@@ -1271,8 +1271,8 @@ void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...)
 
 static bool players_in_level(int Ind, int Ind2)
 {
-        if ((Players[Ind]->lev - Players[Ind2]->lev) > 7) return FALSE;
-        if ((Players[Ind2]->lev - Players[Ind]->lev) > 7) return FALSE;
+        if ((Players[Ind]->lev - Players[Ind2]->lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
+        if ((Players[Ind2]->lev - Players[Ind]->lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
         return TRUE;
 }
 

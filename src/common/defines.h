@@ -360,6 +360,10 @@
  */
 #define MAX_PATH_LENGTH	128
 
+/* Maximum level difference for party members,
+   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
+#define MAX_PARTY_LEVEL_DIFF 7
+
 /* Limit value for Anti-magic fields (AM cap)
    Should range from 75..80%, maybe make skill & DS percentage
    multiply instead of sum up. - C. Blue */

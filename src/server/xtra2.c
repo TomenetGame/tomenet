@@ -5818,11 +5818,13 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			}
 		}
 
-		/* highest player which that monster encountered influences the experience given. (not for kings) */
-		/* also, highest player who boosted this player (by support spells) influences the exp given */
+		/* highest player which that monster encountered influences the experience given. (not for kings)
+		   also, highest player who boosted this player (by support spells) influences the exp given.
+		   Added +1 tolerance levels, to avoid instant exp-nullification for lowest char in case the
+		   leading member of a party just levelled out of MAX_PARTY_LEVEL_DIFF range - C. Blue */
 		if (cfg.henc_strictness && !p_ptr->total_winner) {
-			if (m_ptr->highest_encounter - p_ptr->lev > 7) tmp_exp = 0; /* zonk */
-			if (p_ptr->supported_by - p_ptr->lev > 7) tmp_exp = 0; /* zonk */
+			if (m_ptr->highest_encounter - p_ptr->lev > MAX_PARTY_LEVEL_DIFF + 1) tmp_exp = 0; /* zonk */
+			if (p_ptr->supported_by - p_ptr->lev > MAX_PARTY_LEVEL_DIFF + 1) tmp_exp = 0; /* zonk */
 		}
 
 		/* Higher characters who farm monsters on low levels compared to
@@ -5877,7 +5879,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			/* Give experience to that party */
 			/* Seemingly it's severe to cloning, but maybe it's ok :) */
 //			if (!player_is_king(Ind) && !m_ptr->clone) party_gain_exp(Ind, p_ptr->party, tmp_exp);
-			/* Since players won't share exp if leveldiff > 7
+			/* Since players won't share exp if leveldiff > MAX_PARTY_LEVEL_DIFF (7)
 			   I see ne problem with kings sharing exp.
 			   Otherwise Nether Realm parties are punished.. */
 //			if (!player_is_king(Ind)) party_gain_exp(Ind, p_ptr->party, (tmp_exp*(100-m_ptr->clone))/100);
