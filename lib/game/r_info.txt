@@ -18548,7 +18548,7 @@ D:True master of unbelievers, genuine master of weaponry with his Dark Sword,
 D:no one dare utter a so-called 'mystic' word in front of him.
 
 N:1051:Jan, the Minimite
-G:,:B
+G:u:B
 I:140:10d20:40:10:0
 W:10:2:50:40
 E:0:0:0:0:0:0
