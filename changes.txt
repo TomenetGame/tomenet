@@ -219,3 +219,6 @@ Change list for PernMangband
 05/10/2001
 - Server admin messages fixed (in yellow, after I broke them)
 - Removed the male/female colours. Admin still yellow
+
+08/10/2001
+- Minor bug fixed in house creation

@@ -4108,7 +4108,7 @@ bool poly_build(int Ind, char *args){
 		if(nofloor) houses[num_houses].flags|=HF_NOFLOOR;
 		houses[num_houses].depth=p_ptr->dun_depth;
 		houses[num_houses].dna=dna;
-		if(fill_house(&houses[num_houses],2)){
+		if(cvert>=8 && fill_house(&houses[num_houses],2)){
 			int area=(maxx-minx)*(maxy-miny);
 			wild_add_uhouse(&houses[num_houses]);
 			dna->price=area*area*400;
