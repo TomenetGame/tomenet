@@ -1009,6 +1009,9 @@ static bool black_market_crap(object_type *o_ptr)
 	if (o_ptr->to_h > 0) return (FALSE);
 	if (o_ptr->to_d > 0) return (FALSE);
 
+	/* No Talismans in the BM (can only be found! >:) */
+	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_LUCK) return (TRUE);
+
 	/* check individual store would be better. *later* */
 	for(i=0; i<max_st_idx; i++){
 		if (st_info[i].flags1 & SF1_ALL_ITEM){
