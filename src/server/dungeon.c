@@ -2488,7 +2488,7 @@ void scan_objs(){
 			if(!o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos))){
 				/* ick suggests a store, so leave) */
 				if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
-					if(++o_ptr->marked==3){
+					if(++o_ptr->marked==2){
 						delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx);
 						dcnt++;
 					}
