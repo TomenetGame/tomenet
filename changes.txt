@@ -357,3 +357,4 @@ Change list for PernMangband
 - User commands: /dispose(dis), /tag  Admin commands: /id, /geno
 - Shopkeepers beat down prices for items with high lv-req.
 - Fixed bug in steal-fury ('neutral' was handled as a party).
+- You can no longer know the lv-req of unknown items.

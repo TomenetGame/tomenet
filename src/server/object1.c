@@ -1172,7 +1172,7 @@ static char *object_desc_int(char *t, sint v)
  *   2 -- The Cloak of Death [1,+3] (+2 to Stealth)
  *   3 -- The Cloak of Death [1,+3] (+2 to Stealth) {nifty}
  *
- *  +8 -- Cloak Death [1,+3] (+2stl) {nifty}
+ *  +8 -- Cloak Death [1,+3](+2stl){nifty}
  *   
  * If the strings created with mode 0-3 are too long, this function is called
  * again with 8 added to 'mode' and attempt to 'abbreviate' the strings. -Jir-
@@ -1671,7 +1671,16 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		}
 		t = object_desc_chr(t, ',');
 	}
-	t = object_desc_num(t, o_ptr->level);
+
+	/* you cannot tell the level if not id-ed. */
+	if (!known)
+	{
+		t = object_desc_chr(t, '?');
+	}
+	else
+	{
+		t = object_desc_num(t, o_ptr->level);
+	}
 	t = object_desc_chr(t, '}');
 
 
