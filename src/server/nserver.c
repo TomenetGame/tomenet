@@ -1868,7 +1868,6 @@ static int Handle_login(int ind)
 	}
 
 	if(!(p_ptr->mode & MODE_NO_GHOST) &&
-/*obsolete  !(p_ptr->mode & MODE_HELL) &&*/
 	    !(p_ptr->mode & MODE_IMMORTAL) &&
 	    !cfg.no_ghost && cfg.lifes)
 	{
@@ -7040,9 +7039,6 @@ static int Receive_store_leave(int ind)
         /* Redraw stuff */
         p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA);
 
-        /* Redraw map */
-        p_ptr->redraw |= (PR_MAP);
-
         /* Window stuff */
         p_ptr->window |= (PW_OVERHEAD);
 
@@ -7053,7 +7049,6 @@ static int Receive_store_leave(int ind)
 
 		/* Hack -- don't stand in the way */
 		teleport_player(player, 1);
-//		do_cmd_walk(player, 10 - p_ptr->last_dir, p_ptr->always_pickup);
 	}
 
 	/* hack -- update night/day in wilderness levels */
