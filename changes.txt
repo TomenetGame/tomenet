@@ -747,6 +747,10 @@ Change list for PernMangband
 [B] House doors still seem to crash sometimes.
 [B] wpos display hides wound states(eg.'Deep Gash')
 [B] /rec won't work if to wilderness?
+[B] ever-charging arts (eg.star)
+[B] some traps create 'phial' (INSTA_ARTS)
+[B] strange colouring in unique list
+[B] CURSE_x does 100+ dmg on 50ft
 
 ==== below this line are changes to be done in the future ====
 [minor ones]
@@ -756,10 +760,13 @@ Change list for PernMangband
 - sort unique-list according to the level
 - tombstone screen
 - wilderness compacting
-- low-sanity alart each 2000 turn or sth(and hallucination? :)
+- low-sanity alart each 2000 turn or sth(and 'flushback' hallucination?)
 - cave_special should use union? and their save/load via csfunc
 - display "non-scoring mode" in '@' screen
 - store buying-price should reflect *ID* states
+- /bug (/rfe), which leaves a message on log. {A.Dingle}
+- let players use /rec (apply items with {@R})
+- DEBUG_MSG_LEVEL
 [C] ameliorate option interface(toggle-key/vi-key)
 [C] use 2 lines for each server on server-list
 
@@ -769,37 +776,55 @@ Change list for PernMangband
 - better cave-generator (generate.c) {Asclep?}
 - fully-implemented multiple towns (t_*.txt)
 - more kinds of stores (st_info.txt)
+- item stacks/monster inventory
+- item themes (mage drops magic items, etc)
 - quests (needing LUA-hooks) {hopefully DarkGod}
 - guild, or new party system
 - backbone scenario (like token system)
 - total rebalancing for all of them
 - client updates necessary
-- item stacks/monster inventory
-- item themes (mage drops magic items, etc)
 - better vaults
 - fix gfx again {Asclep}
 - interactive spell system (like in C3)
 - total source-code cleanup {takkaria?}
-- new classes/races
+- integrate save/load into one function (eg. saveload.c)
 
 ==== below this line are RFEs collected so far (good or bad) ====
+[minor ones]
 - more equipment slots in general (like Bracer)
 - door spiking (with '/' key)
-- NPC/pet/golem/slave {Evileye/DG?}
-- monsters' interactions
 - player shouldn't gain more than 1 levels at once (esp.from books)
 - enhanced help system (imo we cannot beat web browsers anyway..)
-- subclass system
-- karma/luck system (karma is like luck, but never gets positive value)
-- make charisma/wisdom/dexterity more important
 - some measures to 'cheezy' admins (at least some warnings)
+- some monster may become 'ghost' after being killed?
 - player ghost should 'fade' slowly, so that a player won't try to preserve
   the floor for days.
+- 'hand to(give)' command
+[major ones]
+- NPC/pet/golem/slave {Evileye/DG?}
+- monsters' interactions
+- subclass system (thief, esper, erudit, tough, mighty etc)
+- karma/luck system (karma is like luck, but never gets positive value)
+- make charisma/wisdom/dexterity more important
 - 3-D gfx and full-audio support
 - full-mouse operation
-- time-limited features (like in Larn)
+- time-limited features(like in Larn) / time bomb
+	struct timed_event{
+		worldpos wpos;
+		int time;
+		char ly, lx, event_kind, magnitude;};
 - savedata editor
+- vault/map editor
 - new networking code (to kiss xpilot adieu :)
 - chat-line editor/history
 - vanilla-Angband style houses
-- some monster may become 'ghost' after being killed?
+- horizontal-connected caves (eg.[32,32,-40]=>[32,31,-40])
+- resistances handled by percent
+- (re)new classes/races
+  + Paladin/Ranger
+  + Mimic
+  + Telepath (as a keystone of party)
+  + Merchant/Diplomat
+- spell extensions, esp. after lv50
+- randunis
+- lowbies (<lv10?) should be immune to Black Breath?
