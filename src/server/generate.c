@@ -2146,6 +2146,14 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0)
 	y2 = yval + (ysize + 1) / 2;
 	x2 = xval + (xsize + 1) / 2;
 
+/* evileye - exceeds MAX_WID... causes efence crash */
+	if((x2+1)>=MAX_WID){
+		x2=MAX_WID-2;
+	}
+	if((y2+1)>=MAX_HGT){
+		y2=MAX_HGT-2;
+	}
+
 
 	/* Place a full floor under the room */
 	for (y = y1 - 1; y <= y2 + 1; y++)
