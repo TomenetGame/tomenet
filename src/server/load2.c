@@ -362,7 +362,6 @@ static void rd_item(object_type *o_ptr)
 
 	rd_byte(&o_ptr->ident);
 
-//	strip_bytes(1);
 	rd_byte(&o_ptr->name2b);
 	/*rd_byte(&o_ptr->marked);*/
 
@@ -387,7 +386,7 @@ static void rd_item(object_type *o_ptr)
 
 
 	/* Obtain k_idx from tval/sval instead :) */
-	if (o_ptr->k_idx)	// zero is cipher :)
+	if (o_ptr->k_idx)	/* zero is cipher :) */
 		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 
 	/* Obtain the "kind" template */
@@ -409,14 +408,6 @@ static void rd_item(object_type *o_ptr)
 		o_ptr->ac = k_ptr->ac;
 		o_ptr->dd = k_ptr->dd;
 		o_ptr->ds = k_ptr->ds;
-
-#if 0
-		/* Acquire correct weight */
-		o_ptr->weight = k_ptr->weight;
-
-		/* Paranoia */
-		o_ptr->name1 = o_ptr->name2 = 0;
-#endif
 
 		/* All done */
 		return;
@@ -494,15 +485,6 @@ static void rd_item(object_type *o_ptr)
 		if ((o_ptr->ac < old_ac)) o_ptr->ac=old_ac;
 		if ((o_ptr->dd < old_dd)) o_ptr->dd=old_dd;
 		if ((o_ptr->ds < old_ds)) o_ptr->ds=old_ds;
-
-#if 0
-		/* Hack -- keep some old fields */
-		if ((o_ptr->dd < old_dd) && (o_ptr->ds == old_ds))
-		{
-			/* Keep old boosted damage dice */
-			o_ptr->dd = old_dd;
-		}
-#endif
 
 		/* Hack -- extract the "broken" flag */
 		if (!e_ptr->cost) o_ptr->ident |= ID_BROKEN;
@@ -593,7 +575,6 @@ static void rd_monster(monster_type *m_ptr)
 	rd_s32b(&m_ptr->maxhp);
 	rd_s16b(&m_ptr->csleep);
 	rd_byte(&m_ptr->mspeed);
-//	rd_byte(&m_ptr->energy);
 	rd_s16b(&m_ptr->energy);
 	rd_byte(&m_ptr->stunned);
 	rd_byte(&m_ptr->confused);
@@ -626,7 +607,7 @@ static void rd_lore(int r_idx)
 	/* Count sights/deaths/kills */
 	rd_s16b(&r_ptr->r_sights);
 	rd_s16b(&r_ptr->r_deaths);
-	rd_s16b(&r_ptr->r_pkills);	// for now, r_pkills is always equal to r_tkills
+	rd_s16b(&r_ptr->r_pkills);	/* for now, r_pkills is always equal to r_tkills */
 	rd_s16b(&r_ptr->r_tkills);
 
 	/* Hack -- if killed, it's been seen */
@@ -695,7 +676,6 @@ static errr rd_store(store_type *st_ptr)
 	/* Read the basic info */
 	rd_s32b(&st_ptr->store_open);
 	rd_s16b(&st_ptr->insult_cur);
-//	rd_byte(&own);
 	rd_u16b(&own);
 	rd_byte(&num);
 	rd_s16b(&st_ptr->good_buy);
@@ -734,8 +714,8 @@ static void rd_quests(){
 	int i;
 	rd_s16b(&questid);
 	for(i=0; i<20; i++){
-		rd_s16b(&quests[i].active);
-		rd_s16b(&quests[i].id);
+		rd_u16b(&quests[i].active);
+		rd_u16b(&quests[i].id);
 		rd_s16b(&quests[i].type);
 		rd_u16b(&quests[i].flags);
 		rd_s32b(&quests[i].creator);
@@ -826,13 +806,6 @@ static void rd_house(int n)
 	rd_s16b(&house_ptr->wpos.wy);
 	rd_s16b(&house_ptr->wpos.wz);
 
-#if 0
-	if((zcave=getcave(&house_ptr->wpos)) && !(house_ptr->flags&HF_STOCK)){
-		/* add dna to static levels */
-		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.type=CS_DNADOOR;
-		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.sc.ptr=house_ptr->dna;
-	}
-#else	// 0
 	if((zcave=getcave(&house_ptr->wpos)))
 	{
 		struct c_special *cs_ptr;
@@ -843,7 +816,6 @@ static void rd_house(int n)
 				cs_ptr->sc.ptr=house_ptr->dna;
 			else if ((cs_ptr=AddCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
 
-//			cs_ptr->type=CS_DNADOOR;
 				cs_ptr->sc.ptr=house_ptr->dna;
 		}
 		else
@@ -852,11 +824,9 @@ static void rd_house(int n)
 			if((cs_ptr=GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
 				cs_ptr->sc.ptr=house_ptr->dna;
 			else if ((cs_ptr=AddCS(&zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx], CS_DNADOOR)))
-//			cs_ptr->type=CS_DNADOOR;
 				cs_ptr->sc.ptr=house_ptr->dna;
 		}
 	}
-#endif	// 0
 	if(house_ptr->flags&HF_RECT){
 		rd_byte(&house_ptr->coords.rect.width);
 		rd_byte(&house_ptr->coords.rect.height);
@@ -880,7 +850,7 @@ static void rd_house(int n)
 	{
 		rd_item(&house_ptr->stock[i]);
 	}
-#endif	// USE_MANG_HOUSE_ONLY
+#endif	/* USE_MANG_HOUSE_ONLY */
 }
 
 static void rd_wild(wilderness_type *w_ptr)
@@ -897,58 +867,6 @@ static void rd_wild(wilderness_type *w_ptr)
 	/* the player(KING) owning the wild */
 	rd_s32b(&w_ptr->own);
 }
-
-
-/*
- * Read RNG state
- */
-#if 0
-static void rd_randomizer(void)
-{
-	int i;
-
-	u16b tmp16u;
-
-	/* Old version */
-	if (older_than(2, 8, 0)) return;
-
-	/* Tmp */
-	rd_u16b(&tmp16u);
-
-	/* Place */
-	rd_u16b(&Rand_place);
-
-	/* State */
-	for (i = 0; i < RAND_DEG; i++)
-	{
-		rd_u32b(&Rand_state[i]);
-	}
-
-	/* Accept */
-	Rand_quick = FALSE;
-}
-#endif
-
-/*
- * Hack -- strip the "ghost" info
- *
- * XXX XXX XXX This is such a nasty hack it hurts.
- */
-#if 0
-static void rd_ghost(void)
-{
-	char buf[64];
-
-	/* Strip name */
-	rd_string(buf, 64);
-
-	/* Strip old data */
-	strip_bytes(60);
-}
-#endif
-
-
-
 
 /*
  * Read/Write the "extra" information
@@ -985,9 +903,6 @@ static bool rd_extra(int Ind)
 	rd_byte(&p_ptr->mode);
 
 	/* Special Race/Class info */
-#if 0
-	rd_s16b(&p_ptr->expfact);
-#endif
 	rd_byte(&p_ptr->hitdie);
 	rd_s16b(&p_ptr->expfact);
 
@@ -998,7 +913,7 @@ static bool rd_extra(int Ind)
 #ifndef SAVEDATA_TRANSFER_KLUDGE
 	rd_u16b(&p_ptr->align_good);	/* alignment */
 	rd_u16b(&p_ptr->align_law);
-#endif	// SAVEDATA_TRANSFER_KLUDGE
+#endif	/* SAVEDATA_TRANSFER_KLUDGE */
 
 	/* Read the stat info */
 	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_max[i]);
@@ -1010,7 +925,7 @@ static bool rd_extra(int Ind)
 
         /* Read the skills */
 	{
-		rd_s16b(&tmp16b);
+		rd_u16b(&tmp16b);
 		if (tmp16b > MAX_SKILLS)
 		{
 			quit("Too many skills!");
@@ -1019,13 +934,13 @@ static bool rd_extra(int Ind)
 		{
 			rd_s32b(&p_ptr->s_info[i].value);
 			rd_u16b(&p_ptr->s_info[i].mod);
-			rd_byte(&p_ptr->s_info[i].dev);
-			rd_byte(&p_ptr->s_info[i].hidden);
+			rd_byte(&tmp8u);
+			p_ptr->s_info[i].dev=tmp8u;
+			rd_byte(&tmp8u);
+			p_ptr->s_info[i].hidden=tmp8u;
 			p_ptr->s_info[i].touched=TRUE;
 		}
 		rd_s16b(&p_ptr->skill_points);
-//		rd_s16b(&p_ptr->skill_last_level);
-//		rd_s16b(&tmp16b);
 	}
 
 	rd_s32b(&p_ptr->id);
@@ -1182,11 +1097,6 @@ static bool rd_extra(int Ind)
 		/* Hack -- try to fix the unique list */
 		r_ptr = &r_info[i];
 
-#if 0	// obsolete maybe
-		if (p_ptr->r_killed[i] && !r_ptr->r_sights)
-			r_ptr->r_sights = 1;
-#endif	// 0
-
 		if (p_ptr->r_killed[i] && !r_ptr->r_tkills &&
 				(r_ptr->flags1 & RF1_UNIQUE))
 			r_ptr->r_tkills = r_ptr->r_pkills = r_ptr->r_sights = 1;
@@ -1283,7 +1193,6 @@ static errr rd_inventory(int Ind)
 		rd_item(&forge);
 
 		/* Hack -- verify item */
-//		if (!forge.k_idx) return (53);
 		if (!forge.k_idx)
 		{
 			s_printf("Warning! Non-existing item detected(erased).");
@@ -1403,7 +1312,6 @@ static errr rd_dungeon(void)
 	cave_type **zcave;
 	u16b max_y, max_x;
 
-//	int i, y, x;
 	int i;
 	byte k, y, x;
 	cave_type *c_ptr;
@@ -1433,7 +1341,6 @@ static errr rd_dungeon(void)
 	rd_s16b(&tmp16b);
 	new_players_on_depth(&wpos,tmp16b,FALSE);
 #if DEBUG_LEVEL > 1
-//#if 1 > 0
 	s_printf("%d players on %s.\n", players_on_depth(&wpos), wpos_format(0, &wpos));
 #endif
 
@@ -1517,15 +1424,6 @@ static errr rd_dungeon(void)
 			}
 		}
 	}
-
-	/*
-	 * TeraHack -- was central town loaded?
-	 * w/o this check, bad bad things will happen...	FIXME
-	 */
-#if 0
-	if (wpos.wx == cfg.town_x && wpos.wy == cfg.town_y && wpos.wz == 0)
-		central_town_loaded = TRUE;
-#endif
 
 	/* Success */
 	return (0);
@@ -1672,49 +1570,6 @@ static errr rd_savefile_new_aux(int Ind)
 
 		Players[Ind]->trap_ident[i] = (tmp8u & 0x01) ? TRUE : FALSE;
 	}
-#if 0
-
-	/* Load the Quests */
-	rd_u16b(&tmp16u);
-
-	/* Incompatible save files */
-	if (tmp16u > 4)
-	{
-		s_printf(format("Too many (%u) quests!", tmp16u));
-		return (23);
-	}
-
-	/* Load the Quests */
-	for (i = 0; i < tmp16u; i++)
-	{
-		rd_byte(&tmp8u);
-		q_list[i].level = tmp8u;
-		rd_byte(&tmp8u);
-		rd_byte(&tmp8u);
-		rd_byte(&tmp8u);
-	}
-
-	/* Load the Artifacts */
-	rd_u16b(&tmp16u);
-
-	/* Incompatible save files */
-	if (tmp16u > MAX_A_IDX)
-	{
-		s_printf(format("Too many (%u) artifacts!", tmp16u));
-		return (24);
-	}
-
-	/* Read the artifact flags */
-	for (i = 0; i < tmp16u; i++)
-	{
-		rd_byte(&tmp8u);
-		a_info[i].cur_num = tmp8u;
-		rd_byte(&tmp8u);
-		rd_byte(&tmp8u);
-		rd_byte(&tmp8u);
-	}
-#endif
-
 
 	/* Read the extra stuff */
 	if (rd_extra(Ind))
@@ -1722,15 +1577,6 @@ static errr rd_savefile_new_aux(int Ind)
 
 	/* Read the player_hp array */
 	rd_u16b(&tmp16u);
-
-#if 0
-	/* Incompatible save files */
-	if (tmp16u > PY_MAX_LEVEL)
-	{
-		s_printf(format("Too many (%u) hitpoint entries!", tmp16u));
-		return (25);
-	}
-#endif
 
 	/* Read the player_hp array */
 	for (i = 0; i < tmp16u; i++)
@@ -1778,7 +1624,7 @@ static errr rd_savefile_new_aux(int Ind)
 	}
 	/* read player guild membership */
 	rd_byte(&p_ptr->guild);
-	rd_s16b(&p_ptr->quest_id);
+	rd_u16b(&p_ptr->quest_id);
         rd_s16b(&p_ptr->quest_num);
 
         if (!older_than(4, 0, 1))
@@ -1846,39 +1692,6 @@ static errr rd_savefile_new_aux(int Ind)
 	p_ptr->w_ignore = NULL;
 	p_ptr->afk = FALSE;
 
-#if 0	// This can be recycled */
-	if(older_than(3,5,5))
-	{
-		/* Set up the skills */
-		p_ptr->skill_points = 0;
-//		p_ptr->skill_last_level = 1;
-		for (i = 1; i < MAX_SKILLS; i++)
-			p_ptr->s_info[i].dev = FALSE;
-		for (i = 1; i < MAX_SKILLS; i++)
-		{
-			s32b value = 0, mod = 0;
-
-			compute_skills(p_ptr, &value, &mod, i);
-
-			init_skill(p_ptr, value, mod, i);
-
-			/* Develop only revelant branches */
-			if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod)
-			{
-				int z = s_info[i].father;
-
-				while (z != -1)
-				{
-					p_ptr->s_info[z].dev = TRUE;
-					z = s_info[z].father;
-					if (z == 0)
-						break;
-				}
-			}
-		}
-	}
-#endif	// 0
-
 	/* Success */
 	return (0);
 }
@@ -1937,10 +1750,6 @@ errr rd_server_savefile()
 	/* Paranoia */
 	if (!fff) return (-1);
 
-#if 0
-	/* Strip the version bytes */
-	strip_bytes(4);
-#else
 	/* Read the version */
 	xor_byte = 0;
 	rd_byte(&ssf_major);
@@ -1950,7 +1759,7 @@ errr rd_server_savefile()
 	rd_byte(&ssf_patch);
 	xor_byte = 0;
 	rd_byte(&ssf_extra);
-#endif
+
 	/* Hack -- decrypt */
 	xor_byte = sf_extra;
 
@@ -2095,11 +1904,7 @@ errr rd_server_savefile()
 	{
 		rd_house(i);
 		if(!(houses[i].flags&HF_STOCK))
-#if 0	/* I believe it's not right - if it is, tell me		- Jir - */
-			wild_add_uhouse(&houses[i].wpos);
-#else	// 0
 			wild_add_uhouse(&houses[i]);
-#endif	// 0
 	}
 
 	/* Read the player name database if new enough */
