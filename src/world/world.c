@@ -137,6 +137,8 @@ void wproto(struct client *ccl){
 			   use a dynamic IP, so this is made *more* necessary */
 
 				ccl->authed=pwcheck(wpk->d.auth.pass, wpk->d.auth.val);
+				/* Send it the current players */
+				update_players(ccl);
 				break;
 			case WP_CHAT:
                                 /* only relay all for now */

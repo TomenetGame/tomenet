@@ -7,7 +7,7 @@
 
 extern int bpipe;
 
-struct rplist *rpmlist=NULL;
+static struct rplist *rpmlist=NULL;
 
 void send_rplay(struct client *ccl){
 	struct rplist *c_pl;
@@ -47,6 +47,20 @@ void rem_players(short id){
 		p_pl=c_pl;
 		c_pl=c_pl->next;
 		if(d_pl) free(d_pl);
+	}
+}
+
+/* Send a players update to a new server */
+void update_players(struct client *ccl){
+	struct rplist *c_pl;
+	struct wpacket playpkt;
+	c_pl=rpmlist;
+	while(c_pl){
+		playpkt.d.play.id=c_pl->id;
+		playpkt.d.play.server=c_pl->server;
+		strncpy(playpkt.d.play.name, c_pl->name);
+		send(ccl->fd, playpkt, sizeof(struct wpacket), 0);
+		c_pl=c_pl->next;
 	}
 }
 
