@@ -1923,6 +1923,8 @@ struct player_type
         byte antimagic_dis;     /* Radius of the anti magic field */
         bool anti_tele;     /* Prevent teleportation */
 							/* in PernM, it's same as st_anchor */
+		bool admin_wiz;		/* Is this char Wizard? */
+		bool admin_dm;		/* or Dungeon Master? */
 
 	/* some new borrowed flags (saved) */
         bool black_breath;      /* The Tolkien's Black Breath */
@@ -1940,4 +1942,37 @@ struct martial_arts
     int     dd;        /* Damage dice */
     int     ds;        /* Damage sides */
     int     effect;     /* Special effects */
+};
+
+/* Server option struct */
+
+typedef struct server_opts server_opts;
+
+struct server_opts
+{
+	char * meta_address;
+	char * bind_name;
+	char * console_password;
+	char * admin_wizard;
+	char * dungeon_master;
+	s32b preserve_death_level;
+	s32b unique_respawn_time;
+	s32b unique_max_respawn_time;
+	s32b level_unstatic_chance;
+	s32b min_unstatic_level;
+	s32b retire_timer;
+	s32b game_port;
+	s32b console_port;
+	s32b spell_interfere;
+	s32b spell_stack_limit;
+	s16b fps;
+	s16b newbies_cannot_drop;
+	bool report_to_meta;
+	bool secret_dungeon_master;
+	bool anti_arts_horde;
+	bool mage_hp_bonus;
+	bool door_bump_open;
+	bool no_ghost;
+	bool maximize;
+	bool kings_etiquette;
 };

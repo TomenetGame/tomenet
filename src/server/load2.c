@@ -2361,6 +2361,8 @@ static errr rd_savefile_new_aux(int Ind)
 	p_ptr->ignore = NULL;
 	p_ptr->afk = FALSE;
 
+	(void)confirm_admin(Ind, p_ptr->name, p_ptr->pass);
+
 	/* Success */
 	return (0);
 }

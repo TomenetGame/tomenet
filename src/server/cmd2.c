@@ -43,7 +43,7 @@ void do_cmd_go_up(int Ind)
 #endif
 
 	/* Verify stairs if not a ghost, or admin wizard */
-	if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_LESS && !p_ptr->prob_travel)
+	if (!p_ptr->ghost && !p_ptr->admin_wiz && c_ptr->feat != FEAT_LESS && !p_ptr->prob_travel)
 	{
 		msg_print(Ind, "I see no up staircase here.");
 		return;
@@ -152,7 +152,7 @@ void do_cmd_go_down(int Ind)
 
 	/* Verify stairs */
 //      if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
-	if ((strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
+	if (!p_ptr->admin_wiz && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
 	{
 		if (!p_ptr->ghost)
 		{
@@ -588,7 +588,8 @@ int pick_house(int Depth, int y, int x)
 /* Door change permissions */
 bool chmod_door(int Ind, struct dna_type *dna, char *args){
 	player_type *p_ptr=Players[Ind];
-	if(strcmp(p_ptr->name, cfg_admin_wizard) && strcmp(p_ptr->name, cfg_dungeon_master)){
+	if (!p_ptr->admin_wiz && !p_ptr->admin_dm)
+	{
 #ifdef NEWHOUSES
 		if(dna->creator!=p_ptr->dna) return(FALSE);
 #endif
@@ -606,7 +607,8 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 	player_type *p_ptr=Players[Ind];
 	int newowner=-1;
 	int i;
-	if(strcmp(p_ptr->name, cfg_admin_wizard) && strcmp(p_ptr->name, cfg_dungeon_master)){
+	if (!p_ptr->admin_wiz && !p_ptr->admin_dm)
+	{
 #ifdef NEWHOUSES
 		if(dna->creator!=p_ptr->dna) return(FALSE);
 #endif
@@ -656,7 +658,7 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 
 bool access_door(int Ind, struct dna_type *dna){
 	player_type *p_ptr=Players[Ind];
-	if(!(strcmp(p_ptr->name,cfg_dungeon_master)) || !(strcmp(p_ptr->name,cfg_admin_wizard)))
+	if (p_ptr->admin_wiz && p_ptr->admin_dm)
 		return(TRUE);
 #ifdef NEWHOUSES
 	if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
@@ -1055,7 +1057,7 @@ void do_cmd_open(int Ind, int dir)
 					if (!houses[i].owned)
 					{
 						/* Assume one key */
-						if (strcmp(p_ptr->name, cfg_admin_wizard)) houses[i].owned = 1;
+						if (!p_ptr->admin_wiz) houses[i].owned = 1;
 					} 
 
 					/* Update some things */
@@ -2387,7 +2389,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 		}
 
 		/* Handle the cfg_door_bump_open option */
-		if (cfg_door_bump_open)
+		if (cfg.door_bump_open)
 		{
 			/* Get requested grid */
 #ifdef NEW_DUNGEON
@@ -2466,7 +2468,7 @@ int do_cmd_run(int Ind, int dir)
 		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px))
 		{
 			/* Handle the cfg_door_bump option */
-			if (cfg_door_bump_open)
+			if (cfg.door_bump_open)
 			{
 				/* Get requested grid */
 #ifdef NEW_DUNGEON
@@ -3779,7 +3781,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 #endif
 
 	/* Handle the newbies_cannot_drop option */
-	if (p_ptr->lev < cfg_newbies_cannot_drop)
+	if (p_ptr->lev < cfg.newbies_cannot_drop)
 	{
 		msg_format(Ind, "Please don't litter the %s.",
 #ifdef NEW_DUNGEON
@@ -4166,7 +4168,8 @@ void do_cmd_throw(int Ind, int dir, int item)
 void destroy_house(int Ind, struct dna_type *dna){
 	player_type *p_ptr=Players[Ind];
 	int i;
-	if(strcmp(p_ptr->name, cfg_admin_wizard)){
+	if(!p_ptr->admin_wiz)
+	{
 		msg_print(Ind,"\377rYour attempts to destroy the house fail.");
 		return;
 	}
@@ -4333,8 +4336,10 @@ void do_cmd_purchase_house(int Ind, int dir)
 					p_ptr->redraw|=PR_GOLD;
 					msg_format(Ind, "You sell your house for %ld gold.", price/2);
 				}
-				else{
-					if(strcmp(p_ptr->name,cfg_admin_wizard)){
+				else
+				{
+					if(!p_ptr->admin_wiz)
+					{
 						msg_print(Ind,"You cannot sell that house");
 						return;
 					}
@@ -4409,7 +4414,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 				
 			}
 		
-			if (!strcmp(p_ptr->name,cfg_admin_wizard))
+			if (p_ptr->admin_wiz)
 			{
 				houses[i].owned = 0;
 				

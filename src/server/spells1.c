@@ -4921,10 +4921,18 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
                 }
 		case GF_WRAITH_PLAYER:		
 		{
-			if (fuzzy) msg_print(Ind, "You feel less consitant!");
+			if (fuzzy) msg_print(Ind, "You feel less constant!");
 			else msg_format(Ind, "%^s turns you into a wraith!", killer);
 		
-			set_tim_wraith(Ind, p_ptr->tim_wraith + dam);
+			if (!p_ptr->tim_wraith)
+			{
+				set_tim_wraith(Ind, dam);
+			}
+			else
+			{
+				(void)set_tim_wraith(Ind, p_ptr->tim_wraith + randint(dam) / 2 + 1);
+			}
+			//set_tim_wraith(Ind, p_ptr->tim_wraith + dam);
 			break;
                 }
 		case GF_SPEED_PLAYER:		

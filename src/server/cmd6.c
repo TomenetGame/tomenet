@@ -306,7 +306,7 @@ void do_cmd_eat_food(int Ind, int item)
 			else
 			{
 				msg_print(Ind, "There is message in the cookie. It says:");
-				fortune(Ind);
+				fortune(Ind, FALSE);
 			}
 			ident = TRUE;
 			break;
@@ -1773,7 +1773,8 @@ void do_cmd_read_scroll(int Ind, int item)
 
 		case SV_SCROLL_RUMOR:
 		{
-			fortune(Ind);
+			msg_print(Ind, "You read the scroll:");
+			fortune(Ind, magik(40) ? TRUE : FALSE);
 			ident = TRUE;
 			break;
 		}
@@ -1834,6 +1835,7 @@ void do_cmd_read_scroll(int Ind, int item)
  */
 void do_cmd_use_staff(int Ind, int item)
 {
+        u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
 
 	int			ident, chance, k, lev;
@@ -1925,6 +1927,15 @@ void do_cmd_use_staff(int Ind, int item)
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
+
+        /* Extract object flags */
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+        /* Is it simple to use ? */
+        if (f4 & TR4_EASY_USE)
+        {
+                chance *= 10;
+        }
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -2293,6 +2304,7 @@ void do_cmd_use_staff(int Ind, int item)
  */
 void do_cmd_aim_wand(int Ind, int item, int dir)
 {
+        u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
 
 	int			lev, ident, chance, sval;
@@ -2383,6 +2395,15 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
+
+        /* Extract object flags */
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+        /* Is it simple to use ? */
+        if (f4 & TR4_EASY_USE)
+        {
+                chance *= 10;
+        }
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -2756,6 +2777,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
  */
 void do_cmd_zap_rod(int Ind, int item)
 {
+        u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
 
 	int                 ident, chance, lev;
@@ -2846,6 +2868,15 @@ void do_cmd_zap_rod(int Ind, int item)
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
+
+        /* Extract object flags */
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+        /* Is it simple to use ? */
+        if (f4 & TR4_EASY_USE)
+        {
+                chance *= 10;
+        }
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -3057,6 +3088,7 @@ void do_cmd_zap_rod(int Ind, int item)
  */
 void do_cmd_zap_rod_dir(int Ind, int dir)
 {
+        u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
 
 	int                 item, ident, chance, lev;
@@ -3134,6 +3166,15 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
+
+        /* Extract object flags */
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+        /* Is it simple to use ? */
+        if (f4 & TR4_EASY_USE)
+        {
+                chance *= 10;
+        }
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -3615,6 +3656,7 @@ static bool brand_bolts(int Ind)
  */
 void do_cmd_activate(int Ind, int item)
 {
+        u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
 
 	int         i, k, lev, chance;
@@ -3673,6 +3715,15 @@ void do_cmd_activate(int Ind, int item)
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
+
+        /* Extract object flags */
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+        /* Is it simple to use ? */
+        if (f4 & TR4_EASY_USE)
+        {
+                chance *= 10;
+        }
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -5998,7 +6049,7 @@ bool unmagic(int Ind)
  * Displays random fortune/rumour.
  * Thanks Mihi!		- Jir -
  */
-void fortune(int Ind)
+void fortune(int Ind, bool broadcast)
 {
 	char Rumor[80];
 
@@ -6021,8 +6072,16 @@ void fortune(int Ind)
 			get_rnd_line("rumors.txt",0 , Rumor);
 	}
 	bracer_ff(Rumor);
-	msg_format(Ind, "%s", Rumor);
+//	msg_format(Ind, "%s", Rumor);
+	msg_format(Ind, Rumor);
 	msg_print(Ind, NULL);
+
+	if (broadcast)
+	{
+		msg_broadcast(Ind, "Suddenly a thought comes to your mind:");
+		msg_broadcast(Ind, Rumor);
+	}
+
 }
 
 char random_colour()

@@ -2068,97 +2068,105 @@ void set_server_option(char * option, char * value)
 	/* Due to the lame way that C handles strings, we can't use a switch statement */
 	if (!strcmp(option,"REPORT_TO_METASERVER"))
 	{
-		cfg_report_to_meta = str_to_boolean(value);
+		cfg.report_to_meta = str_to_boolean(value);
 	}
 	else if (!strcmp(option,"META_ADDRESS"))
 	{
-		cfg_meta_address = strdup(value);
+		cfg.meta_address = strdup(value);
 	}
 	else if (!strcmp(option,"BIND_NAME"))
 	{
-		cfg_bind_name = strdup(value);
+		cfg.bind_name = strdup(value);
 	}
 	else if (!strcmp(option,"CONSOLE_PASSWORD"))
 	{
-		cfg_console_password = strdup(value);
+		cfg.console_password = strdup(value);
 	}
 	else if (!strcmp(option,"ADMIN_WIZARD_NAME"))
 	{
-		cfg_admin_wizard = strdup(value);
+		cfg.admin_wizard = strdup(value);
 	}
 	else if (!strcmp(option,"DUNGEON_MASTER_NAME"))
 	{
-		cfg_dungeon_master = strdup(value);
+		cfg.dungeon_master = strdup(value);
 	}
 	else if (!strcmp(option,"SECRET_DUNGEON_MASTER"))
 	{
-		cfg_secret_dungeon_master = str_to_boolean(value);
+		cfg.secret_dungeon_master = str_to_boolean(value);
 	}
 	else if (!strcmp(option,"FPS"))
 	{
-		cfg_fps = atoi(value);
+		cfg.fps = atoi(value);
 		/* Hack -- reinstall the timer handler to match the new FPS */
-		install_timer_tick(dungeon, cfg_fps);
+		install_timer_tick(dungeon, cfg.fps);
 	}
 	else if (!strcmp(option,"MAGE_HITPOINT_BONUS"))
 	{
-		cfg_mage_hp_bonus = str_to_boolean(value);
+		cfg.mage_hp_bonus = str_to_boolean(value);
 	}
 	else if (!strcmp(option,"NEWBIES_CANNOT_DROP"))
 	{
-		cfg_newbies_cannot_drop = atoi(value);
+		cfg.newbies_cannot_drop = atoi(value);
 	}
 	else if (!strcmp(option,"PRESERVE_DEATH_LEVEL"))
 	{
-		cfg_preserve_death_level = atoi(value);
+		cfg.preserve_death_level = atoi(value);
 	}
 	else if (!strcmp(option,"NO_GHOST"))
 	{
-		cfg_no_ghost = str_to_boolean(value);
+		cfg.no_ghost = str_to_boolean(value);
 	}
 	else if (!strcmp(option,"DOOR_BUMP_OPEN"))
 	{
-		cfg_door_bump_open = str_to_boolean(value);
+		cfg.door_bump_open = str_to_boolean(value);
 	}
 	else if (!strcmp(option,"BASE_UNIQUE_RESPAWN_TIME"))
 	{
-		cfg_unique_respawn_time = atoi(value);
+		cfg.unique_respawn_time = atoi(value);
 	}
 	else if (!strcmp(option,"MAX_UNIQUE_RESPAWN_TIME"))
 	{
-		cfg_unique_max_respawn_time = atoi(value);
+		cfg.unique_max_respawn_time = atoi(value);
 	}
 	else if (!strcmp(option,"LEVEL_UNSTATIC_CHANCE"))
 	{
-		cfg_level_unstatic_chance = atoi(value);
+		cfg.level_unstatic_chance = atoi(value);
 	}
 	else if (!strcmp(option,"RETIRE_TIMER"))
 	{
-		cfg_retire_timer = atoi(value);
+		cfg.retire_timer = atoi(value);
 	}
 	else if (!strcmp(option,"MAXIMIZE"))
 	{
-		cfg_maximize = str_to_boolean(value);
+		cfg.maximize = str_to_boolean(value);
 	}
 	else if (!strcmp(option,"GAME_PORT"))
 	{
-		cfg_game_port = atoi(value);
+		cfg.game_port = atoi(value);
 	}
 	else if (!strcmp(option,"MIN_UNSTATIC_LEVEL"))
 	{
-		cfg_min_unstatic_level = atoi(value);
+		cfg.min_unstatic_level = atoi(value);
 	}
 	else if (!strcmp(option,"SPELL_INTERFERE"))
 	{
-		cfg_spell_interfere = atoi(value);
+		cfg.spell_interfere = atoi(value);
 	}
 	else if (!strcmp(option,"CONSOLE_PORT"))
 	{
-		cfg_console_port = atoi(value);
+		cfg.console_port = atoi(value);
 	}
 	else if (!strcmp(option,"ANTI_ARTS_HORDE"))
 	{
-		cfg_anti_arts_horde = str_to_boolean(value);
+		cfg.anti_arts_horde = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"SPELL_STACK_LIMIT"))
+	{
+		cfg.spell_stack_limit = atoi(value);
+	}
+	else if (!strcmp(option,"KINGS_ETIQUETTE"))
+	{
+		cfg.kings_etiquette = str_to_boolean(value);
 	}
 	else printf("Error : unrecognized mangband.cfg option %s\n", option);
 }

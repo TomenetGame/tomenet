@@ -761,7 +761,7 @@ static void get_money(int Ind)
 	p_ptr->own1 = p_ptr->own2 = 0;
 #endif
 		
-	if (!strcmp(p_ptr->name,cfg_admin_wizard))
+	if (p_ptr->admin_wiz)
 	{
 		/* the admin wizard can basically do what he wants */
 		p_ptr->au = 50000000;
@@ -779,7 +779,7 @@ static void get_money(int Ind)
 
 		for (i = 1; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = r_info[i].level;
 	}
-	if (!strcmp(p_ptr->name,cfg_dungeon_master))
+	else if (p_ptr->admin_dm)
 	{
 		p_ptr->au = 50000000;
 		p_ptr->lev = 100;
@@ -877,6 +877,9 @@ static void player_wipe(int Ind)
 
 	/* Player don't have the black breath from the beginning !*/
 	p_ptr->black_breath = FALSE;
+
+	/* Assume not admin */
+	p_ptr->admin_wiz = p_ptr->admin_dm = FALSE;
 }
 
 
@@ -1023,7 +1026,7 @@ static void player_outfit(int Ind)
 	/*
 	 * Give the cfg_admin_wizard some interesting stuff.
 	 */
-	 if (!strcmp(p_ptr->name,cfg_admin_wizard) || !strcmp(p_ptr->name, cfg_dungeon_master))
+	 if (p_ptr->admin_wiz || p_ptr->admin_dm)
 	 {
 
 		/* Hack -- assume the player has an initial knowledge of the area close to town */
@@ -1472,11 +1475,6 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 {
 	player_type *p_ptr;
 
-	/* Disallow non-authorized admin (improvement needed!!) */
-	if ((!strcmp(name,cfg_admin_wizard) ||
-		!strcmp(name, cfg_dungeon_master)) &&
-		(strcmp(pass, cfg_console_password))) return FALSE;
-
 	/* Do some consistency checks */
 	if (race < 0 || race >= MAX_RACES) race = 0;
 	if (class < 0 || class >= MAX_CLASS) class = 0;
@@ -1493,6 +1491,9 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 
 	/* Clear old information */
 	player_wipe(Ind);
+
+	if (!confirm_admin(Ind, name, pass)) return FALSE;
+
 
 	/* Copy his name and connection info */
 	strcpy(p_ptr->name, name);
@@ -1531,6 +1532,8 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	strcpy(p_ptr->pass, pass);
 	p_ptr->conn = conn;
 
+	confirm_admin(Ind, name, pass);
+
 	/* Reprocess his name */
 	if (!process_player_name(Ind, TRUE)) return FALSE;
 
@@ -1566,7 +1569,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	p_ptr->id = newid();
 
 	/* Actually Generate */
-	p_ptr->maximize = cfg_maximize?TRUE:FALSE;
+	p_ptr->maximize = cfg.maximize?TRUE:FALSE;
 
 	/* No autoroller */
 	get_stats(Ind, stat_order);
@@ -1590,6 +1593,27 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	player_setup(Ind);
 
 	/* Success */
+	return TRUE;
+}
+
+/* returns FALSE if bogus admin - Jir - */
+bool confirm_admin(int Ind, cptr name, cptr pass)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* Disallow non-authorized admin (improvement needed!!) */
+	if (!strcmp(name,cfg.admin_wizard))
+	{
+		if (strcmp(pass, cfg.console_password)) return FALSE;
+		else p_ptr->admin_wiz = TRUE;
+	}
+	/* Disallow non-authorized admin (improvement needed!!) */
+	else if (!strcmp(name, cfg.dungeon_master)) 
+	{
+		if (strcmp(pass, cfg.console_password)) return FALSE;
+		else p_ptr->admin_dm = TRUE;
+	}
+
 	return TRUE;
 }
 

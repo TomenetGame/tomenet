@@ -1246,7 +1246,7 @@ static int auto_retaliate(int Ind)
 	}
 
 	/* The dungeon master does not fight his or her offspring */
-	if (!strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
+	if (p_ptr->admin_dm) return FALSE;
 
 	/* If we have a target to attack, attack it! */
 	if (m_target_ptr)
@@ -2682,13 +2682,13 @@ void do_unstat(struct worldpos *wpos){
 	if (!num_on_depth)
 	{
 		/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
-		if (( getlevel(wpos) < cfg_min_unstatic_level) && (0 < cfg_min_unstatic_level))
+		if (( getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level))
 		{
 			new_players_on_depth(wpos,0,FALSE);
 		}
 		// random chance of the level unstaticing
 		// the chance is one in (base_chance * depth)/250 feet.
-		if (!rand_int(((cfg_level_unstatic_chance * (getlevel(wpos)+5))/5)-1))
+		if (!rand_int(((cfg.level_unstatic_chance * (getlevel(wpos)+5))/5)-1))
 		{
 			// unstatic the level
 			new_players_on_depth(wpos,0,FALSE);
@@ -2754,7 +2754,7 @@ static void process_various(void)
 	}
 
 	/* daily maintenance */
-	if (!(turn % (cfg_fps * 86400))){
+	if (!(turn % (cfg.fps * 86400))){
 		s_printf("24 hours maintenance cycle\n");
 		scan_players();
 		scan_houses();
@@ -2762,7 +2762,7 @@ static void process_various(void)
 	}
 
 	/* Handle certain things once a minute */
-	if (!(turn % (cfg_fps * 60)))
+	if (!(turn % (cfg.fps * 60)))
 	{
 		monster_race *r_ptr;
 
@@ -2824,7 +2824,7 @@ static void process_various(void)
 				if (r_ptr->flags1 & RF1_QUESTOR) continue;
 
 //				if (r_ptr->max_num > 0) continue;
-				if (rand_int(cfg_unique_respawn_time * (r_ptr->level + 1)) > 9)
+				if (rand_int(cfg.unique_respawn_time * (r_ptr->level + 1)) > 9)
 					continue;
 
 				/* "Ressurect" the unique */
@@ -2875,7 +2875,7 @@ static void process_various(void)
 	}
  		
 	// If the level unstaticer is not disabled
-	if (cfg_level_unstatic_chance > 0)
+	if (cfg.level_unstatic_chance > 0)
 	{
 #ifdef NEW_DUNGEON
 		struct worldpos twpos;
@@ -2929,13 +2929,13 @@ static void process_various(void)
 				if (!num_on_depth)
 				{
 					/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
-					if (( i < cfg_min_unstatic_level) && (0 < cfg_min_unstatic_level))
+					if (( i < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level))
 					{
 						players_on_depth[i] = 0;
 					}
 					// random chance of the level unstaticing
 					// the chance is one in (base_chance * depth)/250 feet.
-					if (!rand_int(((cfg_level_unstatic_chance * (i+5))/5)-1))
+					if (!rand_int(((cfg.level_unstatic_chance * (i+5))/5)-1))
 					{
 						// unstatic the level
 						players_on_depth[i] = 0;
@@ -3177,7 +3177,7 @@ void dungeon(void)
                                 player_death(i);
 
                                 /* Kill them again so that they Die! DEG */
-                                if (cfg_no_ghost)
+                                if (cfg.no_ghost)
                                 {
                                         player_death(i);
                                 }
@@ -3678,7 +3678,7 @@ void dungeon(void)
                                 player_death(i);
 
                                 /* Kill them again so that they Die! DEG */
-                                if (cfg_no_ghost)
+                                if (cfg.no_ghost)
                                 {
                                         player_death(i);
                                 }
@@ -4014,7 +4014,7 @@ void play_game(bool new_game)
 	scan_houses();
 
 	/* Set up the main loop */
-	install_timer_tick(dungeon, cfg_fps);
+	install_timer_tick(dungeon, cfg.fps);
 
 	/* Loop forever */
 	sched();

@@ -2640,7 +2640,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		else if ((!p_ptr->ghost && !q_ptr->ghost &&
 			 (ddy[q_ptr->last_dir] == -(ddy[dir])) &&
 			 (ddx[q_ptr->last_dir] == (-ddx[dir]))) ||
-			(!strcmp(q_ptr->name,cfg_dungeon_master)))
+			(q_ptr->admin_dm))
 		{
 #ifdef NEW_DUNGEON
 		  if (!((!wpos->wz) && (p_ptr->tim_wraith || q_ptr->tim_wraith)))
@@ -2664,7 +2664,7 @@ void move_player(int Ind, int dir, int do_pickup)
 
 			/* Tell both of them */
 			/* Don't tell people they bumped into the Dungeon Master */
-			if (strcmp(q_ptr->name,cfg_dungeon_master))
+			if (!q_ptr->admin_dm)
 			{
 				/* Hack if invisible */
 				if (p_ptr->play_vis[Ind2])                              
@@ -2700,7 +2700,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 
 		/* Hack -- the Dungeon Master cannot bump people */
-		else if (strcmp(p_ptr->name,cfg_dungeon_master))
+		else if (!p_ptr->admin_dm)
 		{
 			/* Tell both about it */
 			/* Hack if invisible */
@@ -2728,7 +2728,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	if (c_ptr->m_idx > 0)
 	{
 		/* Hack -- the dungeon master switches places with his monsters */
-		if (!strcmp(p_ptr->name,cfg_dungeon_master))
+		if (p_ptr->admin_dm)
 		{
 			/* save old player location */
 			oldx = p_ptr->px;

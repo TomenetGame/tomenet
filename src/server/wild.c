@@ -351,8 +351,11 @@ static bool wild_monst_aux_town(int r_idx)
 	/* no special monsters allowed */
 	if (r_ptr->flags9 & RF9_SPECIAL_GENE) return FALSE;
 
+	/* non-town monsters are not allowed */
+//	if (r_ptr->level) return FALSE;
+
 	/* OK */
-	return FALSE;
+	return TRUE;
 }
 
 

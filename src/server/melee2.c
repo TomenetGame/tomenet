@@ -4572,7 +4572,7 @@ void process_monsters(void)
                                 continue; 
 
                         /* Hack -- make the dungeon master invisible to monsters */ 
-                        if (!strcmp(p_ptr->name,cfg_dungeon_master)) continue; 
+                        if (p_ptr->admin_dm) continue; 
 
                         /* Monsters serve a king on his land they dont attack him */ 
                         if (player_is_king(pl)) continue; 

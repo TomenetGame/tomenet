@@ -1046,7 +1046,7 @@ static s32b object_value_real(object_type *o_ptr)
 
 			/* Give credit for bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-			value += ((PRICE_BOOST(o_ptr->to_h + o_ptr->to_d, 15) + PRICE_BOOST(o_ptr->to_a, 12)) * 100L);
+			value += ((PRICE_BOOST(o_ptr->to_h + o_ptr->to_d*2, 15) + PRICE_BOOST(o_ptr->to_a, 11)) * 100L);
 
 			/* Done */
 			break;
@@ -5276,7 +5276,7 @@ void drop_near_severe(int Ind, object_type *o_ptr, int chance, int Depth, int y,
 {
 	/* Artifact always disappears */
 //	if (cfg_anti_arts_horde && artifact_p(o_ptr) && !o_ptr->name3)
-	if (cfg_anti_arts_horde && true_artifact_p(o_ptr))
+	if (cfg.anti_arts_horde && true_artifact_p(o_ptr))
 	{
 		char	o_name[160];
 		object_desc(Ind, o_name, o_ptr, TRUE, 0);

@@ -194,6 +194,7 @@ extern header *re_head;
 extern monster_ego *re_info;
 extern char *re_name;
 
+#if 0
 extern bool cfg_report_to_meta;
 extern char * cfg_meta_address;
 extern char * cfg_bind_name;
@@ -217,6 +218,9 @@ extern s32b cfg_game_port;
 extern s32b cfg_console_port;
 extern int cfg_spell_interfere;
 extern bool cfg_anti_arts_horde;
+#endif
+
+extern server_opts cfg;
 
 
 extern bool rogue_like_commands;

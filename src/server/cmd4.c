@@ -523,8 +523,8 @@ void do_cmd_check_players(int Ind, int line)
 		/* don't display the dungeon master if the secret_dungeon_master
 		 * option is set 
 		 */
-		if ((!strcmp(q_ptr->name,cfg_dungeon_master)) &&
-		   (cfg_secret_dungeon_master)) continue;
+		if (q_ptr->admin_dm &&
+		   (cfg.secret_dungeon_master)) continue;
 
 		/*** Determine color ***/
 
@@ -565,14 +565,13 @@ void do_cmd_check_players(int Ind, int line)
 		/* Newline */
 		/* -AD- will this work? */
 		fprintf(fff, "\n");
-		if (!strcmp(p_ptr->name,cfg_admin_wizard) ||
-			!strcmp(p_ptr->name, cfg_dungeon_master))
+		if (p_ptr->admin_dm || p_ptr->admin_wiz)
 			fprintf(fff, "    (%d)", k);
 		fprintf(fff, "     %s@%s", q_ptr->realname, q_ptr->hostname);
 
 		/* Print extra info if these people are in the same party */
 		/* Hack -- always show extra info to dungeon master */
-		if ((p_ptr->party == q_ptr->party && p_ptr->party) || (!strcmp(p_ptr->name,cfg_dungeon_master)) || Ind == k)
+		if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || p_ptr->admin_dm || p_ptr->admin_wiz)
 		{
 #ifdef NEW_DUNGEON
 //			fprintf(fff, "   [(%d,%d), %dft]", q_ptr->wpos.wx, q_ptr->wpos.wy, q_ptr->wpos.wz*50);
@@ -609,8 +608,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 
        player_type *p_ptr = Players[Ind];
 
-		bool admin = (!strcmp(p_ptr->name,cfg_admin_wizard)
-					|| !strcmp(p_ptr->name,cfg_dungeon_master))?TRUE:FALSE;
+		bool admin = p_ptr->admin_wiz || p_ptr->admin_dm;
 
        /* Temporary file */
        if (path_temp(file_name, 1024)) return;
@@ -631,8 +629,8 @@ void do_cmd_check_player_equip(int Ind, int line)
 			/* don't display the dungeon master if the secret_dungeon_master
 			 * option is set
 			 */
-			if ((!strcmp(q_ptr->name,cfg_dungeon_master)) &&
-			   (cfg_secret_dungeon_master)) continue;
+			if (p_ptr->admin_dm &&
+			   (cfg.secret_dungeon_master)) continue;
 
 			/*** Determine color ***/
 

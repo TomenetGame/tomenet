@@ -1216,7 +1216,7 @@ void update_mon(int m_idx, bool dist)
 
 			/* Hack -- Wizards have "perfect telepathy" */
 			/* if (p_ptr->wizard) flag = TRUE; */
-			if (!strcmp(p_ptr->name, cfg_dungeon_master)) flag = TRUE;
+			if (p_ptr->admin_dm) flag = TRUE;
 		}
 
 
@@ -1447,7 +1447,7 @@ void update_player(int Ind)
 			}
 			
 			/* hack -- dungeon masters are invisible */
-			if (!strcmp(q_ptr->name,cfg_dungeon_master)) flag = FALSE;
+			if (p_ptr->admin_dm) flag = FALSE;
 			
 			/* Can we see invisibvle players ? */
 			if ((!p_ptr->see_inv || ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) && q_ptr->invis)

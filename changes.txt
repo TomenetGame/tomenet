@@ -563,3 +563,6 @@ Change list for PernMangband
 - some special attacking effect (like Chaos/Vorpal/Vampiric) implemented.
   (but they don't work in pvp yet!)
 - Items with high bonus get *higher* prices.
+- Config options (cfg_blabla) are bundled in one structure (cfg.blabla).
+- New config option SPELL_STACK_LIMIT.
+- Wraith-Form is harder to stack(just like Haste-Self).

@@ -2484,7 +2484,7 @@ void store_confirm(int Ind)
 	handle_stuff(Ind);
 
 	/* Artifact won't be sold in a store */
-	if (cfg_anti_arts_horde && (artifact_p(&sold_obj)) && (!sold_obj.name3))
+	if (cfg.anti_arts_horde && (artifact_p(&sold_obj)) && (!sold_obj.name3))
 	{
 		a_info[sold_obj.name1].cur_num = 0;
 		return;

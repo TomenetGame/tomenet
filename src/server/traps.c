@@ -518,7 +518,7 @@ bool do_player_drop_items(int Ind, int chance)
 		if (!p_ptr->inventory[i].k_idx) continue;
 		if (randint(100)>chance) continue;
 		if (p_ptr->inventory[i].name1 == ART_POWER) continue;
-		if (cfg_anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9)) continue;
+		if (cfg.anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9)) continue;
 		tmp_obj = p_ptr->inventory[i];
 		/* drop carefully */
 		drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -560,7 +560,7 @@ bool do_player_scatter_items(int Ind, int chance)
 			if (!in_bounds(cy,cx)) continue;
 			if (!cave_floor_bold(zcave, cy,cx)) continue;
 			tmp_obj = p_ptr->inventory[i];
-			if (cfg_anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9)) return(FALSE);
+			if (cfg.anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9)) return(FALSE);
 			inven_item_increase(Ind, i,-999);
 			inven_item_optimize(Ind, i);
 			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -698,7 +698,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
 
 	/* God save the arts :) */
 	if (i_ptr->name1 == ART_POWER) return (FALSE);
-	if (cfg_anti_arts_horde && (artifact_p(o_ptr)) && (!o_ptr->name3) && (rand_int(100)>9)) return(FALSE);
+	if (cfg.anti_arts_horde && (artifact_p(o_ptr)) && (!o_ptr->name3) && (rand_int(100)>9)) return(FALSE);
 
 	while (o_idx == 0)
 	{

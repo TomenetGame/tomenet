@@ -1050,7 +1050,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-		if (interfere(Ind, cfg_spell_interfere)) return;
+		if (interfere(Ind, cfg.spell_interfere)) return;
 
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
@@ -1938,7 +1938,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-		if (interfere(Ind, cfg_spell_interfere)) return;
+		if (interfere(Ind, cfg.spell_interfere)) return;
 
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
@@ -2006,7 +2006,15 @@ void do_cmd_sorc(int Ind, int book, int spell)
 			get_aim_dir(Ind);
 			return;
                 case 15: /* Wraithform */
-                        set_tim_wraith(Ind, p_ptr->tim_wraith + 10 + plev + randint(20));
+//                        set_tim_wraith(Ind, p_ptr->tim_wraith + 10 + plev + randint(20));
+			if (!p_ptr->tim_wraith)
+			{
+				set_tim_wraith(Ind, 10 + plev * 2 + randint(40));
+			}
+			else
+			{
+				(void)set_tim_wraith(Ind, p_ptr->tim_wraith + randint(5));
+			}
                         break;
                 case 15+64: /* Wraithform someone else */
 			p_ptr->current_spell = 15;
@@ -2494,6 +2502,7 @@ void do_cmd_sorc_aux(int Ind, int dir)
 			fire_bolt_or_beam(Ind, beam-10, GF_COLD, dir, damroll(6+((plev-5)/4), 8));
                         break;
                 case 15: /* Wraithform someone else */
+//			project_hook(Ind, GF_WRAITH_PLAYER, dir, 10 + plev + randint(20), PROJECT_STOP | PROJECT_KILL);
 			project_hook(Ind, GF_WRAITH_PLAYER, dir, 10 + plev + randint(20), PROJECT_STOP | PROJECT_KILL);
                         break;
                 case 17: /* Fire Bolt */
@@ -2825,7 +2834,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 	{
 		/* Check interference */
 //		if (interfere(Ind, p_ptr->pclass == CLASS_PRIEST ? 2 : 3)) return;
-		if (interfere(Ind, cfg_spell_interfere * (p_ptr->pclass == CLASS_PRIEST ? 2 : 3) / 3)) return;
+		if (interfere(Ind, cfg.spell_interfere * (p_ptr->pclass == CLASS_PRIEST ? 2 : 3) / 3)) return;
 
 		if (spell >= 64) j += 64;
 		switch (j)
@@ -3844,7 +3853,7 @@ void do_cmd_fight(int Ind, int book, int spell)
 	{
 		/* Check interference */
 		/* Not interfered since it's "technique" */
-		//	if (interfere(Ind, cfg_spell_interfere)) return;
+		//	if (interfere(Ind, cfg.spell_interfere)) return;
 
 		/* Spells.  */
 		switch (j)
@@ -4301,7 +4310,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-		if (interfere(Ind, cfg_spell_interfere * 2 / 3)) return;
+		if (interfere(Ind, cfg.spell_interfere * 2 / 3)) return;
 
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = plev / 2;
@@ -4768,7 +4777,7 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-		if (interfere(Ind, cfg_spell_interfere * 2)) return;
+		if (interfere(Ind, cfg.spell_interfere * 2)) return;
 
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = plev / 2;
@@ -6105,7 +6114,7 @@ void do_cmd_psi(int Ind, int book, int spell)
 	{
 		/* Check interference */
 //		if (interfere(Ind2, Ind == Ind2 ? 10 : 2)) return;
-		if (interfere(Ind, cfg_spell_interfere * ( Ind == Ind2 ? 9 : 2) / 3)) return;
+		if (interfere(Ind, cfg.spell_interfere * ( Ind == Ind2 ? 9 : 2) / 3)) return;
 
 	  /* Hack -- chance of "beam" instead of "bolt" */
 	  beam = plev / 2;

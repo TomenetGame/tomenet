@@ -175,6 +175,7 @@ s32b m_top = 0;                 /* Monster top size */
  * Server options, set in mangband.cfg
  */
 
+#if 0
 bool cfg_report_to_meta = 0;
 char * cfg_meta_address;
 char * cfg_bind_name;
@@ -198,7 +199,20 @@ s32b cfg_game_port = 18348;
 s32b cfg_console_port = 18349;
 int cfg_spell_interfere = 0;
 bool cfg_anti_arts_horde = 1;
+#endif	// 0
 
+server_opts cfg =
+{
+	"mangband.org",
+	"",
+	"changeme",
+	"Serverchez",
+	"DungeonMaster",
+	201,300,50000,60,
+	8,-1,18348,18349,
+	0,200,60,5,
+	TRUE,TRUE,TRUE,FALSE,TRUE,FALSE,TRUE,TRUE
+};
 
 
 /*

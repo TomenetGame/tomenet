@@ -2419,6 +2419,26 @@ void msg_broadcast(int Ind, cptr msg)
 	 }
 }
 
+void msg_broadcast_format(int Ind, cptr fmt, ...)
+{
+	int i;
+	
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+	
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	msg_broadcast(Ind, buf);
+}
+
 
 
 /*
@@ -2541,8 +2561,7 @@ void player_talk_aux(int Ind, cptr message)
 	bool me = FALSE;
 	char c = 'B';
 	int mycolor = 0;
-	bool admin = (!strcmp(p_ptr->name,cfg_admin_wizard) ||
-				!strcmp(p_ptr->name,cfg_dungeon_master)) ? TRUE : FALSE;
+	bool admin = p_ptr->admin_wiz || p_ptr->admin_dm;
 
 	p_ptr->msgcnt++;
 	if(p_ptr->msgcnt>12){

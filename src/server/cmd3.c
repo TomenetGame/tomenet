@@ -666,7 +666,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	object_type *o_ptr;
 
 	/* Handle the newbies_cannot_drop option */	
-	if (p_ptr->lev < cfg_newbies_cannot_drop)
+	if (p_ptr->lev < cfg.newbies_cannot_drop)
 	{
 		msg_print(Ind, "You are not experienced enough to drop items.");
 		return;
@@ -736,7 +736,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	u32b i, unit = 1;
 
 	/* Handle the newbies_cannot_drop option */
-	if (p_ptr->lev < cfg_newbies_cannot_drop)
+	if (p_ptr->lev < cfg.newbies_cannot_drop)
 	{
 		msg_print(Ind, "You are not experienced enough to drop gold.");
 		return;
@@ -1184,7 +1184,7 @@ void do_cmd_steal(int Ind, int dir)
 			forge = *o_ptr;
 
 			/* True artifact is HARD to steal */
-			if (cfg_anti_arts_horde && (artifact_p(o_ptr)) && (!o_ptr->name3)
+			if (cfg.anti_arts_horde && (artifact_p(o_ptr)) && (!o_ptr->name3)
 				&& ((q_ptr->exp > p_ptr->exp)
 					|| (rand_int(500) > success )))
 			{
@@ -1273,7 +1273,7 @@ void do_cmd_steal(int Ind, int dir)
 		set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
 
 		/* Thief drops some items from the shock of blow */
-		if (cfg_newbies_cannot_drop <= p_ptr->lev)
+		if (cfg.newbies_cannot_drop <= p_ptr->lev)
 		{
 			for(i = rand_int(5); i < 5 ; i++ )
 			{

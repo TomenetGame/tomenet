@@ -419,7 +419,7 @@ void NewConsole(int read_fd, int arg)
 
 	/* Check for illegal accesses */
 	//if (console_bad_name(host_name))
-	if (strcmp(passwd, cfg_console_password))
+	if (strcmp(passwd, cfg.console_password))
 	{
 		/* Clear buffer */
 		Sockbuf_clear(&console_buf);

@@ -86,6 +86,10 @@ bool set_adrenaline(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->adrenaline = v;
 
@@ -156,6 +160,10 @@ bool set_biofeedback(int Ind, int v)
 			v -= 20;
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->biofeedback = v;
 
@@ -209,6 +217,10 @@ bool set_tim_esp(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->tim_esp = v;
 	
@@ -261,6 +273,10 @@ bool set_st_anchor(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->st_anchor = v;
 
@@ -311,6 +327,10 @@ bool set_prob_travel(int Ind, int v)
 			notice = TRUE;
 		}
 	}
+
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->prob_travel = v;
@@ -398,6 +418,10 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->bow_brand = v;
 	p_ptr->bow_brand_t = t;
@@ -452,6 +476,10 @@ bool set_mimic(int Ind, int v, int p)
 			notice = TRUE;
 		}
 	}
+
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->tim_mimic = v;
@@ -509,6 +537,10 @@ bool set_tim_manashield(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->tim_manashield = v;
 
@@ -559,6 +591,10 @@ bool set_tim_traps(int Ind, int v)
 			notice = TRUE;
 		}
 	}
+
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->tim_traps = v;
@@ -613,6 +649,10 @@ bool set_invis(int Ind, int v, int p)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->tim_invisibility = v;
 	p_ptr->tim_invis_power = p;
@@ -664,6 +704,10 @@ bool set_furry(int Ind, int v)
 			notice = TRUE;
 		}
 	}
+
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->furry = v;
@@ -718,6 +762,10 @@ bool set_tim_meditation(int Ind, int v)
 			notice = TRUE;
 		}
 	}
+
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->tim_meditation = v;
@@ -785,6 +833,10 @@ bool set_tim_wraith(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->tim_wraith = v;
 
@@ -819,7 +871,7 @@ bool set_blind(int Ind, int v)
 	bool notice = FALSE;
 
 	/* the admin wizard can not be blinded */
-	if (!strcmp(p_ptr->name, cfg_admin_wizard)) return 1;
+	if (p_ptr->admin_wiz) return 1;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -1188,6 +1240,10 @@ bool set_fast(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->fast = v;
 
@@ -1294,6 +1350,10 @@ bool set_shield(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->shield = v;
 
@@ -1347,6 +1407,10 @@ bool set_blessed(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit * 2 < v)
+		v = cfg.spell_stack_limit * 2;
+
 	/* Use the value */
 	p_ptr->blessed = v;
 
@@ -1398,6 +1462,10 @@ bool set_hero(int Ind, int v)
 			notice = TRUE;
 		}
 	}
+
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->hero = v;
@@ -1454,6 +1522,10 @@ bool set_shero(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->shero = v;
 
@@ -1509,6 +1581,10 @@ bool set_protevil(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->protevil = v;
 
@@ -1561,6 +1637,10 @@ bool set_invuln(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->invuln = v;
 
@@ -1589,7 +1669,7 @@ bool set_invuln_short(int Ind, int v)
 	player_type *p_ptr = Players[Ind];
 
 	/* not cumulative */
-	if (p_ptr->invuln) return (FALSE);
+	if (p_ptr->invuln > v) return (FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -1638,6 +1718,10 @@ bool set_tim_invis(int Ind, int v)
 			notice = TRUE;
 		}
 	}
+
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->tim_invis = v;
@@ -1694,6 +1778,10 @@ bool set_tim_infra(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->tim_infra = v;
 
@@ -1749,6 +1837,10 @@ bool set_oppose_acid(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->oppose_acid = v;
 
@@ -1797,6 +1889,10 @@ bool set_oppose_elec(int Ind, int v)
 			notice = TRUE;
 		}
 	}
+
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->oppose_elec = v;
@@ -1847,6 +1943,10 @@ bool set_oppose_fire(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->oppose_fire = v;
 
@@ -1895,6 +1995,10 @@ bool set_oppose_cold(int Ind, int v)
 			notice = TRUE;
 		}
 	}
+
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->oppose_cold = v;
@@ -1945,6 +2049,10 @@ bool set_oppose_pois(int Ind, int v)
 		}
 	}
 
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
 	/* Use the value */
 	p_ptr->oppose_pois = v;
 
@@ -1977,7 +2085,7 @@ bool set_stun(int Ind, int v)
 
 
 	/* hack -- the admin wizard can not be stunned */
-	if (!strcmp(p_ptr->name, cfg_admin_wizard)) return TRUE;
+	if (p_ptr->admin_wiz) return TRUE;
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -3128,10 +3236,10 @@ void monster_death(int Ind, int m_idx)
 								num++;
 
 								/* Set his retire_timer if neccecary */
-								if (cfg_retire_timer >= 0)
+								if (cfg.retire_timer >= 0)
 								{
-									p_ptr2->retire_timer = cfg_retire_timer;
-									msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg_retire_timer);
+									p_ptr2->retire_timer = cfg.retire_timer;
+									msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg.retire_timer);
 								}
 							}
 						}
@@ -3149,10 +3257,10 @@ void monster_death(int Ind, int m_idx)
 						num++;
 
 						/* Set his retire_timer if neccecary */
-						if (cfg_retire_timer >= 0)
+						if (cfg.retire_timer >= 0)
 						{
-							q_ptr->retire_timer = cfg_retire_timer;
-							msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg_retire_timer);
+							q_ptr->retire_timer = cfg.retire_timer;
+							msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg.retire_timer);
 						}
 					}
 			}	
@@ -3203,7 +3311,7 @@ void monster_death(int Ind, int m_idx)
 #endif
 
 			/* Hack -- instantly retire any new winners if neccecary */
-			if (cfg_retire_timer == 0)
+			if (cfg.retire_timer == 0)
 			{
 				for (i = 1; i <= NumPlayers; i++)
 				{
@@ -3677,12 +3785,12 @@ void player_death(int Ind)
                 /* Ghosts dont static the lvl if under cfg_preserve_death_level ft. DEG */
 
 #ifdef NEW_DUNGEON
-                if (getlevel(&p_ptr->wpos) < cfg_preserve_death_level)
+                if (getlevel(&p_ptr->wpos) < cfg.preserve_death_level)
                 {
                 	new_players_on_depth(&p_ptr->wpos,-1,TRUE);
                 }
 #else
-                if ((p_ptr->dun_depth) < cfg_preserve_death_level)
+                if ((p_ptr->dun_depth) < cfg.preserve_death_level)
                 {
                 	players_on_depth[p_ptr->dun_depth]--;
                 }
@@ -3717,7 +3825,7 @@ void player_death(int Ind)
 		sprintf(buf, "The unbeatable %s has retired to a warm, sunny climate.", p_ptr->name);
 	/* Tell the players */
 	/* handle the secret_dungeon_master option */
-	if ((strcmp(p_ptr->name,cfg_dungeon_master)) || (!cfg_secret_dungeon_master)) {
+	if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
 		if(p_ptr->lev>1 || p_ptr->alive)
 			msg_broadcast(Ind, buf);
 	}
@@ -3726,7 +3834,7 @@ void player_death(int Ind)
         if (p_ptr->alive && p_ptr->au)
 	{
 		/* Put the player's gold in the overflow slot */
-		invcopy(&p_ptr->inventory[INVEN_PACK], 488);
+		invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
 
 		/* Drop no more than 32000 gold */
 		if (p_ptr->au > 32000) p_ptr->au = 32000;
@@ -3779,7 +3887,7 @@ void player_death(int Ind)
 //		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
 
 		/* Artifacts cannot be dropped after all */	
-		if (cfg_anti_arts_horde && !p_ptr->alive && artifact_p(&p_ptr->inventory[i])) 
+		if (cfg.anti_arts_horde && !p_ptr->alive && artifact_p(&p_ptr->inventory[i])) 
 		{
 			/* set the artifact as unfound */
 			a_info[p_ptr->inventory[i].name1].cur_num = 0;
@@ -3788,7 +3896,7 @@ void player_death(int Ind)
 			continue;
 		}
 
-		if(p_ptr->lev >= cfg_newbies_cannot_drop){
+		if(p_ptr->lev >= cfg.newbies_cannot_drop){
 			/* Drop this one */
 #ifdef NEW_DUNGEON
 			drop_near(&p_ptr->inventory[i], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -3921,7 +4029,7 @@ void resurrect_player(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	/* Hack -- the dungeon master can not ressurect */
-	if (!strcmp(p_ptr->name,cfg_dungeon_master)) return;
+	if (p_ptr->admin_dm) return TRUE;
 
 	/* Reset ghost flag */
 	p_ptr->ghost = 0;
@@ -5729,7 +5837,7 @@ void telekinesis_aux(int Ind, int item)
 	p2_ptr = Players[Ind2];
 
 	/* You cannot send artifact */
-	if(cfg_anti_arts_horde && (artifact_p(q_ptr)) && (!q_ptr->name3))
+	if(cfg.anti_arts_horde && (artifact_p(q_ptr)) && (!q_ptr->name3))
 	{
 		msg_print(Ind, "You have an acute feeling of loss!");
 		a_info[q_ptr->name1].cur_num = 0;
@@ -6009,7 +6117,7 @@ bool master_level(int Ind, char * parms)
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
 	
-	if (strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
+	if (!p_ptr->admin_dm && !p_ptr->admin_wiz) return FALSE;
 
 	switch (parms[0])
 	{
@@ -6114,6 +6222,7 @@ bool master_level_specific(int Ind, int depth, char * parms)
 	player_type *p_ptr = Players[Ind];
 	
 //	if (strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
+	if (!p_ptr->admin_dm && !p_ptr->admin_wiz) return FALSE;
 
 	switch (parms[0])
 	{
@@ -6157,7 +6266,7 @@ bool master_build(int Ind, char * parms)
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 #endif
 
-	if (strcmp(p_ptr->name, cfg_dungeon_master) && (!player_is_king(Ind))) return FALSE;
+	if (!p_ptr->admin_dm && !p_ptr->admin_wiz && (!player_is_king(Ind))) return FALSE;
 	
 	/* extract arguments, otherwise build a wall of type new_feat */
 	if (parms)
@@ -6361,7 +6470,7 @@ bool master_acquire(int Ind, char * parms)
 {
 	player_type * p_ptr = Players[Ind];
 	
-	if (strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
+	if (!p_ptr->admin_dm && !p_ptr->admin_wiz) return FALSE;
 #ifdef NEW_DUNGEON
 	acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE);
 #else
@@ -6384,7 +6493,7 @@ bool master_summon(int Ind, char * parms)
 	static u16b r_idx = 0; /* which monser to actually summon, from previous variables */
 	unsigned char size = 0;  /* how many monsters to actually summon */
 
-	if (strcmp(p_ptr->name, cfg_dungeon_master) && (!player_is_king(Ind))) return FALSE;
+	if (!p_ptr->admin_dm && !p_ptr->admin_wiz && (!player_is_king(Ind))) return FALSE;
 	
 	/* extract arguments.  If none are found, summon previous type. */
 	if (parms)
@@ -6496,7 +6605,7 @@ bool master_summon(int Ind, char * parms)
 		{
 #ifdef NEW_DUNGEON
 #else
-			if(!strcmp(p_ptr->name, cfg_dungeon_master))
+			if (p_ptr->admin_dm || p_ptr->admin_wiz)
 				wipe_m_list((int)summon_parms);
 #endif
 			break;
@@ -6516,7 +6625,8 @@ bool master_player(int Ind, char *parms){
 	int Ind2=0;
 	int i;
 
-	if(strcmp(p_ptr->name, cfg_dungeon_master)){
+	if (!p_ptr->admin_dm && !p_ptr->admin_wiz)
+	{
 		msg_print(Ind,"You need to be the dungeon master to use this command.");
 		return FALSE;
 	}
@@ -6616,7 +6726,7 @@ bool master_generate(int Ind, char * parms)
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
 	
-	if (strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
+	if (!p_ptr->admin_wiz && !p_ptr->admin_dm) return FALSE;
 
 	switch (parms[0])
 	{

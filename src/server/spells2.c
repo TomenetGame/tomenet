@@ -1334,7 +1334,7 @@ bool detect_invisible(int Ind)
 #endif
 
 		/* Skip the dungeon master */
-		if (!strcmp(q_ptr->name, cfg_dungeon_master)) continue;
+		if (p_ptr->admin_dm) continue;
 
 		/* Detect all invisible players but not the dungeon master */
 		if (panel_contains(py, px) && q_ptr->ghost) 
@@ -2453,6 +2453,14 @@ bool identify_fully_item(int Ind, int item)
  */
 static bool item_tester_hook_recharge(object_type *o_ptr)
 {
+	u32b f1, f2, f3, f4, f5, esp;
+
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	/* Some objects cannot be recharged */
+	if (f4 & TR4_NO_RECHARGE) return (FALSE);
+
 	/* Recharge staffs */
 	if (o_ptr->tval == TV_STAFF) return (TRUE);
 
@@ -3030,7 +3038,7 @@ bool mass_genocide(int Ind)
 		/* Hack -- visual feedback */
 		/* does not effect the dungeon master, because it disturbs his movement
 		 */
-		if (strcmp(p_ptr->name,cfg_dungeon_master))
+		if (!p_ptr->admin_dm)
 			take_hit(Ind, randint(3), "the strain of casting Mass Genocide");
 
 		/* Redraw */

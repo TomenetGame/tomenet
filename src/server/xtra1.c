@@ -1383,7 +1383,7 @@ static void calc_hitpoints(int Ind)
 	if (mhp < p_ptr->lev + 1) mhp = p_ptr->lev + 1;
 
 	/* Option : give mages a bonus hitpoint / lvl */
-	if (cfg_mage_hp_bonus)
+	if (cfg.mage_hp_bonus)
 		if (p_ptr->pclass == CLASS_MAGE) mhp += p_ptr->lev;
 
 	/* Factor in the hero / superhero settings */
@@ -1916,7 +1916,7 @@ static void calc_bonuses(int Ind)
 
 
 	/* Hack -- the dungeon master gets +50 speed. */
-	if (!strcmp(p_ptr->name,cfg_dungeon_master)) 
+	if (p_ptr->admin_dm) 
 	{
 		p_ptr->pspeed += 50;
 		p_ptr->telepathy |= ESP_ALL;

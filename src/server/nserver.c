@@ -234,7 +234,7 @@ static int Init_setup(void)
 	char buf[1024];
 	FILE *fp;
 
-	Setup.frames_per_second = cfg_fps;
+	Setup.frames_per_second = cfg.fps;
 	Setup.motd_len = 23 * 80;
 	Setup.setup_size = sizeof(setup_t);
 
@@ -275,7 +275,7 @@ bool Report_to_meta(int flag)
 	bool hidden_dungeon_master = 0;
 
 	/* Abort if the user doesn't want to report */
-	if (!cfg_report_to_meta)
+	if (!cfg.report_to_meta)
 		return FALSE;
 
 	/* If this is the first time called, initialize our hostname */
@@ -333,7 +333,7 @@ bool Report_to_meta(int flag)
 
 		for (i = 1; i <= NumPlayers; i++)
 		{
-			if (!strcmp(Players[i]->name, cfg_dungeon_master) && cfg_secret_dungeon_master) hidden_dungeon_master = TRUE;
+			if (Players[i]->admin_dm && cfg.secret_dungeon_master) hidden_dungeon_master = TRUE;
 		}
 
 		/* tell the metaserver about everyone except hidden dungeon_masters */
@@ -347,8 +347,7 @@ bool Report_to_meta(int flag)
 			for (i = 1; i <= NumPlayers; i++)
 			{
 				/* handle the cfg_secret_dungeon_master option */
-				if ((!strcmp(Players[i]->name, cfg_dungeon_master))
-				   && (cfg_secret_dungeon_master)) continue;
+			if (Players[i]->admin_dm && cfg.secret_dungeon_master) continue;
 				strcat(buf, Players[i]->basename);
 				strcat(buf, " ");
 			}
@@ -377,7 +376,7 @@ bool Report_to_meta(int flag)
 
 	Packet_printf(&meta_buf, "%S", buf);
 
-	if ((bytes = DgramSend(MetaSocket, cfg_meta_address, 8800, meta_buf.buf, meta_buf.len) == -1))
+	if ((bytes = DgramSend(MetaSocket, cfg.meta_address, 8800, meta_buf.buf, meta_buf.len) == -1))
 	{
 		s_printf("Couldn't send info to meta-server!\n");
 		return FALSE;
@@ -453,7 +452,7 @@ void setup_contact_socket(void)
 	}
 #endif
 	plog("Create TCP socket..."); 
-	while ((Socket = CreateServerSocket(cfg_game_port)) == -1)
+	while ((Socket = CreateServerSocket(cfg.game_port)) == -1)
 	{
 		sleep(1);
 	}
@@ -485,7 +484,7 @@ void setup_contact_socket(void)
 #endif
 
 #ifdef NEW_SERVER_CONSOLE
-	if ((ConsoleSocket = CreateServerSocket(cfg_console_port)) == -1)
+	if ((ConsoleSocket = CreateServerSocket(cfg.console_port)) == -1)
 	{
 		s_printf("Couldn't create console socket\n");
 		return;
@@ -857,7 +856,7 @@ static void Delete_player(int Ind)
 	/* If he was actively playing, tell everyone that he's left */
 	/* handle the cfg_secret_dungeon_master option */
 	if (p_ptr->alive && !p_ptr->death && 
-	   (strcmp(p_ptr->name, cfg_dungeon_master) || !cfg_secret_dungeon_master))
+	   (!p_ptr->admin_dm || !cfg.secret_dungeon_master))
 	{
 		cptr title = "";
 		if (p_ptr->total_winner)
@@ -1212,7 +1211,7 @@ static int Handle_setup(int ind)
 		}
 		connp->setup += len;
 		if (len >= 512)
-			connp->start += (len * cfg_fps) / (8 * 512) + 1;
+			connp->start += (len * cfg.fps) / (8 * 512) + 1;
 	}
 
 	if (connp->setup >= Setup.setup_size)
@@ -1693,7 +1692,7 @@ static int Handle_login(int ind)
 	save_server_info();
 
 	/* Handle the cfg_secret_dungeon_master option */
-	if ((!strcmp(p_ptr->name,cfg_dungeon_master)) && (cfg_secret_dungeon_master)) return 0;
+	if (!p_ptr->admin_dm && (cfg.secret_dungeon_master)) return 0;
 
 	/* Tell everyone about our new player */
 	for (i = 1; i < NumPlayers; i++)
@@ -1988,7 +1987,7 @@ int Net_input(void)
 
 		if (connp->state == CONN_FREE)
 			continue;
-		if (connp->start + connp->timeout * cfg_fps < turn)
+		if (connp->start + connp->timeout * cfg.fps < turn)
 		{
 			if (connp->state & (CONN_PLAYING | CONN_READY))
 			{
@@ -2117,7 +2116,7 @@ int Net_output(void)
 	}
 
 	/* Every fifteen seconds, update the info sent to the metaserver */
-	if (!(turn % (15 * cfg_fps)))
+	if (!(turn % (15 * cfg.fps)))
 		Report_to_meta(META_UPDATE);
 
 	return 1;
@@ -4003,7 +4002,7 @@ static int Receive_run(int ind)
 	}
 
 	/* If not the dungeon master, who can always run */
-	if (strcmp(p_ptr->name,cfg_dungeon_master)) 
+	if (!p_ptr->admin_dm) 
 	{
 		/* Check for monsters in sight or confusion */
 		for (i = 0; i < m_max; i++)
@@ -7038,7 +7037,7 @@ static int Receive_master(int ind)
 	 * authentication schemes will be neccecary. -APD
 	 */
 
-	if (strcmp(Players[player]->name, cfg_dungeon_master) && (!player_is_king(player)))
+	if (!Players[player]->admin_dm && (!player_is_king(player)))
 	{
 		/* Hack -- clear the receive and queue buffers since we won't be
 		 * reading in the dungeon master parameters that were sent.
