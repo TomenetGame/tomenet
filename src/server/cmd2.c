@@ -637,7 +637,7 @@ void do_cmd_open(int Ind, int dir)
 			msg_print(Ind, "There is a monster in the way!");
 
 			/* Attack */
-			py_attack(Ind, y, x);
+			py_attack(Ind, y, x, TRUE);
 		}
 
 		/* Open a closed chest. */
@@ -974,7 +974,7 @@ void do_cmd_close(int Ind, int dir)
 			msg_print(Ind, "There is a monster in the way!");
 
 			/* Attack */
-			py_attack(Ind, y, x);
+			py_attack(Ind, y, x, TRUE);
 		}
 
 		/* House door, close it */
@@ -1157,7 +1157,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			msg_print(Ind, "There is a monster in the way!");
 
 			/* Attack */
-			py_attack(Ind, y, x);
+			py_attack(Ind, y, x, TRUE);
 		}
 
 		/* Okay, try digging */
@@ -1434,7 +1434,7 @@ void do_cmd_disarm(int Ind, int dir)
 			msg_print(Ind, "There is a monster in the way!");
 
 			/* Attack */
-			py_attack(Ind, y, x);
+			py_attack(Ind, y, x, TRUE);
 		}
 
 		/* Normal disarm */
@@ -1661,7 +1661,7 @@ void do_cmd_bash(int Ind, int dir)
 			msg_print(Ind, "There is a monster in the way!");
 
 			/* Attack */
-			py_attack(Ind, y, x);
+			py_attack(Ind, y, x, TRUE);
 		}
 
 		/* Bash a closed door */
@@ -1839,7 +1839,7 @@ void do_cmd_spike(int Ind, int dir)
 			msg_print(Ind, "There is a monster in the way!");
 
 			/* Attack */
-			py_attack(Ind, y, x);
+			py_attack(Ind, y, x, TRUE);
 		}
 
 		/* Go for it */

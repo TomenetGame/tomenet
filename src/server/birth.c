@@ -1115,8 +1115,8 @@ static void player_outfit(int Ind)
                 o_ptr->level = 1;
         (void)inven_carry(Ind, o_ptr);
 
-        invcopy(o_ptr, lookup_kind(TV_SWORD, SV_SCIMITAR));
-		o_ptr->name1 = ART_HARADEKKET;
+        invcopy(o_ptr, lookup_kind(TV_HAFTED, SV_GROND));
+		o_ptr->name1 = ART_GROND;
 		apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
         o_ptr->number = 1;
         o_ptr->discount = 0;

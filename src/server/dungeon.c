@@ -731,8 +731,7 @@ static void process_command(void)
   * has been performed and there are still monsters around, and a 2 if an attack
   * has been performed and all of the surrounding monsters are dead.
   * (This difference between 1 and 2 isn't used anywhere... but I leave it for
-  *  future use. I added 4 to it when non-melee auto-retaliation took place for
-  *  energy calculation.		Jir)
+  *  future use.	Jir)
   */
   /* We now intelligently try to decide which monster to autoattack.  Our current
    * algorithm is to fight first Q's, then any monster that is 20 levels higher
@@ -745,11 +744,12 @@ static void process_command(void)
  * You can also choose to 'do nothing' by inscribing it on not-suitable item.
  *
  * Fighters are allowed to use {@O-}, which is only used if his HP is 1/2 or less.
+ * ({@O-} feature is commented out)
  */
 static int auto_retaliate(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr, *p_target_ptr = NULL, *prev_p_target_ptr = NULL;
-	int i, target, prev_target, item = -1, flag = 0;
+	int i, target, prev_target, item = -1;
 //	char friends = 0;
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
 	unsigned char * inscription;
@@ -960,27 +960,23 @@ static int auto_retaliate(int Ind)
 
 		/* Attack him */
 //		py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
-		if (retaliate_item(Ind, item, inscription))
+		if (!retaliate_item(Ind, item, inscription))
 		{
-			flag = 4;
-		}
-		else
-		{
-			py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
+			py_attack(Ind, p_target_ptr->py, p_target_ptr->px, FALSE);
 		}
 
 		/* Check if he is still alive or another targets exists */
 		if ((!p_target_ptr->death) || (prev_p_target_ptr) || (m_target_ptr))
 		{
 			/* We attacked something */
-			return 1 + flag;
+			return 1;
 		}
 		else
 		{
 			/* Otherwise return 2 to indicate we are no longer
 			 * autoattacking anything.
 			 */
-			return 2 + flag;
+			return 2;
 		}
 	}
 
@@ -995,27 +991,23 @@ static int auto_retaliate(int Ind)
 
 		/* Attack it */
 //		py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
-		if (retaliate_item(Ind, item, inscription))
+		if (!retaliate_item(Ind, item, inscription))
 		{
-			flag = 4;
-		}
-		else
-		{
-			py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
+			py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx, FALSE);
 		}
 
 		/* Check if it is still alive or another targets exists */
 		if ((m_target_ptr->r_idx) || (prev_m_target_ptr) || (p_target_ptr))
 		{
 			/* We attacked something */
-			return 1 + flag;
+			return 1;
 		}
 		else
 		{
 			/* Otherwise return 2 to indicate we are no longer
 			 * autoattacking anything.
 			 */
-			return 2 + flag;
+			return 2;
 		}
 	}
 
@@ -1236,16 +1228,8 @@ static void process_player_end(int Ind)
 		 */
 		if ((attackstatus = auto_retaliate(Ind)))
 		{
-			/* If it was non-melee, energy is already used */
-			if (attackstatus > 4)
-			{
-				attackstatus -= 4;
-			}
-			else
-			{
-				/* Use energy */
-				p_ptr->energy -= level_speed(p_ptr->dun_depth);
-			}
+			/* Use energy */
+//			p_ptr->energy -= level_speed(p_ptr->dun_depth);
 		}
 	}
 

@@ -320,6 +320,7 @@ Change list for PernMangband
 23/11/01 (Jir)
 - Items with too long names are displayed with abbreviated names.
 - New admin commands: /lua, /recall
+- Multiple-melee attacks are efficiently handled now.
 
 23/11/01 (Tanix [Jir wrote this log])
 - Recall/stair GoI message is removed.

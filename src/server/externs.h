@@ -452,7 +452,7 @@ extern s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_p
 extern s16b tot_dam_aux_player(object_type *o_ptr, int tdam, player_type *p_ptr);
 extern void search(int Ind);
 extern void carry(int Ind, int pickup, int confirm);
-extern void py_attack(int Ind, int y, int x);
+extern void py_attack(int Ind, int y, int x, bool old);
 extern void move_player(int Ind, int dir, int do_pickup);
 extern void run_step(int Ind, int dir);
 extern int see_wall(int Ind, int dir, int y, int x);

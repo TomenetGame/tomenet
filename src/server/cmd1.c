@@ -1068,7 +1068,7 @@ static void hit_trap(int Ind)
  *
  * If no "weapon" is available, then "punch" the player one time.
  */
-void py_attack_player(int Ind, int y, int x)
+void py_attack_player(int Ind, int y, int x, bool old)
 {
 	player_type *p_ptr = Players[Ind];
 	int Depth = p_ptr->dun_depth;
@@ -1323,14 +1323,25 @@ void py_attack_player(int Ind, int y, int x)
 			msg_format(Ind, "You miss %s.", p_name);
 			msg_format(0 - c_ptr->m_idx, "%s misses you.", p_ptr->name);
 		}
+
+		/* Hack -- divided turn for auto-retaliator */
+		if (!old)
+		{
+			p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_blow;
+			break;
+		}
 	}
 
 	/* Mega-Hack -- apply earthquake brand */
 	if (do_quake)
-	  {
-	    if (o_ptr->k_idx && check_guard_inscription(o_ptr->note, 'E' ))
-	      earthquake(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 10);
-	  }
+	{
+		if (o_ptr->k_idx && check_guard_inscription(o_ptr->note, 'E' ))
+		{
+			/* Giga-Hack -- equalize the chance (though not likely..) */
+			if (old || randint(p_ptr->num_blow) < 3)
+				earthquake(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 10);
+		}
+	}
 }
 
 
@@ -1340,7 +1351,7 @@ void py_attack_player(int Ind, int y, int x)
  *
  * If no "weapon" is available, then "punch" the monster one time.
  */
-void py_attack_mon(int Ind, int y, int x)
+void py_attack_mon(int Ind, int y, int x, bool old)
 {
 	player_type *p_ptr = Players[Ind];
 	int Depth = p_ptr->dun_depth;
@@ -1705,6 +1716,13 @@ void py_attack_mon(int Ind, int y, int x)
 			/* Message */
 			msg_format(Ind, "You miss %s.", m_name);
 		}
+
+		/* Hack -- divided turn for auto-retaliator */
+		if (!old)
+		{
+			p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_blow;
+			break;
+		}
 	}
 
 
@@ -1718,20 +1736,24 @@ void py_attack_mon(int Ind, int y, int x)
 		msg_format(Ind, "%^s flees in terror!", m_name);
 	}
 
-
 	/* Mega-Hack -- apply earthquake brand */
 	if (do_quake)
-	  {
-	    if (o_ptr->k_idx && check_guard_inscription(o_ptr->note, 'E' ))
-	      earthquake(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 10);
-	  }
+	{
+		if (o_ptr->k_idx && check_guard_inscription(o_ptr->note, 'E' ))
+		{
+			/* Giga-Hack -- equalize the chance (though not likely..) */
+			if (old || randint(p_ptr->num_blow) < 3)
+				earthquake(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 10);
+		}
+	}
+
 }
 
 
 /*
  * Attacking something, figure out what and spawn appropriately.
  */
-void py_attack(int Ind, int y, int x)
+void py_attack(int Ind, int y, int x, bool old)
 {
 	player_type *p_ptr = Players[Ind];
 	int Depth = p_ptr->dun_depth;
@@ -1741,11 +1763,11 @@ void py_attack(int Ind, int y, int x)
 
 	/* Check for monster */
 	if (c_ptr->m_idx > 0)
-		py_attack_mon(Ind, y, x);
+		py_attack_mon(Ind, y, x, old);
 
 	/* Check for player */
 	else if (c_ptr->m_idx < 0)
-		py_attack_player(Ind, y, x);
+		py_attack_player(Ind, y, x, old);
 }
 
 /* Do a probability travel in a wall */
@@ -1990,7 +2012,7 @@ void move_player(int Ind, int dir, int do_pickup)
 #ifdef PLAYER_INTERACTION
 		/* Check for an attack */
 		if (check_hostile(Ind, Ind2))
-			py_attack(Ind, y, x);
+			py_attack(Ind, y, x, TRUE);
 #else
 		/* XXX */
 		if (0);
@@ -2091,7 +2113,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			everyone_lite_spot(Depth, oldy, oldx);
 		}
 		/* Attack */
-		else py_attack(Ind, y, x);
+		else py_attack(Ind, y, x, TRUE);
 		return;
 	}
 

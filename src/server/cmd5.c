@@ -3788,7 +3788,7 @@ void do_cmd_fight(int Ind, int book, int spell)
                                         y = p_ptr->py + ddy[d];
 
                                         if (!in_bounds(p_ptr->dun_depth, y, x)) continue;
-                                        py_attack(Ind, y, x);
+                                        py_attack(Ind, y, x, TRUE);
                                 }
 				break;
 			}
