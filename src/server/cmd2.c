@@ -2886,6 +2886,13 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 	/*int			msec = delay_factor * delay_factor * delay_factor;*/
 
+	/* Handle the newbies_cannot_drop option */
+	if ((p_ptr->lev < 5) && (cfg_newbies_cannot_drop))
+	{
+		msg_format(Ind, "Please don't litter the %s.",
+			Depth != 0 ? (Depth > 0 ? "dungeon" : "Nature") : "town");
+		return;
+	}
 
 	/* Access the item (if in the pack) */
 	if (item >= 0)

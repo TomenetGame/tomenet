@@ -331,4 +331,4 @@ Change list for PernMangband
 25/11/2001 (Jir)
 - Uniques can resurrect after beating Morgoth.
 - Kings/Queens will be alarmed of retire_timer.
-
+- Players under lv-5 cannot throw items (anti-cheeze).
