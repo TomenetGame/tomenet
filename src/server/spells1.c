@@ -967,6 +967,8 @@ static byte spell_color(int type)
 		case GF_COLD:		return (TERM_WHITE);
 		case GF_POIS:		return (TERM_GREEN);
 		case GF_HOLY_ORB:	return (TERM_L_DARK);
+			case GF_HOLY_FIRE:      return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
+//			case GF_HELL_FIRE:      return (randint(6)==1?TERM_RED:TERM_L_DARK);
 		case GF_MANA:		return (TERM_L_DARK);
 		case GF_ARROW:		return (TERM_WHITE);
 		case GF_WATER:		return (TERM_SLATE);
@@ -2544,7 +2546,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_FORCE:
 		case GF_SOUND:
 		case GF_MANA:
-		case GF_HOLY_ORB:
 		{
 			break;
 		}
@@ -2570,6 +2571,13 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Burn trees and grass */
 		case GF_FIRE:
+		/*
+		case GF_METEOR:
+		case GF_PLASMA:
+		*/
+		case GF_HOLY_ORB:
+		case GF_HOLY_FIRE:
+//		case GF_HELL_FIRE:
 		{
 			/* Destroy trees */
 			if (c_ptr->feat == FEAT_TREE)
@@ -3362,6 +3370,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Holy Orb -- destroys cursed non-artifacts */
 		case GF_HOLY_ORB:
+		case GF_HOLY_FIRE:
+//		case GF_HELL_FIRE:
 		{
 			if (cursed_p(o_ptr))
 			{
@@ -3858,12 +3868,37 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Holy Orb -- hurts Evil */
 		case GF_HOLY_ORB:
+//		case GF_HELL_FIRE:
 		{
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_EVIL)
 			{
 				dam *= 2;
 				if (seen) r_ptr->r_flags3 |= RF3_EVIL;
+			}
+			break;
+		}
+
+		/* Holy Fire -- hurts Evil, Good are immune, others _resist_ */
+		case GF_HOLY_FIRE:
+		{
+			if (seen) obvious = TRUE;
+			if (r_ptr->flags3 & (RF3_GOOD))
+			{
+				dam = 0;
+				note = " is immune.";
+				if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
+			}
+			else if (r_ptr->flags3 & (RF3_EVIL))
+			{
+				dam *= 2;
+				note = " is hit hard.";
+				if (seen) r_ptr->r_flags3 |= (RF3_EVIL);
+			}
+			else
+			{
+				note = " resists.";
+				dam *= 3; dam /= (randint(6)+6);
 			}
 			break;
 		}
@@ -5492,8 +5527,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Holy Orb -- Player only takes partial damage */
 		case GF_HOLY_ORB:
+		case GF_HOLY_FIRE:
+//		case GF_HELL_FIRE:
 		if (fuzzy) msg_print(Ind, "You are hit by something!");
-		dam /= 2;
+		if (p_ptr->body_monster && r_ptr->flags3 & RF3_EVIL) dam *= 2;
+		else dam /= 2;
 		take_hit(Ind, dam, killer);
 		break;
 

@@ -755,15 +755,15 @@ F:FLOOR | CHEST | DOOR | LEVEL3
 #D:A Ray of Death hits you!
 #F:FLOOR | CHEST | DOOR | LEVEL4
 
-#N:164:Trap of Holy Fire
-#I:6:80:5:6:15:10d12:g
-#D:Holy fire rises around you!
-#F:FLOOR | CHEST | DOOR | LEVEL3
+N:164:Trap of Holy Fire
+I:6:80:5:6:15:10d12:g:10
+D:Holy fire rises around you!
+F:FLOOR | CHEST | DOOR | LEVEL3
 
-#N:165:Trap of Hell Fire
-#I:6:80:5:6:15:10d12:g
-#D:Hellfire rises around you!
-#F:FLOOR | CHEST | DOOR | LEVEL3
+N:165:Trap of Hell Fire
+I:6:80:5:6:15:10d12:g:10
+D:Hellfire rises around you!
+F:FLOOR | CHEST | DOOR | LEVEL3
 
 N:166:Psi Bolt Trap
 I:6:80:5:6:15:10d12:g:10

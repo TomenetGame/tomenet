@@ -206,7 +206,7 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 /*
  * makeshift river for 3.3.x
  * pfft, still alive for 4.0.0...
- * [15,7,4,6,45,4,19,100]
+ * [15,7,4,6,45,4,19,100,  1000,50]
  *
  * A player is supposed to cross 2 watery belts without avoiding them
  * by scumming;  the first by swimming, the second by flying parhaps.
@@ -221,6 +221,7 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 #define WATERY_BELT_CHANCE	100 /* chance of river generated on watery belt */
 
 #define DUN_MAZE_FACTOR		1000	/* depth/DUN_MAZE_FACTOR chance of maze */
+#define DUN_MAZE_PERMAWALL	20	/* % of maze built of permawall */
 
 
 /*
@@ -7079,7 +7080,7 @@ static void cave_gen(struct worldpos *wpos)
 	bool destroyed = FALSE;
 	bool empty_level = FALSE, dark_empty = TRUE;
 	bool cavern = FALSE;
-	bool maze = FALSE;
+	bool maze = FALSE, permaze = FALSE;
 
 	dun_data dun_body;
 
@@ -7164,6 +7165,8 @@ static void cave_gen(struct worldpos *wpos)
 //	maze = (rand_int(DUN_MAZE_FACTOR) < glev - 10 && !watery) ? TRUE : FALSE;
 	maze = (!cavern && rand_int(DUN_MAZE_FACTOR) < glev - 10) ? TRUE : FALSE;
 
+	if (maze) permaze = magik(DUN_MAZE_PERMAWALL);
+
 //	if ((d_ptr->flags1 & (DF1_EMPTY)) ||
 	if (!maze && !cavern && !rand_int(EMPTY_LEVEL))
 	{
@@ -7196,7 +7199,8 @@ static void cave_gen(struct worldpos *wpos)
 			cave_type *c_ptr = &zcave[y][x];
 
 			/* Create granite wall */
-			c_ptr->feat = empty_level ? FEAT_FLOOR : FEAT_WALL_EXTRA;
+			c_ptr->feat = empty_level ? FEAT_FLOOR :
+				(permaze ? FEAT_PERM_INNER : FEAT_WALL_EXTRA);
 		}
 	}
 

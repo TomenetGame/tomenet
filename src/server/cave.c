@@ -4274,6 +4274,8 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 
 	if(!(zcave=getcave(wpos))) return;
 
+	if (!in_bounds(y, x)) return;
+
 	c_ptr = &zcave[y][x];
 
 	/* Change the feature */

@@ -2390,6 +2390,9 @@ that keeps many algorithms happy.
 #define GF_IDENTIFY      78
 #define GF_PSI           79
 
+#define GF_HOLY_FIRE    80
+#define GF_HELL_FIRE    GF_HOLY_ORB
+
 #define GF_DISINTEGRATE 81
 
 #define GF_MAKE_GLYPH   85
@@ -2431,8 +2434,8 @@ that keeps many algorithms happy.
 #define GF_STONE_WALL   76	// *
 #define GF_DEATH_RAY    77
 #define GF_STUN         78	// *
-#define GF_HOLY_FIRE    79
-#define GF_HELL_FIRE    80
+#define GF_HOLY_FIRE    79	// *
+#define GF_HELL_FIRE    80	// *
 #define GF_DISINTEGRATE 81	// -
 #define GF_CHARM        82
 #define GF_CONTROL_UNDEAD   83

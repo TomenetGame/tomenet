@@ -902,6 +902,7 @@ extern bool sleep_monsters(int Ind);
 extern bool fear_monsters(int Ind);
 extern bool stun_monsters(int Ind);
 extern void aggravate_monsters(int Ind, int who);
+extern bool genocide_aux(int Ind, worldpos *wpos, char typ);
 extern bool genocide(int Ind);
 extern bool mass_genocide(int Ind);
 extern bool probing(int Ind);

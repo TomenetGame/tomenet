@@ -46,14 +46,20 @@
 27/07/2002 (Jir)
 [G]- monster traps backported from ToME.
 [G]- backstabbing reinforced (double dmg was way too small to be meaningful)
+[G]- GF_HOLY_FIRE/GF_HELL_FIRE. Mimic in evil form takes double dmg.
+[G]- genocide monster traps implemented. (genocide_aux)
 [O]- digger to_d/to_h are added to skill_dig.
 [P]- food comsumption is faster with invis/wraithform etc.
 [P]- HP damage for staying inside a wall w/o wraithform.
+[P]- high Swimming (30) allows to 'run' in the water.
 [m]- removed the mangband hack in client which swaps sval/xtra1
+[m]- cheezelog for item-transaction.
 [B]- 'leveled' monster didn't give boosted exp when killing.
 [B]- apartment caused wrong houses[] (build_store)
 [B]- ammo/pick To-Dam/To-Hit were computed in.
 [B]- (nothing) bug is fixed (I hope - compact_monsters)
+[B]- admin couldn't summon 't's in town. (specification by Level still not)
+[B]- random vault crashed. (build_type11)
 
 
 
@@ -1544,66 +1550,107 @@ Porting targets
 =============================================================================
 below this line are the unfixed bugs known:
 
-[B] wpos display hides wound states(eg.'Deep Gash')
-[B][C] chat-history contains lines with 'mindcrafter'.
-    (do_cmd_messages_chatonly)
-[B] mon_vis, obj_vis etc. are messed while the player is off.
-[B] some ivents are not told to the players even when within the sight.
-[B] white '@' sometimes appear on the screen(eg. when targetting).
-[B] Martial-artist has strange +To RHit/+To RDam display.
-[B][C] inventory window sometimes loses a) b) etc.
-[B] 'write error' - admin char gets disconnected after generation once.
-[B] 'No more Scroll of *Identify*'
-[B] Macro sticks sometimes (this should be fixed by spell restructuring)
-[B] Window refreshing fails sometimes, requiring ^R.
-[B] ghost gets 'The weight of your armor emcumbers your movement' msg.
-[B] isolated space can be generated (generate.c)
-    (esp. random vaults tend to have no entrance)
-[B] cannot specify some monster names in master summoning (&35)
-[B][C] GCU client doesn't show the motd when using 'fullauto'
-[B] monsters sometimes drop '(nothing)' (Dread?)
-[B] strange gray spots in the dark.
-[B] 'Nothng to buy here.' when sunrise/sunset
-[B][C] X11 client doesn't accept keystrokes if screen is less than 80x24
-[B] 'You are shooting with a Boomerang.' is not so cool a msg
-[B] macro 'w0w0' doesn't work correctly (unfixable - workaround with /dr)
-[B] 'look' command is almost unusable since the msg gets wiped at once
-[B] store '3' sells tons of Aman daggers when reset.
-[B] admin cannot summon townies.
-[B] deallocator deallocates the floor that ghost is on!
-1 players on -1950ft of (32,32).
-Key_monk was killed by a Night mare.
-saving server info...
-1 players on -1950ft of (32,32).
-14 Jul 16:43:51: Welcome Laggwyrm=key@pm.dip.jp (127.0.0.1/2179)
-saving server info...
-1 players on -1950ft of (32,32).
-1 players on -3050ft of (32,32).
-saving server info...
-1 players on -1950ft of (32,32).
-deallocating -1950ft of (32,32)
+[B]- wpos display hides wound states(eg.'Deep Gash')
+[B]- [C] chat-history contains lines with 'mindcrafter'.
+     (do_cmd_messages_chatonly)
+[B]- mon_vis, obj_vis etc. are messed while the player is off.
+[B]- some ivents are not told to the players even when within the sight.
+[B]- white '@' sometimes appear on the screen(eg. when targetting).
+[B]- Martial-artist has strange +To RHit/+To RDam display.
+[B]- [C] inventory window sometimes loses a) b) etc.
+[B]- 'write error' - admin char gets disconnected after generation once.
+[B]- 'No more Scroll of *Identify*'
+[B]- Macro sticks sometimes (this should be fixed by spell restructuring)
+[B]- Window refreshing fails sometimes, requiring ^R.
+[B]- ghost gets 'The weight of your armor emcumbers your movement' msg.
+[B]- isolated space can be generated (generate.c)
+     (esp. random vaults tend to have no entrance)
+[B]- cannot specify some monster names in master summoning (&35)
+[B]- [C] GCU client doesn't show the motd when using 'fullauto'
+[B]- monsters sometimes drop '(nothing)' (Dread?)
+[B]- strange gray spots in the dark.
+[B]- 'Nothng to buy here.' when sunrise/sunset
+[B]- [C] X11 client doesn't accept keystrokes if screen is less than 80x24
+[B]- 'You are shooting with a Boomerang.' is not so cool a msg
+[B]- macro 'w0w0' doesn't work correctly (unfixable - workaround with /dr)
+[B]- 'look' command is almost unusable since the msg gets wiped at once
+[B]- store '3' sells tons of Aman daggers when reset.
+[B]- cannot specify 0-depth monsters in admin summoning.
+[B]- Forest wight (Lv 4098, undamaged, clone) [<dir>, q] (on 5550')
+     (it's actually lv77 - shown in a wrong way only for DM)
+[B]- apartment doors can displace?
+     Program received signal SIGSEGV, Segmentation fault.
+     access_door (Ind=2, dna=0x0) at server/cmd2.c:666
+     666             if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
+     (gdb) bt
+     #0  access_door (Ind=2, dna=0x0) at server/cmd2.c:666
+     #1  0x80560a4 in map_info (Ind=2, y=46, x=120, ap=0xbfbfefda "\005+<霓衰\006\b\002", 
+		cp=0xbfbfefdb "+<霓衰\006\b\002") at server/cave.c:1330
+     #2  0x8056c4d in prt_map (Ind=2) at server/cave.c:1898
+     #3  0x806eeea in redraw_stuff (Ind=2) at server/xtra1.c:3621
+     #4  0x80edd3a in process_player_end (Ind=2) at server/dungeon.c:2638
+     #5  0x80ef862 in dungeon () at server/dungeon.c:3700
+     #6  0x80d73b9 in sched () at server/sched.c:508
+     #7  0x80efed8 in play_game (new_game=0 '\000') at server/dungeon.c:4062
+     #8  0x810236f in main (argc=2, argv=0xbfbff6c0) at server/main.c:276
+     #9  0x8049d65 in _start ()
 
+[B]- deallocator deallocates the floor that ghost is on!
+     shutdown in dungeon, login, other player recalls there and voila..
+     1 players on -1950ft of (32,32).
+     Key_monk was killed by a Night mare.
+     saving server info...
+     1 players on -1950ft of (32,32).
+     14 Jul 16:43:51: Welcome Laggwyrm=key@pm.dip.jp (127.0.0.1/2179)
+     saving server info...
+     1 players on -1950ft of (32,32).
+     1 players on -3050ft of (32,32).
+     saving server info...
+     1 players on -1950ft of (32,32).
+     deallocating -1950ft of (32,32)
 
 
 *below are bugs repoorted but not confirmed*
-[B] House doors are still said to crash sometimes. (door even vanishes??)
+[B]- House doors are still said to crash sometimes. (door even vanishes??)
 
 
 *below are bugs not shown recently(fixed??)*
-[B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
+[B]- 'You hit it.' etc in town (99% problem in zcave.m_idx)
     sometimes, monsters attack the player from nowhere.. prolly same root?
     * this only happens when rebooting the server and caves lost.
-[B] ever-charging arts (eg.star)
-[B] cave can be erased prematurely after loading.
-[B] /rec won't work if to wilderness? (admin)
+[B]- ever-charging arts (eg.star)
+[B]- cave can be erased prematurely after loading.
+[B]- /rec won't work if to wilderness? (admin)
+[B]- vault generator. (in_bounds check prevents it, but it should be fixed
+     in a better way)
+     Program received signal SIGSEGV, Segmentation fault.
+     0x805a34e in cave_set_feat (wpos=0x8dd4ab4, y=66, x=1, feat=122) at server/cave.c:4261
+     4261            c_ptr->feat = feat;
+     (gdb) bt
+     #0  0x805a34e in cave_set_feat (wpos=0x8dd4ab4, y=66, x=1, feat=122)
+         at server/cave.c:4261
+     #1  0x80dfb35 in build_room_vault (wpos=0x8dd4ab4, x0=22, y0=55, xsize=43, ysize=21)
+         at server/generate.c:4977
+     #2  0x80e1428 in build_type11 (wpos=0x8dd4ab4, by0=4, bx0=1) at server/generate.c:5889
+     #3  0x80e2cc2 in room_build (wpos=0x8dd4ab4, y=4, x=1, typ=11)
+         at server/generate.c:7024
+     #4  0x80e36a2 in cave_gen (wpos=0x8dd4ab4) at server/generate.c:7307
+     #5  0x80e58c5 in generate_cave (wpos=0x8dd4ab4) at server/generate.c:8628
+     #6  0x80eee09 in process_player_change_wpos (Ind=1) at server/dungeon.c:3342
+     #7  0x80ef8a7 in dungeon () at server/dungeon.c:3675
+     #8  0x80d7431 in sched () at server/sched.c:508
+     #9  0x80eff50 in play_game (new_game=0 '\000') at server/dungeon.c:4062
+     #10 0x81023e7 in main (argc=2, argv=0xbfbff6c0) at server/main.c:276
+     #11 0x8049d65 in _start ()
+
 
 
 *below are phenomena not confirmed as bug*
-[B?] breeders breed less if many players are on.
+[B]- breeders breed less if many players are on.
      buggie, but saves the server from getting slowed by breeding..
-[B?] p_ptr->to_d_ranged is always 0.
-[B?] Yeek seems to receive the best store prices.
-[B?] meanless double egos like Elven Robe of Fire Resistance
+[B]- p_ptr->to_d_ranged is always 0.
+[B]- Yeek seems to receive the best store prices.
+[B]- meanless double egos like Elven Robe of Fire Resistance
 
 
 =============================================================================

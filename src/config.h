@@ -667,11 +667,15 @@
  *
  * 0 - no cheeze msgs
  * 1 - very limited cheeze msgs
+ *     (nothing so far)
  * 2 - most of cheeze msgs
+ *     hourly cheeze() log, money transaction
  * 3 - most of cheeze msgs (noisy)
+ *     item transaction
  * 4 - everything
+ *     cheeze() log every minutes
  */
-#define CHEEZELOG_LEVEL 2
+#define CHEEZELOG_LEVEL 3
 
 /*
  * OPTION: verbosity of server for players.

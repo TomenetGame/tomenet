@@ -3595,6 +3595,104 @@ void aggravate_monsters(int Ind, int who)
 }
 
 
+/*
+ * If Ind <=0, no one takes the damage.	- Jir -
+ */
+bool genocide_aux(int Ind, worldpos *wpos, char typ)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int		i;
+
+	bool	result = FALSE;
+
+	int d = 999, tmp;
+
+	dun_level		*l_ptr = getfloor(wpos);
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return FALSE;
+	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return;
+
+	bypass_invuln = TRUE;
+
+	/* Delete the monsters of that "type" */
+	for (i = 1; i < m_max; i++)
+	{
+		monster_type	*m_ptr = &m_list[i];
+		monster_race    *r_ptr = race_inf(m_ptr);
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Hack -- Skip Unique Monsters */
+		if (r_ptr->flags1 & RF1_UNIQUE) continue;
+
+		/* Skip "wrong" monsters */
+		if (r_ptr->d_char != typ) continue;
+
+		/* Skip monsters not on this depth */
+		if(!inarea(wpos, &m_ptr->wpos)) continue;
+
+		/* Skip those immune */
+		if (r_ptr->flags9 & RF9_IM_TELE) continue;
+
+		/* Roll for resistance */
+		tmp = r_ptr->level;
+#ifdef RESIST_GENO
+		if (randint(RESIST_GENO) < tmp) continue;
+#endif	// RESIST_GENO
+
+#ifdef NO_GENO_ON_ICKY
+		/* Not valid inside a vault */
+		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
+#endif	// NO_GENO_ON_ICKY
+
+		/* Delete the monster */
+		delete_monster_idx(i);
+
+		/* Take damage */
+		if (Ind > 0)
+		{
+			take_hit(Ind, randint(4 + (tmp >> 3)), "the strain of casting Genocide");
+
+			/* Redraw */
+			p_ptr->redraw |= (PR_HP);
+
+			/* Window stuff */
+			/* p_ptr->window |= (PW_PLAYER); */
+
+			/* Handle */
+			handle_stuff(Ind);
+
+			/* Delay */
+			Send_flush(Ind);
+		}
+
+		/* Take note */
+		result = TRUE;
+	}
+
+	if (Ind > 0)
+	{
+#ifdef SEVERE_GENO
+		if (!p_ptr->death && result)
+			take_hit(Ind, p_ptr->chp >> 2, "the strain of casting Genocide");
+
+		/* Redraw */
+		p_ptr->redraw |= (PR_HP);
+#endif	// SEVERE_GENO
+
+		/* Window stuff */
+		p_ptr->window |= (PW_PLAYER);
+
+		/* Handle */
+		handle_stuff(Ind);
+	}
+
+	bypass_invuln = FALSE;
+
+	return (result);
+}
 
 /*
  * Delete all non-unique monsters of a given "type" from the level
@@ -3610,7 +3708,6 @@ bool genocide(int Ind)
 
 	char	typ;
 
-	bool	result = FALSE;
 
 	int d = 999, tmp;
 
@@ -3618,7 +3715,7 @@ bool genocide(int Ind)
 	dun_level		*l_ptr = getfloor(wpos);
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return FALSE;
-	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return;
+	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return;	// double check..
 
 	/* Search all monsters and find the closest */
 	for (i = 1; i < m_max; i++)
@@ -3652,79 +3749,7 @@ bool genocide(int Ind)
 		return FALSE;
 	}
 
-	bypass_invuln = TRUE;
-
-	/* Delete the monsters of that "type" */
-	for (i = 1; i < m_max; i++)
-	{
-		monster_type	*m_ptr = &m_list[i];
-		monster_race    *r_ptr = race_inf(m_ptr);
-
-		/* Paranoia -- Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Hack -- Skip Unique Monsters */
-		if (r_ptr->flags1 & RF1_UNIQUE) continue;
-
-		/* Skip "wrong" monsters */
-		if (r_ptr->d_char != typ) continue;
-
-		/* Skip monsters not on this depth */
-		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
-
-		/* Skip those immune */
-		if (r_ptr->flags9 & RF9_IM_TELE) continue;
-
-		/* Roll for resistance */
-		tmp = r_ptr->level;
-#ifdef RESIST_GENO
-		if (randint(RESIST_GENO) < tmp) continue;
-#endif	// RESIST_GENO
-
-#ifdef NO_GENO_ON_ICKY
-		/* Not valid inside a vault */
-		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
-#endif	// NO_GENO_ON_ICKY
-
-		/* Delete the monster */
-		delete_monster_idx(i);
-
-		/* Take damage */
-		take_hit(Ind, randint(4 + (tmp >> 3)), "the strain of casting Genocide");
-
-		/* Redraw */
-		p_ptr->redraw |= (PR_HP);
-
-		/* Window stuff */
-		/* p_ptr->window |= (PW_PLAYER); */
-
-		/* Handle */
-		handle_stuff(Ind);
-
-		/* Delay */
-		Send_flush(Ind);
-
-		/* Take note */
-		result = TRUE;
-	}
-
-#ifdef SEVERE_GENO
-		if (!p_ptr->death && result)
-			take_hit(Ind, p_ptr->chp >> 2, "the strain of casting Genocide");
-
-		/* Redraw */
-		p_ptr->redraw |= (PR_HP);
-#endif	// SEVERE_GENO
-
-		bypass_invuln = FALSE;
-
-	/* Window stuff */
-	p_ptr->window |= (PW_PLAYER);
-
-	/* Handle */
-	handle_stuff(Ind);
-
-	return (result);
+	return (genocide_aux(Ind, wpos, typ));
 }
 
 

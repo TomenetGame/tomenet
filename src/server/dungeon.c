@@ -298,6 +298,7 @@ static void sense_inventory(int Ind)
 			case TV_HARD_ARMOR:
 			case TV_DRAG_ARMOR:
 			case TV_AXE:
+			case TV_TRAPKIT:
 			{
 				if (ok_combat)
 					feel = (heavy ? value_check_aux1(o_ptr) :

@@ -960,6 +960,20 @@ void carry(int Ind, int pickup, int confirm)
 
 				/* Own it */
 				if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
+
+#if CHEEZELOG_LEVEL > 2
+				/* Take cheezelog
+				 * TODO: ignore cheap items (like cure critical pot) */
+				else if (p_ptr->id != o_ptr->owner)
+				{
+					cptr name = lookup_player_name(o_ptr->owner);
+					object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
+					s_printf("%s Item transaction from %s to %s(lv %d):\n  %s\n  ",
+							showtime(), name ? name : "(Dead player)",
+							p_ptr->name, p_ptr->lev, o_name);
+				}
+#endif	// CHEEZELOG_LEVEL
+
 				can_use(Ind, o_ptr);
 
 				/* Carry the item */
@@ -1455,7 +1469,9 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	m_ptr = &m_list[c_ptr->m_idx];
 	r_ptr = race_inf(m_ptr);
 
-	nolite = c_ptr->info & (CAVE_LITE | CAVE_GLOW) ? FALSE : TRUE;
+	nolite = !((c_ptr->info & (CAVE_LITE | CAVE_GLOW)) ||
+		(r_ptr->flags4 & RF4_BR_DARK) ||
+		(r_ptr->flags6 & RF6_DARKNESS));
 	nolite2 = nolite && !(r_ptr->flags9 & RF9_HAS_LITE);
 
 	/* Disturb the player */
@@ -1560,7 +1576,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	{
 		u32b f1=0, f2=0, f3=0, f4=0, f5=0, esp=0;
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-//		chaos_effect = 0;	// we need this methinks..?
+		chaos_effect = 0;	// we need this methinks..?
 
 		if((f4 & TR4_NEVER_BLOW))
 		{
@@ -3286,7 +3302,7 @@ static bool run_test(int Ind)
 	int                     row, col;
 	int                     i, max, inv;
 	int                     option, option2;
-	bool	aqua = p_ptr->fly ||
+	bool	aqua = p_ptr->fly || (get_skill(p_ptr, SKILL_SWIM) > 29) ||
 					((p_ptr->body_monster) && (
 					(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) ||
 					(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ));

@@ -1949,9 +1949,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Bolt Trap */
 		case TRAP_OF_ROCKET: ident=player_handle_breath_trap(Ind, 1, GF_ROCKET, trap); break;
 		case TRAP_OF_NUKE_BOLT: ident=player_handle_breath_trap(Ind, 1, GF_NUKE, trap); break;
-#if 0	// coming..when it comes :)
-		case TRAP_OF_HOLY_FIRE: ident=player_handle_breath_trap(1, GF_HOLY_FIRE, trap); break;
-		case TRAP_OF_HELL_FIRE: ident=player_handle_breath_trap(1, GF_HELL_FIRE, trap); break;
+#if 1	// coming..when it comes :)
+		case TRAP_OF_HOLY_FIRE: ident=player_handle_breath_trap(Ind, 1, GF_HOLY_FIRE, trap); break;
+		case TRAP_OF_HELL_FIRE: ident=player_handle_breath_trap(Ind, 1, GF_HELL_FIRE, trap); break;
 #endif	// 0
 		case TRAP_OF_PSI_BOLT: ident=player_handle_breath_trap(Ind, 1, GF_PSI, trap); break;
 //      case TRAP_OF_PSI_DRAIN: ident=player_handle_breath_trap(1, GF_PSI_DRAIN, trap); break;
@@ -3388,6 +3388,11 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
+	/* Check interference */
+	/* Basically it's not so good idea to set traps next to the enemy */
+	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_TRAPPING, 30)))
+		return;
+
 	/* Get local object */
 	i_ptr = &object_type_body;
 	
@@ -3617,13 +3622,14 @@ bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 //	monster_race    *r_ptr = race_inf(m_ptr);
+	worldpos wpos = m_ptr->wpos;
 	int dam = 0, typ = 0;
 	int rad = 0;
 	int k;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;	
 	cave_type **zcave;
-	zcave=getcave(&m_ptr->wpos);
+	zcave=getcave(&wpos);
 
 	
 	/* Depend on staff type */
@@ -3658,7 +3664,7 @@ bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 			break;
 		case SV_STAFF_SUMMONING:
 			for (k = 0; k < randint(4) ; k++)
-				(void)summon_specific(&m_ptr->wpos, y, x, getlevel(&m_ptr->wpos), 0);
+				(void)summon_specific(&wpos, y, x, getlevel(&wpos), 0);
 			return (FALSE);
 		case SV_STAFF_TELEPORTATION:	
 			typ = GF_AWAY_ALL;
@@ -3729,18 +3735,25 @@ bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
                         return (cave[y][x].m_idx == 0 ? TRUE : FALSE);
 		}
 #endif	// 0
+		case SV_STAFF_GENOCIDE:
+		{
+			monster_race    *r_ptr = race_inf(m_ptr);
+			genocide_aux(0, &wpos, r_ptr->d_char);
+			/* although there's no point in a multiple genocide trap... */
+			return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+		}
 		case SV_STAFF_EARTHQUAKES:
-			earthquake(&m_ptr->wpos, y, x, 10);
+			earthquake(&wpos, y, x, 10);
 			return (FALSE);
 		case SV_STAFF_DESTRUCTION:
-			destroy_area(&m_ptr->wpos, y, x, 15, TRUE, FEAT_FLOOR);
+			destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR);
 			return (FALSE);
 		default:
 			return (FALSE);
 	}
 	
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP);
+	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP);
 	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE); 
 }
 
@@ -3752,6 +3765,7 @@ bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 {
 	monster_type *m_ptr = &m_list[m_idx];
+	worldpos wpos = m_ptr->wpos;
 //	monster_race    *r_ptr = race_inf(m_ptr);
 	int dam = 0, typ = 0;
 	int rad = 0;
@@ -3759,7 +3773,7 @@ bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
         int x = m_ptr->fx;
         int k;
 	cave_type **zcave;
-	zcave=getcave(&m_ptr->wpos);
+	zcave=getcave(&wpos);
 		
 	/* Depend on scroll type */
 	switch (sval)
@@ -3798,10 +3812,10 @@ bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 		      	if (who > 0) aggravate_monsters(who, m_idx);
 		      	return (FALSE);
 		case SV_SCROLL_SUMMON_MONSTER:
-                        for (k = 0; k < randint(3) ; k++) summon_specific(&m_ptr->wpos, y, x, getlevel(&m_ptr->wpos), 0);
+                        for (k = 0; k < randint(3) ; k++) summon_specific(&wpos, y, x, getlevel(&wpos), 0);
 			return (FALSE);	
 		case SV_SCROLL_SUMMON_UNDEAD:	
-                        for (k = 0; k < randint(3) ; k++) summon_specific(&m_ptr->wpos, y, x, getlevel(&m_ptr->wpos), SUMMON_UNDEAD);
+                        for (k = 0; k < randint(3) ; k++) summon_specific(&wpos, y, x, getlevel(&wpos), SUMMON_UNDEAD);
 			return (FALSE);	
 		case SV_SCROLL_PHASE_DOOR:
 			typ = GF_AWAY_ALL;
@@ -3812,7 +3826,7 @@ bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 			dam = 100;
 			break;
 		case SV_SCROLL_TELEPORT_LEVEL:
-			delete_monster(&m_ptr->wpos, y, x);
+			delete_monster(&wpos, y, x);
 			return (TRUE);
 		case SV_SCROLL_LIGHT:		
 //			lite_room(y, x);
@@ -3823,7 +3837,7 @@ bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 		case SV_SCROLL_DETECT_TRAP:
 //                        m_ptr->smart |= SM_NOTE_TRAP;
 			return (FALSE);
-#if 0
+		/* Hrm aren't they too small..? */
 		case SV_SCROLL_BLESSING:
                         typ = GF_HOLY_FIRE;
 			dam = damroll(1, 4);
@@ -3836,45 +3850,43 @@ bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
                         typ = GF_HOLY_FIRE;
 			dam = damroll(4, 4);
 			break;
-#endif	// 0
 		case SV_SCROLL_MONSTER_CONFUSION:
 			typ = GF_OLD_CONF;
 			dam = damroll(5, 10);
 			break;
 		case SV_SCROLL_STAR_DESTRUCTION:
-			destroy_area(&m_ptr->wpos, y, x, 15, TRUE, FEAT_FLOOR);
+			destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR);
 			return (FALSE);			
 		case SV_SCROLL_DISPEL_UNDEAD:
 			typ = GF_DISP_UNDEAD;
 			rad = 5;
 			dam = 60;
 			break;
-#if 0	// XXX implement them!!
 		case SV_SCROLL_GENOCIDE:
 		{
-			monster_race *r_ptr = &r_info[m_ptr->r_idx];
-                        genocide_aux(FALSE, r_ptr->d_char);
+			monster_race    *r_ptr = race_inf(m_ptr);
+			genocide_aux(0, &wpos, r_ptr->d_char);
 			/* although there's no point in a multiple genocide trap... */
-			return (!(r_ptr->flags1 & RF1_UNIQUE));
+//			return (!(r_ptr->flags1 & RF1_UNIQUE));
+			return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 		}
-		case SV_SCROLL_MASS_GENOCIDE:         
+		case SV_SCROLL_MASS_GENOCIDE:	// Hrm uniques too?
 			for (k = 0; k < 8; k++)
-				delete_monster(y+ddy[k], x+ddx[k]);
-			delete_monster(y,x);
+				delete_monster(&wpos, y+ddy[k], x+ddx[k]);
+			delete_monster(&wpos, y, x);
 			return(TRUE);
-#endif	// 0
 		case SV_SCROLL_ACQUIREMENT:
-                        acquirement(&m_ptr->wpos, y, x, 1, TRUE);
+                        acquirement(&wpos, y, x, 1, TRUE);
 			return (FALSE);
 		case SV_SCROLL_STAR_ACQUIREMENT:
-                        acquirement(&m_ptr->wpos, y, x, randint(2) + 1, TRUE);
+                        acquirement(&wpos, y, x, randint(2) + 1, TRUE);
 			return (FALSE);
 		default:
 			return (FALSE);
 	}
 	
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP);
+	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP);
         return (zcave[y][x].m_idx == 0 ? TRUE : FALSE); 
 }
 
@@ -4159,8 +4171,7 @@ bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 					monster_race *r_ptr = &r_info[m_ptr->r_idx];
 					if (r_ptr->flags3 & RF3_UNDEAD)
 					{
-//						typ = GF_HOLY_FIRE;
-						typ = GF_MANA;
+						typ = GF_HOLY_FIRE;
 						dam = damroll(20, 20);
 					}
 					else
@@ -4292,7 +4303,9 @@ bool mon_hit_trap(int m_idx)
 
 	/* Darkness helps */
 	if (!(c_ptr->info & (CAVE_LITE | CAVE_GLOW)) &&
-			!(r_ptr->flags9 & RF9_HAS_LITE))
+			!(r_ptr->flags9 & RF9_HAS_LITE) &&
+			!(r_ptr->flags4 & RF4_BR_DARK) &&
+			!(r_ptr->flags6 & RF6_DARKNESS))
 		difficulty += 20;
 
 	/* Some traps are well-hidden */
