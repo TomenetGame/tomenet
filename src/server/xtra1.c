@@ -1363,34 +1363,48 @@ static void calc_body_bonus(int Ind)
 
 		d += j;
 	}
+#if 0
 	if (n == 0) n = 1;
 	/*d = (d / 2) / n;	// 8 // 7
 	p_ptr->to_d += d;
 	p_ptr->dis_to_d += d; - similar to HP: */
 	d = d / n;
-	p_ptr->to_d = (d < p_ptr->to_d) ?
-		    (((p_ptr->to_d * 2) + (d * 1)) / 3) :
-		    (((p_ptr->to_d * 1) + (d * 1)) / 2);
-	p_ptr->dis_to_d = (d < p_ptr->dis_to_d) ?
+	if (d < (p_ptr->to_d + p_ptr->to_d_melee)) {
+		p_ptr->to_d = ((p_ptr->to_d * 2) + (d * 1)) / 3;
+		p_ptr->to_d_melee = (p_ptr->to_d_melee * 2) / 3;
+		p_ptr->dis_to_d = ((p_ptr->dis_to_d * 2) + (d * 1)) / 3;
+	} else {
+		p_ptr->to_d = ((p_ptr->to_d * 1) + (d * 1)) / 2;
+		p_ptr->to_d_melee = (p_ptr->to_d_melee * 1) / 2;
+		p_ptr->dis_to_d = ((p_ptr->dis_to_d * 1) + (d * 1)) / 2;
+	}
+/*	p_ptr->dis_to_d = (d < p_ptr->dis_to_d) ?
 		    (((p_ptr->dis_to_d * 2) + (d * 1)) / 3) :
-		    (((p_ptr->dis_to_d * 1) + (d * 1)) / 2);
-
+		    (((p_ptr->dis_to_d * 1) + (d * 1)) / 2);*/
+#endif
+#if 0
 	/* Evaluate monster AC (if skin or armor etc) */
 	body = (r_ptr->body_parts[BODY_HEAD] ? 1 : 0)
 		+ (r_ptr->body_parts[BODY_TORSO] ? 3 : 0)
 		+ (r_ptr->body_parts[BODY_ARMS] ? 2 : 0)
 		+ (r_ptr->body_parts[BODY_LEGS] ? 1 : 0);
 
-	toac = r_ptr->ac * 7 / (4 + body);
+	toac = r_ptr->ac * 10 / (6 + body);
 	/* p_ptr->ac += toac;
 	p_ptr->dis_ac += toac; - similar to HP calculation: */
-	p_ptr->ac = (toac < p_ptr->ac) ?
-		    (((p_ptr->ac * 2) + (toac * 1)) / 3) :
-		    (((p_ptr->ac * 1) + (toac * 1)) / 2);
-	p_ptr->dis_ac = (toac < p_ptr->dis_ac) ?
+	if (toac < (p_ptr->ac + p_ptr->to_a)) {
+		p_ptr->ac = (p_ptr->ac * 2) / 3;
+		p_ptr->to_a = ((p_ptr->to_a * 2) + (toac * 1)) / 3;
+		p_ptr->dis_ac = ((p_ptr->dis_ac * 2) + (toac * 1)) / 3;
+	} else {
+		p_ptr->ac = (p_ptr->ac * 1) / 2;
+		p_ptr->to_a = ((p_ptr->to_a * 1) + (toac * 1)) / 2;
+		p_ptr->dis_ac = ((p_ptr->dis_ac * 1) + (toac * 1)) / 2;
+	}
+/*	p_ptr->dis_ac = (toac < p_ptr->dis_ac) ?
 		    (((p_ptr->dis_ac * 2) + (toac * 1)) / 3) :
-		    (((p_ptr->dis_ac * 1) + (toac * 1)) / 2);
-
+		    (((p_ptr->dis_ac * 1) + (toac * 1)) / 2);*/
+#endif
 	if (r_ptr->speed < 110)
 	{
 		/* let slowdown not be that large that players will never try that form */
@@ -1948,6 +1962,10 @@ void calc_bonuses(int Ind)
 
 	object_type		*o_ptr;
 	object_kind		*k_ptr;
+
+	int n, d, toac = 0, body = 0;
+	bool wepless = FALSE;
+	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
 	    u32b f1, f2, f3, f4, f5, esp;
 		s16b pval;
@@ -3178,6 +3196,32 @@ void calc_bonuses(int Ind)
 	p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
 	p_ptr->dis_to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
 
+	/* Evaluate monster AC (if skin or armor etc) */
+	if (p_ptr->body_monster) {
+		body = (r_ptr->body_parts[BODY_HEAD] ? 1 : 0)
+			+ (r_ptr->body_parts[BODY_TORSO] ? 3 : 0)
+			+ (r_ptr->body_parts[BODY_ARMS] ? 2 : 0)
+			+ (r_ptr->body_parts[BODY_LEGS] ? 1 : 0);
+
+		toac = r_ptr->ac * 10 / (6 + body);
+		/* p_ptr->ac += toac;
+		p_ptr->dis_ac += toac; - similar to HP calculation: */
+		if (toac < (p_ptr->ac + p_ptr->to_a)) {
+			p_ptr->ac = (p_ptr->ac * 2) / 3;
+			p_ptr->to_a = ((p_ptr->to_a * 2) + (toac * 1)) / 3;
+			p_ptr->dis_ac = (p_ptr->dis_ac * 2) / 3;
+			p_ptr->dis_to_a = ((p_ptr->dis_to_a * 2) + (toac * 1)) / 3;
+		} else {
+			p_ptr->ac = (p_ptr->ac * 1) / 2;
+			p_ptr->to_a = ((p_ptr->to_a * 1) + (toac * 1)) / 2;
+			p_ptr->dis_ac = (p_ptr->dis_ac * 1) / 2;
+			p_ptr->dis_to_a = ((p_ptr->dis_to_a * 1) + (toac * 1)) / 2;
+		}
+		/*	p_ptr->dis_ac = (toac < p_ptr->dis_ac) ?
+		(((p_ptr->dis_ac * 2) + (toac * 1)) / 3) :
+		(((p_ptr->dis_ac * 1) + (toac * 1)) / 2);*/
+	}
+
 	if (p_ptr->mode & MODE_HELL)
 	{
 		if (p_ptr->dis_to_a > 0) p_ptr->dis_to_a /= 2;
@@ -3341,6 +3385,7 @@ void calc_bonuses(int Ind)
 			p_ptr->to_h_melee += lev;
 			p_ptr->to_d_melee += lev / 2;
 //			p_ptr->num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
+
 		}
 	}
 
@@ -3443,18 +3488,63 @@ void calc_bonuses(int Ind)
 	/* Priest weapon penalty for non-blessed edged weapons */
 //	if ((p_ptr->pclass == 2) && (!p_ptr->bless_blade) &&
 	if ((get_skill(p_ptr, SKILL_PRAY)) && (!p_ptr->bless_blade) &&
-	    ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)))
+	    ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM) ||
+	    (o_ptr->tval == TV_AXE)))
 	{
 		/* Reduce the real bonuses */
-		p_ptr->to_h -= 2;
-		p_ptr->to_d -= 2;
-
+		/*p_ptr->to_h -= 2;
+		p_ptr->to_d -= 2;*/
+		p_ptr->to_h = p_ptr->to_h * 2 / 3;
+		p_ptr->to_d = p_ptr->to_d * 2 / 3;
+		p_ptr->to_h_melee = p_ptr->to_h_melee * 2 / 3;
+		p_ptr->to_d_melee = p_ptr->to_d_melee * 2 / 3;
+		
 		/* Reduce the mental bonuses */
-		p_ptr->dis_to_h -= 2;
-		p_ptr->dis_to_d -= 2;
+		/*p_ptr->dis_to_h -= 2;
+		p_ptr->dis_to_d -= 2;*/
+		p_ptr->dis_to_h = p_ptr->dis_to_h * 2 / 3;
+		p_ptr->dis_to_d = p_ptr->dis_to_d * 2 / 3;
 
 		/* Icky weapon */
 		p_ptr->icky_wield = TRUE;
+	}
+
+	if (p_ptr->body_monster) {
+		if (!r_ptr->body_parts[BODY_WEAPON])
+		{
+			wepless = TRUE;
+	    	}
+
+		d = 0; n = 0;
+		for (i = 0; i < 4; i++)
+		{
+			j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
+			if (j) n++;
+
+			/* Hack -- weaponless combat */
+			if (wepless && j)
+			{
+				j *= 2;
+			}
+			d += j;
+		}
+		if (n == 0) n = 1;
+		/*d = (d / 2) / n;	// 8 // 7
+		p_ptr->to_d += d;
+		p_ptr->dis_to_d += d; - similar to HP: */
+		d = d / n;
+		if (d < (p_ptr->to_d + p_ptr->to_d_melee)) {
+			p_ptr->to_d = ((p_ptr->to_d * 2) + (d * 1)) / 3;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 2) / 3;
+			p_ptr->dis_to_d = ((p_ptr->dis_to_d * 2) + (d * 1)) / 3;
+		} else {
+			p_ptr->to_d = ((p_ptr->to_d * 1) + (d * 1)) / 2;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 1) / 2;
+			p_ptr->dis_to_d = ((p_ptr->dis_to_d * 1) + (d * 1)) / 2;
+		}
+		/*	p_ptr->dis_to_d = (d < p_ptr->dis_to_d) ?
+		(((p_ptr->dis_to_d * 2) + (d * 1)) / 3) :
+		(((p_ptr->dis_to_d * 1) + (d * 1)) / 2);*/
 	}
 
 	/* Redraw plusses to hit/damage if necessary */
