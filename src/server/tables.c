@@ -2979,8 +2979,8 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 21, 24, 1,  14, 16, 70, 55,
-		10, 7,  10, 0,  0,  0,  45, 45,
+		10, 21, 54, 4,  14, 16, 60, 29,
+		2, 4,  10, 0,  0,  2,  35, 10,
                 7,  30,
                 {
                         {
@@ -3143,9 +3143,9 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		20, 20, 20, 10,  20, 20, 70, 55,
-		10, 7,  10, 0,  0,  0,  45, 45,
-                7,  35,
+		34, 32, 30, 5, 30, 30, 60, 55,
+		10, 10, 10, 1, 15,  5, 30, 45,
+                6,  35,
                 {
                         {
                                 SKILL_COMBAT,
@@ -3206,13 +3206,13 @@ player_class class_info[MAX_CLASS] =
                                 /* let's keep it low for now - offbalancing */
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
-                                '+', 600,
+                                '+', 500,
                         },
 
                         {
                                 SKILL_MAGIC,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 700,
                         },
                         {
                                 SKILL_SORCERY,
@@ -3257,12 +3257,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIVINATION,
                                 '+', 0,
-                                '+', 800,
+                                '+', 600,
                         },
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
-                                '+', 800,
+                                '+', 600,
                         },
                         {
                                 SKILL_META,
@@ -3272,12 +3272,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MIND,
                                 '+', 0,
-                                '+', 700,
+                                '+', 600,
                         },
                         {
                                 SKILL_TEMPORAL,
                                 '+', 0,
-                                '+', 650,
+                                '+', 500,
                         },
 
                         {

@@ -918,7 +918,25 @@ static void calc_mana(int Ind)
 	if (levels < 0) levels = 0;
 
 	/* Extract total mana */
-	new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + (adj_mag_mana[p_ptr->stat_ind[A_INT]] * levels / 5) + (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * levels / 5);
+	if ((p_ptr->pclass == CLASS_MAGE) || 
+	    (p_ptr->pclass == CLASS_ROGUE) || 
+	    (p_ptr->pclass == CLASS_RANGER) ||
+	    (p_ptr->pclass == CLASS_ARCHER) ||
+	    (p_ptr->pclass == CLASS_MIMIC) ||
+	    (p_ptr->pclass == CLASS_WARRIOR))
+		/* 75% Int, 25% Wis */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 75 * levels / (5 * 100)) + (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 25 * levels / (5 * 100));
+	
+	if ((p_ptr->pclass == CLASS_PRIEST) || 
+	    (p_ptr->pclass == CLASS_PALADIN) || 
+	    (p_ptr->pclass == CLASS_RANGER))
+		/* 25% Int, 75% Wis */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 25 * levels / (5 * 100)) + (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 75 * levels / (5 * 100));
+	
+	if ((p_ptr->pclass == CLASS_ADVENTURER) ||
+	    (p_ptr->pclass == CLASS_BARD))
+	    	/* 50% Int, 50% Wis */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + (adj_mag_mana[p_ptr->stat_ind[A_INT]] * levels / 5) + (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * levels / 5);
 
 	/* Hack -- usually add one mana */
 	if (new_mana) new_mana++;
