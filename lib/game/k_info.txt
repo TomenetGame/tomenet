@@ -2203,7 +2203,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 ## Hunting book ##
 
-N:299:[Killing form Afar]
+N:299:[Killing from Afar]
 G:?:B
 I:95:1:0
 W:50:0:30:15000
