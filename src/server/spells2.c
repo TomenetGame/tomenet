@@ -470,7 +470,7 @@ static int remove_curse_aux(int Ind, int all)
 		if (!(all & 0x01) && (f3 & TR3_HEAVY_CURSE)) continue;
 
 		/* Perma-Cursed Items can NEVER be uncursed */
-		if (f3 & TR3_PERMA_CURSE) continue;
+                if ((f3 & TR3_PERMA_CURSE) && !p_ptr->admin_wiz && !p_ptr->admin_dm) continue;
 
 		/* Uncurse it */
 		o_ptr->ident &= ~ID_CURSED;

@@ -23,6 +23,9 @@
 # bug.txt should follow the exact same format
 
 
+03/09/2002
+[O]- Admins not affected by perma_curse
+
 02/09/2002 (Jir)
 [m]- '#ifdef TOMENET_WORLDS' added (so that I can compile it :)
 [O]- randart ego items can no longer be created.

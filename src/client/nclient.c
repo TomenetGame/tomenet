@@ -1894,12 +1894,12 @@ int Receive_message(void)
 
 	if (!topline_icky && (party_mode || shopping || !screen_icky))
 	{
-		c_msg_print(buf);
+                c_msg_print(buf);
 	}
 	else
-		if ((n = Packet_printf(&qbuf, "%c%s", ch, buf)) <= 0)
-		{
-			return n;
+                if ((n = Packet_printf(&qbuf, "%c%s", ch, buf)) <= 0)
+                {
+                        return n;
 		}
 
 	return 1;
