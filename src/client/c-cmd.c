@@ -2372,6 +2372,8 @@ void cmd_master_aux_player(){
 	Term_putstr(5, 4, -1, TERM_WHITE, "(1) Editor (offline)");
 	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Acquirement");
 	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Invoke wrath");
+	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Static player");
+	Term_putstr(5, 8, -1, TERM_WHITE, "(5) Unstatic player");
 	
 	Term_putstr(0, 10, -1, TERM_WHITE, "Command: ");
 
@@ -2390,6 +2392,14 @@ void cmd_master_aux_player(){
 				break;
 			case '3':
 				buf[0]='k';
+				get_string("Enter player name:",&buf[1],15);
+				break;
+			case '4':
+				buf[0]='S';
+				get_string("Enter player name:",&buf[1],15);
+				break;
+			case '5':
+				buf[0]='U';
 				get_string("Enter player name:",&buf[1],15);
 				break;
 			case ESCAPE:

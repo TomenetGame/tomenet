@@ -752,7 +752,7 @@ time_t lookup_player_laston(int id)
 	}
 
 	/* Not found */
-	return 0L;			/* i return 0, olo returns -1 */
+	return -1L;
 }
 
 /*
@@ -814,6 +814,24 @@ int lookup_player_id(cptr name)
 	return 0;
 }
 
+void stat_player(char *name, bool on){
+	int id;
+	int slot;
+	hash_entry *ptr;
+
+	id=lookup_player_name(name);
+	if(id){
+		slot = hash_slot(id);
+		ptr = hash_table[slot];
+		while (ptr){
+			if (ptr->id == id){
+				ptr->laston=on ? 0L : time(&ptr->laston);
+			}
+			ptr=ptr->next;
+		}
+	}
+}
+
 /* Timestamp an existing player */
 void clockin(int Ind){
 	int slot;
@@ -822,7 +840,7 @@ void clockin(int Ind){
 	slot = hash_slot(p_ptr->id);
 	ptr = hash_table[slot];
 	while (ptr){
-		if (ptr->id == p_ptr->id){
+		if (ptr->id == p_ptr->id && (ptr->laston)){
 			ptr->laston=time(&ptr->laston);
 		}
 		ptr=ptr->next;
@@ -894,7 +912,7 @@ void add_player_name(cptr name, int id, time_t laston)
 	time_t now;
 	
 	now=time(&now);
-	if(now>laston){				/* it should be! */
+	if(laston && now>laston){		/* it should be! */
 		if(now-laston>7776000){		/* 90 days in seconds */
 			sf_delete(name);	/* a sad day ;( */
 			return;

@@ -5296,6 +5296,13 @@ bool master_player(int Ind, char *parms){
 			msg_print(Ind, "That player is not in the game.");
 
 			break;
+		case 'S':	/* Static a regular */
+			stat_player(&parms[1], TRUE);
+			break;
+			
+		case 'U':	/* Unstatic him */
+			stat_player(&parms[1], FALSE);
+			break;
 	}
 	return(FALSE);
 }
