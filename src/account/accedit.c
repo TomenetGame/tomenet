@@ -43,16 +43,31 @@ void setupscreen(){
 	mvprintw(LINES-5, COLS/2-19, "L: List/Long accounts");
 	mainwin=newwin(LINES-9, COLS, 3, 0);
 	listwin=newwin(LINES-9, COLS, 3, 0);
+	refresh();
 }
 
 unsigned short recwrite(struct account *rec, long filepos){
 	int wfd;
+#ifdef NETBSD
 	wfd=open("tomenet.acc", O_RDWR|O_EXLOCK);	/* blocked open */
+#else
+	wfd=open("tomenet.acc", O_RDWR);
+#endif
 	if(wfd<0) return(0);
+#ifndef NETBSD
+	if((flock(wfd, LOCK_EX))!=0) return(0);
+#endif
 	lseek(wfd, filepos, SEEK_SET);
 	write(wfd, rec, sizeof(struct account));
+#ifndef NETBSD
+	while((flock(wfd, LOCK_UN))!=0);
+#endif
 	close(wfd);
+#ifdef NETBSD
 	fpurge(fp);
+#else
+	fflush(fp);
+#endif
 	fseek(fp, filepos+sizeof(struct account), SEEK_SET);
 	return(1);
 }
