@@ -608,4 +608,6 @@ Change list for PernMangband
 - some monsters will prefer to keep distance (even STUPID_MONSTER is on).
 - new monsters with DISBELIEVE power (eg. Unbeliever).
 - yaac(Yet Another Anti-Cheeze): lowbies' arrows won't drop on floor.
+- antimagic shield of party member disturbs spellcasting less.
+- use of magic-device is penalized according to the antimagic power(and not 0)
 

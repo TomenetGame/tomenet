@@ -417,7 +417,7 @@ D:amulets of adornment to buy.
 N:17:Mean-looking mercenary
 G:t:r
 I:110:5d8:10:20:250
-W:0:1:1700:0
+W:0:3:1700:0
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:HURT:1d10
@@ -430,7 +430,7 @@ D:No job is too low for him.
 N:18:Battle-scarred veteran
 G:t:B
 I:110:7d8:10:30:250
-W:0:1:1650:0
+W:0:5:1650:0
 E:1:1:1:2:1:1
 O:25:50:25:0
 B:HIT:HURT:2d6
@@ -9209,6 +9209,7 @@ F:FORCE_SLEEP | FORCE_MAXHP |
 F:RAND_50 | RAND_25 | NONLIVING | CAN_FLY | 
 F:EMPTY_MIND | BASH_DOOR | POWERFUL | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
+F:DISBELIEVE
 S:1_IN_6 | 
 S:BR_TIME | BR_DISE
 S:UNMAGIC
@@ -18453,7 +18454,7 @@ F:FORCE_SLEEP | NEVER_MOVE |
 F:STUPID | RES_TELE | CAN_SWIM |
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
 F:FRIENDS | DISBELIEVE
-S:1_IN_5
+S:1_IN_8
 S:UNMAGIC
 D:Yum!  It looks quite tasty. It seems to glow with an unusual light. 
 

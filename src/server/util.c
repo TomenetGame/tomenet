@@ -3510,7 +3510,7 @@ void player_talk_aux(int Ind, cptr message)
 	colon = strchr(message, ':');
 
 	/* Ignore "smileys" or URL */
-	if (colon && strchr(")(-/", *(colon + 1)))
+	if (colon && strchr(")(-/:", *(colon + 1)))
 	{
 		/* Pretend colon wasn't there */
 		colon = NULL;

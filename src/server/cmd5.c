@@ -909,6 +909,9 @@ bool check_antimagic(int Ind)
 
 		if (antichance > 95) antichance = 95;
 
+		if (player_in_party(p_ptr->party, i))
+			antichance >>= 1;
+
 		if (dis > antidis) antichance = 0;
 
 		/* Got disrupted ? */
@@ -953,7 +956,7 @@ bool check_antimagic(int Ind)
 			{
 				char m_name[80];
 				monster_desc(Ind, m_name, m_idx, 0);
-				msg_format(Ind, "%s's anti-magic shield disrupts your attemps.", m_name);
+				msg_format(Ind, "%^s's anti-magic shield disrupts your attemps.", m_name);
 				return TRUE;
 			}
 		}
