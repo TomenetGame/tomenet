@@ -237,29 +237,45 @@ void init_lua()
 		exec_lua(0, format("finish_school(%d)", i));
 	}
 
+	/* Finish up the spells */
+	max = exec_lua(0, "return __tmp_spells_num");
+	init_spells(max);
+	for (i = 0; i < max; i++)
+	{
+		exec_lua(0, format("finish_spell(%d)", i));
+	}
 }
 
 bool pern_dofile(int Ind, char *file)
 {
 	char buf[MAX_PATH_LENGTH];
+	int error;
         int oldtop = lua_gettop(L);
+        char ind[80];
 
 	/* Build the filename */
         path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, file);
 
-        lua_dostring(L, format("Ind = %d", Ind));
-        lua_dofile(L, buf);
+        sprintf(ind, "Ind = %d", Ind);
+        lua_dostring(L, ind);
         lua_settop(L, oldtop);
 
-        return (FALSE);
+        error = lua_dofile(L, buf);
+        lua_settop(L, oldtop);
+
+        return (error?TRUE:FALSE);
 }
 
 int exec_lua(int Ind, char *file)
 {
 	int oldtop = lua_gettop(L);
         int res;
+        char ind[80];
 
-        lua_dostring(L, format("Ind = %d", Ind));
+        sprintf(ind, "Ind = %d", Ind);
+        lua_dostring(L, ind);
+        lua_settop(L, oldtop);
+
         if (!lua_dostring(L, file))
         {
                 int size = lua_gettop(L) - oldtop;
@@ -276,8 +292,12 @@ cptr string_exec_lua(int Ind, char *file)
 {
 	int oldtop = lua_gettop(L);
 	cptr res;
+        char ind[80];
 
-        lua_dostring(L, format("Ind = %d", Ind));
+        sprintf(ind, "Ind = %d", Ind);
+        lua_dostring(L, ind);
+        lua_settop(L, oldtop);
+
 	if (!lua_dostring(L, file))
         {
                 int size = lua_gettop(L) - oldtop;

@@ -234,15 +234,20 @@ void init_lua()
 	/* Load the first lua file */
 	pern_dofile(0, "c-init.lua");
 
-	/* XXX delete it as soon as it works */
-	exec_lua(0, "testtest()");
-
 	/* Finish up schools */
 	max = exec_lua(0, "return __schools_num");
 	init_schools(max);
 	for (i = 0; i < max; i++)
 	{
 		exec_lua(0, format("finish_school(%d)", i));
+	}
+
+	/* Finish up the spells */
+	max = exec_lua(0, "return __tmp_spells_num");
+	init_spells(max);
+	for (i = 0; i < max; i++)
+	{
+		exec_lua(0, format("finish_spell(%d)", i));
 	}
 }
 

@@ -47,6 +47,7 @@ function finish_spell(must_i)
 	local i, s
         
         s = __tmp_spells[must_i]
+
         assert(s.name, "No spell name!")
         assert(s.school, "No spell school!")
         assert(s.level, "No spell level!")
@@ -108,11 +109,13 @@ end
 
 -- Change this fct if I want to switch to learnable spells
 function get_level_school(i, s, max, min)
-	local lvl, sch, index, num
+--[[ DGDGDGDGDG
+	local lvl, sch, index, num, bonus
 	local player = players(i)
 
 	lvl = 0
         num = 0
+        bonus = 0
 
         -- No max specified ? assume 50
         if not max then
@@ -137,7 +140,7 @@ function get_level_school(i, s, max, min)
 
                 -- Do we need to add a special bonus ?
                 if __schools[sch].bonus_level then
-                	ok = ok + (__schools[sch].bonus_level() * SKILL_STEP)
+                	bonus = bonus + (__schools[sch].bonus_level() * SKILL_STEP)
                 end
 
                 -- Apply it
@@ -148,12 +151,14 @@ function get_level_school(i, s, max, min)
         -- The loss of information should be negligible since 1 skill = 1000 internaly
         lvl = (lvl / num) / 10
 	if not min then
-	        lvl = lua_get_level(i, s, lvl, max, 1)
+	        lvl = lua_get_level(i, s, lvl, max, 1, bonus)
 	else
-	        lvl = lua_get_level(i, s, lvl, max, min)
+	        lvl = lua_get_level(i, s, lvl, max, min, bonus)
         end
 
         return lvl
+]]
+return 1
 end
 
 -- The real get_level, works for schooled magic and for innate powers
@@ -222,16 +227,18 @@ function print_book(i, book, spl)
         -- Parse all spells
 	for index, s in school_book[book] do
         	local color = TERM_L_DARK
-                local lvl = get_level(i, s, 50, -50)
+--                local lvl = get_level(i, s, 50, -50)
+local lvl = 1
         	local xx, sch_str
-
+--[[
                 if is_ok_spell(i, s) then
                 	if get_mana(s) > get_power(i, s) then color = TERM_ORANGE
                         else color = TERM_L_GREEN end
                 end
-                
+]]
                 xx = nil
                 sch_str = ""
+--[[
 		for index, sch in __spell_school[s] do
                 	if xx then
 		                sch_str = sch_str.."/"..school(sch).name
@@ -240,10 +247,12 @@ function print_book(i, book, spl)
 		                sch_str = sch_str..school(sch).name
 	                end
                 end
+]]
                 c_prt(color, format("%c) %-20s%-16s   %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
 		y = y + 1
                 size = size + 1
         end
+
         prt(format("   %-20s%-16s Level Cost Fail Info", "Name", "School"), 1, x)
         return y
 end

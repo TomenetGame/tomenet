@@ -291,9 +291,9 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
 
 /* adj_mag_stat? stat_ind??  pfft */
 //s32b lua_spell_chance(s32b chance, int level, int skill_level, int mana, int cur_mana, int stat)
-s32b lua_spell_chance(int Ind, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat)
+s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat)
 {
-	player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[i];
         int             minfail;
 
 	/* Reduce failure rate by "effective" level adjustment */

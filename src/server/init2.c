@@ -1622,6 +1622,13 @@ void init_schools(s16b new_size)
 	max_schools = new_size;
 }
 
+void init_spells(s16b new_size)
+{
+	/* allocate the extra memory */
+	C_MAKE(school_spells, new_size, spell_type);
+	max_spells = new_size;
+}
+
 
 /*
  * Initialize some other arrays

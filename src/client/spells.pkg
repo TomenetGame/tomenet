@@ -20,6 +20,27 @@ typedef unsigned int u32b;
 
 #define DEFAULT_RADIUS			18
 
+
+/*
+ * The spell function must provide the desc
+ */
+struct spell_type
+{
+        cptr name;                      /* Name */
+        byte skill_level;               /* Required level (to learn) */
+	byte mana;			/* Required mana at lvl 1 */
+	byte mana_max;			/* Required mana at max lvl */
+	byte fail;			/* Minimum chance of failure */
+        s16b level;                     /* Spell level(0 = not learnt) */
+};
+
+struct school_type
+{
+        cptr name;                      /* Name */
+        s16b skill;                     /* Skill used for that school */
+};
+
+
 /* lua_bind.c */
 extern s16b new_school(int i, cptr name, s16b skill);
 extern s16b new_spell(int i, cptr name);

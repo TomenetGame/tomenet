@@ -624,4 +624,3 @@ struct player_type
 };
 
 extern player_type Players[2] @ Players_real;
-/* extern player_type player @ Player_real; */

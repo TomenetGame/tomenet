@@ -14,6 +14,8 @@
  */
 
 /* tables.c */
+extern byte adj_mag_stat[];
+extern byte adj_mag_fail[];
 extern s16b ddx[10];
 extern s16b ddy[10];
 extern char hexsym[16];
@@ -67,13 +69,9 @@ extern s16b last_line_info;
 extern s16b cur_line;
 extern s16b max_line;
 
-#if 0
-extern player_type player;
-extern player_type *p_ptr;
-#else	// 0
 extern player_type Players[2];
 extern player_type *p_ptr;
-#endif	// 0
+
 extern c_player_extra c_player;
 extern c_player_extra *c_p_ptr;
 // extern char body_name[80];

@@ -117,7 +117,7 @@ CONS_OBJS = \
 
 
 LUASRCS = \
-  server/script.c server/lua_bind.c \
+  server/script.c client/lua_bind.c \
   server/w_util.c server/w_play.c server/w_spells.c
 
 # TODO: lua directory should be under common/ and not server/
@@ -142,7 +142,7 @@ TOLUAOBJS = \
   server/lua/tolua_eh.o server/lua/tolua_bd.o
 
 CLI_LUASRCS = \
-  client/c-script.c server/lua_bind.c \
+  client/c-script.c client/lua_bind.c \
   client/w_play.c client/w_util.c client/w_spells.c
 
 #  server/lua_bind.c \
