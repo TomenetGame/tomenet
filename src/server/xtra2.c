@@ -5721,7 +5721,6 @@ bool master_level_specific(int Ind, int depth, char * parms)
 	player_type *p_ptr = Players[Ind];
 	
 //	if (strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
-//
 
 	switch (parms[0])
 	{
@@ -5729,7 +5728,8 @@ bool master_level_specific(int Ind, int depth, char * parms)
 		case 'u':
 		{
 			unstatic_level(wpos);
-       			msg_format(Ind, "The level (%d,%d) %dft has been unstaticed.", wpos->wx, wpos->wy, wpos->wz*50);
+//       			msg_format(Ind, "The level (%d,%d) %dft has been unstaticed.", wpos->wx, wpos->wy, wpos->wz*50);
+       			msg_format(Ind, "The level %s has been unstaticed.", wpos_format(wpos));
 			break;
 		}
 

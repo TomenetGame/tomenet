@@ -2591,6 +2591,9 @@ void player_talk_aux(int Ind, cptr message)
 	{
 		int k = 0, tk = 0;
 		char *token[9];
+		worldpos wp;
+
+		wpcopy(&wp, &p_ptr->wpos);
 
 		/* Look for a player's name followed by a colon */
 		colon = strchr(message, ' ');
@@ -2929,7 +2932,37 @@ void player_talk_aux(int Ind, cptr message)
 			 */
 			else if (admin)
 			{
-				if (prefix(message, "/shutdown"))
+				/* presume worldpos */
+				switch (tk)
+				{
+					case 1:
+					{
+						/* depth in feet */
+						wp.wz = k / 50;
+						break;
+					}
+
+					case 3:
+					{
+						/* depth in feet */
+						wp.wz = atoi(token[3]) / 50;
+					}
+
+					case 2:
+					{
+						wp.wx = k % MAX_WILD_X;
+						wp.wy = atoi(token[2]) % MAX_WILD_Y;
+						break;
+					}
+
+					default:
+					{
+						break;
+					}
+				}
+
+				if (prefix(message, "/shutdown") ||
+						prefix(message, "/quit"))
 				{
 					shutdown_server();
 				}
@@ -2952,11 +2985,11 @@ void player_talk_aux(int Ind, cptr message)
 					msg_print(Ind, "\377oUsage: /kick [Player name]");
 					return;
 				}
-#if 0 /* ewww jir... depth */
 				/* erase items and monsters */
 				else if (prefix(message, "/clear-level") ||
 						prefix(message, "/clv"))
 				{
+#if 0
 					/* depth in feet */
 					k = k / 50;
 					if (!tk) k = p_ptr->dun_depth;
@@ -2966,17 +2999,19 @@ void player_talk_aux(int Ind, cptr message)
 						msg_print(Ind, "\377oIlligal depth.  Usage: /clv [depth in feet]");
 						return;
 					}
+#endif
 
 					/* Wipe even if town/wilderness */
-					wipe_o_list_safely(k);
-					wipe_m_list(k);
+					wipe_o_list_safely(&wp);
+					wipe_m_list(&wp);
 
-					msg_format(Ind, "\377rItems and monsters on %dft are cleared.", k * 50);
+					msg_format(Ind, "\377rItems and monsters on %s are cleared.", wpos_format(&wp));
 					return;
 				}
 				else if (prefix(message, "/geno-level") ||
 						prefix(message, "/geno"))
 				{
+#if 0
 					/* depth in feet */
 					k = k / 50;
 					if (!tk) k = p_ptr->dun_depth;
@@ -2986,14 +3021,53 @@ void player_talk_aux(int Ind, cptr message)
 						msg_print(Ind, "\377oIlligal depth.  Usage: /geno [depth in feet]");
 						return;
 					}
+#endif	// 0
 
 					/* Wipe even if town/wilderness */
-					wipe_m_list(k);
+					wipe_m_list(&wp);
 
-					msg_format(Ind, "\377rMonsters on %dft are cleared.", k * 50);
+					msg_format(Ind, "\377rMonsters on %s are cleared.", wpos_format(&wp));
 					return;
 				}
+				else if (prefix(message, "/unstatic-level") ||
+						prefix(message, "/unst"))
+				{
+#if 0
+					/* depth in feet */
+					k = k / 50;
+					if (!tk) k = p_ptr->dun_depth;
+
+					if (-MAX_WILD >= k || k >= MAX_DEPTH)
+					{
+						msg_print(Ind, "\377oIlligal depth.  Usage: /unst [depth in feet]");
+						return;
+					}
 #endif
+					/* no sanity check, so be warned! */
+					master_level_specific(Ind, &wp, "u");
+					//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
+					return;
+				}
+				else if (prefix(message, "/static-level") ||
+						prefix(message, "/sta"))
+				{
+#if 0
+					/* depth in feet */
+					k = k / 50;
+					if (!tk) k = p_ptr->dun_depth;
+
+					if (-MAX_WILD >= k || k >= MAX_DEPTH)
+					{
+						msg_print(Ind, "\377oIlligal depth.  Usage: /sta [depth in feet]");
+						return;
+					}
+#endif	// 0
+
+					/* no sanity check, so be warned! */
+					master_level_specific(Ind, &wp, "s");
+					//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
+					return;
+				}
 				else if (prefix(message, "/identify") ||
 						prefix(message, "/id"))
 				{
@@ -3007,42 +3081,6 @@ void player_talk_aux(int Ind, cptr message)
 
 					return;
 				}
-#if 0
-				else if (prefix(message, "/unstatic-level") ||
-						prefix(message, "/unst"))
-				{
-					/* depth in feet */
-					k = k / 50;
-					if (!tk) k = p_ptr->dun_depth;
-
-					if (-MAX_WILD >= k || k >= MAX_DEPTH)
-					{
-						msg_print(Ind, "\377oIlligal depth.  Usage: /unst [depth in feet]");
-						return;
-					}
-
-					master_level_specific(Ind, k, "u");
-					//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
-					return;
-				}
-				else if (prefix(message, "/static-level") ||
-						prefix(message, "/sta"))
-				{
-					/* depth in feet */
-					k = k / 50;
-					if (!tk) k = p_ptr->dun_depth;
-
-					if (-MAX_WILD >= k || k >= MAX_DEPTH)
-					{
-						msg_print(Ind, "\377oIlligal depth.  Usage: /sta [depth in feet]");
-						return;
-					}
-
-					master_level_specific(Ind, k, "s");
-					//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
-					return;
-				}
-#endif
 				else if (prefix(message, "/artifact") ||
 						prefix(message, "/art"))
 				{
@@ -3080,13 +3118,34 @@ void player_talk_aux(int Ind, cptr message)
 					load_server_cfg();
 					return;
 				}
-				/* not fully implemented. */
 				else if (prefix(message, "/recall") ||
 						prefix(message, "/rec"))
 				{
+					switch (tk)
+					{
+						case 1:
+						{
+							/* depth in feet */
+							p_ptr->recall_pos.wz = k / 50;
+							break;
+						}
+
+						case 2:
+						{
+							p_ptr->recall_pos.wx = k % MAX_WILD_X;
+							p_ptr->recall_pos.wy = atoi(token[2]) % MAX_WILD_Y;
+							break;
+						}
+
+						default:
+						{
+							p_ptr->recall_pos.wz = 0;
+						}
+					}
+#if 0
 					/* depth in feet */
 					k = tk ? k / 50 : 0;
-#if 0
+
 					if (-MAX_WILD >= k || k >= MAX_DEPTH)
 					{
 						msg_print(Ind, "\377oIlligal depth.  Usage: /recall [depth in feet]");
@@ -3098,13 +3157,12 @@ void player_talk_aux(int Ind, cptr message)
 
 						msg_print(Ind, "\377oOmnipresent you are...");
 					}
-#endif
 					/* do it on your own risk.. pfft */
 					p_ptr->recall_pos.wz = k;
+#endif
 					p_ptr->word_recall = 1;
-
-					msg_print(Ind, "\377oOmnipresent you are...");
-
+//					msg_print(Ind, "\377oOmnipresent you are...");
+					msg_format(Ind, "\377oTrying to recall to %s...",wpos_format(&p_ptr->recall_pos));
 					return;
 				}
 				else if (prefix(message, "/wish"))
@@ -3606,4 +3664,12 @@ void bracer_ff(char *buf)
 	for(i=0;i<len;i++){
 		if(buf[i]=='{') buf[i]='\377';
 	}
+}
+
+/*
+ * make strings from worldpos '-1550ft of (17,15)'	- Jir -
+ */
+char *wpos_format(worldpos *wpos)
+{
+	return (format("%dft of (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
 }
