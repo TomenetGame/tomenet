@@ -442,7 +442,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	case 1: fprintf(fff, "Cheezer "); break;
 	case 2: fprintf(fff, "Slacker "); break;
 	case 3: fprintf(fff, "Swordsman "); break; //Judge for Highlander games
-	default: fprintf(fff, "%s (", class_info[q_ptr->pclass].title); break;
+	default: fprintf(fff, "%s ", class_info[q_ptr->pclass].title); break;
 	}
 	
 	switch(modify_number){
