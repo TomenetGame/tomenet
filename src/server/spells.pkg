@@ -119,6 +119,7 @@ typedef unsigned int u32b;
 #define GF_SHERO_PLAYER  133
 
 #define GF_UNBREATH     134
+#define GF_WAVE         135
 
 #define GF_TELE_TO		150
 #define GF_HAND_DOOM	151
@@ -181,6 +182,9 @@ extern bool set_oppose_elec(int Ind, int v);
 extern bool set_oppose_fire(int Ind, int v);
 extern bool set_oppose_cold(int Ind, int v);
 extern bool set_oppose_pois(int Ind, int v);
+extern bool set_stun(int Ind, int v);
+extern bool set_cut(int Ind, int v);
+extern bool set_food(int Ind, int v);
 extern bool set_invuln_short(int Ind, int v);
 extern bool set_biofeedback(int Ind, int v);
 extern bool set_adrenaline(int Ind, int v);

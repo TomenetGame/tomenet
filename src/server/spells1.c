@@ -1022,7 +1022,7 @@ byte spell_color(int type)
 		case GF_MANA:           return (randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
 		case GF_ARROW:          return (TERM_L_UMBER);
 		case GF_WATER:          return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
-//		case GF_WAVE:           return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+		case GF_WAVE:           return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 		case GF_NETHER:         return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
 		case GF_CHAOS:          return (TERM_MULTI);
 		case GF_DISENCHANT:     return (randint(5)!=1?TERM_L_BLUE:TERM_VIOLET);
@@ -3109,7 +3109,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #endif	// 0
 
-//		case GF_WAVE:
+		case GF_WAVE:
 		case GF_WATER:
 		{
 			int p1 = 0;
@@ -4027,7 +4027,33 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-			/* Chaos -- Chaos breathers resist */
+
+		/* Wave = Water + Force */
+		case GF_WAVE:
+		{
+                        if (seen) obvious = TRUE;
+
+			if ((r_ptr->d_char == 'E') &&
+			   (prefix(name, "W")))
+			{
+				note = " is immune.";
+				dam = 0;
+			}
+			else if (r_ptr->flags7 && RF7_AQUATIC)
+			{
+				note = " resists.";
+				note = " resists a lot.";
+				dam /= 9;
+                        }
+                        else
+                        {
+                                do_stun = randint(15) / div;
+                        }
+
+			break;
+		}
+
+                /* Chaos -- Chaos breathers resist */
 		case GF_CHAOS:
 		{
 			if (seen) obvious = TRUE;

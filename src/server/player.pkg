@@ -13,6 +13,32 @@ typedef unsigned int u32b;
 #define PW_PLAYER	8
 
 /*
+ * Player constants
+ */
+#define PY_MAX_EXP	999999999L	/* Maximum exp */
+#define PY_MAX_GOLD	999999999L	/* Maximum gold */
+#define PY_MAX_LEVEL	100		/* Maximum level */
+
+/*
+ * Player "food" crucial values
+ */
+#define PY_FOOD_MAX		15000	/* Food value (Bloated) */
+#define PY_FOOD_FULL	10000	/* Food value (Normal) */
+#define PY_FOOD_ALERT	2000	/* Food value (Hungry) */
+#define PY_FOOD_WEAK	1000	/* Food value (Weak) */
+#define PY_FOOD_FAINT	500		/* Food value (Fainting) */
+#define PY_FOOD_STARVE	100		/* Food value (Starving) */
+
+/*
+ * Player regeneration constants
+ */
+#define PY_REGEN_NORMAL		197		/* Regen factor*2^16 when full */
+#define PY_REGEN_WEAK		98		/* Regen factor*2^16 when weak */
+#define PY_REGEN_FAINT		33		/* Regen factor*2^16 when fainting */
+#define PY_REGEN_HPBASE		1442	/* Min amount hp regen*2^16 */
+#define PY_REGEN_MNBASE		524		/* Min amount mana regen*2^16 */
+
+/*
  * Skills
  */
 #define SKILL_MAX               50000           /* Maximun skill value */

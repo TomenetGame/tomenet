@@ -84,6 +84,8 @@ SCHOOL_DIVINATION = add_school
 pern_dofile(Ind, "s_mana.lua")
 pern_dofile(Ind, "s_fire.lua")
 pern_dofile(Ind, "s_air.lua")
+pern_dofile(Ind, "s_water.lua")
+pern_dofile(Ind, "s_earth.lua")
 pern_dofile(Ind, "s_convey.lua")
 
 -- Create the crystal of mana
@@ -96,6 +98,21 @@ school_book[1] = {
 	GLOBELIGHT, FIREFLASH, FIREWALL,
 }
 
+-- The book of the blowing winds
+school_book[2] = {
+        NOXIOUSCLOUD, POISONBLOOD, INVISIBILITY, AIRWINGS, THUNDERSTORM,
+}
+
+-- The book of the impenetrable earth
+school_book[3] = {
+        STONESKIN, DIG, STONEPRISON, SHAKE, STRIKE,
+}
+
+-- The book of the unstopable wave
+school_book[4] = {
+        ENTPOTION, TIDALWAVE, ICESTORM,
+}
+
 -- Create the book of translocation
 school_book[5] = {
         DISARM, BLINK, TELEPORT, TELEAWAY, RECALL,
@@ -103,7 +120,7 @@ school_book[5] = {
 
 -- Create the book of beginner's cantrip
 school_book[50] = {
-        NOXIOUSCLOUD, POISONBLOOD, INVISIBILITY, AIRWINGS, THUNDERSTORM,
+        STONESKIN, DIG, STONEPRISON, SHAKE, STRIKE,
 }
 
 
@@ -170,48 +187,8 @@ school_book[11] = {
         DRAIN, GENOCIDE, WRAITHFORM, FLAMEOFUDUN,
 }
 
--- Create the book of eru
-school_book[20] = {
-        ERU_SEE, ERU_LISTEN, ERU_UNDERSTAND, ERU_PROT,
-}
-
--- Create the book of manwe
-school_book[21] = {
-        MANWE_BLESS, MANWE_SHIELD, MANWE_CALL, MANWE_AVATAR,
-}
-
--- Create the book of tulkas
-school_book[22] = {
-        TULKAS_AIM, TULKAS_SPIN, TULKAS_WAVE,
-}
-
--- Create the book of melkor
-school_book[23] = {
-        MELKOR_CURSE, MELKOR_CORPSE_EXPLOSION, MELKOR_MIND_STEAL,
-}
-
 -- Create the book of beginner's cantrip
 school_book[50] = {
         MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK, SENSEMONSTER, SENSEHIDDEN,
-}
-
--- Create the book of teleporatation
-school_book[51] = {
-        TELEPORT, TELEAWAY
-}
-
--- Create the book of recall
-school_book[52] = {
-        RECALL
-}
-
--- Create the book of summoning
-school_book[53] = {
-        FIREGOLEM, SUMMONANNIMAL
-}
-
--- Create the book of fireflash
-school_book[54] = {
-        FIREFLASH
 }
 ]]

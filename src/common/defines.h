@@ -2663,6 +2663,7 @@ that keeps many algorithms happy.
 #define GF_SHERO_PLAYER  133
 
 #define GF_UNBREATH     134
+#define GF_WAVE         135
 
 #define GF_TELE_TO		150
 #define GF_HAND_DOOM	151

@@ -3365,8 +3365,13 @@ void update_stuff(int Ind)
 		remote_update(p_ptr->conn, "scpt/c-init.lua");
 		remote_update(p_ptr->conn, "scpt/player.lua");
 		remote_update(p_ptr->conn, "scpt/spells.lua");
-		remote_update(p_ptr->conn, "scpt/s_convey.lua");
 		remote_update(p_ptr->conn, "scpt/s_aux.lua");
+		remote_update(p_ptr->conn, "scpt/s_convey.lua");
+		remote_update(p_ptr->conn, "scpt/s_mana.lua");
+		remote_update(p_ptr->conn, "scpt/s_fire.lua");
+		remote_update(p_ptr->conn, "scpt/s_air.lua");
+		remote_update(p_ptr->conn, "scpt/s_water.lua");
+		remote_update(p_ptr->conn, "scpt/s_earth.lua");
 	}
 }
 
