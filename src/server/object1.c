@@ -3662,23 +3662,6 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	calc_bonuses(Ind);
 
 	fprintf(fff, "\n");
-#if 0 //double -> obsolete (already within the only calling function)
-        switch(o_ptr->tval){
-        case TV_HAFTED:
-                fprintf(fff, "It's a hafted weapon.\n"); break;
-        case TV_POLEARM:
-                fprintf(fff, "It's a polearm.\n"); break;
-        case TV_SWORD:
-                fprintf(fff, "It's a sword-type weapon.\n"); break;
-        case TV_AXE:
-                fprintf(fff, "It's an axe-type weapon.\n"); break;
-        default:
-                break;
-        }
-
-        if (f4 & TR4_COULD2H) fprintf(fff, "It can be wielded two-handed.\n");
-	if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
-#endif
 	fprintf(fff, "Using it you would have %d blow%s and do an average damage per turn of:\n", p_ptr->num_blow, (p_ptr->num_blow) ? "s" : "");
 
 	if (f1 & TR1_SLAY_ANIMAL) output_dam(Ind, fff, o_ptr, 2, 0, "animals", NULL);
@@ -4071,15 +4054,6 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 #endif
 	if (f4 & TR4_COULD2H) fprintf(fff, "It can be wielded two-handed.\n");
 	if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
-
-#if 0	// obsolete - DELETEME
-	if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
-	{
-		int blows = calc_blows(Ind, o_ptr);
-		fprintf(fff, "With it, you can usually attack %d time%s/turn.\n",
-				blows, blows > 1 ? "s" : "");
-	}
-#endif	// 0
 
 	/* Mega Hack^3 -- describe the amulet of life saving */
 	if (o_ptr->tval == TV_AMULET &&
@@ -5132,12 +5106,6 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
 		info[i++] = "It allows you to see invisible monsters.";
 	}
-#if 0	// obsolete(DELETEME)
-	if (f3 & TR3_TELEPATHY)
-	{
-		info[i++] = "It gives telepathic powers.";
-	}
-#endif	// 0
 	if (f3 & TR3_SLOW_DIGEST)
 	{
 		info[i++] = "It slows your metabolism.";
