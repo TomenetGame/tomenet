@@ -3001,9 +3001,9 @@ that keeps many algorithms happy.
 #define TR5_FULL_NAME           0x00000100L     /* Uses direct name from k_info */
 #define TR5_LUCK                0x00000200L     /* Luck += pval */
 #define TR5_IMMOVABLE           0x00000400L     /* Cannot move */
-
 /* XXX */
 /*#define TR5_LIFE                0x04000000L */
+#define TR5_IGNORE_WATER	0x00040000L	/* Item ignores Water damage */
 #define TR5_RES_TIME		0x00080000L
 #define TR5_RES_MANA		0x00100000L
 #define TR5_IM_POISON		0x00200000L
