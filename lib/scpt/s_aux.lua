@@ -110,7 +110,7 @@ end
 -- Change this fct if I want to switch to learnable spells
 function get_level_school(i, s, max, min)
 	local lvl, sch, index, num, bonus
-	local player = players(i)
+--	local player = players(i)
 
 	lvl = 0
         num = 0
@@ -127,10 +127,12 @@ function get_level_school(i, s, max, min)
                 -- Take the basic skill value
                 r = player.s_info[(school(sch).skill) + 1].value
 
+	c_msg_print("r:"..r)
         	-- Are we under sorcery effect ?
                 if __schools[sch].sorcery then
                         s = player.s_info[SKILL_SORCERY + 1].value
                 end
+	c_msg_print("s:"..s)
                 
                 -- Find the higher
                 ok = r
@@ -362,11 +364,11 @@ end
 -- one question.. why this should be LUA anyway?
 -- because accessing lua table is so badly easier in lua
 function cast_school_spell(i, s, s_ptr, no_cost, other)
-	local player = players(i)
+--	local player = players(i)
 	local use = FALSE
 
 	-- No magic
-	if (player.antimagic > 0) then
+	if check_antimagic(Ind) == TRUE then
 		msg_print(i, "Your anti-magic field disrupts any magic attempts.")
 		return
         end
@@ -377,7 +379,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	-- if it costs something then some condition must be met
 	if not no_cost then
 	 	-- Require lite
-		if (check_affect(s, "blind")) and ((player.blind > 0) or (no_lite() == TRUE)) then
+		if (check_affect(s, "blind")) and ((player.blind > 0) or (no_lite(Ind) == TRUE)) then
 			msg_print(i, "You cannot see!")
 			return
 		end

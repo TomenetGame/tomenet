@@ -1,6 +1,17 @@
 -- $Id$
 -- Client side LUA initialization of TomeNET
 
+-- Beware of the scary undefined globals
+function safe_getglobal(x)
+	local v = rawget(globals(), x)
+	if v then
+		return v
+	else
+		error("undefined global variable'"..x.."'")
+	end
+end
+
+settagmethod(tag(nil), "getglobal", safe_getglobal)
 
 pern_dofile(Ind, "player.lua")
 
