@@ -18798,7 +18798,7 @@ D:to man and it screams a deadly scream when one tries to pull it out.
 N:1063:Zeus, the Omnipotent
 G:P:W
 I:140:100d100:111:175:0
-W:70:40:1600:77777
+W:70:40:1600:777
 E:2:0:2:6:1:1
 O:20:20:20:20
 B:WHISPER:SEDUCE
