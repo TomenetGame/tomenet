@@ -4177,7 +4177,7 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"Rogue addict",
 		"Schmendrick",
 		"Gunfighter",
-		"Tiem waster",
+		"Time waster",
 		"Bug chaser",
 	},
 #endif	// 0

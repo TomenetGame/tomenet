@@ -389,7 +389,7 @@ static bool do_seduce(int Ind, int m_idx)
 			case 2:
 				msg_print(Ind, "Darn, you've got a disease!");
 				/* bypass resistance */
-				set_poisoned(Ind, p_ptr->poisoned + rand_int(10) + 10);
+				set_poisoned(Ind, p_ptr->poisoned + rand_int(40) + 40);
 				done = TRUE;
 				break;
 
@@ -422,7 +422,7 @@ static bool do_seduce(int Ind, int m_idx)
 				break;
 
 			case 7:
-				msg_print(Ind, "Grr, Basterd!!");
+				msg_print(Ind, "Grr, Bastard!!");
 				(void)do_eat_item(Ind, m_idx);
 				done = TRUE;
 				break;

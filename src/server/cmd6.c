@@ -6247,6 +6247,8 @@ bool unmagic(int Ind)
 		}
 	}
 
+	if (p_ptr->word_recall) ident |= set_recall_timer(Ind, 0);
+
 	return (ident);
 }
 

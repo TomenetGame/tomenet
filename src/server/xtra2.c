@@ -5991,11 +5991,11 @@ bool set_recall(int Ind, int v, object_type * o_ptr)
 	if (!p_ptr->word_recall)
 	{
 		set_recall_depth(p_ptr, o_ptr);
-		set_recall_timer(Ind, v);
+		return (set_recall_timer(Ind, v));
 	}
 	else
 	{
-		set_recall_timer(Ind, 0);
+		return (set_recall_timer(Ind, 0));
 	}
 
 }

@@ -1221,6 +1221,11 @@ To find the latest change quickly, search ==== :)
 - a death inside walls no longer causes item lost.
 [H] Hand of Doom bypasses GoI/ManaShield.
 
+01/07/2002 (Jir)
+[B] arrows did no damage, pfft
+[B] townies could enter the tavern.
+
+
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
@@ -1262,7 +1267,7 @@ concisely: what's hot now?
 =============================================================================
 below this line are the unfixed bugs known:
 
-[B] House doors still seem to crash sometimes. (door even vanishes??)
+[B] House doors are still said to crash sometimes. (door even vanishes??)
 [B] wpos display hides wound states(eg.'Deep Gash')
 [B] ever-charging arts (eg.star)
 [B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
@@ -1284,6 +1289,21 @@ below this line are the unfixed bugs known:
 [B] los chech sometimes goes wrong (southeast)
 [B][C] inventory window sometimes loses a) b) etc.
 [B] 'write error' sometimes (old bug)
+[B] cannot connect!
+Read 96 bytes
+Read 582 bytes
+Read 0 bytes
+check for font-x11.prf
+/usr/home/key/devel/pm/tomenet: Quitting!
+/usr/home/key/devel/pm/tomenet: No play packet reply received.
+
+02 Jul 04:53:32: Welcome Olorin=dg@darkgod.middle.earth (193.251.38.201/33017)
+/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
+/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
+/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
+/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (4)
+02 Jul 04:53:43: Goodbye Olorin=dg@darkgod.middle.earth ("client quit")
+
 
 *below are bugs repoorted but not confirmed*
 [B] Macro sticks sometimes

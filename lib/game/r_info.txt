@@ -18795,6 +18795,32 @@ S:HAND_DOOM | SHRIEK
 D:A poisonous plant like a branched carrot, but it has a face similar
 D:to man and it screams a deadly scream when one tries to pull it out.
 
+N:1063:Zeus, the Omnipotent
+G:P:W
+I:140:100d100:111:175:0
+W:70:40:1600:77777
+E:2:0:2:6:1:1
+O:20:20:20:20
+B:WHISPER:SEDUCE
+B:TOUCH:SEDUCE
+B:WHISPER:SEDUCE
+B:TOUCH:SEDUCE
+# unisex
+F:UNIQUE | CAN_SPEAK | ATTR_MULTI | ATTR_ANY |
+F:FORCE_MAXHP | WEIRD_MIND
+F:REFLECTING | NO_DEATH
+F:RES_NETH | INVISIBLE | 
+F:SMART | PASS_WALL | POWERFUL | RES_TELE | 
+F:REGENERATE | CAN_FLY | CAN_SWIM
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
+F:NO_CONF | NO_SLEEP | NO_FEAR | NO_STUN | RES_TELE
+F:JOKEANGBAND
+S:1_IN_8 | 
+S:TPORT | TELE_TO | DARKNESS
+D:The omnipotent God of the Gods, resides in the Parnassus
+D:and rules the world - but 'it' was also known for its vigor
+D:and lasciviousness.
+
 
 # N: serial number : monster name
 # G: symbol : color

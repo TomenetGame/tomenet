@@ -2572,7 +2572,7 @@ void do_cmd_fire(int Ind, int dir)
 			/* Calculate the new location (see "project()") */
 			ny = y;
 			nx = x;
-//			mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
+			//			mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 			mmove2(&ny, &nx, by, bx, ty, tx);
 
 			/* Stopped by walls/doors */
@@ -2768,49 +2768,96 @@ void do_cmd_fire(int Ind, int dir)
 
 					} /* end hack */
 				}
+			}
 
-				/* Monster here, Try to hit it */
-				if (zcave[y][x].m_idx > 0)
+			/* Monster here, Try to hit it */
+			if (zcave[y][x].m_idx > 0)
+			{
+				cave_type *c_ptr = &zcave[y][x];
+
+				monster_type *m_ptr = &m_list[c_ptr->m_idx];
+				monster_race *r_ptr = race_inf(m_ptr);
+
+				/* Check the visibility */
+				visible = p_ptr->mon_vis[c_ptr->m_idx];
+
+				/* Note the collision */
+				hit_body = TRUE;
+
+				/* Did we hit it (penalize range) */
+				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible))
 				{
-					cave_type *c_ptr = &zcave[y][x];
+					bool fear = FALSE;
 
-					monster_type *m_ptr = &m_list[c_ptr->m_idx];
-					monster_race *r_ptr = race_inf(m_ptr);
+					/* Assume a default death */
+					cptr note_dies = " dies.";
 
-					/* Check the visibility */
-					visible = p_ptr->mon_vis[c_ptr->m_idx];
-
-					/* Note the collision */
-					hit_body = TRUE;
-
-					/* Did we hit it (penalize range) */
-					if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible))
+					/* Some monsters get "destroyed" */
+					if ((r_ptr->flags3 & RF3_DEMON) ||
+							(r_ptr->flags3 & RF3_UNDEAD) ||
+							(r_ptr->flags2 & RF2_STUPID) ||
+							(strchr("Evg", r_ptr->d_char)))
 					{
-						bool fear = FALSE;
+						/* Special note at death */
+						note_dies = " is destroyed.";
+					}
 
-						/* Assume a default death */
-						cptr note_dies = " dies.";
 
-						/* Some monsters get "destroyed" */
-						if ((r_ptr->flags3 & RF3_DEMON) ||
-								(r_ptr->flags3 & RF3_UNDEAD) ||
-								(r_ptr->flags2 & RF2_STUPID) ||
-								(strchr("Evg", r_ptr->d_char)))
+					/* Handle unseen monster */
+					if (!visible)
+					{
+						/* Invisible monster */
+						msg_format(Ind, "The %s finds a mark.", o_name);
+					}
+
+					/* Handle visible monster */
+					else
+					{
+						char m_name[80];
+
+						/* Get "the monster" or "it" */
+						monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+
+						/* Message */
+						msg_format(Ind, "The %s hits %s.", o_name, m_name);
+
+						/* Hack -- Track this monster race */
+						if (visible) recent_track(m_ptr->r_idx);
+
+						/* Hack -- Track this monster */
+						if (visible) health_track(Ind, c_ptr->m_idx);
+					}
+
+					/* Apply special damage XXX XXX XXX */
+					tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr);
+					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
+
+					/* No negative damage */
+					if (tdam < 0) tdam = 0;
+
+					if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) &&
+							!(r_ptr->flags3 & RF3_NO_CONF) &&
+							!(r_ptr->flags4 & RF4_BR_CONF) &&
+							!(r_ptr->flags4 & RF4_BR_CHAO) && !boomerang)
+					{
+						int i;
+
+						/* Already partially confused */
+						if (m_ptr->confused)
 						{
-							/* Special note at death */
-							note_dies = " is destroyed.";
+							i = m_ptr->confused + p_ptr->lev;
 						}
 
-
-						/* Handle unseen monster */
-						if (!visible)
-						{
-							/* Invisible monster */
-							msg_format(Ind, "The %s finds a mark.", o_name);
-						}
-
-						/* Handle visible monster */
+						/* Was not confused */
 						else
+						{
+							i = p_ptr->lev;
+						}
+
+						/* Apply confusion */
+						m_ptr->confused = (i < 200) ? i : 200;
+
+						if (visible)
 						{
 							char m_name[80];
 
@@ -2818,125 +2865,78 @@ void do_cmd_fire(int Ind, int dir)
 							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 							/* Message */
-							msg_format(Ind, "The %s hits %s.", o_name, m_name);
-
-							/* Hack -- Track this monster race */
-							if (visible) recent_track(m_ptr->r_idx);
-
-							/* Hack -- Track this monster */
-							if (visible) health_track(Ind, c_ptr->m_idx);
+							msg_format(Ind, "%s appears confused.", m_name);
 						}
-
-						/* Apply special damage XXX XXX XXX */
-						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr);
-						tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
-
-						/* No negative damage */
-						if (tdam < 0) tdam = 0;
-
-						if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) &&
-								!(r_ptr->flags3 & RF3_NO_CONF) &&
-								!(r_ptr->flags4 & RF4_BR_CONF) &&
-								!(r_ptr->flags4 & RF4_BR_CHAO) && !boomerang)
-						{
-							int i;
-
-							/* Already partially confused */
-							if (m_ptr->confused)
-							{
-								i = m_ptr->confused + p_ptr->lev;
-							}
-
-							/* Was not confused */
-							else
-							{
-								i = p_ptr->lev;
-							}
-
-							/* Apply confusion */
-							m_ptr->confused = (i < 200) ? i : 200;
-
-							if (visible)
-							{
-								char m_name[80];
-
-								/* Get "the monster" or "it" */
-								monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
-								/* Message */
-								msg_format(Ind, "%s appears confused.", m_name);
-							}
-						}
-
-
-						/* Hit the monster, check for death */
-						if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))
-						{
-							/* Dead monster */
-						}
-
-						/* No death */
-						else
-						{
-							/* Message */
-							message_pain(Ind, c_ptr->m_idx, tdam);
-
-							/* Take note */
-							if (fear && visible)
-							{
-								char m_name[80];
-
-								/* Sound */
-								sound(Ind, SOUND_FLEE);
-
-								/* Get the monster name (or "it") */
-								monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
-								/* Message */
-								msg_format(Ind, "%^s flees in terror!", m_name);
-							}
-						}
-
-						/* Add a nice ball if needed */
-						if (p_ptr->bow_brand_t && !boomerang)
-						{
-							switch (p_ptr->bow_brand_t)
-							{
-								case BOW_BRAND_BALL_FIRE:
-									project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-									break;
-								case BOW_BRAND_BALL_COLD:
-									project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-									break;
-								case BOW_BRAND_BALL_ELEC:
-									project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-									break;
-								case BOW_BRAND_BALL_ACID:
-									project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-									break;
-								case BOW_BRAND_BALL_SOUND:
-									project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-									break;
-							}
-						}
-						/* Exploding arrow ? */
-						else if (o_ptr->pval != 0 && !magic)
-						{
-							int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2;
-							int flag = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
-							switch(o_ptr->sval)
-							{
-								case SV_AMMO_LIGHT: rad = 2; dam /= 2; break;
-								case SV_AMMO_NORMAL: rad = 3; break;
-								case SV_AMMO_HEAVY: rad = 4; dam *= 2; break;
-							}
-
-							project(0 - Ind, rad, &p_ptr->wpos, y, x, dam, o_ptr->pval, flag);
-						}
-
-						/* Stop looking */
-						if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP) || boomerang) break;
 					}
+
+
+					/* Hit the monster, check for death */
+					if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))
+					{
+						/* Dead monster */
+					}
+
+					/* No death */
+					else
+					{
+						/* Message */
+						message_pain(Ind, c_ptr->m_idx, tdam);
+
+						/* Take note */
+						if (fear && visible)
+						{
+							char m_name[80];
+
+							/* Sound */
+							sound(Ind, SOUND_FLEE);
+
+							/* Get the monster name (or "it") */
+							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+
+							/* Message */
+							msg_format(Ind, "%^s flees in terror!", m_name);
+						}
+					}
+
+					/* Add a nice ball if needed */
+					if (p_ptr->bow_brand_t && !boomerang)
+					{
+						switch (p_ptr->bow_brand_t)
+						{
+							case BOW_BRAND_BALL_FIRE:
+								project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+								break;
+							case BOW_BRAND_BALL_COLD:
+								project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+								break;
+							case BOW_BRAND_BALL_ELEC:
+								project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+								break;
+							case BOW_BRAND_BALL_ACID:
+								project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+								break;
+							case BOW_BRAND_BALL_SOUND:
+								project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+								break;
+						}
+					}
+					/* Exploding arrow ? */
+					else if (o_ptr->pval != 0 && !magic)
+					{
+						int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2;
+						int flag = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
+						switch(o_ptr->sval)
+						{
+							case SV_AMMO_LIGHT: rad = 2; dam /= 2; break;
+							case SV_AMMO_NORMAL: rad = 3; break;
+							case SV_AMMO_HEAVY: rad = 4; dam *= 2; break;
+						}
+
+						project(0 - Ind, rad, &p_ptr->wpos, y, x, dam, o_ptr->pval, flag);
+					}
+
+					/* Stop looking */
+					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP) || boomerang) break;
 				}
 			}
 		}

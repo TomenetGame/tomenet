@@ -4922,7 +4922,7 @@ static void process_monster(int Ind, int m_idx)
 
 
 		/* Tavern entrance? */
-		if (c_ptr->feat == FEAT_SHOP_TAIL)
+		if (c_ptr->feat == FEAT_SHOP_TAIL - 1)
 		{
 			/* Nothing */
 		}

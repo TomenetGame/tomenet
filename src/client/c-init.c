@@ -500,6 +500,9 @@ void client_init(char *argv1, bool skip)
 	/* Show the MOTD */
 	show_motd();
 
+			/* Flush the network output buffer */
+			Net_flush();	// meanless, most likely
+
 	/* Start the game */
 	if (Net_start(sex, race, class) == -1)
 	{

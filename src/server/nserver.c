@@ -2309,6 +2309,9 @@ static int Receive_play(int ind)
 	int i, n;
 	s16b sex, race, class;
 
+	/* XXX */
+			n = Sockbuf_read(&connp->r);
+
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) != 1)
 	{
 		errno = 0;
@@ -2320,7 +2323,7 @@ static int Receive_play(int ind)
 	{
 	  //		errno = 0;
 #if DEBUG_LEVEL > 1
-		if (ch != PKT_KEEPALIVE)
+//		if (ch != PKT_KEEPALIVE)
 			plog(format("Packet is not of play type (%d)", ch));
 #endif	// DEBUG_LEVEL
 	  //Destroy_connection(ind, "not play");
@@ -2345,6 +2348,10 @@ static int Receive_play(int ind)
 //		if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
 		if (RECEIVE_PLAY_SIZE > connp->r.len - (connp->r.ptr - connp->r.buf))
 		{
+#if DEBUG_LEVEL > 1
+			plog(format("Play packet is not large enough yet (%d)",
+						connp->r.len - (connp->r.ptr - connp->r.buf)));
+#endif	// DEBUG_LEVEL
 			connp->r.ptr = connp->r.buf;
 			return 1;
 		}
@@ -7070,6 +7077,9 @@ static int Receive_clear_buffer(int ind)
 		Sockbuf_clear(&connp->c);
 		Sockbuf_clear(&connp->w);
 #endif	// 0
+
+		/* Clear 'current spell' */
+		p_ptr->current_spell = -1;
 	}
 
 	return 1;

@@ -1460,6 +1460,10 @@ static void calc_hitpoints(int Ind)
 /*
  * Extract and set the current "lite radius"
  */
+/*
+ * XXX currently, this function does almost nothing; if lite radius
+ * should be changed, call calc_bonuses too.
+ */
 static void calc_torch(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
