@@ -58,8 +58,10 @@ bool WriteAccount(struct account *r_acc, bool new){
 			fseek(fp, -sizeof(struct account), SEEK_CUR);
 			fwrite(r_acc, sizeof(struct account), 1, fp);
 		}
-		if(new && delpos!=-1L){
-			fseek(fp, delpos, SEEK_SET);
+		if(new){
+			if(delpos!=-1L)
+				fseek(fp, delpos, SEEK_SET);
+			else fseek(fp, 0L, SEEK_END);
 			fwrite(r_acc, sizeof(struct account), 1, fp);
 			found=1;
 		}
