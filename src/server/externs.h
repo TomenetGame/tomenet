@@ -84,6 +84,9 @@ extern martial_arts ma_blows[MAX_MA];
 
 
 /* variable.c */
+extern char tdy[662];
+extern char tdx[662];
+extern char tdi[16];
 extern cptr copyright[6];
 extern byte version_major;
 extern byte version_minor;

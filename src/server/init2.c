@@ -1347,7 +1347,32 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 };
 #endif
 
+static void prepare_distance()
+{
+	int d, y, x, count = 0;
 
+	/* Start with adjacent locations, spread further */
+	for (d = 0; d < PREPARE_RADIUS ; d++)
+	{
+		/* Check nearby locations */
+		for (y = - d; y <= d; y++)
+		{
+			for (x = - d; x <= d; x++)
+			{
+				/* Check distance */
+				if (distance(y, x, 0, 0) != d) continue;
+
+				tdy[count] = y;
+				tdx[count] = x;
+				count++;
+			}
+		}
+		tdi[d] = count;
+	}
+#if DEBUG_LEVEL > 0
+	s_printf("last count: %d\n", count);
+#endif
+}
 
 
 /*
@@ -1414,6 +1439,7 @@ static errr init_other(void)
 	/* Hack -- Just call the "format()" function */
 	(void)format("%s (%s).", "Ben Harrison", MAINTAINER);
 
+	prepare_distance();
 
 	/* Success */
 	return (0);

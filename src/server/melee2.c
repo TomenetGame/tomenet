@@ -17,18 +17,46 @@
 /* This removes some monster-behavior codes which can be bottlenecksll. */
 //#define STUPID_MONSTERS
 
-/* distance for AI_ANNOY */
+/* distance for AI_ANNOY (nothing to do with game speed.) */
 #define		ANNOY_DISTANCE	5
 
-/* if bottle-neckie, change this radius. default was 10. */
+/* radius that every fleeing/hiding monster scans for safe place.
+ * if bottle-neckie, change this value. default was 10. */
 #define		SAFETY_RADIUS	8
  
+/* INDIRECT_FREQ does the following:
+ *
+ * ..x.......p.
+ * ....###.....
+ * ....@##.....
+ * .....##.....
+ *
+ * 'p' casts a spell on 'x', so that spell(ball and summoning) will affect '@'
+ * indirectly.
+ * also, they cast self-affecting spells(heal, blink etc).
+ * Note that player can do the same thing (using /tar command), which was
+ * an effective abuse in some variants.
+ */
+
 /* Chance of an out-of-sight monster to cast a spell, in percent.
  * reducing this also speeds the server up. */
-/* Disabled for main server game. Quylthulgs summoning
-   and all sorts from behind walls ! ;( */
-#define		INDIRECT_FREQ	0
+#define		INDIRECT_FREQ	50
  
+/* pseudo 'radius' for summoning spells. default is 3.
+ * the real solution should be to limit # of monsters a summoner can summon,
+ * probably introducing 'mana points' to the monsters.
+ */
+#define		INDIRECT_SUMMONING_RADIUS	3
+
+/* This value is for the case like:
+ * > Disabled for main server game. Quylthulgs summoning
+ * > and all sorts from behind walls ! ;(
+ *
+ * TODO: implement monsters' spell-point
+ * TODO: move this kinda 'define's to config.h(or mangband.cfg), so that
+ *       one doesn't have to commit local changes.
+ */
+
 /* How frequent they change colours? */
 #define 	MULTI_HUED_UPDATE	5
 
@@ -407,11 +435,38 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad)
  */
 static bool summon_possible(worldpos *wpos, int y1, int x1)
 {
-	int y, x;
+	int y, x, i;
 	cave_type **zcave;
 
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	
+	/* Start with adjacent locations, spread further */
+	for (i = 1; i <= tdi[2]; i++)
+	{
+		y = y1 + tdy[i];
+		x = x1 + tdx[i];
+
+		/* Ignore illegal locations */
+		if (!in_bounds(y,x)) continue;
+
+		/* Hack: no summon on glyph of warding */
+		if (zcave[y][x].feat == FEAT_GLYPH) continue;
+#if 0
+		if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
+
+		/* Nor on the between */
+		if (cave[y][x].feat == FEAT_BETWEEN) return (FALSE);
+
+		/* ...nor on the Pattern */
+		if ((cave[y][x].feat >= FEAT_PATTERN_START)
+				&& (cave[y][x].feat <= FEAT_PATTERN_XTRA2)) continue;
+#endif	// 0
+
+		/* Require empty floor grid in line of sight */
+		if (cave_empty_bold(zcave,y,x) && los(wpos, y1,x1,y,x)) return (TRUE);
+	}
+
+#if 0	
 	/* Start at the player's location, and check 2 grids in each dir */
 	for (y= y1-2; y<= y1+2; y++)
 	{
@@ -440,7 +495,7 @@ static bool summon_possible(worldpos *wpos, int y1, int x1)
 			if (cave_empty_bold(zcave,y,x) && los(wpos, y1,x1,y,x)) return (TRUE);
 		}
 	}
-	
+#endif	// 0
 	return FALSE;
 }
 
@@ -871,7 +926,7 @@ bool monst_check_antimagic(int Ind, int m_idx)
  *
  * Great bottleneck :-/
  */
-static int near_hit(int m_idx, int *yp, int *xp)
+static int near_hit(int m_idx, int *yp, int *xp, int rad)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
@@ -881,19 +936,51 @@ static int near_hit(int m_idx, int *yp, int *xp)
 	int py = *yp;
 	int px = *xp;
 
-	int y, x, d;	// , dis;
+	int y, x, d = 1, i;	// , dis;
 	/*
 	int vy = magik(50) ? -1 : 1;
 	int vx = magik(50) ? -1 : 1;
+	bool giveup = TRUE;
 	*/
-	bool giveup;
 
 //	int gy = 0, gx = 0, gdis = 0;
 
 	cave_type **zcave;
+
+	if (rad < 1) return 99;
+
 	/* paranoia */
 	if(!(zcave=getcave(&m_ptr->wpos))) return 99;
 
+	for (i = 1; i <= tdi[rad]; i++)
+	{
+		if (i == tdi[d]) d++;
+
+		y = py + tdy[i];
+		x = px + tdx[i];
+
+		/* Check nearby locations */
+
+		/* Skip illegal locations */
+		if (!in_bounds(y, x)) continue;
+
+		/* Skip locations in a wall */
+		if (!cave_floor_bold(zcave, y, x)) continue;
+
+		/* Check if projectable */
+		if (projectable_wall(&m_ptr->wpos, fy, fx, y, x) &&
+				projectable_wall(&m_ptr->wpos, y, x, py, px))
+		{
+			/* Good location */
+			(*yp) = y;
+			(*xp) = x;
+
+			/* Found nice place */
+			return (d);
+		}
+	}
+
+#if 0
 	/* Start with adjacent locations, spread further */
 	for (d = 1; d < 4; d++)
 	{
@@ -933,6 +1020,7 @@ static int near_hit(int m_idx, int *yp, int *xp)
 		}
 		if (giveup) return (99);
 	}
+#endif	// 0
 
 	/* No projectable place */
 	return (99);
@@ -1098,6 +1186,8 @@ bool make_attack_spell(int Ind, int m_idx)
 	f5 = r_ptr->flags5;
 	f6 = r_ptr->flags6;
 
+	/* radius of ball spells and breathes.
+	 * XXX this doesn't reflect some exceptions(eg. radius=4 spells). */
 	srad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
 
 	/* Hack -- require projectable player */
@@ -1122,7 +1212,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (summon ||
 				f4 & RF4_RADIUS_SPELLS ||
 				f5 & RF5_RADIUS_SPELLS)
-				rad = near_hit(m_idx, &y, &x);
+				rad = near_hit(m_idx, &y, &x,
+						srad > INDIRECT_SUMMONING_RADIUS ?
+						srad : INDIRECT_SUMMONING_RADIUS);
 			else rad = 99;
 
 //			if (rad > 3 || (rad == 3 && !(r_ptr->flags2 & (RF2_POWERFUL)))) 
@@ -1188,7 +1280,8 @@ bool make_attack_spell(int Ind, int m_idx)
 	if (rad > 3 || ((f4 & (RF4_SUMMON_MASK) || f5 & (RF5_SUMMON_MASK) ||
 				f6 & (RF6_SUMMON_MASK)) &&
 	*/
-	if (rad > 3 ||
+//	if (rad > 3 ||
+	if (rad > INDIRECT_SUMMONING_RADIUS ||
 		(summon && !stupid &&
 		!(summon_possible(wpos, y, x))))	// <= we can omit this now?
 	{
@@ -3220,13 +3313,70 @@ static bool find_safety(int Ind, int m_idx, int *yp, int *xp)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	int y, x, d, dis;
+	int y, x, d = 1, dis, i;
 	int gy = 0, gx = 0, gdis = 0;
 
 	cave_type **zcave;
 	/* paranoia */
 	if(!(zcave=getcave(&m_ptr->wpos))) return;
 
+	/* Start with adjacent locations, spread further */
+	for (i = 1; i <= tdi[SAFETY_RADIUS]; i++)
+	{
+		if (i == tdi[d])
+		{
+			d++;
+			if (gdis) break;
+		}
+
+		y = fy + tdy[i];
+		x = fx + tdx[i];
+
+		/* Skip illegal locations */
+		if (!in_bounds(y, x)) continue;
+
+		/* Skip locations in a wall */
+		if (!cave_floor_bold(zcave, y, x)) continue;
+
+#ifdef MONSTER_FLOW
+		/* Check for "availability" (if monsters can flow) */
+		if (flow_by_sound)
+		{
+			/* Ignore grids very far from the player */
+			if (cave[y][x].when < cave[py][px].when) continue;
+
+			/* Ignore too-distant grids */
+			if (cave[y][x].cost > cave[fy][fx].cost + 2 * d) continue;
+		}
+#endif
+		/* Check for absence of shot */
+		if (!projectable(&m_ptr->wpos, y, x, py, px))
+		{
+			/* Calculate distance from player */
+			dis = distance(y, x, py, px);
+
+			/* Remember if further than previous */
+			if (dis > gdis)
+			{
+				gy = y;
+				gx = x;
+				gdis = dis;
+			}
+		}
+	}
+
+	/* Check for success */
+	if (gdis > 0)
+	{
+		/* Good location */
+		(*yp) = fy - gy;
+		(*xp) = fx - gx;
+
+		/* Found safe place */
+		return (TRUE);
+	}
+
+#if 0
 	/* Start with adjacent locations, spread further */
 	for (d = 1; d < SAFETY_RADIUS; d++)
 	{
@@ -3282,6 +3432,7 @@ static bool find_safety(int Ind, int m_idx, int *yp, int *xp)
 			return (TRUE);
 		}
 	}
+#endif	// 0
 
 	/* No safe place */
 	return (FALSE);
@@ -3311,7 +3462,7 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	int y, x, d, dis;
+	int y, x, d=1, dis, i;
 	int gy = 0, gx = 0, gdis = 999, min;
 
 	cave_type **zcave;
@@ -3321,6 +3472,52 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 	/* Closest distance to get */
 	min = distance(py, px, fy, fx) * 3 / 4 + 2;
 
+	/* Start with adjacent locations, spread further */
+	for (i = 1; i <= tdi[SAFETY_RADIUS]; i++)
+	{
+		if (i == tdi[d])
+		{
+			d++;
+			if (gdis < 999) break;
+		}
+
+		y = fy + tdy[i];
+		x = fx + tdx[i];
+
+		/* Skip illegal locations */
+		if (!in_bounds(y, x)) continue;
+
+		/* Skip locations in a wall */
+		if (!cave_floor_bold(zcave, y, x)) continue;
+
+		/* Check for hidden, available grid */
+		if (!player_can_see_bold(Ind, y, x) && clean_shot(&m_ptr->wpos, fy, fx, y, x))
+		{
+			/* Calculate distance from player */
+			dis = distance(y, x, py, px);
+
+			/* Remember if closer than previous */
+			if (dis < gdis && dis >= min)
+			{
+				gy = y;
+				gx = x;
+				gdis = dis;
+			}
+		}
+	}
+
+	/* Check for success */
+	if (gdis < 999)
+	{
+		/* Good location */
+		(*yp) = fy - gy;
+		(*xp) = fx - gx;
+
+		/* Found good place */
+		return (TRUE);
+	}
+
+#if 0
 	/* Start with adjacent locations, spread further */
 	for (d = 1; d < SAFETY_RADIUS; d++)
 	{
@@ -3366,6 +3563,7 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 			return (TRUE);
 		}
 	}
+#endif	// 0
 
 	/* No good place */
 	return (FALSE);

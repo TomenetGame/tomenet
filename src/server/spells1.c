@@ -5282,6 +5282,25 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 
 		break;
+
+		/* RF5_BLIND */
+		case GF_BLIND:
+		{
+			if (p_ptr->resist_blind)
+			{
+				msg_print(Ind, "You are unaffected!");
+			}
+			else if (rand_int(100 + dam*6) < p_ptr->skill_sav)
+			{
+				msg_print(Ind, "You resist the effects!");
+			}
+			else if (!p_ptr->blind)
+			{
+				(void)set_blind(Ind, 12 + rand_int(4));
+			}
+			break;
+		}
+
 	}
 
 
@@ -5724,7 +5743,43 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	{
 		/* Mega-Hack -- remove the final "beam" grid */
 		/* if ((flg & PROJECT_BEAM) && (grids > 0)) grids--; */
+		dist = 0;
 
+		for (i = 0; i <= tdi[rad]; i++)
+		{
+			y = y2 + tdy[i];
+			x = x2 + tdx[i];
+
+			/* Encode some more "radius" info */
+			if (i == tdi[dist])
+				gm[++dist] = grids; 
+
+			/* Ignore "illegal" locations */
+			if (!in_bounds2(wpos, y, x)) continue;
+
+#if 1
+			if (typ == GF_DISINTEGRATE)
+			{
+				if (cave_valid_bold(zcave,y,x))
+//						&& (cave[y][x].feat < FEAT_PATTERN_START
+//						 || cave[y][x].feat > FEAT_PATTERN_XTRA2))
+					cave_set_feat(wpos, y, x, FEAT_FLOOR);
+
+				/* Update some things -- similar to GF_KILL_WALL */
+//				p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+			}
+#endif	/* 0 */
+			/* else */ /* HERE!!!!*/
+			/* Ball explosions are stopped by walls */
+			if (!los(wpos, y2, x2, y, x)) continue;
+
+			/* Save this grid */
+			gy[grids] = y;
+			gx[grids] = x;
+			grids++;
+		}
+
+#if 0
 		/* Determine the blast area, work from the inside out */
 		for (dist = 0; dist <= rad; dist++)
 		{
@@ -5770,6 +5825,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			/* Encode some more "radius" info */
 			gm[dist+1] = grids;
 		}
+#endif	// 0
 	}
 
 

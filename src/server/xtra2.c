@@ -3486,7 +3486,7 @@ void monster_death(int Ind, int m_idx)
 				case RBE_ELEC:      typ = GF_ELEC; break;
 				case RBE_FIRE:      typ = GF_FIRE; break;
 				case RBE_COLD:      typ = GF_COLD; break;
-				case RBE_BLIND:     typ = GF_MISSILE; break;
+				case RBE_BLIND:     typ = GF_BLIND; break;
 				case RBE_HALLU:     typ = GF_CONFUSION; break;
 				case RBE_CONFUSE:   typ = GF_CONFUSION; break;
 				case RBE_TERRIFY:   typ = GF_MISSILE; break;

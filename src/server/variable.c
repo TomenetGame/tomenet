@@ -496,3 +496,10 @@ bool (*get_obj_num_hook)(int k_idx);
 /* new Hacks */
 int artifact_bias;
 char summon_kin_type;
+
+/*
+ * radius tables
+ */
+char tdy[662];
+char tdx[662];
+char tdi[16];

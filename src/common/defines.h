@@ -2997,6 +2997,7 @@ that keeps many algorithms happy.
 #define GF_MAKE_GLYPH   85
 #define GF_ROCKET       91
 #define GF_NUKE         110
+#define GF_BLIND		111
 
 #if 0
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */

@@ -800,6 +800,12 @@ Change list for PernMangband
 
 07/03/2002 (Jir)
 - optimizations on monster-AI etc.
+- tdy[],tdx[],tdi[] are introduced;
+  they should do some speed-up for radius-related things.
+- GF_DISINTEGRATION is back.
+- yellow light blinds(GF_BLIND).
+- INDIRECT_SUMMONING_RADIUS, for the asking.
+  (I spent hours to find out why hounds stopped breathing from corner ;)
 
 
 ** [B] stands for Bugfix.
@@ -830,6 +836,7 @@ Change list for PernMangband
 
 ==== below this line are changes to be done in the future ====
 [minor ones]
+(3.3)
 - recall-depth array for each dungeons/towers
 - full colour-support in show_file
 - quiver/tool slot (not a monster! ;)
@@ -846,7 +853,6 @@ Change list for PernMangband
   - telekinesis trap
   - death molds trap
   - house-door-opening trap
-- perma-light should be rarer
 [C] ameliorate option interface(toggle-key/vi-key)
 
 [major ones]
@@ -941,6 +947,8 @@ Change list for PernMangband
 - Auction house {A.Dingle}
 - Casino (or Scroll of Back Gammon ;)
 - resurrect 'targetting cursor'
+- monster spell points.
+- documentations
 [sober (intrinsic) ones]
 - savedata editor
 - vault/map editor

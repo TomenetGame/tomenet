@@ -616,6 +616,11 @@
 #define RANDUNIS
 
 /*
+ * Size of radius-tables.
+ */
+#define PREPARE_RADIUS	16
+
+/*
  * OPTION: vervosity of server.
  *
  * 0 - no debug msgs
@@ -625,3 +630,5 @@
  * 4 - everything
  */
 #define DEBUG_LEVEL 2
+
+
