@@ -3368,17 +3368,17 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
+        /* Is it simple to use ? */
+        if (f4 & TR4_EASY_USE)
+        {
+                chance *= 2;
+        }
+
 	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
 
         /* Extract object flags */
         object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-        /* Is it simple to use ? */
-        if (f4 & TR4_EASY_USE)
-        {
-                chance *= 10;
-        }
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -3900,14 +3900,15 @@ void do_cmd_zap_rod(int Ind, int item)
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
-	/* High level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
-
         /* Is it simple to use ? */
         if (f4 & TR4_EASY_USE)
         {
-                chance *= 10;
+                chance *= 2;
         }
+
+	/* High level objects are harder */
+	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
+	if (chance < 0) chance = 0;
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -4194,6 +4195,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev) - p_ptr->antimagic;
+	if (chance < 0) chance = 0;
 
         /* Is it simple to use ? */
         if (f4 & TR4_EASY_USE)
@@ -6875,18 +6877,18 @@ void do_cmd_activate_dir(int Ind, int dir)
 			fire_ball(Ind, GF_ELEC, dir, 400, 4, p_ptr->attacker);
 			break;
 		case SV_DRAGON_WHITE:
-			msg_print(Ind, "You breathe .");
-			sprintf(p_ptr->attacker, " breathes  for", p_ptr->name);
+			msg_print(Ind, "You breathe frost.");
+			sprintf(p_ptr->attacker, " breathes frost for", p_ptr->name);
 			fire_ball(Ind, GF_COLD, dir, 400, 4, p_ptr->attacker);
 			break;
 		case SV_DRAGON_RED:
-			msg_print(Ind, "You breathe .");
-			sprintf(p_ptr->attacker, " breathes  for", p_ptr->name);
+			msg_print(Ind, "You breathe fire.");
+			sprintf(p_ptr->attacker, " breathes fire for", p_ptr->name);
 			fire_ball(Ind, GF_FIRE, dir, 400, 4, p_ptr->attacker);
 			break;
 		case SV_DRAGON_GREEN:
-			msg_print(Ind, "You breathe .");
-			sprintf(p_ptr->attacker, " breathes  for", p_ptr->name);
+			msg_print(Ind, "You breathe poison.");
+			sprintf(p_ptr->attacker, " breathes poison for", p_ptr->name);
 			fire_ball(Ind, GF_POIS, dir, 400, 4, p_ptr->attacker);
 			break;
 		case SV_DRAGON_MULTIHUED:
@@ -6961,6 +6963,53 @@ void do_cmd_activate_dir(int Ind, int dir)
 			//fire_ball(Ind, GF_MISSILE, dir, 300, 4, p_ptr->attacker);
 			call_chaos(Ind, dir);
 			break;
+		case SV_DRAGON_DEATH:
+			msg_print(Ind, "You breathe nether.");
+			sprintf(p_ptr->attacker, " breathes nether for", p_ptr->name);
+			fire_ball(Ind, GF_NETHER, dir, 550, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_CRYSTAL:
+			msg_print(Ind, "You breathe shards.");
+			sprintf(p_ptr->attacker, " breathes shards for", p_ptr->name);
+			fire_ball(Ind, GF_SHARDS, dir, 400, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_DRACOLICH:
+			switch(rand_int(2)){
+			case 0:	msg_print(Ind, "You breathe nether.");
+				sprintf(p_ptr->attacker, " breathes nether for", p_ptr->name);
+				fire_ball(Ind, GF_NETHER, dir, 550, 4, p_ptr->attacker);
+				break;
+			case 1:	msg_print(Ind, "You breathe cold.");
+				sprintf(p_ptr->attacker, " breathes cold for", p_ptr->name);
+				fire_ball(Ind, GF_COLD, dir, 400, 4, p_ptr->attacker);
+				break;
+			}
+		case SV_DRAGON_DRACOLISK:
+			switch(rand_int(2)){
+			case 0:	msg_print(Ind, "You breathe fire.");
+				sprintf(p_ptr->attacker, " breathes fire for", p_ptr->name);
+				fire_ball(Ind, GF_FIRE, dir, 600, 4, p_ptr->attacker);
+				break;
+			case 1:	msg_print(Ind, "You breathe nexus.");
+				sprintf(p_ptr->attacker, " breathes nexus for", p_ptr->name);
+				fire_ball(Ind, GF_NEXUS, dir, 250, 4, p_ptr->attacker);
+				break;
+			}
+		case SV_DRAGON_SKY:
+			switch(rand_int(3)){
+			case 0:	msg_print(Ind, "You breathe lightning.");
+				sprintf(p_ptr->attacker, " breathes lightning for", p_ptr->name);
+				fire_ball(Ind, GF_ELEC, dir, 600, 4, p_ptr->attacker);
+				break;
+			case 1:	msg_print(Ind, "You breathe light.");
+				sprintf(p_ptr->attacker, " breathes light for", p_ptr->name);
+				fire_ball(Ind, GF_LITE, dir, 400, 4, p_ptr->attacker);
+				break;
+			case 2:	msg_print(Ind, "You breathe gravity.");
+				sprintf(p_ptr->attacker, " breathes gravity for", p_ptr->name);
+				fire_ball(Ind, GF_GRAVITY, dir, 300, 4, p_ptr->attacker);
+				break;
+			}
 		}
 	}
 

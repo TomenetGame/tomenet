@@ -30,6 +30,17 @@
  */
 #define DEATH_ITEM_LOST	0
 
+
+/* Level 50 limit or level 50..69 exp limit for non-kings: */
+#define KINGCAP_LEV
+//#define KINGCAP_EXP
+
+/* Does NOT have effect if KINGCAP_EXP is defined.
+   Total bonus skill points till level 50 for yeeks.
+   All other class/race combinations will get less, down to 0 for
+   max exp penalty of 472,5 %. Must be integer within 0..50. */
+#define WEAK_SKILLBONUS 25
+
 /*
  * Modifier of semi-promised artifact drops, in percent.
  * It can happen that the quickest player will gather most of those
@@ -3279,6 +3290,7 @@ void check_experience(int Ind)
 			p_ptr->max_plv = p_ptr->lev;
 
 			/* gain skill points */
+#ifdef KINGCAP_EXP
 			/* min cap level is 50. check how far this
 			character can come with the actual exp cap of
 			21240000 (TL Ranger level 50) and adjust skill
@@ -3299,6 +3311,19 @@ void check_experience(int Ind)
 			p_ptr->skill_points += SKILL_NB_BASE - 1;
 			/* Eventually give him the last one, depending on his skills/levelup ratio: */
 			if (rand_int(100) < (i - ((SKILL_NB_BASE - 1) * 100))) p_ptr->skill_points++;
+#endif
+#ifndef KINGCAP_EXP
+			p_ptr->skill_points += SKILL_NB_BASE;
+			if (WEAK_SKILLBONUS) {
+				/* calculate total bonus skill points for this
+				   player at level 50, save it in xsp: */
+				long xsp_mul = WEAK_SKILLBONUS * 1000000 / ((573000 / (100 + 35)) - 1000);
+				long xsp = ((573000 / (100 + p_ptr->expfact)) - 1) * xsp_mul;
+				xsp /= 1000000;
+				/* depending on his should-have-bonus give him an extra point randomly */
+				if (rand_int(100) < (xsp * 100 / 50)) p_ptr->skill_points++;
+			}
+#endif
                         p_ptr->redraw |= PR_STUDY;
 			p_ptr->update |= PU_SKILL_MOD;
 
@@ -3330,6 +3355,9 @@ void check_experience(int Ind)
 		char str[160];
 		/* Message */
 		msg_format(Ind, "\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
+#ifdef KINGCAP_LEV
+		if(p_ptr->lev == 50) msg_print(Ind, "\377GYou can't gain more levels until you defeat Morgoth, the Lord of Darkness!");
+#endif
 
 		sprintf(str, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
 		clockin(Ind, 1);	/* Set player level */
@@ -3358,12 +3386,17 @@ void gain_exp(int Ind, s32b amount)
 //        if (p_ptr->ghost) amount/=1.5;	/* allow own kills to be gained */
 	if (p_ptr->ghost) amount = (amount * 2) / 3;	/* 1.5 = 1, none? :) */
 
-#if 0
-        /* You must defeat morgoth before beong allowed level > 50 */
+#ifdef KINGCAP_LEV
+        /* You must defeat morgoth before being allowed level > 50 */
         if ((!p_ptr->total_winner) && (p_ptr->exp + amount >= ((s64b)((s64b)player_exp[50 - 1] *
-                                           (s64b)p_ptr->expfact / 100L))))
-            return;
-#else
+                                           (s64b)p_ptr->expfact / 100L)))) {
+		if (p_ptr->exp >= ((s64b)((s64b)player_exp[50 - 1] *
+                                           (s64b)p_ptr->expfact / 100L)))
+        		return;
+		amount = ((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
+	}		
+#endif
+#ifdef KINGCAP_EXP
 	/* You must defeat morgoth before being allowed to gain more
 	than 21,240,000 exp which is level 50 for Thunderlord Ranger */
 	if ((!p_ptr->total_winner) && (p_ptr->exp + amount >= 21240000)) {
@@ -3386,7 +3419,8 @@ void gain_exp(int Ind, s32b amount)
 
 	if (Ind2)
 	{
-/* exp cap isn't implemented for this Ind2 part yet, don't forget it */
+/* exp cap isn't implemented for this Ind2 part yet, don't forget it in
+   case telepaths are re-implemented. */
 		/* Gain some experience */
 		p_ptr->exp += amount / 2;
 
@@ -3421,10 +3455,22 @@ void gain_exp(int Ind, s32b amount)
 		/* Slowly recover from experience drainage */
 		if (p_ptr->exp < p_ptr->max_exp)
 		{
+#ifdef KINGCAP_LEV
+		        /* You must defeat morgoth before beong allowed level > 50 */
+		        if ((!p_ptr->total_winner) && (p_ptr->max_exp + amount >= ((s64b)((s64b)player_exp[50 - 1] *
+                                           (s64b)p_ptr->expfact / 100L)))) {
+				if (p_ptr->max_exp >= ((s64b)((s64b)player_exp[50 - 1] *
+                                           (s64b)p_ptr->expfact / 100L)))
+        				return;
+				amount = (((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->max_exp) * 10;
+			}
+#endif
+#ifdef KINGCAP_EXP
 			if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount/10) >= 21240000)) {
 				if (p_ptr->max_exp >= 21240000) return;
-				amount = (21240000 - p_ptr->exp) * 10;
+				amount = (21240000 - p_ptr->max_exp) * 10;
 			}
+#endif
 			/* Gain max experience (10%) */
 			p_ptr->max_exp += amount / 10;
 		}

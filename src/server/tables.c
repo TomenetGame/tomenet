@@ -3517,7 +3517,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOW,
                                 '+', 1000,
-                                '+', 450,
+                                '+', 550,
                         },
                         {
                                 SKILL_XBOW,
@@ -3554,7 +3554,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MANA,
                                 '+', 1000,	/* Allow to cast Manathrust */
-                                '+', 600,
+                                '+', 500,
                         },
                         {
                                 SKILL_FIRE,
@@ -3584,7 +3584,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIVINATION,
                                 '+', 0,
-                                '+', 700,
+                                '+', 600,
                         },
                         {
                                 SKILL_CONVEYANCE,
@@ -3599,7 +3599,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MIND,
                                 '+', 0,
-                                '+', 700,
+                                '+', 650,
                         },
                         {
                                 SKILL_TEMPORAL,

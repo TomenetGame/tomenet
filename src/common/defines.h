@@ -1850,6 +1850,11 @@ that keeps many algorithms happy.
 #define SV_DRAGON_CHAOS                 18
 #define SV_DRAGON_BALANCE               20
 #define SV_DRAGON_POWER                 30
+#define SV_DRAGON_DEATH			40
+#define SV_DRAGON_CRYSTAL		41
+#define SV_DRAGON_DRACOLICH		42
+#define SV_DRAGON_DRACOLISK		43
+#define SV_DRAGON_SKY			44
 
 /* The sval codes for TV_LITE */
 #define SV_LITE_TORCH                    0

@@ -2500,7 +2500,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 	      case SV_DRAGON_LAW:
 		{
-		    return "Breathe shards every 200+d100 turns";
+		    return "Breathe shards/sound every 200+d100 turns";
 //		  return "polymorph into a Great Wyrm of Law every 200+d100 turns";
 		}
 	      case SV_DRAGON_BALANCE:
@@ -2517,6 +2517,31 @@ cptr item_activation(object_type *o_ptr)
 		{
 		    return "Breathe havoc every 200+d100 turns";
 //		  return "polymorph into a Great Wyrm of Power every 200+d100 turns";
+		}
+	      case SV_DRAGON_DEATH:
+		{
+		    return "Breathe nether every 200+d100 turns";
+//		  return "polymorph into a death drake every 200+d100 turns";
+		}
+	      case SV_DRAGON_CRYSTAL:
+		{
+		    return "Breathe shards every 200+d100 turns";
+//		  return "polymorph into a great crystal drake every 200+d100 turns";
+		}
+	      case SV_DRAGON_DRACOLICH:
+		{
+		    return "Breathe nether/cold every 200+d100 turns";
+//		  return "polymorph into a dracolich every 200+d100 turns";
+		}
+	      case SV_DRAGON_DRACOLISK:
+		{
+		    return "Breathe fire/nexus every 200+d100 turns";
+//		  return "polymorph into a dracolisk every 200+d100 turns";
+		}
+	      case SV_DRAGON_SKY:
+		{
+		    return "Breathe electricity/light/gravity every 200+d100 turns";
+//		  return "polymorph into a sky drake every 200+d100 turns";
 		}
 	      }
 	  }

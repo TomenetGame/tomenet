@@ -1021,8 +1021,25 @@ static void calc_mana(int Ind)
         }
 #endif
 
-	if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 10;
-	
+	/* adjustment so paladins won't become OoD sentry guns and
+	   rangers won't become invulnerable manashield tanks, and
+	   priests won't become OoD wizards.. (C. Blue) */
+	switch(p_ptr->pclass) {
+	case CLASS_MAGE:
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 10;
+		break;
+	case CLASS_PRIEST:
+	case CLASS_PALADIN:
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 20;
+		break;
+	case CLASS_RANGER:
+	case CLASS_ADVENTURER:
+	case CLASS_ROGUE:
+	default:
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 15;
+		break;
+	}
+
 	/* Meditation increase mana at the cost of hp */
 	if (p_ptr->tim_meditation)
 	{
@@ -1213,7 +1230,6 @@ static void calc_hitpoints(int Ind)
 	    /* limit HP against ~2900 in total: */
 	    /* mHPLim = (100000 / ((100000 / rhp) + 15)); */
 	    /* limit HP against ~2500 in total: */
-s_printf("rhp %d \n", rhp);
 	    mHPLim = (100000 / ((100000 / rhp) + 20));
 	    finalHP = (mHPLim < mhp ) ? (((mhp * 3) + (mHPLim * 2)) / 5) : ((mHPLim + mhp) / 2);
 	    mhp = finalHP;

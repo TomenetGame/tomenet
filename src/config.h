@@ -792,7 +792,6 @@
 				/* 300k cash to spend to buy a house too! (C. Blue) */
 
 
-
 /*
  * Below this line are client-only options.
  * Probably we'd better separate them to another file?	- Jir -

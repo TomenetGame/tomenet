@@ -1866,6 +1866,16 @@ the pots/scrolls show similar pseudo-id tags.
 
 (5.7) Special abilities of items
 --------------------------------
+MANA ('It affects your mana capacity')
+		Will increase your total spell points (mana) by +x0%. Example:
+		Gloves of the magi (+3) increase your mana by 30%.
+		MANA items _add_ to each other, they aren't multiplied.
+		They have slightly less effect on non-mages and quite less effect
+		on priests or paladins who need wisdom rather than intelligence.
+LIFE ('It affects your hit points')
+		Will increase your total hit points by +x0%. Example:
+		Sword of life (+2) increases your HP by 20%.
+		LIFE items _add_ to each other, they aren't multiplied.
 AGGRAVATE ('It aggravates nearby creatures')
 		Wakes up all monsters in whose radius of awareness you are, hastes
 		monsters in your line of sight.

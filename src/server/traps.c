@@ -141,6 +141,8 @@ static bool player_handle_trap_of_hostility(int Ind)
 
 static bool do_trap_of_silliness(int Ind, int power)
 {
+//	return (FALSE);
+
 	player_type *p_ptr = Players[Ind];
 	int i, j;
 	bool aware = FALSE;
@@ -883,6 +885,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Trap of Curse Weapon */
 		case TRAP_OF_CURSE_WEAPON:
 		break; //ill-minded
+#if 0
 		{
 			if (rand_int(120) < p_ptr->skill_sav)
 			{
@@ -892,9 +895,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			ident = curse_weapon(Ind);
 			break;
 		}
+#endif
 		/* Trap of Curse Armor */
 		case TRAP_OF_CURSE_ARMOR:
 		break; //ill-minded
+#if 0
 		{
 			if (rand_int(120) < p_ptr->skill_sav)
 			{
@@ -904,6 +909,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			ident = curse_armor(Ind);
 			break;
 		}
+#endif
 		/* Earthquake Trap */
 		case TRAP_OF_EARTHQUAKE:
 		{
@@ -1255,6 +1261,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Trap of No Return */
 		case TRAP_OF_NO_RETURN:
 		break; //basically ok, but we need fireproof WoR in BM before this gets enabled!
+#if 0
 		{
 			object_type *j_ptr;
 			s16b j;
@@ -1299,6 +1306,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			}
 			break;
 		}
+#endif
 		/* Trap of Silent Switching */
 		case TRAP_OF_SILENT_SWITCHING:
 		{
@@ -1599,10 +1607,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_SCATTER_ITEMS:
 		break; //ill-minded, especially since it's often found in vaults.
 		// Please play the game before introducing stuff like this.
+#if 0
 		{
 			ident = do_player_scatter_items(Ind, 70, 15);
 			break;
 		}
+#endif
 		/* Trap of Decay */
 		case TRAP_OF_DECAY:
 		{
@@ -1670,6 +1680,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_DRAIN_SPEED:
 		break; //ill-minded. If someone spends all his savings for a speed item
 		// or is extremely lucky in finding one.. this is simply SO ill-minded.
+#if 0
 		{
 			object_type *j_ptr;
 			s16b j, chance = 75;
@@ -1721,6 +1732,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			}
 			break;
 		}
+#endif
 
       /*
        * single missile traps
@@ -1853,6 +1865,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		case TRAP_OF_MASCULINITY:
 		break; //why not make a trap of change race/class too.
+#if 0
 		{
 			msg_print(Ind, "Gas sprouts out... you feel you transmute.");
 			trap_hit(Ind, trap);
@@ -1864,6 +1877,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			p_ptr->redraw |= PR_MISC;
 			break;
 		}
+#endif
 		case TRAP_OF_NEUTRALITY:
 		break; //rotfl.
 		{
@@ -2060,6 +2074,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       /* Trap of discordance */
 		case TRAP_OF_HOSTILITY:
 		break; //ill-minded - ppl got wrathed automatically because
+#if 0
 		//someone ELSE triggered this. think more carefully.
 		//Further it's kinda meta-trap, changing the player's configuration.
 		{
@@ -2067,6 +2082,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			ident = FALSE;		// never known
 			break;
 		}
+#endif
 		/* Voluminous cuisine Trap */
 		case TRAP_OF_CUISINE:
 		{
@@ -2123,12 +2139,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			else if (lose_all_info(Ind))
 			{
 				msg_print(Ind, "Your memories fade away.");
-				//				 ident = FALSE;	// haha you forget this also :)
+//				 ident = FALSE;	// haha you forget this also :)
 			}
 			break;
 		}
 		case TRAP_OF_SILLINESS:
 		break; //ill-minded, not silyl
+#if 0
 		{
 			if (rand_int(100) < p_ptr->skill_sav)
 			{
@@ -2137,10 +2154,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			else if (do_trap_of_silliness(Ind, 50 + glev))
 			{
 				msg_print(Ind, "You feel somewhat silly.");
-				//				 ident = FALSE;	// haha you forget this also :)
+//				 ident = FALSE;	// haha you forget this also :)
 			}
 			break;
 		}
+#endif
 		case TRAP_OF_GOODBYE_CHARLIE:
 		{
 			//s16b i,j;
@@ -2349,6 +2367,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		//Maybe even worse than seasoned traveller although it only affects scrolls,
 		//since all WoR / Tele will be lost, and player might be stuck at a *deep* level -> death.
 		break;
+#if 0
 		{
 			int i, j, k, k_idx;
 			object_type *o_ptr;
@@ -2437,12 +2456,14 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 			break;
 		}
+#endif
 		/* Slump Trap */
 		case TRAP_OF_SLUMP:
 		/*ill-minded. Usually you spent a longer time to max your stats.
 		Having traps that permanently decrease one stat is fine, but
 		-10 to all stats permanently is pathetic. */
 		break;
+#if 0
 		{
 			k = glev / 5;
 			k = k < 1 ? 1 : k;
@@ -2456,6 +2477,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			ident |= dec_stat(Ind, A_INT, k, STAT_DEC_PERMANENT);
 			break;
 		}
+#endif
 		/* Ophiuchus Trap */
 		case TRAP_OF_OPHIUCHUS:
 		//lol, never met it, but looks interesting.
