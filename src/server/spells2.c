@@ -523,7 +523,7 @@ bool remove_all_curse(int Ind)
  */
 bool remove_all_curse_reverse(int Ind)
 {
-	return (remove_curse_aux(Ind, 2));
+	return (remove_curse_aux(Ind, 3));
 }
 
 
