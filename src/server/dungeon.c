@@ -4454,13 +4454,6 @@ void play_game(bool new_game)
 	}
 	else server_dungeon = TRUE;
 
-	/* Process old character */
-	if (!new_game)
-	{
-		/* Process the player name */
-		/*process_player_name(FALSE);*/
-	}
-
 	/* Init the RNG */
 	// Is it a good idea ? DGDGDGD --  maybe FIXME
 	//	if (Rand_quick)
@@ -4520,21 +4513,6 @@ void play_game(bool new_game)
 
 		/* Hack -- enter the world */
 		turn = 1;
-
-#if 0
-		/* Initialize the stores */
-		for (n = 0; n < MAX_STORES; n++)
-		{
-			/* Initialize */
-			store_init(n);
-	
-			/* Ignore home and auction house */
-			if ((n == MAX_STORES - 2) || (n == MAX_STORES - 1)) continue;
-	
-			/* Maintain the shop */
-			for (i = 0; i < 10; i++) store_maint(n);
-		}
-#endif
 	}
 
 	/* Initialize wilderness 'level' */
@@ -4574,23 +4552,6 @@ void play_game(bool new_game)
 		/* Actually generate the town */
 		generate_cave(&twpos);
 	}
-#if 0
-//	else if (!central_town_loaded)
-	else 
-	{
-		struct worldpos twpos;
-		twpos.wx=cfg.town_x;
-		twpos.wy=cfg.town_y;
-		twpos.wz=0;
-
-		/* Actually generate the town */
-		generate_cave(&twpos);
-
-		/* Hack -- Build the buildings/stairs (from memory) */
-//		town_gen_hack(&twpos);
-	}
-#endif	// 0
-
 
 	/* Finish initializing dungeon monsters */
 	setup_monsters();
