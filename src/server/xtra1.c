@@ -2054,6 +2054,8 @@ void calc_bonuses(int Ind)
 		p_ptr->see_infra += 2;
 		p_ptr->resist_fear = TRUE;
 		p_ptr->resist_conf = TRUE;
+		p_ptr->resist_dark = TRUE;
+		p_ptr->resist_blind = TRUE;
 		p_ptr->immune_poison = TRUE;
 		p_ptr->resist_cold = TRUE;
 		p_ptr->no_cut = TRUE;
