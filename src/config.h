@@ -211,7 +211,7 @@
  * Probably almost never used.
 */
 #if 0
-#define	BIND_NAME "64.53.71.115"
+#define BIND_NAME "server.pernmangband.net"
 #define	BIND_IP "64.53.71.115"
 #endif
 
