@@ -2492,7 +2492,7 @@ void GetLocalHostName(name, size)
     int                 namelen;
 #endif
 
-    temp=getenv("ANGBAND_HOST");
+    temp=getenv("TOMENET_HOST");
     if(temp){
 	strncpy(name, temp, size);
         name[size - 1] = '\0';
