@@ -1024,6 +1024,7 @@ void do_cmd_steal(int Ind, int dir)
 	cave_type *c_ptr;
 
 	int success, notice;
+	bool caught = FALSE;
 
 	/* Ghosts cannot steal */
 	if ((p_ptr->ghost))
@@ -1117,16 +1118,11 @@ void do_cmd_steal(int Ind, int dir)
 				/* Check for target noticing */
 				if (rand_int(100) < notice)
 				{
-					/* Make target hostile */
-//					add_hostility(0 - c_ptr->m_idx, p_ptr->name);
-					if (Players[0 - c_ptr->m_idx]->exp > p_ptr->exp - 200)add_hostility(0 - c_ptr->m_idx, p_ptr->name);
-
 					/* Message */
 					msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %ld gold!",
 					           p_ptr->name, amt);
 
-					/* The target gets angry */
-					set_furry(0 - c_ptr->m_idx, Players[0 - c_ptr->m_idx]->furry + 20 + randint(20));
+					caught = TRUE;
 				}
 			}
 		}
@@ -1174,16 +1170,11 @@ void do_cmd_steal(int Ind, int dir)
 			/* Check for target noticing */
 			if (rand_int(100) < notice)
 			{
-				/* Make target hostile */
-//				add_hostility(0 - c_ptr->m_idx, p_ptr->name);
-				if (Players[0 - c_ptr->m_idx]->exp > p_ptr->exp - 200)add_hostility(0 - c_ptr->m_idx, p_ptr->name);
-
 				/* Message */
 				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %s!",
 				           p_ptr->name, o_name);
 
-				/* The target gets angry */
-				set_furry(0 - c_ptr->m_idx, Players[0 - c_ptr->m_idx]->furry + 20 + randint(20));
+				caught = TRUE;
 			}
 		}
 	}
@@ -1192,20 +1183,55 @@ void do_cmd_steal(int Ind, int dir)
 		/* Message */
 		msg_print(Ind, "You fail to steal anything.");
 
+		/* Always small chance to be noticed */
+		if (notice < 5) notice = 5;
+
 		/* Easier to notice a failed attempt */
 		if (rand_int(100) < notice + 50)
 		{
-			/* Make target hostile */
-//			add_hostility(0 - c_ptr->m_idx, p_ptr->name);
-			if (Players[0 - c_ptr->m_idx]->exp > p_ptr->exp - 200)add_hostility(0 - c_ptr->m_idx, p_ptr->name);
-
 			/* Message */
 			msg_format(0 - c_ptr->m_idx, "\377rYou notice %s try to steal from you!",
 			           p_ptr->name);
 
-			/* The target gets angry */
-			set_furry(0 - c_ptr->m_idx, Players[0 - c_ptr->m_idx]->furry + 20 + randint(20));
+			caught = TRUE;
 		}
+	}
+
+	/* Counter blow! */
+	if (caught)
+	{
+		int i, j;
+		object_type *o_ptr;
+
+		/* Make target hostile */
+//		add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+		if (Players[0 - c_ptr->m_idx]->exp > p_ptr->exp / 2 - 200)add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+
+		/* Message */
+		msg_format(Ind, "\377r%s gave you an unexpected blow!",
+		           Players[0 - c_ptr->m_idx]->name);
+
+		set_stun(Ind, p_ptr->stun + randint(50));
+		set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
+
+		/* Thief drops some items from the shock of blow */
+		for(i = rand_int(5); i < 5 ; i++ )
+		{
+			j = rand_int(INVEN_TOTAL);
+			o_ptr = &(p_ptr->inventory[j]);
+
+			if (!o_ptr->tval) continue;
+
+			/* An artifact 'resists' */
+			if (artifact_p(o_ptr) && !o_ptr->name3 && rand_int(100) > 2)
+				continue;
+
+			inven_drop(Ind, j, randint(o_ptr->number * 2));
+		}
+
+		/* The target gets angry */
+		set_furry(0 - c_ptr->m_idx, Players[0 - c_ptr->m_idx]->furry + 15 + randint(15));
+
 	}
 
 	/* Take a turn */

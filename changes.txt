@@ -308,3 +308,6 @@ Change list for PernMangband
 - Some xp bonus to encourage partying (C.Blue's idea)
 - Revised conditions to check equipments.
 - Bugfix on /ignore command code.
+
+20/11/01 (Jir)
+- You get stunned, confused and also drop some items when theft fails.
