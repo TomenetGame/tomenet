@@ -998,7 +998,10 @@ void do_activate_skill(int x_idx, int item)
 			if (!get_dir(&dir))
 				return;
 
-		/* TODO: ask for an item or whatever */
+                if (exec_lua(0, format("return pre_exec_spell_extra(%d)", spell)))
+                {
+                        dir = exec_lua(0, "return __pre_exec_extra");
+                }
 
 		/* Send it */
 		Send_activate_skill(MKEY_SCHOOL, item, spell, dir);

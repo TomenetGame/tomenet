@@ -214,6 +214,21 @@ extern bool set_protevil(int Ind, int v);
 extern bool set_invuln(int Ind, int v);
 extern bool set_tim_invis(int Ind, int v);
 extern bool set_tim_infra(int Ind, int v);
+extern bool identify_fully(int Ind);
+extern void self_knowledge(int Ind);
+extern bool detect_trap(int Ind, int rad);
+extern bool detect_sdoor(int Ind, int rad);
+extern bool ident_spell(int Ind);
+extern void map_area(int Ind);
+extern void wiz_lite(int Ind);
+extern void wiz_lite_extra(int Ind);
+extern void wiz_dark(int Ind);
+extern bool detect_monsters_xxx(int Ind, u32b match_flag);
+extern bool detect_treasure(int Ind, int rad);
+extern bool detect_magic(int Ind, int rad);
+extern bool detect_invisible(int Ind);
+extern bool detect_evil(int Ind);
+extern bool detect_creatures(int Ind);
 
 /* spells2.c */
 extern bool heal_insanity(int Ind, int val);

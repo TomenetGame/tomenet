@@ -1558,6 +1558,17 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 	/* Analyze the item */
 	switch (o_ptr->tval)
 	{
+		case TV_BOOK:
+		{
+			if (o_ptr->sval == 255)
+			{
+				/* Pay extra for the spell */
+				value = value * school_spells[o_ptr->pval].skill_level;
+			}
+			/* Done */
+			break;
+                }
+
 		/* Wands/Staffs */
 		case TV_WAND:
 		{

@@ -87,6 +87,7 @@ pern_dofile(Ind, "s_air.lua")
 pern_dofile(Ind, "s_water.lua")
 pern_dofile(Ind, "s_earth.lua")
 pern_dofile(Ind, "s_convey.lua")
+pern_dofile(Ind, "s_divin.lua")
 
 -- Create the crystal of mana
 school_book[0] = {
@@ -118,11 +119,14 @@ school_book[5] = {
         DISARM, BLINK, TELEPORT, TELEAWAY, RECALL,
 }
 
+-- Create the book of Knowledge
+school_book[7] = {
+        SENSEMONSTERS, SENSEHIDDEN, REVEALWAYS, IDENTIFY, VISION, STARIDENTIFY,
+}
+
 -- Create the book of beginner's cantrip
 school_book[50] = {
---        STONESKIN, DIG, STONEPRISON, SHAKE, STRIKE,
-        MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK,
---		SENSEMONSTERS, SENSEHIDDEN,
+        MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK, SENSEMONSTERS, SENSEHIDDEN,
 }
 
 

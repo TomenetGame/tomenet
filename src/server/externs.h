@@ -20,7 +20,7 @@ extern int world_comm(int fd, int arg);
 extern int WorldSocket;
 
 extern void world_msg(char *text);
-extern void world_player(unsigned long id, char *name, unsigned short enter);
+extern void world_player(unsigned long id, char *name, unsigned short enter, byte quiet);
 #endif
 
 /* common/common.c */

@@ -1460,6 +1460,29 @@ void do_cmd_mimic(int Ind, int spell)
 void cast_school_spell(int Ind, int spell, int dir, int item)
 {
         player_type *p_ptr = Players[Ind];
+        object_type *o_ptr = &p_ptr->inventory[item];
+
+        if (o_ptr->tval != TV_BOOK)
+        {
+                msg_print(Ind, "Ahah dont try to hack your client please :) :: tval");
+                return;
+        }
+        else if (o_ptr->sval == 255)
+        {
+                if (o_ptr->pval != spell)
+                {
+                        msg_print(Ind, "Ahah dont try to hack your client please :) :: sval 255");
+                        return;
+                }
+        }
+        else
+        {
+                if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE)
+                {
+                        msg_print(Ind, "Ahah dont try to hack your client please :) :: sval != 255");
+                        return;
+                }
+        }
 
 	/* No magic */
 	if (p_ptr->antimagic)

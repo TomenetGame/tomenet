@@ -111,3 +111,4 @@ extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
 */
 
 extern void c_msg_print(cptr msg);
+extern bool get_check(cptr prompt);

@@ -486,3 +486,10 @@ function pre_exec_spell_dir(s)
                 end
         end
 end
+
+function pre_exec_spell_extra(s)
+        if __tmp_spells[s].extra then
+                __pre_exec_extra = __tmp_spells[s].extra()
+                return TRUE
+        end
+end
