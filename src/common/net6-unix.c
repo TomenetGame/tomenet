@@ -1719,7 +1719,7 @@ int	port;
     memset((char *)&addr_in, 0, sizeof(addr_in));
     addr_in.sin6_family          = AF_INET6;
     addr_in.sin6_port            = htons(port);
-    if((inet_pton(AF_INET6, host, &addr_in.sin6_addr)==-1))
+    if((inet_pton(AF_INET6, host, &addr_in.sin6_addr)<1))
     {
 #ifdef SERVER 
 	printf("DgramConnect called with hostname %s.\n", host);
@@ -1727,14 +1727,25 @@ int	port;
 	hp = gethostbyname2(host, AF_INET6);
 	if (hp == NULL)
 	{
-	    sl_errno = SL_EHOSTNAME;
-	    return (-1);
+	    printf("No IP6 address for %s\n", host);
+	    hp=gethostbyname2(host, AF_INET);
+	    if(hp==NULL){
+	   	sl_errno = SL_EHOSTNAME;
+	    	return (-1);
+	    }
+	    else{
+		/* I dont like this really */
+		*((u_int32_t*)&addr_in.sin6_addr.s6_addr[8])=ntohl(0x0000ffff);
+	    	*((struct in_addr*)(&addr_in.sin6_addr.s6_addr[12])) = *((struct in_addr*)(hp->h_addr));
+
+	    }
 	}
 	else
 	    addr_in.sin6_addr =
 		*((struct in6_addr*)(hp->h_addr));
     } /**/
 #endif  
+#if 0
     hp = gethostbyname2(host, AF_INET6);
     if(hp == NULL)
     {
@@ -1742,6 +1753,7 @@ int	port;
         return(-1);
     }
     memcpy(&addr_in.sin6_addr, hp->h_addr, hp->h_length);
+#endif
     retval = connect(fd, (struct sockaddr *)&addr_in, sizeof(addr_in));
     if (retval < 0)
     {
@@ -1811,8 +1823,9 @@ char	*host, *sbuf;
 #else
     struct hostent	*hp;
     struct sockaddr_in6  the_addr;
+    char temp[INET6_ADDRSTRLEN];
     memset((char *)&the_addr, 0, sizeof(the_addr));
-    the_addr.sin6_family		= AF_INET6;
+    the_addr.sin6_family	= AF_INET6;
     the_addr.sin6_port		= htons(port);
     sl_errno = 0;
 
@@ -1822,24 +1835,38 @@ char	*host, *sbuf;
     else
 #endif
     {
-	if((inet_pton(AF_INET6, host, &the_addr.sin6_addr)==-1))
+	printf("Getting info for %s\n", host);
+	if((inet_pton(AF_INET6, host, &the_addr.sin6_addr)<1))
 	{
 #ifdef SERVER
 	    printf("DgramSend called with host %s\n", host);
 #endif
+	    printf("%s not a valid IPv6 address\n", host);
 	    hp = gethostbyname2(host, AF_INET6);
 	    if (hp == NULL)
-	    {
-		sl_errno = SL_EHOSTNAME;
-		return (-1);
+	    { 
+	        printf("No IP6 address for %s\n", host);
+	        hp=gethostbyname2(host, AF_INET);
+	        if(hp==NULL){
+	   	    sl_errno = SL_EHOSTNAME;
+	    	    return (-1);
+	        }
+	        else{
+		    /* I dont like this really */
+		    *((u_int32_t*)&the_addr.sin6_addr.s6_addr[8])=ntohl(0x0000ffff);
+	    	    *((struct in_addr*)(&the_addr.sin6_addr.s6_addr[12])) = *((struct in_addr*)(hp->h_addr));
+
+	        }
 	    }
-	    else
+	    else{
 		the_addr.sin6_addr =
 		    *((struct in6_addr*)(hp->h_addr));
+	    }
 	}
     }
 #endif      
 
+    inet_ntop(AF_INET6, &the_addr.sin6_addr, &temp, INET6_ADDRSTRLEN);
     cmw_priv_assert_netaccess();
     retval = sendto(fd, sbuf, size, 0, (struct sockaddr *)&the_addr,
 		   sizeof(the_addr));
@@ -1954,7 +1981,7 @@ char	*rbuf;
     struct hostent	*hp;
     struct sockaddr_in6	tmp_addr;
 
-    if((inet_pton(AF_INET6, from, &tmp_addr.sin6_addr)==-1))
+    if((inet_pton(AF_INET6, from, &tmp_addr.sin6_addr)<1))
     {
 #ifdef SERVER
 	printf("DgramReceive called with host %s.\n", from);
@@ -1962,8 +1989,18 @@ char	*rbuf;
 	hp = gethostbyname2(from, AF_INET6);
 	if (hp == NULL)
 	{
-	    sl_errno = SL_EHOSTNAME;
-	    return (-1);
+	    printf("No IP6 address for %s\n", from);
+	    hp=gethostbyname2(from, AF_INET);
+	    if(hp==NULL){
+	   	sl_errno = SL_EHOSTNAME;
+	    	return (-1);
+	    }
+	    else{
+		/* I dont like this really */
+		*((u_int32_t*)&tmp_addr.sin6_addr.s6_addr[8])=ntohl(0x0000ffff);
+	    	*((struct in_addr*)(&tmp_addr.sin6_addr.s6_addr[12])) = *((struct in_addr*)(hp->h_addr));
+
+	    }
 	}
 	else
 	    tmp_addr.sin6_addr =
@@ -2523,7 +2560,11 @@ void GetLocalHostName(name, size)
 
     gethostname(name, size);
     if ((he = gethostbyname2(name, AF_INET6)) == NULL) {
-	return;
+	printf("No IP6 address for %s\n", name);
+	he=gethostbyname2(name, AF_INET);
+	if(he==NULL){
+	    return;
+	}
     }
     strncpy(name, he->h_name, size);
     name[size - 1] = '\0';
