@@ -762,6 +762,13 @@ int party_add(int adder, cptr name)
 		return FALSE;
 	}
 
+	/* Everlasting and other chars cannot be in the same party */
+	if ((p_ptr->mode & MODE_IMMORTAL) != (q_ptr->mode & MODE_IMMORTAL))
+	{
+		msg_print(adder, "\377yEverlasting characters and other characters can't be in the same party.");
+		return FALSE;
+	}
+
 	/* Only newly created characters can create an iron team */
         if (p_ptr->max_exp > 0)
         {
