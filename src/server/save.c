@@ -2511,8 +2511,8 @@ static void new_wr_wild(){
 				wr_u16b(w_ptr->tower->flags);
 				wr_byte(w_ptr->tower->maxdepth);
 				for(i=0;i<10;i++){
-					wr_byte(w_ptr->dungeon->r_char[i]);
-					wr_byte(w_ptr->dungeon->nr_char[i]);
+					wr_byte(w_ptr->tower->r_char[i]);
+					wr_byte(w_ptr->tower->nr_char[i]);
 				}
 			}
 		}

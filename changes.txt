@@ -453,3 +453,4 @@ Change list for PernMangband
 - Fixed a bug where vault didn't contain monsters.
 - Given version number v3.3.0alpha (it'll be v4.0.0 soon :)
 - Version warnings for older(/newer) initialize files.
+- Fixed a bug where creating a tower caused crash.
