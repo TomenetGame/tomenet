@@ -9,28 +9,16 @@ BLINK = add_spell
         ["mana"] = 	1,
         ["mana_max"] =  3,
         ["fail"] = 	10,
-        ["direction"] = FALSE,
-        ["item"] = FALSE,
         ["spell"] = 	function()
-        	        if get_level(BLINK, 50) >= 30 then
-                                local oy, ox = py, px
-
-        	        	teleport_player(10 + get_level(BLINK, 8))
---                                create_between_gate(0, oy, ox)
-                	else
-        	        	teleport_player(10 + get_level(BLINK, 8))
+	      	        	teleport_player(10 + get_level(BLINK, 8))
 	                end
 	end,
 	["info"] = 	function()
-	                if get_level(BLINK, 50) >= 30 then
-        	        	return "distance "..(5 + get_level(BLINK, 8))
-                	else
                 		return "distance "..(10 + get_level(BLINK, 8))
 	                end
 	end,
         ["desc"] =	{
         		"Teleports you on a small scale range",
-                        "At level 30 it creates void jumpgates",
         }
 }
 

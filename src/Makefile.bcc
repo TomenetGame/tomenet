@@ -61,7 +61,7 @@ CLI_EXE = tomenet.exe
 CCOPTS = -Hc -tW -lGn -w- \
 	-D_WIN32_WINNT=0x0400 -DWINVER=0x0400 \
 	-DWIN32 -D_WINDOWS -DSTDVA=1 -DSTRICT \
-	-I$(BCCDIR)\include;server\lua -L$(BCCDIR)\lib
+	-I$(BCCDIR)\include -Iserver\lua -Iserver -L$(BCCDIR)\lib
 
 LDFLAGS = -L$(BCCDIR)\lib
 
@@ -145,6 +145,14 @@ CLI_OBJS = \
   client\c-xtra1.obj client\c-xtra2.obj client\c-spell.obj client\client.obj \
   client\readdib.obj client\skills.obj
 
+CLI_LUASRCS = \
+  client\c-script.c \
+  client\w_play.c client\w_util.c
+
+CLI_LUAOBJS = \
+  client\c-script.obj \
+  client\w_play.obj client\w_util.obj
+
 LUASRCS = \
   server\script.c server\lua_bind.c \
   server\w_util.c server\w_play.c
@@ -211,8 +219,8 @@ $(SERV_EXE): $(SERV_OBJS) $(LUAOBJS) $(TOLUAOBJS)
 $(CONS_EXE): $(CONS_OBJS)
 	$(LINKER) -aa $(LDFLAGS) -x $(CONS_OBJS) c0w32.obj, $(CONS_EXE),, cw32.lib import32.lib ws2_32.lib,, client\angband.res
 
-$(CLI_EXE): $(CLI_OBJS) client\angband.res
-	$(LINKER) -aa $(LDFLAGS) -x $(CLI_OBJS) c0w32.obj, $(CLI_EXE),, cw32.lib import32.lib ws2_32.lib,, client\angband.res
+$(CLI_EXE): $(CLI_OBJS) $(CLI_LUAOBJS) $(TOLUAOBJS) client\angband.res
+	$(LINKER) -aa $(LDFLAGS) -x $(CLI_OBJS) $(CLI_LUAOBJS) $(TOLUAOBJS) c0w32.obj, $(CLI_EXE),, cw32.lib import32.lib ws2_32.lib,, client\angband.res
 
 client\angband.res: client\angband.rc
 	$(RC) -r client\angband.rc
@@ -229,6 +237,16 @@ server\w_util.c: server\util.pkg $(TOLUA)
 server\w_play.c: server\player.pkg $(TOLUA)
 	cd server
 	tolua -n player -o w_play.c player.pkg
+	cd ..
+
+client\w_play.c: client\player.pkg $(TOLUA)
+	cd client
+	..\server\tolua -n player -o w_play.c player.pkg
+	cd ..
+
+client\w_util.c: client\util.pkg $(TOLUA)
+	cd client
+	..\server\tolua -n util -o w_util.c util.pkg
 	cd ..
 
 ########################### Implicit Rules ########################
