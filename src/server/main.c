@@ -160,13 +160,13 @@ int main(int argc, char *argv[])
 	init_stuff();
 
 	/* Initialize the server log file */
-	path_build(buf, 1024, ANGBAND_DIR_DATA, "mangband.log");
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "tomenet.log");
 
 	/* Open the file */
 	s_setup(buf);
 
 	/* Initialize the server rfe file */
-	path_build(buf, 1024, ANGBAND_DIR_DATA, "mangband.rfe");
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "tomenet.rfe");
 
 	/* Open the file */
 	s_setupr(buf);

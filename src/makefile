@@ -185,6 +185,8 @@ CC = gcc
 #LIBS = -L/usr/X11R6/lib -lX11 -lcurses
 
 
+X11BASE = /usr/X11R6
+
 ##
 ## Variation -- FreeBSD 4.3R
 ##
@@ -326,13 +328,13 @@ TOLUA = server/tolua
 # below.
 #
 
-install: date mangclient mangconsole mangband
-	-mv ../mangclient ../mangclient.old
-	-mv ../mangband ../mangband.old
+install: date tomenet mangconsole tomenet.server
+	-mv ../tomenet ../tomenet.old
+	-mv ../tomenet.server ../tomenet.server.old
 	-mv ../mangconsole ../mangconsole.old
-	cp mangclient ..
+	cp tomenet ..
 	cp mangconsole ..
-	cp mangband ..
+	cp tomenet.server ..
 
 mini_install: install
 
@@ -343,16 +345,16 @@ date:
 # Build the "MAngband" server
 #
 
-mangband: $(SERV_OBJS) $(TOLUA)
-	$(CC) $(CFLAGS) -o mangband $(SERV_OBJS) $(LDFLAGS) $(LIBS)
+tomenet.server: $(SERV_OBJS) $(TOLUA)
+	$(CC) $(CFLAGS) -o tomenet.server $(SERV_OBJS) $(LDFLAGS) $(LIBS)
 
 
 #
 # Build the "MAngband" client
 #
 
-mangclient: $(CLI_OBJS)
-	$(CC) $(CFLAGS) -o mangclient $(CLI_OBJS) $(LDFLAGS) $(LIBS)
+tomenet: $(CLI_OBJS)
+	$(CC) $(CFLAGS) -o tomenet $(CLI_OBJS) $(LDFLAGS) $(LIBS)
 
 
 #

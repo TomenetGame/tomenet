@@ -6646,11 +6646,11 @@ static int Receive_special_line(int ind)
  				break;
 			case SPECIAL_FILE_LOG:
 				if (is_admin(Players[player]))
-					do_cmd_view_rfe(player, "mangband.log", line);
+					do_cmd_view_rfe(player, "tomenet.log", line);
  				break;
 			case SPECIAL_FILE_RFE:
 				if (is_admin(Players[player]) || cfg.public_rfe)
-					do_cmd_view_rfe(player, "mangband.rfe", line);
+					do_cmd_view_rfe(player, "tomenet.rfe", line);
  				break;
 		}
 	}

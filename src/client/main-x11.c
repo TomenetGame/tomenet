@@ -8,7 +8,7 @@
 
 #ifdef USE_X11
 
-#define USE_GRAPHICS
+//#define USE_GRAPHICS
 
 #include "../common/z-util.h"
 #include "../common/z-virt.h"
@@ -1619,7 +1619,7 @@ static errr Infowin_set_class_hint(cptr name)
 	res_name[0] = FORCELOWER(res_name[0]);
 	ch->res_name = res_name;
 
-	strcpy(res_class, "Angband");
+	strcpy(res_class, "TomeNET");
 	ch->res_class = res_class;
 
 	XSetClassHint(Metadpy->dpy, Infowin->win, ch);
@@ -2608,7 +2608,7 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_SCREEN;
 
 	/* Initialize the screen */
-	term_data_init(&screen, TRUE, "Angband", fnt_name);
+	term_data_init(&screen, TRUE, "TomeNET", fnt_name);
 	term_screen = Term;
 
 #ifdef USE_GRAPHICS

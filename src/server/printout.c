@@ -51,7 +51,7 @@ extern int s_printf(char *str, ...)
 
 	if(init == FALSE)   /* in case we don't start her up properly */
 	{
-		fp = fopen("mangband.log","w+");
+		fp = fopen("tomenet.log","w+");
 		init = TRUE;
 	}
 
@@ -97,7 +97,7 @@ extern bool rfe_printf(char *str, ...)
 
 	if(initr == FALSE)   /* in case we don't start her up properly */
 	{
-		fpr = fopen("mangband.rfe","a+");
+		fpr = fopen("tomenet.rfe","a+");
 		initr = TRUE;
 	}
 
