@@ -2499,7 +2499,8 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, boo
  */
 static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, bool true_art)
 {
-	int i;
+	int i, tries = 0;
+	artifact_type *a_ptr;
 
 
 	/* No artifacts in the town */
@@ -2572,18 +2573,29 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, bool true_a
 
     		o_ptr->name1 = ART_RANDART;
 
-		/* Piece together a 32-bit random seed */
-		o_ptr->name3 = rand_int(0xFFFF) << 16;
-		o_ptr->name3 += rand_int(0xFFFF);
 
-		/* Check the tval is allowed */
-		if (randart_make(o_ptr) == NULL)
-		{
-			/* If not, wipe seed. No randart today */
-			o_ptr->name1 = 0;
-			o_ptr->name3 = 0L;
+		/* Start loop. Break when artifact is allowed */
+		while (tries < 10) {
+			tries++;
 
-			return (FALSE);
+			/* Piece together a 32-bit random seed */
+			o_ptr->name3 = rand_int(0xFFFF) << 16;
+			o_ptr->name3 += rand_int(0xFFFF);
+
+			/* Check the tval is allowed */
+			if (randart_make(o_ptr) == NULL)
+			{
+				/* If not, wipe seed. No randart today */
+				o_ptr->name1 = 0;
+				o_ptr->name3 = 0L;
+
+    				return (FALSE);
+			}
+			
+			/* Check if we can break the loop (artifact is allowed) */
+			a_ptr = randart_make(o_ptr);
+			/* hack - we use 'true_art' as '!p_ptr->total_winner' here */
+			if (true_art || !(a_ptr->flags1 & TR1_LIFE)) break;
 		}
 		
 		return (TRUE);
@@ -5602,6 +5614,7 @@ void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool g
 void determine_level_req(int level, object_type *o_ptr)
 {
 	int i, j, base = k_info[o_ptr->k_idx].level / 2;
+ 	artifact_type *a_ptr;
 
 	/* Exception */
 	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) return;
@@ -5624,8 +5637,6 @@ void determine_level_req(int level, object_type *o_ptr)
 	/* artifact */
 	if (o_ptr->name1)
 	{
-	 	artifact_type *a_ptr;
-	 	
 	 	/* Randart */
 		if (o_ptr->name1 == ART_RANDART)
 		{
@@ -5793,6 +5804,11 @@ void determine_level_req(int level, object_type *o_ptr)
 	if (o_ptr->level > 50) o_ptr->level--;
 	if (o_ptr->level > 45) o_ptr->level--;
 	if (o_ptr->level > 40) o_ptr->level--;
+
+	/* Special limit for +LIFE randarts */
+	if ((o_ptr->name1 == ART_RANDART) &&
+	    (a_ptr->flags1 & TR1_LIFE) && (o_ptr->level <= 50))
+		o_ptr->level = 51 + rand_int(2);
 }
 
 

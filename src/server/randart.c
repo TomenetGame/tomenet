@@ -221,6 +221,7 @@ static s32b artifact_power (artifact_type *a_ptr)
 			if (a_ptr->to_d > 15) p += (a_ptr->to_d - 14) / 2;
 
 			if (a_ptr->flags1 & TR1_BLOWS) p += (a_ptr->pval) * 6;
+			if (a_ptr->flags1 & TR1_LIFE) p += (a_ptr->pval) * 6;
 
 			if ((a_ptr->flags1 & TR1_TUNNEL) &&
 			    (a_ptr->tval != TV_DIGGING))
@@ -244,6 +245,7 @@ static s32b artifact_power (artifact_type *a_ptr)
 		case TV_HARD_ARMOR:
 		{
 			if (a_ptr->flags1 & TR1_BLOWS) p += (a_ptr->pval) * 8;
+			if (a_ptr->flags1 & TR1_LIFE) p += (a_ptr->pval) * 8;
 
 			if (a_ptr->flags1 & TR1_SLAY_EVIL) p += 15;
 			if (a_ptr->flags1 & TR1_SLAY_ANIMAL) p += 10;
@@ -466,16 +468,20 @@ static void add_ability (artifact_type *a_ptr)
 			{
 				if (r < 25)
 				{
+					if (a_ptr->flags3 & TR3_XTRA_SHOTS) a_ptr->flags3 |= TR3_XTRA_MIGHT;
 					a_ptr->flags3 |= TR3_XTRA_SHOTS;
-					do_pval (a_ptr);
 				}
 				else if (r < 50)
 				{
+					if (a_ptr->flags3 & TR3_XTRA_MIGHT) a_ptr->flags3 |= TR3_XTRA_SHOTS;
 					a_ptr->flags3 |= TR3_XTRA_MIGHT;
-					do_pval (a_ptr);
 				}
-				else if (r < 75) a_ptr->to_h += 4 + rand_int (4);
-				else a_ptr->to_d += 4 + rand_int (4);
+				else if (r < 70) a_ptr->to_h += 4 + rand_int(4);
+				else if (r < 90) a_ptr->to_d += 4 + rand_int(4);
+				else {
+					a_ptr->to_h += 4 + rand_int(4);
+					a_ptr->to_d += 4 + rand_int(4);
+				}
 
 				break;
 			}
@@ -621,28 +627,36 @@ static void add_ability (artifact_type *a_ptr)
 				{
 					if (a_ptr->tval == TV_BOOMERANG) {
 						a_ptr->flags3 |= TR3_XTRA_SHOTS;
-						do_pval (a_ptr);
-						if (a_ptr->pval > 1) a_ptr->pval = 1;
 					} else {
 						a_ptr->flags1 |= TR1_BLOWS;
 						do_pval (a_ptr);
 						if (a_ptr->pval > 3) a_ptr->pval = 3;
 					}
 				}
-				else if (r < 85)
+				else if (r < 74)
+				{
+					if (a_ptr->tval == TV_BOOMERANG) { /* no +LIFE on boomerangs! */
+						a_ptr->flags3 |= TR3_XTRA_SHOTS;
+					} else {
+						a_ptr->flags1 |= TR1_LIFE;
+						do_pval (a_ptr);
+						if (a_ptr->pval > 3) a_ptr->pval = 3;
+					}
+				}
+				else if (r < 87)
 				{
 					a_ptr->to_d += 2 + rand_int (10);
 					a_ptr->to_h += 2 + rand_int (10);
 				}
-				else if (r < 88) a_ptr->to_a += 3 + rand_int (3);
-				else if (r < 91)
+				else if (r < 90) a_ptr->to_a += 3 + rand_int (3);
+				else if (r < 93)
 				{
 					a_ptr->flags5 |= TR5_CRIT;
 					if (a_ptr->pval < 0) break;
 					if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int (8);
 					else if (rand_int (2) == 0) a_ptr->pval++;
 				}
-				else if (r < 95)
+				else if (r < 97)
 				{
 					switch(a_ptr->tval) {
 					case TV_DIGGING:
@@ -844,93 +858,99 @@ static void add_ability (artifact_type *a_ptr)
 					if (rand_int(3)) a_ptr->pval = 1;
                                         else a_ptr->pval = 2;
 				}
-				else if (r < 62)
+				else if (r < 59)
+				{
+					a_ptr->flags1 |= TR1_LIFE;
+					do_pval (a_ptr);
+					if (a_ptr->pval > 3) a_ptr->pval = 3;
+				}
+				else if (r < 64)
 				{
 					a_ptr->flags5 |= TR5_CRIT;
 					if (a_ptr->pval < 0) break;
 					if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int (8);
 					else if (rand_int (2) == 0) a_ptr->pval++;
 				}
-				else if (r < 77)
+				else if (r < 79)
 				{
-				int rsub = 60 + rand_int(24);
-				if ((rsub < 62) && !(a_ptr->flags1 & TR1_MULTMASK))
+				int rsub = 62 + rand_int(24);
+				if ((rsub < 64) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_BRAND_ACID;
 				}
-				else if ((rsub < 64) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if ((rsub < 66) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_BRAND_ELEC;
 				}
-				else if ((rsub < 66) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if ((rsub < 68) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_BRAND_FIRE;
 				}
-				else if ((rsub < 68) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if ((rsub < 70) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_BRAND_COLD;
 				}
-				else if ((rsub < 70) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if ((rsub < 72) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_BRAND_POIS;
 				}
-				else if ((rsub < 72) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if ((rsub < 74) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_SLAY_DRAGON;
 				}
-				else if ((rsub < 74) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if ((rsub < 76) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_SLAY_ANIMAL;
 				}
-				else if ((rsub < 76) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if ((rsub < 78) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_SLAY_UNDEAD;
 				}
-				else if ((rsub < 78) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if ((rsub < 80) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_SLAY_DEMON;
 				}
-				else if ((rsub < 80) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if ((rsub < 82) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_SLAY_ORC;
 				}
-				else if ((rsub < 82) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if ((rsub < 84) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_SLAY_TROLL;
 				}
-				else if ((rsub < 84) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if ((rsub < 86) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_SLAY_GIANT;
 				}
 #if 0 //too powerful on gloves - Art Gloves 'soul cure' can help.
-				else if (r < 71) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if (r < 73) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{ 
 					a_ptr->flags1 |= TR1_KILL_DRAGON;
 				}
-				else if (r < 72) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if (r < 74) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{ 
 					a_ptr->flags1 |= TR1_KILL_UNDEAD;
 				}
-				else if (r < 73) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if (r < 75) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{ 
 					a_ptr->flags1 |= TR1_KILL_DEMON;
 				}
-				else if (r < 74) && !(a_ptr->flags1 & TR1_MULTMASK))
+				else if (r < 76) && !(a_ptr->flags1 & TR1_MULTMASK))
 				{
 					a_ptr->flags1 |= TR1_SLAY_EVIL;
 				}
 #endif
 				}
-				else if (r < 81)
+				else if (r < 83)
 				{
 					a_ptr->flags1 |= TR1_VAMPIRIC;
 				}
-				else if (r < 92)
+				else if (r < 94)
 					a_ptr->to_a += 3 + rand_int (3);
 				else
 				{
-					a_ptr->to_h += 2 + rand_int (3);
-					a_ptr->to_d += 2 + rand_int (3);
+					a_ptr->to_h = 2 + rand_int(7);
+					a_ptr->to_d = 2 + rand_int(7);
 					a_ptr->flags3 |= TR3_SHOW_MODS;
 				}
 				break;
@@ -938,8 +958,14 @@ static void add_ability (artifact_type *a_ptr)
 			case TV_HELM:
 			case TV_CROWN:
 			{
-				if (r < 15) a_ptr->flags2 |= TR2_RES_BLIND;
-				if (r < 17) {
+				if (r < 2)
+				{
+					a_ptr->flags1 |= TR1_LIFE;
+					do_pval (a_ptr);
+					if (a_ptr->pval > 3) a_ptr->pval = 3;
+				}
+				else if (r < 14) a_ptr->flags2 |= TR2_RES_BLIND;
+				else if (r < 17) {
 					a_ptr->flags1 |= TR1_INFRA;
 					if (a_ptr->pval == 0) a_ptr->pval = randint(2);
 				}
@@ -949,9 +975,9 @@ static void add_ability (artifact_type *a_ptr)
 					if (a_ptr->pval == 0) a_ptr->pval = randint(5);
 				}
 				else if (r < 30)
-				  {
-				    a_ptr->flags4 |= TR4_AUTO_ID;
-				  }
+				{
+					a_ptr->flags4 |= TR4_AUTO_ID;
+				}
 //				else if (r < 45) a_ptr->flags3 |= TR3_TELEPATHY;
 //				else if (r < 45) a_ptr->esp |= (ESP_ALL);
 				else if (r < 31) a_ptr->esp |= (ESP_ORC);
@@ -1032,6 +1058,29 @@ static void add_ability (artifact_type *a_ptr)
 				break;
 			}
 			case TV_DRAG_ARMOR:
+				if (r < 55) ;
+				else if (r < 63) a_ptr->flags2 |= TR2_HOLD_LIFE;
+				else if (r < 69)
+				{
+					a_ptr->flags1 |= TR1_CON;
+					do_pval (a_ptr);
+					if (rand_int (2) == 0)
+						a_ptr->flags2 |= TR2_SUST_CON;
+				}
+				else if (r < 75)
+				{
+					a_ptr->flags1 |= TR1_STR;
+					do_pval (a_ptr);
+					if (rand_int (2) == 0)
+						a_ptr->flags2 |= TR2_SUST_STR;
+				}
+				else if (r < 77)
+				{
+					a_ptr->flags1 |= TR1_LIFE;
+					do_pval (a_ptr);
+					if (a_ptr->pval > 3) a_ptr->pval = 3;
+				}
+				else a_ptr->to_a += 1 + rand_int (4);
 				break;
 			case TV_SOFT_ARMOR:
 			case TV_HARD_ARMOR:
@@ -1053,6 +1102,12 @@ static void add_ability (artifact_type *a_ptr)
 				else if (r < 46) a_ptr->flags2 |= TR2_RES_ELEC;
 				else if (r < 58) a_ptr->flags2 |= TR2_RES_FIRE;
 				else if (r < 70) a_ptr->flags2 |= TR2_RES_COLD;
+				else if (r < 72)
+				{
+					a_ptr->flags1 |= TR1_LIFE;
+					do_pval (a_ptr);
+					if (a_ptr->pval > 3) a_ptr->pval = 3;
+				}
 				else if (r < 80)
 					a_ptr->weight = (a_ptr->weight * 9) / 10;
 				else a_ptr->to_a += 3 + rand_int (8);
@@ -1556,7 +1611,16 @@ artifact_type *randart_make(object_type *o_ptr)
 		}
 	}
 	a_ptr->cost = (ap + 10 - RANDART_QUALITY) * (s32b)1500;
+	/* NOTE: a_ptr->level is only the base level. Apply_magic as well as
+	   create_artifact_aux execute a 'determine_level_req' on randarts
+	   after calling make_artifact/creating the seed, so the _real_ level
+	   reqs will base on this value, but not be the same. Just FYI ^^ - C. Blue */
         a_ptr->level = (curse_me ? (ap < -20 ? -ap : (ap > 20 ? ap : 15 + ABS(ap))) : ap);
+	/* +LIFE randarts were mainly meant for Nether Realm,
+	   so make it hard to trade them between non-kings (level < 51):
+	   -- maybe it's fine without this limit, not sure yet.. */
+//	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->level <= 50)) a_ptr->level = 51 + rand_int(2);
+/* commented it out & moved to determine_level_req since this is NOT the final object level.. */
 
 	if (a_ptr->cost < 0) a_ptr->cost = 0;
 
@@ -1609,6 +1673,24 @@ artifact_type *randart_make(object_type *o_ptr)
 	}
 	/* Dark Swords never add to MANA */
 	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;	
+
+	/* If an item increases all three, SPEED, CRIT, MANA,
+	   then reduce pval to 1/2 to balance */
+	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT) && (a_ptr->flags1 & TR1_MANA))
+	{
+		a_ptr->pval /= 2;
+		if (!a_ptr->pval) a_ptr->pval = 1;
+	}
+	/* If an item increases two of SPEED, CRIT, MANA by over 7
+	   then reduce pval to 2/3 to balance */
+	else if ((((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT)) ||
+	    ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags1 & TR1_MANA)) ||
+	    ((a_ptr->flags1 & TR1_MANA) && (a_ptr->flags5 & TR5_CRIT))))
+	{
+		a_ptr->pval = (a_ptr->pval * 2) / 3;
+		if (!a_ptr->pval) a_ptr->pval = 1;
+	}
+	/* Limits for +MANA */
         if (a_ptr->flags1 & TR1_MANA)
 	{
 		/* Randart mage staves may give up to +10 +1 bonus MANA */
@@ -1626,23 +1708,6 @@ artifact_type *randart_make(object_type *o_ptr)
 	/* No more than +4 IV on helms and crowns */
 	if ((a_ptr->tval == TV_HELM || a_ptr->tval == TV_CROWN) &&
 	    (a_ptr->flags1 & TR1_INFRA) && (a_ptr->pval > 4)) a_ptr->pval = 4;
-
-	/* If an item increases all three, SPEED, CRIT, MANA,
-	   then reduce pval to 2/3 to balance */
-	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT) && (a_ptr->flags5 & TR1_MANA))
-	{
-		a_ptr->pval /= 2;
-		if (!a_ptr->pval) a_ptr->pval = 1;
-	}
-	/* If an item increases two of SPEED, CRIT, MANA by over 7
-	   then reduce pval to 2/3 to balance */
-	else if ((((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT)) ||
-	    ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR1_MANA)) ||
-	    ((a_ptr->flags1 & TR1_MANA) && (a_ptr->flags5 & TR5_CRIT))))
-	{
-		a_ptr->pval = (a_ptr->pval * 2) / 3;
-		if (!a_ptr->pval) a_ptr->pval = 1;
-	}
 
 	/* No more than +6 stealth */
 	if ((a_ptr->flags1 & TR1_STEALTH) && (a_ptr->pval > 5)) a_ptr->pval = 5;/* was 6, but I think that's too much Stealth in one item?.. */
@@ -1686,12 +1751,17 @@ artifact_type *randart_make(object_type *o_ptr)
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
         }
-	/* Never more than +3 LIFE (doesn't occur on randarts anyways, yet) */
-	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 3)) a_ptr->pval = 3;
+	/* Never more than +3 LIFE (doesn't occur on randarts anyways, yet) or +3 EA */
+	if ((a_ptr->flags1 & (TR1_LIFE | TR1_BLOWS)) && (a_ptr->pval > 3)) a_ptr->pval = 3;
+	/* Never have super EA _and_ LIFE at the same time o_o */
+	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->flags1 & TR1_BLOWS) && (a_ptr->pval > 1)) a_ptr->pval = 1;
 	/* Never more than +6 +hit/+dam on gloves, +30 in general */
 	if (a_ptr->tval == TV_GLOVES) {
 		if (a_ptr->to_h > 6) a_ptr->to_h = 6;
 		if (a_ptr->to_d > 6) a_ptr->to_d = 6;
+	} else if (a_ptr->tval == TV_BOW) {
+		if (a_ptr->to_h > 35) a_ptr->to_h = 35;
+		if (a_ptr->to_d > 35) a_ptr->to_d = 35;
 	} else {
 		if (a_ptr->to_h > 30) a_ptr->to_h = 30;
 		if (a_ptr->to_d > 30) a_ptr->to_d = 30;
@@ -1995,14 +2065,27 @@ try_an_other_ego:
 	    (o_ptr->name2 == 169 || o_ptr->name2b == 169) ||
 	    (o_ptr->name2 == 185 || o_ptr->name2b == 185) ||
 	    (o_ptr->name2 == 186 || o_ptr->name2b == 186)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
-        if (a_ptr->flags1 & TR1_MANA)
-        {
-                if (a_ptr->pval > 10) a_ptr->pval = 10;
-        }
-	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT))
+	/* If an item increases all three, SPEED, CRIT, MANA,
+	   then reduce pval to 1/2 to balance */
+	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT) && (a_ptr->flags1 & TR1_MANA))
+	{
+		a_ptr->pval /= 2;
+		if (!a_ptr->pval) a_ptr->pval = 1;
+	}
+	/* If an item increases two of SPEED, CRIT, MANA by over 7
+	   then reduce pval to 2/3 to balance */
+	else if ((((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT)) ||
+	    ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags1 & TR1_MANA)) ||
+	    ((a_ptr->flags1 & TR1_MANA) && (a_ptr->flags5 & TR5_CRIT))))
 	{
 		a_ptr->pval = (a_ptr->pval * 2) / 3;
+		if (!a_ptr->pval) a_ptr->pval = 1;
 	}
+	/* While +MANA is capped at 10 for randarts, it's 12 for egos(!) */
+        if (a_ptr->flags1 & TR1_MANA)
+        {
+                if (a_ptr->pval > 12) a_ptr->pval = 12;
+        }
 	if(a_ptr->flags1 & TR1_STEALTH)
 	{
 		if (a_ptr->pval > 6) a_ptr->pval = 6;
@@ -2040,13 +2123,15 @@ try_an_other_ego:
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
         }
+#if 0 /* removed LIFE from VAMPIRIC items for now */
 	/* Back Hack :( */
 	if ((o_ptr->name2 == EGO_VAMPIRIC || o_ptr->name2b == EGO_VAMPIRIC) &&
 	    o_ptr->pval >= 0 && o_ptr->bpval >= 0) {
 		if (o_ptr->bpval > 0) o_ptr->bpval = o_ptr->bpval > 2 ? -2 : 0 - o_ptr->bpval;
 		else o_ptr->pval = o_ptr->pval > 2 ? -2 : 0 - o_ptr->pval;
 	}
-	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 3))
+#endif
+	if ((a_ptr->flags1 & (TR1_LIFE | TR1_BLOWS)) && (a_ptr->pval > 3))
 	{
 		a_ptr->pval = 3;
 	}

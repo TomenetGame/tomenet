@@ -3098,6 +3098,8 @@ bool create_artifact_aux(int Ind, int item)
 {
     player_type *p_ptr = Players[Ind];
     object_type *o_ptr;
+    artifact_type *a_ptr;
+    int tries = 0;
     char o_name[160];
     s32b old_owner;/* anti-cheeze :) */
     int to_h, to_d, to_a;
@@ -3152,37 +3154,50 @@ bool create_artifact_aux(int Ind, int item)
 		o_ptr->bpval = 0;
 	}
 
-	/* Piece together a 32-bit random seed */
-	o_ptr->name3 = rand_int(0xFFFF) << 16;
-	o_ptr->name3 += rand_int(0xFFFF);
 
-	/* Check the tval is allowed */
-	if (randart_make(o_ptr) == NULL)
-	{
-		/* If not, wipe seed. No randart today */
-		o_ptr->name1 = 0;
-		o_ptr->name3 = 0L;
+	/* Randart loop. Try until an allowed randart was made */
+	while (tries < 10) {
+		tries++;
 
-		return FALSE;
-	}
-	if (cursed_p(o_ptr)) cursed_art = TRUE;
+		/* Piece together a 32-bit random seed */
+		o_ptr->name3 = rand_int(0xFFFF) << 16;
+		o_ptr->name3 += rand_int(0xFFFF);
+
+		/* Check the tval is allowed */
+		if (randart_make(o_ptr) == NULL)
+		{
+			/* If not, wipe seed. No randart today */
+			o_ptr->name1 = 0;
+			o_ptr->name3 = 0L;
+
+			return FALSE;
+		}
+		if (cursed_p(o_ptr)) cursed_art = TRUE;
 
 #if 1
-	o_ptr->timeout=0;
-	to_h = o_ptr->to_h;
-	to_d = o_ptr->to_d;
-	to_a = o_ptr->to_a;
-	apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
-	/* Don't reroll to_h, to_d, to_a on jewelry; but keep negative
-	   values if the item was already cursed from artifact_creation. */
-	if (((o_ptr->tval == TV_RING) && (o_ptr->sval != SV_RING_SPECIAL)) || (o_ptr->tval == TV_AMULET)) {
-		if ((o_ptr->to_h > 0) || !cursed_art) o_ptr->to_h = to_h;
-		if ((o_ptr->to_d > 0) || !cursed_art) o_ptr->to_d = to_d;
-		if ((o_ptr->to_a > 0) || !cursed_art) o_ptr->to_a = to_a;
-	}
-	/* Don't let apply_magic remove the curse from randarts */
-	if (cursed_art) o_ptr->ident |= ID_CURSED;
+		o_ptr->timeout=0;
+		to_h = o_ptr->to_h;
+		to_d = o_ptr->to_d;
+		to_a = o_ptr->to_a;
+		apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
+		/* Don't reroll to_h, to_d, to_a on jewelry; but keep negative
+		   values if the item was already cursed from artifact_creation. */
+		if (((o_ptr->tval == TV_RING) && (o_ptr->sval != SV_RING_SPECIAL)) || (o_ptr->tval == TV_AMULET)) {
+			if ((o_ptr->to_h > 0) || !cursed_art) o_ptr->to_h = to_h;
+			if ((o_ptr->to_d > 0) || !cursed_art) o_ptr->to_d = to_d;
+			if ((o_ptr->to_a > 0) || !cursed_art) o_ptr->to_a = to_a;
+		}
+		/* Don't let apply_magic remove the curse from randarts */
+		if (cursed_art) o_ptr->ident |= ID_CURSED;
 #endif
+
+		/* If the resulting randart is allowed, leave the loop */
+		a_ptr = randart_make(o_ptr);
+		if (p_ptr->total_winner || !(a_ptr->flags1 & TR1_LIFE)) break;
+	}
+
+	/* Make final level requirements (basing on a_ptr->level, determined in randart_make) */
+	determine_level_req(50, o_ptr);
 
 #if 0
 	/* If the player's level < artifact level he can't use it :) */
