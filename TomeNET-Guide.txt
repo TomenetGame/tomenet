@@ -1,7 +1,7 @@
 .=========================+==--.
 | TomeNET Beginners Guide |
 +=========================+-
-| Latest update: 25. May 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 27. May 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.0.0, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -505,6 +505,9 @@ In most cases newly created accounts have to be "validated" by a server
 administrator to enable you to use the whole functionality of TomeNET. For
 example it is common not to allow unvalidated players to drop items or money
 to the ground. This is done to prevent certain cases of abuse.
+If you accidentally chose an account name or character name which was already
+taken by another player, you will be disconnected with an error message. In
+that case, try again with different names.
 Now that you have logged in you can create a new player character which will
 represent you in the virtual world of Middle Earth!
 
