@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: cave.c */
 
 /* Purpose: low level dungeon routines -BEN- */
@@ -43,6 +44,25 @@ struct dungeon_type *getdungeon(struct worldpos *wpos)
 	if(wpos->wz==0) return NULL;
 	else
 		return(wpos->wz>0 ? wild->tower:wild->dungeon);
+}
+
+/* another afterthought - it is often needed without up/down info */
+struct dun_level *getfloor(struct worldpos *wpos)
+{
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0)
+	{
+//		return(wild);
+		return(NULL);
+	}
+	else
+	{
+		if(wpos->wz>0)
+			return(&wild->tower->level[wpos->wz-1]);
+		else
+			return(&wild->dungeon->level[ABS(wpos->wz)-1]);
+	}
 }
 
 void new_level_up_x(struct worldpos *wpos, int pos)
@@ -166,11 +186,13 @@ bool can_go_down(struct worldpos *wpos)
 	return((wild->flags&WILD_F_DOWN)?TRUE:FALSE);
 }
 
+#if 0	// macroed.
 bool istown(struct worldpos *wpos)
 {
 	if(!wpos->wz && wild_info[wpos->wy][wpos->wx].type==WILD_TOWN) return(TRUE);
 	return(FALSE);
 }
+#endif	// 0
 
 void wpcopy(struct worldpos *dest, struct worldpos *src)
 {
@@ -179,10 +201,12 @@ void wpcopy(struct worldpos *dest, struct worldpos *src)
 	dest->wz=src->wz;
 }
 
+#if 0	// macroed.
 int wild_idx(worldpos *wpos)
 {
 	return (wpos->wx + wpos->wy * MAX_WILD_X);
 }
+#endif	// 0
 
 void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 {
@@ -192,17 +216,15 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	now=time(&now);
 
 	w_ptr=&wild_info[wpos->wy][wpos->wx];
+#if DEBUG_LEVEL > 2
+		s_printf("new_players_on_depth.. %s  now:%d value:%d inc:%s\n", wpos_format(wpos), now, value, inc?"TRUE":"FALSE");
+#endif
 	if(wpos->wz==0)
 	{
 		w_ptr->ondepth=(inc?w_ptr->ondepth+value:value);
-#if 0
-		if(w_ptr->ondepth < 0) w_ptr->ondepth=0;	// ondepth is unsigned!
+		if(w_ptr->ondepth < 0) w_ptr->ondepth=0;
 		if(!w_ptr->ondepth) w_ptr->lastused=0;
-		if(value>0)
-			w_ptr->lastused=now;
-#endif
-			w_ptr->lastused=now;
-
+		if(value>0) w_ptr->lastused=now;
 	}
 	else
 	{
@@ -216,11 +238,11 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 
 		l_ptr->ondepth=(inc?l_ptr->ondepth+value:value);
 		if(l_ptr->ondepth < 0) l_ptr->ondepth=0;
-#if 0
+#if 1
 		if(!l_ptr->ondepth) l_ptr->lastused=0;
 		if(value>0) l_ptr->lastused=now;
 #endif
-		l_ptr->lastused=now;
+//		l_ptr->lastused=now;
 	}
 }
 
@@ -239,10 +261,12 @@ int players_on_depth(struct worldpos *wpos)
 	}
 }
 
+#if 0	// macroed.
 bool inarea(struct worldpos *apos, struct worldpos *bpos)
 {
 	return(apos->wx==bpos->wx && apos->wy==bpos->wy && apos->wz==bpos->wz);
 }
+#endif	// 0
 
 int getlevel(struct worldpos *wpos)
 {
@@ -883,7 +907,7 @@ static byte player_color(int Ind)
 	/* Ghosts are black */
 	if (p_ptr->ghost) return TERM_L_DARK;
 
-	/* Black Breath carriers omit malignant aura sometimes.. */
+	/* Black Breath carriers emit malignant aura sometimes.. */
 	if (p_ptr->black_breath && magik(50)) return TERM_L_DARK;
 
 	if (p_ptr->body_monster) return (r_ptr->d_attr);
@@ -1096,10 +1120,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			/* Hack to display detected traps */
 			if ((c_ptr->special.type == CS_TRAPS) )
-				// && ((c_ptr->special.ptr)->found))
+				// && ((c_ptr->special.sc.ptr)->found))
 			{
-				trap_type *t_ptr = c_ptr->special.ptr;
-				if (t_ptr->found)
+				int t_idx = c_ptr->special.sc.trap.t_idx;
+				if (c_ptr->special.sc.trap.found)
 				{
 					/* Hack -- random hallucination */
 					if (p_ptr->image)
@@ -1115,14 +1139,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 						(*cp) = '^';
 
 						/* Add attr */
-						a = t_info[t_ptr->t_idx].color;
+						a = t_info[t_idx].color;
 
 						/* Get a new color with a strange formula :) */
-						if (t_info[t_ptr->t_idx].flags & FTRAP_CHANGE)
+						if (t_info[t_idx].flags & FTRAP_CHANGE)
 						{
 							u32b tmp;
 
-							// tmp = dun_level + dungeon_type + c_ptr->feat;
+							// tmp = dlev + dungeon_type + c_ptr->feat;
 							tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + feat;
 
 							// a = tmp % 16;
@@ -1222,13 +1246,13 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* Hack to display detected traps */
 			//		if ((c_ptr->t_idx != 0) && (c_ptr->info & CAVE_TRDT) &&
 			//				(c_ptr->feat != FEAT_ILLUS_WALL))
-			//		if ((c_ptr->special.type == CS_TRAPS) && (c_ptr->special.ptr->found))
+			//		if ((c_ptr->special.type == CS_TRAPS) && (c_ptr->special.sc.ptr->found))
 			/* Hack to display detected traps */
 			if ((c_ptr->special.type == CS_TRAPS) )
-				//					&& ((c_ptr->special.ptr)->found))
+				//					&& ((c_ptr->special.sc.ptr)->found))
 			{
-				trap_type *t_ptr = c_ptr->special.ptr;
-				if (t_ptr->found)
+				int t_idx = c_ptr->special.sc.trap.t_idx;
+				if (c_ptr->special.sc.trap.found)
 				{
 					/* Hack -- random hallucination */
 					if (p_ptr->image)
@@ -1239,15 +1263,15 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					else
 					{
 						/* Add attr */
-						a = t_info[t_ptr->t_idx].color;
+						a = t_info[t_idx].color;
 						//	a = t_info[TR_LIST(c_ptr)->t_idx].color;
 						/* Get a new color with a strange formula :) */
-						if (t_info[t_ptr->t_idx].flags & FTRAP_CHANGE)
+						if (t_info[t_idx].flags & FTRAP_CHANGE)
 						{
 							u32b tmp;
 
 							tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + c_ptr->feat;
-							//tmp = dun_level + dungeon_type + c_ptr->feat;
+							//tmp = dlev + dungeon_type + c_ptr->feat;
 
 //							a = tmp % 16;
 							a = tmp % 6 + 1;
@@ -1699,13 +1723,13 @@ void lite_spot(int Ind, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int dispx, dispy;
-
-	int kludge;
-
 	/* Redraw if on screen */
 	if (panel_contains(y, x))
 	{
+		int dispx, dispy;
+
+		int kludge;
+
 		byte a;
 		char c;
 
@@ -1727,11 +1751,12 @@ void lite_spot(int Ind, int y, int x)
 			}
 				
 			/*if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) c = '4';*/
-			
+#if 0			
 			if (!(strcmp(p_ptr->name,"Strider")))
 			{
 				sprintf(&c,"%d",(p_ptr->chp * 95) / (p_ptr->mhp*10));
 			}
+#endif	// 0
 						
 			if (p_ptr->fruit_bat) c = 'b';
 			
@@ -1783,6 +1808,8 @@ void prt_map(int Ind)
 
 	int x, y;
 	int dispx, dispy;
+	byte a;
+	char c;
 
 	/* Make sure he didn't just change depth */
 	if (p_ptr->new_level_flag) return;
@@ -1802,9 +1829,6 @@ void prt_map(int Ind)
 		/* Scan the columns of row "y" */
 		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
 		{
-			byte a;
-			char c;
-
 			/* Determine what is there */
 			map_info(Ind, y, x, &a, &c);
 
@@ -3168,9 +3192,13 @@ void update_view(int Ind)
 	if(!(zcave=getcave(wpos))) return;
 	if(p_ptr->wpos.wz)
 	{
+		dun_level		*l_ptr = getfloor(&p_ptr->wpos);
+		if(l_ptr && l_ptr->flags1 & LF1_NOMAP) unmap = TRUE;
+#if 0
 		struct dungeon_type *d_ptr;
 		d_ptr=(p_ptr->wpos.wz>0? wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower : wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon);
 		if(d_ptr->flags & DUNGEON_NOMAP) unmap=TRUE;
+#endif	// 0
 	}
 
 
@@ -3855,12 +3883,13 @@ void map_area(int Ind)
 	cave_type       *c_ptr;
 	byte            *w_ptr;
 
-	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
-	struct worldpos *wpos;
+//	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
+	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
+	worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
-	wpos=&p_ptr->wpos;
 	if(!(zcave=getcave(wpos))) return;
-	if(d_ptr && d_ptr->flags & DUNGEON_NOMAP) return;
+//	if(d_ptr && d_ptr->flags & DUNGEON_NOMAP) return;
+	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
 
 	/* Pick an area to map */
 	y1 = p_ptr->panel_row_min - randint(10);
@@ -3942,11 +3971,13 @@ void wiz_lite(int Ind)
 	cave_type       *c_ptr;
 	byte            *w_ptr;
 
-	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
+//	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
+	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-	if(d_ptr && d_ptr->flags & DUNGEON_NOMAP) return;
+//	if(d_ptr && d_ptr->flags & DUNGEON_NOMAP) return;
+	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
 
 	/* Scan all normal grids */
 	for (y = 1; y < p_ptr->cur_hgt-1; y++)
@@ -4324,6 +4355,7 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2)
  *
  * But now the "m" parameter specifies whether "los" is necessary.
  */
+/* if d<16, consider using tdi,tdy,tdx; considerably quicker! */
 void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m)
 {
 	int nx, ny;

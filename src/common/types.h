@@ -1191,7 +1191,7 @@ struct wilderness_type
 	u32b flags; /* various */
 	struct dungeon_type *tower;
 	struct dungeon_type *dungeon;
-	u16b ondepth;
+	s16b ondepth;
 	time_t lastused;
 	cave_type **cave;
 	byte up_x, up_y;

@@ -2642,7 +2642,7 @@ static void do_slash_cmd(int Ind, char *message)
 			/* default is "mangband.rfe" */
 			else if ((is_admin(p_ptr) || cfg.public_rfe))
 			{
-				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "mangband.rfe");
+				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.rfe");
 				do_cmd_check_other_prepare(Ind, path);
 				return;
 			}

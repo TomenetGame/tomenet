@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * This file (and all associated changes) were contributed by Donald Sharp
  * (dsharp@unixpros.com).
@@ -115,13 +116,13 @@ extern bool rfe_printf(char *str, ...)
 	return(TRUE);
 }
 
-#if 1	// under construction
+#if 1	// obsolete, use do_cmd_check_other_prepare() instead!
 /* better move to cmd4.c? */
 extern bool do_cmd_view_rfe(int Ind, char *str, int line)
 {
 	player_type *p_ptr = Players[Ind];
 	/* Path buffer */
-	char    path[1024];
+	char    path[MAX_PATH_LENGTH];
 
 //	if (!is_admin(p_ptr)) return(FALSE);
 
@@ -130,7 +131,7 @@ extern bool do_cmd_view_rfe(int Ind, char *str, int line)
 	initr = FALSE; */
 
 	/* Build the filename */
-	path_build(path, 1024, ANGBAND_DIR_DATA, str);
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, str);
 
 	/* Display the file contents */
 	show_file(Ind, path, str, line, FALSE);

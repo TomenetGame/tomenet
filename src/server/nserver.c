@@ -6740,6 +6740,7 @@ static int Receive_special_line(int ind)
 			case SPECIAL_FILE_HELP:
 				do_cmd_help(player, line);
  				break;
+			/* Obsolete, just left for compatibility (DELETEME) */
 			case SPECIAL_FILE_LOG:
 				if (is_admin(Players[player]))
 					do_cmd_view_rfe(player, "tomenet.log", line);

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: save.c */
 
 /* Purpose: interact with savefiles */
@@ -619,23 +620,23 @@ static void sf_put(byte v)
 	x_stamp += xor_byte;
 }
 
-static void wr_byte(byte v)
+void wr_byte(byte v)
 {
 	sf_put(v);
 }
 
-static void wr_u16b(u16b v)
+void wr_u16b(u16b v)
 {
 	sf_put(v & 0xFF);
 	sf_put((v >> 8) & 0xFF);
 }
 
-static void wr_s16b(s16b v)
+void wr_s16b(s16b v)
 {
 	wr_u16b((u16b)v);
 }
 
-static void wr_u32b(u32b v)
+void wr_u32b(u32b v)
 {
 	sf_put(v & 0xFF);
 	sf_put((v >> 8) & 0xFF);
@@ -643,12 +644,12 @@ static void wr_u32b(u32b v)
 	sf_put((v >> 24) & 0xFF);
 }
 
-static void wr_s32b(s32b v)
+void wr_s32b(s32b v)
 {
 	wr_u32b((u32b)v);
 }
 
-static void wr_string(cptr str)
+void wr_string(cptr str)
 {
 	while (*str)
 	{
@@ -724,9 +725,11 @@ static void wr_item(object_type *o_ptr)
 	{
 		wr_string("");
 	}
+	wr_u16b(o_ptr->next_o_idx);
+	wr_u16b(o_ptr->held_m_idx);
 }
 
-
+#if 0	// DELETEME
 /*
  * Write a "trap" record
  */
@@ -742,6 +745,7 @@ static void wr_trap(trap_type *t_ptr)
 	wr_byte(t_ptr->ix);
 	wr_byte(t_ptr->found);
 }
+#endif	// 0
 
 /*
  * Write a "monster" record
@@ -820,6 +824,8 @@ static void wr_monster(monster_type *m_ptr)
 	wr_byte(m_ptr->stunned);
 	wr_byte(m_ptr->confused);
 	wr_byte(m_ptr->monfear);
+	wr_u16b(m_ptr->hold_o_idx);
+	wr_u16b(m_ptr->clone);
 	wr_s16b(m_ptr->mind);
 
 	if (m_ptr->special)
@@ -999,6 +1005,8 @@ static void wr_wild(wilderness_type *w_ptr)
 	wr_u32b(w_ptr->flags);
 
 	wr_s32b(w_ptr->own);
+
+	/* ondepth is not saved? */
 }
 
 /*
@@ -1343,7 +1351,7 @@ static void wr_hostilities(int Ind)
 
 static void wr_dungeon(struct worldpos *wpos)
 {
-	int y, x;
+	int y, x, i;
 	byte prev_feature;
 	u16b prev_info;
 	unsigned char runlength;
@@ -1352,7 +1360,6 @@ static void wr_dungeon(struct worldpos *wpos)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 #if DEBUG_LEVEL > 1
-//	s_printf("%d players on %d,%d,%d.\n", players_on_depth(wpos), wpos->wx, wpos->wy, wpos->wz);
 	s_printf("%d players on %s.\n", players_on_depth(wpos), wpos_format(wpos));
 #endif
 
@@ -1379,6 +1386,16 @@ static void wr_dungeon(struct worldpos *wpos)
 	wr_byte(level_down_x(wpos));
 	wr_byte(level_rand_y(wpos));
 	wr_byte(level_rand_x(wpos));
+
+	{
+		dun_level *l_ptr = getfloor(wpos);
+		if (l_ptr)
+		{
+			wr_u32b(l_ptr->flags1);
+			wr_byte(l_ptr->hgt);
+			wr_byte(l_ptr->wid);
+		}
+	}
 
 	/*** Simple "Run-Length-Encoding" of cave ***/
 	/* for each each row */
@@ -1417,6 +1434,37 @@ static void wr_dungeon(struct worldpos *wpos)
 		wr_byte(prev_feature);
 		wr_u16b(prev_info);
 	}
+
+	/*** another scan for c_special ***/
+	/* for each each row */
+	for (y = 0; y < MAX_HGT; y++)
+	{
+		/* break the row down into runs */
+		for (x = 0; x < MAX_WID; x++)
+		{
+			c_ptr = &zcave[y][x];
+			i = c_ptr->special.type;
+
+			/* nothing special */
+			if (i == CS_NONE) continue;
+
+			/* TODO: implement DNA_DOOR and KEY_DOOR saving
+			 * currently, their x,y,i is saved in vain.	- Jir -
+			 */
+			wr_byte(x);
+			wr_byte(y);
+			wr_byte(i);
+
+			/* csfunc will take care of it :) */
+			csfunc[i].save(sc_is_pointer(i) ?
+					c_ptr->special.sc.ptr : &c_ptr->special);
+		}
+	}
+
+	/* hack -- terminate it */
+	wr_byte(255);
+	wr_byte(255);
+	wr_byte(255);
 }
 
 /* Write a players memory of a cave, simmilar to the above function. */
@@ -1918,7 +1966,7 @@ bool load_player(int Ind)
 	{
 		FILE *fkk;
 
-		char temp[1024];
+		char temp[MAX_PATH_LENGTH];
 
 		/* Extract name of lock file */
 		strcpy(temp, p_ptr->savefile);
@@ -2085,7 +2133,7 @@ bool load_player(int Ind)
 	/* Verify savefile usage */
 	if (TRUE)
 	{
-		char temp[1024];
+		char temp[MAX_PATH_LENGTH];
 
 		/* Extract name of lock file */
 		strcpy(temp, p_ptr->savefile);
@@ -2263,6 +2311,7 @@ static bool wr_server_savefile(void)
 	/* Dump the objects */
 	for (i = 0; i < tmp16u; i++) wr_item(&o_list[i]);
 
+#if 0	/* done in wr_dungeon, using csfunc */
 	/* Prepare to write the traps */
 	compact_traps(0, FALSE);
 	/* Note the number of traps */
@@ -2270,6 +2319,7 @@ static bool wr_server_savefile(void)
 	wr_u16b(tmp16u);
 	/* Dump the traps */
 	for (i = 0; i < tmp16u; i++) wr_trap(&t_list[i]);
+#endif	// 0
 
 	tmp32u=0L;
 	for(i=0;i<num_houses;i++){
@@ -2359,6 +2409,11 @@ static void new_wr_dungeons(){
 			cwpos.wx=x;
 			w_ptr=&wild_info[y][x];
 			save_guildhalls(&cwpos);
+			/*
+			 * One problem here; if a wilderness tower/dungeon exists, and
+			 * the surface is not static, stair/recall informations are lost
+			 * and cause crash/infinite-loop next time.		FIXME
+			 */
 			if(getcave(&cwpos) && players_on_depth(&cwpos)) wr_dungeon(&cwpos);
 			if(w_ptr->flags & WILD_F_DOWN){
 				struct dungeon_type *d_ptr=w_ptr->dungeon;
@@ -2553,13 +2608,13 @@ bool load_server_info(void)
 bool save_server_info(void)
 {
 	int result = FALSE;
-	char safe[1024];
+	char safe[MAX_PATH_LENGTH];
 
 #if DEBUG_LEVEL > 1
 	printf("saving server info...\n");
 #endif
 	/* New savefile */
-	path_build(safe, 1024, ANGBAND_DIR_SAVE, "server.new");
+	path_build(safe, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "server.new");
 
 	/* Remove it */
 	fd_kill(safe);
@@ -2567,17 +2622,17 @@ bool save_server_info(void)
 	/* Attempt to save the server state */
 	if (save_server_aux(safe))
 	{
-		char temp[1024];
-		char prev[1024];
+		char temp[MAX_PATH_LENGTH];
+		char prev[MAX_PATH_LENGTH];
 
 		/* Old savefile */
-		path_build(temp, 1024, ANGBAND_DIR_SAVE, "server.old");
+		path_build(temp, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "server.old");
 
 		/* Remove it */
 		fd_kill(temp);
 
 		/* Name of previous savefile */
-		path_build(prev, 1024, ANGBAND_DIR_SAVE, "server");
+		path_build(prev, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "server");
 
 		/* Preserve old savefile */
 		fd_move(prev, temp);

@@ -16,7 +16,7 @@
 #include "angband.h"
 
 /* chance of walking in a random direction when confused and trying to climb,
- * in percent.
+ * in percent. [50]
  */
 #define STAIR_FAIL_IF_CONFUSED	50
 
@@ -174,6 +174,20 @@ void do_cmd_go_down(int Ind)
 
 	/* Player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	/* Hack -- Enter a store (and between gates, etc) */
+	if ((!p_ptr->ghost) &&
+			(c_ptr->feat >= FEAT_SHOP_HEAD) &&
+			(c_ptr->feat <= FEAT_SHOP_TAIL))
+	{
+		/* Disturb */
+		disturb(Ind, 0, 0);
+
+		/* Hack -- Enter store */
+		command_new = '_';
+		do_cmd_store(Ind);
+		return;
+	}
 
 	/* Verify stairs */
 //      if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
@@ -2211,10 +2225,10 @@ void do_cmd_fire(int Ind, int dir)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
+#if 0
 	/* Require proper missile */
 	item_tester_tval = p_ptr->tval_ammo;
 
-#if 0
 	/* Access the item (if in the pack) */
 	if (item >= 0)
 	{
@@ -2296,6 +2310,7 @@ void do_cmd_fire(int Ind, int dir)
 	p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
 
 	/* Check if monsters around him/her hinder this */
+	/* TODO: this should be affected by 'archery' skill */
 	if (interfere(Ind, p_ptr->pclass == CLASS_ARCHER ? 12 : 15)) return;
 
 	if (!boomerang && cursed_p(o_ptr) && magik(50))

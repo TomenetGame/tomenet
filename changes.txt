@@ -1050,8 +1050,11 @@ TODO: the newest should appear the first!
 
 16/06/2002 (Jir)
 - /news, displays news.txt
+[H] you can go into a store with '>' key.
 [B] TV_POTION2 didn't shatter when thrown.
 [B] you couldn't fire missiles, doh!
+[B] was trying to read 'mangband.rfe' while rfe file was 'tomenet.rfe'.
+[B] floors got unstaticed prematually sometimes (prolly my enbug).
 
 
 ** [B] stands for Bugfix.
@@ -1065,6 +1068,8 @@ concisely: what's hot now?
 - multiple-dungeons stuff
   + we should preserve level_up_y etc. for manually-added dungeons/towers.
 - quest system
+- skill system
+  + interfere() should be affected by archery/wizardly skills?
 - LUA hook
 - csfunc
 - alignment (let's wait for EE :)
@@ -1083,9 +1088,10 @@ below this line are the unfixed bugs known:
 [B][C] chat-history contains lines with 'mindcrafter'. 
 [B] p_ptr->furry, lol
 [B] 'Ring of Polymorphing of'.
-[B] cannot 'run' near the outer permawall?
+[B] cannot 'run' near the outer permawall (run_test)
 [B] mon_vis, obj_vis etc. are messed while the player is off.
 [B] option '-r' puts the server into infinite-loop (genwild)
+[B] cave can be erased prematurely after loading.
 
 *below are bugs repoorted but not confirmed*
 [B] Macro sticks sometimes

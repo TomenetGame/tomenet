@@ -1,3 +1,4 @@
+/* $Id$ */
 /* Purpose: Angband game engine */
 
 /*
@@ -13,13 +14,19 @@
 #include "angband.h"
 #include "externs.h"
 
-/* chance of townie respawning like other monsters, in % */
+/* chance of townie respawning like other monsters, in % [50] */
 #define TOWNIE_RESPAWN_CHANCE	50
 
-/* if defined, player ghost loses exp slowly.
+/* if defined, player ghost loses exp slowly. [10000]
  * see GHOST_XP_CASHBACK in xtra2.c also.
  */
 #define GHOST_FADING	10000
+
+/* How fast HP/SP regenerate when 'resting'. [3] */
+#define RESTING_RATE	(cfg.resting_rate)
+
+/* Chance of items damaged when drowning, in % [5] */
+#define WATER_ITEM_DAMAGE_CHANCE	5
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
@@ -604,7 +611,7 @@ static void process_world(int Ind)
 
 		disturb(Ind, 0, 0);
 	}
-#if 0	// no BB-causing items for now?
+#if 0	// it's handled by p_ptr->black_breath_tmp
 	if (!(turn % 3000) && (p_ptr->black_breath))
 	{
 		u32b f1, f2, f3, f4, f5;
@@ -638,14 +645,14 @@ static void process_world(int Ind)
 
 	/* Cold Turkey  */
 	i = (p_ptr->csane << 7) / p_ptr->msane;
-	if (!(turn % 1500) && !magik(i))
+	if (!(turn % 4200) && !magik(i))
 	{
 		msg_print(Ind, "\377rA flashback storms your head!");
 
 		/* alert to the neighbors also */
 		if (magik(20)) msg_format_near(Ind, "You see %s's eyes bloodshot.", p_ptr->name);
 
-		set_image(Ind, p_ptr->image + 25 - i / 4);
+		set_image(Ind, p_ptr->image + 12 - i / 8);
 		disturb(Ind, 0, 0);
 	}
 
@@ -736,12 +743,24 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 
 	switch (p_ptr->inventory[item].tval)
 	{
+		/* weapon -- attack normally! */
+		case TV_MSTAFF:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_AXE:
+			return FALSE;
+
 		/* directional ones */
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
+		case TV_BOW:
+		case TV_BOOMERANG:
+//		case TV_INSTRUMENT:
 		{
-			do_cmd_fire(Ind, 5, item);
+//			do_cmd_fire(Ind, 5, item);
+			do_cmd_fire(Ind, 5);
 			return TRUE;
 		}
 
@@ -853,7 +872,7 @@ static int auto_retaliate(int Ind)
 			/* Make sure that the player can see this monster */
 			if (!p_ptr->mon_vis[i]) continue;
 
-                if (p_ptr->id == m_ptr->owner) continue;
+                if (p_ptr->id == m_ptr->owner && !p_ptr->stormbringer) continue;
 
 			/* Figure out if this is the best target so far */
 			if (!m_target_ptr)
@@ -934,7 +953,7 @@ static int auto_retaliate(int Ind)
 			if (q_ptr->conn == NOT_CONNECTED) continue;
 
 			/* Skip players we aren't hostile to */
-			if (!check_hostile(Ind, i)) continue;
+			if (!check_hostile(Ind, i) && !p_ptr->stormbringer) continue;
 
 			/* Skip players we cannot see */
 			if (!p_ptr->play_vis[i]) continue;
@@ -1168,9 +1187,10 @@ static int auto_retaliate(int Ind)
 #endif	// 0
 
 	/* Pick an item with {@O} inscription */
-	for (i = 0; i < INVEN_PACK; i++)
+//	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < INVEN_TOTAL; i++)
 	{
-		if (!p_ptr->inventory[i].tval) break;
+		if (!p_ptr->inventory[i].tval) continue;
 
 //		cptr inscription = (unsigned char *) quark_str(o_ptr->note);
 		inscription = quark_str(p_ptr->inventory[i].note);
@@ -1190,7 +1210,7 @@ static int auto_retaliate(int Ind)
 				{                       
 					inscription++;
 					item = i;
-					i = INVEN_PACK;
+					i = INVEN_TOTAL;
 					break;
 				}
 			}
@@ -1205,8 +1225,9 @@ static int auto_retaliate(int Ind)
 		p_ptr->target_who = target;
 
 		/* Attack him */
+		/* Stormbringer bypasses everything!! */
 //		py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
-		if (!retaliate_item(Ind, item, inscription))
+		if (p_ptr->stormbringer || !retaliate_item(Ind, item, inscription))
 		{
 			py_attack(Ind, p_target_ptr->py, p_target_ptr->px, FALSE);
 		}
@@ -1315,6 +1336,9 @@ static void process_player_begin(int Ind)
 /*
  * Player processing that occurs at the end of a turn
  */
+/*
+ * TODO: find a better way for timed spells(set_*).
+ */
 static void process_player_end(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1387,35 +1411,77 @@ static void process_player_end(int Ind)
 		}
 
 		/* Drowning, but not ghosts */
-		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER && !p_ptr->ghost && !p_ptr->fly)
+//		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER && !p_ptr->ghost && !p_ptr->fly)
+		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER)
 		{
-			int hit=p_ptr->mhp/50+randint(p_ptr->mhp/20);
-			if(!hit) hit=1;
-
-			/* Take damage */
-			if(!(p_ptr->pclass==CLASS_MIMIC) || (
-						!(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
-						!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
+			if(!p_ptr->ghost && !p_ptr->fly)
 			{
-				/* temporary abs weight calc */
-				if(p_ptr->wt+p_ptr->total_weight/10 > 190)
+				/* Take damage */
+				if(!(p_ptr->pclass==CLASS_MIMIC) || (
+					!(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
+					!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
 				{
-					int factor=(p_ptr->wt+p_ptr->total_weight/10)-170;
-					/* too heavy, always drown? */
-					if(factor<300)
-					{
-						if(randint(factor)<20) hit=0;
-					}
+					int hit = p_ptr->mhp>>6;
+					hit += randint(p_ptr->mhp>>5);
+					if(!hit) hit=1;
 
-					if (hit) msg_print(Ind,"\377rYou're drowning!");
-
-					if(randint(1000-factor)<10)
+					/* temporary abs weight calc */
+					/* Hack: Take STR and DEX into consideration (max 51%) */
+					if(p_ptr->wt+p_ptr->total_weight/10 > 170 &&	// 190
+						!magik(adj_str_wgt[p_ptr->stat_ind[A_STR]]) &&
+						!magik(adj_str_wgt[p_ptr->stat_ind[A_DEX]]))
 					{
-						msg_print(Ind,"\377rYou are weakened by the exertion of swimming!");
-						do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
+						int factor=(p_ptr->wt+p_ptr->total_weight/10)-150;	// 170
+						/* too heavy, always drown? */
+						if(factor<300)
+						{
+							if(randint(factor)<20) hit=0;
+						}
+
+						if (hit)
+						{
+							msg_print(Ind,"\377rYou're drowning!");
+							/* harm equipments */
+							if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
+									magik(WATER_ITEM_DAMAGE_CHANCE))
+							{
+								inven_damage(Ind, set_water_destroy, 1);
+								if (magik(20)) minus_ac(Ind);
+							}
+						}
+
+						if(randint(1000-factor)<10)
+						{
+							msg_print(Ind,"\377rYou are weakened by the exertion of swimming!");
+							do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
+						}
+						take_hit(Ind, hit, "drowning");
 					}
-					take_hit(Ind, hit, "drowning");
 				}
+			}
+		}
+		/* Aquatic anoxia */
+		else if(!p_ptr->ghost)
+		{
+			/* Take damage */
+			if((p_ptr->pclass==CLASS_MIMIC) && (
+				(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
+				!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
+			{
+				int hit = p_ptr->mhp>>6;
+				hit += randint(p_ptr->mhp>>5);
+				if(!hit) hit=1;
+
+				/* Take CON into consideration(max 30%) */
+				if (!magik(adj_str_wgt[p_ptr->stat_ind[A_DEX]])) hit = 0;
+				if (hit) msg_print(Ind,"\377rYou cannot breathe air!");
+
+				if(randint(1000)<10)
+				{
+					msg_print(Ind,"\377rYou find it hard to move!");
+					do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
+				}
+				take_hit(Ind, hit, "anoxia");
 			}
 		}
 
@@ -1546,7 +1612,7 @@ static void process_player_end(int Ind)
 		/* Resting */
 		if (p_ptr->resting && !p_ptr->searching)
 		{
-			regen_amount = regen_amount * 3;
+			regen_amount = regen_amount * RESTING_RATE;
 		}
 
 		/* Regenerate the mana */
@@ -1952,7 +2018,9 @@ static void process_player_end(int Ind)
 
 		/* Handle experience draining */
 		if (p_ptr->exp_drain && magik(10))
-			take_xp_hit(Ind, 1, "Draining", TRUE, FALSE);
+//			take_xp_hit(Ind, 1, "Draining", TRUE, FALSE);
+			take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L,
+					"Draining", TRUE, FALSE);
 #if 0
 		{
 			if ((rand_int(100) < 10) && (p_ptr->exp > 0))
@@ -1968,11 +2036,11 @@ static void process_player_end(int Ind)
 		 * is worse, especially for high-level characters.
 		 * As per Tolkien, hobbits are resistant.
          */
-        if (p_ptr->black_breath &&
+        if ((p_ptr->black_breath || p_ptr->black_breath_tmp) &&
 			rand_int(200) < (p_ptr->prace == RACE_HOBBIT ? 2 : 5))
 		{
 			(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
-			take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L,
+			take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L,
 					"Black Breath", TRUE, TRUE);
 #if 0
 			byte chance = (p_ptr->prace == RACE_HOBBIT) ? 2 : 5;
@@ -2299,9 +2367,6 @@ static void process_player_end(int Ind)
 				/* One more person here */
 				new_players_on_depth(&p_ptr->wpos,1,TRUE);
 
-				/* He'll be safe for 2 turn */
-				set_invuln_short(Ind, 2);
-
 				p_ptr->new_level_flag = TRUE;
 
 				/* He'll be safe for 2 turns */
@@ -2329,40 +2394,48 @@ static void process_player_end(int Ind)
 	if (p_ptr->window) window_stuff(Ind);
 }
 
-static bool stale_level(struct worldpos *wpos, int grace){
+static bool stale_level(struct worldpos *wpos, int grace)
+{
 	time_t now;
+
+	/* Hack -- towns are static for good. */
+//	if (istown(wpos)) return (FALSE);
+
 	now=time(&now);
-	if(wpos->wz){
+	if(wpos->wz)
+	{
 		struct dungeon_type *d_ptr;
 		struct dun_level *l_ptr;
 		d_ptr=getdungeon(wpos);
 		if(!d_ptr) return(FALSE);
 		l_ptr=&d_ptr->level[ABS(wpos->wz)-1];
-#if DEBUG_LEVEL > 0
-		s_printf("%s  now:%d last:%d diff:%d grace:%d\n", wpos_format(wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace);
+#if DEBUG_LEVEL > 2
+		s_printf("%s  now:%d last:%d diff:%d grace:%d players:%d\n", wpos_format(wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace, players_on_depth(wpos));
 #endif
 		if(now-l_ptr->lastused > grace){
 			return(TRUE);
 		}
 	}
-	else{
-		if(now-wild_info[wpos->wy][wpos->wx].lastused > grace){
-			/* Never allow dealloc where there are houses */
-			/* For now at least */
+	else if(now-wild_info[wpos->wy][wpos->wx].lastused > grace){
+		/* Never allow dealloc where there are houses */
+		/* For now at least */
 #if 0
-			int i;
-			
-			for(i=0;i<num_houses;i++){
-				if(inarea(wpos, &houses[i].wpos)){
-					if(!(houses[i].flags&HF_DELETED))
-						return(FALSE);
-				}
+		int i;
+
+		for(i=0;i<num_houses;i++){
+			if(inarea(wpos, &houses[i].wpos)){
+				if(!(houses[i].flags&HF_DELETED))
+					return(FALSE);
 			}
+		}
 #endif
 
-			return(TRUE);
-		}
+		return(TRUE);
 	}
+	/*
+	else if(now-wild_info[wpos->wy][wpos->wx].lastused > grace)
+		return(TRUE);
+	 */
 	return(FALSE);
 }
 
@@ -2584,6 +2657,7 @@ void scan_objs(){
 /* Added the japanese unique respawn patch -APD- 
    It appears that each moment of time is equal to 10 minutes?
 */
+/* called only every 10 turns */
 static void process_various(void)
 {
 	int i, j;
@@ -2614,11 +2688,21 @@ static void process_various(void)
 		s_printf("24 hours maintenance cycle\n");
 		scan_players();
 		scan_houses();
-		s_printf("Finished maintenance\n");
+		if (cfg.auto_purge)
+		{
+			s_printf("previous server status: m_max(%d) o_max(%d)\n",
+					m_max, o_max);
+			compact_monsters(0, TRUE);
+			compact_objects(0, TRUE);
+//			compact_traps(0, TRUE);
+			s_printf("current server status:  m_max(%d) o_max(%d)\n",
+					m_max, o_max);
+		}
 #if DEBUG_LEVEL > 1
-		s_printf("Current server status:  m_max(%d) o_max(%d) t_max(%d)\n",
-				m_max, o_max, t_max);
+		else s_printf("Current server status:  m_max(%d) o_max(%d)\n",
+				m_max, o_max);
 #endif
+		s_printf("Finished maintenance\n");
 	}
 
 	if (!(turn % (cfg.fps * 10))){
@@ -2675,7 +2759,7 @@ static void process_various(void)
 				if (!p_ptr->total_winner) continue;
 
 				/* Hack -- never Maggot and his dogs :) */
-				i = rand_range(50,MAX_R_IDX-2);
+				i = rand_range(60,MAX_R_IDX-2);
 				r_ptr = &r_info[i];
 
 				/* Make sure we are looking at a dead unique */
@@ -2930,17 +3014,6 @@ void dungeon(void)
 	/* Return if no one is playing */
 	/* if (!NumPlayers) return; */
 
-	if(cfg.runlevel<6 && time(NULL)-cfg.closetime>60)
-		set_runlevel(cfg.runlevel-1);
-
-	if(cfg.runlevel<5){
-		for(i=NumPlayers; i>0 ;i--){
-			if(Players[i]->conn==NOT_CONNECTED) continue;
-			if(Players[i]->wpos.wz!=0 || Players[i]->new_level_flag) break;
-		}
-		if(!i) set_runlevel(0);
-	}
-
 	/* Check for death.  Go backwards (very important!) */
 	for (i = NumPlayers; i > 0; i--)
 	{
@@ -2975,324 +3048,364 @@ void dungeon(void)
 	for (i = 1; i < NumPlayers + 1; i++)
 	{
 		player_type *p_ptr = Players[i];
-		struct worldpos *wpos=&p_ptr->wpos;
-		cave_type **zcave;
-		struct worldpos twpos;
-                int j, x, y, startx, starty, m_idx, my, mx;
 
-		if (p_ptr->conn == NOT_CONNECTED)
+		if (p_ptr->conn == NOT_CONNECTED || !p_ptr->new_level_flag)
 			continue;
-
-		if (!p_ptr->new_level_flag)
-			continue;
-
-		/* Check "maximum depth" to make sure it's still correct */
-		if ((!p_ptr->ghost) && (getlevel(wpos) > p_ptr->max_dlv))
-			p_ptr->max_dlv = getlevel(wpos);
-
-		/* Make sure the server doesn't think the player is in a store */
-		p_ptr->store_num = -1;
-
-		/* Hack -- artifacts leave the queen/king */
-//		if (!p_ptr->admin_dm && !p_ptr->admin_wiz && player_is_king(Ind))
-		if (cfg.kings_etiquette && p_ptr->total_winner &&
-			!p_ptr->admin_dm && !p_ptr->admin_wiz)
+		else
 		{
-			int j;
-			object_type *o_ptr;
-			char		o_name[160];
+			worldpos *wpos=&p_ptr->wpos;
+			cave_type **zcave;
+			worldpos twpos;
+			dun_level *l_ptr;
+			int j, x, y, startx, starty, m_idx, my, mx;
 
-			for (j = 0; j < INVEN_TOTAL; j++)
+			/* Check "maximum depth" to make sure it's still correct */
+			if ((!p_ptr->ghost) && (getlevel(wpos) > p_ptr->max_dlv))
+				p_ptr->max_dlv = getlevel(wpos);
+
+			/* Make sure the server doesn't think the player is in a store */
+			p_ptr->store_num = -1;
+
+			/* Hack -- artifacts leave the queen/king */
+			/* also checks the artifact list */
+			//		if (!p_ptr->admin_dm && !p_ptr->admin_wiz && player_is_king(Ind))
 			{
-				o_ptr = &p_ptr->inventory[j];
-				if (!o_ptr->k_idx || !true_artifact_p(o_ptr)) continue;
+				object_type *o_ptr;
+				char		o_name[160];
 
-				if (strstr((a_name + a_info[o_ptr->name1].name),"Grond") ||
-					strstr((a_name + a_info[o_ptr->name1].name),"Morgoth"))
-					continue;
+				for (j = 0; j < INVEN_TOTAL; j++)
+				{
+					o_ptr = &p_ptr->inventory[j];
+					if (!o_ptr->k_idx || !true_artifact_p(o_ptr)) continue;
 
-				/* Describe the object */
-				object_desc(i, o_name, o_ptr, TRUE, 0);
+					if (!a_info[o_ptr->name1].cur_num)
+						a_info[o_ptr->name1].cur_num = 1;
 
-				/* Message */
-				msg_format(i, "\377y%s bids farewell to you...", o_name);
-				a_info[o_ptr->name1].cur_num = 0;
-				a_info[o_ptr->name1].known = FALSE;
+					if (!(cfg.kings_etiquette && p_ptr->total_winner && !is_admin(p_ptr)))
+						continue;
 
-				/* Eliminate the item  */
-				inven_item_increase(i, j, -99);
-				inven_item_describe(i, j);
-				inven_item_optimize(i, j);
+					if (strstr((a_name + a_info[o_ptr->name1].name),"Grond") ||
+							strstr((a_name + a_info[o_ptr->name1].name),"Morgoth"))
+						continue;
 
-				j--;
+					/* Describe the object */
+					object_desc(i, o_name, o_ptr, TRUE, 0);
+
+					/* Message */
+					msg_format(i, "\377y%s bids farewell to you...", o_name);
+					a_info[o_ptr->name1].cur_num = 0;
+					a_info[o_ptr->name1].known = FALSE;
+
+					/* Eliminate the item  */
+					inven_item_increase(i, j, -99);
+					inven_item_describe(i, j);
+					inven_item_optimize(i, j);
+
+					j--;
+				}
 			}
-		}
 
-		/* Somebody has entered an ungenerated level */
-		if (players_on_depth(wpos) && !getcave(wpos))
-		{
-			/* Allocate space for it */
-			alloc_dungeon_level(wpos);
-
-			/* Generate a dungeon level there */
-			generate_cave(wpos);
-		}
-		zcave=getcave(wpos);
-
-		/* Clear the "marked" and "lit" flags for each cave grid */
-		for (y = 0; y < MAX_HGT; y++)
-		{
-			for (x = 0; x < MAX_WID; x++)
+			/* Somebody has entered an ungenerated level */
+			if (players_on_depth(wpos) && !getcave(wpos))
 			{
-				w_ptr = &p_ptr->cave_flag[y][x];
+				/* Allocate space for it */
+				alloc_dungeon_level(wpos);
 
-				*w_ptr = 0;
+				/* Generate a dungeon level there */
+				generate_cave(wpos);
 			}
-		}
 
-		/* hack -- update night/day in wilderness levels */
-		if ((!wpos->wz) && (IS_DAY)) wild_apply_day(wpos); 
-		if ((!wpos->wz) && (IS_NIGHT)) wild_apply_night(wpos);
+			zcave = getcave(wpos);
+			l_ptr = getfloor(wpos);
 
-		/* Memorize the town and all wilderness levels close to town */
-		if (istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius <=2))
-		{
-			bool dawn = ((turn % (10L * TOWN_DAWN)) < (10L * TOWN_DAWN / 2)); 
-
-			p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
-			p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
-
-			p_ptr->cur_hgt = MAX_HGT;
-			p_ptr->cur_wid = MAX_WID;
-
-			/* Memorize the town for this player (if daytime) */
+			/* Clear the "marked" and "lit" flags for each cave grid */
 			for (y = 0; y < MAX_HGT; y++)
 			{
 				for (x = 0; x < MAX_WID; x++)
 				{
 					w_ptr = &p_ptr->cave_flag[y][x];
-					c_ptr = &zcave[y][x];
 
-					/* Memorize if daytime or "interesting" */
-					if (dawn || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
-						*w_ptr |= CAVE_MARK;
+					*w_ptr = 0;
 				}
 			}
-		}
-		else
-		{
-			p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
-			p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
 
-			p_ptr->cur_hgt = MAX_HGT;
-			p_ptr->cur_wid = MAX_WID;
-		}
+			/* hack -- update night/day in wilderness levels */
+			if ((!wpos->wz) && (IS_DAY)) wild_apply_day(wpos); 
+			if ((!wpos->wz) && (IS_NIGHT)) wild_apply_night(wpos);
 
-		/* Determine starting location */
-		switch (p_ptr->new_level_method)
-		{
-			/* Climbed down */
-			case LEVEL_DOWN:  starty = level_down_y(wpos);
-					  startx = level_down_x(wpos);
-					  break;
+			/* Memorize the town and all wilderness levels close to town */
+			if (istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius <=2))
+			{
+				bool dawn = ((turn % (10L * TOWN_DAWN)) < (10L * TOWN_DAWN / 2)); 
 
-			/* Climbed up */
-			case LEVEL_UP:    starty = level_up_y(wpos);
-					  startx = level_up_x(wpos);
-					  break;
-			
-			/* Teleported level */
-			case LEVEL_RAND:  starty = level_rand_y(wpos);
-					  startx = level_rand_x(wpos);
-					  break;
-			
-			/* Used ghostly travel */
-			case LEVEL_GHOST: starty = p_ptr->py;
-					  startx = p_ptr->px;
-					  break;
-					  
-			/* Over the river and through the woods */			  
-			case LEVEL_OUTSIDE:
-			case LEVEL_HOUSE:
-					    starty = p_ptr->py;
-				            startx = p_ptr->px;
-				            break;
-			/* this is used instead of extending the level_rand_y/x
-			   into the negative direction to prevent us from
-			   alocing so many starting locations.  Although this does
-			   not make players teleport to simmilar locations, this
-			   could be achieved by seeding the RNG with the depth.
-			*/
-			case LEVEL_OUTSIDE_RAND: 
-			
+				p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
+				p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
+
+				p_ptr->cur_hgt = MAX_HGT;
+				p_ptr->cur_wid = MAX_WID;
+
+				/* Memorize the town for this player (if daytime) */
+				for (y = 0; y < MAX_HGT; y++)
+				{
+					for (x = 0; x < MAX_WID; x++)
+					{
+						w_ptr = &p_ptr->cave_flag[y][x];
+						c_ptr = &zcave[y][x];
+
+						/* Memorize if daytime or "interesting" */
+						if (dawn || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
+							*w_ptr |= CAVE_MARK;
+					}
+				}
+			}
+			else if (wpos->wz)
+			{
+#if 1
+				/* Hack -- tricky formula, but needed */
+				p_ptr->max_panel_rows = ((l_ptr->hgt + SCREEN_HGT / 2) / SCREEN_HGT) * 2 - 2;
+				p_ptr->max_panel_cols = ((l_ptr->wid + SCREEN_WID / 2) / SCREEN_WID ) * 2 - 2;
+#else
+				p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
+				p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
+#endif	// 0
+
+				p_ptr->cur_hgt = l_ptr->hgt;
+				p_ptr->cur_wid = l_ptr->wid;
+
+				show_floor_feeling(i);
+			}
+
+			else
+			{
+				p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
+				p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
+
+				p_ptr->cur_hgt = MAX_HGT;
+				p_ptr->cur_wid = MAX_WID;
+			}
+
+			/* Determine starting location */
+			switch (p_ptr->new_level_method)
+			{
+				/* Climbed down */
+				case LEVEL_DOWN:  starty = level_down_y(wpos);
+								  startx = level_down_x(wpos);
+								  break;
+
+								  /* Climbed up */
+				case LEVEL_UP:    starty = level_up_y(wpos);
+								  startx = level_up_x(wpos);
+								  break;
+
+								  /* Teleported level */
+				case LEVEL_RAND:  starty = level_rand_y(wpos);
+								  startx = level_rand_x(wpos);
+								  break;
+
+								  /* Used ghostly travel */
+				case LEVEL_GHOST: starty = p_ptr->py;
+								  startx = p_ptr->px;
+								  break;
+
+								  /* Over the river and through the woods */
+				case LEVEL_OUTSIDE:
+				case LEVEL_HOUSE:
+								  starty = p_ptr->py;
+								  startx = p_ptr->px;
+								  break;
+								  /* this is used instead of extending the level_rand_y/x
+									 into the negative direction to prevent us from
+									 alocing so many starting locations.  Although this does
+									 not make players teleport to simmilar locations, this
+									 could be achieved by seeding the RNG with the depth.
+								   */
+				case LEVEL_OUTSIDE_RAND: 
+
+					/* make sure we aren't in an "icky" location */
+					do
+					{
+						starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT)-3)+1;
+						startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID)-3)+1;
+					}
+					while (  (zcave[starty][startx].info & CAVE_ICKY)
+							|| (zcave[starty][startx].feat==FEAT_WATER)
+							|| (!cave_floor_bold(zcave, starty, startx)) );
+					break;
+			}
+
+			/* Hack -- handle smaller floors */
+			if (l_ptr && (starty > l_ptr->hgt || startx > l_ptr->wid))
+			{
 				/* make sure we aren't in an "icky" location */
 				do
 				{
-					starty = rand_int(MAX_HGT-3)+1;
-					startx = rand_int(MAX_WID-3)+1;
+					starty = rand_int(l_ptr->hgt-3)+1;
+					startx = rand_int(l_ptr->wid-3)+1;
 				}
 				while (  (zcave[starty][startx].info & CAVE_ICKY)
-					|| (zcave[starty][startx].feat==FEAT_WATER)
-					|| (!cave_floor_bold(zcave, starty, startx)) );
-				break;
-		}
-
-		//printf("finding area (%d,%d)\n",startx,starty);
-		/* Place the player in an empty space */
-		//for (j = 0; j < 1500; ++j)
-		for (j = 0; j < 1500; j++)
-		{
-			/* Increasing distance */
-			d = (j + 149) / 150;
-
-			/* Pick a location */
-			scatter(wpos, &y, &x, starty, startx, d, 1);
-			/* Must have an "empty" grid */
-			if (!cave_empty_bold(zcave, y, x)) continue;
-
-			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
-
-			if(wpos->wz==0){
-				if((zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method!=LEVEL_HOUSE)) continue;
-				if(!(zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method==LEVEL_HOUSE)) continue;
+						|| (!cave_floor_bold(zcave, starty, startx)) );
 			}
-			break;
-		}
+
+			//printf("finding area (%d,%d)\n",startx,starty);
+			/* Place the player in an empty space */
+			//for (j = 0; j < 1500; ++j)
+			for (j = 0; j < 1500; j++)
+			{
+				/* Increasing distance */
+				d = (j + 149) / 150;
+
+				/* Pick a location */
+				scatter(wpos, &y, &x, starty, startx, d, 1);
+				/* Must have an "empty" grid */
+				if (!cave_empty_bold(zcave, y, x)) continue;
+
+				/* Not allowed to go onto a icky location (house) if Depth <= 0 */
+
+				if(wpos->wz==0){
+					if((zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method!=LEVEL_HOUSE)) continue;
+					if(!(zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method==LEVEL_HOUSE)) continue;
+				}
+				break;
+			}
 
 #if 0
-		/* Place the player in an empty space */
-		for (j = 0; j < 1500; ++j)
-		{
-			/* Increasing distance */
-			d = (j + 149) / 150;
-
-			/* Pick a location */
-			scatter(wpos, &y, &x, starty, startx, d, 1);
-
-			/* Must have an "empty" grid */
-			if (!cave_empty_bold(zcave, y, x)) continue;
-
-			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
-			if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY))
-			break;
-		}
-#endif /*0*/
-		p_ptr->py = y;
-		p_ptr->px = x;
-
-		/* Update the player location */
-		zcave[y][x].m_idx = 0 - i;
-
-		for (m_idx = m_top - 1; m_idx >= 0; m_idx--)
-		{
-			monster_type *m_ptr = &m_list[m_fast[m_idx]];
-			cave_type **mcave;
-			mcave=getcave(&m_ptr->wpos);
-
-			if (!m_fast[m_idx]) continue;
-
-			/* Excise "dead" monsters */
-			if (!m_ptr->r_idx) continue;
-
-			if (m_ptr->owner != p_ptr->id) continue;
-
-			if (!m_ptr->wpos.wz && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
-			/*
-			if (m_ptr->mind & GOLEM_GUARD && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
-			*/
-
-			starty = m_ptr->fy;
-			startx = m_ptr->fx;
-			starty = y;
-			startx = x;
-
-			/* Place the golems in an empty space */
+			/* Place the player in an empty space */
 			for (j = 0; j < 1500; ++j)
 			{
 				/* Increasing distance */
 				d = (j + 149) / 150;
 
 				/* Pick a location */
-				scatter(wpos, &my, &mx, starty, startx, d, 0);
+				scatter(wpos, &y, &x, starty, startx, d, 1);
 
 				/* Must have an "empty" grid */
-				if (!cave_empty_bold(zcave, my, mx)) continue;
+				if (!cave_empty_bold(zcave, y, x)) continue;
 
 				/* Not allowed to go onto a icky location (house) if Depth <= 0 */
-				if ((wpos->wz==0) && (zcave[my][mx].info & CAVE_ICKY))
-					continue;
+				if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY))
+					break;
+			}
+#endif /*0*/
+			p_ptr->py = y;
+			p_ptr->px = x;
+
+			/* Update the player location */
+			zcave[y][x].m_idx = 0 - i;
+
+			for (m_idx = m_top - 1; m_idx >= 0; m_idx--)
+			{
+				monster_type *m_ptr = &m_list[m_fast[m_idx]];
+				cave_type **mcave;
+				mcave=getcave(&m_ptr->wpos);
+
+				if (!m_fast[m_idx]) continue;
+
+				/* Excise "dead" monsters */
+				if (!m_ptr->r_idx) continue;
+
+				if (m_ptr->owner != p_ptr->id) continue;
+
+				if (m_ptr->mind & GOLEM_GUARD && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
+
+				/* XXX XXX XXX (merging) */
+				starty = m_ptr->fy;
+				startx = m_ptr->fx;
+				starty = y;
+				startx = x;
+
+			if (!m_ptr->wpos.wz && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
+			/*
+			if (m_ptr->mind & GOLEM_GUARD && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
+			*/
+
+				/* Place the golems in an empty space */
+				for (j = 0; j < 1500; ++j)
+				{
+					/* Increasing distance */
+					d = (j + 149) / 150;
+
+					/* Pick a location */
+					scatter(wpos, &my, &mx, starty, startx, d, 0);
+
+					/* Must have an "empty" grid */
+					if (!cave_empty_bold(zcave, my, mx)) continue;
+
+					/* Not allowed to go onto a icky location (house) if Depth <= 0 */
+					if ((wpos->wz==0) && (zcave[my][mx].info & CAVE_ICKY))
+						continue;
+					break;
+				}
+				if(mcave)
+				{
+					mcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
+					everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+				}
+				wpcopy(&m_ptr->wpos,wpos);
+				m_ptr->fx = mx;
+				m_ptr->fy = my;
+				if(mcave)
+				{
+					mcave[m_ptr->fy][m_ptr->fx].m_idx = m_fast[m_idx];
+					everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+				}
+
+				/* Update the monster (new location) */
+				update_mon(m_fast[m_idx], TRUE);
+			}
+#if 0
+			while (TRUE)
+			{
+				y = rand_range(1, ((Depth) ? (MAX_HGT - 2) : (SCREEN_HGT - 2)));
+				x = rand_range(1, ((Depth) ? (MAX_WID - 2) : (SCREEN_WID - 2)));
+
+				/* Must be a "naked" floor grid */
+				if (!cave_naked_bold(zcave, y, x)) continue;
+
+				/* Refuse to start on anti-teleport grids */
+				if (zcave[y][x].info & CAVE_ICKY) continue;
 				break;
 			}
-			if(mcave)
-			{
-				mcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
-				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
-			}
-			wpcopy(&m_ptr->wpos,wpos);
-			m_ptr->fx = mx;
-			m_ptr->fy = my;
-			if(mcave)
-			{
-				mcave[m_ptr->fy][m_ptr->fx].m_idx = m_fast[m_idx];
-				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
-			}
-
-			/* Update the monster (new location) */
-			update_mon(m_fast[m_idx], TRUE);
-		}
-#if 0
-		while (TRUE)
-		{
-			y = rand_range(1, ((Depth) ? (MAX_HGT - 2) : (SCREEN_HGT - 2)));
-			x = rand_range(1, ((Depth) ? (MAX_WID - 2) : (SCREEN_WID - 2)));
-
-			/* Must be a "naked" floor grid */
-			if (!cave_naked_bold(zcave, y, x)) continue;
-
-			/* Refuse to start on anti-teleport grids */
-			if (zcave[y][x].info & CAVE_ICKY) continue;
-			break;
-		}
 #endif
 
-		/* Recalculate panel */
-		p_ptr->panel_row = ((p_ptr->py - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
-		if (p_ptr->panel_row > p_ptr->max_panel_rows) p_ptr->panel_row = p_ptr->max_panel_rows;
-		else if (p_ptr->panel_row < 0) p_ptr->panel_row = 0;
+			/* Recalculate panel */
+			p_ptr->panel_row = ((p_ptr->py - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
+			if (p_ptr->panel_row > p_ptr->max_panel_rows) p_ptr->panel_row = p_ptr->max_panel_rows;
+			else if (p_ptr->panel_row < 0) p_ptr->panel_row = 0;
 
-		p_ptr->panel_col = ((p_ptr->px - SCREEN_WID / 4) / (SCREEN_WID / 2));
-		if (p_ptr->panel_col > p_ptr->max_panel_cols) p_ptr->panel_col = p_ptr->max_panel_cols;
-		else if (p_ptr->panel_col < 0) p_ptr->panel_col = 0;
-	
-		p_ptr->redraw |= (PR_MAP);
-		p_ptr->redraw |= (PR_DEPTH);
+			p_ptr->panel_col = ((p_ptr->px - SCREEN_WID / 4) / (SCREEN_WID / 2));
+			if (p_ptr->panel_col > p_ptr->max_panel_cols) p_ptr->panel_col = p_ptr->max_panel_cols;
+			else if (p_ptr->panel_col < 0) p_ptr->panel_col = 0;
 
-		panel_bounds(i);
-		forget_view(i);
-		forget_lite(i);
-		update_view(i);
-		update_lite(i);
-		update_monsters(TRUE);
-		
-		/* Tell him that he should beware */
-		if (wpos->wz==0 && !istown(wpos))
-		{
-			if (wild_info[wpos->wy][wpos->wx].own)
+			p_ptr->redraw |= (PR_MAP);
+			p_ptr->redraw |= (PR_DEPTH);
+
+			panel_bounds(i);
+			forget_view(i);
+			forget_lite(i);
+			update_view(i);
+			update_lite(i);
+			update_monsters(TRUE);
+
+			/* Tell him that he should beware */
+			if (wpos->wz==0 && !istown(wpos))
 			{
-				cptr p = lookup_player_name(wild_info[wpos->wy][wpos->wx].own);
-				if (p == NULL) p = "Someone";
+				if (wild_info[wpos->wy][wpos->wx].own)
+				{
+					cptr p = lookup_player_name(wild_info[wpos->wy][wpos->wx].own);
+					if (p == NULL) p = "Someone";
 
-				msg_format(i, "You enter the land of %s.", p);
+					msg_format(i, "You enter the land of %s.", p);
+				}
 			}
-		}
 
-		/* Clear the flag */
-		p_ptr->new_level_flag = FALSE;
+			/* Clear the flag */
+			p_ptr->new_level_flag = FALSE;
+		}
 	}
 
 	/* Handle any network stuff */
 	Net_input();
-
+#if 0
 	/* Hack -- Compact the object list occasionally */
 	if (o_top + 16 > MAX_O_IDX) compact_objects(32, FALSE);
 
@@ -3301,7 +3414,7 @@ void dungeon(void)
 
 	/* Hack -- Compact the trap list occasionally */
 	if (t_top + 16 > MAX_TR_IDX) compact_traps(32, FALSE);
-
+#endif
 
 	// Note -- this is the END of the last turn
 
@@ -3366,10 +3479,33 @@ void dungeon(void)
 	process_monsters();
 
 	/* Process all of the objects */
-	process_objects();
+	if ((turn % 10) == 5) process_objects();
 
 	/* Probess the world */
 	if (!(turn % 50))
+	{
+		if(cfg.runlevel<6 && time(NULL)-cfg.closetime>120)
+			set_runlevel(cfg.runlevel-1);
+
+		if(cfg.runlevel<5)
+		{
+			for(i=NumPlayers; i>0 ;i--)
+			{
+				if(Players[i]->conn==NOT_CONNECTED) continue;
+				if(Players[i]->wpos.wz!=0) break;
+			}
+			if(!i) set_runlevel(0);
+		}
+
+		/* Hack -- Compact the object list occasionally */
+		if (o_top + 160 > MAX_O_IDX) compact_objects(320, TRUE);
+
+		/* Hack -- Compact the monster list occasionally */
+		if (m_top + 320 > MAX_M_IDX) compact_monsters(640, TRUE);
+
+		/* Hack -- Compact the trap list occasionally */
+//		if (t_top + 160 > MAX_TR_IDX) compact_traps(320, TRUE);
+
 		for (i = 1; i < NumPlayers + 1; i++)
 		{
 			if (Players[i]->conn == NOT_CONNECTED)
@@ -3378,12 +3514,16 @@ void dungeon(void)
 			/* Process the world of that player */
 			process_world(i);
 		}
+	}
 
 	/* Process everything else */
-	process_various();
+	if (!(turn % 10))
+	{
+		process_various();
 
-	/* Hack -- Regenerate the monsters every hundred game turns */
-	if (!(turn % 100)) regen_monsters();
+		/* Hack -- Regenerate the monsters every hundred game turns */
+		if (!(turn % 100)) regen_monsters();
+	}
 
 	/* Refresh everybody's displays */
 	for (i = 1; i < NumPlayers + 1; i++)
@@ -3488,6 +3628,7 @@ void play_game(bool new_game)
 		/* Create a new dungeon */
 		server_dungeon = FALSE;
 	}
+	else server_dungeon = TRUE;
 
 	/* Process old character */
 	if (!new_game)
@@ -3526,7 +3667,7 @@ void play_game(bool new_game)
 		server_dungeon = FALSE;
 
 		/* Start in town */
-		/*dun_level = 0;*/
+		/* dlev = 0;*/
 
 		/* Hack -- seed for flavors */
 		seed_flavor = rand_int(0x10000000);
@@ -3572,6 +3713,14 @@ void play_game(bool new_game)
 	reset_visuals();
 
 	/* Make a town if necessary */
+	/*
+	 * NOTE: The central town of Angband is handled in a special way;
+	 * If it was static when saved, we shouldn't allocate it.
+	 * If not static, or it's new game, we should allocate it.
+	 *
+	 * For sure, we should redesign it for real multiple-towns!
+	 * - Jir -
+	 */
 	if (!server_dungeon)
 	{
 		struct worldpos twpos;
@@ -3584,6 +3733,23 @@ void play_game(bool new_game)
 		/* Actually generate the town */
 		generate_cave(&twpos);
 	}
+#if 0
+//	else if (!central_town_loaded)
+	else 
+	{
+		struct worldpos twpos;
+		twpos.wx=cfg.town_x;
+		twpos.wy=cfg.town_y;
+		twpos.wz=0;
+
+		/* Actually generate the town */
+		generate_cave(&twpos);
+
+		/* Hack -- Build the buildings/stairs (from memory) */
+//		town_gen_hack(&twpos);
+	}
+#endif	// 0
+
 
 	/* Finish initializing dungeon monsters */
 	setup_monsters();
@@ -3592,7 +3758,7 @@ void play_game(bool new_game)
 	setup_objects();
 
 	/* Finish initializing dungeon objects */
-	setup_traps();
+//	setup_traps();
 
 	/* Server initialization is now "complete" */
 	server_generated = TRUE;
@@ -3674,27 +3840,25 @@ void shutdown_server(void)
 void pack_overflow(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr;
-	int i;
-        u32b f1, f2, f3, f4, f5, esp;
 	
 	/* XXX XXX XXX Pack Overflow */
 	if (p_ptr->inventory[INVEN_PACK].k_idx)
 	{
-		int		amt, j = 0;
-
+		object_type *o_ptr;
+		int amt, i, j = 0;
+		u32b f1, f2, f3, f4, f5, esp;
 		char	o_name[160];
 
 		/* Choose an item to spill */
 //		i = INVEN_PACK;
 
-		for(i = INVEN_PACK; i >= 0; i--)
+		for(i = INVEN_PACK - 1; i >= 0; i--)
 		{
 			o_ptr = &p_ptr->inventory[i];
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 			if(!check_guard_inscription( o_ptr->note, 'd' ) &&
-				!(f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) 
+				!((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)))
 			{
 				j = 1;
 				break;
