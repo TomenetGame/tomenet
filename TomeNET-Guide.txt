@@ -1613,10 +1613,14 @@ There are different types of dungeons. The main five are:
 -Normal dungeons. The main dungeons below the five cities Bree, Minas Anor,
  Gondolin, Lothlorien and Khazad-dum are such regular dungeons.
  Normal dungeons/towers are marked by a light grey < or > symbol.
--No-death. The Training Tower in Bree has this flag. Players who die inside a
- no-death dungeon won't turn into a ghost if they 'die' but just be teleported
- back to town! They still lose experience though.
- No-death dungeons/towers are marked by a green < or > symbol.
+-No-recall. These dungeons don't allow you to use Word-of-Recall nor
+ probability travel to change the level. The staircases are the only way.
+ Sending items via telekinesis to a player who is currently in a no-recall
+ dungeon/tower will only work if both players are on the same dungeon floor.
+ No-recall dungeons/towers are marked by a light red < or > symbol.
+-No-up / Force-down. These dungeons won't allow you to go upwards, same as
+ ironman, just without the penalty of permanent ghost-death.
+ No-up dungeons/towers are marked by a red < or > symbol.
 -Ironman. Ironman dungeons or towers won't allow you to recall or to use
  staircases that lead upwards! If you die in such a dungeon or tower you won't
  turn into a ghost either but get destroyed completely.
@@ -1625,17 +1629,15 @@ There are different types of dungeons. The main five are:
  To leave an ironman dungeon/tower you'll have to get to it's bottom
  respectively top.
  Ironman dungeons/towers are marked by a dark grey < or > symbol.
--No-up / Force-down. These dungeons won't allow you to go upwards, same as
- ironman, just without the penalty of permanent ghost-death.
- No-up dungeons/towers are marked by a red < or > symbol.
--No-recall. These dungeons don't allow you to use Word-of-Recall nor
- probability travel to change the level. The staircases are the only way.
- Sending items via telekinesis to a player who is currently in a no-recall
- dungeon/tower will only work if both players are on the same dungeon floor.
- No-recall dungeons/towers are marked by a light red < or > symbol.
--Hellish. Hellish dungeons will treat all players inside as if they were
- hellish characters. Including permanent ghost-death, same as ironman.
+-Hellish. Players suffer no-ghost deaths inside hellish dungeons.
+ Even if they're everlasting.
  Hellish dungeons/towers are marked by a fire-like flickering < or > symbol.
+-No-death. The Training Tower in Bree has this flag. Players who die inside a
+ no-death dungeon won't turn into a ghost if they 'die' but just be teleported
+ back to town! They still lose experience though.
+ No-death dungeons/towers are marked by a green < or > symbol.
+If a dungeon has several of these flags, the latter ones will override the
+staircase colour. So a hellish ironman dungeon has hellish-looking staircases.
 
 Jail:
 Note that jails (if the server has one) don't allow any type of teleportation,
