@@ -1056,6 +1056,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 		search the file for MY_VERSION to find it quickly :) */
 
 		return E_VERSION;
+	version = ((4 << 12) | (0 << 8) | (0 << 4) | 0);
 
 	if(!player_allowed(nick))
 		return E_INVITE;
