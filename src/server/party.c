@@ -1572,6 +1572,7 @@ bool add_ignore(int Ind, cptr name)
 			curr=malloc(sizeof(struct remote_ignore));
 			curr->serverid=w_player->server;
 			curr->id=w_player->id;
+			currr->next=NULL;
 			if(prev)
 				prev->next=curr;
 			else
