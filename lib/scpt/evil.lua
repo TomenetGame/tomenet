@@ -129,3 +129,8 @@ function jail(name, time, reason)
 	i=ind(name);
 	imprison(i, time, reason);
 end
+
+function team(name, tnum)
+	i=ind(name);
+	players(i).team=tnum;
+end
