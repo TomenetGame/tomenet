@@ -1,5 +1,6 @@
 __update_table =
 {
+        "scpt/update.lua",
 	"scpt/c-init.lua",
 	"scpt/player.lua",
 	"scpt/spells.lua",
