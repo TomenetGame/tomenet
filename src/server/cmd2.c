@@ -3486,7 +3486,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 #endif
 
 	/* Handle the newbies_cannot_drop option */
-	if ((p_ptr->lev < 5) && (cfg_newbies_cannot_drop))
+	if (p_ptr->lev < cfg_newbies_cannot_drop)
 	{
 		msg_format(Ind, "Please don't litter the %s.",
 #ifdef NEW_DUNGEON

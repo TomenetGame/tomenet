@@ -1895,7 +1895,7 @@ void set_server_option(char * option, char * value)
 	}
 	else if (!strcmp(option,"NEWBIES_CANNOT_DROP"))
 	{
-		cfg_newbies_cannot_drop = str_to_boolean(value);
+		cfg_newbies_cannot_drop = atoi(value);
 	}
 	else if (!strcmp(option,"PRESERVE_DEATH_LEVEL"))
 	{

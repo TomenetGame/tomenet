@@ -665,7 +665,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	object_type *o_ptr;
 
 	/* Handle the newbies_cannot_drop option */	
-	if ((p_ptr->lev == 1) && (cfg_newbies_cannot_drop))
+	if (p_ptr->lev < cfg_newbies_cannot_drop)
 	{
 		msg_print(Ind, "You are not experienced enough to drop items.");
 		return;
@@ -734,7 +734,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	object_type tmp_obj;
 
 	/* Handle the newbies_cannot_drop option */
-	if ((p_ptr->lev < 5) && (cfg_newbies_cannot_drop))
+	if (p_ptr->lev < cfg_newbies_cannot_drop)
 	{
 		msg_print(Ind, "You are not experienced enough to drop gold.");
 		return;
@@ -1265,7 +1265,7 @@ void do_cmd_steal(int Ind, int dir)
 		set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
 
 		/* Thief drops some items from the shock of blow */
-		if (!cfg_newbies_cannot_drop || p_ptr->lev > 4)
+		if (cfg_newbies_cannot_drop <= p_ptr->lev)
 		{
 			for(i = rand_int(5); i < 5 ; i++ )
 			{

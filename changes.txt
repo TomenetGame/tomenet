@@ -415,3 +415,6 @@ Change list for PernMangband
 - World-coodination display for '@' screen.
 - Player-location is shown on 'M'(Map) screen. (wilderness map is disabled)
 - Ghost never bleeds.
+
+13/12/2001 (Jir)
+- newbies_cannot_drop specifies the minimum level for item/au dropping.

@@ -198,7 +198,7 @@ extern char * cfg_dungeon_master;
 extern bool cfg_secret_dungeon_master;
 extern s16b cfg_fps;
 extern bool cfg_mage_hp_bonus;
-extern bool cfg_newbies_cannot_drop;
+extern s16b cfg_newbies_cannot_drop;
 extern bool cfg_door_bump_open;
 extern s32b cfg_preserve_death_level;
 extern bool cfg_no_ghost;

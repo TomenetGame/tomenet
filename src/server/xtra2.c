@@ -3403,7 +3403,7 @@ void player_death(int Ind)
 			continue;
 		}
 
-		if(p_ptr->lev >= 5){
+		if(p_ptr->lev >= cfg_newbies_cannot_drop){
 			/* Drop this one */
 #ifdef NEW_DUNGEON
 			drop_near(&p_ptr->inventory[i], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
