@@ -944,10 +944,12 @@ void do_cmd_cast(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-//		if (interfere(Ind, cfg.spell_interfere)) return;
+		if (interfere(Ind, cfg.spell_interfere)) return;
+		/*
 		if (interfere(Ind, cfg.spell_interfere *
 					(100 - get_skill_scale(p_ptr, SKILL_MAGERY, 50)) / 100))
 			return;
+			*/
 
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
@@ -2072,10 +2074,12 @@ void do_cmd_sorc(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-//		if (interfere(Ind, cfg.spell_interfere)) return;
+		if (interfere(Ind, cfg.spell_interfere)) return;
+		/*
 		if (interfere(Ind, cfg.spell_interfere *
 					(100 - get_skill_scale(p_ptr, SKILL_SORCERY, 50)) / 100))
 			return;
+			*/
 
 		/* Hack -- preserve current 'realm' */
 		p_ptr->current_realm = REALM_SORCERY;
@@ -2941,10 +2945,12 @@ void do_cmd_pray(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-//		if (interfere(Ind, cfg.spell_interfere)) return;
+		if (interfere(Ind, cfg.spell_interfere)) return;
+		/*
 		if (interfere(Ind, cfg.spell_interfere *
 					(100 - get_skill_scale(p_ptr, SKILL_PRAY, 50)) / 100))
 			return;
+			*/
 
 		/* Hack -- preserve current 'realm' */
 		p_ptr->current_realm = REALM_PRAYER;
@@ -4619,10 +4625,12 @@ void do_cmd_shad(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-//		if (interfere(Ind, cfg.spell_interfere * 2 / 3)) return;
+		if (interfere(Ind, cfg.spell_interfere * 2 / 3)) return;
+		/*
 		if (interfere(Ind, cfg.spell_interfere *
 					(100 - get_skill_scale(p_ptr, SKILL_SHADOW, 50)) / 100))
 			return;
+			*/
 
 		/* Hack -- preserve current 'realm' */
 		p_ptr->current_realm = REALM_SHADOW;
@@ -5086,12 +5094,14 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-//		if (interfere(Ind, cfg.spell_interfere * 2)) return;
+		if (interfere(Ind, cfg.spell_interfere * 2)) return;
 		/* XXX this should be different skill (like SKILL_HUNT) */
+		/*
 		if (interfere(Ind, cfg.spell_interfere * 2 *
 //					(100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
 					(100 - get_skill_scale(p_ptr, SKILL_HUNTING, 50)) / 100))
 			return;
+			*/
 
 		/* Hack -- preserve current 'realm' */
 		p_ptr->current_realm = REALM_HUNT;

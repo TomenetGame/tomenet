@@ -25,8 +25,8 @@
 /* How fast HP/SP regenerate when 'resting'. [3] */
 #define RESTING_RATE	(cfg.resting_rate)
 
-/* Chance of items damaged when drowning, in % [5] */
-#define WATER_ITEM_DAMAGE_CHANCE	5
+/* Chance of items damaged when drowning, in % [3] */
+#define WATER_ITEM_DAMAGE_CHANCE	3
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
@@ -182,7 +182,7 @@ static cptr value_check_aux2_magic(object_type *o_ptr)
 			if (artifact_p(o_ptr)) return "good";
 
 			/* Scroll of Nothing, Apple Juice, etc. */
-			if (k_ptr->cost < 3) return "average"";
+			if (k_ptr->cost < 3) return "average";
 
 			/*
 			 * Identify, Phase Door, Cure Light Wounds, etc. are
@@ -236,8 +236,6 @@ static void sense_inventory(int Ind)
         bool heavy = FALSE, heavy_magic = FALSE;
         bool ok_combat = FALSE, ok_magic = FALSE;
 
-	bool	heavy = FALSE;
-
 	cptr	feel;
 
 	object_type *o_ptr;
@@ -250,11 +248,11 @@ static void sense_inventory(int Ind)
 	/* No sensing when confused */
 	if (p_ptr->confused) return;
 
-	if (0 == rand_int(133 - get_skill_scale(SKILL_COMBAT, 130))) ok_combat = TRUE;
-        if (0 == rand_int(133 - get_skill_scale(SKILL_MAGIC, 130))) ok_magic = TRUE;
+	if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_COMBAT, 130))) ok_combat = TRUE;
+        if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) ok_magic = TRUE;
         if ((!ok_combat) && (!ok_magic)) return;
-	heavy = (get_skill(SKILL_COMBAT) > 10) ? TRUE : FALSE;
-        heavy_magic = (get_skill(SKILL_MAGIC) > 10) ? TRUE : FALSE;
+	heavy = (get_skill(p_ptr, SKILL_COMBAT) > 10) ? TRUE : FALSE;
+        heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) > 10) ? TRUE : FALSE;
 
 
 	/*** Sense everything ***/
@@ -1469,6 +1467,7 @@ static void process_player_end(int Ind)
 					!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
 				{
 					int hit = p_ptr->mhp>>6;
+					int swim = get_skill_scale(p_ptr, SKILL_SWIM, 60);
 					hit += randint(p_ptr->mhp>>5);
 					if(!hit) hit=1;
 
@@ -1478,23 +1477,26 @@ static void process_player_end(int Ind)
 						!magik(adj_str_wgt[p_ptr->stat_ind[A_STR]]) &&
 						!magik(adj_str_wgt[p_ptr->stat_ind[A_DEX]]))
 					{
-						int factor=(p_ptr->wt+p_ptr->total_weight/10)-150;	// 170
+						int factor=(p_ptr->wt+p_ptr->total_weight/10)-150-swim;	// 170
 						/* too heavy, always drown? */
 						if(factor<300)
 						{
 							if(randint(factor)<20) hit=0;
 						}
 
+						if (!magik(swim)) hit = 0;
+
 						if (hit)
 						{
 							msg_print(Ind,"\377rYou're drowning!");
-							/* harm equipments */
-							if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
-									magik(WATER_ITEM_DAMAGE_CHANCE))
-							{
-								inven_damage(Ind, set_water_destroy, 1);
-								if (magik(20)) minus_ac(Ind);
-							}
+						}
+
+						/* harm equipments */
+						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
+								magik(WATER_ITEM_DAMAGE_CHANCE))
+						{
+							inven_damage(Ind, set_water_destroy, 1);
+							if (magik(20)) minus_ac(Ind);
 						}
 
 						if(randint(1000-factor)<10)

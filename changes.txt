@@ -1126,7 +1126,7 @@ To find the latest change quickly, search ==== :)
 23/06/2002 (Jir)
 - login is done according to the informations sent by the server.
   (race/class addition still needs client update, tho)
-- SKILL_MISC and SKILL_AGILITY
+- SKILL_MISC, SKILL_AGILITY, SKILL_CALMNESS and SKILL_SWIM.
 [B] potion of learning.
 
 

@@ -1808,6 +1808,16 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 100,	// *HARD* to learn
                         },
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 1000,
+                                '+', 1000,
+                        },
 
                 }
 	},
@@ -1880,6 +1890,16 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 200,
                         },
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 1000,
+                                '+', 2000,
+                        },
                 }
 	},
 
@@ -1935,6 +1955,16 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_STEALTH,
                                 '+', 0,
                                 '+', 700,
+                        },
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 1000,
+                                '+', 1000,
                         },
                 }
 	},
@@ -1992,6 +2022,16 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_STEALTH,
                                 '+', 0,
                                 '+', 700,
+                        },
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 1000,
+                                '+', 1500,
                         },
                 }
 	},
@@ -2073,6 +2113,16 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_AGILITY,
                                 '+', 1000,
                                 '+', 350,
+                        },
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 1000,
+                                '+', 1500,
                         },
                 }
         },
@@ -2180,6 +2230,16 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_DISARM,
                                 '+', 500,
                                 '+', 500,
+                        },
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 1000,
+                                '+', 1500,
                         },
                 }
 	},
@@ -4612,6 +4672,46 @@ skill_type s_info[MAX_SKILLS] =
                 /* Flags */
                 0,
         },
+        {
+                "Calmness",
+				"Ability to stay calm when surrounded by enemies.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Swimming",
+				"Ability to cross water area without drowning.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
 };
 
 /*
@@ -4659,4 +4759,6 @@ int skill_tree_init[MAX_SKILLS][2] =
 
         { -1, SKILL_MISC },
         { SKILL_MISC, SKILL_AGILITY },
+        { SKILL_MISC, SKILL_CALMNESS},
+        { SKILL_MISC, SKILL_SWIM},
 };

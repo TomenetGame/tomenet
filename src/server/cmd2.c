@@ -2330,9 +2330,12 @@ void do_cmd_fire(int Ind, int dir)
 	/* Check if monsters around him/her hinder this */
 	/* TODO: this should be affected by 'archery' skill */
 //	if (interfere(Ind, p_ptr->pclass == CLASS_ARCHER ? 12 : 15)) return;
+        if (interfere(Ind, 25)) return;
+		/*
         if (interfere(Ind, 20 *
                       (100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
-		return;
+		  return;
+		*/
 
 	if (!boomerang && cursed_p(o_ptr) && magik(50))
 	{
@@ -3037,8 +3040,11 @@ bool interfere(int Ind, int chance)
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr;
 	int d, i, tx, ty, x = p_ptr->px, y = p_ptr->py;
+	int calmness = get_skill_scale(p_ptr, SKILL_CALMNESS, 80);
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+
+	chance = chance * (100 - calmness) / 100;
 
 	/* Check if monsters around him/her hinder the action */
 	for (d = 1; d <= 9; d++)
