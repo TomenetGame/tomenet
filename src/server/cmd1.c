@@ -2617,7 +2617,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	the body, on the other hand the body still carries reflexes from the monster ;)
 	- technical reason was to make more forms useful, especially RAND_50 forms */
 	if (((r_ptr->flags1 & RF1_RAND_50) && magik(20)) ||
-		((r_ptr->flags1 & RF1_RAND_25) && magik(8)))
+		((r_ptr->flags1 & RF1_RAND_25) && magik(10)))
 	{
 		do
 		{
