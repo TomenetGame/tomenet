@@ -972,6 +972,16 @@ I:2:100:10:10:6:4d5:r:10
 D:Ouch! You get your finger caught!
 F:CHEST
 
+N:205:Trap of Animate Coins
+I:9:50:10:10:17:0d0:v:50
+D:Your purse suddenly squirms!
+F:FLOOR | CHEST
+
+N:206:Trap of Remittance
+I:6:30:10:10:15:0d0:y:70
+D:Your purse suddenly squirms!
+F:FLOOR | CHEST
+
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
 # I:diff:prob:            :minlevel:      :color:vanish

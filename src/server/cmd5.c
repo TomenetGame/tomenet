@@ -1278,17 +1278,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 
 			case 37:
 			{
-					if (!p_ptr->word_recall)
-					{
-						set_recall_depth(p_ptr, o_ptr);
-						p_ptr->word_recall = rand_int(20) + 15;
-						msg_print(Ind, "\377oThe air about you becomes charged...");
-					}
-					else
-					{
-						p_ptr->word_recall = 0;
-						msg_print(Ind, "\377oA tension leaves the air around you...");
-					}
+				set_recall(Ind, rand_int(20) + 15, o_ptr);
 				break;
 			}
 
@@ -2312,17 +2302,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
                         (void)set_oppose_pois(Ind, p_ptr->oppose_pois + randint(20) + 20);
                         break;
                 case 37: /*  Recall */
-			if (!p_ptr->word_recall)
-			{
-				set_recall_depth(p_ptr, o_ptr);
-				p_ptr->word_recall = rand_int(20) + 15;
-				msg_print(Ind, "\377oThe air about you becomes charged...");
-			}
-			else
-			{
-				p_ptr->word_recall = 0;
-				msg_print(Ind, "\377oA tension leaves the air around you...");
-			}
+						set_recall(Ind, rand_int(20) + 15, o_ptr);
                         break;
                 case 37+64: /* Recall others */
 			p_ptr->current_spell = 37;
@@ -3497,17 +3477,8 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 56:
 			{
-					if (!p_ptr->word_recall)
-					{
-						set_recall_depth(p_ptr, o_ptr);
-						p_ptr->word_recall = rand_int(20) + 15;
-						msg_print(Ind, "\377oThe air about you becomes charged...");
-					}
-					else
-					{
-						p_ptr->word_recall = 0;
-						msg_print(Ind, "\377oA tension leaves the air around you...");
-					}
+				set_recall(Ind, rand_int(20) + 15, o_ptr);
+				break;
 			}
 
 			case 57:
@@ -4854,33 +4825,13 @@ void do_cmd_shad(int Ind, int book, int spell)
 			}
 			case 34: /* recall */
 			{
-				if (!p_ptr->word_recall)
-				{
-					set_recall_depth(p_ptr, o_ptr);
-					p_ptr->word_recall = rand_int(20 - get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 19)) + 15;
-					msg_print(Ind, "\377oThe air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print(Ind, "\377oA tension leaves the air around you...");
-				}
+				set_recall(Ind, rand_int(20 - get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 19)) + 15, o_ptr);
 				break;
 			}
 		
 			case 35: /* f recall */
 			{
-				if (!p_ptr->word_recall)
-				{
-					set_recall_depth(p_ptr, o_ptr);
-					p_ptr->word_recall = rand_int(5 - get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 4)) + 1;
-					msg_print(Ind, "\377oThe air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print(Ind, "\377oA tension leaves the air around you...");
-				}
+				set_recall(Ind, rand_int(5 - get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 4)) + 1, o_ptr);
 				break;
 			}
 			
@@ -6651,17 +6602,7 @@ void do_cmd_psi(int Ind, int book, int spell)
 	      }
 	    case 11: /* Recall */
 	      {
-		if (!p_ptr2->word_recall)
-		  {
-		    set_recall_depth(p_ptr2, o_ptr);
-		    p_ptr2->word_recall = rand_int(20) + 15;
-		    msg_print(Ind, "\377oThe air about you becomes charged...");
-		  }
-		else
-		  {
-		    p_ptr2->word_recall = 0;
-		    msg_print(Ind, "\377oA tension leaves the air around you...");
-		  }
+			  set_recall(Ind2, rand_int(20) + 15, o_ptr);
 		break;
 	      }
 	    case 12: /* Anihilate */

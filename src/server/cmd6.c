@@ -1617,17 +1617,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_WORD_OF_RECALL:
 			{
-				if (p_ptr->word_recall == 0)
-				{
-					set_recall_depth(p_ptr, o_ptr);
-					p_ptr->word_recall = randint(20) + 15;
-					msg_print(Ind, "\377oThe air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print(Ind, "\377oA tension leaves the air around you...");
-				}
+				set_recall(Ind, rand_int(20) + 15, o_ptr);
 				ident = TRUE;
 				break;
 			}
@@ -3160,17 +3150,7 @@ void do_cmd_zap_rod(int Ind, int item)
 
 		case SV_ROD_RECALL:
 		{
-			if (p_ptr->word_recall == 0)
-			{
-				set_recall_depth(p_ptr, o_ptr);
-				msg_print(Ind, "\377oThe air about you becomes charged...");
-				p_ptr->word_recall = 15 + randint(20);
-			}
-			else
-			{
-				msg_print(Ind, "\377oA tension leaves the air around you...");
-				p_ptr->word_recall = 0;
-			}
+			set_recall(Ind, rand_int(20) + 15, o_ptr);
 			ident = TRUE;
 			o_ptr->pval = 60;
 			break;
@@ -3585,17 +3565,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 		case SV_ROD_RECALL:
 		{
-			if (p_ptr->word_recall == 0)
-			{
-				set_recall_depth(p_ptr, o_ptr);
-				msg_print(Ind, "\377oThe air about you becomes charged...");
-				p_ptr->word_recall = 15 + randint(20);
-			}
-			else
-			{
-				msg_print(Ind, "\377oA tension leaves the air around you...");
-				p_ptr->word_recall = 0;
-			}
+			set_recall(Ind, rand_int(20) + 15, o_ptr);
 			ident = TRUE;
 			o_ptr->pval = 60;
 			break;
@@ -4277,17 +4247,7 @@ void do_cmd_activate(int Ind, int item)
 
 			case ART_AVAVIR:
 			{
-				if (p_ptr->word_recall == 0)
-				{
-					set_recall_depth(p_ptr, o_ptr);
-					p_ptr->word_recall = randint(20) + 15;
-					msg_print(Ind, "\377oThe air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print(Ind, "\377oA tension leaves the air around you...");
-				}
+				set_recall(Ind, rand_int(20) + 15, o_ptr);
 				o_ptr->timeout = 200;
 				break;
 			}
@@ -4762,17 +4722,7 @@ void do_cmd_activate(int Ind, int item)
 
 			case ART_AVAVIR:
 			{
-				if (p_ptr->word_recall == 0)
-				{
-					set_recall_depth(p_ptr, o_ptr);
-					p_ptr->word_recall = randint(20) + 15;
-					msg_print(Ind, "\377oThe air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print(Ind, "\377oA tension leaves the air around you...");
-				}
+				set_recall(Ind, rand_int(20) + 15, o_ptr);
 				o_ptr->timeout = 200;
 				break;
 			}

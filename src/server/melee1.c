@@ -73,7 +73,7 @@ static int monster_critical(int dice, int sides, int dam)
  * Always miss 5% of the time, Always hit 5% of the time.
  * Otherwise, match monster power against player armor.
  */
-static int check_hit(int Ind, int power, int level)
+static int check_hit(int Ind, int power, int level, bool flag)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -89,7 +89,7 @@ static int check_hit(int Ind, int power, int level)
 	i = (power + (level * 3));
 
 	/* Total armor */
-	ac = p_ptr->ac + p_ptr->to_a;
+	ac = (flag ? 0 : p_ptr->ac) + p_ptr->to_a;
 
 	/* Power and Level compete against Armor */
 	if ((i > 0) && (randint(i) > ((ac * 3) / 4))) return (TRUE);
@@ -116,9 +116,8 @@ static cptr desc_insult[] =
 };
 
 
-
 /*
- * Hack -- possible "insult" messages
+ * Hack -- possible "moan" messages
  */
 static cptr desc_moan[] =
 {
@@ -127,6 +126,325 @@ static cptr desc_moan[] =
 	"tells you to get off his land.",
 	"mumbles something about mushrooms."
 };
+
+
+/*
+ * Hack -- possible "seducing" messages
+ */
+#define MAX_WHISPERS	7
+static cptr desc_whisper[] =
+{
+	"whispers something to your ear.",
+	"asks if you have time to spare.",
+	"gives you a charming wink.",
+	"murmurs you sweetly.",
+	"murmurs something about the night.",
+	"woos you.",
+	"courts you.",
+};
+
+
+/* returns 'TRUE' if the thief will blink away. */
+static bool do_eat_gold(int Ind, int m_idx)
+{
+	player_type *p_ptr = Players[Ind];
+#if 0
+	monster_type    *m_ptr = &m_list[m_idx];
+	monster_race    *r_ptr = race_inf(m_ptr);
+#endif	// 0
+	int i, k;
+	s32b            gold;
+
+
+	gold = (p_ptr->au / 10) + randint(25);
+	if (gold < 2) gold = 2;
+	if (gold > 5000) gold = (p_ptr->au / 20) + randint(3000);
+	if (gold > p_ptr->au) gold = p_ptr->au;
+	p_ptr->au -= gold;
+	if (gold <= 0)
+	{
+		msg_print(Ind, "Nothing was stolen.");
+	}
+	else if (p_ptr->au)
+	{
+		msg_print(Ind, "Your purse feels lighter.");
+		msg_format(Ind, "%ld coins were stolen!", (long)gold);
+	}
+	else
+	{
+		msg_print(Ind, "Your purse feels lighter.");
+		msg_print(Ind, "All of your coins were stolen!");
+	}
+
+	/* Redraw gold */
+	p_ptr->redraw |= (PR_GOLD);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_PLAYER);
+
+	/* Blink away */
+	return (TRUE);
+}
+
+
+/* returns 'TRUE' if the thief will blink away. */
+static bool do_eat_item(int Ind, int m_idx)
+{
+	player_type *p_ptr = Players[Ind];
+	monster_type    *m_ptr = &m_list[m_idx];
+#if 0
+	monster_race    *r_ptr = race_inf(m_ptr);
+#endif	// 0
+	object_type		*o_ptr;
+	char			o_name[160];
+	int i, k;
+
+	/* Find an item */
+	for (k = 0; k < 10; k++)
+	{
+		/* Pick an item */
+		i = rand_int(INVEN_PACK);
+
+		/* Obtain the item */
+		o_ptr = &p_ptr->inventory[i];
+
+		/* Accept real items */
+		if (!o_ptr->k_idx) continue;
+
+		/* Don't steal artifacts  -CFT */
+		if (artifact_p(o_ptr)) continue;
+
+		/* Don't steal keys */
+		if (o_ptr->tval == TV_KEY) continue;
+
+		/* Get a description */
+		object_desc(Ind, o_name, o_ptr, FALSE, 3);
+
+		/* Message */
+		msg_format(Ind, "%sour %s (%c) was stolen!",
+				((o_ptr->number > 1) ? "One of y" : "Y"),
+				o_name, index_to_label(i));
+
+		/* Option */
+#ifdef MONSTER_INVENTORY
+		{
+			s16b o_idx;
+
+			/* Make an object */
+			o_idx = o_pop();
+
+			/* Success */
+			if (o_idx)
+			{
+				object_type *j_ptr;
+
+				/* Get new object */
+				j_ptr = &o_list[o_idx];
+
+				/* Copy object */
+				object_copy(j_ptr, o_ptr);
+
+				/* Modify number */
+				j_ptr->number = 1;
+
+				/* Hack -- If a wand, allocate total
+				 * maximum timeouts or charges between those
+				 * stolen and those missed. -LM-
+				 */
+				if (o_ptr->tval == TV_WAND)
+				{
+					j_ptr->pval = o_ptr->pval / o_ptr->number;
+					o_ptr->pval -= j_ptr->pval;
+				}
+
+				/* Forget mark */
+				// j_ptr->marked = FALSE;
+
+				/* Memorize monster */
+				j_ptr->held_m_idx = m_idx;
+
+				/* Build stack */
+				j_ptr->next_o_idx = m_ptr->hold_o_idx;
+
+				/* Build stack */
+				m_ptr->hold_o_idx = o_idx;
+			}
+		}
+#endif	// MONSTER_INVENTORY
+
+		/* Steal the items */
+		inven_item_increase(Ind, i, -1);
+		inven_item_optimize(Ind, i);
+
+		/* Done */
+		return (TRUE);
+	}
+}
+
+/* Have fun */
+/* returns 'TRUE' if the partner will blink away. */
+static bool do_seduce(int Ind, int m_idx)
+{
+	player_type *p_ptr = Players[Ind];
+	monster_type    *m_ptr = &m_list[m_idx];
+	monster_race    *r_ptr = race_inf(m_ptr);
+	object_type		*o_ptr;
+	char            m_name[80];
+	char			o_name[160];
+	int d, i, j, ty, tx, chance, crowd = 0, piece = 0;
+	bool done = FALSE;
+	u32b f1, f2, f3, f4, f5, esp;
+
+	cave_type **zcave;
+	cave_type *c_ptr;
+	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+
+	for (d = 1; d <= 9; d++)
+	{
+		if (d == 5) continue;
+
+		tx = p_ptr->px + ddx[d];
+		ty = p_ptr->py + ddy[d];
+
+		if (!in_bounds(ty, tx)) continue;
+
+		c_ptr=&zcave[ty][tx];
+		if (c_ptr->m_idx) crowd++;
+	}
+
+	if (crowd > 1)
+	{
+		msg_print(Ind, "Two of you feel disturbed.");
+		return (TRUE);
+	}
+
+	/* Get the monster name (or "it") */
+	monster_desc(Ind, m_name, m_idx, 0);
+
+	/* Hack -- borrow 'dig' table for CHR check */
+	chance = adj_str_dig[p_ptr->stat_ind[A_CHR]];
+
+	/* Hack -- presume hetero */
+	if ((p_ptr->male && (r_ptr->flags1 & RF1_MALE)) ||
+			(!p_ptr->male && (r_ptr->flags1 & RF1_FEMALE)))
+		chance *= 8;
+
+	/* Give up */
+	if (chance > 100) return (TRUE);
+
+	/* From what you'll undress? */
+	d = rand_int(6);
+
+	for (i = 0; i < 6; i++)
+	{
+		j = INVEN_BODY + ((i + d) % 6);
+
+		/* Get the item to take off */
+		o_ptr = &(p_ptr->inventory[j]);
+		if (!o_ptr->k_idx) continue;
+
+		/* Extract the flags */
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+		if (f3 & TR3_PERMA_CURSE) continue;
+
+		if (!magik(chance))
+		{
+			/* Describe the result */
+			object_desc(Ind, o_name, o_ptr, FALSE, 0);
+
+			msg_format(Ind, "%^s seduces you and you take off your %s...",
+					m_name, o_name);
+
+			inven_takeoff(Ind, j, 255);
+			break;
+		}
+
+		piece++;
+	}
+
+	if (piece || magik(chance)) return (FALSE);
+	if (p_ptr->chp < 4)
+	{
+		msg_print(Ind, "You're too tired..");
+		return (TRUE);
+	}
+
+	msg_format(Ind, "You yield yourself to %s...", m_name);
+
+	/* let's not make it too abusable.. */
+	while (!done)
+	{
+		d = randint(9);
+		switch (d)
+		{
+			case 1:
+				if (!p_ptr->csp) continue;
+				msg_print(Ind, "You feel drained of energy!");
+				p_ptr->csp /= 2;
+				done = TRUE;
+				p_ptr->redraw |= PR_MANA;
+				break;
+
+			case 2:
+				msg_print(Ind, "Darn, you've got a disease!");
+				/* bypass resistance */
+				set_poisoned(Ind, p_ptr->poisoned + rand_int(10) + 10);
+				done = TRUE;
+				break;
+
+			case 3:
+				if (p_ptr->sustain_con) continue;
+				msg_print(Ind, "You feel drained of vigor!");
+				do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
+				done = TRUE;
+				break;
+
+			case 4:
+				/* No sustainance */
+				msg_print(Ind, "You lost your mind!");
+				dec_stat(Ind, A_WIS, 10, STAT_DEC_NORMAL);
+				done = TRUE;
+				break;
+
+			case 5:
+				if (p_ptr->chp < 4) continue;
+				msg_print(Ind, "You feel so tired after this...");
+				p_ptr->chp /= 2;
+				done = TRUE;
+				p_ptr->redraw |= PR_HP;
+				break;
+
+			case 6:
+				msg_print(Ind, "You feel it was not so bad an experience.");
+				gain_exp(Ind, r_ptr->mexp);
+				done = TRUE;
+				break;
+
+			case 7:
+				msg_print(Ind, "Grr, Basterd!!");
+				(void)do_eat_item(Ind, m_idx);
+				done = TRUE;
+				break;
+
+			case 8:
+				if (p_ptr->au < 100) continue;
+				msg_print(Ind, "They charged you for this..");
+				(void)do_eat_gold(Ind, m_idx);
+				done = TRUE;
+				break;
+
+			case 9:
+				if (p_ptr->csane >= p_ptr->msane) continue;
+				msg_print(Ind, "You feel somewhat quenched in a sense.");
+				heal_insanity(Ind, damroll(4,8));
+				done = TRUE;
+				break;
+		}
+	}
+
+	return (TRUE);
+}
 
 
 /*
@@ -145,8 +463,6 @@ bool make_attack_normal(int Ind, int m_idx)
 	int                     i, j, k, tmp, ac, rlev;
 	int                     do_cut, do_stun, factor = 100;
 
-	s32b            gold;
-
 	object_type             *o_ptr;
 
 	char            o_name[160];
@@ -158,7 +474,7 @@ bool make_attack_normal(int Ind, int m_idx)
 	bool            blinked;
 
 	bool touched = FALSE, fear = FALSE, alive = TRUE;
-	bool explode = FALSE;
+	bool explode = FALSE, gone = FALSE;
 
 
 	/* Not allowed to attack */
@@ -189,6 +505,7 @@ bool make_attack_normal(int Ind, int m_idx)
 	{
 		bool visible = FALSE;
 		bool obvious = FALSE;
+		bool bypass_ac = FALSE;
 
 		int power = 0;
 		int damage = 0;
@@ -252,11 +569,26 @@ bool make_attack_normal(int Ind, int m_idx)
                         case RBE_PARASITE:  power =  5; break;
 				case RBE_DISARM:	power = 60; break;
 				case RBE_FAMINE:	power = 20; break;
+				case RBE_SEDUCE:	power = 80; break;
 		}
 
+		switch (method)
+		{
+			case RBM_GAZE:
+			case RBM_WAIL:
+			case RBM_SPORE:
+			case RBM_BEG:
+			case RBM_INSULT:
+			case RBM_MOAN:
+			case RBM_EXPLODE:
+			case RBM_SHOW:
+			case RBM_WHISPER:
+				bypass_ac = TRUE;
+				break;
+		}
 
 		/* Monster hits player */
-		if (!effect || check_hit(Ind, power, rlev * factor / 100))
+		if (!effect || check_hit(Ind, power, rlev * factor / 100, bypass_ac))
 		{
 			int chance = p_ptr->dodge_chance - ((rlev * 5) / 6);
 
@@ -266,7 +598,7 @@ bool make_attack_normal(int Ind, int m_idx)
 			/* Always disturbing */
 			disturb(Ind, 1, 0);
 
-			if ((chance > 0) && magik(chance))
+			if ((chance > 0) && !bypass_ac && magik(chance))
 			{
 				msg_format(Ind, "You dodge %s's attack!", m_name);
 				continue;
@@ -491,6 +823,13 @@ bool make_attack_normal(int Ind, int m_idx)
 //					sound(SOUND_SHOW);
 					break;
 				}
+
+				case RBM_WHISPER:
+				{
+					act = desc_whisper[rand_int(MAX_WHISPERS)];
+					break;
+				}
+
 			}
 
 			/* Message */
@@ -672,37 +1011,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					}
 
 					/* Eat gold */
-					else
-					{
-						gold = (p_ptr->au / 10) + randint(25);
-						if (gold < 2) gold = 2;
-						if (gold > 5000) gold = (p_ptr->au / 20) + randint(3000);
-						if (gold > p_ptr->au) gold = p_ptr->au;
-						p_ptr->au -= gold;
-						if (gold <= 0)
-						{
-							msg_print(Ind, "Nothing was stolen.");
-						}
-						else if (p_ptr->au)
-						{
-							msg_print(Ind, "Your purse feels lighter.");
-							msg_format(Ind, "%ld coins were stolen!", (long)gold);
-						}
-						else
-						{
-							msg_print(Ind, "Your purse feels lighter.");
-							msg_print(Ind, "All of your coins were stolen!");
-						}
-
-						/* Redraw gold */
-						p_ptr->redraw |= (PR_GOLD);
-
-						/* Window stuff */
-						p_ptr->window |= (PW_PLAYER);
-
-						/* Blink away */
-						blinked = TRUE;
-					}
+					else blinked = do_eat_gold(Ind, m_idx);
 
 					break;
 				}
@@ -714,8 +1023,8 @@ bool make_attack_normal(int Ind, int m_idx)
 
 					/* Saving throw (unless paralyzed) based on dex and level */
 					if (!p_ptr->paralyzed &&
-					    (rand_int(100 + UNAWARENESS(p_ptr)) <
-						 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
+							(rand_int(100 + UNAWARENESS(p_ptr)) <
+							 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
 					{
 						/* Saving throw message */
 						msg_print(Ind, "You grab hold of your backpack!");
@@ -746,92 +1055,7 @@ bool make_attack_normal(int Ind, int m_idx)
 						break;
 					}
 
-					/* Find an item */
-					for (k = 0; k < 10; k++)
-					{
-						/* Pick an item */
-						i = rand_int(INVEN_PACK);
-
-						/* Obtain the item */
-						o_ptr = &p_ptr->inventory[i];
-
-						/* Accept real items */
-						if (!o_ptr->k_idx) continue;
-
-						/* Don't steal artifacts  -CFT */
-						if (artifact_p(o_ptr)) continue;
-
-						/* Don't steal keys */
-						if (o_ptr->tval == TV_KEY) continue;
-
-						/* Get a description */
-						object_desc(Ind, o_name, o_ptr, FALSE, 3);
-
-						/* Message */
-						msg_format(Ind, "%sour %s (%c) was stolen!",
-							   ((o_ptr->number > 1) ? "One of y" : "Y"),
-							   o_name, index_to_label(i));
-
-						/* Option */
-#ifdef MONSTER_INVENTORY
-						{
-							s16b o_idx;
-
-							/* Make an object */
-							o_idx = o_pop();
-
-							/* Success */
-							if (o_idx)
-							{
-								object_type *j_ptr;
-
-								/* Get new object */
-								j_ptr = &o_list[o_idx];
-
-								/* Copy object */
-								object_copy(j_ptr, o_ptr);
-
-								/* Modify number */
-								j_ptr->number = 1;
-
-								/* Hack -- If a wand, allocate total
-								 * maximum timeouts or charges between those
-								 * stolen and those missed. -LM-
-								 */
-								if (o_ptr->tval == TV_WAND)
-								{
-									j_ptr->pval = o_ptr->pval / o_ptr->number;
-									o_ptr->pval -= j_ptr->pval;
-								}
-
-								/* Forget mark */
-								// j_ptr->marked = FALSE;
-
-								/* Memorize monster */
-								j_ptr->held_m_idx = m_idx;
-
-								/* Build stack */
-								j_ptr->next_o_idx = m_ptr->hold_o_idx;
-
-								/* Build stack */
-								m_ptr->hold_o_idx = o_idx;
-							}
-						}
-#endif	// MONSTER_INVENTORY
-
-						/* Steal the items */
-						inven_item_increase(Ind, i, -1);
-						inven_item_optimize(Ind, i);
-
-						/* Obvious */
-						obvious = TRUE;
-
-						/* Blink away */
-						blinked = TRUE;
-
-						/* Done */
-						break;
-					}
+					else blinked = obvious = do_eat_item(Ind, m_idx);
 
 					break;
 				}
@@ -1451,6 +1675,21 @@ bool make_attack_normal(int Ind, int m_idx)
 					break;
 				}
 
+				case RBE_SEDUCE:
+				{
+					/* Take some damage */
+					take_hit(Ind, damage, ddesc);
+
+					gone = blinked = do_seduce(Ind, m_idx);
+
+					/* Hack -- aquatic seducers won't blink */
+					if (r_ptr->flags7 & RF7_AQUATIC) gone = blinked = FALSE;
+
+					obvious = TRUE;
+
+					break;
+				}
+
 			}
 
 
@@ -1541,7 +1780,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					{
 						msg_format(Ind, "%^s is suddenly very hot!", m_name);
 						if (mon_take_hit(Ind, m_idx, damroll(2,6), &fear,
-						    " turns into a pile of ash."))
+									" turns into a pile of ash."))
 						{
 							blinked = FALSE;
 							alive = FALSE;
@@ -1549,7 +1788,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					}
 					else
 					{
-//						if (m_ptr->ml)
+						//						if (m_ptr->ml)
 						if (p_ptr->mon_vis[m_idx])
 							r_ptr->r_flags3 |= RF3_IM_FIRE;
 					}
@@ -1561,7 +1800,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					{
 						msg_format(Ind, "%^s gets zapped!", m_name);
 						if (mon_take_hit(Ind, m_idx, damroll(2,6), &fear,
-						    " turns into a pile of cinder."))
+									" turns into a pile of cinder."))
 						{
 							blinked = FALSE;
 							alive = FALSE;
@@ -1569,70 +1808,70 @@ bool make_attack_normal(int Ind, int m_idx)
 					}
 					else
 					{
-//						if (m_ptr->ml)
+						//						if (m_ptr->ml)
 						if (p_ptr->mon_vis[m_idx])
 							r_ptr->r_flags3 |= RF3_IM_ELEC;
 					}
 				}
 #if 0
-                                if ((p_ptr->shield_opt & SHIELD_COUNTER) && alive)
+				if ((p_ptr->shield_opt & SHIELD_COUNTER) && alive)
 				{
-                                        msg_format("%^s gets bashed by your mystic shield!", m_name);
-                                        if (mon_take_hit(m_idx, damroll(10,8), &fear,
-                                                    " is bashed by your mystic shield."))
-						{
-							blinked = FALSE;
-							alive = FALSE;
-						}
+					msg_format("%^s gets bashed by your mystic shield!", m_name);
+					if (mon_take_hit(m_idx, damroll(10,8), &fear,
+								" is bashed by your mystic shield."))
+					{
+						blinked = FALSE;
+						alive = FALSE;
+					}
 				}
 #endif	// 0
 
-                                /*
-                                 * Apply the necromantic auras
-                                 */
-                                /* Aura of fear is NOT affected by the monster level */
-                                if (get_skill(p_ptr, SKILL_AURA_FEAR) && (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING)) && (!(r_ptr->flags1 & RF1_UNIQUE)))
-                                {
-                                        int chance = get_skill_scale(p_ptr, SKILL_AURA_FEAR, 30) + 1;
+				/*
+				 * Apply the necromantic auras
+				 */
+				/* Aura of fear is NOT affected by the monster level */
+				if (get_skill(p_ptr, SKILL_AURA_FEAR) && (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING)) && (!(r_ptr->flags1 & RF1_UNIQUE)))
+				{
+					int chance = get_skill_scale(p_ptr, SKILL_AURA_FEAR, 30) + 1;
 
-                                        if (magik(chance))
-                                        {
-                                                msg_format(Ind, "%^s appears afraid.", m_name);
-                                                m_ptr->monfear = get_skill_scale(p_ptr, SKILL_AURA_POWER, 10);
-                                        }
-                                }
+					if (magik(chance))
+					{
+						msg_format(Ind, "%^s appears afraid.", m_name);
+						m_ptr->monfear = get_skill_scale(p_ptr, SKILL_AURA_POWER, 10);
+					}
+				}
 
-                                /* Shivering Aura is affected by the monster level */
-                                if (get_skill(p_ptr, SKILL_AURA_SHIVER) && (!(r_ptr->flags1 & RF1_UNIQUE)))
-                                {
-                                        int chance = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 20) + 1;
+				/* Shivering Aura is affected by the monster level */
+				if (get_skill(p_ptr, SKILL_AURA_SHIVER) && (!(r_ptr->flags1 & RF1_UNIQUE)))
+				{
+					int chance = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 20) + 1;
 
-                                        if (magik(chance) && (r_ptr->level < get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 99)))
-                                        {
-                                                msg_format(Ind, "%^s appears frozen.", m_name);
-                                                m_ptr->stunned = get_skill_scale(p_ptr, SKILL_AURA_POWER, 20);
-                                        }
-                                }
+					if (magik(chance) && (r_ptr->level < get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 99)))
+					{
+						msg_format(Ind, "%^s appears frozen.", m_name);
+						m_ptr->stunned = get_skill_scale(p_ptr, SKILL_AURA_POWER, 20);
+					}
+				}
 
-                                /* Aura of death is NOT affected by monster level*/
-                                if (get_skill(p_ptr, SKILL_AURA_DEATH))
-                                {
-                                        int chance = get_skill_scale(p_ptr, SKILL_AURA_DEATH, 50);
+				/* Aura of death is NOT affected by monster level*/
+				if (get_skill(p_ptr, SKILL_AURA_DEATH))
+				{
+					int chance = get_skill_scale(p_ptr, SKILL_AURA_DEATH, 50);
 
-                                        if (magik(chance))
-                                        {
-                                                if (magik(50))
-                                                {
-                                                        msg_format(Ind, "%^s disrupts your aura of death which explodes into a wave of plasma.", m_name);
-                                                        fire_ball(Ind, GF_PLASMA, 0, 10 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1);
-                                                }
-                                                else
-                                                {
-                                                        msg_format(Ind, "%^s disrupts your aura of death which explodes into a wave of ice.", m_name);
-                                                        fire_ball(Ind, GF_ICE, 0, 10 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1);
-                                                }
-                                        }
-                                }
+					if (magik(chance))
+					{
+						if (magik(50))
+						{
+							msg_format(Ind, "%^s disrupts your aura of death which explodes into a wave of plasma.", m_name);
+							fire_ball(Ind, GF_PLASMA, 0, 10 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1);
+						}
+						else
+						{
+							msg_format(Ind, "%^s disrupts your aura of death which explodes into a wave of ice.", m_name);
+							fire_ball(Ind, GF_ICE, 0, 10 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1);
+						}
+					}
+				}
 
 				touched = FALSE;
 			}
@@ -1686,6 +1925,9 @@ bool make_attack_normal(int Ind, int m_idx)
 				}
 			}
 		}
+
+		/* Hack -- blinked monster doesn't attack any more */
+		if (gone || !alive) break;
 	}
 
 

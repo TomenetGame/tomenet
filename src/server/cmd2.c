@@ -1080,6 +1080,38 @@ void do_cmd_close(int Ind, int dir)
 }
 
 
+/*
+ * Check the terrain around the location to see if erosion takes place.
+ * TODO: expand this for more generic terrain types		- Jir -
+ */
+byte twall_erosion(worldpos *wpos, int y, int x)
+{
+	int tx, ty, d;
+	byte feat = FEAT_FLOOR;
+	cave_type **zcave;
+	cave_type *c_ptr;
+	if(!(zcave=getcave(wpos))) return(FALSE);
+
+	for (d = 1; d <= 9; d++)
+	{
+		if (d == 5) continue;
+
+		tx = x + ddx[d];
+		ty = y + ddy[d];
+
+		if (!in_bounds(ty, tx)) continue;
+
+		c_ptr=&zcave[ty][tx];
+		if (c_ptr->feat == FEAT_WATER)
+		{
+			feat = FEAT_WATER;
+			break;
+		}
+	}
+
+	/* Result */
+	return (feat);
+}
 
 /*
  * Tunnel through wall.  Assumes valid location.
@@ -1104,7 +1136,8 @@ static bool twall(int Ind, int y, int x)
 	if (cave_floor_bold(zcave, y, x)) return (FALSE);
 
 	/* Remove the feature */
-	c_ptr->feat = FEAT_FLOOR;
+//	c_ptr->feat = FEAT_FLOOR;
+	c_ptr->feat = twall_erosion(wpos, y, x);
 
 	/* Forget the "field mark" */
 	*w_ptr &= ~CAVE_MARK;

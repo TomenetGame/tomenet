@@ -1210,8 +1210,16 @@ To find the latest change quickly, search ==== :)
 - Flint.
 - USE_PK_RULES
 - light code optimized somewhat.
+- digging walls next to water results in new water. (twall_erosion)
 [B] reversing curse worked for normal 'remove curse' scroll.
 
+01/07/2002 (Jir)
+- RBM_WHISPER and RBE_SEDUCE.
+- NEVER_MOVE monsters consume a turn by *NOT* casting a spell.
+- base AC/dodging cannot avoid gaze/wail etc any more.
+- wpos is shown in orange if recalling (for Charlie :)
+- a death inside walls no longer causes item lost.
+[H] Hand of Doom bypasses GoI/ManaShield.
 
 
 ** [B] stands for Bugfix.

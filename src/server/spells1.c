@@ -33,10 +33,12 @@
  */
 #define TELEPORT_MIN_LIMIT	30
 
-/*
- * Default radius of Space-Time anchor/Anti-teleportation.	[12]
- */
+/* Default radius of Space-Time anchor.	[12] */
 #define ST_ANCHOR_DIS	12
+
+/* Limitation for teleport radius on the wilderness.	[20] */
+#define WILDERNESS_TELEPORT_RADIUS	20
+
 
  /*
   * Potions "smash open" and cause an area effect when
@@ -561,6 +563,10 @@ void teleport_player(int Ind, int dis)
 		if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 	}
 	l_ptr = getfloor(wpos);
+
+	/* Hack -- on the wilderness one cannot teleport very far */
+	if (!wpos->wz && !istown(wpos) && dis > WILDERNESS_TELEPORT_RADIUS)
+		dis = WILDERNESS_TELEPORT_RADIUS;
 
 	/* Verify max distance once here */
 	if (dis > 150) dis = 150;
@@ -2764,6 +2770,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Granite */
 			if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
+				byte feat;
 				/* Message */
 				if (!quiet && (*w_ptr & CAVE_MARK))
 				{
@@ -2772,7 +2779,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the wall */
-				c_ptr->feat = FEAT_DIRT;
+				feat = twall_erosion(wpos, y, x);
+				c_ptr->feat = (feat == FEAT_FLOOR) ? FEAT_DIRT : feat;
 			}
 
 			/* Quartz / Magma with treasure */
@@ -5860,6 +5868,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (fuzzy) msg_print(Ind, "You feel more stable!");
 				else msg_format(Ind, "%^s stops your recall!", killer);
 			}
+				p_ptr->redraw |= (PR_DEPTH);
 				dam = 0;
 			break;
                 }

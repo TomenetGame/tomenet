@@ -235,7 +235,7 @@ void prt_sane(void)
 /*
  * Prints depth into the dungeon
  */
-void prt_depth(int x, int y, int z, bool town)
+void prt_depth(int x, int y, int z, bool town, int recall)
 {
 	char depths[32];
 
@@ -248,7 +248,8 @@ void prt_depth(int x, int y, int z, bool town)
 		sprintf(depths, "%dft", z*50);
 
 	/* Right-Adjust the "depth" and clear old values */
-	prt(format("%7s", depths), ROW_DEPTH, COL_DEPTH);
+	if (recall) c_prt(TERM_ORANGE, format("%7s", depths), ROW_DEPTH, COL_DEPTH);
+	else prt(format("%7s", depths), ROW_DEPTH, COL_DEPTH);
 }
 
 /*

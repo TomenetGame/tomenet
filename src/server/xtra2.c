@@ -3787,6 +3787,7 @@ void player_death(int Ind)
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0);
 		if (p_ptr->stun) (void)set_stun(Ind, 0);
 		if (p_ptr->cut) (void)set_cut(Ind, 0);
+		if (p_ptr->food < PY_FOOD_ALERT) (void)set_food(Ind, PY_FOOD_FULL - 1);
 
 		/* Remove the death flag */
 		p_ptr->death = 0;
@@ -3961,6 +3962,8 @@ void player_death(int Ind)
 	/* Starting with the most valuable, drop things one by one */
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
+		bool away = FALSE;
+
 		o_ptr = &p_ptr->inventory[i];
 
 		/* Make sure we have an object */
@@ -3968,45 +3971,60 @@ void player_death(int Ind)
 			continue;
 
 		/* If we committed suicide, only drop artifacts */
-		if (!p_ptr->alive && !artifact_p(o_ptr)) continue;
+//		if (!p_ptr->alive && !artifact_p(o_ptr)) continue;
+		if (!p_ptr->alive)
+		{
+			if (!true_artifact_p(o_ptr)) continue;
 
-		/* hack -- total winners do not drop artifacts when they suicide */
-//		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
+			/* hack -- total winners do not drop artifacts when they suicide */
+			//		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
 
-		/* Artifacts cannot be dropped after all */	
-		if (cfg.anti_arts_horde && !p_ptr->alive && artifact_p(o_ptr)) 
+			/* Artifacts cannot be dropped after all */	
+			if (cfg.anti_arts_horde) 
+			{
+				/* set the artifact as unfound */
+				a_info[o_ptr->name1].cur_num = 0;
+				a_info[o_ptr->name1].known = FALSE;
+
+				/* Don't drop the artifact */
+				continue;
+			}
+		}
+
+		if (!is_admin(p_ptr) && p_ptr->max_plv >= cfg.newbies_cannot_drop){
+#ifdef DEATH_ITEM_LOST
+			/* Apply penulty of death */
+			if (!artifact_p(o_ptr) && magik(DEATH_ITEM_LOST))
+				away = TRUE;
+			else
+#endif	// DEATH_ITEM_LOST
+			{
+				p_ptr->inventory[i].marked=3; /* LONG timeout */
+				/* Drop this one */
+				away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
+					<= 0 ? TRUE : FALSE;
+			}
+
+			if (away)
+			{
+				int o_idx = 0, x1, y1, try = 500;
+				cave_type **zcave;
+				if((zcave=getcave(&p_ptr->wpos)))	/* this should never.. */
+					while (o_idx <= 0 && try--)
+					{
+						x1 = rand_int(p_ptr->cur_wid);
+						y1 = rand_int(p_ptr->cur_hgt);
+
+						if (!cave_clean_bold(zcave, y1, x1)) continue;
+						o_idx = drop_near(o_ptr, 0, &p_ptr->wpos, y1, x1);
+					}
+			}
+		}
+		else if (true_artifact_p(o_ptr))
 		{
 			/* set the artifact as unfound */
 			a_info[o_ptr->name1].cur_num = 0;
 			a_info[o_ptr->name1].known = FALSE;
-			
-			/* Don't drop the artifact */
-			continue;
-		}
-
-#ifdef DEATH_ITEM_LOST
-		/* Apply penulty of death */
-		if (!artifact_p(o_ptr) && magik(DEATH_ITEM_LOST))
-		{
-			int o_idx = 0, x1, y1;
-			cave_type **zcave;
-			if((zcave=getcave(&p_ptr->wpos)))	/* this should never.. */
-				while (o_idx == 0)
-				{
-					x1 = rand_int(p_ptr->cur_wid);
-					y1 = rand_int(p_ptr->cur_hgt);
-
-					if (!cave_clean_bold(zcave, y1, x1)) continue;
-					o_idx = drop_near(o_ptr, 0, &p_ptr->wpos, y1, x1);
-				}
-		}
-		else
-#endif	// DEATH_ITEM_LOST
-
-		if(p_ptr->max_plv >= cfg.newbies_cannot_drop){
-			p_ptr->inventory[i].marked=3; /* LONG timeout */
-			/* Drop this one */
-			drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
 
 		/* No more item */
@@ -4015,6 +4033,7 @@ void player_death(int Ind)
 		p_ptr->inventory[i].ident = 0;
 		inven_item_increase(Ind, i, -p_ptr->inventory[i].number);
 	}
+
 	if (p_ptr->fruit_bat != -1)
 
 	/* Handle suicide */
@@ -4132,7 +4151,7 @@ void player_death(int Ind)
 	p_ptr->update |= (PU_BONUS);
 
 	/* Redraw */
-	p_ptr->redraw |= (PR_HP | PR_GOLD | PR_BASIC);
+	p_ptr->redraw |= (PR_HP | PR_GOLD | PR_BASIC | PR_DEPTH);
 
 	/* Notice */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -5915,6 +5934,70 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 	p_ptr->recall_depth = recall_depth;
 	wpcopy(&p_ptr->recall_pos, &goal);
 #endif
+}
+
+bool set_recall_timer(int Ind, int v)
+{
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v)
+	{
+		if (!p_ptr->word_recall)
+		{
+			msg_print(Ind, "\377oThe air about you becomes charged...");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else
+	{
+		if (p_ptr->word_recall)
+		{
+			msg_print(Ind, "\377oA tension leaves the air around you...");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->word_recall = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Redraw the depth(colour) */
+	p_ptr->redraw |= (PR_DEPTH);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_recall(int Ind, int v, object_type * o_ptr)
+{
+	player_type *p_ptr = Players[Ind];
+
+	if (!p_ptr->word_recall)
+	{
+		set_recall_depth(p_ptr, o_ptr);
+		set_recall_timer(Ind, v);
+	}
+	else
+	{
+		set_recall_timer(Ind, 0);
+	}
+
 }
 
 void telekinesis_aux(int Ind, int item)

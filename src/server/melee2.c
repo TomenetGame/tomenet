@@ -2740,7 +2740,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			{
 				int dummy = (((s32b) ((65 + randint(25)) * (p_ptr->chp))) / 100);
 				msg_print(Ind, "Your feel your life fade away!");
+				bypass_invuln = TRUE;
 				take_hit(Ind, dummy, m_name);
+				bypass_invuln = FALSE;
 				curse_equipment(Ind, 100, 20);
 
 				if (p_ptr->chp < 1) p_ptr->chp = 1;
@@ -4969,7 +4971,8 @@ static void process_monster(int Ind, int m_idx)
 			did_kill_wall = TRUE;
 
 			/* Create floor */
-			c_ptr->feat = FEAT_FLOOR;
+//			c_ptr->feat = FEAT_FLOOR;
+			c_ptr->feat = twall_erosion(wpos, ny, nx);
 
 			/* Forget the "field mark", if any */
 			everyone_forget_spot(wpos, ny, nx);
@@ -5165,6 +5168,9 @@ static void process_monster(int Ind, int m_idx)
 
 			/* Do not move */
 			do_move = FALSE;
+
+			/* Hack -- use up the turn */
+			do_turn = TRUE;
 		}
 
 		/* restrict aquatic life to the pond */
@@ -5674,7 +5680,8 @@ static void process_monster_golem(int Ind, int m_idx)
 			did_kill_wall = TRUE;
 
 			/* Create floor */
-			c_ptr->feat = FEAT_FLOOR;
+//			c_ptr->feat = FEAT_FLOOR;
+			c_ptr->feat = twall_erosion(wpos, ny, nx);
 
 			/* Forget the "field mark", if any */
 			everyone_forget_spot(wpos, ny, nx);

@@ -87,6 +87,7 @@ static cptr r_info_blow_method[] =
 	"INSULT",
 	"MOAN",
 	"SHOW",		// "XXX5",
+	"WHISPER",
 	NULL
 };
 
@@ -132,7 +133,7 @@ static cptr r_info_blow_effect[] =
         "PARASITE",
 	"DISARM",	// ToME-NET ones
 	"FAMINE",
-//	"SEDUCE",
+	"SEDUCE",
 	NULL
 };
 

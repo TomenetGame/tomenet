@@ -373,7 +373,7 @@ extern void prt_ac(int ac);
 extern void prt_hp(int max, int cur);
 extern void prt_sp(int max, int cur);
 #ifdef NEW_DUNGEON
-extern void prt_depth(int x, int y, int z, bool town);
+extern void prt_depth(int x, int y, int z, bool town, int recall);
 #else
 extern void prt_depth(int depth);
 #endif

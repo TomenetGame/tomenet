@@ -298,7 +298,7 @@ F:UNIQUE | MALE | CAN_SPEAK | DROP_CORPSE |
 F:FORCE_MAXHP | WILD_TOWN | WILD_ONLY | 
 #Don't drop.. then no1 hunts you..
 #F:ONLY_ITEM | DROP_90 | DROP_GOOD | NEVER_MOVE
-F:NEVER_MOVE
+F:NEVER_MOVE | NO_DEATH |
 F:OPEN_DOOR | BASH_DOOR | SPECIAL_GENE |
 F:NO_CONF | NO_SLEEP | NEUTRAL |
 F:MORTAL | BASEANGBAND | HAS_LITE
@@ -17051,29 +17051,29 @@ D:seeks livelier prey.
 
 # Questors -- Rest till the day will come
 
-#N:969:The Princess
-#G:p:y
-#I:110:1d1:40:250:3
-#W:0:4:730:0
-#E:0:1:1:2:1:1
-#O:0:0:1:0
-#F:FEMALE | CAN_SPEAK
-#F:FORCE_MAXHP | SPECIAL_GENE | NO_TARGET
-#F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_DEATH
-#F:MORTAL | BASEANGBAND | UNIQUE | PET |
-#D:The princess of an unknown kingdom, you need to save her!
-#
-#N:970:Merton Proudfoot, the lost hobbit
-#G:h:v
-#I:110:1d1:40:250:3
-#W:1:1:730:0
-#E:0:1:1:2:1:1
-#O:0:0:0:1
-#F:MALE | CAN_SPEAK
-#F:FORCE_MAXHP | SPECIAL_GENE
-#F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
-#F:MORTAL | BASEANGBAND | UNIQUE | PET | NO_DEATH
-#D:The poor hobbit got lost in the dreadful maze!
+N:969:The Princess
+G:p:y
+I:110:1d1:40:250:3
+W:0:4:730:0
+E:0:1:1:2:1:1
+O:0:0:1:0
+F:FEMALE | CAN_SPEAK
+F:FORCE_MAXHP | SPECIAL_GENE | NO_TARGET
+F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_DEATH
+F:MORTAL | BASEANGBAND | UNIQUE | PET |
+D:The princess of an unknown kingdom, you need to save her!
+
+N:970:Merton Proudfoot, the lost hobbit
+G:h:v
+I:110:1d1:40:250:3
+W:1:1:730:0
+E:0:1:1:2:1:1
+O:0:0:0:1
+F:MALE | CAN_SPEAK
+F:FORCE_MAXHP | SPECIAL_GENE
+F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
+F:MORTAL | BASEANGBAND | UNIQUE | PET | NO_DEATH
+D:The poor hobbit got lost in the dreadful maze!
 
 N:971:The Wight-King of the Barrow-downs
 G:W:v
@@ -18512,7 +18512,7 @@ F:FORCE_SLEEP | NEVER_MOVE |
 F:STUPID | RES_TELE | CAN_SWIM |
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
 F:FRIENDS | DISBELIEVE
-S:1_IN_10
+S:1_IN_6
 S:UNMAGIC
 D:Yum!  It looks quite tasty. It seems to glow with an unusual light. 
 
@@ -18677,8 +18677,8 @@ I:120:5d8:14:10:20
 W:13:1:800:20
 E:0:0:0:0:1:0
 O:0:0:0:0
-B:HIT:HURT:1d8
-B:HIT:HURT:1d8
+B:BITE:HURT:1d8
+B:BITE:HURT:1d8
 F:ANIMAL | AQUATIC | WILD_TOO | COLD_BLOOD | AI_ANNOY
 F:MORTAL | BASEANGBAND | FRIEND
 S:1_IN_10 | 
@@ -18691,10 +18691,11 @@ I:110:10d12:50:30:0
 W:22:2:1600:180
 E:1:1:1:2:1:0
 O:20:50:10:5
-B:TOUCH:LOSE_WIS
+#B:TOUCH:LOSE_WIS
 B:TOUCH:INSANITY:3d4
 B:TOUCH:CONFUSE
 B:TOUCH:PARALYZE
+B:WHISPER:SEDUCE
 F:FEMALE | RAND_25 | DROP_1D2 | SMART | AQUATIC | NO_CONF
 #Z or Base?
 #F:MORTAL | ZANGBAND
@@ -18739,6 +18740,61 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS |
 F:NO_CONF | NO_SLEEP | RES_TELE
 F:MORTAL | BASEANGBAND | HAS_LITE
 D:A warrior of considerable skill. Really considerable.
+
+N:1060:Incubus
+G:U:R
+I:115:15d12:50:70:15
+W:35:10:1400:500
+E:1:1:1:2:1:0
+O:20:50:10:5
+B:TOUCH:LOSE_WIS
+B:TOUCH:INSANITY:3d4
+B:WHISPER:SEDUCE
+B:WHISPER:SEDUCE
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
+F:MALE | DROP_1D2 | SMART | NO_CONF |
+F:EVIL | MORTAL | BASEANGBAND
+S:1_IN_9
+S:TELE_TO | TPORT | HEAL | FORGET | DARKNESS
+D:A daemon with a form of handsome man, he visits you
+D:while asleep and...
+
+N:1061:Succubus
+G:U:R
+I:115:15d12:50:70:15
+W:35:10:1400:500
+E:1:1:1:2:1:0
+O:20:50:10:5
+B:TOUCH:LOSE_WIS
+B:TOUCH:INSANITY:3d4
+B:WHISPER:SEDUCE
+B:WHISPER:SEDUCE
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
+F:FEMALE | DROP_1D2 | SMART | NO_CONF |
+F:EVIL | MORTAL | BASEANGBAND
+S:1_IN_9
+S:TELE_TO | TPORT | HEAL | FORGET | DARKNESS
+D:A daemon with a form of beautiful woman, she visits you
+D:while asleep and...
+
+N:1062:Mandragora
+G:,:v
+I:110:40d20:60:110:10
+W:72:8:8000:5000
+E:1:1:1:2:1:1
+O:0:0:0:0
+B:SPORE:CONFUSE
+B:SPORE:HALLU
+B:SPORE:LOSE_CON
+B:SPORE:PARALYZE
+F:EVIL | RES_NETH | IM_COLD | IM_POIS | NEVER_MOVE
+F:RES_TELE | IM_FIRE | NO_CONF | NO_SLEEP |
+F:BASEANGBAND | HAS_LITE
+S:1_IN_8 | 
+S:HAND_DOOM | SHRIEK
+D:A poisonous plant like a branched carrot, but it has a face similar
+D:to man and it screams a deadly scream when one tries to pull it out.
+
 
 # N: serial number : monster name
 # G: symbol : color

@@ -1700,18 +1700,18 @@ int Receive_depth(void)
 {
 	int	n;
 	char	ch;
-	s16b	x,y,z;
+	s16b	x,y,z,recall;
 	bool town;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c", &ch, &x, &y, &z, &town)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu", &ch, &x, &y, &z, &town, &recall)) <= 0)
 	{
 		return n;
 	}
 
 	if (!screen_icky && !shopping)
-		prt_depth(x, y, z, town);
+		prt_depth(x, y, z, town, recall);
 	else
-		if ((n = Packet_printf(&qbuf, "%c%hu%hu%hu%c", ch, x, y, z, town)) <= 0)
+		if ((n = Packet_printf(&qbuf, "%c%hu%hu%hu%c%hu", ch, x, y, z, town, recall)) <= 0)
 		{
 			return n;
 		}

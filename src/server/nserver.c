@@ -3121,10 +3121,10 @@ int Send_depth(int ind, struct worldpos *wpos)
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%hu%hu%hu%c", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos));
+		Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos), p_ptr2->word_recall);
 	      }
 	  }
-	return Packet_printf(&connp->c, "%c%hu%hu%hu%c", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos));
+	return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos), p_ptr->word_recall);
 }
 
 int Send_food(int ind, int food)

@@ -1574,6 +1574,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			{
 				msg_print(Ind, "You feel like staying around.");
 				p_ptr->word_recall = 0;
+				p_ptr->redraw |= (PR_DEPTH);
 				ident=TRUE;
 			}
 			break;
@@ -2414,8 +2415,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				if (delay < 1) delay = 1;
 
 				//				p_ptr->word_recall = rand_int(20) + 15;
-				p_ptr->word_recall = rand_int(delay) + 40;	/* pfft, too long */
-				msg_print(Ind, "\377oThe air about you becomes charged...");
+				set_recall_timer(Ind, rand_int(delay) + 40);
 				ident = TRUE;
 			}
 			ident &= do_player_scatter_items(Ind, chance, 15);
@@ -3015,6 +3015,77 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
 			}
 			ident = TRUE;
+			break;
+		}
+
+		/* Animate Coins Trap */
+		case TRAP_OF_ANIMATE_COINS:
+		{
+			u32b price = glev, amt;
+
+			price *= price;
+			if (price < 200) price = 200;
+			if (price > 1000) price = 1000;
+			amt = (p_ptr->au / price);
+
+			if (amt > 20) amt = 20;
+			if (amt > glev / 3) amt = glev / 3;
+
+			for (k = 0; k < amt; k++)
+			{
+				if (summon_specific(wpos, y, x, glev, SUMMON_BIZARRE5))
+				{
+					ident = TRUE;
+					p_ptr->au -= price;
+				}
+			}
+
+			if (ident)
+			{
+				msg_print(Ind, "Your purse suddenly squirms!");
+				p_ptr->redraw |= PR_GOLD;
+			}
+			else msg_print(Ind, "Your purse tickles.");
+
+			break;
+		}
+
+		/*     SEND
+		 * +)  MORE
+		 * ---------
+		 *    MONEY Trap */
+		case TRAP_OF_REMITTANCE:
+		{
+			player_type *q_ptr;
+			u32b amt;
+			for (k = 1; k <= NumPlayers; k++)
+			{
+				q_ptr = Players[k];
+				if (q_ptr->conn == NOT_CONNECTED) continue;
+				if (k == Ind) continue;
+
+//				if (!inarea(wpos, &q_ptr->wpos)) continue;
+
+				amt = q_ptr->lev * 100;
+				if (q_ptr->lev > 20) amt *= q_ptr->lev - 20;
+				if (amt > p_ptr->au) amt = p_ptr->au / 2;
+				if (amt < 100) continue;
+
+				p_ptr->au -= amt;
+				q_ptr->au += amt;
+
+				msg_print(k, "You feel your purse heavier.");
+				q_ptr->redraw |= PR_GOLD;
+
+				ident = TRUE;
+			}
+
+			if (ident)
+			{
+				msg_print(Ind, "You feel yourself very generous!");
+				p_ptr->redraw |= PR_GOLD;
+			}
+
 			break;
 		}
 

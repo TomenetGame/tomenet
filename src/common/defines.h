@@ -3493,6 +3493,8 @@ that keeps many algorithms happy.
 #define RBM_EXPLODE     16
 #define RBM_SHOW        24
 
+#define RBM_WHISPER		25
+
 /*
  * New monster blow effects
  */
@@ -3533,7 +3535,7 @@ that keeps many algorithms happy.
 
 #define RBE_DISARM		34
 #define RBE_FAMINE		35
-//#define RBE_SEDUCE	
+#define RBE_SEDUCE		36
 
 /*** Monster flag values (hard-coded) ***/
 
@@ -4831,6 +4833,8 @@ extern int PlayerUID;
 #define TRAP_OF_UNLIGHT		202
 #define TRAP_OF_THIRST		203
 #define TRAP_OF_FINGER_CATCHING	204
+#define TRAP_OF_ANIMATE_COINS	205
+#define TRAP_OF_REMITTANCE	206
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000

@@ -14,6 +14,14 @@
 #include "angband.h"
 
 
+/*
+ * XXX XXX Important notice:
+ *
+ * adj_*_* arrays are frequently used beyond the original purpose
+ * (yeah, truly bad hack), so changing them may cause various
+ * unexpected side-effects.
+ * grep the array name first and do it deliberately!
+ */
 
 
 /*
@@ -4132,31 +4140,47 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 	},
 	/* Mimic */
 	{
-                "Copier",
-                "Copier",
-                "Modifier",
-                "Multiple",
-                "Multiple",
-                "Changer",
-                "Metamorph",
-                "Metamorph",
-                "Shapeshifter",
-                "Shapeshifter",
-        },
-
-        /* Archer */
-	{
-                "Rock Thrower",
-                "Slinger",
-                "Great Slinger",
-                "Bowsen",
-                "Bowsen",
-                "Great Bowmen",
-                "Great Bowmen",
-                "Archer",
-                "Archer",
-                "Great Archer",
+		"Copier",
+		"Copier",
+		"Modifier",
+		"Multiple",
+		"Multiple",
+		"Changer",
+		"Metamorph",
+		"Metamorph",
+		"Shapeshifter",
+		"Shapeshifter",
 	},
+
+	/* Archer */
+	{
+		"Rock Thrower",
+		"Slinger",
+		"Great Slinger",
+		"Bowsen",
+		"Bowsen",
+		"Great Bowmen",
+		"Great Bowmen",
+		"Archer",
+		"Archer",
+		"Great Archer",
+	},
+
+#if 0
+	/* Exp 626 */
+	{
+		"Apprentice",
+		"Journeyman",
+		"Dragonlord",
+		"Wizard",
+		"Rogue geek",
+		"Rogue addict",
+		"Schmendrick",
+		"Gunfighter",
+		"Tiem waster",
+		"Bug chaser",
+	},
+#endif	// 0
 };
 
 /*
