@@ -743,6 +743,11 @@ void do_cmd_quaff_potion(int Ind, int item)
 			}
 			break;
 		}
+		case SV_POTION_INVIS:
+		{
+			p_ptr->tim_invisibility = 30+randint(60);
+			p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
+		}
 
 		case SV_POTION_SLOW_POISON:
 		{

@@ -2123,6 +2123,10 @@ static void calc_bonuses(int Ind)
 		if (f3 & TR3_DRAIN_EXP) p_ptr->exp_drain = TRUE;
                 if (f5 & (TR5_DRAIN_MANA)) p_ptr->drain_mana++;
                 if (f5 & (TR5_DRAIN_HP)) p_ptr->drain_life++;
+		if (f5 & (TR5_INVIS)){
+			p_ptr->tim_invisibility = 100;
+			p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
+		}
 		if (f3 & TR3_BLESSED) p_ptr->bless_blade = TRUE;
 		if (f3 & TR3_XTRA_MIGHT) p_ptr->xtra_might = TRUE;
 		if (f3 & TR3_SLOW_DIGEST) p_ptr->slow_digest = TRUE;
