@@ -966,7 +966,7 @@ void peruse_file(void)
 		Send_special_line(special_line_type, cur_line);
 
 		/* Show a general "title" */
-		prt(format("[MAngband %d.%d.%d]",
+		prt(format("[TomeNET %d.%d.%d]",
 			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH), 0, 0);
 
 		/* Prompt */

@@ -183,6 +183,7 @@ player_type **Players;
 
 /* The party information */
 party_type parties[MAX_PARTIES];
+struct guild_type guilds[MAX_GUILDS];
 
 /* The information about houses */
 house_type *houses;

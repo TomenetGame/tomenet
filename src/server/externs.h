@@ -213,6 +213,7 @@ extern bool smart_cheat;
 extern s16b hitpoint_warn;
 extern player_type **Players;
 extern party_type parties[MAX_PARTIES];
+extern struct guild_type guilds[MAX_GUILDS];
 extern house_type *houses;
 extern u32b num_houses;
 extern u32b house_alloc;

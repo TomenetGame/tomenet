@@ -592,9 +592,11 @@ bool access_door(int Ind, struct dna_type *dna){
 		case OT_RACE:
 			if(p_ptr->prace==dna->owner) return(TRUE);
 			break;
+#if 0
 		case OT_GUILD:
 			if(p_ptr->guild==dna->owner) return(TRUE);
 			break;
+#endif
 	}
 	return(FALSE);
 }

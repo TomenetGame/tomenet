@@ -82,7 +82,7 @@
  * This is the number of "frames" to produce per second.  It determines
  * the speed of the game.
  */
-#define FPS 12
+#define FPS 60
 
 /* maximum respawn time for uniques.... from japanese patch */
 #define COME_BACK_TIME_MAX 600
@@ -169,6 +169,7 @@
  * server has been run, or all sorts of bad things could happen.
  */
 #define MAX_PARTIES	256
+#define MAX_GUILDS	32	/* test value */
 
 /*
  * Maximum number of houses available.
