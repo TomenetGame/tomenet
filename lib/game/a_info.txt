@@ -2636,7 +2636,7 @@ D:and rebirths. For some time Moltor enjoyed his ale, and all was well.
 
 N:217:'Ocean Soul'
 I:35:8:0
-W:30:30:10:150000
+W:32:10:10:150000
 P:2:0d0:0:0:10
 F:INSTA_ART | IM_WATER | FLY | IM_COLD
 #F:INSTA_ART | IM_WATER | PASS_WATER | BREATHE_WATER | IM_COLD

@@ -1183,6 +1183,7 @@ that keeps many algorithms happy.
 #define ART_COLANNON            48
 #define ART_LUTHIEN                     49
 #define ART_TUOR                        50
+#define ART_OCEANSOUL		217
 
 /* Gloves */
 #define ART_CAMBELEG            52
