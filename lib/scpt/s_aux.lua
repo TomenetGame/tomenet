@@ -478,5 +478,11 @@ function have_object(mode, type, find, find2)
 end
 
 function pre_exec_spell_dir(s)
-        if __tmp_spells[s].direction then return __tmp_spells[s].direction end
+        if __tmp_spells[s].direction then
+                if type(__tmp_spells[s].direction) == "function" then
+                        return __tmp_spells[s].direction()
+                else
+        		return __tmp_spells[s].direction
+                end
+        end
 end

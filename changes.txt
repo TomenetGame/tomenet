@@ -18,7 +18,7 @@
 # 23/07/2002 - T.o.M.E 2.0.0 aka "Point of No Return"
 
 # special tag to specify the current version
-[V]  TomeNET 4.0.0 aka "Packet of No Return"
+[V]  TomeNET 4.0.0 aka "The Gathering"
 
 # bug.txt should follow the exact same format
 

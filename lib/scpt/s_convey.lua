@@ -1,4 +1,3 @@
--- $Id$
 -- handle the conveyance school
 
 BLINK = add_spell
@@ -20,60 +19,6 @@ BLINK = add_spell
         },
 }
 
-TESTDIR = add_spell
-{
-	["name"] = 	"Fireball of test",
-        ["school"] = 	{SCHOOL_CONVEYANCE},
-        ["level"] = 	23,
-        ["mana"] = 	15,
-        ["mana_max"] = 	40,
-        ["fail"] = 	70,
-        ["direction"] = TRUE,
-        ["spell"] = 	function(args)
-			fire_ball(Ind, GF_MANA, args.dir, 2000, 3)
-	end,
-	["info"] = 	function()
-        		return ""
-	end,
-        ["desc"] =	{
-                        "Teleports a line of monsters away",
-                        "At level 10 it turns into a ball",
-                        "At level 20 it teleports all monsters in sight"
-        }
-}
-
---[[
-BLINK = add_spell
-{
-	["name"] = 	"Phase Door",
-        ["school"] = 	{SCHOOL_CONVEYANCE},
-        ["level"] = 	1,
-        ["mana"] = 	1,
-        ["mana_max"] =  3,
-        ["fail"] = 	10,
-        ["spell"] = 	function()
-        	        if get_level(BLINK, 50) >= 30 then
-                                local oy, ox = py, px
-
-        	        	teleport_player(Ind, 10 + get_level(BLINK, 8))
-                                create_between_gate(0, oy, ox)
-                	else
-        	        	teleport_player(Ind, 10 + get_level(BLINK, 8))
-	                end
-	end,
-	["info"] = 	function()
-	                if get_level(BLINK, 50) >= 30 then
-        	        	return "distance "..(5 + get_level(BLINK, 8))
-                	else
-                		return "distance "..(10 + get_level(BLINK, 8))
-	                end
-	end,
-        ["desc"] =	{
-        		"Teleports you on a small scale range",
-                        "At level 30 it creates void jumpgates",
-        }
-}
-
 DISARM = add_spell
 {
 	["name"] = 	"Disarm",
@@ -84,7 +29,7 @@ DISARM = add_spell
         ["fail"] = 	10,
         ["spell"] = 	function()
 			destroy_doors_touch()
-        	        if get_level(DISARM, 50) >= 10 then destroy_traps_touch() end
+        	        if get_level(Ind, DISARM, 50) >= 10 then destroy_traps_touch() end
 	end,
 	["info"] = 	function()
                 	return ""
@@ -104,7 +49,7 @@ TELEPORT = add_spell
         ["mana_max"] = 	14,
         ["fail"] = 	50,
         ["spell"] = 	function()
-        		player.energy = player.energy - (25 - get_level(TELEPORT, 50))
+        		player.energy = player.energy - (25 - get_level(Ind, TELEPORT, 50))
 			teleport_player(Ind, 100 + get_level(TELEPORT, 100))
 	end,
 	["info"] = 	function()
@@ -123,19 +68,14 @@ TELEAWAY = add_spell
         ["mana"] = 	15,
         ["mana_max"] = 	40,
         ["fail"] = 	70,
-        ["spell"] = 	function()
-               		local ret, dir
-
-        		if get_level(TELEAWAY, 50) >= 20 then
+        ["direction"] = function () if get_level(Ind, TELEAWAY) >= 20 then return FALSE else return TRUE end end,
+        ["spell"] = 	function(args)
+        		if get_level(Ind, TELEAWAY, 50) >= 20 then
                                 project_los(GF_AWAY_ALL, 100)
-                        elseif get_level(TELEAWAY, 50) >= 10 then
-        	                ret, dir = get_aim_dir()
-                                if ret == FALSE then return FALSE end
-                                fire_ball(GF_AWAY_ALL, dir, 100, 3 + get_level(TELEAWAY, 4))
+                        elseif get_level(Ind, TELEAWAY, 50) >= 10 then
+                                fire_ball(Ind, GF_AWAY_ALL, args.dir, 100, 3 + get_level(TELEAWAY, 4))
                         else
-        	                ret, dir = get_aim_dir()
-                                if ret == FALSE then return FALSE end
-                                teleport_monster(dir)
+                                teleport_monster(Ind, args.dir)
 			end
 	end,
 	["info"] = 	function()
@@ -147,7 +87,7 @@ TELEAWAY = add_spell
                         "At level 20 it teleports all monsters in sight"
         }
 }
-
+--[[
 RECALL = add_spell
 {
 	["name"] = 	"Recall",

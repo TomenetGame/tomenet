@@ -6,16 +6,18 @@
 SCHOOL_CONVEYANCE = add_school
 {
 	["name"] = "Conveyance", 
-        ["skill"] = 1,
+        ["skill"] = SKILL_CONVEYANCE,
         ["sorcery"] = TRUE,
 }
 
+--[[
 SCHOOL_MANA = add_school
 {
 	["name"] = "Mana", 
-        ["skill"] = 1,
+        ["skill"] = SKILL_MANA,
         ["sorcery"] = TRUE,
 }
+]]
 
 -- Put some spells
 pern_dofile(Ind, "s_convey.lua")
@@ -24,7 +26,7 @@ pern_dofile(Ind, "s_convey.lua")
 -- Great book, eh? ;)
 school_book[50] = {
 --        MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK, SENSEMONSTER, SENSEHIDDEN,
-        BLINK, TESTDIR,
+        DISARM, BLINK, TELEPORT, TELEAWAY,
 }
 
 
