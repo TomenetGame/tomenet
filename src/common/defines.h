@@ -4066,6 +4066,7 @@ extern int PlayerUID;
 #define TERM_SOUN	23
 #define TERM_SHAR	24
 #define TERM_LITE	25
+#define TERM_DARKNESS	26
 
 #define TERM_HALF	63	/* only the brighter colours */
 

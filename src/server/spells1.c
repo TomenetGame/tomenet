@@ -1050,10 +1050,10 @@ byte spell_color(int type)
 		case GF_INERTIA:        return (randint(5)<3?TERM_SLATE:TERM_L_WHITE);
 		case GF_GRAVITY:        return (randint(3)==1?TERM_L_UMBER:TERM_UMBER);
 		case GF_TIME:           return (randint(2)==1?TERM_WHITE:TERM_L_DARK);
-		case GF_LITE_WEAK:      return (randint(3)==1?TERM_ORANGE:TERM_YELLOW);
-		case GF_LITE:           return (randint(4)==1?TERM_ORANGE:TERM_YELLOW);
-		case GF_DARK_WEAK:      return (randint(3)==1?TERM_DARK:TERM_L_DARK);
-		case GF_DARK:           return (randint(4)==1?TERM_DARK:TERM_L_DARK);
+		case GF_LITE_WEAK:      return (TERM_LITE);
+		case GF_LITE:           return (TERM_LITE);
+		case GF_DARK_WEAK:      return (TERM_DARKNESS);
+		case GF_DARK:           return (TERM_DARKNESS);
 		case GF_PLASMA:         return (randint(5)==1?TERM_RED:TERM_L_RED);
 		case GF_METEOR:         return (randint(3)==1?TERM_RED:TERM_UMBER);
 		case GF_ICE:            return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);

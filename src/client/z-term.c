@@ -525,7 +525,7 @@ byte flick_colour(byte attr){
 			return(get_shimmer_color());
 			break;
 		case TERM_ACID:
-			return(randint(5)>3?TERM_SLATE:TERM_L_DARK);
+			return(randint(5)>4?TERM_L_DARK:TERM_SLATE);
 			break;
 		case TERM_CONF:
 			return(randint(5)>3?TERM_UMBER:TERM_L_UMBER);
@@ -537,7 +537,10 @@ byte flick_colour(byte attr){
 			return(randint(5)>3?TERM_UMBER:TERM_SLATE);
 			break;
 		case TERM_LITE:
-			return(randint(5)>3?TERM_WHITE:TERM_YELLOW);
+			return(randint(5)>3?TERM_ORANGE:TERM_YELLOW);
+			break;
+		case TERM_DARKNESS:
+			return(randint(5)>4?TERM_SLATE:TERM_L_DARK);
 			break;
 			
 
