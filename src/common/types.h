@@ -1515,6 +1515,7 @@ struct player_type
 	s16b max_dlv;		/* Max level explored - extension needed! */
 #ifdef NEW_DUNGEON
 	worldpos recall_pos;	/* what position to recall to */
+	u16b town_x, town_y;
 #else
 	s16b recall_depth;	/* which depth to recall to */
 #endif

@@ -630,15 +630,15 @@ bool do_player_trap_call_out(int Ind)
        m_ptr = &m_list[i];
        r_ptr = race_inf(m_ptr);
 
-       /* Paranoia -- Skip dead monsters */
-       if (!m_ptr->r_idx) continue;
+	/* Paranoia -- Skip dead monsters */
+	if (!m_ptr->r_idx) continue;
 
-	   if (!wpcmp(&p_ptr->wpos, &m_ptr->wpos)) continue;
-       if (m_ptr->level>=h_level)
-       {
-         h_level = m_ptr->level;
-         h_index = i;
-       }
+	if (!wpcmp(&p_ptr->wpos, &m_ptr->wpos)) continue;
+	if (m_ptr->level>=h_level)
+	{
+		h_level = m_ptr->level;
+		h_index = i;
+	}
    }
    /* if the level is empty of monsters, h_index will be 0 */
    if (!h_index) return(FALSE);

@@ -2154,12 +2154,13 @@ int Send_leave(int ind, int id)
 void do_quit(int ind, bool tellclient)
 {
 	int player, n, depth = 0;
-	player_type *p_ptr = Players[ind];
+	player_type *p_ptr;
 	connection_t * connp = &Conn[ind];
 
 	if (connp->id != -1) 
 	{
 		player = GetInd[connp->id];
+		p_ptr=Players[player];
 	}
 
 	if (!tellclient)
@@ -2175,7 +2176,7 @@ void do_quit(int ind, bool tellclient)
 	}
 
 	/* If we are close to the center of town, exit quickly. */
-	if(istown(&Players[player]->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<3))
+	if(istown(&p_ptr->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<3))
 	{
 		Destroy_connection(ind, "client quit");
 	}

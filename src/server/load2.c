@@ -1321,6 +1321,9 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->wpos.wy);
 	rd_s16b(&p_ptr->wpos.wz);
 
+	rd_u16b(&p_ptr->town_x);
+	rd_u16b(&p_ptr->town_y);
+
 	p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 	p_ptr->recall_pos.wy = p_ptr->wpos.wy;
 	p_ptr->recall_pos.wz = p_ptr->max_dlv;

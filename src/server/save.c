@@ -1248,6 +1248,9 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->wpos.wy);
 	wr_s16b(p_ptr->wpos.wz);
 
+	wr_u16b(p_ptr->town_x);
+	wr_u16b(p_ptr->town_y);
+	
 	/* More info */
 	wr_s16b(p_ptr->ghost);
 	wr_s16b(p_ptr->sc);

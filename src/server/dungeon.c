@@ -475,23 +475,15 @@ static void process_world(int Ind)
 	/*** Handle the "town" (stores and sunshine) ***/
 
 	/* While in town or wilderness */
-#ifdef NEW_DUNGEON
 	if (p_ptr->wpos.wz==0)
-#else
-	if (p_ptr->dun_depth <= 0)
-#endif
 	{
 		/* Hack -- Daybreak/Nighfall in town */
 		if (!(turn % ((10L * TOWN_DAWN) / 2)))
 		{
 			bool dawn;
-#ifdef NEW_DUNGEON
 			struct worldpos *wpos=&p_ptr->wpos;
 			cave_type **zcave;
 			if(!(zcave=getcave(wpos))) return;
-#else
-			int Depth = p_ptr->dun_depth;
-#endif
 
 			/* Check for dawn */
 			dawn = (!(turn % (10L * TOWN_DAWN)));
@@ -508,22 +500,14 @@ static void process_world(int Ind)
 					for (x = 0; x < MAX_WID; x++)
 					{
 						/* Get the cave grid */
-#ifdef NEW_DUNGEON
 						c_ptr = &zcave[y][x];
-#else
-						c_ptr = &cave[Depth][y][x];
-#endif
 						w_ptr = &p_ptr->cave_flag[y][x];
 
 						/* Assume lit */
 						c_ptr->info |= CAVE_GLOW;
 
 						/* Hack -- Memorize lit grids if allowed */
-#ifdef NEW_DUNGEON
 						if ((istown(wpos)) && (p_ptr->view_perma_grids)) *w_ptr |= CAVE_MARK;
-#else
-						if ((!Depth) && (p_ptr->view_perma_grids)) *w_ptr |= CAVE_MARK;
-#endif
 
 						/* Hack -- Notice spot */
 						note_spot(Ind, y, x);						
@@ -543,11 +527,7 @@ static void process_world(int Ind)
 					for (x = 0; x < MAX_WID; x++)
 					{
 						/*  Get the cave grid */
-#ifdef NEW_DUNGEON
 						c_ptr = &zcave[y][x];
-#else
-						c_ptr = &cave[Depth][y][x];
-#endif
 						w_ptr = &p_ptr->cave_flag[y][x];
 
 						/*  Darken "boring" features */
@@ -592,27 +572,13 @@ static void process_world(int Ind)
 	 */
 
 	/* Check for creature generation */
-#ifdef NEW_DUNGEON
 	if ((rand_int(MAX_M_ALLOC_CHANCE) == 0) && ((!istown(&p_ptr->wpos)) || (rand_int(10)<5)))
-#else
-	if ((rand_int(MAX_M_ALLOC_CHANCE) == 0) && ((p_ptr->dun_depth !=0) || (rand_int(10)<5)))
-#endif
 	{
 		/* Set the monster generation depth */
-#ifdef NEW_DUNGEON
 		monster_level = getlevel(&p_ptr->wpos);
 		if (p_ptr->wpos.wz)
 			(void)alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
 		else wild_add_monster(&p_ptr->wpos);
-#else
-		if (p_ptr->dun_depth >= 0)		
-			monster_level = p_ptr->dun_depth;
-		else monster_level = 2 + (wild_info[p_ptr->dun_depth].radius / 2);
-		if (p_ptr->dun_depth >= 0)
-			(void)alloc_monster(p_ptr->dun_depth, MAX_SIGHT + 5, FALSE);
-		/* Make a new monster */
-		else wild_add_monster(p_ptr->dun_depth);
-#endif
 	}
 
 	/* Every 1500 turns, warn about any Black Breath not gotten from an equipped
@@ -963,10 +929,8 @@ static int auto_retaliate(int Ind)
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
 	monster_race *r_ptr = NULL, *r_ptr2;
 	unsigned char * inscription;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
-#endif
 
 	if (p_ptr->new_level_flag) return 0;
 
@@ -977,17 +941,9 @@ static int auto_retaliate(int Ind)
 		tx = p_ptr->px + ddx[d];
 		ty = p_ptr->py + ddy[d];
 
-#ifdef NEW_DUNGEON
 		if (!in_bounds(ty, tx)) continue;
-#else
-		if (!in_bounds(p_ptr->dun_depth, ty, tx)) continue;
-#endif
 
-#ifdef NEW_DUNGEON
 		if (!(i = zcave[ty][tx].m_idx)) continue;
-#else
-		if (!(i = cave[p_ptr->dun_depth][ty][tx].m_idx)) continue;
-#endif
 		if (i > 0)
 		{
 			m_ptr = &m_list[i];
@@ -1153,11 +1109,7 @@ static int auto_retaliate(int Ind)
 		if (!m_ptr->r_idx) continue;
 
 		/* Skip monsters that aren't at this depth */
-#ifdef NEW_DUNGEON
 		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
-#else
-		if (p_ptr->dun_depth != m_ptr->dun_depth) continue;
-#endif
 
 		/* Make sure that the player can see this monster */
 		if (!p_ptr->mon_vis[i]) continue;
@@ -1245,11 +1197,7 @@ static int auto_retaliate(int Ind)
 		if (q_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Skip players not at this depth */
-#ifdef NEW_DUNGEON
 		if(!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
-#else
-		if (p_ptr->dun_depth != q_ptr->dun_depth) continue;
-#endif
 
 		/* Skip ourselves */
 		if (Ind == i) continue;
@@ -1437,13 +1385,8 @@ static void process_player_begin(int Ind)
 	/* Storing up extra energy lets us perform actions while we are running */
 	//if (p_ptr->energy > (level_speed(p_ptr->dun_depth)*6)/5)
 	//	p_ptr->energy = (level_speed(p_ptr->dun_depth)*6)/5;
-#ifdef NEW_DUNGEON
 	if (p_ptr->energy > (level_speed(&p_ptr->wpos)*2) - 1)
 		p_ptr->energy = (level_speed(&p_ptr->wpos)*2) - 1;
-#else
-	if (p_ptr->energy > (level_speed(p_ptr->dun_depth)*2) - 1)
-		p_ptr->energy = (level_speed(p_ptr->dun_depth)*2) - 1;
-#endif
 
 	/* Check "resting" status */
 	if (p_ptr->resting)
@@ -1486,10 +1429,8 @@ static void process_player_end(int Ind)
 	cave_type		*c_ptr;
 	byte			*w_ptr;
 	object_type		*o_ptr;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
-#endif
 
 	if (Players[Ind]->conn == NOT_CONNECTED)
 		return;
@@ -1501,11 +1442,7 @@ static void process_player_end(int Ind)
 	if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ)) return;
 
 	/* Check for auto-retaliate */
-#ifdef NEW_DUNGEON
 	if ((p_ptr->energy >= level_speed(&p_ptr->wpos)) && !p_ptr->confused)
-#else
-	if ((p_ptr->energy >= level_speed(p_ptr->dun_depth)) && !p_ptr->confused)
-#endif
 	{
 		/* Check for nearby monsters and try to kill them */
 		/* If auto_retaliate returns nonzero than we attacked
@@ -1519,19 +1456,10 @@ static void process_player_end(int Ind)
 	}
 
 	/* Handle running -- 5 times the speed of walking */
-#ifdef NEW_DUNGEON
-//	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos)*6)/5)
 	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos)*(cfg.running_speed + 1))/cfg.running_speed)
-#else
-	while (p_ptr->running && p_ptr->energy >= (level_speed(p_ptr->dun_depth)*6)/5)
-#endif
 	{
 		run_step(Ind, 0);
-#ifdef NEW_DUNGEON
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / cfg.running_speed;
-#else
-		p_ptr->energy -= level_speed(p_ptr->dun_depth) / 5;
-#endif
 	}
 
 
@@ -1580,11 +1508,7 @@ static void process_player_end(int Ind)
 		msg_format(Ind, "You drop %s.", o_name);
 
 		/* Drop it (carefully) near the player */
-#ifdef NEW_DUNGEON
 		drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-#else
-		drop_near_severe(Ind, o_ptr, 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
-#endif
 
 		/* Decrease the item, optimize. */
 		inven_item_increase(Ind, i, -amt);
@@ -1599,11 +1523,7 @@ static void process_player_end(int Ind)
 	 * and poison faster with respect to real time < 1750 feet and slower >
 	 * 1750 feet.
 	 */
-#ifdef NEW_DUNGEON
 	if (!(turn%(level_speed(&p_ptr->wpos)/12)))
-#else
-	if (!(turn%(level_speed(p_ptr->dun_depth)/12)))
-#endif
 	{
 		/*** Damage over Time ***/
 
@@ -1649,11 +1569,7 @@ static void process_player_end(int Ind)
 			if (p_ptr->food < PY_FOOD_MAX)
 			{
 				/* Every 50/6 level turns */
-#ifdef NEW_DUNGEON
 			        if (!(turn%((level_speed((&p_ptr->wpos))*10)/12)))
-#else
-			        if (!(turn%((level_speed((p_ptr->dun_depth))*10)/12)))
-#endif
 				{
 					/* Basic digestion rate based on speed */
 					i = extract_energy[p_ptr->pspeed] * 2;
@@ -1863,22 +1779,10 @@ static void process_player_end(int Ind)
 		{
 			/* In town it only runs out if you are not on a wall
 			   To prevent breaking into houses */
-#ifdef NEW_DUNGEON
 			if (players_on_depth(&p_ptr->wpos) != 0) {
-#else
-			if (players_on_depth[p_ptr->dun_depth] != 0) {
-#endif
 				/* important! check for illegal spaces */
-#ifdef NEW_DUNGEON
 				if (in_bounds(p_ptr->py, p_ptr->px)) {
-#else
-				if (in_bounds(p_ptr->dun_depth, p_ptr->py, p_ptr->px)) {
-#endif
-#ifdef NEW_DUNGEON
 					if ((p_ptr->wpos.wz) || (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)))
-#else
-					if ((p_ptr->dun_depth > 0) || (cave_floor_bold(p_ptr->dun_depth, p_ptr->py, p_ptr->px)))
-#endif
 					{
 						(void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus);
 					}
@@ -2315,11 +2219,7 @@ static void process_player_end(int Ind)
 		       /* MEGA HACK: no recall if icky, or in a shop */
 			if( ! p_ptr->word_recall ) 
 			{
-#ifdef NEW_DUNGEON
 				if(character_icky || (p_ptr->store_num > 0) || check_st_anchor(&p_ptr->wpos))
-#else
-				if(character_icky || (p_ptr->store_num > 0) || check_st_anchor(p_ptr->dun_depth))
-#endif
 				{
 				    p_ptr->word_recall++;
 				}
@@ -2361,22 +2261,17 @@ static void process_player_end(int Ind)
 				}
 				/* beware! bugs inside! (jir) */
 				/* world travel */
-#ifdef NEW_DUNGEON
 				/* why wz again? (jir) */
-//				else if ((p_ptr->wpos.wz) || (p_ptr->recall_depth < 0))
-				else if (!(p_ptr->recall_pos.wz))
-#else
-				else if ((p_ptr->dun_depth < 0) || (p_ptr->recall_depth < 0))
-#endif
+				else if (!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN) ))
 				{
 					if ((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] & (1 << (wild_idx(&p_ptr->recall_pos))%8))) ||
-						wpcmp(&p_ptr->wpos, &p_ptr->recall_pos))
+						!wpcmp(&p_ptr->wpos, &p_ptr->recall_pos))
 					{
 						/* lazy -- back to the centre of the world
 						 * this should be changed so that it lands him/her
 						 * back to the last town (s)he visited.	*/
-						p_ptr->recall_pos.wx = cfg.town_x;
-						p_ptr->recall_pos.wy = cfg.town_y;
+						p_ptr->recall_pos.wx = p_ptr->town_x;
+						p_ptr->recall_pos.wy = p_ptr->town_y;
 					}
 
 					new_pos.wx = p_ptr->recall_pos.wx;
@@ -2390,11 +2285,7 @@ static void process_player_end(int Ind)
 					
 					/* New location */
 #if 0
-#ifdef NEW_DUNGEON
 					if (p_ptr->wpos.wz==0 && !istown(&p_ptr->wpos))
-#else
-					if (p_ptr->dun_depth < 0) 
-#endif
 					{
 						new_depth = 0;
 						new_world_x = 0;
@@ -2459,7 +2350,7 @@ static void process_player_end(int Ind)
 					}
 					else
 					{
-					p_ptr->recall_pos.wz = 0;
+						p_ptr->recall_pos.wz = 0;
 					}
 					
 #ifdef NEW_DUNGEON

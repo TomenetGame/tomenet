@@ -894,6 +894,10 @@ static void hit_trap(int Ind)
 
 			/* Increase the number of players on this next depth */
 			new_players_on_depth(wpos,1,TRUE);
+			if(istown(&p_ptr->wpos)){
+				p_ptr->town_x=p_ptr->wpos.wx;
+				p_ptr->town_y=p_ptr->wpos.wy;
+			}
 			break;
 		}
 
@@ -2424,6 +2428,10 @@ void move_player(int Ind, int dir, int do_pickup)
 			new_players_on_depth(wpos,1,TRUE);
 			p_ptr->new_level_flag = TRUE;
 			p_ptr->new_level_method = LEVEL_OUTSIDE;
+			if(istown(&p_ptr->wpos)){
+				p_ptr->town_x=p_ptr->wpos.wx;
+				p_ptr->town_y=p_ptr->wpos.wy;
+			}
 
 			return;
 		}

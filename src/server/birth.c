@@ -1234,6 +1234,8 @@ static void player_setup(int Ind)
 		p_ptr->wpos.wy=cfg.town_y;
 		p_ptr->py=level_down_y(wpos);
 		p_ptr->px=level_down_x(wpos);
+		p_ptr->town_x=p_ptr->wpos.wx;
+		p_ptr->town_y=p_ptr->wpos.wy;
 	}
 	/* Count players on this depth */
 	for (i = 1; i <= NumPlayers; i++)
