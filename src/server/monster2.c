@@ -1454,9 +1454,10 @@ void update_mon(int m_idx, bool dist)
 			/* Telepathy can see all "nearby" monsters with "minds" */
 			if (p_ptr->telepathy || (p_ptr->prace == RACE_DRIDER))
 			{
-				bool see = FALSE;
+				bool see = FALSE, drsee=FALSE;
 
 				/* Different ESP */
+				if (p_ptr->prace==RACE_DRIDER) drsee = TRUE;
 				if ((p_ptr->telepathy & ESP_ORC) && (r_ptr->flags3 & RF3_ORC)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_SPIDER) && (r_ptr->flags7 & RF7_SPIDER)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_TROLL) && (r_ptr->flags3 & RF3_TROLL)) see = TRUE;
@@ -1472,10 +1473,12 @@ void update_mon(int m_idx, bool dist)
 				if ((p_ptr->telepathy & ESP_UNIQUE) && ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags3 & RF3_UNIQUE_4))) see = TRUE;
 				if (p_ptr->telepathy & ESP_ALL) see = TRUE;
 
-
 //				if (p_ptr->mode == MODE_NORMAL) see = TRUE;
-				if (see && (p_ptr->mode == MODE_HELL) && (m_ptr->cdis < MAX_SIGHT)) see = TRUE;
-				if (see && !p_ptr->telepathy && (p_ptr->prace == RACE_DRIDER) && (m_ptr->cdis > (p_ptr->lev / 2))) see = FALSE;
+				if (see && (p_ptr->mode == MODE_HELL) && (m_ptr->cdis > MAX_SIGHT)) see = FALSE;
+//				if (see && !p_ptr->telepathy && (p_ptr->prace == RACE_DRIDER) && (m_ptr->cdis > (p_ptr->lev / 2))) see = FALSE;
+				if (drsee && !see){
+					if(p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/2)) see=TRUE;
+				}
 
 				if (see)
 				{
@@ -1730,7 +1733,7 @@ void update_player(int Ind)
 
 			  if (p_ptr->mode == MODE_NORMAL) see = TRUE;
 			  if ((p_ptr->mode == MODE_HELL) && (dis < MAX_SIGHT)) see = TRUE;
-			  if (!p_ptr->telepathy && (p_ptr->prace == RACE_DRIDER) && (dis > (p_ptr->lev / 2))) see = FALSE;
+			  if (!(p_ptr->telepathy&ESP_ALL) && (p_ptr->prace == RACE_DRIDER) && (p_ptr->lev<6 || (dis > (5+p_ptr->lev / 2)))) see = FALSE;
 
 			  if (see)
 			    {
