@@ -144,6 +144,7 @@ static int Receive_steal(int ind);
 static int Receive_options(int ind);
 static int Receive_suicide(int ind);
 static int Receive_master(int ind);
+static int Receive_admin_house(int ind);
 static int Receive_autophase(int ind);
 
 static int Receive_clear_buffer(int ind);

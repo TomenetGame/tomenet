@@ -4950,6 +4950,22 @@ bool master_build(int Ind, char * parms)
 	c_ptr = &cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px];
 	/* build a wall of type new_feat at the player's location */
 	c_ptr->feat = new_feat;
+	if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL){
+		struct dna_type *c_dna;
+		if(c_ptr->special) return(FALSE);
+		MAKE(c_dna, struct dna_type);
+		c_ptr->special=c_dna;
+#ifdef NEWHOUSES /* a server reset/player savefile change needed */
+		c_dna->creator=p_ptr->dna;	/* unique extra */
+#endif
+		/* sorry, its only for testing, so quick */
+		if(!(parms && parms[2] && (c_dna->owner=lookup_player_id(&parms[2]))))
+			c_dna->owner=p_ptr->id;
+		c_dna->owner_type=OT_PLAYER;
+		c_dna->a_flags=ACF_NONE;
+		c_dna->min_level=1;
+		p_ptr->master_move_hook=NULL;	/*buggers up if not*/
+	}
 
 	return TRUE;
 }

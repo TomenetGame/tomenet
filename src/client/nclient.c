@@ -3039,6 +3039,14 @@ int Send_options(void)
 	return 1;
 }
 
+int Send_admin_house(int dir, cptr buf){
+	int	n;
+
+	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_HOUSE, dir, buf)) <= 0)
+		return n;
+	return 1;
+}
+
 int Send_master(s16b command, cptr buf)
 {
 	int	n;

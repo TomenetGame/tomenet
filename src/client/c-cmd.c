@@ -1572,15 +1572,71 @@ void cmd_redraw(void)
 	keymap_init();
 }
 
+void cmd_house_admin(int dir)
+{
+	char i=0;
+	char buf[80];
+
+	Term_clear();
+	Term_putstr(0, 2, -1, TERM_BLUE, "Select owner type");
+	Term_putstr(5, 4, -1, TERM_WHITE, "(1) Player");
+	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Party");
+	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Class");
+	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Race");
+	while(i!=ESCAPE){
+		i=inkey();
+		switch(i){
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+				buf[0]=i;
+				buf[1]=0;
+				get_string("Enter new name:",&buf[1],79);
+				Send_admin_house(dir,buf);
+				return;
+			default:
+				bell();
+		}
+		c_msg_print(NULL);
+	}
+}
+
 void cmd_purchase_house(void)
 {
+	char i=0;
 	int dir;
 
-	if (!get_dir(&dir))
-		return;
+	if (!get_dir(&dir)) return;
+
+	screen_icky=TRUE;
+
+	Term_save();
+	Term_clear();
+	Term_putstr(0, 2, -1, TERM_BLUE, "House commands");
+	Term_putstr(5, 4, -1, TERM_WHITE, "(1) Buy/Sell house");
+	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Change house owner");
+
+	while(i!=ESCAPE){
+		i=inkey();
+		switch(i){
+			case '1':
 	
-	/* Send it */
-	Send_purchase_house(dir);
+				/* Send it */
+				Send_purchase_house(dir);
+				i=ESCAPE;
+				break;
+			case '2':
+				cmd_house_admin(dir);
+				i=ESCAPE;
+				break;
+			default:
+				bell();
+		}
+		c_msg_print(NULL);
+	}
+	Term_load();
+	screen_icky=FALSE;
 }
 
 void cmd_suicide(void)
@@ -1795,7 +1851,8 @@ void cmd_master_aux_build(void)
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Grass Mode");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Dirt Mode");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Floor Mode");
-		Term_putstr(5, 11, -1, TERM_WHITE, "(8) Build Mode Off");
+		Term_putstr(5, 11, -1, TERM_WHITE, "(8) House Door Mode");
+		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Build Mode Off");
 
 		/* Prompt */
 		Term_putstr(0, 14, -1, TERM_WHITE, "Command: ");
@@ -1825,8 +1882,13 @@ void cmd_master_aux_build(void)
 			case '6': buf[0] = FEAT_DIRT; break;
 			/* Floor mode on */
 			case '7': buf[0] = FEAT_FLOOR; break;
+			/* House door mode on */
+			case '8':
+				buf[0] = FEAT_HOME_HEAD;
+				get_string("Enter player name:",&buf[2],15);
+				break;
 			/* Build mode off */
-			case '8': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
+			case '9': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
 			/* Oops */
 			default : bell(); break;		
 		}

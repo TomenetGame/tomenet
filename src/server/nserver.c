@@ -221,6 +221,7 @@ static void Init_receive(void)
 	playing_receive[PKT_OPTIONS]		= Receive_options;
 	playing_receive[PKT_SUICIDE]		= Receive_suicide;
 	playing_receive[PKT_MASTER]		= Receive_master;
+	playing_receive[PKT_HOUSE]		= Receive_admin_house;
 
 	playing_receive[PKT_AUTOPHASE]		= Receive_autophase;
 
@@ -6557,6 +6558,51 @@ static int Receive_purchase(int ind)
 		do_cmd_purchase_house(player, item);
 
 	return 1;
+}
+
+static int Receive_admin_house(int ind){
+	connection_t *connp = &Conn[ind];
+	char ch, dir;
+	int n,player;
+	char buf[80];
+	player_type *p_ptr;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
+		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
+		  {
+		    int Ind2 = find_player(p_ptr->esp_link);
+		    
+		    if (!Ind2)
+		      {
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
+			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
+			msg_print(player, "Ending mind link.");
+			p_ptr->esp_link = 0;
+			p_ptr->esp_link_type = 0;
+			p_ptr->esp_link_flags = 0;
+		      }
+		    else
+		      {
+			player = Ind2;
+			p_ptr = Players[Ind2];
+		      }
+		  }
+	}
+	else player = 0;
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &dir, buf)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+	house_admin(player, dir, buf);
+	return(1);
 }
 
 static int Receive_sell(int ind)

@@ -434,7 +434,46 @@ int pick_house(int Depth, int y, int x)
 	return -1;
 }
 
+/* Door change ownership */
+bool chown_door(int Ind, struct dna_type *dna){
+	return FALSE;
+}
 
+/* basic DEMO access new house door function. */
+bool access_door(int Ind, struct dna_type *dna){
+	player_type *p_ptr=Players[Ind];
+	msg_format(Ind,"Owner: %d You: %d",dna->owner,p_ptr->id);
+#ifdef NEWHOUSES
+	if(p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
+		return(FALSE); /* defies logic a bit, but for speed */
+#endif
+	switch(dna->owner_type){
+		case OT_PLAYER:
+			msg_format(Ind,"OT_PLAYER");
+			/* new doors in new server different */
+#ifdef NEWHOUSES
+			if(p_ptr->id==dna->owner && p_ptr->dna==dna->creator)
+				return(TRUE);
+#else
+			if(p_ptr->id==dna->owner) return(TRUE);
+#endif
+			break;
+		case OT_PARTY:
+			msg_format(Ind,"OT_PARTY");
+			if(player_in_party(dna->owner, Ind)) return(TRUE);
+			break;
+		case OT_CLASS:
+			msg_format(Ind,"OT_CLASS");
+			if(p_ptr->pclass==dna->owner) return(TRUE);
+			break;
+		case OT_RACE:
+			msg_format(Ind,"OT_RACE");
+			if(p_ptr->prace==dna->owner) return(TRUE);
+			break;
+	}
+	msg_format(Ind,"Failed");
+	return(FALSE);
+}
 
 
 /*
@@ -642,6 +681,27 @@ void do_cmd_open(int Ind, int dir)
 		else if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
 		{
 			i = pick_house(Depth, y, x);
+
+			/* evileye hack new houses -demo */
+			if(i==-1 && c_ptr->special){ /* orig house failure */
+				msg_format(Ind, "This is a new style house.");
+				if(access_door(Ind, c_ptr->special)){
+					/* Open the door */
+					c_ptr->feat=FEAT_HOME_OPEN;
+					/* Take half a turn */
+					p_ptr->energy -= level_speed(p_ptr->dun_depth)/2;
+					/* Notice */
+					note_spot_depth(Depth, y, x);
+
+					/* Redraw */
+					everyone_lite_spot(Depth, y, x);
+					
+					/* Update some things */
+					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+
+				}
+				return;
+			}
 
 			/* See if he has the key in his inventory */
 			for (j = 0; j < INVEN_PACK; j++)
@@ -2919,6 +2979,48 @@ void do_cmd_throw(int Ind, int dir, int item)
 	drop_near(o_ptr, j, Depth, y, x);
 }
 
+/* DEMO house admin command */
+void house_admin(int Ind, int dir, char *args){
+	player_type *p_ptr=Players[Ind];
+	int Depth=p_ptr->dun_depth;
+	int x,y;
+	int newowner=-1;
+	cave_type *c_ptr;
+	struct dna_type *dna;
+
+	if(dir && args){
+		/* Get requested direction */
+		y = p_ptr->py + ddy[dir];
+		x = p_ptr->px + ddx[dir];
+		/* Get requested grid */
+		c_ptr = &cave[Depth][y][x];
+		if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL)
+		{
+			if((dna=c_ptr->special) && access_door(Ind, dna)){
+				switch(args[0]){
+					case '1':
+						newowner=lookup_player_id(&args[1]);
+						if(!newowner) newowner=-1;
+						break;
+					case '2':
+						newowner=party_lookup(&args[1]);
+						break;
+					case '3':
+					case '4':
+						break;
+				}
+				if(newowner!=-1){
+					dna->owner_type=args[0]-'0';
+					dna->owner=newowner;
+				}
+				else msg_format(Ind,"Door change failed [%s]",&args[1]);
+			}
+			else msg_print(Ind,"You cant modify that door");
+		}
+		else msg_print(Ind,"There is no door");
+	}
+	return;
+}
 
 /*
  * Buy a house.  It is assumed that the player already knows the

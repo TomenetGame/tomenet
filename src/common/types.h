@@ -456,6 +456,7 @@ struct cave_type
 	byte when;		/* Hack -- when cost was computed */
 
 #endif
+	void *special;		/* Special pointer to various struct */
 
 };
 
@@ -955,6 +956,25 @@ struct house_type
 	int depth;
 
 	s32b price;		/* Cost of buying */
+};
+
+#define OT_PLAYER 1
+#define OT_PARTY 2
+#define OT_CLASS 3
+#define OT_RACE 4
+
+#define ACF_NONE 0x00
+#define ACF_PARTY 0x01
+#define ACF_CLASS 0x02
+#define ACF_RACE 0x04
+#define ACF_LEVEL 0x08
+
+struct dna_type{
+	u32b creator;		/* Unique ID of creator/house admin */
+	u32b owner;		/* Player/Party/Class/Race ID */
+	byte owner_type;	/* OT_xxxx */
+	byte a_flags;		/* Combination of ACF_xxxx */
+	u16b min_level;		/* minimum level - no higher than admin level */
 };
 
 

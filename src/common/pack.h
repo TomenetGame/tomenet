@@ -130,6 +130,7 @@
 #define PKT_TARGET_FRIENDLY	117
 #define PKT_MASTER		118 /* dungeon master commands */
 #define PKT_AUTOPHASE		119 /* automatically try to phase */
+#define PKT_HOUSE		120 /* house admin */
 
 /* Packet types 121-122 are more administrative stuff */
 #define PKT_FAILURE		121
