@@ -948,6 +948,10 @@ static void rd_house(int n)
 	rd_u32b(&house_ptr->dna->price);
 	rd_u16b(&house_ptr->flags);
 	rd_u32b(&house_ptr->depth);
+	if(cave[house_ptr->depth] && !(house_ptr->flags&HF_STOCK)){
+		/* add dna to static levels */
+		cave[house_ptr->depth][house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special=house_ptr->dna;
+	}
 	if(house_ptr->flags&HF_RECT){
 		rd_byte(&house_ptr->coords.rect.width);
 		rd_byte(&house_ptr->coords.rect.height);
