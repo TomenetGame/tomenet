@@ -4019,7 +4019,7 @@ void player_death(int Ind)
 			msg_broadcast(Ind, buf);
 		else{
 			for(i=1; i<=NumPlayers; i++)
-				if(p_ptr->lev>1 || p_ptr->alive && i!=Ind && Players[i]->newb_suicide)
+				if(((p_ptr->lev>1 || p_ptr->alive) || Players[i]->newb_suicide) && i!=Ind)
 					msg_print(i, buf);
 		}
 	}
@@ -6127,8 +6127,8 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 					if (*inscription == 'Z') inscription++;
 
 					/* convert the inscription into a level index */
-					if (tmp = atoi((char*)inscription) /
-							(p_ptr->depth_in_feet ? 50 : 1))
+					if ((tmp = atoi((char*)inscription) /
+							(p_ptr->depth_in_feet ? 50 : 1)))
 						p_ptr->recall_pos.wz = tmp;
 				}
 			}

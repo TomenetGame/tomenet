@@ -1769,7 +1769,7 @@ player_race race_info[MAX_RACES] =
 		0,
                 0xFFFFFFFF,
                 50,
-                { 0 },
+                {{ 0 }},
 	},
 
 	{

@@ -2552,7 +2552,7 @@ static void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				if(tk==2){
-					if(j=name_lookup_loose(Ind, token[2], FALSE)){
+					if((j=name_lookup_loose(Ind, token[2], FALSE))){
 						if(Players[j]->quest_id){
 							msg_format(Ind, "\377y%s has a quest already.", Players[j]->name);
 							return;

@@ -267,9 +267,11 @@ void dump_skills(FILE *fff)
 			if (p_ptr->s_info[i].mod == 0) continue;
 		}
 
-//		sprintf(buf, "\n");
+/*		sprintf(buf, "\n");		*/
 		fprintf(fff, "\n");
-		sprintf(buf, "");
+
+/*		sprintf(buf, "");		*/
+		buf[0]='\0';
 
 		for (z = 0; z < table[j][1]; z++) strcat(buf, "    ");
 
@@ -904,7 +906,7 @@ void do_trap(int item_kit)
 {
 //	int item_kit, item_load;
 	int item_load;
-	object_type *o_ptr, *j_ptr, *i_ptr;
+	object_type *o_ptr;
 
 	if (item_kit < 0)
 	{
@@ -1009,7 +1011,6 @@ void do_activate_skill(int x_idx, int item)
 	{
 		/* Ask for a spell, allow cancel */
 		if ((spell = get_school_spell("cast")) == -1) return;
-		printf("school spell %d\n", spell);
 
                 /* Ask for a direction? */
                 dir = -1;

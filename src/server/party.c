@@ -101,7 +101,7 @@ bool check_account(char *accname, char *c_name){
 	hash_entry *ptr;
 	int i;
 
-	if(l_acc=GetAccount(accname, NULL)){
+	if((l_acc=GetAccount(accname, NULL))){
 		a_id=l_acc->id;
 		flags=l_acc->flags;
 		KILL(l_acc, struct account);
@@ -551,7 +551,6 @@ int party_add(int adder, cptr name)
  * In style of del_party.
  */
 static void del_guild(int id){
-	int i;
 	char temp[160];
 
 	/* Clear the guild hall */
@@ -2199,9 +2198,9 @@ int player_id_list(int **list, u32b account)
  *
  * These functions should be common with hostilityes in the future. -Jir-
  */
-bool set_pkill(int Ind, int delay)
+void set_pkill(int Ind, int delay)
 {
-	player_type *p_ptr = Players[Ind], *q_ptr;
+	player_type *p_ptr = Players[Ind];
 	bool admin = is_admin(p_ptr);
 
 	if (cfg.use_pk_rules != PK_RULES_DECLARE)

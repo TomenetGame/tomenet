@@ -840,7 +840,7 @@ extern s32b object_value_real(int Ind, object_type *o_ptr);
 /* party.c */
 extern struct account *GetAccount(cptr name, char *pass);
 extern struct account *GetAccountID(u32b id);
-extern bool set_pkill(int Ind, int delay);
+extern void set_pkill(int Ind, int delay);
 extern int guild_lookup(cptr name);
 extern int party_lookup(cptr name);
 extern bool player_in_party(int party_id, int Ind);

@@ -486,7 +486,7 @@ static int get_mimic_spell(int *sn)
 	if (c_cfg.other_query_flag && !i)
 	{
 		sprintf(out_val, "Really change the form? ");
-		if (!get_check(out_val)) return;
+		if (!get_check(out_val)) return(FALSE);
 	}
 
 	/* Save the choice */
@@ -809,7 +809,6 @@ s32b get_school_spell(cptr do_what)
 
         tmp = spell;
 //        repeat_push(tmp);
-	printf("spell: %d\n",spell);
 	return(spell);
 }
 

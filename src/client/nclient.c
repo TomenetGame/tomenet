@@ -1706,7 +1706,6 @@ int Receive_skill_info(void)
         char	ch;
         s32b    val;
 	int	i, mod, dev, hidden, pt;
-	char    buf[300];
 
 	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%ld%ld", &ch, &pt, &i, &val, &mod, &dev, &hidden)) <= 0)
 	{
@@ -2443,7 +2442,7 @@ int Receive_store_info(void)
 	int	n, max_cost;
 	char	ch, owner_name[80] , store_name[80];
 //	s16b	owner_num, num_items;
-	s16b	owner_num, num_items;
+	s16b	num_items;
 
 //	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd", &ch, &store_num, &owner_num, &num_items)) <= 0)
 	if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d", &ch, &store_num, store_name, owner_name, &num_items, &max_cost)) <= 0)

@@ -685,8 +685,6 @@ void dump_messages_aux(FILE *fff, int lines, int mode)
 //	for (j = 0; i + j + s < n; j++)
 	for (j = 0; j + s < MIN(n, lines); j++)
 	{
-		byte a = TERM_WHITE;
-
 		msg2 = msg;
 //		msg = message_recall[i+j+s];
 		msg = message_recall[MIN(n, lines) - (j+s) - 1];

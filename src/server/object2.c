@@ -464,7 +464,7 @@ void compact_objects(int size, bool purge)
 				x = o_ptr->ix;
 
 				/* Acquire grid */
-				if (zcave=getcave(wpos)){
+				if ((zcave=getcave(wpos))){
 					if (in_bounds2(wpos, y, x)){
 						c_ptr=&zcave[y][x];
 						//			zcave[ny][nx].o_idx = i;
@@ -550,7 +550,7 @@ void wipe_o_list(struct worldpos *wpos)
 	monster_type *m_ptr;
 	bool flag = FALSE;
 
-	if(zcave=getcave(wpos)) flag = TRUE;
+	if((zcave=getcave(wpos))) flag = TRUE;
 
 
 	/* Delete the existing objects */

@@ -24,6 +24,11 @@
 # Oh, thank you, Evileye :)
 # - Jir -
 
+22/08/2002 (evileye)
+- deletion of old spell stuff
+- work on new spell stuff
+- fixed the get_school_spell problem (skills.c)
+
 20/08/2002 (Jir)
 [O]- some 'Rogue' tributes
 [m]- more changes for store code.

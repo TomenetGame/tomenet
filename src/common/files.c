@@ -13,6 +13,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 
 extern const char *ANGBAND_DIR;
