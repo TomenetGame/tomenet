@@ -2804,6 +2804,13 @@ static void do_slash_cmd(int Ind, char *message)
 				//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
 				return;
 			}
+			else if (prefix(message, "/treset")){
+				struct worldpos wpos;
+				wpcopy(&wpos, &p_ptr->wpos);
+				master_level_specific(Ind, &wp, "u");
+				dealloc_dungeon_level(&wpos);
+				return;
+			}
 			else if (prefix(message, "/static-level") ||
 					prefix(message, "/sta"))
 			{

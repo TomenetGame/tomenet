@@ -10095,18 +10095,11 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 	if(exclude!=(char*)NULL){
 		strcpy(d_ptr->nr_char, exclude);
 	}
-#if 0
-	C_MAKE(d_ptr->level, maxdep, struct dun_level);
-	for(i=0;i<maxdep;i++){
-		d_ptr->level[i].ondepth=0;
-	}
-#else	// 0
 	C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 	for(i = 0; i < d_ptr->maxdepth ; i++)
 	{
 		d_ptr->level[i].ondepth = 0;
 	}
-#endif	// 0
 }
 
 /*
@@ -10177,18 +10170,6 @@ void generate_cave(struct worldpos *wpos)
 			/*panel_row = max_panel_rows;
 			panel_col = max_panel_cols;*/
 
-			/* Hack -- add Bree dungeons manually (this will be changed) */
-#if 0
-			if(wpos->wx==cfg.town_x && wpos->wy==cfg.town_y && !wpos->wz){
-				/* Bree dungeon */
-				adddungeon(wpos, cfg.dun_base, cfg.dun_max, 0, DF2_RANDOM, NULL, NULL, FALSE, 0);
-
-				/* Newbie-training tower */
-				adddungeon(wpos, 1, 10, DF1_SAND_VEIN,
-						DF2_RANDOM | DF2_NO_DEATH, NULL, NULL, TRUE, 0);
-			}
-			else if (!wpos->wz)
-#endif	// 0
 			{
 				int retval = -1, type;
 				for(i=0;i<numtowns;i++)

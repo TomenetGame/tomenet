@@ -240,7 +240,6 @@ void wild_spawn_towns()
 			i--;
 			continue;
 		}
-		//addtown(y, x, i * 20 - 20 , 0, i);	/* base town */
 		addtown(y, x, town_profile[i].dun_base, 0, i);	/* base town */
 	}
 
