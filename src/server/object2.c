@@ -1108,6 +1108,9 @@ static s32b object_value_real(object_type *o_ptr)
 				value += (o_ptr->dd - k_ptr->dd) * o_ptr->ds * 5L;
 			}
 
+			/* Special attack (exploding arrow) */
+			if (o_ptr->pval != 0) value *= 14;
+
 			/* Done */
 			break;
 		}
@@ -2093,7 +2096,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 		case TV_ARROW:
 		case TV_SHOT:
 		{
-                        if ((power == 1) && !o_ptr->name2)
+                        if ((power == 1) && !o_ptr->name2 && o_ptr->sval != SV_AMMO_MAGIC)
 		        {
                            if (randint(100) < 30)
 			   {
@@ -4375,8 +4378,10 @@ void place_trap(int Depth, int y, int x)
 /*
  * XXX XXX XXX Do not use these hard-coded values.
  */
+#if 0	// ok so I don't use them :)
 #define OBJ_GOLD_LIST	480	/* First "gold" entry */
 #define MAX_GOLD	18	/* Number of "gold" entries */
+#endif	// 0
 
 /*
  * Places a treasure (Gold or Gems) at given location
@@ -4415,7 +4420,7 @@ void place_gold(int Depth, int y, int x)
 
 
 	/* Hack -- Pick a Treasure variety */
-	i = ((randint(object_level + 2) + 2) / 2) - 1;
+	i = ((randint(object_level + 2) + 2) / 2);
 
 	/* Apply "extra" magic */
 	if (rand_int(GREAT_OBJ) == 0)
@@ -4424,10 +4429,10 @@ void place_gold(int Depth, int y, int x)
 	}
 
 	/* Hack -- Creeping Coins only generate "themselves" */
-	if (coin_type) i = coin_type;
+	if (coin_type) i = coin_type + 1;
 
 	/* Do not create "illegal" Treasure Types */
-	if (i >= MAX_GOLD) i = MAX_GOLD - 1;
+	if (i > SV_GOLD_MAX) i = SV_GOLD_MAX;
 
 
 	/* Make an object */
@@ -4438,7 +4443,8 @@ void place_gold(int Depth, int y, int x)
 	{
 		o_ptr = &o_list[o_idx];
 
-		invcopy(o_ptr, OBJ_GOLD_LIST + i);
+//		invcopy(o_ptr, OBJ_GOLD_LIST + i);
+		invcopy(o_ptr, lookup_kind(TV_GOLD, i));
 
 		o_ptr->iy = y;
 		o_ptr->ix = x;
@@ -4454,7 +4460,8 @@ void place_gold(int Depth, int y, int x)
 		c_ptr->o_idx = o_idx;
 
 		/* Hack -- Base coin cost */
-		base = k_info[OBJ_GOLD_LIST+i].cost;
+//		base = k_info[OBJ_GOLD_LIST+i].cost;
+		base = k_info[lookup_kind(TV_GOLD, i)].cost;
 
 		/* Determine how much the treasure is "worth" */
 		o_ptr->pval = (base + (8L * randint(base)) + randint(8));

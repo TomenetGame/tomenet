@@ -511,9 +511,12 @@ Change list for PernMangband
 - 3 more traps(Silliness/Goodbye-Charlie/Present-Exchange).
 
 26/12/2001 (Jir)
-- Item activations for Some of new items are implemented.
+- Item activations for some of new items are implemented.
 - Added a hack to make insta-killing traps appear in deeper levels.
 - Thrown randarts never break.
 - "Drop 1au to get Great Scimitar" bug fixed.
 - Different kind of "gold" when dropping money.
-- "Torch of infravision (+2500 to infravision) bug is fixed.
+- "Torch of infravision (+2500 to infravision)" bug is fixed.
+- "Leather Jacket/Sickle" bug fixed.
+- Exploding ammos/boomerangs/Ricochet
+- Ammo inscribed {!g} never drops(=never litter the floor).

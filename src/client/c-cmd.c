@@ -104,6 +104,7 @@ void cmd_all_in_one(void)
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
+		case TV_BOOMERANG:
 		{
 			if (!get_dir(&dir))
 				return;
@@ -164,6 +165,7 @@ void cmd_all_in_one(void)
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
+		case TV_AXE:
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_HELM:

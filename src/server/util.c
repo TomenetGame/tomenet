@@ -3207,7 +3207,7 @@ void player_talk_aux(int Ind, cptr message)
 						o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 					}
 
-					apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
+					apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE);
 					o_ptr->discount = 99;
 					object_known(o_ptr);
 					o_ptr->owner = p_ptr->id;

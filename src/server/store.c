@@ -1084,6 +1084,8 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_HAFTED:
 				case TV_POLEARM:
 				case TV_SWORD:
+				case TV_AXE:
+				case TV_BOOMERANG:
 				break;
 				default:
 				return (FALSE);

@@ -2714,6 +2714,7 @@ static int breakage_chance(object_type *o_ptr)
 		/* Always break */
 		case TV_FLASK:
 		case TV_POTION:
+		case TV_POTION2:
 		case TV_BOTTLE:
 		case TV_FOOD:
 		case TV_JUNK:
@@ -2773,6 +2774,7 @@ static int breakage_chance(object_type *o_ptr)
  *
  * Note that Bows of "Extra Shots" give an extra shot.
  */
+/* Added a lot of hacks to handle boomerangs.	- Jir - */
 void do_cmd_fire(int Ind, int dir, int item)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -2782,10 +2784,11 @@ void do_cmd_fire(int Ind, int dir, int item)
 	int Depth = p_ptr->dun_depth;
 #endif
 
-	int                     i, j, y, x, ny, nx, ty, tx;
+	int                     i, j, y, x, ny, nx, ty, tx, bx, by;
 	int                     tdam, tdis, thits, tmul;
 	int                     bonus, chance;
 	int                     cur_dis, visible;
+        int breakage = -1, num_ricochet = 0;
 
 	object_type         throw_obj;
 	object_type             *o_ptr;
@@ -2798,22 +2801,11 @@ void do_cmd_fire(int Ind, int dir, int item)
 	int                     missile_char;
 
 	char            o_name[160];
-	bool magic = FALSE;
+	bool magic = FALSE, boomerang = FALSE;
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 #endif
-
-
-	/* Get the "bow" (if any) */
-	j_ptr = &(p_ptr->inventory[INVEN_BOW]);
-
-	/* Require a launcher */
-	if (!j_ptr->tval)
-	{
-		msg_print(Ind, "You have nothing to fire with.");
-		return;
-	}
 
 
 	/* Require proper missile */
@@ -2829,6 +2821,22 @@ void do_cmd_fire(int Ind, int dir, int item)
 		o_ptr = &o_list[0 - item];
 	}
 
+	if (o_ptr->tval == TV_BOOMERANG) boomerang = TRUE;
+	else
+	{
+
+		/* Get the "bow" (if any) */
+		j_ptr = &(p_ptr->inventory[INVEN_BOW]);
+
+		/* Require a launcher */
+		if (!j_ptr->tval)
+		{
+			msg_print(Ind, "You have nothing to fire with.");
+			return;
+		}
+	}
+
+
 	if( check_guard_inscription( o_ptr->note, 'f' )) {
 		msg_print(Ind, "The item's inscription prevents it");
 		return;
@@ -2841,7 +2849,7 @@ void do_cmd_fire(int Ind, int dir, int item)
     }
 
 
-	if (o_ptr->tval != p_ptr->tval_ammo)
+	if (o_ptr->tval != p_ptr->tval_ammo && !boomerang)
 	{
 		msg_print(Ind, "You cannot fire that!");
 		return;
@@ -2852,7 +2860,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 		return;
 
 	/* Use the proper number of shots */
-	thits = p_ptr->num_fire;
+	thits = boomerang? 1 : p_ptr->num_fire;
 
 	/* Take a (partial) turn */
 #ifdef NEW_DUNGEON
@@ -2867,43 +2875,54 @@ void do_cmd_fire(int Ind, int dir, int item)
 	/* Is this Magic Arrow? */
 	magic = ((o_ptr->sval == SV_AMMO_MAGIC) && !cursed_p(o_ptr))?TRUE:FALSE;
 
+	/* Ricochets ? */
+	//        if (cp_ptr->magic_key == MKEY_FORGING)
+	if (p_ptr->pclass == CLASS_ARCHER && !magic && !boomerang)
+	{
+		num_ricochet = (p_ptr->lev / 10) - 1;
+		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
+	}
+
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
 	throw_obj.number = 1;
 
 	/* Reduce and describe inventory */
-	if (!magic)
-	  {
-	    if (item >= 0)
-	      {
-		inven_item_increase(Ind, item, -1);
-		inven_item_describe(Ind, item);
-		inven_item_optimize(Ind, item);
-	      }
+	if (!boomerang)
+	{
+		if (!magic)
+		{
+			if (item >= 0)
+			{
+				inven_item_increase(Ind, item, -1);
+				inven_item_describe(Ind, item);
+				inven_item_optimize(Ind, item);
+			}
 
-	    /* Reduce and describe floor item */
-	    else
-	      {
-		floor_item_increase(0 - item, -1);
-		floor_item_optimize(0 - item);
-	      }
-	  }
-	else
-	  /* Magic Ammo are NOT allowed to be enchanted */
-	  {
-	    o_ptr->to_h = o_ptr->to_d = o_ptr->name1 = o_ptr->name2 = 0;
-	    if (item >= 0)
-	      {
-		inven_item_describe(Ind, item);
-		inven_item_optimize(Ind, item);
-	      }
+			/* Reduce and describe floor item */
+			else
+			{
+				floor_item_increase(0 - item, -1);
+				floor_item_optimize(0 - item);
+			}
+		}
+		else
+			/* Magic Ammo are NOT allowed to be enchanted */
+		{
+			o_ptr->to_h = o_ptr->to_d = o_ptr->name1 = o_ptr->name2 = 0;
+			if (item >= 0)
+			{
+				inven_item_describe(Ind, item);
+				inven_item_optimize(Ind, item);
+			}
 
-	    /* Reduce and describe floor item */
-	    else
-	      {
-		floor_item_optimize(0 - item);
-	      }
-	  }
+			/* Reduce and describe floor item */
+			else
+			{
+				floor_item_optimize(0 - item);
+			}
+		}
+	}
 
 	/* Use the missile object */
 	o_ptr = &throw_obj;
@@ -2917,61 +2936,79 @@ void do_cmd_fire(int Ind, int dir, int item)
 
 
 	/* Use a base distance */
-	tdis = 10;
+//	tdis = 10;
 
-	/* Base damage from thrown object plus launcher bonus */
-	tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d + j_ptr->to_d;
-
-	if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
-
-	/* Actually "fire" the object */
-	bonus = (p_ptr->to_h + o_ptr->to_h + j_ptr->to_h);
-	chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
-
-	/* Assume a base multiplier */
-	tmul = 1;
-
-	/* Analyze the launcher */
-	switch (j_ptr->sval)
+	if (!boomerang)
 	{
-		/* Sling and ammo */
-		case SV_SLING:
+		/* Base damage from thrown object plus launcher bonus */
+		tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d + j_ptr->to_d;
+
+		if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
+
+		/* Actually "fire" the object */
+		bonus = (p_ptr->to_h + o_ptr->to_h + j_ptr->to_h);
+		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
+
+		/* Assume a base multiplier */
+		tmul = 1;
+
+		/* Analyze the launcher */
+		switch (j_ptr->sval)
 		{
-			tmul = 2;
-			break;
+			/* Sling and ammo */
+			case SV_SLING:
+				{
+					tmul = 2;
+					break;
+				}
+
+				/* Short Bow and Arrow */
+			case SV_SHORT_BOW:
+				{
+					tmul = 2;
+					break;
+				}
+
+				/* Long Bow and Arrow */
+			case SV_LONG_BOW:
+				{
+					tmul = 3;
+					break;
+				}
+
+				/* Light Crossbow and Bolt */
+			case SV_LIGHT_XBOW:
+				{
+					tmul = 3;
+					break;
+				}
+
+				/* Heavy Crossbow and Bolt */
+			case SV_HEAVY_XBOW:
+				{
+					tmul = 4;
+					break;
+				}
 		}
 
-		/* Short Bow and Arrow */
-		case SV_SHORT_BOW:
-		{
-			tmul = 2;
-			break;
-		}
-
-		/* Long Bow and Arrow */
-		case SV_LONG_BOW:
-		{
-			tmul = 3;
-			break;
-		}
-
-		/* Light Crossbow and Bolt */
-		case SV_LIGHT_XBOW:
-		{
-			tmul = 3;
-			break;
-		}
-
-		/* Heavy Crossbow and Bolt */
-		case SV_HEAVY_XBOW:
-		{
-			tmul = 4;
-			break;
-		}
+		/* Get extra "power" from "extra might" */
+		if (p_ptr->xtra_might) tmul++;
 	}
+	else
+	{
+		/* Base damage from thrown object plus launcher bonus */
+		tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d;
 
-	/* Get extra "power" from "extra might" */
-	if (p_ptr->xtra_might) tmul++;
+		/* Actually "fire" the object */
+		bonus = (p_ptr->to_h + o_ptr->to_h);
+		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
+
+		/* Assume a base multiplier */
+		tmul = 1;
+
+		/* Hack -- sorta magic */
+		magic = TRUE;
+	}
 
 	/* Boost the damage */
 	tdam *= tmul;
@@ -2983,6 +3020,8 @@ void do_cmd_fire(int Ind, int dir, int item)
 	/* Start at the player */
 	y = p_ptr->py;
 	x = p_ptr->px;
+        by = y;
+        bx = x;
 
 	/* Predict the "target" location */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -3000,416 +3039,588 @@ void do_cmd_fire(int Ind, int dir, int item)
 	handle_stuff(Ind);
 
 
-	/* Travel until stopped */
-	for (cur_dis = 0; cur_dis <= tdis; )
+	while(TRUE)
 	{
-		/* Hack -- Stop at the target */
-		if ((y == ty) && (x == tx)){
-			break;
-		}
-
-		/* Calculate the new location (see "project()") */
-		ny = y;
-		nx = x;
-		mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
-
-		/* Stopped by walls/doors */
-#ifdef NEW_DUNGEON
-		if (!cave_floor_bold(zcave, ny, nx)) break;
-#else
-		if (!cave_floor_bold(Depth, ny, nx)) break;
-#endif
-
-		/* Advance the distance */
-		cur_dis++;
-
-		/* Save the new location */
-		x = nx;
-		y = ny;
-
-		/* Save the old "player pointer" */
-		q_ptr = p_ptr;
-
-		/* Display it for each player */
-		for (i = 1; i < NumPlayers + 1; i++)
+		/* Travel until stopped */
+		for (cur_dis = 0; cur_dis <= tdis; )
 		{
-			int dispx, dispy;
-
-			/* Use this player */
-			p_ptr = Players[i];
-
-			/* If he's not playing, skip him */
-			if (p_ptr->conn == NOT_CONNECTED)
-				continue;
-
-			/* If he's not here, skip him */
-#ifdef NEW_DUNGEON
-			if(!inarea(&p_ptr->wpos, wpos))
-#else
-			if (p_ptr->dun_depth != Depth)
-#endif
-				continue;
-
-			/* The player can see the (on screen) missile */
-			if (panel_contains(y, x) && player_can_see_bold(i, y, x))
-			{
-				/* Draw, Hilite, Fresh, Pause, Erase */
-				dispy = y - p_ptr->panel_row_prt;
-				dispx = x - p_ptr->panel_col_prt;
-
-				/* Remember the projectile */
-				p_ptr->scr_info[dispy][dispx].c = missile_char;
-				p_ptr->scr_info[dispy][dispx].a = missile_attr;
-
-				/* Tell the client */
-				Send_char(i, dispx, dispy, missile_attr, missile_char);
-
-				/* Flush and wait */
-				if (cur_dis % tmul) Send_flush(i);
-
-				/* Restore */
-				lite_spot(i, y, x);
+			/* Hack -- Stop at the target */
+			if ((y == ty) && (x == tx)){
+				break;
 			}
 
-			/* The player cannot see the missile */
-			else
-			{
-				/* Pause anyway, for consistancy */
-				/*Term_xtra(TERM_XTRA_DELAY, msec);*/
-			}
-		}
+			/* Calculate the new location (see "project()") */
+			ny = y;
+			nx = x;
+//			mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
+			mmove2(&ny, &nx, by, bx, ty, tx);
 
-		/* Restore the player pointer */
-		p_ptr = q_ptr;
-
-		/* Player here, hit him */
+			/* Stopped by walls/doors */
 #ifdef NEW_DUNGEON
-		if (zcave[y][x].m_idx < 0)
+			if (!cave_floor_bold(zcave, ny, nx)) break;
 #else
-		if (cave[Depth][y][x].m_idx < 0)
-#endif
-		{
-#ifdef PLAYER_INTERACTION
-#ifdef NEW_DUNGEON
-			cave_type *c_ptr = &zcave[y][x];
-#else
-			cave_type *c_ptr = &cave[Depth][y][x];
+			if (!cave_floor_bold(Depth, ny, nx)) break;
 #endif
 
-			q_ptr = Players[0 - c_ptr->m_idx];
+			/* Advance the distance */
+			cur_dis++;
 
-			/* AD hack -- "pass over" players in same party */
-			if ((!player_in_party(p_ptr->party, 0 - c_ptr->m_idx)) || (p_ptr->party == 0)){ 
+			/* Save the new location */
+			x = nx;
+			y = ny;
 
-			/* Check the visibility */
-			visible = p_ptr->play_vis[0 - c_ptr->m_idx];
+			/* Save the old "player pointer" */
+			q_ptr = p_ptr;
 
-			/* Note the collision */
-			hit_body = TRUE;
-
-			/* Did we hit it (penalize range) */
-			if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible))
+			/* Display it for each player */
+			for (i = 1; i < NumPlayers + 1; i++)
 			{
-				char p_name[80];
+				int dispx, dispy;
 
-				/* Get the name */
-				strcpy(p_name, q_ptr->name);
+				/* Use this player */
+				p_ptr = Players[i];
 
-				/* Handle unseen player */
-				if (!visible)
+				/* If he's not playing, skip him */
+				if (p_ptr->conn == NOT_CONNECTED)
+					continue;
+
+				/* If he's not here, skip him */
+#ifdef NEW_DUNGEON
+				if(!inarea(&p_ptr->wpos, wpos))
+#else
+					if (p_ptr->dun_depth != Depth)
+#endif
+						continue;
+
+				/* The player can see the (on screen) missile */
+				if (panel_contains(y, x) && player_can_see_bold(i, y, x))
 				{
-					/* Invisible player */
-					msg_format(Ind, "The %s finds a mark.", o_name);
-					msg_format(0 - c_ptr->m_idx, "You are hit by a %s!", o_name);
+					/* Draw, Hilite, Fresh, Pause, Erase */
+					dispy = y - p_ptr->panel_row_prt;
+					dispx = x - p_ptr->panel_col_prt;
+
+					/* Remember the projectile */
+					p_ptr->scr_info[dispy][dispx].c = missile_char;
+					p_ptr->scr_info[dispy][dispx].a = missile_attr;
+
+					/* Tell the client */
+					Send_char(i, dispx, dispy, missile_attr, missile_char);
+
+					/* Flush and wait */
+					if (cur_dis % (boomerang?2:tmul)) Send_flush(i);
+
+					/* Restore */
+					lite_spot(i, y, x);
 				}
 
-				/* Handle visible player */
+				/* The player cannot see the missile */
 				else
 				{
-					/* Messages */
-					msg_format(Ind, "The %s hits %s.", o_name, p_name);
-					msg_format(0 - c_ptr->m_idx, "%^s hits you with a %s.", p_ptr->name, o_name);
-
-					/* Track this player's health */
-					health_track(Ind, c_ptr->m_idx);
+					/* Pause anyway, for consistancy */
+					/*Term_xtra(TERM_XTRA_DELAY, msec);*/
 				}
+			}
 
-				/* If this was intentional, make target hostile */
-				if (check_hostile(Ind, 0 - c_ptr->m_idx))
-				{
-					/* Make target hostile if not already */
-					if (!check_hostile(0 - c_ptr->m_idx, Ind))
+			/* Restore the player pointer */
+			p_ptr = q_ptr;
+
+			/* Player here, hit him */
+#ifdef NEW_DUNGEON
+			if (zcave[y][x].m_idx < 0)
+#else
+			if (cave[Depth][y][x].m_idx < 0)
+#endif
+			{
+#ifdef PLAYER_INTERACTION
+#ifdef NEW_DUNGEON
+				cave_type *c_ptr = &zcave[y][x];
+#else
+				cave_type *c_ptr = &cave[Depth][y][x];
+#endif
+
+				q_ptr = Players[0 - c_ptr->m_idx];
+
+				/* AD hack -- "pass over" players in same party */
+				if ((!player_in_party(p_ptr->party, 0 - c_ptr->m_idx)) || (p_ptr->party == 0))
+				{ 
+
+					/* Check the visibility */
+					visible = p_ptr->play_vis[0 - c_ptr->m_idx];
+
+					/* Note the collision */
+					hit_body = TRUE;
+
+					/* Did we hit it (penalize range) */
+					if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible))
 					{
-						add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+						char p_name[80];
+
+						/* Get the name */
+						strcpy(p_name, q_ptr->name);
+
+						/* Handle unseen player */
+						if (!visible)
+						{
+							/* Invisible player */
+							msg_format(Ind, "The %s finds a mark.", o_name);
+							msg_format(0 - c_ptr->m_idx, "You are hit by a %s!", o_name);
+						}
+
+						/* Handle visible player */
+						else
+						{
+							/* Messages */
+							msg_format(Ind, "The %s hits %s.", o_name, p_name);
+							msg_format(0 - c_ptr->m_idx, "%^s hits you with a %s.", p_ptr->name, o_name);
+
+							/* Track this player's health */
+							health_track(Ind, c_ptr->m_idx);
+						}
+
+						/* If this was intentional, make target hostile */
+						if (check_hostile(Ind, 0 - c_ptr->m_idx))
+						{
+							/* Make target hostile if not already */
+							if (!check_hostile(0 - c_ptr->m_idx, Ind))
+							{
+								add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+							}
+						}
+
+						/* Apply special damage XXX XXX XXX */
+						tdam = tot_dam_aux_player(o_ptr, tdam, q_ptr);
+						tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
+
+						/* No negative damage */
+						if (tdam < 0) tdam = 0;
+
+						/* XXX Reduce damage by 1/3 */
+						tdam = (tdam + 2) / 3;
+
+
+						if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) && !q_ptr->resist_conf && !boomerang)
+						{
+							(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + q_ptr->lev);
+						}
+
+						/* Take damage */
+						take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
+
+						/* Add a nice ball if needed */
+						if (p_ptr->bow_brand_t && !boomerang)
+						{
+							switch (p_ptr->bow_brand_t)
+							{
+								case BOW_BRAND_BALL_FIRE:
+#ifdef NEW_DUNGEON
+									project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#else
+									project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#endif
+									break;
+								case BOW_BRAND_BALL_COLD:
+#ifdef NEW_DUNGEON
+									project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#else
+									project(0 - Ind, 2, p_ptr->dun_depth, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#endif
+									break;
+								case BOW_BRAND_BALL_ELEC:
+#ifdef NEW_DUNGEON
+									project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#else
+									project(0 - Ind, 2, p_ptr->dun_depth, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#endif
+									break;
+								case BOW_BRAND_BALL_ACID:
+#ifdef NEW_DUNGEON
+									project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#else
+									project(0 - Ind, 2, p_ptr->dun_depth, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#endif
+									break;
+								case BOW_BRAND_BALL_SOUND:
+#ifdef NEW_DUNGEON
+									project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#else
+									project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#endif
+									break;
+							}
+						}
+						/* Exploding arrow ? */
+						else if (o_ptr->pval != 0 && !magic)
+						{
+							int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2;
+							int flag = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
+							switch(o_ptr->sval)
+							{
+								case SV_AMMO_LIGHT: rad = 2; dam /= 2; break;
+								case SV_AMMO_NORMAL: rad = 3; break;
+								case SV_AMMO_HEAVY: rad = 4; dam *= 2; break;
+							}
+
+							project(0 - Ind, rad, &p_ptr->wpos, y, x, dam, o_ptr->pval, flag);
+						}
+
+
+						/* Stop looking */
+						if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP) || boomerang) break;
 					}
-				}
 
-				/* Apply special damage XXX XXX XXX */
-				tdam = tot_dam_aux_player(o_ptr, tdam, q_ptr);
-				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
-
-				/* No negative damage */
-				if (tdam < 0) tdam = 0;
-
-				/* XXX Reduce damage by 1/3 */
-				tdam = (tdam + 2) / 3;
-
-
-				if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) && !q_ptr->resist_conf)
-				  {
-				    (void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + q_ptr->lev);
-				  }
-
-				/* Take damage */
-				take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
-
-				/* Add a nice ball if needed */
-				switch (p_ptr->bow_brand_t)
-				{
-					case BOW_BRAND_BALL_FIRE:
-#ifdef NEW_DUNGEON
-						project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+				} /* end hack */
 #else
-						project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
-						break;
-					case BOW_BRAND_BALL_COLD:
-#ifdef NEW_DUNGEON
-						project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-						project(0 - Ind, 2, p_ptr->dun_depth, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
-						break;
-					case BOW_BRAND_BALL_ELEC:
-#ifdef NEW_DUNGEON
-						project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-						project(0 - Ind, 2, p_ptr->dun_depth, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
-						break;
-					case BOW_BRAND_BALL_ACID:
-#ifdef NEW_DUNGEON
-						project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-						project(0 - Ind, 2, p_ptr->dun_depth, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
-						break;
-					case BOW_BRAND_BALL_SOUND:
-#ifdef NEW_DUNGEON
-						project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-						project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
-						break;
-				}
 
 				/* Stop looking */
 				if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP)) break;
+#endif
 			}
-			
-			} /* end hack */
-#else
 
-			/* Stop looking */
-			if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP)) break;
-#endif
-		}
-
-		/* Monster here, Try to hit it */
+			/* Monster here, Try to hit it */
 #ifdef NEW_DUNGEON
-		if (zcave[y][x].m_idx > 0)
+			if (zcave[y][x].m_idx > 0)
 #else
-		if (cave[Depth][y][x].m_idx > 0)
+			if (cave[Depth][y][x].m_idx > 0)
 #endif
-		{
-#ifdef NEW_DUNGEON
-			cave_type *c_ptr = &zcave[y][x];
-#else
-			cave_type *c_ptr = &cave[Depth][y][x];
-#endif
-
-			monster_type *m_ptr = &m_list[c_ptr->m_idx];
-                        monster_race *r_ptr = race_inf(m_ptr);
-
-			/* Check the visibility */
-			visible = p_ptr->mon_vis[c_ptr->m_idx];
-
-			/* Note the collision */
-			hit_body = TRUE;
-
-			/* Did we hit it (penalize range) */
-			if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible))
 			{
-				bool fear = FALSE;
+#ifdef NEW_DUNGEON
+				cave_type *c_ptr = &zcave[y][x];
+#else
+				cave_type *c_ptr = &cave[Depth][y][x];
+#endif
 
-				/* Assume a default death */
-				cptr note_dies = " dies.";
+				monster_type *m_ptr = &m_list[c_ptr->m_idx];
+				monster_race *r_ptr = race_inf(m_ptr);
 
-				/* Some monsters get "destroyed" */
-				if ((r_ptr->flags3 & RF3_DEMON) ||
-				    (r_ptr->flags3 & RF3_UNDEAD) ||
-				    (r_ptr->flags2 & RF2_STUPID) ||
-				    (strchr("Evg", r_ptr->d_char)))
+				/* Check the visibility */
+				visible = p_ptr->mon_vis[c_ptr->m_idx];
+
+				/* Note the collision */
+				hit_body = TRUE;
+
+				/* Did we hit it (penalize range) */
+				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible))
 				{
-					/* Special note at death */
-					note_dies = " is destroyed.";
-				}
+					bool fear = FALSE;
+
+					/* Assume a default death */
+					cptr note_dies = " dies.";
+
+					/* Some monsters get "destroyed" */
+					if ((r_ptr->flags3 & RF3_DEMON) ||
+							(r_ptr->flags3 & RF3_UNDEAD) ||
+							(r_ptr->flags2 & RF2_STUPID) ||
+							(strchr("Evg", r_ptr->d_char)))
+					{
+						/* Special note at death */
+						note_dies = " is destroyed.";
+					}
 
 
-				/* Handle unseen monster */
-				if (!visible)
-				{
-					/* Invisible monster */
-					msg_format(Ind, "The %s finds a mark.", o_name);
-				}
+					/* Handle unseen monster */
+					if (!visible)
+					{
+						/* Invisible monster */
+						msg_format(Ind, "The %s finds a mark.", o_name);
+					}
 
-				/* Handle visible monster */
-				else
-				{
-					char m_name[80];
-
-					/* Get "the monster" or "it" */
-					monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
-					/* Message */
-					msg_format(Ind, "The %s hits %s.", o_name, m_name);
-
-					/* Hack -- Track this monster race */
-					if (visible) recent_track(m_ptr->r_idx);
-
-					/* Hack -- Track this monster */
-					if (visible) health_track(Ind, c_ptr->m_idx);
-				}
-
-				/* Apply special damage XXX XXX XXX */
-				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr);
-				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
-
-				/* No negative damage */
-				if (tdam < 0) tdam = 0;
-
-				/* Complex message */
-				if (wizard)
-				{
-					msg_format(Ind, "You do %d (out of %d) damage.",
-						   tdam, m_ptr->hp);
-				}
-
-				if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) &&
-				    !(r_ptr->flags3 & RF3_NO_CONF) &&
-				    !(r_ptr->flags4 & RF4_BR_CONF) &&
-				    !(r_ptr->flags4 & RF4_BR_CHAO))
-				  {
-				    int i;
-
-				    /* Already partially confused */
-				    if (m_ptr->confused)
-				      {
-					i = m_ptr->confused + p_ptr->lev;
-				      }
-
-				    /* Was not confused */
-				    else
-				      {
-					i = p_ptr->lev;
-				      }
-
-				    /* Apply confusion */
-				    m_ptr->confused = (i < 200) ? i : 200;
-
-				    if (visible)
-				      {
-					char m_name[80];
-
-					/* Get "the monster" or "it" */
-					monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
-					/* Message */
-					msg_format(Ind, "%s appears confused.", m_name);
-				      }
-				  }
-
-
-				/* Hit the monster, check for death */
-				if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))
-				{
-					/* Dead monster */
-				}
-
-				/* No death */
-				else
-				{
-					/* Message */
-					message_pain(Ind, c_ptr->m_idx, tdam);
-
-					/* Take note */
-					if (fear && visible)
+					/* Handle visible monster */
+					else
 					{
 						char m_name[80];
 
-						/* Sound */
-						sound(Ind, SOUND_FLEE);
-
-						/* Get the monster name (or "it") */
+						/* Get "the monster" or "it" */
 						monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 						/* Message */
-						msg_format(Ind, "%^s flees in terror!", m_name);
+						msg_format(Ind, "The %s hits %s.", o_name, m_name);
+
+						/* Hack -- Track this monster race */
+						if (visible) recent_track(m_ptr->r_idx);
+
+						/* Hack -- Track this monster */
+						if (visible) health_track(Ind, c_ptr->m_idx);
 					}
-				}
 
-				/* Add a nice ball if needed */
-				switch (p_ptr->bow_brand_t)
-				{
-					case BOW_BRAND_BALL_FIRE:
-#ifdef NEW_DUNGEON
-						project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-						project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
-						break;
-					case BOW_BRAND_BALL_COLD:
-#ifdef NEW_DUNGEON
-						project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-						project(0 - Ind, 2, p_ptr->dun_depth, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
-						break;
-					case BOW_BRAND_BALL_ELEC:
-#ifdef NEW_DUNGEON
-						project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-						project(0 - Ind, 2, p_ptr->dun_depth, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
-						break;
-					case BOW_BRAND_BALL_ACID:
-#ifdef NEW_DUNGEON
-						project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-						project(0 - Ind, 2, p_ptr->dun_depth, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
-						break;
-					case BOW_BRAND_BALL_SOUND:
-#ifdef NEW_DUNGEON
-						project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-						project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
-						break;
-				}
+					/* Apply special damage XXX XXX XXX */
+					tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr);
+					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
 
-				/* Stop looking */
-				if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP)) break;
+					/* No negative damage */
+					if (tdam < 0) tdam = 0;
+
+					/* Complex message */
+					if (wizard)
+					{
+						msg_format(Ind, "You do %d (out of %d) damage.",
+								tdam, m_ptr->hp);
+					}
+
+					if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) &&
+							!(r_ptr->flags3 & RF3_NO_CONF) &&
+							!(r_ptr->flags4 & RF4_BR_CONF) &&
+							!(r_ptr->flags4 & RF4_BR_CHAO) && !boomerang)
+					{
+						int i;
+
+						/* Already partially confused */
+						if (m_ptr->confused)
+						{
+							i = m_ptr->confused + p_ptr->lev;
+						}
+
+						/* Was not confused */
+						else
+						{
+							i = p_ptr->lev;
+						}
+
+						/* Apply confusion */
+						m_ptr->confused = (i < 200) ? i : 200;
+
+						if (visible)
+						{
+							char m_name[80];
+
+							/* Get "the monster" or "it" */
+							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+
+							/* Message */
+							msg_format(Ind, "%s appears confused.", m_name);
+						}
+					}
+
+
+					/* Hit the monster, check for death */
+					if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))
+					{
+						/* Dead monster */
+					}
+
+					/* No death */
+					else
+					{
+						/* Message */
+						message_pain(Ind, c_ptr->m_idx, tdam);
+
+						/* Take note */
+						if (fear && visible)
+						{
+							char m_name[80];
+
+							/* Sound */
+							sound(Ind, SOUND_FLEE);
+
+							/* Get the monster name (or "it") */
+							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+
+							/* Message */
+							msg_format(Ind, "%^s flees in terror!", m_name);
+						}
+					}
+
+					/* Add a nice ball if needed */
+					if (p_ptr->bow_brand_t && !boomerang)
+					{
+						switch (p_ptr->bow_brand_t)
+						{
+							case BOW_BRAND_BALL_FIRE:
+#ifdef NEW_DUNGEON
+								project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#else
+								project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#endif
+								break;
+							case BOW_BRAND_BALL_COLD:
+#ifdef NEW_DUNGEON
+								project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#else
+								project(0 - Ind, 2, p_ptr->dun_depth, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#endif
+								break;
+							case BOW_BRAND_BALL_ELEC:
+#ifdef NEW_DUNGEON
+								project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#else
+								project(0 - Ind, 2, p_ptr->dun_depth, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#endif
+								break;
+							case BOW_BRAND_BALL_ACID:
+#ifdef NEW_DUNGEON
+								project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#else
+								project(0 - Ind, 2, p_ptr->dun_depth, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#endif
+								break;
+							case BOW_BRAND_BALL_SOUND:
+#ifdef NEW_DUNGEON
+								project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#else
+								project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+#endif
+								break;
+						}
+					}
+					/* Exploding arrow ? */
+					else if (o_ptr->pval != 0 && !magic)
+					{
+						int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2;
+						int flag = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
+						switch(o_ptr->sval)
+						{
+							case SV_AMMO_LIGHT: rad = 2; dam /= 2; break;
+							case SV_AMMO_NORMAL: rad = 3; break;
+							case SV_AMMO_HEAVY: rad = 4; dam *= 2; break;
+						}
+
+						project(0 - Ind, rad, &p_ptr->wpos, y, x, dam, o_ptr->pval, flag);
+					}
+
+					/* Stop looking */
+					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP) || boomerang) break;
+				}
 			}
 		}
+
+		/* Chance of breakage (during attacks) */
+		j = (hit_body ? breakage_chance(o_ptr) : 0);
+
+		/* Break ? */
+		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(100) < j)) && (!magic || boomerang) && !artifact_p(o_ptr))
+		{
+			breakage = 100;
+			if (boomerang)
+			{
+				msg_format(Ind, "Your %s is destroyed.",o_name);
+				inven_item_increase(Ind, item, -1);
+				inven_item_optimize(Ind, item);
+			}
+			break;
+		}
+
+		/* If no break and if Archer, the ammo can ricochet */
+//		if((num_ricochet) && (hit_body) && (magik(45 + p_ptr->lev)))
+
+		if((num_ricochet) && (hit_body) && (magik(50 + p_ptr->lev)) && magik(95))
+		{
+			byte d;
+
+			num_ricochet--;
+			hit_body = FALSE;
+
+			/* New base location */
+			by = y;
+			bx = x;
+
+			/* New target location */
+			while(TRUE)
+			{
+				d = rand_int(10);
+				if(d != 5) break;
+			}
+			tx = p_ptr->px + 99 * ddx[d];
+			ty = p_ptr->py + 99 * ddy[d];
+
+			msg_format(Ind, "The %s ricochets!", o_name);
+		}
+		else break;
 	}
 
-	/* Chance of breakage (during attacks) */
-	j = (hit_body ? breakage_chance(o_ptr) : 0);
+	/* Back in the U.S.S.R */
+	if (boomerang && !breakage)
+	{
+		/* Save the old "player pointer" */
+		q_ptr = p_ptr;
+
+		for (cur_dis = 0; cur_dis <= tdis; )
+		{
+			/* Hack -- Stop at the target */
+			if ((y == q_ptr->py) && (x == q_ptr->px)){
+				break;
+			}
+
+			/* Calculate the new location (see "project()") */
+			ny = y;
+			nx = x;
+			//			mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
+			mmove2(&ny, &nx, ty, tx, q_ptr->py, q_ptr->px);
+
+			/* Stopped by walls/doors */
+#ifdef NEW_DUNGEON
+			if (!cave_floor_bold(zcave, ny, nx)) break;
+#else
+			if (!cave_floor_bold(Depth, ny, nx)) break;
+#endif
+
+			/* Advance the distance */
+			cur_dis++;
+
+			/* Save the new location */
+			x = nx;
+			y = ny;
+
+			/* Display it for each player */
+			for (i = 1; i < NumPlayers + 1; i++)
+			{
+				int dispx, dispy;
+
+				/* Use this player */
+				p_ptr = Players[i];
+
+				/* If he's not playing, skip him */
+				if (p_ptr->conn == NOT_CONNECTED)
+					continue;
+
+				/* If he's not here, skip him */
+#ifdef NEW_DUNGEON
+				if(!inarea(&p_ptr->wpos, wpos))
+#else
+					if (p_ptr->dun_depth != Depth)
+#endif
+						continue;
+
+				/* The player can see the (on screen) missile */
+				if (panel_contains(y, x) && player_can_see_bold(i, y, x))
+				{
+					/* Draw, Hilite, Fresh, Pause, Erase */
+					dispy = y - p_ptr->panel_row_prt;
+					dispx = x - p_ptr->panel_col_prt;
+
+					/* Remember the projectile */
+					p_ptr->scr_info[dispy][dispx].c = missile_char;
+					p_ptr->scr_info[dispy][dispx].a = missile_attr;
+
+					/* Tell the client */
+					Send_char(i, dispx, dispy, missile_attr, missile_char);
+
+					/* Flush and wait */
+					if (cur_dis % (boomerang?2:tmul)) Send_flush(i);
+
+					/* Restore */
+					lite_spot(i, y, x);
+				}
+
+				/* The player cannot see the missile */
+				else
+				{
+					/* Pause anyway, for consistancy */
+					/*Term_xtra(TERM_XTRA_DELAY, msec);*/
+				}
+			}
+		}
+		/* Restore the player pointer */
+		p_ptr = q_ptr;
+	}
+
+	/* Hack -- "Never litter the floor" inscription {!g} */
+	if( check_guard_inscription( o_ptr->note, 'g' ))
+	{
+		breakage = 101;
+	}
 
 	/* Drop (or break) near that location */
 #ifdef NEW_DUNGEON
-	if (!magic) drop_near(o_ptr, j, wpos, y, x);
+	if (!magic) drop_near(o_ptr, breakage, wpos, y, x);
 #else
 	if (!magic) drop_near(o_ptr, j, Depth, y, x);
 #endif
