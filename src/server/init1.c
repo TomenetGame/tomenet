@@ -830,9 +830,9 @@ cptr esp_flags[] =
 	"XXX8X25",
 	"XXX8X26",
 	"XXX8X27",
-	"XXX8X28",
-	"XXX8X29",
-	"XXX8X02",
+	"R_ESP_LOW",
+	"R_ESP_HIGH", /* "XXX8X29", */
+	"R_ESP_ANY", /* "XXX8X02", */
         "ESP_ALL",
 };
 
@@ -2054,7 +2054,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
  */
 static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
 {
-	int i;
+	int i, rr;
 
 	/* Check flags1 */
 	for (i = 0; i < 32; i++)
