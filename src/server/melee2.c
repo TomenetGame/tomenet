@@ -1561,7 +1561,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	monster_desc(Ind, m_poss, m_idx, 0x22);
 
 	/* Hack -- Get the "died from" name */
-	monster_desc(Ind, ddesc, m_idx, 0x88);
+	monster_desc(Ind, ddesc, m_idx, 0x0188);
 
 
 	/* Cast the spell. */

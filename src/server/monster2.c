@@ -895,6 +895,18 @@ s16b get_mon_num(int level)
 
 
 
+cptr r_name_garbled_get()
+{
+	int r_idx;
+
+	while (1)
+	{
+		r_idx = rand_int(MAX_R_IDX);
+		if (!r_info[r_idx].name) continue;
+        else return (r_name + r_info[r_idx].name);
+	}
+}
+
 
 /*
  * Build a string describing a monster in some way.
@@ -941,6 +953,10 @@ s16b get_mon_num(int level)
  *   0x22 --> Possessive, genderized if visable ("his") or "its"
  *   0x23 --> Reflexive, genderized if visable ("himself") or "itself"
  */
+/*
+ * ToME-NET Extra Flags:
+ * 0x0100 --> Ban 'Garbled' name (for death-record)
+ */
 void monster_desc(int Ind, char *desc, int m_idx, int mode)
 {
 	player_type *p_ptr;
@@ -961,6 +977,9 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 	
 		/* Can we "see" it (exists + forced, or visible + not unforced) */
 		seen = (m_ptr && ((mode & 0x80) || (!(mode & 0x40) && p_ptr->mon_vis[m_idx])));
+
+		if (!(mode & 0x0100) && p_ptr->image)
+			name = r_name_garbled_get();
 	}
 	else
 	{

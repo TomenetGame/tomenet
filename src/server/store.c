@@ -881,6 +881,10 @@ static void mass_produce(object_type *o_ptr)
 	}
 	else if (rand_int(25) == 0)
 	{
+		discount = 10;
+	}
+	else if (rand_int(50) == 0)
+	{
 		discount = 25;
 	}
 	else if (rand_int(150) == 0)
@@ -2588,12 +2592,14 @@ void store_shuffle(store_type *st_ptr)
 	for (i = 0; i < st_ptr->stock_num; i++)
 	{
 		object_type *o_ptr;
+		s32b cost;
 
 		/* Get the item */
 		o_ptr = &st_ptr->stock[i];
+		cost = object_value(0, o_ptr);
 
 		/* Hack -- Sell all old items for "half price" */
-		o_ptr->discount = 50;
+		if (cost > 4) o_ptr->discount = 50;
 
 		/* Hack -- Items are no longer "fixed price" */
 		o_ptr->ident &= ~ID_FIXED;
