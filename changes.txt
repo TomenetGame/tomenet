@@ -411,5 +411,6 @@ Change list for PernMangband
 
 12/12/2001 (Jir)
 - Horizontal recall ({@RW17,22}) supported?
-- 'Cannot run' bug fixed.
+- 'Cannot run' / 'Delayed run' bug fixed.
 - World-coodination display for '@' screen.
+

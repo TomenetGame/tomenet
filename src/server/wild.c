@@ -1595,22 +1595,25 @@ int wild_clone_closed_loop_total(int cur_depth)
 }
 
 
-/* figure out what kind of terrain a depth is */
-/* this function assumes that wild_info's world_x and world_y values have been set. */ 
+/* figure out what kind of terrain a depth is
+ * this function assumes that wild_info's world_x and world_y values
+ * have been set. */ 
 
-/* Hack -- Read this for an explenation of the wilderness generation. Each square
-   is seeded with a seed dependent on its depth, and this is used to find its terrain type.
-   If it is of type 'clone', then a random direction is picked, and it becomes the type
-   of terrain that its neighbor is, using recursion if neccecary.  This was causing 
-   problems with closed loops of clones, so I came up with a mega-hack solution : 
-   if we notice we are in a closed loop, find the total depth of the loop by adding 
-   all its components, and use this to seed the pseudorandom number generator and set 
-   the loops terrain.
-   
-   Note that a lot of this craziness is performed to keep the wilderness' terrain
-   types independent of the order in which they are explored; they are completly defiend 
-   by the pseudorandom seed seed_town.
-*/
+/* Hack -- Read this for an explenation of the wilderness generation.
+ * Each square is seeded with a seed dependent on its depth, and this is
+ * used to find its terrain type.
+ * If it is of type 'clone', then a random direction is picked, and
+ * it becomes the type of terrain that its neighbor is, using recursion
+ * if neccecary.  This was causing problems with closed loops of clones,
+ * so I came up with a mega-hack solution : 
+ * if we notice we are in a closed loop, find the total depth of the loop
+ * by adding all its components, and use this to seed the pseudorandom
+ * number generator and set the loops terrain.
+ * 
+ * Note that a lot of this craziness is performed to keep the wilderness'
+ * terrain types independent of the order in which they are explored;
+ * they are completly defiend by the pseudorandom seed seed_town.
+ */
 
 #ifdef NEW_DUNGEON
 int determine_wilderness_type(struct worldpos *wpos)

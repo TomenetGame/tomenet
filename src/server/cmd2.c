@@ -2446,9 +2446,10 @@ int do_cmd_run(int Ind, int dir)
 			/* Reset the player's energy so he can't sprint several spaces
 			 * in the first round of running.  */
 #ifdef NEW_DUNGEON
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
+//			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			p_ptr->energy = level_speed(&p_ptr->wpos);
 #else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
+			p_ptr->energy = level_speed(p_ptr->dun_depth);
 #endif
 			return 2;
 		}
