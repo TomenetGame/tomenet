@@ -21,6 +21,12 @@
 
 # bug.txt should follow the exact same format
 
+04/08/2002 (Jir)
+[I]- character name(cname) is used in place of nick in misc. situations.
+[I]- random name picker.
+[I]- 'mind' is removed from chat-history keyword list.
+
+
 03/08/2002 (Jir)
 # sorry, I cannot help fixing bugs ;)
 [B]- CS saving was broken

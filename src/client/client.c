@@ -82,6 +82,18 @@ static bool read_mangrc(cptr filename)
 				strcpy(pass, p);
 			}
 
+			if (!strncmp(buf, "name", 4))
+			{
+				char *name;
+
+				/* Extract name */
+				name = strtok(buf, " \t\n");
+				name = strtok(NULL, "\t\n");
+
+				/* Default nickname */
+				strcpy(cname, name);
+			}
+
 			/* server line */
 			if (!strncmp(buf, "server", 6))
 			{
@@ -339,6 +351,10 @@ int main(int argc, char **argv)
 			strcpy(path, argv[i]+2);
 			break;
 		
+		case 'N':
+			strcpy(cname, argv[i]+2);
+			break;
+		
 		/* Pull login id */
 		case 'l':
 			if (argv[i][2])	// Hack -- allow space after '-l'
@@ -381,11 +397,12 @@ int main(int argc, char **argv)
 		puts("Example: mangclient -lMorgoth MorgyPass -p18348 TomeNET.net");
 		puts("       : mangclient -f.myrc -lOlorin_archer");
 		puts("  -c                 Always use CUI(GCU) interface");
-		puts("  -f                 Specify rc file to read");
+		puts("  -f                 specify rc File to read");
 		puts("  -i                 Ignore .tomenetrc");
 		puts("  -l<nick> <passwd>  Login as");
-		puts("  -p<num>            Change game port number");
-		puts("  -P<path>           Set the lib directory path");
+		puts("  -N<name>           character Name");
+		puts("  -p<num>            change game Port number");
+		puts("  -P<path>           set the lib directory Path");
 		quit(NULL);
 	}
 
@@ -476,6 +493,30 @@ int main(int argc, char **argv)
 		Net_cleanup();
 		printf("Unable to initialize a display module!\n");
 		exit(1);
+	}
+
+	/* Hack -- use RNG for character generation	- Jir -*/
+	/* Init the RNG */
+	// Is it a good idea ? DGDGDGD --  maybe FIXME
+	//	if (Rand_quick)
+	{
+		u32b seed;
+
+		/* Basic seed */
+		seed = (time(NULL));
+
+#ifdef SET_UID
+
+		/* Mutate the seed on Unix machines */
+		seed = ((seed >> 3) * (getpid() << 1));
+
+#endif
+
+		/* Use the complex RNG */
+		Rand_quick = FALSE;
+
+		/* Seed the "complex" RNG */
+		Rand_state_init(seed);
 	}
 
 	/* Attempt to read default name/password from mangrc file */

@@ -585,30 +585,6 @@ void get_char_name(void)
  */
 void get_char_info(void)
 {
-	/* Hack -- use RNG for character generation	- Jir -*/
-	/* Init the RNG */
-	// Is it a good idea ? DGDGDGD --  maybe FIXME
-	//	if (Rand_quick)
-	{
-		u32b seed;
-
-		/* Basic seed */
-		seed = (time(NULL));
-
-#ifdef SET_UID
-
-		/* Mutate the seed on Unix machines */
-		seed = ((seed >> 3) * (getpid() << 1));
-
-#endif
-
-		/* Use the complex RNG */
-		Rand_quick = FALSE;
-
-		/* Seed the "complex" RNG */
-		Rand_state_init(seed);
-	}
-
 	/* Title everything */
 	put_str("Sex         :", 4, 1);
 	put_str("Race        :", 5, 1);
@@ -818,3 +794,62 @@ bool get_server_name(void)
 	/* Success */
 	return TRUE;
 }
+
+/* Human */
+static char *human_syllable1[] =
+{
+	"Ab", "Ac", "Ad", "Af", "Agr", "Ast", "As", "Al", "Adw", "Adr", "Ar",
+	"B", "Br", "C", "Cr", "Ch", "Cad", "D", "Dr", "Dw", "Ed", "Eth", "Et",
+	"Er", "El", "Eow", "F", "Fr", "G", "Gr", "Gw", "Gal", "Gl", "H", "Ha",
+	"Ib", "Jer", "K", "Ka", "Ked", "L", "Loth", "Lar", "Leg", "M", "Mir",
+	"N", "Nyd", "Ol", "Oc", "On", "P", "Pr", "R", "Rh", "S", "Sev", "T",
+	"Tr", "Th", "V", "Y", "Z", "W", "Wic",
+};
+
+static char *human_syllable2[] =
+{
+	"a", "ae", "au", "ao", "are", "ale", "ali", "ay", "ardo", "e", "ei",
+	"ea", "eri", "era", "ela", "eli", "enda", "erra", "i", "ia", "ie",
+	"ire", "ira", "ila", "ili", "ira", "igo", "o", "oa", "oi", "oe",
+	"ore", "u", "y",
+};
+
+static char *human_syllable3[] =
+{
+	"a", "and", "b", "bwyn", "baen", "bard", "c", "ctred", "cred", "ch",
+	"can", "d", "dan", "don", "der", "dric", "dfrid", "dus", "f", "g",
+	"gord", "gan", "l", "li", "lgrin", "lin", "lith", "lath", "loth",
+	"ld", "ldric", "ldan", "m", "mas", "mos", "mar", "mond", "n",
+	"nydd", "nidd", "nnon", "nwan", "nyth", "nad", "nn", "nnor", "nd",
+	"p", "r", "ron", "rd", "s", "sh", "seth", "sean", "t", "th", "tha",
+	"tlan", "trem", "tram", "v", "vudd", "w", "wan", "win", "wyn", "wyr",
+	"wyr", "wyth",
+};
+
+/*
+ * Random Name Generator
+ * based on a Javascript by Michael Hensley
+ * "http://geocities.com/timessquare/castle/6274/"
+ */
+//static void create_random_name(int race, char *name)
+void create_random_name(int race, char *name)
+{
+	char *syl1, *syl2, *syl3;
+
+	int idx;
+
+
+	/* Paranoia */
+	if (!name) return;
+
+	idx = rand_int(sizeof(human_syllable1) / sizeof(char *));
+	syl1 = human_syllable1[idx];
+	idx = rand_int(sizeof(human_syllable2) / sizeof(char *));
+	syl2 = human_syllable2[idx];
+	idx = rand_int(sizeof(human_syllable3) / sizeof(char *));
+	syl3 = human_syllable3[idx];
+
+	/* Concatenate selected syllables */
+	strnfmt(name, 32, "%s%s%s", syl1, syl2, syl3);
+}
+

@@ -1043,8 +1043,9 @@ bool Destroy_connection(int ind, char *reason)
 		}
 #endif
 	}
-	s_printf("%s: Goodbye %s=%s@%s (\"%s\")\n",
+	s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\")\n",
 		showtime(),
+		connp->c_name ? connp->c_name : "",
 		connp->nick ? connp->nick : "",
 		connp->real ? connp->real : "",
 		connp->host ? connp->host : "",
@@ -7452,6 +7453,9 @@ static int Receive_special_line(int ind)
 
 	if (player)
 	{
+		char kludge[2] = "";
+		kludge[0] = (char) line;
+		kludge[1] = '\0';
 		switch (type)
 		{
 			case SPECIAL_FILE_NONE:
@@ -7499,10 +7503,10 @@ static int Receive_special_line(int ind)
 				do_cmd_check_server_settings(player);
  				break;
 			case SPECIAL_FILE_MONSTER:
-				do_cmd_show_monster_killed_letter(player, &line);
+				do_cmd_show_monster_killed_letter(player, kludge);
  				break;
 			case SPECIAL_FILE_OBJECT:
-				do_cmd_show_known_item_letter(player, &line);
+				do_cmd_show_known_item_letter(player, kludge);
  				break;
 			case SPECIAL_FILE_HOUSE:
 				do_cmd_show_houses(player);

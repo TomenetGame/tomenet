@@ -3850,7 +3850,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 //	s64b price;
 	u32b price;
 
-	cave_type *c_ptr;
+	cave_type *c_ptr = NULL;
 	struct dna_type *dna;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -3875,10 +3875,10 @@ void do_cmd_purchase_house(int Ind, int dir)
 		x = p_ptr->px + ddx[dir];
 
 		/* Get requested grid */
-		c_ptr = &zcave[y][x];
+		if (in_bounds2(wpos, y, x)) c_ptr = &zcave[y][x];
 
 		/* Check for a house */
-		if(!(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL && (cs_ptr=GetCS(c_ptr, CS_DNADOOR))))
+		if (!(c_ptr && c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL && (cs_ptr=GetCS(c_ptr, CS_DNADOOR))))
 		{
 			/* No house, message */
 			msg_print(Ind, "You see nothing to buy there.");

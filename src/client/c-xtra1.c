@@ -1034,8 +1034,8 @@ void fix_message(void)
 	char nameA[20];
 	char nameB[20];
 
-	strcpy(nameA, "[");  strcat(nameA, nick);  strcat(nameA, ":");
-	strcpy(nameB, ":");  strcat(nameB, nick);  strcat(nameB, "]");
+	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
+	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
 
 
         /* Scan windows */
@@ -1190,7 +1190,7 @@ void display_player(int hist)
         put_str("Class       :", 5, 1);
         put_str("Body        :", 6, 1);
 
-        c_put_str(TERM_L_BLUE, nick, 2, 15);
+        c_put_str(TERM_L_BLUE, cname, 2, 15);
         c_put_str(TERM_L_BLUE, (p_ptr->male ? "Male" : "Female"), 3, 15);
         c_put_str(TERM_L_BLUE, race_info[race].title, 4, 15);
         c_put_str(TERM_L_BLUE, class_info[class].title, 5, 15);

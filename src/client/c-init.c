@@ -157,8 +157,15 @@ void initialize_all_pref_files(void)
 		process_pref_file(buf);
 	}
 
-	/* Access the "character" pref file */
+	/* Access the "account" pref file */
 	sprintf(buf, "%s.prf", nick);
+	buf[0] = tolower(buf[0]);
+
+	/* Process that file */
+	process_pref_file(buf);
+
+	/* Access the "character" pref file */
+	sprintf(buf, "%s.prf", cname);
 	buf[0] = tolower(buf[0]);
 
 	/* Process that file */
@@ -438,7 +445,7 @@ void client_init(char *argv1, bool skip)
 		switch (status)
 		{
 			case E_VERSION:
-				quit("This version of the client will not work with that server.  http://T-o-M-E.net/pernmangband/ to get the new client.");
+				quit("This version of the client will not work with that server.  Please visit http://T-o-M-E.net/main.php?tome_current=1");
 			case E_GAME_FULL:
 				quit("Sorry, the game is full.  Try again later.");
 			case E_IN_USE:
@@ -486,10 +493,13 @@ void client_init(char *argv1, bool skip)
 	
 	status=Net_login();
 
+	/* Hack -- display the nick */
+	prt(format("Name        : %s", cname), 2, 1);
+
 	if (status == E_NEED_INFO)
 	{
 		/* Hack -- display the nick */
-		if (skip) prt(format("Name        : %s", nick), 2, 1);
+//		if (skip) prt(format("Name        : %s", cname), 2, 1);
 
 		/* Get sex/race/class */
 		/* XXX this function sends PKT_KEEPALIVE */

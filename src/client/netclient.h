@@ -20,7 +20,7 @@ int Receive_end(void);
 int Receive_leave(void);
 int Receive_reliable(void);
 int Receive_quit(void);
-char *Receive_login(void);
+void Receive_login(void);
 int Receive_reply(int *replyto, int *result);
 int Send_ack(long rel_loops);
 int Receive_magic(void);

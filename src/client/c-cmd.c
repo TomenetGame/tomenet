@@ -1323,7 +1323,7 @@ void cmd_character(void)
                 /* Dump */
                 if ((ch == 'f') || (ch == 'F'))
                 {
-                        strnfmt(tmp, 160, "%s.txt", nick);
+                        strnfmt(tmp, 160, "%s.txt", cname);
                         if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, 80))
 			{
 				if (tmp[0] && (tmp[0] != ' '))

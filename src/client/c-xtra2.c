@@ -34,8 +34,8 @@ void do_cmd_messages(void)
 	cptr nomsg_target = "Target Selected.";
 	cptr nomsg_map = "Map sector ";
 
-	strcpy(nameA, "[");  strcat(nameA, nick);  strcat(nameA, ":");
-	strcpy(nameB, ":");  strcat(nameB, nick);  strcat(nameB, "]");
+	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
+	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
 
 
 	/* Total messages */
@@ -324,8 +324,8 @@ void do_cmd_messages_chatonly(void)
 	cptr msg_telepath = "mind";
 
 
-	strcpy(nameA, "[");  strcat(nameA, nick);  strcat(nameA, ":");
-	strcpy(nameB, ":");  strcat(nameB, nick);  strcat(nameB, "]");
+	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
+	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
 
 
 	/* Total messages */
@@ -341,7 +341,8 @@ void do_cmd_messages_chatonly(void)
 				(strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_destroyed) != NULL) || \
 				(strstr(msg, msg_unique) != NULL) || (strstr(msg, msg_suicide)   != NULL) || \
 				(strstr(msg, msg_deadA)  != NULL) || (strstr(msg, msg_deadB)     != NULL) || \
-				(strstr(msg, msg_telepath) != NULL) || (msg[2] == '['))
+//				(strstr(msg, msg_telepath) != NULL) || (msg[2] == '['))
+				(msg[2] == '['))
 		{
 			message_chat[nn] = msg;	
 			nn++;

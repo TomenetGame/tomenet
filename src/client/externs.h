@@ -32,14 +32,13 @@ extern cptr monster_spells6[32];
 
 
 /* variable.c */
-extern char nick[80];
-extern char pass[80];
-extern char svname[80];
+extern char nick[MAX_CHARS];
+extern char pass[MAX_CHARS];
+extern char svname[MAX_CHARS];
 extern char path[1024];
-
-extern char real_name[80];
-
-extern char server_name[80];
+extern char real_name[MAX_CHARS];
+extern char server_name[MAX_CHARS];
+extern char cname[MAX_CHARS];
 
 extern char message_history[MSG_HISTORY_MAX][80];
 //extern byte hist_start;

@@ -129,7 +129,9 @@ static void Receive_init(void)
 	receive_tbl[PKT_CHARDUMP] 	= Receive_chardump;
 }
 
-char *Receive_login(void){
+//char *Receive_login(void){
+void Receive_login(void)
+{
 	int n;
 	char ch;
 	int i=0;
@@ -156,9 +158,21 @@ char *Receive_login(void){
 		ch=inkey();
 	}
 	if(ch=='a'+i){
-		c_put_str(TERM_YELLOW, "New name: ", 6+i, 11);
-		while(strlen(c_name)==0)
+		if (!strlen(cname)) strcpy(c_name, nick);
+		else strcpy(c_name, cname);
+
+		c_put_str(TERM_WHITE, "(ESC to pick a random name)", 8+i, 11);
+
+		while (1)
+		{
+			c_put_str(TERM_YELLOW, "New name: ", 6+i, 11);
 			askfor_aux(c_name, MAX_CHARS, 0);
+			if (strlen(c_name)) break;
+			create_random_name(0, c_name);
+		}
+
+		/* Capitalize the name */
+		c_name[0] = toupper(c_name[0]);
 	}
 	else strcpy(c_name, names[ch-'a']);
 #if 0
@@ -167,7 +181,8 @@ char *Receive_login(void){
 	}
 #endif
 	Term_clear();
-	return(c_name);
+	strcpy(cname, c_name);
+//	return(c_name);
 }
 
 // I haven't really figured out this function yet.  It looks to me like
@@ -579,8 +594,8 @@ unsigned char Net_login(){
 	}
 	Sockbuf_clear(&rbuf);
 	Sockbuf_read(&rbuf);
-	c_name=Receive_login();
-	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, c_name);
+	Receive_login();
+	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, cname);
 	if (Sockbuf_flush(&wbuf) == -1)
 	{
 		quit("Can't send login packet");
@@ -1732,7 +1747,7 @@ int Receive_message(void)
 
 /*	printf("Message: %s\n", buf);   */
 
-	sprintf(search, "%s] ", nick);
+	sprintf(search, "%s] ", cname);
 
 	if (strstr(buf, search) != 0 && *talk_pend)
 	{
@@ -2578,7 +2593,7 @@ int Receive_chardump(void)
 		return n;
 	}
 
-	strnfmt(tmp, 160, "%s-death.txt", nick);
+	strnfmt(tmp, 160, "%s-death.txt", cname);
 	file_character(tmp, FALSE);
 
 

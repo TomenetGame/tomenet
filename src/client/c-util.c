@@ -2962,7 +2962,7 @@ static void print_tomb(cptr reason)
 		}
 #endif	// 0
 
-		center_string(buf, nick);
+		center_string(buf, cname);
 		put_str(buf, 6, 11);
 
 #if 0
@@ -3072,7 +3072,7 @@ void c_close_game(cptr reason)
 		/* Dump */
 		else if ((k == 'f') || (k == 'F'))
 		{
-			strnfmt(tmp, 160, "%s.txt", nick);
+			strnfmt(tmp, 160, "%s.txt", cname);
 			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, 80))
 			{
 				if (tmp[0] && (tmp[0] != ' '))

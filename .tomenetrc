@@ -5,11 +5,14 @@
 # You can bypass the settings of this file by specifying '-i' option.
 # $ tomenet -i
 
-# your name as a player
-nick Cirion
+# your account name
+nick Gondor
 
 # login password
 pass stone2mud
+
+# character name
+name Cirion
 
 # the server you want to connect.
 server TomeNET.net

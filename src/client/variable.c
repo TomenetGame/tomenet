@@ -3,15 +3,14 @@
 
 /* Client global variables */
 
-char nick[80]="";
-char pass[80]="";
-char svname[80]="";
+char nick[MAX_CHARS]="";
+char pass[MAX_CHARS]="";
+char svname[MAX_CHARS]="";
 //char path[1024]="";
 char path[1024]=DEFAULT_PATH;
-
-char real_name[80]="";
-
-char server_name[80]="";
+char real_name[MAX_CHARS]="";
+char server_name[MAX_CHARS]="";
+char cname[MAX_CHARS]="";
 
 char message_history[MSG_HISTORY_MAX][80];	/* history for chat, slash-cmd etc. */
 //byte hist_start = 0;
