@@ -3737,6 +3737,7 @@ void player_death(int Ind)
 		}
 
 		kill_houses(p_ptr->id, OT_PLAYER);
+		rem_quest(p_ptr->quest_id);
 		kill_objs(p_ptr->id);
 		p_ptr->death=TRUE;
 		
@@ -3882,6 +3883,7 @@ void player_death(int Ind)
 	{
 		/* Delete his houses */
 		kill_houses(p_ptr->id, OT_PLAYER);
+		rem_quest(p_ptr->quest_id);
 		kill_objs(p_ptr->id);
 
 		/* Remove him from his party */
@@ -4038,6 +4040,14 @@ void del_quest(int id){
 	}
 }
 
+void rem_quest(int id){
+	if(id && quests[id].active){
+		quests[id].active--;
+		if(!quests[id].active)
+			del_quest(id);
+	}
+}
+
 void kill_quest(int Ind){
 	int i;
 	s16b id, pos=-1;
@@ -4075,15 +4085,16 @@ void kill_quest(int Ind){
 s16b questid=1;
 
 bool add_quest(s16b type, s16b num, int midlevel){
-	int i, added=0;
+	int i, j;
+	bool added=FALSE;
 	player_type *q_ptr;
 
 	for(i=0; i<20; i++){
 		if(!quests[i].active){
-			quests[i].active=1;
+			quests[i].active=0;
 			quests[i].id=questid;
 			quests[i].type=type;
-			added=1;
+			added=TRUE;
 			break;
 		}
 	}
@@ -4091,18 +4102,18 @@ bool add_quest(s16b type, s16b num, int midlevel){
 		return(FALSE);
 	added=0;
 
-	for(i=1; i<=NumPlayers; i++){
-		q_ptr=Players[i];
+	for(j=1; j<=NumPlayers; j++){
+		q_ptr=Players[j];
 		if(q_ptr && !q_ptr->quest_id){
 			if(ABS(q_ptr->lev-midlevel)>5) continue;
 			q_ptr->quest_id=questid;
 			q_ptr->quest_num=num;
-			msg_print(i, "\377oYou have been given a quest\377y!");
-			msg_format(i, "\377oFind and kill \377y%d \377g%s \377obefore any other player\377y!", num, r_name+r_info[type].name);
-			added++;
+			msg_print(j, "\377oYou have been given a quest\377y!");
+			msg_format(j, "\377oFind and kill \377y%d \377g%s \377obefore any other player\377y!", num, r_name+r_info[type].name);
+			quests[i].active++;
 		}
 	}
-	if(!added){
+	if(!quests[i].active){
 		del_quest(questid);
 		return(FALSE);
 	}
