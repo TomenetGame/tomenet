@@ -781,7 +781,11 @@ static void display_player_middle(int Ind)
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 		adv_exp = 0;
-	else adv_exp = (s32b)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L);
+        else
+        {
+                s64b adv = (player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L);
+                adv_exp = (s32b)(adv);
+        }
 
 	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp);
 

@@ -151,11 +151,11 @@ static void prt_level(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int adv_exp;
+        s64b adv_exp;
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 		adv_exp = 0;
-	else adv_exp = (s32b)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L);
+        else adv_exp = (s64b)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L);
 
 	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp);
 }
@@ -168,11 +168,11 @@ static void prt_exp(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-        s32b adv_exp;
+        s64b adv_exp;
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 		adv_exp = 0;
-	else adv_exp = (s32b)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L);
+        else adv_exp = (s64b)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L);
 
 	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp);
 }
