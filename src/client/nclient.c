@@ -179,7 +179,7 @@ int Receive_file(void){
 				printf("unknown file transfer packet\n");
 				x=0;
 		}
-		Packet_printf(&wbuf, "%c%c%hd", PKT_FILE, x?PKT_FILE_ACK:PKT_FILE_ERR, fnum);
+		Packet_printf(&cbuf, "%c%c%hd", PKT_FILE, x?PKT_FILE_ACK:PKT_FILE_ERR, fnum);
 	}
 }
 

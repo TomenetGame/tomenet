@@ -2714,7 +2714,7 @@ static int Receive_file(int ind){
 				printf("unknown file transfer packet\n");
 				x=0;
 		}
-		Packet_printf(&connp->w, "%c%c%hd", PKT_FILE, x?PKT_FILE_ACK:PKT_FILE_ERR, fnum);
+		Packet_printf(&connp->c, "%c%c%hd", PKT_FILE, x?PKT_FILE_ACK:PKT_FILE_ERR, fnum);
 	}
 	else printf("error file packet\n");
 }
@@ -2722,7 +2722,7 @@ static int Receive_file(int ind){
 int Receive_file_data(int ind, unsigned short len, char *buffer){
 	connection_t *connp = &Conn[ind];
 	memcpy(buffer, connp->r.ptr, len);
-	Sockbuf_advance(&connp->r, len);
+	Sockbuf_advance(&connp->r, len + connp->r.ptr - connp->r.buf);
 }
 
 int Send_file_check(int ind, unsigned short id, char *fname){
