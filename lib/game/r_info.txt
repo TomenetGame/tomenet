@@ -230,7 +230,7 @@ I:110:1d1:30:1:10
 W:0:3:90:0
 E:0:1:1:0:1:0
 O:0:0:0:0
-B:BITE:HURT:1d1
+#B:BITE:HURT:1d1
 F:RAND_25 | CAN_FLY | WILD_TOWN | WILD_ONLY | 
 F:ANIMAL | DROP_SKELETON | HAS_EGG | IMPRESED | 
 F:MORTAL | BASEANGBAND | NO_TARGET
@@ -242,10 +242,11 @@ I:110:1d1:30:1:10
 W:0:3:80:0
 E:0:1:1:0:1:0
 O:0:0:0:0
-B:BITE:HURT:1d1
+#B:BITE:HURT:1d1
 F:RAND_25 | CAN_FLY | WILD_ONLY | WILD_WOOD | WILD_GRASS | 
 F:ANIMAL | DROP_SKELETON | HAS_EGG | IMPRESED | 
-F:MORTAL | BASEANGBAND | NO_TARGET
+F:MORTAL | BASEANGBAND
+# | NO_TARGET
 D:Utterly harmless, except when angry. 
 
 N:5:Wild rabbit
@@ -254,10 +255,11 @@ I:110:1d2:30:1:10
 W:0:3:100:0
 E:0:1:0:2:1:0
 O:0:0:0:0
-B:BITE:HURT:1d1
+#B:BITE:HURT:1d1
 F:RAND_50 | WILD_ONLY | WILD_GRASS | WILD_WOOD |
 F:ANIMAL | DROP_SKELETON | DROP_CORPSE | 
-F:MORTAL | BASEANGBAND | NO_TARGET
+F:MORTAL | BASEANGBAND
+# | NO_TARGET
 D:It is not a carnivore, but will defend itself if you stray too 
 D:close. 
 
@@ -17119,9 +17121,6 @@ D:The poor hobbit got lost in the dreadful maze!
 N:971:The Wight-King of the Barrow-downs
 G:W:v
 I:120:38d22:30:45:0
-#was 46, but it's FORCE_DEPTH now so it appears
-#on the bottom of the barrow-downs always.
-#W:46:3:0:22000
 W:35:1:0:22000
 E:0:0:0:0:0:0
 O:15:55:15:0
@@ -17130,7 +17129,6 @@ B:WAIL:PARALYZE:2d6
 B:TOUCH:EXP_80:4d8
 B:TOUCH:EXP_80:4d8
 F:SPECIAL_GENE | FORCE_MAXHP | SMART | CAN_SPEAK | 
-#F:DROP_4D2 | DROP_2D2 | DROP_GOOD | 
 F:FORCE_DEPTH | DROP_2D2 | DROP_GOOD | DROP_GREAT | 
 F:COLD_BLOOD | UNIQUE | RES_DARK | RES_NETH | 
 F:CAN_SWIM | CAN_FLY | EVIL | UNDEAD | IM_COLD | IM_POIS | HURT_LITE | 
@@ -17141,6 +17139,10 @@ D:He has lived in the Barrow-Downs for centuries after his first death at the
 D:hands of the Witch-King of Angmar.  A once loyal captain under the 
 D:Witch-King's command, he now awaits a time when his undead forces shall 
 D:rise again to avenge their deaths. 
+#was 46, but it's FORCE_DEPTH now so it appears
+#on the bottom of the barrow-downs always.
+#W:46:3:0:22000
+#F:DROP_4D2 | DROP_2D2 | DROP_GOOD | 
 
 N:972:Hurin Thalion, the Last Lord of Dor-Lomin
 G:@:U
@@ -18701,7 +18703,7 @@ W:0:1:80:0
 I:110:1d1:30:4:10
 E:0:0:0:0:1:0
 O:0:0:0:0
-B:BITE:HURT:1d2
+#B:BITE:HURT:1d2
 F:WILD_TOWN | WILD_ONLY  | RAND_50
 #F:WILD_LAKE
 F:AQUATIC | COLD_BLOOD | NO_SLEEP | AI_ANNOY
@@ -18714,10 +18716,11 @@ W:0:3:80:0
 I:105:2d4:70:6:10
 E:0:0:0:0:1:0
 O:0:0:0:0
-B:BITE:HURT:1d4
+#B:BITE:HURT:1d4
 F:WILD_TOWN | WILD_ONLY 
 #F:WILD_LAKE
-F:AQUATIC | COLD_BLOOD | NO_SLEEP | NO_TARGET
+F:AQUATIC | COLD_BLOOD | NO_SLEEP
+# | NO_TARGET
 F:MORTAL | BASEANGBAND
 D:Beautiful and expensive fish for ponds.
 
@@ -18922,6 +18925,54 @@ S:BR_ACID | BR_FIRE | BR_COLD | BR_ELEC | BR_POIS |
 S:S_HI_DRAGON
 D:Usually found guarding the first plane of Hell, Tiamat is a formidable
 D:opponent, her five heads breathing death to all who stand against her.
+
+N:1067:The Hellraiser
+G:g:r
+I:140:400d150:200:200:0
+W:120:1:0:80000
+E:1:1:1:2:1:1
+O:0:0:0:0
+B:HIT:HURT:30d10
+B:HIT:HURT:30d10
+B:GAZE:TIME:30d10
+B:GAZE:INSANITY:30d10
+F:UNIQUE | 
+F:NONLIVING | NO_FEAR | FORCE_MAXHP | FORCE_SLEEP | REFLECTING | RES_MANA |
+F:MOVE_BODY | KILL_WALL | IM_FIRE | IM_ELEC | IM_POIS | IM_ACID | IM_COLD |
+F:RES_NETH | RES_WATE | RES_PLAS | RES_NEXU | RES_CHAOS | NO_STUN | REGENERATE |
+F:ONLY_ITEM | DROP_2D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | 
+F:NO_CONF | NO_SLEEP | CAN_FLY | POWERFUL | COLD_BLOOD |
+F:ATTR_MULTI | ATTR_ANY | FORCE_DEPTH | 
+F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | ZANGBAND | NO_CUT
+S:1_IN_3 |
+S:BR_DISI | BR_MANA | BR_CHAO | SHRIEK | 
+S:S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON
+D:A creature awakened on the hell forge, the powers of hell were bestowed
+D:upon it to call the ultimate terror in case it detects any intruder.
+
+#N:1068:The Cosmos Eater
+#G:g:r
+#I:166:500d200:200:300:0
+#W:150:1:0:150000
+#E:1:1:1:2:1:1
+#O:0:0:0:0
+#B:HIT:HURT:20d10
+#B:HIT:HURT:20d10
+#B:GAZE:TIME:20d10
+#B:GAZE:INSANITY:20d10
+#F:UNIQUE | 
+#F:NONLIVING | NO_FEAR | FORCE_MAXHP | REFLECTING | RES_MANA |
+#F:MOVE_BODY | KILL_WALL | IM_FIRE | IM_ELEC | IM_POIS | IM_ACID | IM_COLD |
+#F:RES_NETH | RES_WATE | RES_PLAS | RES_NEXU | RES_CHAOS | NO_STUN | REGENERATE |
+#F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | 
+#F:NO_CONF | NO_SLEEP | CAN_FLY | POWERFUL | COLD_BLOOD |
+#F:ATTR_MULTI | ATTR_ANY | FORCE_DEPTH | PASS_WALL | 
+#F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | ZANGBAND | NO_CUT
+##S:1_IN_3 |
+##S:BR_DISI
+##S:S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON
+#D:An unliving opposite to Eru's creation. In eternal work it can
+#D:slowly devour a whole cosmos if it's been given just enough time.
 
 
 # N: serial number : monster name
