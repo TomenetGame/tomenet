@@ -1518,6 +1518,9 @@ void calc_body_bonus(int Ind)
 	if(r_ptr->flags2 & RF2_AURA_FIRE) p_ptr->sh_fire = TRUE;
 	if(r_ptr->flags2 & RF2_AURA_ELEC) p_ptr->sh_elec = TRUE;
 
+	if(r_ptr->flags5 & RF5_MIND_BLAST) p_ptr->reduce_insanity = 1;
+	if(r_ptr->flags5 & RF5_BRAIN_SMASH) p_ptr->reduce_insanity = 2;
+
 	if(r_ptr->flags3 & RF3_SUSCEP_FIRE) p_ptr->sensible_fire = TRUE;
 	if(r_ptr->flags3 & RF3_SUSCEP_COLD) p_ptr->sensible_cold = TRUE;
 /* Imho, there should be only suspec fire and cold since these two are opposites.
