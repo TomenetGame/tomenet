@@ -1859,6 +1859,8 @@ void do_recall(int Ind)
 
 			if (-p_ptr->recall_pos.wz > w_ptr->dungeon->maxdepth)
 				p_ptr->recall_pos.wz = 0 - w_ptr->dungeon->maxdepth;
+			if(p_ptr->inval && -p_ptr->recall_pos.wz > 10)
+				p_ptr->recall_pos.wz = -10;
 
 			if (p_ptr->recall_pos.wz >= 0)
 			{
@@ -1886,6 +1888,8 @@ void do_recall(int Ind)
 
 			if (p_ptr->recall_pos.wz > w_ptr->tower->maxdepth)
 				p_ptr->recall_pos.wz = w_ptr->tower->maxdepth;
+			if(p_ptr->inval && -p_ptr->recall_pos.wz > 10)
+				p_ptr->recall_pos.wz = 10;
 
 			if (p_ptr->recall_pos.wz <= 0)
 			{

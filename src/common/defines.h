@@ -3707,7 +3707,6 @@ that keeps many algorithms happy.
 
 
 /* level flags for dun_level */
-#define LF1_NO_TELEPORT         0x00000001L
 #define LF1_ASK_LEAVE           0x00000002L /* XXX */
 #define LF1_NO_STAIR            0x00000004L /* XXX ok */
 #define LF1_SPECIAL             0x00000008L /* XXX */
@@ -3722,7 +3721,7 @@ that keeps many algorithms happy.
 #define LF1_NO_MULTIPLY			0x80000000L /* for scrolls of vermin control */
 
 #define LF1_FEELING_MASK \
-	(LF1_NO_TELEPORT | LF1_NO_GENO | LF1_NOMAP | LF1_NO_MAGIC_MAP | \
+	(LF1_NO_GENO | LF1_NOMAP | LF1_NO_MAGIC_MAP | \
 	 LF1_NO_DESTROY | LF1_NO_MAGIC)
 
 
