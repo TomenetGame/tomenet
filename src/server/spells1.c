@@ -5451,7 +5451,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		x1 = x;
 		y1 = y;
 	}
-#endif	// 0
+#endif	/* 0 */
 
 	y_saver = y1;
 	x_saver = x1;
@@ -5674,8 +5674,8 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 						/* Update some things -- similar to GF_KILL_WALL */
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 					}
-#endif	// 0
-					else
+#endif	/* 0 */
+					/* else */ /* HERE!!!!*/
 					/* Ball explosions are stopped by walls */
 					if (!los(wpos, y2, x2, y, x)) continue;
 #else
@@ -5911,6 +5911,11 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 					continue;
 				}
 
+				if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+			}
+/* Evileye ball spell fix */
+			else{
+				/* Affect the monster */
 				if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
 			}
 #else
