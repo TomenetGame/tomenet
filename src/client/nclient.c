@@ -167,8 +167,10 @@ int Net_setup(void)
 
 						Packet_scanf(&cbuf, "%s%ld", &Setup.race_title[i],
 								&Setup.race_choice[i]);
+#if 0
 						printf("r %d: %s (%d)\n", i, Setup.race_title[i],
 								Setup.race_choice[i]);
+#endif	// 0
 						race_info[i].title = &Setup.race_title[i];
 						race_info[i].choice = Setup.race_choice[i];
 					}
@@ -177,36 +179,10 @@ int Net_setup(void)
 					{
 						//			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
 						Packet_scanf(&cbuf, "%s", &Setup.class_title[i]);
-						printf("c %d: %s\n", i, Setup.class_title[i]);
+//						printf("c %d: %s\n", i, Setup.class_title[i]);
 						class_info[i].title = &Setup.class_title[i];
 					}
 				}
-
-#if 0 // -- DGDGDGDG it would be NEAT to have classes sent to the cleint at conenciton, sadly Im too clumpsy at network code ..
-        i = 0;
-        while (i < max_class)
-        {
-                int ii;
-
-		/* Set timeout */
-		SetTimeout(1, 0);
-
-		/* Wait for info */
-		if (!SocketReadable(Socket)) continue;
-
-		/* Read reply */
-		if(DgramRead(Socket, ibuf.buf, ibuf.size) <= 0)
-		{
-			/*printf("DgramReceiveAny failed (errno = %d)\n", errno);*/
-			continue;
-		}
-
-                Packet_scanf(&ibuf, "%c%s", &ii, buf);
-                printf("c %d: %s\n", ii, buf);
-
-                i++;
-        }
-#endif
 
 				ptr = (char *) &Setup;
 				done = (char *) &Setup.motd[0] - ptr;

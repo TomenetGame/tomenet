@@ -2286,7 +2286,9 @@ static int Receive_play(int ind)
 	{
 		/* Yeah it's noisy, but let's keep it for now */
 	  //		errno = 0;
+#if DEBUG_LEVEL > 1
 	  plog("Packet is not of play type");
+#endif	// DEBUG_LEVEL
 	  //Destroy_connection(ind, "not play");
 	  //return -1;
 	  return 0;
