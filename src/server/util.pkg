@@ -134,6 +134,9 @@ extern void msg_broadcast(int Ind, cptr msg);
 extern void msg_print_near(int Ind, cptr msg);
 extern void msg_admin(cptr msg);
 
+$static int lua_level_speed(worldpos *wpos) { return level_speed(wpos); }
+static int lua_level_speed@level_speed(worldpos *wpos);
+
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 
 void remote_update_lua(int Ind, cptr file);

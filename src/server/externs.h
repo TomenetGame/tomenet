@@ -1286,7 +1286,6 @@ extern bool get_aim_dir(int Ind/*, int *dp*/);
 extern bool get_item(int Ind);
 extern bool do_scroll_life(int Ind);
 extern bool do_restoreXP_other(int Ind);
-//extern int level_speed(struct worldpos *wpos);
 extern bool telekinesis(int Ind, object_type *o_ptr);
 extern void telekinesis_aux(int Ind, int item);
 extern bool set_bow_brand(int Ind, int v, int t, int p);

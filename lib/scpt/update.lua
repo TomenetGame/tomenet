@@ -16,6 +16,7 @@ __update_table =
 	"scpt/s_nature.lua",
 	"scpt/s_mind.lua",
 	"scpt/s_udun.lua",
+	"scpt/powers.lua",
 }
 
 function update_client()

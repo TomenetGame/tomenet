@@ -1728,6 +1728,21 @@ static errr rd_savefile_new_aux(int Ind)
                 p_ptr->spell_project = 0;
         }
 
+        /* Special powers */
+        if (!older_than(4, 0, 2))
+        {
+                rd_s16b(&p_ptr->power_num);
+
+                for (i = 0; i < MAX_POWERS; i++)
+                {
+                        rd_s16b(&p_ptr->powers[i]);
+                }
+        }
+        else
+        {
+                p_ptr->power_num = 0;
+        }
+
 #ifdef VERIFY_CHECKSUMS
 
 	/* Save the checksum */

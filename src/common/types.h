@@ -2347,6 +2347,10 @@ struct player_type
 #endif	// 0
 
         byte spell_project;             /* Do the spells(some) affect nearby party members ? */
+
+        /* Special powers */
+        s16b powers[MAX_POWERS];        /* What powers do we possess? */
+        s16b power_num;                 /* How many */
 };
 
 /* For Monk martial arts */

@@ -40,7 +40,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   0
-#define SF_VERSION_PATCH   1
+#define SF_VERSION_PATCH   2
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -5136,3 +5136,7 @@ extern int PlayerUID;
 #define OBJ_GENE_MAGIC          20
 #define OBJ_GENE_TOOL           20
 
+
+/* Special powers */
+#define MAX_POWERS              50      /* 2 should be enough but let's be on the *SAFE* side ;) */
+#define MAX_KNOW_POWERS         2

@@ -1471,7 +1471,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	player_type *p_ptr = Players[Ind];
 	int                     num = 0, k, bonus, chance;
 
-	object_type             *o_ptr;
+        object_type             *o_ptr;
 
 	char            m_name[80];
 
@@ -1872,7 +1872,8 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				msg_format(Ind, "You %s the fleeing %s!",
 						nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr));
 			else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
-			else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
+//			else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
+			else msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
 
 			/* Damage, check for fear and death */
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) break;

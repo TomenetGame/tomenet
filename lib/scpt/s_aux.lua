@@ -423,11 +423,10 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	        -- Reduce mana
 		adjust_power(i, s, -get_mana(i, s))
 
---[[ DGDGDGDG - Later
 	        -- Take a turn
-        	if is_magestaff() == TRUE then energy_use = 80
-	        else energy_use = 100 end
-]]
+                local energy = level_speed(player.wpos);
+-- DGDGDG        	if is_magestaff() == TRUE then energy = (8 * energy) / 10 end
+                player.energy = player.energy - energy
 	end
 
 	player.redraw = bor(player.redraw, PR_MANA)

@@ -22,6 +22,9 @@
 
 # bug.txt should follow the exact same format
 
+09/09/2002
+[P]- Casting spells cost a turn ;)
+
 06/09/2002
 [I]- Spells can ask for items client side directly
 [P]- Telekinesis spell, Mind/Conveyance school

@@ -1713,6 +1713,13 @@ static bool wr_savefile_new(int Ind)
 
         wr_byte(p_ptr->spell_project);
 
+        /* Special powers */
+        wr_s16b(p_ptr->power_num);
+        for (i = 0; i < MAX_POWERS; i++)
+        {
+                wr_s16b(p_ptr->powers[i]);
+        }
+
 	/* Write the "value check-sum" */
 	wr_u32b(v_stamp);
 
