@@ -688,6 +688,8 @@ player_magic *mp_ptr;*/
 header *v_head;
 vault_type *v_info;
 char *v_name;
+char spacer;
+const char spacer2;
 char *v_text;
 
 /*

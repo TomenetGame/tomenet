@@ -2732,6 +2732,7 @@ bool save_server_info(void)
 	int result = FALSE;
 	char safe[1024];
 
+	printf("save server info\n");
 	/* New savefile */
 	path_build(safe, 1024, ANGBAND_DIR_SAVE, "server.new");
 

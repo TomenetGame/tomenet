@@ -1631,7 +1631,7 @@ static errr init_other(void)
 	C_MAKE(m_list, MAX_M_IDX, monster_type);
 
 	/* Allocate and Wipe the monster list */
-	C_MAKE(t_list, MAX_T_IDX, trap_type);
+	C_MAKE(t_list, MAX_TR_IDX, trap_type);
 
 #ifndef NEW_DUNGEON
 	/* Allocate "permament" space for the town */

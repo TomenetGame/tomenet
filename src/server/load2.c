@@ -2574,7 +2574,7 @@ errr rd_server_savefile()
 		rd_u16b(&tmp16u);
 
 		/* Incompatible save files */
-		if (tmp16u > MAX_T_IDX)
+		if (tmp16u > MAX_TR_IDX)
 		{
 			note(format("Too many (%u) traps!", tmp16u));
 			return (26);
