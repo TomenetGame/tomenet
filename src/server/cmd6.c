@@ -2353,19 +2353,31 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_BLESSING:
 			{
-				if (set_blessed(Ind, p_ptr->blessed + randint(12) + 6)) ident = TRUE;
+				if (p_ptr->blessed_power == 0)
+				{
+				        p_ptr->blessed_power = 10;
+					if (set_blessed(Ind, p_ptr->blessed + randint(12) + 6)) ident = TRUE;
+				}
 				break;
 			}
 
 			case SV_SCROLL_HOLY_CHANT:
 			{
-				if (set_blessed(Ind, p_ptr->blessed + randint(24) + 12)) ident = TRUE;
+				if (p_ptr->blessed_power == 0)
+				{
+					p_ptr->blessed_power = 20;
+					if (set_blessed(Ind, p_ptr->blessed + randint(24) + 12)) ident = TRUE;
+				}
 				break;
 			}
 
 			case SV_SCROLL_HOLY_PRAYER:
 			{
-				if (set_blessed(Ind, p_ptr->blessed + randint(48) + 24)) ident = TRUE;
+				if (p_ptr->blessed_power == 0)
+				{
+					p_ptr->blessed_power = 30;
+					if (set_blessed(Ind, p_ptr->blessed + randint(48) + 24)) ident = TRUE;
+				}
 				break;
 			}
 
