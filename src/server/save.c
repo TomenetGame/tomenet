@@ -1104,8 +1104,6 @@ static void wr_extra(int Ind)
 
 	wr_string(p_ptr->name);
 
-	wr_string(p_ptr->pass);
-
 	wr_string(p_ptr->died_from);
 	wr_string(p_ptr->died_from_list);
 	wr_s16b(p_ptr->died_from_depth);
@@ -2203,6 +2201,7 @@ static void wr_player_names(void)
 		ptr=lookup_player(id_list[i]);
 		if(ptr){
 			wr_s32b(id_list[i]);
+			wr_u32b(ptr->account);
 			wr_s32b(ptr->laston);
 			/* 3.4.2 server */
 			wr_byte(ptr->level);

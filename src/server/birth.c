@@ -1431,7 +1431,7 @@ static void player_setup(int Ind, bool new)
 	{
 		time_t ttime;
 		/* Add */
-		add_player_name(p_ptr->name, p_ptr->id, 1, 0, 0, 0, time(&ttime));
+		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, 1, 0, 0, 0, time(&ttime));
 	}
 
 	/* Set his "current activities" variables */
@@ -1509,7 +1509,7 @@ static void player_setup(int Ind, bool new)
  * Note that we may be called with "junk" leftover in the various
  * fields, so we must be sure to clear them first.
  */
-bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, int sex, int stat_order[6])
+bool player_birth(int Ind, cptr name, int conn, int race, int class, int sex, int stat_order[6])
 {
 	player_type *p_ptr;
 	int i;
@@ -1531,12 +1531,8 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	/* Clear old information */
 	player_wipe(Ind);
 
-	if (!confirm_admin(Ind, name, pass)) return FALSE;
-
-
 	/* Copy his name and connection info */
 	strcpy(p_ptr->name, name);
-	strcpy(p_ptr->pass, pass);
 	p_ptr->conn = conn;
 
 	/* Verify his name and create a savefile name */
@@ -1577,10 +1573,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 
 	/* Copy his name and connection info */
 	strcpy(p_ptr->name, name);
-	strcpy(p_ptr->pass, pass);
 	p_ptr->conn = conn;
-
-	confirm_admin(Ind, name, pass);
 
 	/* Reprocess his name */
 	if (!process_player_name(Ind, TRUE)) return FALSE;
@@ -1683,21 +1676,9 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 
 /* Disallow non-authorized admin (improvement needed!!) */
 /* returns FALSE if bogus admin - Jir - */
-bool confirm_admin(int Ind, cptr name, cptr pass)
+bool confirm_admin(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-
-	if (!strcmp(name,cfg.admin_wizard))
-	{
-		if (strcmp(pass, cfg.console_password)) return FALSE;
-		else p_ptr->admin_wiz = TRUE;
-	}
-	else if (!strcmp(name, cfg.dungeon_master)) 
-	{
-		if (strcmp(pass, cfg.console_password)) return FALSE;
-		else p_ptr->admin_dm = TRUE;
-	}
-
 	return TRUE;
 }
 

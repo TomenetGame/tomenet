@@ -82,6 +82,7 @@ s16b monster_level;             /* Current monster creation level */
 s32b turn;                      /* Current game turn */
 
 s32b player_id;                 /* Current player ID */
+u32b account_id;		/* Current account ID */
 
 u16b panic_save;                /* Track some special "conditions" */
 

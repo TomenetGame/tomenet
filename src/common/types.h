@@ -1605,7 +1605,6 @@ struct player_type
 {
 	int conn;			/* Connection number */
 	char name[MAX_CHARS];		/* Nickname */
-	char pass[MAX_CHARS];		/* Password */
 	char basename[MAX_CHARS];
 	char realname[MAX_CHARS];	/* Userid */
 	char hostname[MAX_CHARS];	/* His hostname */

@@ -482,6 +482,11 @@ void client_init(char *argv1, bool skip)
 		Net_cleanup();
 		quit("Network setup failed!\n");
 	}
+	
+	if (Net_login()==-1){
+		Net_cleanup();
+		quit("Login failed!\n");
+	}
 
 	if (status == E_NEED_INFO)
 	{

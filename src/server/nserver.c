@@ -170,6 +170,7 @@ static void Init_receive(void)
 	login_receive[PKT_QUIT]			= Receive_quit;
 	login_receive[PKT_ACK]			= Receive_ack;
 	login_receive[PKT_VERIFY]		= Receive_discard;
+	login_receive[PKT_LOGIN]		= Receive_login;
 	
 	playing_receive[PKT_ACK]		= Receive_ack;
 	playing_receive[PKT_VERIFY]		= Receive_discard;
@@ -1678,7 +1679,7 @@ static int Handle_login(int ind)
 		}
 	}
 
-	if (!player_birth(NumPlayers + 1, connp->nick, connp->pass, ind, connp->race, connp->class, connp->sex, connp->stat_order))
+	if (!player_birth(NumPlayers + 1, connp->nick, ind, connp->race, connp->class, connp->sex, connp->stat_order))
 	{
 		/* Failed, connection destroyed */
 		Destroy_connection(ind, "not login");
@@ -2334,6 +2335,45 @@ static int Receive_quit(int ind)
 	return 1;
 }
 
+static int Receive_login(int ind){
+	connection_t *connp=&Conn[ind];
+	unsigned char ch;
+	int n;
+	u16b choice;
+
+	n = Sockbuf_read(&connp->r);
+
+	/* if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &choice)) != 2) */
+	if ((n = Packet_scanf(&connp->r, "%hd", &choice)) != 1)
+	{
+		errno = 0;
+		printf("%d\n",n);
+		plog("Failed reading login packet");
+		Destroy_connection(ind, "receive error");
+		return -1;
+	}
+	if(choice==0){
+		struct account *l_acc;
+		if((l_acc=GetAccount(connp->nick, connp->pass))){
+			free(connp->pass);
+			connp->pass=NULL;
+			/* Display all account characters here */
+			Packet_printf(&connp->c, "%c%s%hd%hd", PKT_LOGIN, connp->nick, 0, 0);
+		}
+		else{
+			/* fail login here */
+			Destroy_connection(ind, "login failure");
+		}
+		Sockbuf_flush(&connp->w);
+		return(0);
+	}
+	else{
+	}
+	if (connp->setup >= Setup.setup_size)
+		Conn_set_state(connp, CONN_LOGIN, CONN_LOGIN);
+	return(0);
+}
+
 #define RECEIVE_PLAY_SIZE (2*6+OPT_MAX+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX))
 //#define STRICT_RECEIVE_PLAY
 static int Receive_play(int ind)
@@ -2344,7 +2384,7 @@ static int Receive_play(int ind)
 	s16b sex, race, class;
 
 	/* XXX */
-			n = Sockbuf_read(&connp->r);
+	n = Sockbuf_read(&connp->r);
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) != 1)
 	{
@@ -2352,6 +2392,13 @@ static int Receive_play(int ind)
 		plog("Cannot receive play packet");
 		Destroy_connection(ind, "receive error");
 		return -1;
+	}
+
+	/* Do not tell me how much this sucks. I didn't do the design
+	   evileye */
+	if (ch == PKT_LOGIN){
+		Receive_login(ind);
+		return(0);
 	}
 	if (ch != PKT_PLAY)
 	{

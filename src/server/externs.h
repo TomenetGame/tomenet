@@ -143,6 +143,7 @@ extern void new_level_rand_x(struct worldpos *wpos, int x);
 extern void new_level_rand_y(struct worldpos *wpos, int y);
 extern s32b turn;
 extern s32b player_id;
+extern u32b account_id;
 extern u16b panic_save;
 extern s16b signal_count;
 extern bool inkey_base;
@@ -229,6 +230,7 @@ extern bool dungeon_stair;
 extern bool smart_learn;
 extern bool smart_cheat;
 extern s16b hitpoint_warn;
+extern u32b old_id[MAX_ID];
 extern struct swear swear[30];
 extern struct ip_ban *banlist;
 extern player_type **Players;
@@ -319,8 +321,8 @@ extern char summon_kin_type;
  */
 
 /* birth.c */
-extern bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, int sex, int stat_order[]);
-extern bool confirm_admin(int Ind, cptr name, cptr pass);
+extern bool player_birth(int Ind, cptr name, int conn, int race, int class, int sex, int stat_order[]);
+extern bool confirm_admin(int Ind);
 extern void server_birth(void);
 extern void admin_outfit(int Ind, int realm);
 
@@ -773,6 +775,7 @@ extern s16b m_bonus(int max, int level);
 extern s32b object_value_real(int Ind, object_type *o_ptr);
 
 /* party.c */
+extern struct account *GetAccount(char *name, char *pass);
 extern bool set_pkill(int Ind, int delay);
 extern int guild_lookup(cptr name);
 extern int party_lookup(cptr name);
@@ -792,7 +795,7 @@ extern bool check_ignore(int attacker, int target);
 extern bool check_hostile(int attacker, int target);
 extern cptr lookup_player_name(int id);
 extern int lookup_player_id(cptr name);
-extern void add_player_name(cptr name, int id, byte level, byte party, byte guild, u16b quest, time_t laston);
+extern void add_player_name(cptr name, int id, u32b account, byte level, byte party, byte guild, u16b quest, time_t laston);
 extern void delete_player_id(int id);
 extern void delete_player_name(cptr name);
 extern int player_id_list(int **list);

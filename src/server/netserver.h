@@ -78,6 +78,7 @@ void do_quit(int ind, bool tellclient);
 
 static int Receive_quit(int ind);
 static int Receive_play(int ind);
+static int Receive_login(int ind);
 static int Receive_ack(int ind);
 static int Receive_discard(int ind);
 static int Receive_undefined(int ind);

@@ -16,6 +16,83 @@ static void del_party(int id);
 static void party_msg(int party_id, cptr msg);
 static void del_guild(int id);
 static void guild_msg(int guild_id, cptr msg);
+static u32b new_accid(void);
+
+/* most account type stuff was already in here.
+   a separate file should probably be made in
+   order to split party/guild from account
+   and database handling */
+/* Note. Accounts will be deleted when empty
+   They will not be subject to their own 90
+   days timeout, but will be removed upon
+   the removal of the last character. */
+struct account *GetAccount(char *name, char *pass){
+	FILE *fp;
+	struct account *c_acc;
+
+	MAKE(c_acc, struct account);
+	if(c_acc==(struct account*)NULL) return(NULL);
+	fp=fopen("tomenet.acc", "r+");
+	if(fp==(FILE*)NULL) return(NULL);	/* failed */
+	while(!feof(fp)){
+		fread(c_acc, sizeof(struct account), 1, fp);
+		if(!strcmp(c_acc->name, name)){
+			int val;
+			if(c_acc->flags & ACC_DELD) continue;
+			val=strcmp(c_acc->pass, pass);
+			memset((char *)c_acc->pass, 0, 20);
+			if(val){
+				fclose(fp);
+				KILL(c_acc, struct account);
+				return(NULL);
+			}
+			fclose(fp);
+			return(c_acc);
+		}
+	}
+	/* No account found. Create trial account */ 
+	c_acc->id=new_accid();
+	if(c_acc->id!=0L){
+		c_acc->flags=(ACC_TRIAL|ACC_NOSCORE);
+		strcpy(c_acc->name, name);
+		strcpy(c_acc->pass, pass);
+		fwrite(c_acc, sizeof(struct account), 1, fp);
+	}
+	memset((char *)c_acc->pass, 0, 20);
+	fclose(fp);
+	if(c_acc->id) return(c_acc);
+	KILL(c_acc, struct account);
+	return(NULL);
+}
+
+static u32b new_accid(){
+	u32b id;
+	FILE *fp;
+	char *t_map;
+	struct account t_acc;
+	id=account_id;
+	fp=fopen("tomenet.acc", "r");
+	if(fp==(FILE*)NULL) return(0L);
+	t_map=malloc(MAX_ACCOUNTS/8);
+	while(!feof(fp)){
+		fread(&t_acc, sizeof(struct account), 1, fp);
+		t_map[t_acc.id/8]|=(1<<(t_acc.id%8));
+	}
+	fclose(fp);
+	for(id=account_id; id<MAX_ACCOUNTS; id++){
+		if(!(t_map[id/8]&(1<<(id%8)))) break;
+	}
+	if(id==MAX_ACCOUNTS){
+		for(id=1; id<account_id; id++){
+			if(!(t_map[id/8]&(1<<(id%8)))) break;
+		}
+	}
+	free(t_map);
+	if(id==account_id) return(0);
+	account_id=id+1;
+
+	return(id);	/* temporary */
+}
 
 /*
  * Lookup a guild number by name.
@@ -1878,7 +1955,7 @@ void scan_players(){
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, byte level, byte party, byte guild, u16b quest, time_t laston)
+void add_player_name(cptr name, int id, u32b account, byte level, byte party, byte guild, u16b quest, time_t laston)
 {
 	int slot;
 	hash_entry *ptr;
@@ -1895,6 +1972,7 @@ void add_player_name(cptr name, int id, byte level, byte party, byte guild, u16b
 	ptr->name = strdup(name);
 	ptr->laston = laston;
 	ptr->id = id;
+	ptr->account = account;
 	ptr->level = level;
 	ptr->party = party;
 	ptr->guild = guild;

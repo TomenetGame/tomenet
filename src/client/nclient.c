@@ -70,6 +70,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_START]		= Receive_start;
 	receive_tbl[PKT_END]		= Receive_end;
 /*	receive_tbl[PKT_CHAR]		= Receive_char;*/
+	receive_tbl[PKT_LOGIN]		= Receive_login;
 	
 
 	/*reliable_tbl[PKT_LEAVE]		= Receive_leave;*/
@@ -125,6 +126,18 @@ static void Receive_init(void)
 	receive_tbl[PKT_SKILL_MOD] 	= Receive_skill_info;
 	receive_tbl[PKT_STORE_LEAVE] 	= Receive_store_kick;
 	receive_tbl[PKT_CHARDUMP] 	= Receive_chardump;
+}
+
+
+int Receive_login(void){
+	int n;
+	char ch;
+	char c_name[200];	/* change later */
+	s16b c_race, c_class;
+	if ((n = Packet_scanf(&rbuf, "%c%s%hd%hd", &ch, c_name, &c_race, &c_class)) <= 0){
+		return(-1);
+	}
+	return(1);
 }
 
 // I haven't really figured out this function yet.  It looks to me like
@@ -519,6 +532,29 @@ int Net_fd(void)
 	return rbuf.sock;
 }
 
+int Net_login(){
+	Sockbuf_clear(&wbuf);
+	Packet_printf(&wbuf, "%c%hd", PKT_LOGIN, 0);
+	if (Sockbuf_flush(&wbuf) == -1)
+	{
+		quit("Can't send first login packet");
+	}
+	SetTimeout(5, 0);	
+	if (!SocketReadable(rbuf.sock))
+	{
+		errno = 0;
+		quit("No login reply received.");
+	}
+	Sockbuf_clear(&rbuf);
+	Sockbuf_read(&rbuf);
+	Receive_login();
+	Packet_printf(&wbuf, "%c%hd", PKT_LOGIN, 1);
+	if (Sockbuf_flush(&wbuf) == -1)
+	{
+		quit("Can't send login packet");
+	}
+	return(0);
+}
 
 /*
  * Try to send a `start play' packet to the server and get an
@@ -1168,7 +1204,7 @@ int Receive_sanity(void)
 	strcpy(c_p_ptr->sanity, buf);
 	c_p_ptr->sanity_attr = attr;
 	if (!screen_icky && !shopping){
-		prt_sane(attr, &buf);
+		prt_sane(attr, (char*)buf);
 	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c%s", ch, attr, buf)) <= 0)

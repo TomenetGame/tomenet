@@ -27,6 +27,7 @@
  * Initial revision
  *
  */
+
 #include "angband.h"
 
 #ifdef SET_UID

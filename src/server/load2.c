@@ -1154,7 +1154,6 @@ static void rd_ghost(void)
 static bool rd_extra(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	char pass[80];
 
 	int i;
 	monster_race *r_ptr;
@@ -1163,21 +1162,6 @@ static bool rd_extra(int Ind)
 	u16b tmp16b;
 
 	rd_string(p_ptr->name, 32);
-
-	rd_string(pass, 80);
-
-	if (cfg.runlevel == 1024)
-	{
-		/* Hack -- character edit mode */
-		if (strcmp(cfg.console_password, p_ptr->pass)) return TRUE;
-		else strcpy(p_ptr->pass, pass);
-	}
-	else
-	{
-		/* Old 'guest' hack -- DELETEME */
-		if (strcmp(pass, p_ptr->pass) && strcmp("Guest", p_ptr->name))
-			return TRUE;
-	}
 
 	rd_string(p_ptr->died_from, 80);
 
@@ -2138,8 +2122,6 @@ static errr rd_savefile_new_aux(int Ind)
 		}
 	}
 
-	(void)confirm_admin(Ind, p_ptr->name, p_ptr->pass);
-
 	/* Success */
 	return (0);
 }
@@ -2404,6 +2386,7 @@ errr rd_server_savefile()
 	{
 		char name[80];
 		byte level, party, guild;
+		u32b acct;
 		u16b quest;
 
 		rd_u32b(&tmp32u);
@@ -2415,6 +2398,7 @@ errr rd_server_savefile()
 
 			/* Read the ID */
 			rd_s32b(&tmp32s);
+			rd_u32b(&acct);
 			rd_s32b(&laston);
 			if(!older_than(3,4,2)){
 				rd_byte(&level);
@@ -2437,7 +2421,7 @@ errr rd_server_savefile()
 			rd_string(name, 80);
 
 			/* Store the player name */
-			add_player_name(name, tmp32s, level, party, guild, quest, laston);
+			add_player_name(name, tmp32s, acct, level, party, guild, quest, laston);
 		}
 	}
 
