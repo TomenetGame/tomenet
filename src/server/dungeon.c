@@ -492,6 +492,9 @@ void erase_effects(int effect)
 	worldpos *wpos = &e_ptr->wpos;
 	cave_type **zcave;
 	cave_type *c_ptr;
+	int rad = e_ptr->rad;
+	int cy = e_ptr->cy;
+	int cx = e_ptr->cx;
 
 	e_ptr->time = 0;
 
@@ -505,10 +508,11 @@ void erase_effects(int effect)
 
 	if(!(zcave=getcave(wpos))) return;
 
-	for (l = 0; l < tdi[e_ptr->rad]; l++)
+	/* XXX +1 is needed.. */
+	for (l = 0; l < tdi[rad + 0]; l++)
 	{
-		j = e_ptr->cy + tdy[l];
-		i = e_ptr->cx + tdx[l];
+		j = cy + tdy[l];
+		i = cx + tdx[l];
 		if (!in_bounds2(wpos, j, i)) continue;
 
 		c_ptr = &zcave[j][i];
@@ -524,8 +528,20 @@ void erase_effects(int effect)
 /*
  * Handle staying spell effects once every 10 game turns
  */
-/* TODO: excise dead effect */
-/* TODO: allow players/monsters to 'cancel' the effect */
+/*
+ * TODO:
+ * - excise dead effect for efficiency
+ * - allow players/monsters to 'cancel' the effect
+ * - implement EFF_LAST eraser (for now, no spell has this flag)
+ * - reduce the use of everyone_lite_spot (one call, one packet)
+ */
+/*
+ * XXX Check it:
+ * - what happens if the player dies?
+ * - what happens to the storm/wave when player changes floor?
+ *   (A. the storm is left on the original floor, and still try to follow
+ *    the caster, pfft)
+ */
 static void process_effects(void)
 {
 	int i, j, k, l;
@@ -561,6 +577,13 @@ static void process_effects(void)
 		/* Reduce duration */
 		e_ptr->time--;
 
+		/* It ends? */
+		if (e_ptr->time <= 0)
+		{
+			erase_effects(k);
+			continue;
+		}
+
 		if (e_ptr->who > 0) who = e_ptr->who;
 		else
 		{
@@ -594,35 +617,39 @@ static void process_effects(void)
 
 			c_ptr = &zcave[j][i];
 
-			if (c_ptr->effect != k) continue;
-
-			if (e_ptr->time)
-			{
-				/* Apply damage */
-				project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
-						PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP);
-
-				/* Oh, destroyed? RIP */
-				if (who < 0 && who != PROJECTOR_EFFECT &&
-						Players[0 - who]->conn == NOT_CONNECTED)
-				{
-					who = PROJECTOR_EFFECT;
-				}
-			}
+			//if (c_ptr->effect != k) continue;
+			if (c_ptr->effect != k)	/* Nothing */;
 			else
 			{
-				c_ptr->effect = 0;
-				everyone_lite_spot(wpos, j, i);
-			}
 
-			/* Hack -- notice death */
-			//	if (!alive || death) return;
-			/* Storm ends if the cause is gone */
-			if (e_ptr->flags & EFF_STORM &&
-					(who == PROJECTOR_EFFECT || Players[0 - who]->death))
-			{
-				erase_effects(k);
-				break;
+				if (e_ptr->time)
+				{
+					/* Apply damage */
+					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
+							PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP);
+
+					/* Oh, destroyed? RIP */
+					if (who < 0 && who != PROJECTOR_EFFECT &&
+							Players[0 - who]->conn == NOT_CONNECTED)
+					{
+						who = PROJECTOR_EFFECT;
+					}
+				}
+				else
+				{
+					c_ptr->effect = 0;
+					everyone_lite_spot(wpos, j, i);
+				}
+
+				/* Hack -- notice death */
+				//	if (!alive || death) return;
+				/* Storm ends if the cause is gone */
+				if (e_ptr->flags & EFF_STORM &&
+						(who == PROJECTOR_EFFECT || Players[0 - who]->death))
+				{
+					erase_effects(k);
+					break;
+				}
 			}
 
 
@@ -638,11 +665,17 @@ static void process_effects(void)
 				if ((e_ptr->flags & EFF_WAVE))
 				{
 					if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2)
+					{
 						c_ptr->effect = 0;
+						everyone_lite_spot(wpos, j, i);
+					}
 				}
 				else if ((e_ptr->flags & EFF_STORM))
 				{
-					c_ptr->effect = 0;
+					{
+						c_ptr->effect = 0;
+						everyone_lite_spot(wpos, j, i);
+					}
 				}
 			}
 #endif	// 0
@@ -652,7 +685,10 @@ static void process_effects(void)
 			{
 				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) &&
 						(distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad))
-					c_ptr->effect = i;
+				{
+					c_ptr->effect = k;
+					everyone_lite_spot(wpos, j, i);
+				}
 			}
 		}
 
@@ -675,7 +711,10 @@ static void process_effects(void)
 
 				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) &&
 						(distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad))
-					c_ptr->effect = i;
+				{
+					c_ptr->effect = k;
+					everyone_lite_spot(wpos, j, i);
+				}
 			}
 		}
 	}
@@ -2254,7 +2293,7 @@ static bool process_player_end_aux(int Ind)
 	{
 		if (p_ptr->stat_cnt[i] > 0)
 		{
-			p_ptr->stat_cnt[i] -= 1 - recovery;
+			p_ptr->stat_cnt[i] -= (1 + recovery);
 			if (p_ptr->stat_cnt[i] <= 0)
 			{
 				do_res_stat_temp(Ind, i);
@@ -2520,7 +2559,8 @@ static bool process_player_end_aux(int Ind)
 		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
 
 		/* Apply some healing */
-		(void)set_poisoned(Ind, p_ptr->poisoned - adjust - recovery * 2);
+		//(void)set_poisoned(Ind, p_ptr->poisoned - adjust - recovery * 2);
+		(void)set_poisoned(Ind, p_ptr->poisoned - (adjust + recovery) * (recovery + 1));
 	}
 
 	/* Stun */
@@ -2529,7 +2569,8 @@ static bool process_player_end_aux(int Ind)
 		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
 
 		/* Apply some healing */
-		(void)set_stun(Ind, p_ptr->stun - adjust - recovery * 2);
+		//(void)set_stun(Ind, p_ptr->stun - adjust - recovery * 2);
+		(void)set_stun(Ind, p_ptr->stun - (adjust + recovery) * (recovery + 1));
 	}
 
 	/* Cut */
@@ -2544,7 +2585,8 @@ static bool process_player_end_aux(int Ind)
 		if (p_ptr->biofeedback) adjust += adjust + 10;
 
 		/* Apply some healing */
-		(void)set_cut(Ind, p_ptr->cut - adjust - recovery * 2);
+		//(void)set_cut(Ind, p_ptr->cut - adjust - recovery * 2);
+		(void)set_cut(Ind, p_ptr->cut - (adjust + recovery) * (recovery + 1));
 	}
 
 	/*** Process Light ***/

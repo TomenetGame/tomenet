@@ -1457,32 +1457,41 @@ void do_cmd_mimic(int Ind, int spell)
 /*
  * School spells !
  */
+/* Hrm, 'item' should be used for spells like Identify;
+ * TODO: revise the PKT_ACTIVATE_SKILL packet type
+ */
 void cast_school_spell(int Ind, int spell, int dir, int item)
 {
-        player_type *p_ptr = Players[Ind];
-        object_type *o_ptr = &p_ptr->inventory[item];
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &p_ptr->inventory[item];
 
-        if (o_ptr->tval != TV_BOOK)
-        {
-                msg_print(Ind, "Ahah dont try to hack your client please :) :: tval");
-                return;
-        }
-        else if (o_ptr->sval == 255)
-        {
-                if (o_ptr->pval != spell)
-                {
-                        msg_print(Ind, "Ahah dont try to hack your client please :) :: sval 255");
-                        return;
-                }
-        }
-        else
-        {
-                if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE)
-                {
-                        msg_print(Ind, "Ahah dont try to hack your client please :) :: sval != 255");
-                        return;
-                }
-        }
+	if (!can_use(Ind, o_ptr))
+	{
+		msg_print(Ind, "You are not high level enough.");
+		return;
+	}
+
+	if (o_ptr->tval != TV_BOOK)
+	{
+		msg_print(Ind, "Ahah dont try to hack your client please :) :: tval");
+		return;
+	}
+	else if (o_ptr->sval == 255)
+	{
+		if (o_ptr->pval != spell)
+		{
+			msg_print(Ind, "Ahah dont try to hack your client please :) :: sval 255");
+			return;
+		}
+	}
+	else
+	{
+		if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE)
+		{
+			msg_print(Ind, "Ahah dont try to hack your client please :) :: sval != 255");
+			return;
+		}
+	}
 
 	/* No magic */
 	if (p_ptr->antimagic)
@@ -1491,9 +1500,11 @@ void cast_school_spell(int Ind, int spell, int dir, int item)
 		return;
 	}
 
+	/* TODO: use energy */
+
 	/* Actualy cast the choice */
 	if (spell != -1)
-        {
-                exec_lua(Ind, format("cast_school_spell(%d, %d, spell(%d), nil, {dir = %d, book = %d})", Ind, spell, spell, dir, item));
+	{
+		exec_lua(Ind, format("cast_school_spell(%d, %d, spell(%d), nil, {dir = %d, book = %d})", Ind, spell, spell, dir, item));
 	}
 }

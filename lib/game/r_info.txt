@@ -2412,7 +2412,9 @@ D:enough to bore through solid rock.
 N:162:Mindcrafter
 G:p:y
 I:110:9d8:20:15:20
-W:16:2:1700:50
+# temporarily moved deeper (till MIND_BLAST will be changed)
+#W:16:2:1700:50
+W:24:2:1700:50
 E:1:1:1:2:1:1
 O:30:40:30:0
 B:HIT:HURT:2d4

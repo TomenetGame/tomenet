@@ -249,6 +249,7 @@ static hist_type bg[] =
 	{"leprous skin.",                                               100, 66, 0, 50},
 
 
+#if 0
 	{"You are one of several children of a DragonRider. ", 85, 89, 91, 50  },
 	{"You are the only child of a DragonRider. ", 100, 89, 91, 60 },
 
@@ -257,6 +258,17 @@ static hist_type bg[] =
 	{"You have a Brown Dragon.", 80, 91, 0, 80 },
 	{"You have a Bronze Dragon.", 90, 91, 0, 100 },
 	{"You have a Gold Dragon.", 100, 91, 0, 120},
+#else	// 0
+	/* XXX lol.. change it */
+	{"You are one of several children of a Thunderlord. ", 85, 89, 91, 50  },
+	{"You are the only child of a Thunderlord. ", 100, 89, 91, 60 },
+
+	{"You have a Green Eagle.", 30, 91, 0, 40 },
+	{"You have a Blue Eagle.", 55, 91, 0, 60 },
+	{"You have a Brown Eagle.", 80, 91, 0, 80 },
+	{"You have a Bronze Eagle.", 90, 91, 0, 100 },
+	{"You have a Gold Eagle.", 100, 91, 0, 120},
+#endif	// 0
 
 	{"You are of an unknown generation of the Ents.",        30, 94, 95, 30},
 	{"You are of the third generation of the Ents.",         40, 94, 95, 50},
@@ -892,21 +904,26 @@ static void player_wipe(int Ind)
  * In addition, he always has some food and a few torches.
  */
 
+/*
+ * If { 0, 0} or other 'illigal' item, one random item from bard_init
+ * will be given instead.	- Jir -
+ */
 static byte player_init[MAX_CLASS][3][2] =
 {
 	{
 		/* Adventurer */
-		{ TV_RING, SV_RING_SEE_INVIS },
+//		{ TV_RING, SV_RING_SEE_INVIS },
 //		{ TV_BOOK, 50 },
 		{ TV_SWORD, SV_SABRE },
-		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR }
+		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR },
+		{ 0, 0},
 	},
 
 	{
 		/* Warrior */
 		{ TV_POTION, SV_POTION_BESERK_STRENGTH },
 		{ TV_SWORD, SV_BROAD_SWORD },
-		{ TV_HARD_ARMOR, SV_CHAIN_MAIL }
+		{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
 	},
 
 	{
@@ -921,43 +938,77 @@ static byte player_init[MAX_CLASS][3][2] =
 		{ TV_HAFTED, SV_MACE },
 		{ TV_POTION, SV_POTION_HEALING },
 		/* XXX Some kind of prayer book should be here */
-		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL },
+		// { TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL },
+		{ TV_BOOK, 50 },
 	},
 
 	{
 		/* Rogue */
 		{ TV_SWORD, SV_MAIN_GAUCHE },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
-		{ TV_TRAPKIT, SV_TRAPKIT_SLING }
+		{ TV_TRAPKIT, SV_TRAPKIT_SLING },
 	},
 
 	{
 		/* Mimic */
 		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
 		{ TV_SWORD, SV_LONG_SWORD },
-		{ TV_HARD_ARMOR, SV_CHAIN_MAIL }
+		{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
 	},
 
 	{
 		/* Archer */
 		{ TV_ARROW, SV_AMMO_MAGIC },
 		{ TV_BOW, SV_LONG_BOW },
-		{ TV_BOW, SV_SLING }	/* was Hunting book */
+		{ TV_BOW, SV_SLING },	/* was Hunting book */
 	},
 
 	{
 		/* Bard */
-		{ TV_RING, SV_RING_SEE_INVIS },
+		//{ TV_RING, SV_RING_SEE_INVIS },
 		{ TV_SWORD, SV_SABRE },
-		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR }
+		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR },
+		{ 0, 0},
 	},
 
 };
 
 
+#define BARD_INIT_NUM	15
+static byte bard_init[BARD_INIT_NUM][2] =
+{
+	{ TV_RING, SV_RING_SEE_INVIS },
+	{ TV_BOOK, 50 },
+	{ TV_BOW, SV_LONG_BOW },
+	{ TV_TRAPKIT, SV_TRAPKIT_SLING },
+	{ TV_POTION, SV_POTION_BESERK_STRENGTH },
+
+	{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
+	{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+	{ TV_HAFTED, SV_MACE },
+	{ TV_POTION, SV_POTION_HEALING },
+	{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL },
+
+	{ TV_SWORD, SV_LONG_SWORD },
+	{ TV_ARROW, SV_AMMO_MAGIC },
+	{ TV_HAFTED, SV_WHIP },
+	{ TV_LITE, SV_LITE_LANTERN },
+	{ TV_TOOL, SV_TOOL_FLINT },
+};
+
+#define do_admin_outfit()	\
+	object_aware(Ind, o_ptr); \
+	object_known(o_ptr); \
+	o_ptr->discount = 100; \
+	o_ptr->ident |= ID_MENTAL; \
+	o_ptr->owner = p_ptr->id; \
+	o_ptr->level = 1; \
+	(void)inven_carry(Ind, o_ptr);
+
 /*
  * Give the cfg_admin_wizard some interesting stuff.
  */
+/* XXX 'realm' is not used */
 void admin_outfit(int Ind, int realm)
 {
 	player_type *p_ptr = Players[Ind];
@@ -974,159 +1025,91 @@ void admin_outfit(int Ind, int realm)
 	/* Hack -- assume the player has an initial knowledge of the area close to town */
 	for (i = 0; i < MAX_WILD_X*MAX_WILD_Y; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
 
-        for (i = 0; i < 255; i++)
-        {
-                int k_idx = lookup_kind(TV_BOOK, i);
+	for (i = 0; i < 255; i++)
+	{
+		int k_idx = lookup_kind(TV_BOOK, i);
 
-                if (!k_idx) continue;
-                invcopy(o_ptr, k_idx);
-                o_ptr->number = 3;
-                o_ptr->discount = 100;
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
-                apply_magic(&p_ptr->wpos, o_ptr, 1, TRUE, FALSE, FALSE);
-                object_known(o_ptr);
-                object_aware(Ind, o_ptr);
-                (void)inven_carry(Ind, o_ptr);
-        }
+		if (!k_idx) continue;
+		invcopy(o_ptr, k_idx);
+		o_ptr->number = 3;
+		apply_magic(&p_ptr->wpos, o_ptr, 1, TRUE, FALSE, FALSE);
+		do_admin_outfit();
+	}
 
-        invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
+	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
 	o_ptr->number = 99;
-	o_ptr->discount = 100;
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
 	o_ptr->note = quark_add("@r8");
-	object_known(o_ptr);
-	object_aware(Ind, o_ptr);
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
+
 #if 1
 	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_EXPERIENCE));
 	o_ptr->number = 99;
-	o_ptr->discount = 100;
-	object_known(o_ptr);
-	object_aware(Ind, o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
 #endif
 	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
 	o_ptr->number = 99;
-	o_ptr->discount = 100;
-	object_known(o_ptr);
-	object_aware(Ind, o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
 	o_ptr->note = note;
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
 #if 0
 	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL));
 	o_ptr->number = 98;
-	o_ptr->discount = 100;
-	object_known(o_ptr);
-	object_aware(Ind, o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
-	//		o_ptr->note = quark_add("@R-3000");
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
 #endif
 	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_AUGMENTATION));
 	o_ptr->number = 99;
-	o_ptr->discount = 100;
-	object_known(o_ptr);
-	object_aware(Ind, o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
 
 	invcopy(o_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
 	o_ptr->number = 99;
-	o_ptr->discount = 100;
-	object_known(o_ptr);
-	object_aware(Ind, o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
 
 	invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_LIFE));
 	o_ptr->number = 30;
-	o_ptr->discount = 0;
 	o_ptr->pval = 10;
-	object_known(o_ptr);
-	object_aware(Ind, o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
 	o_ptr->note = note;
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
 #if 0
 	invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_PROBING));
 	o_ptr->number = 1;
 	o_ptr->pval = 30000;
-	o_ptr->discount = 0;
-	object_known(o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
-	(void)inven_carry(Ind, o_ptr);
-
-	invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_FORTUNE_COOKIE));
-	o_ptr->number = 99;
-	o_ptr->discount = 0;
-	object_known(o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
 #endif	// 0
 
 	invcopy(o_ptr, lookup_kind(TV_ARROW, SV_AMMO_MAGIC));
 	o_ptr->note = quark_add("@f1");
 	apply_magic_depth(1, o_ptr, -1, FALSE, FALSE, FALSE);
 	o_ptr->number = 98;
-	o_ptr->discount = 0;
-	object_known(o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
 
 #if 0
 	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_INVIS));
 	o_ptr->number = 9;
-	o_ptr->discount = 100;
-	object_known(o_ptr);
-	object_aware(Ind, o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
 
 	/* Ifrit bug report */
 	invcopy(o_ptr, lookup_kind(TV_SWORD, SV_BROAD_SWORD));
 	o_ptr->name1 = ART_GLAMDRING;
 	apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
 	o_ptr->number = 1;
-	o_ptr->discount = 0;
-	object_known(o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
 
 	invcopy(o_ptr, lookup_kind(TV_GLOVES, SV_SET_OF_CESTI));
 	o_ptr->name1 = ART_FINGOLFIN;
 	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
 	o_ptr->number = 1;
-	o_ptr->discount = 0;
-	object_known(o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
 #endif
 
 	invcopy(o_ptr, lookup_kind(TV_HAFTED, SV_GROND));
 	o_ptr->name1 = ART_GROND;
 	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
 	o_ptr->number = 1;
-	o_ptr->discount = 0;
-	object_known(o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 1;
-	(void)inven_carry(Ind, o_ptr);
+	do_admin_outfit();
+
+	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
+	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
+	o_ptr->number = 1;
+	do_admin_outfit();
 }
 
 #define do_player_outfit()	\
@@ -1137,6 +1120,7 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->level = 0; \
 	(void)inven_carry(Ind, o_ptr);
 
+
 /*
  * Init players with some belongings
  *
@@ -1145,12 +1129,11 @@ void admin_outfit(int Ind, int realm)
 static void player_outfit(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int             i, tv, sv;
+	int             i, j, tv, sv, k_idx;
 
 	object_type     forge;
 
 	object_type     *o_ptr = &forge;
-
 
 	/* Hack -- Give the player some food */
 	if (p_ptr->prace == RACE_ENT)
@@ -1171,6 +1154,13 @@ static void player_outfit(int Ind)
 		o_ptr->number = rand_range(3, 7);
 	}
 	do_player_outfit();
+
+	/* special outfits for admin (pack overflows!) */
+	if (is_admin(p_ptr))
+	{
+		admin_outfit(Ind, 0);
+		return;
+	}
 
 	/* Hack -- Give the player some torches */
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
@@ -1200,16 +1190,27 @@ static void player_outfit(int Ind)
 	{
 		tv = player_init[p_ptr->pclass][i][0];
 		sv = player_init[p_ptr->pclass][i][1];
-		invcopy(o_ptr, lookup_kind(tv, sv));
-		do_player_outfit();
+		k_idx = lookup_kind(tv, sv);
+		if (k_idx < 2)	/* '1' is 'something' */
+		{
+			j = rand_int(BARD_INIT_NUM);
+			k_idx = lookup_kind(bard_init[j][0], bard_init[j][1]);
+		}
+		if (k_idx > 1)
+		{
+			invcopy(o_ptr, k_idx);
+			do_player_outfit();
+		}
 	}
 	
+	/* Firestones for Dragonriders */
 	if (p_ptr->prace == RACE_DRIDER)
 	{
 		invcopy(o_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
 		o_ptr->number = rand_range(3, 7);
 		do_player_outfit();
 	}
+
 
 	/* Hack -- Give the player newbie guide Parchment */
 	invcopy(o_ptr, lookup_kind(TV_PARCHEMENT, SV_PARCHMENT_NEWBIE));
@@ -1488,10 +1489,12 @@ static void do_bard_skill(int Ind)
 
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
+		/* Receives most of 'father' skills for free */
 		if (i == SKILL_COMBAT || i == SKILL_MASTERY ||
 				i == SKILL_ARCHERY || i == SKILL_MAGIC ||
 				i == SKILL_SNEAKINESS || i == SKILL_HEALTH ||
 //				i == SKILL_NECROMANCY ||
+				i == SKILL_SPELL ||
 				i == SKILL_AURA_POWER || i == SKILL_DODGE) continue;
 
 		if (magik(67))

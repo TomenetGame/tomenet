@@ -113,7 +113,7 @@ s32b m_top = 0;                 /* Monster top size */
 server_opts cfg =
 {
 	/* others */
-	6, 0,		// runlevel, closetime (NOT config options)
+	6, 0, 0,	// runlevel, runtime, closetime (NOT config options)
 
 	/* char * */
 	"mangband.org",		// meta_address
@@ -121,6 +121,7 @@ server_opts cfg =
 	"changeme",		// console_password
 	"Serverchez",		// admin_wizard
 	"DungeonMaster",	// dungeon_master
+	"", "",	// wserver, pass
 
 	/* s32b */
 	201,		// preserve_death_level

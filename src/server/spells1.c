@@ -4019,7 +4019,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note = " is immune.";
 				dam = 0;
 			}
-			else if (r_ptr->flags7 && RF7_AQUATIC)
+			else if (r_ptr->flags7 & RF7_AQUATIC)
 			{
 				note = " resists a lot.";
 				dam /= 9;
@@ -4039,7 +4039,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note = " is immune.";
 				dam = 0;
 			}
-			else if (r_ptr->flags7 && RF7_AQUATIC)
+			else if (r_ptr->flags7 & RF7_AQUATIC)
 			{
 				note = " resists.";
 				note = " resists a lot.";
@@ -7157,7 +7157,26 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		{
 			/* I believe it's not right */
 //			effect = new_effect(typ, dam, project_time, py, px, rad, project_time_effect);
-			effect = new_effect(who, typ, dam, project_time, wpos, y2, x2, rad, project_time_effect);
+			/* MEGAHACK -- quick hack to make fire_wall work
+			 * this should be rewritten!	- Jir -
+			 *
+			 * It registers the 'wall' as if it was a ball:
+			 *
+			 *       |--dist_hack--|
+			 * (y,x) *------+------* (y2,x2)
+			 *              +pseudo 'centre'
+			 */
+			if (rad == 0)
+			{
+				effect = new_effect(who, typ, dam, project_time, wpos,
+						(y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
+						project_time_effect);
+			}
+			else
+			{
+				effect = new_effect(who, typ, dam, project_time, wpos,
+						y2, x2, rad, project_time_effect);
+			}
 			project_time = 0;
 			project_time_effect = 0;
 		}

@@ -169,7 +169,7 @@ C:120:100:80
 N:25:Palano(Thunderlord)
 I:0:210:115:6:6
 C:120:100:80
-L:DragonRider
+L:Thunderlord
 
 N:26:Ludwig the Humble(Dwarf)
 I:5000:175:109:6:15

@@ -1878,7 +1878,7 @@ void calc_bonuses(int Ind)
 			if (p_ptr->lev >= 50) p_ptr->telepathy = ESP_ALL;
 		}
 
-		/* DragonRider */
+		/* Thunderlord (former DragonRider) */
 		else if (p_ptr->prace == RACE_DRIDER)
 		{
 			p_ptr->feather_fall = TRUE;

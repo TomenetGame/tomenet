@@ -1568,6 +1568,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '%', 110,
                         },
+                        {
+                                SKILL_DIG,
+                                '+', 1000,
+                                '+', 300,
+                        },
 				},
 	},
 
@@ -1705,6 +1710,7 @@ player_race race_info[MAX_RACES] =
                 0xFFFFFFFF,
                 105,
                 {
+						/* Dunadan makes good generalist */
                         {
                                 SKILL_COMBAT,
                                 '+', 0,
@@ -1833,16 +1839,34 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 1000,
-                                '+', 100,
+                                '+', 200,
+                        },
+						/* Ent loves water and the Earth */
+                        {
+                                SKILL_EARTH,
+                                '+', 0,
+                                '%', 120,
+                        },
+                        {
+                                SKILL_WATER,
+                                '+', 0,
+                                '%', 120,
+                        },
+						/* But hates fire */
+                        {
+                                SKILL_FIRE,
+                                '+', 0,
+                                '%', 60,
                         },
                 },
 	},
 	{
-                "DragonRider",
-                {  6,  3,  -10,  0,  5,  5 },
+                "Thunderlord",	// "DragonRider",
+//                {  6,  3,  -10,  0,  5,  5 },
+                {  6,  2,  1,  1,  3,  8 },
                 6,  0,  10,  -16,  30,  10,  15,  5,
                 12,  450,
-		14,  6,
+                14,  6,
                 180,  6, 255, 25,
                 150,  4, 230, 20,
                 0,
@@ -1858,6 +1882,17 @@ player_race race_info[MAX_RACES] =
                                 SKILL_AURA_FEAR,
                                 '+', 2000,
                                 '+', 300,
+                        },
+						/* TL is jumpy */
+                        {
+                                SKILL_CONVEYANCE,
+                                '+', 0,
+                                '+', 200,
+                        },
+                        {
+                                SKILL_FIRE,
+                                '+', 0,
+                                '%', 120,
                         },
 				},
         },
@@ -2057,11 +2092,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 600,
                         },
                         {
-                                SKILL_CONVEYANCE,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
                                 SKILL_META,
                                 '+', 0,
                                 '+', 600,
@@ -2180,12 +2210,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 SKILL_INTERCEPT,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
 
                 }
@@ -2313,7 +2343,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_INTERCEPT,
@@ -2375,7 +2405,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 0,
-                                '+', 600,
+                                '+', 800,
                         },
                         {
                                 SKILL_SWIM,
@@ -2491,6 +2521,57 @@ player_class class_info[MAX_CLASS] =
                                 '+', 2000,
                                 '+', 900,
                         },
+						/* No religion
+						 * Let them be kind of druid/priests.
+						 * nature, divination, meta, conveyance at least,
+						 * some elemental maybe
+						 */
+                        {
+                                SKILL_SPELL,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_NATURE,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_DIVINATION,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_META,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_CONVEYANCE,
+                                '+', 0,
+                                '+', 700,
+                        },
+						/* Maybe 1-2 random elemental schools? */
+                        {
+                                SKILL_FIRE,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_WATER,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_AIR,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_EARTH,
+                                '+', 0,
+                                '+', 600,
+                        },
                         {
                                 SKILL_PRAY,
                                 '+', 1000,
@@ -2545,7 +2626,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 0,
-                                '+', 600,
+                                '+', 900,
                         },
                 }
 	},
@@ -2592,6 +2673,17 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_MAGIC,
                                 '+', 1000,
                                 '+', 500,
+                        },
+						/* They can be changed */
+                        {
+                                SKILL_CONVEYANCE,
+                                '+', 0,
+                                '+', 400,
+                        },
+                        {
+                                SKILL_DIVINATION,
+                                '+', 0,
+                                '+', 400,
                         },
                         {
                                 SKILL_SHADOW,
@@ -2657,7 +2749,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_SWIM,
@@ -2677,7 +2769,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_INTERCEPT,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 800,
                         },
                 }
         },
@@ -2760,7 +2852,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
                 }
 	},
@@ -2877,7 +2969,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 0,
-                                '+', 800,
+                                '+', 900,
                         },
                 }
 	},
@@ -2886,7 +2978,7 @@ player_class class_info[MAX_CLASS] =
 	/* Basically it's copy of Adventurer */
 	/* TODO: devise another name - Bard is for music class */
 	{
-                "Bard",
+                "Libertine",	// "Bard",
                 TERM_ORANGE,
 		{ 0, 0, 0, 0, 0, 0},
 		20, 20, 20, 2,  15, 15, 50, 50,
@@ -3038,11 +3130,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 600,
                         },
                         {
-                                SKILL_CONVEYANCE,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
                                 SKILL_META,
                                 '+', 0,
                                 '+', 600,
@@ -3161,12 +3248,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 SKILL_INTERCEPT,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
 
                 }

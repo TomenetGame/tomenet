@@ -23,6 +23,20 @@
 # bug.txt should follow the exact same format
 
 
+05/09/2002 (Jir)
+[G]- EFF_WAVE and EFF_STORM implemented (still some bugs inside)
+[G]- Firewall (Fire) implemented and fixed.
+[G]- item owner check for Spellbooks ( {Olorin, 25} )
+[G]- Calmness/Intercept are made cheaper (b/c of new spell system)
+[I]- admin can build terrains of any kind (but CS is not assigned!)
+[P]- Adventurer/Bard receives one semi-random starting item
+[P]- class skills touched, esp. Priests
+[m]- Bard class is renamed to "Libertine" (still not satisfactory)
+[m]- Thunderlords.
+[m]- niceties for admin char.
+[B]- Health recovery was useless with high Con.
+[B]- some attacking spells worked wrong (project_m)
+
 03/09/2002
 [O]- Admins not affected by perma_curse
 
@@ -1860,19 +1874,44 @@ To find the latest change quickly, search ==== :)
 ** [H] stands for Hack and rebalancement :)
 ** [P] stands for Porting from ToME.
 
+
+=============================================================================
+memo and questions:
+(nothing so far)
+
 =============================================================================
 TODO: things to do before 4.0.0
 
-- backport ToME spells
-  + spells that specify items
-  + auto-target
+- backport ToME spells {DG, cept marked {Jir}}
+  + spells that specify items (this should be handled in client)
+  + handle auto_target in client-side
+  + energy consumption
+  + manual target!
   + auto-retaliator
-  + Prayer/Fighting/Hunting/Ghost ?
-  + good price for good 'random' spellbooks
-  + check if the player actually have the book
-  + item owner check
-  + interference
-- login code
+  + interference (maybe for attack-spells only?)
+  + some items give extra-casting; make them revert to spell-power
+  + allow using spell names for macro
+  + make some spells 'friend castable' (eg. healing)
+  + backport tgt_pt {Jir}
+  + implement the following spells: {Jir - pfft}
+    - Poison Blood, Wings of Winds, Thunder Storm (Air)
+      + set_tim_fly, set_tim_ffail; set_poison; set_tim_thunder
+    - Stone Skin, Stone Prison*, Shake (Earth) (does Strike work correctly?)
+      + set_shield; (LUA wpos code)
+    - Regeneration (Nature)
+      + set_tim_regen
+    - Magelock, Essense of Speed (Temporal)
+      + wizard_lock; set_fast; (tgt_pt)
+    - Disperse Magic (Meta)
+    - (everything in Mind/Shadow)
+  [B]- spell descriptions leave debris on the screen
+  [B]- GF_UNBREATH(Noxious Cloud) doesn't seem to work (in both ToME/NET)
+  (RFEs)
+  + some 'weak' attack spells with *low* SP consumption
+  + some schools (esp.elemental) should use WIS instead of INT?
+  + Phase Door accept direction in high lv? (like former Jump)
+  + Prayer/Fighting/Hunting/Ghost ? (maybe not for v4)
+- login code {Evileye}
   (RFEs)
   + If you care, would you add temporal account banning (like IP
     banning)?
@@ -1885,34 +1924,46 @@ TODO: things to do before 4.0.0
     should be handled as the same char, that is)
   + documentating how to use new account system (admin handbook :)
   + tomenet.acc contains death/winning counter
+- 'world server' {Evileye}
 
 
+- revise monster color schemes using CLIENT_SHIMMER {Evileye}
 - rebalance skill-points (after spell)
 - rebalance mimics (they are way too hard, seemingly)
 - fix gfx if possible
-- source-code cleanup
-- sort ?_info.txt (they are quite messy now)
+- source-code cleanup (best if the release will contain 0 warnings)
 - export configurable things to tomenet.cfg
 - a spoonful of documentation for skill system
 - rewrite this changes.txt into the 'new' format
 - total rebalancing for all of them
 - clear the licence out!
 
-- multiple-dungeons stuff
-  + we should preserve level_up_y etc. for manually-added dungeons/towers.
+
 - LUA hook (hooked, but not used for now)
 - csfunc
   + save/load perfectly work. hit/see need some works, maybe.
-- mimics
+- mimics (they are 'RFE's - anyway, some kind of rebalancement is needed)
   + new skill 'Ego Powers', 'Innate Powers'
   + RBM and RBE
-- 'world server'
+- 'power' code {DG}
+
+- other small stuffs
+  - display "non-scoring mode" in '@' screen
+  - illuminate the Bree tavern :)
+  - implement EGO_WOUNDING(ie. monster bleeding/poisoning)
+    + consider m_ptr->last_dmg
+  - revise 'dungeon generation' commands (it lacks most of flags etc)
 
 (likely to be postponed till v5?)
 - alignment
 - a little more complicated quest system (no offense, but something a little
   more than 'kill 5 jackals')
 - refine pk code (just set as option?)
+  + do_cmd_fire
+  + all the spells
+  + terrain effects
+  + blindness/hallucination etc reduces the penalty?
+  + 'tentative' and 'comission'
 
 
 =============================================================================
@@ -1922,6 +1973,286 @@ Porting targets
 [P] powers.c for misc activations {DG seems to have another plan}
 [P] display_player (character dump)
 [P] do_cmd_html_dump (screenshot)
+
+
+
+==== TODO(2): below this line are changes to be done in the future ====
+[minor ones - let's do them before v4 if possible(not sure)]
+- multiple-dungeons stuff
+  + we should preserve level_up_y etc. for manually-added dungeons/towers.
+  + recall-depth array for each dungeons/towers
+- LITE/RING/AMULET shouldn't be EASY_KNOWN (for ego/randarts)
+- Nazgul rings should have corresponding names
+- implement GF_* flags for exploding monsters(voir monster_death)
+- flavor variator (eg. 'light' + 'red' => 'light red potion')
+- reimplement /cast.  ('/cast Manathrust' would be useful for macro)
+- implement monster mimics in a nicer way
++ towns
+  - hint players of town locations (like 'Lorien is south-east to Bree')
+[C] chat-line cursor editing
+
+
+[major ones - they are for v5]
+(5.0)
+- quests using LUA and dungeons
+- reform object_type, so that we can alter artifacts/egos *after* creation
+- backbone scenario
+  - token system (gather blabla to do blabla)
+  - competitive events
+- NPC/pet/golem/slave
+  + NPC should basically be a monster with a flag (like RF9_NPC),
+    and prolly with special array (npc_list[])?
+- guild, or new party system (multi-player Omega :)
+  + prepare pre-defined set of guilds, and player can be 'owner' or 'member'
+    of some of them.
+  + some buildings can give extra services for members only
+  + member can gain/polish related skills (eg. Thieves Guild => Sneakiness)
+- interactive spell system (like in C3)
+- extend worldpos, so that one surface can have more than one dungeons/towers
+
+
+[sober ones]
+- total source-code cleanup {takkaria?}
+  - do :s/\/\/\(.*\)$/\/\*\1 \*\//
+  - rewrite externs.h
+- integrate save/load into one function (eg. saveload.c)
+- *_info.txt encryption / allow *.raw files
+- better remove 'take note'(monster knowledge) stuffs?
+- move configurable stuffs from defines.h to config.h
+- savedata snapshot (via this, player can report bugs with savedata)
+- slash-commands should have info file (like sl_info.txt)
+- put CVS keyword($ID$) to every file.
+- obsolete c-tables.c (hrm, not sure)
+- send flags for each spell, so that we can obsolete do_cmd_cast_aux etc.
+- integrate p_ptr->fruit_bat into p_ptr->body_monster
+- exploding arrows should be ego?
+- switch MAX_*_IDX(define) to max_*_idx(variable) as far as possible.
+- /ver should tell 'last commit time' instead of 'last compile'.
+- allow the server to draw screen more freely (like c_prt)
+- remove the savefile of 'destroyed' characters
+
+[speeding the server up]
+# it's 3 times faster. maybe we don't have to squeeze it further for now.
+- m_list and o_list should be separated by worldpos (like zcave)
+- wilderness compacting (how about 'compacting' townies?)
+- purging things (more)
+- optimize monster AI
+- reduce ATTR_MULTI (now testing)
+- reduce floor size :)
+- give up 'random-seeds' thingie and put flags to every item
+- turn mmove2 functions into arrays
+- bottlenecks: process_monsters, update_view(MAX_SIGHT), lite_spot, map_info,
+    AI codes
+- cave generation (cave_gen) is another bottleneck and causes 'freezing'
+  when a player changes the floor.
+- force view_reduce_lite
+
+[balance matters]
+- should HAND_DOOM be allowed out of sight?
+- missile traps do too small dmgs?
+- 2H weapons should be more powerful in general?
+  (they actually occupy 3 equipment slots!)
+- Mage Staves should only be available for Sorc?
+- NO_MAGIC can be off-balancing (wizard and spellcasting monster will suck)
+- mimic could be too weak on the deepest levels
+- SANITY_BLAST should do insanity dmg according to the caster's level?
+  (too severe in shallow depth, almost no harm in deeper depth)
+
+==== below this line are RFEs collected so far (good or bad) ====
+[minor ones]
+- party, guild and pk (players' interaction) codes:
+  + pk via missile/spell should be punished?
+  + player attacked by another player should be able to strike back at once?
+  + the first /pk of newbie should put him into 'SAFE' mode (and not 'PK')?
+  + not only 'attempt' but also 'commission' of pk should be punished.
+  + ball spell should harm neutral players somewhat
+    (or warrior&sorc combination will be too mighty)
+  + vision sharing among the members of a party
+  + make wand of haste monster etc. friend-castable
+  + guilds related to skills (eg. Thieves' Guild => Sneakiness tree)
+  + command to change party owner (this can be abusable tho)
+  + account-based party controlling (not sure it's good)
+- monsters:
+  + monster speech
+  + 'water bolt' should wash players away.
+  + aquatic should be hard to attack if underwater? (bonus for polearm?)
+  + some monster may become 'ghost' after being killed?
+  + monster spell points.
+  + upper limit of monsters per floor?
+  + better way to display egos/uniques (like bold/underline)
+  + monsters should follow the player when climbling up/down staircase.
+  + aquatic uniques
+  + vault treasures should be held by guardians
+  + strong bosses should drop better than DROP_GOOD
+    (DROP_GOOD can still drop excellent/arts, so better leave as it is now)
+- traps:
+  + missile traps should have AC check(check_hit)?
+  * Trap ideas
+    - no return trap should steal books also?
+    - telekinesis trap
+    - house-door-opening trap
+- items:
+  + Potion of Light Mana?
+  + Staff of Opening/Closing
+  + Scroll of Admin Message (another way to tell players of information)
+  + Musical Instruments (DG seems to have new idea for them)
+  + blessed/cursed, rusty/broken, fire/erode/waterproof flags etc.
+  + upgrade some of arts, so that they'll be treasured.
+  + more tools
+  + generic mimic rings (like 'D', 'Z') / ego rings
+  + wooden/leather armours should be immune to water damage.
+  + sell magic ammo in normal store (maybe archery shop?)
+  + store should buy mimic rings for better prices than 90au?
+  + arts should be stronger/rarer?
+    (consider using 'pair'/'evolving' arts of ToME)
+- anticheeze:
+  + all the house contents belonging to a dead player should be erased?
+- players:
+  + thirst/sleep?
+  + Asclep's '/spell' should be applicable to wands/rods? (fix that first)
+  + when fruit-batting, only overflowed items should be dropped?
+  + lowbies (<lv10?) should be immune to Black Breath?
+  + more equipment slots in general (like Bracer)
+  + being poison-resistant form should slow poison, etc
+  + ghost resurrection gets severer
+    (eg. exp penalty gets worse like 80%,75%,70%,..)
+  + paralysis shouldn't stack (eg.floating eye) (I don't think so - Jir)
+- combat:
+  + players should be able to interfere monsters' firing/casting?
+  + 2-weapon combat
+  + DEX should affect missile to-hit? (or maybe done with skill)
+  + more RBM and RMEs (like seducing, switching place)
+- magic:
+  + sth should be done with all those 'attacking' magic devices no1 uses,
+    such as fire bolt wand/rod.. {DG seems to have an idea}
+  + enlarge 'destroy traps' spell radius (but traps may 'resist' it)
+  + implement project_m
+  + separate GoI into 'vs.spell' and 'vs.melee'.
+  + avoid landing in the middle of a lake (river is ok)
+  + some methods(spell?) to detect vault entrance, so that ppl won't peek
+    v_info.txt ...
+  + 'Negate Time' spell (this should be great in real-time :)
+- user interface:
+  + query[Y/n] for selling/buying houses.
+  + visual effect when teleporting, so that players won't lose sight of '@'.
+  + add a command to *completely* redraw the screen.
+  - enhanced help system (imo we cannot beat web browsers anyway..)
+    + at least, jump and colour tags are needed.
+  + 'hand to(give)' command
+  + client option for verbosity; (half done)
+    msg_print(Ind, importance, "Vlad was here!");
+  + options ('=') should be revised.
+  + auto-retaliator should be able to handle non-item actions.
+  + better character ('C') screen (esp. abilities and resistances)
+  + auto-inscriber for item attributes (eg. {StDxNeFASI})
+  + resurrect 'repeat' (eg. '099^j' to dig etc.)
+  + let players target monsters outside the screen (scrolling)
+  - character screen / chardump
+    + Identify the items when in tombstone screens.
+    + change default file name if already exists.
+    + screenshot! (do_cmd_html_dump)
+  + chat-history/spell window
+  + inventory/equipment display should accept next command directly.
+  + online help (nice, esp. if someone else writes that ;)
+  + more status display (eg. fury, bless, tmp.fire-res...)
+  + resurrect 'cancel adding skill points' {Zz}
+  + warriors.prf, priest.prf etc. should be bandled with client distribution?
+- stores:
+  + one player shouldn't stay more than 1 minutes in a store?
+  + stores should buy {cursed} potions/scrolls/wands etc?
+  + artifact repair (not sure if good -Jir)
+  + casino should have games playable 'between players'
+  + pvp arena
+  + Auction house {A.Dingle}
+  + sell powerful gears in general (not for 'normal' towns maybe)
+- dungeon & terrain:
+  + antimagic terrain feature (is that 'playable'..?)
+  + pattern vaults
+  + moonlit night (not easy under current code)
+  + loophole(like wall, but missiles/breathes pass)
+  + terrain effects (eg. +AC; like in some 'strategy' games)
+- misc:
+  + some measures to 'cheezy' admins (at least some warnings)
+  + resurrect 'level feelings'
+  + allow 'guest' account for invite-only server
+  + water should 'flow', pushing players toward downstream.
+  + score list should show middle-earth time (and not raw turn).
+  + spiked/locked door should be *tougher* (cf. Vanilla)
+  + IRC server connection
+  + player in multi-hued form should be multi-hued (naturally - code it)
+  
+[major ones]
+- monsters' interactions
+- subclass system (thief, esper, erudit, tough, mighty etc)
+- karma/luck system (karma is like luck, but never gets positive value)
+- make charisma/wisdom/dexterity more important
+- resistances handled by percent
+- time-limited features(like in Larn) / time bomb
+    struct timed_event{
+        worldpos wpos;
+        int time;
+        char ly, lx, event_kind, magnitude;};
+- horizontal-connected caves (eg.[32,32,-40]=>[32,31,-40])
+- (re)new classes/races (XXX revise this list!)
+  + Paladin/Ranger
+  + Mimic (actually it's popular now, so no need perhaps :)
+  + Telepath (as a keystone of party)
+  + Merchant/Diplomat
+  + Bard/Beastmaster/Necromancer
+  * race/class extra powers (via '\n' command maybe?)
+  * client changes below should be done first, so that we can add/change
+    race/class w/o client update!
+- randunis
+- port internationalization codes
+- newbie and veteran mode
+- really intelligent auto-retaliator/borg
+- documentations (we need volonteers ;)
+- grec-mythology monsters (GRECANGBAND)
+- allow players to run always, by allowing it to the monsters too?
+- screen wider than 66x22
+
+[sober (intrinsic) ones]
+- savedata editor
+- savedata scanner (to fix broken arts/unique lists, find illigal data etc.)
+- vault/map editor
+- new networking code (to kiss xpilot adieu :)
+- redefine packets in a more generic way
+- ./configure
+- most of configurable-things should be in tonemet.cfg(and not config.h)?
+- meta-server should:
+  + transmit 'port No.', 'variant name' information.
+- periodic (a la cron) savedata backup
+- infinite loop detector
+- sort ?_info.txt (they are quite messy now)
+
+[client matters]
+- GTK client
+- new method to do character-generation;
+  - server prepares and sends a table of valid choices,
+    and the client just displays it and send the answer back.
+  - another solution is to put those things in a file like plug-ins.
+- resurrect 'targetting cursor'
+- client options other than boolean
+- following things should be client-side options:
+  + scroll_mergin (x, y)
+- allow sex/race/class/stat-order/mode specification in .tomenetrc
+- preserve message history
+
+
+[lunatic ones]
+(tbh I'm not so interested in - Jir)
+- 3-D gfx and full-audio support
+- full-mouse operation
+
+
+
+==== Global matters ====
+* direction
+  - 'Buncha new stuffs'(ala Slash'em) vs. 'Handiness of playing'(ala Rogue)?
+  - features vs. speed
+  - long-term gameplay(ala UO/EQ) vs. quick game(ala Rogue)
+  - terminal base(ascii+vi) vs modernity(gui+mouse)
+
 
 
 
@@ -1973,6 +2304,7 @@ below this line are the unfixed bugs known:
 [B]- stores in different town can have the same owner (wow! 2 Bilbo!)
 [B]- connection for player being frozen by Floating eye never timeouts
 [B]- character-choice screen sometimes tell wrong character level
+[B]- store buys uncursed ring of Searching (-1).
 [B]- when dying, client emits 'broken pipe' error.
      (not crucial, and it's same with mang070.)
      Program received signal SIGPIPE, Broken pipe.
@@ -2036,16 +2368,21 @@ below this line are the unfixed bugs known:
 
 
 
-**below are bugs repoorted but not confirmed**
+**below are bugs repoorted but not confirmed yet**
 [B]- House doors are still said to crash sometimes. (door even vanishes??)
+[B]- -read WoR scroll -> "Full" appeared as if I had eaten something.
+     (maybe already full, but wasn't shown. ^R)
+[B]- Ale ego/arts crash if wished for? (I could create.. -Jir)
+[B]- Blasted weapons can be generated? (possible, but not fatal maybe)
+
+
+**below are bugs repoorted but not reproduced**
 [B]- Mindcrafter does unmagic? (wrong report, I'm afraid)
 [B]- No magic arrows? (at least, my server offers plenty) (maybe wrong report)
 [B]- perma walls / normal walls are not distinguishable anymore
      (were they distinguishable before??)
 [B]- Ancient Blue Dragon appears regularly on 550 ft (didn't see a vault)
      (Hrm I've never met one -Jir)
-[B]- -read WoR scroll -> "Full" appeared as if I had eaten something.
-     (maybe already full, but wasn't shown. ^R)
 
 
 **below are bugs not shown recently(fixed??)**
@@ -2150,11 +2487,6 @@ below this line are the unfixed bugs known:
      (eg. Weaponmastery=>Combat)
 
 
-
-=============================================================================
-memo and questions:
-(nothing so far)
-
 ==== below this line are 'implementations' and not 'bugs' ====
 (Don't 'fix' them!! ;)
 + store beats price for non-*ID*ed items (esp.ego & randarts)
@@ -2169,280 +2501,7 @@ memo and questions:
   1-(1-0.08)^8 = 0.486
 + magic arrows are always (+0,+0)  (they're as such)
 + To-Dam bonus doesn't seem to apply to Ranged attack (it's really so, as V)
-
-==== TODO: below this line are changes to be done in the future ====
-[minor ones]
-(4.1)
-- recall-depth array for each dungeons/towers
-- full colour-support in show_file
-- display "non-scoring mode" in '@' screen
-- torch/lantern shouldn't be EASY_KNOWN.
-- Nazgul rings should have corresponding names
-- implement EGO_WOUNDING(ie. monster bleeding)
-  + problem is.. we cannot determine the 'killer'
-- implement GF_* flags for exploding monsters(voir monster_death)
-- flavor variator (eg. 'light' + 'red' => 'light red potion')
-- reimplement /cast.  ('/cast Manathrust' would be useful for macro)
-- implement monster mimics in a nicer way
-+ towns
-  - hint players of town locations (like 'Lorien is south-east to Bree')
-  - illuminate the Bree tavern :)
-- administrative:
-  + revise 'dungeon generation' commands (it lacks most of flags etc)
-[C] chat-line cursor editing
-
-[major ones]
-(4.2)
-- new terrains and their effects (f_info.txt) (under work)
-  - hills, deserts, lavas, waters, underwaters, tundra, elemental planes
-  - loophole(like wall, but missiles/breathes pass)
-  - passage requirements/(eq)damages/themes/generators/AI
-  - terrain effects (eg. +AC; like in some 'strategy' games)
-- variety of dungeon/floor types (d_info.txt)
-  - several flags
-  
-(4.3)
-- quests
-- backbone scenario
-  - token system (gather blabla to do blabla)
-  - competitive events
-- NPC/pet/golem/slave
-  + NPC should basically be a monster with a flag (like RF9_NPC),
-    and prolly with special array (npc_list[])?
-
-(4.4)
-- guild, or new party system (multi-player Omega :)
-  + prepare pre-defined set of guilds, and player can be 'owner' or 'member'
-    of some of them.
-  + some buildings can give extra services for members only
-  + member can gain/polish related skills (eg. Thieves Guild => Sneakiness)
-- interactive spell system (like in C3)
-- extend worldpos, so that one surface can have more than one dungeons/towers
-
-[sober ones]
-- total source-code cleanup {takkaria?}
-  - do :s/\/\/\(.*\)$/\/\*\1 \*\//
-  - rewrite externs.h
-- integrate save/load into one function (eg. saveload.c)
-- *_info.txt encryption
-- better remove 'take note'(monster knowledge) stuffs?
-- move configurable stuffs from defines.h to config.h
-- savedata snapshot (via this, player can report bugs with savedata)
-- slash-commands should have info file (like sl_info.txt)
-- put CVS keyword($ID$) to every file.
-- obsolete c-tables.c (hrm, not sure)
-- send flags for each spell, so that we can obsolete do_cmd_cast_aux etc.
-- integrate p_ptr->fruit_bat into p_ptr->body_monster
-- exploding arrows should be ego?
-- switch MAX_*_IDX(define) to max_*_idx(variable) as far as possible.
-- /ver should tell 'last commit time' instead of 'last compile'.
-- allow the server to draw screen more freely (like c_prt)
-
-[speeding the server up]
-# ok, it's 3 times faster now. maybe we don't squeeze it further for now.
-- m_list and o_list should be separated by worldpos (like zcave)
-- wilderness compacting (how about 'compacting' townies?)
-- purging things (more)
-- optimize monster AI
-- reduce ATTR_MULTI (now testing)
-- reduce floor size :)
-- give up 'random-seeds' thingie and put flags to every item
-- turn mmove2 functions into arrays
-- bottlenecks: process_monsters, update_view(MAX_SIGHT), lite_spot, map_info,
-    AI codes
-- cave generation (cave_gen) is another bottleneck and causes 'freezing'
-  when a player changes the floor.
-- force view_reduce_lite
-
-[balance matters]
-- should HAND_DOOM be allowed out of sight?
-- missile traps do too small dmgs?
-- 2H weapons should be more powerful in general?
-  (they actually occupy 3 equipment slots!)
-- Mage Staves should only be available for Sorc?
-- NO_MAGIC can be off-balancing (wizard and spellcasting monster will suck)
-- mimic could be too weak on the deepest levels
-- SANITY_BLAST should do insanity dmg according to the caster's level?
-  (too severe in shallow depth, almost no harm in deeper depth)
-
-==== below this line are RFEs collected so far (good or bad) ====
-[minor ones]
-- party, guild and pk (players' interaction) codes:
-  + pk via missile/spell should be punished?
-  + player attacked by another player should be able to strike back at once?
-  + the first /pk of newbie should put him into 'SAFE' mode (and not 'PK')?
-  + not only 'attempt' but also 'commission' of pk should be punished.
-  + ball spell should harm neutral players somewhat
-    (or warrior&sorc combination will be too mighty)
-  + vision sharing among the members of a party
-  + make wand of haste monster etc. friend-castable
-  + guilds related to skills (eg. Thieves' Guild => Sneakiness tree)
-  + command to change party owner (this can be abusable tho)
-  + account-based party controlling (not sure it's good)
-- monsters:
-  + monster speech
-  + 'water bolt' should wash players away.
-  + aquatic should be hard to attack if underwater? (bonus for polearm?)
-  + some monster may become 'ghost' after being killed?
-  + monster spell points.
-  + upper limit of monsters per floor?
-  + better way to display egos/uniques (like bold/underline)
-  + monsters should follow the player when climbling up/down staircase.
-  + aquatic uniques
-  + vault treasures should be held by guardians
-  + strong bosses should drop better than DROP_GOOD
-    (DROP_GOOD can still drop excellent/arts, so better leave as it is now)
-- traps:
-  + missile traps should have AC check(check_hit)?
-  * Trap ideas
-    - no return trap should steal books also?
-    - telekinesis trap
-    - house-door-opening trap
-- items:
-  + Potion of Light Mana?
-  + Scroll of Teleport After/To. (wand of teleport to implemented)
-  + Staff of Opening/Closing
-  + Scroll of Admin Message (another way to tell players of information)
-  + Musical Instruments
-  + blessed/cursed, rusty/broken, fire/erode/waterproof flags etc.
-  + LITE/RING/AMULET shouldn't be EASY_KNOWN? (for ego/randarts)
-  + upgrade some of arts, so that they'll be treasured.
-  + more tools
-  + generic mimic rings (like 'D', 'Z') / ego rings
-  + wooden/leather armours should be immune to water damage.
-  + sell magic ammo in normal store (maybe archery shop?)
-  + store should buy mimic rings for better prices than 90au?
-- anticheeze:
-  + all the house contents belonging to a dead player should be erased?
-- players:
-  + thirst/sleep?
-  + Asclep's '/spell' should be applicable to wands/rods? (fix that first)
-  + when fruit-batting, only overflowed items should be dropped?
-  + lowbies (<lv10?) should be immune to Black Breath?
-  + more equipment slots in general (like Bracer)
-  + being poison-resistant form should slow poison, etc
-  + ghost resurrection gets severer
-    (eg. exp penalty gets worse like 80%,75%,70%,..)
-  + paralysis shouldn't stack (eg.floating eye) (I don't think so - Jir)
-- combat:
-  + players should be able to interfere monsters' firing/casting?
-  + 2-weapon combat
-  + DEX should affect missile to-hit? (or maybe done with skill)
-  + more RBM and RMEs (like seducing, switching place)
-- magic:
-  + sth should be done with all those 'attacking' magic devices no1 uses,
-    such as fire bolt wand/rod.. {DG seems to have an idea}
-  + enlarge 'destroy traps' spell radius (but traps may 'resist' it)
-  + implement project_m
-  + separate GoI into 'vs.spell' and 'vs.melee'.
-  + avoid landing in the middle of a lake (river is ok)
-  + some methods(spell?) to detect vault entrance, so that ppl won't peek
-    v_info.txt ...
-  + 'Negate Time' spell (this should be great in real-time :)
-- user interface:
-  + query[Y/n] for selling/buying houses.
-  + visual effect when teleporting, so that players won't lose sight of '@'.
-  + add a command to *completely* redraw the screen.
-  - enhanced help system (imo we cannot beat web browsers anyway..)
-    + at least, jump and colour tags are needed.
-  + 'hand to(give)' command
-  + client option for verbosity; (half done)
-    msg_print(Ind, importance, "Vlad was here!");
-  + options ('=') should be revised.
-  + auto-retaliator should be able to handle non-item actions.
-  + better character ('C') screen (esp. abilities and resistances)
-  + auto-inscriber for item attributes (eg. {StDxNeFASI})
-  + resurrect 'repeat' (eg. '099^j' to dig etc.)
-  + let players target monsters outside the screen (scrolling)
-  - character screen / chardump
-    + Identify the items when in tombstone screens.
-    + change default file name if already exists.
-    + screenshot! (do_cmd_html_dump)
-  + chat-history/spell window
-  + inventory/equipment display should accept next command directly.
-  + online help (nice, esp. if someone else writes that ;)
-  + more status display (eg. fury, bless, tmp.fire-res...)
-- stores:
-  + one player shouldn't stay more than 1 minutes in a store?
-  + stores should buy {cursed} potions/scrolls/wands etc?
-  + artifact repair (not sure if good -Jir)
-  + casino should have games playable 'between players'
-  + pvp arena
-  + Auction house {A.Dingle}
-- dungeon & terrain:
-  + antimagic terrain feature (is that 'playable'..?)
-  + pattern vaults
-  + moonlit night (not easy under current code)
-- misc:
-  + some measures to 'cheezy' admins (at least some warnings)
-  + resurrect 'level feelings'
-  + allow 'guest' account for invite-only server
-  + water should 'flow', pushing players toward downstream.
-  + score list should show middle-earth time (and not raw turn).
-  + spiked/locked door should be *tougher* (cf. Vanilla)
-  + IRC server connection
-  + player in multi-hued form should be multi-hued (naturally - code it)
-  
-[major ones]
-- monsters' interactions
-- subclass system (thief, esper, erudit, tough, mighty etc)
-- karma/luck system (karma is like luck, but never gets positive value)
-- make charisma/wisdom/dexterity more important
-- resistances handled by percent
-- time-limited features(like in Larn) / time bomb
-    struct timed_event{
-        worldpos wpos;
-        int time;
-        char ly, lx, event_kind, magnitude;};
-- horizontal-connected caves (eg.[32,32,-40]=>[32,31,-40])
-- (re)new classes/races (XXX revise this list!)
-  + Paladin/Ranger
-  + Mimic (actually it's popular now, so no need perhaps :)
-  + Telepath (as a keystone of party)
-  + Merchant/Diplomat
-  + Bard/Beastmaster/Necromancer
-  * race/class extra powers (via '\n' command maybe?)
-  * client changes below should be done first, so that we can add/change
-    race/class w/o client update!
-- randunis
-- port internationalization codes
-- newbie and veteran mode
-- really intelligent auto-retaliator/borg
-- documentations (we need volonteers ;)
-- grec-mythology monsters (GRECANGBAND)
-- allow players to run always, by allowing it to the monsters too?
-- screen wider than 66x22
-
-[sober (intrinsic) ones]
-- savedata editor
-- savedata scanner (to fix broken arts/unique lists, find illigal data etc.)
-- vault/map editor
-- new networking code (to kiss xpilot adieu :)
-- redefine packets in a more generic way
-- ./configure
-- most of configurable-things should be in tonemet.cfg(and not config.h)?
-- meta-server should:
-  + transmit 'port No.', 'variant name' information.
-- periodic (a la cron) savedata backup
-- infinite loop detector
-
-[client matters]
-- warriors.prf, priest.prf etc. should be bandled with client distribution?
-- GTK client
-- new method to do character-generation;
-  - server prepares and sends a table of valid choices,
-    and the client just displays it and send the answer back.
-  - another solution is to put those things in a file like plug-ins.
-- resurrect 'targetting cursor'
-- client options other than boolean
-- following things should be client-side options:
-  + scroll_mergin (x, y)
-- allow sex/race/class/stat-order/mode specification in .tomenetrc
-- preserve message history
-
-[lunatic ones]
-- 3-D gfx and full-audio support
-- full-mouse operation
+# I'm tired; if not on 'bug' list, that's as such ;)
 
 ==== below this line are backtraces collected so far (bad or mad.) ====
 (Infinite loop when recalling into dungeon)
@@ -2515,11 +2574,6 @@ Program terminated with signal 10, Bus error.
 #6  0x80640e1 in main (argc=1, argv=0xbfbff6f8) at client/client.c:463
 #7  0x804a0dd in _start ()
 
-==== Global matters ====
-* direction
-  - 'Buncha new stuffs'(ala Slash'em) vs. 'Handiness of playing'(ala Rogue)?
-  - features vs. speed
-  - long-term gameplay(ala UO) vs. quick game(ala Populous3)
-  - terminal base(ascii+vi) vs modernity(gui+mouse)
+
 
  vim:tw=78:fo=tcq2:isk=!-~,^*,^\|,^\":ts=8:ft=memo:norl:

@@ -227,6 +227,10 @@
 /*
  * Worlds server connection
  */
+/* for local testing - if you see this commented out, that means
+ * I committed it by mistake.  please just make it revert back.	-Jir
+ */
+/* Would you make it a tomenet.cfg option? */
 #define TOMENET_WORLDS
 
 #if 0

@@ -700,7 +700,8 @@
 #define RACE_YEEK   	10
 #define RACE_GOBLIN 	11
 #define RACE_ENT   	12
-#define RACE_DRIDER   	13
+#define RACE_DRIDER   	13	/* TODO: rename it to RACE_TLORD */
+/* (or simply replace all those defines with p_info.txt) */
 
 /*
  * Player class constants (hard-coded by save-files, arrays, etc)

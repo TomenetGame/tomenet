@@ -3515,7 +3515,10 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 
 	/* Mockup */
-	msg_format(Ind, "Store command received: %d, %d, %d, %d, %d", action, item, item2, amt, gold);
+#if DEBUG_LEVEL > 2
+	//msg_format(Ind, "Store command received: %d, %d, %d, %d, %d", action, item, item2, amt, gold);
+	s_printf("Store command received: %d, %d, %d, %d, %d\n", action, item, item2, amt, gold);
+#endif	// DEBUG_LEVEL
 
 	/* Is the action legal? */
 	//if (!store_attest_command(p_ptr->store_num, action)) return;

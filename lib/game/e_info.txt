@@ -1102,7 +1102,8 @@ F:R_ANY | R_LOW | SUSTAIN | R_HIGH
 R:10
 F:R_IMMUNITY | R_ANY
 
-N:99:of the Dragonriders
+#N:99:of the Dragonriders
+N:99:of the Thunderlords
 T:15:0:255
 T:21:0:255
 T:22:0:255
@@ -1397,6 +1398,7 @@ C:-50:-50:0:0
 ### Special Broken Items ###
 
 # Destroyed Weapon
+# (and pre-destroyed ammo)
 N:126:Shattered
 T:16:0:99
 T:17:0:99
@@ -1408,9 +1410,12 @@ C:-5:-5:0:0
 # Destroyed Body Armor
 
 N:127:Blasted
-T:16:0:99
-T:17:0:99
-T:18:0:99
+#T:16:0:99
+#T:17:0:99
+#T:18:0:99
+T:36:0:99
+T:37:0:99
+T:38:0:99
 X:B:30:0
 W:0:1:2:0
 C:0:0:-10:0

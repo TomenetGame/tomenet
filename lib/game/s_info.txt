@@ -90,9 +90,11 @@ N:13:Casting-speed
 D:Ability to cast sorcery spells faster than one turn
 I:1000:0
 
-# This will be like that of ToME2
+# This is like that of ToME2 now
 N:14:Sorcery
-D:Ability to cast sorcery spells, beware it reduces hp
+#D:Ability to cast sorcery spells, beware it reduces hp
+D:Ability to use all the magic schools as if their skill was sorcery
+D:But the price to channel that much magic is your health
 #A:1:Cast sorcery spell
 #I:1000:92
 #F:MKEY_SPELL | MKEY_TVAL
@@ -375,8 +377,6 @@ f:Fighting Technic:Combat%25
 f:Martial Arts:Combat%50
 
 # Sorcery and Weaponmastery arent exactly friendly to each other
-# NOTE: Sorcery penulty appears to be too severe as it is; the sorcery
-# skill itself will be changed very soon.
 O:Sorcery:Weaponmastery%100
 O:Sorcery:Archery%100
 O:Sorcery:Martial Arts%100

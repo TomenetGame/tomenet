@@ -3232,6 +3232,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons a DragonRider!", m_name);
+			//else msg_format(Ind, "%^s magically summons a Thunderlord!", m_name);
 			for (k = 0; k < 1; k++)
 			{
 				count += summon_specific(wpos, y, x, rlev, SUMMON_DRAGONRIDER);
@@ -5645,7 +5646,7 @@ static void process_monster(int Ind, int m_idx)
 					(r_ptr->flags2 & RF2_PASS_WALL) &&
 					(c_ptr->feat != FEAT_PERM_SOLID) && !rand_int(9000)))
 				|| (c_ptr->feat == FEAT_PERM_CLEAR) ||
-				((c_ptr->feat == FEAT_HOME)) )
+				((c_ptr->feat == FEAT_HOME) || c_ptr->feat == FEAT_WALL_HOUSE))
 		{
 			/* Nothing */
 		}

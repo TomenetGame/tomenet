@@ -2056,10 +2056,12 @@ void cmd_master_aux_build(void)
 		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Floor Mode");
 		Term_putstr(5, 11, -1, TERM_WHITE, "(8) Special Door Mode");
 		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Signpost");
-		Term_putstr(5, 13, -1, TERM_WHITE, "(a) Build Mode Off");
+		Term_putstr(5, 13, -1, TERM_WHITE, "(0) Any feature");
+
+		Term_putstr(5, 15, -1, TERM_WHITE, "(a) Build Mode Off");
 
 		/* Prompt */
-		Term_putstr(0, 14, -1, TERM_WHITE, "Command: ");
+		Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
 
 		/* Get a key */
 		i = inkey();
@@ -2099,6 +2101,10 @@ void cmd_master_aux_build(void)
 			case '9':
 				buf[0] = FEAT_SIGN;
 				get_string("Sign:", &buf[2], 77);
+				break;
+			/* Ask for feature */
+			case '0':
+				buf[0] = c_get_quantity("Enter feature value:",0xff);
 				break;
 			case 'a': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
 			/* Oops */
