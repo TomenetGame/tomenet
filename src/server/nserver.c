@@ -1053,7 +1053,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 #endif
 
 	//if (version < ((4 << 12) | (0 << 8) | (0 << 4) | 0))
-	if (version != 0)
+	if (version != 1)
 		/* See src/client/c-init.c for why I changed this for now
 		search the file for MY_VERSION to find it quickly :) */
 

@@ -1121,6 +1121,9 @@ static byte player_color(int Ind)
 	
 	if (p_ptr->tim_mimic) pcolor = p_ptr->tim_mimic_what;
 
+	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
+	if (p_ptr->admin_wiz) return p_ptr->cp_ptr->color + TERM_BNW;
+
 	/* Color is based off of class */
 	return p_ptr->cp_ptr->color;
 }

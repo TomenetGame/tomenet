@@ -418,7 +418,7 @@ void client_init(char *argv1, bool skip)
 	Packet_printf(&ibuf, "%u", magic);
 	Packet_printf(&ibuf, "%s%hu%c", real_name, GetPortNum(ibuf.sock), 0xFF);
 //	Packet_printf(&ibuf, "%s%s%hu", nick, host_name, version);
-	Packet_printf(&ibuf, "%s%s%hu", nick, host_name, 0);
+	Packet_printf(&ibuf, "%s%s%hu", nick, host_name, 1);
 	/* Increment the last number in the line above for each new
 	client version that requires the player to update the client!
 	I know it's not following the idea of 'MY_VERSION' but it looks

@@ -506,6 +506,10 @@ char get_shimmer_color()
 #endif
 
 byte flick_colour(byte attr){
+	if ((attr >= TERM_BNW) && (attr <= TERM_RLE)){
+		if (randint(7)<6) return (attr - TERM_BNW);
+		return (randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
+	}
 	switch(attr){
 		case TERM_MULTI:
 			return(randint(15));
