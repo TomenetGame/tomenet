@@ -404,18 +404,6 @@ static bool object_easy_know(int i)
 	/* Analyze the "tval" */
 	switch (k_ptr->tval)
 	{
-		/* Spellbooks */
-		case TV_MAGIC_BOOK:
-		case TV_PRAYER_BOOK:
-		case TV_SORCERY_BOOK:
-		case TV_FIGHT_BOOK:
-		case TV_SHADOW_BOOK:
-		case TV_HUNT_BOOK:
-		case TV_PSI_BOOK:
-		{
-			return (TRUE);
-		}
-
 		/* Simple items */
 		case TV_FLASK:
 		case TV_JUNK:
@@ -582,41 +570,6 @@ static byte default_tval_to_attr(int tval)
 		case TV_FOOD:
 		{
 			return (TERM_L_UMBER);
-		}
-
-		case TV_PSI_BOOK:
-		{
-			return (TERM_YELLOW);
-		}
-
-		case TV_MAGIC_BOOK:
-		{
-			return (TERM_L_RED);
-		}
-
-		case TV_SORCERY_BOOK:
-		{
-			return (TERM_ORANGE);
-		}
-
-		case TV_PRAYER_BOOK:
-		{
-			return (TERM_L_GREEN);
-		}
-
-		case TV_FIGHT_BOOK:
-		{
-			return (TERM_UMBER);
-		}
-
-		case TV_SHADOW_BOOK:
-		{
-			return (TERM_L_DARK);
-		}
-
-		case TV_HUNT_BOOK:
-		{
-			return (TERM_BLUE);
 		}
 	}
 
@@ -1544,61 +1497,6 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			modstr = food_adj[indexx];
 			if (aware) append_name = TRUE;
 			basenm = aware ? "& Mushroom~" : "& # Mushroom~";
-			break;
-		}
-
-
-			/* Psi Books */
-		case TV_PSI_BOOK:
-		{
-			modstr = basenm;
-			basenm = "& Crystal~ #";
-			break;
-		}
-
-			/* FIGHT Books */
-		case TV_FIGHT_BOOK:
-		{
-			modstr = basenm;
-			basenm = mode < 8 ? "& Book~ of Fighting #" : "& B.Fight #";
-			break;
-		}
-			/* Shadow Books */
-		case TV_SHADOW_BOOK:
-		{
-			modstr = basenm;
-			basenm = mode < 8 ? "& Book~ of Shadows #" : "& B.Shadows #";
-			break;
-		}
-			/* Magic Books */
-		case TV_MAGIC_BOOK:
-		{
-			modstr = basenm;
-			basenm = mode < 8 ? "& Book~ of Magic Spells #" : "& B.Magic #";
-			break;
-		}
-
-			/* Sorcery Books */
-		case TV_SORCERY_BOOK:
-		{
-			modstr = basenm;
-			basenm = mode < 8 ? "& Book~ of Sorcery #" : "& B.Sorc #";
-			break;
-		}
-
-			/* Prayer Books */
-		case TV_PRAYER_BOOK:
-		{
-			modstr = basenm;
-			basenm = mode < 8 ? "& Holy Book~ of Prayers #" : "& B.Prayer #";
-			break;
-		}
-
-			/* Hunting Books */
-		case TV_HUNT_BOOK:
-		{
-			modstr = basenm;
-			basenm = mode < 8 ? "& Hunting Book~ #" : "& Hunt B. #";
 			break;
 		}
 

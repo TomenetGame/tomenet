@@ -1510,7 +1510,7 @@ void do_cmd_steal(int Ind, int dir)
 			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik (70))
 			{
 				/* Saving throw message */
-				msg_print(Ind, "Your attempt to steal was interfered by a strange device!");
+				msg_print(Ind, "Your attempt to steal was interfered with by a strange device!");
 				notice += 50;
 			}
 

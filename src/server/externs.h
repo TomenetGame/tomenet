@@ -91,7 +91,6 @@ extern s32b player_exp[PY_MAX_LEVEL + 1];
 extern player_race race_info[MAX_RACES];
 extern player_class class_info[MAX_CLASS];
 
-extern player_magic magic_info[MAX_REALM];
 extern magic_type ghost_spells[64];
 extern u32b spell_flags[MAX_REALM - 1][9][2];
 extern cptr spell_names[MAX_REALM][64];
@@ -568,7 +567,6 @@ extern void do_cmd_activate_dir(int Ind, int dir);
 extern bool unmagic(int Ind);
 extern void fortune(int Ind, bool broadcast);
 extern char random_colour();
-extern bool spell_okay(int Ind, int realm, int j, bool known);
 
 /* control.c */
 extern void NewConsole(int fd, int arg);

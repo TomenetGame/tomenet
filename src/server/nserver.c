@@ -5193,27 +5193,6 @@ static int Receive_activate_skill(int ind)
 		return n;
 	}
 
-#if 0
-	/* Not by class, but by item */
-	if (connp->id != -1 && Players[old]->energy >= level_speed(&Players[old]->wpos) && (Players[old]->inventory[book].tval == TV_PSI_BOOK))
-	{
-		do_cmd_psi(player, book, spell);
-	}
-	else if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-	{
-		int tval = p_ptr->inventory[book].tval;
-		p_ptr->current_char = (old == player)?TRUE:FALSE;
-		switch(tval){
-			case TV_PSI_BOOK:
-#if 0
-				if(get_skill(p_ptr, SKILL_PSI))
-					do_cmd_psi(player, book, spell);
-#endif
-				break;
-		}
-		return 2;
-	}
-#else	// 0
 	/* Not by class nor by item; by skill */
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -5267,7 +5246,6 @@ static int Receive_activate_skill(int ind)
                 }
 		return 2;
 	}
-#endif	// 0
 	else if (player)
 	{
 		p_ptr->current_spell = -1;

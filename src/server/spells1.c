@@ -1499,17 +1499,6 @@ static bool hates_fire(object_type *o_ptr)
 			return (TRUE);
 		}
 
-		/* Books */
-		case TV_MAGIC_BOOK:
-		case TV_PRAYER_BOOK:
-		case TV_FIGHT_BOOK:
-		case TV_SORCERY_BOOK:
-		case TV_SHADOW_BOOK:
-		case TV_HUNT_BOOK:
-		{
-			return (TRUE);
-		}
-
 		/* Chests */
 		case TV_CHEST:
 		{
@@ -1587,13 +1576,6 @@ static bool hates_water(object_type *o_ptr)
 		case TV_POTION:		/* dilutes */
 		case TV_POTION2:	/* dilutes */
 		case TV_SCROLL:		/* fades */
-//		case TV_PSI_BOOK:	/* It's crystal */
-		case TV_MAGIC_BOOK:
-		case TV_PRAYER_BOOK:
-		case TV_SORCERY_BOOK:
-		case TV_FIGHT_BOOK:
-		case TV_SHADOW_BOOK:
-		case TV_HUNT_BOOK:
 		case TV_BOOK:
 		{
 			return (TRUE);

@@ -5384,19 +5384,6 @@ static bool kind_is_good(int k_idx)
 			return (TRUE);
 		}
 
-		/* Books -- High level books are good */
-		case TV_MAGIC_BOOK:
-		case TV_PRAYER_BOOK:
-		case TV_SORCERY_BOOK:
-		case TV_SHADOW_BOOK:
-		case TV_PSI_BOOK:
-		case TV_HUNT_BOOK:
-		case TV_FIGHT_BOOK:
-		{
-			if (k_ptr->sval >= SV_BOOK_MIN_GOOD) return (TRUE);
-			return (FALSE);
-		}
-
 		/* Rings -- Rings of Speed are good */
 		case TV_RING:
 		{
@@ -6458,10 +6445,6 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags)
 	if (!is_book(o_ptr) && o_ptr->tval != TV_BOOK) return;
 
 	/* XXX though it's ok with 'm' for everything.. */
-#if 0
-	c[1] = ((o_ptr->tval == TV_PRAYER_BOOK) ? 'p':'m');
-	if (o_ptr->tval == TV_FIGHT_BOOK) c[1] = 'n';
-#endif	// 0
 	c[2] = o_ptr->sval +1 +48;
 	o_ptr->note = quark_add(c);
 }

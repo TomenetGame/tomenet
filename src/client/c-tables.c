@@ -1052,51 +1052,6 @@ byte old_blows_table[11][12] =
 #endif
 
 /*
- * Spells in each book (mage spells then priest spells)
- */
-u32b spell_flags[3][9][2] =
-{
-	{
-		/*** Mage spell books ***/
-		{ 0x000001ff, 0x00000000 },
-		{ 0x0003fe00, 0x00000000 },
-		{ 0x03fc0000, 0x00000000 },
-		{ 0xfc000000, 0x00000001 },
-		{ 0x00000000, 0x003e0000 },
-		{ 0x00000000, 0x0000003e },
-		{ 0x00000000, 0x0001f000 },
-		{ 0x00000000, 0x07c00000 },
-		{ 0x00000000, 0x00000fc0 }
-	},
-
-	{
-		/*** Priest spell books ***/
-		{ 0x000000ff, 0x00000000 },
-		{ 0x0000ff00, 0x00000000 },
-		{ 0x01ff0000, 0x00000000 },
-		{ 0x7e000000, 0x00000000 },
-		{ 0x00000000, 0x03f00000 },
-		{ 0x80000000, 0x0000000f },
-		{ 0x00000000, 0x000001f0 },
-		{ 0x00000000, 0x000fc000 },
-		{ 0x00000000, 0x00003e00 }
-	},
-	
-	{
-		/*** Sorcery spell books ***/
-		{ 0x000001ff, 0x00000000 },
-		{ 0x0003fe00, 0x00000000 },
-		{ 0x03fc0000, 0x00000000 },
-		{ 0xfc000000, 0x00000001 },
-		{ 0x00000000, 0x003e0000 },
-		{ 0x00000000, 0x0000003e },
-		{ 0x00000000, 0x0001f000 },
-		{ 0x00000000, 0x07c00000 },
-		{ 0x00000000, 0x00000fc0 }
-	},
-};
-
-/*
  * Each chest has a certain set of traps, determined by pval
  * Each chest has a "pval" from 1 to the chest level (max 55)
  * If the "pval" is negative then the trap has been disarmed

@@ -2129,7 +2129,6 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 		{ TV_ARROW, SV_AMMO_NORMAL },
 		{ TV_BOLT, SV_AMMO_NORMAL },
 		
-		{ TV_FIGHT_BOOK, 0 },
 	},
 
 	{
@@ -2163,15 +2162,6 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 		{ TV_POTION, SV_POTION_RESTORE_EXP },
 		{ TV_POTION, SV_POTION_RESTORE_EXP },
 	//	{ TV_POTION, SV_POTION_RESTORE_EXP },
-
-		{ TV_PRAYER_BOOK, 0 },
-		{ TV_PRAYER_BOOK, 0 },
-		{ TV_PRAYER_BOOK, 0 },
-		{ TV_PRAYER_BOOK, 1 },
-		{ TV_PRAYER_BOOK, 1 },
-		{ TV_PRAYER_BOOK, 2 },
-		{ TV_PRAYER_BOOK, 2 },
-		{ TV_PRAYER_BOOK, 3 }
 	},
 
 	{
@@ -2243,19 +2233,6 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 		{ TV_STAFF, SV_STAFF_TELEPORTATION },
 		{ TV_STAFF, SV_STAFF_IDENTIFY },
 		{ TV_STAFF, SV_STAFF_IDENTIFY },
-
-		{ TV_MAGIC_BOOK, 0 },
-		{ TV_MAGIC_BOOK, 0 },
-		{ TV_MAGIC_BOOK, 1 },
-		{ TV_MAGIC_BOOK, 1 },
-		{ TV_MAGIC_BOOK, 2 },
-		{ TV_MAGIC_BOOK, 3 },
-	
-		{ TV_SORCERY_BOOK, 0 },
-		{ TV_SORCERY_BOOK, 0 },
-		{ TV_SORCERY_BOOK, 1 },
-		{ TV_SORCERY_BOOK, 2 },
-		{ TV_SORCERY_BOOK, 3 },
 	}
 };
 #endif

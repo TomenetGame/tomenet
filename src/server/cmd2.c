@@ -3461,7 +3461,7 @@ bool interfere(int Ind, int chance)
 				/* even not visible... :( */
 				strcpy(m_name, Players[-i]->name);
 			}
-			msg_format(Ind, "\377o%^s interferes your attempt!", m_name);
+			msg_format(Ind, "\377o%^s interferes with your attempt!", m_name);
 			return TRUE;
 		}
 	}
@@ -3497,7 +3497,7 @@ bool interfere(int Ind, int chance)
 					/* even not visible... :( */
 					strcpy(m_name, Players[-i]->name);
 				}
-				msg_format(Ind, "\377o%^s interferes your attempt!", m_name);
+				msg_format(Ind, "\377o%^s interferes with your attempt!", m_name);
 				return TRUE;
 			}
 		}

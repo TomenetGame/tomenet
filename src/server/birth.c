@@ -909,29 +909,21 @@ static byte player_init[MAX_CLASS][3][2] =
 
 	{
 		/* Mage */
-		{ TV_MAGIC_BOOK, 0 },
 		{ TV_SWORD, SV_DAGGER },
 		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL }
 	},
 
 	{
 		/* Priest */
-		{ TV_PRAYER_BOOK, 0 },
 		{ TV_HAFTED, SV_MACE },
 		{ TV_POTION, SV_POTION_HEALING }
 	},
 
 	{
 		/* Rogue */
-#if 0
-		{ TV_SHADOW_BOOK, 0 },	// this will be changed soon
-		{ TV_SWORD, SV_SMALL_SWORD },
-		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR }
-#else	// 0
-		{ TV_SHADOW_BOOK, 0 },	// this will be changed soon
 		{ TV_SWORD, SV_MAIN_GAUCHE },
+		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING }
-#endif	// 0
 	},
 
 	{
@@ -943,7 +935,6 @@ static byte player_init[MAX_CLASS][3][2] =
 
 	{
 		/* Archer */
-		{ TV_HUNT_BOOK, 0 },
 		{ TV_ARROW, SV_AMMO_MAGIC },
 		{ TV_BOW, SV_LONG_BOW }
 	},
@@ -1114,39 +1105,6 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->owner = p_ptr->id;
 	o_ptr->level = 1;
 	(void)inven_carry(Ind, o_ptr);
-
-	/* gimme books :) */
-	if (0 <= realm && realm < MAX_REALM)
-	{
-#if 0
-		char c[] = "@m ";
-		/* soon this will be obsolete tho */
-		c[1] = ((realm == REALM_PRAYER)? 'p':'m');
-		if (realm == REALM_FIGHTING) c[1] = 'n';
-#endif	// 0
-		for (i = 0; i < 9; i++)
-		{
-			int k = lookup_kind(magic_info[realm].spell_book, i);
-			u32b f1, f2, f3, f4, f5, esp;
-			if (!k) continue;
-			invcopy(o_ptr, k);
-
-			/* Hack^2 -- use this as a sign of being 'high books' */
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-			o_ptr->number = (f3 & TR3_IGNORE_FIRE) ? 1 : 30;
-
-#if 0
-			c[2] = i +1 +48;
-			o_ptr->note = quark_add(c);
-#endif	// 0
-
-			o_ptr->discount = 72;
-			object_known(o_ptr);
-			o_ptr->owner = p_ptr->id;
-			o_ptr->level = 1;
-			(void)inven_carry(Ind, o_ptr);
-		}
-	}
 }
 
 #define do_player_outfit()	\

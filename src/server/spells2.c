@@ -1988,7 +1988,6 @@ bool detect_magic(int Ind, int rad)
 			    (tv == TV_AMULET) || (tv == TV_RING) ||
 			    (tv == TV_STAFF) || (tv == TV_WAND) || (tv == TV_ROD) ||
 			    (tv == TV_SCROLL) || (tv == TV_POTION) ||
-			    (tv == TV_MAGIC_BOOK) || (tv == TV_PRAYER_BOOK) ||
 			    ((o_ptr->to_a > 0) || (o_ptr->to_h + o_ptr->to_d > 0)))
 			{
 				/* Note new items */
