@@ -2008,6 +2008,11 @@ that keeps many algorithms happy.
  */
 #define SV_BOOK_MIN_GOOD	4
 
+/*
+ * Special "sval" limit -- last gold
+ */
+#define SV_GOLD_MAX			18
+
 
 /* from PernAngband */
 

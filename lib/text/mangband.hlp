@@ -18,11 +18,9 @@ For further (and easy-to-read) documentation, please visit:
 Official Site   - http://www.pernmangband.org/
 Newbie Tutorial - http://www.ctt.ne.jp/~sap/mang/
 
-Latest changes for version 3.3.0 (digest):
+Latest changes for version 3.3.2 (digest):
+- New item system, including hundleds of new egos/artifacts.
 - Multiple towns/dungeons/towers implemented - try exploring the wilderness!
-- You can use the following inscriptions for Word of Recall:
-  + {@RW22,8} will lands you to (22,8) of the world map.
-  + {@RT} lands you to the first town (where you start the game).
 - About 160 new traps added; They now are nasty foes!
 - Ego monsters added; beware, they can be MUCH nastier!
 - YOU LOSE YOUR (non-random) ARTIFACT IF YOU LOOSE YOUR GRIP ON IT!
@@ -30,6 +28,11 @@ Latest changes for version 3.3.0 (digest):
 - You'll be protected by GoI for 2-turns after recall/stairs.
 - Some anti-cheeze rules are applied.
 - Temple priest gives you some $ when resurrecting, so don't suicide :)
+
+[Brief instruction for new commands]
+- You can use the following inscriptions for Word of Recall:
+  + {@RW22,8} will lands you to (22,8) of the world map.
+  + {@RT} lands you to the first town (where you start the game).
 - Inscription {!=} forces you to pick it up; use it on your arrows.
 - Inscribe {@O} on missiles, and you'll fire them for auto-retaliation.
 - {@Oc} on a book makes you use the 'c' spell for auto-retaliation.

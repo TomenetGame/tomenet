@@ -733,6 +733,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	player_type *p_ptr = Players[Ind];
 
 	object_type tmp_obj;
+	u32b i, unit = 1;
 
 	/* Handle the newbies_cannot_drop option */
 	if (p_ptr->lev < cfg_newbies_cannot_drop)
@@ -752,7 +753,12 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 
 	/* Setup the object */
 	/* XXX Use "gold" object kind */
-	invcopy(&tmp_obj, 488);
+//	invcopy(&tmp_obj, 488);
+
+	for (i = amt; i > 99 ; i >>= 1, unit++) /* naught */;
+	if (unit > SV_GOLD_MAX) unit = SV_GOLD_MAX;
+
+	invcopy(&tmp_obj, lookup_kind(TV_GOLD, unit));
 
 	/* Setup the "worth" */
 	tmp_obj.pval = amt;
@@ -768,7 +774,8 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	p_ptr->au -= amt;
 
 	/* Message */
-	msg_format(Ind, "You drop %ld pieces of gold.", amt);
+//	msg_format(Ind, "You drop %ld pieces of gold.", amt);
+	msg_format(Ind, "You drop %ld pieces of %s.", amt, k_name + k_info[tmp_obj.k_idx].name);
 
 	/* Redraw gold */
 	p_ptr->redraw |= (PR_GOLD);

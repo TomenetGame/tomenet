@@ -4344,9 +4344,13 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		{
                         info[i++] = format("It provides light (radius %d) when fueled.", radius);
 		}
-                else
+                else if (radius)
 		{
                         info[i++] = format("It provides light (radius %d) forever.", radius);
+		}
+				else
+		{
+                        info[i++] = "It never provides light.";
 		}
 	}
 

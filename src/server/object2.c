@@ -3456,22 +3456,27 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
                 make_ego_item(level, o_ptr, FALSE);
         }
 
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
 	/* Apply magic (good or bad) according to type */
 	switch (o_ptr->tval)
 	{
 		case TV_LITE:
 
 		/* Hack -- Torches -- random fuel */
-		if (o_ptr->sval == SV_LITE_TORCH)
-		{
-			if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
-		}
+			if (f4 & TR4_FUEL_LITE)
+			{
+				if (o_ptr->sval == SV_LITE_TORCH)
+				{
+					if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
+				}
 
-		/* Hack -- Lanterns -- random fuel */
-		if (o_ptr->sval == SV_LITE_LANTERN)
-		{
-			if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
-		}
+				/* Hack -- Lanterns -- random fuel */
+				if (o_ptr->sval == SV_LITE_LANTERN)
+				{
+					if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
+				}
+			}
 
 		break;
 

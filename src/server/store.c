@@ -1573,8 +1573,15 @@ static void store_create(store_type *st_ptr)
 		/* Hack -- Charge lite's */
 		if (o_ptr->tval == TV_LITE)
 		{
-			if (o_ptr->sval == SV_LITE_TORCH) o_ptr->pval = FUEL_TORCH / 2;
-			if (o_ptr->sval == SV_LITE_LANTERN) o_ptr->pval = FUEL_LAMP / 2;
+			u32b f1, f2, f3, f4, f5, esp;
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+			/* Only fuelable ones! */
+			if (f4 & TR4_FUEL_LITE)
+			{
+				if (o_ptr->sval == SV_LITE_TORCH) o_ptr->pval = FUEL_TORCH / 2;
+				if (o_ptr->sval == SV_LITE_LANTERN) o_ptr->pval = FUEL_LAMP / 2;
+			}
 		}
 
 

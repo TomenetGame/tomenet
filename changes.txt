@@ -514,3 +514,6 @@ Change list for PernMangband
 - Item activations for Some of new items are implemented.
 - Added a hack to make insta-killing traps appear in deeper levels.
 - Thrown randarts never break.
+- "Drop 1au to get Great Scimitar" bug fixed.
+- Different kind of "gold" when dropping money.
+- "Torch of infravision (+2500 to infravision) bug is fixed.
