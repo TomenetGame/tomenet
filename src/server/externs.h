@@ -599,6 +599,7 @@ extern errr init_re_info_txt(FILE *fp, char *buf);
 extern errr init_t_info_txt(FILE *fp, char *buf);
 
 /* init.c */
+extern errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int ymax, int xmax, bool init);
 extern void init_file_paths(char *path);
 extern void init_some_arrays(void);
 extern bool load_server_cfg(void);

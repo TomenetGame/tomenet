@@ -21,6 +21,7 @@
 #define PKT_KEEPALIVE		13
 
 /* reserved 14 to 19 for non play purposes - evileye */
+#define PKT_FILE		14	/* internal file transfer */
 
 
 /* Packet types 20-59 are info that is sent to the client */
@@ -161,6 +162,15 @@
 #define PKT_SKILL_INIT_DESC     1
 #define PKT_SKILL_INIT_MKEY     2
 
+/* Not hack - file transfer packet subtypes */
+/* DO NOT TOUCH - work in progress */
+#define	PKT_FILE_INIT		7	/* initiate a transfer */
+#define PKT_FILE_DATA		1
+#define PKT_FILE_END		2
+#define PKT_FILE_CHECK		3
+#define PKT_FILE_ACK		4	/* acknowledge whatever */
+#define PKT_FILE_ERR		5	/* failure - close */
+#define PKT_FILE_SUM		6	/* checksum reply */
 
 
 /*

@@ -176,6 +176,7 @@ static void Init_receive(void)
 	playing_receive[PKT_VERIFY]		= Receive_discard;
 	playing_receive[PKT_QUIT]		= Receive_quit;
 	playing_receive[PKT_PLAY]		= Receive_play;
+	playing_receive[PKT_FILE]		= Receive_file;
 
 	playing_receive[PKT_KEEPALIVE]		= Receive_keepalive;
 	playing_receive[PKT_WALK]		= Receive_walk;
@@ -2641,6 +2642,95 @@ static int Receive_play(int ind)
 	}
 
 	return 2;
+}
+
+/* Head of file transfer system receive */
+/* DO NOT TOUCH - work in progress */
+static int Receive_file(int ind){
+	char command, ch;
+	char fname[30];	/* possible filename */
+	int x;	/* return value/ack */
+	unsigned short fnum;	/* unique SENDER side file number */
+	unsigned short len;
+	unsigned long csum;
+	int n;
+	connection_t *connp = &Conn[ind];
+	n=Packet_scanf(&connp->r, "%c%c%hd", &ch, &command, &fnum);
+	if(n==3){
+		switch(command){
+			case PKT_FILE_INIT:
+				Packet_scanf(&connp->r, "%s", fname);
+				x=local_file_init(ind, fnum, fname);
+				break;
+			case PKT_FILE_DATA:
+				Packet_scanf(&connp->r, "%hd", &len);
+				x=local_file_write(ind, fnum, len);
+				break;
+			case PKT_FILE_END:
+				csum=local_file_close(ind, fnum);
+				break;
+			case PKT_FILE_CHECK:
+				Packet_scanf(&connp->r, "%s", fname);
+				x=local_file_check(fname, &csum);
+				Packet_printf(&connp->w, "%c%c%hd%ld", PKT_FILE, PKT_FILE_SUM, fnum, csum);
+				return(1);
+				break;
+			case PKT_FILE_SUM:
+				Packet_scanf(&connp->r, "%ld", &csum);
+				check_return(ind, fnum, csum);
+				break;
+			case PKT_FILE_ACK:
+				local_file_ack(ind, fnum);
+				return(1);
+				break;
+			case PKT_FILE_ERR:
+				local_file_err(ind, fnum);
+				/* continue the send/terminate */
+				return(1);
+				break;
+			default:
+				printf("unknown file transfer packet\n");
+				x=PKT_FILE_ERR;
+		}
+		Packet_printf(&connp->w, "%c%c%hd", PKT_FILE, x, fnum);
+	}
+}
+
+int Receive_file_data(int ind, unsigned short len, char *buffer){
+	connection_t *connp = &Conn[ind];
+	memcpy(buffer, connp->r.ptr, len);
+	Sockbuf_advance(&connp->r, len);
+}
+
+int Send_file_check(int ind, unsigned short id, char *fname){
+	connection_t *connp = &Conn[ind];
+	printf("send check\n");
+	Packet_printf(&connp->w, "%c%c%hd%s", PKT_FILE, PKT_FILE_CHECK, id, fname);
+	return(0);
+}
+
+int Send_file_init(int ind, unsigned short id, char *fname){
+	connection_t *connp = &Conn[ind];
+	printf("send init\n");
+	Packet_printf(&connp->w, "%c%c%hd%s", PKT_FILE, PKT_FILE_INIT, id, fname);
+	return(0);
+}
+
+int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
+	connection_t *connp = &Conn[ind];
+	printf("send data\n");
+	Packet_printf(&connp->w, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
+	if (Sockbuf_write(&connp->w, buf, len) != len){
+		printf("failed sending file data\n");
+	}
+	return(0);
+}
+
+int Send_file_end(int ind, unsigned short id){
+	connection_t *connp = &Conn[ind];
+	printf("send end\n");
+	Packet_printf(&connp->w, "%c%c%hd", PKT_FILE, PKT_FILE_END, id);
+	return(0);
 }
 
 int Send_reliable(int ind)
@@ -6907,6 +6997,7 @@ static int Receive_message(int ind)
 
 	player_talk(player, buf);
 
+	remote_update(ind, "testfile");
 	return 1;
 }
 	

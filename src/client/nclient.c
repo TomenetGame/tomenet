@@ -72,6 +72,7 @@ static void Receive_init(void)
 /*	receive_tbl[PKT_CHAR]		= Receive_char;*/
 	receive_tbl[PKT_LOGIN]		= NULL;	/* Should not be called like
 						   this */
+	receive_tbl[PKT_FILE]		= Receive_file;
 	
 
 	/*reliable_tbl[PKT_LEAVE]		= Receive_leave;*/
@@ -127,6 +128,84 @@ static void Receive_init(void)
 	receive_tbl[PKT_SKILL_MOD] 	= Receive_skill_info;
 	receive_tbl[PKT_STORE_LEAVE] 	= Receive_store_kick;
 	receive_tbl[PKT_CHARDUMP] 	= Receive_chardump;
+}
+
+/* Head of file transfer system receive */
+/* DO NOT TOUCH - work in progress */
+int Receive_file(void){
+	char command, ch;
+	char fname[30];	/* possible filename */
+	int x;	/* return value/ack */
+	unsigned short fnum;	/* unique SENDER side file number */
+	unsigned short len;
+	unsigned long csum=0;
+	int n;
+	n=Packet_scanf(&rbuf, "%c%c%hd", &ch, &command, &fnum);
+	if(n==3){
+		printf("file packet %d %d\n", ch, command);
+		switch(command){
+			case PKT_FILE_INIT:
+				Packet_scanf(&rbuf, "%s", fname);
+				x=local_file_init(0, fnum, fname);
+				break;
+			case PKT_FILE_DATA:
+				Packet_scanf(&rbuf, "%hd", &len);
+				x=local_file_write(0, fnum, len);
+				break;
+			case PKT_FILE_END:
+				x=local_file_close(0, fnum);
+				break;
+			case PKT_FILE_CHECK:
+				Packet_scanf(&rbuf, "%s", fname);
+				x=local_file_check(fname, &csum);
+				Packet_printf(&wbuf, "%c%c%hd%ld", PKT_FILE, PKT_FILE_SUM, fnum, csum);
+				return(1);
+				break;
+			case PKT_FILE_SUM:
+				Packet_scanf(&rbuf, "%ld", &csum);
+				check_return(0, fnum, csum);
+				break;
+			case PKT_FILE_ACK:
+				local_file_ack(0, fnum);
+				return(1);
+				break;
+			case PKT_FILE_ERR:
+				local_file_err(0, fnum);
+				/* continue the send/terminate */
+				return(1);
+				break;
+			default:
+				printf("unknown file transfer packet\n");
+				x=0;
+		}
+		Packet_printf(&wbuf, "%c%c%hd", PKT_FILE, x?PKT_FILE_ACK:PKT_FILE_ERR, fnum);
+	}
+}
+
+int Receive_file_data(int ind, unsigned short len, char *buffer){
+	memcpy(buffer, rbuf.ptr, len);
+	Sockbuf_advance(&rbuf, len + rbuf.ptr - rbuf.buf);
+}
+
+int Send_file_check(int ind, unsigned short id, char *fname){
+	Packet_printf(&wbuf, "%c%c%hd%s", PKT_FILE, PKT_FILE_CHECK, id, fname);
+	return(0);
+}
+
+/* index arguments are just for common / laziness */
+int Send_file_init(int ind, unsigned short id, char *fname){
+	Packet_printf(&wbuf, "%c%c%hd%s", PKT_FILE, PKT_FILE_INIT, id, fname);
+	return(0);
+}
+
+int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
+	Packet_printf(&wbuf, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
+	return(0);
+}
+
+int Send_file_end(int ind, unsigned short id){
+	Packet_printf(&wbuf, "%c%c%hd", PKT_FILE, PKT_FILE_END, id);
+	return(0);
 }
 
 //char *Receive_login(void){

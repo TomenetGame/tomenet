@@ -3242,6 +3242,12 @@ static void process_various(void)
 	/* this TomeCron stuff could be merged at some point
 	   to improve efficiency. ;) */
 
+	if(!(turn % 2)){
+		do_xfers();	/* handle filetransfers per second
+				 * FOR NOW!!! DO NOT TOUCH/CHANGE!!!
+				 */
+	}
+
 	/* Save the server state occasionally */
 	if (!(turn % ((NumPlayers ? 10L : 1000L) * SERVER_SAVE)))
 	{

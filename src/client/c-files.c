@@ -940,7 +940,7 @@ errr process_pref_file(cptr name)
                 if (process_pref_file_aux(buf))
                 {
                         /* Useful error message */
-                        printf("Error in '%s' parsing '%s'.", buf, name);
+                        printf("Error in '%s' parsing '%s'.\n", buf, name);
                 }
         }
 

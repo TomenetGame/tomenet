@@ -21,6 +21,7 @@ int Receive_leave(void);
 int Receive_reliable(void);
 int Receive_quit(void);
 void Receive_login(void);
+int Receive_file(void);
 int Receive_reply(int *replyto, int *result);
 int Send_ack(long rel_loops);
 int Receive_magic(void);

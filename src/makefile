@@ -59,7 +59,8 @@ SERV_SRCS = \
   server/cmd6.c server/store.c server/birth.c server/load2.c server/randart.c \
   server/sched.c server/generate.c server/wild.c server/dungeon.c \
   server/init1.c server/init2.c server/nserver.c server/printout.c \
-  server/main.c server/traps.c server/csfunc.c server/skills.c
+  server/main.c server/traps.c server/csfunc.c server/skills.c \
+  common/files.o
 
 SERV_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -73,7 +74,8 @@ SERV_OBJS = \
   server/cmd6.o server/store.o server/birth.o server/load2.o server/randart.o \
   server/sched.o server/generate.o server/wild.o server/dungeon.o \
   server/init1.o server/init2.o server/nserver.o server/printout.o \
-  server/main.o server/traps.o server/csfunc.o server/skills.o
+  server/main.o server/traps.o server/csfunc.o server/skills.o \
+  common/files.o
 
 
 CLI_SRCS = \
@@ -83,7 +85,8 @@ CLI_SRCS = \
   client/c-files.c client/c-tables.c client/c-store.c client/c-init.c \
   client/variable.c client/main-ibm.c client/main-cap.c client/main-gcu.c \
   client/main-x11.c client/main-xaw.c client/nclient.c client/c-birth.c \
-  client/c-xtra1.c client/c-xtra2.c client/c-spell.c client/client.c client/skills.c
+  client/c-xtra1.c client/c-xtra2.c client/c-spell.c client/client.c \
+  client/skills.c common/files.c
 
 CLI_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -92,7 +95,8 @@ CLI_OBJS = \
   client/c-files.o client/c-tables.o client/c-store.o client/c-init.o \
   client/variable.o client/main-ibm.o client/main-cap.o client/main-gcu.o \
   client/main-x11.o client/main-xaw.o client/nclient.o client/c-birth.o \
-  client/c-xtra1.o client/c-xtra2.o client/c-spell.o client/client.o client/skills.o
+  client/c-xtra1.o client/c-xtra2.o client/c-spell.o client/client.o \
+  client/skills.o common/files.o
 
 
 CONS_SRCS = \
@@ -205,7 +209,7 @@ X11BASE = /usr/X11R6
 ##
 #PREFIX = /usr/local
 CFLAGS = -g -pipe -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O3
-LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcurses -lcrypt
+LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcurses -lcrypt 
 
 
 ##

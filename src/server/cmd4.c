@@ -837,7 +837,7 @@ void do_cmd_check_server_settings(int Ind)
 		fprintf(fff, "Players under exp.level %d are not allowed to drop items/golds.\n", k);
 
 	if (k=cfg.spell_interfere)
-		fprintf(fff, "Monsters adjacant to you have %d%% chance of interfering your spellcasting.\n", k);
+		fprintf(fff, "Monsters adjacent to you have %d%% chance of interfering your spellcasting.\n", k);
 
 	if (k=cfg.spell_stack_limit)
 		fprintf(fff, "Duration of assistance spells is limited to %d turns.\n", k);

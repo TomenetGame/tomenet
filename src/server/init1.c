@@ -5242,7 +5242,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 	if (buf[0] == '%')
 	{
 		/* Attempt to Process the given file */
-		return (process_dungeon_file(buf + 2, yval, xval, ymax, xmax, FALSE));
+		return (process_dungeon_file(buf + 2, wpos, yval, xval, ymax, xmax, FALSE));
 	}
 
 	/* Process "N:<sleep>" */
