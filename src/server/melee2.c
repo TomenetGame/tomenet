@@ -4533,7 +4533,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 
 	int y2 = p_ptr->py;
 	int x2 = p_ptr->px;
-	bool done = FALSE;	// not used fully (FIXME)
+	bool done = FALSE, c_blue_ai_done = FALSE;	// not used fully (FIXME)
 
 
 #ifdef MONSTER_FLOW
@@ -4552,7 +4552,10 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	y = m_ptr->fy - y2;
 	x = m_ptr->fx - x2;
 
-	if (r_ptr->flags1 & RF1_NEVER_MOVE) done = TRUE;
+	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
+		done = TRUE;
+		m_ptr->last_target = 0;
+	}
 
 #if SAFETY_RADIUS > 0
 	else if (m_ptr->ai_state & AI_STATE_EFFECT)
@@ -4561,6 +4564,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		if (find_noeffect(m_idx, &y, &x))
 		{
 			done = TRUE;
+			m_ptr->last_target = 0;
 		}
 	}
 #endif	// SAFETY_RADIUS
@@ -4570,6 +4574,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		if (find_terrain(m_idx, &y, &x))
 		{
 			done = TRUE;
+			m_ptr->last_target = 0;
 		}
 	}
 	/* Apply fear if possible and necessary */
@@ -4593,6 +4598,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		if (!y) y = magik(50) ? x : -x;
 
 		done = TRUE;
+		m_ptr->last_target = 0;
 	}
 
 
@@ -4605,6 +4611,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 			x = -x;
 			/* so that they never get reversed again */
 			done = TRUE;
+			m_ptr->last_target = 0;
 		}
 	}
 	
@@ -4620,31 +4627,69 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON))) ||
 #endif
 		(r_ptr->flags2 & RF2_SMART)) && !(r_ptr->flags2 & RF2_STUPID) &&
-		(distance(m_ptr->fy, m_ptr->fx, y2, x2) == 2) &&
-		(p_ptr->pspeed > m_ptr->mspeed) && rand_int(30) &&
+		/* Distance must == 2; distance() won't work for diagonals here */
+		((ABS(m_ptr->fy - y2) == 2 && ABS(m_ptr->fx - x2) <= 2) ||
+		(ABS(m_ptr->fy - y2) <= 2 && ABS(m_ptr->fx - x2) == 2)) &&
+		/* Player must be faster than the monster to cheeze */
+		(p_ptr->pspeed > m_ptr->mspeed) && rand_int(50) &&
+		/* As long as we have good HP there's no need to hold back,
+		   [if player is low on HP we should try to attack him anyways,
+		   this is not basing on consequent logic though] */
 		(m_ptr->hp <= (m_ptr->maxhp * 3) / 5) && (p_ptr->chp > p_ptr->mhp / 4) &&
 		(p_ptr->s_info[SKILL_MASTERY].value >= 3000 || p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= 10000) &&
+		/* If there's los we can just cast a spell -
+		   this assumes the monster can cast damaging spells, might need fixing */
 		!los(&p_ptr->wpos, y2, x2, m_ptr->fy, m_ptr->fx) &&
+		/* Only stay back if the player moved away from us -
+		   this assumes the monster didn't perform a RAND_ turn, might need fixing */
 		(m_ptr->last_target == p_ptr->id)) {
 
 		int xt,yt, more_monsters_nearby = 0;
 		cave_type **zcave = getcave(&p_ptr->wpos);
 		if (zcave) {
 			monster_type *mx_ptr;
-			for (yt = m_ptr->fy - 5; yt < m_ptr->fy + 5; yt ++)
-			for (xt = m_ptr->fx - 5; xt < m_ptr->fx + 5; xt ++) {
-    				if (in_bounds(yt,xt) &&
-				    (zcave[yt][xt].m_idx > 0)) {
+			for (yt = m_ptr->fy - 5; yt <= m_ptr->fy + 5; yt ++)
+			for (xt = m_ptr->fx - 5; xt <= m_ptr->fx + 5; xt ++) {
+    				if (in_bounds(yt,xt) && (zcave[yt][xt].m_idx > 0) &&
+				   !(yt == m_ptr->fy && xt == m_ptr->fx)) {
 					mx_ptr = &m_list[zcave[yt][xt].m_idx];
 					if (!mx_ptr->csleep && !mx_ptr->confused && !mx_ptr->monfear && (mx_ptr->level * 3 > m_ptr->level))
 						more_monsters_nearby++;
 				}
 			}
-			/* Stay. Don't approach the player without enough support! */
-			if (more_monsters_nearby < 3) return;
+			/* Don't approach the player without enough support! */
+			if (more_monsters_nearby < 2) {
+				bool clockwise = TRUE; /* circle the player clockwise */
+				bool tested_so_far = FALSE;
+				/* Often stay still and don't move at all */
+				if (!rand_int(3)) return;
+				/* Move randomly without getting closer */
+				if (rand_int(2)) clockwise = FALSE; /* circle the player anti-clockwise */
+				for (yt = m_ptr->fy - 1; yt <= m_ptr->fy + 1; yt ++)
+				for (xt = m_ptr->fx - 1; xt <= m_ptr->fx + 1; xt ++) {
+	    				if (in_bounds(yt, xt) && !(yt == m_ptr->fy && xt == m_ptr->fx) &&
+					    /* Random target position mustn't change distance to player */
+					    /* Better not enter a position perfectly diagonal to player */
+			    		    ((ABS(yt - y2) == 2 && ABS(xt - x2) <= 1) ||
+					    (ABS(yt - y2) <= 1 && ABS(xt - x2) == 2))) {
+						/* Only 2 fields should ever pass the previous if-clause!
+						   So we can separate them using boolean values: */
+						if (clockwise != tested_so_far) {
+							x = m_ptr->fx - xt;
+							y = m_ptr->fy - yt;
+							done = TRUE;
+							c_blue_ai_done = TRUE;
+							/* keep last_target on this player to remember to
+							   still stay back from him in the next round */
+						}
+						tested_so_far = TRUE;
+					}
+				}
+				/* If monster didn't move randomly, just stay still */
+				if (!c_blue_ai_done) return;
+			}
 		}
 	}
-	if (done) m_ptr->last_target = 0;
 #endif
 
 #if 0
