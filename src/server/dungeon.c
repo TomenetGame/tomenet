@@ -1392,8 +1392,6 @@ static void process_player_end(int Ind)
 			int hit=p_ptr->mhp/10;
 			if(!hit) hit=1;
 
-			//			s_printf("Water!\n");
-
 			/* Take damage */
 			if(!(p_ptr->pclass==CLASS_MIMIC) || (
 						!(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
@@ -1403,7 +1401,6 @@ static void process_player_end(int Ind)
 				if(p_ptr->wt+p_ptr->total_weight/10 > 170)
 				{
 					int factor=(p_ptr->wt+p_ptr->total_weight/10)-150;
-					//			s_printf("Factor = %c\n", factor);
 					/* too heavy, always drown? */
 					if(factor<300)
 					{

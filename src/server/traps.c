@@ -2154,7 +2154,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       /* Trap of hallucination */
       case TRAP_OF_HALLUCINATION:
       {
-	 msg_print(Ind, "Scintillating colors hypnotize you for a moment.");
+	 msg_print(Ind, "Scintillating colours hypnotize you for a moment.");
 
 	 set_image(Ind, 80);
       }
@@ -2221,7 +2221,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		 }
       /* Voluminous cuisine Trap */
       case TRAP_OF_CUISINE:
-         msg_print(Ind, "You are treated to a marvelous elven cuisine!");
+         msg_print(Ind, "You are treated to a marvellous elven cuisine!");
 		 /* 1turn = 100 food value when satiated */
          (void)set_food(Ind, PY_FOOD_MAX + glev*50 + 1000 + rand_int(1000));
          ident=TRUE;
