@@ -2445,7 +2445,11 @@ static int Receive_login(int ind){
 		   on reason - evileye */
 		if(check_account(connp->nick, choice)){
 			/* Validate names/resume in proper place */
-			if(Check_names(choice, connp->real, connp->host, connp->addr));
+			if(Check_names(choice, connp->real, connp->host, connp->addr)){
+				/* fail login here */
+				Destroy_connection(ind, "Security violation");
+				return(-1);
+			}
 			Packet_printf(&connp->c, "%c", lookup_player_id(choice) ? SUCCESS : E_NEED_INFO);
 			connp->c_name=strdup(choice);
 		}
