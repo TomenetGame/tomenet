@@ -55,7 +55,9 @@
 # endif
 #endif
 
-
+#if defined(__NetBSD__)
+#include <termcap.h>
+#endif
 
 /*
  * POSIX stuff
@@ -96,9 +98,9 @@
 #endif
 
 
-
-
 #ifdef USE_TERMCAP
+
+errr init_cap_aux(void);
 
 /*
  * Termcap string information
@@ -189,9 +191,10 @@ static void ewrite(char *str)
 static char write_buffer[128];
 static char *write_buffer_ptr;
 
-static void output_one(char c)
+static int output_one(int c)
 {
-	*write_buffer_ptr++ = c;
+	*write_buffer_ptr++ = (char)c;
+	return(1);
 }
 
 static void tp(char *s)
@@ -267,7 +270,7 @@ static void curs_set(int vis)
 }
 
 
-
+#if 0	/* Unused currently */
 /*
  * Restrict scrolling to within these rows
  */
@@ -285,6 +288,7 @@ static void do_cs(int y1, int y2)
 #endif
 
 }
+#endif
 
 
 
@@ -402,7 +406,7 @@ errr init_cap_aux(void)
 
 #ifdef USE_HARDCODE
 
-	/* Assume some defualt information */
+	/* Assume some default information */
 	rows = 24;
 	cols = 80;
 
@@ -427,12 +431,6 @@ errr init_cap_aux(void)
 	/* Success */
 	return (0);
 }
-
-
-
-
-
-
 
 /*
  * Save the "normal" and "angband" terminal settings
@@ -978,7 +976,6 @@ static void Term_nuke_cap(term *t)
 errr init_cap(void)
 {
 	term *t = &term_screen_body;
-
 
 	/*** Initialize ***/
 

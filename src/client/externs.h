@@ -21,6 +21,10 @@ extern errr init_xaw(void);
 extern errr CheckEvent(bool wait);
 #endif
 
+#ifdef USE_CAP
+extern errr init_cap(void);
+#endif
+
 #ifdef USE_IBM
 extern errr init_ibm(void);
 #endif
