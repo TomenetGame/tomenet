@@ -196,6 +196,7 @@ int getlevel(struct worldpos *wpos){
 		else
 			d_ptr=w_ptr->dungeon;
 		base=d_ptr->baselevel+ABS(wpos->wz)-1;
+		return(base);
 	}
 }
 #endif
