@@ -3403,11 +3403,11 @@ that keeps many algorithms happy.
 #define RBM_BUTT	9
 #define RBM_CRUSH	10
 #define RBM_ENGULF	11
-#define RBM_XXX2	12
+//#define RBM_XXX2	12
 #define RBM_CRAWL	13
 #define RBM_DROOL	14
 #define RBM_SPIT	15
-#define RBM_XXX3	16
+//#define RBM_XXX3	16
 #define RBM_GAZE	17
 #define RBM_WAIL	18
 #define RBM_SPORE	19
@@ -3415,8 +3415,12 @@ that keeps many algorithms happy.
 #define RBM_BEG		21
 #define RBM_INSULT	22
 #define RBM_MOAN	23
-#define RBM_XXX5	24
+//#define RBM_XXX5	24
 
+#define RBM_ANY          0
+#define RBM_CHARGE      12
+#define RBM_EXPLODE     16
+#define RBM_SHOW        24
 
 /*
  * New monster blow effects
@@ -3450,6 +3454,11 @@ that keeps many algorithms happy.
 #define RBE_EXP_40		27
 #define RBE_EXP_80		28
 
+#define RBE_DISEASE     29
+#define RBE_TIME        30
+#define RBE_SANITY      31
+#define RBE_HALLU       32
+#define RBE_PARASITE    33
 
 
 /*** Monster flag values (hard-coded) ***/
@@ -3969,6 +3978,9 @@ that keeps many algorithms happy.
 
 /*
  * Determines if a map location is fully inside the outer walls
+ *
+ * (This should be replaced with the one using
+ * p_ptr->max_hgt/wid?	- Jir -)
  */
 #ifdef NEW_DUNGEON
 #define in_bounds(Y,X) \

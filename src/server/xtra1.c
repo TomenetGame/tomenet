@@ -2061,7 +2061,7 @@ static void calc_bonuses(int Ind)
 		if (f2 & TR2_HOLD_LIFE) p_ptr->hold_life = TRUE;
 
 		/* Light(consider doing it on calc_torch) */
-		if (((f4 & TR4_FUEL_LITE) && (o_ptr->pval > 0)) || (!(f4 & TR4_FUEL_LITE)))
+		if (((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0)) || (!(f4 & TR4_FUEL_LITE)))
 		{
 			if (f3 & TR3_LITE1) p_ptr->lite++;
 			if (f4 & TR4_LITE2) p_ptr->lite += 2;

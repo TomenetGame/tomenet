@@ -1623,7 +1623,8 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr)
 	if (istown(wpos)) return (FALSE);
 
 	/* Check the artifact list (just the "specials") */
-	for (i = 0; i < ART_MIN_NORMAL; i++)
+//	for (i = 0; i < ART_MIN_NORMAL; i++)
+	for (i = 0; i < MAX_A_IDX; i++)
 	{
 		artifact_type *a_ptr = &a_info[i];
 
@@ -1632,6 +1633,13 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr)
 
 		/* Cannot make an artifact twice */
 		if (a_ptr->cur_num) continue;
+
+                /* Cannot generate non special ones */
+                if (!(a_ptr->flags3 & TR3_INSTA_ART)) continue;
+
+                /* Cannot generate some artifacts because they can only exists in special dungeons/quests/... */
+//                if ((a_ptr->flags4 & TR4_SPECIAL_GENE) && (!a_allow_special[i]) && (!vanilla_town)) continue;
+                if (a_ptr->flags4 & TR4_SPECIAL_GENE) continue;
 
 		/* XXX XXX Enforce minimum "depth" (loosely) */
 		if (a_ptr->level > getlevel(wpos))
@@ -1693,7 +1701,8 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr)
 	if (o_ptr->number != 1) return (FALSE);
 
 	/* Check the artifact list (skip the "specials") */
-	for (i = ART_MIN_NORMAL; i < MAX_A_IDX; i++)
+//	for (i = ART_MIN_NORMAL; i < MAX_A_IDX; i++)
+        for (i = 0; i < MAX_A_IDX; i++)
 	{
 		artifact_type *a_ptr = &a_info[i];
 
@@ -1702,6 +1711,13 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr)
 
 		/* Cannot make an artifact twice */
 		if (a_ptr->cur_num) continue;
+
+                /* Cannot generate special ones */
+                if (a_ptr->flags3 & TR3_INSTA_ART) continue;
+
+                /* Cannot generate some artifacts because they can only exists in special dungeons/quests/... */
+//                if ((a_ptr->flags4 & TR4_SPECIAL_GENE) && (!a_allow_special[i]) && (!vanilla_town)) continue;
+                if (a_ptr->flags4 & TR4_SPECIAL_GENE) continue;
 
 		/* Must have the correct fields */
 		if (a_ptr->tval != o_ptr->tval) continue;
@@ -3963,13 +3979,13 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 				if (o_ptr->sval == SV_LITE_TORCH)
 				{
 //					if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
-					o_ptr->pval = randint(FUEL_TORCH);
+					o_ptr->timeout = randint(FUEL_TORCH);
 				}
 
 				/* Hack -- Lanterns -- random fuel */
-				if (o_ptr->sval == SV_LITE_LANTERN)
+				else if (o_ptr->sval == SV_LITE_LANTERN)
 				{
-					o_ptr->pval = randint(FUEL_LAMP);
+					o_ptr->timeout = randint(FUEL_LAMP);
 //					if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
 				}
 			}
@@ -4217,6 +4233,7 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 		case TV_BOLT:
 		case TV_BOOMERANG:
 		case TV_AXE:
+		case TV_MSTAFF:
 		{
 			if (power) a_m_aux_1(o_ptr, lev, power);
 			break;

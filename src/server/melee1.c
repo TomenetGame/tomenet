@@ -143,6 +143,9 @@ bool make_attack_normal(int Ind, int m_idx)
 
 	bool            blinked;
 
+	bool touched = FALSE, fear = FALSE, alive = TRUE;
+	bool explode = FALSE;
+
 
 	/* Not allowed to attack */
 	if (r_ptr->flags1 & RF1_NEVER_BLOW) return (FALSE);
@@ -225,6 +228,11 @@ bool make_attack_normal(int Ind, int m_idx)
 			case RBE_EXP_20:        power =  5; break;
 			case RBE_EXP_40:        power =  5; break;
 			case RBE_EXP_80:        power =  5; break;
+				case RBE_DISEASE:   power =  5; break;
+				case RBE_TIME:      power =  5; break;
+                        case RBE_SANITY:    power = 60; break;
+                        case RBE_HALLU:     power = 10; break;
+                        case RBE_PARASITE:  power =  5; break;
 		}
 
 
@@ -262,12 +270,14 @@ bool make_attack_normal(int Ind, int m_idx)
 				{
 					act = "hits you.";
 					do_cut = do_stun = 1;
+					touched = TRUE;
 					break;
 				}
 
 				case RBM_TOUCH:
 				{
 					act = "touches you.";
+					touched = TRUE;
 					break;
 				}
 
@@ -275,6 +285,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				{
 					act = "punches you.";
 					do_stun = 1;
+					touched = TRUE;
 					break;
 				}
 
@@ -282,6 +293,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				{
 					act = "kicks you.";
 					do_stun = 1;
+					touched = TRUE;
 					break;
 				}
 
@@ -289,6 +301,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				{
 					act = "claws you.";
 					do_cut = 1;
+					touched = TRUE;
 					break;
 				}
 
@@ -296,12 +309,14 @@ bool make_attack_normal(int Ind, int m_idx)
 				{
 					act = "bites you.";
 					do_cut = 1;
+					touched = TRUE;
 					break;
 				}
 
 				case RBM_STING:
 				{
 					act = "stings you.";
+					touched = TRUE;
 					break;
 				}
 
@@ -315,6 +330,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				{
 					act = "butts you.";
 					do_stun = 1;
+					touched = TRUE;
 					break;
 				}
 
@@ -322,24 +338,36 @@ bool make_attack_normal(int Ind, int m_idx)
 				{
 					act = "crushes you.";
 					do_stun = 1;
+					touched = TRUE;
 					break;
 				}
 
 				case RBM_ENGULF:
 				{
 					act = "engulfs you.";
+					touched = TRUE;
 					break;
 				}
-
+#if 0
 				case RBM_XXX2:
 				{
 					act = "XXX2's you.";
+					break;
+				}
+#endif	// 0
+
+				case RBM_CHARGE:
+				{
+					act = "charges you.";
+					touched = TRUE;
+//					sound(SOUND_BUY); /* Note! This is "charges", not "charges at". */
 					break;
 				}
 
 				case RBM_CRAWL:
 				{
 					act = "crawls on you.";
+					touched = TRUE;
 					break;
 				}
 
@@ -355,11 +383,20 @@ bool make_attack_normal(int Ind, int m_idx)
 					break;
 				}
 
+#if 0
 				case RBM_XXX3:
 				{
 					act = "XXX3's on you.";
 					break;
 				}
+#endif	// 0
+				case RBM_EXPLODE:
+				{
+					act = "explodes.";
+					explode = TRUE;
+					break;
+				}
+
 
 				case RBM_GAZE:
 				{
@@ -403,9 +440,21 @@ bool make_attack_normal(int Ind, int m_idx)
 					break;
 				}
 
+#if 0
 				case RBM_XXX5:
 				{
 					act = "XXX5's you.";
+					break;
+				}
+#endif	// 0
+
+				case RBM_SHOW:
+				{
+					if (randint(3)==1)
+						act = "sings 'We are a happy family.'";
+					else
+						act = "sings 'I love you, you love me.'";
+//					sound(SOUND_SHOW);
 					break;
 				}
 			}
@@ -728,11 +777,12 @@ bool make_attack_normal(int Ind, int m_idx)
 					o_ptr = &p_ptr->inventory[INVEN_LITE];
 
 					/* Drain fuel */
-					if ((o_ptr->pval > 0) && (o_ptr->sval < SV_LITE_DWARVEN))
+//					if ((o_ptr->pval > 0) && (o_ptr->sval < SV_LITE_DWARVEN))
+					if (o_ptr->timeout > 0)	// hope this won't cause trouble..
 					{
 						/* Reduce fuel */
-						o_ptr->pval -= (250 + randint(250));
-						if (o_ptr->pval < 1) o_ptr->pval = 1;
+						o_ptr->timeout -= (250 + randint(250));
+						if (o_ptr->timeout < 1) o_ptr->timeout = 1;
 
 						/* Notice */
 						if (!p_ptr->blind)
@@ -1134,6 +1184,118 @@ bool make_attack_normal(int Ind, int m_idx)
 					}
 					break;
 				}
+
+				/* Additisons from PernAngband	- Jir - */
+				case RBE_DISEASE:
+				{
+					/* Take some damage */
+					//                                        carried_monster_hit = TRUE;
+					take_hit(Ind, damage, ddesc);
+
+					/* Take "poison" effect */
+					if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+					{
+						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5))
+						{
+							obvious = TRUE;
+						}
+					}
+
+					/* Damage CON (10% chance)*/
+					if (randint(100) < 11)
+					{
+						/* 1% chance for perm. damage (pernA one was buggie? */
+						bool perm = (randint(10) == 1);
+						if (dec_stat(Ind, A_CON, randint(10), perm + 1)) obvious = TRUE;
+					}
+
+					break;
+				}
+				case RBE_PARASITE:
+				{
+					/* Obvious */
+					obvious = TRUE;
+
+					//                                        if (!p_ptr->parasite) set_parasite(damage, r_idx);
+
+					break;
+				}
+				case RBE_HALLU:
+				{
+					/* Take damage */
+					take_hit(Ind, damage, ddesc);
+
+					/* Increase "image" */
+					if (!p_ptr->resist_chaos)
+					{
+						if (set_image(Ind, p_ptr->image + 3 + randint(rlev / 2)))
+						{
+							obvious = TRUE;
+						}
+					}
+					break;
+
+				}
+				case RBE_TIME:
+				{
+					switch (randint(10))
+					{
+						case 1: case 2: case 3: case 4: case 5:
+							{
+								msg_print(Ind, "You feel life has clocked back.");
+								lose_exp(Ind, 100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+								break;
+							}
+
+						case 6: case 7: case 8: case 9:
+							{
+								int stat = rand_int(6);
+
+								switch (stat)
+								{
+									case A_STR: act = "strong"; break;
+									case A_INT: act = "bright"; break;
+									case A_WIS: act = "wise"; break;
+									case A_DEX: act = "agile"; break;
+									case A_CON: act = "hardy"; break;
+									case A_CHR: act = "beautiful"; break;
+								}
+
+								msg_format(Ind, "You're not as %s as you used to be...", act);
+
+								p_ptr->stat_cur[stat] = (p_ptr->stat_cur[stat] * 3) / 4;
+								if (p_ptr->stat_cur[stat] < 3) p_ptr->stat_cur[stat] = 3;
+								p_ptr->update |= (PU_BONUS);
+								break;
+							}
+
+						case 10:
+							{
+								msg_print(Ind, "You're not as powerful as you used to be...");
+
+								for (k = 0; k < 6; k++)
+								{
+									p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
+									if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
+								}
+								p_ptr->update |= (PU_BONUS);
+								break;
+							}
+					}
+					//                                        carried_monster_hit = TRUE;
+					take_hit(Ind, damage, ddesc);
+					break;
+				}
+#if 0
+                                case RBE_SANITY:
+                                {
+                                        obvious = TRUE;
+
+                                        take_sanity_hit(damage, ddesc);
+                                        break;
+                                }
+#endif	// 0
+
 			}
 
 
@@ -1202,6 +1364,73 @@ bool make_attack_normal(int Ind, int m_idx)
 				/* Apply the stun */
 				if (k) (void)set_stun(Ind, p_ptr->stun + k);
 			}
+
+			if (explode)
+			{
+//				sound(SOUND_EXPLODE);
+				if (mon_take_hit(Ind, m_idx, m_ptr->hp + 1, &fear, NULL))
+				{
+					blinked = FALSE;
+					alive = FALSE;
+				}
+			}
+
+			if (touched)
+			{
+				if (p_ptr->sh_fire && alive)
+				{
+					if (!(r_ptr->flags3 & RF3_IM_FIRE))
+					{
+						msg_format(Ind, "%^s is suddenly very hot!", m_name);
+						if (mon_take_hit(Ind, m_idx, damroll(2,6), &fear,
+						    " turns into a pile of ash."))
+						{
+							blinked = FALSE;
+							alive = FALSE;
+						}
+					}
+					else
+					{
+//						if (m_ptr->ml)
+						if (p_ptr->mon_vis[m_idx])
+							r_ptr->r_flags3 |= RF3_IM_FIRE;
+					}
+				}
+
+				if (p_ptr->sh_elec && alive)
+				{
+					if (!(r_ptr->flags3 & RF3_IM_ELEC))
+					{
+						msg_format(Ind, "%^s gets zapped!", m_name);
+						if (mon_take_hit(Ind, m_idx, damroll(2,6), &fear,
+						    " turns into a pile of cinder."))
+						{
+							blinked = FALSE;
+							alive = FALSE;
+						}
+					}
+					else
+					{
+//						if (m_ptr->ml)
+						if (p_ptr->mon_vis[m_idx])
+							r_ptr->r_flags3 |= RF3_IM_ELEC;
+					}
+				}
+#if 0
+                                if ((p_ptr->shield_opt & SHIELD_COUNTER) && alive)
+				{
+                                        msg_format("%^s gets bashed by your mystic shield!", m_name);
+                                        if (mon_take_hit(m_idx, damroll(10,8), &fear,
+                                                    " is bashed by your mystic shield."))
+						{
+							blinked = FALSE;
+							alive = FALSE;
+						}
+				}
+#endif	// 0
+
+				touched = FALSE;
+			}
 		}
 
 		/* Monster missed player */
@@ -1221,7 +1450,8 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBM_BUTT:
 				case RBM_CRUSH:
 				case RBM_ENGULF:
-				case RBM_XXX2:
+//				case RBM_XXX2:
+				case RBM_CHARGE:
 
 				/* Visible monsters */
 				if (p_ptr->mon_vis[m_idx])

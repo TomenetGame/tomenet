@@ -1375,15 +1375,15 @@ static void do_cmd_refill_lamp(int Ind, int item)
 	j_ptr = &(p_ptr->inventory[INVEN_LITE]);
 
 	/* Refuel */
-	j_ptr->pval += o_ptr->pval;
+	j_ptr->timeout += o_ptr->timeout;
 
 	/* Message */
 	msg_print(Ind, "You fuel your lamp.");
 
 	/* Comment */
-	if (j_ptr->pval >= FUEL_LAMP)
+	if (j_ptr->timeout >= FUEL_LAMP)
 	{
-		j_ptr->pval = FUEL_LAMP;
+		j_ptr->timeout = FUEL_LAMP;
 		msg_print(Ind, "Your lamp is full.");
 	}
 
@@ -1467,15 +1467,15 @@ static void do_cmd_refill_torch(int Ind, int item)
 	j_ptr = &(p_ptr->inventory[INVEN_LITE]);
 
 	/* Refuel */
-	j_ptr->pval += o_ptr->pval + 5;
+	j_ptr->timeout += o_ptr->timeout + 5;
 
 	/* Message */
 	msg_print(Ind, "You combine the torches.");
 
 	/* Over-fuel message */
-	if (j_ptr->pval >= FUEL_TORCH)
+	if (j_ptr->timeout >= FUEL_TORCH)
 	{
-		j_ptr->pval = FUEL_TORCH;
+		j_ptr->timeout = FUEL_TORCH;
 		msg_print(Ind, "Your torch is fully fueled.");
 	}
 

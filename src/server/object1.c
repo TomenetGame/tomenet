@@ -1200,9 +1200,9 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 		(*f1) |= a_ptr->flags1;
 		(*f2) |= a_ptr->flags2;
 		(*f3) |= a_ptr->flags3;
-                (*f4) = a_ptr->flags4;
-                (*f5) = a_ptr->flags5;
-                (*esp) = a_ptr->esp;
+                (*f4) |= a_ptr->flags4;
+                (*f5) |= a_ptr->flags5;
+                (*esp) |= a_ptr->esp;
 	}
 #if 0
 	/* Extra powers */
@@ -2371,7 +2371,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	{
 		/* Hack -- Turns of light for normal lites */
 		t = object_desc_str(t, mode < 8 ? " (with " : "(");
-		t = object_desc_num(t, o_ptr->pval);
+		t = object_desc_num(t, o_ptr->timeout);
 		t = object_desc_str(t, mode < 8 ? " turns of light)" : "t)");
 	}
 
@@ -2463,7 +2463,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 
 	/* Indicate "charging" artifacts XXX XXX XXX */
-	if (known && o_ptr->timeout)
+	if (known && o_ptr->timeout && !((o_ptr->tval == TV_LITE) && (f4 & TR4_FUEL_LITE)))
 	{
 		/* Hack -- Dump " (charging)" if relevant */
 		t = object_desc_str(t, mode < 8 ? " (charging)" : "(#)");

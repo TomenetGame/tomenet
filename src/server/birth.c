@@ -1005,7 +1005,7 @@ static void player_outfit(int Ind)
 	/* Hack -- Give the player some torches */
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
 	o_ptr->number = rand_range(3, 7);
-	o_ptr->pval = rand_range(3, 7) * 500;
+	o_ptr->timeout = rand_range(3, 7) * 500;
 	object_known(o_ptr);
 	o_ptr->owner = p_ptr->id;
 	o_ptr->level = 0;

@@ -1441,11 +1441,12 @@ F:CAPACITY | CHARGING | CHEAPNESS | FAST_CAST |
 
 ### Lights ###
 
-N:136:of Boldness
-X:A:0:5
-T:39:0:99
-W:0:1:5:1000
-Z:remove fear
+#N:136:of Boldness
+#X:A:0:5
+#T:39:0:99
+#W:0:1:5:1000
+#R:100
+#Z:remove fear
 
 N:137:of Boldness
 X:A:0:5
@@ -1489,17 +1490,18 @@ F:LITE2
 F:LITE3
 F:RES_DARK
 
-N:141:of the Shadows
-X:A:0:6
-T:39:0:99
-W:0:1:20:3000
-C:0:0:0:2
-R:100
-F:INVIS
-R:70
-F:RES_DARK
-R:50
-F:RES_LITE
+#N:141:of the Shadows
+#X:A:0:6
+##T:39:0:99
+#T:39:0:1
+#W:0:1:20:3000
+#C:0:0:0:2
+#R:100
+#F:INVIS
+#R:70
+#F:RES_DARK
+#R:50
+#F:RES_LITE
 
 N:142:of Infravision
 X:A:0:3
@@ -1948,6 +1950,22 @@ F:MANA | FREE_ACT
 F:SHOW_MODS | HIDE_TYPE
 F:ABILITY
 
+# basically for monster drops (N:186 is hard-coded!)
+N:186:'Stormbringer'
+T:23:30:30
+X:A:24:0
+W:45:1:127:40000
+C:16:16:0:8
+R:100
+F:VAMPIRIC | STR | CON | BLOWS | FREE_ACT | HOLD_LIFE |
+F:RES_NEXUS | RES_CHAOS | RES_NETHER | RES_CONF
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+F:NO_TELE | CURSED | HEAVY_CURSE
+R:60
+F:DRAIN_EXP
+R:60
+F:AGGRAVATE
+
 
 
 #N:(No.):(name)
@@ -1956,7 +1974,6 @@ F:ABILITY
 #W:(depth):(rarity):(mrarity):(price)
 # (randint(rarity)<mrarity) fail;
 #R:100      [rar[cur_r] (percentile?) ]
-#P:(AC):(base dam.):(to-hit):(to-dam):(+AC?)
 #C:hit:dam:ac:pval-max
 #F:(attribute)|...
 #Z:(power)

@@ -1581,8 +1581,8 @@ static void store_create(store_type *st_ptr)
 			/* Only fuelable ones! */
 			if (f4 & TR4_FUEL_LITE)
 			{
-				if (o_ptr->sval == SV_LITE_TORCH) o_ptr->pval = FUEL_TORCH / 2;
-				if (o_ptr->sval == SV_LITE_LANTERN) o_ptr->pval = FUEL_LAMP / 2;
+				if (o_ptr->sval == SV_LITE_TORCH) o_ptr->timeout = FUEL_TORCH / 2;
+				if (o_ptr->sval == SV_LITE_LANTERN) o_ptr->timeout = FUEL_LAMP / 2;
 			}
 		}
 

@@ -1215,6 +1215,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* Normal attr */
 			(*ap) = object_attr(o_ptr);
 
+			/* Abnormal attr */
+			if (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)
+				(*ap) = randint(15);
+
 			/* Hack -- hallucination */
 			if (p_ptr->image) image_object(ap, cp);
 		}
@@ -1331,7 +1335,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	   
 	 */
 	   
-	if (c_ptr->m_idx < 0)
+	else if (c_ptr->m_idx < 0)
 	{
 		/* Is that player visible? */
 		if (p_ptr->play_vis[0 - c_ptr->m_idx])

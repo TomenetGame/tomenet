@@ -18251,8 +18251,10 @@ S:S_MONSTERS | S_KIN | TELE_TO | HEAL
 D:The lord of the Titans, he has broken loose from his confinement in 
 D:the nether hells to seek revenge on the world. 
 
+# Not knowing why it's here etc..
 N:1038:Water hound
-G:Z:r
+#G:Z:r
+G:Z:s
 I:110:12d6:30:30:0
 W:43:1:600:70
 B:BITE:HURT:1d6

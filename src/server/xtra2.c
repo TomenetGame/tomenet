@@ -2773,6 +2773,8 @@ void monster_death(int Ind, int m_idx)
 	bool do_item = (!(r_ptr->flags1 & RF1_ONLY_GOLD));
 
 	int force_coin = get_coin_type(r_ptr);
+	object_type forge;
+	object_type *qq_ptr;
 #ifdef NEW_DUNGEON
 	struct worldpos *wpos;
 	cave_type **zcave;
@@ -2790,6 +2792,115 @@ void monster_death(int Ind, int m_idx)
 #else
 	Depth = m_ptr->dun_depth;
 #endif
+
+	/* PernAngband additions */
+
+	/* Mega^2-hack -- destroying the Stormbringer gives it us! */
+	if (strstr((r_name + r_ptr->name),"Stormbringer"))
+	{
+		/* Get local object */
+		qq_ptr = &forge;
+
+		/* Prepare to make the Stormbringer */
+		object_prep(qq_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
+
+		/* Megahack -- specify the ego */
+		qq_ptr->name2 = 186;
+
+		apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE);
+
+		qq_ptr->ident |= ID_CURSED;
+
+		/* Drop it in the dungeon */
+		drop_near(qq_ptr, -1, wpos, y, x);
+	}
+
+	/*
+	 * Mega^3-hack: killing a 'Warrior of the Dawn' is likely to
+	 * spawn another in the fallen one's place!
+	 */
+	else if (strstr((r_name + r_ptr->name),"the Dawn"))
+	{
+		if (!(randint(20)==13))
+		{
+			int wy = p_ptr->py, wx = p_ptr->px;
+			int attempts = 100;
+
+			do
+			{
+				scatter(wpos, &wy, &wx,p_ptr->py,p_ptr->px, 20, 0);
+			}
+			while (!(in_bounds(wy,wx) && cave_floor_bold(zcave, wy,wx)) && --attempts);
+
+			if (attempts > 0)
+			{
+#if 0
+                                if (is_friend(m_ptr) > 0)
+				{
+					if (summon_specific_friendly(wy, wx, 100, SUMMON_DAWN, FALSE))
+					{
+						if (player_can_see_bold(wy, wx))
+							msg_print ("A new warrior steps forth!");
+					}
+				}
+				else
+#endif
+				{
+					if (summon_specific(wpos, wy, wx, 100, SUMMON_DAWN))
+					{
+						if (player_can_see_bold(Ind, wy, wx))
+							msg_print (Ind, "A new warrior steps forth!");
+					}
+				}
+			}
+		}
+	}
+
+	/* One more ultra-hack: An Unmaker goes out with a big bang! */
+	else if (strstr((r_name + r_ptr->name),"Unmaker"))
+	{
+		int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+		(void)project(m_idx, 6, wpos, y, x, 100, GF_CHAOS, flg);
+	}
+
+        /* Raal's Tomes of Destruction drop a Raal's Tome of Destruction */
+//        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (rand_int(100) < 20))
+        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (magik(2)))
+	{
+		/* Get local object */
+		qq_ptr = &forge;
+
+                /* Prepare to make a Raal's Tome of Destruction */
+                object_prep(qq_ptr, lookup_kind(TV_MAGIC_BOOK, 8));
+
+		/* Drop it in the dungeon */
+                drop_near(qq_ptr, -1, wpos, y, x);
+	}
+
+	/* Pink horrors are replaced with 2 Blue horrors */
+	else if (strstr((r_name + r_ptr->name),"ink horror"))
+	{
+                for (i = 0; i < 2; i++)
+		{
+			int wy = p_ptr->py, wx = p_ptr->px;
+			int attempts = 100;
+
+			do
+			{
+				scatter(wpos, &wy, &wx, p_ptr->py, p_ptr->px, 3, 0);
+			}
+			while (!(in_bounds(wy,wx) && cave_floor_bold(zcave, wy,wx)) && --attempts);
+
+			if (attempts > 0)
+			{
+                                if (summon_specific(wpos, wy, wx, 100, SUMMON_BLUE_HORROR))
+				{
+					if (player_can_see_bold(Ind, wy, wx))
+						msg_print (Ind, "A blue horror appears!");
+				}
+                        }                
+                }
+	}
 
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
@@ -2963,146 +3074,405 @@ void monster_death(int Ind, int m_idx)
     		msg_broadcast(Ind, buf);
 	}
 
+
 	/* Mega-Hack -- drop "winner" treasures */
-	if (r_ptr->flags1 & RF1_DROP_CHOSEN)
+	if (r_ptr->flags1 & (RF1_DROP_CHOSEN))
 	{
-		/* Hack -- an "object holder" */
-		object_type prize;
-
- 	        int num = 0;
-
-		/* Nothing left, game over... */
-		for (i = 1; i <= NumPlayers; i++)
+		if (strstr((r_name + r_ptr->name),"Morgoth, Lord of Darkness"))
 		{
-			q_ptr = Players[i];
-			/* Make everyone in the game in the same party on the
-			 * same level greater than or equal to level 40 total
-			 * winners.
-			 */
-#ifdef NEW_DUNGEON
-			if ((((p_ptr->party) && (q_ptr->party == p_ptr->party)) ||
-			   (q_ptr == p_ptr) ) && q_ptr->lev >= 40 && inarea(&p_ptr->wpos,&q_ptr->wpos))
-#else
-			if ((((p_ptr->party) && (q_ptr->party == p_ptr->party)) ||
-			   (q_ptr == p_ptr) ) && q_ptr->lev >= 40 && p_ptr->dun_depth == q_ptr->dun_depth)
-#endif
-			{
-			  int Ind2 = 0;
-			  player_type *p_ptr2;
-			  
-			  if (q_ptr->esp_link_type && q_ptr->esp_link && (q_ptr->esp_link_flags & LINKF_PAIN))
-			    {
-			      Ind2 = find_player(q_ptr->esp_link);
-			      
-			      if (!Ind2)
-				end_mind(i, TRUE);
-			      else
-				{
-				  p_ptr2 = Players[Ind2];
+			/* Hack -- an "object holder" */
+			object_type prize;
 
-				  /* Total winner */
-				  p_ptr2->total_winner = TRUE;
+			int num = 0;
 
-				  /* Redraw the "title" */
-				  p_ptr2->redraw |= (PR_TITLE);
-
-				  /* Congratulations */
-				  msg_print(i, "*** CONGRATULATIONS ***");
-				  msg_print(i, "You have won the game!");
-				  msg_print(i, "You may retire (commit suicide) when you are ready.");
-
-				  num++;
-
-				  /* Set his retire_timer if neccecary */
-				  if (cfg_retire_timer >= 0)
-				    {
-				      p_ptr2->retire_timer = cfg_retire_timer;
-					  msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg_retire_timer);
-				    }
-				}
-			    }
-				/* Total winner */
-			        q_ptr->total_winner = TRUE;
-
-				/* Redraw the "title" */
-				q_ptr->redraw |= (PR_TITLE);
-
-				/* Congratulations */
-				msg_print(i, "*** CONGRATULATIONS ***");
-				msg_print(i, "You have won the game!");
-				msg_print(i, "You may retire (commit suicide) when you are ready.");
-
-				num++;
-
-				/* Set his retire_timer if neccecary */
-				if (cfg_retire_timer >= 0)
-				{
-					q_ptr->retire_timer = cfg_retire_timer;
-					msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg_retire_timer);
-				}
-			}
-		}	
-
-		/* Mega-Hack -- Prepare to make "Grond" */
-		invcopy(&prize, lookup_kind(TV_HAFTED, SV_GROND));
-
-		/* Mega-Hack -- Mark this item as "Grond" */
-		prize.name1 = ART_GROND;
-
-		/* Mega-Hack -- Actually create "Grond" */
-#ifdef NEW_DUNGEON
-		apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE);
-#else
-		apply_magic(Depth, &prize, -1, TRUE, TRUE, TRUE);
-#endif
-
-		prize.number = num;
-
-		/* Drop it in the dungeon */
-#ifdef NEW_DUNGEON
-		drop_near(&prize, -1, wpos, y, x);
-#else
-		drop_near(&prize, -1, Depth, y, x);
-#endif
-
-
-		/* Mega-Hack -- Prepare to make "Morgoth" */
-		invcopy(&prize, lookup_kind(TV_CROWN, SV_MORGOTH));
-
-		/* Mega-Hack -- Mark this item as "Morgoth" */
-		prize.name1 = ART_MORGOTH;
-
-		/* Mega-Hack -- Actually create "Morgoth" */
-#ifdef NEW_DUNGEON
-		apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE);
-#else
-		apply_magic(Depth, &prize, -1, TRUE, TRUE, TRUE);
-#endif
-
-		prize.number = num;
-
-		/* Drop it in the dungeon */
-#ifdef NEW_DUNGEON
-		drop_near(&prize, -1, wpos, y, x);
-#else
-		drop_near(&prize, -1, Depth, y, x);
-#endif
-
-		/* Hack -- instantly retire any new winners if neccecary */
-		if (cfg_retire_timer == 0)
-		{
+			/* Nothing left, game over... */
 			for (i = 1; i <= NumPlayers; i++)
 			{
-				p_ptr = Players[i];
-				if (p_ptr->total_winner)
-					do_cmd_suicide(i);
+				q_ptr = Players[i];
+				/* Make everyone in the game in the same party on the
+				 * same level greater than or equal to level 40 total
+				 * winners.
+				 */
+#ifdef NEW_DUNGEON
+				if ((((p_ptr->party) && (q_ptr->party == p_ptr->party)) ||
+							(q_ptr == p_ptr) ) && q_ptr->lev >= 40 && inarea(&p_ptr->wpos,&q_ptr->wpos))
+#else
+					if ((((p_ptr->party) && (q_ptr->party == p_ptr->party)) ||
+								(q_ptr == p_ptr) ) && q_ptr->lev >= 40 && p_ptr->dun_depth == q_ptr->dun_depth)
+#endif
+					{
+						int Ind2 = 0;
+						player_type *p_ptr2;
+
+						if (q_ptr->esp_link_type && q_ptr->esp_link && (q_ptr->esp_link_flags & LINKF_PAIN))
+						{
+							Ind2 = find_player(q_ptr->esp_link);
+
+							if (!Ind2)
+								end_mind(i, TRUE);
+							else
+							{
+								p_ptr2 = Players[Ind2];
+
+								/* Total winner */
+								p_ptr2->total_winner = TRUE;
+
+								/* Redraw the "title" */
+								p_ptr2->redraw |= (PR_TITLE);
+
+								/* Congratulations */
+								msg_print(i, "*** CONGRATULATIONS ***");
+								msg_print(i, "You have won the game!");
+								msg_print(i, "You may retire (commit suicide) when you are ready.");
+
+								num++;
+
+								/* Set his retire_timer if neccecary */
+								if (cfg_retire_timer >= 0)
+								{
+									p_ptr2->retire_timer = cfg_retire_timer;
+									msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg_retire_timer);
+								}
+							}
+						}
+						/* Total winner */
+						q_ptr->total_winner = TRUE;
+
+						/* Redraw the "title" */
+						q_ptr->redraw |= (PR_TITLE);
+
+						/* Congratulations */
+						msg_print(i, "*** CONGRATULATIONS ***");
+						msg_print(i, "You have won the game!");
+						msg_print(i, "You may retire (commit suicide) when you are ready.");
+
+						num++;
+
+						/* Set his retire_timer if neccecary */
+						if (cfg_retire_timer >= 0)
+						{
+							q_ptr->retire_timer = cfg_retire_timer;
+							msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg_retire_timer);
+						}
+					}
+			}	
+
+			/* Mega-Hack -- Prepare to make "Grond" */
+			invcopy(&prize, lookup_kind(TV_HAFTED, SV_GROND));
+
+			/* Mega-Hack -- Mark this item as "Grond" */
+			prize.name1 = ART_GROND;
+
+			/* Mega-Hack -- Actually create "Grond" */
+#ifdef NEW_DUNGEON
+			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE);
+#else
+			apply_magic(Depth, &prize, -1, TRUE, TRUE, TRUE);
+#endif
+
+			prize.number = num;
+
+			/* Drop it in the dungeon */
+#ifdef NEW_DUNGEON
+			drop_near(&prize, -1, wpos, y, x);
+#else
+			drop_near(&prize, -1, Depth, y, x);
+#endif
+
+
+			/* Mega-Hack -- Prepare to make "Morgoth" */
+			invcopy(&prize, lookup_kind(TV_CROWN, SV_MORGOTH));
+
+			/* Mega-Hack -- Mark this item as "Morgoth" */
+			prize.name1 = ART_MORGOTH;
+
+			/* Mega-Hack -- Actually create "Morgoth" */
+#ifdef NEW_DUNGEON
+			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE);
+#else
+			apply_magic(Depth, &prize, -1, TRUE, TRUE, TRUE);
+#endif
+
+			prize.number = num;
+
+			/* Drop it in the dungeon */
+#ifdef NEW_DUNGEON
+			drop_near(&prize, -1, wpos, y, x);
+#else
+			drop_near(&prize, -1, Depth, y, x);
+#endif
+
+			/* Hack -- instantly retire any new winners if neccecary */
+			if (cfg_retire_timer == 0)
+			{
+				for (i = 1; i <= NumPlayers; i++)
+				{
+					p_ptr = Players[i];
+					if (p_ptr->total_winner)
+						do_cmd_suicide(i);
+				}
 			}
+
+			FREE(m_ptr->r_ptr, monster_race);
+			return;
 		}
 
-                FREE(m_ptr->r_ptr, monster_race);
-		return;
+#if 0	// PernA one
+		{
+			/* Get local object */
+			q_ptr = &forge;
+
+			/* Mega-Hack -- Prepare to make "Grond" */
+			object_prep(q_ptr, lookup_kind(TV_HAFTED, SV_GROND));
+
+			/* Mega-Hack -- Mark this item as "Grond" */
+			q_ptr->name1 = ART_GROND;
+
+			/* Mega-Hack -- Actually create "Grond" */
+			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE);
+
+			/* Drop it in the dungeon */
+			drop_near(q_ptr, -1, y, x);
+
+			/* Get local object */
+			q_ptr = &forge;
+
+			/* Mega-Hack -- Prepare to make "Morgoth" */
+			object_prep(q_ptr, lookup_kind(TV_CROWN, SV_MORGOTH));
+
+			/* Mega-Hack -- Mark this item as "Morgoth" */
+			q_ptr->name1 = ART_MORGOTH;
+
+			/* Mega-Hack -- Actually create "Morgoth" */
+			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE);
+
+			/* Drop it in the dungeon */
+			drop_near(q_ptr, -1, y, x);
+		}
+#endif
+		else if (strstr((r_name + r_ptr->name),"Smeagol"))
+		{
+			/* Get local object */
+			qq_ptr = &forge;
+
+			object_wipe(qq_ptr);
+
+			/* Mega-Hack -- Prepare to make a ring of invisibility */
+			/* Sorry, =inv is too nice.. */
+			//                        object_prep(qq_ptr, lookup_kind(TV_RING, SV_RING_INVIS));
+			object_prep(qq_ptr, lookup_kind(TV_RING, SV_RING_TELEPORTATION));
+			qq_ptr->number = 1;
+
+			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE);
+
+			/* Drop it in the dungeon */
+			drop_near(qq_ptr, -1, wpos, y, x);
+		}
+		else if (r_ptr->flags7 & RF7_NAZGUL)
+		{
+			/* Get local object */
+			qq_ptr = &forge;
+
+			object_wipe(qq_ptr);
+
+			/* Mega-Hack -- Prepare to make a Ring of Power */
+			object_prep(qq_ptr, lookup_kind(TV_RING, SV_RING_SPECIAL));
+			qq_ptr->number = 1;
+
+			qq_ptr->name1 = ART_RANDART;
+
+			/* Piece together a 32-bit random seed */
+			qq_ptr->name3 = rand_int(0xFFFF) << 16;
+			qq_ptr->name3 += rand_int(0xFFFF);
+
+			/* Check the tval is allowed */
+			if (randart_make(qq_ptr) == NULL)
+
+				apply_magic(wpos, qq_ptr, -1, FALSE, TRUE, FALSE);
+
+			/* Save the inscription */
+			/* (pfft, not so smart..) */
+			qq_ptr->note = quark_add(format("of %s", r_name + r_ptr->name));
+
+			/* Drop it in the dungeon */
+			drop_near(qq_ptr, -1, wpos, y, x);
+		}
+		else
+		{
+			byte a_idx = 0;
+			int chance = 0;
+			int I_kind = 0;
+
+			/* chances should be reduced, so that the quickest
+			 * won't benefit too much?	- Jir - */
+			if (strstr((r_name + r_ptr->name),"T'ron , the rebel DragonRider"))
+			{
+				a_idx = ART_TRON;
+				chance = 75;
+			}
+			else if (strstr((r_name + r_ptr->name),"Mardra, rider of the Gold Loranth"))
+			{
+				a_idx = ART_MARDA;
+				chance = 50;
+			}
+			else if (strstr((r_name + r_ptr->name),"Saruman of Many Colours"))
+			{
+				a_idx = ART_ELENDIL;
+				chance = 30;
+			}
+			else if (strstr((r_name + r_ptr->name),"Hagen, son of Alberich"))
+			{
+				a_idx = ART_NIMLOTH;
+				chance = 66;
+			}
+			else if (strstr((r_name + r_ptr->name),"Muar, the Balrog"))
+			{
+				a_idx = ART_CALRIS;
+				chance = 60;
+			}
+			else if (strstr((r_name + r_ptr->name),"Gothmog, the High Captain of Balrogs"))
+			{
+				a_idx = ART_GOTHMOG;
+				chance = 50;
+			}
+			else if (strstr((r_name + r_ptr->name),"Eol the Dark Elf"))
+			{
+				a_idx = ART_ANGUIREL;
+				chance = 50;
+			}
+
+//			if ((a_idx > 0) && ((randint(99)<chance) || (wizard)))
+			if ((a_idx > 0) && (magik(chance)))
+			{
+				if (a_info[a_idx].cur_num == 0)
+				{
+					artifact_type *a_ptr = &a_info[a_idx];
+
+					/* Get local object */
+					qq_ptr = &forge;
+
+					/* Wipe the object */
+					object_wipe(qq_ptr);
+
+					/* Acquire the "kind" index */
+					I_kind = lookup_kind(a_ptr->tval, a_ptr->sval);
+
+					/* Create the artifact */
+					object_prep(qq_ptr, I_kind);
+
+					/* Save the name */
+					qq_ptr->name1 = a_idx;
+
+					/* Extract the fields */
+					qq_ptr->pval = a_ptr->pval;
+					qq_ptr->ac = a_ptr->ac;
+					qq_ptr->dd = a_ptr->dd;
+					qq_ptr->ds = a_ptr->ds;
+					qq_ptr->to_a = a_ptr->to_a;
+					qq_ptr->to_h = a_ptr->to_h;
+					qq_ptr->to_d = a_ptr->to_d;
+					qq_ptr->weight = a_ptr->weight;
+
+					/* Hack -- acquire "cursed" flag */
+					if (a_ptr->flags3 & (TR3_CURSED)) qq_ptr->ident |= (ID_CURSED);
+
+					//					random_artifact_resistance(qq_ptr);
+
+					a_info[a_idx].cur_num = 1;
+
+					/* Drop the artifact from heaven */
+					drop_near(qq_ptr, -1, wpos, y, x);
+				}
+			}
+		}
 	}
 
+
+	/* Hack - the Dragonriders give some firestone */
+	else if (r_ptr->flags3 & RF3_DRAGONRIDER)
+	{
+		/* Get local object */
+		qq_ptr = &forge;
+
+		/* Prepare to make some Firestone */
+		object_prep(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRESTONE));
+		qq_ptr->number = (byte)rand_range(10,20);
+
+		/* Drop it in the dungeon */
+		drop_near(qq_ptr, -1, wpos, y, x);
+	}
+
+	/* Hack - the protected monsters must be advanged */
+	else if (r_ptr->flags9 & RF9_WYRM_PROTECT)
+	{
+		int xx = x,yy = y;
+		int attempts = 100;
+
+		msg_print(Ind, "\377vThis monster was under the protection of a great wyrm of power!");
+
+		do
+		{
+			scatter(wpos, &yy, &xx, y, x, 6, 0);
+		}
+		while (!(in_bounds(yy, xx) && cave_floor_bold(zcave, yy, xx)) && --attempts);
+
+		place_monster_aux(wpos, yy, xx, race_index("Great Wyrm of Power"), FALSE, FALSE, m_ptr->clone);
+	}
+
+	/* Let monsters explode! */
+	for (i = 0; i < 4; i++)
+	{
+		if (m_ptr->blow[i].method == RBM_EXPLODE)
+		{
+			int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+			int typ = GF_MISSILE;
+			int d_dice = m_ptr->blow[i].d_dice;
+			int d_side = m_ptr->blow[i].d_side;
+			int damage = damroll(d_dice, d_side);
+
+			switch (m_ptr->blow[i].effect)
+			{
+				case RBE_HURT:      typ = GF_MISSILE; break;
+				case RBE_POISON:    typ = GF_POIS; break;
+				case RBE_UN_BONUS:  typ = GF_DISENCHANT; break;
+				case RBE_UN_POWER:  typ = GF_MISSILE; break; /* ToDo: Apply the correct effects */
+				case RBE_EAT_GOLD:  typ = GF_MISSILE; break;
+				case RBE_EAT_ITEM:  typ = GF_MISSILE; break;
+				case RBE_EAT_FOOD:  typ = GF_MISSILE; break;
+				case RBE_EAT_LITE:  typ = GF_MISSILE; break;
+				case RBE_ACID:      typ = GF_ACID; break;
+				case RBE_ELEC:      typ = GF_ELEC; break;
+				case RBE_FIRE:      typ = GF_FIRE; break;
+				case RBE_COLD:      typ = GF_COLD; break;
+				case RBE_BLIND:     typ = GF_MISSILE; break;
+				case RBE_HALLU:     typ = GF_CONFUSION; break;
+				case RBE_CONFUSE:   typ = GF_CONFUSION; break;
+				case RBE_TERRIFY:   typ = GF_MISSILE; break;
+				case RBE_PARALYZE:  typ = GF_MISSILE; break;
+				case RBE_LOSE_STR:  typ = GF_MISSILE; break;
+				case RBE_LOSE_DEX:  typ = GF_MISSILE; break;
+				case RBE_LOSE_CON:  typ = GF_MISSILE; break;
+				case RBE_LOSE_INT:  typ = GF_MISSILE; break;
+				case RBE_LOSE_WIS:  typ = GF_MISSILE; break;
+				case RBE_LOSE_CHR:  typ = GF_MISSILE; break;
+				case RBE_LOSE_ALL:  typ = GF_MISSILE; break;
+				case RBE_PARASITE:  typ = GF_MISSILE; break;
+				case RBE_SHATTER:   typ = GF_ROCKET; break;
+				case RBE_EXP_10:    typ = GF_MISSILE; break;
+				case RBE_EXP_20:    typ = GF_MISSILE; break;
+				case RBE_EXP_40:    typ = GF_MISSILE; break;
+				case RBE_EXP_80:    typ = GF_MISSILE; break;
+				case RBE_DISEASE:   typ = GF_POIS; break;
+				case RBE_TIME:      typ = GF_TIME; break;
+				case RBE_SANITY:    typ = GF_MISSILE; break;
+			}
+
+			project(m_idx, 3, wpos, y, x, damage, typ, flg);
+			break;
+		}
+	}
+
+//        if((!force_coin)&&(randint(100)<50)) place_corpse(m_ptr);
 
 	/* Only process "Quest Monsters" */
 	if (!(r_ptr->flags1 & RF1_QUESTOR)) return;

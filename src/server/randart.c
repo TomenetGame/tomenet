@@ -1229,8 +1229,8 @@ try_an_other_ego:
 		if (a_ptr->pval > 2)
 			a_ptr->pval -= randint(a_ptr->pval - 2);
 	}
-
-#if 0	// supposed to be gone forever :)
+		
+#if 0	// supposed to be gone forever (DELETEME)
 	/* get flags */
 	object_flags(a_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
