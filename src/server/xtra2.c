@@ -7619,7 +7619,7 @@ void telekinesis_aux(int Ind, int item)
 	}
 
 	/* You cannot send artifact */
-	if(cfg.anti_arts_hoard && true_artifact_p(q_ptr) && !is_admin(p_ptr))
+	if((cfg.anti_arts_hoard || p_ptr->total_winner) && true_artifact_p(q_ptr) && !is_admin(p_ptr))
 	{
 		msg_print(Ind, "You have an acute feeling of loss!");
 		a_info[q_ptr->name1].cur_num = 0;

@@ -2826,7 +2826,7 @@ void store_confirm(int Ind)
 	handle_stuff(Ind);
 
 	/* Artifact won't be sold in a store */
-	if (cfg.anti_arts_shop && true_artifact_p(&sold_obj) && !museum)
+	if ((cfg.anti_arts_shop || p_ptr->total_winner) && true_artifact_p(&sold_obj) && !museum)
 	{
 		a_info[sold_obj.name1].cur_num = 0;
 		a_info[sold_obj.name1].known = FALSE;
@@ -3802,7 +3802,7 @@ void home_sell(int Ind, int item, int amt)
 	handle_stuff(Ind);
 
 	/* Artifact won't be sold in a store */
-	if (cfg.anti_arts_shop && true_artifact_p(&sold_obj))
+	if ((cfg.anti_arts_shop || p_ptr->total_winner) && true_artifact_p(&sold_obj))
 	{
 		a_info[sold_obj.name1].cur_num = 0;
 		a_info[sold_obj.name1].known = FALSE;
