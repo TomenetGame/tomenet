@@ -1,6 +1,8 @@
 /* experimental code - evileye */
 /* this does not necessarily follow any sensible design */
 
+#ifdef TOMENET_WORLDS
+
 #include "angband.h"
 #include "../world/world.h"
 
@@ -36,3 +38,5 @@ void world_chat(char *text){
 	strncpy(spk.d.chat.ctxt, text, 80);
 	x=send(WorldSocket, &spk, len, 0);
 }
+
+#endif
