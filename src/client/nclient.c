@@ -3128,9 +3128,9 @@ void do_keepalive()
 	}
 }
 
+void do_mail(){
 #ifdef SET_UID
 #if 0
-void do_mail(){
 	static int mailticks=0;
 	static struct timespec lm;
 	char mpath[160],buffer[160];
@@ -3159,6 +3159,6 @@ void do_mail(){
 		}
 		mailticks=ticks;
 	}
+#endif
+#endif
 }
-#endif
-#endif

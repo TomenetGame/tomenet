@@ -163,6 +163,7 @@ static void Input_loop(void)
 	{
 		// Send out a keepalive packet if need be
 		do_keepalive();
+		do_mail();
 
 		if (Net_flush() == -1)
 		{
