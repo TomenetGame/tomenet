@@ -401,6 +401,7 @@ void prt_state(bool paralyzed, bool searching, bool resting)
 
 	else if (searching)
 	{
+#if 0
 		if (get_skill(SKILL_STEALTH) <= 10)
 		{
 			strcpy(text, "Searching ");			
@@ -411,7 +412,10 @@ void prt_state(bool paralyzed, bool searching, bool resting)
 			attr = TERM_L_DARK;
 			strcpy(text,"Stlth Mode");
 		}
-		
+#else
+		strcpy(text, "Searching ");			
+#endif
+	
 	}
 
 	else if (resting)
@@ -1171,7 +1175,7 @@ static byte likert_color = TERM_WHITE;
 /*
  * Returns a "rating" of x depending on y
  */
-static cptr likert(int x, int y)
+static cptr likert(int x, int y, int max)
 {
 	/* Paranoia */
 	if (y <= 0) y = 1;
@@ -1182,6 +1186,13 @@ static cptr likert(int x, int y)
 		likert_color = TERM_RED;
 		return ("Very Bad");
 	}
+
+	/* Highest possible value reached */
+        if ((x >= max) && max)
+        {
+                likert_color = TERM_L_UMBER;
+                return ("Legendary");
+        }
 
 	/* Analyze the value */
 	switch (((x * 10) / y))
@@ -1238,7 +1249,10 @@ static cptr likert(int x, int y)
 		}
 		default:
 		{
-			likert_color = TERM_L_GREEN;
+			/* indicate that there is a maximum value */
+			if (max) likert_color = TERM_GREEN;
+			/* indicate that there is no maximum */
+			else likert_color = TERM_L_GREEN;
 			return ("Legendary");
 		}
 	}
@@ -1358,36 +1372,36 @@ void display_player(int hist)
 		
 		/* Display "skills" */
 		put_str("Fighting    :", 16, 1);
-		desc = likert(p_ptr->skill_thn, 120);
+		desc = likert(p_ptr->skill_thn, 120, 0);
 		c_put_str(likert_color, desc, 16, 15);
 
 		put_str("Bows/Throw  :", 17, 1);
-		desc = likert(p_ptr->skill_thb, 120);
+		desc = likert(p_ptr->skill_thb, 120, 0);
 		c_put_str(likert_color, desc, 17, 15);
 
 		put_str("Saving Throw:", 18, 1);
-		desc = likert(p_ptr->skill_sav, 52);	/*was 6.0 before x10 increase */
+		desc = likert(p_ptr->skill_sav, 52, 95);	/*was 6.0 before x10 increase */
 		c_put_str(likert_color, desc, 18, 15);
 
 		put_str("Stealth     :", 19, 1);
-		desc = likert(p_ptr->skill_stl, 10);
+		desc = likert(p_ptr->skill_stl, 10, 30);
 		c_put_str(likert_color, desc, 19, 15);
 
 
 		put_str("Perception  :", 16, 28);
-		desc = likert(p_ptr->skill_fos, 60);
+		desc = likert(p_ptr->skill_fos, 40, 75);
 		c_put_str(likert_color, desc, 16, 42);
 
 		put_str("Searching   :", 17, 28);
-		desc = likert(p_ptr->skill_srh, 60);
+		desc = likert(p_ptr->skill_srh, 60, 100);
 		c_put_str(likert_color, desc, 17, 42);
 
 		put_str("Disarming   :", 18, 28);
-		desc = likert(p_ptr->skill_dis, 80);
+		desc = likert(p_ptr->skill_dis, 80, 100);
 		c_put_str(likert_color, desc, 18, 42);
 
 		put_str("Magic Device:", 19, 28);
-		desc = likert(p_ptr->skill_dev, 60);
+		desc = likert(p_ptr->skill_dev, 60, 0);
 		c_put_str(likert_color, desc, 19, 42);
 
 
