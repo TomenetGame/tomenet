@@ -2166,7 +2166,7 @@ void calc_bonuses(int Ind)
 	{
 		p_ptr->resist_dark = TRUE;
 		/* not while in mimicried form */
-		if(!p_ptr->body_monster) p_ptr->feather_fall = TRUE;
+		/*if(!p_ptr->body_monster) p_ptr->feather_fall = TRUE;*/
 	}
 
 	/* Ent */
