@@ -61,6 +61,8 @@ bool hp_player(int Ind, int num)
             num = num * 3 / 4;
 	  }
 
+	if(!num) return(FALSE);
+
 	if (p_ptr->chp < p_ptr->mhp)
 	{
 		p_ptr->chp += num;
@@ -129,6 +131,7 @@ bool hp_player_quiet(int Ind, int num)
 	int old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
 	int new_num; 
 
+	if(!num) return(FALSE);
 
 	if (p_ptr->chp < p_ptr->mhp)
 	{
