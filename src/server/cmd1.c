@@ -216,50 +216,166 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 
 	u32b f1, f2, f3, f4, f5, esp;
 //	bool brand_pois = FALSE;
+	player_type *p_ptr = Players[Ind];
+
+	struct worldpos *wpos=&p_ptr->wpos;
+	cave_type **zcave;
+	cave_type *c_ptr;
+	char m_name[80];
+
+	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
+	bool apply_monster_brands = TRUE;
+	int i, monster_brands = 0;
+	u32b monster_brand[6], monster_brand_chosen;
+	monster_brand[1] = 0;
+	monster_brand[2] = 0;
+	monster_brand[3] = 0;
+	monster_brand[4] = 0;
+	monster_brand[5] = 0;
+
+	if(!(zcave=getcave(wpos))) return(tdam);
+	c_ptr=&zcave[m_ptr->fy][m_ptr->fx];
+
+	/* Extract monster name (or "it") */
+	monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-	/* Hack -- extract temp branding */
-	if (Ind > 0)
+	if (o_ptr->k_idx)
 	{
-		player_type *p_ptr = Players[Ind];
-		if (p_ptr->bow_brand)
-		{
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-			switch (p_ptr->bow_brand_t)
+		/* Hack -- extract temp branding */
+		if (Ind > 0)
+		{
+			if (p_ptr->bow_brand)
 			{
-				case BOW_BRAND_ELEC:
-					f1 |= TR1_BRAND_ELEC;
-					break;
-				case BOW_BRAND_COLD:
-					f1 |= TR1_BRAND_COLD;
-					break;
-				case BOW_BRAND_FIRE:
-					f1 |= TR1_BRAND_FIRE;
-					break;
-				case BOW_BRAND_ACID:
-					f1 |= TR1_BRAND_ACID;
-					break;
-				case BOW_BRAND_POIS:
-					f1 |= TR1_BRAND_POIS;
-					//		brand_pois = TRUE;
-					break;
+	
+				switch (p_ptr->bow_brand_t)
+				{
+					case BOW_BRAND_ELEC:
+						f1 |= TR1_BRAND_ELEC;
+						break;
+					case BOW_BRAND_COLD:
+						f1 |= TR1_BRAND_COLD;
+						break;
+					case BOW_BRAND_FIRE:
+						f1 |= TR1_BRAND_FIRE;
+						break;
+					case BOW_BRAND_ACID:
+						f1 |= TR1_BRAND_ACID;
+						break;
+					case BOW_BRAND_POIS:
+						f1 |= TR1_BRAND_POIS;
+						//		brand_pois = TRUE;
+						break;
+				}
 			}
 		}
+	}
+	else
+	{
+		f1 = 0; f2 = 0; f3 = 0; f4 = 0; f5 = 0;
+	}
+
+
+	/* Apply brands from mimic monster forms */
+        if (p_ptr->body_monster)
+	{
+#if 0
+		switch (pr_ptr->r_ptr->d_char)
+		{
+			/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
+			case 'p':	case 'h':	case 't':
+			case 'o':	case 'y':	case 'k':
+			apply_monster_brands = TRUE;
+			break;
+			/* If monster is fighting without weapons, the player gets the brand(s) only if
+			he fights with bare hands/martial arts */
+			default:
+			if (!o_ptr->k_idx) apply_monster_brands = TRUE;
+			break;
+		}
+		/* change a.m.b.=TRUE to =FALSE at declaration above if u use this if0-part again */
+#endif
+		/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
+        	/* If monster is fighting without weapons, the player gets the brand(s) only if
+		he fights with bare hands/martial arts */
+		if (!pr_ptr->body_parts[BODY_WEAPON])
+			if (o_ptr->k_idx) apply_monster_brands = FALSE;
+
+		/* Get monster brands. If monster has several, choose one randomly */
+		for (i = 0; i < 4; i++)
+		{
+		        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side)
+			{
+				switch (pr_ptr->blow[i].effect)
+				{
+				case RBE_ACID:
+					monster_brands++;
+					monster_brand[monster_brands] = TR1_BRAND_ACID;
+					break;
+				case RBE_ELEC:
+					monster_brands++;
+					monster_brand[monster_brands] = TR1_BRAND_ELEC;
+					break;
+				case RBE_FIRE:
+					monster_brands++;
+					monster_brand[monster_brands] = TR1_BRAND_FIRE;
+					break;
+				case RBE_COLD:
+					monster_brands++;
+					monster_brand[monster_brands] = TR1_BRAND_COLD;
+					break;
+				case RBE_POISON:
+					monster_brands++;
+					monster_brand[monster_brands] = TR1_BRAND_POIS;
+					break;
+				default:
+					monster_brands++;
+					monster_brand[monster_brands] = 0;
+					break;
+				}
+			}
+		}
+		/* Choose random brand from the ones available */
+		monster_brand_chosen = monster_brand[1 + rand_int(monster_brands)];
+
+		/* Modify damage */
+		if (apply_monster_brands) f1 |= monster_brand_chosen;
+#if 1
+		/* Display message */
+		switch (monster_brand_chosen)
+		{
+			case TR1_BRAND_ACID:
+				msg_format(Ind, "%^s is covered in acid!", m_name);
+				break;
+			case TR1_BRAND_ELEC:
+				msg_format(Ind, "%^s struck by electricity!", m_name);
+				break;
+			case TR1_BRAND_FIRE:
+				msg_format(Ind, "%^s is enveloped in flames!", m_name);
+				break;
+			case TR1_BRAND_COLD:
+				msg_format(Ind, "%^s is covered with frost!", m_name);
+				break;
+			case TR1_BRAND_POIS:
+				break;
+		}
+#endif
 	}
 
 	/* Some "weapons" and "ammo" do extra damage */
 	switch (o_ptr->tval)
 	{
-		case TV_SHOT:
+/*		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
-		case TV_BOOMERANG:
+		case TV_BOOMERANG:*/
+		default:
 		{
 			/* Slay Animal */
 			if ((f1 & TR1_SLAY_ANIMAL) &&
@@ -380,7 +496,10 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 #endif	// 0
 					if (mult < 6) mult = 6;
 				}
-
+				else if (r_ptr->flags9 & RF9_RES_ACID)
+				{
+				    if (mult < 2) mult = 2;
+				}
 
 				/* Otherwise, take the damage */
 				else
@@ -409,6 +528,10 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 #endif	// 0
 					if (mult < 6) mult = 6;
 				}
+				else if (r_ptr->flags9 & RF9_RES_ELEC)
+				{
+				    if (mult < 2) mult = 2;
+				}
 
 				/* Otherwise, take the damage */
 				else
@@ -425,6 +548,21 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 				{
 					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_FIRE;*/
 				}
+				/* Notice susceptibility */
+				else if (r_ptr->flags3 & (RF3_SUSCEP_FIRE))
+				{
+#if 0
+					if (m_ptr->ml)
+					{
+						r_ptr->r_flags3 |= (RF3_SUSCEP_FIRE);
+					}
+#endif	// 0
+					if (mult < 6) mult = 6;
+				}
+				else if (r_ptr->flags9 & RF9_RES_FIRE)
+				{
+				    if (mult < 2) mult = 2;
+				}
 
 				/* Otherwise, take the damage */
 				else
@@ -440,6 +578,21 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 				if (r_ptr->flags3 & RF3_IM_COLD)
 				{
 					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_COLD;*/
+				}
+				/* Notice susceptibility */
+				else if (r_ptr->flags3 & (RF3_SUSCEP_COLD))
+				{
+#if 0
+					if (m_ptr->ml)
+					{
+						r_ptr->r_flags3 |= (RF3_SUSCEP_COLD);
+					}
+#endif	// 0
+					if (mult < 6) mult = 6;
+				}
+				else if (r_ptr->flags9 & RF9_RES_COLD)
+				{
+				    if (mult < 2) mult = 2;
 				}
 
 				/* Otherwise, take the damage */
@@ -472,6 +625,10 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 					if (mult < 6) mult = 6;
 //					if (magik(95)) *special |= SPEC_POIS;
 				}
+				else if (r_ptr->flags9 & RF9_RES_POIS)
+				{
+				    if (mult < 2) mult = 2;
+				}
 
 				/* Otherwise, take the damage */
 				else
@@ -495,35 +652,143 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
  * Note that "flasks of oil" do NOT do fire damage, although they
  * certainly could be made to do so.  XXX XXX
  */
-s16b tot_dam_aux_player(object_type *o_ptr, int tdam, player_type *p_ptr)
+s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr)
 {
 	int mult = 1;
 
 	u32b f1, f2, f3, f4, f5, esp;
 
+	player_type *p_ptr = Players[Ind];
+
+	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
+	bool apply_monster_brands = TRUE;
+	int i, monster_brands = 0;
+	u32b monster_brand[6], monster_brand_chosen;
+	monster_brand[1] = 0;
+	monster_brand[2] = 0;
+	monster_brand[3] = 0;
+	monster_brand[4] = 0;
+	monster_brand[5] = 0;
+
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	if (o_ptr->k_idx)
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	else
+	{
+	    f1 = 0; f2 = 0; f3 = 0; f4 = 0; f5 = 0;
+	}
+
+	/* Apply brands from mimic monster forms */
+        if (p_ptr->body_monster)
+	{
+#if 0
+		switch (pr_ptr->r_ptr->d_char)
+		{
+			/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
+			case 'p':	case 'h':	case 't':
+			case 'o':	case 'y':	case 'k':
+			apply_monster_brands = TRUE;
+			break;
+			/* If monster is fighting without weapons, the player gets the brand(s) only if
+			he fights with bare hands/martial arts */
+			default:
+			if (!o_ptr->k_idx) apply_monster_brands = TRUE;
+			break;
+		}
+		/* change a.m.b.=TRUE to =FALSE at declaration above if u use this if0-part again */
+#endif
+		/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
+        	/* If monster is fighting without weapons, the player gets the brand(s) only if
+		he fights with bare hands/martial arts */
+		if (!pr_ptr->body_parts[BODY_WEAPON])
+			if (o_ptr->k_idx) apply_monster_brands = FALSE;
+
+		/* Get monster brands. If monster has several, choose one randomly */
+		for (i = 0; i < 4; i++)
+		{
+		        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side)
+			{
+				switch (pr_ptr->blow[i].effect)
+				{
+				case RBE_ACID:
+					monster_brands++;
+					monster_brand[monster_brands] = TR1_BRAND_ACID;
+					break;
+				case RBE_ELEC:
+					monster_brands++;
+					monster_brand[monster_brands] = TR1_BRAND_ELEC;
+					break;
+				case RBE_FIRE:
+					monster_brands++;
+					monster_brand[monster_brands] = TR1_BRAND_FIRE;
+					break;
+				case RBE_COLD:
+					monster_brands++;
+					monster_brand[monster_brands] = TR1_BRAND_COLD;
+					break;
+				case RBE_POISON:
+					monster_brands++;
+					monster_brand[monster_brands] = TR1_BRAND_POIS;
+					break;
+				default:
+					monster_brands++;
+					monster_brand[monster_brands] = 0;
+					break;
+				}
+			}
+		}
+		/* Choose random brand from the ones available */
+		monster_brand_chosen = monster_brand[1 + rand_int(monster_brands)];
+
+		/* Modify damage */
+		if (apply_monster_brands) f1 |= monster_brand_chosen;
+#if 1
+		/* Display message */
+		switch (monster_brand_chosen)
+		{
+			case TR1_BRAND_ACID:
+				msg_format(Ind, "%^s is covered in acid!", q_ptr->name);
+				break;
+			case TR1_BRAND_ELEC:
+				msg_format(Ind, "%^s struck by electricity!", q_ptr->name);
+				break;
+			case TR1_BRAND_FIRE:
+				msg_format(Ind, "%^s is enveloped in flames!", q_ptr->name);
+				break;
+			case TR1_BRAND_COLD:
+				msg_format(Ind, "%^s is covered with frost!", q_ptr->name);
+				break;
+			case TR1_BRAND_POIS:
+				break;
+		}
+#endif
+	}
 
 	/* Some "weapons" and "ammo" do extra damage */
 	switch (o_ptr->tval)
 	{
-		case TV_SHOT:
+/*		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
-		case TV_BOOMERANG:
+		case TV_BOOMERANG:*/
+		default:
 		{
 			/* Brand (Acid) */
 			if (f1 & TR1_BRAND_ACID)
 			{
 				/* Notice immunity */
-				if (p_ptr->immune_acid)
+				if (q_ptr->immune_acid)
 				{
 				}
 
+				else if (q_ptr->resist_acid)
+				{
+					if (mult < 2) mult = 2;
+				}
 				/* Otherwise, take the damage */
 				else
 				{
@@ -535,10 +800,14 @@ s16b tot_dam_aux_player(object_type *o_ptr, int tdam, player_type *p_ptr)
 			if (f1 & TR1_BRAND_ELEC)
 			{
 				/* Notice immunity */
-				if (p_ptr->immune_elec)
+				if (q_ptr->immune_elec)
 				{
 				}
 
+				else if (q_ptr->resist_elec)
+				{
+					if (mult < 2) mult = 2;
+				}
 				/* Otherwise, take the damage */
 				else
 				{
@@ -550,10 +819,14 @@ s16b tot_dam_aux_player(object_type *o_ptr, int tdam, player_type *p_ptr)
 			if (f1 & TR1_BRAND_FIRE)
 			{
 				/* Notice immunity */
-				if (p_ptr->immune_fire)
+				if (q_ptr->immune_fire)
 				{
 				}
 
+				else if (q_ptr->resist_fire)
+				{
+					if (mult < 2) mult = 2;
+				}
 				/* Otherwise, take the damage */
 				else
 				{
@@ -565,10 +838,14 @@ s16b tot_dam_aux_player(object_type *o_ptr, int tdam, player_type *p_ptr)
 			if (f1 & TR1_BRAND_COLD)
 			{
 				/* Notice immunity */
-				if (p_ptr->immune_cold)
+				if (q_ptr->immune_cold)
 				{
 				}
 
+				else if (q_ptr->resist_cold)
+				{
+					if (mult < 2) mult = 2;
+				}
 				/* Otherwise, take the damage */
 				else
 				{
@@ -580,8 +857,13 @@ s16b tot_dam_aux_player(object_type *o_ptr, int tdam, player_type *p_ptr)
 			if (f1 & TR1_BRAND_POIS)
 			{
 				/* Notice immunity */
-//				if (p_ptr->immune_poison){} else
-
+				if (q_ptr->immune_poison)
+				{
+				}
+				else if (q_ptr->resist_pois)
+				{
+					if (mult < 2) mult = 2;
+				}
 				/* Otherwise, take the damage */
 				{
 					if (mult < 3) mult = 3;
@@ -1150,6 +1432,19 @@ void py_attack_player(int Ind, int y, int x, bool old)
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	cave_type *c_ptr;
+
+	int fear_chance;
+
+	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
+	bool apply_monster_effects = TRUE;
+	int i, monster_effects;
+	u32b monster_effect[6], monster_effect_chosen;
+	monster_effect[1] = 0;
+	monster_effect[2] = 0;
+	monster_effect[3] = 0;
+	monster_effect[4] = 0;
+	monster_effect[5] = 0;
+
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr=&zcave[y][x];
 	q_ptr = Players[0 - c_ptr->m_idx];
@@ -1301,6 +1596,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 					msg_format(Ind, ma_ptr->desc, q_ptr->name);
 				}
 
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr);
 				k = critical_norm(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < q_ptr->chp))
@@ -1320,17 +1616,22 @@ void py_attack_player(int Ind, int y, int x, bool old)
 					}
 				}
 			} else
-#endif	// 0 (Martial arts)
+#endif	// 1 (Martial arts)
 			/* Handle normal weapon */
 			if (o_ptr->k_idx)
 			{
 				k = damroll(o_ptr->dd, o_ptr->ds);
-				k = tot_dam_aux_player(o_ptr, k, q_ptr);
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr);
 				if (p_ptr->impact && (k > 50)) do_quake = TRUE;
 				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
 				k += o_ptr->to_d;
 			}
-
+			/* handle bare fists/bat/ghost */
+			else
+			{
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr);
+			}
+			
 			/* Apply the player damage bonuses */
 			k += p_ptr->to_d;
 
@@ -1358,6 +1659,121 @@ void py_attack_player(int Ind, int y, int x, bool old)
 			/* Check for death */
 			if (q_ptr->death) break;
 
+			/* Apply effects from mimic monster forms */
+		        if (p_ptr->body_monster)
+			{
+#if 0
+				switch (pr_ptr->r_ptr->d_char)
+				{
+					/* If monster is fighting with a weapon, the player gets the effect(s) even with a weapon */
+					case 'p':	case 'h':	case 't':
+					case 'o':	case 'y':	case 'k':
+					apply_monster_effects = TRUE;
+					break;
+					/* If monster is fighting without weapons, the player gets the effect(s) only if
+					he fights with bare hands/martial arts */
+					default:
+					if (!o_ptr->k_idx) apply_monster_effects = TRUE;
+					break;
+				}
+				/* change a.m.b.=TRUE to =FALSE at declaration above if u use this if0-part again */
+#endif
+				/* If monster is fighting with a weapon, the player gets the effect(s) even with a weapon */
+		        	/* If monster is fighting without weapons, the player gets the effect(s) only if
+		    		he fights with bare hands/martial arts */
+				if (!pr_ptr->body_parts[BODY_WEAPON])
+					if (o_ptr->k_idx) apply_monster_effects = FALSE;
+
+				/* Get monster effects. If monster has several, choose one randomly */
+				monster_effects = 0;
+				for (i = 0; i < 4; i++)
+				{
+				        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side)
+					{
+						monster_effects++;
+						monster_effect[monster_effects] = pr_ptr->blow[i].effect;
+						/*
+						switch (pr_ptr->blow[i].effect)
+						{
+						case RBE_CONFUSE:
+							monster_effects++;
+		    					monster_effect[monster_effects] = 1;
+							break;
+						case RBE_TERRIFY:
+							monster_effects++;
+		    					monster_effect[monster_effects] = 2;
+							break;
+						case RBE_PARALYZE:
+							monster_effects++;
+		    					monster_effect[monster_effects] = 3;
+							break;
+						default:
+							monster_effects++;
+		    					monster_effect[monster_effects] = 0;
+							break;
+						}*/
+					}
+				}
+				/* Choose random brand from the ones available */
+				monster_effect_chosen = monster_effect[1 + rand_int(monster_effects)];
+				
+				
+				/* Modify damage effect */
+				if (apply_monster_effects)
+				{
+					switch (monster_effect_chosen)
+					{
+					case RBE_CONFUSE:
+						if (!p_ptr->confusing)
+						{
+							/* Confuse the monster */
+							if (q_ptr->resist_conf)
+							{
+								msg_format(Ind, "%^s is unaffected.", p_name);
+							}
+							else if (rand_int(100) < q_ptr->lev)
+			    				{
+								msg_format(Ind, "%^s resists the effect.", p_name);
+							}
+							else
+							{
+								msg_format(Ind, "%^s appears confused.", p_name);
+								set_confused(0 - c_ptr->m_idx, q_ptr->confused + 10 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
+							}
+							
+						}
+						break;
+					case RBE_TERRIFY:
+						fear_chance = 50 + (p_ptr->lev - q_ptr->lev) * 5;
+						if (rand_int(100) < fear_chance)
+						{
+							msg_format(Ind, "%^s appears afraid.", p_name);
+							set_afraid(0 - c_ptr->m_idx, q_ptr->afraid + 4 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
+						}
+						else
+		    				{
+							msg_format(Ind, "%^s resists the effect.", p_name);
+						}
+						break;
+					case RBE_PARALYZE:
+						if (!p_ptr->stunning)
+						{
+							/* Stun the monster */
+							if (rand_int(100) < q_ptr->lev)
+							{
+								msg_format(Ind, "%^s resists the effect.", p_name);
+							}
+							else
+							{
+								msg_format(Ind, "\377o%^s appears stunned.", p_name);
+								set_stun(0 - c_ptr->m_idx, q_ptr->stun + 20 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
+							}
+						}
+						break;
+					}
+				}
+			}
+
 			/* Confusion attack */
 			if (p_ptr->confusing)
 			{
@@ -1374,7 +1790,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 				}
 				else if (rand_int(100) < q_ptr->lev)
 				{
-					msg_format(Ind, "%^s is unaffected.", p_name);
+					msg_format(Ind, "%^s resists the effect.", p_name);
 				}
 				else
 				{
@@ -1395,7 +1811,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 				/* Stun the monster */
 				if (rand_int(100) < q_ptr->lev)
 				{
-					msg_format(Ind, "%^s is unaffected.", p_name);
+					msg_format(Ind, "%^s resists the effect.", p_name);
 				}
 				else
 				{
@@ -1407,12 +1823,16 @@ void py_attack_player(int Ind, int y, int x, bool old)
 			/* Ghosts get fear attacks */
 			if (p_ptr->ghost)
 			{
-				int fear_chance = 50 + (p_ptr->lev - q_ptr->lev) * 5;
+				fear_chance = 50 + (p_ptr->lev - q_ptr->lev) * 5;
 
 				if (rand_int(100) < fear_chance)
 				{
 					msg_format(Ind, "%^s appears afraid.", p_name);
 					set_afraid(0 - c_ptr->m_idx, q_ptr->afraid + 4 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
+				}
+				else
+				{
+					msg_format(Ind, "%^s resists the effect.", p_name);
 				}
 			}
 
@@ -1494,6 +1914,19 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	cave_type *c_ptr;
+
+	int fear_chance;
+
+	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
+	bool apply_monster_effects = TRUE;
+	int i, monster_effects;
+	u32b monster_effect[6], monster_effect_chosen;
+	monster_effect[1] = 0;
+	monster_effect[2] = 0;
+	monster_effect[3] = 0;
+	monster_effect[4] = 0;
+	monster_effect[5] = 0;
+
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr=&zcave[y][x];
 
@@ -1725,6 +2158,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 					msg_format(Ind, ma_ptr->desc, m_name);
 				}
 
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr);
 				k = critical_norm(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < m_ptr->hp))
@@ -1760,7 +2194,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 					}
 				}
 			} else
-#endif	// 0 (martial arts)
+#endif	// 1 (martial arts)
 			/* Handle normal weapon */
 			if (o_ptr->k_idx)
 			{
@@ -1852,6 +2286,11 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				do_nazgul(Ind, &k, &num, r_ptr, o_ptr);
 
 			}
+			/* handle bare fists/bat/ghost */
+			else
+			{
+				k = tot_dam_aux_player(Ind, o_ptr, k, m_ptr);
+			}
 
 			/* Apply the player damage bonuses */
 			/* (should this also cancelled by nazgul?(for now not)) */
@@ -1879,6 +2318,126 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) break;
 
 			touch_zap_player(Ind, c_ptr->m_idx);
+
+			/* Apply effects from mimic monster forms */
+		        if (p_ptr->body_monster)
+			{
+#if 0
+				switch (pr_ptr->r_ptr->d_char)
+				{
+					/* If monster is fighting with a weapon, the player gets the effect(s) even with a weapon */
+					case 'p':	case 'h':	case 't':
+					case 'o':	case 'y':	case 'k':
+					apply_monster_effects = TRUE;
+					break;
+					/* If monster is fighting without weapons, the player gets the effect(s) only if
+					he fights with bare hands/martial arts */
+					default:
+					if (!o_ptr->k_idx) apply_monster_effects = TRUE;
+					break;
+				}
+				/* change a.m.b.=TRUE to =FALSE at declaration above if u use this if0-part again */
+#endif
+				/* If monster is fighting with a weapon, the player gets the effect(s) even with a weapon */
+		        	/* If monster is fighting without weapons, the player gets the effect(s) only if
+		    		he fights with bare hands/martial arts */
+				if (!pr_ptr->body_parts[BODY_WEAPON])
+					if (o_ptr->k_idx) apply_monster_effects = FALSE;
+
+				/* Get monster effects. If monster has several, choose one randomly */
+				monster_effects = 0;
+				for (i = 0; i < 4; i++)
+				{
+				        if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side)
+					{
+						monster_effects++;
+	    					monster_effect[monster_effects] = pr_ptr->blow[i].effect;
+						/*
+		    				switch (pr_ptr->blow[i].effect)
+						{
+						case RBE_CONFUSE:
+							monster_effects++;
+		    					monster_effect[monster_effects] = 1;
+							break;
+						case RBE_TERRIFY:
+							monster_effects++;
+		    					monster_effect[monster_effects] = 2;
+							break;
+						case RBE_PARALYZE:
+							monster_effects++;
+		    					monster_effect[monster_effects] = 3;
+							break;
+						default:
+							monster_effects++;
+		    					monster_effect[monster_effects] = 0;
+							break;
+						}*/
+					}
+				}
+				/* Choose random brand from the ones available */
+				monster_effect_chosen = monster_effect[1 + rand_int(monster_effects)];
+				
+				
+				/* Modify damage effect */
+				if (apply_monster_effects)
+				{
+					switch (monster_effect_chosen)
+					{
+					case RBE_CONFUSE:
+						if (!p_ptr->confusing)
+						{
+							/* Confuse the monster */
+							if (r_ptr->flags3 & RF3_NO_CONF)
+							{
+								if (p_ptr->mon_vis[c_ptr->m_idx]) r_ptr->r_flags3 |= RF3_NO_CONF;
+								msg_format(Ind, "%^s is unaffected.", m_name);
+							}
+							else if (rand_int(100) < r_ptr->level)
+							{
+			    					msg_format(Ind, "%^s resists the effect.", m_name);
+    		    					}
+							else
+							{
+								msg_format(Ind, "%^s appears confused.", m_name);
+								m_ptr->confused += 10 + rand_int(p_ptr->lev) / 5;
+							}
+							
+						}
+						break;
+					case RBE_TERRIFY:
+						fear_chance = 50 + (p_ptr->lev - r_ptr->level) * 5;
+						if (!(r_ptr->flags3 & RF3_NO_FEAR) && rand_int(100) < fear_chance)
+						{
+							msg_format(Ind, "%^s appears afraid.", m_name);
+							m_ptr->monfear = m_ptr->monfear + 4 + rand_int(p_ptr->lev) / 5;
+						}
+						break;
+					case RBE_PARALYZE:
+						if (!p_ptr->stunning)
+						{
+							/* Stun the monster */
+							if (r_ptr->flags3 & RF3_NO_STUN)
+							{
+								if (p_ptr->mon_vis[c_ptr->m_idx]) r_ptr->r_flags3 |= RF3_NO_STUN;
+								msg_format(Ind, "%^s is unaffected.", m_name);
+							}
+							else if (rand_int(115) < r_ptr->level)
+							{
+								msg_format(Ind, "%^s resists the effect.", m_name);
+							}
+							else
+							{
+								if (!m_ptr->stunned)
+									msg_format(Ind, "\377o%^s appears stuned.", m_name);
+								else
+									msg_format(Ind, "\377o%^s appears more stunned.", m_name);
+								m_ptr->stunned += 20 + rand_int(p_ptr->lev) / 5;
+							}
+						}
+						break;
+					}
+				}
+			}
 
 			/* Are we draining it?  A little note: If the monster is
 			   dead, the drain does not work... */
@@ -1932,7 +2491,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 				else if (rand_int(100) < r_ptr->level)
 				{
-					msg_format(Ind, "%^s is unaffected.", m_name);
+					msg_format(Ind, "%^s resists the effect.", m_name);
 				}
 				else
 				{
@@ -2010,7 +2569,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 				else if (rand_int(115) < r_ptr->level)
 				{
-					msg_format(Ind, "%^s is unaffected.", m_name);
+					msg_format(Ind, "%^s resists the effect.", m_name);
 				}
 				else
 				{
@@ -2025,7 +2584,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			/* Ghosts get fear attacks */
 			if (p_ptr->ghost)
 			{
-				int fear_chance = 50 + (p_ptr->lev - r_ptr->level) * 5;
+				fear_chance = 50 + (p_ptr->lev - r_ptr->level) * 5;
 
 				if (!(r_ptr->flags3 & RF3_NO_FEAR) && rand_int(100) < fear_chance)
 				{
@@ -2616,8 +3175,9 @@ void move_player(int Ind, int dir, int do_pickup)
 	assuming that the mimic does not use the monster mind but its own to control
 	the body, on the other hand the body still carries reflexes from the monster ;)
 	- technical reason was to make more forms useful, especially RAND_50 forms */
-	if (((r_ptr->flags1 & RF1_RAND_50) && magik(20)) ||
-		((r_ptr->flags1 & RF1_RAND_25) && magik(10)))
+	if (((r_ptr->flags1 & RF1_RAND_50) && (r_ptr->flags1 & RF1_RAND_25) && magik(30)) ||
+	   ((r_ptr->flags1 & RF1_RAND_50) && (!(r_ptr->flags1 & RF1_RAND_25)) && magik(20)) ||
+	   ((!(r_ptr->flags1 & RF1_RAND_50)) && (r_ptr->flags1 & RF1_RAND_25) && magik(10)))
 	{
 		do
 		{
