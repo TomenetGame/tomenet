@@ -2622,8 +2622,36 @@ void player_talk_aux(int Ind, cptr message)
 				/* skip inscribed items */
 				if (o_ptr->note) continue;
 				
-				o_ptr->note = quark_add("!k");
+				o_ptr->note = quark_add(colon ? colon : "!k");
 			}
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+			return;
+		}
+		/* remove specific inscription */
+		else if (prefix(message, "/untag"))
+		{
+			object_type		*o_ptr;
+			cptr	*ax = colon ? colon : "!k";
+
+			for(i = 0; i < INVEN_PACK; i++)
+			{
+				o_ptr = &(p_ptr->inventory[i]);
+				if (!o_ptr->tval) break;
+
+				/* skip inscribed items */
+				if (!o_ptr->note) continue;
+				
+				/* skip non-matching tags */
+				if (strcmp(quark_str(o_ptr->note), ax)) continue;
+				
+				o_ptr->note = 0;
+			}
+
+			/* Combine the pack */
+			p_ptr->notice |= (PN_COMBINE);
+
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
@@ -2817,14 +2845,14 @@ void player_talk_aux(int Ind, cptr message)
 			}
 			else
 			{
-				msg_print(Ind, "Commands(player): afk dis ignore me tag;");
+				msg_print(Ind, "Commands: afk dis ignore me tag untag;");
 				msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta unst");
 				return;
 			}
 		}
 		else
 		{
-			msg_print(Ind, "Commands: afk dis ignore me tag");
+			msg_print(Ind, "Commands: afk dis ignore me tag untag");
 			msg_print(Ind, "/dis \377rdestroys \377wevery uninscribed items in your inventory!");
 			return;
 		}

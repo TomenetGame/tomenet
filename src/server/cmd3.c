@@ -1204,7 +1204,7 @@ void do_cmd_steal(int Ind, int dir)
 		object_type *o_ptr;
 
 		/* Purge this traitor */
-		if (p_ptr->party == q_ptr->party)
+		if (player_in_party(q_ptr->party, Ind))
 		{
 			/* Lose a member */
 			parties[q_ptr->party].num--;
