@@ -23,6 +23,7 @@ cave_type **getcave(struct worldpos *wpos)
 {
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wx>MAX_WILD_X || wpos->wx<0 || wpos->wy>MAX_WILD_Y || wpos->wy<0) return(NULL);
 	if(wpos->wz==0)
 	{
 		return(wild->cave);
@@ -251,6 +252,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 
 int players_on_depth(struct worldpos *wpos)
 {
+	if(wpos->wx>MAX_WILD_X || wpos->wx<0 || wpos->wy>MAX_WILD_Y || wpos->wy<0) return(0);
 	if(wpos->wz==0)
 		return(wild_info[wpos->wy][wpos->wx].ondepth);
 	else
