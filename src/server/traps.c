@@ -2994,6 +2994,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	c_ptr = &zcave[y][x];
 
 	/* No traps over traps/house doors etc */
+	/* TODO: allow traps on jumpgates/fountains etc */
 	if (c_ptr->special) return;	/* its a pointer now */
 
 	/* Require empty, clean, floor grid */

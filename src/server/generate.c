@@ -139,6 +139,9 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 #define DUN_AMT_ROOM	9	/* Amount of objects for rooms */
 #define DUN_AMT_ITEM	3	/* Amount of objects for rooms/corridors */
 #define DUN_AMT_GOLD	3	/* Amount of treasure for rooms/corridors */
+//#define DUN_AMT_ALTAR   1	/* Amount of altars */
+#define DUN_AMT_BETWEEN 2	/* Amount of between gates */
+#define DUN_AMT_FOUNTAIN 1	/* Amount of fountains */
 
 /*
  * Hack -- Dungeon allocation "places"
@@ -154,7 +157,10 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 #define ALLOC_TYP_TRAP		3	/* Trap */
 #define ALLOC_TYP_GOLD		4	/* Gold */
 #define ALLOC_TYP_OBJECT	5	/* Object */
-#define ALLOC_TYP_FOUNT		6	/* Fountain */
+// #define ALLOC_TYP_FOUNT		6	/* Fountain */
+#define ALLOC_TYP_ALTAR         6       /* Altar */
+#define ALLOC_TYP_BETWEEN       7       /* Between */
+#define ALLOC_TYP_FOUNTAIN      8       /* Fountain */
 
 
 
@@ -488,11 +494,128 @@ static void place_rubble(struct worldpos *wpos, int y, int x)
 /*
  * Create a fountain here.
  */
-static void place_fount(struct worldpos *wpos, int y, int x){
+static void place_fountain(struct worldpos *wpos, int y, int x)
+{
 	cave_type **zcave;
 	cave_type *c_ptr;
+	int dun_level;
+	c_special *cs_ptr;
+	int svals[SV_POTION_LAST + SV_POTION2_LAST + 1], maxsval = 0, k;
+
+	if(!(zcave=getcave(wpos))) return;
+	dun_level = getlevel(wpos);
+	c_ptr=&zcave[y][x];
+
+
+	/* No fountains over traps/house doors etc */
+	if (c_ptr->special) return;
+
+	/* Place the fountain */
+	if (randint(100) < 30)
+	{
+		/* XXX Empty fountain doesn't need 'type', does it? */
+		cave_set_feat(wpos, y, x, FEAT_EMPTY_FOUNTAIN);
+//		c_ptr->special2 = 0;
+		return;
+	}
+
+	/* List of usable svals */
+	for (k = 1; k < MAX_K_IDX; k++)
+	{
+		object_kind *k_ptr = &k_info[k];
+
+		if (((k_ptr->tval == TV_POTION) || (k_ptr->tval == TV_POTION2)) &&
+		    (k_ptr->level <= dun_level) && (k_ptr->flags4 & TR4_FOUNTAIN))
+		{
+			if (k_ptr->tval == TV_POTION2) svals[maxsval] = k_ptr->sval + SV_POTION_LAST;
+			else svals[maxsval] = k_ptr->sval;
+			maxsval++;
+		}
+	}
+
+	if (maxsval == 0) return;
+	else
+	{
+		/* TODO: rarity should be counted in? */
+		cave_set_feat(wpos, y, x, FEAT_FOUNTAIN);
+		if (!(cs_ptr=AddCS(c_ptr, CS_FOUNTAIN))) return;
+		cs_ptr->sc.fountain.type = svals[rand_int(maxsval)];
+		cs_ptr->sc.fountain.rest = damroll(3, 4);
+		cs_ptr->sc.fountain.known = FALSE;
+#if 0
+		cs_ptr->type = CS_TRAPS;
+		c_ptr->special2 = damroll(3, 4);
+#endif	// 0
+	}
+
+//	c_ptr->special = svals[rand_int(maxsval)];
+}
+
+#if 0
+/*
+ * Place an altar at the given location
+ */
+static void place_altar(int y, int x)
+{
+        if (magik(10))
+                cave_set_feat(y, x, 164);
+}
+#endif	// 0
+
+
+
+/*
+ * Place a between gate at the given location
+ */
+static void place_between(struct worldpos *wpos, int y, int x)
+{
+	cave_type **zcave;
+	cave_type *c_ptr, *c1_ptr;
+	int gx, gy;
+	c_special *cs_ptr;
+
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr=&zcave[y][x];
+
+	/* No between-gate over traps/house doors etc */
+	if (c_ptr->special) return;
+
+	while(TRUE)	/* TODO: add a counter to prevent infinite-loop */
+	{
+		/* Location */
+		/* XXX if you call it from outside of cave-generation code,
+		 * you should change here */
+		gy = rand_int(dun->l_ptr->hgt);
+		gx = rand_int(dun->l_ptr->wid);
+
+		/* Require "naked" floor grid */
+		if (cave_naked_bold(zcave, gy, gx))
+		{
+			/* Access the target grid */
+			c1_ptr = &zcave[gy][gx];
+
+			if (!c1_ptr->special) break;
+		}
+	}
+
+	if (!(cs_ptr=AddCS(c_ptr, CS_BETWEEN))) return;
+	cave_set_feat(wpos, y, x, FEAT_BETWEEN);
+	cs_ptr->sc.between.fy = gy;
+	cs_ptr->sc.between.fx = gx;
+
+	/* XXX not 'between' gate can be generated */
+	if (!(cs_ptr=AddCS(c1_ptr, CS_BETWEEN))) return;
+	cave_set_feat(wpos, gy, gx, FEAT_BETWEEN);
+	cs_ptr->sc.between.fy = y;
+	cs_ptr->sc.between.fx = x;
+
+#if 0
+	/* Place a pair of between gates */
+	cave_set_feat(wpos, y, x, FEAT_BETWEEN);
+	c_ptr->special = gx + (gy << 8);
+	cave_set_feat(wpos, gy, gx, FEAT_BETWEEN);
+	c1_ptr->special = x + (y << 8);
+#endif	// 0
 }
 
 /*
@@ -824,9 +947,25 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
 				if (rand_int(100) < 2) place_trap(wpos, y, x, 0);
 				break;
 			}
-			case ALLOC_TYP_FOUNT:
+
+#if 0
+			case ALLOC_TYP_ALTAR:
 			{
-				place_fount(wpos, y, x);
+				place_altar(wpos, y, x);
+				break;
+			}
+#endif	// 0
+
+			case ALLOC_TYP_BETWEEN:
+			{
+				place_between(wpos, y, x);
+				break;
+			}
+
+//			case ALLOC_TYP_FOUNT:
+			case ALLOC_TYP_FOUNTAIN:
+			{
+				place_fountain(wpos, y, x);
 				break;
 			}
 		}
@@ -3452,12 +3591,14 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 //void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, cptr data)
 void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 {
+	int bwy[8], bwx[8], i;
 	int dx, dy, x, y, cx, cy, lev = getlevel(wpos);
 
 	cptr t;
 
 	cave_type *c_ptr;
 	cave_type **zcave;
+	c_special *cs_ptr;
 	dun_level *l_ptr = getfloor(wpos);
 	bool hives = FALSE, mirrorlr = FALSE, mirrorud = FALSE,
 		rotate = FALSE, force = FALSE;
@@ -3501,6 +3642,12 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 	if (v_ptr->flags1 & VF1_NO_MAGIC && (magik(VAULT_FLAG_CHANCE) || force)
 			&& lev < 100)
 		l_ptr->flags1 |= LF1_NO_MAGIC;
+
+	/* Clean the between gates arrays */
+	for(i = 0; i < 8; i++)
+	{
+		bwy[i] = bwx[i] = 9999;
+	}
 
 	/* Place dungeon features and objects */
 	for (t = data, dy = 0; dy < ymax; dy++)
@@ -3628,6 +3775,57 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				}
 				if (magik(50)) place_trap(wpos, y, x, 0);
 				break;
+
+				/* Between gates */
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				{
+					/* XXX not sure what will happen if the cave already has
+					 * another between gate */
+					/* Not found before */
+					if(bwy[*t - '0'] == 9999)
+					{
+						if (!(cs_ptr=AddCS(c_ptr, CS_BETWEEN)))
+						{
+#if DEBUG_LEVEL > 0
+							s_printf("oops, vault between gates generation failed(1st: %s)!!\n", wpos_format(0, wpos));
+#endif // DEBUG_LEVEL
+							break;
+						}
+						cave_set_feat(wpos, y, x, FEAT_BETWEEN);
+						bwy[*t - '0'] = y;
+						bwx[*t - '0'] = x;
+					}
+					/* The second time */
+					else
+					{
+						if (!(cs_ptr=AddCS(c_ptr, CS_BETWEEN)))
+						{
+#if DEBUG_LEVEL > 0
+							s_printf("oops, vault between gates generation failed(2nd: %s)!!\n", wpos_format(0, wpos));
+#endif // DEBUG_LEVEL
+							break;
+						}
+						cave_set_feat(wpos, y, x, FEAT_BETWEEN);
+						cs_ptr->sc.between.fy = bwy[*t - '0'];
+						cs_ptr->sc.between.fx = bwx[*t - '0'];
+
+						cs_ptr=GetCS(&zcave[bwy[*t - '0']][bwx[*t - '0']], CS_BETWEEN);
+						cs_ptr->sc.between.fy = y;
+						cs_ptr->sc.between.fx = x;
+#if 0
+						c_ptr->special = bwx[*t - '0'] + (bwy[*t - '0'] << 8);
+						cave[bwy[*t - '0']][bwx[*t - '0']].special = x + (y << 8);
+#endif	// 0
+					}
+					break;
+				}
 			}
 		}
 	}
@@ -7734,6 +7932,16 @@ static void cave_gen(struct worldpos *wpos)
 	/* Put some objects/gold in the dungeon */
 	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3) * dun->ratio / 100 + 1);
 	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3) * dun->ratio / 100 + 1);
+
+	/* Put some altars */	/* No god, no alter */
+//	alloc_object(ALLOC_SET_ROOM, ALLOC_TYP_ALTAR, randnor(DUN_AMT_ALTAR, 3) * dun->ratio / 100 + 1);
+
+	/* Put some between gates */
+	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_BETWEEN, randnor(DUN_AMT_BETWEEN, 3) * dun->ratio / 100 + 1);
+
+	/* Put some fountains */
+	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1);
+
 }
 
 
@@ -7760,6 +7968,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	int                 i, y, x, y0, x0, y1, x1, y2, x2, tmp;
 	cave_type		*c_ptr;
 	bool flat = FALSE;
+	struct c_special *cs_ptr;
 
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return; /*multitowns*/
@@ -8184,7 +8393,6 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	/* Some buildings get special doors */
 	if (n == 13 && !flat)
 	{
-		struct c_special *cs_ptr;
 		/* hack -- only create houses that aren't already loaded from disk */
 		if ((i=pick_house(wpos, y, x)) == -1)
 		{
@@ -8226,6 +8434,10 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 //		c_ptr->feat = FEAT_SHOP_HEAD + n;
 		c_ptr->feat = FEAT_SHOP;	/* TODO: put CS_SHOP */
 		c_ptr->info |= CAVE_NOPK;
+
+		if((cs_ptr=AddCS(c_ptr, CS_SHOP))){
+			cs_ptr->sc.omni = n;
+		}
 
 		for (y1 = y - 1; y1 <= y + 1; y1++)
 		{

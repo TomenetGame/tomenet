@@ -1710,14 +1710,14 @@ static bool process_player_end_aux(int Ind)
 						!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
 			{
 				int hit = p_ptr->mhp>>6;
-				int swim = get_skill_scale(p_ptr, SKILL_SWIM, 80);
+				int swim = get_skill_scale(p_ptr, SKILL_SWIM, 90);
 				hit += randint(p_ptr->mhp>>5);
 				if(!hit) hit=1;
 
 				/* temporary abs weight calc */
-				if(p_ptr->wt+p_ptr->total_weight/10 > 170 + swim)	// 190
+				if(p_ptr->wt+p_ptr->total_weight/10 > 170 + swim * 2)	// 190
 				{
-					int factor=(p_ptr->wt+p_ptr->total_weight/10)-150-swim;	// 170
+					int factor=(p_ptr->wt+p_ptr->total_weight/10)-150-swim * 2;	// 170
 					/* too heavy, always drown? */
 					if(factor<300)
 					{

@@ -575,26 +575,6 @@ struct trap_kind{
   s16b text;        /* longer description once you've met this trap */
 };
 
-#if 0	// time to retire :)
-/*
- * Probably this struct can be used for non-trap 'cave-special's
- * in the same way? If so, we can use t_list for omnipurpose :)
- * - Jir -
- */
-typedef struct trap_type trap_type;
-struct trap_type
-{
-	struct worldpos wpos;		/* position on world map */
-	byte iy;			/* Y-position on map, or zero */
-	byte ix;			/* X-position on map, or zero */
-	
-	byte t_idx;			/* Kind index (zero if non-trapped) */
-						/* is 255 enough? */
-
-	bool found;			/* Is this trap revealed? */
-};
-#endif	// 0
-
 
 
 /*
@@ -629,9 +609,10 @@ struct trap_type
 #define CS_BETWEEN	6	/* petit jump type */
 #define CS_BETWEEN2	7	/* world traveller type */
 #define CS_MON_TRAP	8	/* monster traps */
+#define CS_SHOP		9	/* shop/building */
 
 /* heheh it's kludge.. */
-#define sc_is_pointer(type)	(type < 3 || type == 4 || 8 < type)
+#define sc_is_pointer(type)	(type < 3 || type == 4 || 9 < type)
 
 #if 0
 struct c_special{
@@ -648,7 +629,7 @@ struct c_special{
 		void *ptr;		/* lazy - refer to other arrays or sth */
 		s32b omni;		/* needless of other arrays? k, add here! */
 		struct { byte t_idx; bool found; } trap;
-		struct { byte fy, fx; } between;
+		struct { byte fy, fx; } between; /* or simply 'dpos'? */
 		struct { byte wx, wy; s16b wz; } wpos;	/* XXX */
 		struct { byte type, rest; bool known; } fountain;
 		struct { u16b trap_kit; byte difficulty, feat; } montrap;

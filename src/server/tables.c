@@ -2117,7 +2117,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1400,
+                                '+', 1000,
                         },
                         {
                                 SKILL_TRAINING,
@@ -2244,7 +2244,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 2000,
+                                '+', 1200,
                         },
                         {
                                 SKILL_TRAINING,
@@ -2341,7 +2341,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 800,
                         },
                         {
                                 SKILL_TRAINING,
@@ -2419,7 +2419,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1700,
+                                '+', 1200,
                         },
                         {
                                 SKILL_TRAINING,
@@ -2551,7 +2551,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1800,
+                                '+', 1200,
                         },
                         {
                                 SKILL_TRAINING,
@@ -2643,7 +2643,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 0,
-                                '+', 1000,
+                                '+', 800,
                         },
 						/* Misc tree */
                         {
@@ -2751,7 +2751,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1800,
+                                '+', 1200,
                         },
                         {
                                 SKILL_TRAINING,
@@ -3004,7 +3004,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1400,
+                                '+', 1000,
                         },
                         {
                                 SKILL_TRAINING,

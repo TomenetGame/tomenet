@@ -2040,6 +2040,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	/* Interesting memorized features */
 	if (*w_ptr & CAVE_MARK)
 	{
+#if 0	// wow!
 		/* Notice glyphs */
 		if (c_ptr->feat == FEAT_GLYPH) return (TRUE);
 
@@ -2068,6 +2069,10 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 		/* Notice veins with treasure */
 		if (c_ptr->feat == FEAT_MAGMA_K) return (TRUE);
 		if (c_ptr->feat == FEAT_QUARTZ_K) return (TRUE);
+#endif	// 0
+
+		/* Accept 'naturally' interesting features */
+		if (f_info[c_ptr->feat].flags1 & FF1_NOTICE) return (TRUE);
 	}
 
 	/* Nope */
@@ -2259,7 +2264,7 @@ void do_cmd_look(int Ind, int dir)
 	{
 		int feat = f_info[c_ptr->feat].mimic;
 		cptr name = f_name + f_info[feat].name;
-		cptr p1 = "A ", p2 = "";
+		cptr p1 = "A ", p2 = "", info = "";
 		struct c_special *cs_ptr;
 
 		if (is_a_vowel(name[0])) p1 = "An ";
@@ -2283,10 +2288,33 @@ void do_cmd_look(int Ind, int dir)
 		if (feat == FEAT_SHOP)
 		{
 			p1 = "The entrance to the ";
+			/* TODO: store name! */
+		}
+
+		if ((feat==FEAT_FOUNTAIN) && (cs_ptr=GetCS(c_ptr, CS_FOUNTAIN)) &&
+				cs_ptr->sc.fountain.known)
+		{
+			object_kind *k_ptr;
+			int tval, sval;
+
+			if (cs_ptr->sc.fountain.type <= SV_POTION_LAST)
+			{
+				tval = TV_POTION;
+				sval = cs_ptr->sc.fountain.type;
+			}
+			else
+			{
+				tval = TV_POTION2;
+				sval = cs_ptr->sc.fountain.type - SV_POTION_LAST;
+			}
+
+			k_ptr = &k_info[lookup_kind(tval, sval)];
+			info = k_name + k_ptr->name;
 		}
 
 		/* Message */
-		sprintf(out_val, "%s%s%s", p1, p2, name);
+		if (strlen(info)) sprintf(out_val, "%s%s%s (%s)", p1, p2, name, info);
+		else sprintf(out_val, "%s%s%s", p1, p2, name);
 	}
 
 	/* Append a little info */

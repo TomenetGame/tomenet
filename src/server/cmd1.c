@@ -2338,6 +2338,124 @@ void do_prob_travel(int Ind, int dir)
     }
 }
 
+
+
+/* borrowed from ToME	- Jir - */
+bool player_can_enter(int Ind, byte feature)
+{
+	player_type *p_ptr = Players[Ind];
+	bool pass_wall;
+
+	bool only_wall = FALSE;
+
+
+	/* Player can not walk through "walls" unless in Shadow Form */
+//        if (p_ptr->wraith_form || (PRACE_FLAG(PR1_SEMI_WRAITH)))
+	if (p_ptr->wraith_form || p_ptr->ghost)
+		pass_wall = TRUE;
+	else
+		pass_wall = FALSE;
+
+#if 0	// it's interesting.. hope we can have similar feature :)
+	/* Wall mimicry force the player to stay in walls */
+	if (p_ptr->mimic_extra & CLASS_WALL)
+	{
+		only_wall = TRUE;
+	}
+#endif	// 0
+
+	switch (feature)
+	{
+#if 0
+		/* NOTE: we're not to backport wild_mode (it's cheezy);
+		 * however it's good idea to restrict crossing severer is nice idea
+		 * so p_ptr->wild_mode code can be recycled.	- Jir -
+		 */
+		case FEAT_DEEP_WATER:
+			if (p_ptr->wild_mode)
+			{
+				int wt = (adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2;
+
+				if ((calc_total_weight() < wt) || (p_ptr->ffall))
+					return (TRUE);
+				else
+					return (FALSE);
+			}
+			else
+				return (TRUE);
+
+		case FEAT_SHAL_LAVA:
+			if (p_ptr->wild_mode)
+			{
+				if ((p_ptr->resist_fire) ||
+					(p_ptr->immune_fire) ||
+					(p_ptr->oppose_fire) || (p_ptr->ffall))
+					return (TRUE);
+				else
+					return (FALSE);
+			}
+			else
+				return (TRUE);
+
+		case FEAT_DEEP_LAVA:
+			if (p_ptr->wild_mode)
+			{
+				if ((p_ptr->resist_fire) ||
+					(p_ptr->immune_fire) ||
+					(p_ptr->oppose_fire) || (p_ptr->ffall))
+					return (TRUE);
+				else
+					return (FALSE);
+			}
+			else
+				return (TRUE);
+#endif	// 0
+		case FEAT_DEEP_WATER:
+		case FEAT_SHAL_LAVA:
+		case FEAT_DEEP_LAVA:
+			return (TRUE);	/* you can pass, but you may suffer dmg */
+
+		case FEAT_TREES:
+		{
+			if ((p_ptr->fly) || p_ptr->prace == RACE_ENT)
+#if 0
+					(PRACE_FLAG(PR1_PASS_TREE)) ||
+				(get_skill(SKILL_DRUID) > 15) ||
+				(p_ptr->mimic_form == MIMIC_ENT))
+#endif	// 0
+				return (TRUE);
+			else
+				return (FALSE);
+		}
+
+		default:
+		{
+			if ((p_ptr->climb) && (f_info[feature].flags1 & FF1_CAN_CLIMB))
+				return (TRUE);
+			if ((p_ptr->fly) &&
+				((f_info[feature].flags1 & FF1_CAN_FLY) ||
+				 (f_info[feature].flags1 & FF1_CAN_LEVITATE)))
+				return (TRUE);
+			else if (only_wall && (f_info[feature].flags1 & FF1_FLOOR))
+				return (FALSE);
+			else if ((p_ptr->feather_fall) &&
+					 (f_info[feature].flags1 & FF1_CAN_LEVITATE))
+				return (TRUE);
+			else if ((pass_wall || only_wall) &&
+					 (f_info[feature].flags1 & FF1_CAN_PASS))
+				return (TRUE);
+			else if (f_info[feature].flags1 & FF1_NO_WALK)
+				return (FALSE);
+			else if ((f_info[feature].flags1 & FF1_WEB) &&
+					 (!(r_info[p_ptr->body_monster].flags7 & RF7_SPIDER)))
+				return (FALSE);
+		}
+	}
+
+	return (TRUE);
+}
+
+
 /*
  * Move player in the given direction, with the given "pickup" flag.
  *
@@ -2368,6 +2486,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	int i;
 
 	cave_type               *c_ptr;
+	c_special *cs_ptr;
 	object_type             *o_ptr;
 	monster_type    *m_ptr;
 	byte                    *w_ptr;
@@ -2401,6 +2520,25 @@ void move_player(int Ind, int dir, int do_pickup)
 	{
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
+	}
+
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+	if ((c_ptr->feat == FEAT_ICE) && (!p_ptr->feather_fall && !p_ptr->fly))
+	{
+		if (magik(70 - p_ptr->lev))
+		{
+			do
+			{
+				i = randint(9);
+				y = p_ptr->py + ddy[i];
+				x = p_ptr->px + ddx[i];
+			} while (i == 5);
+			msg_print(Ind, "You slip on the icy floor.");
+		}
+#if 0
+		else
+			tmp = dir;
+#endif	// 0
 	}
 
 	/* Update wilderness positions */
@@ -2631,7 +2769,8 @@ void move_player(int Ind, int dir, int do_pickup)
 	  }
 
 	/* Player can not walk through "walls", but ghosts can */
-	if ((!p_ptr->ghost) && (!p_ptr->tim_wraith) && (!cave_floor_bold(zcave, y, x)))
+//	if ((!p_ptr->ghost) && (!p_ptr->tim_wraith) && (!cave_floor_bold(zcave, y, x)))
+	if (!player_can_enter(Ind, c_ptr->feat))
 	{
 		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
 		bool myhome = FALSE;
@@ -2643,8 +2782,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			cs_ptr=cs_ptr->next;
 		}
 
-		if (cfg.door_bump_open & BUMP_OPEN_HOUSE &&
-			c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
+		if ((cfg.door_bump_open & BUMP_OPEN_HOUSE) && c_ptr->feat == FEAT_HOME)
 		{
 			struct c_special *cs_ptr;
 			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))) /* orig house failure */
@@ -2657,10 +2795,12 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 		}
 
+#if 0
 		/* Hack -- Exception for trees (in a bad way :-/) */
 		if (!myhome && c_ptr->feat == FEAT_TREES &&
 				(p_ptr->fly || p_ptr->prace == RACE_ENT))
 			myhome = TRUE;
+#endif	// 0
 
 		if (!myhome)
 		{
@@ -2763,7 +2903,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	/* XXX quick fix */
 	else if (p_ptr->tim_wraith)
 	{
-		if ((c_ptr->feat >= FEAT_HOME_HEAD) && (c_ptr->feat <= FEAT_HOME_TAIL))
+		if (c_ptr->feat == FEAT_HOME)
 		{
 			struct c_special *cs_ptr;
 			if(!(cs_ptr=GetCS(c_ptr, CS_DNADOOR)) ||
@@ -2782,7 +2922,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	if (p_ptr->tim_wraith){
 		/*if(zcave[y][x].info & CAVE_STCK) p_ptr->tim_wraith=0;*/
 		/*else*/{
-			if ((((c_ptr->feat >= FEAT_HOME_HEAD) && (c_ptr->feat <= FEAT_HOME_TAIL)) ||
+			if (((c_ptr->feat == FEAT_HOME) ||
 		 	((zcave[y][x].info & CAVE_ICKY) && (wpos->wz==0))) && (!wraith_access(Ind)))
 			{
 				disturb(Ind, 0, 0);
@@ -2809,6 +2949,14 @@ void move_player(int Ind, int dir, int do_pickup)
 	{
 		/* Message */
 		msg_print(Ind, "The wall blocks your movement.");
+
+		disturb(Ind, 0, 0);
+		return;
+	}
+
+	else if ((c_ptr->feat == FEAT_DARK_PIT) && !p_ptr->feather_fall)
+	{
+		msg_print(Ind, "You can't cross the chasm.");
 
 		disturb(Ind, 0, 0);
 		return;
@@ -2890,7 +3038,9 @@ void move_player(int Ind, int dir, int do_pickup)
 
 		/* Handle resurrection */
 //		else if (p_ptr->ghost && c_ptr->feat == FEAT_SHOP_HEAD + 3)
-		else if (p_ptr->ghost && c_ptr->feat == FEAT_SHOP)	/* FIXME */
+		else if (p_ptr->ghost && c_ptr->feat == FEAT_SHOP &&
+			(cs_ptr=GetCS(c_ptr, CS_SHOP)) && cs_ptr->sc.omni == 3)
+
 		{
 			/* Resurrect him */
 			resurrect_player(Ind);
@@ -2906,7 +3056,8 @@ void move_player(int Ind, int dir, int do_pickup)
 
 		/* Discover invisible traps */
 //		else if (c_ptr->feat == FEAT_INVIS)
-		if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost){
+		if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost)
+		{
 			bool hit = TRUE;
 
 			/* Disturb */
@@ -3007,6 +3158,8 @@ int see_wall(int Ind, int dir, int y, int x)
 
 	/* Must actually block motion */
 	if (cave_floor_bold(zcave, y, x)) return (FALSE);
+
+	if (f_info[zcave[y][x].feat].flags1 & FF1_CAN_RUN) return (FALSE);
 
 	/* Must be known to the player */
 	if (!(p_ptr->cave_flag[y][x] & CAVE_MARK)) return (FALSE);
@@ -3427,6 +3580,7 @@ static bool run_test(int Ind)
 			/* Examine the terrain */
 			switch (c_ptr->feat)
 			{
+#if 0
 				/* Floors */
 				case FEAT_FLOOR:
 
@@ -3466,6 +3620,37 @@ static bool run_test(int Ind)
 					/* Done */
 					break;
 				}
+#endif	// 0
+
+				/* FIXME: this can be funny with running speed boost */
+				case FEAT_DEEP_LAVA:
+				case FEAT_SHAL_LAVA:
+				{
+					/* Ignore */
+					if (p_ptr->invuln || p_ptr->immune_fire) notice = FALSE;
+
+					/* Done */
+					break;
+				}
+
+#if 0
+				case FEAT_DEEP_WATER:
+				{
+					/* Ignore */
+					if (aqua) notice = FALSE;
+
+					/* Done */
+					break;
+				}
+#endif	// 0
+				case FEAT_ICE:
+				{
+					/* Ignore */
+					if (p_ptr->feather_fall || p_ptr->fly) notice = FALSE;
+
+					/* Done */
+					break;
+				}
 
 				/* Open doors */
 				case FEAT_OPEN:
@@ -3481,6 +3666,13 @@ static bool run_test(int Ind)
 				/* Stairs */
 				case FEAT_LESS:
 				case FEAT_MORE:
+				case FEAT_WAY_LESS:
+				case FEAT_WAY_MORE:
+				case FEAT_SHAFT_UP:
+				case FEAT_SHAFT_DOWN:
+				/* XXX */
+				case FEAT_BETWEEN:
+				case FEAT_BETWEEN2:
 				{
 					/* Option -- ignore */
 					if (p_ptr->find_ignore_stairs) notice = FALSE;
@@ -3497,6 +3689,12 @@ static bool run_test(int Ind)
 					/* Done */
 					break;
 				}
+			}
+
+			/* Check the "don't notice running" flag */
+			if (f_info[c_ptr->feat].flags1 & FF1_DONT_NOTICE_RUNNING)
+			{
+				notice = FALSE;
 			}
 
 			/* Interesting feature */

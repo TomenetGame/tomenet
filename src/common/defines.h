@@ -4737,6 +4737,8 @@ extern int PlayerUID;
 	(apos.wx==bpos.wx && apos.wy==bpos.wy && apos.wz==bpos.wz)
 */
 
+/* To ease backporting :) */
+#define object_prep(o_ptr, k_idx)	invcopy(o_ptr, k_idx)
 
 /* Hooks, scripts */
 #define HOOK_MONSTER_DEATH      0

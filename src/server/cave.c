@@ -1304,7 +1304,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			a = p_ptr->f_attr[feat];
 
 			/* Hack to display detected traps */
-			if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+			if((cs_ptr=GetCS(c_ptr, CS_TRAPS)))
+			{
 				int t_idx = cs_ptr->sc.trap.t_idx;
 				if (cs_ptr->sc.trap.found)
 				{
@@ -1343,9 +1344,26 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					}
 				}
 			}
+			/* Quick Hack -- shop */
+			else if((cs_ptr=GetCS(c_ptr, CS_SHOP)))
+			{
+				/* TODO: Store should have d_attr/d_char */
+				char st_char[10] = "123456789";
+				char st_attr[10] = { TERM_UMBER, TERM_SLATE, TERM_WHITE,
+					TERM_GREEN, TERM_BLUE, TERM_RED, TERM_L_DARK,
+					TERM_YELLOW, TERM_L_BLUE};
+
+				a = st_attr[cs_ptr->sc.omni];
+				(*cp) = st_char[cs_ptr->sc.omni];
+
+#if 0
+				c = st_info[c_ptr->special].x_char;
+				a = st_info[c_ptr->special].x_attr;
+#endif	// 0
+			}
 
 			/* Special lighting effects */
-			if (p_ptr->view_special_lite && (a == TERM_WHITE))
+			else if (p_ptr->view_special_lite && (a == TERM_WHITE))
 			{
 				/* Handle "blind" */
 				if (p_ptr->blind)
@@ -2171,9 +2189,36 @@ static byte priority_table[][2] =
 	{ FEAT_QUARTZ_K, 19 },
 	{ FEAT_MAGMA_K, 19 },
 
+	/* water, lava, & trees oh my! -KMW- */
+	{ FEAT_DEEP_WATER, 20 },
+	{ FEAT_SHAL_WATER, 20 },
+	{ FEAT_DEEP_LAVA, 20 },
+	{ FEAT_SHAL_LAVA, 20 },
+	{ FEAT_DIRT, 20 },
+	{ FEAT_GRASS, 20 },
+	{ FEAT_DARK_PIT, 20 },
+	{ FEAT_TREES, 20 },
+	{ FEAT_MOUNTAIN, 20 },
+	{ FEAT_ICE, 20},
+	{ FEAT_SAND, 20},
+	{ FEAT_DEAD_TREE, 20},
+	{ FEAT_ASH, 20},
+	{ FEAT_MUD, 20},
+
+	/* Fountain */
+	{ FEAT_FOUNTAIN, 22 },
+	{ FEAT_EMPTY_FOUNTAIN, 22 },
+
 	/* Stairs */
 	{ FEAT_LESS, 25 },
 	{ FEAT_MORE, 25 },
+
+	/* Stairs */
+	{ FEAT_WAY_LESS, 25 },
+	{ FEAT_WAY_MORE, 25 },
+
+	{ FEAT_SHAFT_UP, 25 },
+	{ FEAT_SHAFT_DOWN, 25 },
 
 	/* End */
 	{ 0, 0 }

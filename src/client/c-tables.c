@@ -2642,10 +2642,10 @@ option_type option_info[OPT_MAX] =
 	"show_weights",			"Show weights in object listings" },
 
 	{ &c_cfg.show_choices,		FALSE,	1,	0, 12,	// XXX
-	"show_choices",			"(obsolete) Show choices in certain sub-windows" },
+	"show_choices",			"(broken) Show choices in certain sub-windows" },
 
 	{ &c_cfg.show_details,		FALSE,	1,	0, 13,	// XXX
-	"show_details",			"(obsolete) Show details in certain sub-windows" },
+	"show_details",			"(broken) Show details in certain sub-windows" },
 
 	{ &c_cfg.ring_bell,			TRUE,	1,	0, 14,
 	"ring_bell",			"Audible bell (on errors, etc)" },
@@ -2695,7 +2695,7 @@ option_type option_info[OPT_MAX] =
 
 	/*** Game-Play ***/
 
-	{ &c_cfg.auto_afk,			FALSE,	3,	1, 0,	// XXX
+	{ &c_cfg.auto_afk,			FALSE,	3,	1, 0,	// former auto_haggle
 	"auto_afk",			"Allow automatic AFKing" },
 
 	{ &c_cfg.auto_scum,			FALSE,	3,	1, 1,	// XXX
@@ -2756,13 +2756,13 @@ option_type option_info[OPT_MAX] =
 	"avoid_abort",			"(obsolete) Avoid checking for user abort" },
 
 	{ &c_cfg.avoid_other,			FALSE,	4,	1, 19,	// XXX
-	"avoid_other",			"(obsolete) Avoid processing special colors" },
+	"avoid_other",			"(broken) Avoid processing special colors" },
 
 	{ &c_cfg.flush_failure,		TRUE,	4,	1, 20,	// XXX (resurrect me?)
-	"flush_failure",		"(obsolete) Flush input on various failures" },
+	"flush_failure",		"(broken) Flush input on various failures" },
 
 	{ &c_cfg.flush_disturb,		FALSE,	4,	1, 21,	// XXX
-	"flush_disturb",		"(obsolete) Flush input whenever disturbed" },
+	"flush_disturb",		"(broken) Flush input whenever disturbed" },
 
 	{ &c_cfg.flush_command,		FALSE,	4,	1, 22,	// XXX
 	"flush_command",		"(obsolete) Flush input before every command" },
@@ -2777,7 +2777,7 @@ option_type option_info[OPT_MAX] =
 	"fresh_message",		"(obsolete) Flush output after every message" },
 
 	{ &c_cfg.compress_savefile,	TRUE,	4,	1, 26,	// XXX
-	"compress_savefile",	"(obsolete) Compress messages in savefiles" },
+	"compress_savefile",	"(broken) Compress messages in savefiles" },
 
 	{ &c_cfg.hilite_player,		FALSE,	4,	1, 27,	// XXX (resurrect me)
 	"hilite_player",		"(broken) Hilite the player with the cursor" },

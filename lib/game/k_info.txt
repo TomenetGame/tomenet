@@ -36,8 +36,10 @@
 # file, and if you wanna delete ones, just change the rarity/
 # depth too high to be actually generated.
 
-# Many of new flags are not implemented yet;
-# implementations welcone :)	- Jir -
+# Some of new flags are not implemented yet; implementations welcone :)
+#
+# Please avoid to renumber this file for the time being; that'll make
+# backporting from ToME harder.		- Jir -
 
 
 # Version stamp (required)

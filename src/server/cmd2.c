@@ -156,6 +156,41 @@ void do_cmd_go_up(int Ind)
 	create_down_stair = TRUE;
 }
 
+/*
+ * Returns TRUE if we are in the Between...
+ */
+/* I want to be famous, a star of the screen,
+ * but you can do something in between...
+ */
+static bool between_effect(int Ind, cave_type *c_ptr)
+{
+	player_type *p_ptr = Players[Ind];
+	byte bx, by;
+	struct c_special *cs_ptr;
+	if (!(cs_ptr=GetCS(c_ptr, CS_BETWEEN))) return (FALSE);
+
+	by = cs_ptr->sc.between.fy;
+	bx = cs_ptr->sc.between.fx;
+
+	msg_print(Ind, "You fall into the void.");
+	msg_print(Ind, "Brrrr! It's deadly cold.");
+
+//	if (PRACE_FLAG(PR1_TP))
+	if (p_ptr->prace == RACE_DRIDER)
+	{
+		int reduc = ((p_ptr->ac + p_ptr->to_a) / 50) + 1;
+
+		take_hit(Ind, distance(by, bx, p_ptr->py, p_ptr->px) / (10 * reduc), "going Between");
+	}
+
+	swap_position(Ind, by, bx);
+
+	/* To avoid being teleported back */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+	return (TRUE);
+
+}
 
 /*
  * Go down one level
@@ -187,6 +222,13 @@ void do_cmd_go_down(int Ind)
 
 	/* Player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	if (c_ptr->feat == FEAT_BETWEEN)
+//		|| c_ptr->feat == FEAT_BETWEEN2)
+	{
+		if (between_effect(Ind, c_ptr)) return;
+		/* not jumped? strange.. */
+	}
 
 	/* Hack -- Enter a store (and between gates, etc) */
 	if ((!p_ptr->ghost) &&
@@ -1224,6 +1266,7 @@ void do_cmd_tunnel(int Ind, int dir)
 	bool old_floor = FALSE;
 
 	bool more = FALSE;
+	feature_type *f_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -1258,6 +1301,9 @@ void do_cmd_tunnel(int Ind, int dir)
 
 		/* Get grid */
 		c_ptr = &zcave[y][x];
+
+		f_ptr = &f_info[c_ptr->feat];
+
 		/* Check the floor-hood */
 		old_floor = cave_floor_bold(zcave, y, x);
 
@@ -1299,98 +1345,26 @@ void do_cmd_tunnel(int Ind, int dir)
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
+#if 0
 			/* Titanium */
 			if (c_ptr->feat >= FEAT_PERM_EXTRA)
 			{
 				msg_print(Ind, "This seems to be permanent rock.");
 			}
-
-			/* Granite */
-			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
+#else	// 0
+			//do_cmd_tunnel_test(int y, int x)
+			/* Must be tunnelable */
+			if (!(f_info[c_ptr->feat].flags1 & FF1_TUNNELABLE) ||
+				(f_info[c_ptr->feat].flags1 & FF1_PERMANENT))
 			{
-				/* Tunnel */
-				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x))        /* 1600 */
-				{
-					msg_print(Ind, "You have finished the tunnel.");
-				}
+				/* Message */
+				msg_print(Ind, f_text + f_info[c_ptr->feat].tunnel);
 
-				/* Keep trying */
-				else
-				{
-					/* We may continue tunelling */
-					msg_print(Ind, "You tunnel into the granite wall.");
-					more = TRUE;
-				}
+				/* Nope */
+				return;
 			}
+#endif	// 0
 
-			/* Quartz / Magma */
-			else if (c_ptr->feat >= FEAT_MAGMA)
-			{
-				bool okay = FALSE;
-				bool gold = FALSE;
-				bool hard = FALSE;
-
-				/* Found gold */
-				if (c_ptr->feat >= FEAT_MAGMA_H) gold = TRUE;
-
-				/* Extract "quartz" flag XXX XXX XXX */
-				if ((c_ptr->feat - FEAT_MAGMA) & 0x01) hard = TRUE;
-
-				/* Quartz */
-				if (hard)
-				{
-					okay = (power > 20 + rand_int(800)); /* 800 */
-				}
-
-				/* Magma */
-				else
-				{
-					okay = (power > 10 + rand_int(400)); /* 400 */
-				}
-
-				/* Success */
-				if (okay && twall(Ind, y, x))
-				{
-					/* Found treasure */
-					if (gold)
-					{
-						/* Place some gold */
-						place_gold(wpos, y, x);
-
-						/* Notice it */
-						note_spot_depth(wpos, y, x);
-
-						/* Display it */
-						everyone_lite_spot(wpos, y, x);
-
-						/* Message */
-						msg_print(Ind, "You have found something!");
-					}
-
-					/* Found nothing */
-					else
-					{
-						/* Message */
-						msg_print(Ind, "You have finished the tunnel.");
-					}
-				}
-
-				/* Failure (quartz) */
-				else if (hard)
-				{
-					/* Message, continue digging */
-					msg_print(Ind, "You tunnel into the quartz vein.");
-					more = TRUE;
-				}
-
-				/* Failure (magma) */
-				else
-				{
-					/* Message, continue digging */
-					msg_print(Ind, "You tunnel into the magma vein.");
-					more = TRUE;
-				}
-			}
 
 			/* Rubble */
 			else if (c_ptr->feat == FEAT_RUBBLE)
@@ -1470,6 +1444,122 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
 				}
+			}
+
+			/* Granite */
+			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
+			{
+				/* Tunnel */
+				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x))        /* 1600 */
+				{
+					msg_print(Ind, "You have finished the tunnel.");
+				}
+
+				/* Keep trying */
+				else
+				{
+					/* We may continue tunelling */
+					msg_print(Ind, "You tunnel into the granite wall.");
+					more = TRUE;
+				}
+			}
+
+			/* Quartz / Magma */
+//			else if (c_ptr->feat >= FEAT_MAGMA)
+			/* Quartz / Magma / Sandwall */
+			else if (((c_ptr->feat >= FEAT_MAGMA) &&
+						(c_ptr->feat <= FEAT_QUARTZ_K)) ||
+					((c_ptr->feat >= FEAT_SANDWALL) &&
+					 (c_ptr->feat <= FEAT_SANDWALL_K)))
+			{
+				bool okay = FALSE;
+				bool gold = FALSE;
+				bool hard = FALSE;
+				bool soft = FALSE;
+
+				/* Found gold */
+				if ((c_ptr->feat >= FEAT_MAGMA_H) &&
+					(c_ptr->feat <= FEAT_QUARTZ_K)) gold = TRUE;
+
+				if ((c_ptr->feat == FEAT_SANDWALL_H) ||
+					(c_ptr->feat == FEAT_SANDWALL_K))
+				{
+					gold = TRUE;
+					soft = TRUE;
+				}
+				else
+				/* Extract "quartz" flag XXX XXX XXX */
+				if ((c_ptr->feat - FEAT_MAGMA) & 0x01) hard = TRUE;
+
+				/* Quartz */
+				if (hard)
+				{
+					okay = (power > 20 + rand_int(800)); /* 800 */
+				}
+
+				/* Sandwall */
+				else if (soft)
+				{
+					okay = (p_ptr->skill_dig > 5 + rand_int(250));
+				}
+
+				/* Magma */
+				else
+				{
+					okay = (power > 10 + rand_int(400)); /* 400 */
+				}
+
+				/* Success */
+				if (okay && twall(Ind, y, x))
+				{
+					/* Found treasure */
+					if (gold)
+					{
+						/* Place some gold */
+						place_gold(wpos, y, x);
+
+						/* Notice it */
+						note_spot_depth(wpos, y, x);
+
+						/* Display it */
+						everyone_lite_spot(wpos, y, x);
+
+						/* Message */
+						msg_print(Ind, "You have found something!");
+					}
+
+					/* Found nothing */
+					else
+					{
+						/* Message */
+						msg_print(Ind, "You have finished the tunnel.");
+					}
+				}
+
+				/* Failure */
+				else
+				{
+					/* Message, continue digging */
+					msg_print(Ind, f_text + f_ptr->tunnel);
+					more = TRUE;
+				}
+#if 0
+				/* Failure (quartz) */
+				else if (hard)
+				{
+					/* Message, continue digging */
+					msg_print(Ind, "You tunnel into the quartz vein.");
+					more = TRUE;
+				}
+
+				/* Failure (magma) */
+				else
+				{
+					/* Message, continue digging */
+					msg_print(Ind, "You tunnel into the magma vein.");
+					more = TRUE;
+				}
+#endif	// 0
 			}
 
 			/* Default to secret doors */
@@ -1959,7 +2049,8 @@ void do_cmd_bash(int Ind, int dir)
  *
  * XXX XXX XXX Let user choose a pile of spikes, perhaps?
  */
-static bool get_spike(int Ind, int *ip)
+//static bool get_spike(int Ind, int *ip)
+bool get_something_tval(int Ind, int tval, int *ip)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -1971,7 +2062,7 @@ static bool get_spike(int Ind, int *ip)
 		object_type *o_ptr = &(p_ptr->inventory[i]);
 
 		/* Check the "tval" code */
-		if (o_ptr->tval == TV_SPIKE)
+		if (o_ptr->tval == tval)
 		{
 			/* Save the spike index */
 			(*ip) = i;
@@ -2031,7 +2122,8 @@ void do_cmd_spike(int Ind, int dir)
 		}
 
 		/* Get a spike */
-		else if (!get_spike(Ind, &item))
+//		else if (!get_spike(Ind, &item))
+		else if (!get_something_tval(Ind, TV_SPIKE, &item))
 		{
 			/* Message */
 			msg_print(Ind, "You have no spikes!");

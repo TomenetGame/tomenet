@@ -21,6 +21,15 @@
 
 # bug.txt should follow the exact same format
 
+# Ok. My patience is at an end.
+# DARKGOD, EVILEYE, WRITE THE CHANGELOGS!!!!!!!  CVS log does NO HELP!!!!
+# - Jir -
+
+
+11/08/2002 (Jir)
+[D]- more on terrain features. (most of obvious problems are fixed I hope)
+[D]- Void Jumpgates(between gates), between vaults, fountains (/sip)
+
 10/08/2002 (Jir)
 # dangerous version!
 [D]- basement for ToME terrain feature code is backported.
@@ -1809,8 +1818,8 @@ below this line are the unfixed bugs known:
      (do_cmd_messages_chatonly)
 [B]- client quits badly (Destroy_connection)
      (avoided by removing Evileye's anti-DoS code.. FIXME)
-     /usr/home/key/devel/pm/src/tomenet: Can't read on socket
-     /usr/home/key/devel/pm/src/tomenet: Net input error
+     pm/src/tomenet: Can't read on socket
+     pm/src/tomenet: Net input error
      Program received signal SIGPIPE, Broken pipe.
      0x281c0134 in sendto () from /usr/lib/libc.so.4
      (gdb) bt

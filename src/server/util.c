@@ -1800,8 +1800,8 @@ static void do_slash_brief_help(int Ind)
 	msg_print(Ind, "Commands: afk at bed bug cast dis dress ex feel help house ignore less me");	// pet ?
 	msg_print(Ind, "  monster news object pk quest rec ref rfe shout tag target untag ver;");
 #endif	// 0
-	msg_print(Ind, "Commands: afk at bed broadcast bug cast dis dress ex feel help ignore me");	// pet ?
-	msg_print(Ind, "          pk quest rec ref rfe shout tag target untag;");
+	msg_print(Ind, "Commands: afk at bed broadcast bug cast dis dress ex feel fill help ignore me");	// pet ?
+	msg_print(Ind, "          pk quest rec ref rfe shout sip tag target untag;");
 
 	if (is_admin(p_ptr))
 	{
@@ -2765,6 +2765,16 @@ static void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 
+			return;
+		}
+		else if (prefix(message, "/sip"))
+		{
+			do_cmd_drink_fountain(Ind);
+			return;
+		}
+		else if (prefix(message, "/fill"))
+		{
+			do_cmd_fill_bottle(Ind);
 			return;
 		}
 

@@ -315,6 +315,7 @@ D:%.#,,,,,,,,,,,,,+.%
 D:%.###############.%
 D:%.................%
 D:%%%%%%%%%%%%%%%%%%%
+F:NO_MIRROR | NO_ROTATE
 
 N:16:Lesser vault (overlap)
 X:7:5:12:18
@@ -1847,13 +1848,16 @@ D:%.............%
 D:%%%%%%%%%%%%%%%
 
 
+# Doh, typical lowbie-killer!! :-/
 N:82:Miniature Cell
-X:7:5:5:5
+X:7:45:5:5
+#X:7:5:5:5
 D:%%%%%
 D:%#8#%
 D:%888%
 D:%#8#%
 D:%%%%%
+F:HIVES
 
 N:83:LV (Turnabout)
 X:7:10:12:15
@@ -1975,6 +1979,7 @@ D:%X,,,,,,,XX,,,,,,,,,,,XXX&&&XXX^XXX&&&XXX,,,,,,,,,,,XX,,,,,,,X%
 D:%X,,,,,,X#@@@@@@@@@@@@@@XXX&&&&&&&&&XXX@@@@@@@@@@@@@@#X,,,,,,X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_ROTATE
 
 N:90:The I in the Storm
 X:8:40:41:25
@@ -2049,6 +2054,7 @@ D:%X@XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.#%
 D:%X@........................................................#%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_ROTATE
 
 N:93:Snake Maze
 X:8:15:21:23
@@ -2148,6 +2154,7 @@ D:%X,&,,,,,,,,,,,^^^^^^^^^^.....XX.XX.XXX..XXXX..X.X..XXXX..XXX.XX.XX.....^^^^^^
 D:%X,&,,,,,,,,,,,^^^^^^^^^^......XX.#X.XXX.......X.X.......XXX.X#.XX......^^^^^^^^^^,,,,,,,,,,,&,X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_ROTATE | NO_PENETR | NO_DESTROY | NO_GENO | NOMAP | NO_MAGIC_MAP
 
 N:97:Modified Greater Vault (Huge)
 X:8:45:17:39
@@ -2168,6 +2175,7 @@ D:%X#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%X8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | HIVES | NO_TELE
 
 N:98:Mirrored Quartet
 X:8:20:21:49
@@ -2192,6 +2200,7 @@ D:%X9@@#XX....XXX**....XXX#XXX....**XXX....XX#@@9X%
 D:%X89@@@XXX,,,,XXX**..^^^^^^^..**XXX,,,,XXX@@@98X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | HIVES
 
 N:99:Jigsaw
 X:8:25:16:49
@@ -2211,6 +2220,7 @@ D:%.#*************##,,,,,,,,,##&&&&&&&&&##,@,@,@#.%
 D:%.#############################################.%
 D:%...............................................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO
 
 N:100:Hellpit
 X:8:20:19:60
@@ -2233,6 +2243,7 @@ D:%.X@@&....#8.#9....^^&&&&&&&&&&&&###.^^,,......+8*9+,,,,,X.%
 D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
 D:%..........................................................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO
 
 N:101:Funnel
 X:8:15:21:23
@@ -2257,6 +2268,7 @@ D:%X*XXXXXXXXXXXXXXXXX&X%
 D:%X***.............&&&X%
 D:%XXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO
 
 N:102:False Wall
 X:8:20:15:64
@@ -2275,6 +2287,7 @@ D:%X^XXXXXXXXXXXXXXXXXXXXXX+XX...##...XX+XXXXXXXXXXXXXXXXXXXXXX^X%
 D:%X^+*&*@*&*@*&*@*&*@*&*@*&X&@&@88&@&@X&*@*&*@*&*@*&*@*&*@*&*+^X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | NO_ROTATE
 
 N:103:Greater Vault (Divisi)
 X:8:35:31:55
@@ -2309,6 +2322,7 @@ D:%.X,XX@@@&&,,,,,,,,,,,,,,,X8X,,,,,,,,,,,,,,,&&@@@XX,X.%
 D:%.#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX#.%
 D:%.....................................................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | NO_ROTATE | NO_MAGIC_MAP
 
 N:104:Darwinism
 X:8:25:16:33
@@ -2328,6 +2342,8 @@ D:%........#....######....#.......%
 D:%.......##.............##.......%
 D:%...............................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | HIVES
+#F:WATERY
 
 N:105:Cyclone
 X:8:40:23:91
@@ -2354,6 +2370,7 @@ D:%XX***XXX...XXX...XXX...XXX...XXX^^X*.X^X^X^X^X^X.*XXXXXXXXXXXXX..XX^^XXXXXXXX
 D:%XXXX^^^^^^^^^XXX^^^^^^^^^XXX^^^#XXX8.X.&.X.&.X..*X+^.^.^.^.^.^..XX*^.^.^.^.^.^.^.^.^.^#8X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | NO_ROTATE | NO_MAGIC_MAP
 
 N:106:Curlicues One
 X:8:15:23:44
@@ -2380,6 +2397,7 @@ D:%X.............XXXXXXXXXXXX^^^^XXX...**XX+X%
 D:%X^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#8X^^^^^^^^X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO
 
 N:107:Concentricity
 X:8:20:19:76
@@ -2402,6 +2420,7 @@ D:%XXX#99XXX,,,,,XXX**XXX^^XXX99XXX^^XX##XX^^XXX99XXX^^XXX**XXX,,,,,XXX99#XXX%
 D:%X88XXX99XXXXXXX**###^^XXX99###^^XXX8888XXX^^###99XXX^^###**XXXXXXX99XXX88X%
 D:%XXXXXXXXXXXXXX##XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX##XXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | NO_ROTATE | NO_MAGIC_MAP
 
 N:108:Castle Death
 X:8:35:20:60
@@ -2425,6 +2444,7 @@ D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX....XXX....@X****X%
 D:%X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,+XX....+XX...X****X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | NO_ROTATE | NO_MAGIC_MAP
 
 N:109:Bubbles
 X:8:35:25:40
@@ -2453,7 +2473,8 @@ D:%XX#.XX#.XX#.XX#.XX#.XX#.XX#.XX#.XX#.#XX%
 D:%X8XXX8XXX8XXX8XXX8XXX8XXX8XXX8XXX8XXX8X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+F:NO_PENETR | NO_DESTROY | NO_GENO
+#F:WATERY
 # *Greater Vaults* Almost impossible to generate, require #Zangband, of
 
 N:110:a version with the Pattern
@@ -2499,6 +2520,7 @@ D:%.X..^..^..^..^..^..^..^..^..^..^..^..^..^..^..^.X^^^X^^^XX.X..^.^.^.^.^.^.^.^
 D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
 D:%................................................................................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | NO_ROTATE | NO_MAGIC_MAP | FORCE_FLAGS
 
 N:111:Greater Vault (Titanic)
 X:8:50:43:99
@@ -2545,6 +2567,7 @@ D:%.X.^.^.^.^.^.^.^.^.^.^.^....@@@XXXX...........................XXXX@@@....^.^.
 D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
 D:%.................................................................................................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | NO_ROTATE | NO_MAGIC_MAP | FORCE_FLAGS
 
 N:112:Greater Vault (Un Named I)
 X:8:50:45:81
@@ -2593,6 +2616,7 @@ D:%.X.XX,,,,,..9X...XXXXXXXX****X,,,,,&&..X..&&,,,,,X****XXXXXXXX...X9..,,,,,XX.
 D:%.#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX#X#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX#.%
 D:%...............................................................................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | NO_ROTATE | NO_MAGIC_MAP | FORCE_FLAGS
 
 N:113:*Greater Vault* (Divided)
 X:8:50:45:81
@@ -2641,6 +2665,7 @@ D:%X88XX888XXXXXXXX+XX..,XX.X...XXXX...X,X#X,X...XXXX...X.XX,..XX+XXXXXXXX888XX8
 D:%X888XXXXX9999999..X..,,X..............X#X..............X,,..X..9999999XXXXX888X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | NO_ROTATE | NO_MAGIC_MAP | FORCE_FLAGS
 
 # these vaults are borrowed from PernAngband.
 # 
@@ -2660,6 +2685,7 @@ D:%XXXXXXXXXXXXXXXXX#X%
 D:%+&#9#&#9#&#9#&#9#&X%
 D:%XXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%
+F:NO_GENO | HIVES
 
 
 N:115:Lesser vault (spiral checkers)
@@ -2678,6 +2704,7 @@ D:%X#XXXXXXXXXXXX+%
 D:%X&#9#&#9#&#9#&X%
 D:%XXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%
+F:NO_GENO | HIVES
 
 
 N:116:Greater vault (monstrosity)
@@ -2699,6 +2726,7 @@ D:%X9X9X9X9X9X9X9XXXXXXXXXX#X%
 D:%XX9X9X9X9X9X9X#@^@^@^@^@^X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | HIVES
 
 N:117:Cyclone
 X:8:40:23:91
@@ -2725,6 +2753,7 @@ D:%XX***XXX...XXX...XXX...XXX...XXX^^X*.X^X^X^X^X^X.*XXXXXXXXXXXXX..XX^^XXXXXXXX
 D:%XXXX^^^^^^^^^XXX^^^^^^^^^XXX^^^#XXX8.X.&.X.&.X..*X+^.^.^.^.^.^..XX*^.^.^.^.^.^.^.^.^.^#8X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | NO_ROTATE | NO_MAGIC_MAP | FORCE_FLAGS
 
 #N:118:Miniature Cell
 #X:7:5:5:5
@@ -2756,6 +2785,7 @@ D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX....XXX....@X****X%
 D:%X,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,+XX....+XX...X****X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_GENO | NO_MAGIC_MAP | NO_TELE
 
 N:120:Mirrored Quartet
 X:8:20:21:49
@@ -2780,6 +2810,7 @@ D:%X9@@#XX....XXX**....XXX#XXX....**XXX....XX#@@9X%
 D:%X89@@@XXX,,,,XXX**..^^^^^^^..**XXX,,,,XXX@@@98X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_DESTROY | NO_GENO | NO_TELE
 
 N:121:False Wall
 X:8:20:15:64
@@ -2798,6 +2829,7 @@ D:%X^XXXXXXXXXXXXXXXXXXXXXX+XX...##...XX+XXXXXXXXXXXXXXXXXXXXXX^X%
 D:%X^+*&*@*&*@*&*@*&*@*&*@*&X&@&@88&@&@X&*@*&*@*&*@*&*@*&*@*&*+^X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_DESTROY | NO_MAGIC_MAP | NO_ROTATE
 
 N:122:Hellpit
 X:8:20:19:60
@@ -2820,6 +2852,7 @@ D:%.X@@&....#8.#9....^^&&&&&&&&&&&&###.^^,,......+8*9+,,,,,X.%
 D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
 D:%..........................................................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_DESTROY | NO_GENO | FORCE_FLAGS
 
 N:123:Rounda.out Three
 X:8:30:20:97
@@ -2843,6 +2876,7 @@ D:%X,&,,,,,,,,,,,^^^^^^^^^^.....XX.XX.XXX..XXXX..X.X..XXXX..XXX.XX.XX.....^^^^^^
 D:%X,&,,,,,,,,,,,^^^^^^^^^^......XX.#X.XXX.......X.X.......XXX.X#.XX......^^^^^^^^^^,,,,,,,,,,,&,X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_DESTROY | NO_GENO | FORCE_FLAGS | NO_ROTATE | NO_MAGIC_MAP
 
 N:124:The Reward is Worth It
 X:8:20:16:63
@@ -2862,6 +2896,7 @@ D:%X,,,,,,,XX,,,,,,,,,,,XXX&&&XXX^XXX&&&XXX,,,,,,,,,,,XX,,,,,,,X%
 D:%X,,,,,,X#@@@@@@@@@@@@@@XXX&&&&&&&&&XXX@@@@@@@@@@@@@@#X,,,,,,X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_DESTROY | NO_GENO | FORCE_FLAGS | NO_ROTATE
 
 N:125:Little League Treasure Hoard
 X:7:2:5:19
@@ -2870,6 +2905,7 @@ D:%....#...&...#....%
 D:%.#.#.##***##.#.#.%
 D:%....#...&...#....%
 D:%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR
 
 N:126:Mini Maze
 X:7:2:15:25
@@ -2912,6 +2948,7 @@ D:%.XX^^XX.%
 D:%..X++X..%
 D:%........%
 D:%%%%%%%%%%
+F:HIVES
 
 N:129:(Lesser) Major .oss Vault
 X:7:20:10:10
@@ -2925,6 +2962,7 @@ D:%.XX^^XX.%
 D:%..X++X..%
 D:%........%
 D:%%%%%%%%%%
+F:NO_PENETR
 
 N:130:(Greater) Majorly .ossy Vault
 X:8:37:10:10
@@ -2938,6 +2976,7 @@ D:%.XX^^XX.%
 D:%.@X++X@.%
 D:%........%
 D:%%%%%%%%%%
+F:NO_PENETR | NO_GENO
 
 N:131:Bubbles
 X:8:35:25:40
@@ -2966,6 +3005,7 @@ D:%XX#.XX#.XX#.XX#.XX#.XX#.XX#.XX#.XX#.#XX%
 D:%X8XXX8XXX8XXX8XXX8XXX8XXX8XXX8XXX8XXX8X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NOMAP | NO_GENO | NO_DESTROY | FORCE_FLAGS
 
 N:132:Lesser Vault (Cross)
 X:7:10:13:20
@@ -2982,6 +3022,7 @@ D:%#....&,#^^#,&....#%
 D:%#*....*#..#*....*#%
 D:%########++########%
 D:%%%%%%%%%%%%%%%%%%%%
+F:HIVES
 
 N:133:The I in the Storm
 X:8:30:25:41
@@ -3010,6 +3051,7 @@ D:%X&...#....X&&XXXXXX^XXXXXX&&X....#...&X%
 D:%X&&..^..#9X..^^^^^^^^^^^^^..X9#..^..&&X%
 D:%XXXXXXXXXXXXXXXXXXX#XXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_GENO | NO_DESTROY | NO_TELE | FORCE_FLAGS
 
 N:134:Roundabout Two
 X:8:30:25:40
@@ -3038,6 +3080,7 @@ D:%X^X.^XX@XX.XX^^^^^^X.X.X^XXX@.&+9....X%
 D:%#^X.^^+X@XX.+X^^^^^+.X...X8#@&*X*****X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_GENO | NO_DESTROY | FORCE_FLAGS
 
 N:135:Modified Greater Vault (Huge)
 X:8:45:17:39
@@ -3058,6 +3101,7 @@ D:%X#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%X8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#8#%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_GENO | NO_DESTROY | NO_TELE | FORCE_FLAGS
 
 N:136:The Bank from Hell
 X:8:30:20:30
@@ -3081,92 +3125,97 @@ D:%X@XXXXXXXXXXXXXXXXXXXXXXXXX@X%
 D:%X.@.@.@.@.@.@.@.@.@.@.@.@.@.X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_GENO | NO_DESTROY | 
 
 # Since between gates are not implemented yet,
 # I replaced them with normal passage.
 # Hopefully someday we can enjoy them :)	- Jir -
 
 # Between vaults from weisiger
-#N:137:The Between Vault
-#X:8:15:6:25
-#D:XXXXXXXXXXXXXXXXXXXXXXXXX
-#D:#,,,,,X&...@X..**&X....9X
-#D:#...&1X.,,,2X..**&X3...9X
-#D:#...&.X1,,,.X2.**3X....9X
-#D:#,,,,,X&...@X..**&X....9X
-#D:XXXXXXXXXXXXXXXXXXXXXXXXX
-#
-#N:138:Greater Vault (Mix&Match)
-#X:8:35:28:73
-#D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#D:%.......................................................................%
-#D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
-#D:%.X1.^^^^*&XX,,,9,,,XX...X...X...X&..X@..X@.8X7X8#X8#X8#X8#X8#X8#X8#.7X.%
-#D:%.X..^^^*,XX@&@&@&@&X.X...X...X..#X&..X&..X@.#XXX#8XX8XX8XX8XX8XX8XXXXX.%
-#D:%.X^^^^*,XXXX.......X6.X...X...X.#.X&..X@..X@.8X8XXXXXXXXXXXXXXXXXX88XX.%
-#D:%.X^^^*,XX&&XX.....XXXXXXXX.X...X#..X&.#X&..X@.XX#9#9#9#9X88XX^^XX#8XXX.%
-#D:%.X^^*,X#^^^^XX^XXX.X***&@XXXX...X...X&#.X@..X@X8X9X9X9X9X8#X^^XX8#X#8X.%
-#D:%.X^*,XX^^^^^^XX^XX5X***@&,,XXX...X...X#..X&..XX#X#X#X#X#XXX^^XX##XX88X.%
-#D:%.X*,XX........XX^XXX***&@,,,,XXX..X..#X&..X@..X8X8X8X8X8XX^^XX88XXXXXX.%
-#D:%.X&XX..........XX^XX***@&,,,,#.XXX.X.#.X&..X&.X#X#X#X#X#X^^X#8XXXX,#.X.%
-#D:%.XXX************XX6X@&@&@,,,,#...XXXX#..X&.#X@X8X8X8X8X8#XXXXXX,,,,#.X.%
-#D:%.XX&,&,&,&,&,&,&,XXXX@&@&,,,,#.....XXX...X&#.XX8X8X8X8X8XXXX,,,,,,,#.X.%
-#D:%.XX#************XX.^#X,,,,,,,#.......XXXXXXXXXX8X8X8XXXXX@&#,,,,,,XX#X.%
-#D:%.X^XX..........XXX.XXXX,,,,,,#................X8XXXXX&&#&@&#,,XXXXX#.X.%
-#D:%.X.XXX........XX3X^X99XXXXXXXXXXXXXXX#XXXXXXX.XXXX,#&&&#&@&XXXX,#^X#.X.%
-#D:%.X.XXXX......XXX.X.X@@,,,,,,,,,,,,X1X.......X.X,,,,#&&&#XXXX,,,,#^X.#X.%
-#D:%.X^XXXXX....XXXX.^.XXXXXXXXXXXXXX*X^X+XXXXX.X.X,,,,#&&XXX##9,,,,#^X.#X.%
-#D:%.X.X^^.XX@@XXXXXXXXX9@&,,,,,,,,,X*X.X^^&,,X.X.X#####XXX#9@##@,,,#^X#.X.%
-#D:%.X.X^X.XXXXX^^^XXXXXXXXXXXXXXXX,X*X.X^^^,,X.X.X&&&XXX@8##&@##@,,#^X#.X.%
-#D:%.X^X.X2XXXX3^^^XXX.^..^..^..^.X,X*X^X&^^^&X.X.X##XX5.@89##9@##&,#^#.#X.%
-#D:%.X.X^XXXXXXXXX^^XX.XXXXXXXXXX.X,X*X.X..^^^X.X.X^XXXXXXXXXXXXXXXXXXXXXX.%
-#D:%.X.X^^.^..^..X^^^X.^..^..^.4X^X,X*X.X2.&^^+.+.X.^.^.^.^.^.^.^.^.^.^.4X.%
-#D:%.X^XXXXXXXXX^X^^^XXXXXXXXXXXX#X#X#X^XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
-#D:%.X..^..^..^..X^^^#................X..^..^..^..^..^..^..^..^..^..^..^.+.%
-#D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
-#D:%.......................................................................%
-#D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 N:137:The Between Vault
 X:8:15:6:25
 D:XXXXXXXXXXXXXXXXXXXXXXXXX
-D:#,,,,,#&...@X..**&#....9X
-D:#...&.X.,,,.#..**&X....9X
-D:#...&.X.,,,.#..**&X....9X
-D:#,,,,,#&...@X..**&#....9X
+D:#,,,,,X&...@X..**&X....9X
+D:#...&1X.,,,2X..**&X3...9X
+D:#...&.X1,,,.X2.**3X....9X
+D:#,,,,,X&...@X..**&X....9X
 D:XXXXXXXXXXXXXXXXXXXXXXXXX
-
 
 N:138:Greater Vault (Mix&Match)
 X:8:35:28:73
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 D:%.......................................................................%
 D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
-D:%.X8.^^^^*&XX,,,9,,,XX...X...X...X&..X@..X@.8X8X8#X8#X8#X8#X8#X8#X8#.8X.%
-D:%.X..^^^*,X#@&@&@&@&X.X...X...X..#X&..X&..X@.#X#X#8XX8XX8XX8XX8XX8XXXXX.%
-D:%.X^^^^*,XXXX.......X..X...X...X.#.X&..X@..X@.8X8XXXXXXXXXXXXXXXXXX88XX.%
+D:%.X1.^^^^*&XX,,,9,,,XX...X...X...X&..X@..X@.8X7X8#X8#X8#X8#X8#X8#X8#.7X.%
+D:%.X..^^^*,XX@&@&@&@&X.X...X...X..#X&..X&..X@.#XXX#8XX8XX8XX8XX8XX8XXXXX.%
+D:%.X^^^^*,XXXX.......X6.X...X...X.#.X&..X@..X@.8X8XXXXXXXXXXXXXXXXXX88XX.%
 D:%.X^^^*,XX&&XX.....XXXXXXXX.X...X#..X&.#X&..X@.XX#9#9#9#9X88XX^^XX#8XXX.%
 D:%.X^^*,X#^^^^XX^XXX.X***&@XXXX...X...X&#.X@..X@X8X9X9X9X9X8#X^^XX8#X#8X.%
-D:%.X^*,XX^^^^^^XX^XX,X***@&,,XXX...X...X#..X&..XX#X#X#X#X#XXX^^XX##XX88X.%
+D:%.X^*,XX^^^^^^XX^XX5X***@&,,XXX...X...X#..X&..XX#X#X#X#X#XXX^^XX##XX88X.%
 D:%.X*,XX........XX^XXX***&@,,,,XXX..X..#X&..X@..X8X8X8X8X8XX^^XX88XXXXXX.%
-D:%.X&XX..........XX^XX***@&,,,,#.XX#.X.#.X&..X&.X#X#X#X#X#X^^X#8XXXX,#.X.%
-D:%.XXX************XX9X@&@&@,,,,#...XXXX#..X&.#X@X8X8X8X8X8#XXXXXX,,,,#.X.%
-D:%.XX&,&,&,&,&,&,&,X#XX@&@&,,,,#.....XXX...X&#.XX8X8X8X8X8XXXX,,,,,,,#.X.%
+D:%.X&XX..........XX^XX***@&,,,,#.XXX.X.#.X&..X&.X#X#X#X#X#X^^X#8XXXX,#.X.%
+D:%.XXX************XX6X@&@&@,,,,#...XXXX#..X&.#X@X8X8X8X8X8#XXXXXX,,,,#.X.%
+D:%.XX&,&,&,&,&,&,&,XXXX@&@&,,,,#.....XXX...X&#.XX8X8X8X8X8XXXX,,,,,,,#.X.%
 D:%.XX#************XX.^#X,,,,,,,#.......XXXXXXXXXX8X8X8XXXXX@&#,,,,,,XX#X.%
-D:%.X^XX..........#XX.XXXX,,,,,,#................X8XXXXX&&#&@&#,,XXXXX#.X.%
-D:%.X.XXX........XX&X^X99XXXXXXXXXXXXXXX#XXXXXXX.XXXX,#&&&#&@&XXXX,#^X#.X.%
-D:%.X.XXXX......XXX.X.X@@,,,,,,,,,,,,#.X.......X.X,,,,#&&&#XXXX,,,,#^X.#X.%
+D:%.X^XX..........XXX.XXXX,,,,,,#................X8XXXXX&&#&@&#,,XXXXX#.X.%
+D:%.X.XXX........XX3X^X99XXXXXXXXXXXXXXX#XXXXXXX.XXXX,#&&&#&@&XXXX,#^X#.X.%
+D:%.X.XXXX......XXX.X.X@@,,,,,,,,,,,,X1X.......X.X,,,,#&&&#XXXX,,,,#^X.#X.%
 D:%.X^XXXXX....XXXX.^.XXXXXXXXXXXXXX*X^X+XXXXX.X.X,,,,#&&XXX##9,,,,#^X.#X.%
 D:%.X.X^^.XX@@XXXXXXXXX9@&,,,,,,,,,X*X.X^^&,,X.X.X#####XXX#9@##@,,,#^X#.X.%
 D:%.X.X^X.XXXXX^^^XXXXXXXXXXXXXXXX,X*X.X^^^,,X.X.X&&&XXX@8##&@##@,,#^X#.X.%
-D:%.X^X.X2XXXX^^^^XXX.^..^..^..^.X,X*X^X&^^^&X.X.X##XX..@89##9@##&,#^#.#X.%
-D:%.X.X^XXXXXX#XX^^XX.XXXXXXXXXX.X,X*X.X..^^^X.X.#^XXXXXXXXXXXXXXXXXXX#XX.%
-D:%.X.X^^.^..^..X^^^X.^..^..^.8X^X,X*X.X..&^^+.+.X.^.^.^.^.^.^.^.^.^.^.^X.%
+D:%.X^X.X2XXXX3^^^XXX.^..^..^..^.X,X*X^X&^^^&X.X.X##XX5.@89##9@##&,#^#.#X.%
+D:%.X.X^XXXXXXXXX^^XX.XXXXXXXXXX.X,X*X.X..^^^X.X.X^XXXXXXXXXXXXXXXXXXXXXX.%
+D:%.X.X^^.^..^..X^^^X.^..^..^.4X^X,X*X.X2.&^^+.+.X.^.^.^.^.^.^.^.^.^.^.4X.%
 D:%.X^XXXXXXXXX^X^^^XXXXXXXXXXXX#X#X#X^XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
 D:%.X..^..^..^..X^^^#................X..^..^..^..^..^..^..^..^..^..^..^.+.%
 D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
 D:%.......................................................................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_MAGIC | FORCE_FLAGS | NO_MAGIC_MAP | NO_ROTATE
+F:NO_GENO | NO_DESTROY | NO_TELE
+
+#N:137:The Between Vault
+#X:8:15:6:25
+#D:XXXXXXXXXXXXXXXXXXXXXXXXX
+#D:#,,,,,#&...@X..**&#....9X
+#D:#...&.X.,,,.#..**&X....9X
+#D:#...&.X.,,,.#..**&X....9X
+#D:#,,,,,#&...@X..**&#....9X
+#D:XXXXXXXXXXXXXXXXXXXXXXXXX
+#
+#
+#N:138:Greater Vault (Mix&Match)
+#X:8:35:28:73
+#D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#D:%.......................................................................%
+#D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
+#D:%.X8.^^^^*&XX,,,9,,,XX...X...X...X&..X@..X@.8X8X8#X8#X8#X8#X8#X8#X8#.8X.%
+#D:%.X..^^^*,X#@&@&@&@&X.X...X...X..#X&..X&..X@.#X#X#8XX8XX8XX8XX8XX8XXXXX.%
+#D:%.X^^^^*,XXXX.......X..X...X...X.#.X&..X@..X@.8X8XXXXXXXXXXXXXXXXXX88XX.%
+#D:%.X^^^*,XX&&XX.....XXXXXXXX.X...X#..X&.#X&..X@.XX#9#9#9#9X88XX^^XX#8XXX.%
+#D:%.X^^*,X#^^^^XX^XXX.X***&@XXXX...X...X&#.X@..X@X8X9X9X9X9X8#X^^XX8#X#8X.%
+#D:%.X^*,XX^^^^^^XX^XX,X***@&,,XXX...X...X#..X&..XX#X#X#X#X#XXX^^XX##XX88X.%
+#D:%.X*,XX........XX^XXX***&@,,,,XXX..X..#X&..X@..X8X8X8X8X8XX^^XX88XXXXXX.%
+#D:%.X&XX..........XX^XX***@&,,,,#.XX#.X.#.X&..X&.X#X#X#X#X#X^^X#8XXXX,#.X.%
+#D:%.XXX************XX9X@&@&@,,,,#...XXXX#..X&.#X@X8X8X8X8X8#XXXXXX,,,,#.X.%
+#D:%.XX&,&,&,&,&,&,&,X#XX@&@&,,,,#.....XXX...X&#.XX8X8X8X8X8XXXX,,,,,,,#.X.%
+#D:%.XX#************XX.^#X,,,,,,,#.......XXXXXXXXXX8X8X8XXXXX@&#,,,,,,XX#X.%
+#D:%.X^XX..........#XX.XXXX,,,,,,#................X8XXXXX&&#&@&#,,XXXXX#.X.%
+#D:%.X.XXX........XX&X^X99XXXXXXXXXXXXXXX#XXXXXXX.XXXX,#&&&#&@&XXXX,#^X#.X.%
+#D:%.X.XXXX......XXX.X.X@@,,,,,,,,,,,,#.X.......X.X,,,,#&&&#XXXX,,,,#^X.#X.%
+#D:%.X^XXXXX....XXXX.^.XXXXXXXXXXXXXX*X^X+XXXXX.X.X,,,,#&&XXX##9,,,,#^X.#X.%
+#D:%.X.X^^.XX@@XXXXXXXXX9@&,,,,,,,,,X*X.X^^&,,X.X.X#####XXX#9@##@,,,#^X#.X.%
+#D:%.X.X^X.XXXXX^^^XXXXXXXXXXXXXXXX,X*X.X^^^,,X.X.X&&&XXX@8##&@##@,,#^X#.X.%
+#D:%.X^X.X2XXXX^^^^XXX.^..^..^..^.X,X*X^X&^^^&X.X.X##XX..@89##9@##&,#^#.#X.%
+#D:%.X.X^XXXXXX#XX^^XX.XXXXXXXXXX.X,X*X.X..^^^X.X.#^XXXXXXXXXXXXXXXXXXX#XX.%
+#D:%.X.X^^.^..^..X^^^X.^..^..^.8X^X,X*X.X..&^^+.+.X.^.^.^.^.^.^.^.^.^.^.^X.%
+#D:%.X^XXXXXXXXX^X^^^XXXXXXXXXXXX#X#X#X^XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
+#D:%.X..^..^..^..X^^^#................X..^..^..^..^..^..^..^..^..^..^..^.+.%
+#D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
+#D:%.......................................................................%
+#D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#F:NO_MAGIC | FORCE_FLAGS | NO_MAGIC_MAP | NO_ROTATE
+#F:NO_GENO | NO_DESTROY | NO_TELE
 
 # Wilderness vault test
 N:139:The Wilderness Vault
@@ -3198,6 +3247,7 @@ D:%.#^#,,989,,#^#.%
 D:%.#+#########+#.%
 D:%.^^^.......^^^.%
 D:%%%%%%%%%%%%%%%%%
+F:NO_PENETR
 
 # Eric Bock
 #
@@ -3267,6 +3317,8 @@ D:    %%  %%%%%%%  %%
 #D: %.XXXXXXXXXXXXXXXXXXXXXXXXXX+XX+XXXXXXXXXXXXXXXXXXXXXXXXXX.% 
 #D: %.....................&&&&&@@XX@@&&&&&.....................% 
 #D: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%XX%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+#F:NO_MAGIC | FORCE_FLAGS | NO_MAGIC_MAP | NO_ROTATE
+#F:NO_GENO | NO_DESTROY | NO_TELE
 
 
 N:143:Sphere
@@ -3296,7 +3348,7 @@ D:%.....XX8,,XXX998XXXX98889XXXX899XXX,,8XX.....%
 D:%......XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX......%
 D:%.............................................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+F:FORCE_FLAGS | NO_MAGIC_MAP | NO_GENO | NO_DESTROY
 
 N:144:Hourglass
 X:8:24:37:27
@@ -3338,6 +3390,8 @@ D:%...XXXXX...^^^...XXXXX...%
 D:%.......XXXXX+XXXXX.......%
 D:%.........................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_GENO | NO_DESTROY | NO_MAGIC_MAP
+
 
 N:145:Symmet
 X:8:20:23:29
@@ -3365,6 +3419,7 @@ D:%...XX,,.....^^^.....,,XX...%
 D:%....XXXXXXXXX+XXXXXXXXX....%
 D:%...........................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_GENO | NO_DESTROY
 
 N:146:Workaround
 X:7:14:19:21
@@ -3388,6 +3443,7 @@ D:%.X..XX*******XX..X.%
 D:%.XX..XXXXXXXXX..XX.%
 D:%...................%
 D:%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR
 
 N:147:Crown
 X:7:12:19:28
@@ -3411,6 +3467,7 @@ D:%..XXXX^^^^+XXXX+^^^^XXXX..%
 D:%.....XXXXXXXXXXXXXXXX.....%
 D:%..........................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_PENETR | NO_GENO
 
 N:148:Interstices
 X:8:22:19:45
@@ -3434,11 +3491,11 @@ D:%......XXXX*X*X&X@XX^^^^^XX@X&X*X*XXXX......%
 D:%.......XXXXXXXXXXXX^^^^^XXXXXXXXXXXX.......%
 D:%...........................................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_GENO | NO_DESTROY | HIVES
+
 
 N:149:Mazer
 X:8:26:35:31
-
-
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 D:%.............................%
 D:%........XXXXXX+XXXXXX........%
@@ -3474,6 +3531,7 @@ D:%.........XX@.X.X.@XX.........%
 D:%........XXXXXX+XXXXXX........%
 D:%.............................%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_GENO | NO_DESTROY | HIVES
 
 N:150:Orb
 X:8:16:27:27
@@ -3549,8 +3607,9 @@ D:%X^.,...XXX,^9^#X.&.XX*&*,*&*,*&XX.&.,...,.^X%
 D:%X^.&.XXX8@^,^9^XX.&.XX*&*,*@*,*8XX.&.,...,^X%
 D:%X^.XXXXXXXXXXXXXXX.&.XXXXXXXXXXXXXX.&.,...^X%
 D:%X^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^X%
-D:%XXXXXXXXXXXXXXXXXXXXX#XXXXXX#XXXXXXXXXXXXXXX%
+D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXX#XXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_GENO | NO_DESTROY
 
 
 # Jir
@@ -3607,6 +3666,7 @@ D:   %......,.......,.....XXXXX***XXXXXX.,......%
 D:    %%%.......,.......,.....XXXXX.....,......%   
 D:       %%%%.......,.......,.......,.......,%%    
 D:           %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      
+F:NO_GENO | NO_DESTROY | NO_ROTATE
 
 
 # Jir
@@ -3624,6 +3684,7 @@ D: ^^^^^^*^^^^^^^^^^^
 D:  ^^^^^^^^*^^^^^^^  
 D:    ^^^^^^^^^^^^    
 D:       ^^^^^^       
+F:HIVES
 
 
 # Jir
@@ -3651,6 +3712,7 @@ D:#^....XX...,..^^...,..**...,..^^XXXX...,..**...,..**...,..^^...^X
 D:X^..XX++XX...,..^^...,..^^...,..^^...,..^^...,..^^...,..^^.....^X
 D:X^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
 D:X#XXX#XXX#XXX#XXX#XXX#XXX#XXX#XXX#XXX#XXX#XXX#XXX#XXX#XXX#XXX#XXX
+F:NO_GENO | NO_DESTROY | NO_PENETR
 
 
 # Jir
@@ -3686,6 +3748,7 @@ D:X^9^&X...,...,....X,&X,^X.^^...,.......X^&X,&X.^^.......X..^^..^^..X^^^^X
 D:X@^@^X.........XXXX*,X*,X.^^........XXXX*,X*,X.^^.......X..^^..^^..X^^^^X
 D:X^&^,#^........#^^^^*X,*X...........X899,*X88X..........X,........,X^^^^X
 D:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX####X
+F:NO_GENO | NO_DESTROY | NO_PENETR | NO_ROTATE | NO_TELE | FORCE_FLAGS
 
 # Jir
 N:157:Yin-Yang
@@ -3702,6 +3765,7 @@ D: %..%^^^^,9^^^^^^^%
 D:  %%.%^^^9,^^^^^%%  
 D:    %%%^^^^^^%%%    
 D:       %%%%%%       
+F:HIVES | NO_PENETR
 
 
 # Jir
@@ -3737,6 +3801,7 @@ D:%.^^XXXX..8XXXX^^^.*...%%
 D: %.^^^^XXXXX^^^^.,...%%          
 D:  %.*.^^^^^^^.*...%%%            
 D:   %%%%%%%%%%%%%%%               
+F:NO_GENO | NO_DESTROY | NO_PENETR 
 
 
 # Jir
@@ -3777,5 +3842,6 @@ D:%X^^...&...,.......&...,.......&...,.......&...,.......&...*.......&...,......
 D:%X^^^..&...,.......&...,.......&...,.......&...,.......&...,.......&...,.......&....^^^X%
 D:%#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX#%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F:NO_GENO | NO_DESTROY | NO_PENETR | NO_TELE | NOMAP | NO_MIRROR | NO_ROTATE
 
 

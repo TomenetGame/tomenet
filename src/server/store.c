@@ -2650,6 +2650,7 @@ void do_cmd_store(int Ind)
 	int i;
 
 	cave_type		*c_ptr;
+	struct c_special *cs_ptr;
 
 	/* Access the player grid */
 	cave_type **zcave;
@@ -2671,7 +2672,18 @@ void do_cmd_store(int Ind)
 
 	/* Extract the store code */
 //	which = (c_ptr->feat - FEAT_SHOP_HEAD);
-	which = rand_int(7);	/* lol... FIXME */
+//	which = rand_int(7);	/* lol... FIXME */
+
+	if(cs_ptr=GetCS(c_ptr, CS_SHOP))
+	{
+		which = cs_ptr->sc.omni;
+	}
+	else
+	{
+		msg_print(Ind, "You see no store here.");
+		return;
+	}
+
 
 	/* Hack -- Check the "locked doors" */
 	if (town[i].townstore[which].store_open >= turn)

@@ -7445,6 +7445,8 @@ static int Receive_rest(int ind)
 
 	if (player)
 	{
+		cave_type **zcave;
+
 		/* If we are already resting, cancel the rest. */
 		/* Waking up takes no energy, although we will still be drowsy... */
 		if (p_ptr->resting)
@@ -7457,6 +7459,15 @@ static int Receive_rest(int ind)
 		if ((p_ptr->poisoned) || ((p_ptr->chp == p_ptr->mhp) &&
 					(p_ptr->csp == p_ptr->msp)))
 		{
+			return 2;
+		}
+
+		if(!(zcave=getcave(&p_ptr->wpos))) return 2;
+
+		/* Can't rest on a Void Jumpgate -- too dangerous */
+		if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_BETWEEN)
+		{
+			msg_print(player, "Resting on a Void Jumpgate is too dangerous!");
 			return 2;
 		}
 
@@ -8208,6 +8219,11 @@ static int Receive_raw_key(int ind)
 		{
 			switch (key)
 			{
+				/* Test :) */
+				case '_':
+					do_cmd_drink_fountain(player);
+					break;
+
 				default:
 					msg_format(player, "'%c' key is currently not used.  Hit '?' for help.", key);
 					break;

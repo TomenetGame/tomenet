@@ -9,10 +9,11 @@
 /*
  * Some notes:		- Jir -
  *
- * 1. save/load
+ * 1. save/load (changed, so that c_special is stackable)
  * fx, fy and c_ptr->type should be saved/loaded in save.c/load2.c, and then
  * csfunc[].save/load should be called. format:
- *		byte fx, byte fy, byte type, {blabla written by csfunc}
+ *		byte fx, byte fy, byte number,
+ *		byte type, {blabla written by csfunc} (x number)
  * this should be terminated by 255,255,255 or sth.
  * when loading, csfunc will load it to the c_ptr tossed.
  * [implemented - see rd_dungeon() and wr_dungeon() for details.]
@@ -69,13 +70,13 @@ void thit(void *ptr, int Ind);
 
 void betweenload(void *ptr, cave_type *c_ptr);
 void betweensave(void *ptr);
-//void betweensee(void *ptr, int Ind);
+/*void betweensee(void *ptr, int Ind); */
 void betweenhit(void *ptr, int Ind);
-#endif	// 0
+#endif	/* 0 */
 
 
-//void defload(void *ptr, cave_type *c_ptr){
-//void defload(void *ptr, c_special *cs_ptr){
+/*void defload(void *ptr, cave_type *c_ptr){ */
+/*void defload(void *ptr, c_special *cs_ptr){ */
 void defload(c_special *cs_ptr){
 }
 void defsave(c_special *cs_ptr){
@@ -85,7 +86,7 @@ void defsee(void *ptr, int Ind){
 int defhit(void *ptr, int Ind){
 }
 
-//void dnaload(void *ptr, cave_type *c_ptr){
+/*void dnaload(void *ptr, cave_type *c_ptr){ */
 void dnaload(c_special *cs_ptr){
 }
 void dnasave(c_special *cs_ptr){
@@ -100,7 +101,7 @@ int dnahit(void *ptr, int Ind){
 	return(0);
 }
 
-//void keyload(void *ptr, cave_type *c_ptr){
+/*void keyload(void *ptr, cave_type *c_ptr){ */
 void keyload(c_special *cs_ptr){
 }
 void keysave(c_special *cs_ptr){
@@ -118,7 +119,7 @@ int keyhit(void *ptr, int Ind){
 void tload(void *ptr, cave_type *c_ptr)
 {
 	struct c_special *cs_ptr;
-//	cs_ptr=AddCS(c_ptr);
+/*	cs_ptr=AddCS(c_ptr); */
 	cs_ptr=GetCS(c_ptr, CS_TRAPS);
 	rd_byte(&cs_ptr->sc.trap.t_idx);
 	rd_byte(&cs_ptr->sc.trap.found);
@@ -129,7 +130,7 @@ void tload(c_special *cs_ptr)
 	rd_byte(&cs_ptr->sc.trap.t_idx);
 	rd_byte(&cs_ptr->sc.trap.found);
 }
-#endif	// 0
+#endif	/* 0 */
 void tsave(c_special *cs_ptr)
 {
 	wr_byte(cs_ptr->sc.trap.t_idx);
@@ -169,7 +170,7 @@ int insc_hit(void *ptr, int Ind){
 void betweenload(void *ptr, cave_type *c_ptr)
 {
 	struct c_special *cs_ptr;
-//	cs_ptr=AddCS(c_ptr);
+/*	cs_ptr=AddCS(c_ptr); */
 	cs_ptr=GetCS(c_ptr, CS_BETWEEN);
 	rd_byte(&cs_ptr->sc.between.fy);
 	rd_byte(&cs_ptr->sc.between.fx);
@@ -180,7 +181,7 @@ void betweenload(c_special *cs_ptr)
 	rd_byte(&cs_ptr->sc.between.fy);
 	rd_byte(&cs_ptr->sc.between.fx);
 }
-#endif	// 0
+#endif	/* 0 */
 void betweensave(c_special *cs_ptr)
 {
 	wr_byte(cs_ptr->sc.between.fy);
@@ -194,6 +195,23 @@ int betweenhit(void *ptr, int Ind){
 	return(0);
 }
 
+void fountload(c_special *cs_ptr)
+{
+	rd_byte(&cs_ptr->sc.fountain.type);
+	rd_byte(&cs_ptr->sc.fountain.rest);
+	rd_byte(&cs_ptr->sc.fountain.known);
+}
+void fountsave(c_special *cs_ptr)
+{
+	wr_byte(cs_ptr->sc.fountain.type);
+	wr_byte(cs_ptr->sc.fountain.rest);
+	wr_byte(cs_ptr->sc.fountain.known);
+}
+void fountsee(void *ptr, int Ind){
+	/* TODO: tell what kind if 'known' */
+	printf("fountsee %d\n", Ind);
+}
+
 /*
  * Monster_traps (inner-floor version)
  */
@@ -201,25 +219,35 @@ int betweenhit(void *ptr, int Ind){
 void montrapload(void *ptr, cave_type *c_ptr)
 {
 	struct c_special *cs_ptr;
-//	cs_ptr=AddCS(c_ptr);
+/*	cs_ptr=AddCS(c_ptr); */
 	cs_ptr=GetCS(c_ptr, CS_MON_TRAP);
 	rd_u16b(&cs_ptr->sc.montrap.trap_kit);
 	rd_byte(&cs_ptr->sc.montrap.difficulty);
 	rd_byte(&cs_ptr->sc.montrap.feat);
 }
-#else	// 0
+#else	/* 0 */
 void montrapload(c_special *cs_ptr)
 {
 	rd_u16b(&cs_ptr->sc.montrap.trap_kit);
 	rd_byte(&cs_ptr->sc.montrap.difficulty);
 	rd_byte(&cs_ptr->sc.montrap.feat);
 }
-#endif	// 0
+#endif	/* 0 */
 void montrapsave(c_special *cs_ptr)
 {
 	wr_u16b(cs_ptr->sc.montrap.trap_kit);
 	wr_byte(cs_ptr->sc.montrap.difficulty);
 	wr_byte(cs_ptr->sc.montrap.feat);
+}
+
+
+void s32bload(c_special *cs_ptr)
+{
+	rd_s32b(&cs_ptr->sc.omni);
+}
+void s32bsave(c_special *cs_ptr)
+{
+	wr_s32b(cs_ptr->sc.omni);
 }
 
 #if 0
@@ -237,7 +265,7 @@ void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr)
 		}
 	}
 }
-#else // 0
+#else /* 0 */
 void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr)
 {
 	struct c_special *trav, *prev;
@@ -258,7 +286,7 @@ void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr)
 		trav=trav->next;
 	}
 }
-#endif	// 0
+#endif	/* 0 */
 
 
 struct sfunc csfunc[]={
@@ -267,11 +295,12 @@ struct sfunc csfunc[]={
 	{ keyload, keysave, defsee, keyhit },	/* CS_KEYDOOR */
 	{ tload, tsave, tsee, thit },			/* CS_TRAPS */
 	{ insc_load, insc_save, defsee, insc_hit },	/* CS_INSCRIP */
-	{ defload, defsave, defsee, defhit },	/* CS_FOUNTAIN */
+	{ fountload, fountsave, fountsee, defhit },	/* CS_FOUNTAIN */
 	{ betweenload, betweensave, defsee, betweenhit },	/* CS_BETWEEN */
 	{ defload, defsave, defsee, defhit },	/* CS_BETWEEN2 */
 	{ montrapload, montrapsave, defsee, defhit },	/* CS_MON_TRAP */
 	/* CS_FOUNTAIN, CS_BETWEEN, CS_BETWEEN2 to come */
+	{ s32bload, s32bsave, defsee, defhit },	/* CS_SHOP */
 /*
 	{ iload, isave, isee, ihit }
 */
