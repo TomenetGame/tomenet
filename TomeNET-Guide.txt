@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. June 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. June 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -2237,6 +2237,23 @@ Magic Arrows    Those will return into your quiver magically, so you need only
 
 Potions
 --
+Boldness        Removes fear and keeps your heart boldened for a while.
+Heroism         Temporary effects: Increase CHP and MHP by 10. Removes fear.
+                +12 bonus to-hit.
+Berserk Strength
+                Temporary effects: Increase CHP and MHP by 30. Removes fear.
+                +5 bonus to-hit, +10 bonus to-dam, -10 malus to to-ac.
+Speed           Temporary speed increase by +10.
+Cure Light Wounds
+                Cures blindness and cuts; heals 2d8 HP.
+Cure Serious Wounds
+                Cures blindness, cuts, confusion; heals 5d8 HP.
+Cure Critical Wounds
+                Cures blindness, cuts, confusion, stun; heals 8d8 HP.
+Healing         Cures blindness, cuts, confusion, stun, poison; heals 300 HP.
+*Healing*       Cures blindness, cuts, confusion, stun, poison; heals 1200 HP.
+Restore Mana    Restores 500 MP.
+*Restore Mana*  Full mana restoration.
 Curing          Heals some HP, removes blindness/confusion/stun, cures
                 poison/cuts/paranoia (hallucinations), heals some insanity,
                 satisfies your hunger, restores all your stats (except exp).
@@ -2248,12 +2265,15 @@ Experience      Gives you additionally half your experience plus 10,
 Self-Knowledge  Tells you everything about yourself :)
 chauve-souris   Turns you into a fruit bat. Quaff another one to be restored
                 to your original form. A wand/rod of polymorph might help too.
+Enlightenment   Illuminates and maps the whole level and reveals all objects.
 *Enlightenment* Raises your intelligence and wisdom, detect treasures,
                 objects, secret doors, traps. Identifies all items. Does the
                 same as a potion of Self-Knowledge.
 Augmentation    Raises all your stats.
 Invulnerability Will turn you partially invulnerable (50% chance to get hit,
                 50% damage reduction).
+Lose Memories   Lose 25% experience (if Hold Life is missing).
+Ruination       Take 10d10 damage. All stats are decreased by 25 (restorable).
 Detonations     Better not drink it.
 
 Scrolls
@@ -2363,6 +2383,7 @@ Skeletons/Bones/Skulls  You can create ammunition from these if your Archery
 Rubble ':' on the floor You can create sling ammo from this. You cannot pick
                         up rubble, just stand next to it.
 Amulet of Anti-Magic    See '5.7 NO_MAGIC'
+Mushrooms with bad effects are also often poisonous.
 
 
 
@@ -3418,7 +3439,7 @@ Holy Defense
                     The gods won't accept another martyrium until 1000 turns
                     have passed.
 Holy Curing
-    Remove Fear     Removes fear.                                   (project)
+    Remove Fear     Keeps your heart boldened for a while           (project)
     Healing         Heals a percentage of hit points.               (project)
     Curing          Reduces poison duration.
                     Lv10: Cure poison/cuts/stun/blindness/confusion.(project)
