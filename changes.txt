@@ -222,3 +222,6 @@ Change list for PernMangband
 
 08/10/2001
 - Minor bug fixed in house creation
+
+23/10/2001
+- Confusion brand PvP bug fixed ;)
