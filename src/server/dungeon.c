@@ -249,6 +249,9 @@ static void sense_inventory(int Ind)
 			case TV_SOFT_ARMOR:
 			case TV_HARD_ARMOR:
 			case TV_DRAG_ARMOR:
+			case TV_MSTAFF:
+			case TV_BOOMERANG:
+			case TV_AXE:
 			{
 				okay = TRUE;
 				break;
