@@ -2427,7 +2427,7 @@ bool make_attack_spell(int Ind, int m_idx)
 //			else msg_format(Ind, "%^s casts a frost ball.", m_name);
 			else sprintf(p_ptr->attacker, "%s casts an frost ball of", m_name);
 			breath(Ind, m_idx, GF_COLD,
-					randint(rlev * 3 / 2) + 10, y, x, srad);
+					randint(rlev * 2) + 10, y, x, srad);
 			update_smart_learn(m_idx, DRS_COLD);
 			break;
 		}
@@ -2454,7 +2454,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 //			else msg_format(Ind, "%^s casts a nether ball.", m_name);
 			else sprintf(p_ptr->attacker, "%s casts an nether ball of", m_name);
-			breath(Ind, m_idx, GF_NETHER, (50 + damroll(10, 10) + rlev), y, x, srad);
+			breath(Ind, m_idx, GF_NETHER, (50 + damroll(10, 10) + rlev * 4), y, x, srad);
 			update_smart_learn(m_idx, DRS_NETH);
 			break;
 		}
@@ -2798,7 +2798,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 //			else msg_format(Ind, "%^s casts a ball of radiation.", m_name);
 			else sprintf(p_ptr->attacker, "%s casts a ball of radiation of", m_name);
-			breath(Ind, m_idx, GF_NUKE, (rlev + damroll(10, 6)), y, x, 2);
+			breath(Ind, m_idx, GF_NUKE, (rlev * 3 + damroll(10, 6)), y, x, 2);
 			update_smart_learn(m_idx, DRS_POIS);
 			break;
 		}
@@ -2811,7 +2811,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles frighteningly.", m_name);
 //			else msg_format(Ind, "%^s invokes a raw chaos.", m_name);
 			else sprintf(p_ptr->attacker, "%s invokes a raw chaos for", m_name);
-			breath(Ind, m_idx, GF_CHAOS, (rlev * 2) + damroll(10, 10), y, x, 4);
+			breath(Ind, m_idx, GF_CHAOS, (rlev * 4) + damroll(10, 10), y, x, 4);
 			update_smart_learn(m_idx, DRS_CHAOS);
 			break;
 		}

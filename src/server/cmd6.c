@@ -7372,7 +7372,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 			case SV_RING_ICE:
 			{
                                 /* Get a direction for breathing (or abort) */
-				sprintf(p_ptr->attacker, " casts a cold ball for", p_ptr->name);
+				sprintf(p_ptr->attacker, " casts a frost ball for", p_ptr->name);
 				fire_ball(Ind, GF_COLD, dir, 50, 2, p_ptr->attacker);
 				(void)set_oppose_cold(Ind, randint(20) + 20); /* removed stacking */
 				o_ptr->timeout = rand_int(50) + 50;

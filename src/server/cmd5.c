@@ -1237,7 +1237,7 @@ void do_mimic_power_aux(int Ind, int dir)
 // RF5_BA_COLD			0x00000008	/* Cold Ball */
     case 35:
     sprintf(p_ptr->attacker, " casts a cold ball for", p_ptr->name);
-      fire_ball(Ind, GF_COLD, dir, randint(rlev * 3 / 2) + 10 , rad, p_ptr->attacker);
+      fire_ball(Ind, GF_COLD, dir, randint(rlev * 2) + 10 , rad, p_ptr->attacker);
       break;
 // RF5_BA_POIS			0x00000010	/* Poison Ball */
     case 36:

@@ -110,7 +110,8 @@ void do_cmd_go_up(int Ind)
 		msg_print(Ind,"You are at the top of the tower!");
 		return;
 	}
-	if(wpos->wz<0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){
+/*	if(wpos->wz<0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){*/
+	if(wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){
 		msg_print(Ind,"\377rThis is an ironman dungeon, you may not ascend.");
 		if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
 	}
@@ -352,7 +353,8 @@ void do_cmd_go_down(int Ind)
 		return;
 	}
 
-	if(wpos->wz>0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){
+/*	if(wpos->wz>0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){*/
+	if(wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){
 		msg_print(Ind,"\377rThis is an ironman tower, you may not descend.");
 		if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
 	}

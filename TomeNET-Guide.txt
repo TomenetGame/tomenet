@@ -1620,6 +1620,7 @@ There are different types of dungeons. The main five are:
  No-recall dungeons/towers are marked by a light red < or > symbol.
 -No-up / Force-down. These dungeons won't allow you to go upwards, same as
  ironman, just without the penalty of permanent ghost-death.
+ Ghosts cannot float up- or downwards in ironman dungeons though!
  No-up dungeons/towers are marked by a red < or > symbol.
 -Ironman. Ironman dungeons or towers won't allow you to recall or to use
  staircases that lead upwards! If you die in such a dungeon or tower you won't
@@ -2344,7 +2345,7 @@ Fire/Heat               These attacks can burn items in your inventory.
 Frost/Cold              These attacks can shatter potions.
                         Without resistance it can reduce your strength.
                         Frost bolts do (level/3)+(6d8) damage.
-                        Cold balls do (level*3/2)+10 damage.
+                        Cold balls do (level*2)+10 damage.
 Lightning/Electricity   These attacks can destroy rings and amulets.
                         Without resistance it can reduce your dexterity.
                         Lightning bolts do (level/3)+(4d8) damage.
@@ -2443,7 +2444,7 @@ Chaos           Chaos attacks can also have nasty side-effects if you don't
                 Resisting chaos will also make you resist confusion attacks.
                 Resistance will cut down damage to 6/9..6/15.
                 Breath damage is monster HP/6. Chaos breath caps at 600.
-                Raw chaos invocation (chaos ball) does (level*2)+(10d10) dam.
+                Raw chaos invocation (chaos ball) does (level*4)+(10d10) dam.
 Light           Light effects can blind you if you don't resist it.
                 Resistance will cut damage to 4/7..4/12.
                 If you are mimicking a monster that is suspectible to light
@@ -2458,7 +2459,7 @@ Nether          Having 'Hold Life' can protect from experience loss.
                 draining (experience loss).
                 Breath damage is monster HP/6. Nether breath caps at 550.
                 Nether bolts do 30+(5d5)+(level*3/2) damage.
-                Nether balls do 50+level+(10d10) damage.
+                Nether balls do 50+(level*4)+(10d10) damage.
 Disenchantment  This attack does massive damage and can also disenchant your
                 equipped items, lowering their to-hit/to-dam/to-ac bonus!
                 Resistance will cut damage to 6/7..6/12 and prevent
@@ -2522,7 +2523,7 @@ Radiation/Nuke/ This is a poisonous attack that can have acidic effects on
                 - you will be protected from being poisoned
                 - your equipment will be safe from acidic damage.
                 Breath damage is monster HP/3 and caps at 800.
-                Nuke balls (radiation balls) do level+(10d6) damage.
+                Nuke balls (radiation balls) do (level*3)+(10d6) damage.
 Rocket          Rockets combine shard & sound effects with heat influence on
                 your inventory and shard damage to the player. Rockets do
                 insane damage.
@@ -2811,6 +2812,7 @@ Enlightenment   Illuminates and maps the whole level and reveals all objects.
 Augmentation    Raises all your stats.
 Invulnerability Will turn you partially invulnerable (50% chance to get hit,
                 50% damage reduction).
+Learning        Gives you 1..3 (random) additional skill points to spend.
 Lose Memories   Lose 25% experience (if Hold Life is missing).
 Ruination       Take 10d10 damage. All stats are decreased by 25 (restorable).
 Detonations     Better not drink it.
