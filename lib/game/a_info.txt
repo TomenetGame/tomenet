@@ -2721,7 +2721,7 @@ D:for living souls. It is uncertain if a warrior brave enough exists to
 D:resist the corruption of this tool, brought by its power to give death
 D:and annihilation to any existance. Standing close to the scyhte,
 D:the cold of its blade grips your very heart and soul and makes
-D:you scream out in fear.
+D:you scream out in terror.
 
 
 # The Halberd of the Guardian
@@ -2747,7 +2747,7 @@ F:RES_DARK | RES_NETHER | RES_CHAOS | DRAIN_MANA | CURSED | HEAVY_CURSE |
 F:CHAOTIC
 D:Belonging to one of the riders of doom, surprising is the separation
 D:from its wielder. Maybe the lance itself is hunting for a new rider
-D:to be its slave.
+D:to enslave him.
 
 
 #N:(No.):(name)
