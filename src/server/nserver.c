@@ -926,6 +926,7 @@ static void Contact(int fd, int arg)
 		plog(format("Incomplete login from %s", host_addr));
 		return;
 	}
+
 	nick_name[sizeof(nick_name) - 1] = '\0';
 	host_name[sizeof(host_name) - 1] = '\0';
 
@@ -934,7 +935,6 @@ static void Contact(int fd, int arg)
 	s_printf("Address: %s.\n", host_addr);
 	s_printf("Info: real_name %s, port %hu, nick %s, host %s, version %hu\n", real_name, port, nick_name, host_name, version);  
 #endif
-
 
 	status = Enter_player(real_name, nick_name, host_addr, host_name,
 				version, port, &login_port, fd);
@@ -950,7 +950,6 @@ static void Contact(int fd, int arg)
 	/* s_printf("Sending login port %d, status %d.\n", login_port, status); */
 
         Packet_printf(&ibuf, "%c%c%d%c", reply_to, status, login_port);
-//        Packet_printf(&ibuf, "%c%c%d%c", reply_to, status, login_port, MAX_CLASS);
 
 /* -- DGDGDGDG it would be NEAT to have classes sent to the cleint at conenciton, sadly Im too clumpsy at network code ..
         for (i = 0; i < MAX_CLASS; i++)
@@ -1002,12 +1001,6 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 
 	if (*login_port == -1)
 		return E_SOCKET;
-
-/* Can't do this here anymore - evileye */
-/*
-	if (!lookup_player_id(nick))
-		return E_NEED_INFO;
-*/
 
 	return SUCCESS;
 }
@@ -1504,28 +1497,22 @@ static int Handle_listening(int ind)
 {
 	connection_t *connp = &Conn[ind];
 	unsigned char type;
-	//int i, n, oldlen, result;
 	int  n, oldlen;
-//	s16b sex, race, class;
-	char nick[MAX_NAME_LEN], real[MAX_NAME_LEN], pass[MAX_NAME_LEN];
+	char nick[MAX_CHARS], real[MAX_CHARS], pass[MAX_CHARS];
 
 	if (connp->state != CONN_LISTENING)
 	{
 		Destroy_connection(ind, "not listening");
 		return -1;
 	}
-	//Sockbuf_clear(&connp->r);
 	errno = 0;
 
 	/* Some data has arrived on the socket.  Read this data into r.buf.
 	 */
-	//n = DgramReceiveAny(connp->r.sock, connp->r.buf, connp->r.size);
 	oldlen = connp->r.len;
 	n = Sockbuf_read(&connp->r);
 	if (n - oldlen <= 0)
 	{
-		//if (n == 0 || errno == EWOULDBLOCK || errno == EAGAIN)
-		//	n = 0;
 		if (n == 0)
 		{
 			/* Hack -- set sock to -1 so destroy connection doesn't
@@ -1552,7 +1539,7 @@ static int Handle_listening(int ind)
 		Destroy_connection(ind, "not connecting");
 		return -1;
 	}
-//	if ((n = Packet_scanf(&connp->r, "%c%s%s%s%hd%hd%hd", &type, real, nick, pass, &sex, &race, &class)) <= 0)
+
 	if ((n = Packet_scanf(&connp->r, "%c%s%s%s", &type, real, nick, pass)) <= 0)
 	{
 		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
@@ -1560,51 +1547,12 @@ static int Handle_listening(int ind)
 		Destroy_connection(ind, "verify broken");
 		return -1;
 	}
-#if 0	// moved to Enter_player
-	if(!player_allowed(nick)){
-		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
-		Send_reliable(ind);
-		Destroy_connection(ind, "No such character");
-		return(-1);
-	}
-	if(in_banlist(connp->addr)){
-		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
-		Send_reliable(ind);
-		Destroy_connection(ind, "You are temporarily banned.");
-		return(-1);
-	}
-#endif	// 0
 
-
-	/* After the client sends the basic player information, it sends us a
-	 * large block of "verification" data.  Because this block may have
-	 * been broken up into several packets, we may only have the beginning
-	 * of it.  Check to see if we have all this data.  If we don't, then
-	 * exit this function.  It will be called again when more data has
-	 * arrived.
-	 */
-	// The verification block is 2654 bytes long.  Make sure we have this
-	// much data past the basic player information.  If we don't, then reset
-	// the read location and exit.
 	/*
 	 * It's quite doubtful if it's 2654 bytes, since MAX_R_IDX and MAX_K_IDX
 	 * etc are much bigger than before;  however, let's follow the saying
 	 * 'Never touch what works' ;)		- Jir -
 	 */
-#if 0
-	if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
-	{
-		connp->r.ptr = connp->r.buf;
-		return 1;
-	}
-#endif	// 0
-
-	/* toast this after fix
-	*If we don't, then
-	* wait a bit for more to arrive.  Waiting causes the game to "freeze"
-	* for a bit.  This is really bad.  The connection code desperatly
-	* needs to be rewritten to prevent this from happening. -APD
-	*/
 
 	/* Log the players connection */
 	s_printf("%s: Welcome %s=%s@%s (%s/%d)", showtime(), connp->nick,
@@ -1612,167 +1560,6 @@ static int Handle_listening(int ind)
 	if (connp->version != MY_VERSION)
 		s_printf(" (version %04x)", connp->version);
 	s_printf("\n");
-
-
-	// The verification block is 2654 bytes long.  Make sure we have this
-	// much data past the basic player information.  If we don't, then do a
-	// blocking read while we try to get it.
-
-	/* If neccecary receive the rest of the verification data */
-	// note that connp->r.ptr is now pointing past the basic player information, and so
-	// connp->r.ptr - connp->r.buf is the length of the player information.
-	
-	// Mega-hack -- disable the timer interrupt so select isn't disturbed
-#if 0
-	block_timer();	
-
-	SetTimeout(1,0);	
-	while (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
-	{
-		// If we have data, read it
-		if ((result = SocketReadable(connp->r.sock)))
-		{
-			if (result == -1)
-			{
-				Destroy_connection(ind, "verification socket error");
-				return -1;
-			}
-			printf("Got verification data.\n");
-			n = DgramReceiveAny(connp->r.sock, connp->r.buf + connp->r.len, 
-					connp->r.size - connp->r.len);
-			if (n < 0)
-			{
-				Destroy_connection(ind, "verification packet error");
-				return -1;
-			}
-			if (n == 0)
-			{
-				Destroy_connection(ind, "TCP connection closed");
-				return -1;
-			}
-			connp->r.len += n;
-		}
-		// If we timed out, abort
-		else
-		{
-			Destroy_connection(ind, "verify incomplete");
-			return -1;
-		}
-	}
-	SetTimeout(0,0); 
-
-	allow_timer();
-#endif
-
-/*	s_printf("Listening on connection %d, received %d bytes.\n", ind, n);
-
-	for (i = 0; i < n; i++)
-	{
-		printf("%3d ", connp->r.ptr[i] & 0xff);
-		if (i % 20 == 0)
-			printf("\n");
-	}
-
-	printf("\n"); */
-
-#if 0	// moved to Receive_play
-	/* Read the stat order */
-	for (i = 0; i < 6; i++)
-	{
-		n = Packet_scanf(&connp->r, "%hd", &connp->stat_order[i]);
-
-		if (n <= 0)
-		{
-			Destroy_connection(ind, "Misread stat order");
-			return -1;
-		}
-	}
-	
-	/* Read class extra */	
-//	n = Packet_scanf(&connp->r, "%hd", &connp->class_extra);
-
-	if (n <= 0)
-	{
-		Destroy_connection(ind, "Misread class extra");
-		return -1;
-	}
-
-	/* Read the options */
-	for (i = 0; i < 64; i++)
-	{
-		n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
-
-		if (n <= 0)
-		{
-			Destroy_connection(ind, "Misread options");
-			return -1;
-		}
-	}
-
-	/* Read the "unknown" char/attrs */
-	for (i = 0; i < TV_MAX; i++)
-	{
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
-
-		if (n <= 0)
-		{
-			break;
-
-#if 0
-			Destroy_connection(ind, "Misread unknown redefinitions");
-			return -1;
-#endif
-		}
-	}
-
-	/* Read the "feature" char/attrs */
-	for (i = 0; i < MAX_F_IDX; i++)
-	{
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
-
-		if (n <= 0)
-		{
-			break;
-
-#if 0
-			Destroy_connection(ind, "Misread feature redefinitions");
-			return -1;
-#endif
-		}
-	}
-
-	/* Read the "object" char/attrs */
-	for (i = 0; i < MAX_K_IDX; i++)
-	{
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
-
-		if (n <= 0)
-		{
-			break;
-
-#if 0
-			Destroy_connection(ind, "Misread object redefinitions");
-			return -1;
-#endif
-		}
-	}
-
-	/* Read the "monster" char/attrs */
-	for (i = 0; i < MAX_R_IDX; i++)
-	{
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
-
-		if (n <= 0)
-		{
-			break;
-
-#if 0
-			Destroy_connection(ind, "Misread monster redefinitions");
-			return -1;
-#endif
-		}
-	}
-#endif	// 0
 
 	if (strcmp(real, connp->real))
 	{
@@ -1786,14 +1573,6 @@ static int Handle_listening(int ind)
 	
 	/* Set his character info */
 	connp->pass = strdup(pass);
-#if 0
-	connp->sex = sex;
-	connp->race = race;
-	connp->class = class;
-#endif	// 0
-
-
-
 
 	Sockbuf_clear(&connp->w);
 	if (Send_reply(ind, PKT_VERIFY, PKT_SUCCESS) == -1
@@ -1804,7 +1583,6 @@ static int Handle_listening(int ind)
 		return -1;
 	}
 
-	//Conn_set_state(connp, CONN_DRAIN, CONN_SETUP);
 	Conn_set_state(connp, CONN_SETUP, CONN_SETUP);
 
 	return -1;
@@ -2656,7 +2434,6 @@ static int Receive_login(int ind){
 		return(-1);
 	}
 
-	/* if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &choice)) != 2) */
 	if ((n = Packet_scanf(&connp->r, "%s", choice)) != 1)
 	{
 		errno = 0;
