@@ -3956,13 +3956,7 @@ static void process_monster(int Ind, int m_idx)
 
 	/* attempt to "mutiply" if able and allowed */
 
-#ifdef NEW_DUNGEON
-	/* need to expand our range a bit here */
-	if(!istown(wpos))
-#else
-	/* Hack -- No reproduction close to town center */
-	if (Depth <= 0 ? (wild_info[Depth].radius > 2) : 1)
-#endif
+	if(!istown(wpos) && wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].radius > 2)
 		if ((r_ptr->flags4 & RF4_MULTIPLY) && (num_repro < MAX_REPRO))
 		{
 			int k, y, x;
@@ -4324,6 +4318,10 @@ static void process_monster(int Ind, int m_idx)
 			do_move = FALSE;
 		}
 
+		/* restrict aquatic life to the pond */
+		if(do_move && (r_ptr->flags7 & RF7_AQUATIC)){
+			if(c_ptr->feat != FEAT_WATER) do_move=FALSE;
+		}
 
 		/* A monster is in the way */
 		if (do_move && c_ptr->m_idx > 0)
