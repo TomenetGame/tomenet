@@ -2087,10 +2087,12 @@ void c_msg_print(cptr msg)
 	cptr msg_dice = "dice and get";
 	cptr msg_level = "Welcome to level";
 	cptr msg_level2 = "has attained level";
-        cptr msg_inven_destroy1 = "\377oYour ";
+/* don't flood the 5th chat-only window with destroy-msgs,
+   ctrl+o in main window should be sufficient */
+/*	cptr msg_inven_destroy1 = "\377oYour ";
         cptr msg_inven_destroy2 = "\377oOne of your ";
         cptr msg_inven_destroy3 = "\377oSome of your ";
-        cptr msg_inven_destroy4 = "\377oAll of your ";
+        cptr msg_inven_destroy4 = "\377oAll of your "; */
 /*	cptr msg_inven_destroy1 = "was destroyed!";
         cptr msg_inven_destroyx = "were destroyed!";*/
 	cptr msg_nopkfight = "You have beaten";
@@ -2156,9 +2158,11 @@ void c_msg_print(cptr msg)
 	    (strstr(msg, msg_quest) != NULL) || (strstr(msg, msg_dice) != NULL) || \
 	    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) || \
 	    (strstr(msg, msg_deadA) != NULL) || (strstr(msg, msg_deadB) != NULL) || \
-	    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroy2) != NULL) || \
+/* don't flood the 5th window with destroy-msgs */
+/*	    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroy2) != NULL) || \
 	    (strstr(msg, msg_inven_destroy3) != NULL) || (strstr(msg, msg_inven_destroy4) != NULL) || \
 //	    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroyx) != NULL) || \
+*/
 	    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) || \
 	    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_retire) != NULL) ||
 	    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
