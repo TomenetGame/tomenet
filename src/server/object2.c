@@ -1089,6 +1089,15 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 	}
 #endif
 
+	if (f3 & TR3_WRAITH) total += 250000;
+	if (f5 & TR5_INVIS) total += 30000;
+	if (!(f4 & TR4_FUEL_LITE))
+	{
+	        if (f3 & TR3_LITE1) total += 750;
+	        if (f4 & TR4_LITE2) total += 1250;
+	        if (f4 & TR4_LITE3) total += 2750;
+	}
+
 	if ((!(f4 & TR4_FUEL_LITE)) && (f3 & TR3_IGNORE_FIRE)) total += 100;
 
 	if (f5 & TR5_CHAOTIC) total += 10000;
@@ -1585,14 +1594,18 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 
 				/* Flags moved here exclusively from flag_cost */
 			        if (f1 & TR1_MANA) value += (1000 * pval);
+
+#if 0
 				if (f3 & TR3_WRAITH) value += 250000;
-			        if (f5 & TR5_INVIS) value += 30000;
+				if (f5 & TR5_INVIS) value += 30000;
 				if (!(f4 & TR4_FUEL_LITE))
 				{
 				        if (f3 & TR3_LITE1) value += 750;
 				        if (f4 & TR4_LITE2) value += 1250;
-        			        if (f4 & TR4_LITE3) value += 2750;
+				        if (f4 & TR4_LITE3) value += 2750;
 				}
+#endif
+
 				/* End of flags, moved here from flag_cost */
 
 
@@ -5054,9 +5067,9 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 {
 	object_type forge_bak;
 	object_type *o_ptr_bak = &forge_bak;
-
-	int i, rolls, f1, f2, power;
-
+	u32b ego_value1, ego_value2;
+	long depth = ABS(getlevel(wpos)), depth_value;
+	int i, j, rolls, f1, f2, power;
 
 	/* if true arts aren't forbidden, allow them to get a chance of being generated
 	   (goes in hand with the same check in apply_magic) - C. Blue */
@@ -5201,8 +5214,9 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 
 	/* In case we get an ego item, check "verygreat" flag and retry a few times if needed */
+if (verygreat) s_printf("verygreat apply_magic:\n");
 	object_copy(o_ptr_bak, o_ptr);
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < (((o_ptr->tval != TV_SHOT) && (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT)) ? 2 + depth / 7 : 4 + depth / 5); i++) {
 	object_copy(o_ptr, o_ptr_bak);
 
 
@@ -5285,15 +5299,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			break;
 		}
 	}
-
-
-	/* "verygreat" check: */
-	/* 2000 to exclude res, light, reg, etc */
-	/* 5000+objval to exclude brands/slays */
-	if (!verygreat || object_value_real(0, o_ptr) >= 7000) break;
-	}
-
-
 
 #if 1	// tweaked pernA ego.. 
 	/* Hack -- analyze ego-items */
@@ -5522,6 +5527,31 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* Hack -- acquire "cursed" flag */
 		if (k_ptr->flags3 & TR3_CURSED) o_ptr->ident |= ID_CURSED;
 	}
+
+
+	/* "verygreat" check: */
+	/* 2000 to exclude res, light, reg, etc */
+	/* 5000+objval to exclude brands/slays */
+//NO:	if (!verygreat || object_value_real(0, o_ptr) >= 7000) break; <- arrows (+36,+42) -> lol. - C. Blue
+	if (!verygreat) break;
+	depth_value = (depth < 60 ? depth * 150 : 9000) + randint(depth) * 100;
+	if (o_ptr->name2) ego_value1 = e_info[o_ptr->name2].cost; else ego_value1 = 0;
+	if (o_ptr->name2b) ego_value2 = e_info[o_ptr->name2b].cost; else ego_value2 = 0;
+	if ((o_ptr->tval != TV_SHOT) && (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT)) {
+                char o_name[160];
+                object_desc(0, o_name, o_ptr, FALSE, 0);
+s_printf("depth %d, depthvalue %d, egovalue %d / %d, objectreal %d, flags %d (%s)\n", depth, depth_value, ego_value1, ego_value2, object_value_real(0, o_ptr), flag_cost(o_ptr, o_ptr->pval), o_name);
+		if ((ego_value1 >= depth_value) || (ego_value2 >= depth_value) ||
+		    (object_value_real(0, o_ptr) >= depth * 300)) break;
+	} else {
+		/* Ammo amount is increased in place_object */
+		if (object_value_real(0, o_ptr) >= depth + 150) break;
+	}
+	/* verygreat-loop end */
+	}
+if (verygreat) s_printf("taken\n");
+
+
 }
 
 /*
@@ -6123,6 +6153,8 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 				forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
 				else
 				forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (20 - randint(-luck)) / 20));
+				/* Ammo from acquirement scrolls comes in more generous numbers :) */
+				if (verygreat) forge.number *= 2;
 		}
 
 	/* Hack -- inscribe items that a unique drops */

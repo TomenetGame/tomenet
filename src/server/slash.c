@@ -1959,7 +1959,7 @@ void do_slash_cmd(int Ind, char *message)
 					o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 				}
 
-				apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, TRUE, FALSE);
+				apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
 				if (tk > 3){
 					o_ptr->discount = atoi(token[4]);
 				}
@@ -2325,7 +2325,7 @@ void do_slash_cmd(int Ind, char *message)
 				object_type *o_ptr;
 				if (tk < 1)
 				{
-					msg_print(Ind, "\377oUsage: /wish (tval) (sval) (pval) [discount] [name] or /wish (o_idx)");
+					msg_print(Ind, "\377oUsage: /reart <inventory-slot>");
 					return;
 				}
 				if (atoi(token[1]) < 1 || atoi(token[1]) > INVEN_TOTAL) {
