@@ -77,7 +77,7 @@ N:10:Crossbow-mastery
 D:Ability to use crossbows
 I:1000:0
 
-N:11:Backstabing
+N:11:Backstabbing
 D:Ability to backstab sleeping and fleeing monsters
 D:Much more effective in the dark
 I:1000:0
@@ -450,7 +450,7 @@ E:Hunting Lore:Antimagic
 f:Stealth:Sneakiness%15
 f:Disarming:Sneakiness%10
 f:Trapping:Sneakiness%15
-f:Backstabing:Sneakiness%5
+f:Backstabbing:Sneakiness%5
 f:Stealing:Sneakiness%15
 f:Dodging:Sneakiness%10
 
@@ -532,7 +532,7 @@ T:Main:Sneakiness
 T:Sneakiness:Stealth
 T:Sneakiness:Disarming
 T:Sneakiness:Trapping
-T:Sneakiness:Backstabing
+T:Sneakiness:Backstabbing
 T:Sneakiness:Stealing
 T:Sneakiness:Dodging
 T:Dodging:Calmness
