@@ -428,7 +428,7 @@ void do_cmd_eat_food(int Ind, int item)
 					}
 				}
 #endif	// 0
-			unmagic(Ind);
+			ident = unmagic(Ind);
 			break;
 		}
 	}

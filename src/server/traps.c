@@ -1611,7 +1611,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
             else
             {
                /* re-trap the chest */
-				place_trap(&p_ptr->wpos, y , x);
+//				place_trap(&p_ptr->wpos, y , x);
+				 place_trap_object(i_ptr);
             }
             msg_print(Ind, "You hear a noise, and then it's echo.");
             ident=FALSE;
@@ -1640,7 +1641,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			 else
 			 {
 				 /* re-trap the chest (??) */
-				 place_trap(&p_ptr->wpos, y , x);
+//				 place_trap(&p_ptr->wpos, y , x);
+				 place_trap_object(i_ptr);
 			 }
 			 msg_print(Ind, "You hear a noise, and then it's echo.");
 			 /* Never known */
@@ -2493,18 +2495,144 @@ void place_trap_object(object_type *o_ptr)
    return;
 }
 
-#if 0	// soon
 /* Dangerous trap placing function */
-void wiz_place_trap(int y, int x, int idx)
+/* (Not so dangerous as was once	- Jir -) */
+//void wiz_place_trap(int y, int x, int idx)
+void wiz_place_trap(int Ind, int trap)
 {
+	player_type *p_ptr = Players[Ind];
+	int x = p_ptr->px, y = p_ptr->py;
+	worldpos *wpos = &p_ptr->wpos;
+	s16b           t_idx;
+	trap_kind	*t_ptr;
+	trap_type	*tt_ptr;
+
+	s16b           cnt        = 0;
+	u32b flags;
+	cave_type *c_ptr;
+	//	dungeon_info_type *d_ptr = &d_info[dungeon_type];
+
+	/* Paranoia -- verify location */
+	cave_type **zcave;
+
+	if(!(zcave=getcave(wpos))) return;
+	if (!in_bounds(y, x)) return;
+	c_ptr = &zcave[y][x];
+
+	/* Require empty, clean, floor grid */
+	if (!cave_floor_grid(c_ptr) &&
+			((c_ptr->feat < FEAT_DOOR_HEAD) ||
+			 (c_ptr->feat > FEAT_DOOR_TAIL)))
+	{
+		msg_print(Ind, "Inappropriate grid feature type!");
+		return;
+	}
+
+	/* No traps over traps/house doors etc */
+	if (c_ptr->special.type)
+	{
+		msg_print(Ind, "Cave-Special already exists!");
+		return;
+	}
+
+
+	//	if (!cave_naked_bold(zcave, y, x)) return;
+	//	if (!cave_floor_bold(zcave, y, x)) return;
+
+
+	/* no traps in town or on first level */
+	//   if (dun_level<=1) return;
+
+	/* traps only appears on empty floor */
+	//   if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
+
+	/* set flags */
+	/*
+	   if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+	   (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
+	   */
+#if 0
+	if (f_info[c_ptr->feat].flags1 & FF1_DOOR)
+		flags = FTRAP_DOOR;
+	else flags = FTRAP_FLOOR;
+#endif	// 0
+	/* is this a correct trap now?   */
+	if (trap < 0 || MAX_T_IDX < trap)
+	{
+		msg_print(Ind, "Trap index is out of range!");
+		return;
+	}
+
+	t_ptr = &t_info[trap];
+
+	/* is this a correct trap now?   */
+	if (!t_ptr->name)
+	{
+		msg_print(Ind, "Specified no. of trap does not exist!");
+		return;
+	}
+
+	/* no traps below their minlevel */
+	if (t_ptr->minlevel > getlevel(wpos))
+	{
+		msg_print(Ind, "The trap is out of depth!");
+		return;
+	}
+
+	if ((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+			(c_ptr->feat <= FEAT_DOOR_TAIL))
+		flags = FTRAP_DOOR;
+	else flags = FTRAP_FLOOR;
+
+	/* is this a correct trap now?   */
+	if (!(t_ptr->flags & flags))
+	{
+		msg_print(Ind, "Feature type(door/floor) is not proper!");
+		return;
+	}
+
+	/* hack, no trap door at the bottom of dungeon or in flat(non dungeon) places */
+	//      if (((d_ptr->maxdepth == dun_level) || (d_ptr->flags1 & DF1_FLAT)) && (trap == TRAP_OF_SINKING)) continue;
+
+	//	 c_ptr->t_idx = trap;
+
+	/* Make a trap */
+	t_idx = t_pop();
+
+	/* Success */
+	if (t_idx)
+	{
+		tt_ptr = &t_list[t_idx];
+		c_ptr->special.type = CS_TRAPS;
+		c_ptr->special.ptr = tt_ptr;
+
+		tt_ptr->iy = y;
+		tt_ptr->ix = x;
+		tt_ptr->t_idx = trap;
+		tt_ptr->found = FALSE;
+
+		wpcopy(&tt_ptr->wpos, wpos);
+		//				c_ptr=&zcave[y][x];
+	}
+	else
+	{
+		msg_print(Ind, "Failed to allocate t_list[]!");
+		return;
+	}
+
+	return;
+
+#if 0
 	cave_type *c_ptr = &cave[y][x];
 
 	/* Dangerous enough as it is... */
-        if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
+	if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
 
-        c_ptr->t_idx = idx;
+	c_ptr->t_idx = idx;
+#endif	// 0
 }
 
+#if 0	// soon
 /*
  * Here begin monster traps code
  */

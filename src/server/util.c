@@ -3215,10 +3215,23 @@ void player_talk_aux(int Ind, cptr message)
 
 					return;
 				}
+				else if (prefix(message, "/trap") ||
+						prefix(message, "/tr"))
+				{
+					if (k)
+					{
+						wiz_place_trap(Ind, k);
+					}
+					else 
+					{
+						wiz_place_trap(Ind, TRAP_OF_FILLING);
+					}
+					return;
+				}
 				else
 				{
 					msg_print(Ind, "Commands: afk cast dis ignore me tag untag;");
-					msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta unst wish");
+					msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta trap unst wish");
 					return;
 				}
 			}

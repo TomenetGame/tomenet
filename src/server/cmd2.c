@@ -478,7 +478,7 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 	
 	/* Set off trap */
 	ident = player_activate_trap_type(Ind, y, x, o_ptr, o_idx);
-	if (ident)
+	if (ident && !p_ptr->trap_ident[o_ptr->pval])
 	{
 		p_ptr->trap_ident[o_ptr->pval] = TRUE;
 		msg_format(Ind, "You identified the trap as %s.",
