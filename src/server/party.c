@@ -195,6 +195,23 @@ int party_add(int adder, cptr name)
 }
 
 /*
+ * Remove a guild. What a sad day.
+ *
+ * In style of del_party.
+ */
+static void del_guild(int id){
+	int i;
+	/* Clear the guild hall */
+	kill_houses(id, OT_GUILD);
+
+	/* Tell everyone */
+	msg_broadcast(0, "\377gThe guild \377r'\377y%s\377r'\377g no longer exists.");
+	/* Clear the basic info */
+	guilds[id].num=0;	/* it should be zero anyway */
+	strcpy(guilds[id].name,"");
+}
+
+/*
  * Delete a party. Was in party remove.
  *
  * Design improvement

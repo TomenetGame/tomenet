@@ -1287,6 +1287,37 @@ struct party_type
 };
 
 /*
+ * Information about a guild.
+ */
+
+/*
+ * Guilds are semi permanent parties which allow party membership
+ * at the same time as being a guild member. Experience is never
+ * shared by guild members (unless in a party too). The guildmaster
+ * has building privileges within the guild hall, and may alter
+ * the layout of the hall at his/her discretion. Should the guild
+ * master die, the guild is not disbanded, but he may drop a guild
+ * key (if pkill is set) which will pass on ownership. A non member
+ * picking this up, or the loss of the key (unstat etc.) will result
+ * in a disputed guild where there is no master. In this case, the
+ * position will be decided by some form of contest set by the
+ * dungeon master. Should *all* guild members die, or commit suicide,
+ * the guild will be disbanded, and the hall will be cleared and sold
+ * to the bank in the same way houses are. (evileye)
+ */
+#define GF_RACE 1		/* race rstricted */
+#define GF_CLASS 2		/* class restricted */
+#define GF_PKILL 4		/* pkill within guild? */
+
+struct guild_type{
+	char name[80];
+	s32b master;		/* Guildmaster unique player ID */
+	s32b num;		/* Number of guild members */
+	u32b flags;		/* Guild rules flags */
+	s16b minlev;		/* minimum level to join */
+};
+
+/*
  * Information about a "house"
  */
 typedef struct house_type house_type;
@@ -1323,6 +1354,7 @@ struct house_type{
 #define OT_PARTY 2
 #define OT_CLASS 3
 #define OT_RACE 4
+#define OT_GUILD 5
 
 #define ACF_NONE 0x00
 #define ACF_PARTY 0x01

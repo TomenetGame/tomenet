@@ -592,6 +592,9 @@ bool access_door(int Ind, struct dna_type *dna){
 		case OT_RACE:
 			if(p_ptr->prace==dna->owner) return(TRUE);
 			break;
+		case OT_GUILD:
+			if(p_ptr->guild==dna->owner) return(TRUE);
+			break;
 	}
 	return(FALSE);
 }
@@ -831,6 +834,9 @@ void do_cmd_open(int Ind, int dir)
 							case OT_RACE:
 								strcpy(string,race_info[dna->owner].title);
 								strcat(string,"s");
+								break;
+							case OT_GUILD:
+								strcpy(string, guilds[dna->owner].name);
 								break;
 						}
 						msg_format(Ind,"\377sThat house is owned by %s.",string);
