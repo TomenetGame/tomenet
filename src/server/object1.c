@@ -1605,7 +1605,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
                 }
 
 		/* Grab any randart name */
-                else if (o_ptr->name1 == ART_RANDART)
+                if (o_ptr->name1 == ART_RANDART)
 		{
 			/* Create the name */
 			randart_name(o_ptr, tmp_val);
