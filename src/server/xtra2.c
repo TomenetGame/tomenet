@@ -6197,8 +6197,8 @@ bool guild_build(int Ind){
 			if(fill_house(&houses[i], FILL_PLAYER, p_ptr)){
 				if(access_door(Ind, houses[i].dna)){
 					if(houses[i].dna->owner_type==OT_GUILD && p_ptr->guild==houses[i].dna->owner && guilds[p_ptr->guild].master==p_ptr->id){
-						if(p_ptr->au>5000){
-							p_ptr->au-=5000;
+						if(p_ptr->au>1000){
+							p_ptr->au-=1000;
 							p_ptr->redraw|=PR_GOLD;
 							return(TRUE);
 						}
