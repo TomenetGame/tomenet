@@ -681,6 +681,8 @@ Change list for PernMangband
 - Wilderness large map saved - saves time in startup.
 - Fixed bug where player changes wilderness level.
 - More cleaning up done.
+- Wilderness map fixed.
+- project() bug fixed where spell is bounced
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.

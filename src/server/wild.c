@@ -2657,19 +2657,19 @@ void makeland(){
 	}
 }
 
-unsigned short makecoast(int y, int x){
+unsigned short makecoast(unsigned char type, int y, int x){
 	unsigned short r=0;
 	if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_X) return(0);
 	if(wild_info[y][x].type!=WILD_UNDEFINED){
-		return((wild_info[y][x].type==WILD_GRASSLAND));
+		return((wild_info[y][x].type==type));
 	}
 	wild_info[y][x].type=WILD_OCEAN;
-	if(makecoast(y,x-1)) r=1;
-	if(makecoast(y,x+1)) r=1;
-	if(makecoast(y-1,x)) r=1;
-	if(makecoast(y+1,x)) r=1;
+	if(makecoast(type,y,x-1)) r=1;
+	if(makecoast(type,y,x+1)) r=1;
+	if(makecoast(type,y-1,x)) r=1;
+	if(makecoast(type,y+1,x)) r=1;
 	if(r)
-		wild_info[y][x].type=WILD_COAST;
+		wild_info[y][x].type=type==WILD_GRASSLAND?WILD_COAST:WILD_SHORE;
 	return(0);
 }
 
@@ -2709,6 +2709,20 @@ void addwaste(){
 			y=rand_int(MAX_WILD_Y-1);
 		}while(wild_info[y][x].type!=WILD_GRASSLAND);
 		island(y,x, WILD_WASTELAND, WILD_GRASSLAND, rand_int((1<<MAXWASTE)-1)); 
+	}
+}
+
+void addislands(){
+	int i,p;
+	int x,y;
+	p=(MAX_WILD_Y*MAX_WILD_X)/WASTE;
+	p=20;
+	for(i=0;i<p;i++){
+		do{
+			x=rand_int(MAX_WILD_X-1);
+			y=rand_int(MAX_WILD_Y-1);
+		}while(wild_info[y][x].type!=WILD_OCEAN);
+		island(y,x, WILD_WASTELAND, WILD_OCEAN, rand_int((1<<2)-1)); 
 	}
 }
 
@@ -2802,8 +2816,10 @@ void genwild(){
 	makeland();
 	for(j=0;j<MAX_WILD_Y;j++){
 		for(i=0;i<MAX_WILD_X;i++){
-			if(wild_info[j][i].type==WILD_UNDEFINED)
-				makecoast(j,i);
+			if(wild_info[j][i].type==WILD_UNDEFINED){
+				makecoast(WILD_GRASSLAND,j,i);
+				makecoast(WILD_SHORE,j,i);
+			}
 		}
 	}
 	addhills();
@@ -2811,6 +2827,7 @@ void genwild(){
 	addforest();
 	addlakes();
 	addwaste();
+	addislands();
 	/* Restore random generator */
 	Rand_quick=rand_old;
 	Rand_value=old_seed;

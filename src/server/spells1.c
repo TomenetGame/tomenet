@@ -5562,6 +5562,9 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			if (typ == GF_WRAITH_PLAYER) break;
 			if (typ == GF_SPEED_PLAYER) break;
 			if (typ == GF_SHIELD_PLAYER) break;
+
+			/* monsters hit */
+			if(who>0) break;
 			
 			/* neutral people hit each other */			
 			if (!Players[0 - who]->party) break;
@@ -5569,7 +5572,6 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			/* people not in the same party hit each other */			
 			if (!player_in_party(Players[0 - who]->party, 0 - c_ptr->m_idx)) break;	
 		}
-
 
 		/* Calculate the new location */
 		y9 = y;

@@ -2138,7 +2138,7 @@ void wild_display_map(int Ind)
 		{
 			/* Location */
 			twpos.wy = p_ptr->wpos.wy + (MAP_HGT+2)/2 - y;
-			twpos.wx = p_ptr->wpos.wx - (MAP_HGT+2)/2 + x;
+			twpos.wx = p_ptr->wpos.wx - (MAP_WID+2)/2 + x;
 			if(twpos.wy >= 0 && twpos.wy < MAX_WILD_Y && twpos.wx >=0 && twpos.wx < MAX_WILD_X)
 				type = determine_wilderness_type(&twpos);
 			/* if off the map, set to unknown type */
