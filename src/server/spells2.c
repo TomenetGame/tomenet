@@ -1802,7 +1802,7 @@ bool create_artifact_aux(int Ind, int item)
   player_type *p_ptr = Players[Ind];
 
   object_type *o_ptr;
-  char o_name[80];
+  char o_name[160];
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -1870,7 +1870,7 @@ bool curse_spell(int Ind){	// could be void
 bool curse_spell_aux(int Ind, int item){
 	player_type *p_ptr=Players[Ind];
 	object_type *o_ptr=&p_ptr->inventory[item];
-	char		o_name[80];
+	char		o_name[160];
 
 	p_ptr->current_curse=FALSE;
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -1937,7 +1937,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[160];
 
 	/* Assume enchant weapon */
 	item_tester_hook = item_tester_hook_weapon;
@@ -2019,7 +2019,7 @@ bool ident_spell_aux(int Ind, int item)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[160];
 
 
 	/* Get the item (in the pack) */
@@ -2097,7 +2097,7 @@ bool identify_fully_item(int Ind, int item)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[160];
 
 
 	/* Get the item (in the pack) */

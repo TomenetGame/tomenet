@@ -954,7 +954,7 @@ static int inven_damage(int Ind, inven_func typ, int perc)
 
 	object_type	*o_ptr;
 
-	char	o_name[80];
+	char	o_name[160];
 
 
 	/* Count the casualties */
@@ -1024,7 +1024,7 @@ static int minus_ac(int Ind)
 
 	u32b		f1, f2, f3;
 
-	char		o_name[80];
+	char		o_name[160];
 
 
 	/* Pick a (possibly empty) inventory slot */
@@ -1430,7 +1430,7 @@ bool apply_disenchant(int Ind, int mode)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[160];
 
 
 	/* Unused */
@@ -2223,7 +2223,7 @@ static bool project_i(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 	u32b	f1, f2, f3;
 
-	char	o_name[80];
+	char	o_name[160];
 
 	int		div;
 

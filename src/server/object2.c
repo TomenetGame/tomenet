@@ -1394,7 +1394,7 @@ static s16b m_bonus(int max, int level)
  */
 static void object_mention(object_type *o_ptr)
 {
-	char o_name[80];
+	char o_name[160];
 
 	/* Describe */
 	object_desc_store(o_name, o_ptr, FALSE, 0);
@@ -4016,7 +4016,7 @@ void inven_item_describe(int Ind, int item)
 
 	object_type	*o_ptr = &p_ptr->inventory[item];
 
-	char	o_name[80];
+	char	o_name[160];
 
 	/* Get a description */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);

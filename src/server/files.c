@@ -862,7 +862,7 @@ errr file_character(cptr name, bool full)
 
 	store_type		*st_ptr = &store[7];
 
-	char		o_name[80];
+	char		o_name[160];
 
 	char		buf[1024];
 
@@ -1759,7 +1759,7 @@ static void show_info(int Ind)
 			/* Show 12 items */
 			for (j = 0; (j < 12) && (i < st_ptr->stock_num); j++, i++)
 			{
-				char o_name[80];
+				char o_name[160];
 				char tmp_val[80];
 
 				/* Acquire item */

@@ -2228,7 +2228,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 	int			missile_attr;
 	int			missile_char;
 
-	char		o_name[80];
+	char		o_name[160];
 	bool magic = FALSE;
 
 
@@ -2788,7 +2788,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 	int			missile_attr;
 	int			missile_char;
 
-	char		o_name[80];
+	char		o_name[160];
 
 	/*int			msec = delay_factor * delay_factor * delay_factor;*/
 

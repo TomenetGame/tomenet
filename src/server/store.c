@@ -1367,7 +1367,7 @@ static void display_entry(int Ind, int pos)
 	object_type		*o_ptr;
 	s32b		x;
 
-	char		o_name[80];
+	char		o_name[160];
 	byte		attr;
 	int		wgt;
 
@@ -1608,7 +1608,7 @@ void store_purchase(int Ind, int item, int amt)
 	object_type		sell_obj;
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[160];
 
 
 	/* Empty? */
@@ -1896,7 +1896,7 @@ void store_sell(int Ind, int item, int amt)
 	object_type		sold_obj;
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[160];
 
 	/* You can't sell 0 of something. */
 	if (amt <= 0) return;
@@ -2010,7 +2010,7 @@ void store_confirm(int Ind)
 	int item, amt, price, value;
 
 	object_type *o_ptr, sold_obj;
-	char o_name[80];
+	char o_name[160];
 	int item_pos;
 
 	/* Abort if we shouldn't be getting called */

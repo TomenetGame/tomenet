@@ -2530,7 +2530,7 @@ static void brand_weapon(int Ind)
 	{
 		cptr act = NULL;
 
-		char o_name[80];
+		char o_name[160];
 
 		if (rand_int(100) < 25)
 		{

@@ -3119,7 +3119,7 @@ void display_inven(int Ind)
 
 	char	tmp_val[80];
 
-	char	o_name[80];
+	char	o_name[160];
 
 	int wgt;
 
@@ -3174,7 +3174,7 @@ void display_equip(int Ind)
 
 	char	tmp_val[80];
 
-	char	o_name[80];
+	char	o_name[160];
 
 	int wgt;
 

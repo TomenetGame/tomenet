@@ -224,6 +224,7 @@ static vstrnfmt_aux_func vstrnfmt_aux = vstrnfmt_aux_dflt;
  * the given buffer to a length of zero, and return a "length" of zero.
  * The contents of "buf", except for "buf[0]", may then be undefined.
  */
+
 uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 {
 	cptr s;

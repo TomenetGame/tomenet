@@ -135,7 +135,7 @@ bool make_attack_normal(int Ind, int m_idx)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[160];
 
 	char		m_name[80];
 
@@ -1303,7 +1303,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[160];
 
 	char		m_name[80];
 

@@ -929,7 +929,7 @@ static bool curse_armor(int Ind)
 
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[160];
 
 
 	/* Curse the body armor */
@@ -996,7 +996,7 @@ static bool curse_weapon(int Ind)
 
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[160];
 
 
 	/* Curse the weapon */

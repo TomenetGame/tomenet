@@ -3570,7 +3570,7 @@ static void process_monster(int Ind, int m_idx)
 				u32b flg3 = 0L;
 
 				char m_name[80];
-				char o_name[80];
+				char o_name[160];
 
 				/* Check the grid */
 				o_ptr = &o_list[c_ptr->o_idx];

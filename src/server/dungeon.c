@@ -111,7 +111,7 @@ static void sense_inventory(int Ind)
 
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[160];
 
 
 	/*** Check for "sensing" ***/
@@ -1044,7 +1044,7 @@ static void process_player_end(int Ind)
 	{
 		int		amt;
 
-		char	o_name[80];
+		char	o_name[160];
 
 
 		/* Choose an item to spill */

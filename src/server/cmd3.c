@@ -35,7 +35,7 @@ static void inven_takeoff(int Ind, int item, int amt)
 
 	cptr		act;
 
-	char		o_name[80];
+	char		o_name[160];
 
 
 	/* Get the item to take off */
@@ -118,7 +118,7 @@ static void inven_drop(int Ind, int item, int amt)
 
 	cptr		act;
 
-	char		o_name[80];
+	char		o_name[160];
 
 
 
@@ -386,7 +386,7 @@ void do_cmd_wield(int Ind, int item)
 
 	cptr act;
 
-	char o_name[80];
+	char o_name[160];
 
 
 	/* Restrict the choices */
@@ -770,7 +770,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[160];
 
 
 	/* Hack -- force destruction */
@@ -890,7 +890,7 @@ void do_cmd_observe(int Ind, int item)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[160];
 
 
 	/* Get the item (in the pack) */
@@ -979,7 +979,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 
 	object_type		*o_ptr;
 
-	char		o_name[80];
+	char		o_name[160];
 
 
 	/* Get the item (in the pack) */
@@ -1120,7 +1120,7 @@ void do_cmd_steal(int Ind, int dir)
 		{
 			int item;
 			object_type *o_ptr, forge;
-			char o_name[80];
+			char o_name[160];
 
 			/* Steal an item */
 			item = rand_int(q_ptr->inven_cnt);
@@ -1546,7 +1546,7 @@ void do_cmd_look(int Ind, int dir)
 	monster_type *m_ptr;
 	object_type *o_ptr;
 
-	char o_name[80];
+	char o_name[160];
 	char out_val[160];
 
 	/* Blind */

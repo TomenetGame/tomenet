@@ -2501,7 +2501,7 @@ void msg_format(int Ind, cptr fmt, ...)
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
-
+	
 	/* Format the args, save the length */
 	(void)vstrnfmt(buf, 1024, fmt, vp);
 

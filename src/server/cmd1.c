@@ -597,7 +597,7 @@ void carry(int Ind, int pickup, int confirm)
 
 	object_type *o_ptr;
 
-	char	o_name[80];
+	char	o_name[160];
 
 
 	/* Hack -- nothing here to pick up */
