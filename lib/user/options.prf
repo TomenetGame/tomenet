@@ -83,3 +83,5 @@ X:wide_scroll_margin
 X:fail_no_melee
 X:always_show_lists
 X:target_history
+X:linear_stats
+X:exp_need

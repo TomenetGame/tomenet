@@ -13,6 +13,7 @@
 
 #include "angband.h"
 
+#if 0
 /* Initialze the s_info array at server start */
 bool init_s_info()
 {
@@ -31,6 +32,7 @@ bool init_s_info()
         }
         return FALSE;
 }
+#endif	// 0
 
 /*
  * Initialize a skill with given values
@@ -128,6 +130,48 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
 	}
 }
 
+/* Hrm this can be nasty for Sorcery/Antimagic */
+// void recalc_skills_theory(s16b *invest, s32b *base_val, u16b *base_mod, s32b *bonus)
+void increase_related_skills(int Ind, int i)
+{
+	player_type *p_ptr = Players[Ind];
+	int j;
+
+	/* Modify related skills */
+	for (j = 1; j < MAX_SKILLS; j++)
+	{
+		/* Ignore self */
+		if (j == i) continue;
+
+		/* Exclusive skills */
+		if (s_info[i].action[j] == SKILl_EXCLUSIVE)
+		{
+			/* Turn it off */
+			p_ptr->s_info[j].value = 0;
+		}
+
+		/* Non-exclusive skills */
+		else
+		{
+			/* Increase / decrease with a % */
+			s32b val = p_ptr->s_info[j].value +
+				(p_ptr->s_info[j].mod * s_info[i].action[j] / 100);
+
+			/* Skill value cannot be negative */
+			if (val < 0) val = 0;
+
+			/* It cannot exceed SKILL_MAX */
+			if (val > SKILL_MAX) val = SKILL_MAX;
+
+			/* Save the modified value */
+			p_ptr->s_info[j].value = val;
+
+			/* Update the client */
+			Send_skill_info(Ind, j);
+		}
+	}
+}
+
 
 /*
  * Advance the skill point of the skill specified by i and
@@ -160,7 +204,7 @@ void increase_skill(int Ind, int i)
 	}
 
 	/* Cannot allocate more than player level * 3 / 2 + 4 levels */
-	if ((p_ptr->s_info[i].value / SKILL_STEP) >= ((p_ptr->lev * 3 / 2) + 4))
+	if ((p_ptr->s_info[i].value / SKILL_STEP) >= p_ptr->lev + 4)
 	{
 		Send_skill_info(Ind, i);
 		return;
@@ -172,6 +216,8 @@ void increase_skill(int Ind, int i)
 	/* Increase the skill */
 	p_ptr->s_info[i].value += p_ptr->s_info[i].mod;
 	if (p_ptr->s_info[i].value >= SKILL_MAX) p_ptr->s_info[i].value = SKILL_MAX;
+
+	increase_related_skills(Ind, i);
 
 	/* Update the client */
 	Send_skill_info(Ind, i);
@@ -227,6 +273,7 @@ void decrease_skill(int i, s16b *invest)
         invest[i]--;
 }
 
+#endif	// 0
 
 /*
  * Given the name of a skill, returns skill index or -1 if no
@@ -237,7 +284,8 @@ s16b find_skill(cptr name)
 	u16b i;
 
 	/* Scan skill list */
-	for (i = 1; i < max_s_idx; i++)
+//	for (i = 1; i < max_s_idx; i++)
+	for (i = 1; i < MAX_SKILLS; i++)
 	{
 		/* The name matches */
 		if (streq(s_info[i].name + s_name, name)) return (i);
@@ -248,6 +296,7 @@ s16b find_skill(cptr name)
 }
 
 
+#if 0
 /*
  *
  */

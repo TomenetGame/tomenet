@@ -407,6 +407,14 @@ char *re_name;
 
 #endif
 
+/*
+ * Player skills arrays
+ */
+header *s_head;
+skill_type *s_info;
+char *s_name;
+char *s_text;
+
 
 /*
  * Hack -- The special Angband "System Suffix"

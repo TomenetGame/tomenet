@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Runserv, by Chris Atenasio
 # Upgraded to store server logs by evileye
 ulimit -c unlimited

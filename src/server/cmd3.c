@@ -1426,6 +1426,13 @@ void do_cmd_steal(int Ind, int dir)
 		success += get_skill_scale(p_ptr, SKILL_STEALING, 150);
 		notice -= get_skill_scale(p_ptr, SKILL_STEALING, 150);
 	}
+	/* Similar Hack -- Robber is hard to be robbed */
+	if (get_skill(q_ptr, SKILL_STEALING))
+	{
+		/* Increase chance by level */
+		success -= get_skill_scale(p_ptr, SKILL_STEALING, 100);
+		notice += get_skill_scale(p_ptr, SKILL_STEALING, 100);
+	}
 
 	/* Always small chance to fail */
 	if (success > 95) success = 95;

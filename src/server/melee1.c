@@ -1017,9 +1017,16 @@ bool make_attack_normal(int Ind, int m_idx)
 					obvious = TRUE;
 
 					/* Saving throw (unless paralyzed) based on dex and level */
+#if 0
 					if (!p_ptr->paralyzed &&
 					    (rand_int(100 + UNAWARENESS(p_ptr)) <
 						 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
+#else	// 0
+					if (!p_ptr->paralyzed &&
+					    (rand_int(100 + UNAWARENESS(p_ptr)) <
+						 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
+						  get_skill(p_ptr, SKILL_STEALING))))
+#endif	// 0
 					{
 						/* Saving throw message */
 						msg_print(Ind, "You quickly protect your money pouch!");
@@ -1050,9 +1057,16 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Saving throw (unless paralyzed) based on dex and level */
+#if 0
 					if (!p_ptr->paralyzed &&
 							(rand_int(100 + UNAWARENESS(p_ptr)) <
 							 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
+#else	// 0
+					if (!p_ptr->paralyzed &&
+					    (rand_int(100 + UNAWARENESS(p_ptr)) <
+						 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
+						  get_skill(p_ptr, SKILL_STEALING))))
+#endif	// 0
 					{
 						/* Saving throw message */
 						msg_print(Ind, "You grab hold of your backpack!");

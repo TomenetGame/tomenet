@@ -220,15 +220,24 @@ void do_cmd_go_down(int Ind)
 		return;
 	}
 
+#if STAIR_FAIL_IF_CONFUSED
+	/* Hack -- handle confusion */
+	if (p_ptr->confused && magik(STAIR_FAIL_IF_CONFUSED))
+	{
+		int dir = 5;
+
+		/* Prevent walking nowhere */
+		while (dir == 5)
+			dir = rand_int(9) + 1;
+
+		do_cmd_walk(Ind, dir, FALSE);
+		return;
+	}
+#endif // STAIR_FAIL_IF_CONFUSED
+
+
 	/* Player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
-
-	if (c_ptr->feat == FEAT_BETWEEN)
-//		|| c_ptr->feat == FEAT_BETWEEN2)
-	{
-		if (between_effect(Ind, c_ptr)) return;
-		/* not jumped? strange.. */
-	}
 
 	/* Hack -- Enter a store (and between gates, etc) */
 	if ((!p_ptr->ghost) &&
@@ -247,21 +256,18 @@ void do_cmd_go_down(int Ind)
 		return;
 	}
 
-#if STAIR_FAIL_IF_CONFUSED
-	/* Hack -- handle confusion */
-	if (p_ptr->confused && magik(STAIR_FAIL_IF_CONFUSED))
+	/* Hack -- take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+	if (c_ptr->feat == FEAT_BETWEEN)
+//		|| c_ptr->feat == FEAT_BETWEEN2)
 	{
-		int dir = 5;
-
-		/* Prevent walking nowhere */
-		while (dir == 5)
-			dir = rand_int(9) + 1;
-
-		do_cmd_walk(Ind, dir, FALSE);
-		return;
+		/* Check interference */
+		if (interfere(Ind, 20)) return;
+		
+		if (between_effect(Ind, c_ptr)) return;
+		/* not jumped? strange.. */
 	}
-#endif // STAIR_FAIL_IF_CONFUSED
-
 
 
 	/* Verify stairs */
@@ -318,9 +324,6 @@ void do_cmd_go_down(int Ind)
 	/* Forget his lite and viewing area */
 	forget_lite(Ind);
 	forget_view(Ind);
-
-	/* Hack -- take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Success */
 	if (c_ptr->feat == FEAT_MORE)
@@ -1260,6 +1263,7 @@ void do_cmd_tunnel(int Ind, int dir)
 	struct worldpos *wpos=&p_ptr->wpos;
 
 	int                     y, x, power = p_ptr->skill_dig;
+	int mining = get_skill(p_ptr, SKILL_DIG);
 
 	cave_type               *c_ptr;
 
@@ -1376,9 +1380,11 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You have removed the rubble.");
 
 					/* Hack -- place an object */
-					if (rand_int(100) < 10)
+					if (rand_int(100) < 10 + mining)
 					{
-						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+//						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+						place_object(wpos, y, x, magik(mining), magik(mining / 10),
+								default_obj_theme);
 						if (player_can_see_bold(Ind, y, x))
 						{
 							msg_print(Ind, "You have found something!");
@@ -1515,8 +1521,11 @@ void do_cmd_tunnel(int Ind, int dir)
 					/* Found treasure */
 					if (gold)
 					{
-						/* Place some gold */
-						place_gold(wpos, y, x);
+						do
+						{
+							/* Place some gold */
+							place_gold(wpos, y, x);
+						} while (magik(mining));
 
 						/* Notice it */
 						note_spot_depth(wpos, y, x);
@@ -1936,16 +1945,8 @@ void do_cmd_bash(int Ind, int dir)
 		/* Get grid */
 		c_ptr = &zcave[y][x];
 
-		/* Nothing useful */
-		if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-		      (c_ptr->feat <= FEAT_DOOR_TAIL)))
-		{
-			/* Message */
-			msg_print(Ind, "You see nothing there to bash.");
-		}
-
 		/* Monster in the way */
-		else if (c_ptr->m_idx > 0)
+		if (c_ptr->m_idx > 0)
 		{
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1955,6 +1956,63 @@ void do_cmd_bash(int Ind, int dir)
 
 			/* Attack */
 			py_attack(Ind, y, x, TRUE);
+		}
+
+		/* Nothing useful */
+		else if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
+					(c_ptr->feat <= FEAT_DOOR_TAIL)) &&
+				c_ptr->feat != FEAT_HOME)
+		{
+			int item;
+			/* Hack -- 'kick' an item ala NetHack */
+			if (item = c_ptr->o_idx)
+			{
+				object_type *o_ptr = &o_list[c_ptr->o_idx];
+
+				if (c_ptr->feat == FEAT_DEEP_WATER ||
+					c_ptr->feat == FEAT_SHAL_WATER)
+				{
+					/* Take a turn */
+					p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+					msg_print(Ind, "Splash!");
+					return;
+				}
+
+				/* Potions smash open */
+				if (o_ptr->tval == TV_POTION ||
+						o_ptr->tval == TV_POTION2 ||
+						o_ptr->tval == TV_FLASK ||
+						o_ptr->tval == TV_BOTTLE)
+				{
+					char            o_name[160];
+					object_desc(Ind, o_name, o_ptr, FALSE, 3);
+
+					/* Message */
+					/* TODO: handle blindness */
+					msg_format_near_site(y, x, wpos, "The %s shatters!", o_name);
+
+					//			if (potion_smash_effect(0, wpos, y, x, o_ptr->sval))
+					if (k_info[o_ptr->k_idx].tval == TV_POTION)
+						/* This should harm the player too, but for now no way :/ */
+						potion_smash_effect(0 - Ind, wpos, y, x, o_ptr->sval);
+
+					floor_item_increase(item, -1);
+					floor_item_optimize(item);
+
+					return;
+				}
+
+				do_cmd_throw(Ind, dir, 0 - c_ptr->o_idx);
+
+				/* Set off trap (Hack -- handle like door trap) */
+				if(GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
+
+				return;
+			}
+			else
+			/* Message */
+			msg_print(Ind, "You see nothing there to bash.");
 		}
 
 		/* Bash a closed door */
@@ -1980,7 +2038,7 @@ void do_cmd_bash(int Ind, int dir)
 			if (temp < 1) temp = 1;
 
 			/* Hack -- attempt to bash down the door */
-			if (rand_int(100) < temp)
+			if (rand_int(100) < temp && c_ptr->feat != FEAT_HOME)
 			{
 				/* Message */
 				msg_print(Ind, "The door crashes open!");
@@ -2670,7 +2728,8 @@ void do_cmd_fire(int Ind, int dir)
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
 	/* Is this Magic Arrow? */
-	magic = ((o_ptr->sval == SV_AMMO_MAGIC) && !cursed_p(o_ptr))?TRUE:FALSE;
+	magic = ((o_ptr->sval == SV_AMMO_MAGIC) &&
+			(!cursed_p(o_ptr) || true_artifact_p(o_ptr)))?TRUE:FALSE;
 
 	/* Ricochets ? */
         //        if (cp_ptr->magic_key == MKEY_FORGING)
@@ -3335,7 +3394,8 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 	/* Hack -- yet another anti-cheeze(yaac) */
-	if (!magic && p_ptr->lev < cfg.newbies_cannot_drop)
+	if (!magic &&
+		(p_ptr->lev < cfg.newbies_cannot_drop || true_artifact_p(o_ptr)))
 	{
 		o_ptr->level = 0;
 	}
@@ -3528,7 +3588,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Hack - Cannot throw away 'no drop' cursed items */
-	if (cursed_p(o_ptr) && (f4 & TR4_CURSE_NO_DROP))
+	if (cursed_p(o_ptr) && (f4 & TR4_CURSE_NO_DROP) && item >= 0)
 	{
 		/* Oops */
 		msg_print(Ind, "Hmmm, you seem to be unable to throw it.");
@@ -3865,6 +3925,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 	j = (hit_body ? breakage_chance(o_ptr) : 0);
 
 	/* Potions smash open */
+	/* BTW, why not o_ptr->tval ? :) */
 	if (k_info[o_ptr->k_idx].tval == TV_POTION ||
 		k_info[o_ptr->k_idx].tval == TV_POTION2 ||
 		k_info[o_ptr->k_idx].tval == TV_FLASK ||

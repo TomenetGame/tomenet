@@ -992,6 +992,11 @@ I:6:30:40:4:12:0d0:v:90
 D:Reinforcements are drowing near..
 F:FLOOR | CHEST | DOOR
 
+N:209:Jack-in-the-box Trap
+I:6:100:10:10:36:0d0:v:100
+D:Surprise!
+F:CHEST
+
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
 # I:diff:prob:            :minlevel:      :color:vanish

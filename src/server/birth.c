@@ -1159,6 +1159,13 @@ void admin_outfit(int Ind, int realm)
 	}
 }
 
+#define do_player_outfit()	\
+	object_aware(Ind, o_ptr); \
+	object_known(o_ptr); \
+	o_ptr->ident |= ID_MENTAL; \
+	o_ptr->owner = p_ptr->id; \
+	o_ptr->level = 0; \
+	(void)inven_carry(Ind, o_ptr);
 
 /*
  * Init players with some belongings
@@ -1176,24 +1183,30 @@ static void player_outfit(int Ind)
 
 
 	/* Hack -- Give the player some food */
-	invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
-	o_ptr->number = rand_range(3, 7);
-	object_aware(Ind, o_ptr);
-	object_known(o_ptr);
-	o_ptr->ident |= ID_MENTAL;
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 0;
-	(void)inven_carry(Ind, o_ptr);
+	if (p_ptr->prace == RACE_ENT)
+	{
+		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
+		o_ptr->number = rand_range(3, 7);
+	}
+	/* XXX problem is that Lembas sell dear.. */
+	else if (p_ptr->prace == RACE_HALF_ELF ||
+			p_ptr->prace == RACE_ELF || p_ptr->prace == RACE_HIGH_ELF)
+	{
+		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD));
+		o_ptr->number = rand_range(2, 4);
+	}
+	else
+	{
+		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
+		o_ptr->number = rand_range(2, 4);
+	}
+	do_player_outfit();
 
 	/* Hack -- Give the player some torches */
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
 	o_ptr->number = rand_range(3, 7);
 	o_ptr->timeout = rand_range(3, 7) * 500;
-	object_known(o_ptr);
-	o_ptr->ident |= ID_MENTAL;
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 0;
-	(void)inven_carry(Ind, o_ptr);
+	do_player_outfit();
 
 	if (!strcmp(p_ptr->name, "Moltor"))
 	{
@@ -1218,22 +1231,19 @@ static void player_outfit(int Ind)
 		tv = player_init[p_ptr->pclass][i][0];
 		sv = player_init[p_ptr->pclass][i][1];
 		invcopy(o_ptr, lookup_kind(tv, sv));
-		object_aware(Ind, o_ptr);
-		object_known(o_ptr);
-		o_ptr->ident |= ID_MENTAL;
-		o_ptr->owner = p_ptr->id;
-		o_ptr->level = 0;
-		(void)inven_carry(Ind, o_ptr);
+		do_player_outfit();
 	}
 	
+	if (p_ptr->prace == RACE_DRIDER)
+	{
+		invcopy(o_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
+		o_ptr->number = rand_range(3, 7);
+		do_player_outfit();
+	}
+
 	/* Hack -- Give the player newbie guide Parchment */
 	invcopy(o_ptr, lookup_kind(TV_PARCHEMENT, SV_PARCHMENT_NEWBIE));
-	object_known(o_ptr);
-	object_aware(Ind, o_ptr);
-	o_ptr->ident |= ID_MENTAL;
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 0;
-	(void)inven_carry(Ind, o_ptr);
+	do_player_outfit();
 }
 
 void player_create_tmpfile(int Ind)
@@ -1522,7 +1532,7 @@ static void do_bard_skill(int Ind)
 				i == SKILL_ARCHERY || i == SKILL_MAGIC ||
 				i == SKILL_SNEAKINESS || i == SKILL_HEALTH ||
 //				i == SKILL_NECROMANCY ||
-				i == SKILL_AURA_POWER) continue;
+				i == SKILL_AURA_POWER || i == SKILL_DODGE) continue;
 
 		if (magik(67))
 		{

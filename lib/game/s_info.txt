@@ -1,0 +1,486 @@
+# $Id$
+# File: s_info.txt
+
+
+# This file is used to initialize the "lib/data/s_info.raw" file, which is
+# used to initialize the "skills" information for the PernAngband game.
+
+# Do not modify this file unless you know exactly what you are doing,
+# unless you wish to risk possible system crashes and broken savefiles.
+
+# After modifying this file, delete the "lib/data/s_info.raw" file.
+
+# The skill indexes are defined in "defines.h", and must not be changed.
+
+# N:idx:name
+# D:desc
+# A:action mkey:action desc
+# I:rate:tval
+
+# E:exclusive skill:exclusive skill
+# O:skill:opposing skill%percent
+# A:skill:friendly skill%percent
+# (NOTE: not A: but f: ?)
+
+# T:father:child
+
+# Version stamp (required)
+
+V:4.0.0
+
+
+#
+# Skill definitions (beware: hardcoded!)
+#
+
+N:1:Combat
+D:General ability to fight and to pseudo-id armors and weapons
+D:It also allows to use heavier armors without penalties
+I:1000:0
+
+N:2:Weaponmastery
+D:General ability to use melee weapons
+I:1000:0
+
+N:3:Sword-mastery
+D:Ability to use swords
+I:1000:0
+
+N:4:Critical-strike
+D:Ability to land more critial hits with light swords
+I:1000:0
+
+N:5:Polearm-mastery
+D:Ability to use polearms
+I:1000:0
+
+N:6:Hafted-mastery
+D:Ability to use hafted weapons
+I:1000:0
+
+N:7:Archery
+D:General ability to use ranged weapons
+D:It also allows you to evaluate/create ammo
+A:9:Create ammo
+I:1000:0
+
+N:8:Sling-mastery
+D:Ability to use slings
+I:1000:0
+
+N:9:Bow-mastery
+D:Ability to use bows
+I:1000:0
+
+N:10:Crossbow-mastery
+D:Ability to use crossbows
+I:1000:0
+
+N:11:Backstabing
+D:Ability to backstab sleeping and fleeing monsters
+D:Much more effective in the dark
+I:1000:0
+
+N:12:Magic
+D:General ability to use magic. Also influence mana capacity
+I:1000:0
+
+N:13:Casting-speed
+D:Ability to cast sorcery spells faster than one turn
+I:1000:0
+
+N:14:Sorcery
+D:Ability to cast sorcery spells, beware it reduces hp
+A:1:Cast sorcery spell
+I:1000:92
+F:MKEY_SPELL | MKEY_TVAL
+
+N:15:Magery
+D:Ability to cast magery spells
+A:2:Cast magery spell
+I:1000:90
+F:MKEY_SPELL | MKEY_TVAL
+
+N:16:Mimicry
+D:Ability to polymorph into slain monsters
+A:3:Cast monster spell
+F:MKEY_HARDCODE
+I:1000:0
+
+N:17:Magic-device
+D:Ability to use magic devices(wands, rods, staves, artifacts)
+D:Also increases their power
+I:1000:0
+
+N:18:Shadow
+D:Ability to cast shadow spells
+A:4:Cast shadow spell
+I:1000:94
+F:MKEY_SPELL | MKEY_TVAL
+
+N:19:Prayer
+D:Ability to pray to your god(or use your own godly power if you are a god)
+A:7:Recite a prayer
+I:1000:91
+F:MKEY_SPELL | MKEY_TVAL
+
+N:20:Spell-duration
+D:Increases the duration of your shadow spells
+I:1000:0
+
+N:21:Sneakiness
+D:General ability at your sneakiness skills, and improves perception
+I:1000:0
+
+N:22:Disarming
+D:Ability to disarm various traps and crack locks
+D:The trap lore also saves you from activating already-found traps
+I:1000:0
+
+N:23:Stealth
+D:Ability to move without waking up monsters
+I:1000:0
+
+N:24:Stealing
+D:Ability to steal objects or money from other people
+D:This knowledge also protects you from robbery
+I:1000:0
+
+N:25:Necromancy
+D:General ability at necromantic skills. Provides life drain on monster death
+I:1000:0
+
+N:26:Antimagic
+D:Aura that surrounds you and prevents monsters from casting spells
+D:Beware, you won't make an exception!
+I:1000:0
+
+N:27:Aura power
+D:Increases you auras power
+I:1000:0
+
+N:28:Aura of Fear
+D:Aura that surrounds you and strikes fear in monsters that melee you
+D:Making them run away
+I:1000:0
+
+N:29:Shivering Aura
+D:Aura that surrounds you and stuns monsters that melee you
+I:1000:0
+
+N:30:Aura of Death
+D:Aura that surrounds you and creates waves of plasma/ice when monsters melee you
+I:1000:0
+
+N:31:Hunting Lore
+D:Ability to cast hunting spells
+A:6:Use an archery book
+I:1000:0
+F:MKEY_SPELL | MKEY_TVAL
+
+N:32:Fighting Technic
+D:Ability to perform special fighting technics
+A:5:Use a fighting technic
+I:1000:0
+F:MKEY_SPELL | MKEY_TVAL
+
+N:33:Miscellaneous
+D:Not a real skill, it is only used to regroup some skills
+I:1000:0
+F:HIDDEN
+
+N:34:Agility
+D:General ability to move on quickly
+I:1000:0
+
+N:35:Calmness
+D:Ability to stay calm when surrounded by enemies
+I:1000:0
+
+N:36:Swimming
+D:Ability to cross water area without drowning
+I:1000:0
+
+N:37:Martial Arts
+D:Ability to combat bare-handed
+I:1000:0
+
+N:38:Ricochet
+D:Ability to harm more than one opponents using ricochets
+I:1000:0
+
+N:39:Boomerang-mastery
+D:Ability to use (and not to destroy) boomerangs
+I:1000:0
+
+N:40:Training
+D:Ability to train yourself and overcome weak points
+I:1000:0
+
+N:41:Interception
+D:Ability to hinder the opponents around you
+I:1000:0
+
+N:42:Dodging
+D:Ability to dodge blows and bolts
+D:You cannot dodge very well with heavy armour!
+A:8:Check dodge chance
+I:1000:0
+
+N:43:Health
+D:General ability to control and cure your body
+I:1000:0
+
+N:44:Digging
+D:Ability to dig a tunnel with suitable tools
+I:1000:0
+
+N:45:Revelation
+D:Affects how broad a revelation your prayer will bring
+I:1000:0
+
+N:46:Trapping
+D:Ability to set monster traps
+A:10:Set trap
+I:1000:46
+F:MKEY_HARDCODE
+
+N:47:Axe-mastery
+D:Ability to use axes
+I:1000:0
+
+N:48:Conveyance
+D:Ability to learn and use spells from the Conveyance school
+D:Spells use the intelligence stat
+I:1000:0
+
+#
+# Skill interactions
+#
+
+# List of combat friendly skills
+
+# Melee: Specific masteries improve generic mastery
+f:Critical-strike:Sword-mastery%5
+f:Sword-mastery:Weaponmastery%25
+f:Axe-mastery:Weaponmastery%25
+f:Polearm-mastery:Weaponmastery%25
+f:Hafted-mastery:Weaponmastery%25
+
+# Ranged: Specific masteries improve generic mastery
+f:Sling-mastery:Archery%25
+f:Bow-mastery:Archery%25
+f:Crossbow-mastery:Archery%25
+f:Boomerang-mastery:Archery%25
+f:Hunting Lore:Archery%5
+f:Ricochet:Archery%15
+f:Sling-mastery:Ricochet%25
+
+# All combat skills improve Combat
+f:Weaponmastery:Combat%50
+f:Sword-mastery:Combat%7
+f:Axe-mastery:Combat%7
+f:Polearm-mastery:Combat%7
+f:Hafted-mastery:Combat%7
+f:Archery:Combat%50
+f:Sling-mastery:Combat%7
+f:Bow-mastery:Combat%7
+f:Crossbow-mastery:Combat%7
+f:Boomerang-mastery:Combat%7
+f:Hunting Lore:Combat%7
+f:Ricochet:Combat%7
+f:Martial Arts:Combat%50
+
+# Sorcery and Weaponmastery arent exactly friendly to each other
+# NOTE: Sorcery penulty appears to be too severe as it is; the sorcery
+# skill itself will be changed very soon.
+O:Sorcery:Weaponmastery%100
+O:Sorcery:Archery%100
+O:Sorcery:Martial Arts%100
+O:Weaponmastery:Sorcery%100
+O:Archery:Sorcery%100
+O:Martial Arts:Sorcery%100
+
+
+
+# All magic skills affect magic skill
+f:Magic-device:Magic%7
+#f:Spell-power:Magic%20
+f:Sorcery:Magic%20
+#f:Mana:Magic%10
+#f:Fire:Magic%10
+#f:Air:Magic%10
+#f:Water:Magic%10
+#f:Earth:Magic%10
+f:Conveyance:Magic%10
+#f:Divination:Magic%10
+#f:Nature:Magic%10
+#f:Temporal:Magic%10
+#f:Meta:Magic%10
+#f:Mind:Magic%10
+#f:Udun:Magic%10
+#f:Demonology:Magic%10
+#f:Necromancy:Magic%4
+#f:Runecraft:Magic%12
+#f:Thaumaturgy:Magic%6
+f:Casting-speed:Sorcery%10
+f:Casting-speed:Magic%7
+f:Magery:Magic%10
+f:Shadow:Magic%10
+f:Spell-duration:Shadow%10
+f:Mimicry:Magic%7
+f:Prayer:Magic%7
+f:Revelation:Prayer%10
+f:Revelation:Magic%5
+
+
+# Antimagic exclude all magic
+E:Magic-device:Antimagic
+#f:Spell-power:Magic%20
+E:Sorcery:Antimagic
+#f:Mana:Magic%10
+#f:Fire:Magic%10
+#f:Air:Magic%10
+#f:Water:Magic%10
+#f:Earth:Magic%10
+E:Conveyance:Antimagic
+#f:Divination:Magic%10
+#f:Nature:Magic%10
+#f:Temporal:Magic%10
+#f:Meta:Magic%10
+#f:Mind:Magic%10
+#f:Udun:Magic%10
+#f:Demonology:Magic%10
+#f:Necromancy:Magic%4
+#f:Runecraft:Magic%12
+#f:Thaumaturgy:Magic%6
+##E:Casting-speed:Antimagic
+E:Magery:Antimagic
+E:Shadow:Antimagic
+##E:Spell-length:Antimagic
+E:Mimicry:Antimagic
+E:Prayer:Antimagic
+##E:Revelation:Antimagic
+E:Hunting Lore:Antimagic
+
+
+f:Stealth:Sneakiness%15
+f:Disarming:Sneakiness%10
+f:Trapping:Sneakiness%15
+f:Backstabing:Sneakiness%5
+f:Stealing:Sneakiness%15
+f:Dodging:Sneakiness%10
+
+f:Calmness:Dodging%20
+f:Interception:Dodging%20
+f:Calmness:Sneakiness%7
+f:Interception:Sneakiness%7
+
+# Exercises are good to your health :)
+f:Training:Health%25
+f:Agility:Health%25
+f:Swimming:Health%25
+f:Digging:Health%25
+
+
+# I'm not quite sure if they should affect the Necromancy
+
+#f:Aura power:Necromancy%25
+#f:Aura of Fear:Necromancy%25
+#f:Shivering Aura:Necromancy%25
+#f:Aura of Death:Necromancy%25
+#f:Antimagic:Necromancy%10
+
+
+################################## SKILL TREE ################################
+
+T:Main:Combat
+T:Combat:Weaponmastery
+T:Weaponmastery:Sword-mastery
+T:Sword-mastery:Critical-strike
+T:Weaponmastery:Axe-mastery
+T:Weaponmastery:Hafted-mastery
+T:Weaponmastery:Polearm-mastery
+T:Combat:Archery
+T:Archery:Sling-mastery
+T:Archery:Bow-mastery
+T:Archery:Crossbow-mastery
+T:Archery:Boomerang-mastery
+T:Archery:Hunting Lore
+T:Archery:Ricochet
+T:Combat:Fighting Technic
+T:Combat:Martial Arts
+#T:Combat:Bearform-combat
+#T:Combat:Antimagic
+
+T:Main:Sneakiness
+T:Sneakiness:Stealth
+T:Sneakiness:Disarming
+T:Sneakiness:Trapping
+T:Sneakiness:Backstabing
+T:Sneakiness:Stealing
+T:Sneakiness:Dodging
+
+T:Dodging:Calmness
+T:Dodging:Interception
+
+T:Main:Magic
+T:Magic:Magic-device
+#T:Magic:Spell-learning
+#T:Magic:Spell-power
+T:Magic:Sorcery
+#T:Magic:Mana
+#T:Magic:Fire
+#T:Magic:Water
+#T:Magic:Air
+#T:Magic:Earth
+#T:Magic:Meta
+T:Magic:Conveyance
+#T:Magic:Divination
+#T:Magic:Temporal
+#T:Magic:Mind
+#T:Magic:Nature
+#T:Magic:Udun
+#T:Magic:Demonology
+#T:Magic:Necromancy
+#T:Magic:Runecraft
+#T:Magic:Thaumaturgy
+#T:Magic:Alchemy
+T:Magic:Sorcery
+T:Sorcery:Casting-speed
+T:Magic:Magery
+T:Magic:Shadow
+T:Shadow:Spell-duration
+T:Magic:Mimicry
+T:Magic:Prayer
+T:Prayer:Revelation
+
+#T:Main:Spirituality
+#T:Spirituality:Prayer
+#T:Spirituality:Druidistic
+#T:Spirituality:Mindcraft
+#T:Spirituality:Music
+
+#T:Main:Monster-lore
+#T:Monster-lore:Summoning
+#T:Monster-lore:Corpse-preservation
+#T:Monster-lore:Possession
+#T:Monster-lore:Symbiosis
+#T:Monster-lore:Mimicry
+
+T:Main:Necromancy
+T:Necromancy:Aura power
+T:Necromancy:Aura of Fear
+T:Necromancy:Shivering Aura
+T:Necromancy:Aura of Death
+T:Necromancy:Antimagic
+
+T:Main:Health
+T:Health:Training
+T:Health:Agility
+T:Health:Swimming
+T:Health:Digging
+
+#T:Main:Miscellaneous
+#T:Miscellaneous:Calmness
+#T:Miscellaneous:Interception

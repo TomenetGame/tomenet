@@ -4677,6 +4677,7 @@ extern int PlayerUID;
 #define TRAP_OF_REMITTANCE	206
 #define TRAP_OF_HIDE_TRAPS	207
 #define TRAP_OF_RESPAWN		208
+#define TRAP_OF_JACK		209
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
@@ -4803,7 +4804,7 @@ extern int PlayerUID;
 #define MKEY_MIMICRY            3
 #define MKEY_SHADOW             4
 #define MKEY_FIGHTING           5
-#define MKEY_ARCHERING          6
+#define MKEY_ARCHERING          6	/* Hunting. */
 #define MKEY_PRAY               7
 
 #define MKEY_DODGE              8
@@ -4817,6 +4818,7 @@ extern int PlayerUID;
 #define SKILL_MAX               50000           /* Maximun skill value */
 #define SKILL_STEP              1000            /* 1 skill point */
 
+/* why SKILl and not SKILL .. ? */
 #define SKILl_EXCLUSIVE         9999            /* Flag to tell exclusive skills */
 
 #define SKILL_COMBAT            1
@@ -4892,7 +4894,7 @@ extern int PlayerUID;
 #define SKF1_MKEY_DIRECTION		0x80000000	/* mkey requires direction */
 
 
-/* Skill points per level */
-#define SKILL_NB_BASE           6
+/* Skill points per level (xtra2.c) */
+#define SKILL_NB_BASE           5
 
 

@@ -1568,6 +1568,7 @@ struct ip_ban{
  * Skills !
  */
 typedef struct skill_type skill_type;
+#if 0
 struct skill_type
 {
 	cptr name;                              /* Name */
@@ -1584,6 +1585,27 @@ struct skill_type
 	u32b flags1;                            /* Skill flags */
 	byte tval;	/* tval associated */
 };
+#else	// 0
+struct skill_type
+{
+	u32b name;                              /* Name */
+	u32b desc;                              /* Description */
+	u32b action_desc;                       /* Action Description */
+
+	s16b action_mkey;                       /* Action do to */
+
+	s16b rate;                              /* Modifier decreasing rate */
+
+//	s16b action[MAX_SKILLS][2];             /* List of actions against other skills in th form: action[x] = {SKILL_FOO, 10} */
+	s16b action[MAX_SKILLS];             /* List of actions against other skills in th form: action[x] = {SKILL_FOO, 10} */
+
+	s16b father;                            /* Father in the skill tree */
+	s16b order;                             /* Order in the tree */
+
+	u32b flags1;                            /* Skill flags */
+	byte tval;	/* tval associated */
+};
+#endif	// 0
 
 /*
  * Skills of each player
@@ -2358,6 +2380,8 @@ struct client_opts
 	bool fail_no_melee;
 	bool always_show_lists;
 	bool target_history;
+	bool linear_stats;
+	bool exp_need;
 };
 
 /*

@@ -1732,7 +1732,7 @@ void use_ability_blade(int Ind)
 	}
 	else if (chance < 20)
 	{
-		msg_format(Ind, "You have a signifigant chance of dodging a level %d monster.", dun_level);
+		msg_format(Ind, "You have a significant chance of dodging a level %d monster.", dun_level);
 	}
 	else if (chance < 40)
 	{

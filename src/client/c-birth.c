@@ -346,10 +346,14 @@ void choose_stat_order(void)
 			}
 		}
 
+		/* Hack -- it's obvious */
+		if (i > 4) hazard = TRUE;
+
 		/* Get a stat */
 		while (1)
 		{
-			put_str("Choose your stat order (? for Help, * for random, Q to Quit): ", 20, 2);
+//			put_str("Choose your stat order (? for Help, * for random, Q to Quit): ", 20, 2);
+			put_str("Choose your stat order (* for random, Q to Quit): ", 20, 2);
 			if (hazard)
 			{
 				j = rand_int(6);

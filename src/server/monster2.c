@@ -1003,6 +1003,7 @@ cptr r_name_garbled_get()
  * ToME-NET Extra Flags:
  * 0x0100 --> Ban 'Garbled' name (for death-record)
  */
+/* FIXME: 'The The Borshin' when hallucinating */
 void monster_desc(int Ind, char *desc, int m_idx, int mode)
 {
 	player_type *p_ptr;
@@ -2847,7 +2848,8 @@ static bool summon_specific_okay(int r_idx)
 			         (r_ptr->d_char == '?') ||
 			         (r_ptr->d_char == '=') ||
 			         (r_ptr->d_char == '$') ||
-			         (r_ptr->d_char == '|')) &&
+			         (r_ptr->d_char == '|') ||
+					 (r_ptr->flags9 & (RF9_MIMIC)) ) &&
 			        !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		}

@@ -995,6 +995,7 @@ static cptr d_info_flags2[] =
 
 #endif	// 0
 
+/* Vault flags */
 static cptr v_info_flags1[] =
 {
 	"FORCE_FLAGS",
@@ -1029,6 +1030,43 @@ static cptr v_info_flags1[] =
 	"HIVES",
 	"NO_MIRROR",
 	"NO_ROTATE"
+};
+
+/* Skill flags */
+static cptr s_info_flags1[] =
+{
+        "HIDDEN",
+        "AUTO_HIDE",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"MKEY_SCHOOL",		/* Below are Client flags */
+	"MKEY_HARDCODE",
+	"MKEY_SPELL",		/* Realm spells */
+	"MKEY_TVAL",
+	"MKEY_ITEM",
+	"MKEY_DIRECTION"
 };
 
 
@@ -2291,8 +2329,10 @@ errr init_k_info_txt(FILE *fp, char *buf)
 	/* No version yet */
 	if (!okay) return (2);
 
+#if DEBUG_LEVEL > 2
 	/* Debug -- print total no. */
 	s_printf("k_info total: %d\n", idx);
+#endif	// DEBUG_LEVEL
 
 	/* Success */
 	return (0);
@@ -2661,52 +2701,401 @@ errr init_a_info_txt(FILE *fp, char *buf)
 	return (0);
 }
 
-
 /*
- * Grab one flag in a ego-item_type from a textual string
+ * Grab one flag from a textual string
  */
-#if 0
-static bool grab_one_ego_item_flag(ego_item_type *e_ptr, cptr what)
+static errr grab_one_skill_flag(s32b *f1, cptr what)
 {
 	int i;
 
 	/* Check flags1 */
 	for (i = 0; i < 32; i++)
 	{
-		if (streq(what, k_info_flags1[i]))
+                if (streq(what, s_info_flags1[i]))
 		{
-			e_ptr->flags1 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Check flags2 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags2[i]))
-		{
-			e_ptr->flags2 |= (1L << i);
-			return (0);
-		}
-	}
-
-	/* Check flags3 */
-	for (i = 0; i < 32; i++)
-	{
-		if (streq(what, k_info_flags3[i]))
-		{
-			e_ptr->flags3 |= (1L << i);
+			(*f1) |= (1L << i);
 			return (0);
 		}
 	}
 
 	/* Oops */
-	s_printf("Unknown ego-item flag '%s'.", what);
+	s_printf("(2)Unknown skill flag '%s'.", what);
 
 	/* Error */
 	return (1);
 }
-#endif	// 0
+
+
+/*
+ * Initialize the "s_info" array, by parsing an ascii "template" file
+ */
+errr init_s_info_txt(FILE *fp, char *buf)
+{
+	int i, z, order = 1;
+
+	char *s;
+
+	/* Not ready yet */
+	bool okay = FALSE;
+
+	/* Current entry */
+	skill_type *s_ptr = NULL;
+
+
+	/* Just before the first record */
+	error_idx = -1;
+
+	/* Just before the first line */
+	error_line = -1;
+
+
+	/* Parse */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* Advance the line number */
+		error_line++;
+
+		/* Skip comments and blank lines */
+		if (!buf[0] || (buf[0] == '#')) continue;
+
+		/* Verify correct "colon" format */
+		if (buf[1] != ':') return (1);
+
+
+		/* Hack -- Process 'V' for "Version" */
+		if (buf[0] == 'V')
+		{
+			int v1, v2, v3;
+
+#ifdef VERIFY_VERSION_STAMP
+
+			/* Scan for the values */
+			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			    (v1 != s_head->v_major) ||
+			    (v2 != s_head->v_minor) ||
+			    (v3 != s_head->v_patch))
+			{
+				return (2);
+			}
+
+#else /* VERIFY_VERSION_STAMP */
+
+			/* Scan for the values */
+			if (3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+
+#endif /* VERIFY_VERSION_STAMP */
+
+			/* Okay to proceed */
+			okay = TRUE;
+
+			/* Continue */
+			continue;
+		}
+
+		/* No version yet */
+		if (!okay) return (2);
+
+
+		/* Process 'T' for "skill Tree" */
+		if (buf[0] == 'T')
+		{
+			char *sec;
+			s16b s1, s2;
+
+			/* Scan for the values */
+			if (NULL == (sec = strchr(buf+2, ':')))
+			{
+				return (1);
+			}
+			*sec = '\0';
+			sec++;
+			if (!*sec) return (1);
+
+			s1 = find_skill(buf+2);
+			s2 = find_skill(sec);
+			if (s2 == -1) return (1);
+
+			s_info[s2].father = s1;
+			s_info[s2].order = order++;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'E' for "Exclusive" */
+		if (buf[0] == 'E')
+		{
+			char *sec;
+			s16b s1, s2;
+
+			/* Scan for the values */
+			if (NULL == (sec = strchr(buf+2, ':')))
+			{
+				return (1);
+			}
+			*sec = '\0';
+			sec++;
+			if (!*sec) return (1);
+
+			s1 = find_skill(buf+2);
+			s2 = find_skill(sec);
+			if ((s1 == -1) || (s2 == -1)) return (1);
+
+			s_info[s1].action[s2] = SKILl_EXCLUSIVE;
+			s_info[s2].action[s1] = SKILl_EXCLUSIVE;
+
+			/* Next... */
+			continue;
+		}
+
+
+		/* Process 'O' for "Opposite" */
+		if (buf[0] == 'O')
+		{
+			char *sec, *cval;
+			s16b s1, s2;
+
+			/* Scan for the values */
+			if (NULL == (sec = strchr(buf+2, ':')))
+			{
+				return (1);
+			}
+			*sec = '\0';
+			sec++;
+			if (!*sec) return (1);
+			if (NULL == (cval = strchr(sec, '%')))
+			{
+				return (1);
+			}
+			*cval = '\0';
+			cval++;
+			if (!*cval) return (1);
+
+			s1 = find_skill(buf+2);
+			s2 = find_skill(sec);
+			if ((s1 == -1) || (s2 == -1)) return (1);
+
+			s_info[s1].action[s2] = -atoi(cval);
+
+			/* Next... */
+			continue;
+		}
+
+                /* Process 'A' for "Amical/friendly" */
+                if (buf[0] == 'f')
+		{
+			char *sec, *cval;
+			s16b s1, s2;
+
+			/* Scan for the values */
+			if (NULL == (sec = strchr(buf+2, ':')))
+			{
+				return (1);
+			}
+			*sec = '\0';
+			sec++;
+			if (!*sec) return (1);
+			if (NULL == (cval = strchr(sec, '%')))
+			{
+				return (1);
+			}
+			*cval = '\0';
+			cval++;
+			if (!*cval) return (1);
+
+			s1 = find_skill(buf+2);
+			s2 = find_skill(sec);
+			if ((s1 == -1) || (s2 == -1)) return (1);
+
+			s_info[s1].action[s2] = atoi(cval);
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'N' for "New/Number/Name" */
+		if (buf[0] == 'N')
+		{
+			/* Find the colon before the name */
+			s = strchr(buf+2, ':');
+
+			/* Verify that colon */
+			if (!s) return (1);
+
+			/* Nuke the colon, advance to the name */
+			*s++ = '\0';
+
+			/* Paranoia -- require a name */
+			if (!*s) return (1);
+
+			/* Get the index */
+			i = atoi(buf+2);
+
+			/* Verify information */
+			if (i >= s_head->info_num) return (2);
+
+			/* Save the index */
+			error_idx = i;
+
+			/* Point at the "info" */
+			s_ptr = &s_info[i];
+
+			/* Hack -- Verify space */
+			if (s_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+
+			/* Advance and Save the name index */
+			if (!s_ptr->name) s_ptr->name = ++s_head->name_size;
+
+			/* Append chars to the name */
+			strcpy(s_name + s_head->name_size, s);
+
+			/* Advance the index */
+			s_head->name_size += strlen(s);
+
+			/* Init */
+			s_ptr->action_mkey = 0;
+//			s_ptr->dev = FALSE;
+			for (z = 0; z < MAX_SKILLS; z++)
+//			for (z = 0; z < max_s_idx; z++)
+			{
+				s_ptr->action[z] = 0;                                
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* There better be a current s_ptr */
+		if (!s_ptr) return (3);
+
+		/* Process 'D' for "Description" */
+		if (buf[0] == 'D')
+		{
+			/* Acquire the text */
+			s = buf+2;
+
+			/* Hack -- Verify space */
+			if (s_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+
+			/* Advance and Save the text index */
+			if (!s_ptr->desc)
+			{
+				s_ptr->desc = ++s_head->text_size;
+
+				/* Append chars to the name */
+				strcpy(s_text + s_head->text_size, s);
+
+				/* Advance the index */
+				s_head->text_size += strlen(s);
+			}
+			else
+			{
+				/* Append chars to the name */
+				strcpy(s_text + s_head->text_size, format("\n%s", s));
+
+				/* Advance the index */
+				s_head->text_size += strlen(s) + 1;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'A' for "Activation Description" */
+		if (buf[0] == 'A')
+		{
+			char *txt;
+
+			/* Acquire the text */
+			s = buf+2;
+
+			if (NULL == (txt = strchr(s, ':'))) return (1);
+			*txt = '\0';
+			txt++;
+
+			/* Hack -- Verify space */
+			if (s_head->text_size + strlen(txt) + 8 > fake_text_size) return (7);
+
+			/* Advance and Save the text index */
+			if (!s_ptr->action_desc) s_ptr->action_desc = ++s_head->text_size;
+
+			/* Append chars to the name */
+			strcpy(s_text + s_head->text_size, txt);
+			s_ptr->action_mkey = atoi(s);
+
+			/* Advance the index */
+			s_head->text_size += strlen(txt);
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'I' for "Info" (one line only) */
+		if (buf[0] == 'I')
+		{
+			int rate, tval;
+
+			/* Scan for the values */
+			if (2 != sscanf(buf+2, "%d:%d", &rate, &tval))
+			{
+				return (1);
+			}
+
+			/* Save the values */
+			s_ptr->rate = rate;
+			s_ptr->tval = tval;
+
+			/* Next... */
+			continue;
+		}
+
+                /* Process 'F' for flags */
+		if (buf[0] == 'F')
+		{
+                        char *t;
+
+			/* Parse every entry textually */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while ((*t == ' ') || (*t == '|')) t++;
+				}
+
+				/* Parse this entry */
+                                if (0 != grab_one_skill_flag(&(s_ptr->flags1), s)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* Oops */
+		return (6);
+	}
+
+
+	/* Complete the "name" and "text" sizes */
+	++s_head->name_size;
+	++s_head->text_size;
+
+
+	/* No version yet */
+	if (!okay) return (2);
+
+
+	/* Success */
+	return (0);
+}
+
 
 /*
  * Grab one flag in a ego-item_type from a textual string

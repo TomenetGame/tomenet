@@ -2772,7 +2772,7 @@ static void calc_bonuses(int Ind)
 					p_ptr->free_act = TRUE;
 
 				/* give a stealth bonus */
-				p_ptr->skill_stl += get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
+				p_ptr->skill_stl += k;
 			}
 		}
 

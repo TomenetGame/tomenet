@@ -2892,6 +2892,22 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			msg_print(Ind, "You feel uneasy.");
 			ident = FALSE;	// always out of LOS (cept ESP..)
 		}
+		/* Jack-in-the-box trap */
+		case TRAP_OF_JACK:
+		{
+			for (k = 0; k < randint(3); k++)
+			{
+				ident |= summon_specific(wpos, y, x, glev, SUMMON_BIZARRE6);
+			}
+#if 0
+			if (ident)
+			{
+				msg_print(Ind, "Doh!!");
+				set_stun(Ind, p_ptr->stun + randint(50));
+			}
+#endif	// 0
+			break;
+		}
 
 
 		default:

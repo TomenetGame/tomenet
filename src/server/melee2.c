@@ -4535,12 +4535,14 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		/* Hack -- chase player avoiding arrows
 		 * In the real-time, it does work :)
 		 */
-		if (ax < 2 && ay > 5)
+		if (ax < 2 && ay > 5 &&
+			projectable(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, y2, x2))
 		{
 			x = (x > 0 || !x && magik(50)) ? -ay / 2: ay / 2;
 			ax = ay / 2;
 		}
-		if (ay < 2 && ax > 5)
+		if (ay < 2 && ax > 5 &&
+			projectable(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, y2, x2))
 		{
 			y = (y > 0 || !y && magik(50)) ? -ax / 2: ax / 2;
 			ay = ax / 2;

@@ -630,6 +630,240 @@ static errr init_a_info(void)
 }
 
 
+/*
+ * Initialize the "s_info" array
+ *
+ * Note that we let each entry have a unique "name" and "text" string,
+ * even if the string happens to be empty (everyone has a unique '\0').
+ */
+static errr init_s_info(void)
+{
+	int fd;
+
+	/* int i; */
+
+	int mode = 0644;
+
+	errr err = 0;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+
+	/*** Make the "header" ***/
+
+	/* Allocate the "header" */
+	MAKE(s_head, header);
+
+	/* Save the "version" */
+	s_head->v_major = VERSION_MAJOR;
+	s_head->v_minor = VERSION_MINOR;
+	s_head->v_patch = VERSION_PATCH;
+	s_head->v_extra = 0;
+
+	/* Save the "record" information */
+//	s_head->info_num = max_s_idx;
+	s_head->info_num = MAX_SKILLS;
+	s_head->info_len = sizeof(skill_type);
+
+	/* Save the size of "s_head" and "s_info" */
+	s_head->head_size = sizeof(header);
+	s_head->info_size = s_head->info_num * s_head->info_len;
+
+
+#ifdef ALLOW_TEMPLATES
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "s_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Process existing "raw" file */
+	if (fd >= 0)
+	{
+#ifdef CHECK_MODIFICATION_TIME
+
+		err = check_modification_date(fd, "s_info.txt");
+
+#endif /* CHECK_MODIFICATION_TIME */
+
+		/* Attempt to parse the "raw" file */
+		if (!err)
+			err = init_s_info_raw(fd);
+
+		/* Close it */
+		(void)fd_close(fd);
+
+		/* Success */
+		if (!err) return (0);
+
+		/* Information */
+		msg_print("Ignoring obsolete/defective 's_info.raw' file.");
+		msg_print(NULL);
+	}
+#endif	// USE_RAW_FILES
+
+	/*** Make the fake arrays ***/
+
+	/* Fake the size of "a_name" and "a_text" */
+#if 0
+	fake_name_size = FAKE_NAME_SIZE;
+	fake_text_size = FAKE_TEXT_SIZE;
+#else	// 0
+	fake_name_size = 20 * 1024L;
+	fake_text_size = 60 * 1024L;
+#endif	// 0
+
+	/* Allocate the "s_info" array */
+	C_MAKE(s_info, s_head->info_num, skill_type);
+
+	/* Hack -- make "fake" arrays */
+	C_MAKE(s_name, fake_name_size, char);
+	C_MAKE(s_text, fake_text_size, char);
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "s_info.txt");
+
+	/* Grab permission */
+//	safe_setuid_grab();
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Drop permission */
+//	safe_setuid_drop();
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 's_info.txt' file.");
+
+	/* Parse the file */
+	err = init_s_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		s_printf("Error %d at line %d of 's_info.txt'.", err, error_line);
+		s_printf("Record %d contains a '%s' error.", error_idx, oops);
+		s_printf("Parsing '%s'.", buf);
+
+		/* Quit */
+		quit("Error in 's_info.txt' file.");
+	}
+
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+	/*** Dump the binary image file ***/
+
+	/* File type is "DATA" */
+	FILE_TYPE(FILE_TYPE_DATA);
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "s_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Kill the old file */
+	(void)fd_kill(buf);
+
+	/* Attempt to create the raw file */
+	fd = fd_make(buf, mode);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Dump to the file */
+	if (fd >= 0)
+	{
+		/* Dump it */
+		fd_write(fd, (char*)(s_head), s_head->head_size);
+
+		/* Dump the "s_info" array */
+		fd_write(fd, (char*)(s_info), s_head->info_size);
+
+		/* Dump the "s_name" array */
+		fd_write(fd, (char*)(s_name), s_head->name_size);
+
+		/* Dump the "s_text" array */
+		fd_write(fd, (char*)(s_text), s_head->text_size);
+
+		/* Close */
+		(void)fd_close(fd);
+	}
+
+
+	/*** Kill the fake arrays ***/
+
+	/* Free the "s_info" array */
+	C_KILL(s_info, s_head->info_num, skill_type);
+
+	/* Hack -- Free the "fake" arrays */
+	C_KILL(s_name, fake_name_size, char);
+	C_KILL(s_text, fake_text_size, char);
+
+	/* Forget the array sizes */
+	fake_name_size = 0;
+	fake_text_size = 0;
+
+#endif	// USE_RAW_FILES
+#endif	/* ALLOW_TEMPLATES */
+
+
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "s_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Process existing "raw" file */
+	if (fd < 0) quit("Cannot open 's_info.raw' file.");
+
+	/* Attempt to parse the "raw" file */
+	err = init_s_info_raw(fd);
+
+	/* Close it */
+	(void)fd_close(fd);
+
+	/* Error */
+	if (err) quit("Cannot parse 's_info.raw' file.");
+#endif	// USE_RAW_FILES
+
+	/* Success */
+	return (0);
+}
+
+
 
 /*
  * Initialize the "e_info" array

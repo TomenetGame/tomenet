@@ -6507,7 +6507,7 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags)
 		return;
 	}
 
-	if (!is_book(o_ptr)) return;
+	if (!is_book(o_ptr) && o_ptr->tval != TV_BOOK) return;
 
 	/* XXX though it's ok with 'm' for everything.. */
 #if 0

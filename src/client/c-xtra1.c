@@ -23,26 +23,55 @@ static void prt_field(cptr info, int row, int col)
  */
 void cnv_stat(int val, char *out_val)
 {
-	if (val > 18)
+	if (!c_cfg.linear_stats)
 	{
-		int bonus = (val - 18);
+		/* Above 18 */
+		if (val > 18)
+		{
+			int bonus = (val - 18);
 
-		if (bonus >= 220)
-		{
-			sprintf(out_val, "18/%3s", "***");
+			if (bonus >= 220)
+			{
+				sprintf(out_val, "18/%3s", "***");
+			}
+			else if (bonus >= 100)
+			{
+				sprintf(out_val, "18/%03d", bonus);
+			}
+			else
+			{
+				sprintf(out_val, " 18/%02d", bonus);
+			}
 		}
-		else if (bonus >= 100)
-		{
-			sprintf(out_val, "18/%03d", bonus);
-		}
+
+		/* From 3 to 18 */
 		else
 		{
-			sprintf(out_val, " 18/%02d", bonus);
+			sprintf(out_val, "    %2d", val);
 		}
 	}
 	else
 	{
-		sprintf(out_val, "    %2d", val);
+		/* Above 18 */
+		if (val > 18)
+		{
+			int bonus = (val - 18);
+
+			if (bonus >= 220)
+			{
+				sprintf(out_val, "    40");
+			}
+			else
+			{
+				sprintf(out_val, "    %2d", 18 + (bonus / 10));
+			}
+		}
+
+		/* From 3 to 18 */
+		else
+		{
+			sprintf(out_val, "    %2d", val);
+		}
 	}
 }
 
@@ -90,7 +119,22 @@ void prt_level(int level, int max, int cur, int adv)
 	Term_putstr(0, ROW_LEVEL, -1, TERM_WHITE, "LEVEL ");
 	Term_putstr(COL_LEVEL + 6, ROW_LEVEL, -1, TERM_L_GREEN, tmp);
 
-        sprintf(tmp, "%9ld", (long)cur);
+
+	if (!c_cfg.exp_need)
+	{
+		sprintf(tmp, "%9ld", (long)cur);
+	}
+	else
+	{
+		if (level >= PY_MAX_LEVEL)
+		{
+			(void)sprintf(tmp, "*********");
+		}
+		else
+		{
+			(void)sprintf(tmp, "%9ld", adv - cur);
+		}
+	}
 
 	if (cur >= max)
 	{

@@ -2954,12 +2954,21 @@ int Send_skill_init(int ind, int type, int i)
 	}
 
 	/* Why sending thrice..? */
+#if 0
 	if (type == PKT_SKILL_INIT_NAME)
 		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].name, s_info[i].flags1, s_info[i].tval);
 	else if (type == PKT_SKILL_INIT_DESC)
 		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].desc, s_info[i].flags1, s_info[i].tval);
 	else if (type == PKT_SKILL_INIT_MKEY)
 		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].action_desc, s_info[i].flags1, s_info[i].tval);
+#else	// 0
+	if (type == PKT_SKILL_INIT_NAME)
+		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_name + s_info[i].name, s_info[i].flags1, s_info[i].tval);
+	else if (type == PKT_SKILL_INIT_DESC)
+		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_text + s_info[i].desc, s_info[i].flags1, s_info[i].tval);
+	else if (type == PKT_SKILL_INIT_MKEY)
+		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_text + s_info[i].action_desc, s_info[i].flags1, s_info[i].tval);
+#endif	// 0
 }
 
 int Send_skill_info(int ind, int i)

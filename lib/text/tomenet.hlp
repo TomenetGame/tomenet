@@ -71,6 +71,7 @@ Latest changes for version 4.0.0dev (digest):
   '6' or 'l' to use 1 skill point to the skill under the cursor. (no cancel!)
 - 'm' : activate a skill (eg. cast a spell). '/' is also available.
 - '~' : browse several data (like monster/object/trap lore etc.)
+- 'f'('B') : bash a door of course, but also kick an item on the floor.
 - 'I' : examine an item (item should be *ID*ed first).
 - "'" : check other players' equipments under certain conditions.
 - Control-S : Spike doors.
@@ -700,7 +701,7 @@ Part VII. -- Command list
            1  2  3          
 
  a  Aim a wand                           A  Activate an artifact
- b  Browse a book                        B  Bash a door
+ b  Browse a book                        B  Bash a door / kick an item
  c  Close a door                         C  Character description
  d  Drop an item                         D  Disarm a trap
  e  Equipment list                       E  Eat some food
@@ -770,7 +771,7 @@ Part VII. -- Command list
  c  Close a door                         C  Character description
  d  Drop an item                         D  Disarm a trap or chest
  e  Equipment list                       E  Eat some food
- f  Bash a door (force)                  F  Fuel your lantern/torch
+ f  Bash a door (Force) / kick an item   F  Fuel your lantern/torch
  g  Stay still (flip pickup)             G  Gain skills
  h  (walk - west)                        H  (run - west)
  i  Inventory list                       I  Observe an item

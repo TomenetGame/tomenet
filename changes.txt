@@ -25,10 +25,27 @@
 # DARKGOD, EVILEYE, WRITE THE CHANGELOGS!!!!!!!  CVS log does NO HELP!!!!
 # - Jir -
 
+
+14/08/2002 (Jir)
+[m]- monsters no longer move 'zigzag' if not within LOS.
+[G]- skills interaction.  s_info.txt backported.  skillpoints reduced (6=>5)
+[G]- Stealing skill saves you from theft.
+[G]- Digging skill allows you to find more treasures(Mining).
+[I]- cause of death is printed in chardump.
+[I]- one less key strokes for stat-order.
+[I]- linear_stats (18/200 => 38) / exp_need (for the asking)
+[O]- 'permission denied' item is shown in L_DARK (display_inven)
+[O]- arts ammo becomes {+,0} when shot (anticheeze).
+[P]- 'bash' command can 'kick' object on the floor.
+[P]- player can bash house doors (though they never opens ;)
+[P]- Ent can no longer eat food.  Elves have Lembas when generated.
+
 12/08/2002 (Jir)
+[D]- less empty fountain/more 'water' fountain
 [I]- Warnings concerning 'development' version.
 [I]- You can activate empty bottle to fill it with fountain content.
 [I]- target_history: this should make 'look' command more useful.
+[M]- monsters can interfere with jumping into Void Jumpgates.
 [O]- {on sale} tag no longer hinders stacking.
 [P]- Bard never lose race-oriented skills.
 
@@ -1634,7 +1651,7 @@ To find the latest change quickly, search ==== :)
 ** [P] stands for Porting from ToME.
 
 =============================================================================
-things to do before 4.0.0
+TODO: things to do before 4.0.0
 
 - backport ToME spells! (..is anyone working on it..?)
   + spell flags transmitted to the client
@@ -1651,9 +1668,6 @@ things to do before 4.0.0
     we'd better make c_name grobal maybe.
   + .tomenetrc and command-line option(-l) should be able to handle
     not only account name but also character choice (read_mangrc, main)
-  + HAVE_CRYPT should be handled in a little better way; uncompilable
-    makefile by default is not so cool (I know 'configure' will work for
-    such matters, but it's tainted by GPL..)
   (RFEs)
   + If you care, would you add temporal account banning (like IP
     banning)?
@@ -1760,6 +1774,12 @@ below this line are the unfixed bugs known:
      . Magic-device                               02.000 [0.900]
 
 [B]- gray dot left after disarming monster-trap
+[B]- 'The The Borshin' when hallucinating (monster_desc)
+[B]- ego/randart lite/ring/amu can easily be distinguished with {?} req.
+[B]- unique/mego partial shimmering seems to be broken (they always shimmer)
+[B]- starting equipments don't get autotag even with auto_inscribe
+
+*Crushing bugs*
 
 [B]- apartment doors can displace? (disabled)
      Program received signal SIGSEGV, Segmentation fault.
@@ -1897,7 +1917,7 @@ memo and questions:
 + randarts lantern/torch may need fueling (and non-lit one doesn't give
   any resistances/abilities).
 
-==== below this line are changes to be done in the future ====
+==== TODO: below this line are changes to be done in the future ====
 [minor ones]
 (4.1)
 - recall-depth array for each dungeons/towers
@@ -1906,6 +1926,7 @@ memo and questions:
 - torch/lantern shouldn't be EASY_KNOWN.
 - Nazgul rings should have corresponding names
 - implement EGO_WOUNDING(ie. monster bleeding)
+  + problem is.. we cannot determine the 'killer'
 - implement GF_* flags for exploding monsters(voir monster_death)
 - flavor variator (eg. 'light' + 'red' => 'light red potion')
 - reimplement /cast.  ('/cast Manathrust' would be useful for macro)
@@ -1916,7 +1937,7 @@ memo and questions:
 
 [major ones]
 (4.2)
-- new terrains and their effects (f_info.txt) (do this *FIRST*!)
+- new terrains and their effects (f_info.txt) (under work)
   - hills, deserts, lavas, waters, underwaters, tundra, elemental planes
   - loophole(like wall, but missiles/breathes pass)
   - passage requirements/(eq)damages/themes/generators/AI
@@ -2006,6 +2027,7 @@ memo and questions:
     (or warrior&sorc combination will be too mighty)
   + vision sharing among the members of a party
   + make wand of haste monster etc. friend-castable
+  + guilds related to skills (eg. Thieves' Guild => Sneakiness tree)
 - monsters:
   + monster speech
   + 'water bolt' should wash players away.
@@ -2017,7 +2039,6 @@ memo and questions:
   + monsters should follow the player when climbling up/down staircase.
   + aquatic uniques
   + vault treasures should be held by guardians
-  + monsters should stagger(and not freeze) when player is invisible
 - traps:
   + missile traps should have AC check(check_hit)?
   * Trap ideas
@@ -2095,6 +2116,8 @@ memo and questions:
   + water should 'flow'
   + score list should show middle-earth time (and not raw turn).
   + spiked/locked door should be *tougher* (cf. Vanilla)
+  + tomenet.acc contains death/winning counter
+  + IRC server connection
   
 [major ones]
 - monsters' interactions

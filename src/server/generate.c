@@ -511,7 +511,7 @@ static void place_fountain(struct worldpos *wpos, int y, int x)
 	if (c_ptr->special) return;
 
 	/* Place the fountain */
-	if (randint(100) < 30)
+	if (randint(100) < 20)	/* 30 */
 	{
 		/* XXX Empty fountain doesn't need 'type', does it? */
 		cave_set_feat(wpos, y, x, FEAT_EMPTY_FOUNTAIN);
@@ -539,7 +539,11 @@ static void place_fountain(struct worldpos *wpos, int y, int x)
 		/* TODO: rarity should be counted in? */
 		cave_set_feat(wpos, y, x, FEAT_FOUNTAIN);
 		if (!(cs_ptr=AddCS(c_ptr, CS_FOUNTAIN))) return;
-		cs_ptr->sc.fountain.type = svals[rand_int(maxsval)];
+
+		if (!maxsval || magik(20))	/* often water */
+			cs_ptr->sc.fountain.type = SV_POTION_WATER;
+		else cs_ptr->sc.fountain.type = svals[rand_int(maxsval)];
+
 		cs_ptr->sc.fountain.rest = damroll(3, 4);
 		cs_ptr->sc.fountain.known = FALSE;
 #if 0
@@ -901,8 +905,14 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
 			/* Location */
 			y = rand_int(dun->l_ptr->hgt);
 			x = rand_int(dun->l_ptr->wid);
+
 			/* Require "naked" floor grid */
 			if (!cave_naked_bold(zcave, y, x)) continue;
+
+			/* Hack -- avoid doors */
+			if (typ != ALLOC_TYP_TRAP &&
+				f_info[zcave[y][x].feat].flags1 & FF1_DOOR)
+				continue;
 
 			/* Check for "room" */
 			room = (zcave[y][x].info & CAVE_ROOM) ? TRUE : FALSE;

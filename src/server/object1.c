@@ -6184,7 +6184,8 @@ void display_inven(int Ind)
 		n = strlen(o_name);
 
 		/* Get a color */
-		attr = tval_to_attr[o_ptr->tval % 128];
+		if (can_use(Ind, o_ptr)) attr = tval_to_attr[o_ptr->tval % 128];
+		else attr = TERM_L_DARK;
 
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;

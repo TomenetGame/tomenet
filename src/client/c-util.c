@@ -3073,7 +3073,8 @@ void c_close_game(cptr reason)
 
 	/* Let the player view the last scene */
 //	put_str("...Press any key to proceed", 0, 0);
-	put_str(format("%s ...Press '0' key to proceed", reason), 0, 0);
+	c_msg_format("%s ...Press '0' key to proceed", reason);
+//	put_str(format("%s ...Press '0' key to proceed", reason), 0, 0);
 
 	while (inkey() != '0');
 

@@ -2844,6 +2844,12 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.target_history,		FALSE,	5,	9, 74,
 	"target_history",		"Add target informations to the message history" },
 
+	{ &c_cfg.linear_stats,			FALSE,	5,	9, 75,
+	"linear_stats",			"Stats are represented in a linear way" },
+
+	{ &c_cfg.exp_need,				FALSE,  5,  9, 76,
+	"exp_need",				"Show the experience needed for next level" },
+
 #if 0
 	{ &c_cfg.speak_unique,                TRUE,   2,      13,
 	"speak_unique",                 "Allow shopkeepers and uniques to speak" },

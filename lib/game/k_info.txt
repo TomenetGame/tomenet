@@ -210,7 +210,7 @@ N:25:& Lembas~
 #N:25:& Piece~ of Elvish Waybread
 G:,:B
 I:80:37:0
-W:5:0:3:100
+W:5:0:3:50
 A:5/1:10/1:20/1
 
 N:26:& Pint~ of Fine Ale
@@ -4166,13 +4166,13 @@ F:FOUNTAIN
 
 # Potion and Fountain of Corruption
 
-N:585:Corruption
-G:!:d
-I:71:10:0
-W:3:0:4:0
-A:3/1:13/1:23/1
-P:0:1d1:0:0:0
-F:FOUNTAIN
+#N:585:Corruption
+#G:!:d
+#I:71:10:0
+#W:3:0:4:0
+#A:3/1:13/1:23/1
+#P:0:1d1:0:0:0
+#F:FOUNTAIN
 
 # Ring of Invisibility
 

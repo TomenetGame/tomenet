@@ -1809,6 +1809,11 @@ player_race race_info[MAX_RACES] =
                 90,
                 {
                         {
+                                SKILL_MARTIAL_ARTS,
+                                '+', 0,
+                                '+', 200,
+                        },
+                        {
                                 SKILL_HEALTH,
                                 '+', 1000,
                                 '%', 120,
@@ -2192,11 +2197,13 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 700,
                         },
+#if 0
                         {
                                 SKILL_HUNTING,
                                 '+', 0,
                                 '+', 400,
                         },
+#endif	// 0
                         {
                                 /* let's keep it low for now - offbalancing */
                                 SKILL_MARTIAL_ARTS,
@@ -4867,6 +4874,7 @@ martial_arts ma_blows[MAX_MA] =
 /*
  * Skills
  */
+#if 0
 skill_type s_info[MAX_SKILLS] =
 {
         {
@@ -6050,6 +6058,7 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_MISC, SKILL_CALMNESS },
         { SKILL_MISC, SKILL_INTERCEPT },
 };
+#endif	// 0
 
 /*
  * Months

@@ -87,7 +87,7 @@ extern byte chest_traps[64];
 extern cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10];
 extern magic_type innate_powers[96];
 extern martial_arts ma_blows[MAX_MA];
-extern skill_type s_info[MAX_SKILLS];
+//extern skill_type s_info[MAX_SKILLS];
 extern int skill_tree_init[MAX_SKILLS][2];
 
 extern int month_day[9];
@@ -166,6 +166,10 @@ extern s32b t_top;
 extern header *re_head; 
 extern monster_ego *re_info;
 extern char *re_name;
+extern header *s_head;
+extern skill_type *s_info;
+extern char *s_name;
+extern char *s_text;
 
 #if 0
 extern bool cfg_report_to_meta;
@@ -1228,4 +1232,4 @@ extern void init_skill(player_type *p_ptr, u32b value, s16b mod, int i);
 extern s16b get_skill(player_type *p_ptr, int skill);
 extern s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale);
 extern void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i);
-extern bool init_s_info();
+//extern bool init_s_info();
