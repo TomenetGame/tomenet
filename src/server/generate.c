@@ -8815,7 +8815,7 @@ static void cave_gen(struct worldpos *wpos)
 	if (!nether_level) {
 		if ((dungeon_store_timer) || (dun_level < 60) || (dun_level == 100)) return;
 		dungeon_store_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
-	} else if ((dun_level != 166) && (dun_level != 176) && (dun_level != 186)) return;
+	} else if (((dun_level - 166) % 5 != 0) || (dun_level == 196)) return;
 	if ((rand_int(1000) < cfg.dungeon_shop_chance) || nether_level)
 	{
 		/* Try hard to place one */
