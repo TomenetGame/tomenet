@@ -1984,14 +1984,14 @@ that keeps many algorithms happy.
 #define TR2_SUST_DEX		0x00000008L
 #define TR2_SUST_CON		0x00000010L
 #define TR2_SUST_CHR		0x00000020L
-#define TR2_XXX1			0x00000040L	/* Later */
-#define TR2_XXX2			0x00000080L	/* Later */
+#define TR2_REDUC_FIRE                  0x00000040L     /* Later */
+#define TR2_REDUC_COLD                  0x00000080L     /* Later */
 #define TR2_IM_ACID			0x00000100L
 #define TR2_IM_ELEC			0x00000200L
 #define TR2_IM_FIRE			0x00000400L
 #define TR2_IM_COLD			0x00000800L
-#define TR2_XXX3			0x00001000L	/* Later */
-#define TR2_XXX4			0x00002000L	/* Later */
+#define TR2_REDUC_ELEC                  0x00001000L     /* Later */
+#define TR2_REDUC_ACID                  0x00002000L     /* Later */
 #define TR2_FREE_ACT		0x00004000L	/* Free Action */
 #define TR2_HOLD_LIFE	 	0x00008000L	/* Hold Life */
 #define TR2_RES_ACID		0x00010000L

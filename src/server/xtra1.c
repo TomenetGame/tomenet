@@ -1712,6 +1712,10 @@ static void calc_bonuses(int Ind)
 	p_ptr->immune_elec = FALSE;
 	p_ptr->immune_fire = FALSE;
 	p_ptr->immune_cold = FALSE;
+        p_ptr->reduc_fire = 0;
+        p_ptr->reduc_cold = 0;
+        p_ptr->reduc_elec = 0;
+        p_ptr->reduc_acid = 0;
 	p_ptr->anti_magic = FALSE;
 	p_ptr->auto_id = FALSE;
 
@@ -2036,6 +2040,11 @@ static void calc_bonuses(int Ind)
 		if (f2 & TR2_IM_ACID) p_ptr->immune_acid = TRUE;
 		if (f2 & TR2_IM_COLD) p_ptr->immune_cold = TRUE;
 		if (f2 & TR2_IM_ELEC) p_ptr->immune_elec = TRUE;
+
+                if (f2 & TR2_REDUC_FIRE) p_ptr->reduc_fire += 5 * o_ptr->to_a;
+                if (f2 & TR2_REDUC_COLD) p_ptr->reduc_cold += 5 * o_ptr->to_a;
+                if (f2 & TR2_REDUC_ELEC) p_ptr->reduc_elec += 5 * o_ptr->to_a;
+                if (f2 & TR2_REDUC_ACID) p_ptr->reduc_acid += 5 * o_ptr->to_a;
 
 		/* Resistance flags */
 		if (f2 & TR2_RES_ACID) p_ptr->resist_acid = TRUE;

@@ -157,3 +157,7 @@ Change list for PernMangband
 - Houses were not killed on player suicide. Fixed
 - Made start on a delete_house function (For DM)
 - Houses may now be created within larger houses.
+
+25/08/2001
+- Rings of Flames, Acid and Ice now reduce the corresponding element damage
+  by (AC * 5)%

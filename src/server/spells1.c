@@ -1083,7 +1083,11 @@ void acid_dam(int Ind, int dam, cptr kb_str)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+        int inv;
+
+        dam -= p_ptr->reduc_acid * dam / 100;
+
+        inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* Total Immunity */
 	if (p_ptr->immune_acid || (dam <= 0)) return;
@@ -1110,7 +1114,11 @@ void elec_dam(int Ind, int dam, cptr kb_str)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+        int inv;
+
+        dam -= p_ptr->reduc_elec * dam / 100;
+
+        inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* Total immunity */
 	if (p_ptr->immune_elec || (dam <= 0)) return;
@@ -1136,7 +1144,11 @@ void fire_dam(int Ind, int dam, cptr kb_str)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+        int inv;
+
+        dam -= p_ptr->reduc_fire * dam / 100;
+
+        inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* Totally immune */
 	if (p_ptr->immune_fire || (dam <= 0)) return;
@@ -1160,7 +1172,11 @@ void cold_dam(int Ind, int dam, cptr kb_str)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+        int inv;
+
+        dam -= p_ptr->reduc_cold * dam / 100;
+
+        inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* Total immunity */
 	if (p_ptr->immune_cold || (dam <= 0)) return;

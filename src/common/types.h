@@ -1396,6 +1396,11 @@ struct player_type
 	bool immune_fire;	/* Immunity to fire */
 	bool immune_cold;	/* Immunity to cold */
 
+        s16b reduc_fire;        /* Fire damage reduction */
+        s16b reduc_elec;        /* elec damage reduction */
+        s16b reduc_acid;        /* acid damage reduction */
+        s16b reduc_cold;        /* cold damage reduction */
+
 	bool resist_acid;	/* Resist acid */
 	bool resist_elec;	/* Resist lightning */
 	bool resist_fire;	/* Resist fire */
@@ -1437,7 +1442,7 @@ struct player_type
 	bool bless_blade;	/* Blessed blade */
 	bool xtra_might;	/* Extra might bow */
 	bool impact;		/* Earthquake blows */
-  bool auto_id; /* Pickup = Id */
+        bool auto_id; /* Pickup = Id */
 	
 	s16b invis;		/* Invisibility */
 
