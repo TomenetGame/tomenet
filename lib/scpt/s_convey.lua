@@ -20,6 +20,28 @@ BLINK = add_spell
         },
 }
 
+TESTDIR = add_spell
+{
+	["name"] = 	"Fireball of test",
+        ["school"] = 	{SCHOOL_CONVEYANCE},
+        ["level"] = 	23,
+        ["mana"] = 	15,
+        ["mana_max"] = 	40,
+        ["fail"] = 	70,
+        ["direction"] = TRUE,
+        ["spell"] = 	function(args)
+			fire_ball(Ind, GF_MANA, args.dir, 2000, 3)
+	end,
+	["info"] = 	function()
+        		return ""
+	end,
+        ["desc"] =	{
+                        "Teleports a line of monsters away",
+                        "At level 10 it turns into a ball",
+                        "At level 20 it teleports all monsters in sight"
+        }
+}
+
 --[[
 BLINK = add_spell
 {
