@@ -1523,7 +1523,7 @@ F:RES_FEAR
 #N:138:of Illumination
 #X:A:0:5
 #T:39:0:99
-#W:0:3:10:1000
+#W:0:3:10:4000
 #Z:illuminate
 #R:10
 #F:LITE1
@@ -1536,7 +1536,7 @@ F:RES_FEAR
 N:139:of Brightness
 X:A:0:5
 T:39:0:99
-W:0:3:10:1000
+W:0:3:10:2000
 R:100
 F:LITE1 | LITE2
 #R:30
@@ -1548,7 +1548,7 @@ N:140:of *Brightness*
 X:A:0:9
 #T:39:0:99
 T:39:0:1
-W:0:1:40:5000
+W:0:1:40:6000
 R:100
 F:LITE1 | LITE2 | RES_DARK
 R:50
@@ -1561,7 +1561,7 @@ F:LITE3
 #X:A:0:6
 ##T:39:0:99
 #T:39:0:1
-#W:0:1:20:3000
+#W:0:1:20:40000
 #C:0:0:0:2
 #R:100
 #F:INVIS
@@ -1573,7 +1573,7 @@ F:LITE3
 N:142:of Infravision
 X:A:0:3
 T:39:0:99
-W:0:1:10:700
+W:0:1:10:1000
 C:0:0:0:3
 R:100
 F:INFRA
@@ -1581,7 +1581,7 @@ F:INFRA
 N:143:of the Eternal Eye
 X:A:0:7
 T:39:0:99
-W:0:3:40:4000
+W:0:3:40:6000
 C:0:0:0:0
 R:100
 F:RES_BLIND | SEE_INVIS
@@ -1589,7 +1589,7 @@ F:RES_BLIND | SEE_INVIS
 #N:144:of the Ethereal Eye
 #X:A:0:7
 #T:39:0:99
-#W:0:3:40:4000
+#W:0:3:40:8000
 #C:0:0:0:0
 #Z:magic map
 
