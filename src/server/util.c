@@ -2517,6 +2517,15 @@ static void do_slash_cmd(int Ind, char *message)
 		else if(!admin && prefix(message, "/quest")){
 			int i;
 			s16b r;
+	
+			if(p_ptr->quest_id){
+				for(i=0; i<20; i++){
+					if(quests[i].id==p_ptr->quest_id){
+						msg_format(Ind, "\377oYour quest to kill \377y%d \377g%s \377ois not complete.", p_ptr->quest_num, r_name+r_info[quests[i].type].name);
+						return;
+					}
+				}
+			}
 			get_mon_num_hook=dungeon_aux;
 			get_mon_num_prep();
 			i=2+randint(7);
