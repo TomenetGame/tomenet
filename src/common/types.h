@@ -649,7 +649,7 @@ struct sfunc{		/* structure containing calls for specials */
 	void (*load)(c_special *cs_ptr);		/* load function */
 	void (*save)(c_special *cs_ptr);		/* save function */
 	void (*see)(void *ptr, int Ind);	/* sets player view */
-	int (*activate)(void *ptr, int Ind);	/* walk on/bump */
+	int (*activate)(void *ptr, int y, int x, int Ind);	/* walk on/bump */
 	//void (*kill)(void *ptr);		/* removal */
 };
 #endif
