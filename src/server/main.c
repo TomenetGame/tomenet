@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 
 #endif
 
-	MANGBAND_CFG = string_make("mangband.cfg");
+	MANGBAND_CFG = string_make("tomenet.cfg");
 
 	/* Process the command line arguments */
 	for (--argc, ++argv; argc > 0; --argc, ++argv)
@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
 	/* Display the 'news' file */
 	show_news();
 
-	/* Load the mangband.cfg options */
+	/* Load the tomenet.cfg options */
 	load_server_cfg();
 
 	/* Initialize the arrays */

@@ -84,7 +84,7 @@ void init_file_paths(char *path)
 
 	/*** Prepare the "path" ***/
 
-	/* Load in the mangband.cfg file.  This is a file that holds many
+	/* Load in the tomenet.cfg file.  This is a file that holds many
 	 * options thave have historically been #defined in config.h.
 	 */
 
@@ -1816,11 +1816,11 @@ void set_server_option(char * option, char * value)
 	{
 		cfg.public_rfe = str_to_boolean(value);
 	}
-	else printf("Error : unrecognized mangband.cfg option %s\n", option);
+	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }
 
 
-/* Parse the loaded mangband.cfg file, and if a valid expression was found
+/* Parse the loaded tomenet.cfg file, and if a valid expression was found
  * try to set it using set_server_option.
  *
  * Note that this function uses strsep. I don't think this is an ANSI C function.
@@ -1891,7 +1891,7 @@ void load_server_cfg_aux(FILE * cfg)
 	}
 }
 
-/* Load in the mangband.cfg file.  This is a file that holds many
+/* Load in the tomenet.cfg file.  This is a file that holds many
  * options thave have historically been #defined in config.h.
  */
 
@@ -1900,13 +1900,13 @@ void load_server_cfg(void)
 	FILE * cfg;
 	
 	/* Attempt to open the file */
-//	cfg = fopen("mangband.cfg", "r");
+//	cfg = fopen("tomenet.cfg", "r");
 	cfg = fopen(MANGBAND_CFG, "r");
 
 	/* Failure */
 	if (cfg == (FILE*)NULL)
 	{
-//		printf("Error : cannot open file mangband.cfg\n");
+//		printf("Error : cannot open file tomenet.cfg\n");
 		printf("Error : cannot open file %s\n", MANGBAND_CFG);
 		return;
 	}

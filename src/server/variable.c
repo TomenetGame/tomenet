@@ -103,7 +103,7 @@ s32b m_top = 0;                 /* Monster top size */
 
 
 /*
- * Server options, set in mangband.cfg
+ * Server options, set in tomenet.cfg
  */
 
 
@@ -437,7 +437,7 @@ cptr ANGBAND_DIR_USER;
 
 /*
  * Mangband configuration file
- * Usually it's 'mangband.cfg'
+ * Usually it's 'tomenet.cfg'
  */
 cptr MANGBAND_CFG;
 

@@ -61,7 +61,7 @@
  * probably introducing 'mana points' to the monsters.
  *
  * TODO: implement monsters' spell-point
- * TODO: move this kinda 'define's to config.h(or mangband.cfg), so that
+ * TODO: move this kinda 'define's to config.h(or tomenet.cfg), so that
  *       one doesn't have to commit local changes.
  */
 

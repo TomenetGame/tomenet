@@ -2668,7 +2668,7 @@ static void do_slash_cmd(int Ind, cptr message)
 					MANGBAND_CFG = string_make(token[1]);
 				}
 
-				//				msg_print(Ind, "Reloading server option(mangband.cfg).");
+				//				msg_print(Ind, "Reloading server option(tomenet.cfg).");
 				msg_format(Ind, "Reloading server option(%s).", MANGBAND_CFG);
 
 				/* Reload the server preferences */

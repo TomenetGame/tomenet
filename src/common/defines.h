@@ -390,7 +390,7 @@
 #define STORE_MAX_KEEP	36		/* Max slots to "always" keep full */
 #define STORE_SHUFFLE	20		/* 1/Chance (per day) of an owner changing */
 // #define STORE_TURNS	200		/* Number of turns between turnovers */
-// moved to mangband.cfg
+// moved to tomenet.cfg
 
 #if 0
 #define STORE_SHUFFLE	25		/* 1/Chance (per day) of an owner changing */
