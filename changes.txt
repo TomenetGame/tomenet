@@ -22,9 +22,13 @@
 # special tag to specify the current version
 [V]  TomeNET 4.0.0 aka "The Gathering"
 
+12/02/2003
+[O]- Admins can destroy/unequip anything
+
 11/02/2003
 [O]- Changed silly 'Amulet of ESP' to something more cooler and less ooc.
      (Amulets of Telepathic Awareness featuring insta-ego code and random ESP)
+     CAN/MUST_2H displayed correctly on examining a weapon.
 
 10/02/2003
 [G]- Martial Arts give more abilities than just FA.
