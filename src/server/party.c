@@ -39,7 +39,14 @@ struct account *GetAccount(cptr name, char *pass){
 	MAKE(c_acc, struct account);
 	if(c_acc==(struct account*)NULL) return(NULL);
 	fp=fopen("tomenet.acc", "r+");
-	if(fp==(FILE*)NULL) return(NULL);	/* failed */
+	if(fp==(FILE*)NULL){
+		if(errno==ENOENT){	/* ONLY if non-existent */
+			fp=fopen("tomenet.acc", "w+");
+			if(fp==(FILE*)NULL) return(NULL);
+			s_printf("Generated new account file\n");
+		}
+		else return(NULL);	/* failed */
+	}
 	while(!feof(fp)){
 		fread(c_acc, sizeof(struct account), 1, fp);
 		if(c_acc->flags & ACC_DELD){

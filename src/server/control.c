@@ -41,8 +41,10 @@ void SGWHit(int read_fd, int arg){
 			DgramWrite(newsock, sdb, size);
 			free(sdb);
 		}
-		shutdown(newsock, 2);
+		close(newsock);	/* oops */
 	}
+	else
+		s_printf("Web server request failed: %d\n", errno);
 }
 #endif
 
