@@ -226,3 +226,8 @@ Change list for PernMangband
 23/10/2001
 - Confusion brand PvP bug fixed ;)
 - Wraith in own houses added. Tested, no bugs seen.
+
+24/10/2001
+- Fixed MAJOR house security bug.
+- Fixed bug in savefile delete - party, houses were not reset.
+

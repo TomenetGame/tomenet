@@ -4,6 +4,8 @@
 
 #include "angband.h"
 
+static void del_party(int id);
+
 /*
  * Lookup a party number by name.
  */
@@ -174,6 +176,38 @@ int party_add(int adder, cptr name)
 }
 
 /*
+ * Delete a party. Was in party remove.
+ *
+ * Design improvement
+ */
+static void del_party(int id){
+	int i;
+	/* Remove the party altogether */
+	kill_houses(id, OT_PARTY);
+
+	/* Set the number of people in this party to zero */
+	parties[id].num = 0;
+
+	/* Remove everyone else */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		/* Check if they are in here */
+		if (player_in_party(id, i))
+		{
+			Players[i]->party = 0;
+			msg_print(i, "Your party has been disbanded.");
+			Send_party(i);
+		}
+	}
+
+	/* Set the creation time to "disbanded time" */
+	parties[id].created = turn;
+
+	/* Empty the name */
+	strcpy(parties[id].name, "");
+}
+
+/*
  * Remove a person from a party.
  *
  * Removing the party owner destroys the party.
@@ -229,29 +263,7 @@ int party_remove(int remover, cptr name)
 	/* See if this is the owner we're deleting */
 	if (remover == Ind)
 	{
-		/* Remove the party altogether */
-		kill_houses(party_id, OT_PARTY);
-
-		/* Set the number of people in this party to zero */
-		parties[party_id].num = 0;
-
-		/* Remove everyone else */
-		for (i = 1; i <= NumPlayers; i++)
-		{
-			/* Check if they are in here */
-			if (player_in_party(party_id, i))
-			{
-				Players[i]->party = 0;
-				msg_print(i, "Your party has been disbanded.");
-				Send_party(i);
-			}
-		}
-
-		/* Set the creation time to "disbanded time" */
-		parties[party_id].created = turn;
-		
-		/* Empty the name */
-		strcpy(parties[party_id].name, "");
+		del_party(party_id);
 	}
 
 	/* Keep the party, just lose a member */
@@ -915,6 +927,14 @@ void add_player_name(cptr name, int id, time_t laston)
 	now=time(&now);
 	if(laston && now>laston){		/* it should be! */
 		if(now-laston>7776000){		/* 90 days in seconds */
+			int i;
+			for(i=0; i<MAX_PARTIES; i++){
+				if(!streq(parties[i].owner, name)){
+					del_party(i);
+					break;
+				}
+			}
+			kill_houses(id, OT_PLAYER);
 			sf_delete(name);	/* a sad day ;( */
 			return;
 		}
