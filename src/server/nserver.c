@@ -1548,13 +1548,13 @@ static bool validstrings(char *nick, char *real, char *host){
 		}
 	}
 	for(i=0; real[i]; i++){
-		if(real[i]<'A' || real[i]>'z'){
+		if(real[i]<33 || real[i]>'z'){
 			real[i]='\0';
 			rval=0;
 		}
 	}
 	for(i=0; host[i]; i++){
-		if(host[i]<'A' || host[i]>'z'){
+		if(host[i]<33 || host[i]>'z'){
 			host[i]='\0';
 			rval=0;
 		}
