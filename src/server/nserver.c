@@ -186,11 +186,13 @@ static void Init_receive(void)
 	playing_receive[PKT_STAND]		= Receive_stand;
 	playing_receive[PKT_DESTROY]		= Receive_destroy;
 	playing_receive[PKT_LOOK]		= Receive_look;
+#if 0
 	playing_receive[PKT_SPELL]		= Receive_spell;
 	playing_receive[PKT_FIGHT]		= Receive_fight;
+#endif	// 0
 
 	playing_receive[PKT_OPEN]		= Receive_open;
-	playing_receive[PKT_PRAY]		= Receive_pray;
+//	playing_receive[PKT_PRAY]		= Receive_pray;
 	playing_receive[PKT_QUAFF]		= Receive_quaff;
 	playing_receive[PKT_READ]		= Receive_read;
 	playing_receive[PKT_SEARCH]		= Receive_search;
@@ -217,7 +219,7 @@ static void Init_receive(void)
 	playing_receive[PKT_SEARCH_MODE]	= Receive_search_mode;
 
 	playing_receive[PKT_CLOSE]		= Receive_close;
-	playing_receive[PKT_GAIN]		= Receive_gain;
+//	playing_receive[PKT_GAIN]		= Receive_gain;
 	playing_receive[PKT_DIRECTION]		= Receive_direction;
 	playing_receive[PKT_GO_UP]		= Receive_go_up;
 	playing_receive[PKT_GO_DOWN]		= Receive_go_down;
@@ -250,6 +252,8 @@ static void Init_receive(void)
 	playing_receive[PKT_GUILD]		= Receive_guild;
 
         playing_receive[PKT_SKILL_MOD]		= Receive_skill_mod;
+        playing_receive[PKT_ACTIVATE_SKILL]		= Receive_activate_skill;
+	playing_receive[PKT_RAW_KEY]		= Receive_raw_key;
 }
 
 static int Init_setup(void)
@@ -2783,13 +2787,15 @@ int Send_skill_init(int ind, int type, int i)
 		plog(format("Connection not ready for skill init (%d.%d.%d)",
 			ind, connp->state, connp->id));
 		return 0;
-        }
-        if (type == PKT_SKILL_INIT_NAME)
-                return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].name);
-        else if (type == PKT_SKILL_INIT_DESC)
-                return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].desc);
-        else if (type == PKT_SKILL_INIT_MKEY)
-                return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].action_desc);
+	}
+
+	/* Why sending thrice..? */
+	if (type == PKT_SKILL_INIT_NAME)
+		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].name, s_info[i].flags1, s_info[i].tval);
+	else if (type == PKT_SKILL_INIT_DESC)
+		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].desc, s_info[i].flags1, s_info[i].tval);
+	else if (type == PKT_SKILL_INIT_MKEY)
+		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].action_desc, s_info[i].flags1, s_info[i].tval);
 }
 
 int Send_skill_info(int ind, int i)
@@ -4691,6 +4697,7 @@ static int Receive_look(int ind)
 	return 1;
 }
 
+#if 0
 static int Receive_spell(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -4782,6 +4789,157 @@ static int Receive_spell(int ind)
 
 	return 1;
 }
+#endif	// 0
+
+/*
+ * Possibly, most of Receive_* functions can be bandled into one function
+ * like this; that'll make the client *MUCH* more generic.		- Jir -
+ */
+static int Receive_activate_skill(int ind)
+{
+	connection_t *connp = &Conn[ind];
+	player_type *p_ptr;
+
+	char ch, mkey, dir;
+
+	int n, player, old;
+
+	s16b book, spell;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+		old = player;
+
+		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
+		  {
+		    int Ind2 = find_player(p_ptr->esp_link);
+		    
+		    if (!Ind2)
+	      	      end_mind(ind, TRUE);
+		    else
+		      {
+			player = Ind2;
+			p_ptr = Players[Ind2];
+		      }
+		  }
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%c%hd%hd%c", &ch, &mkey, &book, &spell, &dir)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+
+#if 0
+	/* Not by class, but by item */
+	if (connp->id != -1 && Players[old]->energy >= level_speed(&Players[old]->wpos) && (Players[old]->inventory[book].tval == TV_PSI_BOOK))
+	{
+		do_cmd_psi(player, book, spell);
+	}
+	else if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
+	{
+		int tval = p_ptr->inventory[book].tval;
+		p_ptr->current_char = (old == player)?TRUE:FALSE;
+		switch(tval){
+			case TV_SORCERY_BOOK:
+				if(get_skill(p_ptr, SKILL_SORCERY))
+					do_cmd_sorc(player, book, spell);
+				break;
+			case TV_PSI_BOOK:
+#if 0
+				if(get_skill(p_ptr, SKILL_PSI))
+					do_cmd_psi(player, book, spell);
+#endif
+				break;
+			case TV_SHADOW_BOOK:
+				if(get_skill(p_ptr, SKILL_SHADOW))
+					do_cmd_shad(player, book, spell);
+				break;
+			case TV_HUNT_BOOK:
+				if(get_skill(p_ptr, SKILL_HUNTING))
+					do_cmd_hunt(player, book, spell);
+				break;
+			case TV_MAGIC_BOOK:
+				if(get_skill(p_ptr, SKILL_MAGERY))
+					do_cmd_cast(player, book, spell);
+				break;
+			case TV_FIGHT_BOOK:
+				if(get_skill(p_ptr, SKILL_TECHNIC))
+					do_cmd_fight(player, book, spell);
+				break;
+			case TV_PRAYER_BOOK:
+				if(get_skill(p_ptr, SKILL_PRAY))
+					do_cmd_pray(player, book, spell);
+				break;
+		}
+		return 2;
+	}
+#else	// 0
+	/* Not by class nor by item; by skill */
+	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
+	{
+		p_ptr->current_char = (old == player)?TRUE:FALSE;
+		switch (mkey)
+		{
+			case MKEY_SORCERY:
+				if(get_skill(p_ptr, SKILL_SORCERY))
+					do_cmd_sorc(player, book, spell);
+				break;
+
+			case MKEY_MAGERY:
+				if(get_skill(p_ptr, SKILL_MAGERY))
+					do_cmd_cast(player, book, spell);
+				break;
+
+			case MKEY_MIMICRY:
+				if(get_skill(p_ptr, SKILL_MIMIC))
+					do_cmd_mimic(player, spell);
+				break;
+
+			case MKEY_SHADOW:
+				if(get_skill(p_ptr, SKILL_SHADOW))
+					do_cmd_shad(player, book, spell);
+				break;
+
+			case MKEY_FIGHTING:
+				if(get_skill(p_ptr, SKILL_TECHNIC))
+					do_cmd_fight(player, book, spell);
+				break;
+
+			case MKEY_ARCHERING:
+				if(get_skill(p_ptr, SKILL_HUNTING))
+					do_cmd_hunt(player, book, spell);
+				break;
+
+			case MKEY_PRAY:
+				if(get_skill(p_ptr, SKILL_PRAY))
+					do_cmd_pray(player, book, spell);
+				break;
+
+#if 0
+			case MKEY_PSI:
+				if(get_skill(p_ptr, SKILL_PSI))
+					do_cmd_psi(player, book, spell);
+				break;
+#endif
+		}
+		return 2;
+	}
+#endif	// 0
+	else if (player)
+	{
+		p_ptr->current_spell = -1;
+		p_ptr->current_mind = -1;
+		Packet_printf(&connp->q, "%c%hd%hd", ch, book, spell);
+		return 0;
+	}
+
+
+	return 1;
+}
 
 static int Receive_open(int ind)
 {
@@ -4832,6 +4990,7 @@ static int Receive_open(int ind)
 	return 1;
 }
 
+#if 0
 static int Receive_pray(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -4909,6 +5068,7 @@ static int Receive_fight(int ind)
 
 	return 1;
 }
+#endif	// 0
 
 static int Receive_mimic(int ind)
 {
@@ -6074,6 +6234,7 @@ static int Receive_close(int ind)
 	return 1;
 }
 
+#if 0
 static int Receive_gain(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -6111,6 +6272,7 @@ static int Receive_gain(int ind)
 
 	return 1;
 }
+#endif	// 0
 
 static int Receive_skill_mod(int ind)
 {
@@ -7467,3 +7629,63 @@ static int Receive_spike(int ind)
 	return 1;
 }
 
+/*
+ * Lazy way to add a new command	- Jir -
+ */
+static int Receive_raw_key(int ind)
+{
+	connection_t *connp = &Conn[ind];
+	player_type *p_ptr;
+
+	char ch, key;
+
+	int n, player;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
+		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
+		  {
+		    int Ind2 = find_player(p_ptr->esp_link);
+		    
+		    if (!Ind2)
+	      	      end_mind(ind, TRUE);
+		    else
+		      {
+			player = Ind2;
+			p_ptr = Players[Ind2];
+		      }
+		  }
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &key)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
+	{
+		switch (key)
+		{
+			/* something weird here */
+			case '_':
+				break;
+
+			default:
+				msg_format(player, "'%c' key is currently not used.  Hit '?' for help.", key);
+		}
+
+		return 2;
+	}
+	else if (player)
+	{
+		Packet_printf(&connp->q, "%c%c", ch, key);
+		return 0;
+	}
+
+	return 1;
+}

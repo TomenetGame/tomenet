@@ -736,6 +736,9 @@ void do_cmd_open(int Ind, int dir)
 			/* Attempt to unlock it */
 			if (o_ptr->pval > 0)
 			{
+				trap_kind *t_ptr;
+				t_ptr = &t_info[o_ptr->pval];
+
 				/* Assume locked, and thus not open */
 				flag = FALSE;
 
@@ -747,7 +750,8 @@ void do_cmd_open(int Ind, int dir)
 				if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 				/* Extract the difficulty */
-				j = i - o_ptr->pval;
+				j = i - t_ptr->difficulty;
+				// j = i - o_ptr->pval;
 
 				/* Always have a small chance of success */
 				if (j < 2) j = 2;
@@ -1587,7 +1591,7 @@ void do_cmd_disarm(int Ind, int dir)
 			/* XXX XXX XXX Variable power? */
 
 			/* Extract trap "power" */
-			power = t_info[t_idx].difficulty;
+			power = t_info[t_idx].difficulty * 3;
 //			power = 5;
 
 			/* Extract the difficulty */

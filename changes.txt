@@ -1172,8 +1172,22 @@ To find the latest change quickly, search ==== :)
 27/06/2002 (Jir)
 - NO_TELE is radius-based(12).
 - anti_tele and resist_continuum is different now.
+- monster stunning effect is more realistic.
+- HAS_LITE implemented as 'radius 0' light.
+- RBE_FAMINE
+- Scroll of Nothing implemented ;)
 [B] player couldn't teleport monsters away!
+[B] icky_wield was broken
+[B][C] GCU client flickered like hell. (fix_player)
+[B][C] classname.prf was still broken
+[B][C] mkey couldn't handle duplicated {@m1} well
 
+28/06/2002 (Jir)
+- mkeys can be added w/o client update (unless special handling is needed).
+- 'n', 'N', 'p' command obsoleted.
+- '/' can handle mkey-items well now.
+- PKT_RAW_KEY transmits non-defined key to the server directly.
+- '!='(force pickup) inscription only works for the owner.
 
 
 ** [B] stands for Bugfix.
@@ -1204,7 +1218,8 @@ concisely: what's hot now?
 - skill system
   + SKILL_CLIMB
   + spell_info should be redone
-  + bare-handed combat?
+  * a mage would just raise 'Sorcery' to 10 for Wraithform..
+    is it within the design?
 - LUA hook
 - csfunc
 - alignment (let's wait for EE :)
@@ -1219,17 +1234,17 @@ below this line are the unfixed bugs known:
 [B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
     sometimes, monsters attack the player from nowhere.. prolly same root?
 	* this only happens when rebooting the server and caves lost.
-[B] some monsters become 'immune' to spell attacks.
-[B][C] chat-history contains lines with 'mindcrafter'. 
+[B] some monsters become 'immune' to spell attacks. (project_m)
+[B][C] chat-history contains lines with 'mindcrafter'.
+    (do_cmd_messages_chatonly)
 [B] p_ptr->furry, lol
 [B] 'Ring of Polymorphing of'.
 [B] cannot 'run' near the outer permawall (run_test)
 [B] mon_vis, obj_vis etc. are messed while the player is off.
 [B] option '-r' puts the server into infinite-loop (genwild)
-[B] GCU client flickers like hell. (fix_player)
 [B] GCU client cannot handle the cursor very well.
 [B] some ivents are not told to the players even when within the sight.
-[B] white '@' sometimes appear on the screen.
+[B] white '@' sometimes appear on the screen(eg. when targetting).
 [B] Yeek seems to receive the best store prices.
 [B] Martial-artist has strange +To RHit/+To RDam display.
 [B] +To RDam is wrong when using =dam

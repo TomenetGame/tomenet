@@ -150,7 +150,7 @@ void initialize_all_pref_files(void)
 	if (class < Setup.max_class)
 	{
 		//        sprintf(buf, "%s.prf", class_title[class]);
-		sprintf(buf, "%s.prf", race_info[class].title);
+		sprintf(buf, "%s.prf", class_info[class].title);
 		buf[0] = tolower(buf[0]);
 
 		/* Process that file */

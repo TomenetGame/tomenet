@@ -1872,7 +1872,7 @@ static void do_show_monster_killed_letter(int Ind, char *letter)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		i, j, num;
+	int		i, j, num, total = 0;
 	monster_race	*r_ptr;
 	bool	shown = FALSE;
 	bool	mimic = (get_skill(p_ptr, SKILL_MIMIC));
@@ -1923,10 +1923,12 @@ static void do_show_monster_killed_letter(int Ind, char *letter)
 		{
 			fprintf(fff, "%s : %d\n", r_name + r_ptr->name, num);
 		}
+		total += num;
 		shown = TRUE;
 	}
 
 	if (!shown) fprintf(fff, "Nothing so far.\n");
+	else fprintf(fff, "\nTotal : %d\n", total);
 
 	/* Close the file */
 	my_fclose(fff);
@@ -2419,11 +2421,19 @@ static void do_slash_cmd(int Ind, char *message)
 		else if ((prefix(message, "/bed")) ||
 				prefix(message, "/naked"))
 		{
+			byte start = INVEN_WIELD, end = INVEN_TOTAL;
 			object_type		*o_ptr;
+
+			if (!tk)
+			{
+				start = INVEN_BODY;
+				end = INVEN_FEET + 1;
+			}
 
 			disturb(Ind, 1, 0);
 
-			for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
+//			for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
+			for (i = start; i < end; i++)
 			{
 				o_ptr = &(p_ptr->inventory[i]);
 				if (!o_ptr->tval) continue;
@@ -2502,6 +2512,11 @@ static void do_slash_cmd(int Ind, char *message)
 			{
 				cave_type **zcave;
 				cave_type *c_ptr;
+
+				msg_format(Ind, "your sanity: %d/%d", p_ptr->csane, p_ptr->msane);
+				msg_format(Ind, "server status: m_max(%d) o_max(%d)",
+						m_max, o_max);
+
 				if(!(zcave=getcave(&wp)))
 				{
 					msg_print(Ind, "\377rOops, the cave's not allocated!!");
@@ -2509,12 +2524,8 @@ static void do_slash_cmd(int Ind, char *message)
 				}
 				c_ptr=&zcave[p_ptr->py][p_ptr->px];
 
-				msg_format(Ind, "your sanity: %d/%d", p_ptr->csane, p_ptr->msane);
 				msg_format(Ind, "feat:%d o_idx:%d m_idx:%d", c_ptr->feat,
 						c_ptr->o_idx, c_ptr->m_idx);
-
-				msg_format(Ind, "server status: m_max(%d) o_max(%d)",
-						m_max, o_max);
 			}
 
 			return;
@@ -2549,7 +2560,6 @@ static void do_slash_cmd(int Ind, char *message)
 
 			/* Redraw */
 			p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_HISTORY | PR_VARIOUS;
-
 			p_ptr->redraw |= (PR_HP | PR_GOLD | PR_BASIC | PR_PLUSSES);
 
 			/* Notice */
@@ -2893,12 +2903,22 @@ static void do_slash_cmd(int Ind, char *message)
 				o_ptr = &(p_ptr->inventory[i]);
 				if (!o_ptr->tval) break;
 
-				if (!is_book(o_ptr)) continue;
-
 				/* skip inscribed items */
 				if (!tk && o_ptr->note &&
 						strcmp(quark_str(o_ptr->note), "on sale"))
 					continue;
+
+				if (p_ptr->obj_aware[o_ptr->k_idx] &&
+					((o_ptr->tval == TV_SCROLL &&
+						o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
+					(o_ptr->tval == TV_ROD &&
+						o_ptr->sval == SV_ROD_RECALL)))
+				{
+					o_ptr->note = quark_add("@R");
+					continue;
+				}
+
+				if (!is_book(o_ptr)) continue;
 
 				/* XXX though it's ok with 'm' for everything.. */
 #if 0

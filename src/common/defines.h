@@ -3527,7 +3527,8 @@ that keeps many algorithms happy.
 #define RBE_PARASITE    33
 
 #define RBE_DISARM		34
-//#define RBE_SEDUCE		35
+#define RBE_FAMINE		35
+//#define RBE_SEDUCE	
 
 /*** Monster flag values (hard-coded) ***/
 
@@ -5008,10 +5009,18 @@ extern int PlayerUID;
 #define SKILL_CLIMB
 #endif	// 0
 
-#define MAX_SKILLS              70
+//#define MAX_SKILLS              70
+#define MAX_SKILLS              128
 
 /* SKill flags */
 #define SKF1_HIDDEN             0x00000001      /* Starts hidden */
+
+#define SKF1_MKEY_HARDCODE		0x08000000	/* mkey uses hard-coded routine */
+#define SKF1_MKEY_SPELL			0x10000000	/* mkey is spell type */
+#define SKF1_MKEY_TVAL			0x20000000	/* mkey uses specific tval(not used) */
+#define SKF1_MKEY_ITEM			0x40000000	/* mkey requires an item */
+#define SKF1_MKEY_DIRECTION		0x80000000	/* mkey requires direction */
+
 
 /* Skill points per level */
 #define SKILL_NB_BASE           6

@@ -762,7 +762,8 @@ void carry(int Ind, int pickup, int confirm)
 		disturb(Ind, 0, 0);
 
 		/* Describe the object */
-		if ((!pickup) && (!check_guard_inscription( o_ptr->note, '=' )))
+		if ((!pickup) && !(check_guard_inscription( o_ptr->note, '=' ) &&
+					p_ptr->id == o_ptr->owner))
 		{
 			if (p_ptr->blind || no_lite(Ind))
 				msg_format(Ind, "You feel %s%s here.", o_name, 

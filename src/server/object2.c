@@ -6480,8 +6480,10 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 	if (is_book(o_ptr) && (!o_ptr->note) && (can_use(Ind, o_ptr)))
 	{
 		char c[] = "@m ";
+#if 0	// mkey rules!
 		c[1] = ((o_ptr->tval == TV_PRAYER_BOOK) ? 'p':'m');
 		if (o_ptr->tval == TV_FIGHT_BOOK) c[1] = 'n';
+#endif	// 0
 		c[2] = o_ptr->sval +1 +48;
 		o_ptr->note = quark_add(c);
 	}

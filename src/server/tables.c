@@ -2145,7 +2145,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_SWIM,
@@ -2248,7 +2248,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                 }
 	},
@@ -4050,15 +4050,15 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 {
 	/* Adventurer */
 	{
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
-		"Adventurer",
+		"Rambler",
+		"Walker",
+		"Tripper",
+		"Tourist",
+		"Voyager",
+		"Traveller",
+		"Spelunker",
+		"Explorer",
+		"Navigator",
 		"Adventurer",
 	},
 
@@ -4383,6 +4383,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Weaponmastery",
@@ -4409,6 +4412,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Sword-mastery",
@@ -4429,6 +4435,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Critical-strike",
@@ -4449,6 +4458,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Polearm-mastery",
@@ -4469,6 +4481,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Hafted-mastery",
@@ -4489,6 +4504,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Archery",
@@ -4514,6 +4532,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Sling-mastery",
@@ -4534,6 +4555,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Bow-mastery",
@@ -4554,6 +4578,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Crossbow-mastery",
@@ -4574,6 +4601,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Backstabing",
@@ -4594,6 +4624,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Magic",
@@ -4614,6 +4647,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Casting-speed",
@@ -4634,6 +4670,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Sorcery",
@@ -4653,7 +4692,10 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Flags */
-                0,
+				(SKF1_MKEY_SPELL | SKF1_MKEY_TVAL),
+
+				/* Tval */
+				TV_SORCERY_BOOK,
         },
         {
                 "Magery",
@@ -4673,7 +4715,10 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Flags */
-                0,
+				(SKF1_MKEY_SPELL | SKF1_MKEY_TVAL),
+
+				/* Tval */
+				TV_MAGIC_BOOK,
         },
         {
                 "Mimicry",
@@ -4693,7 +4738,10 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Flags */
-                0,
+				(SKF1_MKEY_HARDCODE),
+
+				/* Tval */
+				0,
         },
         {
                 "Magic-device",
@@ -4714,6 +4762,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Shadow",
@@ -4733,7 +4784,10 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Flags */
-                0,
+				(SKF1_MKEY_SPELL | SKF1_MKEY_TVAL),
+
+				/* Tval */
+				TV_SHADOW_BOOK,
         },
         {
                 "Prayer",
@@ -4753,7 +4807,10 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Flags */
-                0,
+				(SKF1_MKEY_SPELL | SKF1_MKEY_TVAL),
+
+				/* Tval */
+				TV_PRAYER_BOOK,
         },
         {
                 "Spell-duration",
@@ -4774,6 +4831,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Sneakiness",
@@ -4794,6 +4854,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Disarming",
@@ -4814,6 +4877,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Stealth",
@@ -4834,6 +4900,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Stealing",
@@ -4854,6 +4923,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Necromancy",
@@ -4874,6 +4946,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Antimagic",
@@ -4894,6 +4969,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Aura power",
@@ -4914,6 +4992,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Aura of Fear",
@@ -4934,6 +5015,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Shivering Aura",
@@ -4954,6 +5038,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Aura of Death",
@@ -4974,6 +5061,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Hunting Lore",
@@ -4993,7 +5083,10 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Flags */
-                0,
+				(SKF1_MKEY_SPELL | SKF1_MKEY_TVAL),
+
+				/* Tval */
+				TV_HUNT_BOOK,
         },
         {
                 "Fighting Technic",
@@ -5013,7 +5106,10 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Flags */
-                0,
+				(SKF1_MKEY_SPELL | SKF1_MKEY_TVAL),
+
+				/* Tval */
+				TV_FIGHT_BOOK,
         },
         {
                 "Miscellaneous",
@@ -5034,6 +5130,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Agility",
@@ -5054,6 +5153,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Calmness",
@@ -5074,6 +5176,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Swimming",
@@ -5094,6 +5199,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Martial Arts",
@@ -5114,6 +5222,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Ricochet",
@@ -5134,6 +5245,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Boomerang-mastery",
@@ -5154,6 +5268,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Training",
@@ -5174,6 +5291,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Interception",
@@ -5194,6 +5314,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Dodging",
@@ -5214,6 +5337,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Health",
@@ -5234,6 +5360,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Digging",
@@ -5254,6 +5383,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
         {
                 "Revelation",
@@ -5274,6 +5406,9 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Flags */
                 0,
+
+				/* Tval */
+				0,
         },
 };
 

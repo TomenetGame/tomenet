@@ -1165,7 +1165,8 @@ void display_player(int hist)
 	cptr desc;
 
         /* Clear screen */
-        Term_clear();
+		clear_from(0);
+//        Term_clear();
 
         /* Name, Sex, Race, Class */
         put_str("Name        :", 2, 1);

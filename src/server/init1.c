@@ -131,6 +131,7 @@ static cptr r_info_blow_effect[] =
         "HALLU",
         "PARASITE",
 	"DISARM",	// ToME-NET ones
+	"FAMINE",
 //	"SEDUCE",
 	NULL
 };

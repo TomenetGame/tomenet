@@ -2654,7 +2654,7 @@ static void calc_bonuses(int Ind)
 		p_ptr->see_infra++;
 	}
 
-	/* Temporary infravision boost */
+	/* Temporary st-anchor */
 	if (p_ptr->st_anchor)
 	{
 		p_ptr->resist_continuum = TRUE;
@@ -3038,7 +3038,8 @@ static void calc_bonuses(int Ind)
 	}
 
 	/* Priest weapon penalty for non-blessed edged weapons */
-	if ((p_ptr->pclass == 2) && (!p_ptr->bless_blade) &&
+//	if ((p_ptr->pclass == 2) && (!p_ptr->bless_blade) &&
+	if ((get_skill(p_ptr, SKILL_PRAY)) && (!p_ptr->bless_blade) &&
 	    ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)))
 	{
 		/* Reduce the real bonuses */

@@ -801,10 +801,12 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "You have a firm hold on your life force.\n");
 	}
+#if 0	// 'lite' indicates radius and nothing else
 	if (p_ptr->lite)
 	{
 		fprintf(fff, "You are carrying a permanent light.\n");
 	}
+#endif	// 0
 	if (p_ptr->auto_id)
 	{
 //		fprintf(fff, "You are able to sense magic.\n");
@@ -2643,7 +2645,8 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
 				    (!(f3 & TR3_PERMA_CURSE)) &&
-				    (o_ptr->to_h >= 0) && (rand_int(100) < 25))
+//				    (o_ptr->to_h >= 0) && (rand_int(100) < 25))
+				    (rand_int(100) < 10 + 10 * o_ptr->to_h))
 				{
 					msg_print(Ind, "The curse is broken!");
 					o_ptr->ident &= ~ID_CURSED;
@@ -2668,7 +2671,8 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
 				    (!(f3 & TR3_PERMA_CURSE)) &&
-				    (o_ptr->to_d >= 0) && (rand_int(100) < 25))
+//				    (o_ptr->to_d >= 0) && (rand_int(100) < 25))
+				    (rand_int(100) < 10 + 10 * o_ptr->to_d))
 				{
 					msg_print(Ind, "The curse is broken!");
 					o_ptr->ident &= ~ID_CURSED;

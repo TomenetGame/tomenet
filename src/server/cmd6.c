@@ -1966,6 +1966,15 @@ void do_cmd_read_scroll(int Ind, int item)
 				}
 				break;
 			}
+
+			case SV_SCROLL_NOTHING:
+			{
+				msg_print(Ind, "This scroll seems to be blank.");
+				ident = TRUE;
+				keep = TRUE;
+				break;
+			}
+
 		}
 	}
 	else if (o_ptr->tval == TV_PARCHEMENT)

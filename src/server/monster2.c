@@ -1481,6 +1481,10 @@ void update_mon(int m_idx, bool dist)
 			/* Normal line of sight, and player is not blind */
 			if ((*w_ptr & CAVE_VIEW) && (!p_ptr->blind))
 			{
+				/* The monster is carrying/emitting light? */
+				if ((r_ptr->flags9 & RF9_HAS_LITE) &&
+					!(r_ptr->flags2 & RF2_INVISIBLE)) easy = flag = TRUE;
+
 				/* Use "infravision" */
 				if (m_ptr->cdis <= (byte)(p_ptr->see_infra))
 				{

@@ -775,13 +775,69 @@ int do_cmd_activate_skill_aux()
 	return ret;
 }
 
+void do_activate_skill(int x_idx)
+{
+	int item, dir, spell;
+
+	item = dir = spell = 0;
+
+	if (s_info[x_idx].flags1 & SKF1_MKEY_HARDCODE)
+	{
+		switch (s_info[x_idx].action_mkey)
+		{
+			case MKEY_MIMICRY:
+				do_mimic();
+//				cmd_mimic();
+				break;
+			default:
+				break;
+		}
+		return;
+	}
+	else if (s_info[x_idx].flags1 & SKF1_MKEY_SPELL)
+	{
+		item_tester_tval = s_info[x_idx].tval;
+		if (!c_get_item(&item, "Cast from which book? ", FALSE, TRUE, FALSE))
+		{
+			if (item == -2) c_msg_print("You have no books that you can cast from.");
+			return;
+		}
+
+		/* Ask for a spell, allow cancel */
+		if (!get_spell(&spell, "cast", item, FALSE)) return;
+
+		/* Send it */
+		Send_activate_skill(s_info[x_idx].action_mkey, item, spell, dir);
+
+		return;
+	}
+
+	if (s_info[x_idx].flags1 & SKF1_MKEY_ITEM)
+	{
+		item_tester_tval = s_info[x_idx].tval;
+		if (!c_get_item(&item, "Which item? ", TRUE, TRUE, FALSE))
+		{
+			return;
+		}
+	}
+
+	if (s_info[x_idx].flags1 & SKF1_MKEY_DIRECTION)
+	{
+		if (!get_dir(&dir))
+			return;
+	}
+
+	/* Send it */
+	Send_activate_skill(s_info[x_idx].action_mkey, item, spell, dir);
+}
+
 /* Ask & execute a skill */
 void do_cmd_activate_skill()
 {
 	int x_idx = -1;
 
 	/* Get the skill, if available */
-        x_idx = do_cmd_activate_skill_aux();
+	x_idx = do_cmd_activate_skill_aux();
 #if 0
         else
 	{
@@ -796,12 +852,15 @@ void do_cmd_activate_skill()
 #endif
 	if (x_idx == -1) return;
 
+	do_activate_skill(x_idx);
+
 //	if (!x_idx)
 //	{
 //		choose_melee();
 //		return;
 //	}
 
+#if 0
 	switch (s_info[x_idx].action_mkey)
 	{
 		case MKEY_SORCERY:
@@ -845,4 +904,5 @@ void do_cmd_activate_skill()
 		default:
 			break;
 	}
+#endif	// 0
 }

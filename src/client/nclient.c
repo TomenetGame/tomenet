@@ -1427,21 +1427,27 @@ int Receive_skill_init(void)
 	char	ch;
 	int	i, type, father, mkey, order;
 	char    buf[300];
+	u32b	flags1;
+	byte	tval;
 
-	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%ld%S", &ch, &type, &i, &father, &order, &mkey, buf)) <= 0)
+//	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%ld%S", &ch, &type, &i, &father, &order, &mkey, buf)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%ld%S%d%c", &ch, &type, &i, &father, &order, &mkey, buf, &flags1, &tval)) <= 0)
 	{
 		return n;
 	}
 
-        if (type == PKT_SKILL_INIT_NAME)
-                s_info[i].name = string_make(buf);
-        if (type == PKT_SKILL_INIT_DESC)
-                s_info[i].desc = string_make(buf);
-        else
-                s_info[i].action_desc = string_make(buf);
-        s_info[i].father = father;
-        s_info[i].order = order;
-        s_info[i].action_mkey = mkey;
+	if (type == PKT_SKILL_INIT_NAME)
+		s_info[i].name = string_make(buf);
+	if (type == PKT_SKILL_INIT_DESC)
+		s_info[i].desc = string_make(buf);
+	else
+		s_info[i].action_desc = string_make(buf);
+
+	s_info[i].father = father;
+	s_info[i].order = order;
+	s_info[i].action_mkey = mkey;
+	s_info[i].flags1 = flags1;
+	s_info[i].tval = tval;
 
 	return 1;
 }
@@ -2886,6 +2892,7 @@ int Send_item(int item)
 	return 1;
 }
 
+#if 0
 int Send_gain(int book, int spell)
 {
 	int	n;
@@ -2897,7 +2904,22 @@ int Send_gain(int book, int spell)
 
 	return 1;
 }
+#endif	// 0
 
+int Send_activate_skill(int mkey, int book, int spell, int dir)
+{
+	int	n;
+
+	if ((n = Packet_printf(&wbuf, "%c%c%hd%hd%c", PKT_ACTIVATE_SKILL,
+					mkey, book, spell, dir)) <= 0)
+	{
+		return n;
+	}
+
+	return 1;
+}
+
+#if 0
 int Send_cast(int book, int spell)
 {
 	int	n;
@@ -2921,6 +2943,7 @@ int Send_pray(int book, int spell)
 
 	return 1;
 }
+#endif	// 0
 
 int Send_mimic(int spell)
 {
@@ -2946,6 +2969,7 @@ int Send_mind()
 	return 1;
 }
 
+#if 0
 int Send_fight(int book, int spell)
 {
 	int	n;
@@ -2957,6 +2981,7 @@ int Send_fight(int book, int spell)
 
 	return 1;
 }
+#endif	// 0
 
 int Send_ghost(int ability)
 {
@@ -3195,6 +3220,18 @@ int Send_spike(int dir)
 	int	n;
 
 	if ((n = Packet_printf(&wbuf, "%c%c", PKT_SPIKE, dir)) <= 0)
+	{
+		return n;
+	}
+
+	return 1;
+}
+
+int Send_raw_key(int key)
+{
+	int	n;
+
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_RAW_KEY, key)) <= 0)
 	{
 		return n;
 	}

@@ -28,9 +28,10 @@ Note:
     Automatically inscribe your books like {@m1}.
     If any argument is given, it will overwrite existing inscriptions.
 
-/bed {alias: /naked} 
-    Take everything off from the equipment slots.
+/bed (any letters) {alias: /naked} 
+    Take the armours off from the equipment slots.
     Items with {!t} tag or those cursed cannot be taken off this way.
+	If any arguments are given, take everything off.
 
 /cast (book no. or slot no.) (spell sign) [target player's name] 
     Cast the specified spell.

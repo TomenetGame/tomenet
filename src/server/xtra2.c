@@ -2677,6 +2677,10 @@ void check_training(int Ind)
 		value = p_ptr->stat_cur[i];
 		value2 = p_ptr->stat_ind[i];
 		chance = train;
+
+		value += (p_ptr->rp_ptr->r_adj[i]);
+		value += (p_ptr->cp_ptr->c_adj[i]);
+
 		if (value > 12) chance /= 2;
 		if (value > 17) chance /= 4;
 

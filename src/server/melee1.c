@@ -143,7 +143,7 @@ bool make_attack_normal(int Ind, int m_idx)
 	int                     ap_cnt;
 
 	int                     i, j, k, tmp, ac, rlev;
-	int                     do_cut, do_stun;
+	int                     do_cut, do_stun, factor = 100;
 
 	s32b            gold;
 
@@ -170,6 +170,9 @@ bool make_attack_normal(int Ind, int m_idx)
 	/* Extract the effective monster level */
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 
+	/* Extract the 'stun' factor */
+	if (m_ptr->stunned > 50) factor -= 30;
+	if (m_ptr->stunned) factor -= 20;
 
 	/* Get the monster name (or "it") */
 	monster_desc(Ind, m_name, m_idx, 0);
@@ -247,11 +250,13 @@ bool make_attack_normal(int Ind, int m_idx)
                         case RBE_SANITY:    power = 60; break;
                         case RBE_HALLU:     power = 10; break;
                         case RBE_PARASITE:  power =  5; break;
+				case RBE_DISARM:	power = 60; break;
+				case RBE_FAMINE:	power = 20; break;
 		}
 
 
 		/* Monster hits player */
-		if (!effect || check_hit(Ind, power, rlev))
+		if (!effect || check_hit(Ind, power, rlev * factor / 100))
 		{
 			int chance = p_ptr->dodge_chance - ((rlev * 5) / 6);
 
@@ -886,7 +891,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					if (o_ptr->timeout > 0)	// hope this won't cause trouble..
 					{
 						/* Reduce fuel */
-						o_ptr->timeout -= (250 + randint(250));
+						o_ptr->timeout -= (250 + randint(250)) * damage;
 						if (o_ptr->timeout < 1) o_ptr->timeout = 1;
 
 						/* Notice */
@@ -1431,6 +1436,18 @@ bool make_attack_normal(int Ind, int m_idx)
 
 						obvious = TRUE;
 					}
+					break;
+				}
+
+				case RBE_FAMINE:
+				{
+					/* Take some damage */
+					take_hit(Ind, damage, ddesc);
+
+					set_food(Ind, p_ptr->food / 2);
+					msg_print(Ind, "You have a sudden attack of hunger!");
+					obvious = TRUE;
+
 					break;
 				}
 

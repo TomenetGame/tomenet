@@ -149,6 +149,8 @@
 #define PKT_SPIKE		152
 #define PKT_GUILD		153
 #define PKT_SKILL_INIT		154
+#define PKT_ACTIVATE_SKILL	155
+#define PKT_RAW_KEY		156
 /* HACK -- used for SKILL_INIT */
 #define PKT_SKILL_INIT_NAME     0
 #define PKT_SKILL_INIT_DESC     1

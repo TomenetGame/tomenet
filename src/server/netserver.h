@@ -153,6 +153,8 @@ static int Receive_clear_buffer(int ind);
 
 static int Receive_spike(int ind);
 static int Receive_guild(int ind);
+static int Receive_activate_skill(int ind);
+static int Receive_raw_key(int ind);
 
 static void Handle_item(int Ind, int item);
 

@@ -127,6 +127,29 @@ void cmd_all_in_one(void)
 		case TV_SORCERY_BOOK:
 		case TV_SHADOW_BOOK:
 		case TV_HUNT_BOOK:
+		case TV_FIGHT_BOOK:
+		case TV_PRAYER_BOOK:
+		{
+			int i;
+			bool done = FALSE;
+			for (i = 1; i < MAX_SKILLS; i++)
+			{
+				if (s_info[i].tval == inventory[item].tval)
+				{
+					if (s_info[i].action_mkey && p_ptr->s_info[i].value)
+					{
+						do_activate_skill(i);
+						done = TRUE;
+					}
+					break;
+				}
+			}
+			if (!done)
+				c_msg_print("You couldn't find a way to use it.");
+
+			break;
+		}
+#if 0
 		{
 			if ((*item_tester_magicable)(&inventory[item]))
 			{
@@ -168,6 +191,7 @@ void cmd_all_in_one(void)
                                 }
                                 break;
                         }
+#endif	// 0
 
 		/* NOTE: 'item' isn't actually sent */
 		case TV_SPIKE:
@@ -419,6 +443,7 @@ void process_command()
 			do_cmd_activate_skill();
 			break;
 
+#if 0	// obsolete - DELETEME
 		case 'p':
 			cmd_pray();
 			break;
@@ -430,6 +455,7 @@ void process_command()
 		case 'N':
 			cmd_mimic();
 			break;
+#endif	// 0
 
 		case 'U':
 			cmd_ghost();
@@ -551,7 +577,8 @@ void process_command()
 			break;
 
 		default:
-			prt("Hit '?' for help.", 0, 0);
+			cmd_raw_key(command_cmd);
+//			prt("Hit '?' for help.", 0, 0);
 			break;
 	}
 }
@@ -1556,6 +1583,7 @@ void cmd_browse(void)
 	show_browse(item);
 }
 
+#if 0	// obsolete
 void cmd_study(void)
 {
 	int item;
@@ -1660,6 +1688,7 @@ void cmd_fight(void)
 	/* Pick a spell and do it */
 	do_fight(item);
 }
+#endif	// 0
 
 void cmd_ghost(void)
 {
@@ -2777,5 +2806,12 @@ void cmd_spike()
 	}
 
 	Send_spike(dir);
+}
+
+/* formality :) */
+void cmd_raw_key(int key)
+{
+	/* Send it */
+	Send_raw_key(key);
 }
 

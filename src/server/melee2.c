@@ -845,7 +845,7 @@ static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
 	}
 	
 	/* Still hurt badly, couldn't flee, attempt to heal */
-	if (m_ptr->hp < m_ptr->maxhp / 3)
+	if (m_ptr->hp < m_ptr->maxhp / 3 || m_ptr->stunned)
 	{
 		/* Choose heal spell if possible */
 		if (heal_num) return (heal[rand_int(heal_num)]);
@@ -1538,7 +1538,13 @@ bool make_attack_spell(int Ind, int m_idx)
 #ifndef STUPID_MONSTER_SPELLS
 	if (!stupid && thrown_spell >= 128)
 	{
-		if (magik(25 - (rlev + 3) / 4))
+		int factor = 0;
+
+		/* Extract the 'stun' factor */
+		if (m_ptr->stunned > 50) factor += 25;
+		if (m_ptr->stunned) factor += 15;
+
+		if (magik(25 - (rlev + 3) / 4) || magik(factor))
 		{
 			/* Message */
 			if (direct)
@@ -2762,6 +2768,22 @@ bool make_attack_spell(int Ind, int m_idx)
 
 			/* Heal some */
 			m_ptr->hp += (rlev * 6);
+			if (m_ptr->stunned)
+			{
+				m_ptr->stunned -= rlev * 2;
+				if (m_ptr->stunned <= 0)
+				{
+					m_ptr->stunned = 0;
+					if (seen)
+					{
+						msg_format(Ind, "%^s no longer looks stunned!", m_name);
+					}
+					else
+					{
+						msg_format(Ind, "%^s no longer sounds stunned!", m_name);
+					}
+				}
+			}
 
 			/* Fully healed */
 			if (m_ptr->hp >= m_ptr->maxhp)
@@ -4651,7 +4673,7 @@ static void process_monster(int Ind, int m_idx)
 		}
 
 		/* Still stunned */
-		if (m_ptr->stunned) 
+		if (m_ptr->stunned > 100)
 		{
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
 			return;

@@ -1551,12 +1551,13 @@ struct skill_type
 
 	s16b action_mkey;                       /* Action do to */
 
-        s16b action[MAX_SKILLS][2];             /* List of actions against other skills in th form: action[x] = {SKILL_FOO, 10} */
+	s16b action[MAX_SKILLS][2];             /* List of actions against other skills in th form: action[x] = {SKILL_FOO, 10} */
 
 	s16b father;                            /* Father in the skill tree */
-        s16b order;                             /* Order in the tree */
+	s16b order;                             /* Order in the tree */
 
-        u32b flags1;                            /* Skill flags */
+	u32b flags1;                            /* Skill flags */
+	byte tval;	/* tval associated */
 };
 
 /*
@@ -1571,22 +1572,6 @@ struct skill_player
         bool hidden;                            /* Innactive */
 
 };
-
-/*
- * transmit an array of this struct when log-in, and we won't need
- * client update when adding a new mkey		- Jir -
- */
-#if 0
-typedef struct mkey_type mkey_type;
-struct mkey_type
-{
-	byte flags1;
-	byte tval;		/* the tval this uses (0 if none) */
-}
-
-#define MKEY_DIRECTION		0x01
-#define MKEY_TVAL			0x02
-#endif	// 0
 
 
 

@@ -1,6 +1,5 @@
+/* $Id$ */
 #include "angband.h"
-
-#define EVIL_TEST /* evil test */
 
 s16b index_to_label(int i)
 {
@@ -130,6 +129,10 @@ static int get_tag(int *cp, char tag)
                 /* Skip empty objects */
                 if (!buf[0]) continue;
 
+				/* Skip wrong tval (for mkey) */
+				if (item_tester_tval && inventory[i].tval != item_tester_tval)
+					continue;
+
                 /* Skip empty inscriptions */
                 if (!(buf2 = strchr(buf, '{'))) continue;
 
@@ -254,9 +257,6 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	/* Hack -- start out in "display" mode */
 	if (command_see) 
 	{
-#ifndef EVIL_TEST /* evil test */
-		screen_icky = TRUE;
-#endif
 		Term_save();
 	}
 
@@ -363,10 +363,6 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				/* Show/hide the list */
 				if (!command_see)
 				{
-#ifndef EVIL_TEST /* evil test */
-					screen_icky = TRUE;
-#endif
-
 					Term_save();
 					command_see = TRUE;
 				}
@@ -374,10 +370,6 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				{
 					Term_load();
 					command_see = FALSE;
-
-#ifndef EVIL_TEST /* evil test */
-					screen_icky = FALSE;
-#endif
 
 					/* Flush any events */
 					Flush_queue();
@@ -543,9 +535,6 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	if (command_see) 
 	{
 		Term_load();
-#ifndef EVIL_TEST /* evil test */
-		screen_icky = FALSE;
-#endif
 	}
 
 	/* Fix the top line */

@@ -101,7 +101,7 @@ static void print_mimic_spells()
 
 /* modified to accept certain capital letters for priest spells. -AD- */ 
  
-static int get_spell(int *sn, cptr prompt, int book, bool known)
+int get_spell(int *sn, cptr prompt, int book, bool known)
 {
 	int		i, num = 0;
 	bool		flag, redraw, okay;
@@ -278,6 +278,7 @@ void show_browse(int book)
 	Flush_queue();
 }
 
+#if 0
 /*
  * Study a book to gain a new spell/prayer
  */
@@ -330,6 +331,7 @@ void do_pray(int book)
 	/* Tell the server */
 	Send_pray(book, j);
 }
+#endif	// 0
 
 static int get_mimic_spell(int *sn)
 {
@@ -475,6 +477,7 @@ void do_mimic()
 }
 
 
+#if 0
 /*
  * Use a technic
  */
@@ -488,6 +491,7 @@ void do_fight(int book)
 	/* Tell the server */
 	Send_fight(book, j);
 }
+#endif	// 0
 
 /*
  * Use a ghost ability
