@@ -1960,8 +1960,7 @@ void do_slash_cmd(int Ind, cptr message){
 		/* '/cast' code is written by Ascrep(DEG). thx! */
 		else if (prefix(message, "/quaff"))
 		{
-			int book, whichplayer, whichspell;
-			bool ami = FALSE;
+			int book;
 
 			/* at least 1 argument required */
 			if (tk < 1)
@@ -2104,6 +2103,111 @@ void do_slash_cmd(int Ind, cptr message){
 			p_ptr->target_who = 0 - MAX_PLAYERS - 2;
 			
 			return;
+		}
+		/* Now this command is opened for everyone */
+		else if (prefix(message, "/recall") ||
+				prefix(message, "/rec"))
+		{
+				if (admin)
+				{
+					p_ptr->word_recall = 1;
+//					msg_print(Ind, "\377oOmnipresent you are...");
+//					msg_format(Ind, "\377oTrying to recall to %s...",wpos_format(&p_ptr->recall_pos));
+				}
+				else
+				{
+					int item;
+					object_type *o_ptr;
+					char c[3] = "@R";
+					bool found = FALSE;
+
+					for(i = 0; i < INVEN_PACK; i++)
+					{
+						o_ptr = &(p_ptr->inventory[i]);
+						if (!o_ptr->tval) break;
+
+						if (find_inscription(o_ptr->note, c))
+						{
+							item = i;
+							found = TRUE;
+							break;
+						}
+					}
+
+					if (!found)
+					{
+						msg_print(Ind, "\377oInscription {@R} not found.");
+						return;
+					}
+
+					/* ALERT! Hard-coded! */
+					switch (o_ptr->tval)
+					{
+						case TV_SCROLL:
+							do_cmd_read_scroll(Ind, item);
+							break;
+						case TV_MAGIC_BOOK:		// 6e
+							do_cmd_cast(Ind, item, 4);
+							break;
+						case TV_SORCERY_BOOK:	// 5f
+							do_cmd_sorc(Ind, item, 5);
+							break;
+						case TV_PRAYER_BOOK:	// 5e
+							do_cmd_pray(Ind, item, 4);
+							break;
+						case TV_SHADOW_BOOK:	// 5c,5d
+							if (spell_okay(Ind, 35, 1) && p_ptr->csp >= 40) do_cmd_shad(Ind, item, 3);
+							else do_cmd_shad(Ind, item, 2);
+							break;
+						case TV_PSI_BOOK:	// 2d
+							do_cmd_psi(Ind, item, 3);
+							break;
+						case TV_ROD:
+							do_cmd_zap_rod(Ind, item);
+							break;
+						default:
+							do_cmd_activate(Ind, item);
+//							msg_print(Ind, "\377oYou cannot recall with that.");
+							break;
+					}
+
+				}
+
+				switch (tk)
+				{
+					case 1:
+						/* depth in feet */
+						p_ptr->recall_pos.wz = k / 50;
+						break;
+
+					case 2:
+						p_ptr->recall_pos.wx = k % MAX_WILD_X;
+						p_ptr->recall_pos.wy = atoi(token[2]) % MAX_WILD_Y;
+						break;
+
+					default:
+						p_ptr->recall_pos.wz = 0;
+				}
+#if 0
+				/* depth in feet */
+				k = tk ? k / 50 : 0;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+				{
+						msg_print(Ind, "\377oIllegal depth.  Usage: /recall [depth in feet]");
+				}
+				else
+				{
+						p_ptr->recall_depth = k;
+						p_ptr->word_recall = 1;
+
+						msg_print(Ind, "\377oOmnipresent you are...");
+				}
+				/* do it on your own risk.. pfft */
+				p_ptr->recall_pos.wz = k;
+#endif
+
+				return;
 		}
 
 		/*
@@ -2312,53 +2416,6 @@ void do_slash_cmd(int Ind, cptr message){
 				load_server_cfg();
 				return;
 			}
-			else if (prefix(message, "/recall") ||
-					prefix(message, "/rec"))
-			{
-				switch (tk)
-				{
-					case 1:
-					{
-						/* depth in feet */
-						p_ptr->recall_pos.wz = k / 50;
-						break;
-					}
-
-					case 2:
-					{
-						p_ptr->recall_pos.wx = k % MAX_WILD_X;
-						p_ptr->recall_pos.wy = atoi(token[2]) % MAX_WILD_Y;
-						break;
-					}
-
-					default:
-					{
-						p_ptr->recall_pos.wz = 0;
-					}
-				}
-#if 0
-				/* depth in feet */
-				k = tk ? k / 50 : 0;
-
-				if (-MAX_WILD >= k || k >= MAX_DEPTH)
-				{
-					msg_print(Ind, "\377oIllegal depth.  Usage: /recall [depth in feet]");
-				}
-				else
-				{
-					p_ptr->recall_depth = k;
-					p_ptr->word_recall = 1;
-
-					msg_print(Ind, "\377oOmnipresent you are...");
-				}
-				/* do it on your own risk.. pfft */
-				p_ptr->recall_pos.wz = k;
-#endif
-				p_ptr->word_recall = 1;
-//				msg_print(Ind, "\377oOmnipresent you are...");
-				msg_format(Ind, "\377oTrying to recall to %s...",wpos_format(&p_ptr->recall_pos));
-				return;
-			}
 			else if (prefix(message, "/wish"))
 			{
 				object_type	forge;
@@ -2424,15 +2481,15 @@ void do_slash_cmd(int Ind, cptr message){
 			}
 			else
 			{
-				msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag target untag;");
-				msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta trap unst wish");
+				msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me rec ref tag target untag;");
+				msg_print(Ind, "  art cfg clv geno id kick lua shutdown sta trap unst wish");
 				return;
 			}
 		}
 		else
 		{
-			msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag target untag;");
-			msg_print(Ind, "  /quaff is also available for old client users :)");
+			msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me rec ref tag target untag;");
+//			msg_print(Ind, "  /quaff is also available for old client users :)");
 			msg_print(Ind, "  /dis \377rdestroys \377wall the uninscribed items in your inventory!");
 			return;
 		}

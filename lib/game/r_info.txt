@@ -18568,6 +18568,31 @@ S:UNMAGIC
 D:Small winged jolly annoying chatterbox, actually he is a descendant
 D:of dispersed minimite race.
 
+N:1052:Adamantite
+G:$:G
+I:110:10d15:15:50:10
+W:55:6:0:60
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:EXPLODE:SHATTER:100d3
+F:ONLY_GOLD | DROP_90 | DROP_2D2 | 
+F:COLD_BLOOD | BASH_DOOR | CHAR_MULTI | NEVER_MOVE | EMPTY_MIND
+F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
+D:It is a pile of coins made of precious adamant... containing explosives.
+
+N:1053:Creeping adamantite coins
+G:$:G
+I:120:20d25:5:50:10
+W:50:6:0:60
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:EXPLODE:HURT:100d4
+F:ONLY_GOLD | DROP_90 | DROP_2D2 | 
+F:COLD_BLOOD | BASH_DOOR | CHAR_MULTI | 
+F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
+D:It appears to be a pile of coins made of precious adamant, slithering toward 
+D:you on lots of tiny legs. 
+
 # N: serial number : monster name
 # G: symbol : color
 # I: speed : hit points : vision : armor class : alertness

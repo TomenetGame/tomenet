@@ -3560,6 +3560,11 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			o_ptr->pval = 90;
 			break;
 		}
+		case SV_ROD_NOTHING:
+		{
+			break;
+		}
+
 		default:
 		{
 			msg_print(Ind, "SERVER ERROR: Tried to zap non-directional rod in directional function!");

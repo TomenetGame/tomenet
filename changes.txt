@@ -738,10 +738,13 @@ Change list for PernMangband
   http://www.fragment.com/~jl8e/angband/
 
 01/03/2002 (Jir)
+- players can use /rec now (this applies item with {@R})
+- new monster: exploding coins
 [B] strange colouring in unique list
 [B] some traps create 'phial' (INSTA_ARTS)
 [B] breeders won't breed
 [B] stormbringer was way too powerful (+8 attacks!!)
+[B] indestructible rings didn't work
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
@@ -752,10 +755,10 @@ Change list for PernMangband
 [B] Panic save often enters into infinite loop.
 [B] House doors still seem to crash sometimes.
 [B] wpos display hides wound states(eg.'Deep Gash')
-[B] /rec won't work if to wilderness?
 [B] ever-charging arts (eg.star)
 [B] CURSE_x does 100+ dmg on 50ft?
-[B] =attack+3 doesn't work?
+[B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
+[B] /rec won't work if to wilderness? (admin)
 
 ==== below this line are changes to be done in the future ====
 [minor ones]
@@ -770,7 +773,6 @@ Change list for PernMangband
 - display "non-scoring mode" in '@' screen
 - store buying-price should reflect *ID* states
 - /bug (/rfe), which leaves a message on log. {A.Dingle}
-- let players use /rec (apply items with {@R})
 - DEBUG_MSG_LEVEL
 [C] ameliorate option interface(toggle-key/vi-key)
 [C] use 2 lines for each server on server-list
@@ -805,14 +807,13 @@ Change list for PernMangband
 - player ghost should 'fade' slowly, so that a player won't try to preserve
   the floor for days.
 - 'hand to(give)' command
+- lowbies (<lv10?) should be immune to Black Breath?
 [major ones]
 - NPC/pet/golem/slave {Evileye/DG?}
 - monsters' interactions
 - subclass system (thief, esper, erudit, tough, mighty etc)
 - karma/luck system (karma is like luck, but never gets positive value)
 - make charisma/wisdom/dexterity more important
-- 3-D gfx and full-audio support
-- full-mouse operation
 - time-limited features(like in Larn) / time bomb
 	struct timed_event{
 		worldpos wpos;
@@ -832,4 +833,6 @@ Change list for PernMangband
   + Merchant/Diplomat
 - spell extensions, esp. after lv50
 - randunis
-- lowbies (<lv10?) should be immune to Black Breath?
+[lunatic ones]
+- 3-D gfx and full-audio support
+- full-mouse operation

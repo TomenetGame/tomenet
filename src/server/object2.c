@@ -3243,8 +3243,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_RING_ATTACKS:
 				{
 					/* Stat bonus */
-					o_ptr->pval = m_bonus(3, level);
-					if (o_ptr->pval < 1) o_ptr->pval = 1;
+					o_ptr->bpval = m_bonus(3, level);
+					if (o_ptr->bpval < 1) o_ptr->bpval = 1;
 
 					/* Cursed */
 					if (power < 0)
@@ -3252,8 +3252,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						/* Cursed */
 						o_ptr->ident |= (ID_CURSED);
 
-						/* Reverse pval */
-						o_ptr->pval = 0 - (o_ptr->pval);
+						/* Reverse bpval */
+						o_ptr->bpval = 0 - (o_ptr->bpval);
 					}
 
 					break;
@@ -3263,8 +3263,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
                                 case SV_RING_CRIT:
 				{
 					/* Stat bonus */
-                                        o_ptr->pval = m_bonus(10, level);
-					if (o_ptr->pval < 1) o_ptr->pval = 1;
+                                        o_ptr->bpval = m_bonus(10, level);
+					if (o_ptr->bpval < 1) o_ptr->bpval = 1;
 
 					/* Cursed */
 					if (power < 0)
@@ -3272,8 +3272,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						/* Cursed */
 						o_ptr->ident |= (ID_CURSED);
 
-						/* Reverse pval */
-						o_ptr->pval = 0 - (o_ptr->pval);
+						/* Reverse bpval */
+						o_ptr->bpval = 0 - (o_ptr->bpval);
 					}
 
 					break;
@@ -3288,7 +3288,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_RING_STEALTH:
 				{
 					/* Stat bonus */
-					o_ptr->pval = 1 + m_bonus(5, level);
+					o_ptr->bpval = 1 + m_bonus(5, level);
 
 					/* Cursed */
 					if (power < 0)
@@ -3296,8 +3296,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						/* Cursed */
 						o_ptr->ident |= (ID_CURSED);
 
-						/* Reverse pval */
-						o_ptr->pval = 0 - (o_ptr->pval);
+						/* Reverse bpval */
+						o_ptr->bpval = 0 - (o_ptr->bpval);
 					}
 
 					break;
@@ -3307,10 +3307,10 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_RING_SPEED:
 				{
 					/* Base speed (1 to 10) */
-					o_ptr->pval = randint(5) + m_bonus(5, level);
+					o_ptr->bpval = randint(5) + m_bonus(5, level);
 
 					/* Super-charge the ring */
-					while (rand_int(100) < 50) o_ptr->pval++;
+					while (rand_int(100) < 50) o_ptr->bpval++;
 
 					/* Cursed Ring */
 					if (power < 0)
@@ -3318,8 +3318,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						/* Cursed */
 						o_ptr->ident |= (ID_CURSED);
 
-						/* Reverse pval */
-						o_ptr->pval = 0 - (o_ptr->pval);
+						/* Reverse bpval */
+						o_ptr->bpval = 0 - (o_ptr->bpval);
 
 						break;
 					}
@@ -3361,7 +3361,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					o_ptr->ident |= (ID_CURSED);
 
 					/* Penalize */
-					o_ptr->pval = 0 - (1 + m_bonus(5, level));
+					o_ptr->bpval = 0 - (1 + m_bonus(5, level));
 
 					break;
 				}
@@ -3374,7 +3374,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 
 					/* Penalize */
 					o_ptr->to_a = 0 - (5 + m_bonus(10, level));
-					o_ptr->pval = 0 - (1 + m_bonus(5, level));
+					o_ptr->bpval = 0 - (1 + m_bonus(5, level));
 
 					break;
 				}

@@ -454,6 +454,7 @@ extern void do_cmd_activate_dir(int Ind, int dir);
 extern bool unmagic(int Ind);
 extern void fortune(int Ind, bool broadcast);
 extern char random_colour();
+extern bool spell_okay(int Ind, int j, bool known);
 
 /* control.c */
 extern void NewConsole(int fd, int arg);

@@ -2169,7 +2169,7 @@ static void process_player_end(int Ind)
 				else if (!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN) ))
 				{
 					if ((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] & (1 << (wild_idx(&p_ptr->recall_pos))%8))) ||
-						!wpcmp(&p_ptr->wpos, &p_ptr->recall_pos))
+						wpcmp(&p_ptr->wpos, &p_ptr->recall_pos))
 					{
 						/* lazy -- back to the centre of the world
 						 * this should be changed so that it lands him/her

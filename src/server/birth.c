@@ -1034,6 +1034,7 @@ static void player_outfit(int Ind)
 	 */
 	 if (p_ptr->admin_wiz || p_ptr->admin_dm)
 	 {
+		int note = quark_add("!k");
 
 		/* Hack -- assume the player has an initial knowledge of the area close to town */
 		for (i = 0; i < MAX_WILD_X*MAX_WILD_Y; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
@@ -1042,6 +1043,7 @@ static void player_outfit(int Ind)
 		o_ptr->discount = 100;
 		o_ptr->owner = p_ptr->id;
 		o_ptr->level = 1;
+		o_ptr->note = quark_add("@r8");
 		object_known(o_ptr);
 		object_aware(Ind, o_ptr);
 		(void)inven_carry(Ind, o_ptr);
@@ -1062,6 +1064,7 @@ static void player_outfit(int Ind)
 		object_aware(Ind, o_ptr);
 		o_ptr->owner = p_ptr->id;
 		o_ptr->level = 1;
+		o_ptr->note = note;
 		(void)inven_carry(Ind, o_ptr);
 #if 1
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL));
@@ -1071,6 +1074,7 @@ static void player_outfit(int Ind)
 		object_aware(Ind, o_ptr);
 		o_ptr->owner = p_ptr->id;
 		o_ptr->level = 1;
+//		o_ptr->note = quark_add("@R-3000");
 		(void)inven_carry(Ind, o_ptr);
 #endif
 		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_AUGMENTATION));
@@ -1090,6 +1094,7 @@ static void player_outfit(int Ind)
 		object_aware(Ind, o_ptr);
 		o_ptr->owner = p_ptr->id;
 		o_ptr->level = 1;
+		o_ptr->note = note;
 		(void)inven_carry(Ind, o_ptr);
 
 		invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_PROBING));

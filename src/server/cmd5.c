@@ -76,7 +76,7 @@ static s16b spell_chance(int Ind, magic_type *s_ptr)
  * The spell must be legible, not forgotten, and also, to cast,
  * it must be known, and to study, it must not be known.
  */
-static bool spell_okay(int Ind, int j, bool known)
+bool spell_okay(int Ind, int j, bool known)
 {
 	player_type *p_ptr = Players[Ind];
 
