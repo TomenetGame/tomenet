@@ -122,18 +122,12 @@ void dnasave(c_special *cs_ptr){
 int dnahit(c_special *cs_ptr, int y, int x, int Ind){
 	/* we have to know from where we are called! */
 	struct dna_type *dna=cs_ptr->sc.ptr;
-#if 0
-#ifdef USE_MANG_HOUSE	// 'passing'..? -Jir
-	if (((cfg.door_bump_open & BUMP_OPEN_HOUSE) || passing)
-				&& c_ptr->feat == FEAT_HOME)
-#endif	//USE_MANG_HOUSE
-#endif	// 0
 	{
 		if(access_door(Ind, dna))
 		{
 #ifdef USE_MANG_HOUSE
 			msg_print(Ind, "\377GYou walk through the door.");
-#endif	//USE_MANG_HOUSE
+#endif	/*USE_MANG_HOUSE */
 			return(TRUE);
 		}
 	}
@@ -210,9 +204,12 @@ void keysee(c_special *cs_ptr, char *c, byte *a, int Ind){
 /* *ptr is not used, but is still needed. */
 void tload(c_special *cs_ptr)
 {
+	byte tmp8u;
 	rd_byte(&cs_ptr->sc.trap.t_idx);
-	rd_byte(&cs_ptr->sc.trap.found);
+	rd_byte(&tmp8u);
+	cs_ptr->sc.trap.found=tmp8u;
 }
+
 void tsave(c_special *cs_ptr)
 {
 	wr_byte(cs_ptr->sc.trap.t_idx);
@@ -234,7 +231,6 @@ int thit(c_special *cs_ptr, int y, int x, int Ind){
 		if (!cs_ptr->sc.trap.found)
 		{
 			/* Message */
-//			msg_print(Ind, "You found a trap!");
 			msg_print(Ind, "You triggered a trap!");
 
 			/* Pick a trap */
@@ -298,9 +294,11 @@ int betweenhit(c_special *cs_ptr, int y, int x, int Ind){
 
 void fountload(c_special *cs_ptr)
 {
+	byte tmp8u;
 	rd_byte(&cs_ptr->sc.fountain.type);
 	rd_byte(&cs_ptr->sc.fountain.rest);
-	rd_byte(&cs_ptr->sc.fountain.known);
+	rd_byte(&tmp8u);
+	cs_ptr->sc.fountain.known=tmp8u;
 }
 void fountsave(c_special *cs_ptr)
 {
@@ -322,6 +320,7 @@ void montrapload(c_special *cs_ptr)
 	rd_byte(&cs_ptr->sc.montrap.difficulty);
 	rd_byte(&cs_ptr->sc.montrap.feat);
 }
+
 void montrapsave(c_special *cs_ptr)
 {
 	wr_u16b(cs_ptr->sc.montrap.trap_kit);
