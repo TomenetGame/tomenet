@@ -236,3 +236,7 @@ Change list for PernMangband
 
 27/10/2001
 - Fixed the archer spells bugs
+
+28/10/2001
+- Added multi player simultaneous building. Seems to work.
+  MAX_BUILDERS allows a limit to be set on builders.

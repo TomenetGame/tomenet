@@ -740,7 +740,7 @@ static int hash_slot(int id)
 }
 
 /*
- * Lookup a player name by ID.  Will return NULL if the name doesn't exist.
+ * Get the timestamp for the last time player was on.
  */
 time_t lookup_player_laston(int id)
 {

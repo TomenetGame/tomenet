@@ -4004,156 +4004,187 @@ void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
         if (f2 & TR2_RES_DISEN) r_ptr->flags3 |= RF3_RES_DISE;
 }
 
+/* multi builder stuff - move when complete */
+struct builder{
+	int player;
+	int lx,ly,dx,dy,minx,miny,maxx,maxy;
+	int sx,sy;
+	int odir;
+	int moves;
+	int cvert;
+	int depth;
+	bool nofloor;
+	struct dna_type *dna;
+	char *vert;
+	struct builder *next;
+};
+
+#define MAX_BUILDERS 4	/* Just so the builders can go on strike */
+/* end of move stuff */
+
 bool poly_build(int Ind, char *args){
-	static s32b curr=0;
-	static char *vert=NULL;
-	static int lx,ly,dx,dy,minx,miny,maxx,maxy;
-	static int sx,sy;
-	static int odir;
-	static int moves;
-	static int cvert;
-	static int depth;
-	static bool nofloor;
-	static struct dna_type *dna;
+	static struct builder *builders=NULL;
+	static int num_build=0;
+
 	player_type *p_ptr=Players[Ind];
+	struct builder *curr=builders;
 	int x,y;
 	int dir=0;
 
-	if(curr==0 || !lookup_player_name(curr)){
-		if(!args){
-			p_ptr->master_move_hook=NULL;
+	while(curr){
+		struct builder *prev=NULL;
+		bool kill=FALSE;
+		if(curr->player==p_ptr->id) break;
+		if(!lookup_player_name(curr->player)){	/* disconnect or free builders */
+			if(prev)
+				prev->next=curr->next;
+			else
+				builders=curr->next;
+			kill=TRUE;
+		}
+		prev=curr;
+		curr=curr->next;
+		if(kill){
+			KILL(prev, struct builder);
+		}
+	}
+
+	if(!curr){			/* new builder */
+#ifdef MAX_BUILDERS
+		if(num_build==MAX_BUILDERS){
+			msg_print(Ind,"The builders are on strike!");
 			return FALSE;
 		}
-		curr=p_ptr->id;
-		C_MAKE(vert, MAXCOORD, byte);
-		MAKE(dna, struct dna_type);
-		dna->creator=p_ptr->dna;
-		dna->owner=p_ptr->id;
-		dna->owner_type=OT_PLAYER;
-		dna->a_flags=ACF_NONE;
-		dna->min_level=ACF_NONE;
-		dna->price=5;	/* so work out */
-		odir=0;
-		cvert=0;
-		nofloor=(*args=='N');
-		sx=p_ptr->px;
-		sy=p_ptr->py;
-		minx=maxx=sx;
-		miny=maxy=sy;
-		dx=lx=sx;
-		dy=ly=sy;
-		moves=25;	/* always new */
-		depth=p_ptr->dun_depth;
-		if(cave[p_ptr->dun_depth][sy][sx].feat==FEAT_PERM_EXTRA){
+#endif
+		MAKE(curr, struct builder);
+		curr->next=builders;	/* insert is fastest */
+		curr->player=p_ptr->id;	/* set him up */
+		C_MAKE(curr->vert, MAXCOORD, byte);
+		MAKE(curr->dna, struct dna_type);
+		curr->dna->creator=p_ptr->dna;
+		curr->dna->owner=p_ptr->id;
+		curr->dna->owner_type=OT_PLAYER;
+		curr->dna->a_flags=ACF_NONE;
+		curr->dna->min_level=ACF_NONE;
+		curr->dna->price=5;	/* so work out */
+		curr->odir=0;
+		curr->cvert=0;
+		curr->nofloor=(*args=='N');
+		curr->sx=p_ptr->px;
+		curr->sy=p_ptr->py;
+		curr->minx=curr->maxx=curr->sx;
+		curr->miny=curr->maxy=curr->sy;
+		curr->dx=curr->lx=curr->sx;
+		curr->dy=curr->ly=curr->sy;
+		curr->moves=25;	/* always new */
+		curr->depth=p_ptr->dun_depth;
+		if(cave[p_ptr->dun_depth][curr->sy][curr->sx].feat==FEAT_PERM_EXTRA){
 			msg_print(Ind, "Your foundations were laid insecurely");
-			cave[p_ptr->dun_depth][sy][sx].special=NULL;
-			KILL(dna, struct dna_type);
-			C_KILL(vert, MAXCOORD, byte);
+			cave[p_ptr->dun_depth][curr->sy][curr->sx].special=NULL;
+			KILL(curr->dna, struct dna_type);
+			C_KILL(curr->vert, MAXCOORD, byte);
 			p_ptr->master_move_hook=NULL;
-			cvert=0;
-			curr=0L;
+			KILL(curr, struct builder);	/* Sack the builders! */
 			return FALSE;
 		}
-		cave[p_ptr->dun_depth][sy][sx].feat=FEAT_HOME_OPEN;
-		cave[p_ptr->dun_depth][sy][sx].special=dna;
+		cave[p_ptr->dun_depth][curr->sy][curr->sx].feat=FEAT_HOME_OPEN;
+		cave[p_ptr->dun_depth][curr->sy][curr->sx].special=curr->dna;
+		builders=curr;
 		return TRUE;
+
 	}
-	else if(curr!=p_ptr->id){
-		msg_print(Ind,"The builders are on strike!"); /* add multi build soon */
-		return FALSE;
-	}
+
 	if(args){
-		moves+=25;
+		curr->moves+=25;
 		return TRUE;
 	}
 	x=p_ptr->px;
 	y=p_ptr->py;
-	minx=MIN(x,minx);
-	maxx=MAX(x,maxx);
-	miny=MIN(y,miny);
-	maxy=MAX(y,maxy);
-	if(x!=dx){
-		if(x>dx) dir=1;
+	curr->minx=MIN(x,curr->minx);
+	curr->maxx=MAX(x,curr->maxx);
+	curr->miny=MIN(y,curr->miny);
+	curr->maxy=MAX(y,curr->maxy);
+	if(x!=curr->dx){
+		if(x>curr->dx) dir=1;
 		else dir=2;
 	}
-	if(y!=dy){
+	if(y!=curr->dy){
 		if(dir){
-			moves=0;
+			curr->moves=0;
 			/* diagonal! house building failed */
 		}
-		if(y>dy) dir|=4;
+		if(y>curr->dy) dir|=4;
 		else dir|=8;
 	}
-	if(odir!=dir){
-		if(odir){		/* first move not new vertex */
-			vert[cvert++]=dx-lx;
-			vert[cvert++]=dy-ly;
+	if(curr->odir!=dir){
+		if(curr->odir){		/* first move not new vertex */
+			curr->vert[curr->cvert++]=curr->dx-curr->lx;
+			curr->vert[curr->cvert++]=curr->dy-curr->ly;
 		}
-		lx=dx;
-		ly=dy;
-		odir=dir;		/* change direction, add vertex */
+		curr->lx=curr->dx;
+		curr->ly=curr->dy;
+		curr->odir=dir;		/* change direction, add vertex */
 	}
-	dx=x;
-	dy=y;
+	curr->dx=x;
+	curr->dy=y;
 
-	if(p_ptr->px==sx && p_ptr->py==sy && moves){	/* check for close */
-		vert[cvert++]=dx-lx;			/* last vertex */
-		vert[cvert++]=dy-ly;
-		if(cvert==10 || cvert==8){
+	if(p_ptr->px==curr->sx && p_ptr->py==curr->sy && curr->moves){	/* check for close */
+		curr->vert[curr->cvert++]=curr->dx-curr->lx;			/* last vertex */
+		curr->vert[curr->cvert++]=curr->dy-curr->ly;
+		if(curr->cvert==10 || curr->cvert==8){
 			/* rectangle! */
 			houses[num_houses].flags=HF_RECT;
-			houses[num_houses].x=minx;
-			houses[num_houses].y=miny;
-			houses[num_houses].coords.rect.width=maxx+1-minx;
-			houses[num_houses].coords.rect.height=maxy+1-miny;
-			houses[num_houses].dx=sx-minx;
-			houses[num_houses].dy=sy-miny;
-			C_KILL(vert, MAXCOORD, byte);
+			houses[num_houses].x=curr->minx;
+			houses[num_houses].y=curr->miny;
+			houses[num_houses].coords.rect.width=curr->maxx+1-curr->minx;
+			houses[num_houses].coords.rect.height=curr->maxy+1-curr->miny;
+			houses[num_houses].dx=curr->sx-curr->minx;
+			houses[num_houses].dy=curr->sy-curr->miny;
+			C_KILL(curr->vert, MAXCOORD, byte);
 		}
 		else{
 			houses[num_houses].flags=HF_NONE;	/* polygonal */
-			houses[num_houses].x=sx;
-			houses[num_houses].y=sy;
-			houses[num_houses].coords.poly=vert;
+			houses[num_houses].x=curr->sx;
+			houses[num_houses].y=curr->sy;
+			houses[num_houses].coords.poly=curr->vert;
 		}
-		if(nofloor) houses[num_houses].flags|=HF_NOFLOOR;
+		if(curr->nofloor) houses[num_houses].flags|=HF_NOFLOOR;
 /* Moat testing */
 #if 0
 		houses[num_houses].flags|=HF_MOAT;
 #endif
 /* Do not commit! */
 		houses[num_houses].depth=p_ptr->dun_depth;
-		houses[num_houses].dna=dna;
-		if(cvert>=8 && fill_house(&houses[num_houses], 2, NULL)){
-			int area=(maxx-minx)*(maxy-miny);
+		houses[num_houses].dna=curr->dna;
+		if(curr->cvert>=8 && fill_house(&houses[num_houses], 2, NULL)){
+			int area=(curr->maxx-curr->minx)*(curr->maxy-curr->miny);
 			wild_add_uhouse(&houses[num_houses]);
-			dna->price=area*area*400;
+			curr->dna->price=area*area*400;
 			msg_print(Ind,"You have completed your house");
 			num_houses++;
 		}
 		else{
 			msg_print(Ind,"Your house was built unsoundly");
+			if(curr->vert) C_KILL(curr->vert, MAXCOORD, byte);
+			KILL(curr->dna, struct dna_type);
 		}
+		curr->player=0;		/* send the builders home */
 		p_ptr->master_move_hook=NULL;
-		curr=0L;
-		dna=NULL;
-		vert=NULL;
 		p_ptr->update|=PU_VIEW;
 		return TRUE;
 	}
 	/* no going off depth, and no spoiling moats */
-	if(depth==p_ptr->dun_depth && !(cave[depth][dy][dx].info&CAVE_ICKY && cave[depth][dy][dx].feat==FEAT_WATER)){
-		cave[p_ptr->dun_depth][dy][dx].feat=FEAT_WALL_EXTRA;
-		if(cvert<MAXCOORD && (--moves)>0) return TRUE;
+	if(curr->depth==p_ptr->dun_depth && !(cave[curr->depth][curr->dy][curr->dx].info&CAVE_ICKY && cave[curr->depth][curr->dy][curr->dx].feat==FEAT_WATER)){
+		cave[p_ptr->dun_depth][curr->dy][curr->dx].feat=FEAT_WALL_EXTRA;
+		if(curr->cvert<MAXCOORD && (--curr->moves)>0) return TRUE;
 		p_ptr->update|=PU_VIEW;
 	}
 	msg_print(Ind,"Your house building attempt has failed");
-	cave[p_ptr->dun_depth][sy][sx].special=NULL;
-	KILL(dna, struct dna_type);
-	C_KILL(vert, MAXCOORD, byte);
+	cave[p_ptr->dun_depth][curr->sy][curr->sx].special=NULL;
+	KILL(curr->dna, struct dna_type);
+	C_KILL(curr->vert, MAXCOORD, byte);
+	curr->player=0;		/* send the builders home */
 	p_ptr->master_move_hook=NULL;
-	cvert=0;
-	curr=0L;
 	return FALSE;
 }
 
