@@ -3685,11 +3685,11 @@ void monster_death(int Ind, int m_idx)
 		/* give credit to the killer by default */
 		if (!Ind2)
 		{
-			sprintf(buf,"\377b%s was slain by %s.", r_name_get(m_ptr), p_ptr->name);
+			sprintf(buf,"\377b*\377c%s was slain by %s.\377b*", r_name_get(m_ptr), p_ptr->name);
 		}
 		else
 		{
-			sprintf(buf,"\377b%s was slain by fusion %s-%s.", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+			sprintf(buf,"\377b*\377c%s was slain by fusion %s-%s.\377b*", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 		}
 
 		/* give credit to the party if there is a teammate on the 
@@ -3700,7 +3700,7 @@ void monster_death(int Ind, int m_idx)
 			{
 				if ( (Players[i]->party == p_ptr->party) && (inarea(&Players[i]->wpos, &p_ptr->wpos)) && (i != Ind) && (p_ptr->wpos.wz) )
 				{
-					sprintf(buf, "\377b%s was slain by %s of %s.", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+					sprintf(buf, "\377b*\377c%s was slain by %s of %s.\377b*", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 					break; 
 				} 
 
@@ -3712,7 +3712,7 @@ void monster_death(int Ind, int m_idx)
 		world_msg(buf);
 #endif	// TOMENET_WORLDS
 		/* Tell every player */
-		msg_broadcast(Ind, buf);
+		msg_broadcast(-1, buf);
 	}
 
 
