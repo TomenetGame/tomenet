@@ -69,7 +69,7 @@ void world_comm(int fd, int arg){
 		switch(wpk->type){
 			case WP_CHAT:
 				/* TEMPORARY chat broadcast method */
-				for(i=1; i<NumPlayers; i++){
+				for(i=1; i<=NumPlayers; i++){
 					if(Players[i]->conn!=NOT_CONNECTED){
 						/* lame method just now */
 						if(world_check_ignore(i, wpk->d.chat.id, wpk->serverid))
@@ -82,7 +82,8 @@ void world_comm(int fd, int arg){
 				/* private message from afar -authed */
 				for(i=1; i<=NumPlayers; i++){
 					if(!strcmp(Players[i]->name, wpk->d.pmsg.victim)){
-						msg_format(i, "\377o[%s:%s] %s", wpk->d.pmsg.player, Players[i]->name, wpk->d.pmsg.ctxt);
+						if(!world_check_ignore(i, wpk->d.pmsg.id, wpk->serverid))
+							msg_format(i, "\377o[%s:%s] %s", wpk->d.pmsg.player, Players[i]->name, wpk->d.pmsg.ctxt);
 					}
 				}
 				break;
