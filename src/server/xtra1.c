@@ -2710,6 +2710,9 @@ void calc_bonuses(int Ind)
 			/* XXX XXX XXX Apply "encumbrance" from weight */
 			if (j > i/5) k -= ((j - (i/5)) / (i / 10));
 
+			/* Assume unencumbered */
+			p_ptr->cumber_weight = FALSE;
+
 			if (k > 0)
 			{
 				p_ptr->pspeed += k;
@@ -2720,6 +2723,23 @@ void calc_bonuses(int Ind)
 
 				/* give a stealth bonus */
 				p_ptr->skill_stl += k;
+			}
+			else
+			{
+			    p_ptr->cumber_weight = TRUE;
+			}
+			if (p_ptr->old_cumber_weight != p_ptr->cumber_weight)
+			{
+				if (p_ptr->cumber_weight)
+				{
+					msg_print(Ind, "You can't move freely due to your backpack weight.");
+
+				}
+				else
+				{
+					msg_print(Ind, "Your backpack is very comfortable to wear.");
+				}
+				p_ptr->old_cumber_weight = p_ptr->cumber_weight;
 			}
 		}
 

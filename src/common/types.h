@@ -2113,6 +2113,7 @@ struct player_type
 	bool old_heavy_shoot;
 	bool old_icky_wield;
 	bool old_awkward_wield;
+	bool old_cumber_weight;
 
 	s16b old_lite;		/* Old radius of lite (if any) */
 	s16b old_view;		/* Old radius of view (if any) */
@@ -2126,6 +2127,7 @@ struct player_type
 	bool heavy_shoot;	/* Heavy shooter */
 	bool icky_wield;	/* Icky weapon */
 	bool awkward_wield;	/* shield and COULD_2H weapon */
+	bool cumber_weight;	/* Full weight. FA from MA will be lost if overloaded */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
 

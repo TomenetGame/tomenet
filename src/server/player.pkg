@@ -535,6 +535,7 @@ struct player_type
 	bool heavy_shoot;	/* Heavy shooter */
 	bool icky_wield;	/* Icky weapon */
 	bool awkward_wield;	/* Icky weapon */
+	bool cumber_weight;	/* FA from MA is lost if overburdened */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
 
