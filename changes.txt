@@ -670,6 +670,7 @@ Change list for PernMangband
   absence of a dungeon.
 - filtered aquatic monsters suitably (i think) now to confine them ;)
 - aquatic monsters should not leave the water now.
+- aquatic monsters always start in water.
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.

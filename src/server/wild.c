@@ -382,6 +382,8 @@ static bool wild_monst_aux_lake(int r_idx)
 	if (r_ptr->flags3 & RF3_ANIMAL) return TRUE;
 	/* humanoids and other races are OK */
 	if (strchr("ph", r_ptr->d_char)) return TRUE;
+	/* always allow aquatics! */
+	if (r_ptr->flags7 & RF7_AQUATIC) return TRUE;
 
 	/* OK */
 	return FALSE;

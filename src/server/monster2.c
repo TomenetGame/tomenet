@@ -1983,6 +1983,12 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Access the location */
 	c_ptr = &zcave[y][x];
 
+	if(r_ptr->flags7 & RF7_AQUATIC){
+		printf("Aquatic!\n");
+		if(c_ptr->feat==FEAT_WATER) printf("ok\n");
+	}
+	if((r_ptr->flags7 & RF7_AQUATIC) && c_ptr->feat!=FEAT_WATER) return FALSE;
+
 	/* Make a new monster */
 	c_ptr->m_idx = m_pop();
 
