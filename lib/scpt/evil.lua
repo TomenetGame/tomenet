@@ -1,6 +1,6 @@
 -- evileye functions for evil admins
 
-function ball(name, rad, type, harm, dam, flg, time, "")
+function ball(name, rad, type, harm, dam, flg, time, attacker)
 	local i;
 	local w;
 	i=ind(name);
@@ -8,7 +8,7 @@ function ball(name, rad, type, harm, dam, flg, time, "")
 	if(harm==1) then w=-1000 else w=-i end;
 	if(rad>8) then rad=8 end;
 	project_time=time;
-	project(w, rad, players(i).wpos, players(i).py, players(i).px, dam, type, flg);
+	project(w, rad, players(i).wpos, players(i).py, players(i).px, dam, type, flg, attacker);
 end
 
 function wallin(name)
