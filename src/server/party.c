@@ -866,7 +866,7 @@ int newid(){
 }
 
 sf_delete(char *name){
-	int i,k;
+	int i,k=0;
 	char temp[128],fname[128];
 	/* Extract "useful" letters */
 	for (i = 0; name[i]; i++)
