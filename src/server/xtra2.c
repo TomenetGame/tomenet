@@ -3100,6 +3100,7 @@ void kill_houses(int id, int type){
 		if(dna->owner==id && dna->owner_type==type){
 			dna->owner=0L;
 			dna->creator=0L;
+			dna->a_flags=ACF_NONE;
 			kill_house_contents(&houses[i]);
 		}
 	}
