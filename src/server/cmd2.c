@@ -3147,7 +3147,7 @@ void do_cmd_fire(int Ind, int dir)
 					bool fear = FALSE;
 
 					/* Assume a default death */
-					cptr note_dies = " dies.";
+					cptr note_dies = " dies";
 
 					/* Some monsters get "destroyed" */
 					if ((r_ptr->flags3 & RF3_DEMON) ||
@@ -3156,7 +3156,7 @@ void do_cmd_fire(int Ind, int dir)
 							(strchr("Evg", r_ptr->d_char)))
 					{
 						/* Special note at death */
-						note_dies = " is destroyed.";
+						note_dies = " is destroyed";
 					}
 
 
@@ -3862,7 +3862,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 				bool fear = FALSE;
 
 				/* Assume a default death */
-				cptr note_dies = " dies.";
+				cptr note_dies = " dies";
 
 				/* Some monsters get "destroyed" */
 				if ((r_ptr->flags3 & RF3_DEMON) ||
@@ -3871,7 +3871,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 				    (strchr("Evg", r_ptr->d_char)))
 				{
 					/* Special note at death */
-					note_dies = " is destroyed.";
+					note_dies = " is destroyed";
 				}
 
 

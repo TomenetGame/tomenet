@@ -3683,7 +3683,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	cptr note = NULL;
 
 	/* Assume a default death */
-	cptr note_dies = " dies.";
+	cptr note_dies = " dies";
 
 	int plev = 25;
 	cave_type **zcave;
@@ -3759,7 +3759,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (strchr("Evg", r_ptr->d_char)))
 	{
 		/* Special note at death */
-		note_dies = " is destroyed.";
+		note_dies = " is destroyed";
 	}
 
 
@@ -3856,7 +3856,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_ACID)
 			{
-				note = " resists a lot.";
+				note = " resists a lot";
 				dam /= 9;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_ACID;
 			}
@@ -3869,7 +3869,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_ELEC)
 			{
-				note = " resists a lot.";
+				note = " resists a lot";
 				dam /= 9;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_ELEC;
 			}
@@ -3882,7 +3882,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_FIRE)
 			{
-				note = " resists a lot.";
+				note = " resists a lot";
 				dam /= 9;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 			}
@@ -3895,7 +3895,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_COLD)
 			{
-				note = " resists a lot.";
+				note = " resists a lot";
 				dam /= 9;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
 			}
@@ -3908,7 +3908,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_POIS)
 			{
-				note = " resists a lot.";
+				note = " resists a lot";
 				dam /= 9;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
 			}
@@ -4021,7 +4021,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			else if (r_ptr->flags7 & RF7_AQUATIC)
 			{
-				note = " resists a lot.";
+				note = " resists a lot";
 				dam /= 9;
 			}
 			break;
@@ -4041,8 +4041,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			else if (r_ptr->flags7 & RF7_AQUATIC)
 			{
-				note = " resists.";
-				note = " resists a lot.";
+				note = " resists a lot";
 				dam /= 9;
                         }
                         else
@@ -4267,7 +4266,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			do_stun = randint(15) / div;
 			if (r_ptr->flags3 & RF3_IM_COLD)
 			{
-				note = " resists a lot.";
+				note = " resists a lot";
 				dam /= 9;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
 			}
@@ -5172,7 +5171,13 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			delete_monster_idx(c_ptr->m_idx);
 
 			/* Give detailed messages if destroyed */
-			if (!quiet && note) msg_format(Ind, "%^s%s", m_name, note);
+			/* DEG Death message with damage. */
+			if ((r_ptr->flags1 & RF1_UNIQUE) && (!quiet && note))
+			{
+				msg_format(Ind, "%^s%s by \377p%d \377wdamage.", m_name, note, dam);
+			}	
+			else	
+			if (!quiet && note) msg_format(Ind, "%^s%s by \377g%d \377wdamage.", m_name, note, dam);
 		}
 
 		/* Damaged monster */
@@ -5204,7 +5209,9 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else
 		{
 			/* Give detailed messages if visible or destroyed */
-			if (!quiet && note && seen) msg_format(Ind, "%^s%s", m_name, note);
+			/* DEG Changed for added damage message. */
+			if ((!quiet && note && seen)&&(r_ptr->flags1 & RF1_UNIQUE)) msg_format(Ind, "%^s%s and takes \377p%d \377wdamage.", m_name, note, dam);
+			else if (!quiet && note && seen) msg_format(Ind, "%^s%s and takes \377g%d \377wdamage.", m_name, note, dam);
 
 			/* Hack -- Pain message */
 			else if (!quiet && dam > 0) message_pain(Ind, c_ptr->m_idx, dam);

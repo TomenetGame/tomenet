@@ -3310,7 +3310,6 @@ void monster_death(int Ind, int m_idx)
 #ifdef TOMENET_WORLDS
 		world_msg(buf);
 #endif	// TOMENET_WORLDS
-
 		/* Tell every player */
 		msg_broadcast(Ind, buf);
 	}
@@ -4669,10 +4668,11 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		sound(Ind, SOUND_KILL);
 
 		/* Death by Missile/Spell attack */
+		/* DEG modified spell damage messages. */
 		if (note)
 		{
-			msg_format_near(Ind, "\377y%^s%s", m_name, note);
-			msg_format(Ind, "\377y%^s%s", m_name, note);
+			msg_format_near(Ind, "\377y%^s%s from\377g%d \377wdamage.", m_name, note, dam);
+			msg_format(Ind, "\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
 		}
 
 		/* Death by physical attack -- invisible monster */

@@ -1633,14 +1633,15 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			sound(Ind, SOUND_HIT);
 
 			/* Message */
+			/* DEG Updated hit message to include damage 
 			if(backstab)
 				msg_format(Ind, "You %s stab the helpless, sleeping %s!",
 						nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr));
 			else if (stab_fleeing)
 				msg_format(Ind, "You %s the fleeing %s!",
 						nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr));
-			else if (!martial) msg_format(Ind, "You hit %s.", m_name);
-
+			else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k); */
+			
 			/* Hack -- bare hands do one damage */
 			k = 1;
 
@@ -1862,6 +1863,16 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 
 			/* No negative damage */
 			if (k < 0) k = 0;
+
+			/* DEG Updated hit message to include damage */
+			if(backstab)
+				msg_format(Ind, "You %s stab the helpless, sleeping %s!",
+						nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr));
+			else if (stab_fleeing)
+				msg_format(Ind, "You %s the fleeing %s!",
+						nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr));
+			else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
+			else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
 
 			/* Damage, check for fear and death */
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) break;

@@ -659,7 +659,7 @@ bool make_attack_normal(int Ind, int m_idx)
 			{
 				case RBM_HIT:
 				{
-					act = "hits you.";
+					act = "hits you";
 #ifdef NORMAL_HIT_NO_STUN
 					do_cut = 1;
 #else
@@ -671,14 +671,14 @@ bool make_attack_normal(int Ind, int m_idx)
 
 				case RBM_TOUCH:
 				{
-					act = "touches you.";
+					act = "touches you";
 					touched = TRUE;
 					break;
 				}
 
 				case RBM_PUNCH:
 				{
-					act = "punches you.";
+					act = "punches you";
 					do_stun = 1;
 					touched = TRUE;
 					break;
@@ -686,7 +686,7 @@ bool make_attack_normal(int Ind, int m_idx)
 
 				case RBM_KICK:
 				{
-					act = "kicks you.";
+					act = "kicks you";
 					do_stun = 1;
 					touched = TRUE;
 					break;
@@ -694,7 +694,7 @@ bool make_attack_normal(int Ind, int m_idx)
 
 				case RBM_CLAW:
 				{
-					act = "claws you.";
+					act = "claws you";
 					do_cut = 1;
 					touched = TRUE;
 					break;
@@ -702,7 +702,7 @@ bool make_attack_normal(int Ind, int m_idx)
 
 				case RBM_BITE:
 				{
-					act = "bites you.";
+					act = "bites you";
 					do_cut = 1;
 					touched = TRUE;
 					break;
@@ -710,20 +710,20 @@ bool make_attack_normal(int Ind, int m_idx)
 
 				case RBM_STING:
 				{
-					act = "stings you.";
+					act = "stings you";
 					touched = TRUE;
 					break;
 				}
 
 				case RBM_XXX1:
 				{
-					act = "XXX1's you.";
+					act = "XXX1's you";
 					break;
 				}
 
 				case RBM_BUTT:
 				{
-					act = "butts you.";
+					act = "butts you";
 					do_stun = 1;
 					touched = TRUE;
 					break;
@@ -731,7 +731,7 @@ bool make_attack_normal(int Ind, int m_idx)
 
 				case RBM_CRUSH:
 				{
-					act = "crushes you.";
+					act = "crushes you";
 					do_stun = 1;
 					touched = TRUE;
 					break;
@@ -739,21 +739,21 @@ bool make_attack_normal(int Ind, int m_idx)
 
 				case RBM_ENGULF:
 				{
-					act = "engulfs you.";
+					act = "engulfs you";
 					touched = TRUE;
 					break;
 				}
 #if 0
 				case RBM_XXX2:
 				{
-					act = "XXX2's you.";
+					act = "XXX2's you";
 					break;
 				}
 #endif	// 0
 
 				case RBM_CHARGE:
 				{
-					act = "charges you.";
+					act = "charges you";
 					touched = TRUE;
 //					sound(SOUND_BUY); /* Note! This is "charges", not "charges at". */
 					break;
@@ -761,33 +761,33 @@ bool make_attack_normal(int Ind, int m_idx)
 
 				case RBM_CRAWL:
 				{
-					act = "crawls on you.";
+					act = "crawls on you";
 					touched = TRUE;
 					break;
 				}
 
 				case RBM_DROOL:
 				{
-					act = "drools on you.";
+					act = "drools on you";
 					break;
 				}
 
 				case RBM_SPIT:
 				{
-					act = "spits on you.";
+					act = "spits on you";
 					break;
 				}
 
 #if 0
 				case RBM_XXX3:
 				{
-					act = "XXX3's on you.";
+					act = "XXX3's on you";
 					break;
 				}
 #endif	// 0
 				case RBM_EXPLODE:
 				{
-					act = "explodes.";
+					act = "explodes";
 					explode = TRUE;
 					break;
 				}
@@ -795,25 +795,25 @@ bool make_attack_normal(int Ind, int m_idx)
 
 				case RBM_GAZE:
 				{
-					act = "gazes at you.";
+					act = "gazes at you";
 					break;
 				}
 
 				case RBM_WAIL:
 				{
-					act = "wails at you.";
+					act = "wails at you";
 					break;
 				}
 
 				case RBM_SPORE:
 				{
-					act = "releases spores at you.";
+					act = "releases spores at you";
 					break;
 				}
 
 				case RBM_XXX4:
 				{
-					act = "projects XXX4's at you.";
+					act = "projects XXX4's at you";
 					break;
 				}
 
@@ -838,7 +838,7 @@ bool make_attack_normal(int Ind, int m_idx)
 #if 0
 				case RBM_XXX5:
 				{
-					act = "XXX5's you.";
+					act = "XXX5's you";
 					break;
 				}
 #endif	// 0
@@ -861,8 +861,26 @@ bool make_attack_normal(int Ind, int m_idx)
 
 			}
 
+			/* Roll out the damage */
+			damage = damroll(d_dice, d_side);
+
 			/* Message */
-			if (act) msg_format(Ind, "%^s %s", m_name, act);
+			/* DEG Modified to give damage number */
+			
+			if ((act) && (damage < 1))
+			{
+				msg_format(Ind, "%^s %s.", m_name, act);
+			}
+			else
+			if ((act) && (r_ptr->flags1 & (RF1_UNIQUE)))
+			{
+				msg_format(Ind, "%^s %s for \377f%d \377wdamage.", m_name, act, damage);
+			}
+			else 
+			if (act)
+			{		
+				msg_format(Ind, "%^s %s for \377r%d \377wdamage.", m_name, act, damage);
+			}
 
 
 			/* The undead can give the player the Black Breath with
@@ -889,9 +907,6 @@ bool make_attack_normal(int Ind, int m_idx)
 
 			/* Hack -- assume all attacks are obvious */
 			obvious = TRUE;
-
-			/* Roll out the damage */
-			damage = damroll(d_dice, d_side);
 
 			/* Apply appropriate damage */
 			switch (effect)
@@ -2110,7 +2125,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 			{
 				case RBM_HIT:
 				{
-					act = "hits you.";
+					act = "hits you";
 #ifdef NORMAL_HIT_NO_STUN
 					do_cut = 1;
 #else
