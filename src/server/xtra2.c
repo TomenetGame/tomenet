@@ -2574,15 +2574,7 @@ void gain_exp(int Ind, s32b amount)
 	    Ind2 = find_player(p_ptr->esp_link);
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(Ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(Ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -2834,15 +2826,7 @@ void monster_death(int Ind, int m_idx)
 		    Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(Ind, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+		      end_mind(Ind, TRUE);
 		    else
 		      {
 			p_ptr2 = Players[Ind2];
@@ -2911,15 +2895,7 @@ void monster_death(int Ind, int m_idx)
 			      Ind2 = find_player(q_ptr->esp_link);
 			      
 			      if (!Ind2)
-				{
-				  q_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-				  q_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-				  q_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-				  msg_print(i, "Ending mind link.");
-				  q_ptr->esp_link = 0;
-				  q_ptr->esp_link_type = 0;
-				  q_ptr->esp_link_flags = 0;
-				}
+				end_mind(i, TRUE);
 			      else
 				{
 				  p_ptr2 = Players[Ind2];
@@ -3117,15 +3093,7 @@ void player_death(int Ind)
 	    int Ind2 = find_player(p_ptr->esp_link);
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(Ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(Ind, TRUE);
 	    else
 	      {
 		strcpy(Players[Ind2]->died_from, p_ptr->died_from);

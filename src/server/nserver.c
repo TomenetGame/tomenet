@@ -859,6 +859,12 @@ static void Delete_player(int Ind)
 		}
 	}
 
+	if(p_ptr->esp_link_type && p_ptr->esp_link){
+		/* This is the last chance to get out!!! */
+		int Ind2=find_player(p_ptr->esp_link);
+		if(Ind2) end_mind(Ind2, TRUE);
+	}
+
 
 	/* Swap entry number 'Ind' with the last one */
 	/* Also, update the "player_index" on the cave grids */
@@ -1731,6 +1737,7 @@ void process_pending_commands(int ind)
 	while ((connp->r.ptr < connp->r.buf + connp->r.len))
 	{
 		type = (connp->r.ptr[0] & 0xFF);
+		printf("Type: %d\n",type);
 		result = (*receive_tbl[type])(ind);
 		if (connp->state == CONN_PLAYING)
 		{
@@ -2144,8 +2151,10 @@ void do_quit(int ind, bool tellclient)
 	/* If we are close to the center of town, exit quickly. */
 	if (depth <= 0 ? wild_info[depth].radius <= 2 : 0)
 	{
+		printf("Quick quit: %d\n",ind);
 		Destroy_connection(ind, "client quit");
 	}
+	printf("Timeout quit: %d\n",ind);
 	// Otherwise wait for the timeout
 }
 
@@ -2462,15 +2471,7 @@ int Send_plusses(int ind, int tohit, int todam)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -2503,15 +2504,7 @@ int Send_ac(int ind, int base, int plus)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -2557,15 +2550,7 @@ int Send_gold(int ind, s32b au)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -2597,15 +2582,7 @@ int Send_hp(int ind, int mhp, int chp)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -2636,15 +2613,7 @@ int Send_sp(int ind, int msp, int csp)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -2704,15 +2673,7 @@ int Send_stat(int ind, int stat, int max, int cur)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -2758,15 +2719,7 @@ int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, cptr n
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -2797,15 +2750,7 @@ int Send_equip(int ind, char pos, byte attr, int wgt, byte tval, cptr name)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -2850,15 +2795,7 @@ int Send_depth(int ind, int depth)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -2889,15 +2826,7 @@ int Send_food(int ind, int food)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -2928,15 +2857,7 @@ int Send_blind(int ind, bool blind)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -2967,15 +2888,7 @@ int Send_confused(int ind, bool confused)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3006,15 +2919,7 @@ int Send_fear(int ind, bool fear)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3045,15 +2950,7 @@ int Send_poison(int ind, bool poisoned)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3084,15 +2981,7 @@ int Send_state(int ind, bool paralyzed, bool searching, bool resting)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3123,15 +3012,7 @@ int Send_speed(int ind, int speed)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3176,15 +3057,7 @@ int Send_cut(int ind, int cut)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3215,15 +3088,7 @@ int Send_stun(int ind, int stun)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3254,15 +3119,7 @@ int Send_direction(int ind)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3303,18 +3160,11 @@ int Send_message(int ind, cptr msg)
 	    player_type *p_ptr2;
 	    connection_t *connp2;
 
-	    if (!Ind2)
-	      {
-		hack_message = TRUE;
-		msg_print(ind, "Ending mind link.");
-		hack_message = FALSE;
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	    if (!Ind2){
+	      hack_message = TRUE;
+	      end_mind(ind, TRUE);
+	      hack_message = FALSE;
+	    }
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3343,15 +3193,7 @@ int Send_char(int ind, int x, int y, byte a, char c)
 	    int Ind2 = find_player(p_ptr->esp_link);
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		if (BIT(Conn[Players[Ind2]->conn].state, CONN_PLAYING | CONN_READY))
@@ -3399,15 +3241,7 @@ int Send_item_request(int ind)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3439,15 +3273,7 @@ int Send_flush(int ind)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3488,15 +3314,7 @@ int Send_line_info(int ind, int y)
 	    Ind2 = find_player(p_ptr->esp_link);
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3579,15 +3397,7 @@ int Send_mini_map(int ind, int y)
 	    Ind2 = find_player(p_ptr->esp_link);
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3668,15 +3478,7 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3709,15 +3511,7 @@ int Send_store_info(int ind, int num, int owner, int items)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3750,15 +3544,7 @@ int Send_store_sell(int ind, int price)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -3798,15 +3584,7 @@ int Send_target_info(int ind, int x, int y, cptr str)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -4018,15 +3796,7 @@ int Send_monster_health(int ind, int num, byte attr)
 	    connection_t *connp2;
 
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(ind, TRUE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -4086,15 +3856,7 @@ static int Receive_walk(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+		      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -4172,15 +3934,7 @@ static int Receive_run(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+		      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -4269,15 +4023,7 @@ static int Receive_tunnel(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+		      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -4322,15 +4068,7 @@ static int Receive_aim_wand(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+		      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -4380,15 +4118,7 @@ static int Receive_drop(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -4438,15 +4168,7 @@ static int Receive_fire(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -4503,15 +4225,7 @@ static int Receive_stand(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -4557,15 +4271,7 @@ static int Receive_destroy(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -4614,15 +4320,7 @@ static int Receive_look(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -4666,15 +4364,7 @@ static int Receive_spell(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -4750,15 +4440,7 @@ static int Receive_open(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -4962,15 +4644,7 @@ static int Receive_mind(int ind)
 		    Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			bool d = TRUE;
@@ -5006,13 +4680,13 @@ static int Receive_mind(int ind)
 
 			if (d)
 			  {
-			    msg_format(player, "The mind link with %s begins to break.", p_ptr2->name);
-			    msg_format(Ind2, "The mind link with %s begins to break.", p_ptr->name);
+			    msg_format(player, "\377RThe mind link with %s begins to break.", p_ptr2->name);
+			    msg_format(Ind2, "\377RThe mind link with %s begins to break.", p_ptr->name);
 			  }
 			else
 			  {
-			    msg_format(player, "The mind link with %s stabilizes.", p_ptr2->name);
-			    msg_format(Ind2, "The mind link with %s stabilizes.", p_ptr->name);
+			    msg_format(player, "\377RThe mind link with %s stabilizes.", p_ptr2->name);
+			    msg_format(Ind2, "\377RThe mind link with %s stabilizes.", p_ptr->name);
 			  }
 		      }
 		  }
@@ -5020,12 +4694,12 @@ static int Receive_mind(int ind)
 		  {
 		    if (p_ptr->esp_link_flags & LINKF_OPEN)
 		      {
-			msg_print(player, "You close your mind.");
+			msg_print(player, "\377RYou close your mind.");
 			p_ptr->esp_link_flags &= ~LINKF_OPEN;
 		      }
 		    else
 		      {
-			msg_print(player, "You open your mind.");
+			msg_print(player, "\377RYou open your mind.");
 			p_ptr->esp_link_flags |= LINKF_OPEN;
 		      }
 		  }
@@ -5093,15 +4767,7 @@ static int Receive_quaff(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5151,15 +4817,7 @@ static int Receive_read(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5208,15 +4866,7 @@ static int Receive_search(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5262,15 +4912,7 @@ static int Receive_take_off(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5320,15 +4962,7 @@ static int Receive_use(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5378,15 +5012,7 @@ static int Receive_throw(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5437,15 +5063,7 @@ static int Receive_wield(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5495,15 +5113,7 @@ static int Receive_zap(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5553,15 +5163,7 @@ static int Receive_target(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5603,15 +5205,7 @@ static int Receive_target_friendly(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5657,15 +5251,7 @@ static int Receive_inscribe(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5709,15 +5295,7 @@ static int Receive_uninscribe(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5760,15 +5338,7 @@ static int Receive_activate(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5817,15 +5387,7 @@ static int Receive_bash(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5874,15 +5436,7 @@ static int Receive_disarm(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5932,15 +5486,7 @@ static int Receive_eat(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -5991,15 +5537,7 @@ static int Receive_fill(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6048,15 +5586,7 @@ static int Receive_locate(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6098,15 +5628,7 @@ static int Receive_map(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6148,15 +5670,7 @@ static int Receive_search_mode(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6197,15 +5711,7 @@ static int Receive_close(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6292,15 +5798,7 @@ static int Receive_go_up(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6349,15 +5847,7 @@ static int Receive_go_down(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6408,15 +5898,7 @@ static int Receive_direction(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6461,15 +5943,7 @@ static int Receive_item(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6534,15 +6008,7 @@ static int Receive_purchase(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6584,15 +6050,7 @@ static int Receive_admin_house(int ind){
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6631,15 +6089,7 @@ static int Receive_sell(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6680,15 +6130,7 @@ static int Receive_store_leave(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6746,15 +6188,7 @@ static int Receive_store_confirm(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6797,15 +6231,7 @@ static int Receive_drop_gold(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6854,15 +6280,7 @@ static int Receive_steal(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6913,15 +6331,7 @@ static int Receive_King(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -6975,15 +6385,7 @@ static int Receive_redraw(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			if (Players[Ind2]->esp_link_flags & LINKF_VIEW)
@@ -7031,15 +6433,7 @@ static int Receive_rest(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -7121,15 +6515,7 @@ static int Receive_clear_buffer(int ind)
 		    int Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(player, "Ending mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
@@ -7353,15 +6739,7 @@ void Handle_direction(int Ind, int dir)
 	    Ind2 = find_player(p_ptr->esp_link);
 	    
 	    if (!Ind2)
-	      {
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-		msg_print(Ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(Ind, TRUE);
 	}
 
 
@@ -7572,3 +6950,15 @@ static int Receive_autophase(int Ind)
 	return -1;
 }
 
+void end_mind(int Ind, bool update){
+	player_type *p_ptr=Players[Ind];
+	msg_print(Ind, "\377REnding mind link.");
+	p_ptr->esp_link = 0;
+	p_ptr->esp_link_type = 0;
+	p_ptr->esp_link_flags = 0;
+	if(update){
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
+		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
+	}
+}

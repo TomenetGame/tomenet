@@ -21,6 +21,7 @@ extern int NumPlayers;
 extern int ConsoleSocket;
 extern void process_pending_commands(int Ind);
 extern bool player_is_king(int Ind);
+extern void end_mind(int Ind, bool update);
 
 /* randart.c */
 extern artifact_type *randart_make(object_type *o_ptr);

@@ -2658,10 +2658,10 @@ void player_talk_aux(int Ind, cptr message)
 		q_ptr = Players[target];
 
 		/* Send message to target */
-		msg_format(target, "[%s:%s] %s", q_ptr->name, sender, colon);
+		msg_format(target, "\377g[%s:%s] %s", q_ptr->name, sender, colon);
 
 		/* Also send back to sender */
-		msg_format(Ind, "[%s:%s] %s", q_ptr->name, sender, colon);
+		msg_format(Ind, "\377g[%s:%s] %s", q_ptr->name, sender, colon);
 
 		/* Done */
 		return;
@@ -2671,12 +2671,12 @@ void player_talk_aux(int Ind, cptr message)
 	if (len && target < 0)
 	{
 		/* Send message to target party */
-		party_msg_format(0 - target, "[%s:%s] %s",
+		party_msg_format(0 - target, "\377G[%s:%s] %s",
 		                 parties[0 - target].name, sender, colon);
 
 		/* Also send back to sender if not in that party */
 		if(!player_in_party(0-target, Ind)){
-			msg_format(Ind, "[%s:%s] %s",
+			msg_format(Ind, "\377G[%s:%s] %s",
 		           parties[0 - target].name, sender, colon);
 		}
 
@@ -2695,7 +2695,7 @@ void player_talk_aux(int Ind, cptr message)
 		for (i = 1; i <= NumPlayers; i++)
 		{
 			/* Send message */
-                        if (!me) msg_format(i, "[%s] %s", sender, message);
+                        if (!me) msg_format(i, "\377B[%s] %s", sender, message);
                         else msg_format(i, "%s %s", sender, message + 4);
 		}
 	/*}
@@ -2710,7 +2710,7 @@ void player_talk_aux(int Ind, cptr message)
 			if (p_ptr->dun_depth == q_ptr->dun_depth)
 			{
 				 Send message 
-				msg_format(i, "[%s] %s", sender, message);
+				msg_format(i, "\377U[%s] %s", sender, message);
 			}
 		}
 	}

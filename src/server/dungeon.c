@@ -1644,21 +1644,13 @@ static void process_player_end(int Ind)
 			      Ind2 = find_player(p_ptr->esp_link);
 		    
 			      if (!Ind2)
-				{
-				  p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-				  p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-				  p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-				  msg_print(Ind, "Ending mind link.");
-				  p_ptr->esp_link = 0;
-				  p_ptr->esp_link_type = 0;
-				  p_ptr->esp_link_flags = 0;
-				}
+				end_mind(Ind, TRUE);
 			      else
 				{
 				  player_type *p_ptr2 = Players[Ind2];
 
-				  msg_format(Ind, "You break the mind link with %s.", p_ptr2->name);
-				  msg_format(Ind2, "%s breaks the mind link with you.", p_ptr->name);
+				  msg_format(Ind, "\377RYou break the mind link with %s.", p_ptr2->name);
+				  msg_format(Ind2, "\377R%s breaks the mind link with you.", p_ptr->name);
 				  p_ptr->esp_link = 0;
 				  p_ptr->esp_link_type = 0;
 				  p_ptr->esp_link_flags = 0;

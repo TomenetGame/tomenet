@@ -1116,12 +1116,7 @@ static void calc_mana(int Ind)
 	    Ind2 = find_player(p_ptr->esp_link);
 
 	    if (!Ind2)
-	      {
-		msg_print(Ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(Ind, FALSE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
@@ -1351,12 +1346,7 @@ static void calc_hitpoints(int Ind)
 	    Ind2 = find_player(p_ptr->esp_link);
 
 	    if (!Ind2)
-	      {
-		msg_print(Ind, "Ending mind link.");
-		p_ptr->esp_link = 0;
-		p_ptr->esp_link_type = 0;
-		p_ptr->esp_link_flags = 0;
-	      }
+	      end_mind(Ind, FALSE);
 	    else
 	      {
 		p_ptr2 = Players[Ind2];

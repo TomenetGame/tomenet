@@ -5769,15 +5769,7 @@ void do_cmd_psi(int Ind, int book, int spell)
 		    Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(Ind, "\377REnding mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+		      end_mind(Ind, TRUE);
 		    else
 		      {
 			p_ptr2 = p_ptr;
@@ -5919,8 +5911,8 @@ void do_cmd_psi(int Ind, int book, int spell)
 		    break;
 		  }
 		
-		msg_format(Ind2, "\377R%s mind fusions with your mind.", p_ptr->name);
-		msg_format(Ind, "\377RYour mind fusion with %s mind.", Players[Ind2]->name);
+		msg_format(Ind2, "\377R%s's mind fusions with your mind.", p_ptr->name);
+		msg_format(Ind, "\377RYour mind fusions with %s's mind.", Players[Ind2]->name);
 		p_ptr->esp_link = Players[Ind2]->id;
 		p_ptr->esp_link_type = LINK_DOMINANT;
 		p_ptr->esp_link_flags = LINKF_MOV | LINKF_OBJ;
@@ -6351,15 +6343,7 @@ void do_cmd_psi_aux(int Ind, int dir)
 		    Ind2 = find_player(p_ptr->esp_link);
 		    
 		    if (!Ind2)
-		      {
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(Ind, "\377REnding mind link.");
-			p_ptr->esp_link = 0;
-			p_ptr->esp_link_type = 0;
-			p_ptr->esp_link_flags = 0;
-		      }
+		      end_mind(Ind, TRUE);
 		    else
 		      {
 			p_ptr2 = p_ptr;
