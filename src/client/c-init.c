@@ -408,12 +408,6 @@ void client_init(char *argv1, bool skip)
 	/* Clear it */
 	Sockbuf_clear(&ibuf);
 	
-	if (!strcmp(nick, "Ciang"))
-	{
-		strcpy(real_name, "pricilla");
-		strcpy(host_name, "pricilla.nazgul");
-	}
-
 	/* Put the contact info in it */
 	Packet_printf(&ibuf, "%u", magic);
 	Packet_printf(&ibuf, "%s%hu%c", real_name, GetPortNum(ibuf.sock), 0xFF);
