@@ -4607,12 +4607,16 @@ void disturb(int Ind, int stop_search, int unused_flag)
  * Hack -- Check if a level is a "quest" level
  */
 /* FIXME - use worldpos and dungeon array! */
+#ifdef NEW_DUNGEON
+bool is_quest(struct worldpos *wpos)
+#else
 bool is_quest(int level)
+#endif
 {
-	int i;
-
 	/* not implemented yet :p */
 	return (FALSE);
+#if 0
+	int i;
 
 	/* Town is never a quest */
 	if (!level) return (FALSE);
@@ -4626,4 +4630,5 @@ bool is_quest(int level)
 
 	/* Nope */
 	return (FALSE);
+#endif
 }

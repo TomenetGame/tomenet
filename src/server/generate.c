@@ -5881,7 +5881,10 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, cha
 	struct dungeon_type *d_ptr;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	wild->flags |= (tower ? WILD_F_UP : WILD_F_DOWN); /* no checking */
-	MAKE((tower ? wild->tower : wild->dungeon), struct dungeon_type);
+	if (tower)
+		MAKE(wild->tower, struct dungeon_type);
+	else
+		MAKE(wild->dungeon, struct dungeon_type);
 	d_ptr=(tower ? wild->tower : wild->dungeon);
 	d_ptr->baselevel=baselevel;
 	d_ptr->flags=flags; 

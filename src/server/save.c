@@ -7,9 +7,9 @@
 #include "angband.h"
 
 #ifdef NEW_DUNGEON
-void new_wr_wild();
+static void new_wr_wild();
 static void new_wr_dungeons();
-static void wr_towns();
+void wr_towns();
 #endif
 
 #ifdef FUTURE_SAVEFILES

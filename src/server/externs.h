@@ -28,6 +28,9 @@ extern void end_mind(int Ind, bool update);
 /* randart.c */
 extern artifact_type *randart_make(object_type *o_ptr);
 extern void randart_name(object_type *o_ptr, char *buffer);
+extern void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b dun_level);
+extern void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific);
+extern void dragon_resist(artifact_type * a_ptr);
 
 /* tables.c */
 extern s16b ddd[9];
@@ -455,6 +458,7 @@ extern char summon_kin_type;
 
 /* birth.c */
 extern bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, int sex, int stat_order[]);
+extern bool confirm_admin(int Ind, cptr name, cptr pass);
 extern void server_birth(void);
 
 /* cave.c */
@@ -503,16 +507,17 @@ extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2);
 extern bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2);
 extern bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2);
 extern void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m);
+extern bool is_quest(struct worldpos *wpos);
 #else
 extern bool projectable(int Depth, int y1, int x1, int y2, int x2);
 extern bool projectable_wall(int Depth, int y1, int x1, int y2, int x2);
 extern void scatter(int Depth, int *yp, int *xp, int y, int x, int d, int m);
+extern bool is_quest(int level);
 #endif
 extern void health_track(int Ind, int m_idx);
 extern void update_health(int m_idx);
 extern void recent_track(int r_idx);
 extern void disturb(int Ind, int stop_search, int flush_output);
-extern bool is_quest(int level);
 extern void update_players(void);
 
 /* cmd1.c */
@@ -650,6 +655,8 @@ extern int find_player_name(char *name);
 extern void play_game(bool new_game);
 extern void shutdown_server(void);
 extern void dungeon(void);
+extern bool retaliate_item(int Ind, int item, cptr inscription);
+extern void pack_overflow(int Ind);
 
 /* files.c */
 extern void safe_setuid_drop(void);

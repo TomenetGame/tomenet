@@ -6,6 +6,11 @@
 
 #include "angband.h"
 
+#ifdef NEW_DUNGEON
+static void new_rd_wild();
+static void new_rd_dungeons();
+void rd_towns();
+#endif
 
 /*
  * This file is responsible for loading all "2.7.X" savefiles

@@ -1933,7 +1933,7 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
  * what it is :)		- Jir -
  */
 
-static void dragon_resist(artifact_type * a_ptr)
+void dragon_resist(artifact_type * a_ptr)
 {
 	do
 	{
