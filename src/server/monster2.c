@@ -2265,7 +2265,7 @@ bool allow_unique_level(int r_idx, struct worldpos *wpos)
  * XXX XXX XXX Actually, do something similar for artifacts, to simplify
  * the "preserve" mode, and to make the "what artifacts" flag more useful.
  */
-static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, char clo)
+static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo)
 {
 	int                     i, Ind, j;
 
@@ -2472,6 +2472,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 
 	/* clone value */
 	m_ptr->clone=clo;
+	if (m_ptr->clone > 100) m_ptr->clone = 100;
 
 	for (Ind = 1; Ind < NumPlayers + 1; Ind++)
 	{
@@ -2538,7 +2539,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 /*
  * Attempt to place a "group" of monsters around the given location
  */
-static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool small)
+static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool small, int s_clone)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2606,7 +2607,7 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 			if (!cave_empty_bold(zcave, my, mx)) continue;
 
 			/* Attempt to place another monster */
-			if (place_monster_one(wpos, my, mx, r_idx, pick_ego_monster(r_idx, getlevel(wpos)), 0, slp, FALSE))
+			if (place_monster_one(wpos, my, mx, r_idx, pick_ego_monster(r_idx, getlevel(wpos)), 0, slp, s_clone))
 			{
 				/* Add it to the "hack" set */
 				hack_y[hack_n] = my;
@@ -2670,7 +2671,7 @@ static bool place_monster_okay(int r_idx)
  * Note the use of the new "monster allocation table" code to restrict
  * the "get_mon_num()" function to "legal" escort types.
  */
-bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, bool clo)
+bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo)
 {
 	int                     i;
 
@@ -2691,14 +2692,14 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	if (r_ptr->flags1 & RF1_FRIEND)
 	{
 		/* Attempt to place a group */
-		(void)place_monster_group(wpos, y, x, r_idx, slp, TRUE);
+		(void)place_monster_group(wpos, y, x, r_idx, slp, TRUE, clo);
 	}
 
 	/* Friends for certain monsters */
 	if (r_ptr->flags1 & RF1_FRIENDS)
 	{
 		/* Attempt to place a group */
-		(void)place_monster_group(wpos, y, x, r_idx, slp, FALSE);
+		(void)place_monster_group(wpos, y, x, r_idx, slp, FALSE, clo);
 	}
 
 
@@ -2744,14 +2745,14 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 			if (!z) break;
 
 			/* Place a single escort */
-			(void)place_monster_one(wpos, ny, nx, z, pick_ego_monster(z, level), 0, slp, FALSE);
+			(void)place_monster_one(wpos, ny, nx, z, pick_ego_monster(z, level), 0, slp, clo);
 
 			/* Place a "group" of escorts if needed */
 			if ((r_info[z].flags1 & RF1_FRIENDS) ||
 			    (r_ptr->flags1 & RF1_ESCORTS))
 			{
 				/* Place a group of monsters */
-				(void)place_monster_group(wpos, ny, nx, z, slp, FALSE);
+				(void)place_monster_group(wpos, ny, nx, z, slp, FALSE, clo);
 			}
 		}
 	}
