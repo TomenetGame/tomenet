@@ -2679,7 +2679,14 @@ void player_talk_aux(int Ind, cptr message)
 					if (!o_ptr->tval) break;
 
 					/* skip inscribed items */
-					if (o_ptr->note) continue;
+					/* skip non-matching tags */
+					if (o_ptr->note && 
+						strcmp(quark_str(o_ptr->note), "cursed") &&
+						strcmp(quark_str(o_ptr->note), "broken") &&
+						strcmp(quark_str(o_ptr->note), "average") &&
+						strcmp(quark_str(o_ptr->note), "good") &&
+						strcmp(quark_str(o_ptr->note), "excellent"))
+							continue;
 
 					do_cmd_destroy(Ind, i, o_ptr->number);
 					i--;

@@ -483,3 +483,6 @@ Change list for PernMangband
 - Traps can be generated under items.
 - 3 new traps.
 - a bug in trap disarming fixed.
+
+20/12/2001 (Jir)
+- '/dis' can destroy items with pseudo-id tags ({good} or below).
