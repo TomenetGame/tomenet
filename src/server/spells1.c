@@ -5654,7 +5654,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	int grids = 0;
 
 	/* Coordinates of the affected grids */
-	byte gx[256], gy[256];
+	byte gx[512], gy[512];
 
 	/* Encoded "radius" info (see above) */
 	byte gm[16];
@@ -5738,6 +5738,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			gy[grids] = y;
 			gx[grids] = x;
 			grids++;
+			if(grids>500) printf("grids %d\n", grids);
 		}
 
 		/* Check the grid */
@@ -5936,6 +5937,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			gy[grids] = y;
 			gx[grids] = x;
 			grids++;
+			if(grids>500) printf("grids %d\n", grids);
 		}
 
 #if 0
@@ -5978,6 +5980,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 					gy[grids] = y;
 					gx[grids] = x;
 					grids++;
+					if(grids>500) printf("grids %d\n", grids);
 				}
 			}
 
