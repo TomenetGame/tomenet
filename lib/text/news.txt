@@ -1,23 +1,23 @@
-':' to chat **********************************************************
-'?' to help **   TomeNET 4.0.0dev **   The Troubles of Middle Earth **
+{o'{y:{o' {wto chat **********************************************************
+{o'{y?{o' {wto help **   {yTomeNET 4.0.0a{w   **   {yThe Troubles of Middle Earth{w **
             **********************************************************
 
-               "One Ring to rule them all, One Ring to find them
-            One Ring to bring them all and in the darkness bind them
-                  In the land of Mordor where the shadows lie"
-                                "Lord of The Rings", J.R.R.Tolkien
- *** spell system is BROKEN. savedata/client will be OBSOLETED/LOST everyday.
- - TomeNET 4.0.0 development version (experimental/no support at all)
- - Client ver. 4.0.0 is needed. (will be available from URL below)
- - account control introduced.     - new skill/spell system(try 'G' key)
- - dungeon generator is improved.  - simple lore browser (`~`)
- - detect traps can NOT fail(pfft) - quiver/tool slots
- - items can stack on the floor now. (but not inside a house!)
- - A guild system is implemented.  - Player alignment is coming soon?
- - Simple quests (/quest)          - Monster AI is improved further
- - Save the game in town as far as possible, so as not to be buried alive.
- - Please don't abuse the system, so as not to have your character removed.
- ... To learn about new features/changes, please see the help screen('?').
+               {y"{gOne Ring to rule them all, One Ring to find them
+            {gOne Ring to bring them all and in the darkness bind them
+                  {gIn the land of Mordor where the shadows lie{y"
+                                {o"{yLord of The Rings{o"{w, J.R.R.Tolkien
+ {r- {wTomeNET 4.0.0 development version
+ {r- {wDetect traps can NOT fail;  detection spells are radius-based now.
+ {r- {wskill system is being implemented. ('G' to check and enhance)
+ {r- {witems can stack on the floor now. (but not inside a house!)
+ {r- {wA guild system is implemented.  - Player alignment is coming soon?
+ {r- {wSimple quests are available (say /quest)
+ {r- {wquiver/tool slots added, along with a number of new tools.
+ {r- {wMonster AI significantly improved; use your head, too!
+ {r- {wSave the game in town as far as possible, so as not to be buried alive.
+ {r- {wPlease don't abuse the system, so as not to have your character removed.
+ {r- {wClient ver. 4.0.0 is needed. (will be available from URL below)
+ ** To learn about new features/changes, please see the help screen('?').
 
-    Official TomeNET site - http://t-o-m-e.net/main.php?tome_current=1
-     TomeNET 3.x-4.x: DarkGod(darkgod@t-o-m-e.net) / TomeNET dev-team
+        Official TomeNET site - http://T-o-M-E.net/pernmangband/
+    PernMAngband 4.x: DarkGod(darkgod@t-o-m-e.net) / TomeNET dev-team
