@@ -13,7 +13,7 @@
 #define PARTY_XP_BOOST	(cfg.party_xp_boost)
 
 #ifdef HAVE_CRYPT
-#include "unistd.h"
+#include <unistd.h>
 #endif	// HAVE_CRYPT
 
 static char *t_crypt(char *inbuf, cptr salt);
@@ -87,7 +87,7 @@ static char *t_crypt(char *inbuf, cptr salt){
 	char setting[9];
 	setting[0]='_';
 	strncpy(&setting[1], salt, 8);
-	strcpy(out, crypt(inbuf, salt));
+	strcpy(out, (char*)crypt(inbuf, salt));
 	return(out);
 #else
 	return(inbuf);
