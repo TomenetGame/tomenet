@@ -1788,6 +1788,7 @@ struct player_type
 
 	char savefile[MAX_PATH_LENGTH];	/* Name of the savefile */
 
+	bool inval;		/* Non validated account */
 	bool alive;		/* Are we alive */
 	bool death;		/* Have we died */
 	s16b ghost;		/* Are we a ghost */
