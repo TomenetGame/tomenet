@@ -686,7 +686,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 		/* don't display the dungeon master if the secret_dungeon_master
 		 * option is set
 		 */
-		if (q_ptr->admin_dm &&
+		if (q_ptr->admin_dm && !p_ptr->admin_dm && 
 				(cfg.secret_dungeon_master)) continue;
 
 		/*** Determine color ***/
@@ -728,7 +728,8 @@ void do_cmd_check_player_equip(int Ind, int line)
 		}
 #endif
 
-		if (q_ptr->invis && !admin &&
+		/* Can see party members / newbies, even if invisible */
+		if (q_ptr->invis && !admin && !((attr == 'B') || (attr == 'w')) &&
 				(!p_ptr->see_inv ||
 				 ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) &&
 				((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) > (q_ptr->lev / 2))))
