@@ -2870,5 +2870,5 @@ extern int PlayerUID;
 
 #define MEGO_CHANCE             18      /* % chances of getting ego monsters */
 
-#define race_inf(m_ptr) (race_info_idx((m_ptr)->r_idx, (m_ptr)->ego))
+#define race_inf(m_ptr) (race_info_idx((m_ptr)->r_idx, (m_ptr)->ego, (m_ptr)->name3))
 

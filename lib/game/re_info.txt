@@ -8,6 +8,8 @@
 
 # Version stamp (required)
 
+V:3.2.2
+
 # Most values can be used with the +, -, % and = operators, = will set the
 # monster value, + and - will modify it based on the normal monster
 # % will apply that percentage to the monster value
@@ -27,8 +29,6 @@
 # O:monster flags to remove, use MF_ALL for all
 # S:monster spells to add for the ego-type
 # T:monster spells to remove, use MF_ALL for all
-
-V:3.2.2
 
 # A few undeads, to be created by the ANIM_DEAD spell
 
@@ -90,6 +90,9 @@ V:3.2.2
 #S:1_IN_5 | BLIND | HOLD | SCARE
 #T:MF_ALL
 
+# Some monsters (like orc captain, troll priest) should be removed
+# from r_info.txt; till then this file is hacked instead.	- Jir -
+# (o)
 N:5:Captain
 G:*:v
 I:+5:%150d%100:+5:%120:=0
@@ -99,7 +102,9 @@ B:*:*:+0d+1
 B:*:*:+0d+1
 B:*:*:+0d+1
 #F:R_CHAR_o | R_CHAR_y | R_CHAR_k | BASEANGBAND # orc captain already
-F:R_CHAR_O | R_CHAR_y | R_CHAR_k | BASEANGBAND
+# hack - avoid Orc captain captain
+H:DROP_90
+F:R_CHAR_o | R_CHAR_O | R_CHAR_y | R_CHAR_k | BASEANGBAND
 M:FORCE_MAXHP | FRIENDS | SMART | DROP_1D2
 
 N:6:Chieftain
@@ -113,23 +118,29 @@ B:*:*:+1d+2
 F:R_CHAR_T | R_CHAR_P | R_CHAR_O | BASEANGBAND
 M:FORCE_MAXHP | FRIENDS | SMART | DROP_1D2
 
+# (oO)
 N:7:Shaman
 G:*:r
 I:+0:%90d%100:+10:%90:=0
 W:+2:1:%90:%120:A
-F:R_CHAR_o | R_CHAR_k | R_CHAR_n | BASEANGBAND
+#F:R_CHAR_o | R_CHAR_k | R_CHAR_n | BASEANGBAND
+F:R_CHAR_k | R_CHAR_n | BASEANGBAND
 M:SMART | FORCE_MAXHP | DROP_1D2
 O:FRIENDS
 S:1_IN_6 | MISSILE | CAUSE_1 | CONF | BLINK
 
+# (T)
 N:8:Priest
 G:*:G
 I:+0:%90d%100:+10:%90:=0
 W:+3:2:%90:%120:A
+# hack - avoid Troll priest Priest
+H:DROP_90
 F:R_CHAR_T | R_CHAR_P | R_CHAR_O | BASEANGBAND
 M:FRIENDS | SMART | FORCE_MAXHP | DROP_1D2
 S:1_IN_6 | CAUSE_2 | MISSILE | DARKNESS | CONF | SCARE | BLINK
 
+#(O)
 N:9:Mage
 G:*:r
 I:+0:%150d%100:+10:%120:=0
@@ -138,7 +149,9 @@ B:*:*:+0d+0
 B:*:*:+0d+0
 B:HIT:HURT:=2d=8
 B:HIT:HURT:=2d=8
-F:R_CHAR_O | BASEANGBAND
+# hack - no Titan / Ogre mage Mage
+H:SMART | DROP_1D2
+F:R_CHAR_P | R_CHAR_O | BASEANGBAND
 M:SMART | FORCE_MAXHP | DROP_1D2
 O:FRIENDS
 S:1_IN_6 | BA_COLD | BO_FIRE | TRAPS | HEAL | HOLD | S_MONSTER | TPORT
@@ -156,6 +169,92 @@ I:+2:+0d+0:+0:+10:=0
 W:+1:2:%90:%100:A
 B:*:EAT_GOLD:+0d+0
 F:R_CHAR_y | R_CHAR_k | R_CHAR_o
+M:TAKE_ITEM | DROP_60
+
+
+#
+# PernMangband original egos
+# 
+# Please note that not all the features are available for now,
+# such as weight, E: and some new flags.	- Jir -
+#
+# use M:FORCE_DEPTH if OoD is not preferable at all.
+
+
+N:12:(ridden)
+G:*:*
+I:+0:%120d%100:%120:+10:=0
+W:+5:2:+100:%150:A
+# hack - no Wyrm
+H:POWERFUL
+B:HIT:HURT:%120d%100
+F:R_CHAR_d | R_CHAR_D
+M:FORCE_MAXHP | DROP_1D2
+S:1_IN_6 | HEAL |
+
+N:13:Veteran Archer
+G:*:W
+I:+10:+0d+0:+0:+0:=0
+W:+8:4:%100:%120:A
+M:DROP_1D2
+F:R_CHAR_y | R_CHAR_k | R_CHAR_O | R_CHAR_o | R_CHAR_T
+S:1_IN_1 | ARROW_2 | ARROW_4 | BLINK
+
+N:14:(Rider on)
+G:*:*
+I:+0:%120d%100:%120:+20:=0
+W:+15:4:+100:%150:A
+B:HIT:HURT:%120d%100
+F:R_CHAR_D | POWERFUL
+M:FORCE_MAXHP | DROP_GREAT
+S:HEAL | BLINK
+
+N:15:Drunk
+G:*:*
+I:+0:+0d+0:+0:+0:+10
+W:+1:4:%90:%80:A
+F:R_CHAR_y | R_CHAR_k | R_CHAR_o | R_CHAR_p
+H:NO_CONF
+M:RAND_25
+
+N:16:Possessed
+G:*:*
+I:+30:+0d+0:+20:+0:=0
+W:+10:3:+0:%150:B
+B:*:*:%150d%150
+B:*:*:%150d%150
+B:*:*:%150d%150
+B:*:*:%150d%150
+F:ANIMAL
+H:WEIRD_MIND | EVIL | FRIENDS
+M:NO_FEAR | NO_SLEEP
+
+N:17:Projector
+G:*:*
+I:+30:+0d+0:+20:+0:=0
+W:+15:3:+0:%150:B
+F:R_CHAR_m | R_CHAR_j | NEVER_MOVE
+M:FORCE_DEPTH
+S:1_IN_2 | ARROW_4
+T:MF_ALL
+
+N:18:Mana-charged
+G:*:*
+I:+0:+0d+0:+20:+0:=0
+W:+20:3:+0:%175:B
+F:R_CHAR_m | R_CHAR_j
+M:FORCE_DEPTH
+S:1_IN_3 | BA_COLD | BO_FIRE | BA_ACID | BA_ELEC | BA_DARK | HEAL | HOLD
+S:HASTE | TELE_AWAY
+T:MF_ALL
+
+N:19:Sparkling
+G:*:*
+I:+0:+0d+0:+20:+0:=0
+W:+10:3:+0:%130:B
+F:R_CHAR_l | R_CHAR_I | R_CHAR_w | R_CHAR_, | R_CHAR_b
+H:EVIL
+S:1_IN_6 | MISSILE
 
 
 # N:x:ego name

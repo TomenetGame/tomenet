@@ -19,7 +19,7 @@
 void monster_check_experience(int m_idx, bool silent)
 {
         monster_type    *m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = R_INFO(m_ptr);
+        monster_race    *r_ptr = race_inf(m_ptr);
 
 	/* Gain levels while possible */
         while ((m_ptr->level < MONSTER_LEVEL_MAX) &&
@@ -92,7 +92,7 @@ void delete_monster_idx(int i)
 
 	monster_type *m_ptr = &m_list[i];
 
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	/* Get location */
 	y = m_ptr->fy;
@@ -206,7 +206,7 @@ void compact_monsters(int size)
 		{
 			monster_type *m_ptr = &m_list[i];
 
-                        monster_race *r_ptr = R_INFO(m_ptr);
+                        monster_race *r_ptr = race_inf(m_ptr);
 
 			/* Paranoia -- skip "dead" monsters */
 			if (!m_ptr->r_idx) continue;
@@ -323,7 +323,7 @@ void wipe_m_list(int Depth)
 	{
 		monster_type *m_ptr = &m_list[i];
 
-                monster_race *r_ptr = R_INFO(m_ptr);
+                monster_race *r_ptr = race_inf(m_ptr);
 
 		/* Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -739,7 +739,7 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 	cptr		res;
 
         monster_type    *m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = R_INFO(m_ptr);
+        monster_race    *r_ptr = race_inf(m_ptr);
 
         cptr            name = r_name_get(m_ptr);
 
@@ -877,7 +877,7 @@ void lore_do_probe(int m_idx)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	/* Hack -- Memorize some flags */
 	r_ptr->r_flags1 = r_ptr->flags1;
@@ -906,7 +906,7 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	/* Note the number of things dropped */
 	if (num_item > r_ptr->r_drop_item) r_ptr->r_drop_item = num_item;
@@ -972,7 +972,7 @@ void update_mon(int m_idx, bool dist)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	player_type *p_ptr;
 
@@ -2383,7 +2383,7 @@ bool summon_specific_race_somewhere(int Depth, int r_idx, unsigned char size)
 bool multiply_monster(int m_idx)
 {
 	monster_type	*m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = R_INFO(m_ptr);
+        monster_race    *r_ptr = race_inf(m_ptr);
 
 	int			i, y, x;
 
@@ -2429,7 +2429,7 @@ void message_pain(int Ind, int m_idx, int dam)
 	int				percentage;
 
 	monster_type		*m_ptr = &m_list[m_idx];
-        monster_race            *r_ptr = R_INFO(m_ptr);
+        monster_race            *r_ptr = race_inf(m_ptr);
 
 	char			m_name[80];
 
@@ -2540,7 +2540,7 @@ void update_smart_learn(int m_idx, int what)
 
 	monster_type *m_ptr = &m_list[m_idx];
 
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 
 	/* Not allowed to learn */
@@ -2856,10 +2856,19 @@ int pick_ego_monster(int r_idx, int Level)
                 if (lvl < 1) lvl = 1;
                 if (rand_int(lvl)) continue;
 
+				/* Hack -- Depth monsters may NOT be created out of depth */
+				if ((re_ptr->mflags1 & RF1_FORCE_DEPTH) && (lvl > 1))
+				{
+					/* Cannot create */
+					return (FALSE);
+				}
+
                 /* Each ego types have a rarity */
                 if (rand_int(re_ptr->rarity)) continue;
 
-				s_printf("ego %d generated", ego);
+				/* (Remove me) */
+				s_printf("ego %d generated.\n", ego);
+
                 /* We finanly got one ? GREAT */
                 return ego;
         }

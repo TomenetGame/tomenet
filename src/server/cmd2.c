@@ -2659,7 +2659,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 			cave_type *c_ptr = &cave[Depth][y][x];
 
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
-                        monster_race *r_ptr = R_INFO(m_ptr);
+                        monster_race *r_ptr = race_inf(m_ptr);
 
 			/* Check the visibility */
 			visible = p_ptr->mon_vis[c_ptr->m_idx];
@@ -3189,7 +3189,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 			cave_type *c_ptr = &cave[Depth][y][x];
 
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
-                        monster_race *r_ptr = R_INFO(m_ptr);
+                        monster_race *r_ptr = race_inf(m_ptr);
 
 			/* Check the visibility */
 			visible = p_ptr->mon_vis[c_ptr->m_idx];

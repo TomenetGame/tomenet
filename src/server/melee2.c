@@ -72,7 +72,7 @@ static bool int_outof(monster_race *r_ptr, int prob)
 static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 {
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	u32b f4 = (*f4p);
 	u32b f5 = (*f5p);
@@ -357,7 +357,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp)
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	/* Determine the radius of the blast */
 	rad = (r_ptr->flags2 & RF2_POWERFUL) ? 3 : 2;
@@ -432,7 +432,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	u32b		f4, f5, f6;
 
 	monster_type	*m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = R_INFO(m_ptr);
+        monster_race    *r_ptr = race_inf(m_ptr);
 
 	object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
@@ -2234,7 +2234,7 @@ static int mon_will_run(int Ind, int m_idx)
 
 #ifdef ALLOW_TERROR
 
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	u16b p_lev, m_lev;
 	u16b p_chp, p_mhp;
@@ -2319,7 +2319,7 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 	cave_type *c_ptr;
 
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	/* Monster flowing disabled */
 	if (!flow_by_sound) return (FALSE);
@@ -2888,7 +2888,7 @@ static void process_monster(int Ind, int m_idx)
 	int Depth = p_ptr->dun_depth;
 
 	monster_type	*m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = R_INFO(m_ptr);
+        monster_race    *r_ptr = race_inf(m_ptr);
 
 	int			i, d, oy, ox, ny, nx;
 
@@ -3729,7 +3729,7 @@ static void process_monster_golem(int Ind, int m_idx)
         player_type *p_ptr;
 
 	monster_type	*m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = R_INFO(m_ptr);
+        monster_race    *r_ptr = race_inf(m_ptr);
         int             Depth = m_ptr->dun_depth;
 
 	int			i, d, oy, ox, ny, nx;
@@ -4144,7 +4144,7 @@ static bool player_invis(int Ind, monster_type *m_ptr)
 {
 	player_type *p_ptr = Players[Ind];
 	s16b inv, mlv;
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
         inv = p_ptr->invis;
 
@@ -4354,7 +4354,7 @@ void process_monsters(void)
 
 
 		/* Access the race */
-                r_ptr = R_INFO(m_ptr);
+                r_ptr = race_inf(m_ptr);
 
 		/* Access the location */
 		fx = m_ptr->fx;
@@ -4423,7 +4423,7 @@ void process_monsters(void)
 			if (!m_ptr->r_idx) continue;
 
 			/* Access the monster race */
-                        r_ptr = R_INFO(m_ptr);
+                        r_ptr = race_inf(m_ptr);
 
 			/* Skip non-multi-hued monsters */
 			if (!(r_ptr->flags1 & RF1_ATTR_MULTI)) continue;

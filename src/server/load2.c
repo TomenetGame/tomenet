@@ -775,6 +775,11 @@ static void rd_monster(monster_type *m_ptr)
 		rd_u16b(&m_ptr->ego);
 		rd_s32b(&m_ptr->name3);
 	}
+	else
+	{
+		m_ptr->ego = 0;
+		m_ptr->name3 = 0;
+	}
 }
 
 

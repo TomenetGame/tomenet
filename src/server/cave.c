@@ -871,7 +871,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		/* Visible monster */
                 if (p_ptr->mon_vis[c_ptr->m_idx])
 		{
-                        monster_race *r_ptr = R_INFO(m_ptr);
+                        monster_race *r_ptr = race_inf(m_ptr);
 
 			/* Desired attr */
 			/* a = r_ptr->x_attr; */

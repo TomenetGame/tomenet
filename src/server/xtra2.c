@@ -2747,7 +2747,7 @@ void monster_death(int Ind, int m_idx)
 
 	monster_type	*m_ptr = &m_list[m_idx];
 
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
 
@@ -3458,7 +3458,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 	monster_type	*m_ptr = &m_list[m_idx];
 
-        monster_race    *r_ptr = R_INFO(m_ptr);
+        monster_race    *r_ptr = race_inf(m_ptr);
 
 	s32b		new_exp, new_exp_frac;
 
@@ -3655,7 +3655,7 @@ void monster_death_mon(int am_idx, int m_idx)
 
 	monster_type	*m_ptr = &m_list[m_idx];
 
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	bool good = (r_ptr->flags1 & RF1_DROP_GOOD) ? TRUE : FALSE;
 	bool great = (r_ptr->flags1 & RF1_DROP_GREAT) ? TRUE : FALSE;
@@ -3745,7 +3745,7 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note)
 
 	monster_type	*m_ptr = &m_list[m_idx];
 
-        monster_race    *r_ptr = R_INFO(m_ptr);
+        monster_race    *r_ptr = race_inf(m_ptr);
 
 	s32b		new_exp, new_exp_frac;
 
@@ -3927,7 +3927,7 @@ void verify_panel(int Ind)
 cptr look_mon_desc(int m_idx)
 {
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	bool          living = TRUE;
 	int           perc;
@@ -4562,7 +4562,7 @@ bool target_set(int Ind, int dir)
 		c_ptr = &cave[Depth][y][x];
 
 		m_ptr = &m_list[idx];
-                r_ptr = R_INFO(m_ptr);
+                r_ptr = race_inf(m_ptr);
 
 		/* Hack -- Track that monster race */
 		recent_track(m_ptr->r_idx);

@@ -377,3 +377,8 @@ Change list for PernMangband
 
 06/12/2001 (Jir)
 - Ego monsters. [version no. is 3.2.2 now]
+
+07/12/2001 (Jir)
+- Trap Detection won't reveal all the traps.
+- Bugfixes for Ego monsters.
+- 8 new ego-monster types added.

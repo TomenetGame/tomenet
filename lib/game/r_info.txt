@@ -1532,6 +1532,7 @@ F:RAND_25 |
 F:ANIMAL | EVIL
 D:A woman's face on the body of a vicious black bird.
 
+# To be replaced with ego
 N:126:Orc shaman
 G:o:r
 I:110:9d10:20:15:20
@@ -2566,6 +2567,7 @@ F:HURT_ROCK | NO_CONF | NO_SLEEP
 D:This bizarre creature has glaring eyes and large mandibles capable of
 D:slicing through rock.
 
+# To be replaced with ego
 N:206:Orc captain
 G:o:o
 I:110:24d10:20:59:20
@@ -3587,6 +3589,7 @@ F:OPEN_DOOR | BASH_DOOR |
 F:EVIL | TROLL | HURT_LITE | HURT_ROCK
 D:He is a giant troll with scabrous black skin.
 
+# To be replaced with ego
 N:279:Troll priest
 G:T:G
 I:110:35d10:20:50:30
@@ -3816,6 +3819,7 @@ S:BR_NEXU
 D:A locus of conflicting points coalesce to form the vague shape of a huge
 D:hound.  Or is it just your imagination?
 
+# To be replaced with ego
 N:296:Ogre mage
 G:O:r
 I:110:35d12:20:40:30
@@ -4305,6 +4309,7 @@ F:WEIRD_MIND | BASH_DOOR |
 F:ANIMAL
 D:It is a giant beetle that produces a chilling sound.
 
+# To be replaced with ego?
 N:328:Ogre shaman
 G:O:o
 I:110:16d10:20:55:30

@@ -416,7 +416,7 @@ static void regen_monsters(void)
 	{
 		/* Check the i'th monster */
 		monster_type *m_ptr = &m_list[i];
-                monster_race *r_ptr = R_INFO(m_ptr);
+                monster_race *r_ptr = race_inf(m_ptr);
 
 		/* Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -752,6 +752,7 @@ static int auto_retaliate(int Ind)
 	int d, i, tx, ty, target, prev_target, item = -1;
 //	char friends = 0;
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
+	monster_race *r_ptr, *r_ptr2;
 	unsigned char * inscription;
 
 	for (d = 1; d <= 9; d++)
@@ -779,12 +780,15 @@ static int auto_retaliate(int Ind)
 			/* Figure out if this is the best target so far */
 			if (m_target_ptr)
 			{
+				r_ptr2 = &r_ptr;
+				r_ptr = race_inf(m_ptr);
+
 				/* If it is a Q, then make it our new target. */
 				/* We don't handle the case of choosing between two
 				 * Q's because if the player is standing next to two Q's
 				 * he deserves whatever punishment he gets.
 				 */
-                                if (R_INFO(m_ptr)->d_char == 'Q')
+                                if (r_ptr->d_char == 'Q')
 				{
 					prev_m_target_ptr = m_target_ptr;
 					m_target_ptr = m_ptr;
@@ -794,7 +798,7 @@ static int auto_retaliate(int Ind)
 				/* Otherwise if it is 20 levels higher than everything
 				 * else attack it.
 				 */
-				else if ((R_INFO(m_ptr)->level - 20) >= R_INFO(m_target_ptr)->level)
+				else if ((r_ptr->level - 20) >= r_ptr2->level)
 				{
 					prev_m_target_ptr = m_target_ptr;
 					m_target_ptr = m_ptr;
@@ -814,7 +818,7 @@ static int auto_retaliate(int Ind)
 				/* If it is a tie attack the higher level monster */
 				else if (m_ptr->hp * m_target_ptr->maxhp == m_target_ptr->hp * m_ptr->maxhp)
 				{
-                                        if (R_INFO(m_ptr)->level > R_INFO(m_target_ptr)->level)
+                                        if (r_ptr->level > r_ptr2->level)
 					{
 						prev_m_target_ptr = m_target_ptr;
 						m_target_ptr = m_ptr;
@@ -822,7 +826,7 @@ static int auto_retaliate(int Ind)
 						target = i;
 					}
 					/* If it is a tie attack the monster with less hit points */
-                                        else if (R_INFO(m_ptr)->level == R_INFO(m_target_ptr)->level)
+                                        else if (r_ptr->level == r_ptr2->level)
 					{
 						if (m_ptr->hp < m_target_ptr->hp)
 						{
@@ -943,7 +947,7 @@ static int auto_retaliate(int Ind)
 				 * Q's because if the player is standing next to two Q's
 				 * he deserves whatever punishment he gets.
 				 */
-                                if (R_INFO(m_ptr)->d_char == 'Q')
+                                if (race_inf(m_ptr)->d_char == 'Q')
 				{
 					prev_m_target_ptr = m_target_ptr;
 					m_target_ptr = m_ptr;
@@ -953,7 +957,7 @@ static int auto_retaliate(int Ind)
 				/* Otherwise if it is 20 levels higher than everything
 				 * else attack it.
 				 */
-                                else if ((R_INFO(m_ptr)->level - 20) >=
+                                else if ((race_inf(m_ptr)->level - 20) >=
                                                 R_INFO(m_target_ptr)->level)
 				{
 					prev_m_target_ptr = m_target_ptr;
@@ -974,7 +978,7 @@ static int auto_retaliate(int Ind)
 				/* If it is a tie attack the higher level monster */
 				else if (m_ptr->hp * m_target_ptr->maxhp == m_target_ptr->hp * m_ptr->maxhp)
 				{
-                                        if (R_INFO(m_ptr)->level > R_INFO(m_target_ptr)->level)
+                                        if (race_inf(m_ptr)->level > R_INFO(m_target_ptr)->level)
 					{
 						prev_m_target_ptr = m_target_ptr;
 						m_target_ptr = m_ptr;
@@ -982,7 +986,7 @@ static int auto_retaliate(int Ind)
 						target = i;
 					}
 					/* If it is a tie attack the monster with less hit points */
-                                        else if (R_INFO(m_ptr)->level == R_INFO(m_target_ptr)->level)
+                                        else if (race_inf(m_ptr)->level == R_INFO(m_target_ptr)->level)
 					{
 						if (m_ptr->hp < m_target_ptr->hp)
 						{

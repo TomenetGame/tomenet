@@ -813,8 +813,8 @@ static void wr_monster(monster_type *m_ptr)
 		wr_monster_race(m_ptr->r_ptr);
 	}
 
-	wr_u16b(&m_ptr->ego);
-	wr_s32b(&m_ptr->name3);
+	wr_u16b(m_ptr->ego);
+	wr_s32b(m_ptr->name3);
 }
 
 /*

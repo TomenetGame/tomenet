@@ -1122,7 +1122,7 @@ bool detect_invisible(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
-                monster_race *r_ptr = R_INFO(m_ptr);
+                monster_race *r_ptr = race_inf(m_ptr);
 
 		int fy = m_ptr->fy;
 		int fx = m_ptr->fx;
@@ -1217,7 +1217,7 @@ bool detect_evil(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
-                monster_race *r_ptr = R_INFO(m_ptr);
+                monster_race *r_ptr = race_inf(m_ptr);
 
 		int fy = m_ptr->fy;
 		int fx = m_ptr->fx;
@@ -1281,7 +1281,7 @@ bool detect_creatures(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
-                monster_race *r_ptr = R_INFO(m_ptr);
+                monster_race *r_ptr = race_inf(m_ptr);
 
 		int fy = m_ptr->fy;
 		int fx = m_ptr->fx;
@@ -1439,13 +1439,14 @@ bool detect_trap(int Ind)
 
 	int Depth = p_ptr->dun_depth;
 
-	int		i, j;
+	int		i, j, chance;
 
 	bool	detect = FALSE;
 
 	cave_type  *c_ptr;
 	byte *w_ptr;
 
+	chance = (p_ptr->pclass == CLASS_ROGUE ? 75 : 50) + p_ptr->lev / 4;
 
 	/* Scan the current panel */
 	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
@@ -1459,6 +1460,9 @@ bool detect_trap(int Ind)
 			/* Detect invisible traps */
 			if (c_ptr->feat == FEAT_INVIS)
 			{
+				/* Hack -- check for failure */
+				if (rand_int(100) > chance) continue;
+
 				/* Pick a trap */
 				pick_trap(Depth, i, j);
 
@@ -2537,7 +2541,7 @@ void aggravate_monsters(int Ind, int who)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type	*m_ptr = &m_list[i];
-                monster_race    *r_ptr = R_INFO(m_ptr);
+                monster_race    *r_ptr = race_inf(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -2604,7 +2608,7 @@ bool genocide(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
-                monster_race *r_ptr = R_INFO(m_ptr);
+                monster_race *r_ptr = race_inf(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -2636,7 +2640,7 @@ bool genocide(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type	*m_ptr = &m_list[i];
-                monster_race    *r_ptr = R_INFO(m_ptr);
+                monster_race    *r_ptr = race_inf(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -2704,7 +2708,7 @@ bool mass_genocide(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type	*m_ptr = &m_list[i];
-                monster_race    *r_ptr = R_INFO(m_ptr);
+                monster_race    *r_ptr = race_inf(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -3217,7 +3221,7 @@ void earthquake(int Depth, int cy, int cx, int r)
 			if (c_ptr->m_idx > 0)
 			{
 				monster_type *m_ptr = &m_list[c_ptr->m_idx];
-                                monster_race *r_ptr = R_INFO(m_ptr);
+                                monster_race *r_ptr = race_inf(m_ptr);
 
 				/* Most monsters cannot co-exist with rock */
 				if (!(r_ptr->flags2 & RF2_KILL_WALL) &&
@@ -3480,7 +3484,7 @@ static void cave_temp_room_lite(int Ind)
 
 			monster_type	*m_ptr = &m_list[c_ptr->m_idx];
 
-                        monster_race    *r_ptr = R_INFO(m_ptr);
+                        monster_race    *r_ptr = race_inf(m_ptr);
 
 			/* Update the monster */
 			update_mon(c_ptr->m_idx, FALSE);

@@ -183,7 +183,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 
 	int mult = 1;
 
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	u32b f1, f2, f3;
 	bool brand_pois = FALSE;
@@ -1366,7 +1366,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	cave_type		*c_ptr = &cave[Depth][y][x];
 
 	monster_type	*m_ptr = &m_list[c_ptr->m_idx];
-        monster_race    *r_ptr = R_INFO(m_ptr);
+        monster_race    *r_ptr = race_inf(m_ptr);
 
 	object_type		*o_ptr;
 

@@ -52,7 +52,7 @@ static void do_cmd_wiz_hack_ben(void)
 			if (c_ptr->m_idx > 0)
 			{
 				monster_type *m_ptr = &m_list[c_ptr->m_idx];
-                                monster_race *r_ptr = &R_INFO(m_ptr)f;
+                                monster_race *r_ptr = &race_inf(m_ptr)f;
 
 				msg_format("Loc %d,%d Monster '%s' (%d), Lev %d",
 				           x, y, r_name + r_ptr->name, m_ptr->r_idx, r_ptr->level);

@@ -104,7 +104,7 @@ void teleport_away(int m_idx, int dis)
 	bool		look = TRUE;
 
 	monster_type	*m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = R_INFO(m_ptr);
+        monster_race    *r_ptr = race_inf(m_ptr);
 
 
 	/* Paranoia */
@@ -2475,7 +2475,7 @@ static bool project_i(int Ind, int who, int r, int Depth, int y, int x, int dam,
 static bool psi_backlash(int Ind, int m_idx, int dam)
 {
 	monster_type *m_ptr = &m_list[m_idx];
-        monster_race *r_ptr = R_INFO(m_ptr);
+        monster_race *r_ptr = race_inf(m_ptr);
 	char m_name[80];
 	player_type *p_ptr;
 
@@ -2614,7 +2614,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
  	m_ptr = &m_list[c_ptr->m_idx];
 
 	/* Acquire race pointer */
-        r_ptr = R_INFO(m_ptr);
+        r_ptr = race_inf(m_ptr);
 
 	/* Acquire name */
         name = r_name_get(m_ptr);
@@ -3639,7 +3639,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			m_ptr = &m_list[c_ptr->m_idx];
 
 			/* Hack -- Get new race */
-                        r_ptr = R_INFO(m_ptr);
+                        r_ptr = race_inf(m_ptr);
 		}
 	}
 
