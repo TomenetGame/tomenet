@@ -1595,6 +1595,8 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* Reprocess his name */
 	if (!process_player_name(Ind, TRUE)) return FALSE;
+	
+	confirm_admin(Ind);
 
 	/* Set info */
 	if (sex > 511)
@@ -1703,8 +1705,10 @@ bool confirm_admin(int Ind)
 	c_acc=GetAccountID(p_ptr->account);
 	if(!c_acc) return(FALSE);
 	if(c_acc->flags&ACC_ADMIN) admin=TRUE;
+	/* sucks, but allows an admin wizard. i'll change - evileye */
+	if(!strcmp(p_ptr->name, c_acc->name)) p_ptr->admin_wiz=admin;
+	else p_ptr->admin_dm=admin;
 	KILL(c_acc, struct account);
-	p_ptr->admin_dm=admin;
 	return(admin);
 }
 

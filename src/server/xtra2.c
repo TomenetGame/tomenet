@@ -3773,10 +3773,14 @@ static void kill_objs(int id){
 #define QUIT_BAN_ALL	2
 
 /* This function prevents DoS attack using suicide */
+/* ;) DoS... its just annoying. hehe */
 static void check_roller(Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	time_t now = time(&now);
+
+	/* This was necessary ;) */
+	if(p_ptr->admin_dm || p_ptr->admin_wiz) return;
 
 	if (!cfg.quit_ban_mode) return;
 
