@@ -315,3 +315,4 @@ Change list for PernMangband
 
 22/11/01 (Jir)
 - You can use {@O} inscription to control auto-retaliator.
+- Neighboring monsters will try to interfere your attempt to fire.

@@ -2309,11 +2309,21 @@ void do_cmd_fire(int Ind, int dir, int item)
 		return;
 	}
 
-	magic = ((o_ptr->sval == SV_AMMO_MAGIC) && !cursed_p(o_ptr))?TRUE:FALSE;
-
 	/* Only fire in direction 5 if we have a target */
 	if ((dir == 5) && !target_okay(Ind))
 		return;
+
+	/* Use the proper number of shots */
+	thits = p_ptr->num_fire;
+
+	/* Take a (partial) turn */
+	p_ptr->energy -= (level_speed(p_ptr->dun_depth) / thits);
+
+	/* Check if monsters around him/her hinder this */
+	if (interfere(Ind, p_ptr->pclass == CLASS_ARCHER ? 12 : 15)) return;
+
+	/* Is this Magic Arrow? */
+	magic = ((o_ptr->sval == SV_AMMO_MAGIC) && !cursed_p(o_ptr))?TRUE:FALSE;
 
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
@@ -2363,9 +2373,6 @@ void do_cmd_fire(int Ind, int dir, int item)
 	missile_attr = object_attr(o_ptr);
 	missile_char = object_char(o_ptr);
 
-
-	/* Use the proper number of shots */
-	thits = p_ptr->num_fire;
 
 	/* Use a base distance */
 	tdis = 10;
@@ -2429,10 +2436,6 @@ void do_cmd_fire(int Ind, int dir, int item)
 
 	/* Base range */
 	tdis = 10 + 5 * tmul;
-
-
-	/* Take a (partial) turn */
-	p_ptr->energy -= (level_speed(p_ptr->dun_depth) / thits);
 
 
 	/* Start at the player */
@@ -2802,6 +2805,54 @@ void do_cmd_fire(int Ind, int dir, int item)
 	if (!magic) drop_near(o_ptr, j, Depth, y, x);
 }
 
+/*
+ * Check if neighboring monster(s) interferes player's action.	- Jir -
+ */
+bool interfere(int Ind, int chance)
+{
+	player_type *p_ptr = Players[Ind];
+	int i, tx, ty, x = p_ptr->px, y = p_ptr->py;
+
+	/* Check if monsters around him/her hinder the action */
+	for (tx = x - 1; tx <= x + 1; tx++)
+	{
+		for (ty = y - 1; ty <= y + 1; ty++)
+		{
+			if (!(i = cave[p_ptr->dun_depth][ty][tx].m_idx)) continue;
+			if (i > 0)
+			{
+				if (r_info[m_list[i].r_idx].flags1 & RF1_NEVER_MOVE)
+					continue;
+			}
+			else
+			{
+				/* hostile player? */
+				if (!check_hostile(Ind, -i) ||
+					Players[-i]->paralyzed ||
+					r_info[Players[-i]->body_monster].flags1 & RF1_NEVER_MOVE)
+					continue;
+			}
+
+			if (rand_int(100) < chance)
+			{
+				char m_name[80];
+				if (i > 0)
+				{
+					monster_desc(Ind, m_name, i, 0);
+				}
+				else
+				{
+					/* even not visible... :( */
+					strcpy(m_name, Players[-i]->name);
+				}
+				msg_format(Ind, "\377o%^s interferes your attempt!", m_name);
+				return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
+}
 
 
 /*
