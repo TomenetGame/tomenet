@@ -1197,9 +1197,20 @@ To find the latest change quickly, search ==== :)
 [B] when logging in, the player was slightly displaced.
 [B] Receive_activate_skill did nasties when out of energy.
 
-28/06/2002 (Jir)
+29/06/2002 (Jir)
 [B] prayer realm level check was broken.
+[B] sanity_blast did nothing.
+[B] some monsters became 'immune' to spell attacks. (project_m)
 [H] added a filter for RF7_PET/RF7_NEUTRAL monsters.
+[H] sleeping monsters don't emit light any more.
+    (it's strange with monsters like yellow light, but forget it for now :)
+[H] ')' command (clear buffer) works in a better way.
+
+30/06/2002 (Jir)
+- Flint.
+- USE_PK_RULES
+[B] reversing curse worked for normal 'remove curse' scroll.
+
 
 
 ** [B] stands for Bugfix.
@@ -1216,6 +1227,7 @@ things to do before 4.0.0
 - fix gfx
 - refine pk code
 - source-code cleanup
+- sort ?_info.txt (they are quite messy now)
 - export configurable things to tomenet.cfg
 - a spoonful of documentation for skill system
 
@@ -1247,7 +1259,6 @@ below this line are the unfixed bugs known:
 [B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
     sometimes, monsters attack the player from nowhere.. prolly same root?
 	* this only happens when rebooting the server and caves lost.
-[B] some monsters become 'immune' to spell attacks. (project_m)
 [B][C] chat-history contains lines with 'mindcrafter'.
     (do_cmd_messages_chatonly)
 [B] p_ptr->furry, lol
@@ -1263,6 +1274,7 @@ below this line are the unfixed bugs known:
 [B] +To RDam is wrong when using =dam
 [B] los chech sometimes goes wrong (southeast)
 [B][C] inventory window sometimes loses a) b) etc.
+[B] 'write error' sometimes (old bug)
 
 *below are bugs repoorted but not confirmed*
 [B] Macro sticks sometimes
@@ -1315,6 +1327,7 @@ memo and questions:
 - make boomerangs useful
 - flavor variator (eg. 'light' + 'red' => 'light red potion')
 - reimplement /cast.
+- implement monster mimics
 * Trap ideas
   - no return trap should steal books also?
   - telekinesis trap
@@ -1389,7 +1402,7 @@ memo and questions:
 - missile traps do too small dmgs?
 - 2H weapons should be more powerful in general?
   (they actually occupy 3 equipment slots!)
-- prolly Dolphiners are too strong?
+- prolly Dolphiners are too strong? (filtered)
 - Mage Staves should only be available for Sorc?
 
 ==== below this line are RFEs collected so far (good or bad) ====
@@ -1473,6 +1486,7 @@ memo and questions:
     * no single town should contain all of them!
   + resurrect 'level feelings'
   + allow 'guest' account for invite-only server
+  + water should 'flow'
   
 [major ones]
 - NPC/pet/golem/slave

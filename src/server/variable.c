@@ -146,7 +146,8 @@ server_opts cfg =
 	TRUE,FALSE, // anti_arts_horde, mage_hp_bonus
 	TRUE,FALSE,	// door_bump_open, no_ghost
 	TRUE,TRUE,	// maximize, kings_etiquette
-	FALSE,FALSE	// public_rfe, auto_purge
+	FALSE,FALSE,	// public_rfe, auto_purge
+	FALSE	// use_pk_rules
 };
 
 struct ip_ban *banlist=NULL;

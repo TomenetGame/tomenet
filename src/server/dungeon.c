@@ -1767,16 +1767,19 @@ static void process_player_end(int Ind)
 		  {
 		    set_tim_manashield(Ind, p_ptr->tim_manashield - minus);
 		  }
-		if(p_ptr->tim_pkill){
-			p_ptr->tim_pkill--;
-			if(!p_ptr->tim_pkill){
-				if(p_ptr->pkill&PKILL_SET){
-					msg_print(Ind, "You may now kill other players");
-					p_ptr->pkill|=PKILL_KILLER;
-				}
-				else{
-					msg_print(Ind, "You are now protected from other players");
-					p_ptr->pkill&=~PKILL_KILLABLE;
+		if (cfg.use_pk_rules)
+		{
+			if(p_ptr->tim_pkill){
+				p_ptr->tim_pkill--;
+				if(!p_ptr->tim_pkill){
+					if(p_ptr->pkill&PKILL_SET){
+						msg_print(Ind, "You may now kill other players");
+						p_ptr->pkill|=PKILL_KILLER;
+					}
+					else{
+						msg_print(Ind, "You are now protected from other players");
+						p_ptr->pkill&=~PKILL_KILLABLE;
+					}
 				}
 			}
 		}
@@ -2045,11 +2048,25 @@ static void process_player_end(int Ind)
 				/* The light is now out */
 				else if (o_ptr->timeout == 0)
 				{
+					bool refilled = FALSE;
+
 					disturb(Ind, 0, 0);
-					msg_print(Ind, "Your light has gone out!");
+
+					/* If flint is ready, refill at once */
+					if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_FLINT &&
+						!p_ptr->paralyzed)
+					{
+						msg_print(Ind, "You prepare a flint...");
+						refilled = do_auto_refill(Ind);
+						if (!refilled)
+							msg_print(Ind, "Oops, you're out of fuel!");
+					}
+
+					if (!refilled)
+						msg_print(Ind, "Your light has gone out!");
 
 					/* Torch disappears */
-					if (o_ptr->sval == SV_LITE_TORCH)
+					if (o_ptr->sval == SV_LITE_TORCH && !o_ptr->timeout)
 					{
 						/* Decrease the item, optimize. */
 						inven_item_increase(Ind, INVEN_LITE, -1);

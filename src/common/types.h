@@ -2189,6 +2189,7 @@ struct server_opts
 	bool kings_etiquette;
 	bool public_rfe;
 	bool auto_purge;
+	bool use_pk_rules;
 };
 
 /* from spells1.c */

@@ -2424,6 +2424,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
                         {
+                                SKILL_BACKSTAB,
+                                '+', 0,
+                                '+', 700,
+                        },
+                        {
                                 SKILL_DODGE,
                                 '+', 0,
                                 '+', 500,

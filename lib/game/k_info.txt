@@ -6645,6 +6645,7 @@ N:883:& Kolla~
 G:(:G
 #I:35:3:0
 I:35:7:0
+# hrm, isn't it a little too expensive?
 W:65:0:5:80000
 A:65/4
 P:3:0d0:0:0:4
@@ -6870,12 +6871,19 @@ W:101:0:4:25000
 A:101/3
 P:0:1d1:0:0:0
 
-N:469:Mana-charging
+N:910:Mana-charging
 G:":d
 I:40:36:0
 W:30:0:3:600
 A:30/3
 F:REGEN_MANA | EASY_KNOW
+
+N:911:& Flint~
+G:~:r
+I:12:6:0
+W:0:0:3:400
+A:8/4
+P:0:1d1:0:0:0
 
 # Always ego!
 

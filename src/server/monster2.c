@@ -1147,59 +1147,56 @@ void sanity_blast(int Ind, int m_idx, bool necro)
 
 		power = (m_ptr->level)+10;
 
-		if (m_ptr != NULL)
+		monster_desc(Ind, m_name, m_idx, 0);
+
+		if (!(r_ptr->flags1 & RF1_UNIQUE))
 		{
-			monster_desc(Ind, m_name, m_idx, 0);
-
-			if (!(r_ptr->flags1 & RF1_UNIQUE))
-			{
-				if (r_ptr->flags1 & RF1_FRIENDS)
-					power /= 2;
-			}
-			else power *= 2;
-
-			//		if (!hack_mind)
-			return; /* No effect yet, just loaded... */
-
-			//		if (!(m_ptr->ml))
-			if (!p_ptr->mon_vis[m_idx])
-				return; /* Cannot see it for some reason */
-
-			if (!(r_ptr->flags2 & RF2_ELDRITCH_HORROR))
-				return; /* oops */
-
-
-
-			//                if ((is_friend(m_ptr) > 0) && (randint(8)!=1))
-			return; /* Pet eldritch horrors are safe most of the time */
-
-
-			if (randint(power)<p_ptr->skill_sav)
-			{
-				return; /* Save, no adverse effects */
-			}
-
-
-			if (p_ptr->image)
-			{
-				/* Something silly happens... */
-				msg_format(Ind, "You behold the %s visage of %s!",
-						funny_desc[(randint(MAX_FUNNY))-1], m_name);
-				if (randint(3)==1)
-				{
-					msg_print(Ind, funny_comments[randint(MAX_COMMENT)-1]);
-					p_ptr->image = (p_ptr->image + randint(m_ptr->level));
-				}
-				return; /* Never mind; we can't see it clearly enough */
-			}
-
-			/* Something frightening happens... */
-			msg_format(Ind, "You behold the %s visage of %s!",
-					horror_desc[(randint(MAX_HORROR))-1], m_name);
-
-			r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
-
+			if (r_ptr->flags1 & RF1_FRIENDS)
+				power /= 2;
 		}
+		else power *= 2;
+
+		/* No effect yet, just loaded... */
+		//		if (!hack_mind) return;
+
+		//		if (!(m_ptr->ml))
+		if (!p_ptr->mon_vis[m_idx])
+			return; /* Cannot see it for some reason */
+
+		if (!(r_ptr->flags2 & RF2_ELDRITCH_HORROR))
+			return; /* oops */
+
+
+
+		/* Pet eldritch horrors are safe most of the time */
+		//                if ((is_friend(m_ptr) > 0) && (randint(8)!=1)) return;
+
+
+		if (randint(power)<p_ptr->skill_sav)
+		{
+			return; /* Save, no adverse effects */
+		}
+
+
+		if (p_ptr->image)
+		{
+			/* Something silly happens... */
+			msg_format(Ind, "You behold the %s visage of %s!",
+					funny_desc[(randint(MAX_FUNNY))-1], m_name);
+			if (randint(3)==1)
+			{
+				msg_print(Ind, funny_comments[randint(MAX_COMMENT)-1]);
+				p_ptr->image = (p_ptr->image + randint(m_ptr->level));
+			}
+			return; /* Never mind; we can't see it clearly enough */
+		}
+
+		/* Something frightening happens... */
+		msg_format(Ind, "You behold the %s visage of %s!",
+				horror_desc[(randint(MAX_HORROR))-1], m_name);
+
+		r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
+
 
 		/* Undead characters are 50% likely to be unaffected */
 #if 0
@@ -1487,7 +1484,8 @@ void update_mon(int m_idx, bool dist)
 			{
 				/* The monster is carrying/emitting light? */
 				if ((r_ptr->flags9 & RF9_HAS_LITE) &&
-					!(r_ptr->flags2 & RF2_INVISIBLE)) easy = flag = TRUE;
+						!(m_ptr->csleep) &&
+						!(r_ptr->flags2 & RF2_INVISIBLE)) easy = flag = TRUE;
 
 				/* Use "infravision" */
 				if (m_ptr->cdis <= (byte)(p_ptr->see_infra))

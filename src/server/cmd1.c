@@ -1005,19 +1005,22 @@ void py_attack_player(int Ind, int y, int x, bool old)
 		/* Make hostile */
 		add_hostility(0 - c_ptr->m_idx, p_ptr->name);
 	}
-	if(!(q_ptr->pkill & PKILL_KILLABLE)){
-		char string[30];
-		sprintf(string, "attacking %s", q_ptr->name);
-		s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
-		if(!imprison(Ind, 500, string)){
-			/* This wrath can be too much */
-//			take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods");
-			/* It's prison here :) */
-			msg_print(Ind, "{yYou feel yourself bound hand and foot!");
-			set_paralyzed(Ind, p_ptr->paralyzed + rand_int(15) + 15);
-			return;
+	if (cfg.use_pk_rules)
+	{
+		if(!(q_ptr->pkill & PKILL_KILLABLE)){
+			char string[30];
+			sprintf(string, "attacking %s", q_ptr->name);
+			s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
+			if(!imprison(Ind, 500, string)){
+				/* This wrath can be too much */
+				//			take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods");
+				/* It's prison here :) */
+				msg_print(Ind, "{yYou feel yourself bound hand and foot!");
+				set_paralyzed(Ind, p_ptr->paralyzed + rand_int(15) + 15);
+				return;
+			}
+			else return;
 		}
-		else return;
 	}
 
 	/* Hack -- divided turn for auto-retaliator */

@@ -2188,9 +2188,13 @@ static void calc_bonuses(int Ind)
 			if (o_ptr->name2 == EGO_STORMBRINGER)
 			{
 				p_ptr->stormbringer = TRUE;
-				p_ptr->pkill|=PKILL_KILLABLE;
-				if (!(p_ptr->pkill & PKILL_KILLER) && !(p_ptr->pkill  & PKILL_SET))
-					set_pkill(Ind, 50);
+				if (cfg.use_pk_rules)
+				{
+					p_ptr->pkill|=PKILL_KILLABLE;
+					if (!(p_ptr->pkill & PKILL_KILLER) &&
+							!(p_ptr->pkill & PKILL_SET))
+						set_pkill(Ind, 50);
+				}
 			}
 		}
 

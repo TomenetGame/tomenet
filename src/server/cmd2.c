@@ -2617,11 +2617,14 @@ void do_cmd_fire(int Ind, int dir)
 					/* Note the collision */
 					hit_body = TRUE;
 
-					if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
-						if(visible && (!player_in_party(Players[0 - c_ptr->m_idx]->party, Ind))){
-							p_ptr->target_who=0;
-							do_player_drop_items(Ind, 40, FALSE);
-							imprison(Ind, 100, "attempted murder");
+					if (cfg.use_pk_rules)
+					{
+						if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
+							if(visible && (!player_in_party(Players[0 - c_ptr->m_idx]->party, Ind))){
+								p_ptr->target_who=0;
+								do_player_drop_items(Ind, 40, FALSE);
+								imprison(Ind, 100, "attempted murder");
+							}
 						}
 					}
 

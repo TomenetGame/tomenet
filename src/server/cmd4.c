@@ -402,15 +402,18 @@ void do_cmd_check_players(int Ind, int line)
 		{
 			fprintf(fff, " AFK");
 		}
-		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
+		if (cfg.use_pk_rules)
 		{
-			fprintf(fff, " PK");
-		}
-		else if(!(q_ptr->pkill & PKILL_KILLABLE)){
-			fprintf(fff, " SAFE");
-		}
-		else if(!(q_ptr->tim_pkill)){
-			fprintf(fff, q_ptr->lev < 5 ? " Newbie" : " Killable");
+			if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
+			{
+				fprintf(fff, " PK");
+			}
+			else if(!(q_ptr->pkill & PKILL_KILLABLE)){
+				fprintf(fff, " SAFE");
+			}
+			else if(!(q_ptr->tim_pkill)){
+				fprintf(fff, q_ptr->lev < 5 ? " Newbie" : " Killable");
+			}
 		}
 				
 		/* Newline */

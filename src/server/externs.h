@@ -426,6 +426,7 @@ extern void do_cmd_uninscribe(int Ind, int item);
 extern void do_cmd_inscribe(int Ind, int item, cptr inscription);
 extern void do_cmd_steal(int Ind, int dir);
 extern void do_cmd_refill(int Ind, int item);
+extern bool do_auto_refill(int Ind);
 extern void do_cmd_target(int Ind, int dir);
 extern void do_cmd_target_friendly(int Ind, int dir);
 extern void do_cmd_look(int Ind, int dir);

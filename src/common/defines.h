@@ -2037,6 +2037,7 @@ that keeps many algorithms happy.
 #define SV_TOOL_MONEY_BELT	3
 #define SV_TOOL_THEFT_PREVENTION	4
 #define SV_TOOL_TARPAULIN	5
+#define SV_TOOL_FLINT		6
 
 /* The "sval" codes for TV_MSTAFF */
 #define SV_MSTAFF 1

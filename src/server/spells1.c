@@ -3539,10 +3539,10 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	c_ptr=&zcave[y][x];
 	/* hack -- by trap */
-	quiet = ((Ind <= 0 || who < PROJECTOR_UNUSUAL) ? TRUE : (Ind == c_ptr->m_idx?TRUE:FALSE));
+	quiet = ((Ind <= 0 || who < PROJECTOR_UNUSUAL) ? TRUE : (0 - Ind == c_ptr->m_idx?TRUE:FALSE));
 
 //	if(quiet) return(FALSE);
-	if (Ind <= 0 || Ind == c_ptr->m_idx) return(FALSE);
+	if (Ind <= 0 || 0 - Ind == c_ptr->m_idx) return(FALSE);
 	if (!quiet)
 	{
 		p_ptr = Players[Ind];
@@ -5215,7 +5215,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{			
 				/* XXX Reduce damage by 1/3 */
 				dam = (dam + 2) / 3;
-				if(!(p_ptr->pkill & PKILL_KILLER) &&
+				if((cfg.use_pk_rules && !(p_ptr->pkill & PKILL_KILLER)) &&
 						!magik(NEUTRAL_FIRE_CHANCE))
 					return FALSE;
 			}

@@ -443,7 +443,8 @@ static bool player_handle_trap_of_hostility(int Ind)
 			p_ptr->hostile = h_ptr;
 		}
 
-		if (!check_hostile(i, Ind) && (q_ptr->pkill & PKILL_SET))
+		if (!check_hostile(i, Ind) &&
+			(!cfg.use_pk_rules || (q_ptr->pkill & PKILL_SET)))
 		{
 			ident = TRUE;
 
@@ -458,8 +459,11 @@ static bool player_handle_trap_of_hostility(int Ind)
 			q_ptr->hostile = h_ptr;
 		}
 	}
-	p_ptr->pkill=(PKILL_SET|PKILL_KILLER|PKILL_KILLABLE);
-	p_ptr->tim_pkill=0;
+	if (cfg.use_pk_rules)
+	{
+		p_ptr->pkill=(PKILL_SET|PKILL_KILLER|PKILL_KILLABLE);
+		p_ptr->tim_pkill=0;
+	}
 
 	return (ident);
 }

@@ -447,7 +447,7 @@ static int remove_curse_aux(int Ind, int all)
 		/* be somewhat unbalancing */
 		/* due to the nature of this procedure, it only works on cursed items */
 		/* ie you get only one chance! */
-		if (((randint(p_ptr->lev > 50) ? 5 : 55 - p_ptr->lev)==1) && !artifact_p(o_ptr) && !(f5 & TR5_NO_ENCHANT));
+		if (all && ((randint(p_ptr->lev > 50) ? 5 : 55 - p_ptr->lev)==1) && !artifact_p(o_ptr) && !(f5 & TR5_NO_ENCHANT));
 	
 		{
 			if (o_ptr->to_a<0) o_ptr->to_a=-o_ptr->to_a;

@@ -1272,7 +1272,8 @@ void do_cmd_steal(int Ind, int dir)
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
 	/* Ghosts cannot steal */
-	if ((p_ptr->ghost) || !(p_ptr->pkill & PKILL_KILLABLE))
+	if ((p_ptr->ghost) ||
+		(!(p_ptr->pkill & PKILL_KILLABLE) && cfg.use_pk_rules))
 	{
 	        msg_print(Ind, "You cannot steal things!");
 	        return;
@@ -1504,7 +1505,7 @@ void do_cmd_steal(int Ind, int dir)
 
 		set_stun(Ind, p_ptr->stun + randint(50));
 		set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
-		p_ptr->pkill|=PKILL_KILLABLE;
+		if (cfg.use_pk_rules) p_ptr->pkill|=PKILL_KILLABLE;
 
 		/* Thief drops some items from the shock of blow */
 		if (cfg.newbies_cannot_drop <= p_ptr->lev)
@@ -1796,6 +1797,66 @@ void do_cmd_refill(int Ind, int item)
 	}
 }
 
+/*
+ * Refill the players lamp, or restock his torches automatically.	- Jir -
+ */
+bool do_auto_refill(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	object_type *o_ptr;
+	object_type *j_ptr;
+
+	int i;
+	u32b f1, f2, f3, f4, f5, esp;
+
+	/* Get the light */
+	o_ptr = &(p_ptr->inventory[INVEN_LITE]);
+
+	if( check_guard_inscription( o_ptr->note, 'F' )) {
+		//		msg_print(Ind, "The item's incription prevents it.");
+		return (FALSE);
+	}
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	/* It's a lamp */
+	if (o_ptr->sval == SV_LITE_LANTERN)
+	{
+		/* Restrict the choices */
+		item_tester_hook = item_tester_refill_lantern;
+
+		for(i = 0; i < INVEN_PACK; i++)
+		{
+			j_ptr = &(p_ptr->inventory[i]);
+			if (!item_tester_hook(j_ptr)) continue;
+			if (artifact_p(j_ptr) || ego_item_p(j_ptr)) continue;
+
+			do_cmd_refill_lamp(Ind, i);
+			return (TRUE);
+		}
+	}
+
+	/* It's a torch */
+	else if (j_ptr->sval == SV_LITE_TORCH)
+	{
+		/* Restrict the choices */
+		item_tester_hook = item_tester_refill_torch;
+
+		for(i = 0; i < INVEN_PACK; i++)
+		{
+			j_ptr = &(p_ptr->inventory[i]);
+			if (!item_tester_hook(j_ptr)) continue;
+			if (artifact_p(j_ptr) || ego_item_p(j_ptr)) continue;
+
+			do_cmd_refill_torch(Ind, i);
+			return (TRUE);
+		}
+	}
+
+	/* Assume false */
+	return (FALSE);
+}
 
 
 

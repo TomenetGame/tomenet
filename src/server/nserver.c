@@ -7065,6 +7065,11 @@ static int Receive_clear_buffer(int ind)
 	{
 		/* Clear the buffer */
 		Sockbuf_clear(&connp->q);
+		Sockbuf_clear(&connp->r);
+#if 0
+		Sockbuf_clear(&connp->c);
+		Sockbuf_clear(&connp->w);
+#endif	// 0
 	}
 
 	return 1;

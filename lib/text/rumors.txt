@@ -7,7 +7,7 @@
 # You should manually write the total # of rumous (lines - 10).
 
 N:*:Default
-640
+661
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -648,8 +648,26 @@ They say that cheezing is nice and sweet, till a bolt from the blue kills you.
 They say that the lazy warrior jumped over the doors.
 They say that carrying dozens of Mana pots without immunities is mere suicide.
 They say that carrying dozens of Heal pots without immunities is not so bad.
-They say that it's comedie when a troll decides to be a wizard.
+They say that it's comedie when a {GT{wroll decides to be a wizard.
 Started to learn a new skill? Time to revise your macros!
-They say that 
+A broken dagger and a filthy rag can be the best suits for a wizard.
+They say that exploding arrows can be lethal, can be comedical.
+They say that more often than not a single Light spell kills a wizard.
+They say that getting skills underground is not so nice idea.
+They say that you should carry permalight to fight with the Unlight.
+Under certain situations you should use intelligence a potion never gives.
+They say that if you feel the air is stable, be sure to secure the way out.
+They say that if you feel the air is stable, watch out the current.
+They say that if you feel a suppressive air, leave the place right now!
+They say that if you feel a suppressive air, try to wear an impressive air.
+They say that if you feel a feeling of peace, stop to wield a weapon.
+They say that if you feel a feeling of peace, don't mind unless you're a mage.
+They say that if you feel like a stranger, seek out to be friendly.
+They say that if you feel like a stranger, just visit a tourist office.
+They say that even if the walls seem solid you can dig them as usual.
+They say that a feeling often comes with a treasure.
+They say that a feeling often comes with a trouble.
+They say that some wizards love to wear a cap of stupidity. Huh?
+Ever tried to fix a shattered weapon?
 They say that 
 They say that 

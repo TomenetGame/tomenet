@@ -1851,6 +1851,10 @@ void set_server_option(char * option, char * value)
 	{
 		cfg.party_xp_boost = atoi(value);
 	}
+	else if (!strcmp(option, "USE_PK_RULES"))
+	{
+		cfg.use_pk_rules = str_to_boolean(value);
+	}
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }
 
