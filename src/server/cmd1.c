@@ -1191,7 +1191,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 		sprintf(string, "attacking %s", q_ptr->name);
 		s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
 		if(!imprison(Ind, 500, string)){
-			take_hit(Ind, p_ptr->lev*p_ptr->lev, "wrath of the Gods");
+			take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods");
 		}
 		else return;
 	}
