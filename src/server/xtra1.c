@@ -2799,9 +2799,29 @@ void calc_bonuses(int Ind)
 			{
 				p_ptr->pspeed += k;
 
+				/* Feather Falling if unencumbered at level 10 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 9)
+					p_ptr->feather_fall = TRUE;
+
+				/* Fear Resistance if unencumbered at level 20 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 19)
+					p_ptr->resist_fear = TRUE;
+
 				/* Free action if unencumbered at level 25 */
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 24)
 					p_ptr->free_act = TRUE;
+
+				/* Swimming if unencumbered at level 35 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 34)
+					p_ptr->can_swim = TRUE;
+
+				/* Climbing if unencumbered at level 45 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 44)
+					p_ptr->climb = TRUE;
+
+				/* Flying if unencumbered at level 50 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 49)
+					p_ptr->fly = TRUE;
 
 				/* give a stealth bonus */
 				p_ptr->skill_stl += k;
