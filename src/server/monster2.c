@@ -103,6 +103,7 @@ int pick_ego_monster(int r_idx, int Level);
 /* Monster gain a few levels ? */
 void monster_check_experience(int m_idx, bool silent)
 {
+	int		levels_gained = 0, i, try;
         monster_type    *m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
 
@@ -124,38 +125,52 @@ void monster_check_experience(int m_idx, bool silent)
 		/* Gain hp */
 		if (magik(90))
 		{
+#if 0
 			m_ptr->maxhp += r_ptr->hside;
 			m_ptr->hp += r_ptr->hside;
+#endif // no thx :)
+			m_ptr->maxhp += (r_ptr->hside * r_ptr->hdice) / 10;
+			m_ptr->hp += (r_ptr->hside * r_ptr->hdice) / 10;
 		}
 
 		/* Gain speed */
-		if (magik(40))
+		if (magik(30))
 		{
 			int speed = randint(3);
 			m_ptr->speed += speed;
 			m_ptr->mspeed += speed;
 
 			/* fix -- never back to 0 */
-			if (m_ptr->speed < speed) m_ptr->speed = 255;
-			if (m_ptr->mspeed < speed) m_ptr->mspeed = 255;
+			if (m_ptr->speed < speed) m_ptr->speed = 66;/* and never forward to insanity :) */
+			if (m_ptr->mspeed < speed) m_ptr->mspeed = 66;
 		}
 
 		/* Gain ac */
-		if (magik(50))
+		if (magik(30))
 		{
-			m_ptr->ac += (r_ptr->ac / 10)?r_ptr->ac / 10:1;
+			m_ptr->ac += (r_ptr->ac / 15)?r_ptr->ac / 15:1;
 		}
 
 		/* Gain melee power */
 		/* XXX 20d1 monster can be too horrible (20d5) */
 		if (magik(50))
 		{
-			int i = rand_int(4), try = 20;
+#if 0 /* yeah whatever.. */
+			i = rand_int(4);
+			try = 20;
 
 			while ((try--) && !m_ptr->blow[i].d_dice) i = rand_int(4);
 
 			m_ptr->blow[i].d_dice++;
+#else
+			levels_gained++;
+#endif
 		}
+	}
+
+	for (i = 1; i < 4; i++) {
+	    m_ptr->blow[i].d_dice += m_ptr->blow[i].d_dice * levels_gained / 10;
+	    m_ptr->blow[i].d_side += m_ptr->blow[i].d_side * levels_gained / 10;
 	}
 }
 
@@ -2500,7 +2515,8 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		m_ptr->exp = MONSTER_EXP(l);
 		monster_check_experience(c_ptr->m_idx, TRUE);
 	}
-#else	// 0
+#endif //no thx
+#if 0	// 0
 	/* Should we gain levels ? */
 	/* Starting from 2600ft, 'too weak' monsters gain levels. */
 	while (getlevel(wpos) > MONSTER_TOO_WEAK + m_ptr->level)
@@ -2511,6 +2527,11 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		monster_check_experience(c_ptr->m_idx, TRUE);
 	}
 #endif	// 0
+	if (getlevel(wpos) > (m_ptr->level + 7)) {
+	    int l = m_ptr->level + ((getlevel(wpos) - (m_ptr->level + 7)) / 3);
+	    m_ptr->exp = MONSTER_EXP(l);
+	    monster_check_experience(c_ptr->m_idx, TRUE);
+	}
 
 	strcpy(buf, (r_name + r_ptr->name));
 
