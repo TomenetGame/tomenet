@@ -76,10 +76,18 @@ void world_comm(int fd, int arg){
 		}
 	}
 	if(x==0){
+		struct rplist *c_pl, *n_pl;
 		/* This happens... we are screwed (fortunately SIGPIPE isnt handled) */
 		s_printf("pfft. world server closed\n");
 		remove_input(WorldSocket);
 		close(WorldSocket);	/* ;) this'll fix it... */
+		/* Clear all the world players quietly */
+		c_pl=rpmlist;
+		while(c_pl){
+			n_pl=c_pl->next;
+			free(c_pl);
+			c_pl=n_pl;
+		}
 		WorldSocket=-1;
 	}
 }
