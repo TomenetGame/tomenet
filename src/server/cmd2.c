@@ -773,8 +773,12 @@ void do_cmd_open(int Ind, int dir)
 					if(dna->owner)
 						msg_print(Ind,"That house is owned already.");
 					
-					else
-						msg_format(Ind,"That house costs %ld gold.",dna->price);
+					else{
+						int factor,price;
+						factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
+						price = dna->price * factor / 100;
+						msg_format(Ind,"That house costs %ld gold.",price);
+					}
 				}
 				return;
 			}

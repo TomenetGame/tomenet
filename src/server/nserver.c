@@ -666,7 +666,9 @@ static void Contact(int fd, int arg)
 	{
 		if ((newsock = SocketAccept(fd)) == -1)
 		{
-			quit("Couldn't accept TCP connection.\n");
+			plog("Couldn't accept TCP connection.\n");
+			plog("!Couldn't accept TCP connection.\n");
+			return;
 		}
 		install_input(Contact, newsock, 2);
 		return;
