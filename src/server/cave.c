@@ -5750,7 +5750,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	   without calling this function */
 	/* No runes of protection / glyphs of warding on non-empty grids!!- C. Blue */
 	if ((feat == FEAT_GLYPH) &&
-	    !((c_ptr->feat == FEAT_NONE) || 
+	    (!((c_ptr->feat == FEAT_NONE) || 
 	    (c_ptr->feat == FEAT_FLOOR) || 
 	    (c_ptr->feat == FEAT_DIRT) || 
 	    (c_ptr->feat == FEAT_GRASS) || 
@@ -5758,7 +5758,10 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	    (c_ptr->feat == FEAT_SAND) || 
 	    (c_ptr->feat == FEAT_ASH) || 
 	    (c_ptr->feat == FEAT_MUD) || 
-	    (c_ptr->feat == FEAT_FLOWER)))
+	    (c_ptr->feat == FEAT_FLOWER))))
+	    /* And no 'terraforming' in Bree either (counting glyph spell to those) */
+//	    || (wpos->wx == 32 && wpos->wy == 32 && wpos->wz == 0))
+	    
 	    return;
 
 	/* Change the feature */
