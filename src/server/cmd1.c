@@ -257,19 +257,19 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	
 				switch (p_ptr->bow_brand_t)
 				{
-					case BOW_BRAND_ELEC:
+					case BRAND_ELEC:
 						f1 |= TR1_BRAND_ELEC;
 						break;
-					case BOW_BRAND_COLD:
+					case BRAND_COLD:
 						f1 |= TR1_BRAND_COLD;
 						break;
-					case BOW_BRAND_FIRE:
+					case BRAND_FIRE:
 						f1 |= TR1_BRAND_FIRE;
 						break;
-					case BOW_BRAND_ACID:
+					case BRAND_ACID:
 						f1 |= TR1_BRAND_ACID;
 						break;
-					case BOW_BRAND_POIS:
+					case BRAND_POIS:
 						f1 |= TR1_BRAND_POIS;
 						//		brand_pois = TRUE;
 						break;

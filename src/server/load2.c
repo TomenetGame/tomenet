@@ -1798,6 +1798,7 @@ static errr rd_savefile_new_aux(int Ind)
 
 	/* Initialize a little more */
 	p_ptr->ignore = NULL;
+	p_ptr->w_ignore = NULL;
 	p_ptr->afk = FALSE;
 
 #if 0	// This can be recycled */

@@ -4450,20 +4450,21 @@ extern int PlayerUID;
 /* Kings/Queens abilities */
 #define KING_OWN	0
 
-/* Bows branding */
-#define BOW_BRAND_ELEC          0
-#define BOW_BRAND_COLD          1
-#define BOW_BRAND_FIRE          2
-#define BOW_BRAND_ACID          3
-#define BOW_BRAND_POIS          4
-#define BOW_BRAND_MANA          5
-#define BOW_BRAND_CONF          6
-#define BOW_BRAND_SHARP         7
-#define BOW_BRAND_BALL_FIRE     8
-#define BOW_BRAND_BALL_COLD     9
-#define BOW_BRAND_BALL_ELEC     10
-#define BOW_BRAND_BALL_ACID     11
-#define BOW_BRAND_BALL_SOUND    12
+/* Added melee weapons for temp weapon brands */
+/* Generic weapon branding */
+#define BRAND_ELEC          0
+#define BRAND_COLD          1
+#define BRAND_FIRE          2
+#define BRAND_ACID          3
+#define BRAND_POIS          4
+#define BRAND_MANA          5
+#define BRAND_CONF          6
+#define BRAND_SHARP         7
+#define BRAND_BALL_FIRE     8
+#define BRAND_BALL_COLD     9
+#define BRAND_BALL_ELEC     10
+#define BRAND_BALL_ACID     11
+#define BRAND_BALL_SOUND    12
 
 
 /* Diff mode */

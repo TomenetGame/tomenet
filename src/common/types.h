@@ -2091,6 +2091,9 @@ struct player_type
 	s16b bow_brand; 	/* Timed -- Bow Branding */
 	byte bow_brand_t; 	/* Timed -- Bow Branding */
 	s16b bow_brand_d; 	/* Timed -- Bow Branding */
+	s16b brand; 	/* Timed -- Weapon Branding */
+	byte brand_t; 	/* Timed -- Weapon Branding */
+	s16b brand_d; 	/* Timed -- Weapon Branding */
         s16b prob_travel;       /* Timed -- Probability travel */
         s16b st_anchor;         /* Timed -- Space/Time Anchor */
         s16b tim_esp;           /* Timed -- ESP */

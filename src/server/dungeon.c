@@ -1788,6 +1788,9 @@ void recall_player(int Ind, char *message){
 
 	/* He'll be safe for 2 turns */
 	set_invuln_short(Ind, 5);	// It runs out if attacking anyway
+
+	/* cancel any user recalls */
+	p_ptr->word_recall=0;
 }
 
 
@@ -2388,6 +2391,11 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->bow_brand)
 	{
 		(void)set_bow_brand(Ind, p_ptr->bow_brand - minus, p_ptr->bow_brand_t, p_ptr->bow_brand_d);
+	}
+
+	/* weapon brand time */
+	if(p_ptr->brand){
+		(void)set_brand(Ind, p_ptr->brand - minus, p_ptr->brand_t, p_ptr->brand_d);
 	}
 
 	/* Hack -- Timed ESP */

@@ -148,6 +148,21 @@ typedef unsigned int u32b;
 #define EFF_LAST                0x00000002      /* The wave lasts */
 #define EFF_STORM               0x00000004      /* The area follows the player */
 
+/* Generic weapon branding */
+#define BRAND_ELEC          0
+#define BRAND_COLD          1
+#define BRAND_FIRE          2
+#define BRAND_ACID          3
+#define BRAND_POIS          4
+#define BRAND_MANA          5
+#define BRAND_CONF          6
+#define BRAND_SHARP         7
+#define BRAND_BALL_FIRE     8
+#define BRAND_BALL_COLD     9
+#define BRAND_BALL_ELEC     10
+#define BRAND_BALL_ACID     11
+#define BRAND_BALL_SOUND    12
+
 /* spells1.c */
 extern byte spell_color(int type);
 //extern void apply_morph(int Ind, int power, char * killer);
@@ -337,6 +352,9 @@ extern void house_creation(int Ind, bool floor, bool jail);
 extern void set_recall_depth(player_type * p_ptr, object_type * o_ptr);
 extern bool set_recall_timer(int Ind, int v);
 extern bool set_recall(int Ind, int v, object_type * o_ptr);
+
+/* xtra2.c */
+extern bool set_brand(int Ind, int v, int t, int p);
 
 /*
  * The spell function must provide the desc

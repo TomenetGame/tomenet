@@ -591,6 +591,99 @@ bool set_prob_travel(int Ind, int v)
 }
 
 /*
+ * Set "p_ptr->brand", notice observable changes
+ */
+bool set_brand(int Ind, int v, int t, int p)
+{
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v)
+	{
+		if (!p_ptr->brand)
+		{
+		  switch (t)
+		    {
+		    case BRAND_ELEC:
+                    case BRAND_BALL_ELEC:
+		      msg_print(Ind, "\377oYour weapon sparkles with lightning !");
+		      break;
+                    case BRAND_BALL_COLD:
+		    case BRAND_COLD:
+		      msg_print(Ind, "\377oYour weapon freezes !");
+		      break;
+                    case BRAND_BALL_FIRE:
+		    case BRAND_FIRE:
+		      msg_print(Ind, "\377oYour weapon burns !");
+		      break;
+                    case BRAND_BALL_ACID:
+		    case BRAND_ACID:
+		      msg_print(Ind, "\377oYour weapon looks acidic !");
+		      break;
+		    case BRAND_POIS:
+		      msg_print(Ind, "\377oYour weapon is covered with venom !");
+		      break;
+		    case BRAND_MANA:
+		      msg_print(Ind, "\377oYour weapon glows with power !");
+		      break;
+		    case BRAND_CONF:
+		      msg_print(Ind, "\377oYour weapon glows many colors !");
+		      break;
+		    case BRAND_SHARP:
+		      msg_print(Ind, "\377oYour weapon sharpens !");
+		      break;
+                    case BRAND_BALL_SOUND:
+                      msg_print(Ind, "\377oYour weapon vibrates !");
+		      break;
+		    }
+		  notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else
+	{
+		if (p_ptr->brand)
+		{
+			msg_print(Ind, "\377oYour weapon seems normal again.");
+			notice = TRUE;
+			t = 0;
+			p = 0;
+		}
+	}
+
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
+	/* Use the value */
+	p_ptr->brand = v;
+	p_ptr->brand_t = t;
+	p_ptr->brand_d = p;
+	
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS | PU_MONSTERS);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+/*
  * Set "p_ptr->bow_brand_xxx", notice observable changes
  */
 bool set_bow_brand(int Ind, int v, int t, int p)
@@ -609,35 +702,35 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 		{
 		  switch (t)
 		    {
-		    case BOW_BRAND_ELEC:
-                    case BOW_BRAND_BALL_ELEC:
+		    case BRAND_ELEC:
+                    case BRAND_BALL_ELEC:
 		      msg_print(Ind, "\377oYour ammo sparkles with lightnings !");
 		      break;
-                    case BOW_BRAND_BALL_COLD:
-		    case BOW_BRAND_COLD:
+                    case BRAND_BALL_COLD:
+		    case BRAND_COLD:
 		      msg_print(Ind, "\377oYour ammo freezes !");
 		      break;
-                    case BOW_BRAND_BALL_FIRE:
-		    case BOW_BRAND_FIRE:
+                    case BRAND_BALL_FIRE:
+		    case BRAND_FIRE:
 		      msg_print(Ind, "\377oYour ammo burns !");
 		      break;
-                    case BOW_BRAND_BALL_ACID:
-		    case BOW_BRAND_ACID:
+                    case BRAND_BALL_ACID:
+		    case BRAND_ACID:
 		      msg_print(Ind, "\377oYour ammo looks acidic !");
 		      break;
-		    case BOW_BRAND_POIS:
+		    case BRAND_POIS:
 		      msg_print(Ind, "\377oYour ammo is covered with venom !");
 		      break;
-		    case BOW_BRAND_MANA:
+		    case BRAND_MANA:
 		      msg_print(Ind, "\377oYour ammo glows with power !");
 		      break;
-		    case BOW_BRAND_CONF:
+		    case BRAND_CONF:
 		      msg_print(Ind, "\377oYour ammo glows many colors !");
 		      break;
-		    case BOW_BRAND_SHARP:
+		    case BRAND_SHARP:
 		      msg_print(Ind, "\377oYour ammo sharpens !");
 		      break;
-                    case BOW_BRAND_BALL_SOUND:
+                    case BRAND_BALL_SOUND:
                       msg_print(Ind, "\377oYour ammo vibrates !");
 		      break;
 		    }
@@ -4163,10 +4256,11 @@ void player_death(int Ind)
 
 		if (secure)
 		{
-			msg_print(Ind, "\377oYou die.. but your life was secured here!");
-
-			/* Send her back to the surface */
-			p_ptr->word_recall = 1;
+			p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_DOWN:LEVEL_UP);
+			p_ptr->recall_pos.wx=p_ptr->wpos.wx;
+			p_ptr->recall_pos.wy=p_ptr->wpos.wy;
+			p_ptr->recall_pos.wz=0;
+			recall_player(Ind, "\377oYou die.. but your life was secured here!");
 
 			/* Apply small penalty for death */
 			p_ptr->au = p_ptr->au * 4 / 5;
