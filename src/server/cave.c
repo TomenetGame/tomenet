@@ -1024,7 +1024,9 @@ struct c_special *AddCS(cave_type *c_ptr){
 /* check for duplication, and also set the type	- Jir - */
 struct c_special *AddCS(cave_type *c_ptr, byte type){
 	struct c_special *cs_ptr;
-	if (GetCS(c_ptr, type)) return(NULL);	/* already exists! */
+	if (GetCS(c_ptr, type)){
+		return(NULL);	/* already exists! */
+	}
 	MAKE(cs_ptr, struct c_special);
 	if(!cs_ptr) return(NULL);
 	cs_ptr->next=c_ptr->special;
