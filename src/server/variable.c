@@ -167,7 +167,8 @@ server_opts cfg =
 	TRUE,TRUE,	// maximize, kings_etiquette
 
 	FALSE,FALSE,	// public_rfe, auto_purge
-	FALSE		// log_u
+	FALSE,		// log_u	
+	""		// server notes for meta list
 };
 
 struct ip_ban *banlist=NULL;

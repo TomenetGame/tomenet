@@ -1559,7 +1559,7 @@ bool make_attack_spell(int Ind, int m_idx)
 
 	/* radius of ball spells and breathes.
 	 * XXX this doesn't reflect some exceptions(eg. radius=4 spells). */
-	srad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 2 : 1; /* was 3 : 2 */
+	srad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2; /* was 2 : 1 */
 
 	/* NOTE: it is abusable that MAX_RANGE is 18 and player arrow range
 	 * is 25-50; one can massacre uniques without any dangers.

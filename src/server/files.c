@@ -882,6 +882,7 @@ void do_cmd_suicide(int Ind)
 	/* Hack -- set the cause of death */
 	if (!p_ptr->ghost) 
 	{
+		//strcpy(p_ptr->died_from, "");
 		strcpy(p_ptr->died_from_list, "self-inflicted wounds");
 		p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
 	}
@@ -951,7 +952,7 @@ void do_cmd_save_game(int Ind)
  * (usually admin chars) */
 long total_points(int Ind)
 {
-	u32b points;
+	u32b points, tmp1, tmp2, tmp3, tmp3a;
 	player_type *p_ptr = Players[Ind];
 	
 	/* kill maggot for 100% bonus on total score? -> no
@@ -963,8 +964,16 @@ long total_points(int Ind)
 	   For now let's calc it basing on pure progress in gameplay!: */
 	//exp counts mainly, level factors in
 //	return (p_ptr->max_exp * (p_ptr->max_plv + 30) / 30);
-	points = ((u32b)(p_ptr->max_exp) * ((u32b)(p_ptr->lev) + 30L) / 30L);
+
+	/* split the number against overflow bug */
+	tmp1 = p_ptr->lev + 33;
+	tmp2 = 33;
+	tmp3a = p_ptr->max_exp % 10000000;
+	tmp3 = (p_ptr->max_exp - tmp3a) / 10000000;
+	points = (tmp3a * tmp1) / tmp2;
+	points += ((10000000 * tmp1) / tmp2) * tmp3;
 	return points;
+
 	//level counts mainly, exp factors in at higher levels
 	//return (p_ptr->max_plv * (300 + (p_ptr->max_exp / 100000)) / 300);
 #if 0
@@ -994,11 +1003,11 @@ struct high_score
 {
 	char what[8];           /* Version info (string) */
 
-	char pts[10];           /* Total Score (number) */
+	char pts[11];           /* Total Score (number) */
 
-	char gold[10];          /* Total Gold (number) */
+	char gold[11];          /* Total Gold (number) */
 
-	char turns[10];         /* Turns Taken (number) */
+	char turns[11];         /* Turns Taken (number) */
 
 	char day[10];           /* Time stamp (string) */
 
@@ -1242,7 +1251,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		for (aged = the_score.turns; isspace(*aged); aged++) /* loop */;
 
 		/* Dump some info */
-		sprintf(out_val, "%3d.%9s  %s the %s %s, Level %d",
+		sprintf(out_val, "%3d.%10s  %s the %s %s, Level %d",
 			place, the_score.pts, the_score.who,
 			race_info[pr].title, class_info[pc].title,
 			clev);
@@ -1344,16 +1353,16 @@ static errr top_twenty(int Ind)
 		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 	/* Calculate and save the points */
-	sprintf(the_score.pts, "%9lu", (long)total_points(Ind));
-	the_score.pts[9] = '\0';
+	sprintf(the_score.pts, "%10lu", (long)total_points(Ind));
+	the_score.pts[10] = '\0';
 
 	/* Save the current gold */
-	sprintf(the_score.gold, "%9lu", (long)p_ptr->au);
-	the_score.gold[9] = '\0';
+	sprintf(the_score.gold, "%10lu", (long)p_ptr->au);
+	the_score.gold[10] = '\0';
 
 	/* Save the current turn */
-	sprintf(the_score.turns, "%9lu", (long)turn);
-	the_score.turns[9] = '\0';
+	sprintf(the_score.turns, "%10lu", (long)turn);
+	the_score.turns[10] = '\0';
 
 #ifdef HIGHSCORE_DATE_HACK
 	/* Save the date in a hacked up form (9 chars) */
@@ -1437,13 +1446,13 @@ static errr predict_score(int Ind, int line)
 		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 	/* Calculate and save the points */
-	sprintf(the_score.pts, "%9lu", (long)total_points(Ind));
+	sprintf(the_score.pts, "%10lu", (long)total_points(Ind));
 
 	/* Save the current gold */
-	sprintf(the_score.gold, "%9lu", (long)p_ptr->au);
+	sprintf(the_score.gold, "%10lu", (long)p_ptr->au);
 
 	/* Save the current turn */
-	sprintf(the_score.turns, "%9lu", (long)turn);
+	sprintf(the_score.turns, "%10lu", (long)turn);
 
 	/* Hack -- no time needed */
 	strcpy(the_score.day, "TODAY");

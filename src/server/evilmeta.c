@@ -70,7 +70,9 @@ int connsocket(int port, char *host){
 	/* Create a socket */
 	ss=socket(AF_INET, SOCK_STREAM, 0);
 	if(ss < 0) return(-1);
+#if 0
 	s_in.sin_len=sizeof(struct sockaddr_in);
+#endif
 	s_in.sin_family=AF_INET;
 	s_in.sin_port=htons(port);
 	he=gethostbyname(host);

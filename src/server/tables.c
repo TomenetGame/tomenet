@@ -2229,12 +2229,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_COMBAT,
                                 '+', 2000,
-                                '+', 650,
+                                '+', 450,
                         },
                         {
                                 SKILL_MASTERY,
                                 '+', 1000,
-                                '+', 650,
+                                '+', 600,
                         },
                         {
                                 SKILL_SWORD,
@@ -2312,7 +2312,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SORCERY,
                                 '+', 0,
-                                '+', 300,//was 500
+                                '+', 250,
                         },
                         {
                                 SKILL_SPELL,
@@ -2640,12 +2640,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_COMBAT,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 150,
                         },
                         {
                                 SKILL_MASTERY,
                                 '+', 1000,
-                                '+', 300,
+                                '+', 150,
                         },
                         {
                                 SKILL_MAGIC,
@@ -3313,7 +3313,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_COMBAT,
                                 '+', 2700,
-                                '+', 900,
+                                '+', 850,
                         },
                         {
                                 SKILL_MASTERY,
@@ -3476,13 +3476,13 @@ player_class class_info[MAX_CLASS] =
                 {
                         {
                                 SKILL_COMBAT,
-                                '+', 2700,
-                                '+', 900,
+                                '+', 1500,
+                                '+', 500,
                         },
                         {
                                 SKILL_MASTERY,
-                                '+', 1800,
-                                '+', 900,
+                                '+', 1000,
+                                '+', 800,
                         },
                         {
                                 SKILL_SWORD,
@@ -3544,7 +3544,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SORCERY,
                                 '+', 0,
-                                '+', 350,//was 300
+                                '+', 250,
                         },
                         {
                                 SKILL_SPELL,

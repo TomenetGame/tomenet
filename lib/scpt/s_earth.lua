@@ -15,13 +15,13 @@ STONESKIN = add_spell
                         else
                         	type = 0
                         end
-               		set_shield(Ind, randint(10) + 10 + get_level(Ind, STONESKIN, 100), 10 + get_level(Ind, STONESKIN, 50), type, 2 + get_level(Ind, STONESKIN, 5), 3 + get_level(Ind, STONESKIN, 5))
+               		set_shield(Ind, randint(10) + 10 + get_level(Ind, STONESKIN, 100), 5 + get_level(Ind, STONESKIN, 40), type, 2 + get_level(Ind, STONESKIN, 5), 3 + get_level(Ind, STONESKIN, 5))
 	end,
 	["info"] = 	function()
         		if get_level(Ind, STONESKIN, 50) >= 25 then
-                                return "dam "..(2 + get_level(Ind, STONESKIN, 5)).."d"..(3 + get_level(Ind, STONESKIN, 5)).." dur "..(10 + get_level(Ind, STONESKIN, 100)).."+d10 AC "..(5 + get_level(Ind, STONESKIN, 25))
+                                return "dam "..(2 + get_level(Ind, STONESKIN, 5)).."d"..(3 + get_level(Ind, STONESKIN, 5)).." dur "..(10 + get_level(Ind, STONESKIN, 100)).."+d10 AC "..(5 + get_level(Ind, STONESKIN, 40))
                         else
-                                return "dur "..(10 + get_level(Ind, STONESKIN, 100)).."+d10 AC "..(5 + get_level(Ind, STONESKIN, 25))
+                                return "dur "..(10 + get_level(Ind, STONESKIN, 100)).."+d10 AC "..(5 + get_level(Ind, STONESKIN, 40))
                         end
 	end,
         ["desc"] =	{

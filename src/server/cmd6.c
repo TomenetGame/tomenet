@@ -3083,7 +3083,8 @@ void do_cmd_use_staff(int Ind, int item)
 			if (do_res_stat(Ind, A_INT)) ident = TRUE;
 			if (p_ptr->csp < p_ptr->msp)
 			{
-				p_ptr->csp = p_ptr->msp;
+				p_ptr->csp += 500;
+				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
 				p_ptr->csp_frac = 0;
 				ident = TRUE;
 				msg_print(Ind, "You feel your head clearing.");

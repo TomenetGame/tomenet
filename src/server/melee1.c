@@ -1696,7 +1696,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					/* Bare-handed? oh.. */
 					if (!o_ptr->k_idx) break;
 
-					msg_format(Ind, "\377r%^s tries to disarms you.", m_name);
+					msg_format(Ind, "\377r%^s tries to disarm you.", m_name);
 
 					if (artifact_p(o_ptr) && magik(50)) break;
 

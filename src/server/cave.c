@@ -3425,7 +3425,7 @@ void update_lite(int Ind)
 		p = p_ptr->cur_lite;
 
 		/* Paranoia -- see "LITE_MAX" */
-		if (p > 5) p = 5;
+		if (p > LITE_CAP) p = LITE_CAP;
 
 		/* South-East of the player */
 		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px+1))

@@ -400,6 +400,9 @@ bool Report_to_meta(int flag)
         strcat(buf_meta, "' port='");
         sprintf(temp, "%ld", cfg.game_port);
         strcat(buf_meta, temp);
+//	strcat(buf_meta, "' notes='");
+//	sprintf(temp, "%s", cfg.server_notes);
+//	strcat(buf_meta, temp);
         strcat(buf_meta, "'");
 	if (flag & META_DIE)
 	{
@@ -419,6 +422,10 @@ bool Report_to_meta(int flag)
                          * if the DungeonMaster is playing, and if so, reduce the
                          * number of players reported.
                          */
+
+			strcat(buf_meta, "<notes>");
+			strcat(buf_meta, cfg.server_notes);
+			strcat(buf_meta, "</notes>");
 
                         for (i = 1; i <= NumPlayers; i++)
                         {
@@ -547,7 +554,7 @@ int Setup_net_server(void)
 		/* We are the meta client */
 		execve(args[0], args, NULL);
 		/* GONE */
-		printf("shit! [%d]\n", errno);
+		printf("shit! [%d - %s]\n", errno, strerror(errno));
 		exit(-20);
 	}
 #endif

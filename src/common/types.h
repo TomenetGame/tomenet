@@ -2567,6 +2567,7 @@ struct server_opts
 	bool public_rfe;
 	bool auto_purge;
 	bool log_u;
+	char * server_notes;
 };
 
 /* Client option struct */

@@ -107,8 +107,8 @@ static void do_curse (artifact_type *a_ptr)
 	/* Some chance of picking up these flags */
 	if (rand_int (3) == 0) a_ptr->flags3 |= TR3_AGGRAVATE;
 	if (rand_int (5) == 0) a_ptr->flags3 |= TR3_DRAIN_EXP;
-	if (rand_int (7) == 0) a_ptr->flags5 |= TR5_DRAIN_MANA;
-	if (rand_int (7) == 0) a_ptr->flags5 |= TR5_DRAIN_HP;
+	if (rand_int (8) == 0) a_ptr->flags5 |= TR5_DRAIN_MANA;
+	if (rand_int (11) == 0) a_ptr->flags5 |= TR5_DRAIN_HP;
 	if (rand_int (7) == 0) a_ptr->flags3 |= TR3_TELEPORT;
 
 	/* Some chance or reversing good bonuses */
@@ -127,7 +127,7 @@ static void do_curse (artifact_type *a_ptr)
 	if (a_ptr->flags3 & TR3_CURSED)
 	{
 		if (rand_int (2) == 0) a_ptr->flags3 |= TR3_HEAVY_CURSE;
-		if (rand_int (5) == 0) a_ptr->flags4 |= TR4_CURSE_NO_DROP;
+		if (rand_int (15) == 0) a_ptr->flags4 |= TR4_CURSE_NO_DROP;
 		return;
 	}
 
@@ -1403,13 +1403,21 @@ artifact_type *randart_make(object_type *o_ptr)
         /* Fix some limits */
         if (a_ptr->flags1 & TR1_BLOWS)
         {
+		if (a_ptr->pval > 3) a_ptr->pval /= 3;
                 if (a_ptr->pval > 3) a_ptr->pval = 3;
+		if (a_ptr->pval == 0) a_ptr->pval = 1;
         }
 
         if (a_ptr->flags1 & TR1_MANA)
         {
                 if (a_ptr->pval > 10) a_ptr->pval = 10;
         }
+	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR))
+	{
+		if (a_ptr->pval > 5) a_ptr->pval /= 2;
+		if (a_ptr->pval > 5) a_ptr->pval = 5;
+		if (a_ptr->pval == 0) a_ptr->pval = 1;
+	}
 	/* Hack -- DarkSword randarts should have this */
 	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD)
 	{
@@ -1767,7 +1775,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 			case 6: a_ptr->flags3 |= (TR3_REGEN);       break;
 			case 7: a_ptr->flags2 |= (TR2_FREE_ACT);    break;
 			case 8: a_ptr->flags2 |= (TR2_HOLD_LIFE);   break;
-			case 9: a_ptr->flags4 |= (TR4_ANTIMAGIC_10);   break;
+			case 9: a_ptr->flags3 |= (TR3_NO_MAGIC);   break;
 			case 10: a_ptr->flags5 |= (TR5_REGEN_MANA);   break;
 		}
 	}

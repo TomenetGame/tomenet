@@ -283,7 +283,8 @@
  * Note that the "lite radius" will NEVER exceed 5, and even if the "lite"
  * was rectangular, we would never require more than 128 entries in the array.
  */
-#define LITE_MAX 128
+#define LITE_MAX 529 /* 529 = ((10+1 safety) radius + 1 centre) 128 */
+#define LITE_CAP 10 /* just a limiter */
 
 /*
  * Maximum size of the "view" array (see "cave.c")
