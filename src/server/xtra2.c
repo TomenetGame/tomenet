@@ -5271,8 +5271,10 @@ bool master_player(int Ind, char *parms){
 					break;
 				}
 			}
-			if(Ind2){
-				msg_print(Ind,"If only.");
+			if(Ind2)
+                        {
+                                player_type *p_ptr2 = Players[Ind2];
+                                acquirement(p_ptr2->dun_depth, p_ptr2->py, p_ptr2->px, 1, TRUE);
 				return(FALSE);
 			}
 			msg_print(Ind, "That player is not in the game.");
