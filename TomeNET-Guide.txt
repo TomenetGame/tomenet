@@ -1,13 +1,13 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. October 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. November 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2b, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
 +---
 | Welcome to this guide!
-| To shield myself: I give no guarantee that this guide
+| Although I'm trying, I give no guarantee that this guide
 | a) contains really every detail/issue about TomeNET and
 | b) is all the time 100% accurate on every occasion.
 | Don't blame me if something differs or is missing; it shouldn't though.
@@ -45,6 +45,7 @@ Contents
     (3.6a)  Ability codes [contained within (3.6)]
     (3.7)   Example macro sets
     (3.8)   Macros with special keys
+    (3.8a)  Creating a chat macro for your party
     (3.9)   Experience, level-ups and skill points
     (3.10)  Death, ghosts and looting
     (3.11)  Malicious effects players can suffer
@@ -434,7 +435,7 @@ Items that induce random teleportation, like a 'ring of teleportation' or
 
 Items that 'can cause Earthquakes':
     !E          will make the item stop causing earthquakes randomly on
-                striking.
+                striking. (See (5.13) for more information.)
 
 Word-Of-Recall scrolls:
     @R500       will teleport you to depth 500ft (tower).
@@ -488,6 +489,7 @@ resistances or abilities.
 (0.4) Typical slang/abbreviations
 ---------------------------------
 Art         Artifact from the a_info.txt file. Also called 'True Art'.
+            (See (7.4) for more info about spoiler files.)
 Auto-ID     A special ability of some items. If you equip an item that grants
             you 'Auto-ID' all items you touch will automatically be
             identified! Items who grant their wielder Auto-Identification are
@@ -576,6 +578,17 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  the game since they had no effect except for generating cash by being sold
  to a shop.
 -Undead powers (for players' ghosts) are not available at the moment.
+-Several shops' features have not yet been implemented.
+-Stealing from monsters is not possible.
+-'LEVELS' and 'ULTIMATE' flag on unique items currently don't do anything.
+-Two types of crashes might occur:
+ a) Everyone is recalled to town. After a crash all levels will stay static
+    for a short while, so you can recall back and grab loot or whatever.
+ b) Players are not recalled. After you logged in again and find yourself in
+    the dungeon, it is highly recommended to recall instantly. When another
+    player enters that level, it can change its layouts/monsters completely
+    even while you're still on it and you might find yourself in big trouble
+    and sometimes unable to move. (In such cases rejoin and recall instantly.)
 
 
 
@@ -910,8 +923,11 @@ life when standing adjacent to the ghost. The ghost will return to the world
 of living under the cost of a lot of experience but at least the player can
 resume playing. If the ghost dies, the character will finally be erased
 permanently, watch out!
-Depending on the server configuration the number of times a ghost can be
-resurrected can be limited.
+Depending on the server configuration the number of times a ghost is limited,
+standard is 3 lifes.
+If a normal player becomes a queen or king (defeats Morgoth), all remaining
+resurrections will be lost and the next time he dies it will be permanent,
+like it is for unworldly characters.
 
 'Everlasting':
 --------------
@@ -1079,22 +1095,22 @@ example b) (if there is a potion of cure critical wounds in the second
 inventory slot).
 However, TomeNET is multiplayer and real-time. This means you don't have
 enough time to look at your inventory and search the correct letters for items
-that you might need *this instance* to avoid certain death. Often, situations
+which you might need *this instance* to avoid certain death. Often situations
 get hectic, for example if all of a sudden a dark elven warlock comes around
 the corner while you are engaging a pack of wolves, then you need kind of a
-panic button that quickly transports you out of the trouble.
+panic button that quickly transports you out of trouble.
 To comply with this need, a macro system has been implemented, allowing you to
 program freely choosable keys of your keyboard to perform a series of other
 keypresses or commands when pressed. These macros can also interact with
 certain items of your inventory by using "item inscriptions". You can inscribe
 items (usually with the '{' key) as often as you like to, the inscription is
 for example useful if an item has special abilities that you want to remember
-by looking at it. You would then inscribe an Elven Cord Armor that you know
-helps you to resist the effects of poison. Then it might look like this in
-your inventory:
+by looking at it. You would for example inscribe an Elven Cord Armor that you
+know helps you to resist the effects of poison. Then it might look like this
+in your inventory:
 Before: d) an Elven Cord Armor [6,+20] (+1) {+,10}
-After:  d) an Elven Cord Armor [6,+20] (+1) {+,10} {Res. Poison!}
-Inscriptions don't only help you remembering the abilities of certain items,
+After:  d) an Elven Cord Armor [6,+20] (+1) {+,10} {resists poison!}
+Inscriptions don't just help you to remember the abilities of certain items,
 they can also interact with the macro system and other aspects of the game.
 Usually if you want to quaff your potion of Heroism or read a scroll of Phase
 Door, you would press qc (q for quaff, then c for third inventory slot for
@@ -1339,7 +1355,6 @@ allows you to hammer the macro without fearing a lock.
 
 (3.6a) Ability codes
 --------------------
-
 A problem with the 'm' key is that it not only brings up your magic spells
 but a menu containing all skills you can use. Those can be arrow fletching
 or dodging for example.
@@ -1551,12 +1566,36 @@ Miscellanous escape sequences:
                 stands for an octal code. The code will be converted into an
                 ASCII character similar to \x?? hex mode, so \101 becomes 'A'.
 
+(3.8a) Creating a chat macro for your party
+-------------------------------------------
+Using public chat for party coordination can prove annoying to other players
+and as well confusing to your fellow party members since it's sometimes hard
+to read if people are chatting vividly.
+On the other hand, entering your chat lines in this format
+  <Party name>:<Text>
+all the time can get annoying since you have to repeat the party name over and
+over, although you can use just the first four letters or so as abbreviation.
+The best solution is, to create a macro for party chat, so you can write a
+party-message by hitting a single key, party-chatting becomes as easy as
+hitting ':' for normal chat.
+Enter the macro menu ('%'), enter a new action ('3'), enter the macro
+according to your party name. For example, if your party is called
+'Scarlet Knights', enter this string:
+:Scarlet:
+hit the Enter key to accept it, create a command macro ('4'), choose a key you
+wish to use for party chat from now on, and dump your macro ('2') to a file
+which is loaded automatically, like '<Your charname>.prf', for example
+Kinkan.prf.
+Using longer or shorter (at least 4 letters) strings works too of course, as
+long as there isn't a party of similar name which could get confused with
+yours.
+
 
 
 (3.9) Experience, level-ups and skill points
 --------------------------------------------
 By killing monsters your character gains experience. In general, harder
-monsters on deeper dunngeon levels give more experience than easy kills.
+monsters on deeper dungeon levels give more experience than easy kills.
 Hanging out on easy dungeon levels compared to your character level (for
 example a high level 50 character on an (to him) easy dungeon level like 60)
 may result in diminishing returns of experience points for killed monsters,
@@ -1570,7 +1609,7 @@ Note: Always the deeper is the better! These are only _minimum_ recommended
 depths. Also, your character might not always be strong enough to survive on
 these depths. In that case better move to easier dungeon levels until you
 found decent items and maxed out your vital stats.
-If your 
+
     Character level     |     Dungeon level
 -------------------------------------------------
         1..19                 decent exp is
@@ -1603,7 +1642,8 @@ If your
         95                          190
         98                          196
         99                    no exp gained
-If you are below the optimum depth, your experience gained will decrease.
+
+If you are below the optimum depth, your experience gain will decrease.
 The experience gained will be multiplied by 2 / (2 + leveldifference).
 So for 1 level missing to optimum depth you would get 2 / (2 + 1) = 67% of
 the optimum experience, at 2 levels difference you'd get 50%, 40% at 3, etc.
@@ -1627,8 +1667,8 @@ the skill chart where you can raise skills of your choice. Do this at a safe
 place, so your character won't be attacked and killed while you are looking
 at the skill chart. The different skills are described in (6.2). Which
 skills your character may specialize in depends on his class (profession),
-skills that are not available to your character's class are greyed out and
-cannot be raised.
+and sometimes also on his race; skills that are not available to your
+character's class are greyed out and cannot be raised.
 On the skill chart you can press 'Up'/'Down' keys to select a skill and
 'Right' key to invest one of your spare skill points into it. Choices cannot
 be undone, so be careful here.
@@ -1705,8 +1745,10 @@ stay static. It may take a whole day for very deep levels to 'unstatice'.
 If a player dies, an automatic chardump is generated in /lib/user called
 '<charname>-death.txt' (see 8.2).
 
-Note that equipment and inventory might be lost forever if you die in a
-forest (within green tree fields) or in mountain regions (brown ^ fields)!
+Note that some or even all equipment and inventory might be lost forever if
+you die in places which don't provide enough surrounding free room to drop
+all of your items, for example a dense forest (green tree fields) or mountain
+regions (brown ^ fields)!
 Last but not least, non-validated players and characters below level 5 don't
 drop their items on death, their loot will vanish forever.
 
@@ -2809,7 +2851,7 @@ Make sure that you have the basics and poison resistance before going far
 deeper than 1000 ft.
 Poison balls (also known as Stinking Clouds) do 12d2 damage.
 
-There are also three minor resistances:
+There are also five minor resistances:
 Fear            While you're afraid you won't be able to attack a target in
                 close combat.
 Blindness       You cannot read scrolls or books while you're blind.
@@ -3225,13 +3267,13 @@ VORPAL ('Sharp' weapons, 'It is very sharp and can cut your foes.')
         so brand/slay effects will increase VORPAL efficiency.
 CHAOTIC ('Your weapon produces chaotic effects')
         On hitting, you have a 50% chance to do one of the following:
-        a) drain life (VAMPIRIC) (very likely)
-        b) earthquake
+        a) drain life (VAMPIRIC, see (5.15)) (very likely)
+        b) earthquake (see (5.13))
         c) confuse target (very likely)
         d) teleport target away
         e) polymorph target
 IMPACT ('It can cause earthquakes')
-        Causes earthquakes if the damage is > 50.
+        Causes earthquakes if the damage is > 50. (See (5.13).)
 WOUNDING ('It is very sharp and makes your foes bleed.')
         Has additional to-hit/to-dam bonus.
 CAPACITY (of Capacity) ('It can hold more mana.')
@@ -3682,6 +3724,7 @@ EAT_xxx         DEX,stealing skill.
                 EAT_FOOD/EAT_LITE.
 UN_BONUS        disenchantment.
 UN_POWER        none.(drains charges/energy from your items)
+                Magic Device skill helps to prevent draining though.
 TIME            time.
 DISEASE         poison. This attack
                 can also decrease
@@ -3700,6 +3743,7 @@ SEDUCE          none. Makes you take off
 SHATTER         hits & causes an
                 earthquake.
                 Very dangerous.
+                See (5.13).
 
 Getting hit by higher undead creatures may also infect you with the
 Black Breath! (See 1.5 for more information about Black Breath.)
@@ -4121,6 +4165,7 @@ Note that not every skill is available to every profession (class).
                                 To find out details about a monster form
                                 look into the file r_info.txt in your
                                 tomenet/lib/game directory!
+                                (See (7.4) for more info about spoiler files.)
 +Sneakiness                     Slightly increases your character speed
                                 (+7 at 50, so approx +1 every 7..8 points).
     .Stealth                    Increases your stealth, which determines
@@ -4767,6 +4812,7 @@ How exactly stats are calculated is written below for each case.
 
 To find out the special abilities of a monster form, consult the file
 /lib/game/r_info.txt in your tomenet directory, and look up the monster.
+(See (7.4) for more info about spoiler files.)
 It's abilities will transform to the mimic's body as follows:
 
 W: depth : rarity : corpse weight : experience for kill
@@ -5045,6 +5091,10 @@ their inventory.
 Those books can be purchased in store '9' (the 'book store') or in '7'
 (the 'black market' - very expensive but you often find tomes here!).
 
+*Experimental* feature (can change / be removed anytime!):
+Schools give certain permanent boni and abilities to the player, when trained
+to a certain extent. The boni are listed below each school.
+
 Istari schools:
 ---------------
 Earth
@@ -5055,6 +5105,8 @@ Earth
     Strike          Creates a micro-ball of force, pushing monsters backwards.
                     Lv12: it turns into a small ball.
     Shake           Creates a local earthquake.
+  BONI:             Shard resistance at 30,
+                    Great damage reduction against earthquakes at 45.
 Air
     Noxious Cloud   Fires a poison cloud.
                     Lv30: Unbreath cloud, irresistable.
@@ -5065,6 +5117,9 @@ Air
                     Lv10: Brands melee weapons with venom.
     Thunderstorm    Throws thunder bolts at random monsters nearby.
                     (33% lightning, 33% sound, 33% light)
+  BONI:             Feather falling at 30,
+                    Poison resistance at 40,
+                    Flying at 50.
 Water
     Tidal Wave      Summons a monstrous tidal wave.
     Ice Storm       Engulfs you in a storm of roaring cold.
@@ -5073,6 +5128,9 @@ Water
                     Lv5: Removes fear.
                     Lv12: Makes you heroic.
     Vapor           Fills the air with toxic moisture (water damage).
+  BONI:             Water resistance at 30,
+                    Passing water at 40,
+                    Water immunity at 50.
 Fire
     Globe of Light  Creates a globe of magical light.
                     Lv10: Damages monsters.
@@ -5082,6 +5140,8 @@ Fire
                           EVIL opponents.
     Fiery Shield    Creates a shield of flames around you.
     Firewall        Creates a fire wall to incinerate monsters that cross it.
+  BONI:             Fire resistance at 30,
+                    Fire immunity at 50.
 Mana
     Manathrust      Casts a powerful mana bolt.
     Remove Curses   Removes all curses of carried/worn objects.
@@ -5092,6 +5152,7 @@ Mana
     Disruption Shield
                     Conjures a shield that protects you from taking damage.
                     Instead, the shield will consume your mana to absorb it.
+  BONI:             Mana resistance at 40.
 Conveyance
     Phase Door      Teleports you on a small scale range.           (project)
     Disarm          Destroys doors and traps around you.
@@ -5105,6 +5166,7 @@ Conveyance
     Probability Travel
                     Renders you instable, allowing to pass walls and to
                     float upwards/downwards.
+  BONI:             Resistance to teleportation attacks at 30.
 Divination
     Identify        Identifies items.
                     Lv17: Identifies all items that you carry/wear.
@@ -5118,6 +5180,7 @@ Divination
     Reveal Ways     Detects doors/stairs/ways within a radius.      (project)
     Sense Monsters  Detects all monsters nearby.                    (project)
                     Lv30: Gives you temporary ESP.
+  BONI:             Automatic identification at 50.
 Nature (This school uses WISDOM to determine fail-rates)
     Grow Trees      Grows trees quickly around you.
     Healing         Heals a percentage of your hit points.          (project)
@@ -5126,19 +5189,24 @@ Nature (This school uses WISDOM to determine fail-rates)
                     Lv20: Restores drained stats.
                     Lv25: Restores lost experience.
     Regeneration    Increases your hit point regeneration rate.
+  BONI:             Regeneration ability (Hit Points) at 30,
+                    Pass trees easily at 30,
+                    Pass water easily at 40.
 Mind
     Confuse         Confuses a monsters.
                     Lv15: Turns into a ball.
                     Lv35: Affects all monsters in sight.
     Stun            Stunds a monster.
                     Lv25: Turns into a ball.
-    Telekinesis     Inscribe your book with @PPlayername, cast it, select an
+    Telekinesis     Inscribe your book @P<Playername>, cast it, select an
                     item that you wish to teleport to the player's inventory.
                     The target player needs to concentrate by opening her/his
                     mind, see (0.2). It's dangerous to have the mind opened,
-                    since everyone can send items to you, so better close it
+                    since everyone can send you any items, so better close it
                     again as soon as the desired telekinesis transaction is
-                    done.
+                    done. Example inscription: @PGandalf
+  BONI:             Reduces confusion and hallucination at 30,
+                    Reduce insanity influence at 40 and especially at 50.
 Temporal
     Magelock        Magically locks a door.
                     Lv30: Creates a Glyph Of Warding on the ground that stops
@@ -5149,6 +5217,7 @@ Temporal
                     Hastes you for a while.                         (project)
     Banishment      Teleports away all monsters within sight.
                     Lv15: Locks monsters in stasis for a while.
+  BONI:             Time resistance at 50.
 Udun
     Genocide        Genocides all monsters of a race on the level.
                     Lv15: Alternatively genocides all monsters near you ("mass
@@ -5161,6 +5230,8 @@ Udun
                     Conjures a powerful and nearly irresistible bolt.
     Hellfire        Conjures a ball of hellfire which is especially deadly to
                     GOOD opponents.
+  BONI:             Resist teleportation attacks at 30,
+                    Hold life at 40.
 
 Istari/priest schools:
 ----------------------
@@ -5184,6 +5255,7 @@ Meta (This school uses WISDOM to determine fail-rates)
                     Lv10: Speed/Slowness.
                     Lv15: Stun/Cuts.
                     Lv20: Heroism/Berserk strength/Blessing/Shields/Fear.
+  BONI:             Improves saving throw, the further it's trained above 20.
 
 Priest schools:
 ---------------
@@ -5198,6 +5270,8 @@ Holy Offense
     Orb Of Draining Summons a holy orb, devouring monsters.
     Drain Life      Drains life from a non-undead and non-nonliving creature
                     and returns a part of it to your hit points.
+  BONI:             Adds slay undead at 30, slay demon at 40, slay evil at 50
+                    to all melee and ranged attacks.
 Holy Defense
     Blessing        Increases AC by 10 temporarily.                 (project)
                     Lv15: Increases AC by 20 temporarily.           (project)
@@ -5220,6 +5294,8 @@ Holy Defense
                     (Remaining HP = MaxHP / 15, but never more than 30.)
                     The gods won't accept another martyrium until 1000 turns
                     have passed.
+  BONI:             Protects the player from undead at 30, from demons at 40,
+                    and from evil in general at 50. Better than the spell.
 Holy Curing
     Remove Fear     Keeps your heart boldened for a while           (project)
     Healing         Heals a percentage of hit points.               (project)
@@ -5238,6 +5314,12 @@ Holy Curing
                     at 33%.
     Soul Curing     Cures Black Breath (See 1.5 for more information about
                     Black Breath).                                  (project)
+  BONI:             Improves HP regeneration rate extraordinarily the further
+                    it is trained above 30,
+                    Half duration of various bad effects on the body at
+                    30 (blindness, poison) / 40 (stun, cuts) / 50
+                    (hallucination),
+                    Less frequent suffering from black breath at 50.
 Holy Support
     Holy Light      Creates a globe of pure light.
                     Lv3: Damages monsters.
@@ -5259,6 +5341,8 @@ Holy Support
                     Lv20: Gives +3 EA.                              (project)
                     Note: The EA effect won't be applied to barehanded players
                     if they don't have Martial Arts skill of at least 01.000.
+  BONI:             Keeps the hunger satisfied all the time at 40,
+                    Suppresses effects of DG_CURSE and TY_CURSE at 50.
 
 
 
@@ -5723,6 +5807,7 @@ The most powerful representant of each class:
  trying to kill it you should examine the text file "r_info.txt" located in
  the lib\game directory to find out if it is a certain unique enemy. Then look
  up his abilities and make sure you are prepared to fight him.
+ (See (7.4) for more info about spoiler files.)
 
 -If you see an enemy that you don't know anything about and that could pose a
  threat (especially if it's inside a vault!), STAY AWAY and consult either an
@@ -6450,6 +6535,12 @@ SOLUTION:   It's most likely because that account name is already in use by
             Likewise, if that account indeed belongs to you, you have probably
             made a typo while entering your password.
 
+PROBLEM 15: The level completely changed while I was on it.
+SOLUTION:   No real solution at this time, sorry. See (0.5) for more
+            information about that problem. ('types of crashes')
+
+PROBLEM 16: I cannot see monster x although I can 'See Invisible'.
+SOLUTION:   Some monsters have no appeareance and cannot be seen at all.
 
 
 
