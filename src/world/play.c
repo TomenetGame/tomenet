@@ -50,20 +50,6 @@ void rem_players(short id){
 	}
 }
 
-/* Send a players update to a new server */
-void update_players(struct client *ccl){
-	struct rplist *c_pl;
-	struct wpacket playpkt;
-	c_pl=rpmlist;
-	while(c_pl){
-		playpkt.d.play.id=c_pl->id;
-		playpkt.d.play.server=c_pl->server;
-		strncpy(playpkt.d.play.name, c_pl->name);
-		send(ccl->fd, playpkt, sizeof(struct wpacket), 0);
-		c_pl=c_pl->next;
-	}
-}
-
 void add_rplayer(struct wpacket *wpk){
 	struct rplist *n_pl, *c_pl;
 	unsigned short found=0;

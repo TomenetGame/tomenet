@@ -138,7 +138,7 @@ void wproto(struct client *ccl){
 
 				ccl->authed=pwcheck(wpk->d.auth.pass, wpk->d.auth.val);
 				/* Send it the current players */
-				update_players(ccl);
+				send_rplay(ccl);
 				break;
 			case WP_CHAT:
                                 /* only relay all for now */
@@ -227,7 +227,6 @@ void addclient(int fd){
 		ncl->next=clist;
 		ncl->authed=0;
 		initauth(ncl);
-		send_rplay(ncl);
 		clist=ncl;
 	}
 }
