@@ -3059,7 +3059,7 @@ kill_house_contents(house_type *h_ptr){
 	}
 }
 
-kill_houses(int id, int type){
+void kill_houses(int id, int type){
 	int i;
 	for(i=0;i<num_houses;i++){
 		struct dna_type *dna=houses[i].dna;
@@ -3067,6 +3067,18 @@ kill_houses(int id, int type){
 			dna->owner=0L;
 			dna->creator=0L;
 			kill_house_contents(&houses[i]);
+		}
+	}
+}
+
+void kill_objs(int id){
+	int i;
+	object_type *o_ptr;
+	for(i=0;i<o_max;i++){
+		o_ptr=&o_list[i];
+		if(!o_ptr->k_idx) continue;
+		if(o_ptr->owner==id){
+			o_ptr->owner=MAX_ID+1;
 		}
 	}
 }
@@ -3116,6 +3128,7 @@ void player_death(int Ind)
 
 		msg_broadcast(Ind, buf);
 		kill_houses(p_ptr->id, OT_PLAYER);
+		kill_objs(p_ptr->id);
 		p_ptr->death=TRUE;
 		
 		/* Remove him from his party */
@@ -3233,6 +3246,7 @@ void player_death(int Ind)
 	{
 		/* Delete his houses */
 		kill_houses(p_ptr->id, OT_PLAYER);
+		kill_objs(p_ptr->id);
 
 		/* Remove him from his party */
 		if (p_ptr->party)

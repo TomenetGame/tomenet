@@ -201,3 +201,7 @@ Change list for PernMangband
 - Other bugs identified (unfixed) Target friendly with golem causes
   chaos. The golem attacks nearest player, kills then homes in on the ghost.
   Also, swapping places with the golem causes problems. (Urgent fix)
+
+02/10/2001
+- Object ownership made invalid now after player ghost death. It was
+  recycling ownership. It is set to MAX_ID+1.
