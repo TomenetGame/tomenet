@@ -5569,6 +5569,8 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 	int                 y1, x1, y2, x2;
 	int			/*y0, x0,*/ y9, x9;
 	int			dist;
+	int y_saver, x_saver; /* For reflecting monsters */
+	int dist_hack = 0;
 	int			who_can_see[26], num_can_see = 0;
 
 	/*int			msec = delay_factor * delay_factor * delay_factor;*/
@@ -5639,6 +5641,9 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 		y1 = y;
 	}
 #endif	// 0
+
+	y_saver = y1;
+	x_saver = x1;
 
 	/* Default "destination" */
 	y2 = y; x2 = x;
@@ -5848,6 +5853,9 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 
 	/* Hack -- make sure beams get to "explode" */
 	gm[1] = grids;
+
+	/* Ported hack for reflection */
+	dist_hack = dist;
 
 	/* If we found a "target", explode there */
 	if (dist <= MAX_RANGE)
@@ -6098,7 +6106,51 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 			if (!cave_floor_bold(zcave, y, x)) continue;
 
 			/* Affect the monster */
-			if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+//			if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+
+			if (grids <= 1)
+			{
+				monster_type *m_ptr = &m_list[zcave[y][x].m_idx];
+				monster_race *ref_ptr = race_inf(m_ptr);
+//				monster_race *ref_ptr = race_inf(&m_list[zcave[y][x].m_idx]);
+
+				if ((ref_ptr->flags2 & (RF2_REFLECTING)) && (randint(10)!=1)
+						&& (dist_hack > 1))
+				{
+					int t_y, t_x;
+					int max_attempts = 10;
+
+					/* Choose 'new' target */
+					do
+					{
+						t_y = y_saver - 1 + randint(3);
+						t_x = x_saver - 1 + randint(3);
+						max_attempts--;
+					}
+
+					while (max_attempts && in_bounds2(wpos, t_y, t_x) &&
+							!(los(wpos, y, x, t_y, t_x)));
+
+					if (max_attempts < 1)
+					{
+						t_y = y_saver;
+						t_x = x_saver;
+					}
+#if 0	// pfft, for now no msg
+//					if (m_list[cave[y][x].m_idx].ml)
+					if (p_ptr->mon_vis[zcave[y][x].m_idx])
+					{
+						msg_print(Ind, "The attack bounces!");
+						ref_ptr->r_flags2 |= RF2_REFLECTING;
+					}
+#endif	// 0
+
+					project(zcave[y][x].m_idx, 0, wpos, t_y, t_x,  dam, typ, flg);
+					continue;
+				}
+
+				if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+			}
 #else
 			/* Walls protect monsters */
 			if (!cave_floor_bold(Depth, y, x)) continue;
@@ -6160,6 +6212,9 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 
 			/* Set the player index */
 #ifdef NEW_DUNGEON
+			/* paranoia */
+			if (!in_bounds2(wpos, y, x)) continue;
+
 			player_idx = 0 - zcave[y][x].m_idx;
 
 			/* Affect the player */

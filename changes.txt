@@ -603,3 +603,9 @@ Change list for PernMangband
 - slain a lot of warnings.
 - "Kings' etiquette" is coded in. (optional)
 
+4/1/2001 (Jir)
+- monster-move code ameliorated (!STUPID_MONSTERS)
+- some monsters will prefer to keep distance (even STUPID_MONSTER is on).
+- new monsters with DISBELIEVE power (eg. Unbeliever).
+- yaac(Yet Another Anti-Cheeze): lowbies' arrows won't drop on floor.
+

@@ -3626,7 +3626,9 @@ void do_cmd_fire(int Ind, int dir, int item)
 	}
 
 	/* Hack -- "Never litter the floor" inscription {!g} */
-	if( check_guard_inscription( o_ptr->note, 'g' ))
+	/* Hack -- yet another anti-cheeze(yaac) */
+	if(check_guard_inscription( o_ptr->note, 'g') ||
+		p_ptr->lev < cfg.newbies_cannot_drop)
 	{
 		breakage = 101;
 	}

@@ -1887,7 +1887,8 @@ static errr rd_dungeon(void)
 	/* players on this depth */
 	rd_s16b(&tmp16b);
 	new_players_on_depth(&wpos,tmp16b,FALSE);
-	s_printf("%d players on %d,%d,%d.\n", tmp16b, wpos.wx, wpos.wy, wpos.wz);
+//	s_printf("%d players on %d,%d,%d.\n", tmp16b, wpos.wx, wpos.wy, wpos.wz);
+	s_printf("%d players on %d,%d,%d.\n", players_on_depth(&wpos), wpos.wx, wpos.wy, wpos.wz);
 #else
 	/* players on this depth */
 	rd_s16b(&players_on_depth[depth]);

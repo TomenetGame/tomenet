@@ -2522,7 +2522,7 @@ F:RES_BLIND | RES_POIS | RES_DISEN | RES_NETHER | RES_CHAOS
 F:SUST_STR | SUST_DEX | SUST_CON | 
 F:SUST_INT | SUST_WIS | SUST_CHR | 
 F:FEATHER | SLOW_DIGEST | HOLD_LIFE |
-F:ANTIMAGIC_50 | DRAIN_MANA
+F:ANTIMAGIC_50 | DRAIN_MANA | NO_MAGIC
 
 # The (Amulet of) Suspicion Methodique
 
@@ -2538,6 +2538,21 @@ F:FEATHER | SLOW_DIGEST | HOLD_LIFE |
 F:ANTIMAGIC_20 | DRAIN_MANA
 D:The ultimate point an phylosopher had arrived, this amulet
 D:reveals the light of true belief.
+
+# The Dark Sword 'Schwerzglaube'
+N:212:'Schwerzglaube'
+I:23:33:2
+W:60:30:70:120000
+P:5:5d7:10:10:0
+F:BLOWS | CON | HIDE_TYPE |
+F:SLAY_ANIMAL | SLAY_UNDEAD | SLAY_DEMON | 
+#F:ESP_ANIMAL | ESP_UNDEAD | ESP_DEMON | 
+F:ESP_UNIQUE
+F:SLOW_DIGEST | SHOW_MODS | SEE_INVIS | RES_DISEN
+F:FREE_ACT | RES_NETHER | HOLD_LIFE
+F:SUST_STR | SUST_DEX | SUST_CON | 
+F:ANTIMAGIC_20 | DRAIN_MANA
+# | NO_MAGIC
 
 #N:(No.):(name)
 #G:(appearence):(colour)

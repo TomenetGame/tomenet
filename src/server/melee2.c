@@ -1937,12 +1937,15 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (!direct) break;
 			disturb(Ind, 1, 0);
+#if 0	// oops, this cannot be 'magic' ;)
 			if (magik(antichance))
 			  {
 			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
 			    break;
 			  }
-			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+#endif	// 0
+//			if (blind) msg_format(Ind, "%^s mumbles coldly.", m_name); else
+			msg_format(Ind, "%^s mumbles coldly.", m_name);
 			if (rand_int(100) < p_ptr->skill_sav)
 			{
 				msg_print(Ind, "You resist the effects!");
@@ -3068,7 +3071,9 @@ static int mon_will_run(int Ind, int m_idx)
 	p_lev = p_ptr->lev;
 
 	/* Examine monster power (level plus morale) */
-	m_lev = r_ptr->level + (m_idx & 0x08) + 25;
+//	m_lev = r_ptr->level + (m_idx & 0x08) + 25;
+	/* Hack.. baby don't run.. */
+	m_lev = r_ptr->level * 3 / 2 + (m_idx & 0x08) + 25;
 
 	/* Optimize extreme cases below */
 	if (m_lev > p_lev + 4) return (FALSE);
@@ -3205,6 +3210,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	player_type *p_ptr = Players[Ind];
 
 	monster_type *m_ptr = &m_list[m_idx];
+        monster_race *r_ptr = race_inf(m_ptr);
 
 	int y, ay, x, ax;
 
@@ -3212,6 +3218,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 
 	int y2 = p_ptr->py;
 	int x2 = p_ptr->px;
+	bool done = FALSE;	// not used fully (FIXME)
 
 
 #ifdef MONSTER_FLOW
@@ -3234,6 +3241,105 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		/* XXX XXX Not very "smart" */
 		y = (-y), x = (-x);
 	}
+
+
+	/* Tease the player */
+	else if (r_ptr->flags7 & RF7_AI_ANNOY)
+	{
+		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < 4)
+		{
+			y = -y;
+			x = -x;
+		}
+	}
+#if 0
+	/* Death orbs .. */
+	if (r_ptr->flags2 & RF2_DEATH_ORB)
+	{
+		if (!los(m_ptr->fy, m_ptr->fx, y2, x2))
+		{
+			return (FALSE);
+		}
+	}
+#endif	// 0
+
+//        if (!stupid_monsters && (is_friend(m_ptr) < 0))
+#ifndef STUPID_MONSTERS
+	{
+		int tx = x2, ty = y2;
+		cave_type **zcave;
+		/* paranoia */
+		if(!(zcave=getcave(&m_ptr->wpos))) return;
+
+		/*
+		 * Animal packs try to get the player out of corridors
+		 * (...unless they can move through walls -- TY)
+		 */
+		if ((r_ptr->flags1 & RF1_FRIENDS) &&
+				(r_ptr->flags3 & RF3_ANIMAL) &&
+				!((r_ptr->flags2 & (RF2_PASS_WALL)) ||
+					(r_ptr->flags2 & (RF2_KILL_WALL))))
+		{
+			int i, room = 0;
+
+			/* Count room grids next to player */
+			for (i = 0; i < 8; i++)
+			{
+				/* Check grid */
+				if (zcave[ty + ddy_ddd[i]][tx + ddx_ddd[i]].info & (CAVE_ROOM))
+				{
+					/* One more room grid */
+					room++;
+				}
+			}
+
+			/* Not in a room and strong player */
+			if ((room < 8) && (p_ptr->chp > ((p_ptr->mhp * 3) / 4)))
+			{
+				/* Find hiding place */
+//				if (find_hiding(m_idx, &y, &x)) done = TRUE;
+				done = TRUE;
+			}
+		}
+
+		/* Monster groups try to surround the player */
+		if (!done && (r_ptr->flags1 & RF1_FRIENDS))
+		{
+			int i;
+
+			/* Find an empty square near the target to fill */
+			for (i = 0; i < 8; i++)
+			{
+				/* Pick squares near target (semi-randomly) */
+				y2 = ty + ddy_ddd[(m_idx + i) & 7];
+				x2 = tx + ddx_ddd[(m_idx + i) & 7];
+
+				/* Already there? */
+				if ((m_ptr->fy == y2) && (m_ptr->fx == x2))
+				{
+					/* Attack the target */
+					y2 = ty;
+					x2 = tx;
+
+					break;
+				}
+
+				/* Ignore filled grids */
+				if (!cave_empty_bold(zcave, y2, x2)) continue;
+
+				/* Try to fill this hole */
+				break;
+			}
+
+			/* Extract the new "pseudo-direction" */
+			y = m_ptr->fy - y2;
+			x = m_ptr->fx - x2;
+
+			/* Done */
+			done = TRUE;
+		}
+	}
+#endif	// STUPID_MONSTERS
 
 
 	/* Extract the "absolute distances" */
@@ -3499,7 +3605,6 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
 	/* Extract the "pseudo-direction" */
 	y = m_ptr->fy - y2;
 	x = m_ptr->fx - x2;
-
 
 	/* Extract the "absolute distances" */
 	ax = ABS(x);

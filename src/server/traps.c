@@ -2269,7 +2269,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       case TRAP_OF_CUISINE:
          msg_print(Ind, "You are treated to a marvelous elven cuisine!");
 		 /* 1turn = 100 food value when satiated */
-         (void)set_food(Ind, PY_FOOD_MAX + getlevel(wpos)*10 + 1000 + rand_int(1000));
+         (void)set_food(Ind, PY_FOOD_MAX + getlevel(wpos)*50 + 1000 + rand_int(1000));
          ident=TRUE;
          break;
       /* Trap of unmagic */

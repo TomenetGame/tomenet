@@ -190,7 +190,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
         monster_race *r_ptr = race_inf(m_ptr);
 
 	u32b f1, f2, f3, f4, f5, esp;
-	bool brand_pois = FALSE;
+//	bool brand_pois = FALSE;
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -320,6 +320,18 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 				{
 					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_ACID;*/
 				}
+				/* Notice susceptibility */
+				else if (r_ptr->flags9 & (RF9_SUSCEP_ACID))
+				{
+#if 0
+					if (m_ptr->ml)
+					{
+						r_ptr->r_flags9 |= (RF9_SUSCEP_ACID);
+					}
+#endif	// 0
+					if (mult < 6) mult = 6;
+				}
+
 
 				/* Otherwise, take the damage */
 				else
@@ -335,6 +347,18 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 				if (r_ptr->flags3 & RF3_IM_ELEC)
 				{
 					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_ELEC;*/
+				}
+
+				/* Notice susceptibility */
+				else if (r_ptr->flags9 & (RF9_SUSCEP_ELEC))
+				{
+#if 0
+					if (m_ptr->ml)
+					{
+						r_ptr->r_flags9 |= (RF9_SUSCEP_ELEC);
+					}
+#endif	// 0
+					if (mult < 6) mult = 6;
 				}
 
 				/* Otherwise, take the damage */
@@ -385,6 +409,19 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 				if (r_ptr->flags3 & RF3_IM_POIS)
 				{
 					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_POIS;*/
+				}
+
+				/* Notice susceptibility */
+				else if (r_ptr->flags9 & (RF9_SUSCEP_POIS))
+				{
+#if 0
+					if (m_ptr->ml)
+					{
+						r_ptr->r_flags9 |= (RF9_SUSCEP_POIS);
+					}
+#endif	// 0
+					if (mult < 6) mult = 6;
+//					if (magik(95)) *special |= SPEC_POIS;
 				}
 
 				/* Otherwise, take the damage */

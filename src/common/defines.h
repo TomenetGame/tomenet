@@ -3761,6 +3761,8 @@ that keeps many algorithms happy.
 #define RF7_AI_SPECIAL          0x00002000  /* For quests */
 #define RF7_NEUTRAL             0x00004000  /* Monster is neutral */
 
+#define RF7_DISBELIEVE			0x80000000	/* Antimagic shield */
+
 
 /*
  * Monster race flags

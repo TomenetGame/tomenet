@@ -14,13 +14,16 @@
  * specified in the arguments. Returns NULL for
  * a failure.
  */
-cave_type **getcave(struct worldpos *wpos){
+cave_type **getcave(struct worldpos *wpos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
-	if(wpos->wz==0){
+	if(wpos->wz==0)
+	{
 		return(wild->cave);
 	}
-	else{
+	else
+	{
 		if(wpos->wz>0)
 			return(wild->tower->level[wpos->wz-1].cave);
 		else
@@ -29,7 +32,8 @@ cave_type **getcave(struct worldpos *wpos){
 }
 
 /* an afterthought - it is often needed without up/down info */
-struct dungeon_type *getdungeon(struct worldpos *wpos){
+struct dungeon_type *getdungeon(struct worldpos *wpos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) return NULL;
@@ -37,7 +41,8 @@ struct dungeon_type *getdungeon(struct worldpos *wpos){
 		return(wpos->wz>0 ? wild->tower:wild->dungeon);
 }
 
-void new_level_up_x(struct worldpos *wpos, int pos){
+void new_level_up_x(struct worldpos *wpos, int pos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) wild->up_x=pos; 
@@ -46,7 +51,8 @@ void new_level_up_x(struct worldpos *wpos, int pos){
 	else
 		wild->dungeon->level[ABS(wpos->wz)-1].up_x=pos;
 }
-void new_level_up_y(struct worldpos *wpos, int pos){
+void new_level_up_y(struct worldpos *wpos, int pos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) wild->up_y=pos; 
@@ -55,7 +61,8 @@ void new_level_up_y(struct worldpos *wpos, int pos){
 	else
 		wild->dungeon->level[ABS(wpos->wz)-1].up_y=pos;
 }
-void new_level_down_x(struct worldpos *wpos, int pos){
+void new_level_down_x(struct worldpos *wpos, int pos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) wild->dn_x=pos; 
@@ -64,7 +71,8 @@ void new_level_down_x(struct worldpos *wpos, int pos){
 	else
 		wild->dungeon->level[ABS(wpos->wz)-1].dn_x=pos;
 }
-void new_level_down_y(struct worldpos *wpos, int pos){
+void new_level_down_y(struct worldpos *wpos, int pos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) wild->dn_y=pos; 
@@ -73,7 +81,8 @@ void new_level_down_y(struct worldpos *wpos, int pos){
 	else
 		wild->dungeon->level[ABS(wpos->wz)-1].dn_y=pos;
 }
-void new_level_rand_x(struct worldpos *wpos, int pos){
+void new_level_rand_x(struct worldpos *wpos, int pos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) wild->rn_x=pos; 
@@ -82,7 +91,8 @@ void new_level_rand_x(struct worldpos *wpos, int pos){
 	else
 		wild->dungeon->level[ABS(wpos->wz)-1].rn_x=pos;
 }
-void new_level_rand_y(struct worldpos *wpos, int pos){
+void new_level_rand_y(struct worldpos *wpos, int pos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) wild->rn_y=pos; 
@@ -92,51 +102,59 @@ void new_level_rand_y(struct worldpos *wpos, int pos){
 		wild->dungeon->level[ABS(wpos->wz)-1].rn_y=pos;
 }
 
-byte level_up_x(struct worldpos *wpos){
+byte level_up_x(struct worldpos *wpos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) return(wild->up_x); 
 	return(wpos->wz>0?wild->tower->level[wpos->wz-1].up_x:wild->dungeon->level[ABS(wpos->wz)-1].up_x);
 }
-byte level_up_y(struct worldpos *wpos){
+byte level_up_y(struct worldpos *wpos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) return(wild->up_y); 
 	return(wpos->wz>0?wild->tower->level[wpos->wz-1].up_y:wild->dungeon->level[ABS(wpos->wz)-1].up_y);
 }
-byte level_down_x(struct worldpos *wpos){
+byte level_down_x(struct worldpos *wpos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) return(wild->dn_x); 
 	return(wpos->wz>0?wild->tower->level[wpos->wz-1].dn_x:wild->dungeon->level[ABS(wpos->wz)-1].dn_x);
 }
-byte level_down_y(struct worldpos *wpos){
+byte level_down_y(struct worldpos *wpos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) return(wild->dn_y); 
 	return(wpos->wz>0?wild->tower->level[wpos->wz-1].dn_y:wild->dungeon->level[ABS(wpos->wz)-1].dn_y);
 }
-byte level_rand_x(struct worldpos *wpos){
+byte level_rand_x(struct worldpos *wpos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) return(wild->rn_x); 
 	return(wpos->wz>0?wild->tower->level[wpos->wz-1].rn_x:wild->dungeon->level[ABS(wpos->wz)-1].rn_x);
 }
-byte level_rand_y(struct worldpos *wpos){
+byte level_rand_y(struct worldpos *wpos)
+{
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) return(wild->rn_y); 
 	return(wpos->wz>0?wild->tower->level[wpos->wz-1].rn_y:wild->dungeon->level[ABS(wpos->wz)-1].rn_y);
 }
 
-bool can_go_up(struct worldpos *wpos){
+bool can_go_up(struct worldpos *wpos)
+{
 	struct wilderness_type *wild;
 	if(wpos->wz<0) return(TRUE);
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz>0) return(wpos->wz < wild->tower->maxdepth);
 	return((wild->flags&WILD_F_UP)?TRUE:FALSE);
 }
-bool can_go_down(struct worldpos *wpos){
+bool can_go_down(struct worldpos *wpos)
+{
 	struct wilderness_type *wild;
 	if(wpos->wz>0) return(TRUE);
 	wild=&wild_info[wpos->wy][wpos->wx];
@@ -144,34 +162,41 @@ bool can_go_down(struct worldpos *wpos){
 	return((wild->flags&WILD_F_DOWN)?TRUE:FALSE);
 }
 
-bool istown(struct worldpos *wpos){
+bool istown(struct worldpos *wpos)
+{
 	if(!wpos->wz && wild_info[wpos->wy][wpos->wx].type==WILD_TOWN) return(TRUE);
 	return(FALSE);
 }
 
-void wpcopy(struct worldpos *dest, struct worldpos *src){
+void wpcopy(struct worldpos *dest, struct worldpos *src)
+{
 	dest->wx=src->wx;
 	dest->wy=src->wy;
 	dest->wz=src->wz;
 }
 
 /* better use macros maybe..	- Jir - */
-bool wpcmp(worldpos *dest, worldpos *src){
+bool wpcmp(worldpos *dest, worldpos *src)
+{
 	return ((dest->wx==src->wx && dest->wy==src->wy && dest->wz==src->wz) ?
 			TRUE : FALSE);
 }
 
-int wild_idx(worldpos *wpos){
+int wild_idx(worldpos *wpos)
+{
 	return (wpos->wx + wpos->wy * MAX_WILD_X);
 }
 
-void new_players_on_depth(struct worldpos *wpos, int value, bool inc){
+void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
+{
 	struct wilderness_type *w_ptr;
 	w_ptr=&wild_info[wpos->wy][wpos->wx];
-	if(wpos->wz==0){
+	if(wpos->wz==0)
+	{
 		w_ptr->ondepth=(inc?w_ptr->ondepth+value:value);
 	}
-	else{
+	else
+	{
 		struct dungeon_type *d_ptr;
 		if(wpos->wz>0)
 			d_ptr=wild_info[wpos->wy][wpos->wx].tower;
@@ -181,10 +206,12 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc){
 	}
 }
 
-int players_on_depth(struct worldpos *wpos){
+int players_on_depth(struct worldpos *wpos)
+{
 	if(wpos->wz==0)
 		return(wild_info[wpos->wy][wpos->wx].ondepth);
-	else{
+	else
+	{
 		struct dungeon_type *d_ptr;
 		if(wpos->wz>0)
 			d_ptr=wild_info[wpos->wy][wpos->wx].tower;
@@ -194,20 +221,24 @@ int players_on_depth(struct worldpos *wpos){
 	}
 }
 
-bool inarea(struct worldpos *apos, struct worldpos *bpos){
+bool inarea(struct worldpos *apos, struct worldpos *bpos)
+{
 	if(apos->wx==bpos->wx && apos->wy==bpos->wy && apos->wz==bpos->wz)
 		return TRUE;
 	return FALSE;
 }
 
-int getlevel(struct worldpos *wpos){
+int getlevel(struct worldpos *wpos)
+{
 	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
 
-	if(wpos->wz==0){
+	if(wpos->wz==0)
+	{
 		/* ground level */
 		return(w_ptr->radius);
 	}
-	else{
+	else
+	{
 		struct dungeon_type *d_ptr;
 		int base;
 		if(wpos->wz>0)
@@ -3161,7 +3192,8 @@ void update_view(int Ind)
 #else
 	int Depth = p_ptr->dun_depth;
 #endif
-	if(p_ptr->wpos.wz){
+	if(p_ptr->wpos.wz)
+	{
 		struct dungeon_type *d_ptr;
 		d_ptr=(p_ptr->wpos.wz>0? wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower : wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon);
 		if(d_ptr->flags & DUNGEON_NOMAP) unmap=TRUE;

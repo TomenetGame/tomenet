@@ -390,7 +390,7 @@ static cptr r_info_flags6[] =
 #endif
 
 /*
- * r_info_flags7-9 are not implemented at all;
+ * most of r_info_flags7-9 are not implemented;
  * for now, they're simply to 'deceive' parser.	- Jir -
  */
 
@@ -430,7 +430,7 @@ static cptr r_info_flags7[] =
 	"XXX7X28",
 	"XXX7X29",
 	"XXX7X30",
-	"XXX7X31",
+	"DISBELIEVE",	//"XXX7X31",
 };
 
 /*

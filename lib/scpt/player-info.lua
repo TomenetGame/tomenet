@@ -35,7 +35,8 @@ local p = Players[i+1]
 end
 
 -- resurrect/exterminate all the uniques
-function resurrect_uni(state)
+-- also nice to test mimics.
+function res_uni(state)
 local i = 0
 local p = Players[Ind+1]
 -- for(i=0;i<255;i++)
@@ -90,5 +91,13 @@ local j = 0
 		j = j + 1
 		p.stat_cur[j] = p.stat_max[j]
 	end
+end
+
+-- reload lua files.
+function init()
+	pern_dofile(Ind, "dg.lua")
+	pern_dofile(Ind, "evil.lua")
+	pern_dofile(Ind, "zz.lua")
+	pern_dofile(Ind, "jir.lua")
 end
 
