@@ -1722,22 +1722,26 @@ static errr rd_dungeon(void)
 	/*** another run for c_special ***/
 	if(!older_than(3,5,3)){
 		struct c_special *cs_ptr;
+		byte n;
 		while (1)
 		{
 			rd_byte(&x);
 			rd_byte(&y);
-			rd_byte(&k);
+			rd_byte(&n);	/* Number of c_special to add */
 
 			/* terminated? */
 			if (x == 255 && y == 255 && k == 255) break;
 
 			c_ptr = &zcave[y][x];
-			cs_ptr=AddCS(c_ptr);
-			cs_ptr->type = k;
+			while(n--){
+				rd_byte(&k);
+				cs_ptr=AddCS(c_ptr);
+				cs_ptr->type = k;
 			
-			/* csfunc will take care of it :) */
-			csfunc[k].load(sc_is_pointer(k) ?
+				/* csfunc will take care of it :) */
+				csfunc[k].load(sc_is_pointer(k) ?
 					cs_ptr->sc.ptr : cs_ptr, c_ptr);
+			}
 		}
 	}
 

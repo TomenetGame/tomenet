@@ -1355,7 +1355,7 @@ static void wr_hostilities(int Ind)
 static void wr_dungeon(struct worldpos *wpos)
 {
 	int y, x, i;
-	byte prev_feature;
+	byte prev_feature, n;
 	u16b prev_info;
 	unsigned char runlength;
 	struct c_special *cs_ptr;
@@ -1446,10 +1446,30 @@ static void wr_dungeon(struct worldpos *wpos)
 		/* break the row down into runs */
 		for (x = 0; x < MAX_WID; x++)
 		{
+			n=0;
 			c_ptr = &zcave[y][x];
 			cs_ptr=c_ptr->special;
-		/* redesign needed - too much of hurry to sort now */
+			/* count the number of cs_things */
+			while(cs_ptr){
+				n++;
+				cs_ptr=cs_ptr->next;
+			}
+			/* write them */
+			if(n){
+				wr_byte(x);
+				wr_byte(y);
+				wr_byte(n);
+				cs_ptr=c_ptr->special;
+				while(cs_ptr){
+					wr_byte(i);
+					/* csfunc will take care of it :) */
+					csfunc[i].save(sc_is_pointer(i) ?
+						cs_ptr->sc.ptr : &c_ptr->special);
+					cs_ptr=cs_ptr->next;
+				}
+			}
 #if 0
+		/* redesign needed - too much of hurry to sort now */
 			while(cs_ptr){
 				i = cs_ptr->type;
 
