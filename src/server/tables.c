@@ -2619,6 +2619,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 400,
                         },
                         {
+                                SKILL_MARTIAL_ARTS,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
                                 SKILL_MAGIC,
                                 '+', 1000,
                                 '+', 500,
