@@ -2957,6 +2957,7 @@ void wilderness_gen(struct worldpos *wpos)
 		zcave[w_ptr->dn_y][w_ptr->dn_x].feat=FEAT_LESS;
 	if(w_ptr->flags & WILD_F_DOWN)
 		zcave[w_ptr->up_y][w_ptr->up_x].feat=FEAT_MORE;
+	/* TODO: add 'inscription' to the dungeon/tower entrances */
 
 	/* Day Light */
 	

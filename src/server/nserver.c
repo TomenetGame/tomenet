@@ -8009,7 +8009,8 @@ static int Receive_autophase(int ind)
 	return -1;
 }
 
-void end_mind(int Ind, bool update){
+void end_mind(int Ind, bool update)
+{
 	player_type *p_ptr=Players[Ind];
 	msg_print(Ind, "\377REnding mind link.");
 	p_ptr->esp_link = 0;

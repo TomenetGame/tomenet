@@ -3537,12 +3537,12 @@ void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cpt
 		if (dam > 0)
 		{
 			if (dam % 10)
-				fprintf(fff, "%d.%d", dam / 10, dam % 10);
+				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
 			else
-				fprintf(fff, "%d", dam / 10);
+				fprintf(fff, "    %d", dam / 10);
 		}
 		else
-			fprintf(fff, "0");
+			fprintf(fff, "    0");
 		fprintf(fff, " against %s", against2);
 	}
 	fprintf(fff, "\n");

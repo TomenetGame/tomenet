@@ -6142,7 +6142,7 @@ void do_cmd_activate(int Ind, int item)
 				break;
 			}
 
-#if 0
+#if 0	// needing pet code
 			case ART_MARDA:
 			{
 				if (randint(3) == 1)
@@ -6178,7 +6178,7 @@ void do_cmd_activate(int Ind, int item)
 				o_ptr->timeout = rand_int(100) + 100;
 				break;
 			}
-#if 0
+#if 0	// Instruments
 			case ART_ROBINTON:
 			{
 				msg_format(Ind, "Your instrument starts %s",music_info[3].desc);
@@ -6301,7 +6301,7 @@ void do_cmd_activate(int Ind, int item)
 				get_aim_dir(Ind);
 				return;
 			}
-#if 0
+#if 1
 			case ART_ORCHAST:
 			{
 				msg_print(Ind, "Your weapon glows brightly...");
@@ -7031,6 +7031,7 @@ static int fletchery_items(int Ind)
 #define do_fletchery_aux() \
 	object_aware(Ind, q_ptr); \
 	object_known(q_ptr); \
+	if (tlev > 50) q_ptr->ident |= ID_MENTAL; \
 	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE); \
 	q_ptr->ident &= ~ID_CURSED; \
 	q_ptr->note = quark_add("Handmade"); \

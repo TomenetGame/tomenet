@@ -666,9 +666,10 @@ struct trap_kind{
 #define CS_BETWEEN2	7	/* world traveller type */
 #define CS_MON_TRAP	8	/* monster traps */
 #define CS_SHOP		9	/* shop/building */
+#define CS_MIMIC	10	/* mimic-ing feature (eg. secret door) */
 
 /* heheh it's kludge.. */
-#define sc_is_pointer(type)	(type < 3 || type == 4 || 9 < type)
+#define sc_is_pointer(type)	(type < 3 || type == 4 || 10 < type)
 
 typedef struct c_special c_special;
 

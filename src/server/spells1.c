@@ -3120,7 +3120,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			int k;
 
 			/* "Permanent" features will stay */
-//			if ((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
+			if ((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
+
+			/* Needs more than 30 damage */
+			if (dam < 30) break;
+
 
 			if ((c_ptr->feat == FEAT_FLOOR) ||
 			    (c_ptr->feat == FEAT_DIRT) ||
@@ -3128,12 +3132,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
 				/* 35% chance to create shallow water */
 				p1 = 35; f1 = FEAT_SHAL_WATER;
-//				p1 = 35; f1 = FEAT_WATER;
 
 				/* 5% chance to create deep water */
 				p2 = 40; f2 = FEAT_DEEP_WATER;
 			}
-#if 0
+#if 1
 			else if ((c_ptr->feat == FEAT_MAGMA) ||
 			         (c_ptr->feat == FEAT_MAGMA_H) ||
 			         (c_ptr->feat == FEAT_MAGMA_K) ||
@@ -5456,7 +5459,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if((cs_ptr=GetCS(c_ptr, CS_TRAPS)))
 				t_idx = cs_ptr->sc.trap.t_idx;
 
-			if(t_idx && t_idx==typ){
+			//if(t_idx && t_idx==typ){
+			if(t_idx){
 				/* huh? */
 				// t_ptr = zcave[p_ptr->py][p_ptr->px].special.sc.ptr;
 				sprintf(killer, t_name + t_info[t_idx].name);
@@ -5468,6 +5472,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			else{
 				/* Hopefully never. */
+				/* Actually this can happen if player's not on the trap
+				 * (eg. door traps) */
 				sprintf(killer, "A mysterious accident");
 			}
 		}
@@ -6194,7 +6200,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_OLD_CONF:
 		
-		if (fuzzy) msg_print(Ind, "You hear puzzling noises!");
+		if (fuzzy || self) msg_print(Ind, "You hear puzzling noises!");
 		else msg_format(Ind, "%^s creates a mesmerising illusion!", killer);
 		
 		if (p_ptr->resist_conf)
@@ -6211,7 +6217,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		
 		case GF_OLD_SLOW:
 		
-		if (fuzzy) msg_print(Ind, "Something drains power from your muscles!");
+		if (fuzzy || self) msg_print(Ind, "Something drains power from your muscles!");
 		else msg_format(Ind, "%^s drains power from your muscles!", killer);
 		
 		if (p_ptr->free_act)
@@ -6228,7 +6234,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		
 		case GF_TURN_ALL:
 		
-		if (fuzzy) msg_print(Ind, "Something mumbles, and you hear scary noises!");
+		if (fuzzy || self) msg_print(Ind, "Something mumbles, and you hear scary noises!");
 		else msg_format(Ind, "%^s casts a fearful illusion!", killer);
 		
 		if (p_ptr->resist_fear)
@@ -6248,7 +6254,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		
 		case GF_OLD_POLY:
 		
-		if (fuzzy) msg_print(Ind, "You feel bizzare!");
+		if (fuzzy || self) msg_print(Ind, "You feel bizzare!");
 		else msg_format(Ind, "%^s polymorphs you!", killer);
 		if (p_ptr->resist_nexus)
 		{

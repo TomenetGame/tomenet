@@ -5972,6 +5972,14 @@ A:30/2
 P:0:4d2:0:0:0
 F:SHOW_MODS
 
+N:916:& Mummy Wrapping~
+G:`:D
+I:12:7:-2
+W:10:0:5:100
+A:10/2
+F:CHR
+
+
 
 # Always ego!
 

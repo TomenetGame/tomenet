@@ -105,11 +105,13 @@ H:Half-Orc | Half-Troll |
 
 N:14:Eddie Beast-Master(Half-Orc)
 I:25000:190:115:5:7
+C:120:100:80
 L:Half-Orc | Half-Troll
 H:Gnome | Dwarf | Human | Elf | Half-Elf | High-Elf
 
 N:15:Oglign Dragon-Slayer(Dwarf)
 I:30000:195:112:4:8
+C:120:100:80
 L:Gnome | Dwarf
 H:Half-Orc | Half-Troll | 
 

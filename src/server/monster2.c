@@ -2360,9 +2360,10 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 #endif	// 0
 
 	/* This usually shouldn't happen */
+	/* but can happen when monsters group */
 	if (!monster_can_cross_terrain(c_ptr->feat, r_ptr))
 	{
-#if DEBUG_LEVEL > 1
+#if DEBUG_LEVEL > 2
 		s_printf("WARNING: Refused monster: cannot cross terrain\n");
 #endif	// DEBUG_LEVEL
 		return FALSE;

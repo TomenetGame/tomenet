@@ -640,11 +640,19 @@ void search(int Ind)
 				/* Secret door */
 				if (c_ptr->feat == FEAT_SECRET)
 				{
+					struct c_special *cs_ptr;
+
 					/* Message */
 					msg_print(Ind, "You have found a secret door.");
 
 					/* Pick a door XXX XXX XXX */
 					c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+
+					/* Clear mimic feature */
+					if((cs_ptr=GetCS(c_ptr, CS_MIMIC)))
+					{
+						cs_erase(c_ptr, cs_ptr);
+					}
 
 					/* Notice */
 					note_spot_depth(wpos, y, x);
@@ -2971,7 +2979,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* Notice things */
 		else
 		{
-			struct c_special *cs_ptr;
+			//struct c_special *cs_ptr;
 			/* Closed doors */
 			if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) || 
 				 (c_ptr->feat == FEAT_HOME))

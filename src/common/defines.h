@@ -51,7 +51,11 @@
  * 2 - "beta"
  * 3 - "development"
  */
-#define VERSION_EXTRA	2
+/* sorry DG, it should be 'dev' till all the spells and skills
+ * will be finished (no concessions.)
+ * please don't make me a lier :)		- Jir -
+ */
+#define VERSION_EXTRA	3
 
 
 
@@ -1397,6 +1401,7 @@ that keeps many algorithms happy.
 #define EGO_KILL_GIANT		95
 #define EGO_KILL_DRAGON		96
 #define EGO_VAMPIRIC            97
+#define EGO_STAR_DF         98
 #define EGO_DRAGON              99
 
 #define EGO_DIGGING		101
@@ -1604,6 +1609,7 @@ that keeps many algorithms happy.
 #define SV_TOOL_THEFT_PREVENTION	4
 #define SV_TOOL_TARPAULIN	5
 #define SV_TOOL_FLINT		6
+#define SV_TOOL_WRAPPING	7
 
 /* The "sval" codes for TV_MSTAFF */
 #define SV_MSTAFF 1

@@ -567,6 +567,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 	{
 		player_type *q_ptr = Players[k];
 		byte attr = 'w';
+		bool hidden = FALSE;
 
 		/* Only print connected players */
 		if (q_ptr->conn == NOT_CONNECTED)
@@ -631,8 +632,12 @@ void do_cmd_check_player_equip(int Ind, int line)
 
 		fprintf(fff, "\n");
 
+		/* Covered by a mummy wrapping? */
+		if ((TOOL_EQUIPPED(q_ptr) == SV_TOOL_WRAPPING) && !admin) hidden = TRUE;
+
 		/* Print equipments */
-		for (i=admin?0:INVEN_WIELD; i<INVEN_TOTAL; i++)
+		for (i = (admin ? 0 : INVEN_WIELD);
+				i < (hidden ? INVEN_LEFT : INVEN_TOTAL); i++)
 		{
 			object_type *o_ptr = &q_ptr->inventory[i];
 			char o_name[160];
@@ -641,6 +646,9 @@ void do_cmd_check_player_equip(int Ind, int line)
 				fprintf(fff, "%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);
 			}
 		}
+
+		/* Covered by a mummy wrapping? */
+		if (hidden) fprintf(fff, "%c (Covered by a grubby wrapping)\n", 'D');
 
 		/* Add blank line */
 		fprintf(fff, "%c\n", 'w');
@@ -727,8 +735,15 @@ void do_cmd_knowledge_dungeons(int Ind)
 				fprintf(fff, " (%3d, %3d) %-30s", x, y,
 						d_info[i].name + d_name);
 				if (admin)
-					fprintf(fff, "  Lev: %3d  Req: %3d  type: %3d",
-							d_info[i].mindepth, d_info[i].min_plev, i);
+#if 0
+					fprintf(fff, "  Lev: %3d~%3d  Req: %3d  type: %3d",
+							d_info[i].mindepth, d_info[i].maxdepth,
+							d_info[i].min_plev, i);
+#else	// 0
+					fprintf(fff, "  Lev: %3d~%3d  Req: %3d  type: %3d",
+							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth,
+							d_info[i].min_plev, i);
+#endif	// 0
 
 				fprintf(fff,"\n");
 			}
@@ -738,8 +753,9 @@ void do_cmd_knowledge_dungeons(int Ind)
 				fprintf(fff, " (%3d, %3d) %-30s", x, y,
 						d_info[i].name + d_name);
 				if (admin)
-					fprintf(fff, "  Lev: %3d  Req: %3d  type: %3d",
-							d_info[i].mindepth, d_info[i].min_plev, i);
+					fprintf(fff, "  Lev: %3d~%3d  Req: %3d  type: %3d",
+							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth,
+							d_info[i].min_plev, i);
 
 				fprintf(fff,"\n");
 			}

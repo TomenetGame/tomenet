@@ -24,8 +24,8 @@
 #define GHOST_XP_LOST	40
 
 /*
- * Chance of an item teleporting away when died, in percent. [10]
- * This is to balance penulty in death after item stacking implemented.
+ * Chance of an item teleporting away when player dies, in percent. [10]
+ * This is to balance death penalty after item stacking was implemented.
  * To disable, comment it out.
  */
 #define DEATH_ITEM_LOST	10

@@ -318,6 +318,7 @@ struct sfunc csfunc[]={
 	{ montrapload, montrapsave, defsee, defhit },	/* CS_MON_TRAP */
 	/* CS_FOUNTAIN, CS_BETWEEN, CS_BETWEEN2 to come */
 	{ s32bload, s32bsave, defsee, defhit },	/* CS_SHOP */
+	{ s32bload, s32bsave, defsee, defhit },	/* CS_MIMIC */
 /*
 	{ iload, isave, isee, ihit }
 */

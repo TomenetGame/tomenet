@@ -1636,6 +1636,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			{
 				/* Hack -- negative hit/damage are of no importance */
 				if (o_ptr->tval == TV_MSTAFF) break;
+				if (o_ptr->name2 == EGO_STAR_DF) break;
 				else return (0L);
 			}
 

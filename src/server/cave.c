@@ -1108,6 +1108,9 @@ static byte player_color(int Ind)
 	/* Black Breath carriers emit malignant aura sometimes.. */
 	if (p_ptr->black_breath && magik(50)) return TERM_L_DARK;
 
+	/* Covered by a mummy wrapping? */
+	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_WRAPPING) return TERM_L_DARK;
+
 	/* Mimicing a monster */
 	/* TODO: handle 'ATTR_MULTI', 'ATTR_CLEAR' */
 	if (p_ptr->body_monster) return (r_ptr->d_attr);
@@ -1484,13 +1487,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* Quick Hack -- shop */
 			if((cs_ptr=GetCS(c_ptr, CS_SHOP)))
 			{
-#if 0
-				a = st_attr[cs_ptr->sc.omni];
-				(*cp) = st_char[cs_ptr->sc.omni];
-#else	// 0
 				(*cp) = st_info[cs_ptr->sc.omni].d_char;
 				a = st_info[cs_ptr->sc.omni].d_attr;
-#endif	// 0
 			}
 
 			/* Special lighting effects */
@@ -1561,8 +1559,40 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		if ((*w_ptr & CAVE_MARK) || (p_ptr->admin_dm))
 		{
 			struct c_special *cs_ptr;
+
 			/* Apply "mimic" field */
-			feat = f_info[feat].mimic;
+			//feat = f_info[feat].mimic;
+
+#if 0	// old hack -- DELETEME
+			/* Hack -- hide the secret door */
+			if (feat == FEAT_SECRET && p_ptr->wpos.wz)
+			{
+				dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
+				dungeon_info_type *di_ptr = &d_info[d_ptr->type];
+
+				feat = di_ptr->fill_type1;
+			}
+#if 1
+			else if (feat == FEAT_PERM_SOLID && p_ptr->wpos.wz)
+			{
+				dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
+				dungeon_info_type *di_ptr = &d_info[d_ptr->type];
+
+				feat = di_ptr->outer_wall;
+			}
+#endif	// 1
+#endif	// 0
+			/* Hack -- hide the secret door */
+			//if (feat == FEAT_SECRET && (cs_ptr = GetCS(c_ptr, CS_MIMIC)))
+			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
+			{
+				feat = cs_ptr->sc.omni;
+			}
+			else
+			{
+				/* Apply "mimic" field */
+				feat = f_info[feat].mimic;
+			}
 
 			/* Access feature */
 			f_ptr = &f_info[feat];
@@ -1583,7 +1613,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			   if ((c_ptr->special.type == CS_TRAPS) && (c_ptr->special.sc.ptr->found))
 			*/
 			/* Hack to display detected traps */
-			if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+			if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && c_ptr->feat != FEAT_ILLUS_WALL)
+			{
 				int t_idx = cs_ptr->sc.trap.t_idx;
 				if (cs_ptr->sc.trap.found)
 				{

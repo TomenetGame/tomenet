@@ -140,6 +140,10 @@
  */
 #define		MONSTER_DIG_FACTOR	100
 
+/* Chance of a monster crossing 'impossible' grid (so that an aquatic
+ * can go back to the water), in percent. [20] */
+#define		MONSTER_CROSS_IMPOSSIBLE_CHANCE		20
+
 /*
  * If defined, monsters will pick up the gold like normal items.
  * Ever wondered why monster rogues never do that? :)
@@ -3570,6 +3574,7 @@ int mon_will_run(int Ind, int m_idx)
 	/* Hack -- aquatic life outa water */
 	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE); // I'll run instead!
 
+#if 0
 	if (zcave[m_ptr->fy][m_ptr->fx].feat != FEAT_DEEP_WATER)
 	{
 		if (r_ptr->flags7 & RF7_AQUATIC) return (TRUE);
@@ -3580,6 +3585,9 @@ int mon_will_run(int Ind, int m_idx)
 				!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ))
 			return(TRUE);
 	}
+#else	// 0
+	if (!monster_can_cross_terrain(zcave[m_ptr->fy][m_ptr->fx].feat, r_ptr)) return (TRUE);
+#endif	// 0
 
 #endif
 
@@ -3776,6 +3784,7 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 	return (m_ptr->hp > dam * 30);
 }
 
+#if 0	/* Replaced by monster_can_cross_terrain */
 /* This should be more generic, of course.	- Jir - */
 static bool monster_is_comfortable(monster_race *r_ptr, cave_type *c_ptr)
 {
@@ -3788,6 +3797,7 @@ static bool monster_is_comfortable(monster_race *r_ptr, cave_type *c_ptr)
 	if (r_ptr->flags7 & RF7_AQUATIC) return (c_ptr->feat == FEAT_DEEP_WATER);
 	else return (c_ptr->feat != FEAT_DEEP_WATER);
 }
+#endif	// 0
 
 #if SAFETY_RADIUS > 0
 /*
@@ -3891,8 +3901,10 @@ static bool find_terrain(int m_idx, int *yp, int *xp)
 	int fy = m_ptr->fy;
 	int fx = m_ptr->fx;
 
+#if 0
 	byte feat = FEAT_DEEP_WATER;	// maybe feat[10] or sth
 	bool negate = FALSE;
+#endif	// 0
 
 	int y, x, d = 1, i;
 	int gy = 0, gx = 0, gdis = 0;
@@ -3901,6 +3913,7 @@ static bool find_terrain(int m_idx, int *yp, int *xp)
 	/* paranoia */
 	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
 
+#if 0
 	/* What do you want? */
 	if (r_ptr->flags7 & RF7_AQUATIC) feat = FEAT_DEEP_WATER;
 	else
@@ -3909,6 +3922,7 @@ static bool find_terrain(int m_idx, int *yp, int *xp)
 		negate = TRUE;
 	}
 //	else return (TRUE);
+#endif	// 0
 
 	/* Start with adjacent locations, spread further */
 	for (i = 1; i <= tdi[SAFETY_RADIUS]; i++)
@@ -3926,8 +3940,11 @@ static bool find_terrain(int m_idx, int *yp, int *xp)
 		if (!in_bounds(y, x)) continue;
 
 		/* Skip bad locations */
+#if 0
 		if (!negate && zcave[y][x].feat != feat) continue;
 		if (negate && zcave[y][x].feat == feat) continue;
+#endif	// 0
+		if (!monster_can_cross_terrain(zcave[y][x].feat, r_ptr)) continue;
 
 #ifdef MONSTER_FLOW
 		/* Check for "availability" (if monsters can flow) */
@@ -5479,7 +5496,8 @@ static void process_monster(int Ind, int m_idx)
 
 	/* All the monsters */
 	/* You cannot breathe? */
-	if (!monster_is_comfortable(r_ptr, c_ptr))
+	//if (!monster_is_comfortable(r_ptr, c_ptr))
+	if (!monster_can_cross_terrain(c_ptr->feat, r_ptr))
 		m_ptr->ai_state |= AI_STATE_TERRAIN;
 
 
@@ -5907,8 +5925,12 @@ static void process_monster(int Ind, int m_idx)
 //				&& monster_can_cross_terrain(zcave[oy][ox].feat, r_ptr)
 				)
 		{
-			/* Assume no move allowed */
-			do_move = FALSE;
+			if (monster_can_cross_terrain(zcave[oy][ox].feat, r_ptr) ||
+					!magik(MONSTER_CROSS_IMPOSSIBLE_CHANCE))
+			{
+				/* Assume no move allowed */
+				do_move = FALSE;
+			}
 		}
 
 #if 0

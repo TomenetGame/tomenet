@@ -723,8 +723,39 @@ static void place_secret_door(struct worldpos *wpos, int y, int x)
 	int tmp;
 	cave_type **zcave;
 	cave_type *c_ptr;
+	struct c_special *cs_ptr;
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
+
+	if((cs_ptr=AddCS(c_ptr, CS_MIMIC)))
+	{
+		/* Vaults */
+		if (c_ptr->info & CAVE_ICKY)
+		{
+			cs_ptr->sc.omni = FEAT_WALL_INNER;
+		}
+
+		/* Ordinary room -- use current outer or inner wall */
+		else if (c_ptr->info & CAVE_ROOM)
+		{
+			/* Determine if it's inner or outer XXX XXX XXX */
+			if ((zcave[y - 1][x].info & CAVE_ROOM) &&
+					(zcave[y + 1][x].info & CAVE_ROOM) &&
+					(zcave[y][x - 1].info & CAVE_ROOM) &&
+					(zcave[y][x + 1].info & CAVE_ROOM))
+			{
+				cs_ptr->sc.omni = feat_wall_inner;
+			}
+			else
+			{
+				cs_ptr->sc.omni = feat_wall_outer;
+			}
+		}
+		else
+		{
+			cs_ptr->sc.omni = fill_type[rand_int(100)];
+		}
+	}
 
 	/* Create secret door */
 	c_ptr->feat = FEAT_SECRET;
@@ -1043,6 +1074,10 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 	int		y, x, dir;
 	cave_type *c_ptr;
 
+	dungeon_type *dt_ptr = getdungeon(wpos);
+	int dun_type = dt_ptr->type;
+
+	struct c_special *cs_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -1087,11 +1122,26 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			}
 			else
 			{
+				/* Only convert "granite" walls */
+				if ((c_ptr->feat != feat_wall_inner) &&
+					(c_ptr->feat != feat_wall_outer) &&
+					(c_ptr->feat != d_info[dun_type].fill_type1) &&
+					(c_ptr->feat != d_info[dun_type].fill_type2) &&
+					(c_ptr->feat != d_info[dun_type].fill_type3)) continue;
+
+#if 0
 				if (c_ptr->feat < FEAT_WALL_EXTRA) continue;
 				if (c_ptr->feat > FEAT_WALL_SOLID) continue;
+#endif	// 0
 			}
 
 			if (dun->no_penetr && c_ptr->info & CAVE_ICKY) continue;
+
+			/* Clear mimic feature to avoid nasty consequences */
+			if((cs_ptr=GetCS(c_ptr, CS_MIMIC)))
+			{
+				cs_erase(c_ptr, cs_ptr);
+			}
 
 			/* Clear previous contents, add proper vein type */
 			c_ptr->feat = feat;
@@ -5328,6 +5378,8 @@ static void build_room_vault(worldpos *wpos, int x0, int y0, int xsize, int ysiz
 		for (y1 = 0; y1 <= ysize; y1++)
 		{
 			int y = y0 - yhsize + y1;
+
+			if (!in_bounds(y, x)) continue;
 
 			cave_set_feat(wpos, y, x, feat_wall_outer);
 			zcave[y][x].info &= ~(CAVE_ICKY);

@@ -22,6 +22,18 @@
 
 # bug.txt should follow the exact same format
 
+31/08/2002 (Jir)
+[D]- CS_MIMIC allows FEAT_SECRET to mimic the surroundings.
+[G]- high archery+mastery yields *ID* on ammo made.
+[I]- 'Identify possessions' uses 'I' key in place of 'i' (same with Inventory)
+[I]- Orchast activation (detect_monsters_xxx)
+[M]- monster AI is tuned for new terrains.
+[O]- store buys (*Defender*) as if it's (+0, +0)
+[O]- Mummy Wrapping (tool 
+[B]- some store owners didn't have 'cost(C:)' entry. (same with ToME)
+[B]- build_room_vault crashed.
+[B]- wrong death reason was shown when killed by a trap.
+
 30/08/2002 (Jir)
 # 'rm lib/save/*; cd src; make clean; make' (as usual)
 [D]- wilderness houses have smaller chance of having 'non-enterable doors'.
@@ -39,9 +51,10 @@
 [O]- 'Scourge' added from RFE
 [P]- Player shimmers (get_monster_color)
 [m]- legality check for store commands. (store_attest_command)
+[m]- removed a number of compiler warnings
 [B]- wild_add_uhouse was called with wpos instead of h_ptr(rd_server_savefile)
 [B]- black market was shovel store (oops)
-[B]- DSM activation required mimicy skill.
+[B]- DSM activation required mimicry skill.
 [B]- wipe_spell was broken (tho I don't know how this function was used)
 [B]- pet/golem creation could cause crash when there's no space around her
 [B]- p_ptr->town_x/town_y weren't updated if recalled/level-teleported
@@ -2333,6 +2346,7 @@ memo and questions:
   + chat-history/spell window
   + inventory/equipment display should accept next command directly.
   + online help (nice, esp. if someone else writes that ;)
+  + more status display (eg. fury, bless, tmp.fire-res...)
 - stores:
   + one player shouldn't stay more than 1 minutes in a store?
   + stores should buy {cursed} potions/scrolls/wands etc?

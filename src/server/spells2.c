@@ -590,7 +590,7 @@ void self_knowledge(int Ind)
 
 	int		k;
 
-	u32b	f1 = 0L, f2 = 0L, f3 = 0L, f4 = 0L, f5 = 0L, esp = 0L;
+	u32b	f1 = 0L, f2 = 0L, f3 = 0L, f4 = 0L, f5 = 0L;	//, esp = 0L;
 
 	object_type	*o_ptr;
 
@@ -2025,6 +2025,94 @@ bool detect_magic(int Ind, int rad)
 
 
 
+/*
+ * A "generic" detect monsters routine, tagged to flags3
+ */
+//bool detect_monsters_xxx(u32b match_flag, int rad)
+bool detect_monsters_xxx(int Ind, u32b match_flag)
+{
+	player_type *p_ptr = Players[Ind];
+	int  i, y, x;
+	bool flag = FALSE;
+	cptr desc_monsters = "weird monsters";
+
+
+	/* Scan monsters */
+	for (i = 1; i < m_max; i++)
+	{
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = race_inf(m_ptr);
+
+		/* Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Skip visible monsters */
+		if (p_ptr->mon_vis[i]) continue;
+
+		/* Skip monsters not on this depth */
+		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+
+		/* Location */
+		y = m_ptr->fy;
+		x = m_ptr->fx;
+
+		/* Only detect nearby monsters */
+		// if (m_ptr->cdis > rad) continue;
+
+		/* Detect evil monsters */
+		if (!panel_contains(y, x)) continue;
+
+		/* Detect evil monsters */
+		if (r_ptr->flags3 & (match_flag))
+		{
+			/* Mega-Hack -- Show the monster */
+			p_ptr->mon_vis[i] = TRUE;
+			lite_spot(Ind, y, x);
+			flag = TRUE;
+		}
+	}
+
+	switch (match_flag)
+	{
+		case RF3_DEMON:
+			desc_monsters = "demons";
+			break;
+		case RF3_UNDEAD:
+			desc_monsters = "the undead";
+			break;
+		case RF3_GOOD:
+			desc_monsters = "good";
+			break;
+		case RF3_ORC:
+			desc_monsters = "orcs";
+			break;
+			/* TODO: ...you know :) */
+	}
+
+	/* Describe */
+	if (flag)
+	{
+		/* Describe result */
+		msg_format(Ind, "You sense the presence of %s!", desc_monsters);
+		//msg_print(NULL);
+
+		/* Wait */
+		Send_pause(Ind);
+
+		/* Mega-Hack -- Fix the monsters */
+		update_monsters(FALSE);
+	}
+	else
+	{
+		/* Describe result */
+		msg_format(Ind, "You sense the absence of %s.", desc_monsters);
+	}
+
+	/* Result */
+	return (flag);
+}
+
+
 
 /*
  * Locates and displays all invisible creatures on current panel -RAK-
@@ -2124,6 +2212,7 @@ bool detect_invisible(int Ind)
 /*
  * Display evil creatures on current panel		-RAK-
  */
+#if 0
 bool detect_evil(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -2182,6 +2271,12 @@ bool detect_evil(int Ind)
 	/* Result */
 	return (flag);
 }
+#else	// 0
+bool detect_evil(int Ind)
+{
+	return(detect_monsters_xxx(Ind, RF3_EVIL));
+}
+#endif	// 0
 
 
 
@@ -2200,7 +2295,7 @@ bool detect_creatures(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
-                monster_race *r_ptr = race_inf(m_ptr);
+		monster_race *r_ptr = race_inf(m_ptr);
 
 		int fy = m_ptr->fy;
 		int fx = m_ptr->fx;
@@ -2488,6 +2583,14 @@ bool detect_sdoor(int Ind, int rad)
 			/* Hack -- detect secret doors */
 			if (c_ptr->feat == FEAT_SECRET)
 			{
+				struct c_special *cs_ptr;
+
+				/* Clear mimic feature */
+				if((cs_ptr=GetCS(c_ptr, CS_MIMIC)))
+				{
+					cs_erase(c_ptr, cs_ptr);
+				}
+
 				/* Find the door XXX XXX XXX */
 				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 
