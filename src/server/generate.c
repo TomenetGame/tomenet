@@ -108,7 +108,8 @@
  * Dungeon generation values
  */
 #define DUN_ROOMS	50	/* Number of rooms to attempt */
-#define DUN_UNUSUAL	150	/* Level/chance of unusual room */
+//#define DUN_UNUSUAL	150	/* Level/chance of unusual room */
+#define DUN_UNUSUAL	(cfg.dun_unusual) /* Level/chance of unusual room */
 #define DUN_DEST	15	/* 1/chance of having a destroyed level */
 
 /*
@@ -182,7 +183,10 @@
  */
 #define ROOM_MAX	9
 
-
+/*
+ * Maxumal 'depth' that has extra stairs
+ */
+#define COMFORT_PASSAGE_DEPTH 5
 
 /*
  * Simple structure to hold a map location
@@ -4836,6 +4840,16 @@ static void cave_gen(int Depth)
 	/* Place 1 or 2 up stairs near some walls */
 	alloc_stairs(wpos, FEAT_LESS, rand_range(1, 2), 3);
 
+	/* Hack -- add *more* stairs for lowbie's sake */
+	if (getlevel(wpos) <= COMFORT_PASSAGE_DEPTH)
+	{
+	/* Place 3 or 4 down stairs near some walls */
+	alloc_stairs(wpos, FEAT_MORE, rand_range(12, 16), 3);
+
+	/* Place 1 or 2 up stairs near some walls */
+	alloc_stairs(wpos, FEAT_LESS, rand_range(10, 14), 3);
+	}
+
 
 	/* Determine the character location */
 	new_player_spot(wpos);
@@ -5823,6 +5837,7 @@ void dealloc_dungeon_level(int Depth)
 	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 #endif
+	s_printf("deallocating %s\n", wpos_format(wpos));
 
 	/* Delete any monsters on that level */
 	/* Hack -- don't wipe wilderness monsters */
@@ -5871,6 +5886,23 @@ void dealloc_dungeon_level(int Depth)
 	/* Set that level to "ungenerated" */
 	cave[Depth] = NULL; 
 #endif
+}
+
+/*
+ * Attempt to deallocate the floor.
+ * if check failed, this heals the monsters on depth instead,
+ * so that a player won't abuse scumming.
+ *
+ * if min_unstatic_level option is set, applicable floors will
+ * always be erased.	 - Jir -
+ */
+void dealloc_dungeon_level_maybe(struct worldpos *wpos)
+{
+	if ((( getlevel(wpos) < cfg.min_unstatic_level) &&
+		(0 < cfg.min_unstatic_level)) ||
+		(randint(1000) > cfg.anti_scum))
+		dealloc_dungeon_level(wpos);
+	else heal_m_list(wpos);
 }
 
 

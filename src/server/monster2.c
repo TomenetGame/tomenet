@@ -500,6 +500,28 @@ void wipe_m_list(int Depth)
 	compact_monsters(0);
 }
 
+/* 
+ * Heal up every monster on the depth, so that a player
+ * cannot abuse stair-GoI and anti-scum.	- Jir -
+ */
+void heal_m_list(struct worldpos *wpos)
+{
+	int i;
+
+	/* Heal all the monsters */
+	for (i = m_max - 1; i >= 1; i--)
+	{
+		monster_type *m_ptr = &m_list[i];
+
+		if (inarea(&m_ptr->wpos,wpos))
+			m_ptr->hp = m_ptr->maxhp;
+//			delete_monster_idx(i);
+	}
+
+	/* Compact the monster list */
+//	compact_monsters(0);
+}
+
 
 /*
  * Acquires and returns the index of a "free" monster.

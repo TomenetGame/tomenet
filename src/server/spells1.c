@@ -2070,15 +2070,18 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 
 	switch (randint(7))
 	{
+		case 4: case 5:
+		{
+			if (m_ptr)
+			{
+				teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
+				break;
+			}
+		}
+
 		case 1: case 2: case 3:
 		{
 			teleport_player(Ind, 200);
-			break;
-		}
-
-		case 4: case 5:
-		{
-			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
 			break;
 		}
 
@@ -5248,7 +5251,8 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		}
 		else
 		{
-			apply_nexus(Ind, m_ptr);
+//			apply_nexus(Ind, m_ptr);
+			apply_nexus(Ind, NULL);
 		}
 		take_hit(Ind, dam, killer);
 		break;

@@ -619,7 +619,38 @@ Change list for PernMangband
 - auto-retaliator can handle a monster inside walls in a better way.
 - RES_TELE flag implemented.
 
-5/1/2001 (Jir)
+6/1/2001 (Jir)
 - some monsters can follow player's teleport.
 - *.cfg option: RUNNING_SPEED (it's HACK! ;)
 [B] pack of mages couldn't keep distance from a player correctly.
+- *.cfg option: ANTI_SCUM and DUN_UNUSUAL
+- dungeon unstaticer is optimized, along with anti-scum code.
+- shallow levels of cave contain many stairs.
+[B] "You bump into it." in the place where a king committed suicide.
+
+
+---- below this line are the unfixed bugs known ----
+[B] Self-reproducing black trap
+[B] Wilderness map('M') is not available.
+[B] Panic save often enters into infinite loop.
+[B] Player forgets the memory of suburb areas (not a bug?)
+[B] Recalling in wilderness dungeons/caves always cause infinite loop.
+[B] 
+---- below this line are changes to be done in the future ----
+- recall-depth array for each dungeons/towers
+- add more dungeon flags
+- new wilderness generator
+- f_info.txt reform
+- variety of dungeon types (d_info.txt)
+- new terrains and their effects (f_info.txt)
+- better wilderness generator
+- better cave-generator (generate.c)
+- fully-implemented multiple towns (t_*.txt/st_info.txt)
+- quests (needing LUA-hooks)
+- guild, or new party system
+- backbone scenario (like token system)
+- new classes/races(/subclasses)
+- total rebalancing for all of them
+- client updates necessary
+- item stacks/monster inventory
+- better vaults

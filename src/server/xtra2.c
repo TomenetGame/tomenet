@@ -3832,18 +3832,18 @@ void player_death(int Ind)
 			party_leave(Ind);
 		}
 
-                /* Ghosts dont static the lvl if under cfg_preserve_death_level ft. DEG */
+		/* Ghosts dont static the lvl if under cfg_preserve_death_level ft. DEG */
 
 #ifdef NEW_DUNGEON
-                if (getlevel(&p_ptr->wpos) < cfg.preserve_death_level)
-                {
-                	new_players_on_depth(&p_ptr->wpos,-1,TRUE);
-                }
+		if (getlevel(&p_ptr->wpos) < cfg.preserve_death_level)
+		{
+			new_players_on_depth(&p_ptr->wpos,-1,TRUE);
+		}
 #else
-                if ((p_ptr->dun_depth) < cfg.preserve_death_level)
-                {
-                	players_on_depth[p_ptr->dun_depth]--;
-                }
+		if ((p_ptr->dun_depth) < cfg.preserve_death_level)
+		{
+			players_on_depth[p_ptr->dun_depth]--;
+		}
 #endif
 
 		/* Remove him from the player name database */
@@ -3881,14 +3881,15 @@ void player_death(int Ind)
 	}
 
 	/* Drop gold if player has any */
-        if (p_ptr->alive && p_ptr->au)
+	if (p_ptr->alive && p_ptr->au)
 	{
 		/* Put the player's gold in the overflow slot */
 		invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
 
 		/* Drop no more than 32000 gold */
 		if (p_ptr->au > 32000) p_ptr->au = 32000;
-		if(p_ptr->lev >= 5){
+		/* (actually, this if-clause is not necessary) */
+		if(p_ptr->lev >= cfg.newbies_cannot_drop){
 			/* Set the amount */
 			p_ptr->inventory[INVEN_PACK].pval = p_ptr->au;
 		}

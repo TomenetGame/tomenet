@@ -691,6 +691,7 @@ extern errr get_rnd_line(cptr file_name, int entry, char *output);
 
 /* generate.c */
 #ifdef NEW_DUNGEON
+extern void dealloc_dungeon_level_maybe(struct worldpos *wpos);
 extern void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, char *race, char *exclude, bool tower);
 extern void alloc_dungeon_level(struct worldpos *wpos);
 extern void dealloc_dungeon_level(struct worldpos *wpos);
@@ -757,6 +758,8 @@ extern void screen_roff(int r_idx);
 extern void display_roff(int r_idx);
 
 /* monster.c */
+/* monster1.c monster2.c */
+extern void heal_m_list(struct worldpos *wpos);
 extern cptr r_name_get(monster_type *m_ptr);
 extern monster_race* r_info_get(monster_type *m_ptr);
 extern void delete_monster_idx(int i);

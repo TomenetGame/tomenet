@@ -1075,7 +1075,7 @@ static int auto_retaliate(int Ind)
 		else
 		{
 			i = -i;
-			q_ptr = Players[i];
+			if (!(q_ptr = Players[i])) continue;
 
 			/* Skip non-connected players */
 			if (q_ptr->conn == NOT_CONNECTED) continue;
@@ -2698,7 +2698,8 @@ static void process_player_end(int Ind)
 }
 
 #ifdef NEW_DUNGEON
-void do_unstat(struct worldpos *wpos){
+void do_unstat(struct worldpos *wpos)
+{
 	int num_on_depth = 0;
 	int j;
 	player_type *p_ptr;
@@ -2731,20 +2732,25 @@ void do_unstat(struct worldpos *wpos){
  * 24 hourly scan of houses - should the odd house be owned by
  * a non player. Hopefully never, but best to save admin work.
  */
-void scan_houses(){
+void scan_houses()
+{
 	int i;
 	int lval;
 	s_printf("Doing house maintenance\n");
-	for(i=0;i<num_houses;i++){
-		switch(houses[i].dna->owner_type){
+	for(i=0;i<num_houses;i++)
+	{
+		switch(houses[i].dna->owner_type)
+		{
 			case OT_PLAYER:
-				if(!lookup_player_name(houses[i].dna->owner)){
+				if(!lookup_player_name(houses[i].dna->owner))
+				{
 					s_printf("Found old player houses. ID: %d\n", houses[i].dna->owner);
 					kill_houses(houses[i].dna->owner, OT_PLAYER);
 				}
 				break;
 			case OT_PARTY:
-				if(!strlen(parties[houses[i].dna->owner].name)){
+				if(!strlen(parties[houses[i].dna->owner].name))
+				{
 					s_printf("Found old party houses. ID: %d\n", houses[i].dna->owner);
 					kill_houses(houses[i].dna->owner, OT_PARTY);
 				}
@@ -2784,7 +2790,8 @@ static void process_various(void)
 	}
 
 	/* daily maintenance */
-	if (!(turn % (cfg.fps * 86400))){
+	if (!(turn % (cfg.fps * 86400)))
+	{
 		s_printf("24 hours maintenance cycle\n");
 		scan_players();
 		scan_houses();
@@ -2853,127 +2860,229 @@ static void process_various(void)
 				/* Hack -- Sauron and Morgoth are exceptions */
 				if (r_ptr->flags1 & RF1_QUESTOR) continue;
 
-//				if (r_ptr->max_num > 0) continue;
+				//				if (r_ptr->max_num > 0) continue;
 				if (rand_int(cfg.unique_respawn_time * (r_ptr->level + 1)) > 9)
 					continue;
 
 				/* "Ressurect" the unique */
 				p_ptr->r_killed[i] = 0;
-// 				r_ptr->max_num = 1;
-//				r_ptr->respawn_timer = -1;
+				// 				r_ptr->max_num = 1;
+				//				r_ptr->respawn_timer = -1;
 
-   				/* Tell every player */
-   				msg_format(j,"%s rises from the dead!",(r_name + r_ptr->name));
-//				msg_broadcast(0,buf); 
+				/* Tell every player */
+				msg_format(j,"%s rises from the dead!",(r_name + r_ptr->name));
+				//				msg_broadcast(0,buf); 
 			}
- 		}
+		}
 
 #if 0 /* No more reswpan */
 		/* Update the unique respawn timers */
 		for (i = 1; i < MAX_R_IDX-1; i++)
 		{
 			monster_race *r_ptr = &r_info[i];
-	                                                
+
 			/* Make sure we are looking at a dead unique */
 			if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
 			if (r_ptr->max_num > 0) continue;
 
 			/* Hack -- Initially set a newly killed uniques respawn timer */
 			/* -1 denotes that the respawn timer is unset */
-   			if (r_ptr->respawn_timer < 0) 
-   			{
+			if (r_ptr->respawn_timer < 0) 
+			{
 				r_ptr->respawn_timer = cfg_unique_respawn_time * (r_ptr->level + 1);
 				if (r_ptr->respawn_timer > cfg_unique_max_respawn_time)
-  					r_ptr->respawn_timer = cfg_unique_max_respawn_time;
-  			}
+					r_ptr->respawn_timer = cfg_unique_max_respawn_time;
+			}
 			// Decrament the counter 
 			else r_ptr->respawn_timer--; 
 			// Once the timer hits 0, ressurect the unique.
 			if (!r_ptr->respawn_timer)
-    			{
+			{
 				/* "Ressurect" the unique */
-    				r_ptr->max_num = 1;
+				r_ptr->max_num = 1;
 				r_ptr->respawn_timer = -1;
 
-    				/* Tell every player */
-    				sprintf(buf,"%s rises from the dead!",(r_name + r_ptr->name));
-    				msg_broadcast(0,buf); 
-    			}	    			
- 		}
+				/* Tell every player */
+				sprintf(buf,"%s rises from the dead!",(r_name + r_ptr->name));
+				msg_broadcast(0,buf); 
+			}	    			
+		}
 #endif
 
-	}
- 		
-	// If the level unstaticer is not disabled
-	if (cfg.level_unstatic_chance > 0)
-	{
-#ifdef NEW_DUNGEON
-		struct worldpos twpos;
-		twpos.wz=0;
-		for(y=0;y<MAX_WILD_Y;y++){
-			twpos.wy=y;
-			for(x=0;x<MAX_WILD_X;x++){
-				struct wilderness_type *w_ptr;
-				struct dungeon_type *d_ptr;
-				twpos.wx=x;
-				w_ptr=&wild_info[twpos.wy][twpos.wx];
-				if(players_on_depth(&twpos)){
-					do_unstat(&twpos);
-				}
-				if(w_ptr->flags & WILD_F_UP){
-					d_ptr=w_ptr->tower;
-					for(i=1;i<=d_ptr->maxdepth;i++){
-						twpos.wz=i;
-						if(players_on_depth(&twpos)){
-							do_unstat(&twpos);
-						}
-					}
-				}
-				if(w_ptr->flags & WILD_F_DOWN){
-					d_ptr=w_ptr->dungeon;
-					for(i=1;i<=d_ptr->maxdepth;i++){
-						twpos.wz=-i;
-						if(players_on_depth(&twpos)){
-							do_unstat(&twpos);
-						}
-					}
-				}
-				twpos.wz=0;
-			}
-		}
-#else
-		// For each dungeon level
-		for (i = 1; i < MAX_DEPTH; i++)
+
+		/* If the level unstaticer is not disabled, try to.
+		 * Now it's done every 60*fps, so better raise the
+		 * rate as such.	- Jir -
+		 */
+		
+//		if (cfg.level_unstatic_chance > 0)
 		{
-			// If this depth is static
-			if (players_on_depth[i])
+#ifdef NEW_DUNGEON
+			struct worldpos twpos;
+			twpos.wz=0;
+			for(y=0;y<MAX_WILD_Y;y++)
 			{
-				num_on_depth = 0;
-				// Count the number of players actually in game on this depth
-				for (j = 1; j < NumPlayers + 1; j++)
+				twpos.wy=y;
+				for(x=0;x<MAX_WILD_X;x++)
 				{
-					p_ptr = Players[j];
-					if (p_ptr->dun_depth == i) num_on_depth++;
-				}
-				// If this level is static and no one is actually on it
-				if (!num_on_depth)
-				{
-					/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
-					if (( i < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level))
+					struct wilderness_type *w_ptr;
+					struct dungeon_type *d_ptr;
+					twpos.wx=x;
+					w_ptr=&wild_info[twpos.wy][twpos.wx];
+
+					if (cfg.level_unstatic_chance > 0 &&
+						players_on_depth(&twpos))
+						do_unstat(&twpos);
+
+					if(!players_on_depth(&twpos) && !istown(&twpos) && getcave(&twpos))
+						dealloc_dungeon_level_maybe(&twpos);
+
+					if(w_ptr->flags & WILD_F_UP)
 					{
-						players_on_depth[i] = 0;
+						d_ptr=w_ptr->tower;
+						for(i=1;i<=d_ptr->maxdepth;i++)
+						{
+							twpos.wz=i;
+							if (cfg.level_unstatic_chance > 0 &&
+								players_on_depth(&twpos))
+								do_unstat(&twpos);
+							
+							if(!players_on_depth(&twpos) && getcave(&twpos))
+								dealloc_dungeon_level_maybe(&twpos);
+						}
 					}
-					// random chance of the level unstaticing
-					// the chance is one in (base_chance * depth)/250 feet.
-					if (!rand_int(((cfg.level_unstatic_chance * (i+5))/5)-1))
+					if(w_ptr->flags & WILD_F_DOWN)
 					{
-						// unstatic the level
-						players_on_depth[i] = 0;
+						d_ptr=w_ptr->dungeon;
+						for(i=1;i<=d_ptr->maxdepth;i++)
+						{
+							twpos.wz=-i;
+							if (cfg.level_unstatic_chance > 0 &&
+								players_on_depth(&twpos))
+								do_unstat(&twpos);
+
+							if(!players_on_depth(&twpos) && getcave(&twpos))
+								dealloc_dungeon_level_maybe(&twpos);
+						}
+					}
+					twpos.wz=0;
+				}
+			}
+#else
+			// For each dungeon level
+			for (i = 1; i < MAX_DEPTH; i++)
+			{
+				// If this depth is static
+				if (players_on_depth[i])
+				{
+					num_on_depth = 0;
+					// Count the number of players actually in game on this depth
+					for (j = 1; j < NumPlayers + 1; j++)
+					{
+						p_ptr = Players[j];
+						if (p_ptr->dun_depth == i) num_on_depth++;
+					}
+					// If this level is static and no one is actually on it
+					if (!num_on_depth)
+					{
+						/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
+						if (( i < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level))
+						{
+							players_on_depth[i] = 0;
+						}
+						// random chance of the level unstaticing
+						// the chance is one in (base_chance * depth)/250 feet.
+						if (!rand_int(((cfg.level_unstatic_chance * (i+5))/5)-1))
+						{
+							// unstatic the level
+							players_on_depth[i] = 0;
+						}
 					}
 				}
 			}
-		}
 #endif
+		}
+#if 0
+		if (cfg.level_unstatic_chance > 0)
+		{
+#ifdef NEW_DUNGEON
+			struct worldpos twpos;
+			twpos.wz=0;
+			for(y=0;y<MAX_WILD_Y;y++)
+			{
+				twpos.wy=y;
+				for(x=0;x<MAX_WILD_X;x++)
+				{
+					struct wilderness_type *w_ptr;
+					struct dungeon_type *d_ptr;
+					twpos.wx=x;
+					w_ptr=&wild_info[twpos.wy][twpos.wx];
+					if(players_on_depth(&twpos))
+					{
+						do_unstat(&twpos);
+					}
+					if(w_ptr->flags & WILD_F_UP)
+					{
+						d_ptr=w_ptr->tower;
+						for(i=1;i<=d_ptr->maxdepth;i++)
+						{
+							twpos.wz=i;
+							if(players_on_depth(&twpos))
+							{
+								do_unstat(&twpos);
+							}
+						}
+					}
+					if(w_ptr->flags & WILD_F_DOWN)
+					{
+						d_ptr=w_ptr->dungeon;
+						for(i=1;i<=d_ptr->maxdepth;i++)
+						{
+							twpos.wz=-i;
+							if(players_on_depth(&twpos))
+							{
+								do_unstat(&twpos);
+							}
+						}
+					}
+					twpos.wz=0;
+				}
+			}
+#else
+			// For each dungeon level
+			for (i = 1; i < MAX_DEPTH; i++)
+			{
+				// If this depth is static
+				if (players_on_depth[i])
+				{
+					num_on_depth = 0;
+					// Count the number of players actually in game on this depth
+					for (j = 1; j < NumPlayers + 1; j++)
+					{
+						p_ptr = Players[j];
+						if (p_ptr->dun_depth == i) num_on_depth++;
+					}
+					// If this level is static and no one is actually on it
+					if (!num_on_depth)
+					{
+						/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
+						if (( i < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level))
+						{
+							players_on_depth[i] = 0;
+						}
+						// random chance of the level unstaticing
+						// the chance is one in (base_chance * depth)/250 feet.
+						if (!rand_int(((cfg.level_unstatic_chance * (i+5))/5)-1))
+						{
+							// unstatic the level
+							players_on_depth[i] = 0;
+						}
+					}
+				}
+			}
+#endif	// NEW_DUNGEON
+		}
+#endif	// 0
 	}
 
 #if 0
@@ -3020,7 +3129,8 @@ static void process_various(void)
 	{
 		int n;
 
-		for(i=0;i<numtowns;i++){
+		for(i=0;i<numtowns;i++)
+		{
 			/* Maintain each shop (except home and auction house) */
 			for (n = 0; n < MAX_STORES - 2; n++)
 			{
@@ -3195,25 +3305,23 @@ void dungeon(void)
 		/* Check for death */
 		if (Players[i]->death)
 		{
-	player_type *p_ptr = Players[i];
-		if (p_ptr->mode == MODE_HELL)
-                        {
-                                /* Kill him */
-                                player_death(i);
-                        }
-                        else
-                        {
-                                /* Kill him */
-                                player_death(i);
+			player_type *p_ptr = Players[i];
+			if (p_ptr->mode == MODE_HELL)
+			{
+				/* Kill him */
+				player_death(i);
+			}
+			else
+			{
+				/* Kill him */
+				player_death(i);
 
-                                /* Kill them again so that they Die! DEG */
-                                if (cfg.no_ghost)
-                                {
-                                        player_death(i);
-                                }
-                        }
-
-
+				/* Kill them again so that they Die! DEG */
+				if (cfg.no_ghost)
+				{
+					player_death(i);
+				}
+			}
 		}
 	}
 
@@ -3238,10 +3346,10 @@ void dungeon(void)
 
 		/* Check "maximum depth" to make sure it's still correct */
 #ifdef NEW_DUNGEON
-                if ((!p_ptr->ghost) && (getlevel(wpos) > p_ptr->max_dlv))
+		if ((!p_ptr->ghost) && (getlevel(wpos) > p_ptr->max_dlv))
 			p_ptr->max_dlv = getlevel(wpos);
 #else
-                if ((!p_ptr->ghost) && (Depth > p_ptr->max_dlv))
+		if ((!p_ptr->ghost) && (Depth > p_ptr->max_dlv))
 			p_ptr->max_dlv = Depth;
 #endif
 
@@ -3328,6 +3436,7 @@ void dungeon(void)
 
 		/* Memorize the town and all wilderness levels close to town */
 #ifdef NEW_DUNGEON
+		/* EE, didn't you forget to add suburbs? */
 		if (istown(wpos))
 #else
 		if (Depth <= 0 ? (wild_info[Depth].radius <= 2) : 0)
@@ -3446,12 +3555,14 @@ void dungeon(void)
 #ifdef NEW_DUNGEON
 			scatter(wpos, &y, &x, starty, startx, d, 1);
 			/* Must have an "empty" grid */
-			if (!cave_empty_bold(zcave, y, x)){
+			if (!cave_empty_bold(zcave, y, x))
+			{
 				continue;
 			}
 
 			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
-			if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY)){
+			if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY))
+			{
 				continue;
 			}
 #else
@@ -3557,14 +3668,16 @@ void dungeon(void)
 				break;
 			}
 #ifdef NEW_DUNGEON
-			if(mcave){
+			if(mcave)
+			{
 				mcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
 				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 			}
 			wpcopy(&m_ptr->wpos,wpos);
 			m_ptr->fx = mx;
 			m_ptr->fy = my;
-			if(mcave){
+			if(mcave)
+			{
 				mcave[m_ptr->fy][m_ptr->fx].m_idx = m_fast[m_idx];
 				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 			}
@@ -3630,50 +3743,63 @@ void dungeon(void)
 		{
 			if (wild_info[wpos->wy][wpos->wx].own)
 			{
-                                cptr p = lookup_player_name(wild_info[wpos->wy][wpos->wx].own);
+				cptr p = lookup_player_name(wild_info[wpos->wy][wpos->wx].own);
+				if (p == NULL) p = "Someone";
+
+				msg_format(i, "You enter the land of %s.", p);
+			}
+		}
+
 #else
 		if (Depth < 0)
 		{
 			if (wild_info[Depth].own)
 			{
-                                cptr p = lookup_player_name(wild_info[Depth].own);
-#endif
-                                if (p == NULL) p = "Someone";
+				cptr p = lookup_player_name(wild_info[Depth].own);
+				if (p == NULL) p = "Someone";
 
-                                msg_format(i, "You enter the land of %s.", p);
+				msg_format(i, "You enter the land of %s.", p);
 			}
 		}
 
+#endif
 		/* Clear the flag */
 		p_ptr->new_level_flag = FALSE;
 
+#if 0	// moved to 'process_various'
 		/* Check to see which if the level needs generation or destruction */
 		/* Note that "town" is excluded */
 #ifdef NEW_DUNGEON
 		twpos.wz=0;
-		for(y=0;y<MAX_WILD_Y;y++){
+		for(y=0;y<MAX_WILD_Y;y++)
+		{
 			twpos.wy=y;
-			for(x=0;x<MAX_WILD_X;x++){
+			for(x=0;x<MAX_WILD_X;x++)
+			{
 				wilderness_type *w_ptr;
 				struct dungeon_type *d_ptr;
 				twpos.wx=x;
 				w_ptr=&wild_info[twpos.wy][twpos.wx];
 				if(!players_on_depth(&twpos) && !istown(&twpos) && getcave(&twpos))
-					dealloc_dungeon_level(&twpos);
-				if(w_ptr->flags & WILD_F_UP){
+					dealloc_dungeon_level_maybe(&twpos);
+				if(w_ptr->flags & WILD_F_UP)
+				{
 					d_ptr=w_ptr->tower;
-					for(j=1;j<=d_ptr->maxdepth;j++){
+					for(j=1;j<=d_ptr->maxdepth;j++)
+					{
 						twpos.wz=j;
 						if(!players_on_depth(&twpos) && getcave(&twpos))
-							dealloc_dungeon_level(&twpos);
+							dealloc_dungeon_level_maybe(&twpos);
 					}
 				}
-				if(w_ptr->flags & WILD_F_DOWN){
+				if(w_ptr->flags & WILD_F_DOWN)
+				{
 					d_ptr=w_ptr->dungeon;
-					for(j=1;j<=d_ptr->maxdepth;j++){
+					for(j=1;j<=d_ptr->maxdepth;j++)
+					{
 						twpos.wz=-j;
 						if(!players_on_depth(&twpos) && getcave(&twpos))
-							dealloc_dungeon_level(&twpos);
+							dealloc_dungeon_level_maybe(&twpos);
 					}
 				}
 				twpos.wz=0;
@@ -3693,7 +3819,8 @@ void dungeon(void)
 			}
 
 		}
-#endif
+#endif	// NEW_DUNGEON
+#endif	// 0
 	}
 
 	/* Handle any network stuff */
@@ -3731,23 +3858,23 @@ void dungeon(void)
 		/* Check for death */
 		if (Players[i]->death)
 		{
-                       player_type *p_ptr = Players[i];
-                       if (p_ptr->mode == MODE_HELL)
-                        {
-                                /* Kill him */
-                                player_death(i);
-                        }
-                        else
-                        {
-                                /* Kill him */
-                                player_death(i);
+			player_type *p_ptr = Players[i];
+			if (p_ptr->mode == MODE_HELL)
+			{
+				/* Kill him */
+				player_death(i);
+			}
+			else
+			{
+				/* Kill him */
+				player_death(i);
 
-                                /* Kill them again so that they Die! DEG */
-                                if (cfg.no_ghost)
-                                {
-                                        player_death(i);
-                                }
-                        }
+				/* Kill them again so that they Die! DEG */
+				if (cfg.no_ghost)
+				{
+					player_death(i);
+				}
+			}
 
 
 		}

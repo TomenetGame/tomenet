@@ -2340,14 +2340,16 @@ void kingly(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
+#if 0	// No, this makes Delete_player fail!
 	/* Hack -- retire in town */
 #ifdef NEW_DUNGEON
-	p_ptr->wpos.wx=0;
+	p_ptr->wpos.wx=0;	// pfft, not 0 maybe
 	p_ptr->wpos.wy=0;
 	p_ptr->wpos.wz=0;
 #else
 	p_ptr->dun_depth = 0;
-#endif
+#endif	// NEW_DUNGEON
+#endif	// 0
 
 	/* Fake death */
 	//(void)strcpy(p_ptr->died_from_list, "Ripe Old Age");
@@ -2674,6 +2676,7 @@ void exit_game_panic(void)
 #ifdef NEW_DUNGEON
 	int j,k;
 	struct worldpos wpos;
+	struct wilderness_type *wild;
 #endif
 
 	/* If nothing important has happened, just quit */
@@ -2737,14 +2740,26 @@ void exit_game_panic(void)
 /* totally inefficient replacement - sorry. */
 /* it also doesnt respect non existent world positions */
 /* rewrite */
+/* k rewritten.. but not so better? */
 	for(i=0;i<MAX_WILD_X;i++){
 		wpos.wx=i;
 		for(j=0;j<MAX_WILD_Y;j++){
 			wpos.wy=j;
-			for(k=0;k<255;k++){
-				wpos.wz=k;
-				if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
-			}
+			wild=&wild_info[j][i];
+
+			if (wild->flags&WILD_F_UP)
+				for (k = 0;k < wild->tower->maxdepth; k++)
+				{
+					wpos.wz=k;
+					if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
+				}
+
+			if (wild->flags&WILD_F_DOWN)
+				for (k = 0;k < wild->dungeon->maxdepth; k++)
+				{
+					wpos.wz=-k;
+					if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
+				}
 		}
 	}
 #else

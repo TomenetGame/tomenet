@@ -2192,6 +2192,14 @@ void set_server_option(char * option, char * value)
 	{
 		cfg.running_speed = atoi(value);
 	}
+	else if (!strcmp(option,"ANTI_SCUM"))
+	{
+		cfg.anti_scum = atoi(value);
+	}
+	else if (!strcmp(option,"DUN_UNUSUAL"))
+	{
+		cfg.dun_unusual = atoi(value);
+	}
 	else printf("Error : unrecognized mangband.cfg option %s\n", option);
 }
 

@@ -1997,6 +1997,8 @@ struct server_opts
 	s16b fps;
 	s16b newbies_cannot_drop;
 	s16b running_speed;
+	s16b anti_scum;
+	s16b dun_unusual;
 	bool report_to_meta;
 	bool secret_dungeon_master;
 	bool anti_arts_horde;
