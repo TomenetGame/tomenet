@@ -1012,8 +1012,8 @@ static void wild_add_dwelling(int Depth, int x, int y)
 			houses[num_houses].flags = HF_RECT|HF_STOCK;
 			if(has_moat)
 				houses[num_houses].flags |= HF_MOAT;
-			houses[num_houses].coords.rect.width = h_x1-h_x2;
-			houses[num_houses].coords.rect.height = h_y1-h_y2;
+			houses[num_houses].coords.rect.width = h_x2-h_x1+1;
+			houses[num_houses].coords.rect.height = h_y2-h_y1+1;
 #else
 			houses[num_houses].price = price;
 			houses[num_houses].x_1 = h_x1+1;
@@ -1179,6 +1179,10 @@ static void wild_add_dwelling(int Depth, int x, int y)
 		}
 #ifdef NEWHOUSES
 		else{
+/* evileye temporary fix */
+			houses[tmp].coords.rect.width=houses[num_houses].coords.rect.width;
+			houses[tmp].coords.rect.height=houses[num_houses].coords.rect.height;
+/* end evileye fix */
 			/* malloc madness otherwise */
 			KILL(houses[num_houses].dna, struct dna_type);
 			c_ptr->special=houses[tmp].dna;

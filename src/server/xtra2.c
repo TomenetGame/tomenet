@@ -3049,8 +3049,9 @@ static void kill_house_contents(house_type *h_ptr){
 		ey=h_ptr->y+h_ptr->coords.rect.height-1;
 		ex=h_ptr->x+h_ptr->coords.rect.width-1;
 		for(y=sy;y<ey;y++){
-			for(x=sx;x<ex;x++)
+			for(x=sx;x<ex;x++){
 				delete_object(depth,y,x);	
+			}
 		}
 	}
 	else{

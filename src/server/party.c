@@ -230,6 +230,7 @@ int party_remove(int remover, cptr name)
 	if (remover == Ind)
 	{
 		/* Remove the party altogether */
+		printf("kill party houses %d\n",party_id);
 		kill_houses(party_id, OT_PARTY);
 
 		/* Set the number of people in this party to zero */
