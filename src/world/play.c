@@ -4,22 +4,52 @@
 #include <stdlib.h>
 
 #include "world.h"
+#include "externs.h"
 
 extern int bpipe;
 
 static struct rplist *rpmlist=NULL;
 
+/* Send server information to other servers */
+void send_sinfo(struct client *ccl, struct client *priv){
+	struct wpacket spk;
+	spk.type=WP_SINFO;
+	spk.serverid=0;
+	strncpy(spk.d.sinfo.name, slist[ccl->authed-1].name, 30);
+	spk.d.sinfo.sid=ccl->authed;
+	if(priv)
+		reply(&spk, priv);
+	else
+		relay(&spk, ccl);
+}
+
+/*
+ * This function is called when a new server starts
+ * and needs to be given the current state of the
+ * world.
+ */
 void send_rplay(struct client *ccl){
 	struct rplist *c_pl;
+	struct client *c_cl;
 	struct wpacket spk;
+
+	/* Send online server info */
+	c_cl=clist;
+	while(c_cl){
+		if(c_cl==ccl) continue;
+		if(c_cl->authed<=0) continue;
+		send_sinfo(c_cl, ccl);
+		c_cl=c_cl->next;
+	}
+
+	/* Send online player login packets */
+	c_pl=rpmlist;
 	spk.type=WP_NPLAYER;
 	spk.serverid=0;
-
-	c_pl=rpmlist;
+	spk.d.play.silent=1;
 	while(c_pl){
 		spk.d.play.id=c_pl->id;
 		spk.d.play.server=c_pl->server;
-		spk.d.play.silent=1;
 		strncpy(spk.d.play.name, c_pl->name, 30);
 		reply(&spk, ccl);
 		/* Temporary stderr output */

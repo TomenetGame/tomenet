@@ -133,13 +133,16 @@ void wproto(struct client *ccl){
 			   without this anyone can hack,
 			   making fake messages etc.
 			   It will be done BEFORE savefiles
-			   and other data is shared. Some machines may
+			   and other data are shared. Some machines may
 			   use a dynamic IP, so this is made *more* necessary */
 
 				ccl->authed=pwcheck(wpk->d.auth.pass, wpk->d.auth.val);
+				if(ccl->authed) send_sinfo(ccl, NULL);
 				/* Send it the current players */
 				send_rplay(ccl);
 				break;
+
+			/* Integrate chat/private chat */
 			case WP_CHAT:
                                 /* only relay all for now */
 				if(ccl->authed && ((ccl->authed>0) || secure.chat)){

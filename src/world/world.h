@@ -18,6 +18,7 @@
 #define WP_RESTART	10	/* servers quit now */
 #define WP_LACCOUNT	11	/* login account */
 #define WP_PMSG		12	/* private message */
+#define WP_SINFO	13	/* server info */
 
 /* now we are going to be the server which authenticates
  * the players. Once they are logged in, they will receive
@@ -93,6 +94,11 @@ struct pmsg{
 	char ctxt[120];
 };
 
+struct sinfo{
+	unsigned short sid;
+	char name[30];
+};
+
 
 /* server world authentication */
 struct auth{
@@ -143,5 +149,6 @@ struct wpacket{
 		struct lock lock;
 		struct pmsg pmsg;
 		struct pl_auth login;
+		struct sinfo sinfo;
 	} d;
 };
