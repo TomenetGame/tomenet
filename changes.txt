@@ -1,6 +1,6 @@
 Change list for PernMangband
 
-- Added random artifacts
+- Added random artifacts from DrAngband
 - Mage damaging spells upgraded in destructive power
 - Sleep Monsters II is gone, replaced by Tidal Wave
 - Acid Bolt is gone, replaced by Mana Strike(a powerfull spell but only a bolt)
