@@ -1145,10 +1145,9 @@ static void calc_hitpoints(int Ind)
 	  {
 	    int rhp = r_info[p_ptr->body_monster].hdice * r_info[p_ptr->body_monster].hside;
 
-	    /* mhp = (mhp * 6 / 10) + (rhp * 3 / 22); -coUGH..OMG- (C. Blue)
-	    better get serious now: */
+	    /* limit HP against ~3200 in total: */
 	    mHPLim = (100000 / ((100000 / rhp) + 15));
-	    finalHP = (mHPLim < mhp ) ? (((mhp * 2) + (mHPLim * 1)) / 3) : ((mHPLim + mhp) / 2);
+	    finalHP = (mHPLim < mhp ) ? (((mhp * 3) + (mHPLim * 2)) / 5) : ((mHPLim + mhp) / 2);
 	    mhp = finalHP;
 	  }
 
