@@ -507,6 +507,14 @@ f:Interception:Dodging%20
 f:Calmness:Sneakiness%7
 f:Interception:Sneakiness%7
 
+
+# Auras increase Necromancy skill (pfft who forgot this? :) - C. Blue)
+f:Aura power:Necromancy%20
+f:Aura of Fear:Necromancy%20
+f:Shivering Aura:Necromancy%20
+f:Aura of Death:Necromancy%20
+#Antimagic increasing Necromancy wouldn't make sense!
+
 # Exercises are good to your health :)
 f:Training:Health%25
 f:Agility:Health%25
