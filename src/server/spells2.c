@@ -2685,6 +2685,15 @@ bool turn_undead(int Ind)
 	return (project_hack(Ind, GF_TURN_UNDEAD, p_ptr->lev));
 }
 
+/*
+ * Turn everyone
+ */
+bool turn_monsters(int Ind, int dam)
+{
+	player_type *p_ptr = Players[Ind];
+	return (project_hack(Ind, GF_TURN_ALL, dam));
+}
+
 
 /*
  * Dispel undead monsters

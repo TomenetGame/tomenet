@@ -3873,24 +3873,7 @@ void do_cmd_fight(int Ind, int book, int spell)
                         /* Spin */
                         case 11:
 			{
-                                int d;
-
-                                for (d = 1; d <= 9; d++)
-                                {
-                                        int x, y;
-
-                                        if (d == 5) continue;
-
-                                        x = p_ptr->px + ddx[d];
-                                        y = p_ptr->py + ddy[d];
-
-#ifdef NEW_DUNGEON
-                                        if (!in_bounds(y, x)) continue;
-#else
-                                        if (!in_bounds(p_ptr->dun_depth, y, x)) continue;
-#endif
-                                        py_attack(Ind, y, x, TRUE);
-                                }
+				do_spin(Ind);
 				break;
 			}
 		}
@@ -3960,6 +3943,29 @@ void do_cmd_fight(int Ind, int book, int spell)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
+}
+
+void do_spin(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int d;
+
+	for (d = 1; d <= 9; d++)
+	{
+		int x, y;
+
+		if (d == 5) continue;
+
+		x = p_ptr->px + ddx[d];
+		y = p_ptr->py + ddy[d];
+
+#ifdef NEW_DUNGEON
+		if (!in_bounds(y, x)) continue;
+#else
+		if (!in_bounds(p_ptr->dun_depth, y, x)) continue;
+#endif
+		py_attack(Ind, y, x, TRUE);
+	}
 }
 
 /*

@@ -315,6 +315,8 @@ s32b artifact_power (artifact_type *a_ptr)
 
 	if (a_ptr->flags3 & TR3_FEATHER) p += 2;
 	if (a_ptr->flags3 & TR3_LITE1) p += 2;
+	if (a_ptr->flags4 & TR4_LITE2) p += 4;
+	if (a_ptr->flags4 & TR4_LITE3) p += 8;
 	if (a_ptr->flags3 & TR3_SEE_INVIS) p += 8;
 	if (a_ptr->flags3 & TR3_TELEPATHY) p += 20;
         if (a_ptr->flags4 & TR4_AUTO_ID) p += 20;
@@ -596,6 +598,13 @@ void add_ability (artifact_type *a_ptr)
 				else if (r < 80)
 					a_ptr->weight = (a_ptr->weight * 9) / 10;
 				else a_ptr->to_a += 3 + rand_int (8);
+				break;
+			}
+			case TV_LITE:
+			{
+				if (r < 50) a_ptr->flags3 |= TR3_LITE1;
+				else if (r < 80) a_ptr->flags4 |= TR4_LITE2;
+				else a_ptr->flags4 |= TR4_LITE3;
 				break;
 			}
 		}

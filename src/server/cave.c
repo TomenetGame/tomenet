@@ -4074,6 +4074,29 @@ void wiz_lite(int Ind)
 }
 
 
+/* from PernA	- Jir - */
+void wiz_lite_extra(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int y, x;
+	struct worldpos *wpos;
+	cave_type **zcave;
+	cave_type *c_ptr;
+	
+	wpos=&p_ptr->wpos;
+	if(!(zcave=getcave(wpos))) return;
+
+	for(y=0;y < p_ptr->cur_hgt;y++)
+	{
+		for(x=0;x < p_ptr->cur_wid;x++)
+		{
+			c_ptr = &zcave[y][x];
+			c_ptr->info |= (CAVE_GLOW | CAVE_MARK);
+		}
+	}
+	wiz_lite(Ind);
+}
+
 /*
  * Forget the dungeon map (ala "Thinking of Maud...").
  */

@@ -1870,3 +1870,14 @@ W:3:2:8:1000
 C:0:0:0:0
 R:100
 F:EASY_USE
+
+
+#N:(No.):(name)
+#T:6:0:255  [tval:min_sval:max_sval]
+#X:A:24:20  ['before':slot(obsolete):rating]
+#W:(depth):(rarity[arts only]):(weight):(price)
+#R:100      [rar[cur_r] (percentile?) ]
+#P:(AC):(base dam.):(to-hit):(to-dam):(+AC?)
+#C:hit:dam:ac:pval-max
+#F:(attribute)|...
+

@@ -510,3 +510,5 @@ Change list for PernMangband
   - bunch of new items/artifacts/ego-items ported from PernAngband.
 - 3 more traps(Silliness/Goodbye-Charlie/Present-Exchange).
 
+26/12/2001 (Jir)
+- Item activations for Some of new items are implemented.

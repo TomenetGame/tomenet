@@ -574,7 +574,8 @@ static void rd_item(object_type *o_ptr)
 	o_ptr->sval = k_ptr->sval;
 #endif
 	/* Obtain k_idx from tval/sval instead :) */
-	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+	if (o_ptr->k_idx)	// zero is cipher :)
+		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 
 	/* Obtain the "kind" template */
 	k_ptr = &k_info[o_ptr->k_idx];

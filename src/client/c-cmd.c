@@ -45,6 +45,7 @@ void cmd_all_in_one(void)
 	switch (inventory[item].tval)
 	{
 		case TV_POTION:
+		case TV_POTION2:
 		{
 			Send_quaff(item);
 			break;

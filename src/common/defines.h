@@ -3784,6 +3784,13 @@ that keeps many algorithms happy.
 #define ego_item_p(T) \
         ((T)->name2 ? TRUE : FALSE)
 
+/*
+ * Ego-Items use the "name2" field
+ */
+#define is_ego_p(T, e) \
+        ((T)->name2 == (e))
+    //    (((T)->name2 == (e)) || ((T)->name2b == (e)))
+
 
 /*
  * Broken items.
