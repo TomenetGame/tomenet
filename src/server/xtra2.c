@@ -4828,7 +4828,10 @@ bool target_able(int Ind, int m_idx)
 
 		/* Paranoia check -- require a valid player */
 		if ((0 - m_idx) >= MAX_PLAYERS) return (FALSE);
-		if (!q_ptr) return (FALSE);
+		if (!q_ptr || q_ptr->conn==NOT_CONNECTED){
+			p_ptr->target_who=0;
+			return (FALSE);
+		}
 
 		/* Players must be on same depth */
 		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) return (FALSE);
