@@ -67,7 +67,7 @@ void world(int ser){
 				}
 			}
 			else{
-				fprintf(stderr, "Got connection. unable to disply remote host. errno %d\n", errno);
+				fprintf(stderr, "Got connection. unable to display remote host. errno %d\n", errno);
 			}
 #endif
 			addclient(sl);
@@ -89,11 +89,17 @@ void handle(struct client *ccl){
 	int x;
         fprintf(stderr, "handling\n");
         x=recv(ccl->fd, ccl->buf+ccl->blen, 1024-ccl->blen, 0);
+
+	/* Error condition */
 	if(x==-1){
+		fprintf(stderr, "Error. killing client %d\n", errno);
 		ccl->flags|=CL_QUIT;
 		return;
 	}
+
+	/* Connection death most likely */
 	if(x==0){
+		fprintf(stderr, "Client quit %d\n", errno);
 		ccl->flags|=CL_QUIT;
 		return;
 	}
@@ -217,6 +223,7 @@ struct client *remclient(struct client *dcl){
 	struct client *ccl;
 	ccl=clist;
 	if(dcl->authed>0){
+		/* Tell other servers if an authed server goes down */
 		struct wpacket spk;
 		rem_players(dcl->authed);
 		spk.type=WP_SQUIT;

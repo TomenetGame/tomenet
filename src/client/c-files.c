@@ -22,7 +22,7 @@
  *
  * Hack -- We will always extract at least one token
  */
-s16b tokenize(char *buf, s16b num, char **tokens)
+static s16b tokenize(char *buf, s16b num, char **tokens)
 {
         int i = 0;
 
@@ -238,7 +238,7 @@ void text_to_ascii(char *buf, cptr str)
  * Replace "~user/" by the home directory of the user named "user"
  * Replace "~/" by the home directory of the current user
  */
-errr path_parse(char *buf, cptr file)
+static errr path_parse(char *buf, cptr file)
 {
 #ifndef WIN32
 #ifndef AMIGA

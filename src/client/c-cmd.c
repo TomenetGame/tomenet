@@ -1,9 +1,11 @@
 /* $Id$ */
 #include "angband.h"
 
+/* reordering will allow these to be removed */
 static void cmd_clear_buffer(void);
+static void cmd_master(void);
 
-void cmd_player_equip(void)
+static void cmd_player_equip(void)
 {
     /* Set the hook */
     special_line_type = SPECIAL_FILE_PLAYER_EQUIP;
@@ -51,7 +53,7 @@ static bool item_tester_oils(object_type *o_ptr)
 	return FALSE;
 }
 
-void cmd_all_in_one(void)
+static void cmd_all_in_one(void)
 {
 	int item, dir;
 
@@ -1702,7 +1704,7 @@ void cmd_redraw(void)
 	keymap_init();
 }
 
-void cmd_house_chown(int dir)
+static void cmd_house_chown(int dir)
 {
 	char i=0;
 	char buf[80];
@@ -1738,7 +1740,7 @@ void cmd_house_chown(int dir)
 	}
 }
 
-void cmd_house_chmod(int dir){
+static void cmd_house_chmod(int dir){
 	char buf[80];
 	char mod=ACF_NONE;
 	u16b minlev=0;
@@ -1755,7 +1757,7 @@ void cmd_house_chmod(int dir){
 	Send_admin_house(dir,buf);
 }
 
-void cmd_house_kill(int dir){
+static void cmd_house_kill(int dir){
 	Send_admin_house(dir,"K");
 }
 void cmd_purchase_house(void)
@@ -1823,7 +1825,7 @@ void cmd_suicide(void)
 	Send_suicide();
 }
 
-void cmd_master_aux_level(void)
+static void cmd_master_aux_level(void)
 {
 	char i;
 	char buf[80];
@@ -1914,7 +1916,7 @@ void cmd_master_aux_level(void)
 	}
 }
 
-void cmd_master_aux_generate_vault(void)
+static void cmd_master_aux_generate_vault(void)
 {
 	char i, redo_hack;
 	char buf[80];
@@ -1980,7 +1982,7 @@ void cmd_master_aux_generate_vault(void)
 	}
 }
 
-void cmd_master_aux_generate(void)
+static void cmd_master_aux_generate(void)
 {
 	char i;
 	char buf[80];
@@ -2029,7 +2031,7 @@ void cmd_master_aux_generate(void)
 
 
 
-void cmd_master_aux_build(void)
+static void cmd_master_aux_build(void)
 {
 	char i;
 	char buf[80];
@@ -2119,7 +2121,7 @@ void cmd_master_aux_build(void)
 	}
 }
 
-char * cmd_master_aux_summon_orcs(void)
+static char * cmd_master_aux_summon_orcs(void)
 {
 	char i;
 	static char buf[80];
@@ -2180,7 +2182,7 @@ char * cmd_master_aux_summon_orcs(void)
 	return NULL;
 }
 
-char * cmd_master_aux_summon_undead_low(void)
+static char * cmd_master_aux_summon_undead_low(void)
 {
 	char i;
 	static char buf[80];
@@ -2253,7 +2255,7 @@ char * cmd_master_aux_summon_undead_low(void)
 }
 
 
-char * cmd_master_aux_summon_undead_high(void)
+static char * cmd_master_aux_summon_undead_high(void)
 {
 	char i;
 	static char buf[80];
@@ -2330,7 +2332,7 @@ char * cmd_master_aux_summon_undead_high(void)
 }
 
 
-void cmd_master_aux_summon(void)
+static void cmd_master_aux_summon(void)
 {
 	char i, redo_hack;
 	char buf[80];
@@ -2537,7 +2539,7 @@ void cmd_master_aux_summon(void)
 	}
 }
 
-void cmd_master_aux_player()
+static void cmd_master_aux_player()
 {
 	char i=0;
 	char buf[80];
@@ -2613,7 +2615,7 @@ void cmd_master_aux_player()
  * Upload/execute scripts
  */
 /* TODO: up-to-date check and download facility */
-void cmd_script_upload()
+static void cmd_script_upload()
 {
 #if 0
 	char buf[1025]
@@ -2659,7 +2661,7 @@ void cmd_script_upload()
 /*
  * Upload/execute scripts
  */
-void cmd_script_exec()
+static void cmd_script_exec()
 {
 	char buf[81];
 
@@ -2669,7 +2671,7 @@ void cmd_script_exec()
 	Send_master(MASTER_SCRIPTS, buf);
 }
 
-void cmd_script_exec_local()
+static void cmd_script_exec_local()
 {
 	char buf[81];
 
@@ -2681,7 +2683,7 @@ void cmd_script_exec_local()
 
 
 /* Dirty implementation.. FIXME		- Jir - */
-void cmd_master_aux_system()
+static void cmd_master_aux_system()
 {
 	char i=0;
 
@@ -2737,7 +2739,7 @@ void cmd_master_aux_system()
 }
 
 /* Dungeon Master commands */
-void cmd_master(void)
+static void cmd_master(void)
 {
 	char i=0;
 	char buf[80];

@@ -19,7 +19,7 @@
 /*
  * Choose the character's name
  */
-void choose_name(void)
+static void choose_name(void)
 {
 	char tmp[23];
 
@@ -66,7 +66,7 @@ void choose_name(void)
 /*
  * Choose the character's name
  */
-void enter_password(void)
+static void enter_password(void)
 {
 	int c;
 	char tmp[23];
@@ -325,7 +325,7 @@ static void choose_class(void)
 /*
  * Get the desired stat order.
  */
-void choose_stat_order(void)
+static void choose_stat_order(void)
 {
 	int i, j, k, avail[6];
 	char c='\0';

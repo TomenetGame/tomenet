@@ -13,6 +13,9 @@
 extern client_opts c_cfg;
 extern short screen_icky;
 
+static char get_shimmer_color(void);
+static byte flick_colour(byte attr);
+
 /*
  * This file provides a generic, efficient, terminal window package,
  * which can be used not only on standard terminal environments such
@@ -482,7 +485,7 @@ static errr Term_text_hack(int x, int y, int n, byte a, cptr s)
 /* 
  * Some eye-candies from PernAngband :)		- Jir -
  */
-char get_shimmer_color()
+static char get_shimmer_color()
 {
 	switch (randint(7))
 	{
@@ -505,7 +508,7 @@ char get_shimmer_color()
 }
 #endif
 
-byte flick_colour(byte attr){
+static byte flick_colour(byte attr){
 	if ((attr >= TERM_BNW) && (attr <= TERM_RLE)){
 		if (randint(7)<6) return (attr - TERM_BNW);
 		return (randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
@@ -1944,6 +1947,7 @@ errr Term_redraw(void)
 	return (0);
 }
 
+#if 0	/* CURRENTLY unused */
 /*
  * Redraw part of a window. (PernA)
  */
@@ -1984,6 +1988,7 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 	/* Success */
 	return (0);
 }
+#endif
 
 
 

@@ -17,7 +17,7 @@
  * Given the name of a skill, returns skill index or -1 if no
  * such skill is found
  */
-s16b find_skill(cptr name)
+static s16b find_skill(cptr name)
 {
 	u16b i;
 
@@ -72,7 +72,7 @@ int get_idx(int i)
 /*
  *
  */
-void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int lev,
+static void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int lev,
 	bool full)
 {
 	int j, i;
@@ -93,14 +93,14 @@ void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int lev,
 }
 
 
-void init_table(int table[MAX_SKILLS][2], int *max, bool full)
+static void init_table(int table[MAX_SKILLS][2], int *max, bool full)
 {
 	*max = 0;
 	init_table_aux(table, max, -1, 0, full);
 }
 
 
-bool has_child(int sel)
+static bool has_child(int sel)
 {
 	int i;
 
@@ -200,7 +200,7 @@ void dump_skills(FILE *fff)
 /*
  * Draw the skill tree
  */
-void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
+static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 {
 	int i, j;
 	int wid, hgt;
@@ -686,7 +686,7 @@ static bool item_tester_hook_potion(object_type *o_ptr)
 /*
  * set a trap .. it's out of place somewhat.	- Jir -
  */
-void do_trap(int item_kit)
+static void do_trap(int item_kit)
 {
 //	int item_kit, item_load;
 	int item_load;

@@ -2904,7 +2904,7 @@ int Send_stay(void)
 	return 1;
 }
 
-int Send_keepalive(void)
+static int Send_keepalive(void)
 {
 	int	n;
 

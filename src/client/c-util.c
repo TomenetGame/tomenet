@@ -4,6 +4,8 @@
 #define MACRO_USE_CMD	0x01
 #define MACRO_USE_STD	0x02
 
+static void ascii_to_text(char *buf, cptr str);
+
 static bool after_macro = FALSE;
 static bool parse_macro = FALSE;
 static bool parse_under = FALSE;
@@ -1898,7 +1900,7 @@ void prt_lnum(cptr header, s32b num, int row, int col, byte color)
 }
 
 
-void ascii_to_text(char *buf, cptr str)
+static void ascii_to_text(char *buf, cptr str)
 {
 	char *s = buf;
 

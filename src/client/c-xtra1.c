@@ -21,7 +21,7 @@ static void prt_field(cptr info, int row, int col)
 /*
  * Converts stat num into a six-char (right justified) string
  */
-void cnv_stat(int val, char *out_val)
+static void cnv_stat(int val, char *out_val)
 {
 	if (!c_cfg.linear_stats)
 	{
@@ -977,7 +977,7 @@ void show_equip(void)
 /*
  * Display inventory in sub-windows
  */
-void fix_inven(void)
+static void fix_inven(void)
 {
 	int j;
 
@@ -1010,7 +1010,7 @@ void fix_inven(void)
 /*
  * Display equipment in sub-windows
  */
-void fix_equip(void)
+static void fix_equip(void)
 {
 	int j;
 
@@ -1043,7 +1043,7 @@ void fix_equip(void)
 /*
  * Display character sheet in sub-windows
  */
-void fix_player(void)
+static void fix_player(void)
 {
 	int j;
 
@@ -1078,7 +1078,7 @@ void fix_player(void)
  *
  * XXX XXX XXX Adjust for width and split messages
  */
-void fix_message(void)
+static void fix_message(void)
 {
         int j, i;
         int w, h;

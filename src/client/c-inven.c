@@ -70,7 +70,7 @@ static bool verify(cptr prompt, int item)
 }
 
 
-s16b c_label_to_inven(int c)
+static s16b c_label_to_inven(int c)
 {
 	int i;
 
@@ -87,7 +87,7 @@ s16b c_label_to_inven(int c)
 	return (i);
 }
 
-s16b c_label_to_equip(int c)
+static s16b c_label_to_equip(int c)
 {
 	int i;
 

@@ -255,10 +255,6 @@ extern void cmd_load_pref(void);
 extern void cmd_redraw(void);
 extern void cmd_purchase_house(void);
 extern void cmd_suicide(void);
-extern void cmd_master(void);
-extern void cmd_master_aux_level(void);
-extern void cmd_master_aux_build(void);
-extern void cmd_master_aux_summon(void);
 extern void cmd_spike(void);
 extern void cmd_raw_key(int key);
 extern void cmd_check_misc(void);
@@ -278,6 +274,8 @@ extern bool my_freadable(cptr file);
 extern errr get_safe_file(char *buf, cptr file);
 
 /* c-init.c */
+extern void init_schools(s16b new_size);
+extern void init_spells(s16b new_size);
 extern void initialize_all_pref_files(void);
 extern void client_init(char *argv1, bool skip);
 
@@ -362,7 +360,6 @@ extern void prt_basic(void);
 extern void health_redraw(int num, byte attr);
 extern void show_inven(void);
 extern void show_equip(void);
-extern void fix_message(void);
 extern void display_player(int hist);
 extern void window_stuff(void);
 //extern void prt_sane(void);
@@ -472,6 +469,7 @@ extern bool hack_do_cmd_skill_wait;
 extern void do_activate_skill(int x_idx, int item);
 extern void do_cmd_activate_skill(void);
 extern void dump_skills(FILE *fff);
+extern s16b get_skill_scale(player_type *pfft, int skill, u32b scale);
 
 /* c-script.c */
 extern void init_lua();
@@ -488,6 +486,12 @@ extern bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...);
 
 /* lua_bind.c */
 extern void lua_set_item_tester(int tval, char *fct);
+extern s16b new_school(int i, cptr name, s16b skill);
+extern s16b new_spell(int i, cptr name);
+extern spell_type *grab_spell_type(s16b num);
+extern school_type *grab_school_type(s16b num);
+extern s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus);
+extern s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat);
 
 
 /* common/common.c */

@@ -21,6 +21,7 @@ void initrand(){
 	srandom(x);
 }
 
+/* Send authentication request to game server */
 void initauth(struct client *ccl){
 	struct wpacket spk;
 	int x, len=sizeof(struct wpacket);
@@ -29,7 +30,7 @@ void initauth(struct client *ccl){
 	x=send(ccl->fd, &spk, len, 0);
 }
 
-
+/* Generate a random password */
 char *rpgen(char *dest){
 	int i=0;
 	long x;
