@@ -6162,7 +6162,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			/* Affect the monster */
 //			if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
 
-			if (grids <= 1)
+			if (grids <= 1 && (zcave[y][x].m_idx > 0))
 			{
 				monster_type *m_ptr = &m_list[zcave[y][x].m_idx];
 				monster_race *ref_ptr = race_inf(m_ptr);

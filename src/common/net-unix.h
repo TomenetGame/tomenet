@@ -63,7 +63,11 @@ extern int
 #ifdef UNIX_SOCKETS
 extern struct sockaddr_un
 #else
+#ifdef USEIP6
+extern struct sockaddr_in6
+#else
 extern struct sockaddr_in
+#endif
 #endif
     sl_dgram_lastaddr;
 
