@@ -4511,8 +4511,15 @@ static void cave_gen(int Depth)
 
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
+	wilderness_type *wild;
+	u32b flags;
+
 	if(!(zcave=getcave(wpos))) return;
 #endif
+	wild=&wild_info[wpos->wy][wpos->wx];
+	flags=(wpos->wz>0 ? wild->tower->flags : wild->dungeon->flags);
+
+	if(!flags & DUNGEON_RANDOM) return;
 
 	/* Global data */
 	dun = &dun_body;

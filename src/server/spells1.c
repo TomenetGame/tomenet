@@ -550,7 +550,7 @@ void teleport_player_level(int Ind)
 	wpcopy(&new_depth, wpos);
 	/* sometimes go down */
 #ifdef NEW_DUNGEON
-	if(can_go_down(wpos) && (!can_go_up(wpos) || (rand_int(100)<50)))
+	if(can_go_down(wpos) && (!can_go_up(wpos) || (rand_int(100)<50)) || (wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->flags & DUNGEON_IRON))
 #else
 	if ((!Depth) || ((rand_int(100) < 50) && (Depth > MAX_DEPTH-1)))
 #endif
@@ -564,7 +564,7 @@ void teleport_player_level(int Ind)
 		p_ptr->new_level_method = LEVEL_RAND;
 	}	
 	/* else go up */
-	else if(can_go_up(wpos))
+	else if(can_go_up(wpos) && !(wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->flags & DUNGEON_IRON))
 	{
 #ifdef NEW_DUNGEON
 		new_depth.wz++;
@@ -663,7 +663,11 @@ void teleport_player_level(int Ind)
 		/* update the players wilderness map */
 		p_ptr->wild_map[(new_depth)/8] |= (1<<((new_depth)%8));
 #endif
-	}	
+	}
+	else{
+		msg_print(Ind, "The scroll seemed to fail");
+		return;
+	}
 	
 	/* Tell the player */
 	msg_print(Ind, msg);

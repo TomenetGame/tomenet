@@ -62,6 +62,10 @@ void do_cmd_go_up(int Ind)
 		msg_print(Ind,"You are at the top of the tower!");
 		return;
 	}
+	if(wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->flags & DUNGEON_IRON){
+		msg_print(Ind,"\377rThis is an ironman dungeon, you may not ascend.");
+		return;
+	}
 #endif
 
 	/* Remove the player from the old location */
@@ -185,6 +189,11 @@ void do_cmd_go_down(int Ind)
 #endif
 	{
 		msg_print(Ind, "You are at the bottom of the dungeon.");
+		return;
+	}
+
+	if(wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->flags & DUNGEON_IRON){
+		msg_print(Ind,"\377rThis is an ironman tower, you may not descend.");
 		return;
 	}
 

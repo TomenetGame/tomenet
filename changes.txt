@@ -428,3 +428,5 @@ Change list for PernMangband
 - Made unstatic_level function (was duplicated)
 - Fixed bug in unstatic_level (space/time anchor wasnt killed for all)
 - Fixed bug where new towns would not have objects/monsters attached
+- Added some support for ironman dungeons - not recall
+- Dungeons may not be generated in towns (must generate with town)

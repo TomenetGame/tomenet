@@ -5660,8 +5660,12 @@ bool master_level(int Ind, char * parms)
 		{
 			cave_type **zcave;
 			if(!parms[1] || !parms[2] || p_ptr->wpos.wz) return FALSE;
+			if(istown(&p_ptr->wpos)){
+				msg_print(Ind,"Even you may not create dungeons in the town!");
+				return FALSE;
+			}
 			if(parms[3]=='t' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags&WILD_F_UP)){
-				adddungeon(&p_ptr->wpos, parms[1], parms[2], 0, TRUE);
+				adddungeon(&p_ptr->wpos, parms[1], parms[2], DUNGEON_RANDOM|DUNGEON_IRON, TRUE);
 				new_level_down_y(&p_ptr->wpos, p_ptr->py);
 				new_level_down_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave=getcave(&p_ptr->wpos))){
@@ -5669,7 +5673,7 @@ bool master_level(int Ind, char * parms)
 				}
 			}
 			if(parms[3]=='d' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags&WILD_F_DOWN)){
-				adddungeon(&p_ptr->wpos, parms[1], parms[2], 0, FALSE);
+				adddungeon(&p_ptr->wpos, parms[1], parms[2], DUNGEON_RANDOM, FALSE);
 				new_level_up_y(&p_ptr->wpos, p_ptr->py);
 				new_level_up_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave=getcave(&p_ptr->wpos))){
@@ -5682,7 +5686,10 @@ bool master_level(int Ind, char * parms)
 		{
 			struct worldpos twpos;
 			if(!parms[1] || p_ptr->wpos.wz) return FALSE;
-			if(istown(&p_ptr->wpos)) return FALSE;
+			if(istown(&p_ptr->wpos)){
+				msg_print(Ind, "There is already a town here!");
+				return FALSE;
+			}
 			wpcopy(&twpos,&p_ptr->wpos);
 
 			/* clean level first! */
