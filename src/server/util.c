@@ -3011,6 +3011,16 @@ static void player_talk_aux(int Ind, char *message)
 		}
 	}
 
+	if(++p_ptr->talk>10){
+		imprison(Ind, 30, "talking too much.");
+		return;
+	}
+
+	for(i=1; i<=NumPlayers; i++){
+		if(Players[i]->conn==NOT_CONNECTED) continue;
+		Players[i]->talk=0;
+	}
+
 	/* Default to no search string */
 	strcpy(search, "");
 

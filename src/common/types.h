@@ -1477,6 +1477,7 @@ struct player_type
 	time_t msg;		/* anti spamming protection */
 	byte msgcnt;
 	byte spam;
+	byte talk;		/* talk too much (moltors idea) */
 
 	hostile_type *hostile;	/* List of players we wish to attack */
 
