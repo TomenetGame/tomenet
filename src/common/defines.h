@@ -1101,6 +1101,7 @@ that keeps many algorithms happy.
 
 /* ToME-NET additions */
 #define ART_BILBO				214
+#define ART_DWARVEN_ALE			216
 
 
 /*** Ego-Item indices (see "lib/edit/e_info.txt") ***/

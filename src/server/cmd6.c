@@ -111,6 +111,7 @@ void do_cmd_eat_food(int Ind, int item)
 	int			ident, lev;
 
 	object_type		*o_ptr;
+	bool keep = FALSE;
 
 
 	/* Restrict choices to food */
@@ -440,6 +441,8 @@ void do_cmd_eat_food(int Ind, int item)
 					}
 					else msg_print(Ind, "That tastes good.");
 
+					if (o_ptr->name1 == ART_DWARVEN_ALE) keep = TRUE;
+
 					ident = TRUE;
 					break;
 				}
@@ -576,6 +579,10 @@ void do_cmd_eat_food(int Ind, int item)
 
 	/* Food can feed the player */
 	(void)set_food(Ind, p_ptr->food + o_ptr->pval);
+
+
+	/* Hack -- really allow certain foods to be "preserved" */
+	if (keep) return;
 
 
 	/* Destroy a food in the pack */

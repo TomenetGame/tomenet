@@ -1461,6 +1461,7 @@ static void wr_dungeon(struct worldpos *wpos)
 				wr_byte(n);
 				cs_ptr=c_ptr->special;
 				while(cs_ptr){
+					i = cs_ptr->type;
 					wr_byte(i);
 					/* csfunc will take care of it :) */
 					csfunc[i].save(sc_is_pointer(i) ?

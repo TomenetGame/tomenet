@@ -21,6 +21,11 @@
 
 # bug.txt should follow the exact same format
 
+03/08/2002 (Jir)
+# sorry, I cannot help fixing bugs ;)
+[B]- CS saving was broken
+[O]- new artifact 'Pint of Ale of Dwarves' :)
+
 02/08/2002 (Jir)
 [G]- one needs at least 1 kill count to mimic that form (namely townies)
 [G]- darkness, traps, hold mimic spells implemented.
@@ -1560,7 +1565,35 @@ things to do before 4.0.0
   + spell flags transmitted to the client
   + less packets
   + spells should be exported to LUA?
-- implement guest-account
+- login code
+  (PBs)
+  + 'Resume connection' doesn't seem to work; if you leave (or get
+    disconnected from) the game in the dungeon and try to reconnect at
+    once, the connection is refused with status code 9.
+  + most displaying/path-building using 'nick' should be changed to use
+    c_name (eg. 'C', tomb, 'Name:', Receive_chardump etcetc - having
+    account-name on the tombstone is weird ;)
+    we'd better make c_name grobal maybe.
+  + .tomenetrc and command-line option(-l) should be able to handle
+    not only account name but also character choice (read_mangrc, main)
+  + HAVE_CRYPT should be handled in a little better way; uncompilable
+    makefile by default is not so cool (I know 'configure' will work for
+    such matters, but it's tainted by GPL..)
+  (RFEs)
+  + If you care, would you add temporal account banning (like IP
+    banning)?
+  + Great if accedit can change password of every account; that'll allow
+    admin to use/modify/fix every character on the server (former
+    /shutdown 1024, I'm meaning).
+  + How about adding o_ptr->account along with o_ptr->id/owner?
+    this would make cheeze-tracking much easier maybe.
+  + Char choice screen should tell the race and class of that char
+    ( a) Imrahil the Dunadan Warrior - Receive_login)
+  + char name should be case-insensitive maybe? (eVileye and Evileye
+    should be handled as the same char, that is)
+  + documentating how to use new account system (admin handbook :)
+
+
 - rebalance skill-points
 - devise a nice way to control ego-item generation w/o luck
 - fix gfx

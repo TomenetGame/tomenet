@@ -2611,6 +2611,23 @@ F:DEX | SUST_DEX | STEALTH | HIDE_TYPE
 F:REGEN | XTRA_MIGHT | XTRA_SHOTS
 F:ESP_ANIMAL | SEE_INVIS |
 
+# The Pint of Ale of Dwarves :)
+
+N:216:of Dwarves
+I:80:38:500
+P:0:0d0:20:25:0
+W:10:40:3:5000
+P:0:0d0:0:0:0
+#Z:Confuse self
+D:In the not-too-distant past, DarkGod created three pints of magic ale.
+D:This ale was of the highest quality -- far stronger than the standard  
+D:fine ale. But more importantly, it was blessed with magic similar to that
+D:used to preserve magical ammo. One could drink, drink, and drink some
+D:more, and three pints always remained. It came to pass that these three pints
+D:were bestowed upon Moltor, the drunkest of the Dwarves. They were
+D:bound to his very soul, so they remained with him despite his frequent deaths
+D:and rebirths. For some time Moltor enjoyed his ale, and all was well.
+
 
 #N:(No.):(name)
 #G:(appearence):(colour)
