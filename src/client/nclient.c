@@ -142,7 +142,6 @@ int Receive_file(void){
 	int n;
 	n=Packet_scanf(&rbuf, "%c%c%hd", &ch, &command, &fnum);
 	if(n==3){
-		printf("file packet %d %d\n", ch, command);
 		switch(command){
 			case PKT_FILE_INIT:
 				Packet_scanf(&rbuf, "%s", fname);
@@ -174,6 +173,8 @@ int Receive_file(void){
 				/* continue the send/terminate */
 				return(1);
 				break;
+			case 0:
+				return(1);
 			default:
 				printf("unknown file transfer packet\n");
 				x=0;

@@ -2657,6 +2657,7 @@ static int Receive_file(int ind){
 	connection_t *connp = &Conn[ind];
 	n=Packet_scanf(&connp->r, "%c%c%hd", &ch, &command, &fnum);
 	if(n==3){
+		printf("file packet %d\n", command);
 		switch(command){
 			case PKT_FILE_INIT:
 				Packet_scanf(&connp->r, "%s", fname);
@@ -2667,7 +2668,7 @@ static int Receive_file(int ind){
 				x=local_file_write(ind, fnum, len);
 				break;
 			case PKT_FILE_END:
-				csum=local_file_close(ind, fnum);
+				x=local_file_close(ind, fnum);
 				break;
 			case PKT_FILE_CHECK:
 				Packet_scanf(&connp->r, "%s", fname);
@@ -2694,6 +2695,7 @@ static int Receive_file(int ind){
 		}
 		Packet_printf(&connp->w, "%c%c%hd", PKT_FILE, x, fnum);
 	}
+	else printf("error file packet\n");
 }
 
 int Receive_file_data(int ind, unsigned short len, char *buffer){
@@ -2704,14 +2706,12 @@ int Receive_file_data(int ind, unsigned short len, char *buffer){
 
 int Send_file_check(int ind, unsigned short id, char *fname){
 	connection_t *connp = &Conn[ind];
-	printf("send check\n");
 	Packet_printf(&connp->w, "%c%c%hd%s", PKT_FILE, PKT_FILE_CHECK, id, fname);
 	return(0);
 }
 
 int Send_file_init(int ind, unsigned short id, char *fname){
 	connection_t *connp = &Conn[ind];
-	printf("send init\n");
 	Packet_printf(&connp->w, "%c%c%hd%s", PKT_FILE, PKT_FILE_INIT, id, fname);
 	return(0);
 }

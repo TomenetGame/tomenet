@@ -83,7 +83,6 @@ int local_file_send(int ind, char *fname){
 	fdata[num].id=new_fileid();	/* ALWAYS succeed */
 	fdata[num].state=(FS_SEND|FS_NEW);
 	strncpy(fdata[num].fname, fname, 30);
-	printf("send file %s\n", fname);
 	Send_file_init(fdata[num].ind, fdata[num].id, fdata[num].fname);
 	return(1);
 }
@@ -98,7 +97,6 @@ int remote_update(int ind, char *fname){
 	fdata[num].state=(FS_CHECK);
 	strncpy(fdata[num].fname, fname, 30);
 	Send_file_check(fdata[num].ind, fdata[num].id, fdata[num].fname);
-	printf("send update (%s)\n", fname);
 	return(1);
 }
 
@@ -109,9 +107,7 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 	unsigned long lsum;
 	num=getfile(ind, fnum);
 	if(num==-1) return(0);
-	printf("check return (%x)\n", sum);
 	local_file_check(fdata[num].fname, &lsum);
-	printf("local sum (%x)\n", lsum);
 	if(!fdata[num].state&FS_CHECK){
 		return;
 	}
@@ -121,15 +117,12 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 			fdata[num].id=0;
 			return(0);
 		}
-		printf("update %s\n", fdata[num].fname);
 		fdata[num].fd=fd;
 		fdata[num].ind=ind;
 		fdata[num].state=(FS_SEND|FS_NEW);
-		printf("update file %s\n", fdata[num].fname);
 		Send_file_init(fdata[num].ind, fdata[num].id, fdata[num].fname);
 		return(1);
 	}
-	printf("checksums match for %s\n", fdata[num].fname);
 	fdata[num].id=0;
 	return(1);
 }
@@ -142,7 +135,6 @@ void do_xfers(){
 		if(!fdata[i].id) continue;	/* non existent */
 		if(!(fdata[i].state&FS_SEND)) continue; /* wrong type */
 		if(!(fdata[i].state&FS_READY)) continue; /* not ready */
-		printf("xfer %d ready\n", i);
 		x=read(fdata[i].fd, fdata[i].buffer, MAX_TNF_SEND);
 		if(!(fdata[i].state&FS_DONE)){
 			if(x==0){
@@ -181,7 +173,6 @@ int local_file_init(int ind, unsigned short fnum, char *fname){
 	char tname[30]="/tmp/tomexfer.XXXX";
 	num=getfile(ind, 0);		/* get empty space */
 	if(num==-1) return(0);
-	printf("receive file %s\n", fname);
 	fdata[num].fd=mkstemp(tname);
 	fdata[num].state=FS_READY;
 	if(fdata[num].fd!=-1){
@@ -207,13 +198,26 @@ int local_file_write(int ind, unsigned short fnum, unsigned long len){
 
 /* Close file and make the changes */
 int local_file_close(int ind, unsigned short fnum){
-	int num;
+	int num, x;
+	char buf[4096];
+	int size=4096;
+	int success=0;
+	FILE *wp;
 	num=getfile(ind, fnum);
 	if(num==-1) return(0);
-	printf("Received %s\n", fdata[num].fname);
-	fdata[num].id=0;
+	wp=fopen(fdata[num].fname, "w");
+	if(wp!=(FILE*)NULL){
+		fdata[num].id=0;
+		lseek(fdata[num].fd, 0, SEEK_SET);
+		do{
+			x=read(fdata[num].fd, buf, size);
+			fwrite(buf, x, 1, wp);
+		}while(x>0);
+		fclose(wp);
+		success=1;
+	}
 	close(fdata[num].fd);
-	return(1);
+	return(success);
 }
 
 unsigned long total;
@@ -236,10 +240,8 @@ int local_file_check(char *fname, unsigned long *sum){
 	unsigned long pos, r;
 	fp=fopen(fname, "r");
 	if(fp==(FILE*)NULL){
-		printf("no local file %s\n", fname);
 		return(0);
 	}
-	printf("check local file %s\n", fname);
 	buffer=(char*)malloc(size);
 	if(buffer){
 		total=0L;
