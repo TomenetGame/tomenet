@@ -564,7 +564,7 @@ bool get_item_hook_find_spell(int *item)
 	if (!get_string("Spell name? ", buf, 79))
 		return FALSE;
 	sprintf(buf2, "return find_spell(\"%s\")", buf);
-	spell = exec_lua(buf2);
+	spell = exec_lua(0, buf2);
 	if (spell == -1) return FALSE;
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
@@ -599,7 +599,7 @@ bool get_item_hook_find_spell(int *item)
 		else if (o_ptr->sval != 255)
 		{
 			sprintf(buf2, "return spell_in_book(%d, %d)", o_ptr->sval, spell);
-			if (exec_lua(buf2))
+			if (exec_lua(0, buf2))
 			{
 				*item = i;
 				hack_force_spell = spell;
@@ -632,7 +632,11 @@ u32b get_school_spell(cptr do_what)
 // DGDGDG -- someone fix it please        get_item_extra_hook = get_item_hook_find_spell;
         item_tester_tval = TV_BOOK;
 	sprintf(buf2, "You have no book to %s from", do_what);
+#if 0	/* not sure if this is what you want ;/ */
         if (!get_item(&item, format("%^s from which book?", do_what), buf2, USE_INVEN | USE_EQUIP )) return -1;
+#else
+        if (!c_get_item(&item, format("%^s from which book?", do_what), TRUE, TRUE, FALSE )) return -1;
+#endif
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -676,7 +680,7 @@ u32b get_school_spell(cptr do_what)
 
 //        if (hack_force_spell == -1)
         {
-                num = exec_lua(format("return book_spells_num(%d)", sval));
+                num = exec_lua(0, format("return book_spells_num(%d)", sval));
 
                 /* Build a prompt (accept all spells) */
                 strnfmt(out_val, 78, "(Spells %c-%c, Descs %c-%c, *=List, ESC=exit) %^s which spell? ",
@@ -698,7 +702,7 @@ u32b get_school_spell(cptr do_what)
                                         Term_save();
 
                                         /* Display a list of spells */
-                                        where = exec_lua(format("return print_book(%d, %d)", sval, pval));
+                                        where = exec_lua(0, format("return print_book(%d, %d)", sval, pval));
                                 }
 
                                 /* Hide the list */
@@ -754,19 +758,19 @@ u32b get_school_spell(cptr do_what)
                                 }
 
                                 /* Display a list of spells */
-                                where = exec_lua(format("return print_book(0, %d, %d)", sval, pval));
-                                exec_lua(format("print_spell_desc(spell_x(%d, %d, %d), %d)", sval, pval, i, where));
+                                where = exec_lua(0, format("return print_book(0, %d, %d)", sval, pval));
+                                exec_lua(0, format("print_spell_desc(spell_x(%d, %d, %d), %d)", sval, pval, i, where));
                         }
                         else
                         {
                                 /* Save the spell index */
-                                spell = exec_lua(format("return spell_x(%d, %d, %d)", sval, pval, i));
+                                spell = exec_lua(0, format("return spell_x(%d, %d, %d)", sval, pval, i));
 
                                 /* Require "okay" spells */
-                                if (!exec_lua(format("return is_ok_spell(0, %d)", spell)))
+                                if (!exec_lua(0, format("return is_ok_spell(0, %d)", spell)))
                                 {
                                         bell();
-                                        msg_format("You may not %s that spell.", do_what);
+                                        c_msg_format("You may not %s that spell.", do_what);
                                         spell = -1;
                                         continue;
                                 }
@@ -780,7 +784,7 @@ u32b get_school_spell(cptr do_what)
         else
         {
                 /* Require "okay" spells */
-                if (exec_lua(format("return is_ok_spell(0, %d)", hack_force_spell)))
+                if (exec_lua(0, format("return is_ok_spell(0, %d)", hack_force_spell)))
                 {
                         flag = TRUE;
                         spell = hack_force_spell;

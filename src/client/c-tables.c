@@ -2700,8 +2700,8 @@ option_type option_info[OPT_MAX] =
 //	"auto_afk",				"Allow automatic AFKing" },
 	"auto_afk",				"Set 'AFK mode' automatically" },
 
-	{ &c_cfg.auto_scum,			FALSE,	3,	1, 1,	// XXX
-	"auto_scum",			"(obsolete) Auto-scum for good levels" },
+	{ &c_cfg.newb_suicide,			FALSE,	3,	1, 1,	// XXX
+	"newb_suicide",			"Display newbie suicides" },
 
 	{ &c_cfg.stack_allow_items,	TRUE,	3,	1, 2,
 	"stack_allow_items",	"Allow weapons and armor to stack" },

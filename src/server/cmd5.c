@@ -7171,19 +7171,18 @@ void do_cmd_psi_aux(int Ind, int dir)
  */
 void cast_school_spell(int Ind, int spell, int dir, int item)
 {
-	int spell;
         player_type *p_ptr = Players[Ind];
 
 	/* No magic */
 	if (p_ptr->antimagic)
 	{
-		msg_print("Your anti-magic field disrupts any magic attempts.");
+		msg_print(Ind, "Your anti-magic field disrupts any magic attempts.");
 		return;
 	}
 
 	/* Actualy cast the choice */
 	if (spell != -1)
         {
-                exec_lua(format("cast_school_spell(%d, %d, spell(%d), nil, {dir = %d, item = %d})", Ind, spell, spell, dir, item));
+                exec_lua(Ind, format("cast_school_spell(%d, %d, spell(%d), nil, {dir = %d, item = %d})", Ind, spell, spell, dir, item));
 	}
 }

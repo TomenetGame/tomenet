@@ -1004,14 +1004,14 @@ void do_activate_skill(int x_idx, int item)
 
 		return;
 	}
-	else if (s_info[x_idx].mkey == MKEY_SCHOOL)
+	else if (s_info[x_idx].action_mkey == MKEY_SCHOOL)
 	{
 		/* Ask for a spell, allow cancel */
-		if ((spell = get_school_spell("cast") == -1) return;
+		if ((spell = get_school_spell("cast") == -1)) return;
 
                 /* Ask for a direction? */
                 dir = -1;
-                if (exec_lua(format("return pre_exec_spell_dir(%d)", spell)))
+                if (exec_lua(0, format("return pre_exec_spell_dir(%d)", spell)))
                         if (!get_dir(&dir))
                                 return;
 
@@ -1041,7 +1041,6 @@ void do_activate_skill(int x_idx, int item)
 
 	/* Send it */
 	Send_activate_skill(s_info[x_idx].action_mkey, item, spell, dir);
-}
 }
 
 /* Ask & execute a skill */

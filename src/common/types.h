@@ -1945,6 +1945,7 @@ struct player_type
 	bool disturb_minor;
 	bool disturb_other;
 	bool auto_afk;
+	bool newb_suicide;
 	bool stack_allow_items;
 	bool stack_allow_wands;
 	bool view_perma_grids;
@@ -2438,7 +2439,7 @@ struct client_opts
 	bool alert_failure;
 
 	bool auto_afk;
-	bool auto_scum;
+	bool newb_suicide;
 	bool stack_allow_items;
 	bool stack_allow_wands;
 	bool expand_look;

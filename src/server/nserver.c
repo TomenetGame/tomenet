@@ -1663,6 +1663,7 @@ static void sync_options(int Ind, bool *options)
 	p_ptr->disturb_minor = options[24];
 	p_ptr->disturb_other = options[25];
 	p_ptr->auto_afk = options[28];
+	p_ptr->newb_suicide = options[29];
 	p_ptr->stack_allow_items = options[30];
 	p_ptr->stack_allow_wands = options[31];
 	p_ptr->view_perma_grids = options[34];
@@ -5416,8 +5417,8 @@ static int Receive_activate_skill(int ind)
 			case MKEY_TRAP:
 				do_cmd_set_trap(player, book, spell);
 				break;
-                case MKEY_SCHOOL:
-                        cast_school_spell(player, spell, dir, book)
+                	case MKEY_SCHOOL:
+				cast_school_spell(player, spell, dir, book);
 
                 }
 		return 2;

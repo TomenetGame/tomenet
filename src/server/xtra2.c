@@ -4017,8 +4017,13 @@ void player_death(int Ind)
 	/* handle the secret_dungeon_master option */
 	/* bug??? evileye - shouldnt it be && */
 	if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
-		if(p_ptr->lev>1 || p_ptr->alive)
+		if(p_ptr->lev>1)
 			msg_broadcast(Ind, buf);
+		else{
+			for(i=1; i<=NumPlayers; i++)
+				if(p_ptr->lev>1 || p_ptr->alive && i!=Ind && Players[i]->newb_suicide)
+					msg_print(i, buf);
+		}
 	}
 
 	/* Unown land */

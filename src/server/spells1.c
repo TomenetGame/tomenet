@@ -4886,7 +4886,10 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		case GF_HOLD:
 		case GF_DOMINATE:
-			note = " is selected";
+			if(!(r_ptr->flags1 & (RF1_UNIQUE|RF1_NEVER_MOVE)) && 
+				!(r_ptr->flags9 & RF9_IM_PSI) && !(r_ptr->flags7 & RF7_MULTIPLY))
+				m_ptr->owner=p_ptr->id;
+			note = " starts following you.";
 			dam=0;
 			break;
 
