@@ -1076,6 +1076,32 @@ static void wr_ghost(void)
  */
 static void wr_house(house_type *house)
 {
+#ifdef NEWHOUSES
+	wr_byte(house->x);
+	wr_byte(house->y);
+	wr_byte(house->dx);
+	wr_byte(house->dy);
+	wr_u32b(house->dna->creator);
+	wr_u32b(house->dna->owner);
+	wr_byte(house->dna->owner_type);
+	wr_byte(house->dna->a_flags);
+	wr_u16b(house->dna->min_level);
+	wr_u32b(house->dna->price);
+	wr_u16b(house->flags);
+	wr_s32b(house->depth);
+	if(house->flags & HF_RECT){
+		wr_byte(house->coords.rect.width);
+		wr_byte(house->coords.rect.height);
+	}
+	else{
+		int i=0;
+		while(house->coords.poly[i] || house->coords.poly[i+1]){
+			wr_byte(house->coords.poly[i]);
+			wr_byte(house->coords.poly[i+1]);
+			i+=2;
+		}
+	}
+#else
 	wr_byte(house->x_1); // APD added for clearing out the house.
 	wr_byte(house->y_1);
 	wr_byte(house->x_2);
@@ -1088,6 +1114,7 @@ static void wr_house(house_type *house)
 
 	wr_s32b(house->depth);
 	wr_s32b(house->price);
+#endif
 }
 
 
@@ -2282,7 +2309,8 @@ static bool wr_server_savefile(void)
 	wr_u16b(tmp16u);
 
 	/* Dump the houses */
-	for (i = 0; i < tmp16u; i++) wr_house(&houses[i]); 
+	for (i = 0; i < tmp16u; i++)
+		wr_house(&houses[i]); 
 
 	/* Note the size of the wilderness 
 	 change this to num_wild ? */

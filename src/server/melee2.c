@@ -4380,7 +4380,6 @@ void process_monsters(void)
                 else
                 {
                         int p = find_player(m_ptr->owner);
-
                         process_monster_golem(p, i);
                 }
 

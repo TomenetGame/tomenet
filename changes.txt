@@ -117,3 +117,6 @@ Change list for PernMangband
 - Player Golems! One can find pieces of golem and make a powerfull ally
 - Level requirement for objects, exepct for the char that found it
 - Level requirments on objects
+
+04/08/2001
+- New houses ready for testing prior to potential server reset

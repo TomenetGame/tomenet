@@ -762,7 +762,6 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->stunned);
 	rd_byte(&m_ptr->confused);
 	rd_byte(&m_ptr->monfear);
-
         if (m_ptr->special)
         {
                 MAKE(m_ptr->r_ptr, monster_race);
@@ -933,6 +932,36 @@ static void rd_house(int n)
 {
 	house_type *house_ptr = &houses[n];
 
+#ifdef NEWHOUSES
+	rd_byte(&house_ptr->x); 
+	rd_byte(&house_ptr->y);
+	rd_byte(&house_ptr->dx); 
+	rd_byte(&house_ptr->dy);
+	MAKE(house_ptr->dna, struct dna_type);
+	rd_u32b(&house_ptr->dna->creator);
+	rd_u32b(&house_ptr->dna->owner);
+	rd_byte(&house_ptr->dna->owner_type);
+	rd_byte(&house_ptr->dna->a_flags);
+	rd_u16b(&house_ptr->dna->min_level);
+	rd_u32b(&house_ptr->dna->price);
+	rd_u16b(&house_ptr->flags);
+	rd_u32b(&house_ptr->depth);
+	if(house_ptr->flags&HF_RECT){
+		rd_byte(&house_ptr->coords.rect.width);
+		rd_byte(&house_ptr->coords.rect.height);
+	}
+	else{
+		int i=-2;
+		C_MAKE(house_ptr->coords.poly, MAXCOORD, byte);
+		do{
+			i+=2;
+			rd_byte(&house_ptr->coords.poly[i]);
+			rd_byte(&house_ptr->coords.poly[i+1]);
+		}while(house_ptr->coords.poly[i] || house_ptr->coords.poly[i+1]);
+		GROW(house_ptr->coords.poly, MAXCOORD, i+2, byte);
+	}
+
+#else
 	/* coordinates of corners of house */
 	rd_byte(&house_ptr->x_1); 
 	rd_byte(&house_ptr->y_1);
@@ -951,6 +980,7 @@ static void rd_house(int n)
 
 	rd_s32b(&house_ptr->depth);
 	rd_s32b(&house_ptr->price);
+#endif
 }
 
 static void rd_wild(int n)
@@ -2370,6 +2400,21 @@ errr rd_server_savefile()
 			rd_house(i);
 		}
 		num_houses = tmp16u;
+		/* insert houses into wild space if needed */
+		for (i=-MAX_WILD;i<0;i++){
+			if(cave[i]){
+				int j;
+				for(j=0;j<num_houses;j++){
+					if(houses[j].depth==i){
+						int x,y;
+						/* add the house dna */	
+						x=houses[j].dx;
+						y=houses[j].dy;
+						cave[i][y][x].special=houses[j].dna;
+					}
+				}
+			}
+		}
 	}
 
 	/* Read wilderness info if new enough */

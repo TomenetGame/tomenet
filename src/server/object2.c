@@ -31,7 +31,7 @@ void delete_object_idx(int o_idx)
 
 	cave_type *c_ptr = &cave[Depth][y][x];
 
-
+#ifndef NEWHOUSES
 	/* First, if this is a key, we need to reset the house */
 	/* it belongs to.  This is probably a hack. */
 	if (o_ptr->tval == TV_KEY)
@@ -55,6 +55,7 @@ void delete_object_idx(int o_idx)
 			houses[o_ptr->pval].owned--;
 		}
 	}
+#endif /* NEWHOUSES */
 
 	/* Wipe the object */
 	WIPE(o_ptr, object_type);
@@ -281,6 +282,7 @@ void wipe_o_list(int Depth)
 
 		/* Delete it */
 
+#ifndef NEWHOUSES
 		/* First, if this is a key, we need to reset the house */
 		/* it belongs to.  This is probably a hack. */
 		if (o_ptr->tval == TV_KEY)
@@ -300,6 +302,7 @@ void wipe_o_list(int Depth)
 			}			
 			
 		}
+#endif /* NEWHOUSES */
 
 		/* Wipe the object */
 		WIPE(o_ptr, object_type);

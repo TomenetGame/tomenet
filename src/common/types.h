@@ -957,6 +957,26 @@ corners of the house.
 -APD-
 */
 
+#ifdef NEWHOUSES
+#define HF_NONE 0x00
+#define HF_MOAT 0x01
+#define HF_RECT 0x02
+
+#define MAXCOORD 40		/* Maximum vertices on non-rect house */
+
+struct house_type{
+	byte x,y;		/* Absolute starting coordinates */
+	byte dx,dy;		/* door coords */
+	struct dna_type *dna;	/* house dna door information */
+	u16b flags;		/* house flags - HF_xxxx */
+	s32b depth;		/* wilderness house depth */
+	union{
+		struct{ byte width, height; }rect;
+		cptr poly;	/* coordinate array for non rect houses */
+	}coords;
+};
+
+#else
 struct house_type
 {
 	byte x_1;
@@ -973,6 +993,7 @@ struct house_type
 
 	s32b price;		/* Cost of buying */
 };
+#endif
 
 #define OT_PLAYER 1
 #define OT_PARTY 2
@@ -991,6 +1012,7 @@ struct dna_type{
 	byte owner_type;	/* OT_xxxx */
 	byte a_flags;		/* Combination of ACF_xxxx */
 	u16b min_level;		/* minimum level - no higher than admin level */
+	u32b price;		/* Speed before memory */
 };
 
 

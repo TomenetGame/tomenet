@@ -423,7 +423,11 @@ int pick_house(int Depth, int y, int x)
 	for (i = 0; i < num_houses; i++)
 	{
 		/* Check this one */
+#ifdef NEWHOUSES
+		if (houses[i].dx == x && houses[i].dy == y && houses[i].depth == Depth)
+#else
 		if (houses[i].door_x == x && houses[i].door_y == y && houses[i].depth == Depth)
+#endif
 		{
 			/* Return */
 			return i;
@@ -484,6 +488,7 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 			break;
 	}
 	if(newowner!=-1){
+		dna->creator=0L;
 		dna->owner=newowner;
 		return(TRUE);
 	}
@@ -493,6 +498,8 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 /* basic DEMO access new house door function. */
 bool access_door(int Ind, struct dna_type *dna){
 	player_type *p_ptr=Players[Ind];
+	if(!(strcmp(p_ptr->name,cfg_dungeon_master)) || !(strcmp(p_ptr->name,cfg_admin_wizard)))
+		return(TRUE);
 #ifdef NEWHOUSES
 	if(p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
 		return(FALSE); /* defies logic a bit, but for speed */
@@ -732,10 +739,13 @@ void do_cmd_open(int Ind, int dir)
 		/* Home */
 		else if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
 		{
+#ifndef NEWHOUSES
 			i = pick_house(Depth, y, x);
-
 			/* evileye hack new houses -demo */
 			if(i==-1 && c_ptr->special){ /* orig house failure */
+#else
+			if(c_ptr->special){ /* orig house failure */
+#endif /* NEWHOUSES */
 				if(access_door(Ind, c_ptr->special)){
 					/* Open the door */
 					c_ptr->feat=FEAT_HOME_OPEN;
@@ -751,9 +761,18 @@ void do_cmd_open(int Ind, int dir)
 					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 
 				}
+				else{
+					struct dna_type *dna=c_ptr->special;
+					if(dna->owner)
+						msg_print(Ind,"That house is owned already.");
+					
+					else
+						msg_format(Ind,"That house costs %ld gold.",dna->price);
+				}
 				return;
 			}
 
+#ifndef NEWHOUSES
 			/* See if he has the key in his inventory */
 			for (j = 0; j < INVEN_PACK; j++)
 			{
@@ -805,6 +824,7 @@ void do_cmd_open(int Ind, int dir)
 				/* Tell him the price */
 				msg_format(Ind, "This house costs %ld gold.", price);
 			}
+#endif /* !NEWHOUSES */
 		}
 
 		/* Closed door */
@@ -913,7 +933,11 @@ void do_cmd_close(int Ind, int dir)
 			p_ptr->energy -= level_speed(p_ptr->dun_depth);
 
 			/* Close the door */
+#ifdef NEWHOUSES
+			c_ptr->feat = FEAT_HOME_HEAD;
+#else
 			c_ptr->feat = FEAT_HOME_HEAD + houses[i].strength;
+#endif
 
 			/* Notice */
 			note_spot_depth(Depth, y, x);
@@ -3084,7 +3108,11 @@ void do_cmd_purchase_house(int Ind, int dir)
 	int factor;
 	long long price; // I'm hoping this will be 64 bits.  I dont know if it will be portable.
 	cave_type *c_ptr;
+#ifndef NEWHOUSES
 	object_type key;
+#else
+	struct dna_type *dna;
+#endif
 
 	/* Ghosts cannot buy houses */
 	if ( (p_ptr->ghost))
@@ -3105,22 +3133,69 @@ void do_cmd_purchase_house(int Ind, int dir)
 		/* Get requested grid */
 		c_ptr = &cave[Depth][y][x];
 
+#ifdef NEWHOUSES
+		if(!(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL && c_ptr->special))
+#else
 		/* Check for a house */
 		if ((i = pick_house(Depth, y, x)) == -1)
+#endif
 		{
 			/* No house, message */
 			msg_print(Ind, "You see nothing to buy there.");
 			return;
 		}
 
+#ifdef NEWHOUSES
+		dna=c_ptr->special;
+#endif
 		/* Take player's CHR into account */
 		factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 		//if (houses[i].price < 3000000)
+#ifdef NEWHOUSES
+		price = dna->price * factor / 100;
+#else
 			price = houses[i].price * factor / 100;
+#endif
 		/* Hack -- ignore CHR to prevent overflow */
 		//else price = houses[i].price;
 
 		/* Check for already-owned house */
+#ifdef NEWHOUSES
+		if(dna->owner){
+			if(access_door(Ind,dna)){
+				if(p_ptr->dna==dna->creator){
+					/* sell house */
+					p_ptr->au+=price/2;
+					p_ptr->redraw|=PR_GOLD;
+					msg_format(Ind, "You sell your house for %ld gold.", price/2);
+				}
+				else{
+					if(strcmp(p_ptr->name,cfg_admin_wizard)){
+						msg_print(Ind,"You cannot sell that house");
+						return;
+					}
+					else
+						msg_print(Ind,"The house is reset");
+				}
+				dna->creator=0L;
+				dna->owner=0L;
+				return;
+			}
+			msg_print(Ind,"That house does not belong to you!");
+			return;
+		}
+		if(price>p_ptr->au){
+			msg_print(Ind,"You do not have enough gold");
+			return;
+		}
+		msg_format(Ind, "You buy the house for %ld gold.", price);
+		p_ptr->au-=price;
+		dna->creator=p_ptr->dna;
+		dna->owner=p_ptr->id;
+		dna->owner_type=OT_PLAYER;
+		dna->a_flags=ACF_NONE;
+		dna->min_level=1;
+#else
 		if (houses[i].owned)
 		{
 			/*
@@ -3213,6 +3288,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 			
 		/* The house is now owned */
 		houses[i].owned = 1;
+#endif /* !NEWHOUSES */
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_GOLD);

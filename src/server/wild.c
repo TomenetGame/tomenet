@@ -1004,11 +1004,24 @@ static void wild_add_dwelling(int Depth, int x, int y)
 			/* Remember price */
 			
 			/* hack -- setup next possibile house addition */
+#ifdef NEWHOUSES
+			printf("Making wild house %d\n",num_houses);
+			MAKE(houses[num_houses].dna, struct dna_type);
+			houses[num_houses].dna->price = price;
+			houses[num_houses].x = h_x1+1;
+			houses[num_houses].y = h_y1+1;
+			houses[num_houses].flags = HF_RECT;
+			if(has_moat)
+				houses[num_houses].flags = HF_MOAT;
+			houses[num_houses].coords.rect.width = h_x1-h_x2;
+			houses[num_houses].coords.rect.height = h_y1-h_y2;
+#else
 			houses[num_houses].price = price;
 			houses[num_houses].x_1 = h_x1+1;
 			houses[num_houses].y_1 = h_y1+1;
 			houses[num_houses].x_2 = h_x2-1;
 			houses[num_houses].y_2 = h_y2-1;
+#endif
 			houses[num_houses].depth = Depth;
 			break;
 	}
@@ -1146,13 +1159,30 @@ static void wild_add_dwelling(int Depth, int x, int y)
 	if (type == WILD_TOWN_HOME)
 	{
 		/* hack -- only add a house if it is not already in memory */
-		if ((pick_house(Depth, door_y, door_x)) == -1)
+		if ((tmp=pick_house(Depth, door_y, door_x)) == -1)
 		{
+#ifdef NEWHOUSES
+			printf("Finishing wild house %d\n",num_houses);
+			c_ptr->special=houses[num_houses].dna;
+			houses[num_houses].dx = door_x;
+			houses[num_houses].dy = door_y;
+			houses[num_houses].dna->creator=0L;
+			houses[num_houses].dna->owner=0L;
+#else
 			houses[num_houses].door_y = door_y;
 			houses[num_houses].door_x = door_x;
 			houses[num_houses].owned = 0;
+#endif
 			num_houses++;
 		}
+#ifdef NEWHOUSES
+		else{
+			/* malloc madness otherwise */
+			printf("Deleting invalid wild house %d\n",num_houses);
+			KILL(houses[num_houses].dna, struct dna_type);
+			c_ptr->special=houses[tmp].dna;
+		}
+#endif
 	}
 		
 	/* make the building interesting */

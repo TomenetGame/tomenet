@@ -3745,7 +3745,6 @@ static void build_store(int n, int yy, int xx)
 		return;
 	}
 
-
 	/* House */
 	if (n == 13)
 	{
@@ -3773,11 +3772,21 @@ static void build_store(int n, int yy, int xx)
 		price *= 80 + randint(40);
 
 		/* Remember price */
+#ifdef NEWHOUSES
+		MAKE(houses[num_houses].dna, struct dna_type);
+		houses[num_houses].dna->price = price;
+		houses[num_houses].x=x1+1;
+		houses[num_houses].y=y1+1;
+		houses[num_houses].flags=HF_RECT;
+		houses[num_houses].coords.rect.width=x2-x1+1;
+		houses[num_houses].coords.rect.height=y2-y1+1;
+#else
 		houses[num_houses].price = price;
 		houses[num_houses].x_1 = x1+1;
 		houses[num_houses].y_1 = y1+1;
 		houses[num_houses].x_2 = x2-1;
 		houses[num_houses].y_2 = y2-1;
+#endif
 		houses[num_houses].depth = 0;
 	}
 
@@ -3829,19 +3838,37 @@ static void build_store(int n, int yy, int xx)
 	/* Some buildings get special doors */
 	if (n == 13)
 	{
+#ifndef NEWHOUSES
 		c_ptr->feat = FEAT_HOME_HEAD + houses[num_houses].strength;
+#endif
 
 		/* hack -- only create houses that aren't already loaded from disk */
-		if ((pick_house(0, y, x)) == -1)
+		if ((i=pick_house(0, y, x)) == -1)
 		{
 			/* Store door location information */
+#ifdef NEWHOUSES
+			c_ptr->feat = FEAT_HOME_HEAD;
+			c_ptr->special = houses[num_houses].dna;
+			houses[num_houses].dx=x;
+			houses[num_houses].dy=y;
+			houses[num_houses].dna->creator=0L;
+			houses[num_houses].dna->owner=0L;
+#else
 			houses[num_houses].door_y = y;
 			houses[num_houses].door_x = x;
 			houses[num_houses].owned = 0;
+#endif
 
 			/* One more house */
 			num_houses++;
 		}
+#ifdef NEWHOUSES
+		else{
+			KILL(houses[num_houses].dna, struct dna_type);
+			c_ptr->feat=FEAT_HOME_HEAD;
+			c_ptr->special=houses[i].dna;
+		}
+#endif
 	}
 	else if (n == 14) // auctionhouse
 	{
