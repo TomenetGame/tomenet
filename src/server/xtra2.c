@@ -4648,7 +4648,7 @@ bool target_set_friendly(int Ind, int dir)
 			if (check_hostile(Ind, i)) continue;
 
 			/* if we are in party, only help members */
-			if (p_ptr->party && (!player_in_party(p_ptr->party, Ind))) continue;
+			if (p_ptr->party && (!player_in_party(p_ptr->party, i))) continue;
 
 			/* Ignore "unreasonable" players */
 			if (!target_able(Ind, 0 - i)) continue;

@@ -30,8 +30,8 @@ bool player_in_party(int party_id, int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	/* Check */
-	if (p_ptr->party == party_id)
+	/* Check - Fail on non party */
+	if (party_id && p_ptr->party == party_id)
 		return TRUE;
 
 	/* Not in the party */
