@@ -1141,7 +1141,7 @@ void do_cmd_steal(int Ind, int dir)
 
 			/* True artifact is HARD to steal */
 			if ((artifact_p(o_ptr)) && (!o_ptr->name3)
-				&& ((Players[0 - c_ptr->m_idx]->exp > p_ptr->exp)
+				&& ((q_ptr->exp > p_ptr->exp)
 					|| (rand_int(500) > success )))
 			{
 				msg_print(Ind, "The object itself seems to evade your hand!");
@@ -1203,13 +1203,27 @@ void do_cmd_steal(int Ind, int dir)
 		int i, j;
 		object_type *o_ptr;
 
+		/* Purge this traitor */
+		if (p_ptr->party == q_ptr->party)
+		{
+			/* Lose a member */
+			parties[q_ptr->party].num--;
+
+			/* Set his party number back to "neutral" */
+			p_ptr->party = 0;
+
+			/* Messages */
+			msg_print(Ind, "You have been purged from your party.");
+			party_msg_format(q_ptr->party, "%s has betrayed your party!", p_ptr->name);
+
+		}
+
 		/* Make target hostile */
-//		add_hostility(0 - c_ptr->m_idx, p_ptr->name);
-		if (Players[0 - c_ptr->m_idx]->exp > p_ptr->exp / 2 - 200)add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+		if (q_ptr->exp > p_ptr->exp / 2 - 200) add_hostility(0 - c_ptr->m_idx, p_ptr->name);
 
 		/* Message */
 		msg_format(Ind, "\377r%s gave you an unexpected blow!",
-		           Players[0 - c_ptr->m_idx]->name);
+		           q_ptr->name);
 
 		set_stun(Ind, p_ptr->stun + randint(50));
 		set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
@@ -1233,7 +1247,7 @@ void do_cmd_steal(int Ind, int dir)
 		}
 
 		/* The target gets angry */
-		set_furry(0 - c_ptr->m_idx, Players[0 - c_ptr->m_idx]->furry + 15 + randint(15));
+		set_furry(0 - c_ptr->m_idx, q_ptr->furry + 15 + randint(15));
 
 	}
 
