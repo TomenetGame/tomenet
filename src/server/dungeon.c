@@ -2321,7 +2321,9 @@ static bool process_player_end_aux(int Ind)
 
 	/* Ghosts don't need food */
 	/* Allow AFK-hivernation if not hungry */
-	if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food > PY_FOOD_ALERT) && !p_ptr->admin_dm)
+	if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food > PY_FOOD_ALERT) && !p_ptr->admin_dm &&
+	    /* Don't starve in town (but recover from being gorged) - C. Blue */
+	    (!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_MAX))
 	{
 		/* Digest normally */
 		if (p_ptr->food < PY_FOOD_MAX)
