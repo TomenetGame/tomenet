@@ -3959,10 +3959,10 @@ if(cfg.unikill_format){
 							msg_print(Ind2, "\377G*** CONGRATULATIONS ***");
 							if (p_ptr2->mode & (MODE_HELL | MODE_NO_GHOST)) {
 								msg_format(Ind2, "\377GYou have won the game and are henceforth titled '%s'!", (p_ptr2->male)?"Emperor":"Empress");
-								msg_broadcast_format(Ind2, "\377v%s is henceforth known as %s %s", p_ptr2->name, (p_ptr2->male)?"Emperor":"Empress", p_ptr2->name);
+								if (!(p_ptr2->admin_dm && cfg.secret_dungeon_master)) msg_broadcast_format(Ind2, "\377v%s is henceforth known as %s %s", p_ptr2->name, (p_ptr2->male)?"Emperor":"Empress", p_ptr2->name);
 							} else {
 								msg_format(Ind2, "\377GYou have won the game and are henceforth titled '%s!'", (p_ptr2->male)?"King":"Queen");
-								msg_broadcast_format(Ind2, "\377v%s is henceforth known as %s %s", p_ptr2->name, (p_ptr2->male)?"King":"Queen", p_ptr2->name);
+								if (!(p_ptr2->admin_dm && cfg.secret_dungeon_master)) msg_broadcast_format(Ind2, "\377v%s is henceforth known as %s %s", p_ptr2->name, (p_ptr2->male)?"King":"Queen", p_ptr2->name);
 							}
 							msg_print(Ind2, "\377G(You may retire (by committing suicide) when you are ready.)");
 

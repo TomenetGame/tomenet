@@ -2950,6 +2950,7 @@ void wilderness_gen(struct worldpos *wpos)
 	int        i, y, x;
 	cave_type *c_ptr;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
+	wilderness_type *w_ptr2;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -3028,6 +3029,64 @@ void wilderness_gen(struct worldpos *wpos)
 	/* Set if we have generated the level before, to determine
 	   whether or not to respawn objects and monsters */
 	w_ptr->flags |= (WILD_F_GENERATED | WILD_F_INHABITED);
+
+
+	/* Indicate certain adjacent wilderness terrain types, so players
+	   won't suddenly get stuck in lava or mountains - C. Blue */
+	for (x = 1; x < MAX_WID - 1; x++)
+	{
+		if ((wpos->wy < MAX_HGT - 1) && magik(30)) {
+			w_ptr2 = &wild_info[wpos->wy + 1][wpos->wx];
+			c_ptr = &zcave[1][x];
+			switch(w_ptr2->type) {
+			case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
+//			case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
+			case WILD_LAKE: case WILD_RIVER:
+			case WILD_OCEANBED1: case WILD_OCEANBED2:
+			case WILD_OCEAN: c_ptr->feat = FEAT_SHAL_WATER; break;
+			case WILD_MOUNTAIN: c_ptr->feat = FEAT_MOUNTAIN; break;
+			}
+		}
+		if ((wpos->wy > 0) && magik(30)) {
+			w_ptr2 = &wild_info[wpos->wy - 1][wpos->wx];
+			c_ptr = &zcave[MAX_HGT-2][x];
+			switch(w_ptr2->type) {
+			case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
+//			case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
+			case WILD_LAKE: case WILD_RIVER:
+			case WILD_OCEANBED1: case WILD_OCEANBED2:
+			case WILD_OCEAN: c_ptr->feat = FEAT_SHAL_WATER; break;
+			case WILD_MOUNTAIN: c_ptr->feat = FEAT_MOUNTAIN; break;
+			}
+		}
+	}
+	for (y = 1; y < MAX_HGT - 1; y++)
+	{
+		if ((wpos->wx < MAX_WID - 1) && magik(30)) {
+			w_ptr2 = &wild_info[wpos->wy][wpos->wx + 1];
+			c_ptr = &zcave[y][MAX_WID-2];
+			switch(w_ptr2->type) {
+			case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
+//			case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
+			case WILD_LAKE: case WILD_RIVER:
+			case WILD_OCEANBED1: case WILD_OCEANBED2:
+			case WILD_OCEAN: c_ptr->feat = FEAT_SHAL_WATER; break;
+			case WILD_MOUNTAIN: c_ptr->feat = FEAT_MOUNTAIN; break;
+			}
+		}
+		if ((wpos->wx > 0) && magik(30)) {
+			w_ptr2 = &wild_info[wpos->wy][wpos->wx - 1];
+			c_ptr = &zcave[y][1];
+			switch(w_ptr2->type) {
+			case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
+//			case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
+			case WILD_LAKE: case WILD_RIVER:
+			case WILD_OCEANBED1: case WILD_OCEANBED2:
+			case WILD_OCEAN: c_ptr->feat = FEAT_SHAL_WATER; break;
+			case WILD_MOUNTAIN: c_ptr->feat = FEAT_MOUNTAIN; break;
+			}
+		}
+	}
 }
 
 

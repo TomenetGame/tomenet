@@ -1872,9 +1872,9 @@ void store_stole(int Ind, int item)
 	}
 
 	/* Level restriction (mainly anticheeze) */
-	if (p_ptr->lev < 10)
+	if (p_ptr->lev < 5)
 	{
-		msg_print(Ind, "You dare not to!");
+		msg_print(Ind, "You dare not to! Your level needs to be 5 at least.");
 		return;
 	}
 

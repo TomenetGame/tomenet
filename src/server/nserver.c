@@ -5625,13 +5625,17 @@ static int Receive_mind(int ind)
 
 			if (d)
 			  {
-			    msg_format(player, "\377RThe mind link with %s begins to break.", p_ptr2->name);
-			    msg_format(Ind2, "\377RThe mind link with %s begins to break.", p_ptr->name);
+			    if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
+				msg_format(player, "\377RThe mind link with %s begins to break.", p_ptr2->name);
+				msg_format(Ind2, "\377RThe mind link with %s begins to break.", p_ptr->name);
+			    }
 			  }
 			else
 			  {
-			    msg_format(player, "\377RThe mind link with %s stabilizes.", p_ptr2->name);
-			    msg_format(Ind2, "\377RThe mind link with %s stabilizes.", p_ptr->name);
+			    if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
+				msg_format(player, "\377RThe mind link with %s stabilizes.", p_ptr2->name);
+				msg_format(Ind2, "\377RThe mind link with %s stabilizes.", p_ptr->name);
+			    }
 			  }
 		      }
 		  }
@@ -8165,7 +8169,8 @@ static int Receive_autophase(int ind)
 void end_mind(int Ind, bool update)
 {
 	player_type *p_ptr=Players[Ind];
-	msg_print(Ind, "\377REnding mind link.");
+	if (!(p_ptr->esp_link_flags & LINKF_HIDDEN))
+		msg_print(Ind, "\377REnding mind link.");
 	p_ptr->esp_link = 0;
 	p_ptr->esp_link_type = 0;
 	p_ptr->esp_link_flags = 0;

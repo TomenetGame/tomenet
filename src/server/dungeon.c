@@ -16,7 +16,7 @@
 
 /* chance of townie respawning like other monsters, in % [50] */
 #ifndef HALLOWEEN
-#define TOWNIE_RESPAWN_CHANCE	67
+#define TOWNIE_RESPAWN_CHANCE	33
 #else
 #define TOWNIE_RESPAWN_CHANCE	100	/* better for Helloween event */
 #endif
@@ -3234,8 +3234,10 @@ static bool process_player_end_aux(int Ind)
 				{
 					player_type *p_ptr2 = Players[Ind2];
 
-					msg_format(Ind, "\377RYou break the mind link with %s.", p_ptr2->name);
-					msg_format(Ind2, "\377R%s breaks the mind link with you.", p_ptr->name);
+					if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
+						msg_format(Ind, "\377RYou break the mind link with %s.", p_ptr2->name);
+						msg_format(Ind2, "\377R%s breaks the mind link with you.", p_ptr->name);
+					}
 					p_ptr->esp_link = 0;
 					p_ptr->esp_link_type = 0;
 					p_ptr->esp_link_flags = 0;

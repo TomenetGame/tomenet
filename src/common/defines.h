@@ -4699,6 +4699,8 @@ extern int PlayerUID;
 /* Ready to receive items via telekinesis - 
    to prevent exploiting this for PK! - C. Blue: */
 #define LINKF_TELEKIN	0x0040
+/* Additional link flags */
+#define LINKF_HIDDEN	0x0080 /* No link status messages */
 
 /* Monster gaining levels */
 #define MONSTER_LEVEL_MAX       500
