@@ -22,9 +22,10 @@ void handle(struct client *ccl);
 void relay(struct wpacket *wpk, struct client *talker);
 void wproto(struct client *ccl);
 void addclient(int fd);
-struct client *remclient(struct client *dcl);
+void remclient(struct list *dlp);
+struct list *remlist(struct list **head, struct list *dlp);
 
-struct client *clist=NULL;
+struct list *clist=NULL;	/* struct client */
 
 void world(int ser){
 	int sl;
@@ -39,11 +40,13 @@ void world(int ser){
 	while(1){
 		int mfd=ser;
 		struct client *c_cl;
+		struct list *lp;
 
 		FD_ZERO(&fds);
 		FD_SET(ser, &fds);
 
-		for(c_cl=clist; c_cl; c_cl=c_cl->next){
+		for(lp=clist; lp; lp=lp->next){
+			c_cl=(struct client*)lp->data;
 			mfd=MAX(mfd, c_cl->fd);
 			FD_SET(c_cl->fd, &fds);
 		}
@@ -74,13 +77,17 @@ void world(int ser){
                         fprintf(stderr, "added!\n");
 		}
 
-		for(c_cl=clist; c_cl; c_cl=c_cl->next)
-			if(FD_ISSET(c_cl->fd, &fds)) handle(c_cl);
-		c_cl=clist;
-		while(c_cl){
-			if(c_cl->flags & CL_QUIT || (c_cl->authed==-1 && secure.secure))
-				c_cl=remclient(c_cl);
-			else c_cl=c_cl->next;
+		for(lp=clist; lp; lp=lp->next)
+			if(FD_ISSET(((struct client*)lp->data)->fd, &fds)) handle((struct client*)lp->data);
+
+		lp=clist;
+		while(lp){
+			c_cl=(struct client*)lp->data;
+			if(c_cl->flags & CL_QUIT || (c_cl->authed==-1 && secure.secure)){
+				remclient(lp);
+				lp=remlist(&clist, lp);
+			}
+			else lp=lp->next;
 		}
 	}
 }
@@ -155,9 +162,12 @@ void wproto(struct client *ccl){
 			case WP_PMSG:
 				/* MUST be authed for private messages */
 				if(ccl->authed>0){
+					struct list *lp;
 					struct client *dcl;
 					wpk->serverid=ccl->authed;
-					for(dcl=clist; dcl; dcl=dcl->next){
+
+					for(lp=clist; lp; lp=lp->next){
+						dcl=(struct client*)lp->data;
 						if(dcl->authed==wpk->d.pmsg.sid){
 							send(dcl->fd, wpk, sizeof(struct wpacket), 0); 
 						}
@@ -200,9 +210,11 @@ void wproto(struct client *ccl){
 /* Send duplicate packet to all servers except originating
    one */
 void relay(struct wpacket *wpk, struct client *talker){
+	struct list *lp;
 	struct client *ccl;
 	wpk->serverid=talker->authed;
-	for(ccl=clist; ccl; ccl=ccl->next){
+	for(lp=clist; lp; lp=lp->next){
+		ccl=(struct client*)lp->data;
 		if(ccl!=talker){
 			send(ccl->fd, wpk, sizeof(struct wpacket), 0); 
 			/* Temporary stderr output */
@@ -222,46 +234,68 @@ void reply(struct wpacket *wpk, struct client *ccl){
 	}
 }
 
+/* Generic list handling function */
+struct list *addlist(struct list **head, int dsize){
+	struct list *newlp;
+	newlp=malloc(sizeof(struct list));
+	if(newlp){
+		newlp->data=malloc(dsize);
+		if(newlp->data!=NULL){
+			newlp->next=*head;
+			*head=newlp;
+			return(newlp);
+		}
+		free(newlp);
+	}
+	return(NULL);
+}
+
 /* add a new client to the server's list */
 void addclient(int fd){
+	struct list *lp;
 	struct client *ncl;
-	ncl=malloc(sizeof(struct client));
-	if(ncl){
+
+	lp=addlist(&clist, sizeof(struct client));
+	if(lp!=(struct list*)NULL){
+		ncl=(struct client*)lp->data;
 		memset(ncl, 0, sizeof(struct client));
 		ncl->fd=fd;
-		ncl->next=clist;
 		ncl->authed=0;
 		initauth(ncl);
-		clist=ncl;
 	}
 }
 
-struct client *remclient(struct client *dcl){
+/* Generic list handling function */
+struct list *remlist(struct list **head, struct list *dlp){
+	struct list *lp;
+	lp=*head;
+	if(dlp==*head){
+		*head=lp->next;
+		free(dlp->data);
+		free(dlp);
+		return(*head);
+	}
+	while(lp){
+		if(lp->next==dlp){
+			lp->next=dlp->next;
+			free(dlp->data);
+			free(dlp);
+			return(lp->next);
+		}
+		lp=lp->next;
+	}
+	return(dlp->next);
+}
+
+void remclient(struct list *dlp){
 	struct client *ccl;
-	ccl=clist;
-	if(dcl->authed>0){
+	ccl=(struct client *)dlp->data;
+	if(ccl->authed>0){
 		/* Tell other servers if an authed server goes down */
 		struct wpacket spk;
-		rem_players(dcl->authed);
+		rem_players(ccl->authed);
 		spk.type=WP_SQUIT;
-		spk.d.sid=dcl->authed;
-		relay(&spk, dcl);
+		spk.d.sid=ccl->authed;
+		relay(&spk, ccl);
 	}
-	if(dcl==clist){
-		clist=ccl->next;
-		close(dcl->fd);
-		free(dcl);
-		return(clist);
-	}
-	while(ccl){
-		if(ccl->next==dcl){
-			ccl->next=dcl->next;
-			close(dcl->fd);
-			free(dcl);
-			return(ccl->next);
-		}
-		ccl=ccl->next;
-	}
-	fprintf(stderr, "Unable to remove connection\n");
-	return(clist);
 }

@@ -33,11 +33,31 @@ struct serverinfo{
 	char pass[20];	/* server plaintext password */
 };
 
+/* Single linked list - its not like we are sorting it */
+struct list{
+	struct list *next;
+	void *data;		/* pointer to the data structure */
+};
+
 struct rplist{
-	struct rplist *next;
 	unsigned long id;
 	short server;
 	char name[30];
+};
+
+/* linked list will use less mem */
+struct objlock{
+	short owner;		/* Owner ID */
+	unsigned long ttl;	/* time to live for non final lock */
+	unsigned long obj;	/* lock object by number (monster, item etc.) */
+};
+
+struct client{
+	int fd;
+	unsigned short flags;
+	short authed;		/* Server ID (>0), authing (0), or failed authentication (-1) */
+	unsigned short blen;
+	char buf[1024];
 };
 
 struct secure{
@@ -45,23 +65,6 @@ struct secure{
 	short chat;	/* Permit chat if unauthed (and not secure) */
 	short play;	/* Players online messages (no tracing on unauthed) */
 	short msgs;	/* Permit server messages */
-};
-
-/* linked list will use less mem */
-struct objlock{
-	struct objlock *next;
-	short owner;		/* Owner ID */
-	unsigned long ttl;	/* time to live for non final lock */
-	unsigned long obj;	/* lock object by number (monster, item etc.) */
-};
-
-struct client{
-	struct client *next;
-	int fd;
-	unsigned short flags;
-	short authed;		/* Server ID (>0), authing (0), or failed authentication (-1) */
-	unsigned short blen;
-	char buf[1024];
 };
 
 /* The structures of these packets will be
@@ -96,6 +99,7 @@ struct pmsg{
 
 struct sinfo{
 	unsigned short sid;
+	unsigned short port;	/* needed for client transfers */
 	char name[30];
 };
 

@@ -8,7 +8,10 @@
 
 extern int bpipe;
 
-static struct rplist *rpmlist=NULL;
+static struct list *rpmlist=NULL;
+
+struct list *addlist(struct list **head, int dsize);
+struct list *remlist(struct list **head, struct list *dlp);
 
 /* Send server information to other servers */
 void send_sinfo(struct client *ccl, struct client *priv){
@@ -29,25 +32,29 @@ void send_sinfo(struct client *ccl, struct client *priv){
  * world.
  */
 void send_rplay(struct client *ccl){
+	struct list *clp, *rlp;
 	struct rplist *c_pl;
 	struct client *c_cl;
 	struct wpacket spk;
 
 	/* Send online server info */
-	c_cl=clist;
-	while(c_cl){
+	clp=clist;
+
+	for(clp=clist; clp; clp=clp->next){
+		c_cl=(struct client*)clp->data;
 		if(c_cl==ccl) continue;
 		if(c_cl->authed<=0) continue;
 		send_sinfo(c_cl, ccl);
-		c_cl=c_cl->next;
+		clp=clp->next;
 	}
 
 	/* Send online player login packets */
-	c_pl=rpmlist;
+	rlp=rpmlist;
 	spk.type=WP_NPLAYER;
 	spk.serverid=0;
 	spk.d.play.silent=1;
-	while(c_pl){
+	while(rlp){
+		c_pl=(struct rplist*)rlp->data;
 		spk.d.play.id=c_pl->id;
 		spk.d.play.server=c_pl->server;
 		strncpy(spk.d.play.name, c_pl->name, 30);
@@ -57,56 +64,50 @@ void send_rplay(struct client *ccl){
 			fprintf(stderr, "SIGPIPE from send_rplay (fd: %d)\n", ccl->fd);
 			bpipe=0;
 		}
-		c_pl=c_pl->next;
+		rlp=rlp->next;
 	}
 }
 
+/* Remove all players from a server */
 void rem_players(short id){
-	struct rplist *c_pl, *p_pl, *d_pl;
-	c_pl=rpmlist;
-	p_pl=c_pl;
-	while(c_pl){
-		d_pl=NULL;
+	struct rplist *c_pl;
+	struct list *lp;
+
+	lp=rpmlist;
+	while(lp){
+		c_pl=(struct rplist*)lp->data;
 		if(c_pl->server==id){
-			if(c_pl==rpmlist)
-				rpmlist=c_pl->next;
-			else
-				p_pl->next=c_pl->next;
-			d_pl=c_pl;
+			lp=remlist(&rpmlist, lp);
 		}
-		p_pl=c_pl;
-		c_pl=c_pl->next;
-		if(d_pl) free(d_pl);
+		else lp=lp->next;
 	}
 }
 
 void add_rplayer(struct wpacket *wpk){
+	struct list *lp;
 	struct rplist *n_pl, *c_pl;
 	unsigned short found=0;
 
 	if(wpk->type==WP_NPLAYER && !wpk->d.play.server) return;
-	c_pl=rpmlist;
-	while(c_pl){
+	lp=rpmlist;
+	while(lp){
+		c_pl=(struct rplist*)lp->data;
 		if(/* c_pl->id==wpk->d.play.id && */ !(strcmp(c_pl->name, wpk->d.play.name))){
 			found=1;
 			break;
 		}
-		n_pl=c_pl;
-		c_pl=c_pl->next;
+		lp=lp->next;
 	}
+
 	if(wpk->type==WP_NPLAYER && !found){
-		n_pl=malloc(sizeof(struct rplist));
-		n_pl->next=rpmlist;
-		n_pl->id=wpk->d.play.id;
-		n_pl->server=wpk->d.play.server;
-		strncpy(n_pl->name, wpk->d.play.name, 30);
-		rpmlist=n_pl;
+		lp=addlist(&rpmlist, sizeof(struct rplist));
+		if(lp){
+			n_pl=(struct rplist*)lp->data;
+			n_pl->id=wpk->d.play.id;
+			n_pl->server=wpk->d.play.server;
+			strncpy(n_pl->name, wpk->d.play.name, 30);
+		}
 	}
-	else if(wpk->type==WP_QPLAYER && found){
-		if(c_pl==rpmlist)
-			rpmlist=c_pl->next;
-		else
-			n_pl->next=c_pl->next;
-		free(c_pl);
-	}
+	else if(wpk->type==WP_QPLAYER && found)
+		remlist(&rpmlist, lp);
 }

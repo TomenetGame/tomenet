@@ -52,6 +52,7 @@ short pwcheck(char *cpasswd, unsigned long val){
 	fprintf(stderr, "authing..\n");
 	for(i=0; i<snum; i++){
 		if(val==chk(slist[i].pass, cpasswd)){
+			printf("auth success\n");
 			return(i+1);
 		}
 	}
