@@ -3085,7 +3085,8 @@ void dungeon(void)
 					startx = rand_int(MAX_WID-3)+1;
 				}
 				while (  (zcave[starty][startx].info & CAVE_ICKY)
-				      || (!cave_floor_bold(zcave, starty, startx)) );
+					|| (zcave[starty][startx].feat==FEAT_WATER)
+					|| (!cave_floor_bold(zcave, starty, startx)) );
 				break;
 		}
 
