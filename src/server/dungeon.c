@@ -2138,7 +2138,7 @@ static bool process_player_end_aux(int Ind)
 			/* Player can walk through trees */
 			//if ((PRACE_FLAG(PR1_PASS_TREE) || (get_skill(SKILL_DRUID) > 15)) && (cave[py][px].feat == FEAT_TREES))
 #if 0
-			if ((p_ptr->prace == RACE_ENT || p_ptr->fly) &&
+			if ((p_ptr->pass_trees || p_ptr->fly) &&
 					(c_ptr->feat == FEAT_TREES))
 #endif	// 0
 			if (player_can_enter(Ind, c_ptr->feat))

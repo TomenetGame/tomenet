@@ -2360,11 +2360,12 @@ void do_cmd_look(int Ind, int dir)
 		/* Format string */
 		if (q_ptr->body_monster)
 		{
-			sprintf(out_val, "%s the %s", q_ptr->name, r_name + r_info[q_ptr->body_monster].name);
+			sprintf(out_val, "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)? (q_ptr->lev)/5 : 10]);
 		}
 		else
 		{
-			sprintf(out_val, "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title);
+			sprintf(out_val, "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10]);
+			//, class_info[q_ptr->pclass].title
 		}
 	}
 	else if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx])	/* TODO: handle monster mimics */

@@ -138,7 +138,7 @@ static void prt_title(int Ind)
 	/* Normal */
 	else
 	{
-		p = player_title[p_ptr->pclass][(p_ptr->lev-1)/10];
+		p = player_title[p_ptr->pclass][((p_ptr->lev/5) < 10)? (p_ptr->lev/5) : 10];
 	}
 
 	/* Ghost */
@@ -1482,7 +1482,7 @@ static void calc_body_bonus(int Ind)
 		case 111:	case 865:
 		{
 			p_ptr->resist_blind = TRUE;
-			p_ptr->climb = TRUE;
+			if (p_ptr->lev >= 30) p_ptr->climb = TRUE;
 			break;
 		}
 		
@@ -1512,6 +1512,7 @@ static void calc_body_bonus(int Ind)
 			if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
 
 			p_ptr->can_swim = TRUE; /* wood? */
+			p_ptr->pass_trees = TRUE;
 		}
 		
 		/* Ghosts get additional boni - undead see below */
@@ -1530,6 +1531,9 @@ static void calc_body_bonus(int Ind)
 			break;
 		}
 	}
+	
+	if ((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL))
+		p_ptr->pass_trees = TRUE;
 
 	/* Orcs get resist_dark */
 	if(r_ptr->flags3 & RF3_ORC) p_ptr->resist_dark = TRUE;
@@ -2059,6 +2063,7 @@ void calc_bonuses(int Ind)
 	p_ptr->fly = FALSE;
 	p_ptr->can_swim = FALSE;
 	p_ptr->climb = FALSE;
+	p_ptr->pass_trees = FALSE;
         p_ptr->reduc_fire = 0;
         p_ptr->reduc_cold = 0;
         p_ptr->reduc_elec = 0;
@@ -2188,7 +2193,8 @@ void calc_bonuses(int Ind)
 	{
 		p_ptr->resist_blind = TRUE;
 		/* not while in mimicried form */
-		if(!p_ptr->body_monster) p_ptr->climb = TRUE;
+		if(!p_ptr->body_monster)
+		    if (p_ptr->lev >= 30) p_ptr->climb = TRUE;
 	}
 
 	/* Half-Orc */
@@ -2228,6 +2234,7 @@ void calc_bonuses(int Ind)
 		if(!p_ptr->body_monster)
 		{
 			p_ptr->can_swim = TRUE; /* wood? */
+			p_ptr->pass_trees = TRUE;
 			p_ptr->pspeed -= 2;
 		}
 
@@ -2257,6 +2264,9 @@ void calc_bonuses(int Ind)
 		if (!p_ptr->body_monster)
 		    if (p_ptr->lev >= 30) p_ptr->fly = TRUE;
 	}
+
+	if (p_ptr->pclass == CLASS_RANGER)
+	    if (p_ptr->lev >= 20) p_ptr->pass_trees = TRUE;
 
 	/* Compute antimagic */
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))

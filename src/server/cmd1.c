@@ -3480,10 +3480,7 @@ bool player_can_enter(int Ind, byte feature)
 		case FEAT_TREES:
 		{
 			/* 708 = Ent (passes trees), 83/142 novice ranger, 345 ranger, 637 ranger chieftain, 945 high-elven ranger */
-			if ((p_ptr->fly) || (p_ptr->prace == RACE_ENT) || pass_wall ||
-			    (p_ptr->pclass == CLASS_RANGER) ||
-			    (p_ptr->body_monster == 708) || (p_ptr->body_monster == 83) || (p_ptr->body_monster == 142) ||
-			    (p_ptr->body_monster == 345) || (p_ptr->body_monster == 637) || (p_ptr->body_monster == 945))
+			if ((p_ptr->fly) || (p_ptr->pass_trees) || pass_wall)
 #if 0
 					(PRACE_FLAG(PR1_PASS_TREE)) ||
 				(get_skill(SKILL_DRUID) > 15) ||
@@ -3912,7 +3909,7 @@ void move_player(int Ind, int dir, int do_pickup)
 #if 0
 		/* Hack -- Exception for trees (in a bad way :-/) */
 		if (!myhome && c_ptr->feat == FEAT_TREES &&
-				(p_ptr->fly || p_ptr->prace == RACE_ENT))
+				(p_ptr->fly || p_ptr->pass_trees))
 			myhome = TRUE;
 #endif	// 0
 

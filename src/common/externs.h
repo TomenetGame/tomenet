@@ -57,7 +57,7 @@ extern player_magic magic_info[MAX_CLASS];
 extern u32b spell_flags[2][9][2];
 extern cptr spell_names[2][64];
 extern byte chest_traps[64];
-extern cptr player_title[MAX_CLASS][PY_MAX_LEVEL/5];
+extern cptr player_title[MAX_CLASS][11];
 extern cptr color_names[16];
 extern cptr sound_names[SOUND_MAX];
 extern cptr stat_names[6];

@@ -3806,7 +3806,7 @@ byte chest_traps[64] =
  * The player gets a new title every five levels, so each class
  * needs only ten titles total.
  */
-cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
+cptr player_title[MAX_CLASS][11] =
 {
 	/* Adventurer */
 	{
@@ -3814,6 +3814,7 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"Walker",
 		"Tripper",
 		"Tourist",
+		"Strider",
 		"Voyager",
 		"Traveller",
 		"Spelunker",
@@ -3825,10 +3826,11 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 	/* Warrior */
 	{
 		"Rookie",
-		"Soldier",
 		"Mercenary",
+		"Soldier",
+		"Captain",
 		"Veteran",
-		"Swordsman",
+		"General",
 		"Champion",
 		"Hero",
 		"Baron",
@@ -3845,9 +3847,10 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"Spellbinder",
 		"Evoker",
 		"Conjurer",
-		"Warlock",
 		"Sorcerer",
+		"Warlock",
 		"Mage Lord",
+		"Arch-Mage",
 	},
 
 	/* Priest */
@@ -3857,11 +3860,12 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"Adept",
 		"Curate",
 		"Canon",
-		"Lama",
-		"Patriarch",
 		"Priest",
+		"Bishop",
+		"Arch-Bishop",
 		"High Priest",
 		"Priest Lord",
+		"Patriarch",
 	},
 
 	/* Rogues */
@@ -3875,21 +3879,23 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"Thief",
 		"Master Thief",
 		"Infiltrator",
+		"Grand Master Thief",
 		"Assassin",
         },
 
 	/* Mimic */
 	{
 		"Pretender",
-		"Copier",
 		"Modifier",
+		"Copier",
 		"Multiple (1st)",
 		"Multiple (2nd)",
-		"Changer",
+		"Shapeshifter",
 		"Metamorph",
-		"Master Metamorph",
-		"Master Shapeshifter",
-		"Ultimate Shapeshifter",
+		"Changer",
+		"Master Changer",
+		"Grand Master Changer",
+		"Ultimate Changer",
 	},
 
 	/* Archer */
@@ -3903,6 +3909,7 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"High Archer",
 		"Great Archer",
 		"Veteran Archer",
+		"Master Archer",
 		"Grand Master Archer",
 	},
 
@@ -3911,6 +3918,7 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"Squire",
 		"Acolyte",
 		"Faithful",
+		"Zealot",
 		"Defender",
 		"Crusader",
 		"Knight",
@@ -3923,12 +3931,13 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
         /* Ranger */
 	{
 		"Rookie",
-		"Strider",
+		"Path Finder",
 		"Deputy",
 		"Guard",
 		"Scout",
 		"Sentry",
 		"Overseer",
+		"Guard Captain",
 	        "Ranger",
 	        "High Ranger",
                 "Ranger Chieftain",

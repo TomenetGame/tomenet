@@ -2311,6 +2311,7 @@ struct player_type
 	bool climb;             /* Can climb mountains */
 	bool fly;               /* Can fly over some features */
 	bool can_swim;		/* Can swim like a fish (or Lizard..whatever) */
+	bool pass_trees;	/* Can pass thick forest */
 
 	//        byte anti_magic_spell;    /* Anti-magic(newer one..) */
 	byte antimagic;    		/* Anti-magic(in percent) */

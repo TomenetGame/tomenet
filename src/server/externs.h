@@ -110,7 +110,7 @@ extern u32b spell_flags[MAX_REALM - 1][9][2];
 extern cptr spell_names[MAX_REALM][64];
 
 extern byte chest_traps[64];
-extern cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10];
+extern cptr player_title[MAX_CLASS][11];
 extern magic_type innate_powers[96];
 extern martial_arts ma_blows[MAX_MA];
 //extern skill_type s_info[MAX_SKILLS];
