@@ -105,7 +105,8 @@ int pick_ego_monster(int r_idx, int Level);
 /* Monster gain a few levels ? */
 void monster_check_experience(int m_idx, bool silent)
 {
-	int		levels_gained = 0, i, try;
+	int		i, try;
+	u32b		levels_gained = 0, levels_gained_tmp = 0;
         monster_type    *m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
 
@@ -155,7 +156,8 @@ void monster_check_experience(int m_idx, bool silent)
 
 		/* Gain melee power */
 		/* XXX 20d1 monster can be too horrible (20d5) */
-		if (magik(50))
+//		if (magik(50))
+		if (magik(80))
 		{
 #if 0 /* yeah whatever.. */
 			i = rand_int(4);
@@ -177,10 +179,47 @@ void monster_check_experience(int m_idx, bool silent)
 	/* +3000: (40 -> 18, 35 -> ,) 30 -> 15, 25 -> , 20 -> 12, 15 -> , 10 -> 7, 5 -> 4 */
 	/* L+40 -> x25, L+35 -> x20, L+30 -> x16, L+25 -> x12, L+20 -> x9, L+15 -> x6, L+10 -> x4, L+5 -> x2 */
 	if (levels_gained != 0) levels_gained = 100000 / ((100000 / levels_gained) + 1000);
+	/* cap stronger for higher monsters */
+//	if (levels_gained != 0) levels_gained = 100000 / ((100000 / levels_gained) + 1000 - (10000/(r_ptr->level+10)));
 
+	/* for more accurate results, add 2 figures */
+	levels_gained *= 100;
+	/* for +20 levels_gained -> double the melee damage output, store the multiplier in levels_gained */
+	levels_gained /= 25; /* +25 -> +1x */
+	/* at least x1 */
+	levels_gained += 100;
+
+	/* very low level monsters get a boost for damage output */
+	levels_gained += 1600 / (r_ptr->level + 10);
+
+	/* calculate square root of the factor, to apply to dice & dice sides */
+	levels_gained *= 1000;
+	levels_gained_tmp = 1;
+	while (levels_gained > 1000) {
+		levels_gained *= 1000;
+		levels_gained /= 1320;
+		levels_gained_tmp *= 1149;
+		if (levels_gained_tmp >= 1000000) levels_gained_tmp /= 1000;
+	}
+	/* keep some figures for more accuracy (instead of / 1000) */
+	levels_gained_tmp /= 100; /* now is value * 100. so we have 2 extra accuracy figures */
+	
 	for (i = 0; i < 4; i++) {
-	    m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * levels_gained) / 10;
-	    m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * levels_gained) / 10;
+//	    	m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * levels_gained) / 10;
+//		m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * levels_gained) / 10;
+//		m_ptr->blow[i].d_dice += levels_gained;
+		/* round upwards */
+		if (((m_ptr->blow[i].d_dice * (levels_gained_tmp - 100) / 100) * 100) <
+		    (m_ptr->blow[i].d_dice * (levels_gained_tmp - 100)))
+			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_tmp - 100) / 100) + 1;
+		else
+			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_tmp - 100) / 100);
+		/* round upwards sometimes */
+		if (((m_ptr->blow[i].d_side * (levels_gained_tmp - 100) / 100) * 100) <
+		    (m_ptr->blow[i].d_side * (levels_gained_tmp - 100)))
+			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_tmp - 100) / 100) + 1;
+		else
+			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_tmp - 100) / 100);
 	}
 }
 
@@ -2419,24 +2458,35 @@ if (r_idx == 862) s_printf("Ok 5\n");
 	   the monster, don't spawn it. (For Morgoth, especially) -C. Blue */
 	if (r_ptr->flags1 & RF1_UNIQUE)
 	{
-		int on_level, who_killed;
+		int on_level = 0, who_killed = 0;
+		int admin_on_level = 0, admin_who_killed = 0;
 		for (i = 1; i <= NumPlayers; i++)
 		{
-			/* Skip the dungeon master - no need to skip him atm. */
+			/* Skip the dungeon master - note:
+			   this will provide maximum security against summoning flaws vs players,
+			   on the other hand this will prevent the DM from summoning uniques!
+			   (Solution: a master_summon flag should be added to this summon routine.) */
 //			if (Players[i]->admin_dm) continue;
 
 			/* Count how many players are here */
 			if (inarea(&Players[i]->wpos, wpos))
 			{
-				on_level++;
+				if (Players[i]->admin_dm) admin_on_level++;
+				else on_level++;
 
 				/* Count how many of them have killed this unique monster */
-				if (Players[i]->r_killed[r_idx])
-					who_killed++;
+				if (Players[i]->r_killed[r_idx]) {
+					if (Players[i]->admin_dm) admin_who_killed++;
+					else who_killed++;
+				}
 			}
 		}
 		/* If all of them already killed it it must not be spawned */
-		if (on_level == who_killed) return(FALSE);
+		/* If players are on the level, they exclusively determine the unique summonability. */
+		if ((on_level > 0) && (on_level <= who_killed)) return(FALSE); /* should be '==', but for now lets be tolerant */
+		/* If only admins are on the level, allow unique creation
+		   if it fits the admin's unique mask */
+		if ((on_level == 0) && (admin_on_level <= admin_who_killed)) return(FALSE);
 	}
 #ifdef DEBUG1
 if (r_idx == 862) s_printf("Ok 6\n");

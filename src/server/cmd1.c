@@ -2196,7 +2196,11 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 						break;
 					case RBE_TERRIFY:
 						fear_chance = 50 + (p_ptr->lev - q_ptr->lev) * 5;
-						if (rand_int(100) < fear_chance)
+		                                if (q_ptr->resist_fear)
+		                                {
+		                                        msg_format(Ind, "%^s is unaffected.", p_name);
+	                                        }
+						else if (rand_int(100) < fear_chance)
 						{
 							msg_format(Ind, "%^s appears afraid.", p_name);
 							set_afraid(0 - c_ptr->m_idx, q_ptr->afraid + 4 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
@@ -4231,7 +4235,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		else Send_floor(Ind, 0);
 
 		/* Handle "store doors" */
-		if ((!p_ptr->ghost) &&
+		if (((!p_ptr->ghost) || p_ptr->admin_dm || p_ptr->admin_wiz) &&
 		    (c_ptr->feat == FEAT_SHOP))
 #if 0
 		    (c_ptr->feat >= FEAT_SHOP_HEAD) &&

@@ -1810,8 +1810,8 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	    p_ptr->resist_water = TRUE;
 	}
 
-	/* gain not more than 2 immunities at the same time from a form */
-	if(immunities < 3)
+	/* gain not more than 1 immunities at the same time from a form */
+	if(immunities < 2)
 	{
 		if(r_ptr->flags3 & RF3_IM_ACID) p_ptr->immune_acid = TRUE;
 		if(r_ptr->flags3 & RF3_IM_ELEC) p_ptr->immune_elec = TRUE;
@@ -1823,9 +1823,10 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	else
 	{
 		immrand[1] = 1 + rand_int(immunities);
-		immrand[2] = 1 + rand_int(immunities - 1);
+		immrand[2] = immrand[1]; /* now only get 1 immunity from form */
+/*		immrand[2] = 1 + rand_int(immunities - 1);
 		if(!(immrand[2] < immrand[1])) immrand[2]++;
-
+*/
 		if((immunity[immrand[1]] == 1) || (immunity[immrand[2]] == 1)) p_ptr->immune_acid = TRUE;
 		if((immunity[immrand[1]] == 2) || (immunity[immrand[2]] == 2)) p_ptr->immune_elec = TRUE;
 		if((immunity[immrand[1]] == 3) || (immunity[immrand[2]] == 3)) p_ptr->immune_fire = TRUE;

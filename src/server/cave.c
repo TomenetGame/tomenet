@@ -386,7 +386,7 @@ void check_Morgoth(void)
 			/* log */
 			s_printf("Morgoth grows stronger\n");
 			/* Tell everyone related to Morgy's depth */
-			msg_print_near_monster(m_idx, "\377sMorgoth, the Lord of Darkness becomes stronger!");
+			msg_print_near_monster(m_idx, "becomes stronger!");
 #if 0
 			for (i = 1; i <= NumPlayers; i++)
 			{
@@ -414,7 +414,7 @@ void check_Morgoth(void)
 			/* log */
 			s_printf("Morgoth weakens\n");
 			/* Tell everyone related to Morgy's depth */
-			msg_print_near_monster(m_idx, "\377sMorgoth, the Lord of Darkness becomes weaker!");
+			msg_print_near_monster(m_idx, "becomes weaker!");
 #if 0
 			for (i = 1; i <= NumPlayers; i++)
 			{

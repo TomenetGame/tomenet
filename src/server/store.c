@@ -786,7 +786,8 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
 
 	if (!j_ptr->owner) o_ptr->owner = 0;
 	if (j_ptr->level < o_ptr->level) o_ptr->level = j_ptr->level;
-	if (o_ptr->level < 1) o_ptr->level = 1;
+	/* I don't know why this is needed, it's bad for Nether Realm store though 
+	if (o_ptr->level < 1) o_ptr->level = 1; -C. Blue */
 
 	/* Combine quantity, lose excess items */
 	o_ptr->number = (total > 99) ? 99 : total;
@@ -1724,6 +1725,9 @@ let's depend on SF1*RARE flags here.. */
 		if ((force_num) && (o_ptr->tval != TV_SHOT) &&
 		    (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT))
 			o_ptr->number = force_num;
+
+		/* Nether Realm store items are always level 0 (or 99?) */
+		if (st_ptr->st_idx == 61) o_ptr->level = 0;
 
 		/* Attempt to carry the (known) item */
 		(void)store_carry(st_ptr, o_ptr);

@@ -8256,6 +8256,7 @@ static void fill_level(worldpos *wpos, bool use_floor, byte smooth)
 static void cave_gen(struct worldpos *wpos)
 {
 	int i, k, y, x, y1, x1, dun_level;
+	bool nether_level = FALSE;
 
 	bool destroyed = FALSE;
 	bool empty_level = FALSE, dark_empty = TRUE;
@@ -8290,6 +8291,9 @@ static void cave_gen(struct worldpos *wpos)
 	dun = &dun_body;
 
 	dun->l_ptr = getfloor(wpos);
+
+	/* Are we in Nether Realm? Needed for shop creation later on */
+	if (dun_level >= 166) nether_level = TRUE;
 
 	/* Very small (1 x 1 panel) level */
 	if (!(d_ptr->flags1 & DF1_BIG) &&
@@ -8959,9 +8963,12 @@ static void cave_gen(struct worldpos *wpos)
 	cave_set_quietly = FALSE;
 
 	/* Create secret black market entrance; never on Morgoth's depth */
-	if ((dungeon_store_timer) || (dun_level < 60) || (dun_level == 100)) return;
-	dungeon_store_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
-	if (rand_int(1000) < cfg.dungeon_shop_chance)
+	/* Nether Realm has overriding shop creation routine! -C. Blue */
+	if (!nether_level) {
+		if ((dungeon_store_timer) || (dun_level < 60) || (dun_level == 100)) return;
+		dungeon_store_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
+	} else if ((dun_level != 166) && (dun_level != 176) && (dun_level != 186)) return;
+	if ((rand_int(1000) < cfg.dungeon_shop_chance) || nether_level)
 	{
 		/* Try hard to place one */
 		for (i = 0; i<300; i++)
@@ -9099,13 +9106,17 @@ static void cave_gen(struct worldpos *wpos)
 						csbm_ptr->feat = FEAT_SHOP;        /* TODO: put CS_SHOP */
 						csbm_ptr->info |= CAVE_NOPK;
 						if((cs_ptr=AddCS(csbm_ptr, CS_SHOP))){
-							if (cfg.dungeon_shop_type == 999){
-							switch(rand_int(3)){
-							case 1:cs_ptr->sc.omni = 42;break; //Rare Jewelry Shop
-							case 2:cs_ptr->sc.omni = 45;break; //Rare Footwear Shop
-							default:cs_ptr->sc.omni = 60;break; //The Secret Black Market
-							}} else {
-							cs_ptr->sc.omni = cfg.dungeon_shop_type;
+							if (!nether_level) {
+								if (cfg.dungeon_shop_type == 999){
+								switch(rand_int(3)){
+								case 1:cs_ptr->sc.omni = 42;break; //Rare Jewelry Shop
+								case 2:cs_ptr->sc.omni = 45;break; //Rare Footwear Shop
+								default:cs_ptr->sc.omni = 60;break; //The Secret Black Market
+								}} else {
+								cs_ptr->sc.omni = cfg.dungeon_shop_type;
+								}
+							} else {
+								cs_ptr->sc.omni = 61;
 							}
 						}
 			    			/* Declare this to be a room & illuminate */
@@ -9118,7 +9129,7 @@ static void cave_gen(struct worldpos *wpos)
 
 		/* Creation failed because no spot was found! */
 		/* So let's allow it on the next level then.. */
-		dungeon_store_timer = 0;
+		if (!nether_level) dungeon_store_timer = 0;
 	}
 }
 

@@ -4324,6 +4324,8 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 
 	dun_level		*l_ptr = getfloor(wpos);
 
+	struct c_special *cs_ptr;       /* for special key doors */
+
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 	if(l_ptr && l_ptr->flags1 & LF1_NO_DESTROY) return;
@@ -4357,6 +4359,9 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 
 			/* Vault is protected */
 			if (c_ptr->info & CAVE_ICKY) continue;
+
+			/* Special key doors are protected -C. Blue */
+			if(cs_ptr=GetCS(c_ptr, CS_KEYDOOR)) continue;
 
 			/* Lose room and vault */
 			/* Hack -- don't do this to houses/rooms outside the dungeon,
@@ -4507,6 +4512,8 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 	bool	map[32][32];
 	dun_level		*l_ptr = getfloor(wpos);
 
+	struct c_special *cs_ptr;	/* for special key doors */
+
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 	if(l_ptr && l_ptr->flags1 & LF1_NO_DESTROY) return;
@@ -4548,6 +4555,9 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 			/* Hack -- ICKY spaces are protected outside of the dungeon */
 			if((!wpos->wz) && (c_ptr->info & CAVE_ICKY)) continue;
 
+			/* Special key doors are protected -C. Blue */
+			if(cs_ptr=GetCS(c_ptr, CS_KEYDOOR)) continue;
+			
 			/* Lose room and vault */
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 

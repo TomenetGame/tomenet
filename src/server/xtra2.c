@@ -4277,7 +4277,7 @@ if(cfg.unikill_format){
 #endif	// SEMI_PROMISED_ARTS_MODIFIER
 
 //			if ((a_idx > 0) && ((randint(99)<chance) || (wizard)))
-			if ((a_idx > 0) && (magik(chance)))
+			if ((a_idx > 0) && (magik(chance)) && (!cfg.arts_disabled))
 			{
 				if (a_info[a_idx].cur_num == 0)
 				{
@@ -4351,7 +4351,7 @@ if(cfg.unikill_format){
 		else if ((m_ptr->maxhp >= 6000) && (m_ptr->maxhp < 10000) && rand_int(40)) pfft = FALSE;
 		else if ((m_ptr->maxhp >= 10000) && rand_int(20)) pfft = FALSE;/* gwop ^^ */
 #if 1
-		if (pfft) {
+		if (pfft && !cfg.arts_disabled) {
 			a_idx = ART_AMUGROM;
 			a_ptr = &a_info[a_idx];
             		chance = 0;
@@ -5666,10 +5666,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			}
 
 			/* Monsters in the Nether Realm give extra-high exp,
-			   +20% per floor! Starting at 120% at -50ft (C. Blue) */
+			   +2% per floor! Starting at 120% at -50ft (C. Blue) */
 			if (dt_ptr2->type == 6)
 			{
-				tmp_exp = ((((-p_ptr->wpos.wz) * 2) + 10) * tmp_exp) / 10;
+				tmp_exp = ((((-p_ptr->wpos.wz) * 2) + 100) * tmp_exp) / 100;
 			}
 		}
 		
