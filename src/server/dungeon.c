@@ -2103,7 +2103,7 @@ void dungeon(void)
 	{
 		player_type *p_ptr = Players[i];
 		int Depth = p_ptr->dun_depth;
-		int j, x, y, startx, starty;
+                int j, x, y, startx, starty, m_idx, my, mx;
 
 		if (p_ptr->conn == NOT_CONNECTED)
 			continue;
@@ -2117,24 +2117,6 @@ void dungeon(void)
 
 		/* Make sure the server doesn't think the player is in a store */
 		p_ptr->store_num = -1;
-
-		/* Check to see which if the level needs generation or destruction */
-		/* Note that "town" is excluded */
-
-		for (j = -MAX_WILD+1; j < MAX_DEPTH; j++)
-		{
-			/* Everybody has left a level that is still generated */
-			if ((players_on_depth[j] == 0) && cave[j])
-			  //			if ((players_on_depth[j] == 0) && (!wild_info[j].own) && cave[j])
-			{
-				/* Destroy the level */
-				/* Hack -- don't dealloc the town */
-				if (j)
-					dealloc_dungeon_level(j);
-			}
-
-		}
-
 
 		/* Somebody has entered an ungenerated level */
 		if (players_on_depth[Depth] && !cave[Depth])
@@ -2260,6 +2242,75 @@ void dungeon(void)
 			break;
 		}
 
+		/* Place the player in an empty space */
+		for (j = 0; j < 1500; ++j)
+		{
+			/* Increasing distance */
+			d = (j + 149) / 150;
+
+			/* Pick a location */
+			scatter(Depth, &y, &x, starty, startx, d, 1);
+
+			/* Must have an "empty" grid */
+			if (!cave_empty_bold(Depth, y, x)) continue;
+
+			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
+			if ((Depth <= 0) && (cave[Depth][y][x].info & CAVE_ICKY))
+				continue;
+
+			break;
+		}
+		p_ptr->py = y;
+		p_ptr->px = x;
+
+		/* Update the player location */
+		cave[Depth][y][x].m_idx = 0 - i;
+
+                for (m_idx = m_top - 1; m_idx >= 0; m_idx--)
+                {
+                        monster_type *m_ptr = &m_list[m_fast[m_idx]];
+
+                        if (!m_fast[m_idx]) continue;
+
+                        /* Excise "dead" monsters */
+                        if (!m_ptr->r_idx) continue;
+
+                        if (m_ptr->owner != p_ptr->id) continue;
+
+                        if (m_ptr->mind & GOLEM_GUARD) continue;
+
+                        starty = m_ptr->fy;
+                        startx = m_ptr->fx;
+
+                        /* Place the golems in an empty space */
+                        for (j = 0; j < 1500; ++j)
+                        {
+                                /* Increasing distance */
+                                d = (j + 149) / 150;
+
+                                /* Pick a location */
+                                scatter(Depth, &my, &mx, starty, startx, d, 0);
+
+                                /* Must have an "empty" grid */
+                                if (!cave_empty_bold(Depth, my, mx)) continue;
+
+                                /* Not allowed to go onto a icky location (house) if Depth <= 0 */
+                                if ((Depth <= 0) && (cave[Depth][my][mx].info & CAVE_ICKY))
+                                        continue;
+
+                                break;
+                        }
+                        cave[m_ptr->dun_depth][m_ptr->fy][m_ptr->fx].m_idx = 0;
+                        everyone_lite_spot(m_ptr->dun_depth, m_ptr->fy, m_ptr->fx);
+                        m_ptr->dun_depth = Depth;
+                        m_ptr->fx = mx;
+                        m_ptr->fy = my;
+                        cave[m_ptr->dun_depth][m_ptr->fy][m_ptr->fx].m_idx = m_fast[m_idx];
+                        everyone_lite_spot(m_ptr->dun_depth, m_ptr->fy, m_ptr->fx);
+
+                        /* Update the monster (new location) */
+                        update_mon(m_fast[m_idx], TRUE);
+                }
 #if 0
 		while (TRUE)
 		{
@@ -2275,12 +2326,6 @@ void dungeon(void)
 			break;
 		}
 #endif
-
-		p_ptr->py = y;
-		p_ptr->px = x;
-
-		/* Update the player location */
-		cave[Depth][y][x].m_idx = 0 - i;
 
 		/* Recalculate panel */
 		p_ptr->panel_row = ((p_ptr->py - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
@@ -2315,6 +2360,22 @@ void dungeon(void)
 
 		/* Clear the flag */
 		p_ptr->new_level_flag = FALSE;
+
+		/* Check to see which if the level needs generation or destruction */
+		/* Note that "town" is excluded */
+		for (j = -MAX_WILD+1; j < MAX_DEPTH; j++)
+		{
+			/* Everybody has left a level that is still generated */
+			if ((players_on_depth[j] == 0) && cave[j])
+			  //			if ((players_on_depth[j] == 0) && (!wild_info[j].own) && cave[j])
+			{
+				/* Destroy the level */
+				/* Hack -- don't dealloc the town */
+				if (j)
+					dealloc_dungeon_level(j);
+			}
+
+		}
 	}
 
 	/* Handle any network stuff */

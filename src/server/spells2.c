@@ -2791,7 +2791,8 @@ bool probing(int Ind)
                         }
 
 			/* Describe the monster */
-                        msg_format(Ind, "%^s (%d) has %d hp, %d ac, %d speed, %s.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->speed, buf);
+                        msg_format(Ind, "%^s (%d) has %d hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->speed);
+                        msg_format(Ind, "%^s (%d) %s.", m_name, m_ptr->level, buf);
 
 			/* Learn all of the non-spell, non-treasure flags */
 			lore_do_probe(i);

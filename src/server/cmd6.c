@@ -3494,6 +3494,12 @@ void do_cmd_activate(int Ind, int item)
                         if (!m_idx) continue;
                         m_ptr = &m_list[m_idx];
 
+                        if (!(m_ptr->r_ptr->extra & (1 << (o_ptr->sval - 200))))
+                        {
+                                msg_print(Ind, "I do not understand, master.");
+                                continue;
+                        }
+
                         switch (o_ptr->sval)
                         {
                                 case SV_GOLEM_ATTACK:

@@ -4175,6 +4175,9 @@ bool target_able(int Ind, int m_idx)
 		/* Monster must be visible */
 		if (!p_ptr->mon_vis[m_idx]) return (FALSE);
 
+                /* Monster must not be owned */
+                if (p_ptr->id == m_ptr->owner) return (FALSE);
+
 		/* Monster must be projectable */
 		if (!projectable(p_ptr->dun_depth, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) return (FALSE);
 
