@@ -3628,7 +3628,7 @@ void kill_houses(int id, int type){
 	}
 }
 
-void kill_objs(int id){
+static void kill_objs(int id){
 	int i;
 	object_type *o_ptr;
 	for(i=0;i<o_max;i++){

@@ -2182,6 +2182,8 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 					}
 					else{
 						c_ptr->feat=fgetc(((struct guildsave*)data)->fp);
+						if(c_ptr->feat>FEAT_INVIS)
+							c_ptr->info &= ~(CAVE_ROOM);
 					}
 				}
 				else if(func==FILL_OBJECT){ /* object in house */
@@ -2216,7 +2218,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						if(h_ptr->flags & HF_JAIL){
 							c_ptr->info|=CAVE_STCK;
 						}
- 						c_ptr->info|=CAVE_ICKY;
+ 						c_ptr->info|=(CAVE_ICKY|CAVE_ROOM);
 					}
 				}
 				else s_printf("rect fill house (func: %d\n", func);
@@ -2304,6 +2306,8 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						}
 						else{
 							c_ptr->feat=fgetc(((struct guildsave*)data)->fp);
+							if(c_ptr->feat>FEAT_INVIS)
+								c_ptr->info &= ~(CAVE_ROOM);
 							if(c_ptr->feat==FEAT_HOME_HEAD){
 								id=(fgetc(gfp)<<8);
 								id|=fgetc(gfp);
@@ -2337,7 +2341,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 					if(func==FILL_BUILD){
 						if(!(h_ptr->flags&HF_NOFLOOR))
 							zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_FLOOR;
-						zcave[miny+(y-1)][minx+(x-1)].info|=CAVE_ICKY;
+						zcave[miny+(y-1)][minx+(x-1)].info|=(CAVE_ROOM|CAVE_ICKY);
 						if(h_ptr->flags&HF_JAIL){
 							zcave[miny+(y-1)][minx+(x-1)].info|=CAVE_STCK;
 						}

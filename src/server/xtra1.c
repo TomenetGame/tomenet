@@ -1573,6 +1573,9 @@ void calc_body_bonus(int Ind)
         if(r_ptr->flags2 & RF2_REGENERATE) p_ptr->regenerate = TRUE;
         if(r_ptr->flags2 & RF2_PASS_WALL) p_ptr->tim_wraith = 100;
         if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->auto_tunnel = 100;
+	if(r_ptr->flags2 & RF2_AURA_FIRE) p_ptr->sh_fire = TRUE;
+	if(r_ptr->flags2 & RF2_AURA_ELEC) p_ptr->sh_elec = TRUE;
+
         if(r_ptr->flags3 & RF3_IM_ACID) p_ptr->resist_acid = TRUE;
         if(r_ptr->flags3 & RF3_IM_ELEC) p_ptr->resist_elec = TRUE;
         if(r_ptr->flags3 & RF3_IM_FIRE) p_ptr->resist_fire = TRUE;
@@ -1744,6 +1747,8 @@ static void calc_bonuses(int Ind)
 	p_ptr->immune_elec = FALSE;
 	p_ptr->immune_fire = FALSE;
 	p_ptr->immune_cold = FALSE;
+	p_ptr->sh_fire = FALSE;
+	p_ptr->sh_elec = FALSE;
 	p_ptr->fly = FALSE;
         p_ptr->reduc_fire = 0;
         p_ptr->reduc_cold = 0;
@@ -1877,7 +1882,7 @@ static void calc_bonuses(int Ind)
 			p_ptr->pspeed -= 2;
 
 			if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
-			if (p_ptr->lev >= 40) p_ptr->telepathy = TRUE;
+			if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_ALL;
 		}
 
 		/* DragonRider */
