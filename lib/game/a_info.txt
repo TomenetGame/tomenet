@@ -2830,6 +2830,16 @@ D:fire, showing the mad will within it to dominate all beasts that hell
 D:could possibly bear.
 
 
+# The Set of Leather Gloves 'Soul Cure'
+
+N:232:'Soul Cure'
+I:31:1:4
+W:10:6:5:50000
+P:1:0d0:0:0:19
+F:WIS | HIDE_TYPE | KILL_UNDEAD | SHOW_MODS | REGEN | ACTIVATE
+D:Sacred gloves of an arch priest whose name is not remembered.
+
+
 #N:(No.):(name)
 #G:(appearence):(colour)
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)

@@ -6606,17 +6606,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
                 case GF_BLESS_PLAYER:
                 {
-			if (dam < 25)
+			if (dam < 18)
 			{
 				p_ptr->blessed_power = 10;
 			}
 
-			if ((dam > 25) && (dam < 49))
+			else if (dam < 33)
 			{
 				p_ptr->blessed_power = 20;
 			}
 
-			if (dam > 48)
+			else
 			{
 				p_ptr->blessed_power = 30;
 			}	

@@ -1316,6 +1316,8 @@ that keeps many algorithms happy.
 #define ART_BILBO				214
 #define ART_DWARVEN_ALE			216
 
+/* C. Blue (arts > 216) */
+#define ART_SOULCURE		232
 
 /*** Ego-Item indices (see "lib/edit/e_info.txt") ***/
 

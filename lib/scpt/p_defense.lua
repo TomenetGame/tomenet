@@ -10,36 +10,50 @@ HBLESSING = add_spell
         ["fail"] = 	10,
 	["stat"] =      A_WIS,
         ["spell"] = 	function()
+		local dur
                 if get_level(Ind, HBLESSING, 50) < 15 then
 			if player.blessed_power == 0 then
 				player.blessed_power = 10
-				set_blessed(Ind, 6 + randint(get_level(Ind, HBLESSING, 50)))
+				dur = 9 + randint(get_level(Ind, HBLESSING, 25))
+				set_blessed(Ind, dur)
+				if player.spell_project > 0 then
+		                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, player.spell_project, "")
+			        end
 			end
                 elseif get_level(Ind, HBLESSING, 50) < 30 then
 			if player.blessed_power < 20 then
 				player.blessed_power = 20
-				set_blessed(Ind, 12 + randint(get_level(Ind, HBLESSING, 50)))
+				dur = 17 + randint(get_level(Ind, HBLESSING, 25))
+				set_blessed(Ind, dur)
+				if player.spell_project > 0 then
+		                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, player.spell_project, "")
+			        end
 			end
 		else
 			if player.blessed_power < 30 then
 				player.blessed_power = 30
-				set_blessed(Ind, 24 + randint(get_level(Ind, HBLESSING, 50)))
+				dur = 32 + randint(get_level(Ind, HBLESSING, 25))
+				set_blessed(Ind, dur)
+				if player.spell_project > 0 then
+		                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, player.spell_project, "")
+			        end
 			end
 		end
 	end,
 	["info"] = 	function()
         	if get_level(Ind, HBLESSING, 50) < 15 then
-			return "AC+10  dur 7.."..get_level(Ind, HBLESSING, 50)+6
+			return "AC+10  dur 9.."..get_level(Ind, HBLESSING, 25)+9
                 elseif get_level(Ind, HBLESSING, 50) < 30 then
-			return "AC+20  dur 13.."..get_level(Ind, HBLESSING, 50)+12
+			return "AC+20  dur 17.."..get_level(Ind, HBLESSING, 25)+17
 		else
-			return "AC+30  dur 25.."..get_level(Ind, HBLESSING, 50)+25
+			return "AC+30  dur 32.."..get_level(Ind, HBLESSING, 25)+32
                 end
 	end,
         ["desc"] =	{
         		"Protects you with a shield of righterousness",
         		"At level 15 it turns into a holy chant",
         		"At level 30 becomes a holy prayer",
+			"***Affected by the Meta spell: Project Spell***",
         }
 }
 
@@ -74,6 +88,7 @@ HRESISTS = add_spell
         		"Lets you resist heat.",
         		"At level 10 you also resist cold.",
         		"At level 20 you resist lightning too.",
+			"***Affected by the Meta spell: Project Spell***",
         }
 }
 

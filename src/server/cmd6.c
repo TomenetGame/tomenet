@@ -6500,8 +6500,21 @@ void do_cmd_activate(int Ind, int item)
 				msg_print(Ind, "Your picklock flashes...");
 				destroy_doors_touch(Ind, 2);
 				o_ptr->timeout = 30 + randint(30);
-				return;
+				break;
 			}
+			case ART_SOULCURE:
+	                {
+				if (p_ptr->blessed_power == 0)
+				{
+					msg_print(Ind, "Your gloves glow golden...");
+					p_ptr->blessed_power = 30;
+	        			set_blessed(Ind, p_ptr->blessed + randint(48) + 24);
+					o_ptr->timeout = 100 + randint(200);
+				} else {
+					msg_print(Ind, "Your gloves shimmer..");
+		    		}
+				break;
+	                }
 		}
 
 		/* Window stuff */

@@ -2899,6 +2899,10 @@ cptr item_activation(object_type *o_ptr)
 		{
 			return "destroy doors and traps every 30+d30 turns";
 		}
+		case ART_SOULCURE:
+		{
+			return "holy prayer (+30 AC) every 100+d200 turns";
+		}
 	}
 
 	// requires some substitution..
