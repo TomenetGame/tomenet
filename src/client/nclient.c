@@ -25,6 +25,10 @@
 #include <unistd.h>
 #endif
 
+#if 1
+#include <sys/stat.h>
+#endif
+
 int			ticks = 0; // Keeps track of time in 100ms "ticks"
 static bool		request_redraw;
 
@@ -3123,3 +3127,38 @@ void do_keepalive()
 		Send_keepalive();
 	}
 }
+
+#ifdef SET_UID
+#if 0
+void do_mail(){
+	static int mailticks=0;
+	static struct timespec lm;
+	char mpath[160],buffer[160];
+
+	int uid;
+	struct passwd *pw;
+
+	strcpy(mpath,"/var/mail/");	/* Cfg soon */
+	uid=getuid();
+	pw=getpwuid(uid);
+	if(pw==(struct passwd*)NULL)
+		return;
+	strcat(mpath,pw->pw_name);
+
+	if(ticks-mailticks >= 300){	/* testing - too fast */
+		struct stat inf;
+		if(!stat(mpath,&inf)){
+			if(inf.st_size!=0){
+				if(inf.st_mtimespec.tv_sec>lm.tv_sec || (inf.st_mtimespec.tv_sec==lm.tv_sec && inf.st_mtimespec.tv_nsec>lm.tv_nsec)){
+					lm.tv_sec=inf.st_mtimespec.tv_sec;
+					lm.tv_nsec=inf.st_mtimespec.tv_nsec;
+					sprintf(buffer,"\377yYou have new mail in %s.", mpath);
+					c_msg_print(buffer);
+				}
+			}
+		}
+		mailticks=ticks;
+	}
+}
+#endif
+#endif
