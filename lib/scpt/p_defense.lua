@@ -67,12 +67,22 @@ HRESISTS = add_spell
         ["fail"] = 	15,
 	["stat"] =      A_WIS,
         ["spell"] = 	function()
-		set_oppose_fire(Ind, randint(10) + 15 + get_level(Ind, HRESISTS, 50))
-        	if get_level(Ind, HRESISTS, 50) > 9 then
-			set_oppose_cold(Ind, randint(10) + 15 + get_level(Ind, HRESISTS, 50))
+		local dur
+		dur = randint(10) + 15 + get_level(Ind, HRESISTS, 50)
+
+		set_oppose_fire(Ind, dur)
+		if player.spell_project > 0 then
+			fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, player.spell_project, "")
 		end
+
+        	if get_level(Ind, HRESISTS, 50) > 9 then
+			set_oppose_cold(Ind, dur))
+			fire_ball(Ind, GF_RESCOLD_PLAYER, 0, dur, player.spell_project, "")
+		end
+
                 if get_level(Ind, HRESISTS, 50) > 19 then
-			set_oppose_elec(Ind, randint(10) + 15 + get_level(Ind, HRESISTS, 50))
+			set_oppose_elec(Ind, dur)
+			fire_ball(Ind, GF_RESELEC_PLAYER, 0, dur, player.spell_project, "")
 		end
 	end,
 	["info"] = 	function()
