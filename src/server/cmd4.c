@@ -500,7 +500,7 @@ void do_cmd_check_players(int Ind, int line)
 		 * option is set 
 		 */
 		if (q_ptr->admin_dm &&
-		   (cfg.secret_dungeon_master)) continue;
+		   (cfg.secret_dungeon_master) && !admin) continue;
 
 		/*** Determine color ***/
 

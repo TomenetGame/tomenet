@@ -3716,8 +3716,13 @@ bool is_a_vowel(int ch)
 int name_lookup_loose(int Ind, cptr name, bool party)
 {
 	int i, len, target = 0;
-	player_type *q_ptr;
+	player_type *q_ptr, *p_ptr;
 	cptr problem = "";
+
+	p_ptr=Players[Ind];
+
+	/* don't waste time */
+	if(p_ptr==(player_type*)NULL) return(0);
 
 	/* Acquire length of search string */
 	len = strlen(name);
@@ -3770,7 +3775,8 @@ int name_lookup_loose(int Ind, cptr name, bool party)
 			/* Skip if disconnected */
 			if (q_ptr->conn == NOT_CONNECTED) continue;
 
-			if (q_ptr->admin_dm) continue;
+			/* let admins chat */
+			if (q_ptr->admin_dm && !(p_ptr->admin_dm || p_ptr->admin_wiz)) continue;
 
 			/* Check name */
 			if (!strncasecmp(q_ptr->name, name, len))
