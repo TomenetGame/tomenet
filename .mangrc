@@ -1,0 +1,30 @@
+# .mangrc - TomeNET preference file
+#
+# copy this file to your home directory, and edit as you need it.
+#
+# You can bypass the settings of this file by specifying '-i' option.
+# $ tome -i
+
+# your name as a player
+nick Nowhereman
+
+# login password
+pass stone2mud
+
+# the server you want to connect.
+server TomeNET.net
+# server 127.0.0.1:18348
+
+# default path for data directory
+path ~/TomeNET/lib/
+
+
+# If you have a line starting with 'fullauto', the client will try to connect
+# to the server automatically, using the default values in this file.
+#
+# (If set, you won't see the server-list.)
+
+#fullauto
+
+# The last line of this file should be empty, or the client will crash..
+
