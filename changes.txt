@@ -701,6 +701,7 @@ Change list for PernMangband
 29/01/2002 (Evileye)
 - Fixed exploitable bug in server code. Client could crash server
   if interrupted before play started.
+- Removed some of the extra stairs on comfortable levels.
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
