@@ -18,6 +18,15 @@ unsigned long chk(unsigned char *s1, unsigned char *s2);
 void rem_players(short id);
 void add_rplayer(struct wpacket *wpk);
 
+void world_update_players(){
+	int i;
+	for(i=0; i<NumPlayers; i++){
+		if(Players[i]->conn!=NOT_CONNECTED){
+			world_player(Players[i]->id, Players[i]->name, 1, 0);
+		}
+	}
+}
+
 void world_comm(int fd, int arg){
 	static char buffer[1024];
 	static char bpos=0;
