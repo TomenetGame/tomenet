@@ -2559,7 +2559,8 @@ struct client_opts
 	bool view_torch_grids;
 	bool dungeon_align;
 	bool dungeon_stair;
-	bool flow_by_sound;
+	bool recall_flicker;
+/*	bool flow_by_sound;	*/
 	bool flow_by_smell;
 	bool track_follow;
 	bool track_target;
