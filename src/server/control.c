@@ -27,7 +27,7 @@ void SGWHit(int read_fd, int arg){
 			size+=sprintf(sdb,"runtime=%ld\n", now-cfg.runtime);
 			size+=sprintf(&sdb[size], "turn=%ld\n", turn);
 			size+=sprintf(&sdb[size], "day=%ld\n", DAY);	/* day const */
-			size+=sprintf(&sdb[size], "year=%d\n", START_YEAR);	/* starting year const */
+			size+=sprintf(&sdb[size], "year=%d\n", bst(YEAR, turn) + START_YEAR);	/* starting year const */
 			/* let the script count or we'll give away
 			   the dungeon masters. */
 			/* size+=sprintf(&sdb[size],"num=%d\n", NumPlayers);*/

@@ -4,7 +4,8 @@
 #include <errno.h>
 
 #include "world.h"
-#include "account.h"
+#include "../common/defines.h"
+#include "../account/account.h"
 
 u_int32_t account_id;		/* Current account ID */
 

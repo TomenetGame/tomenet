@@ -66,7 +66,8 @@ void loadservers(){
 	fp=fopen("servers", "r");
 	if(fp==(FILE*)NULL) return;
 	do{
-		fscanf(fp, "%s%s\n", &slist[i].name, &slist[i].pass);
+                fscanf(fp, "%s%s\n", &slist[i].name, &slist[i].pass);
+                printf("server: %s : %s\n", slist[i].name, slist[i].pass);
 		i++;
 	} while(!feof(fp) && i<MAX_SERVERS);
 	snum=i;
