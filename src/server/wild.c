@@ -2111,7 +2111,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 			switch(matrix[x+y*mw]){
 				case 2:	/* do nothing */
 				case 4:
-				case 6:
+				case 6: /* outside of walls */
 					break;
 				case 0:
 					if(func==3){
@@ -2137,6 +2137,12 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 					break;
 				case 1:
 					if(func==1) break;
+					if(func==3){
+						player_type *p_ptr=(player_type*)data;
+						if(p_ptr->px==minx+(x-1) && p_ptr->py==miny+(y-1))
+							success=TRUE;
+						break;
+					}
 					if(func==2)
 						cave[Depth][miny+(y-1)][minx+(x-1)].feat=FEAT_DIRT;
 					else
@@ -2178,6 +2184,9 @@ void wild_add_uhouse(house_type *h_ptr){
 	fill_house(h_ptr, 0, NULL);
 	if(h_ptr->flags&HF_MOAT){
 		/* Draw a moat around our house */
+		/* It is already valid at this point */
+		if(h_ptr->flags&HF_RECT){
+		}
 	}
 	c_ptr=&cave[Depth][h_ptr->y+h_ptr->dy][h_ptr->x+h_ptr->dx];
 	c_ptr->feat=FEAT_HOME_HEAD;

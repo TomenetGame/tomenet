@@ -14,6 +14,8 @@
 
 #include "angband.h"
 
+static bool wraith_access(int Ind);
+
 
 
 /*
@@ -2313,7 +2315,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	}
 }
 
-bool wraith_access(int Ind){
+static bool wraith_access(int Ind){
 	/* Experimental! lets hope not bugged */
 	/* Wraith walk in own house */
 	player_type *p_ptr=Players[Ind];

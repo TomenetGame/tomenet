@@ -4106,6 +4106,11 @@ bool poly_build(int Ind, char *args){
 			houses[num_houses].coords.poly=vert;
 		}
 		if(nofloor) houses[num_houses].flags|=HF_NOFLOOR;
+/* Moat testing */
+#if 0
+		houses[num_houses].flags|=HF_MOAT;
+#endif
+/* Do not commit! */
 		houses[num_houses].depth=p_ptr->dun_depth;
 		houses[num_houses].dna=dna;
 		if(cvert>=8 && fill_house(&houses[num_houses], 2, NULL)){
