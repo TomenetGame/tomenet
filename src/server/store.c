@@ -459,59 +459,6 @@ void alloc_stores(int townval)
 }
 
 /*
- * A helper function for is_state
- */
-bool is_state_aux(int Ind, store_type *s_ptr, int state)
-{
-	player_type *p_ptr = Players[Ind];
-	owner_type *ot_ptr = &ow_info[s_ptr->owner];
-
-
-	/* Check race */
-	if (ot_ptr->races[state][p_ptr->prace / 32] & (1 << p_ptr->prace))
-	{
-		return (TRUE);
-	}
-
-	/* Check class */
-	if (ot_ptr->classes[state][p_ptr->prace / 32] & (1 << p_ptr->pclass))
-	{
-		return (TRUE);
-	}
-
-#if 0
-	/* Check realms */
-	if ((ot_ptr->realms[state][p_ptr->prace / 32] & (1 << p_ptr->realm1)) ||
-	    (ot_ptr->realms[state][p_ptr->prace / 32] & (1 << p_ptr->realm2)))
-	{
-		return (TRUE); 
-	}
-#endif	// 0
-
-	/* All failed */
-	return (FALSE);
-}
-
-
-/*
- * Test if the state accords with the player
- */
-bool is_state(int Ind, store_type *s_ptr, int state)
-{
-	if (state == STORE_NORMAL)
-	{
-		if (is_state_aux(Ind, s_ptr, STORE_LIKED)) return (FALSE);
-		if (is_state_aux(Ind, s_ptr, STORE_HATED)) return (FALSE);
-		return (TRUE);
-	}
-
-	else
-	{
-		return (is_state_aux(Ind, s_ptr, state));
-	}
-}
-
-/*
  * Determine the price of an item (qty one) in a store.
  *
  * This function takes into account the player's charisma, and the
@@ -1633,7 +1580,8 @@ static void store_create(store_type *st_ptr)
 	{
 		/* Black Market */
 //		if (st_ptr->st_idx == 6)
-		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) &&
+			--black_market_potion < 0)
 		{
 			/* Pick a level for object/magic */
 			level = 60 + rand_int(25);	/* for now let's use this */
@@ -1642,6 +1590,7 @@ static void store_create(store_type *st_ptr)
 			/* Random item (usually of given level) */
 			i = get_obj_num(level);
 			
+#if 0
 			/* MEGA HACK */ /* XXX This will be removed */
 			if (black_market_potion == 1)
 			{
@@ -1681,6 +1630,7 @@ static void store_create(store_type *st_ptr)
 			    force_num = rand_range(2, 4);
 			  }
 #endif
+#endif	// 0
 
 			/* Handle failure */
 			if (!i) continue;
@@ -1743,6 +1693,12 @@ static void store_create(store_type *st_ptr)
 
 				/* Invalidate the cached allocation table */
 //				alloc_kind_table_valid = FALSE;
+			}
+
+			/* Hack -- mass-produce for black-market promised items */
+			if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
+			{
+				force_num = rand_range(3, 9);
 			}
 
 			if (!i) continue;
@@ -2005,7 +1961,7 @@ static void store_prt_gold(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	Send_gold(Ind, p_ptr->au);
+	Send_gold(Ind, p_ptr->au, p_ptr->balance);
 }
 
 
@@ -2045,6 +2001,20 @@ static void display_store(int Ind)
 	else
 	{
 		cptr owner_name = (ow_name + ot_ptr->name);
+
+		/* Send the store actions info */
+		show_building(Ind, st_ptr);
+
+#if 0	// obsolete - DELETEME
+		for (j = 0; j < 6; j++)
+		{
+			store_action_type *ba_ptr =
+				&ba_info[st_info[st_ptr->st_idx].actions[j]];
+
+			Send_store_action(Ind, j, ba_ptr->action, ba_name + ba_ptr->name,
+					ba_ptr->letter, ba_ptr->costs[STORE_LIKED], ba_ptr->flags);
+		}
+#endif	// 0
 
 		/* Hack -- Museum doesn't have owner */
 	    if (st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM) owner_name = "";
@@ -2171,6 +2141,7 @@ void store_purchase(int Ind, int item, int amt)
 	object_type		*o_ptr;
 
 	char		o_name[160];
+	bool legal = FALSE;
 
 	if (p_ptr->store_num == 7)
 	{
@@ -2189,6 +2160,21 @@ void store_purchase(int Ind, int item, int amt)
 	st_ptr = &town[i].townstore[st];
 //	ot_ptr = &owners[st][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
+
+	for (i = 0; i < 6; i++)
+	{
+		if (ba_info[st_info[p_ptr->store_num].actions[i]].action == BACT_BUY)
+		{
+			legal = TRUE;
+			break;
+		}
+	}
+	if (!legal)
+	{
+		/* Hack -- admin can 'buy'
+		 * (it's to remove craps from the Museums) */
+		if (!is_admin(p_ptr)) return;
+	}
 
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)
@@ -2481,8 +2467,9 @@ void store_purchase(int Ind, int item, int amt)
 void store_sell(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
+//	store_type *st_ptr;
 
-	int			choice;
+	int			choice, i;
 
 	s32b		price;
 
@@ -2490,6 +2477,7 @@ void store_sell(int Ind, int item, int amt)
 	object_type		*o_ptr;
 
 	char		o_name[160];
+	bool legal = FALSE;
 
 	if (p_ptr->store_num == 7)
 	{
@@ -2502,6 +2490,18 @@ void store_sell(int Ind, int item, int amt)
 		msg_print(Ind,"You left the shop!");
 		return;
 	}
+
+//	st_ptr = &town[gettown(Ind)].townstore[p_ptr->store_num];
+
+	for (i = 0; i < 6; i++)
+	{
+		if (ba_info[st_info[p_ptr->store_num].actions[i]].action == BACT_SELL)
+		{
+			legal = TRUE;
+			break;
+		}
+	}
+	if (!legal) return;
 
 	/* You can't sell 0 of something. */
 	if (amt <= 0) return;
@@ -2558,6 +2558,31 @@ void store_sell(int Ind, int item, int amt)
 	{
 		if (p_ptr->store_num == 7) msg_print(Ind, "Your home is full.");
 		else msg_print(Ind, "I have not the room in my store to keep it.");
+		return;
+	}
+
+	/* Museum */
+//	if (p_ptr->store_num == 57)
+	if (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM)
+	{
+		/* Describe the transaction */
+//		msg_format(Ind, "Selling %s (%c).", o_name, index_to_label(item));
+
+		/* Haggle for it */
+		choice = sell_haggle(Ind, &sold_obj, &price);
+
+		/* Tell the client about the price */
+//		Send_store_sell(Ind, price);
+
+		/* Save the info for the confirmation */
+		p_ptr->current_selling = item;
+		p_ptr->current_sell_amt = amt;
+		p_ptr->current_sell_price = 0;
+
+		/* Hack -- assume confirmed */
+		store_confirm(Ind);
+
+		/* Wait for confirmation before actually selling */
 		return;
 	}
 
@@ -2708,7 +2733,8 @@ void store_confirm(int Ind)
 	handle_stuff(Ind);
 
 	/* Artifact won't be sold in a store */
-	if (cfg.anti_arts_horde && true_artifact_p(&sold_obj))
+	if (cfg.anti_arts_horde && true_artifact_p(&sold_obj) &&
+			!(st_info[p_ptr->store_num].flags1 & SF1_MUSEUM))
 	{
 		a_info[sold_obj.name1].cur_num = 0;
 		a_info[sold_obj.name1].known = FALSE;
@@ -2842,7 +2868,7 @@ void do_cmd_store(int Ind)
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
 	int			which;
-	int i;
+	int i, j;
 	int maintain_num;
 
 	cave_type		*c_ptr;
@@ -2910,13 +2936,28 @@ void do_cmd_store(int Ind)
 	/* No automatic command */
 	/*command_new = 0;*/
 
+	st_ptr = &town[i].townstore[which];
+
+	/* Make sure if someone is already in */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		/* Check this player */
+		j=gettown(i);
+		if(j!=-1){
+			if(st_ptr==&town[j].townstore[Players[i]->store_num])
+			{
+				msg_print(Ind, "The store is full.");
+				store_kick(Ind, FALSE);
+				return;
+			}
+		}
+	}
+
 	/* Save the store number */
 	p_ptr->store_num = which;
 
 	/* Set the timer */
 	p_ptr->tim_store = STORE_TURNOUT;
-
-	st_ptr = &town[i].townstore[p_ptr->store_num];
 
 	/* Calculate the number of store maintainances since the last visit */
 //	maintain_num = (turn - town_info[p_ptr->town_num].store[which].last_visit) / (10L * STORE_TURNS);
@@ -3124,7 +3165,7 @@ void store_maint(store_type *st_ptr)
 
 	/* Acquire some new items */
 	/* We want speed & healing & mana pots in the BM */
-	black_market_potion = 5;
+	black_market_potion = 10;	/* 5 */
 	while (st_ptr->stock_num < j)
 	  {
 	    store_create(st_ptr);
@@ -3186,8 +3227,30 @@ void store_kick(int Ind, bool say)
 	teleport_player(Ind, 1);
 }
 
+void store_exec_command(int Ind, int action, int item, int item2, int amt, int gold)
+{
+	player_type *p_ptr = Players[Ind];
+	store_type *st_ptr;
+	int i;
 
-#ifndef USE_MANG_HOUSE
+	i=gettown(Ind);
+	if(i==-1) return(0);
+
+	/* sanity check - Yakina - */
+	if (p_ptr->store_num==-1){
+		msg_print(Ind,"You left the building!");
+		return;
+	}
+
+	st_ptr = &town[i].townstore[p_ptr->store_num];
+
+	/* Mockup */
+	msg_format(Ind, "Store command received: %d, %d, %d, %d, %d", action, item, item2, amt, gold);
+
+	bldg_process_command(Ind, st_ptr, action, item, item2, amt, gold);
+}
+
+#ifndef USE_MANG_HOUSE_ONLY
 /*
  * TomeNET functions for 'Vanilla-like' houses.		- Jir -
  *
@@ -3892,6 +3955,8 @@ void do_cmd_trad_house(int Ind)
 
 	cave_type		*c_ptr;
 	struct c_special *cs_ptr;
+	house_type *h_ptr;
+	int h_idx;
 
 	/* Access the player grid */
 	cave_type **zcave;
@@ -3933,6 +3998,15 @@ void do_cmd_trad_house(int Ind)
 	/* Not a house */
 	else return;
 
+	/* Check if it's traditional house */
+	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+	if (h_idx == -1) return;
+
+	h_ptr = &houses[h_idx];
+	if (!(h_ptr->flags & HF_TRAD)) return;
+
+
 	/* Save the store number */
 	p_ptr->store_num = 7;
 
@@ -3949,4 +4023,4 @@ void do_cmd_trad_house(int Ind)
 
 
 
-#endif	// USE_MANG_HOUSE
+#endif	// USE_MANG_HOUSE_ONLY

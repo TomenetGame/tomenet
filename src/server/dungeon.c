@@ -2685,7 +2685,7 @@ static bool process_player_end_aux(int Ind)
 				d_ptr=getdungeon(&p_ptr->wpos);
 
 				/* Messages */
-				if(d_ptr->flags & DUNGEON_IRON && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)){
+				if(d_ptr->flags2 & DF2_IRON && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)){
 					msg_print(Ind, "You feel yourself being pulled toward the surface!");
 					recall_ok=FALSE;
 				}
@@ -3101,6 +3101,9 @@ static void purge_old()
 	}
 }
 
+/*
+ * TODO: Check for OT_GUILD (or guild will be mere den of cheeze)
+ */
 void cheeze(object_type *o_ptr){
 	int j;
 	/* check for inside a house */
@@ -3128,6 +3131,60 @@ void cheeze(object_type *o_ptr){
 	}
 }
 
+
+/* Traditional (Vanilla) houses version of cheeze()	- Jir - */
+#ifndef USE_MANG_HOUSE_ONLY
+void cheeze_trad_house()
+{
+	int i, j;
+	house_type *h_ptr;
+	object_type *o_ptr;
+
+	/* check for inside a house */
+	for(j=0;j<num_houses;j++)
+	{
+		h_ptr = &houses[j];
+		if(h_ptr->dna->owner_type==OT_PLAYER)
+		{
+			for (i = 0; i < h_ptr->stock_num; i++)
+			{
+				o_ptr = &h_ptr->stock[i];
+				if(o_ptr->owner != h_ptr->dna->owner)
+				{
+					if(o_ptr->level > lookup_player_level(h_ptr->dna->owner))
+						s_printf("Suspicious item: (%d,%d) Owned by %s, in %s's trad house(%d). (%d,%d)\n",
+								o_ptr->wpos.wx, o_ptr->wpos.wy,
+								lookup_player_name(o_ptr->owner),
+								lookup_player_name(h_ptr->dna->owner),
+								j, o_ptr->level,
+								lookup_player_level(h_ptr->dna->owner));
+				}
+			}
+		}
+		else if(h_ptr->dna->owner_type==OT_PARTY)
+		{
+			int owner;
+			if((owner=lookup_player_id(parties[h_ptr->dna->owner].owner)))
+			{
+				for (i = 0; i < h_ptr->stock_num; i++)
+				{
+					o_ptr = &h_ptr->stock[i];
+					if(o_ptr->owner != owner)
+					{
+						if(o_ptr->level > lookup_player_level(owner))
+							s_printf("Suspicious item: (%d,%d) Owned by %s, in %s party trad house(%d). (%d,%d)\n",
+									o_ptr->wpos.wx, o_ptr->wpos.wy,
+									lookup_player_name(o_ptr->owner),
+									parties[h_ptr->dna->owner].name,
+									j, o_ptr->level, lookup_player_level(owner));
+					}
+				}
+			}
+		}
+	}
+}
+#endif	// USE_MANG_HOUSE_ONLY
+
 /*
  * The purpose of this function is to scan through all the
  * game objects on the surface of the world. Objects which
@@ -3143,7 +3200,9 @@ void cheeze(object_type *o_ptr){
  * this clearing.
  */
 /*
- * TODO: this function should handle items in 'traditional' houses too
+ * TODO:
+ * - this function should handle items in 'traditional' houses too
+ * - maybe rename this function (scan_objects and scan_objs...)
  */
 void scan_objs(){
 	int i, cnt=0, dcnt=0;
@@ -3184,6 +3243,16 @@ void scan_objs(){
 		}
 	}
 	if(dcnt) s_printf("Scanned %d objects. Removed %d.\n", cnt, dcnt);
+
+#ifndef USE_MANG_HOUSE_ONLY
+#if CHEEZELOG_LEVEL > 1
+#if CHEEZELOG_LEVEL < 4
+	if (!(turn % (cfg.fps * 3600)))
+#endif	// CHEEZELOG_LEVEL (4)
+		cheeze_trad_house();
+#endif	// CHEEZELOG_LEVEL (1)
+#endif	// USE_MANG_HOUSE_ONLY
+
 }
 
 
@@ -4174,6 +4243,9 @@ void play_game(bool new_game)
 {
 	int i, n;
 
+	/*** Init the wild_info array... for more information see wilderness.c ***/
+	init_wild_info();
+
 	/* Attempt to load the server state information */
 	if (!load_server_info())
 	{
@@ -4249,18 +4321,24 @@ void play_game(bool new_game)
 		/* Initialize server state information */
 		server_birth();
 
-		initwild();
+		//initwild();
+
+		/*** Init the wild_info array... for more information see wilderness.c ***/
+		//init_wild_info(TRUE);
 
 		/* Generate the wilderness */
 		genwild();
 
-		/* Hack -- enter the world */
-		turn = 1;
+		/* Generate the towns */
+		wild_spawn_towns();
 
 		/* Hack -- force town surrounding types
 		 * This really shouldn't be here; just a makeshift and to be
 		 * replaced by multiple-town generator */
-		wild_bulldoze();
+		//wild_bulldoze();
+
+		/* Hack -- enter the world */
+		turn = 1;
 
 #if 0
 		/* Initialize the stores */
@@ -4277,6 +4355,9 @@ void play_game(bool new_game)
 		}
 #endif
 	}
+
+	/* Initialize wilderness 'level' */
+	init_wild_info_aux(0,0);
 
 
 	/* Flash a message */

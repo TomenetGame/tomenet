@@ -835,7 +835,7 @@ static void rd_house(int n)
 		GROW(house_ptr->coords.poly, MAXCOORD, i+2, byte);
 	}
 
-#ifndef USE_MANG_HOUSE
+#ifndef USE_MANG_HOUSE_ONLY
 	rd_s16b(&house_ptr->stock_num);
 	rd_s16b(&house_ptr->stock_size);
 	C_MAKE(house_ptr->stock, house_ptr->stock_size, object_type);
@@ -843,7 +843,7 @@ static void rd_house(int n)
 	{
 		rd_item(&house_ptr->stock[i]);
 	}
-#endif	// USE_MANG_HOUSE
+#endif	// USE_MANG_HOUSE_ONLY
 }
 
 static void rd_wild(wilderness_type *w_ptr)
@@ -1168,6 +1168,8 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->msane);
 	rd_s16b(&p_ptr->csane);
 	rd_u16b(&p_ptr->csane_frac);
+
+	rd_s32b(&p_ptr->balance);
 
 	/* Success */
 	return FALSE;
@@ -1523,7 +1525,7 @@ static errr rd_savefile_new_aux(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int i, j;
+	int i;
 
 	u16b tmp16u;
 	u32b tmp32u;
@@ -2072,7 +2074,8 @@ void new_rd_wild()
 				rd_byte(&wptr->up_y);
 				rd_u16b(&d_ptr->id);
 				rd_u16b(&d_ptr->baselevel);
-				rd_u32b(&d_ptr->flags);
+				rd_u32b(&d_ptr->flags1);
+				rd_u32b(&d_ptr->flags2);
 				rd_byte(&d_ptr->maxdepth);
 				for(i=0;i<10;i++){
 					rd_byte((byte*)&d_ptr->r_char[i]);
@@ -2087,7 +2090,8 @@ void new_rd_wild()
 				rd_byte(&wptr->dn_y);
 				rd_u16b(&d_ptr->id);
 				rd_u16b(&d_ptr->baselevel);
-				rd_u32b(&d_ptr->flags);
+				rd_u32b(&d_ptr->flags1);
+				rd_u32b(&d_ptr->flags2);
 				rd_byte(&d_ptr->maxdepth);
 				for(i=0;i<10;i++){
 					rd_byte((byte*)&d_ptr->r_char[i]);
@@ -2119,6 +2123,7 @@ void rd_towns()
 		rd_u16b(&town[i].baselevel);
 		rd_u16b(&town[i].flags);
 		rd_u16b(&town[i].num_stores);
+		rd_u16b(&town[i].type);
 		wild_info[town[i].y][town[i].x].type=WILD_TOWN;
 		wild_info[town[i].y][town[i].x].radius=town[i].baselevel;
 		twpos.wx=town[i].x;

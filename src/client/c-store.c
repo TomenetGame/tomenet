@@ -9,6 +9,47 @@
 bool leave_store;
 static int store_top;
 
+
+
+/*
+ * ToME show_building, ripped for client	- Jir -
+ */
+void display_store_action()
+{
+	int i;
+#if 0
+	char buff[20];
+	byte action_color;
+	char tmp_str[80];
+#endif	// 0
+
+	for (i = 0; i < 6; i++)
+	{
+		if (!c_store.actions[i]) continue;
+
+#if 0
+		action_color = TERM_WHITE;
+
+		if (c_store.cost[i]) strnfmt(buff, 20, "(%dgp)", c_store.cost[i]);
+		else buff[0] = '\0';
+
+		strnfmt(tmp_str, 80, " %c) %s %s",
+				c_store.letter[i], c_store.action_name[i], buff);
+		c_put_str(action_color, tmp_str, 21 + (i / 2), 17 + (30 * (i % 2)));
+#else	// 0
+		c_put_str(c_store.action_attr[i], c_store.action_name[i],
+				21 + (i / 2), 17 + (30 * (i % 2)));
+#endif	// 0
+
+#if 0
+		prt(" p) Purchase an item.", 22, 30);
+		prt(" s) Sell an item.", 23, 30);
+
+		prt(" x) eXamine an item.", 22, 60);
+#endif	// 0
+	}
+}
+
 static void display_entry(int pos)
 {
 	object_type *o_ptr;
@@ -291,16 +332,23 @@ static void store_sell(void)
 {
 	int item, amt;
 
-	if (store_num != 7)
+	if (store_num == 7)
 	{
-		if (!c_get_item(&item, "Sell what? ", TRUE, TRUE, FALSE))
+		if (!c_get_item(&item, "Drop what? ", TRUE, TRUE, FALSE))
+		{
+			return;
+		}
+	}
+	else if (store_num == 57)
+	{
+		if (!c_get_item(&item, "Donate what? ", TRUE, TRUE, FALSE))
 		{
 			return;
 		}
 	}
 	else
 	{
-		if (!c_get_item(&item, "Drop what? ", TRUE, TRUE, FALSE))
+		if (!c_get_item(&item, "Sell what? ", TRUE, TRUE, FALSE))
 		{
 			return;
 		}
@@ -313,17 +361,126 @@ static void store_sell(void)
 	}
 	else amt = 1;
 
+	/* Hack -- verify for Museum(Mathom house) */
+	if (store_num == 57)
+	{
+		char out_val[160];
+
+		if (inventory[item].number == amt)
+			sprintf(out_val, "Really donate %s? ", inventory_name[item]);
+		else
+			sprintf(out_val, "Really donate %d of your %s? ", amt, inventory_name[item]);
+		if (!get_check(out_val)) return;
+	}
+
 	/* Tell the server */
 	Send_store_sell(item, amt);
 }
 
+static void store_do_command(int num)
+{
+	int                     i, amt, gold;
+	int                     item, item2;
+	u16b action = c_store.actions[num];
+	u16b bact = c_store.bact[num];
+
+//	object_type             *o_ptr;
+
+	char            out_val[160];
+
+	i = amt = gold = item = item2 = 0;
+
+	/* lazy job for 'older' commands */
+	switch (bact)
+	{
+		case BACT_SELL:
+			store_sell();
+			return;
+			break;
+		case BACT_BUY:
+			store_purchase();
+			return;
+			break;
+		case BACT_EXAMINE:
+			store_examine();
+			return;
+			break;
+	}
+
+	if (c_store.flags[num] & BACT_F_STORE_ITEM)
+	{
+		/* Empty? */
+		if (store.stock_num <= 0)
+		{
+			if (store_num == 7) c_msg_print("Your home is empty.");
+			else c_msg_print("I am currently out of stock.");
+			return;
+		}
+
+
+		/* Find the number of objects on this and following pages */
+		i = (store.stock_num - store_top);
+
+		/* And then restrict it to the current page */
+		if (i > 12) i = 12;
+
+		/* Prompt */
+		sprintf(out_val, "Which item? ");
+
+		/* Get the item number to be bought */
+		if (!get_stock(&item, out_val, 0, i-1)) return;
+
+		/* Get the actual index */
+		item = item + store_top;
+	}
+
+	if (c_store.flags[num] & BACT_F_INVENTORY)
+	{
+		if (!c_get_item(&item, "Which item? ", TRUE, TRUE, FALSE))
+		{
+			return;
+		}
+	}
+
+	if (c_store.flags[num] & BACT_F_GOLD)
+	{
+		/* Get how much */
+		gold = c_get_quantity("How much gold? ", -1);
+
+		/* Send it */
+		if (!gold) return;
+	}
+
+	if (c_store.flags[num] & BACT_F_HARDCODE)
+	{
+		/* Nothing for now */
+	}
+
+	Send_store_command(action, item, item2, amt, gold);
+}
+
 static void store_process_command(void)
 {
+	if (store_num != 7)
+	{
+		int i;
+		for (i = 0; i < 6; i++)
+		{
+			if (!c_store.actions[i]) continue;
+			if (c_store.letter[i] == command_cmd)
+			{
+				store_do_command(i);
+				return;
+			}
+		}
+	}
+
 	/* Parse the command */
 	switch (command_cmd)
 	{
 		/* Leave */
 		case ESCAPE:
+		case KTRL('X'):
 		{
 			leave_store = TRUE;
 			break;
@@ -400,6 +557,29 @@ static void store_process_command(void)
 	}
 }
 
+void c_store_prt_gold(void)
+{
+	char out_val[64];
+
+	prt("Gold Remaining: ", 19, 53);
+
+	sprintf(out_val, "%9ld", (long) p_ptr->au);
+	prt(out_val, 19, 68);
+
+	/* Hack -- show balance (if not 0) */
+	if (store_num == 56 && p_ptr->balance)
+	{
+		prt("Your balance  : ", 20, 53);
+
+		sprintf(out_val, "%9ld", (long) p_ptr->balance);
+		prt(out_val, 20, 68);
+	}
+	else
+	{
+		/* Erase part of the screen */
+		Term_erase(0, 20, 255);
+	}
+}
 
 void display_store(void)
 {
@@ -476,11 +656,7 @@ void display_store(void)
 		put_str("Price", 5, 72);
 
 		/* Display the players remaining gold */
-		prt("Gold Remaining: ", 19, 53);
-
-		sprintf(buf, "%9ld", (long) p_ptr->au);
-		prt(buf, 19, 68);
-
+		c_store_prt_gold();
 	}
 
 	/* Display the inventory */
@@ -501,13 +677,18 @@ void display_store(void)
 		/* Clear */
 		clear_from(21);
 
+		/* Prompt */
+		prt("You may: ", 21, 0);
+
 		/* Basic commands */
-		prt(" ESC) Exit from Building.", 22, 0);
+//		prt(" ESC) Exit from Building.", 22, 0);
+		prt(" ESC) Exit.", 22, 0);
 
 		/* Browse if necessary */
 		if (store.stock_num > 12)
 		{
-			prt(" SPACE) Next page of stock", 23, 0);
+//			prt(" SPACE) Next page of stock", 23, 0);
+			prt(" SPACE) Next page", 23, 0);
 		}
 
 		/* Home commands */
@@ -522,14 +703,14 @@ void display_store(void)
 		/* Shop commands XXX XXX XXX */
 		else
 		{
+			display_store_action();
+#if 0
 			prt(" p) Purchase an item.", 22, 30);
 			prt(" s) Sell an item.", 23, 30);
 
 			prt(" x) eXamine an item.", 22, 60);
+#endif	// 0
 		}
-
-		/* Prompt */
-		prt("You may: ", 21, 0);
 
 		/* Get a command */
 		while (!command_cmd)

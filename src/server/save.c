@@ -1076,7 +1076,7 @@ static void wr_house(house_type *house)
 		}while(house->coords.poly[i] || house->coords.poly[i+1]);
 	}
 
-#ifndef USE_MANG_HOUSE
+#ifndef USE_MANG_HOUSE_ONLY
 	wr_s16b(house->stock_num);
 	wr_s16b(house->stock_size);
 	for (i = 0; i < house->stock_num; i++)
@@ -1291,6 +1291,9 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->msane);
 	wr_s16b(p_ptr->csane);
 	wr_u16b(p_ptr->csane_frac);
+
+	wr_s32b(p_ptr->balance);
+
 }
 
 /*
@@ -1549,7 +1552,7 @@ static bool wr_savefile_new(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int        i,j ;
+	int        i;
 
 	u32b              now, tmp32u;
 
@@ -2403,7 +2406,8 @@ static void new_wr_wild(){
 				wr_byte(w_ptr->up_y);
 				wr_u16b(w_ptr->dungeon->id);
 				wr_u16b(w_ptr->dungeon->baselevel);
-				wr_u32b(w_ptr->dungeon->flags);
+				wr_u32b(w_ptr->dungeon->flags1);
+				wr_u32b(w_ptr->dungeon->flags2);
 				wr_byte(w_ptr->dungeon->maxdepth);
 				for(i=0;i<10;i++){
 					wr_byte(w_ptr->dungeon->r_char[i]);
@@ -2415,7 +2419,8 @@ static void new_wr_wild(){
 				wr_byte(w_ptr->dn_y);
 				wr_u16b(w_ptr->tower->id);
 				wr_u16b(w_ptr->tower->baselevel);
-				wr_u32b(w_ptr->tower->flags);
+				wr_u32b(w_ptr->tower->flags1);
+				wr_u32b(w_ptr->tower->flags2);
 				wr_byte(w_ptr->tower->maxdepth);
 				for(i=0;i<10;i++){
 					wr_byte(w_ptr->tower->r_char[i]);
@@ -2689,6 +2694,7 @@ void wr_towns(){
 		wr_u16b(town[i].baselevel);
 		wr_u16b(town[i].flags);
 		wr_u16b(town[i].num_stores);
+		wr_u16b(town[i].type);
 
 		/* Dump the stores */
 		for (j = 0; j < town[i].num_stores; j++){

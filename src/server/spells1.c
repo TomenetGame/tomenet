@@ -822,14 +822,14 @@ void teleport_player_level(int Ind)
 
 	wpcopy(&new_depth, wpos);
 	/* sometimes go down */
-	if(can_go_down(wpos) && ((!can_go_up(wpos) || (rand_int(100)<50)) || (wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->flags & DUNGEON_IRON)))
+	if(can_go_down(wpos) && ((!can_go_up(wpos) || (rand_int(100)<50)) || (wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON)))
 	{
 		new_depth.wz--;
 		msg = "You sink through the floor.";
 		p_ptr->new_level_method = (new_depth.wz || (istown(&new_depth)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
 	}	
 	/* else go up */
-	else if(can_go_up(wpos) && !(wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->flags & DUNGEON_IRON))
+	else if(can_go_up(wpos) && !(wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))
 	{
 		new_depth.wz++;
 		msg = "You rise up through the ceiling.";

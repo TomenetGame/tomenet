@@ -68,10 +68,12 @@ void dnasave(c_special *cs_ptr){
 int dnahit(c_special *cs_ptr, int y, int x, int Ind){
 	/* we have to know from where we are called! */
 	struct dna *dna=cs_ptr->sc.ptr;
-#ifdef USE_MANG_HOUSE
+#if 0
+#ifdef USE_MANG_HOUSE	// 'passing'..? -Jir
 	if (((cfg.door_bump_open & BUMP_OPEN_HOUSE) || passing)
 				&& c_ptr->feat == FEAT_HOME)
 #endif	//USE_MANG_HOUSE
+#endif	// 0
 	{
 		if(access_door(Ind, dna))
 		{

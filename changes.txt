@@ -4,6 +4,7 @@
 # m = Misc(internal), P = Player, D = Dungeon, B = Bug, V = version
 # N = Network(client)
 # if you need others tell me
+# (well, then, what for town/wilderness?)
 #
 # date is always this format
 # 02/1/2002
@@ -21,6 +22,18 @@
 
 # bug.txt should follow the exact same format
 
+26/08/2002 (Jir)
+[G]- ba_info.txt and bldg.c backported.
+[G]- merchants' guild. (some stores are not fully functional yet)
+[G]- black market uses item list in st_info.txt too
+[G]- multiple pre-defined towns are implemented.
+[G]- WILD_MOUNTAIN and WILD_LAVA.
+[G]- mangband-style house resurrected(MANG_HOUSE_RATE).
+[D]- cheeze_trad_house for abuse check
+[P]- Sneakiness reduces speed penalty in 'searching mode' (-10 => -3)
+[m]- /cheeze for manual cheeze check (calls cheeze() and cheeze_trad_house())
+[m]- /respawn
+[m]- DUNGEON_* flags are changed to DF2_*
 
 25/08/2002 (Jir)
 [G]- st_info.txt touched (Hope C.B will be happy with it :).
@@ -1887,6 +1900,8 @@ below this line are the unfixed bugs known:
 [B]- starting items don't get autotag even with auto_inscribe (Handle_login)
 [B]- '/' searching doesn't work very well due to msg compressing (x12)
 [B]- stores in different town can have the same owner (wow! 2 Bilbo!)
+[B]- connection for player being frozen by Floating eye never timeouts
+[B]- character-choice screen sometimes tell wrong character level
 [B]- when dying, client emits 'broken pipe' error.
      (not crucial, and it's same with mang070.)
      Program received signal SIGPIPE, Broken pipe.
@@ -1958,6 +1973,8 @@ below this line are the unfixed bugs known:
      (were they distinguishable before??)
 [B]- filthy street-urchins dropped a "nothing" which spawns random items
      (not seen recently, but need to check)
+[B]- Ancient Blue Dragon appears regularly on 550 ft (didn't see a vault)
+     (Hrm I've never met one -Jir)
 
 
 **below are bugs not shown recently(fixed??)**
@@ -2090,6 +2107,7 @@ memo and questions:
   (also +100' for lake/pit/nest)
 + monster interferes too much (raise 'Calmness' skill)
   1-(1-0.08)^8 = 0.486
++ magic arrows are always (+0,+0)  (they're as such)
 
 ==== TODO: below this line are changes to be done in the future ====
 [minor ones]
@@ -2117,15 +2135,11 @@ memo and questions:
 - variety of dungeon/floor types (d_info.txt)
   - several flags
 - fully-implemented multiple towns (t_*.txt)
-- more kinds of stores / flexible store configuration (st_info.txt)
-  - a set of commands should be sent to client when entering a store, so that
-    different stores can have different commands.
+- more kinds of stores / flexible store configuration (almost done)
   - new stores:
     + job centre (for lowbies died)
     + guild house
-    + healer
     + auction house
-    + bank (possibly loan shark :)
     + arena (pvp arena would be of great fun!)
   
 (4.3)
@@ -2153,12 +2167,13 @@ memo and questions:
 - savedata snapshot (via this, player can report bugs with savedata)
 - slash-commands should have info file (like sl_info.txt)
 - put CVS keyword($ID$) to every file.
-- obsolete c-tables.c
+- obsolete c-tables.c (hrm, not sure)
 - send flags for each spell, so that we can obsolete do_cmd_cast_aux etc.
 - integrate p_ptr->fruit_bat into p_ptr->body_monster
 - exploding arrows should be ego?
 - switch MAX_*_IDX(define) to max_*_idx(variable) as far as possible.
 - /ver should tell 'last commit time' instead of 'last compile'.
+- allow the server to draw screen more freely (like c_prt)
 
 [speeding the server up]
 # ok, it's 3 times faster now. maybe we don't squeeze it further for now.
@@ -2197,6 +2212,8 @@ memo and questions:
   + vision sharing among the members of a party
   + make wand of haste monster etc. friend-castable
   + guilds related to skills (eg. Thieves' Guild => Sneakiness tree)
+  + command to change party owner (this can be abusable tho)
+  + account-based party controlling (not sure it's good)
 - monsters:
   + monster speech
   + 'water bolt' should wash players away.
@@ -2231,7 +2248,7 @@ memo and questions:
   + sell magic ammo in normal store (maybe archery shop?)
   + store should buy mimic rings for better prices than 90au?
 - anticheeze:
-  + (nothing so far)
+  + all the house contents belonging to a dead player should be erased?
 - players:
   + thirst/sleep?
   + Asclep's '/spell' should be applicable to wands/rods? (fix that first)
@@ -2241,6 +2258,7 @@ memo and questions:
   + being poison-resistant form should slow poison, etc
   + ghost resurrection gets severer
     (eg. exp penalty gets worse like 80%,75%,70%,..)
+  + paralysis shouldn't stack (eg.floating eye) (I don't think so - Jir)
 - combat:
   + players should be able to interfere monsters' firing/casting?
   + 2-weapon combat
@@ -2279,9 +2297,12 @@ memo and questions:
     + screenshot! (do_cmd_html_dump)
   + chat-history/spell window
   + inventory/equipment display should accept next command directly.
+  + more docs in general
+  + online help (nice, esp. if someone else writes that ;)
 - stores:
   + one player shouldn't stay more than 1 minutes in a store?
   + stores should buy {cursed} potions/scrolls/wands etc?
+  + artifact repair (not sure if good -Jir)
 - misc:
   + some measures to 'cheezy' admins (at least some warnings)
   + some places that renders special services(eg. curing, id, *ID*, enchant etc)

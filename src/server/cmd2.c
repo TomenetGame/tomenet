@@ -104,7 +104,7 @@ void do_cmd_go_up(int Ind)
 		msg_print(Ind,"You are at the top of the tower!");
 		return;
 	}
-	if(wpos->wz<0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags & DUNGEON_IRON){
+	if(wpos->wz<0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){
 		msg_print(Ind,"\377rThis is an ironman dungeon, you may not ascend.");
 		return;
 	}
@@ -302,7 +302,7 @@ void do_cmd_go_down(int Ind)
 		return;
 	}
 
-	if(wpos->wz>0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags & DUNGEON_IRON){
+	if(wpos->wz>0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){
 		msg_print(Ind,"\377rThis is an ironman tower, you may not descend.");
 		return;
 	}
@@ -884,7 +884,7 @@ void do_cmd_open(int Ind, int dir)
 			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
 				if(access_door(Ind, cs_ptr->sc.ptr))
 				{
-#if USE_MANG_HOUSE || TRUE /* let'em open it, so that thevery can take place :) */
+#if USE_MANG_HOUSE_ONLY || TRUE /* let'em open it, so that thevery can take place :) */
 					/* Open the door */
 					c_ptr->feat=FEAT_HOME_OPEN;
 #else	// USE_MANG_HOUSE

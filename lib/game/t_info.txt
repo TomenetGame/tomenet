@@ -7,7 +7,11 @@
 %:t_pref.txt
 
 ## Town Bree
-%:t_bree.txt
+#%:t_bree.txt
+#%:t_gondol.txt
+#%:t_minas.txt
+#%:t_lorien.txt
+#%:t_khazad.txt
 
 ## Town Bree
 #?:[AND [EQU $TOWN 1] [EQU $TOWN_DESTROY1 1] ]
@@ -37,6 +41,12 @@
 #%:t_lorien.txt
 #?:1
 #
+## Khazad-Dum
+#?:[AND [EQU $TOWN 5] [EQU $TOWN_DESTROY5 1] ]
+#%:t_d_khaz.txt
+#?:[AND [EQU $TOWN 5] [NOT [EQU $TOWN_DESTROY5 1] ] ]
+#%:t_khazad.txt
+#?:1
 ## Volcano
 #?:[EQU $TOWN 5]
 #%:volcano.txt

@@ -191,7 +191,7 @@ static void prt_gold(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	Send_gold(Ind, p_ptr->au);
+	Send_gold(Ind, p_ptr->au, p_ptr->balance);
 }
 
 
@@ -2699,7 +2699,8 @@ static void calc_bonuses(int Ind)
 	{
 		int stealth = get_skill(p_ptr, SKILL_STEALTH);
 		int sneakiness = get_skill(p_ptr, SKILL_SNEAKINESS);
-		p_ptr->pspeed -= 10;
+//		p_ptr->pspeed -= 10;
+		p_ptr->pspeed -= 10 - sneakiness / 7;
 
 		if (stealth >= 10)
 		{
@@ -2709,7 +2710,7 @@ static void calc_bonuses(int Ind)
 		if (sneakiness >= 10)
 		{
 			p_ptr->skill_srh = p_ptr->skill_srh * sneakiness / 10;
-//			p_ptr->skill_fos= p_ptr->skill_fos * p_ptr->rp_ptr->r_srh + p_ptr->cp_ptr->c_srh;
+//			p_ptr->skill_fos = p_ptr->skill_fos * sneakiness / 10;
 		}
 	}
 

@@ -3,6 +3,8 @@
 
 # Bree
 
+%:t_pref.txt
+
 ############### Additional default terrain settings ###############
 
 # Default for Quest 1 = entrance is tree

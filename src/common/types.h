@@ -119,10 +119,35 @@ struct worldpos
 
 #if 0
 /*
+ * Following are rough sketches for versions to come.	- Jir -
+ */
+/* TODO: tweak it in a way so that one wilderness field can contain
+ * more than one dungeons/towers/rooms (eg.quest, arena..)
+ *
+ * probably, wild_info will contain array of pointers instead of
+ * 'cave', 'tower' and 'dungeon', and then functions like getcave will
+ * look up for a proper 'dungeon'.
+ *
+ * wpos={32,32,-20,2} => wild_info[32][32].dungeons[2].[20]
+ * (dungeons[] contains the info whether it's tower/dungeon or whatever
+ */
+struct worldpos
+{
+	s16b wx;	/* west to east */
+	s16b wy;	/* south to north */
+	s16b wz;	/* deep to sky */
+	s16b ww;	/* 4th dimention! */
+};
+
+
+/*
  * No work is done yet for this.
  * Probably, we should use not 'getlevel' but actual 'wz'
  * to determine the max depth a player can recall to.
  *
+ * XXX some dungeons/towers can be added afterwards;
+ * we should either allocate bigger array in advance, or make it
+ * reallocatable.
  */
 typedef struct recall_depth recall_depth;
 
@@ -1192,8 +1217,8 @@ struct dungeon_type
 {
 	u16b id;		/* dungeon id */
 	u16b baselevel;		/* base level (1 - 50ft etc). */
-	u32b flags;		/* dungeon flags */
-//	u32b flags2;		/* DF2 flags */
+	u32b flags1;		/* dungeon flags */
+	u32b flags2;		/* DF2 flags */
 	byte maxdepth;		/* max height/depth */
 	char r_char[10];	/* races allowed */
 	char nr_char[10];	/* races prevented */
@@ -1207,6 +1232,7 @@ struct town_type
 	u16b flags;		/* town flags */
 	u16b num_stores;	/* always 8 or unused atm. */
 	store_type *townstore;  /* pointer to the stores */
+	u16b type;		/* town type (0=vanilla, 1=bree etc) */
 };
 
 typedef struct wilderness_type wilderness_type;
@@ -1539,7 +1565,7 @@ corners of the house.
 #define HF_NOFLOOR 0x08		/* courtyard generated without floor */
 #define HF_JAIL 0x10		/* generate with CAVE_STCK */
 #define HF_APART 0x20		/* build apartment (obsolete - DELETEME) */
-//#define HF_TRAD	0x40	/* Vanilla style house */
+#define HF_TRAD	0x40		/* Vanilla style house */
 #define HF_DELETED 0x80		/* Ruined house - do not save/reload */
 
 #define MAXCOORD 200		/* Maximum vertices on non-rect house */
@@ -1554,7 +1580,7 @@ struct house_type{
 		struct{ byte width, height; }rect;
 		char *poly;	/* coordinate array for non rect houses */
 	}coords;
-#ifndef USE_MANG_HOUSE
+#ifndef USE_MANG_HOUSE_ONLY
 	s16b stock_num;			/* Stock -- Number of entries */
 	s16b stock_size;		/* Stock -- Total Size of Array */
 	object_type *stock;		/* Stock -- Actual stock items */
@@ -2256,6 +2282,7 @@ struct player_type
 	//        s16b to_s;                      /* Bonus to spell(num_spell) */
 	s16b dodge_chance;		/* Chance of dodging blows/missiles */
 
+	s32b balance;		/* Deposit/debt */
 #if 0
 	s16b mtp;                       /* Max tank pts */
 	s16b ctp;                       /* Cur tank pts */
@@ -2282,6 +2309,23 @@ struct martial_arts
     int     ds;        /* Damage sides */
     int     effect;     /* Special effects */
 };
+
+/*
+ * Hack -- basic town data
+ * (In great need of death!)
+ */
+typedef struct town_extra town_extra;
+struct town_extra
+{
+	byte feat1;
+	byte feat2;
+	byte ratio;
+	byte wild_req;
+	u16b dun_base;
+	u16b dun_max;
+	bool tower;
+};
+
 
 /* Server option struct */
 
@@ -2453,6 +2497,16 @@ struct c_store_extra
 //	s16b store_num;			/* XXX makeshift - will be removed soon */
 
 	/* TODO: list of command */
+//	store_action_type actions[6];
+//	byte num_actions;
+	u16b actions[6];                /* Actions(refers to ba_info) */
+	u16b bact[6];                /* ba_ptr->action */
+	char action_name[6][40];
+	char action_attr[6];
+	u16b action_restr[6];
+	char letter[6];
+	s16b cost[6];
+	byte flags[6];
 };
 
 /* from spells1.c */

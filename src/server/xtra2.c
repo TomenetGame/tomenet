@@ -3741,6 +3741,9 @@ void monster_death(int Ind, int m_idx)
         FREE(m_ptr->r_ptr, monster_race);
 }
 
+/* FIXME: this function is known to be bypassable by nominally
+ * 'party-owning'.
+ */
 static void kill_house_contents(house_type *h_ptr){
 	struct worldpos *wpos=&h_ptr->wpos;
 	object_type *o_ptr;
@@ -3762,8 +3765,9 @@ static void kill_house_contents(house_type *h_ptr){
 		fill_house(h_ptr, FILL_CLEAR, NULL);
 		/* Polygonal house */
 	}
+#endif	// USE_MANG_HOUSE
 
-#else	// USE_MANG_HOUSE
+#ifndef USE_MANG_HOUSE_ONLY
 	for (i = 0; i < h_ptr->stock_num; i++)
 	{
 		o_ptr = &h_ptr->stock[i];
@@ -3775,7 +3779,7 @@ static void kill_house_contents(house_type *h_ptr){
 		invwipe(o_ptr);
 	}
 	h_ptr->stock_num = 0;
-#endif	// USE_MANG_HOUSE
+#endif	// USE_MANG_HOUSE_ONLY
 }
 
 void kill_houses(int id, int type){
@@ -3791,6 +3795,9 @@ void kill_houses(int id, int type){
 	}
 }
 
+/* XXX maybe this function can delete the objects
+ * to prevent 'house-owner char cheeze'	- Jir -
+ */
 static void kill_objs(int id){
 	int i;
 	object_type *o_ptr;
@@ -3906,7 +3913,7 @@ void player_death(int Ind)
 		struct dungeon_type *dungeon;
 		wild=&wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		dungeon=(p_ptr->wpos.wz > 0 ? wild->tower : wild->dungeon);
-		if(!p_ptr->wpos.wz || !(dungeon->flags & DUNGEON_HELL))
+		if(!p_ptr->wpos.wz || !(dungeon->flags2 & DF2_HELL))
 			hell=FALSE;
 	}
 
@@ -6295,7 +6302,7 @@ void telekinesis_aux(int Ind, int item)
 		dungeon_type *d_ptr;
 
 		d_ptr=getdungeon(&p2_ptr->wpos);
-		if(d_ptr && d_ptr->flags & DUNGEON_IRON){
+		if(d_ptr && d_ptr->flags2 & DF2_IRON){
 			msg_print(Ind, "You are unable to contact that player");
 			return;
 		}
@@ -6595,8 +6602,8 @@ bool master_level(int Ind, char * parms)
 				return FALSE;
 			}
 			if(parms[3]=='t' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags&WILD_F_UP)){
-				printf("tower: flags %x\n",parms[4]);
-				adddungeon(&p_ptr->wpos, parms[1], parms[2], parms[4], NULL, NULL, TRUE);
+				printf("tower: flags %x,%x\n",parms[4], parms[5]);
+				adddungeon(&p_ptr->wpos, parms[1], parms[2], parms[4], parms[5], NULL, NULL, TRUE);
 				new_level_down_y(&p_ptr->wpos, p_ptr->py);
 				new_level_down_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave=getcave(&p_ptr->wpos))){
@@ -6604,8 +6611,8 @@ bool master_level(int Ind, char * parms)
 				}
 			}
 			if(parms[3]=='d' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags&WILD_F_DOWN)){
-				printf("dungeon: flags %x\n",parms[4]);
-				adddungeon(&p_ptr->wpos, parms[1], parms[2], parms[4], NULL, NULL, FALSE);
+				printf("dungeon: flags %x,%x\n",parms[4], parms[5]);
+				adddungeon(&p_ptr->wpos, parms[1], parms[2], parms[4], parms[5], NULL, NULL, FALSE);
 				new_level_up_y(&p_ptr->wpos, p_ptr->py);
 				new_level_up_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave=getcave(&p_ptr->wpos))){
@@ -6655,7 +6662,7 @@ bool master_level(int Ind, char * parms)
 					houses[i].flags|=HF_DELETED;
 				}
 			}
-			addtown(p_ptr->wpos.wy, p_ptr->wpos.wx, parms[1], 0);
+			addtown(p_ptr->wpos.wy, p_ptr->wpos.wx, parms[1], 0, TOWN_VANILLA);
 			unstatic_level(&twpos);
 			if(getcave(&twpos))
 				dealloc_dungeon_level(&twpos);

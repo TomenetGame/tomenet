@@ -2308,7 +2308,7 @@ static errr init_other(void)
 //	C_MAKE(t_list, MAX_TR_IDX, trap_type);
 
 	/*** Init the wild_info array... for more information see wilderness.c ***/
-	init_wild_info();
+	// init_wild_info();
 
 	/*** Prepare the various "bizarre" arrays ***/
 

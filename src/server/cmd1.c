@@ -1149,7 +1149,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 
 	/* Extract name */
 //	strcpy(p_name, q_ptr->name);
-	monster_desc(Ind, p_name, 0 - c_ptr->m_idx, 0);
+	player_desc(Ind, p_name, 0 - c_ptr->m_idx, 0);
 
 	/* Track player health */
 	if (p_ptr->play_vis[0 - c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
@@ -3103,14 +3103,14 @@ void move_player(int Ind, int dir, int do_pickup)
 				p_ptr->au += i;
 			}
 		}
-#ifndef USE_MANG_HOUSE
+#ifndef USE_MANG_HOUSE_ONLY
 		else if ((c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
 				&& !p_ptr->ghost)
 		{
 			do_cmd_trad_house(Ind);
 //			return;	/* allow builders to build */
 		}
-#endif	// USE_MANG_HOUSE
+#endif	// USE_MANG_HOUSE_ONLY
 
 
 		/* Discover invisible traps */

@@ -104,6 +104,7 @@ extern int skill_tree_init[MAX_SKILLS][2];
 
 extern int month_day[9];
 extern cptr month_name[9];
+extern town_extra town_profile[6];
 
 
 /* variable.c */
@@ -590,7 +591,7 @@ extern void wipeout_needless_objects();
 /* generate.c */
 extern bool dungeon_aux(int r_idx);
 //extern void dealloc_dungeon_level_maybe(struct worldpos *wpos);
-extern void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, char *race, char *exclude, bool tower);
+extern void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, char *race, char *exclude, bool tower);
 extern void alloc_dungeon_level(struct worldpos *wpos);
 extern void dealloc_dungeon_level(struct worldpos *wpos);
 extern void generate_cave(struct worldpos *wpos);
@@ -601,7 +602,9 @@ extern void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v
 extern int world_index(int world_x, int world_y);
 extern void wild_bulldoze();
 extern void init_wild_info(void);
-extern void addtown(int y, int x, int base, u16b flags);
+//extern void init_wild_info(bool new);
+//extern void addtown(int y, int x, int base, u16b flags);
+extern void addtown(int y, int x, int base, u16b flags, int type);
 extern void wild_apply_day(struct worldpos *wpos);
 extern void wild_apply_night(struct worldpos *wpos);
 extern int determine_wilderness_type(struct worldpos *wpos);
@@ -702,7 +705,8 @@ extern int Send_skill_init(int ind, int type, int i);
 extern int Send_skill_init(int ind, u16b i);
 #endif
 extern int Send_skill_info(int ind, int i);
-extern int Send_gold(int Ind, s32b gold);
+//extern int Send_gold(int Ind, s32b gold);
+extern int Send_gold(int Ind, s32b gold, s32b balance);
 extern int Send_hp(int Ind, int mhp, int chp);
 extern int Send_sp(int Ind, int msp, int csp);
 extern int Send_char_info(int Ind, int race, int class, int sex);
@@ -740,6 +744,8 @@ extern int Send_mini_map(int Ind, int y);
 extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval);
 //extern int Send_store_info(int Ind, int num, int owner, int items);
 extern int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse);
+//extern int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse, byte num_actions);
+extern int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char attr, char letter, s16b cost, byte flag);
 extern int Send_store_sell(int Ind, int price);
 extern int Send_store_kick(int Ind);
 extern int Send_target_info(int ind, int x, int y, cptr buf);
@@ -1017,6 +1023,7 @@ extern bool create_artifact_aux(int Ind, int item);
 extern bool curse_spell(int Ind);
 extern bool curse_spell_aux(int Ind, int item);
 extern void house_creation(int Ind, bool floor, bool jail);
+extern bool item_tester_hook_recharge(object_type *o_ptr);
 
 
 /* store.c */

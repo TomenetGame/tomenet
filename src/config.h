@@ -764,7 +764,9 @@
 /* OPTION: Use mangband-style houses in place of Vanilla/ToME ones.
  * (make clean!)
  */
-//#define USE_MANG_HOUSE
+//#define USE_MANG_HOUSE_ONLY	/* Not tested yet */
+#define USE_MANG_HOUSE
+#define MANG_HOUSE_RATE	50	/* [50] */
 
 
 

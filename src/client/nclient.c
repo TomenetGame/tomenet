@@ -130,6 +130,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_SKILL_MOD] 	= Receive_skill_info;
 	receive_tbl[PKT_STORE_LEAVE] 	= Receive_store_kick;
 	receive_tbl[PKT_CHARDUMP] 	= Receive_chardump;
+	receive_tbl[PKT_BACT]		= Receive_store_action;
 }
 
 /* Head of file transfer system receive */
@@ -432,7 +433,7 @@ int Net_setup(void)
 //int Net_verify(char *real, char *nick, char *pass, int sex, int race, int class)
 int Net_verify(char *real, char *nick, char *pass)
 {
-	int	i, n,
+	int	n,
 		type,
 		result;
 
@@ -874,8 +875,8 @@ static int Net_packet(void)
 {
 	int		type,
 			prev_type = 0,
-			result,
-			replyto;
+			result;
+//			replyto;
 
 	/* Hack -- copy cbuf to rbuf since this is where this function
 	 * expects the data to be.
@@ -897,6 +898,9 @@ static int Net_packet(void)
 	while (rbuf.buf + rbuf.len > rbuf.ptr)
 	{
 		type = (*rbuf.ptr & 0xFF);
+#if DEBUG_LEVEL > 2
+		if (type > 50) printf("Received packet: %d\n", type);
+#endif	// DEBUG_LEVEL
 		if (receive_tbl[type] == NULL)
 		{
 			errno = 0;
@@ -1730,31 +1734,28 @@ int Receive_gold(void)
 {
 	int	n;
 	char	ch;
-	int	gold;
+	int	gold, balance;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &gold)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &gold, &balance)) <= 0)
 	{
 		return n;
 	}
 
 	p_ptr->au = gold;
+	p_ptr->balance = balance;
 
 	if (shopping)
 	{
-	        char out_val[64];
+		char out_val[64];
 
-	        prt("Gold Remaining: ", 19, 53);
-
-	        sprintf(out_val, "%9ld", (long) gold);
-	        prt(out_val, 19, 68);
+		/* Display the players remaining gold */
+		c_store_prt_gold();
 	}
-	else if (!screen_icky)
-		prt_gold(gold);
-	else
-		if ((n = Packet_printf(&qbuf, "%c%d", ch, gold)) <= 0)
-		{
-			return n;
-		}
+	else if (!screen_icky) prt_gold(gold);
+	else if ((n = Packet_printf(&qbuf, "%c%d%d", ch, gold, balance)) <= 0)
+	{
+		return n;
+	}
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
@@ -2411,6 +2412,34 @@ int Receive_special_other(void)
 	return 1;
 }
 
+int Receive_store_action(void)
+{
+	int	n, cost, action, bact;
+	char	ch, pos, name[1024], letter, attr;
+	byte	flag;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%c", &ch, &pos, &bact, &action, name, &attr, &letter, &cost, &flag)) <= 0)
+	{
+		return n;
+	}
+
+	c_store.bact[(int)pos] = bact;
+	c_store.actions[(int)pos] = action;
+	strncpy(c_store.action_name[(int) pos], name, 40);
+	c_store.action_attr[(int)pos] = attr;
+	c_store.letter[(int)pos] = letter;
+	c_store.cost[(int)pos] = cost;
+	c_store.flags[(int)pos] = flag;
+
+	/* Make sure that we're in a store */
+	if (shopping)
+	{
+		display_store_action();
+	}
+
+	return 1;
+}
+
 int Receive_store(void)
 {
 	int	n, price;
@@ -2496,7 +2525,8 @@ int Receive_sell(void)
 	}
 
 	/* Tell the user about the price */
-	sprintf(buf, "Accept %d gold? ", price);
+	if (store_num == 57) sprintf(buf, "Really donate it? ");
+	else sprintf(buf, "Accept %d gold? ", price);
 
 	if (get_check(buf))
 		Send_store_confirm();
@@ -3328,6 +3358,18 @@ int Send_locate(int dir)
 	int n;
 
 	if ((n = Packet_printf(&wbuf, "%c%c", PKT_LOCATE, dir)) <= 0)
+	{
+		return n;
+	}
+
+	return 1;
+}
+
+int Send_store_command(int action, int item, int item2, int amt, int gold)
+{
+	int 	n;
+
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd%hd%hd%d", PKT_STORE_CMD, action, item, item2, amt, gold)) <= 0)
 	{
 		return n;
 	}

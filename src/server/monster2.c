@@ -3781,6 +3781,7 @@ int pick_ego_monster(int r_idx, int Level)
                 lvl -= ((Level / 2) + (rand_int(Level / 2)));
                 if (lvl < 1) lvl = 1;
                 if (rand_int(lvl)) continue;
+                // if (rand_int(lvl * 2 - 1)) continue;	/* less OoD */
 
 				/* Hack -- Depth monsters may NOT be created out of depth */
 				if ((re_ptr->mflags1 & RF1_FORCE_DEPTH) && (lvl > 1))

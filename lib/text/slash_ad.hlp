@@ -2,8 +2,8 @@
 This help describes admin-limited slash commands(and LUA commands).
 For user-level commands, please use '/help user'.
 
-Admin Commands: art cfg clv cp en eq geno id kick lua purge shutdown sta
-                trap unc unst wish
+Admin Commands: art cfg cheeze clv cp en eq geno id kick lua purge respawn
+                shutdown sta trap unc unst wish
 
 [User-level commands] (only those different)
 
@@ -77,6 +77,10 @@ Note: {worldpos} is interpreted in the following ways.
     If filename is ommitted, the default one will be loaded again (which is
     'mangband.cfg', or a file specified with '-m' option when booting.)
 
+/cheeze
+    Scan all the houses to check suspicious cheeze, and display tomenet.log.
+    This check is also (usually) done automatically every 60 min.
+
 /clv {worldpos} 
     Clear every monster and item on the level.
     Items on the icky(eg. inside house/vault) won't be erased.
@@ -128,6 +132,9 @@ Note: {worldpos} is interpreted in the following ways.
     character with admin password (and normal password/new character
     generation is disabled temporarily).
     To leave possessor mode, type /quit again.
+
+/respawn
+    Respawns monsters on your current level.
 
 /static {worldpos} {shorthand: /sta} 
     Makes the specified level static.

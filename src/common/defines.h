@@ -227,8 +227,8 @@
 #define MAX_RE_IDX	128	/* Max size for "re_info[]" */
 #define MAX_T_IDX	256 /* Max size for "t_info[]" */
 #define MAX_OW_IDX	96 /* Max size for "ow_info[]" */
-#define MAX_ST_IDX	64 /* Max size for "ow_info[]" */
-#define MAX_BA_IDX	64 /* Max size for "ow_info[]" */
+#define MAX_ST_IDX	64 /* Max size for "st_info[]" */
+#define MAX_BA_IDX	64 /* Max size for "ba_info[]" */
 
 
 
@@ -3601,43 +3601,50 @@ that keeps many algorithms happy.
 #define FF1_WEB                 0x00010000L
 #define FF1_ATTR_MULTI          0x00020000L
 
-#if 0
+
 /*** Dungeon type flags -- DG ***/
-#define DF1_PRINCIPAL           0x00000001L
-#define DF1_MAZE                0x00000002L
-#define DF1_SMALLEST            0x00000004L
-#define DF1_SMALL               0x00000008L
-#define DF1_BIG                 0x00000010L
-#define DF1_NO_DOORS            0x00000020L
-#define DF1_WATER_RIVER         0x00000040L
-#define DF1_LAVA_RIVER          0x00000080L
-#define DF1_WATER_RIVERS        0x00000100L
-#define DF1_LAVA_RIVERS         0x00000200L
-#define DF1_CAVE                0x00000400L
-#define DF1_CAVERN              0x00000800L
-#define DF1_NO_UP               0x00001000L
-#define DF1_HOT                 0x00002000L
-#define DF1_COLD                0x00004000L
-#define DF1_FORCE_DOWN          0x00008000L
-#define DF1_FORGET              0x00010000L	/* DUNGEON_NOMAP */
-#define DF1_NO_DESTROY          0x00020000L
-#define DF1_SAND_VEIN           0x00040000L
-#define DF1_CIRCULAR_ROOMS      0x00080000L
-#define DF1_EMPTY               0x00100000L
+
+#define DF1_PRINCIPAL           0x00000001L	/* Is a principal dungeon */
+#define DF1_MAZE                0x00000002L	/* Is a maze-type dungeon */
+#define DF1_SMALLEST            0x00000004L	/* Creates VERY small levels like The Maze */
+#define DF1_SMALL               0x00000008L	/* Creates small levels like Dol Goldor */
+#define DF1_BIG                 0x00000010L	/* Creates big levels like Moria, and Angband dungeons */
+#define DF1_NO_DOORS            0x00000020L	/* No doors on rooms, like Barrowdowns, Old Forest etc) */
+#define DF1_WATER_RIVER         0x00000040L	/* Allow a single water streamer on a level */
+#define DF1_LAVA_RIVER          0x00000080L	/* Allow a single lava streamer on a level */
+#define DF1_WATER_RIVERS        0x00000100L	/* Allow multiple water streamers on a level */
+#define DF1_LAVA_RIVERS         0x00000200L	/* Allow multiple lava streamers on a level */
+#define DF1_CAVE                0x00000400L	/* Allow rooms */
+#define DF1_CAVERN              0x00000800L	/* Allow cavern rooms */
+#define DF1_NO_UP               0x00001000L	/* Disallow up stairs */
+#define DF1_HOT                 0x00002000L	/* Corpses on ground and in pack decay quicker through heat */
+#define DF1_COLD                0x00004000L	/* Corpses on ground and in pack decay quicker through cold */
+#define DF1_FORCE_DOWN          0x00008000L	/* No up stairs generated */
+#define DF1_FORGET              0x00010000L	/* Features are forgotten, like the Maze and Illusory Castle */
+#define DF1_NO_DESTROY          0x00020000L	/* No destroyed levels in dungeon */
+#define DF1_SAND_VEIN           0x00040000L	/* Like in the sandworm lair */
+#define DF1_CIRCULAR_ROOMS      0x00080000L	/* Allow circular rooms */
+#define DF1_EMPTY               0x00100000L	/* Allow arena levels */
 #define DF1_DAMAGE_FEAT         0x00200000L
-#define DF1_FLAT                0x00400000L
-#define DF1_TOWER               0x00800000L
-#define DF1_RANDOM_TOWNS        0x01000000L
-#define DF1_DOUBLE              0x02000000L
-#define DF1_LIFE_LEVEL          0x04000000L
-#define DF1_EVOLVE              0x08000000L
-#define DF1_ADJUST_LEVEL_1      0x10000000L
-#define DF1_ADJUST_LEVEL_2      0x20000000L
-#define DF1_NO_RECALL           0x40000000L
-#define DF1_NO_STREAMERS        0x80000000L
+#define DF1_FLAT                0x00400000L	/* Creates paths to next areas at edge of level, like Barrowdowns */
+#define DF1_TOWER               0x00800000L	/* You start at bottom and go up rather than the reverse */
+#define DF1_RANDOM_TOWNS        0x01000000L	/* Allow random towns */
+#define DF1_DOUBLE              0x02000000L	/* Creates double-walled dungeon like Helcaraxe and Erebor */
+#define DF1_LIFE_LEVEL          0x04000000L	/* Creates dungeon level on modified 'game of life' algorithm */
+#define DF1_EVOLVE              0x08000000L	/* Evolving, pulsing levels like Heart of the Earth */
+#define DF1_ADJUST_LEVEL_1      0x10000000L	/* Minimum monster level will be equal to dungeon level */
+#define DF1_ADJUST_LEVEL_2      0x20000000L	/* Minimum monster level will be double the dungeon level */
+#define DF1_NO_RECALL           0x40000000L	/* No recall allowed */
+#define DF1_NO_STREAMERS        0x80000000L	/* No streamers */
 
-#define DF2_ADJUST_LEVEL_1_2    0x00000001L
+#if 0
+#define DF2_ADJUST_LEVEL_1_2    0x00000001L	/* Minimum monster level will be half the dungeon level */
+#define DF2_NO_SHAFT            0x00000002L	/* No shafts */
+#define DF2_ADJUST_LEVEL_PLAYER 0x00000004L	/* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
+#endif	// 0
 
+
+#if 0
 /* Level flags */
 #define LF1_NO_TELEPORT         0x00000001L
 #define LF1_ASK_LEAVE           0x00000002L
@@ -3649,6 +3656,7 @@ that keeps many algorithms happy.
 
 #endif	/* 0 */
 
+#if 0
 /* dungeon flags for dungeon_type 
  * they should be renamed to DFx_*
  */
@@ -3658,6 +3666,21 @@ that keeps many algorithms happy.
 #define DUNGEON_NOMAP		0x00000008L	/* player never gains level knowledge */
 #define DUNGEON_NO_MAGIC_MAP	0x00000010L
 #define DUNGEON_DELETED		0x80000000L /* Deleted, but not yet removed */
+#endif	// 0
+#define DF2_RANDOM		0x00000001L /* random dungeon - not preloaded */
+#define DF2_IRON		0x00000002L	/* one way dungeon - return portal at max level */
+#define DF2_HELL		0x00000004L	/* hellish dungeon - forces hellish mode on all */
+#define DF2_NOMAP		0x00000008L	/* player never gains level knowledge */
+#define DF2_NO_MAGIC_MAP	0x00000010L
+#define DF2_DELETED		0x80000000L /* Deleted, but not yet removed */
+#if 0
+#define DF2_RANDOM			0x04000000L /* random dungeon - not preloaded */
+#define DF2_IRON			0x08000000L	/* one way dungeon - return portal at max level */
+#define DF2_HELL			0x10000000L	/* hellish dungeon - forces hellish mode on all */
+#define DF2_NOMAP			0x20000000L	/* player never gains level knowledge */
+#define DF2_NO_MAGIC_MAP	0x40000000L
+#define DF2_DELETED			0x80000000L /* Deleted, but not yet removed */
+#endif	// 0
 
 /* level flags for dun_level */
 #define LF1_NO_TELEPORT         0x00000001L
@@ -4802,8 +4825,16 @@ extern int PlayerUID;
 #define HOOK_LOAD_GAME          41
 #define HOOK_LEVEL_REGEN        42
 #define HOOK_LEVEL_END_GEN      43
-#define HOOK_NPCTEST		44
-#define MAX_HOOKS               45
+#define HOOK_BUILDING_ACTION    44
+#define HOOK_PROCESS_WORLD      45
+#define HOOK_WIELD_SLOT         46
+#define HOOK_STORE_STOCK        47
+#define HOOK_STORE_BUY          48
+#define HOOK_GEN_LEVEL_BEGIN    49
+#define HOOK_GET                50
+
+#define HOOK_NPCTEST            51
+#define MAX_HOOKS               52
 
 /*
  * Mkeys are skill activations
@@ -5000,9 +5031,21 @@ extern int PlayerUID;
 #define BACT_REQUEST_ITEM           51
 #define BACT_GET_LOAN               52
 #define BACT_PAY_BACK_LOAN          53
+#define BACT_DEPOSIT				54
+#define BACT_WITHDRAW				55
 // If one adds new BACT_ do NOT forget to increase max_bact in variables.c
+/* MAX_BA_INFO for TomeNET	- Jir - */
 
 #define BACT_F_NOTHING		0x00
 #define BACT_F_STORE_ITEM	0x01
 #define BACT_F_INVENTORY	0x02
-#define BACT_F_HARDCODE		0x04
+#define BACT_F_GOLD			0x04
+#define BACT_F_HARDCODE		0x80
+
+#define TOWN_VANILLA	0
+#define TOWN_BREE		1
+#define TOWN_GONDLIN	2
+#define TOWN_MINAS_ANOR	3
+#define TOWN_LORIEN		4
+#define TOWN_KHAZAD		5	/* this town seems to be under construction in ToME */
+

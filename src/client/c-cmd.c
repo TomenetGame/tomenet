@@ -1863,14 +1863,16 @@ void cmd_master_aux_level(void)
 		}
 		else if (i == '3'){	/* create dungeon stair here */
 			buf[0]='D';
-			buf[4]=0;
+			buf[4]= DF1_PRINCIPAL;	/* DF1_* */ /* Hack -- avoid '0' */
+			buf[5]=0;	/* DF2_* */
 			buf[1]=c_get_quantity("Base level: ", 127);
 			buf[2]=c_get_quantity("Max depth (1-127): ",127);
 			buf[3]=(get_check("Is it a tower? ") ? 't':'d');
-			if(get_check("Random dungeon?")) buf[4] |= DUNGEON_RANDOM;
-			if(get_check("Hellish?")) buf[4] |= DUNGEON_HELL;
-			if(get_check("Not mappable?")) buf[4] |= DUNGEON_NOMAP;
-			if(get_check("Ironman?")) buf[4] |= DUNGEON_IRON;
+			/* FIXME flags are u32b while buf[] is char! */
+			if(get_check("Random dungeon?")) buf[5] |= DF2_RANDOM;
+			if(get_check("Hellish?")) buf[5] |= DF2_HELL;
+			if(get_check("Not mappable?")) buf[5] |= DF2_NOMAP;
+			if(get_check("Ironman?")) buf[5] |= DF2_IRON;
 			Send_master(MASTER_LEVEL, buf);
 		}
 		else if (i == '4'){

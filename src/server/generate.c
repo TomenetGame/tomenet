@@ -7429,13 +7429,14 @@ static void cave_gen(struct worldpos *wpos)
 	cave_type **zcave;
 	wilderness_type *wild;
 	dungeon_type	*d_ptr = getdungeon(wpos);
-	u32b flags;		/* entire-dungeon flags */
+	u32b flags1, flags2;		/* entire-dungeon flags */
 
 	if(!(zcave=getcave(wpos))) return;
 	wild=&wild_info[wpos->wy][wpos->wx];
-	flags=(wpos->wz>0 ? wild->tower->flags : wild->dungeon->flags);
+	flags1=(wpos->wz>0 ? wild->tower->flags1 : wild->dungeon->flags1);
+	flags2=(wpos->wz>0 ? wild->tower->flags2 : wild->dungeon->flags2);
 
-	if(!flags & DUNGEON_RANDOM) return;
+	if(!flags2 & DF2_RANDOM) return;
 
 	glev = getlevel(wpos);
 	/* Global data */
@@ -7467,11 +7468,12 @@ static void cave_gen(struct worldpos *wpos)
 	if (magik(NO_DESTROY_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_DESTROY;
 
 	/* TODO: copy dungeon_type flags to dun_level */
-	if (d_ptr && d_ptr->flags & DUNGEON_NOMAP) dun->l_ptr->flags1 |= LF1_NOMAP;
-	if (d_ptr && d_ptr->flags & DUNGEON_NO_MAGIC_MAP) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
+	if (d_ptr && d_ptr->flags2 & DF2_NOMAP) dun->l_ptr->flags1 |= LF1_NOMAP;
+	if (d_ptr && d_ptr->flags2 & DF2_NO_MAGIC_MAP) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 
 	/* Hack -- NOMAP often comes with NO_MAGIC_MAP */
-	if (dun->l_ptr->flags1 & LF1_NOMAP && magik(70)) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
+	if ((dun->l_ptr->flags1 & LF1_NOMAP) && magik(70))
+		dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 
 	/* Possible cavern */
 //	if ((d_ptr->flags1 & DF1_CAVERN) && (rand_int(dun_level/2) > DUN_CAVERN))
@@ -7919,9 +7921,9 @@ static void cave_gen(struct worldpos *wpos)
 static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 {
 	int                 i, y, x, y0, x0, y1, x1, y2, x2, tmp;
-	int size;
+	int size = 0;
 	cave_type		*c_ptr;
-	bool flat = FALSE;
+	bool flat = FALSE, trad = FALSE;
 	struct c_special *cs_ptr;
 
 	cave_type **zcave;
@@ -7964,6 +7966,12 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		if ((x2 - x1) % 2) x2--;
 		if ((y2 - y1) % 2) y2--;
 		if ((x2 - x1) >= 4 && (y2 - y1) >= 4 && magik(60)) flat = TRUE;
+	}
+
+	/* Hack -- try 'apartment house' */
+	if (n == 13)
+	{
+		if (!magik(MANG_HOUSE_RATE)) trad = TRUE;
 	}
 
 	/* Build an invulnerable rectangular building */
@@ -8151,18 +8159,21 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		int price;
 
 #ifdef USE_MANG_HOUSE
-		for (y = y1 + 1; y < y2; y++)
+		if (!trad)
 		{
-			for (x = x1 + 1; x < x2; x++)
+			for (y = y1 + 1; y < y2; y++)
 			{
-				/* Get the grid */
-				c_ptr = &zcave[y][x];
+				for (x = x1 + 1; x < x2; x++)
+				{
+					/* Get the grid */
+					c_ptr = &zcave[y][x];
 
-				/* Fill with floor */
-				c_ptr->feat = FEAT_FLOOR;
+					/* Fill with floor */
+					c_ptr->feat = FEAT_FLOOR;
 
-				/* Make it "icky" */
-				c_ptr->info |= CAVE_ICKY;
+					/* Make it "icky" */
+					c_ptr->info |= CAVE_ICKY;
+				}
 			}
 		}
 #endif	// USE_MANG_HOUSE
@@ -8182,6 +8193,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			houses[num_houses].x=x1;
 			houses[num_houses].y=y1;
 			houses[num_houses].flags=HF_RECT|HF_STOCK;
+			if (trad) houses[num_houses].flags |= HF_TRAD;
 			houses[num_houses].coords.rect.width=x2-x1+1;
 			houses[num_houses].coords.rect.height=y2-y1+1;
 			wpcopy(&houses[num_houses].wpos, wpos);
@@ -8237,7 +8249,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				houses[num_houses].x = x;
 				houses[num_houses].y = y;
 				houses[num_houses].flags=HF_RECT|HF_STOCK|HF_APART;
-				/* was -0 */
+				if (trad) houses[num_houses].flags |= HF_TRAD;
 				houses[num_houses].coords.rect.width=(x2-x1) / 2 + 1;
 				houses[num_houses].coords.rect.height=(y2-y1) / 2 + 1;
 				wpcopy(&houses[num_houses].wpos, wpos);
@@ -8265,16 +8277,24 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 					houses[num_houses].dna->creator=0L;
 					houses[num_houses].dna->owner=0L;
 
-#ifndef USE_MANG_HOUSE
+#ifndef USE_MANG_HOUSE_ONLY
 					/* This can be changed later */
 					/* XXX maybe new owner will be unhappy if size>STORE_INVEN_MAX;
 					 * this will be fixed when STORE_INVEN_MAX will be removed. - Jir
 					 */
-					size = (size >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : size;
-					houses[num_houses].stock_size = size;
-					houses[num_houses].stock_num = 0;
-					/* TODO: pre-allocate some when launching the server */
-					C_MAKE(houses[num_houses].stock, size, object_type);
+					if (trad)
+					{
+						size = (size >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : size;
+						houses[num_houses].stock_size = size;
+						houses[num_houses].stock_num = 0;
+						/* TODO: pre-allocate some when launching the server */
+						C_MAKE(houses[num_houses].stock, size, object_type);
+					}
+					else
+					{
+						houses[num_houses].stock_size = 0;
+						houses[num_houses].stock_num = 0;
+					}
 #endif	// USE_MANG_HOUSE
 
 					/* One more house */
@@ -8360,17 +8380,25 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			houses[num_houses].dna->creator=0L;
 			houses[num_houses].dna->owner=0L;
 
-#ifndef USE_MANG_HOUSE
+#ifndef USE_MANG_HOUSE_ONLY
 			/* This can be changed later */
 			/* XXX maybe new owner will be unhappy if size>STORE_INVEN_MAX;
 			 * this will be fixed when STORE_INVEN_MAX will be removed. - Jir
 			 */
-			size = (size >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : size;
-			houses[num_houses].stock_size = size;
-			houses[num_houses].stock_num = 0;
-			/* TODO: pre-allocate some when launching the server */
-			C_MAKE(houses[num_houses].stock, size, object_type);
-#endif	// USE_MANG_HOUSE
+			if (trad)
+			{
+				size = (size >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : size;
+				houses[num_houses].stock_size = size;
+				houses[num_houses].stock_num = 0;
+				/* TODO: pre-allocate some when launching the server */
+				C_MAKE(houses[num_houses].stock, size, object_type);
+			}
+			else
+			{
+				houses[num_houses].stock_size = 0;
+				houses[num_houses].stock_num = 0;
+			}
+#endif	// USE_MANG_HOUSE_ONLY
 
 			/* One more house */
 			num_houses++;
@@ -8648,12 +8676,28 @@ static void town_gen_hack(struct worldpos *wpos)
  
 static void town_gen(struct worldpos *wpos)
 { 
-	int		y, x;
+	int y, x, type = -1, i;
 	int xstart = 0, ystart = 0;	/* dummy, for now */
 
 	cave_type	*c_ptr;
 	cave_type	**zcave;
 	if(!(zcave=getcave(wpos))) return;
+
+	for (i = 0; i < numtowns; i++)
+	{
+		if (town[i].x == wpos->wx && town[i].y == wpos->wy)
+		{
+			type = town[i].type;
+			break;
+		}
+	}
+
+	if (type < 0)
+	{
+		s_printf("TRIED TO GENERATE NON-ALLOCATED TOWN! %s\n",
+				wpos_format(0, wpos));
+		return;
+	}
 
 	/* Perma-walls -- North/South*/
 	for (x = 0; x < MAX_WID; x++)
@@ -8704,9 +8748,11 @@ static void town_gen(struct worldpos *wpos)
 //	town_gen_hack(wpos);
 //	process_dungeon_file("t_info.txt", &ystart, &xstart, cur_hgt, cur_wid, TRUE);
 
-	/* XXX this will be changed very soon	- Jir - */
+	/* XXX this will be changed very soon	- Jir -
+	 * It's no good hardcoding things like this.. */
 #if 1
-	if(wpos->wx==cfg.town_x && wpos->wy==cfg.town_y && !wpos->wz)
+//	if(wpos->wx==cfg.town_x && wpos->wy==cfg.town_y && !wpos->wz)
+	if (type > 0 || type < 6)
 	{
 		/* Hack -- Use the "simple" RNG */
 		Rand_quick = TRUE;
@@ -8724,7 +8770,8 @@ static void town_gen(struct worldpos *wpos)
 				c_ptr = &zcave[y][x];
 
 				/* Clear previous contents, add forest */
-				c_ptr->feat = magik(98) ? FEAT_TREES : FEAT_GRASS;
+				//c_ptr->feat = magik(98) ? FEAT_TREES : FEAT_GRASS;
+				c_ptr->feat = magik(town_profile[type].ratio) ? town_profile[type].feat1 : town_profile[type].feat2;
 			}
 		}
 
@@ -8777,8 +8824,36 @@ static void town_gen(struct worldpos *wpos)
 		/* Hack -- use the "complex" RNG */
 		Rand_quick = FALSE;
 
+#if 0
 		process_dungeon_file("t_info.txt", wpos, &ystart, &xstart,
 				MAX_HGT, MAX_WID, TRUE);
+#endif	// 0
+		switch(type)
+		{
+			case 1:
+				process_dungeon_file("t_bree.txt", wpos, &ystart, &xstart,
+						MAX_HGT, MAX_WID, TRUE);
+				break;
+			case 2:
+				process_dungeon_file("t_gondol.txt", wpos, &ystart, &xstart,
+						MAX_HGT, MAX_WID, TRUE);
+				break;
+			case 3:
+				process_dungeon_file("t_minas.txt", wpos, &ystart, &xstart,
+						MAX_HGT, MAX_WID, TRUE);
+				break;
+			case 4:
+				process_dungeon_file("t_lorien.txt", wpos, &ystart, &xstart,
+						MAX_HGT, MAX_WID, TRUE);
+				break;
+			case 5:
+				process_dungeon_file("t_khazad.txt", wpos, &ystart, &xstart,
+						MAX_HGT, MAX_WID, TRUE);
+				break;
+			default:
+				town_gen_hack(wpos);
+				break;
+		}
 	}
 	else town_gen_hack(wpos);
 #else	// 0
@@ -8914,7 +8989,7 @@ void del_dungeon(struct worldpos *wpos, bool tower){
 
 	wpcopy(&twpos, wpos);
 	d_ptr=(tower ? wild->tower : wild->dungeon);
-	if(d_ptr->flags & DUNGEON_DELETED){
+	if(d_ptr->flags2 & DF2_DELETED){
 		s_printf("Deleted flag\n");
 		for(i=0;i<d_ptr->maxdepth;i++){
 			twpos.wz=(tower ? i+1 : 0-(i+1));
@@ -8951,11 +9026,11 @@ void remdungeon(struct worldpos *wpos, bool tower){
 	wild->flags |= (tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN);
 	/* This will prevent players entering the dungeon */
 	wild->flags &= ~(tower ? WILD_F_UP : WILD_F_DOWN);
-	d_ptr->flags |= DUNGEON_DELETED;
+	d_ptr->flags2 |= DF2_DELETED;
 	del_dungeon(wpos, tower);	/* Hopefully first time */
 }
 
-void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, char *race, char *exclude, bool tower){
+void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, char *race, char *exclude, bool tower){
 	int i;
 	wilderness_type *wild;
 	struct dungeon_type *d_ptr;
@@ -8968,7 +9043,8 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, cha
 		MAKE(wild->dungeon, struct dungeon_type);
 	d_ptr=(tower ? wild->tower : wild->dungeon);
 	d_ptr->baselevel=baselevel;
-	d_ptr->flags=flags; 
+	d_ptr->flags1=flags1; 
+	d_ptr->flags2=flags2; 
 	d_ptr->maxdepth=maxdep;
 	for(i=0;i<10;i++){
 		d_ptr->r_char[i]='\0';
@@ -9056,7 +9132,26 @@ void generate_cave(struct worldpos *wpos)
 
 			if(wpos->wx==cfg.town_x && wpos->wy==cfg.town_y && !wpos->wz){
 				/* town of angband */
-				adddungeon(wpos, cfg.dun_base, cfg.dun_max, DUNGEON_RANDOM, NULL, NULL, FALSE);
+				adddungeon(wpos, cfg.dun_base, cfg.dun_max, 0, DF2_RANDOM, NULL, NULL, FALSE);
+			}
+			else if (!wpos->wz)
+			{
+				int retval = -1, type;
+				for(i=0;i<numtowns;i++)
+				{
+					if(town[i].x==wpos->wx && town[i].y==wpos->wy)
+					{
+						retval=i;
+						break;
+					}
+				}
+				if (retval < 0)
+				{
+					s_printf("adddungeon failed in generate_cave!! %s", wpos_format(0, wpos));
+					return;	/* This should never.. */
+				}
+				type = town[retval].type;
+				adddungeon(wpos, town_profile[type].dun_base, town_profile[type].dun_max, 0, DF2_RANDOM, NULL, NULL, town_profile[type].tower);
 			}
 			/* Make a town */
 			town_gen(wpos);

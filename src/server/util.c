@@ -1395,7 +1395,7 @@ void msg_broadcast(int Ind, cptr msg)
 
 void msg_broadcast_format(int Ind, cptr fmt, ...)
 {
-	int i;
+//	int i;
 	
 	va_list vp;
 
@@ -1662,7 +1662,7 @@ static int trap_index(char * name)
  */
 void use_ability_blade(int Ind)
 {
-	player_type *p_ptr = Players[Ind], *q_ptr;
+	player_type *p_ptr = Players[Ind];
 	int dun_level = getlevel(&p_ptr->wpos);
 	int chance = p_ptr->dodge_chance - (dun_level * 5 / 6);
 
@@ -1745,7 +1745,7 @@ static void do_cmd_refresh(int Ind)
 
 static void do_slash_brief_help(int Ind)
 {
-	player_type *p_ptr = Players[Ind], *q_ptr;
+	player_type *p_ptr = Players[Ind];
 
 #if 0	// let's not show obsolete ones
 	msg_print(Ind, "Commands: afk at bed bug cast dis dress ex feel help house ignore less me");	// pet ?
@@ -1756,8 +1756,8 @@ static void do_slash_brief_help(int Ind)
 
 	if (is_admin(p_ptr))
 	{
-		msg_print(Ind, "  art cfg clv cp en eq geno id kick lua purge shutdown sta store");
-		msg_print(Ind, "  trap unc unst wish");
+		msg_print(Ind, "  art cfg cheeze clv cp en eq geno id kick lua purge respawn shutdown");
+		msg_print(Ind, "  sta store trap unc unst wish");
 	}
 	else
 	{
@@ -2472,6 +2472,7 @@ static void do_slash_cmd(int Ind, char *message)
 			set_pkill(Ind, admin? 10 : 200);
 			return;
 		}
+		/* TODO: move it to the Mayor's house */
 		else if(prefix(message, "/quest") ||
 				prefix(message, "/que"))	/* /quIt */
 		{
@@ -2613,7 +2614,6 @@ static void do_slash_cmd(int Ind, char *message)
 				prefix(message, "/at"))
 		{
 			object_type		*o_ptr;
-			char c[] = "@m ";
 			for(i = 0; i < INVEN_PACK; i++)
 			{
 				o_ptr = &(p_ptr->inventory[i]);
@@ -3083,6 +3083,36 @@ static void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "\377oStore owners had been changed!");
 				}
 				else msg_print(Ind, "\377GStore inventory had been changed.");
+
+				return;
+			}
+			/* take 'cheezelog'
+			 * result is output to the logfile */
+			else if (prefix(message, "/cheeze")) 
+			{
+				char    path[MAX_PATH_LENGTH];
+				object_type *o_ptr;
+				for(i=0;i<o_max;i++)
+				{
+					o_ptr=&o_list[i];
+					cheeze(o_ptr);
+				}
+
+				cheeze_trad_house();
+
+				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.log");
+				do_cmd_check_other_prepare(Ind, path);
+				return;
+			}
+			/* Respawn monsters on the floor
+			 * TODO: specify worldpos to respawn */
+			else if (prefix(message, "/respawn")) 
+			{
+				/* Set the monster generation depth */
+				monster_level = getlevel(&p_ptr->wpos);
+				if (p_ptr->wpos.wz)
+					alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
+				else wild_add_monster(&p_ptr->wpos);
 
 				return;
 			}

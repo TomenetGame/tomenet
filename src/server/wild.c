@@ -145,7 +145,7 @@ void initwild(){
    Note that this has to be initially called with 0,0 to work properly. 
 */
 
-void addtown(int y, int x, int base, u16b flags)
+void addtown(int y, int x, int base, u16b flags, int type)
 {
 	int n;
 	if(numtowns)
@@ -158,6 +158,7 @@ void addtown(int y, int x, int base, u16b flags)
 	town[numtowns].flags=flags;
 //	town[numtowns].num_stores=MAX_STORES;
 	town[numtowns].num_stores=max_st_idx;
+	town[numtowns].type = type;
 	wild_info[y][x].type=WILD_TOWN;
 	wild_info[y][x].radius=base;
 	alloc_stores(numtowns);
@@ -173,7 +174,7 @@ void addtown(int y, int x, int base, u16b flags)
 //		if ((n == MAX_STORES - 2) || (n == MAX_STORES - 1)) continue;
 
 		/* Maintain the shop */
-		for (i = 0; i < 3; i++) store_maint(&town[numtowns].townstore[n]);
+		store_maint(&town[numtowns].townstore[n]);
 //		for (i = 0; i < 10; i++) store_maint(&town[numtowns].townstore[n]);
 	}
 	numtowns++;
@@ -194,6 +195,47 @@ void wild_bulldoze()
 	}
 }
 
+void wild_spawn_towns()
+{
+	int x, y, i, j;
+	bool retry;
+
+	for (i = 1 + 1; i < 6; i++)
+	{
+		retry = FALSE;
+
+		y = rand_int(MAX_WILD_Y);
+		x = rand_int(MAX_WILD_X);
+
+		if (wild_info[y][x].type != town_profile[i].wild_req)
+		{
+			i--;
+			continue;
+		}
+
+		/* Don't build them too near to each other */
+		for (j = 0; j < i - 1; j++)
+		{
+			if (distance(y, x, town[j].y, town[j].x) < 8)
+			{
+				retry = TRUE;
+				break;
+			}
+			/* TODO: check wilderness type so that Bree is in forest and
+			 * Minas Anor in mountain etc */
+		}
+		if (retry)
+		{
+			i--;
+			continue;
+		}
+		addtown(y, x, i * 20 - 20 , 0, i);	/* base town */
+
+		/* TODO: create bed towns */
+	}
+}
+
+#if 0
 void init_wild_info()
 {
 	int x,y;
@@ -207,13 +249,32 @@ void init_wild_info()
 	}
 */
 	initwild();
-	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0);	/* base town */
+//	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0);	/* base town */
+	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0, TOWN_BREE);	/* base town */
 	init_wild_info_aux(0,0);
 
 #if 0	// this function is called *before* wilderness generation, so..
 	wild_bulldoze()
 #endif	// 0
 }
+#else	// 0
+//void init_wild_info(bool new)
+void init_wild_info()
+{
+	int x, y, i, j;
+	memset(&wild_info[0][0],0,sizeof(wilderness_type)*(MAX_WILD_Y*MAX_WILD_X));
+
+	/* evileye test new wilderness map */
+	initwild();
+
+	/* Jir tests new town allocator */
+	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0, 1);	/* base town */
+	//if (new) wild_spawn_towns();
+
+	//init_wild_info_aux(0,0);
+}
+#endif	// 0
+
 
 /* Called when the player goes onto a wilderness level, to 
    make sure the lighting information is up to date with
@@ -1071,6 +1132,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	char wall_feature, door_feature, has_moat = 0;
 	cave_type *c_ptr;
 	bool rand_old = Rand_quick;
+	bool trad = !magik(MANG_HOUSE_RATE);
 	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -1120,11 +1182,13 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		plot_ylen = house_ylen + (area/25)*2;
 		//plot_xlen = house_xlen + (area/10)*2;
 		//plot_ylen = house_ylen + (area/16)*2;
+		trad = FALSE;
 	}
 	else
 	{
 		plot_xlen = house_xlen + (area/8)*2;
 		plot_ylen = house_ylen + (area/14)*2;
+		trad = FALSE;
 	}
 
 	/* Hack -- sometimes large buildings get moats */
@@ -1229,6 +1293,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			houses[num_houses].x = h_x1;
 			houses[num_houses].y = h_y1;
 			houses[num_houses].flags = HF_RECT|HF_STOCK;
+			if (trad) houses[num_houses].flags |= HF_TRAD;
 			if(has_moat)
 				houses[num_houses].flags |= HF_MOAT;
 			houses[num_houses].coords.rect.width = h_x2-h_x1+1;
@@ -1317,9 +1382,9 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	}		
 		
 	/* TODO: use coloured roof, so that they look cute :) */
-#ifndef USE_MANG_HOUSE
-	if (type != WILD_TOWN_HOME)
-#endif	// USE_MANG_HOUSE
+#ifndef USE_MANG_HOUSE_ONLY
+	if (type != WILD_TOWN_HOME || !trad)
+#endif	// USE_MANG_HOUSE_ONLY
 	/* make it hollow */
 	for (y = h_y1 + 1; y < h_y2; y++)
 	{
@@ -1385,7 +1450,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			houses[num_houses].dna->creator=0L;
 			houses[num_houses].dna->owner=0L;
 
-#ifndef USE_MANG_HOUSE
+#ifndef USE_MANG_HOUSE_ONLY
 			/* This can be changed later - house capacity doesn't need
 			 * to be bound to the house size any more.
 			 * TODO: add 'extension' command
@@ -1394,12 +1459,20 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			/* XXX maybe new owner will be unhappy if area>STORE_INVEN_MAX;
 			 * this will be fixed when STORE_INVEN_MAX will be removed. - Jir
 			 */
-			size = (area >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : area;
-			houses[num_houses].stock_size = size;
-			houses[num_houses].stock_num = 0;
-			/* TODO: pre-allocate some when launching the server */
-			C_MAKE(houses[num_houses].stock, size, object_type);
-#endif	// USE_MANG_HOUSE
+			if (trad)
+			{
+				size = (area >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : area;
+				houses[num_houses].stock_size = size;
+				houses[num_houses].stock_num = 0;
+				/* TODO: pre-allocate some when launching the server */
+				C_MAKE(houses[num_houses].stock, size, object_type);
+			}
+			else
+			{
+				houses[num_houses].stock_size = 0;
+				houses[num_houses].stock_num = 0;
+			}
+#endif	// USE_MANG_HOUSE_ONLY
 
 			num_houses++;
 			if((house_alloc-num_houses)<32){
@@ -1623,6 +1696,8 @@ struct terrain_type
 	int water;
 	int tree;
 	int eviltree;
+	int mountain;
+	int lava;
 	int dwelling;
 	int hotspot;
 	int monst_lev;
@@ -1633,13 +1708,37 @@ struct terrain_type
 void init_terrain(terrain_type *t_ptr, int radius)
 {
 	/* not many terrain types have evil trees */
-	t_ptr->eviltree = t_ptr->mud = 0;
+	t_ptr->eviltree = t_ptr->mud = t_ptr->mountain = t_ptr->lava = 0;
 
 	switch (t_ptr->type)
 	{
 		/* wasteland */
 		case WILD_VOLCANO:
+		{
+			t_ptr->grass = rand_int(100);
+			t_ptr->tree = 0;
+			t_ptr->water = 0;
+			t_ptr->dwelling = 0;
+			t_ptr->eviltree = rand_int(4);
+			t_ptr->mountain = rand_int(100)+450;
+			t_ptr->lava = rand_int(150)+800;
+			t_ptr->hotspot = rand_int(15) + 4;
+			t_ptr->monst_lev = 20 + (radius / 2); break;
+			break;
+		}
 		case WILD_MOUNTAIN:
+		{
+			t_ptr->grass = rand_int(100);
+			t_ptr->tree = rand_int(5);
+			t_ptr->water = 0;
+			t_ptr->dwelling = 0;
+			t_ptr->eviltree = rand_int(4);
+			t_ptr->mountain = rand_int(100)+850;
+			t_ptr->lava = rand_int(150)+200;
+			t_ptr->hotspot = rand_int(15) + 4;
+			t_ptr->monst_lev = 20 + (radius / 2); break;
+			break;
+		}
 		case WILD_WASTELAND:
 		{
 			t_ptr->grass = rand_int(100);
@@ -1737,6 +1836,8 @@ char terrain_spot(terrain_type * terrain)
 	if (rand_int(1000) < terrain->eviltree) feat = FEAT_DEAD_TREE;
 	if (rand_int(1000) < terrain->water) feat = FEAT_DEEP_WATER;
 	if (rand_int(1000) < terrain->mud) feat = FEAT_MUD;
+	if (rand_int(1000) < terrain->mountain) feat = FEAT_MOUNTAIN;
+	if (rand_int(1000) < terrain->lava) feat = magik(30)?FEAT_DEEP_LAVA:FEAT_SHAL_LAVA;
 	return feat;
 }
 

@@ -773,6 +773,7 @@ static void get_money(int Ind)
 
 	/* Save the gold */
 	p_ptr->au = gold;
+	p_ptr->balance = 0;
 
 	/* Since it's not a king/queen */
 	p_ptr->own1.wx=p_ptr->own1.wy=p_ptr->own1.wz=0;

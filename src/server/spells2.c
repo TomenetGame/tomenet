@@ -397,6 +397,18 @@ void identify_pack(int Ind)
 			object_known(o_ptr);
 		}
 	}
+
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
 }
 
 
@@ -3178,7 +3190,8 @@ bool identify_fully_item(int Ind, int item)
 /*
  * Hook for "get_item()".  Determine if something is rechargable.
  */
-static bool item_tester_hook_recharge(object_type *o_ptr)
+//static bool item_tester_hook_recharge(object_type *o_ptr)
+bool item_tester_hook_recharge(object_type *o_ptr)
 {
 	u32b f1, f2, f3, f4, f5, esp;
 

@@ -294,6 +294,14 @@ G:6:r
 W:36
 
 N:6:Black Market
+#potion of Speed
+T:100:71:29
+#potion of Healing
+T:100:71:37
+#scroll of Teleportation
+T:100:70:9
+I:100:Restore Mana
+I:100:Blood Bond
 A:30:0:1:2:3:4
 O:38:39:40:41
 G:7:D
@@ -729,7 +737,8 @@ F:RARE
 W:24
 
 N:56:Merchants Guild
-A:0:0:56:57:58:0
+#A:0:0:56:57:58:0
+A:60:61:56:57:58:0
 O:68:68:68:68
 G:+:g
 W:0

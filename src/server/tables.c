@@ -3598,3 +3598,73 @@ cptr month_name[9] =
 	"Mettare",
 };
 
+town_extra town_profile[6]=
+{
+	/* Vanilla */
+	{
+		FEAT_GRASS,
+		FEAT_GRASS,
+		90,
+		WILD_GRASSLAND,
+		1,
+		127,
+		FALSE,
+	},
+
+	/* Bree */
+	{
+		FEAT_TREES,
+		FEAT_GRASS,
+		98,
+		WILD_FOREST,
+		1,
+		60,
+		FALSE,
+	},
+
+	/* Gondolin */
+	{
+		FEAT_GRASS,
+		FEAT_DIRT,
+		70,
+		WILD_GRASSLAND,
+		20,
+		80,
+		FALSE,
+	},
+
+	/* Minas Anor */
+	{
+		FEAT_MOUNTAIN,
+		FEAT_SAND,
+		90,
+		WILD_MOUNTAIN,
+		40,
+		80,
+		TRUE,
+	},
+
+	/* Lothlorien */
+	{
+		FEAT_DEEP_WATER,
+		FEAT_SHAL_WATER,
+		80,
+		WILD_RIVER,
+		60,
+		80,
+		FALSE
+	},
+
+	/* Khazad-dum */
+	{
+		FEAT_MOUNTAIN,
+		FEAT_ASH,
+		70,
+		WILD_MOUNTAIN,
+		80,
+		120,
+		TRUE,
+	}
+};
+
+

@@ -254,6 +254,7 @@ static void Init_receive(void)
         playing_receive[PKT_ACTIVATE_SKILL]		= Receive_activate_skill;
 	playing_receive[PKT_RAW_KEY]		= Receive_raw_key;
 	playing_receive[PKT_STORE_EXAMINE]		= Receive_store_examine;
+	playing_receive[PKT_STORE_CMD]		= Receive_store_command;
 }
 
 static int Init_setup(void)
@@ -3132,7 +3133,7 @@ int Send_skill_info(int ind, int i)
         return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%ld", PKT_SKILL_MOD, p_ptr->skill_points, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden);
 }
 
-int Send_gold(int ind, s32b au)
+int Send_gold(int ind, s32b au, s32b balance)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -3157,10 +3158,10 @@ int Send_gold(int ind, s32b au)
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%d", PKT_GOLD, au);
+		Packet_printf(&connp2->c, "%c%d%d", PKT_GOLD, au, balance);
 	      }
 	  }
-	return Packet_printf(&connp->c, "%c%d", PKT_GOLD, au);
+	return Packet_printf(&connp->c, "%c%d%d", PKT_GOLD, au, balance);
 }
 
 #if 0	// well, it's easily cracked by client
@@ -4174,6 +4175,7 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
  */
 //int Send_store_info(int ind, int num, int owner, int items)
 int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse)
+//int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse, byte num_actions)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -4200,12 +4202,46 @@ int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int pur
 			connp2 = &Conn[p_ptr2->conn];
 
 //			Packet_printf(&connp2->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
+//			Packet_printf(&connp2->c, "%c%hd%s%s%hd%d%c", PKT_STORE_INFO, num, store, owner, items, purse, num_actions);
 			Packet_printf(&connp2->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
 		}
 	}
 
 	return Packet_printf(&connp->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
 //	return Packet_printf(&connp->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
+}
+
+int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char attr, char letter, s16b cost, byte flag)
+{
+	connection_t *connp = &Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for store info (%d.%d.%d)",
+					ind, connp->state, connp->id));
+		return 0;
+	}
+
+	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
+	{
+		int Ind2 = find_player(p_ptr->esp_link);
+		player_type *p_ptr2;
+		connection_t *connp2;
+
+		if (!Ind2)
+			end_mind(ind, TRUE);
+		else
+		{
+			p_ptr2 = Players[Ind2];
+			connp2 = &Conn[p_ptr2->conn];
+
+			Packet_printf(&connp2->c, "%c%c%hd%hd%s%c%c%hd%c", PKT_BACT, pos, bact, action, name, attr, letter, cost, flag);
+		}
+	}
+
+	return Packet_printf(&connp->c, "%c%c%hd%hd%s%c%c%hd%c", PKT_BACT, pos, bact, action, name, attr, letter, cost, flag);
 }
 
 int Send_store_sell(int ind, int price)
@@ -7008,6 +7044,49 @@ static int Receive_store_examine(int ind)
 
 	if (player && p_ptr->store_num > -1)
 		store_examine(player, item);
+
+	return 1;
+}
+
+static int Receive_store_command(int ind)
+{
+	connection_t *connp = &Conn[ind];
+	player_type *p_ptr;
+
+	char ch;
+	int n, player = 0, gold;
+	u16b action;
+	s16b item, item2, amt;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
+		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
+		  {
+		    int Ind2 = find_player(p_ptr->esp_link);
+		    
+		    if (!Ind2)
+	      	      end_mind(ind, TRUE);
+		    else
+		      {
+			player = Ind2;
+			p_ptr = Players[Ind2];
+		      }
+		  }
+	}
+	else player = 0;
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd%hd%hd%hd%d", &ch, &action, &item, &item2, &amt, &gold)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (player && p_ptr->store_num > -1)
+		store_exec_command(player, action, item, item2, amt, gold);
 
 	return 1;
 }

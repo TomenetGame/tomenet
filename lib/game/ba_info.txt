@@ -22,6 +22,8 @@
 # 0 = Nothing
 # 1 = Specify store inventory
 # 2 = Specify player inventory/equipment
+# 4 = Specify gold
+# 128 = Hardcoded in client
 
 # Version stamp (required)
 
@@ -122,19 +124,19 @@ I:55:0:m:0
 # This should have new flag (2 weps)
 N:23:Compare weapons
 C:220:200:180
-I:21:0:c:4
+I:21:0:c:80
 
 N:24:Enchant weapon
 C:750:700:150
-I:23:0:w:4
+I:23:0:w:0
 
 N:25:Enchant armor
 C:750:700:150
-I:24:0:a:4
+I:24:0:a:0
 
 N:26:Recharge item
 C:350:300:75
-I:25:0:r:4
+I:25:0:r:2
 
 N:27:Identify possessions
 C:900:800:100
@@ -154,11 +156,11 @@ I:7:2:g:0
 
 N:31:Enchant arrows
 C:550:500:100
-I:30:0:a:4
+I:30:0:a:0
 
 N:32:Enchant bow
 C:550:500:100
-I:31:0:b:4
+I:31:0:b:0
 
 N:33:Recall to dungeon
 C:300:200:100
@@ -224,7 +226,7 @@ I:26:0:i:0
 #for Star-Dome
 N:47:Recharge item
 C:1200:1000:150
-I:25:0:r:4
+I:25:0:r:80
 
 #for Valarin Temple
 N:48:Restoration
@@ -239,17 +241,17 @@ I:37:0:r:0
 #for The Golden Flower
 N:50:Enchant arrows
 C:1100:1000:200
-I:30:0:a:4
+I:30:0:a:0
 
 #for The Golden Flower
 N:51:Enchant bow
 C:1100:1000:200
-I:31:0:b:4
+I:31:0:b:0
 
 #for The Fountain
 N:52:Enchant armor
 C:1100:1000:200
-I:24:0:a:4
+I:24:0:a:0
 
 #for The Fountain
 N:53:See Healers
@@ -264,18 +266,28 @@ N:55:Get an item
 C:0:0:0
 I:44:0:g:1
 
+#maybe not for v4
 N:56:Request an item
 C:0:0:0
-I:51:2:r:4
+I:51:2:r:80
 
 N:57:Ask for loan
 C:0:0:0
-I:52:2:a:0
+I:52:2:a:4
 
 N:58:Pay back loan
 C:0:0:0
-I:53:2:p:0
+I:53:2:p:4
 
 N:59:Donate an item
 C:0:0:0
 I:43:0:d:2
+
+N:60:Deposit gold
+C:0:0:0
+I:54:0:d:4
+
+N:61:Withdraw gold
+C:0:0:0
+I:55:0:w:4
+

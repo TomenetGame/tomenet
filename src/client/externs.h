@@ -453,6 +453,7 @@ extern int Send_admin_house(int dir, cptr buf);
 extern int Send_spike(int dir);
 extern int Send_skill_mod(int i);
 extern int Send_store_examine(int item);
+extern int Send_store_command(int action, int item, int item2, int amt, int gold);
 
 
 /* skills.c */
