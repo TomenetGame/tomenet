@@ -2084,7 +2084,7 @@ F:UNIQUE | MALE | FORCE_SLEEP | FORCE_MAXHP | CAN_SPEAK |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | DROP_GREAT | WILD_TOO | WILD_WOOD |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | EVIL | DROP_SKELETON | DROP_CORPSE
 F:MORTAL | ZANGBAND | HAS_LITE
-#F:AI_ANNOY
+F:AI_ANNOY
 S:1_IN_5
 S:ARROW_1 | HEAL | TRAPS
 D:The legendary archer steals from the rich (you qualify). 
@@ -2679,7 +2679,7 @@ F:FORCE_SLEEP |
 F:ONLY_ITEM | DROP_1D2 | DROP_SKELETON | DROP_CORPSE | 
 F:OPEN_DOOR | BASH_DOOR | RES_DARK | 
 F:EVIL | RES_POIS | HURT_LITE | BASEANGBAND | HAS_LITE
-#F:AI_ANNOY
+F:AI_ANNOY
 S:1_IN_5 | 
 S:BLIND | CONF | MISSILE | DARKNESS | BA_POIS
 D:A dark elven figure, dressed all in black, hurling spells at you. 
@@ -3573,7 +3573,7 @@ D:It is a vicious insect with a tough carapace.
 
 N:237:Boldor, King of the Yeeks
 G:y:v
-I:120:18d10:18:24:10
+I:120:36d10:18:24:10
 W:15:3:650:200
 E:1:1:1:2:1:1
 O:0:90:10:0
@@ -3587,7 +3587,7 @@ F:ONLY_ITEM | DROP_90 | DROP_1D2 | DROP_GOOD | DROP_GREAT |
 F:SMART | OPEN_DOOR | BASH_DOOR | CAN_SPEAK | DROP_CORPSE | 
 F:ANIMAL | EVIL | IM_ACID | 
 F:MORTAL | BASEANGBAND
-#F:AI_ANNOY
+F:AI_ANNOY
 S:1_IN_3 | 
 S:HEAL | BLINK | TPORT | BLIND | SLOW | 
 S:S_KIN | S_MONSTER
@@ -3632,7 +3632,7 @@ F:MALE |
 F:FORCE_SLEEP | DROP_1D2 | DROP_SKELETON | DROP_CORPSE
 F:SMART | OPEN_DOOR | BASH_DOOR | 
 F:EVIL | MORTAL | BASEANGBAND | HAS_LITE
-#F:AI_ANNOY
+F:AI_ANNOY
 S:1_IN_3 | 
 S:HASTE | BLINK | TPORT | BLIND | HOLD | SLOW | CONF | DARKNESS
 D:A deceptive spell caster. 
@@ -3650,7 +3650,7 @@ F:FORCE_SLEEP | DROP_1D2 | DROP_SKELETON | DROP_CORPSE
 F:SMART | OPEN_DOOR | BASH_DOOR | 
 F:EVIL
 F:MORTAL | BASEANGBAND | HAS_LITE
-#F:AI_ANNOY
+F:AI_ANNOY
 S:1_IN_3 | 
 S:HASTE | BLINK | BLIND | HOLD | SLOW | BO_FIRE | BO_ELEC | S_ANIMAL
 D:A priest devoted to Nature. 
@@ -5765,7 +5765,7 @@ F:FORCE_SLEEP |
 F:ONLY_ITEM | DROP_1D2 | DROP_SKELETON | DROP_CORPSE |
 F:OPEN_DOOR | BASH_DOOR | FRIENDS | RES_DARK |
 F:EVIL | RES_POIS | HURT_LITE | BASEANGBAND | HAS_LITE
-#F:AI_ANNOY
+F:AI_ANNOY
 S:1_IN_5 | 
 S:CONF | MISSILE | DARKNESS | BO_MANA
 D:A dark elven mage with spells of frightening destructive power. 
@@ -8736,7 +8736,7 @@ D:A giant ant covered in shaggy fur. Its powerful jaws glow with heat.
 
 N:549:Mature white dragon
 G:d:w
-I:110:40d10:20:70:70
+I:110:50d10:20:70:70
 W:34:1:110000:1200
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -8953,7 +8953,7 @@ D:tarnished gold hue, and light is reflected from its form.
 
 N:560:Mature blue dragon
 G:d:b
-I:110:40d10:20:70:70
+I:110:50d10:20:70:70
 W:34:1:110000:1200
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -8972,7 +8972,7 @@ D:A large dragon, scales tinted deep blue.
 
 N:561:Mature green dragon
 G:d:g
-I:110:40d10:20:70:70
+I:110:50d10:20:70:70
 W:34:1:110000:1200
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -8991,7 +8991,7 @@ D:A large dragon, scales tinted deep green.
 
 N:562:Mature bronze dragon
 G:d:U
-I:110:40d10:20:70:70
+I:110:50d10:20:70:70
 W:34:1:110000:1200
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -9163,7 +9163,7 @@ F:ONLY_ITEM | DROP_1D2 | DROP_SKELETON
 F:SMART | OPEN_DOOR | BASH_DOOR | 
 F:EVIL
 F:MORTAL | BASEANGBAND | HAS_LITE
-#F:AI_ANNOY
+F:AI_ANNOY
 S:1_IN_3 | 
 S:HASTE | TPORT | TELE_TO | BLIND | HOLD | SCARE | CURSE | 
 S:BO_NETH | MIND_BLAST | FORGET |
@@ -9350,7 +9350,7 @@ F:ONLY_ITEM | DROP_2D2 | DROP_GOOD |
 F:WEIRD_MIND | OPEN_DOOR | BASH_DOOR | 
 F:ANIMAL | NO_CONF | NO_SLEEP
 F:MORTAL | BASEANGBAND | S_LOWEXP
-#F:AI_ANNOY
+F:AI_ANNOY
 S:1_IN_2 | 
 S:S_KIN
 D:She's upset because you hurt her children. 
@@ -9481,7 +9481,7 @@ D:A whirlpool of intense flame, charring the stones at your feet.
 
 N:589:Mature red dragon
 G:d:r
-I:110:50d10:20:80:70
+I:110:62d10:20:80:70
 W:36:1:110000:1500
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -9500,7 +9500,7 @@ D:A large dragon, scales tinted deep red.
 
 N:590:Mature gold dragon
 G:d:y
-I:110:50d10:20:80:70
+I:110:62d10:20:80:70
 W:36:1:110000:1500
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -9539,7 +9539,7 @@ D:your eyes with spectrums of colour.
 
 N:592:Mature black dragon
 G:d:s
-I:110:50d10:20:80:70
+I:110:62d10:20:80:70
 W:36:1:110000:1500
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -9558,7 +9558,7 @@ D:A large dragon, with scales of deepest black.
 
 N:593:Mature multi-hued dragon
 G:d:v
-I:110:60d10:20:80:70
+I:110:62d10:20:80:70
 W:38:1:110000:1800
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -9712,7 +9712,7 @@ D:waking monsters from their slumber.
 
 N:601:Ancient blue dragon
 G:D:b
-I:120:72d10:20:90:80
+I:120:72d15:20:90:80
 W:40:1:170000:2000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -9731,7 +9731,7 @@ D:A huge draconic form. Lightning crackles along its length.
 
 N:602:Ancient bronze dragon
 G:D:U
-I:120:72d10:20:90:80
+I:120:72d15:20:90:80
 W:40:1:170000:2000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -10021,7 +10021,7 @@ D:look for prey, but each with its own deadly breath weapon.
 
 N:617:Ancient white dragon
 G:D:w
-I:120:72d10:20:90:80
+I:120:72d15:20:90:80
 W:40:1:170000:2000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -10041,7 +10041,7 @@ D:A huge draconic form. Frost covers it from head to tail.
 
 N:618:Ancient green dragon
 G:D:g
-I:120:72d10:20:90:80
+I:120:72d15:20:90:80
 W:40:1:170000:2000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -10156,7 +10156,7 @@ D:A foul wind chills your bones as this ghastly figure approaches.
 
 N:624:Ancient black dragon
 G:D:s
-I:120:10d100:20:90:80
+I:120:100d15:20:90:80
 W:41:1:170000:2500
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -10230,7 +10230,7 @@ F:FORCE_SLEEP | FORCE_MAXHP | DROP_CORPSE
 F:ONLY_ITEM | DROP_90 | DROP_4D2 | DROP_GOOD |
 F:SMART | OPEN_DOOR | BASH_DOOR | RES_DARK
 F:EVIL | HURT_LITE | NO_CONF | NO_SLEEP | NO_STUN | ZANGBAND | HAS_LITE
-#F:AI_ANNOY
+F:AI_ANNOY
 S:1_IN_2 | 
 S:HEAL | TELE_TO | BLIND | CONF | CURSE | DARKNESS | FORGET | HOLD |
 S:S_MONSTER | S_MONSTERS | S_DEMON | TPORT | BA_NETH | MIND_BLAST |
@@ -10518,7 +10518,7 @@ D:true form but you sense its evil.
 
 N:644:Ancient red dragon
 G:D:r
-I:120:10d100:20:90:80
+I:120:100d15:20:90:80
 W:41:1:170000:2500
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -10538,7 +10538,7 @@ D:extreme heat surrounding it makes you gasp for breath.
 
 N:645:Ancient gold dragon
 G:D:y
-I:120:10d100:20:90:80
+I:120:100d15:20:90:80
 W:41:1:170000:2500
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -10796,7 +10796,7 @@ F:FORCE_SLEEP | FORCE_MAXHP | DROP_SKELETON | DROP_CORPSE
 F:ONLY_ITEM | DROP_90 | DROP_4D2 | 
 F:SMART | OPEN_DOOR | BASH_DOOR | RES_DARK |
 F:EVIL | HURT_LITE | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:AI_ANNOY
+F:AI_ANNOY
 S:1_IN_2 | 
 S:HEAL | BLINK | TELE_TO | BLIND | CONF | CURSE | DARKNESS | 
 S:BO_ACID | BA_FIRE | BA_COLD | ANIM_DEAD 
@@ -11153,7 +11153,7 @@ D:A Dark Judge, reputedly so frightening that his gaze can kill.
 
 N:675:Ancient multi-hued dragon
 G:D:v
-I:120:21d100:25:100:80
+I:120:100d26:25:100:80
 W:43:1:170000:13000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -12487,7 +12487,7 @@ F:FORCE_SLEEP | FORCE_MAXHP |
 F:ONLY_ITEM | DROP_4D2 | 
 F:OPEN_DOOR | BASH_DOOR | TAKE_ITEM |
 F:EVIL | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-#F:AI_ANNOY
+F:AI_ANNOY
 S:1_IN_2 |
 S:BLINK | TELE_TO | BLIND | CONF | CURSE | CURSE | TRAPS |
 S:BO_ACID | BA_FIRE | BA_COLD | BA_POIS |

@@ -22,6 +22,10 @@
 # special tag to specify the current version
 [V]  TomeNET 4.0.0 aka "The Gathering"
 
+22/12/2002
+[M]- Ancient Dragons got 1,5x the HP. Mature Dragons got 1,25x the HP.
+     Pure mages get AI_ANNOY again. Boldor get's AI_ANNOY too (DROP_GREAT).
+
 21/12/2002
 [m]- Client/server now do version check on development versions.
      That number starts at 0, raises with each client and is never
