@@ -3729,6 +3729,9 @@ void player_death(int Ind)
 			/* He leaves */
 			party_leave(Ind);
 		}
+		if(p_ptr->guild){
+			guild_leave(Ind);
+		}
 
 		/* Ghosts dont static the lvl if under cfg_preserve_death_level ft. DEG */
 
@@ -3866,6 +3869,9 @@ void player_death(int Ind)
 		{
 			/* He leaves */
 			party_leave(Ind);
+		}
+		if(p_ptr->guild){
+			guild_leave(Ind);
 		}
 	
 		/* Kill him */
