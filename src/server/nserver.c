@@ -3769,7 +3769,7 @@ int Send_skills(int ind)
 {
 	player_type *p_ptr = Players[ind];
 	connection_t *connp = &Conn[p_ptr->conn];
-	s16b skills[11];
+	s16b skills[12];
 	int i, tmp;
 	object_type *o_ptr;
 
@@ -3794,9 +3794,10 @@ int Send_skills(int ind)
 	/* Number of blows */
 	skills[8] = p_ptr->num_blow;
 	skills[9] = p_ptr->num_fire;
+	skills[10] = p_ptr->num_spell;
 
 	/* Infravision */
-	skills[10] = p_ptr->see_infra;
+	skills[11] = p_ptr->see_infra;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -3808,7 +3809,7 @@ int Send_skills(int ind)
 
 	Packet_printf(&connp->c, "%c", PKT_SKILLS);
 
-	for (i = 0; i < 11; i++)
+	for (i = 0; i < 12; i++)
 	{
 		Packet_printf(&connp->c, "%hd", skills[i]);
 	}

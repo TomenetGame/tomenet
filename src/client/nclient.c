@@ -2224,7 +2224,7 @@ int Receive_party(void)
 int Receive_skills(void)
 {
 	int	n, i;
-	s16b tmp[11];
+	s16b tmp[12];
 	char	ch;
 
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
@@ -2233,7 +2233,7 @@ int Receive_skills(void)
 	}
 
 	/* Read into skills info */
-	for (i = 0; i < 11; i++)
+	for (i = 0; i < 12; i++)
 	{
 		if ((n = Packet_scanf(&rbuf, "%hd", &tmp[i])) <= 0)
 		{
@@ -2252,7 +2252,8 @@ int Receive_skills(void)
 	p_ptr->skill_dev = tmp[7];
 	p_ptr->num_blow = tmp[8];
 	p_ptr->num_fire = tmp[9];
-	p_ptr->see_infra = tmp[10];
+	p_ptr->num_spell = tmp[10];
+	p_ptr->see_infra = tmp[11];
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);

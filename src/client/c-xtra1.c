@@ -1299,6 +1299,9 @@ void display_player(int hist)
 		put_str("Shots/Round:", 17, 55);
 		put_str(format("%d", p_ptr->num_fire), 17, 69);
 
+		put_str("Shots/Round:", 18, 55);
+		put_str(format("%d", p_ptr->num_spell), 18, 69);
+
 		put_str("Infra-Vision:", 19, 55);
 		put_str(format("%d feet", p_ptr->see_infra * 10), 19, 69);
 	}
@@ -1367,6 +1370,7 @@ void display_player(int hist)
         {
                 prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_RED);
         }
+	prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_RED);
 }
 
 /*
