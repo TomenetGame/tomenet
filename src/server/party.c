@@ -91,8 +91,21 @@ int guild_create(int Ind, cptr name){
 	}
 
 	/* Check for already existing guild by that name */
-	if (guild_lookup(name) != -1)
+	if ((index=guild_lookup(name) != -1))
 	{
+		if(p_ptr->admin_dm){
+			/* make the guild key */
+			invcopy(o_ptr, lookup_kind(TV_KEY, 2));
+			o_ptr->number=1;
+			o_ptr->pval=index;
+			o_ptr->level=1;
+			o_ptr->owner=p_ptr->id;
+			object_known(o_ptr);
+			object_aware(Ind, o_ptr);
+			(void)inven_carry(Ind, o_ptr);
+			msg_print(Ind, "Spare key created.");
+			return FALSE;
+		}
 		msg_print(Ind, "A guild by that name already exists.");
 		return FALSE;
 	}
