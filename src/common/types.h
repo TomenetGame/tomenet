@@ -1806,6 +1806,7 @@ struct player_type
 
   s32b current_char;
 	s16b current_spell;	/* Spell being cast */
+	s16b current_realm;	/* Realm of spell being cast */
   s16b current_mind;	/* Power being use */
 	s16b current_rod;	/* Rod being zapped */
 	s16b current_activation;/* Artifact (or dragon mail) being activated */

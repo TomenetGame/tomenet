@@ -1110,9 +1110,11 @@ To find the latest change quickly, search ==== :)
 - spell interference is affected by corresponding skills.
 - some parchments.
 - auto-inscriber reimplemented.
+- changes in skill reflect to the spells list at once.
 [B] some spells are shown as 'unknown' even when castable
 [B] Ghost powers were broken
 [B] get_spell was messed due to sval/xtra1 hack :(
+[B] 'directional' spells didn't work if not of original realm.
 
 22/06/2002 (Yakina)
 - updates needed for bcc.  Thanks Yakina for courtesy.
@@ -1161,6 +1163,7 @@ below this line are the unfixed bugs known:
 [B] GCU client flickers like hell. (fix_player)
 [B] GCU client cannot handle the cursor very well.
 [B] some ivents are not told to the players even when within the sight.
+[B] white '@' sometimes appear on the screen.
 
 *below are bugs repoorted but not confirmed*
 [B] Macro sticks sometimes

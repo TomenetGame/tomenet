@@ -661,6 +661,8 @@
 #define REALM_GHOST             7
 #define MAX_REALM               8
 
+/* hack needed in Handle_direction */
+#define REALM_MIMIC				200
 
 /*** Screen Locations ***/
 

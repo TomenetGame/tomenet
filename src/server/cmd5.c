@@ -1033,9 +1033,11 @@ void do_cmd_cast(int Ind, int book, int spell)
 					(100 - get_skill_scale(p_ptr, SKILL_MAGERY, 50)) / 100))
 			return;
 
-
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
+
+		/* Hack -- preserve current 'realm' */
+		p_ptr->current_realm = REALM_MAGERY;
 
 		/* Spells.  */
 		if (spell >= 64) j += 64;	
@@ -2156,6 +2158,9 @@ void do_cmd_sorc(int Ind, int book, int spell)
 					(100 - get_skill_scale(p_ptr, SKILL_SORCERY, 50)) / 100))
 			return;
 
+		/* Hack -- preserve current 'realm' */
+		p_ptr->current_realm = REALM_SORCERY;
+
 
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
@@ -3020,6 +3025,9 @@ void do_cmd_pray(int Ind, int book, int spell)
 		if (interfere(Ind, cfg.spell_interfere *
 					(100 - get_skill_scale(p_ptr, SKILL_PRAY, 50)) / 100))
 			return;
+
+		/* Hack -- preserve current 'realm' */
+		p_ptr->current_realm = REALM_PRAYER;
 
 		if (spell >= 64) j += 64;
 		switch (j)
@@ -4241,6 +4249,9 @@ void do_cmd_fight(int Ind, int book, int spell)
 		/* Not interfered since it's "technique" */
 		//	if (interfere(Ind, cfg.spell_interfere)) return;
 
+		/* Hack -- preserve current 'realm' */
+		p_ptr->current_realm = REALM_FIGHTING;
+
 		/* Spells.  */
 		switch (j)
 		{
@@ -4683,6 +4694,9 @@ void do_cmd_shad(int Ind, int book, int spell)
 		if (interfere(Ind, cfg.spell_interfere *
 					(100 - get_skill_scale(p_ptr, SKILL_SHADOW, 50)) / 100))
 			return;
+
+		/* Hack -- preserve current 'realm' */
+		p_ptr->current_realm = REALM_SHADOW;
 
 
 		/* Hack -- chance of "beam" instead of "bolt" */
@@ -5145,6 +5159,9 @@ void do_cmd_hunt(int Ind, int book, int spell)
 					(100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
 			return;
 
+		/* Hack -- preserve current 'realm' */
+		p_ptr->current_realm = REALM_HUNT;
+
 
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = plev / 2;
@@ -5539,6 +5556,9 @@ static void do_mimic_power(int Ind, int power)
 	}
 	else
 	{
+		/* Hack -- preserve current 'realm' */
+		p_ptr->current_realm = REALM_MIMIC;
+
 
   /* 0-31 = RF4, 32-63 = RF5, 64-95 = RF6 */
   switch(j)
@@ -6483,6 +6503,10 @@ void do_cmd_psi(int Ind, int book, int spell)
 		if (interfere(Ind, cfg.spell_interfere * 2 *
 					(100 - get_skill_scale(p_ptr, SKILL_PSI, 50)) / 100))
 			return;
+
+		/* Hack -- preserve current 'realm' */
+		p_ptr->current_realm = REALM_PSI;
+
 #endif	// 0
 
 

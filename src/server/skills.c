@@ -121,45 +121,48 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
  */
 void increase_skill(int Ind, int i)
 {
-        player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind];
 
 	/* No skill points to be allocated */
-        if (p_ptr->skill_points <= 0)
-        {
-                Send_skill_info(Ind, i);
-                return;
-        }
+	if (p_ptr->skill_points <= 0)
+	{
+		Send_skill_info(Ind, i);
+		return;
+	}
 
 	/* The skill cannot be increased */
 	if (p_ptr->s_info[i].mod <= 0)
-        {
-                Send_skill_info(Ind, i);
-                return;
-        }
+	{
+		Send_skill_info(Ind, i);
+		return;
+	}
 
 	/* The skill is already maxed */
-        if (p_ptr->s_info[i].value >= SKILL_MAX)
-        {
-                Send_skill_info(Ind, i);
-                return;
-        }
+	if (p_ptr->s_info[i].value >= SKILL_MAX)
+	{
+		Send_skill_info(Ind, i);
+		return;
+	}
 
-        /* Cannot allocate more than player level * 3 / 2 + 4 levels */
-        if ((p_ptr->s_info[i].value / SKILL_STEP) >= ((p_ptr->lev * 3 / 2) + 4))
-        {
-                Send_skill_info(Ind, i);
-                return;
-        }
+	/* Cannot allocate more than player level * 3 / 2 + 4 levels */
+	if ((p_ptr->s_info[i].value / SKILL_STEP) >= ((p_ptr->lev * 3 / 2) + 4))
+	{
+		Send_skill_info(Ind, i);
+		return;
+	}
 
 	/* Spend an unallocated skill point */
 	p_ptr->skill_points--;
 
 	/* Increase the skill */
-        p_ptr->s_info[i].value += p_ptr->s_info[i].mod;
-        if (p_ptr->s_info[i].value >= SKILL_MAX) p_ptr->s_info[i].value = SKILL_MAX;
+	p_ptr->s_info[i].value += p_ptr->s_info[i].mod;
+	if (p_ptr->s_info[i].value >= SKILL_MAX) p_ptr->s_info[i].value = SKILL_MAX;
 
-        /* Update the client */
-        Send_skill_info(Ind, i);
+	/* Update the client */
+	Send_skill_info(Ind, i);
+
+	/* Update the spells */
+	p_ptr->window |= PW_SPELL;
 }
 
 
