@@ -1404,6 +1404,9 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 		{	
 			a_ptr = &a_info[o_ptr->name1];
 			value = a_ptr->cost;
+			
+			/* Let true arts' prices be totally determined in a_info.txt */
+			return(value);
 		}
 
 		/* Hack -- "worthless" artifacts */
@@ -4187,10 +4190,18 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					break;
 				}
 
-				/* Amulet of Suspicion */
-				case SV_AMULET_SUSPICION:
+				/* Amulet of Rage, formerly 'Suspicion' */
+				case SV_AMULET_RAGE:
 				{
-					o_ptr->bpval = -1;
+					o_ptr->bpval = 1 + m_bonus(4, level);
+					o_ptr->to_a = -1 - m_bonus(15, level);
+					o_ptr->to_h = 1 + m_bonus(15, level);
+					o_ptr->to_d = 1 + m_bonus(15, level);
+					
+					if (rand_int(100) < 33) {
+	                                        o_ptr->xtra1 = EGO_XTRA_POWER;
+    		                                o_ptr->xtra2 = rand_int(255);
+					}
 					break;
 				}
 
