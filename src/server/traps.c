@@ -2401,6 +2401,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 					q_ptr->number = 1;
 					q_ptr->discount = o_ptr->discount;
 					q_ptr->owner = o_ptr->owner;
+					q_ptr->owner_mode = o_ptr->owner_mode;
 					q_ptr->level = o_ptr->level;
 					q_ptr->note = o_ptr->note;
 					(void)inven_carry(Ind, q_ptr);
@@ -2542,6 +2543,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->owner = p_ptr->id;
+			o_ptr->owner_mode = p_ptr->mode;
 			o_ptr->level = 0;
 			(void)inven_carry(Ind, o_ptr);
 

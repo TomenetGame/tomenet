@@ -1001,6 +1001,7 @@ static byte bard_init[BARD_INIT_NUM][2] =
 	o_ptr->discount = 100; \
 	o_ptr->ident |= ID_MENTAL; \
 	o_ptr->owner = p_ptr->id; \
+        o_ptr->owner_mode = p_ptr->mode; \
 	o_ptr->level = 1; \
 	(void)inven_carry(Ind, o_ptr);
 
@@ -1087,6 +1088,7 @@ void admin_outfit(int Ind, int realm)
 	object_known(o_ptr); \
 	o_ptr->ident |= ID_MENTAL; \
 	o_ptr->owner = p_ptr->id; \
+	o_ptr->owner_mode = p_ptr->mode; \
 	o_ptr->level = 0; \
 	(void)inven_carry(Ind, o_ptr);
 
@@ -1146,6 +1148,7 @@ static void player_outfit(int Ind)
 		apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
 		o_ptr->discount = 72;
 		o_ptr->owner = p_ptr->id;
+                o_ptr->owner_mode = p_ptr->mode;
 		o_ptr->level = 1;
 		object_known(o_ptr);
 		object_aware(Ind, o_ptr);
@@ -1666,33 +1669,15 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		sex -= 512;
 		p_ptr->fruit_bat = 1;
 	}
-#if 0
-	if (sex > 1)
-	{
-		sex -= 2;
-		p_ptr->mode = MODE_HELL;
-	}
-	else
-	{
-		p_ptr->mode = MODE_NORMAL;
-	}
-#else	// 0
 	p_ptr->mode = sex & ~MODE_MALE;
 
-#endif	// 0
 	p_ptr->dna = ((class & 0xff) | ((race & 0xff) << 8) );
 	p_ptr->dna |= (randint(65535) << 16);
 	p_ptr->male = sex & 1;
         p_ptr->pclass = class;
 	p_ptr->align_good = 0x7fff;	/* start neutral */
 	p_ptr->align_law = 0x7fff;
-#if 0
-        /* Mega hack but it's fun :) */
-        if (!strcmp(name, "Stitch"))
-                p_ptr->prace = RACE_EXP626;
-        else
-#endif
-                p_ptr->prace = race;
+	p_ptr->prace = race;
 	p_ptr->pkill=(PKILL_KILLABLE);
 
 	/* Set pointers */

@@ -764,6 +764,7 @@ typedef struct object_type object_type;
 
 struct object_type
 {
+        s32b owner_mode;                /* Player that found it */
         s32b owner;                     /* Player that found it */
         s16b level;                     /* Level req */
 			/* Hack -- ego-items use 'level' in a special way, and

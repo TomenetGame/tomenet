@@ -453,6 +453,7 @@ static void choose_mode(void)
 	put_str("g) no Ghost", 20, 30 + 2);
 	put_str("h) Hard", 20, 45 + 2);
 	put_str("H) Hellish", 20, 60 + 2);
+	put_str("e) Everlasting", 21, 2);
 
 	while (1)
 	{
@@ -488,6 +489,12 @@ static void choose_mode(void)
 			c_put_str(TERM_L_BLUE, "Hellish", 10, 15);
 			break;
 		}
+		else if (c == 'e')
+		{
+			sex += MODE_IMMORTAL;
+			c_put_str(TERM_L_BLUE, "Everlasting", 10, 15);
+			break;
+		}
 		else if (c == '?')
 		{
 			/*do_cmd_help("help.hlp");*/
@@ -510,6 +517,9 @@ static void choose_mode(void)
 					break;
 				case 4:
 					c = 'H';
+					break;
+				case 5:
+					c = 'i';
 					break;
 			}
 			hazard = TRUE;

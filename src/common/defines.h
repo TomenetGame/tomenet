@@ -39,8 +39,8 @@
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
-#define SF_VERSION_MINOR   1
-#define SF_VERSION_PATCH   7
+#define SF_VERSION_MINOR   0
+#define SF_VERSION_PATCH   8
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -4516,11 +4516,8 @@ extern int PlayerUID;
 #define MODE_NORMAL		0x0000
 #define MODE_MALE		0x0001	/* Dummy */
 #define MODE_HELL		0x0002	/* Penalized */
-#define MODE_NO_GHOST	0x0004	/* traditional 'hellish' is 3 */
-#if 0
-#define MODE_HELL		0x0001	/* Penalized */
-#define MODE_NO_GHOST	0x0002	/* traditional 'hellish' is 3 */
-#endif	/* 0 */
+#define MODE_NO_GHOST		0x0004	/* traditional 'hellish' is 3 */
+#define MODE_IMMORTAL   	0x0008	/* No death counter */
 
 /* Monk martial arts... */
 # define MAX_MA 17

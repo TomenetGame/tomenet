@@ -6528,6 +6528,9 @@ bool can_use(int Ind, object_type *o_ptr)
 
 	if (o_ptr->level < 1 && o_ptr->owner) return (FALSE);
 
+	if ((!(p_ptr->mode & MODE_IMMORTAL)) && (o_ptr->owner_mode & MODE_IMMORTAL))
+                return FALSE;
+
 	/* Hack -- convert if available */
 	if (p_ptr->lev >= o_ptr->level && !p_ptr->admin_dm)
 	{

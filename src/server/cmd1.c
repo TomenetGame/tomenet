@@ -1504,7 +1504,11 @@ void carry(int Ind, int pickup, int confirm)
 
 #if 0
 			/* Own it */
-			if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
+			if (!o_ptr->owner)
+			{
+				o_ptr->owner = p_ptr->id;
+				o_ptr->owner_mode = p_ptr->mode;
+			}
 			can_use(Ind, o_ptr);
 #endif	// 0
 
@@ -1641,7 +1645,11 @@ void carry(int Ind, int pickup, int confirm)
 				int slot;
 
 				/* Own it */
-				if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
+				if (!o_ptr->owner)
+				{
+					o_ptr->owner = p_ptr->id;
+					o_ptr->owner_mode = p_ptr->mode;
+				}
 
 #if CHEEZELOG_LEVEL > 2
 				/* Take cheezelog

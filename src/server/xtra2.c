@@ -4427,6 +4427,8 @@ static void kill_objs(int id){
 		if(!o_ptr->k_idx) continue;
 		if(o_ptr->owner==id){
 			o_ptr->owner=MAX_ID+1;
+			o_ptr->owner_mode = 0;
+
 		}
 	}
 }
@@ -5116,6 +5118,7 @@ void player_death(int Ind)
 			object_known(o_ptr);
 			object_aware(Ind, o_ptr);
 			o_ptr->owner = p_ptr->id;
+			o_ptr->owner_mode = p_ptr->mode;
 			o_ptr->level = 0;
 			o_ptr->note = quark_add(format("#of %s", p_ptr->name));
 			(void)drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -5139,6 +5142,7 @@ void player_death(int Ind)
 			object_known(o_ptr);
 			object_aware(Ind, o_ptr);
 			o_ptr->owner = p_ptr->id;
+			o_ptr->owner_mode = p_ptr->mode;
 			o_ptr->level = 1;
 			(void)inven_carry(Ind, o_ptr);
 		}
@@ -5224,7 +5228,7 @@ void resurrect_player(int Ind, int exploss)
 	/* (was in player_death: Take care of ghost suiciding before final resurrection (p_ptr->alive check, C. Blue)) */
 	/*if (p_ptr->alive && ((p_ptr->lives > 0+1) && cfg.lifes)) p_ptr->lives--;*/
 	/* Tell him his remaining lifes */
-	if (p_ptr->lives > 1+1) p_ptr->lives--;
+	if ((!(p_ptr->mode & MODE_IMMORTAL)) && (p_ptr->lives > 1+1)) p_ptr->lives--;
 	if (cfg.lifes)
 	{
 		if (p_ptr->lives == 1+1)

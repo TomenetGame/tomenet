@@ -320,6 +320,8 @@ static void rd_item(object_type *o_ptr)
 
 	rd_s32b(&o_ptr->owner);
 	rd_s16b(&o_ptr->level);
+        if (!older_than(4, 0, 8))
+		rd_s32b(&o_ptr->owner_mode);
 
 	/* Kind (discarded though - Jir -) */
 	rd_s16b(&o_ptr->k_idx);

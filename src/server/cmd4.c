@@ -423,8 +423,10 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 				fprintf(fff, "purgatorial ");
 				break;
 			case MODE_NO_GHOST:
-//				fprintf(fff, "square ");
 				fprintf(fff, "unworldly ");
+				break;
+			case MODE_IMMORTAL:
+				fprintf(fff, "everlasting ");
 				break;
 	    		case (MODE_HELL + MODE_NO_GHOST):
 				fprintf(fff, "hellish ");
