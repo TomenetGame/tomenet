@@ -7709,7 +7709,7 @@ static int fletchery_items(int Ind)
 void do_cmd_fletchery(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int ext=0, tlev = 0, raw_materials;
+	int ext=0, tlev = 0, raw_materials, raw_amount;
 	//char ch;
 
 	object_type	forge;
@@ -7880,15 +7880,17 @@ void do_cmd_fletchery(int Ind)
 
 		/* Remember amount of raw materials used for this */
 		raw_materials = q_ptr->number;
+		/* Prevent large pack overflow which results in much lost ammo */
+		if (raw_materials > 10) raw_materials = 10;
 
 		/* Get local object */
 		q_ptr = &forge;
 
 		/* Hack -- Give the player some arrows */
-		invcopy(q_ptr, lookup_kind(TV_ARROW, m_bonus(1, tlev) + 1));
 //		q_ptr->number = (byte)rand_range(15,25);
+		invcopy(q_ptr, lookup_kind(TV_ARROW, m_bonus(1, tlev) + 1));
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
-		q_ptr->number *= raw_materials;
+		raw_amount = q_ptr->number * raw_materials;
 		do_fletchery_aux();
 
 		if (item >= 0)
@@ -7904,7 +7906,15 @@ void do_cmd_fletchery(int Ind)
 			floor_item_optimize(0 - item);
 		}
 
-		(void)inven_carry(Ind, q_ptr);
+		while (raw_amount > 99) {
+			q_ptr->number = 99;
+			raw_amount -= 99;
+			(void)inven_carry(Ind, q_ptr);
+		}
+		if (raw_amount) {
+			q_ptr->number = raw_amount;
+			(void)inven_carry(Ind, q_ptr);
+		}
 	}
 
 	/**********Create bolts*********/
@@ -7945,6 +7955,8 @@ void do_cmd_fletchery(int Ind)
 
 		/* Remember amount of raw materials used for this */
 		raw_materials = q_ptr->number;
+		/* Prevent large pack overflow which results in much lost ammo */
+		if (raw_materials > 10) raw_materials = 10;
 
 		/* Get local object */
 		q_ptr = &forge;
@@ -7953,7 +7965,7 @@ void do_cmd_fletchery(int Ind)
 		invcopy(q_ptr, lookup_kind(TV_BOLT, m_bonus(1, tlev) + 1));
 //		q_ptr->number = (byte)rand_range(15,25);
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
-		q_ptr->number *= raw_materials;
+		raw_amount = q_ptr->number * raw_materials;
 		do_fletchery_aux();
 
 		if (item >= 0)
@@ -7969,7 +7981,15 @@ void do_cmd_fletchery(int Ind)
 			floor_item_optimize(0 - item);
 		}
 
-		(void)inven_carry(Ind, q_ptr);
+		while (raw_amount > 99) {
+			q_ptr->number = 99;
+			raw_amount -= 99;
+			(void)inven_carry(Ind, q_ptr);
+		}
+		if (raw_amount) {
+			q_ptr->number = raw_amount;
+			(void)inven_carry(Ind, q_ptr);
+		}
 	}
 
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
