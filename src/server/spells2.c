@@ -4040,7 +4040,7 @@ bool poly_build(int Ind, char *args){
 		miny=maxy=sy;
 		dx=lx=sx;
 		dy=ly=sy;
-		moves=30;
+		moves=25;	/* always new */
 		depth=p_ptr->dun_depth;
 		cave[p_ptr->dun_depth][sy][sx].feat=FEAT_HOME_OPEN;
 		cave[p_ptr->dun_depth][sy][sx].special=dna;
@@ -4049,6 +4049,10 @@ bool poly_build(int Ind, char *args){
 	else if(curr!=p_ptr->id){
 		msg_print(Ind,"The builders are on strike!"); /* add multi build soon */
 		return FALSE;
+	}
+	if(args){
+		moves+=25;
+		return TRUE;
 	}
 	x=p_ptr->px;
 	y=p_ptr->py;
@@ -4062,7 +4066,8 @@ bool poly_build(int Ind, char *args){
 	}
 	if(y!=dy){
 		if(dir){
-			/* diagonal handler */
+			moves=0;
+			/* diagonal! house building failed */
 		}
 		if(y>dy) dir|=4;
 		else dir|=8;
@@ -4079,11 +4084,11 @@ bool poly_build(int Ind, char *args){
 	dx=x;
 	dy=y;
 
-	if(p_ptr->px==sx && p_ptr->py==sy){		/* check for close */
+	if(p_ptr->px==sx && p_ptr->py==sy && moves){	/* check for close */
 		vert[cvert++]=dx-lx;			/* last vertex */
 		vert[cvert++]=dy-ly;
 		if(cvert==10 || cvert==8){
-			/*rectangle!*/
+			/* rectangle! */
 			houses[num_houses].flags=HF_RECT;
 			houses[num_houses].x=minx;
 			houses[num_houses].y=miny;
@@ -4101,7 +4106,9 @@ bool poly_build(int Ind, char *args){
 		houses[num_houses].depth=p_ptr->dun_depth;
 		houses[num_houses].dna=dna;
 		if(fill_house(&houses[num_houses],2)){
+			int area=(maxx-minx)*(maxy-miny);
 			wild_add_uhouse(&houses[num_houses]);
+			dna->price=area*area*400;
 			msg_print(Ind,"You have completed your house");
 			num_houses++;
 		}
@@ -4118,7 +4125,7 @@ bool poly_build(int Ind, char *args){
 	/* no going off depth, and no spoiling moats */
 	if(depth==p_ptr->dun_depth && !(cave[depth][dy][dx].info&CAVE_ICKY)){
 		cave[p_ptr->dun_depth][dy][dx].feat=FEAT_PERM_EXTRA;
-		if(cvert<MAXCOORD) return TRUE;
+		if(cvert<MAXCOORD && (--moves)>0) return TRUE;
 	}
 	msg_print(Ind,"Your house building attempt has failed");
 	cave[p_ptr->dun_depth][sy][sx].special=NULL;
