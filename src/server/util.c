@@ -2840,6 +2840,7 @@ int censor(char *line){
 	}
 	for(i=0; strlen(swear[i].word); i++){
 		if((word=strstr(lcopy, swear[i].word))){
+			if(word!=lcopy && *(word-1)!=' ') continue;
 			word=(&line[(word-lcopy)]);
 			for(j=0; j<strlen(swear[i].word); j++){
 				word[j]='*';
