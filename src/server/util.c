@@ -3362,6 +3362,11 @@ static void player_talk_aux(int Ind, char *message)
 		/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
 		if(!pname)
 			target = name_lookup_loose(Ind, search, TRUE);
+		else{
+			world_pmsg_send(p_ptr->id, p_ptr->name, pname, colon);
+			msg_format(Ind, "\377o[%s:%s] %s", p_ptr->name, pname, colon);
+			return;
+		}
 
 		/* Move colon pointer forward to next word */
 		while (*colon && (isspace(*colon) || *colon == ':')) colon++;
@@ -3374,9 +3379,6 @@ static void player_talk_aux(int Ind, char *message)
 
 			/* Give up */
 			return;
-		}
-		else if(pname){
-			world_pmsg_send(p_ptr->id, p_ptr->name, pname, colon);
 		}
 	}
 
