@@ -1355,7 +1355,16 @@ void calc_body_bonus(int Ind)
 	toac = r_ptr->ac * 7 / (4 + body);
 	p_ptr->ac += toac;
 	p_ptr->dis_ac += toac;
-	p_ptr->pspeed = r_ptr->speed;
+	if (r_ptr->speed < 110)
+	{
+		/* let slowdown not be that large that players will never try that form */
+		p_ptr->pspeed = 110 - (((110 - r_ptr->speed) * 40) / 100);
+	}
+	else
+	{
+		/* let speed bonus not be that high that players won't try any slower form */
+		p_ptr->pspeed = (((r_ptr->speed - 110) * 60) / 100) + 110;
+	}
 
 	/* Base skill -- searching ability */
 	p_ptr->skill_srh /= 2;
@@ -1379,6 +1388,114 @@ void calc_body_bonus(int Ind)
 		if (r_ptr->freq_inate > 60) p_ptr->num_spell++;	// 1_IN_1
 	}
 
+
+	/* Racial boni depending on the form's race */
+	switch(p_ptr->body_monster)
+	{
+		/* Bats get feather falling */
+		case 37:	case 114:	case 187:	case 235:	case 351:
+		case 377:	case 391:	case 406:	case 484:	case 968:
+		{
+			p_ptr->feather_fall = TRUE;
+			break;
+		}
+
+		/* Elves get resist_lite, Dark-Elves get resist_dark */
+		case 122:	case 400:	case 178:	case 182:	case 226:
+		case 234:	case 348:	case 375:	case 564:	case 657:
+		{
+			p_ptr->resist_dark = TRUE;
+			break;
+		}
+		case 864:
+		{
+			p_ptr->resist_lite = TRUE;
+			break;
+		}
+
+		/* Hobbits/Halflings get the no-shoes-bonus */
+		case 74:	case 539:
+		{
+			if (!p_ptr->inventory[INVEN_FEET].k_idx)
+				p_ptr->stat_add[A_DEX] += 2;
+			break;
+		}
+		
+		/* Gnomes get free_act */
+		case 258:	case 281:
+		{
+			p_ptr->free_act = TRUE;
+			break;
+		}
+
+		/* Dwarves get res_blind & climbing ability */
+		case 111:	case 865:
+		{
+			p_ptr->resist_blind = TRUE;
+			p_ptr->climb = TRUE;
+			break;
+		}
+		
+		/* High-elves resist_lite & see_inv */
+		case 945:
+		{
+			p_ptr->resist_lite = TRUE;
+			p_ptr->see_inv = TRUE;
+			break;
+		}
+
+		/* Yeeks get feather_fall */
+		case 52:	case 141:	case 179:	case 224:
+		{
+			p_ptr->feather_fall = TRUE;
+			break;
+		}
+
+		/* Ghosts get additional boni - undead see below */
+		case 65:	case 100:	case 133:	case 152:	case 231:
+		case 385:	case 394:	case 477:	case 507:	case 508:
+		case 533:	case 534:	case 553:	case 630:	case 665:
+		case 667:	case 690:	case 774:	case 895:
+		case 929:	case 930:	case 931:	case 932:	case 933:
+		case 967:	case 973:	case 974:
+		{
+			p_ptr->see_inv = TRUE;
+			p_ptr->see_infra += 5;
+			break;
+		}
+	}
+
+	/* Orcs get resist_dark */
+	if(r_ptr->flags3 & RF3_ORC) p_ptr->resist_dark = TRUE;
+
+	/* Trolls/Giants get sustain_str */
+	if((r_ptr->flags3 & RF3_TROLL) || (r_ptr->flags3 & RF3_GIANT)) p_ptr->sustain_str = TRUE;
+
+	/* Thunderlords get feather_fall, ESP_DRAGON */
+	if(r_ptr->flags3 & RF3_DRAGONRIDER)
+	{
+	        p_ptr->feather_fall = TRUE;
+		if (p_ptr->lev >= 5) p_ptr->telepathy |= ESP_DRAGON;
+	}
+
+	/* Undead get lots of stuff similar to player ghosts */
+	if(r_ptr->flags3 & RF3_UNDEAD)
+	{
+		/* p_ptr->see_inv = TRUE;
+		p_ptr->resist_neth = TRUE;*/
+		p_ptr->hold_life = TRUE;
+		/* p_ptr->free_act = TRUE;
+		p_ptr->see_infra += 3; */
+    		p_ptr->resist_fear = TRUE;
+		/*p_ptr->resist_conf = TRUE;*/
+		p_ptr->resist_dark = TRUE;
+		p_ptr->resist_blind = TRUE;
+		p_ptr->resist_pois = TRUE; /* instead of immune */
+		p_ptr->resist_cold = TRUE;
+		p_ptr->no_cut = TRUE;
+		p_ptr->reduce_insanity = 1;
+//		p_ptr->invis += 5; */ /* No. */
+	}
 
 	//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
 	if(r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 2;
@@ -1545,6 +1662,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if(!(r_ptr->flags2 & RF2_PASS_WALL) && p_ptr->tim_wraith)
 		p_ptr->tim_wraith = 1;
 
+
 	/* Update the innate spells */
 	p_ptr->innate_spells[0] = r_ptr->flags4 & RF4_PLAYER_SPELLS;
 	p_ptr->innate_spells[1] = r_ptr->flags5 & RF5_PLAYER_SPELLS;
@@ -1597,10 +1715,10 @@ int get_weaponmastery_skill(player_type *p_ptr)
                 if ((!skill) || (skill == SKILL_SWORD)) skill = SKILL_SWORD;
                 else skill = -1;
                 break;
-		case TV_AXE:
-				if ((!skill) || (skill == SKILL_AXE)) skill = SKILL_AXE;
-				else skill = -1;
-				break;
+	case TV_AXE:
+		if ((!skill) || (skill == SKILL_AXE)) skill = SKILL_AXE;
+		else skill = -1;
+		break;
         case TV_HAFTED:
                 if ((!skill) || (skill == SKILL_HAFTED)) skill = SKILL_HAFTED;
                 else skill = -1;
@@ -1942,6 +2060,7 @@ void calc_bonuses(int Ind)
 	if(p_ptr->body_monster)
 	{
 		calc_body_bonus(Ind);
+
 	}
 	else	// if if or switch to switch, that is the problem :)
 			/* I vote for p_info ;) */
@@ -1952,87 +2071,100 @@ void calc_bonuses(int Ind)
 		/* Bats get +10 speed ... they need it!*/
 		if (p_ptr->fruit_bat){
 			p_ptr->pspeed += 10;
-			p_ptr->fly=TRUE;
+			p_ptr->fly = TRUE;
+			p_ptr->feather_fall = TRUE;
 		}
-		if (p_ptr->fruit_bat) p_ptr->feather_fall = TRUE;
+	/* Choosing a race just for its HP or low exp% shouldn't be what we want -C. Blue- */
+	}
 
-		/* Elf */
-		if (p_ptr->prace == RACE_ELF) p_ptr->resist_lite = TRUE;
+	/* Elf */
+	if (p_ptr->prace == RACE_ELF) p_ptr->resist_lite = TRUE;
 
-		/* Hobbit */
-		else if (p_ptr->prace == RACE_HOBBIT)
-		{
-			p_ptr->sustain_dex = TRUE;
+	/* Hobbit */
+	else if (p_ptr->prace == RACE_HOBBIT)
+	{
+		p_ptr->sustain_dex = TRUE;
 
-			/* DEX bonus for NOT wearing shoes */
+		/* DEX bonus for NOT wearing shoes */
+		/* not while in mimicried form */
+		if(!p_ptr->body_monster)
 			if (!p_ptr->inventory[INVEN_FEET].k_idx)
 				p_ptr->stat_add[A_DEX] += 2;
-		}
+	}
 
-		/* Gnome */
-		else if (p_ptr->prace == RACE_GNOME) p_ptr->free_act = TRUE;
+	/* Gnome */
+	else if (p_ptr->prace == RACE_GNOME) p_ptr->free_act = TRUE;
 
-		/* Dwarf */
-		else if (p_ptr->prace == RACE_DWARF)
-		{
-			p_ptr->resist_blind = TRUE;
-			p_ptr->climb = TRUE;
-		}
+	/* Dwarf */
+	else if (p_ptr->prace == RACE_DWARF)
+	{
+		p_ptr->resist_blind = TRUE;
+		/* not while in mimicried form */
+		if(!p_ptr->body_monster) p_ptr->climb = TRUE;
+	}
 
-		/* Half-Orc */
-		else if (p_ptr->prace == RACE_HALF_ORC) p_ptr->resist_dark = TRUE;
+	/* Half-Orc */
+	else if (p_ptr->prace == RACE_HALF_ORC) p_ptr->resist_dark = TRUE;
 
-		/* Half-Troll */
-		else if (p_ptr->prace == RACE_HALF_TROLL) p_ptr->sustain_str = TRUE;
+	/* Half-Troll */
+	else if (p_ptr->prace == RACE_HALF_TROLL) p_ptr->sustain_str = TRUE;
 
-		/* Dunadan */
-		else if (p_ptr->prace == RACE_DUNADAN) p_ptr->sustain_con = TRUE;
+	/* Dunadan */
+	else if (p_ptr->prace == RACE_DUNADAN) p_ptr->sustain_con = TRUE;
 
-		/* High Elf */
-		else if (p_ptr->prace == RACE_HIGH_ELF)
-		{
-			p_ptr->resist_lite = TRUE;
-			p_ptr->see_inv = TRUE;
-		}
+	/* High Elf */
+	else if (p_ptr->prace == RACE_HIGH_ELF)
+	{
+		p_ptr->resist_lite = TRUE;
+		p_ptr->see_inv = TRUE;
+	}
 
-		/* Yeek */
-		else if (p_ptr->prace == RACE_YEEK) p_ptr->feather_fall = TRUE;
+	/* Yeek */
+	else if (p_ptr->prace == RACE_YEEK) p_ptr->feather_fall = TRUE;
 
-		/* Goblin */
-		else if (p_ptr->prace == RACE_GOBLIN)
-		{
-			p_ptr->resist_dark = TRUE;
-			p_ptr->feather_fall = TRUE;
-		}
+	/* Goblin */
+	else if (p_ptr->prace == RACE_GOBLIN)
+	{
+		p_ptr->resist_dark = TRUE;
+		/* not while in mimicried form */
+		if(!p_ptr->body_monster) p_ptr->feather_fall = TRUE;
+	}
 
-		/* Ent */
-		else if (p_ptr->prace == RACE_ENT)
-		{
-			p_ptr->slow_digest = TRUE;
-			p_ptr->pspeed -= 2;
-			p_ptr->sensible_fire = TRUE;
+	/* Ent */
+	else if (p_ptr->prace == RACE_ENT)
+	{
+		p_ptr->slow_digest = TRUE;
+		p_ptr->pspeed -= 2;
+		p_ptr->sensible_fire = TRUE;
 
-			if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
-//			if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_ALL;
-			if (p_ptr->lev >= 20) p_ptr->telepathy |= ESP_ANIMAL;
-			if (p_ptr->lev >= 25) p_ptr->telepathy |= ESP_TROLL;
-			if (p_ptr->lev >= 30) p_ptr->telepathy |= ESP_GIANT;
-			if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_EVIL;
-			if (p_ptr->lev >= 50) p_ptr->telepathy = ESP_ALL;
-		}
+		/* not while in mimicried form */
+		if(!p_ptr->body_monster) p_ptr->can_swim = TRUE; /* wood? */
 
-		/* Thunderlord (former DragonRider) */
-		else if (p_ptr->prace == RACE_DRIDER)
-		{
-			p_ptr->feather_fall = TRUE;
+		if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
+		/* why would someone choose Thunderlord with all his advantages over ent gone??
+		ESP_ALL and ESP_EVIL should be removed or Thunderlords exp% lowered a great deal. */
+//		if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_ALL;
+		if (p_ptr->lev >= 10) p_ptr->telepathy |= ESP_ANIMAL;//20
+		if (p_ptr->lev >= 20) p_ptr->telepathy |= ESP_TROLL;//25
+		if (p_ptr->lev >= 30) p_ptr->telepathy |= ESP_GIANT;//30
+//		if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_EVIL;
+//		if (p_ptr->lev >= 50) p_ptr->telepathy = ESP_ALL;
+	}
 
-			if (p_ptr->lev >= 5) p_ptr->telepathy |= ESP_DRAGON;
-			if (p_ptr->lev >= 10) p_ptr->resist_fire = TRUE;
-			if (p_ptr->lev >= 15) p_ptr->resist_cold = TRUE;
-			if (p_ptr->lev >= 20) p_ptr->resist_acid = TRUE;
-			if (p_ptr->lev >= 25) p_ptr->resist_elec = TRUE;
-			if (p_ptr->lev >= 30) p_ptr->fly = TRUE;
-		}
+	/* Thunderlord (former DragonRider) */
+	else if (p_ptr->prace == RACE_DRIDER)
+	{
+		/* not while in mimicried form */
+		if(!p_ptr->body_monster) p_ptr->feather_fall = TRUE;
+
+		if (p_ptr->lev >= 5) p_ptr->telepathy |= ESP_DRAGON;
+		if (p_ptr->lev >= 10) p_ptr->resist_fire = TRUE;
+		if (p_ptr->lev >= 15) p_ptr->resist_cold = TRUE;
+		if (p_ptr->lev >= 20) p_ptr->resist_acid = TRUE;
+		if (p_ptr->lev >= 25) p_ptr->resist_elec = TRUE;
+		/* not while in mimicried form */
+		if (!p_ptr->body_monster)
+		    if (p_ptr->lev >= 30) p_ptr->fly = TRUE;
 	}
 
 	/* Compute antimagic */
@@ -2050,7 +2182,7 @@ void calc_bonuses(int Ind)
 		p_ptr->resist_neth = TRUE;
 		p_ptr->hold_life = TRUE;
 		p_ptr->free_act = TRUE;
-		p_ptr->see_infra += 2;
+		p_ptr->see_infra += 3;
 		p_ptr->resist_fear = TRUE;
 		p_ptr->resist_conf = TRUE;
 		p_ptr->resist_dark = TRUE;
