@@ -2979,7 +2979,7 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 21, 54, 4,  14, 16, 60, 29,
+		10, 21, 54, 1,  13, 16, 60, 29,
 		2, 4,  10, 0,  0,  2,  35, 10,
                 7,  30,
                 {
