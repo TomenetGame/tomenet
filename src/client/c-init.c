@@ -1,3 +1,4 @@
+/* $Id$ */
 /* Client initialization module */
 
 /*
@@ -51,30 +52,33 @@ static void init_arrays(void)
  */
 static void init_stuff(void)
 {
-        char path[1024];
+	//        char path[1024];
 
 #if defined(AMIGA) || defined(VM)
 
-        /* Hack -- prepare "path" */
-        strcpy(path, "PMAngband:");
+	/* Hack -- prepare "path" */
+	strcpy(path, "PMAngband:");
 
 #else /* AMIGA / VM */
 
-        cptr tail;
+	if (!path)
+	{
+		cptr tail;
 
-        /* Get the environment variable */
-        tail = getenv("ANGBAND_PATH");
+		/* Get the environment variable */
+		tail = getenv("ANGBAND_PATH");
 
-        /* Use the angband_path, or a default */
-        strcpy(path, tail ? tail : DEFAULT_PATH);
+		/* Use the angband_path, or a default */
+		strcpy(path, tail ? tail : DEFAULT_PATH);
+	}
 
-        /* Hack -- Add a path separator (only if needed) */
-        if (!suffix(path, PATH_SEP)) strcat(path, PATH_SEP);
+	/* Hack -- Add a path separator (only if needed) */
+	if (!suffix(path, PATH_SEP)) strcat(path, PATH_SEP);
 
 #endif /* AMIGA / VM */
 
-        /* Initialize */
-        init_file_paths(path);
+	/* Initialize */
+	init_file_paths(path);
 }
 
 
@@ -262,16 +266,17 @@ static void quit_hook(cptr s)
 /*
  * Initialize everything, contact the server, and start the loop.
  */
-void client_init(char *argv1)
+void client_init(char *argv1, bool skip)
 {
 	sockbuf_t ibuf;
 	unsigned magic = 12345;
 	unsigned char reply_to, status;
-	int login_port;
+	int login_port, i;
 	int bytes, retries;
 	char host_name[80];
 	u16b version = MY_VERSION;
-	s32b temp;
+        s32b temp;
+        char max_class;
 
 	/* Setup the file paths */
 	init_stuff();
@@ -305,7 +310,7 @@ void client_init(char *argv1)
 
 
 	/* Get character name and pass */
-	get_char_name();
+	if (!skip) get_char_name();
 
 	/* Capitalize the name */
 	nick[0] = toupper(nick[0]);
@@ -362,7 +367,9 @@ void client_init(char *argv1)
 
 	/* Listen for reply */
 	for (retries = 0; retries < 10; retries++)
-	{
+        {
+                char buf[200];
+
 		/* Set timeout */
 		SetTimeout(1, 0);
 
@@ -377,13 +384,39 @@ void client_init(char *argv1)
 		}
 
 		/* Extra info from packet */
-		Packet_scanf(&ibuf, "%c%c%d", &reply_to, &status, &temp);
+		Packet_scanf(&ibuf, "%c%c%d%c", &reply_to, &status, &temp, &max_class);
 
-		/* Hack -- set the login port correctly */
+                /* Hack -- set the login port correctly */
 		login_port = (int) temp;
 
 		break;
 	}
+
+#if 0 // -- DGDGDGDG it would be NEAT to have classes sent to the cleint at conenciton, sadly Im too clumpsy at network code ..
+        i = 0;
+        while (i < max_class)
+        {
+                int ii;
+
+		/* Set timeout */
+		SetTimeout(1, 0);
+
+		/* Wait for info */
+		if (!SocketReadable(Socket)) continue;
+
+		/* Read reply */
+		if(DgramRead(Socket, ibuf.buf, ibuf.size) <= 0)
+		{
+			/*printf("DgramReceiveAny failed (errno = %d)\n", errno);*/
+			continue;
+		}
+
+                Packet_scanf(&ibuf, "%c%s", &ii, buf);
+                printf("c %d: %s\n", ii, buf);
+
+                i++;
+        }
+#endif
 
 	/* Check for failure */
 	if (retries >= 10)
@@ -395,6 +428,9 @@ void client_init(char *argv1)
 	/* Server returned error code */
 	if (status == E_NEED_INFO)
 	{
+		/* Hack -- display the nick */
+		if (skip) prt(format("Name        : %s", nick), 2, 1);
+
 		/* Get sex/race/class */
 		get_char_info();
 	}
@@ -404,7 +440,7 @@ void client_init(char *argv1)
 		switch (status)
 		{
 			case E_VERSION:
-				quit("This version of the client will not work with that server. http://pernmangband.pernangband.org/ to get the new client.");
+				quit("This version of the client will not work with that server.  http://T-o-M-E.net/pernmangband/ to get the new client.");
 			case E_GAME_FULL:
 				quit("Sorry, the game is full.  Try again later.");
 			case E_IN_USE:
@@ -413,6 +449,10 @@ void client_init(char *argv1)
 				quit("The server didn't like your nickname, realname, or hostname.");
 			case E_TWO_PLAYERS:
 				quit("There is already another character from this user/machine on the server.");
+			case E_INVITE:
+				quit("Sorry, the server is for members only.  Please retry with name 'guest'.");
+			case E_BANNED:
+				quit("You are temporally banned from connecting to this server!");
 			default:
 				quit(format("Connection failed with status %d.", status));
 		}

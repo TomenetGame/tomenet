@@ -120,12 +120,11 @@ int get_idx(int i)
 {
 	int j;
 
-/*	for (j = 1; j < MAX_SKILLS; j++)
+	for (j = 1; j < MAX_SKILLS; j++)
 	{
 		if (s_info[j].order == i)
 			return (j);
-                        }*/
-        return i;
+                        }
 	return (0);
 }
 
@@ -737,126 +736,10 @@ void do_cmd_activate_skill()
 		case MKEY_MAGERY:
 			cmd_cast();
 			break;
+		case MKEY_MIMICRY:
+			cmd_mimic();
+			break;
 		default:
 			break;
 	}
 }
-
-
-#if 0
-/* Which magic forbids non FA gloves */
-bool forbid_gloves()
-{
-	if (get_skill(SKILL_SORCERY)) return (TRUE);
-	if (get_skill(SKILL_MANA)) return (TRUE);
-	if (get_skill(SKILL_FIRE)) return (TRUE);
-	if (get_skill(SKILL_AIR)) return (TRUE);
-	if (get_skill(SKILL_WATER)) return (TRUE);
-	if (get_skill(SKILL_EARTH)) return (TRUE);
-	if (get_skill(SKILL_THAUMATURGY)) return (TRUE);
-	return (FALSE);
-}
-
-/* Which gods forbid edged weapons */
-bool forbid_non_blessed()
-{
-	GOD(GOD_ERU) return (TRUE);
-	return (FALSE);
-}
-
-/*
- * Get a skill from a list
- */
-static int available_skills[] =
-{
-        SKILL_COMBAT,
-        SKILL_MASTERY,
-        SKILL_ARCHERY,
-        SKILL_HAND,
-        SKILL_MAGIC,
-        SKILL_DIVINATION,
-        SKILL_CONVEYANCE,
-        SKILL_SNEAK,
-        SKILL_NECROMANCY,
-        SKILL_SPIRITUALITY,
-        SKILL_MINDCRAFT,
-        SKILL_MIMICRY,
-        SKILL_ANTIMAGIC,
-        SKILL_RUNECRAFT,
-        SKILL_TRAPPING,
-        SKILL_STEALTH,
-        SKILL_DISARMING,
-        SKILL_THAUMATURGY,
-        SKILL_SUMMON,
-        SKILL_LORE,
-        -1
-};
-
-void do_get_new_skill()
-{
-        char *items[4];
-        int skl[4];
-        u32b val[4], mod[4];
-        bool used[MAX_SKILLS];
-        int max = 0, max_a = 0, res;
-
-        /* Check if some skills didnt influence other stuff */
-        recalc_skills(TRUE);
-
-        /* Init */
-	for (max = 0; max < MAX_SKILLS; max++)
-                used[max] = FALSE;
-
-        /* Count the number of available skills */
-        while (available_skills[max_a] != -1) max_a++;
-
-        /* Get 4 skills */
-        for (max = 0; max < 4; max++)
-        {
-                int i;
-                skill_type *s_ptr;
-
-                /* Get an non used skill */
-                do
-                {
-                        i = rand_int(max_a);
-                } while (used[available_skills[i]]);
-                s_ptr = &s_info[available_skills[i]];
-                used[available_skills[i]] = TRUE;
-
-                if (s_ptr->mod)
-                {
-                        val[max] = s_ptr->mod * 3;
-                        mod[max] = 0;
-                }
-                else
-                {
-                        mod[max] = 500;
-                        val[max] = 1000;
-                }
-                if (s_ptr->value + val[max] > SKILL_MAX) val[max] = SKILL_MAX - s_ptr->value;
-                skl[max] = available_skills[i];
-                items[max] = (char *)string_make(format("%-40s: +%02ld.%03ld value, +%01d.%03d modifier", s_ptr->name + s_name, val[max] / SKILL_STEP, val[max] % SKILL_STEP, mod[max] / SKILL_STEP, mod[max] % SKILL_STEP));
-        }
-        res = ask_menu("Choose a skill to learn(a-d to choose, ESC to cancel)?", (char **)items, 4);
-
-        /* Ok ? lets learn ! */
-        if (res > -1)
-        {
-                skill_type *s_ptr = &s_info[skl[res]];
-                s_ptr->value += val[res];
-                s_ptr->mod += mod[res];
-                if (mod[res])
-                        c_msg_format("You can now learn the %s skill.", s_ptr->name + s_name);
-                else
-                        c_msg_format("Your knowledge of the %s skill increase.", s_ptr->name + s_name);
-        }
-
-        /* Free them ! */
-	for (max = 0; max < 4; max++)
-                string_free(items[max]);
-
-        /* Check if some skills didnt influence other stuff */
-        recalc_skills(FALSE);
-}
-#endif

@@ -4906,6 +4906,7 @@ extern int PlayerUID;
  */
 #define MKEY_SORCERY            1
 #define MKEY_MAGERY             2
+#define MKEY_MIMICRY            3
 
 /*
  * Skills
@@ -4918,17 +4919,19 @@ extern int PlayerUID;
 #define SKILL_COMBAT            1
 #define SKILL_MASTERY           2
 #define SKILL_SWORD             3
-#define SKILL_POLEARM           4
-#define SKILL_HAFTED            5
-#define SKILL_ARCHERY           6
-#define SKILL_SLING             7
-#define SKILL_BOW               8
-#define SKILL_XBOW              9
-#define SKILL_BACKSTAB          10
-#define SKILL_MAGIC             11
-#define SKILL_CASTSPEED         12
-#define SKILL_SORCERY           13
-#define SKILL_MAGERY            14
+#define SKILL_CRITS             4
+#define SKILL_POLEARM           5
+#define SKILL_HAFTED            6
+#define SKILL_ARCHERY           7
+#define SKILL_SLING             8
+#define SKILL_BOW               9
+#define SKILL_XBOW              10
+#define SKILL_BACKSTAB          11
+#define SKILL_MAGIC             12
+#define SKILL_CASTSPEED         13
+#define SKILL_SORCERY           14
+#define SKILL_MAGERY            15
+#define SKILL_MIMIC             16
 
 /* Ugly but needed */
 #define MAX_SKILLS              70

@@ -1618,7 +1618,7 @@ void cmd_pray(void)
 
 void cmd_mimic(void)
 {
-	if (class != CLASS_MIMIC)
+	if (!get_skill(SKILL_MIMIC))
 	{
 		c_msg_print("You are too solid.");
 		return;

@@ -7,7 +7,7 @@
                   In the land of Mordor where the shadows lie"
                                 "Lord of The Rings", J.R.R.Tolkien
  - Detect traps can NOT fail (Pfft)
- - TomeNET 4.0.0 development version (internally 3.5.5a)
+ - TomeNET 4.0.0 development version
  - skill system is being implemented. ('X' or '\X' to check)
  - items can stack on the floor now. (but not inside a house!)
  - A guild system is implemented.  - Player alignment is coming soon?

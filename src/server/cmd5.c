@@ -5580,13 +5580,13 @@ void do_cmd_shad_aux(int Ind, int dir)
 
 static void do_mimic_power(int Ind, int power)
 {
-  player_type *p_ptr = Players[Ind];
-  monster_race *r_ptr = &r_info[p_ptr->body_monster];
-  int rlev = r_ptr->level;
-  int j, chance;
-  magic_type *s_ptr = &innate_powers[power];
+        player_type *p_ptr = Players[Ind];
+        monster_race *r_ptr = &r_info[p_ptr->body_monster];
+        int rlev = r_ptr->level;
+        int j, chance;
+        magic_type *s_ptr = &innate_powers[power];
 
-  j = power;
+        j = power;
 
 	/* Check mana */
 	if (s_ptr->smana > p_ptr->csp)
@@ -6346,9 +6346,9 @@ void do_mimic_change(int Ind, int r_idx)
 {
 	player_type *p_ptr = Players[Ind];
 
-	if (r_info[r_idx].level > p_ptr->lev * 2)
+	if (r_info[r_idx].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))
 	{
-		msg_print(Ind, "You're not high level enough to use that shape.");
+		msg_print(Ind, "You do need a higher mimicry skill to use that shape.");
 		return;
 	}
 
@@ -6390,7 +6390,7 @@ void do_cmd_mimic(int Ind, int spell)
 
 			if (j >= MAX_R_IDX - 1) j = 0;
 
-			if (r_info[j].level > p_ptr->lev * 2) continue;
+			if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) continue;
 			if (r_info[j].flags1 & RF1_UNIQUE) continue;
 			if (p_ptr->r_killed[j] < r_info[j].level) continue;
 			if (strlen(r_info[j].name + r_name) <= 1) continue;

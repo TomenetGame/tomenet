@@ -127,7 +127,7 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
  *
  * Factor in weapon weight, total plusses, player level.
  */
-s16b critical_norm(int Ind, int weight, int plus, int dam)
+s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -137,11 +137,19 @@ s16b critical_norm(int Ind, int weight, int plus, int dam)
 	i = (weight + ((p_ptr->to_h + plus) * 5) +
                  get_skill_scale(p_ptr, SKILL_MASTERY, 150));
         i += 50 * p_ptr->xtra_crit;
+        if (allow_skill_crit)
+        {
+                i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
+        }
 
 	/* Chance */
 	if (randint(5000) <= i)
 	{
 		k = weight + randint(650);
+                if (allow_skill_crit)
+                {
+                        k += get_skill_scale(p_ptr, SKILL_CRITS, 400);
+                }
 
 		if (k < 400)
 		{
@@ -1390,7 +1398,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 					msg_format(Ind, ma_ptr->desc, q_ptr->name);
 				}
 
-				k = critical_norm(Ind, p_ptr->lev * (randint(10)), ma_ptr->min_level, k);
+				k = critical_norm(Ind, p_ptr->lev * (randint(10)), ma_ptr->min_level, k, FALSE);
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < q_ptr->chp))
 				{
@@ -1416,7 +1424,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 				k = damroll(o_ptr->dd, o_ptr->ds);
 				k = tot_dam_aux_player(o_ptr, k, q_ptr);
 				if (p_ptr->impact && (k > 50)) do_quake = TRUE;
-				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h, k);
+				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
 				k += o_ptr->to_d;
 			}
 
@@ -1787,7 +1795,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 					msg_format(Ind, ma_ptr->desc, m_name);
 				}
 
-				k = critical_norm(Ind, p_ptr->lev * (randint(10)), ma_ptr->min_level, k);
+				k = critical_norm(Ind, p_ptr->lev * (randint(10)), ma_ptr->min_level, k, FALSE);
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < m_ptr->hp))
 				{
@@ -1884,7 +1892,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 
 				if ((p_ptr->impact && (k > 50)) || chaos_effect == 2) do_quake = TRUE;
 
-				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h, k);
+				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
 				if (vorpal_cut)
 				{
 					int step_k = k;
@@ -3356,7 +3364,7 @@ static bool run_test(int Ind)
 	int                     i, max, inv;
 	int                     option, option2;
 	bool	aqua = p_ptr->fly ||
-					((p_ptr->pclass==CLASS_MIMIC) && (
+					((p_ptr->body_monster) && (
 					(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) ||
 					(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ));
 

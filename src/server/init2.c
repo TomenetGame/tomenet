@@ -1972,6 +1972,10 @@ void init_some_arrays(void)
 	s_printf("[Initializing arrays... (features)]\n");
 	if (init_f_info()) quit("Cannot initialize features");
 
+	/* Initialize skill info */
+	s_printf("[Initializing skills... (skills)]\n");
+	if (init_s_info()) quit("Cannot initialize skills");
+
 	/* Initialize object info */
 	s_printf("[Initializing arrays... (objects)]\n");
 	if (init_k_info()) quit("Cannot initialize objects");

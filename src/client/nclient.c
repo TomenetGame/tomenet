@@ -1341,10 +1341,10 @@ int Receive_skill_init(void)
 {
 	int	n;
 	char	ch;
-	int	i, type, father, mkey;
+	int	i, type, father, mkey, order;
 	char    buf[300];
 
-	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%s", &ch, &type, &i, &father, &mkey, buf)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%ld%S", &ch, &type, &i, &father, &order, &mkey, buf)) <= 0)
 	{
 		return n;
 	}
@@ -1356,6 +1356,7 @@ int Receive_skill_init(void)
         else
                 s_info[i].action_desc = string_make(buf);
         s_info[i].father = father;
+        s_info[i].order = order;
         s_info[i].action_mkey = mkey;
 
 	return 1;

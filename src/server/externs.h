@@ -86,6 +86,7 @@ extern cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10];
 extern magic_type innate_powers[96];
 extern martial_arts ma_blows[MAX_MA];
 extern skill_type s_info[MAX_SKILLS];
+extern int skill_tree_init[MAX_SKILLS][2];
 
 
 /* variable.c */
@@ -369,7 +370,7 @@ extern void update_players(void);
 extern bool test_hit_fire(int chance, int ac, int vis);
 extern bool test_hit_norm(int chance, int ac, int vis);
 extern s16b critical_shot(int Ind, int weight, int plus, int dam);
-extern s16b critical_norm(int Ind, int weight, int plus, int dam);
+extern s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crits);
 extern s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr);
 extern s16b tot_dam_aux_player(object_type *o_ptr, int tdam, player_type *p_ptr);
 extern void search(int Ind);
@@ -1145,3 +1146,4 @@ extern void init_skill(player_type *p_ptr, u32b value, s16b mod, int i);
 extern s16b get_skill(player_type *p_ptr, int skill);
 extern s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale);
 extern void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i);
+extern bool init_s_info();

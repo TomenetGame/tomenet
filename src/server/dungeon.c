@@ -1417,7 +1417,7 @@ static void process_player_end(int Ind)
 			if(!p_ptr->ghost && !p_ptr->fly)
 			{
 				/* Take damage */
-				if(!(p_ptr->pclass==CLASS_MIMIC) || (
+				if (!(p_ptr->body_monster) || (
 					!(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
 					!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
 				{
@@ -1465,7 +1465,7 @@ static void process_player_end(int Ind)
 		else if(!p_ptr->ghost)
 		{
 			/* Take damage */
-			if((p_ptr->pclass==CLASS_MIMIC) && (
+			if((p_ptr->body_monster) && (
 				(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
 				!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
 			{

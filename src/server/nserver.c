@@ -672,7 +672,7 @@ static void Console(int fd, int arg)
 		
 static void Contact(int fd, int arg)
 {
-	int bytes, login_port, newsock;
+	int bytes, login_port, newsock, i;
 	u16b version = 0;
 	unsigned magic;
 	unsigned short port;
@@ -773,8 +773,14 @@ static void Contact(int fd, int arg)
 
 	/* s_printf("Sending login port %d, status %d.\n", login_port, status); */
 
-	Packet_printf(&ibuf, "%c%c%d", reply_to, status, login_port);
+        Packet_printf(&ibuf, "%c%c%d%c", reply_to, status, login_port, MAX_CLASS);
 
+/* -- DGDGDGDG it would be NEAT to have classes sent to the cleint at conenciton, sadly Im too clumpsy at network code ..
+        for (i = 0; i < MAX_CLASS; i++)
+        {
+                 Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
+        }
+*/
 	Reply(host_addr, fd);
 }
 
@@ -794,7 +800,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 		return status;
 	}
 
-	if (version < ((3 << 12) | (2 << 8) | (0 << 4) | 0))
+	if (version < ((4 << 12) | (0 << 8) | (0 << 4) | 0))
 		return E_VERSION;
 
 	if(!player_allowed(nick))
@@ -2590,11 +2596,11 @@ int Send_skill_init(int ind, int type, int i)
 		return 0;
         }
         if (type == PKT_SKILL_INIT_NAME)
-                return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%s", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].action_mkey, s_info[i].name);
+                return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].name);
         else if (type == PKT_SKILL_INIT_DESC)
-                return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%s", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].action_mkey, s_info[i].desc);
+                return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].desc);
         else if (type == PKT_SKILL_INIT_MKEY)
-                return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%s", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].action_mkey, s_info[i].action_desc);
+                return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].action_desc);
 }
 
 int Send_skill_info(int ind, int i)
