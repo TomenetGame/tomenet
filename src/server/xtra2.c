@@ -4173,6 +4173,8 @@ bool target_able(int Ind, int m_idx)
 
 	monster_type *m_ptr;
 
+	if(!p_ptr) return FALSE;
+
 	/* Check for OK monster */
 	if (m_idx > 0)
 	{

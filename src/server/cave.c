@@ -644,6 +644,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	byte a;
 	char c;
 
+	if(!cave[Depth]) return;
 
 	/* Get the cave */
 	c_ptr = &cave[Depth][y][x];
