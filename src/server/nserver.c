@@ -2443,6 +2443,13 @@ static int Receive_login(int ind){
 	struct account *l_acc;
 
 	n = Sockbuf_read(&connp->r);
+	if(n==0 && !(errno==EAGAIN || errno==EWOULDBLOCK)){
+		/* avoid SIGPIPE in zero read - it was closed */
+		remove_input(connp->w.sock);
+		connp->w.sock = -1;
+		Destroy_connection(ind, "disconnect in login");
+		return(-1);
+	}
 
 	/* if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &choice)) != 2) */
 	if ((n = Packet_scanf(&connp->r, "%s", choice)) != 1)
@@ -2514,6 +2521,14 @@ static int Receive_play(int ind)
 
 	/* XXX */
 	n = Sockbuf_read(&connp->r);
+	if(n==0 && !(errno==EAGAIN || errno==EWOULDBLOCK)){
+
+		/* avoid SIGPIPE in zero read */
+		remove_input(connp->w.sock);
+		connp->w.sock = -1;
+		Destroy_connection(ind, "disconnect in play");
+		return(-1);
+	}
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) != 1)
 	{
