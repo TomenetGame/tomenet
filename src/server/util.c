@@ -2670,7 +2670,8 @@ void player_talk_aux(int Ind, cptr message)
 			}
 
 			/* Semi-auto item destroyer */
-			else if ((prefix(message, "/dispose")) || prefix(message, "/dis"))
+			else if ((prefix(message, "/dispose")) ||
+					prefix(message, "/dis"))
 			{
 				object_type		*o_ptr;
 				for(i = 0; i < INVEN_PACK; i++)
@@ -2933,6 +2934,59 @@ void player_talk_aux(int Ind, cptr message)
 				}
 
 				//			msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer); 
+				return;
+			}
+			/* Take everything off */
+			else if ((prefix(message, "/bed")) ||
+					prefix(message, "/naked"))
+			{
+				object_type		*o_ptr;
+				for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
+				{
+					o_ptr = &(p_ptr->inventory[i]);
+					if (!o_ptr->tval) continue;
+
+					/* skip inscribed items */
+					/* skip non-matching tags */
+					if ((check_guard_inscription(o_ptr->note, 't')) ||
+						(check_guard_inscription(o_ptr->note, 'T')) ||
+						(cursed_p(o_ptr))) continue;
+
+					inven_takeoff(Ind, i, 255);
+					p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+				}
+				return;
+			}
+
+			/* Try to wield everything */
+			else if ((prefix(message, "/dress")) ||
+					prefix(message, "/dr"))
+			{
+				object_type		*o_ptr;
+				int j;
+
+				for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
+				{
+					o_ptr = &(p_ptr->inventory[i]);
+					if (o_ptr->tval) continue;
+
+					for(j = 0; j < INVEN_PACK; j++)
+					{
+						o_ptr = &(p_ptr->inventory[j]);
+						if (!o_ptr->tval) break;
+
+						/* skip unsuitable inscriptions */
+						if (o_ptr->note &&
+								(strcmp(quark_str(o_ptr->note), "cursed") ||
+								 check_guard_inscription(o_ptr->note, 'w')) )continue;
+
+						if (wield_slot(Ind, o_ptr) != i) continue;
+
+						do_cmd_wield(Ind, j);
+						break;
+					}
+
+				}
 				return;
 			}
 
@@ -3231,14 +3285,14 @@ void player_talk_aux(int Ind, cptr message)
 				}
 				else
 				{
-					msg_print(Ind, "Commands: afk cast dis ignore me tag untag;");
+					msg_print(Ind, "Commands: afk bed cast dis dress ignore me tag untag;");
 					msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta trap unst wish");
 					return;
 				}
 			}
 			else
 			{
-				msg_print(Ind, "Commands: afk cast dis ignore me tag untag");
+				msg_print(Ind, "Commands: afk bed cast dis dress ignore me tag untag;");
 				msg_print(Ind, "  /dis \377rdestroys \377wevery uninscribed items in your inventory!");
 				return;
 			}

@@ -24,7 +24,7 @@
  * to fall to the ground.
  */
 bool bypass_inscrption = FALSE;
-static void inven_takeoff(int Ind, int item, int amt)
+void inven_takeoff(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
 

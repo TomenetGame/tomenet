@@ -525,3 +525,4 @@ Change list for PernMangband
 27/12/2001 (Jir)
 - Sector info on '@'.
 - Some small scripts.
+- Chatline commands: /bed, /dress
