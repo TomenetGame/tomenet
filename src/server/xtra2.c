@@ -5457,7 +5457,6 @@ bool get_rep_dir(int *dp)
 }
 #endif
 
-#ifdef NEW_DUNGEON
 /*
  * Allows to travel both vertical/horizontal using Recall;
  * probably wilderness(horizontal) travel will be made by other means
@@ -5561,53 +5560,6 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 	wpcopy(&p_ptr->recall_pos, &goal);
 #endif
 }
-
-#else
-void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
-{
-	int recall_depth = 0;
-	
-	unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
-	
-	/* default to the players maximum depth */
-	p_ptr->recall_depth = p_ptr->max_dlv;
-	
-	/* check for a valid inscription */
-	if (inscription == NULL) return;
-	
-	/* scan the inscription for @R */
-	while (*inscription != '\0')
-	{
-		
-		if (*inscription == '@')
-		{
-			inscription++;
-			
-			/* a valid @R has been located */
-			if (*inscription == 'R')
-			{			
-				inscription++;
-				/* convert the inscription into a level index */
-				recall_depth = atoi(inscription) / 50;
-			}
-		}
-		inscription++;
-	}
-	
-	/* do some bounds checking / sanity checks */
-	if ((recall_depth > p_ptr->max_dlv) || (!recall_depth)) recall_depth = p_ptr->max_dlv;
-	
-	/* if a wilderness level, verify that the player has visited here before */
-	if (recall_depth < 0)
-	{
-		/* if the player has not visited here, set the recall depth to the town */
-		if (!(p_ptr->wild_map[-recall_depth/8] & (1 << -recall_depth%8))) 		
-			recall_depth = 1;
-	}
-	
-	p_ptr->recall_depth = recall_depth;
-}
-#endif NEW_DUNGEON
 
 void telekinesis_aux(int Ind, int item)
 {
@@ -5895,7 +5847,6 @@ bool do_restoreXP_other(int Ind)
  * times five to keep the same movement rate.
  */
 
-#ifdef NEW_DUNGEON
 /* ok so its a hack - lets get it working first */
 int level_speed(struct worldpos *wpos){
 	if(!wpos->wz){
@@ -5905,13 +5856,6 @@ int level_speed(struct worldpos *wpos){
 		return (level_speeds[getlevel(wpos)]*5);
 	}
 }
-#else
-int level_speed(int Ind)
-{
-	if ( Ind <= 0) return level_speeds[0]*5;
-	else return level_speeds[Ind]*5;
-}
-#endif
 
 void unstatic_level(struct worldpos *wpos){
 	int i;

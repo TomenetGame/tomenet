@@ -53,6 +53,14 @@ void do_cmd_go_up(int Ind)
 		msg_print(Ind,"\377rThis is an ironman dungeon, you may not ascend.");
 		return;
 	}
+	if(wpos->wz==0){
+		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].tower;
+		if(d_ptr->baselevel-p_ptr->max_dlv>2){
+			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
+			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+			return;
+		}
+	}
 
 	/* Remove the player from the old location */
 	c_ptr->m_idx = 0;
@@ -143,6 +151,14 @@ void do_cmd_go_down(int Ind)
 	if(wpos->wz>0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags & DUNGEON_IRON){
 		msg_print(Ind,"\377rThis is an ironman tower, you may not descend.");
 		return;
+	}
+	if(wpos->wz==0){
+		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
+		if(d_ptr->baselevel-p_ptr->max_dlv>2){
+			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
+			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+			return;
+		}
 	}
 
 	/* Remove the player from the old location */

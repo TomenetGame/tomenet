@@ -657,6 +657,7 @@ Change list for PernMangband
 - Teleport level had same problem as recall (when new wz became 0)
 - Hacked up load2.c - backwards compatibility is only posssible
   in the future. ;)
+- Players may not enter high level dungeons quite so easily.
 
 
 ** [B] stands for Bugfix.

@@ -2334,13 +2334,9 @@ void kingly(int Ind)
 
 #if 0	// No, this makes Delete_player fail!
 	/* Hack -- retire in town */
-#ifdef NEW_DUNGEON
 	p_ptr->wpos.wx=0;	// pfft, not 0 maybe
 	p_ptr->wpos.wy=0;
 	p_ptr->wpos.wz=0;
-#else
-	p_ptr->dun_depth = 0;
-#endif	// NEW_DUNGEON
 #endif	// 0
 
 	/* Fake death */
@@ -2726,7 +2722,6 @@ void exit_game_panic(void)
 	 * these levels should have been cleared by now. However, paranoia
 	 * can't hurt all that much... -APD
 	 */
-#ifdef NEW_DUNGEON
 /* totally inefficient replacement - sorry. */
 /* it also doesnt respect non existent world positions */
 /* rewrite */
@@ -2752,14 +2747,6 @@ void exit_game_panic(void)
 				}
 		}
 	}
-#else
-	for (i = 1; i < MAX_DEPTH; i++)
-	{
-
-		/* Paranoia -- wipe this depth's objects if no players are on it*/
-		if (!players_on_depth[i]) wipe_o_list(i);
-	}
-#endif
 	/* Stop the timer */
 	teardown_timer();
 
