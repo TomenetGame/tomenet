@@ -3248,3 +3248,19 @@ byte count_bits(u32b array)
 	return k;
 }
 
+/*
+ * Find a player
+ */
+int get_playerind(char *name)
+{
+        int i;
+
+        if (name == (char*)NULL)
+                return(-1);
+        for(i=1; i<=NumPlayers; i++)
+        {
+                if(Players[i]->conn==NOT_CONNECTED) return(-1);
+                if(!stricmp(Players[i]->name, name)) return(i);
+        }
+        return(-1);
+}

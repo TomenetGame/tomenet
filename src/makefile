@@ -49,7 +49,7 @@
 SERV_SRCS = \
   common/z-util.c common/z-virt.c common/z-form.c common/z-rand.c \
   common/net-unix.c common/sockbuf.c common/common.c \
-  server/variable.c server/control.c \
+  server/variable.c server/control.c server/hooks.c \
   server/party.c server/tables.c server/util.c server/cave.c \
   server/object1.c server/object2.c server/monster2.c \
   server/xtra1.c server/xtra2.c server/spells1.c server/spells2.c \
@@ -63,7 +63,7 @@ SERV_SRCS = \
 SERV_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
   common/net-unix.o common/sockbuf.o common/common.o \
-  server/variable.o server/control.o \
+  server/variable.o server/control.o server/hooks.o  \
   server/party.o server/tables.o server/util.o server/cave.o \
   server/object1.o server/object2.o server/monster2.o \
   server/xtra1.o server/xtra2.o server/spells1.o server/spells2.o \

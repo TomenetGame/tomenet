@@ -584,4 +584,5 @@ extern void teleport_player_to(int Ind, int ny, int nx);
 extern void teleport_player_level(int Ind);
 
 extern int NumPlayers;
-extern player_type *Players[0xFFFFF];
+extern player_type *Players[0xFFFFF] @ Players_real;
+extern int get_playerind(char *name);

@@ -103,3 +103,49 @@ extern void cat_script(int Ind, char *name);
 extern void msg_print(int Ind, cptr msg);
 extern void msg_broadcast(int Ind, cptr msg);
 extern void msg_print_near(int Ind, cptr msg);
+
+
+#define HOOK_MONSTER_DEATH      0
+#define HOOK_OPEN               1
+#define HOOK_GEN_QUEST          2
+#define HOOK_END_TURN           3
+#define HOOK_FEELING            4
+#define HOOK_NEW_MONSTER        5
+#define HOOK_GEN_LEVEL          6
+#define HOOK_BUILD_ROOM1        7
+#define HOOK_NEW_LEVEL          8
+#define HOOK_QUEST_FINISH       9
+#define HOOK_QUEST_FAIL         10
+#define HOOK_GIVE               11
+#define HOOK_CHAR_DUMP          12
+#define HOOK_INIT_QUEST         13
+#define HOOK_WILD_GEN           14
+#define HOOK_DROP               15
+#define HOOK_IDENTIFY           16
+#define HOOK_MOVE               17
+#define HOOK_STAIR              18
+#define HOOK_MONSTER_AI         19
+#define HOOK_PLAYER_LEVEL       20
+#define HOOK_WIELD              21
+#define HOOK_INIT               22
+#define HOOK_QUAFF              23
+#define HOOK_AIM                24
+#define HOOK_USE                25
+#define HOOK_ACTIVATE           26
+#define HOOK_ZAP                27
+#define HOOK_READ               28
+#define HOOK_CALC_BONUS         29
+#define HOOK_PLAYER_FLAGS       30
+#define HOOK_KEYPRESS           31
+#define HOOK_CHAT               32
+#define HOOK_MON_SPEAK          33
+#define HOOK_MKEY               34
+#define HOOK_BIRTH_OBJECTS      35
+#define HOOK_ACTIVATE_DESC      36
+#define HOOK_INIT_GAME          37
+#define HOOK_ACTIVATE_POWER     38
+#define HOOK_ITEM_NAME          39
+#define HOOK_SAVE_GAME          40
+#define HOOK_LOAD_GAME          41
+#define HOOK_LEVEL_REGEN        42
+#define HOOK_LEVEL_END_GEN      43

@@ -1,3 +1,6 @@
+-- Init !
+pern_dofile(Ind, "player.lua")
+
 -- Put whatever is needed here
 
 pern_dofile(Ind, "dg.lua")

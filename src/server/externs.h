@@ -901,6 +901,7 @@ extern errr path_temp(char *buf, int max);
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern FILE *my_fopen(cptr file, cptr mode);
 extern errr my_fgets(FILE *fff, char *buf, huge n);
+extern int get_playerind(char *name);
 extern errr my_fputs(FILE *fff, cptr buf, huge n);
 extern errr my_fclose(FILE *fff);
 extern errr fd_kill(cptr file);

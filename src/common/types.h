@@ -2022,3 +2022,19 @@ struct server_opts
 
 /* from spells1.c */
 typedef int (*inven_func)(object_type *);
+
+typedef struct hooks_chain hooks_chain;
+struct hooks_chain
+{
+	char name[40];
+	char script[40];
+	hooks_chain *next;
+};
+
+typedef union hook_return hook_return;
+union hook_return
+{
+	s32b num;
+	char *str;
+	object_type *o_ptr;
+};
