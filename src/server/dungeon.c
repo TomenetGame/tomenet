@@ -2231,6 +2231,7 @@ static void process_player_end(int Ind)
 			{
 				/* sorta circumlocution? */
 				worldpos new_pos;
+				bool recall_ok=TRUE;
 
 				/* Disturbing! */
 				disturb(Ind, 0, 0);
@@ -2239,25 +2240,33 @@ static void process_player_end(int Ind)
 				/* recalling to surface */
 				if(p_ptr->wpos.wz)
 				{
-					/* Messages */
-					if(p_ptr->wpos.wz > 0)
-					{
-						msg_print(Ind, "You feel yourself yanked downwards!");
-						msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
-					}
-					else
-					{
-						msg_print(Ind, "You feel yourself yanked upwards!");
-						msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
-					}
+					struct dungeon_type *d_ptr;
+					d_ptr=getdungeon(&p_ptr->wpos);
 
-					/* New location */
-					//					p_ptr->wpos.wz=0;
-					new_pos.wx = p_ptr->wpos.wx;
-					new_pos.wy = p_ptr->wpos.wy;
-					new_pos.wz = 0;
+					/* Messages */
+					if(d_ptr->flags & DUNGEON_IRON && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)){
+						msg_print(Ind, "You feel yourself being pulled toward the surface!");
+						recall_ok=FALSE;
+					}
+					else{
+						if(p_ptr->wpos.wz > 0)
+						{
+							msg_print(Ind, "You feel yourself yanked downwards!");
+							msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
+						}
+						else
+						{
+							msg_print(Ind, "You feel yourself yanked upwards!");
+							msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
+						}
+
+						/* New location */
+						new_pos.wx = p_ptr->wpos.wx;
+						new_pos.wy = p_ptr->wpos.wy;
+						new_pos.wz = 0;
 					
-					p_ptr->new_level_method = ( istown(&new_pos) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND );
+						p_ptr->new_level_method = ( istown(&new_pos) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND );
+					}
 				}
 				/* beware! bugs inside! (jir) */
 				/* world travel */
@@ -2346,6 +2355,7 @@ static void process_player_end(int Ind)
 					else p_ptr->new_level_method = LEVEL_RAND;
 				}
 				
+				if(recall_ok){
 				/* One less person here */
 				new_players_on_depth(&p_ptr->wpos,-1,TRUE);
 				
@@ -2373,6 +2383,7 @@ static void process_player_end(int Ind)
 
 				/* He'll be safe for 2 turns */
 				set_invuln_short(Ind, 2);
+				}
 			}
 		}
 	}

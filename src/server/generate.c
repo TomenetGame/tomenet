@@ -318,18 +318,12 @@ static void rand_dir(int *rdir, int *cdir)
 /*
  * Returns random co-ordinates for player starts
  */
-#ifdef NEW_DUNGEON
 static void new_player_spot(struct worldpos *wpos)
-#else
-static void new_player_spot(int Depth)
-#endif
 {
 	int        y, x;
 
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 	/* Place the player */
 	while (1)
@@ -339,31 +333,18 @@ static void new_player_spot(int Depth)
 		x = rand_range(1, MAX_WID - 2);
 
 		/* Must be a "naked" floor grid */
-#ifdef NEW_DUNGEON
 		if (!cave_naked_bold(zcave, y, x)) continue;
-#else
-		if (!cave_naked_bold(Depth, y, x)) continue;
-#endif
 
 		/* Refuse to start on anti-teleport grids */
-#ifdef NEW_DUNGEON
 		if (zcave[y][x].info & CAVE_ICKY) continue;
-#else
-		if (cave[Depth][y][x].info & CAVE_ICKY) continue;
-#endif
 
 		/* Done */
 		break;
 	}
 
 	/* Save the new grid */
-#ifdef NEW_DUNGEON
 	new_level_rand_y(wpos, y);
 	new_level_rand_x(wpos, x);
-#else
-	level_rand_y[Depth] = y;
-	level_rand_x[Depth] = x;
-#endif
 }
 
 
@@ -375,14 +356,9 @@ static void new_player_spot(int Depth)
  *
  * We count only granite walls and permanent walls.
  */
-#ifdef NEW_DUNGEON
 static int next_to_walls(struct worldpos *wpos, int y, int x)
-#else
-static int next_to_walls(int Depth, int y, int x)
-#endif
 {
 	int        k = 0;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
@@ -390,13 +366,6 @@ static int next_to_walls(int Depth, int y, int x)
 	if (zcave[y-1][x].feat >= FEAT_WALL_EXTRA) k++;
 	if (zcave[y][x+1].feat >= FEAT_WALL_EXTRA) k++;
 	if (zcave[y][x-1].feat >= FEAT_WALL_EXTRA) k++;
-#else
-	if (cave[Depth][y+1][x].feat >= FEAT_WALL_EXTRA) k++;
-	if (cave[Depth][y-1][x].feat >= FEAT_WALL_EXTRA) k++;
-	if (cave[Depth][y][x+1].feat >= FEAT_WALL_EXTRA) k++;
-	if (cave[Depth][y][x-1].feat >= FEAT_WALL_EXTRA) k++;
-#endif
-
 	return (k);
 }
 
@@ -405,20 +374,12 @@ static int next_to_walls(int Depth, int y, int x)
 /*
  * Convert existing terrain type to rubble
  */
-#ifdef NEW_DUNGEON
 static void place_rubble(struct worldpos *wpos, int y, int x)
-#else
-static void place_rubble(int Depth, int y, int x)
-#endif
 {
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr=&zcave[y][x];
-#else
-	cave_type *c_ptr = &cave[Depth][y][x];
-#endif
 
 	/* Create rubble */
 	c_ptr->feat = FEAT_RUBBLE;
@@ -429,20 +390,12 @@ static void place_rubble(int Depth, int y, int x)
 /*
  * Convert existing terrain type to "up stairs"
  */
-#ifdef NEW_DUNGEON
 static void place_up_stairs(struct worldpos *wpos, int y, int x)
-#else
-static void place_up_stairs(int Depth, int y, int x)
-#endif
 {
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr=&zcave[y][x];
-#else
-	cave_type *c_ptr = &cave[Depth][y][x];
-#endif
 
 	/* Create up stairs */
 	c_ptr->feat = FEAT_LESS;
@@ -452,21 +405,12 @@ static void place_up_stairs(int Depth, int y, int x)
 /*
  * Convert existing terrain type to "down stairs"
  */
-#ifdef NEW_DUNGEON
-//static void place_down_stairs(int wpos, int y, int x)
 static void place_down_stairs(worldpos *wpos, int y, int x)
-#else
-static void place_down_stairs(int Depth, int y, int x)
-#endif
 {
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr=&zcave[y][x];
-#else
-	cave_type *c_ptr = &cave[Depth][y][x];
-#endif
 
 	/* Create down stairs */
 	c_ptr->feat = FEAT_MORE;
@@ -479,13 +423,8 @@ static void place_down_stairs(int Depth, int y, int x)
 /*
  * Place an up/down staircase at given location
  */
-#ifdef NEW_DUNGEON
 static void place_random_stairs(struct worldpos *wpos, int y, int x)
-#else
-static void place_random_stairs(int Depth, int y, int x)
-#endif
 {
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return;
@@ -505,48 +444,18 @@ static void place_random_stairs(int Depth, int y, int x)
 	{
 		place_up_stairs(wpos, y, x);
 	}
-#else
-	/* Paranoia */
-	if (!cave_clean_bold(Depth, y, x)) return;
-
-	/* Choose a staircase */
-	if (!Depth)
-	{
-		place_down_stairs(Depth, y, x);
-	}
-	else if (is_quest(Depth) || (Depth >= MAX_DEPTH-1))
-	{
-		place_up_stairs(Depth, y, x);
-	}
-	else if (rand_int(100) < 50)
-	{
-		place_down_stairs(Depth, y, x);
-	}
-	else
-	{
-		place_up_stairs(Depth, y, x);
-	}
-#endif
 }
 
 
 /*
  * Place a locked door at the given location
  */
-#ifdef NEW_DUNGEON
 static void place_locked_door(struct worldpos *wpos, int y, int x)
-#else
-static void place_locked_door(int Depth, int y, int x)
-#endif
 {
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
-#else
-	cave_type *c_ptr = &cave[Depth][y][x];
-#endif
 
 	/* Create locked door */
 	c_ptr->feat = FEAT_DOOR_HEAD + randint(7);
@@ -556,20 +465,12 @@ static void place_locked_door(int Depth, int y, int x)
 /*
  * Place a secret door at the given location
  */
-#ifdef NEW_DUNGEON
 static void place_secret_door(struct worldpos *wpos, int y, int x)
-#else
-static void place_secret_door(int Depth, int y, int x)
-#endif
 {
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
-#else
-	cave_type *c_ptr = &cave[Depth][y][x];
-#endif
 
 	/* Create secret door */
 	c_ptr->feat = FEAT_SECRET;
@@ -579,21 +480,13 @@ static void place_secret_door(int Depth, int y, int x)
 /*
  * Place a random type of door at the given location
  */
-#ifdef NEW_DUNGEON
 static void place_random_door(struct worldpos *wpos, int y, int x)
-#else
-static void place_random_door(int Depth, int y, int x)
-#endif
 {
 	int tmp;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
-#else
-	cave_type *c_ptr = &cave[Depth][y][x];
-#endif
 
 	/* Choose an object */
 	tmp = rand_int(1000);
@@ -646,19 +539,13 @@ static void place_random_door(int Depth, int y, int x)
 /*
  * Places some staircases near walls
  */
-#ifdef NEW_DUNGEON
 static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
-#else
-static void alloc_stairs(int Depth, int feat, int num, int walls)
-#endif
 {
 	int                 y, x, i, j, flag;
 
 	cave_type		*c_ptr;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 	/* Place "num" stairs */
 	for (i = 0; i < num; i++)
@@ -670,7 +557,6 @@ static void alloc_stairs(int Depth, int feat, int num, int walls)
 			for (j = 0; !flag && j <= 3000; j++)
 			{
 				/* Pick a random grid */
-#ifdef NEW_DUNGEON
 				y = rand_int(MAX_HGT);
 				x = rand_int(MAX_WID);
 
@@ -685,22 +571,6 @@ static void alloc_stairs(int Depth, int feat, int num, int walls)
 
 				/* Town -- must go down */
 				if (!can_go_up(wpos))
-#else
-				y = rand_int(Depth ? MAX_HGT : MAX_HGT);
-				x = rand_int(Depth ? MAX_WID : MAX_WID);
-
-				/* Require "naked" floor grid */
-				if (!cave_naked_bold(Depth, y, x)) continue;
-
-				/* Require a certain number of adjacent walls */
-				if (next_to_walls(Depth, y, x) < walls) continue;
-
-				/* Access the grid */
-				c_ptr = &cave[Depth][y][x];
-
-				/* Town -- must go down */
-				if (!Depth)
-#endif
 				{
 					/* Clear previous contents, add down stairs */
 					c_ptr->feat = FEAT_MORE;
@@ -710,25 +580,15 @@ static void alloc_stairs(int Depth, int feat, int num, int walls)
 					}
 				}
 
-#ifdef NEW_DUNGEON
 				/* Quest -- must go up */
 				else if (is_quest(wpos) || !can_go_down(wpos))
-#else
-				/* Quest -- must go up */
-				else if (is_quest(Depth) || (Depth >= MAX_DEPTH-1))
-#endif
 				{
 					/* Clear previous contents, add up stairs */
 					c_ptr->feat = FEAT_LESS;
 
 					/* Set this to be the starting location for people going down */
-#ifdef NEW_DUNGEON
 					new_level_down_y(wpos,y);
 					new_level_down_x(wpos,x);
-#else
-					level_down_y[Depth] = y;
-					level_down_x[Depth] = x;
-#endif
 				}
 
 				/* Requested type */
@@ -740,24 +600,14 @@ static void alloc_stairs(int Depth, int feat, int num, int walls)
 					if (feat == FEAT_LESS)
 					{
 						/* Set this to be the starting location for people going down */
-#ifdef NEW_DUNGEON
 						new_level_down_y(wpos, y);
 						new_level_down_x(wpos, x);
-#else
-						level_down_y[Depth] = y;
-						level_down_x[Depth] = x;
-#endif
 					}
 					if (feat == FEAT_MORE)
 					{
 						/* Set this to be the starting location for people going up */
-#ifdef NEW_DUNGEON
 						new_level_up_y(wpos, y);
 						new_level_up_x(wpos, x);
-#else
-						level_up_y[Depth] = y;
-						level_up_x[Depth] = x;
-#endif
 					}
 				}
 
@@ -777,17 +627,11 @@ static void alloc_stairs(int Depth, int feat, int num, int walls)
 /*
  * Allocates some objects (using "place" and "type")
  */
-#ifdef NEW_DUNGEON
 static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
-#else
-static void alloc_object(int Depth, int set, int typ, int num)
-#endif
 {
 	int y, x, k;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 	/* Place some objects */
 	for (k = 0; k < num; k++)
