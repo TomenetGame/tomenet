@@ -1,5 +1,5 @@
 N:*:Default
-431
+480
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -414,6 +414,7 @@ They say that a poor player created adamantium golem that never follows him.
 They say that a poor player created Pinnocio that is doomed to be burnt.
 {vAdamantium {wso precious, ever wondered why its massive piece is that cheap?
 They say that have you seen another {yQ {wstanding in the shadow?
+They say that have you seen another rogue standing in the shadow?
 They say that no one can be stealthy enough to sneak up on a Quylthulg.
 What's that Quylthulg creature anyway?
 Ever relished a dragon steak?
@@ -431,3 +432,51 @@ Wanna slay Sauron? Ask Wormie!
 Foudinni said: You cannot be satisfied with imaginary cakes.
 You're lucky today if you find a coloured fortune.
 They say that once a player named Grima slew Sauron with a dagger.
+They say that repented evils still are horrible foes of priests.
+They say that holy animals are holy, just don't touch them.
+They say that it's not only players that knows phase'n'shoot.
+They say that 90% of sorcerors are born to die.
+They say that 100% of mortals are born to die.
+They say that if you notice a hound of different colour in a pack, run away!
+They say that never drink and dive.
+They say that cloning technology often results in mutants.
+They say that it worthes while enchanting a launcher.
+A mouth of Sauron,a nose of Sauron and 2 eyes of Sauron make a face of Sauron.
+Ever seen the second town?
+Found a scroll of acquirement? Hush! Don't tell that to anyone!
+They say that the best way to make use of ?acq is to sell it to other players.
+Inscribe your potion of death {{augmentation}.
+Inscribe your nifty randarts {{Slow Metabolism}.
+What on earth is the difference between sickness and sickliness?
+Ever seen a pack of multi-coloured walking potions of experience?
+They say that mangband incubi/succubi are on the other side of the screen.
+They say that mage staff helps mages of ages to walk.
+They say that without mage staff a mage should crawl to move around.
+They say that shadow cloak envelops a rogue in the shade.
+They say that a cloak of shock resistance is made of ebonite.
+Shrink asks you: what do you imagine with {BZZZZZZZ{op{w@{GZZZZZZZ{w# ?
+Lamps won't stack? Try identifying them!
+You see a sign: Never steal the {ocarrots{w, damned dungeoneers!
+They say that you should inscribe on ?acq the name of what you want.
+Ever found a potion of augmentation while your stats are not max-ed yet?
+They say that casting spells trains your intelligence.
+They say that an arrow without macro is like a gun without trigger.
+Foudinni says: always prepare to fight, always prepare to run!
+Who is that Foudinni guy anyway?
+Ever tried to rub a lamp? - Erm, which key to rub?
+They say that you should detect traps more than once.
+They say that all the clerics should learn to pray at very level 1.
+They say that one thing I can tell you is you got to be free.
+They say that Maggot is on bouties for smuggling hallucinogenic mushrooms.
+Foudinni says: Okay, now who bells the cat?
+Foudinni says: Here's Rhodes; jump!
+They say that there's no use crying over spilt arts.
+They say that prepare to die when you dared to enter the land of kings.
+Built a castle? Time to vacate your long-dwelt small flat!
+They say that all the wizards are positivists and never believe in words.
+They say that shopkeepers won't change inventory as far as a customer is in.
+(AD) Suggestions very welcome - either in unidiff or in context-diff.
+Glue the shards of pottery and you'll have a china.
+Ever faced a Greater Titan Sorceror?
+They say that genius is but one remove from idiot.
+"You can't have everything.  Where would you put it?" -- Steven Wright
