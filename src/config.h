@@ -747,7 +747,7 @@
 /* Chance of bolt/ball harming party-member by accident. [10] */
 #define FRIEND_FIRE_CHANCE	0
 /* Chance of bolt/ball harming neutral-player by accident. [50] */
-#define NEUTRAL_FIRE_CHANCE	30
+#define NEUTRAL_FIRE_CHANCE	0
 
 /* OPTION: allow monsters to carry objects. */
 #define MONSTER_INVENTORY
