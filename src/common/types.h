@@ -1000,6 +1000,17 @@ struct house_type
 };
 #endif
 
+#if 0 /* Evileye - work in progress */
+/* Cave special types */
+#define DNA_DOOR 1
+#define KEY_DOOR 2
+
+struct c_special{
+	unsigned char type;
+	void *ptr;		/* lazy */
+};
+#endif
+
 #define OT_PLAYER 1
 #define OT_PARTY 2
 #define OT_CLASS 3
@@ -1019,6 +1030,12 @@ struct dna_type{
 	u16b min_level;		/* minimum level - no higher than admin level */
 	u32b price;		/* Speed before memory */
 };
+
+#if 0 /* evileye - work in progress */
+struct key_type{
+	u16b key;		/* key pval */	
+};
+#endif
 
 
 /*

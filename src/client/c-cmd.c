@@ -1894,7 +1894,7 @@ void cmd_master_aux_build(void)
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Grass Mode");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Dirt Mode");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Floor Mode");
-		Term_putstr(5, 11, -1, TERM_WHITE, "(8) House Door Mode");
+		Term_putstr(5, 11, -1, TERM_WHITE, "(8) Special Door Mode");
 		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Build Mode Off");
 
 		/* Prompt */
@@ -1928,7 +1928,7 @@ void cmd_master_aux_build(void)
 			/* House door mode on */
 			case '8':
 				buf[0] = FEAT_HOME_HEAD;
-				get_string("Enter player name:",&buf[2],15);
+				buf[1] = c_get_quantity("Enter key pval:",0xffffffff);
 				break;
 			/* Build mode off */
 			case '9': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;

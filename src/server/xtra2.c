@@ -5208,6 +5208,7 @@ bool master_build(int Ind, char * parms)
 		KILL(c_ptr->special, struct dna_type);
 	c_ptr->feat = new_feat;
 	if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL){
+		/* new special door creation (with keys) */
 		struct dna_type *c_dna;
 		int id;
 		if(c_ptr->special) return(FALSE);

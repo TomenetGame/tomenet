@@ -15,6 +15,7 @@ static void read_mangrc(void)
 	char config_name[100];
 	FILE *config;
 	char buf[1024];
+	char *temp;
 
 #ifdef SET_UID
 	int player_uid;
@@ -47,6 +48,7 @@ static void read_mangrc(void)
 	strcpy(pass, "passwd");
 	strcpy(real_name, "PLAYER");
 
+
 	/* Get login name if a UNIX machine */
 #ifdef SET_UID
 	/* Get player UID */
@@ -70,6 +72,12 @@ static void read_mangrc(void)
         if((GetVar("mang_name",real_name,80,0L))!=-1){
           strcpy(nick,real_name);
 	}
+#endif
+#ifdef SET_UID
+	temp=getenv("ANGBAND_PLAYER");
+	if(temp) strcpy(nick, temp); 
+	temp=getenv("ANGBAND_USER");
+	if(temp) strcpy(real_name, temp); 
 #endif
 
 	/* Attempt to open file */

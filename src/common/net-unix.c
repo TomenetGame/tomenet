@@ -501,7 +501,7 @@ int	namelen;
 
     hp = gethostbyaddr((char *)&addr.sin_addr.s_addr, 4, AF_INET);
     if (hp != NULL)
-    {
+    { 
 	strncpy(name, hp->h_name, namelen);
     }
     else
@@ -2497,6 +2497,7 @@ void GetLocalHostName(name, size)
     char		*alias, *dot;
     char		xpilot_hostname[MAXHOSTNAMELEN];
     static const char	xpilot[] = "xpilot";
+    char		*temp;
 #ifdef VMS
     char                vms_inethost[MAXHOSTNAMELEN]   = "UCX$INET_HOST";
     char                vms_inetdomain[MAXHOSTNAMELEN] = "UCX$INET_DOMAIN";
@@ -2514,6 +2515,12 @@ void GetLocalHostName(name, size)
 	    tmp = *xpilot_he;
 	    xpilot_he = &tmp;
 	}
+    }
+    temp=getenv("ANGBAND_HOST");
+    if(temp){
+	strncpy(name, temp, size);
+        name[size - 1] = '\0';
+	return;
     }
 
     gethostname(name, size);
