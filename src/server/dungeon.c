@@ -2907,7 +2907,7 @@ void dungeon(void)
 	if(cfg.runlevel<5){
 		for(i=NumPlayers; i>0 ;i--){
 			if(Players[i]->conn==NOT_CONNECTED) continue;
-			if(Players[i]->wpos.wz!=0) break;
+			if(Players[i]->wpos.wz!=0 || Players[i]->new_level_flag) break;
 		}
 		if(!i) set_runlevel(0);
 	}
@@ -3409,6 +3409,7 @@ void set_runlevel(int val)
 			msg_broadcast(0, "\377yWarning. Server shutdown will take place in five minutes.");
 			break;
 		case 6:
+			/* Running */
 		default:
 			/* Cancelled shutdown */
 			msg_broadcast(0, "\377GServer shutdown cancelled.");

@@ -1908,6 +1908,15 @@ bool load_player(int Ind)
 		s_printf("Savefile does not exist for player %s.\n", p_ptr->name);
 		s_printf("(%s) %d\n", p_ptr->savefile, errno);
 
+		if(errno!=ENOENT){	/* EMFILE for example */
+			if(cfg.runlevel>1){
+				s_printf("Automatic shutdown\n");
+				msg_broadcast(0, "\377r* SERVER EMERGENCY SHUTDOWN *");
+				set_runlevel(1);
+			}
+			return(FALSE);
+		}
+
 		/* Allow this */
 		return (TRUE);
 	}
