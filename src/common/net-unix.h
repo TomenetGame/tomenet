@@ -106,9 +106,9 @@ extern int	DgramReply(int, char *, int);
 extern int	DgramRead(int fd, char *rbuf, int size);
 extern int	DgramWrite(int fd, char *wbuf, int size);
 extern int	DgramSendRec(int, char *, int, char *, int, char *, int);
-extern char	*DgramLastaddr(void);
-extern char	*DgramLastname(void);
-extern int	DgramLastport(void);
+extern char	*DgramLastaddr(int fd);
+extern char	*DgramLastname(int fd);
+extern int	DgramLastport(int fd);
 extern void	DgramClose(int);
 extern void	GetLocalHostName(char *, unsigned);
 #else /* __STDC__ */

@@ -645,9 +645,12 @@ int	fd;
 #endif /* __STDC__ */
 {
     int		retval;
+    int		socklen;
 
     cmw_priv_assert_netaccess();
-    retval = accept(fd, NULL, 0);
+    retval = accept(fd, &sl_dgram_lastaddr, &socklen);
+    printf("works here: %s\n", inet_ntoa(sl_dgram_lastaddr.sin_addr));
+    //retval = accept(fd, NULL, 0);
     cmw_priv_deassert_netaccess();
 
     return retval;
@@ -2281,15 +2284,13 @@ char	*host, *sbuf, *rbuf;
  * Originally coded by Arne Helme
  */
 char *
-#ifdef __STDC__
-DgramLastaddr(void)
-#else
-DgramLastaddr()
-#endif /* __STDC__ */
+DgramLastaddr(int fd)
 {
 #ifdef UNIX_SOCKETS
     return "localhost";
 #else
+    int len=sizeof(struct sockaddr_in);
+    getpeername(fd, &sl_dgram_lastaddr, &len);
     return (inet_ntoa(sl_dgram_lastaddr.sin_addr));
 #endif
 } /* DgramLastaddr */
@@ -2329,17 +2330,15 @@ DgramLastaddr()
  * Originally coded by Bert Gijsbers
  */
 char *
-#ifdef __STDC__
-DgramLastname(void)
-#else
-DgramLastname()
-#endif /* __STDC__ */
+DgramLastname(int fd)
 {
 #ifdef UNIX_SOCKETS
     return "localhost";
 #else
     struct hostent	*he;
     char		*str;
+    int len=sizeof(struct sockaddr_in);
+    getpeername(fd, &sl_dgram_lastaddr, &len);
 
     he = gethostbyaddr((char *)&sl_dgram_lastaddr.sin_addr,
 		       sizeof(struct in_addr), AF_INET);
@@ -2383,11 +2382,7 @@ DgramLastname()
  * Originally coded by Arne Helme
  */
 int
-#ifdef __STDC__
-DgramLastport(void)
-#else
-DgramLastport()
-#endif /* __STDC__ */
+DgramLastport(int fd)
 {
 #ifdef UNIX_SOCKETS
     int port;
@@ -2396,6 +2391,8 @@ DgramLastport()
         return (-1);
     return port;
 #else
+    int len=sizeof(struct sockaddr_in);
+    getpeername(fd, &sl_dgram_lastaddr, &len);
     return (ntohs((int)sl_dgram_lastaddr.sin_port));
 #endif
 } /* DgramLastport */

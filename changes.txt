@@ -430,3 +430,6 @@ Change list for PernMangband
 - Fixed bug where new towns would not have objects/monsters attached
 - Added some support for ironman dungeons - not recall
 - Dungeons may not be generated in towns (must generate with town)
+
+14/12/2001 (Evileye)
+- Forced net code to recheck IP/port when asked

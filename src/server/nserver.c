@@ -699,7 +699,7 @@ static void Contact(int fd, int arg)
 	}
 	ibuf.len = bytes;
 
-	strcpy(host_addr, DgramLastaddr());
+	strcpy(host_addr, DgramLastaddr(fd));
 	/*if (Check_address(host_addr)) return;*/
 
 	if (Packet_scanf(&ibuf, "%u", &magic) <= 0)
@@ -715,7 +715,7 @@ static void Contact(int fd, int arg)
 	}
 	reply_to = (ch & 0xFF);
 
-	port = DgramLastport();
+	port = DgramLastport(fd);
 
 	if (Packet_scanf(&ibuf, "%s%s%hu", nick_name, host_name, &version) <= 0)
 	{
@@ -1266,7 +1266,7 @@ static int Handle_listening(int ind)
 		*/
 		return -1;
 	}
-	connp->his_port = DgramLastport();
+	connp->his_port = DgramLastport(connp->r.sock);
 
 	/* Do a sanity check and read in the some basic player information. */
 	if (connp->r.ptr[0] != PKT_VERIFY)
