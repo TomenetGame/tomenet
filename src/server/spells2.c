@@ -1876,7 +1876,7 @@ bool curse_spell_aux(int Ind, int item){
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
 
-	if(artifact_p(o_ptr)){
+	if(artifact_p(o_ptr) && (randint(10)<8)){
 		msg_format(Ind,"The artifact resists your attempts.");
 		return(FALSE);
 	}
@@ -1898,6 +1898,9 @@ bool curse_spell_aux(int Ind, int item){
 	o_ptr->name3=0;
 	o_ptr->ident|=ID_CURSED;
 	o_ptr->ident&=~ID_KNOWN|ID_SENSE;	/* without this, the spell is pointless */
+
+	if(o_ptr->name2)
+		o_ptr->pval=0-randint(10);	/* nasty */
 
 	/* Recalculate the bonuses - if stupid enough to curse worn item ;) */
 	p_ptr->update |= (PU_BONUS);

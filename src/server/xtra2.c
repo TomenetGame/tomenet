@@ -5210,11 +5210,33 @@ bool master_player(int Ind, char *parms){
 	int Ind2=0;
 	int i;
 
-	if(strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
+	if(strcmp(p_ptr->name, cfg_dungeon_master)){
+		msg_print(Ind,"You need to be the dungeon master to use this command.");
+		return FALSE;
+	}
 	switch(parms[0]){
 		case 'E':	/* offline editor */
+			for(i=1;i<=NumPlayers;i++){
+				if(!strcmp(Players[i]->name,&parms[1])){
+					msg_format("%s is currently playing",&parms[1]);
+					return(FALSE);
+				}
+			}
+			//player_edit(&parms[1]);
+
 			break;
 		case 'A':	/* acquirement */
+			for(i=1;i<=NumPlayers;i++){
+				if(!strcmp(Players[i]->name,&parms[1])){
+					Ind2=i;
+					break;
+				}
+			}
+			if(Ind2){
+				msg_print(Ind,"If only.");
+				return(FALSE);
+			}
+			msg_print(Ind, "That player is not in the game.");
 			break;
 		case 'k':	/* admin wrath */
 			for(i=1;i<=NumPlayers;i++){
