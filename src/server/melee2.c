@@ -2481,8 +2481,8 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			/* No antimagic check -- is 'curse' magic? */
 			/* rebalance might be needed? */
-			if (monst_check_antimagic(Ind, m_idx) && !(rand_int(4))) break;
 			int power = rlev / 2 + randint(rlev);
+			if (monst_check_antimagic(Ind, m_idx) && !(rand_int(4))) break;
 			disturb(Ind, 1, 0);
 			if (power < 15)
 			{
