@@ -830,30 +830,18 @@ static void Delete_player(int Ind)
 	int i;
 
 	/* Be paranoid */
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if ((zcave=getcave(&p_ptr->wpos)))
-#else
-	if (cave[p_ptr->dun_depth])
-#endif
 	{
 		/* There's nobody on this space anymore */
-#ifdef NEW_DUNGEON
 		zcave[p_ptr->py][p_ptr->px].m_idx = 0;
-#else
-		cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].m_idx = 0;
-#endif
 
 		/* Forget his lite and viewing area */
 		forget_lite(Ind);
 		forget_view(Ind);
 
 		/* Show everyone his disappearance */
-#ifdef NEW_DUNGEON
 		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-#else
-		everyone_lite_spot(p_ptr->dun_depth, p_ptr->py, p_ptr->px);
-#endif
 	}
 
 	/* Try to save his character */
@@ -901,17 +889,10 @@ static void Delete_player(int Ind)
 	/* Also, update the "player_index" on the cave grids */
 	if (Ind != NumPlayers)
 	{
-#ifdef NEW_DUNGEON
 		cave_type **zcave;
-#endif
 		p_ptr			= Players[NumPlayers];
-#ifdef NEW_DUNGEON
 		if((zcave=getcave(&p_ptr->wpos)))
 			zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
-#else
-		if (cave[p_ptr->dun_depth])
-			cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
-#endif
 		Players[NumPlayers]	= Players[Ind];
 		Players[Ind]		= p_ptr;
 		p_ptr			= Players[NumPlayers];
@@ -2179,9 +2160,6 @@ void do_quit(int ind, bool tellclient)
 	if (connp->id != -1) 
 	{
 		player = GetInd[connp->id];
-#ifndef NEW_DUNGEON
-		depth = Players[player]->dun_depth;
-#endif
 	}
 
 	if (!tellclient)
@@ -2197,12 +2175,7 @@ void do_quit(int ind, bool tellclient)
 	}
 
 	/* If we are close to the center of town, exit quickly. */
-#ifdef NEW_DUNGEON
-	/* be a bit kinder than this?? */
-	if(istown(&Players[player]->wpos))
-#else
-	if (depth <= 0 ? wild_info[depth].radius <= 2 : 0)
-#endif
+	if(istown(&Players[player]->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<3))
 	{
 		Destroy_connection(ind, "client quit");
 	}
@@ -2826,11 +2799,7 @@ int Send_title(int ind, cptr title)
 	return Packet_printf(&connp->c, "%c%s", PKT_TITLE, title);
 }
 
-#ifdef NEW_DUNGEON
 int Send_depth(int ind, struct worldpos *wpos)
-#else
-int Send_depth(int ind, int depth)
-#endif
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -2855,18 +2824,10 @@ int Send_depth(int ind, int depth)
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-#ifdef NEW_DUNGEON
 		Packet_printf(&connp2->c, "%c%hu%hu%hu%c", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos));
-#else
-		Packet_printf(&connp2->c, "%c%hu", PKT_DEPTH, depth);
-#endif
 	      }
 	  }
-#ifdef NEW_DUNGEON
 	return Packet_printf(&connp->c, "%c%hu%hu%hu%c", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos));
-#else
-	return Packet_printf(&connp->c, "%c%hu", PKT_DEPTH, depth);
-#endif
 }
 
 int Send_food(int ind, int food)
@@ -3943,11 +3904,7 @@ static int Receive_walk(int ind)
 	}
 
 
-#ifdef NEW_DUNGEON
 	if (player && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (player && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_walk(player, dir, p_ptr->always_pickup);
 		return 2;
@@ -4105,11 +4062,7 @@ static int Receive_tunnel(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_tunnel(player, dir);
 		return 2;
@@ -4154,11 +4107,7 @@ static int Receive_aim_wand(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_aim_wand(player, item, dir);
 		return 2;
@@ -4208,11 +4157,7 @@ static int Receive_drop(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_drop(player, item, amt);
 		return 2;
@@ -4270,11 +4215,7 @@ static int Receive_fire(int ind)
 			dir = randint(9) + 1;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)/p_ptr->num_fire)
-#else
-	if (connp->id != -1 && p_ptr->energy >= (level_speed(p_ptr->dun_depth) / p_ptr->num_fire))
-#endif
 	{
 		do_cmd_fire(player, dir, item);
 		return 2;
@@ -4369,11 +4310,7 @@ static int Receive_destroy(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_destroy(player, item, amt);
 		return 2;
@@ -4466,19 +4403,11 @@ static int Receive_spell(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && Players[old]->energy >= level_speed(&Players[old]->wpos) && (Players[old]->pclass == CLASS_TELEPATH))
-#else
-	if (connp->id != -1 && Players[old]->energy >= level_speed(Players[old]->dun_depth) && (Players[old]->pclass == CLASS_TELEPATH))
-#endif
 	  {
 	    do_cmd_psi(player, book, spell);
 	  }
-#ifdef NEW_DUNGEON
 	else if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	else if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
  	        p_ptr->current_char = (old == player)?TRUE:FALSE;
 
@@ -4550,11 +4479,7 @@ static int Receive_open(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_open(player, dir);
 		return 2;
@@ -4592,11 +4517,7 @@ static int Receive_pray(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_pray(player, book, prayer);
 		return 2;
@@ -4635,11 +4556,7 @@ static int Receive_fight(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_fight(player, book, technic);
 		return 2;
@@ -4677,11 +4594,7 @@ static int Receive_mimic(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 	  /* Find a good monster */
 	  int tries = MAX_R_IDX;
@@ -4843,11 +4756,7 @@ static int Receive_ghost(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_ghost_power(player, ability);
 		return 2;
@@ -4897,11 +4806,7 @@ static int Receive_quaff(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_quaff_potion(player, item);
 		return 2;
@@ -4951,11 +4856,7 @@ static int Receive_read(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_read_scroll(player, item);
 		return 2;
@@ -5004,11 +4905,7 @@ static int Receive_search(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_search(player);
 		return 2;
@@ -5054,11 +4951,7 @@ static int Receive_take_off(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_takeoff(player, item);
 		return 2;
@@ -5108,11 +5001,7 @@ static int Receive_use(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_use_staff(player, item);
 		return 2;
@@ -5162,11 +5051,7 @@ static int Receive_throw(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_throw(player, dir, item);
 		return 2;
@@ -5217,11 +5102,7 @@ static int Receive_wield(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_wield(player, item);
 		return 2;
@@ -5271,11 +5152,7 @@ static int Receive_zap(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_zap_rod(player, item);
 		return 2;
@@ -5500,11 +5377,7 @@ static int Receive_activate(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_activate(player, item);
 		return 2;
@@ -5553,11 +5426,7 @@ static int Receive_bash(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_bash(player, dir);
 		return 2;
@@ -5606,11 +5475,7 @@ static int Receive_disarm(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_disarm(player, dir);
 		return 2;
@@ -5660,11 +5525,7 @@ static int Receive_eat(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_eat_food(player, item);
 		return 2;
@@ -5715,11 +5576,7 @@ static int Receive_fill(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_refill(player, item);
 		return 2;
@@ -5893,11 +5750,7 @@ static int Receive_close(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_close(player, dir);
 		return 2;
@@ -5935,11 +5788,7 @@ static int Receive_gain(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_study(player, book, spell);
 		return 2;
@@ -5988,11 +5837,7 @@ static int Receive_go_up(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_go_up(player);
 		return 2;
@@ -6041,11 +5886,7 @@ static int Receive_go_down(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_go_down(player);
 		return 2;
@@ -6429,11 +6270,7 @@ static int Receive_drop_gold(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_drop_gold(player, amt);
 		return 2;
@@ -6482,11 +6319,7 @@ static int Receive_steal(int ind)
 		return n;
 	}
 
-#ifdef NEW_DUNGEON
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-	if (connp->id != -1 && p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 	{
 		do_cmd_steal(player, dir);
 		return 2;
@@ -6658,11 +6491,7 @@ static int Receive_rest(int ind)
 		}
 
 		/* Resting takes a lot of energy! */
-#ifdef NEW_DUNGEON
 		if ((p_ptr->energy) >= (level_speed(&p_ptr->wpos)*2)-1)
-#else
-		if ((p_ptr->energy) >= (level_speed(p_ptr->dun_depth)*2)-1)
-#endif
 		{
 
 			/* Set flag */
@@ -6672,11 +6501,7 @@ static int Receive_rest(int ind)
 			p_ptr->running = FALSE;
 
 			/* Take a lot of energy to enter "rest mode" */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= (level_speed(&p_ptr->wpos)*2)-1;
-#else
-			p_ptr->energy -= (level_speed(p_ptr->dun_depth)*2)-1;
-#endif
 
 			/* Redraw */
 			p_ptr->redraw |= (PR_STATE);
@@ -7016,11 +6841,7 @@ bool player_is_king(int Ind)
 
 	return FALSE;
 	
-#ifdef NEW_DUNGEON
 	if (p_ptr->total_winner && ((inarea(&p_ptr->own1, &p_ptr->wpos)) || (inarea(&p_ptr->own2, &p_ptr->wpos))))
-#else
-	if (p_ptr->total_winner && ((p_ptr->own1 == p_ptr->dun_depth) || (p_ptr->own2 == p_ptr->dun_depth)))
-#endif
 	{
 		return TRUE;
 	}
