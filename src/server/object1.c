@@ -1999,7 +1999,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 		strcpy(tmp_val, quark_str(o_ptr->note));
 
-//                for (; *u && (*u != '#'); u++);
+                for (; *u && (*u != '#'); u++);
 	
 		*u = '\0';
 	}
