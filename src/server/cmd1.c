@@ -1194,6 +1194,16 @@ void py_attack_player(int Ind, int y, int x, bool old)
 		add_hostility(0 - c_ptr->m_idx, p_ptr->name);
 	}
 
+	/* Hack -- divided turn for auto-retaliator */
+	if (!old)
+	{
+#ifdef NEW_DUNGEON
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_blow;
+#else
+		p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_blow;
+#endif                        
+	}
+
 	/* Handle attacker fear */
 	if (p_ptr->afraid)
 	{
@@ -1423,16 +1433,6 @@ void py_attack_player(int Ind, int y, int x, bool old)
 		}
 	}
 
-	/* Hack -- divided turn for auto-retaliator */
-	if (!old)
-	{
-#ifdef NEW_DUNGEON
-		p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_blow;
-#else
-		p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_blow;
-#endif                        
-	}
-
 	/* Mega-Hack -- apply earthquake brand */
 	if (do_quake)
 	{
@@ -1559,6 +1559,16 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	/* Track a new monster */
 	if (p_ptr->mon_vis[c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
 
+
+	/* Hack -- divided turn for auto-retaliator */
+	if (!old)
+	{
+#ifdef NEW_DUNGEON
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_blow;
+#else                    
+		p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_blow;
+#endif
+	}
 
 	/* Handle player fear */
 	if (p_ptr->afraid)
@@ -1850,16 +1860,6 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 		{
 			break;
 		}
-	}
-
-	/* Hack -- divided turn for auto-retaliator */
-	if (!old)
-	{
-#ifdef NEW_DUNGEON
-		p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_blow;
-#else                    
-		p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_blow;
-#endif
 	}
 
 	/* Hack -- delay fear messages */

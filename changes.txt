@@ -494,3 +494,4 @@ Change list for PernMangband
 - Still bugfixes on traps.
 - Some traps have chance of disappearence.
 - 3 more traps(Random/Wasting wand/Amnesia).
+- "You are too afraid to attack .." msgs flood less.

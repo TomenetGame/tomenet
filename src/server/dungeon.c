@@ -2639,7 +2639,7 @@ static void process_various(void)
 	char buf[1024];
 
 	/* Save the server state occasionally */
-	if (!(turn % (10L * SERVER_SAVE)))
+	if (!(turn % ((NumPlayers ? 10L : 1000L) * SERVER_SAVE)))
 	{
 		save_server_info();
 
