@@ -14,6 +14,8 @@
 
 #include "angband.h"
 
+#define MAX_VAMPIRIC_DRAIN 100
+
 static bool wraith_access(int Ind);
 
 
@@ -1166,6 +1168,10 @@ static void hit_trap(int Ind)
  *
  * If no "weapon" is available, then "punch" the player one time.
  */
+/*
+ * NOTE: New attacking features from PernAngband are not
+ * implemented yet for pvp!! (FIXME)		- Jir -
+ */
 void py_attack_player(int Ind, int y, int x, bool old)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1473,18 +1479,25 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 {
 	player_type *p_ptr = Players[Ind];
 	int                     num = 0, k, bonus, chance;
-	
+
 	object_type             *o_ptr;
 
 	char            m_name[80];
 
 	monster_type	*m_ptr;
-        monster_race    *r_ptr;
+	monster_race    *r_ptr;
 
 	bool		fear = FALSE;
 	bool            do_quake = FALSE;
 
 	bool            backstab = FALSE, stab_fleeing = FALSE;
+
+
+	bool            vorpal_cut = FALSE;
+	int             chaos_effect = 0;
+	bool            drain_msg = TRUE;
+	int             drain_result = 0, drain_heal = 0;
+	int             drain_left = MAX_VAMPIRIC_DRAIN;
 
 #ifdef NEW_DUNGEON        
 	struct worldpos *wpos=&p_ptr->wpos;
@@ -1609,14 +1622,24 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	/* Access the weapon */
 	o_ptr = &(p_ptr->inventory[INVEN_WIELD]);
 
-	/* Calculate the "attack quality" */
-	bonus = p_ptr->to_h + o_ptr->to_h;
-	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
-
 
 	/* Attack once for each legal blow */
 	while (num++ < p_ptr->num_blow)
 	{
+		u32b f1=0, f2=0, f3=0, f4=0, f5=0, esp=0;
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+//		chaos_effect = 0;	// we need this methinks..?
+
+		if((f4 & TR4_NEVER_BLOW))
+		{
+			msg_print(Ind, "You can't attack with that weapon.");
+			return;
+		}
+		
+		/* Calculate the "attack quality" */
+		bonus = p_ptr->to_h + o_ptr->to_h;
+		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
+
 		/* Test for hit */
 		if (test_hit_norm(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]))
 		{
@@ -1746,6 +1769,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			{
 				k = damroll(o_ptr->dd, o_ptr->ds);
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr);
+
 				if (backstab)
 				{
 					backstab = FALSE;
@@ -1755,13 +1779,78 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				{
 					k = ((3 * k) / 2);
 				}
-				if (p_ptr->impact && (k > 50)) do_quake = TRUE;
+
+				/* Select a chaotic effect (50% chance) */
+				if ((f1 & TR5_CHAOTIC) && (randint(2)==1))
+				{
+					if (randint(5) < 3)
+					{
+						/* Vampiric (20%) */
+						chaos_effect = 1;
+					}
+					else if (randint(250) == 1)
+					{
+						/* Quake (0.12%) */
+						chaos_effect = 2;
+					}
+					else if (randint(10) != 1)
+					{
+						/* Confusion (26.892%) */
+						chaos_effect = 3;
+					}
+					else if (randint(2) == 1)
+					{
+						/* Teleport away (1.494%) */
+						chaos_effect = 4;
+					}
+					else
+					{
+						/* Polymorph (1.494%) */
+						chaos_effect = 5;
+					}
+				}
+
+				/* Vampiric drain */
+				if ((f1 & TR1_VAMPIRIC) || (chaos_effect == 1))
+				{
+					if (!((r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->flags3 & RF3_NONLIVING)))
+						drain_result = m_ptr->hp;
+					else
+						drain_result = 0;
+				}
+
+				if (f1 & TR1_VORPAL && (randint(6) == 1))
+					vorpal_cut = TRUE;
+				else vorpal_cut = FALSE;
+
+				if ((p_ptr->impact && (k > 50)) || chaos_effect == 2) do_quake = TRUE;
+
 				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h, k);
+				if (vorpal_cut)
+				{
+					int step_k = k;
+
+					msg_format(Ind, "Your weapon cuts deep into %s!", m_name);
+					do
+					{
+						k += step_k;
+					}
+					while (randint(4) == 1);
+				}
+
 				k += o_ptr->to_d;
+
+
+				/* May it clone the monster ? */
+				if ((f4 & TR4_CLONE) && magik(30))
+				{
+					msg_format(Ind, "Oh no ! Your weapon clones %^s!", m_name);
+					multiply_monster(c_ptr->m_idx);
+				}
 
 				/* heheheheheh */
 				do_nazgul(Ind, &k, &num, r_ptr, o_ptr);
-				
+
 			}
 
 			/* Apply the player damage bonuses */
@@ -1779,8 +1868,50 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			/* Damage, check for fear and death */
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) break;
 
+			touch_zap_player(Ind, m_ptr);	// IMPLEMENT!
+
+			/* Are we draining it?  A little note: If the monster is
+			   dead, the drain does not work... */
+
+			if (drain_result)
+			{
+				drain_result -= m_ptr->hp;  /* Calculate the difference */
+
+				if (drain_result > 0) /* Did we really hurt it? */
+				{
+					drain_heal = damroll(4,(drain_result / 6));
+
+					if (cheat_xtra)
+					{
+						msg_format(Ind, "Draining left: %d", drain_left);
+					}
+
+					if (drain_left)
+					{
+						if (drain_heal < drain_left)
+						{
+							drain_left -= drain_heal;
+						}
+						else
+						{
+							drain_heal = drain_left;
+							drain_left = 0;
+						}
+
+						if (drain_msg)
+						{
+							msg_format(Ind, "Your weapon drains life from %s!", m_name);
+							drain_msg = FALSE;
+						}
+
+						hp_player(Ind, drain_heal);
+						/* We get to keep some of it! */
+					}
+				}
+			}
+
 			/* Confusion attack */
-			if (p_ptr->confusing)
+			if ((p_ptr->confusing) || (chaos_effect == 3))
 			{
 				/* Cancel glowing hands */
 				p_ptr->confusing = FALSE;
@@ -1804,6 +1935,56 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 					m_ptr->confused += 10 + rand_int(p_ptr->lev) / 5;
 				}
 			}
+
+			else if (chaos_effect == 4)
+			{
+				msg_format(Ind, "%^s disappears!", m_name);
+				teleport_away(c_ptr->m_idx, 50);
+				num = p_ptr->num_blow + 1; /* Can't hit it anymore! */
+//				no_extra = TRUE;
+			}
+
+			else if ((chaos_effect == 5) && cave_floor_bold(zcave,y,x)
+					&& (randint(90) > m_ptr->level))
+			{
+				if (!((r_ptr->flags1 & RF1_UNIQUE) ||
+							(r_ptr->flags4 & RF4_BR_CHAO) ))
+//						|| (m_ptr->mflag & MFLAG_QUEST)))
+				{
+					int tmp = poly_r_idx(m_ptr->r_idx);
+
+					/* Pick a "new" monster race */
+
+					/* Handle polymorph */
+					if (tmp != m_ptr->r_idx)
+					{
+						msg_format(Ind, "%^s changes!", m_name);
+
+						/* Create a new monster (no groups) */
+						(void)place_monster_aux(wpos, y, x, tmp, FALSE, FALSE, m_ptr->clone);
+
+						/* "Kill" the "old" monster */
+						delete_monster_idx(c_ptr->m_idx);
+
+						/* XXX XXX XXX Hack -- Assume success */
+
+						/* Hack -- Get new monster */
+						m_ptr = &m_list[c_ptr->m_idx];
+
+						/* Oops, we need a different name... */
+						monster_desc(Ind, m_name, m_ptr, 0);
+
+						/* Hack -- Get new race */
+						r_ptr = race_inf(m_ptr);
+
+						fear = FALSE;
+
+					}
+				}
+				else
+					msg_format(Ind, "%^s is unaffected.", m_name);
+			}
+
 
 			/* Stunning attack */
 			if (p_ptr->stunning)
@@ -1940,13 +2121,65 @@ void py_attack(int Ind, int y, int x, bool old)
 		py_attack_player(Ind, y, x, old);
 }
 
+/* PernAngband addition */
+void touch_zap_player(int Ind, monster_type *m_ptr)
+{
+	player_type *p_ptr = Players[Ind];
+	int aura_damage = 0;
+	monster_race *r_ptr = race_inf(m_ptr);
+
+	if (r_ptr->flags2 & (RF2_AURA_FIRE))
+	{
+		if (!(p_ptr->immune_fire))
+		{
+			char aura_dam[80];
+
+			aura_damage = damroll(1 + (m_ptr->level / 26), 1 + (m_ptr->level / 17));
+
+			/* Hack -- Get the "died from" name */
+			monster_desc(Ind, aura_dam, m_ptr, 0x88);
+
+			msg_print(Ind, "You are suddenly very hot!");
+
+			if (p_ptr->oppose_fire) aura_damage = (aura_damage+2) / 3;
+			if (p_ptr->resist_fire) aura_damage = (aura_damage+2) / 3;
+			if (p_ptr->sensible_fire) aura_damage = (aura_damage+2) * 2;
+
+			take_hit(Ind, aura_damage, aura_dam);
+			r_ptr->r_flags2 |= RF2_AURA_FIRE;
+			handle_stuff(Ind);
+		}
+	}
+
+
+	if (r_ptr->flags2 & (RF2_AURA_ELEC))
+	{
+		if (!(p_ptr->immune_elec))
+		{
+			char aura_dam[80];
+
+			aura_damage = damroll(1 + (m_ptr->level / 26), 1 + (m_ptr->level / 17));
+
+			/* Hack -- Get the "died from" name */
+			monster_desc(Ind, aura_dam, m_ptr, 0x88);
+
+			if (p_ptr->oppose_elec) aura_damage = (aura_damage+2) / 3;
+			if (p_ptr->resist_elec) aura_damage = (aura_damage+2) / 3;
+
+			msg_print(Ind, "You get zapped!");
+			take_hit(Ind, aura_damage, aura_dam);
+			r_ptr->r_flags2 |= RF2_AURA_ELEC;
+			handle_stuff(Ind);
+		}
+	}
+}
+
 
 /* Hiho! Finally *Nazguls* had come!		- Jir -
  *
- * Those features are not implemented yet, however:
- * - multi-handed weapons attack
+ * However, following features are not implemented yet:
+ * - multi-weapons attack
  * - attack interrupting
- * - Black Breath
  *
  */
 

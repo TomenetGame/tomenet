@@ -560,3 +560,5 @@ Change list for PernMangband
 30/12/2001 (Jir)
 - new RBM/RBEs implemented.
 - fixed a bug that allowed ego-torches to burn forever.
+- some special attacking effect (like Chaos/Vorpal/Vampiric) implemented.
+  (but they don't work in pvp yet!)
