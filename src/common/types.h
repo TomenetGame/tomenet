@@ -1595,6 +1595,7 @@ struct player_type
 	/* elements under this line won't be saved...for now. - Jir - */
 	hostile_type	*ignore;  /* List of players whose chat we wish to ignore */
 	bool	afk;		/* player is afk */
+	bool	use_r_gfx;	/* hack - client uses gfx? */
 };
 
 /* For Monk martial arts */

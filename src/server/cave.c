@@ -878,13 +878,13 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			 */
 			/* Desired attr */
 			/* a = r_ptr->x_attr; */
-                        if (!m_ptr->special) a = p_ptr->r_attr[m_ptr->r_idx];
+                        if (!m_ptr->special && p_ptr->use_r_gfx) a = p_ptr->r_attr[m_ptr->r_idx];
                         else a = r_ptr->d_attr;
 //                        else a = m_ptr->r_ptr->d_attr;
 
 			/* Desired char */
 			/* c = r_ptr->x_char; */
-                        if (!m_ptr->special) c = p_ptr->r_char[m_ptr->r_idx];
+                        if (!m_ptr->special && p_ptr->use_r_gfx) c = p_ptr->r_char[m_ptr->r_idx];
                         else c = r_ptr->d_char;
 //                        else c = m_ptr->r_ptr->d_char;
 

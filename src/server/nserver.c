@@ -1620,13 +1620,19 @@ static int Handle_login(int ind)
 		if (!p_ptr->d_char[i]) p_ptr->d_char[i] = k_info[i].d_char;
 	}
 
+	/* Hack -- acquire a flag for ego-monsters	- Jir - */
+	p_ptr->use_r_gfx = FALSE;
+
 	for (i = 0; i < MAX_R_IDX; i++)
 	{
 		p_ptr->r_attr[i] = connp->Client_setup.r_attr[i];
 		p_ptr->r_char[i] = connp->Client_setup.r_char[i];
 
 		if (!p_ptr->r_attr[i]) p_ptr->r_attr[i] = r_info[i].x_attr;
+		else p_ptr->use_r_gfx = TRUE;
+
 		if (!p_ptr->r_char[i]) p_ptr->r_char[i] = r_info[i].x_char;
+		else p_ptr->use_r_gfx = TRUE;
 	}
 
 	sync_options(NumPlayers + 1);
