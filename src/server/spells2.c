@@ -2095,6 +2095,7 @@ bool create_artifact_aux(int Ind, int item)
 			return FALSE;
 		}
 
+		o_ptr->timeout=0;
 		apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE);
 
 	/* Recalculate bonuses */
