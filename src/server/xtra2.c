@@ -3595,6 +3595,211 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	return (FALSE);
 }
 
+void monster_death_mon(int am_idx, int m_idx)
+{
+        monster_type *am_ptr = &m_list[am_idx];
+
+	int			i, j, y, x, ny, nx, Depth;
+
+	int			dump_item = 0;
+	int			dump_gold = 0;
+
+	int			number = 0;
+	int			total = 0;
+
+	char buf[160];
+
+	cave_type		*c_ptr;
+
+	monster_type	*m_ptr = &m_list[m_idx];
+
+        monster_race *r_ptr = R_INFO(m_ptr);
+
+	bool good = (r_ptr->flags1 & RF1_DROP_GOOD) ? TRUE : FALSE;
+	bool great = (r_ptr->flags1 & RF1_DROP_GREAT) ? TRUE : FALSE;
+
+	bool do_gold = (!(r_ptr->flags1 & RF1_ONLY_ITEM));
+	bool do_item = (!(r_ptr->flags1 & RF1_ONLY_GOLD));
+
+	int force_coin = get_coin_type(r_ptr);
+
+
+	/* Get the location */
+	y = m_ptr->fy;
+	x = m_ptr->fx;
+	Depth = m_ptr->dun_depth;
+
+	/* Determine how much we can drop */
+	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
+	if ((r_ptr->flags1 & RF1_DROP_90) && (rand_int(100) < 90)) number++;
+	if (r_ptr->flags1 & RF1_DROP_1D2) number += damroll(1, 2);
+	if (r_ptr->flags1 & RF1_DROP_2D2) number += damroll(2, 2);
+	if (r_ptr->flags1 & RF1_DROP_3D2) number += damroll(3, 2);
+	if (r_ptr->flags1 & RF1_DROP_4D2) number += damroll(4, 2);
+
+	/* Drop some objects */
+	for (j = 0; j < number; j++)
+	{
+		/* Try 20 times per item, increasing range */
+		for (i = 0; i < 20; ++i)
+		{
+			int d = (i + 14) / 15;
+
+			/* Pick a "correct" location */
+			scatter(Depth, &ny, &nx, y, x, d, 0);
+
+			/* Must be "clean" floor grid */
+			if (!cave_clean_bold(Depth, ny, nx)) continue;
+
+			/* Access the grid */
+			c_ptr = &cave[Depth][ny][nx];
+
+			/* Hack -- handle creeping coins */
+			coin_type = force_coin;
+
+			/* Average dungeon and monster levels */
+			object_level = (Depth + r_ptr->level) / 2;
+
+			/* Place Gold */
+			if (do_gold && (!do_item || (rand_int(100) < 50)))
+			{
+				place_gold(Depth, ny, nx);
+			}
+
+			/* Place Object */
+			else
+			{
+				place_object(Depth, ny, nx, good, great);
+			}
+
+			/* Reset the object level */
+			object_level = Depth;
+
+			/* Reset "coin" type */
+			coin_type = 0;
+
+			/* Notice */
+			note_spot_depth(Depth, ny, nx);
+
+			/* Display */
+			everyone_lite_spot(Depth, ny, nx);
+
+			/* Under a player */
+			if (c_ptr->m_idx < 0)
+			{
+				msg_print(0 - c_ptr->m_idx, "You feel something roll beneath your feet.");
+			}
+
+			break;
+		}
+	}
+
+        FREE(m_ptr->r_ptr, monster_race);
+}
+
+bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note)
+{
+        monster_type *am_ptr = &m_list[am_idx];
+
+	monster_type	*m_ptr = &m_list[m_idx];
+
+        monster_race    *r_ptr = R_INFO(m_ptr);
+
+	s32b		new_exp, new_exp_frac;
+
+
+	/* Redraw (later) if needed */
+	update_health(m_idx);
+
+	/* Wake it up */
+	m_ptr->csleep = 0;
+
+	/* Hurt it */
+	m_ptr->hp -= dam;
+
+        /* Cannot kill uniques */
+        if ((r_ptr->flags1 & RF1_UNIQUE) && (m_ptr->hp < 1)) m_ptr->hp = 1;
+
+	/* It is dead now */
+	if (m_ptr->hp < 0)
+	{
+                /* Give some experience */
+                new_exp = ((long)r_ptr->mexp * r_ptr->level) / am_ptr->level;
+
+                /* Gain experience */
+                if(!m_ptr->clone)
+                        monster_gain_exp(am_idx, new_exp, TRUE);
+
+		/* Generate treasure */
+                if (!m_ptr->clone) monster_death_mon(am_idx, m_idx);
+
+		/* Delete the monster */
+		delete_monster_idx(m_idx);
+
+		/* Not afraid */
+		(*fear) = FALSE;
+
+		/* Monster is dead */
+		return (TRUE);
+	}
+
+
+#ifdef ALLOW_FEAR
+
+	/* Mega-Hack -- Pain cancels fear */
+	if (m_ptr->monfear && (dam > 0))
+	{
+		int tmp = randint(dam);
+
+		/* Cure a little fear */
+		if (tmp < m_ptr->monfear)
+		{
+			/* Reduce fear */
+			m_ptr->monfear -= tmp;
+		}
+
+		/* Cure all the fear */
+		else
+		{
+			/* Cure fear */
+			m_ptr->monfear = 0;
+
+			/* No more fear */
+			(*fear) = FALSE;
+		}
+	}
+
+	/* Sometimes a monster gets scared by damage */
+	if (!m_ptr->monfear && !(r_ptr->flags3 & RF3_NO_FEAR))
+	{
+		int		percentage;
+
+		/* Percentage of fully healthy */
+		percentage = (100L * m_ptr->hp) / m_ptr->maxhp;
+
+		/*
+		 * Run (sometimes) if at 10% or less of max hit points,
+		 * or (usually) when hit for half its current hit points
+		 */
+		if (((percentage <= 10) && (rand_int(10) < percentage)) ||
+		    ((dam >= m_ptr->hp) && (rand_int(100) < 80)))
+		{
+			/* Hack -- note fear */
+			(*fear) = TRUE;
+
+			/* XXX XXX XXX Hack -- Add some timed fear */
+			m_ptr->monfear = (randint(10) +
+			                  (((dam >= m_ptr->hp) && (percentage > 7)) ?
+			                   20 : ((11 - percentage) * 5)));
+		}
+	}
+
+#endif
+
+	/* Not dead yet */
+	return (FALSE);
+}
+
 
 
 /*

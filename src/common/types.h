@@ -594,7 +594,7 @@ struct monster_type
 #endif
 	bool clone;
 
-        byte mind;                      /* Current action -- golems */
+        s16b mind;                      /* Current action -- golems */
 };
 
 

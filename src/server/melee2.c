@@ -2661,14 +2661,6 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
 	x = m_ptr->fx - x2;
 
 
-	/* Apply fear if possible and necessary */
-	if (mon_will_run(Ind, m_idx))
-	{
-		/* XXX XXX Not very "smart" */
-		y = (-y), x = (-x);
-	}
-
-
 	/* Extract the "absolute distances" */
 	ax = ABS(x);
 	ay = ABS(y);
@@ -4055,10 +4047,9 @@ static void process_monster_golem(int Ind, int m_idx)
 		/* A monster is in the way */
 		if (do_move && c_ptr->m_idx > 0)
 		{
-#if 0
                         /* Attack it ! */
-                        if (m_ptr->owner != y_ptr->owner) monster_attack_normal(c_ptr->m_idx, m_idx)
-#endif
+                        if (m_ptr->owner != y_ptr->owner) monster_attack_normal(c_ptr->m_idx, m_idx);
+
 			/* Assume no movement */
 			do_move = FALSE;
 

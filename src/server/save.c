@@ -806,6 +806,7 @@ static void wr_monster(monster_type *m_ptr)
 	wr_byte(m_ptr->stunned);
 	wr_byte(m_ptr->confused);
 	wr_byte(m_ptr->monfear);
+        wr_s16b(m_ptr->mind);
 
         if (m_ptr->special)
         {

@@ -1247,4 +1247,237 @@ bool make_attack_normal(int Ind, int m_idx)
 	return (TRUE);
 }
 
+/*
+ * Determine if a monster attack against the monster succeeds.
+ * Always miss 5% of the time, Always hit 5% of the time.
+ * Otherwise, match monster power against player armor.
+ */
+static int mon_check_hit(int m_idx, int power, int level)
+{
+        monster_type *m_ptr = &m_list[m_idx];
 
+	int i, k, ac;
+
+	/* Percentile dice */
+	k = rand_int(100);
+
+	/* Hack -- Always miss or hit */
+	if (k < 10) return (k < 5);
+
+	/* Calculate the "attack quality" */
+	i = (power + (level * 3));
+
+	/* Total armor */
+        ac = m_ptr->ac;
+
+	/* Power and Level compete against Armor */
+	if ((i > 0) && (randint(i) > ((ac * 3) / 4))) return (TRUE);
+
+	/* Assume miss */
+	return (FALSE);
+}
+
+
+/*
+ * Attack a monster via physical attacks.
+ */
+bool monster_attack_normal(int m_idx, int tm_idx)
+{
+        /* Targer */
+        monster_type    *tm_ptr = &m_list[tm_idx];
+
+        /* Attacker */
+	monster_type	*m_ptr = &m_list[m_idx];
+
+        monster_race    *r_ptr = R_INFO(m_ptr);
+        monster_race    *tr_ptr = R_INFO(tm_ptr);
+
+	int			ap_cnt;
+
+	int			i, j, k, tmp, ac, rlev;
+	int			do_cut, do_stun;
+
+	s32b		gold;
+
+        bool dead = FALSE;
+
+	object_type		*o_ptr;
+
+	char		o_name[80];
+
+	char		m_name[80];
+
+	bool		blinked;
+
+
+	/* Not allowed to attack */
+	if (r_ptr->flags1 & RF1_NEVER_BLOW) return (FALSE);
+
+	/* Total armor */
+        ac = tm_ptr->ac;
+
+	/* Extract the effective monster level */
+	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
+
+	/* Assume no blink */
+	blinked = FALSE;
+
+	/* Scan through all four blows */
+	for (ap_cnt = 0; ap_cnt < 4; ap_cnt++)
+	{
+		bool visible = FALSE;
+		bool obvious = FALSE;
+
+		int power = 0;
+		int damage = 0;
+
+		cptr act = NULL;
+
+		/* Extract the attack infomation */
+                int effect = m_ptr->blow[ap_cnt].effect;
+                int method = m_ptr->blow[ap_cnt].method;
+                int d_dice = m_ptr->blow[ap_cnt].d_dice;
+                int d_side = m_ptr->blow[ap_cnt].d_side;
+
+
+		/* Hack -- no more attacks */
+		if (!method) break;
+
+                /* Stop if monster is dead or gone */
+                if (dead) break;
+
+
+		/* Extract the attack "power" */
+		switch (effect)
+		{
+			case RBE_HURT:	power = 60; break;
+		}
+
+		/* Monster hits player */
+                if (!effect || mon_check_hit(tm_idx, power, rlev))
+		{
+			/* Assume no cut or stun */
+			do_cut = do_stun = 0;
+
+			/* Describe the attack method */
+			switch (method)
+			{
+				case RBM_HIT:
+				{
+					act = "hits you.";
+					do_cut = do_stun = 1;
+					break;
+				}
+			}
+
+			/* Hack -- assume all attacks are obvious */
+			obvious = TRUE;
+
+			/* Roll out the damage */
+			damage = damroll(d_dice, d_side);
+
+			/* Apply appropriate damage */
+			switch (effect)
+			{
+				case 0:
+				{
+					/* Hack -- Assume obvious */
+					obvious = TRUE;
+
+					/* Hack -- No damage */
+					damage = 0;
+
+					break;
+				}
+
+				case RBE_HURT:
+				{
+                                        bool fear;
+
+					/* Obvious */
+					obvious = TRUE;
+
+					/* Hack -- Player armor reduces total damage */
+					damage -= (damage * ((ac < 150) ? ac : 150) / 250);
+
+					/* Take damage */
+                                        dead = mon_take_hit_mon(m_idx, tm_idx, damage, &fear, NULL);
+
+					break;
+				}
+			}
+
+
+			/* Hack -- only one of cut or stun */
+			if (do_cut && do_stun)
+			{
+				/* Cancel cut */
+				if (rand_int(100) < 50)
+				{
+					do_cut = 0;
+				}
+
+				/* Cancel stun */
+				else
+				{
+					do_stun = 0;
+				}
+			}
+#if 0
+			/* Handle cut */
+			if (do_cut)
+			{
+				int k = 0;
+
+				/* Critical hit (zero if non-critical) */
+				tmp = monster_critical(d_dice, d_side, damage);
+
+				/* Roll for damage */
+				switch (tmp)
+				{
+					case 0: k = 0; break;
+					case 1: k = randint(5); break;
+					case 2: k = randint(5) + 5; break;
+					case 3: k = randint(20) + 20; break;
+					case 4: k = randint(50) + 50; break;
+					case 5: k = randint(100) + 100; break;
+					case 6: k = 300; break;
+					default: k = 500; break;
+				}
+
+				/* Apply the cut */
+				if (k) (void)set_cut(Ind, p_ptr->cut + k);
+			}
+#endif
+#if 0
+			/* Handle stun */
+			if (do_stun)
+			{
+				int k = 0;
+
+				/* Critical hit (zero if non-critical) */
+				tmp = monster_critical(d_dice, d_side, damage);
+
+				/* Roll for damage */
+				switch (tmp)
+				{
+					case 0: k = 0; break;
+					case 1: k = randint(5); break;
+					case 2: k = randint(10) + 10; break;
+					case 3: k = randint(20) + 20; break;
+					case 4: k = randint(30) + 30; break;
+					case 5: k = randint(40) + 40; break;
+					case 6: k = 100; break;
+					default: k = 200; break;
+				}
+
+				/* Apply the stun */
+				if (k) (void)set_stun(Ind, p_ptr->stun + k);
+			}
+#endif
+		}
+	}
+
+	/* Assume we attacked */
+	return (TRUE);
+}

@@ -4241,10 +4241,10 @@ void golem_creation(int Ind)
 
         for (i = 0; i < golem_m_arms; i++)
         {
-                r_ptr->blow[i].method = r_ptr->blow[i].method = RBM_HIT;
-                r_ptr->blow[i].effect = r_ptr->blow[i].effect = RBE_HURT;
-                r_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice = (golem_type + 1) * 3;
-                r_ptr->blow[i].d_side = r_ptr->blow[i].d_side = 3 + golem_arms[i];
+                m_ptr->blow[i].method = r_ptr->blow[i].method = RBM_HIT;
+                m_ptr->blow[i].effect = r_ptr->blow[i].effect = RBE_HURT;
+                m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice = (golem_type + 1) * 3;
+                m_ptr->blow[i].d_side = r_ptr->blow[i].d_side = 3 + golem_arms[i];
         }
 
         m_ptr->owner = p_ptr->id;

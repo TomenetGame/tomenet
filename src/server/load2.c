@@ -762,6 +762,8 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->stunned);
 	rd_byte(&m_ptr->confused);
 	rd_byte(&m_ptr->monfear);
+        if (!older_than(3, 2, 1)) rd_s16b(&m_ptr->mind);
+        else m_ptr->mind = GOLEM_NONE;
         if (m_ptr->special)
         {
 		printf("reading special monster\n");

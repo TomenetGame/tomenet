@@ -627,6 +627,7 @@ extern errr rd_server_savefile(void);
 
 /* melee1.c */
 /* melee2.c */
+extern bool monster_attack_normal(int m_idx, int tm_idx);
 extern bool make_attack_normal(int Ind, int m_idx);
 extern bool make_attack_spell(int Ind, int m_idx);
 extern void process_monsters(void);
@@ -1036,6 +1037,8 @@ extern void set_recall_depth(player_type * p_ptr, object_type * o_ptr);
 extern void check_experience(int Ind);
 extern void gain_exp(int Ind, s32b amount);
 extern void lose_exp(int Ind, s32b amount);
+extern bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note);
+extern void monster_death_mon(int am_idx, int m_idx);
 extern void monster_death(int Ind, int m_idx);
 extern void player_death(int Ind);
 extern void resurrect_player(int Ind);
