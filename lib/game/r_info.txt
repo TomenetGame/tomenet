@@ -17175,14 +17175,6 @@ D:Last and proudest king of ancient Numenor. Corrupted by power and
 D:avarice, he fell victim to Sauron's wiles, tried to fight the immortals 
 D:themselves, and condemned Numenor to oblivion. 
 
-N:981:Doppelganger
-G:@:w
-I:1:1d1:1:1:1
-E:0:0:0:0:0:0
-O:0:0:0:0
-F:NEVER_MOVE | NEVER_BLOW | DOPPLEGANGER | BASEANGBAND | HAS_LITE
-D:It looks like you... 
-
 N:982:Marylene, Heartbreakeress of the Netherworld
 G:P:W
 I:155:200d120:155:175:0
