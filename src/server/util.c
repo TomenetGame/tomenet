@@ -2967,7 +2967,7 @@ static void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 
-				invcopy(o_ptr, tk > 1 ? lookup_kind(k, atoi(token[3])) : k);
+				invcopy(o_ptr, tk > 1 ? lookup_kind(k, atoi(token[2])) : k);
 
 				/* Wish arts out! */
 				if (tk > 4)
