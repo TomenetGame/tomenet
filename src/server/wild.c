@@ -1984,27 +1984,51 @@ void bleed_with_neighbors(int Depth)
 	Rand_quick = rand_old;
 }
 
-bool check_point(house_type *h_ptr, int fx, int fy){
-	int sx, sy;
+void fill_house(house_type *h_ptr, int func){
+	/* polygonal house */
+	/* draw all the outer walls cleanly */
+	cptr coord=h_ptr->coords.poly;
+	cptr ptr=coord;
+	cptr matrix;
+	int Depth=h_ptr->depth;
+	int sx=h_ptr->x;
+	int sy=h_ptr->y;
 	int dx,dy;
 	int x,y;
-	cptr coord=h_ptr->coords.poly;
-	sx=h_ptr->x;
-	sy=h_ptr->y;
-	x=sx;
-	y=sy;
-	while(coord[0] || coord[1]){
-		dx=coord[0];
-		dy=coord[1];
+	int minx,miny,maxx,maxy;
+	int mw,mh;
+
+	maxx=minx=h_ptr->x;
+	maxy=miny=h_ptr->y;
+	x=h_ptr->x;
+	y=h_ptr->y;
+
+	while(ptr[0] || ptr[1]){
+		x+=ptr[0];
+		y+=ptr[1];
+		minx=MIN(x, minx);
+		miny=MIN(y, miny);
+		maxx=MAX(x, maxx);
+		maxy=MAX(y, maxy);
+		ptr+=2;
+	}
+	mw=maxx+3-minx;
+	mh=maxy+3-miny;
+	C_MAKE(matrix,mw*mh,byte);
+	ptr=coord;
+
+	while(ptr[0] || ptr[1]){
+		dx=ptr[0];
+		dy=ptr[1];
 		if(dx){		/* dx/dy mutually exclusive */
 			if(dx<0){
 				for(x=sx;x>(sx+dx);x--){
-					if(fx==x && fy==y) return TRUE;
+					matrix[(x+1-minx)+(y+1-miny)*mw]=1;
 				}
 			}
 			else{
 				for(x=sx;x<(sx+dx);x++){
-					if(fx==x && fy==y) return TRUE;
+					matrix[(x+1-minx)+(y+1-miny)*mw]=1;
 				}
 			}
 			sx=x;
@@ -2012,102 +2036,54 @@ bool check_point(house_type *h_ptr, int fx, int fy){
 		else{
 			if(dy<0){
 				for(y=sy;y>(sy+dy);y--){
-					if(fx==x && fy==y) return TRUE;
+					matrix[(x+1-minx)+(y+1-miny)*mw]=1;
 				}
 			}
 			else{
 				for(y=sy;y<(sy+dy);y++){
-					if(fx==x && fy==y) return TRUE;
+					matrix[(x+1-minx)+(y+1-miny)*mw]=1;
 				}
 			}
 			sy=y;
 		}
-		coord+=2;
+		ptr+=2;
 	}
-	return FALSE;
+
+	flood(matrix, 0, 0, mw, mh);
+	for(y=0;y<mh;y++){
+		for(x=0;x<mw;x++){
+			switch(matrix[x+y*mw]){
+				case 2:	/* do nothing */
+				case 4:
+				case 6:
+					break;
+				case 0:
+					if(func==1){
+						delete_object(Depth, miny+(y-1), minx+(x-1));
+						break;
+					}
+					cave[Depth][miny+(y-1)][minx+(x-1)].feat=FEAT_FLOOR;
+					cave[Depth][miny+(y-1)][minx+(x-1)].info|=CAVE_ICKY;
+					break;
+				case 1:
+					if(func==1) break;
+					cave[Depth][miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
+					break;
+			}
+		}
+	}
+	C_KILL(matrix,mw*mh,byte);
 }
 
-void fill_house(house_type *h_ptr, int func){
-	int minx, miny;
-	int maxx, maxy;
-	int x,y;
-	cptr coord=h_ptr->coords.poly;
-	cptr matrix;
-	maxx=minx=h_ptr->x;
-	maxy=miny=h_ptr->y;
-	x=minx;
-	y=miny;
-
-	/* get maxima/minima */
-	while(coord[0] || coord[1]){
-		x+=coord[0];
-		y+=coord[1];
-		minx=MIN(x, minx);
-		miny=MIN(y, miny);
-		maxx=MAX(x, maxx);
-		maxy=MAX(y, maxy);
-		coord+=2;
+void flood(cptr buf, int x, int y, int w, int h){
+	if (x>=0 && x<w && y>=0 && y<h && buf[x+y*w] == 0)
+	{
+		buf[x+y*w]=6;
+		flood(buf, x+1, y, w, h);
+		flood(buf, x-1, y, w, h);
+		flood(buf, x, y+1, w, h);
+		flood(buf, x, y-1, w, h);
 	}
-	C_MAKE(matrix,(maxx+1-minx)*(maxy+1-miny),byte);
-	//C_WIPE(matrix,(maxx+1-minx)*(maxy+1-miny),byte);
-
-	for(x=minx;x<=maxx;x++){
-		int cw,sy,py;
-		cw=0;
-		sy=0;
-		for(y=miny;y<=maxy;y++){
-			if(check_point(h_ptr, x, y)){
-				if(sy){
-					for(py=sy;py<y;py++){
-						matrix[(x-minx)+(py-miny)*(maxx+1-minx)]=1;
-					}
-					sy=0;
-				}
-				cw=1;
-			}
-			else{
-				if(cw){
-					sy=y;
-				}
-				cw=0;
-			}
-		}
-	}
-
-	for(y=miny;y<=maxy;y++){
-		int cw,sx,px;
-		cw=0;
-		sx=0;
-		for(x=minx;x<=maxx;x++){
-			if(check_point(h_ptr, x, y)){
-				if(sx){
-					for(px=sx;px<x;px++){
-						if(!matrix[(px-minx)+(y-miny)*(maxx+1-minx)])
-							continue;
-						switch(func){
-							case 1:
-								delete_object(h_ptr->depth,y,px);
-								break;
-							case 2:
-								cave[h_ptr->depth][y][px].feat=FEAT_FLOOR;
-							case 3:
-								cave[h_ptr->depth][y][px].info|=CAVE_ICKY;
-								break;
-						}
-					}
-					sx=0;
-				}
-				cw=1;
-			}
-			else{
-				if(cw){
-					sx=x;
-				}
-				cw=0;
-			}
-		}
-	}
-	C_KILL(matrix,(maxx+1-minx)*(maxy+1-miny),byte);
 }
 
 void wild_add_uhouse(house_type *h_ptr){
@@ -2144,53 +2120,7 @@ void wild_add_uhouse(house_type *h_ptr){
 		}
 	}
 	else{
-		/* polygonal house */
-		/* draw all the outer walls cleanly */
-		cptr coord=h_ptr->coords.poly;
-		int sx=h_ptr->x;
-		int sy=h_ptr->y;
-		int dx,dy;
-		x=h_ptr->x;
-		y=h_ptr->y;
-		while(coord[0] || coord[1]){
-			dx=coord[0];
-			dy=coord[1];
-			if(dx){		/* dx/dy mutually exclusive */
-				if(dx<0){
-					for(x=sx;x>(sx+dx);x--){
- 						c_ptr=&cave[Depth][y][x];
-						c_ptr->feat=FEAT_PERM_EXTRA;
-					}
-				}
-				else{
-					for(x=sx;x<(sx+dx);x++){
- 						c_ptr=&cave[Depth][y][x];
-						c_ptr->feat=FEAT_PERM_EXTRA;
-					}
-				}
-				sx=x;
-			}
-			else{
-				if(dy<0){
-					for(y=sy;y>(sy+dy);y--){
- 						c_ptr=&cave[Depth][y][x];
-						c_ptr->feat=FEAT_PERM_EXTRA;
-					}
-				}
-				else{
-					for(y=sy;y<(sy+dy);y++){
- 						c_ptr=&cave[Depth][y][x];
-						c_ptr->feat=FEAT_PERM_EXTRA;
-					}
-				}
-				sy=y;
-			}
-			coord+=2;
-		}
-		if(!(h_ptr->flags&HF_NOFLOOR))
-			fill_house(h_ptr,2);
-		else
-			fill_house(h_ptr,3);
+		fill_house(h_ptr,0);
 	}
 	if(h_ptr->flags&HF_MOAT){
 		/* Draw a moat around our house */

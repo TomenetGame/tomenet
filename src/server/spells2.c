@@ -4005,7 +4005,7 @@ void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 }
 
 bool poly_build(int Ind, char *args){
-	static int curr=0;
+	static s32b curr=0;
 	static cptr vert=NULL;
 	static int lx,ly,dx,dy;
 	static int sx,sy;
@@ -4077,10 +4077,11 @@ bool poly_build(int Ind, char *args){
 		houses[num_houses].depth=p_ptr->dun_depth;;
 		houses[num_houses].dna=dna;
 		houses[num_houses].coords.poly=vert;
-		fill_house(&houses[num_houses],2);
+		//fill_house(&houses[num_houses],2);
+		wild_add_uhouse(&houses[num_houses]);
 		num_houses++;
 		p_ptr->master_move_hook=NULL;
-		curr=NULL;
+		curr=0L;
 		dna=NULL;
 		vert=NULL;
 		msg_print(Ind,"You have completed your house");
@@ -4094,53 +4095,23 @@ bool poly_build(int Ind, char *args){
 		KILL(dna, struct dna_type);
 		C_KILL(vert, MAXCOORD, byte);
 		p_ptr->master_move_hook=NULL;
+		cvert=0;
+		curr=0L;
 	}
 	return TRUE;
 }
 
-void poly_house_creation(int Ind){
+void house_creation(int Ind){
 	player_type *p_ptr=Players[Ind];
 	cptr coords;
 	/* set master_move_hook : a bit like a setuid really ;) */
 
+	if(p_ptr->dun_depth>=0) return;		/* Building in town??? no */
 	p_ptr->master_move_hook=poly_build;
 	poly_build(Ind,1);
 	/* ok no sense checking, building bad houses is easy */
 }
 
-void house_creation(int Ind)
-{
-	player_type *p_ptr = Players[Ind];
-	int w,h;
-	if((house_alloc-num_houses)<32){
-		return;		/* i know... */
-	}
-	poly_house_creation(Ind);		/* Testing only! */
-	return;
-
-	if(p_ptr->dun_depth>=0) return;		/* Building in town??? no */
-	w=4+randint(4);
-	h=4+randint(4);
-	if(!(p_ptr->px+w<196 && p_ptr->py+h<64))	/* bounds */
-		return;
-	houses[num_houses].x=p_ptr->px;		/* lame positioning code */
-	houses[num_houses].y=p_ptr->py;
-	houses[num_houses].dx=w/2;	
-	houses[num_houses].dy=h-1;
-	houses[num_houses].flags=HF_RECT;
-	houses[num_houses].coords.rect.width=w;
-	houses[num_houses].coords.rect.height=h;
-	houses[num_houses].depth=p_ptr->dun_depth;;
-	MAKE(houses[num_houses].dna, struct dna_type);
-	houses[num_houses].dna->creator=p_ptr->dna;
-	houses[num_houses].dna->owner=p_ptr->id;
-	houses[num_houses].dna->owner_type=OT_PLAYER;
-	houses[num_houses].dna->a_flags=ACF_NONE;
-	houses[num_houses].dna->min_level=ACF_NONE;
-	houses[num_houses].dna->price=5;	/* so work out */
-	num_houses++;
-	wild_add_uhouse(&houses[num_houses-1]);
-}
 
 /* Create a mindless servant ! */
 void golem_creation(int Ind, int max)
