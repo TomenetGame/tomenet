@@ -2625,6 +2625,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
                         if (!in_bounds(m_ptr->dun_depth, sy, sx)) continue;
 
                         c_ptr = &cave[m_ptr->dun_depth][sy][sx];
+			if(!c_ptr->m_idx) continue;
 
                         if (c_ptr->m_idx > 0)
                         {
@@ -2652,8 +2653,8 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
 
         if (!tm_idx) return FALSE;
 
-        y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[tm_idx]->py;
-        x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[tm_idx]->px;
+        y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
+        x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
 
 	/* Extract the "pseudo-direction" */
 	y = m_ptr->fy - y2;
@@ -4042,7 +4043,7 @@ static void process_monster_golem(int Ind, int m_idx)
                 if (do_move && (c_ptr->m_idx < 0))
 		{
 			/* Do the attack */
-                        if (Players[c_ptr->m_idx]->id != m_ptr->owner) (void)make_attack_normal(0 - c_ptr->m_idx, m_idx);
+                        if (Players[0-c_ptr->m_idx]->id != m_ptr->owner) (void)make_attack_normal(0 - c_ptr->m_idx, m_idx);
 
 			/* Do not move */
 			do_move = FALSE;
