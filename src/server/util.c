@@ -2408,7 +2408,7 @@ static void do_slash_cmd(int Ind, char *message)
 		{
 				if (admin)
 				{
-					p_ptr->word_recall = 1;
+					if(cfg.runlevel>4) p_ptr->word_recall = 1;
 //					msg_print(Ind, "\377oOmnipresent you are...");
 //					msg_format(Ind, "\377oTrying to recall to %s...",wpos_format(&p_ptr->recall_pos));
 				}
