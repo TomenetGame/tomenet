@@ -673,19 +673,30 @@
 #define CHATTERBOX_LEVEL	3
 
 /*
- * OPTION: suppress visual effects in project()	[10]
+ * OPTION: suppress visual effects in project()	[3, 3]
  * To disable, comment it out.	(melee2.c, spells1.c, variables.c)
  *
  * If you recalled into a pack of hounds, the visual effects of breathes
  * slows the server/client and make it almost impossible to control.
- * This option prevents this by limiting the maximum # of blasts per turn.
+ * This option prevents this by limiting the maximum # of blasts
+ * per (PROJECTION_FLUSH_LIMIT_TURNS * MONSTER_TURNS) turns.
  *
  * NOTE: of course, it can happen that you cannot see the attacks made.
  *
  * XXX: Visual effects like this should be done in 100% client-side,
  * so that it doesn't affect connection.
+ * This can be done by adjusting TERM_XTRA_DELAY, for example.
+ * (see also: thin_down_flush)
  */
-#define PROJECTION_FLUSH_LIMIT 5
+#define PROJECTION_FLUSH_LIMIT 9
+#define PROJECTION_FLUSH_LIMIT_TURNS 3
+
+/* 
+ * OPTION: the interval of monster turns.	[6]
+ * If the value is 6 and FPS is 60, monsters are processed 10 times/second.
+ * This should be of *great* help for slow servers :)
+ */
+#define MONSTER_TURNS	6
 
 /*
  * OPTION: allow sanity display.

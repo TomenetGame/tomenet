@@ -2940,7 +2940,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 			if (artifact_p(o_ptr))
 			{
-				msg_print(Ind, "Your light resists the effects!");
+				if (!p_ptr->blind) msg_print(Ind, "Your light resists the effects!");
 				break;
 			}
 					
@@ -3146,7 +3146,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		ident = FALSE;
 	}
 
-	if (never_id || p_ptr->image || p_ptr->confused || p_ptr->blind || no_lite(Ind)) return (FALSE);
+	/* Had the player seen it? */
+	if (never_id || p_ptr->image || p_ptr->confused || p_ptr->blind ||
+			no_lite(Ind) || !inarea(&p_ptr->wpos, wpos) ||
+			!los(wpos, p_ptr->py, p_ptr->px, y, x))
+//			no_lite(Ind) || !player_has_los_bold(Ind, y, x))
+		return (FALSE);
 	else return ident;
 }
 

@@ -4231,6 +4231,7 @@ extern int PlayerUID;
 
 /* Monster gaining levels */
 #define MONSTER_LEVEL_MAX       500
+#define MONSTER_TOO_WEAK		50
 #define MONSTER_EXP(level)      ((((level) > MONSTER_LEVEL_MAX)?MONSTER_LEVEL_MAX:(level)) * (((level) > MONSTER_LEVEL_MAX)?MONSTER_LEVEL_MAX:(level)) * (((level) > MONSTER_LEVEL_MAX)?MONSTER_LEVEL_MAX:(level)) * 9)
 /* R_INFO is obsolete; use race_inf instead.	- Jir -	*/
 #define R_INFO(m_ptr)           (r_info_get(m_ptr))

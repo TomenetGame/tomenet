@@ -1594,7 +1594,7 @@ void calc_body_bonus(int Ind)
 		p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
 	}
 	if(r_ptr->flags2 & RF2_REGENERATE) p_ptr->regenerate = TRUE;
-	if(r_ptr->flags2 & RF2_PASS_WALL) p_ptr->tim_wraith = 100;
+	if(r_ptr->flags2 & RF2_PASS_WALL) p_ptr->tim_wraith = 30000;
 	//        if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->auto_tunnel = 100;
 	/* quick hack */
 	if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->skill_dig = 20000;
@@ -1875,6 +1875,7 @@ static void calc_bonuses(int Ind)
 
 	/* Invisibility */
 	p_ptr->invis = 0;
+	if (!p_ptr->tim_invisibility) p_ptr->tim_invis_power = 0;
 
 	p_ptr->immune_neth = FALSE;
 	p_ptr->anti_tele = FALSE;
@@ -2320,6 +2321,7 @@ static void calc_bonuses(int Ind)
 		if (f5 & (TR5_INVIS)){
 //			p_ptr->tim_invisibility = 100;
 			p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
+//			p_ptr->invis = p_ptr->tim_invis_power;
 		}
 		if (f3 & TR3_BLESSED) p_ptr->bless_blade = TRUE;
 		if (f3 & TR3_XTRA_MIGHT) p_ptr->xtra_might = TRUE;

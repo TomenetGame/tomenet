@@ -214,6 +214,7 @@ bool auto_inscribe;
 bool taciturn_messages;
 bool last_words;
 bool limit_chat;
+bool thin_down_flush;
 
 
 u32b cfg_game_port = 18348; 

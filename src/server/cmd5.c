@@ -2061,8 +2061,6 @@ void do_cmd_sorc(int Ind, int book, int spell)
 
 	/* Take a turn */
 	/* Compute in the effect of Castingspeed skill */
-	/* Seemingly, my lv1 sorc cast magic missiles 30 times each turn :) */
-//	p_ptr->energy -= ((level_speed(&p_ptr->wpos) * get_skill_scale(p_ptr, SKILL_CASTSPEED, 60)) / 100) / p_ptr->num_spell;
 	p_ptr->energy -= (level_speed(&p_ptr->wpos) * (100 - get_skill_scale(p_ptr, SKILL_CASTSPEED, 60)) / 100) / p_ptr->num_spell;
 
 	/* Spell failure chance */

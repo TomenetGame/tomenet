@@ -670,10 +670,10 @@ int do_cmd_activate_skill_aux()
 	/* Count the max */
 
 	/* More than 1 melee skill ? */
-//	if (get_melee_skills() > 1)
-//	{
-//		p[max++] = 0;
-//	}
+	//	if (get_melee_skills() > 1)
+	//	{
+	//		p[max++] = 0;
+	//	}
 
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
@@ -683,20 +683,20 @@ int do_cmd_activate_skill_aux()
 			bool next = FALSE;
 
 			/* Already got it ? */
-                        for (j = 0; j < max; j++)
-                        {
+			for (j = 0; j < max; j++)
+			{
 				if (s_info[i].action_mkey == s_info[p[j]].action_mkey)
 				{
 					next = TRUE;
 					break;
 				}
-                        }
-                        if (next) continue;
+			}
+			if (next) continue;
 
-                        /* Hack -- only able to learn spells when learning is required */
-//                      if ((i == SKILL_LEARN) && (!must_learn_spells()))
-//                              continue;
-                        p[max++] = i;
+			/* Hack -- only able to learn spells when learning is required */
+			//                      if ((i == SKILL_LEARN) && (!must_learn_spells()))
+			//                              continue;
+			p[max++] = i;
 		}
 	}
 
@@ -705,7 +705,7 @@ int do_cmd_activate_skill_aux()
 		c_msg_print("You dont have any activable skills.");
 		return -1;
 	}
-	if (max == 1)
+	if (max == 1 && quick_messages)
 	{
 		return p[0];
 	}
@@ -713,11 +713,11 @@ int do_cmd_activate_skill_aux()
 #ifndef EVIL_TEST /* evil test */
 	screen_icky = TRUE;
 #endif
-        Term_save();
+	Term_save();
 
 	while (1)
 	{
-                print_skill_batch(p, start, max, mode);
+		print_skill_batch(p, start, max, mode);
 		which = inkey();
 
 		if (which == ESCAPE)
@@ -733,7 +733,7 @@ int do_cmd_activate_skill_aux()
 #ifndef EVIL_TEST /* evil test */
 			screen_icky = FALSE;
 #endif
-                }
+		}
 		else if (which == '+')
 		{
 			start += 20;
@@ -755,30 +755,30 @@ int do_cmd_activate_skill_aux()
 #endif
 		}
 		else if (which == '@')
-                {
-                        char buf[80];
-                        int nb;
+		{
+			char buf[80];
+			int nb;
 
-                        strcpy(buf, "Cast sorcery spell");
-                        if (!get_string("Skill action? ", buf, 79))
-                                return FALSE;
+			strcpy(buf, "Cast sorcery spell");
+			if (!get_string("Skill action? ", buf, 79))
+				return FALSE;
 
-                        /* Can we convert to a number? */
-                        nb = atoi(buf) - 1;
+			/* Can we convert to a number? */
+			nb = atoi(buf) - 1;
 
-                        /* Find the skill it is related to */
-                        for (i = 1; i < MAX_SKILLS; i++)
-                        {
-                                if (s_info[i].action_desc && (!strcmp(buf, s_info[i].action_desc) && get_skill(i)))
-                                        break;
-                                if (i == nb)
-                                        break;
-                        }
-                        if ((i < MAX_SKILLS))
-                        {
-                                ret = i;
-                                break;
-                        }
+			/* Find the skill it is related to */
+			for (i = 1; i < MAX_SKILLS; i++)
+			{
+				if (s_info[i].action_desc && (!strcmp(buf, s_info[i].action_desc) && get_skill(i)))
+					break;
+				if (i == nb)
+					break;
+			}
+			if ((i < MAX_SKILLS))
+			{
+				ret = i;
+				break;
+			}
 
 		}
 		else
@@ -801,7 +801,7 @@ int do_cmd_activate_skill_aux()
 	}
 	Term_load();
 #ifndef EVIL_TEST /* evil test */
-        screen_icky = FALSE;
+	screen_icky = FALSE;
 #endif
 
 	C_FREE(p, MAX_SKILLS, int);

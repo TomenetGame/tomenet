@@ -224,6 +224,7 @@ extern bool auto_inscribe;
 extern bool taciturn_messages;
 extern bool last_words;
 extern bool limit_chat;
+extern bool thin_down_flush;
 
 extern u32b cfg_game_port;
 

@@ -6367,6 +6367,9 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		/* XXX XXX Hack -- Display "beam" grids */
 		if (!(flg & PROJECT_HIDE) &&
 		    dist && (flg & PROJECT_BEAM))
+#ifdef PROJECTION_FLUSH_LIMIT
+			if (count_project < PROJECTION_FLUSH_LIMIT)
+#endif	// PROJECTION_FLUSH_LIMIT
 		{
 			/* Hack -- Visual effect -- "explode" the grids */
 			for (j = 1; j < NumPlayers + 1; j++)

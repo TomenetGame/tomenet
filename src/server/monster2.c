@@ -743,11 +743,13 @@ s16b get_mon_num(int level)
 
 	alloc_entry             *table = alloc_race_table;
 
+#if 0	// removed, but not disabled.. please see place_monster_one
 	/* Warp level around */
 	if (level > 100)
 	{
 		level = level - 100;
 	}
+#endif	// 0
 
 	if (level > 0)
 	{
@@ -2080,6 +2082,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 
 
 
+#if 0
 	/* Powerful monster */
 	if (r_ptr->level > getlevel(wpos))
 	{
@@ -2097,7 +2100,6 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 			/*if (cheat_hear) msg_format("Deep Monster (%s).", name);*/
 		}
 	}
-#if 0
 	/* Note the monster */
 	else if (r_ptr->flags1 & RF1_UNIQUE)
 	{
@@ -2233,6 +2235,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		Players[Ind]->mon_vis[c_ptr->m_idx] = FALSE;
 	}
 
+#if 0	// may I change it somewhat?	- Jir -
 	/* Should we gain levels ? */
 	if (getlevel(wpos) >100)
 	{
@@ -2241,6 +2244,17 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		m_ptr->exp = MONSTER_EXP(l);
 		monster_check_experience(c_ptr->m_idx, TRUE);
 	}
+#else	// 0
+	/* Should we gain levels ? */
+	/* Starting from 2600ft, 'too weak' monsters gain levels. */
+	while (getlevel(wpos) > MONSTER_TOO_WEAK + m_ptr->level)
+	{
+		int l = m_ptr->level + MONSTER_TOO_WEAK;
+
+		m_ptr->exp = MONSTER_EXP(l);
+		monster_check_experience(c_ptr->m_idx, TRUE);
+	}
+#endif	// 0
 
 	strcpy(buf, (r_name + r_ptr->name));
 
@@ -3048,12 +3062,16 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int type)
 	/* Pick a monster, using the level calculation */
 	/* XXX: Exception for Morgoth (so that he won't summon townies)
 	 * This fix presumes Morgie and Morgie only has level 100 */
+#if 0
 #ifdef NEW_DUNGEON
 //	r_idx = (lev != 100)?get_mon_num((getlevel(wpos) + lev) / 2 + 5) : 100;
 	r_idx = get_mon_num((lev != 100)?(getlevel(wpos) + lev) / 2 + 5 : 100);
 #else
 	r_idx = (lev != 100)?get_mon_num((Depth + lev) / 2 + 5) : 100;
 #endif
+#endif	// 0
+	/* Ok, now let them summon what they can */
+	r_idx = get_mon_num((getlevel(wpos) + lev) / 2 + 5);
 
 
 	/* Remove restriction */

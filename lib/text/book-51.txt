@@ -10,7 +10,7 @@ come to end by simply dying - you now are a ghost.
 If your ghost is destroyed, the game will come to the real end.
 
 As a ghost, you cannot carry or use substantial objects (except this
-parchment).. everything you had with you while alive is left on the site of
+parchment).. the stuffs you had with you while alive is left on the site of
 your death.
 
 You can freely pass through walls, floors and ceilings; so hide inside a wall.
@@ -22,12 +22,14 @@ Well, there's roughly 3 ways a ghost might wish to take:
 1. Leave your treasures, just go back to the town and visit the temple (store
    '4').  The temple priest will resurrect you to the body.
    If you are less than level 10, it is the best way parhaps.
+   To go back to the surface, just activate this parchment.
 
 2. If you cannot give up your items, try calling for help.  Living players can
    resurrect you by reading 'Scroll of Life' adjacant to you.
    Behold, you're "fading" while waiting for a help to come!
 
 3. Simply type 'Qy@' and start over with a brand-new character.
+   If you are less than level 3, it is the best way parhaps.
    Kyrie Eleison.
 
 

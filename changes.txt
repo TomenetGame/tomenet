@@ -1311,12 +1311,29 @@ To find the latest change quickly, search ==== :)
 - mangconsole options: -P<pass>, -s (shutdown at once)
 - mangconsole and client option: -c (force to use GCU)
 - depth_in_feet reimplemented. (not sure which is better, Lev -5 or Lev 5..)
+- 3 ego torches/1 monster race added.
 [B] Infinite loop when a mimic used /dr under no-equip form.
+[B] ego items with different powers sometimes merged!
 [B][C] GCU client couldn't handle the cursor very well.
   (most of GCU client problems are fixed now :)
 [H] mimic's stats are affected by race modifiers now. (yeek mimic..)
 [H] mimic innate spells (like breath) aren't hindered by antimagic any more.
 
+12/07/2002 (Jir)
+# anti-freeze and efficiency codes. (over-the-net test needed)
+# server is ... 3 times faster than yesterday (if we believe 'top' :)
+# dragon pit won't hinder player's movement any more.
+- /dress ignores unidentified or cursed items.
+- look('x') can tell the form of mimic.
+- MONSTER_TURNS, Ring of Speed (+20) for the server ;)
+- PROJECTION_FLUSH_LIMIT(_TURNS) should work better now.
+- thin_down_flush, client side anti-freeze option.
+  (with it, one can use Elemental Blasts for auto-retaliation w/o troubles)
+- monster level gaining changed:
+  if a monter is too weak(2500ft mergin - MONSTER_TOO_WEAK), give some level.
+[B] oops, tim_invisibility lasted forever
+[H] Book of the Dead can be activated (WoR).
+[H] owners[][].max_cost touched.
 
 
 ** [B] stands for Bugfix.
@@ -1396,6 +1413,7 @@ below this line are the unfixed bugs known:
 [B] cannot specify some monster names in master summoning (&35)
 [B] invisibility/wraithform linger on even after item/form is removed.
 [B][C] GCU client doesn't show the motd when using 'fullauto'
+[B] monsters sometimes drop '(nothing)' (Dread?)
 
 *below are bugs repoorted but not confirmed*
 (nothing so far)
@@ -1466,6 +1484,10 @@ memo and questions:
   + job centre (for lowbies died)
   + guild house
   + healer
+  + auction house
+  + bank (possibly loan shark :)
+  + arena (pvp arena would be of great fun!)
+  
 (4.3)
 - quests (needing LUA-hooks) {hopefully DarkGod}
 - backbone scenario
@@ -1497,7 +1519,7 @@ memo and questions:
 - integrate p_ptr->fruit_bat into p_ptr->body_monster
 
 [speeding the server up]
-# tomenet.server never seems to take more than 10% of CPU time. why? (sched.c?)
+# ok, it's 3 times faster now. maybe we don't squeeze it further for now.
 - m_list and o_list should be separated by worldpos (like zcave)
 - purging things (more)
 - optimize monster AI
@@ -1507,6 +1529,7 @@ memo and questions:
 - turn mmove2 functions into arrays
 - bottlenecks: process_monsters, update_view(MAX_SIGHT), lite_spot, map_info,
 	AI codes
+- force view_reduce_lite
 
 [balance matters]
 - should HAND_DOOM be allowed out of sight?
@@ -1539,6 +1562,7 @@ memo and questions:
   + monsters should follow the player when climbling up/down staircase.
   + aquatic uniques
   + vault treasures should be held by guardians
+  + monsters should stagger(and not freeze) when player is invisible
 - traps:
   + another check for Dexterity (with high Dex, you can avoid some)
   + missile traps should have AC check(check_hit)?

@@ -1835,7 +1835,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		{
 			/* Require full knowledge of both items */
 			if (!Ind || !object_known_p(Ind, o_ptr) ||
-					!object_known_p(Ind, j_ptr) || (o_ptr->name3)) return (0);
+//					!object_known_p(Ind, j_ptr) || (o_ptr->name3)) return (0);
+					!object_known_p(Ind, j_ptr)) return (FALSE);
 			if (o_ptr->bpval != j_ptr->bpval) return(FALSE);
 
 			/* Fall through */
@@ -1859,6 +1860,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 
 			/* Require identical "ego-item" names */
 			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
+
+			/* Require identical random seeds */
+			if (o_ptr->name3 != j_ptr->name3) return (FALSE);
 
 			/* Hack -- Never stack "powerful" items */
 //			if (o_ptr->xtra1 || j_ptr->xtra1) return (FALSE);

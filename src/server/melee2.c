@@ -118,8 +118,10 @@
 #endif // STUPID_MONSTERS
 
 
-/* How frequent they change colours? [5] */
-#define		MULTI_HUED_UPDATE	10
+/* How frequent they change colours? [2]
+ * Note that this value is multiplied by MONSTER_TURNS.
+ */
+#define		MULTI_HUED_UPDATE	2
 
 /* 
  * Chance of a breeder breeding, in percent. [0]
@@ -6196,9 +6198,21 @@ void process_monsters(void)
 	player_type *p_ptr;
 
 
+	/* maybe better do in dungeon()?	- Jir - */
 #ifdef PROJECTION_FLUSH_LIMIT
+	count_project_times++;
+
 	/* Reset projection counts */
-	count_project = 0;
+	if (count_project_times >= PROJECTION_FLUSH_LIMIT_TURNS)
+	{
+#if DEBUG_LEVEL > 1
+		if (count_project > PROJECTION_FLUSH_LIMIT)
+			s_printf("project() flush suppressed(%d)\n", count_project);
+#endif	// DEBUG_LEVEL
+		count_project = 0;
+		count_project_times = 0;
+	}
+
 #endif	// PROJECTION_FLUSH_LIMIT
 
 
@@ -6232,7 +6246,7 @@ void process_monsters(void)
 		e = extract_energy[m_ptr->mspeed];
 
 		/* Give this monster some energy */
-		m_ptr->energy += e;
+		m_ptr->energy += e * MONSTER_TURNS;
 
 		tmp = level_speed(&m_ptr->wpos);
 
@@ -6384,7 +6398,7 @@ void process_monsters(void)
 	/* Only when needed, every five game turns */
 	/* TODO: move this to the client side!!! */
 //	if (scan_monsters && (!(turn%5)))
-	if (scan_monsters && (!(turn % MULTI_HUED_UPDATE)))
+	if (scan_monsters && !(turn % (MULTI_HUED_UPDATE * MONSTER_TURNS)))
 	{
 		/* Shimmer multi-hued monsters */
 		for (i = 1; i < m_max; i++)

@@ -684,6 +684,7 @@ bool set_invis(int Ind, int v, int p)
 			msg_print(Ind, "The shadows enveloping you disipate.");
 			notice = TRUE;
 		}
+		p = 0;
 	}
 
 	/* apply the maximum value if any */
@@ -4182,7 +4183,7 @@ void player_death(int Ind)
 		p_ptr->chp_frac = 0;
 
 		/* Hack -- Give him/her the newbie death guide */
-		if (p_ptr->max_plv < 20)
+//		if (p_ptr->max_plv < 20)	/* Now it's for everyone */
 		{
 			object_type	forge;
 			o_ptr = &forge;
@@ -6033,6 +6034,8 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 				else if (*inscription == 'T')
 				{
 					inscription++;
+					p_ptr->recall_pos.wx = p_ptr->town_x;
+					p_ptr->recall_pos.wy = p_ptr->town_y;
 					p_ptr->recall_pos.wz = 0;
 				}
 #endif

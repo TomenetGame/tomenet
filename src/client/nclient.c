@@ -2013,7 +2013,15 @@ int Receive_flush(void)
 	Term_fresh();
 
 	/* Wait */
-	Term_xtra(TERM_XTRA_DELAY, 1);
+	/*
+	 * NOTE: this is very what makes the server freeze when a pack of
+	 * hounds breath at the player.. 1ms is too long.	- Jir -
+	 *
+	 * thin_down_flush is a crude hack to save this from happening.
+	 * of course, better if we can specify 0.3ms sleep - helas, windoze
+	 * client doesn't support that :-/
+	 */
+	if (!thin_down_flush || magik(33)) Term_xtra(TERM_XTRA_DELAY, 1);
 
 	return 1;
 }

@@ -1149,55 +1149,56 @@ byte old_blows_table[11][12] =
  * Store owners (exactly four "possible" owners per store, chosen randomly)
  * { name, purse, max greed, min greed, haggle_per, tolerance, race, unused }
  */
+#define STORE_PURSE_BOOST	10	// 15	(let's period the infration)
 owner_type owners[MAX_STORES][MAX_OWNERS] =
 {
 	{
 		/* General store */
-		{ "Bilbo the Friendly",		200*15,	170, 108,  5, 15, RACE_HOBBIT},
-		{ "Rincewind the Chicken",	200*15,	175, 108,  4, 12, RACE_HUMAN},
-		{ "Sultan the Midget",		300*15,	170, 107,  5, 15, RACE_GNOME},
-		{ "Lyar-el the Comely",		300*15,	165, 107,  6, 18, RACE_ELF},
+		{ "Bilbo the Friendly",		200*STORE_PURSE_BOOST,	170, 108,  5, 15, RACE_HOBBIT},
+		{ "Rincewind the Chicken",	200*STORE_PURSE_BOOST,	175, 108,  4, 12, RACE_HUMAN},
+		{ "Sultan the Midget",		300*STORE_PURSE_BOOST,	170, 107,  5, 15, RACE_GNOME},
+		{ "Lyar-el the Comely",		300*STORE_PURSE_BOOST,	165, 107,  6, 18, RACE_ELF},
 	},
 	{
 		/* Armoury */
-		{ "Kon-Dar the Ugly",		5000*15,	210, 115,  5,  7, RACE_HALF_ORC},
-		{ "Darg-Low the Grim",		10000*15,	190, 111,  4,  9, RACE_HUMAN},
-		{ "Decado the Handsome",	25000*15,  	200, 112,  4, 10, RACE_DUNADAN},
-		{ "Mauglin the Grumpy",		30000*15,	200, 112,  4,  5, RACE_DWARF},
+		{ "Kon-Dar the Ugly",		5000*STORE_PURSE_BOOST,	210, 115,  5,  7, RACE_HALF_ORC},
+		{ "Darg-Low the Grim",		10000*STORE_PURSE_BOOST,	190, 111,  4,  9, RACE_HUMAN},
+		{ "Decado the Handsome",	25000*STORE_PURSE_BOOST,  	200, 112,  4, 10, RACE_DUNADAN},
+		{ "Mauglin the Grumpy",		30000*STORE_PURSE_BOOST,	200, 112,  4,  5, RACE_DWARF},
 	},
 	{
 		/* Weapon Smith */
-		{ "Ithyl-Mak the Beastly",	5000*15,	210, 115,  6,  6, RACE_HALF_TROLL},
-		{ "Arndal Beast-Slayer",	10000*15,	185, 110,  5,  9, RACE_HALF_ELF},
-		{ "Tarl Beast-Master",		25000*15,	190, 115,  5,  7, RACE_HOBBIT},
-		{ "Oglign Dragon-Slayer",	30000*15,	195, 112,  4,  8, RACE_DWARF},
+		{ "Ithyl-Mak the Beastly",	5000*STORE_PURSE_BOOST,	210, 115,  6,  6, RACE_HALF_TROLL},
+		{ "Arndal Beast-Slayer",	10000*STORE_PURSE_BOOST,	185, 110,  5,  9, RACE_HALF_ELF},
+		{ "Tarl Beast-Master",		25000*STORE_PURSE_BOOST,	190, 115,  5,  7, RACE_HOBBIT},
+		{ "Oglign Dragon-Slayer",	30000*STORE_PURSE_BOOST,	195, 112,  4,  8, RACE_DWARF},
 	},
 	{
 		/* Temple */
-		{ "Ludwig the Humble",		5000*15,	175, 109,  6, 15, RACE_HUMAN},
-		{ "Gunnar the Paladin",		10000*15,	185, 110,  5, 23, RACE_HUMAN},
-		{ "Delilah the Pure",		25000*15,	180, 107,  6, 20, RACE_ELF},
-		{ "Keldon the Wise",		30000*15,	185, 109,  5, 15, RACE_DWARF},
+		{ "Ludwig the Humble",		5000*STORE_PURSE_BOOST,	175, 109,  6, 15, RACE_HUMAN},
+		{ "Gunnar the Paladin",		10000*STORE_PURSE_BOOST,	185, 110,  5, 23, RACE_HUMAN},
+		{ "Delilah the Pure",		25000*STORE_PURSE_BOOST,	180, 107,  6, 20, RACE_ELF},
+		{ "Keldon the Wise",		30000*STORE_PURSE_BOOST,	185, 109,  5, 15, RACE_DWARF},
 	},
 	{
-		{ "Mauser the Chemist",		10000*15,	190, 111,  5,  8, RACE_HALF_ELF},
-		{ "Wizzle the Chaotic",		10000*15,	190, 110,  6,  8, RACE_HOBBIT},
-		{ "Ga-nat the Greedy",		15000*15,	200, 116,  6,  9, RACE_GNOME},
-		{ "Sasha the Slender",		15000*15,	220, 111,  4,  9, RACE_ELF},
+		{ "Mauser the Chemist",		10000*STORE_PURSE_BOOST,	190, 111,  5,  8, RACE_HALF_ELF},
+		{ "Wizzle the Chaotic",		10000*STORE_PURSE_BOOST,	190, 110,  6,  8, RACE_HOBBIT},
+		{ "Ga-nat the Greedy",		15000*STORE_PURSE_BOOST,	200, 116,  6,  9, RACE_GNOME},
+		{ "Sasha the Slender",		15000*STORE_PURSE_BOOST,	220, 111,  4,  9, RACE_ELF},
 	},
 	{
 		/* Magic Shop */
-		{ "Ariel the Sorceress",	20000*15,	200, 110,  7,  8, RACE_HALF_ELF},
-		{ "Buggerby the Great",		20000*15,	215, 113,  6, 10, RACE_GNOME},
-		{ "Inglorian the Mage",		30000*15,	200, 110,  7, 10, RACE_HUMAN},
-		{ "Luthien Starshine",		30000*15,	175, 110,  5, 11, RACE_HIGH_ELF},
+		{ "Ariel the Sorceress",	20000*STORE_PURSE_BOOST,	200, 110,  7,  8, RACE_HALF_ELF},
+		{ "Buggerby the Great",		20000*STORE_PURSE_BOOST,	215, 113,  6, 10, RACE_GNOME},
+		{ "Inglorian the Mage",		30000*STORE_PURSE_BOOST,	200, 110,  7, 10, RACE_HUMAN},
+		{ "Luthien Starshine",		30000*STORE_PURSE_BOOST,	175, 110,  5, 11, RACE_HIGH_ELF},
 	},
 	{
 		/* Black Market */
-		{ "Lo-Hak the Awful",		20000*25,	250, 150, 10,  5, RACE_HALF_TROLL},
-		{ "Histor the Goblin",		20000*25,	250, 150, 10,  5, RACE_HALF_ORC},
-		{ "Durwin the Shifty",		30000*25,	250, 150, 10,  5, RACE_HUMAN},
-		{ "Drago the Fair",		30000*25,	250, 150, 10,  5, RACE_ELF},
+		{ "Lo-Hak the Awful",		20000*STORE_PURSE_BOOST,	250, 150, 10,  5, RACE_HALF_TROLL},
+		{ "Histor the Goblin",		20000*STORE_PURSE_BOOST,	250, 150, 10,  5, RACE_HALF_ORC},
+		{ "Durwin the Shifty",		30000*STORE_PURSE_BOOST,	250, 150, 10,  5, RACE_HUMAN},
+		{ "Drago the Fair",		30000*STORE_PURSE_BOOST,	250, 150, 10,  5, RACE_ELF},
 	},
 	{
 		/* Home */
@@ -2816,6 +2817,9 @@ option_type option_info[OPT_MAX] =
 
 	{ &limit_chat,			FALSE,	5,	9, 67,
 	"limit_chat",			"Chat only with players on the same floor" },
+
+	{ &thin_down_flush,		TRUE,	5,	9, 68,
+	"thin_down_flush",		"Thin down screen flush signals to avoid freezing" },
 
 #if 0
 	{ &speak_unique,                TRUE,   2,      13,

@@ -18822,6 +18822,20 @@ D:The omnipotent God of the Gods, resides in the Parnassus
 D:and rules the world - but 'it' was also known for its vigor
 D:and lasciviousness.
 
+N:1064:Dark mist
+G:#:d
+I:110:10d8:12:55:30
+W:22:1:0:40
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:ENGULF:EAT_LITE:1d8
+B:ENGULF:EAT_LITE:1d8
+F:RAND_25 | SUSCEP_FIRE
+F:IM_COLD | IM_POIS | IM_ACID | IM_ELEC | RES_NETH | WILD_TOO | WILD_SWAMP |
+F:EVIL | EMPTY_MIND | COLD_BLOOD | FRIENDS | BASEANGBAND | NO_CUT
+#F:MULTIPLY
+D:A pitch-dark cloud of evil, sentient mist. 
+
 
 # N: serial number : monster name
 # G: symbol : color
@@ -18837,6 +18851,6 @@ D:and lasciviousness.
 
 # NOTE for some kludges in this file:		- Jir -
 #
-# Only Morgie has both KILL_WALL and PASS_WALL and W:100; this allows him to
-# act in a special way. So if you add KILL_WALL and PASS_WALL to another
-# monster, that will act like Morgie...
+# Only Morgie has both KILL_WALL and PASS_WALL; this allows him to act in a
+# special way. So if you add KILL_WALL and PASS_WALL to another monster, that
+# will act like Morgie...

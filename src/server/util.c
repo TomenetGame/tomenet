@@ -1957,6 +1957,7 @@ static void do_slash_cmd(int Ind, char *message)
 				/* skip inscribed items */
 				/* skip non-matching tags */
 				if (o_ptr->note && 
+					strcmp(quark_str(o_ptr->note), "terrible") &&
 					strcmp(quark_str(o_ptr->note), "cursed") &&
 					strcmp(quark_str(o_ptr->note), "uncursed") &&
 					strcmp(quark_str(o_ptr->note), "broken") &&
@@ -2283,6 +2284,9 @@ static void do_slash_cmd(int Ind, char *message)
 							 !strcmp(quark_str(o_ptr->note), "terrible") ||
 							 !strcmp(quark_str(o_ptr->note), "worthless") ||
 							 check_guard_inscription(o_ptr->note, 'w')) )continue;
+
+					if (!object_known_p(Ind, o_ptr)) continue;
+					if (cursed_p(o_ptr)) continue;
 
 					/* Already used? */
 					if (wield_slot(Ind, o_ptr) != i) continue;

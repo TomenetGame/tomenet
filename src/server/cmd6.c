@@ -847,8 +847,12 @@ void do_cmd_quaff_potion(int Ind, int item)
 		}
 		case SV_POTION_INVIS:
 		{
+			set_invis(Ind, 30 + randint(40), p_ptr->lev * 4 / 5);
+#if 0
 			p_ptr->tim_invisibility = 30+randint(40);
 			p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
+#endif	// 0
+			ident = TRUE;
 		}
 
 		case SV_POTION_SLOW_POISON:
@@ -4265,6 +4269,20 @@ void do_cmd_activate(int Ind, int item)
 
 	/* Wonder Twin Powers... Activate! */
 	msg_print(Ind, "You activate it...");
+
+	/* Hack -- Book of the Dead is activatable for Ghosts */
+	if (p_ptr->ghost &&
+			o_ptr->tval == TV_PARCHEMENT && o_ptr->sval == SV_PARCHMENT_DEATH)
+	{
+//		msg_print(Ind, "The parchment explodes into a space distorsion.");
+		p_ptr->recall_pos.wx = p_ptr->town_x;
+		p_ptr->recall_pos.wy = p_ptr->town_y;
+		p_ptr->recall_pos.wz = 0;
+		(void)set_recall_timer(Ind, 5 + randint(3));
+
+		inven_item_increase(Ind, item, -255);
+		inven_item_optimize(Ind, item);
+	}
 
 	/* Hack -- Dragon Scale Mail can be activated as well */
 	/* Yikes, hard-coded r_idx.. */

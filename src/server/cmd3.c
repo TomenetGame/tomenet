@@ -2186,9 +2186,16 @@ void do_cmd_look(int Ind, int dir)
 		if (p_ptr->play_vis[0 - c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
 
 		/* Format string */
-		sprintf(out_val, "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title);
+		if (q_ptr->body_monster)
+		{
+			sprintf(out_val, "%s the %s", q_ptr->name, r_name + r_info[q_ptr->body_monster].name);
+		}
+		else
+		{
+			sprintf(out_val, "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title);
+		}
 	}
-	else if (c_ptr->m_idx > 0)
+	else if (c_ptr->m_idx > 0)	/* TODO: handle monster mimics */
 	{
 		/* Track health */
 		if (p_ptr->mon_vis[c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);

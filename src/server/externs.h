@@ -94,6 +94,7 @@ extern int skill_tree_init[MAX_SKILLS][2];
 /* variable.c */
 extern obj_theme default_obj_theme;
 extern s16b count_project;
+extern s16b count_project_times;
 extern char tdy[662];
 extern char tdx[662];
 extern s32b tdi[18];	// PREPARE_RADIUS + 2

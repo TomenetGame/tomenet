@@ -3549,7 +3549,8 @@ void dungeon(void)
 	}
 
 	/* Process all of the monsters */
-	process_monsters();
+	if (!(turn % MONSTER_TURNS))
+		process_monsters();
 
 	/* Process all of the objects */
 	if ((turn % 10) == 5) process_objects();

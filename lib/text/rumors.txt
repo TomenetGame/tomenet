@@ -7,7 +7,7 @@
 # You should manually write the total # of rumous (lines - 10).
 
 N:*:Default
-675
+676
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -683,5 +683,6 @@ You cannot pick things up from the bottom of {bwater {wwithout getting wet.
 They say that martial artists often are sensual.
 Catch the Disembodied Hand That Strangled People for extra ring fingers.
 They say that clever dungeoneers always open a door without touching the knob.
+Alas, you died? Never forget to gather your ashes!
 They say that 
 They say that 

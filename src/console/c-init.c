@@ -123,43 +123,53 @@ static void Input_loop(void)
 
 	for (;;)
 	{
-		/* Clear screen */
-		Term_clear();
-
-		/* Show the menu */
-		show_menu();
-
-		/* Refresh the screen */
-		Term_fresh();
-
-		/* Clear the previous command */
-		command_cmd = 0;
-
-		/* See if we have a command waiting */
-		request_command(FALSE);
-
-		/* Clear the buffer */
-		Sockbuf_clear(&ibuf);
-
-		/* Write the password to the packet */
-		Packet_printf(&ibuf, "%s", pass);
-
+		/* Hack -- shutdown at once */
 		if (shutdown)
 		{
+			/* Clear the buffer */
+			Sockbuf_clear(&ibuf);
+
+			/* Write the password to the packet */
+			Packet_printf(&ibuf, "%s", pass);
+
 			/* Send the command */
 			Packet_printf(&ibuf, "%c", CONSOLE_SHUTDOWN);
 		}
-		/* Process any commands we got */
-		else if (command_cmd)
-		{
-			/* Process it */
-			if (!process_command())
-				continue;
-		}
 		else
 		{
-			/* No command */
-			continue;
+			/* Clear screen */
+			Term_clear();
+
+			/* Show the menu */
+			show_menu();
+
+			/* Refresh the screen */
+			Term_fresh();
+
+			/* Clear the previous command */
+			command_cmd = 0;
+
+			/* See if we have a command waiting */
+			request_command(FALSE);
+
+			/* Clear the buffer */
+			Sockbuf_clear(&ibuf);
+
+			/* Write the password to the packet */
+			Packet_printf(&ibuf, "%s", pass);
+
+			/* Process any commands we got */
+			if (command_cmd)
+			{
+				/* Process it */
+				if (!process_command())
+					continue;
+			}
+			else
+			{
+				/* No command */
+				continue;
+			}
 		}
 
 		/* Send the command */
