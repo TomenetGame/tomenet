@@ -1,3 +1,8 @@
+--[[
+test
+of 
+block remark
+]]
 --
 -- simple scripts to examine/modify players' status.
 -- 

@@ -25,7 +25,10 @@
 # sorry, I cannot help fixing bugs ;)
 [B]- CS saving was broken
 [B]- oops, yet another apartment crash
+[B]- client died of SIGPIPE when quitting (Destroy_connection)
+[m]- apartment door displacer resurrected.
 [m]- csfunc touched a little
+[m]- block comment in LUA script
 [O]- new artifact 'Pint of Ale of Dwarves' :)
 
 02/08/2002 (Jir)
@@ -1712,6 +1715,20 @@ below this line are the unfixed bugs known:
      $2 = 65
      (gdb) print x
      $3 = 174
+
+[B]- client quits badly (Destroy_connection)
+     /usr/home/key/devel/pm/src/tomenet: Can't read on socket
+     /usr/home/key/devel/pm/src/tomenet: Net input error
+     Program received signal SIGPIPE, Broken pipe.
+     0x281c0134 in sendto () from /usr/lib/libc.so.4
+     (gdb) bt
+     #0  0x281c0134 in sendto () from /usr/lib/libc.so.4
+     #1  0x281e72db in send () from /usr/lib/libc.so.4
+     #2  0x804bf7a in DgramWrite (fd=8, wbuf=0xbfbff4d7 "\0048\225\005\b\003", size=1) at common/net-unix.c:2112
+     #3  0x805ef02 in Net_cleanup () at client/nclient.c:513
+     #4  0x805ab95 in client_init (argv1=0x0, skip=0 '\000') at client/c-init.c:527
+     #5  0x80662b7 in main (argc=2, argv=0xbfbff6cc) at client/client.c:498
+     #6  0x804a11d in _start ()
 
 
 *below are bugs repoorted but not confirmed*

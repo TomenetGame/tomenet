@@ -1192,13 +1192,15 @@ int Receive_quit(void)
 		/* Cleanup network stuff */
 //		Net_cleanup();
 
-		/* TERAHACK */
-		initialized = FALSE;
-
 		/* Hack -- tombstone */
 		if (strstr(reason, "Killed by") ||
 				strstr(reason, "Committed suicide"))
+		{
+			/* TERAHACK */
+			initialized = FALSE;
+
 			c_close_game(reason);
+		}
 #endif	// 0
 		quit(format("Quitting: %s", reason));
 	}

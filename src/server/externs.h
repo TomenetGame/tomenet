@@ -334,6 +334,7 @@ extern void admin_outfit(int Ind, int realm);
 extern struct c_special *GetCS(cave_type *c_ptr, unsigned char type);
 //extern struct c_special *AddCS(cave_type *c_ptr);
 extern struct c_special *AddCS(cave_type *c_ptr, byte type);
+extern c_special *ReplaceCS(cave_type *c_ptr, byte type);
 extern dun_level *getfloor(struct worldpos *wpos);
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);

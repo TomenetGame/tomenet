@@ -1035,7 +1035,7 @@ bool Destroy_connection(int ind, char *reason)
 	/*len++;*/
 	if (sock != -1)
 	{
-#if 0
+#if 1	// sorry evileye, removing it causes SIGPIPE to the client
 		if (DgramWrite(sock, pkt, len) != len)
 		{
 			GetSocketError(sock);

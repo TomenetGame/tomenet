@@ -1054,17 +1054,17 @@ static void rd_house(int n)
 		if (house_ptr->flags&HF_STOCK)
 		{
 			/* add dna to static levels even though town-generated */
-			cs_ptr=AddCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR);
+			if (cs_ptr=AddCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR))
 
 //			cs_ptr->type=CS_DNADOOR;
-			cs_ptr->sc.ptr=house_ptr->dna;
+				cs_ptr->sc.ptr=house_ptr->dna;
 		}
 		else
 		{
 			/* add dna to static levels */
-			cs_ptr=AddCS(&zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx], CS_DNADOOR);
+			if (cs_ptr=AddCS(&zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx], CS_DNADOOR))
 //			cs_ptr->type=CS_DNADOOR;
-			cs_ptr->sc.ptr=house_ptr->dna;
+				cs_ptr->sc.ptr=house_ptr->dna;
 		}
 	}
 #endif	// 0

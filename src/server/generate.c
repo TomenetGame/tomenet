@@ -7890,16 +7890,16 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 				/* MEGAHACK -- add doors here and return */
 
-#if 0	/* savedata sometimes forget about it and crashes.. */
-				x += (i < 2 ? doorx : 0 - doorx);
-				y += ((i % 2) ? 0 - doory : doory);
+#if 1	/* savedata sometimes forget about it and crashes.. */
+				dx += (i < 2 ? doorx : 0 - doorx);
+				dy += ((i % 2) ? 0 - doory : doory);
 #endif	// 0
+
+				c_ptr = &zcave[dy][dx];
 
 				/* hack -- only create houses that aren't already loaded from disk */
 				if ((tmp=pick_house(wpos, dy, dx)) == -1)
 				{
-					c_ptr = &zcave[dy][dx];
-
 					/* Store door location information */
 					c_ptr->feat = FEAT_HOME_HEAD;
 					if((cs_ptr=AddCS(c_ptr, CS_DNADOOR))){
