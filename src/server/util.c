@@ -2663,9 +2663,44 @@ void player_talk_aux(int Ind, cptr message)
 				load_server_cfg();
 				return;
 			}
+			else if (prefix(message, "/recall") ||
+					prefix(message, "/rec"))
+			{
+				/* depth in feet */
+				k = (colon)? k / 50 : 0;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+				{
+					msg_print(Ind, "\377oIlligal depth.  Usage: /recall [depth in feet]");
+				}
+				else
+				{
+					p_ptr->recall_depth = k;
+					p_ptr->word_recall = 1;
+
+					msg_print(Ind, "\377oOmnipresent you are...");
+				}
+
+				return;
+			}
+			else if (prefix(message, "/script ") ||
+					prefix(message, "/scr") ||
+					prefix(message, "/lua"))
+			{
+				if (colon)
+				{
+					master_script_exec(Ind, colon);
+				}
+				else
+				{
+					msg_print(Ind, "\377oUsage: /script (LUA script command)");
+				}
+
+				return;
+			}
 			else
 			{
-				msg_print(Ind, "Commands: afk ignore me; art cfg clv kick shutdown");
+				msg_print(Ind, "Commands: afk ignore me; art cfg clv kick recall script shutdown");
 				return;
 			}
 		}

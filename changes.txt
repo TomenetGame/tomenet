@@ -319,3 +319,4 @@ Change list for PernMangband
 
 23/11/01 (Jir)
 - Items with too long names are displayed with abbreviated names.
+- New admin commands: /lua, /recall
