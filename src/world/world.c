@@ -16,6 +16,12 @@ struct secure secure;
 struct serverinfo slist[MAX_SERVERS];
 int snum=0;
 
+void handle(struct client *ccl);
+void relay(struct wpacket *wpk, struct client *talker);
+void wproto(struct client *ccl);
+void addclient(int fd);
+struct client *remclient(struct client *dcl);
+
 struct client *clist=NULL;
 
 void world(int ser){
@@ -92,7 +98,7 @@ void handle(struct client *ccl){
 }
 
 void wproto(struct client *ccl){
-	struct wpacket *wpk=ccl->buf;
+	struct wpacket *wpk=(struct wpacket*)ccl->buf;
 	while(ccl->blen>=sizeof(struct wpacket)){
 		switch(wpk->type){
 			case WP_RESTART:

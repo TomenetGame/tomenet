@@ -10,6 +10,9 @@
 
 char salt[21];
 
+long chk(char *s1, char *s2);
+char *rpgen(char *dest);
+
 void initrand(){
 	time_t now;
 	long x;

@@ -15,6 +15,8 @@
 
 struct sockaddr_in sa;
 
+void loadservers();
+
 int main(int argc, char *argv[]){
 	int ser;
 	initrand();
