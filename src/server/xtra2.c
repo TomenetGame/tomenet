@@ -4307,7 +4307,7 @@ void player_death(int Ind)
 	}	
 	
 	/* Drop gold if player has any */
-	if (p_ptr->bat!=-1 && p_ptr->alive && p_ptr->au)
+	if (p_ptr->fruit_bat!=-1 && p_ptr->alive && p_ptr->au)
 	{
 		/* Put the player's gold in the overflow slot */
 		invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
@@ -4328,7 +4328,7 @@ void player_death(int Ind)
 	/* Polymorph back to player (moved)*/
 	/* if (p_ptr->body_monster) do_mimic_change(Ind, 0); */
 
-	if(p_ptr->bat!=-1){
+	if(p_ptr->fruit_bat!=-1){
 		/* Setup the sorter */
 		ang_sort_comp = ang_sort_comp_value;
 		ang_sort_swap = ang_sort_swap_value;
