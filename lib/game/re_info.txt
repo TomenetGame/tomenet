@@ -326,11 +326,11 @@ M:AI_ANNOY
 
 N:25:Holy
 G:*:v
-I:+50:%400d%400:+20:+50:=0
-W:+30:12:+0:%4000:B
-B:*:*:%255d%255
-B:*:*:%255d%255
-B:*:*:%255d%255
+I:+30:%200d%200:+20:+50:=0
+W:+20:12:+0:%4000:B
+B:*:*:%100d%200
+B:*:*:%100d%200
+B:*:*:%100d%200
 B:GAZE:TERRIFY:+8d+8
 F:ANIMAL
 H:WEIRD_MIND | EMPTY_MIND | EVIL | R_CHAR_Z | R_CHAR_r
@@ -506,11 +506,11 @@ M:NO_FEAR | RAND_25
 # double entry for rarity control
 N:38:Holy
 G:*:v
-I:+50:%400d%400:+20:+50:=0
-W:+30:60:+0:%4000:B
-B:*:*:%255d%255
-B:*:*:%255d%255
-B:*:*:%255d%255
+I:+30:%200d%200:+20:+50:=0
+W:+20:60:+0:%4000:B
+B:*:*:%100d%200
+B:*:*:%100d%200
+B:*:*:%100d%200
 B:GAZE:TERRIFY:+8d+8
 F:ANIMAL
 H:WEIRD_MIND | EMPTY_MIND | EVIL | R_CHAR_Z | R_CHAR_r
