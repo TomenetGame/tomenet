@@ -2874,7 +2874,7 @@ bool set_food(int Ind, int v)
 	/* True Ghosts don't starve */
 	if (p_ptr->ghost)
 	{
-	    p_ptr->food = PY_FOOD_MAX;
+	    p_ptr->food = PY_FOOD_MAX - 1;
 	    return (FALSE);
 	}
 
