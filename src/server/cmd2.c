@@ -1513,7 +1513,7 @@ void do_cmd_disarm(int Ind, int dir)
 	byte                    *w_ptr;
 	object_type             *o_ptr;
 	trap_kind *t_ptr;
-	int t_idx;
+	int t_idx = 0;
 
 	bool            more = FALSE;
 	cave_type **zcave;
@@ -3401,6 +3401,20 @@ void do_cmd_throw(int Ind, int dir, int item)
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
 	throw_obj.number = 1;
+
+	/*
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
+	 * charges need to be allocated between the two stacks.  If all the items 
+	 * are being dropped, it makes for a neater message to leave the original 
+	 * stack's pval alone. -LM-
+	 */
+	if (o_ptr->tval == TV_WAND)
+	{
+		if (o_ptr->tval == TV_WAND)
+		{
+			throw_obj.pval = divide_charged_item(o_ptr, 1);
+		}
+	}
 
 	/* Reduce and describe inventory */
 	if (item >= 0)

@@ -2471,6 +2471,8 @@ static void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 
+				disturb(Ind, 1, 0);
+
 				/* ALERT! Hard-coded! */
 				switch (o_ptr->tval)
 				{
@@ -3455,13 +3457,15 @@ void toggle_afk(int Ind)
 	if (p_ptr->afk)
 	{
 		msg_print(Ind, "AFK mode is turned \377GOFF\377w.");
-		msg_broadcast(Ind, format("\377o%s has returned from AFK.", p_ptr->name));
+		if (!p_ptr->admin_dm)
+			msg_broadcast(Ind, format("\377o%s has returned from AFK.", p_ptr->name));
 		p_ptr->afk = FALSE;
 	}
 	else
 	{
 		msg_print(Ind, "AFK mode is turned \377rON\377w.");
-		msg_broadcast(Ind, format("\377o%s seems to be AFK now.", p_ptr->name));
+		if (!p_ptr->admin_dm)
+			msg_broadcast(Ind, format("\377o%s seems to be AFK now.", p_ptr->name));
 		p_ptr->afk = TRUE;
 	}
 	return;
@@ -3816,5 +3820,14 @@ cptr get_day(int day)
 
 	sprintf(buf, "%d%s", day, p);
 	return (buf);
+}
+
+int gold_colour(int amt)
+{
+	int i, unit = 1;
+
+	for (i = amt; i > 99 ; i >>= 1, unit++) /* naught */;
+	if (unit > SV_GOLD_MAX) unit = SV_GOLD_MAX;
+	return (lookup_kind(TV_GOLD, unit));
 }
 

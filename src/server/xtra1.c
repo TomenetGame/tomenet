@@ -2087,7 +2087,14 @@ static void calc_bonuses(int Ind)
 		if (p_ptr->prace == RACE_ELF) p_ptr->resist_lite = TRUE;
 
 		/* Hobbit */
-		else if (p_ptr->prace == RACE_HOBBIT) p_ptr->sustain_dex = TRUE;
+		else if (p_ptr->prace == RACE_HOBBIT)
+		{
+			p_ptr->sustain_dex = TRUE;
+
+			/* DEX bonus for NOT wearing shoes */
+			if (!p_ptr->inventory[INVEN_FEET].k_idx)
+				p_ptr->stat_add[A_DEX] += 2;
+		}
 
 		/* Gnome */
 		else if (p_ptr->prace == RACE_GNOME) p_ptr->free_act = TRUE;

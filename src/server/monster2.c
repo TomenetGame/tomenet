@@ -3910,4 +3910,41 @@ void monster_drop_carried_objects(monster_type *m_ptr)
 	/* Forget objects */
 	m_ptr->hold_o_idx = 0;
 }
+
+void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr)
+{
+	object_type *o_ptr;
+
+	/* Get new object */
+	int o_idx = o_pop();
+
+	if (o_idx)
+	{
+		/* Get the item */
+		o_ptr = &o_list[o_idx];
+
+		/* Structure copy */
+		object_copy(o_ptr, q_ptr);
+
+		/* Build a stack */
+		o_ptr->next_o_idx = m_ptr->hold_o_idx;
+
+		o_ptr->held_m_idx = m_idx;
+		o_ptr->ix = 0;
+		o_ptr->iy = 0;
+
+		m_ptr->hold_o_idx = o_idx;
+	}
+
+	else
+	{
+		/* Hack -- Preserve artifacts */
+		if (q_ptr->name1)
+		{
+			a_info[q_ptr->name1].cur_num = 0;
+			a_info[q_ptr->name1].known = FALSE;
+		}
+	}
+}
+
 #endif	// MONSTER_INVENTORY

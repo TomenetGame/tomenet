@@ -1589,6 +1589,84 @@ static bool do_cancellation(int Ind, int flags)
 -AD-
  */
  
+/* Pfft, it's silly long */
+#define LOTTERY_MAX_PRIZE	7
+void do_lottery(int Ind, object_type *o_ptr)
+{
+	player_type *p_ptr = Players[Ind];
+	int i = k_info[o_ptr->k_idx].cost, j, k = 0, gold;
+
+	i -= i * o_ptr->discount / 100;
+
+	/* 30 * 10^7 = 300,000,000 */
+	for (j = 0; j < LOTTERY_MAX_PRIZE; j++)
+	{
+		if (!magik(10)) break;
+		if (k) i *= 10;
+		k++;
+	}
+
+	if (!j)
+	{
+		msg_print(Ind, "\377WYou draw a blank :-P");
+	}
+	else
+	{
+		cptr p = "th";
+
+		k = LOTTERY_MAX_PRIZE + 1 - k;
+
+		if ((k % 10) == 1) p = "st";
+		else if ((k % 10) == 2) p = "nd";
+		else if ((k % 10) == 3) p = "rd";
+
+		if (k < 4 && (p_ptr->au < i / 5))
+		{
+			msg_broadcast_format(Ind, "\377B%s seems to hit the big time!", p_ptr->name);
+			set_confused(Ind, p_ptr->confused + rand_int(10) + 10);
+			set_image(Ind, p_ptr->image + rand_int(10) + 10);
+			msg_format(Ind, "\377oYou won the %d%s prize!", k, p);
+		}
+		else msg_format(Ind, "\377BYou won the %d%s prize.", k, p);
+
+		gold = i;
+
+		while (gold > 0)
+		{
+			object_type forge, *j_ptr = &forge;
+			int drop;
+
+			drop = (i > 1000) ?
+					randint(i / 10 / (LOTTERY_MAX_PRIZE * LOTTERY_MAX_PRIZE
+							+ 1 - k * k)) * 10 : i;
+
+			if (drop > gold) drop = gold;
+
+			/* Wipe the object */
+			object_wipe(j_ptr);
+
+			/* Prepare a gold object */
+			invcopy(j_ptr, gold_colour(gold));
+
+			/* Determine how much the treasure is "worth" */
+			//		j_ptr->pval = (gold >= 15000) ? 15000 : gold;
+			j_ptr->pval = drop;
+
+			drop_near(j_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+			gold -= drop;
+		}
+
+		//					p_ptr->au += i;
+
+		/* Redraw gold */
+		p_ptr->redraw |= (PR_GOLD);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_PLAYER);
+	}
+}
+
 /*
  * NOTE: seemingly, 'used_up' flag is used in a strange way to allow
  * item specification.  'keep' flag should be used for non-consuming
@@ -2121,49 +2199,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_LOTTERY:
 			{
-				int i = k_info[o_ptr->k_idx].cost, j, k = 0;
-
-				i -= i * o_ptr->discount / 100;
-
-				/* 30 * 10^7 = 300,000,000 */
-				for (j = 0; j < 7; j++)
-				{
-					if (!magik(10)) break;
-					if (k) i *= 10;
-					k++;
-				}
-
-				if (!j)
-				{
-					msg_print(Ind, "\377WYou draw a blank :-P");
-				}
-				else
-				{
-					cptr p = "th";
-
-					k = 8 - k;
-
-					if ((k % 10) == 1) p = "st";
-					else if ((k % 10) == 2) p = "nd";
-					else if ((k % 10) == 3) p = "rd";
-
-					if (k < 4 && (p_ptr->au < i / 5))
-					{
-						msg_broadcast_format(Ind, "\377B%s seems to hit the big time!", p_ptr->name);
-						set_confused(Ind, p_ptr->confused + rand_int(10) + 10);
-						set_image(Ind, p_ptr->image + rand_int(10) + 10);
-						msg_format(Ind, "\377oYou won the %d%s prize!", k, p);
-					}
-					else msg_format(Ind, "\377BYou won the %d%s prize.", k, p);
-
-					p_ptr->au += i;
-
-					/* Redraw gold */
-					p_ptr->redraw |= (PR_GOLD);
-
-					/* Window stuff */
-					p_ptr->window |= (PW_PLAYER);
-				}
+				do_lottery(Ind, o_ptr);
 				ident = TRUE;
 				break;
 			}
@@ -3236,6 +3272,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	/* Use a single charge */
 	o_ptr->pval--;
 
+#if 0
 	/* Hack -- unstack if necessary */
 	if ((item >= 0) && (o_ptr->number > 1))
 	{
@@ -3255,6 +3292,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		/* Message */
 		msg_print(Ind, "You unstack your wand.");
 	}
+#endif	// 0
 
 	/* Describe the charges in the pack */
 	if (item >= 0)
@@ -6689,6 +6727,15 @@ static int fletchery_items(int Ind)
 	return (-1);
 }
 
+/* Dirty but useful macro */
+#define do_fletchery_aux() \
+	object_aware(Ind, q_ptr); \
+	object_known(q_ptr); \
+	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 10))?TRUE:FALSE); \
+	q_ptr->note = quark_add("Handmade"); \
+	q_ptr->discount = 50 + 25 * rand_int(3); \
+	msg_print(Ind, "You make some ammo.")
+
 /*
  * do_cmd_cast calls this function if the player's class
  * is 'archer'.
@@ -6807,13 +6854,9 @@ void do_cmd_fletchery(int Ind)
 				/* Hack -- Give the player some bullets */
 				invcopy(q_ptr, lookup_kind(TV_SHOT, m_bonus(2, tlev)));
 				q_ptr->number = (byte)rand_range(15,30);
-				object_aware(Ind, q_ptr);
-				object_known(q_ptr);
-				apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 10))?TRUE:FALSE);
+				do_fletchery_aux();
 
 				(void)inven_carry(Ind, q_ptr);
-
-				msg_print(Ind, "You make some ammo.");
 
 //				(void)wall_to_mud(Ind, dir);
 				twall(Ind, y, x);
@@ -6871,11 +6914,7 @@ void do_cmd_fletchery(int Ind)
 		invcopy(q_ptr, lookup_kind(TV_ARROW, m_bonus(1, tlev) + 1));
 //		q_ptr->number = (byte)rand_range(15,25);
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
-		object_aware(Ind, q_ptr);
-		object_known(q_ptr);
-		apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 10))?TRUE:FALSE);
-
-		msg_print(Ind, "You make some ammo.");
+		do_fletchery_aux();
 
 		if (item >= 0)
 		{
@@ -6933,11 +6972,7 @@ void do_cmd_fletchery(int Ind)
 		invcopy(q_ptr, lookup_kind(TV_BOLT, m_bonus(1, tlev) + 1));
 //		q_ptr->number = (byte)rand_range(15,25);
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
-		object_aware(Ind, q_ptr);
-		object_known(q_ptr);
-		apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 20))?TRUE:FALSE);
-
-		msg_print(Ind, "You make some ammo.");
+		do_fletchery_aux();
 
 		if (item >= 0)
 		{

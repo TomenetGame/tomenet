@@ -163,13 +163,15 @@ bool do_trap_of_silliness(int Ind, int power)
 bool do_player_drop_items(int Ind, int chance, bool trap)
 {
 	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
 	s16b i;
 	bool message = FALSE, ident = FALSE;
 
 	for (i=0;i<INVEN_PACK;i++)
 	{
 		object_type tmp_obj = p_ptr->inventory[i];
-		if (tmp_obj.k_idx) continue;
+		o_ptr = &p_ptr->inventory[i];
+		if (!tmp_obj.k_idx) continue;
 		if (randint(100)>chance) continue;
 		if (tmp_obj.name1 == ART_POWER) continue;
 		if (cfg.anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
@@ -181,6 +183,19 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 			continue;
 		}
 //		tmp_obj = p_ptr->inventory[i];
+
+		/* Hack -- If a wand, allocate total
+		 * maximum timeouts or charges between those
+		 * stolen and those missed. -LM-
+		 */
+		if (o_ptr->tval == TV_WAND)
+		{
+			if (o_ptr->tval == TV_WAND)
+			{
+				tmp_obj.pval = divide_charged_item(o_ptr, 1);
+			}
+		}
+
 		/* drop carefully */
 		drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		inven_item_increase(Ind, i,-999);
@@ -204,6 +219,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 bool do_player_scatter_items(int Ind, int chance, int rad)
 {
 	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
 	s16b i,j;
 	bool message = FALSE;
 	cave_type **zcave;
@@ -220,6 +236,7 @@ bool do_player_scatter_items(int Ind, int chance, int rad)
 			s16b cy = p_ptr->py+rad-rand_int(rad * 2);
 			if (!in_bounds(cy,cx)) continue;
 			if (!cave_floor_bold(zcave, cy,cx)) continue;
+			o_ptr = &p_ptr->inventory[i];
 			tmp_obj = p_ptr->inventory[i];
 			if (cfg.anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
 			{
@@ -229,6 +246,19 @@ bool do_player_scatter_items(int Ind, int chance, int rad)
 				msg_format(Ind, "%s resists the effect!", o_name);
 				continue;
 			}
+
+			/* Hack -- If a wand, allocate total
+			 * maximum timeouts or charges between those
+			 * stolen and those missed. -LM-
+			 */
+			if (o_ptr->tval == TV_WAND)
+			{
+				if (o_ptr->tval == TV_WAND)
+				{
+					tmp_obj.pval = divide_charged_item(o_ptr, 1);
+				}
+			}
+
 			inven_item_increase(Ind, i,-999);
 			inven_item_optimize(Ind, i);
 			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -2235,16 +2265,34 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Steal Item Trap */
 		case TRAP_OF_SEASONED_TRAVELER:
 		{
+			object_type *o_ptr;
 			int i, j;
 
 			for (i=0;i<INVEN_PACK;i++)
 			{
 				if (!p_ptr->inventory[i].k_idx) continue;
 				if (rand_int(999) < p_ptr->skill_sav) continue;
-				if ((j = p_ptr->inventory[i].number) < 2) continue;
-				if (p_ptr->inventory[i].name1 == ART_POWER) continue;
+
+				o_ptr = &p_ptr->inventory[i];
+
+				if ((j = o_ptr->number) < 2) continue;
+				if (o_ptr->name1 == ART_POWER) continue;
 
 				if (j > 8) j -= j >> 3;
+
+				/* Hack -- If a wand, allocate total
+				 * maximum timeouts or charges between those
+				 * stolen and those missed. -LM-
+				 */
+				if (o_ptr->tval == TV_WAND)
+				{
+					if (o_ptr->tval == TV_WAND)
+					{
+						/* The charge goes to .. void ;) */
+						(void)divide_charged_item(o_ptr, 1);
+					}
+				}
+
 				inven_item_increase(Ind, i, 1-j);
 				inven_item_optimize(Ind, i);
 				p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -2826,10 +2874,29 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			ident = FALSE;	// naturally.
 			break;
 		}
+		/* Trap of Respawning */
+		case TRAP_OF_RESPAWN:
+		{
+			dun_level *l_ptr = getfloor(&p_ptr->wpos);
+			if (!l_ptr || !(l_ptr->flags1 & LF1_NO_NEW_MONSTER))
+			{
+				/* Set the monster generation depth */
+				monster_level = glev;
+				for (k = 0; k < 5 + glev / 4; k++)
+				{
+					if (p_ptr->wpos.wz)
+						ident |= alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
+					else wild_add_monster(&p_ptr->wpos);
+				}
+			}
+			msg_print(Ind, "You feel uneasy.");
+			ident = FALSE;	// always out of LOS (cept ESP..)
+		}
 
 
 		default:
 		{
+			/* XXX LUA hook here maybe? */
 			s_printf("Executing unknown trap %d", trap);
 		}
 	}
@@ -3428,6 +3495,21 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	/* Drop it here */
 //	cave[py][px].special = floor_carry(py, px, i_ptr);
 	if (!(cs_ptr=AddCS(c_ptr, CS_MON_TRAP))) return;
+
+	/*
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
+	 * charges need to be allocated between the two stacks.  If all the items 
+	 * are being dropped, it makes for a neater message to leave the original 
+	 * stack's pval alone. -LM-
+	 */
+	if (j_ptr->tval == TV_WAND)
+	{
+		if (j_ptr->tval == TV_WAND)
+		{
+			i_ptr->pval = divide_charged_item(j_ptr, 1);
+		}
+	}
+
 //	cs_ptr->type = CS_MON_TRAP;
 //	cs_ptr->sc.montrap.trap_load = pop_montrap(i_ptr);
 	i = pop_montrap(Ind, i_ptr, 0);

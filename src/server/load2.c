@@ -1200,8 +1200,10 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->age);
 	rd_s16b(&p_ptr->ht);
 	rd_s16b(&p_ptr->wt);
+#ifndef SAVEDATA_TRANSFER_KLUDGE
 	rd_u16b(&p_ptr->align_good);	/* alignment */
 	rd_u16b(&p_ptr->align_law);
+#endif	// SAVEDATA_TRANSFER_KLUDGE
 
 	/* Read the stat info */
 	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_max[i]);

@@ -2590,7 +2590,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	bool	obvious = FALSE;
 
 //	bool quiet = ((Ind <= 0) ? TRUE : FALSE);
-	bool quiet = ((Ind <= 0 || who < PROJECTOR_UNUSUAL) ? TRUE : FALSE);
+	bool quiet = ((Ind <= 0 || who <= PROJECTOR_UNUSUAL) ? TRUE : FALSE);
 	int		div;
 
 	player_type *p_ptr = (quiet ? NULL : Players[Ind]);
@@ -3243,7 +3243,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	bool	obvious = FALSE;
 
-	bool quiet = ((Ind <= 0 || Ind > 0 - PROJECTOR_UNUSUAL) ? TRUE : FALSE);
+	bool quiet = ((Ind <= 0 || Ind >= 0 - PROJECTOR_UNUSUAL) ? TRUE : FALSE);
 
 	    u32b f1, f2, f3, f4, f5, esp;
 
@@ -3723,7 +3723,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	c_ptr=&zcave[y][x];
 	/* hack -- by trap */
-	quiet = ((Ind <= 0 || who < PROJECTOR_UNUSUAL) ? TRUE : (0 - Ind == c_ptr->m_idx?TRUE:FALSE));
+	quiet = ((Ind <= 0 || who <= PROJECTOR_UNUSUAL) ? TRUE : (0 - Ind == c_ptr->m_idx?TRUE:FALSE));
 
 //	if(quiet) return(FALSE);
 	if (Ind <= 0 || 0 - Ind == c_ptr->m_idx) return(FALSE);
@@ -3756,7 +3756,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if ((who > 0) && (c_ptr->m_idx == who)) return (FALSE);
 
         /* Never hurt golem */
-        if (who < 0 && who >= PROJECTOR_UNUSUAL)
+        if (who < 0 && who > PROJECTOR_UNUSUAL)
         {
                 if (Players[-who]->id == m_ptr->owner) return (FALSE);
         }
@@ -5140,7 +5140,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 	/* If another monster did the damage, hurt the monster by hand */
-	if (who > 0 || who < PROJECTOR_UNUSUAL)
+	if (who > 0 || who <= PROJECTOR_UNUSUAL)
 	{
 		/* Redraw (later) if needed */
 		update_health(c_ptr->m_idx);
@@ -5307,7 +5307,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Mega-Hack -- Players cannot hurt other players */
 	if (cfg.use_pk_rules == PK_RULES_NEVER && who <= 0 &&
-			who >= PROJECTOR_UNUSUAL) return (FALSE);
+			who > PROJECTOR_UNUSUAL) return (FALSE);
 
 	/* Bolt attack from a monster, a player or a trap */
 //	if ((!rad) && get_skill(p_ptr, SKILL_DODGE) && (who > 0))
@@ -5447,7 +5447,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (blind) fuzzy = TRUE;
 
 	/* If the player is hit by a trap, be more descritive */
-	if (who < PROJECTOR_UNUSUAL) fuzzy = TRUE;
+	if (who <= PROJECTOR_UNUSUAL) fuzzy = TRUE;
 
 	if (who > 0)
 	{
@@ -6375,7 +6375,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) break;
 
 			/* Teleport to nowhere..? */
-			if (who >=0 || who < PROJECTOR_UNUSUAL) break;
+			if (who >=0 || who <= PROJECTOR_UNUSUAL) break;
 
 			if (p_ptr->anti_tele)
 			{
@@ -6401,7 +6401,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_HAND_DOOM:
 		{
 			/* Teleport to nowhere..? */
-			if (who >=0 || who < PROJECTOR_UNUSUAL) break;
+			if (who >=0 || who <= PROJECTOR_UNUSUAL) break;
 
 			msg_format(Ind, "%^s invokes the Hand of Doom!",
 					Players[0-who]->name);
@@ -7270,7 +7270,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		}
 
 		/* Mega-Hack */
-		if ((who < 0) && (project_m_n == 1) && (who >= PROJECTOR_UNUSUAL))
+		if ((who < 0) && (project_m_n == 1) && (who > PROJECTOR_UNUSUAL))
 		{
 			/* Location */
 			x = project_m_x;

@@ -2539,6 +2539,7 @@ int Receive_pause(void)
 		return n;
 	}
 
+#if 0
 	/* Show the most recent changes to the screen */
 	Term_fresh();
 
@@ -2550,6 +2551,7 @@ int Receive_pause(void)
 
 	/* Flush queue */
 	Flush_queue();
+#endif	// 0
 
 	return 1;
 }

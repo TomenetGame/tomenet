@@ -6332,7 +6332,7 @@ void do_mimic_change(int Ind, int r_idx)
 void do_cmd_mimic(int Ind, int spell)
 {
 	player_type *p_ptr = Players[Ind];
-	int j;
+	int j, k;
 
 	/* should it..? */
 	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
@@ -6352,8 +6352,16 @@ void do_cmd_mimic(int Ind, int spell)
 	}
 	if (spell == 0){
 		j = p_ptr->body_monster;
+		k = 0;
 		while (TRUE){
 			j++;
+			k++;
+			if (k > MAX_R_IDX)
+			{
+//				j = 0;
+				msg_print(Ind, "You don't know any forms!");
+				return;
+			}
 
 			if (j >= MAX_R_IDX - 1) j = 0;
 

@@ -163,11 +163,25 @@ void inven_drop(int Ind, int item, int amt)
 	if( check_guard_inscription( o_ptr->note, 'd' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
-	};
+	}
 
 	/* Make a "fake" object */
 	tmp_obj = *o_ptr;
 	tmp_obj.number = amt;
+
+	/*
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
+	 * charges need to be allocated between the two stacks.  If all the items 
+	 * are being dropped, it makes for a neater message to leave the original 
+	 * stack's pval alone. -LM-
+	 */
+	if (o_ptr->tval == TV_WAND)
+	{
+		if (o_ptr->tval == TV_WAND)
+		{
+			tmp_obj.pval = divide_charged_item(o_ptr, amt);
+		}
+	}
 
 	/* What are we "doing" with the object */
 	if (amt < o_ptr->number)
@@ -784,7 +798,6 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	player_type *p_ptr = Players[Ind];
 
 	object_type tmp_obj;
-	u32b i, unit = 1;
 
 	/* Handle the newbies_cannot_drop option */
 	if (p_ptr->lev < cfg.newbies_cannot_drop)
@@ -806,10 +819,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	/* XXX Use "gold" object kind */
 //	invcopy(&tmp_obj, 488);
 
-	for (i = amt; i > 99 ; i >>= 1, unit++) /* naught */;
-	if (unit > SV_GOLD_MAX) unit = SV_GOLD_MAX;
-
-	invcopy(&tmp_obj, lookup_kind(TV_GOLD, unit));
+	invcopy(&tmp_obj, gold_colour(amt));
 
 	/* Setup the "worth" */
 	tmp_obj.pval = amt;

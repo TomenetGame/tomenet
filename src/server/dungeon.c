@@ -235,8 +235,10 @@ static void sense_inventory(int Ind)
 
 	int		i;
 
-        bool heavy = FALSE, heavy_magic = FALSE, heavy_archery = FALSE;
-        bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE;
+	bool heavy = FALSE, heavy_magic = FALSE, heavy_archery = FALSE;
+	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE;
+	bool ok_curse = FALSE;
+
 
 	cptr	feel;
 
@@ -253,6 +255,7 @@ static void sense_inventory(int Ind)
 	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_COMBAT, 130))) ok_combat = TRUE;
 	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_ARCHERY, 130))) ok_archery = TRUE;
 	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) ok_magic = TRUE;
+	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_PRAY, 130))) ok_curse = TRUE;
 	if (!ok_combat && !ok_magic && !ok_archery) return;
 	heavy = (get_skill(p_ptr, SKILL_COMBAT) > 10) ? TRUE : FALSE;
 	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) > 10) ? TRUE : FALSE;
@@ -280,6 +283,8 @@ static void sense_inventory(int Ind)
 				(magik(80) || UNAWARENESS(p_ptr))) continue;
 
 		feel = NULL;
+
+		if (ok_curse && cursed_p(o_ptr)) feel = value_check_aux1(o_ptr);
 
 		/* Valid "tval" codes */
 		switch (o_ptr->tval)
@@ -1843,7 +1848,8 @@ static bool process_player_end_aux(int Ind)
 			if (!(turn%((level_speed((&p_ptr->wpos))/12)*10)))
 			{
 				/* Basic digestion rate based on speed */
-				i = extract_energy[p_ptr->pspeed]*1.3;
+//				i = extract_energy[p_ptr->pspeed]*2;	// 1.3 (let them starve)
+				i = (10 + extract_energy[p_ptr->pspeed]*3) / 2;
 
 				/* Adrenaline takes more food */
 				if (p_ptr->adrenaline) i *= 5;
@@ -2603,7 +2609,8 @@ static bool process_player_end_aux(int Ind)
 		{
 			//				if(p_ptr->anti_tele ||
 			if((p_ptr->store_num > 0) || p_ptr->anti_tele ||
-					(check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) && !p_ptr->admin_dm && !p_ptr->admin_wiz) ||
+					(check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) &&
+					 !p_ptr->admin_dm) ||
 					zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK)
 			{
 				p_ptr->word_recall++;

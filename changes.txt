@@ -21,11 +21,22 @@
 
 # bug.txt should follow the exact same format
 
+05/08/2002 (Jir)
+[m]- DM afk no longer is broadcasted (DM doesn't need AFK mode anyway)
+[m]- part of gold stolen from player can be retrieved.
+[O]- wands are stackable even with different charges.
+[P]- SKILL_PRAY allows to pseudo-ID cursed items.
+[B]- do_player_drop_items dropped (nothing).
+
 04/08/2002 (Jir)
 [I]- character name(cname) is used in place of nick in misc. situations.
 [I]- random name picker.
 [I]- 'mind' is removed from chat-history keyword list.
-
+[G]- ammos made with Archery get discount to prevent abuse.
+[P]- hobbit receives DEX bonus for NOT wearing shoes.
+[B]- disarming monster trap inside a town house crashed
+[B]- ball() in evil.lua caused crash. (project)
+[B]- Morgoth can no longer destroy house doors (in case bad admin does it ;)
 
 03/08/2002 (Jir)
 # sorry, I cannot help fixing bugs ;)
@@ -1650,8 +1661,6 @@ Porting targets
 below this line are the unfixed bugs known:
 
 [B]- wpos display hides wound states(eg.'Deep Gash')
-[B]- [C] chat-history contains lines with 'mindcrafter'.
-     (do_cmd_messages_chatonly)
 [B]- mon_vis, obj_vis etc. are messed while the player is off.
 [B]- some ivents are not told to the players even when within the sight.
 [B]- white '@' sometimes appear on the screen(eg. when targetting).
@@ -1665,19 +1674,15 @@ below this line are the unfixed bugs known:
 [B]- isolated space can be generated (generate.c)
      (esp. random vaults tend to have no entrance)
 [B]- cannot specify some monster names in master summoning (&35)
-[B]- [C] GCU client doesn't show the motd when using 'fullauto'
+[B]- cannot specify 0-depth monsters in admin summoning.
 [B]- monsters sometimes drop '(nothing)' (Dread?)
 [B]- strange gray spots in the dark. (info=26; room filler leaks maybe)
 [B]- sometimes you can see monsters over the door.
-[B]- 'Nothng to buy here.' when sunrise/sunset
 [B]- [C] X11 client doesn't accept keystrokes if screen is less than 80x24
 [B]- 'You are shooting with a Boomerang.' is not so cool a msg
 [B]- macro 'w0w0' doesn't work correctly (unfixable - workaround with /dr)
 [B]- 'look' command is almost unusable since the msg gets wiped at once
 [B]- store '3' sells tons of Aman daggers when reset.
-[B]- cannot specify 0-depth monsters in admin summoning.
-[B]- Forest wight (Lv 4098, undamaged, clone) [<dir>, q] (on 5550')
-     (it's actually lv77 - shown in a wrong way only for DM)
 [B]- Warrior gets ugly char-dump; Device skill under Combat (dump_skills)
 [B]- Cannot resume connection (status 9)
 [B]- apartment doors can displace? (disabled)
@@ -1722,26 +1727,16 @@ below this line are the unfixed bugs known:
      (gdb) print x
      $3 = 174
 
-[B]- client quits badly (Destroy_connection)
-     /usr/home/key/devel/pm/src/tomenet: Can't read on socket
-     /usr/home/key/devel/pm/src/tomenet: Net input error
-     Program received signal SIGPIPE, Broken pipe.
-     0x281c0134 in sendto () from /usr/lib/libc.so.4
-     (gdb) bt
-     #0  0x281c0134 in sendto () from /usr/lib/libc.so.4
-     #1  0x281e72db in send () from /usr/lib/libc.so.4
-     #2  0x804bf7a in DgramWrite (fd=8, wbuf=0xbfbff4d7 "\0048\225\005\b\003", size=1) at common/net-unix.c:2112
-     #3  0x805ef02 in Net_cleanup () at client/nclient.c:513
-     #4  0x805ab95 in client_init (argv1=0x0, skip=0 '\000') at client/c-init.c:527
-     #5  0x80662b7 in main (argc=2, argv=0xbfbff6cc) at client/client.c:498
-     #6  0x804a11d in _start ()
-
 
 *below are bugs repoorted but not confirmed*
 [B]- House doors are still said to crash sometimes. (door even vanishes??)
 
 
 *below are bugs not shown recently(fixed??)*
+[B]- 'Nothng to buy here.' when sunrise/sunset
+[B]- [C] GCU client doesn't show the motd when using 'fullauto'
+[B]- Forest wight (Lv 4098, undamaged, clone) [<dir>, q] (on 5550')
+     (it's actually lv77 - shown in a wrong way only for DM)
 [B]- 'You hit it.' etc in town (99% problem in zcave.m_idx)
     sometimes, monsters attack the player from nowhere.. prolly same root?
     * this only happens when rebooting the server and caves lost.
@@ -1765,6 +1760,20 @@ below this line are the unfixed bugs known:
      #5  0x80e58c5 in generate_cave (wpos=0x8dd4ab4) at server/generate.c:8628
      #6  0x80eee09 in process_player_change_wpos (Ind=1) at server/dungeon.c:3342
      #7  0x80ef8a7 in dungeon () at server/dungeon.c:3675
+[B]- client quits badly (Destroy_connection)
+     /usr/home/key/devel/pm/src/tomenet: Can't read on socket
+     /usr/home/key/devel/pm/src/tomenet: Net input error
+     Program received signal SIGPIPE, Broken pipe.
+     0x281c0134 in sendto () from /usr/lib/libc.so.4
+     (gdb) bt
+     #0  0x281c0134 in sendto () from /usr/lib/libc.so.4
+     #1  0x281e72db in send () from /usr/lib/libc.so.4
+     #2  0x804bf7a in DgramWrite (fd=8, wbuf=0xbfbff4d7 "\0048\225\005\b\003", size=1) at common/net-unix.c:2112
+     #3  0x805ef02 in Net_cleanup () at client/nclient.c:513
+     #4  0x805ab95 in client_init (argv1=0x0, skip=0 '\000') at client/c-init.c:527
+     #5  0x80662b7 in main (argc=2, argv=0xbfbff6cc) at client/client.c:498
+     #6  0x804a11d in _start ()
+
 
 [B]- crash the moment one die (maybe fixed - in_bounds4)
      Laggwyrm was killed by a Great Storm Wyrm.
@@ -1781,6 +1790,9 @@ below this line are the unfixed bugs known:
 
 
 
+*below are bugs not fixed but avoided*
+[B]- [C] chat-history contains lines with 'mindcrafter'.
+     (do_cmd_messages_chatonly)
 
 
 *below are phenomena not confirmed as bug*

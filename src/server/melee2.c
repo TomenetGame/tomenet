@@ -5574,7 +5574,9 @@ static void process_monster(int Ind, int m_idx)
 				!((r_ptr->flags2 & RF2_KILL_WALL) &&
 					(r_ptr->flags2 & RF2_PASS_WALL) &&
 					(c_ptr->feat != FEAT_PERM_SOLID) && !rand_int(9000)))
-				|| (c_ptr->feat == FEAT_PERM_CLEAR) )
+				|| (c_ptr->feat == FEAT_PERM_CLEAR) ||
+				((c_ptr->feat >= FEAT_HOME_HEAD) &&
+				 (c_ptr->feat <= FEAT_HOME_TAIL)) ) 
 		{
 			/* Nothing */
 		}

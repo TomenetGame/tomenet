@@ -1823,6 +1823,11 @@ player_race race_info[MAX_RACES] =
                 95,
                 {
                         {
+                                SKILL_POLEARM,
+                                '+', 0,
+                                '%', 115,
+                        },
+                        {
                                 SKILL_AURA_FEAR,
                                 '+', 2000,
                                 '+', 300,

@@ -3223,15 +3223,19 @@ void monster_death(int Ind, int m_idx)
 	}
 
 	if (p_ptr->r_killed[m_ptr->r_idx] < 1000)
-        {
-                /* Remember */
-                p_ptr->r_killed[m_ptr->r_idx]++;
-                if (get_skill(p_ptr, SKILL_MIMIC) && p_ptr->r_killed[m_ptr->r_idx] == r_info[m_ptr->r_idx].level)
-                {
-                        if (!(r_ptr->flags1 & RF1_UNIQUE))
-                                msg_format(Ind, "\377UYou have learned the form of %s!", r_info[m_ptr->r_idx].name+r_name);
-                }
-        }
+	{
+		i = get_skill_scale(p_ptr, SKILL_MIMIC, 100);
+
+		/* Remember */
+		p_ptr->r_killed[m_ptr->r_idx]++;
+		if (i && i >= r_info[m_ptr->r_idx].level &&
+				p_ptr->r_killed[m_ptr->r_idx] == r_info[m_ptr->r_idx].level)
+		{
+			if (!(r_ptr->flags1 & RF1_UNIQUE))
+				msg_format(Ind, "\377UYou have learned the form of %s!",
+						r_info[m_ptr->r_idx].name+r_name);
+		}
+	}
 
 	/* Take note of the killer */
 	if (r_ptr->flags1 & RF1_UNIQUE)

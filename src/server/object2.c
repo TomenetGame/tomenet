@@ -1562,6 +1562,13 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 	{
 		/* Wands/Staffs */
 		case TV_WAND:
+		{
+			/* Pay extra for charges */
+			value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+
+			/* Done */
+			break;
+		}
 		case TV_STAFF:
 		{
 			/* Pay extra for charges */
@@ -1813,8 +1820,31 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		}
 
 		/* Staffs and Wands */
-		case TV_STAFF:
 		case TV_WAND:
+		{
+			/* Require either knowledge or known empty for both wands. */
+			if ((!(o_ptr->ident & (ID_EMPTY)) && 
+				!object_known_p(Ind, o_ptr)) || 
+				(!(j_ptr->ident & (ID_EMPTY)) && 
+				!object_known_p(Ind, j_ptr))) return(0);
+
+			/* Beware artifatcs should not combine with "lesser" thing */
+			if (o_ptr->name1 != j_ptr->name1) return (0);
+
+			/* Do not combine recharged ones with non recharged ones. */
+//			if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return (0);
+
+			/* Do not combine different ego or normal ones */
+			if (o_ptr->name2 != j_ptr->name2) return (0);
+
+			/* Do not combine different ego or normal ones */
+			if (o_ptr->name2b != j_ptr->name2b) return (0);
+
+			/* Assume okay */
+			break;
+		}
+
+		case TV_STAFF:
 		{
 			/* Require knowledge */
 			if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return (0);
@@ -2001,6 +2031,12 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 
 	/* blend level-req into lower one */
 	if (o_ptr->level > j_ptr->level) o_ptr->level = j_ptr->level;
+
+	/* Hack -- if wands are stacking, combine the charges. -LM- */
+	if (o_ptr->tval == TV_WAND)
+	{
+		o_ptr->pval += j_ptr->pval;
+	}
 }
 
 
@@ -6148,6 +6184,51 @@ void pick_trap(struct worldpos *wpos, int y, int x)
 	/* Redraw */
 	everyone_lite_spot(wpos, y, x);
 }
+
+/*
+ * Divide 'stacked' wands.	- Jir -
+ * o_ptr->number is not changed here!
+ */
+#if 0
+object_type *divide_charged_item(object_type *o_ptr, int amt)
+{
+	object_type forge;
+	object_type *q_ptr = &forge;
+
+	/* Paranoia */
+	if (o_ptr->number < amt) return (NULL);
+
+	/* Obtain local object */
+	object_copy(q_ptr, o_ptr);
+
+	/* Modify quantity */
+	q_ptr->number = amt;
+
+	if (o_ptr->tval == TV_WAND)
+	{
+		q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
+		if (amt < o_ptr->number) o_ptr->pval -= q_ptr->pval;
+	}
+
+	return (q_ptr);
+}
+#else	// 0
+int divide_charged_item(object_type *o_ptr, int amt)
+{
+	int charge = 0;
+
+	/* Paranoia */
+	if (o_ptr->number < amt) return (-1);
+
+	if (o_ptr->tval == TV_WAND)
+	{
+		charge = o_ptr->pval * amt / o_ptr->number;
+		if (amt < o_ptr->number) o_ptr->pval -= charge;
+	}
+
+	return (charge);
+}
+#endif	// 0
 
 
 /*

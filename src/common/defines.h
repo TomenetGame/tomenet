@@ -4454,6 +4454,7 @@ extern int PlayerUID;
 #define TRAP_OF_ANIMATE_COINS	205
 #define TRAP_OF_REMITTANCE	206
 #define TRAP_OF_HIDE_TRAPS	207
+#define TRAP_OF_RESPAWN		208
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000

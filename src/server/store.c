@@ -930,7 +930,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
 
 	/* Different charges (etc) cannot be stacked */
-	if (o_ptr->pval != j_ptr->pval) return (0);
+	if (o_ptr->pval != j_ptr->pval && o_ptr->tval != TV_WAND) return (0);
 	if (o_ptr->bpval != j_ptr->bpval) return (0);
 
 	/* Require many identical values */
@@ -984,6 +984,9 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
 
 	/* Combine quantity, lose excess items */
 	o_ptr->number = (total > 99) ? 99 : total;
+
+	/* Hack -- combine wands' charge */
+	if (o_ptr->tval == TV_WAND) o_ptr->pval += j_ptr->pval;
 }
 
 
@@ -1481,12 +1484,14 @@ static bool black_market_crap(object_type *o_ptr)
 static void store_delete(store_type *st_ptr)
 {
 	int what, num;
+	object_type *o_ptr;
 
 	/* Pick a random slot */
 	what = rand_int(st_ptr->stock_num);
 
 	/* Determine how many items are here */
-	num = st_ptr->stock[what].number;
+	o_ptr = &st_ptr->stock[what];
+	num = o_ptr->number;
 
 	/* Hack -- sometimes, only destroy half the items */
 	if (rand_int(100) < 50) num = (num + 1) / 2;
@@ -1495,11 +1500,25 @@ static void store_delete(store_type *st_ptr)
 	if (rand_int(100) < 50) num = 1;
 
 	/* Hack -- preserve artifacts */
-	if (artifact_p(&st_ptr->stock[what]))
+	if (artifact_p(o_ptr))
 	{
 		/* Preserve this one */
-		a_info[st_ptr->stock[what].name1].cur_num = 0;
-		a_info[st_ptr->stock[what].name1].known = FALSE;
+		a_info[o_ptr->name1].cur_num = 0;
+		a_info[o_ptr->name1].known = FALSE;
+	}
+
+	/*
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
+	 * charges need to be allocated between the two stacks.  If all the items 
+	 * are being dropped, it makes for a neater message to leave the original 
+	 * stack's pval alone. -LM-
+	 */
+	if (o_ptr->tval == TV_WAND)
+	{
+		if (o_ptr->tval == TV_WAND)
+		{
+			(void)divide_charged_item(o_ptr, num);
+		}
 	}
 
 	/* Actually destroy (part of) the item */
@@ -2036,6 +2055,20 @@ void store_purchase(int Ind, int item, int amt)
 	sell_obj = *o_ptr;
 	sell_obj.number = amt;
 
+	/*
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
+	 * charges need to be allocated between the two stacks.  If all the items 
+	 * are being dropped, it makes for a neater message to leave the original 
+	 * stack's pval alone. -LM-
+	 */
+	if (o_ptr->tval == TV_WAND)
+	{
+		if (o_ptr->tval == TV_WAND)
+		{
+			sell_obj.pval = divide_charged_item(o_ptr, amt);
+		}
+	}
+
 	/* Hack -- require room in pack */
 	if (!inven_carry_okay(Ind, &sell_obj))
 	{
@@ -2449,6 +2482,20 @@ void store_confirm(int Ind)
 	/* Re-Create the now-identified object that was sold */
 	sold_obj = *o_ptr;
 	sold_obj.number = amt;
+
+	/*
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
+	 * charges need to be allocated between the two stacks.  If all the items 
+	 * are being dropped, it makes for a neater message to leave the original 
+	 * stack's pval alone. -LM-
+	 */
+	if (o_ptr->tval == TV_WAND)
+	{
+		if (o_ptr->tval == TV_WAND)
+		{
+			sold_obj.pval = divide_charged_item(o_ptr, amt);
+		}
+	}
 
 	/* Get the "actual" value */
 	value = object_value(Ind, &sold_obj) * sold_obj.number;
@@ -2869,7 +2916,7 @@ void store_kick(int Ind)
 	//				store_leave(Ind);
 	p_ptr->store_num = -1;
 	Send_store_kick(Ind);
-	teleport_player(Ind, 10);
+	teleport_player(Ind, 1);
 }
 
 #if 0

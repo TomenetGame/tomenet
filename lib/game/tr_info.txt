@@ -987,6 +987,11 @@ I:10:100:0:10:24:0d0:o:20
 D:The whole room vibrates in a strange way...
 F:FLOOR | DOOR
 
+N:208:Trap of Respawning
+I:6:30:40:4:12:0d0:v:90
+D:Reinforcements are drowing near..
+F:FLOOR | CHEST | DOOR
+
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
 # I:diff:prob:            :minlevel:      :color:vanish

@@ -148,8 +148,8 @@ static cptr desc_whisper[] =
 static bool do_eat_gold(int Ind, int m_idx)
 {
 	player_type *p_ptr = Players[Ind];
-#if 0
 	monster_type    *m_ptr = &m_list[m_idx];
+#if 0
 	monster_race    *r_ptr = race_inf(m_ptr);
 #endif	// 0
 	int i, k;
@@ -174,6 +174,30 @@ static bool do_eat_gold(int Ind, int m_idx)
 	{
 		msg_print(Ind, "Your purse feels lighter.");
 		msg_print(Ind, "All of your coins were stolen!");
+	}
+
+	/* Hack -- Consume some */
+	if (magik(50)) gold = gold * rand_int(100) / 100;
+
+	/* XXX simply one mass, in case player had huge amount of $ */
+	while (gold > 0)
+	{
+		object_type forge, *j_ptr = &forge;
+
+		/* Wipe the object */
+		object_wipe(j_ptr);
+
+		/* Prepare a gold object */
+		invcopy(j_ptr, lookup_kind(TV_GOLD, 9));
+
+		/* Determine how much the treasure is "worth" */
+//		j_ptr->pval = (gold >= 15000) ? 15000 : gold;
+		j_ptr->pval = gold;
+
+		monster_carry(m_ptr, m_idx, j_ptr);
+
+//		gold -= 15000;
+		gold = 0;
 	}
 
 	/* Redraw gold */
@@ -253,8 +277,10 @@ static bool do_eat_item(int Ind, int m_idx)
 				 */
 				if (o_ptr->tval == TV_WAND)
 				{
-					j_ptr->pval = o_ptr->pval / o_ptr->number;
-					o_ptr->pval -= j_ptr->pval;
+					if (o_ptr->tval == TV_WAND)
+					{
+						j_ptr->pval = divide_charged_item(o_ptr, 1);
+					}
 				}
 
 				/* Forget mark */

@@ -2902,7 +2902,7 @@ void move_player(int Ind, int dir, int do_pickup)
 
 		/* Discover invisible traps */
 //		else if (c_ptr->feat == FEAT_INVIS)
-		if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+		if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost){
 			bool hit = TRUE;
 
 			/* Disturb */
