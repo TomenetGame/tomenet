@@ -470,6 +470,7 @@ extern void do_cmd_fire(int Ind, int dir, int item);
 extern void do_cmd_throw(int Ind, int dir, int item);
 extern void do_cmd_purchase_house(int Ind, int dir);
 extern int pick_house(int Depth, int y, int x);
+extern void house_admin(int Ind, int dir, char *args);
 
 /* cmd3.c */
 extern void do_takeoff_impossible(int Ind);

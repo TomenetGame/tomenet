@@ -447,6 +447,7 @@ extern int Send_options(void);
 extern int Send_master(s16b command, cptr buf);
 extern int Send_clear_buffer(void);
 extern int Send_King(byte type);
+extern int Send_admin_house(int dir, char *buf);
 
 
 

@@ -4949,6 +4949,8 @@ bool master_build(int Ind, char * parms)
 	
 	c_ptr = &cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px];
 	/* build a wall of type new_feat at the player's location */
+	if(c_ptr->special)	/* only dna_type ATM */
+		KILL(c_ptr->special, struct dna_type);
 	c_ptr->feat = new_feat;
 	if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL){
 		struct dna_type *c_dna;
