@@ -814,6 +814,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	cave_type *c_ptr;
 	trap_kind *t_ptr;
 
+	object_kind *ok_ptr;
+
 	/* Paranoia */
 	cave_type **zcave;
 	if (!in_bounds(y, x)) return(FALSE);
@@ -879,6 +881,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 		/* Trap of Curse Weapon */
 		case TRAP_OF_CURSE_WEAPON:
+		break; //ill-minded
 		{
 			if (rand_int(120) < p_ptr->skill_sav)
 			{
@@ -890,6 +893,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		/* Trap of Curse Armor */
 		case TRAP_OF_CURSE_ARMOR:
+		break; //ill-minded
 		{
 			if (rand_int(120) < p_ptr->skill_sav)
 			{
@@ -1249,6 +1253,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		/* Trap of No Return */
 		case TRAP_OF_NO_RETURN:
+		break; //basically ok, but we need fireproof WoR in BM before this gets enabled!
 		{
 			object_type *j_ptr;
 			s16b j;
@@ -1528,6 +1533,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		/* Trap of New Trap */
 		case TRAP_OF_NEW:
+		// maybe could become more interesting if it spawns several more traps at random locations? :)
 		{
 			struct c_special *cs_ptr;
 			cs_ptr=GetCS(c_ptr, CS_TRAPS);
@@ -1590,6 +1596,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 		/* Trap of Scatter Items */
 		case TRAP_OF_SCATTER_ITEMS:
+		break; //ill-minded, especially since it's often found in vaults.
+		// Please play the game before introducing stuff like this.
 		{
 			ident = do_player_scatter_items(Ind, 70, 15);
 			break;
@@ -1659,6 +1667,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
 		}
 		case TRAP_OF_DRAIN_SPEED:
+		break; //ill-minded. If someone spends all his savings for a speed item
+		// or is extremely lucky in finding one.. this is simply SO ill-minded.
 		{
 			object_type *j_ptr;
 			s16b j, chance = 75;
@@ -1828,6 +1838,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 		/* -SC- */
 		case TRAP_OF_FEMINITY:
+		break; //why not make a trap of change race/class too.
 		{
 			msg_print(Ind, "Gas sprouts out... you feel you transmute.");
 			trap_hit(Ind, trap);
@@ -1840,6 +1851,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
 		}
 		case TRAP_OF_MASCULINITY:
+		break; //why not make a trap of change race/class too.
 		{
 			msg_print(Ind, "Gas sprouts out... you feel you transmute.");
 			trap_hit(Ind, trap);
@@ -1852,6 +1864,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
 		}
 		case TRAP_OF_NEUTRALITY:
+		break; //rotfl.
 		{
 #if 0
 			msg_print(Ind, "Gas sprouts out... you feel you transmute.");
@@ -1939,7 +1952,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Trap of Divine Anger */
 		case TRAP_OF_DIVINE_ANGER:
 		{
-#if 0	// No hell below us above us only sky o/~  // DG - lol :)
+#if 0	// No hell below us above us only sky o/~  // DG - lol :)  -C. Blue: John Lennon? :)
 			{
 				if (p_ptr->pgod == 0)
 				{
@@ -1992,7 +2005,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Bolt Trap */
 		case TRAP_OF_ROCKET: ident=player_handle_breath_trap(Ind, 1, GF_ROCKET, trap); break;
 		case TRAP_OF_NUKE_BOLT: ident=player_handle_breath_trap(Ind, 1, GF_NUKE, trap); break;
-#if 1	// coming..when it comes :)
+#if 1	// coming..when it comes :) //very powerful btw. instakills weaker chars.
 		case TRAP_OF_HOLY_FIRE: ident=player_handle_breath_trap(Ind, 1, GF_HOLY_FIRE, trap); break;
 		case TRAP_OF_HELL_FIRE: ident=player_handle_breath_trap(Ind, 1, GF_HELL_FIRE, trap); break;
 #endif	// 0
@@ -2045,6 +2058,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
       /* Trap of discordance */
 		case TRAP_OF_HOSTILITY:
+		break; //ill-minded - ppl got wrathed automatically because
+		//someone ELSE triggered this. think more carefully.
+		//Further it's kinda meta-trap, changing the player's configuration.
 		{
 			ident = player_handle_trap_of_hostility(Ind);
 			ident = FALSE;		// never known
@@ -2068,7 +2084,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Vermin Trap */
 		case TRAP_OF_VERMIN:
 		{
-			l = randint(50 + glev) + 100;
+			l = randint(20 + glev) + 30;/*let's give the player a decent chance to clean the mess
+						    over a reasonable amount of time.*/
 			for (k = 0; k < l; k++)
 			{
 				s16b cx = x+20-rand_int(40);
@@ -2110,6 +2127,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
 		}
 		case TRAP_OF_SILLINESS:
+		break; //ill-minded, not silyl
 		{
 			if (rand_int(100) < p_ptr->skill_sav)
 			{
@@ -2144,7 +2162,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				set_recall_timer(Ind, rand_int(delay) + 40);
 				ident = TRUE;
 			}
-			ident &= do_player_scatter_items(Ind, chance, 15);
+			//SO ill-minded. Ever hit it two times in a row after
+			//cleaning vaults?
+			//ident &= do_player_scatter_items(Ind, chance, 15);
+			//without scattering it's acceptable.
 			break;
 		}
 		case TRAP_OF_PRESENT_EXCHANGE:
@@ -2267,6 +2288,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		/* Steal Item Trap */
 		case TRAP_OF_SEASONED_TRAVELER:
+		/* lose all your cash, invested in items worth 60k Au or so?
+		all *healings* / fireproof WoR that took ages to collect just gone? great idea.
+		PLAY the game before madly thinking out stuff.
+		Suggestion from me: A seasoned traveller doesn't need the
+		silyl standard stuff in order to survive. So I added a value
+		check, see below. - C. Blue */
 		{
 			object_type *o_ptr;
 			int i, j;
@@ -2280,6 +2307,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				if ((j = o_ptr->number) < 2) continue;
 				if (o_ptr->name1 == ART_POWER) continue;
+				
+				ok_ptr = &k_info[o_ptr->k_idx];
+				if (ok_ptr->cost > 150) continue;
+				//cure crits cost 100, WoR 150, so it still poses a decent threat.
 
 				if (j > 8) j -= j >> 3;
 
@@ -2313,6 +2344,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		/* Scribble Trap */
 		case TRAP_OF_SCRIBBLE:
+		//Ill-minded. The loss can be *immense* and existential. It's not contributing to the gameplay really.
+		//Maybe even worse than seasoned traveller although it only affects scrolls,
+		//since all WoR / Tele will be lost, and player might be stuck at a *deep* level -> death.
+		break;
 		{
 			int i, j, k, k_idx;
 			object_type *o_ptr;
@@ -2403,6 +2438,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		/* Slump Trap */
 		case TRAP_OF_SLUMP:
+		/*ill-minded. Usually you spent a longer time to max your stats.
+		Having traps that permanently decrease one stat is fine, but
+		-10 to all stats permanently is pathetic. */
+		break;
 		{
 			k = glev / 5;
 			k = k < 1 ? 1 : k;
@@ -2418,6 +2457,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		/* Ophiuchus Trap */
 		case TRAP_OF_OPHIUCHUS:
+		//lol, never met it, but looks interesting.
 		{
 			player_type *q_ptr;
 			for (k = m_max - 1; k >= 1; k--)
@@ -2730,7 +2770,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 //				vanish = 90;
 
 				j = o_ptr->number;
-				j = randint(j < 20 ? j : 20);
+				/* j = randint(j < 20 ? j : 20); not cool for *healings* */
+				j = randint(j < 30 ? j / 2 : 15);
 				bottles += j;
 
 				inven_item_increase(Ind, i, -j);
