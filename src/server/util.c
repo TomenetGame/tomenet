@@ -2502,8 +2502,8 @@ static void do_slash_cmd(int Ind, char *message)
 			get_mon_num_prep();
 			i=2+randint(7);
 			do{
-				r=get_mon_num(p_ptr->lev);
-			} while(r_info[r].flags1 & RF1_UNIQUE);
+				r=get_mon_num(p_ptr->lev+5);
+			} while(((p_ptr->lev-5) > r_info[r].level) || r_info[r].flags1 & RF1_UNIQUE);
 			add_quest(r, i, p_ptr->lev);
 		}
 

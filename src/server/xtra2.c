@@ -4057,6 +4057,11 @@ void kill_quest(int Ind){
 	msg_broadcast(Ind, temp);
 	msg_format(Ind, "\377yYou have won the %s quest!", r_name+r_info[quests[pos].type].name);
 	s_printf("%s won the %s quest\n", p_ptr->name, r_name+r_info[quests[pos].type].name);
+	/*
+	   Temporary prize ... Too good perhaps...
+	   it will do for now though
+	*/
+	acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE);
 	for(i=1; i<=NumPlayers; i++){
 		q_ptr=Players[i];
 		if(q_ptr && q_ptr->quest_id==id){
