@@ -3810,7 +3810,13 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 							break;
 						}
 						o_ptr->pval = i;
-						//o_ptr->level = 15 + (1000 / ((2000 / r_info[i].level) + 10));
+						/* Let's give found poly rings random levels
+						to allow surprises :)
+						if (r_info[i].level > 0) {
+							o_ptr->level = 15 + (1000 / ((2000 / r_info[i].level) + 10));
+						} else {
+							o_ptr->level = 15;
+						}*/
 					}
 					else o_ptr->level=1;
 					break;

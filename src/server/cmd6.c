@@ -6461,7 +6461,11 @@ void do_cmd_activate(int Ind, int item)
 					else{
 						msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
 						o_ptr->pval = p_ptr->body_monster;
-						o_ptr->level = 15 + (1000 / ((2000 / r_info[p_ptr->body_monster].level) + 10));
+						if (r_info[p_ptr->body_monster].level > 0) {
+							o_ptr->level = 15 + (1000 / ((2000 / r_info[p_ptr->body_monster].level) + 10));
+						} else {
+							o_ptr->level = 15;
+						}
 
 						/* Reduce player's kill count by the monster level */
 						if (p_ptr->r_killed[p_ptr->body_monster] < (r_info[p_ptr->body_monster].level * 4))

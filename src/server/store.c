@@ -554,7 +554,11 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 			}
 			else
 			{
-				o_ptr->level = 15 + (1000 / ((2000 / r_info[o_ptr->pval].level) + 10));
+				if (r_info[o_ptr->pval].level > 0) {
+					o_ptr->level = 15 + (1000 / ((2000 / r_info[o_ptr->pval].level) + 10));
+				} else {
+					o_ptr->level = 15;
+				}
 				price = 1000;
 			}
 		}
