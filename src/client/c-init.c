@@ -416,7 +416,13 @@ void client_init(char *argv1, bool skip)
 	/* Put the contact info in it */
 	Packet_printf(&ibuf, "%u", magic);
 	Packet_printf(&ibuf, "%s%hu%c", real_name, GetPortNum(ibuf.sock), 0xFF);
-	Packet_printf(&ibuf, "%s%s%hu", nick, host_name, version);
+//	Packet_printf(&ibuf, "%s%s%hu", nick, host_name, version);
+	Packet_printf(&ibuf, "%s%s%hu", nick, host_name, 0);
+	/* Increment the last number in the line above for each new
+	client version that requires the player to update the client!
+	I know it's not following the idea of 'MY_VERSION' but it looks
+	to me like the final version is supposed to still be '4.0.0',
+	so I don't see another way :) Also see src/server/nserver.c */
 
 
 	/* Connect to server */
@@ -485,7 +491,8 @@ void client_init(char *argv1, bool skip)
 		switch (status)
 		{
 			case E_VERSION:
-				quit("This version of the client will not work with that server.  Please visit http://T-o-M-E.net/main.php?tome_current=1");
+				//quit("This version of the client will not work with that server.  Please visit http://T-o-M-E.net/main.php?tome_current=1");
+				quit("Your client is outdated. Please get the latest one from http://www.tomenet.net/");
 			case E_GAME_FULL:
 				quit("Sorry, the game is full.  Try again later.");
 			case E_IN_USE:
