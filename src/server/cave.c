@@ -2708,11 +2708,7 @@ void update_lite(int Ind)
 		}
 
 		/* East of the player */
-#ifdef NEW_DUNGEON
 		if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px+1))
-#else
-		if (cave_floor_bold(Depth, p_ptr->py, p_ptr->px+1))
-#endif
 		{
 			cave_lite_hack(p_ptr->py, p_ptr->px+2);
 			cave_lite_hack(p_ptr->py+1, p_ptr->px+2);
@@ -2720,11 +2716,7 @@ void update_lite(int Ind)
 		}
 
 		/* West of the player */
-#ifdef NEW_DUNGEON
 		if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px-1))
-#else
-		if (cave_floor_bold(Depth, p_ptr->py, p_ptr->px-1))
-#endif
 		{
 			cave_lite_hack(p_ptr->py, p_ptr->px-2);
 			cave_lite_hack(p_ptr->py+1, p_ptr->px-2);
@@ -2744,41 +2736,25 @@ void update_lite(int Ind)
 		if (p > 5) p = 5;
 
 		/* South-East of the player */
-#ifdef NEW_DUNGEON
 		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px+1))
-#else
-		if (cave_floor_bold(Depth, p_ptr->py+1, p_ptr->px+1))
-#endif
 		{
 			cave_lite_hack(p_ptr->py+2, p_ptr->px+2);
 		}
 
 		/* South-West of the player */
-#ifdef NEW_DUNGEON
 		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px-1))
-#else
-		if (cave_floor_bold(Depth, p_ptr->py+1, p_ptr->px-1))
-#endif
 		{
 			cave_lite_hack(p_ptr->py+2, p_ptr->px-2);
 		}
 
 		/* North-East of the player */
-#ifdef NEW_DUNGEON
 		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px+1))
-#else
-		if (cave_floor_bold(Depth, p_ptr->py-1, p_ptr->px+1))
-#endif
 		{
 			cave_lite_hack(p_ptr->py-2, p_ptr->px+2);
 		}
 
 		/* North-West of the player */
-#ifdef NEW_DUNGEON
 		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px-1))
-#else
-		if (cave_floor_bold(Depth, p_ptr->py-1, p_ptr->px-1))
-#endif
 		{
 			cave_lite_hack(p_ptr->py-2, p_ptr->px-2);
 		}
@@ -2836,7 +2812,6 @@ void update_lite(int Ind)
 		x = p_ptr->lite_x[i];
 
 		/* Update fresh grids */
-#ifdef NEW_DUNGEON
 		if (zcave[y][x].info & CAVE_TEMP) continue;
 
 		/* Note */
@@ -2844,14 +2819,6 @@ void update_lite(int Ind)
 
 		/* Redraw */
 		everyone_lite_spot(wpos, y, x);
-#else
-		if (cave[Depth][y][x].info & CAVE_TEMP) continue;
-		/* Note */
-		note_spot_depth(Depth, y, x);
-
-		/* Redraw */
-		everyone_lite_spot(Depth, y, x);
-#endif
 	}
 
 	/* Clear them all */
@@ -2861,21 +2828,13 @@ void update_lite(int Ind)
 		x = p_ptr->temp_x[i];
 
 		/* No longer in the array */
-#ifdef NEW_DUNGEON
 		zcave[y][x].info &= ~CAVE_TEMP;
-#else
-		cave[Depth][y][x].info &= ~CAVE_TEMP;
-#endif
 
 		/* Update stale grids */
 		if (p_ptr->cave_flag[y][x] & CAVE_LITE) continue;
 
 		/* Redraw */
-#ifdef NEW_DUNGEON
 		everyone_lite_spot(wpos, y, x);
-#else
-		everyone_lite_spot(Depth, y, x);
-#endif
 	}
 
 	/* None left */

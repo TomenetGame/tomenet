@@ -66,11 +66,7 @@ s16b poly_r_idx(int r_idx)
 	return (r_idx);
 }
 
-#ifdef NEW_DUNGEON
 bool check_st_anchor(struct worldpos *wpos)
-#else
-bool check_st_anchor(int depth)
-#endif
 {
 	int i;
 
@@ -82,11 +78,7 @@ bool check_st_anchor(int depth)
 		if (q_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Skip players not on this depth */
-#ifdef NEW_DUNGEON
 		if (!inarea(&q_ptr->wpos, wpos)) continue;
-#else
-		if (q_ptr->dun_depth != depth) continue;
-#endif
 
 //		if (!q_ptr->st_anchor) continue;
 		if (!q_ptr->anti_tele) continue;
@@ -114,23 +106,14 @@ void teleport_away(int m_idx, int dis)
 
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos;
 	cave_type **zcave;
-#else
-	int Depth;
-#endif
-
 
 	/* Paranoia */
 	if (!m_ptr->r_idx) return;
 
 	/* Space/Time Anchor */
-#ifdef NEW_DUNGEON
 	if (check_st_anchor(&m_ptr->wpos)) return;
-#else
-	if (check_st_anchor(m_ptr->dun_depth)) return;
-#endif
 
         if (r_ptr->flags9 & RF9_IM_TELE) return;
 
@@ -138,12 +121,8 @@ void teleport_away(int m_idx, int dis)
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
 
-#ifdef NEW_DUNGEON
 	wpos=&m_ptr->wpos;
 	if(!(zcave=getcave(wpos))) return;
-#else
-	Depth = m_ptr->dun_depth;
-#endif
 
 	/* Minimum distance */
 	min = dis / 2;
@@ -167,30 +146,15 @@ void teleport_away(int m_idx, int dis)
 			}
 
 			/* Ignore illegal locations */
-#ifdef NEW_DUNGEON
 			if (!in_bounds(ny, nx)) continue;
-#else
-			if (!in_bounds(Depth, ny, nx)) continue;
-#endif
 
 			/* Require "empty" floor space */
-#ifdef NEW_DUNGEON
 			if (!cave_empty_bold(zcave, ny, nx)) continue;
-#else
-			if (!cave_empty_bold(Depth, ny, nx)) continue;
-#endif
 
-#ifdef NEW_DUNGEON
 			/* Hack -- no teleport onto glyph of warding */
 			if (zcave[ny][nx].feat == FEAT_GLYPH) continue;
 			/* No teleporting into vaults and such */
 			if (zcave[ny][nx].info & CAVE_ICKY) continue;
-#else
-			/* Hack -- no teleport onto glyph of warding */
-			if (cave[Depth][ny][nx].feat == FEAT_GLYPH) continue;
-			/* No teleporting into vaults and such */
-			if (cave[Depth][ny][nx].info & CAVE_ICKY) continue;
-#endif
 
 			/* This grid looks good */
 			look = FALSE;
@@ -207,17 +171,10 @@ void teleport_away(int m_idx, int dis)
 	}
 
 	/* Update the new location */
-#ifdef NEW_DUNGEON
 	zcave[ny][nx].m_idx = m_idx;
 
 	/* Update the old location */
 	zcave[oy][ox].m_idx = 0;
-#else
-	cave[Depth][ny][nx].m_idx = m_idx;
-
-	/* Update the old location */
-	cave[Depth][oy][ox].m_idx = 0;
-#endif
 
 	/* Move the monster */
 	m_ptr->fy = ny;
@@ -226,19 +183,11 @@ void teleport_away(int m_idx, int dis)
 	/* Update the monster (new location) */
 	update_mon(m_idx, TRUE);
 
-#ifdef NEW_DUNGEON
 	/* Redraw the old grid */
 	everyone_lite_spot(wpos, oy, ox);
 
 	/* Redraw the new grid */
 	everyone_lite_spot(wpos, ny, nx);
-#else
-	/* Redraw the old grid */
-	everyone_lite_spot(Depth, oy, ox);
-
-	/* Redraw the new grid */
-	everyone_lite_spot(Depth, ny, nx);
-#endif
 }
 
 
@@ -366,22 +315,14 @@ void teleport_player(int Ind, int dis)
 
 	int d, i, min, ox, oy, x = p_ptr->py, y = p_ptr->px;
 	int xx , yy, m_idx;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	bool look = TRUE;
 
 	/* Space/Time Anchor */
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 	if (check_st_anchor(wpos)) return;
-#else
-	if (check_st_anchor(p_ptr->dun_depth)) return;
-#endif
 
 	/* Verify max distance once here */
 	if (dis > 150) dis = 150;
@@ -410,11 +351,7 @@ void teleport_player(int Ind, int dis)
 			}
 
 			/* Ignore illegal locations */
-#ifdef NEW_DUNGEON
 			if (!in_bounds(y, x)) continue;
-#else
-			if (!in_bounds(Depth, y, x)) continue;
-#endif
 
 #ifdef NEW_DUNGEON
 			/* Require floor space if not ghost */
@@ -478,7 +415,7 @@ void teleport_player(int Ind, int dis)
 
 		if (!in_bounds(yy, xx)) continue;
 
-		if (m_idx = zcave[yy][xx].m_idx)
+		if ((m_idx = zcave[yy][xx].m_idx))
 		{
 			monster_race *r_ptr = race_inf(&m_list[m_idx]);
 
@@ -542,30 +479,18 @@ void teleport_player_to(int Ind, int ny, int nx)
 	player_type *p_ptr = Players[Ind];
 
 	int y, x, oy, ox, dis = 1, ctr = 0;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 	int tries = 200;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 	if (ny < 1) ny = 1;
 	if (nx < 1) nx = 1;
 	if (ny > MAX_HGT - 2) ny = MAX_HGT - 2;
 	if (nx > MAX_WID - 2) nx = MAX_WID - 2;
 
-
-
 	/* Space/Time Anchor */
-#ifdef NEW_DUNGEON
 	if (check_st_anchor(wpos)) return;
-#else
-	if (check_st_anchor(p_ptr->dun_depth)) return;
-#endif
 
 	/* Find a usable location */
 	while (tries--)
@@ -575,25 +500,14 @@ void teleport_player_to(int Ind, int ny, int nx)
 		{
 			y = rand_spread(ny, dis);
 			x = rand_spread(nx, dis);
-#ifdef NEW_DUNGEON
 			if (in_bounds(y, x)) break;
-#else
-			if (in_bounds(Depth, y, x)) break;
-#endif
 		}
 
 		/* Cant telep in houses */
-#ifdef NEW_DUNGEON
 		if (((wpos->wz==0) && !(zcave[y][x].info & CAVE_ICKY)) || (wpos->wz))
 		  {
 		    if (cave_naked_bold(zcave, y, x)) break;
 		  }
-#else
-		if (((Depth <= 0) && !(cave[Depth][y][x].info & CAVE_ICKY)) || (Depth > 0))
-		  {
-		    if (cave_naked_bold(Depth, y, x)) break;
-		  }
-#endif
 
 		/* Occasionally advance the distance */
 		if (++ctr > (4 * dis * dis + 4 * dis + 1))
@@ -611,7 +525,6 @@ void teleport_player_to(int Ind, int ny, int nx)
 	p_ptr->py = y;
 	p_ptr->px = x;
 
-#ifdef NEW_DUNGEON
 	/* The player isn't here anymore */
 	zcave[oy][ox].m_idx = 0;
 
@@ -623,19 +536,6 @@ void teleport_player_to(int Ind, int ny, int nx)
 
 	/* Redraw the new spot */
 	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-#else
-	/* The player isn't here anymore */
-	cave[Depth][oy][ox].m_idx = 0;
-
-	/* The player is now here */
-	cave[Depth][y][x].m_idx = 0 - Ind;
-
-	/* Redraw the old spot */
-	everyone_lite_spot(Depth, oy, ox);
-
-	/* Redraw the new spot */
-	everyone_lite_spot(Depth, p_ptr->py, p_ptr->px);
-#endif
 
 	/* Check for new panel (redraw map) */
 	verify_panel(Ind);
@@ -669,67 +569,35 @@ void teleport_player_level(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	wilderness_type *w_ptr;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
 	struct worldpos new_depth;
-#else
-	int  Depth=p_ptr->wpos, new_depth;
-	int new_world_x = 0, new_world_y = 0;
-#endif
 	char *msg;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
-
 
 	/* Space/Time Anchor */
-#ifdef NEW_DUNGEON
 	if (check_st_anchor(&p_ptr->wpos)) return;
-#else
-	if (check_st_anchor(p_ptr->dun_depth)) return;
-#endif
 
 	wpcopy(&new_depth, wpos);
 	/* sometimes go down */
-#ifdef NEW_DUNGEON
-	if(can_go_down(wpos) && (!can_go_up(wpos) || (rand_int(100)<50)) || (wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->flags & DUNGEON_IRON))
-#else
-	if ((!Depth) || ((rand_int(100) < 50) && (Depth > MAX_DEPTH-1)))
-#endif
+	if(can_go_down(wpos) && ((!can_go_up(wpos) || (rand_int(100)<50)) || (wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->flags & DUNGEON_IRON)))
 	{
-#ifdef NEW_DUNGEON
 		new_depth.wz--;
-#else
-		new_depth = Depth+1;
-#endif
 		msg = "You sink through the floor.";
 		p_ptr->new_level_method = LEVEL_RAND;
 	}	
 	/* else go up */
 	else if(can_go_up(wpos) && !(wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->flags & DUNGEON_IRON))
 	{
-#ifdef NEW_DUNGEON
 		new_depth.wz++;
-#else
-		new_depth = Depth-1;
-#endif
 		msg = "You rise up through the ceiling.";
 		p_ptr->new_level_method = LEVEL_RAND;
 	}
 	
 	/* If in the wilderness, teleport to a random neighboring level */
-#ifdef NEW_DUNGEON
 	else if(wpos->wz==0 && new_depth.wz==0)
-#else
-	if (Depth < 0)
-#endif
 	{
-#ifdef NEW_DUNGEON
 		w_ptr = &wild_info[wpos->wy][wpos->wx];
-#else
-		w_ptr = &wild_info[Depth];
-#endif
 		/* get a valid neighbor */
 		do
 		{	
@@ -737,52 +605,20 @@ void teleport_player_level(int Ind)
 			switch (rand_int(4))
 			{
 				case DIR_NORTH:
-#ifdef NEW_DUNGEON
 					new_depth.wy++;
-#else
-					new_depth = world_index(w_ptr->world_x,w_ptr->world_y+1);
-#endif
 					msg = "A gust of wind blows you north.";
-#ifndef NEW_DUNGEON
-					new_world_x = w_ptr->world_x;
-					new_world_y = w_ptr->world_y+1;
-#endif
 					break;
 				case DIR_EAST:
-#ifdef NEW_DUNGEON
 					new_depth.wx++;
-#else
-					new_depth = world_index(w_ptr->world_x+1,w_ptr->world_y);
-#endif
 					msg = "A gust of wind blows you east.";
-#ifndef NEW_DUNGEON
-					new_world_x = w_ptr->world_x+1;
-					new_world_y = w_ptr->world_y;
-#endif
 					break;
 				case DIR_SOUTH:
-#ifdef NEW_DUNGEON
 					new_depth.wy--;
-#else
-					new_depth = world_index(w_ptr->world_x,w_ptr->world_y-1);
-#endif
 					msg = "A gust of wind blows you south.";
-#ifndef NEW_DUNGEON
-					new_world_x = w_ptr->world_x;
-					new_world_y = w_ptr->world_y-1;
-#endif
 					break;
 				case DIR_WEST:
-#ifdef NEW_DUNGEON
 					new_depth.wx--;
-#else
-					new_depth = world_index(w_ptr->world_x-1,w_ptr->world_y);
-#endif
 					msg = "A gust of wind blows you west.";
-#ifndef NEW_DUNGEON
-					new_world_x = w_ptr->world_x-1;
-					new_world_y = w_ptr->world_y;
-#endif
 					break;		
 			}
 		}

@@ -594,6 +594,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 	return SUCCESS;
 }
 
+#if 0
 static void Console(int fd, int arg)
 {
 	char buf[1024];
@@ -648,6 +649,7 @@ static void Console(int fd, int arg)
 		/* Whatever I need at the moment */
 	}
 }
+#endif // if 0
 		
 static void Contact(int fd, int arg)
 {

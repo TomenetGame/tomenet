@@ -31,11 +31,6 @@
 
 #ifdef SET_UID
 
-#ifndef lint
-static char sourceid[] =
-    "@(#)$Id$";
-#endif
-
 #ifdef TERMNET
 /* support for running clients over term, but not servers please. */
 #include "termnet.h"

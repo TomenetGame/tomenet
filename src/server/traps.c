@@ -1076,7 +1076,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 	/* Paranoia */
 	cave_type **zcave;
-	if (!in_bounds(y, x)) return;
+	if (!in_bounds(y, x)) return(FALSE);
 	if((zcave=getcave(wpos)))
 	{
 		c_ptr=&zcave[y][x];

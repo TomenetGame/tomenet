@@ -3057,6 +3057,30 @@ void initwild(){
 	}
 }
 
+void island(int y, int x, unsigned char type, unsigned char fill, int size){
+	int ranval;
+	if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_Y) return;
+	if(wild_info[y][x].type!=fill) return;
+	ranval=random()&15;
+	if(size){
+		if(ranval&1) island(y,x-1,type,fill,size-1);
+		if(ranval&2) island(y,x+1,type,fill,size-1);
+		if(ranval&4) island(y-1,x,type,fill,size-1);
+		if(ranval&8) island(y+1,x,type,fill,size-1);
+	}
+	if((random()&17)==0){
+		switch(type){
+			case WILD_MOUNTAIN:
+				type=WILD_VOLCANO;
+				break;
+			case WILD_LAKE:
+				type=WILD_SWAMP;
+				break;
+		}
+	}
+	wild_info[y][x].type=type;
+}
+
 void makeland(){
 	int p,i;
 	int x,y;
@@ -3085,30 +3109,6 @@ unsigned short makecoast(int y, int x){
 	if(r)
 		wild_info[y][x].type=WILD_COAST;
 	return(0);
-}
-
-void island(int y, int x, unsigned char type, unsigned char fill, int size){
-	int ranval;
-	if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_Y) return;
-	if(wild_info[y][x].type!=fill) return;
-	ranval=random()&15;
-	if(size){
-		if(ranval&1) island(y,x-1,type,fill,size-1);
-		if(ranval&2) island(y,x+1,type,fill,size-1);
-		if(ranval&4) island(y-1,x,type,fill,size-1);
-		if(ranval&8) island(y+1,x,type,fill,size-1);
-	}
-	if((random()&17)==0){
-		switch(type){
-			case WILD_MOUNTAIN:
-				type=WILD_VOLCANO;
-				break;
-			case WILD_LAKE:
-				type=WILD_SWAMP;
-				break;
-		}
-	}
-	wild_info[y][x].type=type;
 }
 
 void addhills(){

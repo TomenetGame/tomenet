@@ -651,6 +651,7 @@ Change list for PernMangband
 13/01/2002 (Evileye)
 - Cleaned up new dungeon code, removing old
 - Fixed targetting bug in new code
+- Some compilation warnings fixed (cleanup)
 
 
 ** [B] stands for Bugfix.

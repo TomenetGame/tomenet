@@ -15,6 +15,9 @@
 
 /* #include "netserver.h" */
 
+/* common */
+extern int color_char_to_attr(char c);
+
 extern struct sfunc csfunc[];
 
 /* netserver.c */
@@ -26,6 +29,7 @@ extern bool player_is_king(int Ind);
 extern void end_mind(int Ind, bool update);
 
 /* randart.c */
+extern artifact_type *ego_make(object_type *o_ptr);
 extern artifact_type *randart_make(object_type *o_ptr);
 extern void randart_name(object_type *o_ptr, char *buffer);
 extern void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b dun_level);
@@ -462,6 +466,7 @@ extern bool confirm_admin(int Ind, cptr name, cptr pass);
 extern void server_birth(void);
 
 /* cave.c */
+extern struct dungeon_type *getdungeon(struct worldpos *wpos);
 extern bool can_go_up(struct worldpos *wpos);
 extern bool can_go_down(struct worldpos *wpos);
 extern bool istown(struct worldpos *wpos);
@@ -540,6 +545,7 @@ extern void black_breath_infection(int Ind, int Ind2);
 extern int see_wall(int Ind, int dir, int y, int x);
 
 /* cmd2.c */
+extern bool access_door(int Ind, struct dna_type *dna);
 extern void do_cmd_own(int Ind);
 extern void do_cmd_go_up(int Ind);
 extern void do_cmd_go_down(int Ind);
@@ -567,6 +573,7 @@ extern int pick_house(int Depth, int y, int x);
 extern void house_admin(int Ind, int dir, char *args);
 
 /* cmd3.c */
+extern void inven_takeoff(int Ind, int item, int amt);
 extern void do_takeoff_impossible(int Ind);
 extern void do_cmd_inven(void);
 extern void do_cmd_equip(void);
@@ -632,6 +639,8 @@ extern void do_cmd_ghost_power_aux(int Ind, int dir);
 
 
 /* cmd6.c */
+extern bool curse_armor(int Ind);
+extern bool curse_weapon(int Ind);
 extern void do_cmd_eat_food(int Ind, int item);
 extern void do_cmd_quaff_potion(int Ind, int item);
 extern void do_cmd_read_scroll(int Ind, int item);
@@ -871,6 +880,10 @@ extern void Handle_direction(int Ind, int dir);
 
 /* object1.c */
 /* object2.c */
+extern void object_copy(object_type *o_ptr, object_type *j_ptr);
+extern s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
+extern void object_wipe(object_type *o_ptr);
+extern void object_prep(object_type *o_ptr, int k_idx);
 extern bool can_use(int Ind, object_type *o_ptr);
 extern void flavor_init(void);
 extern void reset_visuals(void);
@@ -902,7 +915,6 @@ extern void show_equip(void);
 extern void toggle_inven_equip(void);
 extern bool get_item(int Ind, int *cp, cptr pmt, bool equip, bool inven, bool floor);*/
 extern void delete_object_idx(int i);
-#ifdef NEW_DUNGEON
 extern void delete_object(struct worldpos *wpos, int y, int x);
 extern void wipe_o_list(struct worldpos *wpos);
 extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great);
@@ -913,18 +925,6 @@ extern void place_trap(struct worldpos *wpos, int y, int x);
 extern void place_gold(struct worldpos *wpos, int y, int x);
 extern s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void pick_trap(struct worldpos *wpos, int y, int x);
-#else
-extern void delete_object(int Depth, int y, int x);
-extern void wipe_o_list(int Depth);
-extern void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great);
-extern void determine_level_req(int Depth, object_type *o_ptr);
-extern void place_object(int Depth, int y, int x, bool good, bool great);
-extern void acquirement(int Depth, int y1, int x1, int num, bool great);
-extern void place_trap(int Depth, int y, int x);
-extern void place_gold(int Depth, int y, int x);
-extern void drop_near(object_type *o_ptr, int chance, int Depth, int y, int x);
-extern void pick_trap(int Depth, int y, int x);
-#endif
 extern void compact_objects(int size);
 extern s16b o_pop(void);
 extern errr get_obj_num_prep(void);
@@ -995,12 +995,9 @@ extern void setup_timer(void);
 extern void teardown_timer(void);
 
 /* spells1.c */
+extern void take_sanity_hit(int Ind, int damage, cptr hit_from);
 extern s16b poly_r_idx(int r_idx);
-#ifdef NEW_DUNGEON
 extern bool check_st_anchor(struct worldpos *wpos);
-#else
-extern bool check_st_anchor(int depth);
-#endif
 extern void teleport_away(int m_idx, int dis);
 extern void teleport_player(int Ind, int dis);
 extern void teleport_player_to(int Ind, int ny, int nx);
@@ -1027,6 +1024,8 @@ extern int inven_damage(int Ind, inven_func typ, int perc);
 //extern int inven_damage(int Ind, object_type *typ, int perc);
 
 /* spells2.c */
+extern bool heal_insanity(int Ind, int val);
+extern void summon_cyber(int Ind);
 extern void golem_creation(int Ind, int max);
 extern bool hp_player(int Ind, int num);
 extern bool hp_player_quiet(int Ind, int num);
@@ -1133,6 +1132,7 @@ extern void store_maint(store_type *st_ptr);
 extern void store_init(store_type *st_ptr);
 
 /* util.c */
+extern void msg_admin(cptr fmt, ...);
 extern int name_lookup_loose(int Ind, cptr name, bool party);
 extern errr path_parse(char *buf, int max, cptr file);
 extern errr path_temp(char *buf, int max);
@@ -1186,6 +1186,7 @@ extern void window_stuff(int Ind);
 extern void handle_stuff(int Ind);
 
 /* xtra2.c */
+extern bool set_invuln_short(int Ind, int v);
 extern bool set_biofeedback(int Ind, int v);
 extern bool set_adrenaline(int Ind, int v);
 extern bool set_tim_esp(int Ind, int v);

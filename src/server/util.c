@@ -3448,7 +3448,6 @@ void player_talk_aux(int Ind, cptr message)
 				}
 				else if (prefix(message, "/wish"))
 				{
-					int l;
 					object_type	forge;
 					object_type	*o_ptr = &forge;
 

@@ -1238,7 +1238,7 @@ static s32b object_value_real(object_type *o_ptr)
 			if (f1 & TR1_CON) count++;
 			if (f1 & TR1_CHR) count++;
 
-			if (count) value += count * PRICE_BOOST(count + pval, 2, 1)* 200L;
+			if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 200L;
 
                         if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 500L);
 
@@ -5316,11 +5316,7 @@ void place_gold(int Depth, int y, int x)
  *
  * XXX XXX XXX Consider allowing objects to combine on the ground.
  */
-#ifdef NEW_DUNGEON
 s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
-#else
-void drop_near(object_type *o_ptr, int chance, int Depth, int y, int x)
-#endif
 {
 	int		k, d, ny, nx, y1, x1, o_idx;
 
@@ -5330,7 +5326,7 @@ void drop_near(object_type *o_ptr, int chance, int Depth, int y, int x)
 
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave=getcave(wpos))) return(-1);
 #endif
 
 
@@ -5533,14 +5529,9 @@ void drop_near(object_type *o_ptr, int chance, int Depth, int y, int x)
  * and call the normal dropping function otherwise.
  */
 
-#ifdef NEW_DUNGEON
-void drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
-#else
-void drop_near_severe(int Ind, object_type *o_ptr, int chance, int Depth, int y, int x)
-#endif
+s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
 {
 	/* Artifact always disappears */
-//	if (cfg_anti_arts_horde && artifact_p(o_ptr) && !o_ptr->name3)
 	if (cfg.anti_arts_horde && true_artifact_p(o_ptr))
 	{
 		char	o_name[160];
@@ -5549,9 +5540,9 @@ void drop_near_severe(int Ind, object_type *o_ptr, int chance, int Depth, int y,
 		msg_format(Ind, "%s fades into the air!", o_name);
 		a_info[o_ptr->name1].cur_num = 0;
 		a_info[o_ptr->name1].known = FALSE;
-		return;
+		return -1;
 	}
-	else drop_near(o_ptr,chance,wpos,y,x);
+	else return(drop_near(o_ptr,chance,wpos,y,x));
 }
 
 
@@ -5564,24 +5555,16 @@ void drop_near_severe(int Ind, object_type *o_ptr, int chance, int Depth, int y,
  * Actually, it is not this routine, but the "trap instantiation"
  * code, which should also check for "trap doors" on quest levels.
  */
-#ifdef NEW_DUNGEON
 void pick_trap(struct worldpos *wpos, int y, int x)
-#else
-void pick_trap(int Depth, int y, int x)
-#endif
 {
 //	int feat;
 //	int tries = 100;
 
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	cave_type *c_ptr;
 	trap_type *t_ptr;
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
-#else
-	cave_type *c_ptr = &cave[Depth][y][x];
-#endif
 
 #if 0
 	/* Paranoia */
@@ -5594,18 +5577,10 @@ void pick_trap(int Depth, int y, int x)
 		feat = FEAT_TRAP_HEAD + rand_int(16);
 
 		/* Hack -- no trap doors on quest levels */
-#ifdef NEW_DUNGEON
 		if ((feat == FEAT_TRAP_HEAD + 0x00) && is_quest(wpos)) continue;
-#else
-		if ((feat == FEAT_TRAP_HEAD + 0x00) && is_quest(Depth)) continue;
-#endif
 
 		/* Hack -- no trap doors on the deepest level */
-#ifdef NEW_DUNGEON
                 if ((feat == FEAT_TRAP_HEAD + 0x00) && can_go_down(wpos))
-#else
-                if ((feat == FEAT_TRAP_HEAD + 0x00) && (Depth >= MAX_DEPTH_OBJ-1))
-#endif
 		continue;
 
 		/* Done */
@@ -5623,19 +5598,11 @@ void pick_trap(int Depth, int y, int x)
 	
 	t_ptr->found = TRUE;
 
-#ifdef NEW_DUNGEON
 	/* Notice */
 	note_spot_depth(wpos, y, x);
 
 	/* Redraw */
 	everyone_lite_spot(wpos, y, x);
-#else
-	/* Notice */
-	note_spot_depth(Depth, y, x);
-
-	/* Redraw */
-	everyone_lite_spot(Depth, y, x);
-#endif
 }
 
 
@@ -6068,14 +6035,10 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 	p_ptr->inventory[i] = (*o_ptr);
 
 	/* Forget the old location */
-#ifdef NEW_DUNGEON
 	p_ptr->inventory[i].iy = p_ptr->inventory[i].ix = 0;
 	p_ptr->inventory[i].wpos.wx = 0;
 	p_ptr->inventory[i].wpos.wy = 0;
 	p_ptr->inventory[i].wpos.wz = 0;
-#else
-	p_ptr->inventory[i].iy = p_ptr->inventory[i].ix = p_ptr->inventory[i].dun_depth = 0;
-#endif
 
 	/* Increase the weight, prepare to redraw */
 	p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
@@ -6363,9 +6326,7 @@ void process_objects(void)
 void setup_objects(void)
 {
 	int i;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
-#endif
 
 	for (i = 0; i < o_max; i++)
 	{
@@ -6375,18 +6336,10 @@ void setup_objects(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip objects on depths that aren't allocated */
-#ifdef NEW_DUNGEON
 		if (!(zcave=getcave(&o_ptr->wpos))) continue;
-#else
-		if (!cave[o_ptr->dun_depth]) continue;
-#endif
 
 		/* Set the o_idx correctly */
-#ifdef NEW_DUNGEON
 		zcave[o_ptr->iy][o_ptr->ix].o_idx = i;
-#else
-		cave[o_ptr->dun_depth][o_ptr->iy][o_ptr->ix].o_idx = i;
-#endif
 	}
 }
 

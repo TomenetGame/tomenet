@@ -784,10 +784,7 @@ void carry(int Ind, int pickup, int confirm)
 	}
 }
 
-
-
-
-
+#if 0
 /*
  * Determine if a trap affects the player.
  * Always miss 5% of the time, Always hit 5% of the time.
@@ -817,8 +814,7 @@ static int check_hit(int Ind, int power)
 	/* Assume miss */
 	return (FALSE);
 }
-
-
+#endif // if 0
 
 /*
  * Handle player hitting a real trap
