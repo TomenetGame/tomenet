@@ -122,6 +122,8 @@ extern town_extra town_profile[6];
 
 
 /* variable.c */
+extern int teamscore[];
+extern int gametype;
 extern obj_theme default_obj_theme;
 extern s16b count_project;
 extern s16b count_project_times;

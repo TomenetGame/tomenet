@@ -1656,6 +1656,9 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	
 	confirm_admin(Ind);
 
+	/* player is not in a game */
+	p_ptr->team=0;
+
 	/* Set info */
 	if (sex > 511)
 	{
