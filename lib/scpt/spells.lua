@@ -18,7 +18,7 @@ SCHOOL_MANA = add_school
 }
 
 -- Put some spells
-pern_dofile(Ind, "s_convey.lua")
+pern_dofile("s_convey.lua")
 
 -- Create the book of beginner's cantrip
 -- Great book, eh? ;)
