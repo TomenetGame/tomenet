@@ -33,7 +33,7 @@ s16b t_pop(void)
 
 
 	/* Normal allocation */
-	if (t_max < MAX_T_IDX)
+	if (t_max < MAX_TR_IDX)
 	{
 		/* Access the next hole */
 		i = t_max;
@@ -50,19 +50,19 @@ s16b t_pop(void)
 
 
 	/* Check for some space */
-	for (n = 1; n < MAX_T_IDX; n++)
+	for (n = 1; n < MAX_TR_IDX; n++)
 	{
 		/* Get next space */
 		i = t_nxt;
 
 		/* Advance (and wrap) the "next" pointer */
-		if (++t_nxt >= MAX_T_IDX) t_nxt = 1;
+		if (++t_nxt >= MAX_TR_IDX) t_nxt = 1;
 
 		/* Skip monsters in use */
 		if (t_list[i].t_idx) continue;
 
 		/* Verify space XXX XXX */
-		if (t_top >= MAX_T_IDX) continue;
+		if (t_top >= MAX_TR_IDX) continue;
 
 		/* Verify not allocated */
 		for (k = 0; k < t_top; k++)
@@ -120,7 +120,7 @@ void delete_trap_idx(trap_type *t_ptr)
 #endif
 //	monster_type *m_ptr = &m_list[i];
 
-	trap_kind *tt_ptr = &t_info[t_ptr->t_idx];
+//	trap_kind *tk_ptr = &t_info[t_ptr->t_idx];
 
 	/* Get location */
 	y = t_ptr->iy;
@@ -138,6 +138,7 @@ void delete_trap_idx(trap_type *t_ptr)
 #ifdef NEW_DUNGEON
 	if((zcave=getcave(wpos))){
 		zcave[y][x].special.type=0;
+		zcave[y][x].special.ptr = NULL;
 		t_ptr->t_idx=0;
 	}
 
@@ -158,7 +159,7 @@ void delete_trap_idx(trap_type *t_ptr)
 	everyone_lite_spot(Depth, y, x);
 #endif
 	/* Wipe the Monster */
-	FREE(tt_ptr, trap_kind);
+//	FREE(tt_ptr, trap_kind);
 	WIPE(t_ptr, trap_type);
 }
 
