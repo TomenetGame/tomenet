@@ -4527,10 +4527,12 @@ bool poly_build(int Ind, char *args){
 
 void house_creation(int Ind, bool floor){
 	player_type *p_ptr=Players[Ind];
+	struct worldpos *wpos=&p_ptr->wpos;
+
 	/* set master_move_hook : a bit like a setuid really ;) */
 
 	/* No building in town */
-	if(p_ptr->wpos.wz || istown(wpos) || wild_info[wpos->wy][wpos->wx].radius<3)
+	if(wpos->wz || istown(wpos) || wild_info[wpos->wy][wpos->wx].radius<3)
 	if((house_alloc-num_houses)<32){
 		GROW(houses, house_alloc, house_alloc+512, house_type);
 		house_alloc+=512;
