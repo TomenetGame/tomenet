@@ -336,3 +336,6 @@ Change list for PernMangband
 25/11/2001 (Tanix [log by Jir])
 - Shallow dungeon levels won't be static (configurable).
 - NO_GHOST / PRESERVE_DEATH_LEVEL options
+
+27/11/2001 (Jir)
+- Optimization in auto_retaliate (observable :)

@@ -2811,9 +2811,50 @@ void do_cmd_fire(int Ind, int dir, int item)
 bool interfere(int Ind, int chance)
 {
 	player_type *p_ptr = Players[Ind];
-	int i, tx, ty, x = p_ptr->px, y = p_ptr->py;
+	int d, i, tx, ty, x = p_ptr->px, y = p_ptr->py;
 
 	/* Check if monsters around him/her hinder the action */
+	for (d = 1; d <= 9; d++)
+	{
+		if (d == 5) continue;
+
+		tx = x + ddx[d];
+		ty = y + ddy[d];
+
+		if (!in_bounds(p_ptr->dun_depth, ty, tx)) continue;
+
+		if (!(i = cave[p_ptr->dun_depth][ty][tx].m_idx)) continue;
+		if (i > 0)
+		{
+			if (r_info[m_list[i].r_idx].flags1 & RF1_NEVER_MOVE)
+				continue;
+		}
+		else
+		{
+			/* hostile player? */
+			if (!check_hostile(Ind, -i) ||
+				Players[-i]->paralyzed ||
+				r_info[Players[-i]->body_monster].flags1 & RF1_NEVER_MOVE)
+				continue;
+		}
+
+		if (rand_int(100) < chance)
+		{
+			char m_name[80];
+			if (i > 0)
+			{
+				monster_desc(Ind, m_name, i, 0);
+			}
+			else
+			{
+				/* even not visible... :( */
+				strcpy(m_name, Players[-i]->name);
+			}
+			msg_format(Ind, "\377o%^s interferes your attempt!", m_name);
+			return TRUE;
+		}
+	}
+#if 0
 	for (tx = x - 1; tx <= x + 1; tx++)
 	{
 		for (ty = y - 1; ty <= y + 1; ty++)
@@ -2850,6 +2891,7 @@ bool interfere(int Ind, int chance)
 			}
 		}
 	}
+#endif
 
 	return FALSE;
 }

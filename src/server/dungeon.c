@@ -749,11 +749,173 @@ static void process_command(void)
 static int auto_retaliate(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr, *p_target_ptr = NULL, *prev_p_target_ptr = NULL;
-	int i, target, prev_target, item = -1;
+	int d, i, tx, ty, target, prev_target, item = -1;
 //	char friends = 0;
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
 	unsigned char * inscription;
 
+	for (d = 1; d <= 9; d++)
+	{
+		if (d == 5) continue;
+
+		tx = p_ptr->px + ddx[d];
+		ty = p_ptr->py + ddy[d];
+
+		if (!in_bounds(p_ptr->dun_depth, ty, tx)) continue;
+
+		if (!(i = cave[p_ptr->dun_depth][ty][tx].m_idx)) continue;
+		if (i > 0)
+		{
+			m_ptr = &m_list[i];
+
+			/* Paranoia -- Skip dead monsters */
+			if (!m_ptr->r_idx) continue;
+
+			/* Make sure that the player can see this monster */
+			if (!p_ptr->mon_vis[i]) continue;
+
+                if (p_ptr->id == m_ptr->owner) continue;
+
+			/* Figure out if this is the best target so far */
+			if (m_target_ptr)
+			{
+				/* If it is a Q, then make it our new target. */
+				/* We don't handle the case of choosing between two
+				 * Q's because if the player is standing next to two Q's
+				 * he deserves whatever punishment he gets.
+				 */
+                                if (R_INFO(m_ptr)->d_char == 'Q')
+				{
+					prev_m_target_ptr = m_target_ptr;
+					m_target_ptr = m_ptr;
+					prev_target = target;
+					target = i;
+				}
+				/* Otherwise if it is 20 levels higher than everything
+				 * else attack it.
+				 */
+				else if ((R_INFO(m_ptr)->level - 20) >= R_INFO(m_target_ptr)->level)
+				{
+					prev_m_target_ptr = m_target_ptr;
+					m_target_ptr = m_ptr;
+					prev_target = target;
+					target = i;
+				}
+				/* Otherwise if it is the most proportionatly wounded monster
+				 * attack it.
+				 */
+				else if (m_ptr->hp * m_target_ptr->maxhp < m_target_ptr->hp * m_ptr->maxhp)
+				{
+					prev_m_target_ptr = m_target_ptr;
+					m_target_ptr = m_ptr;
+					prev_target = target;
+					target = i;
+				}
+				/* If it is a tie attack the higher level monster */
+				else if (m_ptr->hp * m_target_ptr->maxhp == m_target_ptr->hp * m_ptr->maxhp)
+				{
+                                        if (R_INFO(m_ptr)->level > R_INFO(m_target_ptr)->level)
+					{
+						prev_m_target_ptr = m_target_ptr;
+						m_target_ptr = m_ptr;
+						prev_target = target;
+						target = i;
+					}
+					/* If it is a tie attack the monster with less hit points */
+                                        else if (R_INFO(m_ptr)->level == R_INFO(m_target_ptr)->level)
+					{
+						if (m_ptr->hp < m_target_ptr->hp)
+						{
+							prev_m_target_ptr = m_target_ptr;
+							m_target_ptr = m_ptr;
+							prev_target = target;
+							target = i;
+						}
+					}
+				}
+			}
+			else
+			{
+				prev_m_target_ptr = m_target_ptr;
+				m_target_ptr = m_ptr;
+				prev_target = target;
+				target = i;
+			}
+		}
+		else
+		{
+			i = -i;
+			q_ptr = Players[i];
+
+			/* Skip non-connected players */
+			if (q_ptr->conn == NOT_CONNECTED) continue;
+
+			/* Skip players we aren't hostile to */
+			if (!check_hostile(Ind, i)) continue;
+
+			/* Skip players we cannot see */
+			if (!p_ptr->play_vis[i]) continue;
+
+			/* Figure out if this is the best target so far */
+			if (p_target_ptr)
+			{
+				/* If we are 15 levels over the old target, make this
+				 * player our new target.
+				 */
+				if ((q_ptr->lev - 15) >= p_target_ptr->lev)
+				{
+					prev_p_target_ptr = p_target_ptr;
+					p_target_ptr = q_ptr;
+					prev_target = target;
+					target = -i;
+				}
+				/* Otherwise attack this player if he is more proportionatly
+				 * wounded than our old target.
+				 */
+				else if (q_ptr->chp * p_target_ptr->mhp < p_target_ptr->chp * q_ptr->mhp)
+				{
+					prev_p_target_ptr = p_target_ptr;
+					p_target_ptr = q_ptr;
+					prev_target = target;
+					target = -i;
+				}
+				/* If it is a tie attack the higher level player */
+				else if (q_ptr->chp * p_target_ptr->mhp == p_target_ptr->chp * q_ptr->mhp)
+				{
+					if (q_ptr->lev > p_target_ptr->lev)
+					{
+						prev_p_target_ptr = p_target_ptr;
+						p_target_ptr = q_ptr;
+						prev_target = target;
+						target = -i;
+					}
+					/* If it is a tie attack the player with less hit points */
+					else if (q_ptr->lev == p_target_ptr->lev)
+					{
+						if (q_ptr->chp < p_target_ptr->chp)
+						{
+							prev_p_target_ptr = p_target_ptr;
+							p_target_ptr = q_ptr;
+							prev_target = target;
+							target = -i;
+						}
+					}
+				}
+			}
+			else
+			{
+				prev_p_target_ptr = p_target_ptr;
+				p_target_ptr = q_ptr;
+				prev_target = target;
+				target = -i;
+			}
+		}
+	}
+	
+#if 0
+	/* This code is not so efficient when many monsters are on the floor..
+	 * However it can be 'recycled' for automatons in the future.	- Jir -
+	 */
 	/* Check each monster */
 	for (i = 1; i < m_max; i++)
 	{
@@ -920,6 +1082,7 @@ static int auto_retaliate(int Ind)
 			}
 		}
 	}
+#endif	// 0
 
 	/* Pick an item with {@O} inscription */
 	for (i = 0; i < INVEN_PACK; i++)
