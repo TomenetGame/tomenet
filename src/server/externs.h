@@ -211,6 +211,7 @@ extern bool cfg_maximize;
 extern s32b cfg_game_port;
 extern s32b cfg_console_port;
 extern int cfg_spell_interfere;
+extern bool cfg_anti_arts_horde;
 
 
 extern bool rogue_like_commands;

@@ -1945,6 +1945,10 @@ void set_server_option(char * option, char * value)
 	{
 		cfg_console_port = atoi(value);
 	}
+	else if (!strcmp(option,"ANTI_ARTS_HORDE"))
+	{
+		cfg_anti_arts_horde = str_to_boolean(value);
+	}
 	else printf("Error : unrecognized mangband.cfg option %s\n", option);
 }
 

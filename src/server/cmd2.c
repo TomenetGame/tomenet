@@ -3492,7 +3492,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 #ifdef NEW_DUNGEON
 			istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));
 #else
-			Depth != 0 ? (Depth > 0 ? "dungeon" : "Nature") : "town");
+			Depth != 0 ? (Depth > 0 ? "dungeon" : "Nature") : "town";
 #endif
 		return;
 	}

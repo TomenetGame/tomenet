@@ -3394,7 +3394,7 @@ void player_death(int Ind)
 //		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
 
 		/* Artifacts cannot be dropped after all */	
-		if (!p_ptr->alive && artifact_p(&p_ptr->inventory[i])) 
+		if (cfg_anti_arts_horde && !p_ptr->alive && artifact_p(&p_ptr->inventory[i])) 
 		{
 			/* set the artifact as unfound */
 			a_info[p_ptr->inventory[i].name1].cur_num = 0;
