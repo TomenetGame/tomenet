@@ -730,9 +730,11 @@ void world_connect(int Ind){
 		if(Ind!=-1) msg_print(Ind, "\377rFailed to connect to the world server");
                 return;
 	}
+	else{
+		install_input(world_comm, WorldSocket, 0);
+		if(Ind!=-1) msg_print(Ind, "\377gSuccessfully connected to the world server");
+	}
 	allow_timer();
-	install_input(world_comm, WorldSocket, 0);
-	if(Ind!=-1) msg_print(Ind, "\377gSuccessfully connected to the world server");
 }
 #endif
 
