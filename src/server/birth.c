@@ -902,6 +902,13 @@ static void player_wipe(int Ind)
 static byte player_init[MAX_CLASS][3][2] =
 {
 	{
+		/* Adventurer */
+		{ TV_RING, SV_RING_SEE_INVIS },
+		{ TV_SWORD, SV_SABRE },
+		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR }
+	},
+
+	{
 		/* Warrior */
 		{ TV_POTION, SV_POTION_BESERK_STRENGTH },
 		{ TV_SWORD, SV_BROAD_SWORD },
@@ -930,59 +937,17 @@ static byte player_init[MAX_CLASS][3][2] =
 	},
 
 	{
-		/* Ranger */
-		{ TV_MAGIC_BOOK, 0 },
-		{ TV_SWORD, SV_BROAD_SWORD },
-		{ TV_BOW, SV_LONG_BOW }
-	},
-
-	{
-		/* Paladin */
-		{ TV_PRAYER_BOOK, 0 },
-		{ TV_SWORD, SV_BROAD_SWORD },
-		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL }
-	},
-
-	{
-		/* Sorcerer */
-		{ TV_SORCERY_BOOK, 0 },
-		{ TV_SWORD, SV_DAGGER },
-		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL }
-	},
-
-	{
 		/* Mimic */
 		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
 		{ TV_SWORD, SV_LONG_SWORD },
 		{ TV_HARD_ARMOR, SV_CHAIN_MAIL }
 	},
 
-	{
-		/* Unbeliever */
-		{ TV_POTION, SV_POTION_BESERK_STRENGTH },
-		{ TV_SWORD, SV_DARK_SWORD },
-		{ TV_HARD_ARMOR, SV_CHAIN_MAIL }
-	},
-
-	{
+        {
 		/* Archer */
 		{ TV_HUNT_BOOK, 0 },
 		{ TV_ARROW, SV_AMMO_MAGIC },
 		{ TV_BOW, SV_LONG_BOW }
-	},
-
-	{
-		/* Monk */
-		{ TV_POTION, SV_POTION_HEALING },
-		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
-		{ TV_AMULET, SV_AMULET_RESIST_ACID },
-	},
-
-	{
-		/* Telepath */
-		{ TV_PSI_BOOK, 0 },
-		{ TV_SOFT_ARMOR, SV_ROBE },
-		{ TV_SWORD, SV_DAGGER }
 	},
 };
 
@@ -1136,7 +1101,6 @@ void admin_outfit(int Ind, int realm)
 	(void)inven_carry(Ind, o_ptr);
 
 	/* gimme books :) */
-	//		for (i = p_ptr->pclass == CLASS_WARRIOR?0:1; i < 9; i++)
 	if (0 <= realm && realm < MAX_REALM)
 	{
 #if 0

@@ -2187,7 +2187,8 @@ static void do_slash_cmd(int Ind, char *message)
 		/* '/cast' code is written by Ascrep(DEG). thx! */
 		else if (prefix(message, "/cast"))
 		{
-			int book, whichplayer, whichspell;
+#if 0 // TODO: make that work without dependance on CLASS_
+                        int book, whichplayer, whichspell;
 			bool ami = FALSE;
 #if 0
 			token[0]=strtok(message," ");
@@ -2369,7 +2370,8 @@ static void do_slash_cmd(int Ind, char *message)
 			}
 
 //			msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer); 
-			return;
+#endif
+                        return;
 		}
 		/* Take everything off */
 		else if ((prefix(message, "/bed")) ||

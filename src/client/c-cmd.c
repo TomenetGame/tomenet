@@ -142,7 +142,7 @@ void cmd_all_in_one(void)
 		case TV_FIGHT_BOOK:
 		{
 //			if ((*item_tester_magicable)(&inventory[item]))
-			if (p_ptr->pclass == CLASS_WARRIOR)
+			if (get_skill(SKILL_TECHNIC))
 			{
 				 do_fight(item);
 			}
@@ -157,17 +157,17 @@ void cmd_all_in_one(void)
 
 
 		case TV_PRAYER_BOOK:
-		{
-			if (class != CLASS_PRIEST && class != CLASS_PALADIN)
-        	{
-				c_msg_print("You pray.");
-			}
-			else
-			{
-				do_pray(item);
-			}
-			break;
-        }
+                        {
+                                if (!get_skill(SKILL_PRAY))
+                                {
+                                        c_msg_print("You pray.");
+                                }
+                                else
+                                {
+                                        do_pray(item);
+                                }
+                                break;
+                        }
 
 		/* NOTE: 'item' isn't actually sent */
 		case TV_SPIKE:
@@ -1503,44 +1503,6 @@ void cmd_throw(void)
 
 static bool item_tester_browsable(object_type *o_ptr)
 {
-#if 0 // Test: everybody can browse, doesnt mean everybody can use
-        if (((p_ptr->pclass == CLASS_MAGE) || (p_ptr->pclass == CLASS_RANGER)) &&
-	    (o_ptr->tval == TV_MAGIC_BOOK))
-	{
-		return TRUE;
-	}
-	if (((p_ptr->pclass == CLASS_PRIEST) || (p_ptr->pclass == CLASS_PALADIN)) &&
-	    (o_ptr->tval == TV_PRAYER_BOOK))
-	{
-		return TRUE;
-	}
-	
-	if ((p_ptr->pclass == CLASS_SORCERER) && (o_ptr->tval == TV_SORCERY_BOOK))
-	{
-		return TRUE;
-	}
-	
-	if ((p_ptr->pclass == CLASS_ROGUE) && (o_ptr->tval == TV_SHADOW_BOOK))
-	{
-		return TRUE;
-	}
-	
-	if ((p_ptr->pclass == CLASS_ARCHER) && (o_ptr->tval == TV_HUNT_BOOK))
-	{
-		return TRUE;
-	}
-	
-	if ((p_ptr->pclass == CLASS_WARRIOR) && (o_ptr->tval == TV_FIGHT_BOOK))
-	{
-		return TRUE;
-	}
-
-	if ((p_ptr->pclass == CLASS_TELEPATH) && (o_ptr->tval == TV_PSI_BOOK))
-	{
-		return TRUE;
-	}
-        return FALSE;
-#else	// same with item_tester_magicable
 	if ((o_ptr->tval == TV_MAGIC_BOOK)) return TRUE;
 
 	if ((o_ptr->tval == TV_SORCERY_BOOK)) return TRUE;
@@ -1556,7 +1518,6 @@ static bool item_tester_browsable(object_type *o_ptr)
 	if (o_ptr->tval == TV_PRAYER_BOOK) return TRUE;
 
         return FALSE;
-#endif
 }
 
 void cmd_browse(void)
@@ -1634,7 +1595,7 @@ void cmd_pray(void)
 {
 	int item;
 
-	if (class != CLASS_PRIEST && class != CLASS_PALADIN)
+	if (!get_skill(SKILL_PRAY))
 	{
 		c_msg_print("Pray hard enough and your prayers may be answered.");
 		return;
@@ -1668,7 +1629,7 @@ void cmd_fight(void)
 {
 	int item;
 
-	if (class != CLASS_WARRIOR)
+	if (get_skill(SKILL_TECHNIC))
 	{
 		c_msg_print("You are not strong enough.");
 		return;

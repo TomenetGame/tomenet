@@ -1668,7 +1668,7 @@ bool set_invuln(int Ind, int v)
 	{
 		if (p_ptr->invuln)
 		{	/* Keeps the 2 turn GOI from getting annoying. DEG */
-			if ((p_ptr->pclass == CLASS_MAGE) && (p_ptr->lev > 44))
+			if (get_skill(p_ptr, SKILL_MAGERY) > 44)
 			{
 				msg_print(Ind, "You feel vulnerable once more.");
 			}

@@ -172,10 +172,7 @@ void prt_sp(int max, int cur)
 	char tmp[32];
 	byte color;
 
-	if (p_ptr->pclass == CLASS_WARRIOR)
-		put_str("Max ST ", ROW_MAXSP, COL_MAXSP);
-	else
-		put_str("Max SP ", ROW_MAXSP, COL_MAXSP);
+        put_str("Max SP ", ROW_MAXSP, COL_MAXSP);
 
 	sprintf(tmp, "%5d", max);
 	color = TERM_L_GREEN;
@@ -183,10 +180,7 @@ void prt_sp(int max, int cur)
 	c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP + 7);
 
 
-	if (p_ptr->pclass == CLASS_WARRIOR)
-		put_str("Cur ST ", ROW_CURSP, COL_CURSP);
-  	else
-		put_str("Cur SP ", ROW_CURSP, COL_CURSP);
+        put_str("Cur SP ", ROW_CURSP, COL_CURSP);
 		
 	sprintf(tmp, "%5d", cur);
 
@@ -371,7 +365,7 @@ void prt_state(bool paralyzed, bool searching, bool resting)
 
 	else if (searching)
 	{
-		if (player.pclass != CLASS_ROGUE)
+		if (get_skill(SKILL_STEALTH) <= 10)
 		{
 			strcpy(text, "Searching ");			
 		}
@@ -504,39 +498,9 @@ void prt_basic(void)
 {
 	cptr r=NULL, c=NULL;
 
-	switch(race)
-	{
-		case 0: r = "Human"; break;
-		case 1: r = "Half-elf"; break;
-		case 2: r = "Elf"; break;
-		case 3: r = "Hobbit"; break;
-		case 4: r = "Gnome"; break;
-		case 5: r = "Dwarf"; break;
-		case 6: r = "Half-orc"; break;
-		case 7: r = "Half-troll"; break;
-		case 8: r = "Dunadan"; break;
-		case 9: r = "High-elf"; break;
-		case RACE_YEEK: r = "Yeek"; break;
-		case RACE_GOBLIN: r = "Goblin"; break;
-		case RACE_ENT: r = "Ent"; break;
-		case RACE_DRIDER: r = "DragonRider"; break;
-	}
+        r = p_ptr->rp_ptr->title;
 
-	switch(class)
-	{
-		case 0: c = "Warrior"; break;
-		case 1: c = "Warlock"; break;
-		case 2: c = "Priest"; break;
-		case 3: c = "Rogue"; break;
-		case 4: c = "Ranger"; break;
-		case 5: c = "Paladin"; break;
-		case CLASS_SORCERER: c = "Sorceror"; break;
-		case CLASS_MIMIC: c = "Mimic"; break;
-		case CLASS_UNBELIEVER: c = "Unbeliever"; break;
-		case CLASS_ARCHER: c = "Archer"; break;
-		case CLASS_MONK: c = "Monk"; break;
-		case CLASS_TELEPATH: c = "Telepath"; break;
-	}
+        c = p_ptr->cp_ptr->title;
 
 	prt_field((char *)r, ROW_RACE, COL_RACE);
 	prt_field((char *)c, ROW_CLASS, COL_CLASS);

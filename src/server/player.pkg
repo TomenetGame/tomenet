@@ -102,22 +102,6 @@ typedef unsigned int u32b;
 #define RACE_ENT   	12
 #define RACE_DRIDER   	13
 
-/*
- * Player class constants (hard-coded by save-files, arrays, etc)
- */
-#define CLASS_WARRIOR		0
-#define CLASS_MAGE		1
-#define CLASS_PRIEST		2
-#define CLASS_ROGUE		3
-#define CLASS_RANGER		4
-#define CLASS_PALADIN		5
-#define CLASS_SORCERER		6
-#define CLASS_MIMIC		7
-#define CLASS_UNBELIEVER	8
-#define CLASS_ARCHER		9
-#define CLASS_MONK              10
-#define CLASS_TELEPATH		11
-
 struct worldpos{
 	s16b wx;	/* west to east */
 	s16b wy;	/* south to north */

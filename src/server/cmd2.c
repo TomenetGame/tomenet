@@ -2330,8 +2330,8 @@ void do_cmd_fire(int Ind, int dir)
 	/* Check if monsters around him/her hinder this */
 	/* TODO: this should be affected by 'archery' skill */
 //	if (interfere(Ind, p_ptr->pclass == CLASS_ARCHER ? 12 : 15)) return;
-	if (interfere(Ind, 20 *
-				(100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
+        if (interfere(Ind, 20 *
+                      (100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
 		return;
 
 	if (!boomerang && cursed_p(o_ptr) && magik(50))
@@ -2344,13 +2344,14 @@ void do_cmd_fire(int Ind, int dir)
 	magic = ((o_ptr->sval == SV_AMMO_MAGIC) && !cursed_p(o_ptr))?TRUE:FALSE;
 
 	/* Ricochets ? */
-	//        if (cp_ptr->magic_key == MKEY_FORGING)
+        //        if (cp_ptr->magic_key == MKEY_FORGING)
+#if 0 // DG - no
 	if (p_ptr->pclass == CLASS_ARCHER && !magic && !boomerang)
 	{
 		num_ricochet = (p_ptr->lev / 10) - 1;
 		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
 	}
-
+#endif
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
 	throw_obj.number = 1;

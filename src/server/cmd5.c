@@ -2941,7 +2941,6 @@ void do_cmd_pray(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-//		if (interfere(Ind, p_ptr->pclass == CLASS_PRIEST ? 2 : 3)) return;
 //		if (interfere(Ind, cfg.spell_interfere)) return;
 		if (interfere(Ind, cfg.spell_interfere *
 					(100 - get_skill_scale(p_ptr, SKILL_PRAY, 50)) / 100))
@@ -4741,7 +4740,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 					q_ptr = Players[i];
 
 					/* Disguising into a rogue is .. mhh ... stupid */
-					if (q_ptr->pclass == CLASS_ROGUE) continue;
+					if (q_ptr->pclass == p_ptr->pclass) continue;
 					
 					/* Ok we found a good class lets mimic */
 					what = q_ptr->pclass;
@@ -4749,7 +4748,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 				}
 				
 				/* Arg nothing .. bah be a warrior */
-				if (!tries) what = CLASS_WARRIOR;
+				if (!tries) what = CLASS_ADVENTURER;
 			
 				set_mimic(Ind, p_ptr->tim_mimic + 20 + randint(20) + plev + get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 150), what);
 				break;

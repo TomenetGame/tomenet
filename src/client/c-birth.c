@@ -537,14 +537,6 @@ void get_char_info(void)
 	choose_class();
 
 	class_extra = 0;	
-	switch (class)
-	{
-		case CLASS_MAGE:
-		{
-//			choose_class_mage();
-			break;
-		}
-	}
 		
 	/* Choose stat order */
 	choose_stat_order();

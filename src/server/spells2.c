@@ -2306,7 +2306,7 @@ bool detect_trap(int Ind, int rad)
 	dun_level		*l_ptr;
 //	int		py = p_ptr->py, px = p_ptr->px;
 
-	int		i, j, chance, t_idx;
+	int		i, j, t_idx;
 
 	bool	detect = FALSE;
 
@@ -2317,7 +2317,6 @@ bool detect_trap(int Ind, int rad)
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
 	l_ptr = getfloor(wpos);
-	chance = (p_ptr->pclass == CLASS_ROGUE ? 75 : 50) + p_ptr->lev / 4;
 
 	/* Scan the current panel */
 //	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
@@ -2347,10 +2346,6 @@ bool detect_trap(int Ind, int rad)
 
 				if (!c_ptr->special.sc.trap.found)
 				{
-					/* Hack -- check for failure */
-#if TRAP_DETECTION_FAILURE /* DG -- NO ! */
-					if (!magik(chance)) continue;
-#endif
 					/* Pick a trap */
 					pick_trap(wpos, i, j);
 				}

@@ -1274,8 +1274,10 @@ int Receive_char_info(void)
 		return n;
 	}
 
-	p_ptr->prace = race;
-	p_ptr->pclass = class;
+        p_ptr->prace = race;
+        p_ptr->rp_ptr = &race_info[race];
+        p_ptr->pclass = class;
+        p_ptr->cp_ptr = &class_info[class];
 	p_ptr->male = sex;
 
 	/* Mega-hack -- Read pref files if we haven't already */

@@ -282,10 +282,7 @@ void show_browse(int book)
 void do_study(int book)
 {
 	int j;
-	cptr p = ((class == CLASS_PRIEST || class == CLASS_PALADIN) ? "prayer" : "spell");
-
-	if (p_ptr->pclass == CLASS_WARRIOR)
-		p = "technic";
+	cptr p = "spell";
 
 	/* Priest -- Learn random spell */
 	if (!strcmp(p, "prayer"))

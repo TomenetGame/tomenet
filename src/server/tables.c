@@ -1441,7 +1441,7 @@ player_race race_info[MAX_RACES] =
 		66,  6, 130, 15,
 		62,  6, 100, 10,
 		2,
-                0xFFFFFFFF - BITS(CLASS_MIMIC) - BITS(CLASS_PALADIN),
+                0xFFFFFFFF,
                 110,
 	},
 
@@ -1454,7 +1454,7 @@ player_race race_info[MAX_RACES] =
 		60,  4, 100,  6,
 		54,  4, 80,  6,
 		3,
-                0xFFFFFFFF - BITS(CLASS_MIMIC) - BITS(CLASS_PALADIN) - BITS(CLASS_UNBELIEVER),
+                0xFFFFFFFF,
                 120,
 	},
 
@@ -1467,7 +1467,7 @@ player_race race_info[MAX_RACES] =
 		36,  3, 60,  3,
 		33,  3, 50,  3,
 		4,
-                0xFFFFFFFF - BITS(CLASS_PALADIN) - BITS(CLASS_MONK) - BITS(CLASS_TELEPATH),
+                0xFFFFFFFF,
                 90,
 	},
 
@@ -1480,7 +1480,7 @@ player_race race_info[MAX_RACES] =
 		42,  3, 90,  6,
 		39,  3, 75,  3,
 		4,
-                0xFFFFFFFF - BITS(CLASS_UNBELIEVER),
+                0xFFFFFFFF,
                 120,
 	},
 
@@ -1493,7 +1493,7 @@ player_race race_info[MAX_RACES] =
 		48,  3, 150, 10,
 		46,  3, 120, 10,
 		5,
-                0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER) - BITS(CLASS_TELEPATH),
+                0xFFFFFFFF,
                 95,
 	},
 
@@ -1506,7 +1506,7 @@ player_race race_info[MAX_RACES] =
 		66,  1, 150,  5,
 		62,  1, 120,  5,
 		3,
-                0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER) - BITS(CLASS_TELEPATH),
+                0xFFFFFFFF,
                 50,
 	},
 
@@ -1519,7 +1519,7 @@ player_race race_info[MAX_RACES] =
 		96, 10, 250, 50,
 		84,  8, 225, 40,
 		3,
-                0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER) - BITS(CLASS_TELEPATH),
+                0xFFFFFFFF,
                 20,
 	},
 
@@ -1545,7 +1545,7 @@ player_race race_info[MAX_RACES] =
 		90, 10, 190, 20,
 		82, 10, 180, 15,
 		4,
-                0xFFFFFFFF - BITS(CLASS_UNBELIEVER),
+                0xFFFFFFFF,
                 125,
 	},
 
@@ -1571,7 +1571,7 @@ player_race race_info[MAX_RACES] =
 		66,  1, 150,  5,
 		62,  1, 120,  5,
 		3,
-                0xFFFFFFFF - BITS(CLASS_SORCERER) - BITS(CLASS_TELEPATH),
+                0xFFFFFFFF,
                 70,
 	},
 
@@ -1584,7 +1584,7 @@ player_race race_info[MAX_RACES] =
 		72, 6, 100, 25,
 		66, 4, 100, 20,
 		5,
-                0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER),
+                0xFFFFFFFF,
                 90,
 	},
 	{
@@ -1596,7 +1596,7 @@ player_race race_info[MAX_RACES] =
                 180,  6, 255, 25,
                 150,  4, 230, 20,
                 0,
-                0xFFFFFFFF - BITS(CLASS_MIMIC),
+                0xFFFFFFFF,
                 95,
         },
 };
@@ -1618,6 +1618,7 @@ player_race race_info[MAX_RACES] =
  * Player Classes.
  *
  *   Title,
+ *   Color,
  *   {STR,INT,WIS,DEX,CON,CHR},
  *   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
@@ -1627,7 +1628,187 @@ player_race race_info[MAX_RACES] =
 player_class class_info[MAX_CLASS] =
 {
 	{
-		"Warrior",
+                "Adventurer",
+                TERM_VIOLET,
+		{ 0, 0, 0, 0, 0, 0},
+		20, 20, 20, 2,  15, 15, 50, 50,
+		10, 7,  10, 0,  0,  0,  25, 25,
+                4,  0,
+                {
+                        /* Combat tree */
+                        {
+                                SKILL_COMBAT,
+                                '+', 2000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_TECHNIC,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_SWORD,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_CRITS,
+                                '+', 0,
+                                '+', 450,
+                        },
+                        {
+                                SKILL_HAFTED,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_POLEARM,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_ARCHERY,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_HUNTING,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_SLING,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_BOW,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_XBOW,
+                                '+', 0,
+                                '+', 500,
+                        },
+
+                        /* Magic tree */
+                        {
+                                SKILL_MAGIC,
+                                '+', 2000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_SORCERY,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_CASTSPEED,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_MAGERY,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_SHADOW,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_SPELLLENGTH,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_MIMIC,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_PRAY,
+                                '+', 0,
+                                '+', 600,
+                        },
+
+                        /* Sneakiness tree */
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_DISARM,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_BACKSTAB,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_STEALTH,
+                                '+', 1000,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_STEALING,
+                                '+', 0,
+                                '+', 500,
+                        },
+
+                        /* Necromancy tree */
+                        {
+                                SKILL_NECROMANCY,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_AURA_POWER,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_AURA_FEAR,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_AURA_SHIVER,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_AURA_DEATH,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_ANTIMAGIC,
+                                '+', 0,
+                                '+', 500,
+                        },
+
+                }
+	},
+
+	{
+                "Warrior",
+                TERM_UMBER,
 		{ 5, -2, -2, 2, 2, -1},
 		25, 18, 18, 1,  14, 2, 70, 55,
 		10, 7,  10, 0,  0,  0,  45, 45,
@@ -1684,68 +1865,21 @@ player_class class_info[MAX_CLASS] =
                                 '+', 500,
                         },
                         {
-                                SKILL_BACKSTAB,
-                                '+', 500,
-                                '+', 500,
+                                SKILL_ANTIMAGIC,
+                                '+', 0,
+                                '+', 600,
                         },
                 }
 	},
 
 	{
-		"Warlock",
+                "Wizard",
+                TERM_RED,
 		{-5, 3, 0, 1, -2, 1},
 		30, 36, 30, 2,  16, 20, 34, 20,
 		7,  13, 9,  0,  0,  0,  15, 15,
 		0, 30,
-				/* XXX copied from sorc ones */
                 {
-                        {
-                                SKILL_MAGIC,
-                                '+', 6000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_MAGERY,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-						/* ok try it */
-                        {
-                                SKILL_SORCERY,
-                                '+', 500,
-                                '+', 200,
-                        },
-                }
-	},
-
-	{
-		"Priest",
-		{-1, -3, 3, -1, 0, 2},
-		25, 30, 32, 2,  16, 8, 48, 35,
-		7,  10, 12, 0,  0,  0, 20, 20,
-		2, 20,
-				/* XXX copied from sorc and mimic ones */
-                {
-                        {
-                                SKILL_MAGIC,
-                                '+', 2000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_PRAY,
-                                '+', 1000,
-                                '+', 1100,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 800,
-                        },
                         {
                                 SKILL_COMBAT,
                                 '+', 1000,
@@ -1757,15 +1891,92 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
                         {
-                                SKILL_POLEARM,
+                                SKILL_MAGIC,
+                                '+', 6000,
                                 '+', 1000,
+                        },
+                        {
+                                SKILL_MAGERY,
+                                '+', 1000,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_SORCERY,
+                                '+', 0,
                                 '+', 800,
+                        },
+                        {
+                                SKILL_CASTSPEED,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 1000,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_STEALTH,
+                                '+', 0,
+                                '+', 700,
                         },
                 }
 	},
 
 	{
-		"Rogue",
+		"Priest",
+                TERM_GREEN,
+                {-1, -3, 3, -1, 0, 2},
+		25, 30, 32, 2,  16, 8, 48, 35,
+		7,  10, 12, 0,  0,  0, 20, 20,
+		2, 20,
+                {
+                        {
+                                SKILL_COMBAT,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_MAGIC,
+                                '+', 2000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_PRAY,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 1000,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_STEALTH,
+                                '+', 0,
+                                '+', 700,
+                        },
+                }
+	},
+
+	{
+                "Rogue",
+                TERM_BLUE,
 		{ 2, 1, -2, 3, 1, -1},
 		45, 32, 28, 5, 32, 24, 60, 66,
 		15, 10, 10, 0,  0,  0, 40, 30,
@@ -1781,7 +1992,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 800,
                         },
-						/* cool if SKILL_DAGGER, none? :) */
                         {
                                 SKILL_SWORD,
                                 '+', 0,
@@ -1794,7 +2004,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_ARCHERY,
-                                '+', 500,
+                                '+', 0,
                                 '+', 800,
                         },
                         {
@@ -1805,7 +2015,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SHADOW,
                                 '+', 1000,
-                                '+', 1100,
+                                '+', 700,
                         },
                         {
                                 SKILL_DEVICE,
@@ -1835,155 +2045,9 @@ player_class class_info[MAX_CLASS] =
                 }
         },
 
-	{
-		"Ranger",
-		{ 2, 2, 0, 1, 1, 1},
-		30, 32, 28, 3,  24, 16, 56, 72,
-		8,  10, 10, 0,  0,  0,  30, 45,
-		4, 30,
-				/* XXX copied from sorc and mimic ones */
-                {
-                        {
-                                SKILL_MAGIC,
-                                '+', 2000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_MAGERY,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_COMBAT,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_ARCHERY,
-                                '+', 1000,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_BOW,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DISARM,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_STEALING,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_BACKSTAB,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                }
-	},
-
-	{
-		"Paladin",
-		{ 3, -3, 1, 0, 2, 2},
-		20, 24, 25, 1,  12, 2, 68, 40,
-		7,  10, 11, 0,  0,  0,  35, 30,
-		6, 35,
-				/* XXX copied from sorc and mimic ones */
-                {
-                        {
-                                SKILL_MAGIC,
-                                '+', 2000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_MAGERY,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_COMBAT,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_ARCHERY,
-                                '+', 1000,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_MAGIC,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_PRAY,
-                                '+', 1000,
-                                '+', 800,
-                        },
-                }
-	},
-
-	{
-		"Sorceror",
-		{-5, 5, 1, 0, -1, 0},
-		35, 40, 30, 2, 16, 20, 30, 20,
-		8,  15,  9, 0,  0,  0, 11, 15,
-		0, 30,
-                {
-                        {
-                                SKILL_MAGIC,
-                                '+', 6000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_CASTSPEED,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_SORCERY,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-                }
-	},
-
-	{
-		"Mimic",
+        {
+                "Mimic",
+                TERM_WHITE,
 		{ 1, 0, 0, 1, 1, -4},
 		25, 35, 28, 7, 18, 18, 60, 66,
 	         9, 10, 10, 0,  0,  0, 40, 30,
@@ -2019,72 +2083,26 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 600,
                         },
-                }
-	},
-	
-	{
-		"Unbeliever",
-		{ 5, -5, -5, 3, 3, 1},
-		25, 3, 32, 2,  18, 4, 75, 55,
-		15, 2, 14, 0,  0,  0, 50, 45,
-		9,  20,
-				/* XXX mere copy of that of Warrior */
-                {
                         {
-                                SKILL_COMBAT,
-                                '+', 3000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_SWORD,
+                                SKILL_SNEAKINESS,
                                 '+', 0,
                                 '+', 800,
                         },
                         {
-                                SKILL_HAFTED,
+                                SKILL_STEALTH,
                                 '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_POLEARM,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_ARCHERY,
-                                '+', 1000,
                                 '+', 700,
-                        },
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 500,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_DISARM,
-                                '+', 500,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_BACKSTAB,
-                                '+', 500,
-                                '+', 500,
                         },
                 }
 	},
 
 	{
-		"Archer",
+                "Archer",
+                TERM_L_GREEN,
 		{ 1, 0, 2, 3, 1, -1},
 		30, 32, 28, 2,  24, 20, 56, 82,
 		8,  10, 10, 0,  0,  0,  30, 55,
 		4, 30,
-				/* XXX mere copy of that of Warrior */
                 {
                         {
                                 SKILL_COMBAT,
@@ -2094,42 +2112,27 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MASTERY,
                                 '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_SWORD,
-                                '+', 0,
                                 '+', 700,
-                        },
-                        {
-                                SKILL_HAFTED,
-                                '+', 0,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_POLEARM,
-                                '+', 0,
-                                '+', 1000,
                         },
                         {
                                 SKILL_ARCHERY,
-                                '+', 3000,
                                 '+', 1000,
-                        },
-                        {
-                                SKILL_BOW,
-                                '+', 3000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 1000,
-                                '+', 800,
+                                '+', 900,
                         },
                         {
                                 SKILL_SLING,
+                                '+', 0,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_BOW,
+                                '+', 0,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_XBOW,
+                                '+', 0,
                                 '+', 1000,
-                                '+', 800,
                         },
                         {
                                 SKILL_HUNTING,
@@ -2148,68 +2151,12 @@ player_class class_info[MAX_CLASS] =
                         },
                 }
 	},
-
-	{
-		"Monk",
-		{ 2, -1, 1, 3, 2, 1},
-		45, 32, 28, 5, 32, 24, 64, 60,
-		15, 11, 10, 0,  0,  0, 40, 30,
-		6, 40,
-						/* I'm not quite sure what a Monk should be like.. */
-                        {
-                                SKILL_SNEAKINESS,
-                                '+', 1000,
-                                '+', 1000,
-                        },
-	},
-
-	{
-		"Telepath",
-		{ -1, 1, 3, 0, 0, 4},
-		30, 30, 30, 1,  26, 30, 42, 30,
-		7,  13, 6,  0,  0,  0,  20, 20,
-		0, 20,
-				/* XXX copied from sorc and mimic ones */
-                {
-                        {
-                                SKILL_MAGIC,
-                                '+', 2000,
-                                '+', 1000,
-                        },
-                        {
-                                SKILL_DEVICE,
-                                '+', 1000,
-                                '+', 800,
-                        },
-#if 0
-                        {
-                                SKILL_PSI,
-                                '+', 1000,
-                                '+', 1100,
-                        },
-#endif	// 0
-                        {
-                                SKILL_MAGERY,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_COMBAT,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                        {
-                                SKILL_MASTERY,
-                                '+', 1000,
-                                '+', 700,
-                        },
-                }
-	},
 };
 /*
  * Player Classes.
  *
  *   Title,
+ *   color,
  *   {STR,INT,WIS,DEX,CON,CHR},
  *   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
@@ -3626,6 +3573,20 @@ byte chest_traps[64] =
  */
 cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 {
+	/* Adventurer */
+	{
+		"Adventurer",
+		"Adventurer",
+		"Adventurer",
+		"Adventurer",
+		"Adventurer",
+		"Adventurer",
+		"Adventurer",
+		"Adventurer",
+		"Adventurer",
+		"Adventurer",
+	},
+
 	/* Warrior */
 	{
 		"Rookie",
@@ -3681,76 +3642,19 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"Master Thief",
 		"Assassin",
 	},
-
-	/* Rangers */
-	{
-		"Runner",
-		"Strider",
-		"Scout",
-		"Courser",
-		"Tracker",
-		"Guide",
-		"Pathfinder",
-		"Low Ranger",
-		"High Ranger",
-		"Ranger Lord",
-	},
-
-	/* Paladins */
-	{
-		"Gallant",
-		"Keeper",
-		"Protector",
-		"Defender",
-		"Warder",
-		"Knight",
-		"Guardian",
-		"Low Paladin",
-		"High Paladin",
-		"Paladin Lord",
-	},
-
-	/* Sorcerer */
-	{
-		"Novice",
-		"Apprentice",
-		"Trickster",
-		"Illusionist",
-		"Spellbinder",
-		"Evoker",
-		"Conjurer",
-		"Warlock",
-		"Spellmaster",
-		"Sorcerer",
-	},
-
 	/* Mimic */
 	{
-	  "Copier",
-	  "Copier",
-	  "Modifier",
-	  "Multiple",
-	  "Multiple",
-	  "Changer",
-	  "Metamorph",
-	  "Metamorph",
-	  "Shapeshifter",
-	  "Shapeshifter",
-	},
-	
-	/* Unbeliever */
-	{
-                "Asker",
-                "Thinker",
-                "Faithless",
-                "Critic",
-                "Betrayer",
-                "Renegate",
-                "Undisciple",
-                "Disbeliever",
-                "Knower",
-                "Magicbane",
-	},
+                "Copier",
+                "Copier",
+                "Modifier",
+                "Multiple",
+                "Multiple",
+                "Changer",
+                "Metamorph",
+                "Metamorph",
+                "Shapeshifter",
+                "Shapeshifter",
+        },
 
         /* Archer */
 	{
@@ -3764,34 +3668,6 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
                 "Archer",
                 "Archer",
                 "Great Archer",
-	},
-
-	/* Monk */
-	{
-		"Initiate",
-		"Brother",
-		"Disciple",
-		"Immaculate",
-		"Master",
-		"Soft Master",
-		"Hard Master",
-		"Flower Master",
-		"Dragon Master",
-		"Grand Master",
-	},
-
-	/* Telepath */
-	{
-		"Novice",
-		"Talent",
-		"Empath",
-		"Mindbender",
-		"Mindcrafter",
-		"Psionicist",
-		"Clairvoyant",
-		"Telepath",
-		"Meta",
-		"Pegasus Rider",
 	},
 };
 

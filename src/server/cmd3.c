@@ -250,10 +250,6 @@ static bool item_tester_hook_wear(int Ind, int slot)
 	}
 	else
 	{
-		if ((p_ptr->pclass == CLASS_MONK) &&
-			(slot == INVEN_WIELD || slot == INVEN_BOW || slot == INVEN_AMMO) )
-			return FALSE;
-
 		/* Check for a usable slot */
 		if (slot >= INVEN_WIELD)
 		{
@@ -1336,11 +1332,11 @@ void do_cmd_steal(int Ind, int dir)
 	notice += 1 * (UNAWARENESS(q_ptr) - UNAWARENESS(p_ptr));
 
 	/* Hack -- Rogues get bonuses to chances */
-	if (p_ptr->pclass == CLASS_ROGUE)
+	if (get_skill(p_ptr, SKILL_STEALING))
 	{
 		/* Increase chance by level */
-		success += 3 * p_ptr->lev;
-		notice -= 3 * p_ptr->lev;
+		success += get_skill_scale(p_ptr, SKILL_STEALING, 150);
+		notice -= get_skill_scale(p_ptr, SKILL_STEALING, 150);
 	}
 
 	/* Always small chance to fail */

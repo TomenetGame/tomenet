@@ -930,10 +930,6 @@ bool monst_check_grab(int Ind, int m_idx)
 		/* Compute distance */
 		if (distance(y2, x2, q_ptr->py, q_ptr->px) > 1) continue;
 
-		/* Monk only */
-		/* XXX maybe Warrior too? */
-		if (q_ptr->pclass != CLASS_MONK) continue;
-
 		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed)
 			continue;
 
@@ -3865,9 +3861,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	/* Tease the player */
 	else if (r_ptr->flags7 & RF7_AI_ANNOY)
 	{
-//		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < 4)
 		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < ANNOY_DISTANCE)
-//			&& !(r_ptr->flags2 & RF2_SMART && p_ptr->pclass == CLASS_ARCHER))
 		{
 			y = -y;
 			x = -x;

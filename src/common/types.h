@@ -1336,6 +1336,8 @@ struct player_class
 {
 	cptr title;			/* Type of class */
 
+        byte color;                     /* @ color */
+
 	s16b c_adj[6];		/* Class stat modifier */
 
 	s16b c_dis;			/* class disarming */

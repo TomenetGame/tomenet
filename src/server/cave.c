@@ -919,34 +919,7 @@ static byte player_color(int Ind)
 	if (p_ptr->tim_mimic) pcolor = p_ptr->tim_mimic_what;
 
 	/* Color is based off of class */
-	switch (pcolor)
-	{
-		case CLASS_WARRIOR:
-			return TERM_UMBER;
-		case CLASS_MAGE:
-			return TERM_RED;
-		case CLASS_PRIEST:
-			return TERM_GREEN;
-		case CLASS_ROGUE:
-			return TERM_BLUE;
-		case CLASS_RANGER:
-			return TERM_L_WHITE;
-		case CLASS_PALADIN:
-			return TERM_L_BLUE;
-		case CLASS_SORCERER:
-			return TERM_ORANGE;
-		case CLASS_UNBELIEVER:
-			return TERM_L_DARK;
-		case CLASS_ARCHER:
-			return TERM_L_GREEN;
-		case CLASS_MONK:
-			return TERM_SLATE;
-		case CLASS_TELEPATH:
-			return TERM_YELLOW;
-	}
-
-	/* Oops */
-	return TERM_WHITE;
+	return p_ptr->cp_ptr->color;
 }
 
 

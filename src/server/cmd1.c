@@ -1346,7 +1346,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 				k = p_ptr->lev;
 			if (p_ptr->fruit_bat)
 				k = p_ptr->lev * ((p_ptr->lev / 10) + 1);
-
+#if 0 // DGDGDG -- monks are no more
 			if (p_ptr->pclass == CLASS_MONK)
 			{
 				int special_effect = 0, stun_effect = 0, times = 0;
@@ -1418,10 +1418,10 @@ void py_attack_player(int Ind, int y, int x, bool old)
 						set_stun(0 - c_ptr->m_idx, q_ptr->stun + stun_effect);
 					}
 				}
-			}
-
+			} else
+#endif
 			/* Handle normal weapon */
-			else if (o_ptr->k_idx)
+			if (o_ptr->k_idx)
 			{
 				k = damroll(o_ptr->dd, o_ptr->ds);
 				k = tot_dam_aux_player(o_ptr, k, q_ptr);
@@ -1730,7 +1730,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				
 			if (p_ptr->fruit_bat)
 				k = p_ptr->lev * ((p_ptr->lev / 10) + 1);
-
+#if 0 // DGHDGDGDG -- monks are no more
 			if (p_ptr->pclass == CLASS_MONK)
 			{
 				int special_effect = 0, stun_effect = 0, times = 0;
@@ -1829,10 +1829,10 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 						m_ptr->stunned += (stun_effect);
 					}
 				}
-			}
-
+			} else
+#endif
 			/* Handle normal weapon */
-			else if (o_ptr->k_idx)
+			if (o_ptr->k_idx)
 			{
 				k = damroll(o_ptr->dd, o_ptr->ds);
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr);

@@ -1193,7 +1193,6 @@ static void calc_mana(int Ind)
 		}
 	}
 
-        if (p_ptr->pclass != CLASS_WARRIOR) new_mana = new_mana * p_ptr->rp_ptr->mana / 100;
         if (new_mana <= 0) new_mana = 1;
 
 	/* Sorcery helps mana */
@@ -1611,7 +1610,8 @@ void calc_body_bonus(int Ind)
 
 bool monk_heavy_armor(int Ind)
 {
-	player_type *p_ptr = Players[Ind];
+#if 0 // DGDGDGDG -- no more monks for the time being
+        player_type *p_ptr = Players[Ind];
 	u16b monk_arm_wgt = 0;
 
 	if (!(p_ptr->pclass == CLASS_MONK)) return FALSE;
@@ -1625,6 +1625,7 @@ bool monk_heavy_armor(int Ind)
 	monk_arm_wgt += p_ptr->inventory[INVEN_FEET].weight;
 
 	return (monk_arm_wgt > ( 100 + (p_ptr->lev * 4))) ;
+#endif
 }
 
 /* Are all the weapons wielded of the right type ? */
@@ -1968,6 +1969,7 @@ static void calc_bonuses(int Ind)
 		}
 	}
 
+#if 0 // DGDGDGDG -- skill powa !
 	switch(p_ptr->pclass)
 	{
 		case CLASS_MONK:
@@ -1987,7 +1989,7 @@ static void calc_bonuses(int Ind)
 			p_ptr->pspeed += p_ptr->lev / 6;
 			break;
 	}
-
+#endif
         /* Compute antimagic */
         if (get_skill(p_ptr, SKILL_ANTIMAGIC))
         {
@@ -2305,16 +2307,7 @@ static void calc_bonuses(int Ind)
 
 		/* Limit use of disenchanted DarkSword for non-unbe */
 		minus = o_ptr->to_h + o_ptr->to_d + pval + o_ptr->to_a;
-#if 0	/* Now there're many other ways to get antimagic */
-		/* if ((minus < 0) && (q_ptr->pclass != CLASS_UNBELIEVER)) minus = 0; */
-		if (p_ptr->pclass != CLASS_UNBELIEVER)
-		{
-			if (minus < -p_ptr->lev / 2) minus = -p_ptr->lev / 2;
-			if (minus < -40) minus = -40;
-		}
-#else
 		if (minus < 0) minus = 0;
-#endif
 
 		if (f4 & (TR4_ANTIMAGIC_50) && minus < 50)
 		{
@@ -2449,7 +2442,7 @@ static void calc_bonuses(int Ind)
 			p_ptr->window |= (PW_PLAYER);
 		}
 	}
-
+#if 0 // DGDGDGDGDG - no monks ffor the time being
 	/* Monks get extra ac for armour _not worn_ */
 	if ((p_ptr->pclass == CLASS_MONK) && !(monk_heavy_armor(Ind)))
 	  {
@@ -2484,7 +2477,7 @@ static void calc_bonuses(int Ind)
 		p_ptr->dis_to_a += (p_ptr->lev / 3);
 	      }
 	  }
-
+#endif
 	/* Apply temporary "stun" */
 	if (p_ptr->stun > 50)
 	{
@@ -2661,7 +2654,7 @@ static void calc_bonuses(int Ind)
 	/* -APD- adding "stealth mode" for rogues... will probably need to tweek this */
 	if (p_ptr->searching) 
 	{
-		if (p_ptr->pclass != CLASS_ROGUE) p_ptr->pspeed -= 10;
+		if (get_skill(p_ptr, SKILL_STEALTH) >= 10) p_ptr->pspeed -= 10;
 		else 
 		{
 			p_ptr->pspeed -= 10;
@@ -2830,11 +2823,14 @@ static void calc_bonuses(int Ind)
 		/* Analyze the class */
 		switch (p_ptr->pclass)
 		{
+			/* Adevnturer */
+			case CLASS_ADVENTURER: num = 5; wgt = 35; mul = 6; break;
+
 			/* Warrior */
 			case CLASS_WARRIOR: num = 6; wgt = 30; mul = 5; break;
 
 			/* Mage */
-			case CLASS_MAGE:    num = 5; wgt = 40; mul = 2; break;
+			case CLASS_MAGE:    num = 4; wgt = 40; mul = 2; break;
 
 			/* Priest */
 			case CLASS_PRIEST:  num = 5; wgt = 35; mul = 3; break;
@@ -2842,29 +2838,11 @@ static void calc_bonuses(int Ind)
 			/* Rogue */
 			case CLASS_ROGUE:   num = 5; wgt = 30; mul = 3; break;
 
-			/* Ranger */
-			case CLASS_RANGER:  num = 5; wgt = 35; mul = 4; break;
-
-			/* Paladin */
-			case CLASS_PALADIN: num = 5; wgt = 30; mul = 4; break;
-
-			/* Sorcerer */
-			case CLASS_SORCERER:num = 1; wgt = 40; mul = 2; break;
-
-			/* Telepath */
-			case CLASS_TELEPATH:num = 4; wgt = 30; mul = 3; break;
-
 			/* Mimic */
 			case CLASS_MIMIC:   num = 4; wgt = 30; mul = 3; break;
-			
-			/* Unbeliever */
-			case CLASS_UNBELIEVER: num = 7; wgt = 40; mul = 4; break;
 
 			/* Archer */
 			case CLASS_ARCHER:   num = 3; wgt = 30; mul = 3; break;
-
-			/* Monk */
-			case CLASS_MONK:     num = (p_ptr->lev<40?3:4); wgt = 40; mul = 4; break;
 		}
 
 		/* Enforce a minimum "weight" (tenth pounds) */
@@ -2909,7 +2887,8 @@ static void calc_bonuses(int Ind)
         }
 
 	/* Different calculation for monks with empty hands */
-	if (p_ptr->pclass == CLASS_MONK)
+#if 0 // DGDGDGDG -- no more monks for the time being
+        if (p_ptr->pclass == CLASS_MONK)
 	{
 		p_ptr->num_blow = 0;
 
@@ -2934,7 +2913,7 @@ static void calc_bonuses(int Ind)
 			p_ptr->dis_to_d += (p_ptr->lev / 3);
 		}
 	}
-
+#endif
 
 	/* Hell mode is HARD */
 	if ((p_ptr->mode == MODE_HELL) && (p_ptr->num_blow > 1)) p_ptr->num_blow--;
@@ -3049,10 +3028,12 @@ static void calc_bonuses(int Ind)
 	}
 	else
 	{
-		if (p_ptr->pclass == CLASS_MONK) 
+#if 0 // DGDGDGDG -- no more monks for the time being
+                if (p_ptr->pclass == CLASS_MONK)
 		{
 			p_ptr->skill_stl += (p_ptr->lev/10); /* give a stealth bonus */
-		}
+                }
+#endif
 	}
 
 

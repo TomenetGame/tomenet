@@ -173,7 +173,7 @@
 /*
  * Maximum number of player "class" types (see "table.c", etc)
  */
-#define MAX_CLASS	12
+#define MAX_CLASS       7
 
 /*
  * Maximum number of parties to allow.  If, while trying to create a new
@@ -635,18 +635,13 @@
 /*
  * Player class constants (hard-coded by save-files, arrays, etc)
  */
-#define CLASS_WARRIOR		0
-#define CLASS_MAGE		1
-#define CLASS_PRIEST		2
-#define CLASS_ROGUE		3
-#define CLASS_RANGER		4
-#define CLASS_PALADIN		5
-#define CLASS_SORCERER		6
-#define CLASS_MIMIC		7
-#define CLASS_UNBELIEVER	8
-#define CLASS_ARCHER		9
-#define CLASS_MONK		10
-#define CLASS_TELEPATH		11
+#define CLASS_ADVENTURER	0
+#define CLASS_WARRIOR		1
+#define CLASS_MAGE		2
+#define CLASS_PRIEST		3
+#define CLASS_ROGUE		4
+#define CLASS_MIMIC		5
+#define CLASS_ARCHER		6
 
 /*
  * Define the realms
@@ -4837,9 +4832,7 @@ extern int PlayerUID;
 			(value > base ? value << ((value - base)/step) : value )	
 
 #define is_fighter(p_ptr) \
-	((p_ptr->pclass == CLASS_WARRIOR) || \
-	 (p_ptr->pclass == CLASS_UNBELIEVER) || \
-	 (p_ptr->pclass == CLASS_MONK))
+	((p_ptr->pclass == CLASS_WARRIOR))
 
 #define is_admin(p_ptr) (p_ptr->admin_wiz || p_ptr->admin_dm)
 
@@ -4983,4 +4976,4 @@ extern int PlayerUID;
 #define SKF1_HIDDEN             0x00000001      /* Starts hidden */
 
 /* Skill points per level */
-#define SKILL_NB_BASE           4
+#define SKILL_NB_BASE           6
