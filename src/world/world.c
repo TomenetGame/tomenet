@@ -12,6 +12,8 @@
 
 #define MAX(x,y) (x > y ? x : y)
 
+extern int bpipe;
+
 struct secure secure;
 struct serverinfo slist[MAX_SERVERS];
 int snum=0;
@@ -168,6 +170,11 @@ void relay(struct wpacket *wpk, struct client *talker){
 	for(ccl=clist; ccl; ccl=ccl->next){
 		if(ccl!=talker){
 			send(ccl->fd, wpk, sizeof(struct wpacket), 0); 
+			/* Temporary stderr output */
+			if(bpipe){
+				fprintf(stderr, "SIGPIPE from relay (fd: %d)\n", ccl->fd);
+				bpipe=0;
+			}
 		}
 	}
 }

@@ -1,8 +1,11 @@
 /* player lists */
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "world.h"
+
+extern int bpipe;
 
 struct rplist *rpmlist=NULL;
 
@@ -21,6 +24,11 @@ void send_rplay(struct client *ccl){
 		spk.d.play.silent=1;
 		strncpy(spk.d.play.name, c_pl->name, 30);
 		send(ccl->fd, &spk, len, 0);
+		/* Temporary stderr output */
+		if(bpipe){
+			fprintf(stderr, "SIGPIPE from send_rplay (fd: %d)\n", ccl->fd);
+			bpipe=0;
+		}
 		c_pl=c_pl->next;
 	}
 }

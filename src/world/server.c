@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <signal.h>
 #include <netinet/in.h>
 
 #include <errno.h>
@@ -16,12 +17,16 @@
 struct sockaddr_in sa;
 
 void loadservers();
+void sig_pipe(int num);
+
+int bpipe=0;
 
 int main(int argc, char *argv[]){
 	int ser;
 	initrand();
 	loadservers();
 	ser=createsocket(PORT, ADDR);
+	signal(SIGPIPE, sig_pipe);	/* Catch SIGPIPE... */
 	if(ser!=-1){
 		world(ser);
 		close(ser);
@@ -66,4 +71,11 @@ void loadservers(){
 	} while(!feof(fp) && i<MAX_SERVERS);
 	snum=i;
 	fclose(fp);
+}
+
+void sig_pipe(int num){
+	signal(SIGPIPE, SIG_IGN);
+	fprintf(stderr, "Broken pipe signal received\n");
+	bpipe=1;
+	signal(SIGPIPE, &sig_pipe);
 }

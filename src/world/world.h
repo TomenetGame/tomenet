@@ -16,6 +16,8 @@
 #define WP_AUTH		8	/* server authing */
 #define WP_SQUIT	9	/* server quits */
 #define WP_RESTART	10	/* servers quit now */
+#define WP_LACCOUNT	11	/* login account */
+#define WP_NEWID	12	/* new player id (blocks) */
 
 /* now we are going to be the server which authenticates
  * the players. Once they are logged in, they will receive
@@ -98,6 +100,15 @@ struct lock{
 	unsigned long obj;	/* lock object by number (monster, item etc.) */
 };
 
+/* Block of unused Player IDs for the server to hand out 
+ * these should be requested BEFORE they are needed in order
+ * to avoid delays
+ */
+struct idblock{
+	int numids;
+	unsigned long startid;
+};
+
 struct smsg{
 	char stxt[160];		/* may need more info than this sometime */
 };
@@ -112,5 +123,6 @@ struct wpacket{
 		struct player play;
 		struct auth auth;
 		struct lock lock;
+		struct idblock ids;
 	} d;
 };
