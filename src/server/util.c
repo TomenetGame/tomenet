@@ -2869,13 +2869,6 @@ void player_talk_aux(int Ind, cptr message)
 	int mycolor = 0;
 	bool admin = p_ptr->admin_wiz || p_ptr->admin_dm;
 
-	switch((i=censor(message))){
-		default:
-			imprison(Ind, i*20, "swearing");
-		case 1:	msg_print(Ind, "Please do not swear");
-		case 0:
-	}
-
 	p_ptr->msgcnt++;
 	if(p_ptr->msgcnt>12){
 		time_t last=p_ptr->msg;
@@ -3025,6 +3018,13 @@ void player_talk_aux(int Ind, cptr message)
 	for (i = 1; i <= NumPlayers; i++)
 	{
 		if (check_ignore(i, Ind)) continue;
+		switch((i=censor(message))){
+			default:
+				imprison(Ind, i*20, "swearing");
+			case 1:	msg_print(Ind, "Please do not swear");
+			case 0:
+		}
+
 
 		/* Send message */
 		if (!me)
