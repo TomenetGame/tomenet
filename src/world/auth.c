@@ -10,7 +10,7 @@
 
 char salt[21];
 
-long chk(char *s1, char *s2);
+unsigned long chk(char *s1, char *s2);
 char *rpgen(char *dest);
 
 void initrand(){
@@ -46,7 +46,7 @@ char *rpgen(char *dest){
 }
 
 /* return server number, or -1 on failure */
-short pwcheck(char *cpasswd, long val){
+short pwcheck(char *cpasswd, unsigned long val){
 	int i;
 	for(i=0; i<snum; i++){
 		if(val==chk(slist[i].pass, cpasswd)){
@@ -58,10 +58,12 @@ short pwcheck(char *cpasswd, long val){
 }
 
 /* unified, hopefully unique password check function */
-long chk(char *s1, char *s2){
+unsigned long chk(char *s1, char *s2){
 	unsigned int i, j=0;
 	int m1, m2;
-	static long rval[2]={0, 0};
+	static unsigned long rval[2]={0, 0};
+	rval[0]=0L;
+	rval[1]=0L;
 	m1=strlen(s1);
 	m2=strlen(s2);
 	for(i=0; i<m1; i++){
@@ -78,7 +80,6 @@ long chk(char *s1, char *s2){
 		rval[0]+=s2[j];
 		j=(unsigned long)rval[0]%m2;
 		rval[0]<<=(3+rval[1]%3);
-		printf("j:%d\n", j);
 	}
 	return(rval[0]+rval[1]);
 }
