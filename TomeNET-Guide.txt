@@ -2875,35 +2875,58 @@ Some shops offer an *identify* service but they are quite expensive.
 
 If you sell an item to a shop the offer you will receive depends on
 the following:
+
 Item is not identified at all -> the offered cash will equal the value of the
                                  basic item type, eg 300 Au for a long sword
                                  or 20 Au for an unknown potion.
+
 Item has been pseudo-identified -> shops won't buy items that have a bad
                                    pseudo-identification. 'average' items will
                                    sell for the value of the basic item type.
                                    good/excellent/special items will sell for
-                                   basic value too so you better identify
-                                   them!
-Item has been identified -> the shop will pay you fully for all boni that are
-                            very obvious (like +STRength or Extra Attacks or
-                            Life/Mana) and also add a decent bonus for each
-                            of the up to two ego powers an item can have
-                            (prefix/suffix, eg 'Fiery' Dagger of 'Slaying').
+                                   their basic value too so you better
+                                   identify them to get more money for them!
+
+Item has been identified -> the shop will pay you fully for all those boni
+                            that are either very obvious (like +STRength or
+                            Extra Attacks or Life/Mana) or which are always
+                            granted to this kind of ego item (for example
+                            'weapons of *Slay Evil*' always give 'ESP evil').
+
                             However, the shop won't offer money for 'hidden'
                             abilities like resistances or ESP which aren't
-                            so obvious. To make the shop pay for these you'll
-                            need to fully identify the item, this is called
-                            *identifying* (note the asterisks).
+                            obvious and which are randomly bestowed upon
+                            this type of ego item. (Most ego items have
+                            one or more random powers!)
+                            To make the shop pay for these unknown powers
+                            too you'll need to fully identify the item,
+                            this is called *identifying* (note the asterisks).
                             To do this, there are scrolls of *Identify*,
                             staves of *Perception* as well as the spell
                             'Greater Identify'.
+                            If your item turns out to lack any hidden powers
+                            you wasted the *Identify* scroll, but that's not
+                            a big deal.
+
 Item has been identified and is a true artifact -> the shop will pay a fixed
                                                    price which is predefined
                                                    for each true artifact.
-Item has been identified and is cursed -> the shops never buy cursed items,
-                                          that might change if you uncurse
+                                                   You don't need to *ID* it.
+
+Item has been identified and is a randart -> Shops will usually offer between
+                                             10,000 and 15,000 Au for unknown
+                                             randarts, but never more than the
+                                             item is really worth. You should
+                                             _always_ *identify* your randarts
+                                             to discover all their hidden
+                                             abilities, so shopkeepers will
+                                             pay a lot more.
+
+Item has been identified and is cursed -> the shops never buy cursed items.
+                                          That might change if you uncurse
                                           it and if the item hasn't only bad
-                                          boni on it.
+                                          (negative) boni on it.
+
 Shop prices in general may slightly vary depending on the shop owner's race
 and your character's race.
 
@@ -2971,7 +2994,8 @@ AGGRAVATE ('It aggravates nearby creatures')
 LUCK ('The item increases your luck')
         If you are lucky, your chance to find better items increases.
         Luck caps at 40, having higher bonus won't help any more.
-        The higher your luck is, the more diminishing is the effect.
+        The higher your luck is, the more diminishing is the effect of
+        increasing it even more.
 NO_MAGIC ('Antimagic shell')
         Raises your saving throw to 95%, making you nearly immune to any
         malicious magical influence (like paralysation). Also prevents
