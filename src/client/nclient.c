@@ -1397,9 +1397,9 @@ int Receive_stat(void)
 	int	n;
 	char	ch;
 	char	stat;
-	s16b	max, cur, s_ind;
+	s16b	max, cur, s_ind, cur_base;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%hd", &ch, &stat, &max, &cur, &s_ind)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%hd%hd", &ch, &stat, &max, &cur, &s_ind, &cur_base)) <= 0)
 	{
 		return n;
 	}
@@ -1407,11 +1407,12 @@ int Receive_stat(void)
 	p_ptr->stat_top[(int) stat] = max;
 	p_ptr->stat_use[(int) stat] = cur;
 	p_ptr->stat_ind[(int) stat] = s_ind;
+	p_ptr->stat_cur[(int) stat] = cur_base;
 
 	if (!screen_icky && !shopping)
-		prt_stat(stat, max, cur);
+		prt_stat(stat, max, cur, cur_base);
 	else
-		if ((n = Packet_printf(&qbuf, "%c%c%hd%hd%hd", ch, stat, max, cur, s_ind)) <= 0)
+		if ((n = Packet_printf(&qbuf, "%c%c%hd%hd%hd%hd", ch, stat, max, cur, s_ind, cur_base)) <= 0)
 		{
 			return n;
 		}

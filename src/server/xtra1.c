@@ -114,8 +114,7 @@ s16b modify_stat_value(int value, int amount)
 static void prt_stat(int Ind, int stat)
 {	
 	player_type *p_ptr = Players[Ind];
-
-	Send_stat(Ind, stat, p_ptr->stat_top[stat], p_ptr->stat_use[stat], p_ptr->stat_ind[stat]);
+	Send_stat(Ind, stat, p_ptr->stat_top[stat], p_ptr->stat_use[stat], p_ptr->stat_ind[stat], p_ptr->stat_cur[stat]);
 }
 
 

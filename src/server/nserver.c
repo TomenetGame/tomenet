@@ -3387,7 +3387,7 @@ int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body)
 	return Packet_printf(&connp->c, "%c%hu%hu%hu%hu%s", PKT_VARIOUS, hgt, wgt, age, sc, body);
 }
 
-int Send_stat(int ind, int stat, int max, int cur, int s_ind)
+int Send_stat(int ind, int stat, int max, int cur, int s_ind, int cur_base)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -3413,11 +3413,11 @@ int Send_stat(int ind, int stat, int max, int cur, int s_ind)
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%c%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind);
+		Packet_printf(&connp2->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, cur_base);
 	      }
 	  }
 
-	return Packet_printf(&connp->c, "%c%c%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind);
+	return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, cur_base);
 }
 
 int Send_history(int ind, int line, cptr hist)

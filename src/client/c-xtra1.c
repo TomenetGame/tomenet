@@ -79,7 +79,7 @@ void cnv_stat(int val, char *out_val)
 /*
  * Print character stat in given row, column
  */
-void prt_stat(int stat, int max, int cur)
+void prt_stat(int stat, int max, int cur, int cur_base)
 {
 	char tmp[32];
 
@@ -94,7 +94,14 @@ void prt_stat(int stat, int max, int cur)
 	{
 		Term_putstr(0, ROW_STAT + stat, -1, TERM_WHITE, (char*)stat_names[stat]);
 		cnv_stat(cur, tmp);
-		Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_L_GREEN, tmp);
+		if(cur_base < (18 + 100))
+		{
+			Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_L_GREEN, tmp);
+		}
+		else
+		{
+			Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_L_UMBER, tmp);
+		}
 	}
 }
 
@@ -1276,7 +1283,14 @@ void display_player(int hist)
                         cnv_stat(value, buf);
 
                         /* Display the maximum stat (modified) */
-                        c_put_str(TERM_L_GREEN, buf, 2 + i, 73);
+			if(p_ptr->stat_cur[i] < (18 + 100))
+			{
+                    		c_put_str(TERM_L_GREEN, buf, 2 + i, 73);
+			}
+			else
+			{
+                    		c_put_str(TERM_L_UMBER, buf, 2 + i, 73);
+			}
                 }
 
                 /* Normal treatment of "normal" stats */
@@ -1289,7 +1303,14 @@ void display_player(int hist)
                         cnv_stat(p_ptr->stat_use[i], buf);
 
                         /* Display the current stat (modified) */
-                        c_put_str(TERM_L_GREEN, buf, 2 + i, 66);
+			if(p_ptr->stat_cur[i] < (18 + 100))
+			{
+    		                c_put_str(TERM_L_GREEN, buf, 2 + i, 66);
+			}
+			else
+			{
+    		                c_put_str(TERM_L_UMBER, buf, 2 + i, 66);
+			}
                 }
         }
 

@@ -338,7 +338,7 @@ extern void c_store_prt_gold(void);
 extern void display_store_action();
 
 /* c-xtra1.c */
-extern void prt_stat(int stat, int max, int cur);
+extern void prt_stat(int stat, int max, int cur, int cur_base);
 extern void prt_title(cptr title);
 extern void prt_level(int level, int max, int cur, int adv);
 extern void prt_gold(int gold);
