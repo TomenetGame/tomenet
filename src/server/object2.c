@@ -4859,6 +4859,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		{
 			a_ptr = &a_info[o_ptr->name1];
 		}
+		if(a_ptr==(artifact_type*)NULL){
+			o_ptr->name1=0;
+			return;
+		}
 
 		/* Hack -- Mark the artifact as "created" */
 		a_ptr->cur_num = 1;
@@ -5164,6 +5168,11 @@ void determine_level_req(int level, object_type *o_ptr)
 		if (o_ptr->name1 == ART_RANDART)
 		{
 			a_ptr =	randart_make(o_ptr);
+			if(a_ptr==(artifact_type*)NULL){
+				o_ptr->name1=0;
+				o_ptr->level=0;
+				return;
+			}
 
 			/* level of randarts tends to be outrageous */
 			base = a_ptr->level / 2;
