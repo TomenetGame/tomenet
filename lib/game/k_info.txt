@@ -2294,7 +2294,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 
 
 
-##### Staffs #####
+##### Staves #####
 
 N:300:Trap Location
 G:_:d
@@ -3788,6 +3788,7 @@ I:35:3:0
 W:20:0:30:300
 A:20/2:30/2
 P:3:0d0:0:0:0
+F:IGNORE_WATER
 
 #N:532:Water Curing
 #G:!:d
@@ -3814,6 +3815,7 @@ I:36:8:0
 W:15:0:110:400
 A:15/1
 P:8:1d1:-1:0:0
+F:IGNORE_WATER
 
 N:536:Leather Jacket~
 G:(:U
@@ -3821,6 +3823,7 @@ I:36:12:0
 W:20:0:130:550
 A:20/3
 P:12:1d2:-1:0:0
+F:IGNORE_WATER
 
 ##### New weapons #####
 
