@@ -1,13 +1,13 @@
 ':' to chat **********************************************************
-'?' to help **   TomeNET 4.0.0    **   The Troubles of Middle Earth **
+'?' to help **   TomeNET 4.0.0a   **   The Troubles of Middle Earth **
             **********************************************************
 
                "One Ring to rule them all, One Ring to find them
             One Ring to bring them all and in the darkness bind them
                   In the land of Mordor where the shadows lie"
                                 "Lord of The Rings", J.R.R.Tolkien
- - Detect traps can NOT fail (Pfft)
  - TomeNET 4.0.0 development version
+ - Detect traps can NOT fail;  detection spells are radius-based now.
  - skill system is being implemented. ('G' to check and enhance)
  - items can stack on the floor now. (but not inside a house!)
  - A guild system is implemented.  - Player alignment is coming soon?
@@ -17,7 +17,7 @@
  - Save the game in town as far as possible, so as not to be buried alive.
  - Please don't abuse the system, so as not to have your character removed.
  - Client ver. 4.0.0 is needed. (will be available from URL below)
- - To learn about new features/changes, please see the help screen('?').
+ ** To learn about new features/changes, please see the help screen('?').
 
         Official TomeNET site - http://T-o-M-E.net/pernmangband/
     PernMAngband 4.x: DarkGod(darkgod@t-o-m-e.net) / TomeNET dev-team

@@ -1946,6 +1946,17 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 800,
                         },
+						/* let's give them some skills for non-swords */
+                        {
+                                SKILL_HAFTED,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_POLEARM,
+                                '+', 0,
+                                '+', 600,
+                        },
                         {
                                 SKILL_MAGIC,
                                 '+', 2000,
@@ -2126,13 +2137,13 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_BOW,
-                                '+', 0,
-                                '+', 700,
+                                '+', 1000,
+                                '+', 1000,
                         },
                         {
                                 SKILL_XBOW,
                                 '+', 0,
-                                '+', 1000,
+                                '+', 700,
                         },
                         {
                                 SKILL_HUNTING,
@@ -4402,7 +4413,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Antimagic",
-                "Aura that surrounds you and prevents monsters from casting spells.",
+                "Aura that surrounds you and prevents monsters from casting spells.\nBeware, you won't make an exception!",
 
                 /* Mkey desc/mkey */
                 NULL,

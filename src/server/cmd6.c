@@ -588,18 +588,6 @@ void do_cmd_quaff_potion(int Ind, int item)
 			ident = TRUE;
 			break;
                 }
-        case SV_POTION_LEARNING:
-                {
-                        ident = TRUE;
-
-                        /* gain skill points */
-			p_ptr->skill_points += 1;
-                        p_ptr->redraw |= PR_STUDY;
-
-                        msg_print(Ind, "You have one more skill point.");
-
-                        break;
-                }
 
 		case SV_POTION_SLEEP:
 		{
@@ -1083,6 +1071,16 @@ void do_cmd_quaff_potion(int Ind, int item)
 					p_ptr->update |= (PU_BONUS | PU_HP);
 				}
 								
+				break;
+			case SV_POTION2_LEARNING:
+				ident = TRUE;
+
+				/* gain skill points */
+				p_ptr->skill_points += 1;
+				p_ptr->redraw |= PR_STUDY;
+
+				msg_print(Ind, "You have one more skill point.");
+
 				break;
 		}
 	}

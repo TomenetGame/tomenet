@@ -2284,7 +2284,7 @@ static int Receive_play(int ind)
 	}
 	if (ch != PKT_PLAY)
 	{
-		/* Year it's noisy, but let's keep it for now */
+		/* Yeah it's noisy, but let's keep it for now */
 	  //		errno = 0;
 	  plog("Packet is not of play type");
 	  //Destroy_connection(ind, "not play");
