@@ -7387,8 +7387,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			break;
 		case GF_SOULCURE_PLAYER:
-			msg_print(Ind, "The hold of the Black Breath on you is broken!");
-			p_ptr->black_breath = FALSE;
+                        msg_print(Ind, "You feel a calming warmth touching your soul.");
+			if (p_ptr->black_breath) {
+				msg_print(Ind, "The hold of the Black Breath on you is broken!");
+				p_ptr->black_breath = FALSE;
+			}
 			break;
 
 		case GF_OLD_CONF:
