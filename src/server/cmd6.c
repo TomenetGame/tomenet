@@ -5707,6 +5707,11 @@ void do_cmd_activate(int Ind, int item)
 				/* Mimics only */
 				if(!(p_ptr->pclass==CLASS_MIMIC)) return;
 
+				if(o_ptr!=p_ptr->inventory[INVEN_LEFT] &&
+				  o_ptr!=p_ptr->inventory[INVEN_RIGHT]){
+					msg_print(Ind, "You must be wearing the ring!");
+					return;
+				}
 				/* If never used before, then set to the player form, otherwise set the player form*/
 				if (!o_ptr->pval)
 				{
