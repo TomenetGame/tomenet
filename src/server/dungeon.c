@@ -2024,7 +2024,7 @@ static void process_player_end(int Ind)
 
 			/* Recharge activatable objects */
 			/* (well, light-src should be handled here too? -Jir- */
-			if ((o_ptr->timeout > 0) && (o_ptr->tval != TV_LITE))
+			if ((o_ptr->timeout > 0) && ((o_ptr->tval != TV_LITE) || o_ptr->name1))
 			{
 				/* Recharge */
 				o_ptr->timeout--;

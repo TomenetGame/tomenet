@@ -1918,7 +1918,9 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				if (p_ptr->au < i * 10000 / 5)
 				{
-					msg_broadcast(Ind, "\377B%^s seems to hit a big time!");
+					char temp[80];
+					sprintf(temp, "\377B%s seems to hit the big time!", p_ptr->name);
+					msg_broadcast(Ind, temp);
 					set_confused(Ind, p_ptr->confused + rand_int(10) + 10);
 					set_image(Ind, p_ptr->image + rand_int(10) + 10);
 				}
