@@ -6124,6 +6124,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			y = gy[i];
 			x = gx[i];
 
+			if(!in_bounds(y,x)) continue;
 			/* Affect the object */
 			if (project_i(0 - who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
 		}
