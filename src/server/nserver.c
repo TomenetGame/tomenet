@@ -4613,37 +4613,37 @@ static int Receive_spell(int ind)
 	{
 		int tval = p_ptr->inventory[book].tval;
 		p_ptr->current_char = (old == player)?TRUE:FALSE;
-
-		if (get_skill(p_ptr, SKILL_SORCERY) && tval == TV_SORCERY_BOOK)
-		{
-			do_cmd_sorc(player, book, spell);
-		}
-/*
-                else if (get_skill(p_ptr, SKILL_SORCERY) && tval == TV_PSI_BOOK)
-		{
-			do_cmd_psi(player, book, spell);
-                        }
-                        */
-		else if (get_skill(p_ptr, SKILL_SHADOW) && tval == TV_SHADOW_BOOK)
-		{
-			do_cmd_shad(player, book, spell);
-		}
-		else if (get_skill(p_ptr, SKILL_HUNTING) && tval == TV_HUNT_BOOK)
-		{
-			do_cmd_hunt(player, book, spell);
-		}
-		else if (get_skill(p_ptr, SKILL_MAGERY) && tval == TV_MAGIC_BOOK)
-		{
-			do_cmd_cast(player, book, spell);
-		}
-		/* two more */
-		else if (get_skill(p_ptr, SKILL_TECHNIC) && tval == TV_FIGHT_BOOK)
-		{        
-			do_cmd_fight(player, book, spell);
-		}
-		else if (get_skill(p_ptr, SKILL_PRAY) && tval == TV_PRAYER_BOOK)
-		{
-			do_cmd_pray(player, book, spell);
+		switch(tval){
+			case TV_SORCERY_BOOK:
+				if(get_skill(p_ptr, SKILL_SORCERY))
+					do_cmd_sorc(player, book, spell);
+				break;
+			case TV_PSI_BOOK:
+#if 0
+				if(get_skill(p_ptr, SKILL_PSI))
+					do_cmd_psi(player, book, spell);
+#endif
+				break;
+			case TV_SHADOW_BOOK:
+				if(get_skill(p_ptr, SKILL_SHADOW))
+					do_cmd_shad(player, book, spell);
+				break;
+			case TV_HUNT_BOOK:
+				if(get_skill(p_ptr, SKILL_HUNTING))
+					do_cmd_hunt(player, book, spell);
+				break;
+			case TV_MAGIC_BOOK:
+				if(get_skill(p_ptr, SKILL_MAGERY))
+					do_cmd_cast(player, book, spell);
+				break;
+			case TV_FIGHT_BOOK:
+				if(get_skill(p_ptr, SKILL_TECHNIC))
+					do_cmd_fight(player, book, spell);
+				break;
+			case TV_PRAYER_BOOK:
+				if(get_skill(p_ptr, SKILL_PRAY))
+					do_cmd_pray(player, book, spell);
+				break;
 		}
 		return 2;
 	}

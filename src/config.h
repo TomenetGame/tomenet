@@ -79,7 +79,7 @@
  */
 /* #define SPECIAL_BSD */
 
-/* #define NETBSD */ /* pfft */
+#define NETBSD /* pfft */
 
 
 /*
