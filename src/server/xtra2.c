@@ -5030,10 +5030,10 @@ void player_death(int Ind)
 	}
 	else if (!p_ptr->total_winner) {
 		sprintf(buf, "\377D%s committed suicide.", p_ptr->name);
-		s_printf(buf, "%s committed suicide.\n", p_ptr->name);
+		s_printf("(%d) %s committed suicide.\n", p_ptr->lev, p_ptr->name);
 	} else {
 		sprintf(buf, "\377vThe unbeatable %s has retired to a warm, sunny climate.", p_ptr->name);
-		s_printf(buf, "%s committed suicide. (Retirement)\n", p_ptr->name);
+		s_printf("(%d) %s committed suicide. (Retirement)\n", p_ptr->lev, p_ptr->name);
 	}
 	/* Tell the players */
 	/* handle the secret_dungeon_master option */
@@ -5042,7 +5042,7 @@ void player_death(int Ind)
 #ifdef TOMENET_WORLDS
 		world_msg(buf);
 #endif	// TOMENET_WORLDS
-//		if(p_ptr->lev>1)
+/*		if(p_ptr->lev>1)*/
 			msg_broadcast(Ind, buf);
 /*		else{
 			for(i=1; i<=NumPlayers; i++)
