@@ -174,9 +174,10 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 }
 
 void kill_xfers(int ind){
-	struct ft_data *trav;
+	struct ft_data *trav, *next;
 	trav=fdata;
-	for(; trav; trav=trav->next){
+	for(; trav; trav=next){
+		next=trav->next;
 		if(!trav->id) continue;
 		if(trav->ind==ind){
 			close(trav->fd);
