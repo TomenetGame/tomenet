@@ -2334,6 +2334,13 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						}
 						break;
 					}
+					if(func==FILL_OBJECT){ /* object in house */
+						object_type *o_ptr=(object_type*)data;
+						if(o_ptr->ix==minx+(x-1) && o_ptr->iy==miny+(y-1)){
+							success=TRUE;
+							break;
+						}
+					}
 					if(func==FILL_CLEAR){
 						delete_object(wpos, miny+(y-1), minx+(x-1));
 						break;
