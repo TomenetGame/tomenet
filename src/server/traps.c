@@ -2029,7 +2029,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	 if (p_ptr->male) break;
 //	 p_ptr->psex = SEX_MALE;
 //	 sp_ptr = &sex_info[p_ptr->psex];
-	 p_ptr->male = FALSE;
+	 p_ptr->male = TRUE;
 	 ident = TRUE;
 	 break;
       }
