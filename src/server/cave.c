@@ -485,8 +485,8 @@ void check_Morgoth(void)
 			if (m_ptr->hp == m_ptr->maxhp)
 			{
 				m_ptr->hp -= tmphp * 2 / 3;
-				m_ptr->maxhp -= tmphp * 2 / 3;
 			}
+			m_ptr->maxhp -= tmphp * 2 / 3;
 			m_ptr->speed = (140 - 6) + (6 * num_on_depth);
 
 			/* log */
