@@ -1587,6 +1587,7 @@ void do_slash_cmd(int Ind, cptr message){
 		if (colon)
 		{
 			rfe_printf("[%s]%s\n", p_ptr->name, colon);
+			msg_print(Ind, "\377GThank you for sending us a message!");
 		}
 		else
 		{

@@ -34,174 +34,6 @@ V:3.3.0
 
 # Blow dice modifier is 'byte' type (0-255)!
 
-# Undead egos are of hack, until PernA monster system is
-# fully ported.		- Jir -
-# (now it's implemented so... DELETEME)
-
-#(kopT)
-#N:1:Skeleton
-#G:s:*
-#I:%100:+1d+1:+0:+5:=0
-#W:+5:13:%30:%95:B
-##F:DROP_SKELETON
-#F:R_CHAR_O | R_CHAR_P | R_CHAR_p | R_CHAR_o | R_CHAR_T
-#F:R_CHAR_k | R_CHAR_y | R_CHAR_n | R_CHAR_h
-##H:UNDEAD | NONLIVING | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g
-#H:UNDEAD | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g | R_CHAR_s
-##M:DROP_SKELETON | UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF | 
-#M:UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF | 
-#M:NO_SLEEP | EMPTY_MIND | COLD_BLOOD | STUPID | EVIL
-##O:GOOD | DROP_CORPSE | FRIEND | FRIENDS | ESCORT | ESCORTS | SMART | 
-#O:FRIEND | FRIENDS | ESCORT | ESCORTS | SMART | 
-#O:DROP_GREAT | DROP_GOOD | RAND_25 | RAND_50
-#T:MF_ALL
-#
-#N:2:Zombie
-#G:z:*
-#I:%95:%110d%100:%90:+10:=0
-#W:+10:14:%70:%100:B
-##F:DROP_CORPSE
-#F:R_CHAR_O | R_CHAR_P | R_CHAR_p | R_CHAR_o | R_CHAR_T
-#F:R_CHAR_k | R_CHAR_y | R_CHAR_n | R_CHAR_h
-##H:UNDEAD | NONLIVING | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g
-#H:UNDEAD | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g | R_CHAR_s
-##M:DROP_CORPSE | UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF
-#M:UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF | 
-#M:NO_SLEEP | EMPTY_MIND | COLD_BLOOD | STUPID | EVIL
-##O:GOOD | DROP_SKELETON | FRIEND | FRIENDS | ESCORT | ESCORTS | SMART
-#O:FRIEND | FRIENDS | ESCORT | ESCORTS | SMART
-##O:DROP_GREAT | DROP_GOOD | RAND_25 | RAND_50 | MORTAL
-#O:DROP_GREAT | DROP_GOOD | RAND_25 | RAND_50
-#T:MF_ALL
-#
-#N:3:Lich
-#G:L:*
-#I:%100:+0d+1:+10:+20:=0
-#W:+30:22:+0:%200:B
-#B:TOUCH:LOSE_DEX:+0d+0
-#B:TOUCH:LOSE_DEX:+0d+0
-#B:TOUCH:UN_POWER:+0d+0
-#B:TOUCH:EXP_40:+0d+0
-##F:DROP_SKELETON | SMART | R_CHAR_h | R_CHAR_p | R_CHAR_P | R_CHAR_O
-#F:SMART | R_CHAR_h | R_CHAR_p | R_CHAR_P | R_CHAR_O
-##H:UNDEAD | NONLIVING | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g
-#H:UNDEAD | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g | R_CHAR_s
-#H:R_CHAR_L
-##M:DROP_SKELETON | UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF
-#M:UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF
-#M:NO_SLEEP | SMART | EVIL | COLD_BLOOD
-##O:GOOD | DROP_CORPSE | FRIEND | FRIENDS | ESCORT | ESCORTS | 
-#O:FRIEND | FRIENDS | ESCORT | ESCORTS
-##O:DROP_GREAT | RAND_25 | RAND_50 | MORTAL
-#O:DROP_GREAT | RAND_25 | RAND_50
-#S:BLINK | TELE_TO | TELE_AWAY | BRAIN_SMASH | DRAIN_MANA | CURSE | 
-#S:BLIND | HOLD | SLOW | SCARE
-#
-#N:4:Spectral
-#G:G:*
-#I:+10:%80d%100:+10:+20:=0
-#W:+20:20:%10:%110:B
-#B:*:EXP_20:+0d+0
-#B:*:EXP_20:+0d+0
-##F:DROP_CORPSE
-#F:R_CHAR_O | R_CHAR_P | R_CHAR_p | R_CHAR_o | R_CHAR_T
-#F:R_CHAR_k | R_CHAR_y | R_CHAR_n | R_CHAR_h
-##H:UNDEAD | NONLIVING | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g
-#H:UNDEAD | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g | R_CHAR_s
-#M:DROP_CORPSE | UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF
-#M:NO_SLEEP | PASS_WALL | EVIL | COLD_BLOOD
-##O:GOOD | DROP_CORPSE | FRIEND | FRIENDS | ESCORT | ESCORTS | 
-#O:FRIEND | FRIENDS | ESCORT | ESCORTS
-##O:DROP_GREAT | EMPTY_MIND | RAND_50 | MORTAL
-#O:DROP_GREAT | EMPTY_MIND | RAND_50
-#S:1_IN_5 | BLIND | HOLD | SCARE
-#T:MF_ALL
-#
-## Some monsters (like orc captain, troll priest) should be removed
-## from r_info.txt; till then this file is hacked instead.
-## I eliminated stupid combinations as much as possible, but still
-## Ogre sharman Veteran Archers etc. can be generated.	- Jir -
-#
-## (o)
-#N:5:Captain
-#G:*:o
-#I:+5:%150d%100:+5:%120:=0
-#W:+5:4:%120:%150:A
-#B:*:*:+0d+1
-#B:*:*:+0d+1
-#B:*:*:+0d+1
-#B:*:*:+0d+1
-##F:R_CHAR_o | R_CHAR_y | R_CHAR_k | BASEANGBAND # orc captain already
-## hack - avoid Orc captain captain
-##H:DROP_90
-#F:R_CHAR_o | R_CHAR_O | R_CHAR_y | R_CHAR_k | BASEANGBAND
-#M:FORCE_MAXHP | FRIENDS | SMART | DROP_1D2
-#
-#N:6:Chieftain
-#G:*:*
-#I:+10:%200d%100:+10:%120:=0
-#W:+5:4:%120:%200:A
-#B:*:*:+1d+2
-#B:*:*:+1d+2
-#B:*:*:+1d+2
-#B:*:*:+1d+2
-#F:R_CHAR_T | R_CHAR_P | R_CHAR_O | BASEANGBAND
-#M:FORCE_MAXHP | FRIENDS | SMART | DROP_1D2
-#
-## (oO)
-#N:7:Shaman
-#G:*:r
-#I:+0:%90d%100:+10:%90:=0
-#W:+2:1:%90:%120:A
-#F:R_CHAR_o | R_CHAR_k | R_CHAR_n | BASEANGBAND
-##F:R_CHAR_k | R_CHAR_n | BASEANGBAND
-#M:SMART | FORCE_MAXHP | DROP_1D2
-#O:FRIENDS
-#S:1_IN_6 | MISSILE | CURSE | CONF | BLINK
-#
-## (T)
-#N:8:Priest
-#G:*:G
-#I:+0:%90d%100:+10:%90:=0
-#W:+3:2:%90:%120:A
-## hack - avoid Troll priest Priest
-##H:DROP_90
-#F:R_CHAR_T | R_CHAR_P | R_CHAR_O | BASEANGBAND
-#M:FRIENDS | SMART | FORCE_MAXHP | DROP_1D2
-#S:1_IN_6 | CURSE | MISSILE | DARKNESS | CONF | SCARE | BLINK
-#
-##(O)
-#N:9:Mage
-#G:*:r
-#I:+0:%150d%100:+10:%120:=0
-#W:+5:4:%120:%150:A
-#B:*:*:+0d+0
-#B:*:*:+0d+0
-#B:HIT:HURT:=2d=8
-#B:HIT:HURT:=2d=8
-## hack - no Titan / Ogre mage Mage
-#H:SMART | DROP_1D2
-#F:R_CHAR_P | R_CHAR_O | BASEANGBAND
-#M:SMART | FORCE_MAXHP | DROP_1D2
-#O:FRIENDS
-#S:1_IN_6 | BA_COLD | BO_FIRE | TRAPS | HEAL | HOLD | S_MONSTER | TPORT
-#
-#N:10:Archer
-#G:*:W
-#I:+0:+0d+0:+0:+0:=0
-#W:+1:1:%100:%110:A
-#F:R_CHAR_y | R_CHAR_k | R_CHAR_O | R_CHAR_o | BASEANGBAND
-## ban them to apeear on 50ft
-#M:FORCE_DEPTH
-#S:1_IN_4 | ARROW_1
-#
-#N:11:Rogue
-#G:*:b
-#I:+2:+0d+0:+0:+10:=0
-#W:+1:2:%90:%100:A
-#B:*:EAT_GOLD:+0d+0
-#F:R_CHAR_y | R_CHAR_k | R_CHAR_o
-#M:TAKE_ITEM | DROP_60
 
 N:1:Skeleton
 G:s:*
@@ -458,48 +290,11 @@ M:NO_FEAR | NO_SLEEP
 S:1_IN_5 | BLINK | TELE_TO
 #T:MF_ALL
 
-# Again, hacked undead egos for ANIMALs.
-
-#(kopT)
-#N:23:Skeleton
-#G:s:*
-#I:%100:+1d+1:+0:+5:=0
-#W:+5:13:%30:%95:B
-##F:DROP_SKELETON
-#F:ANIMAL
-##H:UNDEAD | NONLIVING | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g
-#H:UNDEAD | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g | R_CHAR_s
-#H:R_CHAR_$
-#H:WEIRD_MIND | EMPTY_MIND | MULTIPLY
-##M:DROP_SKELETON | UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF | 
-#M:UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF | 
-#M:NO_SLEEP | EMPTY_MIND | COLD_BLOOD | STUPID | EVIL
-#O:FRIEND | FRIENDS | ESCORT | ESCORTS | SMART | 
-#O:DROP_GREAT | DROP_GOOD | RAND_25 | RAND_50 | MORTAL
-#T:MF_ALL
-#
-#N:24:Zombie
-#G:z:*
-#I:%95:%110d%100:%90:+10:=0
-#W:+10:14:%70:%100:B
-##F:DROP_CORPSE
-#F:ANIMAL
-##H:UNDEAD | NONLIVING | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g
-#H:UNDEAD | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g | R_CHAR_s
-##M:DROP_CORPSE | UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF
-#M:UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF
-#M:NO_SLEEP | EVIL | EMPTY_MIND | COLD_BLOOD | STUPID | EVIL
-#H:WEIRD_MIND | EMPTY_MIND | MULTIPLY
-##O:GOOD | DROP_SKELETON | FRIEND | FRIENDS | ESCORT | ESCORTS | SMART
-#O:FRIEND | FRIENDS | ESCORT | ESCORTS | SMART
-##O:DROP_GREAT | DROP_GOOD | RAND_25 | RAND_50 | MORTAL
-#O:DROP_GREAT | DROP_GOOD | RAND_25 | RAND_50
-#T:MF_ALL
 
 N:23:Master Archer
 G:*:W
 I:+15:%200d%200:+20:+50:=0
-W:+30:4:%100:%140:A
+W:+30:4:%100:%500:A
 F:R_CHAR_y | R_CHAR_k | R_CHAR_O | R_CHAR_o | R_CHAR_T
 # hack - no Titan / Ogre mage V.Archer
 H:SMART | DROP_1D2
@@ -514,20 +309,16 @@ N:24:Tactical
 G:*:*
 I:+0:+0d+0:+0:+0:+0
 W:+10:20:+0:%200:B
-F:ANIMAL | R_CHAR_Z | R_CHAR_D | R_CHAR_d
+F:R_CHAR_Z | R_CHAR_D | R_CHAR_d
 # Hack -- avoid Tactical Clear Hound
 #H:ATTR_CLEAR 
-#M:NO_FEAR | NO_SLEEP
 M:AI_ANNOY
-#S:1_IN_5 | BLINK | TELE_TO
-#T:MF_ALL
-
 
 
 N:25:Holy
 G:*:v
 I:+50:%400d%400:+20:+50:=0
-W:+30:8:+0:%4000:B
+W:+30:12:+0:%4000:B
 B:*:*:%255d%255
 B:*:*:%255d%255
 B:*:*:%255d%255
@@ -556,7 +347,7 @@ S:S_MONSTER | S_UNDEAD | HEAL | HOLD
 N:27:Warrior
 G:*:*
 I:+10:%200d%150:+10:%120:=0
-W:+10:4:%120:%200:A
+W:+10:4:%120:%250:A
 B:*:*:%200d%200
 B:*:*:%200d%200
 B:*:*:%200d%200
@@ -585,11 +376,7 @@ N:29:(mimic)
 G:*:*
 I:+0:+0d+0:+0:+0:+0
 W:+0:120:+0:+0:A
-#F:R_CHAR_y | R_CHAR_k | R_CHAR_o | R_CHAR_T | R_CHAR_O
 H:R_CHAR_! | R_CHAR_? | R_CHAR_= | R_CHAR_> | R_CHAR_<
-#M:TAKE_ITEM | DROP_1D2
-#S:1_IN_10 | CONF | DARKNESS | TRAPS
-#T:MF_ALL
 
 N:30:Sorceror
 G:*:v
@@ -678,6 +465,27 @@ M:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | NO_FEAR
 S:1_IN_5 | 
 S:UNMAGIC
 T:MF_ALL
+
+N:36:Tactical
+G:*:*
+I:+0:+0d+0:+0:+0:+0
+W:+5:20:+0:%150:B
+F:ANIMAL
+M:AI_ANNOY
+
+N:37:Demented
+G:*:v
+I:+10:%100d%100:+10:%100:=0
+W:+10:15:%80:%180:B
+B:BITE:INSANITY:%50d%50
+B:*:*:+0d+0
+B:WAIL:TERRIFY:+0d+0
+B:*:*:+0d+0
+F:R_CHAR_P | R_CHAR_h | R_CHAR_y | R_CHAR_o | R_CHAR_p
+F:R_CHAR_k
+F:BASEANGBAND
+H:AI_ANNOY
+M:NO_FEAR | RAND_25
 
 
 # N:x:ego name

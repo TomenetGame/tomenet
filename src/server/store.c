@@ -725,7 +725,7 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 	ot_ptr = &owners[p_ptr->store_num][town[i].townstore[p_ptr->store_num].owner];
 
 	/* Get the value of one of the items */
-	price = object_value(Ind, o_ptr);
+	price = object_value(flip ? Ind : 0, o_ptr);
 
 	/* Worthless items */
 	if (price <= 0) return (0L);

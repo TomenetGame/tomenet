@@ -18,19 +18,23 @@ For further (and easy-to-read) documentation, please visit:
 Official Site   - http://www.pernmangband.org/
 Newbie Tutorial - http://www.ctt.ne.jp/~sap/mang/
 
-Latest changes for version 3.3.5a (digest):
+Latest changes for version 3.3.6b (digest):
 - Sanity point, which describes how distant you are from insanity.
+- Genocide spell is penalized; use it with attention!
 - New item system, including hundleds of new egos/artifacts.
 - Multiple towns/dungeons/towers implemented - try exploring the wilderness!
-- About 160 new traps added; They now are nasty foes!
+- About 170 new traps added; They now are nasty foes!
 - Ego monsters added; beware, they can be MUCH nastier!
 - YOU LOSE YOUR (non-random) ARTIFACT IF YOU LOOSE YOUR GRIP ON IT!
 - 50-350ft in dungeon cannot be static, so please SAVE IN TOWN.
 - You'll be protected by GoI for 2-turns after recall/stairs.
-- Some anti-cheeze rules are applied.
 - Temple priest gives you some $ when resurrecting, so don't suicide :)
 
 [Brief instruction for new commands]
+- Chat-line commands; enter '/' in chat-line for help.
+  + '/dis' DESTROYS everything w/o (non-system) inscription in your inventory.
+  + Please send us your ideas/bug-reports via '/rfe' command.
+  + '/rec -550' recalls you to -550ft, using an item inscribed {@R}.
 - You can use the following inscriptions for Word of Recall:
   + {@RW22,8} will lands you to (22,8) of the world map.
   + {@RT} lands you to the first town (where you start the game).
@@ -39,8 +43,6 @@ Latest changes for version 3.3.5a (digest):
 - Inscribe {@O} on missiles, and you'll fire them for auto-retaliation.
 - {@Oc} on a book makes you use the 'c' spell for auto-retaliation.
 - {@Ox} on any items and auto-retaliator will be disabled.
-- Chat-line commands; enter '/' in chat-line for help.
-  + '/dis' DESTROYS everything w/o (non-system) inscription in your inventory.
 - You can check players' equipments with "'" key under certain conditions.
 - '/' key can do many things (a,A,e,E,F,i,m,p,q,r,t,w,z,Z)
 

@@ -2638,7 +2638,7 @@ static void process_various(void)
 #endif /* if 0 */
 
 	/* Update the stores */
-	if (!(turn % (10L * STORE_TURNS)))
+	if (!(turn % (10L * cfg.store_turns)))
 	{
 		int n;
 

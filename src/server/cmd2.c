@@ -2245,7 +2245,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 		else
 			/* Magic Ammo are NOT allowed to be enchanted */
 		{
-			o_ptr->to_h = o_ptr->to_d = o_ptr->name1 = o_ptr->name2 = o_ptr->pval = 0;
+			o_ptr->to_h = o_ptr->to_d = o_ptr->name2 = o_ptr->pval = 0;
 			if (item >= 0)
 			{
 				inven_item_describe(Ind, item);

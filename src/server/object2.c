@@ -993,20 +993,19 @@ s32b flag_cost(object_type * o_ptr, int plusses)
  * more expensive than =int+2.
  * Probably, it's not formula job but that of table..?
  */
-static s32b object_value_real(object_type *o_ptr)
+static s32b object_value_real(int Ind, object_type *o_ptr)
 {
-	s32b value;
-
-	u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, esp, i;
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
-
-	/* Hack -- "worthless" items */
-	if (!k_ptr->cost) return (0L);
+	bool star = (Ind == 0 || object_fully_known_p(Ind, o_ptr));
 
 	/* Base cost */
-	value = k_ptr->cost;
+	s32b value = k_ptr->cost;
+
+	/* Hack -- "worthless" items */
+	if (!value) return (0L);
 
 
 	/* Extract some flags */
@@ -1022,17 +1021,22 @@ static s32b object_value_real(object_type *o_ptr)
 		if (o_ptr->name1 == ART_RANDART)
 		{
 			a_ptr = randart_make(o_ptr);
+			value = a_ptr->cost;
+
+			if (value && !star) value = (object_value_base(Ind, o_ptr) << 3) + 15000;
+			if (value > a_ptr->cost) value = a_ptr->cost;
 		}
 		else
 		{	
 			a_ptr = &a_info[o_ptr->name1];
+			value = a_ptr->cost;
 		}
 
 		/* Hack -- "worthless" artifacts */
-		if (!a_ptr->cost) return (0L);
+		if (!value) return (0L);
 
 		/* Hack -- Use the artifact cost instead */
-		value = a_ptr->cost;
+//		value = a_ptr->cost;
 	}
 
 	else
@@ -1049,7 +1053,7 @@ static s32b object_value_real(object_type *o_ptr)
 			value += e_ptr->cost;
 
 			/* Hope this won't cause inflation.. */
-			value += flag_cost(o_ptr, o_ptr->pval);
+			if (star) value += flag_cost(o_ptr, o_ptr->pval);
 
 
 #if 0	// see you later :)
@@ -1095,57 +1099,80 @@ static s32b object_value_real(object_type *o_ptr)
 		case TV_AMULET:
 		case TV_RING:
 		{
-			int count = 0, pval = o_ptr->pval;
+			/* they should be of bpval.. hopefully. */
+			int pval = o_ptr->bpval;
 //			int boost = 1 << pval;
 
 			/* Hack -- Negative "pval" is always bad */
 //			if (pval < 0) return (0L);
 
-			/* No pval */
-			if (!pval) break;
-
-			/* Give credit for stat bonuses */
-//			if (f1 & TR1_STR) value += (pval * 200L);
-//			if (f1 & TR1_STR) value += (boost * 200L);
-			if (f1 & TR1_STR) count++;
-			if (f1 & TR1_INT) count++;
-			if (f1 & TR1_WIS) count++;
-			if (f1 & TR1_DEX) count++;
-			if (f1 & TR1_CON) count++;
-			if (f1 & TR1_CHR) count++;
-
-			if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 200L;
-
-                        if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 500L);
-
-			/* Give credit for stealth and searching */
-			if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
-			if (f1 & TR1_SEARCH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
-
-			/* Give credit for infra-vision and tunneling */
-			if (f1 & TR1_INFRA) value += (PRICE_BOOST(pval, 3, 1) * 50L);
-			if (f1 & TR1_TUNNEL) value += (PRICE_BOOST(pval, 3, 1) * 50L);
-
-			/* Give credit for extra attacks */
-			if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 2000L);
-
-			/* Hack -- amulets of speed and rings of speed are
-			 * cheaper than other items of speed.
-			 */
-			if (o_ptr->tval == TV_AMULET)
+			for (i = 0; i < 2; i++)
 			{
-				/* Give credit for speed bonus */
-//				if (f1 & TR1_SPEED) value += (boost * 25000L);
-				if (f1 & TR1_SPEED) value += pval * pval * 5000L;
+				int count = 0;
+
+				/* No pval */
+				if (!pval)
+				{
+					pval = o_ptr->pval;
+					continue;
+				}
+
+				/* Give credit for stat bonuses */
+				//			if (f1 & TR1_STR) value += (pval * 200L);
+				//			if (f1 & TR1_STR) value += (boost * 200L);
+				if (f1 & TR1_STR) count++;
+				if (f1 & TR1_INT) count++;
+				if (f1 & TR1_WIS) count++;
+				if (f1 & TR1_DEX) count++;
+				if (f1 & TR1_CON) count++;
+				if (f1 & TR1_CHR) count++;
+
+				if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 200L;
+
+				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 500L);
+
+				/* Give credit for stealth and searching */
+				if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
+				if (f1 & TR1_SEARCH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
+
+				/* Give credit for infra-vision and tunneling */
+				if (f1 & TR1_INFRA) value += (PRICE_BOOST(pval, 3, 1) * 50L);
+				if (f1 & TR1_TUNNEL) value += (PRICE_BOOST(pval, 3, 1) * 50L);
+
+				/* Give credit for extra attacks */
+				if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
+
+				/* Give credit for extra casting */
+				if (f1 & TR1_SPELL) value += (PRICE_BOOST(pval, 0, 1) * 4000L);
+
+				/* Hack -- amulets of speed and rings of speed are
+				 * cheaper than other items of speed.
+				 */
+				if (o_ptr->tval == TV_AMULET)
+				{
+					/* Give credit for speed bonus */
+					//				if (f1 & TR1_SPEED) value += (boost * 25000L);
+					if (f1 & TR1_SPEED) value += pval * pval * 5000L;
+				}
+				else if (o_ptr->tval == TV_RING)
+				{
+					/* Give credit for speed bonus */
+					//				if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 50000L);
+					if (f1 & TR1_SPEED) value += pval * pval * 10000L;
+				}
+				//			else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
+				else if (f1 & TR1_SPEED) value += pval * pval * 20000L;
+
+				pval = o_ptr->pval;
+
+				if (o_ptr->name2)
+				{
+					artifact_type *a_ptr;
+
+					a_ptr =	ego_make(o_ptr);
+					f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
+				}
 			}
-			else if (o_ptr->tval == TV_RING)
-			{
-				/* Give credit for speed bonus */
-//				if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 50000L);
-				if (f1 & TR1_SPEED) value += pval * pval * 10000L;
-			}
-//			else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
-			else if (f1 & TR1_SPEED) value += pval * pval * 20000L;
 			break;
 		}
 	}
@@ -1284,7 +1311,7 @@ s32b object_value(int Ind, object_type *o_ptr)
 	s32b value;
 
 
-	/* Unknown items -- acquire a base value */
+	/* Known items -- acquire the actual value */
 	if (Ind == 0 || object_known_p(Ind, o_ptr))
 	{
 		/* Broken items -- worthless */
@@ -1294,10 +1321,10 @@ s32b object_value(int Ind, object_type *o_ptr)
 		if (cursed_p(o_ptr)) return (0L);
 
 		/* Real value (see above) */
-		value = object_value_real(o_ptr);
+		value = object_value_real(Ind, o_ptr);
 	}
 
-	/* Known items -- acquire the actual value */
+	/* Unknown items -- acquire a base value */
 	else
 	{
 		/* Hack -- Felt broken items */
@@ -4244,6 +4271,9 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		o_ptr->to_h = a_ptr->to_h;
 		o_ptr->to_d = a_ptr->to_d;
 		o_ptr->weight = a_ptr->weight;
+
+		/* Hack -- no bundled arts (esp.missiles) */
+		o_ptr->number = 1;
 
 		/* Hack -- extract the "broken" flag */
 		if (!a_ptr->cost) o_ptr->ident |= ID_BROKEN;

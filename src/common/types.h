@@ -1925,6 +1925,7 @@ struct server_opts
 	s16b town_base;
 	s16b dun_base;
 	s16b dun_max;
+	s16b store_turns;
 	bool report_to_meta;
 	bool secret_dungeon_master;
 	bool anti_arts_horde;

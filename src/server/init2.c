@@ -1782,6 +1782,10 @@ void set_server_option(char * option, char * value)
 	{
 		cfg.dun_base = atoi(value);
 	}
+	else if (!strcmp(option, "STORE_TURNS"))
+	{
+		cfg.store_turns = atoi(value);
+	}
 	else printf("Error : unrecognized mangband.cfg option %s\n", option);
 }
 

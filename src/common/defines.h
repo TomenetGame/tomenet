@@ -379,7 +379,8 @@
 #define STORE_MIN_KEEP	12		/* Min slots to "always" keep full */
 #define STORE_MAX_KEEP	36		/* Max slots to "always" keep full */
 #define STORE_SHUFFLE	20		/* 1/Chance (per day) of an owner changing */
-#define STORE_TURNS	200		/* Number of turns between turnovers */
+// #define STORE_TURNS	200		/* Number of turns between turnovers */
+// moved to mangband.cfg
 
 #if 0
 #define STORE_SHUFFLE	25		/* 1/Chance (per day) of an owner changing */
@@ -3103,7 +3104,7 @@ that keeps many algorithms happy.
 #define ID_EMPTY	0x04	/* Item charges are known */
 #define ID_KNOWN	0x08	/* Item abilities are known */
 #define ID_RUMOUR	0x10	/* Item background is known */
-#define ID_MENTAL	0x20	/* Item information is known */
+#define ID_MENTAL	0x20	/* Item information is known (*ID*-ed) */
 #define ID_CURSED	0x40	/* Item is temporarily cursed */
 #define ID_BROKEN	0x80	/* Item is permanently worthless */
 
@@ -3968,6 +3969,9 @@ that keeps many algorithms happy.
 #define object_known_p(IND, T) \
     (((T)->ident & ID_KNOWN) || \
      (k_info[(T)->k_idx].easy_know && Players[IND]->obj_aware[(T)->k_idx]))
+
+#define object_fully_known_p(IND, T) \
+	(object_known_p(IND,T) && ((T)->ident & ID_MENTAL))
 
 
 /*

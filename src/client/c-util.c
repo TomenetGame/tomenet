@@ -2304,6 +2304,7 @@ static void do_cmd_options_aux(int page, cptr info)
 
 			case '-':
 			case '8':
+			case 'k':
 			{
 				k = (n + k - 1) % n;
 				break;
@@ -2313,6 +2314,7 @@ static void do_cmd_options_aux(int page, cptr info)
 			case '\n':
 			case '\r':
 			case '2':
+			case 'j':
 			{
 				k = (k + 1) % n;
 				break;
@@ -2338,6 +2340,17 @@ static void do_cmd_options_aux(int page, cptr info)
 				break;
 			}
 
+			case 't':
+			case 'T':
+			case '5':
+			case 's':
+			{
+				bool tmp = 1 - (*option_info[opt[k]].o_var);
+				(*option_info[opt[k]].o_var) = tmp;
+				Client_setup.options[opt[k]] = tmp;
+				k = (k + 1) % n;
+				break;
+			}
 			default:
 			{
 				bell();

@@ -740,12 +740,16 @@ Change list for PernMangband
 01/03/2002 (Jir)
 - players can use /rec now (this applies item with {@R})
 - new monster: exploding coins
-- admin command: /en, /eq
+- admin command: /en(light), /eq(uipment)
 - SEVERE_GENO/RESIST_GENO compile-time option.
 - saving-throw is limited to 95 (4% fail) now.
 - door spiking (ctrl-s or '/')
 - /bug (/rfe), which leaves a message on server. {thx A.Dingle for idea}
 - admin can view log-file and rfe-file via client.
+- store buying-prices reflect *ID* states.
+- STORE_TURNS is moved to cfg struct.
+- mangband.cfg revised.
+[C] option-setting screen accepts 'j','k','s','t','5' keys.
 [C] server-list can display the whole players when crowded
 [B] strange colouring in unique list
 [B] some traps create 'phial' (INSTA_ARTS)
@@ -753,6 +757,8 @@ Change list for PernMangband
 [B] stormbringer was way too powerful (+8 attacks!!)
 [B] indestructible rings didn't work
 [B] a leveled spellcasters could cast with DarkSword.
+[B] artifact missiles could be bandled
+[B] store prices were confused with pval and bpval.
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
@@ -791,7 +797,6 @@ Change list for PernMangband
 - wilderness compacting
 - low-sanity alart each 2000 turn or sth(and 'flushback' hallucination?)
 - display "non-scoring mode" in '@' screen
-- store buying-price should reflect *ID* states
 [C] ameliorate option interface(toggle-key/vi-key)
 
 [major ones]
@@ -844,7 +849,7 @@ Change list for PernMangband
 		worldpos wpos;
 		int time;
 		char ly, lx, event_kind, magnitude;};
-- chat-line editor/history
+- chat-line editor/history (askfor_aux)
 - vanilla-Angband style houses
 - horizontal-connected caves (eg.[32,32,-40]=>[32,31,-40])
 - (re)new classes/races
