@@ -496,6 +496,7 @@ struct player_type
 	s16b fury;			/* Timed -- Furry */
 	s16b shield;		/* Timed -- Shield Spell */
 	s16b blessed;		/* Timed -- Blessed */
+	s16b blessed_power;
 	s16b tim_invis;		/* Timed -- See Invisible */
 	s16b tim_infra;		/* Timed -- Infra Vision */
 	s16b tim_wraith;	/* Timed -- Wraithform */
