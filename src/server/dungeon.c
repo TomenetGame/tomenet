@@ -2148,10 +2148,10 @@ static void process_player_end(int Ind)
 				/* One more person here */
 				players_on_depth[p_ptr->dun_depth]++;
 
-				/* He'll be safe for 2 turn */
-				set_invuln_short(Ind, 2);
-
 				p_ptr->new_level_flag = TRUE;
+
+				/* He'll be safe for 2 turns */
+				set_invuln_short(Ind, 2);
 			}
 		}
 	}
