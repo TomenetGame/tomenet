@@ -755,6 +755,8 @@ static int auto_retaliate(int Ind)
 	monster_race *r_ptr, *r_ptr2;
 	unsigned char * inscription;
 
+	if (p_ptr->new_level_flag) return 0;
+
 	for (d = 1; d <= 9; d++)
 	{
 		if (d == 5) continue;

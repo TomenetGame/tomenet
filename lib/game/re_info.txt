@@ -115,7 +115,10 @@ S:1_IN_5 | BLIND | HOLD | SCARE
 T:MF_ALL
 
 # Some monsters (like orc captain, troll priest) should be removed
-# from r_info.txt; till then this file is hacked instead.	- Jir -
+# from r_info.txt; till then this file is hacked instead.
+# I eliminated stupid combinations as much as possible, but still
+# Ogre sharman Veteran Archers etc. can be generated.	- Jir -
+
 # (o)
 N:5:Captain
 G:*:v
@@ -230,14 +233,14 @@ I:+0:%120d%100:%120:+20:=0
 W:+15:4:+100:%150:A
 B:HIT:HURT:%120d%100
 F:R_CHAR_D | POWERFUL
-M:FORCE_MAXHP | DROP_GREAT
+M:FORCE_MAXHP | DROP_GOOD
 S:HEAL | BLINK
 
 N:15:Drunk
 G:*:*
 I:+0:+0d+0:+0:+0:+10
 W:+1:4:%90:%80:A
-F:R_CHAR_y | R_CHAR_k | R_CHAR_o | R_CHAR_p
+F:R_CHAR_y | R_CHAR_k | R_CHAR_o | R_CHAR_p | R_CHAR_h
 H:NO_CONF
 M:RAND_25
 
@@ -277,6 +280,7 @@ G:*:*
 I:+0:+0d+0:+20:+0:=0
 W:+10:3:+0:%130:B
 F:R_CHAR_l | R_CHAR_I | R_CHAR_w | R_CHAR_, | R_CHAR_b
+F:R_CHAR_i
 H:EVIL
 S:1_IN_6 | MISSILE
 
@@ -349,6 +353,46 @@ O:FRIEND | FRIENDS | ESCORT | ESCORTS | SMART
 #O:DROP_GREAT | DROP_GOOD | RAND_25 | RAND_50 | MORTAL
 O:DROP_GREAT | DROP_GOOD | RAND_25 | RAND_50
 T:MF_ALL
+
+N:25:Holy
+G:*:v
+I:+50:%400d%400:+20:+50:=0
+W:+30:8:+0:%600:B
+B:*:*:%300d%300
+B:*:*:%300d%300
+B:*:*:%300d%300
+B:*:*:%300d%300
+F:ANIMAL
+H:WEIRD_MIND | EMPTY_MIND | EVIL | R_CHAR_Z | R_CHAR_r
+M:SMART | BASH_DOOR | MOVE_BODY | REGENERATE
+M:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP
+M:NO_FEAR | RES_NETH | RES_NEXU | RES_PLAS | RES_DISE
+M:FORCE_MAXHP | ATTR_MULTI
+S:1_IN_12 | HEAL
+
+# (T)
+N:26:Archpriest
+G:*:G
+I:+10:%120d%100:+10:%90:=0
+W:+20:4:%90:%200:A
+# hack - avoid Troll priest archpriest
+H:DROP_90
+F:R_CHAR_T | R_CHAR_P | R_CHAR_O | BASEANGBAND
+M:FRIENDS | SMART | FORCE_MAXHP | DROP_2D2
+S:1_IN_2 | CAUSE_3 | CAUSE_4 | MISSILE | DARKNESS | CONF | SCARE | BLINK
+S:S_MONSTER | S_UNDEAD | HEAL | HOLD
+
+N:27:Warrior
+G:*:*
+I:+10:%200d%150:+10:%120:=0
+W:+10:4:%120:%200:A
+B:*:*:%200d%200
+B:*:*:%200d%200
+B:*:*:%200d%200
+B:*:*:%200d%200
+F:R_CHAR_T | R_CHAR_P | R_CHAR_O | BASEANGBAND
+M:FORCE_MAXHP | FRIENDS | SMART | DROP_1D2
+
 
 
 # N:x:ego name

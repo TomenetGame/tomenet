@@ -2683,8 +2683,10 @@ int race_index(char * name)
 
 monster_race* r_info_get(monster_type *m_ptr)
 {
-        if (m_ptr->special) return (m_ptr->r_ptr);
-        else return (&r_info[m_ptr->r_idx]);
+	/* golem? */
+	if (m_ptr->special) return (m_ptr->r_ptr);
+//	else return (&r_info[m_ptr->r_idx]);
+	else return (race_info_idx((m_ptr)->r_idx, (m_ptr)->ego, (m_ptr)->name3));
 }
 
 cptr r_name_get(monster_type *m_ptr)
@@ -2838,6 +2840,8 @@ int pick_ego_monster(int r_idx, int Level)
         /* First are we allowed to find an ego */
         if (!magik(MEGO_CHANCE)) return 0;
 
+        /* Ego Uniques are NOT to be created */
+        if ((r_info[r_idx].flags1 & RF1_UNIQUE)) return 0;
 
         /* Lets look for one */
         while(tries--)
