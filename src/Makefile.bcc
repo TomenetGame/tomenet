@@ -11,9 +11,12 @@
 #     (the directory this file is in.)
 #  3. change the 'BCC55 = ..' option to the directory you
 #     installed bcc++
-#  4. type 'make -f makefile.bcc'
-#     ( or 'make -f makefile.bcc client' if you want client only.
-#  5. enjoy!
+#  4. type 'make -f makefile.bcc' to compile client
+#     ( or 'make -f makefile.bcc mangband.exe' if you want a server.)
+#  5. copy the binary (mangclient.exe) to the directory of
+#     pernMangband 3.2.1.6
+#     ( available from http://www.pernmangband.net/ )
+#  6. enjoy!
 #
 ###################################################################
 
@@ -57,7 +60,7 @@ CLI_EXE = mangclient.exe
 CCOPTS = -jb -j1 -Hc -tW -lGn -w- \
 	-D_WIN32_WINNT=0x0400 -DWINVER=0x0400 \
 	-DUSE_TRANSPARENCY -DWIN32 -D_WINDOWS -DSTDVA=1 -DSTRICT \
-	-I$(BCC55)\include -L$(BCC55)\lib
+	-I$(BCC55)\include;server\lua -L$(BCC55)\lib
 
 LDFLAGS = -L$(BCC55)\lib
 
@@ -70,6 +73,11 @@ LDFLAGS = -L$(BCC55)\lib
 
 # Compile flags:
 CPPFLAGS= $(CCOPTS) $(JPOPTS) $(DBGOPT)
+
+###################################################################
+#
+# Lua
+TOLUA = server\tolua.exe
 
 
 ######################## Targets ##################################
@@ -85,7 +93,7 @@ SERV_SRCS = \
   server\cmd6.c server\store.c server\birth.c server\load2.c \
   server\sched.c server\generate.c server\wild.c server\dungeon.c \
   server\init1.c server\init2.c server\nserver.c server\printout.c \
-  server\randart.c common\common.c \
+  server\randart.c server\csfunc.c server\traps.c common\common.c \
   server\main.c
 
 SERV_OBJS = \
@@ -99,8 +107,8 @@ SERV_OBJS = \
   server\cmd6.obj server\store.obj server\birth.obj server\load2.obj \
   server\sched.obj server\generate.obj server\wild.obj server\dungeon.obj \
   server\init1.obj server\init2.obj server\nserver.obj server\printout.obj \
-  server\randart.obj common\common.obj \
-  server\main.obj 
+  server\randart.obj server\csfunc.obj server\traps.obj common\common.obj \
+  server\main.obj
 
 CONS_SRCS = \
   common\z-util.c common\z-virt.c common\z-form.c common\net-win.c \
@@ -134,6 +142,30 @@ CLI_OBJS = \
   client\c-xtra1.obj client\c-xtra2.obj client\c-spell.obj client\client.obj \
   client\readdib.obj
 
+LUASRCS = \
+  server\script.c server\lua_bind.c \
+  server\w_util.c server\w_play.c
+
+TOLUASRCS = \
+  server\lua\lapi.c server\lua\lcode.c server\lua\ldebug.c server\lua\ldo.c server\lua\lfunc.c server\lua\lgc.c \
+  server\lua\llex.c server\lua\lmem.c server\lua\lobject.c server\lua\lparser.c server\lua\lstate.c server\lua\lstring.c \
+  server\lua\ltable.c server\lua\ltests.c server\lua\ltm.c server\lua\lundump.c server\lua\lvm.c server\lua\lzio.c \
+  server\lua\lauxlib.c server\lua\lbaselib.c server\lua\ldblib.c server\lua\liolib.c server\lua\lstrlib.c \
+  server\lua\tolua_lb.c server\lua\tolua_rg.c server\lua\tolua_tt.c server\lua\tolua_tm.c server\lua\tolua_gp.c \
+  server\lua\tolua_eh.c server\lua\tolua_bd.c
+
+LUAOBJS = \
+  server\script.obj server\lua_bind.obj \
+  server\w_util.obj server\w_play.obj
+
+TOLUAOBJS = \
+  server\lua\lapi.obj server\lua\lcode.obj server\lua\ldebug.obj server\lua\ldo.obj server\lua\lfunc.obj server\lua\lgc.obj \
+  server\lua\llex.obj server\lua\lmem.obj server\lua\lobject.obj server\lua\lparser.obj server\lua\lstate.obj server\lua\lstring.obj \
+  server\lua\ltable.obj server\lua\ltests.obj server\lua\ltm.obj server\lua\lundump.obj server\lua\lvm.obj server\lua\lzio.obj \
+  server\lua\lauxlib.obj server\lua\lbaselib.obj server\lua\ldblib.obj server\lua\liolib.obj server\lua\lstrlib.obj \
+  server\lua\tolua_lb.obj server\lua\tolua_rg.obj server\lua\tolua_tt.obj server\lua\tolua_tm.obj server\lua\tolua_gp.obj \
+  server\lua\tolua_eh.obj server\lua\tolua_bd.obj
+
 all : $(CLI_EXE)
 
 clean:
@@ -148,14 +180,24 @@ clean:
 	-@if exist *.ild del *.ild >nul
 	-@if exist *.ilf del *.ilf >nul
 	-@if exist *.ils del *.ils >nul
+	-@if exist server\*.exe del server\*.exe >nul
+	-@if exist server\*.res del server\*.res >nul
+	-@if exist server\*.tds del server\*.tds >nul
+	-@if exist server\*.ilc del server\*.ilc >nul
+	-@if exist server\*.ild del server\*.ild >nul
+	-@if exist server\*.ilf del server\*.ilf >nul
+	-@if exist server\*.ils del server\*.ils >nul
+	-@if exist server\w_util.c del server\w_util.c
+	-@if exist server\w_play.c del server\w_play.c
+	-@if exist server\lua\*.obj del server\lua\*.obj >nul
 
 install: $(CLI_EXE)
 	copy $(CLI_EXE) ..
 
 
 ########################### Explicit Rules ########################
-$(SERV_EXE): $(SERV_OBJS)
-	$(LINKER) -ap $(LDFLAGS) -x $(SERV_OBJS) c0x32.obj, $(SERV_EXE),, cw32mt.lib import32.lib ws2_32.lib
+$(SERV_EXE): $(SERV_OBJS) $(LUAOBJS) $(TOLUAOBJS)
+	$(LINKER) -ap $(LDFLAGS) -x $(SERV_OBJS) $(LUAOBJS) $(TOLUAOBJS) c0x32.obj, $(SERV_EXE),, cw32mt.lib import32.lib ws2_32.lib
 
 $(CONS_EXE): $(CONS_OBJS)
 	$(LINKER) -aa $(LDFLAGS) -x $(CONS_OBJS) c0w32.obj, $(CONS_EXE),, cw32.lib import32.lib ws2_32.lib,, client\angband.res
@@ -165,6 +207,20 @@ $(CLI_EXE): $(CLI_OBJS) angband.res
 
 angband.res: client\angband.rc
 	$(RC) -r client\angband.rc
+
+$(TOLUA): $(TOLUAOBJS) server\lua\tolua.obj server\lua\tolualua.obj
+	$(LINKER) -ap $(LDFLAGS) -x $(TOLUAOBJS) server\lua\tolua.obj server\lua\tolualua.obj c0x32.obj, $(TOLUA),, cw32.lib import32.lib
+
+# Lua library compilation rules
+server\w_util.c: server\util.pkg $(TOLUA)
+	cd server
+	tolua -n util -o w_util.c util.pkg
+	cd ..
+
+server\w_play.c: server\player.pkg $(TOLUA)
+	cd server
+	tolua -n player -o w_play.c player.pkg
+	cd ..
 
 ########################### Implicit Rules ########################
 .c.obj:
