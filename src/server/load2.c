@@ -6,11 +6,9 @@
 
 #include "angband.h"
 
-#ifdef NEW_DUNGEON
 static void new_rd_wild();
 static void new_rd_dungeons();
 void rd_towns();
-#endif
 
 /*
  * This file is responsible for loading all "2.7.X" savefiles
@@ -502,17 +500,9 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&o_ptr->iy);
 	rd_byte(&o_ptr->ix);
 	
-#ifdef NEW_DUNGEON
 	rd_s16b(&o_ptr->wpos.wx);
 	rd_s16b(&o_ptr->wpos.wy);
 	rd_s16b(&o_ptr->wpos.wz);
-#else
-	if (older_than(0,5,5))
-	{
-		rd_byte((char *)&o_ptr->dun_depth);
-	}
-	else rd_s32b((s32b *)&o_ptr->dun_depth);
-#endif
 
 	/* Type/Subtype */
 	rd_byte(&o_ptr->tval);
@@ -525,11 +515,7 @@ static void rd_item(object_type *o_ptr)
 	else o_ptr->bpval = 0;
 
 	/* Special pval */
-	if (older_than(0,6,1))
-	{
-		rd_s16b(&o_ptr->pval);
-	}
-	else	rd_s32b(&o_ptr->pval);
+	rd_s32b(&o_ptr->pval);
 #else
 	rd_s32b(&o_ptr->bpval);
 	rd_s32b(&o_ptr->pval);
@@ -707,13 +693,10 @@ static void rd_trap(trap_type *t_ptr)
 	/* Hack -- wipe */
 	WIPE(t_ptr, trap_type);
 
-#ifdef NEW_DUNGEON
 	rd_s16b(&t_ptr->wpos.wx);
 	rd_s16b(&t_ptr->wpos.wy);
 	rd_s16b(&t_ptr->wpos.wz);
-#else
-	rd_s32b(&t_ptr->dun_depth);
-#endif
+
 	rd_byte(&t_ptr->t_idx);
 	rd_byte(&t_ptr->iy);
 	rd_byte(&t_ptr->ix);
@@ -787,13 +770,11 @@ static void rd_monster(monster_type *m_ptr)
 	/* Read the other information */
 	rd_byte(&m_ptr->fy);
 	rd_byte(&m_ptr->fx);
-#ifdef NEW_DUNGEON
+
 	rd_s16b(&m_ptr->wpos.wx);
 	rd_s16b(&m_ptr->wpos.wy);
 	rd_s16b(&m_ptr->wpos.wz);
-#else
-	rd_u16b(&m_ptr->dun_depth);
-#endif
+
 	rd_s16b(&m_ptr->ac);
 	rd_byte(&m_ptr->speed);
 	rd_s32b(&m_ptr->exp);
@@ -814,24 +795,15 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->stunned);
 	rd_byte(&m_ptr->confused);
 	rd_byte(&m_ptr->monfear);
-	if (!older_than(3, 2, 1)) rd_s16b(&m_ptr->mind);
-	else m_ptr->mind = GOLEM_NONE;
+	rd_s16b(&m_ptr->mind);
 	if (m_ptr->special)
 	{
 		MAKE(m_ptr->r_ptr, monster_race);
 		rd_monster_race(m_ptr->r_ptr);
 	}
 
-	if (!older_than(3, 2, 2))
-	{
-		rd_u16b(&m_ptr->ego);
-		rd_s32b(&m_ptr->name3);
-	}
-	else
-	{
-		m_ptr->ego = 0;
-		m_ptr->name3 = 0;
-	}
+	rd_u16b(&m_ptr->ego);
+	rd_s32b(&m_ptr->name3);
 }
 
 
@@ -856,15 +828,7 @@ static void rd_lore(int r_idx)
 	rd_byte(&r_ptr->r_ignore);
 
 	/* Load in the amount of time left until the (possobile) unique respawns */
-	if (older_than(0,6,1))
-	{
-		rd_u16b(&tmp16u);
-		r_ptr->respawn_timer = tmp16u;
-	}
-	else
-	{
-		rd_s32b(&r_ptr->respawn_timer);
-	}
+	rd_s32b(&r_ptr->respawn_timer);
 
 	/* Count drops */
 	rd_byte(&r_ptr->r_drop_gold);
@@ -891,10 +855,6 @@ static void rd_lore(int r_idx)
 
 	/* Read the "Racial" monster limit per level */
 	rd_byte(&r_ptr->max_num);
-
-	/* Read the "killer" info */
-	if (!older_than(0,4,1) && older_than(3, 0, 3))
-		rd_s32b(&r_ptr->killer);
 
 	/* Later (?) */
 	rd_byte(&tmp8u);
@@ -997,9 +957,7 @@ static void rd_party(int n)
 static void rd_house(int n)
 {
 	house_type *house_ptr = &houses[n];
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
-#endif
 
 #ifdef NEWHOUSES
 	rd_byte(&house_ptr->x); 
@@ -1014,26 +972,16 @@ static void rd_house(int n)
 	rd_u16b(&house_ptr->dna->min_level);
 	rd_u32b(&house_ptr->dna->price);
 	rd_u16b(&house_ptr->flags);
-#ifdef NEW_DUNGEON
+
 	rd_s16b(&house_ptr->wpos.wx);
 	rd_s16b(&house_ptr->wpos.wy);
 	rd_s16b(&house_ptr->wpos.wz);
-#else
-	rd_u32b(&house_ptr->depth);
-#endif
-#ifdef NEW_DUNGEON
+
 	if((zcave=getcave(&house_ptr->wpos)) && !(house_ptr->flags&HF_STOCK)){
 		/* add dna to static levels */
 		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.type=DNA_DOOR;
 		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.ptr=house_ptr->dna;
 	}
-#else
-	if(cave[house_ptr->depth] && !(house_ptr->flags&HF_STOCK)){
-		/* add dna to static levels */
-		cave[house_ptr->depth][house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.type=DNA_DOOR;
-		cave[house_ptr->depth][house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.ptr=house_ptr->dna;
-	}
-#endif
 	if(house_ptr->flags&HF_RECT){
 		rd_byte(&house_ptr->coords.rect.width);
 		rd_byte(&house_ptr->coords.rect.height);
@@ -1071,27 +1019,17 @@ static void rd_house(int n)
 #endif
 }
 
-#ifdef NEW_DUNGEON
 static void rd_wild(wilderness_type *w_ptr)
-#else
-static void rd_wild(int n)
-#endif
 {
 	u32b tmp32u;
-#ifndef NEW_DUNGEON
-	wilderness_type *w_ptr = &wild_info[-n];
-#endif
 
 	/* future use */
 	rd_u32b(&tmp32u);
 	/* the flags */
 	rd_u32b((u32b *) &w_ptr->flags);
 
-	if (!older_than(3, 0, 4))
-	{	
-		/* the player(KING) owning the wild */
-		rd_s32b(&w_ptr->own);
-	}
+	/* the player(KING) owning the wild */
+	rd_s32b(&w_ptr->own);
 }
 
 
@@ -1310,11 +1248,8 @@ static bool rd_extra(int Ind)
 	rd_string(p_ptr->died_from, 80);
 
 	/* if new enough, load the died_from_list information */
-	if (!older_than(0,5,5)) 
-	{
-		rd_string(p_ptr->died_from_list, 80);
-		rd_s16b(&p_ptr->died_from_depth);
-	}
+	rd_string(p_ptr->died_from_list, 80);
+	rd_s16b(&p_ptr->died_from_depth);
 
 	for (i = 0; i < 4; i++)
 	{
@@ -1326,25 +1261,11 @@ static bool rd_extra(int Ind)
 	rd_byte(&p_ptr->pclass);
 	rd_byte(&p_ptr->male);
 	rd_byte(&p_ptr->party);
-	if (!older_than(3, 1, 0))
-	{
-		rd_byte(&p_ptr->mode);
-	}
-	else
-	{
-		p_ptr->mode = MODE_NORMAL;
-	}
+	rd_byte(&p_ptr->mode);
 
 	/* Special Race/Class info */
 #if 0
-	if (!older_than(3, 0, 9))
-	{
-		rd_s16b(&p_ptr->expfact);
-	}
-	else
-	{
-		rd_byte(&p_ptr->expfact);
-	}
+	rd_s16b(&p_ptr->expfact);
 #endif
 	rd_byte(&p_ptr->hitdie);
 	rd_s16b(&p_ptr->expfact);
@@ -1359,16 +1280,8 @@ static bool rd_extra(int Ind)
 	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_cur[i]);
 
 	/* Dump the stats (maximum and current) */
-	if (!older_than(3, 3, 1))
-	{
-		for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_cnt[i]);
-		for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_los[i]);
-	}
-	else
-	{
-		for (i = 0; i < 6; ++i) p_ptr->stat_cnt[i] = 0;
-		for (i = 0; i < 6; ++i) p_ptr->stat_los[i] = 0;
-	}
+	for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_cnt[i]);
+	for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_los[i]);
 
 	rd_s32b(&p_ptr->id);
 
@@ -1403,35 +1316,14 @@ static bool rd_extra(int Ind)
 
 	rd_s16b(&p_ptr->py);
 	rd_s16b(&p_ptr->px);
-#ifdef NEW_DUNGEON
+
 	rd_s16b(&p_ptr->wpos.wx);
 	rd_s16b(&p_ptr->wpos.wy);
 	rd_s16b(&p_ptr->wpos.wz);
-#else
-	if (older_than(0,5,5))
-		rd_byte((char *)&p_ptr->dun_depth);
-	else rd_s32b((s32b *) &p_ptr->dun_depth);
-#endif
 
-#ifdef NEW_DUNGEON
 	p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 	p_ptr->recall_pos.wy = p_ptr->wpos.wy;
 	p_ptr->recall_pos.wz = p_ptr->max_dlv;
-#else
-	p_ptr->recall_depth = p_ptr->max_dlv;
-#endif
-
-#ifndef NEW_DUNGEON
-	/* read the world coordinates if new enough */
-	if (!older_than(0,5,5))
-	{
-		rd_s16b(&p_ptr->world_x);
-		rd_s16b(&p_ptr->world_y);
-	}
-#endif
-
-	if (older_than(0,5,5))
-		strip_bytes(1);
 
 	/* More info */
 
@@ -1471,28 +1363,11 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->oppose_acid);
 	rd_s16b(&p_ptr->oppose_elec);
 	rd_s16b(&p_ptr->oppose_pois);
-	if (!older_than(3, 1, 2))
-	{
-		rd_s16b(&p_ptr->prob_travel);
-	}
-	else
-	{
-		p_ptr->prob_travel = 0;
-	}
-	if (!older_than(3, 1, 3))
-	{
-		rd_s16b(&p_ptr->st_anchor);
-		rd_s16b(&p_ptr->tim_esp);
-		rd_s16b(&p_ptr->adrenaline);
-		rd_s16b(&p_ptr->biofeedback);
-	}
-	else
-	{
-		p_ptr->st_anchor = 0;
-		p_ptr->tim_esp = 0;
-		p_ptr->adrenaline = 0;
-		p_ptr->biofeedback = 0;
-	}
+	rd_s16b(&p_ptr->prob_travel);
+	rd_s16b(&p_ptr->st_anchor);
+	rd_s16b(&p_ptr->tim_esp);
+	rd_s16b(&p_ptr->adrenaline);
+	rd_s16b(&p_ptr->biofeedback);
 
 	rd_byte(&p_ptr->confusing);
 	rd_s16b(&p_ptr->tim_wraith);
@@ -1502,35 +1377,22 @@ static bool rd_extra(int Ind)
 	rd_byte(&p_ptr->preserve);
 	rd_byte(&p_ptr->stunning);
 
-	if (!older_than(3, 0, 6))
-	{
-		rd_s16b(&p_ptr->body_monster);
-		if (older_than(3, 1, 4)) p_ptr->body_monster = 0;
-		rd_s16b(&p_ptr->auto_tunnel);
-	}
+	rd_s16b(&p_ptr->body_monster);
+	rd_s16b(&p_ptr->auto_tunnel);
 
 	rd_s16b(&p_ptr->tim_meditation);
 
-	if (!older_than(3, 0, 0))
-	{
-		rd_s16b(&p_ptr->tim_invisibility);
-		rd_s16b(&p_ptr->tim_invis_power);
+	rd_s16b(&p_ptr->tim_invisibility);
+	rd_s16b(&p_ptr->tim_invis_power);
 
-		rd_s16b(&p_ptr->furry);
-	}
+	rd_s16b(&p_ptr->furry);
 
-	if (!older_than(3, 0, 1))
-	{
-		rd_s16b(&p_ptr->tim_manashield);
-	}
+	rd_s16b(&p_ptr->tim_manashield);
 
 	rd_s16b(&p_ptr->tim_traps);
 
-	if (!older_than(3, 0, 2))
-	{
-		rd_s16b(&p_ptr->tim_mimic);
-		rd_s16b(&p_ptr->tim_mimic_what);
-	}
+	rd_s16b(&p_ptr->tim_mimic);
+	rd_s16b(&p_ptr->tim_mimic_what);
 
 	/* Read the unique list info */
 	if (!older_than(3, 0, 3))
@@ -1583,45 +1445,26 @@ static bool rd_extra(int Ind)
 	/* Special stuff */
 	rd_u16b(&panic_save);
 	rd_u16b(&p_ptr->total_winner);
-#ifdef NEW_DUNGEON
+
 	rd_s16b(&p_ptr->own1.wx);
 	rd_s16b(&p_ptr->own1.wy);
 	rd_s16b(&p_ptr->own1.wz);
 	rd_s16b(&p_ptr->own2.wx);
 	rd_s16b(&p_ptr->own2.wy);
 	rd_s16b(&p_ptr->own2.wz);
-#else
-	if (!older_than(3,0,4))
-	{
-		rd_s16b(&p_ptr->own1);
-		rd_s16b(&p_ptr->own2);
-	}
-#endif
-	if (!older_than(0,7,0))
-		rd_u16b(&p_ptr->retire_timer);
+
+	rd_u16b(&p_ptr->retire_timer);
 	rd_u16b(&p_ptr->noscore);
 
 	/* Read "death" */
 	rd_byte(&tmp8u);
 	p_ptr->death = tmp8u;
 
-	if (!older_than(3,3,4))
-		rd_byte(&p_ptr->black_breath);
-	else p_ptr->black_breath = FALSE;
+	rd_byte(&p_ptr->black_breath);
 
-	if (!older_than(3,3,5))
-	{
-		rd_s16b(&p_ptr->msane);
-		rd_s16b(&p_ptr->csane);
-		rd_u16b(&p_ptr->csane_frac);
-	}
-	else
-	{
-		p_ptr->csane = 32767;
-		calc_sanity(Ind);
-//		p_ptr->csane = p_ptr->msane;
-		p_ptr->csane_frac = 0;
-	}
+	rd_s16b(&p_ptr->msane);
+	rd_s16b(&p_ptr->csane);
+	rd_u16b(&p_ptr->csane_frac);
 
 	/* Read "feeling" */
 	/*rd_byte(&tmp8u);
@@ -1850,12 +1693,10 @@ static void rd_messages(void)
 static errr rd_dungeon(void)
 {
 	s32b depth;
-#ifdef NEW_DUNGEON
 	struct worldpos wpos;
 	s16b tmp16b;
 	byte tmp;
 	cave_type **zcave;
-#endif
 	u16b max_y, max_x;
 
 	int i, y, x;
@@ -1867,19 +1708,14 @@ static errr rd_dungeon(void)
 	/*** Depth info ***/
 
 	/* Level info */
-#ifdef NEW_DUNGEON
 	rd_s16b(&wpos.wx);
 	rd_s16b(&wpos.wy);
 	rd_s16b(&wpos.wz);
 	if(wpos.wx==0x7fff && wpos.wy==0x7fff && wpos.wz==0x7fff)
 		return(1);
-#else
-	rd_s32b(&depth);
-#endif
 	rd_u16b(&max_y);
 	rd_u16b(&max_x);
 
-#ifdef NEW_DUNGEON
 	/* Alloc before doing NPOD() */
 	alloc_dungeon_level(&wpos);
 	zcave=getcave(&wpos);
@@ -1889,12 +1725,7 @@ static errr rd_dungeon(void)
 	new_players_on_depth(&wpos,tmp16b,FALSE);
 //	s_printf("%d players on %d,%d,%d.\n", tmp16b, wpos.wx, wpos.wy, wpos.wz);
 	s_printf("%d players on %d,%d,%d.\n", players_on_depth(&wpos), wpos.wx, wpos.wy, wpos.wz);
-#else
-	/* players on this depth */
-	rd_s16b(&players_on_depth[depth]);
-#endif
 
-#ifdef NEW_DUNGEON
 	rd_byte(&tmp);
 	new_level_up_y(&wpos, tmp);
 	rd_byte(&tmp);
@@ -1907,27 +1738,6 @@ static errr rd_dungeon(void)
 	new_level_rand_y(&wpos, tmp);
 	rd_byte(&tmp);
 	new_level_rand_x(&wpos, tmp);
-#else
-	/* Hack -- only read in staircase information for non-wilderness
-	 * levels
-	 */
-
-	if (depth >= 0)
-	{
-		rd_byte(&level_up_y[depth]);
-		rd_byte(&level_up_x[depth]);
-		rd_byte(&level_down_y[depth]);
-		rd_byte(&level_down_x[depth]);
-		rd_byte(&level_rand_y[depth]);
-		rd_byte(&level_rand_x[depth]);
-	}
-#endif
-
-	/* allocate the memory for the dungoen */
-#ifndef NEW_DUNGEON
-	alloc_dungeon_level(depth);
-#endif
-
 
 	/*** Run length decoding ***/
 
@@ -1943,11 +1753,7 @@ static errr rd_dungeon(void)
 		for (i = 0; i < runlength; i++)
 		{
 			/* Access the cave */
-#ifdef NEW_DUNGEON
 			c_ptr = &zcave[y][x];
-#else
-			c_ptr = &cave[depth][y][x];
-#endif
 
 			/* set the feature */
 			c_ptr->feat = feature;
@@ -2249,18 +2055,6 @@ static errr rd_savefile_new_aux(int Ind)
 	rd_u32b(&p_ptr->spell_forgotten1);
 	rd_u32b(&p_ptr->spell_forgotten2);
 
-	/* Hack, rogue spells tottaly changed */
-	if ((p_ptr->pclass == CLASS_ROGUE) && (older_than(3,0,0)))
-	{
-		p_ptr->spell_learned1 = 0;
-		p_ptr->spell_learned2 = 0;
-		p_ptr->spell_worked1 = 0;
-		p_ptr->spell_worked2 = 0;
-		p_ptr->spell_forgotten1 = 0;
-		p_ptr->spell_forgotten2 = 0;
-		p_ptr->update |= PU_SPELLS;
-	}
-
 	for (i = 0; i < 64; i++)
 	{
 		rd_byte(&p_ptr->spell_order[i]);
@@ -2293,19 +2087,13 @@ static errr rd_savefile_new_aux(int Ind)
 	}
 
 	/* Read hostility information if new enough */
-	if (!older_than(0, 5, 3))
+	if (rd_hostilities(Ind))
 	{
-		if (rd_hostilities(Ind))
-		{
-			return (22);
-		}
+		return (22);
 	}
 
 	/* read the dungeon memory if new enough */
-	if (!older_than(0,5,7))
-	{
-		rd_cave_memory(Ind);
-	}
+	rd_cave_memory(Ind);
 
 	/* read the wilderness map if new enough */
 	if (!older_than(0,5,5))
@@ -2314,11 +2102,7 @@ static errr rd_savefile_new_aux(int Ind)
 		rd_u32b(&tmp32u);
 
 		/* if too many map entries */
-#ifdef NEW_DUNGEON
 		if (tmp32u > MAX_WILD_X*MAX_WILD_Y)
-#else
-		if (tmp32u > MAX_WILD)
-#endif
 		{
 			return 23;
 		}
@@ -2508,14 +2292,6 @@ errr rd_server_savefile()
 
 		/* Access the monster race */
 		r_ptr = &r_info[i];
-
-		/* Special hack -- bring back all uniques if this is a pre-0.4.1 savefile */
-		if (older_than(0,4,1))
-		{
-			/* Check for unique */
-			if (r_ptr->flags1 & RF1_UNIQUE)
-				r_ptr->max_num = 1;
-		}
 	}
 
 	/* Load the Artifacts */
@@ -2547,30 +2323,19 @@ errr rd_server_savefile()
 	}
 #endif
 
-	/* Read party info if savefile is new enough */
-	if (older_than(0,3,0))
+	rd_u16b(&tmp16u);
+
+	/* Incompatible save files */
+	if (tmp16u > MAX_PARTIES)
 	{
-		/* Set party zero's name to "Neutral" */
-		strcpy(parties[0].name, "Neutral");
+		note(format("Too many (%u) parties!", tmp16u));
+		return (25);
 	}
 
-	/* New enough to have party info */
-	else
+	/* Read the available records */
+	for (i = 0; i < tmp16u; i++)
 	{
-		rd_u16b(&tmp16u);
-
-		/* Incompatible save files */
-		if (tmp16u > MAX_PARTIES)
-		{
-			note(format("Too many (%u) parties!", tmp16u));
-			return (25);
-		}
-
-		/* Read the available records */
-		for (i = 0; i < tmp16u; i++)
-		{
-			rd_party(i);
-		}
+		rd_party(i);
 	}
 
 	/* XXX If new enough, read in the saved levels and monsters. */
@@ -2578,16 +2343,9 @@ errr rd_server_savefile()
 	if (!older_than(0,5,7))
 	{
 		/* read the number of levels to be loaded */
-#ifdef NEW_DUNGEON
 		rd_towns();
 		new_rd_wild();
 		new_rd_dungeons();
-#else
-		rd_u32b(&tmp32u);
-		/* load the levels */
-		for (i = 0; i < tmp32u; i++) rd_dungeon();
-		}
-#endif
 
 		/* get the number of monsters to be loaded */
 		rd_u32b(&tmp32u);
@@ -2675,11 +2433,7 @@ errr rd_server_savefile()
 			if(cave[i]){
 				int j;
 				for(j=0;j<num_houses;j++){
-#ifdef NEW_DUNGEON
 					if(inarea(wpos, &houses[j].wpos)){
-#else
-					if(houses[j].depth==i){
-#endif
 						int x,y;
 						/* add the house dna */	
 						x=houses[j].dx;
@@ -2691,26 +2445,6 @@ errr rd_server_savefile()
 			}
 		}
 #endif /*if 0 evileye */
-	}
-
-	/* Read wilderness info if new enough */
-	if (!older_than(0,5,5))
-	{
-#ifndef NEW_DUNGEON
-		/* read how many wilderness levels */
-		rd_u32b(&tmp32u);
-
-		if (tmp32u > MAX_WILD)
-		{
-			note("Too many wilderness levels");
-			return 28;
-		}
-
-		for (i = 1; i < tmp32u; i++)
-		{
-			rd_wild(i);
-		}	
-#endif
 	}
 
 	/* Read the player name database if new enough */
@@ -2762,7 +2496,6 @@ errr rd_server_savefile()
 	return (err);
 }
 
-#ifdef NEW_DUNGEON
 void new_rd_wild(){
 	int x,y,i;
 	wilderness_type *wptr;
@@ -2835,4 +2568,3 @@ void rd_towns(){
 		}
 	}
 }
-#endif

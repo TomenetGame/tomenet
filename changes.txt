@@ -654,6 +654,9 @@ Change list for PernMangband
 - Some compilation warnings fixed (cleanup)
 - Light bug fixed when changing wilderness area
 - Recalling up/down in wilderness fixed
+- Teleport level had same problem as recall (when new wz became 0)
+- Hacked up load2.c - backwards compatibility is only posssible
+  in the future. ;)
 
 
 ** [B] stands for Bugfix.
@@ -663,12 +666,8 @@ Change list for PernMangband
 ==== below this line are the unfixed bugs known ====
 [B] Self-reproducing black trap
 [B] Panic save often enters into infinite loop.
-[B] Recalling in wilderness dungeons/towers always cause infinite loop.
-[B] Restarting server erases all the floor.
 [B] House doors still seem to crash sometimes.
-[B] Level teleporting in the wilderness crashes.
 [B] Saving on wilderness causes crash when coming back (due to unstaticing?)
-[B] 
 
 ==== below this line are changes to be done in the future ====
 [minor ones]
@@ -696,7 +695,7 @@ Change list for PernMangband
 - item stacks/monster inventory
 - better vaults
 - fix gfx again {Asclep}
-- interractive spell system (like in C3)
+- interactive spell system (like in C3)
 - total source-code cleanup {takkaria?}
 - new classes/races
 
