@@ -1593,6 +1593,13 @@ static void do_cmd_refill_lamp(int Ind, int item)
 		return;
 	}
 
+	/* Too kind? :) */
+	if (artifact_p(o_ptr))
+	{
+		msg_print(Ind, "Your light seems to resist!");
+		return;
+	}
+
 
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -1682,6 +1689,12 @@ static void do_cmd_refill_torch(int Ind, int item)
 		return;
 	}
 
+	/* Too kind? :) */
+	if (artifact_p(o_ptr))
+	{
+		msg_print(Ind, "Your light seems to resist!");
+		return;
+	}
 
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -1739,6 +1752,7 @@ void do_cmd_refill(int Ind, int item)
 	player_type *p_ptr = Players[Ind];
 
 	object_type *o_ptr;
+	u32b f1, f2, f3, f4, f5, esp;
 
 	/* Get the light */
 	o_ptr = &(p_ptr->inventory[INVEN_LITE]);
@@ -1746,12 +1760,21 @@ void do_cmd_refill(int Ind, int item)
 	if( check_guard_inscription( o_ptr->note, 'F' )) {
 		msg_print(Ind, "The item's incription prevents it.");
 		return;
-	};
+	}
 
 	/* It is nothing */
-	if (o_ptr->tval != TV_LITE)
+	if (o_ptr->tval != TV_LITE || !o_ptr->k_idx)
 	{
 		msg_print(Ind, "You are not wielding a light.");
+		return;
+	}
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	if (!(f4 & TR4_FUEL_LITE))
+	{
+		msg_print(Ind, "Your light cannot be refilled.");
+		return;
 	}
 
 	/* It's a lamp */

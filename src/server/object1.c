@@ -4328,6 +4328,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
 		fprintf(fff, "It produces an anti-magic shell.\n");
 	}
+	/* Mega Hack^3 -- describe the Anchor of Space-time */
+	if (o_ptr->name1 == ART_ANCHOR)
+	{
+		fprintf(fff, "It prevents the space-time continuum from being disrupted.\n");
+	}
+
 	if (f3 & (TR3_NO_TELE))
 	{
 		fprintf(fff, "It prevents teleportation.\n");

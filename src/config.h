@@ -667,15 +667,18 @@
 
 /*
  * OPTION: suppress visual effects in project()	[10]
- * To disable, comment it out.
+ * To disable, comment it out.	(melee2.c, spells1.c, variables.c)
  *
  * If you recalled into a pack of hounds, the visual effects of breathes
  * slows the server/client and make it almost impossible to control.
  * This option prevents this by limiting the maximum # of blasts per turn.
  *
  * NOTE: of course, it can happen that you cannot see the attacks made.
+ *
+ * XXX: Visual effects like this should be done in 100% client-side,
+ * so that it doesn't affect connection.
  */
-#define PROJECTION_FLUSH_LIMIT 10
+#define PROJECTION_FLUSH_LIMIT 5
 
 /*
  * OPTION: allow sanity display.

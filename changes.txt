@@ -1169,6 +1169,12 @@ To find the latest change quickly, search ==== :)
 [H] SUPPRESS_MONSTER_STUN and NORMAL_HIT_NO_STUN flags, for DG's HERESY :)
 [H] SKILL_INTERCEPT and SKILL_DODGE rebalanced somewhat.
 
+27/06/2002 (Jir)
+- NO_TELE is radius-based(12).
+- anti_tele and resist_continuum is different now.
+[B] player couldn't teleport monsters away!
+
+
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
@@ -1178,7 +1184,6 @@ To find the latest change quickly, search ==== :)
 =============================================================================
 things to do before 4.0.0
 
-- make NO_TELE radius-based
 - implement guest-account
 - rebalance skill-points
 - fix gfx
@@ -1227,6 +1232,7 @@ below this line are the unfixed bugs known:
 [B] white '@' sometimes appear on the screen.
 [B] Yeek seems to receive the best store prices.
 [B] Martial-artist has strange +To RHit/+To RDam display.
+[B] +To RDam is wrong when using =dam
 
 *below are bugs repoorted but not confirmed*
 [B] Macro sticks sometimes
@@ -1500,6 +1506,21 @@ memo and questions:
 - full-mouse operation
 
 ==== below this line are backtraces collected so far (bad or mad.) ====
+(Infinite loop when recalling into dungeon)
+(gdb) bt
+#0  Rand_div (m=42) at common/z-rand.c:203
+#1  0x80d8553 in cave_gen (wpos=0x8d558e0) at server/generate.c:411
+#2  0x80d9c65 in generate_cave (wpos=0x8d558e0) at server/generate.c:5148
+#3  0x80e2622 in dungeon () at server/dungeon.c:3177
+#4  0x80d14cd in sched () at server/sched.c:508
+#5  0x80e3612 in play_game (new_game=0 '\000') at server/dungeon.c:3845
+#6  0x80f56ca in main (argc=2, argv=0xbfbff6c4) at server/main.c:272
+#7  0x8049d65 in _start ()
+(gdb) print *dun.l_ptr
+$6 = {ondepth = 1, lastused = 1025134735, up_x = 63 '?', up_y = 41 ')', 
+  dn_x = 50 '2', dn_y = 41 ')', rn_x = 183 '', rn_y = 8 '\b', flags1 = 0, 
+    hgt = 44 ',', wid = 99 'c', cave = 0x87c6600}
+
 Program received signal SIGSEGV, Segmentation fault.
 access_door (Ind=1, dna=0x0) at server/cmd2.c:609
 609             if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)

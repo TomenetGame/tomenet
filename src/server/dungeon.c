@@ -2269,7 +2269,9 @@ static void process_player_end(int Ind)
 		       /* MEGA HACK: no recall if icky, or in a shop */
 			if( ! p_ptr->word_recall ) 
 			{
-				if((p_ptr->store_num > 0) || check_st_anchor(&p_ptr->wpos) || zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK)
+				if((p_ptr->store_num > 0) || p_ptr->anti_tele ||
+					check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) ||
+					zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK)
 				{
 				    p_ptr->word_recall++;
 				}

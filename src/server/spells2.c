@@ -823,6 +823,11 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "You are surrounded with electricity.\n");
 	}
+
+	if (p_ptr->resist_continuum)
+	{
+		fprintf(fff, "The space-time continuum cannot be disrupted near you.\n");
+	}
 	if (p_ptr->anti_tele)
 	{
 		fprintf(fff, "You cannot teleport.\n");

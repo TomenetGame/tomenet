@@ -5237,7 +5237,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Digging",
-				"Ability to handle digging tools.",
+				"Ability to dig a tunnel with suitable tools.",
 
                 /* Mkey desc/mkey */
                 NULL,

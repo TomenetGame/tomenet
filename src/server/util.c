@@ -1953,6 +1953,50 @@ static int trap_index(char * name)
 }
 #endif	// 0
 
+/*
+ * Dodge Chance Feedback.
+ */
+static void use_ability_blade(int Ind)
+{
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	int dun_level = getlevel(&p_ptr->wpos);
+	int chance = p_ptr->dodge_chance - (dun_level * 5 / 6);
+
+	if (chance < 0) chance = 0;
+	if (chance > 90) chance = 90;	// see DODGE_MAX_CHANCE in melee1.c
+	if (is_admin(p_ptr))
+	{
+		msg_format(Ind, "You have exactly %d%% chances of dodging a level %d monster.", chance, dun_level);
+	}
+
+	if (chance < 5)
+	{
+		msg_format(Ind, "You have almost no chance of dodging a level %d monster.", dun_level);
+	}
+	else if (chance < 10)
+	{
+		msg_format(Ind, "You have a slight chance of dodging a level %d monster.", dun_level);
+	}
+	else if (chance < 20)
+	{
+		msg_format(Ind, "You have a signifigant chance of dodging a level %d monster.", dun_level);
+	}
+	else if (chance < 40)
+	{
+		msg_format(Ind, "You have a large chance of dodging a level %d monster.", dun_level);
+	}
+	else if (chance < 70)
+	{
+		msg_format(Ind, "You have a high chance of dodging a level %d monster.", dun_level);
+	}
+	else
+	{
+		msg_format(Ind, "You will usually dodge succesfully a level %d monster.", dun_level);
+	}
+
+	return;
+}
+
 
 static void do_slash_brief_help(int Ind)
 {
@@ -2128,11 +2172,9 @@ static void do_slash_cmd(int Ind, char *message)
 
 				/* Hack - Don't take a turn here */
 				p_ptr->energy += level_speed(&p_ptr->wpos);
-//				p_ptr->energy += level_speed(p_ptr->dun_depth);
 			}
 			/* Take total of one turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-//			p_ptr->energy -= level_speed(p_ptr->dun_depth);
 			return;
 		}
 
@@ -2442,7 +2484,9 @@ static void do_slash_cmd(int Ind, char *message)
 				prefix(message, "/examine") ||
 				prefix(message, "/ex"))
 		{
-			msg_format(Ind, "\377GThe deepest point you've reached: -%dft", p_ptr->max_dlv * 50);
+			msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
+
+			if (get_skill(p_ptr, SKILL_DODGE)) use_ability_blade(Ind);
 
 			/* Insanity warning (better message needed!) */
 			if (p_ptr->csane < p_ptr->msane / 8)

@@ -1573,6 +1573,24 @@ struct skill_player
 };
 
 /*
+ * transmit an array of this struct when log-in, and we won't need
+ * client update when adding a new mkey		- Jir -
+ */
+#if 0
+typedef struct mkey_type mkey_type;
+struct mkey_type
+{
+	byte flags1;
+	byte tval;		/* the tval this uses (0 if none) */
+}
+
+#define MKEY_DIRECTION		0x01
+#define MKEY_TVAL			0x02
+#endif	// 0
+
+
+
+/*
  * Most of the "player" information goes here.
  *
  * This stucture gives us a large collection of player variables.
@@ -2103,6 +2121,7 @@ struct player_type
         byte antimagic_dis;     /* Radius of the anti magic field */
         bool anti_tele;     /* Prevent teleportation */
 							/* in PernM, it's same as st_anchor */
+        bool resist_continuum;	/* non-timed -- Space/Time Anchor */
 		bool admin_wiz;		/* Is this char Wizard? */
 		bool admin_dm;		/* or Dungeon Master? */
 		bool stormbringer;	/* Attack friends? */

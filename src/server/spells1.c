@@ -33,6 +33,10 @@
  */
 #define TELEPORT_MIN_LIMIT	30
 
+/*
+ * Default radius of Space-Time anchor/Anti-teleportation.	[12]
+ */
+#define ST_ANCHOR_DIS	12
 
  /*
   * Potions "smash open" and cause an area effect when
@@ -254,10 +258,14 @@ s16b poly_r_idx(int r_idx)
 }
 
 /*
- * XXX: this should be radius-determined like antimagic?
- * It prevents everyone from using WoR in town..
+ * It is radius-based now.
+ *
+ * TODO:
+ * - give some messages
+ * - allow monsters to have st-anchor?
  */
-bool check_st_anchor(struct worldpos *wpos)
+//bool check_st_anchor(struct worldpos *wpos)
+bool check_st_anchor(struct worldpos *wpos, int y, int x)
 {
 	int i;
 
@@ -274,10 +282,17 @@ bool check_st_anchor(struct worldpos *wpos)
 		/* Skip players not on this depth */
 		if (!inarea(&q_ptr->wpos, wpos)) continue;
 
-//		if (!q_ptr->st_anchor) continue;
-		if (!q_ptr->anti_tele) continue;
+		/* Maybe CAVE_ICKY/CAVE_STCK can be checked here */
 
-		if(istown(wpos) && randint(100)>q_ptr->lev) continue;
+//		if (!q_ptr->st_anchor) continue;
+//		if (!q_ptr->anti_tele) continue;
+		if (!q_ptr->resist_continuum) continue;
+
+		/* Compute distance */
+		if (distance(y, x, q_ptr->py, q_ptr->px) > ST_ANCHOR_DIS)
+			continue;
+
+//		if(istown(wpos) && randint(100)>q_ptr->lev) continue;
 
 		return TRUE;
 	  }
@@ -309,14 +324,15 @@ bool teleport_away(int m_idx, int dis)
 	/* Paranoia */
 	if (!m_ptr->r_idx) return FALSE;
 
-	/* Space/Time Anchor */
-	if (check_st_anchor(&m_ptr->wpos)) return FALSE;
-
-        if (r_ptr->flags9 & RF9_IM_TELE) return FALSE;
+	if (r_ptr->flags9 & RF9_IM_TELE) return FALSE;
 
 	/* Save the old location */
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
+
+	/* Space/Time Anchor */
+	if (check_st_anchor(&m_ptr->wpos, oy, ox)) return FALSE;
+
 
 	wpos=&m_ptr->wpos;
 	if(!(zcave=getcave(wpos))) return FALSE;
@@ -353,6 +369,9 @@ bool teleport_away(int m_idx, int dis)
 			if (zcave[ny][nx].feat == FEAT_GLYPH) continue;
 			/* No teleporting into vaults and such */
 			if (zcave[ny][nx].info & CAVE_ICKY) continue;
+
+			/* Space/Time Anchor */
+			if (check_st_anchor(&m_ptr->wpos, ny, nx)) return FALSE;
 
 			/* This grid looks good */
 			look = FALSE;
@@ -421,11 +440,15 @@ void teleport_to_player(int Ind, int m_idx)
 
 	if(!(zcave=getcave(wpos))) return;
 	if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) return;
-//	if (check_st_anchor(wpos)) return;
 
 	/* Save the old location */
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
+
+	/* Hrm, I cannot remember/see why it's commented out..
+	 * maybe pets and golems need it? */
+//	if (check_st_anchor(wpos)) return;
+	if (check_st_anchor(wpos, oy, ox)) return;
 
 	/* Minimum distance */
 	min = dis / 2;
@@ -466,6 +489,9 @@ void teleport_to_player(int Ind, int m_idx)
 
 			/* No teleporting into vaults and such */
 			/* if (cave[ny][nx].info & (CAVE_ICKY)) continue; */
+			if (zcave[ny][nx].info & CAVE_ICKY) continue;
+
+			if (check_st_anchor(wpos, ny, nx)) return;
 
 			/* This grid looks good */
 			look = FALSE;
@@ -527,7 +553,7 @@ void teleport_player(int Ind, int dis)
 	/* Space/Time Anchor */
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-	if (check_st_anchor(wpos)) return;
+	if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px)) return;
 	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 	l_ptr = getfloor(wpos);
 
@@ -572,6 +598,9 @@ void teleport_player(int Ind, int dis)
 
 			/* No teleporting into vaults and such */
 			if (zcave[y][x].info & CAVE_ICKY) continue;
+
+			/* Never break into st-anchor */
+			if (check_st_anchor(wpos, y, x)) return;
 
 			/* This grid looks good */
 			look = FALSE;
@@ -684,6 +713,7 @@ void teleport_player_to(int Ind, int ny, int nx)
 	dun_level *l_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+	if (p_ptr->anti_tele) return;
 	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 	l_ptr = getfloor(wpos);
 
@@ -693,7 +723,7 @@ void teleport_player_to(int Ind, int ny, int nx)
 	if (nx > MAX_WID - 2) nx = MAX_WID - 2;
 
 	/* Space/Time Anchor */
-	if (check_st_anchor(wpos)) return;
+	if (check_st_anchor(wpos, ny, nx)) return;
 
 	/* Find a usable location */
 	while (tries--)
@@ -708,9 +738,14 @@ void teleport_player_to(int Ind, int ny, int nx)
 
 		/* Cant telep in houses */
 		if (((wpos->wz==0) && !(zcave[y][x].info & CAVE_ICKY)) || (wpos->wz))
-		  {
-		    if (cave_naked_bold(zcave, y, x)) break;
-		  }
+		{
+			if (cave_naked_bold(zcave, y, x))
+			{
+				/* Never break into st-anchor */
+				if (!check_st_anchor(wpos, y, x)) break;
+			}
+
+		}
 
 		/* Occasionally advance the distance */
 		if (++ctr > (4 * dis * dis + 4 * dis + 1))
@@ -780,7 +815,8 @@ void teleport_player_level(int Ind)
 	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 
 	/* Space/Time Anchor */
-	if (check_st_anchor(&p_ptr->wpos)) return;
+	if (p_ptr->anti_tele) return;
+	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return;
 
 	wpcopy(&new_depth, wpos);
 	/* sometimes go down */
@@ -2208,22 +2244,33 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 	{
 		case 4: case 5:
 		{
-			if (m_ptr)
+			if (!m_ptr) break;
+
+			if (p_ptr->anti_tele)
 			{
-				teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
+				msg_print(Ind, "You resist the effects!");
 				break;
 			}
+
+			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
+			break;
 		}
 
 		case 1: case 2: case 3:
 		{
+			if (p_ptr->anti_tele)
+			{
+				msg_print(Ind, "You resist the effects!");
+				break;
+			}
+
 			teleport_player(Ind, 200);
 			break;
 		}
 
 		case 6:
 		{
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (rand_int(100) < p_ptr->skill_sav || p_ptr->anti_tele)
 			{
 				msg_print(Ind, "You resist the effects!");
 				break;
@@ -2265,9 +2312,9 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 
 		case 8:
 		{
-			if (check_st_anchor(&p_ptr->wpos)) break;
+			if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break;
 
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (rand_int(100) < p_ptr->skill_sav || p_ptr->anti_tele)
 			{
 				msg_print(Ind, "You resist the effects!");
 				break;
@@ -2275,7 +2322,10 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 
 			msg_print(Ind, "Your backpack starts to scramble...");
 
-			do_player_scatter_items(Ind, 5, 50);
+			ii = 10 + m_ptr->level / 3;
+			if (ii > 50) ii = 50;
+
+			do_player_scatter_items(Ind, 5, ii);
 
 			break;
 		}
@@ -3221,7 +3271,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			int j, dist = (typ == GF_NEXUS ? 80 : 15);
 			object_type tmp_obj = *o_ptr;
-			if (check_st_anchor(wpos)) break;
+			if (check_st_anchor(wpos, y, x)) break;
 //			if (seen) obvious = TRUE;
 
 			note_kill = (plural ? " disappear!" : " disappears!");
@@ -4652,7 +4702,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		note = " disappears!";
 
 		/* Teleport */
-		/* TODO: handle failure (eg. st-anchor)
+		/* TODO: handle failure (eg. st-anchor)	*/
 		teleport_away(c_ptr->m_idx, do_dist);
 
 		/* Hack -- get new location */

@@ -1177,10 +1177,10 @@ static void calc_mana(int Ind)
 	o_ptr = &p_ptr->inventory[INVEN_HANDS];
 
 	/* Examine the gloves */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Only Sorcery/Magery users are affected */
-	if (get_skill(p_ptr, SKILL_SORCERY))
+	if (get_skill(p_ptr, SKILL_SORCERY) || get_skill(p_ptr, SKILL_MAGERY))
 	{
 		/* Assume player is not encumbered by gloves */
 		p_ptr->cumber_glove = FALSE;
@@ -1198,7 +1198,7 @@ static void calc_mana(int Ind)
 		}
 	}
 
-        if (new_mana <= 0) new_mana = 1;
+	if (new_mana <= 0) new_mana = 1;
 
 	/* Sorcery helps mana */
 	if (get_skill(p_ptr, SKILL_SORCERY))
@@ -1240,13 +1240,7 @@ static void calc_mana(int Ind)
 	p_ptr->cumber_armor = FALSE;
 
 	/* Weigh the armor */
-	cur_wgt = 0;
-	cur_wgt += p_ptr->inventory[INVEN_BODY].weight;
-	cur_wgt += p_ptr->inventory[INVEN_HEAD].weight;
-	cur_wgt += p_ptr->inventory[INVEN_ARM].weight;
-	cur_wgt += p_ptr->inventory[INVEN_OUTER].weight;
-	cur_wgt += p_ptr->inventory[INVEN_HANDS].weight;
-	cur_wgt += p_ptr->inventory[INVEN_FEET].weight;
+	cur_wgt = armour_weight(p_ptr);
 
 	/* Determine the weight allowance */
 	max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 500);
@@ -1852,6 +1846,7 @@ static void calc_bonuses(int Ind)
 	p_ptr->dodge_chance = 0;
 
 	p_ptr->sensible_fire = FALSE;
+	p_ptr->resist_continuum = FALSE;
 
 	/* Start with a single blow per turn */
 	p_ptr->num_blow = 1;
@@ -2104,6 +2099,12 @@ static void calc_bonuses(int Ind)
 
 		/* Not-burning light source does nothing, good or bad */
 		if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) continue;
+
+		/* MEGA ugly hack -- set spacetime distortion resistance */
+		if(o_ptr->name1 == ART_ANCHOR)
+		{
+			p_ptr->resist_continuum = TRUE;
+		}
 
 		/* Hack -- first add any "base bonuses" of the item.  A new
 		 * feature in MAngband 0.7.0 is that the magnitude of the
@@ -2653,6 +2654,11 @@ static void calc_bonuses(int Ind)
 		p_ptr->see_infra++;
 	}
 
+	/* Temporary infravision boost */
+	if (p_ptr->st_anchor)
+	{
+		p_ptr->resist_continuum = TRUE;
+	}
 
 	/* Hack -- Res Chaos -> Res Conf */
 	if (p_ptr->resist_chaos)
@@ -2996,7 +3002,8 @@ static void calc_bonuses(int Ind)
 		p_ptr->dodge_chance = get_skill_scale(p_ptr, SKILL_DODGE, 150);
 
 		/* Armor weight bonus/penalty */
-		p_ptr->dodge_chance -= cur_wgt * 2;
+//		p_ptr->dodge_chance -= cur_wgt * 2;
+		p_ptr->dodge_chance -= cur_wgt;		/* XXX adjust me */
 
 		/* Encumberance bonus/penalty */
 		p_ptr->dodge_chance -= p_ptr->total_weight / 100;

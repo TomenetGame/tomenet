@@ -4024,6 +4024,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_AMULET_SUSPICION:
 				{
 					o_ptr->bpval = -1;
+					break;
 				}
 
 				/* Amulet of speed */

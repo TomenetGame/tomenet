@@ -2881,6 +2881,12 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
+			/* Hack -- duplicated check to avoid silly message */
+			if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px))
+			{
+				msg_format(Ind, "%^s commands you to return, but you don't care.", m_name);
+				break;
+			}
 			msg_format(Ind, "%^s commands you to return.", m_name);
 			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
 			break;
@@ -2892,6 +2898,12 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
+			/* Hack -- duplicated check to avoid silly message */
+			if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px))
+			{
+				msg_format(Ind, "%^s tries to teleport you away in vain.", m_name);
+				break;
+			}
 			msg_format(Ind, "%^s teleports you away.", m_name);
 			teleport_player(Ind, 100);
 			break;

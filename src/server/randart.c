@@ -1194,7 +1194,7 @@ void randart_name(object_type *o_ptr, char *buffer)
 /*
  * Here begins the code for new ego-items.		- Jir -
  * Powers of ego-items are determined from random seed
- * just like randarts, but is controled by ego-flags.
+ * just like randarts, but is controlled by ego-flags.
  *
  * This code is the mixture of PernAngband ego-item system
  * and PernMangband randarts system(as you see above).

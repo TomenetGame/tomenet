@@ -4822,6 +4822,9 @@ extern int PlayerUID;
 #define TRAP_OF_BATTLE_FIELD	199
 #define TRAP_OF_DEATH_MOLDS	200
 #define TRAP_OF_DEATH_SWORDS	201
+#define TRAP_OF_UNLIGHT		202
+#define TRAP_OF_THIRST		203
+#define TRAP_OF_FINGER_CATCHING	204
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000

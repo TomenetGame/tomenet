@@ -27,6 +27,8 @@
  */
 //#define NORMAL_HIT_NO_STUN
 
+/* upper limit of dodging chance.	[90] */
+#define DODGE_MAX_CHANCE	90
 
 /*
  * Critical blow.  All hits that do 95% of total possible damage,
@@ -253,8 +255,8 @@ bool make_attack_normal(int Ind, int m_idx)
 		{
 			int chance = p_ptr->dodge_chance - ((rlev * 5) / 6);
 
-			/* always 20% chance to hit */
-			if (chance > 80) chance = 80;
+			/* always 10% chance to hit */
+			if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;
 
 			/* Always disturbing */
 			disturb(Ind, 1, 0);

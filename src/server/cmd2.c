@@ -3530,7 +3530,9 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 	/* Potions smash open */
 	if (k_info[o_ptr->k_idx].tval == TV_POTION ||
-			k_info[o_ptr->k_idx].tval == TV_POTION2)
+		k_info[o_ptr->k_idx].tval == TV_POTION2 ||
+		k_info[o_ptr->k_idx].tval == TV_FLASK ||
+		k_info[o_ptr->k_idx].tval == TV_BOTTLE)
 	{
 		if ((hit_body) || (hit_wall) || (randint(100) < j))
 		{

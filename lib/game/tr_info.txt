@@ -586,12 +586,12 @@ D:A poisoned seeker bolt shoots out at you.
 F:FLOOR | CHEST | DOOR
 
 N:118:Broken Dagger Trap
-I:2:100:0:5:2:0d0:R:10
+I:2:100:0:5:2:0d0:R:40
 D:An broken dagger shoots out at you.
 F:FLOOR | CHEST | DOOR
 
 N:119:Dagger Trap
-I:2:100:0:5:5:0d0:R:10
+I:2:100:0:5:5:0d0:R:40
 D:A dagger shoots out at you.
 F:FLOOR | CHEST | DOOR
 
@@ -610,62 +610,62 @@ F:FLOOR | CHEST | DOOR
 #
 
 N:122:Arrows Trap
-I:4:100:0:7:16:0d0:R:10
+I:4:100:0:7:16:0d0:R:30
 D:Some arrows shoot out at you.
 F:FLOOR | CHEST | DOOR
 
 N:123:Bolts Trap
-I:4:100:0:7:18:0d0:R:10
+I:4:100:0:7:18:0d0:R:30
 D:Some bolts shoot out at you.
 F:FLOOR | CHEST | DOOR
 
 N:124:Seeker Arrow Trap
-I:5:100:0:8:20:0d0:R:10
+I:5:100:0:8:20:0d0:R:60
 D:Some seeker arrows shoot out at you.
 F:FLOOR | CHEST | DOOR
 
 N:125:Seeker Bolt Trap
-I:5:100:0:8:24:0d0:R:10
+I:5:100:0:8:24:0d0:R:60
 D:Some seeker bolts shoot out at you.
 F:FLOOR | CHEST | DOOR
 
 N:126:Poison Arrows Trap
-I:5:100:0:8:18:0d0:R:10
+I:5:100:0:8:18:0d0:R:30
 D:Some poisoned arrows shoot out at you.
 F:FLOOR | CHEST | DOOR
 
 N:127:Poison Bolt Trap
-I:6:100:0:8:20:0d0:R:10
+I:6:100:0:8:20:0d0:R:30
 D:Some poisoned bolts shoot out at you.
 F:FLOOR | CHEST | DOOR
 
 N:128:Poison Seeker Arrows Trap
-I:7:100:0:9:27:0d0:R:10
+I:7:100:0:9:27:0d0:R:60
 D:Some poisoned seeker arrows shoot out at you.
 F:FLOOR | CHEST | DOOR
 
 N:129:Poison Seeker Bolts Trap
-I:9:100:0:9:30:0d0:R:10
+I:9:100:0:9:30:0d0:R:60
 D:Some poisoned seeker bolts shoot out at you.
 F:FLOOR | CHEST | DOOR
 
 N:130:Broken Daggers Trap
-I:4:100:0:6:12:0d0:R:10
+I:4:100:0:6:12:0d0:R:40
 D:Some broken daggers shoot out at you.
 F:FLOOR | CHEST | DOOR
 
 N:131:Dagger Trap
-I:4:100:0:6:15:0d0:R:10
+I:4:100:0:6:15:0d0:R:40
 D:Some daggers shoot out at you.
 F:FLOOR | CHEST | DOOR
 
 N:132:Poison Broken Daggers Trap
-I:5:100:0:7:18:0d0:R:10
+I:5:100:0:7:18:0d0:R:40
 D:Some poisoned broken daggers shoot out at you.
 F:FLOOR | CHEST | DOOR
 
 N:133:Poison Daggers Trap
-I:6:100:0:7:23:0d0:R:10
+I:6:100:0:7:23:0d0:R:40
 D:Some poisoned daggers shoot out at you.
 F:FLOOR | CHEST | DOOR
 
@@ -909,7 +909,7 @@ F:DOOR | CHEST | CHANGE
 
 N:192:Wrong Target Trap
 I:7:40:5:5:22:0d0:w:10
-D:Suddenly you felt something really splendid just happened to you!
+D:You feel uneasy.
 F:FLOOR | DOOR | CHEST
 
 N:193:Cleaning Trap
@@ -953,9 +953,24 @@ D:You suddenly see a lump of malice!
 F:FLOOR | CHEST | DOOR
 
 N:201:Summon Death Sword Trap
-I:7:40:10:10:11:0d0:v:50
+I:7:40:10:10:13:0d0:v:50
 D:You suddenly see a siege of malicious blades!
 F:FLOOR | CHEST | DOOR
+
+N:202:Trap of Unlight
+I:4:70:10:10:10:0d0:W:10
+D:Your light goes out!
+F:FLOOR | CHEST | DOOR
+
+N:203:Trap of Thirst
+I:8:30:10:10:23:0d0:y:50
+D:Your backpack makes a clattering noise.
+F:FLOOR | CHEST | DOOR
+
+N:204:Finger Catching Trap
+I:2:100:10:10:6:4d5:r:10
+D:Ouch! You get your finger caught!
+F:CHEST
 
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
