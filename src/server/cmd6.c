@@ -136,11 +136,7 @@ void do_cmd_eat_food(int Ind, int item)
 		return;
 	}
 
-	if (!can_use(Ind, o_ptr))
-	{
-		msg_print(Ind, "You are not high level enough.");
-		return;
-	}
+	if (!can_use_verbose(Ind, o_ptr)) return;
 
 
 	if (o_ptr->tval != TV_FOOD && o_ptr->tval != TV_FIRESTONE)
@@ -1281,11 +1277,7 @@ void do_cmd_quaff_potion(int Ind, int item)
                 return;
         };
 
-        if (!can_use(Ind, o_ptr))
-        {
-                msg_print(Ind, "You are not high level enough.");
-		return;
-        }
+        if (!can_use_verbose(Ind, o_ptr)) return;
 
 
 	if ((o_ptr->tval != TV_POTION) &&
@@ -2077,11 +2069,7 @@ void do_cmd_read_scroll(int Ind, int item)
 		return;
 	}
 
-	if (!can_use(Ind, o_ptr))
-	{
-		msg_print(Ind, "You are not high level enough.");
-		return;
-	}
+	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2850,11 +2838,7 @@ void do_cmd_use_staff(int Ind, int item)
 		return;
 	}
 
-        if (!can_use(Ind, o_ptr))
-        {
-                msg_print(Ind, "You are not high level enough.");
-		return;
-        }
+        if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1))
@@ -3326,11 +3310,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		return;
 	}
 
-        if (!can_use(Ind, o_ptr))
-        {
-                msg_print(Ind, "You are not high level enough.");
-		return;
-        }
+        if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Mega-Hack -- refuse to aim a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1))
@@ -3859,11 +3839,7 @@ void do_cmd_zap_rod(int Ind, int item)
 		return;
 	}
 
-        if (!can_use(Ind, o_ptr))
-        {
-                msg_print(Ind, "You are not high level enough.");
-		return;
-        }
+        if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Get a direction (unless KNOWN not to need it) */
 	/* Pfft, dirty, dirty, diiirrrrtie!! (FIXME) */
@@ -4158,11 +4134,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		return;
 	}
 
-        if (!can_use(Ind, o_ptr))
-        {
-                msg_print(Ind, "You are not high level enough.");
-		return;
-        }
+        if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Hack -- verify potential overflow */
 	/*if ((inven_cnt >= INVEN_PACK) &&
@@ -4753,11 +4725,7 @@ void do_cmd_activate(int Ind, int item)
 		return;
 	} 
 
-	if (!can_use(Ind, o_ptr))
-	{
-		msg_print(Ind, "You are not high level enough.");
-		return;
-	}
+	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Test the item */
 	if (!item_tester_hook_activate(Ind, o_ptr))
@@ -6855,11 +6823,7 @@ void do_cmd_activate_dir(int Ind, int dir)
                 return;
         }; 
 
-        if (!can_use(Ind, o_ptr))
-        {
-                msg_print(Ind, "You are not high level enough.");
-		return;
-        }
+        if (!can_use_verbose(Ind, o_ptr)) return;
 
 	if (o_ptr->tval == TV_DRAG_ARMOR && item==INVEN_BODY && !o_ptr->name1)
 	{

@@ -2694,11 +2694,7 @@ void do_cmd_fire(int Ind, int dir)
 		return;
 	}
 
-	if (!can_use(Ind, o_ptr))
-	{
-		msg_print(Ind, "You are not high level enough.");
-		return;
-	}
+	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	if (!o_ptr->tval || !o_ptr->number)
 	{

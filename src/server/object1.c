@@ -6547,3 +6547,35 @@ bool can_use(int Ind, object_type *o_ptr)
 	}
 	else return (FALSE);
 }
+
+bool can_use_verbose(int Ind, object_type *o_ptr)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* Owner always can use */
+	if (p_ptr->id == o_ptr->owner || p_ptr->admin_dm) return (TRUE);
+
+	if (o_ptr->level < 1 && o_ptr->owner)
+	{
+		msg_print(Ind, "You must be the owner in order to use it.");
+		return (FALSE);
+	}
+
+	if ((!(p_ptr->mode & MODE_IMMORTAL)) && (o_ptr->owner_mode & MODE_IMMORTAL))
+	{
+		msg_print(Ind, "You cannot use things that belong to everlasting players.");
+                return FALSE;
+	}
+
+	/* Hack -- convert if available */
+	if (p_ptr->lev >= o_ptr->level && !p_ptr->admin_dm)
+	{
+		o_ptr->owner = p_ptr->id;
+		return (TRUE);
+	}
+	else
+	{
+		msg_print(Ind, "Your level is not high enough yet to use this.");
+		return (FALSE);
+	}
+}

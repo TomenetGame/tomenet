@@ -508,11 +508,7 @@ void do_cmd_wield(int Ind, int item)
 		return;
 	}
 
-	if (!can_use(Ind, o_ptr))
-	{
-		msg_print(Ind, "You are not high level enough.");
-		return;
-	}
+	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	/* Prevent wielding into a cursed slot */
 	if (cursed_p(&(p_ptr->inventory[slot])))

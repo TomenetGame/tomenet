@@ -708,6 +708,7 @@ extern int get_playerind(char *name);
 extern bool no_lite(int Ind);
 
 extern bool can_use(int Ind, object_type *o_ptr);
+extern bool can_use_verbose(int Ind, object_type *o_ptr);
 extern bool interfere(int Ind, int chance);
 
 extern void telekinesis_aux(int Ind, int item);

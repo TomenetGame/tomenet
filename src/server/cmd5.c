@@ -1586,11 +1586,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[book];
 
-	if (!can_use(Ind, o_ptr))
-	{
-		msg_print(Ind, "You are not high level enough.");
-		return;
-	}
+	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	if (o_ptr->tval != TV_BOOK)
 	{

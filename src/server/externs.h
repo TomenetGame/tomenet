@@ -864,6 +864,7 @@ extern void object_copy(object_type *o_ptr, object_type *j_ptr);
 extern s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void object_wipe(object_type *o_ptr);
 extern bool can_use(int Ind, object_type *o_ptr);
+extern bool can_use_verbose(int Ind, object_type *o_ptr);
 extern void flavor_init(void);
 extern void reset_visuals(void);
 extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp);

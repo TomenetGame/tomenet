@@ -2350,6 +2350,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 500,
                         },
                         {
+                                SKILL_UDUN,
+                                '+', 0,
+                                '+', 450,
+                        },
+                        {
                                 SKILL_META,
                                 '+', 0,
                                 '+', 300,
@@ -2752,6 +2757,11 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_TEMPORAL,
+                                '+', 0,
+                                '+', 1400,
+                        },
+                        {
+                                SKILL_UDUN,
                                 '+', 0,
                                 '+', 1400,
                         },
@@ -3600,6 +3610,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_TEMPORAL,
                                 '+', 0,
                                 '+', 550,
+                        },
+                        {
+                                SKILL_UDUN,
+                                '+', 0,
+                                '+', 450,
                         },
 
                         {

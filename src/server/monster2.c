@@ -2323,14 +2323,12 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Paranoia */
 	if (!r_ptr->name) return (FALSE);
 
-
 	/* Hack -- "unique" monsters must be "unique" */
 	if ((r_ptr->flags1 & RF1_UNIQUE) && ((!allow_unique_level(r_idx, wpos)) || (r_ptr->cur_num >= r_ptr->max_num)))
 	{
 		/* Cannot create */
 		return (FALSE);
 	}
-
 
 	/* Depth monsters may NOT be created out of depth */
 	if ((r_ptr->flags1 & RF1_FORCE_DEPTH) && (getlevel(wpos) < r_ptr->level))
@@ -2341,6 +2339,24 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 
         /* Ego Uniques are NOT to be created */
         if ((r_ptr->flags1 & RF1_UNIQUE) && (ego || randuni)) return 0;
+
+	/* If the monster is unique and all players on this level already killed
+	   the monster, don't spawn it. (For Morgoth, especially) -C. Blue */
+	if (r_ptr->flags1 & RF1_UNIQUE)
+	{
+		int on_level, who_killed;
+		for (i = 1; i <= NumPlayers; i++)
+		{
+			/* Count how many players are here */
+			on_level++;
+			/* Count how many of them have killed this unique monster */
+			if (inarea(&Players[i]->wpos, wpos) &&
+			    Players[i]->r_killed[r_idx])
+				who_killed++;
+		}
+		/* If all of them already killed it it must not be spawned */
+		if (on_level == who_killed) return(FALSE);
+	}
 
         /* Now could we generate an Ego Monster */
         r_ptr = race_info_idx(r_idx, ego, randuni);

@@ -5943,8 +5943,10 @@ static void process_monster(int Ind, int m_idx)
 		{
 			player_type *q_ptr = Players[0 - c_ptr->m_idx];
 
-			/* Don't attack your master! */
-			if (q_ptr && m_ptr->owner != q_ptr->id)
+			/* Don't attack your master! Invincible players can't be atacked! */
+			if ((q_ptr && m_ptr->owner != q_ptr->id) &&
+			    !((q_ptr->inventory[INVEN_NECK].tval == TV_AMULET) &&
+			    (q_ptr->inventory[INVEN_NECK].sval == SV_AMULET_IMMORTALITY)))
 			{
 				/* Push past weaker players (unless leaving a wall) */
 				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
@@ -6951,6 +6953,11 @@ void process_monsters(void)
 			/* Glaur. Skip if same distance and stronger and same visibility*/ 
 			if ((j == dis_to_closest) && (p_ptr->chp > lowhp) && (blos == new_los)) 
 				continue; 
+			
+			/* Skip if player wears amulet of invincibility - C. Blue */
+			if ((p_ptr->inventory[INVEN_NECK].tval == TV_AMULET) &&
+			    (p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_IMMORTALITY))
+				continue;
 
 			/* Remember this player */ 
 			blos = new_los; 

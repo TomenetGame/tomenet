@@ -3271,8 +3271,7 @@ void check_experience(int Ind)
 
 	/* Gain levels while possible */
 	while ((p_ptr->lev < PY_MAX_LEVEL) &&
-			(p_ptr->exp >= ((s64b)(((s64b)player_exp[p_ptr->lev-1] *
-								   (s64b)p_ptr->expfact) / 100L))))
+			(p_ptr->exp >= ((s64b)(((s64b)player_exp[p_ptr->lev-1] * (s64b)p_ptr->expfact) / 100L))))
 	{
 		if(p_ptr->inval && p_ptr->lev >= 25){
 			msg_print(Ind, "\377rYou cannot gain level further. Ask an admin to validate your account.");
@@ -3387,13 +3386,15 @@ void gain_exp(int Ind, s32b amount)
 	if (p_ptr->ghost) amount = (amount * 2) / 3;	/* 1.5 = 1, none? :) */
 
 #ifdef KINGCAP_LEV
-        /* You must defeat morgoth before being allowed level > 50 */
-        if ((!p_ptr->total_winner) && (p_ptr->exp + amount >= ((s64b)((s64b)player_exp[50 - 1] *
+        /* You must defeat morgoth before being allowed level > 50
+	   otherwise stop 1 exp point before 51 */
+        if ((!p_ptr->total_winner) && (p_ptr->exp + amount + 1 >= ((s64b)((s64b)player_exp[50 - 1] *
                                            (s64b)p_ptr->expfact / 100L)))) {
-		if (p_ptr->exp >= ((s64b)((s64b)player_exp[50 - 1] *
+		if (p_ptr->exp + 1 >= ((s64b)((s64b)player_exp[50 - 1] *
                                            (s64b)p_ptr->expfact / 100L)))
         		return;
 		amount = ((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
+		amount--;
 	}		
 #endif
 #ifdef KINGCAP_EXP

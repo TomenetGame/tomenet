@@ -3499,11 +3499,8 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	o_ptr = &p_ptr->inventory[item_kit];
 	j_ptr = &p_ptr->inventory[item_load];
 
-	if (!can_use(Ind, o_ptr) || !can_use(Ind, j_ptr))
-	{
-		msg_print(Ind, "You are not high level enough.");
-		return;
-	}
+	if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, j_ptr)) return;
 
 	/* Trap kits need a second object */
 	switch (o_ptr->sval)
