@@ -13780,7 +13780,7 @@ D:her magic to do his bidding.
 
 N:795:Horned Reaper
 G:U:B
-I:130:50d100:40:140:40
+I:130:50d100:40:120:40
 W:72:3:0:18000
 E:1:1:1:2:1:1
 O:0:100:0:0

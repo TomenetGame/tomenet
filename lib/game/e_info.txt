@@ -35,9 +35,9 @@ W:5:3:12:10000
 C:-20:-20:0:4
 R:100
 F:MANA | PVAL_M2 | NO_ENCHANT
-R:50
+R:100
 F:R_HIGH
-R:25
+R:50
 F:ABILITY
 #R:10
 #F:REGEN_MANA
@@ -55,9 +55,9 @@ F:PVAL_M2 | NO_ENCHANT
 #since SPELL doesn't work atm:
 F:MANA
 #pval was 3
-R:70
+R:100
 F:R_HIGH
-R:35
+R:75
 F:ABILITY
 #R:30
 #F:REGEN_MANA
@@ -72,9 +72,9 @@ R:100
 F:MANA | PVAL_M2 | NO_ENCHANT
 #SPELL | 
 #since SPELL doesn't work atm: pval was 3
-R:90
+R:100
 F:R_HIGH
-R:45
+R:90
 F:ABILITY
 #R:50
 #F:REGEN_MANA
