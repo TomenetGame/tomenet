@@ -931,6 +931,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 
 	/* Different charges (etc) cannot be stacked */
 	if (o_ptr->pval != j_ptr->pval) return (0);
+	if (o_ptr->bpval != j_ptr->bpval) return (0);
 
 	/* Require many identical values */
 	if (o_ptr->to_h  !=  j_ptr->to_h) return (0);
