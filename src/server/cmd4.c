@@ -575,7 +575,10 @@ void do_cmd_check_players(int Ind, int line)
 		if ((p_ptr->party == q_ptr->party && p_ptr->party) || (!strcmp(p_ptr->name,cfg_dungeon_master)) || Ind == k)
 		{
 #ifdef NEW_DUNGEON
-			fprintf(fff, "   [(%d,%d), %dft]", q_ptr->wpos.wx, q_ptr->wpos.wy, q_ptr->wpos.wz*50);
+//			fprintf(fff, "   [(%d,%d), %dft]", q_ptr->wpos.wx, q_ptr->wpos.wy, q_ptr->wpos.wz*50);
+			/* maybe too kind? */
+			fprintf(fff, "   {[%d,%d] of %dft(%d,%d)}", q_ptr->panel_row, q_ptr->panel_col, q_ptr->wpos.wz*50, q_ptr->wpos.wx, q_ptr->wpos.wy);
+
 #else
 			fprintf(fff, " - at %ld ft", q_ptr->dun_depth * 50);
 #endif

@@ -521,3 +521,7 @@ Change list for PernMangband
 - Exploding ammos/boomerangs/Ricochet
 - Ammo inscribed {!g} never drops(=never litter the floor).
 - Other bugfixes.
+
+27/12/2001 (Jir)
+- Sector info on '@'.
+- Some small scripts.

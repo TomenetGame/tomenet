@@ -2150,7 +2150,7 @@ void do_cmd_view_map(int Ind)
 	if (Players[Ind]->dun_depth >= 0) display_map(Ind, &cy, &cx);
 #endif
 	/* do wilderness map */
-	/* pfft */
+	/* pfft, fix me pls, Evileye ;) */
 //	else wild_display_map(Ind);
 	else display_map(Ind, &cy, &cx);
 }

@@ -84,6 +84,12 @@ typedef unsigned int u32b;
 #define CLASS_MONK              10
 #define CLASS_TELEPATH		11
 
+struct worldpos{
+	s16b wx;	/* west to east */
+	s16b wy;	/* south to north */
+	s16b wz;	/* deep to sky */
+};
+
 struct object_type
 {
         s32b owner;                     /* Player that found it */
@@ -254,6 +260,7 @@ struct player_type
 
 	bool obj_aware[MAX_K_IDX]; /* Is the player aware of this obj type? */
 	bool obj_tried[MAX_K_IDX]; /* Has the player tried this obj type? */
+	bool trap_ident[MAX_T_IDX];       /* do we know the name */
 
 	bool options[64];	/* Player's options */
 	byte d_attr[MAX_K_IDX];
