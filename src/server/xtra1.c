@@ -2008,7 +2008,7 @@ static void calc_bonuses(int Ind)
 		 * bonus but not the ego bonus so we don't add them twice.
 		*/
 #if 1
-		if (o_ptr->name2)
+		if (o_ptr->name2 && o_ptr->tval!=TV_RING)
 		{
 			artifact_type *a_ptr;
 	 	
@@ -2025,6 +2025,7 @@ static void calc_bonuses(int Ind)
 		if (f1 & TR1_DEX) p_ptr->stat_add[A_DEX] += pval;
 		if (f1 & TR1_CON) p_ptr->stat_add[A_CON] += pval;
 		if (f1 & TR1_CHR) p_ptr->stat_add[A_CHR] += pval;
+
 
 //                if (f5 & (TR5_LUCK)) p_ptr->luck_cur += pval;
 
