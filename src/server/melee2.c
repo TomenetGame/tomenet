@@ -2432,7 +2432,7 @@ bool make_attack_spell(int Ind, int m_idx)
 				}
 
 
-				take_sanity_hit(Ind, damroll(8, 8), ddesc);
+				take_sanity_hit(Ind, damroll(6, 6), ddesc);/* 8,8 was too powerful */
 				//				take_hit(Ind, damroll(8, 8), ddesc);
 			}
 			break;
@@ -2458,7 +2458,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			{
 				msg_print(Ind, "Your mind is blasted by psionic energy.");
 				//				take_hit(Ind, damroll(12, 15), ddesc);
-				take_sanity_hit(Ind, damroll(12,15), ddesc);
+				take_sanity_hit(Ind, damroll(9,9), ddesc);/* 12,15 was too powerful */
 				if (!p_ptr->resist_blind)
 				{
 					(void)set_blind(Ind, p_ptr->blind + 8 + rand_int(8));
