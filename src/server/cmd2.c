@@ -3067,7 +3067,7 @@ void do_cmd_fire(int Ind, int dir)
 									tdam += o_ptr->to_d;
 									if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
 									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg);
-									tdam += j_ptr->to_d;
+									tdam += j_ptr->to_d + p_ptr->to_d_ranged;
 								}
 								else
 								{
@@ -3075,6 +3075,7 @@ void do_cmd_fire(int Ind, int dir)
 								        tdam = damroll(o_ptr->dd, o_ptr->ds);
 									tdam += o_ptr->to_d;
 									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg);
+									tdam += p_ptr->to_d_ranged;
 								}
 
 								/* Boost the damage */
@@ -3210,7 +3211,7 @@ void do_cmd_fire(int Ind, int dir)
 						tdam += o_ptr->to_d;
 						if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
 						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg);
-						tdam += j_ptr->to_d;
+						tdam += j_ptr->to_d + p_ptr->to_d_ranged;
 					}
 					else
 					{
@@ -3218,6 +3219,7 @@ void do_cmd_fire(int Ind, int dir)
 					        tdam = damroll(o_ptr->dd, o_ptr->ds);
 						tdam += o_ptr->to_d;
 						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg);
+						tdam += p_ptr->to_d_ranged;
 					}
 
 					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);

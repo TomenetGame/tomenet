@@ -1791,7 +1791,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 	o_ptr = &(p_ptr->inventory[INVEN_WIELD]);
 
 	/* Calculate the "attack quality" */
-	bonus = p_ptr->to_h + o_ptr->to_h;
+	bonus = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
 	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
 
@@ -1897,7 +1897,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 				k = damroll(o_ptr->dd, o_ptr->ds);
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg);
 				if (p_ptr->impact && (k > 50)) do_quake = TRUE;
-				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
+				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
 				k += o_ptr->to_d;
 			}
 			/* handle bare fists/bat/ghost */
@@ -1907,7 +1907,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 			}
 			
 			/* Apply the player damage bonuses */
-			k += p_ptr->to_d;
+			k += p_ptr->to_d + p_ptr->to_d_melee;
 
 			/* No negative damage */
 			if (k < 0) k = 0;
@@ -2366,7 +2366,8 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	{
 		martial = TRUE;
 	}
-	else if (get_skill(p_ptr, SKILL_BACKSTAB))
+	/* Need TV_SWORD type weapon to backstab */
+	else if (get_skill(p_ptr, SKILL_BACKSTAB) && (o_ptr->tval == TV_SWORD))
 	{
 		if(m_ptr->csleep /*&& m_ptr->ml*/)
 			backstab = TRUE;
@@ -2393,7 +2394,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 		}
 		
 		/* Calculate the "attack quality" */
-		bonus = p_ptr->to_h + o_ptr->to_h;
+		bonus = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
 		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
 		/* Test for hit */
@@ -2542,13 +2543,13 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				{
 					k += (k * (nolite ? 3 : 1) *
 						get_skill_scale(p_ptr, SKILL_BACKSTAB, 300)) / 100;
-					backstab = FALSE;
+//					backstab = FALSE;
 				}
 				else if (stab_fleeing)
 				{
 					k += (k * (nolite2 ? 2 : 1) *
 						get_skill_scale(p_ptr, SKILL_BACKSTAB, 210)) / 100;
-					stab_fleeing = FALSE;
+//					stab_fleeing = FALSE;
 				}
 
 				/* Select a chaotic effect (50% chance) */
@@ -2596,7 +2597,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 
 				if ((p_ptr->impact && (k > 50)) || chaos_effect == 2) do_quake = TRUE;
 
-				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
+				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
 				if (vorpal_cut)
 				{
 					int step_k = k;
@@ -2631,7 +2632,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 
 			/* Apply the player damage bonuses */
 			/* (should this also cancelled by nazgul?(for now not)) */
-			k += p_ptr->to_d;
+			k += p_ptr->to_d + p_ptr->to_d_melee;
 
 			/* Penalty for could-2H when having a shield */
 			if ((f4 & TR4_COULD2H) &&
@@ -2643,12 +2644,14 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			/* DEG Updated hit message to include damage */
 			if(backstab)
 			{
+				backstab = FALSE;
 				if (r_ptr->flags1 & RF1_UNIQUE)
 				msg_format(Ind, "You %s stab the helpless, sleeping %s for \377p%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
 				else msg_format(Ind, "You %s stab the helpless, sleeping %s for \377p%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
 			}
 			else if (stab_fleeing)
 			{
+				stab_fleeing = FALSE;
 				if (r_ptr->flags1 & RF1_UNIQUE)
 				msg_format(Ind, "You %s the fleeing %s for \377p%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
 				else msg_format(Ind, "You %s the fleeing %s for \377g%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
