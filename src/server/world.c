@@ -108,7 +108,7 @@ void add_rplayer(struct wpacket *wpk){
 	if(wpk->type==WP_NPLAYER && !wpk->d.play.server) return;
 	c_pl=rpmlist;
 	while(c_pl){
-		if(c_pl->id==wpk->d.play.id && !(strcmp(c_pl->name, wpk->d.play.name))){
+		if(/* c_pl->id==wpk->d.play.id && */ !(strcmp(c_pl->name, wpk->d.play.name))){
 			found=1;
 			break;
 		}

@@ -2189,6 +2189,14 @@ void store_stole(int Ind, int item)
 		return;
 	}
 
+	/* I'm not saying this is the way to go, but they
+	   can cheeze by attempting repeatedly */
+	if(p_ptr->tim_blacklist){
+		msg_print(Ind, "Bastard Thief! Get out of my shop!!!");
+		store_kick(Ind, FALSE);
+		return;
+	}
+
 	i=gettown(Ind);
 	if(i==-1) return;
 
@@ -2358,7 +2366,7 @@ void store_stole(int Ind, int item)
 	{
 		/* Complain */
 		// say_comment_4();
-		msg_print(Ind, "Basterd!!!");
+		msg_print(Ind, "\377yBastard{L!!!");
 		msg_print(Ind, "\377rNow you're on the black list of merchants..");
 
 		/* Reset insults */
