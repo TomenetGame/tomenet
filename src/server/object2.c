@@ -6118,8 +6118,10 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
 {
+	player_type *p_ptr=Players[Ind];
+
 	/* Artifact always disappears */
-	if (cfg.anti_arts_horde && true_artifact_p(o_ptr))
+	if (cfg.anti_arts_horde && true_artifact_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))
 	{
 		char	o_name[160];
 		object_desc(Ind, o_name, o_ptr, TRUE, 0);

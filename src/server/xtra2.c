@@ -4307,7 +4307,7 @@ void player_death(int Ind)
 	}	
 	
 	/* Drop gold if player has any */
-	if (p_ptr->alive && p_ptr->au)
+	if (p_ptr->bat!=-1 && p_ptr->alive && p_ptr->au)
 	{
 		/* Put the player's gold in the overflow slot */
 		invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
@@ -4328,132 +4328,132 @@ void player_death(int Ind)
 	/* Polymorph back to player (moved)*/
 	/* if (p_ptr->body_monster) do_mimic_change(Ind, 0); */
 
-	/* Setup the sorter */
-	ang_sort_comp = ang_sort_comp_value;
-	ang_sort_swap = ang_sort_swap_value;
+	if(p_ptr->bat!=-1){
+		/* Setup the sorter */
+		ang_sort_comp = ang_sort_comp_value;
+		ang_sort_swap = ang_sort_swap_value;
 
-	/* Sort the player's inventory according to value */
-	ang_sort(Ind, p_ptr->inventory, NULL, INVEN_TOTAL);
+		/* Sort the player's inventory according to value */
+		ang_sort(Ind, p_ptr->inventory, NULL, INVEN_TOTAL);
 
-	/* Starting with the most valuable, drop things one by one */
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
-		bool away = FALSE;
-
-		o_ptr = &p_ptr->inventory[i];
-
-		/* Make sure we have an object */
-		if (o_ptr->k_idx == 0)
-			continue;
-
-		/* If we committed suicide, only drop artifacts */
-//		if (!p_ptr->alive && !artifact_p(o_ptr)) continue;
-		if (!p_ptr->alive)
+		/* Starting with the most valuable, drop things one by one */
+		for (i = 0; i < INVEN_TOTAL; i++)
 		{
-			if (!true_artifact_p(o_ptr)) continue;
+			bool away = FALSE;
 
-			/* hack -- total winners do not drop artifacts when they suicide */
-			//		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
+			o_ptr = &p_ptr->inventory[i];
 
-			/* Artifacts cannot be dropped after all */	
-			if (cfg.anti_arts_horde) 
+			/* Make sure we have an object */
+			if (o_ptr->k_idx == 0)
+				continue;
+
+			/* If we committed suicide, only drop artifacts */
+//			if (!p_ptr->alive && !artifact_p(o_ptr)) continue;
+			if (!p_ptr->alive)
+			{
+				if (!true_artifact_p(o_ptr)) continue;
+
+				/* hack -- total winners do not drop artifacts when they suicide */
+				//		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
+
+				/* Artifacts cannot be dropped after all */	
+				if (cfg.anti_arts_horde) 
+				{
+					/* set the artifact as unfound */
+					a_info[o_ptr->name1].cur_num = 0;
+					a_info[o_ptr->name1].known = FALSE;
+
+					/* Don't drop the artifact */
+					continue;
+				}
+			}
+
+			if (!is_admin(p_ptr) && !p_ptr->inval && p_ptr->max_plv >= cfg.newbies_cannot_drop){
+#ifdef DEATH_ITEM_LOST
+				/* Apply penalty of death */
+				if (!artifact_p(o_ptr) && magik(DEATH_ITEM_LOST))
+					away = TRUE;
+				else
+#endif	// DEATH_ITEM_LOST
+				{
+					p_ptr->inventory[i].marked=3; /* LONG timeout */
+					/* Drop this one */
+					away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
+						<= 0 ? TRUE : FALSE;
+				}
+
+				if (away)
+				{
+					int o_idx = 0, x1, y1, try = 500;
+					cave_type **zcave;
+					if((zcave=getcave(&p_ptr->wpos)))	/* this should never.. */
+						while (o_idx <= 0 && try--)
+						{
+							x1 = rand_int(p_ptr->cur_wid);
+							y1 = rand_int(p_ptr->cur_hgt);
+
+							if (!cave_clean_bold(zcave, y1, x1)) continue;
+							o_idx = drop_near(o_ptr, 0, &p_ptr->wpos, y1, x1);
+						}
+				}
+			}
+			else if (true_artifact_p(o_ptr))
 			{
 				/* set the artifact as unfound */
 				a_info[o_ptr->name1].cur_num = 0;
 				a_info[o_ptr->name1].known = FALSE;
-
-				/* Don't drop the artifact */
-				continue;
 			}
+
+			/* No more item */
+			p_ptr->inventory[i].k_idx = 0;
+			p_ptr->inventory[i].tval = 0;
+			p_ptr->inventory[i].ident = 0;
+			inven_item_increase(Ind, i, -p_ptr->inventory[i].number);
 		}
 
-		if (!is_admin(p_ptr) && !p_ptr->inval && p_ptr->max_plv >= cfg.newbies_cannot_drop){
-#ifdef DEATH_ITEM_LOST
-			/* Apply penalty of death */
-			if (!artifact_p(o_ptr) && magik(DEATH_ITEM_LOST))
-				away = TRUE;
-			else
-#endif	// DEATH_ITEM_LOST
-			{
-				p_ptr->inventory[i].marked=3; /* LONG timeout */
-				/* Drop this one */
-				away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
-					<= 0 ? TRUE : FALSE;
-			}
-
-			if (away)
-			{
-				int o_idx = 0, x1, y1, try = 500;
-				cave_type **zcave;
-				if((zcave=getcave(&p_ptr->wpos)))	/* this should never.. */
-					while (o_idx <= 0 && try--)
-					{
-						x1 = rand_int(p_ptr->cur_wid);
-						y1 = rand_int(p_ptr->cur_hgt);
-
-						if (!cave_clean_bold(zcave, y1, x1)) continue;
-						o_idx = drop_near(o_ptr, 0, &p_ptr->wpos, y1, x1);
-					}
-			}
-		}
-		else if (true_artifact_p(o_ptr))
+		/* Handle suicide */
+		if (!p_ptr->alive)
 		{
-			/* set the artifact as unfound */
-			a_info[o_ptr->name1].cur_num = 0;
-			a_info[o_ptr->name1].known = FALSE;
-		}
+			/* Delete his houses */
+			kill_houses(p_ptr->id, OT_PLAYER);
+			rem_quest(p_ptr->quest_id);
+			kill_objs(p_ptr->id);
 
-		/* No more item */
-		p_ptr->inventory[i].k_idx = 0;
-		p_ptr->inventory[i].tval = 0;
-		p_ptr->inventory[i].ident = 0;
-		inven_item_increase(Ind, i, -p_ptr->inventory[i].number);
-	}
-
-	if (p_ptr->fruit_bat != -1)
-
-	/* Handle suicide */
-	if (!p_ptr->alive)
-	{
-		/* Delete his houses */
-		kill_houses(p_ptr->id, OT_PLAYER);
-		rem_quest(p_ptr->quest_id);
-		kill_objs(p_ptr->id);
-
-		/* Remove him from his party */
-		if (p_ptr->party)
-		{
-			/* He leaves */
-			party_leave(Ind);
-		}
-		if(p_ptr->guild){
-			guild_leave(Ind);
-		}
+			/* Remove him from his party */
+			if (p_ptr->party)
+			{
+				/* He leaves */
+				party_leave(Ind);
+			}
+			if(p_ptr->guild){
+				guild_leave(Ind);
+			}
 	
-		/* Kill him */
-		p_ptr->death = TRUE;
+			/* Kill him */
+			p_ptr->death = TRUE;
 
-		/* One less player here */
-		new_players_on_depth(&p_ptr->wpos,-1,TRUE);
+			/* One less player here */
+			new_players_on_depth(&p_ptr->wpos,-1,TRUE);
 
-		check_roller(Ind);
+			check_roller(Ind);
 
-		/* Remove him from the player name database */
-		delete_player_name(p_ptr->name);
+			/* Remove him from the player name database */
+			delete_player_name(p_ptr->name);
 
-		/* Put him on the high score list */
-		if(!p_ptr->admin_dm && !p_ptr->admin_wiz && !p_ptr->noscore)
-			add_high_score(Ind);
+			/* Put him on the high score list */
+			if(!p_ptr->admin_dm && !p_ptr->admin_wiz && !p_ptr->noscore)
+				add_high_score(Ind);
 
 #ifdef TOMENET_WORLDS
-		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
+			world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
 #endif	// TOMENET_WORLDS
 
-		/* Get rid of him */
-		Destroy_connection(p_ptr->conn, "Committed suicide");
+			/* Get rid of him */
+			Destroy_connection(p_ptr->conn, "Committed suicide");
 
-		/* Done */
-		return;
+			/* Done */
+			return;
+		}
 	}
 
 	if (p_ptr->fruit_bat == -1) 
@@ -4538,18 +4538,15 @@ void player_death(int Ind)
 			o_ptr->level = 1;
 			(void)inven_carry(Ind, o_ptr);
 		}
+		/* Cancel any WOR spells */
+		p_ptr->word_recall = 0;
+
+		/* He is carrying nothing */
+		p_ptr->inven_cnt = 0;
 	}
-	
-	
 	
 	/* Remove the death flag */
 	p_ptr->death = 0;
-
-	/* Cancel any WOR spells */
-	p_ptr->word_recall = 0;
-
-	/* He is carrying nothing */
-	p_ptr->inven_cnt = 0;
 
 	/* Update bonus */
 	p_ptr->update |= (PU_BONUS);

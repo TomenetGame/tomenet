@@ -1189,8 +1189,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					p_ptr->fruit_bat = -1;
 					player_death(Ind);
 				}
-				else				
-				{	/* no saving throw for being restored..... */
+				else if(p_ptr->fruit_bat==2) {
 					msg_print(Ind, "You have been restored!");
 					p_ptr->fruit_bat = 0;
 					p_ptr->update |= (PU_BONUS | PU_HP);

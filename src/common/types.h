@@ -1305,25 +1305,6 @@ struct wilderness_type
 
 typedef struct owner_type owner_type;
 
-#if 0
-struct owner_type
-{
-	cptr owner_name;	/* Name */
-
-	s32b max_cost;		/* Purse limit */
-
-	byte max_inflate;	/* Inflation (max) */
-	byte min_inflate;	/* Inflation (min) */
-
-	byte haggle_per;	/* Haggle unit */
-
-	byte insult_max;	/* Insult limit */
-
-	byte owner_race;	/* Owner race */
-
-	byte unused;		/* Unused */
-};
-#else	// 0
 struct owner_type
 {
 	u32b name;                      /* Name (offset) */
@@ -1343,7 +1324,6 @@ struct owner_type
 
 	s16b costs[3];                  /* Costs for liked people */
 };
-#endif	// 0
 
 /*
  * A store/building type
@@ -2126,20 +2106,6 @@ struct player_type
 	byte confusing;		/* Glowing hands */
 	byte stunning;		/* Heavy hands */
 	byte searching;		/* Currently searching */
-
-#if 0
-	s16b new_spells;	/* Number of spells available */
-
-	s16b old_spells;
-
-	u32b spell_learned1[MAX_REALM];	/* bit mask of spells learned */
-	u32b spell_learned2[MAX_REALM];	/* bit mask of spells learned */
-	u32b spell_worked1[MAX_REALM];	/* bit mask of spells tried and worked */
-	u32b spell_worked2[MAX_REALM];	/* bit mask of spells tried and worked */
-	u32b spell_forgotten1[MAX_REALM];	/* bit mask of spells learned but forgotten */
-	u32b spell_forgotten2[MAX_REALM];	/* bit mask of spells learned but forgotten */
-	byte spell_order[MAX_REALM][64];	/* order spells learned/remembered/fogotten */
-#endif
 
 	bool old_cumber_armor;
 	bool old_cumber_glove;

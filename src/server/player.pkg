@@ -669,6 +669,7 @@ struct player_type
 
 
         byte spell_project;             /* Do the spells(some) affect nearby party members ? */
+	s32b tim_blacklist;
 };
 
 extern bool imprison(int Ind, int time, char *reason);
