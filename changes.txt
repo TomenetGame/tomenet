@@ -17,10 +17,19 @@
 # date start with a number and can then include anything, they are like comments
 # 23/07/2002 - T.o.M.E 2.0.0 aka "Point of No Return"
 
+# bug.txt should follow the exact same format
+
 # special tag to specify the current version
 [V]  TomeNET 4.0.0 aka "The Gathering"
 
-# bug.txt should follow the exact same format
+20/11/2002
+[I]- Unkown skills(no mod, no value) arent displayed in the list
+[I]- Removed a *LOT* of AI_ANNOY
+[P]- Mind, Nature, Divination, Meta and Udun schools are bound to Wisdom
+     instead of Intelligence. Priests are tweaked accordingly
+[P]- Max skill level = player level + 2
+[P]- Impossible to gain exp after level 50 until Morgoth is dead
+[m]- Windows server nearly works, but there is a problem with player speed
 
 13/11/2002
 [O]- Adjusted 2h-only weapons.
