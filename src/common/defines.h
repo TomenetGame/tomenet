@@ -329,7 +329,7 @@
  * OPTION: Maximum number of "quarks" (see "io.c")
  * Default: assume at most 512 different inscriptions are used
  */
-#define QUARK_MAX	1024
+#define QUARK_MAX	4096 /* 1024 wasn't enough it seemed :) - C. Blue */
 
 /*
  * OPTION: Maximum number of messages to remember (see "io.c")
@@ -2502,6 +2502,9 @@ that keeps many algorithms happy.
 
 /* world surface at night */
 #define CAVE_DARKEN	0x0400	/* change colours to darker variants */
+
+/* Field 'remembers' if it belongs to a perma-wall vault or normal vault */
+#define CAVE_ICKY_PERMA	0x0800 	/* part of a perma-walled vault */
 
 #if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?
