@@ -1456,6 +1456,19 @@ void calc_body_bonus(int Ind)
 			break;
 		}
 
+		/* Ents */
+		case 708:
+		{
+			p_ptr->slow_digest = TRUE;
+			//if (p_ptr->prace != RACE_ENT) 
+			p_ptr->pspeed -= 2;
+			p_ptr->sensible_fire = TRUE;
+
+			if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
+
+			p_ptr->can_swim = TRUE; /* wood? */
+		}
+		
 		/* Ghosts get additional boni - undead see below */
 		case 65:	case 100:	case 133:	case 152:	case 231:
 		case 385:	case 394:	case 477:	case 507:	case 508:
@@ -1484,6 +1497,7 @@ void calc_body_bonus(int Ind)
 	{
 	        p_ptr->feather_fall = TRUE;
 		if (p_ptr->lev >= 5) p_ptr->telepathy |= ESP_DRAGON;
+		if (p_ptr->lev >= 30) p_ptr->fly = TRUE;
 	}
 
 	/* Undead get lots of stuff similar to player ghosts */
@@ -2149,15 +2163,17 @@ void calc_bonuses(int Ind)
 	else if (p_ptr->prace == RACE_ENT)
 	{
 		p_ptr->slow_digest = TRUE;
-		p_ptr->pspeed -= 2;
 		p_ptr->sensible_fire = TRUE;
 
 		/* not while in mimicried form */
-		if(!p_ptr->body_monster) p_ptr->can_swim = TRUE; /* wood? */
+		if(!p_ptr->body_monster)
+		{
+			p_ptr->can_swim = TRUE; /* wood? */
+			p_ptr->pspeed -= 2;
+		}
 
 		if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
-		/* why would someone choose Thunderlord with all his advantages over ent gone??
-		ESP_ALL and ESP_EVIL should be removed or Thunderlords exp% lowered a great deal. */
+
 		if (p_ptr->lev >= 10) p_ptr->telepathy |= ESP_ANIMAL;
 		if (p_ptr->lev >= 15) p_ptr->telepathy |= ESP_ORC;
 		if (p_ptr->lev >= 20) p_ptr->telepathy |= ESP_TROLL;
