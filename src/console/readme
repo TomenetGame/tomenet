@@ -1,0 +1,54 @@
+README file for the new remote console tool (12/01/97):
+
+PURPOSE
+-------
+	This is an experimental method of controlling a MAngband server
+without the old, cumbersome method of typing commands on the server's
+terminal.  The new method employs a new socket opened on the server side, and
+a client-type utility for sending commands and interpreting the results.  The
+tool will use the standard Angband "terminal" package and the MAngband
+"network" package, so it should be fairly portable.
+	One nice feature of this method is that new commands can be easily
+added.  If you have any ideas for useful commands, please let me know.
+
+USE
+---
+	This is a list of the possible commands and their uses.
+
+"Get player list" -- This is basically the same as the '@' command from within
+the game, but you can see the depth that any player is at regardless of party
+affiliations.
+
+"Get artifact list" -- This shows the same information as the '~' command from
+within the game.  The numbers on the left are to be used with the "Modify
+artifact info" command, described below.
+
+"Get unique list" -- Same as the '|' command, but also shows the numbers to be
+used for the "Modify unique info" command.
+
+"Modify artifact info" -- This can be used to allow artifacts to be created
+again.  This could be useful if artifacts have become permanently lost
+(this was possible because of some earlier bugs).  The "artifact number" that
+you are asked for is shown on the artifact list, and corresponds to those in
+the "a_info.txt" file.
+
+"Modify unique info" -- This can be used to either resurrect or kill uniques.
+The number that is asked for is shown in the unique list.  When killing a
+unique, you are asked for the name of the player who killed the unique.  This
+must be the name of a valid, live player.
+
+"Get detailed player info" -- This is not implemented yet.
+
+"Send a message" -- This is the same as the client's ':' command, but your
+name shown in brackets will be "Server Admin".  Messages can be sent to one
+player or to all players in the normal fashion.
+
+"Kick a player" -- This allows you to kick a player off the server.  You are
+asked for the player's name.  Note that this doesn't stop the player from
+immediately rejoining.
+
+"Shutdown the server" -- This saves all savefiles and shuts the server down
+cleanly.  It is a good idea to always use this method of shutting the server
+down.
+
+	Keldon (keldon@umr.edu)

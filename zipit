@@ -1,0 +1,1 @@
+zip -r -9 pm.zip * -x mangband mangclient mangconsole *.old src/mangband src/mangconsole src/mangclient core lib/save/*

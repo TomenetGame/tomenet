@@ -1,0 +1,318 @@
+This is the README file for MAngband 0.6.1 (4/27/2000)
+
+	New in this version of Mangband are several important features.  One
+is a mangband.cfg server configuration file which lets some server parameters
+be set without recompiling the server.  This file can be dynamically reloaded
+from mangconsole.  Another is an automatic level unstaticer which randomly
+unstatics the levels, more frequently for higher levels and less frequently for
+deeper levels.  
+	Unfortunatly, as in version 0.6.0, the server is still a bit unstable.  
+The game ocasionally gets a segmentation violation.  In the case that this
+happens, the server will try its best to save everything before crashing.
+If you plan on running a 0.6.1 server, I recomend using something such as the
+included runserv script which will immediatly restart the server when it
+crashes. 
+
+	Send bug reports or feature requests to adingle@crud.net, or to the
+mangband-d mailing list.  Information about and archives of the mailing list
+can be found on the official MAngband site at http://www.mangband.org.
+
+New in .6.1 :
+
+  * The file mangband.cfg has been added, which defines many game options. 
+    This file can be dynamically reloaded through mangconsole.
+
+  * The MAngband lib directory system has been changed.  It has been simplified
+  to the following directorys : lib/data which holds the high scores and the
+  MAngband log, lib/game which holds the .txt template files, lib/save which
+  holds the save files, lib/text which holds the help and login message files,
+  and lib/user which holds the client configuration files.
+  
+  * Shop maximum selling prices have been increased by 25x in the Black Market,
+    and 15x everywhere else.
+
+  * An automatic level unstaticer has been added.
+
+
+New in .6.0 :
+
+  * If you are in the wilderness, and check your map, you get a special
+      wilderness map.  Each character on this map represents an entire wilderness
+      level.
+  * There are now two administration characters, ADMIN_WIZARD, and DUNGEON_MASTER,
+      whose names are defined in config.h.  These characters will probably be
+      combined in the future.  The ADMIN_WIZARD always starts at level 50, is
+      invulnerable, and can open the doors to any house.  This character can
+      move up and down without any stairs, and starts with a fully explored
+      wilderness map.  This character can make owned houses unowned by
+      attempting to purchase them.  This is useful if the key to a house
+      disapears for some reason.  The DUNGEON_MASTER character is fast,
+      invisible, and has a list of dungeon master commands accessable by hitting
+      & that do such things as summon monsters and build walls.  Currently,
+      other players are not informed when he is in game, although this will
+      probably be changed in the future.  If you run a server, **BE SURE** that
+      as soon as you start it for the first time you create characters having
+      the DUNGEON_MASTER and ADMIN_WIZARD names that are defined in config.h,
+      and give these characters a hard to guess password (not mangband).  If you
+      don't do this, then anyone could connect as one of these characters and
+      start cheating or terrorizing your players.
+  * If you are being asked for a direction, say for a magic missile,
+      you can wait and watch your target as it moves.
+  * If you are looking at your inven/equip, the screen isn't updated,
+      so you could be getting attacked without your knowledge.
+  * Although the client options can be modifed from within the client by 
+      hitting =, these changes will not be saved.  The only way to 
+      permatly change these options is by editting the pref files.
+  * Macros/keymaps/options/visual info can only be set using the "pref
+      files".  After doing so, you must reload the pref file using the '"'
+      command (or by restarting your client).
+  * To select your recall depth, inscribe whatever scroll/rod/spellbook you
+    are using to recall @Rdepth_in_feet.
+  * The Home has been changed into the "Tavern", which is where you start.
+  * Resting takes no arguments, and you regenerate at triple speed.
+  * Try using the party commands with 'P'.
+  * The Angband macro interface has been added.  Try it with '%'.
+  * Buying houses can be done with the 'h' key.
+  * The high score list can be looked at with '#'.
+  * There is a "help" command '?'.
+  * Stealing is now possible: use the 'j' command ('S' for roguelike keys).
+
+	
+Every server reports to a metaserver running at MIT.  To ask questions
+about it, send mail to hao@mit.edu.  To see a list of servers running and the
+number of people playing on each of them, telnet to mangband.mit.edu at port
+8801 (for example, type "telnet mangband.mit.edu 8801").  It should give you
+a list of servers with number of people on each.
+
+Visit the MAngband Home Page "http://www.mangband.org" for
+more information about recent changes and improvements, and links to binarys
+of the client and server for various platforms.
+
+If you are only going to use the client, the "lib" directories do not need
+to be installed anywhere.  However, to use the "pref files", you must install
+the "lib/user" directory correctly.
+
+If you are going to run a server, the "lib" directories must be installed
+in the location pointed to in "config.h" and must be readable/writable by
+the owner of the server process.
+
+Most of the networking code was borrowed from the game "XPilot", and then
+heavily modified by myself.  Because XPilot is placed under the GNU
+General Public License, those portions of MAngband are also placed under
+that license.  A copy of the License is included in the source distribution
+as the file "COPYING".
+
+
+
+=== General information ===
+
+MAngband is a "graphical" dungeon adventure game using textual characters
+to represent the walls and floors of a dungeon and the inhabitants therein,
+in the vein of "rogue", "hack", "nethack", and "moria".  MAngband differs
+from normal Angband in that more than one human player inhabits this
+dungeon, and the players can interact in peaceful or violent ways.
+
+There are extensive ascii "on line help" files in the "lib/help" directory.
+
+This version of MAngband will only work on Unix (X11/Curses), Linux 
+(X11/Curses), and similar platforms that are UNIX-ish.  However, this 
+version has only been tested extensively on a Linux machine.  It has been
+tested and compiles and works on SGI's, HP-UX, and Sun's, however.
+
+See Makefile, h-config.h, and config.h for details on compiling.
+
+Visit the MAngband Home Page ("http://www.mangband.org") and
+browse through the Angband newsgroup ("rec.games.roguelike.angband").
+
+Send bug reports, suggestions, etc, to Alex Dingle ("adingle@crud.net").
+
+
+=== Quick and dirty compilation instructions (for Unix/Linux) === 
+
+Step 1: Acquire.  Use a web browser to acquire the source at
+                  "http://www.mangband.org/download/.
+Step 2: Extract.  Try "gunzip *.gz" then "tar -xvf *.tar"
+Step 3: Prepare.  Try "cd mangband*/src", then edit "Makefile"
+                  You should also edit "h-config.h" and "config.h"
+Step 4: Compile.  Try "make", and then "cd .." if successful
+Step 5: Execute.  Try "mangclient keldon.student.umr.edu" to connect
+                  to a server running on my personal machine.
+Step 6: Play....  Read the "online help" via the "?" command.
+
+
+
+=== Directory "src" ===
+
+The "src" directory contains the complete set of source files.
+
+The "src" directory has two subdirectories. The "server" directory
+contains the source for the MAngband server, and the "client" directory
+contains the client source.
+
+The "main-???.c" and "Makefile.???" in the "client" directory may
+eventually allow compilation on various systems.
+
+Some of these systems (Macintosh, Windows) require "extra" files, most of
+which are located elsewhere (except for the "A-mac-h.*" Macintosh files).
+
+
+=== Directory "lib" ===
+
+The "lib" directory contains all of MAngband's special sub-directories.
+
+
+=== Directory "lib/apex" ===
+
+The "lib/apex" directory contains the "high score" files.
+
+The "scores.raw" file contains the "high score" table, in a "semi-binary" form,
+that is, all the bytes in the file are normal ascii values, but this includes
+the special "nul" or "zero" byte, which is used to separate and pad records.
+You should probably not attempt to modify this file with a normal text editor.
+This file should be (more or less) portable between different platforms.  It
+must be present (or creatable) for the game to run correctly.
+
+
+=== Directory "lib/bone" ===
+
+The "lib/bone" directory contains special "player ghost" template files.
+
+The files in this directory have filenames of the form "bone.NNN" where
+"NNN" is the level on which the player died.  They contain information
+about the dead player, currently, one line each for the player name,
+maximum hitpoints, race, and class.  These files are probably portable,
+and are probably compatible with older bone files, if those files are
+renamed, and a final newline is added for compatibility.  Actually,
+only the "player name" from these files is actually used.
+
+
+=== Directory "lib/data" ===
+
+The "lib/data" directory contains various special binary data files.
+
+The files 'f_info.raw', 'k_info.raw', 'a_info.raw', 'e_info.raw', 'r_info.raw',
+and 'v_info.raw' are binary image files constructed by parsing the ascii
+template files in "lib/edit", described below.  These files are required,
+but can be created by the game if the "lib/edit" directory contains the
+proper files, and if the game was compiled to allow this creation.
+
+
+=== Directory "lib/edit" ===
+
+The "lib/edit" directory contains various special ascii data files.
+
+The files 'f_info.txt', 'k_info.txt', 'a_info.txt', 'e_info.txt', 'r_info.txt',
+and 'v_info.txt' are ascii template files used to construct the binary image
+files in "lib/data", described above.  These files describe the "terrain
+features", "object kinds", "artifacts", "ego-items", "monster races", and
+"dungeon vaults", respectively.
+
+The ascii template files are easier to edit than hard-coded arrays, and also
+prevent compilation errors on some machines, and also shrink the size of the
+binary executable, and also provide a user-readible spoiler file of sorts.
+
+These files are optional if the game is distributed with pre-created
+binary raw files in "lib/data".
+
+
+=== Directory "lib/file" ===
+
+The "lib/file" directory contains various special ascii data files.
+
+The 'news.txt' file is displayed to the user when the game starts up.  It
+contains basic information such as my name and email address, and the names
+of some of the people who have been responsible for previous versions of
+Angband.  You may edit this file (slightly) to include local "site specific"
+information such as who compiled the local executable.  You should refer the
+user to a special "online help" file, if necessary, that describes any local
+modifications in detail.  The first two lines of this file should be blank,
+and only the next 20 lines should contain information.
+
+The 'dead.txt' file is displayed to the user when the player dies.  It
+contains a picture of a tombstone which is filled in with interesting
+information about the dead player.  You should not edit this file.
+
+The optional file 'wizards.txt' may be used to specify which users may enter
+'wizard' mode.  A missing file provides no restrictions, and an empty file
+prevents everyone from entering 'wizard' mode.  This file is only used on
+multi-user machines, otherwise there are no restrictions.
+
+The optional file 'time.txt' may be used to restrict the "times" at which
+the game may be played, by providing specification of which hours of each day
+of the week are legal for playing the game.  See 'files.c' for more details.
+A missing file provides no restrictions, and an empty file will, by default,
+forbid the playing of the game from 8am-5pm on weekdays.  This file is only
+used on multi-user machines, and only if CHECK_TIME is defined, otherwise,
+there are no restrictions.
+
+The optional file 'load.txt' may be used to restrict the "load" which the game
+may impose on the system.  See 'files.c' for more details.  A missing file
+provides no restrictions, and an empty file will, by default, restrict the
+"current load" to a maximal value of 100*FSCALE.  This file is only used on
+multi-user machines, and only if CHECK_LOAD is defined, otherwise, there are
+no restrictions.
+
+
+=== Directory "lib/help" ===
+
+The "lib/help" directory contains the "online help" files.
+
+This directory is used to search for normal "on line help" files.
+
+
+=== Directory "lib/info" ===
+
+The "lib/info" directory (optional) contains the "spoiler" files.
+
+This directory is used to search for any "on line help" file that cannot
+be found in the "lib/help" directory.
+
+The user may "redirect" this directory to point at any available directory.
+
+Note that the default "help.hlp" file allows the "9" key to access a help
+file called "spoiler.hlp", and allows the "0" key to access "user.hlp".
+
+These special help files can thus be placed in the user's own "info"
+directory to allow the on line help to access his files.
+
+
+=== Directory "lib/save" ===
+
+The "lib/save" directory contains "savefiles" for the players.
+
+Each savefile is named "NNN" where "NNN" is the name of the character.
+
+The savefiles should be portable between systems, assuming that the
+appropriate renaming is perfomed, and any file "type" information is
+specified (for the Macintosh).  However, I must really recommend
+against copying savefiles from one server to another, because this
+could cause problems about having multiple artifacts on one server,
+etc.  Don't do it.
+
+
+=== Directory "lib/user" ===
+
+The "lib/user" directory contains the "user pref files", if any.
+
+In general, these files are used to "customize" aspects of the game for
+a given site or a given player.  These files can define "macros" (which
+allow a single keypress to perform a complex action), set options (which
+affect how the game will handle various situations), and specify visual
+mappings for various monsters, objects, or terrain features.
+
+Many of these files are not read by the server, but most are read by
+the client.
+
+See "files.c" for more information on the proper "format" of these files.
+
+
+=== Directory "lib/xtra" ===
+
+The "lib/xtra" directory contains special system files, if any.
+
+
+--- Ben ---
+
+    Keldon 
+
+   -Alex

@@ -1,0 +1,10 @@
+#!/bin/bash
+# Runserv, by Chris Atenasio
+ulimit -c unlimited
+
+while :; do
+	./mangband
+	if [ -f core ] ; then
+		mv core cores/`/bin/date +"%Y%m%d%I%M%S"`
+	fi
+done

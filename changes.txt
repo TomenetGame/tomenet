@@ -1,0 +1,57 @@
+Change list for PernMangband
+
+- Added random artifacts
+- Mage damaging spells upgraded in destructive power
+- Sleep Monsters II is gone, replaced by Tidal Wave
+- Acid Bolt is gone, replaced by Mana Strike(a powerfull spell but only a bolt)
+- Reduced the spell cost and failure rate of some mage spells to make them more
+  usefull
+- GoI is stackable but 1/2 will only reduce the damage instead of ignoring it
+- Added Gloves of Magic, that reduce fighting but increase mana(from 10 to 100%)
+  Now Mages will hopefully play in a more "mage-like" way
+- Added the Yeek race, -5 to all stats, bad HP, but very few experience
+  needed to gain a level.
+- Add the Sorceror class
+- Ball spells from party members dont hurt anymore
+- Sorcerors can project wraithfrom, speed, shield on other players
+- Got a permanent server(198.252.166.41) thanks a lot Crimson !
+- Rings & lights artifacts
+...
+
+14/12/2000
+- Damn I always forgot to make this up to date ... ok so lots of
+  things changed ...
+- Mimic class that can polymorph at will into any monster they have
+  "studied"(killed :) enough
+- Much more things I cant remeber .. ok I promise I'll TRY to get this
+  uptodate ... mhh ...
+
+16/12/2000
+- Mimics can now use the powers of the monster they are polymorphed into
+- Old clients no more works with new server(3.0.7)
+
+...
+
+28/03/2001
+- Telepath Class, uses crystals, can fusion with otehr people
+- Grond inscribed with !E wont earthquake
+- Mage Staffs of Power wont increase casting speed
+- Grond WILL increase casting speed by 4
+- DragonRiders get a ESP radius of (lvl/2)
+- DragonRiders lost resist poison
+- DragonRiders resistancess comes at lvl 10 15 20 25
+
+01/04/2001
+- Telepaths can now cast their spells with their energy instead of the
+  controlled guy energy
+- Telepaths got 3 new Telekinesis spells
+- Mind links needs 20 + d15 turns to be ended
+- Telepaths got 1 new Psychoportation spell
+
+16/04/2001
+- Fixed a bug in the polymorph ring generation that could hang the game
+- Mimics polymorph will cycle throught the possible forms instead of
+  randomly selecting them
+
+...
+

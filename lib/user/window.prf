@@ -1,0 +1,12 @@
+# Window.prf:  Set the "usage" on the various windows
+
+
+# Usage: W:<window number>:<usage number>
+#
+# Valid usage numbers:
+#   0 - Inventory    1 - Equipment   3 - Character sheet
+#   6 - Messages
+
+W:1:6
+W:2:0
+W:3:3

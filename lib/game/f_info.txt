@@ -1,0 +1,477 @@
+# File: f_info.txt
+
+
+# This file is used to initialize the "lib/raw/f_info.raw" file, which is
+# used to initialize the "terrain feature" information for the Angband game.
+
+# Do not modify this file unless you know exactly what you are doing,
+# unless you wish to risk possible system crashes and broken savefiles.
+
+# After modifying this file, delete the "lib/raw/f_info.raw" file.
+
+# Note that the terrain feature are grouped into very regular groups,
+# such that each of the bits in the feature type conveys information.
+
+# Note that terrain feature zero contains the "darkness" picture.
+
+
+# Version stamp (required)
+
+V:2.9.9
+
+
+# 0x00 --> nothing
+
+N:0:nothing
+G: :w
+
+
+# 0x01 --> open floor
+
+N:1:open floor
+G:.:w
+
+# 0x02 --> grass
+
+N:2:grass
+G:.:g
+
+# 0x03 --> packed dirt
+
+N:3:packed dirt
+G:.:u
+
+# 0x04 --> crops  
+
+N:4:crops
+G:%:g
+
+# 0x05 --> loose dirt
+
+N:5:loose dirt
+G:%:u
+
+# 0x06 --> water
+
+N:6:water
+G:~:b
+
+# 0x07 --> mud
+
+N:7:mud
+G:~:u
+
+# 0x08 --> invisible trap (drawn as open floor)
+
+N:8:invisible trap
+G:.:w
+M:1
+
+# 0x09 --> glyph of warding
+
+N:9:glyph of warding
+G:;:y
+
+# 0x0A --> open door
+
+N:10:open door
+G:':U
+
+# 0x0B --> broken door
+
+N:11:broken door
+G:':U
+
+# 0x0C --> up stairs (perm)
+
+N:12:up staircase
+G:<:w
+
+# 0x0D --> down stairs (perm)
+
+N:13:down staircase
+G:>:w
+
+# 0x0E --> open door to a home
+
+N:14:open door
+G:':U
+
+# 0x10 --> visible trap -- trap door
+
+N:16:trap door
+G:^:w
+
+# 0x11 --> visible trap -- open pit
+
+N:17:pit
+G:^:s
+
+# 0x12 --> visible trap -- spiked pit
+
+N:18:pit
+G:^:s
+
+# 0x13 --> visible trap -- poison pit
+
+N:19:pit
+G:^:s
+
+# 0x14 --> visible trap -- rune -- summon
+
+N:20:strange rune
+G:^:o
+
+# 0x15 --> visible trap -- rune -- teleport
+
+N:21:strange rune
+G:^:o
+
+# 0x16 --> visible trap -- spot -- fire
+
+N:22:discolored spot
+G:^:u
+
+# 0x17 --> visible trap -- spot -- acid
+
+N:23:discolored spot
+G:^:u
+
+# 0x18 --> visible trap -- dart -- slow
+
+N:24:dart trap
+G:^:r
+
+# 0x19 --> visible trap -- dart -- lose str
+
+N:25:dart trap
+G:^:r
+
+# 0x1A --> visible trap -- dart -- lose dex
+
+N:26:dart trap
+G:^:r
+
+# 0x1B --> visible trap -- dart -- lose con
+
+N:27:dart trap
+G:^:r
+
+# 0x1C --> visible trap -- gas -- blind
+
+N:28:gas trap
+G:^:g
+
+# 0x1D --> visible trap -- gas -- confuse
+
+N:29:gas trap
+G:^:g
+
+# 0x1E --> visible trap -- gas -- poison
+
+N:30:gas trap
+G:^:g
+
+# 0x1F --> visible trap -- gas -- sleep
+
+N:31:gas trap
+G:^:g
+
+# 0x20 --> tree
+
+N:32:tree
+G:*:g
+
+# 0x21 --> evil tree
+
+N:33:dark tree
+G:*:D
+
+# 0x28 --> home door (strength 1)
+
+N:40:closed door
+G:+:U
+
+# 0x29 --> home door (strength 2)
+
+N:41:closed door
+G:+:U
+M:40
+
+# 0x2A --> home door (strength 2)
+
+N:42:closed door
+G:+:U
+M:40
+
+# 0x2B --> home door (strength 2)
+
+N:43:closed door
+G:+:U
+M:40
+
+# 0x2C --> home door (strength 2)
+
+N:44:closed door
+G:+:U
+M:40
+
+# 0x2D --> home door (strength 2)
+
+N:45:closed door
+G:+:U
+M:40
+
+# 0x2E --> home door (strength 2)
+
+N:46:closed door
+G:+:U
+M:40
+
+# 0x2F --> home door (strength 2)
+
+N:47:closed door
+G:+:U
+M:40
+
+# used for the wilderness border
+N:48:permanent wall
+#G: :w
+G: :w
+
+# logs, used for log cabin
+N:49:logs
+G:=:u
+
+# drawbridge, used for moats
+N:64:drawbridge
+G:=:u
+
+# 0x48 --> shop -- general store (perm)
+
+N:72:General Store
+G:1:U
+
+# 0x49 --> shop -- armoury (perm)
+
+N:73:Armoury
+G:2:s
+
+# 0x4A --> shop -- weapon shop (perm)
+
+N:74:Weapon Smiths
+G:3:w
+
+# 0x4B --> shop -- temple (perm)
+
+N:75:Temple
+G:4:g
+
+# 0x4C --> shop -- alchemist (perm)
+
+N:76:Alchemy Shop
+G:5:b
+
+# 0x4D --> shop -- magic shop (perm)
+
+N:77:Magic Shop
+G:6:r
+
+# 0x4E --> shop -- black market (perm)
+
+N:78:Black Market
+G:7:D
+
+N:79:Tavern
+G:8:y
+
+# 0x50 --> shop - AUCTION House . woo hoo. -AD-
+
+N:80:Auction House
+G:9:B
+
+# 0x6x --> locked door (power 0)
+
+N:96:door
+G:+:U
+M:96
+
+# 0x6x --> locked door (power 1)
+
+N:97:locked door
+G:+:U
+M:96
+
+# 0x6x --> locked door (power 2)
+
+N:98:locked door
+G:+:U
+M:96
+
+# 0x6x --> locked door (power 3)
+
+N:99:locked door
+G:+:U
+M:96
+
+# 0x6x --> locked door (power 4)
+
+N:100:locked door
+G:+:U
+M:96
+
+# 0x6x --> locked door (power 5)
+
+N:101:locked door
+G:+:U
+M:96
+
+# 0x6x --> locked door (power 6)
+
+N:102:locked door
+G:+:U
+M:96
+
+# 0x6x --> locked door (power 7)
+
+N:103:locked door
+G:+:U
+M:96
+
+# 0x6x --> jammed door (power 0)
+
+N:104:jammed door
+G:+:U
+M:96
+
+# 0x6x --> jammed door (power 1)
+
+N:105:jammed door
+G:+:U
+M:96
+
+# 0x6x --> jammed door (power 2)
+
+N:106:jammed door
+G:+:U
+M:96
+
+# 0x6x --> jammed door (power 3)
+
+N:107:jammed door
+G:+:U
+M:96
+
+# 0x6x --> jammed door (power 4)
+
+N:108:jammed door
+G:+:U
+M:96
+
+# 0x6x --> jammed door (power 5)
+
+N:109:jammed door
+G:+:U
+M:96
+
+# 0x6x --> jammed door (power 6)
+
+N:110:jammed door
+G:+:U
+M:96
+
+# 0x6x --> jammed door (power 7)
+
+N:111:jammed door
+G:+:U
+M:96
+
+# 0x70 --> secret door
+
+N:112:secret door
+G:#:w
+M:120
+
+# 0x71 --> rubble
+
+N:113:rubble
+G:::w
+
+# 0x72 --> magma vein
+
+N:114:magma vein
+G:%:s
+
+# 0x73 --> quartz vein
+
+N:115:quartz vein
+G:%:w
+
+# 0x74 --> magma vein + treasure
+
+N:116:magma vein
+G:%:s
+M:114
+
+# 0x75 --> quartz vein + treasure
+
+N:117:quartz vein
+G:%:w
+M:115
+
+# 0x76 --> magma vein + known treasure
+
+N:118:magma vein with treasure
+G:*:o
+
+# 0x77 --> quartz vein + known treasure
+
+N:119:quartz vein with treasure
+G:*:o
+
+# 0x78 --> granite wall -- basic
+
+N:120:granite wall
+G:#:w
+
+# 0x79 --> granite wall -- inner
+
+N:121:granite wall
+G:#:w
+M:120
+
+# 0x7A --> granite wall -- outer
+
+N:122:granite wall
+G:#:w
+M:120
+
+# 0x7B --> granite wall -- solid
+
+N:123:granite wall
+G:#:w
+M:120
+
+# 0x7C --> permanent wall -- basic (perm)
+
+N:124:permanent wall
+G:#:w
+
+# 0x7D --> permanent wall -- inner (perm)
+
+N:125:permanent wall
+G:#:w
+M:124
+
+# 0x7E --> permanent wall -- outer (perm)
+
+N:126:permanent wall
+G:#:w
+M:124
+
+# 0x7F --> permanent wall -- solid (perm)
+
+N:127:permanent wall
+G:#:w
+M:124
+

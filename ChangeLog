@@ -1,0 +1,1207 @@
+6/10/00:
+	Fixed a bug that caused a player to become a *KING* after killing Sauron,
+		and revised the winning code to make anyone >= level 40 in the same
+		party and on the same level as the killer of Morgoth a *KING*.
+	Added a retire timer option to mangband.cfg, RETIRE_TIMER.  Setting this 
+		option will cause a player to be automatically retired after
+		the specified number of minutes of play since winning the game.
+	Made it so that people who are't total winners can't wield Grond or
+		the Massive Iron Crown of Morgoth.
+	Increased the weight of the Massive Iron Crown of Morgoth from 2 to 20 
+		lbs.
+	Disabled the prayer alter reality until later when I have time to fix it.
+	
+6/08/00:
+	Revised the pricing and rarities of the deep books so that the deepest
+		deep books worth more money and easier to find.
+	Reworked the code so that types of items can be created that
+		instrinsically have ego powers, and that when excellent can
+		have additional independent ego powers.
+		Example : An Orcish Shield intrinsically gives 1d2 STR and CON.
+		When a shield of the Avari, it will additionally give 1d2 CON.
+		An Orcish Shield of the Avari (+1) (+2) will therefore have two
+		independent ego bonuses -- +1 STR,CON from the shield and +2 CON from the
+		Avari ego, and will therefore give +1 STR and +3 CON when worn. 
+	Made feather falling give resistance to gravity attacks.
+	Made Defenders no longer give feather falling.
+	Made holy avenger weapons additionaly give slay orc and slay troll.
+	Amulets of the magi have been given a random high resist and made rarer
+		at deeper depths than they were previously.
+	Some new items have been added to the game : amulet of the
+		Moon, amulet of Terken, amulet of Speed, Kolla (a type of cloak), Witan Boots,
+		Orcish Shield and Elven Gloves.  Also, some new types of ego armor have been
+		added : shield of the Avari, cloak of Resistance, cloak of the Teleri, cloak of
+		Lordly Resistance, missile weapon of Lothlorien, missile weapon of the Numenor, 
+		boots of Mirkwood, and gloves of the Istari.  
+	
+
+6/07/00:
+	The client and server networking code has been rewritten.  All
+		communications between client and server now use TCP.  The old
+		code was using a guarenteed delivery transmittion scheme
+		piggybacked on top of UDP to transmit all the game data.  TCP
+		not surprisingly appears to do a better job of this.
+	A proper command queue has been added for each player.  When the server
+		receives an "important" command from a player and the player
+		doesn't have enough energy to execute it, the command will be
+		added to the command queue.  Any pending commands on the queue
+		are executed in order as soon as the player gets enough energy
+		to execute them.
+	The time system has been revised so that resting rates and spell durations
+		scale to the speed of the level a player is on.
+	The autoattacker has been changed to be more intelligent in selecting
+		its target.  It has also been changed to "take effect" as soon
+		as possobile.
+	In order to make game motion more smooth, the games FPS has been increased
+		by a factor of 5 and the other game constants scaled accordingly.
+	Changed the mage spell GOI so that it lasts longer but doesn't stack.
+
+5/25/00: 
+	Fixed some minor bugs relating to the door_bump_open option.
+
+5/04/00:
+	Fixed a bug that caused the game to freeze for a bit when people 
+		exited a level, it unstaticed, and they came back into rock.
+
+4/27/00:
+	----- MAngband 0.6.1 released -----
+
+4/27/00: Fixed a bug that was causing the game to freeze when trying to generate
+		 a lake adjacent to town.
+
+4/19/00: Fixed a pricing bug that was causing charisma not to be taken into 
+		account when buying very expensive houses.
+	 Patched the client and server to support dropping more than 32767
+		gold in one square.
+	 Added a newbies_cannot_drop option to mangband.cfg which when enabled
+		will prevent level one characters from dropping items or gold.
+	 Added a secret_dungeon_master option to mangband.cfg which when enabled
+		prevents the game from telling the players about the dungeon
+		master, and does not display the dungeon master on the
+		server's metaserver listing.
+	 Added a mangconsole option to reload mangband.cfg.
+
+4/18/00: Finished making it so that if a player logs out on a dungeon level and
+		it unstatics, he will be on the new dungeon level when he comes
+		back in. 
+
+4/8/00:  Added an option door_bump_open to mangband.cfg  When enabled the game
+		 will automatically try to open a door when it is bumped into.  
+
+3/11/00: Cleaned up the unique respawn code a bit.
+	 Added unique respawn time options to mangband.cfg.
+	 Added a level unstaticer, which randomly unstatics levels.
+		 The chance of a level unstaticing is inversly proportional to
+		 its depth.  The base chance of a level unstaticing can be set
+		 in mangband.cfg.
+
+3/5/00:  Added a mangband.cfg file which contains many options formerly
+		located in config.h.  This should be a big help to all
+		those who run mangband servers but can't recompile their
+		binarys.
+
+3/3/00:  Simplified the mangband directory structure to lib/data, lib/game,
+	 	lib/text, lib/save, and lib/user.
+	 Removed the game template binary caches, since parsing the game
+		templates takes a trivial amount of time on any modern
+		processor.
+
+>>>>>>> 1.15
+2/5/00:	 Made death terminate WOR spells.
+	 Increased the store max prices by 25x in the BM and 15x everywhere
+	 	else.
+
+2/1/00:  Fixed a bug that allowed people to break into houses by surrounding
+		the target house with doors and entering from an adjacent
+		wilderness level.
+
+1/30/00:  Added Chris Atenasio's vault fixes.  Huge vaults should now
+		be clipped to the edge of the level, instead of crashing the
+		server.
+
+1/11/00: Fixed a nasty bug that allowed people to earthquake in town.
+		 This is too nasty a bug to leave in an 'official' release, so
+		 I am releasing a revision 2 mangband-060-rev2.src.tar.gz.
+1/9/00:
+	----- MAngband 0.6.0 released -----
+1/9/00:
+	Fixed mangconsole authentication : it now takes a password defined
+		in config.h as CONSOLE_PASSWORD.  A bonus of this fix is 
+		that mangconsole can now be used remotely.
+	Made it so that retiring winners receive a 10 million experience
+		point bonus for having sucessfully completed the game.
+	Fixed a bug that caused genocide to genocide all the monsters of
+		the specified type on all the levels, not just the casters
+		level.
+1/8/00:
+	Handled 'retiring' on the high score list properly.
+	Changed it so that when a players password is entered,  it is masked
+		with the letter 'x' instead of being displayed directly.
+		
+1/7/00:
+	Players now have the regions surrounding town "memorized".  They also
+		start with these areas already mapped out on their wilderness 
+		map.
+	Fixed an earthquake near town bug.
+	Removed some code that was preventing Sauron and Morgoth from 
+		respawning.
+
+12/29/99:
+	Revised the wilderness close to town.  Made many more for sale houses,
+	and occasional moats on large houses.  Large buildings are spread out,
+	while cheap buildings are clustered together.
+
+12/28/99:
+	Made the houses outside of town bigger.
+	Changed the pricing on houses outside of town.
+	Made it so wasteland, swamps, etc won't show up near town very often.
+	Made it so earthquake can't be cast within 2 levels of town in the 
+		wilderness.
+
+12/19/99:
+	Fixed the sell 0 bug, and disabled searching mode speeding up 
+		regeneration.
+12/19/99:	
+	This file is updated.
+
+10/20/98->12/19/99:
+(versions .0.5.4D to .0.5.7)
+
+Note -- During this time I (Alex Dingle) have taken over the role of maintainer
+from Keldon Jones.  I haven't been keeping a changelog up to now, so the
+changes listed below are not in chronological order.  This list of changes is
+probably incomplete.
+
+Server changes:
+
+	No more duplicate keys.
+	Houses are much cheaper.
+	Houses can now be sold.  To sell a house, use the h command
+		on it.  (As if you were trying to buy it again)
+	The contents of a house now disapear when the last key is
+		lost.
+	
+	Party members can see each other behind corners, sort of like ESP.
+	Party members will "miss" each other with spells and projectiles.
+	The party XP algorithm has been revised to give more XP to 
+		lower level characters.
+	
+	Many mage spells, such as confuse monster, polymorph monster, 
+		frost bolt, fire bolt, etc now affect other players.
+	Gave some heal other prayers.  Made some priest prayers
+		(rememberence, restoration) affect other players.
+	
+	Rogues now get +1 speed at levels 5,20,35, and 50.
+	Rogues get backstab on fleeing monsters and cruel stab on
+		sleeping monsters.
+	Rogues have 'stealth mode' -- go into searching mode to activate it.
+	
+	SP regenerate 3/5 times faster.
+	Added selectable recall depths -- to select your recall depth inscribe
+		your scroll/book/rod @Rdepth_in_feet.  For example, to recall to
+		1500 feet inscribe your recall scroll @R1500.
+	
+	Added several administration characters -- ADMIN_WIZARD and 
+		DUNGEON_MASTER.  These characters will proably be combined
+		in the future.  Their names are defined in config.h
+	
+	Added wilderness.
+	Added a wilderness map.
+	
+	Added light stacking.  Your helm of light will now increase your light
+		radius.
+	
+	Levels are now saved upon server exits.
+	Players now "remember" their memory of their current level when they
+		exit the game and come back in.
+	
+	Respawning uniques have been added, from the Japanese server patch.
+	
+	Several important bug fixes, such as one that was making MAngband
+		utlize 99% of the CPU under certain conditions, and the
+		"disapearing party after server reset" bug.
+	
+	Removed "max number of players from 1 IP address" restriction.
+	
+	
+	A whole list of ! inscription commands has been added by Crimson.
+		To guard against dropping something, inscribe it !d, to guard 
+		against quaffing something, inscribe it !q, etc.  Inscribing 
+		something !* will include most of the ! commands.
+
+	You no longer have to type :: to talk to everyone in the game.
+
+	Added the 100+ vaults from ZAngband.  If you don't like these
+		vaults, replace lib/edit/v_info.txt with the old
+		file and remove lib/data/v_info.raw if neccecary.
+
+	Added scrolls of life which ressurect ghosts that are adjacent to the
+		player who is reading the scroll.  Scrolls of life also restore
+		the XP of whoever is reading them.  They can be bought in the
+		temple.
+
+	The server will now log you out if you are at full hitpoints and begin
+		starving to death.  This should help prevent afk (away from
+		keyboard) deaths.
+
+	An "instant reconnect" feature has been added by Crimson.  When
+		you exit the game, and your character has not timed out,
+		you can "instantly reconnect" and regain control of your
+		character.
+
+	The game exiting timeout has been reduced from 30 to 15 seconds.
+		
+	
+Client changes: 
+	
+	Added a friendly target key which targets the most wounded party
+		member: '('.
+	
+	Made the client much more bulletproof to corrupted packets.  This
+		greatly reduce the number of buffer dumps.
+	
+	Added some special priest/palidan heal other prayer keys.  When
+		casting a healing spell, to try to cast it on other players,
+		capitalize the prayer letter.  For example, to cast cure light
+		wounds on another player type in paB instead of pab.  This only 
+		works with some of the healing prayers.
+	
+	Added dungeon master command list key: '&'.  (You must be the
+		dungeon master for this to do anything.)
+
+10/20/98:
+	----- MAngband 0.5.4 released -----
+
+10/20/98:
+	Removed much old crufty code, mainly related to user interface
+		stuff in the server.
+	Ghosts can no longer switch places with other players.
+	Messages have been redone again.  If a message begins with part
+		of any player's or party's name, followed by a colon,
+		then the message will be sent to just that player or
+		party.  Note that this differs from the old method
+		in that only *part* of the name needs to be written.
+	Added a small hack to the client that may help with some
+		connection problems, but will break graphics.  See the
+		explanation of BREAK_GRAPHICS in config.h.
+
+05/25/98:
+	Monsters will now attack the weakest of two or more players who
+		are equally distant from it, rather than a random player.
+	Trees will now occasionally grow in the town at random places.
+	The monster health bar will now show the health of players as
+		well.
+
+05/24/98:
+	Ghosts now teleport away when they die, and ghosts are allowed
+		to teleport into walls.
+	Put the Angband options interface in.  Options can now be sent
+		to the server after the client has started.
+	Added a suicide command 'Q'.  Players who commit suicide will
+		not drop their gold or items.
+	Added hacks to main-win.c that were necessary to re-enable the
+		menu support and graphics.
+	All player-player damage has been reduced by a factor of 3.
+	Changed call to "usleep" in the client to use the delay provided
+		by the system-specific main-xxx file.
+	Changed "Detect Monsters" to "Detect Creatures" so that it will
+		detect both players and monsters.  Also, Detect Invisible
+		will detect player ghosts.
+	Changed update_players so that it works like update_monsters and
+		calculates player visibility.
+	Efficiency improvements by chopping excessive calls of the
+		update_view() function.
+	Multi-hued monsters should shimmer better now.
+	Various clean-ups of some old server code.
+	Increased the size of the object and monster lists so that
+		compaction should not occur as frequently.
+
+05/23/98:
+	Increased some constants in the dungeon generation functions so
+		that some rarely reported crashes should not occur.
+
+05/20/98:
+	The auto-retaliate function will now also attack players.
+	Added a "steal" command (j).  Every player can steal, but only
+		rogues are very good at it.  Chance to succeed is based
+		on both thief's and target's DEX, and chance to be
+		noticed is based on thief's stealth and target's INT.
+
+05/19/98:
+	Messages have been redone a bit.  Sending a message to a person
+		is no longer case-sensitive.  By default, a message
+		is only sent to people on the current dungeon depth.
+		"Broadcast" messages to everyone may be done either by
+		beginning the message with a colon or by "All:".  You
+		can also send messages to a party the same way as to a
+		single person.
+
+05/18/98:
+	Added color to the player list: red for players you are hostile
+		to, blue for players in your party, green for yourself,
+		and white for everyone else.
+
+05/12/98:
+	Have the server use a case-insensitive name check to determine
+		whether or not to allow commands from a remote console.
+
+05/12/98:
+	----- MAngband 0.5.3 released -----
+
+05/12/98:
+	Allow multiple players with a username of "mangband" from the
+		same machine (for the people who telnet in).
+	Make a player automatically hostile toward another if they are
+		hit by a spell by a player that is hostile toward them.
+	Redraw the spot a player sits in when he is killed to show that
+		he has been changed into a ghost.
+
+05/11/98:
+	Added several patches for house keys and house management in
+		general.
+	Added code to expire old parties that were owned by ghosts who
+		later died.
+	Added desperate hack to prevent several types of crashes that
+		occur when a player issues a command just as he is
+		recalling into the dungeon.
+	Fixed problems with client hanging during lots of spell/arrow
+		animation by speeding up such animations by quite a bit.
+
+05/10/98:
+	Fixed the appearance of lag if heavy use is made of running over
+		and over again in the same direction.
+	Even more paranoia checks have been added to the panic-saver.
+
+05/09/98:
+	The server's panic-save code is more robust and should be less
+		prone to itself having crashes.
+	Fixed several ghost bugs.  Now when a ghost dies he leaves his
+		party correctly and any uniques he killed as a ghost are
+		resurrected.  Also, ghosts that resurrect should be able
+		to pick up the correct number of items again.  Ghosts in
+		walls can now be attacked by monsters with melee.
+	Fixed potential bugs with artifact and dragon scale mail
+		activations.
+	Stone to Mud now changes the cave feature from the stone floor
+		to the dirt terrain type (found in Town).
+	Stone to Mud no longer affects trees, but fire now does (and
+		also burns grass).
+
+05/08/98:
+	I was (foolishly) using the reported hostname instead of IP
+		address to deny two characters from the same machine at
+		once.
+
+05/07/98:
+	Fixed bug with spells and buffers that some people experience.
+
+05/06/98:
+	Fixed bug causing race/class pref files to not be automatically
+		loaded by the client at startup.
+	Players now have a list of parties and/or players that they are
+		hostile toward, and this is used to determine whether
+		a player attacks or bumps into another.  This list can
+		be modified with the 'P' (party) command.
+
+03/24/98:
+	----- MAngband 0.5.2 released -----
+
+03/24/98:
+	Added necessary hacks for getting the client compiled under
+		Windows.
+	Fixed the stat ordering bug again, as I managed to put it back
+		in.
+	The client now reads defaults for the nickname and password
+		from the .mangrc or mangband.ini file if available.
+
+03/23/98:
+	The object and monster compaction routines have been enhanced,
+		and are called more often, to prevent newly generated
+		dungeon levels from being scrapped as often.
+	Newly dropped objects should no longer be visible to everyone.
+	Detect traps will now work better for the second player to cast
+		it on a dungeon panel.
+	Emptying a wand or staff now resends your inventory so you can
+		see that it is empty.
+
+03/22/98:
+	You can no longer destroy cursed equipped items.
+	Fixed small English mistake in party code.
+	Fixed sometimes-fatal bug in the spell code.
+
+03/21/98:
+	Capitalized the second word of "Dwarven Lantern" and "Feanorian
+		Lamp".
+	Fixed bug where silver jelly's "dim light" attack would cause a
+		message when wielding the new permanent light sources.
+
+03/16/98:
+	----- MAngband 0.5.1 released -----
+
+03/16/98:
+	Revamped the speed system to vary according to the depth the
+		player/monster is at.
+	Made the player ghosts' "Blink" ability a level 1 one.
+	Added a rather hackish fix to the "inventory shift" due to
+		reading the last Identify scroll, causing the wrong item
+		to be often identified.
+	Fixed an elusive bug causing the objects in Town to disappear
+		after the server was quit and restarted.
+	Firing a bow while confused will now result in a random direction
+		being chosen.
+	The server now denies a client request if someone else from that
+		hostname with the same username is already on.  This will
+		prevent some ugly player farming techniques.
+	Make resting regenerate hit points and mana 3 times as fast as
+		normal now (used to be twice as fast).
+
+03/15/98:
+	Fixed bugs regarding house ownership due to duplicate keys.
+	Tweaked store inventories a little.  The General Store will now
+		carry more arrows and bolts, but no spikes.  The
+		Alchemist will carry more enchant weapon/armor scrolls,
+		but no scrolls of detect traps, stairs, or treasure.
+	Added two new objects: Dwarven lanterns and Feanorian lamps,
+		which give permanent radius 2 or 3 light, respectively.
+		They are fairly deep and somewhat rare.  Look for a blue
+		tilde (~).
+
+03/11/98:
+	Fixed bug in stat ordering.
+	Fixed bug where infra-vision could be used to see players
+		behind walls.
+	Allow house owners to duplicate their keys by paying another
+		10 percent of the house purchase price.
+	Make house keys un-stealable, un-destroyable, and un-sellable.
+
+03/09/98:
+	If a house-owner dropped his key and picked it back up, the
+		house would be marked as "unowned", letting others
+		buy the house and taking the items inside.
+
+01/13/98:
+	Put checks on ghosts so that they can't go up from Town, or
+		down from the lowest dungeon level.
+
+12/17/97:
+	----- MAngband 0.5.0 released -----
+
+12/17/97:
+	Player ghosts can now use a small set of ghost powers, their
+		melee attack damage is now based on their level, and
+		the also have the ability to terrify players or
+		monsters with their melee attacks.
+
+12/16/97:
+	Fixed up running while a ghost.
+	Fixed small bug causing players to not see monsters when they
+		enter the game.
+	Made players become unparalyzed, unpoisoned, unstunned, etc.
+		when they die.
+
+12/14/97:
+	Fixed some bugs regarding player inventory when they die.
+
+12/13/97:
+	When players die, they become ghosts, which can walk through
+		walls, but cannot interact with objects.  When a ghost
+		dies, it is gone forever.
+
+12/05/97:
+	Your location is now saved in your savefile, so quitting while
+		in the dungeon is not a viable method of Word of Recall
+		anymore.
+
+12/02/97:
+	The remote console can now be used to kick players from the game.
+	The server now saves its savefile at regular intervals.
+	Added much more functionality to the remote console.
+
+12/01/97:
+	Began implementation of a seperate server console program, so
+		that control of the server can be done without requiring
+		that the server have its own terminal.
+
+11/22/97:
+	Included patch by Hao Chen (hao@mit.edu) to fix various network
+		problems when running on Digital UNIX.
+
+11/17/97:
+	Now, when a player dies, all entries in the hash table with
+		his name will be removed, instead of just one.  This
+		protects against server crashes, etc.
+	Added a help command, '?', which displays a help file stored
+		on the server.
+
+11/15/97:
+	----- MAngband 0.4.2 released -----
+
+11/15/97:
+	Put a metaserver interface in the client, so the player can
+		choose a server from a menu.
+	Removed some superfluous server debugging output.
+	Fixed bug in client causing junk characters to be printed
+		at the end of every line in the metaserver output.
+
+11/14/97:
+	Modified the server and client to accept the player's name
+		and password on startup, thus scrapping the need
+		for the old .mangrc file.
+
+11/09/97:
+	Fixed bug that would cause a crash if an earthquake occured.
+
+11/08/97:
+	Macros such as "*tmaa" should now work if the "use_old_target"
+		option is on.  Also "*tf15" will now work, whether
+		"use_old_target" is on or not.  Targetting needs a big
+		amount of help....
+	Players used to be able to walk several spaces at once if they
+		would hold down a movement key, this is no longer
+		possible.
+	Inscribing and uninscribing commands take no energy, as they
+		seem to be more of "administrative" commands rather
+		than action commands.
+	The "cast spell" and "pray" commands will now ignore direction
+		5 if no target is selected.
+
+11/07/97:
+	Allow a new "development" string to be appended to the version
+		string sent to the metaserver to reflect the new
+		auto-patch versions that are available.
+
+11/05/97:
+	The house buying code now takes the player's CHR into account
+		when computing the price.
+
+11/04/97:
+	Made a couple of bow firing improvements; having "extra shots"
+		will allow you to fire with less energy, and firing in
+		direction '5' with no target will do nothing.
+
+11/02/97:
+	----- MAngband 0.4.1 released -----
+
+11/02/97:
+	Fixed a small display bug in the high score list.
+	Took out some of the more verbose debugging output that the
+		server has been printing recently.
+
+10/30/97:
+	Added a hash table to store the names of players who are alive
+		at the moment.
+	Used that hash table to show the killer of uniques in the
+		unique list.
+	Re-implemented the high score list.  It can be accessed with
+		the new '#' command.
+	Prevent yet another server crash cause.  Also, make the signal
+		handling code be more paranoid, thus preventing the
+		handler from generating a signal, which is very bad.
+
+10/11/97:
+	Each player is now assigned a unique ID number that is retained
+		in his savefile.  This will allow for such things as
+		uniques getting regenerated after their killer dies, etc.
+	Implemented said feature about uniques being regenerated after
+		the player who killed them dies.
+
+10/06/97:
+	Put in a *real* fix for the disappearing messages bug.  Messages
+		that you send that you don't get back within 3 seconds
+		will be resent.
+
+10/05/97:
+	Sleeping monsters that are in sight will no longer stop running.
+	Stone to Mud will no longer destroy house doors.
+	Passing bad values of your race/class could cause the server to
+		get hung in an infinite loop during the character
+		creation.  This has been fixed.
+
+10/04/97:
+	----- MAngband 0.4.0 released -----
+
+10/04/97:
+	Made houses 1/5 the price that they were.
+	Now most commands are cached until the player has enough energy
+		to perform them.
+	Implemented the "Locate" command ('L').
+	You can no longer run if monsters are on the screen.
+
+10/03/97:
+	Modified that main-gcu.c file to use multiple windows if you
+		are running on a screen bigger than 80x25.  I'll also
+		submit this to Ben for inclusion in future Angband
+		releases.
+
+09/27/97:
+	Earthquake and Word of Destruction no longer do anything in town.
+
+09/26/97:
+	The command cache broke walking cancelling a rest.  I refixed it.
+	Someone reported that if the staircase that you are supposed to
+		appear at is surrounded by monsters, you might appear
+		inside a wall.  This shouldn't happen anymore.
+
+09/25/97:
+	Added a "command cache" on the server.  It will remember the
+		last command that you sent, and if you did not have
+		enough energy to execute it, then you will when you do
+		gain enough.
+	Finished up the house code.  Houses can now be bought, keys will
+		allow entry, etc.
+	Fixed some annoying visual effects that happened when a player
+		disarmed a trap or tunneled through a rubble.  Other
+		players would see a dark gray spot left behind.
+
+09/24/97:
+	Added an object kind "key".
+
+09/23/97:
+	Fixed problem in the server that woudl cause the server to crash
+		if someone with control characters in their nickname
+		tried to enter the game.
+
+09/22/97:
+	A bug in the look code would cause a server crash if you were
+		looking at someone when they left the game.
+	That patch did not appear to fix the message bug.
+	The client will now quit more cleanly if something goes wrong
+		during the startup process (wrong password, etc.).
+	The server now saves the information about objects in town to
+		the savefile, so that houses will be useful.
+	Stores will now refresh even if players are in town, and they
+		do so twice as often.
+	Fixed a bug that could cause artifacts to get lost if they are
+		on the ground when the server crashes.
+
+09/21/97:
+	I believe I've fixed the "disappearing messages" bug.  A client
+		patch will be made available.
+
+09/20/97:
+	Monsters will no longer be placed inside houses.
+	Finally fixed the visibility bug that caused treasure to be
+		visible when it shouldn't have been.
+	Changed the name of the old Home to "the Tavern" under the look
+		command.
+
+09/19/97:
+	Trees will no longer be generated next to the streets.
+	The stores will all now be in the center of town.
+
+09/18/97:
+	Had the server resend the spell book info when you gain/lose a
+		level (for the updated fail rates).
+
+09/17/97:
+	Fixed server bug that would cause a crash if someone was trying
+		to start running at the moment he recalls down into the
+		dungeon.
+
+09/15/97:
+	Updated the client so that it will not busy loop while waiting
+		for a response from the server during the login process.
+
+09/14/97:
+	----- MAngband 0.3.6 released -----
+
+09/14/97:
+	Added more messages about the activities of other players.
+
+09/13/97:
+	Hitting ESC at the direction prompt while firing an arrow will
+		no longer drop an arrow at your feet.
+	Trying to run will cancel resting.
+
+09/12/97:
+	Made the mini-map run-length encoded, and removed some special
+		code to handle older clients that are now too old to
+		be used anyway.
+	Overly long object names could crash the client when trying to
+		look at them.
+
+09/11/97:
+	Changed the reported spell fail rate to report what the fail
+		rate would be if the player has enough mana to cast.
+	Changed the reliable data stream code a bit.  Perhaps this
+		will alleviate some of the buffer dump problems that
+		people would sometimes experience.
+	Cleaned up the mini-map usage on the client.  If the command
+		to view the map gets lost, hitting ESC will abort.
+	Made it impossible to phase door or teleport into a house.
+	Tried to make it much more difficult for players to be placed
+		on the walls of the Tavern on startup if it was full
+		of junk.
+	Moved the minimap so that is covers over the "map" part of the
+		screen, rather than the part with your stats.
+	Now heavy spellcasters like hounds and magic mushroom patches
+		shouldn't be quite so deadly.
+	Players without lights will now be invisible to players
+		without telepathy, if they are not in a lit square or
+		within range of infravision.
+	Under a windowing system, the message window will now be
+		redrawn every time a message comes in, rather than
+		only when it is efficient.
+	Party names can now be reused if the party is disbanded.
+
+09/10/97:
+	Fixed a problem with the screen getting corrupted when
+		leaving a store after looking at your inventory.
+	Fixed yet another problem with wide corridors causing crashes.
+
+09/09/97:
+	Fixed various problems causing some monsters to get misdrawn.
+	The wide corridor code was always making one-width doorways.
+	Redid the updating of the monster health bar.  Now it is
+		more "correct", and will no longer crash the server
+		under certain conditions.
+
+09/08/97:
+	----- MAngband 0.3.5 released -----
+
+09/08/97:
+	Added the monster "health-o-meter".
+	Fixed the "Detect <foo>" spells.
+	Fixed a problem that would sometimes cause the client to
+		hang when leaving a store.
+
+09/07/97:
+	Fixed various problems causing the server to sometimes
+		crash (caused by wide corridors).
+	The displayed +to-hit and +to-dam have been fixed on the
+		character info sheet.
+
+09/06/97:
+	Changed some buildings to a "forest".
+
+09/04/97:
+	Changed many of the unused buildings to be eventually used
+		as houses.
+
+09/03/97:
+	Made the town bigger, and added some new terrain types
+		such as grass, dirt, trees, and water.
+
+09/01/97:
+	----- MAngband 0.3.4 released -----
+
+09/01/97:
+	The character information sheet will now display your
+		skills in addition to your history.
+
+08/31/97:
+	Fixed a problem that caused people to know the names of
+		invisible monsters ("the Poltergeist" instead of
+		"it").
+	Fixed another bug with the wide corridors that would
+		very occasionally crash the server.
+	Fixed a missing "break" causing the mage spell "spear of
+		light" to also do a "frost bolt".
+	Now, arrows, bolts, and thrown objects will continue past
+		the target if they miss.
+	Fixed *Identify* and Self Knowledge.
+	Added a new way of rolling stats.  The user now specifies
+		the relative order of importance of his stats,
+		and they are sorted according to that order.
+	Now both doors in a pair will be the same type.
+
+08/30/97:
+	Changed the "load pref file" command to a "pref file
+		action" command.  This should make it easier to add
+		macros, etc. while in the game.  You can still load
+		a pref file by doing %:<name of file>.
+
+08/29/97:
+	Fixed bug causing players to be able to hurt themselves
+		with spells (like Stinking Cloud).
+	Fixed various problems with the lit squares.  Now grids lit
+		by other people's lights are now memorized if they
+		are in sight.  Also fixed some object visibility
+		problems.  And fixed a problem with the monster
+		visibility.
+
+08/28/97:
+	Fixed the problem with the metaserver (it was my fault).
+	Now players will see squares lit by others' lights as
+		yellow.
+	Added a "send message to every player in the game" command
+		at the console (type "message <whatever>").
+
+08/27/97:
+	----- MAngband 0.3.3 released -----
+
+08/26/97:
+	Added lots of messages describing other players' actions
+		to other (nearby) players.
+
+08/25/97:
+	Added a mapping for the party commands for use with the
+		roguelike keys ('O').
+
+08/24/97:
+	Fixed the redraw command so that it will actually work.
+	Fixed a problem with the wide corridors that would
+		occasionally crash the server.
+	Added a "player interaction" option, which allows players
+		to harm each other with melee, spells, missiles,
+		and thrown objects.
+	Fixed a problem in sched.c that was causing "sched select
+		errors" with errno 9 (at least I think I fixed it).
+
+08/23/97:
+	Fixed autoretaliate so that it won't attack monsters that
+		the player cannot see.
+
+08/22/97:
+	Fixed another silly big/little endian problem in the
+		client.  Somebody hit me.
+
+08/21/97:
+	Fixed problems with autoretaliate.  It would always deduct
+		energy, even if no monsters were nearby, and it
+		was able to attack if the player was confused.
+	Fixed problem with plusses to hit/damage not getting
+		displayed (caused by the bandwidth reduction code).
+	Added another patch by Dave Thaler.  This one fixes problems
+		in the server's networking code.
+
+08/20/97:
+	----- MAngband 0.3.2 released -----
+
+08/20/97:
+	Modified "h-config.h" to reflect the fact that HP-UX has
+		the function "usleep()".
+	Added a patch by Dave Thaler that should prevent the client
+		from eating more CPU time than it should.
+	Fixed problem about extra garbage not getting erased in the
+		inventory and equipment windows.
+	Fixed some problems with the subwindows not getting redrawn
+		often enough (while in stores, for example).
+
+08/19/97:
+	Fixed Donald Sharp's sched.c that allows more than 32 file
+		descriptors to be listened to at once.
+	Changed the transmission of the map data to be run-length
+		encoded, which saves an incredible amount of bandwidth.
+	Added some more bandwidth reduction code.  Lots of redudant
+		information was being transmitted.
+	Fixed problem causing people who cast Word of Recall to be
+		trapped in solid granite.
+
+08/18/97:
+	----- MAngband 0.3.1 released -----
+
+08/18/97:
+	Added more functions for the client's subwindows.
+	Added a pref file for using the subwindows (window.prf).
+	Added an incredibly simple "auto-retaliate" feature.  It works
+		well, despite its simplicity.
+	Changed the info sent to the metaserver to reflect the names
+		of the people currently on the server.
+
+08/17/97:
+	Fixed some more party problems (having to deal with death of
+		the owner, etc).
+	Fixed the problem with scrolling on the artifact, unique, and
+		player lists.
+	Fixed problem causing client to crash with overly long party
+		names.
+
+08/14/97:
+	Added "remove myself from party" command.
+	Did some more work on wide corridors.  They look kinda nice now.
+
+08/13/97:
+	Added "wide corridor" option.  Still needs some work, though.
+	Fixed the stairs problem.
+
+07/28/97:
+	Fixed pretty bad bug in Genocide causing random monsters to
+		be genocided.
+	Fixed another couple of genocide bugs, one of which caused
+		client crashes.
+
+07/17/97:
+	----- MAngband 0.3.0 released -----
+
+07/17/97:
+	Fixed a few party bugs related to experience sharing.
+	Put a party front end on the client and added client/server
+		communication for same.
+	Finally got around to removing those debugging messages
+		"Created artifact ??" and "Preserving artifact ??"
+	Fixed Genocide (finally), but it will genocide all monsters of
+		the same character as the closest to the player, instead
+		of allowing the player to choose a character.
+	Fixed client crashes due to hallucination and casting Mass
+		Genocide.
+
+07/13/97:
+	Changed the player list to show the party each player belongs
+		to, and add some extra information about people in
+		your party.
+
+07/12/97:
+	Changed the savefile format to save/load the player's party.
+		Old savefiles are still compatible.  The player will
+		start as "neutral" (party 0).
+
+07/05/97:
+	Finished some back-end portions of the party code, including
+		the experience sharing algorithm.
+	Changed default metaserver address to Timo's machine.
+
+06/23/97:
+	Fixed some problems with functions being called in the
+		wrong order in main() on the client.
+
+06/20/97:
+	Changed the old "Home" into a "Tavern".  It is now hollow,
+		players start inside, and monsters cannot enter.
+
+06/19/97:
+	----- MAngband 0.2.4 released -----
+
+06/19/97:
+	Fixed "Prompt before picking things up" option.
+	Fixed "Use old target by default" for some things, most
+		notably spells/prayers and directional rods.
+		However, wands and firing/throwing WILL ask for a
+		direction even with this option enabled.
+	Fixed "negative stat" problem.
+
+06/10/97:
+	Fixed bug in character sheet -- class title wasn't correct.
+
+06/07/97:
+	Made the client transmit the option set and char/attr
+		redefinitions to the server.  Many more options work
+		now and Windows graphics should also work (but
+		that's untested).
+
+06/03/97:
+	Rearranged the order of function calls in the client.  Things
+		work much nicer now.  While reading the Message of
+		the Day, you are not in the game (being attacked).
+
+05/31/97:
+	----- MAngband 0.2.3 released -----
+
+05/31/97:
+	Added the artifact list ('~'), the unique list ('|'), and the
+		player list ('@').
+
+05/21/97:
+	Added the character sheet command ('C').  Only the history
+		is available so far, no skills yet.
+
+05/18/97:
+	Added "resting".
+	Added "positional targetting".
+
+05/16/97:
+	Made the metaserver address a compile-time option.
+	Removed the "p_idx" field from the "cave" array.  We now use
+		a negative "m_idx" to mean that a player is in that
+		grid.
+
+05/10/97:
+	Fixed another problem with the "lite area" spells.
+	Fixed another problem causing incorrect stats to be sent to
+		the client.
+
+05/09/97:
+	Fixed annoying "lite room" bug.
+
+05/09/97:
+	----- MAngband 0.2.2 released -----
+
+05/09/97:
+	Fixed some bugs with the looking code.
+	Fixed inefficency in cave.c.
+	Added a redraw command (^R) and fixed many of the redisplay
+		bugs.
+
+05/08/97:
+	Deleted a bunch of nasty server messages that really don't
+		tell much.
+	Added looking.
+
+05/07/97:
+	Adding targetting.
+
+05/06/97:
+	Fixed bug causing stats to be misprinted if you had bonuses to
+		them due to equipment.
+	Added a command to drop gold.
+	Added a "load pref file" command, which should allow people to
+		experiment with macros and options while playing the
+		game.
+
+05/05/97:
+	Fixed problem with reading multiple-word nicknames in the
+		configuration file.
+	Fixed bug that probably causes server crashes sometimes when
+		people leave the server.
+	Fixed price bug when selling multiple items to a store.
+	Added firing/throwing.
+
+05/04/97:
+	Fixed a bug causing a server crash when players tried going up
+		or down stairs twice in very rapid sucession (before the
+		level got generated).
+
+05/04/97:
+	----- MAngband 0.2.1 released -----
+
+05/04/97:
+	Made the server "console" a compile-time option.
+	Fixed bug causing a server crash when a monster "destroys" an
+		object on the ground by breathing something, such as fire.
+
+05/03/97:
+	Fixed "Gold Remaining" bug in stores.
+	Added a temporary hack to "fix" problems with the map of town not
+		being redisplayed after leaving a store.
+	Added a patch by Garrett to fix various things with the Windows
+		port.
+	
+05/02/97:
+	Fixed another big endian/little endian bug.
+	Fixed another problem with the sun setting in town.
+	Fixed problem causing messages from other players to not appear.
+	Fixed problem disallowing the sale of certain objects in stores.
+	Fixed stupid bug caused by writing Packet_scanf instead of
+		Packet_printf.
+
+05/01/97:
+	----- MAngband 0.2.0 released -----
+
+04/30/97:
+	Added stores in town.
+	The stores "maintain" themselves every 1000 player turns.
+	Fixed some problems with town at night.
+
+04/29/97:
+	Fixed problem with the multiple configuration blocks in the .mangrc
+		file.
+	Minor changes to the loading of the server savefile.
+	Fixed bug allowing players to activate unknown artifacts.
+	Added in support for the Windows port.  All the work was done by
+		Garrett Pease (gpease@dcomp.com).
+	Fixed "multi-hued-ness" of monsters so that they flicker correctly.
+
+04/28/97:
+	Implemented a "server savefile".  It hold the uniques that have been
+		killed, the artifacts that have been created, the layout of
+		the town, and the object flavors.
+	Added a server "console", for giving some simple commands to the
+		server.
+
+04/28/97:
+	----- MAngband 0.1.5 released -----
+
+04/28/97:
+	Fixed problem with "project()".  Now player's magic missiles, etc. 
+		don't pass through other players.  In fact, they hurt those
+		players.
+	Player's spells no longer hurt other players.
+
+04/27/97:
+	Messed with the message printing routines.  They should be less
+		deadly and annoying now.
+	Finally implemented inscribing and uninscribing in the client.  They
+		had been in the server since 0.1.0!
+	Reimplemented the usage of the {@#} feature in the macros, where # is
+		a digit.
+	Changed the color of messages sent by players to blue.
+	Made running more "correct" when slightly slowed.
+
+04/26/97:
+	Added a Message of the Day feature.  The server sends the contents
+		of its news.txt file to the client for display.  This should
+		let server admins tell people about special things in their
+		server.
+	Fixed an annoying "can't-move-in-town" networking bug.
+
+04/25/97:
+	Fixed bug causing SEGV when player dies in the dungeon (and he is also
+		the last person at that depth).
+
+04/24/97:
+	Added patch from Donald Sharp to allow different blocks in the
+		.mangrc file to have different configurations for different
+		servers.
+	Increased radius of drops, so that players will drop most (if not all)
+		of their stuff on death.
+
+04/22/97:
+	Included patch by Donald Sharp to implement server logging in
+		lib/xtra/mangband.log.
+
+04/21/97:
+	The server now rejects clients that are too old, and the client will
+		recognize this, and tell the user to upgrade.  Also, the client
+		prints out more intelligible messages on failure.
+	Fixed bug in the client networking code that only appeared on big
+		endian machines.
+
+04/20/97:
+	----- MAngband 0.1.4 released -----
+
+04/20/97:
+	Added "option.prf", which sets all the options in one convenient
+		place.
+
+04/19/97:
+	Fixed small bug in teleport_player_to -- after being teleported, the
+		player left a "statue" of himself in his old location.
+	Fixed problem with levels staying generated even if nobody was on that
+		level.
+	Rewrote part of the client networking code.  Now the minimap works
+		correctly, and annoying buffer dumps should be prevented.
+
+04/18/97:
+	Slightly better messaging support -- Message that begins with a player
+		name and then a colon sends message to only that player.
+	Added player switching places code.
+	
+04/17/97:
+	Added the minimap (sorta).  It doesn't work, because there seems to be
+		a fatal error in the network protocols.
+	Fixed bug with zapping of unidentified rods.
+	Fixed confusion bug to prevent silly "You bump into X.  X bumps into
+		you." messages, where you are player X.
+
+04/03/97:
+	Finished adding pref files, so now macros, keymappings, and a few 
+		options now work.  Adding support for even more options should
+		be fairly simple.
+
+03/29/97:
+	Fixed unique creation.  Now uniques will be generated.
+
+
+03/28/97:
+	Added player drops so that people drop their inventory when they
+		die.
+	Fixed a fatal server bug that happened rarely, having to do with
+		updating the viewing area for player just having changed
+		depth.
+
+03/27/97:
+	Fixed spell updates so that players don't see (untried) right after
+		they cast a spell for the first time.
+
+
+03/26/97:
+	Added informational messages about the comings and goings of other
+		players.
+	Fixed object visibility bug -- occured when players changed depth.
+	Fixed monster generation bug -- now dungeon monsters won't get
+		generated in the town.
+	Have server deny any spell casting that requires more mana than
+		available.
+	Fix another server infinite loop bug caused by neglecting to compact
+		the object list after dungeon level destruction.
+

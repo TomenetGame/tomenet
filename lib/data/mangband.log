@@ -1,0 +1,159 @@
+           **********************************************************
+           ** PernMAngband 3.1.3  **  The Troubles of Middle Earth **
+           **********************************************************
+
+               "One Ring to rule them all, One Ring to find them
+            One Ring to bring them all and in the darkness bind them
+                  In the land of Mordor where the shadows lie"
+                                "Lord of The Rings", J.R.R.Tolkien
+
+           Based on Moria:    Copyright (c) 1985 Robert Alan Koeneke
+               and Umoria:    Copyright (c) 1989 James E. Wilson
+          Angband 2.0 - 2.4: Alex Cutler, Andy Astrand, Sean Marsh,
+          Angband 2.5 - 2.6: Charles Swiger (cs4w+@andrew.cmu.edu)
+          Angband 2.7 - 2.8: Ben Harrison (benh@phial.com)
+          Curses/X11 Module: Ben Harrison, Torbj|rn Lindgren
+         MAngband 0.1 - 0.5: Keldon Jones (keldon@umr.edu)
+         MAngband 0.6 - 0.7: Alex Dingle (adingle@crud.net)  
+     PernMAngband 2.9 - x.x: DarkGod (darkgod@ifrance.com)
+
+       ****WARNING**** !!!!!!!! You NEED the new client to play go to:
+                   http://pernmangband.pernangband.org
+
+ Send all comments, bug reports, patches, etc, to "darkgod@pernangband.org".
+[Initializing arrays... (features)]
+[Initializing arrays... (objects)]
+[Initializing arrays... (artifacts)]
+[Initializing arrays... (ego-items)]
+[Initializing arrays... (monsters)]
+[Initializing arrays... (vaults)]
+[Initializing arrays... (other)]
+[Initializing arrays... (alloc)]
+[Initializing arrays... done]
+Please wait...
+Object flavors initialized...
+Server is running version 3140
+24 Jul 04:07:30: Welcome Archo=PLAYER@uffikodu (213.219.80.36/1083) (version 3130)
+24 Jul 04:07:45: Welcome Kopssu=PLAYER@uffikodu (213.219.80.36/1085) (version 3130)
+24 Jul 04:16:16: Welcome Keep my house=PLAYER@uffikodu (213.219.80.36/1087) (version 3130)
+24 Jul 04:33:57: Goodbye Archo=PLAYER@uffikodu ("client quit")
+24 Jul 04:33:59: Goodbye Keep my house=PLAYER@uffikodu ("client quit")
+24 Jul 04:34:01: Goodbye Kopssu=PLAYER@uffikodu ("client quit")
+24 Jul 05:37:32: Welcome Shen Long=PLAYER@h3e7j3 (172.139.33.87/1558) (version 3130)
+24 Jul 05:45:55: Welcome Archo=PLAYER@uffikodu (213.219.80.36/1385) (version 3130)
+24 Jul 05:46:29: Goodbye Archo=PLAYER@uffikodu ("client quit")
+24 Jul 05:51:01: Goodbye Shen Long=PLAYER@h3e7j3 ("timeout 08")
+24 Jul 05:52:16: Welcome Shen Long=PLAYER@h3e7j3 (172.139.33.87/1563) (version 3130)
+24 Jul 05:54:32: Goodbye Shen Long=PLAYER@h3e7j3 ("timeout 08")
+24 Jul 05:55:06: Welcome Shen Long=PLAYER@h3e7j3 (172.139.33.87/1567) (version 3130)
+24 Jul 06:23:28: Welcome Archo=PLAYER@uffikodu (213.219.80.36/1603) (version 3130)
+24 Jul 06:23:48: Welcome Kopssu=PLAYER@uffikodu (213.219.80.36/1605) (version 3130)
+24 Jul 06:25:38: Goodbye Kopssu=PLAYER@uffikodu ("client quit")
+24 Jul 06:25:41: Goodbye Archo=PLAYER@uffikodu ("client quit")
+24 Jul 06:34:56: Goodbye Shen Long=PLAYER@h3e7j3 ("resume connection")
+24 Jul 06:34:56: Welcome Shen Long=PLAYER@h3e7j3 (172.139.33.87/1570) (version 3130)
+24 Jul 06:36:37: Welcome Inviable=inviable@localhost.localdomain (66.20.128.216/2441) (version 3130)
+24 Jul 06:37:01: Goodbye Inviable=inviable@localhost.localdomain ("timeout 08")
+24 Jul 06:57:44: Welcome Glaurung=PLAYER@uffikodu (213.219.80.36/2008) (version 3130)
+24 Jul 06:58:34: Welcome Inviable=inviable@localhost.localdomain (66.20.128.216/2593) (version 3130)
+24 Jul 06:58:52: Welcome Jiggity_snuff=inviable@localhost.localdomain (66.20.128.216/2594) (version 3130)
+24 Jul 06:59:01: Goodbye Inviable=inviable@localhost.localdomain ("timeout 08")
+24 Jul 07:01:20: Welcome Telepower=PLAYER@uffikodu (213.219.80.36/2010) (version 3130)
+24 Jul 07:01:43: Goodbye Telepower=PLAYER@uffikodu ("client quit")
+24 Jul 07:02:07: Welcome Fang=PLAYER@uffikodu (213.219.80.36/2012) (version 3130)
+24 Jul 07:04:52: Welcome Telepower=PLAYER@uffikodu (213.219.80.36/2014) (version 3130)
+24 Jul 07:06:08: Goodbye Telepower=PLAYER@uffikodu ("client quit")
+24 Jul 07:09:58: Goodbye Jiggity_snuff=inviable@localhost.localdomain ("Committed suicide")
+24 Jul 07:10:25: Welcome Jiggity_snuff=inviable@localhost.localdomain (66.20.128.216/2597) (version 3130)
+24 Jul 07:12:58: Goodbye Jiggity_snuff=inviable@localhost.localdomain ("timeout 08")
+24 Jul 07:15:14: Goodbye Fang=PLAYER@uffikodu ("client quit")
+24 Jul 07:15:15: Goodbye Glaurung=PLAYER@uffikodu ("client quit")
+24 Jul 07:15:25: Welcome Destroyer=PLAYER@uffikodu (213.219.80.36/2019) (version 3130)
+24 Jul 07:16:48: Goodbye Shen Long=PLAYER@h3e7j3 ("client quit")
+24 Jul 07:26:15: Welcome Telepower=PLAYER@uffikodu (213.219.80.36/2024) (version 3130)
+24 Jul 07:31:19: Goodbye Telepower=PLAYER@uffikodu ("client quit")
+24 Jul 07:31:26: Goodbye Destroyer=PLAYER@uffikodu ("client quit")
+24 Jul 08:43:40: Welcome Kedal=PLAYER@yywang (149.99.73.174/1076) (version 3130)
+24 Jul 08:56:55: Welcome GreaterBalrog=PLAYER@beerchen (217.50.239.88/1032) (version 3130)
+24 Jul 08:58:35: Goodbye GreaterBalrog=PLAYER@beerchen ("client quit")
+24 Jul 09:21:59: Welcome Qqq=PLAYER@yywang (149.99.73.174/1079) (version 3130)
+24 Jul 09:24:02: Goodbye Qqq=PLAYER@yywang ("client quit")
+24 Jul 09:28:05: Goodbye Kedal=PLAYER@yywang ("client quit")
+24 Jul 09:49:24: Welcome Mihi=mihi@artemis (210.231.97.249/21913) (version 3130)
+24 Jul 09:49:41: Welcome Shen Long=PLAYER@h3e7j3 (172.172.145.32/1035) (version 3130)
+24 Jul 09:50:34: Welcome Mathilde=mihi@artemis (210.231.97.249/32061) (version 3130)
+24 Jul 09:51:01: Goodbye Mathilde=mihi@artemis ("client quit")
+24 Jul 10:05:22: Goodbye Mihi=mihi@artemis ("client quit")
+24 Jul 10:06:29: Goodbye Shen Long=PLAYER@h3e7j3 ("timeout 08")
+24 Jul 10:07:02: Welcome Shen Long=PLAYER@h3e7j3 (172.172.145.32/1040) (version 3130)
+24 Jul 10:12:37: Welcome Archo=PLAYER@uffikodu (213.219.80.36/2516) (version 3130)
+24 Jul 10:19:46: Welcome Kopssu=PLAYER@uffikodu (213.219.80.36/2544) (version 3130)
+24 Jul 10:26:43: Welcome Keep my house=PLAYER@uffikodu (213.219.80.36/2571) (version 3130)
+24 Jul 10:31:47: Welcome Locke=PLAYER@default (162.42.18.164/1031) (version 3130)
+24 Jul 10:33:00: Welcome Mihi=mihi@artemis (210.231.97.249/50446) (version 3130)
+24 Jul 10:37:41: Goodbye Locke=PLAYER@default ("client quit")
+24 Jul 10:42:16: Goodbye Mihi=mihi@artemis ("client quit")
+24 Jul 11:05:35: Welcome Kedal=PLAYER@yywang (149.99.75.69/1219) (version 3130)
+24 Jul 11:11:53: Goodbye Sucker=PLAYER@uffikodu ("TCP connection closed")
+24 Jul 11:12:12: Welcome Sucker=PLAYER@uffikodu (213.219.80.36/2733) (version 3130)
+24 Jul 11:12:23: Goodbye Sucker=PLAYER@uffikodu ("Committed suicide")
+24 Jul 11:12:44: Goodbye Sucker=PLAYER@uffikodu ("TCP connection closed")
+24 Jul 11:13:04: Welcome Seikleja=PLAYER@uffikodu (213.219.80.36/2740) (version 3130)
+Savefile does not exist for player Seikleja.
+24 Jul 11:24:07: Goodbye Seikleja=PLAYER@uffikodu ("Killed by a Green jelly")
+24 Jul 11:30:16: Welcome Nondive=PLAYER@uffikodu (213.219.80.36/2806) (version 3130)
+Savefile does not exist for player Nondive.
+24 Jul 11:32:05: Goodbye Nondive=PLAYER@uffikodu ("Committed suicide")
+24 Jul 11:41:24: Goodbye Kopssu=PLAYER@uffikodu ("client quit")
+24 Jul 11:41:25: Goodbye Archo=PLAYER@uffikodu ("client quit")
+24 Jul 11:41:26: Goodbye Keep my house=PLAYER@uffikodu ("client quit")
+24 Jul 12:15:53: Goodbye Shen Long=PLAYER@h3e7j3 ("timeout 08")
+24 Jul 12:17:11: Welcome Shen Long=PLAYER@h3e7j3 (172.172.145.32/1047) (version 3130)
+24 Jul 12:35:20: Goodbye Kedal=PLAYER@yywang ("client quit")
+24 Jul 12:48:58: Goodbye Shen Long=PLAYER@h3e7j3 ("client quit")
+24 Jul 13:23:21: Welcome Evileye=evileye@localhost (158.152.95.145/1026) (version 3130)
+24 Jul 13:24:27: Goodbye Evileye=evileye@localhost ("client quit")
+24 Jul 13:30:33: Welcome Evileye=evileye@localhost (158.152.95.145/1042) (version 3130)
+24 Jul 13:31:54: Goodbye Evileye=evileye@localhost ("client quit")
+24 Jul 13:33:53: Welcome Evileye=evileye@localhost (158.152.95.145/1050) (version 3130)
+24 Jul 13:34:11: Goodbye Evileye=evileye@localhost ("timeout 04")
+24 Jul 13:34:28: Welcome Evileye=evileye@localhost (158.152.95.145/1052) (version 3130)
+24 Jul 13:35:17: Welcome Tuor=PLAYER@hppav (141.154.74.205/1041) (version 3130)
+24 Jul 13:37:48: Goodbye Tuor=PLAYER@hppav ("client quit")
+24 Jul 13:38:22: Welcome Tuor=root@beast (141.154.74.220/1028) (version 3130)
+24 Jul 13:46:36: Goodbye Evileye=evileye@localhost ("client quit")
+24 Jul 13:47:13: Welcome Evileye=evileye@localhost (158.152.95.145/1067) (version 3130)
+24 Jul 13:49:29: Welcome PowerWyrm=PLAYER@oben0003@vnu.net (213.195.0.198/1037) (version 3130)
+24 Jul 13:55:12: Welcome Curator=root@beast (141.154.74.220/1030) (version 3130)
+24 Jul 13:55:55: Goodbye Curator=root@beast ("client quit")
+24 Jul 13:58:05: Goodbye Evileye=evileye@localhost ("client quit")
+24 Jul 13:58:33: Welcome Archon=PLAYER@oben0003@vnu.net (213.195.0.198/1041) (version 3130)
+24 Jul 14:03:47: Goodbye Archon=PLAYER@oben0003@vnu.net ("Committed suicide")
+24 Jul 14:03:58: Goodbye PowerWyrm=PLAYER@oben0003@vnu.net ("client quit")
+24 Jul 14:05:04: Welcome Haschel=PLAYER@black-lotus (204.233.241.235/1027) (version 3130)
+24 Jul 14:05:23: Goodbye Haschel=PLAYER@black-lotus ("timeout 08")
+24 Jul 14:05:58: Welcome Haschel=PLAYER@black-lotus (204.233.241.235/1030) (version 3130)
+24 Jul 14:06:18: Goodbye Haschel=PLAYER@black-lotus ("timeout 08")
+24 Jul 14:07:03: Welcome Haschel=PLAYER@black-lotus (204.233.241.235/1033) (version 3130)
+24 Jul 14:17:04: Welcome Evileye=evileye@localhost (158.152.95.145/1085) (version 3130)
+24 Jul 14:21:29: Welcome Curator=root@beast (141.154.74.220/1032) (version 3130)
+24 Jul 14:25:59: Welcome Treebark=PLAYER@black-lotus (204.233.241.235/1040) (version 3130)
+24 Jul 14:26:19: Goodbye Treebark=PLAYER@black-lotus ("timeout 08")
+24 Jul 14:26:36: Goodbye Curator=root@beast ("client quit")
+24 Jul 14:26:54: Welcome Treebark=PLAYER@black-lotus (204.233.241.235/1043) (version 3130)
+24 Jul 14:27:13: Goodbye Treebark=PLAYER@black-lotus ("timeout 08")
+24 Jul 14:37:30: Goodbye Evileye=evileye@localhost ("client quit")
+24 Jul 14:39:40: Goodbye Haschel=PLAYER@black-lotus ("client quit")
+24 Jul 14:42:03: Welcome Curator=root@beast (141.154.74.220/1034) (version 3130)
+24 Jul 14:43:42: Goodbye Curator=root@beast ("client quit")
+24 Jul 14:57:36: Welcome Bof=PLAYER@sirbod.therealm.org (217.35.40.221/3442) (version 3130)
+Savefile does not exist for player Bof.
+24 Jul 15:00:08: Welcome Menthos=PLAYER@station01 (217.35.46.128/4139) (version 3130)
+Savefile does not exist for player Menthos.
+24 Jul 15:00:51: Welcome Evileye=evileye@localhost (158.152.95.145/1097) (version 3130)
+24 Jul 15:01:40: Welcome Shen Long=PLAYER@h3e7j3 (172.164.50.69/1170) (version 3130)
+24 Jul 15:13:02: Welcome Curator=root@beast (141.154.74.220/1040) (version 3130)
+24 Jul 15:15:00: Welcome Haschel=PLAYER@black-lotus (204.233.241.235/1065) (version 3130)
+24 Jul 15:16:04: Goodbye Menthos=PLAYER@station01 ("Killed by a Small kobold")
+24 Jul 15:16:47: Goodbye Bof=PLAYER@sirbod.therealm.org ("Committed suicide")
+24 Jul 15:19:54: Goodbye Curator=root@beast ("client quit")
