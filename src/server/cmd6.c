@@ -7322,8 +7322,10 @@ static int fletchery_items(int Ind)
 	q_ptr->note = quark_add("Handmade"); \
 	q_ptr->discount = 50 + 25 * rand_int(3); \
 	msg_print(Ind, "You make some ammo.")
-//	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE); \
-//	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 10))?TRUE:FALSE);
+/*
+	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE); \
+	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 10))?TRUE:FALSE);
+*/
 
 /*
  * do_cmd_cast calls this function if the player's class
