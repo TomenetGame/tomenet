@@ -2025,12 +2025,23 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 		{
 			if (magik(25))
 			{
-				msg_print(Ind, "Your foe calls upon your soul!");
-				msg_print(Ind, "You feel the Black Breath slowly draining you of life...");
-				p_ptr->black_breath = TRUE;
+				set_black_breath(Ind);
 			}
 		}
 	}
+}
+
+void set_black_breath(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* deja */
+	if (p_ptr->black_breath) return;
+	if (p_ptr->ghost) return;
+
+	msg_print(Ind, "Your foe calls upon your soul!");
+	msg_print(Ind, "You feel the Black Breath slowly draining you of life...");
+	p_ptr->black_breath = TRUE;
 }
 
 
@@ -2430,6 +2441,8 @@ void move_player(int Ind, int dir, int do_pickup)
 					msg_format(Ind2, "You switch places with %s.", p_ptr->name);
 				else
 					msg_format(Ind2, "You switch places with it.");
+
+				black_breath_infection(Ind, Ind2);
 			}
 
 			/* Disturb both of them */
@@ -2465,6 +2478,8 @@ void move_player(int Ind, int dir, int do_pickup)
 				msg_format(Ind2, "%s bumps into you.", p_ptr->name);
 			else
 				msg_format(Ind2, "It bumps into you.");
+
+			black_breath_infection(Ind, Ind2);
 
 			/* Disturb both parties */
 			disturb(Ind, 1, 0);
@@ -2861,6 +2876,14 @@ static bool wraith_access(int Ind){
 	return(FALSE);
 }
 
+void black_breath_infection(int Ind, int Ind2)
+{
+	player_type *p_ptr = Players[Ind];
+	player_type *q_ptr = Players[Ind2];
+
+	if (p_ptr->black_breath && magik(20)) set_black_breath(Ind2);
+	if (q_ptr->black_breath && magik(20)) set_black_breath(Ind);
+}
 
 /*
  * Hack -- Check for a "motion blocker" (see below)

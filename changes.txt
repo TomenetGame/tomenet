@@ -544,4 +544,10 @@ Change list for PernMangband
 - Black-Breath is implemented.
 - Specific ESP (eg. slay-orc weapon gives orc-only ESP)
 - Fixed a bug that allowed to generate breeders on the wilderness.
+- Some mangband-origined ego-items are back again.
+- Fixed a bug where some ego-items could never be generated.
 
+29/12/2001 (Jir)
+- Black-Breath works slower/is contagious now.
+- Fixed a bug that caused breeders not to breed.
+- Randarts/egos can have specific-esp.

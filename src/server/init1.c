@@ -648,7 +648,7 @@ static cptr k_info_flags3[] =
 	"FEATHER",
         "LITE1",	// "LITE",
 	"SEE_INVIS",
-	"TELEPATHY",	// "NORM_ART", (5)
+	"TELEPATHY",	// "NORM_ART", (5)	// contradictory! should be removed.
 	"SLOW_DIGEST",
 	"REGEN",
 	"XTRA_MIGHT",

@@ -2141,11 +2141,14 @@ static void process_player_end(int Ind)
 
 //                if (PRACE_FLAG(PR1_RESIST_BLACK_BREATH)) chance = 2;
 
-                if ((rand_int(100) < chance) && (p_ptr->exp > 0))
+//                if ((rand_int(100) < chance) && (p_ptr->exp > 0))
+                /* Toned down a little, considering it's realtime. */
+                if ((rand_int(200) < chance) && (p_ptr->exp > 0))
                 {
                         p_ptr->exp -= 1 + plev / 5;
                         p_ptr->max_exp -= 1 + plev / 5;
-                        (void)do_dec_stat(Ind, randint(6)+1, STAT_DEC_NORMAL);
+//                        (void)do_dec_stat(Ind, randint(6)+1, STAT_DEC_NORMAL);
+                        (void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
                         check_experience(Ind);
                 }
         }

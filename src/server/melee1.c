@@ -429,11 +429,8 @@ bool make_attack_normal(int Ind, int m_idx)
 					(randint(450 - m_ptr->level) == 1))) )
 			  )
 			{
-				msg_print(Ind, "Your foe calls upon your soul!");
-				msg_print(Ind, "You feel the Black Breath slowly draining you of life...");
-				p_ptr->black_breath = TRUE;
+				set_black_breath(Ind);
 			}
-
 
 
 			/* Hack -- assume all attacks are obvious */

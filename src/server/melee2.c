@@ -3229,7 +3229,7 @@ static void process_monster(int Ind, int m_idx)
 
 #ifdef NEW_DUNGEON
 	/* need to expand our range a bit here */
-	if(istown(wpos))
+	if(!istown(wpos))
 #else
 	/* Hack -- No reproduction close to town center */
 	if (Depth <= 0 ? (wild_info[Depth].radius > 2) : 1)

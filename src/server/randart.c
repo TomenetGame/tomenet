@@ -323,7 +323,21 @@ s32b artifact_power (artifact_type *a_ptr)
 	if (a_ptr->flags4 & TR4_LITE2) p += 4;
 	if (a_ptr->flags4 & TR4_LITE3) p += 8;
 	if (a_ptr->flags3 & TR3_SEE_INVIS) p += 8;
-	if (a_ptr->flags3 & TR3_TELEPATHY) p += 20;
+//	if (a_ptr->flags3 & TR3_TELEPATHY) p += 20;
+	if (a_ptr->esp & (ESP_ORC)) p += 1;
+	if (a_ptr->esp & (ESP_TROLL)) p += 1;
+	if (a_ptr->esp & (ESP_DRAGON)) p += 1;
+	if (a_ptr->esp & (ESP_GIANT)) p += 1;
+	if (a_ptr->esp & (ESP_DEMON)) p += 1;
+	if (a_ptr->esp & (ESP_UNDEAD)) p += 2;
+	if (a_ptr->esp & (ESP_EVIL)) p += 8;
+	if (a_ptr->esp & (ESP_ANIMAL)) p += 1;
+	if (a_ptr->esp & (ESP_DRAGONRIDER)) p += 2;
+	if (a_ptr->esp & (ESP_GOOD)) p += 2;
+	if (a_ptr->esp & (ESP_NONLIVING)) p += 2;
+	if (a_ptr->esp & (ESP_UNIQUE)) p += 8;
+	if (a_ptr->esp & (ESP_SPIDER)) p += 2;
+	if (a_ptr->esp & ESP_ALL) p += 20;
         if (a_ptr->flags4 & TR4_AUTO_ID) p += 20;
 	if (a_ptr->flags3 & TR3_SLOW_DIGEST) p += 4;
 	if (a_ptr->flags3 & TR3_REGEN) p += 8;
@@ -360,6 +374,8 @@ void remove_contradictory (artifact_type *a_ptr)
 	if (a_ptr->flags3 & TR3_CURSED) a_ptr->flags3 &= ~(TR3_BLESSED);
 	if (a_ptr->flags1 & TR1_KILL_DRAGON) a_ptr->flags1 &= ~(TR1_SLAY_DRAGON);
 	if (a_ptr->flags3 & TR3_DRAIN_EXP) a_ptr->flags2 &= ~(TR2_HOLD_LIFE);
+
+	if (a_ptr->esp & (ESP_ALL)) a_ptr->esp = (ESP_ALL);
 }
 
 
@@ -434,38 +450,91 @@ void add_ability (artifact_type *a_ptr)
 					a_ptr->dd += 1 + rand_int (2) + rand_int (2);
 					if (a_ptr->dd > 9) a_ptr->dd = 9;
 				}
-				else if (r < 31) a_ptr->flags1 |= TR1_KILL_DRAGON;
-				else if (r < 35) a_ptr->flags1 |= TR1_SLAY_DRAGON;
-				else if (r < 40) a_ptr->flags1 |= TR1_SLAY_EVIL;
+				else if (r < 31)
+				{ 
+					a_ptr->flags1 |= TR1_KILL_DRAGON;
+					a_ptr->esp |= (ESP_DRAGON);
+				}
+				else if (r < 35)
+				{
+					a_ptr->flags1 |= TR1_SLAY_DRAGON;
+					if (magik(80)) a_ptr->esp |= (ESP_DRAGON);
+				}
+				else if (r < 40)
+				{
+					a_ptr->flags1 |= TR1_SLAY_EVIL;
+					if (magik(80)) a_ptr->esp |= (ESP_EVIL);
+				}
 
-				else if (r < 45) a_ptr->flags1 |= TR1_SLAY_ANIMAL;
+				else if (r < 45)
+				{
+					a_ptr->flags1 |= TR1_SLAY_ANIMAL;
+					if (magik(80)) a_ptr->esp |= (ESP_EVIL);
+				}
 				else if (r < 50)
 				{
 					a_ptr->flags1 |= TR1_SLAY_UNDEAD;
-					if (rand_int (2) == 0) a_ptr->flags1 |= TR1_SLAY_DEMON;
+					if (magik(80)) a_ptr->esp |= (ESP_UNDEAD);
+					if (rand_int (2) == 0)
+					{
+						a_ptr->flags1 |= TR1_SLAY_DEMON;
+						if (magik(80)) a_ptr->esp |= (ESP_DEMON);
+					}
 				}
 				else if (r < 54)
 				{
 					a_ptr->flags1 |= TR1_SLAY_DEMON;
-					if (rand_int (2) == 0) a_ptr->flags1 |= TR1_SLAY_UNDEAD;
+					if (magik(80)) a_ptr->esp |= (ESP_DEMON);
+					if (rand_int (2) == 0)
+					{
+						a_ptr->flags1 |= TR1_SLAY_UNDEAD;
+						if (magik(80)) a_ptr->esp |= (ESP_UNDEAD);
+					}
 				}
 				else if (r < 59)
 				{
 					a_ptr->flags1 |= TR1_SLAY_ORC;
-					if (rand_int (2) == 0) a_ptr->flags1 |= TR1_SLAY_TROLL;
-					if (rand_int (2) == 0) a_ptr->flags1 |= TR1_SLAY_GIANT;
+					if (magik(80)) a_ptr->esp |= (ESP_ORC);
+					if (rand_int (2) == 0)
+					{
+						a_ptr->flags1 |= TR1_SLAY_TROLL;
+						if (magik(80)) a_ptr->esp |= (ESP_TROLL);
+					}
+					if (rand_int (2) == 0)
+					{
+						a_ptr->flags1 |= TR1_SLAY_GIANT;
+						if (magik(80)) a_ptr->esp |= (ESP_GIANT);
+					}
 				}
 				else if (r < 63)
 				{
 					a_ptr->flags1 |= TR1_SLAY_TROLL;
-					if (rand_int (2) == 0) a_ptr->flags1 |= TR1_SLAY_ORC;
-					if (rand_int (2) == 0) a_ptr->flags1 |= TR1_SLAY_GIANT;
+					if (magik(80)) a_ptr->esp |= (ESP_TROLL);
+					if (rand_int (2) == 0)
+					{
+						a_ptr->flags1 |= TR1_SLAY_ORC;
+						if (magik(80)) a_ptr->esp |= (ESP_ORC);
+					}
+					if (rand_int (2) == 0)
+					{
+						a_ptr->flags1 |= TR1_SLAY_GIANT;
+						if (magik(80)) a_ptr->esp |= (ESP_GIANT);
+					}
 				}
 				else if (r < 67)
 				{
 					a_ptr->flags1 |= TR1_SLAY_GIANT;
-					if (rand_int (2) == 0) a_ptr->flags1 |= TR1_SLAY_ORC;
-					if (rand_int (2) == 0) a_ptr->flags1 |= TR1_SLAY_TROLL;
+					if (magik(80)) a_ptr->esp |= (ESP_GIANT);
+					if (rand_int (2) == 0)
+					{
+						a_ptr->flags1 |= TR1_SLAY_ORC;
+						if (magik(80)) a_ptr->esp |= (ESP_ORC);
+					}
+					if (rand_int (2) == 0)
+					{
+						a_ptr->flags1 |= TR1_SLAY_TROLL;
+						if (magik(80)) a_ptr->esp |= (ESP_TROLL);
+					}
 				}
 				else if (r < 72) a_ptr->flags3 |= TR3_SEE_INVIS;
 				else if (r < 76)
@@ -546,7 +615,22 @@ void add_ability (artifact_type *a_ptr)
 				  {
 				    a_ptr->flags4 |= TR4_AUTO_ID;
 				  }
-				else if (r < 45) a_ptr->flags3 |= TR3_TELEPATHY;
+//				else if (r < 45) a_ptr->flags3 |= TR3_TELEPATHY;
+//				else if (r < 45) a_ptr->esp |= (ESP_ALL);
+				else if (r < 31) a_ptr->esp |= (ESP_ORC);
+				else if (r < 32) a_ptr->esp |= (ESP_TROLL);
+				else if (r < 33) a_ptr->esp |= (ESP_DRAGON);
+				else if (r < 34) a_ptr->esp |= (ESP_GIANT);
+				else if (r < 35) a_ptr->esp |= (ESP_DEMON);
+				else if (r < 36) a_ptr->esp |= (ESP_UNDEAD);
+				else if (r < 37) a_ptr->esp |= (ESP_EVIL);
+				else if (r < 38) a_ptr->esp |= (ESP_ANIMAL);
+				else if (r < 39) a_ptr->esp |= (ESP_DRAGONRIDER);
+				else if (r < 40) a_ptr->esp |= (ESP_GOOD);
+				else if (r < 41) a_ptr->esp |= (ESP_NONLIVING);
+				else if (r < 42) a_ptr->esp |= (ESP_UNIQUE);
+				else if (r < 43) a_ptr->esp |= (ESP_SPIDER);
+				else if (r < 44) a_ptr->esp |= (ESP_ALL);
 				else if (r < 65) a_ptr->flags3 |= TR3_SEE_INVIS;
 				else if (r < 75)
 				{
@@ -769,9 +853,29 @@ void add_ability (artifact_type *a_ptr)
 			case 38: a_ptr->flags3 |= TR3_LITE1; break;
 			case 39: a_ptr->flags3 |= TR3_SEE_INVIS; break;
 		        case 40:
+#if 0
 				if (rand_int (3) == 0)
-					a_ptr->flags3 |= TR3_TELEPATHY;
-				break;
+//					a_ptr->flags3 |= TR3_TELEPATHY;
+					a_ptr->esp |= (ESP_ALL);
+#endif	// 0
+				{
+					int rr = rand_int (29);
+					if (rr < 1) a_ptr->esp |= (ESP_ORC);
+					else if (rr < 2) a_ptr->esp |= (ESP_TROLL);
+					else if (rr < 3) a_ptr->esp |= (ESP_DRAGON);
+					else if (rr < 4) a_ptr->esp |= (ESP_GIANT);
+					else if (rr < 5) a_ptr->esp |= (ESP_DEMON);
+					else if (rr < 8) a_ptr->esp |= (ESP_UNDEAD);
+					else if (rr < 12) a_ptr->esp |= (ESP_EVIL);
+					else if (rr < 14) a_ptr->esp |= (ESP_ANIMAL);
+					else if (rr < 16) a_ptr->esp |= (ESP_DRAGONRIDER);
+					else if (rr < 19) a_ptr->esp |= (ESP_GOOD);
+					else if (rr < 21) a_ptr->esp |= (ESP_NONLIVING);
+					else if (rr < 24) a_ptr->esp |= (ESP_UNIQUE);
+					else if (rr < 26) a_ptr->esp |= (ESP_SPIDER);
+					else a_ptr->esp |= (ESP_ALL);
+					break;
+				}
 			case 41: a_ptr->flags3 |= TR3_SLOW_DIGEST; break;
 
 			case 42:
@@ -1219,7 +1323,26 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 			case 1: a_ptr->flags3 |= (TR3_FEATHER);     break;
 			case 2: a_ptr->flags3 |= (TR3_LITE1);        break;
 			case 3: a_ptr->flags3 |= (TR3_SEE_INVIS);   break;
-			case 4: a_ptr->esp |= (ESP_ALL);   break;
+//			case 4: a_ptr->esp |= (ESP_ALL);   break;
+			case 4:
+			{
+				int rr = rand_int (29);
+				if (rr < 1) a_ptr->esp |= (ESP_ORC);
+				else if (rr < 2) a_ptr->esp |= (ESP_TROLL);
+				else if (rr < 3) a_ptr->esp |= (ESP_DRAGON);
+				else if (rr < 4) a_ptr->esp |= (ESP_GIANT);
+				else if (rr < 5) a_ptr->esp |= (ESP_DEMON);
+				else if (rr < 8) a_ptr->esp |= (ESP_UNDEAD);
+				else if (rr < 12) a_ptr->esp |= (ESP_EVIL);
+				else if (rr < 14) a_ptr->esp |= (ESP_ANIMAL);
+				else if (rr < 16) a_ptr->esp |= (ESP_DRAGONRIDER);
+				else if (rr < 19) a_ptr->esp |= (ESP_GOOD);
+				else if (rr < 21) a_ptr->esp |= (ESP_NONLIVING);
+				else if (rr < 24) a_ptr->esp |= (ESP_UNIQUE);
+				else if (rr < 26) a_ptr->esp |= (ESP_SPIDER);
+				else a_ptr->esp |= (ESP_ALL);
+				break;
+			}
 			case 5: a_ptr->flags3 |= (TR3_SLOW_DIGEST); break;
 			case 6: a_ptr->flags3 |= (TR3_REGEN);       break;
 			case 7: a_ptr->flags2 |= (TR2_FREE_ACT);    break;

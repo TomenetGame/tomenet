@@ -1770,7 +1770,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr)
  */
 static bool make_ego_item(int level, object_type *o_ptr, bool good)
 {
-	int i = 0, j;
+	int i = 0, j, k;
 	int *ok_ego, ok_num = 0;
 	bool ret = FALSE;
 
@@ -1835,7 +1835,9 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good)
 
 		/* We must make the "rarity roll" */
 //		if (rand_int(e_ptr->mrarity - luck(-(e_ptr->mrarity / 2), e_ptr->mrarity / 2)) < e_ptr->rarity)
-		if (rand_int(e_ptr->mrarity) < e_ptr->rarity)
+//		if (rand_int(e_ptr->mrarity) < e_ptr->rarity)
+		k = e_ptr->mrarity - e_ptr->rarity;
+		if (k && rand_int(k))
 		{
 			continue;
 		}

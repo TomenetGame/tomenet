@@ -747,6 +747,9 @@ static byte player_color(int Ind)
 	/* Ghosts are black */
 	if (p_ptr->ghost) return TERM_L_DARK;
 
+	/* Black Breath carriers omit malignous aura sometimes.. */
+	if (p_ptr->black_breath && magik(50)) return TERM_L_DARK;
+
 	if (p_ptr->body_monster) return (r_ptr->d_attr);
 
 	/* Bats are orange */

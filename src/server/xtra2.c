@@ -3501,6 +3501,7 @@ void player_death(int Ind)
 	
 	
 	/* Cure him from various maladies */
+	p_ptr->black_breath = FALSE;
 	if (p_ptr->image) (void)set_image(Ind, 0);
 	if (p_ptr->blind) (void)set_blind(Ind, 0);
 	if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
