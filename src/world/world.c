@@ -147,6 +147,17 @@ void wproto(struct client *ccl){
 					relay(wpk, ccl);
 				}
 				break;
+			case WP_PMSG:
+				/* MUST be authed for private messages */
+				if(ccl->authed>0){
+					struct client *dcl;
+					for(dcl=clist; dcl; dcl=dcl->next){
+						if(dcl->authed==wpk->d.pmsg.sid){
+							send(dcl->fd, wpk, sizeof(struct wpacket), 0); 
+						}
+					}
+				}
+				break;
 			case WP_NPLAYER:
 			case WP_QPLAYER:
 				/* STORE players here */

@@ -17,6 +17,7 @@
 #define WP_SQUIT	9	/* server quits */
 #define WP_RESTART	10	/* servers quit now */
 #define WP_LACCOUNT	11	/* login account */
+#define WP_PMSG		12	/* private message */
 
 /* now we are going to be the server which authenticates
  * the players. Once they are logged in, they will receive
@@ -84,6 +85,15 @@ struct chat{
 	char ctxt[120];
 };
 
+struct pmsg{
+	unsigned long id;	/* From ID */
+	unsigned short sid;	/* To server ID */
+	char player[80];	/* thats what it is in server :( */
+	char victim[80];	/* thats what it is in server :( */
+	char ctxt[120];
+};
+
+
 /* server world authentication */
 struct auth{
 	unsigned char pass[21];
@@ -131,6 +141,7 @@ struct wpacket{
 		struct player play;
 		struct auth auth;
 		struct lock lock;
+		struct pmsg pmsg;
 		struct pl_auth login;
 	} d;
 };
