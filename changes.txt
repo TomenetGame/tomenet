@@ -1259,9 +1259,14 @@ To find the latest change quickly, search ==== :)
 [H] all-star dragon pit / mankind pit (experimental)
 
 08/07/2002 (Jir)
+# most part of ToME generate.c imported.
 - faster choose_attack_spell imported from Angband3.0.0.
+- user command: /object
+[P] dungeon generator (generate.c) .. d_info and f_info needed!!
 [H] 'Health' skill is a little more useful now (x1.5 regen)
 [H] GoI when changing floor is somewhat longer (due to the rule change of GoI)
+[H] skill table somewhat adjusted (Fighting Technic moved to Combat)
+
 
 
 ** [B] stands for Bugfix.
@@ -1326,6 +1331,7 @@ below this line are the unfixed bugs known:
 [B] Macro sticks sometimes
 [B] Window refreshing fails sometimes, requiring ^R.
 [B] ghost gets 'The weight of your armor emcumbers your movement' msg.
+[B] isolated space can be generated (generate.c)
 
 *below are bugs repoorted but not confirmed*
 (nothing so far)
@@ -1377,10 +1383,6 @@ memo and questions:
 - implement monster mimics
 - better vaults
   - between gates, patterns
-* Trap ideas
-  - no return trap should steal books also?
-  - telekinesis trap
-  - house-door-opening trap
 [C] chat-line cursor editing
 
 [major ones]
@@ -1480,6 +1482,11 @@ memo and questions:
 - traps:
   + another check for Dexterity (with high Dex, you can avoid some)
   + missile traps should have AC check(check_hit)?
+  + some traps should be identified when disarmed (EASY_KNOWN/NEVER_KNOWN)
+  * Trap ideas
+    - no return trap should steal books also?
+    - telekinesis trap
+    - house-door-opening trap
 - items:
   + Potion of Light Mana?
   + Scroll of Teleport After/To.

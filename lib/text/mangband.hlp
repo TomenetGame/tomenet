@@ -22,6 +22,7 @@ Newbie Tutorial - http://www.mangband.org/documentation/mang/
 
 Latest changes for version 4.0.0a (digest):
 - development version toward 4.0.0!
+- dungeon generator is improved.
 - skill system is being implemented. (try 'G')
   this implies *MAJOR* changes in the gameplay!
 - some of unpopular classes are removed:
@@ -32,7 +33,7 @@ Latest changes for version 4.0.0a (digest):
   'fire' command no longer needs item specification.
 - pack of hounds no longer freezes the client (and instakills you :)
 - chat-line editing (^P, ^N, ^U, ^W)
-- /help, /shout, /feeling, /monster, /quest, /news
+- /help, /quest, /feeling, /shout, /monster, /news, /house, /object
 - '/ver 1' to see server settings.
 - Vaults are varied somewhat.
 - Smaller floors can be generated.

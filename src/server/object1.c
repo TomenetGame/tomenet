@@ -397,7 +397,7 @@ static bool object_has_flavor(int i)
  *
  * XXX XXX XXX Add "EASY_KNOW" flag to "k_info.txt" file
  */
-static bool object_easy_know(int i)
+bool object_easy_know(int i)
 {
 	object_kind *k_ptr = &k_info[i];
 

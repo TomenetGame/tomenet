@@ -2110,6 +2110,113 @@ static void do_show_houses(int Ind)
 	Send_special_other(Ind);
 }
 
+/*
+ * Tell players of the known items, using temporary file. - Jir -
+ */
+static void do_cmd_show_known_item_letter(int Ind, char *letter)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int		i, j, num, total = 0;
+	object_kind	*k_ptr;
+	object_type forge;
+	char o_name[80];
+	bool	shown = FALSE;
+
+	FILE *fff;
+
+	/* Paranoia */
+	// if (!letter) return;
+
+	/* Open a new file */
+	fff = my_fopen(p_ptr->infofile, "w");
+
+	/* Current file viewing */
+	strcpy(p_ptr->cur_file, p_ptr->infofile);
+
+	/* Let the player scroll through the info */
+	p_ptr->special_file_type = TRUE;
+
+
+	/* Output color byte */
+//	fprintf(fff, "%c", 'G');
+
+	if (letter) fprintf(fff, "======== Objects known (%c) ========\n", *letter);
+	else fprintf(fff, "======== Objects known ========\n");
+
+	/* for each object kind */
+	for (i = 1; i <= MAX_K_IDX; i++)
+	{
+		k_ptr = &k_info[i];
+		if (!k_ptr->name) continue;
+		if (letter && *letter != k_ptr->d_char) continue;	// k_char ?
+//		if (!object_easy_know(i)) continue;
+		if (!k_ptr->easy_know) continue;
+		if (!k_ptr->has_flavor) continue;
+		if (!p_ptr->obj_aware[i]) continue;
+
+		/* Create the object */
+		invcopy(&forge, i);
+
+		/* Describe the artifact */
+		object_desc_store(Ind, o_name, &forge, FALSE, 0);
+
+		/* Hack -- remove {0} */
+		j = strlen(o_name);
+		o_name[j-4] = '\0';
+
+		fprintf(fff, "%s\n", o_name);
+
+		total++;
+		shown = TRUE;
+	}
+
+	fprintf(fff, "\n");
+
+	if (letter) fprintf(fff, "======== Objects tried (%c) ========\n", *letter);
+	else fprintf(fff, "======== Objects tried ========\n");
+
+	/* for each object kind */
+	for (i = 1; i <= MAX_K_IDX; i++)
+	{
+		k_ptr = &k_info[i];
+		if (!k_ptr->name) continue;
+		if (letter && *letter != k_ptr->d_char) continue;	// k_char ?
+//		if (!object_easy_know(i)) continue;
+		if (!k_ptr->easy_know) continue;
+		if (!k_ptr->has_flavor) continue;
+		if (p_ptr->obj_aware[i]) continue;
+		if (!p_ptr->obj_tried[i]) continue;
+
+		/* Create the object */
+		invcopy(&forge, i);
+
+		/* Describe the artifact */
+		object_desc(Ind, o_name, &forge, FALSE, 0);
+
+		/* Hack -- remove {0} */
+		j = strlen(o_name);
+		o_name[j-4] = '\0';
+
+		fprintf(fff, "%s\n", o_name);
+
+		total++;
+		shown = TRUE;
+	}
+
+	fprintf(fff, "\n");
+
+	if (!shown) fprintf(fff, "Nothing so far.\n");
+	else fprintf(fff, "\nTotal : %d\n", total);
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Let the client know to expect some info */
+	Send_special_other(Ind);
+}
+
+
 /* Takes a trap name and returns an index, or 0 if no such trap
  * was found. (NOT working!)
  */
@@ -2218,7 +2325,7 @@ static void do_slash_brief_help(int Ind)
 	player_type *p_ptr = Players[Ind], *q_ptr;
 
 	msg_print(Ind, "Commands: afk at bed bug cast dis dress ex feel help house ignore less me");	// pet ?
-	msg_print(Ind, "  monster news pk quest rec ref rfe shout tag target untag ver;");
+	msg_print(Ind, "  monster news object pk quest rec ref rfe shout tag target untag ver;");
 
 	if (is_admin(p_ptr))
 	{
@@ -3120,6 +3227,23 @@ static void do_slash_cmd(int Ind, char *message)
 				prefix(message, "/ho"))
 		{
 			do_show_houses(Ind);
+			return;
+		}
+		else if (prefix(message, "/object") ||
+				prefix(message, "/obj"))
+		{
+			if (!tk)
+			{
+				do_cmd_show_known_item_letter(Ind, NULL);
+				return;
+			}
+
+			if (strlen(token[1]) == 1)
+			{
+				do_cmd_show_known_item_letter(Ind, token[1]);
+				return;
+			}
+
 			return;
 		}
 

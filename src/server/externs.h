@@ -683,6 +683,7 @@ extern void Handle_direction(int Ind, int dir);
 
 /* object1.c */
 /* object2.c */
+extern bool object_easy_know(int i);
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
 extern s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void object_wipe(object_type *o_ptr);

@@ -1934,7 +1934,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 SKILL_AGILITY,
@@ -2148,7 +2148,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 0,
-                                '+', 300,
+                                '+', 400,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -2236,7 +2236,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_SWIM,
@@ -2348,7 +2348,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_AGILITY,
@@ -2445,7 +2445,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_TRAINING,
@@ -2537,7 +2537,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_SWIM,
@@ -5462,7 +5462,6 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_SWORD, SKILL_CRITS },
         { SKILL_MASTERY, SKILL_POLEARM },
         { SKILL_MASTERY, SKILL_HAFTED },
-        { SKILL_MASTERY, SKILL_TECHNIC },
         { SKILL_COMBAT, SKILL_ARCHERY },
         { SKILL_ARCHERY, SKILL_SLING },
         { SKILL_ARCHERY, SKILL_BOW },
@@ -5470,6 +5469,7 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_ARCHERY, SKILL_BOOMERANG },
         { SKILL_ARCHERY, SKILL_HUNTING },
         { SKILL_ARCHERY, SKILL_RICOCHET },
+        { SKILL_COMBAT, SKILL_TECHNIC },
         { SKILL_COMBAT, SKILL_MARTIAL_ARTS },
 
         { -1, SKILL_MAGIC },

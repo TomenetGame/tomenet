@@ -1681,8 +1681,12 @@ static void process_player_end(int Ind)
 		/* Regeneration ability */
 		if (p_ptr->regenerate)
 		{
-//			regen_amount = regen_amount * 2;
-			regen_amount = regen_amount * (recovery ? 3 : 2);
+			regen_amount = regen_amount * 2;
+		}
+
+		if (recovery)
+		{
+			regen_amount = regen_amount * 3 / 2;
 		}
 
 		/* Poisoned or cut yields no healing */

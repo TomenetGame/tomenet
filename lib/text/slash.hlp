@@ -4,15 +4,18 @@ This is help screen for Slash-commands.
 If you want a help for game-play itself, try '?' key in the game instead.
 
 'Slash-commands' are set of expanded commands available via chat-command(':').
+You can beat the game without knowing any of them, but learning a little will
+make your game more comfortable, we expect.
+
 
 Commands: afk at bed bug cast dis dress ex feel help house ignore less me
-          monster news pkill quest rec ref rfe shout tag target untag ver
+      monster news object pkill quest rec ref rfe shout tag target untag ver
 
 Note:
 (parameter) cannot be omitted.
 [parameter] can be omitted.
 
-[User-level commands]
+=============================================================================
 
 / 
     Displays a concise list of slash-commands available.
@@ -76,7 +79,8 @@ Note:
     (Added for anti-spamming purpose.)
 
 /less
-    If RFE file is open by setting, you can view the RFEs from everyone.
+    If RFE file is open by setting, you can view it with this command.
+    To send a comment, use /rfe.
 
 /me [strings] 
     Messages via this command will be sent in a special manner.
@@ -91,10 +95,16 @@ Note:
 /news
     Displays the news screen, in case you overlooked it when logging on.
 
+/object [object letter] {shorthand: /obj}
+    Displays a list of items you know of or you've ever tried so far.
+    If nothing is specified, it shows all kinds of items.
+    ex) /obj !
+
 /pkill {shorthand: /pk}
     Toggles 'player-killing' mode.
     It takes *long* for the change to actually become valid, so be careful.
     (You'll receive a message when the switching completes.)
+    NOTE: this command can be disabled by the server settings.
 
 /quest [guild (name)]
     Requests for a quest.
