@@ -90,3 +90,5 @@ Change list for PernMangband
 
 27/07/2001 (evileye)
 - Fixed double experience bug on priests and sorcerors.
+- Ghost cant gain experience
+- Diving as a ghost dont affect recall depth

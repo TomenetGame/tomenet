@@ -2747,7 +2747,6 @@ int Send_msg(cptr message)
 	{
 		return n;
 	}
-	talk_pend[0]='\0';
 
 	return 1;
 }

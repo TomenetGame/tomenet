@@ -2563,6 +2563,7 @@ void gain_exp(int Ind, s32b amount)
 
 	/* You cant gain xp on your land */
 	if (player_is_king(Ind)) return;
+        if (p_ptr->ghost) return;
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
 	  {
@@ -2600,7 +2601,7 @@ void gain_exp(int Ind, s32b amount)
 	    check_experience(Ind);
 
 	    /* Gain some experience */
-	    p_ptr2->exp += amount / 2;
+            p_ptr2->exp += amount / 2;
 
 	    /* Slowly recover from experience drainage */
 	    if (p_ptr2->exp < p_ptr2->max_exp)

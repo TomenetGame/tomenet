@@ -2107,7 +2107,7 @@ void dungeon(void)
 			continue;
 
 		/* Check "maximum depth" to make sure it's still correct */
-		if (Depth > p_ptr->max_dlv)
+                if ((!p_ptr->ghost) && (Depth > p_ptr->max_dlv))
 			p_ptr->max_dlv = Depth;
 
 		/* Make sure the server doesn't think the player is in a store */
