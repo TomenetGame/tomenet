@@ -1514,7 +1514,7 @@ void do_cmd_read_scroll(int Ind, int item)
 		case SV_SCROLL_DARKNESS:
 		{
 			if (unlite_area(Ind, 10, 3)) ident = TRUE;
-			if (!p_ptr->resist_blind)
+			if (!p_ptr->resist_dark)
 			{
 				(void)set_blind(Ind, p_ptr->blind + 3 + randint(5));
 			}

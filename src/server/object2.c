@@ -1585,6 +1585,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 			/* Probably okay */
 			break;
 		}
+		case TV_GOLEM:
+			if (o_ptr->pval != j_ptr->pval) return(FALSE);
+			break;
 
 		/* Various */
 		default:

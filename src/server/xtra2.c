@@ -3104,6 +3104,10 @@ void monster_death(int Ind, int m_idx)
 	  {
 	    /* Remember */
 	    p_ptr->r_killed[m_ptr->r_idx]++;
+	    if(p_ptr->pclass==CLASS_MIMIC && p_ptr->r_killed[m_ptr->r_idx]==r_info[m_ptr->r_idx].level){
+		if(!(r_ptr->flags1 & RF1_UNIQUE))
+			msg_format(Ind, "\377UYou have learned the form of %s!", r_info[m_ptr->r_idx].name+r_name);
+	    }
 	  }
 
 	/* Take note of the killer */

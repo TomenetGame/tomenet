@@ -4826,7 +4826,7 @@ void golem_creation(int Ind, int max)
         r_ptr->name = 0;
         r_ptr->sleep = 0;
         r_ptr->aaf = 20;
-        r_ptr->speed = 100;
+        r_ptr->speed = 110;
         for (i = 0; i < golem_m_legs; i++)
         {
                 r_ptr->speed += golem_legs[i];

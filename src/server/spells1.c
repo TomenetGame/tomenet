@@ -80,6 +80,8 @@ bool check_st_anchor(struct worldpos *wpos)
 //		if (!q_ptr->st_anchor) continue;
 		if (!q_ptr->anti_tele) continue;
 
+		if(istown(wpos) && randint(100)>q_ptr->lev) continue;
+
 		return TRUE;
 	  }
 

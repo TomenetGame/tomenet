@@ -101,6 +101,14 @@ void monster_check_experience(int m_idx, bool silent)
 	{
 		/* Gain a level */
 		m_ptr->level++;
+		if(m_ptr->owner){
+			int i;
+			for(i=0; i<=NumPlayers; i++){
+				if(Players[i]->id==m_ptr->owner){
+					msg_format(i, "\377UYour %s looks more experienced!", r_name_get(m_ptr));
+				}
+			}
+		}
 
 		/* Gain hp */
 		if (magik(90))
