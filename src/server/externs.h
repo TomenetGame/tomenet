@@ -59,7 +59,7 @@ extern byte adj_con_mhp[];
 extern byte blows_table[12][12];
 extern owner_type owners[MAX_STORES][MAX_OWNERS];
 extern byte extract_energy[200];
-extern byte level_speeds[128];
+extern byte level_speeds[501];
 extern s32b player_exp[PY_MAX_LEVEL];
 extern player_race race_info[MAX_RACES];
 extern player_class class_info[MAX_CLASS];
