@@ -6068,15 +6068,16 @@ void do_cmd_activate(int Ind, int item)
 					}
 					else
 					{
+						/* Need skill; no need of killing count */
+						do_mimic_change(Ind, o_ptr->pval);
+#if 0
 						monster_race *r_ptr = &r_info[o_ptr->pval];
 
-#if 0
 						if ((r_ptr->level > p_ptr->lev * 2) || (p_ptr->r_killed[o_ptr->pval] < r_ptr->level))
 						{
 							msg_print(Ind, "You dont match the ring yet.");
 							return;
 						}
-#endif
 
 						msg_print(Ind, "You polymorph !");
 						p_ptr->body_monster = o_ptr->pval;
@@ -6089,6 +6090,7 @@ void do_cmd_activate(int Ind, int item)
 
 						/* Window stuff */
 						p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+#endif
 					}
 				}
 		}

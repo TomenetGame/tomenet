@@ -1,3 +1,4 @@
+/* $Id$ */
 /* Main console module */
 
 /*
@@ -30,16 +31,35 @@ int main(int argc, char **argv)
 		/* Analyze option */
 		switch (argv[i][1])
 		{
-		case 'p':
-		{
-			cfg_console_port = atoi(&argv[i][2]);
-			break;
-		}
-		
-		default:
+			case 'p':
+			{
+				cfg_console_port = atoi(&argv[i][2]);
+				break;
+			}
+			case 'P':
+			{
+				strcpy(pass, argv[i]+2);
+				break;
+			}
+			case 'c':
+			{
+				force_cui = TRUE;
+				break;
+			}
+			case 's':
+			{
+				shutdown = TRUE;
+				break;
+			}
+
+			default:
 			/* Dump usage information */
-			puts("Usage: mangconsole [options] [servername]");
-			puts("  -p<num>  Change console port number");
+			puts("Usage  : mangconsole [options] [servername]");
+			puts("Example: mangconsole -Pmypass -c -s localhost");
+			puts("  -p<num>   Change console port number");
+			puts("  -P<pass>  Specify password");
+			puts("  -c        Always use CUI(GCU) interface");
+			puts("  -s        Shutdown the server immediataly");
 			quit(NULL);
 		}
 	}

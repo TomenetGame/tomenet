@@ -140,6 +140,7 @@ bool use_sound;
 
 
 
+/* I strongly suspect of bad design.. */
 bool rogue_like_commands;
 bool quick_messages;
 bool other_query_flag;
@@ -210,6 +211,10 @@ bool easy_disarm;
 bool easy_tunnel;
 bool auto_destroy;
 bool auto_inscribe;
+bool taciturn_messages;
+bool last_words;
+bool limit_chat;
+
 
 u32b cfg_game_port = 18348; 
 

@@ -221,6 +221,9 @@ extern bool easy_disarm;
 extern bool easy_tunnel;
 extern bool auto_destroy;
 extern bool auto_inscribe;
+extern bool taciturn_messages;
+extern bool last_words;
+extern bool limit_chat;
 
 extern u32b cfg_game_port;
 

@@ -1327,7 +1327,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
  *
  * XXX: 'Ego randarts' are not handled correltly, so be careful!
  */
-static s32b object_value_real(int Ind, object_type *o_ptr)
+s32b object_value_real(int Ind, object_type *o_ptr)
 {
 	u32b f1, f2, f3, f4, f5, esp, i;
 
@@ -6074,6 +6074,9 @@ void inven_item_describe(int Ind, int item)
 	object_type	*o_ptr = &p_ptr->inventory[item];
 
 	char	o_name[160];
+
+	/* Hack -- suppress msg */
+	if (p_ptr->taciturn_messages) return;
 
 	/* Get a description */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);

@@ -4124,6 +4124,9 @@ void player_death(int Ind)
 	}
 	else
 	{
+		/* Polymorph back to player */
+		if (p_ptr->body_monster) do_mimic_change(Ind, 0);
+
 		/* Cure him from various maladies */
 		p_ptr->black_breath = FALSE;
 		if (p_ptr->image) (void)set_image(Ind, 0);
@@ -4137,11 +4140,12 @@ void player_death(int Ind)
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
 		/* Tell him */
-			msg_print(Ind, "\377RYou die.");
-//			msg_print(Ind, NULL);
+		msg_print(Ind, "\377RYou die.");
+//		msg_print(Ind, NULL);
 		msg_format(Ind, "\377RYou have been killed by %s.", p_ptr->died_from);
 
 #if CHATTERBOX_LEVEL > 2
+		if (p_ptr->last_words)
 		{
 			char death_message[80];
 
@@ -4149,9 +4153,6 @@ void player_death(int Ind)
 			msg_print(Ind, death_message);
 		}
 #endif	// CHATTERBOX_LEVEL
-
-		/* Polymorph back to player */
-		if (p_ptr->body_monster) do_mimic_change(Ind, 0);
 
 		/* Turn him into a ghost */
 		p_ptr->ghost = 1;
@@ -4487,6 +4488,9 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		char m_name[80];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 		long tmp_exp = (long)r_ptr->mexp * r_ptr->level;
+
+		/* Hack -- remove possible suppress flag */
+		suppress_message = FALSE;
 
 		/* Award players of disadvantageous situations */
 		if (l_ptr)
@@ -5281,7 +5285,7 @@ void ang_sort_swap_s16b(int Ind, vptr u, vptr v, int a, int b)
 }
 
 /*
- * Compare the  from k_idx.	- Jir -
+ * Sort a list of k_idx by tval and sval.	- Jir -
  *
  * Pointer "v" should not point to anything (it isn't used, anyway).
  */
@@ -5335,6 +5339,9 @@ bool target_able(int Ind, int m_idx)
 
 	if(!p_ptr) return FALSE;
 
+	/* Hack -- no targeting hallucinations */
+	if (p_ptr->image) return (FALSE);
+
 	/* Check for OK monster */
 	if (m_idx > 0)
 	{
@@ -5355,9 +5362,6 @@ bool target_able(int Ind, int m_idx)
 
 		if(m_ptr->owner==p_ptr->id) return(FALSE);
 
-		/* Hack -- no targeting hallucinations */
-		if (p_ptr->image) return (FALSE);
-
 		/* XXX XXX XXX Hack -- Never target trappers */
 		/* if (CLEAR_ATTR && CLEAR_CHAR) return (FALSE); */
 		
@@ -5371,6 +5375,9 @@ bool target_able(int Ind, int m_idx)
 	/* Check for OK player */
 	if (m_idx < 0)
 	{
+		/* Don't target oneself */
+		if (Ind == 0 - m_idx) return(FALSE);
+
 		/* Acquire pointer */
 		q_ptr = Players[0 - m_idx];
 
@@ -5390,9 +5397,6 @@ bool target_able(int Ind, int m_idx)
 
 		/* Player must be projectable */
 		if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px)) return (FALSE);
-
-		/* Hack -- no targetting hallucinations */
-		if (p_ptr->image) return (FALSE);
 
 		/* Assume okay */
 		return (TRUE);
@@ -5963,7 +5967,7 @@ bool get_item(int Ind)
  *
  * Also, player_type doesn't contain the max.depth for each dungeon...
  * Currently, this function uses getlevel() to determine the max.depth
- * for each dungeon, but this should be replaced by actual depthes
+ * for each dungeon, but this should be replaced by actual depths
  * a player has ever been.	- Jir -
  */
 void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
@@ -6038,7 +6042,8 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 					if (*inscription == 'Z') inscription++;
 
 					/* convert the inscription into a level index */
-					if (tmp = atoi((char*)inscription) / 50)
+					if (tmp = atoi((char*)inscription) /
+							(p_ptr->depth_in_feet ? 50 : 1))
 						p_ptr->recall_pos.wz = tmp;
 				}
 			}
@@ -6584,7 +6589,7 @@ bool master_level_specific(int Ind, struct worldpos *wpos, char * parms)
 		{
 			unstatic_level(wpos);
 //       			msg_format(Ind, "The level (%d,%d) %dft has been unstaticed.", wpos->wx, wpos->wy, wpos->wz*50);
-       			msg_format(Ind, "The level %s has been unstaticed.", wpos_format(wpos));
+       			msg_format(Ind, "The level %s has been unstaticed.", wpos_format(Ind, wpos));
 			break;
 		}
 

@@ -8247,7 +8247,7 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 #if DEBUG_LEVEL > 1
-	s_printf("deallocating %s\n", wpos_format(wpos));
+	s_printf("deallocating %s\n", wpos_format(0, wpos));
 #endif
 
 	/* Delete any monsters on that level */

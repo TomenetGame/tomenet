@@ -1,3 +1,4 @@
+/* $Id$ */
 #include "angband.h"
 
 /* Console global variables */
@@ -6,6 +7,8 @@ sockbuf_t ibuf;
 
 char server_name[80] = "undefined";
 char pass[40] = "undefined";
+bool shutdown = FALSE;
+bool force_cui = FALSE;
 
 term *ang_term[8];
 u32b window_flag[8];

@@ -672,6 +672,7 @@ void do_cmd_open(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
+	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
 	int                             y, x, i, j;
 	int                             flag;
@@ -684,7 +685,8 @@ void do_cmd_open(int Ind, int dir)
 
 
 	/* Ghosts cannot open doors */
-	if ((p_ptr->ghost))
+	if (p_ptr->ghost ||
+			(p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)))
 	{
 		msg_print(Ind, "You cannot open things!");
 		return;
@@ -969,6 +971,7 @@ void do_cmd_open(int Ind, int dir)
 void do_cmd_close(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
+	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	struct worldpos *wpos=&p_ptr->wpos;
 
 	int                     y, x, i;
@@ -980,7 +983,8 @@ void do_cmd_close(int Ind, int dir)
 
 
 	/* Ghosts cannot close */
-	if ( (p_ptr->ghost))
+	if (p_ptr->ghost ||
+			(p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)))
 	{
 		msg_print(Ind, "You cannot close things!");
 		return;
@@ -1712,6 +1716,7 @@ void do_cmd_bash(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
+	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
 	int                 y, x;
 
@@ -1725,7 +1730,8 @@ void do_cmd_bash(int Ind, int dir)
 
 
 	/* Ghosts cannot bash */
-	if ( (p_ptr->ghost) || (p_ptr->fruit_bat) )
+	if ( (p_ptr->ghost) || (p_ptr->fruit_bat) ||
+			(p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR)))
 	{
 		/* Message */
 		msg_print(Ind, "You cannot bash things!");
@@ -2418,6 +2424,9 @@ void do_cmd_fire(int Ind, int dir)
 		msg_print(Ind, "You somehow failed to fire!");
 		return;
 	}
+
+	/* Hack -- suppress messages */
+	if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
 	/* Is this Magic Arrow? */
 	magic = ((o_ptr->sval == SV_AMMO_MAGIC) && !cursed_p(o_ptr))?TRUE:FALSE;
@@ -3122,6 +3131,8 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Drop (or break) near that location */
 	if (!magic) drop_near(o_ptr, breakage, wpos, y, x);
+
+	suppress_message = FALSE;
 }
 
 /*

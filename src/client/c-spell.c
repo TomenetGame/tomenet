@@ -473,7 +473,8 @@ void do_mimic()
   if(!get_mimic_spell(&spell)) return;
 
   /* Tell the server */
-  Send_mimic(spell);
+//  Send_mimic(spell);
+  Send_activate_skill(MKEY_MIMICRY, 0, spell, 0);
 }
 
 

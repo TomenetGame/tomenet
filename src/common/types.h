@@ -1790,6 +1790,20 @@ struct player_type
 	bool easy_tunnel;
 	bool auto_destroy;
 	bool auto_inscribe;
+	bool taciturn_messages;
+	bool last_words;
+	bool limit_chat;
+	// bool speak_unique;
+
+	/* 'make clean; make' consumes time :) */
+	bool depth_in_feet;
+	bool dummy_option_2;
+	bool dummy_option_3;
+	bool dummy_option_4;
+	bool dummy_option_5;
+	bool dummy_option_6;
+	bool dummy_option_7;
+	bool dummy_option_8;
 
 	s16b max_panel_rows;
 	s16b max_panel_cols;
@@ -2072,62 +2086,62 @@ struct player_type
 	
 	bool anti_magic;	/* Can the player resist magic */
 
-        s32b blood_bond; /* Norc is now happy :) */
+	s32b blood_bond; /* Norc is now happy :) */
 
-        byte mode; /* Difficulty MODE */
+	byte mode; /* Difficulty MODE */
 
-        s32b esp_link; /* Mental link */
-        byte esp_link_type;
-        u16b esp_link_flags;
-        u16b esp_link_end; /* Time before actual end */
+	s32b esp_link; /* Mental link */
+	byte esp_link_type;
+	u16b esp_link_flags;
+	u16b esp_link_end; /* Time before actual end */
 	bool (*master_move_hook)(int Ind, char * args);
 
 	/* some new borrowed flags (saved) */
-        bool black_breath;      /* The Tolkien's Black Breath */
-        bool black_breath_tmp;	/* (NOT saved) BB induced by an item */
-//        u32b malady;      /* TODO: Flags for malady */
+	bool black_breath;      /* The Tolkien's Black Breath */
+	bool black_breath_tmp;	/* (NOT saved) BB induced by an item */
+	//        u32b malady;      /* TODO: Flags for malady */
 
-        s16b msane;                   /* Max sanity */
-        s16b csane;                   /* Cur sanity */
-        u16b csane_frac;              /* Cur sanity frac */
+	s16b msane;                   /* Max sanity */
+	s16b csane;                   /* Cur sanity */
+	u16b csane_frac;              /* Cur sanity frac */
 
 	/* elements under this line won't be saved...for now. - Jir - */
 	hostile_type	*ignore;  /* List of players whose chat we wish to ignore */
 	bool	afk;		/* player is afk */
 	bool	use_r_gfx;	/* hack - client uses gfx? */
 
-        byte drain_mana;        /* mana draining */
-        byte drain_life;        /* hp draining */
+	byte drain_mana;        /* mana draining */
+	byte drain_life;        /* hp draining */
 
-        bool sensible_fire;     /* Fire does more damage on the player */
+	bool sensible_fire;     /* Fire does more damage on the player */
 
-        bool reflect;       /* Reflect 'bolt' attacks */
-        bool sh_fire;       /* Fiery 'immolation' effect */
-        bool sh_elec;       /* Electric 'immolation' effect */
-        bool wraith_form;   /* wraithform */
-        bool immune_neth;       /* Immunity to nether */
-        bool climb;             /* Can climb mountains */
-        bool fly;               /* Can fly over some features */
+	bool reflect;       /* Reflect 'bolt' attacks */
+	bool sh_fire;       /* Fiery 'immolation' effect */
+	bool sh_elec;       /* Electric 'immolation' effect */
+	bool wraith_form;   /* wraithform */
+	bool immune_neth;       /* Immunity to nether */
+	bool climb;             /* Can climb mountains */
+	bool fly;               /* Can fly over some features */
 
-//        byte anti_magic_spell;    /* Anti-magic(newer one..) */
-        byte antimagic;    		/* Anti-magic(in percent) */
-        byte antimagic_dis;     /* Radius of the anti magic field */
-        bool anti_tele;     /* Prevent teleportation */
-							/* in PernM, it's same as st_anchor */
-        bool resist_continuum;	/* non-timed -- Space/Time Anchor */
-		bool admin_wiz;		/* Is this char Wizard? */
-		bool admin_dm;		/* or Dungeon Master? */
-		bool stormbringer;	/* Attack friends? */
+	//        byte anti_magic_spell;    /* Anti-magic(newer one..) */
+	byte antimagic;    		/* Anti-magic(in percent) */
+	byte antimagic_dis;     /* Radius of the anti magic field */
+	bool anti_tele;     /* Prevent teleportation */
+	/* in PernM, it's same as st_anchor */
+	bool resist_continuum;	/* non-timed -- Space/Time Anchor */
+	bool admin_wiz;		/* Is this char Wizard? */
+	bool admin_dm;		/* or Dungeon Master? */
+	bool stormbringer;	/* Attack friends? */
 
 	u16b quest_id;		/* Quest number */
 	s16b quest_num;		/* Number of kills needed */
 
-        s16b xtra_crit;         /* % of increased crits */
+	s16b xtra_crit;         /* % of increased crits */
 
-        s16b to_l;                      /* Bonus to life */
-        s16b to_m;                      /* Bonus to mana */
-//        s16b to_s;                      /* Bonus to spell(num_spell) */
-        s16b dodge_chance;                      /* Bonus to mana */
+	s16b to_l;                      /* Bonus to life */
+	s16b to_m;                      /* Bonus to mana */
+	//        s16b to_s;                      /* Bonus to spell(num_spell) */
+	s16b dodge_chance;                      /* Bonus to mana */
 
 };
 

@@ -4953,6 +4953,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int rad)
 {
 	player_type *p_ptr;
+	monster_race *r_ptr;
 
 	int k = 0;
 
@@ -4986,6 +4987,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		return (FALSE);
 
 	p_ptr = Players[Ind];
+	r_ptr = &r_info[p_ptr->body_monster];
 
 	blind = (p_ptr->blind ? TRUE : FALSE);
 
@@ -5552,6 +5554,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else if (!blind && !p_ptr->resist_blind)
 		{
 			(void)set_blind(Ind, p_ptr->blind + randint(5) + 2);
+		}
+		if (p_ptr->body_monster && r_ptr->flags3 & RF3_HURT_LITE)
+		{
+			dam *= 2;
 		}
 		take_hit(Ind, dam, killer);
 		break;

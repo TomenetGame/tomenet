@@ -1,3 +1,4 @@
+/* $Id$ */
 /* Console initialization module */
 
 /*
@@ -143,8 +144,13 @@ static void Input_loop(void)
 		/* Write the password to the packet */
 		Packet_printf(&ibuf, "%s", pass);
 
+		if (shutdown)
+		{
+			/* Send the command */
+			Packet_printf(&ibuf, "%c", CONSOLE_SHUTDOWN);
+		}
 		/* Process any commands we got */
-		if (command_cmd)
+		else if (command_cmd)
 		{
 			/* Process it */
 			if (!process_command())
@@ -231,6 +237,8 @@ void console_init(void)
 #endif
 
 	/* Attempt to initialize a visual module */
+	if (!force_cui)
+	{
 #ifdef USE_XAW
 	/* Attempt to use the "main-xaw.c" support */
 	if (!done)
@@ -250,6 +258,7 @@ void console_init(void)
 		if (done) ANGBAND_SYS = "x11";
 	}
 #endif
+	}
 
 #ifdef USE_GCU
 	/* Attempt to use the "main-gcu.c" support */
@@ -296,7 +305,7 @@ void console_init(void)
 	if (!strcmp(server_name, "undefined")) enter_server_name();
 
 	/* Get the password */
-	enter_password();
+	if (!strcmp(pass, "undefined")) enter_password();
 
 
 	/* Create net socket */

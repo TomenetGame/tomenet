@@ -202,7 +202,7 @@ static void Init_receive(void)
 	playing_receive[PKT_WIELD]		= Receive_wield;
 	playing_receive[PKT_OBSERVE]		= Receive_observe;
 	playing_receive[PKT_ZAP]		= Receive_zap;
-	playing_receive[PKT_MIMIC]		= Receive_mimic;
+//	playing_receive[PKT_MIMIC]		= Receive_mimic;
 	playing_receive[PKT_MIND]		= Receive_mind;
 
 	playing_receive[PKT_TARGET]		= Receive_target;
@@ -1664,6 +1664,12 @@ static void sync_options(int Ind, bool *options)
 	p_ptr->easy_tunnel = options[62];
 	p_ptr->auto_destroy = options[63];
 	p_ptr->auto_inscribe = options[64];
+	p_ptr->taciturn_messages = options[65];
+	p_ptr->last_words = options[66];
+	p_ptr->limit_chat = options[67];
+
+	p_ptr->depth_in_feet = options[7];
+	// bool speak_unique;
 
 }
 #endif	// 0
@@ -4951,6 +4957,12 @@ static int Receive_activate_skill(int ind)
 	{
 		p_ptr->current_char = (old == player)?TRUE:FALSE;
 
+		if (p_ptr->ghost)
+		{
+			msg_print(player, "\377oYou need your body to use a skill.");
+			return 2;
+		}
+
 		/* Break goi/manashield */
 		if (mkey != MKEY_DODGE)	// it's not real 'activation'
 		{
@@ -5160,7 +5172,6 @@ static int Receive_fight(int ind)
 
 	return 1;
 }
-#endif	// 0
 
 static int Receive_mimic(int ind)
 {
@@ -5198,6 +5209,7 @@ static int Receive_mimic(int ind)
 
 	return 1;
 }
+#endif	// 0
 
 
 static int Receive_mind(int ind)

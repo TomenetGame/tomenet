@@ -16,12 +16,6 @@
 #include "angband.h"
 
 
-/*
- * Monster themes above this value in percent are told to the players
- * via '/ver 1'. (If below ... that's "spice" ;)
- */
-#define TELL_MONSTER_ABOVE	50
-
 
 /*
  * Check the status of "artifacts"
@@ -345,7 +339,7 @@ void do_cmd_check_uniques(int Ind, int line)
 		{
 			/* Only display known uniques */
 //			if (r_ptr->r_sights && mon_allowed(r_ptr))
-			if (r_ptr->r_sights)
+			if (r_ptr->r_sights && mon_allowed_view(r_ptr))
 			{
 				idx[total++] = k;
 			}
@@ -545,11 +539,7 @@ void do_cmd_check_players(int Ind, int line)
 		/* Print a message */
 		do_write_others_attributes(fff, q_ptr);
 
-		/* AFK */
-		if(q_ptr->afk)
-		{
-			fprintf(fff, " AFK");
-		}
+		/* PK */
 		if (cfg.use_pk_rules == PK_RULES_DECLARE)
 		{
 			if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
@@ -562,6 +552,15 @@ void do_cmd_check_players(int Ind, int line)
 			else if(!(q_ptr->tim_pkill)){
 				fprintf(fff, q_ptr->lev < 5 ? " Newbie" : " Killable");
 			}
+		}
+		if(q_ptr->limit_chat)
+		{
+			fprintf(fff, " Silent");
+		}
+		/* AFK */
+		if(q_ptr->afk)
+		{
+			fprintf(fff, " AFK");
 		}
 				
 		/* Newline */
@@ -577,7 +576,8 @@ void do_cmd_check_players(int Ind, int line)
 		if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin)
 		{
 			/* maybe too kind? */
-			fprintf(fff, "   {[%d,%d] of %dft(%d,%d)}", q_ptr->panel_row, q_ptr->panel_col, q_ptr->wpos.wz*50, q_ptr->wpos.wx, q_ptr->wpos.wy);
+//			fprintf(fff, "   {[%d,%d] of %dft(%d,%d)}", q_ptr->panel_row, q_ptr->panel_col, q_ptr->wpos.wz*50, q_ptr->wpos.wx, q_ptr->wpos.wy);
+			fprintf(fff, "   {[%d,%d] in %s}", q_ptr->panel_row, q_ptr->panel_col, wpos_format(Ind, &q_ptr->wpos));
 
 		}
 		if((p_ptr->guild == q_ptr->guild && q_ptr->guild) || Ind == k || admin){
@@ -744,7 +744,10 @@ void do_cmd_knowledge_dungeons(int Ind)
 	/* Let the player scroll through the info */
 	p_ptr->special_file_type = TRUE;
 
-	fprintf(fff, "The deepest point of Angband you've reached: -%d ft\n", p_ptr->max_dlv * 50);
+//	fprintf(fff, "The deepest point of Angband you've reached: -%d ft\n", p_ptr->max_dlv * 50);
+
+	if (p_ptr->depth_in_feet) fprintf(fff, "The deepest point you've reached: -%d ft\n", p_ptr->max_dlv * 50);
+	else fprintf(fff, "The deepest point you've reached: Lev -%d\n", p_ptr->max_dlv);
 
 #if 0
 	/* Scan all dungeons */
@@ -1109,7 +1112,7 @@ void do_cmd_show_houses(int Ind)
 
 		fprintf(fff, "%3d)   [%d,%d] in %s", total,
 				h_ptr->dy * 5 / MAX_HGT, h_ptr->dx * 5 / MAX_WID,
-				wpos_format(&h_ptr->wpos));
+				wpos_format(Ind, &h_ptr->wpos));
 //				h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
 
 		if (dna->creator == p_ptr->dna)

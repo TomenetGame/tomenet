@@ -92,6 +92,7 @@ void inven_takeoff(int Ind, int item, int amt)
 	}
 
 	/* Polymorph back */
+	/* XXX this can cause strange things for players with mimicry skill.. */
 	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) do_mimic_change(Ind, 0);
 
 	/* Carry the object, saving the slot it went in */
@@ -215,7 +216,7 @@ void inven_drop(int Ind, int item, int amt)
 /*
  * The "wearable" tester
  */
-static bool item_tester_hook_wear(int Ind, int slot)
+bool item_tester_hook_wear(int Ind, int slot)
 {
 	player_type *p_ptr = Players[Ind];
 	
@@ -230,8 +231,6 @@ static bool item_tester_hook_wear(int Ind, int slot)
 		switch(slot)
 		{
 			case INVEN_WIELD:
-				if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
-				break;
 			case INVEN_BOW:
 				if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
 				break;
@@ -318,19 +317,29 @@ static bool item_tester_hook_wear(int Ind, int slot)
 /* Take off things that are no more wearable */
 void do_takeoff_impossible(int Ind)
 {
-  int k;
-  player_type *p_ptr = Players[Ind];
+	int k;
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	u32b f1, f2, f3, f4, f5, esp;
 
-  bypass_inscrption = TRUE;
-  for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
-    {
-      if ((p_ptr->inventory[k].k_idx) && (!item_tester_hook_wear(Ind, k)))
+
+	bypass_inscrption = TRUE;
+	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
 	{
-	  /* Ahah TAKE IT OFF ! */
-	  inven_takeoff(Ind, k, 255);
+		o_ptr = &p_ptr->inventory[k];
+		if ((o_ptr->k_idx) && (!item_tester_hook_wear(Ind, k)))
+		{
+			/* Extract the flags */
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+			/* Morgie crown and The One Ring resists! */
+			if (f3 & TR3_PERMA_CURSE) continue;
+
+			/* Ahah TAKE IT OFF ! */
+			inven_takeoff(Ind, k, 255);
+		}
 	}
-    }
-  bypass_inscrption = FALSE;
+	bypass_inscrption = FALSE;
 }
 
 /*
@@ -1912,8 +1921,10 @@ bool do_auto_refill(int Ind)
  */
 void do_cmd_target(int Ind, int dir)
 {
+	player_type *p_ptr = Players[Ind];
+
 	/* Set the target */
-	if (target_set(Ind, dir))
+	if (target_set(Ind, dir) && !p_ptr->taciturn_messages)
 	{
 		msg_print(Ind, "Target Selected.");
 	}
@@ -1925,8 +1936,10 @@ void do_cmd_target(int Ind, int dir)
 
 void do_cmd_target_friendly(int Ind, int dir)
 {
+	player_type *p_ptr = Players[Ind];
+
 	/* Set the target */
-	if (target_set_friendly(Ind, dir))
+	if (target_set_friendly(Ind, dir) && !p_ptr->taciturn_messages)
 	{
 		msg_print(Ind, "Target Selected.");
 	}

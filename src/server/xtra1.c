@@ -1551,49 +1551,77 @@ void calc_body_bonus(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int d, i;
-        monster_race *r_ptr = &r_info[p_ptr->body_monster];
+	int d, i, j, toac = 0, body = 0;
+	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
-        /* If in the player body nothing have to be done */
-        if (!p_ptr->body_monster) return;
+	/* If in the player body nothing have to be done */
+	if (!p_ptr->body_monster) return;
 
 	d = 0;
 	for (i = 0; i < 4; i++)
 	{
-		 d += (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
+		j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
+
+		/* Hack -- weaponless combat */
+		if (!r_ptr->body_parts[BODY_WEAPON] && j)
+		{
+			p_ptr->num_blow++;
+			j *= 2;
+		}
+
+		d += j;
 	}
-	d /= 7;
+	d /= 8;		// 7
 	p_ptr->to_d += d;
 	p_ptr->dis_to_d += d;
-        p_ptr->ac += r_ptr->ac;
-        p_ptr->dis_ac += r_ptr->ac;
-        p_ptr->pspeed = r_ptr->speed;
 
-//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
-        if(r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 1;
-        if(r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 1;
-        if(r_ptr->flags2 & RF2_INVISIBLE){
-		p_ptr->tim_invisibility = 100;
+	body = (r_ptr->body_parts[BODY_HEAD] ? 1 : 0)
+		+ (r_ptr->body_parts[BODY_TORSO] ? 3 : 0)
+		+ (r_ptr->body_parts[BODY_ARMS] ? 2 : 0)
+		+ (r_ptr->body_parts[BODY_LEGS] ? 1 : 0);
+
+	toac = r_ptr->ac * 7 / (4 + body);
+	p_ptr->ac += toac;
+	p_ptr->dis_ac += toac;
+	p_ptr->pspeed = r_ptr->speed;
+
+	//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
+	if(r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 1;
+	if(r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 1;
+	if(r_ptr->flags2 & RF2_REFLECTING) p_ptr->reflect = TRUE;
+	if(r_ptr->flags2 & RF2_INVISIBLE){
+		//		p_ptr->tim_invisibility = 100;
 		p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
 	}
-        if(r_ptr->flags2 & RF2_REGENERATE) p_ptr->regenerate = TRUE;
-        if(r_ptr->flags2 & RF2_PASS_WALL) p_ptr->tim_wraith = 100;
-        if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->auto_tunnel = 100;
+	if(r_ptr->flags2 & RF2_REGENERATE) p_ptr->regenerate = TRUE;
+	if(r_ptr->flags2 & RF2_PASS_WALL) p_ptr->tim_wraith = 100;
+	//        if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->auto_tunnel = 100;
+	/* quick hack */
+	if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->skill_dig = 20000;
 	if(r_ptr->flags2 & RF2_AURA_FIRE) p_ptr->sh_fire = TRUE;
 	if(r_ptr->flags2 & RF2_AURA_ELEC) p_ptr->sh_elec = TRUE;
 
-        if(r_ptr->flags3 & RF3_IM_ACID) p_ptr->resist_acid = TRUE;
-        if(r_ptr->flags3 & RF3_IM_ELEC) p_ptr->resist_elec = TRUE;
-        if(r_ptr->flags3 & RF3_IM_FIRE) p_ptr->resist_fire = TRUE;
-        if(r_ptr->flags3 & RF3_IM_POIS) p_ptr->resist_pois = TRUE;
-        if(r_ptr->flags3 & RF3_IM_COLD) p_ptr->resist_cold = TRUE;
-        if(r_ptr->flags3 & RF3_RES_NETH) p_ptr->resist_neth = TRUE;
-        if(r_ptr->flags3 & RF3_RES_NEXU) p_ptr->resist_nexus = TRUE;
-        if(r_ptr->flags3 & RF3_RES_DISE) p_ptr->resist_disen = TRUE;
-        if(r_ptr->flags3 & RF3_NO_FEAR) p_ptr->resist_fear = TRUE;
-        if(r_ptr->flags3 & RF3_NO_SLEEP) p_ptr->free_act = TRUE;
-        if(r_ptr->flags3 & RF3_NO_CONF) p_ptr->resist_conf = TRUE;
+	if(r_ptr->flags3 & RF3_SUSCEP_FIRE) p_ptr->sensible_fire = TRUE;
+//	if(r_ptr->flags3 & RF3_SUSCEP_COLD) p_ptr->sensible_cold = TRUE;
+	if(r_ptr->flags3 & RF3_IM_ACID) p_ptr->resist_acid = TRUE;
+	if(r_ptr->flags3 & RF3_IM_ELEC) p_ptr->resist_elec = TRUE;
+	if(r_ptr->flags3 & RF3_IM_FIRE) p_ptr->resist_fire = TRUE;
+	if(r_ptr->flags3 & RF3_IM_POIS) p_ptr->resist_pois = TRUE;
+	if(r_ptr->flags3 & RF3_IM_COLD) p_ptr->resist_cold = TRUE;
+	if(r_ptr->flags3 & RF3_RES_TELE) p_ptr->anti_tele = TRUE;
+	if(r_ptr->flags3 & RF3_RES_NETH) p_ptr->resist_neth = TRUE;
+//#define RF3_RES_WATE		0x00800000	/* Resist water */
+	if(r_ptr->flags3 & RF3_RES_NEXU) p_ptr->resist_nexus = TRUE;
+	if(r_ptr->flags3 & RF3_RES_DISE) p_ptr->resist_disen = TRUE;
+	if(r_ptr->flags3 & RF3_NO_FEAR) p_ptr->resist_fear = TRUE;
+	if(r_ptr->flags3 & RF3_NO_SLEEP) p_ptr->free_act = TRUE;
+	if(r_ptr->flags3 & RF3_NO_CONF) p_ptr->resist_conf = TRUE;
 	if(r_ptr->flags7 & RF7_CAN_FLY) p_ptr->fly = TRUE;
+	if(r_ptr->flags7 & RF7_DISBELIEVE)
+	{
+		p_ptr->antimagic += r_ptr->level / 2 + 20;
+		p_ptr->antimagic_dis += r_ptr->level / 15 + 3;
+	}
 
 	/* If not change,d spells didnt changed too, no need to send them */
 	if (!p_ptr->body_changed) return;
@@ -1603,6 +1631,10 @@ void calc_body_bonus(int Ind)
 	/* Take off what is no more usable */
 	do_takeoff_impossible(Ind);
 #endif
+
+	/* Hack -- cancel wraithform upon form change  */
+	if(!(r_ptr->flags2 & RF2_PASS_WALL) && p_ptr->tim_wraith)
+		p_ptr->tim_wraith = 1;
 
 	/* Update the innate spells */
 	p_ptr->innate_spells[0] = r_ptr->flags4 & RF4_PLAYER_SPELLS;
@@ -2039,8 +2071,8 @@ static void calc_bonuses(int Ind)
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
 //		p_ptr->anti_magic = TRUE;	/* it means 95% saving-throw!! */
-		p_ptr->antimagic = get_skill(p_ptr, SKILL_ANTIMAGIC);
-		p_ptr->antimagic_dis = 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 11);
+		p_ptr->antimagic += get_skill(p_ptr, SKILL_ANTIMAGIC);
+		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 11);
 	}
 
 	/* Take off what is no more usable */
@@ -2066,7 +2098,9 @@ static void calc_bonuses(int Ind)
 		for (i = 0; i < 6; i++)
 		{
 			/* Modify the stats for "race" */
-			if (!p_ptr->body_monster) p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]);
+			/* yeek mimic no longer rocks too much */
+//			if (!p_ptr->body_monster) p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]);
+			p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]) * 3 / (p_ptr->body_monster ? 4 : 3);
 			p_ptr->stat_add[i] += (p_ptr->cp_ptr->c_adj[i]);
 		}
 	}
@@ -2284,7 +2318,7 @@ static void calc_bonuses(int Ind)
                 if (f5 & (TR5_DRAIN_MANA)) p_ptr->drain_mana++;
                 if (f5 & (TR5_DRAIN_HP)) p_ptr->drain_life++;
 		if (f5 & (TR5_INVIS)){
-			p_ptr->tim_invisibility = 100;
+//			p_ptr->tim_invisibility = 100;
 			p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
 		}
 		if (f3 & TR3_BLESSED) p_ptr->bless_blade = TRUE;
@@ -2604,7 +2638,7 @@ static void calc_bonuses(int Ind)
 	}
 
 	/* Temprory invisibility */
-	if (p_ptr->tim_invisibility)
+//	if (p_ptr->tim_invisibility)
 	{
 		p_ptr->invis = p_ptr->tim_invis_power;
 	}
@@ -3122,11 +3156,11 @@ static void calc_bonuses(int Ind)
 
 	if (p_ptr->aggravate)
 	{
+		if (p_ptr->tim_invisibility || magik(1))	/* don't be too noisy */
+			msg_print(Ind, "You somewhat feel your presence is known.");
 		p_ptr->invis = 0;
 		p_ptr->tim_invisibility = 0;
 		p_ptr->tim_invis_power = 0;
-		if (magik(1))	/* don't be too noisy */
-			msg_print(Ind, "You somewhat feel your presence is known.");
 	}
 	else
 	{

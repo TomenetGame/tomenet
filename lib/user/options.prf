@@ -73,3 +73,6 @@ X:easy_disarm
 X:easy_tunnel
 X:auto_destroy
 X:auto_inscribe
+X:taciturn_messages
+Y:last_words
+X:limit_chat

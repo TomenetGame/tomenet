@@ -2084,6 +2084,8 @@ void store_purchase(int Ind, int item, int amt)
 			/* Player can afford it */
 			if (p_ptr->au >= price)
 			{
+				if (p_ptr->taciturn_messages) suppress_message = TRUE;
+
 				/* Say "okay" */
 				say_comment_1(Ind);
 
@@ -2175,6 +2177,7 @@ void store_purchase(int Ind, int item, int amt)
 					/* Redraw the item */
 					display_entry(Ind, item);
 				}
+				suppress_message = FALSE;
 			}
 
 			/* Player cannot afford it */

@@ -6362,7 +6362,15 @@ void process_monsters(void)
 
 
 		/* Process the monster */
-		if (!m_ptr->special) process_monster(closest, i);
+		if (!m_ptr->special)
+		{
+			/* Hack -- suppress messages */
+			if (p_ptr->taciturn_messages) suppress_message = TRUE;
+
+			process_monster(closest, i);
+
+			suppress_message = FALSE;
+		}
 		else
 		{
 			int p = find_player(m_ptr->owner);

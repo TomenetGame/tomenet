@@ -85,8 +85,9 @@ static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
 		if (minfail < 5) minfail = 5;
 	}
 #else
-	minminfail = 5 - get_skill_scale(p_ptr, find_realm_skill(realm), 3)
-		- get_skill_scale(p_ptr, SKILL_MAGIC, 2);
+	minminfail = 8 - get_skill_scale(p_ptr, find_realm_skill(realm), 5)
+		- get_skill_scale(p_ptr, SKILL_MAGIC, 3);
+	if (minminfail > 5) minminfail = 5;
 
 	if (minfail < minminfail) minfail = minminfail;
 
@@ -858,7 +859,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 	/* Require spell ability */
 	if (!get_skill(p_ptr, SKILL_MAGERY))
 	{
-		msg_print(Ind, "You cannot cast spells!");
+		msg_print(Ind, "You cannot cast magery spells!");
 		return;
 	}
 
@@ -4522,7 +4523,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 	/* Require spell ability */
 	if (!get_skill(p_ptr, SKILL_SHADOW))
 	{
-		msg_print(Ind, "You cannot cast spells!");
+		msg_print(Ind, "You cannot cast shadow spells!");
 		return;
 	}
 
@@ -4944,377 +4945,6 @@ void do_cmd_shad(int Ind, int book, int spell)
 
 
 /*
- * Cast a hunt spell
- */
-void do_cmd_hunt(int Ind, int book, int spell)
-{
-	player_type *p_ptr = Players[Ind];
-
-	int			i, j, sval;
-	int			chance, beam;
-//	int			plev = get_skill(p_ptr, SKILL_ARCHERY);
-	int			plev = get_skill(p_ptr, SKILL_HUNTING);
-
-	object_type		*o_ptr;
-
-	magic_type		*s_ptr;
-
-	byte spells[64], num = 0;
-
-	bool antifail = FALSE;
-
-	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
-
-	/* No anti-magic shields around ? */
-	if (check_antimagic(Ind)) antifail = TRUE;
-
-	/* Require spell ability */
-//	if (!get_skill(p_ptr, SKILL_ARCHERY))
-	if (!get_skill(p_ptr, SKILL_HUNTING))
-	{
-		msg_print(Ind, "You cannot cast spells!");
-		return;
-	}
-
-	/* Require lite */
-	if (p_ptr->blind || no_lite(Ind))
-	{
-		msg_print(Ind, "You cannot see!");
-		return;
-	}
-
-	/* Not when confused */
-	if (p_ptr->confused)
-	{
-		msg_print(Ind, "You are too confused!");
-		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (book >= 0)
-	{
-		o_ptr = &p_ptr->inventory[book];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - book];
-	}
-
-	if (o_ptr->tval != TV_HUNT_BOOK)
-	{
-		msg_print(Ind, "SERVER ERROR: Tried to cast spell from bad book!");
-		return;
-	}
-
-        if( check_guard_inscription( o_ptr->note, 'm' )) {
-                msg_print(Ind, "The item's inscription prevents it");
-                return;
-        };
-
-	/* Access the item's sval */
-	sval = o_ptr->sval;
-
-	for (i = 0; i < 64; i++)
-	{
-		/* Check for this spell */
-		if ((i < 32) ?
-			(spell_flags[REALM_HUNT][sval][0] & (1L << i)) :
-			(spell_flags[REALM_HUNT][sval][1] & (1L << (i - 32))))
-		{
-			/* Collect this spell */
-			spells[num++] = i;
-		}
-	}
-
-	/* Set the spell number */
-	j = spells[spell];
-
-	if (!spell_okay(Ind, REALM_HUNT, j, 1))
-	{
-		msg_print(Ind, "You cannot cast that spell.");
-		return;
-	}
-
-	/* Access the spell */
-	s_ptr = &magic_info[REALM_HUNT].info[j];
-
-	/* Check mana */
-	if (s_ptr->smana > p_ptr->csp)
-	{
-		msg_print(Ind, "You do not have enough mana.");
-		return;
-	}
-
-	/* Take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_spell;
-
-	/* Spell failure chance */
-	chance = spell_chance(Ind, REALM_HUNT, s_ptr);
-
-	/* Failed spell */
-	if ((rand_int(100) < chance) || antifail ||
-			(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC))
-	{
-		msg_print(Ind, "You failed to get the spell off!");
-	}
-
-	/* Process spell */
-	else
-	{
-		/* Check interference */
-		if (interfere(Ind, cfg.spell_interfere * 2)) return;
-		/* XXX this should be different skill (like SKILL_HUNT) */
-		/*
-		if (interfere(Ind, cfg.spell_interfere * 2 *
-//					(100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
-					(100 - get_skill_scale(p_ptr, SKILL_HUNTING, 50)) / 100))
-			return;
-			*/
-
-		/* Hack -- preserve current 'realm' */
-		p_ptr->current_realm = REALM_HUNT;
-
-
-		/* Hack -- chance of "beam" instead of "bolt" */
-		beam = plev / 2;
-
-		/* Spells.  */
-		switch (j)
-		{
-			case 0: /* Elec Shots */
-			{
-			  if (p_ptr->bow_brand == BOW_BRAND_ELEC)
-			    set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_ELEC, 3);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-			      set_bow_brand(Ind, plev + randint(20), BOW_BRAND_ELEC, 3);
-			    }
-			  break;
-			}
-			case 1: /* Sense */
-			{
-				(void)detect_creatures(Ind);
-				break;
-			}
-			case 2: /* Cold Shots */
-			{
-			  if (p_ptr->bow_brand == BOW_BRAND_COLD)
-			    set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_COLD, 5);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-			      set_bow_brand(Ind, plev + randint(20), BOW_BRAND_COLD, 5);
-			    }
-			  break;
-			}
-			case 3: /* Create Light */
-			{
-			  (void)lite_area(Ind, damroll(2, (plev / 2)), (plev / 10) + 1);
-				break;
-			}
-			case 4: /* Fire Shots */
-			{
-			  if (p_ptr->bow_brand == BOW_BRAND_FIRE)
-			    set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_FIRE, 7);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-			      set_bow_brand(Ind, plev + randint(20), BOW_BRAND_FIRE, 7);
-			    }
-			  break;
-			}
-
-			case 8: /* Acid Shots */
-			{
-			  if (p_ptr->bow_brand == BOW_BRAND_ACID)
-			    set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_ACID, 8);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-			      set_bow_brand(Ind, plev + randint(20), BOW_BRAND_ACID, 8);
-			    }
-			  break;
-			}
-                        case 9: /* Fire ball shots */
-			{
-                          if (p_ptr->bow_brand == BOW_BRAND_BALL_FIRE)
-                            set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_FIRE, 1);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-                              set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_FIRE, 1);
-			    }
-			  break;
-			}
-			case 10: /* Conf Shots */
-			{
-			  if (p_ptr->bow_brand == BOW_BRAND_CONF)
-			    set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_CONF, 5);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-			      set_bow_brand(Ind, plev + randint(20), BOW_BRAND_CONF, 5);
-			    }
-			  break;
-			}
-			case 11: /* Pois Shots */
-			{
-			  if (p_ptr->bow_brand == BOW_BRAND_POIS)
-			    set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_POIS, 11);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-			      set_bow_brand(Ind, plev + randint(20), BOW_BRAND_POIS, 11);
-			    }
-			  break;
-			}
-			case 12: /* Sharp Shots */
-			{
-			  if (p_ptr->bow_brand == BOW_BRAND_SHARP)
-			    set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_SHARP, 1);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-			      set_bow_brand(Ind, plev + randint(20), BOW_BRAND_SHARP, 1);
-			    }
-			  break;
-			}
-
-                        case 16: /* cold ball shots */
-			{
-                          if (p_ptr->bow_brand == BOW_BRAND_BALL_COLD)
-                            set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_COLD, 1);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-                              set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_COLD, 1);
-			    }
-			  break;
-			}
-                        case 17: /* elec ball shots */
-			{
-                          if (p_ptr->bow_brand == BOW_BRAND_BALL_ELEC)
-                            set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_ELEC, 1);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-                              set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_ELEC, 1);
-			    }
-			  break;
-			}
-                        case 18: /* Acid ball shots */
-			{
-                          if (p_ptr->bow_brand == BOW_BRAND_BALL_ACID)
-                            set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_ACID, 1);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-                              set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_ACID, 1);
-			    }
-			  break;
-			}
-                        case 19: /* Power Shots */
-			{
-			  if (p_ptr->bow_brand == BOW_BRAND_MANA)
-			    set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_MANA, 25);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-			      set_bow_brand(Ind, plev + randint(20), BOW_BRAND_MANA, 25);
-			    }
-			  break;
-				break;
-			}
-                        case 20: /* Sonic ball shots */
-			{
-                          if (p_ptr->bow_brand == BOW_BRAND_BALL_SOUND)
-                            set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_SOUND, 1);
-			  else
-			    {
-			      p_ptr->bow_brand = 0;
-                              set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_SOUND, 1);
-			    }
-			  break;
-			}
-		}
-
-#if 0 // Dont learn, dont gain xp
-		/* A spell was cast */
-		if (!((j < 32) ?
-		      (p_ptr->spell_worked1[REALM_HUNT] & (1L << j)) :
-		      (p_ptr->spell_worked2[REALM_HUNT] & (1L << (j - 32)))))
-		{
-			int e = s_ptr->sexp;
-
-			/* The spell worked */
-			if (j < 32)
-			{
-				p_ptr->spell_worked1[REALM_HUNT] |= (1L << j);
-			}
-			else
-			{
-				p_ptr->spell_worked2[REALM_HUNT] |= (1L << (j - 32));
-			}
-
-			/* Gain experience */
-			gain_exp(Ind, e * s_ptr->slevel);
-
-			/* Fix the spell info */
-			p_ptr->window |= PW_SPELL;
-                }
-#endif
-	}
-
-	/* Take a turn */
-//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
-
-	/* Sufficient mana */
-	if (s_ptr->smana <= p_ptr->csp)
-	{
-		/* Use some mana */
-		p_ptr->csp -= s_ptr->smana;
-	}
-
-	/* Over-exert the player */
-	else
-	{
-		int oops = s_ptr->smana - p_ptr->csp;
-
-		/* No mana left */
-		p_ptr->csp = 0;
-		p_ptr->csp_frac = 0;
-
-		/* Message */
-		msg_print(Ind, "You faint from the effort!");
-
-		/* Hack -- Bypass free action */
-		(void)set_paralyzed(Ind, p_ptr->paralyzed + randint(5 * oops + 1));
-
-		/* Damage CON (possibly permanently) */
-		if (rand_int(100) < 50)
-		{
-			bool perm = (rand_int(100) < 25);
-
-			/* Message */
-			msg_print(Ind, "You have damaged your health!");
-
-			/* Reduce constitution */
-			(void)dec_stat(Ind, A_CON, 15 + randint(10), perm);
-		}
-	}
-
-	/* Redraw mana */
-	p_ptr->redraw |= (PR_MANA);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_PLAYER);
-}
-
-
-/*
  * Finish casting a spell that required a direction --KLJ--
  */
 void do_cmd_shad_aux(int Ind, int dir)
@@ -5446,15 +5076,102 @@ void do_cmd_shad_aux(int Ind, int dir)
 	p_ptr->window |= (PW_PLAYER);
 }
 
-static void do_mimic_power(int Ind, int power)
+/*
+ * Cast a hunt spell
+ */
+void do_cmd_hunt(int Ind, int book, int spell)
 {
-        player_type *p_ptr = Players[Ind];
-        monster_race *r_ptr = &r_info[p_ptr->body_monster];
-        int rlev = r_ptr->level;
-        int j, chance;
-        magic_type *s_ptr = &innate_powers[power];
+	player_type *p_ptr = Players[Ind];
 
-        j = power;
+	int			i, j, sval;
+	int			chance, beam;
+	//	int			plev = get_skill(p_ptr, SKILL_ARCHERY);
+	int			plev = get_skill(p_ptr, SKILL_HUNTING);
+
+	object_type		*o_ptr;
+
+	magic_type		*s_ptr;
+
+	byte spells[64], num = 0;
+
+	bool antifail = FALSE;
+
+	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
+
+	/* No anti-magic shields around ? */
+	if (check_antimagic(Ind)) antifail = TRUE;
+
+	/* Require spell ability */
+	//	if (!get_skill(p_ptr, SKILL_ARCHERY))
+	if (!get_skill(p_ptr, SKILL_HUNTING))
+	{
+		msg_print(Ind, "You cannot cast hunting spells!");
+		return;
+	}
+
+	/* Require lite */
+	if (p_ptr->blind || no_lite(Ind))
+	{
+		msg_print(Ind, "You cannot see!");
+		return;
+	}
+
+	/* Not when confused */
+	if (p_ptr->confused)
+	{
+		msg_print(Ind, "You are too confused!");
+		return;
+	}
+
+	/* Get the item (in the pack) */
+	if (book >= 0)
+	{
+		o_ptr = &p_ptr->inventory[book];
+	}
+
+	/* Get the item (on the floor) */
+	else
+	{
+		o_ptr = &o_list[0 - book];
+	}
+
+	if (o_ptr->tval != TV_HUNT_BOOK)
+	{
+		msg_print(Ind, "SERVER ERROR: Tried to cast spell from bad book!");
+		return;
+	}
+
+	if( check_guard_inscription( o_ptr->note, 'm' )) {
+		msg_print(Ind, "The item's inscription prevents it");
+		return;
+	};
+
+	/* Access the item's sval */
+	sval = o_ptr->sval;
+
+	for (i = 0; i < 64; i++)
+	{
+		/* Check for this spell */
+		if ((i < 32) ?
+				(spell_flags[REALM_HUNT][sval][0] & (1L << i)) :
+				(spell_flags[REALM_HUNT][sval][1] & (1L << (i - 32))))
+		{
+			/* Collect this spell */
+			spells[num++] = i;
+		}
+	}
+
+	/* Set the spell number */
+	j = spells[spell];
+
+	if (!spell_okay(Ind, REALM_HUNT, j, 1))
+	{
+		msg_print(Ind, "You cannot cast that spell.");
+		return;
+	}
+
+	/* Access the spell */
+	s_ptr = &magic_info[REALM_HUNT].info[j];
 
 	/* Check mana */
 	if (s_ptr->smana > p_ptr->csp)
@@ -5463,9 +5180,305 @@ static void do_mimic_power(int Ind, int power)
 		return;
 	}
 
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_spell;
+
+	/* Spell failure chance */
+	chance = spell_chance(Ind, REALM_HUNT, s_ptr);
+
+	/* Failed spell */
+	if ((rand_int(100) < chance) || antifail ||
+			(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC))
+	{
+		msg_print(Ind, "You failed to get the spell off!");
+	}
+
+	/* Process spell */
+	else
+	{
+		/* Check interference */
+		if (interfere(Ind, cfg.spell_interfere * 2)) return;
+		/* XXX this should be different skill (like SKILL_HUNT) */
+		/*
+		   if (interfere(Ind, cfg.spell_interfere * 2 *
+		//					(100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
+		(100 - get_skill_scale(p_ptr, SKILL_HUNTING, 50)) / 100))
+		return;
+		*/
+
+		/* Hack -- preserve current 'realm' */
+		p_ptr->current_realm = REALM_HUNT;
+
+
+		/* Hack -- chance of "beam" instead of "bolt" */
+		beam = plev / 2;
+
+		/* Spells.  */
+		switch (j)
+		{
+			case 0: /* Elec Shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_ELEC)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_ELEC, 3);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_ELEC, 3);
+				}
+				break;
+			}
+			case 1: /* Sense */
+			{
+				(void)detect_creatures(Ind);
+				break;
+			}
+			case 2: /* Cold Shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_COLD)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_COLD, 5);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_COLD, 5);
+				}
+				break;
+			}
+			case 3: /* Create Light */
+			{
+				(void)lite_area(Ind, damroll(2, (plev / 2)), (plev / 10) + 1);
+				break;
+			}
+			case 4: /* Fire Shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_FIRE)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_FIRE, 7);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_FIRE, 7);
+				}
+				break;
+			}
+
+			case 8: /* Acid Shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_ACID)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_ACID, 8);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_ACID, 8);
+				}
+				break;
+			}
+			case 9: /* Fire ball shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_BALL_FIRE)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_FIRE, 1);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_FIRE, 1);
+				}
+				break;
+			}
+			case 10: /* Conf Shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_CONF)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_CONF, 5);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_CONF, 5);
+				}
+				break;
+			}
+			case 11: /* Pois Shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_POIS)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_POIS, 11);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_POIS, 11);
+				}
+				break;
+			}
+			case 12: /* Sharp Shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_SHARP)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_SHARP, 1);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_SHARP, 1);
+				}
+				break;
+			}
+
+			case 16: /* cold ball shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_BALL_COLD)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_COLD, 1);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_COLD, 1);
+				}
+				break;
+			}
+			case 17: /* elec ball shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_BALL_ELEC)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_ELEC, 1);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_ELEC, 1);
+				}
+				break;
+			}
+			case 18: /* Acid ball shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_BALL_ACID)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_ACID, 1);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_ACID, 1);
+				}
+				break;
+			}
+			case 19: /* Power Shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_MANA)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_MANA, 25);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_MANA, 25);
+				}
+				break;
+				break;
+			}
+			case 20: /* Sonic ball shots */
+			{
+				if (p_ptr->bow_brand == BOW_BRAND_BALL_SOUND)
+					set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_SOUND, 1);
+				else
+				{
+					p_ptr->bow_brand = 0;
+					set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_SOUND, 1);
+				}
+				break;
+			}
+		}
+
+#if 0 // Dont learn, dont gain xp
+		/* A spell was cast */
+		if (!((j < 32) ?
+					(p_ptr->spell_worked1[REALM_HUNT] & (1L << j)) :
+					(p_ptr->spell_worked2[REALM_HUNT] & (1L << (j - 32)))))
+		{
+			int e = s_ptr->sexp;
+
+			/* The spell worked */
+			if (j < 32)
+			{
+				p_ptr->spell_worked1[REALM_HUNT] |= (1L << j);
+			}
+			else
+			{
+				p_ptr->spell_worked2[REALM_HUNT] |= (1L << (j - 32));
+			}
+
+			/* Gain experience */
+			gain_exp(Ind, e * s_ptr->slevel);
+
+			/* Fix the spell info */
+			p_ptr->window |= PW_SPELL;
+		}
+#endif
+	}
+
+	/* Take a turn */
+	//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+
+	/* Sufficient mana */
+	if (s_ptr->smana <= p_ptr->csp)
+	{
+		/* Use some mana */
+		p_ptr->csp -= s_ptr->smana;
+	}
+
+	/* Over-exert the player */
+	else
+	{
+		int oops = s_ptr->smana - p_ptr->csp;
+
+		/* No mana left */
+		p_ptr->csp = 0;
+		p_ptr->csp_frac = 0;
+
+		/* Message */
+		msg_print(Ind, "You faint from the effort!");
+
+		/* Hack -- Bypass free action */
+		(void)set_paralyzed(Ind, p_ptr->paralyzed + randint(5 * oops + 1));
+
+		/* Damage CON (possibly permanently) */
+		if (rand_int(100) < 50)
+		{
+			bool perm = (rand_int(100) < 25);
+
+			/* Message */
+			msg_print(Ind, "You have damaged your health!");
+
+			/* Reduce constitution */
+			(void)dec_stat(Ind, A_CON, 15 + randint(10), perm);
+		}
+	}
+
+	/* Redraw mana */
+	p_ptr->redraw |= (PR_MANA);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_PLAYER);
+}
+
+
+static void do_mimic_power(int Ind, int power)
+{
+	player_type *p_ptr = Players[Ind];
+	monster_race *r_ptr = &r_info[p_ptr->body_monster];
+	int rlev = r_ptr->level;
+	int j, chance;
+	magic_type *s_ptr = &innate_powers[power];
+
+	j = power;
+
+
+	/* Not when confused */
+	if (p_ptr->confused)
+	{
+		msg_print(Ind, "You are too confused!");
+		return;
+	}
+
+	/* Check mana */
+	if (s_ptr->smana > p_ptr->csp)
+	{
+		msg_print(Ind, "You do not have enough mana.");
+		return;
+	}
+
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 	/* Spell failure chance -- Hack, use the same stats as magery*/
 //	chance = spell_chance(Ind, REALM_MAGERY, s_ptr);
 	chance = spell_chance(Ind, REALM_MIMIC, s_ptr);
+
+	if (j >= 32 && interfere(Ind, cfg.spell_interfere)) return;
 
 	/* Failed spell */
 	if (rand_int(100) < chance)
@@ -5503,14 +5516,10 @@ static void do_mimic_power(int Ind, int power)
       return;
 //#define RF4_ARROW_3			0x00000040	/* Fire missiles (light) */
     case 6:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
+      break;
 //#define RF4_ARROW_4			0x00000080	/* Fire missiles (heavy) */
     case 7:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
+      break;
 //#define RF4_BR_ACID			0x00000100	/* Breathe Acid */
     case 8:
       get_aim_dir(Ind);
@@ -5628,9 +5637,15 @@ static void do_mimic_power(int Ind, int power)
       break;
 //#define RF4_XXX5			0x10000000
     case 28:
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
       break;
 //#define RF4_XXX6			0x20000000
     case 29:
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
       break;
 //#define RF4_XXX7			0x40000000
     case 30:
@@ -5701,11 +5716,15 @@ static void do_mimic_power(int Ind, int power)
       break;
 // RF5_MIND_BLAST		0x00000400	/* Blast Mind */
     case 42:
-      msg_print(Ind, "Haha, you wish ... :)");
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
       break;
 // RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
     case 43:
-      msg_print(Ind, "Haha, you wish ... :)");
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
       break;
 // RF5_CAUSE_1			0x00001000	/* Cause Light Wound */
     case 44:
@@ -5719,13 +5738,13 @@ static void do_mimic_power(int Ind, int power)
       p_ptr->current_spell = j;
       return;
       break;
-// RF5_CAUSE_3			0x00004000	/* Cause Critical Wound */
+// RF5_BA_NUKE			0x00004000	/* Cause Critical Wound */
     case 46:
       get_aim_dir(Ind);
       p_ptr->current_spell = j;
       return;
       break;
-// RF5_CAUSE_4			0x00008000	/* Cause Mortal Wound */
+// RF5_BA_CHAO			0x00008000	/* Cause Mortal Wound */
     case 47:
       get_aim_dir(Ind);
       p_ptr->current_spell = j;
@@ -5828,7 +5847,7 @@ static void do_mimic_power(int Ind, int power)
     case 64:
       if(!p_ptr->fast) set_fast(Ind, 10 + (rlev / 2));
       break;
-// RF6_XXX1			0x00000002	/* Speed a lot (?) */
+// RF6_HAND_DOOM		0x00000002	/* Should we...? */
     case 65:
       break;
 // RF6_HEAL			0x00000004	/* Heal self */
@@ -5888,7 +5907,6 @@ static void do_mimic_power(int Ind, int power)
     }
 	}
 
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
 	if (s_ptr->smana <= p_ptr->csp)
 	{
 		/* Use some mana */
@@ -5951,21 +5969,25 @@ void do_mimic_power_aux(int Ind, int dir)
 	/* We assume that the spell can be cast, and so forth */
 	switch(p_ptr->current_spell)
 	{
-//#define RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
+//#define RF4_ARROW_1			0x00000010	/* Fire arrow(s) */
     case 4:
-      fire_bolt(Ind, GF_ARROW, dir, damroll(1, 6));
-      break;
-//#define RF4_ARROW_2			0x00000020	/* Fire an arrow (heavy) */
+	{
+		int k;
+		for (k = 0; k < 1 + rlev / 20; k++)
+		{
+			fire_bolt(Ind, GF_ARROW, dir, damroll(1 + rlev / 8, 6));
+			break;
+		}
+	}
+//#define RF4_ARROW_2			0x00000020	/* Fire missiles */
     case 5:
-      fire_bolt(Ind, GF_ARROW, dir, damroll(3, 6));
+      fire_bolt(Ind, GF_ARROW, dir, damroll(3 + rlev / 15, 6));
       break;
-//#define RF4_ARROW_3			0x00000040	/* Fire missiles (light) */
+//#define RF4_ARROW_3			0x00000040	/* XXX */
     case 6:
-      fire_bolt(Ind, GF_ARROW, dir, damroll(5, 6));
       break;
-//#define RF4_ARROW_4			0x00000080	/* Fire missiles (heavy) */
+//#define RF4_ARROW_4			0x00000080	/* XXX */
     case 7:
-      fire_bolt(Ind, GF_ARROW, dir, damroll(7, 6));
       break;
 //#define RF4_BR_ACID			0x00000100	/* Breathe Acid */
     case 8:
@@ -6047,6 +6069,17 @@ void do_mimic_power_aux(int Ind, int dir)
     case 27:
       fire_ball(Ind, GF_MANA, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3) , rad);
       break;
+	/* RF4_BR_DISI */
+	case 28:
+	  fire_ball(Ind, GF_DISINTEGRATE, dir,
+			  ((p_ptr->chp / 3) > 300 ? 300 : (p_ptr->chp / 3)), rad);
+	  break;
+	/* RF4_BR_NUKE */
+	case 29:
+	  fire_ball(Ind, GF_NUKE, dir,
+			  ((p_ptr->chp / 3) > 800 ? 800 : (p_ptr->chp / 3)), rad);
+	  break;
+		 
 
 /* RF5 */
 
@@ -6086,22 +6119,29 @@ void do_mimic_power_aux(int Ind, int dir)
     case 40:
       fire_ball(Ind, GF_DARK, dir, damroll(10, 10) + (rlev * 2) , rad);
       break;
-// RF5_CAUSE_1			0x00001000	/* Cause Light Wound */
+// RF5_MIND_BLAST		0x00000400	/* Blast Mind */
+    case 42:
+      fire_bolt(Ind, GF_PSI, dir, damroll(3 + rlev / 5, 8));
+      break;
+// RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
+    case 43:
+      fire_bolt(Ind, GF_PSI, dir, damroll(5 + rlev / 4, 8));
+      break;
+// RF5_CAUSE_1			0x00001000	/* Cause Wound */
     case 44:
-      fire_bolt(Ind, GF_MANA, dir, damroll(3, 8));
+      fire_bolt(Ind, GF_MANA, dir, damroll(3 + rlev / 4, 8));
       break;
-// RF5_CAUSE_2			0x00002000	/* Cause Serious Wound */
+// RF5_CAUSE_2			0x00002000	/* XXX */
     case 45:
-      fire_bolt(Ind, GF_MANA, dir, damroll(8, 8));
       break;
-// RF5_CAUSE_3			0x00004000	/* Cause Critical Wound */
-    case 46:
-      fire_bolt(Ind, GF_MANA, dir, damroll(10, 15));
-      break;
-// RF5_CAUSE_4			0x00008000	/* Cause Mortal Wound */
-    case 47:
-      fire_bolt(Ind, GF_MANA, dir, damroll(15, 15));
-      break;
+	/* RF5_BA_NUKE */
+	case 32+14:
+	  fire_ball(Ind, GF_NUKE, dir, (rlev + damroll(10, 6)), 2);
+	  break;
+	/* RF5_BA_CHAO */
+	case 32+15:
+	  fire_ball(Ind, GF_CHAOS, dir, (rlev * 2) + damroll(10, 10), 4);
+	  break;
 // RF5_BO_ACID			0x00010000	/* Acid Bolt */
     case 48:
       fire_bolt(Ind, GF_ACID, dir, damroll(7, 8) + (rlev / 3));
@@ -6148,12 +6188,15 @@ void do_mimic_power_aux(int Ind, int dir)
       break;
 // RF5_SCARE			0x08000000	/* Frighten Player */
     case 59:
+      fire_bolt(Ind, GF_TURN_ALL, dir, damroll(2, 6) + (rlev / 3));
       break;
 // RF5_CONF			0x20000000	/* Confuse Player */
     case 61:
+      fire_bolt(Ind, GF_CONFUSION, dir, damroll(2, 6) + (rlev / 3));
       break;
 // RF5_SLOW			0x40000000	/* Slow Player */
     case 62:
+      fire_bolt(Ind, GF_OLD_SLOW, dir, damroll(2, 6) + (rlev / 3));
       break;
 // RF6_TELE_AWAY
 	case 73:
@@ -6168,7 +6211,7 @@ void do_mimic_power_aux(int Ind, int dir)
 		}
 	}	
 
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
+//	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	if (s_ptr->smana <= p_ptr->csp)
 	{
@@ -6249,15 +6292,21 @@ void do_cmd_mimic(int Ind, int spell)
 	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
 	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) return;
 
+	if (!get_skill(p_ptr, SKILL_MIMIC))
+	{
+		msg_print(Ind, "You are too solid.");
+		return;
+	}
+
 	/* No anti-magic shields around ? */
-	if (check_antimagic(Ind)) {
+	/* Innate powers aren't hindered */
+	if ((!spell || spell - 1 >= 32) && check_antimagic(Ind)) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}
 	if (spell == 0){
 		j = p_ptr->body_monster;
 		while (TRUE){
-			/*j = j++;*/
 			j++;
 
 			if (j >= MAX_R_IDX - 1) j = 0;

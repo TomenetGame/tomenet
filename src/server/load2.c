@@ -1645,7 +1645,7 @@ static errr rd_dungeon(void)
 	rd_s16b(&tmp16b);
 	new_players_on_depth(&wpos,tmp16b,FALSE);
 #if DEBUG_LEVEL > 1
-	s_printf("%d players on %s.\n", players_on_depth(&wpos), wpos_format(&wpos));
+	s_printf("%d players on %s.\n", players_on_depth(&wpos), wpos_format(0, &wpos));
 #endif
 
 	rd_byte(&tmp);

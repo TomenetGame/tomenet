@@ -715,6 +715,13 @@
 /* NOTE: skill_dev is already affected by SKILL_DEVICE
  * get_skill_scale(p_ptr, SKILL_DEVICE, 100) */
 
+/*
+ * Monster themes above this value in percent are told to the players
+ * via '/ver 1'. (If below ... that's "spice" ;)
+ * (server/cmd4.c, server/monster2.c)
+ */
+#define TELL_MONSTER_ABOVE	15
+
 
 /*
  * Below this line are client-only options.

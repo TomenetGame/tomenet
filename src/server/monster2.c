@@ -671,6 +671,33 @@ bool mon_allowed(monster_race *r_ptr)
 	return(TRUE);
 }
 
+/* Similar to mon_allowed, but determine the result by TELL_MONSTER_ABOVE. */
+bool mon_allowed_view(monster_race *r_ptr)
+{
+	int i = TELL_MONSTER_ABOVE;
+
+	/* Pet/neutral monsters allowed? */
+	if(i > cfg.pet_monsters && (r_ptr->flags7 & (RF7_PET | RF7_NEUTRAL)))
+				return(FALSE);
+
+	/* Joke monsters allowed ? or not ? */
+	if(i > cfg.joke_monsters && (r_ptr->flags8 & RF8_JOKEANGBAND)) return(FALSE);
+
+	/* Lovercraftian monsters allowed ? or not ? */
+	if(i > cfg.cth_monsters && (r_ptr->flags8 & RF8_CTHANGBAND)) return(FALSE);
+
+	/* Zangbandish monsters allowed ? or not ? */
+	if(i > cfg.zang_monsters && (r_ptr->flags8 & RF8_ZANGBAND)) return(FALSE);
+
+	/* Pernian monsters allowed ? or not ? */
+	if(i > cfg.pern_monsters && (r_ptr->flags8 & RF8_PERNANGBAND)) return(FALSE);
+
+	/* Base monsters allowed ? or not ? */
+	if(i > cfg.vanilla_monsters && (r_ptr->flags8 & RF8_ANGBAND)) return(FALSE);
+
+	return(TRUE);
+}
+
 
 /*
  * Choose a monster race that seems "appropriate" to the given level

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* Main client module */
 
 /*
@@ -271,95 +272,10 @@ static void default_set(void)
 int main(int argc, char **argv)
 {
 	int i, modus = 0;
-	bool done = FALSE, skip = FALSE;
+	bool done = FALSE, skip = FALSE, force_cui = FALSE;
 
 	/* Save the program name */
 	argv0 = argv[0];
-
-	/* Attempt to initialize a visual module */
-
-#ifdef USE_GTK
-	/* Attempt to use the "main-gtk.c" support */
-//	if (!done && (!mstr || (streq(mstr, "gtk"))))
-	if (!done)
-	{
-		extern errr init_gtk(int, char**);
-		if (0 == init_gtk(argc, argv))
-		{
-			ANGBAND_SYS = "gtk";
-			done = TRUE;
-		}
-	}
-#endif
-
-
-#ifdef USE_XAW
-	/* Attempt to use the "main-xaw.c" support */
-	if (!done)
-	{
-		extern errr init_xaw(void);
-		if (0 == init_xaw()) done = TRUE;
-		if (done) ANGBAND_SYS = "xaw";
-	}
-#endif
-
-#ifdef USE_X11
-	/* Attempt to use the "main-x11.c" support */
-	if (!done)
-	{
-		extern errr init_x11(void);
-		if (0 == init_x11()) done = TRUE;
-		if (done) ANGBAND_SYS = "x11";
-	}
-#endif
-
-#ifdef USE_GCU
-	/* Attempt to use the "main-gcu.c" support */
-	if (!done)
-	{
-		extern errr init_gcu(void);
-		if (0 == init_gcu()) done = TRUE;
-		if (done) ANGBAND_SYS = "gcu";
-	}
-#endif
-
-#ifdef USE_IBM
-	/* Attempt to use the "main_ibm.c" support */
-	if (!done)
-	{
-		extern errr init_ibm(void);
-		if (0 == init_ibm()) done = TRUE;
-		if (done) ANGBAND_SYS = "ibm";
-	}
-#endif
-
-#ifdef USE_EMX
-	/* Attempt to use the "main-emx.c" support */
-	if (!done)
-	{
-		extern errr init_emx(void);
-		if (0 == init_emx()) done = TRUE;
-		if (done) ANGBAND_SYS = "emx";
-	}
-#endif
-
-#ifdef USE_AMY
-	/* Attempt to use the "main-amy.c" support */
-	if (!done)
-	{
-		extern errr init_amy(void);
-		if (0 == init_amy()) done = TRUE;
-		if (done) ANGBAND_SYS = "amy";
-	}
-#endif
-
-	/* No visual module worked */
-	if (!done)
-	{
-		Net_cleanup();
-		printf("Unable to initialize a display module!\n");
-		exit(1);
-	}
 
 
 	/* Set default values */
@@ -441,6 +357,12 @@ int main(int argc, char **argv)
 			}
 			/* Fall through */
 
+		case 'c':
+		{
+			force_cui = TRUE;
+			break;
+		}
+
 		default:
 			modus = -1;
 			i = argc;
@@ -455,12 +377,102 @@ int main(int argc, char **argv)
 		puts("Usage  : mangclient [options] [servername]");
 		puts("Example: mangclient -lMorgoth MorgyPass -p18348 TomeNET.net");
 		puts("       : mangclient -f.myrc -lOlorin_archer");
+		puts("  -c                 Always use CUI(GCU) interface");
 		puts("  -f                 Specify rc file to read");
 		puts("  -i                 Ignore .tomenetrc");
 		puts("  -l<nick> <passwd>  Login as");
 		puts("  -p<num>            Change game port number");
 		puts("  -P<path>           Set the lib directory path");
 		quit(NULL);
+	}
+
+
+	/* Attempt to initialize a visual module */
+
+	if (!force_cui)
+	{
+#ifdef USE_GTK
+	/* Attempt to use the "main-gtk.c" support */
+//	if (!done && (!mstr || (streq(mstr, "gtk"))))
+	if (!done)
+	{
+		extern errr init_gtk(int, char**);
+		if (0 == init_gtk(argc, argv))
+		{
+			ANGBAND_SYS = "gtk";
+			done = TRUE;
+		}
+	}
+#endif
+
+
+#ifdef USE_XAW
+	/* Attempt to use the "main-xaw.c" support */
+	if (!done)
+	{
+		extern errr init_xaw(void);
+		if (0 == init_xaw()) done = TRUE;
+		if (done) ANGBAND_SYS = "xaw";
+	}
+#endif
+
+#ifdef USE_X11
+	/* Attempt to use the "main-x11.c" support */
+	if (!done)
+	{
+		extern errr init_x11(void);
+		if (0 == init_x11()) done = TRUE;
+		if (done) ANGBAND_SYS = "x11";
+	}
+#endif
+	}
+
+#ifdef USE_GCU
+	/* Attempt to use the "main-gcu.c" support */
+	if (!done)
+	{
+		extern errr init_gcu(void);
+		if (0 == init_gcu()) done = TRUE;
+		if (done) ANGBAND_SYS = "gcu";
+	}
+#endif
+
+#ifdef USE_IBM
+	/* Attempt to use the "main_ibm.c" support */
+	if (!done)
+	{
+		extern errr init_ibm(void);
+		if (0 == init_ibm()) done = TRUE;
+		if (done) ANGBAND_SYS = "ibm";
+	}
+#endif
+
+#ifdef USE_EMX
+	/* Attempt to use the "main-emx.c" support */
+	if (!done)
+	{
+		extern errr init_emx(void);
+		if (0 == init_emx()) done = TRUE;
+		if (done) ANGBAND_SYS = "emx";
+	}
+#endif
+
+#ifdef USE_AMY
+	/* Attempt to use the "main-amy.c" support */
+	if (!done)
+	{
+		extern errr init_amy(void);
+		if (0 == init_amy()) done = TRUE;
+		if (done) ANGBAND_SYS = "amy";
+	}
+#endif
+
+	/* No visual module worked */
+	if (!done)
+	{
+		Net_cleanup();
+		printf("Unable to initialize a display module!\n");
+		exit(1);
 	}
 
 	/* Attempt to read default name/password from mangrc file */

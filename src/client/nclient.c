@@ -1579,7 +1579,7 @@ int Receive_char(void)
 		Term_draw(x, y, a, c);
 
 		/* Put the cursor there */
-		Term_gotoxy(x, y);
+//		Term_gotoxy(x, y);	/* It's disagreeable in GCU */
 	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c%c%c%c", ch, x, y, a, c)) <= 0)
@@ -2943,7 +2943,6 @@ int Send_pray(int book, int spell)
 
 	return 1;
 }
-#endif	// 0
 
 int Send_mimic(int spell)
 {
@@ -2956,6 +2955,7 @@ int Send_mimic(int spell)
 
 	return 1;
 }
+#endif	// 0
 
 int Send_mind()
 {

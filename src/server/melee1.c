@@ -346,6 +346,7 @@ static bool do_seduce(int Ind, int m_idx)
 		/* Extract the flags */
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
+		/* Hack -- cannot take off, not counted */
 		if (f3 & TR3_PERMA_CURSE) continue;
 
 		if (!magik(chance))

@@ -8,8 +8,9 @@ You can beat the game without knowing any of them, but learning a little will
 make your game more comfortable, we expect.
 
 
-Commands: afk at bed bug cast dis dress ex feel help house ignore less me
-      monster news object pkill quest rec ref rfe shout tag target untag ver
+Commands: afk at bed broadcast bug cast dis dress ex feel help house ignore
+          less me monster news object pkill quest rec ref rfe shout tag
+          target untag ver
 
 Note:
 (parameter) cannot be omitted.
@@ -36,6 +37,10 @@ Note:
     Items with {!t} tag or those cursed cannot be taken off this way.
     If any arguments are given, take everything off.
 
+/broadcast [message]
+    Tell the [message] to everyone, overriding 'limit_chat' option.
+    Please don't abuse it to spam the server.. (see /ignore)
+
 /cast (book no. or slot no.) (spell sign) [target player's name] 
     *** BROKEN ***  not available for now
     Cast the specified spell.
@@ -47,12 +52,14 @@ Note:
     This command consumes 1 (casting) turn.
     This command was coded by Tanix(Asclep).
 
-/dispose {shorthand: /dis} 
+/dispose [value] {shorthand: /dis} 
     Destroys everything in your pack without inscription.
     Items with following inscriptions are destroyed also:
         discount tag (eg. {25% off}) 
         pseudo-id tag ({good} or below) 
-    This can be very useful to get rid of useless items from your backpack.
+    If [value] is given, only identified items of price less than [value] will
+    be destroyed.
+    This can be useful to get rid of useless items from your backpack.
     This command consumes total of 1 turn(regardless of # of items destroyed).
 
 /dress {shorthand: /dr} 

@@ -996,7 +996,8 @@ bool askfor_aux(char *buf, int len, char private)
 
 	/* Display the default answer */
 	Term_erase(x, y, len);
-	Term_putstr(x, y, -1, TERM_YELLOW, buf);
+	if (private) Term_putstr(x, y, -1, TERM_YELLOW, "(default)");
+	else Term_putstr(x, y, -1, TERM_YELLOW, buf);
 
 	if (!nohist) strcpy(message_history[hist_end], buf);
 
@@ -2355,6 +2356,7 @@ static void do_cmd_options_aux(int page, cptr info)
 		switch (ch)
 		{
 			case ESCAPE:
+			case KTRL('X'):
 			{
 				return;
 			}
@@ -2736,7 +2738,7 @@ void do_cmd_options(void)
 		k = inkey();
 
 		/* Exit */
-		if (k == ESCAPE) break;
+		if (k == ESCAPE || k == KTRL('X')) break;
 
 		/* General Options */
 		if (k == '1')

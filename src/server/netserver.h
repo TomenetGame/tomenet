@@ -130,7 +130,7 @@ static int Receive_go_down(int ind);
 static int Receive_message(int ind);
 static int Receive_item(int ind);
 static int Receive_purchase(int ind);
-static int Receive_mimic(int ind);
+//static int Receive_mimic(int ind);
 static int Receive_mind(int ind);
 
 static int Receive_sell(int ind);

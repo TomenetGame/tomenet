@@ -104,7 +104,7 @@ static cptr value_check_aux1_magic(object_type *o_ptr)
 			if (k_ptr->cost < 10000) return "good";
 
 			/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
-			if (k_ptr->cost >= 10000) return "excelent";
+			if (k_ptr->cost >= 10000) return "excellent";
 
 			break;
 		}
@@ -339,6 +339,9 @@ static void sense_inventory(int Ind)
 		/* Get an object description */
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
+		/* Hack -- suppress messages */
+		if (p_ptr->taciturn_messages) suppress_message = TRUE;
+
 		/* Message (equipment) */
 		if (i >= INVEN_WIELD)
 		{
@@ -354,6 +357,8 @@ static void sense_inventory(int Ind)
 			           o_name, index_to_label(i),
 			           ((o_ptr->number == 1) ? "is" : "are"), feel);
 		}
+
+		suppress_message = FALSE;
 
 		/* We have "felt" it */
 		o_ptr->ident |= (ID_SENSE);
@@ -2505,7 +2510,7 @@ static bool stale_level(struct worldpos *wpos, int grace)
 		if(!d_ptr) return(FALSE);
 		l_ptr=&d_ptr->level[ABS(wpos->wz)-1];
 #if DEBUG_LEVEL > 2
-		s_printf("%s  now:%d last:%d diff:%d grace:%d players:%d\n", wpos_format(wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace, players_on_depth(wpos));
+		s_printf("%s  now:%d last:%d diff:%d grace:%d players:%d\n", wpos_format(0, wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace, players_on_depth(wpos));
 #endif
 		if(now-l_ptr->lastused > grace){
 			return(TRUE);

@@ -1441,7 +1441,12 @@ void cmd_check_misc(void)
 				Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0);
 				break;
 			case 'e':
-				Send_special_line(SPECIAL_FILE_RFE, 0);
+//				Send_special_line(SPECIAL_FILE_RFE, 0);
+				/* Set the hook */
+				special_line_type = SPECIAL_FILE_RFE;
+
+				/* Call the file perusal */
+				peruse_file();
 				break;
 			case 'f':
 				show_motd();
@@ -1450,6 +1455,7 @@ void cmd_check_misc(void)
 				cmd_help();
 				break;
 			case ESCAPE:
+			case KTRL('X'):
 				break;
 			default:
 				bell();
@@ -1520,7 +1526,7 @@ void cmd_party(void)
 		i = inkey();
 
 		/* Leave */
-		if (i == ESCAPE) break;
+		if (i == ESCAPE || i == KTRL('X')) break;
 
 		/* Create party */
 		else if (i == '1')
@@ -1850,6 +1856,9 @@ void cmd_house_chown(int dir)
 				get_string("Enter new name:",&buf[2],79);
 				Send_admin_house(dir,buf);
 				return;
+			case ESCAPE:
+			case KTRL('X'):
+				break;
 			default:
 				bell();
 		}
@@ -1912,6 +1921,9 @@ void cmd_purchase_house(void)
 			case '4':
 				cmd_house_kill(dir);
 				i=ESCAPE;
+				break;
+			case ESCAPE:
+			case KTRL('X'):
 				break;
 			default:
 				bell();
@@ -2261,7 +2273,7 @@ char * cmd_master_aux_summon_orcs(void)
 		{
 			case '1': strcpy(buf,"Snaga"); break;
 			case '2': strcpy(buf,"Cave orc"); break;
-			case '3': strcpy(buf,"Cave orc"); break;
+			case '3': strcpy(buf,"Hill orc"); break;
 			case '4': strcpy(buf,"Black orc"); break;
 			case '5': strcpy(buf,"Half-orc"); break;
 			case '6': strcpy(buf, "Uruk"); break;
@@ -2873,6 +2885,7 @@ void cmd_master(void)
 				cmd_script_upload();
 				break;
 			case ESCAPE:
+			case KTRL('X'):
 				break;
 			default:
 				bell();

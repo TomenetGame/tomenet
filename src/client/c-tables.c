@@ -2622,8 +2622,8 @@ option_type option_info[OPT_MAX] =
 	{ &always_repeat,		TRUE,	1,	0, 6,	// XXX
 	"always_repeat",		"(broken) Repeat obvious commands" },
 
-	{ &depth_in_feet,		FALSE,	1,	0, 7,	// XXX (resurrect me)
-	"depth_in_feet",		"(broken) Show dungeon level in feet" },
+	{ &depth_in_feet,		TRUE,	1,	0, 7,
+	"depth_in_feet",		"Show dungeon level in feet" },
 
 	{ &stack_force_notes,	FALSE,	1,	0, 8,
 	"stack_force_notes",	"Merge inscriptions when stacking" },
@@ -2808,6 +2808,20 @@ option_type option_info[OPT_MAX] =
 	{ &auto_inscribe,		FALSE,	5,	9, 64,
 	"auto_inscribe",		"Automatically inscribe books and so on" },
 
+	{ &taciturn_messages,	FALSE,	5,	9, 65,
+	"taciturn_messages",	"Suppress server messages as far as possible" },
+
+	{ &last_words,			TRUE,	5,	9, 66,
+	"last_words",			"Get last words when the character dies" },
+
+	{ &limit_chat,			FALSE,	5,	9, 67,
+	"limit_chat",			"Chat only with players on the same floor" },
+
+#if 0
+	{ &speak_unique,                TRUE,   2,      13,
+	"speak_unique",                 "Allow shopkeepers and uniques to speak" },
+#endif	// 0
+
 	/*** End of Table ***/
 
 	{ NULL,			0, 0, 0, 0,
@@ -2822,7 +2836,7 @@ cptr monster_spells4[32] =
   "XXX3",
   "Rocket",
   "Arrow",
-  "Mighty Arrow",
+  "Bolt",
   "XXX7",
   "XXX8",
   "Breath Acid",

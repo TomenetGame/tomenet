@@ -1542,6 +1542,11 @@ player_race race_info[MAX_RACES] =
                 0xFFFFFFFF,
                 50,
 				{
+                        {
+                                SKILL_BACKSTAB,
+                                '+', 1000,
+                                '+', 200,
+                        },
                         /* Not banned, but hard */
                         {
                                 SKILL_MAGIC,
@@ -1575,7 +1580,7 @@ player_race race_info[MAX_RACES] =
 				{
                         {
                                 SKILL_HEALTH,
-                                '+', 0,
+                                '+', 3000,
                                 '%', 140,
                         },
                         /* Not banned, but *hard* */
@@ -1671,7 +1676,13 @@ player_race race_info[MAX_RACES] =
 		5,
                 0xFFFFFFFF,
                 90,
-                { 0 },
+                {
+                        {
+                                SKILL_CALMNESS,
+                                '+', 1000,
+                                '+', 100,
+                        },
+                },
 	},
 	{
                 "DragonRider",
@@ -2456,6 +2467,12 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_SWIM,
                                 '+', 0,
                                 '+', 1000,
+                        },
+						/* Misc tree */
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 500,
                         },
                 }
 	},
@@ -4261,9 +4278,9 @@ magic_type innate_powers[96] =
 // RF4_BR_MANA			0x08000000	/* Breathe Mana */
   {0, 60, 70, 0},
 // RF4_BR_DISI			0x10000000
-  {0, 0, 0, 0},
+  {0, 60, 70, 0},
 // RF4_BR_NUKE			0x20000000
-  {0, 0, 0, 0},
+  {0, 50, 50, 0},
 // 0x40000000
   {0, 0, 0, 0},
 // 0x80000000
@@ -4293,17 +4310,17 @@ magic_type innate_powers[96] =
 // RF5_DRAIN_MANA		0x00000200	/* Drain Mana */
   {0, 0, 0, 0},
 // RF5_MIND_BLAST		0x00000400	/* Blast Mind */
-  {0, 0, 0, 0},
+  {0, 12, 13, 0},
 // RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
-  {0, 0, 0, 0},
+  {0, 15, 15, 0},
 // RF5_CAUSE_1			0x00001000	/* Cause Light Wound */
-  {0, 3, 20, 0},
+  {0, 5, 20, 0},
 // RF5_CAUSE_2			0x00002000	/* Cause Serious Wound */
   {0, 0, 0, 0},
-// RF5_BA_NUKE			0x00004000	/* Cause Critical Wound */
-  {0, 0, 0, 0},
-// RF5_BA_CHAO			0x00008000	/* Cause Mortal Wound */
-  {0, 0, 0, 0},
+// RF5_BA_NUKE			0x00004000	/* Toxic Ball */
+  {0, 50, 50, 0},
+// RF5_BA_CHAO			0x00008000	/* Chaos Ball */
+  {0, 50, 50, 0},
 // RF5_BO_ACID			0x00010000	/* Acid Bolt */
   {0, 7, 13, 0},
 // RF5_BO_ELEC			0x00020000	/* Elec Bolt (unused) */
@@ -4327,13 +4344,13 @@ magic_type innate_powers[96] =
 // RF5_MISSILE			0x04000000	/* Magic Missile */
   {0, 1, 5, 0},
 // RF5_SCARE			0x08000000	/* Frighten Player */
-  {0, 0, 0, 0},
+  {0, 4, 8, 0},
 // RF5_BLIND			0x10000000	/* Blind Player */
   {0, 0, 0, 0},
 // RF5_CONF			0x20000000	/* Confuse Player */
-  {0, 0, 0, 0},
+  {0, 4, 8, 0},
 // RF5_SLOW			0x40000000	/* Slow Player */
-  {0, 0, 0, 0},
+  {0, 6, 10, 0},
 // RF5_HOLD			0x80000000	/* Paralyze Player */
   {0, 0, 0, 0},
 

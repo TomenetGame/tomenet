@@ -250,7 +250,16 @@ void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 	Term_get_size(&wid, &hgt);
 
 //	c_prt(TERM_WHITE, "TomeNET Skills Screen", 0, 28);
-	c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:2,8,j,k  fold:<CR>,c,o  advance:6,l]", 0, 0);
+//	c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:2,8,j,k  fold:<CR>,c,o  advance:6,l]", 0, 0);
+	if (rogue_like_commands)
+	{
+		c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:j,k,g,G,#  fold:<CR>,c,o  advance:l]", 0, 0);
+	}
+	else
+	{
+		c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:2,8,g,G,#  fold:<CR>,c,o  advance:6]", 0, 0);
+	}
+
 	c_prt((p_ptr->skill_points) ? TERM_L_BLUE : TERM_L_RED,
 	      format("Skill points left: %d", p_ptr->skill_points), 1, 0);
 	print_desc_aux(s_info[table[sel][0]].desc, 2, 0);
@@ -413,8 +422,32 @@ void do_cmd_skill()
 				p_ptr->s_info[table[i][0]].dev = TRUE;
 
 			init_table(table, &max, FALSE);
+			/* TODO: memorize and recover the cursor position */
 		}
 
+		else if (c == 'g')
+		{
+			start = sel = 0;
+		}
+		else if (c == 'G')
+		{
+			sel = max - 1;
+			start = sel - (hgt - 4);
+			if (sel >= start + (hgt - 4)) start = sel - (hgt - 4) + 1;
+		}
+		/* Hack -- go to a specific line */
+		else if (c == '#')
+		{
+			char tmp[80];
+			prt(format("Goto Line(max %d): ", max), 23, 0);
+			strcpy(tmp, "1");
+			if (askfor_aux(tmp, 10, 0))
+			{
+				sel = start = atoi(tmp) - 1;
+				if (sel >= max) sel = start = max - 1;
+				if (sel < 0) sel = start = 0;
+			}
+		}
 
 		/* Next page */
 		else if (c == 'n' || c == ' ')

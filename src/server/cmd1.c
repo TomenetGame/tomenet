@@ -738,10 +738,10 @@ void carry(int Ind, int pickup, int confirm)
 
 	/* Auto id ? */
 	if (p_ptr->auto_id)
-	  {
-	    object_aware(Ind, o_ptr);
-	    object_known(o_ptr);
-	  }
+	{
+		object_aware(Ind, o_ptr);
+		object_known(o_ptr);
+	}
 
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
@@ -789,6 +789,7 @@ void carry(int Ind, int pickup, int confirm)
 			else msg_format(Ind, "You see %s%s.", o_name,
 						o_ptr->next_o_idx ? " on a pile" : "");
 			Send_floor(Ind, o_ptr->tval);
+			return;
 		}
 #if 1
 		/* Try to add to the quiver */
@@ -905,6 +906,17 @@ void carry(int Ind, int pickup, int confirm)
 			}
 		}
 	}
+
+	/* splash! harm equipments */
+	if (c_ptr->feat == FEAT_WATER &&
+			TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
+//			magik(WATER_ITEM_DAMAGE_CHANCE))
+			magik(3))
+	{
+		inven_damage(Ind, set_water_destroy, 1);
+		if (magik(20)) minus_ac(Ind);
+	}
+
 }
 
 #if 0
@@ -1345,7 +1357,6 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	/* Disturb the player */
 	disturb(Ind, 0, 0);
 
-
 	/* Extract monster name (or "it") */
 	monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
@@ -1395,6 +1406,9 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 		return;
 	}
 
+	/* Hack -- suppress messages */
+	if (p_ptr->taciturn_messages) suppress_message = TRUE;
+
 	/* Auto-Recall if possible and visible */
 	if (p_ptr->mon_vis[c_ptr->m_idx]) recent_track(m_ptr->r_idx);
 
@@ -1413,6 +1427,8 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	{
 		/* Message */
 		msg_format(Ind, "You are too afraid to attack %s!", m_name);
+
+		suppress_message = FALSE;
 
 		/* Done */
 		return;
@@ -1445,7 +1461,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 		if((f4 & TR4_NEVER_BLOW))
 		{
 			msg_print(Ind, "You can't attack with that weapon.");
-			return;
+			break;
 		}
 		
 		/* Calculate the "attack quality" */
@@ -1904,6 +1920,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 		}
 	}
 
+	suppress_message = FALSE;
 }
 
 
@@ -2545,28 +2562,13 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* Notice things */
 		else
 		{
-			bool autotunnel = FALSE;
-
-			/* Rubble */
-			if (c_ptr->feat == FEAT_RUBBLE)
-			{
-				if (p_ptr->easy_tunnel) autotunnel = TRUE;
-				else msg_print(Ind, "There is rubble blocking your way.");
-			}
-
 			/* Closed doors */
-			else if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) || 
+			if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) || 
 				 (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL))
 			{
 				msg_print(Ind, "There is a closed door blocking your way.");
 			}
 
-			/* Tree */
-			else if (c_ptr->feat == FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE)
-			{
-				if (p_ptr->easy_tunnel) autotunnel = TRUE;
-				else msg_print(Ind, "There is a tree blocking your way.");
-			}
 			else if (c_ptr->feat == FEAT_SIGN)
 			{
 				if(c_ptr->special.type==CS_INSCRIP){
@@ -2576,15 +2578,31 @@ void move_player(int Ind, int dir, int do_pickup)
 				else msg_print(Ind, "A blank sign is here");
 			}
 
-			/* Wall (or secret door) */
+			else if (p_ptr->easy_tunnel || (p_ptr->skill_dig > 4000))
+			{
+				do_cmd_tunnel(Ind, dir);
+			}
 			else
 			{
-				if (p_ptr->easy_tunnel) autotunnel = TRUE;
-				else msg_print(Ind, "There is a wall blocking your way.");
+				/* Rubble */
+				if (c_ptr->feat == FEAT_RUBBLE)
+				{
+					msg_print(Ind, "There is rubble blocking your way.");
+				}
+				/* Tree */
+				else if (c_ptr->feat == FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE)
+				{
+					msg_print(Ind, "There is a tree blocking your way.");
+				}
+				/* Wall (or secret door) */
+				else
+				{
+					msg_print(Ind, "There is a wall blocking your way.");
+				}
 			}
-			csfunc[c_ptr->special.type].activate(c_ptr->special.sc.ptr, Ind);
 
-			if (autotunnel) do_cmd_tunnel(Ind, dir);
+			/* It's bad place maybe? */
+			csfunc[c_ptr->special.type].activate(c_ptr->special.sc.ptr, Ind);
 		}
 		return;
 		} /* 'if (!myhome)' ends here */

@@ -433,6 +433,7 @@ extern void do_cmd_target_friendly(int Ind, int dir);
 extern void do_cmd_look(int Ind, int dir);
 extern void do_cmd_locate(int Ind, int dir);
 extern void do_cmd_query_symbol(int Ind, char sym);
+extern bool item_tester_hook_wear(int Ind, int slot);
 
 /* cmd4.c */
 extern void do_cmd_check_artifacts(int Ind, int line);
@@ -591,6 +592,7 @@ extern void curse_equipment(int Ind, int chance, int heavy_chance);
 /* monster.c */
 /* monster1.c monster2.c */
 extern bool mon_allowed(monster_race *r_ptr);
+extern bool mon_allowed_view(monster_race *r_ptr);
 extern void heal_m_list(struct worldpos *wpos);
 extern cptr r_name_get(monster_type *m_ptr);
 extern monster_race* r_info_get(monster_type *m_ptr);
@@ -754,6 +756,7 @@ extern void combine_pack(int Ind);
 extern void reorder_pack(int Ind);
 extern void setup_objects(void);
 extern s16b m_bonus(int max, int level);
+extern s32b object_value_real(int Ind, object_type *o_ptr);
 
 /* party.c */
 extern bool set_pkill(int Ind, int delay);
@@ -946,6 +949,8 @@ extern void store_maint(store_type *st_ptr);
 extern void store_init(store_type *st_ptr);
 
 /* util.c */
+extern bool suppress_message;
+
 extern void use_ability_blade(int Ind);
 extern bool show_floor_feeling(int Ind);
 extern void msg_admin(cptr fmt, ...);
@@ -989,7 +994,7 @@ extern void msg_print_near_monster(int m_idx, cptr msg);
 extern void toggle_afk(int Ind);
 extern void player_talk(int Ind, char *msg);
 extern bool is_a_vowel(int ch);
-extern char *wpos_format(worldpos *wpos);
+extern char *wpos_format(int Ind, worldpos *wpos);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);

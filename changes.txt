@@ -1289,10 +1289,34 @@ To find the latest change quickly, search ==== :)
 - new client options: easy_open, easy_disarm, easy_tunnel, auto_inscribe
 - monster spells rearranged.
 - ang_sort hooks; object/unique lists are displayed sorted.
+- uniques from themes with low percentage won't appear on the unique list.
 [H] underground lakes can have various size/shape.
 [B] monster pit often had 'holes' (build_type6 - still sometimes)
 [B] monster mimics could be (mimic), mana-charged, projector ego types.
 [B] '\"' didn't transmit option changes to the server.
+
+11/07/2002 (Jir)
+# mimic!
+- polymorphing into headless form won't allow to take Crown off.
+- replaced some hacks in p_ptr->invis/tim_wraith
+- mimic in armless forms can get extra blows / bodyless extra ac.
+- PKT_MIMIC obsoleted. (PKT_GHOST should be, too)
+- some mimic innate spells implemeted and updated.
+- more mimic flags implemented (like DISBELIEVE, OPEN_DOOR, KILL_WALL)
+- client options: taciturn_messages(see below), last_words, limit_chat
+	/* Hack -- suppress messages */
+	if (p_ptr->taciturn_messages) suppress_message = TRUE;
+	suppress_message = FALSE;
+- /broadcast - send msg ignoring limit_chat
+- mangconsole options: -P<pass>, -s (shutdown at once)
+- mangconsole and client option: -c (force to use GCU)
+- depth_in_feet reimplemented. (not sure which is better, Lev -5 or Lev 5..)
+[B] Infinite loop when a mimic used /dr under no-equip form.
+[B][C] GCU client couldn't handle the cursor very well.
+  (most of GCU client problems are fixed now :)
+[H] mimic's stats are affected by race modifiers now. (yeek mimic..)
+[H] mimic innate spells (like breath) aren't hindered by antimagic any more.
+
 
 
 ** [B] stands for Bugfix.
@@ -1303,7 +1327,7 @@ To find the latest change quickly, search ==== :)
 =============================================================================
 things to do before 4.0.0
 
-- backport ToME spells!
+- backport ToME spells! (..is anyone working on it..?)
   + timed 'cave-affecting' spells
   + spell flags transmitted to the client
   + less packets
@@ -1334,6 +1358,9 @@ concisely: what's hot now?
 - LUA hook (hooked, but not used for now)
 - csfunc
 - alignment (let's wait for EE :)
+- mimics
+  + new skill 'Ego Powers', 'Innate Powers'
+  + RBM and RBE
 
 
 =============================================================================
@@ -1353,7 +1380,6 @@ below this line are the unfixed bugs known:
 [B] cannot 'run' near the outer permawall (run_test)
 [B] mon_vis, obj_vis etc. are messed while the player is off.
 [B] option '-r' puts the server into infinite-loop (genwild)
-[B] GCU client cannot handle the cursor very well.
 [B] some ivents are not told to the players even when within the sight.
 [B] white '@' sometimes appear on the screen(eg. when targetting).
 [B] Martial-artist has strange +To RHit/+To RDam display.
@@ -1369,6 +1395,7 @@ below this line are the unfixed bugs known:
 [B] stairs/doors tend to disappear on NO_MAP floors
 [B] cannot specify some monster names in master summoning (&35)
 [B] invisibility/wraithform linger on even after item/form is removed.
+[B][C] GCU client doesn't show the motd when using 'fullauto'
 
 *below are bugs repoorted but not confirmed*
 (nothing so far)
@@ -1570,6 +1597,7 @@ memo and questions:
     msg_print(Ind, importance, "Vlad was here!");
   + options ('=') should be revised.
   + auto-retaliator should be able to handle non-item actions.
+  + better character ('C') screen
 - stores:
   + allow to eXamine items in the store inventory.
   + one player shouldn't stay more than 1 minutes in a store?
@@ -1638,12 +1666,11 @@ memo and questions:
   - another solution is to put those things in a file like plug-ins.
 - resurrect 'targetting cursor'
 - write gaming options changed by '=' to the local pref files.
+- client options other than boolean
 - following things should be client-side options:
-  + door_bump_open
-  + auto_disarm_trap
   + scroll_mergin (x, y)
-  + auto_destroy
-  + auto_inscribe
+- allow sex/race/class/stat-order/mode specification in .tomenetrc
+- preserve message history
 
 [lunatic ones]
 - 3-D gfx and full-audio support

@@ -220,7 +220,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 
 	w_ptr=&wild_info[wpos->wy][wpos->wx];
 #if DEBUG_LEVEL > 2
-		s_printf("new_players_on_depth.. %s  now:%d value:%d inc:%s\n", wpos_format(wpos), now, value, inc?"TRUE":"FALSE");
+		s_printf("new_players_on_depth.. %s  now:%d value:%d inc:%s\n", wpos_format(0, wpos), now, value, inc?"TRUE":"FALSE");
 #endif
 	if(wpos->wz==0)
 	{

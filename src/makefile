@@ -1,3 +1,4 @@
+# $Id$
 # File: Makefile
 
 # This is not a very "nice" Makefile, but it usually works.
@@ -340,6 +341,12 @@ mini_install: install
 
 date:
 	touch common/common.c
+
+update_use:
+	touch client/client.c
+	touch client/main-x11.c
+#	touch client/main-gcu.c
+	touch console/c-init.c
 
 #
 # Build the "MAngband" server

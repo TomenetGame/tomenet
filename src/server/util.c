@@ -1411,8 +1411,13 @@ char *find_inscription(s16b quark, char *what)
  * XXX XXX XXX Note that "msg_print(NULL)" will clear the top line
  * even if no messages are pending.  This is probably a hack.
  */
+bool suppress_message = FALSE;
+
 void msg_print(int Ind, cptr msg)
 {
+	/* Pfft, sorry to bother you.... --JIR-- */
+	if (suppress_message) return;
+
 	/* Ahh, the beautiful simplicity of it.... --KLJ-- */
 	Send_message(Ind, msg);
 }
@@ -1794,7 +1799,7 @@ static void do_slash_brief_help(int Ind)
 	msg_print(Ind, "Commands: afk at bed bug cast dis dress ex feel help house ignore less me");	// pet ?
 	msg_print(Ind, "  monster news object pk quest rec ref rfe shout tag target untag ver;");
 #endif	// 0
-	msg_print(Ind, "Commands: afk at bed bug cast dis dress ex feel help ignore me");	// pet ?
+	msg_print(Ind, "Commands: afk at bed broadcast bug cast dis dress ex feel help ignore me");	// pet ?
 	msg_print(Ind, "          pk quest rec ref rfe shout tag target untag;");
 
 	if (is_admin(p_ptr))
@@ -1962,6 +1967,11 @@ static void do_slash_cmd(int Ind, char *message)
 					continue;
 
 				if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr))
+					continue;
+
+				/* Hack -- filter by value */
+				if (k && (!object_known_p(Ind, o_ptr) ||
+							object_value_real(Ind, o_ptr) > k))
 					continue;
 
 				do_cmd_destroy(Ind, i, o_ptr->number);
@@ -2257,6 +2267,8 @@ static void do_slash_cmd(int Ind, char *message)
 
 			for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
 			{
+				if (!item_tester_hook_wear(Ind, i)) continue;
+
 				o_ptr = &(p_ptr->inventory[i]);
 				if (o_ptr->tval) continue;
 
@@ -2291,7 +2303,8 @@ static void do_slash_cmd(int Ind, char *message)
 				prefix(message, "/ex"))
 		{
 //			do_cmd_knowledge_dungeons(Ind);
-			msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
+			if (p_ptr->depth_in_feet) msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
+			else msg_format(Ind, "The deepest point you've reached: Lev \377G-%d", p_ptr->max_dlv);
 
 			if (get_skill(p_ptr, SKILL_DODGE)) use_ability_blade(Ind);
 
@@ -2304,6 +2317,17 @@ static void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377yYou feel insanity creep into your mind..");
 			else
 				msg_print(Ind, "\377wYou are sane.");
+
+			if (p_ptr->body_monster)
+			{
+				monster_race *r_ptr = &r_info[p_ptr->body_monster];
+				msg_format(Ind, "You %shave head.", r_ptr->body_parts[BODY_HEAD] ? "" : "don't ");
+				msg_format(Ind, "You %shave arms.", r_ptr->body_parts[BODY_ARMS] ? "" : "don't ");
+				msg_format(Ind, "You can%s use weapons.", r_ptr->body_parts[BODY_WEAPON] ? "" : "not");
+				msg_format(Ind, "You can%s wear %s.", r_ptr->body_parts[BODY_FINGER] ? "" : "not", r_ptr->body_parts[BODY_FINGER] == 1 ? "a ring" : "rings");
+				msg_format(Ind, "You %shave torso.", r_ptr->body_parts[BODY_TORSO] ? "" : "don't ");
+				msg_format(Ind, "You %shave legs.", r_ptr->body_parts[BODY_LEGS] ? "" : "don't ");
+			}
 
 			if (admin)
 			{
@@ -2439,7 +2463,7 @@ static void do_slash_cmd(int Ind, char *message)
 			{
 				case 1:
 					/* depth in feet */
-					p_ptr->recall_pos.wz = k / 50;
+					p_ptr->recall_pos.wz = k / (p_ptr->depth_in_feet ? 50 : 1);
 					break;
 
 				case 2:
@@ -2731,13 +2755,13 @@ static void do_slash_cmd(int Ind, char *message)
 			{
 				case 1:
 					/* depth in feet */
-					wp.wz = k / 50;
+					wp.wz = (p_ptr->depth_in_feet ? k / 50 : k);
 					break;
 				case 3:
 					/* depth in feet */
 					wp.wx = k % MAX_WILD_X;
 					wp.wy = atoi(token[2]) % MAX_WILD_Y;
-					wp.wz = atoi(token[3]) / 50;
+					wp.wz = atoi(token[3]) / (p_ptr->depth_in_feet ? 50 : 1);
 					break;
 				case 2:
 					wp.wx = k % MAX_WILD_X;
@@ -2800,7 +2824,7 @@ static void do_slash_cmd(int Ind, char *message)
 				/* XXX trap clearance support dropped - reimplement! */
 //				wipe_t_list(&wp);
 
-				msg_format(Ind, "\377rItems/monsters on %s are cleared.", wpos_format(&wp));
+				msg_format(Ind, "\377rItems/monsters on %s are cleared.", wpos_format(Ind, &wp));
 				return;
 			}
 			else if(prefix(message, "/cp")){
@@ -2813,7 +2837,7 @@ static void do_slash_cmd(int Ind, char *message)
 				/* Wipe even if town/wilderness */
 				wipe_m_list(&wp);
 
-				msg_format(Ind, "\377rMonsters on %s are cleared.", wpos_format(&wp));
+				msg_format(Ind, "\377rMonsters on %s are cleared.", wpos_format(Ind, &wp));
 				return;
 			}
 			else if (prefix(message, "/unstatic-level") ||
@@ -3163,7 +3187,8 @@ static void player_talk_aux(int Ind, char *message)
 	bool me = FALSE;
 	char c = 'B';
 	int mycolor = 0;
-	bool admin = p_ptr->admin_wiz || p_ptr->admin_dm;
+	bool admin = is_admin(p_ptr);
+	bool broadcast = FALSE;
 
 	p_ptr->msgcnt++;
 	if(p_ptr->msgcnt>12){
@@ -3213,6 +3238,7 @@ static void player_talk_aux(int Ind, char *message)
 
 	if(message[0]=='/'){
 		if(!strncmp(message, "/me", 3)) me=TRUE;
+		else if(!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
 		else{
 			do_slash_cmd(Ind, message);	/* add check */
 			return;
@@ -3340,10 +3366,19 @@ static void player_talk_aux(int Ind, char *message)
 	/* Send to everyone */
 	for (i = 1; i <= NumPlayers; i++)
 	{
-		if (check_ignore(i, Ind)) continue;
+		q_ptr = Players[i];
+
+		if (!admin)
+		{
+			if (check_ignore(i, Ind)) continue;
+			if (!broadcast && (p_ptr->limit_chat || p_ptr->limit_chat) &&
+					!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
+		}
 
 		/* Send message */
-		if (!me)
+		if (broadcast)
+			msg_format(i, "\377r[\377%c%s\377r] \377B%s", c, sender, message + 11);
+		else if (!me)
 		{
 			msg_format(i, "\377%c[%s] \377B%s", c, sender, message + mycolor);
 			/* msg_format(i, "\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
@@ -3578,9 +3613,11 @@ void bracer_ff(char *buf)
 /*
  * make strings from worldpos '-1550ft of (17,15)'	- Jir -
  */
-char *wpos_format(worldpos *wpos)
+char *wpos_format(int Ind, worldpos *wpos)
 {
+	if (!Ind || Players[Ind]->depth_in_feet)
 	return (format("%dft of (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
+	else return (format("Lev %d of (%d,%d)", wpos->wz, wpos->wx, wpos->wy));
 }
 
 

@@ -244,8 +244,10 @@ void prt_depth(int x, int y, int z, bool town, int recall)
 
 	if(town)
 		sprintf(depths, "Town");
-	else
+	else if (depth_in_feet)
 		sprintf(depths, "%dft", z*50);
+	else
+		sprintf(depths, "Lev %d", z);
 
 	/* Right-Adjust the "depth" and clear old values */
 	if (recall) c_prt(TERM_ORANGE, format("%7s", depths), ROW_DEPTH, COL_DEPTH);
