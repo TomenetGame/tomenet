@@ -1775,7 +1775,9 @@ void cmd_master_aux_level(void)
 			Send_master(MASTER_LEVEL, buf);
 		}
 		else if (i == '4'){
-			c_get_quantity("Base level: ", 127);
+			buf[0]='T';
+			buf[1]=c_get_quantity("Base level: ", 127);
+			Send_master(MASTER_LEVEL, buf);
 		}
 
 		/* Oops */

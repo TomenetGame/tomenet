@@ -550,7 +550,7 @@ void teleport_player_level(int Ind)
 	wpcopy(&new_depth, wpos);
 	/* sometimes go down */
 #ifdef NEW_DUNGEON
-	if(!can_go_up(wpos) || ((rand_int(100)<50) && can_go_down(wpos)))
+	if(can_go_down(wpos) && (!can_go_up(wpos) || (rand_int(100)<50)))
 #else
 	if ((!Depth) || ((rand_int(100) < 50) && (Depth > MAX_DEPTH-1)))
 #endif
@@ -577,7 +577,7 @@ void teleport_player_level(int Ind)
 	
 	/* If in the wilderness, teleport to a random neighboring level */
 #ifdef NEW_DUNGEON
-	if(wpos->wz==0 && new_depth.wz==0)
+	else if(wpos->wz==0 && new_depth.wz==0)
 #else
 	if (Depth < 0)
 #endif
@@ -699,7 +699,7 @@ void teleport_player_level(int Ind)
 	forget_view(Ind);
 
 #ifdef NEW_DUNGEON
-	wpcopy(wpos,new_depth);
+	wpcopy(wpos,&new_depth);
 #else
 	Depth = p_ptr->dun_depth = new_depth;
 #endif

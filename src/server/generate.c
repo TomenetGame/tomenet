@@ -5985,6 +5985,8 @@ void generate_cave(int Depth)
 			/* Make a town */
 #ifdef NEW_DUNGEON
 			town_gen(wpos);
+			setup_objects();
+			setup_monsters();
 #else
 			town_gen();
 #endif

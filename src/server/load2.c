@@ -2675,8 +2675,10 @@ void new_rd_dungeons(){
 
 void rd_towns(){
 	int i;
-	rd_u16b(&numtowns);
+	struct worldpos twpos;
+	twpos.wz=0;
 	C_KILL(town, numtowns, struct town_type); /* first is alloced */
+	rd_u16b(&numtowns);
 	C_MAKE(town, numtowns, struct town_type);
 	for(i=0; i<numtowns; i++){
 		rd_u16b(&town[i].x);
@@ -2684,6 +2686,8 @@ void rd_towns(){
 		rd_u16b(&town[i].baselevel);
 		rd_u16b(&town[i].flags);
 		wild_info[town[i].y][town[i].x].type=WILD_TOWN;
+		twpos.wx=town[i].x;
+		twpos.wy=town[i].y;
 	}
 }
 #endif

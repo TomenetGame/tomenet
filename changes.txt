@@ -419,3 +419,11 @@ Change list for PernMangband
 13/12/2001 (Jir)
 - NEWBIES_CANNOT_DROP specifies the minimum level for item/au dropping.
 - ANTI_ARTS_HORDE configure option added.
+
+13/12/2001 (Evileye)
+- Fixed bugs in teleport_player_level
+- Added town generation for Dungeon Master (limited)
+- Monster generation in town/near town houses suppressed.
+- Made unstatic_level function (was duplicated)
+- Fixed bug in unstatic_level (space/time anchor wasnt killed for all)
+- Fixed bug where new towns would not have objects/monsters attached

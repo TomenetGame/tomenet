@@ -5592,6 +5592,26 @@ int level_speed(int Ind)
 }
 #endif
 
+void unstatic_level(struct worldpos *wpos){
+	int i;
+
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (Players[i]->st_anchor){
+			Players[i]->st_anchor=0;
+			msg_print(GetInd[Players[i]->id],"Your space/time anchor breaks\n");
+		}
+	}
+	for (i = 1; i <= NumPlayers; i++){
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (inarea(&Players[i]->wpos, wpos)){
+			teleport_player_level(i);
+		}
+	}
+	new_players_on_depth(wpos,0,FALSE);
+}
+
 /* these Dungeon Master commands should probably be added somewhere else, but I am
  * hacking them together here to start.
  */
@@ -5599,7 +5619,7 @@ int level_speed(int Ind)
 /* static or unstatic a level */
 bool master_level(int Ind, char * parms)
 {
-	int num_on_depth, i;
+	int i;
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
 	
@@ -5611,41 +5631,11 @@ bool master_level(int Ind, char * parms)
 		case 'u':
 		{
 #ifdef NEW_DUNGEON
-		  struct worldpos twpos;
-		  wpcopy(&twpos,&p_ptr->wpos);
+			struct worldpos twpos;
+			wpcopy(&twpos,&p_ptr->wpos);
+			unstatic_level(&twpos);
 #else
-		  int depth = p_ptr->dun_depth;
-#endif
-
-		  //	    		do_cmd_go_up(Ind);
-
-			/* hack -- figure out how many players are currently on the level */
-			num_on_depth = 0;
-			for (i = 1; i <= NumPlayers; i++)
-			{
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-				if (p_ptr->st_anchor){
-					p_ptr->st_anchor=0;
-					msg_print(GetInd[p_ptr->id],"Your space/time anchor breaks\n");
-				}
-			}
-			for (i = 1; i <= NumPlayers; i++){
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-#ifdef NEW_DUNGEON
-				if (inarea(&Players[i]->wpos, &twpos)){
-#else
-				if (Players[i]->dun_depth == depth){
-#endif
-					teleport_player_level(i);
-				}
-			}
-			/* set the number of players on the level equal to the numer of 
-			 * currently connected players on the level.
-			 */
-#ifdef NEW_DUNGEON
-			new_players_on_depth(&twpos,0,FALSE);
-#else
-			players_on_depth[depth] = 0;
+			int depth = p_ptr->dun_depth;
 #endif
        			msg_print(Ind, "The level has been unstaticed.");
 			break;
@@ -5688,6 +5678,30 @@ bool master_level(int Ind, char * parms)
 			}
 			break;
 		}
+		case 'T':
+		{
+			struct worldpos twpos;
+			if(!parms[1] || p_ptr->wpos.wz) return FALSE;
+			if(istown(&p_ptr->wpos)) return FALSE;
+			wpcopy(&twpos,&p_ptr->wpos);
+
+			/* clean level first! */
+			wipe_m_list(&p_ptr->wpos);
+			wipe_o_list(&p_ptr->wpos);
+
+			/* dont do this where there are houses! */
+			for(i=0;i<num_houses;i++){
+				if(inarea(&p_ptr->wpos, &houses[i].wpos)){
+					houses[i].flags|=HF_DELETED;
+				}
+			}
+			addtown(p_ptr->wpos.wy, p_ptr->wpos.wx, parms[1], 0);
+			unstatic_level(&twpos);
+			if(getcave(&twpos))
+				dealloc_dungeon_level(&twpos);
+
+			break;
+		}
 #endif
 		/* default -- do nothing. */
 		default: break;
@@ -5702,7 +5716,7 @@ bool master_level_specific(int Ind, struct worldpos *wpos, char * parms)
 bool master_level_specific(int Ind, int depth, char * parms)
 #endif
 {
-	int num_on_depth, i;
+	int i;
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
 	
@@ -5714,40 +5728,8 @@ bool master_level_specific(int Ind, int depth, char * parms)
 		/* unstatic the level */
 		case 'u':
 		{
-//		  int depth = p_ptr->dun_depth;
-
-		  //	    		do_cmd_go_up(Ind);
-
-			/* hack -- figure out how many players are currently on the level */
-			num_on_depth = 0;
-			for (i = 1; i <= NumPlayers; i++)
-			{
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-				if (p_ptr->st_anchor){
-					p_ptr->st_anchor=0;
-					msg_print(GetInd[p_ptr->id],"Your space/time anchor breaks\n");
-				}
-			}
-			for (i = 1; i <= NumPlayers; i++){
-				if (p_ptr->conn == NOT_CONNECTED) continue;
-#ifdef NEW_DUNGEON
-				if (inarea(&Players[i]->wpos, wpos)){
-#else
-				if (Players[i]->dun_depth == depth){
-#endif
-					teleport_player_level(i);
-				}
-			}
-			/* set the number of players on the level equal to the numer of 
-			 * currently connected players on the level.
-			 */
-#ifdef NEW_DUNGEON
-			new_players_on_depth(wpos,0,FALSE);
+			unstatic_level(wpos);
        			msg_format(Ind, "The level (%d,%d) %dft has been unstaticed.", wpos->wx, wpos->wy, wpos->wz*50);
-#else
-			players_on_depth[depth] = 0;
-       			msg_format(Ind, "The level %dft has been unstaticed.", depth * 50);
-#endif
 			break;
 		}
 

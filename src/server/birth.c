@@ -1307,7 +1307,8 @@ static void player_setup(int Ind)
 #endif
 	/* Memorize town */
 #ifdef NEW_DUNGEON
-	if(!wpos->wz && wpos->wy==MAX_WILD_Y/2 && wpos->wx==MAX_WILD_X/2)
+	//if(!wpos->wz && wpos->wy==MAX_WILD_Y/2 && wpos->wx==MAX_WILD_X/2)
+	if(istown(wpos))
 #else
 	if (!Depth)
 #endif

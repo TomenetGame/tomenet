@@ -1602,8 +1602,12 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 	/* Hack -- no creation on glyph of warding */
 	if (zcave[y][x].feat == FEAT_GLYPH) return (FALSE);
 
+	if(istown(wpos) && zcave[y][x].info & CAVE_ICKY) return(FALSE);
+	if(wild_info[wpos->wy][wpos->wx].radius < 3 && zcave[y][x].info & CAVE_ICKY) return(FALSE);
+
 #if 0
-	/* sort this ;) */
+	/* should be sorted - look above */
+
 	/* Hack -- no creation in town inside house */
 	if (!Depth && (cave[Depth][y][x].info & CAVE_ICKY)) return (FALSE);
 	/* Hack -- or close to town in wilderness areas */
