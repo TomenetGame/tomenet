@@ -2562,7 +2562,7 @@ void player_talk_aux(int Ind, cptr message)
 					return FALSE;
 			}
 		}
-		if(p_ptr->msg-last > 240) p_ptr->spam--;
+		if(p_ptr->msg-last > 240 && p_ptr->spam) p_ptr->spam--;
 		p_ptr->msgcnt=0;
 	}
 	if(p_ptr->spam > 1) return FALSE;
