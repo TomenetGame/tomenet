@@ -774,7 +774,8 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		damage = damage / 2;
   	}
 
-#if 0
+/* Re allowed by evileye for power */
+#if 1
         if (p_ptr->tim_manashield && (!bypass_invuln))
 	  {
 	     if (p_ptr->csp > 0)

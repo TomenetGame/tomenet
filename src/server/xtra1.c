@@ -1213,7 +1213,8 @@ static void calc_mana(int Ind)
 	/* Disruption Shield now increases hp at the cost of mana */
 	if (p_ptr->tim_manashield)
 	{
-		new_mana -= new_mana / 2;
+	/* commented out (evileye for power) */
+	/*	new_mana -= new_mana / 2; */
 	}
 	
 	/* Warrior dont get much */
@@ -1411,7 +1412,8 @@ static void calc_hitpoints(int Ind)
 	/* Disruption Shield */
 	if (p_ptr->tim_manashield)
 	{
-		mhp += p_ptr->msp * 2 / 3;
+	/* commented out (evileye for power) */
+	/*	mhp += p_ptr->msp * 2 / 3; */
 	}
 
 #if 0
