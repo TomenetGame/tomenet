@@ -2121,6 +2121,7 @@ static void wr_player_names(void)
 			/* 3.4.2 server */
 			wr_byte(ptr->level);
 			wr_byte(ptr->party);
+			wr_byte(ptr->guild);
 			wr_u16b(ptr->quest);
 			/* Store the player name */
 			wr_string(ptr->name);
