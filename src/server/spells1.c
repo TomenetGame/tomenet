@@ -4639,18 +4639,18 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					add_hostility(Ind, killer);
 				}
 			}
-			if(!(p_ptr->pkill & PKILL_KILLER)){
-				do_player_drop_items(0 - who, 40, FALSE);
-				p_ptr->pkill|=PKILL_KILLABLE;
-				imprison(0 - who, 200, "attempted murder");
-				return FALSE;
-			}
 			
-			/* people not in the same party hit each other */			
+			/* people not in the same party hit each other */
 			if (!player_in_party(Players[0 - who]->party, Ind))
 			{			
 				/* XXX Reduce damage by 1/3 */
 				dam = (dam + 2) / 3;
+				if(!(p_ptr->pkill & PKILL_KILLER)){
+					do_player_drop_items(0 - who, 40, FALSE);
+					p_ptr->pkill|=PKILL_KILLABLE;
+					imprison(0 - who, 200, "attempted murder");
+					return FALSE;
+				}
 			}
 			else
 			{
