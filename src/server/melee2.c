@@ -3964,10 +3964,14 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 			break;
 		case GF_COLD:
 			if (r_ptr->flags3 & RF3_IM_COLD) dam = 0;
+			else if (r_ptr->flags3 & RF3_UNDEAD) dam = 0;
 			else if (r_ptr->flags9 & RF9_RES_COLD) dam /= 4;
 			break;
 		case GF_POIS:
 			if (r_ptr->flags3 & RF3_IM_POIS) dam = 0;
+			else if (r_ptr->flags3 & RF3_UNDEAD) dam = 0;
+			else if (r_ptr->flags3 & RF3_NONLIVING) dam = 0;
+			else if (r_ptr->d_char == 'A') dam = 0;
 			else if (r_ptr->flags9 & RF9_RES_POIS) dam /= 4;
 			break;
 		case GF_WATER:

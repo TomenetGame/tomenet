@@ -1088,7 +1088,7 @@ static void Delete_player(int Ind)
 		{
 			if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST))
 			{
-				title = (p_ptr->male)?"God ":"Goddess ";
+				title = (p_ptr->male)?"Emperor ":"Empress ";
 			}
 			else
 			{
@@ -1868,7 +1868,7 @@ static int Handle_login(int ind)
 		  {
 			if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST))
 		      {
-			title = (p_ptr->male)?"God ":"Goddess ";
+			title = (p_ptr->male)?"Emperor ":"Empress ";
 		      }
 		    else
 		      {

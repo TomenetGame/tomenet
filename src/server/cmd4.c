@@ -425,8 +425,11 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	fprintf(fff, "  %s the %s%s %s (%s%sLv %d, %s)",
 			q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"",
 			race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
-			(q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):
-						((q_ptr->male)?"Male, ":"Female, "),
+			(q_ptr->total_winner)?
+			    ((p_ptr->mode & (MODE_HELL | MODE_NO_GHOST))?
+				((q_ptr->male)?"Emperor":"Empress"):
+				((q_ptr->male)?"King, ":"Queen, ")):
+			    ((q_ptr->male)?"Male, ":"Female, "),
 			q_ptr->fruit_bat ? "Fruit bat, " : "",
 			q_ptr->lev, parties[q_ptr->party].name);
 #else	// 0
@@ -522,7 +525,10 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 		else fprintf(fff,"\377bDungeon Wizard\377U ");
 		break; //Server Admin
 	default: fprintf(fff, "%s",
-		(q_ptr->total_winner)?((q_ptr->male)?"\377vKing\377U ":"\377vQueen\377U "):
+		(q_ptr->total_winner)?
+		    ((q_ptr->mode & (MODE_HELL | MODE_NO_GHOST))?
+			((q_ptr->male)?"\377vEmperor\377U ":"\377vEmpress\377U "):
+		        ((q_ptr->male)?"\377vKing\377U ":"\377vQueen\377U ")):
 		((q_ptr->male)?"Male ":"Female "));
 		break;
 	}

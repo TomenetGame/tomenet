@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. Dec 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. Dec 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -2865,6 +2865,11 @@ Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 50-3-4 = 43% chance of interrupting spellcasters.
                 The radius of the antimagic field is several fields, getting
                 smaller if the chance is smaller than 50%.
+                Dark Swords never give more than 50% AM, even if tohit and
+                todam boni added together result in a negative number.
+                They also never give 'negative antimagic', 0% AM is the
+                minimum, even if tohit+todam are greater than its AM.
+                AC boni on Dark Swords won't affect the antimagic field.
 Magic Arrows    Those will return into your quiver magically, so you need only
                 one of them really. Same goes for artifact ammunition of any
                 type. (Magic Arrows can be destroyed by fire or acid though.)
@@ -5055,6 +5060,9 @@ The most powerful representant of each class:
  Dark Swords and ego weapons also have a certain chance to resist destruction.
  (Compare (1.5).)
 
+-Unique 'P' are often very dangerous, some say the most dangerous next to
+ Morgoth himself is Nodens, Lord of the Great Abyss.
+
 
 Mistakes / Carelessness:
 ------------------------
@@ -5314,14 +5322,19 @@ type. For each applied mod there is a chance of 50% to be picked from either
 type-dependant mods or general mods.
 Ammunition (shots/pebbles, arrows, bolts) will never get general mods but only
 type-dependant ones.
+Boomerangs, bows, crossbows and slings usually get more type-dependant mods
+than general mods.
 
 Type-dependant mods:
 --------------------
 Bows, crossbows, slings
-        Extra shots, Extra might
+        Extra shots
+        Extra might
+        +hit bonus
+        +dam bonus
 Weapons
         Blessed (usable for priests without penalty)
-Weapons, (diggers,) boomerangs, mage staves
+Weapons, (diggers,) boomerangs
         Acid/elec/fire/cold brands
         Increased damage dice
         All SLAY mods (also have a chance to add the corresponding ESP)
@@ -5333,6 +5346,12 @@ Weapons, (diggers,) boomerangs, mage staves
         Critical hit bonus
         Vampiric life leech
         Reduced weight
+Mage staves
+        Sustain wisdom
+        Sustain intelligence
+        See invisible
+        Random ESP
+        Extra +mana capacity bonus
 (Diggers
         Increased digging power)
 Boomerangs

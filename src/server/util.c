@@ -1153,13 +1153,19 @@ bool check_guard_inscription( s16b quark, char what ) {
 		return TRUE; /* exact match, stop */
 	    }
 	    if(*ax =='*') {
+		/* why so much hassle? * = all, that's it */
+		return TRUE;
+
 		switch( what ) { /* check for paranoid tags */
 		    case 'd': /* no drop */
 		    case 'h': /* no house ( sell a a key ) */
 		    case 'k': /* no destroy */
 		    case 's': /* no sell */
 		    case 'v': /* no thowing */
-			case '=': /* force pickup */
+		    case '=': /* force pickup */
+		    /* you forgot important ones */
+		    case 'w': /* no wear/wield */
+		    case 't': /* no take off */
 		      return TRUE;
 		};
 	    };  

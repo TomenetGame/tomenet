@@ -2674,7 +2674,18 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good)
 			switch (o_ptr->name2) {
 			case EGO_RESIST_FIRE:	case EGO_RESIST_COLD:
 			case EGO_RESIST_ELEC:	case EGO_RESIST_ACID:
-				if (i == EGO_ELVENKIND) continue;
+				if (i == EGO_ELVENKIND) {
+					o_ptr->name2 = EGO_ELVENKIND;
+					continue;
+				}
+				break;
+			case EGO_ELVENKIND:
+				switch (i) {
+				case EGO_RESIST_FIRE:	case EGO_RESIST_COLD:
+				case EGO_RESIST_ELEC:	case EGO_RESIST_ACID:
+					continue;
+				}
+				break;
 			}
 
 			/* Hack -- mark the item as an ego */

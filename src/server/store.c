@@ -346,7 +346,7 @@ static int mass_roll(int num, int max)
  * Certain "cheap" objects should be created in "piles"
  * Some objects can be sold at a "discount" (in small piles)
  */
-static void mass_produce(object_type *o_ptr)
+static void mass_produce(object_type *o_ptr, store_type *st_ptr)
 {
 	int size = 1;
 	int discount = 0;
@@ -399,12 +399,20 @@ static void mass_produce(object_type *o_ptr)
 		case TV_BOOMERANG:
 		case TV_MSTAFF:
 		case TV_AXE:
+		case TV_TRAPKIT:
+		case TV_INSTRUMENT:
+		case TV_ROD: case TV_ROD_MAIN: case TV_STAFF: case TV_WAND:
 		{
+			/* No ego-stacks */
 			if (o_ptr->name2) break;
+
 			if (cost <= 10L) size += mass_roll(3, 5);
 			if (cost <= 100L) size += mass_roll(3, 5);
 			break;
 		}
+		case TV_DRAG_ARMOR:
+			/* Only single items of these */
+			break;
 
 		case TV_SPIKE:
 		case TV_SHOT:
@@ -1367,7 +1375,8 @@ let's depend on SF1*RARE flags here.. */
 #endif
 
 		/* Mass produce and/or Apply discount */
-		mass_produce(o_ptr);
+		mass_produce(o_ptr, st_ptr);
+
 		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT2) {
 		    /* Reduce discount */
 		    if (o_ptr->discount == 10) o_ptr->discount = 0;
@@ -1384,7 +1393,19 @@ let's depend on SF1*RARE flags here.. */
 
 		if ((force_num) && (o_ptr->tval != TV_SHOT) &&
 		    (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT))
+		{
+			switch (o_ptr->tval) {
+			case TV_DRAG_ARMOR:
+				/* Only single items of these */
+				force_num = 1;
+				break;
+			}
+
+			/* No ego-stacks */
+			if (o_ptr->name2) force_num = 1;
+
 			o_ptr->number = force_num;
+		}
 
 		/* Nether Realm store items are always level 0 (or 99?) */
 		if (st_ptr->st_idx == 61) o_ptr->level = 0;

@@ -416,6 +416,7 @@ static void add_ability (artifact_type *a_ptr)
 
 	
 	r = rand_int (10);
+	if ((a_ptr->tval == TV_BOOMERANG) || (a_ptr->tval == TV_BOW)) r -= 2;
 	/* if r < 5 -> Pick something dependent on item type. */
 	if ((r < 5) || (a_ptr->tval == TV_SHOT) ||
 	(a_ptr->tval == TV_ARROW) || (a_ptr->tval == TV_BOLT))
@@ -425,18 +426,18 @@ static void add_ability (artifact_type *a_ptr)
 		{
 			case TV_BOW:
 			{
-				if (r < 15)
+				if (r < 25)
 				{
 					a_ptr->flags3 |= TR3_XTRA_SHOTS;
 					do_pval (a_ptr);
 				}
-				else if (r < 35)
+				else if (r < 50)
 				{
 					a_ptr->flags3 |= TR3_XTRA_MIGHT;
 					do_pval (a_ptr);
 				}
-				else if (r < 65) a_ptr->to_h += 2 + rand_int (2);
-				else a_ptr->to_d += 2 + rand_int (3);
+				else if (r < 75) a_ptr->to_h += 4 + rand_int (4);
+				else a_ptr->to_d += 4 + rand_int (4);
 
 				break;
 			}
@@ -446,7 +447,6 @@ static void add_ability (artifact_type *a_ptr)
 			case TV_SWORD:
 			case TV_AXE:
 			case TV_BOOMERANG:
-			case TV_MSTAFF:
 			{
 				if (r < 4)
 				{
@@ -618,7 +618,60 @@ static void add_ability (artifact_type *a_ptr)
 					}
 				}
 				else a_ptr->weight = (a_ptr->weight * 9) / 10;
-
+				break;
+			}
+			case TV_MSTAFF:
+			{
+				if (r < 5)
+				{
+					a_ptr->flags2 |= TR2_SUST_WIS;
+				}
+				else if (r < 15)
+				{
+					a_ptr->flags2 |= TR2_SUST_INT;
+				}
+				else if (r < 25) a_ptr->flags3 |= TR3_SEE_INVIS;
+				else if (r < 35)
+				{
+					a_ptr->to_d += 2 + rand_int (10);
+					a_ptr->to_h += 2 + rand_int (10);
+				}
+#if 0
+				else if (r < 36) a_ptr->flags2 |= TR2_FREE_ACT;
+				else if (r < 37) a_ptr->flags2 |= TR2_HOLD_LIFE;
+				else if (r < 38) a_ptr->flags2 |= TR2_RES_POIS;
+				else if (r < 39) a_ptr->flags2 |= TR2_RES_LITE;
+				else if (r < 40) a_ptr->flags2 |= TR2_RES_DARK;
+				else if (r < 41) a_ptr->flags2 |= TR2_RES_BLIND;
+				else if (r < 42) a_ptr->flags2 |= TR2_RES_CONF;
+				else if (r < 43) a_ptr->flags2 |= TR2_RES_SOUND;
+				else if (r < 44) a_ptr->flags2 |= TR2_RES_SHARDS;
+				else if (r < 45) a_ptr->flags2 |= TR2_RES_NETHER;
+				else if (r < 46) a_ptr->flags2 |= TR2_RES_NEXUS;
+				else if (r < 47) a_ptr->flags2 |= TR2_RES_CHAOS;
+				else if (r < 48) a_ptr->flags2 |= TR2_RES_DISEN;
+				else if (r < 49) a_ptr->flags3 |= TR3_FEATHER;
+				else if (r < 50) a_ptr->flags3 |= TR3_LITE1;
+#endif
+				else if (r < 40)
+				{
+					int rr = rand_int (29);
+					if (rr < 1) a_ptr->esp |= (ESP_ORC);
+					else if (rr < 2) a_ptr->esp |= (ESP_TROLL);
+					else if (rr < 3) a_ptr->esp |= (ESP_DRAGON);
+					else if (rr < 4) a_ptr->esp |= (ESP_GIANT);
+					else if (rr < 5) a_ptr->esp |= (ESP_DEMON);
+					else if (rr < 8) a_ptr->esp |= (ESP_UNDEAD);
+					else if (rr < 12) a_ptr->esp |= (ESP_EVIL);
+					else if (rr < 14) a_ptr->esp |= (ESP_ANIMAL);
+					else if (rr < 16) a_ptr->esp |= (ESP_DRAGONRIDER);
+					else if (rr < 19) a_ptr->esp |= (ESP_GOOD);
+					else if (rr < 21) a_ptr->esp |= (ESP_NONLIVING);
+					else if (rr < 24) a_ptr->esp |= (ESP_UNIQUE);
+					else if (rr < 26) a_ptr->esp |= (ESP_SPIDER);
+					else a_ptr->esp |= (ESP_ALL);
+				}
+				else a_ptr->pval += randint(5);
 				break;
 			}
 			case TV_SHOT:
@@ -979,6 +1032,11 @@ static void add_ability (artifact_type *a_ptr)
 	}
 	else			/* Pick something universally useful. */
 	{
+	    switch (a_ptr->tval) {
+	    case TV_BOOMERANG:
+	    case TV_BOW:
+/*		if (magik(33)) break;*/
+	    default:
 		r = rand_int(45);
 		switch (r)
 		{
@@ -1164,6 +1222,7 @@ static void add_ability (artifact_type *a_ptr)
 			case 44:
 				a_ptr->flags3 |= TR3_NO_MAGIC; break;
 		}
+	    }
 	}
 
 	/* Now remove contradictory or redundant powers. */
@@ -1456,6 +1515,9 @@ artifact_type *randart_make(object_type *o_ptr)
 	if (a_ptr->tval == TV_MSTAFF) {
 		a_ptr->flags3 &= ~TR3_NO_MAGIC;
 		if (a_ptr->pval) a_ptr->flags1 |= TR1_MANA;
+		/* reduce +hit/+dam depending on +MANA bonus */
+		a_ptr->to_h -= (a_ptr->pval + rand_int(5)) * 3;
+		a_ptr->to_d -= (a_ptr->pval + rand_int(5)) * 3;
 	}
 	/* Dark Swords never add to MANA */
 	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;	

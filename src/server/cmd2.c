@@ -115,7 +115,8 @@ void do_cmd_go_up(int Ind)
 	}
 /*	if(wpos->wz<0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){*/
 	if(wpos->wz<0 && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
-			 wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)))
+			 wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
+			 (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS))
 	{
 		msg_print(Ind,"\377rThe stairways leading upwards are magically sealed in this dungeon.");
 		if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
@@ -365,7 +366,8 @@ void do_cmd_go_down(int Ind)
 
 /*	if(wpos->wz>0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){*/
 	if(wpos->wz>0 && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
-			 wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)))
+			 wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
+			(c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE))
 	{
 		msg_print(Ind,"\377rThe stairways leading downwards are magically sealed in this tower.");
 		if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
@@ -4405,7 +4407,11 @@ void do_cmd_own(int Ind)
 	}
 	wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own = p_ptr->id;
 	
-	sprintf(buf, "%s %s now owns (%d,%d).", (p_ptr->male)?"King":"Queen", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);
+	if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST)) {
+		sprintf(buf, "%s %s now owns (%d,%d).", (p_ptr->male)?"Emperor":"Empress", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);
+	} else {
+		sprintf(buf, "%s %s now owns (%d,%d).", (p_ptr->male)?"King":"Queen", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);
+	}
 	msg_broadcast(Ind, buf);
 	msg_print(Ind, buf);
 }

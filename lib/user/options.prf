@@ -44,7 +44,7 @@ Y:view_perma_grids
 X:view_torch_grids
 Y:dungeon_align
 Y:dungeon_stair
-X:flow_by_sound
+#X:flow_by_sound
 X:flow_by_smell
 X:track_follow
 X:track_target
