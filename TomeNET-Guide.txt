@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. July 2004; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.2.2, http://www.tomenet.net/
+| Latest update: 28. July 2004; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.2.2b, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
 +---
@@ -1338,19 +1338,18 @@ want to use in your macros, by specifying the "ability code"!
 
 [(3.6a) Ability codes:]
 Here is a list of all available ability codes:
-8       Create ammunition (for archers)
-17      Cast monster spell (for mimics)
-43      Check your dodge chance
-47      Set a monster trap
-49/59   Cast a magic spell / recite a holy prayer (check your skill list
-        which number it is, might differ from these values)
+9       Create ammunition (for archers)
+3       Cast monster spell (for mimics)
+8       Check your dodge chance
+10      Set a monster trap
+11      Cast a magic spell / recite a holy prayer
 
 After the ability code has been entered you need to press Enter to confirm it.
 In a macro, this is done by '\r' (one of the so-called escape sequences).
 Example for a macro that directly specifies the ability code to cast the magic
 spell "a) Manathrust" from book "a) Beginner Cantrips" on the closest monster:
 
-\e)m@49\r2a*t
+\e)m@11\r2a*t
 
 What does that mean?
 \e  ->  escape any pending input request, if there is any
@@ -1361,14 +1360,14 @@ What does that mean?
         ready to perform our mana thrust spell _now_)
 m   ->  invoke an ability
 @   ->  specify an ability code directly
-49  ->  the code for 'cast a magic spell/recite a holy prayer'
+11  ->  the code for 'cast a magic spell/recite a holy prayer'
 \r  ->  press Enter to confirm
-1   ->  cast from book 1 (inscription on the book must be @m1)
+2   ->  cast from book 2 (inscription on the book must be @m2)
 a   ->  cast spell "a)" (Manathrust)
 *t  ->  choose the closest monster as target
 
 (That macro basically does the same as:
-mb1a*t
+mb2a*t
 ..assumed that entry 'b)' in the ability menu (invoked by 'm') is
 'b) Cast a spell'. Except for escaping and clearing the keyboard buffer.)
 

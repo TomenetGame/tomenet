@@ -469,7 +469,7 @@ static void print_skill_batch(int *p, int start, int max, bool mode)
 		if (i >= max) break;
 
 		if (p[i] > 0)
-			sprintf(buff, "  %c-%3d) %-30s", I2A(j), p[i] + 1, s_info[p[i]].action_desc);
+			sprintf(buff, "  %c-%3d) %-30s", I2A(j), s_info[p[i]].action_mkey, s_info[p[i]].action_desc);
 		else
 			sprintf(buff, "  %c-%3d) %-30s", I2A(j), 1, "Change melee style");
 
@@ -517,11 +517,11 @@ static int do_cmd_activate_skill_aux()
 		c_msg_print("You dont have any activable skills.");
 		return -1;
 	}
-	if (max == 1 && c_cfg.quick_messages)
+/*	if (max == 1 && c_cfg.quick_messages)
 	{
 		return p[0];
 	}
-
+*/
 	Term_save();
 
 	while (1)
@@ -571,7 +571,7 @@ static int do_cmd_activate_skill_aux()
 			{
 				if (s_info[i].action_desc && (!strcmp(buf, (char*)s_info[i].action_desc) && get_skill(i)))
 					break;
-				if (i == nb)
+				if (s_info[i].action_mkey == nb + 1)
 					break;
 			}
 			if ((i < MAX_SKILLS))
