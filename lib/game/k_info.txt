@@ -493,15 +493,15 @@ G:/:s
 I:22:13:0
 W:20:0:190:363
 A:20/1
-P:0:3d7:0:0:0
+P:0:3d6:0:0:0
 F:SHOW_MODS | COULD2H
 
 N:61:& Halberd~
 G:/:s
 I:22:15:0
-W:25:0:190:430
+W:25:0:220:430
 A:25/1
-P:0:3d9:0:0:0
+P:0:3d8:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:62:& Awl-Pike~
@@ -517,7 +517,7 @@ G:/:s
 I:22:8:0
 W:15:0:160:358
 A:15/1
-P:0:2d11:0:0:0
+P:0:2d9:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:64:& Spear~
@@ -581,7 +581,7 @@ G:/:s
 I:22:17:0
 W:45:0:250:800
 A:45/1
-P:0:5d3:0:0:0
+P:0:6d3:0:0:0
 F:SHOW_MODS | COULD2H
 
 N:72:& Scythe~ of Slicing
@@ -3929,7 +3929,7 @@ F:SHOW_MODS | COULD2H
 N:552:& Guisarme~
 G:/:s
 I:22:16:0
-W:21:0:170:320
+W:21:0:180:320
 A:21/1
 P:0:2d9:0:0:0
 F:SHOW_MODS | COULD2H
