@@ -2390,15 +2390,16 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 	{
 		case 4: case 5:
 		{
-			if (!m_ptr) break;
-
 			if (p_ptr->anti_tele || (p_ptr->res_tele  && (rand_int(100) < 67)))
 			{
 				msg_print(Ind, "You resist the effects!");
 				break;
 			}
 
-			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
+			if (m_ptr)
+				teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
+			else
+				teleport_player(Ind, 200);
 			break;
 		}
 
@@ -2468,8 +2469,12 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 
 			msg_print(Ind, "Your backpack starts to scramble...");
 
-			ii = 10 + m_ptr->level / 3;
-			if (ii > 50) ii = 50;
+			if(m_ptr){
+				ii = 10 + m_ptr->level / 3;
+				if (ii > 50) ii = 50;
+			}
+			else
+				ii=25;
 
 			do_player_scatter_items(Ind, 5, ii);
 
@@ -5424,7 +5429,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	bool self = FALSE;
 
 	/* Source monster */
-	monster_type *m_ptr;
+	monster_type *m_ptr=NULL;
 
 	/* Monster name (for attacks) */
 	char m_name[80];
@@ -6049,10 +6054,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			dam *= 6; dam /= (randint(6) + 6);
 		}
 		else
-		{
-//			apply_nexus(Ind, m_ptr);
-			apply_nexus(Ind, NULL);
-		}
+			apply_nexus(Ind, m_ptr);
 		take_hit(Ind, dam, killer);
 		break;
 
