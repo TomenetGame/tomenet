@@ -3808,6 +3808,10 @@ static bool find_noeffect(int m_idx, int *yp, int *xp)
 	int y, x, d = 1, dis, i;
 	int gy = 0, gx = 0, gdis = 0;
 
+	/* Hack -- please don't run to northwest always */
+	char dy = magik(50) ? 1 : -1;
+	char dx = magik(50) ? 1 : -1;
+
 	cave_type **zcave;
 	/* paranoia */
 	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
@@ -3821,8 +3825,8 @@ static bool find_noeffect(int m_idx, int *yp, int *xp)
 			if (gdis) break;
 		}
 
-		y = fy + tdy[i];
-		x = fx + tdx[i];
+		y = fy + tdy[i] * dy;
+		x = fx + tdx[i] * dx;
 
 		/* Skip illegal locations */
 		if (!in_bounds(y, x)) continue;

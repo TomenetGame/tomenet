@@ -5557,6 +5557,7 @@ bool poly_build(int Ind, char *args)
 #ifdef NEW_DUNGEON
 	if(inarea(&curr->wpos, &p_ptr->wpos) && !(zcave[curr->dy][curr->dx].info&CAVE_ICKY && zcave[curr->dy][curr->dx].feat==FEAT_DEEP_WATER)){
 		zcave[curr->dy][curr->dx].feat=FEAT_WALL_EXTRA;
+//		zcave[curr->dy][curr->dx].feat=FEAT_WALL_HOUSE;
 		if(curr->cvert<MAXCOORD && (--curr->moves)>0) return TRUE;
 		p_ptr->update|=PU_VIEW;
 	}

@@ -1435,7 +1435,7 @@ static void place_filler(worldpos *wpos, int y, int x)
 void place_floor(worldpos *wpos, int y, int x)
 {
 //	cave_set_feat(wpos, y, x, floor_type[rand_int(100)]);
-//	cave_set_feat(wpos, y, x, dun->watery ? FEAT_WATER : FEAT_FLOOR);
+	cave_set_feat(wpos, y, x, dun->watery ? FEAT_SHAL_WATER : FEAT_FLOOR);
 	cave_set_feat(wpos, y, x, FEAT_FLOOR);
 }
 
@@ -8769,18 +8769,64 @@ static void town_gen(struct worldpos *wpos)
 
 		/* Hack -- fill with trees
 		 * This should be determined by wilderness information */
-		for (x = 1; x < MAX_WID - 1; x++)
+		for (x = 2; x < MAX_WID - 2; x++)
 		{
-			for (y = 1; y < MAX_HGT - 1; y++)
+			for (y = 2; y < MAX_HGT - 2; y++)
 			{
 				/* Access the grid */
 				c_ptr = &zcave[y][x];
 
 				/* Clear previous contents, add forest */
-				c_ptr->feat = FEAT_TREES;
+				c_ptr->feat = magik(98) ? FEAT_TREES : FEAT_GRASS;
 			}
 		}
 
+		/* XXX The space is needed to prevent players from getting
+		 * stack when entering into a town from wilderness.
+		 * TODO: devise a better way */
+		/* Perma-walls -- North/South*/
+		for (x = 1; x < MAX_WID - 1; x++)
+		{
+			/* North wall */
+			c_ptr = &zcave[1][x];
+
+			/* Clear previous contents, add "clear" perma-wall */
+			c_ptr->feat = FEAT_GRASS;
+
+			/* Illuminate and memorize the walls 
+			   c_ptr->info |= (CAVE_GLOW | CAVE_MARK);*/
+
+			/* South wall */
+			c_ptr = &zcave[MAX_HGT-2][x];
+
+			/* Clear previous contents, add "clear" perma-wall */
+			c_ptr->feat = FEAT_GRASS;
+
+			/* Illuminate and memorize the walls 
+			   c_ptr->info |= (CAVE_GLOW);*/
+		}
+
+		/* Perma-walls -- West/East */
+		for (y = 1; y < MAX_HGT - 1; y++)
+		{
+			/* West wall */
+			c_ptr = &zcave[y][1];
+
+			/* Clear previous contents, add "clear" perma-wall */
+			c_ptr->feat = FEAT_GRASS;
+
+			/* Illuminate and memorize the walls
+			   c_ptr->info |= (CAVE_GLOW);*/
+
+			/* East wall */
+			c_ptr = &zcave[y][MAX_WID-2];
+
+			/* Clear previous contents, add "clear" perma-wall */
+			c_ptr->feat = FEAT_GRASS;
+
+			/* Illuminate and memorize the walls 
+			   c_ptr->info |= (CAVE_GLOW);*/
+		}
 		/* Hack -- use the "complex" RNG */
 		Rand_quick = FALSE;
 

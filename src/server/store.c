@@ -2693,9 +2693,14 @@ void do_cmd_store(int Ind)
 	}
 
 	/* Hack -- Ignore the home */
-	if (which == 7 || which > 7)	/* XXX It'll change */
+	if (which == 7)	/* XXX It'll change */
 	{
 		/* msg_print(Ind, "The doors are locked."); */
+		return;
+	}
+	else if (which > 7)	/* XXX It'll change */
+	{
+		msg_print(Ind, "A placard reads: Closed for inventory.");
 		return;
 	}
 

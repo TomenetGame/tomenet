@@ -2393,6 +2393,7 @@ static bool wraith_access_virtual(int Ind, int y, int x)
 
 
 /* borrowed from ToME	- Jir - */
+/* NOTE: in ToME fly gives free FF, but in TomeNET not. */
 bool player_can_enter(int Ind, byte feature)
 {
 	player_type *p_ptr = Players[Ind];
@@ -3049,7 +3050,8 @@ void move_player(int Ind, int dir, int do_pickup)
 #endif	// 0
 
 	/* XXX fly? */
-	else if ((c_ptr->feat == FEAT_DARK_PIT) && !p_ptr->feather_fall)
+	else if ((c_ptr->feat == FEAT_DARK_PIT) && !p_ptr->feather_fall &&
+			!p_ptr->fly && !p_ptr->admin_dm)
 	{
 		msg_print(Ind, "You can't cross the chasm.");
 
@@ -3488,7 +3490,7 @@ static void run_init(int Ind, int dir)
 	if (see_wall(Ind, cycle[i+1], p_ptr->py, p_ptr->px))
 	{
 		/* if in the dungeon */
-		if (p_ptr->wpos.wz)
+//		if (p_ptr->wpos.wz)
 		{
 			p_ptr->find_breakleft = TRUE;
 			shortleft = TRUE;
@@ -3497,7 +3499,7 @@ static void run_init(int Ind, int dir)
 	else if (see_wall(Ind, cycle[i+1], row, col))
 	{
 		/* if in the dungeon */
-		if (p_ptr->wpos.wz)
+//		if (p_ptr->wpos.wz)
 		{
 			p_ptr->find_breakleft = TRUE;
 			deepleft = TRUE;
@@ -3508,7 +3510,7 @@ static void run_init(int Ind, int dir)
 	if (see_wall(Ind, cycle[i-1], p_ptr->py, p_ptr->px))
 	{
 		/* if in the dungeon */
-		if (p_ptr->wpos.wz)
+//		if (p_ptr->wpos.wz)
 		{
 			p_ptr->find_breakright = TRUE;
 			shortright = TRUE;
@@ -3517,7 +3519,7 @@ static void run_init(int Ind, int dir)
 	else if (see_wall(Ind, cycle[i-1], row, col))
 	{
 		/* if in the dungeon */
-		if (p_ptr->wpos.wz)
+//		if (p_ptr->wpos.wz)
 		{
 			p_ptr->find_breakright = TRUE;
 			deepright = TRUE;
@@ -3528,7 +3530,7 @@ static void run_init(int Ind, int dir)
 	{
 		/* Not looking for open area */
 		/* In the town/wilderness, always in an open area */
-		if (p_ptr->wpos.wz)
+//		if (p_ptr->wpos.wz)
 			p_ptr->find_openarea = FALSE;   
 
 		/* Hack -- allow angled corridor entry */
@@ -3826,14 +3828,14 @@ static bool run_test(int Ind)
 				if (i < 0)
 				{
 					/* Break to the right */
-					if (p_ptr->wpos.wz)
+//					if (p_ptr->wpos.wz)
 						p_ptr->find_breakright = (TRUE);
 				}
 
 				else if (i > 0)
 				{
 					/* Break to the left */
-					if (p_ptr->wpos.wz)
+//					if (p_ptr->wpos.wz)
 						p_ptr->find_breakleft = (TRUE);
 				}
 			}

@@ -855,8 +855,11 @@ bool set_tim_wraith(int Ind, int v)
 				p_ptr->wraith_in_wall = TRUE;
 			}
 		}
+#if 0	// I can't remember what was it for..
+		// but for sure it's wrong
 		else if(!p_ptr->wpos.wz && cave_floor_bold(zcave, p_ptr->py, p_ptr->px))
 			return(FALSE);
+#endif	// 0
 	}
 
 	/* Shut */

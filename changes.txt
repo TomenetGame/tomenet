@@ -26,13 +26,17 @@
 # - Jir -
 
 
+16/08/2002 (Jir)
+[m]- monsters run in random direction when in bad effect(poison cloud).
+[B]- wraith couldn't access polygon house(FEAT_PERM_EXTRA => FEAT_WALL_HOUSE)
+[G]- removed wilderness exceptions in run_init and run_test
+[P]- Sneakiness yields small bonus to speed (max +5)
+
 15/08/2002 (Jir)
 # more on new terrain code / new ToME town code :)
 [D]- predefined town code is backported. (process_dungeon_file)
 [D]- FEAT_WALL_HOUSE introduced.
-[D]- (slightly) better shop illumination
 [P]- ghost/wraith can only pass through house walls of their own.
-     (not working well for polygonal houses - use door :p)
 [m]- admin-DM can no longer use always_pickup ('g' is still usable)
 [B]- Player could stack on another player when logging on. (player_setup)
 [B]- Scroll of House Creation caused crash (by trying to add DNADOOR twice,
@@ -1843,6 +1847,20 @@ below this line are the unfixed bugs known:
      (gdb) print x
      $3 = 174
 
+[B]- scroll of house creation causes crash after shutdown/reboot
+     Program received signal SIGSEGV, Segmentation fault.
+     0x80d8201 in load_guildhalls (wpos=0x886c356) at server/load2.c:2568
+     2568                    if((houses[i].dna->owner_type==OT_GUILD) && (inarea(wpos, &houses[i].wpos))){
+     (gdb) bt
+     #0  0x80d8201 in load_guildhalls (wpos=0x886c356) at server/load2.c:2568
+     #1  0x80efd31 in wild_add_uhouses (wpos=0x886c356) at server/wild.c:2570
+     #2  0x80d6eb5 in rd_server_savefile () at server/load2.c:2382
+     #3  0x809fb08 in load_server_info () at server/save.c:2626
+     #4  0x80f5e82 in play_game (new_game=0 '\000') at server/dungeon.c:4212
+     #5  0x810a4d3 in main (argc=3, argv=0xbfbff6b0) at server/main.c:276
+     #6  0x8049df9 in _start ()
+
+
 
 **below are bugs repoorted but not confirmed**
 [B]- House doors are still said to crash sometimes. (door even vanishes??)
@@ -1952,8 +1970,6 @@ memo and questions:
 - flavor variator (eg. 'light' + 'red' => 'light red potion')
 - reimplement /cast.  ('/cast Manathrust' would be useful for macro)
 - implement monster mimics in a nicer way
-- better vaults
-  - between gates, patterns
 [C] chat-line cursor editing
 
 [major ones]
@@ -1965,7 +1981,6 @@ memo and questions:
   - terrain effects (like in some 'strategy' games
 - variety of dungeon/floor types (d_info.txt)
   - several flags
-  - size (done)
 - fully-implemented multiple towns (t_*.txt)
 - more kinds of stores / flexible store configuration (st_info.txt)
   - a set of commands should be sent to client when entering a store, so that
@@ -2137,6 +2152,7 @@ memo and questions:
   + score list should show middle-earth time (and not raw turn).
   + spiked/locked door should be *tougher* (cf. Vanilla)
   + IRC server connection
+  + pattern vaults
   
 [major ones]
 - monsters' interactions

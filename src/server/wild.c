@@ -284,9 +284,6 @@ void wild_apply_night(struct worldpos *wpos)
 				c_ptr->info |= CAVE_GLOW;
 			}
 		}
-
-		/* Hack -- it's nice with current design */
-//		zcave[y + 2][x].info |= CAVE_GLOW;
 	}
 }
 
@@ -643,6 +640,7 @@ void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *x2, int
 					case FEAT_CROP:
 					case FEAT_WALL_EXTRA:
 					case FEAT_PERM_EXTRA:
+					case FEAT_WALL_HOUSE:
 					case FEAT_LOGS:
 						plot_clear = 0;
 						break;
@@ -1185,7 +1183,8 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 						
 			break;
 		case WILD_PERM_HOME:
-			wall_feature = FEAT_PERM_EXTRA;
+//			wall_feature = FEAT_PERM_EXTRA;
+			wall_feature = FEAT_WALL_HOUSE;
 			
 			/* doors are locked 90% of the time */
 			if (rand_int(100) < 90) door_feature = FEAT_DOOR_HEAD + rand_int(7);
@@ -2493,7 +2492,8 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 					if(func==FILL_MAKEHOUSE)
 						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_DIRT;
 					else if(func==FILL_BUILD)
-						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
+//						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
+						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_WALL_HOUSE;
 					break;
 			}
 		}

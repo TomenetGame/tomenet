@@ -2815,6 +2815,7 @@ static void calc_bonuses(int Ind)
 	}
 
 	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
+	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 5);
 #endif	// 0
 
 #if 0 // DGDGDGDGDG - no monks ffor the time being

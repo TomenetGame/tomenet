@@ -800,6 +800,7 @@ static void process_world(int Ind)
 						if ((istown(wpos)) && (p_ptr->view_perma_grids)) *w_ptr |= CAVE_MARK;
 
 						/* Hack -- Notice spot */
+						/* XXX it's slow (sunrise/sunset lag) */
 						note_spot(Ind, y, x);						
 					}			
 				}
@@ -808,12 +809,15 @@ static void process_world(int Ind)
 			/* Night falls */
 			else
 			{
+				int stores = 0, y1, x1;
+				byte sx[255], sy[255];
+
 				/* Message  */
 				msg_print(Ind, "The sun has fallen.");
 
 				 /* Hack -- Scan the level */
 				for (y = 0; y < MAX_HGT; y++)
-				{					
+				{
 					for (x = 0; x < MAX_WID; x++)
 					{
 						/*  Get the cave grid */
@@ -828,12 +832,39 @@ static void process_world(int Ind)
 							c_ptr->info &= ~CAVE_GLOW;
 							*w_ptr &= ~CAVE_MARK;
 
-							  /* Hack -- Notice spot */
+							/* Hack -- Notice spot */
 							note_spot(Ind, y, x);
 						}						
+
+						if (c_ptr->feat == FEAT_SHOP)
+						{
+							sx[stores] = x;
+							sy[stores] = y;
+							stores++;
+						}
 					}
 					
 				}  				
+
+				/* Hack -- illuminate the stores */
+				for (i = 0; i < stores; i++)
+				{
+					x = sx[i];
+					y = sy[i];
+
+					for (y1 = y - 1; y1 <= y + 1; y1++)
+					{
+						for (x1 = x - 1; x1 <= x + 1; x1++)
+						{
+							/* Get the grid */
+							c_ptr = &zcave[y1][x1];
+
+							/* Illuminate the store */
+							//				c_ptr->info |= CAVE_ROOM | CAVE_GLOW;
+							c_ptr->info |= CAVE_GLOW;
+						}
+					}
+				}
 			}
 
 			/* Update the monsters */
