@@ -20,7 +20,7 @@ void add_rplayer(struct wpacket *wpk);
 
 void world_update_players(){
 	int i;
-	for(i=0; i<NumPlayers; i++){
+	for(i=1; i<=NumPlayers; i++){
 		if(Players[i]->conn!=NOT_CONNECTED){
 			world_player(Players[i]->id, Players[i]->name, 1, 0);
 		}
