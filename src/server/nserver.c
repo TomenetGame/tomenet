@@ -8045,10 +8045,10 @@ static int Receive_master(int ind)
  * doing a basic version for now.
  */
 
-static int Receive_autophase(int Ind)
+static int Receive_autophase(int ind)
 {
 	player_type *p_ptr;
-	connection_t *connp = &Conn[Ind];
+	connection_t *connp = &Conn[ind];
 	object_type *o_ptr;
 	int player, n;
 
@@ -8058,7 +8058,7 @@ static int Receive_autophase(int Ind)
 	/* a valid player was found, try to do the autophase */	
 	if (player)
 	{
-		p_ptr = Players[Ind];
+		p_ptr = Players[player];
 		/* first, check the inventory for phase scrolls */
 		/* check every item of his inventory */
 		for (n = 0; n < INVEN_PACK; n++)
