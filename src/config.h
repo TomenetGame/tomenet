@@ -18,7 +18,6 @@
  * included in all such copies.
  */
 
-
 /*
  * Look through the following lines, and where a comment includes the
  * tag "OPTION:", examine the associated "#define" statements, and decide
@@ -224,6 +223,11 @@
  * Server gateway: Provide raw data for applications
  */
 #define SERVER_GWPORT
+
+/*
+ * Worlds server connection
+ */
+/* #define TOMENET_WORLDS */
 
 #if 0	/* Sorry Jir, but this IS used sometimes. */
 #define BIND_NAME "TomeNET.net"

@@ -15,6 +15,11 @@
 
 /* #include "netserver.h" */
 
+#ifdef TOMENET_WORLDS
+extern int world_comm(int fd, int arg);
+extern int WorldSocket;
+#endif
+
 /* common/common.c */
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern int color_char_to_attr(char c);

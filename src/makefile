@@ -60,7 +60,7 @@ SERV_SRCS = \
   server/sched.c server/generate.c server/wild.c server/dungeon.c \
   server/init1.c server/init2.c server/nserver.c server/printout.c \
   server/main.c server/traps.c server/csfunc.c server/skills.c server/bldg.c \
-  common/files.c common/w_z_pack.c
+  common/files.c common/w_z_pack.c server/world.c
 
 SERV_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -75,7 +75,7 @@ SERV_OBJS = \
   server/sched.o server/generate.o server/wild.o server/dungeon.o \
   server/init1.o server/init2.o server/nserver.o server/printout.o \
   server/main.o server/traps.o server/csfunc.o server/skills.o server/bldg.o \
-  common/files.o common/w_z_pack.o
+  common/files.o common/w_z_pack.o server/world.o
 
 
 CLI_SRCS = \
@@ -208,7 +208,7 @@ X11BASE = /usr/X11R6
 ## Variation -- FreeBSD 4.3R
 ##
 #PREFIX = /usr/local
-CFLAGS = -g -pipe -Wall -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O3
+CFLAGS = -g -pipe -Wall -Wuninitialized -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O3
 LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt
 
 

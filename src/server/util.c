@@ -3400,6 +3400,11 @@ static void player_talk_aux(int Ind, char *message)
 	/* Send to everyone */
 	for (i = 1; i <= NumPlayers; i++)
 	{
+#ifdef TOMENET_WORLDS
+		char tmessage[160];		/* TEMPORARY! We will not send the name soon */
+		sprintf(tmessage, "\377%c[%s] \377B%s", c, sender, message + mycolor);
+		world_chat(tmessage);
+#endif
 		q_ptr = Players[i];
 
 		if (!admin)

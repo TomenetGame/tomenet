@@ -114,6 +114,9 @@ int		ConsoleSocket = -1;
 #ifdef SERVER_GWPORT
 int		SGWSocket = -1;
 #endif
+#ifdef TOMENET_WORLDS
+int		WorldSocket = -1;
+#endif
 
 
 char *showtime(void)
@@ -357,7 +360,6 @@ bool Report_to_meta(int flag)
 			GetLocalHostName(local_name, 1024);
 #endif
 #else
-                        printf(">>%s\n",cfg.bind_name);
                         if (cfg.bind_name)
                                 strncpy(local_name, cfg.bind_name, 1024);
                         else
@@ -565,6 +567,15 @@ void setup_contact_socket(void)
 
 	/* Install the new gateway socket */
 	install_input(SGWHit, SGWSocket, 0);
+#endif
+#ifdef TOMENET_WORLDS
+	/* evileye testing only */
+	/* really, server should DIE if this happens */
+	if((WorldSocket=CreateClientSocket("theforest.demon.co.uk", 18360))==-1){
+		s_printf("Unable to connect to world server\n");
+		return;
+	}
+	install_input(world_comm, WorldSocket, 0);
 #endif
 }
 
