@@ -1169,6 +1169,7 @@ static char *object_desc_int(char *t, sint v)
  */
 void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 {
+        player_type     *p_ptr = Players[Ind];
 	cptr		basenm, modstr;
 	int			power, indexx;
 
@@ -1614,6 +1615,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_str(t, (e_name + e_ptr->name));
 		}
 	}
+
+        /* Print level and owning */
+        t = object_desc_chr(t, ' ');
+        t = object_desc_chr(t, '{');
+        t = object_desc_num(t, o_ptr->level);
+        t = object_desc_chr(t, '}');
 
 
 	/* No more details wanted */
@@ -3170,3 +3177,13 @@ void display_equip(int Ind)
 	}
 }
 
+bool can_use(int Ind, object_type *o_ptr)
+{
+	player_type *p_ptr = Players[Ind];
+
+        /* Owner always can use */
+        if (p_ptr->id == o_ptr->owner) return (TRUE);
+
+        if (p_ptr->lev >= o_ptr->level) return (TRUE);
+        else return (FALSE);
+}

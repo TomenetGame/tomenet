@@ -480,6 +480,9 @@ typedef struct object_type object_type;
 
 struct object_type
 {
+        s32b owner;                     /* Player that found it */
+        s16b level;                     /* Level req */
+
 	s16b k_idx;			/* Kind index (zero if "dead") */
 
 	byte iy;			/* Y-position on map, or zero */

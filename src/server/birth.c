@@ -983,6 +983,8 @@ static void player_outfit(int Ind)
 	o_ptr->number = rand_range(3, 7);
 	object_aware(Ind, o_ptr);
 	object_known(o_ptr);
+        o_ptr->owner = p_ptr->id;
+        o_ptr->level = 1;
 	(void)inven_carry(Ind, o_ptr);
 
 	/* Hack -- Give the player some torches */
@@ -990,6 +992,8 @@ static void player_outfit(int Ind)
 	o_ptr->number = rand_range(3, 7);
 	o_ptr->pval = rand_range(3, 7) * 500;
 	object_known(o_ptr);
+        o_ptr->owner = p_ptr->id;
+        o_ptr->level = 1;
 	(void)inven_carry(Ind, o_ptr);
 
 	/*
@@ -1020,7 +1024,9 @@ static void player_outfit(int Ind)
                         o_ptr->number = 4;
                         apply_magic(100, o_ptr, 100, TRUE, TRUE, TRUE);
                         object_aware(Ind, o_ptr);
-                        object_known(o_ptr);        
+                        object_known(o_ptr);
+                        o_ptr->owner = p_ptr->id;
+                        o_ptr->level = 1;
                         (void)inven_carry(Ind, o_ptr);
                 }
 
@@ -1028,11 +1034,15 @@ static void player_outfit(int Ind)
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
 		object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
 		object_known(o_ptr);
 		(void)inven_carry(Ind, o_ptr);
 
@@ -1040,30 +1050,40 @@ static void player_outfit(int Ind)
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
 		object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
 		object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
 		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_AUGMENTATION));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
 		object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
 		invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_LIFE));
 		o_ptr->number = 99;
 		o_ptr->discount = 0;
 		object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
                 invcopy(o_ptr, lookup_kind(TV_RING, SV_RING_SEE_INVIS));
 		o_ptr->number = 99;
 		o_ptr->discount = 0;
 		object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 	}
 #endif
@@ -1076,6 +1096,8 @@ static void player_outfit(int Ind)
 		invcopy(o_ptr, lookup_kind(tv, sv));
 		object_aware(Ind, o_ptr);
 		object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 	}
 	

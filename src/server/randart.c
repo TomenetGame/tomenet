@@ -263,7 +263,8 @@ s32b artifact_power (artifact_type *a_ptr)
 	}
 	if (a_ptr->flags1 & TR1_CHR) p += a_ptr->pval;
 	if (a_ptr->flags1 & TR1_INFRA) p += (a_ptr->pval + sign (a_ptr->pval)) / 2;
-	if (a_ptr->flags1 & TR1_SPEED) p += (a_ptr->pval * 3) / 2;
+        if (a_ptr->flags1 & TR1_SPEED) p += a_ptr->pval * 2;
+        if (a_ptr->flags1 & TR1_MANA) p += a_ptr->pval * 2;
 
 	if (a_ptr->flags2 & TR2_SUST_STR) p += 6;
 	if (a_ptr->flags2 & TR2_SUST_INT) p += 4;
@@ -316,6 +317,7 @@ s32b artifact_power (artifact_type *a_ptr)
 	if (a_ptr->flags3 & TR3_LITE) p += 2;
 	if (a_ptr->flags3 & TR3_SEE_INVIS) p += 8;
 	if (a_ptr->flags3 & TR3_TELEPATHY) p += 20;
+        if (a_ptr->flags3 & TR3_KNOWLEDGE) p += 20;
 	if (a_ptr->flags3 & TR3_SLOW_DIGEST) p += 4;
 	if (a_ptr->flags3 & TR3_REGEN) p += 8;
 	if (a_ptr->flags3 & TR3_TELEPORT) p -= 20;
@@ -960,6 +962,7 @@ artifact_type *randart_make(object_type *o_ptr)
 	}
 	
 	a_ptr->cost = ap * (s32b)1000;
+        a_ptr->level = ap;
 
 	if (a_ptr->cost < 0) a_ptr->cost = 0;
 

@@ -486,6 +486,9 @@ static void rd_item(object_type *o_ptr)
 	/* Hack -- wipe */
 	WIPE(o_ptr, object_type);
 
+        rd_s32b(&o_ptr->owner);
+        rd_s16b(&o_ptr->level);
+
 	/* Kind */
 	rd_s16b(&o_ptr->k_idx);
 

@@ -115,3 +115,5 @@ Change list for PernMangband
 - Tidal Wave mana/level increased
 - Healing in hellish mode is now only 3/4 instead of 1/2
 - Player Golems! One can find pieces of golem and make a powerfull ally
+- Level requirement for objects, exepct for the char that found it
+- Level requirments on objects

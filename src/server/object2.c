@@ -1020,6 +1020,10 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 	/* Require identical object types */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
 
+        /* Require same owner */
+//
+msg_format(Ind, "%ld:%ld", o_ptr->owner, j_ptr->owner);
+        if (o_ptr->owner != j_ptr->owner) return (0);
 
 	/* Analyze the items */
 	switch (o_ptr->tval)
@@ -3210,6 +3214,9 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 		}
 	}
 
+        /* Unowned yet */
+        o_ptr->owner = 0;
+        o_ptr->level = (lev > 100)?100:lev;
 
 	/* Hack -- analyze ego-items */
 	if (o_ptr->name2)
@@ -4347,6 +4354,12 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		invwipe(&p_ptr->inventory[i]);
 	}
 
+        if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
+        if (!o_ptr->level)
+        {
+                o_ptr->level = p_ptr->dun_depth;
+                if (o_ptr->level > 100) o_ptr->level = 100;
+        }
 
 	/* Structure copy to insert the new item */
 	p_ptr->inventory[i] = (*o_ptr);

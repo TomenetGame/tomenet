@@ -93,6 +93,12 @@ void do_cmd_eat_food(int Ind, int item)
                 return;
         };
 
+        if (!can_use(Ind, o_ptr))
+        {
+                msg_print(Ind, "You are not high level enough.");
+		return;
+        }
+
 
 	if (o_ptr->tval != TV_FOOD)
 	{
@@ -389,6 +395,11 @@ void do_cmd_quaff_potion(int Ind, int item)
                 return;
         };
 
+        if (!can_use(Ind, o_ptr))
+        {
+                msg_print(Ind, "You are not high level enough.");
+		return;
+        }
 
 
 	if (o_ptr->tval != TV_POTION)
@@ -1112,6 +1123,12 @@ void do_cmd_read_scroll(int Ind, int item)
 		return;
 	}
 
+        if (!can_use(Ind, o_ptr))
+        {
+                msg_print(Ind, "You are not high level enough.");
+		return;
+        }
+
 	/* Take a turn */
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
 
@@ -1614,6 +1631,12 @@ void do_cmd_use_staff(int Ind, int item)
 		return;
 	}
 
+        if (!can_use(Ind, o_ptr))
+        {
+                msg_print(Ind, "You are not high level enough.");
+		return;
+        }
+
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1))
 	{
@@ -2045,6 +2068,12 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
 		return;
 	}
+
+        if (!can_use(Ind, o_ptr))
+        {
+                msg_print(Ind, "You are not high level enough.");
+		return;
+        }
 
 	/* Mega-Hack -- refuse to aim a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1))
@@ -2483,6 +2512,12 @@ void do_cmd_zap_rod(int Ind, int item)
 		return;
 	}
 
+        if (!can_use(Ind, o_ptr))
+        {
+                msg_print(Ind, "You are not high level enough.");
+		return;
+        }
+
 	/* Get a direction (unless KNOWN not to need it) */
 	if ((o_ptr->sval >= SV_ROD_MIN_DIRECTION) || !object_aware_p(Ind, o_ptr))
 	{
@@ -2761,6 +2796,12 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		msg_print(Ind, "You must first pick up the rods.");
 		return;
 	}
+
+        if (!can_use(Ind, o_ptr))
+        {
+                msg_print(Ind, "You are not high level enough.");
+		return;
+        }
 
 	/* Hack -- verify potential overflow */
 	/*if ((inven_cnt >= INVEN_PACK) &&
@@ -3292,6 +3333,12 @@ void do_cmd_activate(int Ind, int item)
                 msg_print(Ind, "The item's inscription prevents it");
                 return;
         }; 
+
+        if (!can_use(Ind, o_ptr))
+        {
+                msg_print(Ind, "You are not high level enough.");
+		return;
+        }
 
 	/* Test the item */
 	if (!item_tester_hook_activate(Ind, o_ptr))
@@ -4066,6 +4113,12 @@ void do_cmd_activate_dir(int Ind, int dir)
                 msg_print(Ind, "The item's inscription prevents it");
                 return;
         }; 
+
+        if (!can_use(Ind, o_ptr))
+        {
+                msg_print(Ind, "You are not high level enough.");
+		return;
+        }
 
 	/* Artifacts activate by name */
 	if (o_ptr->name1)

@@ -680,6 +680,9 @@ static void wr_string(cptr str)
  */
 static void wr_item(object_type *o_ptr)
 {
+        wr_s32b(o_ptr->owner);
+        wr_s16b(o_ptr->level);
+
 	wr_s16b(o_ptr->k_idx);
 
 	wr_byte(o_ptr->iy);

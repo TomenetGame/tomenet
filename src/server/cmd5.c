@@ -566,7 +566,6 @@ void do_cmd_study(int Ind, int book, int spell)
 		return;
 	}
 
-
 	/* Restrict choices to "useful" books */
 	item_tester_tval = p_ptr->mp_ptr->spell_book;
 
@@ -587,6 +586,12 @@ void do_cmd_study(int Ind, int book, int spell)
 		msg_print(Ind, "SERVER ERROR: Trying to gain a spell from a bad book!");
 		return;
 	}
+
+        if (!can_use(Ind, o_ptr))
+        {
+                msg_print(Ind, "You are not high level enough.");
+		return;
+        }
 
 	/* Access the item's sval */
 	sval = o_ptr->sval;

@@ -418,6 +418,12 @@ void do_cmd_wield(int Ind, int item)
 		return;
 	}
 
+        if (!can_use(Ind, o_ptr))
+        {
+                msg_print(Ind, "You are not high level enough.");
+		return;
+        }
+
 	/* Check the slot */
 	slot = wield_slot(Ind, o_ptr);
 

@@ -687,6 +687,14 @@ void carry(int Ind, int pickup, int confirm)
 				/* Get the item again */
 				o_ptr = &(p_ptr->inventory[slot]);
 
+                                /* Own it */
+                                if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
+                                if (!o_ptr->level)
+                                {
+                                        o_ptr->level = p_ptr->dun_depth;
+                                        if (o_ptr->level > 100) o_ptr->level = 100;
+                                }
+
 				/* Describe the object */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
 

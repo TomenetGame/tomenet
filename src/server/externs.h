@@ -727,6 +727,7 @@ extern void Handle_direction(int Ind, int dir);
 
 /* object1.c */
 /* object2.c */
+extern bool can_use(int Ind, object_type *o_ptr);
 extern void flavor_init(void);
 extern void reset_visuals(void);
 extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
