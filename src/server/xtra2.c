@@ -5414,18 +5414,17 @@ bool get_item(int Ind)
  * for each dungeon, but this should be replaced by actual depthes
  * a player has been.	- Jir -
  */
-void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
+void set_recall_depth(player_type *p_ptr, object_type *o_ptr)
 {
 //	int recall_depth = 0;
 //	worldpos goal;
 	
-	unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
+	unsigned char *inscription = (unsigned char*) quark_str(o_ptr->note);
 	
 	/* default to the players maximum depth */
 	p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 	p_ptr->recall_pos.wy = p_ptr->wpos.wy;
-	p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
-			WILD_F_DOWN) ? 0 - p_ptr->max_dlv : p_ptr->max_dlv;
+	p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags 		& WILD_F_DOWN) ? 0 - p_ptr->max_dlv : p_ptr->max_dlv;
 #if 0
 	p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
 			WILD_F_DOWN) ? 0 - p_ptr->max_dlv :
@@ -5443,7 +5442,6 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 	/* scan the inscription for @R */
 	while (*inscription != '\0')
 	{
-		
 		if (*inscription == '@')
 		{
 			inscription++;
@@ -5472,14 +5470,12 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 					p_ptr->recall_pos.wy = atoi((char*)inscription) % MAX_WILD_Y;
 					p_ptr->recall_pos.wz = 0;
 				}
-#if 1
 				/* @RT for inter-Town travels (not fully implemented yet) */
 				else if (*inscription == 'T')
 				{
 					inscription++;
 					p_ptr->recall_pos.wz = 0;
 				}
-#endif
 				else
 				{
 					if (*inscription == 'Z') inscription++;

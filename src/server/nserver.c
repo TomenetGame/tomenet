@@ -2540,7 +2540,6 @@ int Send_sanity(int ind, int msane, int csane)
 	connection_t *connp = &Conn[Players[ind]->conn];
 
 	player_type *p_ptr = Players[ind];
-	printf("sanity send!\n");
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{

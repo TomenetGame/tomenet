@@ -202,7 +202,7 @@ static void prt_ac(int Ind)
 
 static void prt_sanity(int Ind){
 	player_type *p_ptr=Players[Ind];
-	Send_hp(Ind, p_ptr->msane, p_ptr->csane);
+	Send_sanity(Ind, p_ptr->msane, p_ptr->csane);
 }
 
 /*
@@ -3192,6 +3192,7 @@ void redraw_stuff(int Ind)
 	}
 
 	if(p_ptr->redraw & PR_SANITY){
+		p_ptr->redraw &= ~(PR_SANITY);
 		prt_sanity(Ind);
 	}
 

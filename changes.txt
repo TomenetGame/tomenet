@@ -818,6 +818,9 @@ Change list for PernMangband
 08/03/2002 (evileye)
 - Guild system load/save implemented. Converts old savefiles safely.
 
+09/03/2002 (evileye)
+- Sanity send / hp bug fixed.
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)
