@@ -6747,11 +6747,8 @@ bool master_build(int Ind, char * parms)
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
-	printf("admin build 1\n");
-
 	if (!p_ptr->admin_dm && !p_ptr->admin_wiz && (!player_is_king(Ind)) && (!guild_build(Ind))) return FALSE;
 	
-	printf("admin build 2\n");
 	/* extract arguments, otherwise build a wall of type new_feat */
 	if (parms)
 	{
@@ -6772,25 +6769,6 @@ bool master_build(int Ind, char * parms)
 	if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){
 		return(FALSE);
 	}
-
-	/* build a wall of type new_feat at the player's location */
-#if 0
-	if(c_ptr->special.type){
-		switch(c_ptr->special.type){
-			case CS_INSCRIP:
-				KILL(c_ptr->special.sc.ptr, struct floor_insc);
-				c_ptr->special.type=CS_NONE;
-				break;
-			case CS_KEYDOOR:
-				KILL(c_ptr->special.sc.ptr, struct key_type);
-				c_ptr->special.type=CS_NONE;
-				break;
-			case CS_DNADOOR:	/* even DM must not kill houses like this */
-			default:
-				return FALSE;
-		}
-	}
-#endif
 
 	/* This part to be rewritten for stacked CS */
 	c_ptr->feat = new_feat;

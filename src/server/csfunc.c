@@ -94,12 +94,21 @@ void dnasave(c_special *cs_ptr){
 }
 int dnahit(void *ptr, int y, int x, int Ind){
 	/* we have to know from where we are called! */
-	if(access_door(Ind, (struct dna_type *)ptr)){
-		printf("Access to door!\n");
-		return(1);
+	struct dna *dna=ptr;
+#ifdef USE_MANG_HOUSE
+	if (((cfg.door_bump_open & BUMP_OPEN_HOUSE) || passing)
+				&& c_ptr->feat == FEAT_HOME)
+#endif	//USE_MANG_HOUSE
+	{
+		if(access_door(Ind, dna))
+		{
+#ifdef USE_MANG_HOUSE
+			msg_print(Ind, "\377GYou walk through the door.");
+#endif	//USE_MANG_HOUSE
+			return(TRUE);
+		}
 	}
-	printf("no access!\n");
-	return(0);
+	return(FALSE);
 }
 
 /*void keyload(void *ptr, cave_type *c_ptr){ */
@@ -121,10 +130,11 @@ int keyhit(void *ptr, int y, int x, int Ind){
 	struct key_type *key=ptr;
 
 	p_ptr=Players[Ind];
-	if (!(cfg.door_bump_open && p_ptr->easy_open)) return(FALSE);
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 	c_ptr=&zcave[y][x];
 
+	if(c_ptr->feat==FEAT_HOME_OPEN) return(TRUE);
+	if (!(cfg.door_bump_open && p_ptr->easy_open)) return(FALSE);
 	if(p_ptr==(struct player_type*)NULL) return(FALSE);
 	for(j=0; j<INVEN_PACK; j++){
 		object_type *o_ptr=&p_ptr->inventory[j];
@@ -138,7 +148,7 @@ int keyhit(void *ptr, int y, int x, int Ind){
 			return(TRUE);
 		}
 	}
-	return(0);
+	return(FALSE);
 }
 
 /*
@@ -169,9 +179,40 @@ void tsave(c_special *cs_ptr)
 void tsee(void *ptr, int Ind){
 	printf("tsee %d\n", Ind);
 }
+
+/* evileye - i'll have to change ptr to
+   the full struct pointer now. this can
+   be done later. */
 int thit(void *ptr, int y, int x, int Ind){
-	printf("thit: %d\n", Ind);
-	return(0);
+#if 0	/* temporary while csfunc->activate() is changed */
+	if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost)
+	{
+		bool hit = TRUE;
+
+		/* Disturb */
+		disturb(Ind, 0, 0);
+
+		if (!cs_ptr->sc.trap.found)
+		{
+			/* Message */
+//			msg_print(Ind, "You found a trap!");
+			msg_print(Ind, "You triggered a trap!");
+
+			/* Pick a trap */
+			pick_trap(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+		}
+		else if (magik(get_skill_scale(p_ptr, SKILL_DISARM, 90)
+					- UNAWARENESS(p_ptr)))
+		{
+			msg_print(Ind, "You carefully avoid touching the trap.");
+			hit = FALSE;
+		}
+
+		/* Hit the trap */
+		if (hit) hit_trap(Ind);
+	}
+	return(TRUE);
+#endif
 }
 
 void insc_load(c_special *cs_ptr){
@@ -189,8 +230,9 @@ void insc_save(c_special *cs_ptr){
 }
 
 int insc_hit(void *ptr, int y, int x, int Ind){
-	printf("hit inscr\n");
-	return(0);
+	struct floor_insc *sptr=ptr;
+	msg_format(Ind, "A sign here reads: %s", sptr->text);
+	return(TRUE);
 }
 
 /*
@@ -222,7 +264,7 @@ void betweensee(void *ptr, int Ind){
 }
 int betweenhit(void *ptr, int y, int x, int Ind){
 	printf("bhit: %d\n", Ind);
-	return(0);
+	return(TRUE);
 }
 
 void fountload(c_special *cs_ptr)

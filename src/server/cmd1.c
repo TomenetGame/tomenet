@@ -2560,12 +2560,14 @@ void move_player(int Ind, int dir, int do_pickup)
 	bool do_move = FALSE;
 
 	cave_type               *c_ptr;
-	c_special *cs_ptr;
+	struct c_special	*cs_ptr;
 	object_type             *o_ptr;
 	monster_type    *m_ptr;
 	byte                    *w_ptr;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type **zcave;
+	int csmove=TRUE;
+
 	if(!(zcave=getcave(wpos))) return;
 
 
@@ -2842,38 +2844,25 @@ void move_player(int Ind, int dir, int do_pickup)
 		return;
 	}
 
+	/* now this is temp while i redesign!!! - do not change */
+	cs_ptr=c_ptr->special;
+	while(cs_ptr){
+		int tcv;
+		tcv=csfunc[cs_ptr->type].activate(cs_ptr->sc.ptr, y, x, Ind);
+		cs_ptr=cs_ptr->next;
+		if(!tcv){
+			csmove=FALSE;
+			printf("csmove is false\n");
+		}
+	}
+
 	/* Player can not walk through "walls", but ghosts can */
-//	if ((!p_ptr->ghost) && (!p_ptr->tim_wraith) && (!cave_floor_bold(zcave, y, x)))
-	if (!player_can_enter(Ind, c_ptr->feat))
+	if (!player_can_enter(Ind, c_ptr->feat) || !csmove)
 	{
 		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
 		bool myhome = FALSE;
 		bool passing = (p_ptr->tim_wraith || p_ptr->ghost);
-		struct c_special *cs_ptr;
-		/* one activate is enough */
-		cs_ptr=c_ptr->special;
-		while(cs_ptr){
-			csfunc[cs_ptr->type].activate(cs_ptr->sc.ptr, y, x, Ind);
-			cs_ptr=cs_ptr->next;
-		}
 
-#ifdef USE_MANG_HOUSE
-		if (((cfg.door_bump_open & BUMP_OPEN_HOUSE) || passing)
-					&& c_ptr->feat == FEAT_HOME)
-#endif	//USE_MANG_HOUSE
-		{
-			struct c_special *cs_ptr;
-			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))) /* orig house failure */
-			{
-				if(access_door(Ind, cs_ptr->sc.ptr))
-				{
-					myhome = TRUE;
-#ifdef USE_MANG_HOUSE
-					msg_print(Ind, "\377GYou walk through the door.");
-#endif	//USE_MANG_HOUSE
-				}
-			}
-		}
 		/* XXX quick fix */
 		if (passing)
 		{
@@ -2928,6 +2917,12 @@ void move_player(int Ind, int dir, int do_pickup)
 		if (!(*w_ptr & CAVE_MARK) &&
 		    (p_ptr->blind || !(*w_ptr & CAVE_LITE)))
 		{
+			if (c_ptr->feat == FEAT_SIGN){
+				/*msg_print(Ind, "\377GYou feel a signpost blocking your way.");*/
+				*w_ptr |= CAVE_MARK;
+				everyone_lite_spot(wpos, y, x);
+			}
+
 			/* Rubble */
 			if (c_ptr->feat == FEAT_RUBBLE)
 			{
@@ -2973,15 +2968,6 @@ void move_player(int Ind, int dir, int do_pickup)
 				msg_print(Ind, "There is a closed door blocking your way.");
 			}
 
-			else if (c_ptr->feat == FEAT_SIGN)
-			{
-				if((cs_ptr=GetCS(c_ptr, CS_INSCRIP))){
-					struct floor_insc *sptr=cs_ptr->sc.ptr;
-					msg_format(Ind, "A sign here reads: %s", sptr->text);
-				}
-				else msg_print(Ind, "A blank sign is here");
-			}
-
 			else if (p_ptr->easy_tunnel || (p_ptr->skill_dig > 4000))
 			{
 				do_cmd_tunnel(Ind, dir);
@@ -3004,14 +2990,6 @@ void move_player(int Ind, int dir, int do_pickup)
 					msg_print(Ind, "There is a wall blocking your way.");
 				}
 			}
-			/* It's bad place maybe? */
-#if 0
-			cs_ptr=c_ptr->special;
-			while(cs_ptr){
-				csfunc[cs_ptr->type].activate(cs_ptr->sc.ptr, Ind);
-				cs_ptr=cs_ptr->next;
-			}
-#endif
 		}
 		return;
 		} /* 'if (!myhome)' ends here */
