@@ -1040,7 +1040,6 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 
         /* Require same owner */
 //
-msg_format(Ind, "%ld:%ld", o_ptr->owner, j_ptr->owner);
         if (o_ptr->owner != j_ptr->owner) return (0);
 
 	/* Analyze the items */
