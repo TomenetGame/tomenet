@@ -1727,8 +1727,8 @@ static void cmd_house_chown(int dir)
 				buf[0]='O';
 				buf[1]=i;
 				buf[2]=0;
-				get_string("Enter new name:",&buf[2],79);
-				Send_admin_house(dir,buf);
+				if(get_string("Enter new name:",&buf[2],79))
+					Send_admin_house(dir,buf);
 				return;
 			case ESCAPE:
 			case KTRL('X'):
