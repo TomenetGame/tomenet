@@ -1189,7 +1189,7 @@ static int Handle_setup(int ind)
 bool player_allowed(char *name){
 	FILE *sfp;
 	char buffer[80];
-	bool success=TRUE;
+	bool success=FALSE;
 	sfp=fopen("allowlist","r");
 	if(sfp==(FILE*)NULL)
 		return TRUE;
