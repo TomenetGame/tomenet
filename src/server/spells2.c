@@ -20,7 +20,7 @@
  * if this option is set.
  * Also, geno won't work if inside a vault(icky).		- Jir -
  */
-#define SEVERE_GENO
+/* #define SEVERE_GENO */
 /*
  * Further, each monster has (level) in RESIST_GENO chance of surviving this.
  */

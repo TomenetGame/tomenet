@@ -2840,7 +2840,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 
 				/* Nasty monster and treasure */
 				case '8':
-				monster_level = lev + 40;
+				monster_level = lev + 21;
 				place_monster(wpos, y, x, TRUE, TRUE);
 				monster_level = lev;
 				object_level = lev + 20;

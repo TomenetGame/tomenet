@@ -179,14 +179,6 @@ void wpcopy(struct worldpos *dest, struct worldpos *src)
 	dest->wz=src->wz;
 }
 
-// pfft, it was same with inarea
-/* better use macros maybe..	- Jir - */
-bool wpcmp(worldpos *dest, worldpos *src)
-{
-	return ((dest->wx==src->wx && dest->wy==src->wy && dest->wz==src->wz) ?
-			TRUE : FALSE);
-}
-
 int wild_idx(worldpos *wpos)
 {
 	return (wpos->wx + wpos->wy * MAX_WILD_X);
@@ -250,11 +242,6 @@ int players_on_depth(struct worldpos *wpos)
 bool inarea(struct worldpos *apos, struct worldpos *bpos)
 {
 	return(apos->wx==bpos->wx && apos->wy==bpos->wy && apos->wz==bpos->wz);
-#if 0
-	if(apos->wx==bpos->wx && apos->wy==bpos->wy && apos->wz==bpos->wz)
-		return TRUE;
-	return FALSE;
-#endif	// 0
 }
 
 int getlevel(struct worldpos *wpos)

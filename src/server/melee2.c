@@ -15,7 +15,7 @@
 #include "angband.h"
 
 /* This removes some monster-behavior codes which can be bottlenecksll. */
-//#define STUPID_MONSTERS
+#define STUPID_MONSTERS
 
 /* distance for AI_ANNOY (nothing to do with game speed.) */
 #define		ANNOY_DISTANCE	5
