@@ -1227,7 +1227,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
 				/* Tunnel */
-				if ((power > 40 + rand_int(800)) && twall(Ind, y, x))        /* 1600 */
+				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x))        /* 1600 */
 				{
 					msg_print(Ind, "You have finished the tunnel.");
 				}
@@ -1257,13 +1257,13 @@ void do_cmd_tunnel(int Ind, int dir)
 				/* Quartz */
 				if (hard)
 				{
-					okay = (power > 20 + rand_int(400)); /* 800 */
+					okay = (power > 20 + rand_int(800)); /* 800 */
 				}
 
 				/* Magma */
 				else
 				{
-					okay = (power > 10 + rand_int(250)); /* 400 */
+					okay = (power > 10 + rand_int(400)); /* 400 */
 				}
 
 				/* Success */
@@ -1347,7 +1347,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			else if (c_ptr->feat == FEAT_TREE)
 			{
 				/* mow down the vegetation */
-				if ((power > rand_int(250)) && twall(Ind, y, x)) /* 400 */
+				if ((power > rand_int(400)) && twall(Ind, y, x)) /* 400 */
 				{
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
@@ -1369,7 +1369,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			else if (c_ptr->feat == FEAT_EVIL_TREE)
 			{
 				/* mow down the vegetation */
-				if ((power > rand_int(400)) && twall(Ind, y, x)) /* 600 */
+				if ((power > rand_int(600)) && twall(Ind, y, x)) /* 600 */
 				{
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");

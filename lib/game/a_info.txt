@@ -1815,7 +1815,8 @@ D:A powerful arrow that is feared by even the mightiest demons.
 # The Bolt 'Travak'
 
 N:136:'Travak'
-I:16:0:0
+#I:16:0:0
+I:18:1:0
 W:5:1:2:5000
 P:0:3d6:8:5:0
 F:BRAND_ACID | BRAND_ELEC | BRAND_FIRE | BRAND_COLD | BRAND_POIS

@@ -249,7 +249,7 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 /*
  * Chance of 'HIVES' type vaults reproducing themselves, in %. [60]
  */
-#define HIVE_CHANCE		60
+#define HIVE_CHANCE(lev)	(lev > 120 ? 60 : lev / 3 + 20)
 
 /*
  * Simple structure to hold a map location
@@ -3129,9 +3129,9 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 	/* TODO: make a better routine! */
 	if (hives)
 	{
-		if (magik(HIVE_CHANCE) && !magik(ymax))
+		if (magik(HIVE_CHANCE(lev)) && !magik(ymax))
 			build_vault(wpos, yval + ymax, xval, v_ptr);
-		if (magik(HIVE_CHANCE) && !magik(xmax))
+		if (magik(HIVE_CHANCE(lev)) && !magik(xmax))
 			build_vault(wpos, yval, xval + xmax, v_ptr);
 
 //		build_vault(wpos, yval - ymax, xval, &v_ptr);

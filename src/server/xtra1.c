@@ -2019,7 +2019,7 @@ static void calc_bonuses(int Ind)
 	/* Compute antimagic */
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
-		p_ptr->anti_magic = TRUE;
+//		p_ptr->anti_magic = TRUE;	/* it means 95% saving-throw!! */
 		p_ptr->antimagic = get_skill(p_ptr, SKILL_ANTIMAGIC);
 		p_ptr->antimagic_dis = 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 11);
 	}
@@ -2826,7 +2826,11 @@ static void calc_bonuses(int Ind)
 
 	/* Boost digging skill by tool weight */
 	if(o_ptr->k_idx && o_ptr->tval == TV_DIGGING)
+	{
 		p_ptr->skill_dig += (o_ptr->weight / 10);
+		p_ptr->skill_dig += p_ptr->skill_dig *
+			get_skill_scale(p_ptr, SKILL_DIG, 300) / 100;
+	}
 
 
 	/* Examine the "main weapon" */

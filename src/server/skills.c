@@ -93,7 +93,7 @@ s32b modify_aux(s32b a, s32b b, char mod)
  */
 void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
 {
-	s32b value, mod, j;
+	s32b value = 0, mod = 0, j;
 
         /***** class skills *****/
 

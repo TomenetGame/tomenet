@@ -4994,6 +4994,9 @@ extern int PlayerUID;
 #define SKILL_TRAINING			40
 #define SKILL_INTERCEPT			41
 #define SKILL_DODGE				42
+#define SKILL_DODGE				42
+#define SKILL_HEALTH			43
+#define SKILL_DIG				44
 
 #if 0	// skills to come	- Jir -
 #define SKILL_CLIMB

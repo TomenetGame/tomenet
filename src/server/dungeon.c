@@ -1391,7 +1391,6 @@ static void process_player_end(int Ind)
 	int		x, y, i, j;
 	int		regen_amount, NumPlayers_old=NumPlayers;
 	char		attackstatus;
-	int 		minus;
 
 	cave_type		*c_ptr;
 	byte			*w_ptr;
@@ -1445,6 +1444,11 @@ static void process_player_end(int Ind)
 	 */
 	if (!(turn%(level_speed(&p_ptr->wpos)/12)))
 	{
+		/* Unbelievers "resist" magic */
+//		int minus = (p_ptr->anti_magic)?3:1;
+		int minus = 1 + get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 3);
+		int recovery = magik(get_skill_scale(p_ptr, SKILL_HEALTH, 100))?1:0;
+		
 		/*** Damage over Time ***/
 
 		/* Take damage from poison */
@@ -1691,9 +1695,6 @@ static void process_player_end(int Ind)
 			disturb(Ind, 0, 0);
 		}
 
-		/* Unbelievers "resist" magic */
-		minus = (p_ptr->anti_magic)?3:1;
-		
 		/* Finally, at the end of our turn, update certain counters. */
 		/*** Timeout Various Things ***/
 
@@ -1826,13 +1827,13 @@ static void process_player_end(int Ind)
 		/* Hack -- Hallucinating */
 		if (p_ptr->image)
 		{
-			(void)set_image(Ind, p_ptr->image - 1);
+			(void)set_image(Ind, p_ptr->image - 1 - recovery);
 		}
 
 		/* Blindness */
 		if (p_ptr->blind)
 		{
-			(void)set_blind(Ind, p_ptr->blind - 1);
+			(void)set_blind(Ind, p_ptr->blind - 1 - recovery);
 		}
 
 		/* Times see-invisible */
@@ -1864,13 +1865,13 @@ static void process_player_end(int Ind)
 		/* Paralysis */
 		if (p_ptr->paralyzed)
 		{
-			(void)set_paralyzed(Ind, p_ptr->paralyzed - 1);
+			(void)set_paralyzed(Ind, p_ptr->paralyzed - 1 - recovery);
 		}
 
 		/* Confusion */
 		if (p_ptr->confused)
 		{
-			(void)set_confused(Ind, p_ptr->confused - minus);
+			(void)set_confused(Ind, p_ptr->confused - minus - recovery);
 		}
 
 		/* Afraid */
@@ -1888,7 +1889,7 @@ static void process_player_end(int Ind)
 		/* Slow */
 		if (p_ptr->slow)
 		{
-			(void)set_slow(Ind, p_ptr->slow - minus);
+			(void)set_slow(Ind, p_ptr->slow - minus - recovery);
 		}
 
 		/* Protection from evil */
@@ -1973,7 +1974,7 @@ static void process_player_end(int Ind)
 			int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
 
 			/* Apply some healing */
-			(void)set_poisoned(Ind, p_ptr->poisoned - adjust);
+			(void)set_poisoned(Ind, p_ptr->poisoned - adjust - recovery);
 		}
 
 		/* Stun */
@@ -1982,7 +1983,7 @@ static void process_player_end(int Ind)
 			int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
 
 			/* Apply some healing */
-			(void)set_stun(Ind, p_ptr->stun - adjust);
+			(void)set_stun(Ind, p_ptr->stun - adjust - recovery);
 		}
 
 		/* Cut */
@@ -1997,7 +1998,7 @@ static void process_player_end(int Ind)
 			if (p_ptr->biofeedback) adjust += adjust + 10;
 
 			/* Apply some healing */
-			(void)set_cut(Ind, p_ptr->cut - adjust);
+			(void)set_cut(Ind, p_ptr->cut - adjust - recovery);
 		}
 
 		/*** Process Light ***/

@@ -2077,10 +2077,10 @@ void do_cmd_use_staff(int Ind, int item)
 	/* Hack -- let staffs of identify get aborted */
 	bool use_charge = TRUE;
 
-#if 0	
+#if 1
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "An anti-magic shield disrupts your attempts.");	
+		msg_print(Ind, "An anti-magic shell disrupts your attempts.");	
 		return;
 	}
 #endif
@@ -2154,7 +2154,7 @@ void do_cmd_use_staff(int Ind, int item)
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
-	/* Hight level objects are harder */
+	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
 
         /* Extract object flags */
@@ -2534,10 +2534,10 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 	object_type		*o_ptr;
 
-#if 0
+#if 1	// anti_magic is not antimagic :)
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "An anti-magic shield disrupts your attempts.");	
+		msg_print(Ind, "An anti-magic shell disrupts your attempts.");	
 		return;
 	}
 #endif	// 0
@@ -2614,7 +2614,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
-	/* Hight level objects are harder */
+	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
 
         /* Extract object flags */
@@ -3005,10 +3005,11 @@ void do_cmd_zap_rod(int Ind, int item)
 
 	/* Hack -- let perception get aborted */
 	bool use_charge = TRUE;
-#if 0
+#if 1
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "An anti-magic shield disrupts your attempts.");	
+//		msg_print(Ind, "An anti-magic shield disrupts your attempts.");	
+		msg_print(Ind, "An anti-magic shell disrupts your attempts.");	
 		return;
 	}
 #endif	// 0
@@ -3092,7 +3093,7 @@ void do_cmd_zap_rod(int Ind, int item)
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
-	/* Hight level objects are harder */
+	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
 
         /* Is it simple to use ? */
@@ -3392,7 +3393,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
-	/* Hight level objects are harder */
+	/* High level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev) - p_ptr->antimagic;
 
         /* Is it simple to use ? */

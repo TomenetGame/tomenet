@@ -2669,11 +2669,11 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 
 						//                                o_ptr->pval2 = power[rand_int(25)];
 					o_ptr->pval = power[rand_int(27)];
+				}
 			}
+			break;
 		}
-		break;
 	}
-}
 #if 0	// heheh
 	/* Analyze type */
 	switch (o_ptr->tval)
@@ -5364,14 +5364,15 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 	apply_magic(wpos, &forge, object_level, TRUE, good, great);
 
 	/* Hack -- generate multiple spikes/missiles */
-	switch (forge.tval)
-	{
-		case TV_SPIKE:
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		forge.number = damroll(6, 7);
-	}
+	if (!forge.name1)
+		switch (forge.tval)
+		{
+			case TV_SPIKE:
+			case TV_SHOT:
+			case TV_ARROW:
+			case TV_BOLT:
+				forge.number = damroll(6, 7);
+		}
 
 	drop_near(&forge, -1, wpos, y, x);
 

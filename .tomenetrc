@@ -1,4 +1,4 @@
-# .mangrc - TomeNET preference file
+# .tomenetrc - TomeNET preference file
 #
 # copy this file to your home directory, and edit as you need it.
 #
@@ -6,7 +6,7 @@
 # $ tomenet -i
 
 # your name as a player
-nick Nowhereman
+nick Cirion
 
 # login password
 pass stone2mud
@@ -25,6 +25,3 @@ path ~/TomeNET/lib/
 # (If set, you won't see the server-list.)
 
 #fullauto
-
-# The last line of this file should be empty, or the client will crash..
-

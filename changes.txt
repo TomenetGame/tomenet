@@ -1139,7 +1139,12 @@ To find the latest change quickly, search ==== :)
 [C] 'c' and 'o' key available in skill screen (for quick browsing)
 
 24/06/2002 (Jir)
+- SKILL_DISARM can help players from hitting already-found traps.
+- SKILL_HEALTH, SKILL_DIG
 [P] SKILL_DODGE
+[H] Hardness of walls are reverted to the original.
+[B] anti_magic and antimagic :)
+[B] 'Travak' was sling-shot and mass-produced.
 
 24/06/2002
 [C]- .mangrc changed to .tomenetrc

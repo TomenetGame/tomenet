@@ -1699,7 +1699,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
-                                '+', 300,
+                                '+', 500,
                         },
                         {
                                 SKILL_RICOCHET,
@@ -1751,7 +1751,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MIMIC,
                                 '+', 0,
-                                '+', 500,
+                                '+', 300,
                         },
                         {
                                 SKILL_PRAY,
@@ -1822,16 +1822,16 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,
                         },
-						/* Misc tree */
+						/* Health tree */
+                        {
+                                SKILL_HEALTH,
+                                '+', 1000,
+                                '+', 500,
+                        },
                         {
                                 SKILL_AGILITY,
                                 '+', 0,
-                                '+', 100,	// *HARD* to learn
-                        },
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 500,
+                                '+', 200,	// *HARD* to learn
                         },
                         {
                                 SKILL_SWIM,
@@ -1842,6 +1842,17 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_TRAINING,
                                 '+', 3000,
                                 '+', 1000,
+                        },
+                        {
+                                SKILL_DIG,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+						/* Misc tree */
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 500,
                         },
                         {
                                 SKILL_INTERCEPT,
@@ -1932,15 +1943,16 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 600,
                         },
+						/* Health tree */
+                        {
+                                SKILL_HEALTH,
+                                '+', 1000,
+                                '+', 800,
+                        },
                         {
                                 SKILL_AGILITY,
                                 '+', 1000,
-                                '+', 200,
-                        },
-                        {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 500,
+                                '+', 300,
                         },
                         {
                                 SKILL_SWIM,
@@ -1951,6 +1963,16 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_TRAINING,
                                 '+', 3000,
                                 '+', 1000,
+                        },
+                        {
+                                SKILL_DIG,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 500,
                         },
                         {
                                 SKILL_INTERCEPT,
@@ -2017,6 +2039,12 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_DODGE,
                                 '+', 0,
                                 '+', 500,
+                        },
+						/* Health tree */
+                        {
+                                SKILL_HEALTH,
+                                '+', 0,
+                                '+', 300,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -2095,9 +2123,10 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,
                         },
+						/* Health tree */
                         {
-                                SKILL_CALMNESS,
-                                '+', 0,
+                                SKILL_HEALTH,
+                                '+', 1000,
                                 '+', 500,
                         },
                         {
@@ -2109,6 +2138,16 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_TRAINING,
                                 '+', 3000,
                                 '+', 1000,
+                        },
+                        {
+                                SKILL_DIG,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 500,
                         },
                 }
 	},
@@ -2196,6 +2235,12 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1000,
                         },
+						/* Health tree */
+                        {
+                                SKILL_HEALTH,
+                                '+', 1000,
+                                '+', 500,
+                        },
                         {
                                 SKILL_AGILITY,
                                 '+', 1000,
@@ -2215,6 +2260,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_TRAINING,
                                 '+', 3000,
                                 '+', 1000,
+                        },
+                        {
+                                SKILL_DIG,
+                                '+', 0,
+                                '+', 500,
                         },
                         {
                                 SKILL_INTERCEPT,
@@ -2277,9 +2327,20 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,
                         },
+						/* Health tree */
+                        {
+                                SKILL_HEALTH,
+                                '+', 1000,
+                                '+', 500,
+                        },
                         {
                                 SKILL_TRAINING,
                                 '+', 3000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 0,
                                 '+', 1000,
                         },
                 }
@@ -2358,10 +2419,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1000,
                         },
+						/* Health tree */
                         {
-                                SKILL_CALMNESS,
-                                '+', 0,
-                                '+', 800,
+                                SKILL_HEALTH,
+                                '+', 1000,
+                                '+', 500,
                         },
                         {
                                 SKILL_SWIM,
@@ -2372,6 +2434,16 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_TRAINING,
                                 '+', 3000,
                                 '+', 1000,
+                        },
+                        {
+                                SKILL_DIG,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 800,
                         },
                 }
 	},
@@ -4326,7 +4398,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Backstabing",
-                "Ability to use backstab sleeping and fleeing monsters",
+                "Ability to backstab sleeping and fleeing monsters",
 
                 /* Mkey desc/mkey */
                 NULL,
@@ -4546,7 +4618,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Disarming",
-                "Ability to disarm various traps",
+                "Ability to disarm various traps and crack locks.\nThe trap lore also saves you from activating already-found traps.",
 
                 /* Mkey desc/mkey */
                 NULL,
@@ -4964,6 +5036,46 @@ skill_type s_info[MAX_SKILLS] =
                 /* Flags */
                 0,
         },
+        {
+                "Health",
+				"General ability to control and cure your body.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Digging",
+				"Ability to handle digging tools.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
 };
 
 /*
@@ -5013,10 +5125,13 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_NECROMANCY, SKILL_AURA_DEATH },
         { SKILL_NECROMANCY, SKILL_ANTIMAGIC },
 
+        { -1, SKILL_HEALTH },
+        { SKILL_HEALTH, SKILL_TRAINING },
+        { SKILL_HEALTH, SKILL_AGILITY },
+        { SKILL_HEALTH, SKILL_SWIM },
+        { SKILL_HEALTH, SKILL_DIG },
+
         { -1, SKILL_MISC },
-        { SKILL_MISC, SKILL_AGILITY },
         { SKILL_MISC, SKILL_CALMNESS },
         { SKILL_MISC, SKILL_INTERCEPT },
-        { SKILL_MISC, SKILL_SWIM },
-        { SKILL_MISC, SKILL_TRAINING },
 };

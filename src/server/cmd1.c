@@ -2942,6 +2942,8 @@ void move_player(int Ind, int dir, int do_pickup)
 //		else if (c_ptr->feat == FEAT_INVIS)
 		else if (c_ptr->special.type == CS_TRAPS)
 		{
+			bool hit = TRUE;
+
 			/* Disturb */
 			disturb(Ind, 0, 0);
 
@@ -2954,8 +2956,14 @@ void move_player(int Ind, int dir, int do_pickup)
 				/* Pick a trap */
 				pick_trap(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 			}
+			else if (magik(get_skill_scale(p_ptr, SKILL_DISARM, 90)))
+			{
+				msg_print(Ind, "You carefully avoid touching the trap.");
+				hit = FALSE;
+			}
+
 			/* Hit the trap */
-			hit_trap(Ind);
+			if (hit) hit_trap(Ind);
 		}
 
 		/* Mega-hack -- if we are the dungeon master, and our movement hook
