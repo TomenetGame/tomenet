@@ -3579,7 +3579,6 @@ void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 	/* Ok now the hackish stuff, we replace the current weapon with this one */
 	/* XXX this hack can be even worse under TomeNET, dunno :p */
-	WIPE(old_ptr, object_type);
 	object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
 	object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
 
