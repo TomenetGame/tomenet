@@ -5,6 +5,7 @@
    while testing. */
 #include <curses.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <errno.h>
 
 #include "account.h"
@@ -16,11 +17,17 @@
 void editor(void);
 void edit(void);
 unsigned short ask(char *prompt);
+void status(char *info);
+void setupscreen(void);
+unsigned short recwrite(struct account *rec, long filepos);
+int ListAccounts(int fpos);
 
 FILE *fp;
 WINDOW *listwin, *mainwin;
 
 char *fname="tomenet.acc";
+
+int tfpos;
 
 int main(int argc, char *argv[]){
 	fp=fopen(fname, "r");
@@ -30,6 +37,7 @@ int main(int argc, char *argv[]){
 	}
 	editor();
 	fclose(fp);
+	return(0);
 }
 
 void setupscreen(){
@@ -40,7 +48,7 @@ void setupscreen(){
 	attroff(A_STANDOUT);
 	mvprintw(LINES-3, COLS/2-19, "N: next      P: previous     D: Delete");
 	mvprintw(LINES-4, COLS/2-19, "V: Validate A: Admin S: Score M: Multi");
-	mvprintw(LINES-5, COLS/2-19, "L: List/Long accounts");
+	mvprintw(LINES-5, COLS/2-19, "L: List/Long F: Find");
 	mainwin=newwin(LINES-9, COLS, 3, 0);
 	listwin=newwin(LINES-9, COLS, 3, 0);
 	refresh();
@@ -115,6 +123,15 @@ int ListAccounts(int fpos){
 			case 'L':
 				quit=1;
 				break;
+			case 'f':
+			case 'F':
+				mvwaddch(listwin, (fpos-ifpos)+1, 3, ' ');
+				tfpos=findacc();
+				if(tfpos>=0){
+					fpos=tfpos;
+					reload=1;
+				}
+				break;
 			case 'n':
 			case 'N':
 				mvwaddch(listwin, (fpos-ifpos)+1, 3, ' ');
@@ -164,7 +181,7 @@ int ListAccounts(int fpos){
 }
 
 void editor(){
-	int i, x;
+	int x;
 	int quit=0;
 	char ch;
 	unsigned long fpos=0;
@@ -220,12 +237,25 @@ void editor(){
 					touchwin(mainwin);
 					continue;
 					break;
+				case 'f':
+				case 'F':
+					tfpos=findacc();
+					if(tfpos>=0){
+						fpos=tfpos;
+						fseek(fp, fpos*sizeof(struct account), SEEK_SET);
+						x=fread(&c_acc, sizeof(struct account),1, fp);
+					}
+				break;
 				case 'n':
 				case 'N':
 					if(change)
 						if(ask("This record was changed. Save?")){
-							recwrite(&c_acc, fpos*sizeof(struct account));
-							change=0;
+							if(recwrite(&c_acc, fpos*sizeof(struct account)))
+								change=0;
+							else{
+								if(!ask("Could not write record. Continue anyway?"))
+									break;
+							}
 						}
 					x=fread(&c_acc, sizeof(struct account),1, fp);
 					if(!x){
@@ -240,8 +270,12 @@ void editor(){
 				case 'P':
 					if(change)
 						if(ask("This record was changed. Save?")){
-							recwrite(&c_acc, fpos*sizeof(struct account));
-							change=0;
+							if(recwrite(&c_acc, fpos*sizeof(struct account)))
+								change=0;
+							else{
+								if(!ask("Could not write record. Continue anyway?"))
+									break;
+							}
 						}
 					if(!fpos){
 						status("This is the first record");
@@ -289,9 +323,58 @@ void editor(){
 	endwin();
 }
 
+/* account finder */
+int findacc(){
+	int x, i=0;
+	char sname[30];
+	struct account c_acc;
+
+	statinput("Find which name: ", &sname, 30);
+	fseek(fp, 0L, SEEK_SET);
+	while((x=fread(&c_acc, sizeof(struct account),1, fp))){
+		if(!strncmp(c_acc.name, sname, 30)){
+			return(i);
+		}
+		i++;
+	}while(x);
+	status("Could not find that account");
+
+	return(-1);
+}
+
 void status(char *info){
 	mvprintw(LINES-1, 0, info);
 	beep();
+}
+
+void statinput(char *prompt, char *string, int max){
+	char ch;
+	int pos=0;
+	mvprintw(LINES-1, 0, prompt);
+	do{
+		ch=getch();
+		if(ch=='\n') break;
+		if(ch=='\b'){
+			if(pos){
+				string[--pos]='\0';
+				mvdelch(LINES-1, strlen(prompt)+pos);
+			}
+			else
+				beep();
+		}
+		else{
+			if(pos<(max-1)){
+				string[pos++]=ch;
+				addch(ch);
+			}
+			else
+				beep();
+		}
+		refresh();
+	}while(ch!='\n');
+	string[pos]='\0';
+	move(LINES-1, 0);
+	clrtoeol();
 }
 
 unsigned short ask(char *prompt){
