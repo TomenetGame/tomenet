@@ -4275,7 +4275,7 @@ void golem_creation(int Ind, int max)
                                 int k;
 
                                 for (k = 0; k < o_ptr->number; k++){
-					if(golem_m_arms==30) break;
+					if(golem_m_legs==30) break;
                                         golem_legs[golem_m_legs++] = o_ptr->pval;
 				}
 				inven_item_increase(Ind,i,-o_ptr->number);
