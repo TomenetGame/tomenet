@@ -201,6 +201,9 @@ int Send_file_init(int ind, unsigned short id, char *fname){
 
 int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
 	Packet_printf(&wbuf, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
+	if (Sockbuf_write(&wbuf, buf, len) != len){
+		printf("failed sending file data\n");
+	}
 	return(0);
 }
 

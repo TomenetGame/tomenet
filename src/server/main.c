@@ -79,14 +79,14 @@ static void init_stuff(void)
 #if defined(AMIGA) || defined(VM)
 
 	/* Hack -- prepare "path" */
-	strcpy(path, "Angband:");
+	strcpy(path, "Tomenet:");
 
 #else /* AMIGA / VM */
 
 	cptr tail;
 
 	/* Get the environment variable */
-	tail = getenv("ANGBAND_PATH");
+	tail = getenv("TOMENET_PATH");
 
 	/* Use the angband_path, or a default */
 	strcpy(path, tail ? tail : DEFAULT_PATH);

@@ -2655,13 +2655,25 @@ static int Receive_file(int ind){
 	unsigned long csum;
 	int n;
 	connection_t *connp = &Conn[ind];
+	player_type *p_ptr;
+	int Ind;
+
+	Ind=GetInd[connp->id];
+	p_ptr=Players[Ind];
 	n=Packet_scanf(&connp->r, "%c%c%hd", &ch, &command, &fnum);
 	if(n==3){
-		printf("file packet %d\n", command);
 		switch(command){
 			case PKT_FILE_INIT:
+				/* Admin to do this only !!! */
 				Packet_scanf(&connp->r, "%s", fname);
-				x=local_file_init(ind, fnum, fname);
+				if(!p_ptr->admin_dm && !p_ptr->admin_wiz){
+					msg_print(Ind, "\377rFile transfer refused");
+					x=0; 
+				}
+				else{
+					msg_print(Ind, "\377gAttempting file transfer");
+					x=local_file_init(ind, fnum, fname);
+				}
 				break;
 			case PKT_FILE_DATA:
 				Packet_scanf(&connp->r, "%hd", &len);
@@ -2669,12 +2681,21 @@ static int Receive_file(int ind){
 				break;
 			case PKT_FILE_END:
 				x=local_file_close(ind, fnum);
+				msg_format(Ind, "\377oFile transfer %s.", x? "successful":"failed");
 				break;
 			case PKT_FILE_CHECK:
+				/* Admin to do this only !!! */
 				Packet_scanf(&connp->r, "%s", fname);
-				x=local_file_check(fname, &csum);
-				Packet_printf(&connp->w, "%c%c%hd%ld", PKT_FILE, PKT_FILE_SUM, fnum, csum);
-				return(1);
+				if(!p_ptr->admin_dm && !p_ptr->admin_wiz){
+					msg_print(Ind, "\377rFile check refused");
+					x=0; 
+				}
+				else{
+					msg_print(Ind, "\377yChecking file");
+					x=local_file_check(fname, &csum);
+					Packet_printf(&connp->w, "%c%c%hd%ld", PKT_FILE, PKT_FILE_SUM, fnum, csum);
+					return(1);
+				}
 				break;
 			case PKT_FILE_SUM:
 				Packet_scanf(&connp->r, "%ld", &csum);
@@ -2691,9 +2712,9 @@ static int Receive_file(int ind){
 				break;
 			default:
 				printf("unknown file transfer packet\n");
-				x=PKT_FILE_ERR;
+				x=0;
 		}
-		Packet_printf(&connp->w, "%c%c%hd", PKT_FILE, x, fnum);
+		Packet_printf(&connp->w, "%c%c%hd", PKT_FILE, x?PKT_FILE_ACK:PKT_FILE_ERR, fnum);
 	}
 	else printf("error file packet\n");
 }
@@ -7023,7 +7044,6 @@ static int Receive_message(int ind)
 
 	player_talk(player, buf);
 
-	remote_update(ind, "testfile");
 	return 1;
 }
 	

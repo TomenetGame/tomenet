@@ -2785,10 +2785,20 @@ void cmd_script_upload()
 
 	name[0]='\0';
 
+#if 0
 	if (!get_string("Script name: ", name + 1, 79)) return;
+#else
+	if (!get_string("Script name: ", name, 30)) return;
+#endif
+
+	remote_update(0, name);
+
+#if 0	/* evileye - testing my file xfer */
+	/* feel free to return this to normal afterwards!!! */
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_SCPT, name + 1);
+
 	fff = my_fopen(buf, "r");
 	if (fff == NULL) return;
 
@@ -2806,6 +2816,7 @@ void cmd_script_upload()
 
 	my_fclose(fff);
 	c_msg_print("Sent.");
+#endif
 }
 
 /*

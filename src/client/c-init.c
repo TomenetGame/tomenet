@@ -208,6 +208,7 @@ static void Input_loop(void)
 		do_keepalive();
 		do_mail();
 		do_flicker();
+		do_xfers();
 
 		if (Net_flush() == -1)
 		{
