@@ -30,6 +30,26 @@ typedef unsigned int u32b;
 #define TERM_L_BLUE             14  /* 'B' */   /* 0,4,4 */
 #define TERM_L_UMBER            15  /* 'U' */   /* 3,2,1 */
 
+struct hash_entry
+{
+	int id;				/* The character ID */
+	u32b account;			/* account id */
+	cptr name;			/* Player name */
+
+	/* new in 3.4.2 */
+	byte level;			/* Player maximum level */
+	byte party;			/* Player party */
+	/* 3.5.0 */
+	byte guild;			/* Player guild */
+	s16b quest;			/* Player quest */
+
+	time_t laston;			/* Last on time */
+	struct hash_entry *next;	/* Next entry in the chain */
+};
+
+extern struct hash_entry *lookup_player(int id);
+extern int lookup_player_id(cptr name);
+
 /* probably this shouldn't be here? */
 struct server_opts
 {
