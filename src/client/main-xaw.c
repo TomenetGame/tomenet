@@ -1270,7 +1270,7 @@ errr init_xaw(void)
 	argc = 1;
 
 	/* Save the program name */
-	argv[0] = argv0;
+	argv[0] = (char*)argv0;
 
 	/* Terminate */
 	argv[1] = NULL;

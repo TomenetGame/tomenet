@@ -18,6 +18,7 @@ extern errr init_x11(void);
 
 #ifdef USE_XAW
 extern errr init_xaw(void);
+extern errr CheckEvent(bool wait);
 #endif
 
 #ifdef USE_IBM
