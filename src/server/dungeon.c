@@ -2802,6 +2802,14 @@ void dungeon(void)
 	if(cfg.runlevel<6 && time(NULL)-cfg.closetime>120)
 		set_runlevel(cfg.runlevel-1);
 
+	if(cfg.runlevel<5){
+		for(i=NumPlayers; i>0 ;i--){
+			if(Players[i]->conn==NOT_CONNECTED) continue;
+			if(Players[i]->wpos.wz!=0) break;
+		}
+		if(!i) set_runlevel(0);
+	}
+
 	/* Check for death.  Go backwards (very important!) */
 	for (i = NumPlayers; i > 0; i--)
 	{
