@@ -4169,39 +4169,27 @@ Polymorph rings:
 ----------------
 There are two types of polymorph rings, those which already provide a monster
 form and those which can still be forged by a mimic. Latter ones are named
-'Rings of polymorphing of player', while the first ones are named after the
+'Rings of Polymorphing of Player', while the first ones are named after the
 monster form.
 
 A player can use a ring that carries a monster form, by wearing it and
 activating it. The user needs a mimicry skill of at least 1/2 the level of
-the monster in order to activate the ring. After the form-change, the
-ring can be taken off and the form will stay.
+the monster in order to activate the ring. After the form-change, if the
+ring is taken off, the character will polymorph back to his normal form.
 Rings of polymorphing have a certain chance to break after activation,
 depending on the user's mimicry skill (if the ring is indestructible or not
 does not matter here!). The ring breaks just after the player has been
-polymorphed. The chance of breaking (in percent) is roughly:
-
-mimicry skill       monster level       break chance
-----------------------------------------------------
- 1..50              0                   11%..11%
- 5..50              10                  20%..16%
-15..50              30                  31%..18%
-30..50              60                  28%..20%
-50                  100                 12%
+polymorphed. The chance of breaking (in percent) is:
+40 + (monster_level / 3) - (mimicry_skill / 5)
+so it'd be 50% for a level 60 monster at a mimicry skill of 50.
 
 Players can also create monster rings out of 'polymorph player' rings, by
 mimicking the according form, then wearing the ring and activating it.
 The ring will turn into a ring of polymorphing of the current monster form.
 However, to create such a ring it is required that the player has already
-learnt that form. A large part of his knowledge will be absorbed into the
-ring, so if he just learnt the form he will now have forgotten it and depend
-on the ring to use it, or kill more monsters to re-learn it.
-
-If the player has killed less than 4 times as many monsters as he needed to
-learn the form (4 x monsterlevel) his kill counter will be lowered by the
-monsterlevel on forging the ring.
-If the player has killed at least 4 times as many monsters as needed to learn
-the form, his kill counter will be halved on forging the ring.
+learnt that form. All of his knowledge will be absorbed into the ring, so
+the player will completely forget the form and have to re-learn it if he
+wants to use it again!
 
 The level of the ring will change depending on the form. Here are some levels:
 form level              ring level

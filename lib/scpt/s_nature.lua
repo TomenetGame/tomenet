@@ -1,5 +1,14 @@
 -- handle the nature school
 
+function get_healing_power()
+	local pow
+	pow = player.mhp * (10 + get_level(Ind, HEALING, 31)) / 100
+	if pow > 200 then
+		pow = 200
+	end
+	return pow
+end
+
 GROWTREE = add_spell
 {
 	["name"] = 	"Grow Trees",
@@ -26,18 +35,17 @@ HEALING = add_spell
         ["school"] = 	{SCHOOL_NATURE},
         ["level"] = 	10,
         ["mana"] = 	15,
-        ["mana_max"] = 	50,
+        ["mana_max"] = 	150,
         ["fail"] = 	30,
         ["stat"] =      A_WIS,
         ["spell"] = 	function()
-                        local hp = player.mhp * (15 + get_level(Ind, HEALING, 35)) / 100
-        		hp_player(Ind, hp)
+        		hp_player(Ind, get_healing_power())
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_HEAL_PLAYER, 0, (hp * 3) / 2, player.spell_project, "")
+                                fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(), player.spell_project, "")
                         end
 	end,
 	["info"] = 	function()
-			return "heal "..(15 + get_level(Ind, HEALING, 35)).."% = "..(player.mhp * (15 + get_level(Ind, HEALING, 35)) / 100).."hp"
+			return "heal "..(10 + get_level(Ind, HEALING, 31)).."% = "..get_healing_power().."hp"
 	end,
         ["desc"] =	{
         		"Heals a percent of hitpoints",

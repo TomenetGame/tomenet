@@ -1,23 +1,31 @@
 -- handle the holy curing school
 
+function get_healing_power2()
+        local pow
+        pow = player.mhp * (15 + get_level(Ind, HHEALING, 43)) / 100
+        if pow > 400 then
+                pow = 400
+        end
+        return pow
+end
+
 HHEALING = add_spell
 {
 	["name"] = 	"Healing",
         ["school"] = 	{SCHOOL_HCURING},
 	["level"] =     10,
 	["mana"] =      10,
-	["mana_max"] =  25,
+	["mana_max"] =  100,
 	["fail"] =      25,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
-		local hp = player.mhp * (15 + get_level(Ind, HHEALING, 35)) / 100
-		hp_player(Ind, hp)
+		hp_player(Ind, get_healing_power2())
 		if player.spell_project > 0 then
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, (hp * 3) / 2, player.spell_project, " points at your wounds.")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power2(), player.spell_project, " points at your wounds.")
 		end
 	end,
 	["info"] =      function()
-		return "heal "..(15 + get_level(Ind, HHEALING, 35)).."% = "..(player.mhp * (15 + get_level(Ind, HHEALING, 35)) / 100).."hp"
+		return "heal "..(15 + get_level(Ind, HHEALING, 43)).."% = "..get_healing_power2().."hp"
 	end,
 	["desc"] =      {
 		"Heals a percent of hitpoints",

@@ -6705,7 +6705,8 @@ void do_cmd_activate(int Ind, int item)
 				 * otherwise set the player form*/
 				if (!o_ptr->pval)
 				{
-					if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
+					if ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
+					    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level))
 						msg_print(Ind, "Nothing happens");
 					else if (r_info[p_ptr->body_monster].level == 0)
 						msg_print(Ind, "The ring starts to glow but fades");
@@ -6718,6 +6719,7 @@ void do_cmd_activate(int Ind, int item)
 							o_ptr->level = 15;
 						}
 
+#if 0
 						/* Reduce player's kill count by the monster level */
 						if (p_ptr->r_killed[p_ptr->body_monster] < (r_info[p_ptr->body_monster].level * 4))
 						{
@@ -6732,7 +6734,10 @@ void do_cmd_activate(int Ind, int item)
 							msg_print(Ind, "A lot of your knowledge is absorbed by the ring.");
 							p_ptr->r_killed[p_ptr->body_monster] /= 2;
 						}
-
+#else
+						msg_print(Ind, "Your knowledge is absorbed by the ring!");
+						p_ptr->r_killed[p_ptr->body_monster] = 0;
+#endif
 						/* If player hasn't got high enough kill count anymore now, poly back to player form! */
 						if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
 							do_mimic_change(Ind, 0, FALSE);
@@ -6753,8 +6758,12 @@ void do_cmd_activate(int Ind, int item)
 					/* Poly first, break then :) */
 					do_mimic_change(Ind, o_ptr->pval, FALSE);
 
+#if 0
 					if (rand_int(100) < (11 + (1000 / ((1010 / (r_info[p_ptr->body_monster].level + 1)) + 10 +
 					    (get_skill(p_ptr, SKILL_MIMIC) * get_skill(p_ptr, SKILL_MIMIC) / 30)))))
+#else
+					if (rand_int(100) < 40 + (r_info[p_ptr->body_monster].level / 3) - get_skill_scale(p_ptr, SKILL_MIMIC, 10))
+#endif
 					{
 						msg_print(Ind, "There is a bright flash of light.");
 

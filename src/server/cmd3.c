@@ -143,6 +143,20 @@ void inven_takeoff(int Ind, int item, int amt)
 		}*/
 	}
 #endif
+	/* Polymorph back */
+	/* XXX this can cause strange things for players with mimicry skill.. */
+	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
+	{
+		if ((p_ptr->body_monster == o_ptr->pval) && 
+		    ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
+		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
+		{
+			/* If player hasn't got high enough kill count anymore now, poly back to player form! */
+			msg_print(Ind, "You polymorph back to your normal form.");
+			do_mimic_change(Ind, 0, FALSE);
+		}
+	}
+
 	/* Check if item gave WRAITH form */
 	if(k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) p_ptr->tim_wraith = 1;
 
