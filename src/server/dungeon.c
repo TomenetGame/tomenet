@@ -1405,7 +1405,7 @@ static void process_player_end(int Ind)
 			if(!hit) hit=1;
 
 			/* Take damage */
-			if(!p_ptr->pclass==CLASS_MIMIC && !r_info[p_ptr->body_monster].flags7&RF7_AQUATIC)
+			if(!(p_ptr->pclass==CLASS_MIMIC) || !(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC))
 				take_hit(Ind, hit, "drowning");
 		}
 

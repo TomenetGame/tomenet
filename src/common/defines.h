@@ -656,11 +656,13 @@
 #define COL_SPEED		49	/* "Slow (-NN)" or "Fast (+NN)" */
 
 #define ROW_STUDY		23
-#define COL_STUDY		64	/* "Study" */
+#define COL_STUDY		60	/* "Study" */
 
 #define ROW_DEPTH		23
-#define COL_DEPTH		66	/* "Lev NNN" / "NNNN ft" */
+#define COL_DEPTH		69	/* "Lev NNN" / "NNNN ft" */
 
+#define ROW_XYPOS		21
+#define COL_XYPOS		0
 
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/

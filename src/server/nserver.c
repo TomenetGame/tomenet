@@ -1758,7 +1758,6 @@ void process_pending_commands(int ind)
 	 */
 	if (NumPlayers == num_players_start)
 		if (!p_ptr->energy) p_ptr->energy = old_energy;
-
 }
 
 /*
@@ -4521,7 +4520,7 @@ static int Receive_mimic(int ind)
 	char ch;
 
 	int n, player;
-	s16b j, spell;
+	s16b j=0, spell;
 
 	if (connp->id != -1)
 	{
@@ -4529,7 +4528,7 @@ static int Receive_mimic(int ind)
 		p_ptr = Players[player];
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c%d", &ch, &spell)) <= 0)
+	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &spell)) <= 0)
 	{
 		if (n == -1)
 			Destroy_connection(ind, "read error");
@@ -4538,41 +4537,39 @@ static int Receive_mimic(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
-	  /* Find a good monster */
-	  int tries = MAX_R_IDX;
+		/* Find a good monster */
+		int tries = MAX_R_IDX;
 
-	  if (spell == 0)
-	    {
-	      j = p_ptr->body_monster;
-	      while (TRUE)
-		{
-		  j = j++;
+		if (spell == 0){
+			j = p_ptr->body_monster;
+			while (TRUE){
+				/*j = j++;*/
+				j++;
 
-		  if (j >= MAX_R_IDX - 1) j = 0;
+				if (j >= MAX_R_IDX - 1) j = 0;
 
-		  if (r_info[j].level > p_ptr->lev * 2) continue;
-		  if (r_info[j].flags1 & RF1_UNIQUE) continue;
-		  if (p_ptr->r_killed[j] < r_info[j].level) continue;
-		  if (strlen(r_info[j].name + r_name) <= 1) continue;
+				if (r_info[j].level > p_ptr->lev * 2) continue;
+				if (r_info[j].flags1 & RF1_UNIQUE) continue;
+				if (p_ptr->r_killed[j] < r_info[j].level) continue;
+				if (strlen(r_info[j].name + r_name) <= 1) continue;
 
-		  /* Ok we found */
-		  break;
+				/* Ok we found */
+				break;
+			}
 		}
-	    }
 	  
-	  if (!tries)
-	    {
-	     	  msg_print(player, "You failed to polymorph.");
-		  return 2;
-	    }
+		if (!tries)
+		{
+			msg_print(player, "You failed to polymorph.");
+			return 2;
+		}
 
-	  do_cmd_mimic(player, j, spell);
-	  return 2;
+		do_cmd_mimic(player, j, spell);
+		return 2;
 	}
-	else if (player)
-	{
+	else if (player){
 		p_ptr->current_spell = -1;
-		Packet_printf(&connp->q, "%c%d", ch, spell);
+		Packet_printf(&connp->q, "%c%hd", ch, spell);
 		return 0;
 	}
 

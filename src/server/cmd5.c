@@ -5802,27 +5802,27 @@ void do_mimic_power_aux(int Ind, int dir)
 
 void do_mimic_change(int Ind, int r_idx)
 {
-  player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind];
 
-  if (r_info[r_idx].level > p_ptr->lev * 2)
-    {
-      msg_print(Ind, "You're not high level enough to use that shape.");
-      return;
-    }
+	if (r_info[r_idx].level > p_ptr->lev * 2)
+	{
+		msg_print(Ind, "You're not high level enough to use that shape.");
+		return;
+	}
 
-  p_ptr->body_monster = r_idx;
-  p_ptr->body_changed = TRUE;
+	p_ptr->body_monster = r_idx;
+	p_ptr->body_changed = TRUE;
 	
-  msg_format(Ind, "You polymorph into a %s !", r_info[r_idx].name + r_name);
-  msg_format_near(Ind, "%s polymorphs a % !", p_ptr->name, r_info[r_idx].name + r_name);
+	msg_format(Ind, "You polymorph into a %s !", r_info[r_idx].name + r_name);
+	msg_format_near(Ind, "%s polymorphs a % !", p_ptr->name, r_info[r_idx].name + r_name);
 
-  p_ptr->update |= (PU_BONUS);
+	p_ptr->update |= (PU_BONUS);
 
-  /* Recalculate mana */
-  p_ptr->update |= (PU_MANA | PU_HP);
+	/* Recalculate mana */
+	p_ptr->update |= (PU_MANA | PU_HP);
 
-  /* Window stuff */
-  p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 }
 
 void do_cmd_mimic(int Ind, int r_idx, int spell)
@@ -5830,21 +5830,18 @@ void do_cmd_mimic(int Ind, int r_idx, int spell)
 	player_type *p_ptr = Players[Ind];
 	
 	/* No anti-magic shields around ? */
-	if (check_antimagic(Ind))
-	  {
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
-	    return;
-	  }
+	if (check_antimagic(Ind)) {
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		return;
+	}
 
-	if (!spell)
-	  {
-	    do_mimic_change(Ind, r_idx);
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
-	  }
-	else
-	  {
-	    do_mimic_power(Ind, spell - 1);
-	  }
+	if (!spell) {
+		do_mimic_change(Ind, r_idx);
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+	}
+	else {
+		do_mimic_power(Ind, spell - 1);
+	}
 }
 
 

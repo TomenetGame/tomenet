@@ -243,13 +243,16 @@ void prt_depth(int x, int y, int z, bool town)
 {
 	char depths[32];
 
+	sprintf(depths, "(%-2d,%-2d)",x,y);
+	c_put_str(TERM_L_GREEN, depths, ROW_XYPOS, COL_XYPOS);
+
 	if(town)
-		sprintf(depths, "(%d,%d) Town", x, y);
+		sprintf(depths, "Town");
 	else
-		sprintf(depths, "(%d,%d) %dft", x, y, z*50);
+		sprintf(depths, "%dft", z*50);
 
 	/* Right-Adjust the "depth" and clear old values */
-	prt(format("%7s", depths), 23, COL_DEPTH);
+	prt(format("%7s", depths), ROW_DEPTH, COL_DEPTH);
 }
 
 /*
@@ -385,7 +388,7 @@ void prt_state(bool paralyzed, bool searching, bool resting)
 	}
 	else
 	{
-		strcpy(text, "            ");
+		strcpy(text, "          ");
 	}
 
 	c_put_str(attr, text, ROW_STATE, COL_STATE);
@@ -412,7 +415,7 @@ void prt_speed(int speed)
 	}
 
 	/* Display the speed */
-	c_put_str(attr, format("%-14s", buf), ROW_SPEED, COL_SPEED);
+	c_put_str(attr, format("%-11s", buf), ROW_SPEED, COL_SPEED);
 }
 
 /*
@@ -422,7 +425,7 @@ void prt_study(bool study)
 {
 	if (study)
 	{
-		put_str("Study", ROW_STUDY, 64);
+		put_str("Study", ROW_STUDY, COL_STUDY);
 	}
 	else
 	{

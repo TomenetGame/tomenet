@@ -2790,7 +2790,7 @@ int Send_mimic(int spell)
 {
 	int	n;
 
-	if ((n = Packet_printf(&wbuf, "%c%d", PKT_MIMIC, spell)) <= 0)
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_MIMIC, spell)) <= 0)
 	{
 		return n;
 	}

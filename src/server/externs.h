@@ -21,7 +21,7 @@ extern int color_char_to_attr(char c);
 extern struct sfunc csfunc[];
 
 /* netserver.c */
-extern long Id;
+/*extern long Id;*/
 extern int NumPlayers;
 extern int ConsoleSocket;
 extern void process_pending_commands(int Ind);
