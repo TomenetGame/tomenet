@@ -2494,69 +2494,69 @@ P:0:1d2:0:0:0
 
 ##### School Books #####
 
-#N:330:& Tome~ of Magical Energy
-#G:?:B
-#I:111:0:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW
-#
-#N:331:& Tome~ of the Eternal Flame
-#G:?:R
-#I:111:1:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW | IGNORE_FIRE
-#
-#N:332:& Tome~ of the Blowing Wind
-#G:?:b
-#I:111:2:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW | IGNORE_ELEC
-#
-#N:333:& Tome~ of the Impenetrable Earth
-#G:?:U
-#I:111:3:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW | IGNORE_ACID
-#
-#N:334:& Tome~ of the Everrunning Wave
-#G:?:B
-#I:111:4:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW
-#
-#N:335:& Tome~ of Translocation
-#G:?:B
-#I:111:5:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW
-#
-#N:336:& Tome~ of the Tree
-#G:?:G
-#I:111:6:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW
-#
-#N:337:& Tome~ of Knowledge
-#G:?:D
-#I:111:7:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW
+N:330:& Tome~ of Magical Energy
+G:?:B
+I:111:0:0
+W:50:0:30:25000
+A:50/4
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW
+
+N:331:& Tome~ of the Eternal Flame
+G:?:R
+I:111:1:0
+W:50:0:30:25000
+A:50/4
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW | IGNORE_FIRE
+
+N:332:& Tome~ of the Blowing Wind
+G:?:b
+I:111:2:0
+W:50:0:30:25000
+A:50/4
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW | IGNORE_ELEC
+
+N:333:& Tome~ of the Impenetrable Earth
+G:?:U
+I:111:3:0
+W:50:0:30:25000
+A:50/4
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW | IGNORE_ACID
+
+N:334:& Tome~ of the Everrunning Wave
+G:?:B
+I:111:4:0
+W:50:0:30:25000
+A:50/4
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW
+
+N:335:& Tome~ of Translocation
+G:?:B
+I:111:5:0
+W:50:0:30:25000
+A:50/4
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW
+
+N:336:& Tome~ of the Tree
+G:?:G
+I:111:6:0
+W:50:0:30:25000
+A:50/4
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW
+
+N:337:& Tome~ of Knowledge
+G:?:D
+I:111:7:0
+W:50:0:30:25000
+A:50/4
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW
 
 
 ##### Chests #####
@@ -5102,37 +5102,37 @@ A:20/3
 F:FLY | EASY_KNOW
 
 
-#N:756:& Tome~ of the Time
-#G:?:b
-#I:111:8:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW
-#
-#N:757:& Spellbook~ of #
-#G:?:w
-#I:111:255:0
-#W:10:0:30:200
-#A:10/1:20/1:30/1:40/1:50/1:60/1:70/1
-#P:0:1d1:0:0:0
-#
-#N:758:& Tome~ of Meta Spells
-#G:?:v
-#I:111:9:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW | IGNORE_FIRE | ATTR_MULTI
-#
-#N:759:& Tome~ of the Mind
-#G:?:B
-#I:111:10:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW
-#
+N:756:& Tome~ of the Time
+G:?:b
+I:111:8:0
+W:50:0:30:25000
+A:50/4
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW
+
+N:757:& Spellbook~ of #
+G:?:w
+I:111:255:0
+W:10:0:30:200
+A:10/1:20/1:30/1:40/1:50/1:60/1:70/1
+P:0:1d1:0:0:0
+
+N:758:& Tome~ of Meta Spells
+G:?:v
+I:111:9:0
+W:50:0:30:25000
+A:50/4
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW | IGNORE_FIRE | ATTR_MULTI
+
+N:759:& Tome~ of the Mind
+G:?:B
+I:111:10:0
+W:50:0:30:25000
+A:50/4
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW
+
 #N:760:& Holy Tome~ of Eru Iluvatar
 #G:?:G
 #I:111:20:0

@@ -970,7 +970,23 @@ void admin_outfit(int Ind, int realm)
 	/* Hack -- assume the player has an initial knowledge of the area close to town */
 	for (i = 0; i < MAX_WILD_X*MAX_WILD_Y; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
 
-	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
+        for (i = 0; i < 255; i++)
+        {
+                int k_idx = lookup_kind(TV_BOOK, i);
+
+                if (!k_idx) continue;
+                invcopy(o_ptr, k_idx);
+                o_ptr->number = 3;
+                o_ptr->discount = 100;
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
+                apply_magic(&p_ptr->wpos, o_ptr, 1, TRUE, FALSE, FALSE);
+                object_known(o_ptr);
+                object_aware(Ind, o_ptr);
+                (void)inven_carry(Ind, o_ptr);
+        }
+
+        invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
 	o_ptr->number = 99;
 	o_ptr->discount = 100;
 	o_ptr->owner = p_ptr->id;

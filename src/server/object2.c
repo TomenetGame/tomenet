@@ -4611,6 +4611,41 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 	/* Apply magic (good or bad) according to type */
 	switch (o_ptr->tval)
 	{
+		case TV_BOOK:
+		{
+			/* Randomize random books */
+			if (o_ptr->sval == 255)
+			{
+				int  i = 0, tries = 1000;
+
+				while (tries)
+				{
+					tries--;
+
+					/* Pick a spell */
+					i = rand_int(max_spells);
+
+                                        /* Only random ones */
+//                                        if (exec_lua(format("return can_spell_random(%d)", i)) == FALSE)
+//                                                continue;
+
+					/* Test if it passes the level check */
+                                        if (rand_int(school_spells[i].skill_level * 3) <= level)
+                                        {
+                                                /* Ok */
+                                                break;
+                                        }
+				}
+				/* Use globe of light(or the first one) */
+				if (!tries)
+					o_ptr->pval = 0;
+				else
+					o_ptr->pval = i;
+			}
+
+			break;
+		}
+
 		case TV_LITE:
 
 			o_ptr->to_h = o_ptr->to_d = o_ptr->to_a = 0;
