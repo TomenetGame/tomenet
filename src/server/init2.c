@@ -2178,11 +2178,18 @@ void set_server_option(char * option, char * value)
  * Note that this function uses strsep. I don't think this is an ANSI C function.
  * If you have any problems compiling this, please let me know and I will change this.
  * -Alex 
+ *
+ * Seemingly it caused trouble in win32;
+ * Yakina reverted this to strtok.
  */
 void load_server_cfg_aux(FILE * cfg)
 {
 	char line[256];
+#if 0
 	char * lineofs;
+#else
+	bool first_token;
+#endif	// 0
 
 	char * newword;
 	char * option;
@@ -2206,9 +2213,16 @@ void load_server_cfg_aux(FILE * cfg)
 		// strsep is a really cool function... its neat, we don't have
 		// to dynamically allocate any memory because we apply our null
 		// terminations directly to line.
+#if 0
 		lineofs = line;
 		while ((newword = strsep(&lineofs, " ")))
+#else
+		first_token = 1;
+		while ((newword = strtok(first_token ? line : NULL, " ")))
+#endif	// 0
 		{
+			first_token = 0;
+
 			/* Set the option or value */
 			if (!option) option = newword;
 			else if ((!value) && (newword[0] != '=')) 

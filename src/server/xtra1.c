@@ -1735,6 +1735,7 @@ static void calc_bonuses(int Ind)
 	p_ptr->anti_tele = FALSE;
 	p_ptr->antimagic = 0;
 	p_ptr->antimagic_dis = 0;
+	p_ptr->xtra_crit = 0;
 
 	/* Base infravision (purely racial) */
 	p_ptr->see_infra = p_ptr->rp_ptr->infra;
@@ -2029,6 +2030,7 @@ static void calc_bonuses(int Ind)
 
 		/* Affect blows */
 		if (f1 & TR1_BLOWS) extra_blows += o_ptr->pval;
+                if (f5 & (TR5_CRIT)) p_ptr->xtra_crit += o_ptr->pval;
 
 		/* Affect spellss */
 //		if (f1 & TR1_SPELL_SPEED) extra_spells += o_ptr->pval;

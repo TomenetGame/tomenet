@@ -91,6 +91,7 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
 
 	/* Extract "shot" power */
 	i = (weight + ((p_ptr->to_h + plus) * 4) + (p_ptr->lev * 2));
+        i += 50 * p_ptr->xtra_crit;
 
 	/* Critical hit */
 	if (randint(5000) <= i)
@@ -132,6 +133,7 @@ s16b critical_norm(int Ind, int weight, int plus, int dam)
 
 	/* Extract "blow" power */
 	i = (weight + ((p_ptr->to_h + plus) * 5) + (p_ptr->lev * 3));
+        i += 50 * p_ptr->xtra_crit;
 
 	/* Chance */
 	if (randint(5000) <= i)

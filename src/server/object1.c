@@ -2422,6 +2422,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 				if (ABS(o_ptr->pval) != 1 && mode < 8) t = object_desc_chr(t, 's');
 			}
 
+			/* Critical chance */
+			else if (f5 & (TR5_CRIT))
+			{
+				/* Add " attack" */
+				t = object_desc_str(t, mode < 8 ? "% of critical hits" : "crt");
+			}
+
 			/* Stealth */
 			else if (f1 & TR1_STEALTH)
 			{

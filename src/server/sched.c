@@ -29,6 +29,10 @@
 #include <sys/time.h>
 #endif
 
+#ifdef WINDOWS
+#include <windows.h>
+#endif /* WINDOWS */
+
 /*char sched_version[] = VERSION;*/
 
 #ifdef sony_news
@@ -81,6 +85,7 @@ int sigprocmask(int how, const sigset_t *set, sigset_t *oset)
 #endif
 
 
+#ifndef WINDOWS
 /*
  * Block or unblock a single signal.
  */
@@ -113,6 +118,7 @@ void allow_timer(void)
 {
     sig_ok(SIGALRM, 1);
 }
+#endif /* ! WINDOWS */
 
 static volatile long	timer_ticks;	/* SIGALRMs that have occurred */
 static long		timers_used;	/* SIGALRMs that have been used */
@@ -120,6 +126,7 @@ static long		timer_freq;	/* rate at which timer ticks. */
 static void		(*timer_handler)(void);
 static time_t		current_time;
 static int		ticks_till_second;
+static int		sched_running;
 
 /*
  * Catch SIGALRM.
@@ -129,12 +136,34 @@ static void catch_timer(int signum)
     timer_ticks++;
 }
 
+#ifdef WINDOWS
+#define TIMERNAME "pernmangband_timer"
+
+/* Timer handle */
+HANDLE hTimer;
+
+/* Timer thread */
+DWORD WINAPI DoThread(DWORD param)
+{
+	while (sched_running)
+	{
+		if (WaitForSingleObject(hTimer, INFINITE)==WAIT_OBJECT_0)
+		{
+			catch_timer(0);
+		}
+	}
+
+	return(0);
+}
+#endif /* WINDOWS */
+
 /*
  * Setup the handling of the SIGALRM signal
  * and setup the real-time interval timer.
  */
 static void setup_timer(void)
 {
+#ifndef WINDOWS
     struct itimerval itv;
     struct sigaction act;
 
@@ -178,6 +207,29 @@ static void setup_timer(void)
      * Allow the real-time timer to generate SIGALRM signals.
      */
     allow_timer();
+#else /* WINDOWS */
+	HANDLE hThread;
+	DWORD ThreadID;
+	LARGE_INTEGER li;
+
+    /* sanity check */
+    if (timer_freq <= 0) {
+	plog(format("illegal timer frequency: %ld", timer_freq));
+	exit(1);
+    }
+	
+	/* Initialize a timer object */
+	hTimer = CreateWaitableTimer(NULL, FALSE, TIMERNAME);
+	hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)DoThread,
+			NULL, 0, &ThreadID);
+	li.QuadPart = -10000; /* unit=100ns (negative for relative); wait 1ms */
+    SetWaitableTimer(hTimer, &li, 1000/timer_freq, NULL, &li, FALSE);
+	hTimer = OpenWaitableTimer(TIMER_ALL_ACCESS, FALSE, TIMERNAME);
+
+    timers_used = timer_ticks;
+    time(&current_time);
+    ticks_till_second = timer_freq;
+#endif /* WINDOWS */
 }
 
 /*
@@ -389,7 +441,7 @@ void remove_input(int fd)
     }
 }
 
-static int		sched_running;
+// static int		sched_running;
 
 void stop_sched(void)
 {
@@ -419,10 +471,14 @@ void sched(void)
 
     while (sched_running) {
 
+		/*
 #ifdef VMS
         if (NumPlayers > NumRobots + NumPseudoPlayers
             || login_in_progress != 0
             || NumQueuedPlayers > 0) {
+			*/
+#if defined(VMS) || defined(_WINDOWS)
+        if (NumPlayers > 0) {
 
             /* need fast I/O checks now! (2 or 3 times per frames) */
             tv.tv_sec = 0;

@@ -92,6 +92,7 @@ static			jmp_buf env;
 
 /* Global socklib errno variable */
 int			sl_errno = 0;
+int			errno = 0;
 
 /* Global timeout variable. May be modified by users */
 int			sl_timeout_s = DEFAULT_S_TIMEOUT_VALUE;

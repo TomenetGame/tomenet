@@ -640,7 +640,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 			/* don't display the dungeon master if the secret_dungeon_master
 			 * option is set
 			 */
-			if (p_ptr->admin_dm &&
+			if (q_ptr->admin_dm &&
 			   (cfg.secret_dungeon_master)) continue;
 
 			/*** Determine color ***/

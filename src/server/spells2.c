@@ -5101,7 +5101,7 @@ void golem_creation(int Ind, int max)
                         r_ptr->hside = 150;
                         r_ptr->ac = 210;
                         break;
-		default:
+//		default:
         }
         r_ptr->extra = golem_flags;
 //#if 0

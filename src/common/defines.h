@@ -1969,6 +1969,7 @@ that keeps many algorithms happy.
 
 
 #define SV_RING_POLYMORPH	60
+#define SV_RING_STEALTH		61
 
 #define SV_SCROLL_ARTIFACT_CREATION             52
 #define SV_SCROLL_GOLEM                         55
@@ -4594,6 +4595,6 @@ extern int PlayerUID;
 #define TR_LIST(c_ptr) (c_ptr->special.ptr)
 
 #define TRUE_ARTS(o_ptr) ((artifact_p(o_ptr)) && (!o_ptr->name3))
-#define PRICE_BOOST(value, base) \
-			(value > base ? value << ((value - base)/4) : value )	
+#define PRICE_BOOST(value, base, step) \
+			(value > base ? value << ((value - base)/step) : value )	
 

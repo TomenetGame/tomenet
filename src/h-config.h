@@ -137,6 +137,8 @@
     defined(__WINNT__) || defined(__NT__)
 # ifndef WINDOWS
 #  define WINDOWS
+#  define strcasecmp stricmp
+#  define strncasecmp strnicmp
 # endif
 #endif
 

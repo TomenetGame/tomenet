@@ -6722,6 +6722,14 @@ P:0:0d0:5:5:0
 F:SEE_INVIS | INFRA | ACTIVATE | 
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
+# Smeagol drops this in place of =inv. (idea of Mihi)
+N:138:Stealth
+G:=:d
+I:45:61:0
+W:8:0:2:250
+A:8/10
+F:STEALTH
+
 #(See above - Already in)
 #N:171:the Magi
 #G:":d

@@ -115,6 +115,22 @@ struct worldpos{
 	s16b wz;	/* deep to sky */
 };
 
+#if 0
+/*
+ * No work is done yet for this.
+ * Probably, we should use not 'getlevel' but actual 'wz'
+ * to determine the max depth a player can recall to.
+ *
+ */
+typedef struct recall_depth recall_depth;
+
+struct recall_depth
+{
+	u16b id;	/* dungeon id (see dungeon_type) */
+	s16b depth;	/* max recall-depth */
+}
+#endif
+
 
 /*
  * Information about terrain "features"
@@ -1926,8 +1942,15 @@ struct player_type
 		bool admin_wiz;		/* Is this char Wizard? */
 		bool admin_dm;		/* or Dungeon Master? */
 
+        s16b xtra_crit;         /* % of increased crits */
+
 	/* some new borrowed flags (saved) */
         bool black_breath;      /* The Tolkien's Black Breath */
+
+        s16b msane;                   /* Max sanity */
+        s16b csane;                   /* Cur sanity */
+        u16b csane_frac;              /* Cur sanity frac */
+
 };
 
 /* For Monk martial arts */

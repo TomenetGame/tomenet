@@ -942,11 +942,13 @@ void do_cmd_open(int Ind, int dir)
 #ifndef NEWHOUSES
 			i = pick_house(Depth, y, x);
 			/* evileye hack new houses -demo */
-			if(i==-1 && c_ptr->special){ /* orig house failure */
+			if(i==-1 && c_ptr->special) /* orig house failure */
 #else
-			if(c_ptr->special.type==DNA_DOOR){ /* orig house failure */
+			if(c_ptr->special.type==DNA_DOOR) /* orig house failure */
 #endif /* NEWHOUSES */
-				if(access_door(Ind, c_ptr->special.ptr)){
+			{
+				if(access_door(Ind, c_ptr->special.ptr))
+				{
 					/* Open the door */
 					c_ptr->feat=FEAT_HOME_OPEN;
 					/* Take half a turn */
@@ -970,7 +972,8 @@ void do_cmd_open(int Ind, int dir)
 					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 
 				}
-				else{
+				else
+				{
 					struct dna_type *dna=c_ptr->special.ptr;
 					if(dna->owner){
 						char string[80];
@@ -996,7 +999,8 @@ void do_cmd_open(int Ind, int dir)
 						}
 						msg_format(Ind,"\377sThat house is owned by %s.",string);
 					}
-					else{
+					else
+					{
 						int factor,price;
 						factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 						price = dna->price * factor / 100;
@@ -2917,7 +2921,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 		else
 			/* Magic Ammo are NOT allowed to be enchanted */
 		{
-			o_ptr->to_h = o_ptr->to_d = o_ptr->name1 = o_ptr->name2 = 0;
+			o_ptr->to_h = o_ptr->to_d = o_ptr->name1 = o_ptr->name2 = o_ptr->pval = 0;
 			if (item >= 0)
 			{
 				inven_item_describe(Ind, item);
@@ -4261,7 +4265,9 @@ void do_cmd_purchase_house(int Ind, int dir)
 
 	int y, x, i, j;
 	int factor;
-	int64_t price; /* I'm hoping this will be 64 bits.  I dont know if it will be portable. */
+//	int64_t price; /* I'm hoping this will be 64 bits.  I dont know if it will be portable. */
+	s64b price;
+
 	cave_type *c_ptr;
 #ifndef NEWHOUSES
 	object_type key;

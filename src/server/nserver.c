@@ -81,6 +81,10 @@
 #include "angband.h"
 #include "netserver.h"
 
+#ifdef WINDOWS
+# define EWOULDBLOCK WSAEWOULDBLOCK
+#endif
+
 #define MAX_SELECT_FD			1023
 /* #define MAX_RELIABLE_DATA_PACKET_SIZE	1024 */
 #define MAX_RELIABLE_DATA_PACKET_SIZE	512

@@ -2756,8 +2756,12 @@ void exit_game_panic(void)
 
 
 	/* Dump a nice core - Chris */
+#ifdef HANDLE_SIGNALS
 	signal(11, 0);
+#ifndef WINDOWS
 	kill(getpid(), 11);
+#endif
+#endif
 	
 	/* Successful panic save of server info */
 	quit("server panic info save succeeded!");
@@ -2792,7 +2796,11 @@ static void handle_signal_suspend(int sig)
 	/*Term_xtra(TERM_XTRA_ALIVE, 0);*/
 
 	/* Suspend ourself */
+#ifndef WINDOWS
 	(void)kill(0, SIGSTOP);
+#else
+	raise(SIGSTOP);
+#endif
 
 	/* Resume the "Term" */
 	/*Term_xtra(TERM_XTRA_ALIVE, 1);*/

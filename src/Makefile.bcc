@@ -1,0 +1,178 @@
+###################################################################
+#
+#  makefile.bcc - PernMangband makefile for Borland C++ 5.5 (Win32)
+#
+#  This makefile, along with necessary code, was written by
+#  Yakina (yakina@dsb.to).
+#
+#  How to compile:
+#  1. install bcc++5.5 first - from http://www.borland.com/
+#  2. go to the directory 'src' of PernMangband
+#     (the directory this file is in.)
+#  3. change the 'BCC55 = ..' option to the directory you
+#     installed bcc++
+#  4. type 'make -f makefile.bcc'
+#     ( or 'make -f makefile.bcc client' if you want client only.
+#  5. enjoy!
+#
+###################################################################
+
+
+###################################################################
+#
+#       Borland specific directives ---
+#
+.AUTODEPEND
+
+###################################################################
+#
+# Set tool and version names:
+
+BCC55      = "C:\Program Files\Borland\Bcc55"
+
+CPP        = $(BCC55)\bin\bcc32
+LINKER     = $(BCC55)\bin\ilink32
+RC         = $(BCC55)\bin\brc32
+
+###################################################################
+#
+# Name of the *.exe-file
+
+SERV_EXE = mangband.exe
+CONS_EXE = mangconsole.exe
+CLI_EXE = mangclient.exe
+
+
+###################################################################
+#
+# Debug mode (un-comment for debugging)
+
+# DBGOPT= -v -N -x -xp
+
+
+###################################################################
+#
+# Set any compiler options
+
+CCOPTS = -jb -j1 -Hc -tW -lGn -w- \
+	-D_WIN32_WINNT=0x0400 -DWINVER=0x0400 \
+	-DUSE_TRANSPARENCY -DWIN32 -D_WINDOWS -DSTDVA=1 -DSTRICT \
+	-I$(BCC55)\include -L$(BCC55)\lib
+
+LDFLAGS = -L$(BCC55)\lib
+
+###################################################################
+#
+# Japanese options
+
+#JPOPTS = -DJP -DSJIS
+
+
+# Compile flags:
+CPPFLAGS= $(CCOPTS) $(JPOPTS) $(DBGOPT)
+
+
+######################## Targets ##################################
+
+SERV_SRCS = \
+  common\z-util.c common\z-virt.c common\z-form.c common\z-rand.c \
+  common\net-win.c common\sockbuf.c server\variable.c server\control.c \
+  server\party.c server\tables.c server\util.c server\cave.c \
+  server\object1.c server\object2.c server\monster1.c server\monster2.c \
+  server\xtra1.c server\xtra2.c server\spells1.c server\spells2.c \
+  server\melee1.c server\melee2.c server\save.c server\files.c \
+  server\cmd1.c server\cmd2.c server\cmd3.c server\cmd4.c server\cmd5.c \
+  server\cmd6.c server\store.c server\birth.c server\load2.c \
+  server\sched.c server\generate.c server\wild.c server\dungeon.c \
+  server\init1.c server\init2.c server\nserver.c server\printout.c \
+  server\randart.c common\common.c \
+  server\main.c
+
+SERV_OBJS = \
+  common\z-util.obj common\z-virt.obj common\z-form.obj common\z-rand.obj \
+  common\net-win.obj common\sockbuf.obj server\variable.obj server\control.obj \
+  server\party.obj server\tables.obj server\util.obj server\cave.obj \
+  server\object1.obj server\object2.obj server\monster1.obj server\monster2.obj \
+  server\xtra1.obj server\xtra2.obj server\spells1.obj server\spells2.obj \
+  server\melee1.obj server\melee2.obj server\save.obj server\files.obj \
+  server\cmd1.obj server\cmd2.obj server\cmd3.obj server\cmd4.obj server\cmd5.obj \
+  server\cmd6.obj server\store.obj server\birth.obj server\load2.obj \
+  server\sched.obj server\generate.obj server\wild.obj server\dungeon.obj \
+  server\init1.obj server\init2.obj server\nserver.obj server\printout.obj \
+  server\randart.obj common\common.obj \
+  server\main.obj 
+
+CONS_SRCS = \
+  common\z-util.c common\z-virt.c common\z-form.c common\net-win.c \
+  common\sockbuf.c common\net-ibm.c \
+  client\z-term.c \
+  client\main-win.c \
+  console\variable.c console\c-util.c console\console.c console\c-init.c
+
+CONS_OBJS = \
+  common\z-util.obj common\z-virt.obj common\z-form.obj common\net-win.obj \
+  common\sockbuf.obj common\net-ibm.obj \
+  client\z-term.obj \
+  client\main-win.obj \
+  console\variable.obj console\c-util.obj console\console.obj console\c-init.obj
+
+CLI_SRCS = \
+  common\z-util.c common\z-virt.c common\z-form.c common\z-rand.c \
+  common\net-win.c common\sockbuf.c common\net-ibm.c common\common.c \
+  client\z-term.c client\c-util.c client\c-cmd.c client\c-inven.c \
+  client\c-files.c client\c-tables.c client\c-store.c client\c-init.c \
+  client\variable.c client\main-win.c client\nclient.c client\c-birth.c \
+  client\c-xtra1.c client\c-xtra2.c client\c-spell.c client\client.c \
+  client\readdib.c
+
+CLI_OBJS = \
+  common\z-util.obj common\z-virt.obj common\z-form.obj common\z-rand.obj \
+  common\net-win.obj common\sockbuf.obj common\net-ibm.obj common\common.obj \
+  client\z-term.obj client\c-util.obj client\c-cmd.obj client\c-inven.obj \
+  client\c-files.obj client\c-tables.obj client\c-store.obj client\c-init.obj \
+  client\variable.obj client\main-win.obj client\nclient.obj client\c-birth.obj \
+  client\c-xtra1.obj client\c-xtra2.obj client\c-spell.obj client\client.obj \
+  client\readdib.obj
+
+all : $(CLI_EXE)
+
+clean:
+	-@if exist common\*.obj del common\*.obj >nul
+	-@if exist server\*.obj del server\*.obj >nul
+	-@if exist client\*.obj del client\*.obj >nul
+	-@if exist client\*.res del client\*.res >nul
+	-@if exist *.exe del *.exe >nul
+	-@if exist *.res del *.res >nul
+	-@if exist *.tds del *.tds >nul
+	-@if exist *.ilc del *.ilc >nul
+	-@if exist *.ild del *.ild >nul
+	-@if exist *.ilf del *.ilf >nul
+	-@if exist *.ils del *.ils >nul
+
+install: $(CLI_EXE)
+	copy $(CLI_EXE) ..
+
+
+########################### Explicit Rules ########################
+$(SERV_EXE): $(SERV_OBJS)
+	$(LINKER) -ap $(LDFLAGS) -x $(SERV_OBJS) c0x32.obj, $(SERV_EXE),, cw32mt.lib import32.lib ws2_32.lib
+
+$(CONS_EXE): $(CONS_OBJS)
+	$(LINKER) -aa $(LDFLAGS) -x $(CONS_OBJS) c0w32.obj, $(CONS_EXE),, cw32.lib import32.lib ws2_32.lib,, client\angband.res
+
+$(CLI_EXE): $(CLI_OBJS) angband.res
+	$(LINKER) -aa $(LDFLAGS) -x $(CLI_OBJS) c0w32.obj, $(CLI_EXE),, cw32.lib import32.lib ws2_32.lib,, client\angband.res
+
+angband.res: client\angband.rc
+	$(RC) -r client\angband.rc
+
+########################### Implicit Rules ########################
+.c.obj:
+	$(CPP) $(CPPFLAGS) -o$*.obj -c {$? }
+
+.c.i:
+	$(CPP) $(CPPFLAGS) -c -Sr -Sd {$? }
+
+.obj.exe:
+	$(CPP) $(CPPFLAGS) $<
+

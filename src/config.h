@@ -464,7 +464,7 @@
 #ifdef WINDOWS
 
 /* Do not handle signals */
-# undef HANDLE_SIGNALS
+// # undef HANDLE_SIGNALS
 
 #endif
 

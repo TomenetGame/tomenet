@@ -3368,7 +3368,7 @@ void monster_death(int Ind, int m_idx)
 			/* Mega-Hack -- Prepare to make a ring of invisibility */
 			/* Sorry, =inv is too nice.. */
 			//                        object_prep(qq_ptr, lookup_kind(TV_RING, SV_RING_INVIS));
-			object_prep(qq_ptr, lookup_kind(TV_RING, SV_RING_TELEPORTATION));
+			object_prep(qq_ptr, lookup_kind(TV_RING, SV_RING_STEALTH));
 			qq_ptr->number = 1;
 
 			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE);

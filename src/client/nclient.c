@@ -22,7 +22,9 @@
 #include <devices/timer.h>
 #endif
 #ifndef DUMB_WIN
+#ifndef WINDOWS
 #include <unistd.h>
+#endif
 #endif
 
 #if 1
@@ -3092,6 +3094,20 @@ int Send_King(byte type)
 	return 1;
 }
 
+#ifdef WINDOWS
+int gettimeofday(struct timeval *timenow)
+{
+	time_t t;
+
+	t = clock();
+
+	timenow->tv_usec = t % 1000;
+	timenow->tv_sec = t / CLK_TCK;
+
+	return 0;
+}
+#endif
+
 // Update the current time, which is stored in 100 ms "ticks".
 // I hope that Windows systems have gettimeofday on them by default.
 // If not there should hopefully be some simmilar efficient call with the same
@@ -3106,7 +3122,11 @@ void update_ticks()
 #ifdef AMIGA
 	GetSysTime(&cur_time);
 #else
+#ifdef WINDOWS
+	gettimeofday(&cur_time);
+#else
 	gettimeofday(&cur_time, NULL);
+#endif
 #endif
 
 	// Set the new ticks to the old ticks rounded down to the number of seconds.
@@ -3115,7 +3135,11 @@ void update_ticks()
 #ifdef AMIGA
 	newticks += cur_time.tv_micro / 100000;
 #else
+#ifdef WINDOWS
+	newticks += cur_time.tv_usec / 100;
+#else
 	newticks += cur_time.tv_usec / 100000;
+#endif
 #endif
 
 	// Assume that it has not been more than one second since this function was last called

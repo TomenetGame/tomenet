@@ -28,7 +28,9 @@
 #ifndef DUMB_WIN
 # define EWOULDBLOCK WSAEWOULDBLOCK
 /* this next one redefines va_start and va_end, but it is necessary -GP*/
+#ifndef _WINDOWS
 # include <varargs.h>
+#endif
 #endif
 #else
 # include <unistd.h>

@@ -187,6 +187,12 @@ int main(int argc, char *argv[])
 	WSAStartup(MAKEWORD(1, 1), &wsadata);
 #endif
 
+#ifdef WINDOWS
+	WSADATA wsadata;
+	/* Initialize WinSock */
+	WSAStartup(MAKEWORD(1, 1), &wsadata);
+#endif
+  
 
 	/* Save the "program name" */
 	argv0 = argv[0];

@@ -1,0 +1,49 @@
+LANGUAGE 0, 0
+ANGBAND MENU DISCARDABLE
+BEGIN
+	POPUP "&File"
+	BEGIN
+		MENUITEM "E&xit"	101
+	END
+	POPUP "&Window"
+	BEGIN
+		POPUP "&Visible..."
+		BEGIN
+			MENUITEM "Main"	200
+			MENUITEM "Mirror"	201
+			MENUITEM "Recall"	202
+			MENUITEM "Choice"	203
+			MENUITEM "Term-4 Window"	204
+			MENUITEM "Term-5 Window"	205
+			MENUITEM "Term-6 Window"	206
+			MENUITEM "Term-7 Window"	207
+		END
+		POPUP "&Font..."
+		BEGIN
+			MENUITEM "Main"	210
+			MENUITEM "Mirror"	211
+			MENUITEM "Recall"	212
+			MENUITEM "Choice"	213
+			MENUITEM "Term-4 Window"	214
+			MENUITEM "Term-5 Window"	215
+			MENUITEM "Term-6 Window"	216
+			MENUITEM "Term-7 Window"	217
+		END
+	END
+	POPUP "&Option"
+	BEGIN
+		MENUITEM "&Sounds"	401
+	END
+END
+
+
+1 DIALOG 0,0,240,12
+STYLE WS_POPUP | WS_CAPTION | WS_VISIBLE | DS_MODALFRAME | DS_3DLOOK | DS_CONTEXTHELP
+CAPTION "Message"
+FONT 14, "System"
+BEGIN
+	EDITTEXT	101,0,0,240,12,WS_BORDER
+END
+
+ANGBAND ICON "angband.ico"
+
