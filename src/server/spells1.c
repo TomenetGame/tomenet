@@ -4158,7 +4158,9 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_POIS:
 		{
 			if (seen) obvious = TRUE;
-			if (r_ptr->flags3 & RF3_IM_POIS)
+			if ((r_ptr->flags3 & RF3_IM_POIS) ||
+			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
 			{
 				note = " is immune.";
 				dam = 0;
@@ -4185,7 +4187,8 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 //			if (magik(15)) do_pois = (10 + randint(11) + r) / (r + 1);
 			if ((r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A'))
+			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) ||
+			    (m_ptr->r_idx == 862)) /* <- Morgoth */
 			{
 				note = " is immune.";
 				dam = 0;
