@@ -105,6 +105,7 @@ static int Receive_take_off(int ind);
 static int Receive_use(int ind);
 static int Receive_throw(int ind);
 static int Receive_wield(int ind);
+static int Receive_observe(int ind);
 static int Receive_zap(int ind);
 
 static int Receive_target(int ind);

@@ -717,6 +717,26 @@ Change list for PernMangband
 - Added automatic nice shutdown. No more angry players.
 - Mimic rings have no restriction on use now.
 
+26/02/2002 (Jir)
+- leftover typos and minor bugfixes.
+
+26/02/2002 (Yakina {note by Jir})
+- Resurrected command 'I' (examine Item)
+- Bugfixes and enhancements for windoze.
+  - cleanup makefile.bcc
+  - fix broken menu
+  - new menu item 'Save Preference'.
+	Fonts and Windows' positon are saved to .ini
+  - Windows font (logical font) support (experimental).
+    Define 'USE_LOGFONT' in makefile.bcc or appropriate place.
+  - `Slow server' bug fix. (Windows server can be compiled well,
+	but not work at least the HEAD)
+  - some minor fix
+
+26/02/2002 (Unknown {note by Jir})
+- Borrowed a *_info.txt renumbering script.
+  http://www.fragment.com/~jl8e/angband/
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)
@@ -725,6 +745,7 @@ Change list for PernMangband
 [B] Self-reproducing black trap
 [B] Panic save often enters into infinite loop.
 [B] House doors still seem to crash sometimes.
+[B] wpos display hides wound states(eg.'Deep Gash')
 
 ==== below this line are changes to be done in the future ====
 [minor ones]
@@ -734,15 +755,19 @@ Change list for PernMangband
 - sort unique-list according to the level
 - tombstone screen
 - wilderness compacting
-- move slash-commands to another function
 - low-sanity alart each 2000 turn or sth(and hallucination? :)
 - cave_special should use union? and their save/load via csfunc
+- display "non-scoring mode" in '@' screen
+- store buying-price should reflect *ID* states
+[C] ameliorate option interface(toggle-key/vi-key)
+[C] use 2 lines for each server on server-list
 
 [major ones]
 - new terrains and their effects (f_info.txt)
 - variety of dungeon types (d_info.txt)
 - better cave-generator (generate.c) {Asclep?}
-- fully-implemented multiple towns (t_*.txt/st_info.txt)
+- fully-implemented multiple towns (t_*.txt)
+- more kinds of stores (st_info.txt)
 - quests (needing LUA-hooks) {hopefully DarkGod}
 - guild, or new party system
 - backbone scenario (like token system)
@@ -758,8 +783,9 @@ Change list for PernMangband
 ==== below this line are RFEs collected so far (good or bad) ====
 - more equipment slots in general (like Bracer)
 - door spiking (with '/' key)
-- pet/golem {Evileye/DG?}
-- player shouldn't gain more than 1 xp.level once?
+- NPC/pet/golem {Evileye/DG?}
+- monsters' interactions
+- player shouldn't gain more than 1 levels at once (esp.from books)
 - enhanced help system (imo we cannot beat web browsers anyway..)
 - subclass system
 - karma/luck system (karma is like luck, but never gets positive value)
@@ -769,5 +795,9 @@ Change list for PernMangband
   the floor for days.
 - 3-D gfx and full-audio support
 - full-mouse operation
-- player shouldn't gain more than 1 levels at once (esp.from books)
+- time-limited features (like in Larn)
+- savedata editor
+- new networking code (to kiss xpilot adieu :)
+- chat-line editor/history
+- vanilla-Angband style houses
 

@@ -74,7 +74,21 @@
 #ifdef WINDOWS
 
 #define MNU_SUPPORT
-#define GRAPHICS
+/* #define USE_GRAPHICS */
+
+#ifdef JP
+#  ifndef USE_LOGFONT
+#    define USE_LOGFONT
+#  endif
+#endif
+
+#ifdef USE_LOGFONT
+#  define DEFAULT_FONTNAME "8X13"
+#  undef  USE_GRAPHICS
+#else
+#  define DEFAULT_FONTNAME "8X13.FON"
+#  define DEFAULT_TILENAME "8X13.BMP"
+#endif
 
 
 /*
@@ -126,6 +140,7 @@
 #define IDM_OPTIONS_SOUND		222
 #define IDM_OPTIONS_UNUSED		231
 #define IDM_OPTIONS_SAVER		232
+#define IDM_OPTIONS_SAVEPREF	241
 
 #define IDM_HELP_GENERAL		901
 #define IDM_HELP_SPOILERS		902
@@ -335,6 +350,10 @@ struct _term_data
 
 	uint     font_wid;
 	uint     font_hgt;
+
+#ifdef USE_LOGFONT
+	LOGFONT  lf;
+#endif
 };
 
 
@@ -696,11 +715,21 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 		WritePrivateProfileString(sec_name, "Visible", buf, ini_file);
 	}
 
+#ifdef USE_LOGFONT
+	WritePrivateProfileString(sec_name, "Font", *(td->lf.lfFaceName) ? td->lf.lfFaceName : DEFAULT_FONTNAME, ini_file);
+	wsprintf(buf, "%d", td->lf.lfWidth);
+	WritePrivateProfileString(sec_name, "FontWid", buf, ini_file);
+	wsprintf(buf, "%d", td->lf.lfHeight);
+	WritePrivateProfileString(sec_name, "FontHgt", buf, ini_file);
+	wsprintf(buf, "%d", td->lf.lfWeight);
+	WritePrivateProfileString(sec_name, "FontWgt", buf, ini_file);
+#else
 	/* Desired font */
 	if (td->font_file)
 	{
 		WritePrivateProfileString(sec_name, "Font", td->font_file, ini_file);
 	}
+#endif
 
 	/* Desired graf */
 	if (td->graf_file)
@@ -783,12 +812,21 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
 	}
 
 	/* Desired font, with default */
-	GetPrivateProfileString(sec_name, "Font", "8X13.FON", tmp, 127, ini_file);
+	GetPrivateProfileString(sec_name, "Font", DEFAULT_FONTNAME, tmp, 127, ini_file);
+#ifdef USE_LOGFONT
+	td->font_want = string_make(tmp);
+	td->lf.lfWidth  = GetPrivateProfileInt(sec_name, "FontWid", 0, ini_file);
+	td->lf.lfHeight = GetPrivateProfileInt(sec_name, "FontHgt", 15, ini_file);
+	td->lf.lfWeight = GetPrivateProfileInt(sec_name, "FontWgt", 0, ini_file);
+#else
 	td->font_want = string_make(extract_file_name(tmp));
+#endif
 
 	/* Desired graf, with default */
-	GetPrivateProfileString(sec_name, "Graf", "8X13.BMP", tmp, 127, ini_file);
+#ifdef USE_GRAPHICS
+	GetPrivateProfileString(sec_name, "Graf", DEFAULT_TILENAME, tmp, 127, ini_file);
 	td->graf_want = string_make(extract_file_name(tmp));
+#endif
 
 	/* Window size */
 	td->cols = GetPrivateProfileInt(sec_name, "Columns", td->cols, ini_file);
@@ -1050,6 +1088,12 @@ static errr term_force_font(term_data *td, cptr name)
 	char buf[1024];
 
 
+#ifdef USE_LOGFONT
+	td->font_id = CreateFontIndirect(&(td->lf));
+	if (!td->font_id) return (1);
+	wid = td->lf.lfWidth;
+	hgt = td->lf.lfHeight;
+#else
 	/* Forget the old font (if needed) */
 	if (td->font_id) DeleteObject(td->font_id);
 
@@ -1134,7 +1178,7 @@ static errr term_force_font(term_data *td, cptr name)
 	                         ANSI_CHARSET, OUT_DEFAULT_PRECIS,
 	                         CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
 	                         FIXED_PITCH | FF_DONTCARE, base);
-
+#endif
 
 	/* Hack -- Unknown size */
 	if (!wid || !hgt)
@@ -1286,6 +1330,35 @@ static errr term_force_graf(term_data *td, cptr name)
  */
 static void term_change_font(term_data *td)
 {
+#ifdef USE_LOGFONT
+	CHOOSEFONT cf;
+
+	memset(&cf, 0, sizeof(cf));
+	cf.lStructSize = sizeof(cf);
+	cf.Flags = CF_SCREENFONTS | CF_FIXEDPITCHONLY | CF_NOVERTFONTS | CF_INITTOLOGFONTSTRUCT;
+	cf.lpLogFont = &(td->lf);
+
+	if (ChooseFont(&cf))
+	{
+		/* Force the font */
+		term_force_font(td, NULL);
+
+#if 0
+		/* Assume not bizarre */
+		td->bizarre = TRUE;
+
+		/* Reset the tile info */
+		td->tile_wid = td->font_wid;
+		td->tile_hgt = td->font_hgt;
+#endif
+
+		/* Analyze the font */
+		term_getsize(td);
+
+		/* Resize the window */
+		term_window_resize(td);
+	}
+#else
 	OPENFILENAME ofn;
 
 	char tmp[128] = "";
@@ -1312,9 +1385,10 @@ static void term_change_font(term_data *td)
 		if (term_force_font(td, tmp))
 		{
 			/* Oops */
-			(void)term_force_font(td, "8X13.FON");
+			(void)term_force_font(td, DEFAULT_FONTNAME);
 		}
 	}
+#endif
 }
 
 
@@ -1358,10 +1432,10 @@ static void term_change_bitmap(term_data *td)
 		    term_force_graf(td, tmp))
 		{
 			/* Force the "standard" font */
-			(void)term_force_font(td, "8X13.FON");
+			(void)term_force_font(td, DEFAULT_FONTNAME);
 
 			/* Force the "standard" bitmap */
-			(void)term_force_graf(td, "8X13.BMP");
+			(void)term_force_graf(td, DEFAULT_TILENAME);
 		}
 	}
 }
@@ -2052,10 +2126,20 @@ static void init_windows(void)
 	/* Windows */
 	for (i = 0; i < MAX_TERM_DATA; i++)
 	{
+#ifdef USE_LOGFONT
+		td = &data[i];
+
+		strncpy(td->lf.lfFaceName, td->font_want, LF_FACESIZE);
+		td->lf.lfHeight = td->font_hgt;
+		td->lf.lfWidth  = td->font_wid;
+		td->lf.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
+		term_force_font(td, NULL);
+#else
 		if (term_force_font(&data[i], data[i].font_want))
 		{
-			(void)term_force_font(&data[i], "8X13.FON");
+			(void)term_force_font(&data[i], DEFAULT_FONTNAME);
 		}
+#endif
 	}
 
 
@@ -2109,10 +2193,10 @@ static void init_windows(void)
 		if (term_force_graf(&data[0], data[0].graf_want))
 		{
 			/* XXX XXX XXX Force the "standard" font */
-			(void)term_force_font(&data[0], "8X13.FON");
+			(void)term_force_font(&data[0], DEFAULT_FONTNAME);
 
 			/* XXX XXX XXX Force the "standard" bitmap */
-			(void)term_force_graf(&data[0], "8X13.BMP");
+			(void)term_force_graf(&data[0], DEFAULT_TILENAME);
 		}
 
 #ifdef FULL_GRAPHICS
@@ -2124,10 +2208,10 @@ static void init_windows(void)
 			if (term_force_graf(&data[i], data[i].graf_want))
 			{
 				/* XXX XXX XXX Force the "standard" font */
-				(void)term_force_font(&data[i], "8X13.FON");
+				(void)term_force_font(&data[i], DEFAULT_FONTNAME);
 
 				/* XXX XXX XXX Force the "standard" bitmap */
-				(void)term_force_graf(&data[i], "8X13.BMP");
+				(void)term_force_graf(&data[i], DEFAULT_TILENAME);
 			}
 		}
 
@@ -2184,7 +2268,7 @@ static void setup_menus(void)
 
 	/* Exit with save */
 	EnableMenuItem(hm, IDM_FILE_EXIT,
-                       MF_BYCOMMAND | MF_ENABLED | MF_GRAYED);
+                       MF_BYCOMMAND | MF_ENABLED);
  
 
 	/* Window font options */
@@ -2504,10 +2588,10 @@ static void process_menus(WORD wCmd)
 				if (term_force_graf(&data[0], data[0].font_file))
 				{
 					/* XXX XXX XXX Force a "usable" font */
-					(void)term_force_font(&data[0], "8X13.FON");
+					(void)term_force_font(&data[0], DEFAULT_FONTNAME);
 
 					/* XXX XXX XXX Force a "usable" graf */
-					(void)term_force_graf(&data[0], "8X13.BMP");
+					(void)term_force_graf(&data[0], DEFAULT_TILENAME);
 				}
 
 #ifdef FULL_GRAPHICS
@@ -2519,10 +2603,10 @@ static void process_menus(WORD wCmd)
 					if (term_force_graf(&data[i], data[i].font_file))
 					{
 						/* XXX XXX XXX Force a "usable" font */
-						(void)term_force_font(&data[i], "8X13.FON");
+						(void)term_force_font(&data[i], DEFAULT_FONTNAME);
 
 						/* XXX XXX XXX Force a "usable" graf */
-						(void)term_force_graf(&data[i], "8X13.BMP");
+						(void)term_force_graf(&data[i], DEFAULT_TILENAME);
 					}
 				}
 
@@ -2545,6 +2629,12 @@ static void process_menus(WORD wCmd)
 		case IDM_OPTIONS_SOUND:
 		{
 			use_sound = !use_sound;
+			break;
+		}
+
+		case IDM_OPTIONS_SAVEPREF:
+		{
+			save_prefs();
 			break;
 		}
 
@@ -3285,9 +3375,11 @@ static void init_stuff(void)
 	validate_dir(ANGBAND_DIR_FILE);
 	validate_dir(ANGBAND_DIR_HELP);
 	validate_dir(ANGBAND_DIR_USER);
+#if !defined(USE_LOGFONT) || defined(USE_GRAPHICS) || defined(USE_SOUND)
 	validate_dir(ANGBAND_DIR_XTRA);	  /*sounds & graphics */
+#endif
 
-
+#ifndef USE_LOGFONT
 	// Build the "font" path
 	path_build(path, 1024, ANGBAND_DIR_XTRA, "font");
 
@@ -3298,10 +3390,11 @@ static void init_stuff(void)
 	validate_dir(ANGBAND_DIR_XTRA_FONT);
 
 	// Build the filename 
-	path_build(path, 1024, ANGBAND_DIR_XTRA_FONT, "8X13.FON");
+	path_build(path, 1024, ANGBAND_DIR_XTRA_FONT, DEFAULT_FONTNAME);
 
 	// Hack -- Validate the basic font
 	validate_file(path);
+#endif
 
 
 #ifdef USE_GRAPHICS
@@ -3316,7 +3409,7 @@ static void init_stuff(void)
 	validate_dir(ANGBAND_DIR_XTRA_GRAF);
 
 	/* Build the filename */
-	path_build(path, 1024, ANGBAND_DIR_XTRA_GRAF, "8X13.BMP");
+	path_build(path, 1024, ANGBAND_DIR_XTRA_GRAF, DEFAULT_TILENAME);
 
 	/* Hack -- Validate the basic graf */
 	validate_file(path);

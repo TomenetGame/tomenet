@@ -3,36 +3,38 @@ ANGBAND MENU DISCARDABLE
 BEGIN
 	POPUP "&File"
 	BEGIN
-		MENUITEM "E&xit"	101
+		MENUITEM "E&xit"	104
 	END
 	POPUP "&Window"
 	BEGIN
 		POPUP "&Visible..."
 		BEGIN
-			MENUITEM "Main"	200
-			MENUITEM "Mirror"	201
-			MENUITEM "Recall"	202
-			MENUITEM "Choice"	203
-			MENUITEM "Term-4 Window"	204
-			MENUITEM "Term-5 Window"	205
-			MENUITEM "Term-6 Window"	206
-			MENUITEM "Term-7 Window"	207
+			MENUITEM "Main"	211
+			MENUITEM "Mirror"	212
+			MENUITEM "Recall"	213
+			MENUITEM "Choice"	214
+			MENUITEM "Term-4 Window"	215
+			MENUITEM "Term-5 Window"	216
+			MENUITEM "Term-6 Window"	217
+			MENUITEM "Term-7 Window"	218
 		END
 		POPUP "&Font..."
 		BEGIN
-			MENUITEM "Main"	210
-			MENUITEM "Mirror"	211
-			MENUITEM "Recall"	212
-			MENUITEM "Choice"	213
-			MENUITEM "Term-4 Window"	214
-			MENUITEM "Term-5 Window"	215
-			MENUITEM "Term-6 Window"	216
-			MENUITEM "Term-7 Window"	217
+			MENUITEM "Main"	201
+			MENUITEM "Mirror"	202
+			MENUITEM "Recall"	203
+			MENUITEM "Choice"	204
+			MENUITEM "Term-4 Window"	205
+			MENUITEM "Term-5 Window"	206
+			MENUITEM "Term-6 Window"	207
+			MENUITEM "Term-7 Window"	208
 		END
 	END
 	POPUP "&Option"
 	BEGIN
-		MENUITEM "&Sounds"	401
+		MENUITEM "&Sounds"	222
+		MENUITEM SEPARATOR
+		MENUITEM "Save &Preference"	241
 	END
 END
 

@@ -139,9 +139,9 @@
 #define PKT_SCRIPT		124
 
 
-/* Packet type 150 are hacks */
+/* Packet type 150- are hacks */
 #define PKT_FLUSH		150
-
+#define PKT_OBSERVE		151
 
 
 /*

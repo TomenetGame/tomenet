@@ -1095,7 +1095,8 @@ void do_cmd_quaff_potion(int Ind, int item)
 				if (heal_insanity(Ind, damroll(12,8))) ident = TRUE;
 				break;
 			case SV_POTION2_CURE_SANITY:
-				if (heal_insanity(Ind, damroll(10,100))) ident = TRUE;
+//				if (heal_insanity(Ind, damroll(10,100))) ident = TRUE;
+				if (heal_insanity(Ind, damroll(10,20))) ident = TRUE;
 				break;
 		}
 	}

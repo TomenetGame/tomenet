@@ -842,7 +842,7 @@ void do_cmd_observe(int Ind, int item)
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Describe */
-	msg_format(Ind, "Examining %s...", o_name);
+	/* msg_format(Ind, "Examining %s...", o_name); */
 
 	/* Describe it fully */
 	if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");

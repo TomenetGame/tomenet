@@ -17006,6 +17006,32 @@ S:SCARE | BR_POIS | BR_DARK
 D:Fed with horrid meats and grown to enormous size, this slavering creature 
 D:seeks livelier prey. 
 
+# Questors -- Rest till the day will come
+
+#N:969:The Princess
+#G:p:y
+#I:110:1d1:40:250:3
+#W:0:4:730:0
+#E:0:1:1:2:1:1
+#O:0:0:1:0
+#F:FEMALE | CAN_SPEAK
+#F:FORCE_MAXHP | SPECIAL_GENE | NO_TARGET
+#F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_DEATH
+#F:MORTAL | BASEANGBAND | UNIQUE | PET |
+#D:The princess of an unknown kingdom, you need to save her!
+#
+#N:970:Merton Proudfoot, the lost hobbit
+#G:h:v
+#I:110:1d1:40:250:3
+#W:1:1:730:0
+#E:0:1:1:2:1:1
+#O:0:0:0:1
+#F:MALE | CAN_SPEAK
+#F:FORCE_MAXHP | SPECIAL_GENE
+#F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
+#F:MORTAL | BASEANGBAND | UNIQUE | PET | NO_DEATH
+#D:The poor hobbit got lost in the dreadful maze!
+
 N:971:The Wight-King of the Barrow-downs
 G:W:v
 I:120:38d22:30:45:0
@@ -17174,6 +17200,14 @@ S:HEAL | HASTE | TELE_AWAY | S_MONSTERS | S_KIN
 D:Last and proudest king of ancient Numenor. Corrupted by power and 
 D:avarice, he fell victim to Sauron's wiles, tried to fight the immortals 
 D:themselves, and condemned Numenor to oblivion. 
+
+#N:981:Doppelganger
+#G:@:w
+#I:1:1d1:1:1:1
+#E:0:0:0:0:0:0
+#O:0:0:0:0
+#F:NEVER_MOVE | NEVER_BLOW | DOPPLEGANGER | BASEANGBAND | HAS_LITE
+#D:It looks like you...
 
 N:982:Marylene, Heartbreakeress of the Netherworld
 G:P:W
@@ -18354,6 +18388,32 @@ S:S_MONSTER | S_KIN | SHRIEK | BRAIN_SMASH | TRAPS
 D:A strange creature that disguises itself as an object to lure 
 D:unsuspecting adventurers within reach of its venomous claws. 
 
+# Questors -- Rest till the day will come
+
+#N:1041:Melinda Proudfoot
+#G:h:v
+#I:110:1d1:40:250:3
+#W:1:1:730:0
+#E:0:1:1:2:1:1
+#O:0:0:0:1
+#F:FEMALE | CAN_SPEAK
+#F:FORCE_MAXHP | SPECIAL_GENE
+#F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
+#F:MORTAL | BASEANGBAND | UNIQUE | NEUTRAL | NO_DEATH
+#D:She seems to seek someone, you may help...
+#
+#N:1042:Thrain, the King Under the Mountain
+#G:h:B
+#I:110:1d1:40:250:3
+#W:60:1:730:0
+#E:0:1:1:2:1:1
+#O:0:0:0:1
+#F:MALE | CAN_SPEAK
+#F:FORCE_MAXHP | SPECIAL_GENE
+#F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
+#F:MORTAL | BASEANGBAND | UNIQUE | NEUTRAL | NO_DEATH
+#D:He must have suffered horrible tortures...
+
 # PernMangband Additions
 
 N:1043:Pitiful-looking Cheezer
@@ -18489,7 +18549,23 @@ F:DISBELIEVE | RES_TELE
 S:1_IN_2 | 
 S:UNMAGIC
 D:True master of unbelievers, genuine master of weaponry with his Dark Sword,
-D:no one dare utter a so-called 'mystic' word in front of him.
+D:no one dares utter a so-called 'mystic' word in front of him.
+
+N:1051:Jan, the Minimite
+G:u:B
+I:140:10d20:40:10:0
+W:10:50:50:40
+E:0:0:0:0:0:0
+O:0:0:0:0
+F:UNIQUE | NEVER_BLOW | FORCE_MAXHP | MALE | DROP_CORPSE
+F:OPEN_DOOR | RES_TELE | CAN_FLY |
+F:NO_SLEEP | NO_FEAR | JOKEANGBAND | NO_CUT
+F:NO_DEATH | CAN_SPEAK | NO_TARGET
+F:DISBELIEVE | AI_ANNOY
+S:1_IN_12
+S:UNMAGIC
+D:Small winged jolly annoying chatterbox, actually he is a descendant
+D:of dispersed minimite race.
 
 # N: serial number : monster name
 # G: symbol : color

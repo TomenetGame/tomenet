@@ -35,7 +35,7 @@
 # file, and if you wanna delete ones, just change the rarity/
 # depth too high to be actually generated.
 
-# Many new flags are not implemented yet;
+# Many of new flags are not implemented yet;
 # implementations welcone :)	- Jir -
 
 
@@ -1777,8 +1777,10 @@ F:FOUNTAIN
 N:237:Curing
 G:!:d
 I:71:61:100
-W:18:0:4:250
-A:18/1:40/1
+#W:18:0:4:250
+W:18:0:4:5000
+#A:18/1:40/1
+A:18/10:40/3
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
@@ -2611,7 +2613,8 @@ N:347:& Brass Lantern~
 G:~:U
 I:39:1:0:7500
 W:3:0:50:35
-A:3/1
+#A:3/1
+A:3/3
 P:0:1d1:0:0:0
 F:EASY_KNOW | IGNORE_FIRE | LITE2 | FUEL_LITE
 
@@ -6075,7 +6078,7 @@ F:HIDE_TYPE
 # (Pern)Mangband native items
 # Renumbering needed!		- Jir -
 
-N:28:Polymorphing
+N:810:Polymorphing
 G:=:d
 #I:45:5:0
 I:45:60:0
@@ -6083,7 +6086,7 @@ W:30:0:2:100
 A:30/1
 F:ACTIVATE | HIDE_TYPE
 
-N:90:& Magic Arrow~
+N:811:& Magic Arrow~
 G:{:v
 I:17:3:0
 W:10:0:2:100
@@ -6091,14 +6094,14 @@ A:10/1:25/1
 P:0:1d4:0:0:0
 F:SHOW_MODS
 
-N:178:Life
+N:812:Life
 G:?:d
 #I:70:48:0
 I:70:56:0
 W:20:0:5:500
 A:20/1
 
-N:270:Lightning Bolts
+N:813:Lightning Bolts
 G:-:d
 I:65:33:0
 W:15:0:10:600
@@ -6107,13 +6110,13 @@ P:0:1d1:0:0:0
 
 ##Now Norcocth can go wild :) ##
 
-N:399:Blood Bond
+N:814:Blood Bond
 G:?:d
 I:70:58:0
 W:15:0:5:125
 A:15/1
 
-N:542:Unmagic
+N:815:Unmagic
 G:,:d
 I:80:50:50
 W:15:0:2:75
@@ -6121,14 +6124,14 @@ A:15/1
 
 ## Hunting Book ##
 
-N:293:[Hunting and Tracking]
+N:816:[Hunting and Tracking]
 G:?:B
 I:95:0:0
 W:5:0:30:25
 A:5/1
 P:0:1d1:0:0:0
 
-N:299:[Killing from Afar]
+N:817:[Killing from Afar]
 G:?:B
 I:95:1:0
 W:50:0:30:15000
@@ -6136,7 +6139,7 @@ A:50/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:350:[Arrows of the Master Archers]
+N:818:[Arrows of the Master Archers]
 G:?:B
 I:95:2:0
 W:60:0:30:40000
@@ -6146,56 +6149,56 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 ##### Basic Books #####
 
-N:330:[Magic for Beginners]
+N:819:[Magic for Beginners]
 G:?:R
 I:90:0:0
 W:5:0:30:25
 A:5/1
 P:0:1d1:0:0:0
 
-N:331:[Conjurings and Tricks]
+N:820:[Conjurings and Tricks]
 G:?:R
 I:90:1:0
 W:10:0:30:100
 A:10/1
 P:0:1d1:0:0:0
 
-N:332:[Incantations and Illusions]
+N:821:[Incantations and Illusions]
 G:?:R
 I:90:2:0
 W:20:0:30:400
 A:20/1
 P:0:1d1:0:0:0
 
-N:333:[Sorcery and Evocations]
+N:822:[Sorcery and Evocations]
 G:?:R
 I:90:3:0
 W:30:0:30:800
 A:30/1
 P:0:1d1:0:0:0
 
-N:334:[Beginners Handbook]
+N:823:[Beginners Handbook]
 G:?:G
 I:91:0:0
 W:5:0:30:25
 A:5/1
 P:0:1d1:0:0:0
 
-N:335:[Words of Wisdom]
+N:824:[Words of Wisdom]
 G:?:G
 I:91:1:0
 W:10:0:30:100
 A:10/1
 P:0:1d1:0:0:0
 
-N:336:[Chants and Blessings]
+N:825:[Chants and Blessings]
 G:?:G
 I:91:2:0
 W:20:0:30:300
 A:20/1
 P:0:1d1:0:0:0
 
-N:337:[Exorcism and Dispelling]
+N:826:[Exorcism and Dispelling]
 G:?:G
 I:91:3:0
 W:30:0:30:900
@@ -6204,7 +6207,7 @@ P:0:1d1:0:0:0
 
 ##### Special Books (note resistances) #####
 
-N:379:[Resistance of Scarabtarices]
+N:827:[Resistance of Scarabtarices]
 G:?:r
 I:90:4:0
 W:40:0:30:5000
@@ -6212,7 +6215,7 @@ A:40/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:380:[Mordenkainen's Escapes]
+N:828:[Mordenkainen's Escapes]
 G:?:r
 I:90:5:0
 W:50:0:30:15000
@@ -6220,7 +6223,7 @@ A:50/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:381:[Kelek's Grimoire of Power]
+N:829:[Kelek's Grimoire of Power]
 G:?:r
 I:90:6:0
 W:60:0:30:40000
@@ -6228,7 +6231,7 @@ A:60/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:382:[Tenser's Transformations]
+N:830:[Tenser's Transformations]
 G:?:r
 I:90:7:0
 W:70:0:30:300000
@@ -6236,7 +6239,7 @@ A:70/4
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:383:[Raal's Tome of Destruction]
+N:831:[Raal's Tome of Destruction]
 G:?:r
 I:90:8:0
 W:100:0:30:500000
@@ -6244,7 +6247,7 @@ A:75/8
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:384:[Ethereal Openings]
+N:832:[Ethereal Openings]
 G:?:g
 I:91:4:0
 W:40:0:30:5000
@@ -6252,7 +6255,7 @@ A:40/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:385:[Godly Insights]
+N:833:[Godly Insights]
 G:?:g
 I:91:5:0
 W:50:0:30:25000
@@ -6260,7 +6263,7 @@ A:50/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:386:[Purifications and Healing]
+N:834:[Purifications and Healing]
 G:?:g
 I:91:6:0
 W:60:0:30:50000
@@ -6268,7 +6271,7 @@ A:60/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:387:[Holy Infusions]
+N:835:[Holy Infusions]
 G:?:g
 I:91:7:0
 W:80:0:30:100000
@@ -6276,7 +6279,7 @@ A:70/2
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:388:[Wrath of God]
+N:836:[Wrath of God]
 G:?:g
 I:91:8:0
 W:100:0:30:400000
@@ -6286,14 +6289,14 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 # Psi Crystal
 
-N:423:of Telepathy
+N:837:of Telepathy
 G:?:y
 I:89:0:0
 W:10:0:30:25
 A:10/3
 P:0:1d1:0:0:0
 
-N:424:of Psychoportation
+N:838:of Psychoportation
 G:?:y
 I:89:1:0
 W:10:0:30:25
@@ -6303,135 +6306,135 @@ P:0:1d1:0:0:0
 
 ##### Keys #####
 
-N:425:& key~
+N:839:& key~
 G:;:s
 #I:4:1:0
 I:51:1:0
 W:0:0:1:10000
 
 ##### Extra food #####
-N:430:& Potato~
+N:840:& Potato~
 G:,:u
 I:80:20:1500
 W:0:0:2:1
 
-N:431:& Head~ of Cabbage
+N:841:& Head~ of Cabbage
 G:,:G
 I:80:21:1500
 W:0:0:3:1
 
-N:432:& Carrot~
+N:842:& Carrot~
 G:,:o
 I:80:22:500
 W:0:0:1:2
 
-N:433:& Beet~
+N:843:& Beet~
 G:,:r
 I:80:23:750
 W:0:0:1:2
 
-N:434:& Squash
+N:844:& Squash
 G:,:y
 I:80:24:2000
 W:0:0:3:1
 
-N:435:& Ear~ of Corn
+N:845:& Ear~ of Corn
 G:`:y
 I:80:25:1500
 W:0:0:2:2
 
-N:436:of Telekinesis
+N:846:of Telekinesis
 G:?:y
 I:89:2:0
 W:10:0:30:25
 A:10/3
 P:0:1d1:0:0:0
 
-N:437:of Claisentiance
+N:847:of Claisentiance
 G:?:y
 I:89:3:0
 W:10:0:30:25
 A:10/3
 P:0:1d1:0:0:0
 
-N:438:of Empathy
+N:848:of Empathy
 G:?:y
 I:89:4:0
 W:10:0:30:25
 A:10/3
 P:0:1d1:0:0:0
 
-N:439:& Massive~ Piece of Wood
+N:849:& Massive~ Piece of Wood
 G:*:y
 I:52:0:0
 W:10:0:2500:500
 A:10/40
 P:0:1d1:0:0:0
 
-N:440:& Massive~ Piece of Copper
+N:850:& Massive~ Piece of Copper
 G:*:y
 I:52:1:0
 W:30:0:3000:500
 A:30/50
 P:0:1d1:0:0:0
 
-N:441:& Massive~ Piece of Iron
+N:851:& Massive~ Piece of Iron
 G:*:y
 I:52:2:0
 W:50:0:3500:500
 A:50/60
 P:0:1d1:0:0:0
 
-N:442:& Massive~ Piece of Aluminium
+N:852:& Massive~ Piece of Aluminium
 G:*:y
 I:52:3:0
 W:70:0:3500:500
 A:70/70
 P:0:1d1:0:0:0
 
-N:443:& Massive~ Piece of Silver
+N:853:& Massive~ Piece of Silver
 G:*:y
 I:52:4:0
 W:80:0:4000:500
 A:80/80
 P:0:1d1:0:0:0
 
-N:444:& Massive~ Piece of Gold
+N:854:& Massive~ Piece of Gold
 G:*:y
 I:52:5:0
 W:90:0:4500:500
 A:90/90
 P:0:1d1:0:0:0
 
-N:445:& Massive~ Piece of Mithril
+N:855:& Massive~ Piece of Mithril
 G:*:y
 I:52:6:0
 W:110:0:3500:500
 A:110/110
 P:0:1d1:0:0:0
 
-N:446:& Massive~ Piece of Adamantite
+N:856:& Massive~ Piece of Adamantite
 G:*:y
 I:52:7:0
 W:120:0:6000:500
 A:120/200
 P:0:1d1:0:0:0
 
-N:447:& Golem Arm~
+N:857:& Golem Arm~
 G:*:v
 I:52:8:0
 W:10:0:400:500
 A:10/30
 P:0:1d1:0:0:0
 
-N:448:& Golem Leg~
+N:858:& Golem Leg~
 G:*:v
 I:52:9:0
 W:10:0:400:500
 A:10/30
 P:0:1d1:0:0:0
 
-N:449:& Golem Scroll~ of Attack
+N:859:& Golem Scroll~ of Attack
 G:*:s
 I:52:200:0
 W:10:0:10:500
@@ -6440,7 +6443,7 @@ P:0:1d1:0:0:0
 F:ACTIVATE
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:450:& Golem Scroll~ of Following
+N:860:& Golem Scroll~ of Following
 G:*:s
 I:52:201:0
 W:10:0:10:500
@@ -6449,7 +6452,7 @@ P:0:1d1:0:0:0
 F:ACTIVATE
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:451:& Golem Scroll~ of Guard
+N:861:& Golem Scroll~ of Guard
 G:*:s
 I:52:202:0
 W:15:0:10:500
@@ -6458,7 +6461,7 @@ P:0:1d1:0:0:0
 F:ACTIVATE
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:452:Golem Creation
+N:862:Golem Creation
 G:?:d
 #I:70:23:0
 I:70:55:0
@@ -6467,35 +6470,35 @@ A:10/20
 
 ##### Sorcery Books #####
 
-N:512:[Apprentice Handbook]
+N:863:[Apprentice Handbook]
 G:?:R
 I:92:0:0
 W:5:0:30:25
 A:5/1
 P:0:1d1:0:0:0
 
-N:513:[Mystical Words]
+N:864:[Mystical Words]
 G:?:R
 I:92:1:0
 W:10:0:30:100
 A:10/1
 P:0:1d1:0:0:0
 
-N:514:[Arcane Chants]
+N:865:[Arcane Chants]
 G:?:R
 I:92:2:0
 W:20:0:30:400
 A:20/1
 P:0:1d1:0:0:0
 
-N:515:[Locus of Force]
+N:866:[Locus of Force]
 G:?:R
 I:92:3:0
 W:30:0:30:800
 A:30/1
 P:0:1d1:0:0:0
 
-N:516:[Powerfull Sigils]
+N:867:[Powerfull Sigils]
 G:?:o
 I:92:4:0
 W:40:0:30:10000
@@ -6503,7 +6506,7 @@ A:40/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:517:[Disruptive Forces]
+N:868:[Disruptive Forces]
 G:?:o
 I:92:5:0
 W:50:0:30:15000
@@ -6511,7 +6514,7 @@ A:50/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:518:[Forces of the Mind]
+N:869:[Forces of the Mind]
 G:?:o
 I:92:6:0
 W:60:0:30:40000
@@ -6519,7 +6522,7 @@ A:60/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:519:[Power of Ancient Sorcerors]
+N:870:[Power of Ancient Sorcerors]
 G:?:o
 I:92:7:0
 W:80:0:30:300000
@@ -6529,42 +6532,42 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 ##### Fighting Books #####
 
-N:520:[Bashing for Beginners]
+N:871:[Bashing for Beginners]
 G:?:U
 I:93:0:0
 W:5:0:30:200
 A:5/1
 P:0:1d1:0:0:0
 
-N:521:[Fury and Killing]
+N:872:[Fury and Killing]
 G:?:U
 I:93:1:0
 W:50:0:30:50000
 A:50/1
 P:0:1d1:0:0:0
 
-N:522:[Robbers Handbook]
+N:873:[Robbers Handbook]
 G:?:D
 I:94:0:0
 W:5:0:30:25
 A:5/1
 P:0:1d1:0:0:0
 
-N:523:[Shadows and Illusions]
+N:874:[Shadows and Illusions]
 G:?:D
 I:94:1:0
 W:10:0:30:100
 A:10/1
 P:0:1d1:0:0:0
 
-N:524:[Killing Made Easy]
+N:875:[Killing Made Easy]
 G:?:D
 I:94:2:0
 W:20:0:30:400
 A:20/1
 P:0:1d1:0:0:0
 
-N:525:[Bilbo's Tome of Burglary]
+N:876:[Bilbo's Tome of Burglary]
 G:?:D
 I:94:3:0
 W:50:0:30:15000
@@ -6572,7 +6575,7 @@ A:50/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:526:[Shadows Escapes]
+N:877:[Shadows Escapes]
 G:?:D
 I:94:4:0
 W:60:0:30:40000
@@ -6580,7 +6583,7 @@ A:60/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:527:[Great Shadows]
+N:878:[Great Shadows]
 G:?:D
 I:94:5:0
 W:70:0:30:300000
@@ -6588,14 +6591,14 @@ A:70/4
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:528:of Psychometabolism
+N:879:of Psychometabolism
 G:?:y
 I:89:5:0
 W:10:0:30:25
 A:10/3
 P:0:1d1:0:0:0
 
-N:529:House creation
+N:880:House creation
 G:?:d
 #I:70:49:0
 I:70:57:0
@@ -6610,7 +6613,7 @@ A:40/20
 # Scheduled to be ego items.
 # Currently, those items will be generated w/o random bonuses.
 
-N:179:& Orcish Shield~
+N:881:& Orcish Shield~
 G:):D
 I:34:7:0
 W:40:0:100:25000
@@ -6619,7 +6622,7 @@ P:5:1d3:0:0:5
 F:STR | CON
 F:IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC
 
-N:182:& Kolla~
+N:882:& Kolla~
 G:(:G
 #I:35:3:0
 I:35:7:0
@@ -6628,7 +6631,7 @@ A:65/4
 P:3:0d0:0:0:4
 F:STR | CON | DEX | SUST_STR | SUST_CON | SUST_DEX
 
-N:183:& Pair~ of Witan Boots
+N:883:& Pair~ of Witan Boots
 G:]:b
 I:30:8:0
 W:60:0:80:4000
@@ -6636,7 +6639,7 @@ A:60/1
 P:8:1d1:0:0:5
 F:STEALTH | IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC
 
-N:195:Terken
+N:884:Terken
 G:":d
 #I:40:13:0
 I:40:30:0
@@ -6647,7 +6650,7 @@ F:SEE_INVIS | FREE_ACT | SEARCH |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 # Once again, this is out of place, the format of this file needs to be revised.
-N:196:& Set~ of Elven Gloves
+N:885:& Set~ of Elven Gloves
 G:]:g
 I:31:4:0
 W:1:0:40:4000
@@ -6655,7 +6658,7 @@ A:20/16
 P:1:0d0:0:0:0
 F:REGEN
 
-N:205:Speed
+N:886:Speed
 G:":d
 #I:40:14:0
 I:40:31:0
@@ -6666,7 +6669,8 @@ F:SPEED | HIDE_TYPE
 
 ## Only for Highlander tornaments ##
 
-N:414:Immortality
+#N:887:Immortality
+N:887:Pure Cheeze
 G:":d
 #I:40:15:1
 I:40:32:1
@@ -6674,7 +6678,7 @@ W:127:0:3:1
 A:127/255
 F:WIS | STR | INT | DEX | CON | CHR | LIFE | INFRA | SPEED | HIDE_TYPE
 
-N:170:the Moon
+N:888:the Moon
 G:":d
 #I:40:9:5
 I:40:33:5
@@ -6685,14 +6689,14 @@ F:SEE_INVIS | INFRA | ACTIVATE |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 # Smeagol drops this in place of =inv. (idea of Mihi)
-N:138:Stealth
+N:889:Stealth
 G:=:d
 I:45:61:0
 W:8:0:2:250
 A:8/10
 F:STEALTH
 
-N:520:Reflection
+N:890:Reflection
 G:":d
 I:40:9:0
 W:60:0:3:30000
@@ -6703,39 +6707,49 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 # The potions of cure insanity, in light, medium, regular, and full
 # versions.
 
-N:657:Cure Light Insanity
+# Those pots should *never* be sold in BM..
+
+N:891:Cure Light Insanity
 G:!:d
 I:72:14:0
-W:5:5:4:15
-A:5/1:1/1:3/1
+#W:5:5:4:15
+W:5:5:4:250
+#A:5/1:1/1:3/1
+A:5/4
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
-N:658:Cure Serious Insanity
+N:892:Cure Serious Insanity
 G:!:d
 I:72:15:0
-W:10:5:4:40
-A:10/1
+#W:10:5:4:40
+W:10:5:4:1000
+#A:10/1
+A:10/6
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
-N:659:Cure Critical Insanity
+N:893:Cure Critical Insanity
 G:!:d
 I:72:16:0
-W:15:5:4:100
-A:15/3
+#W:15:5:4:100
+W:15:12:4:5000
+#A:15/3
+A:15/8
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
-N:660:Cure Insanity
+N:894:Cure Insanity
 G:!:d
 I:72:17:0
-W:25:5:4:30
-A:25/3
+#W:25:5:4:30
+W:25:5:4:30000
+#A:25/3
+A:25/12
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
-N:163:Suspicion
+N:895:Suspicion
 G:":d
 I:40:34:-1
 W:20:0:3:5000
@@ -6743,7 +6757,7 @@ A:20/5
 F:INT | WIS | ANTIMAGIC_20
 
 # !!
-N:163:Life Saving
+N:896:Life Saving
 G:":d
 I:40:35:0
 W:40:0:3:400000

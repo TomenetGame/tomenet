@@ -480,20 +480,14 @@ void sched(void)
 
     while (sched_running) {
 
-		/*
 #ifdef VMS
         if (NumPlayers > NumRobots + NumPseudoPlayers
             || login_in_progress != 0
             || NumQueuedPlayers > 0) {
-			*/
-#if defined(VMS) || defined(_WINDOWS)
-        if (NumPlayers > 0) {
 
             /* need fast I/O checks now! (2 or 3 times per frames) */
             tv.tv_sec = 0;
             tv.tv_usec = 1000000 / (3 * timer_freq + 1); 
-            if (tv.tv_usec<15000)
-                tv.tv_usec = 15000;
         }
         else {
             /* slow I/O checks are possible here... (2 times per second) */ ; 
@@ -566,7 +560,7 @@ void sched(void)
 		    io_todo--;
 		}
 	    }
-#ifndef VMS
+#if !defined(VMS) && !defined(WINDOWS)
 	    if (io_todo == 0) {
 		tvp = NULL;
 	    }

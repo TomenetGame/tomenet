@@ -2433,7 +2433,7 @@ void do_slash_cmd(int Ind, cptr message){
 		{
 			msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag target untag;");
 			msg_print(Ind, "  /quaff is also available for old client users :)");
-			msg_print(Ind, "  /dis \377rdestroys \377wevery uninscribed items in your inventory!");
+			msg_print(Ind, "  /dis \377rdestroys \377wall the uninscribed items in your inventory!");
 			return;
 		}
 	}

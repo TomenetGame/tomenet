@@ -9,10 +9,10 @@
 #  1. install bcc++5.5 first - from http://www.borland.com/
 #  2. go to the directory 'src' of PernMangband
 #     (the directory this file is in.)
-#  3. change the 'BCC55 = ..' option to the directory you
-#     installed bcc++
+#  3. change the 'BCCDIR = ..' option or set environment variable `BCCDIR'
+#     to the directory you installed bcc++
 #  4. type 'make -f makefile.bcc' to compile client
-#     ( or 'make -f makefile.bcc mangband.exe' if you want a server.)
+#     ( or 'make -f makefile.bcc server' if you want a server.)
 #  5. copy the binary (mangclient.exe) to the directory of
 #     pernMangband 3.2.1.6
 #     ( available from http://www.pernmangband.net/ )
@@ -30,12 +30,13 @@
 ###################################################################
 #
 # Set tool and version names:
+!ifndef BCCDIR
+BCCDIR     = C:\Borland\Bcc55
+!endif
 
-BCC55      = "C:\Program Files\Borland\Bcc55"
-
-CPP        = $(BCC55)\bin\bcc32
-LINKER     = $(BCC55)\bin\ilink32
-RC         = $(BCC55)\bin\brc32
+CPP        = $(BCCDIR)\bin\bcc32
+LINKER     = $(BCCDIR)\bin\ilink32
+RC         = $(BCCDIR)\bin\brc32
 
 ###################################################################
 #
@@ -57,12 +58,12 @@ CLI_EXE = mangclient.exe
 #
 # Set any compiler options
 
-CCOPTS = -jb -j1 -Hc -tW -lGn -w- \
+CCOPTS = -Hc -tW -lGn -w- \
 	-D_WIN32_WINNT=0x0400 -DWINVER=0x0400 \
-	-DUSE_TRANSPARENCY -DWIN32 -D_WINDOWS -DSTDVA=1 -DSTRICT \
-	-I$(BCC55)\include;server\lua -L$(BCC55)\lib
+	-DWIN32 -D_WINDOWS -DSTDVA=1 -DSTRICT \
+	-I$(BCCDIR)\include;server\lua -L$(BCCDIR)\lib
 
-LDFLAGS = -L$(BCC55)\lib
+LDFLAGS = -L$(BCCDIR)\lib
 
 ###################################################################
 #
@@ -86,7 +87,7 @@ SERV_SRCS = \
   common\z-util.c common\z-virt.c common\z-form.c common\z-rand.c \
   common\net-win.c common\sockbuf.c server\variable.c server\control.c \
   server\party.c server\tables.c server\util.c server\cave.c \
-  server\object1.c server\object2.c server\monster1.c server\monster2.c \
+  server\object1.c server\object2.c server\monster2.c \
   server\xtra1.c server\xtra2.c server\spells1.c server\spells2.c \
   server\melee1.c server\melee2.c server\save.c server\files.c \
   server\cmd1.c server\cmd2.c server\cmd3.c server\cmd4.c server\cmd5.c \
@@ -100,7 +101,7 @@ SERV_OBJS = \
   common\z-util.obj common\z-virt.obj common\z-form.obj common\z-rand.obj \
   common\net-win.obj common\sockbuf.obj server\variable.obj server\control.obj \
   server\party.obj server\tables.obj server\util.obj server\cave.obj \
-  server\object1.obj server\object2.obj server\monster1.obj server\monster2.obj \
+  server\object1.obj server\object2.obj server\monster2.obj \
   server\xtra1.obj server\xtra2.obj server\spells1.obj server\spells2.obj \
   server\melee1.obj server\melee2.obj server\save.obj server\files.obj \
   server\cmd1.obj server\cmd2.obj server\cmd3.obj server\cmd4.obj server\cmd5.obj \
@@ -166,7 +167,13 @@ TOLUAOBJS = \
   server\lua\tolua_lb.obj server\lua\tolua_rg.obj server\lua\tolua_tt.obj server\lua\tolua_tm.obj server\lua\tolua_gp.obj \
   server\lua\tolua_eh.obj server\lua\tolua_bd.obj
 
-all : $(CLI_EXE)
+defalut: client
+
+all : server client
+
+server: $(SERV_EXE)
+
+client: $(CLI_EXE)
 
 clean:
 	-@if exist common\*.obj del common\*.obj >nul
@@ -202,10 +209,10 @@ $(SERV_EXE): $(SERV_OBJS) $(LUAOBJS) $(TOLUAOBJS)
 $(CONS_EXE): $(CONS_OBJS)
 	$(LINKER) -aa $(LDFLAGS) -x $(CONS_OBJS) c0w32.obj, $(CONS_EXE),, cw32.lib import32.lib ws2_32.lib,, client\angband.res
 
-$(CLI_EXE): $(CLI_OBJS) angband.res
+$(CLI_EXE): $(CLI_OBJS) client\angband.res
 	$(LINKER) -aa $(LDFLAGS) -x $(CLI_OBJS) c0w32.obj, $(CLI_EXE),, cw32.lib import32.lib ws2_32.lib,, client\angband.res
 
-angband.res: client\angband.rc
+client\angband.res: client\angband.rc
 	$(RC) -r client\angband.rc
 
 $(TOLUA): $(TOLUAOBJS) server\lua\tolua.obj server\lua\tolualua.obj

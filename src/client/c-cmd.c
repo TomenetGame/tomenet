@@ -532,6 +532,12 @@ void process_command()
 			break;
 		}
 
+		case 'I':
+		{
+			cmd_observe();
+			break;
+		}
+
 		/*** Information ***/
 		case 'C':
 		{
@@ -977,6 +983,19 @@ void cmd_wield(void)
 
 	/* Send it */
 	Send_wield(item);
+}
+
+void cmd_observe(void)
+{
+	int item;
+
+	if (!c_get_item(&item, "Examine which item? ", TRUE, TRUE, FALSE))
+	{
+		return;
+	}
+
+	/* Send it */
+	Send_observe(item);
 }
 
 void cmd_take_off(void)

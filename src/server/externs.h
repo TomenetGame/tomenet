@@ -1072,3 +1072,7 @@ extern void player_activate_door_trap(int Ind, s16b y, s16b x);
 extern void place_trap(struct worldpos *wpos, int y, int x);
 extern void place_trap_object(object_type *o_ptr);
 // extern void wiz_place_trap(int y, int x, int idx);
+
+/* wild.c */
+extern void initwild(void);
+extern void genwild(void);

@@ -1932,7 +1932,7 @@ bool make_attack_spell(int Ind, int m_idx)
 #endif	// 0
 //			if (blind) msg_format(Ind, "%^s mumbles coldly.", m_name); else
 			msg_format(Ind, "%^s mumbles coldly.", m_name);
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (rand_int(150) < p_ptr->skill_sav)
 			{
 				msg_print(Ind, "You resist the effects!");
 			}

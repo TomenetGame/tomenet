@@ -184,6 +184,7 @@ static void Init_receive(void)
 	playing_receive[PKT_USE]		= Receive_use;
 	playing_receive[PKT_THROW]		= Receive_throw;
 	playing_receive[PKT_WIELD]		= Receive_wield;
+	playing_receive[PKT_OBSERVE]		= Receive_observe;
 	playing_receive[PKT_ZAP]		= Receive_zap;
 	playing_receive[PKT_MIMIC]		= Receive_mimic;
 	playing_receive[PKT_MIND]		= Receive_mind;
@@ -875,9 +876,9 @@ static void Delete_player(int Ind)
 		p_ptr			= Players[NumPlayers];
 	}
 
-	if (Conn[Players[Ind]->conn].id>=0)
+	if (Conn[Players[Ind]->conn].id != -1)
 		GetInd[Conn[Players[Ind]->conn].id] = Ind;
-	if (Conn[Players[NumPlayers]->conn].id>=0)
+	if (Conn[Players[NumPlayers]->conn].id != -1)
 		GetInd[Conn[Players[NumPlayers]->conn].id] = NumPlayers;
 
 	/* Recalculate player-player visibility */
@@ -4170,6 +4171,36 @@ static int Receive_fire(int ind)
 		Packet_printf(&connp->q, "%c%c%hd", ch, dir, item);
 		return 0;
 	}
+
+	return 1;
+}
+
+static int Receive_observe(int ind)
+{
+	connection_t *connp = &Conn[ind];
+	player_type *p_ptr;
+
+	char ch;
+
+	s16b item;
+
+	int n, player;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (connp->id != -1)
+		do_cmd_observe(player, item);
 
 	return 1;
 }

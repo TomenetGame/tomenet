@@ -3630,10 +3630,10 @@ static void cave_gen(struct worldpos *wpos)
 	if (getlevel(wpos) <= COMFORT_PASSAGE_DEPTH)
 	{
 		/* Place 3 or 4 down stairs near some walls */
-		alloc_stairs(wpos, FEAT_MORE, rand_range(3, 4), 3);
+		alloc_stairs(wpos, FEAT_MORE, rand_range(2, 4), 3);
 
 		/* Place 1 or 2 up stairs near some walls */
-		alloc_stairs(wpos, FEAT_LESS, rand_range(1, 2), 3);
+		alloc_stairs(wpos, FEAT_LESS, rand_range(3, 4), 3);
 	}
 
 

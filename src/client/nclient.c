@@ -2496,6 +2496,18 @@ int Send_wield(int item)
 	return 1;
 }
 
+int Send_observe(int item)
+{
+	int	n;
+
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_OBSERVE, item)) <= 0)
+	{
+		return n;
+	}
+
+	return 1;
+}
+
 int Send_take_off(int item)
 {
 	int	n;
