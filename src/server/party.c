@@ -68,6 +68,21 @@ struct account *GetAccount(char *name, char *pass){
 	return(NULL);
 }
 
+bool check_account(char *accname, char *c_name){
+	struct account *l_acc;
+	u32b id, a_id;
+	hash_entry *ptr;
+	if(l_acc=GetAccount(accname, NULL)){
+		a_id=l_acc->id;
+		KILL(l_acc, struct account);
+		id=lookup_player_id(c_name);
+		ptr=lookup_player(id);
+		if(!ptr || ptr->account==a_id)
+			return(TRUE);
+	}
+	return(FALSE);
+}
+
 struct account *GetAccountID(u32b id){
 	FILE *fp;
 	struct account *c_acc;
@@ -1806,8 +1821,9 @@ int lookup_player_id(cptr name)
 		while (ptr)
 		{
 			/* Check this name */
-			if (!strcmp(ptr->name, name))
+			if (!strcmp(ptr->name, name)){
 				return ptr->id;
+			}
 
 			/* Next entry in chain */
 			ptr = ptr->next;
@@ -2080,7 +2096,7 @@ void delete_player_name(cptr name)
 /*
  * Return a list of the player ID's stored in the table.
  */
-int player_id_list(int **list)
+int player_id_list(int **list, u32b account)
 {
 	int i, len = 0, k = 0;
 	hash_entry *ptr;
@@ -2095,7 +2111,8 @@ int player_id_list(int **list)
 		while (ptr)
 		{
 			/* One more entry */
-			len++;
+			if(!account || ptr->account==account)
+				len++;
 
 			/* Next entry in chain */
 			ptr = ptr->next;
@@ -2115,7 +2132,8 @@ int player_id_list(int **list)
 		while (ptr)
 		{
 			/* Store this ID */
-			(*list)[k++] = ptr->id;
+			if(!account || ptr->account==account)
+				(*list)[k++] = ptr->id;
 
 			/* Next entry in chain */
 			ptr = ptr->next;

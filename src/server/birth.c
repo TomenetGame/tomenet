@@ -1583,6 +1583,13 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* Copy his name and connection info */
 	strcpy(p_ptr->name, name);
 	p_ptr->conn = conn;
+	
+	/* again ;( */
+	c_acc=GetAccount(accname, NULL);
+	if(c_acc){
+		p_ptr->account=c_acc->id;
+		KILL(c_acc, struct account);
+	}
 
 	/* Reprocess his name */
 	if (!process_player_name(Ind, TRUE)) return FALSE;

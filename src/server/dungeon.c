@@ -3739,6 +3739,10 @@ void dungeon(void)
 	if (!(turn % MONSTER_TURNS))
 		process_monsters();
 
+	/* Process programmable NPCs */
+	if (!(turn % NPC_TURNS))
+		process_npcs();
+
 	/* Process all of the objects */
 	if ((turn % 10) == 5) process_objects();
 

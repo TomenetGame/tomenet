@@ -53,6 +53,7 @@ typedef struct {
 	unsigned	version;
 	char		*real;
 	char 		*nick;
+	char		*c_name;
 	char		*addr;
 	char		*host;
 	char		*pass;

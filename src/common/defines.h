@@ -176,6 +176,12 @@
 #define MAX_CLASS       7
 
 /*
+ * Maximum NPC robots to allow.
+ */
+#define MAX_NPCS	16	/* Allow more perhaps, or make
+				   it expandable... */
+
+/*
  * Maximum number of parties to allow.  If, while trying to create a new
  * party, you get a "No empty party slot" or somesuch message, increase
  * this number.  However, you should NEVER decrease this number after a

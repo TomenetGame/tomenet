@@ -852,8 +852,11 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	if (*login_port == -1)
 		return E_SOCKET;
 
+/* Can't do this here anymore - evileye */
+/*
 	if (!lookup_player_id(nick))
 		return E_NEED_INFO;
+*/
 
 	return SUCCESS;
 }
@@ -1679,7 +1682,7 @@ static int Handle_login(int ind)
 		}
 	}
 
-	if (!player_birth(NumPlayers + 1, connp->nick, connp->nick, ind, connp->race, connp->class, connp->sex, connp->stat_order))
+	if (!player_birth(NumPlayers + 1, connp->nick, connp->c_name, ind, connp->race, connp->class, connp->sex, connp->stat_order))
 	{
 		/* Failed, connection destroyed */
 		Destroy_connection(ind, "not login");
@@ -2339,12 +2342,13 @@ static int Receive_login(int ind){
 	connection_t *connp=&Conn[ind];
 	unsigned char ch;
 	int n;
-	u16b choice;
+	char choice[MAX_CHARS];
+	struct account *l_acc;
 
 	n = Sockbuf_read(&connp->r);
 
 	/* if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &choice)) != 2) */
-	if ((n = Packet_scanf(&connp->r, "%hd", &choice)) != 1)
+	if ((n = Packet_scanf(&connp->r, "%s", choice)) != 1)
 	{
 		errno = 0;
 		printf("%d\n",n);
@@ -2352,13 +2356,19 @@ static int Receive_login(int ind){
 		Destroy_connection(ind, "receive error");
 		return -1;
 	}
-	if(choice==0){
-		struct account *l_acc;
+	if(strlen(choice)==0){
 		if((l_acc=GetAccount(connp->nick, connp->pass))){
+			int *id_list, i;
 			free(connp->pass);
 			connp->pass=NULL;
+			n=player_id_list(&id_list, l_acc->id);
 			/* Display all account characters here */
-			Packet_printf(&connp->c, "%c%s%hd%hd", PKT_LOGIN, connp->nick, 0, 0);
+			for(i=0; i<n; i++){
+				Packet_printf(&connp->c, "%c%s%hd%hd", PKT_LOGIN, lookup_player_name(id_list[i]), 1, 1);
+			}
+			Packet_printf(&connp->c, "%c%s%hd%hd", PKT_LOGIN, "", 0, 0);
+			C_KILL(id_list, i, int);
+			KILL(l_acc, struct account);
 		}
 		else{
 			/* fail login here */
@@ -2368,6 +2378,14 @@ static int Receive_login(int ind){
 		return(0);
 	}
 	else{
+		if(check_account(connp->nick, choice)){
+			Packet_printf(&connp->c, "%c", lookup_player_id(choice) ? SUCCESS : E_NEED_INFO);
+			connp->c_name=strdup(choice);
+		}
+		else{
+			/* fail login here */
+			Destroy_connection(ind, "Name already owned");
+		}
 	}
 	if (connp->setup >= Setup.setup_size)
 		Conn_set_state(connp, CONN_LOGIN, CONN_LOGIN);

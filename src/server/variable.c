@@ -177,6 +177,7 @@ bool avoid_other;                       /* Avoid processing special colors */
 
 s16b hitpoint_warn;             /* Hitpoint warning (0 to 9) */
 
+struct npc_type *Npcs[MAX_NPCS];
 /* The array of players */
 player_type **Players;
 

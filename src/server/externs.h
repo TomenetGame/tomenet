@@ -799,7 +799,7 @@ extern int lookup_player_id(cptr name);
 extern void add_player_name(cptr name, int id, u32b account, byte level, byte party, byte guild, u16b quest, time_t laston);
 extern void delete_player_id(int id);
 extern void delete_player_name(cptr name);
-extern int player_id_list(int **list);
+extern int player_id_list(int **list, u32b account);
 extern void stat_player(char *name, bool on);
 extern time_t lookup_player_laston(int id);
 extern byte lookup_player_level(int id);

@@ -4809,12 +4809,20 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist)
 	return (inv >= randint((mlv * 10) / 7));
 }
 
+/*
+ * Special NPC processing
+ *
+ * Call LUA stuff where needed.
+ *
+ * Evileye
+ */
+void process_npcs(){
+}
 
 /*
  * Hack -- local "player stealth" value (see below)
  */
 static u32b noise = 0L;
-
 
 /*
  * Process a monster
@@ -5067,7 +5075,7 @@ static void process_monster(int Ind, int m_idx)
 			m_ptr->monfear = 0;
 
 			/* Visual note */
-			msg_print_near_monster(m_idx, "recovers the courage.");
+			msg_print_near_monster(m_idx, "recovers its courage.");
 #if 0
 			if (p_ptr->mon_vis[m_idx])
 			{

@@ -717,6 +717,7 @@
  * This should be of *great* help for slow servers :)
  */
 #define MONSTER_TURNS	6
+#define NPC_TURNS	6	/* Programmable NPC Turns */
 
 /*
  * OPTION: allow sanity display.

@@ -449,7 +449,7 @@ void client_init(char *argv1, bool skip)
 			case E_INVITE:
 				quit("Sorry, the server is for members only.  Please retry with name 'guest'.");
 			case E_BANNED:
-				quit("You are temporally banned from connecting to this server!");
+				quit("You are temporarily banned from connecting to this server!");
 			default:
 				quit(format("Connection failed with status %d.", status));
 		}
@@ -483,7 +483,7 @@ void client_init(char *argv1, bool skip)
 		quit("Network setup failed!\n");
 	}
 	
-	if (Net_login()==-1){
+	if ((status=Net_login())==-1){
 		Net_cleanup();
 		quit("Login failed!\n");
 	}

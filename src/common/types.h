@@ -774,7 +774,27 @@ struct object_type
 	u16b held_m_idx;	/* Monster holding us (if any) */
 };
 
+/*
+ * NPC type information - LUA programmable
+ * Basic structure for experimental use only
+ * More data will need to be added for the
+ * real thing.
+ */
 
+struct npc_type{
+	char name[20];			/* NPC name */
+	s16b fy, fx;			/* Position */
+	struct worldpos wpos;
+
+        s32b exp;                       /* Experience of the monster */
+        s16b level;                     /* Level of the monster */
+	
+	s16b energy;		/* Monster "energy" */
+	
+	byte stunned;		/* Monster is stunned */
+	byte confused;		/* Monster is confused */
+	byte monfear;		/* Monster is afraid */
+};
 
 /*
  * Monster information, for a specific monster.

@@ -70,7 +70,8 @@ static void Receive_init(void)
 	receive_tbl[PKT_START]		= Receive_start;
 	receive_tbl[PKT_END]		= Receive_end;
 /*	receive_tbl[PKT_CHAR]		= Receive_char;*/
-	receive_tbl[PKT_LOGIN]		= Receive_login;
+	receive_tbl[PKT_LOGIN]		= NULL;	/* Should not be called like
+						   this */
 	
 
 	/*reliable_tbl[PKT_LEAVE]		= Receive_leave;*/
@@ -128,16 +129,44 @@ static void Receive_init(void)
 	receive_tbl[PKT_CHARDUMP] 	= Receive_chardump;
 }
 
-
-int Receive_login(void){
+char *Receive_login(void){
 	int n;
 	char ch;
-	char c_name[200];	/* change later */
+	int i=0;
+	char names[8][MAX_CHARS];
+	char tmp[MAX_CHARS+3];	/* like we'll need it... */
+
+	static char c_name[MAX_CHARS];	/* change later */
 	s16b c_race, c_class;
-	if ((n = Packet_scanf(&rbuf, "%c%s%hd%hd", &ch, c_name, &c_race, &c_class)) <= 0){
-		return(-1);
+	Term_clear();
+	c_put_str(TERM_L_BLUE, "Choose a character", 3, 8);
+	while((n = Packet_scanf(&rbuf, "%c%s%hd%hd", &ch, c_name, &c_race, &c_class)) >0){
+		if(!strlen(c_name)){
+			break;
+		}
+		strcpy(names[i], c_name);
+		sprintf(tmp, "%c) %s", 'a'+i, c_name);
+		c_put_str(TERM_L_BLUE, tmp, 5+i, 11);
+		i++;
+		if(i==8) break;
 	}
-	return(1);
+	sprintf(tmp, "%c) New character", 'a'+i);
+	c_put_str(TERM_L_BLUE, tmp, 5+i, 11);
+	while(ch<'a' || ch>'a'+i){
+		ch=inkey();
+	}
+	if(ch=='a'+i){
+		c_put_str(TERM_L_BLUE, "New name: ", 6+i, 11);
+		askfor_aux(c_name, MAX_CHARS, 0);
+	}
+	else strcpy(c_name, names[ch-'a']);
+#if 0
+	if(i==0){
+		return(NULL);
+	}
+#endif
+	Term_clear();
+	return(c_name);
 }
 
 // I haven't really figured out this function yet.  It looks to me like
@@ -533,8 +562,10 @@ int Net_fd(void)
 }
 
 int Net_login(){
+	char *c_name;
+	char tc;
 	Sockbuf_clear(&wbuf);
-	Packet_printf(&wbuf, "%c%hd", PKT_LOGIN, 0);
+	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, "");
 	if (Sockbuf_flush(&wbuf) == -1)
 	{
 		quit("Can't send first login packet");
@@ -547,13 +578,14 @@ int Net_login(){
 	}
 	Sockbuf_clear(&rbuf);
 	Sockbuf_read(&rbuf);
-	Receive_login();
-	Packet_printf(&wbuf, "%c%hd", PKT_LOGIN, 1);
+	c_name=Receive_login();
+	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, c_name);
 	if (Sockbuf_flush(&wbuf) == -1)
 	{
 		quit("Can't send login packet");
 	}
-	return(0);
+	Packet_scanf(&rbuf, "%c", &tc);
+	return(tc);
 }
 
 /*

@@ -2189,7 +2189,7 @@ static void wr_player_names(void)
 	u32b num;
 
 	/* Get the list of player ID's */
-	num = player_id_list(&id_list);
+	num = player_id_list(&id_list, 0L);
 
 	/* Store the number of entries */
 	wr_u32b(num);
