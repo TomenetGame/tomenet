@@ -1400,12 +1400,15 @@ static void process_player_end(int Ind)
 		}
 
 		/* Drowning, but not ghosts */
-		if(!p_ptr->ghost && zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER){
+		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER && !p_ptr->ghost && !p_ptr->fly){
 			int hit=p_ptr->mhp/15;
 			if(!hit) hit=1;
 
 			/* Take damage */
-			if(!(p_ptr->pclass==CLASS_MIMIC) || !(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC))
+			if(!(p_ptr->pclass==CLASS_MIMIC) || (
+				!(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
+				!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD)
+				))
 				take_hit(Ind, hit, "drowning");
 		}
 
