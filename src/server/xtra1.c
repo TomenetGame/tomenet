@@ -1389,13 +1389,13 @@ static void calc_body_bonus(int Ind)
 		+ (r_ptr->body_parts[BODY_ARMS] ? 2 : 0)
 		+ (r_ptr->body_parts[BODY_LEGS] ? 1 : 0);
 
-	toac = r_ptr->ac * 10 / (6 + body);
+	toac = r_ptr->ac * 14 / (7 + body);
 	/* p_ptr->ac += toac;
 	p_ptr->dis_ac += toac; - similar to HP calculation: */
 	if (toac < (p_ptr->ac + p_ptr->to_a)) {
-		p_ptr->ac = (p_ptr->ac * 2) / 3;
-		p_ptr->to_a = ((p_ptr->to_a * 2) + (toac * 1)) / 3;
-		p_ptr->dis_ac = ((p_ptr->dis_ac * 2) + (toac * 1)) / 3;
+		p_ptr->ac = (p_ptr->ac * 3) / 4;
+		p_ptr->to_a = ((p_ptr->to_a * 3) + (toac * 1)) / 4;
+		p_ptr->dis_ac = ((p_ptr->dis_ac * 3) + (toac * 1)) / 4;
 	} else {
 		p_ptr->ac = (p_ptr->ac * 1) / 2;
 		p_ptr->to_a = ((p_ptr->to_a * 1) + (toac * 1)) / 2;
@@ -3203,13 +3203,13 @@ void calc_bonuses(int Ind)
 			+ (r_ptr->body_parts[BODY_ARMS] ? 2 : 0)
 			+ (r_ptr->body_parts[BODY_LEGS] ? 1 : 0);
 
-		toac = r_ptr->ac * 10 / (6 + body);
+		toac = r_ptr->ac * 14 / (7 + body);
 		/* p_ptr->ac += toac;
 		p_ptr->dis_ac += toac; - similar to HP calculation: */
 		if (toac < (p_ptr->ac + p_ptr->to_a)) {
-			p_ptr->ac = (p_ptr->ac * 2) / 3;
-			p_ptr->to_a = ((p_ptr->to_a * 2) + (toac * 1)) / 3;
-			p_ptr->dis_ac = (p_ptr->dis_ac * 2) / 3;
+			p_ptr->ac = (p_ptr->ac * 3) / 4;
+			p_ptr->to_a = ((p_ptr->to_a * 3) + (toac * 1)) / 4;
+			p_ptr->dis_ac = (p_ptr->dis_ac * 3) / 4;
 			p_ptr->dis_to_a = ((p_ptr->dis_to_a * 2) + (toac * 1)) / 3;
 		} else {
 			p_ptr->ac = (p_ptr->ac * 1) / 2;
@@ -3534,9 +3534,9 @@ void calc_bonuses(int Ind)
 		p_ptr->dis_to_d += d; - similar to HP: */
 		d = d / n;
 		if (d < (p_ptr->to_d + p_ptr->to_d_melee)) {
-			p_ptr->to_d = ((p_ptr->to_d * 2) + (d * 1)) / 3;
-			p_ptr->to_d_melee = (p_ptr->to_d_melee * 2) / 3;
-			p_ptr->dis_to_d = ((p_ptr->dis_to_d * 2) + (d * 1)) / 3;
+			p_ptr->to_d = ((p_ptr->to_d * 3) + (d * 1)) / 4;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 3) / 4;
+			p_ptr->dis_to_d = ((p_ptr->dis_to_d * 3) + (d * 1)) / 4;
 		} else {
 			p_ptr->to_d = ((p_ptr->to_d * 1) + (d * 1)) / 2;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 1) / 2;
