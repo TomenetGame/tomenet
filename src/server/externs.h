@@ -1413,3 +1413,6 @@ s16b new_school(int i, cptr name, s16b skill);
 s16b new_spell(int i, cptr name);
 spell_type *grab_spell_type(s16b num);
 school_type *grab_school_type(s16b num);
+
+/* only called once, in util.c, referring to new file slash.c */
+extern void do_slash_cmd(int Ind, char *message);

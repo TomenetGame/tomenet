@@ -5009,6 +5009,14 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			o_ptr->name1=0;
 			return;
 		}
+		
+		/* Override level requirements? */
+		if ((o_ptr->name1 == ART_RANDART) &&
+	            (cfg.arts_level_req >= 3)) o_ptr->level = 0;
+		else if ((a_ptr->flags4 & TR4_SPECIAL_GENE) &&
+	            (cfg.arts_level_req >= 1)) o_ptr->level = 0;
+		else if (cfg.arts_level_req >= 2)
+		    o_ptr->level = 0;
 
 		/* Hack -- Mark the artifact as "created" */
 		a_ptr->cur_num = 1;

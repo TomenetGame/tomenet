@@ -633,6 +633,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 {
 	player_type *p_ptr = Players[Ind];
 	int ident = FALSE;
+	int i;
 
 	bypass_invuln = TRUE;
 
@@ -1229,11 +1230,12 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				ident = TRUE;
 
 				/* gain skill points */
-				p_ptr->skill_points += 1;
+				i = 1 + rand_int(3);
+				p_ptr->skill_points += i;
 				p_ptr->update |= PU_SKILL_MOD;
 				p_ptr->redraw |= PR_STUDY;
 
-				msg_print(Ind, "You have one more skill point.");
+				msg_format(Ind, "You gained %d more skill point%s.", i, (i == 1)?"":"s");
 
 				break;
 		}

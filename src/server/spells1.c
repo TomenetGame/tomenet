@@ -6371,7 +6371,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Time -- bolt fewer effects XXX */
 		case GF_TIME:
-		if (p_ptr->resist_time) dam /= 3;
+		if (p_ptr->resist_time) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		if (p_ptr->resist_time)
@@ -6486,7 +6486,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Pure damage */
 		case GF_MANA:
-		if (p_ptr->resist_mana) dam /= 3;
+		if (p_ptr->resist_mana) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer);

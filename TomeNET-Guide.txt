@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. Nov 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. Dec 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -47,7 +47,7 @@ Contents
     (4.2)   Level and owner of items
     (4.3)   Dungeon and tower types, Ironman, Jail
     (4.4)   Terrain
-    (4.5)   Towns and shops
+    (4.5)   Towns, shops, the dungeons
     (4.6)   Pits and vaults
     (4.7)   Traps
     (4.8)   Level & vault feelings
@@ -982,7 +982,7 @@ scroll.
 Now we are going to create three macros that will instantly quaff the potions
 or read a scroll of recall, no matter where in the inventory they exactly are,
 on a single keypress! Inscribe the potion of Heroism "@q1", the scroll of
-Phase Door "@r1" and the Potion of Cure Light Wounds "@q2".
+Phase Door "@r1" and the potion of Cure Light Wounds "@q2".
 It should look like this now:
 b) a potion of Heroism {+,1} {@q1}
 c) a potion of Cure Light Wounds {+,1} {@q2}
@@ -1045,14 +1045,14 @@ Use 'create command macro' instead of 'create normal macro' in case you don't
 want the macro to appear on hitting the corresponding key in a normal chat
 message (for example useful for '-' key so it won't prevent you from inscribing your
 word-of-recall scrolls).
-(It is recommended to command macros rather than normal macros.)
+(It is recommended to create command macros rather than normal macros.)
 
 Identity macros:
 ----------------
 If you accidentally bound a macro to a key which wasn't free, for example
 the key 'r' which is used to read a scroll, you can reset the key by
 -pressing % to invoke the macro menu
--choosing '6 - create an identity macro'
+-choosing '(6) - create an identity macro'
 -pressing the key wich you want to reset.
 
 
@@ -1241,6 +1241,9 @@ mbaa*t
 (3.7)   An example macro set for warriors
 -----------------------------------------
 Here is an example macro set for a (Thunderlord) Warrior:
+(For the meaning of '\e)' see below (3.8). I recommend to have all your
+macros start with the '\e)' sequence to avoid character lock-ups due to
+queued keypresses that have to be processed.)
 
 Key         Purpose of the Macro                    The macro   Inscription
                                                     itself      on the item(s)
@@ -1333,6 +1336,45 @@ may result in diminishing returns of experience points for killed monsters,
 while monsters that dwell in deeper regions that are more fitted as a
 challenge to the player, and whose levels are far above the player
 character's level, will be very rewarding in terms of experience and loot.
+Experience is shared automatically in 'parties', see (6.9).
+
+Recommended minimum depths for optimal experience gain
+Note: Always the deeper is the better! These are only _minimum_ recommended
+depths. Also, your character might not always be strong enough to survive on
+these depths. In that case better move to easier dungeon levels until you
+found decent items and maxed out your vital stats.
+If your 
+    Character level     |     Dungeon level
+-------------------------------------------------
+        1..19                 decent exp is
+                            gained everywhere
+        20                           15
+        30                           20
+        40                           33
+        41                           36
+        42                           38
+        43                           41
+        44                           45
+        45                           49
+        46                           54
+        47                           60
+        48                           67
+        49                           77
+------  50                           90   ------
+        60                          110
+        70                          130
+        80                          150
+        90                          170
+        99                    no exp gained
+If you are below the optimum depth, your experience gained will decrease.
+The experience gained will be multiplied by 10 / (10 + leveldifference).
+So for 5 levels missing to optimum depth you would get 10 / (10 + 5) = 67% of
+the optimum experience, at 10 levels difference you'd get 50%, 33% at 20, etc.
+At level 69 and higher, no dungeon except for the Nether Realm (see (4.5))
+will be deep enough to deliver optimal experience and your experience gain
+will slowly start to decrease while you further rise in character levels.
+The Nether Realm is by far the deepest dungeon in the game and allows players
+of very high character levels to accumulate excellent experience.
 
 If your character accumulates a certain amount of experience, (s)he will gain
 a 'level-up', meaning that you become noticably more powerful than you were
@@ -1696,8 +1738,8 @@ Oceans-         blue '%' fields.
 
 
 
-(4.5) Towns and shops
----------------------
+(4.5) Towns, shops, the dungeons
+--------------------------------
 If you create a new character, it will start in 'Bree', a town located at
 position 32,32 on the world map (same position on all servers!).
 The world map however, ranging from 0,0 (bottom left corner) to 63,63
@@ -2443,7 +2485,7 @@ Mana            Mana is pure magical energy. There are only rumours
                 Breath damage is monster HP/3, breath caps at 250. Only very
                 few monsters (mostly uniques) can breathe mana.
                 Mana bolts do 50+(1...[level*7/2]) damage.
-                Mana storms (balls) do (level*4)+(10d10) damage. Beware!
+                Mana storms (balls) do (level*5)+(10d10) damage. Beware!
 Time            Time is pure temporary distortion. There are only rumours
                 about items that provides resistance against it.
                 Time attacks can have very nasty side effects:
@@ -2451,7 +2493,7 @@ Time            Time is pure temporary distortion. There are only rumours
                 -One of your stats can be lowered (resistance will reduce the
                  amount).
                 -Drain all your stats (resistance will prevent this).
-                Resistance will cut damage to 1/3.
+                Resistance will cut damage to 1/2.
                 Breath damage is monster HP/3. Time breath caps at 150.
 Meteor          This is an irresistable attack of pure impact.
                 <Meteor attacks are currently not implemented.>
@@ -3953,18 +3995,20 @@ B: attack method : attack effect : damage
     EXPxx means the monster drains life on attacking. The player will
     receive HOLD_LIFE (resist life-draining attacks) from this form.
 
-    Monster effects (like poisoning or paralyzing) are also applied to
-    the player's attacks, with a probability that corresponds their
-    rarity over the up to 4 monster attacks per round.
-    (If the monster has 3 blows per round and one of them is poisoning,
-    the other two are paralying, the mimic will have 1/3 chance to do
-    a poison branded attack and 2/3 chance to do a stunning attack.)
+    Monster effects (like poisoning or paralyzing) are applied to
+    the player's attacks with a probability that corresponds to their
+    rarity over the up to 4 monster attacks per round. Example:
+    If the monster has 3 blows per round and one of them is poisoning,
+    the other two are paralyzing, the mimic will have 1/3 chance to do
+    a poison branded attack and 2/3 chance to do a stunning attack.
+
     These effects won't be applied if one of the following conditions
     is met:
     a) The player is doing a ranged attack.
-       (Effects only works with melee attacks!)
+       (Effects only work with melee attacks!)
     b) The player uses a weapon but the monster doesn't have an
-       inventory slot for melee weapons).
+       equipment slot for melee weapons, because it has no arms or is
+       immaterial - see the E:... line of that monster in r_info.txt).
 
     Melee to-damage bonus also depends on the monster form:
     The monster damage dice for each attack are multiplied and the products

@@ -3146,6 +3146,10 @@ static void set_server_option(char * option, char * value)
 	{
 		cfg.arts_disabled = str_to_boolean(value);
 	}
+	else if (!strcmp(option,"ARTS_LEVEL_REQ"))
+	{
+		cfg.arts_level_req = atoi(value);
+	}
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }
 

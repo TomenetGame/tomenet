@@ -2392,6 +2392,39 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 #ifdef DEBUG1
 if (r_idx == 862) s_printf("Ok 1\n");
 #endif
+
+	/* hard-coded -C. Blue */
+	/* Wight-King of the Barrow-downs might not occur anywhere else */
+	if ((r_idx == 971) && ((wpos->wx != 32) || (wpos->wy != 32))) return (FALSE);
+	/* Hellraiser and Nether Realm minions may only occur in the Nether Realm  */
+	/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
+	if ((r_idx == 1067) && (getlevel(wpos) < (166 + 1))) return (FALSE);
+	if (((r_idx == 1068) || (r_idx == 1080) || (r_idx == 1083) || (r_idx == 1084)) &&
+	    (getlevel(wpos) < 166)) return (FALSE);
+	/* Zu-Aon guards the bottom of the Nether Realm now */
+	if ((r_idx == 1085) && (getlevel(wpos) < (166 + 30))) return (FALSE);
+	/* On Nether Realm bottom no Nether Guards but only Zu-Aon may spawn */
+	if ((r_idx == 1068) && (getlevel(wpos) == (166 + 30))) r_idx = 1085;
+	/* Nether Guard isn't a unique but there's only 1 guard per level,
+	   If Zu-Aon appears, the Nether Guard disappears instead */
+	if (r_idx == 1068) {
+		s_printf("Checking for old Nether Guards\n");
+		for (i = m_top - 1; i >= 0; i--)
+		{
+	        	m_idx = m_fast[i];
+			m_ptr = &m_list[m_idx];
+			if (!m_ptr->r_idx) {
+				m_fast[i] = m_fast[--m_top];
+				continue;
+			}
+			/* Old Nether Guard on this level are deleted */
+			if ((m_ptr->r_idx == 1068) && inarea(wpos, &m_ptr->wpos)) return(FALSE);
+		}
+	}
+#ifdef DEBUG1
+if (r_idx == 862) s_printf("Ok 2\n");
+#endif
+
 /* BEGIN of ugly hack */
 	/* Check if the monster is already on the level -
 	   I put this in after someone told me about 3 Glaurungs on the same
@@ -2410,7 +2443,7 @@ if (r_idx == 862) s_printf("Ok 1\n");
 	}
 /* END of ugly hack */
 #ifdef DEBUG1
-if (r_idx == 862) s_printf("Ok 2\n");
+if (r_idx == 862) s_printf("Ok 3\n");
 #endif
 
 	/* Hack -- "unique" monsters must be "unique" */
@@ -2422,7 +2455,7 @@ if (r_idx == 862) s_printf("Ok 2\n");
 		return (FALSE);
 	}
 #ifdef DEBUG1
-if (r_idx == 862) s_printf("Ok 3\n");
+if (r_idx == 862) s_printf("Ok 4\n");
 #endif
 
 	/* Depth monsters may NOT be created out of depth */
@@ -2431,24 +2464,6 @@ if (r_idx == 862) s_printf("Ok 3\n");
 		/* Cannot create */
 		return (FALSE);
 	}
-#ifdef DEBUG1
-if (r_idx == 862) s_printf("Ok 4\n");
-#endif
-
-	/* hard-coded -C. Blue */
-	/* Wight-King of the Barrow-downs might not occur anywhere else */
-	if ((r_idx == 971) && ((wpos->wx != 32) || (wpos->wy != 32))) return (FALSE);
-	/* Hellraiser and Nether Realm minions may only occur in the Nether Realm  */
-	/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
-	if ((r_idx == 1067) &&
-	    (getlevel(wpos) < (166 + 1))) return (FALSE);
-	if (((r_idx == 1068) || (r_idx == 1080) || (r_idx == 1083) || (r_idx == 1084)) &&
-	    (getlevel(wpos) < 166)) return (FALSE);
-	/* Nether Guard isn't a unique but there's only 1 guard per level */
-	if ((r_idx == 1068) && (r_ptr->cur_num > 0)) return;
-	/* Zu-Aon guards the bottom of the Nether Realm now */
-	if ((r_idx == 1085) &&
-	    (getlevel(wpos) < (166 + 30))) return (FALSE);
 #ifdef DEBUG1
 if (r_idx == 862) s_printf("Ok 5\n");
 #endif

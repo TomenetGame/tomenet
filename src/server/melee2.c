@@ -2482,7 +2482,7 @@ bool make_attack_spell(int Ind, int m_idx)
 //			else msg_format(Ind, "%^s invokes a mana storm.", m_name);
 			else sprintf(p_ptr->attacker, "%s invokes a mana storm for", m_name);
 			breath(Ind, m_idx, GF_MANA,
-					(rlev * 4) + damroll(10, 10), y, x, srad);
+					(rlev * 5) + damroll(10, 10), y, x, srad);
 			break;
 		}
 

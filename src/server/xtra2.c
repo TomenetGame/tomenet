@@ -4178,6 +4178,19 @@ if(cfg.unikill_format){
 
 			/* Drop it in the dungeon */
 			drop_near(qq_ptr, -1, wpos, y, x);
+
+			/* Prepare a second reward */
+			object_wipe(qq_ptr);
+
+			/* Drop Potions Of Learning along with loot */
+			invcopy(qq_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
+			qq_ptr->number = 2;
+			qq_ptr->note = local_quark;
+
+			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE);
+
+			/* Drop it in the dungeon */
+			drop_near(qq_ptr, -1, wpos, y, x);
 		}
 		else if (r_ptr->flags7 & RF7_NAZGUL)
 		{
@@ -4217,7 +4230,7 @@ if(cfg.unikill_format){
 
 			/* chances should be reduced, so that the quickest
 			 * won't benefit too much?	- Jir - */
-			if (strstr((r_name + r_ptr->name),"T'ron , the rebel DragonRider"))
+			if (strstr((r_name + r_ptr->name),"T'ron, the Rebel Dragonrider"))
 			{
 				a_idx = ART_TRON;
 				chance = 75;
@@ -4247,25 +4260,25 @@ if(cfg.unikill_format){
 				a_idx = ART_GOTHMOG;
 				chance = 50;
 			}
-			else if (strstr((r_name + r_ptr->name),"Eol the Dark Elf"))
+			else if (strstr((r_name + r_ptr->name),"Eol, the Dark Elf"))
 			{
 				a_idx = ART_ANGUIREL;
 				chance = 50;
 			}
 			else if (strstr((r_name + r_ptr->name),"Zu-Aon, The Cosmic Border Guard"))
 			{
-				if (a_info[a_idx].cur_num != 0) {
-					/* Get local object */
-					qq_ptr = &forge;
-					object_wipe(qq_ptr);
-					/* Drop Scroll Of Artifact Creation if Ring Of Phasing already exists */
-					invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
-					qq_ptr->number = 3;
-					qq_ptr->note = local_quark;
-					apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE);
-					/* Drop it in the dungeon */
-					drop_near(qq_ptr, -1, wpos, y, x);
-				} else {
+				/* Get local object */
+				qq_ptr = &forge;
+				object_wipe(qq_ptr);
+				/* Drop Scroll Of Artifact Creation if Ring Of Phasing already exists */
+				invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
+				qq_ptr->number = (a_info[a_idx].cur_num == 0)?1:3;
+				qq_ptr->note = local_quark;
+				apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE);
+				/* Drop it in the dungeon */
+				drop_near(qq_ptr, -1, wpos, y, x);
+
+				if (a_info[a_idx].cur_num == 0) {
 					/* Generate Ring Of Phasing -w00t ;) */
 					a_idx = 203;
 					chance = 100;
@@ -4314,6 +4327,9 @@ if(cfg.unikill_format){
 
 //					random_artifact_resistance(qq_ptr);
 					a_info[a_idx].cur_num = 1;
+
+					/* Complete generation, especially level requirements check */
+					apply_magic(wpos, qq_ptr, -1, FALSE, TRUE, FALSE);
 
 					/* Drop the artifact from heaven */
 					drop_near(qq_ptr, -1, wpos, y, x);
