@@ -603,7 +603,7 @@ int pick_house(struct worldpos *wpos, int y, int x)
 }
 
 /* Door change permissions */
-bool chmod_door(int Ind, struct dna_type *dna, char *args){
+static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 	player_type *p_ptr=Players[Ind];
 	if (!p_ptr->admin_wiz && !p_ptr->admin_dm)
 	{
@@ -618,7 +618,7 @@ bool chmod_door(int Ind, struct dna_type *dna, char *args){
 }
 
 /* Door change ownership */
-bool chown_door(int Ind, struct dna_type *dna, char *args){
+static bool chown_door(int Ind, struct dna_type *dna, char *args){
 	player_type *p_ptr=Players[Ind];
 	int newowner=-1;
 	int i;
@@ -1592,7 +1592,7 @@ void do_cmd_tunnel(int Ind, int dir)
 /*
  * Try to identify a trap when disarming it.	- Jir -
  */
-void do_id_trap(int Ind, int t_idx)
+static void do_id_trap(int Ind, int t_idx)
 {
 	player_type *p_ptr = Players[Ind];
 	trap_kind *tr_ptr = &t_info[t_idx];
@@ -2805,7 +2805,7 @@ void do_cmd_fire(int Ind, int dir)
 	/* Reduce and describe inventory */
 	if (!boomerang)
 	{
-		/* C. Blue - Artefact ammo never runs out (similar to magic arrows:) */
+		/* C. Blue - Artifact ammo never runs out (similar to magic arrows:) */
 		if (true_artifact_p(o_ptr))
 		{
 			if (item >= 0)
@@ -2837,7 +2837,7 @@ void do_cmd_fire(int Ind, int dir)
 		else
 			/* Magic Ammo are NOT allowed to be enchanted */
 		{
-			/* C. Blue - Except magic artefact ammo: */
+			/* C. Blue - Except magic artifact ammo: */
 			if (!true_artifact_p(o_ptr))
 				o_ptr->to_h = o_ptr->to_d = o_ptr->name2 = o_ptr->pval = 0;
 			if (item >= 0)
@@ -4051,7 +4051,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 	drop_near_severe(Ind, o_ptr, j, wpos, y, x);
 }
 
-void destroy_house(int Ind, struct dna_type *dna)
+static void destroy_house(int Ind, struct dna_type *dna)
 {
 	player_type *p_ptr=Players[Ind];
 	int i;

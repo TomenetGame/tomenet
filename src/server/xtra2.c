@@ -2906,7 +2906,7 @@ bool set_food(int Ind, int v)
 /* 
  * Try to raise stats, esp. if low.		- Jir -
  */
-void check_training(int Ind)
+static void check_training(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int train = get_skill_scale(p_ptr, SKILL_TRAINING, 50);
@@ -5485,7 +5485,7 @@ void ang_sort(int Ind, vptr u, vptr v, int n)
 
 
 /* returns our max times 100 divided by our current...*/
-int player_wounded(s16b ind)
+static int player_wounded(s16b ind)
 {
 	player_type *p_ptr = Players[ind];
 	
@@ -5501,7 +5501,7 @@ think it really matters... this one goes out to you Mr. Munroe.
 -ADA-
 */
 
-void wounded_player_target_sort(int Ind, vptr sx, vptr sy, vptr id, int n)
+static void wounded_player_target_sort(int Ind, vptr sx, vptr sy, vptr id, int n)
 {
 	int c,num;
 	s16b swp;
@@ -6808,7 +6808,7 @@ int level_speed(struct worldpos *wpos){
 }
 #endif	// 0
 
-void unstatic_level(struct worldpos *wpos){
+static void unstatic_level(struct worldpos *wpos){
 	int i;
 
 	for (i = 1; i <= NumPlayers; i++)
@@ -7088,7 +7088,7 @@ bool master_build(int Ind, char * parms)
 
 static char master_specific_race_char = 'a';
 
-bool master_summon_specific_aux(int r_idx)
+static bool master_summon_specific_aux(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -7103,7 +7103,7 @@ bool master_summon_specific_aux(int r_idx)
 /* Auxillary function to master_summon, determine the exact type of monster
  * to summon from a more general description.
  */
-u16b master_summon_aux_monster_type( char monster_type, char * monster_parms)
+static u16b master_summon_aux_monster_type( char monster_type, char * monster_parms)
 {
 	int tmp;
 	/* handle each category of monster types */
@@ -7395,7 +7395,7 @@ bool imprison(int Ind, u16b time, char *reason){
 	return(FALSE);
 }
 
-void player_edit(char *name){
+static void player_edit(char *name){
 	
 }
 
@@ -7510,7 +7510,7 @@ bool master_player(int Ind, char *parms){
 	return(FALSE);
 }
 
-vault_type *get_vault(char *name)
+static vault_type *get_vault(char *name)
 {
 	int i;
 	

@@ -485,7 +485,7 @@ static void regenmana(int Ind, int percent)
 #ifdef pelpel
 
 /* Wipeout the effects	- Jir - */
-void erase_effects(int effect)
+static void erase_effects(int effect)
 {
 	int i, j, l;
 	effect_type *e_ptr = &effects[effect];
@@ -1692,7 +1692,7 @@ static void process_player_begin(int Ind)
 /*
  * Generate the feature effect
  */
-void apply_effect(int Ind)
+static void apply_effect(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int y = p_ptr->py, x = p_ptr->px;
@@ -1748,7 +1748,7 @@ void apply_effect(int Ind)
 /* Handles WoR
  * XXX dirty -- REWRITEME
  */
-void do_recall(int Ind)
+static void do_recall(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -3177,7 +3177,7 @@ static void do_unstat(struct worldpos *wpos)
  * 24 hourly scan of houses - should the odd house be owned by
  * a non player. Hopefully never, but best to save admin work.
  */
-void scan_houses()
+static void scan_houses()
 {
 	int i;
 	//int lval;
@@ -3378,7 +3378,7 @@ void cheeze_trad_house()
  * - this function should handle items in 'traditional' houses too
  * - maybe rename this function (scan_objects and scan_objs...)
  */
-void scan_objs(){
+static void scan_objs(){
 	int i, cnt=0, dcnt=0;
 	object_type *o_ptr;
 	cave_type **zcave;

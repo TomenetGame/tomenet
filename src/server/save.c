@@ -11,6 +11,12 @@
 static void new_wr_wild();
 static void new_wr_dungeons();
 void wr_towns();
+void wr_byte(byte v);
+void wr_u16b(u16b v);
+void wr_s16b(s16b v);
+void wr_u32b(u32b v);
+void wr_s32b(s32b v);
+void wr_string(cptr str);
 
 #ifdef FUTURE_SAVEFILES
 
@@ -1514,7 +1520,7 @@ static void wr_dungeon(struct worldpos *wpos)
 }
 
 /* Write a players memory of a cave, simmilar to the above function. */
-void wr_cave_memory(Ind)
+static void wr_cave_memory(Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int y,x;

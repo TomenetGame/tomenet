@@ -461,6 +461,13 @@ extern void do_cmd_activate_dir(int Ind, int dir);
 /* dungeon.c */
 extern void play_game(bool new_game);
 
+/* client/server */
+extern int Receive_file_data(int ind, unsigned short len, char *buffer);
+extern int Send_file_check(int ind, unsigned short id, char *fname);
+extern int Send_file_init(int ind, unsigned short id, char *fname);
+extern int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len);
+extern int Send_file_end(int ind, unsigned short id);
+
 /* files.c */
 extern void safe_setuid_drop(void);
 extern void safe_setuid_grab(void);
@@ -866,7 +873,7 @@ extern bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor);
 /* common.c */
 extern int color_char_to_attr(char c);
 extern int find_realm(int book);
-extern void version_build();
+extern void version_build(void);
 
 /*
  * Hack -- conditional (or "bizarre") externs

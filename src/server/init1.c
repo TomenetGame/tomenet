@@ -5454,7 +5454,6 @@ errr init_d_info_txt(FILE *fp, char *buf)
 	/* Current entry */
 	dungeon_info_type *d_ptr = NULL;
 
-
 	/* Just before the first record */
 	error_idx = -1;
 

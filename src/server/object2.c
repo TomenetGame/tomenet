@@ -1086,7 +1086,7 @@ static void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u
 }
 
 /* Return the value of the flags the object has... */
-s32b flag_cost(object_type * o_ptr, int plusses)
+static s32b flag_cost(object_type * o_ptr, int plusses)
 {
 	s32b total = 0;
 	u32b f1, f2, f3, f4, f5, esp, am;
@@ -5293,7 +5293,7 @@ static bool theme_changed(obj_theme theme)
 /*
  * Maga-Hack -- match certain types of object only.
  */
-bool kind_is_theme(int k_idx)
+static bool kind_is_theme(int k_idx)
 {
 	object_kind *k_ptr = &k_info[k_idx];
 

@@ -309,6 +309,7 @@ static void to_free(struct to_handler *top)
     }
 }
 
+#if 0 /* CURRENTLY not used */
 /*
  * Configure timout callback.
  */
@@ -355,6 +356,7 @@ void remove_timeout(void (*func)(void *), void *arg)
 	}
     }
 }
+#endif
 
 static void timeout_chime(void)
 {
@@ -452,10 +454,12 @@ void remove_input(int fd)
 
 // static int		sched_running;
 
+#if 0 /* CURRENTLY unused */
 void stop_sched(void)
 {
     sched_running = 0;
 }
+#endif
 
 /*
  * I/O + timer dispatcher.

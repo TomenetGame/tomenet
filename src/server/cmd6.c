@@ -64,7 +64,7 @@
  * This function should be obsoleted when ToME power.c is backported.
  */
 /* Basically not cumulative */
-void do_tank(int Ind, int power)
+static void do_tank(int Ind, int power)
 {
 	// player_type *p_ptr = Players[Ind];
 	int i = randint(9);
@@ -1871,7 +1871,7 @@ static bool do_cancellation(int Ind, int flags)
  
 /* Pfft, it's silly long */
 #define LOTTERY_MAX_PRIZE	7
-void do_lottery(int Ind, object_type *o_ptr)
+static void do_lottery(int Ind, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
 	int i = k_info[o_ptr->k_idx].cost, j, k = 0, gold;

@@ -2607,7 +2607,7 @@ static errr init_other(void)
 }
 
 
-void init_swearing(){
+static void init_swearing(){
 	int i=0;
 	FILE *fp;
 	fp=fopen("swearing.txt", "r");
@@ -2860,7 +2860,7 @@ static void init_guardians(void)
 }
 #endif	// 0
 
-bool str_to_boolean(char * str)
+static bool str_to_boolean(char * str)
 {
 	/* false by default */
 	return !(strcasecmp(str, "true"));
@@ -2871,7 +2871,7 @@ bool str_to_boolean(char * str)
  * the handeling of this will be unified in the future with some sort of 
  * options structure.
  */
-void set_server_option(char * option, char * value)
+static void set_server_option(char * option, char * value)
 {
 	/* Due to the lame way that C handles strings, we can't use a switch statement */
 	if (!strcmp(option,"REPORT_TO_METASERVER"))
@@ -3096,7 +3096,7 @@ void set_server_option(char * option, char * value)
  * Seemingly it caused trouble in win32;
  * Yakina reverted this to strtok.
  */
-void load_server_cfg_aux(FILE * cfg)
+static void load_server_cfg_aux(FILE * cfg)
 {
 	char line[256];
 #if 0

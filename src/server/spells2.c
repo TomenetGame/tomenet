@@ -2857,7 +2857,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 	/* Unenchantable items always fail */
 	if (f5 & TR5_NO_ENCHANT) return (FALSE);
 	
-	/* Artefacts cannot be enchanted. */
+	/* Artifacts cannot be enchanted. */
 	if (true_artifact_p(o_ptr)) return (FALSE);
 	
 	/* Large piles resist enchantment */
@@ -3181,7 +3181,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	if (enchant(Ind, o_ptr, num_dam, ENCH_TODAM)) okay = TRUE;
 	if (enchant(Ind, o_ptr, num_ac, ENCH_TOAC)) okay = TRUE;
 	
-	/* Artefacts cannot be enchanted. */
+	/* Artifacts cannot be enchanted. */
 	if (true_artifact_p(o_ptr)) msg_format(Ind,"Your %s %s unaffected.",o_name,((o_ptr->number != 1)?"are":"is"));
 
 	/* Failure */
@@ -5587,7 +5587,7 @@ bool sleep_monsters_touch(int Ind)
 }
 
 /* Scan magical powers for the golem */
-void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
+static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 {
 	    u32b f1, f2, f3, f4, f5, esp;
 
@@ -5624,7 +5624,7 @@ struct builder{
 #define MAX_BUILDERS 4	/* Just so the builders can go on strike */
 /* end of move stuff */
 
-bool poly_build(int Ind, char *args)
+static bool poly_build(int Ind, char *args)
 {
 	static struct builder *builders=NULL;
 	static int num_build=0;

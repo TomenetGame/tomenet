@@ -73,11 +73,13 @@ static struct luaL_reg pern_iolib[] =
  * better avoid to use them maybe */
 
 #define DYADIC(name, op) \
+    s32b name(s32b a, s32b b); \
     s32b name(s32b a, s32b b) { \
 		return (a op b); \
     }
 
 #define MONADIC(name, op) \
+    s32b name(s32b b); \
     s32b name(s32b b) { \
 		return (op b); \
     }
@@ -285,7 +287,7 @@ void dump_lua_stack_stdout(int min, int max)
         printf("ylua_stack:\n");
         for (i = min; i <= max; i++)
         {
-                if (lua_isnumber(L, i)) printf("%d [n] = %d\n", i, tolua_getnumber(L, i, 0));
+                if (lua_isnumber(L, i)) printf("%d [n] = %ld\n", i, tolua_getnumber(L, i, 0));
                 else if (lua_isstring(L, i)) printf("%d [s] = '%s'\n", i, tolua_getstring(L, i, 0));
         }
         printf("END lua_stack\n");

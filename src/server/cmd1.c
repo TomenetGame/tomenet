@@ -1711,7 +1711,7 @@ static void hit_trap(int Ind)
  * implemented yet for pvp!! (FIXME)		- Jir -
  */
 /* TODO: p_ptr->name should be replaced by strings made by player_desc */
-void py_attack_player(int Ind, int y, int x, bool old)
+static void py_attack_player(int Ind, int y, int x, bool old)
 {
 	player_type *p_ptr = Players[Ind];
 	int num = 0, k, bonus, chance;
@@ -2239,7 +2239,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
  *
  * If no "weapon" is available, then "punch" the monster one time.
  */
-void py_attack_mon(int Ind, int y, int x, bool old)
+static void py_attack_mon(int Ind, int y, int x, bool old)
 {
 	player_type *p_ptr = Players[Ind];
 	int                     num = 0, k, bonus, chance;

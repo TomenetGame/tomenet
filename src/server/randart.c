@@ -52,7 +52,7 @@ s16b	power;
  * Calculate the multiplier we'll get with a given bow type.
  * This is done differently in 2.8.2 than it was in 2.8.1.
  */
-int bow_multiplier (int sval)
+static int bow_multiplier (int sval)
 {
 	switch (sval)
 	{
@@ -74,7 +74,7 @@ int bow_multiplier (int sval)
  * Make sure it's not zero.  If it's currently negative, leave
  * it negative (heh heh).
  */
-void do_pval (artifact_type *a_ptr)
+static void do_pval (artifact_type *a_ptr)
 {
 	/* Add some pval */
 	if (a_ptr->pval == 0)
@@ -102,7 +102,7 @@ void do_pval (artifact_type *a_ptr)
 /* 
  * Make it bad, or if it's already bad, make it worse!
  */
-void do_curse (artifact_type *a_ptr)
+static void do_curse (artifact_type *a_ptr)
 {
 	/* Some chance of picking up these flags */
 	if (rand_int (3) == 0) a_ptr->flags3 |= TR3_AGGRAVATE;
@@ -138,7 +138,7 @@ void do_curse (artifact_type *a_ptr)
 /* 
  * Evaluate the artifact's overall power level.
  */
-s32b artifact_power (artifact_type *a_ptr)
+static s32b artifact_power (artifact_type *a_ptr)
 {
 	s32b p = 0;
 	int immunities = 0;
@@ -373,7 +373,7 @@ s32b artifact_power (artifact_type *a_ptr)
 
 
 
-void remove_contradictory (artifact_type *a_ptr)
+static void remove_contradictory (artifact_type *a_ptr)
 {
 	if (a_ptr->flags3 & TR3_AGGRAVATE)
 	{
@@ -407,7 +407,7 @@ void remove_contradictory (artifact_type *a_ptr)
  * Randomly select an extra ability to be added to the artifact in question.
  * This function is way too large.
  */
-void add_ability (artifact_type *a_ptr)
+static void add_ability (artifact_type *a_ptr)
 {
 	int r;
 

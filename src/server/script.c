@@ -18,6 +18,8 @@
 #include "lauxlib.h"
 #include "tolua.h"
 
+extern int tolua_z_pack_open (lua_State* tolua_S);
+
 int  tolua_util_open (lua_State *L);
 int  tolua_player_open (lua_State *L);
 int  tolua_spells_open (lua_State *L);
@@ -68,11 +70,13 @@ static struct luaL_reg pern_iolib[] =
  * better avoid to use them maybe */
 
 #define DYADIC(name, op) \
+    s32b name(s32b a, s32b b); \
     s32b name(s32b a, s32b b) { \
 		return (a op b); \
     }
 
 #define MONADIC(name, op) \
+    s32b name(s32b b); \
     s32b name(s32b b) { \
 		return (op b); \
     }

@@ -139,7 +139,7 @@ static bool player_handle_trap_of_hostility(int Ind)
 	return (ident);
 }
 
-bool do_trap_of_silliness(int Ind, int power)
+static bool do_trap_of_silliness(int Ind, int power)
 {
 	player_type *p_ptr = Players[Ind];
 	int i, j;
@@ -289,7 +289,7 @@ bool do_player_scatter_items(int Ind, int chance, int rad)
 	return (message);
 }
 
-bool do_player_trap_garbage(int Ind, int times)
+static bool do_player_trap_garbage(int Ind, int times)
 {
 	player_type *p_ptr = Players[Ind];
 	int k, l, lv = getlevel(&p_ptr->wpos);
@@ -320,7 +320,7 @@ bool do_player_trap_garbage(int Ind, int times)
 /*
  * eg. if a player falls 250ft, set 'dis' to -5.
  */
-void do_player_trap_change_depth(int Ind, int dis)
+static void do_player_trap_change_depth(int Ind, int dis)
 {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
@@ -342,7 +342,7 @@ void do_player_trap_change_depth(int Ind, int dis)
 	new_players_on_depth(&p_ptr->wpos,1,TRUE);
 }
 
-bool do_player_trap_call_out(int Ind)
+static bool do_player_trap_call_out(int Ind)
 {
         player_type *p_ptr = Players[Ind];
         s16b          i,sn,cx,cy;
@@ -3667,7 +3667,7 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x)
  *
  * Return TRUE if the monster died
  */ 
-bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
+static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
 {
 	int dam = 0, typ = 0;
 	int rad = 0;
@@ -3790,7 +3790,7 @@ bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
  *
  * Return TRUE if the monster died
  */ 
-bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
+static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 //	monster_race    *r_ptr = race_inf(m_ptr);
@@ -3934,7 +3934,7 @@ bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
  *
  * Return TRUE if the monster died
  */ 
-bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
+static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 	worldpos wpos = m_ptr->wpos;
@@ -4067,7 +4067,7 @@ bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
  *
  * Return TRUE if the monster died
  */ 
-bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
+static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 	int dam = 0, typ = 0;
@@ -4216,7 +4216,7 @@ bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
  *
  * Return TRUE if the monster died
  */ 
-bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
+static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 {
 	monster_type *m_ptr = &m_list[m_idx];
         int dam = 0, typ = 0, rad = 1;

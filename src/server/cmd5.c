@@ -25,7 +25,7 @@
 /*
  * Rerturn the skill associated with the realm
  */
-int find_realm_skill(int realm)
+static int find_realm_skill(int realm)
 {
         switch (realm)
         {

@@ -584,7 +584,7 @@ int	port;
 	hp = gethostbyname2(host, AF_INET6);
 	if (hp == NULL)
 	{
-	    printf("No IP6 address for %s\n", host);
+	    printf("1 No IP6 address for %s\n", host);
 	    hp=gethostbyname2(host, AF_INET);
 	    if(hp==NULL){
 	   	sl_errno = SL_EHOSTNAME;
@@ -614,6 +614,7 @@ int	port;
 
     if (connect(fd, (struct sockaddr *)&peer, sizeof(peer)) < 0)
     {
+	printf("1 connect failed\n");
 	sl_errno = SL_ECONNECT;
 	(void) close(fd);
 	return (-1);
@@ -662,8 +663,11 @@ int	fd;
 {
     int		retval;
     socklen_t	socklen=sizeof(struct sockaddr_in6);
+    char temp[INET6_ADDRSTRLEN];
 
     cmw_priv_assert_netaccess();
+    inet_ntop(AF_INET6, &sl_dgram_lastaddr, &temp, INET6_ADDRSTRLEN);
+    printf("socketaccept: %s\n", temp);
     retval = accept(fd, (struct sockaddr*)&sl_dgram_lastaddr, &socklen);
     //retval = accept(fd, NULL, 0);
     cmw_priv_deassert_netaccess();
@@ -1727,7 +1731,7 @@ int	port;
 	hp = gethostbyname2(host, AF_INET6);
 	if (hp == NULL)
 	{
-	    printf("No IP6 address for %s\n", host);
+	    printf("2 No IP6 address for %s\n", host);
 	    hp=gethostbyname2(host, AF_INET);
 	    if(hp==NULL){
 	   	sl_errno = SL_EHOSTNAME;
@@ -1845,7 +1849,7 @@ char	*host, *sbuf;
 	    hp = gethostbyname2(host, AF_INET6);
 	    if (hp == NULL)
 	    { 
-	        printf("No IP6 address for %s\n", host);
+	        printf("3 No IP6 address for %s\n", host);
 	        hp=gethostbyname2(host, AF_INET);
 	        if(hp==NULL){
 	   	    sl_errno = SL_EHOSTNAME;
@@ -1989,7 +1993,7 @@ char	*rbuf;
 	hp = gethostbyname2(from, AF_INET6);
 	if (hp == NULL)
 	{
-	    printf("No IP6 address for %s\n", from);
+	    printf("4 No IP6 address for %s\n", from);
 	    hp=gethostbyname2(from, AF_INET);
 	    if(hp==NULL){
 	   	sl_errno = SL_EHOSTNAME;
@@ -2560,7 +2564,7 @@ void GetLocalHostName(name, size)
 
     gethostname(name, size);
     if ((he = gethostbyname2(name, AF_INET6)) == NULL) {
-	printf("No IP6 address for %s\n", name);
+	printf("5 No IP6 address for %s\n", name);
 	he=gethostbyname2(name, AF_INET);
 	if(he==NULL){
 	    return;

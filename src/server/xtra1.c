@@ -845,7 +845,7 @@ static void fix_monster(int Ind)
  * Calculate the player's sanity
  */
 
-void calc_sanity(int Ind)
+static void calc_sanity(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int bonus, msane;
@@ -1321,7 +1321,7 @@ static int weight_limit(int Ind)
 
 /* Should be called by every calc_bonus call */
 /* TODO: allow ego form */
-void calc_body_bonus(int Ind)
+static void calc_body_bonus(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -1743,7 +1743,7 @@ bool monk_heavy_armor(int Ind)
 #endif	// 0
 
 /* Are all the weapons wielded of the right type ? */
-int get_weaponmastery_skill(player_type *p_ptr)
+static int get_weaponmastery_skill(player_type *p_ptr)
 {
 	int i, skill = 0;
 	object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
@@ -3220,6 +3220,8 @@ void calc_bonuses(int Ind)
 		if (archery != -1)
 		{
 			p_ptr->to_h_ranged += get_skill_scale(p_ptr, archery, 25);
+			/* the "xtra_might" adds damage for specifics */
+			p_ptr->to_d_ranged += get_skill_scale(p_ptr, SKILL_ARCHERY, 20);
 			/* Isn't 4 shots/turn too small? */
 			p_ptr->num_fire += (get_skill(p_ptr, archery) / 16)
 				+ get_skill_scale(p_ptr, SKILL_ARCHERY, 1);
@@ -3228,16 +3230,20 @@ void calc_bonuses(int Ind)
 			switch (archery)
 			{
 				case SKILL_SLING:
-					if (p_ptr->tval_ammo == TV_SHOT) p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
+					if (p_ptr->tval_ammo == TV_SHOT)
+						p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
 					break;
 				case SKILL_BOW:
-					if (p_ptr->tval_ammo == TV_ARROW) p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
+					if (p_ptr->tval_ammo == TV_ARROW)
+						p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
 					break;
 				case SKILL_XBOW:
-					if (p_ptr->tval_ammo == TV_BOLT) p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
+					if (p_ptr->tval_ammo == TV_BOLT)
+						p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
 					break;
 				case SKILL_BOOMERANG:
-					if (!p_ptr->tval_ammo) p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
+					if (!p_ptr->tval_ammo)
+						p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
 					break;
 			}
 #endif	// 0

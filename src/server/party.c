@@ -1012,7 +1012,7 @@ void party_msg_format(int party_id, cptr fmt, ...)
 /*
  * Send a message to everyone in a party, considering ignorance.
  */
-void party_msg_ignoring(int sender, int party_id, cptr msg)
+static void party_msg_ignoring(int sender, int party_id, cptr msg)
 {
 	int i;
 
@@ -1085,7 +1085,7 @@ void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...)
     -APD-
     */
 
-bool players_in_level(int Ind, int Ind2)
+static bool players_in_level(int Ind, int Ind2)
 {
         if ((Players[Ind]->lev - Players[Ind2]->lev) > 7) return FALSE;
         if ((Players[Ind2]->lev - Players[Ind]->lev) > 7) return FALSE;

@@ -1381,7 +1381,7 @@ static void store_delete(store_type *st_ptr)
 
 /* Analyze store flags and return a level */
 //int return_level()
-int return_level(store_type *st_ptr)
+static int return_level(store_type *st_ptr)
 {
 	store_info_type *sti_ptr = &st_info[st_ptr->st_idx];
 	int level;
@@ -1961,7 +1961,7 @@ static bool retire_owner_p(store_type *st_ptr)
 
 
 /* Is the command legal?	- Jir - */
-bool store_attest_command(int store, int bact)
+static bool store_attest_command(int store, int bact)
 {
 	int i;
 	for (i = 0; i < STORE_MAX_ACTION; i++)

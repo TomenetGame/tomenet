@@ -2476,7 +2476,7 @@ void display_map(int Ind, int *cy, int *cx)
 }
 
 
-void wild_display_map(int Ind)
+static void wild_display_map(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -5736,7 +5736,7 @@ bool is_quest(struct worldpos *wpos)
 /*
  * handle spell effects
  */
-int effect_pop(int who)
+static int effect_pop(int who)
 {
 	int i, cnt = 0;
 

@@ -725,7 +725,7 @@ bool mon_allowed_view(monster_race *r_ptr)
  * Return TRUE is the monster is OK and FALSE otherwise
  */
 //bool apply_rule(monster_race *r_ptr, byte rule)
-bool apply_rule(monster_race *r_ptr, byte rule, int dun_type)
+static bool apply_rule(monster_race *r_ptr, byte rule, int dun_type)
 {
 	dungeon_info_type *d_ptr = &d_info[dun_type];
 
@@ -816,7 +816,7 @@ bool apply_rule(monster_race *r_ptr, byte rule, int dun_type)
 }
 
 //bool restrict_monster_to_dungeon(int r_idx)
-bool restrict_monster_to_dungeon(int r_idx, int dun_type)
+static bool restrict_monster_to_dungeon(int r_idx, int dun_type)
 {
 	dungeon_info_type *d_ptr = &d_info[dun_type];
 	monster_race *r_ptr = &r_info[r_idx];
@@ -1065,7 +1065,7 @@ s16b get_mon_num(int level, int dun_type)
 
 
 
-cptr r_name_garbled_get()
+static cptr r_name_garbled_get()
 {
 	int r_idx;
 
@@ -1433,7 +1433,7 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
  * Here comes insanity from PernAngband.. hehehe.. - Jir -
  */
 //void sanity_blast(int Ind, monster_type * m_ptr, bool necro)
-void sanity_blast(int Ind, int m_idx, bool necro)
+static void sanity_blast(int Ind, int m_idx, bool necro)
 {
 	player_type *p_ptr = Players[Ind];
 	monster_type    *m_ptr = &m_list[m_idx];
@@ -2235,7 +2235,7 @@ void update_players(void)
 
 
 /* Scan all players on the level and see if at least one can find the unique */
-bool allow_unique_level(int r_idx, struct worldpos *wpos)
+static bool allow_unique_level(int r_idx, struct worldpos *wpos)
 {
 	int i;
 	
@@ -3937,7 +3937,7 @@ static s32b modify_aux(s32b a, s32b b, char mod)
 #define MODIFY(o, n, min) MODIFY_AUX(o, n); (o) = ((o) < (min))?(min):(o)
 
 /* Is this ego ok for this monster ? */
-bool mego_ok(int r_idx, int ego)
+static bool mego_ok(int r_idx, int ego)
 {
         monster_ego *re_ptr = &re_info[ego];
         monster_race *r_ptr = &r_info[r_idx];
@@ -4281,7 +4281,7 @@ void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr)
 #define monster_dungeon(r_idx) dungeon_aux(r_idx)
 
 
-bool monster_deep_water(int r_idx)
+static bool monster_deep_water(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -4294,7 +4294,7 @@ bool monster_deep_water(int r_idx)
 }
 
 
-bool monster_shallow_water(int r_idx)
+static bool monster_shallow_water(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -4307,7 +4307,7 @@ bool monster_shallow_water(int r_idx)
 }
 
 
-bool monster_lava(int r_idx)
+static bool monster_lava(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 

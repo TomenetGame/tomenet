@@ -112,7 +112,7 @@ static bool has_child(int sel)
 	return (FALSE);
 }
 
-void print_desc_aux(cptr txt, int y, int xx)
+static void print_desc_aux(cptr txt, int y, int xx)
 {
 	int i = -1, x = xx;
 
@@ -516,7 +516,7 @@ static void print_skill_batch(int *p, int start, int max, bool mode)
 	prt(format("Select a skill (a-%c), * to list, @ to select by name/No., +/- to scroll:", I2A(j - 1)), 0, 0);
 }
 
-int do_cmd_activate_skill_aux()
+static int do_cmd_activate_skill_aux()
 {
 	char which;
 	int max = 0, i, start = 0;

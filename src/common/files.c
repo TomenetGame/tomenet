@@ -13,7 +13,18 @@
 #include "angband.h"
 
 extern errr path_build(char *buf, int max, cptr path, cptr file);
+
+int remote_update(int ind, char *fname);
+int check_return(int ind, unsigned short fnum, unsigned long sum);
+void kill_xfers(int ind);
+void do_xfers(void);
 int local_file_check(char *fname, unsigned long *sum);
+int local_file_ack(int ind, unsigned short fnum);
+int local_file_err(int ind, unsigned short fnum);
+int local_file_send(int ind, char *fname);
+int local_file_init(int ind, unsigned short fnum, char *fname);
+int local_file_write(int ind, unsigned short fnum, unsigned long len);
+int local_file_close(int ind, unsigned short fnum);
 
 extern const char *ANGBAND_DIR;
 
@@ -59,7 +70,7 @@ static struct ft_data *getfile(int ind, unsigned short fnum){
 	return(NULL);
 }
 
-void remove_ft(struct ft_data *d_ft){
+static void remove_ft(struct ft_data *d_ft){
 	struct ft_data *trav;
 	trav=fdata;
 	if(trav==d_ft){
@@ -80,7 +91,7 @@ void remove_ft(struct ft_data *d_ft){
 /* server and client need to be synchronised on this
    but for now, clashes are UNLIKELY in the extreme
    so they can generate their own. */
-int new_fileid(){
+static int new_fileid(){
 	static int c_id=0;
 	c_id++;
 	if(!c_id) c_id=1;
@@ -158,6 +169,7 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 		return(0);
 	}
 	local_file_check(c_fd->fname, &lsum);
+	printf("local file: %ld  remote file: %ld\n", sum, lsum);
 	if(!c_fd->state&FS_CHECK){
 		return(0);
 	}
@@ -265,7 +277,7 @@ int local_file_write(int ind, unsigned short fnum, unsigned long len){
 	struct ft_data *c_fd;
 	c_fd=getfile(ind, fnum);
 	if(c_fd==(struct ft_data*)NULL) return(0);
-	Receive_file_data(ind, len, &c_fd->buffer);
+	Receive_file_data(ind, len, c_fd->buffer);
 	write(c_fd->fd, &c_fd->buffer, len);
 	return(1);
 }
@@ -300,7 +312,7 @@ int local_file_close(int ind, unsigned short fnum){
 
 unsigned long total;
 
-void do_sum(unsigned char *buffer, int size){
+static void do_sum(unsigned char *buffer, int size){
 	int i;
 	for(i=0; i<size; i++){
 		total+=buffer[i];
@@ -347,6 +359,7 @@ int local_file_check(char *fname, unsigned long *sum){
 	}
 	r=total % 0x10000 + (total % 0x100000000) / 0x10000;
 	*sum=(r%0x10000)+r/0x10000;
+	printf("sum: %s %ld\n", fname, *sum);
 	fclose(fp);
 	return(success);
 }

@@ -193,7 +193,7 @@ extern void create_random_name(int race, char *name);
 
 /* c-cmd.c */
 extern void process_command(void);
-extern void do_cmd_skill();
+extern void do_cmd_skill(void);
 extern void cmd_tunnel(void);
 extern void cmd_walk(void);
 extern void cmd_king(void);
@@ -327,14 +327,14 @@ extern void do_cast(int book);
 extern void do_pray(int book);
 extern void do_fight(int book);
 extern void do_ghost(void);
-extern void do_mimic();
+extern void do_mimic(void);
 
 /* c-store.c */
 extern bool leave_store;
 extern void display_inventory(void);
 extern void display_store(void);
 extern void c_store_prt_gold(void);
-extern void display_store_action();
+extern void display_store_action(void);
 
 /* c-xtra1.c */
 extern void prt_stat(int stat, int max, int cur, int cur_base);
@@ -392,8 +392,13 @@ extern int Net_start(int sex, int race, int class);
 extern int Net_input(void);
 extern int Flush_queue(void);
 
+extern int Send_file_check(int ind, unsigned short id, char *fname);
+extern int Send_file_init(int ind, unsigned short id, char *fname);
+extern int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len);
+extern int Send_file_end(int ind, unsigned short id);
+extern int Receive_file_data(int ind, unsigned short len, char *buffer);
 extern int Send_raw_key(int key);
-extern int Send_mind();
+extern int Send_mind(void);
 extern int Send_mimic(int spell);
 extern int Send_search(void);
 extern int Send_walk(int dir);
@@ -472,13 +477,13 @@ extern void dump_skills(FILE *fff);
 extern s16b get_skill_scale(player_type *pfft, int skill, u32b scale);
 
 /* c-script.c */
-extern void init_lua();
-extern void open_lua();
+extern void init_lua(void);
+extern void open_lua(void);
 extern bool pern_dofile(int Ind, char *file);
 extern int exec_lua(int Ind, char *file);
 extern cptr string_exec_lua(int Ind, char *file);
 extern void master_script_begin(char *name, char mode);
-extern void master_script_end();
+extern void master_script_end(void);
 extern void master_script_line(char *buf);
 extern void master_script_exec(int Ind, char *name);
 extern void cat_script(char *name);
@@ -498,6 +503,7 @@ extern s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern cptr longVersion;
 extern cptr shortVersion;
+extern void version_build(void);
 
 /* common/files.c */
 int local_file_init(int ind, unsigned short fnum, char *fname);
@@ -506,7 +512,7 @@ int local_file_close(int ind, unsigned short fnum);
 int local_file_check(char *fname, unsigned long *sum);
 int local_file_ack(int ind, unsigned short fnum);
 int local_file_err(int ind, unsigned short fnum);
-void do_xfers();
+void do_xfers(void);
 int check_return(int ind, unsigned short fnum, unsigned long sum);
 int remote_update(int ind, char *fname);
 

@@ -74,7 +74,7 @@ int world_index(int world_x, int world_y)
 } 
 
 /* returns the neighbor index, valid or invalid. */
-int neighbor_index(struct worldpos *wpos, char dir)
+static int neighbor_index(struct worldpos *wpos, char dir)
 {
 	int cur_x, cur_y, neigh_idx;
 	
@@ -102,7 +102,7 @@ int neighbor_index(struct worldpos *wpos, char dir)
    Note that this has to be initially called with 0,0 to work properly. 
 */
 
-int towndist(int wx, int wy){
+static int towndist(int wx, int wy){
 	int i;
 	int dist, mindist=100;
 	for(i=0;i<numtowns;i++){
@@ -649,7 +649,7 @@ static bool wild_monst_aux_wasteland(int r_idx)
 }
 
 
-bool wild_monst_aux_ocean(int r_idx)
+static bool wild_monst_aux_ocean(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -659,7 +659,7 @@ bool wild_monst_aux_ocean(int r_idx)
 		return FALSE;
 }
 
-bool wild_monst_aux_shore(int r_idx)
+static bool wild_monst_aux_shore(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -669,7 +669,7 @@ bool wild_monst_aux_shore(int r_idx)
 		return FALSE;
 }
 
-bool wild_monst_aux_volcano(int r_idx)
+static bool wild_monst_aux_volcano(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -730,7 +730,7 @@ void wild_add_monster(struct worldpos *wpos)
 
 /* chooses a clear building location, possibly specified by xcen, ycen, and "reserves" it so
  * nothing else can choose any of its squares for building again */
-void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *x2, int *y2, int xlen, int ylen, int xcen, int ycen)
+static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *x2, int *y2, int xlen, int ylen, int xcen, int ycen)
 {
 	int x,y, attempts = 0, plot_clear;
 	cave_type **zcave;
@@ -989,7 +989,7 @@ static bool wild_obj_aux_bones(int k_idx)
 
 /* make a dwelling 'interesting'.
 */
-void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2, int y2, int type)
+static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2, int y2, int type)
 {
 	int x,y, cash, num_food, num_objects, num_bones, trys, r_idx, k_idx, food_sval;
 	bool inhabited, at_home, taken_over;
@@ -1629,7 +1629,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
    to be 2 in length, it was revised to find the total depth of the loop.
 */
 
-int wild_clone_closed_loop_total(struct worldpos *wpos)
+static int wild_clone_closed_loop_total(struct worldpos *wpos)
 {
 	int total_depth;
 	struct worldpos start, curr, total, neigh;
@@ -1823,7 +1823,7 @@ struct terrain_type
 
 
 /* determines terrain composition. seperated from gen_wilderness_aux for bleed functions.*/
-void init_terrain(terrain_type *t_ptr, int radius)
+static void init_terrain(terrain_type *t_ptr, int radius)
 {
 	/* not many terrain types have evil trees */
 	t_ptr->eviltree = t_ptr->mud = t_ptr->mountain = t_ptr->lava = 0;
@@ -1943,7 +1943,7 @@ void init_terrain(terrain_type *t_ptr, int radius)
 	t_ptr->monst_lev *= 1;
 }	
 
-char terrain_spot(terrain_type * terrain)
+static char terrain_spot(terrain_type * terrain)
 {
 	char feat;
 	
@@ -2111,7 +2111,7 @@ static void wild_add_hotspot(struct worldpos *wpos)
 
 
 /* helper function to wild_gen_bleedmap */
-void wild_gen_bleedmap_aux(int *bleedmap, int span, char dir)
+static void wild_gen_bleedmap_aux(int *bleedmap, int span, char dir)
 {
 	int c = 0, above, below, noise_mag, rand_noise, bleedmag;
 	
@@ -2151,7 +2151,7 @@ void wild_gen_bleedmap_aux(int *bleedmap, int span, char dir)
 
 /* using a simple fractal algorithm, generates the bleedmap used by the function below. */
 /* hack -- for this algorithm to work nicely, an initial span of a power of 2 is required. */
-void wild_gen_bleedmap(int *bleedmap, char dir, int start, int end)
+static void wild_gen_bleedmap(int *bleedmap, char dir, int start, int end)
 {
 	int c = 0, bound;
 	
@@ -2303,7 +2303,7 @@ void wild_bleed_level(int bleed_to, int bleed_from, char dir, int start, int end
 /* determines whether or not to bleed from a given depth in a given direction.
    useful for initial determination, as well as shared bleed points.
 */   
-bool should_we_bleed(struct worldpos *wpos, char dir)
+static bool should_we_bleed(struct worldpos *wpos, char dir)
 {
 #if 0
 	int neigh_idx = 0, tmp;
@@ -2361,7 +2361,7 @@ bool should_we_bleed(struct worldpos *wpos, char dir)
    
 */
    
-void bleed_with_neighbors(struct worldpos *wpos)
+static void bleed_with_neighbors(struct worldpos *wpos)
 {
 #if 0 /* evileye - temp */
 	int c, d, neigh_idx[4], tmp, side[2], start, end, opposite;

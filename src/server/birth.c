@@ -1239,7 +1239,7 @@ static void player_outfit(int Ind)
 	do_player_outfit();
 }
 
-void player_create_tmpfile(int Ind)
+static void player_create_tmpfile(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 

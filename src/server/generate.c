@@ -1657,7 +1657,7 @@ void place_floor(worldpos *wpos, int y, int x)
 /*
  * Place floor terrain at (y, x) according to dungeon info
  */
-void place_floor_respectedly(worldpos *wpos, int y, int x)
+static void place_floor_respectedly(worldpos *wpos, int y, int x)
 {
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -1871,7 +1871,7 @@ bool room_alloc(worldpos *wpos, int x, int y, bool crowded, int by0, int bx0, in
 /*
  * The following functions create a rectangle (e.g. outer wall of rooms)
  */
-void build_rectangle(worldpos *wpos, int y1, int x1, int y2, int x2, int feat, int info)
+static void build_rectangle(worldpos *wpos, int y1, int x1, int y2, int x2, int feat, int info)
 {
 	int y, x;
 
@@ -4421,7 +4421,7 @@ static void store_height(worldpos *wpos, int x, int y, int x0, int y0, byte val,
  * size=length of the side of the square cave system.
  */
 
-void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, int grd,
+static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, int grd,
 	int roug, int cutoff)
 {
 	int xhsize, yhsize, xsize, ysize, maxsize;
@@ -4701,7 +4701,7 @@ static void fill_hack(worldpos *wpos, int y0, int x0, int y, int x, int xsize, i
 }
 
 
-bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysize,
+static bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysize,
 	int cutoff, bool light, bool room)
 {
 	int x, y, i, amount, xhsize, yhsize;
@@ -6251,7 +6251,7 @@ static void add_outer_wall(worldpos *wpos, int x, int y, int light, int x1, int 
  *
  * Used to build crypts
  */
-int dist2(int x1, int y1, int x2, int y2,
+static int dist2(int x1, int y1, int x2, int y2,
 	int h1, int h2, int h3, int h4)
 {
 	int dx, dy;
@@ -6616,7 +6616,7 @@ static void build_type12(worldpos *wpos, int by0, int bx0)
  */
 typedef char maze_row[(MAX_WID / 2) + 2];
 
-void dig(maze_row *maze, int y, int x, int d)
+static void dig(maze_row *maze, int y, int x, int d)
 {
 	int k;
 	int dy = 0, dx = 0;
@@ -9993,7 +9993,7 @@ void dealloc_dungeon_level_maybe(struct worldpos *wpos)
 }
 #endif	// 0
 
-void del_dungeon(struct worldpos *wpos, bool tower){
+static void del_dungeon(struct worldpos *wpos, bool tower){
 	struct dungeon_type *d_ptr;
 	int i;
 	struct worldpos twpos;

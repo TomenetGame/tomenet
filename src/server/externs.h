@@ -28,7 +28,7 @@ extern void world_remote_players(FILE *fff);
 /* common/common.c */
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern int color_char_to_attr(char c);
-extern void version_build();
+extern void version_build(void);
 
 
 /* common/files.c */
@@ -38,7 +38,7 @@ int local_file_close(int ind, unsigned short fnum);
 int local_file_check(char *fname, unsigned long *sum);
 int local_file_ack(int ind, unsigned short fnum);
 int local_file_err(int ind, unsigned short fnum);
-void do_xfers();
+void do_xfers(void);
 void kill_xfers(int ind);
 int check_return(int ind, unsigned short fnum, unsigned long sum);
 int remote_update(int ind, char *fname);
@@ -531,6 +531,7 @@ extern void do_cmd_check_other(int Ind, int line);
 extern void do_cmd_check_other_prepare(int Ind, char *path);
 
 /* cmd5.c */
+extern bool check_antimagic(int Ind);
 extern void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux);
 extern void do_cmd_browse(int Ind, object_type *o_ptr);
 extern void do_cmd_study(int Ind, int book, int spell);
@@ -570,7 +571,7 @@ extern void do_cmd_activate(int Ind, int item);
 extern void do_cmd_activate_dir(int Ind, int dir);
 extern bool unmagic(int Ind);
 extern void fortune(int Ind, bool broadcast);
-extern char random_colour();
+extern char random_colour(void);
 
 extern void do_cmd_drink_fountain(int Ind);
 extern void do_cmd_fill_bottle(int Ind);
@@ -591,10 +592,10 @@ extern void dungeon(void);
 //extern bool retaliate_item(int Ind, int item, cptr inscription);
 extern void pack_overflow(int Ind);
 extern void set_runlevel(int val);
-extern void store_turnover();
+extern void store_turnover(void);
 
 extern void cheeze(object_type *o_ptr);
-extern void cheeze_trad_house();
+extern void cheeze_trad_house(void);
 
 
 /* files.c */
@@ -624,9 +625,10 @@ extern void signals_handle_tstp(void);
 extern void signals_init(void);
 extern void kingly(int Ind);
 extern errr get_rnd_line(cptr file_name, int entry, char *output);
-extern void wipeout_needless_objects();
+extern void wipeout_needless_objects(void);
 
 /* generate.c */
+extern bool room_alloc(worldpos *wpos, int x, int y, bool crowded, int by0, int bx0, int *xx, int *yy);
 extern bool dungeon_aux(int r_idx);
 //extern void dealloc_dungeon_level_maybe(struct worldpos *wpos);
 //extern void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, char *race, char *exclude, bool tower);
@@ -643,7 +645,7 @@ extern void place_floor(worldpos *wpos, int y, int x);
 
 /* wild.c */
 extern int world_index(int world_x, int world_y);
-extern void wild_bulldoze();
+extern void wild_bulldoze(void);
 extern void init_wild_info(void);
 //extern void init_wild_info(bool new);
 //extern void addtown(int y, int x, int base, u16b flags);
@@ -655,6 +657,7 @@ extern void wilderness_gen(struct worldpos *wpos);
 extern void wild_add_monster(struct worldpos *wpos);
 extern bool fill_house(house_type *h_ptr, int func, void *data);
 extern void wild_add_uhouse(house_type *h_ptr);
+extern void wild_add_uhouses(struct worldpos *wpos);
 extern bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w);
 
 /* init-txt.c */
@@ -699,6 +702,7 @@ extern bool make_attack_normal(int Ind, int m_idx);
 extern bool make_attack_spell(int Ind, int m_idx);
 extern void process_monsters(void);
 extern void curse_equipment(int Ind, int chance, int heavy_chance);
+extern void process_npcs(void);
 
 /* monster.c */
 /* monster1.c monster2.c */
@@ -748,12 +752,18 @@ extern void monster_check_experience(int m_idx, bool silent);
 /* XXX those entries are duplicated with those in netserver.h
  * consider removing one of them */
 /*extern void Contact(int fd, void *arg);*/
+extern void world_connect(int Ind);
 extern int Net_input(void);
 extern int Net_output(void);
 extern void setup_contact_socket(void);
 extern bool Report_to_meta(int flag);
 extern int Setup_net_server(void);
 extern bool Destroy_connection(int Ind, char *reason);
+extern int Send_file_check(int ind, unsigned short id, char *fname);
+extern int Send_file_init(int ind, unsigned short id, char *fname);
+extern int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len);
+extern int Send_file_end(int ind, unsigned short id);
+extern int Receive_file_data(int ind, unsigned short len, char *buffer);
 extern int Send_plusses(int Ind, int tohit, int todam, int tohit_r, int todam_r, int tohit_m, int todam_m);
 extern int Send_ac(int Ind, int base, int plus);
 extern int Send_experience(int Ind, int lev, s32b max_exp, s32b cur_exp, s32b adv_exp);
@@ -762,6 +772,7 @@ extern int Send_skill_init(int ind, int type, int i);
 #else
 extern int Send_skill_init(int ind, u16b i);
 #endif
+extern int Send_skill_points(int ind);
 extern int Send_skill_info(int ind, int i);
 //extern int Send_gold(int Ind, s32b gold);
 extern int Send_gold(int Ind, s32b gold, s32b balance);
@@ -823,7 +834,7 @@ extern void Handle_direction(int Ind, int dir);
 extern void Handle_clear_buffer(int Ind);
 extern int Send_sanity(int ind, byte attr, cptr msg);
 extern char *showtime(void);
-extern void init_players();
+extern void init_players(void);
 
 
 
@@ -906,6 +917,9 @@ extern void init_match_theme(obj_theme theme);
 
 
 /* party.c */
+extern void account_check(int Ind);
+extern bool WriteAccount(struct account *r_acc, bool new);
+extern void validate(char *name);
 extern void sf_delete(const char *name);
 extern struct account *GetAccount(cptr name, char *pass, bool leavepass);
 extern struct account *GetAccountID(u32b id);
@@ -943,7 +957,7 @@ extern byte lookup_player_party(int id);
 extern void clockin(int Ind, int type);
 extern int newid(void);
 
-extern void scan_players();
+extern void scan_players(void);
 extern void party_check(int Ind);
 extern void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...);
 extern u16b lookup_player_type(int id);
@@ -1012,6 +1026,7 @@ extern void teleport_to_player(int Ind, int m_idx);
 
 
 /* spells2.c */
+extern void summon_pet(int Ind, int max);
 extern void grow_trees(int Ind, int rad);
 extern bool heal_insanity(int Ind, int val);
 extern void summon_cyber(int Ind, int s_clone);
@@ -1183,7 +1198,7 @@ extern cptr get_month_name(int day, bool full, bool compact);
 extern cptr get_day(int day);
 extern void bracer_ff(char *buf);
 
-extern void check_banlist();
+extern void check_banlist(void);
 extern void msg_broadcast_format(int Ind, cptr fmt, ...);
 extern byte count_bits(u32b array);
 extern int gold_colour(int amt);
@@ -1306,7 +1321,7 @@ extern void kill_houses(int id, int type);
 /*extern bool get_rep_dir(int *dp);*/
 
 extern bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor);
-extern void check_quests();
+extern void check_quests(void);
 extern bool master_level_specific(int Ind, struct worldpos *wpos, char * parms);
 
 /*
@@ -1340,12 +1355,12 @@ extern int stricmp(cptr a, cptr b);
 
 
 /* script.c */
-extern void init_lua();
+extern void init_lua(void);
 extern bool pern_dofile(int Ind, char *file);
 extern int exec_lua(int Ind, char *file);
 extern cptr string_exec_lua(int Ind, char *file);
 extern void master_script_begin(char *name, char mode);
-extern void master_script_end();
+extern void master_script_end(void);
 extern void master_script_line(char *buf);
 extern void master_script_exec(int Ind, char *name);
 extern void cat_script(int Ind, char *name);
@@ -1359,7 +1374,6 @@ extern void wipe_t_list(struct worldpos *wpos);
 extern void setup_traps(void);
 #endif	// 0
 extern bool do_player_drop_items(int Ind, int chance, bool trap);
-extern bool do_player_trap_call_out(int Ind);
 extern bool do_player_scatter_items(int Ind, int chance, int rad);
 //extern static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x);
 //extern static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, s16b dd, s16b ds, s16b pdam, cptr name);
@@ -1379,7 +1393,7 @@ extern void wiz_place_trap(int Ind, int trap);
 /* wild.c */
 extern void initwild(void);
 extern void genwild(void);
-extern void wild_spawn_towns();
+extern void wild_spawn_towns(void);
 extern void init_wild_info_aux(int x, int y);
 
 
@@ -1393,17 +1407,24 @@ extern void init_skill(player_type *p_ptr, u32b value, s16b mod, int i);
 extern s16b get_skill(player_type *p_ptr, int skill);
 extern s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale);
 extern void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i);
-//extern bool init_s_info();
+//extern bool init_s_info(void);
 extern s16b find_skill(cptr name);
 
 /* hooks.c */
 extern bool process_hooks(int h_idx, char *fmt, ...);
 extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
-extern void dump_hooks();
-extern void wipe_hooks();
+extern void dump_hooks(void);
+extern void wipe_hooks(void);
 
 /* bldg.c */
 extern bool is_state(int Ind, store_type *s_ptr, int state);
 extern void show_building(int Ind, store_type *s_ptr);
 extern bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item, int item2, int amt, int gold);
 
+/* lua_bind.c */
+s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus);
+s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat);
+s16b new_school(int i, cptr name, s16b skill);
+s16b new_spell(int i, cptr name);
+spell_type *grab_spell_type(s16b num);
+school_type *grab_school_type(s16b num);

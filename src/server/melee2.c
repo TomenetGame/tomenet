@@ -1191,7 +1191,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 }
 
 
-bool monst_check_antimagic(int Ind, int m_idx)
+static bool monst_check_antimagic(int Ind, int m_idx)
 {
 //	player_type *p_ptr;
 	monster_type	*m_ptr = &m_list[m_idx];

@@ -753,7 +753,7 @@ static int Reply(char *host_addr, int fd)
 
 
 /* invite only */
-bool player_allowed(char *name){
+static bool player_allowed(char *name){
 	FILE *sfp;
 	char buffer[80];
 	bool success=FALSE;
@@ -3018,6 +3018,7 @@ int Send_reliable(int ind)
 	return num_written;
 }
 
+#if 0 /* CURRENTLY not used */
 int Send_reliable_old(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -3110,6 +3111,7 @@ int Send_reliable_old(int ind)
 
 	return (max_todo - todo);
 }
+#endif
 
 static int Receive_ack(int ind)
 {

@@ -3533,7 +3533,7 @@ cptr item_activation(object_type *o_ptr)
  * Display the damage done with a multiplier
  */
 //void output_dam(object_type *o_ptr, int mult, int mult2, cptr against, cptr against2, bool *first)
-void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cptr against, cptr against2)
+static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cptr against, cptr against2)
 {
 	player_type *p_ptr = Players[Ind];
 	int dam;
@@ -3574,7 +3574,7 @@ void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cpt
 
 
 /* XXX this ignores the chance of extra dmg via 'critical hit' */
-void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
+static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 {
 	player_type *p_ptr = Players[Ind];
 	object_type forge, *old_ptr = &forge;
@@ -3642,7 +3642,7 @@ void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
  * Display the ammo damage done with a multiplier
  */
 //void output_ammo_dam(object_type *o_ptr, int mult, int mult2, cptr against, cptr against2, bool *first)
-void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cptr against, cptr against2)
+static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cptr against, cptr against2)
 {
 	player_type *p_ptr = Players[Ind];
 	int dam;
@@ -3692,7 +3692,7 @@ void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2
  * Outputs the damage we do/would do with the current bow and this ammo
  */
 /* TODO: tell something about boomerangs */
-void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
+static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 {
 	//player_type *p_ptr = Players[Ind];
 	u32b f1, f2, f3, f4, f5, esp;

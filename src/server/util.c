@@ -1335,7 +1335,7 @@ bool check_guard_inscription( s16b quark, char what ) {
  * Litterally.	- Jir -
  */
 
-char *find_inscription(s16b quark, char *what)
+static char *find_inscription(s16b quark, char *what)
 {
     const char  *ax = quark_str(quark);
     if( ax == NULL || !what) { return FALSE; };
@@ -2731,7 +2731,7 @@ static void do_slash_cmd(int Ind, char *message)
 #if 1
 				if (tk && prefix(token[1], "force"))
 				{
-					summon_pet(Ind);
+					summon_pet(Ind, 1);
 					msg_print(Ind, "You summon a pet");
 				}
 				else
@@ -3198,14 +3198,14 @@ static void do_slash_cmd(int Ind, char *message)
 	return;
 }
 
-int checkallow(char *buff, int pos){
+static int checkallow(char *buff, int pos){
 	if(!pos) return(0);
 	if(pos==1) return(buff[0]==' ' ? 0 : 1); /* allow things like brass lantern */
 	if(buff[pos-1]==' ' || buff[pos-2]=='\377') return(0);	/* swearing in colour */
 	return(1);
 }
 
-int censor(char *line){
+static int censor(char *line){
 	int i, j;
 	char *word;
 	char lcopy[100];
