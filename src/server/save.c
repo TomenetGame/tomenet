@@ -979,6 +979,7 @@ static void wr_wild(wilderness_type *w_ptr)
 	/* Reserved for future use */
 	wr_u32b(0);
 	/* level flags */
+	wr_u16b(w_ptr->type);
 	wr_u32b(w_ptr->flags);
 
 	wr_s32b(w_ptr->own);

@@ -1025,8 +1025,10 @@ static void rd_wild(wilderness_type *w_ptr)
 
 	/* future use */
 	rd_u32b(&tmp32u);
+	/* terrain type */
+	rd_u16b(&w_ptr->type);
 	/* the flags */
-	rd_u32b((u32b *) &w_ptr->flags);
+	rd_u32b(&w_ptr->flags);
 
 	/* the player(KING) owning the wild */
 	rd_s32b(&w_ptr->own);

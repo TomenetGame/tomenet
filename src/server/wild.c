@@ -245,11 +245,8 @@ void init_wild_info()
 	}
 */
 	initwild();
-	genwild();
 	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0);	/* base town */
-	printf("iwia:s\n");
 	init_wild_info_aux(0,0);
-	printf("iwia:f\n");
 
 	/* inefficient? thats an understatement */
 	for(y=0;y<MAX_WILD_Y;y++){
@@ -1609,11 +1606,7 @@ int wild_clone_closed_loop_total(int cur_depth)
 	do
 	{
 		/* seed the number generator */
-#ifdef NEW_DUNGEON
 		Rand_value = seed_town + (curr.wx+curr.wy*MAX_WILD_X) * 600;
-#else
-		Rand_value = seed_town + cur_depth * 600;
-#endif
 		/* HACK -- the second rand after the seed is used for the beginning of the clone
 		   directions (see below function).  This rand sets things up. */
 		   rand_int(100); 
@@ -1687,13 +1680,9 @@ int determine_wilderness_type(int Depth)
 #endif
 {
 	int dir, closed_loop = -0xFFF;
-#ifdef NEW_DUNGEON
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	struct worldpos neighbor;
-#else
-	int neighbor_idx;
-	wilderness_type *w_ptr = &wild_info[Depth];
-#endif
+	
 	bool rand_old = Rand_quick;
 	u32b old_seed = Rand_value;	
 				
@@ -2809,11 +2798,7 @@ static void wild_add_uhouses(int Depth){
 #endif
 }
 
-#ifdef NEW_DUNGEON
 static void wilderness_gen_hack(struct worldpos *wpos)
-#else
-static void wilderness_gen_hack(int Depth)
-#endif
 {
 	int y, x, x1, x2, y1, y2;
 	terrain_type terrain;
@@ -2947,41 +2932,25 @@ static void wilderness_gen_hack(int Depth)
 
 /* Generates a wilderness level. */
           
-#ifdef NEW_DUNGEON
 void wilderness_gen(struct worldpos *wpos)
-#else
-void wilderness_gen(int Depth)
-#endif
 {
 	int        i, y, x;
 	cave_type *c_ptr;
-#ifdef NEW_DUNGEON
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#else
-	wilderness_type *w_ptr = &wild_info[Depth];
-#endif
 
 	/* Perma-walls -- North/South*/
 	for (x = 0; x < MAX_WID; x++)
 	{
 		/* North wall */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[0][x];
-#else
-		c_ptr = &cave[Depth][0][x];
-#endif
 
 		/* Clear previous contents, add "clear" perma-wall */
 		c_ptr->feat = FEAT_PERM_CLEAR;
 
 		/* South wall */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[MAX_HGT-1][x];
-#else
-		c_ptr = &cave[Depth][MAX_HGT-1][x];
-#endif
 
 		/* Clear previous contents, add "clear" perma-wall */
 		c_ptr->feat = FEAT_PERM_CLEAR;
@@ -2994,11 +2963,7 @@ void wilderness_gen(int Depth)
 	for (y = 0; y < MAX_HGT; y++)
 	{
 		/* West wall */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][0];
-#else
-		c_ptr = &cave[Depth][y][0];
-#endif
 		/* Clear previous contents, add "clear" perma-wall */
 		c_ptr->feat = FEAT_PERM_CLEAR;
 
@@ -3006,11 +2971,7 @@ void wilderness_gen(int Depth)
 		c_ptr->info |= (CAVE_GLOW);*/
 
 		/* East wall */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][MAX_WID-1];
-#else
-		c_ptr = &cave[Depth][y][MAX_WID-1];
-#endif
 
 		/* Clear previous contents, add "clear" perma-wall */
 		c_ptr->feat = FEAT_PERM_CLEAR;
@@ -3087,7 +3048,6 @@ void wilderness_gen(int Depth)
 
 void initwild(){
 	int i,j;
-	printf("initwild\n");
 	for(i=0;i<MAX_WILD_X;i++){
 		for(j=0;j<MAX_WILD_Y;j++){
 			wild_info[j][i].type=WILD_UNDEFINED;
@@ -3267,11 +3227,12 @@ void addrivers(){
 
 void genwild(){
 	int j,i;
-	bool oldrand;
-	oldrand=Rand_quick;
+	bool rand_old = Rand_quick;
+	u32b old_seed = Rand_value;	
+
 	Rand_quick=TRUE;
 	Rand_value=seed_town;
-	printf("genwild\n");
+
 	island(cfg.town_y, cfg.town_x,WILD_GRASSLAND, WILD_UNDEFINED,5);
 	wild_info[cfg.town_y][cfg.town_x].type=WILD_TOWN;
 	makeland();
@@ -3286,5 +3247,7 @@ void genwild(){
 	addforest();
 	addlakes();
 	addwaste();
-	Rand_quick=oldrand;
+	/* Restore random generator */
+	Rand_quick=rand_old;
+	Rand_value=old_seed;
 }

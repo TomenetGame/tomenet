@@ -2410,18 +2410,14 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* Hack -- take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			
+			/* A player has left this depth */
+			new_players_on_depth(wpos,-1,TRUE);
+			if (players_on_depth(wpos)<0)
+				new_players_on_depth(wpos,0,FALSE);
+
 			p_ptr->wpos.wx = nwpos.wx;
 			p_ptr->wpos.wy = nwpos.wy;
 		
-			/* A player has left this depth */
-			new_players_on_depth(wpos,-1,TRUE);
-			
-			/* (required) paranoia, allows integration of old wilderness
-			   saves onto new severs.
-			*/
-			if (players_on_depth(wpos)<0)
-				new_players_on_depth(wpos,0,FALSE);
-			
 			/* update the wilderness map */
 			p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)/8] |= (1<<((p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)%8));
 			

@@ -675,6 +675,12 @@ Change list for PernMangband
 18/01/2002 (Evileye)
 - Ironman recalling done (maximum level of tower or dungeon)
 
+19/01/2002 (Evileye)
+- Players below level 5 never get stuck in walls
+- Wilderness generated AFTER random generator is seeded ;)
+- Wilderness large map saved - saves time in startup.
+- Fixed bug where player changes wilderness level.
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)
@@ -683,7 +689,6 @@ Change list for PernMangband
 [B] Self-reproducing black trap
 [B] Panic save often enters into infinite loop.
 [B] House doors still seem to crash sometimes.
-[B] Saving on wilderness causes crash when coming back (due to unstaticing?)
 
 ==== below this line are changes to be done in the future ====
 [minor ones]
@@ -694,7 +699,6 @@ Change list for PernMangband
 - tombstone screen
 - wilderness compacting
 - move slash-commands to another function
-- auto-teleport for lowbies in wall(in case they saved in dungeon).
 - low-sanity alart each 2000 turn or sth(and hallucination? :)
 - cave_special should use union? and their save/load via csfunc
 

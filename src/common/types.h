@@ -1098,13 +1098,13 @@ typedef struct wilderness_type wilderness_type;
 
 struct wilderness_type
 {
-	int radius; /* the distance from the town */
-	int type;   /* what kind of terrain we are in */
+	u16b radius; /* the distance from the town */
+	u16b type;   /* what kind of terrain we are in */
 
 	u32b flags; /* various */
 	struct dungeon_type *tower;
 	struct dungeon_type *dungeon;
-	int ondepth;
+	u16b ondepth;
 	cave_type **cave;
 	byte up_x, up_y;
 	byte dn_x, dn_y;

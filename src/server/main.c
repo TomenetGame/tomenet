@@ -542,9 +542,6 @@ int main(int argc, char *argv[])
 	/* Initialize the arrays */
 	init_some_arrays();
 
-	/* Wait for response */
-	/*pause_line(23);*/
-
 	/* Play the game */
 	play_game(new_game);
 

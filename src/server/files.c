@@ -1169,14 +1169,6 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 
 
 	/* Display the file */
-#if 0
-	while (TRUE)
-	{
-		/* Clear screen */
-		Term_clear();
-
-#endif
-
 		/* Restart when necessary */
 		if (line >= size) line = 0;
 
@@ -1394,20 +1386,8 @@ void do_cmd_help(int Ind, int line)
  */
 errr show_file(int Ind, cptr name, cptr what, int line, int color)
 {
-	/* Enter "icky" mode */
-	/*character_icky = TRUE;*/
-
-	/* Save the screen */
-	/*Term_save();*/
-
 	/* Peruse the requested file */
 	(void)do_cmd_help_aux(Ind, name, what, line, color);
-
-	/* Restore the screen */
-	/*Term_load();*/
-
-	/* Leave "icky" mode */
-	/*character_icky = FALSE;*/
 
 	/* Success */
 	return (0);

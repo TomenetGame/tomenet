@@ -683,7 +683,7 @@ void self_knowledge(int Ind)
 #if 1
 	if (p_ptr->climb)
 	{
-		info[i++] = "You can climb hight mountains.";
+		info[i++] = "You can climb high mountains.";
 	}
 #endif	// 0
 	if (p_ptr->free_act)

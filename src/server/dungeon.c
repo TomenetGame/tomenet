@@ -3685,8 +3685,10 @@ void play_game(bool new_game)
 		seed_town = rand_int(0x10000000);
 
 		/* Initialize server state information */
-		/*player_birth();*/
 		server_birth();
+
+		/* Generate the wilderness */
+		genwild();
 
 		/* Hack -- enter the world */
 		turn = 1;
@@ -3711,13 +3713,8 @@ void play_game(bool new_game)
 	/* Flash a message */
 	s_printf("Please wait...\n");
 
-	/* Flush the message */
-	/*Term_fresh();*/
-
-
 	/* Hack -- Enter wizard mode */
 	/*if (arg_wizard && enter_wizard_mode()) wizard = TRUE;*/
-
 
 	/* Flavor the objects */
 	flavor_init();
@@ -3727,16 +3724,6 @@ void play_game(bool new_game)
 	/* Reset the visual mappings */
 	reset_visuals();
 
-	/* Window stuff */
-	/*p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);*/
-
-	/* Window stuff */
-	/*p_ptr->window |= (PW_MONSTER);*/
-
-	/* Window stuff */
-	/*window_stuff();*/
-
-
 	/* Load the "pref" files */
 	load_all_pref_files();
 
@@ -3744,17 +3731,9 @@ void play_game(bool new_game)
 	/*if (arg_force_original) rogue_like_commands = FALSE;
 	if (arg_force_roguelike) rogue_like_commands = TRUE;*/
 
-	/* Verify the keymap */
-	/*keymap_init();*/
-
-	/* React to changes */
-	/*Term_xtra(TERM_XTRA_REACT, 0);*/
-
-
 	/* Make a town if necessary */
 	if (!server_dungeon)
 	{
-#ifdef NEW_DUNGEON
 		struct worldpos twpos;
 		twpos.wx=cfg.town_x;
 		twpos.wy=cfg.town_y;
@@ -3764,13 +3743,6 @@ void play_game(bool new_game)
 
 		/* Actually generate the town */
 		generate_cave(&twpos);
-#else
-		/* Allocate space for it */
-		alloc_dungeon_level(0);
-
-		/* Actually generate the town */
-		generate_cave(0);
-#endif
 	}
 
 	/* Finish initializing dungeon monsters */
@@ -3784,17 +3756,6 @@ void play_game(bool new_game)
 
 	/* Server initialization is now "complete" */
 	server_generated = TRUE;
-
-
-	/* Hack -- Character is no longer "icky" */
-	/*character_icky = FALSE;*/
-
-
-	/* Start game */
-	/*alive = TRUE;*/
-
-	/* Hack -- Enforce "delayed death" */
-	/*if (p_ptr->chp < 0) death = TRUE;*/
 
 	/* Set up the contact socket, so we can allow players to connect */
 	setup_contact_socket();

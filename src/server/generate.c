@@ -5834,19 +5834,12 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, cha
  */
  
  
-#ifdef NEW_DUNGEON
 void generate_cave(struct worldpos *wpos)
-#else
-void generate_cave(int Depth)
-#endif
 {
 	int i, num;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	zcave=getcave(wpos);
-#endif
 
-	/* No dungeon yet */
 	server_dungeon = FALSE;
 
 	/* Generate */
@@ -5865,11 +5858,7 @@ void generate_cave(int Depth)
 		for (i = 0; i < MAX_HGT; i++)
 		{
 			/* Wipe a whole row at a time */
-#ifdef NEW_DUNGEON
 			C_WIPE(zcave[i], MAX_WID, cave_type);
-#else
-			C_WIPE(cave[Depth][i], MAX_WID, cave_type);
-#endif
 		}
 
 
@@ -5883,20 +5872,11 @@ void generate_cave(int Depth)
 		panel_col_min = 0;
 		panel_col_max = 0;*/
 
-
-#ifdef NEW_DUNGEON
 		/* Reset the monster generation level */
 		monster_level = getlevel(wpos);
 
 		/* Reset the object generation level */
 		object_level = getlevel(wpos);
-#else
-		/* Reset the monster generation level */
-		monster_level = Depth;
-
-		/* Reset the object generation level */
-		object_level = Depth;
-#endif
 
 		/* Nothing special here yet */
 		good_item_flag = FALSE;
@@ -5906,11 +5886,7 @@ void generate_cave(int Depth)
 
 
 		/* Build the town */
-#ifdef NEW_DUNGEON
 		if (istown(wpos))
-#else
-		if (!Depth)
-#endif
 		{
 			/* Small town */
 			/*cur_hgt = SCREEN_HGT;
@@ -5942,17 +5918,10 @@ void generate_cave(int Depth)
 		}
 
 		/* Build wilderness */
-#ifdef NEW_DUNGEON
 		else if (!wpos->wz)
 		{
 			wilderness_gen(wpos);		
 		}
-#else
-		else if (Depth < 0)
-		{
-			wilderness_gen(Depth);		
-		}
-#endif
 
 		/* Build a real level */
 		else

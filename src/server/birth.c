@@ -1279,6 +1279,9 @@ static void player_setup(int Ind)
 		if(p_ptr->wpos.wz){
 			alloc_dungeon_level(wpos);
 			generate_cave(wpos);
+			if(p_ptr->lev<=5){
+				teleport_player(Ind, 5);
+			}
 		}
 		else{
 			alloc_dungeon_level(wpos);
