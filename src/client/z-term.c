@@ -1677,8 +1677,11 @@ errr Term_putstr(int x, int y, int n, byte a, cptr s)
 
 	while(ptr){
 		strncpy(tmp,s,ptr-s);
-		tmp[ptr-s]='\0';
-		if((res=Term_addstr(ptr-s, a, tmp))!=0) return(res);
+		if(ptr-s){
+			tmp[ptr-s]='\0';
+			if((res=Term_addstr(ptr-s, a, tmp))!=0) return(res);
+		}
+		else if(*(s+1)=='\0') break;
 		s=ptr+1;
 		if((b=color_char_to_attr(*s))!=-1){
 			a=b;

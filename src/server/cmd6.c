@@ -424,7 +424,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 		case SV_POTION_APPLE_JUICE:
 		case SV_POTION_SLIME_MOLD:
 		{
-			msg_print(Ind, "You feel less thirsty.");
+			msg_print(Ind, "\377GYou feel less thirsty.");
 			ident = TRUE;
 			break;
 		}
@@ -499,7 +499,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 		{
 			if (!p_ptr->hold_life && (p_ptr->exp > 0))
 			{
-				msg_print(Ind, "You feel your memories fade.");
+				msg_print(Ind, "\377GYou feel your memories fade.");
 				lose_exp(Ind, p_ptr->exp / 4);
 				ident = TRUE;
 			}
@@ -710,7 +710,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 
 		case SV_POTION_LIFE:
 		{
-			msg_print(Ind, "You feel life flow through your body!");
+			msg_print(Ind, "\377GYou feel life flow through your body!");
 			restore_level(Ind);
 			hp_player(Ind, 5000);
 			(void)set_poisoned(Ind, 0);
@@ -872,7 +872,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 			{
 				s32b ee = (p_ptr->exp / 2) + 10;
 				if (ee > 100000L) ee = 100000L;
-				msg_print(Ind, "You feel more experienced.");
+				msg_print(Ind, "\377GYou feel more experienced.");
 				gain_exp(Ind, ee);
 				ident = TRUE;
 			}
@@ -1308,12 +1308,12 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				set_recall_depth(p_ptr, o_ptr);
 				p_ptr->word_recall = randint(20) + 15;
-				msg_print(Ind, "The air about you becomes charged...");
+				msg_print(Ind, "\377oThe air about you becomes charged...");
 			}
 			else
 			{
 				p_ptr->word_recall = 0;
-				msg_print(Ind, "A tension leaves the air around you...");
+				msg_print(Ind, "\377oA tension leaves the air around you...");
 			}
 			ident = TRUE;
 			break;
@@ -1341,7 +1341,7 @@ void do_cmd_read_scroll(int Ind, int item)
 		{
 			if (remove_curse(Ind))
 			{
-				msg_print(Ind, "You feel as if someone is watching over you.");
+				msg_print(Ind, "\377GYou feel as if someone is watching over you.");
 				ident = TRUE;
 			}
 			break;
@@ -2620,12 +2620,12 @@ void do_cmd_zap_rod(int Ind, int item)
 			if (p_ptr->word_recall == 0)
 			{
 				set_recall_depth(p_ptr,o_ptr);
-				msg_print(Ind, "The air about you becomes charged...");
+				msg_print(Ind, "\377oThe air about you becomes charged...");
 				p_ptr->word_recall = 15 + randint(20);
 			}
 			else
 			{
-				msg_print(Ind, "A tension leaves the air around you...");
+				msg_print(Ind, "\377oA tension leaves the air around you...");
 				p_ptr->word_recall = 0;
 			}
 			ident = TRUE;
@@ -3029,12 +3029,12 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			if (p_ptr->word_recall == 0)
 			{
 				set_recall_depth(p_ptr,o_ptr);
-				msg_print(Ind, "The air about you becomes charged...");
+				msg_print(Ind, "\377oThe air about you becomes charged...");
 				p_ptr->word_recall = 15 + randint(20);
 			}
 			else
 			{
-				msg_print(Ind, "A tension leaves the air around you...");
+				msg_print(Ind, "\377oA tension leaves the air around you...");
 				p_ptr->word_recall = 0;
 			}
 			ident = TRUE;
@@ -3605,7 +3605,7 @@ void do_cmd_activate(int Ind, int item)
 
 			case ART_DAL:
 			{
-				msg_print(Ind, "You feel energy flow through your feet...");
+				msg_print(Ind, "\377GYou feel energy flow through your feet...");
 				(void)set_afraid(Ind, 0);
 				(void)set_poisoned(Ind, 0);
 				o_ptr->timeout = 5;
@@ -3680,12 +3680,12 @@ void do_cmd_activate(int Ind, int item)
 				{
 					set_recall_depth(p_ptr,o_ptr);
 					p_ptr->word_recall = randint(20) + 15;
-					msg_print(Ind, "The air about you becomes charged...");
+					msg_print(Ind, "\377oThe air about you becomes charged...");
 				}
 				else
 				{
 					p_ptr->word_recall = 0;
-					msg_print(Ind, "A tension leaves the air around you...");
+					msg_print(Ind, "\377oA tension leaves the air around you...");
 				}
 				o_ptr->timeout = 200;
 				break;
@@ -3772,7 +3772,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_SOULKEEPER:
 			{
 				msg_print(Ind, "Your armor glows a bright white...");
-				msg_print(Ind, "You feel much better...");
+				msg_print(Ind, "\377GYou feel much better...");
 				(void)hp_player(Ind, 1000);
 				(void)set_cut(Ind, 0);
 				o_ptr->timeout = 888;
@@ -3909,7 +3909,7 @@ void do_cmd_activate(int Ind, int item)
 
 			case ART_GONDOR:
 			{
-				msg_print(Ind, "You feel a warm tingling inside...");
+				msg_print(Ind, "\377GYou feel a warm tingling inside...");
 				(void)hp_player(Ind, 500);
 				(void)set_cut(Ind, 0);
 				o_ptr->timeout = 500;

@@ -315,7 +315,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* Under the player */
 				if ((ny == p_ptr->py) && (nx == p_ptr->px))
 				{
-					msg_print(Ind, "You feel something roll beneath your feet.");
+					msg_print(Ind, "\377GYou feel something roll beneath your feet.");
 				}
 
 				/* Successful placement */
@@ -798,13 +798,13 @@ void do_cmd_open(int Ind, int dir)
 								strcat(string,"s");
 								break;
 						}
-						msg_format(Ind,"That house is owned by %s.",string);
+						msg_format(Ind,"\377rThat house is owned by %s.",string);
 					}
 					else{
 						int factor,price;
 						factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 						price = dna->price * factor / 100;
-						msg_format(Ind,"That house costs %ld gold.",price);
+						msg_format(Ind,"\377oThat house costs %ld gold.",price);
 					}
 				}
 				return;
@@ -2611,7 +2611,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 				bool fear = FALSE;
 
 				/* Assume a default death */
-				cptr note_dies = " dies.";
+				cptr note_dies = "\377y dies.";
 
 				/* Some monsters get "destroyed" */
 				if ((r_ptr->flags3 & RF3_DEMON) ||
@@ -3039,7 +3039,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 				bool fear = FALSE;
 
 				/* Assume a default death */
-				cptr note_dies = " dies.";
+				cptr note_dies = "\377y dies.";
 
 				/* Some monsters get "destroyed" */
 				if ((r_ptr->flags3 & RF3_DEMON) ||
@@ -3136,17 +3136,17 @@ void destroy_house(int Ind, struct dna_type *dna){
 	player_type *p_ptr=Players[Ind];
 	int i;
 	if(strcmp(p_ptr->name, cfg_admin_wizard)){
-		msg_print(Ind,"Your attempts to destroy the house fail.");
+		msg_print(Ind,"\377rYour attempts to destroy the house fail.");
 		return;
 	}
 	for(i=0;i<num_houses;i++){
 		if(houses[i].dna==dna){
 			if(houses[i].flags&HF_STOCK){
-				msg_print(Ind,"That house may not be destroyed");
+				msg_print(Ind,"\377oThat house may not be destroyed");
 				return;
 			}
 			/* quicker than copying back an array. */
-			msg_print(Ind,"The house crumbles away.");
+			msg_print(Ind,"\377DThe house crumbles away.");
 			fill_house(&houses[i],2);
 			houses[i].flags|=HF_DELETED;
 			break;
@@ -3183,13 +3183,13 @@ void house_admin(int Ind, int dir, char *args){
 						return;
 				}
 				if(success){
-					msg_format(Ind,"Door change successful");
+					msg_format(Ind,"\377gDoor change successful");
 				}
-				else msg_format(Ind,"Door change failed");
+				else msg_format(Ind,"\377oDoor change failed");
 			}
-			else msg_print(Ind,"You cant modify that door");
+			else msg_print(Ind,"\377rYou cant modify that door");
 		}
-		else msg_print(Ind,"There is no door there");
+		else msg_print(Ind,"\377sThere is no door there");
 	}
 	return;
 }

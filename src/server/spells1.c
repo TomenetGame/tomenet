@@ -661,7 +661,7 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		sound(Ind, SOUND_DEATH);
 
 		/* Hack -- Note death */
-		msg_print(Ind, "You die.");
+		msg_print(Ind, "\377RYou die.");
 		msg_print(Ind, NULL);
 
 		/* Hack -- Blond bond */
@@ -2596,7 +2596,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 	cptr note = NULL;
 
 	/* Assume a default death */
-	cptr note_dies = " dies.";
+	cptr note_dies = "\377y dies.";
 
 	/* This can happen! */
 	if(p_ptr == NULL) return(FALSE);
@@ -2653,7 +2653,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 	    (strchr("Evg", r_ptr->d_char)))
 	{
 		/* Special note at death */
-		note_dies = " is destroyed.";
+		note_dies = " \377yis destroyed.";
 	}
 
 
@@ -2664,7 +2664,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		case GF_PSI:
 		{
 			if (seen) obvious = TRUE;
-			note_dies = " collapses, a mindless husk.";
+			note_dies = " \377ycollapses, a mindless husk.";
 
 			if (r_ptr->flags3 & RF3_RES_PSI)
 			if (rand_int(3))
@@ -3282,7 +3282,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 				/* Special effect */
 				note = " cringes from the light!";
-				note_dies = " shrivels away in the light!";
+				note_dies = "\377y shrivels away in the light!";
 			}
 
 			/* Normally no damage */
@@ -3310,7 +3310,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			{
 				if (seen) r_ptr->r_flags3 |= RF3_HURT_LITE;
 				note = " cringes from the light!";
-				note_dies = " shrivels away in the light!";
+				note_dies = "\377y shrivels away in the light!";
 				dam *= 2;
 			}
 			break;
@@ -3344,7 +3344,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 				/* Cute little message */
 				note = " loses some skin!";
-				note_dies = " dissolves!";
+				note_dies = "\377y dissolves!";
 			}
 
 			/* Usually, ignore the effects */
@@ -3515,7 +3515,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 				/* Message */
 				note = " shudders."; 
-				note_dies = " dissolves!";
+				note_dies = "\377y dissolves!";
 			}
 
 			/* Ignore other monsters */
@@ -3543,7 +3543,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 				/* Message */
 				note = " shudders.";
-				note_dies = " dissolves!";
+				note_dies = "\377y dissolves!";
 			}
 
 			/* Ignore other monsters */
@@ -3565,7 +3565,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 			/* Message */
 			note = " shudders.";
-			note_dies = " dissolves!";
+			note_dies = "\377y dissolves!";
 
 			break;
 		}

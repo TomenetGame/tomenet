@@ -1238,12 +1238,12 @@ void do_cmd_cast(int Ind, int book, int spell)
 				{
 					set_recall_depth(p_ptr, o_ptr);
 					p_ptr->word_recall = rand_int(20) + 15;
-					msg_print(Ind, "The air about you becomes charged...");
+					msg_print(Ind, "\377oThe air about you becomes charged...");
 				}
 				else
 				{
 					p_ptr->word_recall = 0;
-					msg_print(Ind, "A tension leaves the air around you...");
+					msg_print(Ind, "\377oA tension leaves the air around you...");
 				}
 				break;
 			}
@@ -2057,12 +2057,12 @@ void do_cmd_sorc(int Ind, int book, int spell)
 			{
 				set_recall_depth(p_ptr, o_ptr);
 				p_ptr->word_recall = rand_int(20) + 15;
-				msg_print(Ind, "The air about you becomes charged...");
+				msg_print(Ind, "\377oThe air about you becomes charged...");
 			}
 			else
 			{
 				p_ptr->word_recall = 0;
-				msg_print(Ind, "A tension leaves the air around you...");
+				msg_print(Ind, "\377oA tension leaves the air around you...");
 			}
                         break;
                 case 37+64: /* Recall others */
@@ -2128,22 +2128,22 @@ void do_cmd_sorc(int Ind, int book, int spell)
 
 			  if (Ind == Ind2)
 			    {
-			      msg_print(Ind, "You cannot mind vision yourself.");
+			      msg_print(Ind, "\377RYou cannot mind vision yourself.");
 			      break;
 			    }
 			  if (p_ptr->esp_link)
 			    {
-			      msg_print(Ind, "Your mind is already linked.");
+			      msg_print(Ind, "\377RYour mind is already linked.");
 			      break;
 			    }
 			  if (Players[Ind2]->esp_link)
 			    {
-			      msg_format(Ind, "%s mind is already linked.", Players[Ind2]->name);
+			      msg_format(Ind, "\377R%s mind is already linked.", Players[Ind2]->name);
 			      break;
 			    }
 
-			  msg_format(Ind2, "%s infiltrates your mind.", p_ptr->name);
-			  msg_format(Ind, "You infiltrate %s mind.", Players[Ind2]->name);
+			  msg_format(Ind2, "\377R%s infiltrates your mind.", p_ptr->name);
+			  msg_format(Ind, "\377RYou infiltrate %s mind.", Players[Ind2]->name);
 			  p_ptr->esp_link = Players[Ind2]->id;
 			  p_ptr->esp_link_type = LINK_DOMINANT;
 			  p_ptr->esp_link_flags = 0;
@@ -3110,12 +3110,12 @@ void do_cmd_pray(int Ind, int book, int spell)
 				{
 					set_recall_depth(p_ptr, o_ptr);
 					p_ptr->word_recall = rand_int(20) + 15;
-					msg_print(Ind, "The air about you becomes charged...");
+					msg_print(Ind, "\377oThe air about you becomes charged...");
 				}
 				else
 				{
 					p_ptr->word_recall = 0;
-					msg_print(Ind, "A tension leaves the air around you...");
+					msg_print(Ind, "\377oA tension leaves the air around you...");
 				}
 				break;
 			}
@@ -4319,12 +4319,12 @@ void do_cmd_shad(int Ind, int book, int spell)
 				{
 					set_recall_depth(p_ptr, o_ptr);
 					p_ptr->word_recall = rand_int(20) + 15;
-					msg_print(Ind, "The air about you becomes charged...");
+					msg_print(Ind, "\377oThe air about you becomes charged...");
 				}
 				else
 				{
 					p_ptr->word_recall = 0;
-					msg_print(Ind, "A tension leaves the air around you...");
+					msg_print(Ind, "\377oA tension leaves the air around you...");
 				}
 				break;
 			}
@@ -4335,12 +4335,12 @@ void do_cmd_shad(int Ind, int book, int spell)
 				{
 					set_recall_depth(p_ptr, o_ptr);
 					p_ptr->word_recall = rand_int(5) + 1;
-					msg_print(Ind, "The air about you becomes charged...");
+					msg_print(Ind, "\377oThe air about you becomes charged...");
 				}
 				else
 				{
 					p_ptr->word_recall = 0;
-					msg_print(Ind, "A tension leaves the air around you...");
+					msg_print(Ind, "\377oA tension leaves the air around you...");
 				}
 				break;
 			}
@@ -5773,7 +5773,7 @@ void do_cmd_psi(int Ind, int book, int spell)
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(Ind, "Ending mind link.");
+			msg_print(Ind, "\377REnding mind link.");
 			p_ptr->esp_link = 0;
 			p_ptr->esp_link_type = 0;
 			p_ptr->esp_link_flags = 0;
@@ -5895,22 +5895,22 @@ void do_cmd_psi(int Ind, int book, int spell)
 		
 		if (Ind == Ind2)
 		  {
-		    msg_print(Ind, "You cannot mind control yourself.");
+		    msg_print(Ind, "\377RYou cannot mind control yourself.");
 		    break;
 		  }
 		if (p_ptr->esp_link)
 		  {
-		    msg_print(Ind, "Your mind is already linked.");
+		    msg_print(Ind, "\377RYour mind is already linked.");
 		    break;
 		  }
 		if (Players[Ind2]->esp_link)
 		  {
-		    msg_format(Ind, "%s mind is already linked.", Players[Ind2]->name);
+		    msg_format(Ind, "\377R%s mind is already linked.", Players[Ind2]->name);
 		    break;
 		  }
 		if (!(Players[Ind2]->esp_link_flags & LINKF_OPEN))
 		  {
-		    msg_format(Ind, "%s mind is not open.", Players[Ind2]->name);
+		    msg_format(Ind, "\377R%s mind is not open.", Players[Ind2]->name);
 		    break;
 		  }
 		if (abs(Players[Ind2]->lev - p_ptr->lev) > 5)
@@ -5919,8 +5919,8 @@ void do_cmd_psi(int Ind, int book, int spell)
 		    break;
 		  }
 		
-		msg_format(Ind2, "%s mind fusions with your mind.", p_ptr->name);
-		msg_format(Ind, "Your mind fusion with %s mind.", Players[Ind2]->name);
+		msg_format(Ind2, "\377R%s mind fusions with your mind.", p_ptr->name);
+		msg_format(Ind, "\377RYour mind fusion with %s mind.", Players[Ind2]->name);
 		p_ptr->esp_link = Players[Ind2]->id;
 		p_ptr->esp_link_type = LINK_DOMINANT;
 		p_ptr->esp_link_flags = LINKF_MOV | LINKF_OBJ;
@@ -5950,22 +5950,22 @@ void do_cmd_psi(int Ind, int book, int spell)
 		
 		if (Ind == Ind2)
 		  {
-		    msg_print(Ind, "You cannot mind control yourself.");
+		    msg_print(Ind, "\377RYou cannot mind control yourself.");
 		    break;
 		  }
 		if (p_ptr->esp_link)
 		  {
-		    msg_print(Ind, "Your mind is already linked.");
+		    msg_print(Ind, "\377RYour mind is already linked.");
 		    break;
 		  }
 		if (Players[Ind2]->esp_link)
 		  {
-		    msg_format(Ind, "%s mind is already linked.", Players[Ind2]->name);
+		    msg_format(Ind, "\377R%s mind is already linked.", Players[Ind2]->name);
 		    break;
 		  }
 
-		msg_format(Ind2, "%s mind infiltrates your mind.", p_ptr->name);
-		msg_format(Ind, "Your mind infiltrate %s mind.", Players[Ind2]->name);
+		msg_format(Ind2, "\377R%s mind infiltrates your mind.", p_ptr->name);
+		msg_format(Ind, "\377RYour mind infiltrate %s mind.", Players[Ind2]->name);
 		p_ptr->esp_link = Players[Ind2]->id;
 		p_ptr->esp_link_type = LINK_DOMINANT;
 		p_ptr->esp_link_flags = 0;
@@ -5991,27 +5991,27 @@ void do_cmd_psi(int Ind, int book, int spell)
 		
 		if (Ind == Ind2)
 		  {
-		    msg_print(Ind, "You cannot mind control yourself.");
+		    msg_print(Ind, "\377RYou cannot mind control yourself.");
 		    break;
 		  }
 		if (p_ptr->esp_link)
 		  {
-		    msg_print(Ind, "Your mind is already linked.");
+		    msg_print(Ind, "\377RYour mind is already linked.");
 		    break;
 		  }
 		if (Players[Ind2]->esp_link)
 		  {
-		    msg_format(Ind, "%s mind is already linked.", Players[Ind2]->name);
+		    msg_format(Ind, "\377R%s mind is already linked.", Players[Ind2]->name);
 		    break;
 		  }
 		if (!(Players[Ind2]->esp_link_flags & LINKF_OPEN))
 		  {
-		    msg_format(Ind, "%s mind is not open.", Players[Ind2]->name);
+		    msg_format(Ind, "\377R%s mind is not open.", Players[Ind2]->name);
 		    break;
 		  }
 		
-		msg_format(Ind2, "%s mind infiltrates your mind.", p_ptr->name);
-		msg_format(Ind, "Your mind infiltrate %s mind.", Players[Ind2]->name);
+		msg_format(Ind2, "\377R%s mind infiltrates your mind.", p_ptr->name);
+		msg_format(Ind, "\377RYour mind infiltrate %s mind.", Players[Ind2]->name);
 		p_ptr->esp_link = Players[Ind2]->id;
 		p_ptr->esp_link_type = LINK_DOMINANT;
 		p_ptr->esp_link_flags = LINKF_MOV | LINKF_OBJ;
@@ -6053,12 +6053,12 @@ void do_cmd_psi(int Ind, int book, int spell)
 		  {
 		    set_recall_depth(p_ptr2, o_ptr);
 		    p_ptr2->word_recall = rand_int(20) + 15;
-		    msg_print(Ind, "The air about you becomes charged...");
+		    msg_print(Ind, "\377oThe air about you becomes charged...");
 		  }
 		else
 		  {
 		    p_ptr2->word_recall = 0;
-		    msg_print(Ind, "A tension leaves the air around you...");
+		    msg_print(Ind, "\377oA tension leaves the air around you...");
 		  }
 		break;
 	      }
@@ -6164,22 +6164,22 @@ void do_cmd_psi(int Ind, int book, int spell)
 		
 		if (Ind == Ind2)
 		  {
-		    msg_print(Ind, "You cannot share pain with yourself yourself.");
+		    msg_print(Ind, "\377RYou cannot share pain with yourself yourself.");
 		    break;
 		  }
 		if (p_ptr->esp_link)
 		  {
-		    msg_print(Ind, "Your mind is already linked.");
+		    msg_print(Ind, "\377RYour mind is already linked.");
 		    break;
 		  }
 		if (Players[Ind2]->esp_link)
 		  {
-		    msg_format(Ind, "%s mind is already linked.", Players[Ind2]->name);
+		    msg_format(Ind, "\377R%s mind is already linked.", Players[Ind2]->name);
 		    break;
 		  }
 		if (!(Players[Ind2]->esp_link_flags & LINKF_OPEN))
 		  {
-		    msg_format(Ind, "%s mind is not open.", Players[Ind2]->name);
+		    msg_format(Ind, "\377R%s mind is not open.", Players[Ind2]->name);
 		    break;
 		  }
 	      	if (abs(Players[Ind2]->lev - p_ptr->lev) > 5)
@@ -6188,8 +6188,8 @@ void do_cmd_psi(int Ind, int book, int spell)
 		    break;
 		  }
 
-		msg_format(Ind2, "%s share your pains.", p_ptr->name);
-		msg_format(Ind, "Your share %s pains.", Players[Ind2]->name);
+		msg_format(Ind2, "\377R%s share your pains.", p_ptr->name);
+		msg_format(Ind, "\377RYour share %s pains.", Players[Ind2]->name);
 		p_ptr->esp_link = Players[Ind2]->id;
 		p_ptr->esp_link_type = LINK_DOMINANT;
 		p_ptr->esp_link_flags = 0;
@@ -6355,7 +6355,7 @@ void do_cmd_psi_aux(int Ind, int dir)
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 			p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 			p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-			msg_print(Ind, "Ending mind link.");
+			msg_print(Ind, "\377REnding mind link.");
 			p_ptr->esp_link = 0;
 			p_ptr->esp_link_type = 0;
 			p_ptr->esp_link_flags = 0;
@@ -6396,7 +6396,7 @@ void do_cmd_psi_aux(int Ind, int dir)
 	switch(p_ptr2->current_mind)
 	{
 		case 1:
-			msg_format_near(Ind, "%s hurls a mind thrust.", p_ptr2->name);
+			msg_format_near(Ind, "\377R%s hurls a mind thrust.", p_ptr2->name);
 			fire_bolt(Ind, GF_PSI, dir,
 						damroll(3 + ((plev - 1) / 5), 4 + (plev / 5)));
 			break;

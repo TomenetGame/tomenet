@@ -731,7 +731,8 @@ static int Net_packet(void)
 			Sockbuf_clear(&rbuf);
 			break;
 		}
-		else if ((result = (*receive_tbl[type])()) <= 0)
+		else{
+		if ((result = (*receive_tbl[type])()) <= 0)
 		{
 			if (result == -1)
 			{
@@ -744,6 +745,7 @@ static int Net_packet(void)
 			}
 			Sockbuf_clear(&rbuf);
 			break;
+		}
 		}
 		prev_type = type;
 	}
@@ -1533,9 +1535,9 @@ int Receive_message(void)
 	/* Hack -- ' ' is numericall the lowest charcter we will probably be trying to
 	 * display.  This might screw up international character sets.
 	 */
-	for (c = 0; c < n; c++) if (buf[c] < ' ') return 1;
+	for (c = 0; c < n; c++) if (buf[c] < ' ' && buf[c]!=-1) return 1;
 
-/*	printf("Message: %s\n", buf);*/
+/*	printf("Message: %s\n", buf);   */
 
 	sprintf(search, "%s] ", nick);
 

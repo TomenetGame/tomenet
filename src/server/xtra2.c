@@ -348,34 +348,34 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 		    {
 		    case BOW_BRAND_ELEC:
                     case BOW_BRAND_BALL_ELEC:
-		      msg_print(Ind, "Your ammos sparkle with lightnings !");
+		      msg_print(Ind, "\377oYour ammos sparkle with lightnings !");
 		      break;
                     case BOW_BRAND_BALL_COLD:
 		    case BOW_BRAND_COLD:
-		      msg_print(Ind, "Your ammos freeze !");
+		      msg_print(Ind, "\377oYour ammos freeze !");
 		      break;
                     case BOW_BRAND_BALL_FIRE:
 		    case BOW_BRAND_FIRE:
-		      msg_print(Ind, "Your ammos burn !");
+		      msg_print(Ind, "\377oYour ammos burn !");
 		      break;
                     case BOW_BRAND_BALL_ACID:
 		    case BOW_BRAND_ACID:
-		      msg_print(Ind, "Your ammos look acidic !");
+		      msg_print(Ind, "\377oYour ammos look acidic !");
 		      break;
 		    case BOW_BRAND_POIS:
-		      msg_print(Ind, "Your ammos are covered with venom !");
+		      msg_print(Ind, "\377oYour ammos are covered with venom !");
 		      break;
 		    case BOW_BRAND_MANA:
-		      msg_print(Ind, "Your ammos glows with power !");
+		      msg_print(Ind, "\377oYour ammos glows with power !");
 		      break;
 		    case BOW_BRAND_CONF:
-		      msg_print(Ind, "Your ammos glows many colors !");
+		      msg_print(Ind, "\377oYour ammos glows many colors !");
 		      break;
 		    case BOW_BRAND_SHARP:
-		      msg_print(Ind, "Your ammos sharpen !");
+		      msg_print(Ind, "\377oYour ammos sharpen !");
 		      break;
                     case BOW_BRAND_BALL_SOUND:
-                      msg_print(Ind, "Your ammos vibrates !");
+                      msg_print(Ind, "\377oYour ammos vibrates !");
 		      break;
 		    }
 		  notice = TRUE;
@@ -387,7 +387,7 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 	{
 		if (p_ptr->bow_brand)
 		{
-			msg_print(Ind, "Your ammos seems normal again.");
+			msg_print(Ind, "\377oYour ammos seems normal again.");
 			notice = TRUE;
 		}
 	}
@@ -1995,14 +1995,14 @@ bool set_stun(int Ind, int v)
 		{
 			/* Stun */
 			case 1:
-			msg_format_near(Ind, "%s appears stunned.", p_ptr->name);
-			msg_print(Ind, "You have been stunned.");
+			msg_format_near(Ind, "\377o%s appears stunned.", p_ptr->name);
+			msg_print(Ind, "\377oYou have been stunned.");
 			break;
 
 			/* Heavy stun */
 			case 2:
-			msg_format_near(Ind, "%s is very stunned.", p_ptr->name);
-			msg_print(Ind, "You have been heavily stunned.");
+			msg_format_near(Ind, "\377o%s is very stunned.", p_ptr->name);
+			msg_print(Ind, "\377oYou have been heavily stunned.");
 			break;
 
 			/* Knocked out */
@@ -2024,8 +2024,8 @@ bool set_stun(int Ind, int v)
 		{
 			/* None */
 			case 0:
-			msg_format_near(Ind, "%s is no longer stunned.", p_ptr->name);
-			msg_print(Ind, "You are no longer stunned.");
+			msg_format_near(Ind, "\377o%s is no longer stunned.", p_ptr->name);
+			msg_print(Ind, "\377oYou are no longer stunned.");
 			if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 			break;
 		}
@@ -2856,11 +2856,11 @@ void monster_death(int Ind, int m_idx)
 		/* give credit to the killer by default */
 		if (!Ind2)
 		  {
-                    sprintf(buf,"%s was slain by %s.", r_name_get(m_ptr), p_ptr->name);
+                    sprintf(buf,"\377b%s was slain by %s.", r_name_get(m_ptr), p_ptr->name);
 		  }
 		else
 		  {
-                    sprintf(buf,"%s was slain by fusion %s-%s.", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+                    sprintf(buf,"\377b%s was slain by fusion %s-%s.", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 		  }
 		
 		/* give credit to the party if there is a teammate on the 
@@ -2871,7 +2871,7 @@ void monster_death(int Ind, int m_idx)
 			{
 				if ( (Players[i]->party == p_ptr->party) && (Players[i]->dun_depth == p_ptr->dun_depth) && (i != Ind) && (p_ptr->dun_depth) )
 				{
-                                        sprintf(buf, "%s was slain by %s.", r_name_get(m_ptr),parties[p_ptr->party].name);
+                                        sprintf(buf, "\377b%s was slain by %s.", r_name_get(m_ptr),parties[p_ptr->party].name);
 					break; 
 				} 
 			
@@ -3143,7 +3143,7 @@ void player_death(int Ind)
 	if (p_ptr->ghost || ((p_ptr->mode == MODE_HELL) && p_ptr->alive))
 	{
 		/* Tell players */
-		sprintf(buf, "%s's ghost was destroyed by %s.",
+		sprintf(buf, "\377r%s's ghost was destroyed by %s.",
 				p_ptr->name, p_ptr->died_from);
 
 		msg_broadcast(Ind, buf);
@@ -3182,9 +3182,9 @@ void player_death(int Ind)
 		sprintf(buf, "%s was turned into a fruit bat by %s!", p_ptr->name, p_ptr->died_from);
 	
 	else if (p_ptr->alive)
-		sprintf(buf, "%s was killed by %s.", p_ptr->name, p_ptr->died_from);
+		sprintf(buf, "\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from);
 	else if (!p_ptr->total_winner)
-		sprintf(buf, "%s committed suicide.", p_ptr->name);
+		sprintf(buf, "\377r%s committed suicide.", p_ptr->name);
 	else
 		sprintf(buf, "The unbeatable %s has retired to a warm, sunny climate.", p_ptr->name);
 	/* Tell the players */
@@ -3302,7 +3302,7 @@ void player_death(int Ind)
 	{
 
 	/* Tell him */
-	msg_format(Ind, "You have been killed by %s.", p_ptr->died_from);
+	msg_format(Ind, "\377RYou have been killed by %s.", p_ptr->died_from);
 
 	/* Turn him into a ghost */
 	p_ptr->ghost = 1;
@@ -3474,15 +3474,15 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		         (r_ptr->flags2 & RF2_STUPID) ||
 		         (strchr("Evg", r_ptr->d_char)))
 		{
-			msg_format_near(Ind, "%s has destroyed %s.", p_ptr->name, m_name);
-			msg_format(Ind, "You have destroyed %s.", m_name);
+			msg_format_near(Ind, "\377y%s has destroyed %s.", p_ptr->name, m_name);
+			msg_format(Ind, "\377yYou have destroyed %s.", m_name);
 		}
 
 		/* Death by Physical attack -- living monster */
 		else
 		{
-			msg_format_near(Ind, "%s has slain %s.", p_ptr->name, m_name);
-			msg_format(Ind, "You have slain %s.", m_name);
+			msg_format_near(Ind, "\377y%s has slain %s.", p_ptr->name, m_name);
+			msg_format(Ind, "\377yYou have slain %s.", m_name);
 		}
 
 		/* Split experience if in a party */

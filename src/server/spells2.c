@@ -499,19 +499,19 @@ void self_knowledge(int Ind)
 	}
 	if (p_ptr->cut)
 	{
-		info[i++] = "You are bleeding.";
+		info[i++] = "\377rYou are bleeding.";
 	}
 	if (p_ptr->stun)
 	{
-		info[i++] = "You are stunned.";
+		info[i++] = "\377oYou are stunned.";
 	}
 	if (p_ptr->poisoned)
 	{
-		info[i++] = "You are poisoned.";
+		info[i++] = "\377GYou are poisoned.";
 	}
 	if (p_ptr->image)
 	{
-		info[i++] = "You are hallucinating.";
+		info[i++] = "You are \377rha\377oll\377yuc\377gin\377bat\377ving.";
 	}
 
 	if (p_ptr->aggravate)

@@ -788,7 +788,7 @@ static void hit_trap(int Ind)
 		{
 			/* MEGAHACK: Ignore Wilderness trap doors. */
 			if( p_ptr->dun_depth<0) {
-				msg_print(Ind, "You feel quite certain something really awfull just happened..");
+				msg_print(Ind, "\377GYou feel quite certain something really awfull just happened..");
 				break;
 			}
 
@@ -1203,7 +1203,7 @@ void py_attack_player(int Ind, int y, int x)
 				{
 					if (p_ptr->lev > randint((q_ptr->lev * 2) + resist_stun + 10))
 					{
-						msg_format(Ind, "%^s is stunned.", q_ptr->name);
+						msg_format(Ind, "\377o%^s is stunned.", q_ptr->name);
 
 						set_stun(Ind, stun_effect);
 					}
@@ -1278,7 +1278,7 @@ void py_attack_player(int Ind, int y, int x)
 				}
 				else
 				{
-					msg_format(Ind, "%^s appears stunned.", p_name);
+					msg_format(Ind, "\377o%^s appears stunned.", p_name);
 					set_stun(0 - c_ptr->m_idx, q_ptr->stun + 20 + rand_int(p_ptr->lev) / 5);
 				}
 			}
@@ -1555,7 +1555,7 @@ void py_attack_mon(int Ind, int y, int x)
                                             (randint(p_ptr->lev * 2) > r_ptr->level) &&
 					    m_ptr->mspeed > 60)
 					{
-						msg_format(Ind, "%^s starts limping slower.", m_name);
+						msg_format(Ind, "\377o%^s starts limping slower.", m_name);
 						m_ptr->mspeed -= 10;
 					}
 				}
@@ -1565,9 +1565,9 @@ void py_attack_mon(int Ind, int y, int x)
 					if (p_ptr->lev > randint(r_ptr->level + resist_stun + 10))
 					{
 						if (m_ptr->stunned)
-                                                        msg_format(Ind, "%^s is still stunned.", m_name);
+                                                        msg_format(Ind, "\377o%^s is still stunned.", m_name);
 						else
-							msg_format(Ind, "%^s is stunned.", m_name);
+							msg_format(Ind, "\377o%^s is stunned.", m_name);
 
 						m_ptr->stunned += (stun_effect);
 					}
@@ -1656,9 +1656,9 @@ void py_attack_mon(int Ind, int y, int x)
 				else
 				{
 					if (!m_ptr->stunned)
-						msg_format(Ind, "%^s appears stuned.", m_name);
+						msg_format(Ind, "\377o%^s appears stuned.", m_name);
 					else
-						msg_format(Ind, "%^s appears more stunned.", m_name);
+						msg_format(Ind, "\377o%^s appears more stunned.", m_name);
 					m_ptr->stunned += 20 + rand_int(p_ptr->lev) / 5;
 				}
 			}
@@ -2107,7 +2107,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* Rubble */
 			if (c_ptr->feat == FEAT_RUBBLE)
 			{
-				msg_print(Ind, "You feel some rubble blocking your way.");
+				msg_print(Ind, "\377GYou feel some rubble blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(Depth, y, x);
 			}
@@ -2116,7 +2116,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			else if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) ||
 			         (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL))
 			{
-				msg_print(Ind, "You feel a closed door blocking your way.");
+				msg_print(Ind, "\377GYou feel a closed door blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(Depth, y, x);
 			}
@@ -2124,7 +2124,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* Tree */
 			else if (c_ptr->feat == FEAT_TREE)
 			{
-				msg_print(Ind, "You feel a tree blocking your way.");
+				msg_print(Ind, "\377GYou feel a tree blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(Depth, y, x);
 			}
@@ -2132,7 +2132,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* Wall (or secret door) */
 			else
 			{
-				msg_print(Ind, "You feel a wall blocking your way.");
+				msg_print(Ind, "\377GYou feel a wall blocking your way.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(Depth, y, x);
 			}
