@@ -1834,6 +1834,7 @@ struct player_type
 	bool disturb_state;
 	bool disturb_minor;
 	bool disturb_other;
+	bool auto_afk;
 	bool stack_allow_items;
 	bool stack_allow_wands;
 	bool view_perma_grids;
@@ -2326,7 +2327,7 @@ struct client_opts
 	bool alert_hitpoint;
 	bool alert_failure;
 
-	bool auto_haggle;
+	bool auto_afk;
 	bool auto_scum;
 	bool stack_allow_items;
 	bool stack_allow_wands;

@@ -1658,6 +1658,7 @@ static void sync_options(int Ind, bool *options)
 	p_ptr->disturb_state = options[23];
 	p_ptr->disturb_minor = options[24];
 	p_ptr->disturb_other = options[25];
+	p_ptr->auto_afk = options[28];
 	p_ptr->stack_allow_items = options[30];
 	p_ptr->stack_allow_wands = options[31];
 	p_ptr->view_perma_grids = options[34];
@@ -4428,7 +4429,7 @@ static int Receive_keepalive(int ind)
 	if(connp->id != -1){
 		Ind=GetInd[connp->id];
 		p_ptr=Players[Ind];
-		if(!p_ptr->afk){			/* dont oscillate ;) */
+		if(!p_ptr->afk && p_ptr->auto_afk){	/* dont oscillate ;) */
 			if(++connp->inactive>45)	/* auto AFK timer (>1.5 min) */
 				toggle_afk(Ind);
 		}
@@ -8067,7 +8068,7 @@ static int Receive_autophase(int ind)
 			if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_PHASE_DOOR))
 			{
 				/* found a phase scroll, read it! */
-				do_cmd_read_scroll(Ind, n);
+				do_cmd_read_scroll(player, n);
 				return 1;
 			}
 		}
@@ -8082,7 +8083,7 @@ static int Receive_autophase(int ind)
 			if ((o_ptr->tval == TV_MAGIC_BOOK) && (o_ptr->sval == 0))
 			{
 				/* attempt to cast phase door */
-				do_cmd_cast(Ind, 0, 2);
+				do_cmd_cast(player, 0, 2);
 			}
 		}
 	}

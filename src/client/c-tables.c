@@ -2695,8 +2695,8 @@ option_type option_info[OPT_MAX] =
 
 	/*** Game-Play ***/
 
-	{ &c_cfg.auto_haggle,			FALSE,	3,	1, 0,	// XXX
-	"auto_haggle",			"(obsolete) Auto-haggle in stores" },
+	{ &c_cfg.auto_afk,			FALSE,	3,	1, 0,	// XXX
+	"auto_afk",			"Allow automatic AFKing" },
 
 	{ &c_cfg.auto_scum,			FALSE,	3,	1, 1,	// XXX
 	"auto_scum",			"(obsolete) Auto-scum for good levels" },
