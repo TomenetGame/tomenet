@@ -40,7 +40,7 @@
  * Max sizes of the following arrays
  */
 #define MAX_ROCKS      62       /* Used with rings (min 58) */
-#define MAX_AMULETS    37       /* Used with amulets (min 30) */
+#define MAX_AMULETS    38       /* Used with amulets (min 30) */
 #define MAX_WOODS      36       /* Used with staffs (min 32) */
 #define MAX_METALS     39       /* Used with wands/rods (min 32/30) */
 #define MAX_COLORS     68       /* Used with potions (min 62) */
@@ -113,7 +113,7 @@ static cptr amulet_adj[MAX_AMULETS] =
         "Carved Oak", "Sea Shell", "Flint Stone", "Ruby", "Scarab",
         "Origami Paper", "Meteoric Iron", "Platinum", "Glass", "Beryl",
         "Malachite", "Adamantite", "Mother-of-pearl", "Runed",
-		"Sandalwood", "Emerald", "Aquamarine",
+	"Sandalwood", "Emerald", "Aquamarine", "Sparkling",
 };
 
 static byte amulet_col[MAX_AMULETS] =
@@ -125,7 +125,7 @@ static byte amulet_col[MAX_AMULETS] =
 	TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN, 
 	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_WHITE, TERM_L_GREEN, 
 	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER,
-	TERM_L_WHITE, TERM_GREEN, TERM_L_BLUE,
+	TERM_L_WHITE, TERM_GREEN, TERM_L_BLUE, TERM_ELEC,
 };
 
 

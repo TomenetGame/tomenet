@@ -4103,6 +4103,16 @@ void player_death(int Ind)
 	//wilderness_type *wild;
 	bool hell=TRUE, secure = FALSE;
 
+        /* Amulet of immortality relieves from eating */
+        o_ptr = &p_ptr->inventory[INVEN_NECK];
+        /* Skip empty items */
+        if (o_ptr->k_idx)
+        {
+            if (o_ptr->tval == TV_AMULET &&
+                o_ptr->sval == SV_AMULET_IMMORTALITY)
+	        return;
+        }
+
 	/* very very rare case, but this can happen(eg. starvation) */
 	if (p_ptr->store_num > -1)
 	{

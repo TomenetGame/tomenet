@@ -2214,6 +2214,17 @@ static bool process_player_end_aux(int Ind)
 	/* Default regeneration */
 	regen_amount = PY_REGEN_NORMAL;
 
+	/* Amulet of immortality relieves from eating */
+        o_ptr = &p_ptr->inventory[INVEN_NECK];
+        /* Skip empty items */
+        if (o_ptr->k_idx)
+        {
+            if (o_ptr->tval == TV_AMULET &&
+                o_ptr->sval == SV_AMULET_IMMORTALITY)
+		p_ptr->food = PY_FOOD_MAX - 1;
+	}
+
+
 	/* Getting Weak */
 	if (p_ptr->food < PY_FOOD_WEAK)
 	{

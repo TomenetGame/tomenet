@@ -5780,8 +5780,9 @@ F:SPEED | HIDE_TYPE
 ## Only for Highlander tornaments ##
 
 #N:887:Immortality
-N:888:Pure Cheeze
-G:":d
+#N:888:Pure Cheeze
+N:888:the Highlands
+G:":e
 #I:40:15:1
 I:40:32:1
 W:127:0:3:1
@@ -6072,6 +6073,14 @@ W:60:0:380:2900
 A:60/3
 P:0:6d8:0:0:0
 F:SHOW_MODS | MUST2H | SLAY_GIANT
+
+
+N:920:Immortality
+G:":d
+I:40:37:1
+W:127:0:3:1
+A:127/255
+F:HIDE_TYPE
 
 
 #N:(No.):(name)

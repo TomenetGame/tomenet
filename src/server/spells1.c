@@ -1081,12 +1081,24 @@ void take_hit(int Ind, int damage, cptr hit_from)
 {
 	player_type *p_ptr = Players[Ind];
 
+	// The "number" that the character is displayed as before the hit
+	int old_num, new_num;
+
+	/* Amulet of Immortality */
+        object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
+        /* Skip empty items */
+        if (o_ptr->k_idx)
+	{
+	    if (o_ptr->tval == TV_AMULET &&
+        	o_ptr->sval == SV_AMULET_IMMORTALITY)
+		return;
+	}
+
 	// This is probably unused
 	// int warning = (p_ptr->mhp * hitpoint_warn / 10);
 
 	// The "number" that the character is displayed as before the hit
-	int old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
-	int new_num; 
+	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
 
 	if (old_num >= 7) old_num = 10;
 
