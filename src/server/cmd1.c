@@ -2776,11 +2776,10 @@ void move_player(int Ind, int dir, int do_pickup)
 #ifdef WRAITH_THROUGH_TOWNWALL
 	/* Wraiths trying to walk into a house */
 	if (p_ptr->tim_wraith){
-		//if(zcave[y][x].info & CAVE_STCK) p_ptr->tim_wraith=0;
+		/*if(zcave[y][x].info & CAVE_STCK) p_ptr->tim_wraith=0;*/
 		/*else*/{
 			if ((((c_ptr->feat >= FEAT_HOME_HEAD) && (c_ptr->feat <= FEAT_HOME_TAIL)) ||
 		 	((zcave[y][x].info & CAVE_ICKY) && (wpos->wz==0))) && (!wraith_access(Ind)))
-//		 	((zcave[y][x].info & CAVE_ICKY) && (wpos->wz==0))) && (!wraith_access(Ind) || istown(wpos)))
 			{
 				disturb(Ind, 0, 0);
 				return;
@@ -2944,18 +2943,24 @@ static bool wraith_access(int Ind){
 	/* Wraith walk in own house */
 	player_type *p_ptr=Players[Ind];
 	int i;
+	bool house=FALSE;
 
 	for(i=0;i<num_houses;i++){
 		if(inarea(&houses[i].wpos, &p_ptr->wpos))
 		{
 			if(fill_house(&houses[i], FILL_PLAYER, p_ptr)){
-				if(access_door(Ind, houses[i].dna))
-					return(TRUE);
+				house=TRUE;
+				if(access_door(Ind, houses[i].dna)){
+					if(houses[i].flags & HF_APART){
+						break;
+					}
+					else return(TRUE);
+				}
 				break;
 			}
 		}
 	}
-	return(FALSE);
+	return(house ? FALSE : TRUE);
 }
 
 

@@ -7879,9 +7879,10 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				houses[num_houses].dna->price = price;
 				houses[num_houses].x = x;
 				houses[num_houses].y = y;
-				houses[num_houses].flags=HF_RECT|HF_STOCK;
-				houses[num_houses].coords.rect.width=(x2-x1) / 2 - 0;
-				houses[num_houses].coords.rect.height=(y2-y1) / 2 - 0;
+				houses[num_houses].flags=HF_RECT|HF_STOCK|HF_APART;
+				/* was -0 */
+				houses[num_houses].coords.rect.width=(x2-x1) / 2 + 1;
+				houses[num_houses].coords.rect.height=(y2-y1) / 2 + 1;
 #ifdef NEW_DUNGEON
 				wpcopy(&houses[num_houses].wpos, wpos);
 #else
