@@ -61,11 +61,12 @@ bool WriteAccount(struct account *r_acc, bool new){
 		if(new && delpos!=-1L){
 			fseek(fp, delpos, SEEK_SET);
 			fwrite(r_acc, sizeof(struct account), 1, fp);
+			found=1;
 		}
 		fclose(fp);
 	}
 #ifndef NETBSD
-	while((flock(fd, LOCK_UN))!=0);
+	flock(fd, LOCK_UN);
 #endif
 	close(fd);
 	return(found);
@@ -113,13 +114,24 @@ struct account *GetAccount(cptr name, char *pass){
 			return(c_acc);
 		}
 	}
+	/* New accounts always have pass */
+	if(pass==(char*)NULL){
+		KILL(c_acc, struct account);
+		fclose(fp);
+		return(NULL);
+	}
+
 	/* No account found. Create trial account */ 
 	c_acc->id=new_accid();
 	if(c_acc->id!=0L){
 		c_acc->flags=(ACC_TRIAL|ACC_NOSCORE);
 		strcpy(c_acc->name, name);
 		strcpy(c_acc->pass, t_crypt(pass, name));
-		WriteAccount(c_acc, TRUE);
+		if(!(WriteAccount(c_acc, TRUE)){
+			KILL(c_acc, struct_account);
+			fclose(fp);
+			return(NULL);
+		}
 	}
 	memset((char *)c_acc->pass, 0, 20);
 	fclose(fp);
