@@ -1171,6 +1171,11 @@ static char *object_desc_int(char *t, sint v)
  *   1 -- The Cloak of Death [1,+3]
  *   2 -- The Cloak of Death [1,+3] (+2 to Stealth)
  *   3 -- The Cloak of Death [1,+3] (+2 to Stealth) {nifty}
+ *
+ *  +8 -- Cloak Death [1,+3] (+2stl) {nifty}
+ *   
+ * If the strings created with mode 0-3 are too long, this function is called
+ * again with 8 added to 'mode' and attempt to 'abbreviate' the strings. -Jir-
  */
 void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 {
@@ -1389,21 +1394,21 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_FIGHT_BOOK:
 		{
 			modstr = basenm;
-			basenm = "& Book~ of Fighting #";
+			basenm = mode < 8 ? "& Book~ of Fighting #" : "& B.Fight #";
 			break;
 		}
 			/* Shadow Books */
 		case TV_SHADOW_BOOK:
 		{
 			modstr = basenm;
-			basenm = "& Book~ of Shadows #";
+			basenm = mode < 8 ? "& Book~ of Shadows #" : "& B.Shadows #";
 			break;
 		}
 			/* Magic Books */
 		case TV_MAGIC_BOOK:
 		{
 			modstr = basenm;
-			basenm = "& Book~ of Magic Spells #";
+			basenm = mode < 8 ? "& Book~ of Magic Spells #" : "& B.Magic #";
 			break;
 		}
 
@@ -1411,7 +1416,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_SORCERY_BOOK:
 		{
 			modstr = basenm;
-			basenm = "& Book~ of Sorcery #";
+			basenm = mode < 8 ? "& Book~ of Sorcery #" : "& B.Sorc #";
 			break;
 		}
 
@@ -1419,7 +1424,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_PRAYER_BOOK:
 		{
 			modstr = basenm;
-			basenm = "& Holy Book~ of Prayers #";
+			basenm = mode < 8 ? "& Holy Book~ of Prayers #" : "& B.Prayer #";
 			break;
 		}
 
@@ -1427,7 +1432,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_HUNT_BOOK:
 		{
 			modstr = basenm;
-			basenm = "& Hunting Book~ #";
+			basenm = mode < 8 ? "& Hunting Book~ #" : "& Hunt B. #";
 			break;
 		}
 
@@ -1473,6 +1478,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		{
 			t = object_desc_num(t, o_ptr->number);
 			t = object_desc_chr(t, ' ');
+		}
+
+		/* Hack -- Omit an article */
+		else if (mode >= 8)
+		{
+			/* Naught */
 		}
 
 		/* Hack -- The only one of its kind */
@@ -1526,7 +1537,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		/* Hack -- The only one of its kind */
-		else if (known && artifact_p(o_ptr))
+		else if (known && artifact_p(o_ptr) && mode < 8)
 		{
 			t = object_desc_str(t, "The ");
 		}
@@ -1584,7 +1595,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	/* Append the "kind name" to the "base name" */
 	if (append_name)
 	{
-		t = object_desc_str(t, " of ");
+		t = object_desc_str(t,mode < 8 ? " of " : " ");
 		t = object_desc_str(t, (k_name + k_ptr->name));
 	}
 
@@ -1636,29 +1647,47 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		}
 	}
 
-        /* Print level and owning */
-        t = object_desc_chr(t, ' ');
-        t = object_desc_chr(t, '{');
-        if (o_ptr->owner)
-        {
-                cptr name = lookup_player_name(o_ptr->owner);
+	/* Print level and owning */
+	t = object_desc_chr(t, ' ');
+	t = object_desc_chr(t, '{');
+	if (o_ptr->owner)
+	{
+		cptr name = lookup_player_name(o_ptr->owner);
 
-                if (name != NULL)
-                {
-                        t = object_desc_str(t, name);
-                }
-				else
-				{
-						t = object_desc_chr(t, '-');
-				}
-                t = object_desc_chr(t, ',');
-        }
-        t = object_desc_num(t, o_ptr->level);
-        t = object_desc_chr(t, '}');
+		if (name != NULL)
+		{
+			if (!strcmp(name, p_ptr->name))
+			{
+				t = object_desc_chr(t, '+');
+			}
+			else
+			{
+				t = object_desc_str(t, name);
+			}
+		}
+		else
+		{
+			t = object_desc_chr(t, '-');
+		}
+		t = object_desc_chr(t, ',');
+	}
+	t = object_desc_num(t, o_ptr->level);
+	t = object_desc_chr(t, '}');
 
 
 	/* No more details wanted */
-	if (mode < 1) return;
+	if ((mode & 7) < 1)
+	{
+		if (t - buf <= 65 || mode & 8)
+		{
+			return;
+		}
+		else
+		{
+			object_desc(Ind, buf, o_ptr, pref, mode + 8);
+			return;
+		}
+	}
 
 
 	/* Hack -- Chests must be described in detail */
@@ -1763,7 +1792,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_DIGGING:
 
 		/* Append a "damage" string */
-		t = object_desc_chr(t, ' ');
+		if (mode < 8) t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, p1);
 		t = object_desc_num(t, o_ptr->dd);
 		t = object_desc_chr(t, 'd');
@@ -1784,7 +1813,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		if (f3 & TR3_XTRA_MIGHT) power++;
 
 		/* Append a special "damage" string */
-		t = object_desc_chr(t, ' ');
+		if (mode < 8) t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, p1);
 		t = object_desc_chr(t, 'x');
 		t = object_desc_num(t, power);
@@ -1801,7 +1830,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* Show the tohit/todam on request */
 		if (show_weapon)
 		{
-			t = object_desc_chr(t, ' ');
+			if (mode < 8) t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
 			t = object_desc_int(t, o_ptr->to_h);
 			t = object_desc_chr(t, ',');
@@ -1812,7 +1841,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* Show the tohit if needed */
 		else if (o_ptr->to_h)
 		{
-			t = object_desc_chr(t, ' ');
+			if (mode < 8) t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
 			t = object_desc_int(t, o_ptr->to_h);
 			t = object_desc_chr(t, p2);
@@ -1821,7 +1850,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* Show the todam if needed */
 		else if (o_ptr->to_d)
 		{
-			t = object_desc_chr(t, ' ');
+			if (mode < 8) t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
 			t = object_desc_int(t, o_ptr->to_d);
 			t = object_desc_chr(t, p2);
@@ -1835,7 +1864,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* Show the armor class info */
 		if (show_armour)
 		{
-			t = object_desc_chr(t, ' ');
+			if (mode < 8) t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, b1);
 			t = object_desc_num(t, o_ptr->ac);
 			t = object_desc_chr(t, ',');
@@ -1846,7 +1875,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* No base armor, but does increase armor */
 		else if (o_ptr->to_a)
 		{
-			t = object_desc_chr(t, ' ');
+			if (mode < 8) t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, b1);
 			t = object_desc_int(t, o_ptr->to_a);
 			t = object_desc_chr(t, b2);
@@ -1856,7 +1885,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	/* Hack -- always show base armor */
 	else if (show_armour)
 	{
-		t = object_desc_chr(t, ' ');
+		if (mode < 8) t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, b1);
 		t = object_desc_num(t, o_ptr->ac);
 		t = object_desc_chr(t, b2);
@@ -1864,7 +1893,18 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 
 	/* No more details wanted */
-	if (mode < 2) return;
+	if ((mode & 7) < 2)
+	{
+		if (t - buf <= 65 || mode & 8)
+		{
+			return;
+		}
+		else
+		{
+			object_desc(Ind, buf, o_ptr, pref, mode + 8);
+			return;
+		}
+	}
 
 
 	/* Hack -- Wands and Staffs have charges */
@@ -1873,11 +1913,14 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	     (o_ptr->tval == TV_WAND)))
 	{
 		/* Dump " (N charges)" */
-		t = object_desc_chr(t, ' ');
+		if (mode < 8) t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, p1);
 		t = object_desc_num(t, o_ptr->pval);
-		t = object_desc_str(t, " charge");
-		if (o_ptr->pval != 1) t = object_desc_chr(t, 's');
+		if (mode < 8)
+		{
+			t = object_desc_str(t, " charge");
+			if (o_ptr->pval != 1) t = object_desc_chr(t, 's');
+		}
 		t = object_desc_chr(t, p2);
 	}
 
@@ -1885,16 +1928,16 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	else if (known && (o_ptr->tval == TV_ROD))
 	{
 		/* Hack -- Dump " (charging)" if relevant */
-		if (o_ptr->pval) t = object_desc_str(t, " (charging)");
+		if (o_ptr->pval) t = object_desc_str(t, mode < 8 ? " (charging)" : "(#)");
 	}
 
 	/* Hack -- Process Lanterns/Torches */
 	else if ((o_ptr->tval == TV_LITE) && (o_ptr->sval < SV_LITE_DWARVEN) && (!o_ptr->name3))
 	{
 		/* Hack -- Turns of light for normal lites */
-		t = object_desc_str(t, " (with ");
+		t = object_desc_str(t, mode < 8 ? " (with " : "(");
 		t = object_desc_num(t, o_ptr->pval);
-		t = object_desc_str(t, " turns of light)");
+		t = object_desc_str(t, mode < 8 ? " turns of light)" : "t)");
 	}
 
 
@@ -1905,7 +1948,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		 * The "bpval" flags are never displayed.  */
 		if (o_ptr->bpval)
 		{
-			t = object_desc_chr(t, ' ');
+			if (mode < 8) t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
 			/* Dump the "pval" itself */
 			t = object_desc_int(t, o_ptr->bpval);
@@ -1915,7 +1958,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		if (o_ptr->pval)
 		{
 			/* Start the display */
-			t = object_desc_chr(t, ' ');
+			if (mode < 8) t = object_desc_chr(t, ' ');
 			t = object_desc_chr(t, p1);
 
 			/* Dump the "pval" itself */
@@ -1931,38 +1974,38 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			else if (f1 & TR1_SPEED)
 			{
 				/* Dump " to speed" */
-				t = object_desc_str(t, " to speed");
+				t = object_desc_str(t, mode < 8 ? " to speed" : "spd");
 			}
 
 			/* Attack speed */
 			else if (f1 & TR1_BLOWS)
 			{
 				/* Add " attack" */
-				t = object_desc_str(t, " attack");
+				t = object_desc_str(t, mode < 8 ? " attack" : "at");
 
 				/* Add "attacks" */
-				if (ABS(o_ptr->pval) != 1) t = object_desc_chr(t, 's');
+				if (ABS(o_ptr->pval) != 1 && mode < 8) t = object_desc_chr(t, 's');
 			}
 
 			/* Stealth */
 			else if (f1 & TR1_STEALTH)
 			{
 				/* Dump " to stealth" */
-				t = object_desc_str(t, " to stealth");
+				t = object_desc_str(t, mode < 8 ? " to stealth" : "stl");
 			}
 
 			/* Search */
 			else if (f1 & TR1_SEARCH)
 			{
 				/* Dump " to searching" */
-				t = object_desc_str(t, " to searching");
+				t = object_desc_str(t, mode < 8 ? " to searching" : "srch");
 			}
 
 			/* Infravision */
 			else if (f1 & TR1_INFRA)
 			{
 				/* Dump " to infravision" */
-				t = object_desc_str(t, " to infravision");
+				t = object_desc_str(t, mode < 8 ? " to infravision" : "infr");
 			}
 
 			/* Tunneling */
@@ -1979,7 +2022,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	/* Special case, ugly, but needed */
 	if (known && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
 	  {
-	    t = object_desc_str(t, " of ");
+	    t = object_desc_str(t, mode < 8 ? " of " : "-");
 	    t = object_desc_str(t, r_info[o_ptr->pval].name + r_name);
 	  }
 
@@ -1988,12 +2031,23 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	if (known && o_ptr->timeout)
 	{
 		/* Hack -- Dump " (charging)" if relevant */
-		t = object_desc_str(t, " (charging)");
+		t = object_desc_str(t, mode < 8 ? " (charging)" : "(#)");
 	}
 
 
 	/* No more details wanted */
-	if (mode < 3) return;
+	if ((mode & 7) < 3)
+	{
+		if (t - buf <= 65 || mode & 8)
+		{
+			return;
+		}
+		else
+		{
+			object_desc(Ind, buf, o_ptr, pref, mode + 8);
+			return;
+		}
+	}
 
 
 	/* No inscription yet */
@@ -2051,10 +2105,24 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		tmp_val[75 - n] = '\0';
 
 		/* Append the inscription */
-		t = object_desc_chr(t, ' ');
+		if (mode < 8) t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, c1);
 		t = object_desc_str(t, tmp_val);
 		t = object_desc_chr(t, c2);
+	}
+
+	/* This should always be true, but still.. */
+	if ((mode & 7) < 4)
+	{
+		if (t - buf <= 65 || mode >= 8)
+		{
+			return;
+		}
+		else
+		{
+			object_desc(Ind, buf, o_ptr, pref, mode + 8);
+			return;
+		}
 	}
 }
 
