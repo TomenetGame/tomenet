@@ -80,3 +80,9 @@ Change list for PernMangband
 - Furry, Dig, Spin warrior technics
 - Fixed DSM being dopepd without unpolying
 - Fixed morphing and not lossing eq wit eq is inscribed !
+
+26/07/2001 (evileye)
+- Fixed password prompt in client
+- Bug in netserver which could result in bus fault fixed.
+- Added Player menu to wizard commands (framework mainly)
+- Added wizard level genocide

@@ -5191,9 +5191,50 @@ bool master_summon(int Ind, char * parms)
 			p_ptr->master_move_hook = NULL;
 			break;
 		}
+
+		/* Wipe monsters from level (DM only) */
+		case 'Q':
+		{
+			if(!strcmp(p_ptr->name, cfg_dungeon_master))
+				wipe_m_list((int)summon_parms);
+			break;
+		}
 	}
 
 	return TRUE;
+}
+
+bool master_player(int Ind, char *parms){
+	player_type *p_ptr=Players[Ind];
+	player_type *q_ptr;
+	int Ind2=0;
+	int i;
+
+	if(strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
+	switch(parms[0]){
+		case 'E':	/* offline editor */
+			break;
+		case 'A':	/* acquirement */
+			break;
+		case 'k':	/* admin wrath */
+			for(i=1;i<=NumPlayers;i++){
+				if(!strcmp(Players[i]->name,&parms[1])){
+					Ind2=i;
+					break;
+				}
+			}
+			if(Ind2){
+				q_ptr=Players[Ind2];
+				msg_print(Ind2, "You are hit by a bolt from the skies!");
+				strcpy(q_ptr->died_from,"divine wrath");
+				q_ptr->alive=FALSE;
+				player_death(Ind2);
+			}
+			else
+				msg_print(Ind, "That player is not in the game.");
+
+			break;
+	}
 }
 
 vault_type *get_vault(char *name)

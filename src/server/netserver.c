@@ -1905,6 +1905,10 @@ void Handle_input(int fd, int arg)
 	}
 	if (connp->c.len > 0)
 	{
+	/* evileye - p_ptr can be undefined (!!!) */
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
 		if (Packet_printf(&connp->c, "%c", PKT_END) <= 0)
 		{
 			Destroy_connection(p_ptr->conn, "write error");
@@ -7441,6 +7445,12 @@ static int Receive_master(int ind)
 			case MASTER_GENERATE:
 			{
 				master_generate(player, buf);
+				break;
+			}
+
+			case MASTER_PLAYER:
+			{
+				master_player(player, buf);
 				break;
 			}
 		}
