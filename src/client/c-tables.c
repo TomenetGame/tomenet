@@ -1519,8 +1519,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.dungeon_stair,		TRUE,	3,	1, 9,	// XXX
 	"dungeon_stair",		"(obsolete) Generate dungeons with connected stairs" },
 
-	{ &c_cfg.flow_by_sound,		FALSE,	3,	1, 10,	// XXX
-	"flow_by_sound",		"(obsolete) Monsters chase current location (v.slow)" },
+	{ &c_cfg.recall_flicker,		FALSE,	3,	1, 10,	// XXX
+	"recall_flicker",		"Flicker messages in recall" },
 
 	{ &c_cfg.flow_by_smell,		FALSE,	3,	1, 11,	// XXX
 	"flow_by_smell",		"(obsolete) Monsters chase recent locations (v.slow)" },

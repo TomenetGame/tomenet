@@ -10,6 +10,7 @@
 #include "../common/angband.h"
 
 /* evil test */
+extern client_opts c_cfg;
 extern short screen_icky;
 
 /*
@@ -571,6 +572,7 @@ void flicker(){
 				(void)((*tterm->text_hook)(x, y, 1, attr, &ch));
 			}
 		}
+		if(!c_cfg.recall_flicker) break;
 	}
 	Term_activate(old);
 }
