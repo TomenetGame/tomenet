@@ -773,9 +773,9 @@ void do_cmd_open(int Ind, int dir)
 			/* evileye hack new houses -demo */
 			if(i==-1 && c_ptr->special){ /* orig house failure */
 #else
-			if(c_ptr->special){ /* orig house failure */
+			if(c_ptr->special.type==DNA_DOOR){ /* orig house failure */
 #endif /* NEWHOUSES */
-				if(access_door(Ind, c_ptr->special)){
+				if(access_door(Ind, c_ptr->special.ptr)){
 					/* Open the door */
 					c_ptr->feat=FEAT_HOME_OPEN;
 					/* Take half a turn */
@@ -791,7 +791,7 @@ void do_cmd_open(int Ind, int dir)
 
 				}
 				else{
-					struct dna_type *dna=c_ptr->special;
+					struct dna_type *dna=c_ptr->special.ptr;
 					if(dna->owner){
 						char string[80];
 						char *name;
@@ -824,6 +824,22 @@ void do_cmd_open(int Ind, int dir)
 					}
 				}
 				return;
+			}
+			else if(c_ptr->special.type==KEY_DOOR){
+				struct key_type *key=c_ptr->special.ptr;
+				for(j=0; j<INVEN_PACK; j++){
+					object_type *o_ptr=&p_ptr->inventory[j];
+					if(o_ptr->tval==TV_KEY && o_ptr->pval==key->id){
+						c_ptr->feat=FEAT_HOME_OPEN;
+						p_ptr->energy-=level_speed(p_ptr->dun_depth)/2;
+						note_spot_depth(Depth, y, x);
+						everyone_lite_spot(Depth, y, x);
+						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+						msg_format(Ind, "\377gThe key fits in the lock. %d:%d",key->id, o_ptr->pval);
+						return;
+					}
+				}
+				msg_print(Ind,"\377rYou need a key to open this door.");
 			}
 
 #ifndef NEWHOUSES
@@ -1928,9 +1944,9 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 				/* evileye hack new houses -demo */
 				if(i==-1 && c_ptr->special){ /* orig house failure */
 #else
-				if(c_ptr->special){ /* orig house failure */
+				if(c_ptr->special.type==DNA_DOOR){ /* orig house failure */
 #endif /* NEWHOUSES */
-					if(!access_door(Ind, c_ptr->special))
+					if(!access_door(Ind, c_ptr->special.ptr))
 					{
 						do_cmd_open(Ind, dir);
 						return;
@@ -3318,7 +3334,8 @@ void house_admin(int Ind, int dir, char *args){
 		c_ptr = &cave[Depth][y][x];
 		if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL)
 		{
-			if((dna=c_ptr->special) && access_door(Ind, dna)){
+			if(c_ptr->special.type==DNA_DOOR && access_door(Ind, dna)){
+				dna=c_ptr->special.ptr;
 				switch(args[0]){
 					case 'O':
 						success=chown_door(Ind, dna, args);
@@ -3384,7 +3401,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 		c_ptr = &cave[Depth][y][x];
 
 #ifdef NEWHOUSES
-		if(!(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL && c_ptr->special))
+		if(!(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL && c_ptr->special.type==DNA_DOOR))
 #else
 		/* Check for a house */
 		if ((i = pick_house(Depth, y, x)) == -1)
@@ -3396,7 +3413,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 		}
 
 #ifdef NEWHOUSES
-		dna=c_ptr->special;
+		dna=c_ptr->special.ptr;
 #endif
 		/* Take player's CHR into account */
 		factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
@@ -3433,6 +3450,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 				}
 				dna->creator=0L;
 				dna->owner=0L;
+				dna->a_flags=ACF_NONE;
 				return;
 			}
 			msg_print(Ind,"That house does not belong to you!");

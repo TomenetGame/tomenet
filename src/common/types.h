@@ -437,6 +437,17 @@ struct vault_type
  * and for the "tracking" code.
  */
 
+#if 1 /* Evileye - work in progress */
+/* Cave special types */
+#define DNA_DOOR 1
+#define KEY_DOOR 2
+
+struct c_special{
+	unsigned char type;
+	void *ptr;		/* lazy */
+};
+#endif
+
 typedef struct cave_type cave_type;
 
 struct cave_type
@@ -456,8 +467,7 @@ struct cave_type
 	byte when;		/* Hack -- when cost was computed */
 
 #endif
-	void *special;		/* Special pointer to various struct */
-
+	struct c_special special;	/* Special pointer to various struct */
 };
 
 
@@ -1000,16 +1010,6 @@ struct house_type
 };
 #endif
 
-#if 0 /* Evileye - work in progress */
-/* Cave special types */
-#define DNA_DOOR 1
-#define KEY_DOOR 2
-
-struct c_special{
-	unsigned char type;
-	void *ptr;		/* lazy */
-};
-#endif
 
 #define OT_PLAYER 1
 #define OT_PARTY 2
@@ -1031,11 +1031,10 @@ struct dna_type{
 	u32b price;		/* Speed before memory */
 };
 
-#if 0 /* evileye - work in progress */
+/* evileye - work in progress */
 struct key_type{
-	u16b key;		/* key pval */	
+	u16b id;		/* key pval */	
 };
-#endif
 
 
 /*

@@ -2141,9 +2141,9 @@ void move_player(int Ind, int dir, int do_pickup)
             /* evileye hack new houses -demo */
             if(i==-1 && c_ptr->special){ /* orig house failure */
 #else
-            if(c_ptr->special){ /* orig house failure */
+            if(c_ptr->special.type==DNA_DOOR){ /* orig house failure */
 #endif /* NEWHOUSES */
-                if(access_door(Ind, c_ptr->special))
+                if(access_door(Ind, c_ptr->special.ptr))
 				{
 					myhome = TRUE;
 					msg_print(Ind, "\377GYou walk through the door.");

@@ -5283,33 +5283,29 @@ bool master_build(int Ind, char * parms)
 	
 	c_ptr = &cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px];
 	/* build a wall of type new_feat at the player's location */
-	if(c_ptr->special)	/* only dna_type ATM */
-		KILL(c_ptr->special, struct dna_type);
+	if(c_ptr->special.type){
+		switch(c_ptr->special.type){
+			case KEY_DOOR:
+				KILL(c_ptr->special.ptr, struct key_type);
+				break;
+			case DNA_DOOR:	/* even DM must not kill houses like this */
+			default:
+				return;
+		}
+	}
 	c_ptr->feat = new_feat;
 	if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL){
 		/* new special door creation (with keys) */
-		struct dna_type *c_dna;
+		struct key_type *key;
+		object_type newkey;
 		int id;
-		if(c_ptr->special) return(FALSE);
-		MAKE(c_dna, struct dna_type);
-		c_ptr->special=c_dna;
-#ifdef NEWHOUSES /* a server reset/player savefile change needed */
-		c_dna->creator=p_ptr->dna;	/* unique extra */
-#endif
-		c_dna->owner=p_ptr->id;
-		/* sorry, its only for testing, so quick */
-		if(!(parms && parms[2] && (id=lookup_player_id(&parms[2])))){
-			int i;
-			for(i=1;i<=NumPlayers;i++){
-				if(Players[i]->id==id){
-					c_dna->creator=Players[i]->dna;
-					c_dna->owner=id;
-				}
-			}
-		}
-		c_dna->owner_type=OT_PLAYER;
-		c_dna->a_flags=ACF_NONE;
-		c_dna->min_level=1;
+		MAKE(key, struct key_type);
+		sscanf(&parms[2],"%d",&key->id);
+		invcopy(&newkey, lookup_kind(TV_KEY, 1));
+		newkey.pval=key->id;
+		drop_near(&newkey, -1, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
+		c_ptr->special.type=KEY_DOOR;
+		c_ptr->special.ptr=key;
 		p_ptr->master_move_hook=NULL;	/*buggers up if not*/
 	}
 

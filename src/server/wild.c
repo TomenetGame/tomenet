@@ -1161,7 +1161,8 @@ static void wild_add_dwelling(int Depth, int x, int y)
 		if ((tmp=pick_house(Depth, door_y, door_x)) == -1)
 		{
 #ifdef NEWHOUSES
-			c_ptr->special=houses[num_houses].dna;
+			c_ptr->special.type=DNA_DOOR;
+			c_ptr->special.ptr=houses[num_houses].dna;
 			houses[num_houses].dx = door_x;
 			houses[num_houses].dy = door_y;
 			houses[num_houses].dna->creator=0L;
@@ -1187,7 +1188,8 @@ static void wild_add_dwelling(int Depth, int x, int y)
 /* end evileye fix */
 			/* malloc madness otherwise */
 			KILL(houses[num_houses].dna, struct dna_type);
-			c_ptr->special=houses[tmp].dna;
+			c_ptr->special.type=DNA_DOOR;
+			c_ptr->special.ptr=houses[tmp].dna;
 		}
 #endif
 	}
@@ -2190,7 +2192,8 @@ void wild_add_uhouse(house_type *h_ptr){
 	}
 	c_ptr=&cave[Depth][h_ptr->y+h_ptr->dy][h_ptr->x+h_ptr->dx];
 	c_ptr->feat=FEAT_HOME_HEAD;
-	c_ptr->special=h_ptr->dna;
+	c_ptr->special.type=DNA_DOOR;
+	c_ptr->special.ptr=h_ptr->dna;
 }
 
 static void wild_add_uhouses(int Depth){

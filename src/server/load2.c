@@ -950,7 +950,8 @@ static void rd_house(int n)
 	rd_u32b(&house_ptr->depth);
 	if(cave[house_ptr->depth] && !(house_ptr->flags&HF_STOCK)){
 		/* add dna to static levels */
-		cave[house_ptr->depth][house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special=house_ptr->dna;
+		cave[house_ptr->depth][house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.type=DNA_DOOR;
+		cave[house_ptr->depth][house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.ptr=house_ptr->dna;
 	}
 	if(house_ptr->flags&HF_RECT){
 		rd_byte(&house_ptr->coords.rect.width);
@@ -2423,7 +2424,8 @@ errr rd_server_savefile()
 						/* add the house dna */	
 						x=houses[j].dx;
 						y=houses[j].dy;
-						cave[i][y][x].special=houses[j].dna;
+						cave[i][y][x].special.type=DNA_DOOR;
+						cave[i][y][x].special.ptr=houses[j].dna;
 					}
 				}
 			}

@@ -1950,7 +1950,11 @@ void cmd_master_aux_build(void)
 			/* House door mode on */
 			case '8':
 				buf[0] = FEAT_HOME_HEAD;
-				buf[1] = c_get_quantity("Enter key pval:",0xffffffff);
+				{
+					u16b keyid;
+					keyid=c_get_quantity("Enter key pval:",0xffff);
+					sprintf(&buf[2],"%d",keyid);
+				}
 				break;
 			/* Build mode off */
 			case '9': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;

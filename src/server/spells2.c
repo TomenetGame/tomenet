@@ -4095,7 +4095,7 @@ bool poly_build(int Ind, char *args){
 		curr->depth=p_ptr->dun_depth;
 		if(cave[p_ptr->dun_depth][curr->sy][curr->sx].feat==FEAT_PERM_EXTRA){
 			msg_print(Ind, "Your foundations were laid insecurely");
-			cave[p_ptr->dun_depth][curr->sy][curr->sx].special=NULL;
+			cave[p_ptr->dun_depth][curr->sy][curr->sx].special.ptr=NULL;
 			KILL(curr->dna, struct dna_type);
 			C_KILL(curr->vert, MAXCOORD, byte);
 			p_ptr->master_move_hook=NULL;
@@ -4103,7 +4103,8 @@ bool poly_build(int Ind, char *args){
 			return FALSE;
 		}
 		cave[p_ptr->dun_depth][curr->sy][curr->sx].feat=FEAT_HOME_OPEN;
-		cave[p_ptr->dun_depth][curr->sy][curr->sx].special=curr->dna;
+		cave[p_ptr->dun_depth][curr->sy][curr->sx].special.type=DNA_DOOR;
+		cave[p_ptr->dun_depth][curr->sy][curr->sx].special.ptr=curr->dna;
 		builders=curr;
 		return TRUE;
 
@@ -4195,7 +4196,7 @@ bool poly_build(int Ind, char *args){
 		p_ptr->update|=PU_VIEW;
 	}
 	msg_print(Ind,"Your house building attempt has failed");
-	cave[p_ptr->dun_depth][curr->sy][curr->sx].special=NULL;
+	cave[p_ptr->dun_depth][curr->sy][curr->sx].special.ptr=NULL;
 	KILL(curr->dna, struct dna_type);
 	C_KILL(curr->vert, MAXCOORD, byte);
 	curr->player=0;		/* send the builders home */

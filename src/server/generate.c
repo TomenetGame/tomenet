@@ -3848,7 +3848,8 @@ static void build_store(int n, int yy, int xx)
 			/* Store door location information */
 #ifdef NEWHOUSES
 			c_ptr->feat = FEAT_HOME_HEAD;
-			c_ptr->special = houses[num_houses].dna;
+			c_ptr->special.type=DNA_DOOR;
+			c_ptr->special.ptr = houses[num_houses].dna;
 			houses[num_houses].dx=x;
 			houses[num_houses].dy=y;
 			houses[num_houses].dna->creator=0L;
@@ -3870,7 +3871,8 @@ static void build_store(int n, int yy, int xx)
 		else{
 			KILL(houses[num_houses].dna, struct dna_type);
 			c_ptr->feat=FEAT_HOME_HEAD;
-			c_ptr->special=houses[i].dna;
+			c_ptr->special.type=DNA_DOOR;
+			c_ptr->special.ptr=houses[i].dna;
 		}
 #endif
 	}
