@@ -1011,8 +1011,6 @@ void fix_message(void)
 	char nameA[20];
 	char nameB[20];
 
-	cptr nomsg_target = "Target Selected.";
-
 	strcpy(nameA, "[");  strcat(nameA, nick);  strcat(nameA, ":");
 	strcpy(nameB, ":");  strcat(nameB, nick);  strcat(nameB, "]");
 
