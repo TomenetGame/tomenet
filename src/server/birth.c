@@ -20,7 +20,9 @@
  * This option also bottom-up the starting stats somewhat to
  * compensate it.		- Jir -
  */
+#if 0
 #define STARTING_STAT_LIMIT
+#endif
 
 /*
  * Forward declare
