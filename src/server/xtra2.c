@@ -3379,6 +3379,63 @@ void monster_death(int Ind, int m_idx)
 		}
 	}
 
+	/* Let monsters explode! */
+	for (i = 0; i < 4; i++)
+	{
+		if (m_ptr->blow[i].method == RBM_EXPLODE)
+		{
+			int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+			int typ = GF_MISSILE;
+			int d_dice = m_ptr->blow[i].d_dice;
+			int d_side = m_ptr->blow[i].d_side;
+			int damage = damroll(d_dice, d_side);
+
+			switch (m_ptr->blow[i].effect)
+			{
+				case RBE_HURT:      typ = GF_MISSILE; break;
+				case RBE_POISON:    typ = GF_POIS; break;
+				case RBE_UN_BONUS:  typ = GF_DISENCHANT; break;
+				case RBE_UN_POWER:  typ = GF_MISSILE; break; /* ToDo: Apply the correct effects */
+				case RBE_EAT_GOLD:  typ = GF_MISSILE; break;
+				case RBE_EAT_ITEM:  typ = GF_MISSILE; break;
+				case RBE_EAT_FOOD:  typ = GF_MISSILE; break;
+				case RBE_EAT_LITE:  typ = GF_MISSILE; break;
+				case RBE_ACID:      typ = GF_ACID; break;
+				case RBE_ELEC:      typ = GF_ELEC; break;
+				case RBE_FIRE:      typ = GF_FIRE; break;
+				case RBE_COLD:      typ = GF_COLD; break;
+				case RBE_BLIND:     typ = GF_BLIND; break;
+//				case RBE_HALLU:     typ = GF_CONFUSION; break;
+				case RBE_HALLU:     typ = GF_CHAOS; break;	/* CAUTION! */
+				case RBE_CONFUSE:   typ = GF_CONFUSION; break;
+				case RBE_TERRIFY:   typ = GF_MISSILE; break;
+				case RBE_PARALYZE:  typ = GF_MISSILE; break;
+				case RBE_LOSE_STR:  typ = GF_MISSILE; break;
+				case RBE_LOSE_DEX:  typ = GF_MISSILE; break;
+				case RBE_LOSE_CON:  typ = GF_MISSILE; break;
+				case RBE_LOSE_INT:  typ = GF_MISSILE; break;
+				case RBE_LOSE_WIS:  typ = GF_MISSILE; break;
+				case RBE_LOSE_CHR:  typ = GF_MISSILE; break;
+				case RBE_LOSE_ALL:  typ = GF_MISSILE; break;
+				case RBE_PARASITE:  typ = GF_MISSILE; break;
+				case RBE_SHATTER:   typ = GF_ROCKET; break;
+				case RBE_EXP_10:    typ = GF_MISSILE; break;
+				case RBE_EXP_20:    typ = GF_MISSILE; break;
+				case RBE_EXP_40:    typ = GF_MISSILE; break;
+				case RBE_EXP_80:    typ = GF_MISSILE; break;
+				case RBE_DISEASE:   typ = GF_POIS; break;
+				case RBE_TIME:      typ = GF_TIME; break;
+				case RBE_SANITY:    typ = GF_MISSILE; break;
+			}
+
+			project(m_idx, 3, wpos, y, x, damage, typ, flg);
+			break;
+		}
+	}
+
+	/* clones don't drop treasure or complete quests */
+	if (m_ptr->clone) return;
+
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
 	if ((r_ptr->flags1 & RF1_DROP_90) && (rand_int(100) < 90)) number++;
@@ -3866,60 +3923,6 @@ void monster_death(int Ind, int m_idx)
 		while (!(in_bounds(yy, xx) && cave_floor_bold(zcave, yy, xx)) && --attempts);
 
 		place_monster_aux(wpos, yy, xx, race_index("Great Wyrm of Power"), FALSE, FALSE, m_ptr->clone);
-	}
-
-	/* Let monsters explode! */
-	for (i = 0; i < 4; i++)
-	{
-		if (m_ptr->blow[i].method == RBM_EXPLODE)
-		{
-			int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-			int typ = GF_MISSILE;
-			int d_dice = m_ptr->blow[i].d_dice;
-			int d_side = m_ptr->blow[i].d_side;
-			int damage = damroll(d_dice, d_side);
-
-			switch (m_ptr->blow[i].effect)
-			{
-				case RBE_HURT:      typ = GF_MISSILE; break;
-				case RBE_POISON:    typ = GF_POIS; break;
-				case RBE_UN_BONUS:  typ = GF_DISENCHANT; break;
-				case RBE_UN_POWER:  typ = GF_MISSILE; break; /* ToDo: Apply the correct effects */
-				case RBE_EAT_GOLD:  typ = GF_MISSILE; break;
-				case RBE_EAT_ITEM:  typ = GF_MISSILE; break;
-				case RBE_EAT_FOOD:  typ = GF_MISSILE; break;
-				case RBE_EAT_LITE:  typ = GF_MISSILE; break;
-				case RBE_ACID:      typ = GF_ACID; break;
-				case RBE_ELEC:      typ = GF_ELEC; break;
-				case RBE_FIRE:      typ = GF_FIRE; break;
-				case RBE_COLD:      typ = GF_COLD; break;
-				case RBE_BLIND:     typ = GF_BLIND; break;
-//				case RBE_HALLU:     typ = GF_CONFUSION; break;
-				case RBE_HALLU:     typ = GF_CHAOS; break;	/* CAUTION! */
-				case RBE_CONFUSE:   typ = GF_CONFUSION; break;
-				case RBE_TERRIFY:   typ = GF_MISSILE; break;
-				case RBE_PARALYZE:  typ = GF_MISSILE; break;
-				case RBE_LOSE_STR:  typ = GF_MISSILE; break;
-				case RBE_LOSE_DEX:  typ = GF_MISSILE; break;
-				case RBE_LOSE_CON:  typ = GF_MISSILE; break;
-				case RBE_LOSE_INT:  typ = GF_MISSILE; break;
-				case RBE_LOSE_WIS:  typ = GF_MISSILE; break;
-				case RBE_LOSE_CHR:  typ = GF_MISSILE; break;
-				case RBE_LOSE_ALL:  typ = GF_MISSILE; break;
-				case RBE_PARASITE:  typ = GF_MISSILE; break;
-				case RBE_SHATTER:   typ = GF_ROCKET; break;
-				case RBE_EXP_10:    typ = GF_MISSILE; break;
-				case RBE_EXP_20:    typ = GF_MISSILE; break;
-				case RBE_EXP_40:    typ = GF_MISSILE; break;
-				case RBE_EXP_80:    typ = GF_MISSILE; break;
-				case RBE_DISEASE:   typ = GF_POIS; break;
-				case RBE_TIME:      typ = GF_TIME; break;
-				case RBE_SANITY:    typ = GF_MISSILE; break;
-			}
-
-			project(m_idx, 3, wpos, y, x, damage, typ, flg);
-			break;
-		}
 	}
 
 //        if((!force_coin)&&(randint(100)<50)) place_corpse(m_ptr);
@@ -4977,10 +4980,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			hp_player(Ind, gain);
 		}
 
+		monster_death(Ind, m_idx);
 		/* Generate treasure */
 		if(!m_ptr->clone){
 			int i;
-			monster_death(Ind, m_idx);
 			for(i=0;i<20;i++){
 				if(p_ptr->quest_id && quests[i].id==p_ptr->quest_id){
 					if(m_ptr->r_idx==quests[i].type){
