@@ -2480,6 +2480,8 @@ void cmd_script_upload()
 {
         char buf[1025], name[81];
         FILE *fff;
+	
+	name[0]='\0';
 
         if (!get_string("Script name: ", name + 1, 79)) return;
 
@@ -2511,6 +2513,7 @@ void cmd_script_exec()
 {
         char buf[81];
 
+	buf[0]='\0';
         if (!get_string("Script> ", buf, 80)) return;
 
        	Send_master(MASTER_SCRIPTS, buf);
