@@ -21,6 +21,11 @@ function dom(name)
 	msg_print(Ind, "Dominate - "..name);
 end
 
+function evilrumour(text)
+	msg_broadcast(0, "Suddenly a thought comes to your mind:");
+	msg_broadcast(0, text);
+end
+
 function trap(name)
 	ball(name, 2, 47, 0, 0, 176, 0);
 	msg_print(Ind, "Trapping "..name);
@@ -53,7 +58,7 @@ end
 
 -- 40 stm 81 disin
 function openarea(name)
-	ball(name, 8, 81, 0, 0, 176);
+	ball(name, 8, 81, 0, 0, 176, 0);
 	msg_print(Ind, "Opening up area for "..name);
 end
 
@@ -67,6 +72,24 @@ function curse(i)
 		players(i).stat_max[j]=3;
 		j=j+1;
 	end
+end
+
+-- Use this when you want to hassle a player
+-- in the dungeon. (Sets same uniques as victim)
+function unimask(name)
+	local j = 1;
+	local vict, evil;
+	local i;
+	i=ind(name);
+	if(i==-1) then return end;
+	--vict=players(i);
+	--evil=players(Ind);
+	while(j<MAX_R_IDX)
+	do
+		players(Ind).r_killed[j]=players(i).r_killed[j];
+		j=j+1;
+	end
+	msg_print(Ind, "Copied uniques of "..name);
 end
 
 function res(i)

@@ -2,7 +2,7 @@ function ind(i)
 	local id
 
         id = get_playerind(i)
-        if id == -1 then msg_print(Ind, "Unknown player "..i) return end
+        if id == -1 then msg_print(Ind, "Unknown player "..i) return id end
         return id
 end
 
