@@ -503,5 +503,5 @@ char summon_kin_type;
  */
 char tdy[662];
 char tdx[662];
-s16b tdi[16];
+s32b tdi[16];
 
