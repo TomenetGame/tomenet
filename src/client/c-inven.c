@@ -133,8 +133,8 @@ static int get_tag(int *cp, char tag)
 				if (item_tester_tval && inventory[i].tval != item_tester_tval)
 					continue;
 
-                /* Skip empty inscriptions */
-                if (!(buf2 = strchr(buf, '{'))) continue;
+                /* Skip empty inscriptions (those which don't contain any @.. tag) */
+                if (!(buf2 = strchr(buf, '@'))) continue;
 
                 /* Find a '@' */
                 s = strchr(buf2, '@');
