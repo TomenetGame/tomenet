@@ -16,6 +16,7 @@ GLOBELIGHT = add_spell
                 if get_level(Ind, GLOBELIGHT, 50) > 15 then
 		        fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, GLOBELIGHT, 100), 5 + get_level(Ind, GLOBELIGHT, 6))
 		end
+		msg_print(Ind, "You are surrounded by a globe of light")
 	end,
 	["info"] = 	function()
         	if get_level(Ind, GLOBELIGHT, 50) > 15 then
