@@ -264,7 +264,7 @@ static void spell_info(int Ind, char *p, int j)
                         case 60: sprintf(p, " dam 8*%dd%d", 20 + (plev / 10), 10); break;
                         case 61: sprintf(p, " dam %d", 450 + (2 * plev)); break;
                         case 62: sprintf(p, " dam 5*%d", 250 + plev); break;
-                        case 63: sprintf(p, " dam %d", 800); break;
+                        case 63: sprintf(p, " dam mana dep"); break;
 		}
 	}
 	
@@ -2431,7 +2431,7 @@ void do_cmd_sorc_aux(int Ind, int dir)
                         break;
                 case 63: /* Mana Strike */
 			msg_format_near(Ind, "%s fires a mana strike.", p_ptr->name);
-                        (void)fire_ball(Ind, GF_MANA, dir, 800, 0);
+                        (void)fire_ball(Ind, GF_MANA, dir, (p_ptr->csp / 2) + (plev * 4), 0);
                         break;
 
 		default:  /* For some reason we got called for a spell that */

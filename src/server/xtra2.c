@@ -513,7 +513,7 @@ bool set_tim_manashield(int Ind, int v)
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
 	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
+        p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
 
 	/* Handle stuff */
 	handle_stuff(Ind);

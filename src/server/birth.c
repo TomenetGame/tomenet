@@ -1017,13 +1017,13 @@ static void player_outfit(int Ind)
                 for (i = 0; i < MAX_WILD; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
 
 
-                for (i = 7; i < 203; i++)
+                for (i = 1; i < 8; i++)
                 {
-                        int k = lookup_kind(TV_GOLEM, i);
+                        int k = lookup_kind(TV_SORCERY_BOOK, i);
                         if (!k) continue;
 
                         invcopy(o_ptr, k);
-                        o_ptr->number = 2;
+                        o_ptr->number = 1;
                         apply_magic(100, o_ptr, 100, TRUE, TRUE, TRUE);
                         object_aware(Ind, o_ptr);
                         object_known(o_ptr);
@@ -1032,8 +1032,10 @@ static void player_outfit(int Ind)
                         (void)inven_carry(Ind, o_ptr);
                 }
 
-                invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_GOLEM));
-		o_ptr->number = 99;
+		invcopy(o_ptr, lookup_kind(TV_CROWN, SV_MORGOTH));
+		o_ptr->name1 = ART_MORGOTH;
+		apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
+		o_ptr->number = 1;
 		o_ptr->discount = 100;
 		object_known(o_ptr);
                 o_ptr->owner = p_ptr->id;

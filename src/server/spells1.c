@@ -610,6 +610,7 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		damage = damage / 2;
   	}
 
+#if 0
         if (p_ptr->tim_manashield && (!bypass_invuln))
 	  {
 	     if (p_ptr->csp > 0)
@@ -631,7 +632,8 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		 p_ptr->redraw |= (PR_MANA);
 	       }
 	  }
-		
+#endif
+        
 	/* Hurt the player */
 	p_ptr->chp -= damage;
 
