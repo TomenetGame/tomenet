@@ -1550,6 +1550,897 @@ void msg_format_near(int Ind, cptr fmt, ...)
 	msg_print_near(Ind, buf);
 }
 
+void do_slash_cmd(int Ind, cptr message){
+	int i;
+	int k = 0, tk = 0;
+	player_type *p_ptr = Players[Ind], *q_ptr;
+ 	cptr colon;
+	char *token[9];
+	worldpos wp;
+	bool admin = p_ptr->admin_wiz || p_ptr->admin_dm;
+	bool me = FALSE;
+
+	wpcopy(&wp, &p_ptr->wpos);
+
+	/* Look for a player's name followed by a colon */
+	colon = strchr(message, ' ');
+
+	/* hack -- non-token ones first */
+	if ((prefix(message, "/script") ||
+			prefix(message, "/scr") ||
+			prefix(message, "/ ") ||	// use with care!
+			prefix(message, "//") ||	// use with care!
+			prefix(message, "/lua")) && admin)
+	{
+		if (colon)
+		{
+			master_script_exec(Ind, colon);
+		}
+		else
+		{
+			msg_print(Ind, "\377oUsage: /lua (LUA script command)");
+		}
+		return;
+	}
+	else if (prefix(message, "/me "))
+	{
+		me = TRUE;
+	}
+	else
+	{
+		/* cut tokens off (thx Ascrep(DEG)) */
+		if ((token[0]=strtok(message," ")))
+		{
+//			s_printf("%d : %s", tk, token[0]);
+			for (i=1;i<=9;i++)
+			{
+				token[i]=strtok(NULL," ");
+				if (token[i]==NULL)
+					break;
+				tk = i;
+			}
+		}
+
+		/* Default to no search string */
+		//		strcpy(search, "");
+
+		/* Form a search string if we found a colon */
+		if (tk)
+		{
+			k = atoi(token[1]);
+#if 0
+			/* Copy everything up to the colon to the search string */
+			strncpy(search, message, colon - message);
+
+			/* Add a trailing NULL */
+			search[colon - message] = '\0';
+
+			/* Move colon pointer forward to next word */
+			while (*colon && (isspace(*colon))) colon++;
+#endif
+		}
+
+		/* User commands */
+		if (prefix(message, "/ignore") ||
+				prefix(message, "/ig"))
+		{
+			add_ignore(Ind, token[1]);
+			return;
+		}
+		else if (prefix(message, "/afk"))
+		{
+			toggle_afk(Ind);
+			return;
+		}
+
+		/* Semi-auto item destroyer */
+		else if ((prefix(message, "/dispose")) ||
+				prefix(message, "/dis"))
+		{
+			object_type		*o_ptr;
+			u32b f1, f2, f3, f4, f5, esp;
+			for(i = 0; i < INVEN_PACK; i++)
+			{
+				o_ptr = &(p_ptr->inventory[i]);
+				if (!o_ptr->tval) break;
+
+				object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+				/* skip inscribed items */
+				/* skip non-matching tags */
+				if (o_ptr->note && 
+					strcmp(quark_str(o_ptr->note), "cursed") &&
+					strcmp(quark_str(o_ptr->note), "uncursed") &&
+					strcmp(quark_str(o_ptr->note), "broken") &&
+					strcmp(quark_str(o_ptr->note), "average") &&
+					strcmp(quark_str(o_ptr->note), "good") &&
+//					strcmp(quark_str(o_ptr->note), "excellent"))
+					strcmp(quark_str(o_ptr->note), "worthless"))
+					continue;
+
+				if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr))
+					continue;
+
+				do_cmd_destroy(Ind, i, o_ptr->number);
+				i--;
+
+				/* Hack - Don't take a turn here */
+				p_ptr->energy += level_speed(&p_ptr->wpos);
+//				p_ptr->energy += level_speed(p_ptr->dun_depth);
+			}
+			/* Take total of one turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+//			p_ptr->energy -= level_speed(p_ptr->dun_depth);
+			return;
+		}
+
+		/* add inscription to everything */
+		else if (prefix(message, "/tag"))
+		{
+			object_type		*o_ptr;
+			for(i = 0; i < INVEN_PACK; i++)
+			{
+				o_ptr = &(p_ptr->inventory[i]);
+				if (!o_ptr->tval) break;
+
+				/* skip inscribed items */
+				if (o_ptr->note) continue;
+
+				o_ptr->note = quark_add(token[1] ? token[1] : "!k");
+			}
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+			return;
+		}
+		/* remove specific inscription */
+		else if (prefix(message, "/untag"))
+		{
+			object_type		*o_ptr;
+//			cptr	*ax = token[1] ? token[1] : "!k";
+			cptr	ax = token[1] ? token[1] : "!k";
+
+			for(i = 0; i < INVEN_PACK; i++)
+			{
+				o_ptr = &(p_ptr->inventory[i]);
+				if (!o_ptr->tval) break;
+
+				/* skip inscribed items */
+				if (!o_ptr->note) continue;
+
+				/* skip non-matching tags */
+				if (strcmp(quark_str(o_ptr->note), ax)) continue;
+
+				o_ptr->note = 0;
+			}
+
+			/* Combine the pack */
+			p_ptr->notice |= (PN_COMBINE);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+			return;
+		}
+		/* '/cast' code is written by Ascrep(DEG). thx! */
+		else if (prefix(message, "/cast"))
+		{
+			int book, whichplayer, whichspell;
+			bool ami = FALSE;
+#if 0
+			token[0]=strtok(message," ");
+			if (token[0]==NULL)
+			{
+				msg_print(Ind, "\377oUsage: /cast (Book) (Spell) [Playername]");
+				return;
+			}
+
+			for (i=1;i<50;i++)
+			{
+				token[i]=strtok(NULL," ");
+				if (token[i]==NULL)
+					break;
+			}
+#endif
+
+			/* at least 2 arguments required */
+			if (tk < 2)
+			{
+				msg_print(Ind, "\377oUsage: /cast (Book) (Spell) [Player name]");
+				return;
+			}
+
+			if(*token[1]>='1' && *token[1]<='9')
+			{	
+				object_type *o_ptr;
+				char c[4] = "@";
+				bool found = FALSE;
+
+				c[1] = ((p_ptr->pclass == CLASS_PRIEST) ||
+						(p_ptr->pclass == CLASS_PALADIN)? 'p':'m');
+				if (p_ptr->pclass == CLASS_WARRIOR) c[1] = 'n';
+				c[2] = *token[1];
+				c[3] = '\0';
+
+				for(i = 0; i < INVEN_PACK; i++)
+				{
+					o_ptr = &(p_ptr->inventory[i]);
+					if (!o_ptr->tval) break;
+
+					if (find_inscription(o_ptr->note, c))
+					{
+						book = i;
+						found = TRUE;
+						break;
+					}
+				}
+
+				if (!found)
+				{
+					msg_format(Ind, "\377oInscription {%s} not found.", c);
+					return;
+				}
+				//					book = atoi(token[1])-1;
+			}	
+			else
+			{	
+				*token[1] &= ~(0x20);
+				if(*token[1]>='A' && *token[1]<='W')
+				{	
+					book = (int)(*token[1]-'A');
+				}		
+				else 
+				{
+					msg_print(Ind,"\377oBook variable was out of range (a-i) or (1-9)");
+					return;
+				}	
+			}
+
+			if(*token[2]>='1' && *token[2]<='9')
+			{	
+				//					whichspell = atoi(token[2]+'A'-1);
+				whichspell = atoi(token[2]) - 1;
+			}	
+			else if(*token[2]>='a' && *token[2]<='i')
+			{	
+				whichspell = (int)(*token[2]-'a');
+			}		
+			/* if Capital letter, it's for friends */
+			else if(*token[2]>='A' && *token[2]<='I')
+			{
+				whichspell = (int)(*token[2]-'A');
+				//					*token[2] &= 0xdf;
+				//					whichspell = *token[2]-1;
+				ami = TRUE;
+			}
+			else 
+			{
+				msg_print(Ind,"\377oSpell out of range [A-I].");
+				return;
+			}	
+
+			if (token[3])
+			{
+				if (!(whichplayer = name_lookup_loose(Ind, token[3], TRUE)))
+					return;
+
+				if (whichplayer == Ind)
+				{
+					msg_print(Ind,"You feel lonely.");
+				}
+				/* Ignore "unreasonable" players */
+				else if (!target_able(Ind, 0 - whichplayer))
+				{
+					msg_print(Ind,"\377oThat player is out of your sight.");
+					return;
+				}
+				else
+				{
+//					msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer); 
+					target_set_friendly(Ind,5,whichplayer);
+					whichspell += 64;
+				}
+			}
+			else if (ami)
+			{
+				target_set_friendly(Ind, 5);
+				whichspell += 64;
+			}
+			else
+			{
+				target_set(Ind, 5);
+			}
+
+			switch (p_ptr->pclass)
+			{
+				case CLASS_SORCERER:
+					{
+						do_cmd_sorc(Ind, book, whichspell);
+#ifdef FRIENDLY_SPELL_BOOST
+						p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+						break;
+					}
+
+				case CLASS_TELEPATH:
+					{
+						do_cmd_psi(Ind, book, whichspell);
+#ifdef FRIENDLY_SPELL_BOOST
+						p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+						break;
+					}
+				case CLASS_ROGUE:
+					{
+						do_cmd_shad(Ind, book, whichspell);
+#ifdef FRIENDLY_SPELL_BOOST
+						p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+						break;
+					}
+				case CLASS_ARCHER:
+					{
+						do_cmd_hunt(Ind, book, whichspell);
+#ifdef FRIENDLY_SPELL_BOOST
+						p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+						break;
+					}
+				case CLASS_MAGE:
+				case CLASS_RANGER:
+					{
+						do_cmd_cast(Ind, book, whichspell);
+#ifdef FRIENDLY_SPELL_BOOST
+						p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+						break;
+					}
+				case CLASS_PRIEST:
+				case CLASS_PALADIN:
+					{
+						do_cmd_pray(Ind, book, whichspell);
+#ifdef FRIENDLY_SPELL_BOOST
+						p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+						break;
+					}
+			}
+
+//			msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer); 
+			return;
+		}
+		/* Take everything off */
+		else if ((prefix(message, "/bed")) ||
+				prefix(message, "/naked"))
+		{
+			object_type		*o_ptr;
+			for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
+			{
+				o_ptr = &(p_ptr->inventory[i]);
+				if (!o_ptr->tval) continue;
+
+				/* skip inscribed items */
+				/* skip non-matching tags */
+				if ((check_guard_inscription(o_ptr->note, 't')) ||
+					(check_guard_inscription(o_ptr->note, 'T')) ||
+					(cursed_p(o_ptr))) continue;
+
+				inven_takeoff(Ind, i, 255);
+				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+			}
+			return;
+		}
+
+		/* Try to wield everything */
+		else if ((prefix(message, "/dress")) ||
+				prefix(message, "/dr"))
+		{
+			object_type		*o_ptr;
+			int j;
+
+			for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
+			{
+				o_ptr = &(p_ptr->inventory[i]);
+				if (o_ptr->tval) continue;
+
+				for(j = 0; j < INVEN_PACK; j++)
+				{
+					o_ptr = &(p_ptr->inventory[j]);
+					if (!o_ptr->tval) break;
+
+					/* skip unsuitable inscriptions */
+					if (o_ptr->note &&
+							(!strcmp(quark_str(o_ptr->note), "cursed") ||
+							 check_guard_inscription(o_ptr->note, 'w')) )continue;
+
+					if (wield_slot(Ind, o_ptr) != i) continue;
+
+					do_cmd_wield(Ind, j);
+					break;
+				}
+
+			}
+			return;
+		}
+		/* '/cast' code is written by Ascrep(DEG). thx! */
+		else if (prefix(message, "/quaff"))
+		{
+			int book, whichplayer, whichspell;
+			bool ami = FALSE;
+
+			/* at least 1 argument required */
+			if (tk < 1)
+			{
+				msg_print(Ind, "\377oUsage: /quaff (item index or no.)");
+				return;
+			}
+
+			if(*token[1]>='1' && *token[1]<='9')
+			{	
+				object_type *o_ptr;
+				char c[4] = "@q";
+				bool found = FALSE;
+
+				c[2] = *token[1];
+				c[3] = '\0';
+
+				for(i = 0; i < INVEN_PACK; i++)
+				{
+					o_ptr = &(p_ptr->inventory[i]);
+					if (!o_ptr->tval) break;
+
+					if (find_inscription(o_ptr->note, c))
+					{
+						book = i;
+						found = TRUE;
+						break;
+					}
+				}
+
+				if (!found)
+				{
+					msg_format(Ind, "\377oInscription {%s} not found.", c);
+					return;
+				}
+				//					book = atoi(token[1])-1;
+			}	
+			else
+			{	
+				*token[1] &= ~(0x20);
+				if(*token[1]>='A' && *token[1]<='W')
+				{	
+					book = (int)(*token[1]-'A');
+				}		
+				else 
+				{
+					msg_print(Ind,"\377oPotion variable was out of range (a-w) or (1-9)");
+					return;
+				}	
+			}
+
+			do_cmd_quaff_potion(Ind, book);
+			return;
+		}
+		/* Display extra information */
+		else if (prefix(message, "/extra") ||
+				prefix(message, "/examine") ||
+				prefix(message, "/ex"))
+		{
+			/* Insanity warning (better message needed!) */
+			if (p_ptr->csane < p_ptr->msane / 8)
+			{
+				/* Message */
+				msg_print(Ind, "\377rYou can hardly resist the temptation to cry out!");
+			}
+			else if (p_ptr->csane < p_ptr->msane / 4)
+			{
+				/* Message */
+				msg_print(Ind, "\377yYou feel insanity about to grasp your mind..");
+			}
+			else if (p_ptr->csane < p_ptr->msane / 2)
+			{
+				/* Message */
+				msg_print(Ind, "\377yYou feel insanity creep into your mind..");
+			}
+			else
+			{
+				/* Message */
+				msg_print(Ind, "\377wYou are sane.");
+			}
+
+			return;
+		}
+		/* Please add here anything you think is needed.  */
+		else if ((prefix(message, "/refresh")) ||
+				prefix(message, "/ref"))
+		{
+			/* Clear the target */
+			p_ptr->target_who = 0;
+
+			/* Recalculate bonuses */
+			p_ptr->update |= (PU_BONUS);
+
+			/* Recalculate torch */
+			p_ptr->update |= (PU_TORCH);
+
+			/* Recalculate mana */
+			p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
+
+			/* Redraw */
+			p_ptr->redraw |= (PR_HP | PR_GOLD | PR_BASIC | PR_PLUSSES);
+
+			/* Notice */
+			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_SPELL);
+
+			return;
+		}
+		else if ((prefix(message, "/target")) ||
+				prefix(message, "/tar"))
+		{
+			int tx, ty;
+
+			/* Clear the target */
+			p_ptr->target_who = 0;
+
+			/* at least 2 arguments required */
+			if (tk < 2)
+			{
+				msg_print(Ind, "\377oUsage: /target (X) (Y) <from your position>");
+				return;
+			}
+
+			tx = p_ptr->px + k;
+			ty = p_ptr->py + atoi(token[2]);
+			
+			if (!in_bounds(ty,tx))
+			{
+				msg_print(Ind, "\377oIllegal position!");
+				return;
+			}
+
+			/* Set the target */
+			p_ptr->target_row = ty;
+			p_ptr->target_col = tx;
+
+			/* Set 'stationary' target */
+			p_ptr->target_who = 0 - MAX_PLAYERS - 2;
+			
+			return;
+		}
+
+		/*
+		 * Admin commands
+		 *
+		 * These commands should be replaced by LUA scripts in the future.
+		 */
+		else if (admin)
+		{
+			/* presume worldpos */
+			switch (tk)
+			{
+				case 1:
+				{
+					/* depth in feet */
+					wp.wz = k / 50;
+					break;
+				}
+
+				case 3:
+				{
+					/* depth in feet */
+					wp.wz = atoi(token[3]) / 50;
+				}
+
+				case 2:
+				{
+					wp.wx = k % MAX_WILD_X;
+					wp.wy = atoi(token[2]) % MAX_WILD_Y;
+					wp.wz = 0;
+					break;
+				}
+
+				default:
+				{
+					break;
+				}
+			}
+
+			if (prefix(message, "/shutdown") ||
+					prefix(message, "/quit"))
+			{
+				shutdown_server();
+			}
+			else if (prefix(message, "/kick"))
+			{
+				if (tk)
+				{
+					int j = name_lookup_loose(Ind, token[1], FALSE);
+					if (j)
+					{
+						/* Success maybe :) */
+						msg_format(Ind, "Kicking %s out...", Players[j]->name);
+
+						/* Kick him */
+						Destroy_connection(Players[j]->conn, "kicked out");
+					}
+					return;
+				}
+
+				msg_print(Ind, "\377oUsage: /kick [Player name]");
+				return;
+			}
+			/* erase items and monsters */
+			else if (prefix(message, "/clear-level") ||
+					prefix(message, "/clv"))
+			{
+#if 0
+				/* depth in feet */
+				k = k / 50;
+				if (!tk) k = p_ptr->dun_depth;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+				{
+					msg_print(Ind, "\377oIlligal depth.  Usage: /clv [depth in feet]");
+					return;
+				}
+#endif
+
+				/* Wipe even if town/wilderness */
+				wipe_o_list_safely(&wp);
+				wipe_m_list(&wp);
+				wipe_t_list(&wp);
+
+				msg_format(Ind, "\377rItems/monsters/traps on %s are cleared.", wpos_format(&wp));
+				return;
+			}
+			else if (prefix(message, "/geno-level") ||
+					prefix(message, "/geno"))
+			{
+#if 0
+				/* depth in feet */
+				k = k / 50;
+				if (!tk) k = p_ptr->dun_depth;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+				{
+					msg_print(Ind, "\377oIlligal depth.  Usage: /geno [depth in feet]");
+					return;
+				}
+#endif	// 0
+
+				/* Wipe even if town/wilderness */
+				wipe_m_list(&wp);
+
+				msg_format(Ind, "\377rMonsters on %s are cleared.", wpos_format(&wp));
+				return;
+			}
+			else if (prefix(message, "/unstatic-level") ||
+					prefix(message, "/unst"))
+			{
+#if 0
+				/* depth in feet */
+				k = k / 50;
+				if (!tk) k = p_ptr->dun_depth;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+				{
+					msg_print(Ind, "\377oIlligal depth.  Usage: /unst [depth in feet]");
+					return;
+				}
+#endif
+				/* no sanity check, so be warned! */
+				master_level_specific(Ind, &wp, "u");
+				//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
+				return;
+			}
+			else if (prefix(message, "/static-level") ||
+					prefix(message, "/sta"))
+			{
+#if 0
+				/* depth in feet */
+				k = k / 50;
+				if (!tk) k = p_ptr->dun_depth;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+				{
+					msg_print(Ind, "\377oIlligal depth.  Usage: /sta [depth in feet]");
+					return;
+				}
+#endif // 0
+
+				/* no sanity check, so be warned! */
+				master_level_specific(Ind, &wp, "s");
+				//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
+				return;
+			}
+			else if (prefix(message, "/identify") ||
+					prefix(message, "/id"))
+			{
+				identify_pack(Ind);
+
+				/* Combine the pack */
+				p_ptr->notice |= (PN_COMBINE);
+
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+				return;
+			}
+			else if (prefix(message, "/artifact") ||
+					prefix(message, "/art"))
+			{
+				if (k)
+				{
+					if (a_info[k].cur_num)
+					{
+						a_info[k].cur_num = 0;
+						a_info[k].known = FALSE;
+						msg_format(Ind, "Artifact %d is now \377Gfindable\377w.", k);
+					}
+					else
+					{
+						a_info[k].cur_num = 1;
+						a_info[k].known = TRUE;
+						msg_format(Ind, "Artifact %d is now \377runfindable\377w.", k);
+					}
+				}
+				else if (tk > 0 && strchr(token[1],'*'))
+				{
+					for (i = 0; i < MAX_A_IDX ; i++)
+						a_info[i].cur_num = 0;
+						a_info[k].known = FALSE;
+						msg_format(Ind, "All the artifacts are \377rfindable\377w!", k);
+				}
+				else
+				{
+					msg_print(Ind, "Usage: /artifact No.");
+				}
+				return;
+			}
+			else if (prefix(message, "/reload-config") ||
+					prefix(message, "/cfg"))
+			{
+				if (tk)
+				{
+					MANGBAND_CFG = string_make(token[1]);
+				}
+
+				//				msg_print(Ind, "Reloading server option(mangband.cfg).");
+				msg_format(Ind, "Reloading server option(%s).", MANGBAND_CFG);
+
+				/* Reload the server preferences */
+				load_server_cfg();
+				return;
+			}
+			else if (prefix(message, "/recall") ||
+					prefix(message, "/rec"))
+			{
+				switch (tk)
+				{
+					case 1:
+					{
+						/* depth in feet */
+						p_ptr->recall_pos.wz = k / 50;
+						break;
+					}
+
+					case 2:
+					{
+						p_ptr->recall_pos.wx = k % MAX_WILD_X;
+						p_ptr->recall_pos.wy = atoi(token[2]) % MAX_WILD_Y;
+						break;
+					}
+
+					default:
+					{
+						p_ptr->recall_pos.wz = 0;
+					}
+				}
+#if 0
+				/* depth in feet */
+				k = tk ? k / 50 : 0;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+				{
+					msg_print(Ind, "\377oIlligal depth.  Usage: /recall [depth in feet]");
+				}
+				else
+				{
+					p_ptr->recall_depth = k;
+					p_ptr->word_recall = 1;
+
+					msg_print(Ind, "\377oOmnipresent you are...");
+				}
+				/* do it on your own risk.. pfft */
+				p_ptr->recall_pos.wz = k;
+#endif
+				p_ptr->word_recall = 1;
+//				msg_print(Ind, "\377oOmnipresent you are...");
+				msg_format(Ind, "\377oTrying to recall to %s...",wpos_format(&p_ptr->recall_pos));
+				return;
+			}
+			else if (prefix(message, "/wish"))
+			{
+				object_type	forge;
+				object_type	*o_ptr = &forge;
+
+//				if (tk < 2 || !k || !(l = atoi(token[2])))
+				if (tk < 1 || !k)
+				{
+					msg_print(Ind, "\377oUsage: /wish (tval) (sval) [name1] or /wish (o_idx)");
+					return;
+				}
+
+				/* Move colon pointer forward to next word */
+//				while (*arg2 && (isspace(*arg2))) arg2++;
+
+				invcopy(o_ptr, tk > 1 ? lookup_kind(k, atoi(token[2])) : k);
+
+				/* Wish arts out! */
+//				if (token[3])
+				if (tk > 2)
+				{
+					int nom = atoi(token[3]);
+					o_ptr->number = 1;
+
+					if (nom > 0) o_ptr->name1 = nom;
+					else
+					{
+						/* It's ego or randarts */
+						if (nom) o_ptr->name2 = 0 - nom;
+						else o_ptr->name1 = ART_RANDART;
+
+						/* Piece together a 32-bit random seed */
+						o_ptr->name3 = rand_int(0xFFFF) << 16;
+						o_ptr->name3 += rand_int(0xFFFF);
+					}
+				}
+				else
+				{
+					o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
+				}
+
+				apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE);
+				o_ptr->discount = 99;
+				object_known(o_ptr);
+				o_ptr->owner = p_ptr->id;
+				o_ptr->level = 1;
+				(void)inven_carry(Ind, o_ptr);
+
+				return;
+			}
+			else if (prefix(message, "/trap") ||
+					prefix(message, "/tr"))
+			{
+				if (k)
+				{
+					wiz_place_trap(Ind, k);
+				}
+				else 
+				{
+					wiz_place_trap(Ind, TRAP_OF_FILLING);
+				}
+				return;
+			}
+			else
+			{
+				msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag target untag;");
+				msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta trap unst wish");
+				return;
+			}
+		}
+		else
+		{
+			msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag target untag;");
+			msg_print(Ind, "  /quaff is also available for old client users :)");
+			msg_print(Ind, "  /dis \377rdestroys \377wevery uninscribed items in your inventory!");
+			return;
+		}
+	}
+}
 
 /*
  * Allow to cast quickly when using '/cast'. (code by DEG)
@@ -1621,900 +2512,13 @@ void player_talk_aux(int Ind, cptr message)
 		return;
 	}
 
-	/* Special - '/' commands */
-	if (prefix(message, "/"))
-	{
-		int k = 0, tk = 0;
-		char *token[9];
-//		cptr token[9];
-		worldpos wp;
-
-		wpcopy(&wp, &p_ptr->wpos);
-
-		/* Look for a player's name followed by a colon */
-		colon = strchr(message, ' ');
-
-		/* hack -- non-token ones first */
-		if ((prefix(message, "/script") ||
-					prefix(message, "/scr") ||
-					prefix(message, "/ ") ||	// use with care!
-					prefix(message, "//") ||	// use with care!
-					prefix(message, "/lua")) && admin)
-		{
-			if (colon)
-			{
-				master_script_exec(Ind, colon);
-			}
-			else
-			{
-				msg_print(Ind, "\377oUsage: /lua (LUA script command)");
-			}
-			return;
-		}
-		else if (prefix(message, "/me "))
-		{
-			me = TRUE;
-		}
-		else
-		{
-
-			/* cut tokens off (thx Ascrep(DEG)) */
-			if ((token[0]=strtok(message," ")))
-			{
-//				s_printf("%d : %s", tk, token[0]);
-				for (i=1;i<=9;i++)
-				{
-					token[i]=strtok(NULL," ");
-					if (token[i]==NULL)
-						break;
-					tk = i;
-				}
-			}
-
-			/* Default to no search string */
-			//		strcpy(search, "");
-
-			/* Form a search string if we found a colon */
-			if (tk)
-			{
-				k = atoi(token[1]);
-#if 0
-				/* Copy everything up to the colon to the search string */
-				strncpy(search, message, colon - message);
-
-				/* Add a trailing NULL */
-				search[colon - message] = '\0';
-
-				/* Move colon pointer forward to next word */
-				while (*colon && (isspace(*colon))) colon++;
-#endif
-			}
-
-			/* User commands */
-			if (prefix(message, "/ignore") ||
-					prefix(message, "/ig"))
-			{
-				add_ignore(Ind, token[1]);
-				return;
-			}
-			else if (prefix(message, "/afk"))
-			{
-				toggle_afk(Ind);
-				return;
-			}
-
-			/* Semi-auto item destroyer */
-			else if ((prefix(message, "/dispose")) ||
-					prefix(message, "/dis"))
-			{
-				object_type		*o_ptr;
-                u32b f1, f2, f3, f4, f5, esp;
-				for(i = 0; i < INVEN_PACK; i++)
-				{
-					o_ptr = &(p_ptr->inventory[i]);
-					if (!o_ptr->tval) break;
-
-					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-					/* skip inscribed items */
-					/* skip non-matching tags */
-					if (o_ptr->note && 
-						strcmp(quark_str(o_ptr->note), "cursed") &&
-						strcmp(quark_str(o_ptr->note), "uncursed") &&
-						strcmp(quark_str(o_ptr->note), "broken") &&
-						strcmp(quark_str(o_ptr->note), "average") &&
-						strcmp(quark_str(o_ptr->note), "good") &&
-//						strcmp(quark_str(o_ptr->note), "excellent"))
-						strcmp(quark_str(o_ptr->note), "worthless"))
-							continue;
-
-					if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr))
-						continue;
-
-					do_cmd_destroy(Ind, i, o_ptr->number);
-					i--;
-
-					/* Hack - Don't take a turn here */
-					p_ptr->energy += level_speed(&p_ptr->wpos);
-//					p_ptr->energy += level_speed(p_ptr->dun_depth);
-				}
-				/* Take total of one turn */
-				p_ptr->energy -= level_speed(&p_ptr->wpos);
-//				p_ptr->energy -= level_speed(p_ptr->dun_depth);
-				return;
-			}
-
-			/* add inscription to everything */
-			else if (prefix(message, "/tag"))
-			{
-				object_type		*o_ptr;
-				for(i = 0; i < INVEN_PACK; i++)
-				{
-					o_ptr = &(p_ptr->inventory[i]);
-					if (!o_ptr->tval) break;
-
-					/* skip inscribed items */
-					if (o_ptr->note) continue;
-
-					o_ptr->note = quark_add(token[1] ? token[1] : "!k");
-				}
-				/* Window stuff */
-				p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-				return;
-			}
-			/* remove specific inscription */
-			else if (prefix(message, "/untag"))
-			{
-				object_type		*o_ptr;
-//				cptr	*ax = token[1] ? token[1] : "!k";
-				cptr	ax = token[1] ? token[1] : "!k";
-
-				for(i = 0; i < INVEN_PACK; i++)
-				{
-					o_ptr = &(p_ptr->inventory[i]);
-					if (!o_ptr->tval) break;
-
-					/* skip inscribed items */
-					if (!o_ptr->note) continue;
-
-					/* skip non-matching tags */
-					if (strcmp(quark_str(o_ptr->note), ax)) continue;
-
-					o_ptr->note = 0;
-				}
-
-				/* Combine the pack */
-				p_ptr->notice |= (PN_COMBINE);
-
-				/* Window stuff */
-				p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-				return;
-			}
-			/* '/cast' code is written by Ascrep(DEG). thx! */
-			else if (prefix(message, "/cast"))
-			{
-				int book, whichplayer, whichspell;
-				bool ami = FALSE;
-#if 0
-				token[0]=strtok(message," ");
-				if (token[0]==NULL)
-				{
-					msg_print(Ind, "\377oUsage: /cast (Book) (Spell) [Playername]");
-					return;
-				}
-
-				for (i=1;i<50;i++)
-				{
-					token[i]=strtok(NULL," ");
-					if (token[i]==NULL)
-						break;
-				}
-#endif
-
-				/* at least 2 arguments required */
-				if (tk < 2)
-				{
-					msg_print(Ind, "\377oUsage: /cast (Book) (Spell) [Player name]");
-					return;
-				}
-
-				if(*token[1]>='1' && *token[1]<='9')
-				{	
-					object_type *o_ptr;
-					char c[4] = "@";
-					bool found = FALSE;
-
-					c[1] = ((p_ptr->pclass == CLASS_PRIEST) ||
-							(p_ptr->pclass == CLASS_PALADIN)? 'p':'m');
-					if (p_ptr->pclass == CLASS_WARRIOR) c[1] = 'n';
-					c[2] = *token[1];
-					c[3] = '\0';
-
-					for(i = 0; i < INVEN_PACK; i++)
-					{
-						o_ptr = &(p_ptr->inventory[i]);
-						if (!o_ptr->tval) break;
-
-						if (find_inscription(o_ptr->note, c))
-						{
-							book = i;
-							found = TRUE;
-							break;
-						}
-					}
-
-					if (!found)
-					{
-						msg_format(Ind, "\377oInscription {%s} not found.", c);
-						return;
-					}
-					//					book = atoi(token[1])-1;
-				}	
-				else
-				{	
-					*token[1] &= ~(0x20);
-					if(*token[1]>='A' && *token[1]<='W')
-					{	
-						book = (int)(*token[1]-'A');
-					}		
-					else 
-					{
-						msg_print(Ind,"\377oBook variable was out of range (a-i) or (1-9)");
-						return;
-					}	
-				}
-
-				if(*token[2]>='1' && *token[2]<='9')
-				{	
-					//					whichspell = atoi(token[2]+'A'-1);
-					whichspell = atoi(token[2]) - 1;
-				}	
-				else if(*token[2]>='a' && *token[2]<='i')
-				{	
-					whichspell = (int)(*token[2]-'a');
-				}		
-				/* if Capital letter, it's for friends */
-				else if(*token[2]>='A' && *token[2]<='I')
-				{
-					whichspell = (int)(*token[2]-'A');
-					//					*token[2] &= 0xdf;
-					//					whichspell = *token[2]-1;
-					ami = TRUE;
-				}
-				else 
-				{
-					msg_print(Ind,"\377oSpell out of range [A-I].");
-					return;
-				}	
-
-				if (token[3])
-				{
-					if (!(whichplayer = name_lookup_loose(Ind, token[3], TRUE)))
-						return;
-
-					if (whichplayer == Ind)
-					{
-						msg_print(Ind,"You feel lonely.");
-					}
-					/* Ignore "unreasonable" players */
-					else if (!target_able(Ind, 0 - whichplayer))
-					{
-						msg_print(Ind,"\377oThat player is out of your sight.");
-						return;
-					}
-					else
-					{
-						//			msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer); 
-						target_set_friendly(Ind,5,whichplayer);
-						whichspell += 64;
-					}
-				}
-				else if (ami)
-				{
-					target_set_friendly(Ind, 5);
-					whichspell += 64;
-				}
-				else
-				{
-					target_set(Ind, 5);
-				}
-
-				switch (p_ptr->pclass)
-				{
-					case CLASS_SORCERER:
-						{
-							do_cmd_sorc(Ind, book, whichspell);
-#ifdef FRIENDLY_SPELL_BOOST
-							p_ptr->energy += level_speed(p_ptr->dun_depth);
-#endif
-							break;
-						}
-
-					case CLASS_TELEPATH:
-						{
-							do_cmd_psi(Ind, book, whichspell);
-#ifdef FRIENDLY_SPELL_BOOST
-							p_ptr->energy += level_speed(p_ptr->dun_depth);
-#endif
-							break;
-						}
-					case CLASS_ROGUE:
-						{
-							do_cmd_shad(Ind, book, whichspell);
-#ifdef FRIENDLY_SPELL_BOOST
-							p_ptr->energy += level_speed(p_ptr->dun_depth);
-#endif
-							break;
-						}
-					case CLASS_ARCHER:
-						{
-							do_cmd_hunt(Ind, book, whichspell);
-#ifdef FRIENDLY_SPELL_BOOST
-							p_ptr->energy += level_speed(p_ptr->dun_depth);
-#endif
-							break;
-						}
-					case CLASS_MAGE:
-					case CLASS_RANGER:
-						{
-							do_cmd_cast(Ind, book, whichspell);
-#ifdef FRIENDLY_SPELL_BOOST
-							p_ptr->energy += level_speed(p_ptr->dun_depth);
-#endif
-							break;
-						}
-					case CLASS_PRIEST:
-					case CLASS_PALADIN:
-						{
-							do_cmd_pray(Ind, book, whichspell);
-#ifdef FRIENDLY_SPELL_BOOST
-							p_ptr->energy += level_speed(p_ptr->dun_depth);
-#endif
-							break;
-						}
-				}
-
-				//			msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer); 
-				return;
-			}
-			/* Take everything off */
-			else if ((prefix(message, "/bed")) ||
-					prefix(message, "/naked"))
-			{
-				object_type		*o_ptr;
-				for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
-				{
-					o_ptr = &(p_ptr->inventory[i]);
-					if (!o_ptr->tval) continue;
-
-					/* skip inscribed items */
-					/* skip non-matching tags */
-					if ((check_guard_inscription(o_ptr->note, 't')) ||
-						(check_guard_inscription(o_ptr->note, 'T')) ||
-						(cursed_p(o_ptr))) continue;
-
-					inven_takeoff(Ind, i, 255);
-					p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
-				}
-				return;
-			}
-
-			/* Try to wield everything */
-			else if ((prefix(message, "/dress")) ||
-					prefix(message, "/dr"))
-			{
-				object_type		*o_ptr;
-				int j;
-
-				for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
-				{
-					o_ptr = &(p_ptr->inventory[i]);
-					if (o_ptr->tval) continue;
-
-					for(j = 0; j < INVEN_PACK; j++)
-					{
-						o_ptr = &(p_ptr->inventory[j]);
-						if (!o_ptr->tval) break;
-
-						/* skip unsuitable inscriptions */
-						if (o_ptr->note &&
-								(!strcmp(quark_str(o_ptr->note), "cursed") ||
-								 check_guard_inscription(o_ptr->note, 'w')) )continue;
-
-						if (wield_slot(Ind, o_ptr) != i) continue;
-
-						do_cmd_wield(Ind, j);
-						break;
-					}
-
-				}
-				return;
-			}
-			/* '/cast' code is written by Ascrep(DEG). thx! */
-			else if (prefix(message, "/quaff"))
-			{
-				int book, whichplayer, whichspell;
-				bool ami = FALSE;
-
-				/* at least 1 argument required */
-				if (tk < 1)
-				{
-					msg_print(Ind, "\377oUsage: /quaff (item index or no.)");
-					return;
-				}
-
-				if(*token[1]>='1' && *token[1]<='9')
-				{	
-					object_type *o_ptr;
-					char c[4] = "@q";
-					bool found = FALSE;
-
-					c[2] = *token[1];
-					c[3] = '\0';
-
-					for(i = 0; i < INVEN_PACK; i++)
-					{
-						o_ptr = &(p_ptr->inventory[i]);
-						if (!o_ptr->tval) break;
-
-						if (find_inscription(o_ptr->note, c))
-						{
-							book = i;
-							found = TRUE;
-							break;
-						}
-					}
-
-					if (!found)
-					{
-						msg_format(Ind, "\377oInscription {%s} not found.", c);
-						return;
-					}
-					//					book = atoi(token[1])-1;
-				}	
-				else
-				{	
-					*token[1] &= ~(0x20);
-					if(*token[1]>='A' && *token[1]<='W')
-					{	
-						book = (int)(*token[1]-'A');
-					}		
-					else 
-					{
-						msg_print(Ind,"\377oPotion variable was out of range (a-w) or (1-9)");
-						return;
-					}	
-				}
-
-				do_cmd_quaff_potion(Ind, book);
-				return;
-			}
-			/* Display extra information */
-			else if (prefix(message, "/extra") ||
-					prefix(message, "/examine") ||
-					prefix(message, "/ex"))
-			{
-				/* Insanity warning (better message needed!) */
-				if (p_ptr->csane < p_ptr->msane / 8)
-				{
-					/* Message */
-					msg_print(Ind, "\377rYou can hardly resist the temptation to cry out!");
-				}
-				else if (p_ptr->csane < p_ptr->msane / 4)
-				{
-					/* Message */
-					msg_print(Ind, "\377yYou feel insanity about to grasp your mind..");
-				}
-				else if (p_ptr->csane < p_ptr->msane / 2)
-				{
-					/* Message */
-					msg_print(Ind, "\377yYou feel insanity creep into your mind..");
-				}
-				else
-				{
-					/* Message */
-					msg_print(Ind, "\377wYou are sane.");
-				}
-
-				return;
-			}
-			/* Please add here anything you think is needed.  */
-			else if ((prefix(message, "/refresh")) ||
-					prefix(message, "/ref"))
-			{
-				/* Clear the target */
-				p_ptr->target_who = 0;
-
-				/* Recalculate bonuses */
-				p_ptr->update |= (PU_BONUS);
-
-				/* Recalculate torch */
-				p_ptr->update |= (PU_TORCH);
-
-				/* Recalculate mana */
-				p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
-
-				/* Redraw */
-				p_ptr->redraw |= (PR_HP | PR_GOLD | PR_BASIC | PR_PLUSSES);
-
-				/* Notice */
-				p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-				/* Window stuff */
-				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_SPELL);
-
-				return;
-			}
-			else if ((prefix(message, "/target")) ||
-					prefix(message, "/tar"))
-			{
-				int tx, ty;
-
-				/* Clear the target */
-				p_ptr->target_who = 0;
-
-				/* at least 2 arguments required */
-				if (tk < 2)
-				{
-					msg_print(Ind, "\377oUsage: /target (X) (Y) <from your position>");
-					return;
-				}
-
-				tx = p_ptr->px + k;
-				ty = p_ptr->py + atoi(token[2]);
-				
-				if (!in_bounds(ty,tx))
-				{
-					msg_print(Ind, "\377oIllegal position!");
-					return;
-				}
-
-				/* Set the target */
-				p_ptr->target_row = ty;
-				p_ptr->target_col = tx;
-
-				/* Set 'stationary' target */
-				p_ptr->target_who = 0 - MAX_PLAYERS - 2;
-				
-				return;
-			}
-
-			/*
-			 * Admin commands
-			 *
-			 * These commands should be replaced by LUA scripts in the future.
-			 */
-			else if (admin)
-			{
-				/* presume worldpos */
-				switch (tk)
-				{
-					case 1:
-					{
-						/* depth in feet */
-						wp.wz = k / 50;
-						break;
-					}
-
-					case 3:
-					{
-						/* depth in feet */
-						wp.wz = atoi(token[3]) / 50;
-					}
-
-					case 2:
-					{
-						wp.wx = k % MAX_WILD_X;
-						wp.wy = atoi(token[2]) % MAX_WILD_Y;
-						wp.wz = 0;
-						break;
-					}
-
-					default:
-					{
-						break;
-					}
-				}
-
-				if (prefix(message, "/shutdown") ||
-						prefix(message, "/quit"))
-				{
-					shutdown_server();
-				}
-				else if (prefix(message, "/kick"))
-				{
-					if (tk)
-					{
-						int j = name_lookup_loose(Ind, token[1], FALSE);
-						if (j)
-						{
-							/* Success maybe :) */
-							msg_format(Ind, "Kicking %s out...", Players[j]->name);
-
-							/* Kick him */
-							Destroy_connection(Players[j]->conn, "kicked out");
-						}
-						return;
-					}
-
-					msg_print(Ind, "\377oUsage: /kick [Player name]");
-					return;
-				}
-				/* erase items and monsters */
-				else if (prefix(message, "/clear-level") ||
-						prefix(message, "/clv"))
-				{
-#if 0
-					/* depth in feet */
-					k = k / 50;
-					if (!tk) k = p_ptr->dun_depth;
-
-					if (-MAX_WILD >= k || k >= MAX_DEPTH)
-					{
-						msg_print(Ind, "\377oIlligal depth.  Usage: /clv [depth in feet]");
-						return;
-					}
-#endif
-
-					/* Wipe even if town/wilderness */
-					wipe_o_list_safely(&wp);
-					wipe_m_list(&wp);
-					wipe_t_list(&wp);
-
-					msg_format(Ind, "\377rItems/monsters/traps on %s are cleared.", wpos_format(&wp));
-					return;
-				}
-				else if (prefix(message, "/geno-level") ||
-						prefix(message, "/geno"))
-				{
-#if 0
-					/* depth in feet */
-					k = k / 50;
-					if (!tk) k = p_ptr->dun_depth;
-
-					if (-MAX_WILD >= k || k >= MAX_DEPTH)
-					{
-						msg_print(Ind, "\377oIlligal depth.  Usage: /geno [depth in feet]");
-						return;
-					}
-#endif	// 0
-
-					/* Wipe even if town/wilderness */
-					wipe_m_list(&wp);
-
-					msg_format(Ind, "\377rMonsters on %s are cleared.", wpos_format(&wp));
-					return;
-				}
-				else if (prefix(message, "/unstatic-level") ||
-						prefix(message, "/unst"))
-				{
-#if 0
-					/* depth in feet */
-					k = k / 50;
-					if (!tk) k = p_ptr->dun_depth;
-
-					if (-MAX_WILD >= k || k >= MAX_DEPTH)
-					{
-						msg_print(Ind, "\377oIlligal depth.  Usage: /unst [depth in feet]");
-						return;
-					}
-#endif
-					/* no sanity check, so be warned! */
-					master_level_specific(Ind, &wp, "u");
-					//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
-					return;
-				}
-				else if (prefix(message, "/static-level") ||
-						prefix(message, "/sta"))
-				{
-#if 0
-					/* depth in feet */
-					k = k / 50;
-					if (!tk) k = p_ptr->dun_depth;
-
-					if (-MAX_WILD >= k || k >= MAX_DEPTH)
-					{
-						msg_print(Ind, "\377oIlligal depth.  Usage: /sta [depth in feet]");
-						return;
-					}
-#endif	// 0
-
-					/* no sanity check, so be warned! */
-					master_level_specific(Ind, &wp, "s");
-					//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
-					return;
-				}
-				else if (prefix(message, "/identify") ||
-						prefix(message, "/id"))
-				{
-					identify_pack(Ind);
-
-					/* Combine the pack */
-					p_ptr->notice |= (PN_COMBINE);
-
-					/* Window stuff */
-					p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-					return;
-				}
-				else if (prefix(message, "/artifact") ||
-						prefix(message, "/art"))
-				{
-					if (k)
-					{
-						if (a_info[k].cur_num)
-						{
-							a_info[k].cur_num = 0;
-							a_info[k].known = FALSE;
-							msg_format(Ind, "Artifact %d is now \377Gfindable\377w.", k);
-						}
-						else
-						{
-							a_info[k].cur_num = 1;
-							a_info[k].known = TRUE;
-							msg_format(Ind, "Artifact %d is now \377runfindable\377w.", k);
-						}
-					}
-					else if (tk > 0 && strchr(token[1],'*'))
-					{
-						for (i = 0; i < MAX_A_IDX ; i++)
-							a_info[i].cur_num = 0;
-							a_info[k].known = FALSE;
-							msg_format(Ind, "All the artifacts are \377rfindable\377w!", k);
-					}
-					else
-					{
-						msg_print(Ind, "Usage: /artifact No.");
-					}
-					return;
-				}
-				else if (prefix(message, "/reload-config") ||
-						prefix(message, "/cfg"))
-				{
-					if (tk)
-					{
-						MANGBAND_CFG = string_make(token[1]);
-					}
-
-					//				msg_print(Ind, "Reloading server option(mangband.cfg).");
-					msg_format(Ind, "Reloading server option(%s).", MANGBAND_CFG);
-
-					/* Reload the server preferences */
-					load_server_cfg();
-					return;
-				}
-				else if (prefix(message, "/recall") ||
-						prefix(message, "/rec"))
-				{
-					switch (tk)
-					{
-						case 1:
-						{
-							/* depth in feet */
-							p_ptr->recall_pos.wz = k / 50;
-							break;
-						}
-
-						case 2:
-						{
-							p_ptr->recall_pos.wx = k % MAX_WILD_X;
-							p_ptr->recall_pos.wy = atoi(token[2]) % MAX_WILD_Y;
-							break;
-						}
-
-						default:
-						{
-							p_ptr->recall_pos.wz = 0;
-						}
-					}
-#if 0
-					/* depth in feet */
-					k = tk ? k / 50 : 0;
-
-					if (-MAX_WILD >= k || k >= MAX_DEPTH)
-					{
-						msg_print(Ind, "\377oIlligal depth.  Usage: /recall [depth in feet]");
-					}
-					else
-					{
-						p_ptr->recall_depth = k;
-						p_ptr->word_recall = 1;
-
-						msg_print(Ind, "\377oOmnipresent you are...");
-					}
-					/* do it on your own risk.. pfft */
-					p_ptr->recall_pos.wz = k;
-#endif
-					p_ptr->word_recall = 1;
-//					msg_print(Ind, "\377oOmnipresent you are...");
-					msg_format(Ind, "\377oTrying to recall to %s...",wpos_format(&p_ptr->recall_pos));
-					return;
-				}
-				else if (prefix(message, "/wish"))
-				{
-					object_type	forge;
-					object_type	*o_ptr = &forge;
-
-//					if (tk < 2 || !k || !(l = atoi(token[2])))
-					if (tk < 1 || !k)
-					{
-						msg_print(Ind, "\377oUsage: /wish (tval) (sval) [name1] or /wish (o_idx)");
-						return;
-					}
-
-					/* Move colon pointer forward to next word */
-//					while (*arg2 && (isspace(*arg2))) arg2++;
-
-					invcopy(o_ptr, tk > 1 ? lookup_kind(k, atoi(token[2])) : k);
-
-					/* Wish arts out! */
-//					if (token[3])
-					if (tk > 2)
-					{
-						int nom = atoi(token[3]);
-						o_ptr->number = 1;
-
-						if (nom > 0) o_ptr->name1 = nom;
-						else
-						{
-							/* It's ego or randarts */
-							if (nom) o_ptr->name2 = 0 - nom;
-							else o_ptr->name1 = ART_RANDART;
-
-							/* Piece together a 32-bit random seed */
-							o_ptr->name3 = rand_int(0xFFFF) << 16;
-							o_ptr->name3 += rand_int(0xFFFF);
-						}
-					}
-					else
-					{
-						o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
-					}
-
-					apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE);
-					o_ptr->discount = 99;
-					object_known(o_ptr);
-					o_ptr->owner = p_ptr->id;
-					o_ptr->level = 1;
-					(void)inven_carry(Ind, o_ptr);
-
-					return;
-				}
-				else if (prefix(message, "/trap") ||
-						prefix(message, "/tr"))
-				{
-					if (k)
-					{
-						wiz_place_trap(Ind, k);
-					}
-					else 
-					{
-						wiz_place_trap(Ind, TRAP_OF_FILLING);
-					}
-					return;
-				}
-				else
-				{
-					msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag target untag;");
-					msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta trap unst wish");
-					return;
-				}
-			}
-			else
-			{
-				msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag target untag;");
-				msg_print(Ind, "  /quaff is also available for old client users :)");
-				msg_print(Ind, "  /dis \377rdestroys \377wevery uninscribed items in your inventory!");
-				return;
-			}
-		}
+	if(message[0]=='/'){
+		do_slash_cmd(Ind, message);	/* add check */
+		return;
 	}
 
 	/* Default to no search string */
 	strcpy(search, "");
-
 
 	/* Look for a player's name followed by a colon */
 	colon = strchr(message, ':');

@@ -5647,6 +5647,40 @@ void do_cmd_activate(int Ind, int item)
                                 }
 				break;
 			}
+			case SV_RING_POLYMORPH:
+			{
+				/* Mimics only */
+				if(!(p_ptr->pclass==CLASS_MIMIC)) return;
+
+				/* If never used before, then set to the player form, otherwise set the player form*/
+				if (!o_ptr->pval)
+				{
+					msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
+					o_ptr->pval = p_ptr->body_monster;
+				}
+				else
+				{
+					monster_race *r_ptr = &r_info[o_ptr->pval];
+
+					if ((r_ptr->level > p_ptr->lev * 2) || (p_ptr->r_killed[o_ptr->pval] < r_ptr->level))
+					{
+						msg_print(Ind, "You dont match the ring yet.");
+						return;
+					}
+
+					msg_print(Ind, "You polymorph !");
+					p_ptr->body_monster = o_ptr->pval;
+					p_ptr->body_changed = TRUE;
+       	
+					p_ptr->update |= (PU_BONUS);
+
+					/* Recalculate mana */
+					p_ptr->update |= (PU_MANA | PU_HP);
+
+					/* Window stuff */
+					p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+				}
+			}
 		}
 
 
@@ -5691,40 +5725,6 @@ void do_cmd_activate(int Ind, int item)
 		return;
 	}
 #endif	// 0
-
-
-	if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH) && (p_ptr->pclass == CLASS_MIMIC))
-	  {
-	    /* If never used before, then set to the player form, otehrwise set the player form*/
-	    if (!o_ptr->pval)
-	      {
-		msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
-		o_ptr->pval = p_ptr->body_monster;
-	      }
-	    else
-	      {
-		monster_race *r_ptr = &r_info[o_ptr->pval];
-
-		if ((r_ptr->level > p_ptr->lev * 2) || (p_ptr->r_killed[o_ptr->pval] < r_ptr->level))
-		  {
-		    msg_print(Ind, "You dont match the ring yet.");
-		    return;
-		  }
-
-		msg_print(Ind, "You polymorph !");
-		p_ptr->body_monster = o_ptr->pval;
-		p_ptr->body_changed = TRUE;
-       	
-		p_ptr->update |= (PU_BONUS);
-
-		/* Recalculate mana */
-		p_ptr->update |= (PU_MANA | PU_HP);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-	      }
-	    return;
-	  }
 
 	/* Mistake */
 	msg_print(Ind, "That object cannot be activated.");

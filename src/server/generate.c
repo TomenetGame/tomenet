@@ -4401,7 +4401,6 @@ static void town_gen(struct worldpos *wpos)
 void alloc_dungeon_level(struct worldpos *wpos)
 {
 	int i;
-#ifdef NEW_DUNGEON
 	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
 	struct dungeon_type *d_ptr;
 	cave_type **zcave;
@@ -4421,18 +4420,6 @@ void alloc_dungeon_level(struct worldpos *wpos)
 		dlp->cave=zcave;
 	}
 	else w_ptr->cave=zcave;
-#else
-
-	/* Allocate the array of rows */
-	C_MAKE(cave[Depth], MAX_HGT, cave_type *);
-
-	/* Allocate each row */
-	for (i = 0; i < MAX_HGT; i++)
-	{
-		/* Allocate it */
-		C_MAKE(cave[Depth][i], MAX_WID, cave_type);
-	}
-#endif
 }
 
 /*
@@ -4455,7 +4442,6 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 
 	if (wpos->wz) wipe_t_list(wpos);
 
-#ifdef NEW_DUNGEON
 	zcave=getcave(wpos);
 	for (i = 0; i < MAX_HGT; i++)
 	{
@@ -4472,20 +4458,6 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 		dlp->cave=NULL;
 	}
 	else w_ptr->cave=NULL;
-#else
-	/* Free up the space taken by each row */
-	for (i = 0; i < MAX_HGT; i++)
-	{
-		/* Dealloc that row */
-		C_FREE(cave[Depth][i], MAX_WID, cave_type);
-	}
-
-	/* Deallocate the array of rows */
-	C_FREE(cave[Depth], MAX_HGT, cave_type *);
-
-	/* Set that level to "ungenerated" */
-	cave[Depth] = NULL; 
-#endif
 }
 
 /*
@@ -4495,6 +4467,9 @@ void dealloc_dungeon_level(struct worldpos *wpos)
  *
  * if min_unstatic_level option is set, applicable floors will
  * always be erased.	 - Jir -
+ *
+ * evileye - Levels were being unstaticed crazily. Adding a
+ * protection against this happening.
  */
 void dealloc_dungeon_level_maybe(struct worldpos *wpos)
 {

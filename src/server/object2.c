@@ -1175,9 +1175,9 @@ static s32b object_value_real(object_type *o_ptr)
 			if (o_ptr->to_d < 0) return (0L);
 
 			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
-			  {
-			    value += r_info[o_ptr->pval].level * r_info[o_ptr->pval].mexp;
-			  }
+			{
+				value += r_info[o_ptr->pval].level * r_info[o_ptr->pval].mexp;
+			}
 
 			/* Give credit for bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
@@ -3180,15 +3180,18 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
  */
 static void a_m_aux_3(object_type *o_ptr, int level, int power)
 {
-  int tries;
+	int tries;
 
 	artifact_bias = 0;
 
         /* Very good */
         if (power > 1)
         {
-                /* Make ego item */
-//                if (!rand_int(RANDART_JEWEL)) create_artifact(o_ptr, FALSE, TRUE);	else
+#if 0
+		if (!rand_int(RANDART_JEWEL)) create_artifact(o_ptr, FALSE, TRUE);
+			else
+#endif
+		/* Make ego item */
                 make_ego_item(level, o_ptr, TRUE);
         }
         else if (power < -1)
@@ -3230,6 +3233,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						}
 						o_ptr->pval = i;
 					}
+					else o_ptr->level=0;
 					break;
 				}
 
