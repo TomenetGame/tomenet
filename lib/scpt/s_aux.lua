@@ -57,8 +57,8 @@ function finish_spell(must_i)
         assert(s.spell, "No spell function!")
         assert(s.info, "No spell info!")
         assert(s.desc, "No spell desc!")
-		if not s.direction then s.direction = FALSE end
-		if not s.item then s.item = FALSE end
+       	if not s.direction then s.direction = FALSE end
+       	if not s.item then s.item = FALSE end
 
         i = new_spell(must_i, s.name)
         assert(i == must_i, "ACK ! i != must_i ! please contact the maintainer")
