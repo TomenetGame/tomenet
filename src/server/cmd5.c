@@ -3746,8 +3746,8 @@ void do_cmd_fight(int Ind, int book, int spell)
 
                                         if (d == 5) continue;
 
-                                        x = p_ptr->px + ddirx[d];
-                                        y = p_ptr->py + ddiry[d];
+                                        x = p_ptr->px + ddx[d];
+                                        y = p_ptr->py + ddy[d];
 
                                         if (!in_bounds(p_ptr->dun_depth, y, x)) continue;
                                         py_attack(Ind, y, x);
