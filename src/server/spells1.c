@@ -7281,7 +7281,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	bool old_tacit = suppress_message;
 
 	/* Affected location(s) */
-	cave_type *c_ptr;
+	cave_type *c_ptr, *c_ptr2;
 
 	/* Assume the player sees nothing */
 	bool notice = FALSE;
@@ -7609,13 +7609,31 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 #if 1
 			if (typ == GF_DISINTEGRATE)
 			{
+				c_ptr2 = &zcave[y][x];
 				if (cave_valid_bold(zcave,y,x))
 //						&& (cave[y][x].feat < FEAT_PATTERN_START
 //						 || cave[y][x].feat > FEAT_PATTERN_XTRA2))
-					cave_set_feat(wpos, y, x, FEAT_FLOOR);
+				{
+					if (
+					    //(c_ptr->feat != FEAT_WATER) &&
+					    (c_ptr2->feat != FEAT_SHAL_WATER) &&
+					    (c_ptr2->feat != FEAT_DEEP_WATER) &&
+					    (c_ptr2->feat != FEAT_TAINTED_WATER) &&
+					    (c_ptr2->feat != FEAT_DEEP_LAVA) &&
+					    (c_ptr2->feat != FEAT_SHAL_LAVA) &&
+					    //(c_ptr2->feat != FEAT_ASH) &&
+					    (c_ptr2->feat != FEAT_MUD) &&
+					    (c_ptr2->feat != FEAT_DIRT))
+					{
+					if (randint(2) == 1)
+						cave_set_feat(wpos, y, x, FEAT_FLOOR);
+					else
+						cave_set_feat(wpos, y, x, FEAT_ASH);
+					}
 
 				/* Update some things -- similar to GF_KILL_WALL */
 //				p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+				}
 			}
 #endif	/* 0 */
 			/* else */ /* HERE!!!!*/
