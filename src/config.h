@@ -807,6 +807,7 @@
  * DELETEME - test done
  */
 #define EVIL_TEST
+#define EVIL_METACLIENT
 
 #define CLIENT_SHIMMER
 #endif
