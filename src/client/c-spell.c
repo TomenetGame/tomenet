@@ -331,7 +331,7 @@ void do_pray(int book)
 static int get_mimic_spell(int *sn)
 {
 	int		i, num = 1;
-	bool		flag, redraw, okay;
+	bool		flag, redraw;
 	char		choice;
 	char		out_val[160];
 	int             corresp[200];
@@ -469,7 +469,7 @@ static int get_mimic_spell(int *sn)
  */
 void do_mimic()
 {
-  int spell, j, i;
+  int spell;
 
   /* Ask for the spell */
   if(!get_mimic_spell(&spell)) return;

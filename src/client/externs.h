@@ -379,10 +379,12 @@ extern void window_stuff(void);
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);
+extern void do_cmd_messages_chatonly(void);
 
 /* client.c */
 
 /* netclient.c */
+extern void do_mail(void);
 extern int ticks;
 extern void update_ticks();
 extern void do_keepalive();

@@ -125,7 +125,7 @@ static void Receive_init(void)
 
 int Net_setup(void)
 {
-	int n, len, done = 0, retries;
+	int n, len, done = 0;
 	long todo = sizeof(setup_t);
 	char *ptr;
 
@@ -241,8 +241,7 @@ int Net_verify(char *real, char *nick, char *pass, int sex, int race, int class)
 {
 	int	i, n,
 		type,
-		result,
-		retries;
+		result;
 	time_t	last;
 
 	//for (retries = 0;;retries++)
@@ -568,8 +567,7 @@ int Net_fd(void)
  */
 int Net_start(void)
 {
-	int		retries,
-			type,
+	int		type,
 			result;
 	time_t		last;
 

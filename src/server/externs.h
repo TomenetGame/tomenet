@@ -450,6 +450,12 @@ extern bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int 
 extern void server_birth(void);
 
 /* cave.c */
+extern bool can_go_up(struct worldpos *wpos);
+extern bool can_go_down(struct worldpos *wpos);
+extern bool istown(struct worldpos *wpos);
+extern bool inarea(struct worldpos *apos, struct worldpos *bpos);
+extern int getlevel(struct worldpos *wpos);
+extern void wpcopy(struct worldpos *dest, struct worldpos *src);
 extern int distance(int y1, int x1, int y2, int x2);
 extern bool player_can_see_bold(int Ind, int y, int x);
 extern bool no_lite(int Ind);
@@ -660,6 +666,7 @@ extern errr get_rnd_line(cptr file_name, int entry, char *output);
 
 /* generate.c */
 #ifdef NEW_DUNGEON
+extern void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, char *race, char *exclude, bool tower);
 extern void alloc_dungeon_level(struct worldpos *wpos);
 extern void dealloc_dungeon_level(struct worldpos *wpos);
 extern void generate_cave(struct worldpos *wpos);
@@ -675,6 +682,7 @@ extern void build_vault(int Depth, int yval, int xval, int ymax, int xmax, cptr 
 extern int world_index(int world_x, int world_y);
 extern void init_wild_info(void);
 #ifdef NEW_DUNGEON
+extern void addtown(int y, int x, int base, u16b flags);
 extern void wild_apply_day(struct worldpos *wpos);
 extern void wild_apply_night(struct worldpos *wpos);
 extern int determine_wilderness_type(struct worldpos *wpos);

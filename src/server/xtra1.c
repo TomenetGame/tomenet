@@ -1347,7 +1347,7 @@ static void calc_hitpoints(int Ind)
 	player_type *p_ptr = Players[Ind], *p_ptr2;
 
 	object_type *o_ptr;
-	u32b f1, f2, f3, f4;
+	u32b f1, f2, f3;
 
 	int bonus, mhp, Ind2 = 0;
 

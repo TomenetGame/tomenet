@@ -3325,7 +3325,7 @@ void player_death(int Ind)
 		add_high_score(Ind);
 
 		/* Format string */
-		sprintf(buf, "Killed by %s (%d points)", p_ptr->died_from, total_points(Ind));
+		sprintf(buf, "Killed by %s (%ld points)", p_ptr->died_from, total_points(Ind));
 
 		/* Get rid of him */
 		Destroy_connection(p_ptr->conn, buf);
@@ -4959,10 +4959,10 @@ bool target_set_friendly(int Ind, int dir, ...)
 			q_ptr = Players[castplayer];
 
 			/* Skip unconnected players */
-			if (q_ptr->conn == NOT_CONNECTED) return;
+			if (q_ptr->conn == NOT_CONNECTED) return FALSE;
 
 			/* Ignore "unreasonable" players */
-			if (!target_able(Ind, 0 - castplayer)) return;
+			if (!target_able(Ind, 0 - castplayer)) return FALSE;
 
 			/* Save the player index */
 			p_ptr->target_x[p_ptr->target_n] = q_ptr->px;

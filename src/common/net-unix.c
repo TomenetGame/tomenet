@@ -648,7 +648,7 @@ int	fd;
     int		socklen=sizeof(struct sockaddr_in);
 
     cmw_priv_assert_netaccess();
-    retval = accept(fd, &sl_dgram_lastaddr, &socklen);
+    retval = accept(fd, (struct sockaddr*)&sl_dgram_lastaddr, &socklen);
     //retval = accept(fd, NULL, 0);
     cmw_priv_deassert_netaccess();
 
@@ -693,7 +693,6 @@ SocketLinger(fd)
 int	fd;
 #endif /* __STDC__ */
 {
-    int option=1;
 #if defined(LINUX0) || !defined(SO_LINGER)
     /*
      * As of 0.99.12 Linux doesn't have LINGER stuff.
@@ -2289,7 +2288,7 @@ DgramLastaddr(int fd)
     return "localhost";
 #else
     int len=sizeof(struct sockaddr_in);
-    getpeername(fd, &sl_dgram_lastaddr, &len);
+    getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
     return (inet_ntoa(sl_dgram_lastaddr.sin_addr));
 #endif
 } /* DgramLastaddr */
@@ -2337,7 +2336,7 @@ DgramLastname(int fd)
     struct hostent	*he;
     char		*str;
     int len=sizeof(struct sockaddr_in);
-    getpeername(fd, &sl_dgram_lastaddr, &len);
+    getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
 
     he = gethostbyaddr((char *)&sl_dgram_lastaddr.sin_addr,
 		       sizeof(struct in_addr), AF_INET);
@@ -2391,7 +2390,7 @@ DgramLastport(int fd)
     return port;
 #else
     int len=sizeof(struct sockaddr_in);
-    getpeername(fd, &sl_dgram_lastaddr, &len);
+    getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
     return (ntohs((int)sl_dgram_lastaddr.sin_port));
 #endif
 } /* DgramLastport */

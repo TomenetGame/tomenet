@@ -14,6 +14,7 @@
 
 #include "angband.h"
 
+static monster_race* race_info_idx(int r_idx, int ego, int randuni);
 
 /* Monster gain a few levels ? */
 void monster_check_experience(int m_idx, bool silent)
@@ -2859,9 +2860,8 @@ bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, unsigned c
 bool summon_specific_race_somewhere(int Depth, int r_idx, unsigned char size)
 #endif
 {
-	int                     y, x, i, d, min_dis = 999;
+	int                     y, x;
 	int                     tries = 0;
-	player_type *p_ptr;
 
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
@@ -3492,7 +3492,7 @@ int pick_randuni(int r_idx, int Level)
  * proprieties, the ego type and randuni id.
  * (randuni parts are not done yet..	- Jir -)
  */
-monster_race* race_info_idx(int r_idx, int ego, int randuni)
+static monster_race* race_info_idx(int r_idx, int ego, int randuni)
 {
         static monster_race race;
         monster_ego *re_ptr = &re_info[ego];

@@ -1600,7 +1600,7 @@ static void object_mention(object_type *o_ptr)
  *
  * Note -- see "make_artifact()" and "apply_magic()"
  */
-static bool make_artifact_special(int Depth, object_type *o_ptr)
+static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr)
 {
 	int			i;
 
@@ -1608,7 +1608,7 @@ static bool make_artifact_special(int Depth, object_type *o_ptr)
 
 
 	/* No artifacts in the town */
-	if (!Depth) return (FALSE);
+	if (istown(wpos)) return (FALSE);
 
 	/* Check the artifact list (just the "specials") */
 	for (i = 0; i < ART_MIN_NORMAL; i++)
@@ -1622,10 +1622,10 @@ static bool make_artifact_special(int Depth, object_type *o_ptr)
 		if (a_ptr->cur_num) continue;
 
 		/* XXX XXX Enforce minimum "depth" (loosely) */
-		if (a_ptr->level > Depth)
+		if (a_ptr->level > getlevel(wpos))
 		{
 			/* Acquire the "out-of-depth factor" */
-			int d = (a_ptr->level - Depth) * 2;
+			int d = (a_ptr->level - getlevel(wpos)) * 2;
 
 			/* Roll for out-of-depth creation */
 			if (rand_int(d) != 0) continue;
@@ -1669,13 +1669,13 @@ static bool make_artifact_special(int Depth, object_type *o_ptr)
  *
  * Note -- see "make_artifact_special()" and "apply_magic()"
  */
-static bool make_artifact(int Depth, object_type *o_ptr)
+static bool make_artifact(struct worldpos *wpos, object_type *o_ptr)
 {
 	int i;
 
 
 	/* No artifacts in the town */
-	if (!Depth) return (FALSE);
+	if (istown(wpos)) return (FALSE);
 
 	/* Paranoia -- no "plural" artifacts */
 	if (o_ptr->number != 1) return (FALSE);
@@ -1696,10 +1696,10 @@ static bool make_artifact(int Depth, object_type *o_ptr)
 		if (a_ptr->sval != o_ptr->sval) continue;
 
 		/* XXX XXX Enforce minimum "depth" (loosely) */
-		if (a_ptr->level > Depth)
+		if (a_ptr->level > getlevel(wpos))
 		{
 			/* Acquire the "out-of-depth factor" */
-			int d = (a_ptr->level - Depth) * 2;
+			int d = (a_ptr->level - getlevel(wpos)) * 2;
 
 			/* Roll for out-of-depth creation */
 			if (rand_int(d) != 0) continue;

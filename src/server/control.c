@@ -117,8 +117,7 @@ static void console_artifacts()
 static void console_uniques()
 {
 	int k, count = 0;
-	char buf[1024], tmp[1024];
-	cptr killer;
+	char buf[1024];
 
 	/* Packet header */
 	Packet_printf(&console_buf, "%c", CONSOLE_UNIQUE_LIST);
