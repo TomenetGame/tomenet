@@ -558,6 +558,14 @@ void self_knowledge(int Ind)
 		f5 |= t5;
 	}
 
+#if 0
+	k = 100 - p_ptr->csane * 100 / p_ptr->msane;
+	if (k < 100)
+	{
+		sprintf(info[i++], "%d%% of your mind is under your control.", k);
+	}
+#endif
+
 
 	if (p_ptr->blind)
 	{
@@ -659,7 +667,7 @@ void self_knowledge(int Ind)
 	{
 		info[i++] = "You land gently.";
 	}
-#if 0
+#if 1
 	if (p_ptr->climb)
 	{
 		info[i++] = "You can climb hight mountains.";
@@ -698,14 +706,14 @@ void self_knowledge(int Ind)
 			if (p_ptr->telepathy & ESP_UNIQUE) info[i++] = "You can sense the presence of unique beings.";
 		}
 	}
-	if (p_ptr->anti_magic)	// older
+	if (p_ptr->antimagic)	// older (percent)
 	{
 		info[i++] = "You are surrounded by an anti-magic shield.";
 	}
-#if 0
-        if (p_ptr->antimagic)	// newer
+#if 1
+        if (p_ptr->anti_magic)	// newer (saving-throw boost)
 	{
-                info[i++] = "You are surrounded by an anti-magic field.";
+                info[i++] = "You are surrounded by an anti-magic shell.";
 	}
 #endif	// 0
 	if (p_ptr->hold_life)
@@ -5287,6 +5295,7 @@ bool heal_insanity(int Ind, int val)
 			p_ptr->csane_frac = 0;
 		}
 
+		p_ptr->update |= PU_SANITY;
 		p_ptr->redraw |= PR_SANITY;
 		p_ptr->window |= (PW_SPELL | PW_PLAYER);
 

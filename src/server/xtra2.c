@@ -3805,6 +3805,21 @@ void player_death(int Ind)
 				p_ptr->name, p_ptr->died_from);
 
 		msg_broadcast(Ind, buf);
+
+		/* wipe artifacts (s)he had */
+		for (i = 0; i < INVEN_TOTAL; i++)
+		{
+			/* Make sure we have an object */
+			if (p_ptr->inventory[i].k_idx == 0)
+				continue;
+
+			if (artifact_p(&p_ptr->inventory[i])) 
+			{
+				/* set the artifact as unfound */
+				a_info[p_ptr->inventory[i].name1].cur_num = 0;
+			}
+		}
+
 		kill_houses(p_ptr->id, OT_PLAYER);
 		kill_objs(p_ptr->id);
 		p_ptr->death=TRUE;

@@ -2309,6 +2309,7 @@ static void calc_bonuses(int Ind)
 				if (p_ptr->mp_ptr->spell_stat == A_WIS)
 				{
 					p_ptr->update |= (PU_MANA | PU_SPELLS);
+			//	 | PU_SANITY
 				}
 			}
 

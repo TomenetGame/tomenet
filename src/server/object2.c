@@ -945,18 +945,22 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f3 & TR3_HIDE_TYPE) total += 0;
 	if (f3 & TR3_SHOW_MODS) total += 0;
 	if (f3 & TR3_INSTA_ART) total += 0;
+	if (!(f4 & TR4_FUEL_LITE))
+	{
         if (f3 & TR3_LITE1) total += 750;
         if (f4 & TR4_LITE2) total += 1250;
         if (f4 & TR4_LITE3) total += 2750;
+		if (f3 & TR3_IGNORE_FIRE) total += 100;
+	}
 	if (f3 & TR3_SEE_INVIS) total += 2000;
         if (esp) total += (12500 * count_bits(esp));
+        if (esp & ESP_ALL) total += 100000;
 	if (f3 & TR3_SLOW_DIGEST) total += 750;
 	if (f3 & TR3_REGEN) total += 2500;
 	if (f3 & TR3_XTRA_MIGHT) total += 2250;
 	if (f3 & TR3_XTRA_SHOTS) total += 10000;
 	if (f3 & TR3_IGNORE_ACID) total += 100;
 	if (f3 & TR3_IGNORE_ELEC) total += 100;
-	if (f3 & TR3_IGNORE_FIRE) total += 100;
 	if (f3 & TR3_IGNORE_COLD) total += 100;
 	if (f3 & TR3_ACTIVATE) total += 100;
 	if (f3 & TR3_DRAIN_EXP) total -= 12500;
@@ -1137,11 +1141,12 @@ static s32b object_value_real(object_type *o_ptr)
 		value = a_ptr->cost;
 	}
 
-	/* Ego-Item */
 	else
 	{
 		/* Hope this won't cause inflation.. */
-		value += flag_cost (o_ptr, o_ptr->pval);
+		value += flag_cost(o_ptr, o_ptr->pval);
+
+		/* Ego-Item */
 		if (o_ptr->name2)
 		{
 			ego_item_type *e_ptr = &e_info[o_ptr->name2];
@@ -1151,6 +1156,7 @@ static s32b object_value_real(object_type *o_ptr)
 
 			/* Hack -- Reward the ego-item with a bonus */
 			value += e_ptr->cost;
+
 
 #if 0	// see you later :)
 			if (o_ptr->name2b)

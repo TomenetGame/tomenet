@@ -590,3 +590,4 @@ Change list for PernMangband
 - 'cleverer' monster spells. (set STUPID_MONSTERS if it's too slow)
 - monster category filter (eg. to eliminate Joke-monsters).
 - better store-price calculator (rebalancement needed).
+- dying hellish could cause unfindable arts.

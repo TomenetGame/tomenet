@@ -6596,7 +6596,7 @@ static int Receive_redraw(int ind)
 		p_ptr->store_num = -1;
 		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 	       	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-	       	p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
+	       	p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP | PU_SANITY);
 	}
 
 	return 1;
