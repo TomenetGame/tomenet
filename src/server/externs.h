@@ -729,13 +729,15 @@ extern bool check_ignore(int attacker, int target);
 extern bool check_hostile(int attacker, int target);
 extern cptr lookup_player_name(int id);
 extern int lookup_player_id(cptr name);
-extern void add_player_name(cptr name, int id, time_t laston);
+extern void add_player_name(cptr name, int id, byte level, byte party, time_t laston);
 extern void delete_player_id(int id);
 extern void delete_player_name(cptr name);
 extern int player_id_list(int **list);
 extern void stat_player(char *name, bool on);
 extern time_t lookup_player_laston(int id);
-extern void clockin(int Ind);
+extern byte lookup_player_level(int id);
+extern byte lookup_player_party(int id);
+extern void clockin(int Ind, int type);
 extern int newid(void);
 
 /* printout.c */

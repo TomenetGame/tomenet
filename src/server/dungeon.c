@@ -2463,6 +2463,33 @@ static void purge_old()
 	}
 }
 
+void cheeze(object_type *o_ptr){
+	int j;
+	/* check for inside a house */
+	for(j=0;j<num_houses;j++){
+		if(inarea(&houses[j].wpos, &o_ptr->wpos)){
+			if(fill_house(&houses[j], 4, o_ptr)){
+				if(houses[j].dna->owner_type==OT_PLAYER){
+					if(o_ptr->owner != houses[j].dna->owner){
+						if(o_ptr->level > lookup_player_level(houses[j].dna->owner))
+							s_printf("Suspicious item: (%d,%d) Owned by %s, in %s's house. (%d,%d)\n", o_ptr->wpos.wx, o_ptr->wpos.wy, lookup_player_name(o_ptr->owner), lookup_player_name(houses[j].dna->owner), o_ptr->level, lookup_player_level(houses[j].dna->owner));
+					}
+				}
+				else if(houses[j].dna->owner_type==OT_PARTY){
+					int owner;
+					if((owner=lookup_player_id(parties[houses[j].dna->owner].owner))){
+						if(o_ptr->owner != owner){
+							if(o_ptr->level > lookup_player_level(owner))
+								s_printf("Suspicious item: (%d,%d) Owned by %s, in %s party house. (%d,%d)\n", o_ptr->wpos.wx, o_ptr->wpos.wy, lookup_player_name(o_ptr->owner), parties[houses[j].dna->owner].name, o_ptr->level, lookup_player_level(owner));
+						}
+					}
+				}
+				break;
+			}
+		}
+	}
+}
+
 /*
  * The purpose of this function is to scan through all the
  * game objects on the surface of the world. Objects which
@@ -2478,7 +2505,7 @@ static void purge_old()
  * this clearing.
  */
 void scan_objs(){
-	int i,cnt=0, dcnt=0;
+	int i, cnt=0, dcnt=0;
 	object_type *o_ptr;
 	cave_type **zcave;
 	for(i=0;i<MAX_O_IDX;i++){
@@ -2493,6 +2520,9 @@ void scan_objs(){
 						dcnt++;
 					}
 				}
+	/* Once hourly cheeze check. (logs would fill the hd otherwise ;( */
+				else
+					if (!(turn % (cfg.fps * 3600))) cheeze(o_ptr);
 				cnt++;
 			}
 		}

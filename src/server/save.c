@@ -1312,6 +1312,9 @@ static void wr_player_names(void)
 		/* Store the ID */
 		wr_s32b(id_list[i]);
 		wr_s32b(lookup_player_laston(id_list[i]));
+		/* 3.4.2 server */
+		wr_byte(lookup_player_level(id_list[i]));
+		wr_byte(lookup_player_party(id_list[i]));
 
 		/* Store the player name */
 		wr_string(lookup_player_name(id_list[i]));

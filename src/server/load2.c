@@ -2156,6 +2156,7 @@ errr rd_server_savefile()
 	if (!older_than(0,4,1))
 	{
 		char name[80];
+		byte level, party;
 
 		rd_u32b(&tmp32u);
 
@@ -2167,12 +2168,20 @@ errr rd_server_savefile()
 			/* Read the ID */
 			rd_s32b(&tmp32s);
 			rd_s32b(&laston);
+			if(!older_than(3,4,2)){
+				rd_byte(&level);
+				rd_byte(&party);
+			}
+			else{
+				level=0;
+				party=0;
+			}
 
 			/* Read the player name */
 			rd_string(name, 80);
 
 			/* Store the player name */
-			add_player_name(name, tmp32s, laston);
+			add_player_name(name, tmp32s, level, party, laston);
 		}
 	}
 

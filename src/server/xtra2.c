@@ -2719,6 +2719,7 @@ void check_experience(int Ind)
 		/* Message */
 		msg_format(Ind, "Welcome to level %d.", p_ptr->lev);
 		sprintf(str, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
+		clockin(Ind, 1);	/* Set player level */
 		msg_broadcast(Ind, str);
 	}
 }

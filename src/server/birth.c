@@ -1383,7 +1383,7 @@ static void player_setup(int Ind)
 	{
 		time_t ttime;
 		/* Add */
-		add_player_name(p_ptr->name, p_ptr->id, time(&ttime));
+		add_player_name(p_ptr->name, p_ptr->id, 1, 0, time(&ttime));
 	}
 
 	/* Set his "current activities" variables */
@@ -1493,7 +1493,9 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	{
 		/* Loading succeeded */         
 		player_setup(Ind);
-		clockin(Ind);
+		clockin(Ind, 0);	/* Timestamp the player */
+		clockin(Ind, 1);	/* Set player level */
+		clockin(Ind, 2);	/* Set player party */
 		return TRUE;            
 	}
 

@@ -5779,14 +5779,20 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 				
 		if ((c_ptr->m_idx != 0) && dist && (flg & PROJECT_STOP))
 		{
-			/* always hit monsters */
-			if (c_ptr->m_idx > 0) break;
+			if (who > 0){
+				/* hit first player (ignore monster) */
+				if(c_ptr->m_idx < 0) break;
+			}
+			else{
+				/* always hit monsters */
+				if (c_ptr->m_idx > 0) break;
 			
-			/* neutral people hit each other */			
-			if (!Players[0 - who]->party) break;
+				/* neutral people hit each other */			
+				if (!Players[0 - who]->party) break;
 			
-			/* people not in the same party hit each other */			
-			if (!player_in_party(Players[0 - who]->party, 0 - c_ptr->m_idx)) break;	
+				/* people not in the same party hit each other */			
+				if (!player_in_party(Players[0 - who]->party, 0 - c_ptr->m_idx)) break;	
+			}
 		}
 
                 if((c_ptr->m_idx != 0) && dist && ((typ == GF_HEAL_PLAYER) || (typ == GF_WRAITH_PLAYER) || (typ == GF_SPEED_PLAYER) || (typ == GF_SHIELD_PLAYER) || (typ == GF_RECALL_PLAYER) || (typ == GF_BLESS_PLAYER) || (typ == GF_REMFEAR_PLAYER) || (typ == GF_SATHUNGER_PLAYER) || (typ == GF_RESFIRE_PLAYER) || (typ == GF_RESCOLD_PLAYER) || (typ == GF_CUREPOISON_PLAYER) || (typ == GF_SEEINVIS_PLAYER) || (typ == GF_SEEMAP_PLAYER) || (typ == GF_CURECUT_PLAYER) || (typ == GF_CURESTUN_PLAYER) || (typ == GF_DETECTCREATURE_PLAYER) || (typ == GF_DETECTDOOR_PLAYER) || (typ == GF_DETECTTRAP_PLAYER) || (typ == GF_TELEPORTLVL_PLAYER) || (typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) || (typ == GF_RESACID_PLAYER) || (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER)))

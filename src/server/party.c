@@ -199,6 +199,7 @@ int party_create(int Ind, cptr name)
 	/* Add the owner as a member */
 	p_ptr->party = index;
 	parties[index].num++;
+	clockin(Ind, 2);
 
 	/* Set the "creation time" */
 	parties[index].created = turn;
@@ -345,6 +346,7 @@ int party_add(int adder, cptr name)
 
 	/* Set his party number */
 	p_ptr->party = party_id;
+	clockin(Ind, 2);
 
 	/* Resend info */
 	Send_party(Ind);
@@ -393,6 +395,7 @@ static void del_party(int id){
 		if (player_in_party(id, i))
 		{
 			Players[i]->party = 0;
+			clockin(i, 2);
 			msg_print(i, "Your party has been disbanded.");
 			Send_party(i);
 		}
@@ -555,6 +558,7 @@ int party_remove(int remover, cptr name)
 
 		/* Set his party number back to "neutral" */
 		p_ptr->party = 0;
+		clockin(Ind, 2);
 
 		/* Messages */
 		msg_print(Ind, "You have been removed from your party.");
@@ -633,6 +637,7 @@ void party_leave(int Ind)
 
 	/* Set him back to "neutral" */
 	p_ptr->party = 0;
+	clockin(Ind, 2);
 
 	/* Inform people */
 	msg_print(Ind, "You have been removed from your party.");
@@ -1567,6 +1572,11 @@ struct hash_entry
 {
 	int id;				/* The ID */
 	cptr name;			/* Player name */
+
+	/* new in 3.4.2 */
+	byte level;			/* Player maximum level */
+	byte party;			/* Player party */
+
 	time_t laston;			/* Last on time */
 	struct hash_entry *next;	/* Next entry in the chain */
 };
@@ -1582,6 +1592,64 @@ static int hash_slot(int id)
 {
 	/* Be very efficient */
 	return (id & (NUM_HASH_ENTRIES - 1));
+}
+
+/*
+ * Get the player's highest level.
+ */
+byte lookup_player_level(int id)
+{
+	int slot;
+	hash_entry *ptr;
+
+	/* Get the slot */
+	slot = hash_slot(id);
+
+	/* Acquire the pointer to the first element in the chain */
+	ptr = hash_table[slot];
+
+	/* Search the chain, looking for the correct ID */
+	while (ptr)
+	{
+		/* Check this entry */
+		if (ptr->id == id)
+			return ptr->level;
+
+		/* Next entry in chain */
+		ptr = ptr->next;
+	}
+
+	/* Not found */
+	return -1L;
+}
+
+/*
+ * Get the player's current party.
+ */
+byte lookup_player_party(int id)
+{
+	int slot;
+	hash_entry *ptr;
+
+	/* Get the slot */
+	slot = hash_slot(id);
+
+	/* Acquire the pointer to the first element in the chain */
+	ptr = hash_table[slot];
+
+	/* Search the chain, looking for the correct ID */
+	while (ptr)
+	{
+		/* Check this entry */
+		if (ptr->id == id)
+			return ptr->party;
+
+		/* Next entry in chain */
+		ptr = ptr->next;
+	}
+
+	/* Not found */
+	return -1L;
 }
 
 /*
@@ -1691,15 +1759,27 @@ void stat_player(char *name, bool on){
 }
 
 /* Timestamp an existing player */
-void clockin(int Ind){
+void clockin(int Ind, int type){
 	int slot;
 	hash_entry *ptr;
 	player_type *p_ptr=Players[Ind];
 	slot = hash_slot(p_ptr->id);
 	ptr = hash_table[slot];
 	while (ptr){
-		if (ptr->id == p_ptr->id && (ptr->laston)){
-			ptr->laston=time(&ptr->laston);
+		if (ptr->id == p_ptr->id){
+			switch(type){
+				case 0:
+					if(ptr->laston) ptr->laston=time(&ptr->laston);
+					break;
+				case 1:
+					if(p_ptr->lev>ptr->level)
+						ptr->level=p_ptr->lev;
+					break;
+				case 2:
+					ptr->party=p_ptr->party;
+					break;
+			}
+			break;
 		}
 		ptr=ptr->next;
 	}
@@ -1813,7 +1893,7 @@ void scan_players(){
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, time_t laston)
+void add_player_name(cptr name, int id, byte level, byte party, time_t laston)
 {
 	int slot;
 	hash_entry *ptr;
@@ -1850,6 +1930,8 @@ void add_player_name(cptr name, int id, time_t laston)
 	ptr->name = strdup(name);
 	ptr->laston = laston;
 	ptr->id = id;
+	ptr->level = level;
+	ptr->party = party;
 
 	/* Add the rest of the chain to this entry */
 	ptr->next = hash_table[slot];

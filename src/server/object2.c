@@ -321,7 +321,7 @@ void wipe_o_list_safely(struct worldpos *wpos)
 	int i;
 
 	cave_type **zcave;
-	zcave=getcave(wpos);
+	if(!(zcave=getcave(wpos))) return;
 
 	/* Delete the existing objects */
 	for (i = 1; i < o_max; i++)
@@ -332,7 +332,7 @@ void wipe_o_list_safely(struct worldpos *wpos)
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip objects not on this depth */
-		if(inarea(wpos, &o_ptr->wpos))
+		if(!(inarea(wpos, &o_ptr->wpos)))
 			continue;
 
 		/* Skip objects inside a house(or something) */
@@ -353,9 +353,7 @@ void wipe_o_list_safely(struct worldpos *wpos)
 		}
 
 		/* Wipe the object */
-		if(zcave){
-			zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
-		}
+		zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
 		WIPE(o_ptr, object_type);
 	}
 

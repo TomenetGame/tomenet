@@ -2158,7 +2158,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
-	if(func==3)
+	if(func==3 || func==4)
 		success=FALSE;
 
 	if(h_ptr->flags&HF_RECT){
@@ -2166,6 +2166,13 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 		for(x=0;x<h_ptr->coords.rect.width;x++){
 			for(y=0;y<h_ptr->coords.rect.height;y++){
  				c_ptr=&zcave[h_ptr->y+y][h_ptr->x+x];
+				if(func==4){ /* object in house */
+					object_type *o_ptr=(object_type*)data;
+					if(o_ptr->ix==h_ptr->x+x && o_ptr->iy==h_ptr->y+y){
+						success=TRUE;
+						break;
+					}
+				}
 				if(func==3){ /* player in house? */
 					player_type *p_ptr=(player_type*)data;
 					if(p_ptr->px==h_ptr->x+x && p_ptr->py==h_ptr->y+y){
