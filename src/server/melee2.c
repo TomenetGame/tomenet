@@ -905,7 +905,7 @@ static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
 }
 
 //bool monst_check_grab(int Ind, int m_idx, cptr desc)
-bool monst_check_grab(int m_idx, cptr desc)
+bool monst_check_grab(int m_idx, int mod, cptr desc)
 {
 //	player_type *p_ptr;
 	monster_type	*m_ptr = &m_list[m_idx];
@@ -933,6 +933,9 @@ bool monst_check_grab(int m_idx, cptr desc)
 		/* Compute distance */
 		if (distance(y2, x2, q_ptr->py, q_ptr->px) > 1) continue;
 
+		/* Cannot grab what you cannot see */
+		if (!q_ptr->mon_vis[m_idx]) continue;
+
 		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed)
 			continue;
 
@@ -942,6 +945,8 @@ bool monst_check_grab(int m_idx, cptr desc)
 		if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(q_ptr)
 				&& !q_ptr->inventory[INVEN_WIELD].k_idx)
 			grabchance += get_skill_scale(q_ptr, SKILL_MARTIAL_ARTS, 50);
+
+		grabchance *= mod / 100;
 
 		if (q_ptr->blind) grabchance -= 30;
 
@@ -1542,7 +1547,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			return (TRUE);
 		}
 
-		if (monst_check_grab(m_idx, "cast")) return (TRUE);
+		if (monst_check_grab(m_idx, 50, "cast")) return (TRUE);
 	}
 #endif	// STUPID_MONSTER_SPELLS
 
@@ -1629,7 +1634,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (power > 30) dice += 2;
 #endif
 			disturb(Ind, 1, 0);
-			if (monst_check_grab(m_idx, "fire")) break;
+			if (monst_check_grab(m_idx, 100, "fire")) break;
 			for (k = 0; k < fois; k++)
 			{
 				if (blind) msg_format(Ind, "%^s makes a strange noise.", m_name);
@@ -2828,6 +2833,8 @@ bool make_attack_spell(int Ind, int m_idx)
 			disturb(Ind, 1, 0);
 			if (monst_check_antimagic(Ind, m_idx)) break;
 //			if (monst_check_grab(Ind, m_idx)) break;
+			/* it's low b/c check for spellcast is already done */
+			if (monst_check_grab(m_idx, 40, "teleport")) break;
 			if (teleport_away(m_idx, 10) && visible)
 				msg_format(Ind, "%^s blinks away.", m_name);
 			break;
@@ -2839,6 +2846,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 //			if (monst_check_grab(Ind, m_idx)) break;
+			if (monst_check_grab(m_idx, 40, "teleport")) break;
 			if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && visible)
 				msg_format(Ind, "%^s teleports away.", m_name);
 			break;
@@ -5183,7 +5191,7 @@ static void process_monster(int Ind, int m_idx)
 		}
 
 		/* Hack -- player hinders its movement */
-		if (do_move && monst_check_grab(m_idx, "run"))
+		if (do_move && monst_check_grab(m_idx, 70, "run"))
 		{
 			/* Take a turn */
 			do_turn = TRUE;

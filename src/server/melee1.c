@@ -21,6 +21,12 @@
  */
 //#define SUPPRESS_MONSTER_STUN // HERESY !
 
+/* 
+ * This one is more moderate; kick, punch, crush etc. still stuns, but
+ * normal 'hit' doesn't.
+ */
+#define NORMAL_HIT_NO_STUN
+
 
 /*
  * Critical blow.  All hits that do 95% of total possible damage,
@@ -247,6 +253,9 @@ bool make_attack_normal(int Ind, int m_idx)
 		{
 			int chance = p_ptr->dodge_chance - ((rlev * 5) / 6);
 
+			/* always 20% chance to hit */
+			if (chance > 80) chance = 80;
+
 			/* Always disturbing */
 			disturb(Ind, 1, 0);
 
@@ -283,7 +292,11 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBM_HIT:
 				{
 					act = "hits you.";
+#ifdef NORMAL_HIT_NO_STUN
+					do_cut = 1;
+#else
 					do_cut = do_stun = 1;
+#endif	// NORMAL_HIT_NO_STUN
 					touched = TRUE;
 					break;
 				}
@@ -1463,6 +1476,9 @@ bool make_attack_normal(int Ind, int m_idx)
 				if (k) (void)set_cut(Ind, p_ptr->cut + k);
 			}
 #ifndef SUPPRESS_MONSTER_STUN // HERESY !
+		/* That's overdone;
+		 * let's remove do_stun from RBM_HIT instead		- Jir - */
+
 			/* Handle stun */
 			if (do_stun)
 			{
@@ -1776,7 +1792,11 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 				case RBM_HIT:
 				{
 					act = "hits you.";
+#ifdef NORMAL_HIT_NO_STUN
+					do_cut = 1;
+#else
 					do_cut = do_stun = 1;
+#endif	// NORMAL_HIT_NO_STUN
 					break;
 				}
 			}

@@ -1158,11 +1158,14 @@ To find the latest change quickly, search ==== :)
 
 26/06/2002 (Jir)
 - skill-requirements for spells revised.
+- 'Master Unbeliever'(GoI-killer) and 'Monk' mego.
 [B] choose_race/choose_class still used MAX_* (and not Setup.max_*)
 [B] '%' skill modifications by race weren't reflected.
 [B] p_ptr->u_attr[] was broken (Something should be wrong in Net_setup!)
 [C] '-f' option added (use specified file in place of '.tomenet')
 [H] Speed bonus for Martial-arts is reduced by total_weight.
+[H] SUPPRESS_MONSTER_STUN and NORMAL_HIT_NO_STUN flags, for DG's HERESY :)
+[H] SKILL_INTERCEPT and SKILL_DODGE rebalanced somewhat.
 
 
 ** [B] stands for Bugfix.
@@ -1222,6 +1225,7 @@ below this line are the unfixed bugs known:
 [B] some ivents are not told to the players even when within the sight.
 [B] white '@' sometimes appear on the screen.
 [B] Yeek seems to receive the best store prices.
+[B] Martial-artist has strange +To RHit/+To RDam display.
 
 *below are bugs repoorted but not confirmed*
 [B] Macro sticks sometimes

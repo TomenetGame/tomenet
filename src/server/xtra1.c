@@ -2997,7 +2997,7 @@ static void calc_bonuses(int Ind)
 		p_ptr->dodge_chance -= cur_wgt * 2;
 
 		/* Encumberance bonus/penalty */
-		p_ptr->dodge_chance = p_ptr->dodge_chance - (p_ptr->total_weight / 100);
+		p_ptr->dodge_chance -= p_ptr->total_weight / 100;
 
 		/* Never below 0 */
 		if (p_ptr->dodge_chance < 0) p_ptr->dodge_chance = 0;

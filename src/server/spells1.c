@@ -4904,7 +4904,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if ((chance > 0) && magik(chance))
 			{
-				msg_print(Ind, "You dodge a magical attack!");
+//				msg_print(Ind, "You dodge a magical attack!");
+				msg_print(Ind, "You dodge a projectile!");
 				return (TRUE);
 			}
 		}

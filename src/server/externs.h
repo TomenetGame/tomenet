@@ -571,7 +571,7 @@ extern errr rd_server_savefile(void);
 
 /* melee1.c */
 /* melee2.c */
-extern bool monst_check_grab(int m_idx, cptr desc);
+extern bool monst_check_grab(int m_idx, int mod, cptr desc);
 extern int mon_will_run(int Ind, int m_idx);
 extern bool monster_attack_normal(int m_idx, int tm_idx);
 extern bool make_attack_normal(int Ind, int m_idx);

@@ -452,10 +452,10 @@ N:35:Unbeliever
 G:*:u
 I:+10:%200d%150:+10:%120:=0
 W:+10:20:%120:%250:A
-B:*:*:%200d%200
-B:*:*:%200d%200
-B:*:*:%200d%200
-B:*:*:%200d%200
+B:*:*:%160d%160
+B:*:*:%160d%160
+B:*:*:%160d%160
+B:*:*:%160d%160
 F:R_CHAR_T | R_CHAR_O | R_CHAR_y | R_CHAR_o
 F:BASEANGBAND
 # hack -- no Troll priest Warrior
@@ -502,6 +502,40 @@ M:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP
 M:NO_FEAR | RES_NETH | RES_NEXU | RES_PLAS | RES_DISE
 M:FORCE_MAXHP | ATTR_MULTI | ATTR_ANY
 S:1_IN_12 | HEAL
+
+N:39:Master Unbeliever
+G:*:u
+I:+10:%200d%150:+10:%120:=0
+W:+15:50:%120:%350:A
+B:*:*:%200d%200
+B:*:*:%200d%200
+B:*:*:%200d%200
+B:*:*:%200d%200
+F:R_CHAR_T | R_CHAR_O | R_CHAR_y | R_CHAR_o
+F:BASEANGBAND
+# hack -- no Troll priest Warrior
+H:DROP_90 | DROP_1D2 | SMART
+M:FORCE_MAXHP | DROP_1D2
+M:DISBELIEVE
+M:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | NO_FEAR
+S:1_IN_15 | UNMAGIC
+T:MF_ALL
+
+N:40:Monk
+G:*:u
+I:+10:%200d%200:+10:%200:%20
+W:+12:25:%120:%300:A
+B:PUNCH:HURT:%200d%200
+B:KICK:HURT:%200d%200
+B:CRUSH:HURT:%200d%200
+B:*:*:%200d%200
+F:R_CHAR_T | R_CHAR_O | R_CHAR_y | R_CHAR_P | R_CHAR_k
+F:BASEANGBAND
+# hack -- no Troll priest Monk
+H:DROP_90 | DROP_1D2 | SMART
+M:FORCE_MAXHP | DROP_1D2
+M:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | NO_FEAR
+T:MF_ALL
 
 
 # N:x:ego name
