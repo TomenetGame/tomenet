@@ -188,18 +188,17 @@ int Receive_file(void){
 			case 0:
 				return(1);
 			default:
-				printf("unknown file transfer packet\n");
 				x=0;
 		}
 		Packet_printf(&wbuf, "%c%c%hd", PKT_FILE, x?PKT_FILE_ACK:PKT_FILE_ERR, fnum);
 	}
-	return(0);
+	return(1);
 }
 
 int Receive_file_data(int ind, unsigned short len, char *buffer){
 	memcpy(buffer, rbuf.ptr, len);
-	Sockbuf_advance(&rbuf, len + rbuf.ptr - rbuf.buf);
-	return(0);
+	rbuf.ptr+=len;
+	return(1);
 }
 
 int Send_file_check(int ind, unsigned short id, char *fname){
@@ -214,6 +213,7 @@ int Send_file_init(int ind, unsigned short id, char *fname){
 }
 
 int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
+	Sockbuf_flush(&wbuf);
 	Packet_printf(&wbuf, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
 	if (Sockbuf_write(&wbuf, buf, len) != len){
 		printf("failed sending file data\n");

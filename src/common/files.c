@@ -77,6 +77,9 @@ void remove_ft(struct ft_data *d_ft){
 	}
 }
 
+/* server and client need to be synchronised on this
+   but for now, clashes are UNLIKELY in the extreme
+   so they can generate their own. */
 int new_fileid(){
 	static int c_id=0;
 	c_id++;
@@ -151,7 +154,9 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 	char buf[256];
 
 	c_fd=getfile(ind, fnum);
-	if(c_fd==(struct ft_data*)NULL) return(0);
+	if(c_fd==(struct ft_data*)NULL){
+		return(0);
+	}
 	local_file_check(c_fd->fname, &lsum);
 	if(!c_fd->state&FS_CHECK){
 		return(0);

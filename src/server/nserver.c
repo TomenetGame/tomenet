@@ -2701,6 +2701,7 @@ static int Receive_file(int ind){
 			case PKT_FILE_SUM:
 				Packet_scanf(&connp->r, "%ld", &csum);
 				check_return(ind, fnum, csum);
+				return(1);
 				break;
 			case PKT_FILE_ACK:
 				local_file_ack(ind, fnum);
@@ -2717,14 +2718,13 @@ static int Receive_file(int ind){
 		}
 		Packet_printf(&connp->c, "%c%c%hd", PKT_FILE, x?PKT_FILE_ACK:PKT_FILE_ERR, fnum);
 	}
-	else printf("error file packet\n");
 	return(1);
 }
 
 int Receive_file_data(int ind, unsigned short len, char *buffer){
 	connection_t *connp = &Conn[ind];
 	memcpy(buffer, connp->r.ptr, len);
-	Sockbuf_advance(&connp->r, len + connp->r.ptr - connp->r.buf);
+	connp->r.ptr+=len;
 	return(1);
 }
 
