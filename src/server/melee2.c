@@ -43,7 +43,7 @@
 
 /* Chance of an out-of-sight monster to cast a spell, in percent.
  * reducing this also speeds the server up. */
-#define		INDIRECT_FREQ	5
+#define		INDIRECT_FREQ	1
  
 /* pseudo 'radius' for summoning spells. default is 3.  */
 #define		INDIRECT_SUMMONING_RADIUS	3
@@ -101,9 +101,6 @@
  * Both of them have the same effect on the "choose spell" routine.
  */
 
-
-
-
 /*
  * Internal probablility routine
  */
@@ -115,8 +112,6 @@ static bool int_outof(monster_race *r_ptr, int prob)
 	/* Roll the dice */
 	return (rand_int(100) < prob);
 }
-
-
 
 /*
  * Remove the "bad" spells from a spell list
@@ -132,14 +127,11 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 
 	u32b smart = 0L;
 
-
 	/* Too stupid to know anything */
 	if (r_ptr->flags2 & RF2_STUPID) return;
 
-
 	/* Must be cheating or learning */
 	if (!smart_cheat && !smart_learn) return;
-
 
 	/* Update acquired knowledge */
 	if (smart_learn)
@@ -150,7 +142,6 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 		/* Use the memorized flags */
 		smart = m_ptr->smart;
 	}
-
 
 	/* Cheat if requested */
 	if (smart_cheat)
@@ -192,10 +183,8 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 		if (!p_ptr->msp) smart |= SM_IMM_MANA;
 	}
 
-
 	/* Nothing known */
 	if (!smart) return;
-
 
 	if (smart & SM_IMM_ACID)
 	{
@@ -216,7 +205,6 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_ACID;
 	}
 
-
 	if (smart & SM_IMM_ELEC)
 	{
 		if (int_outof(r_ptr, 100)) f4 &= ~RF4_BR_ELEC;
@@ -236,7 +224,6 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_ELEC;
 	}
 
-
 	if (smart & SM_IMM_FIRE)
 	{
 		if (int_outof(r_ptr, 100)) f4 &= ~RF4_BR_FIRE;
@@ -255,7 +242,6 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BA_FIRE;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_FIRE;
 	}
-
 
 	if (smart & SM_IMM_COLD)
 	{
@@ -279,7 +265,6 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_ICEE;
 	}
 
-
 	if ((smart & SM_OPP_POIS) && (smart & SM_RES_POIS))
 	{
 		if (int_outof(r_ptr, 80)) f4 &= ~RF4_BR_POIS;
@@ -290,7 +275,6 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 		if (int_outof(r_ptr, 30)) f4 &= ~RF4_BR_POIS;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BA_POIS;
 	}
-
 
 	if (smart & SM_RES_NETH)
 	{
@@ -354,7 +338,6 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_SHAR;
 	}
 
-
 	if (smart & SM_IMM_FREE)
 	{
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_HOLD;
@@ -366,10 +349,8 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_DRAIN_MANA;
 	}
 
-
 	/* XXX XXX XXX No spells left? */
 	/* if (!f4 && !f5 && !f6) ... */
-
 
 	(*f4p) = f4;
 	(*f5p) = f5;

@@ -1906,10 +1906,12 @@ void do_cmd_read_scroll(int Ind, int item)
 
 		case SV_SCROLL_LOTTERY:
 		{
-			int i = k_info[o_ptr->k_idx].cost, j = rand_int(10000);
+			int i = k_info[o_ptr->k_idx].cost, j = rand_int(100);
 
 			i -= i * o_ptr->discount / 100;
-			
+
+			j*=100;
+
 			if (!j)
 			{
 				msg_print(Ind, "\377WYou draw a blank :-P");
@@ -1925,8 +1927,9 @@ void do_cmd_read_scroll(int Ind, int item)
 					set_image(Ind, p_ptr->image + rand_int(10) + 10);
 				}
 
-				msg_print(Ind, "\377BYou won the first prize!");
-				p_ptr->au += i * 10000;
+				if(j==100)
+					msg_print(Ind, "\377BYou won the first prize!");
+				p_ptr->au += i * j;
 
 				/* Redraw gold */
 				p_ptr->redraw |= (PR_GOLD);

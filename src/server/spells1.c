@@ -5752,7 +5752,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			if (i == tdi[dist])
 			{
 				gm[++dist] = grids; 
-				if (dist >= rad) break;
+				if (dist > rad) break;
 			}
 
 			y = y2 + tdy[i];
