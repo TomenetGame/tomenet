@@ -25,6 +25,16 @@
 # DARKGOD, EVILEYE, WRITE THE CHANGELOGS!!!!!!!  CVS log does NO HELP!!!!
 # - Jir -
 
+18/08/2002 (evileye)
+- File transfer changes. I have changed script upload in client to
+  use the file transfer system which I wrote. Server replies with
+  suitable messages regarding success/permission. My intent is to 
+  change the system so that it will upload/download into a
+  predefined set of directories (and check for illegal characters in
+  filenames which pose a security threat).
+  Currently it will send/receive from/in the current working directory.
+  I require more information regarding WHERE we need file transfer
+  access before I can complete.
 
 18/08/2002 (Jir)
 [G]- ow_info.txt and st_info.txt backported.
