@@ -1108,11 +1108,14 @@ To find the latest change quickly, search ==== :)
 
 22/06/2002 (Jir)
 - spell interference is affected by corresponding skills.
+- some parchments.
 [B] some spells are shown as 'unknown' even when castable
 [B] Ghost powers were broken
+[B] get_spell was messed due to sval/xtra1 hack :(
 
 22/06/2002 (Yakina)
 - updates needed for bcc.  Thanks Yakina for courtesy.
+
 
 
 ** [B] stands for Bugfix.
@@ -1263,6 +1266,7 @@ memo and questions:
 - savedata snapshot (via this, player can report bugs with savedata)
 - slash-commands should have info file (like sl_info.txt)
 - put CVS keyword($ID$) to every file.
+- remove the hack in client which swaps sval/xtra1 ;(
 
 [speeding the server up]
 # tomenet.server never seems to take more than 10% of CPU time. why? (sched.c?)

@@ -6837,12 +6837,28 @@ I:12:4:0
 W:35:0:12:30000
 A:35/20
 
-N:905:& Tarpaulin~
+N:906:& Tarpaulin~
 G:`:D
 #G:`:B
 I:12:5:0
 W:15:0:60:1000
 A:15/5
+
+# Parchment to help dead beginners
+N:907:The Book of the Deads
+G:?:o
+#I:8:20:0
+I:8:51:0
+W:0:0:5:1
+A:200/127
+
+# Parchment sold in general store to tell players of the news
+N:908:The Gazette
+G:?:o
+#I:8:20:0
+I:8:52:0
+W:0:0:5:1
+A:0/12
 
 # Always ego!
 

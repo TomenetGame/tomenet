@@ -1233,7 +1233,7 @@ static void player_outfit(int Ind)
 	}
 	
 	/* Hack -- Give the player newbie guide Parchment */
-	invcopy(o_ptr, lookup_kind(TV_PARCHEMENT, 50));
+	invcopy(o_ptr, lookup_kind(TV_PARCHEMENT, SV_PARCHMENT_NEWBIE));
 	object_known(o_ptr);
 	object_aware(Ind, o_ptr);
 	o_ptr->owner = p_ptr->id;

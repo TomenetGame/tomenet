@@ -109,8 +109,10 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 	char		out_val[160];
 	cptr p;
 	
-        object_type *o_ptr = &inventory[book];
-        int realm = find_realm(o_ptr->tval);
+	object_type *o_ptr = &inventory[book];
+	int realm = find_realm(o_ptr->tval);
+	/* see Receive_inven .. one of the dirtiest hack ever :( */
+	int sval = o_ptr->xtra1;
 
 	p = "spell";
 
@@ -119,6 +121,7 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 		p = "power";
 		realm = REALM_GHOST;
 		book = 0;
+		sval = 0;
 	}
 
 	/* Assume no usable spells */
@@ -131,10 +134,11 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 	for (i = 0; i < 9; i++)
 	{
 		/* Look for "okay" spells */
-		//if (spell_info[realm][book][i][0])
+		if (spell_info[realm][sval][i][0])
+//		if (spell_info[realm][book][i])
 		/* quite a hack.. FIXME */
 //		if (!spell_info[realm][book][i][0])
-		if (!strstr(spell_info[realm][book][i],"unknown"))
+//		if (!strstr(spell_info[realm][book][i],"unknown"))
 		{
 			okay = TRUE;
 			num++;

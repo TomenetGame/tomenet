@@ -2694,6 +2694,11 @@ that keeps many algorithms happy.
 #define SV_CORPSE_SKULL      4
 #define SV_CORPSE_MEAT       5
 
+/* The "sval" codes for TV_PARCHEMENT */
+#define SV_PARCHMENT_NEWBIE	50
+#define SV_PARCHMENT_DEATH	51
+#define SV_PARCHMENT_NEWS	52
+
 
 /*** General flag values ***/
 

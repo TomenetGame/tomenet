@@ -4022,32 +4022,46 @@ void player_death(int Ind)
 	else
 	{
 
-	/* Tell him */
-	msg_format(Ind, "\377RYou have been killed by %s.", p_ptr->died_from);
+		/* Tell him */
+		msg_format(Ind, "\377RYou have been killed by %s.", p_ptr->died_from);
 
 #if CHATTERBOX_LEVEL > 2
-	{
-		char death_message[80];
+		{
+			char death_message[80];
 
-		(void)get_rnd_line("death.txt", 0, death_message);
-		msg_print(Ind, death_message);
-	}
+			(void)get_rnd_line("death.txt", 0, death_message);
+			msg_print(Ind, death_message);
+		}
 #endif	// CHATTERBOX_LEVEL
 
-	/* Polymorph back to player */
-	if (p_ptr->body_monster) do_mimic_change(Ind, 0);
+		/* Polymorph back to player */
+		if (p_ptr->body_monster) do_mimic_change(Ind, 0);
 
-	/* Turn him into a ghost */
-	p_ptr->ghost = 1;
+		/* Turn him into a ghost */
+		p_ptr->ghost = 1;
 
-	/* Teleport him */
-	/* XXX space-time ancor or NO_TELE can hinder this..
-	 * should they be bypassed? */
-	teleport_player(Ind, 200);
+		/* Teleport him */
+		/* XXX space-time ancor or NO_TELE can hinder this..
+		 * should they be bypassed? */
+		teleport_player(Ind, 200);
 
-	/* Give him his hit points back */
-	p_ptr->chp = p_ptr->mhp;
-	p_ptr->chp_frac = 0;
+		/* Give him his hit points back */
+		p_ptr->chp = p_ptr->mhp;
+		p_ptr->chp_frac = 0;
+
+		/* Hack -- Give him/her the newbie death guide */
+		if (p_ptr->max_plv < 10)
+		{
+			object_type	forge;
+			o_ptr = &forge;
+
+			invcopy(o_ptr, lookup_kind(TV_PARCHEMENT, SV_PARCHMENT_DEATH));
+			object_known(o_ptr);
+			object_aware(Ind, o_ptr);
+			o_ptr->owner = p_ptr->id;
+			o_ptr->level = 1;
+			(void)inven_carry(Ind, o_ptr);
+		}
 	}
 	
 	

@@ -1216,6 +1216,7 @@ int Receive_inven(void)
 
         /* Hack -- The color is stored in the sval, since we don't use it for anything else */
         /* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
+		/* I'm one of those who really hate it .. Jir */
 	inventory[pos - 'a'].sval = attr;
 	inventory[pos - 'a'].tval = tval;
 	inventory[pos - 'a'].xtra1 = sval;

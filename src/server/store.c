@@ -43,7 +43,6 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 		{ TV_LITE, SV_LITE_TORCH },
 		{ TV_LITE, SV_LITE_TORCH },
 		{ TV_LITE, SV_LITE_TORCH },
-		{ TV_LITE, SV_LITE_TORCH },
 		{ TV_LITE, SV_LITE_LANTERN },
 
 		{ TV_FLASK, 0 },
@@ -62,7 +61,8 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 		{ TV_DIGGING, SV_PICK },
 		{ TV_CLOAK, SV_CLOAK },
 		{ TV_CLOAK, SV_CLOAK },
-		{ TV_CLOAK, SV_CLOAK }
+		{ TV_PARCHEMENT, SV_PARCHMENT_NEWS },
+		{ TV_PARCHEMENT, SV_PARCHMENT_NEWS }
 	},
 
 	{
@@ -814,6 +814,7 @@ static void mass_produce(object_type *o_ptr)
 		case TV_FOOD:
 		case TV_FLASK:
 		case TV_LITE:
+		case TV_PARCHEMENT:
 		{
 			if (cost <= 5L) size += mass_roll(3, 5);
 			if (cost <= 20L) size += mass_roll(3, 5);
@@ -1053,6 +1054,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_DIGGING:
 				case TV_CLOAK:
 				case TV_TOOL:
+				case TV_PARCHEMENT:
 				break;
 				default:
 				return (FALSE);
@@ -1608,7 +1610,8 @@ static void store_create(store_type *st_ptr)
 		object_known(o_ptr);
 
 		/* Mega-Hack -- no chests in stores */
-		if (o_ptr->tval == TV_CHEST || o_ptr->tval==8) continue;
+//		if (o_ptr->tval == TV_CHEST || o_ptr->tval==8) continue;
+		if (o_ptr->tval == TV_CHEST) continue;
 
 		/* Prune the black market */
 		if (st_ptr->num == 6)
@@ -2442,7 +2445,7 @@ void store_confirm(int Ind)
 	}
 
 	/* The store gets that (known) item */
-	if(sold_obj.tval!=8)
+//	if(sold_obj.tval!=8)	// What was it for.. ?
 		item_pos = store_carry(&town[gettown(Ind)].townstore[p_ptr->store_num], &sold_obj);
 //		item_pos = store_carry(p_ptr->store_num, &sold_obj);
 
