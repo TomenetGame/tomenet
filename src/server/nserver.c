@@ -7830,7 +7830,7 @@ void Handle_item(int Ind, int item)
 	{
 		telekinesis_aux(Ind, item);
 	}
-	else if (p_ptr->current_curse != NULL)
+	else if (p_ptr->current_curse != 0)
 	{
 		curse_spell_aux(Ind, item);
 	}
