@@ -2613,7 +2613,7 @@ static cptr ident_info[] =
 	"%:A vein (magma or quartz)",
 	/* "&:unused", */
 	"':An open door",
-	"(:Soft armor",
+	"(:Soft armour",
 	"):A shield",
 	"*:A vein with treasure",
 	"+:A closed door",
@@ -2664,9 +2664,9 @@ static cptr ident_info[] =
 	"X:Xorn/Xaren/etc",
 	"Y:Yeti",
 	"Z:Zephyr Hound",
-	"[:Hard armor",
+	"[:Hard armour",
 	"\\:A hafted weapon (mace/whip/etc)",
-	"]:Misc. armor",
+	"]:Misc. armour",
 	"^:A trap",
 	"_:A staff",
 	/* "`:unused", */

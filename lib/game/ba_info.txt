@@ -130,7 +130,7 @@ N:24:Enchant weapon
 C:750:700:650
 I:23:0:w:0
 
-N:25:Enchant armor
+N:25:Enchant armour
 C:750:700:650
 I:24:0:a:0
 
@@ -251,7 +251,7 @@ C:1100:1000:800
 I:31:0:b:0
 
 #for The Fountain
-N:52:Enchant armor
+N:52:Enchant armour
 C:1100:1000:900
 I:24:0:a:0
 

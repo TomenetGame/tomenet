@@ -122,7 +122,7 @@
 
 # N: serial number : monster name
 # G: symbol : color
-# I: speed : hit points : vision : armor class : alertness
+# I: speed : hit points : vision : armour class : alertness
 # W: depth : rarity : corpse weight : experience for kill
 # E: weapons : torso : arms : finger : head : leg
 # O: treasure : combat : magic : tool
@@ -144,7 +144,7 @@
 # R - Light Red    G - Light Green    B - Light Blue    U - Light Brown
 
 # 'I' is for information - speed, health, vision in tens of feet,
-#     armor class, and alertness. 110 is normal speed. Alertness ranges
+#     armour class, and alertness. 110 is normal speed. Alertness ranges
 #     from 0 (ever vigilant for intruders) to 255 (prefers to ignore
 #     intruders).
 
@@ -15646,7 +15646,7 @@ B:CLAW:HURT:3d4
 B:CLAW:HURT:3d4
 F:ANIMAL | AQUATIC | STUPID | WEIRD_MIND | DROP_CORPSE | COLD_BLOOD | 
 F:MORTAL | BASEANGBAND
-D:A man-sized, heavily armored fresh-water relative of the lobster. 
+D:A man-sized, heavily armoured fresh-water relative of the lobster. 
 
 N:882:Mermaid
 G:h:G
@@ -18981,9 +18981,9 @@ I:120:30d100:25:150:50
 W:50:4:3000:14000
 E:0:1:0:2:1:0
 O:0:50:50:0
-B:GAZE:PARALYZE:5d12
-B:BITE:DISEASE:20d12
-B:BITE:DISEASE:20d12
+B:GAZE:PARALYZE:3d3
+B:BITE:DISEASE:9d12
+B:BITE:DISEASE:9d12
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | POWERFUL |
 F:OPEN_DOOR | BASH_DOOR | EVIL | IM_FIRE | IM_COLD | IM_ACID |
 F:RES_ELEC | IM_POIS | DROP_CORPSE | RES_NETH | RES_DARK | 
@@ -18997,12 +18997,12 @@ D:the touch of hell where it steps.
 N:1070:Cave Gorm
 G:R:D
 I:120:40d100:25:150:50
-W:55:4:3000:18000
+W:60:4:3000:18000
 E:0:1:0:2:1:0
 O:0:50:50:0
-B:GAZE:PARALYZE:5d12
-B:BITE:DISEASE:30d12
-B:BITE:DISEASE:30d12
+B:GAZE:PARALYZE:5d3
+B:BITE:DISEASE:15d12
+B:BITE:DISEASE:15d12
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | POWERFUL |
 F:OPEN_DOOR | BASH_DOOR | EVIL | IM_FIRE | IM_COLD | IM_ACID |
 F:RES_ELEC | IM_POIS | DROP_CORPSE | RES_NETH | RES_DARK | 
@@ -19144,7 +19144,8 @@ S:FORGET | MIND_BLAST | DARKNESS
 D:Direct descendant of Lucifer, mother of Glaryssa, all Angels seeking
 D:to destroy her fell to her serpent kiss.
 
-N:1077:C. Blue, The Mad Balancer
+#N:1077:C. Blue, The Mad Balancer
+N:1077:Mad Balancer
 G:p:b
 I:160:256d256:200:150:255
 W:127:1:16000:50000
@@ -19164,6 +19165,7 @@ F:NO_CONF | NO_SLEEP | NO_STUN | SMART | CAN_SWIM | DROP_CORPSE | DROP_SKELETON
 #(BLUEBAND)
 S:1_IN_2 | 
 S:CONF | HOLD | HEAL | BR_CHAO | BA_MANA | BLINK | TPORT
+S:SCARE | BRAIN_SMASH | TRAPS | TELE_TO
 D:The coder who keeps balancing this game like there is no tomorrow.
 D:Make sure you have downloaded the latest scripts, or he will drive
 D:you to despair!
@@ -19188,6 +19190,7 @@ F:NO_CONF | NO_SLEEP | NO_STUN | SMART | CAN_SWIM |
 #(BLUEBAND)
 S:1_IN_2 | 
 S:TELE_TO | S_HI_UNDEAD | BA_NETH | BA_MANA | HEAL
+S:CONF | HOLD | SCARE | BRAIN_SMASH | TRAPS
 D:A huge disembodied eye.  As you stare into the black nothingness of its pupil, 
 D:you feel your will and vitality draining away, and are unable to do anything 
 D:except approach it in horrified fascination. 
@@ -19219,7 +19222,7 @@ D:except approach it in horrified fascination.
 
 # N: serial number : monster name
 # G: symbol : color
-# I: speed : hit points : vision : armor class : alertness
+# I: speed : hit points : vision : armour class : alertness
 # W: depth : rarity : corpse weight : experience for kill
 # E: weapons : torso : arms : finger : head : leg
 # O: treasure : combat : magic : tool

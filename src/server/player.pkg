@@ -630,7 +630,8 @@ struct player_type
 	bool reduce_insanity;	/* for mimic forms with weird/empty mind */
 	
 	s16b invis;		/* Invisibility */
-
+	bool admin_wiz;         /* Is this char Wizard? */
+        bool admin_dm;          /* or Dungeon Master? */
 	s16b dis_to_h;		/* Known bonus to hit */
 	s16b dis_to_d;		/* Known bonus to dam */
 	s16b dis_to_a;		/* Known bonus to ac */

@@ -143,9 +143,9 @@ I:5:10:0:12:20:0d0:y:10
 D:Your weapon will never be the same...
 F:FLOOR | CHEST | DOOR
 
-N:21:Trap of Curse Armor
+N:21:Trap of Curse Armour
 I:5:15:0:12:20:0d0:y:10
-D:Your armor doesn't exactly get better by setting off this trap...
+D:Your armour doesn't exactly get better by setting off this trap...
 F:FLOOR | CHEST | DOOR
 
 N:22:Earthquake Trap

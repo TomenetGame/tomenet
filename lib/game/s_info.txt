@@ -34,8 +34,8 @@ V:4.0.0
 #
 
 N:1:Combat
-D:General ability to fight and to pseudo-id armors and weapons
-D:It also allows to use heavier armors without penalties
+D:General ability to fight and to pseudo-id armours and weapons
+D:It also allows to use heavier armours without penalties
 I:1000:0
 
 N:2:Weaponmastery

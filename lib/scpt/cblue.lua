@@ -29,7 +29,7 @@ function cureall(name)
     do_res_stat(Ind, A_INT)
     do_res_stat(Ind, A_CHR)
     restore_level(Ind)
-    set_food(Ind, PY_FOOD_MAX - 1)
+    set_food(Ind, PY_FOOD_FULL)
     player.black_breath = FALSE
     player.csane = player.msane
     player.chp = player.mhp

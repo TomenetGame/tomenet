@@ -1661,7 +1661,7 @@ bool curse_armor(int Ind)
 	{
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
-		           "terrible black aura", "surround your armor", o_name);
+		           "terrible black aura", "surround your armour", o_name);
 	}
 
 	/* not artifact or failed save... */
@@ -2320,7 +2320,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_ENCHANT_ARMOR:
 			{
-				msg_print(Ind, "This is a scroll of enchant armor.");
+				msg_print(Ind, "This is a scroll of enchant armour.");
 				ident = TRUE;
 				(void)enchant_spell(Ind, 0, 0, 1, 0);
 				used_up = FALSE;
@@ -2347,7 +2347,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_STAR_ENCHANT_ARMOR:
 			{
-				msg_print(Ind, "This is a scroll of *enchant* armor.");
+				msg_print(Ind, "This is a scroll of *enchant* armour.");
 				(void)enchant_spell(Ind, 0, 0, randint(3) + 2, 0);
 				used_up = FALSE;
 				ident = TRUE;
@@ -4287,7 +4287,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires an acid bolt for", p_ptr->name);
-			fire_bolt_or_beam(Ind, 10, GF_ACID, dir, damroll(6, 8), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 10, GF_ACID, dir, damroll(6, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + get_skill_scale(p_ptr, SKILL_DEVICE, 180), p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 12;
 			break;
@@ -4297,7 +4297,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a lightning bolt for", p_ptr->name);
-			fire_bolt_or_beam(Ind, 10, GF_ELEC, dir, damroll(3, 8), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 10, GF_ELEC, dir, damroll(3, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + get_skill_scale(p_ptr, SKILL_DEVICE, 90), p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 11;
 			break;
@@ -4307,7 +4307,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a fire bolt for", p_ptr->name);
-			fire_bolt_or_beam(Ind, 10, GF_FIRE, dir, damroll(8, 8), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 10, GF_FIRE, dir, damroll(8, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + get_skill_scale(p_ptr, SKILL_DEVICE, 240), p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 15;
 			break;
@@ -4317,7 +4317,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a frost bolt for", p_ptr->name);
-			fire_bolt_or_beam(Ind, 10, GF_COLD, dir, damroll(5, 8), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 10, GF_COLD, dir, damroll(5, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + get_skill_scale(p_ptr, SKILL_DEVICE, 150), p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 13;
 			break;
@@ -4327,7 +4327,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s fires an acid ball.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires an acid ball for", p_ptr->name);
-			fire_ball(Ind, GF_ACID, dir, 60, 2, p_ptr->attacker);
+			fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 2, p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 27;
 			break;
@@ -4337,7 +4337,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s fires a lightning ball.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a lightning ball for", p_ptr->name);
-			fire_ball(Ind, GF_ELEC, dir, 32, 2, p_ptr->attacker);
+			fire_ball(Ind, GF_ELEC, dir, 32 + get_skill_scale(p_ptr, SKILL_DEVICE, 160), 2, p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 23;
 			break;
@@ -4347,7 +4347,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s fires a fire ball.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a fire ball for", p_ptr->name);
-			fire_ball(Ind, GF_FIRE, dir, 72, 2, p_ptr->attacker);
+			fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 360), 2, p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 30;
 			break;
@@ -4357,7 +4357,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s fires a frost ball.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a frost ball for", p_ptr->name);
-			fire_ball(Ind, GF_COLD, dir, 48, 2, p_ptr->attacker);
+			fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 240), 2, p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 25;
 			break;
@@ -4398,7 +4398,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_ILLUMINATION:
 		{
 			msg_format_near(Ind, "%s calls light.", p_ptr->name);
-			if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
+			if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 100)), 2)) ident = TRUE;
 			o_ptr->pval = 30;
 			break;
 		}
@@ -4620,7 +4620,7 @@ static void ring_of_power(int Ind, int dir)
 		{
 			/* Mana Ball */
 			sprintf(p_ptr->attacker, " invokes a mana storm for", p_ptr->name);
-			fire_ball(Ind, GF_MANA, dir, 300, 3, p_ptr->attacker);
+			fire_ball(Ind, GF_MANA, dir, 500, 3, p_ptr->attacker);
 
 			break;
 		}
@@ -5134,7 +5134,7 @@ void do_cmd_activate(int Ind, int item)
 
 			case ART_CASPANION:
 			{
-				msg_print(Ind, "Your armor glows bright red...");
+				msg_print(Ind, "Your armour glows bright red...");
 				destroy_doors_touch(Ind, 1);
 				o_ptr->timeout = 10;
 				break;
@@ -5227,7 +5227,7 @@ void do_cmd_activate(int Ind, int item)
 
 			case ART_SOULKEEPER:
 			{
-				msg_print(Ind, "Your armor glows a bright white...");
+				msg_print(Ind, "Your armour glows a bright white...");
 				msg_print(Ind, "\377GYou feel much better...");
 				(void)hp_player(Ind, 1000);
 				(void)set_cut(Ind, 0);
@@ -5383,7 +5383,7 @@ void do_cmd_activate(int Ind, int item)
 
 			case ART_BLADETURNER:
 			{
-				msg_print(Ind, "Your armor glows many colours...");
+				msg_print(Ind, "Your armour glows in many colours...");
 				(void)hp_player(Ind, 30);
 				(void)set_afraid(Ind, 0);
 				(void)set_shero(Ind, p_ptr->shero + randint(50) + 50);
@@ -5610,7 +5610,7 @@ void do_cmd_activate(int Ind, int item)
 
 			case ART_CASPANION:
 			{
-				msg_print(Ind, "Your armor glows bright red...");
+				msg_print(Ind, "Your armour glows bright red...");
 				destroy_doors_touch(Ind, 1);
 				o_ptr->timeout = 10;
 				break;
@@ -5703,7 +5703,7 @@ void do_cmd_activate(int Ind, int item)
 
 			case ART_SOULKEEPER:
 			{
-				msg_print(Ind, "Your armor glows a bright white...");
+				msg_print(Ind, "Your armour glows a bright white...");
 				msg_print(Ind, "\377GYou feel much better...");
 				(void)hp_player(Ind, 1000);
 				(void)set_cut(Ind, 0);
@@ -5859,7 +5859,7 @@ void do_cmd_activate(int Ind, int item)
 
 			case ART_BLADETURNER:
 			{
-				msg_print(Ind, "Your armor glows many colours...");
+				msg_print(Ind, "Your armour glows in many colours...");
 				(void)hp_player(Ind, 30);
 				(void)set_afraid(Ind, 0);
 				(void)set_shero(Ind, p_ptr->shero + randint(50) + 50);
@@ -6699,6 +6699,7 @@ void do_cmd_activate(int Ind, int item)
 						if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
 							do_mimic_change(Ind, 0, FALSE);
 
+						object_aware(Ind, o_ptr);
 						object_known(o_ptr);
 					}
 				}
@@ -7223,7 +7224,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 				msg_print(Ind, "You breathe the elements.");
 				sprintf(p_ptr->attacker, " breathes the elements for", p_ptr->name);
 				fire_ball(Ind, GF_MISSILE, dir, 300, 4, p_ptr->attacker);
-				msg_print(Ind, "Your armor glows many colours...");
+				msg_print(Ind, "Your armour glows in many colours...");
 				(void)set_afraid(Ind, 0);
 				(void)set_shero(Ind, p_ptr->shero + randint(50) + 50);
 				(void)hp_player(Ind, 30);

@@ -172,7 +172,7 @@ W:36
 N:4:Alchemy shop
 I:100:Enchant Weapon To-Hit
 I:100:Enchant Weapon To-Dam
-I:100:Enchant Armor
+I:100:Enchant Armour
 I:100:Identify
 I:100:Identify
 I:100:Identify
@@ -220,8 +220,8 @@ I:100:Restore Dexterity
 #I:100:Restore Constitution
 T:100:71:46
 I:100:Restore Charisma
-I:100:Enchant Armor
-I:100:Enchant Armor
+I:100:Enchant Armour
+I:100:Enchant Armour
 I:100:Recharging
 I:100:Satisfy Hunger
 I:100:Satisfy Hunger

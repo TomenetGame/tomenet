@@ -732,7 +732,7 @@ A:50/4
 P:0:1d4:0:0:0
 F:SHOW_MODS | TUNNEL
 
-##### Armor #####
+##### Armour #####
 
 N:90:& Elven Cloak~
 G:(:G
@@ -1335,7 +1335,7 @@ W:10:0:3:20
 A:10/1
 F:EASY_KNOW
 
-##### Extra armor #####
+##### Extra armour #####
 
 N:170:Double Ring Mail~
 G:[:s
@@ -1379,7 +1379,7 @@ I:70:18:0
 W:15:0:5:125
 A:15/1
 
-N:175:Enchant Armor
+N:175:Enchant Armour
 G:?:d
 I:70:16:0
 W:15:0:5:125
@@ -1628,13 +1628,13 @@ I:70:3:0
 W:50:0:5:0
 A:50/1
 
-N:214:*Enchant Armor*
+N:214:*Enchant Armour*
 G:?:d
 I:70:20:0
 W:50:0:5:500
 A:50/1:50/1
 
-N:215:Curse Armor
+N:215:Curse Armour
 G:?:d
 I:70:2:0
 W:50:0:5:0
@@ -3878,7 +3878,7 @@ A:10/2
 P:0:1d5:0:0:0
 F:SHOW_MODS
 
-##### New armor #####
+##### New armour #####
 
 N:535:Rhino Hide Armour~
 G:(:s
@@ -4060,8 +4060,8 @@ A:2/2:30/2
 N:561:Stone and Hide Armour~
 G:(:U
 I:36:15:0
-W:35:0:200:500
-A:35/7
+W:30:0:200:500
+A:30/7
 P:15:1d1:-1:0:0
 
 ### Trapping Kits 
@@ -4696,7 +4696,7 @@ F:INVIS | HIDE_TYPE
 #P:0:1d1:0:0:0
 #F:DECAY
 
-# New armor: Dragonrider Coat. (With two low resists, it shouldn't be 
+# New armour: Dragonrider Coat. (With two low resists, it shouldn't be 
 # at only 5th level. Make it 25th. -JLE...)
 
 N:646:& Dragonrider Coat~
@@ -6209,6 +6209,14 @@ W:60:0:3:100000
 F:INSTA_ART
 
 #N:928-932:Extended Dragon Scale Mails: defined above below the other DSMs.
+
+N:933:Wyvern Hide Armour~
+G:(:U
+I:36:16:0
+W:40:0:180:1500
+A:40/10
+P:17:1d1:-1:0:0
+
 
 
 #N:(No.):(name)

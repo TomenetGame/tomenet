@@ -16,7 +16,7 @@
 # created from items that belong to a certain "slot" in the equipment, if
 # one assumes that "ammo" belongs to an imaginary slot (23).  However, it
 # is possible for several "ego-item" types to have the same "textual name",
-# such as with "Armor of Resistance" and "Shield of Resistance".
+# such as with "Armour of Resistance" and "Shield of Resistance".
 
 # **** NEVER RENUMBER!!!! ****
 # If you renumber this file, you should renumber defines.h too! (EGO_*)
@@ -76,7 +76,7 @@ F:REGEN_MANA
 #F:ACTIVATE
 #F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | NO_ENCHANT
 
-### Body Armor ###
+### Body Armour ###
 
 N:5:of Resist Acid
 T:36:0:255
@@ -1421,7 +1421,7 @@ X:B:24:0
 W:0:1:2:0
 C:-5:-5:0:0
 
-# Destroyed Body Armor
+# Destroyed Body Armour
 
 N:127:Blasted
 #T:16:0:99
@@ -1639,7 +1639,7 @@ C:0:0:0:0
 R:100
 F:FUEL_LITE
 
-# Armor (dwarven): must be heavy metal, and not rusty chain mail
+# Armour (dwarven): must be heavy metal, and not rusty chain mail
 
 N:146:Dwarven
 T:37:2:255
@@ -1826,7 +1826,7 @@ F:REGEN_MANA
 
 ### New ego-items added by JLE
 
-# Armor of Vulnerability (the only cursed armor)
+# Armour of Vulnerability (the only cursed armour)
 N:164:of Vulnerability
 X:A:30:0
 W:0:2:20:0

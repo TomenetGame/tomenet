@@ -4412,13 +4412,13 @@ extern int PlayerUID;
 #define TERM_BLUE		6	/* 'b' */	/* 0,0,4 */
 #define TERM_UMBER		7	/* 'u' */	/* 2,1,0 */
 #define TERM_L_DARK		8	/* 'D' */	/* 1,1,1 */
-#define TERM_L_WHITE	9	/* 'W' */	/* 3,3,3 */
+#define TERM_L_WHITE		9	/* 'W' */	/* 3,3,3 */
 #define TERM_VIOLET		10	/* 'v' */	/* 4,0,4 */
 #define TERM_YELLOW		11	/* 'y' */	/* 4,4,0 */
 #define TERM_L_RED		12	/* 'R' */	/* 4,0,0 */
-#define TERM_L_GREEN	13	/* 'G' */	/* 0,4,0 */
+#define TERM_L_GREEN		13	/* 'G' */	/* 0,4,0 */
 #define TERM_L_BLUE		14	/* 'B' */	/* 0,4,4 */
-#define TERM_L_UMBER	15	/* 'U' */	/* 3,2,1 */
+#define TERM_L_UMBER		15	/* 'U' */	/* 3,2,1 */
 
 /* Non encoded shimmer attributes */
 #define TERM_MULTI	16	/* all the main colours */
@@ -4434,8 +4434,8 @@ extern int PlayerUID;
 #define TERM_DARKNESS	26
 #define TERM_HALF	31	/* only the brighter colours */
 
-#define TERM_SHIELDM	0x27	/* 64: mana shield */
-#define TERM_SHIELDI	0x28	/* 128: invulnerability */
+#define TERM_SHIELDM	27	/* 64: mana shield */
+#define TERM_SHIELDI	28	/* 128: invulnerability */
 
 #define TERM_BNW	0x20	/* 32: black & white MASK, for admin wizards */
 

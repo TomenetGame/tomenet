@@ -1159,7 +1159,7 @@ static void calc_mana(int Ind)
 		/* Message */
 		if (p_ptr->cumber_armor)
 		{
-			msg_print(Ind, "The weight of your armor encumbers your movement.");
+			msg_print(Ind, "The weight of your armour encumbers your movement.");
 		}
 		else
 		{

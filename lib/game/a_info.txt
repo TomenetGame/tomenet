@@ -13,7 +13,7 @@
 
 # The artifact indexes are defined in "defines.h", and must not be changed.
 
-# Artifacts 1-15 are "special", 16-63 are "armor", and 64-127 are "weapons".
+# Artifacts 1-15 are "special", 16-63 are "armour", and 64-127 are "weapons".
 
 # Hack -- "Grond" and "Morgoth" MUST have a rarity of one, or they might
 # not be dropped when Morgoth is killed.  Note that they, like the "special"
@@ -334,7 +334,7 @@ W:30:3:200:100000
 P:19:1d4:0:0:20
 F:STR | DEX | SPEED | HIDE_TYPE | RES_FEAR | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_CONF | RES_SOUND
-D:A stiff suit of armor composed of small metal plates sewn to an 
+D:A stiff suit of armour composed of small metal plates sewn to an 
 D:inner layer of heavy canvas, and covered with a second layer of 
 D:cloth.  Within it is the spirit of Eorl the Young, matchless in combat.
 
@@ -2205,7 +2205,7 @@ D:A mighty suit of dragon armour, set with the scales of dragons of both
 D:Law and Chaos, and with power over both.
 
 
-# The Hard Leather Armor of Himring
+# The Hard Leather Armour of Himring
 
 N:167:of Himring
 I:36:6:0

@@ -411,7 +411,7 @@ R:40:0
 
 # The Sandworm's Lair
 # level 22-29
-# guarded by the Sandworm Queen (and her children), who will drop her armor
+# guarded by the Sandworm Queen (and her children), who will drop her armour
 N:27:The Sandworm lair
 D:SwL:a sandhole.
 W:22:29:12:0:5:200
