@@ -647,8 +647,7 @@ static void Contact(int fd, int arg)
 	{
 		if ((newsock = SocketAccept(fd)) == -1)
 		{
-			printf("Couldn't accept game TCP connection.\n");
-			return;
+			quit("Couldn't accept game TCP connection.\n");
 		}
 		install_input(Contact, newsock, 2);
 		return;
@@ -665,6 +664,11 @@ static void Contact(int fd, int arg)
 		 */
 		if (bytes == 0)
 		{
+	/* evileye - still in contact input, so close the socket here */
+	/* Dont tell me it is ugly. I know ;( */
+	/* Sched should do accepts and closes */
+			close(fd);
+	/*end evileye*/
 			remove_input(fd);
 		}
 		else if (bytes < 0 && errno != EWOULDBLOCK && errno != EAGAIN &&

@@ -711,6 +711,10 @@ Change list for PernMangband
 09/02/2002 (Evileye)
 - Unstaticer/anti scum changes.
 
+10/02/2002
+- Server/sched bug fix. Sockets closed when connection does not pass
+  the Contact() stage. The select mask was being set to the new mask!
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)

@@ -553,7 +553,9 @@ void sched(void)
 		for (i = max_fd; i >= 0; i--) {
                     if (FD_ISSET(i,&readmask))  {
 			(*input_handlers[i].func)(i, input_handlers[i].arg);
+/* evileye *//*
                         readmask = input_mask; 
+*//* oh ;( */
 			if (--n == 0) {
 			    break;
 			}

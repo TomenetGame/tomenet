@@ -374,8 +374,9 @@ void NewConsole(int read_fd, int arg)
 		if (newsock) remove_input(newsock);
 		if ((newsock = SocketAccept(read_fd)) == -1)
 		{
-			printf("Couldn't accept console TCP connection.\n");
-			return;
+			/* Clear socket if it failed */
+			newsock=0;
+			quit("Couldn't accept console TCP connection.\n");
 		}
 		console_buf.sock = newsock;
 		install_input(NewConsole, newsock, 2);
