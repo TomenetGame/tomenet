@@ -1446,6 +1446,19 @@ static errr init_other(void)
 }
 
 
+void init_swearing(){
+	int i=0;
+	FILE *fp;
+	fp=fopen("swearing.txt", "r");
+	if(fp==(FILE*)NULL) return;
+	do{
+		fscanf(fp, "%s%d\n", swear[i].word, &swear[i].level);
+		printf("%d %s %d\n", i, swear[i].word, swear[i].level);
+		i++;
+	}while(!feof(fp));
+	swear[i].word[0]='\0';
+	fclose(fp);
+}
 
 /*
  * Initialize some other arrays
@@ -1975,6 +1988,8 @@ void init_some_arrays(void)
 	/* Initialize some other arrays */
 	s_printf("[Initializing arrays... (alloc)]\n");
 	if (init_alloc()) quit("Cannot initialize alloc stuff");
+
+	init_swearing();
 
 	/* Hack -- all done */
 	s_printf("[Initializing arrays... done]\n");

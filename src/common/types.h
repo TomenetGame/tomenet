@@ -520,6 +520,10 @@ struct vault_type
 	byte wid;			/* Vault width */
 };
 
+struct swear{
+	char word[30];
+	int level;
+};
 
 /* jk */
 /* name and description are in some other arrays */

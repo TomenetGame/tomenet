@@ -137,6 +137,7 @@ server_opts cfg =
 };
 
 struct ip_ban *banlist=NULL;
+struct swear swear[30];
 
 /*
  * Software options (set via the '=' command).  See "tables.c"

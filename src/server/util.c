@@ -2829,6 +2829,27 @@ static void do_slash_cmd(int Ind, cptr message)
  */
 // #define FRIENDLY_SPELL_BOOST
 
+int censor(char *line){
+	int i, j;
+	char *word;
+	char lcopy[100];
+	int level=0;
+	strcpy(lcopy, line);
+	for(i=0; lcopy[i]; i++){
+		lcopy[i]=tolower(lcopy[i]);
+	}
+	for(i=0; strlen(swear[i].word); i++){
+		if((word=strstr(lcopy, swear[i].word))){
+			word=(&line[(word-lcopy)]);
+			for(j=0; j<strlen(swear[i].word); j++){
+				word[j]='*';
+			}
+			level=MAX(level, swear[i].level);
+		}
+	}
+	return(level);
+}
+
 /*
  * A message prefixed by a player name is sent only to that player.
  * Otherwise, it is sent to everyone.
@@ -2847,6 +2868,13 @@ void player_talk_aux(int Ind, cptr message)
 	char c = 'B';
 	int mycolor = 0;
 	bool admin = p_ptr->admin_wiz || p_ptr->admin_dm;
+
+	switch((i=censor(message))){
+		default:
+			imprison(Ind, i*20, "swearing");
+		case 1:	msg_print(Ind, "Please do not swear");
+		case 0:
+	}
 
 	p_ptr->msgcnt++;
 	if(p_ptr->msgcnt>12){
