@@ -49,52 +49,23 @@ extern void rd_u32b(u32b *ip);
 extern void rd_s32b(s32b *ip);
 extern void rd_string(char *str, int max);
 
-#if 0
-void defload(void *ptr, cave_type *c_ptr);
-void defsave(void *ptr);
-void defsee(void *ptr, int Ind);
-void defhit(void *ptr, int Ind);
-
-void dnaload(void *ptr, cave_type *c_ptr);
-void dnasave(void *ptr);
-void dnahit(void *ptr, int Ind);
-
-void keyload(void *ptr, cave_type *c_ptr);
-void keysave(void *ptr);
-void keyhit(void *ptr, int Ind);
-
-void tload(void *ptr, cave_type *c_ptr);
-void tsave(void *ptr);
-void tsee(void *ptr, int Ind);
-void thit(void *ptr, int Ind);
-
-void betweenload(void *ptr, cave_type *c_ptr);
-void betweensave(void *ptr);
-/*void betweensee(void *ptr, int Ind); */
-void betweenhit(void *ptr, int Ind);
-#endif	/* 0 */
-
-
-/*void defload(void *ptr, cave_type *c_ptr){ */
-/*void defload(void *ptr, c_special *cs_ptr){ */
 void defload(c_special *cs_ptr){
 }
 void defsave(c_special *cs_ptr){
 }
-void defsee(void *ptr, int Ind){
+void defsee(c_special *cs_ptr, int Ind){
 }
-int defhit(void *ptr, int y, int x, int Ind){
+int defhit(c_special *cs_ptr, int y, int x, int Ind){
 	return(1);
 }
 
-/*void dnaload(void *ptr, cave_type *c_ptr){ */
 void dnaload(c_special *cs_ptr){
 }
 void dnasave(c_special *cs_ptr){
 }
-int dnahit(void *ptr, int y, int x, int Ind){
+int dnahit(c_special *cs_ptr, int y, int x, int Ind){
 	/* we have to know from where we are called! */
-	struct dna *dna=ptr;
+	struct dna *dna=cs_ptr->sc.ptr;
 #ifdef USE_MANG_HOUSE
 	if (((cfg.door_bump_open & BUMP_OPEN_HOUSE) || passing)
 				&& c_ptr->feat == FEAT_HOME)
@@ -102,6 +73,7 @@ int dnahit(void *ptr, int y, int x, int Ind){
 	{
 		if(access_door(Ind, dna))
 		{
+			printf("access door...\n");
 #ifdef USE_MANG_HOUSE
 			msg_print(Ind, "\377GYou walk through the door.");
 #endif	//USE_MANG_HOUSE
@@ -111,7 +83,6 @@ int dnahit(void *ptr, int y, int x, int Ind){
 	return(FALSE);
 }
 
-/*void keyload(void *ptr, cave_type *c_ptr){ */
 void keyload(c_special *cs_ptr){
 	struct key_type *key;
 	MAKE(key, struct key_type);
@@ -123,11 +94,11 @@ void keysave(c_special *cs_ptr){
 	key=cs_ptr->sc.ptr;
 	wr_u16b(key->id);
 }
-int keyhit(void *ptr, int y, int x, int Ind){
+int keyhit(c_special *cs_ptr, int y, int x, int Ind){
 	struct player_type *p_ptr;
 	int j;
 	struct cave_type **zcave, *c_ptr;
-	struct key_type *key=ptr;
+	struct key_type *key=cs_ptr->sc.ptr;
 
 	p_ptr=Players[Ind];
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
@@ -155,35 +126,21 @@ int keyhit(void *ptr, int y, int x, int Ind){
  * Traps
  */
 /* *ptr is not used, but is still needed. */
-#if 0
-void tload(void *ptr, cave_type *c_ptr)
-{
-	struct c_special *cs_ptr;
-/*	cs_ptr=AddCS(c_ptr); */
-	cs_ptr=GetCS(c_ptr, CS_TRAPS);
-	rd_byte(&cs_ptr->sc.trap.t_idx);
-	rd_byte(&cs_ptr->sc.trap.found);
-}
-#else
 void tload(c_special *cs_ptr)
 {
 	rd_byte(&cs_ptr->sc.trap.t_idx);
 	rd_byte(&cs_ptr->sc.trap.found);
 }
-#endif	/* 0 */
 void tsave(c_special *cs_ptr)
 {
 	wr_byte(cs_ptr->sc.trap.t_idx);
 	wr_byte(cs_ptr->sc.trap.found);
 }
-void tsee(void *ptr, int Ind){
+void tsee(c_special *cs_ptr, int Ind){
 	printf("tsee %d\n", Ind);
 }
 
-/* evileye - i'll have to change ptr to
-   the full struct pointer now. this can
-   be done later. */
-int thit(void *ptr, int y, int x, int Ind){
+int thit(c_special *cs_ptr, int y, int x, int Ind){
 #if 0	/* temporary while csfunc->activate() is changed */
 	if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost)
 	{
@@ -229,8 +186,8 @@ void insc_save(c_special *cs_ptr){
 	wr_u16b(insc->found);
 }
 
-int insc_hit(void *ptr, int y, int x, int Ind){
-	struct floor_insc *sptr=ptr;
+int insc_hit(c_special *cs_ptr, int y, int x, int Ind){
+	struct floor_insc *sptr=cs_ptr->sc.ptr;
 	msg_format(Ind, "A sign here reads: %s", sptr->text);
 	return(TRUE);
 }
@@ -238,31 +195,20 @@ int insc_hit(void *ptr, int y, int x, int Ind){
 /*
  * Between gates (inner-floor version)
  */
-#if 0
-void betweenload(void *ptr, cave_type *c_ptr)
-{
-	struct c_special *cs_ptr;
-/*	cs_ptr=AddCS(c_ptr); */
-	cs_ptr=GetCS(c_ptr, CS_BETWEEN);
-	rd_byte(&cs_ptr->sc.between.fy);
-	rd_byte(&cs_ptr->sc.between.fx);
-}
-#else
 void betweenload(c_special *cs_ptr)
 {
 	rd_byte(&cs_ptr->sc.between.fy);
 	rd_byte(&cs_ptr->sc.between.fx);
 }
-#endif	/* 0 */
 void betweensave(c_special *cs_ptr)
 {
 	wr_byte(cs_ptr->sc.between.fy);
 	wr_byte(cs_ptr->sc.between.fx);
 }
-void betweensee(void *ptr, int Ind){
+void betweensee(c_special *cs_ptr, int Ind){
 	printf("tsee %d\n", Ind);
 }
-int betweenhit(void *ptr, int y, int x, int Ind){
+int betweenhit(c_special *cs_ptr, int y, int x, int Ind){
 	printf("bhit: %d\n", Ind);
 	return(TRUE);
 }
@@ -279,7 +225,7 @@ void fountsave(c_special *cs_ptr)
 	wr_byte(cs_ptr->sc.fountain.rest);
 	wr_byte(cs_ptr->sc.fountain.known);
 }
-void fountsee(void *ptr, int Ind){
+void fountsee(c_special *cs_ptr, int Ind){
 	/* TODO: tell what kind if 'known' */
 	printf("fountsee %d\n", Ind);
 }
@@ -287,24 +233,12 @@ void fountsee(void *ptr, int Ind){
 /*
  * Monster_traps (inner-floor version)
  */
-#if 0
-void montrapload(void *ptr, cave_type *c_ptr)
-{
-	struct c_special *cs_ptr;
-/*	cs_ptr=AddCS(c_ptr); */
-	cs_ptr=GetCS(c_ptr, CS_MON_TRAP);
-	rd_u16b(&cs_ptr->sc.montrap.trap_kit);
-	rd_byte(&cs_ptr->sc.montrap.difficulty);
-	rd_byte(&cs_ptr->sc.montrap.feat);
-}
-#else	/* 0 */
 void montrapload(c_special *cs_ptr)
 {
 	rd_u16b(&cs_ptr->sc.montrap.trap_kit);
 	rd_byte(&cs_ptr->sc.montrap.difficulty);
 	rd_byte(&cs_ptr->sc.montrap.feat);
 }
-#endif	/* 0 */
 void montrapsave(c_special *cs_ptr)
 {
 	wr_u16b(cs_ptr->sc.montrap.trap_kit);
@@ -322,22 +256,6 @@ void s32bsave(c_special *cs_ptr)
 	wr_s32b(cs_ptr->sc.omni);
 }
 
-#if 0
-void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr)
-{
-	struct c_special *trav, *prev;
-	if (!c_ptr) return;
-
-	prev=trav=c_ptr->special;
-	while(trav){
-		if(trav==cs_ptr){
-			prev=trav->next;
-			KILL(trav, struct c_special);
-			return;
-		}
-	}
-}
-#else /* 0 */
 void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr)
 {
 	struct c_special *trav, *prev;
@@ -358,8 +276,6 @@ void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr)
 		trav=trav->next;
 	}
 }
-#endif	/* 0 */
-
 
 struct sfunc csfunc[]={
 	{ defload, defsave, defsee, defhit },	/* CS_NONE */
