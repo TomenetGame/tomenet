@@ -4259,7 +4259,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 			}
 			case 25: /* curse */
 			{
-//			
+				curse_spell(Ind);
 				break;
 			}
 			case 26: /* id ball */
