@@ -714,6 +714,7 @@ void teleport_player(int Ind, int dis)
 		{
 			/* Avoid server hang-up on 100%-tree-maps */
 			tries++;
+			if (tries == 3000) break;
 
 			/* Pick a (possibly illegal) location */
 			while (1)
@@ -756,7 +757,7 @@ void teleport_player(int Ind, int dis)
 	}
 
 	/* No empty field on this map o_O */
-	if (tries > 3000) return;
+	if (tries >= 3000) return;
 
 	/* Save the old location */
 	oy = p_ptr->py;
