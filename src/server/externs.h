@@ -518,6 +518,7 @@ extern void signals_handle_tstp(void);
 extern void signals_init(void);
 extern void kingly(int Ind);
 extern errr get_rnd_line(cptr file_name, int entry, char *output);
+extern void wipeout_needless_objects();
 
 /* generate.c */
 extern bool dungeon_aux(int r_idx);

@@ -1687,6 +1687,80 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 	return (0);
 }
 
+/* Clear objects so that artifacts get saved.
+ * This probably isn't neccecary, as all the objects on each of
+ * these levels should have been cleared by now. However, paranoia
+ * can't hurt all that much... -APD
+ */
+/* totally inefficient replacement - sorry. */
+/* it also doesnt respect non existent world positions */
+/* rewrite */
+/* k rewritten.. but not so better?	- Jir - */
+void wipeout_needless_objects()
+{
+#if 0	// exit_game_panic version
+	int i = 1;
+	int j,k;
+	struct worldpos wpos;
+	struct wilderness_type *wild;
+
+	for(i=0;i<MAX_WILD_X;i++){
+		wpos.wx=i;
+		for(j=0;j<MAX_WILD_Y;j++){
+			wpos.wy=j;
+			wild=&wild_info[j][i];
+
+			wpos.wz=0;
+			if(getcave(&wpos) && !players_on_depth(&wpos)) wipe_o_list(&wpos);
+
+			if (wild->flags&WILD_F_UP)
+				for (k = 0;k < wild->tower->maxdepth; k++)
+				{
+					wpos.wz=k;
+					if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
+				}
+
+			if (wild->flags&WILD_F_DOWN)
+				for (k = 0;k < wild->dungeon->maxdepth; k++)
+				{
+					wpos.wz=-k;
+					if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
+				}
+		}
+	}
+#else	// 0
+	struct worldpos cwpos;
+	struct dungeon_type *d_ptr;
+	wilderness_type *w_ptr;
+	int x,y,z;
+
+	for(y=0;y<MAX_WILD_Y;y++){
+		cwpos.wy=y;
+		for(x=0;x<MAX_WILD_X;x++){
+			cwpos.wx=x;
+			cwpos.wz=0;
+			w_ptr=&wild_info[y][x];
+			if(getcave(&cwpos) && !players_on_depth(&cwpos)) wipe_o_list(&cwpos);
+			if(w_ptr->flags & WILD_F_DOWN){
+				d_ptr=w_ptr->dungeon;
+				for(z=1;z<=d_ptr->maxdepth;z++){
+					cwpos.wz=-z;
+					if(d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
+						wipe_o_list(&cwpos);
+				}
+			}
+			if(w_ptr->flags & WILD_F_UP){
+				d_ptr=w_ptr->tower;
+				for(z=1;z<=d_ptr->maxdepth;z++){
+					cwpos.wz=z;
+					if(d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
+						wipe_o_list(&cwpos);
+				}
+			}
+		}
+	}
+#endif	// 0
+}
 
 /*
  * Handle a fatal crash.
@@ -1703,9 +1777,6 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 void exit_game_panic(void)
 {
 	int i = 1;
-	int j,k;
-	struct worldpos wpos;
-	struct wilderness_type *wild;
 
 	/* If nothing important has happened, just quit */
 	if (!server_generated || server_saved) quit("panic");
@@ -1756,36 +1827,8 @@ void exit_game_panic(void)
 		}
 	}
 
-	/* Clear objects so that artifacts get saved.
-	 * This probably isn't neccecary, as all the objects on each of
-	 * these levels should have been cleared by now. However, paranoia
-	 * can't hurt all that much... -APD
-	 */
-/* totally inefficient replacement - sorry. */
-/* it also doesnt respect non existent world positions */
-/* rewrite */
-/* k rewritten.. but not so better? */
-	for(i=0;i<MAX_WILD_X;i++){
-		wpos.wx=i;
-		for(j=0;j<MAX_WILD_Y;j++){
-			wpos.wy=j;
-			wild=&wild_info[j][i];
+	wipeout_needless_objects();
 
-			if (wild->flags&WILD_F_UP)
-				for (k = 0;k < wild->tower->maxdepth; k++)
-				{
-					wpos.wz=k;
-					if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
-				}
-
-			if (wild->flags&WILD_F_DOWN)
-				for (k = 0;k < wild->dungeon->maxdepth; k++)
-				{
-					wpos.wz=-k;
-					if((getcave(&wpos)) && (!players_on_depth(&wpos))) wipe_o_list(&wpos);
-				}
-		}
-	}
 	/* Stop the timer */
 	teardown_timer();
 

@@ -1052,12 +1052,17 @@ TODO: the newest should appear the first!
 - /news, displays news.txt
 - you can no longer drop items on stairs/store-entrances.
 - monster drops stack on the floor too.
+- extra info in unique/arts list available for admin-chars.
+- /arts [show,fix,ban!,reset!]
 [H] you can go into a store with '>' key.
 [B] TV_POTION2 didn't shatter when thrown.
 [B] you couldn't fire missiles, doh!
 [B] was trying to read 'mangband.rfe' while rfe file was 'tomenet.rfe'.
 [B] floors got unstaticed prematually sometimes (prolly my enbug).
 [B] STR damage by swimming exertion could be prevented by sustain_str.
+[B] excise_object_idx crashed if unstaticed.
+[B] server shutdown caused ever-unfindable arts.
+[B] 2 'if();' potential bugs in new_wr_dungeons() fixed.
 
 
 ** [B] stands for Bugfix.
@@ -1073,6 +1078,7 @@ concisely: what's hot now?
 - quest system
 - skill system
   + interfere() should be affected by archery/wizardly skills?
+  + no SKILL_BOOMERANG ?
 - LUA hook
 - csfunc
 - alignment (let's wait for EE :)
@@ -1336,6 +1342,7 @@ memo and questions:
 
 [sober (intrinsic) ones]
 - savedata editor
+- savedata scanner (to fix broken arts/unique lists, find illigal data etc.)
 - vault/map editor
 - new networking code (to kiss xpilot adieu :)
 - redefine packets in a way more generic
@@ -1344,6 +1351,7 @@ memo and questions:
 - meta-server should:
   + transmit 'port No.', 'variant name' information.
 - periodic (a la cron) savedata backup
+- infinite loop detector
 
 [client matters]
 - warriors.prf, priest.prf etc. should be bandled with client distribution?

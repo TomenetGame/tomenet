@@ -1670,6 +1670,9 @@ int get_archery_skill(player_type *p_ptr)
 
         o_ptr = &p_ptr->inventory[INVEN_BOW];
 
+		/* No Boomerang skill? */
+		if (o_ptr->tval == TV_BOOMERANG) return -1;
+
         switch (o_ptr->sval / 10)
         {
         case 0:

@@ -3080,8 +3080,12 @@ void dungeon(void)
 					o_ptr = &p_ptr->inventory[j];
 					if (!o_ptr->k_idx || !true_artifact_p(o_ptr)) continue;
 
+					/* fix the list */
 					if (!a_info[o_ptr->name1].cur_num)
 						a_info[o_ptr->name1].cur_num = 1;
+
+					if (!a_info[o_ptr->name1].known && (o_ptr->ident & ID_KNOWN))
+						a_info[o_ptr->name1].known = TRUE;
 
 					if (!(cfg.kings_etiquette && p_ptr->total_winner && !is_admin(p_ptr)))
 						continue;
@@ -3817,9 +3821,12 @@ void shutdown_server(void)
 		Destroy_connection(p_ptr->conn, "Server shutdown (save succeeded)");
 	}
 
-#ifdef NEW_DUNGEON
-#else
 	/* Now wipe every object, to preserve artifacts on the ground */
+#ifdef NEW_DUNGEON
+#if 1	// though AUTO_PURGE does this job anyway..
+	wipeout_needless_objects();
+#endif	// 0
+#else
 	for (i = 1; i < MAX_DEPTH; i++)
 	{
 		/* Wipe this depth */

@@ -97,11 +97,9 @@ void excise_object_idx(int o_idx)
 		int x = j_ptr->ix;
 
 		/* Grid */
-		if((zcave=getcave(&j_ptr->wpos)))
-		{
-			c_ptr=&zcave[y][x];
-		}
-
+		if(!(zcave=getcave(&j_ptr->wpos))) return;
+		
+		c_ptr=&zcave[y][x];
 
 		/* Scan all objects in the grid */
 		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -372,9 +370,19 @@ void compact_objects(int size, bool purge)
 		/* real objects in unreal location are not skipped. */
 		/* hack -- items on wilderness are preserved, since
 		 * they can be house contents. */
+#if 0
 		if (o_ptr->k_idx &&
 			((!o_ptr->wpos.wz && (!purge || o_ptr->owner)) ||
 			 getcave(&o_ptr->wpos))) continue;
+#endif	// 0
+		if (o_ptr->k_idx)
+		{
+			if ((!o_ptr->wpos.wz && (!purge || o_ptr->owner)) ||
+					getcave(&o_ptr->wpos)) continue;
+
+			/* Delete it first */
+			delete_object_idx(i);
+		}
 
 
 		/* One less object */

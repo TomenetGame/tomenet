@@ -2957,12 +2957,48 @@ static void do_slash_cmd(int Ind, char *message)
 						msg_format(Ind, "Artifact %d is now \377runfindable\377w.", k);
 					}
 				}
-				else if (tk > 0 && strchr(token[1],'*'))
+				else if (tk > 0 && prefix(token[1], "show"))
+				{
+					int count = 0;
+					for (i = 0; i < MAX_A_IDX ; i++)
+					{
+						if (!a_info[i].cur_num || a_info[i].known) continue;
+
+						a_info[i].known = TRUE;
+						count++;
+					}
+					msg_format(Ind, "%d 'found but unknown' artifacts are set as '\377Gknown\377w'.", count);
+				}
+				else if (tk > 0 && prefix(token[1], "fix"))
+				{
+					int count = 0;
+					for (i = 0; i < MAX_A_IDX ; i++)
+					{
+						if (!a_info[i].cur_num || a_info[i].known) continue;
+
+						a_info[i].cur_num = 0;
+						count++;
+					}
+					msg_format(Ind, "%d 'found but unknown' artifacts are set as '\377rfindable\377w'.", count);
+				}
+//				else if (tk > 0 && strchr(token[1],'*'))
+				else if (tk > 0 && prefix(token[1], "reset!"))
 				{
 					for (i = 0; i < MAX_A_IDX ; i++)
+					{
 						a_info[i].cur_num = 0;
-						a_info[k].known = FALSE;
-						msg_format(Ind, "All the artifacts are \377rfindable\377w!", k);
+						a_info[i].known = FALSE;
+					}
+					msg_format(Ind, "All the artifacts are \377rfindable\377w!", k);
+				}
+				else if (tk > 0 && prefix(token[1], "ban!"))
+				{
+					for (i = 0; i < MAX_A_IDX ; i++)
+					{
+						a_info[i].cur_num = 1;
+						a_info[i].known = TRUE;
+					}
+					msg_format(Ind, "All the artifacts are \377runfindable\377w!", k);
 				}
 				else
 				{

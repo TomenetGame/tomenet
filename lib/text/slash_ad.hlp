@@ -64,8 +64,13 @@ Note: {worldpos} is interpreted in the following ways.
     eg: /unst 48 2 250
 
 
-/art (id) 
+/art (id, or 'show', 'fix', 'ban!' and 'reset!') 
     Toggle artifact status findable/unfindable.
+    Following commands are also available (but use with *CARE*!)
+        show  : make 'found but unknown' arts appear on the list
+        fix   : make 'found but unknown' arts findable once more
+        ban!  : make ALL the arts UNFINDABLE
+        reset!: make ALL the arts FINDABLE
 
 /cfg [configuration filename] 
     Reload configuration file.
@@ -137,7 +142,7 @@ Note: {worldpos} is interpreted in the following ways.
     /wish (tval) (sval) 
     /wish (tval) (sval) (name1) 
     name1 is ID of an artifact. If name1 is less than zero, ego item will be
-	generated instead. If 0, it'll be randarts.
+    generated instead. If 0, it'll be randarts.
     eg. '/wish 242' or '/wish 75 37' for 99 potions of healing.
         '/wish 23 30 -187' for 'Stormbringer'.
 

@@ -1,4 +1,4 @@
-
+/* $Id$ */
 /* File: cmd4.c */
 
 /* Purpose: Interface commands */
@@ -37,15 +37,17 @@ void do_cmd_check_artifacts(int Ind, int line)
 
 	FILE *fff;
 
-	char file_name[1024];
+	char file_name[MAX_PATH_LENGTH];
 
 	char base_name[80];
 
 	bool okay[MAX_A_IDX];
 
+	player_type *q_ptr = Players[Ind];
+	bool admin = is_admin(q_ptr);
 
 	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
@@ -65,7 +67,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 		if (!a_ptr->cur_num) continue;
 
 		/* Skip "unknown" artifacts */
-		if (!a_ptr->known) continue;
+		if (!a_ptr->known && !admin) continue;
 
 		/* Assume okay */
 		okay[k] = TRUE;
@@ -154,7 +156,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 			if (!artifact_p(o_ptr)) continue;
 
 			/* Ignore known items */
-			if (object_known_p(Ind, o_ptr)) continue;
+			if (object_known_p(Ind, o_ptr) && !admin) continue;
 
 			/* Note the artifact */
 			okay[o_ptr->name1] = FALSE;
@@ -195,7 +197,9 @@ void do_cmd_check_artifacts(int Ind, int line)
 		}
 
 		/* Hack -- Build the artifact name */
-		fprintf(fff, "     The %s\n", base_name);
+		if (admin) fprintf(fff, "(%d)", k);
+		fprintf(fff, "     The %s%s\n", base_name, admin && !a_ptr->known ?
+				" (unknown)" : "");
 	}
 
 	/* Close the file */
@@ -227,10 +231,13 @@ void do_cmd_check_uniques(int Ind, int line)
 
 	FILE *fff;
 
-	char file_name[1024];
+	char file_name[MAX_PATH_LENGTH];
+
+	player_type *q_ptr = Players[Ind];
+	bool admin = is_admin(q_ptr);
 
 	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
@@ -244,7 +251,8 @@ void do_cmd_check_uniques(int Ind, int line)
 		if (r_ptr->flags1 & RF1_UNIQUE)
 		{
 			/* Only display known uniques */
-			if (r_ptr->r_sights && mon_allowed(r_ptr))
+//			if (r_ptr->r_sights && mon_allowed(r_ptr))
+			if (r_ptr->r_sights)
 			{
 				int i, j = 0;
 				byte ok = FALSE;
@@ -252,6 +260,9 @@ void do_cmd_check_uniques(int Ind, int line)
 
 				/* Output color byte */
 				fprintf(fff, "%c", 'w');
+
+				/* Hack -- Show the ID for admin */
+				if (admin) fprintf(fff, "(%d) ", k);
 
 				/* Format message */
 //				fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
@@ -334,12 +345,14 @@ void do_cmd_check_players(int Ind, int line)
 
 	FILE *fff;
 
-	char file_name[1024];
+	char file_name[MAX_PATH_LENGTH];
 
 	player_type *p_ptr = Players[Ind];
 
+	bool admin = is_admin(p_ptr);
+
 	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
@@ -376,27 +389,19 @@ void do_cmd_check_players(int Ind, int line)
 		fprintf(fff, "%c", attr);
 
 		/* Print a message */
-		if(q_ptr->fruit_bat)
-		{
-			fprintf(fff, "  %s the %s%s %s (%sFruit bat, Lv %d, %s)",
-				q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[q_ptr->prace].title, 
-				class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
-				parties[q_ptr->party].name);
-		}
-		else
-		{
-			fprintf(fff, "  %s the %s%s %s (%sLv %d, %s)",
-				q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[q_ptr->prace].title, 
-				class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
-				parties[q_ptr->party].name);
-	}
+		fprintf(fff, "  %s the %s%s %s (%s%sLv %d, %s)",
+				q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"",
+				race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
+				(q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"",
+				q_ptr->fruit_bat ? "Fruit bat, " : "",
+				q_ptr->lev, parties[q_ptr->party].name);
 
 		/* AFK */
 		if(q_ptr->afk)
 		{
 			fprintf(fff, " AFK");
 		}
-		if(q_ptr->pkill & PKILL_SET)
+		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 		{
 			fprintf(fff, " PK");
 		}
@@ -404,27 +409,26 @@ void do_cmd_check_players(int Ind, int line)
 			fprintf(fff, " SAFE");
 		}
 		else if(!(q_ptr->tim_pkill)){
-			fprintf(fff, " Newbie");
+			fprintf(fff, q_ptr->lev < 5 ? " Newbie" : " Killable");
 		}
 				
 		/* Newline */
 		/* -AD- will this work? */
 		fprintf(fff, "\n");
-#if 0
-		if (p_ptr->admin_dm || p_ptr->admin_wiz)
-			fprintf(fff, "   %c(%d)", (q_ptr->quest_id?'Q':' '), k);
-#endif
+
+		if (is_admin(p_ptr)) fprintf(fff, "   (%d)", k);
+
 		fprintf(fff, "     %s@%s", q_ptr->realname, q_ptr->hostname);
 
 		/* Print extra info if these people are in the same party */
 		/* Hack -- always show extra info to dungeon master */
-		if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || p_ptr->admin_dm || p_ptr->admin_wiz)
+		if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin)
 		{
 			/* maybe too kind? */
 			fprintf(fff, "   {[%d,%d] of %dft(%d,%d)}", q_ptr->panel_row, q_ptr->panel_col, q_ptr->wpos.wz*50, q_ptr->wpos.wx, q_ptr->wpos.wy);
 
 		}
-		if((p_ptr->guild == q_ptr->guild && q_ptr->guild) || Ind == k || p_ptr->admin_dm || p_ptr->admin_wiz){
+		if((p_ptr->guild == q_ptr->guild && q_ptr->guild) || Ind == k || admin){
 			if(q_ptr->guild)
 				fprintf(fff, " [%s]", guilds[q_ptr->guild].name);
 			fprintf(fff, " %c", (q_ptr->quest_id?'Q':' '));
@@ -451,14 +455,14 @@ void do_cmd_check_player_equip(int Ind, int line)
 
 	FILE *fff;
 
-	char file_name[1024];
+	char file_name[MAX_PATH_LENGTH];
 
 	player_type *p_ptr = Players[Ind];
 
-	bool admin = p_ptr->admin_wiz || p_ptr->admin_dm;
+	bool admin = is_admin(p_ptr);
 
 	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
@@ -574,8 +578,51 @@ void do_cmd_check_player_equip(int Ind, int line)
 
 
 /*
+ * Prepare to view already-existing text file. full path is needed.
+ * do_cmd_check_other is called after the client is ready.	- Jir -
+ *
+ * Unlike show_file and do_cmd_help_aux, this can display the file
+ * w/o request from client, ie. no new packet definition etc. is needed.
+ */
+void do_cmd_check_other_prepare(int Ind, char *path)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* Current file viewing */
+	strcpy(p_ptr->cur_file, path);
+
+	/* Let the player scroll through the info */
+	p_ptr->special_file_type = TRUE;
+
+	/* Let the client know to expect some info */
+	Send_special_other(Ind);
+}
+
+
+/*
  * Scroll through *ID* or Self Knowledge information.
  */
+void do_cmd_check_other(int Ind, int line)
+{
+	player_type *p_ptr = Players[Ind];
+
+
+	/* Make sure the player is allowed to */
+	if (!p_ptr->special_file_type) return;
+
+	/* Display the file contents */
+//	show_file(Ind, p_ptr->infofile, "Extra Info", line, 0);
+	show_file(Ind, p_ptr->cur_file, "Extra Info", line, 0);
+
+#if 0
+	/* Remove the file */
+	fd_kill(p_ptr->infofile);
+
+	strcpy(p_ptr->infofile, "");
+#endif	// 0
+}
+
+#if 0
 void do_cmd_check_other(int Ind, int line)
 {
 	player_type *p_ptr = Players[Ind];
@@ -584,14 +631,14 @@ void do_cmd_check_other(int Ind, int line)
 
 	FILE *fff;
 
-	char file_name[1024];
+	char file_name[MAX_PATH_LENGTH];
 
 
 	/* Make sure the player is allowed to */
 	if (!p_ptr->special_file_type) return;
 
 	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
@@ -618,3 +665,4 @@ void do_cmd_check_other(int Ind, int line)
 	/* Remove the file */
 	fd_kill(file_name);
 }
+#endif	// 0
