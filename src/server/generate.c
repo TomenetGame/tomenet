@@ -452,6 +452,7 @@ static void place_random_stairs(struct worldpos *wpos, int y, int x)
  */
 static void place_locked_door(struct worldpos *wpos, int y, int x)
 {
+	int tmp;
 	cave_type **zcave;
 	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return;
@@ -459,6 +460,10 @@ static void place_locked_door(struct worldpos *wpos, int y, int x)
 
 	/* Create locked door */
 	c_ptr->feat = FEAT_DOOR_HEAD + randint(7);
+
+	/* let's trap this ;) */
+	if ((tmp = getlevel(wpos)) < 6 || rand_int(900) < tmp) return;
+	place_trap(wpos, y, x);
 }
 
 
@@ -467,6 +472,7 @@ static void place_locked_door(struct worldpos *wpos, int y, int x)
  */
 static void place_secret_door(struct worldpos *wpos, int y, int x)
 {
+	int tmp;
 	cave_type **zcave;
 	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return;
@@ -474,6 +480,10 @@ static void place_secret_door(struct worldpos *wpos, int y, int x)
 
 	/* Create secret door */
 	c_ptr->feat = FEAT_SECRET;
+
+	/* let's trap this ;) */
+	if ((tmp = getlevel(wpos)) < 6 || rand_int(900) < tmp) return;
+	place_trap(wpos, y, x);
 }
 
 
@@ -532,6 +542,10 @@ static void place_random_door(struct worldpos *wpos, int y, int x)
 		/* Create jammed door */
 		c_ptr->feat = FEAT_DOOR_HEAD + 0x08 + rand_int(8);
 	}
+
+	/* let's trap this ;) */
+	if ((tmp = getlevel(wpos)) < 6 || rand_int(900) < tmp) return;
+	place_trap(wpos, y, x);
 }
 
 
@@ -1371,6 +1385,9 @@ static void build_type3(struct worldpos *wpos, int yval, int xval)
 
 		/* Let's guard the treasure well */
 		vault_monsters(wpos, yval, xval, rand_int(2) + 3);
+
+		/* Place the trap */
+		if (magik(50)) place_trap(wpos, yval, xval);
 
 		/* Traps naturally */
 		vault_traps(wpos, yval, xval, 4, 4, rand_int(3) + 2);

@@ -44,6 +44,7 @@ Latest changes for version 3.3.6b (digest):
 - {@Oc} on a book makes you use the 'c' spell for auto-retaliation.
 - {@Ox} on any items and auto-retaliator will be disabled.
 - You can check players' equipments with "'" key under certain conditions.
+- You can spike doors with Control-S (client update needed).
 - '/' key can do many things (a,A,e,E,F,i,m,p,q,r,t,w,z,Z)
 
 [Please see the ChangeLog on the official site for details.]

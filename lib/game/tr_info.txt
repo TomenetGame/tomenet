@@ -863,9 +863,14 @@ D:A chasm opens up under you!
 F:FLOOR
 
 N:184:Pit
-I:4:50:0:0:3:0d0:w
+I:4:100:0:0:3:0d0:w
 D:A pit opens up under you!
 F:FLOOR
+
+N:185:Seasoned Traveler Trap
+I:6:30:50:3:16:0d0:y
+D:Your backpack feels lighter, now it's the time to depart!
+F:FLOOR | DOOR | CHEST
 
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color

@@ -2523,6 +2523,12 @@ void do_slash_cmd(int Ind, cptr message){
 				admin_outfit(Ind);
 				return;
 			}
+			else if (prefix(message, "/uncurse") ||
+					prefix(message, "/unc"))
+			{
+				remove_all_curse(Ind);
+				return;
+			}
 #if 0	// pfft, it was not suitable for slash-commands
 			/* view RFE file. this should be able to handle log file also. */
 			else if (prefix(message, "/less")) 
@@ -2534,7 +2540,7 @@ void do_slash_cmd(int Ind, cptr message){
 			else
 			{
 				msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me rec ref rfe tag target untag;");
-				msg_print(Ind, "  art cfg clv en eq geno id kick lua shutdown sta trap unst wish");
+				msg_print(Ind, "  art cfg clv en eq geno id kick lua shutdown sta trap unc unst wish");
 				return;
 			}
 		}

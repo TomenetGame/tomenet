@@ -4621,6 +4621,7 @@ extern int PlayerUID;
 #define TRAP_OF_GARBAGE_FILLING		182
 #define TRAP_OF_CHASM		183
 #define TRAP_OF_PIT			184
+#define TRAP_OF_SEASONED_TRAVELER	185
 
 #define TR_LIST(c_ptr) (c_ptr->special.ptr)
 

@@ -3321,13 +3321,13 @@ void monster_death(int Ind, int m_idx)
 			qq_ptr->name3 += rand_int(0xFFFF);
 
 			/* Check the tval is allowed */
-			if (randart_make(qq_ptr) == NULL)
+//			if (randart_make(qq_ptr) != NULL)
 
 				apply_magic(wpos, qq_ptr, -1, FALSE, TRUE, FALSE);
 
 			/* Save the inscription */
 			/* (pfft, not so smart..) */
-			qq_ptr->note = quark_add(format("of %s", r_name + r_ptr->name));
+			qq_ptr->note = quark_add(format("#of %s", r_name + r_ptr->name));
 
 			/* Drop it in the dungeon */
 			drop_near(qq_ptr, -1, wpos, y, x);

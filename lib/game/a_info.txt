@@ -210,6 +210,7 @@ F:SUST_STR | SUST_DEX | SUST_CON |
 F:SUST_INT | SUST_WIS | SUST_CHR | 
 F:RES_BLIND | RES_POIS | RES_DISEN | RES_NETHER | ESP_ALL | 
 F:DRAIN_MANA | DRAIN_HP | DRAIN_EXP | 
+F:INVIS
 F:INSTA_ART
 Z:change the world
 D:"Ash nazg durbatuluk, ash nazg gimbatul, ash nazg thrakatuluk agh 

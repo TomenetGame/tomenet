@@ -1786,6 +1786,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 
 			/* Apply the player damage bonuses */
+			/* (should this also cancelled by nazgul?(for now not)) */
 			k += p_ptr->to_d;
 
 			/* No negative damage */
@@ -2113,13 +2114,41 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 
 		if ((!o_ptr->name2) && (!artifact_p(o_ptr)))
 		{
-			msg_print(Ind, "Your weapon *DISINTEGRATES*!");
+			msg_print(Ind, "\377rYour weapon *DISINTEGRATES*!");
 			*k = 0;
 			inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 			inven_item_optimize(Ind, INVEN_WIELD + weap);
 
 			/* To stop attacking */
 //			*num = num_blow;
+		}
+		else if (artifact_p(o_ptr))
+		{
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f5 & TR5_KILL_UNDEAD))
+			{
+				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
+				*k = 0;
+			}
+
+//			apply_disenchant(Ind, INVEN_WIELD + weap);
+			apply_disenchant(Ind, weap);
+
+			/* 1/1000 chance of getting destroyed */
+			if (!rand_int(1000))
+			{
+				if (true_artifact_p(o_ptr))
+				{
+					a_info[o_ptr->name1].cur_num = 0;
+					a_info[o_ptr->name1].known = FALSE;
+				}
+
+				msg_print(Ind, "\377rYour weapon is destroyed !");
+				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+				inven_item_optimize(Ind, INVEN_WIELD + weap);
+
+				/* To stop attacking */
+//				*num = num_blow;
+			}
 		}
 		else if (o_ptr->name2)
 		{
@@ -2132,34 +2161,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 			/* 25% chance of getting destroyed */
 			if (magik(25))
 			{
-				msg_print(Ind, "Your weapon is destroyed !");
-				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
-				inven_item_optimize(Ind, INVEN_WIELD + weap);
-
-				/* To stop attacking */
-//				*num = num_blow;
-			}
-		}
-		else if (artifact_p(o_ptr))
-		{
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f5 & TR5_KILL_UNDEAD))
-			{
-				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
-				*k = 0;
-			}
-
-			apply_disenchant(Ind, INVEN_WIELD + weap);
-
-			/* 1/1000 chance of getting destroyed */
-			if (!rand_int(1000))
-			{
-				if (true_artifact_p(o_ptr))
-				{
-					a_info[o_ptr->name1].cur_num = 0;
-					a_info[o_ptr->name1].known = FALSE;
-				}
-
-				msg_print(Ind, "Your weapon is destroyed !");
+				msg_print(Ind, "\377rYour weapon is destroyed !");
 				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 				inven_item_optimize(Ind, INVEN_WIELD + weap);
 

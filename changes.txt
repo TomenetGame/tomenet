@@ -740,7 +740,7 @@ Change list for PernMangband
 01/03/2002 (Jir)
 - players can use /rec now (this applies item with {@R})
 - new monster: exploding coins
-- admin command: /en(light), /eq(uipment)
+- admin command: /en(light), /eq(uipment) ,/unc(urse)
 - SEVERE_GENO/RESIST_GENO compile-time option.
 - saving-throw is limited to 95 (4% fail) now.
 - door spiking (ctrl-s or '/')
@@ -749,6 +749,7 @@ Change list for PernMangband
 - store buying-prices reflect *ID* states.
 - STORE_TURNS is moved to cfg struct.
 - mangband.cfg revised.
+- doors can be trapped.
 [C] option-setting screen accepts 'j','k','s','t','5' keys.
 [C] server-list can display the whole players when crowded
 [B] strange colouring in unique list
@@ -756,9 +757,11 @@ Change list for PernMangband
 [B] breeders won't breed
 [B] stormbringer was way too powerful (+8 attacks!!)
 [B] indestructible rings didn't work
-[B] a leveled spellcasters could cast with DarkSword.
+[B] a leveled spellcasters could cast with DarkSword
 [B] artifact missiles could be bandled
-[B] store prices were confused with pval and bpval.
+[B] store prices were confused with pval and bpval
+[B] Nazguls didn't drop the rings
+[B] some arts were handled in a wrong way when fighting Nazguls
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
@@ -767,6 +770,7 @@ Change list for PernMangband
 ==== below this line are the unfixed bugs known ====
 [B] Self-reproducing black trap
 [B] Panic save often enters into infinite loop.
+[B] rebooting server always make floors disappear
 [B] House doors still seem to crash sometimes.
 [B] wpos display hides wound states(eg.'Deep Gash')
 [B] ever-charging arts (eg.star)
@@ -794,9 +798,12 @@ Change list for PernMangband
 - quiver/tool slot (not a monster! ;)
 - sort unique-list according to the level
 - tombstone screen
-- wilderness compacting
+- wilderness compacting (how about 'compacting' townies?)
 - low-sanity alart each 2000 turn or sth(and 'flushback' hallucination?)
 - display "non-scoring mode" in '@' screen
+- no return trap/expert traveller trap
+- torch/lantern shouldn't be EASY_KNOWN.
+- Nazgul rings should have corresponding names
 [C] ameliorate option interface(toggle-key/vi-key)
 
 [major ones]
@@ -822,6 +829,7 @@ Change list for PernMangband
 - DEBUG_MSG_LEVEL
 - total source-code cleanup {takkaria?}
 - integrate save/load into one function (eg. saveload.c)
+- *_info.txt encryption
 
 ==== below this line are RFEs collected so far (good or bad) ====
 [minor ones]
@@ -837,6 +845,7 @@ Change list for PernMangband
 - wielding 'Stormbringer' should make the wielder attack the others
 - intelligent monsters should cast a spell even when player is out of sight.
 - NO_GHOST, but not HELLISH mode
+- vision sharing among the members of a party
 [major ones]
 - NPC/pet/golem/slave {Evileye/DG?}
 - monsters' interactions

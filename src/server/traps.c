@@ -1471,7 +1471,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 //               else if ((j_ptr->tval==TV_ROD_MAIN) && (j_ptr->pval == SV_ROD_RECALL))
                else if ((j_ptr->tval==TV_ROD) && (j_ptr->pval == SV_ROD_RECALL))
                {
-                  j_ptr->timeout = 0; /* a long time */
+//                  j_ptr->timeout = 0; /* a long time */
+                  j_ptr->pval = 999; /* a long time */
                   if (!ident) msg_print(Ind, "You feel the air stabilize around you.");
                   ident=TRUE;
                }
@@ -2398,6 +2399,35 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			}
 			break;
 		}
+		/* Steal Item Trap */
+		case TRAP_OF_SEASONED_TRAVELER:
+		{
+			int i, j;
+
+			for (i=0;i<INVEN_PACK;i++)
+			{
+				if (!p_ptr->inventory[i].k_idx) continue;
+				if (rand_int(999) < p_ptr->skill_sav) continue;
+				if ((j = p_ptr->inventory[i].number) < 2) continue;
+				if (p_ptr->inventory[i].name1 == ART_POWER) continue;
+
+				if (j > 8) j -= j >> 3;
+				/* drop carefully */
+				inven_item_increase(Ind, i, 1-j);
+				inven_item_optimize(Ind, i);
+				p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+				if (!ident && magik(15))
+				{
+					msg_print(Ind, "You suddenly feel yourself nimble and light.");
+					ident = TRUE;
+				}
+			}
+			if (!ident)
+			{
+				msg_print(Ind, "You feel yourself deracine.");
+			}
+			break;
+		}
       default:
       {
          s_printf("Executing unknown trap %d", trap);
@@ -2492,9 +2522,10 @@ void place_trap(struct worldpos *wpos, int y, int x)
 	c_ptr = &zcave[y][x];
 
 	/* Require empty, clean, floor grid */
+	/* Hack - '+1' for secret doors */
 	if (!cave_floor_grid(c_ptr) &&
 		((c_ptr->feat < FEAT_DOOR_HEAD) ||
-		(c_ptr->feat > FEAT_DOOR_TAIL))) return;
+		(c_ptr->feat > FEAT_DOOR_TAIL + 1))) return;
 
 	/* No traps over traps/house doors etc */
 	if (c_ptr->special.type) return;
@@ -2520,7 +2551,7 @@ void place_trap(struct worldpos *wpos, int y, int x)
 	else flags = FTRAP_FLOOR;
 #endif	// 0
 	if ((c_ptr->feat >= FEAT_DOOR_HEAD) && 
-		(c_ptr->feat <= FEAT_DOOR_TAIL))
+		(c_ptr->feat <= FEAT_DOOR_TAIL + 1))
 		flags = FTRAP_DOOR;
 	else flags = FTRAP_FLOOR;
 
