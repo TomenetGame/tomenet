@@ -393,6 +393,7 @@ Change list for PernMangband
 
 09/12/2001 (Jir)
 - Bugfixes. Megos.
+- rewritten chat-line commands' code using that of Tanix(thx).
 
 09/12/2001 (written by Tanix/modified by Jir)
 - chat-line command /cast.
