@@ -142,6 +142,14 @@ void wproto(struct client *ccl){
 					relay(wpk, ccl);
 				}
 				break;
+			case WP_LOCK:
+				/* lock server object */
+				attempt_lock(ccl, wpk->d.lock.ltype, wpk->d.lock.ttl, wpk->d.lock.obj);
+				break;
+			case WP_UNLOCK:
+				/* unlock server object */
+				attempt_unlock(ccl, wpk->d.lock.ltype, wpk->d.lock.ttl, wpk->d.lock.obj);
+				break;
 			default:
 				fprintf(stderr, "ignoring undefined packet %d\n", wpk->type);
 		}
@@ -173,6 +181,7 @@ void addclient(int fd){
 		ncl->next=clist;
 		ncl->authed=0;
 		initauth(ncl);
+		send_rplay(ncl);
 		clist=ncl;
 	}
 }

@@ -30,11 +30,26 @@ struct serverinfo{
 	char pass[20];	/* server plaintext password */
 };
 
+struct rplist{
+	struct rplist *next;
+	unsigned long id;
+	short server;
+	char name[30];
+};
+
 struct secure{
 	short secure;	/* kick off ALL unauthed clients */
 	short chat;	/* Permit chat if unauthed (and not secure) */
 	short play;	/* Players online messages (no tracing on unauthed) */
 	short msgs;	/* Permit server messages */
+};
+
+/* linked list will use less mem */
+struct objlock{
+	struct objlock *next;
+	short owner;		/* Owner ID */
+	unsigned long ttl;	/* time to live for non final lock */
+	unsigned long obj;	/* lock object by number (monster, item etc.) */
 };
 
 struct client{
@@ -80,7 +95,7 @@ struct auth{
 struct lock{
 	unsigned short ltype;	/* Lock type */
 	unsigned long ttl;	/* time to live for non final lock */
-	unsigned obj;		/* lock object by number (monster, item etc.) */
+	unsigned long obj;	/* lock object by number (monster, item etc.) */
 };
 
 struct smsg{
