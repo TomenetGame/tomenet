@@ -951,7 +951,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Teleport Trap */
 		case TRAP_OF_TELEPORT:
 		{
-			if (p_ptr->anti_tele || check_st_anchor(wpos, y, x)) break;
+			if (p_ptr->anti_tele || check_st_anchor(wpos, y, x) || (p_ptr->res_tele && (rand_int(100) < 67))) break;
 			msg_print(Ind, "The world whirls around you.");
 			teleport_player(Ind, RATIO*67);
 			ident=TRUE;
