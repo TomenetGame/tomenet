@@ -2024,7 +2024,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	w_ptr = &p_ptr->cave_flag[y][x];
 
 	/* Player grids */
-	if (c_ptr->m_idx < 0)
+	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx])
 	{
 		player_type *q_ptr=Players[0-c_ptr->m_idx];
 		if (!q_ptr->admin_dm && (player_has_los_bold(Ind, y, x) || p_ptr->telepathy))
@@ -2032,7 +2032,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	}
 
 	/* Visible monsters */
-	if (c_ptr->m_idx > 0)
+	if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx])
 	{
 		/* Visible monsters */
 		if (p_ptr->mon_vis[c_ptr->m_idx]) return (TRUE);
@@ -2240,12 +2240,12 @@ void do_cmd_look(int Ind, int dir)
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
-	if (c_ptr->m_idx < 0 && !Players[0-c_ptr->m_idx]->admin_dm)
+	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx] && !Players[0-c_ptr->m_idx]->admin_dm)
 	{
 		q_ptr = Players[0 - c_ptr->m_idx];
 
 		/* Track health */
-		if (p_ptr->play_vis[0 - c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
+		health_track(Ind, c_ptr->m_idx);
 
 		/* Format string */
 		if (q_ptr->body_monster)
@@ -2257,10 +2257,10 @@ void do_cmd_look(int Ind, int dir)
 			sprintf(out_val, "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title);
 		}
 	}
-	else if (c_ptr->m_idx > 0)	/* TODO: handle monster mimics */
+	else if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx])	/* TODO: handle monster mimics */
 	{
 		/* Track health */
-		if (p_ptr->mon_vis[c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
+		health_track(Ind, c_ptr->m_idx);
 
 		/* Format string */
 //                sprintf(out_val, "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
