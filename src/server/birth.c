@@ -964,6 +964,20 @@ static byte player_init[MAX_CLASS][3][2] =
 	},
 
 	{
+		/* Paladin */
+		{ TV_HAFTED, SV_LUCERN_HAMMER },
+		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL },
+		{ TV_BOOK, 50 },
+	},
+
+	{
+		/* Ranger */
+		{ TV_SWORD, SV_LONG_SWORD },
+		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL },
+		{ TV_BOOK, 50 },
+	},
+
+	{
 		/* Bard */
 		//{ TV_RING, SV_RING_SEE_INVIS },
 		{ TV_SWORD, SV_SABRE },

@@ -1805,15 +1805,14 @@ int calc_blows(int Ind, object_type *o_ptr)
 	/* Analyze the class */
 	switch (p_ptr->pclass)
 	{
-		/* Adevnturer */
+							/* Adevnturer */
 		case CLASS_ADVENTURER: num = 5; wgt = 35; mul = 6; break;
-		case CLASS_BARD: num = 5; wgt = 35; mul = 6; break;
 
-							   /* Warrior */
+							/* Warrior */
 		case CLASS_WARRIOR: num = 6; wgt = 30; mul = 5; break;
 
 							/* Mage */
-		case CLASS_MAGE:    num = 4; wgt = 40; mul = 2; break;
+		case CLASS_MAGE:    num = 3; wgt = 40; mul = 2; break;
 
 							/* Priest */
 		case CLASS_PRIEST:  num = 5; wgt = 35; mul = 3; break;
@@ -1826,6 +1825,15 @@ int calc_blows(int Ind, object_type *o_ptr)
 
 							/* Archer */
 		case CLASS_ARCHER:   num = 3; wgt = 30; mul = 3; break;
+
+							/* Paladin */
+		case CLASS_PALADIN:  num = 5; wgt = 35; mul = 4; break;
+
+							/* Ranger */
+		case CLASS_RANGER:  num = 5; wgt = 35; mul = 4; break;
+
+
+		case CLASS_BARD: num = 4; wgt = 35; mul = 6; break;
 	}
 
 	/* Enforce a minimum "weight" (tenth pounds) */

@@ -183,7 +183,7 @@
 /*
  * Maximum number of player "class" types (see "table.c", etc)
  */
-#define MAX_CLASS       8
+#define MAX_CLASS       10
 
 /*
  * Maximum NPC robots to allow.
@@ -719,7 +719,9 @@
 #define CLASS_ROGUE		4
 #define CLASS_MIMIC		5
 #define CLASS_ARCHER		6
-#define CLASS_BARD			7
+#define CLASS_PALADIN		7
+#define CLASS_RANGER		8
+#define CLASS_BARD		9
 
 /*
  * Define the realms
@@ -4800,7 +4802,7 @@ extern int PlayerUID;
 			(value > base ? value << ((value - base)/step) : value )	
 
 #define is_fighter(p_ptr) \
-	((p_ptr->pclass == CLASS_WARRIOR))
+	((p_ptr->pclass == CLASS_WARRIOR) || (p_ptr->pclass == CLASS_PALADIN) || (p_ptr->pclass == CLASS_RANGER) || (p_ptr->pclass == CLASS_MIMIC))
 
 #define is_admin(p_ptr) (p_ptr->admin_wiz || p_ptr->admin_dm)
 
