@@ -1921,7 +1921,7 @@ static void calc_bonuses(int Ind)
 	{
 		o_ptr = &p_ptr->inventory[i];
 		k_ptr = &k_info[o_ptr->k_idx];
-		e_ptr = &e_info[o_ptr->name2];
+//		e_ptr = &e_info[o_ptr->name2];
 
 		/* Skip missing items */
 		if (!o_ptr->k_idx) continue;
@@ -1983,11 +1983,13 @@ static void calc_bonuses(int Ind)
 		/* Hack -- clear out any pval bonuses that are in the base item
 		 * bonus but not the ego bonus so we don't add them twice.
 		*/
-		/* Huh? it's not done with bpval??	- Jir - */
-#if 0
+#if 1
 		if (o_ptr->name2)
 		{
-			f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~e_ptr->flags1);
+			artifact_type *a_ptr;
+	 	
+			a_ptr =	ego_make(o_ptr);
+			f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
 		}
 #endif
 

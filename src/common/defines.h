@@ -2369,7 +2369,7 @@ that keeps many algorithms happy.
 #define SV_STAFF_DESTRUCTION            29
 #define SV_STAFF_NOTHING                30
 #define SV_STAFF_WISHING                31
-#define SV_STAFF_GANDALF                32
+#define SV_STAFF_GANDALF                32	// sorta hack? (tval=6)
 
 /* jk - the first valuable staff */
 #define SV_STAFF_NASTY_STAFF              4

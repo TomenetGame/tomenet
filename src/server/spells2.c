@@ -589,6 +589,12 @@ void self_knowledge(int Ind)
 	{
 		info[i++] = "You are protected from evil.";
 	}
+#if 0
+	if (p_ptr->protgood)
+	{
+		info[i++] = "You are protected from good.";
+	}
+#endif	// 0
 	if (p_ptr->shield)
 	{
 		info[i++] = "You are protected by a mystic shield.";
@@ -629,6 +635,12 @@ void self_knowledge(int Ind)
 	{
 		info[i++] = "You land gently.";
 	}
+#if 0
+	if (p_ptr->climb)
+	{
+		info[i++] = "You can climb hight mountains.";
+	}
+#endif	// 0
 	if (p_ptr->free_act)
 	{
 		info[i++] = "You have free action.";
@@ -643,12 +655,35 @@ void self_knowledge(int Ind)
 	}
 	if (p_ptr->telepathy)
 	{
-		info[i++] = "You have ESP.";
+		//		info[i++] = "You have ESP.";
+		if (p_ptr->telepathy & ESP_ALL) info[i++] = "You have ESP.";
+		else
+		{
+			if (p_ptr->telepathy & ESP_ORC) info[i++] = "You can sense the presence of orcs.";
+			if (p_ptr->telepathy & ESP_TROLL) info[i++] = "You can sense the presence of trolls.";
+			if (p_ptr->telepathy & ESP_DRAGON) info[i++] = "You can sense the presence of dragons.";
+			if (p_ptr->telepathy & ESP_SPIDER) info[i++] = "You can sense the presence of spiders.";
+			if (p_ptr->telepathy & ESP_GIANT) info[i++] = "You can sense the presence of giants.";
+			if (p_ptr->telepathy & ESP_DEMON) info[i++] = "You can sense the presence of demons.";
+			if (p_ptr->telepathy & ESP_UNDEAD) info[i++] = "You can sense presence of undead.";
+			if (p_ptr->telepathy & ESP_EVIL) info[i++] = "You can sense the presence of evil beings.";
+			if (p_ptr->telepathy & ESP_ANIMAL) info[i++] = "You can sense the presence of animals.";
+			if (p_ptr->telepathy & ESP_DRAGONRIDER) info[i++] = "You can sense the presence of dragonriders.";
+			if (p_ptr->telepathy & ESP_GOOD) info[i++] = "You can sense the presence of good beings.";
+			if (p_ptr->telepathy & ESP_NONLIVING) info[i++] = "You can sense the presence of non-living things.";
+			if (p_ptr->telepathy & ESP_UNIQUE) info[i++] = "You can sense the presence of unique beings.";
+		}
 	}
-	if (p_ptr->anti_magic)
+	if (p_ptr->anti_magic)	// older
 	{
 		info[i++] = "You are surrounded by an anti-magic shield.";
 	}
+#if 0
+        if (p_ptr->antimagic)	// newer
+	{
+                info[i++] = "You are surrounded by an anti-magic field.";
+	}
+#endif	// 0
 	if (p_ptr->hold_life)
 	{
 		info[i++] = "You have a firm hold on your life force.";
@@ -659,8 +694,27 @@ void self_knowledge(int Ind)
 	}
 	if (p_ptr->auto_id)
 	{
-		info[i++] = "You are able to sense magic.";
+//		info[i++] = "You are able to sense magic.";
+		info[i++] = "You can sense magic.";
 	}
+#if 0
+	if (p_ptr->reflect)
+	{
+		info[i++] = "You reflect arrows and bolts.";
+	}
+	if (p_ptr->sh_fire)
+	{
+		info[i++] = "You are surrounded with a fiery aura.";
+	}
+	if (p_ptr->sh_elec)
+	{
+		info[i++] = "You are surrounded with electricity.";
+	}
+	if (p_ptr->anti_tele)
+	{
+		info[i++] = "You cannot teleport.";
+	}
+#endif	// 0
 
 	if (p_ptr->immune_acid)
 	{
@@ -842,6 +896,11 @@ void self_knowledge(int Ind)
 	{
 		info[i++] = "Your attack speed is affected by your equipment.";
 	}
+        if (f5 & (TR5_CRIT))
+	{
+                info[i++] = "Your ability to score critical hits is affected by your equipment.";
+	}
+
 
 
 	/* Access the current weapon */
@@ -856,10 +915,25 @@ void self_knowledge(int Ind)
 			info[i++] = "Your weapon has been blessed by the gods.";
 		}
 
+		if (f5 & (TR5_CHAOTIC))
+		{
+                        info[i++] = "Your weapon is branded with the Sign of Chaos.";
+		}
+
 		/* Hack */
 		if (f1 & TR1_IMPACT)
 		{
 			info[i++] = "The impact of your weapon can cause earthquakes.";
+		}
+
+		if (f1 & (TR1_VORPAL))
+		{
+			info[i++] = "Your weapon is very sharp.";
+		}
+
+		if (f1 & (TR1_VAMPIRIC))
+		{
+			info[i++] = "Your weapon drains life from your foes.";
 		}
 
 		/* Special "Attack Bonuses" */
@@ -879,6 +953,11 @@ void self_knowledge(int Ind)
 		{
 			info[i++] = "Your weapon freezes your foes.";
 		}
+		if (f1 & (TR1_BRAND_POIS))
+		{
+			info[i++] = "Your weapon poisons your foes.";
+		}
+
 
 		/* Special "slay" flags */
 		if (f1 & TR1_SLAY_ANIMAL)

@@ -530,3 +530,5 @@ Change list for PernMangband
 - pval/bpval bug is fixed(but still needing ameliorations).
 [C] Random attribute-picker.
 - Some of ported items are implemented(cmd6.c).
+- Poison branding.
+- added some articles on self-knowledge.

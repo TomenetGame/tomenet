@@ -209,7 +209,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 		f1 |= TR1_BRAND_ACID;
 		break;
 	      case BOW_BRAND_POIS:
-		brand_pois = TRUE;
+		f1 |= TR1_BRAND_POIS;
+//		brand_pois = TRUE;
 		break;
 	      }
 	  }
@@ -373,7 +374,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 
 
 			/* Brand (Pois) */
-			if (brand_pois)
+//			if (brand_pois)
+			if (f1 & TR1_BRAND_POIS)
 			{
 				/* Notice immunity */
 				if (r_ptr->flags3 & RF3_IM_POIS)
@@ -483,6 +485,17 @@ s16b tot_dam_aux_player(object_type *o_ptr, int tdam, player_type *p_ptr)
 				}
 			}
 
+			/* Brand (Poison) */
+			if (f1 & TR1_BRAND_POIS)
+			{
+				/* Notice immunity */
+//				if (p_ptr->immune_poison){} else
+
+				/* Otherwise, take the damage */
+				{
+					if (mult < 3) mult = 3;
+				}
+			}
 			break;
 		}
 	}

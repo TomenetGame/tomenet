@@ -2195,6 +2195,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
+                case TV_BOOMERANG:
+                case TV_AXE:
+                case TV_MSTAFF:
 
 		/* Append a "damage" string */
 		if (mode < 8) t = object_desc_chr(t, ' ');
