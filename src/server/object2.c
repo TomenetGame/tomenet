@@ -182,15 +182,6 @@ void delete_object_idx(int o_idx, bool unfound_art)
 	/* Excise */
 	excise_object_idx(o_idx);
 
-#if 0
-	/* Object is gone */
-	if((zcave=getcave(wpos)))
-	{
-		c_ptr=&zcave[y][x];
-		c_ptr->o_idx = 0;
-	}
-#endif	// 0
-
 	/* No one can see it anymore */
 	for (i = 1; i < NumPlayers + 1; i++)
 	{
@@ -281,6 +272,12 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) /* may
  * After "compacting" (if needed), we "reorder" the objects into a more
  * compact order, and we reset the allocation info, and the "live" array.
  */
+/*
+ * Debugging is twice as hard as writing the code in the first
+ * place. Therefore, if you write the code as cleverly as possible,
+ * you are, by definition, not smart enough to debug it.
+ * -- Brian W. Kernighan
+ */
 void compact_objects(int size, bool purge)
 {
 	int i, j, y, x, num, cnt, Ind; // , ny, nx;
@@ -291,18 +288,14 @@ void compact_objects(int size, bool purge)
 	object_type *q_ptr;
 	cave_type *c_ptr;
 
+	int tmp_max=o_max;
+
 
 	/* Compact */
 	if (size)
 	{
 		/* Message */
 		s_printf("Compacting objects...\n");
-
-		/* Redraw map */
-		/*p_ptr->redraw |= (PR_MAP);*/
-
-		/* Window stuff */
-		/*p_ptr->window |= (PW_OVERHEAD);*/
 	}
 
 
@@ -353,7 +346,6 @@ void compact_objects(int size, bool purge)
 				cave_type **zcave;
 				zcave=getcave(&o_ptr->wpos);
 				if(zcave[y][x].info&CAVE_ICKY)
-//			if (!o_ptr->dun_depth && (cave[0][y][x].info & CAVE_ICKY))
 				{
 					/* Grant immunity except in emergencies */
 					if (cnt < 1000) chance = 100;
@@ -382,11 +374,6 @@ void compact_objects(int size, bool purge)
 		/* real objects in unreal location are not skipped. */
 		/* hack -- items on wilderness are preserved, since
 		 * they can be house contents. */
-#if 0
-		if (o_ptr->k_idx &&
-			((!o_ptr->wpos.wz && (!purge || o_ptr->owner)) ||
-			 getcave(&o_ptr->wpos))) continue;
-#endif	// 0
 		if (o_ptr->k_idx)
 		{
 			if ((!o_ptr->wpos.wz && (!purge || o_ptr->owner)) ||
@@ -396,134 +383,101 @@ void compact_objects(int size, bool purge)
 			delete_object_idx(i, TRUE);
 		}
 
-
 		/* One less object */
-		o_max--;
+		tmp_max--;
+	}
 
-		/* Reorder */
-		if (i != o_max)
-		{
-#if 0	// not used
-			ny = o_list[o_max].iy;
-			nx = o_list[o_max].ix;
-#endif	// 0
-			wpos=&o_list[o_max].wpos;
+	/*
+	 * Now, all objects that wanted removed have been wiped.
+	 * Their spaces remain. Fill in the gaps and pull back the list.
+	 */
 
-			/* Update the cave */
-#if 0
-			/* Hack -- with wilderness objects, sometimes the cave is not allocated,
-			   so check that it is. */
-			if ((zcave=getcave(wpos))){
-				zcave[ny][nx].o_idx = i;
+	/* were any removed? */
+	if(o_max != tmp_max){
+		int *old_idx;
+		int z=1;
+		int j;
+		monster_type *m_ptr;
+		object_type *o_ptr;
+
+		/* allocate storage for map */
+		old_idx=calloc(1, o_max*sizeof(int));
+
+		/* map the list and compress it */
+		for(i=1; i<o_max; i++){
+			if(o_list[i].k_idx){
+				/* Copy structure */
+				o_list[z]=o_list[i];
+				old_idx[i]=z;
+				z++;
 			}
-#endif	// 0
+		}
 
-			/* Repair objects */
-			for (j = 1; j < o_max; j++)
-			{
-				/* Acquire object */
-				q_ptr = &o_list[j];
+		/* wipe any cleared spaces */
+		for(i=tmp_max; i<o_max; i++){
+			WIPE(&o_list[i], object_type);
+		}
 
-				/* Skip "dead" objects */
-				if (!q_ptr->k_idx) continue;
+		/* now, we can fix o_max */
+		o_max=tmp_max;
 
-				/* Repair "next" pointers */
-				if (q_ptr->next_o_idx == o_max)
-				{
-					/* Repair */
-					q_ptr->next_o_idx = i;
-				}
+		/* relink objects correctly */
+		for(i=1; i<o_max; i++){
+			if(o_list[i].next_o_idx){
+				/* get the new mapping */
+				j=old_idx[o_list[i].next_o_idx];
+				o_list[i].next_o_idx=j;
 			}
-
-			/* Acquire object */
-			o_ptr = &o_list[o_max];
+		}
 
 #ifdef MONSTER_INVENTORY
-			/* Monster */
-			if (o_ptr->held_m_idx)
-			{
-				monster_type *m_ptr;
-
-				/* Acquire monster */
-				m_ptr = &m_list[o_ptr->held_m_idx];
-
-				/* Repair monster */
-				if (m_ptr->hold_o_idx == o_max)
-				{
-					/* Repair */
-					m_ptr->hold_o_idx = i;
+		/* fix monsters' inventories */
+		for(i=1; i<o_max; i++){
+			if(o_list[i].held_m_idx){
+				m_ptr=&m_list[o_list[i].held_m_idx];
+				if(old_idx[m_ptr->hold_o_idx]==i){
+					m_ptr->hold_o_idx=i;
 				}
 			}
+		}
+#endif	/* MONSTER_INVENTORY */
+		for(i=1; i<o_max; i++){
+			o_ptr=&o_list[i];
+			wpos=&o_ptr->wpos;
+			x=o_ptr->ix;
+			y=o_ptr->iy;
 
-			/* Dungeon */
-			else
-#endif	// MONSTER_INVENTORY
-			{
-				/* Acquire location */
-				y = o_ptr->iy;
-				x = o_ptr->ix;
-
-				/* Acquire grid */
-				if ((zcave=getcave(wpos))){
-					if (in_bounds2(wpos, y, x)){
-						c_ptr=&zcave[y][x];
-						//			zcave[ny][nx].o_idx = i;
-
-						/* Repair grid */
-						if (c_ptr->o_idx == o_max)
-						{
-							/* Repair */
-							c_ptr->o_idx = i;
-						}
+			if((zcave=getcave(wpos))){
+				c_ptr=&zcave[y][x];
+				if(in_bounds2(wpos, y, x)){
+					if(old_idx[c_ptr->o_idx]==i){
+						c_ptr->o_idx=i;
 					}
-					/* Hack -- monster trap maybe */
-					else
-					{
-						y = 255 - y;
-						if (in_bounds2(wpos, y, x)){
-							c_ptr=&zcave[y][x];
-							if (c_ptr->feat == FEAT_MON_TRAP)
-							{
-								struct c_special *cs_ptr;
-								if((cs_ptr=GetCS(c_ptr, CS_MON_TRAP))){
-									if (cs_ptr->sc.montrap.trap_kit == o_max)
-									{
-										cs_ptr->sc.montrap.trap_kit = i;
-									}
-									
+				}
+				else{
+					y=255-y;
+					if(in_bounds2(wpos, y, x)){
+						c_ptr=&zcave[y][x];
+						if(c_ptr->feat==FEAT_MON_TRAP){
+							struct c_special *cs_ptr;
+							if((cs_ptr=GetCS(c_ptr, CS_MON_TRAP))){
+								if(old_idx[cs_ptr->sc.montrap.trap_kit]==i){
+									cs_ptr->sc.montrap.trap_kit=i;
 								}
 							}
-							else
-							{
-								s_printf("Strange located item detected(dropped)!\n");
-								o_ptr->iy = y;
-//								o_ptr->ix = x;
-							}
 						}
-						else s_printf("Utterly out-of-bound item detected!\n");
 					}
 				}
 			}
-
-			/* Structure copy */
-			o_list[i] = o_list[o_max];
-
-			/* Copy the visiblity flags for each player */
-			for (Ind = 1; Ind < NumPlayers + 1; Ind++)
-			{
-				if (Players[Ind]->conn == NOT_CONNECTED) continue;
-
-				Players[Ind]->obj_vis[i] = Players[Ind]->obj_vis[o_max];
+			for(Ind=1; Ind<=NumPlayers; Ind++){
+				if(Players[Ind]->conn==NOT_CONNECTED) continue;
+				Players[Ind]->obj_vis[i]=old_idx[Players[Ind]->obj_vis[i]];
 			}
-
-			/* Wipe the hole */
-			WIPE(&o_list[o_max], object_type);
 		}
 	}
 
 	/* Reset "o_nxt" */
 	o_nxt = o_max;
-
 
 	/* Reset "o_top" */
 	o_top = 0;
