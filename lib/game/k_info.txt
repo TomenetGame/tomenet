@@ -254,9 +254,9 @@ F:SHOW_MODS
 N:31:& Bastard Sword~
 G:|:W
 I:23:21:0
-W:15:0:140:550
+W:15:0:160:550
 A:15/1
-P:0:3d6:0:0:0
+P:0:3d5:0:0:0
 F:SHOW_MODS | COULD2H
 
 N:32:& Scimitar~
@@ -335,7 +335,7 @@ F:SHOW_MODS | MUST2H
 N:41:& Katana~
 G:|:W
 I:23:20:0
-W:20:0:90:400
+W:20:0:100:470
 A:20/1
 P:0:3d4:0:0:0
 F:SHOW_MODS | COULD2H
@@ -343,7 +343,7 @@ F:SHOW_MODS | COULD2H
 N:42:& Long Sword~
 G:|:W
 I:23:17:0
-W:10:0:130:300
+W:10:0:140:300
 A:10/1:20/1
 P:0:2d5:0:0:0
 F:SHOW_MODS
@@ -1655,13 +1655,13 @@ A:1/1
 N:218:Holy Chant
 G:?:d
 I:70:34:0
-W:10:0:5:40
+W:10:0:5:50
 A:10/1
 
 N:219:Holy Prayer
 G:?:d
 I:70:35:0
-W:25:0:5:80
+W:25:0:5:150
 A:25/1
 
 N:220:Word of Recall
@@ -3865,7 +3865,7 @@ F:SHOW_MODS
 N:544:& Khopesh~
 G:|:W
 I:23:14:0
-W:10:0:130:190
+W:10:0:120:190
 A:10/2
 P:0:2d4:0:0:0
 F:SHOW_MODS
