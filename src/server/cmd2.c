@@ -2553,7 +2553,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 
 				if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) && !q_ptr->resist_conf)
 				  {
-				    (void)set_confused(Ind, q_ptr->confused + q_ptr->lev);
+				    (void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + q_ptr->lev);
 				  }
 
 				/* Take damage */
