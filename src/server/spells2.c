@@ -4040,7 +4040,6 @@ bool poly_build(int Ind, char *args){
 		msg_print(Ind,"The builders are on strike!");
 		return FALSE;
 	}
-	printf("Got master move [%d:%d] from %d\n",p_ptr->px,p_ptr->py, Ind);
 	if(lx!=sx){
 	}
 	if(ly!=sy){
@@ -4179,26 +4178,43 @@ void golem_creation(int Ind)
                         if (o_ptr->sval <= SV_GOLEM_ADAM)
                         {
                                 golem_type = o_ptr->sval;
+				inven_item_increase(Ind,i,-o_ptr->number);
+				inven_item_optimize(Ind,i);
+				i--;
+				continue;
                         }
-                        else if (o_ptr->sval == SV_GOLEM_ARM)
+                        if (o_ptr->sval == SV_GOLEM_ARM)
                         {
                                 int k;
 
                                 for (k = 0; k < o_ptr->number; k++)
                                         golem_arms[golem_m_arms++] = o_ptr->pval;
+				inven_item_increase(Ind,i,-o_ptr->number);
+				inven_item_optimize(Ind,i);
+				i--;
+				continue;
                         }
-                        else if (o_ptr->sval == SV_GOLEM_LEG)
+                        if (o_ptr->sval == SV_GOLEM_LEG)
                         {
                                 int k;
 
                                 for (k = 0; k < o_ptr->number; k++)
                                         golem_legs[golem_m_legs++] = o_ptr->pval;
+				inven_item_increase(Ind,i,-o_ptr->number);
+				inven_item_optimize(Ind,i);
+				i--;
+				continue;
                         }
                         else
                         {
                                 golem_flags |= 1 << (o_ptr->sval - 200);
                         }
                 }
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
         }
 
         /* Ahah FAIL !!! */
@@ -4286,7 +4302,7 @@ void golem_creation(int Ind)
                 if (inscription != NULL)
                 {
                         /* scan the inscription for @P */
-                        while ((*inscription != '\0') && !ok)
+                        while ((*inscription != '\0'))
                         {
 		
                                 if (*inscription == '@')
@@ -4296,10 +4312,13 @@ void golem_creation(int Ind)
                                         /* a valid @G has been located */
                                         if (*inscription == 'G')
                                         {                
-						printf("Found item %d\n",i);
                                                 inscription++;
 
                                                 scan_golem_flags(o_ptr, r_ptr);
+						inven_item_increase(Ind,i,-o_ptr->number);
+						inven_item_optimize(Ind,i);
+						i--;
+						continue;
                                         }
                                 }
                                 inscription++;

@@ -666,8 +666,7 @@ static void Contact(int fd, int arg)
 	{
 		if ((newsock = SocketAccept(fd)) == -1)
 		{
-			plog("Couldn't accept TCP connection.\n");
-			plog("!Couldn't accept TCP connection.\n");
+			printf("Couldn't accept game TCP connection.\n");
 			return;
 		}
 		install_input(Contact, newsock, 2);
@@ -4193,7 +4192,7 @@ static int Receive_run(int ind)
 		for (i = 0; i < m_max; i++)
 		{
 			/* Check this monster */
-			if ((p_ptr->mon_los[i] && !m_list[i].csleep) || (p_ptr->confused))
+			if ((p_ptr->mon_los[i] && !m_list[i].csleep && !m_list[i].special) || (p_ptr->confused))
 			{
 				// Treat this as a walk request
 				// Hack -- send the same connp->r "arguments" to Receive_walk

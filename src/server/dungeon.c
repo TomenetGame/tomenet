@@ -2281,6 +2281,8 @@ void dungeon(void)
 
                         starty = m_ptr->fy;
                         startx = m_ptr->fx;
+                        starty = y;
+                        startx = x;
 
                         /* Place the golems in an empty space */
                         for (j = 0; j < 1500; ++j)

@@ -2662,6 +2662,8 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
 
         if (!tm_idx) return FALSE;
 
+	if(((tm_idx>0) ? m_list[tm_idx].dun_depth:Players[-tm_idx]->dun_depth)!=m_ptr->dun_depth) return FALSE; 
+
         y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
         x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
 

@@ -2717,7 +2717,7 @@ static bool run_test(int Ind)
 		if (c_ptr->m_idx > 0)
 		{
 			/* Visible monster */
-			if (p_ptr->mon_vis[c_ptr->m_idx]) return (TRUE);
+			if (p_ptr->mon_vis[c_ptr->m_idx] && !(m_list[c_ptr->m_idx].special)) return (TRUE);
 		}
 
 		/* Visible objects abort running */
@@ -3085,7 +3085,6 @@ void run_step(int Ind, int dir)
 
 		/* Initialize */
 		run_init(Ind, dir);
-
 		/* check if we have enough energy to move */
 		if (p_ptr->energy < (level_speed(p_ptr->dun_depth)/5))
 			return;
