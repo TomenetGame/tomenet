@@ -3988,14 +3988,14 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			else if (r_ptr->flags3 & RF3_IM_POIS)
 			{
-				note = " resists a lot.";
-				dam /= 2;
+				note = " resists.";
+				dam = (dam * 3) / 4;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
 			}
 			else if (r_ptr->flags9 & RF9_RES_POIS)
 			{
 				note = " resists slightly.";
-				dam = (dam * 3) / 4;
+				dam = (dam * 4) / 5;
 				if (seen) r_ptr->flags9 |= RF9_RES_POIS;
 			}
 #if 0
@@ -4108,13 +4108,13 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (r_ptr->flags3 & RF3_IM_FIRE)
 				{
 					note = " resists.";
-					dam *= 2; dam /= 2;//(randint(4)+3);
+					dam *= 2; dam = (dam * 3) / 4;//(randint(4)+3);
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 				}
 				else if (r_ptr->flags9 & RF9_RES_FIRE)
 				{
     					note = " is hit.";
-					dam = (dam * 3) / 2;
+					dam = (dam * 5) / 3;
 					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
 				}
 #if 0
@@ -4138,13 +4138,13 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (r_ptr->flags3 & RF3_IM_FIRE)
 				{
 					note = " resists a lot.";
-					dam *= 2; dam /= 4;//(randint(6)+10);
+					dam *= 3; dam /= 4;//(randint(6)+10);
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 				}
 				else if (r_ptr->flags9 & RF9_RES_FIRE)
 				{
     					note = " resists.";
-					dam = (dam * 3) / 4;
+					dam = (dam * 4) / 5;
 					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
 				}
 #if 0

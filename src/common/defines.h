@@ -359,6 +359,9 @@
  */
 #define MAX_PATH_LENGTH	128
 
+/* Limit value for Anti-magic fields (AM cap) */
+#define ANTIMAGIC_CAP 80
+
 /*
  * Party commands
  */

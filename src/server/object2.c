@@ -1172,7 +1172,7 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 	if (esp & ESP_UNIQUE) total += 20000;
 	if (esp & ESP_SPIDER) total += 10000;
 //        if (esp) total += (12500 * count_bits(esp));
-        if (esp & ESP_ALL) total += 125000;
+        if (esp & ESP_ALL) total += 150000;/* was 125k, but ESP crowns cost 150k */
 	if (f3 & TR3_SLOW_DIGEST) total += 750;
 	if (f3 & TR3_REGEN) total += 2500;
 	if (f5 & TR5_REGEN_MANA) total += 2500;
@@ -1546,7 +1546,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 				if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 200L;
 
 //				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
-				if (f5 & (TR5_CRIT)) value += pval * pval * 20000L;
+				if (f5 & (TR5_CRIT)) value += pval * pval * 10000L;/* was 20k, but speed is only 10k */
 				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 10L);
 
 				/* Give credit for stealth and searching */
@@ -5055,6 +5055,12 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	 	/* Randart */
 		if (o_ptr->name1 == ART_RANDART)
 		{
+			/* Allow mods on non-artified randart jewelry! */
+			if (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET) {
+				if (!power && (rand_int(100) < 50)) power = -1;
+				a_m_aux_3(o_ptr, lev, power);
+			}
+
 			a_ptr =	randart_make(o_ptr);
 		}
 		/* Normal artifacts */

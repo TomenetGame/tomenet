@@ -2,9 +2,9 @@
 
 function get_healing_power()
 	local pow
-	pow = player.mhp * (10 + get_level(Ind, HEALING, 31)) / 100
-	if pow > 200 then
-		pow = 200
+	pow = player.mhp * (25 + get_level(Ind, HEALING, 31)) / 100
+	if pow > 400 then
+		pow = 400
 	end
 	return pow
 end
@@ -35,7 +35,7 @@ HEALING = add_spell
         ["school"] = 	{SCHOOL_NATURE},
         ["level"] = 	10,
         ["mana"] = 	15,
-        ["mana_max"] = 	200,
+        ["mana_max"] = 	180,
         ["fail"] = 	30,
         ["stat"] =      A_WIS,
         ["spell"] = 	function()
@@ -45,10 +45,11 @@ HEALING = add_spell
                         end
 	end,
 	["info"] = 	function()
-			return "heal "..(10 + get_level(Ind, HEALING, 31)).."% = "..get_healing_power().."hp"
+			return "heal "..(15 + get_level(Ind, HEALING, 43)).."%="..get_healing_power().."/"..(get_healing_power() / 2).." hp"
 	end,
         ["desc"] =	{
-        		"Heals a percent of hitpoints up to a maximum of 200 points healed",
+        		"Heals a percent of hitpoints up to a maximum of 400 points healed",
+			"Projecting it will heal half that amount on other players",
                         "***Affected by the Meta spell: Project Spell***",
         }
 }

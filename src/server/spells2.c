@@ -894,11 +894,11 @@ void self_knowledge(int Ind)
 	if (p_ptr->antimagic)	// older (percent)
 	{
 //		fprintf(fff, "You are surrounded by an anti-magic field.\n");
-		if (p_ptr->antimagic >= 90) /* AM cap */
+		if (p_ptr->antimagic >= ANTIMAGIC_CAP) /* AM cap */
 			fprintf(fff, "You are surrounded by a complete anti-magic field.\n");
-		else if (p_ptr->antimagic >= 80)
+		else if (p_ptr->antimagic >= ANTIMAGIC_CAP - 10)
 			fprintf(fff, "You are surrounded by a mighty anti-magic field.\n");
-		else if (p_ptr->antimagic >= 70)
+		else if (p_ptr->antimagic >= ANTIMAGIC_CAP - 20)
 			fprintf(fff, "You are surrounded by a strong anti-magic field.\n");
 		else if (p_ptr->antimagic >= 50)
 			fprintf(fff, "You are surrounded by an anti-magic field.\n");
@@ -1539,11 +1539,11 @@ void self_knowledge(int Ind)
 	if (p_ptr->antimagic)	// older (percent)
 	{
 //		info[i++] = "You are surrounded by an anti-magic field.";
-		if (p_ptr->antimagic >= 90) /* AM cap */
+		if (p_ptr->antimagic >= ANTIMAGIC_CAP) /* AM cap */
 			info[i++] = "You are surrounded by a complete anti-magic field.";
-		else if (p_ptr->antimagic >= 80)
+		else if (p_ptr->antimagic >= ANTIMAGIC_CAP - 10)
 			info[i++] = "You are surrounded by a mighty anti-magic field.";
-		else if (p_ptr->antimagic >= 70)
+		else if (p_ptr->antimagic >= ANTIMAGIC_CAP - 20)
 			info[i++] = "You are surrounded by a strong anti-magic field.";
 		else if (p_ptr->antimagic >= 50)
 			info[i++] = "You are surrounded by an anti-magic field.";

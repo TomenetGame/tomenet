@@ -2,7 +2,7 @@
 
 function get_healing_power2()
         local pow
-        pow = player.mhp * (15 + get_level(Ind, HHEALING, 43)) / 100
+        pow = player.mhp * (25 + get_level(Ind, HHEALING, 31)) / 100
         if pow > 400 then
                 pow = 400
         end
@@ -21,14 +21,15 @@ HHEALING = add_spell
 	["spell"] =     function()
 		hp_player(Ind, get_healing_power2())
 		if player.spell_project > 0 then
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power2(), player.spell_project, " points at your wounds.")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, ((get_healing_power2() * 3) / 2), player.spell_project, " points at your wounds.")
 		end
 	end,
 	["info"] =      function()
-		return "heal "..(15 + get_level(Ind, HHEALING, 43)).."% = "..get_healing_power2().."hp"
+		return "heal "..(15 + get_level(Ind, HHEALING, 43)).."%="..get_healing_power2().."/"..((get_healing_power2() * 3) / 4).."hp"
 	end,
 	["desc"] =      {
 		"Heals a percent of hitpoints up to a maximum of 400 points healed",
+		"Projecting it will heal 3/4 of that amount on other players",
 		"***Affected by the Meta spell: Project Spell***",
 	}
 }

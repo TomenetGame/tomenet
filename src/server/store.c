@@ -765,6 +765,19 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
+		/* Mining Supply Store */
+		case 59:
+			switch (o_ptr->tval)
+			{
+				case TV_DIGGING:
+				case TV_LITE:
+				case TV_FLASK:
+				case TV_WAND: if (o_ptr->sval != SV_WAND_STONE_TO_MUD) return(FALSE);
+				case TV_POTION: if (o_ptr->sval != SV_POTION_DETONATIONS) return(FALSE);
+				break;
+				default:
+				return (FALSE);
+			}
 		/* Bordertravel supplies */
 		case 61:
 		{
@@ -2096,7 +2109,7 @@ void store_purchase(int Ind, int item, int amt)
 	o_ptr = &st_ptr->stock[item];
 
 	/* Check if the player is powerful enough for that item */
-        if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev))
+        if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))
         {
                 if (cfg.anti_cheeze_pickup)
                 {
@@ -3696,7 +3709,7 @@ void home_purchase(int Ind, int item, int amt)
 	o_ptr = &h_ptr->stock[item];
 
 	/* Check if the player is powerful enough for that item */
-        if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev))
+        if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))
         {
                 if (cfg.anti_cheeze_pickup)
                 {

@@ -142,7 +142,7 @@ bool check_antimagic(int Ind)
 
 		if (i != Ind) antichance -= p_ptr->lev >> 1;
 
-		if (antichance > 90) antichance = 90;/* AM cap */
+		if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP;/* AM cap */
 
 		/* Reduction for party */
 		if ((i != Ind) && player_in_party(p_ptr->party, i))
@@ -189,7 +189,7 @@ bool check_antimagic(int Ind)
 		antidis = r_ptr->level / 15 + 3;
 
 		if (dis > antidis) continue;
-		if (antichance > 90) antichance = 90; /* AM cap */
+		if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP; /* AM cap */
 
 		/* Got disrupted ? */
 		if (magik(antichance))
@@ -234,7 +234,7 @@ bool check_antimagic(int Ind)
 			antidis = r_ptr->level / 15 + 3;
 
 			if (dis > antidis) continue;
-			if (antichance > 90) antichance = 90; /* AM cap */
+			if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP; /* AM cap */
 
 			/* Got disrupted ? */
 			if (magik(antichance))

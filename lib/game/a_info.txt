@@ -403,9 +403,9 @@ W:70:30:80:250000
 P:9:0d0:0:0:25
 F:FREE_ACT | RES_BLIND | RES_CONF | RES_FEAR | DRAIN_MANA | 
 F:REFLECT | RES_NEXUS | SH_FIRE | SUST_INT | SUST_CON | SUST_CHR |
-F:STEALTH | ESP_DRAGONRIDER | CON | CHR | INT | ACTIVATE |
+F:STEALTH | ESP_DRAGONRIDER | CON | CHR | INT | ACTIVATE | FLY | 
 F:RES_ACID | RES_ELEC | IM_COLD | RES_COLD | AGGRAVATE | HEAVY_CURSE
-F:REGEN_MANA | SPECIAL_GENE
+F:REGEN_MANA | SPECIAL_GENE | SPEED
 D:The flying suit of Mardra, very powerful armour that protects 
 D:the wearer from cold.  Wonderful as this mighty 
 D:armour is, beware wearing it, for it has been cursed by a 

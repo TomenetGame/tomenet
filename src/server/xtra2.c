@@ -5349,10 +5349,12 @@ void resurrect_player(int Ind, int exploss)
 	p_ptr->ghost = 0;
 	
 	disturb(Ind, 1, 0);
-	
-	/* capping exp loss */
+
+	/* paranoia limits */	
 	if (exploss < 0) exploss = 0;
 	if (exploss > 100) exploss = 100;
+	/* capping exp loss */
+	if (exploss < 33) exploss = 33;
 	if (exploss > 50) exploss = 50;
 
 	/* Lose some experience */

@@ -1473,7 +1473,7 @@ void carry(int Ind, int pickup, int confirm)
 		bool force_pickup = check_guard_inscription(o_ptr->note, '=')
 			&& p_ptr->id == o_ptr->owner;
 
-		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev))
+		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))
 		{
 			if (cfg.anti_cheeze_pickup)
 			{
@@ -4223,7 +4223,11 @@ void move_player(int Ind, int dir, int do_pickup)
 		if(zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK))
 			msg_print(Ind, "\377DThe air in here feels very still.");
 		if(zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK))
+		{
 			msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
+			/* Automatically re-enable permanent wraith form */
+			p_ptr->update |= PU_BONUS;
+		}
 		/* Update the player indices */
 		zcave[oy][ox].m_idx = 0;
 		zcave[y][x].m_idx = 0 - Ind;

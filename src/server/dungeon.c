@@ -1993,7 +1993,8 @@ static void do_recall(int Ind, bool bypass)
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
 			if(((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
 			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
-			    (d_ptr->flags1 & DF1_NO_RECALL)) && !p_ptr->admin_dm && !p_ptr->admin_wiz)
+			    (d_ptr->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN)) ||
+			    (d_ptr->flags2 & DF2_IRON)) && !p_ptr->admin_dm && !p_ptr->admin_wiz)
 			{
 				p_ptr->recall_pos.wz = 0;
 			}
@@ -2024,7 +2025,8 @@ static void do_recall(int Ind, bool bypass)
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
 			if(((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
 			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
-			    (d_ptr->flags1 & DF1_NO_RECALL)) && !p_ptr->admin_dm && !p_ptr->admin_wiz)
+			    (d_ptr->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN)) ||
+			    (d_ptr->flags2 & DF2_IRON)) && !p_ptr->admin_dm && !p_ptr->admin_wiz)
 			{
 				p_ptr->recall_pos.wz = 0;
 			}

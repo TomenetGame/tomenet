@@ -2077,7 +2077,7 @@ void do_cmd_read_scroll(int Ind, int item)
 #if 0
 	/* unbelievers need some more disadvantage, but this might be too much */
 	antichance = p_ptr->antimagic / 4;
-	if (antichance > 90) antichance = 90;/* AM cap */
+	if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP;/* AM cap */
 	/* Got disrupted ? */
 	if (magik(antichance)) {
     		msg_print(Ind, "Your anti-magic field disrupts the scroll.");

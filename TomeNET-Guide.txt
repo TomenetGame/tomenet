@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. Dec 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. Dec 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -42,6 +42,7 @@ Contents
     (3.4)   Preparing the first time for fighting enemies
     (3.5)   Creating basic macros & inscribing items
     (3.6)   Creating macros for ranged attacks & abilities (spells)
+    (3.6a)  Ability codes [contained within (3.6)]
     (3.7)   An example macro set for warriors
     (3.8)   Macros with special keys
     (3.9)   Experience, level-ups and skill points
@@ -778,12 +779,30 @@ weaker but cast spells the better the higher their intelligence is, so
 choosing a race that is very intelligent might be a good idea, while a race
 with high strength and constitution will be fitting a warrior profession.
 Now you will see your six basic attributes STRength, INTelligence, WISdom,
-DEXterity, CONstitution, CHaRisma. You have to determine how important they
-are for you by defining an order. The first attribute you choose will be
-raised most. However, know that all your stats are randomly modified slightly,
-each character that you create even with same race and class will be a bit
+DEXterity, CONstitution, CHaRisma.
+
+Depending on the server configuration, starting at TomeNET version 4.2.0,
+there are 2 alternative stages of character creation that may follow now.
+
+1) The old way - random stats:
+You see the short names for the 6 stats written from the left to the right
+on the very bottom of the screen, and you're asked to choose a stat order.
+You have to determine how important each of the 6 stats is to you by defining
+an order. The first attribute you choose will be raised most.
+However, know that all your stats are randomly modified slightly, each
+character that you create even with same race and class will be a bit
 different. Sometimes you are lucky and get really high attributes at the
-beginning. And sometimes you get more gold to start with.
+beginning. And sometimes you get more gold to start with. If you don't like
+the resulting stats after you finished character creation, suicide and start
+over.
+
+2) The new way since 4.2.0 - chosen stats:
+You see your 6 stats written below each other, followed by a base number (10).
+Right above them you see your free points (30) that you may distribute on the
+stats. Use the numpad (numlock turned on) to navigate and increase or decrease
+your stats until you used up all free points. Hit ESC when you're happy with
+your choice.
+
 Now you can choose a difficulty level you wish to play on. Options are
 n) Normal  f) Fruit bat  g) no Ghost  h) Hard  H) Hellish e) Everlasting
 It is recommended that you choose either n) to play a normal character or g)
@@ -1228,30 +1247,41 @@ macros need to be rewritten to take account of this question.
 To avoid this, you can directly choose which skill (ie spell-casting) you
 want to use in your macros, by specifying the "ability code"!
 
+[(3.6a) Ability codes:]
 Here is a list of all available ability codes:
-8   Create ammunition (for archers)
-17  Cast monster spell (for mimics)
-43  Check your dodge chance
-47  Set a monster trap
-49  Cast a magic spell / recite a holy prayer
+8       Create ammunition (for archers)
+17      Cast monster spell (for mimics)
+43      Check your dodge chance
+47      Set a monster trap
+49/59   Cast a magic spell / recite a holy prayer (check your skill list
+        which number it is, might differ from these values)
 
+After the ability code has been entered you need to press Enter to confirm it.
+In a macro, this is done by '\r' (one of the so-called escape sequences).
 Example for a macro that directly specifies the ability code to cast the magic
 spell "a) Manathrust" from book "a) Beginner Cantrips" on the closest monster:
 
-m@49aa*t
+\e)m@49\r2a*t
 
 What does that mean?
+\e  ->  escape any pending input request, if there is any
+        (so we don't have to press ESC before casting the spell in case we're
+         currently 'L'ooking around or something)
+)   ->  clear the keyboard buffer (removes all pending keypresses that haven't
+        been processed yet due to slow character speed, so we become instantly
+        ready to perform our mana thrust spell _now_)
 m   ->  invoke an ability
 @   ->  specify an ability code directly
 49  ->  the code for 'cast a magic spell/recite a holy prayer'
-a   ->  cast from book "a)" (Beginner Cantrips)
+\r  ->  press Enter to confirm
+1   ->  cast from book 1 (inscription on the book must be @m1)
 a   ->  cast spell "a)" (Manathrust)
 *t  ->  choose the closest monster as target
 
-(That macro does exactly the same as:
-mbaa*t
+(That macro basically does the same as:
+mb1a*t
 ..assumed that entry 'b)' in the ability menu (invoked by 'm') is
-'b) Cast a spell'.)
+'b) Cast a spell'. Except for escaping and clearing the keyboard buffer.)
 
 
 
@@ -2769,8 +2799,10 @@ VAMPIRIC ('The weapon drains life from your victim')
         Drains life from your victim, which you gain as hit points.
         For details see '(5.15) Vampirism'.
 VORPAL ('Sharp' weapons, 'It is very sharp and makes your foes bleed.')
-        Has a chance that weapon dice result is multiplied on hitting,
-        you'll see 'Your weapon cuts deep into your enemy'.
+        Has a chance that the weapon damage dice result is multiplied on
+        hitting, you'll see 'Your weapon cuts deep into your enemy'.
+        The multiplication is done after brand/slay effects have been applied,
+        so brand/slay effects will increase VORPAL efficiency.
 CHAOTIC ('Your weapon produces chaotic effects')
         On hitting, you have a 50% chance to do one of the following:
         a) drain life (VAMPIRIC) (very likely)
@@ -3564,18 +3596,30 @@ Note that not every skill is available to every profession (class).
                                 attempts from other casters to cast spells or
                                 summon monsters. This effect is cumulative
                                 with the anti-magic field of a Dark Sword.
-                                It's capped at 90% chance of interrupting
+                                It's capped at 80% chance of interrupting
                                 enemy spells.
                                 Note that as soon as you invest a point into
                                 this skill you won't be able to use any magic
                                 wands,staves or rods anymore!
-                                Further, this skill also slightly affects
-                                your fellow party members (casters).
-                                Each point in Antimagic adds 1% to your total
-                                AM chance, so the max gain is +50% from skill.
+                                This skill also slightly affects your fellow
+                                party members (casters).
+                                Each point in Antimagic adds 0.8% to your
+                                AM chance, so the max gain is +40% from skill.
                                 Note: While ball/bolt attacks are spells,
                                       breathing is NOT.
-+Health                         Increases your hit point regeneration rate.
+                                Antimagic will also reduce the duration of all
+                                timed magic effects on you, be it good or bad.
+                                Warriors that specialize in Antimagic are
+                                called 'Unbelievers' (The Anti-magic powers
+                                result from their strong disbelief in magic).
++Health                         Increases your hit point regeneration rate:
+                                (skill_level * 2)% chance to regenerate 1,5x
+                                the normal amount of HP per turn (stacks with
+                                REGEN items).
+                                Also helps you to recover from temporary stats
+                                drain, hallucination, blindness, paralysis,
+                                confusion, slowness, poison, stun and cuts
+                                faster.
                                 If you spend 10 points into Health, your
                                 sanity will be displayed as a bar.
                                 At 20 points you'll get the percentage
@@ -3824,7 +3868,7 @@ Thunderlord (also known as Dragonrider)
     fire at 10, cold at 15, acid at 20 and electricity at 25. At level 30
     they learn how to fly. Thunderlords are not very wise, and need a very
     long time to gain experience. They need to eat often. Thunderlords have
-    feather falling from birth. See (5.9) for firestone details.
+    feather falling (levitation) from birth. See (5.9) for firestone details.
     They receive bonus on 'Polearm-Mastery', 'Aura of Fear' and the magic
     schools 'Conveyance' and 'Fire'.
 
@@ -3963,7 +4007,7 @@ Mimic
     To find out how many monsters you already killed and how many you need
     in total to learn a form, press the '~' key followed by '3'.
     To polymorph into a form, press 'm' key, like casting a magic spell.
-    To find out the special abilities of a monster form, see section (6.8).
+    To find out the special abilities of a monster form, see section (6.7).
 Archer
     Archers aren't good at fighting, but can deliever extremely high damage
     with their ranged weapons. They can die quickly too, however.
@@ -4232,7 +4276,7 @@ S: spell list
     BR_xxx      (breathing) will give the according resistance to the player
                 (if that specific attack CAN be resisted at all).
     BR_PLASMA   gives plasma & fire resistance.
-    BR_GRAVITY  gives feather falling.
+    BR_GRAVITY  gives feather falling (levitation).
     BR_INERTIA  gives free action.
     MIND_BLAST  Insanity attacks are reduced by 25%.
     BRAIN_SMASH Insanity attacks are reduced by 50%.
@@ -4263,7 +4307,8 @@ All orcs    Resist darkness
 All trolls and giants
             Sustain strength
 All dragonriders
-            ESP_DRAGON at level 5, feather falling, flying at level 30.
+            ESP_DRAGON at level 5, feather falling (levitation),
+            flying at level 30.
 All undead creatures
             Resist darkness, blindness, poison (usually immunity);
             can't bleed (no_cut), infra-vision +1, insanity attacks are
@@ -5231,7 +5276,7 @@ reduce the stack to 1.
 
 ONLY WORKS ON STANDARD EQUIPMENT:
 -Artifact creation only works on items that can be equipped - with the
-exception of minor tool items like picklock, money belt, device of theft
+exception of tool items like diggers, picklock, money belt, device of theft
 prevention, tarpaulin, flint, mummy wrapping, climbing set. These won't work!
 
 DOESN'T WORK ON EGOS / ARTS:
@@ -5247,12 +5292,148 @@ has high bonus numbers into an artifact, like for example a ring of speed
 (+11) because these numbers will get erased and randomly re-rolled.
 On jewelry (+to-hit,+to-dam) and [+AC] will stay the same (for example a ring
 of slaying (+10,+15) will keep the (+10,+15)).
-(Any dice (xdy) as well as base AC [x,+0] on jewelry will always become 0.)
+(Any dice (xdy) as well as _base_ AC [x,+0] on jewelry will always become 0.)
 
 HOW IT WORKS ON NON-JEWELRY:
 All boni, to-hit/to-dam/to-ac and the pval/bpval (those (+x) bonus) are
 randomly rerolled. So it won't matter what stats the item has, only its
 base type is important.
+
+Mods on the final randart:
+--------------------------
+The item will gain a random number of random properties. The more powerful it
+becomes, the higher a chance of also becoming 'aggravating' will be.
+
+There is always a 10% chance that the resulting randart will be 'cursed'.
+Cursed randarts cannot be sold to shops even if the curse is broken. They gain
+only very few abilities, which are accompanied by different types of curses.
+
+Possible mods that randarts may get depend on its base type.
+Further, there are general mods that may appear on all items regardless of its
+type. For each applied mod there is a chance of 50% to be picked from either
+type-dependant mods or general mods.
+Ammunition (shots/pebbles, arrows, bolts) will never get general mods but only
+type-dependant ones.
+
+Type-dependant mods:
+--------------------
+Bows, crossbows, slings
+        Extra shots, Extra might
+Weapons
+        Blessed (usable for priests without penalty)
+Weapons, (diggers,) boomerangs, mage staves
+        Acid/elec/fire/cold brands
+        Increased damage dice
+        All SLAY mods (also have a chance to add the corresponding ESP)
+        All KILL (*SLAY*) mods (will also add the corresponding ESP)
+        See invisible
+        Extra attacks
+        Extra +hit and +dam bonus
+        Extra +AC bonus
+        Critical hit bonus
+        Vampiric life leech
+        Reduced weight
+(Diggers
+        Increased digging power)
+Boomerangs
+        Extra shots
+Mage staves
+        Extra mana capacity
+Dark swords
+        Increased anti-magic (not over 50% in total)
+Ammunition
+        All elemental brands (acid/elec/fire/cold/poison)
+        All SLAY mods
+        All KILL (*SLAY*) mods
+        Vampiric life leech
+        Exploding property. The type of explosion damage is randomly picked
+                            from this list:
+                            Acid, elec, fire, cold, poison, light, dark,
+                            confusion, plasma, sound, shards, force, inertia,
+                            mana, meteor, ice, chaos, nether, nexus, time,
+                            gravity, kill wall, teleport away, scare monster,
+                            nuke, stun, disintegration, hell fire.
+        Extra +hit and +dam bonus
+        +1 Extra damage side or dice
+Boots
+        Feather falling (levitation)
+        Flying
+        Climbing
+        Extra +AC bonus
+        Stealth
+        Speed
+        Reduced weight
+Gloves
+        Free action
+        Mana capacity bonus
+        Auto-ID
+        Strength bonus
+        Dexterity bonus
+        Extra attacks (+1 or +2)
+        Critical hit bonus
+        One of the elemental brands (acid/elec/fire/cold/poison) or SLAY mods
+        Vampiric life leeech
+        Extra +AC bonus
+        +hit and +dam bonus
+Caps, helms and crowns
+        Resist blindness
+        Auto-ID
+        All possible ESP mods (including ESP_ALL)
+        See invisible
+        Intelligence bonus
+        Wisdom bonus
+        Extra +AC bonus
+        Mana capacity bonus
+        Infra-vision
+        Faster mana regeneration
+        Resist confusion
+        Resist fear
+Shields
+        All basic resistances (acid/elec/fire/cold)
+        Reflection
+        Extra +AC bonus
+Cloaks
+        Stealth
+        Feather falling (levitation)
+        Flying
+        Chance for either lightning or fire aura and corresponding resistance
+        Chance for shard resistance
+        Invisibility
+        Extra +AC bonus
+Body Armour (except for Dragon Scale Mails)
+        Stealth
+        Hold life
+        Constitution bonus (has a chance to include constitution sustenance)
+        All basic resistances (acid/elec/fire/cold)
+        Reduced weight
+Light sources
+        Increased light radius
+        Everburning (no fuel needed; applies only if item usually needs fuel)
+
+General mods:
+-------------
+        Bonus on any stats (has chance to include sustenance for that stat;
+                            wisdom might also include 'Blessed' flag)
+        Sustenances on any stats (has chance to include bonus for that stat)
+        Stealth
+        Searching
+        Infra-Vision
+        Speed
+        Any base immunities (acid/elec/fire/cold)
+        Free action
+        Hold life
+        Any base resistances (acid/elec/fire/cold)
+        Any of these resistances:
+                Poison, Light, Dark, Blindness, Confusion, Shound,
+                Shards, Nether, Nexus, Chaos, Disenchantment
+        Feather falling
+        Glowing (+1 light radius)
+        See invisible
+        All possible ESP mods (including ESP_ALL)
+        Slow digestion
+        Faster mana regeneration
+        Faster HP regeneration
+        Anti-magic shell (Legendary saving throw, 95% cap)
 
 
 

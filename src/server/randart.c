@@ -848,6 +848,15 @@ static void add_ability (artifact_type *a_ptr)
 			case TV_CROWN:
 			{
 				if (r < 15) a_ptr->flags2 |= TR2_RES_BLIND;
+				if (r < 17) {
+					a_ptr->flags1 |= TR1_INFRA;
+					if (a_ptr->pval == 0) a_ptr->pval = randint(2);
+				}
+				else if (r < 20) a_ptr->flags5 |= TR5_REGEN_MANA;
+				else if (r < 22) {
+					a_ptr->flags1 |= TR1_MANA;
+					if (a_ptr->pval == 0) a_ptr->pval = randint(5);
+				}
 				else if (r < 30)
 				  {
 				    a_ptr->flags4 |= TR4_AUTO_ID;
@@ -868,41 +877,67 @@ static void add_ability (artifact_type *a_ptr)
 				else if (r < 42) a_ptr->esp |= (ESP_UNIQUE);
 				else if (r < 43) a_ptr->esp |= (ESP_SPIDER);
 				else if (r < 44) a_ptr->esp |= (ESP_ALL);
-				else if (r < 65) a_ptr->flags3 |= TR3_SEE_INVIS;
-				else if (r < 75)
+				else if (r < 60) a_ptr->flags3 |= TR3_SEE_INVIS;
+				else if (r < 70)
 				{
 					a_ptr->flags1 |= TR1_WIS;
 					do_pval (a_ptr);
 				}
-				else if (r < 85)
+				else if (r < 80)
 				{
 					a_ptr->flags1 |= TR1_INT;
 					do_pval (a_ptr);
 				}
+				else if (r < 85) a_ptr->flags2 |= TR2_RES_CONF;
+				else if (r < 90) a_ptr->flags2 |= TR2_RES_FEAR;
 				else a_ptr->to_a += 3 + rand_int (3);
 				break;
 			}
 			case TV_SHIELD:
 			{
-				if (r < 20) a_ptr->flags2 |= TR2_RES_ACID;
-				else if (r < 40) a_ptr->flags2 |= TR2_RES_ELEC;
-				else if (r < 60) a_ptr->flags2 |= TR2_RES_FIRE;
-				else if (r < 80) a_ptr->flags2 |= TR2_RES_COLD;
+				if (r < 18) a_ptr->flags2 |= TR2_RES_ACID;
+				else if (r < 36) a_ptr->flags2 |= TR2_RES_ELEC;
+				else if (r < 54) a_ptr->flags2 |= TR2_RES_FIRE;
+				else if (r < 72) a_ptr->flags2 |= TR2_RES_COLD;
+				else if (r < 80) a_ptr->flags5 |= TR5_REFLECT;
 				else a_ptr->to_a += 3 + rand_int (3);
 				break;
 			}
 			case TV_CLOAK:
 			{
-				if (r < 45)
+				if (r < 20)
+				{
+					a_ptr->flags3 |= TR3_FEATHER;
+					do_pval (a_ptr);
+				}
+				else if (r < 28)//30
+				{
+					if (!(a_ptr->flags3 & TR3_SH_FIRE || a_ptr->flags3 & TR3_SH_ELEC))
+					{
+						if (rand_int(2)) {
+							a_ptr->flags3 |= TR3_SH_FIRE;
+							a_ptr->flags2 |= TR2_RES_FIRE;
+						} else {
+							a_ptr->flags3 |= TR3_SH_ELEC;
+							a_ptr->flags2 |= TR2_RES_ELEC;
+						}
+					}
+				}
+				else if (r < 31) a_ptr->flags5 |= TR5_INVIS;//33
+				else if (r < 53)//55
 				{
 					a_ptr->flags1 |= TR1_STEALTH;
 					do_pval (a_ptr);
 				}
-				else if (r < 60)
+				else if (r < 63)
+				{
+					a_ptr->flags2 |= TR2_RES_SHARDS;
+				}
+				else if (r < 70)
 				{
 					a_ptr->flags4 |= TR4_FLY;
 				}
-				else a_ptr->to_a += 3 + rand_int (3);
+				else a_ptr->to_a += 3 + rand_int(3);
 				break;
 			}
 			case TV_SOFT_ARMOR:
@@ -1414,35 +1449,52 @@ artifact_type *randart_make(object_type *o_ptr)
 
 	/* Add TR3_HIDE_TYPE to all artifacts with nonzero pval because we're
 	   too lazy to find out which ones need it and which ones don't. */
-	if (a_ptr->pval)
-		a_ptr->flags3 |= TR3_HIDE_TYPE;
+	if (a_ptr->pval) a_ptr->flags3 |= TR3_HIDE_TYPE;
 
         /* Fix some limits */
-	if (a_ptr->tval == TV_MSTAFF) a_ptr->flags3 &= ~TR3_NO_MAGIC;
-	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;
+	/* Mage staves never have NO_MAGIC but their pval always adds to MANA */
+	if (a_ptr->tval == TV_MSTAFF) {
+		a_ptr->flags3 &= ~TR3_NO_MAGIC;
+		if (a_ptr->pval) a_ptr->flags1 |= TR1_MANA;
+	}
+	/* Dark Swords never add to MANA */
+	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;	
         if (a_ptr->flags1 & TR1_MANA)
-        {
-                if (a_ptr->pval > 10) a_ptr->pval = 10;
+	{
+		/* Randart mage staves may give up to +10 +1 bonus MANA */
+		if ((a_ptr->tval == TV_MSTAFF) && (a_ptr->pval > 11)) a_ptr->pval = 11;
+		/* Helms and crowns may not give more than +3 MANA */
+		else if ((a_ptr->tval == TV_HELM || a_ptr->tval == TV_CROWN) &&
+		    (a_ptr->pval > 3)) a_ptr->pval = 3;
+		/* Usually +10 MANA is max */
+                else if (a_ptr->pval > 10) a_ptr->pval = 10;
         }
-	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT))
-	{
-		a_ptr->pval = (a_ptr->pval * 2) / 3;
-	}
-	if(a_ptr->flags1 & TR1_STEALTH)
-	{
-		if (a_ptr->pval > 6) a_ptr->pval = 6;
-	}
-	if(a_ptr->flags5 & TR5_LUCK)
-	{
-		if (a_ptr->pval > 5) a_ptr->pval = 5;
-	}
-	if(a_ptr->flags5 & TR5_DISARM)
-	{
-		if (a_ptr->pval > 3) a_ptr->pval = 3;
-	}
+	/* No more than +4 IV on helms and crowns */
+	if ((a_ptr->tval == TV_HELM || a_ptr->tval == TV_CROWN) &&
+	    (a_ptr->flags1 & TR1_INFRA) && (a_ptr->pval > 4)) a_ptr->pval = 4;
+	/* If an item increases SPEED _and_ CRIT by over 7
+	   then reduce pval to 2/3 to balance */
+	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT) &&
+	    (a_ptr->pval > 7)) a_ptr->pval = (a_ptr->pval * 2) / 3;
+	/* No more than +6 stealth */
+	if ((a_ptr->flags1 & TR1_STEALTH) && (a_ptr->pval > 6)) a_ptr->pval = 6;
+	/* No more than +5 luck */
+	if ((a_ptr->flags5 & TR5_LUCK) && (a_ptr->pval > 5)) a_ptr->pval = 5;
+	/* No more than +3 disarming ability (randart picklocks aren't allowed anyways) */
+	if ((a_ptr->flags5 & TR5_DISARM) && (a_ptr->pval > 3)) a_ptr->pval = 3;
+	/* Never increase stats too greatly */
 	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR))
 	{
-		if (a_ptr->tval == TV_AMULET)
+		int c=0; /* Count how many stats are increased */
+		if (a_ptr->flags1 & TR1_STR) c++;
+		if (a_ptr->flags1 & TR1_INT) c++;
+		if (a_ptr->flags1 & TR1_WIS) c++;
+		if (a_ptr->flags1 & TR1_DEX) c++;
+		if (a_ptr->flags1 & TR1_CON) c++;
+		if (a_ptr->flags1 & TR1_CHR) c++;
+		/* limit +stats to 15 (3*(+5) or 5*(+3)),
+		   never more than +3 on amulets */
+		if ((a_ptr->tval == TV_AMULET) || (c > 3))
 		{
 			if (a_ptr->pval > 3) a_ptr->pval /= 2;
 			if (a_ptr->pval > 3) a_ptr->pval = 3;
@@ -1453,6 +1505,7 @@ artifact_type *randart_make(object_type *o_ptr)
 			if (a_ptr->pval == 0) a_ptr->pval = 1;
 		}
 	}
+	/* Never more than +3 EA, +2 on gloves */
         if (a_ptr->flags1 & TR1_BLOWS)
         {
 		if (a_ptr->tval == TV_GLOVES)
@@ -1465,11 +1518,9 @@ artifact_type *randart_make(object_type *o_ptr)
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
         }
-	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 3))
-	{
-		a_ptr->pval = 3;
-	}
-
+	/* Never more than +3 LIFE (doesn't occur on randarts anyways, yet) */
+	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 3)) a_ptr->pval = 3;
+	/* Never more than +6 +hit/+dam on gloves, +30 in general */
 	if (a_ptr->tval == TV_GLOVES) {
 		if (a_ptr->to_h > 6) a_ptr->to_h = 6;
 		if (a_ptr->to_d > 6) a_ptr->to_d = 6;
@@ -1479,7 +1530,7 @@ artifact_type *randart_make(object_type *o_ptr)
 	}
 
 	/* Hack -- DarkSword randarts should have this */
-	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD)
+	if ((a_ptr->tval == TV_SWORD) && (a_ptr->sval == SV_DARK_SWORD))
 	{
 		/* Remove all old ANTIMAGIC flags that might have been
 		set by a curse or random ability */
@@ -1489,14 +1540,18 @@ artifact_type *randart_make(object_type *o_ptr)
 		a_ptr->flags4 |= TR4_ANTIMAGIC_50;
 
 		/* If they have large tohit/dam boni they can get more AM even */
+
+		/* If +hit/+dam cancels out base AM.. */
 		if ((a_ptr->to_h + a_ptr->to_d) >= 50)
 		{
+			/* Reduce +hit/+dam equally so it just cancels out 50% base AM */
 			if (magik(50))
 				while (a_ptr->to_h + a_ptr->to_d > 50) {
 					a_ptr->to_h--;
 					if (a_ptr->to_h + a_ptr->to_d > 50) a_ptr->to_d--;
 				}
-		
+			/* Now add 0%..50% AM to receive -10%..50% AM in total;
+			   (-10% from +30+30 -50% if +hit+dam wasn't reduced above) */
 			if (magik(40)) a_ptr->flags4 |= TR4_ANTIMAGIC_30 | TR4_ANTIMAGIC_20;
 			else if (magik(60)) a_ptr->flags4 |= TR4_ANTIMAGIC_30 | TR4_ANTIMAGIC_10;
 			else if (magik(80)) a_ptr->flags4 |= TR4_ANTIMAGIC_30;
@@ -1656,7 +1711,7 @@ try_an_other_ego:
 			a_ptr->flags4 |= e_ptr->flags4[j];
 			a_ptr->flags5 |= e_ptr->flags5[j];
 			a_ptr->esp |= e_ptr->esp[j];
-			add_random_ego_flag(a_ptr, e_ptr->fego[j], &limit_blows, o_ptr->level);
+			add_random_ego_flag(a_ptr, e_ptr->fego[j], &limit_blows, o_ptr->level, o_ptr);
 		}
 	}
 	
@@ -1847,7 +1902,7 @@ static void add_random_esp(artifact_type *a_ptr, int all)
  * will result in changes of ego-item powers themselves!!	- Jir -
  */
 // void add_random_ego_flag(object_type *o_ptr, int fego, bool *limit_blows)
-void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b dlev)
+void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b dlev, object_type *o_ptr)
 {
 	if (fego & ETR4_SUSTAIN)
 	{
@@ -1939,23 +1994,29 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 
 		if (randint(3) == 1) /* double damage */
 		{
+#if 0 /* isn't the following line buggy and meant to be..*/
 			a_ptr->dd *= 2;
-			while (a_ptr->dd * a_ptr->ds > 75)
+#else /* this instead?: */
+			a_ptr->dd = o_ptr->dd * 2;
+#endif
+			while ((a_ptr->dd + o_ptr->dd) * (a_ptr->ds + o_ptr->ds) > ((a_ptr->flags4 & TR4_MUST2H)?75:50))
 				a_ptr->dd -= 1; /* No overpowered slaying weapons */
+			/* fix lower limit */
+			if (a_ptr->dd < 0) a_ptr->dd = 0;
 		} else {
 			do
 			{
 				a_ptr->dd++;
 			}
 			while ((randint(a_ptr->dd) == 1) &&
-				(a_ptr->dd * a_ptr->ds < (a_ptr->flags4 & TR4_MUST2H)?65:45));
+				((a_ptr->dd + o_ptr->dd) * (a_ptr->ds + o_ptr->ds) < ((a_ptr->flags4 & TR4_MUST2H)?65:43)));
 				/* No overpowered slaying weapons */
 			do
 			{
 				a_ptr->ds++;
 			}
 			while ((randint(a_ptr->ds) == 1) &&
-				(a_ptr->dd * a_ptr->ds < (a_ptr->flags4 & TR4_MUST2H)?65:45));
+				((a_ptr->dd + o_ptr->dd) * (a_ptr->ds + o_ptr->ds) < (a_ptr->flags4 & TR4_MUST2H)?65:45));
 				/* No overpowered slaying weapons */
 		}
 		if (randint(5) == 1)

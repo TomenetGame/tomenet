@@ -2475,8 +2475,8 @@ void calc_bonuses(int Ind)
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
 //		p_ptr->anti_magic = TRUE;	/* it means 95% saving-throw!! */
-		p_ptr->antimagic += get_skill(p_ptr, SKILL_ANTIMAGIC);
-		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 11);
+		p_ptr->antimagic += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 40);
+		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 10); /* was /11, but let's reward max skill! */
 	}
 
 	/* Ghost */
@@ -2954,7 +2954,7 @@ void calc_bonuses(int Ind)
 
 	}
 
-	if (p_ptr->antimagic > 90) p_ptr->antimagic = 90; /* AM cap */
+	if (p_ptr->antimagic > ANTIMAGIC_CAP) p_ptr->antimagic = ANTIMAGIC_CAP; /* AM cap */
 	if (p_ptr->luck_cur < -10) p_ptr->luck_cur = -10; /* luck caps at -10 */
 	if (p_ptr->luck_cur > 40) p_ptr->luck_cur = 40; /* luck caps at 40 */
 

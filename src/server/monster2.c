@@ -2363,6 +2363,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 
 	monster_type    *m_ptr;
 	monster_race    *r_ptr = &r_info[r_idx];
+	player_type	*p_ptr;
 
 	char buf[80];
 
@@ -2421,6 +2422,27 @@ if (r_idx == 862) s_printf("Ok 1\n");
 			if ((m_ptr->r_idx == 1068) && inarea(wpos, &m_ptr->wpos)) return(FALSE);
 		}
 	}
+
+	/* Morgoth may not spawn 'live' if the players on his level aren't prepared correctly */
+	if (r_idx == 862) {
+		for (i = 1; i <= NumPlayers; i++)
+		{
+			p_ptr = Players[i];
+			if (p_ptr->admin_wiz || p_ptr->admin_dm) continue;
+			if (inarea(&p_ptr->wpos, wpos) &&
+			    (p_ptr->total_winner || (p_ptr->r_killed[860] == 0)))
+			{
+			        /* log */
+				if (p_ptr->total_winner) {
+		    		        s_printf("Morgoth live spawn prevented due to winner %s\n", p_ptr->name);
+				} else {
+				        s_printf("Morgoth live spawn prevented due to Sauron-misser %s\n", p_ptr->name);
+				}
+				return (FALSE);
+			}
+		}
+	}
+
 #ifdef DEBUG1
 if (r_idx == 862) s_printf("Ok 2\n");
 #endif
@@ -2733,7 +2755,10 @@ if (r_idx == 862) s_printf("Ok 8\n");
 
 	/* Success */
 	/* Report some very interesting monster creating: */
-	if (r_idx == 862) s_printf("Morgoth was created on %d\n", getlevel(wpos));
+	if (r_idx == 862) {
+		s_printf("Morgoth was created on %d\n", getlevel(wpos));
+/*		check_Morgoth(); /* was he allowed to spawn!? */
+	}
 	if (r_idx == 1032) s_printf("Tik'Svrzllat was created on %d\n", getlevel(wpos));
 	if (r_idx == 1067) s_printf("The Hellraiser was created on %d\n", getlevel(wpos));
 	if (r_idx == 1085) s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", getlevel(wpos));

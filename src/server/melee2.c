@@ -1306,7 +1306,7 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 
 //		antichance -= r_ptr->level;
 
-		if (antichance > 90) antichance = 90; /* AM cap */
+		if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP; /* AM cap */
 
 		/* Reduction for party */
 		/*
@@ -1369,7 +1369,7 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 			antidis = r_ptr->level / 15 + 3;
 
 			if (dis > antidis) continue;
-			if (antichance > 90) antichance = 90; /* AM cap */
+			if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP; /* AM cap */
 
 			/* Got disrupted ? */
 			if (magik(antichance))
