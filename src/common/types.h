@@ -934,6 +934,7 @@ struct monster_type
 #endif
 
 	u16b ai_state;		/* What special behaviour this monster takes now? */
+	s16b last_target;	/* For C. Blue's anti-cheeze AI in melee2.c */
 };
 
 typedef struct monster_ego monster_ego;

@@ -12,6 +12,7 @@
  */
 
 #define SERVER
+#define C_BLUE_AI
 
 #include "angband.h"
 
@@ -4544,6 +4545,9 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	}
 #endif
 
+	if ((ABS(m_ptr->fy - y2) <= 1) && (ABS(m_ptr->fx - x2) <= 1))
+		m_ptr->last_target = p_ptr->id;
+
 	/* Extract the "pseudo-direction" */
 	y = m_ptr->fy - y2;
 	x = m_ptr->fx - x2;
@@ -4603,6 +4607,45 @@ static void get_moves(int Ind, int m_idx, int *mm)
 			done = TRUE;
 		}
 	}
+	
+#ifdef C_BLUE_AI
+	/* Anti-cheeze vs Hit&Run-tactics if player has slightly superiour speed:
+	   Monster tries to make player approach so it gets attack turns! -C. Blue */
+	else if ((
+#if 1
+		((r_ptr->level >= 30) &&
+		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL))) ||
+		((r_ptr->level >= 60) && 
+		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD))) ||
+#endif
+		(r_ptr->flags2 & RF2_SMART)) && !(r_ptr->flags2 & RF2_STUPID) &&
+		(distance(m_ptr->fy, m_ptr->fx, y2, x2) == 2) &&
+		(p_ptr->pspeed > m_ptr->mspeed) && rand_int(30) &&
+		(m_ptr->hp <= (m_ptr->maxhp * 3) / 5) && (p_ptr->chp > p_ptr->mhp / 4) &&
+		(p_ptr->s_info[SKILL_MASTERY].value >= 3000 || p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= 10000) &&
+		!los(&p_ptr->wpos, y2, x2, m_ptr->fy, m_ptr->fx) &&
+		(m_ptr->last_target == p_ptr->id)) {
+
+		int xt,yt, more_monsters_nearby = 0;
+		cave_type **zcave = getcave(&p_ptr->wpos);
+		if (zcave) {
+			monster_type *mx_ptr;
+			for (yt = m_ptr->fy - 5; yt < m_ptr->fy + 5; yt ++)
+			for (xt = m_ptr->fx - 5; xt < m_ptr->fx + 5; xt ++) {
+    				if (in_bounds(yt,xt) &&
+				    (zcave[yt][xt].m_idx > 0)) {
+					mx_ptr = &m_list[zcave[yt][xt].m_idx];
+					if (!mx_ptr->csleep && !mx_ptr->confused && !mx_ptr->monfear && (mx_ptr->level * 3 > m_ptr->level))
+						more_monsters_nearby++;
+				}
+			}
+			/* Stay. Don't approach the player without enough support! */
+			if (more_monsters_nearby < 3) return;
+		}
+	}
+	if (done) m_ptr->last_target = 0;
+#endif
+
 #if 0
 	/* Death orbs .. */
 	if (r_ptr->flags2 & RF2_DEATH_ORB)
