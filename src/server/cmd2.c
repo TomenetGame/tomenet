@@ -3152,7 +3152,7 @@ void destroy_house(int Ind, struct dna_type *dna){
 			}
 			/* quicker than copying back an array. */
 			msg_print(Ind,"\377DThe house crumbles away.");
-			fill_house(&houses[i],2);
+			fill_house(&houses[i], 2, NULL);
 			houses[i].flags|=HF_DELETED;
 			break;
 		}

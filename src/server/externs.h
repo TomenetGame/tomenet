@@ -604,7 +604,7 @@ extern void wild_apply_night(int Depth);
 extern int determine_wilderness_type(int Depth);
 extern void wilderness_gen(int Depth);
 extern void wild_add_monster(int Depth);
-extern bool fill_house(house_type *h_ptr, int func);
+extern bool fill_house(house_type *h_ptr, int func, void *data);
 extern void wild_add_uhouse(house_type *h_ptr);
 
 /* init-txt.c */

@@ -2001,7 +2001,7 @@ static void flood(char *buf, int x, int y, int w, int h){
 	}
 }
 
-bool fill_house(house_type *h_ptr, int func){
+bool fill_house(house_type *h_ptr, int func, void *data){
 	/* polygonal house */
 	/* draw all the outer walls cleanly */
 	cptr coord=h_ptr->coords.poly;
@@ -2016,12 +2016,22 @@ bool fill_house(house_type *h_ptr, int func){
 	int mw,mh;
 	bool success=TRUE;
 
+	if(func==3)
+		success=FALSE;
+
 	if(h_ptr->flags&HF_RECT){
 		cave_type *c_ptr;
 		for(x=0;x<h_ptr->coords.rect.width;x++){
 			for(y=0;y<h_ptr->coords.rect.height;y++){
  				c_ptr=&cave[Depth][h_ptr->y+y][h_ptr->x+x];
-				if(func==2){
+				if(func==3){ /* player in house? */
+					player_type *p_ptr=(player_type*)data;
+					if(p_ptr->px==h_ptr->x+x && p_ptr->py==h_ptr->y+y){
+						success=TRUE;
+						break;
+					}
+				}
+				else if(func==2){
 					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
 						if((pick_house(Depth,h_ptr->y,h_ptr->x))!=-1)
 							success=FALSE;
@@ -2029,7 +2039,7 @@ bool fill_house(house_type *h_ptr, int func){
 					else
 						c_ptr->feat=FEAT_DIRT;
 				}
-				if(func==1){
+				else if(func==1){
 					delete_object(Depth,y,x);
 				}
 				else{
@@ -2104,6 +2114,13 @@ bool fill_house(house_type *h_ptr, int func){
 				case 6:
 					break;
 				case 0:
+					if(func==3){
+						player_type *p_ptr=(player_type*)data;
+						if(p_ptr->px==minx+(x-1) && p_ptr->py==miny+(y-1)){
+							success=TRUE;
+						}
+						break;
+					}
 					if(func==2){
 						if((pick_house(Depth,miny+(y-1),minx+(x-1))!=-1)){
 							success=FALSE;
@@ -2158,7 +2175,7 @@ void wild_add_uhouse(house_type *h_ptr){
  			c_ptr->feat=FEAT_PERM_EXTRA;
 		}
 	}
-	fill_house(h_ptr,0);
+	fill_house(h_ptr, 0, NULL);
 	if(h_ptr->flags&HF_MOAT){
 		/* Draw a moat around our house */
 	}

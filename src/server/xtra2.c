@@ -3055,7 +3055,7 @@ static void kill_house_contents(house_type *h_ptr){
 		}
 	}
 	else{
-		fill_house(h_ptr, 1);
+		fill_house(h_ptr, 1, NULL);
 		/* Polygonal house */
 	}
 }

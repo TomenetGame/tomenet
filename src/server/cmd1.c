@@ -2170,7 +2170,7 @@ void move_player(int Ind, int dir, int do_pickup)
 
 	/* Wraiths trying to walk into a house */
 	else if (p_ptr->tim_wraith && (((c_ptr->feat >= FEAT_HOME_HEAD) && (c_ptr->feat <= FEAT_HOME_TAIL)) ||
-	         ((cave[Depth][y][x].info & CAVE_ICKY) && (Depth <= 0))))
+	         ((cave[Depth][y][x].info & CAVE_ICKY) && (Depth <= 0))) && !wraith_access(Ind))
 	{
 		disturb(Ind, 0, 0);
 	}
@@ -2311,6 +2311,25 @@ void move_player(int Ind, int dir, int do_pickup)
 		if (p_ptr->master_move_hook)
 			p_ptr->master_move_hook(Ind, NULL);
 	}
+}
+
+bool wraith_access(int Ind){
+	/* Experimental! lets hope not bugged */
+	/* Wraith walk in own house */
+	player_type *p_ptr=Players[Ind];
+	int i;
+
+	for(i=0;i<num_houses;i++){
+		if(houses[i].depth==p_ptr->dun_depth){
+			if(fill_house(&houses[i], 3, p_ptr)){
+				printf("Got the house!\n");
+				if(access_door(Ind, houses[i].dna))
+					return(TRUE);
+				break;
+			}
+		}
+	}
+	return(FALSE);
 }
 
 
