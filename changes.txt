@@ -1073,6 +1073,7 @@ To find the latest change quickly, search ==== :)
 17/06/2002 (Jir)
 # 'pfft, my sorc cannot cast!' version ;)
 - monsters drop what they've picked up before.
+[H] roguelike-keys support in do_cmd_skill()
 
 
 
@@ -1103,6 +1104,7 @@ concisely: what's hot now?
 =============================================================================
 below this line are the unfixed bugs known:
 
+[B] game starts with map screen. huh?
 [B] House doors still seem to crash sometimes. (door even vanishes??)
 [B] wpos display hides wound states(eg.'Deep Gash')
 [B] ever-charging arts (eg.star)

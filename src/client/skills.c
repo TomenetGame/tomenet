@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: skills.c */
 
 /* Purpose: player skills */
@@ -371,16 +372,16 @@ void do_cmd_skill()
 			int dir = c;
 
 			/* Move cursor down */
-			if (dir == '2') sel++;
+			if (dir == '2' || dir == 'j') sel++;
 
 			/* Move cursor up */
-			if (dir == '8') sel--;
+			if (dir == '8' || dir == 'k') sel--;
 
 			/* Miscellaneous skills cannot be increased/decreased as a group */
 //			if (table[sel][0] == SKILL_MISC) continue;
 
 			/* Increase the current skill */
-                        if (dir == '6')
+                        if (dir == '6' || dir == 'l')
                         {
                                 /* Send a packet */
                                 Send_skill_mod(table[sel][0]);
@@ -390,7 +391,7 @@ void do_cmd_skill()
                         }
 
 			/* Decrease the current skill */
-//      		if (dir == '4') decrease_skill(table[sel][0], skill_invest);
+//      		if (dir == '4' || dir == 'h') decrease_skill(table[sel][0], skill_invest);
 
 			/* XXX XXX XXX Wizard mode commands outside of wizard2.c */
 
