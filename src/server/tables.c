@@ -2815,9 +2815,17 @@ player_magic magic_info[MAX_REALM] =
         	        { 7, 7, 22, 10 },
                 	{ 7, 7, 22, 11 },
 	                { 8, 7, 25, 12 },
+#if 0
         	        { 8, 9, 30, 13 },
                 	{ 9, 8, 35, 14 },
 	                { 10, 10, 50, 15 },
+#else
+					/* cannot be a mage with wraithform so easily..
+					 * Any thoughts?- Jir - */
+        	        { 9, 9, 30, 13 },
+                	{ 10, 8, 35, 14 },
+	                { 20, 10, 50, 15 },
+#endif	// 0
 
         	        /* Arcane Chants */
 	       	        { 11, 8, 40, 16 },

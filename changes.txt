@@ -1191,8 +1191,11 @@ To find the latest change quickly, search ==== :)
 - '!='(force pickup) inscription only works for the owner.
 [H] allowed teleportation under NO_TELE when died.
 [H] thresholds for screen scrolling changed. (they should be client-option)
+[H] wraithform is lv.20 spell now (for the balance's sake)
 [B] Green/Blue etc. Dragonriders were all red.
 [B] Shattering potions of Healing didn't heal the players.
+[B] when logging in, the player was slightly displaced.
+[B] Receive_activate_skill did nasties when out of energy.
 
 
 ** [B] stands for Bugfix.
@@ -1205,6 +1208,7 @@ things to do before 4.0.0
 
 - implement guest-account
 - rebalance skill-points
+- devise a nice way to control ego-item generation w/o luck
 - fix gfx
 - refine pk code
 - source-code cleanup
@@ -1253,7 +1257,8 @@ below this line are the unfixed bugs known:
 [B] Yeek seems to receive the best store prices.
 [B] Martial-artist has strange +To RHit/+To RDam display.
 [B] +To RDam is wrong when using =dam
-[B] when logging in, the player can be slightly displaced.
+[B] los chech sometimes goes wrong (southeast)
+[B][C] inventory window sometimes loses a) b) etc.
 
 *below are bugs repoorted but not confirmed*
 [B] Macro sticks sometimes

@@ -31,7 +31,7 @@ Note:
 /bed (any letters) {alias: /naked} 
     Take the armours off from the equipment slots.
     Items with {!t} tag or those cursed cannot be taken off this way.
-	If any arguments are given, take everything off.
+    If any arguments are given, take everything off.
 
 /cast (book no. or slot no.) (spell sign) [target player's name] 
     Cast the specified spell.
@@ -61,7 +61,7 @@ Note:
     Currently, this displays how sane you are, and how deep you can recall.
 
 /feeling {shorthand: /fe}
-	Displays the feeling of the floor you are on.
+    Displays the feeling of the floor you are on.
 
 /help {alias: /? shorthand: /h}
     Displays this help file.
@@ -80,21 +80,21 @@ Note:
 
 /monster [monster letter/monster name] {shorthand: /mo}
     Displays how many monsters of that kind you've slain so far.
-	If nothing is specified, it shows all the monsters.
-	Mimics receive the 'learning' status also.
-	ex) /mo Z
+    If nothing is specified, it shows all the monsters.
+    Mimics receive the 'learning' status also.
+    ex) /mo Z
 
 /news
     Displays the news screen, in case you overlooked it when logging on.
 
 /pkill {shorthand: /pk}
-	Toggles 'player-killing' mode.
-	It takes *long* for the change to actually become valid, so be careful.
-	(You'll receive a message when the switching completes.)
+    Toggles 'player-killing' mode.
+    It takes *long* for the change to actually become valid, so be careful.
+    (You'll receive a message when the switching completes.)
 
 /quest [guild (name)]
-	Requests for a quest.
-	If you already have quests assigned, it displays the current quest status.
+    Requests for a quest.
+    If you already have quests assigned, it displays the current quest status.
 
 /refresh {shorthand: /ref} 
     Force the server to reflesh your states manually.
@@ -110,7 +110,7 @@ Note:
     Send a message to the admins(Dungeon Master), even when they're off.
     Please use this for sending bug-reports, requests, your feelings or
     new cookies.
-	If server option is configured, you can view RFEs via /less.
+    If server option is configured, you can view RFEs via /less.
 
 /shout [message]
     You shout.
@@ -126,8 +126,6 @@ Note:
 
     ......@..
     ..x......
-
-    (Based on an idea of Norcoth.)
 
 /untag [inscription] 
     Uninscribe every items in your backpack inscribed [inscription].

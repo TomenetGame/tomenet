@@ -507,6 +507,9 @@ void client_init(char *argv1, bool skip)
 		quit("Network start failed!\n");
 	}
 
+	/* Hack -- flush the key buffer */
+	Term_flush();
+
 	/* Main loop */
 	Input_loop();
 

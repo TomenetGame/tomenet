@@ -249,7 +249,8 @@ void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 	Term_clear();
 	Term_get_size(&wid, &hgt);
 
-	c_prt(TERM_WHITE, "TomeNET Skills Screen", 0, 28);
+//	c_prt(TERM_WHITE, "TomeNET Skills Screen", 0, 28);
+	c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:2,8,j,k  fold:<CR>,c,o  advance:6,l]", 0, 0);
 	c_prt((p_ptr->skill_points) ? TERM_L_BLUE : TERM_L_RED,
 	      format("Skill points left: %d", p_ptr->skill_points), 1, 0);
 	print_desc_aux(s_info[table[sel][0]].desc, 2, 0);
@@ -775,6 +776,10 @@ int do_cmd_activate_skill_aux()
 	return ret;
 }
 
+/*
+ * Handle the mkey according to the types.
+ * if item is less than zero, ask for an item if needed.
+ */
 void do_activate_skill(int x_idx, int item)
 {
 	int dir, spell;
@@ -796,7 +801,7 @@ void do_activate_skill(int x_idx, int item)
 	}
 	else if (s_info[x_idx].flags1 & SKF1_MKEY_SPELL)
 	{
-		if (!item)
+		if (item < 0)
 		{
 			item_tester_tval = s_info[x_idx].tval;
 			if (!c_get_item(&item, "Cast from which book? ", FALSE, TRUE, FALSE))
@@ -816,7 +821,7 @@ void do_activate_skill(int x_idx, int item)
 		return;
 	}
 
-	if (!item && s_info[x_idx].flags1 & SKF1_MKEY_ITEM)
+	if (item < 0 && s_info[x_idx].flags1 & SKF1_MKEY_ITEM)
 	{
 		item_tester_tval = s_info[x_idx].tval;
 		if (!c_get_item(&item, "Which item? ", TRUE, TRUE, FALSE))
@@ -856,7 +861,7 @@ void do_cmd_activate_skill()
 #endif
 	if (x_idx == -1) return;
 
-	do_activate_skill(x_idx, 0);
+	do_activate_skill(x_idx, -1);
 
 //	if (!x_idx)
 //	{

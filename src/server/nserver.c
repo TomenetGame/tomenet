@@ -4937,7 +4937,7 @@ static int Receive_activate_skill(int ind)
 	{
 		p_ptr->current_spell = -1;
 		p_ptr->current_mind = -1;
-		Packet_printf(&connp->q, "%c%hd%hd", ch, book, spell);
+		Packet_printf(&connp->q, "%c%c%hd%hd%c", ch, mkey, book, spell, dir);
 		return 0;
 	}
 
@@ -7675,10 +7675,6 @@ static int Receive_raw_key(int ind)
 	{
 		switch (key)
 		{
-			/* something weird here */
-			case '_':
-				break;
-
 			default:
 				msg_format(player, "'%c' key is currently not used.  Hit '?' for help.", key);
 		}

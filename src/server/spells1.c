@@ -5057,7 +5057,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
         /* Effects done by the plane cannot bounce */
         if (p_ptr->reflect && !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-			rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 7 : 2))
+			rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 7 : 3))
 
 	{
                 int t_y, t_x, ay, ax;

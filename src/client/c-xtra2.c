@@ -1,8 +1,7 @@
+/* $Id$ */
 /* More extra client things */
 
 #include "angband.h"
-
-#define EVIL_TEST /* evil test */
 
 /*
  * Show previous messages to the user   -BEN-
@@ -33,6 +32,7 @@ void do_cmd_messages(void)
 	char nameA[20];
 	char nameB[20];
 	cptr nomsg_target = "Target Selected.";
+	cptr nomsg_map = "Map sector ";
 
 	strcpy(nameA, "[");  strcat(nameA, nick);  strcat(nameA, ":");
 	strcpy(nameB, ":");  strcat(nameB, nick);  strcat(nameB, "]");
@@ -53,7 +53,8 @@ void do_cmd_messages(void)
 	{
 		msg = message_str(i);
 
-		if (strstr(msg, nomsg_target) != NULL) 
+		if (strstr(msg, nomsg_target) ||
+				strstr(msg, nomsg_map))
 			continue;	
 
 		message_recall[nn] = msg;	
@@ -66,11 +67,6 @@ void do_cmd_messages(void)
 
 	/* Start at leftmost edge */
 	q = 0;
-
-#ifndef EVIL_TEST /* evil test */
-	/* Enter "icky" mode */
-	screen_icky = topline_icky = TRUE;
-#endif
 
 	/* Save the screen */
 	Term_save();
@@ -223,6 +219,9 @@ void do_cmd_messages(void)
 					/* New location */
 					i = z;
 
+					/* Hack -- also show */
+					strcpy(shower, str);
+
 					/* Done */
 					break;
 				}
@@ -293,11 +292,6 @@ void do_cmd_messages(void)
 	/* Restore the screen */
 	Term_load();
 
-#ifndef EVIL_TEST /* evil test */
-	/* Leave "icky" mode */
-	screen_icky = topline_icky = FALSE;
-#endif
-
 	/* Flush any queued events */
 	Flush_queue();
 }
@@ -359,11 +353,6 @@ void do_cmd_messages_chatonly(void)
 	/* Start at leftmost edge */
 	q = 0;
 
-
-#ifndef EVIL_TEST /* evil test */
-	/* Enter "icky" mode */
-	screen_icky = topline_icky = TRUE;
-#endif
 
 	/* Save the screen */
 	Term_save();
@@ -488,6 +477,9 @@ void do_cmd_messages_chatonly(void)
 					/* New location */
 					i = z;
 
+					/* Hack -- also show */
+					strcpy(shower, str);
+
 					/* Done */
 					break;
 				}
@@ -558,11 +550,6 @@ void do_cmd_messages_chatonly(void)
 
 	/* Restore the screen */
 	Term_load();
-
-#ifndef EVIL_TEST /* evil test */
-	/* Leave "icky" mode */
-	screen_icky = topline_icky = FALSE;
-#endif
 
 	/* Flush any queued events */
 	Flush_queue();
