@@ -126,9 +126,9 @@ void wproto(struct client *ccl){
 				break;
 			case WP_MESSAGE:
 				/* simple relay message */
-				if(ccl->authed && (ccl->authed>0 || secure.msgs))
+				if(ccl->authed && (ccl->authed>0 || secure.msgs)){
 					relay(wpk, ccl);
-				relay(wpk, ccl);
+				}
 			default:
 				fprintf(stderr, "ignoring undefined packet %d\n", wpk->type);
 		}
