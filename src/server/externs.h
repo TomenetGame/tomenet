@@ -689,7 +689,6 @@ extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool
 extern void determine_level_req(int level, object_type *o_ptr);
 extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great);
 extern void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great);
-extern void place_trap(struct worldpos *wpos, int y, int x);
 extern void place_gold(struct worldpos *wpos, int y, int x);
 extern s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void pick_trap(struct worldpos *wpos, int y, int x);
@@ -872,7 +871,7 @@ extern bool cure_serious_wounds_proj(int Ind, int dir);
 extern bool cure_critical_wounds_proj(int Ind, int dir);
 extern bool heal_other_proj(int Ind, int dir);
 extern bool door_creation(int Ind);
-extern bool trap_creation(int Ind);
+extern bool trap_creation(int Ind, int mod);
 extern bool destroy_doors_touch(int Ind);
 extern bool sleep_monsters_touch(int Ind);
 extern bool create_artifact(int Ind);
@@ -1079,7 +1078,7 @@ extern bool do_player_trap_call_out(int Ind);
 //extern static void trap_hit(int Ind, s16b trap);
 extern bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b item);
 extern void player_activate_door_trap(int Ind, s16b y, s16b x);
-extern void place_trap(struct worldpos *wpos, int y, int x);
+extern void place_trap(struct worldpos *wpos, int y, int x, int mod);
 extern void place_trap_object(object_type *o_ptr);
 // extern void wiz_place_trap(int y, int x, int idx);
 

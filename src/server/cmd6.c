@@ -1593,7 +1593,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 		case SV_SCROLL_TRAP_CREATION:
 		{
-			if (trap_creation(Ind)) ident = TRUE;
+			if (trap_creation(Ind, 5)) ident = TRUE;
 			break;
 		}
 

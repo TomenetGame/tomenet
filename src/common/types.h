@@ -702,13 +702,14 @@ struct object_type
 
 	s16b ac;			/* Normal AC */
 
-	byte dd, ds;		/* Damage dice/sides */
+	byte dd, ds;			/* Damage dice/sides */
 
-	s16b timeout;		/* Timeout Counter */
+	s16b timeout;			/* Timeout Counter */
 
 	byte ident;			/* Special flags  */
 
-	/*byte marked;	*/	/* Object is marked */
+	byte marked;			/* Object is marked */
+					/* Object scan counter */
 
 	u16b note;			/* Inscription index */
 

@@ -824,6 +824,9 @@ Change list for PernMangband
 14/03/2002 (evileye)
 - IP banning filter added. (fixed at 5 mins just now.)
 
+16/03/2002 (evileye)
+- Litter removal added as part of a general object management
+  system.
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)

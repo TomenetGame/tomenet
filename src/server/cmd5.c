@@ -4398,7 +4398,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 			
 		case 19: /* trap craetion */
 		  {
-		    trap_creation(Ind);
+		    trap_creation(Ind, 7);
 		  }
 			case 20: /* fear monsters */
 			{

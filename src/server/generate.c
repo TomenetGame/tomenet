@@ -482,7 +482,7 @@ static void place_locked_door(struct worldpos *wpos, int y, int x)
 	/* let's trap this ;) */
 	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
 		rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) return;
-	place_trap(wpos, y, x);
+	place_trap(wpos, y, x, 0);
 }
 
 
@@ -503,7 +503,7 @@ static void place_secret_door(struct worldpos *wpos, int y, int x)
 	/* let's trap this ;) */
 	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
 		rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) return;
-	place_trap(wpos, y, x);
+	place_trap(wpos, y, x, 0);
 }
 
 
@@ -566,7 +566,7 @@ static void place_random_door(struct worldpos *wpos, int y, int x)
 	/* let's trap this ;) */
 	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
 		rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) return;
-	place_trap(wpos, y, x);
+	place_trap(wpos, y, x, 0);
 }
 
 
@@ -706,7 +706,7 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
 
 			case ALLOC_TYP_TRAP:
 			{
-				place_trap(wpos, y, x);
+				place_trap(wpos, y, x, 0);
 				break;
 			}
 
@@ -714,7 +714,7 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
 			{
 				place_gold(wpos, y, x);
 				/* hack -- trap can be hidden under gold */
-				if (rand_int(100) < 3) place_trap(wpos, y, x);
+				if (rand_int(100) < 3) place_trap(wpos, y, x, 0);
 				break;
 			}
 
@@ -722,7 +722,7 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
 			{
 				place_object(wpos, y, x, FALSE, FALSE);
 				/* hack -- trap can be hidden under an item */
-				if (rand_int(100) < 2) place_trap(wpos, y, x);
+				if (rand_int(100) < 2) place_trap(wpos, y, x, 0);
 				break;
 			}
 		}
@@ -1084,7 +1084,7 @@ static void vault_trap_aux(struct worldpos *wpos, int y, int x, int yd, int xd)
 //		if (!cave_naked_bold(zcave, y1, x1)) continue;
 
 		/* Place the trap */
-		place_trap(wpos, y1, x1);
+		place_trap(wpos, y1, x1, 0);
 
 		/* Done */
 		break;
@@ -1536,7 +1536,7 @@ static void build_type3(struct worldpos *wpos, int yval, int xval)
 		vault_monsters(wpos, yval, xval, rand_int(2) + 3);
 
 		/* Place the trap */
-		if (magik(50)) place_trap(wpos, yval, xval);
+		if (magik(50)) place_trap(wpos, yval, xval, 0);
 
 		/* Traps naturally */
 		vault_traps(wpos, yval, xval, 4, 4, rand_int(3) + 2);
@@ -2795,7 +2795,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 //				if (rand_int(100) < 25)
 				if (rand_int(100) < 40)
 				{
-					place_trap(wpos, y, x);
+					place_trap(wpos, y, x, 0);
 				}
 				break;
 
@@ -2804,13 +2804,13 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 				place_secret_door(wpos, y, x);
 				if (magik(20))
 				{
-					place_trap(wpos, y, x);
+					place_trap(wpos, y, x, 0);
 				}
 				break;
 
 				/* Trap */
 				case '^':
-				place_trap(wpos, y, x);
+				place_trap(wpos, y, x, 0);
 				break;
 
 				/* Monster */
@@ -2835,7 +2835,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 				object_level = lev + 7;
 				place_object(wpos, y, x, TRUE, FALSE);
 				object_level = lev;
-				if (magik(40)) place_trap(wpos, y, x);
+				if (magik(40)) place_trap(wpos, y, x, 0);
 				break;
 
 				/* Nasty monster and treasure */
@@ -2846,7 +2846,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 				object_level = lev + 20;
 				place_object(wpos, y, x, TRUE, TRUE);
 				object_level = lev;
-				if (magik(80)) place_trap(wpos, y, x);
+				if (magik(80)) place_trap(wpos, y, x, 0);
 				break;
 
 				/* Monster and/or object */
@@ -2911,7 +2911,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 				object_level = lev + 7;
 				place_object(wpos, y, x, TRUE, FALSE);
 				object_level = lev;
-				if (magik(40)) place_trap(wpos, y, x);
+				if (magik(40)) place_trap(wpos, y, x, 0);
 				break;
 
 				/* Nasty monster and treasure */
@@ -2922,7 +2922,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 				object_level = lev + 20;
 				place_object(wpos, y, x, TRUE, TRUE);
 				object_level = lev;
-				if (magik(80)) place_trap(wpos, y, x);
+				if (magik(80)) place_trap(wpos, y, x, 0);
 				break;
 
 				/* Monster and/or object */
@@ -3417,7 +3417,7 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 			/* let's trap this too ;) */
 			if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
 					rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) continue;
-			place_trap(wpos, y, x);
+			place_trap(wpos, y, x, 0);
 #endif
 		}
 	}

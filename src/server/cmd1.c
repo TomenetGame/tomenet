@@ -764,6 +764,7 @@ void carry(int Ind, int pickup, int confirm)
 
 				/* Describe the object */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				o_ptr->marked=0;
 
 				/* Message */
 				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));

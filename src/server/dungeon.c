@@ -2463,6 +2463,39 @@ static void purge_old()
 	}
 }
 
+/*
+ * The purpose of this function is to scan through all the
+ * game objects on the surface of the world. Objects which
+ * are not owned will be ignored. Owned items will be checked.
+ * If they are in a house, they will be compared against the
+ * house owner. If this fails, the level difference will be
+ * used to calculate some chance for the object's deletion.
+ *
+ * In the case for non house objects, essentially a TTL is
+ * set. This protects them from instant loss, should a player
+ * drop something just at the wrong time, but it should get
+ * rid of some town junk. Artifacts should probably resist
+ * this clearing.
+ */
+void scan_objs(){
+	int i;
+	object_type *o_ptr;
+	cave_type **zcave;
+	for(i=0;i<MAX_K_IDX;i++){
+		/* We leave non owned objects */
+		o_ptr=&o_list[i];
+		if(o_ptr->owner){
+			if(!o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos))){
+				/* ick suggests a store, so leave) */
+				if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
+					if(++o_ptr->marked==3)
+						delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx);
+				}
+			}
+		}
+	}
+}
+
 
 /*
  * This function handles "global" things such as the stores,
@@ -2479,6 +2512,9 @@ static void process_various(void)
 	player_type *p_ptr;
 
 	char buf[1024];
+
+	/* this TomeCron stuff could be merged at some point
+	   to improve efficiency. ;) */
 
 	/* Save the server state occasionally */
 	if (!(turn % ((NumPlayers ? 10L : 1000L) * SERVER_SAVE)))
@@ -2516,6 +2552,7 @@ static void process_various(void)
 		monster_race *r_ptr;
 
 		check_banlist();	/* unban some players */
+		scan_objs();		/* scan objects and houses */
 
 		/* Update the player retirement timers */
 		for (i = 1; i <= NumPlayers; i++)

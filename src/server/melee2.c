@@ -2755,7 +2755,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles, and then cackles evilly.", m_name);
 			else msg_format(Ind, "%^s casts a spell and cackles evilly.", m_name);
-			(void)trap_creation(Ind);
+			(void)trap_creation(Ind, 3);
 			break;
 		}
 

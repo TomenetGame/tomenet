@@ -2510,7 +2510,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (!cave_naked_bold(zcave, y, x)) break;
 
 			/* Place a trap */
-			place_trap(wpos, y, x);
+			place_trap(wpos, y, x, dam);
 
 			if (!quiet)
 			{

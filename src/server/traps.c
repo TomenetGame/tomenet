@@ -1306,7 +1306,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 //                if(in_bounds(y + l, px + k) && !cave[y + l][px + k].t_idx)
                 if(in_bounds(y + l, x + k) && (zcave[y + l][x + k].special.type != CS_TRAPS))
                 {
-                        place_trap(wpos, y + l, x + k);
+                        place_trap(wpos, y + l, x + k, 0);
                 }
          }
          ident = TRUE;
@@ -1723,7 +1723,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
             if ((item == -1) || (item == -2))
             {
 				delete_trap_idx(tt_ptr);
-				place_trap(wpos, y , x);
+				place_trap(wpos, y , x, 0);
                   if (player_has_los_bold(Ind, y, x))
                   {
                      note_spot(Ind, y, x);
@@ -1733,7 +1733,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
             else
             {
                /* re-trap the chest */
-//				place_trap(wpos, y , x);
+//				place_trap(wpos, y , x, 0);
 				 place_trap_object(i_ptr);
             }
             msg_print(Ind, "You hear a noise, and then it's echo.");
@@ -1753,7 +1753,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			 /* if we're on a floor or on a door, place a new trap */
 			 if ((item == -1) || (item == -2))
 			 {
-				 place_trap(wpos, y , x);
+				 place_trap(wpos, y , x, 0);
 				 if (player_has_los_bold(Ind, y, x))
 				 {
 					 note_spot(Ind, y, x);
@@ -1763,7 +1763,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			 else
 			 {
 				 /* re-trap the chest (??) */
-//				 place_trap(wpos, y , x);
+//				 place_trap(wpos, y , x, 0);
 				 place_trap_object(i_ptr);
 			 }
 			 msg_print(Ind, "You hear a noise, and then it's echo.");
@@ -1828,7 +1828,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
                   if (rand_int(distance(ny,nx,y,x))>3)
                   {
-                     place_trap(wpos, ny,nx);
+                     place_trap(wpos, ny,nx, 0);
                   }
                }
             }
@@ -2323,7 +2323,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
                   if (rand_int(distance(ny,nx,y,x))>3)
                   {
-                     place_trap(wpos, ny,nx);
+                     place_trap(wpos, ny,nx, 0);
                   }
                }
             }
@@ -2679,7 +2679,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				/* Skip objects not on this depth */
 				if (!inarea(&o_ptr->wpos, wpos)) continue;
 
-				if (magik(glev)) place_trap(wpos, o_ptr->iy, o_ptr->ix);
+				if (magik(glev)) place_trap(wpos, o_ptr->iy, o_ptr->ix, 0);
 			}
 			msg_print(Ind, "You feel uneasy.");
 			break;
@@ -2759,7 +2759,7 @@ void player_activate_door_trap(int Ind, s16b y, s16b x)
  * FEAT_DOOR stuffs should be revised after f_info reform	- Jir -
  */
 //void place_trap(int y, int x)
-void place_trap(struct worldpos *wpos, int y, int x)
+void place_trap(struct worldpos *wpos, int y, int x, int mod)
 {
 	bool           more       = TRUE;
 	s16b           trap, t_idx, lv;
