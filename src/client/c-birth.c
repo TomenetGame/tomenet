@@ -172,7 +172,7 @@ static void choose_sex(void)
 static void choose_race(void)
 {
 	player_race *rp_ptr;
-	int                 j, k, l, m;
+	int                 j, l, m;
 
 	char                c;
 
@@ -232,7 +232,7 @@ static void choose_class(void)
 {
 	player_class *cp_ptr;
         player_race *rp_ptr = &race_info[race];
-	int          j, k, l, m;
+	int          j, l, m;
 
 	char         c;
 

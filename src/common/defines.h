@@ -1434,7 +1434,7 @@ that keeps many algorithms happy.
 #define TV_RUNE1        104      /* Base runes */
 #define TV_RUNE2        105      /* Modifier runes */
 
-#if 0	// we'll use PernM books :)
+#if 0	/* we'll use PernM books :) */
 #define TV_VALARIN_BOOK 111
 #define TV_MAGERY_BOOK  112
 #define TV_SHADOW_BOOK  113
@@ -3132,23 +3132,23 @@ that keeps many algorithms happy.
  * powerful as actually granting resistance/immunity to the wearer.
  */
 
-#define TR1_STR				0x00000001L	/* STR += "pval" */
-#define TR1_INT				0x00000002L	/* INT += "pval" */
-#define TR1_WIS				0x00000004L	/* WIS += "pval" */
-#define TR1_DEX				0x00000008L	/* DEX += "pval" */
-#define TR1_CON				0x00000010L	/* CON += "pval" */
-#define TR1_CHR				0x00000020L	/* CHR += "pval" */
-#define TR1_MANA			0x00000040L	/* SP += "pval" * SP / 10 */
-//#define TR1_SPELL_SPEED			0x00000080L	/* Spell Speed += pval */
-#define TR1_SPELL			0x00000080L	/* Spell Speed += pval */
-#define TR1_STEALTH			0x00000100L	/* Stealth += "pval" */
-#define TR1_SEARCH			0x00000200L	/* Search += "pval" */
-#define TR1_INFRA			0x00000400L	/* Infra += "pval" */
-#define TR1_TUNNEL			0x00000800L	/* Tunnel += "pval" */
-#define TR1_SPEED			0x00001000L	/* Speed += "pval" */
-#define TR1_BLOWS			0x00002000L	/* Blows += "pval" */
+#define TR1_STR			0x00000001L	/* STR += "pval" */
+#define TR1_INT			0x00000002L	/* INT += "pval" */
+#define TR1_WIS			0x00000004L	/* WIS += "pval" */
+#define TR1_DEX			0x00000008L	/* DEX += "pval" */
+#define TR1_CON			0x00000010L	/* CON += "pval" */
+#define TR1_CHR			0x00000020L	/* CHR += "pval" */
+#define TR1_MANA		0x00000040L	/* SP += "pval" * SP / 10 */
+//#define TR1_SPELL_SPEED	0x00000080L	/* Spell Speed += pval */
+#define TR1_SPELL		0x00000080L	/* Spell Speed += pval */
+#define TR1_STEALTH		0x00000100L	/* Stealth += "pval" */
+#define TR1_SEARCH		0x00000200L	/* Search += "pval" */
+#define TR1_INFRA		0x00000400L	/* Infra += "pval" */
+#define TR1_TUNNEL		0x00000800L	/* Tunnel += "pval" */
+#define TR1_SPEED		0x00001000L	/* Speed += "pval" */
+#define TR1_BLOWS		0x00002000L	/* Blows += "pval" */
 #define TR1_LIFE		0x00004000L	/* Later */
-#define TR1_VAMPIRIC			0x00008000L	/* XXX4 */
+#define TR1_VAMPIRIC		0x00008000L	/* XXX4 */
 #define TR1_SLAY_ANIMAL		0x00010000L
 #define TR1_SLAY_EVIL		0x00020000L
 #define TR1_SLAY_UNDEAD		0x00040000L
@@ -3158,9 +3158,9 @@ that keeps many algorithms happy.
 #define TR1_SLAY_GIANT		0x00400000L
 #define TR1_SLAY_DRAGON		0x00800000L
 #define TR1_KILL_DRAGON		0x01000000L	/* Execute Dragon */
-#define TR1_VORPAL			0x02000000L	/* XXX5 */
-#define TR1_IMPACT			0x04000000L	/* Cause Earthquakes */
-#define TR1_BRAND_POISON			0x08000000L	/* XXX6 */
+#define TR1_VORPAL		0x02000000L	/* XXX5 */
+#define TR1_IMPACT		0x04000000L	/* Cause Earthquakes */
+#define TR1_BRAND_POIS		0x08000000L	/* XXX6 */
 #define TR1_BRAND_ACID		0x10000000L
 #define TR1_BRAND_ELEC		0x20000000L
 #define TR1_BRAND_FIRE		0x40000000L
@@ -3239,8 +3239,6 @@ that keeps many algorithms happy.
 #define TR3_PERMA_CURSE		0x80000000L	/* Item is Perma Cursed */
 
 /* Flags from PernAngband	- Jir - */
-#define TR1_VORPAL                      0x02000000L     /* Later */
-#define TR1_BRAND_POIS                  0x08000000L
 
 #define TR3_SH_FIRE             0x00000001L     /* Immolation (Fire) */
 #define TR3_SH_ELEC             0x00000002L     /* Electric Sheath */

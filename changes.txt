@@ -691,6 +691,13 @@ Change list for PernMangband
 - fixed client bug with store size
 - Burning trees is drawn now.
 
+21/01/2002 (Evileye)
+- Fixed admin/dungeon master house access.
+- Server broadcasts player levelling.
+
+23/01/2002 (Evileye)
+- Miscellaneous bugfixes, typos and cleanups.
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)

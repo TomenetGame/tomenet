@@ -3153,7 +3153,6 @@ void do_keepalive()
 
 void do_mail(){
 #ifdef SET_UID
-#if 0
 	static int mailticks=0;
 	static struct timespec lm;
 	char mpath[160],buffer[160];
@@ -3161,7 +3160,12 @@ void do_mail(){
 	int uid;
 	struct passwd *pw;
 
-	strcpy(mpath,"/var/mail/");	/* Cfg soon */
+#ifdef NETBSD
+	strcpy(mpath,"/var/mail/");
+#else
+	strcpy(mpath,"/var/spool/mail/");
+#endif
+
 	uid=getuid();
 	pw=getpwuid(uid);
 	if(pw==(struct passwd*)NULL)
@@ -3182,6 +3186,5 @@ void do_mail(){
 		}
 		mailticks=ticks;
 	}
-#endif
 #endif
 }

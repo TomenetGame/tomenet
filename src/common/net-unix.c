@@ -361,7 +361,7 @@ GetPortNum(fd)
 int	fd;
 #endif /* __STDC__ */
 {
-    int			len;
+    socklen_t		len;
 #ifdef UNIX_SOCKETS
     struct sockaddr_un	addr;
     int port;
@@ -429,7 +429,7 @@ int	fd;
 #ifdef UNIX_SOCKETS
     return "localhost";
 #else
-    int			len;
+    socklen_t		len;
     struct sockaddr_in	addr;
 
     len = sizeof(struct sockaddr_in);
@@ -486,7 +486,7 @@ int	namelen;
 #ifdef UNIX_SOCKETS
     strcpy(name, "localhost");
 #else
-    int			len;
+    socklen_t		len;
     struct sockaddr_in	addr;
     struct hostent	*hp;
 
@@ -640,7 +640,7 @@ int	fd;
 #endif /* __STDC__ */
 {
     int		retval;
-    int		socklen=sizeof(struct sockaddr_in);
+    socklen_t	socklen=sizeof(struct sockaddr_in);
 
     cmw_priv_assert_netaccess();
     retval = accept(fd, (struct sockaddr*)&sl_dgram_lastaddr, &socklen);
@@ -1045,7 +1045,8 @@ GetSocketError(fd)
 int	fd;
 #endif /* __STDC__ */
 {
-    int	error, size;
+    int	error;
+    socklen_t size;
 
     size = sizeof(error);
     if (getsockopt(fd, SOL_SOCKET, SO_ERROR,
@@ -1868,7 +1869,7 @@ int	size;
 #endif /* __STDC__ */
 {
     int		retval;
-    int		addrlen = sizeof(sl_dgram_lastaddr);
+    socklen_t	addrlen = sizeof(sl_dgram_lastaddr);
 
     (void) memset((char *)&sl_dgram_lastaddr, 0, addrlen);
     cmw_priv_assert_netaccess();
@@ -2282,7 +2283,7 @@ DgramLastaddr(int fd)
 #ifdef UNIX_SOCKETS
     return "localhost";
 #else
-    int len=sizeof(struct sockaddr_in);
+    socklen_t len=sizeof(struct sockaddr_in);
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
     return (inet_ntoa(sl_dgram_lastaddr.sin_addr));
 #endif
@@ -2330,7 +2331,7 @@ DgramLastname(int fd)
 #else
     struct hostent	*he;
     char		*str;
-    int len=sizeof(struct sockaddr_in);
+    socklen_t len=sizeof(struct sockaddr_in);
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
 
     he = gethostbyaddr((char *)&sl_dgram_lastaddr.sin_addr,
@@ -2384,7 +2385,7 @@ DgramLastport(int fd)
         return (-1);
     return port;
 #else
-    int len=sizeof(struct sockaddr_in);
+    socklen_t len=sizeof(struct sockaddr_in);
     getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
     return (ntohs((int)sl_dgram_lastaddr.sin_port));
 #endif
