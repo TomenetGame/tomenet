@@ -185,6 +185,7 @@ bool cfg_door_bump_open = 1;
 s32b cfg_unique_respawn_time = 300;
 s32b cfg_unique_max_respawn_time = 50000;
 s32b cfg_level_unstatic_chance = 60;
+s32b cfg_min_unstatic_level = 8;
 s32b cfg_retire_timer = -1;
 bool cfg_maximize = 1;
 s32b cfg_game_port = 18348;

@@ -332,3 +332,6 @@ Change list for PernMangband
 - Uniques can resurrect after beating Morgoth.
 - Kings/Queens will be alarmed of retire_timer.
 - Players under lv-5 cannot throw items (anti-cheeze).
+
+25/11/2001 (Tanix [log by Jir])
+- Shallow dungeon levels won't be static (configurable).

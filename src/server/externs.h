@@ -182,6 +182,7 @@ extern bool cfg_door_bump_open;
 extern s32b cfg_unique_respawn_time;
 extern s32b cfg_unique_max_respawn_time;
 extern s32b cfg_level_unstatic_chance;
+extern s32b cfg_min_unstatic_level;
 extern s32b cfg_retire_timer;
 extern bool cfg_maximize;
 extern s32b cfg_game_port;

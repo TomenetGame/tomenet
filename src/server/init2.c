@@ -1690,6 +1690,10 @@ void set_server_option(char * option, char * value)
 	{
 		cfg_game_port = atoi(value);
 	}
+	else if (!strcmp(option,"MIN_UNSTATIC_LEVEL"))
+	{
+		cfg_min_unstatic_level = atoi(value);
+	}
 	else if (!strcmp(option,"CONSOLE_PORT"))
 	{
 		cfg_console_port = atoi(value);

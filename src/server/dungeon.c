@@ -2172,6 +2172,11 @@ static void process_various(void)
 				// If this level is static and no one is actually on it
 				if (!num_on_depth)
 				{
+					/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
+					if (( i < cfg_min_unstatic_level) && (0 < cfg_min_unstatic_level))
+					{
+						players_on_depth[i] = 0;
+					}
 					// random chance of the level unstaticing
 					// the chance is one in (base_chance * depth)/250 feet.
 					if (!rand_int(((cfg_level_unstatic_chance * (i+5))/5)-1))
