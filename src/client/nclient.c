@@ -1479,10 +1479,10 @@ int Receive_inven(void)
 	int	n;
 	char	ch;
 	char pos, attr, tval, sval;
-	s16b wgt, amt;
+	s16b wgt, amt, pval;
 	char name[80];
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, name)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
 	{
 		return n;
 	}
@@ -1493,6 +1493,7 @@ int Receive_inven(void)
 		/* I hated it too much I swapped them	- Jir - */
 	inventory[pos - 'a'].sval = sval;
 	inventory[pos - 'a'].tval = tval;
+	inventory[pos - 'a'].pval = pval;
 	inventory[pos - 'a'].xtra1 = attr;
 	inventory[pos - 'a'].weight = wgt;
 	inventory[pos - 'a'].number = amt;
@@ -1510,17 +1511,17 @@ int Receive_equip(void)
 	int	n;
 	char 	ch;
 	char pos, attr, tval, sval;
-	s16b wgt, amt;
+	s16b wgt, amt, pval;
 	char name[80];
 
-//	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%c%s", &ch, &pos, &attr, &wgt, &tval, name)) <= 0)
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, name)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
 	{
 		return n;
 	}
 
 	inventory[pos - 'a' + INVEN_WIELD].sval = sval;
 	inventory[pos - 'a' + INVEN_WIELD].tval = tval;
+	inventory[pos - 'a' + INVEN_WIELD].pval = pval;
 	inventory[pos - 'a' + INVEN_WIELD].xtra1 = attr;
 	inventory[pos - 'a' + INVEN_WIELD].weight = wgt;
 	inventory[pos - 'a' + INVEN_WIELD].number = amt;
