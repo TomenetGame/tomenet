@@ -3038,7 +3038,7 @@ void check_experience(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	bool newlv = FALSE;
-
+	long int i;
 #ifdef LEVEL_GAINING_LIMIT
 	int limit;
 #endif	// LEVEL_GAINING_LIMIT
@@ -3103,8 +3103,8 @@ void check_experience(int Ind)
 
 	/* Gain levels while possible */
 	while ((p_ptr->lev < PY_MAX_LEVEL) &&
-			(p_ptr->exp >= ((s64b)((s64b)player_exp[p_ptr->lev-1] *
-								   (s64b)p_ptr->expfact / 100L))))
+			(p_ptr->exp >= ((s64b)(((s64b)player_exp[p_ptr->lev-1] *
+								   (s64b)p_ptr->expfact) / 100L))))
 	{
 		if(p_ptr->inval && p_ptr->lev >= 25){
 			msg_print(Ind, "\377rYou cannot gain level further. Ask an admin to validate your account.");
@@ -3122,7 +3122,26 @@ void check_experience(int Ind)
 			p_ptr->max_plv = p_ptr->lev;
 
 			/* gain skill points */
-			p_ptr->skill_points += SKILL_NB_BASE;
+			/* min cap level is 50. check how far this
+			character can come with the actual exp cap of
+			21240000 (TL Ranger level 50) and adjust skill
+			distribution so that characters gain 250..300
+			skill points in total (TLRanger..YeekWarrior)*/
+			for (i = 50; i < 69; i++) {
+				if ((((s64b)player_exp[i-1] * (s64b)p_ptr->expfact) / 100L) > 21240000) break;
+			}
+			i--;/* i now contains the maximum reachable level for
+			    this character, due to exp cap 21240000 */
+			/* now calculate his skills/level ratio.
+			It's (250+2.63*extraLevel) / personalCapLevel */
+			i = i - 50;/* i now contains the extraLevel above 50 */
+			i = ((250000 + (2630 * i)) / (50 + i));
+			if (i != ((i / 1000) * 1000)) i += 10;/* +1 against rounding probs */
+			i /= 10; /* i is now 500..4xx, containing the skills/levelup * 100 */
+			/* Give player all of his skill points except the last one: */
+			p_ptr->skill_points += SKILL_NB_BASE - 1;
+			/* Eventually give him the last one, depending on his skills/levelup ratio: */
+			if (rand_int(100) < (i - ((SKILL_NB_BASE - 1) * 100))) p_ptr->skill_points++;
                         p_ptr->redraw |= PR_STUDY;
 			p_ptr->update |= PU_SKILL_MOD;
 
