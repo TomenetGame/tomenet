@@ -2822,7 +2822,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 /*
  * Grab one flag from a textual string
  */
-static errr grab_one_skill_flag(s32b *f1, cptr what)
+static errr grab_one_skill_flag(u32b *f1, cptr what)
 {
 	int i;
 
