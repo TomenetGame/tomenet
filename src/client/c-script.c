@@ -207,9 +207,10 @@ static const struct luaL_reg bitlib[] =
 
 
 /* Initialize lua scripting */
+bool init_lua_done = FALSE;
 void init_lua()
 {
-	int i, max;
+        if (init_lua_done) return;
 
 	/* Start the interpreter with default stack size */
 	L = lua_open(0);
@@ -229,7 +230,20 @@ void init_lua()
 	/* Register the TomeNET main APIs */
 	tolua_util_open(L);
 	tolua_player_open(L);
-	tolua_spells_open(L);
+        tolua_spells_open(L);
+
+        /* Load the xml module */
+	pern_dofile(0, "xml.lua");
+	pern_dofile(0, "meta.lua");
+
+        init_lua_done = TRUE;
+}
+
+void open_lua()
+{
+	int i, max;
+
+        if (!init_lua_done) init_lua();
 
 	/* Load the first lua file */
 	pern_dofile(0, "c-init.lua");
@@ -262,6 +276,19 @@ void dump_lua_stack(int min, int max)
                 else if (lua_isstring(L, i)) c_msg_format("\377y%d [s] = '%s'", i, tolua_getstring(L, i, 0));
         }
         c_msg_print("\377yEND lua_stack");
+}
+
+void dump_lua_stack_stdout(int min, int max)
+{
+        int i;
+
+        printf("ylua_stack:\n");
+        for (i = min; i <= max; i++)
+        {
+                if (lua_isnumber(L, i)) printf("%d [n] = %d\n", i, tolua_getnumber(L, i, 0));
+                else if (lua_isstring(L, i)) printf("%d [s] = '%s'\n", i, tolua_getstring(L, i, 0));
+        }
+        printf("END lua_stack\n");
 }
 
 bool pern_dofile(int Ind, char *file)
@@ -381,4 +408,105 @@ void cat_script(char *name)
         {
                 c_msg_print(buf);
         }
+}
+
+bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...)
+{
+        int i = 0, nb = 0, nbr = 0;
+        int oldtop = lua_gettop(L), size;
+	va_list ap;
+
+        char ind[80];
+        sprintf(ind, "Ind = %d; player = Players_real[2]", 1);
+        lua_dostring(L, ind);
+        lua_settop(L, oldtop);
+
+        va_start(ap, ret);
+
+        /* Push the function */
+        lua_getglobal(L, function);
+
+        /* Push and count the arguments */
+        while (args[i])
+        {
+                switch (args[i++])
+                {
+                case 'd':
+                case 'l':
+                        tolua_pushnumber(L, va_arg(ap, s32b));
+                        nb++;
+                        break;
+                case 's':
+                        tolua_pushstring(L, va_arg(ap, char*));
+                        nb++;
+                        break;
+                case 'O':
+                        tolua_pushusertype(L, (void*)va_arg(ap, object_type*), tolua_tag(L, "object_type"));
+                        nb++;
+                        break;
+                case '(':
+                case ')':
+                case ',':
+                        break;
+                }
+        }
+
+        /* Count returns */
+        nbr = strlen(ret);
+ 
+        /* Call the function */
+        if (lua_call(L, nb, nbr))
+        {
+                c_msg_format("#yERROR in lua_call while calling '%s' from call_lua. Things should start breaking up from now on!", function);
+                return FALSE;
+        }
+
+        /* Number of returned values, SHOULD be the same as nbr, but I'm paranoid */
+        size = lua_gettop(L) - oldtop;
+
+        /* Get the returns */
+        for (i = 0; ret[i]; i++)
+        {
+                switch (ret[i])
+                {
+                case 'd':
+                case 'l':
+                        {
+                                s32b *tmp = va_arg(ap, s32b*);
+
+                                if (lua_isnumber(L, (-size) + i)) *tmp = tolua_getnumber(L, (-size) + i, 0);
+                                else *tmp = 0;
+                                break;
+                        }
+
+                case 's':
+                        {
+                                cptr *tmp = va_arg(ap, cptr*);
+
+                                if (lua_isstring(L, (-size) + i)) *tmp = tolua_getstring(L, (-size) + i, "");
+                                else *tmp = NULL;
+                                break;
+                        }
+
+                case 'O':
+                        {
+                                object_type **tmp = va_arg(ap, object_type**);
+
+                                if (tolua_istype(L, (-size) + i, tolua_tag(L, "object_type"), 0))
+                                        *tmp = (object_type*)tolua_getuserdata(L, (-size) + i, NULL);
+                                else
+                                        *tmp = NULL;
+                                break;
+                        }
+
+                default:
+                        c_msg_format("#yERROR in lua_call while calling '%s' from call_lua: Unkown return type '%c'", function, ret[i]);
+                        return FALSE;
+                }
+        }
+        lua_settop(L, oldtop);
+
+        va_end(ap);
+
+        return TRUE;
 }

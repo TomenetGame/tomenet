@@ -12,6 +12,7 @@ char svname[MAX_CHARS]="";
 char path[1024]="";
 char real_name[MAX_CHARS]="";
 char server_name[MAX_CHARS]="";
+s32b server_port;
 char cname[MAX_CHARS]="";
 
 char message_history[MSG_HISTORY_MAX][80];	/* history for chat, slash-cmd etc. */

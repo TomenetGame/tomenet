@@ -342,7 +342,7 @@ void client_init(char *argv1, bool skip)
 	init_arrays();
 
 	/* Initialize lua scripting */
-	init_lua();
+	open_lua();
 	
 	GetLocalHostName(host_name, 80);
 
@@ -356,6 +356,9 @@ void client_init(char *argv1, bool skip)
 		/* Query metaserver */
 		if (!get_server_name())
 			quit("No server specified.");
+#ifdef EXPERIMENTAL_META
+                cfg_game_port = server_port;
+#endif
 	}
 	else
 	{
@@ -373,15 +376,15 @@ void client_init(char *argv1, bool skip)
 	/* Fix "localhost" */
 	if (!strcmp(server_name, "localhost"))
 #endif
-		strcpy(server_name, host_name);
+                strcpy(server_name, host_name);
 
 
 	/* Get character name and pass */
 	if (!skip) get_char_name();
 
-	/* Capitalize the name */
+        /* Capitalize the name */
 	nick[0] = toupper(nick[0]);
-
+        printf("=> %s :: %d\n",server_name, cfg_game_port);
 	// Create the net socket and make the TCP connection
 	if ((Socket = CreateClientSocket(server_name, cfg_game_port)) == -1)
 	{

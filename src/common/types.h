@@ -2465,6 +2465,7 @@ struct server_opts
 	time_t runtime;		/* Server start time */
 	time_t closetime;	/* Server closedown time */
 	char * meta_address;
+	s16b meta_port;
 	char * bind_name;
 	char * console_password;
 	char * admin_wizard;

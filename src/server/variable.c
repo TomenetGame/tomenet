@@ -116,7 +116,8 @@ server_opts cfg =
 	6, 0, 0,	// runlevel, runtime, closetime (NOT config options)
 
 	/* char * */
-	"mangband.org",		// meta_address
+        "mangband.org",		// meta_address
+        8800,           // meta port
 	"",		// bind_name
 	"changeme",		// console_password
 	"Serverchez",		// admin_wizard

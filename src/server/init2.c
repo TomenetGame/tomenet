@@ -2882,6 +2882,10 @@ void set_server_option(char * option, char * value)
 	{
 		cfg.meta_address = strdup(value);
 	}
+	else if (!strcmp(option,"META_PORT"))
+	{
+                cfg.meta_port = atoi(value);
+	}
 	else if (!strcmp(option,"WORLDSERVER")){
 		cfg.wserver=strdup(value);
 	}

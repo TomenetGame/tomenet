@@ -334,6 +334,139 @@ void init_players(){
  * This function is called on startup, on death, and when the number of players
  * in the game changes.
  */
+#ifdef EXPERIMENTAL_META
+bool Report_to_meta(int flag)
+{
+	static sockbuf_t meta_buf;
+	static char local_name[1024];
+	static int init = 0;
+	int bytes, i;
+	char buf[8024], temp[100];
+	bool hidden_dungeon_master = 0;
+
+
+        /* Abort if the user doesn't want to report */
+	if (!cfg.report_to_meta || cfg.runlevel<4 || cfg.runlevel > 1023)
+		return FALSE;
+
+	/* If this is the first time called, initialize our hostname */
+	if (!init)
+	{
+		/* Never do this again */
+		init = 1;
+
+		/* Get our hostname */
+#if 0
+#ifdef BIND_NAME
+			strncpy(local_name, BIND_NAME, 1024);
+#else
+			GetLocalHostName(local_name, 1024);
+#endif
+#else
+                        if (cfg.bind_name)
+                                strncpy(local_name, cfg.bind_name, 1024);
+                        else
+                                GetLocalHostName(local_name, 1024);
+#endif
+        }
+
+	strcpy(buf, "<server url='");
+        strcat(buf, local_name);
+        strcat(buf, "' port='");
+        sprintf(temp, "%ld", cfg.game_port);
+        strcat(buf, temp);
+        strcat(buf, "'");
+	if (flag & META_DIE)
+	{
+		strcat(buf, " death='true'></server>");
+        }
+        else
+        {
+                strcat(buf, ">");
+                if (flag & META_START)
+                {
+                        if ((MetaSocket = CreateDgramSocket(0)) == -1)
+                        {
+                                quit("Couldn't create meta-server Dgram socket\n");
+                        }
+
+                        if (SetSocketNonBlocking(MetaSocket, 1) == -1)
+                        {
+                                quit("Can't make socket non-blocking\n");
+                        }
+
+                        if (Sockbuf_init(&meta_buf, MetaSocket, SERVER_SEND_SIZE,
+                                         SOCKBUF_READ | SOCKBUF_WRITE | SOCKBUF_DGRAM) == -1)
+                        {
+                                quit("No memory for sockbuf buffer\n");
+                        }
+
+                        Sockbuf_clear(&meta_buf);
+                }
+
+                else if (flag & META_UPDATE)
+                {
+                        /* Hack -- If cfg_secret_dungeon_master is enabled, determine
+                         * if the DungeonMaster is playing, and if so, reduce the
+                         * number of players reported.
+                         */
+
+                        for (i = 1; i <= NumPlayers; i++)
+                        {
+                                if (Players[i]->admin_dm && cfg.secret_dungeon_master) hidden_dungeon_master = TRUE;
+                        }
+
+                        /* if someone other than a dungeon master is playing */
+                        if (NumPlayers - hidden_dungeon_master)
+                        {
+                                for (i = 1; i <= NumPlayers; i++)
+                                {
+                                        /* handle the cfg_secret_dungeon_master option */
+                                        if (Players[i]->admin_dm && cfg.secret_dungeon_master) continue;
+
+                                        strcat(buf, "<player>");
+                                        strcat(buf, Players[i]->basename);
+                                        strcat(buf, "</player>");
+                                }
+                        }
+                }
+
+                strcat(buf, "<game>TomeNET</game>");
+
+                /* Append the version number */
+                sprintf(temp, "<version>%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+                strcat(buf, temp);
+
+                /* Append the additional version info */
+                if (VERSION_EXTRA == 1)
+                        strcat(buf, "alpha");
+                if (VERSION_EXTRA == 2)
+                        strcat(buf, "beta");
+                if (VERSION_EXTRA == 3)
+                        strcat(buf, "development");
+
+                strcat(buf, "</version></server>");
+        }
+
+        s_printf("Sending meta info...");
+
+	/* If we haven't setup the meta connection yet, abort */
+	if (MetaSocket == -1)
+		return FALSE;
+
+	Sockbuf_clear(&meta_buf);
+
+	Packet_printf(&meta_buf, "%S", buf);
+
+	if ((bytes = DgramSend(MetaSocket, cfg.meta_address, cfg.meta_port, meta_buf.buf, meta_buf.len) == -1))
+	{
+		s_printf("Couldn't send info to meta-server[%s@%d]!\n", cfg.meta_address, cfg.meta_port);
+		return FALSE;
+	}
+        s_printf("Info sent to the meta\n");
+	return TRUE;
+}
+#else
 bool Report_to_meta(int flag)
 {
 	static sockbuf_t meta_buf;
@@ -343,7 +476,8 @@ bool Report_to_meta(int flag)
 	char buf[1024], temp[100];
 	bool hidden_dungeon_master = 0;
 
-	/* Abort if the user doesn't want to report */
+
+        /* Abort if the user doesn't want to report */
 	if (!cfg.report_to_meta || cfg.runlevel<4 || cfg.runlevel > 1023)
 		return FALSE;
 
@@ -444,6 +578,8 @@ bool Report_to_meta(int flag)
 	if (!(flag & META_DIE))
 		strcat(buf, temp);
 
+        s_printf("Sending meta info...");
+
 	/* If we haven't setup the meta connection yet, abort */
 	if (MetaSocket == -1)
 		return FALSE;
@@ -454,12 +590,13 @@ bool Report_to_meta(int flag)
 
 	if ((bytes = DgramSend(MetaSocket, cfg.meta_address, 8800, meta_buf.buf, meta_buf.len) == -1))
 	{
-		s_printf("Couldn't send info to meta-server!\n");
+		s_printf("Couldn't send info to meta-server[%s@8800]!\n", cfg.meta_address);
 		return FALSE;
 	}
-
+        s_printf("Info sent to the meta\n");
 	return TRUE;
 }
+#endif
 
 	 
 /*

@@ -673,8 +673,13 @@ static bool enter_server_name(void)
 
 bool get_server_name(void)
 {
-	int i, j, k, l, bytes, socket, offsets[20], lines = 0;
-	char buf[8192], *ptr, c, out_val[160];
+        s32b i;
+        cptr tmp;
+	int j, k, l, bytes, socket, offsets[20], lines = 0;
+	char buf[80192], *ptr, c, out_val[260];
+
+        /* We NEED lua here, so if it aint initialized yet, do it */
+        init_lua();
 
 	/* Message */
 	prt("Connecting to metaserver for server list....", 1, 1);
@@ -682,7 +687,7 @@ bool get_server_name(void)
 	/* Make sure message is shown */
 	Term_fresh();
 
-	/* Connect to metaserver */
+        /* Connect to metaserver */
 	socket = CreateClientSocket(META_ADDRESS, 8801);
 
 	/* Check for failure */
@@ -699,7 +704,7 @@ bool get_server_name(void)
 	}
 
 	/* Read */
-	bytes = SocketRead(socket, buf, 8192);
+	bytes = SocketRead(socket, buf, 80192);
 
 	/* Close the socket */
 	SocketClose(socket);
@@ -710,10 +715,15 @@ bool get_server_name(void)
 		return enter_server_name();
 	}
 
+        Term_clear();
+
+#ifdef EXPERIMENTAL_META
+        call_lua(0, "meta_display", "(s)", "d", buf, &i);
+#else
+
 	/* Start at the beginning */
 	ptr = buf;
 	i = 0;
-	Term_clear();
 
 	/* Print each server */
 	while (ptr - buf < bytes)
@@ -784,6 +794,7 @@ bool get_server_name(void)
 
 	/* Prompt */
 	prt("-- Choose a server to connect to (Q for manual entry): ", lines + 2, 1);
+#endif
 
 	/* Ask until happy */
 	while (1)
@@ -805,8 +816,13 @@ bool get_server_name(void)
 			break;
 	}
 
+#ifdef EXPERIMENTAL_META
+        call_lua(0, "meta_get", "(s,d)", "sd", buf, j, &tmp, &server_port);
+        strcpy(server_name, tmp);
+#else
 	/* Extract server name */
-	sscanf(buf + offsets[j], "%s", server_name);
+        sscanf(buf + offsets[j], "%s", server_name);
+#endif
 
 	/* Success */
 	return TRUE;

@@ -218,7 +218,8 @@
  * server uses those in mangband.cfg.
  * bad design.
  */
-#define	META_ADDRESS "www.mangband.org"
+//#define	META_ADDRESS "www.mangband.org"
+#define	META_ADDRESS "darkgod.tomenet.net"
 #define	META_ADDRESS_2 "64.53.71.113"  
 
 /*
@@ -810,3 +811,8 @@
 
 #define CLIENT_SHIMMER
 #endif
+
+/*
+ * Use the new meta scheme to do neater things
+ */
+/* #define EXPERIMENTAL_META */

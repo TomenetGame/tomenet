@@ -41,6 +41,7 @@ extern char svname[MAX_CHARS];
 extern char path[1024];
 extern char real_name[MAX_CHARS];
 extern char server_name[MAX_CHARS];
+extern s32b server_port;
 extern char cname[MAX_CHARS];
 
 extern char message_history[MSG_HISTORY_MAX][80];
@@ -474,6 +475,7 @@ extern void dump_skills(FILE *fff);
 
 /* c-script.c */
 extern void init_lua();
+extern void open_lua();
 extern bool pern_dofile(int Ind, char *file);
 extern int exec_lua(int Ind, char *file);
 extern cptr string_exec_lua(int Ind, char *file);
@@ -482,6 +484,7 @@ extern void master_script_end();
 extern void master_script_line(char *buf);
 extern void master_script_exec(int Ind, char *name);
 extern void cat_script(char *name);
+extern bool call_lua(int Ind, cptr function, cptr args, cptr ret, ...);
 
 /* lua_bind.c */
 extern void lua_set_item_tester(int tval, char *fct);
