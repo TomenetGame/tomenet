@@ -3220,6 +3220,8 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
         /* Unowned yet */
         o_ptr->owner = 0;
         o_ptr->level = ((lev * 2 / 3) > 100)?100:(lev * 2 / 3);
+        if (lev > 0) o_ptr->level = ((lev * 2 / 3) > 100)?100:(lev * 2 / 3);
+        else o_ptr->level = -((lev * 2 / 3) > 100)?100:(lev * 2 / 3);
 
 	/* Hack -- analyze ego-items */
 	if (o_ptr->name2)
@@ -4360,7 +4362,8 @@ s16b inven_carry(int Ind, object_type *o_ptr)
         if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
         if (!o_ptr->level)
         {
-                o_ptr->level = p_ptr->dun_depth;
+                if (p_ptr->dun_depth > 0) o_ptr->level = p_ptr->dun_depth;
+                else o_ptr->level = -p_ptr->dun_depth;
                 if (o_ptr->level > 100) o_ptr->level = 100;
         }
 

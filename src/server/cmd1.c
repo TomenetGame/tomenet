@@ -691,7 +691,8 @@ void carry(int Ind, int pickup, int confirm)
                                 if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
                                 if (!o_ptr->level)
                                 {
-                                        o_ptr->level = p_ptr->dun_depth;
+                                        if (p_ptr->dun_depth > 0) o_ptr->level = p_ptr->dun_depth;
+                                        else o_ptr->level = -p_ptr->dun_depth;
                                         if (o_ptr->level > 100) o_ptr->level = 100;
                                 }
 
