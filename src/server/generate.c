@@ -449,7 +449,8 @@ static void place_up_stairs(int Depth, int y, int x)
  * Convert existing terrain type to "down stairs"
  */
 #ifdef NEW_DUNGEON
-static void place_down_stairs(int wpos, int y, int x)
+//static void place_down_stairs(int wpos, int y, int x)
+static void place_down_stairs(worldpos *wpos, int y, int x)
 #else
 static void place_down_stairs(int Depth, int y, int x)
 #endif
