@@ -2957,10 +2957,12 @@ void calc_bonuses(int Ind)
 	/* Temporary "Berserk" */
 	if (p_ptr->shero)
 	{
-		p_ptr->to_h += 24;
-		p_ptr->dis_to_h += 24;
-		p_ptr->to_a -= 10;
-		p_ptr->dis_to_a -= 10;
+		p_ptr->to_h += 5;//24
+		p_ptr->dis_to_h += 5;//24
+                p_ptr->to_d += 10;
+                p_ptr->dis_to_d += 10;
+		p_ptr->to_a -= 30;//10
+		p_ptr->dis_to_a -= 30;//10
 	}
 
 	/* Temporary "Fury" */
