@@ -5,6 +5,9 @@
 
 #define SERVER
 
+//#define CHECK_MODIFICATION_TIME
+#define CHECK_MODIFICATION_ALWAYS
+
 #include "angband.h"
 
 
@@ -696,11 +699,11 @@ static errr init_s_info(void)
 	if (fd >= 0)
 	{
 #ifdef CHECK_MODIFICATION_TIME
-
 		err = check_modification_date(fd, "s_info.txt");
-
 #endif /* CHECK_MODIFICATION_TIME */
-
+#ifdef CHECK_MODIFICATION_ALWAYS
+		err = 0;
+#endif
 		/* Attempt to parse the "raw" file */
 		if (!err)
 			err = init_s_info_raw(fd);
@@ -1201,12 +1204,13 @@ static errr init_d_info(void)
 	/* Process existing "raw" file */
 	if (fd >= 0)
 	{
-//#ifdef CHECK_MODIFICATION_TIME
-#if 1
-
+#ifdef CHECK_MODIFICATION_TIME
+//#if 1
 		err = check_modification_date(fd, "d_info.txt");
-
 #endif /* CHECK_MODIFICATION_TIME */
+#ifdef CHECK_MODIFICATION_ALWAYS
+	        err = 0;
+#endif
 
 		/* Attempt to parse the "raw" file */
 		if (!err)
@@ -1629,10 +1633,11 @@ static errr init_st_info(void)
 	if (fd >= 0)
 	{
 #ifdef CHECK_MODIFICATION_TIME
-
 		err = check_modification_date(fd, "st_info.txt");
-
 #endif /* CHECK_MODIFICATION_TIME */
+#ifdef CHECK_MODIFICATION_ALWAYS
+	        err = 0;
+#endif
 
 		/* Attempt to parse the "raw" file */
 		if (!err)
@@ -1855,10 +1860,11 @@ static errr init_ow_info(void)
 	if (fd >= 0)
 	{
 #ifdef CHECK_MODIFICATION_TIME
-
 		err = check_modification_date(fd, "ow_info.txt");
-
 #endif /* CHECK_MODIFICATION_TIME */
+#ifdef CHECK_MODIFICATION_ALWAYS
+	        err = 0;
+#endif
 
 		/* Attempt to parse the "raw" file */
 		if (!err)
@@ -2085,10 +2091,11 @@ static errr init_ba_info(void)
 	if (fd >= 0)
 	{
 #ifdef CHECK_MODIFICATION_TIME
-
 		err = check_modification_date(fd, "ba_info.txt");
-
 #endif /* CHECK_MODIFICATION_TIME */
+#ifdef CHECK_MODIFICATION_ALWAYS
+	        err = 0;
+#endif
 
 		/* Attempt to parse the "raw" file */
 		if (!err)

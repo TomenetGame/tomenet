@@ -581,7 +581,7 @@ void do_cmd_wield(int Ind, int item)
 	/* Mega-hack -- prevent anyone but total winners from wielding the Massive Iron
 	 * Crown of Morgoth or the Mighty Hammer 'Grond'.
 	 */
-	if (!p_ptr->total_winner)
+	if (!(p_ptr->total_winner || p_ptr->admin_wiz || p_ptr->admin_dm))
 	{
 		/* Attempting to wear the crown if you are not a winner is a very, very bad thing
 		 * to do.
@@ -793,7 +793,7 @@ void do_cmd_takeoff(int Ind, int item)
 
 
 	/* Item is cursed */
-	if (cursed_p(o_ptr))
+	if (cursed_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))
 	{
 		/* Oops */
 		msg_print(Ind, "Hmmm, it seems to be cursed.");

@@ -714,6 +714,20 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 	invcopy(o_ptr, k_idx);
 	o_ptr->number = num;
 	apply_magic(&p_ptr->wpos, o_ptr, getlevel(&p_ptr->wpos), FALSE, FALSE, FALSE);
+
+	/* No more perfection / EA / and other nice daggers from this one -C. Blue */
+	/* If weapon has good boni, remove all ego abilities */
+	if ((o_ptr->pval < 0) || (o_ptr->to_a < 0) || (o_ptr->to_h > 0) || (o_ptr->to_d > 0))
+	{
+		o_ptr->name1 = o_ptr->name2 = o_ptr->name2b = o_ptr->name3 = 0;
+	}
+        /* Reverse good bonuses */
+	if (o_ptr->bpval > 0) o_ptr->bpval = 0;
+	if (o_ptr->pval > 0) o_ptr->pval = 0;
+        if (o_ptr->to_a > 0) o_ptr->to_a = 0;
+        if (o_ptr->to_h > 0) o_ptr->to_h = -o_ptr->to_h;
+        if (o_ptr->to_d > 0) o_ptr->to_d = -o_ptr->to_d;
+
 	object_desc(Ind, i_name, o_ptr, TRUE, 0);
 	dd = dd * MISSILE_TRAP_FACTOR / 100;
 
@@ -2994,7 +3008,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	}
 
 	p_ptr->redraw |= PR_VARIOUS | PR_MISC;
-	
+
 	/* Had the player seen it? */
 	if (never_id || p_ptr->image || p_ptr->confused || p_ptr->blind ||
 			no_lite(Ind) || !inarea(&p_ptr->wpos, wpos) ||

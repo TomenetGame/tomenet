@@ -1941,11 +1941,16 @@ static int Handle_login(int ind)
 
 	for (i = 0; i < MAX_F_IDX; i++)
 	{
+/* Hacking the no-floor bug for loth/bree tower/gondo city -C. Blue */
 		p_ptr->f_attr[i] = connp->Client_setup.f_attr[i];
 		p_ptr->f_char[i] = connp->Client_setup.f_char[i];
-
+#if 1
 		if (!p_ptr->f_attr[i]) p_ptr->f_attr[i] = f_info[i].z_attr;
 		if (!p_ptr->f_char[i]) p_ptr->f_char[i] = f_info[i].z_char;
+#else		//now all tiles are bright white and never dimmed.
+		p_ptr->f_attr[i] = f_info[i].z_attr;
+		p_ptr->f_char[i] = f_info[i].z_char;
+#endif
 	}
 
 	for (i = 0; i < MAX_K_IDX; i++)
@@ -5597,7 +5602,7 @@ static int Receive_activate_skill(int ind)
 		{
 			case MKEY_MIMICRY:
 				if(get_skill(p_ptr, SKILL_MIMIC))
-					do_cmd_mimic(player, spell);
+					do_cmd_mimic(player, spell, dir);//w0t0w
 				break;
 
 			case MKEY_DODGE:

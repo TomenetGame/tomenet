@@ -881,7 +881,7 @@ F:FLOOR | NOTICE
 
 # Underground Tunnel
 N:204:Underground Tunnel
-G:^:U
+G:^:u
 F:FLOOR | REMEMBER | SUPPORT_LIGHT | DONT_NOTICE_RUNNING | CAN_RUN
 D:0:Oh, an underground tunnel!
 

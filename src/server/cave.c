@@ -203,6 +203,16 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	struct wilderness_type *w_ptr;
 	time_t now;
 
+	/* Ultra-hack bugfix for recall-crash w/ char corruption by C. Blue,
+	   thanks to Chris for the idea :) */
+	if ((wpos->wx > 63) || (wpos->wy > 63) || (wpos->wz > 255) ||
+	    (wpos->wx < 0) || (wpos->wy < 0) || (wpos->wz < -255)) {
+		s_printf("Ultra-hack executed. wx %d wy %d wz %d\n", wpos->wx, wpos->wy, wpos->wz);
+		wpos->wx = 32;
+		wpos->wy = 32;
+		wpos->wz = 0;
+	}
+
 	now=time(&now);
 
 	w_ptr=&wild_info[wpos->wy][wpos->wx];
@@ -271,10 +281,11 @@ void check_Morgoth(void)
 		if (!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) continue;
 		wpos = &m_ptr->wpos;
 		
-		/* log */
-		s_printf("Morgoth generated on %d\n", getlevel(wpos));
+		/* log - done in place_monster_one now -C. Blue */
+//		s_printf("Morgoth generated on %d\n", getlevel(wpos));
 
 		/* check if players are on his depth */
+		num_on_depth = 0;
 		for (i = 1; i <= NumPlayers; i++)
 		{
 			/* skip disconnected players */
@@ -403,7 +414,7 @@ void check_Morgoth(void)
 			/* log */
 			s_printf("Morgoth weakens\n");
 			/* Tell everyone related to Morgy's depth */
-			msg_print_near_monster(m_idx, "\377sMorgoth, the Lord of Darkness becomes stronger!");
+			msg_print_near_monster(m_idx, "\377sMorgoth, the Lord of Darkness becomes weaker!");
 #if 0
 			for (i = 1; i <= NumPlayers; i++)
 			{

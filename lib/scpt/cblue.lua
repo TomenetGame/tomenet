@@ -138,7 +138,7 @@ function status(name)
     msg_print(Ind, "ToD:  "..players(p).to_d.."   TDM:  "..players(p).to_d_melee.."   TDR:  "..players(p).to_d_ranged)
     msg_print(Ind, "BpR:  "..players(p).num_blow.."   SpR:  "..players(p).num_fire.."   CpR:  "..players(p).num_spell)
     msg_print(Ind, "Au :  "..players(p).au.."   Bank:  "..players(p).balance)
-    msg_print(Ind, "Exp:  "..players(p).exp.."   MEx:  "..players(p).max_exp.."   E2A:  "..(player_exp[players(p).lev] * players(p).expfact / 100))
+    msg_print(Ind, "Exp:  "..players(p).exp.."   MEx:  "..players(p).max_exp.."   E2A:  "..(player_exp[players(p).lev] / 100 * players(p).expfact))
     if players(p).body_monster > 0 then
 --	msg_print(Ind, "Body: "..players(p).body_monster.." ("..r_info[players(p).body_monster].name..")")
 	msg_print(Ind, "Body: "..players(p).body_monster.."  -  Lifes: "..players(p).lives)

@@ -127,11 +127,11 @@ C:220:200:180
 I:21:0:c:128
 
 N:24:Enchant weapon
-C:750:700:650
+C:3000:2800:2600
 I:23:0:w:0
 
 N:25:Enchant armour
-C:750:700:650
+C:20000:17500:15000
 I:24:0:a:0
 
 N:26:Recharge item
@@ -139,7 +139,7 @@ C:350:300:250
 I:25:0:r:2
 
 N:27:Identify possessions
-C:900:800:700
+C:2200:1900:1600
 #I:26:0:i:0
 I:26:0:I:0
 
@@ -156,11 +156,11 @@ C:0:0:0
 I:7:2:g:0
 
 N:31:Enchant arrows
-C:550:500:450
+C:2200:2000:1800
 I:30:0:a:0
 
 N:32:Enchant bow
-C:550:500:450
+C:4400:4000:3600
 I:31:0:b:0
 
 N:33:Recall to dungeon
@@ -193,7 +193,7 @@ C:15000:10000:7500
 I:50:0:h:0
 
 N:40:Song of Lore
-C:2000:1500:1000
+C:2600:2200:1800
 I:26:0:s:0
 
 N:41:Distribute earnings
@@ -221,7 +221,7 @@ I:1:0:a:2
 
 #for Star-Dome
 N:46:Identify possessions
-C:1200:1000:800
+C:2400:2000:1600
 #I:26:0:i:0
 I:26:0:I:0
 
@@ -242,17 +242,17 @@ I:37:0:r:0
 
 #for The Golden Flower
 N:50:Enchant arrows
-C:1100:1000:800
+C:2200:2000:1600
 I:30:0:a:0
 
 #for The Golden Flower
 N:51:Enchant bow
-C:1100:1000:800
+C:4400:4000:1800
 I:31:0:b:0
 
 #for The Fountain
 N:52:Enchant armour
-C:1100:1000:900
+C:24000:21000:18000
 I:24:0:a:0
 
 #for The Fountain

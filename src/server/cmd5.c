@@ -513,7 +513,7 @@ void do_spin(int Ind)
 	}
 }
 
-static void do_mimic_power(int Ind, int power)
+static void do_mimic_power(int Ind, int power, int dir)//w0t0w
 {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
@@ -615,7 +615,7 @@ static void do_mimic_power(int Ind, int power)
       return;
 //#define RF4_BR_FIRE			0x00000400	/* Breathe Fire */
     case 10:
-      get_aim_dir(Ind);
+      get_aim_dir(Ind);//w0t0w
       p_ptr->current_spell = j;
       return;
 //#define RF4_BR_COLD			0x00000800	/* Breathe Cold */
@@ -1100,22 +1100,22 @@ void do_mimic_power_aux(int Ind, int dir)
       break;
 //#define RF4_BR_ACID			0x00000100	/* Breathe Acid */
     case 8:
-    sprintf(p_ptr->attacker, " breathes acid for");
+    sprintf(p_ptr->attacker, " breathes acid for", p_ptr->name);
       fire_ball(Ind, GF_ACID, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_ELEC			0x00000200	/* Breathe Elec */
     case 9:
-    sprintf(p_ptr->attacker, " breathes lightning for");
-      fire_ball(Ind, GF_ELEC, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2) , rad, p_ptr->attacker);
+    sprintf(p_ptr->attacker, " breathes lightning for", p_ptr->name);
+      fire_ball(Ind, GF_ELEC, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_FIRE			0x00000400	/* Breathe Fire */
     case 10:
-    sprintf(p_ptr->attacker, " breathes fire for");
+    sprintf(p_ptr->attacker, " breathes fire for", p_ptr->name);
       fire_ball(Ind, GF_FIRE, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_COLD			0x00000800	/* Breathe Cold */
     case 11:
-    sprintf(p_ptr->attacker, " breathes for");
+    sprintf(p_ptr->attacker, " breathes frost for", p_ptr->name);
       fire_ball(Ind, GF_COLD, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_POIS			0x00001000	/* Breathe Poison */
@@ -1232,7 +1232,7 @@ void do_mimic_power_aux(int Ind, int dir)
 // RF5_BA_FIRE			0x00000004	/* Fire Ball */
     case 34:
     sprintf(p_ptr->attacker, " casts a fire ball for", p_ptr->name);
-      fire_ball(Ind, GF_FIRE, dir, randint(rlev * 7 / 0) + 10 , rad, p_ptr->attacker);
+      fire_ball(Ind, GF_FIRE, dir, randint(rlev * 7 / 2) + 10 , rad, p_ptr->attacker);
       break;
 // RF5_BA_COLD			0x00000008	/* Cold Ball */
     case 35:
@@ -1369,7 +1369,7 @@ void do_mimic_power_aux(int Ind, int dir)
       break;
 // RF6_HAND_DOOM		0x00000002	/* Should we...? */ /* YES! */
     case 65:
-    sprintf(p_ptr->attacker, " invokes the hand of doom for");
+    sprintf(p_ptr->attacker, " invokes the hand of doom for", p_ptr->name);
 	  (void)project_hook(Ind, GF_HAND_DOOM, dir, 1, PROJECT_STOP | PROJECT_KILL, p_ptr->attacker);
       break;
 // RF6_TELE_TO
@@ -1475,7 +1475,7 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 }
 
-void do_cmd_mimic(int Ind, int spell)
+void do_cmd_mimic(int Ind, int spell, int dir)
 {
 	char out_val[5];
 
@@ -1571,7 +1571,7 @@ void do_cmd_mimic(int Ind, int spell)
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 	}
 	else {
-		do_mimic_power(Ind, spell - 2); /* 2 polymorph self abilities */
+		do_mimic_power(Ind, spell - 2, dir); /* 2 polymorph self abilities *///w0t0w
 	}
 }
 

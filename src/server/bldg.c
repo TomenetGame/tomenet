@@ -2056,7 +2056,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 
 		case BACT_ENCHANT_ARROWS:
 		{
-			paid = fix_item(Ind, 0, INVEN_WIELD, TV_ARROW, FALSE,
+			paid = fix_item(Ind, INVEN_AMMO, INVEN_AMMO, TV_ARROW, FALSE,
 					BACT_ENCHANT_ARROWS, set_reward);
 			break;
 		}

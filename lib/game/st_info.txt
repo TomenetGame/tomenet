@@ -299,9 +299,9 @@ T:100:71:29
 #potion of Healing
 T:100:71:37
 #scroll of Teleportation
-T:100:70:9
+T:90:70:9
 I:100:Restore Mana
-I:100:Blood Bond
+I:50:Blood Bond
 #potion of resistance
 T:5:71:60
 #scroll of *enchant weapon*

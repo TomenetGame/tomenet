@@ -2945,7 +2945,7 @@ O:0:0:0:0
 B:HIT:HURT:2d5
 B:TOUCH:POISON:3d5
 F:ONLY_GOLD | DROP_90 | DROP_1D2 | 
-F:COLD_BLOOD | BASH_DOOR | 
+F:COLD_BLOOD | BASH_DOOR | RES_MANA | REFLECTING | 
 F:IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 D:It appears to be a pile of gold coins, until it starts crawling towards you 
 D:on tiny legs. 
@@ -3619,7 +3619,7 @@ E:0:0:0:0:0:0
 O:0:0:0:0
 B:HIT:HURT:2d5
 B:TOUCH:POISON:3d5
-F:ONLY_GOLD | DROP_90 | DROP_2D2 | 
+F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | 
 F:COLD_BLOOD | BASH_DOOR | IM_ACID | CHAR_MULTI | 
 F:IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 D:It appears to be a pile of sentient mithril coins that doesn't like being 
@@ -4737,7 +4737,7 @@ S:BLIND | CONF | SCARE | CURSE | BO_COLD
 D:A strange creature that disguises itself as some object to lure
 D:unsuspecting adventurers within reach of its venomous claws. 
 
-N:311:Door mimic
+N:311:Door Mimic
 G:+:U
 I:110:10d10:25:30:0
 W:18:6:100:70
@@ -4942,7 +4942,7 @@ O:0:0:0:0
 B:HIT:HURT:1d10
 B:HIT:HURT:1d10
 F:COLD_BLOOD | EMPTY_MIND | BASH_DOOR | 
-F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_SHARDS | 
+F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | IM_ACID | RES_SHARDS | 
 F:HURT_ROCK | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | NONLIVING | BASEANGBAND | NO_CUT
 D:It is a massive animated statue. 
@@ -5641,7 +5641,7 @@ O:0:0:0:0
 B:HIT:HURT:1d12
 F:FORCE_SLEEP | SUSCEP_ACID |
 F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | 
-F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
+F:RES_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | NONLIVING | BASEANGBAND | NO_CUT
 S:1_IN_7 | 
 S:SLOW
@@ -6546,7 +6546,7 @@ B:BITE:POISON:3d4
 B:TOUCH:POISON:3d5
 B:HIT:HURT:1d12
 B:HIT:HURT:1d12
-F:ONLY_GOLD | DROP_90 | DROP_2D2 | 
+F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | 
 F:COLD_BLOOD | BASH_DOOR | CHAR_MULTI | 
 F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 D:It appears to be a pile of coins made of precious adamant, slithering toward 
@@ -7281,7 +7281,7 @@ B:HIT:HURT:5d5
 B:HIT:HURT:5d5
 F:ONLY_GOLD | DROP_2D2 | 
 F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | REFLECTING | RES_MANA | 
-F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
+F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_ACID | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | NONLIVING | BASEANGBAND | NO_CUT
 D:It is a massive statue of purest mithril. It looks expensive! 
 
@@ -8432,7 +8432,7 @@ B:HIT:HURT:6d6
 B:HIT:HURT:6d6
 F:ONLY_GOLD | DROP_2D2 | 
 F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | REFLECTING | RES_MANA | 
-F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
+F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_ACID | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | NONLIVING | BASEANGBAND | NO_CUT
 D:It is a massive deep brown statue, striding towards you with an 
 D:all-too-familiar purpose. Your magic surprisingly feels much less 
@@ -9718,7 +9718,7 @@ D:waking monsters from their slumber.
 
 N:601:Ancient blue dragon
 G:D:b
-I:120:72d15:20:90:80
+I:120:72d15:20:110:80
 W:40:1:170000:2000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -9737,7 +9737,7 @@ D:A huge draconic form. Lightning crackles along its length.
 
 N:602:Ancient bronze dragon
 G:D:U
-I:120:72d15:20:90:80
+I:120:72d15:20:110:80
 W:40:1:170000:2000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -9858,7 +9858,8 @@ N:608:Nightgaunt
 G:U:D
 I:110:24d10:20:50:80
 W:38:2:0:1000
-E:0:0:0:0:0:0
+E:0:1:0:2:1:0
+#E:0:0:0:0:0:0
 O:50:0:50:0
 B:STING:LOSE_STR:1d5
 B:TOUCH:PARALYZE:3d4
@@ -10027,7 +10028,7 @@ D:look for prey, but each with its own deadly breath weapon.
 
 N:617:Ancient white dragon
 G:D:w
-I:120:72d15:20:90:80
+I:120:72d15:20:110:80
 W:40:1:170000:2000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -10047,7 +10048,7 @@ D:A huge draconic form. Frost covers it from head to tail.
 
 N:618:Ancient green dragon
 G:D:g
-I:120:72d15:20:90:80
+I:120:72d15:20:110:80
 W:40:1:170000:2000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -10162,7 +10163,7 @@ D:A foul wind chills your bones as this ghastly figure approaches.
 
 N:624:Ancient black dragon
 G:D:s
-I:120:100d15:20:90:80
+I:120:100d15:20:110:80
 W:41:1:170000:2500
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -10524,7 +10525,7 @@ D:true form but you sense its evil.
 
 N:644:Ancient red dragon
 G:D:r
-I:120:100d15:20:90:80
+I:120:100d15:20:110:80
 W:41:1:170000:2500
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -10544,7 +10545,7 @@ D:extreme heat surrounding it makes you gasp for breath.
 
 N:645:Ancient gold dragon
 G:D:y
-I:120:100d15:20:90:80
+I:120:100d15:20:110:80
 W:41:1:170000:2500
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -10552,7 +10553,7 @@ B:CLAW:HURT:4d9
 B:CLAW:HURT:4d9
 B:BITE:HURT:7d9
 F:FORCE_SLEEP | FORCE_MAXHP | DROP_CORPSE
-F:DROP_3D2 | DROP_4D2 | CAN_FLY |
+F:DROP_3D2 | DROP_4D2 | CAN_FLY | REFLECTING | 
 F:SMART | BASH_DOOR | POWERFUL | MOVE_BODY | 
 F:EVIL | DRAGON | NO_STUN | NO_SLEEP | BASEANGBAND | HAS_LITE
 #| ATTR_MULTI
@@ -10924,7 +10925,8 @@ N:663:Hunting horror
 G:U:D
 I:110:30d17:20:90:80
 W:42:2:0:2300
-E:0:0:0:0:0:0
+#E:0:0:0:0:0:0
+E:0:0:0:2:1:0
 O:45:35:0:10
 B:BITE:LOSE_DEX:1d3
 B:BITE:POISON:1d3
@@ -11159,7 +11161,7 @@ D:A Dark Judge, reputedly so frightening that his gaze can kill.
 
 N:675:Ancient multi-hued dragon
 G:D:v
-I:120:100d26:25:100:80
+I:120:100d26:25:120:80
 W:43:1:170000:13000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -11203,7 +11205,8 @@ N:677:Dark young of Shub-Niggurath
 G:U:g
 I:120:12d100:20:75:80
 W:43:2:0:5000
-E:0:0:0:0:0:0
+#E:0:0:0:0:0:0
+E:0:0:4:6:1:0
 O:0:40:30:20
 B:CRUSH:HURT:5d6
 B:CRUSH:HURT:5d6
@@ -11567,7 +11570,8 @@ N:694:Lesser black reaver
 G:L:D
 I:120:25d100:20:120:50
 W:45:3:2600:12000
-E:0:0:0:0:0:0
+#E:0:0:0:0:0:0
+E:1:1:1:2:1:1
 O:0:0:100:0
 B:HIT:UN_BONUS:4d8
 B:HIT:UN_BONUS:4d8
@@ -12567,7 +12571,8 @@ N:742:Demilich
 G:L:U
 I:120:35d100:20:100:50
 W:54:2:3000:12500
-E:0:0:0:0:0:0
+#E:0:0:0:0:0:0
+E:1:1:1:2:1:1
 O:0:0:100:0
 B:TOUCH:EXP_80
 B:TOUCH:UN_POWER
@@ -13314,7 +13319,8 @@ N:776:Archlich
 G:L:B
 I:120:45d100:20:120:50
 W:64:2:0:20000
-E:0:0:0:0:0:0
+#E:0:0:0:0:0:0
+E:1:1:1:2:1:1
 O:0:0:100:0
 B:TOUCH:EXP_80
 B:TOUCH:UN_POWER
@@ -13454,7 +13460,7 @@ D:An enormous, terrible sea-monster, the true master of the ocean.
 
 N:783:Great Wyrm of Chaos
 G:D:v
-I:120:60d100:40:170:100
+I:120:60d100:40:190:100
 W:75:2:190000:29000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -13477,7 +13483,7 @@ D:stay real. Its very existence distorts the universe around it.
 
 N:784:Great Wyrm of Law
 G:D:B
-I:120:60d100:40:170:100
+I:120:60d100:40:190:100
 W:75:2:190000:29000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -13500,7 +13506,7 @@ D:insects to be crushed underfoot.
 
 N:785:Great Wyrm of Balance
 G:D:v
-I:120:70d100:40:170:100
+I:120:70d100:40:190:100
 W:80:2:190000:31000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -13614,7 +13620,7 @@ D:Dragonwing came to defend Morgoth! He is an evil and powerful Dragonrider.
 
 N:790:Great Wyrm of Many Colours
 G:D:v
-I:120:70d100:40:170:255
+I:120:70d100:40:190:255
 W:80:2:190000:31000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -13800,7 +13806,8 @@ N:798:Black reaver
 G:L:D
 I:120:50d100:20:170:50
 W:74:3:1900:23000
-E:0:0:0:0:0:0
+#E:0:0:0:0:0:0
+E:1:1:1:2:1:1
 O:0:60:40:0
 B:HIT:UN_BONUS:6d8
 B:HIT:UN_BONUS:6d8
@@ -14121,11 +14128,11 @@ D:commanders of vast demon armies.
 
 N:813:The Serpent of Chaos
 G:J:v
-I:130:66d100:30:180:150
+I:130:66d200:30:180:150
 W:75:2:0:25000
 E:0:0:0:0:1:0
 O:40:40:20:0
-B:CRUSH:POISON:15d10
+B:CRUSH:SHATTER:15d10
 B:CRUSH:CONFUSE:15d10
 B:CRUSH:UN_BONUS:10d15
 B:CRUSH:UN_POWER:10d15
@@ -14135,7 +14142,8 @@ F:DROP_2D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT |
 F:OPEN_DOOR | BASH_DOOR | ANIMAL | EVIL | CAN_FLY |
 F:KILL_ITEM | KILL_BODY |
 F:NO_CONF | NO_SLEEP | NO_STUN | NO_FEAR | ZANGBAND | 
-F:IM_COLD | IM_FIRE | IM_POIS | RES_CHAOS | RES_DISE | RES_NETH | RES_NEXU | RES_MANA | RES_TIME
+F:IM_COLD | IM_FIRE | IM_POIS | RES_CHAOS | RES_DISE |
+F:RES_NETH | RES_NEXU | RES_MANA | RES_TIME | RES_TELE
 S:1_IN_3 | 
 S:BR_CHAO | BR_DISI | BA_CHAO | BR_NETH | BR_MANA | 
 S:S_MONSTERS | S_HI_DEMON | S_HI_DRAGON
@@ -14643,7 +14651,8 @@ N:836:Star-spawn of Cthulhu
 G:U:G
 I:130:75d100:90:90:90
 W:86:2:0:44000
-E:0:0:0:0:0:0
+#E:0:0:0:0:0:0
+E:0:0:2:0:1:0
 O:0:0:100:0
 B:CLAW:POISON:1d30
 B:CLAW:ACID:1d30
@@ -14897,7 +14906,7 @@ D:hunger - and leave the gods for dessert.
 
 N:847:Great Wyrm of Power
 G:D:v
-I:130:111d111:40:160:70
+I:130:111d111:40:215:70
 W:85:4:220000:47500
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -14908,7 +14917,8 @@ B:BITE:HURT:10d14
 F:FORCE_SLEEP | FORCE_MAXHP | MOVE_BODY | AURA_FIRE | REFLECTING | RES_MANA | AURA_ELEC |
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | AURA_COLD |
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | RES_NETH | RES_DISE |
-F:DRAGON | GOOD | RES_TELE | DROP_CORPSE | EVIL |
+F:DRAGON | RES_TELE | DROP_CORPSE | EVIL |
+#F:GOOD <- !?
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP |
 F:RES_NEXU | RES_PLAS | CAN_FLY | BASEANGBAND | HAS_LITE | NO_CUT
 F:ATTR_MULTI
@@ -15283,7 +15293,7 @@ D:encounter him, pray your deity holds you in good stead.
 N:862:Morgoth, Lord of Darkness
 G:P:D
 #I:140:200d150:100:150:99
-I:140:200d150:100:150:30
+I:140:200d150:200:150:0
 W:100:1:200000:60000
 E:1:1:1:2:1:1
 O:0:100:0:0
@@ -16118,7 +16128,7 @@ D:A large dragon turtle, covered with a tough white shell.
 
 N:914:Ancient dragon turtle
 G:D:W
-I:120:70d10:20:90:80
+I:120:70d10:20:120:80
 W:41:1:220000:2500
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -17730,7 +17740,7 @@ D:himself to hear so well that it nearly makes up for his disability.
 
 N:1002:Great Wyrm of Perplexity
 G:D:U
-I:120:40d100:30:150:80
+I:120:40d100:30:170:80
 W:63:2:190000:20000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -17771,7 +17781,7 @@ D:bodies? I saw them only for a moment, I cannot be certain."
 
 N:1004:Great Wyrm of Thunder
 G:D:y
-I:120:50d100:30:150:80
+I:120:50d100:30:170:80
 W:67:2:190000:23000
 E:0:1:0:6:1:0
 O:50:50:0:0
@@ -17973,8 +17983,8 @@ B:HIT:HURT:10d10
 B:HIT:HURT:10d10
 B:HIT:HURT:10d10
 B:HIT:HURT:10d10
-F:FORCE_MAXHP | FORCE_SLEEP | EMPTY_MIND | COLD_BLOOD | 
-F:OPEN_DOOR | BASH_DOOR | IM_FIRE | IM_ELEC | IM_POIS | RES_TELE | 
+F:FORCE_MAXHP | FORCE_SLEEP | EMPTY_MIND | COLD_BLOOD | IM_COLD | RES_ACID | 
+F:OPEN_DOOR | BASH_DOOR | RES_FIRE | IM_ELEC | IM_POIS | RES_TELE | 
 F:NO_CONF | NO_SLEEP | NO_STUN | NO_FEAR | NONLIVING | BASEANGBAND | NO_CUT
 S:1_IN_3 |
 S:BO_PLAS | BA_FIRE | BR_FIRE | BA_ELEC | S_HI_DEMON | TELE_TO
@@ -17984,7 +17994,8 @@ N:1016:Dimensional shambler
 G:h:B
 I:120:40d10:30:68:255
 W:29:6:1100:400
-E:0:0:0:0:0:0
+#E:0:0:0:0:0:0
+E:1:1:1:2:1:1
 O:20:40:40:0
 B:HIT:HURT:3d5
 B:HIT:HURT:3d5
@@ -18274,7 +18285,7 @@ B:CLAW:ACID:5d4
 B:CLAW:POISON:5d4
 B:BITE:FIRE:5d4
 B:BITE:ELEC:5d4
-F:FORCE_MAXHP | DROP_60 | ONLY_ITEM | DROP_GREAT | DROP_GOOD | DROP_CORPSE | 
+F:FORCE_MAXHP | DROP_90 | DROP_1D2 | ONLY_ITEM | DROP_GREAT | DROP_GOOD | DROP_CORPSE | 
 F:OPEN_DOOR | BASH_DOOR | FEMALE | POWERFUL | SPECIAL_GENE | REFLECTING | RES_MANA |
 F:EVIL | ANIMAL | IM_ELEC | RES_FIRE | IM_ACID | IM_POIS | ESCORT | 
 F:MORTAL | BASEANGBAND | EMPTY_MIND | UNIQUE | NO_CONF
@@ -18687,7 +18698,7 @@ E:0:0:0:0:0:0
 O:0:0:0:0
 #was: 100d3, which was too much: $ traps killed everyone.
 B:EXPLODE:SHATTER:80d2
-F:ONLY_GOLD | DROP_90 | DROP_2D2 | 
+F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | 
 F:COLD_BLOOD | BASH_DOOR | CHAR_MULTI | NEVER_MOVE | EMPTY_MIND
 F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 D:It is a pile of coins made of precious adamant... containing explosives.
@@ -18699,7 +18710,7 @@ W:50:6:0:60
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:EXPLODE:HURT:100d4
-F:ONLY_GOLD | DROP_90 | DROP_2D2 | 
+F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | 
 F:COLD_BLOOD | BASH_DOOR | CHAR_MULTI | 
 F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 D:It appears to be a pile of coins made of precious adamant, slithering toward 
@@ -18934,6 +18945,7 @@ S:S_HI_DRAGON
 D:Usually found guarding the first plane of Hell, Tiamat is a formidable
 D:opponent, her five heads breathing death to all who stand against her.
 
+#Nether Realm only
 N:1067:The Hellraiser
 G:x:r
 I:145:300d150:200:200:0
@@ -18944,26 +18956,23 @@ B:HIT:HURT:30d10
 B:HIT:HURT:30d10
 B:GAZE:TIME:10d10
 B:GAZE:INSANITY:8d10
-#F:FORCE_SLEEP | 
-F:UNIQUE | 
-F:NONLIVING | NO_FEAR | FORCE_MAXHP | REFLECTING | RES_MANA | EMPTY_MIND | 
+F:UNIQUE | NONLIVING | NO_FEAR | FORCE_MAXHP | REFLECTING | RES_MANA | EMPTY_MIND | 
 F:MOVE_BODY | KILL_WALL | IM_FIRE | IM_ELEC | IM_POIS | IM_ACID | IM_COLD |
 F:RES_NETH | RES_WATE | RES_PLAS | RES_NEXU | RES_CHAOS | NO_STUN | REGENERATE |
 F:ONLY_ITEM | DROP_4D2 | DROP_3D2 | DROP_2D2 | DROP_GOOD | DROP_GREAT | 
-F:NO_CONF | NO_SLEEP | NO_CUT | CAN_FLY | POWERFUL | COLD_BLOOD |
-#F:ATTR_MULTI | 
-F:ATTR_ANY | 
-F:FORCE_DEPTH | KILL_ITEM | COLD_BLOOD | BASH_DOOR | BLUEBAND
+F:NO_CONF | NO_SLEEP | NO_CUT | CAN_FLY | POWERFUL | COLD_BLOOD | ATTR_ANY | 
+F:KILL_ITEM | COLD_BLOOD | BASH_DOOR | BLUEBAND
 S:1_IN_3
 S:BR_DISI | BR_MANA | BR_CHAO | SHRIEK | BA_MANA | 
 S:S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON
 D:A creature awakened on the hell forge, the powers of hell were bestowed
 D:upon it to call the ultimate terror in case it detects any intruder.
 
+#Nether Realm only
 N:1068:Nether Guard
 G:N:G
 I:140:150d150:200:200:255
-W:98:4:0:100000
+W:98:3:0:100000
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:HIT:HURT:20d5
@@ -18975,9 +18984,7 @@ F:MOVE_BODY | KILL_WALL | IM_FIRE | IM_ELEC | IM_POIS | IM_ACID | IM_COLD |
 F:RES_NETH | RES_WATE | RES_PLAS | RES_NEXU | RES_CHAOS | NO_STUN | REGENERATE |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | DROP_GREAT | DROP_60 | 
 F:NO_CONF | NO_SLEEP | CAN_FLY | POWERFUL | COLD_BLOOD | 
-#F:ATTR_MULTI | 
-F:ATTR_ANY | 
-F:FORCE_DEPTH | KILL_ITEM | EMPTY_MIND | COLD_BLOOD | BASH_DOOR | BLUEBAND | NO_CUT
+F:KILL_ITEM | EMPTY_MIND | COLD_BLOOD | BASH_DOOR | BLUEBAND | NO_CUT
 S:1_IN_5
 S:BA_NETH | HEAL | TPORT | TELE_LEVEL | TELE_TO
 D:Bound to guard the nether realm that no mortal would set foot in it.
@@ -19035,6 +19042,7 @@ F:SMART | KILL_ITEM | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | KILL_WALL |
 F:RES_LITE | RES_TELE | RES_NEXU | RES_MANA | REFLECTING | AURA_COLD | 
 F:CAN_FLY | NO_FEAR | NO_STUN | NO_SLEEP | HAS_LITE | BLUEBAND | 
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | ATTR_MULTI
+F:RAND_25
 S:1_IN_3
 S:TELE_TO | SCARE | BA_MANA | BR_DISE | S_ANGEL
 D:A lordly angel, designated to watch the skies and maintain their balance.
@@ -19057,6 +19065,7 @@ F:SMART | KILL_ITEM | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | KILL_WALL |
 F:RES_LITE | RES_TELE | RES_NEXU | RES_MANA | REFLECTING | AURA_FIRE | 
 F:CAN_FLY | NO_FEAR | NO_STUN | NO_SLEEP | HAS_LITE | BLUEBAND | 
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | ATTR_MULTI
+F:RAND_25
 S:1_IN_3
 S:TELE_TO | BLIND | BA_MANA | BR_DISE | S_ANGEL
 D:A lordly angel, designated to watch sun, earth and moon and maintain their
@@ -19079,6 +19088,7 @@ F:SMART | KILL_ITEM | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | KILL_WALL |
 F:RES_LITE | RES_TELE | RES_NEXU | RES_MANA | REFLECTING | AURA_ELEC | 
 F:CAN_FLY | NO_FEAR | NO_STUN | NO_SLEEP | HAS_LITE | BLUEBAND | 
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | ATTR_MULTI
+F:RAND_25
 S:1_IN_3
 S:TELE_TO | HOLD | BA_MANA | BR_DISE | S_ANGEL
 D:A lordly angel, designated to watch the stars and the void  and maintain
@@ -19102,6 +19112,7 @@ F:RES_LITE | RES_DARK | RES_TELE | RES_NEXU | RES_MANA | REFLECTING | AURA_ELEC 
 F:CAN_FLY | NO_FEAR | NO_STUN | NO_SLEEP | HAS_LITE | BLUEBAND | AURA_FIRE | 
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_NEXU | 
 F:RES_CHAOS | RES_DISE | ATTR_MULTI | UNIQUE | ESCORT
+F:RAND_25
 S:1_IN_3
 S:BA_MANA | TELE_TO | S_ANGEL
 D:Through many succeeding cycles of time, as Ray after Ray provided The Pathway
@@ -19216,18 +19227,20 @@ F:WEIRD_MIND | BASH_DOOR | GOOD |
 F:ANIMAL | RES_SOUND | MORTAL | BLUEBAND
 D:A giant ant covered in shaggy fur. Its powerful jaws glow with heat. 
 
+#Nether Realm only
 N:1080:Minion of Doom
-G:p:v
-I:140:20d300:20:150:50
-W:98:6:0:20000
+G:p:B
+#I:140:20d300:20:150:50
+I:130:10d300:20:150:50
+W:98:8:0:20000
 E:1:1:1:2:1:1
 O:0:100:0:0
-B:GAZE:EXP_80:15d5
+B:GAZE:EXP_80:10d5
 B:GAZE:TERRIFY:4d5
 B:HIT:FIRE:4d15
 B:HIT:UN_POWER:4d15
 F:CAN_FLY | FRIENDS | FORCE_MAXHP | OPEN_DOOR | BASH_DOOR
-F:MOVE_BODY | ATTR_MULTI | NONLIVING | EVIL | 
+F:MOVE_BODY | NONLIVING | EVIL | 
 F:IM_FIRE | RES_PLAS | RES_NETH | AURA_FIRE |
 F:NO_CONF | NO_SLEEP | NO_FEAR | NO_STUN | NO_CUT | 
 F:RES_COLD | RES_POIS | BLUEBAND | HAS_LITE | 
@@ -19256,54 +19269,82 @@ S:1_IN_4 |
 S:BLINK | BLIND | SLOW | S_MONSTER
 D:A small humanoid that radiates hellish power.
 
+N:1082:Void Gate Mimic
+G:+:v
+I:110:50d10:25:30:0
+W:26:8:100:70
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:HIT:POISON:4d4
+B:HIT:CONFUSE:3d3
+B:HIT:PARALYZE:3d3
+F:CHAR_MULTI | 
+F:FORCE_SLEEP | NEVER_MOVE | EMPTY_MIND | COLD_BLOOD | 
+F:NO_CONF | NO_SLEEP | NO_FEAR | BLUEBAND | NO_CUT
+#S:1_IN_6 | 
+#S:BLIND | CONF | SCARE | CURSE | BO_COLD
+D:A strange creature that disguises itself as a void gate to lure 
+D:unsuspecting adventurers within reach of its venomous claws. 
 
-#N:1081:Za-Zdhra, Guard-Demi Of The Cosmic Border
-#G:N:D
-#I:140:300d200:200:200:255
-#W:98:1:0:100000
-#E:0:0:0:0:0:0
-#O:0:0:0:0
-#B:HIT:HURT:60d5
-#B:HIT:HURT:60d5
-#B:GAZE:INSANITY:5d5
-#F:UNIQUE | NONLIVING | NO_FEAR | FORCE_MAXHP | REFLECTING | RES_MANA | SMART | 
-#F:MOVE_BODY | KILL_WALL | IM_FIRE | IM_ELEC | IM_POIS | IM_ACID | IM_COLD |
-#F:RES_NETH | RES_WATE | RES_PLAS | RES_NEXU | RES_CHAOS | NO_STUN | REGENERATE |
-#F:ONLY_ITEM | DROP_4D2 | DROP_3D2 | DROP_2D2 | DROP_1D2 | DROP_GOOD | DROP_GREAT | 
-#F:NO_CONF | NO_SLEEP | CAN_FLY | POWERFUL | COLD_BLOOD | 
-##F:ATTR_MULTI | 
-#F:ATTR_ANY | 
-#F:FORCE_DEPTH | KILL_ITEM | EMPTY_MIND | COLD_BLOOD | BASH_DOOR | BLUEBAND | NO_CUT
-#S:1_IN_5
-#S:BA_NETH | HEAL | TPORT | TELE_LEVEL | TELE_TO | BA_MANA
-#D:Guarding the border between nether dimensions and the mundane cosmos
-#D:this being has a clear mission.
+#Nether Realm only
+N:1083:Ironwing
+G:B:w
+I:130:300d300:200:300:5
+W:98:8:1800:50000
+E:0:1:1:0:1:0
+O:0:0:0:0
+B:GAZE:*
+B:GAZE:*
+F:FORCE_MAXHP | DROP_CORPSE | BASH_DOOR | NONLIVING | 
+F:IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_NETH | REFLECTING | EMPTY_MIND |
+F:RES_WATE | RES_PLAS | RES_CHAOS | RES_DISE | RES_LITE | RES_DARK | 
+F:NO_CONF | NO_SLEEP | NO_STUN | NO_CUT | NO_FEAR | 
+F:BLUEBAND | REGENERATE
+S:1_IN_8 | 
+S:UNMAGIC | HOLD
+D:An artificial bird completely made of hardened iron, kept in the air
+D:by magical forces. It's a drone to scout intruders, not a weapon to
+D:destroy them.
+
+#Nether Realm only
+N:1084:Force vortex
+G:v:r
+I:140:900d9:100:30:0
+W:98:8:0:30000
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:ENGULF:HURT:100d1
+B:ENGULF:PARALYZE:50d1
+B:ENGULF:HURT:100d1
+F:FORCE_SLEEP | RAND_50 | CAN_FLY | WILD_VOLCANO | WILD_TOO | EMPTY_MIND |
+F:BASH_DOOR | POWERFUL | IM_POIS | IM_FIRE | IM_COLD | IM_ELEC | IM_ACID |
+F:NO_FEAR | NO_CONF | NO_SLEEP | NO_STUN | NONLIVING | BLUEBAND | NO_CUT
+S:1_IN_6 | 
+S:BR_WALL
+D:A whirling maelstrom of force that will unleash powerful impact on you.
+
+#Nether Realm only
+N:1085:Zu-Aon, The Cosmic Border Guard
+G:N:b
+I:140:300d200:200:200:255
+W:127:1:0:100000
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:HIT:HURT:60d5
+B:HIT:HURT:60d5
+B:GAZE:INSANITY:5d5
+F:UNIQUE | NONLIVING | NO_FEAR | FORCE_MAXHP | REFLECTING | RES_MANA | SMART | 
+F:MOVE_BODY | KILL_WALL | IM_FIRE | IM_ELEC | IM_POIS | IM_ACID | IM_COLD |
+F:RES_NETH | RES_WATE | RES_PLAS | RES_NEXU | RES_CHAOS | NO_STUN | REGENERATE |
+F:ONLY_ITEM | DROP_4D2 | DROP_3D2 | DROP_2D2 | DROP_1D2 | DROP_GOOD | DROP_GREAT | 
+F:NO_CONF | NO_SLEEP | CAN_FLY | POWERFUL | COLD_BLOOD | ATTR_MULTI | 
+F:KILL_ITEM | EMPTY_MIND | COLD_BLOOD | BASH_DOOR | BLUEBAND | NO_CUT
+S:1_IN_5
+S:BA_NETH | HEAL | TPORT | TELE_LEVEL | TELE_TO | BA_MANA
+D:Guarding the border between nether dimensions and the mundane cosmos
+D:this being has a clear mission.
 
 
-#N:1082:The Cosmos Eater
-#G:g:r
-#I:166:500d200:200:300:0
-#W:150:1:0:150000
-#E:1:1:1:2:1:1
-#O:0:0:0:0
-#B:HIT:HURT:20d10
-#B:HIT:HURT:20d10
-#B:GAZE:TIME:20d10
-#B:GAZE:INSANITY:20d10
-#F:UNIQUE | 
-#F:NONLIVING | NO_FEAR | FORCE_MAXHP | REFLECTING | RES_MANA |
-#F:MOVE_BODY | KILL_WALL | IM_FIRE | IM_ELEC | IM_POIS | IM_ACID | IM_COLD |
-#F:RES_NETH | RES_WATE | RES_PLAS | RES_NEXU | RES_CHAOS | NO_STUN | REGENERATE |
-#F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | 
-#F:NO_CONF | NO_SLEEP | CAN_FLY | POWERFUL | COLD_BLOOD |
-#F:ATTR_MULTI | ATTR_ANY | FORCE_DEPTH | PASS_WALL | 
-#F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | JOKEANGBAND | NO_CUT
-##(BLUEBAND)
-##S:1_IN_3
-##S:BR_DISI
-##S:S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON
-#D:An unliving opposite to Eru's creation. In eternal work it can
-#D:slowly devour a whole cosmos if it's been given just enough time.
 
 # N: serial number : monster name
 # G: symbol : color

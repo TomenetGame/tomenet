@@ -40,7 +40,7 @@
  * Max sizes of the following arrays
  */
 #define MAX_ROCKS      62       /* Used with rings (min 58) */
-#define MAX_AMULETS    39       /* Used with amulets (min 30) */
+#define MAX_AMULETS    40       /* Used with amulets (min 30) */
 #define MAX_WOODS      36       /* Used with staffs (min 32) */
 #define MAX_METALS     39       /* Used with wands/rods (min 32/30) */
 #define MAX_COLORS     68       /* Used with potions (min 62) */
@@ -114,6 +114,7 @@ static cptr amulet_adj[MAX_AMULETS] =
         "Origami Paper", "Meteoric Iron", "Platinum", "Glass", "Beryl",
         "Malachite", "Adamantite", "Mother-of-pearl", "Runed",
 	"Sandalwood", "Emerald", "Aquamarine", "Sapphire", "Glimmer-Stone",
+	"Ebony",
 };
 
 static byte amulet_col[MAX_AMULETS] =
@@ -125,7 +126,8 @@ static byte amulet_col[MAX_AMULETS] =
 	TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN, 
 	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_WHITE, TERM_L_GREEN, 
 	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER,
-	TERM_L_WHITE, TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_LITE, 
+	TERM_L_WHITE, TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_LITE,
+	TERM_L_DARK,
 };
 
 
@@ -1405,6 +1407,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Known artifacts */
 //			if (artifact_p(o_ptr) && aware) break;
 			if (artifact_p(o_ptr) && known)	break;
+			
+			/* "Amulets of Luck" are just called "Talismans" -C. Blue */
+			if ((o_ptr->sval == SV_AMULET_LUCK) && aware) break;
 
 			/* Color the object */
 			modstr = amulet_adj[indexx];
@@ -1421,8 +1426,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Known artifacts */
 //			if (artifact_p(o_ptr) && aware) break;
 			//if (artifact_p(o_ptr) && known && o_ptr->sval!=SV_RING_SPECIAL) break;
-			if(o_ptr->sval==SV_RING_SPECIAL){
-				basenm="The Ring of Power";
+			if( o_ptr->sval == SV_RING_SPECIAL) {
+				basenm = "The Ring of Power";
 			}
 			if (artifact_p(o_ptr) && known) break;
 

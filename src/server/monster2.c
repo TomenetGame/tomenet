@@ -922,9 +922,11 @@ s16b get_mon_num(int level, int dun_type)
 	}
 #endif	// 0
 
+	/* Out Of Depth modification: */
 	if (level > 0)
 	{
-
+//commented this one out, it's too much (destroyer on lv 54..)
+#if 0
 		/* Occasional "nasty" monster */
 		if (rand_int(NASTY_MON) == 0)
 		{
@@ -944,6 +946,13 @@ s16b get_mon_num(int level, int dun_type)
 			/* Boost the level */
 			level += ((d2 < 5) ? d2 : 5);
 		}
+#else
+		if (rand_int(NASTY_MON) == 0)
+		{
+			if (level < 15) level += (2 + level/2 + randint(3));
+			else level += (10 + level/4 + randint(level / 4));
+		}
+#endif
 	}       
 
 	/* Boost the level -- but not in town square. 
@@ -2304,12 +2313,12 @@ static bool allow_unique_level(int r_idx, struct worldpos *wpos)
  */
 static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo)
 {
-	int                     i, Ind, j;
+	int                     i, Ind, j, m_idx;
+	bool			already_on_level = FALSE;
 
 	cave_type               *c_ptr;
 
 	monster_type    *m_ptr;
-
 	monster_race    *r_ptr = &r_info[r_idx];
 
 	char buf[80];
@@ -2331,9 +2340,28 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Paranoia */
 	if (!r_ptr->name) return (FALSE);
 
+/* BEGIN of ugly hack */
+	/* Check if the monster is already on the level -
+	   I put this in after someone told me about 3 Glaurungs on the same
+	   level, while 1 player on the depth had him killed, the other didn't.
+	   Then a Glaurung summoned 2 more of himself.. */
+	for (i = m_top - 1; i >= 0; i--)
+	{
+        	m_idx = m_fast[i];
+		m_ptr = &m_list[m_idx];
+		if (!m_ptr->r_idx) {
+			m_fast[i] = m_fast[--m_top];
+			continue;
+		}
+		if (m_ptr->r_idx != r_idx) continue;
+		if (inarea(wpos, &m_ptr->wpos)) already_on_level = TRUE;
+	}
+/* END of ugly hack */
+
 	/* Hack -- "unique" monsters must be "unique" */
 	if ((r_ptr->flags1 & RF1_UNIQUE) &&
-	    ((!allow_unique_level(r_idx, wpos)) || (r_ptr->cur_num >= r_ptr->max_num)))
+	    ((!allow_unique_level(r_idx, wpos)) || (r_ptr->cur_num >= r_ptr->max_num) ||
+	    already_on_level))
 	{
 		/* Cannot create */
 		return (FALSE);
@@ -2353,10 +2381,13 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
 	if ((r_idx == 1067) &&
 	    (getlevel(wpos) < (166 + 1))) return (FALSE);
-	if (((r_idx == 1068) || (r_idx == 1080)) &&
+	if (((r_idx == 1068) || (r_idx == 1080) || (r_idx == 1083) || (r_idx == 1084)) &&
 	    (getlevel(wpos) < 166)) return (FALSE);
 	/* Nether Guard isn't a unique but there's only 1 guard per level */
 	if ((r_idx == 1068) && (r_ptr->cur_num > 0)) return;
+	/* Zu-Aon guards the bottom of the Nether Realm now */
+	if ((r_idx == 1085) &&
+	    (getlevel(wpos) < (166 + 30))) return (FALSE);
 
         /* Ego Uniques are NOT to be created */
         if ((r_ptr->flags1 & RF1_UNIQUE) && (ego || randuni)) return 0;
@@ -2604,6 +2635,11 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	}*/
 
 	/* Success */
+	/* Report some very interesting monster creating: */
+	if (r_idx == 862) s_printf("Morgoth was created on %d\n", getlevel(wpos));
+	if (r_idx == 1032) s_printf("Tik'Svrzllat was created on %d\n", getlevel(wpos));
+	if (r_idx == 1067) s_printf("The Hellraiser was created on %d\n", getlevel(wpos));
+	if (r_idx == 1085) s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", getlevel(wpos));
 	return (TRUE);
 }
 

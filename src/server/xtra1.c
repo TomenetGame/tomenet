@@ -881,6 +881,23 @@ static void calc_sanity(int Ind)
 
 		/* Sanity carries over between levels. */
 		p_ptr->csane += (msane - p_ptr->msane);
+		/* If sanity just dropped to 0 or lower, die! */
+                if (p_ptr->csane < 0) {
+                        /* Sound */
+                        sound(Ind, SOUND_DEATH);
+                        /* Hack -- Note death */
+                        msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
+			(void)strcpy(p_ptr->died_from, "Insanity");
+	                if (!p_ptr->ghost) {
+		                strcpy(p_ptr->died_from_list, "Insanity");
+		                p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
+			}
+            		/* No longer a winner */
+		        p_ptr->total_winner = FALSE;
+			/* Note death */
+			p_ptr->death = TRUE;
+	                p_ptr->deathblow = 0;
+		}
 
 		p_ptr->msane = msane;
 
@@ -1045,17 +1062,18 @@ static void calc_mana(int Ind)
 	   where disruption shield is calculated. (C. Blue) */
 	switch(p_ptr->pclass) {
 	case CLASS_MAGE:
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 10;
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
 		break;
 	case CLASS_PRIEST:
 	case CLASS_PALADIN:
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 20;
+	case CLASS_MIMIC:
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
 		break;
 	case CLASS_RANGER:
 	case CLASS_ADVENTURER:
 	case CLASS_ROGUE:
 	default:
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 10;
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
 		break;
 	}
 
@@ -1635,9 +1653,14 @@ static void calc_body_bonus(int Ind)
 	if ((r_ptr->flags9 & RF9_HAS_LITE) &&
 	     ((!r_ptr->body_parts[BODY_TORSO]) || (r_ptr->flags4 & RF4_BR_LITE)))
 		p_ptr->cur_lite += 1;
-	
+
+	/* Forms that occur in the woods are able to pass them, so are animals */	
 	if ((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL))
 		p_ptr->pass_trees = TRUE;
+
+	/* Forms that occur in the mountains are able to pass them */
+	if (r_ptr->flags8 & (RF8_WILD_MOUNTAIN | RF8_WILD_VOLCANO))
+		p_ptr->climb = TRUE;
 
 	/* Orcs get resist_dark */
 	if(r_ptr->flags3 & RF3_ORC) p_ptr->resist_dark = TRUE;
@@ -1913,7 +1936,7 @@ bool monk_heavy_armor(int Ind)
 #endif	// 0
 
 //	return (monk_arm_wgt > ( 100 + (p_ptr->lev * 4))) ;
-	return (monk_arm_wgt > 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 250));
+	return (monk_arm_wgt > 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200));
 #endif
 }
 #endif	// 0
@@ -2097,6 +2120,7 @@ void calc_bonuses(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	int			i, j, hold, minus, am;
+	long			w;
 
 	int			old_speed;
 
@@ -2577,7 +2601,13 @@ void calc_bonuses(int Ind)
 //			if (k_ptr->flags1 & TR1_SPELL_SPEED) extra_spells += o_ptr->bpval;
 
                 /* Affect mana capacity */
-                if (f1 & (TR1_MANA)) p_ptr->to_m += o_ptr->bpval;
+                if (f1 & (TR1_MANA)) {
+			if ((f4 & TR4_COULD2H) &&
+			    (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx))
+				p_ptr->to_m += (o_ptr->bpval * 20) / 3;
+			else
+				p_ptr->to_m += o_ptr->bpval * 10;
+		}
 
                 /* Affect life capacity */
                 if (f1 & (TR1_LIFE)) p_ptr->to_l += o_ptr->bpval;
@@ -2645,7 +2675,13 @@ void calc_bonuses(int Ind)
 //                if (f1 & (TR1_SPELL)) p_ptr->to_s += pval;
 
                 /* Affect mana capacity */
-                if (f1 & (TR1_MANA)) p_ptr->to_m += pval;
+                if (f1 & (TR1_MANA)) {
+			if ((f4 & TR4_COULD2H) &&
+			    (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx))
+				p_ptr->to_m += (pval * 20) / 3;
+			else
+            			p_ptr->to_m += pval * 10;
+		}
 
                 /* Affect life capacity */
                 if (f1 & (TR1_LIFE)) p_ptr->to_l += pval;
@@ -2686,9 +2722,6 @@ void calc_bonuses(int Ind)
 		if (f5 & (TR6_SENS_ELEC)) p_ptr->sensible_elec = TRUE;
 		if (f5 & (TR6_SENS_ACID)) p_ptr->sensible_acid = TRUE;
 		if (f5 & (TR6_SENS_POIS)) p_ptr->sensible_acid = TRUE; */
-
-		/* Hack -- cause earthquakes */
-		if (f5 & TR5_IMPACT) p_ptr->impact = TRUE;
 
 		/* Boost shots */
 //		if (f3 & TR3_KNOWLEDGE) p_ptr->auto_id = TRUE;
@@ -2865,6 +2898,9 @@ void calc_bonuses(int Ind)
 
 		if (i == INVEN_AMMO || i == INVEN_TOOL) continue;
 
+		/* Hack -- cause earthquakes */
+		if (f5 & TR5_IMPACT) p_ptr->impact = TRUE;
+
 		/* Apply the bonuses to hit/damage */
 		p_ptr->to_h += o_ptr->to_h;
 		p_ptr->to_d += o_ptr->to_d;
@@ -2985,21 +3021,19 @@ void calc_bonuses(int Ind)
 		if (k)
 		{
 			/* Extract the current weight (in tenth pounds) */
-			j = p_ptr->total_weight;
+			w = p_ptr->total_weight;
 
 			/* Extract the "weight limit" (in tenth pounds) */
 			i = weight_limit(Ind);
 
 			/* XXX XXX XXX Apply "encumbrance" from weight */
-			if (j > i/5) k -= ((j - (i/5)) / (i / 10));
+			if (w> i/5) k -= ((w - (i/5)) / (i / 10));
 
 			/* Assume unencumbered */
 			p_ptr->cumber_weight = FALSE;
 
 			if (k > 0)
 			{
-				p_ptr->pspeed += k;
-
 				/* Feather Falling if unencumbered at level 10 */
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 9)
 					p_ptr->feather_fall = TRUE;
@@ -3028,8 +3062,19 @@ void calc_bonuses(int Ind)
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 49)
 					p_ptr->fly = TRUE;
 
-				/* give a stealth bonus */
-				p_ptr->skill_stl += k;
+				if (((!p_ptr->inventory[INVEN_ARM].k_idx) ||
+				    (k_info[p_ptr->inventory[INVEN_ARM].k_idx].weight < 100)) &&
+				    ((!p_ptr->inventory[INVEN_BOW].k_idx) ||
+				    (k_info[p_ptr->inventory[INVEN_BOW].k_idx].weight < 150)) &&
+				    ((!p_ptr->inventory[INVEN_WIELD].k_idx) ||
+				    (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].weight < 150)))
+				{
+					/* give a speed bonus */
+					p_ptr->pspeed += k;
+
+					/* give a stealth bonus */
+					p_ptr->skill_stl += k;
+				}
 			}
 			else
 			{
@@ -3052,7 +3097,8 @@ void calc_bonuses(int Ind)
 
 		/* Monks get extra ac for wearing very light or no armour at all */
 		if (!p_ptr->inventory[INVEN_BOW].k_idx &&
-			!p_ptr->inventory[INVEN_WIELD].k_idx)
+			!p_ptr->inventory[INVEN_WIELD].k_idx &&
+			!p_ptr->cumber_weight)
 		{
 			int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
 			int martsbonus, martsweight, martscapacity;
@@ -3360,13 +3406,13 @@ void calc_bonuses(int Ind)
 
 
 	/* Extract the current weight (in tenth pounds) */
-	j = p_ptr->total_weight;
+	w = p_ptr->total_weight;
 
 	/* Extract the "weight limit" (in tenth pounds) */
 	i = weight_limit(Ind);
 
 	/* XXX XXX XXX Apply "encumbrance" from weight */
-	if (j > i/2) p_ptr->pspeed -= ((j - (i/2)) / (i / 10));
+	if (w > i/2) p_ptr->pspeed -= ((w - (i/2)) / (i / 10));
 
 	/* Bloating slows the player down (a little) */
 	if (p_ptr->food >= PY_FOOD_MAX) p_ptr->pspeed -= 10;
@@ -3650,6 +3696,11 @@ void calc_bonuses(int Ind)
 	/* Hell mode is HARD */
 	if ((p_ptr->mode & MODE_HELL) && (p_ptr->num_blow > 1)) p_ptr->num_blow--;
 
+	/* A perma_cursed weapon stays even in weapon-less body form, reduce blows for that: */
+	if ((p_ptr->inventory[INVEN_WIELD].k_idx) &&
+	    (!r_info[p_ptr->body_monster].body_parts[BODY_WEAPON]) &&
+	    (p_ptr->num_blow > 1)) p_ptr->num_blow = 1;
+
 	/* Combat bonus to damage */
 	if (get_skill(p_ptr, SKILL_COMBAT))
 	{
@@ -3677,21 +3728,27 @@ void calc_bonuses(int Ind)
 	if (get_skill(p_ptr, SKILL_DODGE))
 //	if (!(r_ptr->flags1 & RF1_NEVER_MOVE));		// not for now
 	{
+		/* use a long var temporarily to handle v.high total_weight */
+		long temp_chance;
+
 		/* Get the armor weight */
 		int cur_wgt = armour_weight(p_ptr);
 
 		/* Base dodge chance */
-		p_ptr->dodge_chance = get_skill_scale(p_ptr, SKILL_DODGE, 150);
+		temp_chance = get_skill_scale(p_ptr, SKILL_DODGE, 150);
 
 		/* Armor weight bonus/penalty */
 //		p_ptr->dodge_chance -= cur_wgt * 2;
-		p_ptr->dodge_chance -= cur_wgt;		/* XXX adjust me */
+		temp_chance -= cur_wgt;		/* XXX adjust me */
 
 		/* Encumberance bonus/penalty */
-		p_ptr->dodge_chance -= p_ptr->total_weight / 100;
+		temp_chance -= p_ptr->total_weight / 100;
 
 		/* Penalty for bad conditions */
-		p_ptr->dodge_chance -= UNAWARENESS(p_ptr);
+		temp_chance -= UNAWARENESS(p_ptr);
+
+		/* write long back to int */
+		p_ptr->dodge_chance = temp_chance;
 
 		/* Never below 0 */
 		if (p_ptr->dodge_chance < 0) p_ptr->dodge_chance = 0;
@@ -4003,6 +4060,9 @@ void calc_bonuses(int Ind)
 	/* resistance to acid cancel sensibility to fire */
 	if(p_ptr->resist_acid || p_ptr->oppose_acid || p_ptr->immune_acid)
 		p_ptr->sensible_acid=FALSE;
+
+	/* Limit speed penalty from total_weight */
+	if (p_ptr->pspeed < 10) p_ptr->pspeed = 10;
 
 	/* XXX - Always resend skills */
 	p_ptr->redraw |= (PR_SKILLS);

@@ -186,7 +186,7 @@ school_book[10] = {
 
 -- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing
 school_book[11] = {
-        GENOCIDE, WRAITHFORM,
+        GENOCIDE, WRAITHFORM, DISEBOLT,
 }
 
 -- Priests / Paladins:

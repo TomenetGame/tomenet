@@ -3131,6 +3131,16 @@ static void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377rItems/monsters on %s are cleared.", wpos_format(Ind, &wp));
 				return;
 			}
+			/* erase items (prevent loot-mass-freeze) */
+			else if (prefix(message, "/clear-items") ||
+					prefix(message, "/cli"))
+			{
+				/* Wipe even if town/wilderness */
+				wipe_o_list_safely(&wp);
+
+				msg_format(Ind, "\377rItems on %s are cleared.", wpos_format(Ind, &wp));
+				return;
+			}
 			else if(prefix(message, "/cp")){
 				party_check(Ind);
 				account_check(Ind);
@@ -3273,8 +3283,7 @@ static void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
-			else if (prefix(message, "/unique") ||
-					prefix(message, "/uni"))
+			else if (prefix(message, "/unique"))
 			{
 				bool done = FALSE;
 				monster_race *r_ptr;
@@ -3307,6 +3316,27 @@ static void do_slash_cmd(int Ind, char *message)
 					}
 				}
 				if (!done) msg_print(Ind, "Usage: /unique (unseen | nonkill)");
+				return;
+			}
+			else if (prefix(message, "/uninum"))
+			{
+				if (k)
+				{
+					if (r_info[k].max_num)
+					{
+						r_info[k].max_num = 0;
+						msg_format(Ind, "Monster %d is now \377Gunfindable\377w.", k);
+					}
+					else
+					{
+						r_info[k].max_num = 1;
+						msg_format(Ind, "Monster %d is now \377rfindable\377w.", k);
+					}
+				}
+				else
+				{
+					msg_print(Ind, "Usage: /uninum <monster_index>");
+				}
 				return;
 			}
 			else if (prefix(message, "/reload-config") ||
@@ -3904,7 +3934,7 @@ static void player_talk_aux(int Ind, char *message)
 		if (strlen(message) > 4) mycolor = (prefix(&message[4], "}") && (color_char_to_attr(*(message + 5)) != -1))?2:0;
 		else return;
 		if(mycolor) c=message[5];
-		sprintf(tmessage, "\377%c%s %s", c, sender, message + 4+mycolor);
+		sprintf(tmessage, "\377%c[%s %s]", c, sender, message + 4+mycolor);
 	}
 	world_chat(p_ptr->id, tmessage);	/* no ignores... */
 	for(i = 1; i <= NumPlayers; i++){

@@ -298,6 +298,9 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 {
 	player_type *p_ptr = Players[i];
         int             minfail;
+//DEBUG:s_printf("chance %d - level %d - skill_level %d", chance, level, skill_level);
+	/* correct LUA overflow bug */
+	if (chance >= 156) chance -= 256;
 
 	/* Reduce failure rate by "effective" level adjustment */
         chance -= 3 * (level - skill_level);

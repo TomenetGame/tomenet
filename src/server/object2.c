@@ -1487,6 +1487,13 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 	case TV_BOLT:
 	case TV_BOW:
 	case TV_BOOMERANG:
+
+	case TV_MSTAFF:
+	case TV_LITE:
+	case TV_AMULET:
+	case TV_RING:
+	case TV_TRAPKIT:
+
 	default:
 /*		if ((((o_ptr->to_h - k_ptr->to_h) < 0) ||
 		    ((o_ptr->to_d - k_ptr->to_d) < 0) ||
@@ -1574,8 +1581,9 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 
 				if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 200L;
 
-				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 400L);//was 500
-//				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 500L);
+//				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
+				if (f5 & (TR5_CRIT)) value += pval * pval * 20000L;
+				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 10L);
 
 				/* Give credit for stealth and searching */
 //				if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
@@ -4350,6 +4358,27 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 			                make_ego_item(level, o_ptr, TRUE);
 					break;
 				}
+
+				/* Talisman (Amulet of Luck) */
+				case SV_AMULET_LUCK:
+				{
+					o_ptr->bpval = magik(40)?randint(3):randint(5);
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Broken */
+						o_ptr->ident |= ID_BROKEN;
+
+						/* Cursed */
+						o_ptr->ident |= ID_CURSED;
+
+						/* Reverse bonuses */
+						o_ptr->bpval = 0 - (o_ptr->bpval);
+					}
+
+					break;
+				}
 			}
 
 			break;
@@ -5671,8 +5700,8 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 
 	/* max luck = 40 */
 	luck = 200 - (8000 / (luck + 40));
-	if (!good && magik(luck / 2)) good = TRUE;
-	else if (good && !great && magik(luck / 5)) {great = TRUE; good = TRUE;}
+	if ((!good) && magik(luck / 2)) good = TRUE;
+	else if (good && (!great) && magik(luck / 5)) {great = TRUE; good = TRUE;}
 
 	/* Chance of "special object" */
 	prob = (good ? 10 : 1000);

@@ -1229,6 +1229,7 @@ bool twall(int Ind, int y, int x)
 void do_cmd_tunnel(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
 	struct worldpos *wpos=&p_ptr->wpos;
 
 	int                     y, x, power = p_ptr->skill_dig;
@@ -1581,6 +1582,14 @@ void do_cmd_tunnel(int Ind, int dir)
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 		}
+	}
+
+	/* Apply Earthquakes */
+	if ((p_ptr->inventory[INVEN_TOOL].k_idx) &&
+	    (p_ptr->impact || k_info[o_ptr->k_idx].flags5 & TR5_IMPACT) &&
+	    (randint(200) < power) && magik(50)) {
+		//if (!check_guard_inscription(o_ptr->note, 'E' ))
+		earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
 	}
 
 	/* Cancel repetition unless we can continue */

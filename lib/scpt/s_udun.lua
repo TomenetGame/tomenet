@@ -1,4 +1,9 @@
 -- handle the udun school
+
+function get_disebolt_dam()
+        return 40, 15 + get_level(Ind, DISEBOLT, 50)
+end
+
 --[[
 DRAIN = add_spell
 {
@@ -97,7 +102,6 @@ WRAITHFORM = add_spell
         ["mana"] = 	20,
         ["mana_max"] = 	40,
         ["fail"] = 	20,
-        ["stat"] =      A_WIS,
         ["spell"] = 	function()
                         local dur = randint(30) + 20 + get_level(Ind, WRAITHFORM, 40)
                        	set_tim_wraith(Ind, dur)
@@ -133,3 +137,27 @@ FLAMEOFUDUN = add_spell
         }
 }
 ]]
+
+DISEBOLT = add_spell
+{
+	["name"] =      "Disenchantment Bolt",
+	["school"] =    {SCHOOL_UDUN},
+	["level"] =     40,
+	["mana"] =      30,
+	["mana_max"] =  50,
+        ["fail"] =      -40,
+	["direction"] = TRUE,
+	["spell"] =     function(args)
+		fire_bolt(Ind, GF_DISENCHANT, args.dir, damroll(get_disebolt_dam()), " casts a disenchantment bolt for")
+	end,
+	["info"] =      function()
+		local x, y
+
+		x, y = get_disebolt_dam()
+		return "dam "..x.."d"..y
+	end,
+	["desc"] =      {
+		"Conjures a powerful disenchantment bolt",
+		"The damage is nearly irresistible and will increase with level"
+	}
+}

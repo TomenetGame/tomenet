@@ -3560,6 +3560,7 @@ void monster_death(int Ind, int m_idx)
 	player_type *q_ptr = Players[Ind];
 
 	int			i, j, y, x, ny, nx;
+	int			tmp_luck = p_ptr->luck_cur;
 
 	int			dump_item = 0;
 	int			dump_gold = 0;
@@ -3789,6 +3790,11 @@ void monster_death(int Ind, int m_idx)
 	{
 		local_quark = quark_add(r_name + r_ptr->name);
 		unique_quark = local_quark;
+
+		/* make uniques drop a bit better than normal monsters */
+		tmp_luck += 10;
+		/* luck caps at 40 */
+		if (tmp_luck > 40) tmp_luck = 40;
 	}
 
 	/* Drop some objects */
@@ -3825,7 +3831,7 @@ void monster_death(int Ind, int m_idx)
 			/* Place Object */
 			else
 			{
-				place_object(wpos, y, x, good, great, r_ptr->drops, p_ptr->luck_cur);
+				place_object(wpos, y, x, good, great, r_ptr->drops, tmp_luck);
 //				if (player_can_see_bold(Ind, ny, nx)) dump_item++;
 			}
 
@@ -3958,6 +3964,8 @@ if(cfg.unikill_format){
 #endif	// TOMENET_WORLDS
 		/* Tell every player */
 		msg_broadcast(-1, buf);
+		/* Log event */
+		s_printf("%s was slain by %s.\n", r_name_get(m_ptr), p_ptr->name);
 	}
 
 
@@ -4244,6 +4252,25 @@ if(cfg.unikill_format){
 				a_idx = ART_ANGUIREL;
 				chance = 50;
 			}
+			else if (strstr((r_name + r_ptr->name),"Zu-Aon, The Cosmic Border Guard"))
+			{
+				if (a_info[a_idx].cur_num != 0) {
+					/* Get local object */
+					qq_ptr = &forge;
+					object_wipe(qq_ptr);
+					/* Drop Scroll Of Artifact Creation if Ring Of Phasing already exists */
+					invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
+					qq_ptr->number = 3;
+					qq_ptr->note = local_quark;
+					apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE);
+					/* Drop it in the dungeon */
+					drop_near(qq_ptr, -1, wpos, y, x);
+				} else {
+					/* Generate Ring Of Phasing -w00t ;) */
+					a_idx = 203;
+					chance = 100;
+				}
+		}
 
 #ifdef SEMI_PROMISED_ARTS_MODIFIER
 			chance = chance * SEMI_PROMISED_ARTS_MODIFIER / 100;
@@ -5116,7 +5143,7 @@ void player_death(int Ind)
 			delete_player_name(p_ptr->name);
 
 			/* Put him on the high score list */
-			if(!p_ptr->admin_dm && !p_ptr->admin_wiz && !p_ptr->noscore)
+			if(!p_ptr->admin_dm && !p_ptr->admin_wiz && !p_ptr->noscore && !(p_ptr->mode & MODE_IMMORTAL))
 				add_high_score(Ind);
 
 #ifdef TOMENET_WORLDS
@@ -5538,7 +5565,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	s32b		new_exp, new_exp_frac;
 	bool old_tacit = suppress_message;
 
-	long tmp_exp;
+	long tmp_exp, req_lvl;
 
         int dun_level2 = getlevel(&p_ptr->wpos);
         dungeon_type *dt_ptr2 = getdungeon(&p_ptr->wpos);
@@ -5644,6 +5671,17 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			{
 				tmp_exp = ((((-p_ptr->wpos.wz) * 2) + 10) * tmp_exp) / 10;
 			}
+		}
+		
+		/* Higher characters who farm monsters on low levels compared to
+		   their clvl will gain less exp - EXPERIMENTAL */
+		if (p_ptr->lev >= 20) {
+			/* Formula for non-kings: */
+			if (p_ptr->lev < 50) req_lvl = 540 / (56 - p_ptr->lev);
+			/* Formula for kings: */
+			else req_lvl = (p_ptr->lev - 5) * 2;
+			/* Punishment for goofing off: */
+			if (getlevel(&p_ptr->wpos) < req_lvl) tmp_exp = tmp_exp * 10 / (10 + req_lvl - getlevel(&p_ptr->wpos));
 		}
 
 		/* Split experience if in a party */

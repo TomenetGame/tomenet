@@ -1244,7 +1244,7 @@ void take_hit(int Ind, int damage, cptr hit_from)
 			p_ptr->redraw |= (PR_HP);
 			Players[Ind2]->redraw |= (PR_HP);
 
-			msg_broadcast(Ind, format("%s won the blood bond against %s.", Players[Ind2]->name, p_ptr->name));
+			msg_broadcast(0, format("%s won the blood bond against %s.", Players[Ind2]->name, p_ptr->name));
 
 			p_ptr->blood_bond = Players[Ind2]->blood_bond = 0;
 			remove_hostility(Ind, Players[Ind2]->name);
@@ -4298,7 +4298,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				else
 				{
 					note = " resists somewhat.";
-					dam *= 5; dam /= (randint(3)+4);
+//					dam *= 5; dam /= (randint(3)+4);
 				}
 			}
 			break;
@@ -5534,7 +5534,8 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Sound and Impact breathers never stun */
 	else if (do_stun &&
 	         !(r_ptr->flags4 & RF4_BR_SOUN) &&
-	         !(r_ptr->flags4 & RF4_BR_WALL))
+	         !(r_ptr->flags4 & RF4_BR_WALL) &&
+		 !(r_ptr->flags3 & RF3_NO_STUN))
 	{
 		/* Obvious */
 		if (seen) obvious = TRUE;
@@ -6733,7 +6734,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
                 case GF_SATHUNGER_PLAYER:
                 {
+			if (p_ptr->male)
 			msg_format_near(Ind, "\377y%s looks like he is going to explode.", p_ptr->name);
+			else
+			msg_format_near(Ind, "\377y%s looks like she is going to explode.", p_ptr->name);
                         (void)set_food(Ind, PY_FOOD_MAX - 1);
                         break;
 		}

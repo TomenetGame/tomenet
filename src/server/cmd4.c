@@ -836,7 +836,8 @@ void do_cmd_knowledge_dungeons(int Ind)
 							d_info[i].min_plev, i);
 #else	// 0
 					fprintf(fff, "  Lev: %3d~%3d  Req: %3d  type: %3d",
-							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth,
+							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+//							d_info[i].mindepth, d_info[i].mindepth + d_info[i].maxdepth - 1,
 							d_info[i].min_plev, i);
 #endif	// 0
 
@@ -849,7 +850,8 @@ void do_cmd_knowledge_dungeons(int Ind)
 						d_info[i].name + d_name);
 				if (admin)
 					fprintf(fff, "  Lev: %3d~%3d  Req: %3d  type: %3d",
-							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth,
+							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+//							d_info[i].mindepth, d_info[i].mindepth + d_info[i].maxdepth - 1,
 							d_info[i].min_plev, i);
 
 				fprintf(fff,"\n");

@@ -1245,9 +1245,18 @@ artifact_type *randart_make(object_type *o_ptr)
 	o_ptr->bpval = 0;*/
 
 	if (k_ptr->tval == TV_LITE) a_ptr->pval = 0;
-	a_ptr->to_h = k_ptr->to_h;
-	a_ptr->to_d = k_ptr->to_d;
-	a_ptr->to_a = k_ptr->to_a;
+	/* Amulets and Rings keep their (+hit,+dam)[+AC] instead of having it
+	   reset to (+0,+0)[+0] (since those boni are hard-coded for jewelry) */
+	if ((a_ptr->tval == TV_AMULET) || (a_ptr->tval == TV_RING))
+	{
+		a_ptr->to_h = o_ptr->to_h;
+		a_ptr->to_d = o_ptr->to_d;
+		a_ptr->to_a = o_ptr->to_a;
+	} else {
+		a_ptr->to_h = k_ptr->to_h;
+		a_ptr->to_d = k_ptr->to_d;
+		a_ptr->to_a = k_ptr->to_a;
+	}
 	a_ptr->ac = k_ptr->ac;
 	a_ptr->dd = k_ptr->dd;
 	a_ptr->ds = k_ptr->ds;
@@ -1402,6 +1411,8 @@ artifact_type *randart_make(object_type *o_ptr)
 		a_ptr->flags3 |= TR3_HIDE_TYPE;
 
         /* Fix some limits */
+	if (a_ptr->tval == TV_MSTAFF) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;
         if (a_ptr->flags1 & TR1_MANA)
         {
                 if (a_ptr->pval > 10) a_ptr->pval = 10;
@@ -1414,11 +1425,26 @@ artifact_type *randart_make(object_type *o_ptr)
 	{
 		if (a_ptr->pval > 6) a_ptr->pval = 6;
 	}
+	if(a_ptr->flags5 & TR5_LUCK)
+	{
+		if (a_ptr->pval > 5) a_ptr->pval = 5;
+	}
+	if(a_ptr->flags5 & TR5_DISARM)
+	{
+		if (a_ptr->pval > 3) a_ptr->pval = 3;
+	}
 	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR))
 	{
-		if (a_ptr->pval > 5) a_ptr->pval /= 2;
-		if (a_ptr->pval > 5) a_ptr->pval = 5;
-		if (a_ptr->pval == 0) a_ptr->pval = 1;
+		if (a_ptr->tval == TV_AMULET)
+		{
+			if (a_ptr->pval > 3) a_ptr->pval /= 2;
+			if (a_ptr->pval > 3) a_ptr->pval = 3;
+			if (a_ptr->pval == 0) a_ptr->pval = 1;
+		} else {
+			if (a_ptr->pval > 5) a_ptr->pval /= 2;
+			if (a_ptr->pval > 5) a_ptr->pval = 5;
+			if (a_ptr->pval == 0) a_ptr->pval = 1;
+		}
 	}
         if (a_ptr->flags1 & TR1_BLOWS)
         {
@@ -1718,7 +1744,21 @@ try_an_other_ego:
 #endif	// 0
 
         /* Fix some limits */
-
+	/* Mage Staves don't have NO_MAGIC */
+	if (o_ptr->tval == TV_MSTAFF) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+	/* Dark Swords don't have MANA (or SPELL) flag */
+	if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD)
+	{
+		a_ptr->flags1 &= ~TR1_MANA;
+		a_ptr->flags1 &= ~TR1_SPELL;
+	}
+	/* Items of/with 'Magi'/'Istari' don't have NO_MAGIC: */
+	if ((o_ptr->name2 == EGO_MAGI || o_ptr->name2b == EGO_MAGI) ||
+	    (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI) ||
+	    (o_ptr->name2 == 135 || o_ptr->name2b == 135) ||
+	    (o_ptr->name2 == 169 || o_ptr->name2b == 169) ||
+	    (o_ptr->name2 == 185 || o_ptr->name2b == 185) ||
+	    (o_ptr->name2 == 186 || o_ptr->name2b == 186)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
         if (a_ptr->flags1 & TR1_MANA)
         {
                 if (a_ptr->pval > 10) a_ptr->pval = 10;
@@ -1731,15 +1771,30 @@ try_an_other_ego:
 	{
 		if (a_ptr->pval > 6) a_ptr->pval = 6;
 	}
+	if(a_ptr->flags5 & TR5_LUCK)
+	{
+		if (a_ptr->pval > 5) a_ptr->pval = 5;
+	}
+	if(a_ptr->flags5 & TR5_DISARM)
+	{
+		if (a_ptr->pval > 3) a_ptr->pval = 3;
+	}
 	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR))
 	{
-		if (a_ptr->pval > 5) a_ptr->pval /= 2;
-		if (a_ptr->pval > 5) a_ptr->pval = 5;
-		if (a_ptr->pval == 0) a_ptr->pval = 1;
+		if (a_ptr->tval == TV_AMULET)
+		{
+			if (a_ptr->pval > 3) a_ptr->pval /= 2;
+			if (a_ptr->pval > 3) a_ptr->pval = 3;
+			if (a_ptr->pval == 0) a_ptr->pval = 1;
+		} else {
+			if (a_ptr->pval > 5) a_ptr->pval /= 2;
+			if (a_ptr->pval > 5) a_ptr->pval = 5;
+			if (a_ptr->pval == 0) a_ptr->pval = 1;
+		}
 	}
         if (a_ptr->flags1 & TR1_BLOWS)
         {
-		if (a_ptr->tval == TV_GLOVES)
+		if (o_ptr->tval == TV_GLOVES)
 		{
 			if (a_ptr->pval > 2) a_ptr->pval /= 3;
 	                if (a_ptr->pval > 2) a_ptr->pval = 2;
@@ -1877,25 +1932,32 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		/* Make a Weapon of Slaying */
 
 		if (randint(3) == 1) /* double damage */
-			a_ptr->dd *= 2;
-		else
 		{
+			a_ptr->dd *= 2;
+			while (a_ptr->dd * a_ptr->ds > 75)
+				a_ptr->dd -= 1; /* No overpowered slaying weapons */
+		} else {
 			do
 			{
 				a_ptr->dd++;
 			}
-			while (randint(a_ptr->dd) == 1);
+			while ((randint(a_ptr->dd) == 1) &&
+				(a_ptr->dd * a_ptr->ds < (a_ptr->flags4 & TR4_MUST2H)?65:45));
+				/* No overpowered slaying weapons */
 			do
 			{
 				a_ptr->ds++;
 			}
-			while (randint(a_ptr->ds) == 1);
+			while ((randint(a_ptr->ds) == 1) &&
+				(a_ptr->dd * a_ptr->ds < (a_ptr->flags4 & TR4_MUST2H)?65:45));
+				/* No overpowered slaying weapons */
 		}
 		if (randint(5) == 1)
 		{
 			a_ptr->flags1 |= TR1_BRAND_POIS;
 		}
-		if (a_ptr->tval == TV_SWORD && (randint(3) == 1))
+/*		if (a_ptr->tval == TV_SWORD && (randint(4) == 1))*/
+		if ((a_ptr->tval != TV_HAFTED) && (randint(4) == 1))
 		{
 			a_ptr->flags5 |= TR5_VORPAL;
 		}

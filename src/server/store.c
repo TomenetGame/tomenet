@@ -2391,7 +2391,7 @@ void store_purchase(int Ind, int item, int amt)
 
 	if (amt < 1)
 	{
-		s_printf("$INTRUSION$ Bad amount %d! Bought by %s.", amt, p_ptr->name);
+		s_printf("$INTRUSION$ Bad amount %d! Bought by %s.\n", amt, p_ptr->name);
 		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
 		return;
 	}
@@ -2745,6 +2745,13 @@ void store_sell(int Ind, int item, int amt)
 	object_type		*o_ptr;
 
 	char		o_name[160];
+
+	/* Check for client-side exploit! */
+	if (p_ptr->inventory[item].number < amt) {
+		s_printf("$INTRUSION$ Bad amount %d of %d! (Home) Sold by %s.\n", amt, p_ptr->inventory[item].number, p_ptr->name);
+		msg_print(Ind, "You don't have that many!");
+		return;
+	}
 
 	if (p_ptr->store_num == 7)
 	{
@@ -3882,7 +3889,7 @@ void home_sell(int Ind, int item, int amt)
 	/* Not gonna happen XXX inscribe */
 	/* Nah, gonna happen */
 	/* TODO: CURSE_NO_DROP */
-	if (cursed_p(o_ptr))
+	if (cursed_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))
 	{
 		u32b f1, f2, f3, f4, f5, esp;
 		if (item >= INVEN_WIELD)

@@ -3748,12 +3748,12 @@ bool project_hack(int Ind, int typ, int dam)
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
 
+		/* Skip monsters not on this depth */
+		if(!inarea(wpos, &m_ptr->wpos)) continue;
+
 		/* Location */
 		y = m_ptr->fy;
 		x = m_ptr->fx;
-
-		/* Skip monsters not on this depth */
-		if(!inarea(wpos, &m_ptr->wpos)) continue;
 
 		/* Require line of sight */
 		if (!player_has_los_bold(Ind, y, x)) continue;
@@ -3761,6 +3761,41 @@ bool project_hack(int Ind, int typ, int dam)
 		/* Jump directly to the target monster */
 		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, "")) obvious = TRUE;
 	}
+
+#if 0	//this would require to differ between project_hack calls that are meant
+	//to work on players and those that are meant to work on monsters only
+	//like GF_OLD_SPEED, GF_OLD_HEAL, etc. If this is done, an attacker string
+	//should be added as well, however.
+
+	/* Affect all (nearby) non-partied players */
+	for (i = 1; i < NumPlayers + 1; i++)
+	{
+                /* If he's not playing, skip him */
+                if (Players[i]->conn == NOT_CONNECTED)
+                        continue;
+
+                /* If he's not here, skip him */
+                if (!inarea(wpos, &Players[i]->wpos))
+                        continue;
+							
+                /* Ignore players we aren't hostile to */
+//                if (!check_hostile(Ind, i)) continue;
+
+	        /* if we are in the same party, don't affect target player */
+	        if (p_ptr->party && (player_in_party(p_ptr->party, i)))
+			continue;
+
+		/* Location */
+		y = Players[i]->py;
+		x = Players[i]->px;
+
+		/* Require line of sight */
+		if (!player_has_los_bold(Ind, y, x)) continue;
+
+		/* Jump directly to the target player */
+		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, "")) obvious = TRUE;
+	}
+#endif
 
 	/* Result */
 	return (obvious);
@@ -5299,8 +5334,10 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, char *att
  */
 bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff, char *attacker)
 {
+	char pattacker[80];
 	project_time_effect = eff;
-	return (fire_cloud(Ind, typ, dir, dam, rad, time, attacker));
+        sprintf(pattacker,"%s%s", Players[Ind]->name, attacker);
+	return (fire_cloud(Ind, typ, dir, dam, rad, time, pattacker));
 }
 
 /*

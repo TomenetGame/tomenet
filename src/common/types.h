@@ -1841,7 +1841,7 @@ struct player_type
 
 	object_type *inventory;	/* Player's inventory */
 
-	s16b total_weight;	/* Total weight being carried */
+	s32b total_weight;	/* Total weight being carried */
 
 	s16b inven_cnt;		/* Number of items in inventory */
 	s16b equip_cnt;		/* Number of items in equipment */

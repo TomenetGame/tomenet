@@ -1126,7 +1126,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 			/* shape-changing for retaliation is not so nice idea, eh? */
 			if (spell < 3)	/* 2 polymorph powers */
 			{
-				do_cmd_mimic(Ind, 0);
+				do_cmd_mimic(Ind, 0, 5);//w0t0w
 				return TRUE;
 			}
 			else
@@ -1134,7 +1134,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 				int power = retaliate_mimic_power(Ind, spell);
 				if (power)
 				{
-					do_cmd_mimic(Ind, power + 2); /* 2 polymorph powers */
+					do_cmd_mimic(Ind, power + 2, 5); /* 2 polymorph powers *///w0t0w
 					return TRUE;
 				}
 			}
@@ -1977,7 +1977,8 @@ static void do_recall(int Ind, bool bypass)
 	}
 
 	/* into dungeon/tower */
-	else if((cfg.runlevel>4) && (cfg.runlevel < 2048))
+	/* even at runlevel 2048 players may still recall..for now */
+	else if((cfg.runlevel>4) && (cfg.runlevel <= 2048))
 	{
 		wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		/* Messages */
@@ -2164,7 +2165,7 @@ static bool process_player_end_aux(int Ind)
 					/* temporary abs weight calc */
 					if(p_ptr->wt+p_ptr->total_weight/10 > 170 + swim * 2)	// 190
 					{
-						int factor=(p_ptr->wt+p_ptr->total_weight/10)-150-swim * 2;	// 170
+						long factor=(p_ptr->wt+p_ptr->total_weight/10)-150-swim * 2;	// 170
 						/* too heavy, always drown? */
 						if(factor<300)
 						{
@@ -3544,6 +3545,7 @@ static void purge_old()
  * TODO: Check for OT_GUILD (or guild will be mere den of cheeze)
  */
 void cheeze(object_type *o_ptr){
+#if CHEEZELOG_LEVEL > 3
 	int j;
 	/* check for inside a house */
 	for(j=0;j<num_houses;j++){
@@ -3568,6 +3570,7 @@ void cheeze(object_type *o_ptr){
 			}
 		}
 	}
+#endif // CHEEZELOG_LEVEL > 3
 }
 
 
@@ -3575,6 +3578,7 @@ void cheeze(object_type *o_ptr){
 #ifndef USE_MANG_HOUSE_ONLY
 void cheeze_trad_house()
 {
+#if CHEEZELOG_LEVEL > 3
 	int i, j;
 	house_type *h_ptr;
 	object_type *o_ptr;
@@ -3621,6 +3625,7 @@ void cheeze_trad_house()
 			}
 		}
 	}
+#endif // CHEEZELOG_LEVEL > 3
 }
 #endif	// USE_MANG_HOUSE_ONLY
 
@@ -4702,6 +4707,9 @@ void set_runlevel(int val)
 			meta=FALSE;
 			break;
 			/* Hack -- character edit (possessor) mode */
+		case 2048:
+			/* Shutdown as soon as server is empty (admins don't count) */
+			break;
 		case 6:
 			/* Running */
 		default:

@@ -122,20 +122,20 @@ function get_level_school(i, s, max, min)
         end
 
         for index, sch in __spell_school[s] do
-                local r, s, p, ok = 0, 0, 0, 0
+                local r, p, ok = 0, 0, 0, 0
 
                 -- Take the basic skill value
                 r = player.s_info[(school(sch).skill) + 1].value
 
         	-- Are we under sorcery effect ?
+		p = 0
                 if __schools[sch].sorcery then
-                        s = player.s_info[SKILL_SORCERY + 1].value
+                        p = player.s_info[SKILL_SORCERY + 1].value
                 end
                 
                 -- Find the higher
                 ok = r
-                if ok < s then ok = s end
-                if ok < p then ok = p end
+                if r < p then ok = p end
 
                 -- Do we need to add a special bonus ?
                 if __schools[sch].bonus_level then

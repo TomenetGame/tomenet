@@ -1153,8 +1153,9 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 100) - (rlev / 3);
 
 		/* Apply Martial-arts bonus */
-		if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(q_ptr)
-				&& !q_ptr->inventory[INVEN_WIELD].k_idx)
+		if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(q_ptr) &&
+		    !q_ptr->inventory[INVEN_WIELD].k_idx && !q_ptr->inventory[INVEN_BOW].k_idx &&
+		    !q_ptr->inventory[INVEN_ARM].k_idx)
 			grabchance += get_skill_scale(q_ptr, SKILL_MARTIAL_ARTS, 25);
 
 //		grabchance *= mod / 100;
@@ -5242,7 +5243,7 @@ static void process_monster(int Ind, int m_idx)
 	cave_type **zcave;
 
 	monster_type	*m_ptr = &m_list[m_idx];
-        monster_race    *r_ptr = race_inf(m_ptr);
+        monster_race    *r_ptr = race_inf(m_ptr);// = &r_info[r_idx];
 
 	int			i, d, oy, ox, ny, nx;
 
@@ -5693,7 +5694,6 @@ static void process_monster(int Ind, int m_idx)
 		/* Access that cave grid's contents */
 		y_ptr = &m_list[c_ptr->m_idx];
 
-
 		/* Tavern entrance? */
 //		if (c_ptr->feat == FEAT_SHOP_TAIL - 1)
 		if (c_ptr->feat == FEAT_SHOP)
@@ -5732,6 +5732,14 @@ static void process_monster(int Ind, int m_idx)
 			do_move = TRUE;
 		}
 
+		/* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */
+		else if ((c_ptr->feat==FEAT_MOUNTAIN) &&
+			((r_ptr->flags8 & RF8_WILD_MOUNTAIN) || (r_ptr->flags8 & RF8_WILD_VOLCANO)))
+		{
+			/* Pass through trees if monster lives in the woods >:) */
+			do_move = TRUE;
+		}
+
 		/* Player ghost in wall XXX */
 		else if (c_ptr->m_idx < 0)
 		{
@@ -5739,15 +5747,29 @@ static void process_monster(int Ind, int m_idx)
 			do_move = TRUE;
 		}
 
+		/* Let monsters pass permanent but passable walls if they have PASS_WALL! */
+		else if (	(f_info[c_ptr->feat].flags1 & FF1_PERMANENT) &&
+				(f_info[c_ptr->feat].flags1 & FF1_CAN_PASS) &&
+				(r_ptr->flags2 & RF2_PASS_WALL)		)
+		{
+			/* Pass through walls/doors/rubble */
+			do_move = TRUE;
+
+			/* Monster went through a wall */
+			did_pass_wall = TRUE;
+		}
+
 		/* Permanent wall */
 		/* Hack: Morgie DIGS!! */
 //		else if ( (c_ptr->feat >= FEAT_PERM_EXTRA &&
-		else if (((f_info[c_ptr->feat].flags1 & FF1_PERMANENT) &&
-				!((r_ptr->flags2 & RF2_KILL_WALL) &&
+		else if (	(	(f_info[c_ptr->feat].flags1 & FF1_PERMANENT) &&
+				    !(	(r_ptr->flags2 & RF2_KILL_WALL) &&
 					(r_ptr->flags2 & RF2_PASS_WALL) &&
-					(c_ptr->feat != FEAT_PERM_SOLID) && !rand_int(500)))
-				|| (c_ptr->feat == FEAT_PERM_CLEAR) ||
-				((c_ptr->feat == FEAT_HOME) || c_ptr->feat == FEAT_WALL_HOUSE))
+					(c_ptr->feat != FEAT_PERM_SOLID) &&
+					!rand_int(100)	)	)
+				|| (c_ptr->feat == FEAT_PERM_CLEAR)
+				|| (c_ptr->feat == FEAT_HOME)
+				|| (c_ptr->feat == FEAT_WALL_HOUSE)	)
 		{
 			/* Nothing */
 		}

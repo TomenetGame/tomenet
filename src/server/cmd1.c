@@ -2018,8 +2018,10 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			if (o_ptr->k_idx)
 			{
 				k = damroll(o_ptr->dd, o_ptr->ds);
+				if ((p_ptr->impact || (k_info[o_ptr->k_idx].flags5 & TR5_IMPACT)) &&
+				    500 / (10 + (k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(35)) do_quake = TRUE;
+				    /* I made the new formula above, to get a better chance curve over all the different weapon types. -C. Blue- */
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg);
-				if (p_ptr->impact && (k > 50)) do_quake = TRUE;
 				k += o_ptr->to_d;
 
 				/* Apply the player damage bonuses */
@@ -2045,7 +2047,6 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK ||
 			   zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
 				if(k>q_ptr->chp) k-=q_ptr->chp;
-				take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
 
 				/* Messages */
 				msg_format(Ind, "You hit %s for \377y%d \377wdamage.", p_name, k);
@@ -2057,11 +2058,11 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 					msg_format(0-c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
 					teleport_player(0 - c_ptr->m_idx, 400);
 				}
+
+				take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
 			}
 			else
 			{
-				take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
-
 				/* Messages */
 				msg_format(Ind, "You hit %s for \377y%d \377wdamage.", p_name, k);
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
@@ -2072,6 +2073,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 					msg_format(0-c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
 					teleport_player(0 - c_ptr->m_idx, 400);
 				}
+
+				take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
 			}
 
 			if(!c_ptr->m_idx) break;
@@ -2333,7 +2336,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	/* Mega-Hack -- apply earthquake brand */
 	if (do_quake)
 	{
-		if (o_ptr->k_idx && check_guard_inscription(o_ptr->note, 'E' ))
+		if (o_ptr->k_idx)// && !check_guard_inscription(o_ptr->note, 'E' ))
 		{
 			/* Giga-Hack -- equalize the chance (though not likely..) */
 			if (old || randint(p_ptr->num_blow) < 3)
@@ -2675,6 +2678,15 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			if (o_ptr->k_idx)
 			{
 				k = damroll(o_ptr->dd, o_ptr->ds);
+				/* weapons that inflict little damage, especially of only 1 damage dice,
+				   mostly don't cause earthquakes at all */
+				if ((p_ptr->impact || (f5 & TR5_IMPACT)) &&
+				    500 / (10 + (k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(35)) do_quake = TRUE;
+				    /* I made the new formula above, to get a better chance curve over all the different weapon types. -C. Blue- */
+				    /* Some old tries: */
+//				    130 - ((k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(130)) do_quake = TRUE;
+//				    (150 / (10 + k - o_ptr->dd) < 11 - (2 / o_ptr->dd))) do_quake = TRUE;
+//				    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg);
 
 				if (backstab)
@@ -2733,7 +2745,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
                                         vorpal_cut = TRUE;
 				else vorpal_cut = FALSE;
 
-				if ((p_ptr->impact && (k > 50)) || chaos_effect == 2) do_quake = TRUE;
+				if (chaos_effect == 2) do_quake = TRUE;
 
 				if (vorpal_cut)
 				{
@@ -3119,7 +3131,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	/* Mega-Hack -- apply earthquake brand */
 	if (do_quake)
 	{
-		if (o_ptr->k_idx && check_guard_inscription(o_ptr->note, 'E' ))
+		if (o_ptr->k_idx)// && !check_guard_inscription(o_ptr->note, 'E' ))
 		{
 			/* Giga-Hack -- equalize the chance (though not likely..) */
 			if (old || randint(p_ptr->num_blow) < 3)

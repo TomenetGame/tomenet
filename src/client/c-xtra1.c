@@ -1083,6 +1083,7 @@ static void fix_message(void)
         int j, i;
         int w, h;
         int x, y;
+	bool msgtarget;
 
 	/* Display messages in different colors -Zz */
 	char nameA[20];
@@ -1095,13 +1096,15 @@ static void fix_message(void)
         /* Scan windows */
         for (j = 0; j < 8; j++)
         {
-                term *old = Term;
+                term *old = Term, *newterm;
 
                 /* No window */
                 if (!ang_term[j]) continue;
 
                 /* No relevant flags */
-                if (!(window_flag[j] & PW_MESSAGE)) continue;
+                if (!(window_flag[j] &
+		    (PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT))) continue;
+		msgtarget = TRUE;
 
                 /* Activate */
                 Term_activate(ang_term[j]);
@@ -1118,12 +1121,17 @@ static void fix_message(void)
 			msg = message_str(i);
 
 			/* Display messages in different colors -Zz */
-			if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL))
+			if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL)) {
+				if (!(window_flag[j] & (PW_MESSAGE | PW_CHAT))) msgtarget = FALSE;
 				a = TERM_GREEN;
-			else if (msg[0] == '[')
+			} else if (msg[2] == '[') {
+				if (!(window_flag[j] & (PW_MESSAGE | PW_CHAT))) msgtarget = FALSE;
 				a = TERM_L_BLUE;
-			else 
+			} else {
+				if (!(window_flag[j] & (PW_MESSAGE | PW_MSGNOCHAT))) msgtarget = FALSE;
 				a = TERM_WHITE;
+			}
+			if (!msgtarget) break;
 
                         /* Dump the message on the appropriate line */
                         Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
@@ -1502,9 +1510,9 @@ void window_stuff(void)
 	}
 
 	/* Display messages */
-	if (p_ptr->window & PW_MESSAGE)
+	if (p_ptr->window & (PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT))
 	{
-		p_ptr->window &= (~PW_MESSAGE);
+		p_ptr->window &= (~(PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT));
 		fix_message();
 	}
 }

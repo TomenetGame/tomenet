@@ -3412,7 +3412,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 
 			/* Advance and Save the name index */
 			if (!e_ptr->name) e_ptr->name = ++e_head->name_size;
-
+			
 			/* Append chars to the name */
 			strcpy(e_name + e_head->name_size, s);
 

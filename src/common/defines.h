@@ -1914,6 +1914,7 @@ that keeps many algorithms happy.
 #define SV_AMULET_WISDOM                28
 #define SV_AMULET_INFRA                 26
 #define SV_AMULET_GROM			38
+#define SV_AMULET_LUCK			39	/* Talisman */
 
 /* The sval codes for TV_RING */
 #define SV_RING_WOE                      0
@@ -2559,6 +2560,8 @@ that keeps many algorithms happy.
 #define PW_BORG_1	0x00004000L	/* Display borg messages */
 #define PW_BORG_2	0x00008000L	/* Display borg status */
 
+#define PW_CHAT		0x00040000L	/* Display chat messages */
+#define PW_MSGNOCHAT	0x00080000L	/* Display messages except chat */
 
 
 /*** General index values ***/
@@ -4878,7 +4881,7 @@ extern int PlayerUID;
 #define monk_heavy_armor(p_ptr) \
 	(get_skill(p_ptr, SKILL_MARTIAL_ARTS) && \
 	 armour_weight(p_ptr) > \
-	 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 150))
+	 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200))
 
 
 /* replacement of helper functions in cave.c */

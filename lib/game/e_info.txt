@@ -1491,9 +1491,10 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 #R:100
 #F:CAPACITY
 
-#Robes and all cloaks
+#Robes and all cloaks except elven cloak
 N:131:Gnomish
-T:35:0:255
+T:35:0:1
+T:35:3:255
 T:36:1:1
 X:B:30:15
 W:0:1:60:5000
@@ -1570,7 +1571,8 @@ F:CHARGING | FAST_CAST
 
 N:137:of Boldness
 X:A:0:5
-T:39:0:99
+#T:39:0:99
+T:39:0:2
 W:0:1:10:1500
 R:100
 F:RES_FEAR
@@ -1591,20 +1593,20 @@ F:RES_FEAR
 N:139:of Brightness
 X:A:0:5
 T:39:0:99
-W:0:3:10:2000
+W:0:3:10:10000
 R:100
 F:LITE1 | LITE2
-R:30
+R:35
 F:RES_DARK
 
 N:140:of *Brightness*
 X:A:0:9
 #T:39:0:99
-T:39:0:1
-W:0:1:40:6000
+T:39:0:2
+W:0:1:40:10000
 R:100
 F:LITE1 | LITE2 | RES_DARK
-R:30
+R:40
 F:RES_LITE
 
 #N:141:of the Shadows
@@ -1623,7 +1625,7 @@ F:RES_LITE
 N:142:of Infravision
 X:A:0:3
 T:39:0:99
-W:0:1:10:1000
+W:0:1:10:2000
 C:0:0:0:3
 R:100
 F:INFRA
@@ -1966,13 +1968,13 @@ F:REGEN_MANA
 # Weapon of Fury (must be big heavy type of weapon, no daggers or whips)
 N:176:of Fury
 X:A:24:30
-W:40:1:40:20000
+W:0:1:107:20000
 T:21:12:99
 T:22:10:99
 T:23:16:99
 T:24:8:99
 T:125:0:99
-C:-10:15:-20:3
+C:-15:15:-25:3
 R:100
 F:STR | BLOWS | SPEED | AGGRAVATE | RES_FEAR | HIDE_TYPE | 
 F:IGNORE_ACID | IGNORE_FIRE | DRAIN_MANA | IGNORE_WATER | ACTIVATE
@@ -2228,7 +2230,7 @@ F:R_ESP
 R:20
 F:R_ESP
 
-#Telepathic Awareness. Name must be slit because it's an insta-ego (C. Blue)
+#Telepathic Awareness. Name must be split because it's an insta-ego (C. Blue)
 N:197: 
 X:A:40:20
 W:0:0:0:1000
@@ -2255,7 +2257,7 @@ F:NO_SEED
 # Weapon of Perfection (must be light (<=100) and sword or polearm)
 N:199:of Perfection
 X:A:24:30
-W:60:1:45:20000
+W:50:1:30:5000
 T:22:3:3
 T:22:5:5
 T:22:7:7

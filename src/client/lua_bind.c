@@ -85,9 +85,11 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
         else if (lvl > 0)
         {
 //                tmp += p_ptr->to_s * (SKILL_STEP / 10);
-                tmp += get_skill_scale(p_ptr, SKILL_SPELL, 20) * (SKILL_STEP / 10);
+//                tmp += get_skill_scale(p_ptr, SKILL_SPELL, 20) * (SKILL_STEP / 10);
                 tmp += bonus;
                 lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
+                lvl *= (100 + get_skill_scale(p_ptr, SKILL_SPELL, 40));
+                lvl /= 100;
         }
         return lvl;
 }
@@ -97,6 +99,9 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
 s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat)
 {
         int             minfail;
+
+        /* correct LUA overflow bug */
+        if (chance >= 156) chance -= 256;
 
 	/* Reduce failure rate by "effective" level adjustment */
         chance -= 3 * (level - skill_level);
