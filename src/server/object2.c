@@ -5466,12 +5466,13 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		/* Require line of sight */
 		if (!los(wpos, y, x, ny, nx)) continue;
 
-		/* Obtain grid */
-		c_ptr = &zcave[ny][nx];
-
 		/* Require floor space (or shallow terrain) -KMW- */
 //		if (!(f_info[c_ptr->feat].flags1 & FF1_FLOOR)) continue;
-		if (!cave_floor_bold(zcave, ny, nx)) continue;
+		if (!cave_floor_bold(zcave, ny, nx) ||
+				cave_perma_bold(zcave, ny, nx)) continue;
+
+		/* Obtain grid */
+		c_ptr = &zcave[ny][nx];
 
 		/* No traps */
 //		if (c_ptr->t_idx) continue;

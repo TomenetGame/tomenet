@@ -1453,7 +1453,8 @@ static void process_player_end(int Ind)
 						if(randint(1000-factor)<10)
 						{
 							msg_print(Ind,"\377rYou are weakened by the exertion of swimming!");
-							do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
+//							do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
+							dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
 						}
 						take_hit(Ind, hit, "drowning");
 					}
@@ -1479,7 +1480,8 @@ static void process_player_end(int Ind)
 				if(randint(1000)<10)
 				{
 					msg_print(Ind,"\377rYou find it hard to move!");
-					do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
+//					do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
+					dec_stat(Ind, A_DEX, 10, STAT_DEC_TEMPORARY);
 				}
 				take_hit(Ind, hit, "anoxia");
 			}

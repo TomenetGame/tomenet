@@ -1050,11 +1050,13 @@ TODO: the newest should appear the first!
 
 16/06/2002 (Jir)
 - /news, displays news.txt
+- you can no longer drop items on stairs/store-entrances.
 [H] you can go into a store with '>' key.
 [B] TV_POTION2 didn't shatter when thrown.
 [B] you couldn't fire missiles, doh!
 [B] was trying to read 'mangband.rfe' while rfe file was 'tomenet.rfe'.
 [B] floors got unstaticed prematually sometimes (prolly my enbug).
+[B] STR damage by swimming exertion could be prevented by sustain_str.
 
 
 ** [B] stands for Bugfix.
@@ -1274,9 +1276,10 @@ memo and questions:
   + Potion of Light Mana?
   + Scroll of Teleport After/To.
   + Scroll of Dull Weapon/Armor (makes the item (+0, +0) [n, +0])
+  + Staff of Opening/Closing
   + Scroll of Admin Message (another way to tell players of information)
   + Musical Instruments
-  + blessed/cursed, rusty/broken flags etc.
+  + blessed/cursed, rusty/broken, fire/erode/waterproof flags etc.
   + LITE/RING/AMULET shouldn't be EASY_KNOWN? (for ego/randarts)
   + upgrade some of arts, so that they'll be treasured.
   + more tools
@@ -1292,7 +1295,8 @@ memo and questions:
 - combat:
   + players should be able to interfere monsters' firing/casting?
   + 2-weapon combat
-  + DEX should affect missile to-hit?
+  + DEX should affect missile to-hit? (or maybe done with skill)
+  + more RBM and RMEs (like seducing)
   
 [major ones]
 - NPC/pet/golem/slave

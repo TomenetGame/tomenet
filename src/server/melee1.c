@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: melee1.c */
 
 /* Purpose: Monster attacks */
@@ -467,25 +468,15 @@ bool make_attack_normal(int Ind, int m_idx)
 			 * a sucessful blow. Uniques have a better chance. -LM-
 			 * Nazgul have a 25% chance
 			 */
-/* if (!p_ptr->protundead){		// more efficient way :)	*/
-#if 0
-			if(
-				(r_ptr->flags7 & RF7_NAZGUL && magik(25)) ||
-				((r_ptr->flags3 & (RF3_UNDEAD)) &&
-					(((m_ptr->level >= 35) &&
-					(r_ptr->flags1 & (RF1_UNIQUE)) &&
-					(randint(300 - m_ptr->level) == 1))) ||
-					(((m_ptr->level >= 40) && (randint(450 - m_ptr->level) == 1)))
-			))
-#endif
-
-
+/* if (!p_ptr->protundead){}		// more efficient way :)	*/
 		/* I believe the previous version was wrong - evileye */
 
 			if(
 				(r_ptr->flags7 & RF7_NAZGUL && magik(25)) ||
 				((r_ptr->flags3 & (RF3_UNDEAD)) && (
-					((m_ptr->level >= 35) && (r_ptr->flags1 & (RF1_UNIQUE)) && (randint(300 - m_ptr->level) == 1)) ||
+					((m_ptr->level >= 35) &&
+					 (r_ptr->flags1 & (RF1_UNIQUE)) &&
+					 (randint(300 - m_ptr->level) == 1)) ||
 					((m_ptr->level >= 40) && (randint(450 - m_ptr->level) == 1))
 				))
 			  )
@@ -627,11 +618,21 @@ bool make_attack_normal(int Ind, int m_idx)
 
 					/* Saving throw (unless paralyzed) based on dex and level */
 					if (!p_ptr->paralyzed &&
-					    (rand_int(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-							      p_ptr->lev)))
+					    (rand_int(100 + UNAWARENESS(p_ptr)) <
+						 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
 					{
 						/* Saving throw message */
 						msg_print(Ind, "You quickly protect your money pouch!");
+
+						/* Occasional blink anyway */
+						if (rand_int(3)) blinked = TRUE;
+					}
+
+					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_MONEY_BELT &&
+							magik (70))
+					{
+						/* Saving throw message */
+						msg_print(Ind, "Your money was secured!");
 
 						/* Occasional blink anyway */
 						if (rand_int(3)) blinked = TRUE;
@@ -680,11 +681,27 @@ bool make_attack_normal(int Ind, int m_idx)
 
 					/* Saving throw (unless paralyzed) based on dex and level */
 					if (!p_ptr->paralyzed &&
-					    (rand_int(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-							      p_ptr->lev)))
+					    (rand_int(100 + UNAWARENESS(p_ptr)) <
+						 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev)))
 					{
 						/* Saving throw message */
 						msg_print(Ind, "You grab hold of your backpack!");
+
+						/* Occasional "blink" anyway */
+						blinked = TRUE;
+
+						/* Obvious */
+						obvious = TRUE;
+
+						/* Done */
+						break;
+					}
+
+					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION &&
+							magik (70))
+					{
+						/* Saving throw message */
+						msg_print(Ind, "Your backpack was secured!");
 
 						/* Occasional "blink" anyway */
 						blinked = TRUE;
@@ -721,6 +738,53 @@ bool make_attack_normal(int Ind, int m_idx)
 						msg_format(Ind, "%sour %s (%c) was stolen!",
 							   ((o_ptr->number > 1) ? "One of y" : "Y"),
 							   o_name, index_to_label(i));
+
+						/* Option */
+#ifdef MONSTER_INVENTORY
+						{
+							s16b o_idx;
+
+							/* Make an object */
+							o_idx = o_pop();
+
+							/* Success */
+							if (o_idx)
+							{
+								object_type *j_ptr;
+
+								/* Get new object */
+								j_ptr = &o_list[o_idx];
+
+								/* Copy object */
+								object_copy(j_ptr, o_ptr);
+
+								/* Modify number */
+								j_ptr->number = 1;
+
+								/* Hack -- If a wand, allocate total
+								 * maximum timeouts or charges between those
+								 * stolen and those missed. -LM-
+								 */
+								if (o_ptr->tval == TV_WAND)
+								{
+									j_ptr->pval = o_ptr->pval / o_ptr->number;
+									o_ptr->pval -= j_ptr->pval;
+								}
+
+								/* Forget mark */
+								// j_ptr->marked = FALSE;
+
+								/* Memorize monster */
+								j_ptr->held_m_idx = m_idx;
+
+								/* Build stack */
+								j_ptr->next_o_idx = m_ptr->hold_o_idx;
+
+								/* Build stack */
+								m_ptr->hold_o_idx = o_idx;
+							}
+						}
+#endif	// MONSTER_INVENTORY
 
 						/* Steal the items */
 						inven_item_increase(Ind, i, -1);
@@ -1304,6 +1368,43 @@ bool make_attack_normal(int Ind, int m_idx)
 					break;
 				}
 
+				case RBE_DISARM:
+				{
+					u32b f1, f2, f3, f4, f5, esp;
+					object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
+					bool shield = p_ptr->inventory[INVEN_ARM].k_idx ? TRUE : FALSE;
+
+					/* Take damage */
+					take_hit(Ind, damage, ddesc);
+
+					/* Bare-handed? oh.. */
+					if (!o_ptr->k_idx) break;
+
+					if (artifact_p(o_ptr) && magik(50)) break;
+
+					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+					if (!p_ptr->heavy_wield && (
+								((f4 & TR4_MUST2H) && magik(90)) ||
+								((f4 & TR4_COULD2H) && !shield && magik(80)) ))
+						break;
+					
+					/* riposte */
+					if (rand_int(p_ptr->skill_thn) * (p_ptr->heavy_wield ? 1 : 3)
+							< (rlev + damage + UNAWARENESS(p_ptr)))
+					{
+//						msg_print(Ind, "You lose the grip of your weapon!");
+						msg_format(Ind, "\377r%^s disarms you!", m_name);
+
+						if (cfg.anti_arts_horde && true_artifact_p(o_ptr)
+								&& magik(98))
+							inven_takeoff(Ind, INVEN_WIELD, 1);
+						else inven_drop(Ind, INVEN_WIELD, 1);
+
+						obvious = TRUE;
+					}
+					break;
+				}
+
 			}
 
 
@@ -1495,8 +1596,8 @@ bool make_attack_normal(int Ind, int m_idx)
 	/* Blink away */
 	if (blinked)
 	{
-		msg_print(Ind, "There is a puff of smoke!");
-		teleport_away(m_idx, MAX_SIGHT * 2 + 5);
+		if (teleport_away(m_idx, MAX_SIGHT * 2 + 5))
+			msg_print(Ind, "There is a puff of smoke!");
 	}
 
 
