@@ -56,12 +56,12 @@ typedef struct hist_type hist_type;
  */
 struct hist_type
 {
-	cptr info;                          /* Textual History */
+	cptr info;			/* Textual History */
 
-	byte roll;                          /* Frequency of this entry */
-	byte chart;                         /* Chart index */
-	byte next;                          /* Next chart index */
-	byte bonus;                         /* Social Class Bonus + 50 */
+	byte roll;			/* Frequency of this entry */
+	byte chart;			/* Chart index */
+	byte next;			/* Next chart index */
+	byte bonus;			/* Social Class Bonus + 50 */
 };
 
 
@@ -82,43 +82,43 @@ struct hist_type
  */
 static hist_type bg[] =
 {
-	{"You are the illegitimate and unacknowledged child ",   10, 1, 2, 25},
-	{"You are the illegitimate but acknowledged child ",     20, 1, 2, 35},
-	{"You are one of several children ",                     95, 1, 2, 45},
-	{"You are the first child ",                            100, 1, 2, 50},
+	{"You are the illegitimate and unacknowledged child ",	10, 1, 2, 25},
+	{"You are the illegitimate but acknowledged child ",	20, 1, 2, 35},
+	{"You are one of several children ",			95, 1, 2, 45},
+	{"You are the first child ",				100, 1, 2, 50},
 
-	{"of a Serf.  ",                                                 40, 2, 3, 65},
-	{"of a Yeoman.  ",                                               65, 2, 3, 80},
-	{"of a Townsman.  ",                                     80, 2, 3, 90},
-	{"of a Guildsman.  ",                                    90, 2, 3, 105},
-	{"of a Landed Knight.  ",                                        96, 2, 3, 120},
-	{"of a Titled Noble.  ",                                         99, 2, 3, 130},
-	{"of a Royal Blood Line.  ",                            100, 2, 3, 140},
+	{"of a Serf.  ",					40, 2, 3, 65},
+	{"of a Yeoman.  ",					65, 2, 3, 80},
+	{"of a Townsman.  ",					80, 2, 3, 90},
+	{"of a Guildsman.  ",					90, 2, 3, 105},
+	{"of a Landed Knight.  ",				96, 2, 3, 120},
+	{"of a Titled Noble.  ",				99, 2, 3, 130},
+	{"of a Royal Blood Line.  ",				100, 2, 3, 140},
 
-	{"You are the black sheep of the family.  ",             20, 3, 50, 20},
-	{"You are a credit to the family.  ",                    80, 3, 50, 55},
-	{"You are a well liked child.  ",                               100, 3, 50, 60},
+	{"You are the black sheep of the family.  ",		20, 3, 50, 20},
+	{"You are a credit to the family.  ",			80, 3, 50, 55},
+	{"You are a well liked child.  ",			100, 3, 50, 60},
 
-	{"Your mother was of the Teleri.  ",                     40, 4, 1, 50},
-	{"Your father was of the Teleri.  ",                     75, 4, 1, 55},
-	{"Your mother was of the Noldor.  ",                     90, 4, 1, 55},
-	{"Your father was of the Noldor.  ",                     95, 4, 1, 60},
-	{"Your mother was of the Vanyar.  ",                     98, 4, 1, 65},
-	{"Your father was of the Vanyar.  ",                    100, 4, 1, 70},
+	{"Your mother was of the Teleri.  ",			40, 4, 1, 50},
+	{"Your father was of the Teleri.  ",			75, 4, 1, 55},
+	{"Your mother was of the Noldor.  ",			90, 4, 1, 55},
+	{"Your father was of the Noldor.  ",			95, 4, 1, 60},
+	{"Your mother was of the Vanyar.  ",			98, 4, 1, 65},
+	{"Your father was of the Vanyar.  ",			100, 4, 1, 70},
 
-	{"You are one of several children ",                     60, 7, 8, 50},
-	{"You are the only child ",                                     100, 7, 8, 55},
+	{"You are one of several children ",			60, 7, 8, 50},
+	{"You are the only child ",				100, 7, 8, 55},
 
-	{"of a Teleri ",                                                 75, 8, 9, 50},
-	{"of a Noldor ",                                                 95, 8, 9, 55},
-	{"of a Vanyar ",                                                100, 8, 9, 60},
+	{"of a Teleri ",					75, 8, 9, 50},
+	{"of a Noldor ",					95, 8, 9, 55},
+	{"of a Vanyar ",					100, 8, 9, 60},
 
-	{"Ranger.  ",                                            40, 9, 54, 80},
-	{"Archer.  ",                                            70, 9, 54, 90},
-	{"Warrior.  ",                                           87, 9, 54, 110},
-	{"Mage.  ",                                                      95, 9, 54, 125},
-	{"Prince.  ",                                            99, 9, 54, 140},
-	{"King.  ",                                                     100, 9, 54, 145},
+	{"Ranger.  ",						40, 9, 54, 80},
+	{"Archer.  ",						70, 9, 54, 90},
+	{"Warrior.  ",						87, 9, 54, 110},
+	{"Mage.  ",						95, 9, 54, 125},
+	{"Prince.  ",						99, 9, 54, 140},
+	{"King.  ",						100, 9, 54, 145},
 
 	{"You are one of several children of a Hobbit ",                 85, 10, 11, 45},
 	{"You are the only child of a Hobbit ",                 100, 10, 11, 55},
@@ -1521,10 +1521,8 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	  {
 	    p_ptr->mode = MODE_NORMAL;
 	  }
-#ifdef NEWHOUSES
 	p_ptr->dna = ((class & 0xff) | ((race & 0xff) << 8) );
 	p_ptr->dna |= (randint(65535) << 16);
-#endif
 	p_ptr->male = sex;
 	p_ptr->pclass = class;
 	p_ptr->prace = race;

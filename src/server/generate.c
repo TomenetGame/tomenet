@@ -4046,7 +4046,6 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		price *= 80 + randint(40);
 
 		/* Remember price */
-#ifdef NEWHOUSES
 		MAKE(houses[num_houses].dna, struct dna_type);
 		houses[num_houses].dna->price = price;
 		houses[num_houses].x=x1;
@@ -4054,13 +4053,6 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		houses[num_houses].flags=HF_RECT|HF_STOCK;
 		houses[num_houses].coords.rect.width=x2-x1+1;
 		houses[num_houses].coords.rect.height=y2-y1+1;
-#else
-		houses[num_houses].price = price;
-		houses[num_houses].x_1 = x1+1;
-		houses[num_houses].y_1 = y1+1;
-		houses[num_houses].x_2 = x2-1;
-		houses[num_houses].y_2 = y2-1;
-#endif
 #ifdef NEW_DUNGEON
 		wpcopy(&houses[num_houses].wpos, wpos);
 #else
@@ -4116,15 +4108,10 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	/* Some buildings get special doors */
 	if (n == 13)
 	{
-#ifndef NEWHOUSES
-		c_ptr->feat = FEAT_HOME_HEAD + houses[num_houses].strength;
-#endif
-
 		/* hack -- only create houses that aren't already loaded from disk */
 		if ((i=pick_house(wpos, y, x)) == -1)
 		{
 			/* Store door location information */
-#ifdef NEWHOUSES
 			c_ptr->feat = FEAT_HOME_HEAD;
 			c_ptr->special.type=DNA_DOOR;
 			c_ptr->special.ptr = houses[num_houses].dna;
@@ -4132,11 +4119,6 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			houses[num_houses].dy=y;
 			houses[num_houses].dna->creator=0L;
 			houses[num_houses].dna->owner=0L;
-#else
-			houses[num_houses].door_y = y;
-			houses[num_houses].door_x = x;
-			houses[num_houses].owned = 0;
-#endif
 
 			/* One more house */
 			num_houses++;
@@ -4145,14 +4127,12 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				house_alloc+=512;
 			}
 		}
-#ifdef NEWHOUSES
 		else{
 			KILL(houses[num_houses].dna, struct dna_type);
 			c_ptr->feat=FEAT_HOME_HEAD;
 			c_ptr->special.type=DNA_DOOR;
 			c_ptr->special.ptr=houses[i].dna;
 		}
-#endif
 	}
 	else if (n == 14) // auctionhouse
 	{

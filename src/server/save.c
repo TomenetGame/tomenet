@@ -1123,7 +1123,6 @@ static void wr_ghost(void)
  */
 static void wr_house(house_type *house)
 {
-#ifdef NEWHOUSES
 	wr_byte(house->x);
 	wr_byte(house->y);
 	wr_byte(house->dx);
@@ -1152,20 +1151,6 @@ static void wr_house(house_type *house)
 			wr_byte(house->coords.poly[i+1]);
 		}while(house->coords.poly[i] || house->coords.poly[i+1]);
 	}
-#else
-	wr_byte(house->x_1); // APD added for clearing out the house.
-	wr_byte(house->y_1);
-	wr_byte(house->x_2);
-	wr_byte(house->y_2);
-
-	wr_byte(house->door_y);
-	wr_byte(house->door_x);
-	wr_byte(house->strength);
-	wr_byte(house->owned);
-
-	wr_s32b(house->depth);
-	wr_s32b(house->price);
-#endif
 }
 
 
@@ -1215,9 +1200,7 @@ static void wr_extra(int Ind)
 	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_los[i]);
 
 	wr_s32b(p_ptr->id);
-#ifdef NEWHOUSES	/* define this before reset and DIE!!! ;) */
 	wr_u32b(p_ptr->dna);
-#endif
 
 	/* Ignore the transient stats */
 	for (i = 0; i < 10; ++i) wr_s16b(0);
@@ -2256,7 +2239,6 @@ bool load_player(int Ind)
 static bool wr_server_savefile(void)
 {
         int        i;
-	int x,y;
 	u32b              now;
 
 	byte            tmp8u;
@@ -2457,7 +2439,6 @@ static void new_wr_dungeons(){
 	struct worldpos cwpos;
 	wilderness_type *w_ptr;
 	int x,y,z;
-	u32b cnt=0;
 	cwpos.wz=0;
 	for(y=0;y<MAX_WILD_Y;y++){
 		cwpos.wy=y;

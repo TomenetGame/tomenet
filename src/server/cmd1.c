@@ -768,12 +768,6 @@ void carry(int Ind, int pickup, int confirm)
 				/* Message */
 				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 
-
-#ifndef NEWHOUSES
-				/*  hack so it doesnt clear the house -APD- */
-				if (o_ptr->tval == TV_KEY) houses[o_ptr->pval].owned = 2;
-#endif
-
 				/* Delete original */
 				delete_object(wpos, p_ptr->py, p_ptr->px);
 
@@ -2121,7 +2115,6 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 {
 	if (r_ptr->flags7 & RF7_NAZGUL)
 	{
-		player_type *p_ptr = Players[Ind];
 		int weap = 0;	// Hack!
 		u32b f1, f2, f3, f4, f5, esp;
 
@@ -2579,13 +2572,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		csfunc[c_ptr->special.type].activate(c_ptr->special.ptr, Ind);
 		if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
 		{
-#ifndef NEWHOUSES
-			i = pick_house(Depth, y, x);
-			/* evileye hack new houses -demo */
-			if(i==-1 && c_ptr->special) /* orig house failure */
-#else
 			if(c_ptr->special.type==DNA_DOOR) /* orig house failure */
-#endif /* NEWHOUSES */
 			{
 				if(access_door(Ind, c_ptr->special.ptr))
 				{

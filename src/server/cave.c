@@ -706,24 +706,24 @@ static void image_random(byte *ap, char *cp)
  */
 char get_shimmer_color()
 {
-        switch (randint(7))
-        {
-                case 1:
-                        return TERM_RED;
-                case 2:
-                        return TERM_L_RED;
-                case 3:
-                        return TERM_WHITE;
-                case 4:
-                        return TERM_L_GREEN;
-                case 5:
-                        return TERM_BLUE;
-                case 6:
-                        return TERM_L_DARK;
-                case 7:
-                        return TERM_GREEN;
-        }
-        return (TERM_VIOLET);
+	switch (randint(7))
+	{
+		case 1:
+			return TERM_RED;
+		case 2:
+			return TERM_L_RED;
+		case 3:
+			return TERM_WHITE;
+		case 4:
+			return TERM_L_GREEN;
+		case 5:
+			return TERM_BLUE;
+		case 6:
+			return TERM_L_DARK;
+		case 7:
+			return TERM_GREEN;
+	}
+	return (TERM_VIOLET);
 }
 
 /* 
@@ -743,30 +743,30 @@ static byte breath_to_attr[32][2] =
 	{  0,  0 },
 	{  0,  0 },
 	{  0,  0 },
-	{  TERM_SLATE, TERM_L_DARK },       /* RF4_BRTH_ACID */
-	{  TERM_BLUE,  TERM_L_BLUE },       /* RF4_BRTH_ELEC */
-	{  TERM_RED,  TERM_L_RED },         /* RF4_BRTH_FIRE */
-	{  TERM_WHITE,  TERM_L_WHITE },     /* RF4_BRTH_COLD */
-	{  TERM_GREEN,  TERM_L_GREEN },     /* RF4_BRTH_POIS */
-	{  TERM_L_GREEN,  TERM_GREEN },     /* RF4_BRTH_NETHR */
-	{  TERM_YELLOW,  TERM_ORANGE },     /* RF4_BRTH_LITE */
-	{  TERM_L_DARK,  TERM_SLATE },      /* RF4_BRTH_DARK */
-	{  TERM_L_UMBER,  TERM_UMBER },     /* RF4_BRTH_CONFU */
-	{  TERM_YELLOW,  TERM_L_UMBER },    /* RF4_BRTH_SOUND */
-        {  255,  255 },   /* (any color) */ /* RF4_BRTH_CHAOS */
-	{  TERM_VIOLET,  TERM_VIOLET },     /* RF4_BRTH_DISEN */
-	{  TERM_L_RED,  TERM_VIOLET },      /* RF4_BRTH_NEXUS */
-	{  TERM_L_BLUE,  TERM_L_BLUE },     /* RF4_BRTH_TIME */
-	{  TERM_L_WHITE,  TERM_SLATE },     /* RF4_BRTH_INER */
-	{  TERM_L_WHITE,  TERM_SLATE },     /* RF4_BRTH_GRAV */
-	{  TERM_UMBER,  TERM_L_UMBER },     /* RF4_BRTH_SHARD */
-	{  TERM_ORANGE,  TERM_RED },        /* RF4_BRTH_PLAS */
-	{  TERM_UMBER,  TERM_L_UMBER },     /* RF4_BRTH_FORCE */
-	{  TERM_L_BLUE,  TERM_WHITE },      /* RF4_BRTH_MANA */
+	{  TERM_SLATE, TERM_L_DARK },		/* RF4_BRTH_ACID */
+	{  TERM_BLUE,  TERM_L_BLUE },		/* RF4_BRTH_ELEC */
+	{  TERM_RED,  TERM_L_RED },		/* RF4_BRTH_FIRE */
+	{  TERM_WHITE,  TERM_L_WHITE },		/* RF4_BRTH_COLD */
+	{  TERM_GREEN,  TERM_L_GREEN },		/* RF4_BRTH_POIS */
+	{  TERM_L_GREEN,  TERM_GREEN },		/* RF4_BRTH_NETHR */
+	{  TERM_YELLOW,  TERM_ORANGE },		/* RF4_BRTH_LITE */
+	{  TERM_L_DARK,  TERM_SLATE },		/* RF4_BRTH_DARK */
+	{  TERM_L_UMBER,  TERM_UMBER },		/* RF4_BRTH_CONFU */
+	{  TERM_YELLOW,  TERM_L_UMBER },	/* RF4_BRTH_SOUND */
+        {  255,  255 },   /* (any color) */	/* RF4_BRTH_CHAOS */
+	{  TERM_VIOLET,  TERM_VIOLET },		/* RF4_BRTH_DISEN */
+	{  TERM_L_RED,  TERM_VIOLET },		/* RF4_BRTH_NEXUS */
+	{  TERM_L_BLUE,  TERM_L_BLUE },		/* RF4_BRTH_TIME */
+	{  TERM_L_WHITE,  TERM_SLATE },		/* RF4_BRTH_INER */
+	{  TERM_L_WHITE,  TERM_SLATE },		/* RF4_BRTH_GRAV */
+	{  TERM_UMBER,  TERM_L_UMBER },		/* RF4_BRTH_SHARD */
+	{  TERM_ORANGE,  TERM_RED },		/* RF4_BRTH_PLAS */
+	{  TERM_UMBER,  TERM_L_UMBER },		/* RF4_BRTH_FORCE */
+	{  TERM_L_BLUE,  TERM_WHITE },		/* RF4_BRTH_MANA */
 	{  0,  0 },     /*  */
-	{  TERM_GREEN,  TERM_L_GREEN },     /* RF4_BRTH_NUKE */
+	{  TERM_GREEN,  TERM_L_GREEN },		/* RF4_BRTH_NUKE */
 	{  0,  0 },     /*  */
-	{  TERM_WHITE,  TERM_L_RED },       /* RF4_BRTH_DISINT */
+	{  TERM_WHITE,  TERM_L_RED },		/* RF4_BRTH_DISINT */
 };
 /*
  * Multi-hued monsters shimmer acording to their breaths.

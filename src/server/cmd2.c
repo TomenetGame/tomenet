@@ -370,7 +370,6 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
  * Exploding chest destroys contents (and traps).
  * Note that the chest itself is never destroyed.
  */
-// static void chest_trap(int Ind, int y, int x, object_type *o_ptr)
 static void chest_trap(int Ind, int y, int x, s16b o_idx)
 {
 	player_type *p_ptr = Players[Ind];
@@ -473,11 +472,7 @@ int pick_house(struct worldpos *wpos, int y, int x)
 	for (i = 0; i < num_houses; i++)
 	{
 		/* Check this one */
-#ifdef NEWHOUSES
 		if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, wpos))
-#else
-		if (houses[i].door_x == x && houses[i].door_y == y && houses[i].depth == Depth)
-#endif
 		{
 			/* Return */
 			return i;
@@ -493,9 +488,7 @@ bool chmod_door(int Ind, struct dna_type *dna, char *args){
 	player_type *p_ptr=Players[Ind];
 	if (!p_ptr->admin_wiz && !p_ptr->admin_dm)
 	{
-#ifdef NEWHOUSES
 		if(dna->creator!=p_ptr->dna) return(FALSE);
-#endif
 		/* more security needed... */
 	}
 
@@ -512,9 +505,7 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 	int i;
 	if (!p_ptr->admin_wiz && !p_ptr->admin_dm)
 	{
-#ifdef NEWHOUSES
 		if(dna->creator!=p_ptr->dna) return(FALSE);
-#endif
 		if(args[1]>='3') return(FALSE);
 		/* maybe make party leader only chown party */
 	}
@@ -563,14 +554,11 @@ bool access_door(int Ind, struct dna_type *dna){
 	player_type *p_ptr=Players[Ind];
 	if (p_ptr->admin_wiz && p_ptr->admin_dm)
 		return(TRUE);
-#ifdef NEWHOUSES
 	if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
 		return(FALSE); /* defies logic a bit, but for speed */
-#endif
 	switch(dna->owner_type){
 		case OT_PLAYER:
 			/* new doors in new server different */
-#ifdef NEWHOUSES
 			if(p_ptr->id==dna->owner && p_ptr->dna==dna->creator)
 				return(TRUE);
 			if(dna->a_flags & ACF_PARTY){
@@ -581,9 +569,6 @@ bool access_door(int Ind, struct dna_type *dna){
 				return(TRUE);
 			if((dna->a_flags & ACF_RACE) && (p_ptr->prace==((dna->creator>>8)&0xff)))
 				return(TRUE);
-#else
-			if(p_ptr->id==dna->owner) return(TRUE);
-#endif
 			break;
 		case OT_PARTY:
 			if(player_in_party(dna->owner, Ind)) return(TRUE);
@@ -808,13 +793,7 @@ void do_cmd_open(int Ind, int dir)
 		/* Home */
 		else if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
 		{
-#ifndef NEWHOUSES
-			i = pick_house(Depth, y, x);
-			/* evileye hack new houses -demo */
-			if(i==-1 && c_ptr->special) /* orig house failure */
-#else
 			if(c_ptr->special.type==DNA_DOOR) /* orig house failure */
-#endif /* NEWHOUSES */
 			{
 				if(access_door(Ind, c_ptr->special.ptr))
 				{
@@ -886,60 +865,6 @@ void do_cmd_open(int Ind, int dir)
 				}
 				msg_print(Ind,"\377rYou need a key to open this door.");
 			}
-
-#ifndef NEWHOUSES
-			/* See if he has the key in his inventory */
-			for (j = 0; j < INVEN_PACK; j++)
-			{
-				object_type *o_ptr = &p_ptr->inventory[j];
-
-				/* Check for a key */
-				if ( (o_ptr->tval == TV_KEY && o_ptr->pval == i) || (!(strcmp(p_ptr->name,cfg_admin_wizard))) )
-				{
-					/* Open the door */
-					c_ptr->feat = FEAT_HOME_OPEN;
-
-					/* Take half a turn */
-					p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
-
-					/* Notice */
-					note_spot_depth(Depth, y, x);
-
-					/* Redraw */
-					everyone_lite_spot(Depth, y, x);
-
-					/* XXX -- Paranoia */
-					if (!houses[i].owned)
-					{
-						/* Assume one key */
-						if (!p_ptr->admin_wiz) houses[i].owned = 1;
-					} 
-
-					/* Update some things */
-					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
-					
-					/* Done */
-					return;
-				}
-			}
-
-			/* He's not the owner, check if owned */
-			if (houses[i].owned)
-			{
-				msg_format(Ind, "This house is already owned.");
-			}
-			else
-			{
-				int price, factor;
-
-				/* Take CHR into account */
-				factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
-				price = houses[i].price * factor / 100;
-
-				/* Tell him the price */
-				msg_format(Ind, "This house costs %ld gold.", price);
-			}
-#endif /* !NEWHOUSES */
 		}
 
 		/* Closed door */
@@ -1053,11 +978,7 @@ void do_cmd_close(int Ind, int dir)
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			/* Close the door */
-#ifdef NEWHOUSES
 			c_ptr->feat = FEAT_HOME_HEAD;
-#else
-			c_ptr->feat = FEAT_HOME_HEAD + houses[i].strength;
-#endif
 
 			/* Notice */
 			note_spot_depth(wpos, y, x);
@@ -1446,7 +1367,6 @@ void do_cmd_disarm(int Ind, int dir)
 	struct worldpos *wpos=&p_ptr->wpos;
 
 	int                 y, x, i, j, power;
-	s16b o_idx;
 
 	cave_type               *c_ptr;
 	byte                    *w_ptr;
@@ -1457,7 +1377,6 @@ void do_cmd_disarm(int Ind, int dir)
 	bool            more = FALSE;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-
 
 	/* Ghosts cannot disarm */
 	if ( (p_ptr->ghost))
@@ -2041,13 +1960,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 			if ((c_ptr->feat >= FEAT_HOME_HEAD) &&
 				(c_ptr->feat <= FEAT_HOME_TAIL)) 
 			{
-#ifndef NEWHOUSES
-				i = pick_house(Depth, y, x);
-				/* evileye hack new houses -demo */
-				if(i==-1 && c_ptr->special){ /* orig house failure */
-#else
 				if(c_ptr->special.type==DNA_DOOR){ /* orig house failure */
-#endif /* NEWHOUSES */
 					if(!access_door(Ind, c_ptr->special.ptr))
 					{
 						do_cmd_open(Ind, dir);
@@ -3713,17 +3626,13 @@ void do_cmd_purchase_house(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 
-	int y, x, i, j;
+	int y, x;
 	int factor;
 //	int64_t price; /* I'm hoping this will be 64 bits.  I dont know if it will be portable. */
 	s64b price;
 
 	cave_type *c_ptr;
-#ifndef NEWHOUSES
-	object_type key;
-#else
 	struct dna_type *dna;
-#endif
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -3746,38 +3655,27 @@ void do_cmd_purchase_house(int Ind, int dir)
 		/* Get requested grid */
 		c_ptr = &zcave[y][x];
 
-#ifdef NEWHOUSES
-		if(!(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL && c_ptr->special.type==DNA_DOOR))
-#else
 		/* Check for a house */
-		if ((i = pick_house(Depth, y, x)) == -1)
-#endif
+		if(!(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL && c_ptr->special.type==DNA_DOOR))
 		{
 			/* No house, message */
 			msg_print(Ind, "You see nothing to buy there.");
 			return;
 		}
 
-#ifdef NEWHOUSES
 		dna=c_ptr->special.ptr;
-#endif
 		/* Take player's CHR into account */
 		factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 #if 0
 		if (houses[i].price < 3000000)
 #endif
-#ifdef NEWHOUSES
 		price = dna->price * factor / 100;
-#else
-			price = houses[i].price * factor / 100;
-#endif
 		/* Hack -- ignore CHR to prevent overflow */
 #if 0
 		else price = houses[i].price;
 #endif
 
 		/* Check for already-owned house */
-#ifdef NEWHOUSES
 		if(dna->owner){
 			if(access_door(Ind,dna)){
 				if(p_ptr->dna==dna->creator){
@@ -3815,100 +3713,6 @@ void do_cmd_purchase_house(int Ind, int dir)
 		dna->owner_type=OT_PLAYER;
 		dna->a_flags=ACF_NONE;
 		dna->min_level=1;
-#else
-		if (houses[i].owned)
-		{
-			/*
-			
-			NO MORE DUPLICATE KEYS HAHAHHA
-			
-			OK, so now this sells the house
-			*/
-			
-			 /* See if he has the key in his inventory */
-			for (j = 0; j < INVEN_PACK; j++)
-			{
-				object_type *o_ptr = &p_ptr->inventory[j];
-
-				/* Check for a key */
-				if (o_ptr->tval == TV_KEY && o_ptr->pval == i)
-				{
-
-					if( check_guard_inscription( o_ptr->note, 'h' )) {
-						msg_print(Ind, "The item's inscription prevents it");
-						return;
-					};
-					
-					/* Take away a key (do) */
-					inven_item_increase(Ind,j,-1);
-					inven_item_describe(Ind,j);
-					inven_item_optimize(Ind,j);
-
-					/* house is no longer owned */
-					houses[i].owned = 0;
-					
-					msg_format(Ind, "You sell your house for %ld gold.", price/2);
-
-					 /* Get the money */
-					p_ptr->au += price / 2;
-
-					/* Window */
-					p_ptr->window |= (PW_INVEN);
-
-					/* Redraw */
-					p_ptr->redraw |= (PR_GOLD);
-
-					/* Done */
-					return;
-				}
-				
-			}
-		
-			if (p_ptr->admin_wiz)
-			{
-				houses[i].owned = 0;
-				
-				msg_format(Ind, "The house has been reset.");
-				
-				return;
-			}
-		
-			/* Message */
-			msg_print(Ind, "That house is already owned.");
-			
-			/* No sale */
-			return;
-		}
-
-		/* Check for enough funds */
-		if (price > p_ptr->au)
-		{
-			/* Not enough money, message */
-			msg_print(Ind, "You do not have enough money.");
-			return;
-		}
-
-		/* Open the door */
-		c_ptr->feat = FEAT_HOME_OPEN;
-
-		/* Reshow */
-		everyone_lite_spot(Depth, y, x);
-
-		/* Make a key */
-		invcopy(&key, lookup_kind(TV_KEY, 1));
-
-		/* Set the pval to the house that this key opens */
-		key.pval = i;
-
-		/* Drop it */
-		drop_near(&key, -1, Depth, y, x);
-		
-		/* Take some of the player's money */
-		p_ptr->au -= price;
-			
-		/* The house is now owned */
-		houses[i].owned = 1;
-#endif /* !NEWHOUSES */
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_GOLD);

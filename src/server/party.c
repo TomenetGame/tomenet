@@ -122,7 +122,7 @@ int party_add(int adder, cptr name)
 {
 	player_type *p_ptr;
 	player_type *q_ptr = Players[adder];
-	int party_id = q_ptr->party, Ind = 0, i;
+	int party_id = q_ptr->party, Ind = 0;
 #if 0
 	/* Find name */
 	for (i = 1; i <= NumPlayers; i++)
@@ -235,7 +235,7 @@ int party_remove(int remover, cptr name)
 {
 	player_type *p_ptr;
 	player_type *q_ptr = Players[remover];
-	int party_id = q_ptr->party, Ind = 0, i;
+	int party_id = q_ptr->party, Ind = 0;
 
 #if 0
 	/* Find name */

@@ -959,7 +959,6 @@ static void rd_house(int n)
 	house_type *house_ptr = &houses[n];
 	cave_type **zcave;
 
-#ifdef NEWHOUSES
 	rd_byte(&house_ptr->x); 
 	rd_byte(&house_ptr->y);
 	rd_byte(&house_ptr->dx); 
@@ -996,27 +995,6 @@ static void rd_house(int n)
 		}while(house_ptr->coords.poly[i] || house_ptr->coords.poly[i+1]);
 		GROW(house_ptr->coords.poly, MAXCOORD, i+2, byte);
 	}
-
-#else
-	/* coordinates of corners of house */
-	rd_byte(&house_ptr->x_1); 
-	rd_byte(&house_ptr->y_1);
-	rd_byte(&house_ptr->x_2);
-	rd_byte(&house_ptr->y_2);
-
-	/* coordinates of the house door */
-	rd_byte(&house_ptr->door_y);
-	rd_byte(&house_ptr->door_x);
-
-	/* Door Strength */
-	rd_byte(&house_ptr->strength);
-
-	/* Owned or not */
-	rd_byte(&house_ptr->owned);
-
-	rd_s32b(&house_ptr->depth);
-	rd_s32b(&house_ptr->price);
-#endif
 }
 
 static void rd_wild(wilderness_type *w_ptr)
@@ -1287,9 +1265,7 @@ static bool rd_extra(int Ind)
 
 	rd_s32b(&p_ptr->id);
 
-#ifdef NEWHOUSES
 	rd_u32b(&p_ptr->dna);
-#endif
 
 	/* If he was created in the pre-ID days, give him one */
 	if (!p_ptr->id)

@@ -98,27 +98,12 @@ int neighbor_index(struct worldpos *wpos, char dir)
 */
 
 int towndist(int wx, int wy){
-	int x,y;
 	int i;
 	int dist, mindist=100;
 	for(i=0;i<numtowns;i++){
 		dist=abs(wx-town[i].x)+abs(wy-town[i].y);
 		mindist=MIN(dist, mindist);
 	}
-#if 0
-	int numtowns=0, dist, sdist=0, meandist, mindist=50;
-	for(y=0;y<MAX_WILD_Y;y++){
-		for(x=0;x<MAX_WILD_X;x++){
-			if(wild_info[y][x].type==WILD_TOWN){
-				numtowns++;
-				dist=abs(wx-x)+abs(wy-y);
-				mindist=MIN(dist, mindist);
-			}
-		}
-	}
-	meandist=sdist/numtowns; /* Take the mean distance from any town */
-
-#endif
 	return(mindist);
 }
 
@@ -1110,7 +1095,6 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			/* Remember price */
 			
 			/* hack -- setup next possibile house addition */
-#ifdef NEWHOUSES
 			MAKE(houses[num_houses].dna, struct dna_type);
 			houses[num_houses].dna->price = price;
 			houses[num_houses].x = h_x1;
@@ -1120,13 +1104,6 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 				houses[num_houses].flags |= HF_MOAT;
 			houses[num_houses].coords.rect.width = h_x2-h_x1+1;
 			houses[num_houses].coords.rect.height = h_y2-h_y1+1;
-#else
-			houses[num_houses].price = price;
-			houses[num_houses].x_1 = h_x1+1;
-			houses[num_houses].y_1 = h_y1+1;
-			houses[num_houses].x_2 = h_x2-1;
-			houses[num_houses].y_2 = h_y2-1;
-#endif
 			wpcopy(&houses[num_houses].wpos,wpos);
 			break;
 	}
@@ -1266,25 +1243,18 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		/* hack -- only add a house if it is not already in memory */
 		if ((tmp=pick_house(wpos, door_y, door_x)) == -1)
 		{
-#ifdef NEWHOUSES
 			c_ptr->special.type=DNA_DOOR;
 			c_ptr->special.ptr=houses[num_houses].dna;
 			houses[num_houses].dx = door_x;
 			houses[num_houses].dy = door_y;
 			houses[num_houses].dna->creator=0L;
 			houses[num_houses].dna->owner=0L;
-#else
-			houses[num_houses].door_y = door_y;
-			houses[num_houses].door_x = door_x;
-			houses[num_houses].owned = 0;
-#endif
 			num_houses++;
 			if((house_alloc-num_houses)<32){
 				GROW(houses, house_alloc, house_alloc+512, house_type);
 				house_alloc+=512;
 			}
 		}
-#ifdef NEWHOUSES
 		else{
 /* evileye temporary fix */
 #if 1
@@ -1297,7 +1267,6 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			c_ptr->special.type=DNA_DOOR;
 			c_ptr->special.ptr=houses[tmp].dna;
 		}
-#endif
 	}
 		
 	/* make the building interesting */
@@ -2381,14 +2350,12 @@ void wild_add_uhouse(house_type *h_ptr){
 }
 
 static void wild_add_uhouses(struct worldpos *wpos){
-#ifdef NEWHOUSES
 	int i;
 	for(i=0;i<num_houses;i++){
 		if(inarea(&houses[i].wpos,wpos) && !(houses[i].flags&HF_STOCK)){
 			wild_add_uhouse(&houses[i]);
 		}
 	}
-#endif
 }
 
 static void wilderness_gen_hack(struct worldpos *wpos)

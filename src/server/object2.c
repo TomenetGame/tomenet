@@ -23,7 +23,7 @@
 void delete_object_idx(int o_idx)
 {
 	object_type *o_ptr = &o_list[o_idx];
-	int i,j;
+	int i;
 
 	int y = o_ptr->iy;
 	int x = o_ptr->ix;
@@ -31,32 +31,6 @@ void delete_object_idx(int o_idx)
 	struct worldpos *wpos=&o_ptr->wpos;
 
 	cave_type *c_ptr;
-
-#ifndef NEWHOUSES
-	/* First, if this is a key, we need to reset the house */
-	/* it belongs to.  This is probably a hack. */
-	if (o_ptr->tval == TV_KEY)
-	{		
-		/* Disown the house */
-		
-		/* Hack -- do not clear house if houses[o_ptr->pval].owned = 2 */
-		if (houses[o_ptr->pval].owned)
-		{
-			if (houses[o_ptr->pval].owned != 2)
-			{
-				for (i = houses[o_ptr->pval].y_1; i <= houses[o_ptr->pval].y_2; i++)
-				{
-					for (j = houses[o_ptr->pval].x_1; j <= houses[o_ptr->pval].x_2; j++)
-					{
-						delete_object(houses[o_ptr->pval].depth,i,j);
-					}
-				}
-			}
-		
-			houses[o_ptr->pval].owned--;
-		}
-	}
-#endif /* NEWHOUSES */
 
 	/* Artifact becomes 'not found' status */
 	if ((artifact_p(o_ptr)) && (!o_ptr->name3))
@@ -298,7 +272,7 @@ void compact_objects(int size)
  
 void wipe_o_list(struct worldpos *wpos)
 {
-	int i, x, y;
+	int i;
 
 	/* Delete the existing objects */
 	for (i = 1; i < o_max; i++)
@@ -325,30 +299,6 @@ void wipe_o_list(struct worldpos *wpos)
 			a_info[o_ptr->name1].known = FALSE;
 		}
 
-		/* Delete it */
-
-#ifndef NEWHOUSES
-		/* First, if this is a key, we need to reset the house */
-		/* it belongs to.  This is probably a hack. */
-		if (o_ptr->tval == TV_KEY)
-		{
-			/* Disown the house */
-			/* delete the objects inside it. -APD*/
-			if (houses[o_ptr->pval].owned)
-			{
-				for (y = houses[o_ptr->pval].y_1; y <= houses[o_ptr->pval].y_2; y++)
-				{
-					for (x = houses[o_ptr->pval].x_1; x <= houses[o_ptr->pval].x_2; x++)
-					{
-						delete_object(houses[o_ptr->pval].depth,y,x); 
-					}
-				}
-			houses[o_ptr->pval].owned--;			
-			}			
-			
-		}
-#endif /* NEWHOUSES */
-
 		/* Wipe the object */
 		WIPE(o_ptr, object_type);
 	}
@@ -367,7 +317,7 @@ void wipe_o_list(struct worldpos *wpos)
  
 void wipe_o_list_safely(struct worldpos *wpos)
 {
-	int i, x, y;
+	int i;
 
 	cave_type **zcave;
 
@@ -400,30 +350,6 @@ void wipe_o_list_safely(struct worldpos *wpos)
 			a_info[o_ptr->name1].cur_num = 0;
 			a_info[o_ptr->name1].known = FALSE;
 		}
-
-		/* Delete it */
-
-#ifndef NEWHOUSES
-		/* First, if this is a key, we need to reset the house */
-		/* it belongs to.  This is probably a hack. */
-		if (o_ptr->tval == TV_KEY)
-		{
-			/* Disown the house */
-			/* delete the objects inside it. -APD*/
-			if (houses[o_ptr->pval].owned)
-			{
-				for (y = houses[o_ptr->pval].y_1; y <= houses[o_ptr->pval].y_2; y++)
-				{
-					for (x = houses[o_ptr->pval].x_1; x <= houses[o_ptr->pval].x_2; x++)
-					{
-						delete_object(houses[o_ptr->pval].depth,y,x); 
-					}
-				}
-			houses[o_ptr->pval].owned--;			
-			}			
-			
-		}
-#endif /* NEWHOUSES */
 
 		/* Wipe the object */
 		if(zcave){

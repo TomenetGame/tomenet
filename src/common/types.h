@@ -1328,7 +1328,6 @@ corners of the house.
 -APD-
 */
 
-#ifdef NEWHOUSES
 #define HF_NONE 0x00
 #define HF_MOAT 0x01
 #define HF_RECT 0x02
@@ -1349,26 +1348,6 @@ struct house_type{
 		cptr poly;	/* coordinate array for non rect houses */
 	}coords;
 };
-
-#else
-struct house_type
-{
-	byte x_1;
-	byte y_1; 
-	byte x_2;
-	byte y_2;
-	
-	byte door_y;		/* Location of door */
-	byte door_x;
-	byte strength;		/* Strength of door (unused) */
-	byte owned;		/* Currently owned? */
-
-	int depth;
-
-	s32b price;		/* Cost of buying */
-};
-#endif
-
 
 #define OT_PLAYER 1
 #define OT_PARTY 2
@@ -1446,9 +1425,7 @@ struct player_type
 	unsigned int version;		/* His version */
 
 	s32b id;		/* Unique ID to each player */
-#ifdef NEWHOUSES
 	u32b dna;		/* DNA - psuedo unique to each player life */
-#endif
 	time_t msg;		/* anti spamming protection */
 	byte msgcnt;
 	byte spam;
