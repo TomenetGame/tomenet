@@ -2009,7 +2009,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 1000,
                         },
                         {
                                 SKILL_SORCERY,
@@ -2106,17 +2106,17 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_STEALING,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_DODGE,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
 
                         /* Necromancy tree */
@@ -2260,18 +2260,18 @@ player_class class_info[MAX_CLASS] =
 
                         {
                                 SKILL_DEVICE,
-                                '+', 500,
-                                '+', 400,
+                                '+', 1000,
+                                '+', 1100,
                         },
                         {
                                 SKILL_SNEAKINESS,
-                                '+', 500,
-                                '+', 500,
+                                '+', 1000,
+                                '+', 900,
                         },
                         {
                                 SKILL_DISARM,
-                                '+', 500,
-                                '+', 500,
+                                '+', 1000,
+                                '+', 900,
                         },
                         {
                                 SKILL_DODGE,
@@ -2308,7 +2308,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 1200,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -2349,12 +2349,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 1200,
                         },
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 1000,
-                                '+', 900,
+                                '+', 700,
                         },
                         {
                                 SKILL_STEALTH,
@@ -2504,7 +2504,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 1100,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -2540,7 +2540,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 0,
-                                '+', 700,
+                                '+', 1000,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -2606,22 +2606,22 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 1000,
                         },
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 1200,
                         },
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 1200,
                         },
                         {
                                 SKILL_DISARM,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 1200,
                         },
                         {
                                 SKILL_TRAPPING,
@@ -2672,7 +2672,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 0,
-                                '+', 800,
+                                '+', 900,
                         },
                         {
                                 SKILL_INTERCEPT,
@@ -2718,7 +2718,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 1000,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -2820,8 +2820,8 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_DEVICE,
-                                '+', 500,
-                                '+', 400,
+                                '+', 1000,
+                                '+', 1000,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -2872,7 +2872,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 0,
-                                '+', 800,
+                                '+', 900,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -2990,47 +2990,77 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 1000,
                         },
                         {
                                 SKILL_SORCERY,
                                 '+', 0,
-                                '+', 400,	// 600.. too useful
+                                '+', 500,
                         },
                         {
-                                SKILL_CASTSPEED,
+                                SKILL_SPELL,
                                 '+', 0,
                                 '+', 500,
                         },
                         {
-                                SKILL_MAGERY,
+                                SKILL_MANA,
                                 '+', 1000,
-                                '+', 400,	// 600.. too useful
+                                '+', 600,
                         },
                         {
-                                SKILL_SHADOW,
+                                SKILL_FIRE,
                                 '+', 0,
-                                '+', 500,	// 600.. too useful
+                                '+', 600,
                         },
                         {
-                                SKILL_SPELLLENGTH,
+                                SKILL_AIR,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_EARTH,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_WATER,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_NATURE,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_DIVINATION,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_CONVEYANCE,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_META,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_MIND,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_TEMPORAL,
+                                '+', 0,
+                                '+', 600,
                         },
                         {
                                 SKILL_MIMIC,
                                 '+', 0,
                                 '+', 300,	/* I'd give 200 */
-                        },
-                        {
-                                SKILL_PRAY,
-                                '+', 0,
-                                '+', 500,	// 600.. too useful
-                        },
-                        {
-                                SKILL_SPELLRAD,
-                                '+', 0,
-                                '+', 500,
                         },
 
                         /* Sneakiness tree */
@@ -3057,17 +3087,17 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_STEALING,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_DODGE,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
 
                         /* Necromancy tree */

@@ -2051,7 +2051,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 
 	int                     ap_cnt;
 
-	int                     i, j, k, tmp, ac, rlev;
+	int                     ac, rlev; // ,i, j, k, tmp;
 	int                     do_cut, do_stun;
 
 	bool dead = FALSE;

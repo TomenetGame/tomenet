@@ -3214,14 +3214,10 @@ void do_cmd_store(int Ind)
 		}
 	}
 
-	/* Save the store number */
-	p_ptr->store_num = which;
-
 	/* Set the timer */
 	p_ptr->tim_store = STORE_TURNOUT;
 
 	/* Calculate the number of store maintainances since the last visit */
-//	maintain_num = (turn - town_info[p_ptr->town_num].store[which].last_visit) / (10L * STORE_TURNS);
 	maintain_num = (turn - st_ptr->last_visit) / (10L * STORE_TURNS);
 
 	/* Maintain the store max. 10 times */
@@ -3238,9 +3234,11 @@ void do_cmd_store(int Ind)
 		}
 
 		/* Save the visit */
-//		town_info[p_ptr->town_num].store[which].last_visit = turn;
 		st_ptr->last_visit = turn;
 	}
+
+	/* Save the store number */
+	p_ptr->store_num = which;
 
 	/* Save the store and owner pointers */
 	/*st_ptr = &store[p_ptr->store_num];
@@ -3264,7 +3262,7 @@ void do_cmd_store(int Ind)
 void store_shuffle(store_type *st_ptr)
 {
 	int i, j;
-	owner_type *ot_ptr;
+	//owner_type *ot_ptr;
 	int tries = 100;
 
 #if 0
@@ -3292,8 +3290,8 @@ void store_shuffle(store_type *st_ptr)
 	}
 
 	/* Activate the new owner */
-//	ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
-	ot_ptr = &ow_info[st_ptr->owner];
+	//	ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
+	//ot_ptr = &ow_info[st_ptr->owner];
 
 
 	/* Reset the owner data */

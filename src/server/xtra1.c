@@ -275,7 +275,7 @@ static void prt_sanity(int Ind)
 	buf[9] = '\0';
 
 	/* Send it */
-	Send_sanity(Ind, attr, &buf);
+	Send_sanity(Ind, attr, buf);
 
 #endif	// 0
 #endif	// SHOW_SANITY

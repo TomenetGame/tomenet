@@ -638,11 +638,13 @@ static errr init_a_info(void)
  */
 static errr init_s_info(void)
 {
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	int fd;
 
 	/* int i; */
 
 	int mode = 0644;
+#endif	// USE_RAW_FILES
 
 	errr err = 0;
 
@@ -1050,7 +1052,7 @@ static errr init_r_info(void)
  */
 static errr init_re_info(void)
 {
-	int mode = 0644;
+	//int mode = 0644;
 
 	errr err = 0;
 
@@ -1145,9 +1147,11 @@ static errr init_re_info(void)
  */
 static errr init_d_info(void)
 {
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	int fd;
 
 	int mode = 0644;
+#endif	// USE_RAW_FILES
 
 	errr err = 0;
 
@@ -1380,7 +1384,9 @@ static errr init_d_info(void)
  */
 static errr init_t_info(void)
 {
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	int mode = 0644;
+#endif	// USE_RAW_FILES
 
 	errr err = 0;
 
@@ -1567,9 +1573,11 @@ static errr init_v_info(void)
  */
 static errr init_st_info(void)
 {
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	int fd;
 
 	int mode = 0644;
+#endif	// USE_RAW_FILES
 
 	errr err = 0;
 
@@ -1791,9 +1799,11 @@ static errr init_st_info(void)
  */
 static errr init_ow_info(void)
 {
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	int fd;
 
 	int mode = 0644;
+#endif	// USE_RAW_FILES
 
 	errr err = 0;
 
@@ -2019,9 +2029,11 @@ static errr init_ow_info(void)
  */
 static errr init_ba_info(void)
 {
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	int fd;
 
 	int mode = 0644;
+#endif	// USE_RAW_FILES
 
 	errr err = 0;
 
@@ -2873,7 +2885,6 @@ void set_server_option(char * option, char * value)
 	else if (!strcmp(option,"BIND_NAME"))
 	{
 		cfg.bind_name = strdup(value);
-                printf("<<%s\n",cfg.bind_name);
 	}
 	else if (!strcmp(option,"CONSOLE_PASSWORD"))
 	{

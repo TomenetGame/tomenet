@@ -78,7 +78,9 @@ void do_cmd_go_up(int Ind)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Verify stairs if not a ghost, or admin wizard */
-	if (!p_ptr->admin_dm && !p_ptr->admin_wiz && c_ptr->feat != FEAT_LESS && !p_ptr->prob_travel)
+	if (!p_ptr->admin_dm && !p_ptr->admin_wiz &&
+		c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
+		!p_ptr->prob_travel)
 	{
 		struct worldpos twpos;
 		wpcopy(&twpos, wpos);
@@ -133,10 +135,13 @@ void do_cmd_go_up(int Ind)
 	/* Hack -- take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 	/* Success */
-	if (c_ptr->feat == FEAT_LESS)
+	if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)
 	{
 		process_hooks(HOOK_STAIR, "d", Ind);
-		msg_print(Ind, "You enter a maze of up staircases.");
+		if (c_ptr->feat == FEAT_WAY_LESS)
+			msg_print(Ind, "You enter the previous area.");
+		else
+			msg_print(Ind, "You enter a maze of up staircases.");
 		p_ptr->new_level_method = LEVEL_UP;
 	}
 	else
@@ -275,7 +280,9 @@ void do_cmd_go_down(int Ind)
 
 	/* Verify stairs */
 //      if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
-	if (!p_ptr->admin_dm && !p_ptr->admin_wiz && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
+	if (!p_ptr->admin_dm && !p_ptr->admin_wiz &&
+		c_ptr->feat != FEAT_MORE && c_ptr->feat != FEAT_WAY_MORE &&
+		!p_ptr->prob_travel)
 	{
 		struct worldpos twpos;
 		wpcopy(&twpos, wpos);
@@ -334,10 +341,13 @@ void do_cmd_go_down(int Ind)
 	forget_view(Ind);
 
 	/* Success */
-	if (c_ptr->feat == FEAT_MORE)
+	if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)
 	{
 		process_hooks(HOOK_STAIR, "d", Ind);
-		msg_print(Ind, "You enter a maze of down staircases.");
+		if (c_ptr->feat == FEAT_WAY_MORE)
+			msg_print(Ind, "You enter the next area.");
+		else
+			msg_print(Ind, "You enter a maze of down staircases.");
 		p_ptr->new_level_method = LEVEL_DOWN;
 	}
 	else

@@ -22,6 +22,14 @@
 
 # bug.txt should follow the exact same format
 
+
+01/09/2002 (Jir)
+[D]- FEAT_WAY_LESS/FEAT_WAY_MORE for DF1_FLAT dungeons.
+[D]- tree/water/lava streamers (build_streamer2)
+[B]- cavern was buried by walls
+[B]- Barrow-Downs floor was white
+[B]- store owners never changed (ie. no bargain)
+
 01/09/2002
 [m]- BIND_NAME works in tomenet.cfg
 
@@ -2177,6 +2185,7 @@ memo and questions:
 - implement monster mimics in a nicer way
 + towns
   - hint players of town locations (like 'Lorien is south-east to Bree')
+  - illuminate the Bree tavern :)
 [C] chat-line cursor editing
 
 [major ones]

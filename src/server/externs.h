@@ -15,11 +15,11 @@
 
 /* #include "netserver.h" */
 
-/* common */
+/* common/common.c */
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern int color_char_to_attr(char c);
+extern void version_build();
 
-extern struct sfunc csfunc[];
 
 /* common/files.c */
 int local_file_init(int ind, unsigned short fnum, char *fname);
@@ -34,6 +34,7 @@ int check_return(int ind, unsigned short fnum, unsigned long sum);
 int remote_update(int ind, char *fname);
 
 /* csfunc.c */
+extern struct sfunc csfunc[];
 extern void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr);
 
 /* netserver.c */
@@ -370,6 +371,8 @@ extern void server_birth(void);
 extern void admin_outfit(int Ind, int realm);
 
 /* cave.c */
+extern bool cave_set_quietly;
+
 extern bool cave_valid_bold(cave_type **zcave, int y, int x);
 extern struct c_special *GetCS(cave_type *c_ptr, unsigned char type);
 //extern struct c_special *AddCS(cave_type *c_ptr);
@@ -806,6 +809,8 @@ extern int Send_chardump(int ind);
 extern void Handle_direction(int Ind, int dir);
 extern void Handle_clear_buffer(int Ind);
 extern int Send_sanity(int ind, byte attr, cptr msg);
+extern char *showtime(void);
+extern void init_players();
 
 
 
