@@ -3711,6 +3711,7 @@ void update_stuff(int Ind)
 		/* update the client files */
 		p_ptr->update &= ~(PU_LUA);
 		remote_update(p_ptr->conn, "scpt/c-init.lua");
+		remote_update(p_ptr->conn, "scpt/player.lua");
 		remote_update(p_ptr->conn, "scpt/spells.lua");
 		remote_update(p_ptr->conn, "scpt/s_convey.lua");
 		remote_update(p_ptr->conn, "scpt/s_aux.lua");
