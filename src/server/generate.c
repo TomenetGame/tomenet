@@ -3936,7 +3936,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	int dx, dy, x, y, cx, cy, lev = getlevel(wpos);
 	cptr t;
 
-	bool morgoth_inside = FALSE;
+	bool morgoth_inside = FALSE, perma_walled = FALSE;
 	monster_type *m_ptr;
 
 	cave_type *c_ptr;
@@ -4035,6 +4035,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				/* Permanent wall (inner) */
 				case 'X':
 				c_ptr->feat = FEAT_PERM_INNER;
+				perma_walled = TRUE;
 				break;
 
 				/* Treasure/trap */
@@ -4178,40 +4179,47 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 		}
 	}
 
-	/* overridden by MORGOTH_NO_TELE_VAULTS:
-	   instead of making just that vault no-tele,
-	   now all vaults on the level are no-tele;
-	   performed in cave_gen (in generate.c too) */
-#ifdef MORGOTH_NO_TELE_VAULT
-#ifndef MORGOTH_NO_TELE_VAULTS
-	if (morgoth_inside)
-	{
-		/* Check if Morgoth occurs in this vault. If so, make it NO_TELEPORT! -C. Blue */
+	/* Check if vault is perma_walled, and make its fields 'remember' that */
+	if (perma_walled) {
 		for (t = data, dy = 0; dy < ymax; dy++)
 		{
 			for (dx = 0; dx < xmax; dx++, t++)
 			{
+				/* Extract the location */
+	/*			x = xval - (xmax / 2) + dx;
+				y = yval - (ymax / 2) + dy;	*/
 				x = cx + (rotate?dy:dx) * (mirrorlr?-1:1);
 				y = cy + (rotate?dx:dy) * (mirrorud?-1:1);
 
 				/* FIXME - find a better solution */
 				/* Is this any better? */
-	    			if(!in_bounds4(l_ptr,y,x))
-    					continue;
-
+				if(!in_bounds4(l_ptr,y,x))
+					continue;
+			
 				/* Hack -- skip "non-grids" */
 				if (*t == ' ') continue;
 
 				/* Access the grid */
 				c_ptr = &zcave[y][x];
-
-				/* Make it NO_TELEPORT */
-				c_ptr->info |= CAVE_STCK;
+			
+				/* Remember that this field belongs to a perma-wall vault */
+				c_ptr->info |= CAVE_ICKY_PERMA;
+				
+				/* overridden by MORGOTH_NO_TELE_VAULTS:
+				   instead of making just that vault no-tele,
+				   now all vaults on the level are no-tele;
+				   performed in cave_gen (in generate.c too) */
+#ifdef MORGOTH_NO_TELE_VAULT
+#ifndef MORGOTH_NO_TELE_VAULTS
+				if (morgoth_inside) {
+					/* Make it NO_TELEPORT */
+					c_ptr->info |= CAVE_STCK;
+				}
+#endif
+#endif
 			}
 		}
 	}
-#endif
-#endif
 
 	/* Reproduce itself */
 	/* TODO: make a better routine! */
@@ -5853,7 +5861,7 @@ static void build_mini_c_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 	{
 		for (x = x1 - 1; x <= x2 + 1; x++)
 		{
-			zcave[y][x].info |= (CAVE_ROOM | CAVE_ICKY);
+			zcave[y][x].info |= (CAVE_ROOM | CAVE_ICKY | CAVE_ICKY_PERMA);
 
 			/* Permanent walls */
 			cave_set_feat(wpos, y, x, FEAT_PERM_INNER);
@@ -8892,7 +8900,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		for (y = 1; y < dun->l_ptr->hgt - 1; y++) {
 			for (x = 1; x < dun->l_ptr->wid - 1; x++) {
 				cr_ptr = &zcave[y][x];
-				if (cr_ptr->info & (CAVE_ICKY)) cr_ptr->info |= (CAVE_STCK);
+				/* Only those vaults with PERMA_WALL walls */
+				if (cr_ptr->info & (CAVE_ICKY_PERMA)) cr_ptr->info |= (CAVE_STCK);
 			}
 		}
 	}
