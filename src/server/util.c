@@ -2740,7 +2740,7 @@ static void do_slash_cmd(int Ind, char *message)
 				do{
 					msg_format(Ind, "\377GValidating %s", token[tk]);
 					validate(token[tk]);
-				}while(--tk)
+				}while(--tk);
 				return;
 			}
 			else if (prefix(message, "/kick"))
