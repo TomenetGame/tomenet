@@ -6730,6 +6730,14 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 #A:50/1
 #F:CURSED | STR | INT | WIS | DEX | CON | CHR | HIDE_TYPE
 
+#N:0:& Cracker~
+#G:{:s
+#I:16:0:0
+#W:0:0:4:5
+#A:0/1:10/2
+#P:0:2d4:0:0:0
+#F:SHOW_MODS
+
 
 #N:(No.):(name)
 #G:(appearence):(colour)

@@ -1631,7 +1631,8 @@ void do_cmd_save_game(int Ind)
 long total_points(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int i = p_ptr->r_killed[4]? 1 : 2;
+	/* Maggot bonus.. beware, r_idx is hard-coded! */
+	int i = p_ptr->r_killed[8]? 1 : 2;
 
 	if (p_ptr->mode == MODE_HELL) return (((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 3 / 2)*i);
 	else return ((p_ptr->max_exp + (100 * p_ptr->max_dlv) + p_ptr->au)*i);

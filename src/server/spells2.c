@@ -846,6 +846,11 @@ void self_knowledge(int Ind)
 	{
 		info[i++] = "Your charisma is sustained.";
 	}
+	if (p_ptr->black_breath)
+	{
+		info[i++] = "You suffer from Black Breath.";
+	}
+
 
 	if (f1 & TR1_STR)
 	{
@@ -2943,7 +2948,7 @@ bool genocide(int Ind)
 #endif
 
 		/* Delete the monster */
-                if (!(r_ptr->flags3 & RF3_IM_TELE)) delete_monster_idx(i);
+                if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster_idx(i);
                 else continue;
 
 		/* Take damage */
@@ -3015,7 +3020,7 @@ bool mass_genocide(int Ind)
 		if (m_ptr->cdis > MAX_SIGHT) continue;
 
 		/* Delete the monster */
-                if (!(r_ptr->flags3 & RF3_IM_TELE)) delete_monster_idx(i);
+                if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster_idx(i);
                 else continue;
 
 		/* Hack -- visual feedback */
@@ -3260,9 +3265,9 @@ void destroy_area(int Depth, int y1, int x1, int r, bool full)
                         {
                                 monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
 #ifdef NEW_DUNGEON
-                                if (!(r_ptr->flags3 & RF3_IM_TELE)) delete_monster(wpos, y, x);
+                                if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, y, x);
 #else
-                                if (!(r_ptr->flags3 & RF3_IM_TELE)) delete_monster(Depth, y, x);
+                                if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(Depth, y, x);
 #endif
                                 else continue;
                         }
@@ -3875,9 +3880,9 @@ void wipe_spell(int Depth, int cy, int cx, int r)
                         {
                                 monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
 #ifdef NEW_DUNGEON
-                                if (!(r_ptr->flags3 & RF3_IM_TELE)) delete_monster(wpos, y, x);
+                                if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, y, x);
 #else
-                                if (!(r_ptr->flags3 & RF3_IM_TELE)) delete_monster(Depth, y, x);
+                                if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(Depth, y, x);
 #endif
                                 else continue;
                         }
@@ -5040,7 +5045,7 @@ void golem_creation(int Ind, int max)
         r_ptr->freq_spell = 0;
         r_ptr->flags1 |= RF1_FORCE_MAXHP;
         r_ptr->flags2 |= RF2_STUPID | RF2_EMPTY_MIND | RF2_REGENERATE | RF2_POWERFUL | RF2_BASH_DOOR | RF2_MOVE_BODY;
-        r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP | RF3_IM_TELE;
+        r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP | RF9_IM_TELE;
 
         switch (golem_type)
         {

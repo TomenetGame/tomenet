@@ -5223,7 +5223,8 @@ void drop_near_severe(int Ind, object_type *o_ptr, int chance, int Depth, int y,
 #endif
 {
 	/* Artifact always disappears */
-	if (cfg_anti_arts_horde && artifact_p(o_ptr) && !o_ptr->name3)
+//	if (cfg_anti_arts_horde && artifact_p(o_ptr) && !o_ptr->name3)
+	if (cfg_anti_arts_horde && true_artifact_p(o_ptr))
 	{
 		char	o_name[160];
 		object_desc(Ind, o_name, o_ptr, TRUE, 0);

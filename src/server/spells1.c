@@ -88,7 +88,8 @@ bool check_st_anchor(int depth)
 		if (q_ptr->dun_depth != depth) continue;
 #endif
 
-		if (!q_ptr->st_anchor) continue;
+//		if (!q_ptr->st_anchor) continue;
+		if (!q_ptr->anti_tele) continue;
 
 		return TRUE;
 	  }
@@ -131,7 +132,7 @@ void teleport_away(int m_idx, int dis)
 	if (check_st_anchor(m_ptr->dun_depth)) return;
 #endif
 
-        if (r_ptr->flags3 & RF3_IM_TELE) return;
+        if (r_ptr->flags9 & RF9_IM_TELE) return;
 
 	/* Save the old location */
 	oy = m_ptr->fy;
@@ -1695,7 +1696,9 @@ bool res_stat(int Ind, int stat)
  *
  * XXX XXX XXX This function is also called from the "melee" code
  *
- * The "mode" is currently unused.
+ *
+ * If "mode is set to 0 then a random slot will be used, if not the "mode"
+ * slot will be used.
  *
  * Return "TRUE" if the player notices anything
  */
@@ -1703,7 +1706,7 @@ bool apply_disenchant(int Ind, int mode)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int			t = 0;
+	int			t = mode;
 
 	object_type		*o_ptr;
 
@@ -1711,20 +1714,24 @@ bool apply_disenchant(int Ind, int mode)
 
 
 	/* Unused */
-	mode = mode;
+//	mode = mode;
 
+	if(mode < 1 || mode > 8) return (FALSE);
 
 	/* Pick a random slot */
-	switch (randint(8))
+	if(!mode)
 	{
-		case 1: t = INVEN_WIELD; break;
-		case 2: t = INVEN_BOW; break;
-		case 3: t = INVEN_BODY; break;
-		case 4: t = INVEN_OUTER; break;
-		case 5: t = INVEN_ARM; break;
-		case 6: t = INVEN_HEAD; break;
-		case 7: t = INVEN_HANDS; break;
-		case 8: t = INVEN_FEET; break;
+		switch (randint(8))
+		{
+			case 1: t = INVEN_WIELD; break;
+			case 2: t = INVEN_BOW; break;
+			case 3: t = INVEN_BODY; break;
+			case 4: t = INVEN_OUTER; break;
+			case 5: t = INVEN_ARM; break;
+			case 6: t = INVEN_HEAD; break;
+			case 7: t = INVEN_HANDS; break;
+			case 8: t = INVEN_FEET; break;
+		}
 	}
 
 	/* Get the item */
@@ -3143,13 +3150,13 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			if (seen) obvious = TRUE;
 			note_dies = " collapses, a mindless husk.";
 
-			if (r_ptr->flags3 & RF3_RES_PSI)
+			if (r_ptr->flags9 & RF9_RES_PSI)
 			if (rand_int(3))
 			{
 				resist = TRUE;
 			}
 
-			if ((r_ptr->flags3 & RF3_IM_PSI) || (r_ptr->flags2 & RF2_EMPTY_MIND))
+			if ((r_ptr->flags9 & RF9_IM_PSI) || (r_ptr->flags2 & RF2_EMPTY_MIND))
 			{
 				note = " is unaffected.";
 				dam = 0;
@@ -3862,7 +3869,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		case GF_AWAY_UNDEAD:
 		{
 			/* Only affect undead */
-                        if (!(r_ptr->flags3 & RF3_IM_TELE))
+                        if (!(r_ptr->flags9 & RF9_IM_TELE))
 			if (r_ptr->flags3 & RF3_UNDEAD)
 			{
 				if (seen) obvious = TRUE;
@@ -3880,7 +3887,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		case GF_AWAY_EVIL:
 		{
 			/* Only affect undead */
-                        if (!(r_ptr->flags3 & RF3_IM_TELE))
+                        if (!(r_ptr->flags9 & RF9_IM_TELE))
 			if (r_ptr->flags3 & RF3_EVIL)
 			{
 				if (seen) obvious = TRUE;
@@ -3897,8 +3904,8 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			/* Teleport monster (Use "dam" as "power") */
 		case GF_AWAY_ALL:
 		{
-                        if (!(r_ptr->flags3 & RF3_IM_TELE))
-                        if (!(r_ptr->flags3 & RF3_IM_TELE))
+                        if (!(r_ptr->flags9 & RF9_IM_TELE))
+                        if (!(r_ptr->flags9 & RF9_IM_TELE))
                         {
                                 /* Obvious */
                                 if (seen) obvious = TRUE;

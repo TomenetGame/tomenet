@@ -312,6 +312,20 @@ void do_cmd_eat_food(int Ind, int item)
 			break;
 		}
 
+		case SV_FOOD_ATHELAS:
+		{
+			msg_print(Ind, "A fresh, clean essence rises, driving away wounds and poison.");
+			ident = set_poisoned(Ind, 0) |
+					set_stun(Ind, 0) |
+					set_cut(Ind, 0);
+			if (p_ptr->black_breath)
+			{
+				msg_print(Ind, "The hold of the Black Breath on you is broken!");
+				p_ptr->black_breath = FALSE;
+			}
+			ident = TRUE;
+			break;
+		}
 
 		case SV_FOOD_RATION:
 		case SV_FOOD_BISCUIT:
@@ -328,6 +342,7 @@ void do_cmd_eat_food(int Ind, int item)
 			msg_print(Ind, "That tastes good.");
 			(void)set_poisoned(Ind, 0);
 			(void)hp_player(Ind, damroll(4, 8));
+			set_food(Ind, PY_FOOD_MAX - 1);
 			ident = TRUE;
 			break;
 		}
@@ -335,7 +350,13 @@ void do_cmd_eat_food(int Ind, int item)
 		case SV_FOOD_PINT_OF_ALE:
 		case SV_FOOD_PINT_OF_WINE:
 		{
-			msg_print(Ind, "That tastes good.");
+			if (magik(20))
+			{
+				msg_print(Ind, "*HIC*");
+				msg_format_near(Ind, "%s hiccups!", p_ptr->name);
+			}
+			else msg_print(Ind, "That tastes good.");
+
 			ident = TRUE;
 			break;
 		}
@@ -824,6 +845,11 @@ void do_cmd_quaff_potion(int Ind, int item)
 			(void)do_res_stat(Ind, A_WIS);
 			(void)do_res_stat(Ind, A_INT);
 			(void)do_res_stat(Ind, A_CHR);
+                        if (p_ptr->black_breath)
+                        {
+                                msg_print(Ind, "The hold of the Black Breath on you is broken!");
+                        }
+                        p_ptr->black_breath = FALSE;
 			ident = TRUE;
 			break;
 		}
@@ -5127,7 +5153,7 @@ void do_cmd_activate(int Ind, int item)
 				break;
 			}
 
-#if 0
+#if 1
                         case ART_ELESSAR:
 			{
                                 if (Ind, p_ptr->black_breath)
@@ -5135,7 +5161,7 @@ void do_cmd_activate(int Ind, int item)
                                         msg_print(Ind, "The hold of the Black Breath on you is broken!");
                                 }
                                 p_ptr->black_breath = FALSE;
-                                hp_player(100);
+                                hp_player(Ind, 100);
                                 o_ptr->timeout = 200;
 				break;
 			}
@@ -5447,7 +5473,7 @@ void do_cmd_activate(int Ind, int item)
 		return;
 
         }
-#if 0
+#if 1
 	/* Some ego items can be activated */
 	else if (o_ptr->name2)
 	{

@@ -1365,6 +1365,7 @@ static void wr_extra(int Ind)
 	/* Write death */
 	wr_byte(p_ptr->death);
 
+	wr_byte(p_ptr->black_breath);
 	/* Write feeling */
 	/*wr_byte(feeling);*/
 

@@ -73,11 +73,11 @@ static cptr r_info_blow_method[] =
 	"BUTT",
 	"CRUSH",
 	"ENGULF",
-	"XXX2",	// CHARGE
+	"CHARGE",	// "XXX2",
 	"CRAWL",
 	"DROOL",
 	"SPIT",
-	"XXX3",	// EXPLODE
+	"EXPLODE",	// "XXX3",
 	"GAZE",
 	"WAIL",
 	"SPORE",
@@ -85,7 +85,7 @@ static cptr r_info_blow_method[] =
 	"BEG",
 	"INSULT",
 	"MOAN",
-	"XXX5",	// SHOW
+	"SHOW",		// "XXX5",
 	NULL
 };
 
@@ -124,6 +124,11 @@ static cptr r_info_blow_effect[] =
 	"EXP_20",
 	"EXP_40",
 	"EXP_80",
+	"DISEASE",	// below are PernA additions
+	"TIME",
+        "INSANITY",
+        "HALLU",
+        "PARASITE",
 	NULL
 };
 
@@ -184,20 +189,20 @@ static cptr r_info_flags2[] =
 {
 	"STUPID",
 	"SMART",
-	"XXX1X2",	// "CAN_SPEAK",
-	"XXX2X2",	// "REFLECTING",
+	"CAN_SPEAK",	// "XXX1X2",
+	"REFLECTING",	// "XXX2X2",
 	"INVISIBLE",
 	"COLD_BLOOD",
 	"EMPTY_MIND",
 	"WEIRD_MIND",
-	"MULTIPLY",	// "DEATH_ORB",
+	"DEATH_ORB",	// "MULTIPLY",
 	"REGENERATE",
-	"XXX3X2",	// "SHAPECHANGER",
-	"XXX4X2",	// "ATTR_ANY",
+	"SHAPECHANGER",	// "XXX3X2",
+	"ATTR_ANY",	// "XXX4X2",
 	"POWERFUL",
-	"XXX5X2",	// "ELDRITCH_HORROR", 	
-	"XXX7X2",	// "AURA_FIRE",
-	"XXX6X2",	// "AURA_ELEC",
+	"ELDRITCH_HORROR", 		//"XXX5X2",
+	"AURA_FIRE",	// "XXX7X2",
+	"AURA_ELEC",	// "XXX6X2",
 	"OPEN_DOOR",
 	"BASH_DOOR",
 	"PASS_WALL",
@@ -229,26 +234,26 @@ static cptr r_info_flags3[] =
 	"UNDEAD",
 	"EVIL",
 	"ANIMAL",
-	"XXX1X3",	// "DRAGONRIDER",
-	"XXX2X3",	// "GOOD",
-	"XXX3X3",	// "AURA_COLD",
-        "IM_TELE",	// "NONLIVING",
+	"DRAGONRIDER",	// "XXX1X3",
+	"GOOD",	// "XXX2X3",
+	"AURA_COLD",	// "XXX3X3",
+	"NONLIVING",	// "IM_TELE",
 	"HURT_LITE",
 	"HURT_ROCK",
-	"HURT_FIRE",	// "SUSCEP_FIRE",
-	"HURT_COLD",	// "SUSCEP_COLD",
+	"SUSCEP_FIRE",	// "HURT_FIRE",
+	"SUSCEP_COLD",	// "HURT_COLD",
 	"IM_ACID",
 	"IM_ELEC",
 	"IM_FIRE",
 	"IM_COLD",
 	"IM_POIS",
-	"IM_PSI",	// "RES_TELE",
+	"RES_TELE",	// "IM_PSI",
 	"RES_NETH",
 	"RES_WATE",
 	"RES_PLAS",
 	"RES_NEXU",
 	"RES_DISE",
-	"RES_PSI",	// "UNIQUE_4",
+	"UNIQUE_4",	// "RES_PSI",
 	"NO_FEAR",
 	"NO_STUN",
 	"NO_CONF",
@@ -261,9 +266,9 @@ static cptr r_info_flags3[] =
 static cptr r_info_flags4[] =
 {
 	"SHRIEK",
-	"XXX2X4",	// "MULTIPLY",
-	"XXX3X4",	// "S_ANIMAL",
-	"XXX4X4",	// "ROCKET",
+	"MULTIPLY",	// "XXX2X4",
+	"S_ANIMAL",	// "XXX3X4",
+	"ROCKET",	// "XXX4X4",
 	"ARROW_1",
 	"ARROW_2",
 	"ARROW_3",
@@ -288,10 +293,10 @@ static cptr r_info_flags4[] =
 	"BR_PLAS",
 	"BR_WALL",
 	"BR_MANA",
-	"XXX5X4",	// "BA_NUKE",
-	"XXX6X4",	// "BR_NUKE",
-	"XXX7X4",	// "BA_CHAO",
-	"XXX8X4"	// "BR_DISI",
+	"BA_NUKE",	// "XXX5X4",
+	"BR_NUKE",	// "XXX6X4",
+	"BA_CHAO",	// "XXX7X4",
+	"BR_DISI"	// "XXX8X4"
 };
 
 /*
@@ -339,23 +344,23 @@ static cptr r_info_flags5[] =
 static cptr r_info_flags6[] =
 {
 	"HASTE",
-	"XXX1X6",	// "HAND_DOOM",
+	"HAND_DOOM",	// "XXX1X6",
 	"HEAL",
-	"XXX2X6",	// "S_ANIMALS",
+	"S_ANIMALS",	// "XXX2X6",
 	"BLINK",
 	"TPORT",
-	"XXX3X6",
-	"XXX4X6",
+	"ANIM_DEAD",	// "XXX3X6",
+        "S_BUG",	// "XXX4X6",
 	"TELE_TO",
 	"TELE_AWAY",
 	"TELE_LEVEL",
-	"XXX5",
+        "S_RNG",	// "XXX5",
 	"DARKNESS",
 	"TRAPS",
 	"FORGET",
-	"XXX6X6",
-	"XXX7X6",
-	"XXX8X6",
+        "S_DRAGONRIDER",	// "XXX6X6",
+	"S_KIN",	// "XXX7X6",
+        "S_HI_DEMON",	// "XXX8X6",
 	"S_MONSTER",
 	"S_MONSTERS",
 	"S_ANT",
@@ -500,8 +505,9 @@ static cptr r_info_flags9[] =
 	"XXX9X27",
 	"XXX9X28",
 	"XXX9X29",
-	"XXX9X30",
-	"XXX9X31",
+	"IM_TELE",
+	"IM_PSI",
+	"RES_PSI",
 };
 
 
@@ -2547,12 +2553,43 @@ static errr grab_one_basic_flag(monster_race *r_ptr, cptr what)
 		}
 	}
 
-	/* Scan flags1 */
+	/* Scan flags3 */
 	for (i = 0; i < 32; i++)
 	{
 		if (streq(what, r_info_flags3[i]))
 		{
 			r_ptr->flags3 |= (1L << i);
+			return (0);
+		}
+	}
+
+
+	/* Scan flags7 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags7[i]))
+		{
+			r_ptr->flags7 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Scan flags8 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags8[i]))
+		{
+			r_ptr->flags8 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Scan flags9 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags9[i]))
+		{
+			r_ptr->flags9 |= (1L << i);
 			return (0);
 		}
 	}
@@ -2721,6 +2758,15 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			/* Advance the index */
 			r_head->name_size += strlen(s);
 
+#if 0	// pernA hack -- someday.
+                        /* HACK -- Those ones HAVE to have a set default value */
+                        r_ptr->drops.treasure = OBJ_GENE_TREASURE;
+                        r_ptr->drops.combat = OBJ_GENE_COMBAT;
+                        r_ptr->drops.magic = OBJ_GENE_MAGIC;
+                        r_ptr->drops.tools = OBJ_GENE_TOOL;
+                        r_ptr->freq_inate = r_ptr->freq_spell = 0;
+#endif	// 0
+
 			/* Next... */
 			continue;
 		}
@@ -2732,6 +2778,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 		/* Process 'D' for "Description" */
 		if (buf[0] == 'D')
 		{
+#if 0	// I've never seen this used :)		- Jir -
 			/* Acquire the text */
 			s = buf+2;
 
@@ -2746,6 +2793,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 
 			/* Advance the index */
 			r_head->text_size += strlen(s);
+#endif
 
 			/* Next... */
 			continue;
@@ -2800,6 +2848,53 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			continue;
 		}
 
+                /* Process 'E' for "Body Parts" (one line only) */
+                if (buf[0] == 'E')
+		{
+#if 0
+                        int weap, tors, fing, head, arms, legs;
+
+			/* Scan for the other values */
+                        if (BODY_MAX != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
+                                &weap, &tors, &arms, &fing, &head, &legs)) return (1);
+
+			/* Save the values */
+                        r_ptr->body_parts[BODY_WEAPON] = weap;
+                        r_ptr->body_parts[BODY_TORSO] = tors;
+                        r_ptr->body_parts[BODY_ARMS] = arms;
+                        r_ptr->body_parts[BODY_FINGER] = fing;
+                        r_ptr->body_parts[BODY_HEAD] = head;
+                        r_ptr->body_parts[BODY_LEGS] = legs;
+
+                        /* Mega debugging hack */
+                        if (weap > arms) quit(format("monster %d, %d weapon(s), %d arm(s) !", error_idx, weap, arms));
+
+#endif	// 0
+			/* Next... */
+			continue;
+		}
+
+                /* Process 'O' for "Object type" (one line only) */
+                if (buf[0] == 'O')
+		{
+#if 0
+                        int treasure, combat, magic, tools;
+
+			/* Scan for the values */
+                        if (4 != sscanf(buf+2, "%d:%d:%d:%d",
+                                &treasure, &combat, &magic, &tools)) return (1);
+
+			/* Save the values */
+                        r_ptr->drops.treasure = treasure;
+                        r_ptr->drops.combat = combat;
+                        r_ptr->drops.magic = magic;
+                        r_ptr->drops.tools = tools;
+
+#endif	// 0
+			/* Next... */
+			continue;
+		}
+
 		/* Process 'W' for "More Info" (one line only) */
 		if (buf[0] == 'W')
 		{
@@ -2813,7 +2908,13 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			/* Save the values */
 			r_ptr->level = lev;
 			r_ptr->rarity = rar;
-			r_ptr->extra = pad;
+//			r_ptr->extra = pad;
+#if 1	//
+			r_ptr->extra = 0;
+                        /* MEGA HACK */
+                        if(!pad) pad = 100;
+                        r_ptr->weight = pad;
+#endif
 			r_ptr->mexp = exp;
 
 			/* Next... */

@@ -414,6 +414,28 @@ bool make_attack_normal(int Ind, int m_idx)
 			if (act) msg_format(Ind, "%^s %s", m_name, act);
 
 
+			/* The undead can give the player the Black Breath with
+			 * a sucessful blow. Uniques have a better chance. -LM-
+			 * Nazgul have a 25% chance
+			 */
+/* if (!p_ptr->protundead){		// more efficient way :)	*/
+			if(
+				(r_ptr->flags7 & RF7_NAZGUL && magik(25)) ||
+				 ((r_ptr->flags3 & (RF3_UNDEAD)) &&
+					(((m_ptr->level >= 35) &&
+					(r_ptr->flags1 & (RF1_UNIQUE)) &&
+					(randint(300 - m_ptr->level) == 1))) ||
+					(((m_ptr->level >= 40) &&
+					(randint(450 - m_ptr->level) == 1))) )
+			  )
+			{
+				msg_print(Ind, "Your foe calls upon your soul!");
+				msg_print(Ind, "You feel the Black Breath slowly draining you of life...");
+				p_ptr->black_breath = TRUE;
+			}
+
+
+
 			/* Hack -- assume all attacks are obvious */
 			obvious = TRUE;
 

@@ -403,7 +403,7 @@ struct monster_race
 
 	s32b mexp;				/* Exp value for kill */
 
-//	s32b weight;		/* Weight of the monster */
+	s32b weight;		/* Weight of the monster */
 	s16b extra;				/* Unused (for now) */
 
 	byte freq_inate;		/* Inate spell frequency */
@@ -415,7 +415,7 @@ struct monster_race
 	u32b flags4;			/* Flags 4 (inate/breath) */
 	u32b flags5;			/* Flags 5 (normal spells) */
 	u32b flags6;			/* Flags 6 (special spells) */
-#if 0
+#if 1
 	u32b flags7;			/* Flags 7 (movement related abilities) */
 	u32b flags8;			/* Flags 8 (wilderness info) */
 	u32b flags9;			/* Flags 9 (drops info) */
@@ -1827,7 +1827,8 @@ struct player_type
 	bool see_inv;		/* Can see invisible */
 	bool regenerate;	/* Regenerate hit pts */
 	bool hold_life;		/* Resist life draining */
-	bool telepathy;		/* Telepathy */
+//	bool telepathy;		/* Telepathy */
+	u32b telepathy;		/* Telepathy */
 	bool slow_digest;	/* Slower digestion */
 	bool bless_blade;	/* Blessed blade */
 	bool xtra_might;	/* Extra might bow */
@@ -1892,6 +1893,26 @@ struct player_type
 	hostile_type	*ignore;  /* List of players whose chat we wish to ignore */
 	bool	afk;		/* player is afk */
 	bool	use_r_gfx;	/* hack - client uses gfx? */
+
+        byte drain_mana;        /* mana draining */
+//        byte drain_life;        /* hp draining */
+//
+        bool sensible_fire;     /* Fire does more damage on the player */
+
+        bool reflect;       /* Reflect 'bolt' attacks */
+        bool sh_fire;       /* Fiery 'immolation' effect */
+        bool sh_elec;       /* Electric 'immolation' effect */
+        bool wraith_form;   /* wraithform */
+        bool immune_neth;       /* Immunity to nether */
+
+//        byte anti_magic_spell;    /* Anti-magic(newer one..) */
+        byte antimagic;    		/* Anti-magic(in percent) */
+        byte antimagic_dis;     /* Radius of the anti magic field */
+        bool anti_tele;     /* Prevent teleportation */
+							/* in PernM, it's same as st_anchor */
+
+	/* some new borrowed flags (saved) */
+        bool black_breath;      /* The Tolkien's Black Breath */
 };
 
 /* For Monk martial arts */

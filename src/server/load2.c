@@ -1581,6 +1581,10 @@ static bool rd_extra(int Ind)
 	rd_byte(&tmp8u);
 	p_ptr->death = tmp8u;
 
+	if (!older_than(3,3,4))
+		rd_byte(&p_ptr->black_breath);
+	else p_ptr->black_breath = FALSE;
+
 	/* Read "feeling" */
 	/*rd_byte(&tmp8u);
 	  feeling = tmp8u;*/

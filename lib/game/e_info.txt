@@ -48,14 +48,14 @@ C:-40:-40:0:3
 R:100
 F:MANA | SPELL | PVAL_M2
 
-N:4:of Spell
-T:6:0:255
-X:A:24:60
-W:0:2:8:40000
-C:0:0:0:0
-R:100
-F:ACTIVATE
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+#N:4:of Spell
+#T:6:0:255
+#X:A:24:60
+#W:0:2:8:40000
+#C:0:0:0:0
+#R:100
+#F:ACTIVATE
+#F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 ### Body Armor ###
 
@@ -1871,6 +1871,16 @@ C:0:0:0:0
 R:100
 F:EASY_USE
 
+# Mangband oriented ones
+N:180:of Lordly Resistance
+X:A:31:10
+#X:31:20
+#W:0:0:0:250000
+W:60:1:36:250000
+C:0:0:20:0
+F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | ACTIVATE |
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+
 
 #N:(No.):(name)
 #T:6:0:255  [tval:min_sval:max_sval]
@@ -1880,4 +1890,4 @@ F:EASY_USE
 #P:(AC):(base dam.):(to-hit):(to-dam):(+AC?)
 #C:hit:dam:ac:pval-max
 #F:(attribute)|...
-
+#Z:(power)

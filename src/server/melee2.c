@@ -491,11 +491,13 @@ bool make_attack_spell(int Ind, int m_idx)
 	if (rand_int(100) >= chance) return (FALSE);
 
 	/* Compute the probability of the unbeliever to disrupt any magic attemps */
+#if 0
 	if ((p_ptr->pclass == CLASS_UNBELIEVER))
 	  {
 	    antichance += p_ptr->lev;
 	    antidis += 1 + (p_ptr->lev / 11);
 	  }
+
 
 	if (o_ptr->k_idx)
 	  {
@@ -520,7 +522,11 @@ bool make_attack_spell(int Ind, int m_idx)
 		antidis += 4 - (minus / 10);
 	      }
 	  }
+#endif	// 0
 	
+	antichance = p_ptr->antimagic;
+	antidis = p_ptr->antimagic_dis;
+
 	if (m_ptr->cdis > antidis) antichance = 0;
 
 
@@ -3228,7 +3234,7 @@ static void process_monster(int Ind, int m_idx)
 	/* Hack -- No reproduction close to town center */
 	if (Depth <= 0 ? (wild_info[Depth].radius > 2) : 1)
 #endif
-		if ((r_ptr->flags2 & RF2_MULTIPLY) && (num_repro < MAX_REPRO))
+		if ((r_ptr->flags4 & RF4_MULTIPLY) && (num_repro < MAX_REPRO))
 		{
 			int k, y, x;
 
@@ -3252,7 +3258,7 @@ static void process_monster(int Ind, int m_idx)
 				if (multiply_monster(m_idx))
 				{
 					/* Take note if visible */
-					if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags2 |= RF2_MULTIPLY;
+					if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags4 |= RF4_MULTIPLY;
 
 					/* Multiplying takes energy */
 #ifdef NEW_DUNGEON

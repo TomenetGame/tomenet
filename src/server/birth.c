@@ -874,6 +874,9 @@ static void player_wipe(int Ind)
 
 	/* Esp link */
 	p_ptr->esp_link_end = 0;
+
+	/* Player don't have the black breath from the beginning !*/
+	p_ptr->black_breath = FALSE;
 }
 
 

@@ -604,7 +604,6 @@ static void process_world(int Ind)
 		if (p_ptr->wpos.wz)
 			(void)alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
 		else wild_add_monster(&p_ptr->wpos);
-	}
 #else
 		if (p_ptr->dun_depth >= 0)		
 			monster_level = p_ptr->dun_depth;
@@ -613,8 +612,49 @@ static void process_world(int Ind)
 			(void)alloc_monster(p_ptr->dun_depth, MAX_SIGHT + 5, FALSE);
 		/* Make a new monster */
 		else wild_add_monster(p_ptr->dun_depth);
-	}
 #endif
+	}
+
+	/* Every 1500 turns, warn about any Black Breath not gotten from an equipped
+	 * object, and stop any resting. -LM-
+	 */
+	/* Probably better done in process_player_end?	- Jir - */
+	if (!(turn % 3000) && (p_ptr->black_breath))
+	{
+		msg_print(Ind, "\377WThe Black Breath saps your soul!");
+		disturb(Ind, 0, 0);
+	}
+#if 0	// no BB-causing items for now?
+	if (!(turn % 3000) && (p_ptr->black_breath))
+	{
+		u32b f1, f2, f3, f4, f5;
+
+		bool be_silent = FALSE;
+
+		/* check all equipment for the Black Breath flag. */
+		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+		{
+			o_ptr = &inventory[i];
+
+			/* Skip non-objects */
+			if (!o_ptr->k_idx) continue;
+
+			/* Extract the item flags */
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+			/* No messages if object has the flag, to avoid annoyance. */
+			if (f4 & (TR4_BLACK_BREATH)) be_silent = TRUE;
+
+		}
+		/* If we are allowed to speak, warn and disturb. */
+
+		if (!be_silent)
+		{
+			cmsg_print(TERM_L_DARK, "The Black Breath saps your soul!");
+			disturb(0, 0);
+		}
+	}
+#endif	// 0
 }
 
 
@@ -2088,6 +2128,41 @@ static void process_player_end(int Ind)
 				p_ptr->max_exp--;
 				check_experience(Ind);
 			}
+		}
+
+        /* Handle experience draining.  In Oangband, the effect is worse,
+         * especially for high-level characters.  As per Tolkien, hobbits
+         * are resistant.
+         */
+        if (p_ptr->black_breath)
+        {
+                byte chance = (p_ptr->prace == RACE_HOBBIT) ? 2 : 5;
+                int plev = p_ptr->lev;
+
+//                if (PRACE_FLAG(PR1_RESIST_BLACK_BREATH)) chance = 2;
+
+                if ((rand_int(100) < chance) && (p_ptr->exp > 0))
+                {
+                        p_ptr->exp -= 1 + plev / 5;
+                        p_ptr->max_exp -= 1 + plev / 5;
+                        (void)do_dec_stat(Ind, randint(6)+1, STAT_DEC_NORMAL);
+                        check_experience(Ind);
+                }
+        }
+
+		/* Drain Mana */
+		if (p_ptr->drain_mana && p_ptr->csp)
+		{
+			p_ptr->csp -= p_ptr->drain_mana;
+			if (magik(30)) p_ptr->csp -= p_ptr->drain_mana;
+
+			if (p_ptr->csp < 0) p_ptr->csp = 0;
+
+			/* Redraw */
+			p_ptr->redraw |= (PR_MANA);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_PLAYER);
 		}
 
 		/* Note changes */

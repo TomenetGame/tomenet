@@ -117,7 +117,7 @@ void delete_monster_idx(int i)
 	r_ptr->cur_num--;
 
 	/* Hack -- count the number of "reproducers" */
-	if (r_ptr->flags2 & RF2_MULTIPLY) num_repro--;
+	if (r_ptr->flags4 & RF4_MULTIPLY) num_repro--;
 
 
 	/* Remove him from everybody's view */
@@ -1161,9 +1161,26 @@ void update_mon(int m_idx, bool dist)
 			{
 				bool see = FALSE;
 
-				if (p_ptr->mode == MODE_NORMAL) see = TRUE;
-				if ((p_ptr->mode == MODE_HELL) && (m_ptr->cdis < MAX_SIGHT)) see = TRUE;
-				if (!p_ptr->telepathy && (p_ptr->prace == RACE_DRIDER) && (m_ptr->cdis > (p_ptr->lev / 2))) see = FALSE;
+				/* Different ESP */
+				if ((p_ptr->telepathy & ESP_ORC) && (r_ptr->flags3 & RF3_ORC)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_SPIDER) && (r_ptr->flags7 & RF7_SPIDER)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_TROLL) && (r_ptr->flags3 & RF3_TROLL)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_DRAGON) && (r_ptr->flags3 & RF3_DRAGON)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_GIANT) && (r_ptr->flags3 & RF3_GIANT)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_DEMON) && (r_ptr->flags3 & RF3_DEMON)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_UNDEAD) && (r_ptr->flags3 & RF3_UNDEAD)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_EVIL) && (r_ptr->flags3 & RF3_EVIL)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_ANIMAL) && (r_ptr->flags3 & RF3_ANIMAL)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_DRAGONRIDER) && (r_ptr->flags3 & RF3_DRAGONRIDER)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_GOOD) && (r_ptr->flags3 & RF3_GOOD)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_NONLIVING) && (r_ptr->flags3 & RF3_NONLIVING)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_UNIQUE) && ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags3 & RF3_UNIQUE_4))) see = TRUE;
+				if (p_ptr->telepathy & ESP_ALL) see = TRUE;
+
+
+//				if (p_ptr->mode == MODE_NORMAL) see = TRUE;
+				if (see && (p_ptr->mode == MODE_HELL) && (m_ptr->cdis < MAX_SIGHT)) see = TRUE;
+				if (see && !p_ptr->telepathy && (p_ptr->prace == RACE_DRIDER) && (m_ptr->cdis > (p_ptr->lev / 2))) see = FALSE;
 
 				if (see)
 				{
@@ -1753,7 +1770,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 
 
 	/* Hack -- count the number of "reproducers" */
-	if (r_ptr->flags2 & RF2_MULTIPLY) num_repro++;
+	if (r_ptr->flags4 & RF4_MULTIPLY) num_repro++;
 
 
 	/* Assign maximal hitpoints */
@@ -2648,7 +2665,7 @@ static bool summon_specific_okay(int r_idx)
 
 		case SUMMON_VERMIN:
 		{
-			okay = (r_ptr->flags2 & RF2_MULTIPLY)?TRUE:FALSE;
+			okay = (r_ptr->flags4 & RF4_MULTIPLY)?TRUE:FALSE;
 			break;
 		}
 

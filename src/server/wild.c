@@ -344,7 +344,7 @@ static bool wild_monst_aux_lake(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* no reproducing monsters allowed */
-	if (r_ptr->flags3 & RF2_MULTIPLY) return FALSE;
+	if (r_ptr->flags4 & RF4_MULTIPLY) return FALSE;
 
 	/* animals are OK */
 	if (r_ptr->flags3 & RF3_ANIMAL) return TRUE;
@@ -364,7 +364,7 @@ static bool wild_monst_aux_grassland(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* no reproducing monsters allowed */
-	if (r_ptr->flags3 & RF2_MULTIPLY) return FALSE;
+	if (r_ptr->flags4 & RF4_MULTIPLY) return FALSE;
 
 	/* animals are OK */
 	if (r_ptr->flags3 & RF3_ANIMAL) return TRUE; 

@@ -1625,7 +1625,7 @@ static void calc_bonuses(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int			i, j, hold;
+	int			i, j, hold, minus;
 
 	int			old_speed;
 
@@ -1693,7 +1693,7 @@ static void calc_bonuses(int Ind)
 	p_ptr->regenerate = FALSE;
 	p_ptr->feather_fall = FALSE;
 	p_ptr->hold_life = FALSE;
-	p_ptr->telepathy = FALSE;
+	p_ptr->telepathy = 0;
 	p_ptr->lite = FALSE;
 	p_ptr->sustain_str = FALSE;
 	p_ptr->sustain_int = FALSE;
@@ -1731,6 +1731,10 @@ static void calc_bonuses(int Ind)
 	/* Invisibility */
 	p_ptr->invis = 0;
 
+	p_ptr->immune_neth = FALSE;
+	p_ptr->anti_tele = FALSE;
+	p_ptr->antimagic = 0;
+	p_ptr->antimagic_dis = 0;
 
 	/* Base infravision (purely racial) */
 	p_ptr->see_infra = p_ptr->rp_ptr->infra;
@@ -1905,6 +1909,8 @@ static void calc_bonuses(int Ind)
 	if (p_ptr->pclass == CLASS_UNBELIEVER)
 	  {
 	    p_ptr->anti_magic = TRUE;
+	    p_ptr->antimagic = p_ptr->lev;
+		p_ptr->antimagic_dis = 1 + (p_ptr->lev / 11);
 	  }
 
 
@@ -1912,7 +1918,7 @@ static void calc_bonuses(int Ind)
 	if (!strcmp(p_ptr->name,cfg_dungeon_master)) 
 	{
 		p_ptr->pspeed += 50;
-		p_ptr->telepathy = 1;
+		p_ptr->telepathy |= ESP_ALL;
 	}
 
 
@@ -2045,7 +2051,8 @@ static void calc_bonuses(int Ind)
 		if (f3 & TR3_XTRA_MIGHT) p_ptr->xtra_might = TRUE;
 		if (f3 & TR3_SLOW_DIGEST) p_ptr->slow_digest = TRUE;
 		if (f3 & TR3_REGEN) p_ptr->regenerate = TRUE;
-		if (f3 & TR3_TELEPATHY) p_ptr->telepathy = TRUE;
+                if (esp) p_ptr->telepathy |= esp;
+//		if (f3 & TR3_TELEPATHY) p_ptr->telepathy = TRUE;
 //		if (f3 & TR3_LITE1) p_ptr->lite += 1;
 		if (f3 & TR3_SEE_INVIS) p_ptr->see_inv = TRUE;
 		if (f3 & TR3_FEATHER) p_ptr->feather_fall = TRUE;
@@ -2089,6 +2096,7 @@ static void calc_bonuses(int Ind)
 		if (f2 & TR2_RES_NETHER) p_ptr->resist_neth = TRUE;
 //		if (f2 & TR2_ANTI_MAGIC) p_ptr->anti_magic = TRUE;
 		if (f3 & TR3_NO_MAGIC) p_ptr->anti_magic = TRUE;
+		if (f3 & (TR3_NO_TELE)) p_ptr->anti_tele = TRUE;
 
 		/* Sustain flags */
 		if (f2 & TR2_SUST_STR) p_ptr->sustain_str = TRUE;
@@ -2123,6 +2131,46 @@ static void calc_bonuses(int Ind)
 		/* Apply the mental bonuses tp hit/damage, if known */
 		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_h += o_ptr->to_h;
 		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_d += o_ptr->to_d;
+
+		/* Additional flags from PernAngband */
+//		if (f4 & (TR4_PRECOGNITION)) p_ptr->precognition = TRUE;
+
+		if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
+
+		/* Limit use of disenchanted DarkSword for non-unbe */
+		minus = o_ptr->to_h + o_ptr->to_d + o_ptr->pval + o_ptr->to_a;
+		/* if ((minus < 0) && (q_ptr->pclass != CLASS_UNBELIEVER)) minus = 0; */
+		if (p_ptr->pclass != CLASS_UNBELIEVER)
+		{
+			if (minus < -p_ptr->lev / 2) minus = -p_ptr->lev / 2;
+			if (minus < -40) minus = -40;
+		}
+
+		if (f4 & (TR4_ANTIMAGIC_50) && minus < 50)
+		{
+			p_ptr->antimagic += 50 - minus;
+			p_ptr->antimagic_dis += 5 - (minus / 15);
+		}
+		/* (no items seem to give 30/20/10, though..) */
+		if (f4 & (TR4_ANTIMAGIC_30) && minus < 30)
+		{
+			p_ptr->antimagic += 30 - minus;
+			p_ptr->antimagic_dis += 3 - (minus / 15);
+		}
+		if (f4 & (TR4_ANTIMAGIC_20) && minus < 20)
+		{
+			p_ptr->antimagic += 20 - minus;
+			p_ptr->antimagic_dis += 2 - (minus / 15);
+		}
+		if (f4 & (TR4_ANTIMAGIC_10) && minus < 10)
+		{
+			p_ptr->antimagic += 10 - minus;
+			p_ptr->antimagic_dis += 1 - (minus / 15);
+		}
+
+		if (f4 & (TR4_BLACK_BREATH)) p_ptr->black_breath = TRUE;
+
+//		if (f5 & (TR5_IMMOVABLE)) p_ptr->immovable = TRUE;
 	}
 
 
@@ -2294,7 +2342,8 @@ static void calc_bonuses(int Ind)
 	/* Temp ESP */
 	if (p_ptr->tim_esp)
 	{
-		p_ptr->telepathy = TRUE;
+//		p_ptr->telepathy = TRUE;
+                p_ptr->telepathy |= ESP_ALL;
 	}
 
 	/* Temporary blessing */
@@ -2395,6 +2444,12 @@ static void calc_bonuses(int Ind)
 	if (p_ptr->see_inv != old_see_inv)
 	{
 		p_ptr->update |= (PU_MONSTERS);
+	}
+
+	/* Temporary space-time anchor */
+	if (p_ptr->st_anchor)
+	{
+		p_ptr->anti_tele = TRUE;
 	}
 
 
@@ -2667,7 +2722,7 @@ static void calc_bonuses(int Ind)
 	}
 
 
-	/* Hell omde is HARD */
+	/* Hell mode is HARD */
 	if ((p_ptr->mode == MODE_HELL) && (p_ptr->num_blow > 1)) p_ptr->num_blow--;
 
 
@@ -2757,6 +2812,7 @@ static void calc_bonuses(int Ind)
 	/* Limit Skill -- digging from 1 up */
 	if (p_ptr->skill_dig < 1) p_ptr->skill_dig = 1;
 
+	if ((p_ptr->anti_magic) && (p_ptr->skill_sav < 95)) p_ptr->skill_sav = 95;
 
 	/* Hack -- handle "xtra" mode */
 	/*if (character_xtra) return;*/

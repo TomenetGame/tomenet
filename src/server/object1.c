@@ -2911,8 +2911,9 @@ cptr item_activation(object_type *o_ptr)
 		}
 	}
 
+#endif	// 0
 
-//#if 0	// requires some substitution..
+	// requires some substitution..
 	/* Some ego items can be activated */
 	switch (o_ptr->name2)
 	{
@@ -2925,7 +2926,6 @@ cptr item_activation(object_type *o_ptr)
 	/* The amulet of the moon can be activated for sleep */
 	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_THE_MOON))
 		return "sleep monsters every 100+d100 turns";
-#endif	// 0
 
 	/* From PernA.. some of them won't work as is described :p */
 #if 0
@@ -3530,6 +3530,19 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_NARYA:
 		{
+			return "large fire ball (120) every 225+d225 turns";
+		}
+		case ART_NENYA:
+		{
+			return "large frost ball (200) every 325+d325 turns";
+		}
+		case ART_VILYA:
+		{
+			return "large lightning ball (250) every 425+d425 turns";
+		}
+#if 0	// implement me!
+		case ART_NARYA:
+		{
                         return "healing (500) every 200+d100 turns";
 		}
 		case ART_NENYA:
@@ -3540,6 +3553,7 @@ cptr item_activation(object_type *o_ptr)
 		{
                         return "greater healing (900) every 200+d200 turns";
 		}
+#endif	// 0
 		case ART_POWER:
 		{
                         return "powerful things";

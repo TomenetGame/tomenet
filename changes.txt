@@ -532,3 +532,15 @@ Change list for PernMangband
 - Some of ported items are implemented(cmd6.c).
 - Poison branding.
 - added some articles on self-knowledge.
+- Nazgul powers are ported (except Black-Breath).
+
+28/12/2001 (Jir)
+# MORE Unstable, bug-filled, far-from-fully-implemented version!!
+# Bugfixes and implementations URGENTLY needed. (almost not tested at all)
+  - PernAngband monster system is ported.
+  - replaced 550 mangband monsters with 1042 PernA monsters.
+  - Generation flags are not used for now(eg. Shark in dungeon, pfft)
+  - Most of new flags are not implemented yet.
+- Black-Breath is implemented.
+- Specific ESP (eg. slay-orc weapon gives orc-only ESP)
+

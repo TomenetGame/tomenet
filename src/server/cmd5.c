@@ -789,6 +789,7 @@ void do_cmd_study(int Ind, int book, int spell)
 }
 
 /* let's hack this :)	- Jir - */
+#if 0
 bool check_antimagic(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -865,7 +866,55 @@ bool check_antimagic(int Ind)
 	/* Assume no antimagic */
 	return FALSE;
 }
+#endif	// 0
 
+
+/* ok, it's hacked :) */
+bool check_antimagic(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int i;
+
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		player_type *q_ptr = Players[i];
+		int dis, antichance = 0, antidis = 0;
+		object_type *o_ptr;
+
+		/* Skip disconnected players */
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Skip players not on this depth */
+#ifdef NEW_DUNGEON
+		if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) continue;
+#else
+		if (q_ptr->dun_depth != p_ptr->dun_depth) continue;
+#endif
+
+		/* Compute distance */
+		dis = distance(p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px);
+
+		antichance = q_ptr->antimagic;
+		antidis = q_ptr->antimagic_dis;
+
+		antichance -= p_ptr->lev;
+
+		if (antichance > 95) antichance = 95;
+
+		if (dis > antidis) antichance = 0;
+
+		/* Got disrupted ? */
+		if (magik(antichance))
+		{
+			msg_format(Ind, "%s's anti-magic shield disrupts your attemps.", q_ptr->name);
+			return TRUE;
+		}
+	}
+
+	/* Assume no antimagic */
+	return FALSE;
+}
 
 /*
  * Cast a spell
@@ -6571,9 +6620,9 @@ void do_cmd_psi_aux(int Ind, int dir)
 			break;
 		case 14:
 			msg_format_near(Ind, "%s breaks the space/time continuum.", p_ptr2->name);
-			if (p_ptr->st_anchor)
+			if (p_ptr->st_anchor || p_ptr->anti_tele)
 			  {
-			    if (!rand_int(3))
+			    if (!rand_int(3) || p_ptr->anti_tele)
 			      {
 				msg_print(Ind, "The space/time anchor stops your time bolt!");
 				break;

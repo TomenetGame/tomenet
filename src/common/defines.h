@@ -37,10 +37,10 @@
  
 #define VERSION_MAJOR	3
 #define VERSION_MINOR   3
-#define VERSION_PATCH   2
+#define VERSION_PATCH   4
 
 /*
- * This value specifys the suffix to the version info sent to the metaserver.
+ * This value specifies the suffix to the version info sent to the metaserver.
  *
  * 0 - nothing
  * 1 - "alpha"
@@ -194,7 +194,8 @@
 //#define MAX_A_IDX	128	/* Max size for "a_info[]" */
 #define MAX_A_IDX	256	/* Max size for "a_info[]" */
 #define MAX_E_IDX	256 /* Max size for "e_info[]" */
-#define MAX_R_IDX	563 /* Max size for "r_info[]"  551 + 12 (Tanix fix) */
+//#define MAX_R_IDX	563 /* Max size for "r_info[]"  551 + 12 (Tanix fix) */
+#define MAX_R_IDX	1152	/* Max size for "r_info[]" */
 #define MAX_V_IDX 	256	/* Max size for "v_info[]" */
 #define MAX_RE_IDX	128	/* Max size for "re_info[]" */
 #define MAX_T_IDX	256 /* Max size for "re_info[]" */
@@ -1255,6 +1256,7 @@ that keeps many algorithms happy.
 
 #endif	// 0
 
+/* pfft, sort it please.. */
 #define EGO_MANA                1
 #define EGO_POWER               2
 #define EGO_MANA_POWER          3
@@ -1307,6 +1309,8 @@ that keeps many algorithms happy.
 #define EGO_LITE_MAGI           163
 #define EGO_HA                  65
 
+/* megahack */
+#define EGO_CLOAK_LORDLY_RES	180 
 
 /*** Object "tval" and "sval" codes ***/
 
@@ -3491,20 +3495,28 @@ that keeps many algorithms happy.
  */
 #define RF2_STUPID			0x00000001	/* Monster is stupid */
 #define RF2_SMART			0x00000002	/* Monster is smart */
-#define RF2_XXX1			0x00000004	/* (?) */
-#define RF2_XXX2			0x00000008	/* (?) */
+//#define RF2_XXX1			0x00000004	/* (?) */
+//#define RF2_XXX2			0x00000008	/* (?) */
+#define RF2_CAN_SPEAK            0x00000004  /* TY: can speak */
+#define RF2_REFLECTING                  0x00000008      /* Reflects bolts */
 #define RF2_INVISIBLE		0x00000010	/* Monster avoids vision */
 #define RF2_COLD_BLOOD		0x00000020	/* Monster avoids infra */
 #define RF2_EMPTY_MIND		0x00000040	/* Monster avoids telepathy */
 #define RF2_WEIRD_MIND		0x00000080	/* Monster avoids telepathy? */
-#define RF2_MULTIPLY		0x00000100	/* Monster reproduces */
+//#define RF2_MULTIPLY		0x00000100	/* Monster reproduces */
+#define RF2_DEATH_ORB           0x00000100      /* Death Orb */
 #define RF2_REGENERATE		0x00000200	/* Monster regenerates */
-#define RF2_XXX3			0x00000400	/* (?) */
-#define RF2_XXX4			0x00000800	/* (?) */
+#define RF2_SHAPECHANGER        0x00000400  /* TY: shapechanger */
+#define RF2_ATTR_ANY            0x00000800  /* TY: Attr_any */
+//#define RF2_XXX3			0x00000400	/* (?) */
+//#define RF2_XXX4			0x00000800	/* (?) */
 #define RF2_POWERFUL		0x00001000	/* Monster has strong breath */
-#define RF2_XXX5			0x00002000	/* (?) */
-#define RF2_XXX7			0x00004000	/* (?) */
-#define RF2_XXX6			0x00008000	/* (?) */
+//#define RF2_XXX5			0x00002000	/* (?) */
+//#define RF2_XXX7			0x00004000	/* (?) */
+//#define RF2_XXX6			0x00008000	/* (?) */
+#define RF2_ELDRITCH_HORROR             0x00002000      /* Sanity-blasting horror    */
+#define RF2_AURA_FIRE                   0x00004000      /* Burns in melee */
+#define RF2_AURA_ELEC                   0x00008000      /* Shocks in melee */
 #define RF2_OPEN_DOOR		0x00010000	/* Monster can open doors */
 #define RF2_BASH_DOOR		0x00020000	/* Monster can bash doors */
 #define RF2_PASS_WALL		0x00040000	/* Monster can pass walls */
@@ -3533,26 +3545,34 @@ that keeps many algorithms happy.
 #define RF3_UNDEAD			0x00000020	/* Undead */
 #define RF3_EVIL			0x00000040	/* Evil */
 #define RF3_ANIMAL			0x00000080	/* Animal */
-#define RF3_XXX1			0x00000100	/* (?) */
-#define RF3_XXX2			0x00000200	/* (?) */
-#define RF3_XXX3			0x00000400	/* Non-Vocal (?) */
-#define RF3_IM_TELE                     0x00000800      /* Resist teleportation */
+//#define RF3_XXX1			0x00000100	/* (?) */
+//#define RF3_XXX2			0x00000200	/* (?) */
+//#define RF3_XXX3			0x00000400	/* Non-Vocal (?) */
+//#define RF3_IM_TELE                     0x00000800      /* Resist teleportation */
+#define RF3_DRAGONRIDER            0x00000100  /* DG: DragonRider */
+#define RF3_GOOD                        0x00000200      /* Good */
+#define RF3_AURA_COLD                        0x00000400      /* Freezes in melee */
+#define RF3_NONLIVING           0x00000800  /* TY: Non-Living (?) */
 #define RF3_HURT_LITE		0x00001000	/* Hurt by lite */
 #define RF3_HURT_ROCK		0x00002000	/* Hurt by rock remover */
-#define RF3_HURT_FIRE		0x00004000	/* Hurt badly by fire */
-#define RF3_HURT_COLD		0x00008000	/* Hurt badly by cold */
+//#define RF3_HURT_FIRE		0x00004000	/* Hurt badly by fire */
+//#define RF3_HURT_COLD		0x00008000	/* Hurt badly by cold */
+#define RF3_SUSCEP_FIRE           0x00004000      /* Hurt badly by fire */
+#define RF3_SUSCEP_COLD           0x00008000      /* Hurt badly by cold */
 #define RF3_IM_ACID			0x00010000	/* Resist acid a lot */
 #define RF3_IM_ELEC			0x00020000	/* Resist elec a lot */
 #define RF3_IM_FIRE			0x00040000	/* Resist fire a lot */
 #define RF3_IM_COLD			0x00080000	/* Resist cold a lot */
 #define RF3_IM_POIS			0x00100000	/* Resist poison a lot */
-#define RF3_IM_PSI			0x00200000	/* Immune to (?) */
+//#define RF3_IM_PSI			0x00200000	/* Immune to (?) */
+#define RF3_RES_TELE                    0x00200000      /* Resist teleportation */
 #define RF3_RES_NETH		0x00400000	/* Resist nether a lot */
 #define RF3_RES_WATE		0x00800000	/* Resist water */
 #define RF3_RES_PLAS		0x01000000	/* Resist plasma */
 #define RF3_RES_NEXU		0x02000000	/* Resist nexus */
 #define RF3_RES_DISE		0x04000000	/* Resist disenchantment */
-#define RF3_RES_PSI			0x08000000	/* Resist (?) */
+//#define RF3_RES_PSI			0x08000000	/* Resist (?) */
+#define RF3_UNIQUE_4                    0x08000000      /* Is a "Nazgul" unique */
 #define RF3_NO_FEAR			0x10000000	/* Cannot be scared */
 #define RF3_NO_STUN			0x20000000	/* Cannot be stunned */
 #define RF3_NO_CONF			0x40000000	/* Cannot be confused */
@@ -3562,9 +3582,12 @@ that keeps many algorithms happy.
  * New monster race bit flags
  */
 #define RF4_SHRIEK			0x00000001	/* Shriek for help */
-#define RF4_XXX2			0x00000002	/* (?) */
-#define RF4_XXX3			0x00000004	/* (?) */
-#define RF4_XXX4			0x00000008	/* (?) */
+#define RF4_MULTIPLY                    0x00000002  /* Monster reproduces */
+#define RF4_S_ANIMAL                    0x00000004  /* Summon animals */
+#define RF4_ROCKET                      0x00000008  /* TY: Rocket */
+//#define RF4_XXX2			0x00000002	/* (?) */
+//#define RF4_XXX3			0x00000004	/* (?) */
+//#define RF4_XXX4			0x00000008	/* (?) */
 #define RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
 #define RF4_ARROW_2			0x00000020	/* Fire an arrow (heavy) */
 #define RF4_ARROW_3			0x00000040	/* Fire missiles (light) */
@@ -3589,10 +3612,15 @@ that keeps many algorithms happy.
 #define RF4_BR_PLAS			0x02000000	/* Breathe Plasma */
 #define RF4_BR_WALL			0x04000000	/* Breathe Force */
 #define RF4_BR_MANA			0x08000000	/* Breathe Mana */
-#define RF4_XXX5			0x10000000
-#define RF4_XXX6			0x20000000
-#define RF4_XXX7			0x40000000
-#define RF4_XXX8			0x80000000
+#define RF4_BA_NUKE                     0x10000000  /* TY: Nuke Ball */
+#define RF4_BR_NUKE                     0x20000000  /* TY: Toxic Breath */
+#define RF4_BA_CHAO                     0x40000000  /* Chaos Ball */
+#define RF4_BR_DISI                     0x80000000  /* Breathe Disintegration */
+//#define RF4_XXX5			0x10000000
+//#define RF4_XXX6			0x20000000
+//#define RF4_XXX7			0x40000000
+//#define RF4_XXX8			0x80000000
+
 #define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA)
 
 /*
@@ -3636,23 +3664,31 @@ that keeps many algorithms happy.
  * New monster race bit flags
  */
 #define RF6_HASTE			0x00000001	/* Speed self */
-#define RF6_XXX1			0x00000002	/* Speed a lot (?) */
+#define RF6_HAND_DOOM                   0x00000002      /* Hand of Doom */
+//#define RF6_XXX1			0x00000002	/* Speed a lot (?) */
 #define RF6_HEAL			0x00000004	/* Heal self */
-#define RF6_XXX2			0x00000008	/* Heal a lot (?) */
+#define RF6_S_ANIMALS                   0x00000008      /* Summon animals */
+//#define RF6_XXX2			0x00000008	/* Heal a lot (?) */
 #define RF6_BLINK			0x00000010	/* Teleport Short */
 #define RF6_TPORT			0x00000020	/* Teleport Long */
-#define RF6_XXX3			0x00000040	/* Move to Player (?) */
-#define RF6_XXX4			0x00000080	/* Move to Monster (?) */
+//#define RF6_XXX3			0x00000040	/* Move to Player (?) */
+//#define RF6_XXX4			0x00000080	/* Move to Monster (?) */
+#define RF6_RAISE_DEAD                  0x00000040      /* Raise Dead */
+#define RF6_S_BUG                       0x00000080      /* Summon Software bug */
 #define RF6_TELE_TO			0x00000100	/* Move player to monster */
 #define RF6_TELE_AWAY		0x00000200	/* Move player far away */
 #define RF6_TELE_LEVEL		0x00000400	/* Move player vertically */
-#define RF6_XXX5			0x00000800	/* Move player (?) */
+//#define RF6_XXX5			0x00000800	/* Move player (?) */
+#define RF6_S_RNG                       0x00000800      /* Summon RNG */
 #define RF6_DARKNESS		0x00001000	/* Create Darkness */
 #define RF6_TRAPS			0x00002000	/* Create Traps */
 #define RF6_FORGET			0x00004000	/* Cause amnesia */
-#define RF6_XXX6			0x00008000	/* ??? */
-#define RF6_XXX7			0x00010000	/* Summon (?) */
-#define RF6_XXX8			0x00020000	/* Summon (?) */
+//#define RF6_XXX6			0x00008000	/* ??? */
+//#define RF6_XXX7			0x00010000	/* Summon (?) */
+//#define RF6_XXX8			0x00020000	/* Summon (?) */
+#define RF6_S_DRAGONRIDER               0x00008000      /* Summon DragonRiders */
+#define RF6_S_KIN                       0x00010000      /* Summon "kin" */
+#define RF6_S_HI_DEMON                  0x00020000      /* Summon greater demons! */
 #define RF6_S_MONSTER		0x00040000	/* Summon Monster */
 #define RF6_S_MONSTERS		0x00080000	/* Summon Monsters */
 #define RF6_S_ANT			0x00100000	/* Summon Ants */
@@ -3668,6 +3704,78 @@ that keeps many algorithms happy.
 #define RF6_S_WRAITH		0x40000000	/* Summon Unique Wraith */
 #define RF6_S_UNIQUE		0x80000000	/* Summon Unique Monster */
 #define RF6_PLAYER_SPELLS (RF6_HASTE | RF6_HEAL | RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY | RF6_TELE_LEVEL)
+
+/*
+ * New monster race bit flags from PernAngband.		- Jir -
+ */
+#define RF7_AQUATIC             0x00000001  /* Aquatic monster */
+#define RF7_CAN_SWIM            0x00000002  /* Monster can swim */
+#define RF7_CAN_FLY             0x00000004  /* Monster can fly */
+#define RF7_FRIENDLY            0x00000008  /* Monster is friendly */
+#define RF7_PET                 0x00000010  /* Monster is a pet */
+#define RF7_MORTAL              0x00000020  /* Monster is a mortal being */
+#define RF7_SPIDER              0x00000040  /* Monster is a spider (can pass webs) */
+#define RF7_NAZGUL              0x00000080  /* Monster is a Nazgul */
+#define RF7_DG_CURSE            0x00000100  /* If killed the monster grant a DG Curse to the player */
+#define RF7_POSSESSOR           0x00000200  /* Is it a dreaded possessor monster ? */
+#define RF7_NO_DEATH            0x00000400  /* Cannot be killed */
+#define RF7_NO_TARGET           0x00000800  /* Cannot be targeted */
+#define RF7_AI_ANNOY            0x00001000  /* Try to tease the player */
+#define RF7_AI_SPECIAL          0x00002000  /* For quests */
+#define RF7_NEUTRAL             0x00004000  /* Monster is neutral */
+
+
+/*
+ * Monster race flags
+ */
+#define RF8_DUNGEON             0x00000001
+#define RF8_WILD_TOWN           0x00000002
+#define RF8_XXX8X02             0x00000004
+#define RF8_WILD_SHORE          0x00000008
+#define RF8_WILD_OCEAN          0x00000010
+#define RF8_WILD_WASTE          0x00000020
+#define RF8_WILD_WOOD           0x00000040
+#define RF8_WILD_VOLCANO        0x00000080
+#define RF8_XXX8X08             0x00000100
+#define RF8_WILD_MOUNTAIN       0x00000200
+#define RF8_WILD_GRASS          0x00000400
+#define RF8_NO_CUT              0x00000800
+#define RF8_CTHANGBAND          0x00001000
+#define RF8_PERNANGBAND         0x00002000
+#define RF8_ZANGBAND            0x00004000
+#define RF8_JOKEANGBAND         0x00008000
+#define RF8_ANGBAND             0x00010000
+
+#define RF8_WILD_TOO            0x80000000
+
+
+/*
+ * Monster race flags
+ */
+#define RF9_DROP_CORPSE         0x00000001
+#define RF9_DROP_SKELETON       0x00000002
+#define RF9_HAS_LITE            0x00000004      /* Carries a lite */
+#define RF9_MIMIC               0x00000008      /* *REALLY* looks like an object ... only nastier */
+#define RF9_HAS_EGG             0x00000010      /* Can be monster's eggs */
+#define RF9_IMPRESED            0x00000020      /* The monster can follow you on each level until he dies */
+#define RF9_SUSCEP_ACID         0x00000040      /* Susceptible to acid */
+#define RF9_SUSCEP_ELEC         0x00000080      /* Susceptible to lightning */
+#define RF9_SUSCEP_POIS         0x00000100      /* Susceptible to poison */
+#define RF9_KILL_TREES          0x00000200      /* Monster can eat trees */
+#define RF9_WYRM_PROTECT        0x00000400      /* The monster is protected by great wyrms of power: They'll be summoned if it's killed */
+#define RF9_DOPPLEGANGER        0x00000800      /* The monster looks like you */
+#define RF9_ONLY_DEPTH          0x00001000      /* The monster can only be generated at the GIVEN depth */
+#define RF9_SPECIAL_GENE        0x00002000      /* The monster can only be generated in special conditions like quests, special dungeons, ... */
+#define RF9_NEVER_GENE          0x00004000      /* The monster cannot be normaly generated */
+
+/*
+ * these flags are not in PernA nor in PernM-monsters,
+ * but the code for them already exists in our code..
+ * Let's consider of recycling them :)		- Jir -
+ */
+#define RF9_IM_TELE                     0x20000000      /* Resist teleportation */
+#define RF9_IM_PSI			0x40000000	/* Immune to (?) */
+#define RF9_RES_PSI			0x80000000	/* Resist (?) */
 
 /* 
 	Different types of terrain, used for the wilderness.
@@ -3826,6 +3934,9 @@ that keeps many algorithms happy.
  */
 #define artifact_p(T) \
         ((T)->name1 ? TRUE : FALSE)
+
+#define true_artifact_p(T) \
+        (artifact_p(T) && (T)->name1 != ART_RANDART ? TRUE : FALSE)
 
 /*
  * Ego-Items use the "name2" field

@@ -1758,6 +1758,10 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				if (p_ptr->impact && (k > 50)) do_quake = TRUE;
 				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h, k);
 				k += o_ptr->to_d;
+
+				/* heheheheheh */
+				do_nazgul(Ind, &k, &num, r_ptr, o_ptr);
+				
 			}
 
 			/* Apply the player damage bonuses */
@@ -1935,6 +1939,100 @@ void py_attack(int Ind, int y, int x, bool old)
 	else if (c_ptr->m_idx < 0)
 		py_attack_player(Ind, y, x, old);
 }
+
+
+/* Hiho! Finally *Nazguls* had come!		- Jir -
+ *
+ * Those features are not implemented yet, however:
+ * - multi-handed weapons attack
+ * - attack interrupting
+ * - Black Breath
+ *
+ */
+
+/* Apply nazgul effects */
+/* Mega Hack -- Hitting Nazgul is REALY dangerous
+ * (ideas from Akhronath) */
+//void do_nazgul(int *k, int *num, int num_blow, int weap, monster_race *r_ptr, object_type *o_ptr)
+void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_ptr)
+{
+	if (r_ptr->flags7 & RF7_NAZGUL)
+	{
+		player_type *p_ptr = Players[Ind];
+		int weap = 0;	// Hack!
+		u32b f1, f2, f3, f4, f5, esp;
+
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+		if ((!o_ptr->name2) && (!artifact_p(o_ptr)))
+		{
+			msg_print(Ind, "Your weapon *DISINTEGRATES*!");
+			*k = 0;
+			inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+			inven_item_optimize(Ind, INVEN_WIELD + weap);
+
+			/* To stop attacking */
+//			*num = num_blow;
+		}
+		else if (o_ptr->name2)
+		{
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f5 & TR5_KILL_UNDEAD))
+			{
+				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
+				*k = 0;
+			}
+
+			/* 25% chance of getting destroyed */
+			if (magik(25))
+			{
+				msg_print(Ind, "Your weapon is destroyed !");
+				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+				inven_item_optimize(Ind, INVEN_WIELD + weap);
+
+				/* To stop attacking */
+//				*num = num_blow;
+			}
+		}
+		else if (artifact_p(o_ptr))
+		{
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f5 & TR5_KILL_UNDEAD))
+			{
+				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
+				*k = 0;
+			}
+
+			apply_disenchant(Ind, INVEN_WIELD + weap);
+
+			/* 1/1000 chance of getting destroyed */
+			if (!rand_int(1000))
+			{
+				if (true_artifact_p(o_ptr))
+				{
+					a_info[o_ptr->name1].cur_num = 0;
+				}
+
+				msg_print(Ind, "Your weapon is destroyed !");
+				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+				inven_item_optimize(Ind, INVEN_WIELD + weap);
+
+				/* To stop attacking */
+//				*num = num_blow;
+			}
+		}
+
+		/* If any damage is done, then 25% chance of getting the Black Breath */
+		if (*k)
+		{
+			if (magik(25))
+			{
+				msg_print(Ind, "Your foe calls upon your soul!");
+				msg_print(Ind, "You feel the Black Breath slowly draining you of life...");
+				p_ptr->black_breath = TRUE;
+			}
+		}
+	}
+}
+
 
 /* Do a probability travel in a wall */
 void do_prob_travel(int Ind, int dir)
