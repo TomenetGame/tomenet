@@ -416,7 +416,6 @@ int main(int argc, char **argv)
 //	if (!done && (!mstr || (streq(mstr, "gtk"))))
 	if (!done)
 	{
-		extern errr init_gtk(int, char**);
 		if (0 == init_gtk(argc, argv))
 		{
 			ANGBAND_SYS = "gtk";
@@ -430,7 +429,6 @@ int main(int argc, char **argv)
 	/* Attempt to use the "main-xaw.c" support */
 	if (!done)
 	{
-		extern errr init_xaw(void);
 		if (0 == init_xaw()) done = TRUE;
 		if (done) ANGBAND_SYS = "xaw";
 	}
@@ -440,7 +438,6 @@ int main(int argc, char **argv)
 	/* Attempt to use the "main-x11.c" support */
 	if (!done)
 	{
-		extern errr init_x11(void);
 		if (0 == init_x11()) done = TRUE;
 		if (done) ANGBAND_SYS = "x11";
 	}
@@ -451,7 +448,6 @@ int main(int argc, char **argv)
 	/* Attempt to use the "main-gcu.c" support */
 	if (!done)
 	{
-		extern errr init_gcu(void);
 		if (0 == init_gcu()) done = TRUE;
 		if (done) ANGBAND_SYS = "gcu";
 	}
@@ -461,7 +457,6 @@ int main(int argc, char **argv)
 	/* Attempt to use the "main_ibm.c" support */
 	if (!done)
 	{
-		extern errr init_ibm(void);
 		if (0 == init_ibm()) done = TRUE;
 		if (done) ANGBAND_SYS = "ibm";
 	}
@@ -471,7 +466,6 @@ int main(int argc, char **argv)
 	/* Attempt to use the "main-emx.c" support */
 	if (!done)
 	{
-		extern errr init_emx(void);
 		if (0 == init_emx()) done = TRUE;
 		if (done) ANGBAND_SYS = "emx";
 	}
@@ -481,7 +475,6 @@ int main(int argc, char **argv)
 	/* Attempt to use the "main-amy.c" support */
 	if (!done)
 	{
-		extern errr init_amy(void);
 		if (0 == init_amy()) done = TRUE;
 		if (done) ANGBAND_SYS = "amy";
 	}

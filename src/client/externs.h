@@ -8,6 +8,34 @@
  * (z-virt.h, z-util.h, z-form.h, term.h, random.h)
  */
 
+#ifdef USE_GCU
+extern errr init_gcu(void);
+#endif
+
+#ifdef USE_X11
+extern errr init_x11(void);
+#endif
+
+#ifdef USE_XAW
+extern errr init_xaw(void);
+#endif
+
+#ifdef USE_IBM
+extern errr init_ibm(void);
+#endif
+
+#ifdef USE_EMX
+extern errr init_emx(void);
+#endif
+
+#ifdef USE_AMY
+extern errr init_amy(void);
+#endif
+
+#ifdef USE_GTK
+extern errr init_gtk(int, char **);
+#endif
+
 
 /*
  * Not-so-Automatically generated "variable" declarations
