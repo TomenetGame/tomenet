@@ -109,6 +109,7 @@ int remote_update(int ind, char *fname){
 int check_return(int ind, unsigned short fnum, unsigned long sum){
 	int num, fd;
 	unsigned long lsum;
+
 	num=getfile(ind, fnum);
 	if(num==-1) return(0);
 	local_file_check(fdata[num].fname, &lsum);
@@ -253,7 +254,10 @@ int local_file_check(char *fname, unsigned long *sum){
 	int size=4096;
 	unsigned long tbytes=0;
 	unsigned long pos, r;
-	fp=fopen(fname, "r");
+	char buf[1024];
+
+	path_build(buf, 1024, ANGBAND_DIR, fname);
+	fp=fopen(buf, "r");
 	if(fp==(FILE*)NULL){
 		return(0);
 	}
