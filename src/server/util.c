@@ -1252,7 +1252,7 @@ void keymap_init(void)
 	int i, k;
 
 	/* Notice changes in the "rogue_like_commands" flag */
-	static old_rogue_like = -1;
+	static bool old_rogue_like = -1;
 
 	/* Hack -- notice changes in "rogue_like_commands" */
 	if (old_rogue_like == rogue_like_commands) return;

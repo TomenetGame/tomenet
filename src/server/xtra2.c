@@ -3040,7 +3040,7 @@ void monster_death(int Ind, int m_idx)
         FREE(m_ptr->r_ptr, monster_race);
 }
 
-kill_house_contents(house_type *h_ptr){
+static void kill_house_contents(house_type *h_ptr){
 	int depth=h_ptr->depth;
 	if(h_ptr->flags&HF_RECT){
 		int sy,sx,ey,ex,x,y;

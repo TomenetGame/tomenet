@@ -4006,7 +4006,7 @@ void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 
 bool poly_build(int Ind, char *args){
 	static s32b curr=0;
-	static cptr vert=NULL;
+	static char *vert=NULL;
 	static int lx,ly,dx,dy,minx,miny,maxx,maxy;
 	static int sx,sy;
 	static int odir;
@@ -4143,7 +4143,6 @@ bool poly_build(int Ind, char *args){
 
 void house_creation(int Ind, bool floor){
 	player_type *p_ptr=Players[Ind];
-	cptr coords;
 	/* set master_move_hook : a bit like a setuid really ;) */
 
 	if(p_ptr->dun_depth>=0) return;		/* Building in town??? no */
@@ -4169,7 +4168,6 @@ void golem_creation(int Ind, int max)
         s16b golem_flags = 0;
         cave_type *c_ptr;
         int x, y, k, g_cnt = 0;
-        bool ok = FALSE;
 
         /* Process the monsters */
         for (k = m_top - 1; k >= 0; k--)
@@ -4193,7 +4191,6 @@ void golem_creation(int Ind, int max)
         if (g_cnt >= max)
         {
                 msg_print(Ind, "You cannot create more golems.");
-                return (FALSE);
         }
 
         for (x = p_ptr->px - 1; x <= p_ptr->px; x++)        
@@ -4210,7 +4207,6 @@ void golem_creation(int Ind, int max)
 
                 if ((p_ptr->px == x) || (p_ptr->py == y)) continue;
 
-                ok = TRUE;
                 break;
         }
 
@@ -4245,7 +4241,6 @@ void golem_creation(int Ind, int max)
         for (i = 0; i < INVEN_WIELD; i++)
         {
                 object_type *o_ptr = &p_ptr->inventory[i];
-                unsigned char *inscription = (unsigned char *) quark_str(o_ptr->note);
 
                 if (o_ptr->tval == TV_GOLEM)
                 {

@@ -1658,7 +1658,7 @@ errr Term_putch(int x, int y, byte a, char c)
 /*
  * Move to a location and, using an attr, add a string
  */
-errr Term_putstr(int x, int y, int n, byte a, cptr s)
+errr Term_putstr(int x, int y, int n, byte a, char *s)
 {
 	errr res;
 	char *ptr;

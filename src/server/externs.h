@@ -596,7 +596,7 @@ extern void dealloc_dungeon_level(int Depth);
 extern void generate_cave(int Depth);
 extern void build_vault(int Depth, int yval, int xval, int ymax, int xmax, cptr data);
 
-/* wilderness.c */
+/* wild.c */
 extern int world_index(int world_x, int world_y);
 extern void init_wild_info(void);
 extern void wild_apply_day(int Depth);
@@ -604,6 +604,8 @@ extern void wild_apply_night(int Depth);
 extern int determine_wilderness_type(int Depth);
 extern void wilderness_gen(int Depth);
 extern void wild_add_monster(int Depth);
+extern bool fill_house(house_type *h_ptr, int func);
+extern void wild_add_uhouse(house_type *h_ptr);
 
 /* init-txt.c */
 extern errr init_v_info_txt(FILE *fp, char *buf);
@@ -663,6 +665,7 @@ extern void setup_monsters(void);
 extern int race_index(char * name);
 extern bool summon_specific_race(int Depth, int y1, int x1, int r_idx, unsigned char num);
 extern bool summon_specific_race_somewhere(int Depth, int r_idx, unsigned char num);
+extern void monster_gain_exp(int m_idx, u32b exp, bool silent);
 
 /* netserver.c */
 /*extern void Contact(int fd, void *arg);*/
@@ -807,6 +810,10 @@ extern void add_player_name(cptr name, int id, time_t laston);
 extern void delete_player_id(int id);
 extern void delete_player_name(cptr name);
 extern int player_id_list(int **list);
+extern void stat_player(char *name, bool on);
+extern time_t lookup_player_laston(int id);
+extern void clockin(int Ind);
+extern int newid(void);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);
@@ -933,6 +940,9 @@ extern bool destroy_doors_touch(int Ind);
 extern bool sleep_monsters_touch(int Ind);
 extern bool create_artifact(int Ind);
 extern bool create_artifact_aux(int Ind, int item);
+extern bool curse_spell(int Ind);
+extern bool curse_spell_aux(int Ind, int item);
+extern void house_creation(int Ind, bool floor);
 
 
 /* store.c */
@@ -1072,6 +1082,8 @@ extern bool master_summon(int Ind, char * parms);
 extern bool master_generate(int Ind, char * parms);
 extern bool master_acquire(int Ind, char * parms);
 extern bool master_player(int Ind, char * parms);
+
+extern void kill_houses(int id, int type);
 
 /*extern bool get_rep_dir(int *dp);*/
 

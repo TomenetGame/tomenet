@@ -1984,12 +1984,23 @@ void bleed_with_neighbors(int Depth)
 	Rand_quick = rand_old;
 }
 
+static void flood(char *buf, int x, int y, int w, int h){
+	if (x>=0 && x<w && y>=0 && y<h && buf[x+y*w] == 0)
+	{
+		buf[x+y*w]=6;
+		flood(buf, x+1, y, w, h);
+		flood(buf, x-1, y, w, h);
+		flood(buf, x, y+1, w, h);
+		flood(buf, x, y-1, w, h);
+	}
+}
+
 bool fill_house(house_type *h_ptr, int func){
 	/* polygonal house */
 	/* draw all the outer walls cleanly */
 	cptr coord=h_ptr->coords.poly;
 	cptr ptr=coord;
-	cptr matrix;
+	char *matrix;
 	int Depth=h_ptr->depth;
 	int sx=h_ptr->x;
 	int sy=h_ptr->y;
@@ -2115,17 +2126,6 @@ bool fill_house(house_type *h_ptr, int func){
 	return(success);
 }
 
-void flood(cptr buf, int x, int y, int w, int h){
-	if (x>=0 && x<w && y>=0 && y<h && buf[x+y*w] == 0)
-	{
-		buf[x+y*w]=6;
-		flood(buf, x+1, y, w, h);
-		flood(buf, x-1, y, w, h);
-		flood(buf, x, y+1, w, h);
-		flood(buf, x, y-1, w, h);
-	}
-}
-
 void wild_add_uhouse(house_type *h_ptr){
  	int x,y;
 	int Depth=h_ptr->depth;
@@ -2161,7 +2161,7 @@ void wild_add_uhouse(house_type *h_ptr){
 	c_ptr->special=h_ptr->dna;
 }
 
-void wild_add_uhouses(int Depth){
+static void wild_add_uhouses(int Depth){
 #ifdef NEWHOUSES
 	int i;
 	for(i=0;i<num_houses;i++){

@@ -820,7 +820,7 @@ void stat_player(char *name, bool on){
 	int slot;
 	hash_entry *ptr;
 
-	id=lookup_player_name(name);
+	id=lookup_player_id(name);
 	if(id){
 		slot = hash_slot(id);
 		ptr = hash_table[slot];
@@ -884,7 +884,7 @@ int newid(){
 	return(0);	/* no user IDs available - not likely */
 }
 
-sf_delete(char *name){
+static void sf_delete(char *name){
 	int i,k=0;
 	char temp[128],fname[128];
 	/* Extract "useful" letters */

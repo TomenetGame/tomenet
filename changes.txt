@@ -211,3 +211,7 @@ Change list for PernMangband
 - A couple of bug fixes, and some debug stuff removed (mine)
 - Fixed golem change places with owner.
 - Life scroll now shows life returning (lite_spot)
+
+04/10/2001
+- Console password request fixed (in line with client)
+
