@@ -2174,7 +2174,7 @@ F:R_ESP
 #Telepathic Awareness. Name must be slit because it's an insta-ego (C. Blue)
 N:197:Awareness
 X:A:40:20
-W:0:1:32:50000
+W:0:1:32:49000
 T:40:0:99
 R:100
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
