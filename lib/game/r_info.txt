@@ -14217,7 +14217,8 @@ F:INVISIBLE | OPEN_DOOR | BASH_DOOR | CAN_FLY |
 F:EVIL | RES_NETH | IM_COLD | IM_POIS |
 F:RES_FIRE | NO_CONF | NO_SLEEP | ZANGBAND | HAS_LITE
 S:1_IN_3 | 
-S:CURSE | CURSE | HAND_DOOM | TELE_TO | HOLD |
+S:CURSE | CURSE | TELE_TO | HOLD |
+#S:HAND_DOOM |
 S:S_UNDEAD | S_HI_UNDEAD | S_HI_DRAGON | FORGET | SCARE | BLIND |
 S:BA_DARK | BA_NETH | HEAL | ANIM_DEAD
 D:The Norse ruler of Hel is a merciless queen, who ever hunts for more 
@@ -14271,7 +14272,8 @@ F:AI_ANNOY
 S:1_IN_2 | 
 S:CURSE | TELE_TO | BA_FIRE | DRAIN_MANA | HOLD |
 S:TRAPS | BA_WATE | BO_PLAS | BA_NETH |
-S:BA_MANA | BA_DARK | S_HI_UNDEAD | BA_CHAO | HAND_DOOM | ANIM_DEAD
+S:BA_MANA | BA_DARK | S_HI_UNDEAD | BA_CHAO | ANIM_DEAD
+#S:HAND_DOOM | 
 D:The dark master of the terrible fortress of southern Mirkwood.  It is 
 D:rumoured that this is in fact none other than Sauron in disguise: 
 D:although if this is so, he has yet to reveal his full power - and perhaps 
@@ -14416,7 +14418,8 @@ F:EVIL | DEMON | IM_ACID | IM_ELEC |
 F:IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | CTHANGBAND | HAS_LITE
 S:1_IN_3 | 
 S:TELE_AWAY | BLIND | HOLD | SCARE |  BRAIN_SMASH | 
-S:BR_DARK | BA_DARK | BR_NETH | HAND_DOOM |
+S:BR_DARK | BA_DARK | BR_NETH | 
+#S:HAND_DOOM |
 S:S_HI_UNDEAD | S_DEMON | S_MONSTERS | S_HYDRA
 D:"...it was a gigantic eye staring down at them. Around the eye, 
 D:the sky split; deep clefts opened through which the darkness 
@@ -14529,7 +14532,8 @@ F:ESCORTS | RES_COLD | IM_POIS | ZANGBAND | HAS_LITE
 S:1_IN_3 |
 S:TELE_TO | SCARE | HOLD | BRAIN_SMASH |
 S:S_DEMON | S_HI_UNDEAD | S_UNDEAD |
-S:BR_FIRE | BR_NETH | S_HI_DEMON | HAND_DOOM | ANIM_DEAD
+S:BR_FIRE | BR_NETH | S_HI_DEMON | ANIM_DEAD
+#S:HAND_DOOM | 
 D:A duke of hell, in the flesh. 
 
 N:832:Godzilla
@@ -14598,7 +14602,8 @@ F:EVIL | IM_COLD | NO_CONF | NO_SLEEP | IM_POIS | SUSCEP_FIRE |
 F:COLD_BLOOD | AURA_COLD | DROP_CORPSE | ZANGBAND | HAS_LITE | NO_CUT
 S:1_IN_5 | 
 S:BR_COLD | BO_ICEE | DARKNESS | TELE_TO | S_KIN | S_HI_UNDEAD | 
-S:TELE_AWAY | HAND_DOOM
+S:TELE_AWAY
+#S: | HAND_DOOM
 D:Ymir is one of the oldest beings in existence. He looks like a giant 
 D:humanoid made of ice. 
 
@@ -14619,7 +14624,8 @@ F:EVIL | IM_FIRE | NO_CONF | NO_SLEEP | IM_POIS | SUSCEP_COLD | GIANT |
 F:REGENERATE | ZANGBAND | HAS_LITE
 S:1_IN_5 | 
 S:SHRIEK | HASTE | HEAL | DRAIN_MANA | TPORT | TELE_TO | TELE_AWAY |
-S:TELE_LEVEL | FORGET | S_HI_DEMON | HAND_DOOM | S_HI_UNDEAD |
+S:TELE_LEVEL | FORGET | S_HI_DEMON | S_HI_UNDEAD |
+#S:HAND_DOOM | 
 S:S_UNIQUE | S_HI_DRAGON | BA_DARK | BA_MANA | ANIM_DEAD
 D:Loki, the god of mischief, is a nasty person. He will use every 
 D:dirty trick in the book, and then some. In the end, his half-giant 
@@ -14669,7 +14675,8 @@ F:EVIL | IM_FIRE | NO_CONF | NO_SLEEP | IM_POIS | SUSCEP_COLD | GIANT |
 F:ZANGBAND | HAS_LITE
 S:1_IN_5 | 
 S:BR_FIRE | BR_PLAS | BLIND | TELE_TO | S_KIN | 
-S:HAND_DOOM | TELE_AWAY | S_HI_DEMON
+S:TELE_AWAY | S_HI_DEMON
+#S:HAND_DOOM | 
 D:Surtur is another of the most ancient of all creatures. He is a demonic 
 D:giant of fire, who is destined to set the nine worlds afire with his 
 D:accursed sword of doom on the day of Ragnarok. 
@@ -14759,7 +14766,8 @@ F:NO_FEAR | NO_CONF | NO_SLEEP | DEMON | SMART | ELDRITCH_HORROR |
 F:COLD_BLOOD | RES_DISE | NO_STUN | CTHANGBAND | NO_CUT | RES_CHAOS
 F:AI_ANNOY
 S:1_IN_2 |
-S:FORGET | HEAL | HAND_DOOM | BA_MANA | TPORT | TELE_AWAY |
+S:FORGET | HEAL | BA_MANA | TPORT | TELE_AWAY |
+#S:HAND_DOOM | 
 S:TELE_LEVEL | CONF | BLIND | BRAIN_SMASH | DRAIN_MANA |
 S:S_MONSTERS | S_KIN | S_HI_DEMON | S_HOUND | S_HYDRA | 
 S:S_UNIQUE | S_HI_UNDEAD | S_HI_DRAGON | ANIM_DEAD
@@ -14829,7 +14837,8 @@ F:NO_CUT
 S:1_IN_3 | 
 S:TPORT | BLIND | SCARE | CURSE | BRAIN_SMASH | 
 S:BA_MANA | BO_MANA | BA_FIRE | BA_NETH | 
-S:S_MONSTERS | S_HI_DEMON | S_HI_UNDEAD | S_KIN | HAND_DOOM | ANIM_DEAD
+S:S_MONSTERS | S_HI_DEMON | S_HI_UNDEAD | S_KIN | ANIM_DEAD
+#S:HAND_DOOM | 
 D:The greatest of all undead sorcerers, even the gods once feared him.  This
 D:ancient shadow of death wilts every living thing it passes. 
 
@@ -14947,7 +14956,8 @@ F:NO_SLEEP | RES_NEXU | RES_NETH | RES_WATE | ZANGBAND | HAS_LITE
 S:1_IN_1 |
 S:TELE_AWAY | TELE_TO | TELE_LEVEL | TPORT |
 S:BO_MANA | BA_MANA | S_MONSTERS | HEAL |
-S:CURSE | HASTE | HAND_DOOM | 
+S:CURSE | HASTE | 
+#S:HAND_DOOM | 
 S:S_ANGEL | S_UNIQUE
 D:The hoary Lord of the Great Abyss seems a wizened man, 
 D:but appearances can be deceiving. 
@@ -14993,7 +15003,8 @@ S:1_IN_3 |
 S:TELE_AWAY | TELE_TO | TELE_LEVEL | TPORT | BR_NEXU | BA_CHAO |
 S:BA_MANA | BA_FIRE | S_MONSTERS | BRAIN_SMASH | MIND_BLAST |
 S:CURSE | HASTE | S_HI_UNDEAD | S_HI_DRAGON | ANIM_DEAD | 
-S:S_ANGEL | HEAL | S_SPIDER | S_HOUND | S_HI_DEMON | HAND_DOOM
+S:S_ANGEL | HEAL | S_SPIDER | S_HOUND | S_HI_DEMON
+# | HAND_DOOM
 D:Nyarlathothep is the messenger, the heart and the soul of the outer gods. 
 D:He is a shapechanger capable of assuming thousands of nightmarish forms. 
 D:One of them looks like this: "A tall, slim figure with the young face of 
@@ -15142,7 +15153,8 @@ S:1_IN_3
 S:TPORT | SCARE | BLIND | MIND_BLAST | BRAIN_SMASH | DRAIN_MANA |
 S:BR_POIS | BR_ACID | BR_FIRE | CONF | DARKNESS | FORGET | S_HI_UNDEAD |
 S:BR_NUKE | BR_NETH | BR_CHAO | BR_DISE | BR_DARK | BR_PLAS | BR_CONF
-S:BR_NEXU | S_HI_DEMON | BR_DISI | HAND_DOOM | 
+S:BR_NEXU | S_HI_DEMON | BR_DISI | 
+#S:HAND_DOOM | 
 S:ANIM_DEAD
 D:This creature is death incarnate. "A monster of vaguely anthropoid 
 D:outline, but with an octopus-like head whose face was a mass of 
@@ -15222,7 +15234,8 @@ S:TPORT | TELE_LEVEL | BLIND | CONF | SCARE | CURSE |
 S:BRAIN_SMASH | FORGET | BO_ICEE | BO_MANA | BO_PLAS | 
 S:BA_MANA | BA_FIRE | BA_WATE | BA_NETH | BA_DARK | BA_CHAO | 
 S:S_MONSTERS | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | S_WRAITH | S_UNIQUE | 
-S:HAND_DOOM | ANIM_DEAD
+S:ANIM_DEAD
+#S:HAND_DOOM | 
 D:Mighty in spells and enchantments,he created the One Ring. 
 D:His eyes glow with power and with his gaze he seeks to destroy 
 D:your soul. He has many servants, and rarely fights without them. 
@@ -15250,7 +15263,8 @@ F:MORTAL | JOKEANGBAND | HAS_LITE
 S:1_IN_2 | 
 S:S_DRAGONRIDER | BR_CHAO | BA_CHAO | ROCKET | BRAIN_SMASH | S_HI_DEMON | 
 S:BR_NETH | HASTE | BR_MANA | S_HI_UNDEAD | S_HI_DRAGON | TRAPS | FORGET | 
-S:BR_NUKE | BR_POIS | BR_DISI | HAND_DOOM | HEAL | TPORT | TELE_TO |
+S:BR_NUKE | BR_POIS | BR_DISI | HEAL | TPORT | TELE_TO |
+#S:HAND_DOOM | 
 S:S_BUG | S_RNG |
 D:He is the master of coding; none can match his skill. He created the 
 D:Variant Maintainer, the RNGs, and the software bugs. Bull Gates is 
@@ -15282,7 +15296,8 @@ S:1_IN_3 |
 S:BRAIN_SMASH | 
 S:BA_MANA | BO_MANA | BA_NETH | BA_CHAO | BA_DARK | ANIM_DEAD | 
 S:S_MONSTERS | S_UNIQUE | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | 
-S:ROCKET | BR_NETH | BR_DISI | HAND_DOOM | S_WRAITH
+S:ROCKET | BR_NETH | BR_DISI | S_WRAITH
+#S:HAND_DOOM | 
 S:UNMAGIC
 D:He was the most powerful of the Valar, the equal of Manwe. 
 D:He is the Master of the Pits of Angband. His figure is like a black 
@@ -17352,7 +17367,8 @@ F:EVIL | IM_FIRE | NO_CONF | NO_SLEEP | IM_POIS | GIANT |
 F:ZANGBAND | HAS_LITE | NO_CUT
 S:1_IN_5 | 
 S:BR_WALL | BR_GRAV | BR_SHAR | BLIND | TELE_TO | S_KIN | S_MONSTERS | 
-S:HAND_DOOM | TELE_AWAY | 
+S:TELE_AWAY | 
+#S:HAND_DOOM | 
 D:Hrungnir is the strongest of all the Stone Giants: one who would even dare 
 D:to challenge Thor himself to single combat. 
 
@@ -18066,7 +18082,8 @@ F:EVIL | IM_FIRE | NO_CONF | NO_SLEEP | IM_POIS | SUSCEP_COLD | GIANT | DEMON
 F:ZANGBAND | HAS_LITE | IM_ELEC
 S:1_IN_5 | 
 S:BR_ELEC | BR_PLAS | BR_MANA | BLIND | TELE_TO | S_KIN | S_HI_DRAGON | 
-S:HAND_DOOM | TELE_AWAY
+S:TELE_AWAY
+#S:HAND_DOOM | 
 D:Thiazi is the greatest of all the Storm Giants: when travelling, he takes
 D:the form of a giant eagle.  It was he who succeeded in kidnapping Iduna and 
 D:her apples of youth from Asgard itself. 
@@ -18819,7 +18836,8 @@ F:RES_TELE | RES_FIRE | NO_CONF | NO_SLEEP |
 F:STUPID | EMPTY_MIND | 
 F:BASEANGBAND | HAS_LITE
 S:1_IN_8 | 
-S:HAND_DOOM | SHRIEK
+S:SHRIEK
+#S:HAND_DOOM | 
 D:A poisonous plant like a branched carrot, but it has a face similar
 D:to man and it screams a deadly scream when one tries to pull it out.
 
