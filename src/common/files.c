@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <fcntl.h>
 
+extern const char *ANGBAND_DIR;
+
 #define FS_READY 1	/* if ready for more data, set. */
 #define FS_SEND 2	/* sending connection? */
 #define FS_NEW 4	/* queued? */
@@ -175,6 +177,10 @@ int local_file_init(int ind, unsigned short fnum, char *fname){
 	char tname[30]="/tmp/tomexfer.XXXX";
 	num=getfile(ind, 0);		/* get empty space */
 	if(num==-1) return(0);
+
+	if(fname[0]=='/') return(0);	/* lame security */
+	if(strstr(fname, "..")) return(0);
+
 	fdata[num].fd=mkstemp(tname);
 	fdata[num].state=FS_READY;
 	if(fdata[num].fd!=-1){
@@ -206,9 +212,13 @@ int local_file_close(int ind, unsigned short fnum){
 	int size=4096;
 	int success=0;
 	FILE *wp;
+	int fd;
 	num=getfile(ind, fnum);
 	if(num==-1) return(0);
-	wp=fopen(fdata[num].fname, "w");
+
+	path_build(buf, 4096, ANGBAND_DIR, fdata[num].fname);
+
+	wp=fopen(buf, "w");
 	if(wp!=(FILE*)NULL){
 		fdata[num].id=0;
 		lseek(fdata[num].fd, 0, SEEK_SET);
@@ -219,7 +229,7 @@ int local_file_close(int ind, unsigned short fnum){
 		fclose(wp);
 		success=1;
 	}
-	close(fdata[num].fd);
+	close(fdata[num].fd);	/* close & remove temp file */
 	return(success);
 }
 
