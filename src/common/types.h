@@ -1669,7 +1669,7 @@ struct hostile_type
 /* remotely ignore players */
 struct remote_ignore
 {
-	char name[40];
+	unsigned long id;		/* player unique id */
 	short serverid;
 	struct remote_ignore *next;	/* Next in list */
 };

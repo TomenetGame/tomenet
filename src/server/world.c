@@ -28,6 +28,17 @@ void world_update_players(){
 	}
 }
 
+bool world_check_ignore(int Ind, unsigned long id, short server){
+	struct remote_ignore *curr;
+	curr=Players[Ind]->w_ignore;
+	while(curr){
+		if(curr->serverid==server && curr->playerid==id)
+			return(TRUE);
+		curr=curr->next;
+	}
+	return(FALSE);
+}
+
 void world_comm(int fd, int arg){
 	static char buffer[1024];
 	char cbuf[sizeof(struct wpacket)];
@@ -58,7 +69,14 @@ void world_comm(int fd, int arg){
 		switch(wpk->type){
 			case WP_CHAT:
 				/* TEMPORARY chat broadcast method */
-				msg_broadcast_format(0, "%s", wpk->d.chat.ctxt);
+				for(i=1; i<NumPlayers; i++){
+					if(Players[i]->conn!=NOT_CONNECTED){
+						/* lame method just now */
+						if(world_check_ignore(wpk->d.chat.id, wpk->serverid))
+								continue;
+						msg_print(i, wpk->d.chat.ctxt);
+					}
+				}
 				break;
 			case WP_PMSG:
 				/* private message from afar -authed */
@@ -121,15 +139,14 @@ int world_find_server(char *pname){
 	return(0);
 }
 
-/* returns fixed pname, or NULL */
-char *world_find_player(char *pname){
+/* returns list entry, or NULL */
+struct rplist *world_find_player(char *pname, short server){
 	struct rplist *c_pl;
 	c_pl=rpmlist;
 
 	while(c_pl){
-		if(!stricmp(c_pl->name, pname)){
-			strcpy(pname, c_pl->name);
-			return(pname);
+		if(!stricmp(c_pl->name, pname) && (!server || server==c_pl->server)){
+			return(c_pl);
 		}
 		c_pl=c_pl->next;
 	}
