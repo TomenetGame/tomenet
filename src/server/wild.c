@@ -1012,7 +1012,7 @@ static void wild_add_dwelling(int Depth, int x, int y)
 			houses[num_houses].y = h_y1+1;
 			houses[num_houses].flags = HF_RECT|HF_STOCK;
 			if(has_moat)
-				houses[num_houses].flags = HF_MOAT;
+				houses[num_houses].flags |= HF_MOAT;
 			houses[num_houses].coords.rect.width = h_x1-h_x2;
 			houses[num_houses].coords.rect.height = h_y1-h_y2;
 #else
