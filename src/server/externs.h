@@ -937,6 +937,7 @@ extern void store_maint(store_type *st_ptr);
 extern void store_init(store_type *st_ptr);
 
 /* util.c */
+extern void use_ability_blade(int Ind);
 extern bool show_floor_feeling(int Ind);
 extern void msg_admin(cptr fmt, ...);
 extern int name_lookup_loose(int Ind, cptr name, bool party);

@@ -4925,6 +4925,10 @@ static int Receive_activate_skill(int ind)
 					do_cmd_psi(player, book, spell);
 				break;
 #endif
+
+			case MKEY_DODGE:
+				use_ability_blade(player);
+				break;
 		}
 		return 2;
 	}

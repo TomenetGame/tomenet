@@ -5323,8 +5323,8 @@ skill_type s_info[MAX_SKILLS] =
 				"Ability to dodge blows and bolts.\nYou cannot dodge very well with heavy armour!",
 
                 /* Mkey desc/mkey */
-                NULL,
-                0,
+				"Check dodge chance",
+				MKEY_DODGE,
 
                 /* Effect on other skills */
                 { 0 },
@@ -5336,7 +5336,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Flags */
-                0,
+                0,		/* No flags */
 
 				/* Tval */
 				0,

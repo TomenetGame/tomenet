@@ -1958,7 +1958,7 @@ static int trap_index(char * name)
 /*
  * Dodge Chance Feedback.
  */
-static void use_ability_blade(int Ind)
+void use_ability_blade(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	int dun_level = getlevel(&p_ptr->wpos);

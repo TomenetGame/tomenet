@@ -1184,6 +1184,7 @@ To find the latest change quickly, search ==== :)
 
 28/06/2002 (Jir)
 - mkeys can be added w/o client update (unless special handling is needed).
+- MKEY_DODGE implemented (to make sure the above modification works).
 - 'n', 'N', 'p' command obsoleted.
 - '/' can handle mkey-items well now.
 - PKT_RAW_KEY transmits non-defined key to the server directly.

@@ -4950,6 +4950,8 @@ extern int PlayerUID;
 #define MKEY_ARCHERING          6
 #define MKEY_PRAY               7
 
+#define MKEY_DODGE              8
+
 /*
  * Skills
  */
