@@ -1029,6 +1029,9 @@ bool Destroy_connection(int ind, char *reason)
 	int			id, len, sock;
 	char			pkt[MAX_CHARS];
 
+	kill_xfers(ind);	/* don't waste time sending to a dead
+				   connection ( or crash! ) */
+
 	if (connp->state == CONN_FREE)
 	{
 		errno = 0;
