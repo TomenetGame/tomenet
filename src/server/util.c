@@ -3363,8 +3363,8 @@ static void player_talk_aux(int Ind, char *message)
 		if(!pname)
 			target = name_lookup_loose(Ind, search, TRUE);
 		else{
-			world_pmsg_send(p_ptr->id, p_ptr->name, pname, colon);
-			msg_format(Ind, "\377o[%s:%s] %s", p_ptr->name, pname, colon);
+			world_pmsg_send(p_ptr->id, p_ptr->name, pname, colon+1);
+			msg_format(Ind, "\377o[%s:%s] %s", p_ptr->name, pname, colon+1);
 			return;
 		}
 
