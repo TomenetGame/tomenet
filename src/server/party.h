@@ -9,6 +9,7 @@ struct hash_entry
 	int id;				/* The character ID */
 	u32b account;			/* account id */
 	cptr name;			/* Player name */
+	byte race,class;		/* Race/class */
 
 	/* new in 3.4.2 */
 	byte level;			/* Player maximum level */

@@ -139,15 +139,15 @@ void Receive_login(void)
 	char tmp[MAX_CHARS+3];	/* like we'll need it... */
 
 	static char c_name[MAX_CHARS];	/* change later */
-	s16b c_race, c_class;
+	s16b c_race, c_class, level;
 	Term_clear();
 	c_put_str(TERM_L_BLUE, "Choose a character", 3, 8);
-	while((n = Packet_scanf(&rbuf, "%c%s%hd%hd", &ch, c_name, &c_race, &c_class)) >0){
+	while((n = Packet_scanf(&rbuf, "%c%s%hd%hd%hd", &ch, c_name, &level, &c_race, &c_class)) >0){
 		if(!strlen(c_name)){
 			break;
 		}
 		strcpy(names[i], c_name);
-		sprintf(tmp, "%c) %s", 'a'+i, c_name);
+		sprintf(tmp, "%c) %s the level %d %s %s", 'a'+i, c_name, level, race_info[c_race].title, class_info[c_class].title);
 		c_put_str(TERM_L_BLUE, tmp, 5+i, 11);
 		i++;
 		if(i==8) break;

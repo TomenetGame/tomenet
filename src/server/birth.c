@@ -1431,7 +1431,7 @@ static void player_setup(int Ind, bool new)
 	{
 		time_t ttime;
 		/* Add */
-		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, 1, 0, 0, 0, time(&ttime));
+		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, 1, 0, 0, 0, time(&ttime));
 	}
 
 	/* Set his "current activities" variables */

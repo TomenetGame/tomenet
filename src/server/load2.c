@@ -2404,7 +2404,7 @@ errr rd_server_savefile()
 	if (!older_than(0,4,1))
 	{
 		char name[80];
-		byte level, party, guild;
+		byte level, party, guild, race, class;
 		u32b acct;
 		u16b quest;
 
@@ -2420,6 +2420,8 @@ errr rd_server_savefile()
 			rd_u32b(&acct);
 			rd_s32b(&laston);
 			if(!older_than(3,4,2)){
+				rd_byte(&race);
+				rd_byte(&class);
 				rd_byte(&level);
 				rd_byte(&party);
 				if(!older_than(3,5,0)){
@@ -2440,7 +2442,7 @@ errr rd_server_savefile()
 			rd_string(name, 80);
 
 			/* Store the player name */
-			add_player_name(name, tmp32s, acct, level, party, guild, quest, laston);
+			add_player_name(name, tmp32s, acct, race, class, level, party, guild, quest, laston);
 		}
 	}
 

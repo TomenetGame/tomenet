@@ -2367,9 +2367,11 @@ static int Receive_login(int ind){
 			n=player_id_list(&id_list, l_acc->id);
 			/* Display all account characters here */
 			for(i=0; i<n; i++){
-				Packet_printf(&connp->c, "%c%s%hd%hd", PKT_LOGIN, lookup_player_name(id_list[i]), 1, 1);
+				u16b ptype=lookup_player_type(id_list[i]);
+				/* do not change protocol here */
+				Packet_printf(&connp->c, "%c%s%hd%hd%hd", PKT_LOGIN, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
 			}
-			Packet_printf(&connp->c, "%c%s%hd%hd", PKT_LOGIN, "", 0, 0);
+			Packet_printf(&connp->c, "%c%s%hd%hd%hd", PKT_LOGIN, "", 0, 0, 0);
 			C_KILL(id_list, i, int);
 			KILL(l_acc, struct account);
 		}

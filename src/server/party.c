@@ -1784,6 +1784,15 @@ byte lookup_player_level(int id)
 	return -1L;
 }
 
+u16b lookup_player_type(int id) {
+	hash_entry *ptr;
+	if((ptr=lookup_player(id)))
+		return(ptr->race|(ptr->class<<8));
+
+	/* Not found */
+	return -1L;
+}
+
 /*
  * Get the player's current party.
  */
@@ -2016,7 +2025,7 @@ void scan_players(){
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, u32b account, byte level, byte party, byte guild, u16b quest, time_t laston)
+void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte level, byte party, byte guild, u16b quest, time_t laston)
 {
 	int slot;
 	hash_entry *ptr;
@@ -2038,6 +2047,8 @@ void add_player_name(cptr name, int id, u32b account, byte level, byte party, by
 	ptr->party = party;
 	ptr->guild = guild;
 	ptr->quest = quest;
+	ptr->race = race;
+	ptr->class = class;
 
 	/* Add the rest of the chain to this entry */
 	ptr->next = hash_table[slot];

@@ -2238,6 +2238,8 @@ static void wr_player_names(void)
 			wr_u32b(ptr->account);
 			wr_s32b(ptr->laston);
 			/* 3.4.2 server */
+			wr_byte(ptr->race);
+			wr_byte(ptr->class);
 			wr_byte(ptr->level);
 			wr_byte(ptr->party);
 			wr_byte(ptr->guild);

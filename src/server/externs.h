@@ -804,7 +804,8 @@ extern bool check_ignore(int attacker, int target);
 extern bool check_hostile(int attacker, int target);
 extern cptr lookup_player_name(int id);
 extern int lookup_player_id(cptr name);
-extern void add_player_name(cptr name, int id, u32b account, byte level, byte party, byte guild, u16b quest, time_t laston);
+/* another arg, and its getting a struct... pfft. */
+extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte level, byte party, byte guild, u16b quest, time_t laston);
 extern void delete_player_id(int id);
 extern void delete_player_name(cptr name);
 extern int player_id_list(int **list, u32b account);
