@@ -2321,6 +2321,8 @@ void scan_players(){
 				}
 				kill_houses(ptr->id, OT_PLAYER);
 				rem_quest(ptr->quest);
+				/* Added this one.. should work well? */
+				kill_objs(ptr->id);
 
 				/* Wipe Artifacts (s)he had  -C. Blue */
 				for (i = 0; i < o_max; i++)

@@ -4474,7 +4474,7 @@ void kill_houses(int id, int type){
 /* XXX maybe this function can delete the objects
  * to prevent 'house-owner char cheeze'	- Jir -
  */
-static void kill_objs(int id){
+void kill_objs(int id){
 	int i;
 	object_type *o_ptr;
 	for(i=0;i<o_max;i++){
@@ -7503,20 +7503,20 @@ void telekinesis_aux(int Ind, int item)
 	if (!Ind2) return;
 	p2_ptr = Players[Ind2];
 
-	if (p2_ptr->ghost)
+	if (p2_ptr->ghost && !is_admin(p_ptr))
 	{
 	    msg_print(Ind, "You cannot send items to ghosts!");
 	    return;
 	}
 
-	if (cfg.charmode_trading_restrictions > 0) {
+	if (cfg.charmode_trading_restrictions > 0 && !is_admin(p_ptr)) {
 		if ((p_ptr->mode & MODE_IMMORTAL) && !(p2_ptr->mode & MODE_IMMORTAL))
 		{
 		    msg_print(Ind, "You can only contact everlasting beings!");
 		    return;
 		}
 	}
-	if (cfg.charmode_trading_restrictions > 1) {
+	if (cfg.charmode_trading_restrictions > 1 && !is_admin(p_ptr)) {
 		if (!(p_ptr->mode & MODE_IMMORTAL) && (p2_ptr->mode & MODE_IMMORTAL))
 		{
 		    msg_print(Ind, "You can only contact non-everlasting beings!");
@@ -7524,14 +7524,14 @@ void telekinesis_aux(int Ind, int item)
 		}
 	}
 
-	if(cfg.anti_arts_send && artifact_p(q_ptr))
+	if(cfg.anti_arts_send && artifact_p(q_ptr) && !is_admin(p_ptr))
 	{
 		msg_print(Ind, "The artifact resists telekinesis!");
 		return;
 	}
 
 	/* You cannot send artifact */
-	if(cfg.anti_arts_hoard && true_artifact_p(q_ptr))
+	if(cfg.anti_arts_hoard && true_artifact_p(q_ptr) && !is_admin(p_ptr))
 	{
 		msg_print(Ind, "You have an acute feeling of loss!");
 		a_info[q_ptr->name1].cur_num = 0;
@@ -7542,7 +7542,7 @@ void telekinesis_aux(int Ind, int item)
 		/* If they're not within the same dungeon level,
 		   they cannot reach each other if
 		   one is in an IRON or NO_RECALL dungeon/tower */
-		if (!inarea(&p_ptr->wpos, &p2_ptr->wpos)) {
+		if (!inarea(&p_ptr->wpos, &p2_ptr->wpos) && !is_admin(p_ptr)) {
 			dungeon_type *d_ptr;
 			d_ptr=getdungeon(&p_ptr->wpos);
 			if(d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_DOWN)) || (d_ptr->flags1 & DF1_NO_RECALL))){

@@ -2763,8 +2763,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		/* Burn trees and grass */
-		case GF_FIRE:
 		case GF_HOLY_FIRE:
+			/* Holy Fire doesn't destroy trees! */
+			break;
+
+		case GF_FIRE:
 
 		case GF_METEOR:
 		case GF_PLASMA:

@@ -908,8 +908,8 @@ void do_cmd_open(int Ind, int dir)
 
 
 	/* Ghosts cannot open doors */
-	if (p_ptr->ghost ||
-			(p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)))
+	if ((p_ptr->ghost && !is_admin(p_ptr)) ||
+	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)))
 	{
 		msg_print(Ind, "You cannot open things!");
 		return;

@@ -928,6 +928,7 @@ extern void excise_object_idx(int o_idx);
 extern bool kind_is_legal(int k_idx);
 extern void init_match_theme(obj_theme theme);
 
+extern void kill_objs(int id);
 
 /* party.c */
 extern void account_check(int Ind);
