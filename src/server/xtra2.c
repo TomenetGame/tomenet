@@ -3701,7 +3701,7 @@ void player_death(int Ind)
 			Players[Ind2]->died_from_depth = getlevel(&Players[Ind2]->wpos);
 		}
                 bypass_invuln = TRUE;
-                take_hit(Ind2, 32000, p_ptr->died_from);
+                take_hit(Ind2, Players[Ind2]->chp+1, p_ptr->died_from);
                 bypass_invuln = FALSE;
 	      }
 	  }

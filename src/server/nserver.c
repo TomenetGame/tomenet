@@ -1185,6 +1185,23 @@ static int Handle_setup(int ind)
 	return 0;
 }
 
+/* invite only */
+bool player_allowed(char *name){
+	FILE *sfp;
+	char buffer[80];
+	sfp=fopen("allowlist","r");
+	if(sfp==(FILE*)NULL)
+		return TRUE;
+	else{
+		while(fgets(buffer, 80, sfp)){
+			/* allow for \n */
+			if((strlen(name)+1)!=strlen(buffer)) continue;
+			if(!strncmp(buffer,name, strlen(name))) return(TRUE);
+		}
+		fclose(sfp);
+	}
+	return(FALSE);
+}
 
 /*
  * Handle a connection that is in the listening state.
@@ -1245,6 +1262,12 @@ static int Handle_listening(int ind)
 		Send_reliable(ind);
 		Destroy_connection(ind, "verify broken");
 		return -1;
+	}
+	if(!player_allowed(nick)){
+		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
+		Send_reliable(ind);
+		Destroy_connection(ind, "No such character");
+		return(-1);
 	}
 	if(in_banlist(connp->addr)){
 		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
