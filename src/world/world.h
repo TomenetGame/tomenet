@@ -27,10 +27,10 @@ struct serverinfo{
 };
 
 struct secure{
-	short secure :1,	/* kick off ALL unauthed clients */
-		chat :1,	/* Permit chat if unauthed (and not secure) */
-		play :1,	/* Players online tracing */
-		msgs :1;	/* Permit server messages */
+	short secure;	/* kick off ALL unauthed clients */
+	short chat;	/* Permit chat if unauthed (and not secure) */
+	short play;	/* Players online tracing */
+	short msgs;	/* Permit server messages */
 };
 
 struct client{
