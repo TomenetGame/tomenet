@@ -640,6 +640,10 @@ Change list for PernMangband
 [H] larger tavern / shop lighting
 [B] some of holy animals didn't do any damage.
 
+12/01/2002 (Evileye)
+- Added a wilderness generator (test)
+- Reenabled and fixed the wild mapping function (still more fixes needed)
+
 
 
 
@@ -673,7 +677,6 @@ Change list for PernMangband
 - cave_special should use union? and their save/load via csfunc
 
 [major ones]
-- new wilderness generator {Evileye}
 - new terrains and their effects (f_info.txt)
 - variety of dungeon types (d_info.txt)
 - better cave-generator (generate.c) {Asclep?}
