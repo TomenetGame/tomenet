@@ -22,17 +22,20 @@ void world_update_players(){
 	int i;
 	for(i=1; i<=NumPlayers; i++){
 		if(Players[i]->conn!=NOT_CONNECTED){
-			world_player(Players[i]->id, Players[i]->name, 1, 0);
+			if(!Players[i]->admin_dm)
+				world_player(Players[i]->id, Players[i]->name, 1, 0);
 		}
 	}
 }
 
 void world_comm(int fd, int arg){
 	static char buffer[1024];
-	static char bpos=0;
+	char cbuf[sizeof(struct wpacket)];
+	static short bpos=0;
+	static short blen=0;
 	int x, i;
 	struct wpacket *wpk;
-	x=recv(fd, buffer+bpos, 1024-bpos, 0);
+	x=recv(fd, buffer+(bpos+blen), 1024-(bpos+blen), 0);
 	if(x==0){
 		struct rplist *c_pl, *n_pl;
 		/* This happens... we are screwed (fortunately SIGPIPE isnt handled) */
@@ -49,7 +52,8 @@ void world_comm(int fd, int arg){
 		rpmlist=NULL;
 		WorldSocket=-1;
 	}
-	while(x>=sizeof(struct wpacket)){
+	blen+=x;
+	while(blen>=sizeof(struct wpacket)){
 		wpk=(struct wpacket*)(buffer+bpos);
 		switch(wpk->type){
 			case WP_CHAT:
@@ -93,12 +97,14 @@ void world_comm(int fd, int arg){
 		}
 		/* update buffer position and remaining data size */
 		bpos+=sizeof(struct wpacket);
-		x-=sizeof(struct wpacket);
+		blen-=sizeof(struct wpacket);
 	}
-	if(x==0) bpos=0;
-	else{
-		/* see how it goes.. really we should probably copy back */
+	if(blen){
+		/* copy it back */
+		memcpy(cbuf, buffer+bpos, blen);
+		memcpy(buffer, cbuf, blen);
 	}
+	bpos=0;
 }
 
 /* returns authed server id or 0 */
