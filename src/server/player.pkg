@@ -1,0 +1,566 @@
+$#include "angband.h"
+
+typedef char* cptr;
+typedef int errr;
+typedef unsigned char bool;
+typedef unsigned char byte;
+typedef signed short s16b;
+typedef unsigned short u16b;
+typedef signed int s32b;
+typedef unsigned int u32b;
+
+/*
+ * Maximum number of "normal" pack slots, and the index of the "overflow"
+ * slot, which can hold an item, but only temporarily, since it causes the
+ * pack to "overflow", dropping the "last" item onto the ground.  Since this
+ * value is used as an actual slot, it must be less than "INVEN_WIELD" (below).
+ * Note that "INVEN_PACK" is probably hard-coded by its use in savefiles, and
+ * by the fact that the screen can only show 23 items plus a one-line prompt.
+ */
+#define INVEN_PACK		23
+
+/*
+ * Indexes used for various "equipment" slots (hard-coded by savefiles, etc).
+ */
+#define INVEN_WIELD		24
+#define INVEN_BOW       25
+#define INVEN_LEFT      26
+#define INVEN_RIGHT     27
+#define INVEN_NECK      28
+#define INVEN_LITE      29
+#define INVEN_BODY      30
+#define INVEN_OUTER     31
+#define INVEN_ARM       32
+#define INVEN_HEAD      33
+#define INVEN_HANDS     34
+#define INVEN_FEET      35
+
+/*
+ * Total number of inventory slots (hard-coded).
+ */
+#define INVEN_TOTAL	36
+
+/*
+ * Indexes of the various "stats" (hard-coded by savefiles, etc).
+ */
+#define A_STR	0
+#define A_INT	1
+#define A_WIS	2
+#define A_DEX	3
+#define A_CON	4
+#define A_CHR	5
+
+/*
+ * Player race constants (hard-coded by save-files, arrays, etc)
+ */
+#define RACE_HUMAN		0
+#define RACE_HALF_ELF	1
+#define RACE_ELF		2
+#define RACE_HOBBIT		3
+#define RACE_GNOME		4
+#define RACE_DWARF		5
+#define RACE_HALF_ORC	6
+#define RACE_HALF_TROLL	7
+#define RACE_DUNADAN	8
+#define RACE_HIGH_ELF	9
+#define RACE_YEEK   	10
+#define RACE_GOBLIN 	11
+#define RACE_ENT   	12
+#define RACE_DRIDER   	13
+
+/*
+ * Player class constants (hard-coded by save-files, arrays, etc)
+ */
+#define CLASS_WARRIOR		0
+#define CLASS_MAGE		1
+#define CLASS_PRIEST		2
+#define CLASS_ROGUE		3
+#define CLASS_RANGER		4
+#define CLASS_PALADIN		5
+#define CLASS_SORCERER		6
+#define CLASS_MIMIC		7
+#define CLASS_UNBELIEVER	8
+#define CLASS_ARCHER		9
+#define CLASS_MONK              10
+#define CLASS_TELEPATH		11
+
+struct object_type
+{
+        s32b owner;                     /* Player that found it */
+        s16b level;                     /* Level req */
+
+	s16b k_idx;			/* Kind index (zero if "dead") */
+
+	byte iy;			/* Y-position on map, or zero */
+	byte ix;			/* X-position on map, or zero */
+
+	s32b dun_depth;			/* Depth into the dungeon */
+
+	byte tval;			/* Item type (from kind) */
+	byte sval;			/* Item sub-type (from kind) */
+
+	s32b bpval;			/* Base item extra-parameter */
+	s32b pval;			/* Extra enchantment item extra-parameter */
+
+	byte discount;		/* Discount (if any) */
+
+	byte number;		/* Number of items */
+
+	s16b weight;		/* Item weight */
+
+	byte name1;			/* Artifact type, if any */
+	byte name2;			/* Ego-Item type, if any */
+	s32b name3;			/* Randart seed, if any */
+
+	byte xtra1;			/* Extra info type */
+	byte xtra2;			/* Extra info index */
+
+	s16b to_h;			/* Plusses to hit */
+	s16b to_d;			/* Plusses to damage */
+	s16b to_a;			/* Plusses to AC */
+
+	s16b ac;			/* Normal AC */
+
+	byte dd;
+        byte ds;		/* Damage dice/sides */
+
+	s16b timeout;		/* Timeout Counter */
+
+	byte ident;			/* Special flags  */
+
+	/*byte marked;	*/	/* Object is marked */
+
+	u16b note;			/* Inscription index */
+};
+
+struct player_type
+{
+	int conn;			/* Connection number */
+	char name[MAX_CHARS];		/* Nickname */
+	char pass[MAX_CHARS];		/* Password */
+	char basename[MAX_CHARS];
+	char realname[MAX_CHARS];	/* Userid */
+	char hostname[MAX_CHARS];	/* His hostname */
+	char addr[MAX_CHARS];		/* His IP address */
+	unsigned int version;		/* His version */
+
+	s32b id;		/* Unique ID to each player */
+	u32b dna;		/* DNA - psuedo unique to each player life */
+
+	hostile_type *hostile;	/* List of players we wish to attack */
+
+	char savefile[1024];	/* Name of the savefile */
+
+	bool alive;		/* Are we alive */
+	bool death;		/* Have we died */
+	s16b ghost;		/* Are we a ghost */
+	s16b fruit_bat;		/* Are we a fruit bat */
+	byte lives;         /* number of times we have ressurected */
+
+	byte prace;			/* Race index */
+	byte pclass;		/* Class index */
+	byte male;			/* Sex of character */
+	byte oops;			/* Unused */
+	
+	s16b class_extra;	/* Class extra info */
+
+	byte hitdie;		/* Hit dice (sides) */
+	s16b expfact;		/* Experience factor */
+
+	byte maximize;		/* Maximize stats */
+	byte preserve;		/* Preserve artifacts */
+
+	s16b age;			/* Characters age */
+	s16b ht;			/* Height */
+	s16b wt;			/* Weight */
+	s16b sc;			/* Social Class */
+
+
+	player_race *rp_ptr;		/* Pointers to player tables */
+	player_class *cp_ptr;
+	player_magic *mp_ptr;
+
+	s32b au;			/* Current Gold */
+
+	s32b max_exp;		/* Max experience */
+	s32b exp;			/* Cur experience */
+	u16b exp_frac;		/* Cur exp frac (times 2^16) */
+
+	s16b lev;			/* Level */
+
+	s16b mhp;			/* Max hit pts */
+	s16b chp;			/* Cur hit pts */
+	u16b chp_frac;		/* Cur hit frac (times 2^16) */
+
+	s16b player_hp[PY_MAX_LEVEL];
+
+	s16b msp;			/* Max mana pts */
+	s16b csp;			/* Cur mana pts */
+	u16b csp_frac;		/* Cur mana frac (times 2^16) */
+
+	object_type inventory[INVEN_TOTAL];	/* Player's inventory */
+
+	s16b total_weight;	/* Total weight being carried */
+
+	s16b inven_cnt;		/* Number of items in inventory */
+	s16b equip_cnt;		/* Number of items in equipment */
+
+	s16b max_plv;		/* Max Player Level */
+	s16b max_dlv;		/* Max level explored */
+	s16b recall_depth;	/* which depth to recall to */
+
+	s16b stat_max[6];	/* Current "maximal" stat values */
+	s16b stat_cur[6];	/* Current "natural" stat values */
+
+	s16b world_x;	/* The wilderness x coordinate */
+	s16b world_y;	/* The wilderness y coordinate */
+
+	unsigned char wild_map[MAX_WILD_8]; /* the wilderness we have explored */
+
+	s16b py;		/* Player location in dungeon */
+	s16b px;
+	s32b dun_depth;		/* Player depth -- wilderness level offset */
+
+	s16b cur_hgt;		/* Height and width of their dungeon level */
+	s16b cur_wid;
+
+	bool new_level_flag;	/* Has this player changed depth? */
+	byte new_level_method;	/* Climb up stairs, down, or teleport level? */
+
+	byte party;		/* The party he belongs to (or 0 if neutral) */
+
+	s16b target_who;
+	s16b target_col;	/* What position is targetted */
+	s16b target_row;
+
+	s16b health_who;	/* Who's shown on the health bar */
+
+	s16b view_n;		/* Array of grids viewable to player */
+	byte view_y[VIEW_MAX];
+	byte view_x[VIEW_MAX];
+
+	s16b lite_n;		/* Array of grids lit by player lite */
+	byte lite_y[LITE_MAX];
+	byte lite_x[LITE_MAX];
+
+	s16b temp_n;		/* Array of grids used for various things */
+	byte temp_y[TEMP_MAX];
+	byte temp_x[TEMP_MAX];
+
+	s16b target_n;		/* Array of grids used for targetting/looking */
+	byte target_y[TEMP_MAX];
+	byte target_x[TEMP_MAX];
+	s16b target_idx[TEMP_MAX];
+
+	cptr info[128];		/* Temp storage of *ID* and Self Knowledge info */
+	byte special_file_type;	/* Is he using *ID* or Self Knowledge? */
+
+	bool obj_aware[MAX_K_IDX]; /* Is the player aware of this obj type? */
+	bool obj_tried[MAX_K_IDX]; /* Has the player tried this obj type? */
+
+	bool options[64];	/* Player's options */
+	byte d_attr[MAX_K_IDX];
+	char d_char[MAX_K_IDX];
+	byte f_attr[MAX_F_IDX];
+	char f_char[MAX_F_IDX];
+	byte k_attr[MAX_K_IDX];
+	char k_char[MAX_K_IDX];
+	byte r_attr[MAX_R_IDX];
+	char r_char[MAX_R_IDX];
+
+	bool carry_query_flag;
+	bool use_old_target;
+	bool always_pickup;
+	bool stack_force_notes;
+	bool stack_force_costs;
+	bool find_ignore_stairs;
+	bool find_ignore_doors;
+	bool find_cut;
+	bool find_examine;
+	bool disturb_move;
+	bool disturb_near;
+	bool disturb_panel;
+	bool disturb_state;
+	bool disturb_minor;
+	bool disturb_other;
+	bool stack_allow_items;
+	bool stack_allow_wands;
+	bool view_perma_grids;
+	bool view_torch_grids;
+	bool view_reduce_lite;
+	bool view_reduce_view;
+	bool view_yellow_lite;
+	bool view_bright_lite;
+	bool view_granite_lite;
+	bool view_special_lite;
+
+	s16b max_panel_rows;
+	s16b max_panel_cols;
+	s16b panel_row;
+	s16b panel_col;
+	s16b panel_row_min;
+	s16b panel_row_max;
+	s16b panel_col_min;
+	s16b panel_col_max;
+	s16b panel_col_prt;	/* What panel this guy's on */
+	s16b panel_row_prt;
+	s16b panel_row_old;
+	s16b panel_col_old;
+
+	char died_from[80];	/* What off-ed him */
+	char died_from_list[80]; /* what goes on the high score list */
+	s16b died_from_depth;	/* what depth we died on */
+
+	u16b total_winner;	/* Is this guy the winner */
+	s16b own1;
+        s16b own2;	/* IF we are a king what do we own ? */
+	u16b retire_timer;	/* The number of minutes this guy can play until
+				   he will be forcibly retired.
+				 */
+
+	u16b noscore;		/* Has he cheated in some way (hopefully not) */
+	s16b command_rep;	/* Command repetition */
+
+	byte last_dir;		/* Last direction moved (used for swapping places) */
+
+	s16b running;		/* Are we running */
+	byte find_current;	/* These are used for the running code */
+	byte find_prevdir;
+	bool find_openarea;
+	bool find_breakright;
+	bool find_breakleft;
+
+	bool resting;		/* Are we resting? */
+
+	s16b energy_use;	/* How much energy has been used */
+
+	int look_index;		/* Used for looking or targeting */
+
+  s32b current_char;
+	s16b current_spell;	/* Spell being cast */
+  s16b current_mind;	/* Power being use */
+	s16b current_rod;	/* Rod being zapped */
+	s16b current_activation;/* Artifact (or dragon mail) being activated */
+	s16b current_enchant_h; /* Current enchantments */
+	s16b current_enchant_d;
+	s16b current_enchant_a;
+	s16b current_identify;	/* Are we identifying something? */
+	s16b current_star_identify;
+	s16b current_recharge;
+  s16b current_artifact;
+  object_type *current_telekinesis;
+	s16b current_curse;
+
+	s16b current_selling;
+	s16b current_sell_amt;
+	int current_sell_price;
+
+	int store_num;		/* What store this guy is in */
+
+	s16b fast;			/* Timed -- Fast */
+	s16b slow;			/* Timed -- Slow */
+	s16b blind;			/* Timed -- Blindness */
+	s16b paralyzed;		/* Timed -- Paralysis */
+	s16b confused;		/* Timed -- Confusion */
+	s16b afraid;		/* Timed -- Fear */
+	s16b image;			/* Timed -- Hallucination */
+	s16b poisoned;		/* Timed -- Poisoned */
+	s16b cut;			/* Timed -- Cut */
+	s16b stun;			/* Timed -- Stun */
+
+	s16b protevil;		/* Timed -- Protection */
+	s16b invuln;		/* Timed -- Invulnerable */
+	s16b hero;			/* Timed -- Heroism */
+	s16b shero;			/* Timed -- Super Heroism */
+	s16b furry;			/* Timed -- Furry */
+	s16b shield;		/* Timed -- Shield Spell */
+	s16b blessed;		/* Timed -- Blessed */
+	s16b tim_invis;		/* Timed -- See Invisible */
+	s16b tim_infra;		/* Timed -- Infra Vision */
+	s16b tim_wraith;	/* Timed -- Wraithform */
+	bool wraith_in_wall;
+	s16b tim_meditation;	/* Timed -- Meditation */
+	s16b tim_invisibility;		/* Timed -- Invisibility */
+	s16b tim_invis_power;	/* Timed -- Invisibility Power */
+	s16b tim_traps; 	/* Timed -- Avoid traps */
+	s16b tim_manashield;    /* Timed -- Mana Shield */
+	s16b tim_mimic; 	/* Timed -- Mimicry */
+	s16b tim_mimic_what; 	/* Timed -- Mimicry */
+	s16b bow_brand; 	/* Timed -- Bow Branding */
+	byte bow_brand_t; 	/* Timed -- Bow Branding */
+	s16b bow_brand_d; 	/* Timed -- Bow Branding */
+        s16b prob_travel;       /* Timed -- Probability travel */
+        s16b st_anchor;         /* Timed -- Space/Time Anchor */
+        s16b tim_esp;           /* Timed -- ESP */
+  s16b adrenaline;
+  s16b biofeedback;
+
+  s16b auto_tunnel;
+  s16b body_monster;
+
+	s16b oppose_acid;	/* Timed -- oppose acid */
+	s16b oppose_elec;	/* Timed -- oppose lightning */
+	s16b oppose_fire;	/* Timed -- oppose heat */
+	s16b oppose_cold;	/* Timed -- oppose cold */
+	s16b oppose_pois;	/* Timed -- oppose poison */
+
+	s16b word_recall;	/* Word of recall counter */
+
+	s16b energy;		/* Current energy */
+
+	s16b food;			/* Current nutrition */
+
+	byte confusing;		/* Glowing hands */
+	byte stunning;		/* Heavy hands */
+	byte searching;		/* Currently searching */
+
+	s16b new_spells;	/* Number of spells available */
+
+	s16b old_spells;
+
+	u32b spell_learned1;	/* bit mask of spells learned */
+	u32b spell_learned2;	/* bit mask of spells learned */
+	u32b spell_worked1;	/* bit mask of spells tried and worked */
+	u32b spell_worked2;	/* bit mask of spells tried and worked */
+	u32b spell_forgotten1;	/* bit mask of spells learned but forgotten */
+	u32b spell_forgotten2;	/* bit mask of spells learned but forgotten */
+	byte spell_order[64];	/* order spells learned/remembered/fogotten */
+
+	bool old_cumber_armor;
+	bool old_cumber_glove;
+	bool old_heavy_wield;
+	bool old_heavy_shoot;
+	bool old_icky_wield;
+
+	s16b old_lite;		/* Old radius of lite (if any) */
+	s16b old_view;		/* Old radius of view (if any) */
+
+	s16b old_food_aux;	/* Old value of food */
+
+
+	bool cumber_armor;	/* Mana draining armor */
+	bool cumber_glove;	/* Mana draining gloves */
+	bool heavy_wield;	/* Heavy weapon */
+	bool heavy_shoot;	/* Heavy shooter */
+	bool icky_wield;	/* Icky weapon */
+
+	s16b cur_lite;		/* Radius of lite (if any) */
+
+
+	u32b notice;		/* Special Updates (bit flags) */
+	u32b update;		/* Pending Updates (bit flags) */
+	u32b redraw;		/* Normal Redraws (bit flags) */
+	u32b window;		/* Window Redraws (bit flags) */
+
+	s16b stat_use[6];	/* Current modified stats */
+	s16b stat_top[6];	/* Maximal modified stats */
+
+	s16b stat_add[6];	/* Modifiers to stat values */
+	s16b stat_ind[6];	/* Indexes into stat tables */
+
+	bool immune_acid;	/* Immunity to acid */
+	bool immune_elec;	/* Immunity to lightning */
+	bool immune_fire;	/* Immunity to fire */
+	bool immune_cold;	/* Immunity to cold */
+
+        s16b reduc_fire;        /* Fire damage reduction */
+        s16b reduc_elec;        /* elec damage reduction */
+        s16b reduc_acid;        /* acid damage reduction */
+        s16b reduc_cold;        /* cold damage reduction */
+
+	bool resist_acid;	/* Resist acid */
+	bool resist_elec;	/* Resist lightning */
+	bool resist_fire;	/* Resist fire */
+	bool resist_cold;	/* Resist cold */
+	bool resist_pois;	/* Resist poison */
+
+	bool resist_conf;	/* Resist confusion */
+	bool resist_sound;	/* Resist sound */
+	bool resist_lite;	/* Resist light */
+	bool resist_dark;	/* Resist darkness */
+	bool resist_chaos;	/* Resist chaos */
+	bool resist_disen;	/* Resist disenchant */
+	bool resist_shard;	/* Resist shards */
+	bool resist_nexus;	/* Resist nexus */
+	bool resist_blind;	/* Resist blindness */
+	bool resist_neth;	/* Resist nether */
+	bool resist_fear;	/* Resist fear */
+
+	bool sustain_str;	/* Keep strength */
+	bool sustain_int;	/* Keep intelligence */
+	bool sustain_wis;	/* Keep wisdom */
+	bool sustain_dex;	/* Keep dexterity */
+	bool sustain_con;	/* Keep constitution */
+	bool sustain_chr;	/* Keep charisma */
+
+	bool aggravate;		/* Aggravate monsters */
+	bool teleport;		/* Random teleporting */
+
+	bool exp_drain;		/* Experience draining */
+
+	bool feather_fall;	/* No damage falling */
+	bool lite;		/* Permanent light */
+	bool free_act;		/* Never paralyzed */
+	bool see_inv;		/* Can see invisible */
+	bool regenerate;	/* Regenerate hit pts */
+	bool hold_life;		/* Resist life draining */
+	bool telepathy;		/* Telepathy */
+	bool slow_digest;	/* Slower digestion */
+	bool bless_blade;	/* Blessed blade */
+	bool xtra_might;	/* Extra might bow */
+	bool impact;		/* Earthquake blows */
+        bool auto_id; /* Pickup = Id */
+	
+	s16b invis;		/* Invisibility */
+
+	s16b dis_to_h;		/* Known bonus to hit */
+	s16b dis_to_d;		/* Known bonus to dam */
+	s16b dis_to_a;		/* Known bonus to ac */
+
+	s16b dis_ac;		/* Known base ac */
+
+	s16b to_h;			/* Bonus to hit */
+	s16b to_d;			/* Bonus to dam */
+	s16b to_a;			/* Bonus to ac */
+
+	s16b ac;			/* Base ac */
+
+	s16b see_infra;		/* Infravision range */
+
+	s16b skill_dis;		/* Skill: Disarming */
+	s16b skill_dev;		/* Skill: Magic Devices */
+	s16b skill_sav;		/* Skill: Saving throw */
+	s16b skill_stl;		/* Skill: Stealth factor */
+	s16b skill_srh;		/* Skill: Searching ability */
+	s16b skill_fos;		/* Skill: Searching frequency */
+	s16b skill_thn;		/* Skill: To hit (normal) */
+	s16b skill_thb;		/* Skill: To hit (shooting) */
+	s16b skill_tht;		/* Skill: To hit (throwing) */
+	s16b skill_dig;		/* Skill: Digging */
+
+	s16b num_blow;		/* Number of blows */
+	s16b num_fire;		/* Number of shots */
+	s16b num_spell;		/* Number of spells */
+
+	byte tval_xtra;		/* Correct xtra tval */
+
+	byte tval_ammo;		/* Correct ammo tval */
+
+	s16b pspeed;		/* Current speed */
+	
+ 	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
+
+	s32b innate_spells[3]; /* Monster spells */
+	bool body_changed;
+	
+	bool anti_magic;	/* Can the player resist magic */
+
+        s32b blood_bond; /* Norc is now happy :) */
+
+        byte mode; /* Difficulty MODE */
+
+        s32b esp_link; /* Mental link */
+        byte esp_link_type;
+        u16b esp_link_flags;
+        u16b esp_link_end; /* Time before actual end */
+};

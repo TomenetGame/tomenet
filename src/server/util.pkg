@@ -1,0 +1,58 @@
+$#include "angband.h"
+
+typedef char* cptr;
+typedef int errr;
+typedef unsigned char bool;
+typedef unsigned char byte;
+typedef signed short s16b;
+typedef unsigned short u16b;
+typedef signed int s32b;
+typedef unsigned int u32b;
+
+#define TRUE
+#define FALSE
+
+#define TERM_DARK                0  /* 'd' */   /* 0,0,0 */
+#define TERM_WHITE               1  /* 'w' */   /* 4,4,4 */
+#define TERM_SLATE               2  /* 's' */   /* 2,2,2 */
+#define TERM_ORANGE              3  /* 'o' */   /* 4,2,0 */
+#define TERM_RED                 4  /* 'r' */   /* 3,0,0 */
+#define TERM_GREEN               5  /* 'g' */   /* 0,2,1 */
+#define TERM_BLUE                6  /* 'b' */   /* 0,0,4 */
+#define TERM_UMBER               7  /* 'u' */   /* 2,1,0 */
+#define TERM_L_DARK              8  /* 'D' */   /* 1,1,1 */
+#define TERM_L_WHITE             9  /* 'W' */   /* 3,3,3 */
+#define TERM_VIOLET             10  /* 'v' */   /* 4,0,4 */
+#define TERM_YELLOW             11  /* 'y' */   /* 4,4,0 */
+#define TERM_L_RED              12  /* 'R' */   /* 4,0,0 */
+#define TERM_L_GREEN            13  /* 'G' */   /* 0,4,0 */
+#define TERM_L_BLUE             14  /* 'B' */   /* 0,4,4 */
+#define TERM_L_UMBER            15  /* 'U' */   /* 3,2,1 */
+
+
+extern s32b turn;
+extern s32b old_turn;
+
+$extern s32b intMod(s32b a, s32b b);
+$extern s32b intAnd(s32b a, s32b b);
+$extern s32b intOr(s32b a, s32b b);
+$extern s32b intXor(s32b a, s32b b);
+$extern s32b intShiftl(s32b a, s32b b);
+$extern s32b intShiftr(s32b a, s32b b);
+$extern s32b intBitNot(s32b b);
+
+extern s32b intMod @ mod(s32b a, s32b b);
+extern s32b intAnd @ band(s32b a, s32b b);
+extern s32b intOr @ bor(s32b a, s32b b);
+extern s32b intXor @ bxor(s32b a, s32b b);
+extern s32b intShiftl @ bshl(s32b a, s32b b);
+extern s32b intShiftr @ bshr(s32b a, s32b b);
+extern s32b intBitNot @ bnot(s32b b);
+
+extern bool pern_dofile(int Ind, char *file);
+extern bool exec_lua(int Ind, char *file);
+extern void cat_script(int Ind, char *name);
+
+extern void msg_print(int Ind, cptr msg);
+extern void msg_broadcast(int Ind, cptr msg);
+extern void msg_print_near(int Ind, cptr msg);
