@@ -1897,6 +1897,7 @@ static void process_player_end(int Ind)
 						//						inven_item_describe(Ind, INVEN_LITE);
 						inven_item_optimize(Ind, INVEN_LITE);
 					}
+					p_ptr->update|=(PU_LITE);
 				}
 
 				/* The light is getting dim */
