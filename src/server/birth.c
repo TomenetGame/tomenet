@@ -1019,6 +1019,15 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->level = 1;
 	(void)inven_carry(Ind, o_ptr);
 
+	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_LEARNING));
+	o_ptr->number = 99;
+	o_ptr->discount = 100;
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	(void)inven_carry(Ind, o_ptr);
+
 	invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_LIFE));
 	o_ptr->number = 30;
 	o_ptr->discount = 0;
