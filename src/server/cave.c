@@ -203,8 +203,8 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	if(wpos->wz==0)
 	{
 		w_ptr->ondepth=(inc?w_ptr->ondepth+value:value);
-		if(w_ptr->ondepth < 0) w_ptr->ondepth=0;
 #if 0
+		if(w_ptr->ondepth < 0) w_ptr->ondepth=0;	// ondepth is unsigned!
 		if(!w_ptr->ondepth) w_ptr->lastused=0;
 		if(value>0)
 			w_ptr->lastused=now;
@@ -287,6 +287,11 @@ int getlevel(struct worldpos *wpos)
  * over-estimate about one grid per fifteen grids of distance.
  *
  * Algorithm: hypot(dy,dx) = max(dy,dx) + min(dy,dx) / 2
+ */
+/*
+ * For radius-affecting things, consider using tdx[], tdy[], tdi[] instead,
+ * which contain pre-calculated results of this function.		- Jir -
+ * (Please see prepare_distance() )
  */
 int distance(int y1, int x1, int y2, int x2)
 {

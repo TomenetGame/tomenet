@@ -26,14 +26,17 @@
  
 /* INDIRECT_FREQ does the following:
  *
+ * ########....
  * ..x.......p.
  * ....###.....
  * ....@##.....
- * .....##.....
+ * .....##Q....
  *
  * 'p' casts a spell on 'x', so that spell(ball and summoning) will affect '@'
  * indirectly.
  * also, they cast self-affecting spells(heal, blink etc).
+ * 'Q' can never summons on '@', however (s)he may attempt to phase.
+ *
  * Note that player can do the same thing (using /tar command), which was
  * an effective abuse in some variants.
  */
@@ -42,15 +45,20 @@
  * reducing this also speeds the server up. */
 #define		INDIRECT_FREQ	50
  
-/* pseudo 'radius' for summoning spells. default is 3.
- * the real solution should be to limit # of monsters a summoner can summon,
- * probably introducing 'mana points' to the monsters.
- */
+/* pseudo 'radius' for summoning spells. default is 3.  */
 #define		INDIRECT_SUMMONING_RADIUS	3
 
-/* This value is for the case like:
+/* though Quylthulgs are intelligent by nature, for the balance's sake
+ * this flag bans Qs from casting spells indirectly (just like vanilla ones).
+ */
+//#define		STUPID_Q
+
+/* Those 2 values above are for the case like:
  * > Disabled for main server game. Quylthulgs summoning
  * > and all sorts from behind walls ! ;(
+ *
+ * the real solution should be to limit # of monsters a summoner can summon,
+ * probably introducing 'mana points' to the monsters.
  *
  * TODO: implement monsters' spell-point
  * TODO: move this kinda 'define's to config.h(or mangband.cfg), so that
@@ -1204,6 +1212,10 @@ bool make_attack_spell(int Ind, int m_idx)
 
 		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px))
 		{
+#ifdef STUPID_Q
+			if (r_ptr->d_char == 'Q') return (FALSE);
+#endif	// STUPID_Q
+
 			if (!magik(INDIRECT_FREQ)) return (FALSE);
 
 			direct = FALSE;

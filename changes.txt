@@ -804,7 +804,7 @@ Change list for PernMangband
   they should do some speed-up for radius-related things.
 - GF_DISINTEGRATION is back.
 - yellow light blinds(GF_BLIND).
-- INDIRECT_SUMMONING_RADIUS, for the asking.
+- INDIRECT_SUMMONING_RADIUS and STUPID_Q compile options, for the asking.
   (I spent hours to find out why hounds stopped breathing from corner ;)
 
 
