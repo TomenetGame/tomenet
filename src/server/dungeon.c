@@ -872,24 +872,12 @@ static void process_world(int Ind)
 	cave_type		*c_ptr;
 	byte			*w_ptr;
 
-	//object_type		*o_ptr;
-
-
-	/* Every 50 game turns */
-	/* Check moved */
-//	if (turn % 50) return;
-
-
-	/*** Check the Time and Load ***/
-	/* The server will never quit --KLJ-- */
-
 	/*** Handle the "town" (stores and sunshine) ***/
 
 	/* While in town or wilderness */
 	if (p_ptr->wpos.wz==0)
 	{
 		/* Hack -- Daybreak/Nighfall in town */
-//		if (!(turn % ((10L * TOWN_DAWN) / 2)))
 		if (!(turn % ((10L * DAY) / 2)))
 		{
 			bool dawn;
@@ -898,7 +886,6 @@ static void process_world(int Ind)
 			if(!(zcave=getcave(wpos))) return;
 
 			/* Check for dawn */
-//			dawn = (!(turn % (10L * TOWN_DAWN)));
 			dawn = (!(turn % (10L * DAY)));
 
 			/* Day breaks */
@@ -953,16 +940,16 @@ static void process_world(int Ind)
 						w_ptr = &p_ptr->cave_flag[y][x];
 
 						/*  Darken "boring" features */
-//						if (c_ptr->feat <= FEAT_INVIS && !(c_ptr->info & CAVE_ROOM))
 						if (cave_plain_floor_grid(c_ptr) && !(c_ptr->info & CAVE_ROOM))
 						{
-							  /* Forget the grid */ 
-							c_ptr->info &= ~CAVE_GLOW;
+							/* Forget the grid */ 
 							*w_ptr &= ~CAVE_MARK;
 						}
+						/* darken all */
+						c_ptr->info &= ~CAVE_GLOW;
 
-							/* Hack -- Notice spot */
-							note_spot(Ind, y, x);
+						/* Hack -- Notice spot */
+						note_spot(Ind, y, x);
 
 						c_ptr->info |= CAVE_DARKEN;
 
@@ -3960,92 +3947,6 @@ static void process_various(void)
 
 			/* Done */
 			break;
-		}
-	}
-#endif /* if 0 */
-
-#if 0	// no longer
-	/* Update the stores */
-	if (!(turn % (10L * cfg.store_turns)))
-	{
-		store_turnover();
-	}
-#endif	// 0
-
-#if 0
-	/* Hack -- Daybreak/Nightfall outside the dungeon */
-	if (!(turn % ((10L * TOWN_DAWN) / 2)))
-	{
-		bool dawn;
-
-		/* Check for dawn */
-		dawn = (!(turn % (10L * TOWN_DAWN)));
-		/* Day breaks */
-		if (dawn)
-		{
-			/* Mega-Hack -- erase all wilderness monsters.
-			 * This should prevent wilderness monster "buildup",
-			 * massive worm infestations, and uniques getting
-			 * lost out there.
-			 */
-			struct worldpos twpos;
-			twpos.wz=0;
-			for(y=0;y<MAX_WILD_Y;y++){
-				twpos.wy=y;
-				for(x=0;x<MAX_WILD_X;x++){
-					twpos.wx=x;
-					if(!players_on_depth(&twpos)) wipe_m_list(&twpos);
-					wild_info[twpos.wy][twpos.wx].flags&=~(WILD_F_INHABITED);
-				}
-			}
-		
-			/* Hack -- Scan the town */
-			for (y = 0; y < MAX_HGT; y++)
-			{
-				for (x = 0; x < MAX_WID; x++)
-				{
-					 /* Get the cave grid */
-					c_ptr = &zcave[0][y][x];
-
-					 /* Assume lit */
-					c_ptr->info |= CAVE_GLOW;
-
-					 /* Hack -- Notice spot */
-					note_spot_depth(townpos, y, x);
-				}
-			} 
-		}	
-		else
-		{
-			/* Hack -- Scan the town */
-			for (y = 0; y < MAX_HGT; y++)
-			{
-				for (x = 0; x < MAX_WID; x++)
-				{
-					 /* Get the cave grid */
-					c_ptr = &zcave[0][y][x];
-
-					 /* Darken "boring" features */
-					if (c_ptr->feat <= FEAT_INVIS && !(c_ptr->info & CAVE_ROOM))
-					{
-						 /* Darken the grid */
-						c_ptr->info &= ~CAVE_GLOW;
-					}
-				}
-			}
-			/* hack -- make fruit bat wear off */
-			/* No more -- DG */
-#if 0			
-			for (x = 1; x < NumPlayers + 1; x++)
-			{
-				if (Players[x]->fruit_bat)
-				{
-					Players[x]->fruit_bat--;
-					if (!Players[x]->fruit_bat)
-					msg_print(x, "Your form feels much more familliar.");
-				}
-			}
-#endif
 		}
 	}
 #endif /* if 0 */
