@@ -522,7 +522,7 @@ void do_mimic()
     //j = c_get_quantity("Which form (0 for player) ? ", 0);
     
     strcpy(out_val,"");
-    get_string("Which form (0 for player) ? ", out_val, 4);
+    c_get_string("Which form (0 for player) ? ", out_val, 4);
     j = atoi(out_val);
 
     if((j < 0) || (j > 2767)) return;
