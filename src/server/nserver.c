@@ -318,6 +318,7 @@ static int Init_setup(void)
 }
 	
 void init_players(){
+	max_connections = MAX_SELECT_FD - 5;
 	/* Last player is the DM Edit player ! */
 	/* As no extra connection is required, */
 	/* we need only allocate the player_type for it */
@@ -471,7 +472,6 @@ int Setup_net_server(void)
 	 * the contact socket, and the socket for the resolver library routines.
 	 */
 
-	max_connections = MAX_SELECT_FD - 5;
 	size = max_connections * sizeof(*Conn);
 	if ((Conn = (connection_t *) malloc(size)) == NULL)
 		quit("Cannot allocate memory for connections");
