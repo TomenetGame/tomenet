@@ -12,7 +12,7 @@ STARIDENTIFY = add_spell
         ["extra"] =     function () return get_check("Cast on yourself?") end,
         ["spell"] = 	function (args)
         		if args.dir == TRUE then
-                        	self_knowledge()
+                        	self_knowledge(Ind)
                         else
                         	identify_fully(Ind)
                         end
@@ -93,7 +93,7 @@ SENSEHIDDEN = add_spell
         ["mana_max"] = 	10,
         ["fail"] = 	10,
         ["spell"] = 	function()
-        		detect_traps(Ind, 10 + get_level(SENSEHIDDEN, 40, 0))
+        		detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN, 40, 0))
         		if get_level(Ind, SENSEHIDDEN, 50) >= 10 then
                         	set_tim_invis(Ind, 10 + randint(20) + get_level(Ind, SENSEHIDDEN, 40))
                         end
@@ -120,7 +120,7 @@ REVEALWAYS = add_spell
         ["mana_max"] = 	15,
         ["fail"] = 	10,
         ["spell"] = 	function()
-        		detect_sdoors(Ind, 10 + get_level(REVEALWAYS, 40, 0))
+        		detect_sdoor(Ind, 10 + get_level(Ind, REVEALWAYS, 40, 0))
 	end,
 	["info"] = 	function()
                         return "rad "..(10 + get_level(Ind, REVEALWAYS, 40))
@@ -139,7 +139,7 @@ SENSEMONSTERS = add_spell
         ["mana_max"] =  20,
         ["fail"] = 	10,
         ["spell"] = 	function()
-                        detect_creatures(Ind, 10 + get_level(Ind, SENSEMONSTERS, 40, 0))
+                        detect_creatures(Ind)
         		if get_level(Ind, SENSEMONSTERS, 50) >= 30 then
                         	set_tim_esp(Ind, 10 + randint(10) + get_level(Ind, SENSEMONSTERS, 20))
                         end

@@ -170,7 +170,7 @@ void world_player(unsigned long id, char *name, unsigned short enter, byte quiet
 long chk(char *s1, char *s2){
 	int i, j=0;
 	int m1, m2;
-	static long rval[2]={0, 0};
+        static long rval[2]={0, 0};
 	m1=strlen(s1);
 	m2=strlen(s2);
 	for(i=0; i<m1; i++){
