@@ -344,6 +344,7 @@ void party_check(int Ind){
 		if (parties[i].num != 0){
 			if(!(id=lookup_player_id(parties[i].owner))){
 				msg_format(Ind, "Lost party %s (%s)", parties[i].name, parties[i].owner);
+				del_party(i);
 			}
 			else{
 				if((lookup_player_party(id)!=i)){
@@ -362,7 +363,7 @@ void party_check(int Ind){
  */
 void account_check(int Ind){	/* Temporary Ind */
 	hash_entry *ptr;
-	int i;
+	int i,del;
 	player_type *p_ptr=Players[Ind];
 
 	/* Search in each array slot */
@@ -378,10 +379,12 @@ void account_check(int Ind){	/* Temporary Ind */
 			if(!GetAccountID(ptr->account)){
 				s_printf("Lost player: %s\n", ptr->name);
 				msg_format(Ind, "Lost player: %s", ptr->name);
+				del=ptr->id;
 			}
 
 			/* Next entry in chain */
 			ptr = ptr->next;
+			delete_player_id(del);
 		}
 	}
 
