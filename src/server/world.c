@@ -63,6 +63,7 @@ void world_comm(int fd, int arg){
 				wpk->d.auth.val=chk(cfg.pass, wpk->d.auth.pass);
 				x=sizeof(struct wpacket);
 				x=send(WorldSocket, wpk, x, 0);
+				world_update_players();
 				break;
 			case WP_SQUIT:
 				/* Remove players */
