@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. July 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 15. August 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2b, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -92,6 +92,7 @@ Contents
     (7.2)   Preparing the equipment for diving into the dungeon
     (7.3)   Surviving critical situations
     (7.4)   Spoiler files
+    (7.5)   Skill point distribution
 (8) Miscellanous
     (8.1)   'The Art Not To Die'
     (8.2)   Character dumps
@@ -154,7 +155,7 @@ Contents
 -If you have any journals like 'Guide to Middle Earth' or 'The Gazette' in
  your inventory (Recall window) you should read those by pressing 'r' to read.
 -If your character gains a new level it also gains skill points. To distribute
- those, invoke the skill screen with 'G'.
+ those, invoke the skill screen with 'G'. (See 3.9, 6.2 and 7.5.)
 -If you don't like your character and want to delete it, you may commit
  suicide by pressing SHIFT+q or CTRL+c and double-confirming the following
  questions with 'y' and '@'.
@@ -401,15 +402,16 @@ All items:
     to drop an item are 'k' respectively 'd').
     You can uninscribe an item simply by pressing '{', then pressing the ENTER
     key (causes an 'empty' inscription, equal to no inscription at all).
-    '*' is a 'wild card' which means it stands for all possible choices.
+
+The !* inscription:
+    '*' is a 'wild card' which means it stands for multiple choices at once.
     Inscribing an item '!*' will prevent any of these action on it:
-    drop (!d) / kill (!k) / throw it (!v) / take off (!t).
+    drop (!d) / kill (!k) / throw it (!v) / take off (!t) / house operations
+    (selling a key, '!h') / selling an item to a shop (!s).
     For example, if you wear an artifact and you want to avoid (d)ropping it,
     (t)aking it off or (v) throwing it away accidentally you could either
     inscribe it  !d!t!v  or just  !*  .
     '!*'  also implies  '!='  , so used on arrows it forces auto-pickup.
-    Note that  !*  or  !s  will NOT save your items from accidentally being
-    (s)old in stores.
 
 Items that induce random teleportation, like a 'ring of teleportation' or
 'weapon of the thunderlords':
@@ -1626,6 +1628,7 @@ At each level-up you gain 5 skill points, so you will have gained at least 250
 skill points at level 50. There is a slim chance that you get 6. This chance
 can be raised by spending points into the 'Training' skill.
 For details about skill point distribution and the different skills see (6.2).
+Also see (7.5) for suggestions about skill point distribution.
 
 Further, there is a slim chance that you gain an extra stat point on stats you
 are very bad at ("stats" = "attributes" = STRength, INTelligence, WISdom,
@@ -3280,6 +3283,8 @@ Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 They also never give 'negative antimagic', 0% AM is the
                 minimum, even if tohit+todam are greater than its AM.
                 AC boni on Dark Swords won't affect the antimagic field.
+                The antimagic chance of a dark sword stacks with the
+                Antimagic skill (see 6.2).
 Magic Arrows    Those will return into your quiver magically, so you need only
                 one of them really. Same goes for artifact ammunition of any
                 type. (Magic Arrows can be destroyed by fire or acid though.)
@@ -3987,11 +3992,14 @@ Note that not every skill is available to every profession (class).
                                 NOTES ABOUT CRITICAL HITS IN GENERAL:
                                 You can always score critical hits,
                                 independent on weapon class and crit-skill.
+                                Martial artists can score critical hits too.
                                 The probability will be small though, if you
                                 don't have +critical hit items or this skill
                                 to help out. Critical hit bonus on items
                                 counts slightly more than the skill, and it
                                 is applied to melee AND ranged attacks!
+                                For weapon users the weight of their weapon
+                                affects their critical hits:
                                 If your weapon is lighter than 10.0 lb, your
                                 chances to score a critical hit will further
                                 increase.
@@ -4204,6 +4212,7 @@ Note that not every skill is available to every profession (class).
                                 attempts from other casters to cast spells or
                                 summon monsters. This effect is cumulative
                                 with the anti-magic field of a Dark Sword.
+                                (See 5.9 for more info about dark swords.)
                                 It's capped at 80% chance of interrupting
                                 enemy spells.
                                 Note that as soon as you invest a point into
@@ -4252,7 +4261,8 @@ Note that not every skill is available to every profession (class).
     .Confusion Resistance       You need this at 01.000 to resist confusion.
 
 In my opinion, the sub-skills of 'Health' should be avoided. There are more
-important skills to care about.
+important skills to care about. Also see (7.5) for suggestions about skill
+point distribution.
 
 Here is what the numbers mean (we will use the Axe-Mastery skill for this
 example:
@@ -4927,7 +4937,8 @@ points for it! This may or may not work, and there's a possibility that you
 will faint and become paralyzed for a few turns (Free Action won't help) as
 well as your health being damaged (constitution will be decreased).
 
-Further, certain races and classes get abilities:
+Further, certain races and classes get abilities (even if they are not
+mentioned in r_info.txt for monster forms):
 Bats        Feather falling (levitation)
 Elves       Resist light
 Dark elves  Resist darkness
@@ -4949,6 +4960,8 @@ All undead creatures
             Resist darkness, blindness, poison (usually immunity);
             can't bleed (no_cut), infra-vision +1, insanity attacks are
             reduced by 25%.
+All greater demons (capital 'U')
+            Resist poison (in most cases immunity).
 All non-living creatures
             Resist poison (usually even immune) and fear; insanity attacks
             are reduced by 50%.
@@ -5796,6 +5809,30 @@ e_info.txt  contains all ego item types.
 a_info.txt  contains all artifacts.
 All files contain a block of information, either at the beginning or at the
 end, which explains the meaning of each discrete info-line.
+
+
+
+(7.5) Skill point distribution
+------------------------------
+Melee fighters should maximize (to get extra attacks and extra damage) one of
+the weapon masteries (Sword, Hafted, Polearm, Axes) or Martial Arts if they
+prefer this, and 'Interception'!
+Interception is especially important if they don't train Martial Arts, in
+order to prevent the target from summoning or casting spells.
+Hybrid classes might choose to not fully train their chosen mastery to have
+spare skill points for spell casting or other skills.
+
+Spellcasters might want to train Spell-Power additionally to their school
+spells to further boost their powers.
+
+Archers probably want to train Calmness to keep shooting adjacent enemies,
+without getting interrupted by them. And of course they should train one of
+the ranged-weapon masteries (Bows, Crossbows, Slings) to eventually get 3
+extra shots per round, and also train Archery up to 50 to get additional
+extra might.
+
+Spare skill points might be well invested into Stealth and Sneakiness,
+especially in Stealth if your stealth is rather low.
 
 
 
