@@ -23,11 +23,12 @@ extern const char *ANGBAND_DIR;
 #define FS_DONE 8	/* ready to send end packet on final ack */
 #define FS_CHECK 16	/* file data block open for sum compare only */
 
-#define MAX_TNF_SEND	128	/* maximum bytes in a transfer
+#define MAX_TNF_SEND	256	/* maximum bytes in a transfer
 				 * make this a power of 2 if possible
 				 */
 
 struct ft_data{
+	struct ft_data *next;	/* next in list */
 	unsigned short id;	/* unique xfer ID */
 	int ind;		/* server security - who has this transfer */
 	char fname[30];		/* actual filename */
@@ -36,18 +37,43 @@ struct ft_data{
 	char buffer[MAX_TNF_SEND];
 };
 
-struct ft_data fdata[8];	/* maximum transfers at once */
-				/* testing only - this NEEDS to be
-				   expandable or the server will fail */
+struct ft_data *fdata=NULL;	/* our pointer to the transfer data */
 
-int getfile(int ind, unsigned short fnum){
-	int i;
-	for(i=0; i<8 ; i++){
-		if(fdata[i].id==fnum && (!fnum || ind==fdata[i].ind)){
-			return(i);
-		}
+struct ft_data *getfile(int ind, unsigned short fnum){
+	struct ft_data *trav, *new_ft;
+	if(fnum==0){
+		new_ft=(struct ft_data*)malloc(sizeof(struct ft_data));
+		if(new_ft==(struct ft_data*)NULL) return(NULL);
+		new_ft->next=fdata;
+		fdata=new_ft;
+		return(new_ft);
 	}
-	return(-1);
+	trav=fdata;
+	while(trav){
+		if(trav->id==fnum && trav->ind==ind){
+			return(trav);
+		}
+		trav=trav->next;
+	}
+	return(NULL);
+}
+
+void remove_ft(struct ft_data *d_ft){
+	struct ft_data *trav;
+	trav=fdata;
+	if(trav==d_ft){
+		fdata=trav->next;
+		free(trav);
+		return;
+	}
+	while(trav){
+		if(trav->next==d_ft){
+			trav->next=d_ft->next;
+			free(d_ft);
+			return;
+		}
+		trav=trav->next;
+	}
 }
 
 int new_fileid(){
@@ -59,97 +85,101 @@ int new_fileid(){
 
 /* acknowledge recipient ready to receive more */
 int local_file_ack(int ind, unsigned short fnum){
-	int num;
-	num=getfile(ind, fnum);
-	if(num==-1) return(0);
-	if(fdata[num].state&FS_SEND){
-		fdata[num].state|=FS_READY;
+	struct ft_data *c_fd;
+	c_fd=getfile(ind, fnum);
+	if(c_fd==(struct ft_data*)NULL) return(0);
+	if(c_fd->state&FS_SEND){
+		c_fd->state|=FS_READY;
 	}
-	if(fdata[num].state&FS_DONE){
-		close(fdata[num].fd);
-		fdata[num].id=0;
+	if(c_fd->state&FS_DONE){
+		close(c_fd->fd);
+		remove_ft(c_fd);
 	}
 	return(1);
 }
 
 /* for now, just kill the connection completely */
 int local_file_err(int ind, unsigned short fnum){
-	int num;
-	num=getfile(ind, fnum);
-	if(num==-1) return(0);
-	close(fdata[num].fd);	/* close the file */
-	fdata[num].id=0;
+	struct ft_data *c_fd;
+	c_fd=getfile(ind, fnum);
+	if(c_fd==(struct ft_data*)NULL) return(0);
+	close(c_fd->fd);	/* close the file */
+	remove_ft(c_fd);
 	return(1);
 }
 
 /* initialise an file to send */
 int local_file_send(int ind, char *fname){
-	int num, fd;
+	struct ft_data *c_fd;
+	int fd;
 	char buf[1024];
-	num=getfile(ind, 0);
-	if(num==-1) return(0);
+
+	c_fd=getfile(ind, 0);
+	if(c_fd==(struct ft_data*)NULL) return(0);
 	path_build(buf, 1024, ANGBAND_DIR, fname);
 	fd=open(buf, O_RDONLY);
 	if(fd==-1) return(0);
-	fdata[num].fd=fd;
-	fdata[num].ind=ind;
-	fdata[num].id=new_fileid();	/* ALWAYS succeed */
-	fdata[num].state=(FS_SEND|FS_NEW);
-	strncpy(fdata[num].fname, fname, 30);
-	Send_file_init(fdata[num].ind, fdata[num].id, fdata[num].fname);
+	c_fd->fd=fd;
+	c_fd->ind=ind;
+	c_fd->id=new_fileid();	/* ALWAYS succeed */
+	c_fd->state=(FS_SEND|FS_NEW);
+	strncpy(c_fd->fname, fname, 30);
+	Send_file_init(c_fd->ind, c_fd->id, c_fd->fname);
 	return(1);
 }
 
 /* request checksum of remote file */
 int remote_update(int ind, char *fname){
-	int num;
-	num=getfile(ind, 0);
-	if(num==-1) return(0);
-	fdata[num].ind=ind;
-	fdata[num].id=new_fileid();	/* ALWAYS succeed */
-	fdata[num].state=(FS_CHECK);
-	strncpy(fdata[num].fname, fname, 30);
-	Send_file_check(fdata[num].ind, fdata[num].id, fdata[num].fname);
+	struct ft_data *c_fd;
+	c_fd=getfile(ind, 0);
+	if(c_fd==(struct ft_data*)NULL) return(0);
+	c_fd->ind=ind;
+	c_fd->id=new_fileid();	/* ALWAYS succeed */
+	c_fd->state=(FS_CHECK);
+	strncpy(c_fd->fname, fname, 30);
+	Send_file_check(c_fd->ind, c_fd->id, c_fd->fname);
 	return(1);
 }
 
 /* compare checksums of local/remote files - update if
    necessary */
 int check_return(int ind, unsigned short fnum, unsigned long sum){
-	int num, fd;
+	struct ft_data *c_fd;
+	int fd;
 	unsigned long lsum;
 	char buf[1024];
 
-	num=getfile(ind, fnum);
-	if(num==-1) return(0);
-	local_file_check(fdata[num].fname, &lsum);
-	if(!fdata[num].state&FS_CHECK){
+	c_fd=getfile(ind, fnum);
+	if(c_fd==(struct ft_data*)NULL) return(0);
+	local_file_check(c_fd->fname, &lsum);
+	if(!c_fd->state&FS_CHECK){
 		return(0);
 	}
 	if(lsum!=sum){
-		path_build(buf, 4096, ANGBAND_DIR, fdata[num].fname);
+		path_build(buf, 4096, ANGBAND_DIR, c_fd->fname);
 		fd=open(buf, O_RDONLY);
 		if(fd==-1){
-			fdata[num].id=0;
+			remove_ft(c_fd);
 			return(0);
 		}
-		fdata[num].fd=fd;
-		fdata[num].ind=ind;
-		fdata[num].state=(FS_SEND|FS_NEW);
-		Send_file_init(fdata[num].ind, fdata[num].id, fdata[num].fname);
+		c_fd->fd=fd;
+		c_fd->ind=ind;
+		c_fd->state=(FS_SEND|FS_NEW);
+		Send_file_init(c_fd->ind, c_fd->id, c_fd->fname);
 		return(1);
 	}
-	fdata[num].id=0;
+	remove_ft(c_fd);
 	return(1);
 }
 
 void kill_xfers(int ind){
-	int i;
-	for(i=0; i<8; i++){
-		if(!fdata[i].id) continue;
-		if(fdata[i].ind==ind){
-			fdata[i].id=0;
-			close(fdata[i].fd);
+	struct ft_data *trav;
+	trav=fdata;
+	for(; trav; trav=trav->next){
+		if(!trav->id) continue;
+		if(trav->ind==ind){
+			close(trav->fd);
+			remove_ft(trav);
 		}
 	}
 }
@@ -157,24 +187,27 @@ void kill_xfers(int ind){
 /* handle all current SEND type file transfers */
 /* laid out long like this for testing. DO NOT CHANGE */
 void do_xfers(){
-	int i, x;
-	for(i=0; i<8; i++){
-		if(!fdata[i].id) continue;	/* non existent */
-		if(!(fdata[i].state&FS_SEND)) continue; /* wrong type */
-		if(!(fdata[i].state&FS_READY)) continue; /* not ready */
-		x=read(fdata[i].fd, fdata[i].buffer, MAX_TNF_SEND);
-		if(!(fdata[i].state&FS_DONE)){
+	int x;
+	struct ft_data *trav;
+	int ct=1;
+	trav=fdata;
+	for(; trav; trav=trav->next){
+		if(!trav->id) continue;	/* non existent */
+		if(!(trav->state&FS_SEND)) continue; /* wrong type */
+		if(!(trav->state&FS_READY)) continue; /* not ready */
+		x=read(trav->fd, trav->buffer, MAX_TNF_SEND);
+		if(!(trav->state&FS_DONE)){
 			if(x==0){
-				fdata[i].state|=FS_DONE;
+				trav->state|=FS_DONE;
 			}
 			else{
-				Send_file_data(fdata[i].ind, fdata[i].id, fdata[i].buffer, x);
-				fdata[i].state&=~(FS_READY);
+				Send_file_data(trav->ind, trav->id, trav->buffer, x);
+				trav->state&=~(FS_READY);
 			}
 		}
 		else{
-			Send_file_end(fdata[i].ind, fdata[i].id);
-			fdata[i].state&=~(FS_READY);
+			Send_file_end(trav->ind, trav->id);
+			trav->state&=~(FS_READY);
 		}
 	}
 }
@@ -198,23 +231,24 @@ int mkstemp(char *template)
 
 /* Open file for receive/writing */
 int local_file_init(int ind, unsigned short fnum, char *fname){
-	int num;
+	struct ft_data *c_fd;
 	char tname[30]="/tmp/tomexfer.XXXXXX";
-	num=getfile(ind, 0);		/* get empty space */
-	if(num==-1) return(0);
+	c_fd=getfile(ind, 0);		/* get empty space */
+	if(c_fd==(struct ft_data*)NULL) return(0);
 
 	if(fname[0]=='/') return(0);	/* lame security */
 	if(strstr(fname, "..")) return(0);
 
-	fdata[num].fd=mkstemp(tname);
-	fdata[num].state=FS_READY;
-	if(fdata[num].fd!=-1){
+	c_fd->fd=mkstemp(tname);
+	c_fd->state=FS_READY;
+	if(c_fd->fd!=-1){
 		unlink(tname);		/* don't fill up /tmp */
-		fdata[num].id=fnum;
-		fdata[num].ind=ind;	/* not really needed for client */
-		strncpy(fdata[num].fname, fname, 30);
+		c_fd->id=fnum;
+		c_fd->ind=ind;	/* not really needed for client */
+		strncpy(c_fd->fname, fname, 30);
 		return(1); 
 	}
+	remove_ft(c_fd);
 	return(0);
 }
 
@@ -222,39 +256,40 @@ int local_file_init(int ind, unsigned short fnum, char *fname){
 
 /* Write received data to temporary file */
 int local_file_write(int ind, unsigned short fnum, unsigned long len){
-	int num;
-	num=getfile(ind, fnum);
-	if(num==-1) return(0);
-	Receive_file_data(ind, len, &fdata[num].buffer);
-	write(fdata[num].fd, &fdata[num].buffer, len);
+	struct ft_data *c_fd;
+	c_fd=getfile(ind, fnum);
+	if(c_fd==(struct ft_data*)NULL) return(0);
+	Receive_file_data(ind, len, &c_fd->buffer);
+	write(c_fd->fd, &c_fd->buffer, len);
 	return(1);
 }
 
 /* Close file and make the changes */
 int local_file_close(int ind, unsigned short fnum){
-	int num, x;
+	int x;
+	struct ft_data *c_fd;
 	char buf[4096];
 	int size=4096;
 	int success=0;
 	FILE *wp;
 	int fd;
-	num=getfile(ind, fnum);
-	if(num==-1) return(0);
+	c_fd=getfile(ind, fnum);
+	if(c_fd==(struct ft_data*)NULL) return(0);
 
-	path_build(buf, 4096, ANGBAND_DIR, fdata[num].fname);
+	path_build(buf, 4096, ANGBAND_DIR, c_fd->fname);
 
 	wp=fopen(buf, "w");
 	if(wp!=(FILE*)NULL){
-		fdata[num].id=0;
-		lseek(fdata[num].fd, 0, SEEK_SET);
+		lseek(c_fd->fd, 0, SEEK_SET);
 		do{
-			x=read(fdata[num].fd, buf, size);
+			x=read(c_fd->fd, buf, size);
 			fwrite(buf, x, 1, wp);
 		}while(x>0);
 		fclose(wp);
 		success=1;
 	}
-	close(fdata[num].fd);	/* close & remove temp file */
+	close(c_fd->fd);	/* close & remove temp file */
+	remove_ft(c_fd);
 	return(success);
 }
 
