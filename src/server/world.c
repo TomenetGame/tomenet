@@ -1,9 +1,10 @@
 /* experimental code - evileye */
 /* this does not necessarily follow any sensible design */
 
+#include "angband.h"
+
 #ifdef TOMENET_WORLDS
 
-#include "angband.h"
 #include "../world/world.h"
 
 struct wpacket spk;
