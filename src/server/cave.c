@@ -1264,6 +1264,16 @@ static byte player_color(int Ind)
 	/* Black Breath carriers emit malignant aura sometimes.. */
 	if (p_ptr->black_breath && magik(50)) return TERM_L_DARK;
 
+	if(p_ptr->team){
+		/* may have multiteam */
+		switch(p_ptr->team){
+			case 1:
+				return TERM_RED;
+			case 2:
+				return TERM_L_BLUE;
+		}
+	}
+
 	/* Covered by a mummy wrapping? */
 	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_WRAPPING) return TERM_L_DARK;
 
@@ -1323,8 +1333,8 @@ static byte player_color(int Ind)
 	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
 	if (p_ptr->admin_wiz) return p_ptr->cp_ptr->color + TERM_BNW;
 
-	/* Color is based off of class */
-	return p_ptr->cp_ptr->color;
+	/* Color is based off of class 
+	return p_ptr->cp_ptr->color; */
 }
 
 

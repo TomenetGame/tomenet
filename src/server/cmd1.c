@@ -177,7 +177,6 @@ s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit
 	i = (w * 2) + ((p_ptr->to_h + plus) * 5) + get_skill_scale(p_ptr, SKILL_MASTERY, 150);
 #endif
         i += 50 * p_ptr->xtra_crit;
-
         if (allow_skill_crit)
         {
                 i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
@@ -3863,16 +3862,46 @@ void move_player(int Ind, int dir, int do_pickup)
 		{
 			/* Tell both about it */
 			/* Hack if invisible */
-			if (p_ptr->play_vis[Ind2])
-				msg_format(Ind, "You bump into %s.", q_ptr->name);
-			else
-				msg_format(Ind, "You bump into it.");
+			int ball=has_ball(q_ptr);
+			if(p_ptr->team && ball!=-1 && q_ptr->team!=p_ptr->team){
+				object_type *o_ptr=&q_ptr->inventory[ball];
+				object_type tmp_obj;
+				int tackle;
+				tackle=randint(20);
+				if(tackle>10){
+					tmp_obj=*o_ptr;
+					if(tackle<18){
+						msg_format_near(Ind2, "%s is tackled by %s", q_ptr->name, p_ptr->name);
+						msg_format(Ind2, "%s tackles you", p_ptr->name);
+						drop_near(&tmp_obj, -1, wpos, y, x);
+					}
+					else{
+						msg_format_near(Ind2, "%s gets the ball from %s", p_ptr->name, q_ptr->name);
+						msg_format(Ind2, "%s gets the ball from you", p_ptr->name);
+						inven_carry(Ind, o_ptr);
+					}
+					inven_item_increase(Ind2, ball, -1);
+					inven_item_describe(Ind2, ball);
+					inven_item_optimize(Ind2, ball);
+					q_ptr->energy=0;
+				}
+				else{
+					msg_format(Ind2, "%s tries to tackle you", p_ptr->name);
+					msg_format(Ind, "You fail to tackle %s", q_ptr->name);
+				}
+			}
+			else{
+				if (p_ptr->play_vis[Ind2])
+					msg_format(Ind, "You bump into %s.", q_ptr->name);
+				else
+					msg_format(Ind, "You bump into it.");
 			
-			/* Hack if invisible */
-			if (q_ptr->play_vis[Ind])
-				msg_format(Ind2, "%s bumps into you.", p_ptr->name);
-			else
-				msg_format(Ind2, "It bumps into you.");
+				/* Hack if invisible */
+				if (q_ptr->play_vis[Ind])
+					msg_format(Ind2, "%s bumps into you.", p_ptr->name);
+				else
+					msg_format(Ind2, "It bumps into you.");
+			}
 
 			black_breath_infection(Ind, Ind2);
 

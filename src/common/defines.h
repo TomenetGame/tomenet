@@ -1081,6 +1081,9 @@ that keeps many algorithms happy.
 
 /* Features 0xCF - 0xFF -- unused */
 
+#define FEAT_AGOAL	208
+#define FEAT_BGOAL	209
+
 
 #define MAX_BETWEEN_EXITS       2
 
@@ -5228,3 +5231,8 @@ extern int PlayerUID;
 /* Special powers */
 #define MAX_POWERS              50      /* 2 should be enough but let's be on the *SAFE* side ;) */
 #define MAX_KNOW_POWERS         2
+
+/* evileye games */
+#define EEGAME_CTF		1
+#define EEGAME_RUGBY		2
+
