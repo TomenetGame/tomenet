@@ -459,6 +459,12 @@ static int get_mimic_spell(int *sn)
 	/* Abort if needed */
 	if (!flag) return (FALSE);
 
+	if (c_cfg.other_query_flag && !i)
+	{
+		sprintf(out_val, "Really change the form? ");
+		if (!get_check(out_val)) return;
+	}
+
 	/* Save the choice */
 	(*sn) = corresp[i];
 

@@ -82,7 +82,7 @@ void do_tank(int Ind, int power)
 			set_prob_travel(Ind, power + randint(power));
 			break;
 		case 6:
-			set_furry(Ind, power + randint(power));
+			set_fury(Ind, power + randint(power));
 			break;
 		case 7:
 			set_fast(Ind, power + randint(power));
@@ -3115,39 +3115,39 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 			switch (randint(5))
 			{
 				case 1:
-				{
-					msg_format_near(Ind, "%s shoots dragon acid!", p_ptr->name);
-					fire_ball(Ind, GF_ACID, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
-					break;
-				}
+					{
+						msg_format_near(Ind, "%s shoots dragon acid!", p_ptr->name);
+						fire_ball(Ind, GF_ACID, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
+						break;
+					}
 
 				case 2:
-				{
-					msg_format_near(Ind, "%s shoots dragon lightning!", p_ptr->name);
-					fire_ball(Ind, GF_ELEC, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
-					break;
-				}
+					{
+						msg_format_near(Ind, "%s shoots dragon lightning!", p_ptr->name);
+						fire_ball(Ind, GF_ELEC, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
+						break;
+					}
 
 				case 3:
-				{
-					msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
-					fire_ball(Ind, GF_FIRE, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
-					break;
-				}
+					{
+						msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
+						fire_ball(Ind, GF_FIRE, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
+						break;
+					}
 
 				case 4:
-				{
-					msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
-					fire_ball(Ind, GF_COLD, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
-					break;
-				}
+					{
+						msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
+						fire_ball(Ind, GF_COLD, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
+						break;
+					}
 
 				default:
-				{
-					msg_format_near(Ind, "%s shoots dragon poison!", p_ptr->name);
-					fire_ball(Ind, GF_POIS, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
-					break;
-				}
+					{
+						msg_format_near(Ind, "%s shoots dragon poison!", p_ptr->name);
+						fire_ball(Ind, GF_POIS, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
+						break;
+					}
 			}
 
 			ident = TRUE;
@@ -3173,16 +3173,23 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_CHARM_MONSTER:
 		{
 			if (charm_monster(dir, 45))
-			ident = TRUE;
+				ident = TRUE;
 			break;
 		}
 
 #endif	// 0
 
-                case SV_WAND_WALL_CREATION:
+		case SV_WAND_WALL_CREATION:
 		{
-                        project_hook(Ind, GF_STONE_WALL, dir, 1, PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID);
-                        ident = TRUE;
+			project_hook(Ind, GF_STONE_WALL, dir, 1, PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID);
+			ident = TRUE;
+			break;
+		}
+
+		/* TomeNET addition */
+		case SV_WAND_TELEPORT_TO:
+		{
+			ident = project_hook(Ind, GF_TELE_TO, dir, 1, PROJECT_STOP | PROJECT_KILL);
 			break;
 		}
 
@@ -6041,78 +6048,79 @@ void do_cmd_activate(int Ind, int item)
 			case SV_RING_ACID:
 			case SV_RING_ICE:
 			case SV_RING_FLAMES:
-				{
-					/* Get a direction for breathing (or abort) */
-					p_ptr->current_activation = item;
-					get_aim_dir(Ind);
+			{
+				/* Get a direction for breathing (or abort) */
+				p_ptr->current_activation = item;
+				get_aim_dir(Ind);
+				return;
+			}
+
+
+			/* Yes, this can be activated but at the cost of it's destruction */
+			case SV_RING_TELEPORTATION:
+			{
+//				if(!get_check("This will destroy the ring, do you want to continue ?")) break;
+				msg_print(Ind, "The ring explode into a space distorsion.");
+				teleport_player(Ind, 200);
+
+				/* It explodes, doesnt it ? */
+				take_hit(Ind, damroll(2, 10), "an exploding ring");
+
+				inven_item_increase(Ind, item, -255);
+				inven_item_optimize(Ind, item);
+				break;
+			}
+			case SV_RING_POLYMORPH:
+			{
+				/* Mimics only */
+				if (!get_skill(p_ptr, SKILL_MIMIC)) return;
+
+				if(!(item==INVEN_LEFT || item==INVEN_RIGHT)){
+					msg_print(Ind, "You must be wearing the ring!");
 					return;
 				}
 
-
-				/* Yes, this can be activated but at the cost of it's destruction */
-			case SV_RING_TELEPORTATION:
+				/* If never used before, then set to the player form,
+				 * otherwise set the player form*/
+				if (!o_ptr->pval)
 				{
-					//                                if(get_check("This will destroy the ring, do you want to continue ?"))
-					{
-						msg_print(Ind, "The ring explode into a space distorsion.");
-						teleport_player(Ind, 200);
-
-						/* It explodes, doesnt it ? */
-						take_hit(Ind, damroll(2, 10), "an exploding ring");
-
-						inven_item_increase(Ind, item, -255);
-						inven_item_optimize(Ind, item);
+					if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
+						msg_print(Ind, "Nothing happens");
+					else{
+						msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
+						o_ptr->pval = p_ptr->body_monster;
+						//							p_ptr->r_killed[p_ptr->body_monster]=0;
+						p_ptr->r_killed[p_ptr->body_monster] >>= 1;
+						object_known(o_ptr);
 					}
-					break;
 				}
-			case SV_RING_POLYMORPH:
+				else
 				{
-					/* Mimics only */
-					if (!get_skill(p_ptr, SKILL_MIMIC)) return;
+					/* Need skill; no need of killing count */
+					do_mimic_change(Ind, o_ptr->pval);
+#if 0
+					monster_race *r_ptr = &r_info[o_ptr->pval];
 
-					if(!(item==INVEN_LEFT || item==INVEN_RIGHT)){
-						msg_print(Ind, "You must be wearing the ring!");
+					if ((r_ptr->level > p_ptr->lev * 2) || (p_ptr->r_killed[o_ptr->pval] < r_ptr->level))
+					{
+						msg_print(Ind, "You dont match the ring yet.");
 						return;
 					}
 
-                                        /* If never used before, then set to the player form, otherwise set the player form*/
-					if (!o_ptr->pval)
-					{
-						if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
-							msg_print(Ind, "Nothing happens");
-						else{
-							msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
-							o_ptr->pval = p_ptr->body_monster;
-							p_ptr->r_killed[p_ptr->body_monster]=0;
-						}
-					}
-					else
-					{
-						/* Need skill; no need of killing count */
-						do_mimic_change(Ind, o_ptr->pval);
-#if 0
-						monster_race *r_ptr = &r_info[o_ptr->pval];
+					msg_print(Ind, "You polymorph !");
+					p_ptr->body_monster = o_ptr->pval;
+					p_ptr->body_changed = TRUE;
 
-						if ((r_ptr->level > p_ptr->lev * 2) || (p_ptr->r_killed[o_ptr->pval] < r_ptr->level))
-						{
-							msg_print(Ind, "You dont match the ring yet.");
-							return;
-						}
+					p_ptr->update |= (PU_BONUS);
 
-						msg_print(Ind, "You polymorph !");
-						p_ptr->body_monster = o_ptr->pval;
-						p_ptr->body_changed = TRUE;
+					/* Recalculate mana */
+					p_ptr->update |= (PU_MANA | PU_HP);
 
-						p_ptr->update |= (PU_BONUS);
-
-						/* Recalculate mana */
-						p_ptr->update |= (PU_MANA | PU_HP);
-
-						/* Window stuff */
-						p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+					/* Window stuff */
+					p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 #endif
-					}
 				}
+			}
 		}
 
 
@@ -6534,7 +6542,7 @@ bool unmagic(int Ind)
 			set_tim_manashield(Ind, 0) |
 			set_tim_traps(Ind, 0) |
 			set_invis(Ind, 0, 0) |
-			set_furry(Ind, 0) |
+			set_fury(Ind, 0) |
 			set_tim_meditation(Ind, 0) |
 			set_tim_wraith(Ind, 0) |
 			set_fast(Ind, 0) |

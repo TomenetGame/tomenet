@@ -366,7 +366,8 @@ void choose_stat_order(void)
 			if ((j < 6) && (j >= 0) && (avail[j]))
 			{
 				stat_order[i] = j;
-				c_put_str(TERM_L_BLUE, stats[j], 8 + i, 15);
+//				c_put_str(TERM_L_BLUE, stats[j], 8 + i, 15);
+				c_put_str(TERM_L_BLUE, stats[j], 8, 15 + i * 5);
 				avail[j] = 0;
 				break;
 			}
@@ -426,7 +427,7 @@ static void choose_bat(void)
 #else	// 0
 /* Quick hack!		- Jir -
  * TODO: remove hard-coded things. */
-static void choose_bat(void)
+static void choose_mode(void)
 {
 	char        c='\0';
 	bool hazard = FALSE;
@@ -445,30 +446,30 @@ static void choose_bat(void)
 		if (c == 'f')
 		{
 			sex += 512;
-			c_put_str(TERM_L_BLUE, "Fruit Bat", 15, 15);
+			c_put_str(TERM_L_BLUE, "Fruit Bat", 10, 15);
 			break;
 		}
 		else if (c == 'n')
 		{
-			c_put_str(TERM_L_BLUE, "Normal", 15, 15);
+			c_put_str(TERM_L_BLUE, "Normal", 10, 15);
 			break;
 		}
 		else if (c == 'g')
 		{
-			sex += MODE_NO_GHOST << 1;
-			c_put_str(TERM_L_BLUE, "No Ghost", 15, 15);
+			sex += MODE_NO_GHOST;
+			c_put_str(TERM_L_BLUE, "No Ghost", 10, 15);
 			break;
 		}
 		else if (c == 'h')
 		{
-			sex += (MODE_HELL) << 1;
-			c_put_str(TERM_L_BLUE, "Hard", 15, 15);
+			sex += (MODE_HELL);
+			c_put_str(TERM_L_BLUE, "Hard", 10, 15);
 			break;
 		}
 		else if (c == 'H')
 		{
-			sex += (MODE_NO_GHOST + MODE_HELL) << 1;
-			c_put_str(TERM_L_BLUE, "Hellish", 15, 15);
+			sex += (MODE_NO_GHOST + MODE_HELL);
+			c_put_str(TERM_L_BLUE, "Hellish", 10, 15);
 			break;
 		}
 		else if (c == '?')
@@ -613,7 +614,7 @@ void get_char_info(void)
 	put_str("Race        :", 5, 1);
 	put_str("Class       :", 6, 1);
 	put_str("Stat order  :", 8, 1);
-	put_str("Mode        :",15, 1);
+	put_str("Mode        :",10, 1);
 
 	/* Clear bottom of screen */
 	clear_from(20);
@@ -635,7 +636,7 @@ void get_char_info(void)
 	choose_stat_order();
 
 	/* Choose form */
-	choose_bat();
+	choose_mode();
 
 	/* Clear */
 	clear_from(20);

@@ -931,7 +931,7 @@ static void Delete_player(int Ind)
 		cptr title = "";
 		if (p_ptr->total_winner)
 		{
-			if (p_ptr->mode != MODE_NORMAL)
+			if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST))
 			{
 				title = (p_ptr->male)?"God ":"Goddess ";
 			}
@@ -1597,42 +1597,7 @@ static int Handle_listening(int ind)
  *
  * This is a crappy way of doing things....
  */
-#if 0
-static void sync_options(int Ind)
-{
-	player_type *p_ptr = Players[Ind];
-
-	/* Do the dirty work */
-	p_ptr->carry_query_flag = p_ptr->options[3];
-	p_ptr->use_old_target = p_ptr->options[4];
-	p_ptr->always_pickup = p_ptr->options[5];
-	p_ptr->stack_force_notes = p_ptr->options[8];
-	p_ptr->stack_force_costs = p_ptr->options[9];
-	p_ptr->find_ignore_stairs = p_ptr->options[16];
-	p_ptr->find_ignore_doors = p_ptr->options[17];
-	p_ptr->find_cut = p_ptr->options[18];
-	p_ptr->find_examine = p_ptr->options[19];
-	p_ptr->disturb_move = p_ptr->options[20];
-	p_ptr->disturb_near = p_ptr->options[21];
-	p_ptr->disturb_panel = p_ptr->options[22];
-	p_ptr->disturb_state = p_ptr->options[23];
-	p_ptr->disturb_minor = p_ptr->options[24];
-	p_ptr->disturb_other = p_ptr->options[25];
-	p_ptr->stack_allow_items = p_ptr->options[30];
-	p_ptr->stack_allow_wands = p_ptr->options[31];
-	p_ptr->view_perma_grids = p_ptr->options[34];
-	p_ptr->view_torch_grids = p_ptr->options[35];
-	p_ptr->view_reduce_lite = p_ptr->options[44];
-	p_ptr->view_reduce_view = p_ptr->options[45];
-	p_ptr->view_yellow_lite = p_ptr->options[56];
-	p_ptr->view_bright_lite = p_ptr->options[57];
-	p_ptr->view_granite_lite = p_ptr->options[58];
-	p_ptr->view_special_lite = p_ptr->options[59];
-
-	p_ptr->easy_open = p_ptr->options[59];
-
-}
-#else	// 0
+/* see client_opts */
 static void sync_options(int Ind, bool *options)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1677,10 +1642,10 @@ static void sync_options(int Ind, bool *options)
 	p_ptr->auto_target = options[69];
 	p_ptr->autooff_retaliator = options[70];
 	p_ptr->wide_scroll_margin = options[71];
+	p_ptr->always_repeat = options[6];
 	// bool speak_unique;
 
 }
-#endif	// 0
 
 /*
  * A client has requested to start active play.
@@ -1839,7 +1804,7 @@ static int Handle_login(int ind)
 
 		if (p_ptr->total_winner)
 		  {
-			if (p_ptr->mode != MODE_NORMAL)
+			if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST))
 		      {
 			title = (p_ptr->male)?"God ":"Goddess ";
 		      }
@@ -4480,8 +4445,15 @@ static int Receive_tunnel(int ind)
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
 		do_cmd_tunnel(player, dir);
+		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c%c", ch, dir);
 		return 2;
 	}
+	else if (player)
+	{
+		Packet_printf(&connp->q, "%c%c", ch, dir);
+		return 0;
+	}
+
 
 	return 1;
 }
@@ -5125,6 +5097,7 @@ static int Receive_open(int ind)
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
 		do_cmd_open(player, dir);
+		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c%c", ch, dir);
 		return 2;
 	}
 	else if (player)
@@ -5524,7 +5497,13 @@ static int Receive_search(int ind)
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
 		do_cmd_search(player);
+		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c", ch);
 		return 2;
+	}
+	else if (player)
+	{
+		Packet_printf(&connp->q, "%c", ch);
+		return 0;
 	}
 
 	return 1;
@@ -6045,6 +6024,7 @@ static int Receive_bash(int ind)
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
 		do_cmd_bash(player, dir);
+		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c%c", ch, dir);
 		return 2;
 	}
 	else if (player)
@@ -6094,6 +6074,7 @@ static int Receive_disarm(int ind)
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
 		do_cmd_disarm(player, dir);
+		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c%c", ch, dir);
 		return 2;
 	}
 	else if (player)

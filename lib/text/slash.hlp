@@ -66,10 +66,12 @@ Note:
     This can be useful to get rid of useless items from your backpack.
     This command consumes total of 1 turn(regardless of # of items destroyed).
 
-/dress {shorthand: /dr} 
+/dress [inscription] {shorthand: /dr} 
     Try to fill the equipment slots as much as possible.
-    Items with {!w} or {cursed} tags cannot be worn this way.
+    Items with {!w} or {cursed}(or below) tags cannot be worn this way.
     Be careful not to wield unexpected items using this!
+	If [inscription] is given, only items with matching tag are used. In this
+	case, you'll take off already-worn items if needed.
 
 /extra {alias: /examine shorthand: /ex} 
     Displays extra informations about your character.

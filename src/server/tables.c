@@ -4476,7 +4476,7 @@ magic_type innate_powers[96] =
 // RF6_HASTE			0x00000001	/* Speed self */
   {0, 50, 60, 0},
 // RF6_HAND_DOOM		0x00000002	/* Speed a lot (?) */
-  {0, 0, 0, 0},
+  {0, 250, 80, 0},
 // RF6_HEAL			0x00000004	/* Heal self */
   {0, 80, 50, 0},
 // RF6_XXX2			0x00000008	/* Heal a lot (?) */
@@ -4490,7 +4490,7 @@ magic_type innate_powers[96] =
 // RF6_XXX4			0x00000080	/* Move to Monster (?) */
   {0, 0, 0, 0},
 // RF6_TELE_TO			0x00000100	/* Move player to monster */
-  {0, 0, 0, 0},
+  {0, 20, 40, 0},
 // RF6_TELE_AWAY		0x00000200	/* Move player far away */
   {0, 20, 40, 0},
 // RF6_TELE_LEVEL		0x00000400	/* Move player vertically */

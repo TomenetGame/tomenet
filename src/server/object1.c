@@ -2333,7 +2333,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	}
 
 	/* Special case, ugly, but needed */
-	if (known && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
+	if (known && aware && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
 	{
 		t = object_desc_str(t, mode < 8 ? " of " : "-");
 		t = object_desc_str(t, r_info[o_ptr->pval].name + r_name);

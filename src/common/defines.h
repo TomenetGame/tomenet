@@ -1769,6 +1769,7 @@ that keeps many algorithms happy.
 #define SV_WAND_THRAIN                  32
 /* ToME-NET additions(?) */
 #define SV_WAND_ELEC_BOLT		33
+#define SV_WAND_TELEPORT_TO		34
 
 /* jk - the first valuable wand */
 #define SV_WAND_NASTY_WAND               3
@@ -2370,6 +2371,7 @@ that keeps many algorithms happy.
 
 #define GF_MAKE_GLYPH   85
 #define GF_ROCKET       91
+
 #define GF_NUKE         110
 #define GF_BLIND	111
 #define GF_HOLD		112	/* hold */
@@ -2394,6 +2396,9 @@ that keeps many algorithms happy.
 #define GF_HPINCREASE_PLAYER  131
 #define GF_HERO_PLAYER  132
 #define GF_SHERO_PLAYER  133
+
+#define GF_TELE_TO		150
+#define GF_HAND_DOOM	151
 
 #if 0	// Let's implement one by one..
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
@@ -3069,7 +3074,9 @@ that keeps many algorithms happy.
 
 #define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | RF4_BR_DISI | RF4_BR_NUKE)
 
-#define RF4_RADIUS_SPELLS (0xffffff08) /* Hack ;) */
+/* NOTE: BR_DISI is not considered as 'radius spell', since this can
+ * eliminate walls between the caster and the player. */
+#define RF4_RADIUS_SPELLS (0xefffff08) /* Hack ;) */
 //#define RF5_RADIUS_SPELLS (0x000001ff) /* Hack ;) */
 #define RF5_RADIUS_SPELLS ( RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | \
 		RF5_BA_COLD | RF5_BA_POIS | RF5_BA_NETH | RF5_BA_WATE | \
@@ -3160,7 +3167,9 @@ that keeps many algorithms happy.
 #define RF6_S_HI_DRAGON		0x20000000	/* Summon Ancient Dragon */
 #define RF6_S_WRAITH		0x40000000	/* Summon Unique Wraith */
 #define RF6_S_UNIQUE		0x80000000	/* Summon Unique Monster */
-#define RF6_PLAYER_SPELLS (RF6_HASTE | RF6_HEAL | RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY | RF6_TELE_LEVEL)
+
+#define RF6_PLAYER_SPELLS (RF6_HASTE | RF6_HAND_DOOM | RF6_HEAL | \
+		RF6_BLINK | RF6_TPORT | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL)
 
 /*
  * New monster race bit flags from ToME.		- Jir -
@@ -3429,6 +3438,18 @@ that keeps many algorithms happy.
     RF6_S_ANGEL | RF6_S_DRAGON | RF6_S_UNDEAD | RF6_S_DEMON | \
     RF6_S_HI_DRAGON | RF6_S_HI_UNDEAD | RF6_S_WRAITH | RF6_S_UNIQUE | \
     RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG | RF6_S_ANIMALS)
+
+/*
+ * Spells castable even when farther than MAX_RANGE
+ */
+#define RF4_INDIRECT_MASK \
+	(0L)
+
+#define RF5_INDIRECT_MASK \
+	(0L)
+
+#define RF6_INDIRECT_MASK \
+	(RF6_HASTE | RF6_BLINK | RF6_TPORT | RF6_HEAL)
 
 
 /*
@@ -4004,8 +4025,13 @@ extern int PlayerUID;
 
 /* Diff mode */
 #define MODE_NORMAL		0x0000
+#define MODE_MALE		0x0001	/* Dummy */
+#define MODE_HELL		0x0002	/* Penalized */
+#define MODE_NO_GHOST	0x0004	/* traditional 'hellish' is 3 */
+#if 0
 #define MODE_HELL		0x0001	/* Penalized */
 #define MODE_NO_GHOST	0x0002	/* traditional 'hellish' is 3 */
+#endif	// 0
 
 /* Monk martial arts... */
 # define MAX_MA 17

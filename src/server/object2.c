@@ -2554,6 +2554,7 @@ static void charge_wand(object_type *o_ptr)
 		case SV_WAND_ROCKETS:                   o_ptr->pval = randint(2)  + 1; break;
 
 		case SV_WAND_ELEC_BOLT:			o_ptr->pval = randint(8)  + 6; break;
+		case SV_WAND_TELEPORT_TO:			o_ptr->pval = randint(3)  + 3; break;
 	}
 }
 
@@ -6343,6 +6344,44 @@ void floor_item_optimize(int item)
 }
 
 
+/*
+ * Inscribe the items automatically.	- Jir -
+ * if 'flags' is non-0, overwrite existing inscriptions.
+ *
+ * TODO: inscribe item's power like {+StCo[FiAc;FASI}
+ */
+void auto_inscribe(int Ind, object_type *o_ptr, int flags)
+{
+	player_type *p_ptr = Players[Ind];
+	char c[] = "@m ";
+
+	if (!o_ptr->tval) return;
+
+	/* skip inscribed items */
+	if (!flags && o_ptr->note &&
+			strcmp(quark_str(o_ptr->note), "on sale"))
+		return;
+
+	if (p_ptr->obj_aware[o_ptr->k_idx] &&
+			((o_ptr->tval == TV_SCROLL &&
+			  o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
+			 (o_ptr->tval == TV_ROD &&
+			  o_ptr->sval == SV_ROD_RECALL)))
+	{
+		o_ptr->note = quark_add("@R");
+		return;
+	}
+
+	if (!is_book(o_ptr)) return;
+
+	/* XXX though it's ok with 'm' for everything.. */
+#if 0
+	c[1] = ((o_ptr->tval == TV_PRAYER_BOOK) ? 'p':'m');
+	if (o_ptr->tval == TV_FIGHT_BOOK) c[1] = 'n';
+#endif	// 0
+	c[2] = o_ptr->sval +1 +48;
+	o_ptr->note = quark_add(c);
+}
 
 
 
@@ -6547,20 +6586,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 #ifdef	AUTO_INSCRIBER
 	if (p_ptr->auto_inscribe)
 	{
-		if (is_book(o_ptr) && (!o_ptr->note) && (can_use(Ind, o_ptr)))
-		{
-			char c[] = "@m ";
-			c[2] = o_ptr->sval +1 +48;
-			o_ptr->note = quark_add(c);
-		}
-		if (!o_ptr->note && p_ptr->obj_aware[o_ptr->k_idx])
-		{
-			if ((o_ptr->tval == TV_SCROLL &&
-						o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
-					(o_ptr->tval == TV_ROD &&
-					 o_ptr->sval == SV_ROD_RECALL))
-				o_ptr->note = quark_add("@R");
-		}
+		auto_inscribe(Ind, o_ptr, 0);
 	}
 #endif	// AUTO_INSCRIBER
 			

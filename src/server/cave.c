@@ -4559,12 +4559,12 @@ void disturb(int Ind, int stop_search, int unused_flag)
 	/* Cancel auto-commands */
 	/* command_new = 0; */
 
-#if 0
+#if 1
 	/* Cancel repeated commands */
-	if (command_rep)
+	if (p_ptr->command_rep)
 	{
 		/* Cancel */
-		command_rep = 0;
+		p_ptr->command_rep = 0;
 
 		/* Redraw the state (later) */
 		p_ptr->redraw |= (PR_STATE);

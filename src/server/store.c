@@ -1986,6 +1986,11 @@ void store_purchase(int Ind, int item, int amt)
 	i=gettown(Ind);
 	if(i==-1) return;
 
+	if (p_ptr->store_num==-1){
+		msg_print(Ind,"You left the shop!");
+		return;
+	}
+
 	st_ptr = &town[i].townstore[st];
 	ot_ptr = &owners[st][st_ptr->owner];
 
@@ -2268,7 +2273,10 @@ void store_sell(int Ind, int item, int amt)
 	char		o_name[160];
 
 	/* sanity check - Yakina - */
-	if (p_ptr->store_num < 0) return;
+	if (p_ptr->store_num==-1){
+		msg_print(Ind,"You left the shop!");
+		return;
+	}
 
 	/* You can't sell 0 of something. */
 	if (amt <= 0) return;

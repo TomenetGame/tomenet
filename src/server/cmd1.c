@@ -2036,7 +2036,8 @@ void py_attack(int Ind, int y, int x, bool old)
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr=&zcave[y][x];
 
-	if (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW) return;
+	if (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW
+			|| !p_ptr->num_blow) return;
 
 	/* Break goi/manashield */
 	if (p_ptr->invuln)
@@ -2345,7 +2346,11 @@ void move_player(int Ind, int dir, int do_pickup)
 	if (p_ptr->afk) toggle_afk(Ind);
 
 	/* Can we move ? */
-	if (r_ptr->flags1 & RF1_NEVER_MOVE) return;
+	if (r_ptr->flags1 & RF1_NEVER_MOVE)
+	{
+		msg_print(Ind, "You cannot move by nature.");
+		return;
+	}
 
 	/* Find the result of moving */
 	if (((r_ptr->flags1 & RF1_RAND_50) && magik(50)) ||

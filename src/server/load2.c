@@ -1356,7 +1356,7 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->tim_invisibility);
 	rd_s16b(&p_ptr->tim_invis_power);
 
-	rd_s16b(&p_ptr->furry);
+	rd_s16b(&p_ptr->fury);
 
 	rd_s16b(&p_ptr->tim_manashield);
 

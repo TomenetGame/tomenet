@@ -23,6 +23,13 @@
 /* duration of GoI when climbing stairs.	[2] */
 #define STAIR_GOI_LENGTH	3
 
+/* max range of arrows in do_cmd_fire.
+ * the aim is to prevent 'out-of-range attack' abuse.
+ * [MAX_RANGE] */
+/* commented out due to monster AI improvements.
+ * activate it if STUPID_MONSTER_SPELLS is defined!
+ * */
+//#define ARROW_DIST_LIMIT	MAX_RANGE
 
 /*
  * Go up one level                                      -RAK-
@@ -30,6 +37,7 @@
 void do_cmd_go_up(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type *c_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
@@ -38,6 +46,13 @@ void do_cmd_go_up(int Ind)
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
 		return;
+
+	/* Can we move ? */
+	if (r_ptr->flags1 & RF1_NEVER_MOVE)
+	{
+		msg_print(Ind, "You cannot move by nature.");
+		return;
+	}
 
 #if STAIR_FAIL_IF_CONFUSED
 	/* Hack -- handle confusion */
@@ -148,6 +163,7 @@ void do_cmd_go_up(int Ind)
 void do_cmd_go_down(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type *c_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
@@ -159,6 +175,30 @@ void do_cmd_go_down(int Ind)
 	
 	if(cfg.runlevel<5 && !p_ptr->wpos.wz){
 		msg_print(Ind,"The dungeon is closed");
+		return;
+	}
+
+	/* Can we move ? */
+	if (r_ptr->flags1 & RF1_NEVER_MOVE)
+	{
+		msg_print(Ind, "You cannot move by nature.");
+		return;
+	}
+
+	/* Player grid */
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	/* Hack -- Enter a store (and between gates, etc) */
+	if ((!p_ptr->ghost) &&
+			(c_ptr->feat >= FEAT_SHOP_HEAD) &&
+			(c_ptr->feat <= FEAT_SHOP_TAIL))
+	{
+		/* Disturb */
+		disturb(Ind, 0, 0);
+
+		/* Hack -- Enter store */
+		command_new = '_';
+		do_cmd_store(Ind);
 		return;
 	}
 
@@ -177,22 +217,7 @@ void do_cmd_go_down(int Ind)
 	}
 #endif // STAIR_FAIL_IF_CONFUSED
 
-	/* Player grid */
-	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-	/* Hack -- Enter a store (and between gates, etc) */
-	if ((!p_ptr->ghost) &&
-			(c_ptr->feat >= FEAT_SHOP_HEAD) &&
-			(c_ptr->feat <= FEAT_SHOP_TAIL))
-	{
-		/* Disturb */
-		disturb(Ind, 0, 0);
-
-		/* Hack -- Enter store */
-		command_new = '_';
-		do_cmd_store(Ind);
-		return;
-	}
 
 	/* Verify stairs */
 //      if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
@@ -290,6 +315,14 @@ void do_cmd_search(int Ind)
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+#if CHATTERBOX_LEVEL > 2	/* This can be noisy */
+	if (!p_ptr->taciturn_messages)
+		msg_print(Ind, "You carefully search things around you..");
+#endif	// CHATTERBOX_LEVEL
+
+	/* Repeat if requested */
+	if (p_ptr->always_repeat) p_ptr->command_rep = 1;
 
 	/* Search */
 	search(Ind);
@@ -963,6 +996,7 @@ void do_cmd_open(int Ind, int dir)
 
 	/* Cancel repeat unless we may continue */
 	if (!more) disturb(Ind, 0, 0);
+	else if (p_ptr->always_repeat) p_ptr->command_rep = 1;
 }
 
 
@@ -1458,6 +1492,7 @@ void do_cmd_tunnel(int Ind, int dir)
 
 	/* Cancel repetition unless we can continue */
 	if (!more) disturb(Ind, 0, 0);
+	else if (p_ptr->always_repeat) p_ptr->command_rep = 1;
 }
 
 
@@ -1693,6 +1728,7 @@ void do_cmd_disarm(int Ind, int dir)
 
 	/* Cancel repeat unless told not to */
 	if (!more) disturb(Ind, 0, 0);
+	else if (p_ptr->always_repeat) p_ptr->command_rep = 1;
 }
 
 
@@ -1853,6 +1889,7 @@ void do_cmd_bash(int Ind, int dir)
 
 	/* Unless valid action taken, cancel bash */
 	if (!more) disturb(Ind, 0, 0);
+	else if (p_ptr->always_repeat) p_ptr->command_rep = 1;
 }
 
 
@@ -2627,7 +2664,9 @@ void do_cmd_fire(int Ind, int dir)
 	tdis = 10 + 5 * tmul;
 
 	/* Play fairly */
-	if (tdis > MAX_RANGE) tdis = MAX_RANGE;
+#ifdef ARROW_DIST_LIMIT
+	if (tdis > ARROW_DIST_LIMIT) tdis = ARROW_DIST_LIMIT;
+#endif	// ARROW_DIST_LIMIT
 
 	/* Start at the player */
 	y = p_ptr->py;

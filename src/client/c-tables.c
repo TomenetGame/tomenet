@@ -2609,7 +2609,7 @@ option_type option_info[OPT_MAX] =
 	"quick_messages",		"Activate quick messages" },
 
 	{ &c_cfg.other_query_flag,	FALSE,	1,	0, 2,	// XXX
-	"other_query_flag",		"(broken) Prompt for various information" },
+	"other_query_flag",		"Prompt for various information (mimic polymorph)" },
 
 	{ &c_cfg.carry_query_flag,	FALSE,	1,	0, 3,	// XXX
 	"carry_query_flag",		"(broken) Prompt before picking things up" },
@@ -2621,7 +2621,7 @@ option_type option_info[OPT_MAX] =
 	"always_pickup",		"Pick things up by default" },
 
 	{ &c_cfg.always_repeat,		TRUE,	1,	0, 6,	// XXX
-	"always_repeat",		"(broken) Repeat obvious commands" },
+	"always_repeat",		"Repeat obvious commands" },
 
 	{ &c_cfg.depth_in_feet,		TRUE,	1,	0, 7,
 	"depth_in_feet",		"Show dungeon level in feet" },
@@ -2826,7 +2826,7 @@ option_type option_info[OPT_MAX] =
 	"auto_target",			"Automatically set target to the nearest enemy" },
 
 	{ &c_cfg.autooff_retaliator,	FALSE,	5,	9, 70,
-	"autooff_retaliator",	"stop the retaliator when protected by GoI etc" },
+	"autooff_retaliator",	"Stop the retaliator when protected by GoI etc" },
 
 	{ &c_cfg.wide_scroll_margin,	FALSE,	5,	9, 71,
 	"wide_scroll_margin",	"Scroll the screen more frequently" },
@@ -2842,7 +2842,7 @@ option_type option_info[OPT_MAX] =
 	NULL,			NULL }
 };
 
-
+/* XXX XXX they should be sent from server like other spells! */
 cptr monster_spells4[32] =
 {
   "Shriek",
@@ -2896,7 +2896,8 @@ cptr monster_spells5[32] =
   "Drain Mana",
   "Mind Blast",
   "Brain Smash",
-  "Cause Light Wounds",
+  //"Cause Light Wounds",
+  "Cause Wounds",
   "XXX",
   "Ball of Toxic Waste",
   "Ball of Chaos",
@@ -2907,7 +2908,8 @@ cptr monster_spells5[32] =
   "Bolt of Poison",
   "Bolt of Nether",
   "Bolt of Water",
-  "Bolt of Mana",  "Bolt of Plasma",
+  "Bolt of Mana",
+  "Bolt of Plasma",
   "Bolt of Ice",
   "Magic Missile",
   "Scare",
@@ -2923,7 +2925,7 @@ cptr monster_spells5[32] =
 cptr monster_spells6[32] =
 {
   "Speed",
-  "XXX",
+  "Hand of Doom",	// "XXX",
   "Heal",
   "XXX",
   "Blink",

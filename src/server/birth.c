@@ -1239,7 +1239,7 @@ void player_create_tmpfile(int Ind)
 	strcpy(p_ptr->infofile, file_name);
 }
 
-static void player_setup(int Ind)
+static void player_setup(int Ind, bool new)
 {
 	player_type *p_ptr = Players[Ind];
 	int y, x, i, d, count = 0;
@@ -1257,7 +1257,8 @@ static void player_setup(int Ind)
 	p_ptr->spam=0;
 
 	/* Default location if just starting */
-	if(wpos->wz==0 && wpos->wy==0 && wpos->wx==0 && p_ptr->py==0 && p_ptr->px==0){
+//	if(wpos->wz==0 && wpos->wy==0 && wpos->wx==0 && p_ptr->py==0 && p_ptr->px==0){
+	if (new) {
 		p_ptr->wpos.wx=cfg.town_x;
 		p_ptr->wpos.wy=cfg.town_y;
 		p_ptr->py=level_down_y(wpos);
@@ -1534,7 +1535,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	if (character_loaded)
 	{
 		/* Loading succeeded */         
-		player_setup(Ind);
+		player_setup(Ind, FALSE);
 		clockin(Ind, 0);	/* Timestamp the player */
 		clockin(Ind, 1);	/* Set player level */
 		clockin(Ind, 2);	/* Set player party */
@@ -1580,7 +1581,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 		p_ptr->mode = MODE_NORMAL;
 	}
 #else	// 0
-	p_ptr->mode = sex >> 1;
+	p_ptr->mode = sex & ~MODE_MALE;
 
 #endif	// 0
 	p_ptr->dna = ((class & 0xff) | ((race & 0xff) << 8) );
@@ -1625,7 +1626,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	player_outfit(Ind);
 
 	/* Set his location, panel, etc. */
-	player_setup(Ind);
+	player_setup(Ind, TRUE);
 
 	/* Set up the skills */
 	p_ptr->skill_points = 0;

@@ -115,7 +115,7 @@ function init()
 	pern_dofile(Ind, "jir.lua")
 end
 
--- get all the skills
+-- get all the skills (cept antimagic)
 function learn()
 local i = 0
 local p = players(Ind)
@@ -128,6 +128,7 @@ local p = players(Ind)
 --		end
 	end
 
+	antimagic(0)
 end
 
 -- set specified skill

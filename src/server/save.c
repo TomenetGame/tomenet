@@ -1247,7 +1247,7 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->tim_invisibility);
 	wr_s16b(p_ptr->tim_invis_power);
 
-	wr_s16b(p_ptr->furry);
+	wr_s16b(p_ptr->fury);
 
 	wr_s16b(p_ptr->tim_manashield);
 

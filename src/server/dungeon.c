@@ -2018,9 +2018,9 @@ static void process_player_end(int Ind)
 		}
 
 		/* Furry */
-		if (p_ptr->furry)
+		if (p_ptr->fury)
 		{
-			(void)set_furry(Ind, p_ptr->furry - 1);
+			(void)set_fury(Ind, p_ptr->fury - 1);
 		}
 
 		/* Blessed */
@@ -3791,9 +3791,11 @@ void set_runlevel(int val)
 			/* Running */
 		default:
 			/* Cancelled shutdown */
-			msg_broadcast(0, "\377GServer shutdown cancelled.");
+			if (cfg.runlevel != 6)
+				msg_broadcast(0, "\377GServer shutdown cancelled.");
 			Report_to_meta(META_START);
 			meta=TRUE;
+			val = 6;
 			break;
 	}
 	time(&cfg.closetime);

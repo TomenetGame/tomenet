@@ -1432,7 +1432,7 @@ static void calc_hitpoints(int Ind)
 	if (p_ptr->hero) mhp += 10;
 	if (p_ptr->shero) mhp += 30;
 	
-	if (p_ptr->furry) mhp += 40;
+	if (p_ptr->fury) mhp += 40;
 	
 	/* Meditation increase mana at the cost of hp */
 	if (p_ptr->tim_meditation)
@@ -1570,15 +1570,23 @@ static int weight_limit(int Ind)
 
 
 /* Should be called by every calc_bonus call */
+/* TODO: allow ego form */
 void calc_body_bonus(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
 	int d, i, j, toac = 0, body = 0;
+	bool wepless = FALSE;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
 	/* If in the player body nothing have to be done */
 	if (!p_ptr->body_monster) return;
+
+	if (!r_ptr->body_parts[BODY_WEAPON])
+	{
+		wepless = TRUE;
+		p_ptr->num_blow = 0;
+	}
 
 	d = 0;
 	for (i = 0; i < 4; i++)
@@ -1586,7 +1594,7 @@ void calc_body_bonus(int Ind)
 		j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
 
 		/* Hack -- weaponless combat */
-		if (!r_ptr->body_parts[BODY_WEAPON] && j)
+		if (wepless && j)
 		{
 			p_ptr->num_blow++;
 			j *= 2;
@@ -1598,6 +1606,7 @@ void calc_body_bonus(int Ind)
 	p_ptr->to_d += d;
 	p_ptr->dis_to_d += d;
 
+	/* Evaluate monster AC (if skin or armor etc) */
 	body = (r_ptr->body_parts[BODY_HEAD] ? 1 : 0)
 		+ (r_ptr->body_parts[BODY_TORSO] ? 3 : 0)
 		+ (r_ptr->body_parts[BODY_ARMS] ? 2 : 0)
@@ -1607,6 +1616,29 @@ void calc_body_bonus(int Ind)
 	p_ptr->ac += toac;
 	p_ptr->dis_ac += toac;
 	p_ptr->pspeed = r_ptr->speed;
+
+	/* Base skill -- searching ability */
+	p_ptr->skill_srh /= 2;
+	p_ptr->skill_srh += r_ptr->aaf / 10;
+
+	/* Base skill -- searching frequency */
+	p_ptr->skill_fos /= 2;
+	p_ptr->skill_fos += r_ptr->aaf / 10;
+
+	/* Extra fire if good archer */
+	if (r_ptr->flags4 & RF4_ARROW_1)
+	{
+		p_ptr->num_fire++;	// Free
+		if (r_ptr->freq_inate > 30) p_ptr->num_fire++;	// 1_IN_3
+		if (r_ptr->freq_inate > 60) p_ptr->num_fire++;	// 1_IN_1
+	}
+	else
+	/* Extra casting if good spellcaster */
+	{
+		if (r_ptr->freq_inate > 30) p_ptr->num_spell++;	// 1_IN_3
+		if (r_ptr->freq_inate > 60) p_ptr->num_spell++;	// 1_IN_1
+	}
+
 
 	//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
 	if(r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 1;
@@ -1646,7 +1678,7 @@ void calc_body_bonus(int Ind)
 		p_ptr->antimagic_dis += r_ptr->level / 15 + 3;
 	}
 
-	/* If not change,d spells didnt changed too, no need to send them */
+	/* If not changed, spells didnt changed too, no need to send them */
 	if (!p_ptr->body_changed) return;
 	p_ptr->body_changed = FALSE;
 
@@ -2753,7 +2785,7 @@ static void calc_bonuses(int Ind)
 	}
 
 	/* Temporary "Fury" */
-	if (p_ptr->furry)
+	if (p_ptr->fury)
 	{
 		p_ptr->to_h += 10;
 		p_ptr->dis_to_h += 10;

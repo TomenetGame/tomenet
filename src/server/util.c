@@ -2281,6 +2281,7 @@ static void do_slash_cmd(int Ind, char *message)
 		{
 			object_type		*o_ptr;
 			int j;
+			bool gauche = FALSE;
 
 			disturb(Ind, 1, 0);
 
@@ -2307,12 +2308,21 @@ static void do_slash_cmd(int Ind, char *message)
 					if (cursed_p(o_ptr)) continue;
 
 					/* Already used? */
-					if (wield_slot(Ind, o_ptr) != i) continue;
+					if (!tk && wield_slot(Ind, o_ptr) != i) continue;
+
+					/* Limit to items with specified strings, if any */
+					if (tk && (!o_ptr->note ||
+								!strstr(quark_str(o_ptr->note), token[1])))
+						continue;
 
 					do_cmd_wield(Ind, j);
 
 					/* MEGAHACK -- tweak to handle rings right */
-					if (o_ptr->tval == TV_RING) i -= 2;
+					if (o_ptr->tval == TV_RING && !gauche)
+					{
+						i -= 2;
+						gauche = TRUE;
+					}
 
 					break;
 				}
@@ -2348,7 +2358,7 @@ static void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "You can%s use weapons.", r_ptr->body_parts[BODY_WEAPON] ? "" : "not");
 				msg_format(Ind, "You can%s wear %s.", r_ptr->body_parts[BODY_FINGER] ? "" : "not", r_ptr->body_parts[BODY_FINGER] == 1 ? "a ring" : "rings");
 				msg_format(Ind, "You %shave torso.", r_ptr->body_parts[BODY_TORSO] ? "" : "don't ");
-				msg_format(Ind, "You %shave legs.", r_ptr->body_parts[BODY_LEGS] ? "" : "don't ");
+				msg_format(Ind, "You %shave legs suitable for shoes.", r_ptr->body_parts[BODY_LEGS] ? "" : "don't ");
 			}
 
 			if (admin)
@@ -2662,18 +2672,18 @@ static void do_slash_cmd(int Ind, char *message)
 			monster_race *r_ptr;
 			if (!tk)
 			{
-				// msg_print(Ind, "Usage: /monster (monster letter)");
 				do_cmd_show_monster_killed_letter(Ind, NULL);
 				return;
 			}
 
+			/* Handle specification like 'D', 'k' */
 			if (strlen(token[1]) == 1)
 			{
 				do_cmd_show_monster_killed_letter(Ind, token[1]);
 				return;
 			}
 
-			/* TODO: handle specification like 'D', 'k' */
+			/* Directly specify a name (tho no1 would use it..) */
 			r_idx = race_index(token[1]);
 			if (!r_idx)
 			{
@@ -2712,32 +2722,7 @@ static void do_slash_cmd(int Ind, char *message)
 			for(i = 0; i < INVEN_PACK; i++)
 			{
 				o_ptr = &(p_ptr->inventory[i]);
-				if (!o_ptr->tval) break;
-
-				/* skip inscribed items */
-				if (!tk && o_ptr->note &&
-						strcmp(quark_str(o_ptr->note), "on sale"))
-					continue;
-
-				if (p_ptr->obj_aware[o_ptr->k_idx] &&
-					((o_ptr->tval == TV_SCROLL &&
-						o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
-					(o_ptr->tval == TV_ROD &&
-						o_ptr->sval == SV_ROD_RECALL)))
-				{
-					o_ptr->note = quark_add("@R");
-					continue;
-				}
-
-				if (!is_book(o_ptr)) continue;
-
-				/* XXX though it's ok with 'm' for everything.. */
-#if 0
-				c[1] = ((o_ptr->tval == TV_PRAYER_BOOK) ? 'p':'m');
-				if (o_ptr->tval == TV_FIGHT_BOOK) c[1] = 'n';
-#endif	// 0
-				c[2] = o_ptr->sval +1 +48;
-				o_ptr->note = quark_add(c);
+				auto_inscribe(Ind, o_ptr, tk);
 			}
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
@@ -2901,6 +2886,7 @@ static void do_slash_cmd(int Ind, char *message)
 				//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
 				return;
 			}
+			/* TODO: make this player command (using spells, scrolls etc) */
 			else if (prefix(message, "/identify") ||
 					prefix(message, "/id"))
 			{

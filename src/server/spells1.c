@@ -438,7 +438,7 @@ void teleport_to_player(int Ind, int m_idx)
 	if (!m_ptr->r_idx) return;
 
 	/* "Skill" test */
-        if (randint(100) > m_ptr->level) return;
+//	if (randint(100) > m_ptr->level) return;	/* not here */
 
 	if(!(zcave=getcave(wpos))) return;
 	if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) return;
@@ -667,8 +667,12 @@ void teleport_player(int Ind, int dis)
 				 */
 			{
 				if (!(m_list[m_idx].csleep) &&
-					!mon_will_run(Ind, m_idx))
-					teleport_to_player(Ind, m_idx);
+						!mon_will_run(Ind, m_idx))
+				{
+					/* "Skill" test */
+					if (randint(100) < r_ptr->level) 
+						teleport_to_player(Ind, m_idx);
+				}
 			}
 		}
 	}
@@ -4758,6 +4762,77 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			dam=0;
 			break;
 
+		/* Teleport monster TO (Use "dam" as "power") */
+		case GF_TELE_TO:
+		{
+			bool resists_tele = FALSE;
+			dun_level		*l_ptr = getfloor(wpos);
+			if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) break;
+
+			/* Teleport to nowhere..? */
+			if (quiet) break;
+
+			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
+				(r_ptr->flags3 & (RF3_RES_TELE)))
+			{
+				if (r_ptr->flags1 & (RF1_UNIQUE))
+				{
+					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+					note = " is unaffected!";
+					resists_tele = TRUE;
+				}
+				else if (m_ptr->level > randint(100))
+				{
+					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+					note = " resists!";
+					resists_tele = TRUE;
+				}
+			}
+
+			if (!resists_tele)
+			{
+				/* Obvious */
+				if (seen) obvious = TRUE;
+
+				/* Prepare to teleport */
+//				do_dist = dam;
+				teleport_to_player(Ind, c_ptr->m_idx);
+
+				/* Hack -- get new location */
+				y = m_ptr->fy;
+				x = m_ptr->fx;
+
+				/* Hack -- get new grid */
+				c_ptr = &zcave[y][x];
+			}
+
+			/* No "real" damage */
+			dam = 0;
+			break;
+		}
+
+		/* Hand of Doom */
+		case GF_HAND_DOOM:
+		{
+#if 0	/* okay, do that! ;) */
+			if(r_ptr->r_flags1 & RF1_UNIQUE)
+			{
+				note = " resists.";
+				dam = 0;
+			}
+			else
+#endif	// 0
+			{
+				int dummy = (((s32b) ((65 + randint(25)) * (m_ptr->hp))) / 100);
+//				msg_print(Ind, "Your feel your life fade away!");
+
+				if (m_ptr->hp - dummy < 1) dummy = m_ptr->hp - 1;
+
+				dam = dummy;
+			}
+			break;
+		}
+
 			/* Default */
 		default:
 		{
@@ -6129,6 +6204,60 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
+		case GF_TELE_TO:
+		{
+			bool resists_tele = FALSE;
+			dun_level		*l_ptr = getfloor(wpos);
+			if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) break;
+
+			/* Teleport to nowhere..? */
+			if (who >=0 || who < PROJECTOR_UNUSUAL) break;
+
+			if (p_ptr->anti_tele)
+			{
+				msg_print(Ind, "You are unaffected!");
+			}
+			else
+			{
+				player_type *q_ptr = Players[0 - who];
+
+				msg_format(Ind, "%^s commands you to return.", q_ptr->name);
+
+				/* Prepare to teleport */
+				teleport_player_to(Ind, q_ptr->py, q_ptr->px);
+
+			}
+
+			/* No "real" damage */
+			dam = 0;
+			break;
+		}
+
+		/* Hand of Doom */
+		case GF_HAND_DOOM:
+		{
+			/* Teleport to nowhere..? */
+			if (who >=0 || who < PROJECTOR_UNUSUAL) break;
+
+			msg_format(Ind, "%^s invokes the Hand of Doom!",
+					Players[0-who]->name);
+
+			if (rand_int(100) < p_ptr->skill_sav)
+			{
+				msg_format(Ind, "You resist the effects!");
+			}
+			else
+			{
+				int dummy = (((s32b) ((65 + randint(25)) * (p_ptr->chp))) / 100);
+				if (p_ptr->chp - dummy < 1) dummy = p_ptr->chp - 1;
+				msg_print(Ind, "Your feel your life fade away!");
+				bypass_invuln = TRUE;
+				take_hit(Ind, dummy, Players[0-who]->name);
+				bypass_invuln = FALSE;
+				curse_equipment(Ind, 100, 20);
+			}
+			break;
+		}
 
 		/* Default */
 		default:
@@ -6141,12 +6270,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 
 
-       /* Skip non-connected players */
-       if (!p_ptr->conn == NOT_CONNECTED)
-        {
-        /* Disturb */
-        disturb(Ind, 1, 0);
-        }
+	/* Skip non-connected players */
+	if (!p_ptr->conn == NOT_CONNECTED)
+	{
+		/* Disturb */
+		disturb(Ind, 1, 0);
+	}
 
 	/* Return "Anything seen?" */
 	return (obvious);

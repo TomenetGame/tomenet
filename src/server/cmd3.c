@@ -1585,7 +1585,7 @@ void do_cmd_steal(int Ind, int dir)
 		}
 
 		/* The target gets angry */
-		set_furry(0 - c_ptr->m_idx, q_ptr->furry + 15 + randint(15));
+		set_fury(0 - c_ptr->m_idx, q_ptr->fury + 15 + randint(15));
 
 	}
 

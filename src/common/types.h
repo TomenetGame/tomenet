@@ -1810,7 +1810,7 @@ struct player_type
 	bool auto_target;
 	bool autooff_retaliator;
 	bool wide_scroll_margin;
-	bool dummy_option_5;
+	bool always_repeat;
 	bool dummy_option_6;
 	bool dummy_option_7;
 	bool dummy_option_8;
@@ -1863,6 +1863,7 @@ struct player_type
 	s16b current_spell;	/* Spell being cast */
 	s16b current_realm;	/* Realm of spell being cast */
   s16b current_mind;	/* Power being use */
+  /* XXX XXX consider using union or sth */
 	s16b current_rod;	/* Rod being zapped */
 	s16b current_activation;/* Artifact (or dragon mail) being activated */
 	s16b current_enchant_h; /* Current enchantments */
@@ -1897,7 +1898,7 @@ struct player_type
 	s16b invuln;		/* Timed -- Invulnerable */
 	s16b hero;			/* Timed -- Heroism */
 	s16b shero;			/* Timed -- Super Heroism */
-	s16b furry;			/* Timed -- Furry */
+	s16b fury;			/* Timed -- Furry */
 	s16b shield;		/* Timed -- Shield Spell */
 	s16b blessed;		/* Timed -- Blessed */
 	s16b blessed_power;		/* Timed -- Blessed */

@@ -712,9 +712,9 @@ bool set_invis(int Ind, int v, int p)
 }
 
 /*
- * Set "p_ptr->furry", notice observable changes
+ * Set "p_ptr->fury", notice observable changes
  */
-bool set_furry(int Ind, int v)
+bool set_fury(int Ind, int v)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -726,7 +726,7 @@ bool set_furry(int Ind, int v)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->furry)
+		if (!p_ptr->fury)
 		{
 			msg_print(Ind, "You grow a fury!");
 			notice = TRUE;
@@ -736,7 +736,7 @@ bool set_furry(int Ind, int v)
 	/* Shut */
 	else
 	{
-		if (p_ptr->furry)
+		if (p_ptr->fury)
 		{
 			msg_print(Ind, "The fury stops.");
 			notice = TRUE;
@@ -748,7 +748,7 @@ bool set_furry(int Ind, int v)
 		v = cfg.spell_stack_limit;
 
 	/* Use the value */
-	p_ptr->furry = v;
+	p_ptr->fury = v;
 
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
@@ -3811,6 +3811,13 @@ void player_death(int Ind)
 	int i;
 	wilderness_type *wild;
 	bool hell=TRUE;
+
+	/* very very rare case, but this can happen(eg. starvation) */
+	if (p_ptr->store_num > -1)
+	{
+		p_ptr->store_num = -1;
+		Send_store_kick(Ind);
+	}
 
 	/* Hack -- amulet of life saving */
 	if (p_ptr->alive && p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING && p_ptr->fruit_bat != -1)

@@ -972,7 +972,9 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6)
 		/*** Try to pick an appropriate spell type ***/
 
 		/* Hurt badly or afraid, attempt to flee */
-		if (has_escape && ((m_ptr->hp < m_ptr->maxhp / 4) || m_ptr->monfear))
+		/* If too far, attempt to change position */
+		if (has_escape && ((m_ptr->hp < m_ptr->maxhp / 4) || m_ptr->monfear
+					|| m_ptr->cdis > MAX_RANGE))
 		{
 			/* Choose escape spell */
 			f4_mask = (RF4_ESCAPE_MASK);
@@ -990,7 +992,8 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6)
 		}
 
 		/* Player is close and we have attack spells, blink away */
-		else if (has_tactic && (distance(py, px, m_ptr->fy, m_ptr->fx) < 4) &&
+//		else if (has_tactic && (distance(py, px, m_ptr->fy, m_ptr->fx) < 4) &&
+		else if (has_tactic && (m_ptr->cdis < 4) &&
 		         has_attack && (rand_int(100) < 75))
 		{
 			/* Choose tactical spell */
@@ -1514,46 +1517,6 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* Only do spells occasionally */
 	if (rand_int(100) >= chance) return (FALSE);
 
-	/* Compute the probability of the unbeliever to disrupt any magic attempts */
-#if 0
-	if ((p_ptr->pclass == CLASS_UNBELIEVER))
-	  {
-	    antichance += p_ptr->lev;
-	    antidis += 1 + (p_ptr->lev / 11);
-	  }
-
-
-	if (o_ptr->k_idx)
-	  {
-	    u32b f1, f2, f3, f4, f5, esp;
-
-			  /* Extract the flags */
-			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-//	    if (f2 & TR2_ANTI_MAGIC)
-	    if (f2 & TR3_NO_MAGIC)
-	      {
-		int minus = o_ptr->to_h + o_ptr->to_d + o_ptr->pval;
-		/* if ((minus < 0) && (p_ptr->pclass != CLASS_UNBELIEVER)) minus = 0; */
-		if (p_ptr->pclass != CLASS_UNBELIEVER)
-		{
-			if (minus < -p_ptr->lev / 2) minus = -p_ptr->lev / 2;
-			if (minus < -40) minus = -40;
-		}
-
-		/* Enchanting DarkSwords is not a wise thing */
-		antichance += 50 - minus;
-		antidis += 4 - (minus / 10);
-	      }
-	  }
-#endif	// 0
-#if 0	
-	antichance = p_ptr->antimagic;
-	antidis = p_ptr->antimagic_dis;
-
-	if (m_ptr->cdis > antidis) antichance = 0;
-#endif	// 0
-
 
 	/* XXX XXX XXX Handle "track_target" option (?) */
 
@@ -1570,11 +1533,41 @@ bool make_attack_spell(int Ind, int m_idx)
 	 * XXX this doesn't reflect some exceptions(eg. radius=4 spells). */
 	srad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
 
+	/* NOTE: it is abusable that MAX_RANGE is 18 and player arrow range
+	 * is 25-50; one can massacre uniques without any dangers.
+	 * This attempt to prevent it somewhat by allowing monsters to cast
+	 * some spells (like teleport) under such situations.
+	 */
+#ifndef	STUPID_MONSTER_SPELLS // see MAX_SIGHT in process_monsters
+	if (m_ptr->cdis > MAX_RANGE)
+	{
+		if (!los(wpos, y, x, m_ptr->fy, m_ptr->fx)) return (FALSE);
+
+		f4 &= (RF4_INDIRECT_MASK | RF4_SUMMON_MASK);
+		f5 &= (RF5_INDIRECT_MASK | RF5_SUMMON_MASK);
+		f6 &= (RF6_INDIRECT_MASK | RF6_SUMMON_MASK);
+
+		/* No spells left */
+		if (!f4 && !f5 && !f6) return (FALSE);
+
+		normal = FALSE;
+		direct = FALSE;
+
+		/* Hack -- summon around itself */
+		y = m_ptr->fy;
+		x = m_ptr->fx;
+		summon = f4 & (RF4_SUMMON_MASK) || f5 & (RF5_SUMMON_MASK) ||
+			f6 & (RF6_SUMMON_MASK);
+	}
+#else	// STUPID_MONSTER_SPELLS
+	if (m_ptr->cdis > MAX_RANGE) return (FALSE);
+#endif	// STUPID_MONSTER_SPELLS
+
 	/* Hack -- require projectable player */
 	if (normal)
 	{
 		/* Check range */
-		if (m_ptr->cdis > MAX_RANGE) return (FALSE);
+//		if (m_ptr->cdis > MAX_RANGE) return (FALSE);
 
 		/* Check path */
 #if INDIRECT_FREQ < 1
@@ -2928,13 +2921,14 @@ bool make_attack_spell(int Ind, int m_idx)
 			else
 			{
 				int dummy = (((s32b) ((65 + randint(25)) * (p_ptr->chp))) / 100);
+				if (p_ptr->chp - dummy < 1) dummy = p_ptr->chp - 1;
 				msg_print(Ind, "Your feel your life fade away!");
 				bypass_invuln = TRUE;
 				take_hit(Ind, dummy, m_name);
 				bypass_invuln = FALSE;
 				curse_equipment(Ind, 100, 20);
 
-				if (p_ptr->chp < 1) p_ptr->chp = 1;
+//				if (p_ptr->chp < 1) p_ptr->chp = 1;
 			}
 			break;
 		}
@@ -4264,15 +4258,17 @@ static void get_moves(int Ind, int m_idx, int *mm)
 
 	if (!done)
 	{
-		/* Hack -- chase in zigzags */
+		/* Hack -- chase player avoiding arrows
+		 * In the real-time, it does work :)
+		 */
 		if (ax < 2 && ay > 5)
 		{
-			x = (x > 0 || !x && magik(50)) ? ay : -ay;
+			x = (x > 0 || !x && magik(50)) ? -ay : ay;
 			ax = ay;
 		}
 		if (ay < 2 && ax > 5)
 		{
-			y = (y > 0 || !y && magik(50)) ? ax : -ax;
+			y = (y > 0 || !y && magik(50)) ? -ax : ax;
 			ay = ax;
 		}
 	}
@@ -6462,9 +6458,15 @@ void process_monsters(void)
 		}
 
 		/* Handle "sight" and "aggravation" */
+#if 0
 		else if ((m_ptr->cdis <= MAX_SIGHT) &&
 		         (player_has_los_bold(closest, fy, fx) ||
 		          p_ptr->aggravate))
+#else
+		else if (
+		         (player_has_los_bold(closest, fy, fx) ||
+		          p_ptr->aggravate))
+#endif	// 0
 		{
 			/* We can "see" or "feel" the player */
 			test = TRUE;

@@ -4242,7 +4242,7 @@ void do_cmd_fight(int Ind, int book, int spell)
                         case 10:
 			{
 				msg_format_near(Ind, "%s enters a battle *RAGE*.", p_ptr->name);
-                                set_furry(Ind, p_ptr->furry + 10 + randint(10) + (plev / 2));
+                                set_fury(Ind, p_ptr->fury + 10 + randint(10) + (plev / 2));
 				break;
 			}
 			
@@ -5854,8 +5854,11 @@ static void do_mimic_power(int Ind, int power)
     case 64:
       if(!p_ptr->fast) set_fast(Ind, 10 + (rlev / 2));
       break;
-// RF6_HAND_DOOM		0x00000002	/* Should we...? */
+// RF6_HAND_DOOM		0x00000002	/* Should we...? */ /* YES! */
     case 65:
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
       break;
 // RF6_HEAL			0x00000004	/* Heal self */
     case 66:
@@ -5880,7 +5883,10 @@ static void do_mimic_power(int Ind, int power)
       break;
 // RF6_TELE_TO			0x00000100	/* Move player to monster */
     case 72:
-      msg_print(Ind, "Haha, you wish ... :)");
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
+//      msg_print(Ind, "Haha, you wish ... :)");
       break;
 // RF6_TELE_AWAY		0x00000200	/* Move player far away */
     case 73:
@@ -6205,6 +6211,14 @@ void do_mimic_power_aux(int Ind, int dir)
     case 62:
       fire_bolt(Ind, GF_OLD_SLOW, dir, damroll(2, 6) + (rlev / 3));
       break;
+// RF6_HAND_DOOM		0x00000002	/* Should we...? */ /* YES! */
+    case 65:
+	  (void)project_hook(Ind, GF_HAND_DOOM, dir, 1, PROJECT_STOP | PROJECT_KILL);
+      break;
+// RF6_TELE_TO
+	case 72:
+	  (void)project_hook(Ind, GF_TELE_TO, dir, 1, PROJECT_STOP | PROJECT_KILL);
+	  break;
 // RF6_TELE_AWAY
 	case 73:
           (void)fire_beam(Ind, GF_AWAY_ALL, dir, rlev);

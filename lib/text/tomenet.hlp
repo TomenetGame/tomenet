@@ -25,21 +25,21 @@ Latest changes for version 4.0.0a (digest):
 - skill system is implemented. (try 'G')
 - some of unpopular classes are removed:
   Unbeliever, Warlock, Sorceror, Ranger, Paladin, Monk and Telepath.
-- several client-options added; press '=' to check them out.
-- dungeon generator is improved.
-  this implies *MAJOR* changes in the gameplay!
-- items can stack on the floor now. (but not inside a house!)
+- several client-options added; press '=' to check them out(Important!).
+- dungeon generator is improved.. sorry, sometimes non-connecting room is
+  generated.  Please carry a Pick and Scrolls of Phase Door.
+- items can stack on the floor now. (BEWARE: not inside a house!)
 - potions can cause some effects when shattering; handle them with care.
-- quiver/tool slots are available. (client update needed!)
+- quiver/tool slots available.
   'fire' command no longer needs item specification.
 - pack of hounds no longer freezes the client (and instakills you :)
+- Monster AI improved further; use your head, too!
 - chat-line editing (^P, ^N, ^U, ^W)
 - /help, /quest, /feeling, /shout, /monster, /news, /house, /object
 - '/ver 1' to see server settings.
 - Vaults are varied somewhat.  - Smaller floors can be generated.
 - Restricted floors can be generated; you gain level quickly there.
 - Name changed to 'TomeNET'(Trouble-of-Middle-Earth the NET).
-- Monster AI significantly improved; use your head, too!
 - Underground rivers, lakes and their habitants.
 - Genocide spell is penalized; use it with attention!
 
@@ -715,7 +715,7 @@ Part VII. -- Command list
  &  Dungeon Master Commands             ^G  (unused)
  *  target monster or location          ^H  (unused)
  (  target other player                 ^I  (special - tab)
- )  clear key buffer                    ^J  (special - linefeed)
+ )  clear key buffer / stop command     ^J  (special - linefeed)
  {  Inscribe an object                  ^K  (unused)
  }  Uninscribe an object                ^L  (unused)
  [  (unused)                            ^M  (special - return)
@@ -781,7 +781,7 @@ Part VII. -- Command list
  &  Dungeon Master Commands             ^G  (unused)
  *  Target monster or location          ^H  (tunnel - west)
  (  target other player                 ^I  (special - tab)
- )  clear key buffer                    ^J  (tunnel - south)
+ )  clear key buffer / stop command     ^J  (tunnel - south)
  {  inscribe an object                  ^K  (tunnel - north)
  }  uninscribe an object                ^L  (tunnel - east)
  [  (unused)                            ^M  (tunnel - south)
