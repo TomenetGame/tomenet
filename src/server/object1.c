@@ -1419,6 +1419,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		{
 			/* Known artifacts */
 //			if (artifact_p(o_ptr) && aware) break;
+			//if (artifact_p(o_ptr) && known && o_ptr->sval!=SV_RING_SPECIAL) break;
+			if(o_ptr->sval==SV_RING_SPECIAL){
+				basenm="The Ring of Power";
+			}
 			if (artifact_p(o_ptr) && known) break;
 
 			/* Color the object */
@@ -1774,11 +1778,24 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* Grab any randart name */
                 if (o_ptr->name1 == ART_RANDART)
 		{
-			/* Create the name */
-			randart_name(o_ptr, tmp_val);
-			
 			t = object_desc_chr(t, ' ');
-			t = object_desc_str(t, tmp_val);
+
+			if(o_ptr->tval==TV_RING && o_ptr->sval==SV_RING_SPECIAL){
+				monster_race *r_ptr=&r_info[o_ptr->bpval];
+				t=object_desc_str(t, "of ");
+				if(!(r_ptr->flags7 & RF7_NAZGUL)){
+					t=object_desc_str(t, "bug");
+				}
+				else{
+					t=object_desc_str(t, r_name+r_ptr->name);
+				}
+				
+			}
+			else{
+				/* Create the name */
+				randart_name(o_ptr, tmp_val);
+				t = object_desc_str(t, tmp_val);
+			}
 		}
 			
 		/* Grab any artifact name */

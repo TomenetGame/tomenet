@@ -3719,7 +3719,8 @@ void monster_death(int Ind, int m_idx)
 
 			/* Save the inscription */
 			/* (pfft, not so smart..) */
-			qq_ptr->note = quark_add(format("#of %s", r_name + r_ptr->name));
+			/*qq_ptr->note = quark_add(format("#of %s", r_name + r_ptr->name));*/
+			qq_ptr->bpval=m_ptr->r_idx;
 
 			/* Drop it in the dungeon */
 			drop_near(qq_ptr, -1, wpos, y, x);
