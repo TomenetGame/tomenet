@@ -2246,7 +2246,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 //			if ((power == 1) && !o_ptr->name2 && o_ptr->sval != SV_AMMO_MAGIC)
 			else if ((power == 1) && !o_ptr->name2)
 			{
-				if (randint(100) < 30)
+				if (randint(100) < 7)
 				{
 					/* Exploding missile */
 					int power[27]={GF_ELEC, GF_POIS, GF_ACID,
