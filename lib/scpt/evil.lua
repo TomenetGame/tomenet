@@ -124,3 +124,8 @@ end
 function highlander(name, x, y)
 	player_send(name, x, y, 0, "You feel drawn to the battleground!");
 end
+
+function jail(name, time, reason)
+	i=ind(name);
+	imprison(i, time, reason);
+end
