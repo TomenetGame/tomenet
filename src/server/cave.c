@@ -1777,6 +1777,23 @@ void display_map(int Ind, int *cy, int *cx)
 			/* Extract the priority of that attr/char */
 			tp = priority(ta, tc);
 
+			/* Hack - Player(@) should always be displayed */
+			if (i == p_ptr->px && j == p_ptr->py)
+			{
+				tp = 99;
+				ta = player_color(Ind);
+
+				if (p_ptr->body_monster) tc = r_info[p_ptr->body_monster].d_char;
+				else if (p_ptr->fruit_bat) tc = 'b';
+				else if((( p_ptr->chp * 95)/ (p_ptr->mhp*10)) >= 7) tc = '@';
+				else 
+				{
+					int kludge;
+					sprintf((unsigned char *)&kludge,"%d", ((p_ptr->chp * 95) / (p_ptr->mhp*10)));
+					tc = kludge;
+				}                       
+			}
+
 			/* Save "best" */
 			if (mp[y][x] < tp)
 			{
@@ -2063,7 +2080,8 @@ void do_cmd_view_map(int Ind)
 	if (Players[Ind]->dun_depth >= 0) display_map(Ind, &cy, &cx);
 #endif
 	/* do wilderness map */
-	else wild_display_map(Ind);
+	/* pfft */
+//	else wild_display_map(Ind);
 }
 
 

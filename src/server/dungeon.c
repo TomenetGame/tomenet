@@ -2289,8 +2289,8 @@ static void process_player_end(int Ind)
 					if(p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN)
 					{
 //						if (p_ptr->max_dlv < getlevel(p_ptr->wpos))
-						if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz)
-							p_ptr->recall_pos.wz = w_ptr->dungeon->baselevel - p_ptr->max_dlv;
+						if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz + 1)
+							p_ptr->recall_pos.wz = w_ptr->dungeon->baselevel - p_ptr->max_dlv - 1;
 
 						if (-p_ptr->recall_pos.wz > w_ptr->dungeon->maxdepth)
 							p_ptr->recall_pos.wz = 0 - w_ptr->dungeon->maxdepth;
@@ -2308,8 +2308,8 @@ static void process_player_end(int Ind)
 					else if(p_ptr->recall_pos.wz > 0 && w_ptr->flags & WILD_F_UP)
 					{
 //						if (p_ptr->max_dlv < getlevel(p_ptr->wpos))
-						if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz)
-							p_ptr->recall_pos.wz = 0 - w_ptr->tower->baselevel + p_ptr->max_dlv;
+						if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz + 1)
+							p_ptr->recall_pos.wz = 0 - w_ptr->tower->baselevel + p_ptr->max_dlv + 1;
 
 						if (p_ptr->recall_pos.wz > w_ptr->tower->maxdepth)
 							p_ptr->recall_pos.wz = w_ptr->tower->maxdepth;
