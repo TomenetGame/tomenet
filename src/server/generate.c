@@ -153,6 +153,7 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 #define ALLOC_TYP_TRAP		3	/* Trap */
 #define ALLOC_TYP_GOLD		4	/* Gold */
 #define ALLOC_TYP_OBJECT	5	/* Object */
+#define ALLOC_TYP_FOUNT		6	/* Fountain */
 
 
 
@@ -404,7 +405,15 @@ static void place_rubble(struct worldpos *wpos, int y, int x)
 	c_ptr->feat = FEAT_RUBBLE;
 }
 
-
+/*
+ * Create a fountain here.
+ */
+static void place_fount(struct worldpos *wpos, int y, int x){
+	cave_type **zcave;
+	cave_type *c_ptr;
+	if(!(zcave=getcave(wpos))) return;
+	c_ptr=&zcave[y][x];
+}
 
 /*
  * Convert existing terrain type to "up stairs"
@@ -724,6 +733,11 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
 				place_object(wpos, y, x, FALSE, FALSE);
 				/* hack -- trap can be hidden under an item */
 				if (rand_int(100) < 2) place_trap(wpos, y, x, 0);
+				break;
+			}
+			case ALLOC_TYP_FOUNT:
+			{
+				place_fount(wpos, y, x);
 				break;
 			}
 		}

@@ -686,7 +686,7 @@ static cptr k_info_flags3[] =
 /*
  * Trap flags
  */
-cptr k_info_flags2_trap[] =
+static cptr k_info_flags2_trap[] =
 {
         "AUTOMATIC_5",
         "AUTOMATIC_99",
@@ -726,7 +726,7 @@ cptr k_info_flags2_trap[] =
 /*
  * Object flags
  */
-cptr k_info_flags4[] =
+static cptr k_info_flags4[] =
 {
         "NEVER_BLOW",
         "PRECOGNITION",
@@ -765,7 +765,7 @@ cptr k_info_flags4[] =
 /*
  * Object flags
  */
-cptr k_info_flags5[] =
+static cptr k_info_flags5[] =
 {
         "TEMPORARY",
         "DRAIN_MANA",

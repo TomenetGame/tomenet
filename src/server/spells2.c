@@ -2416,9 +2416,6 @@ bool identify_fully_item(int Ind, int item)
 	return (TRUE);
 }
 
-
-
-
 /*
  * Hook for "get_item()".  Determine if something is rechargable.
  */
