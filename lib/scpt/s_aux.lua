@@ -122,29 +122,13 @@ function get_level_school(i, s, max, min)
         for index, sch in __spell_school[s] do
                 local r, s, p, ok = 0, 0, 0, 0
 
-                -- Does it require we worship a specific god?
-                if __schools[sch].god then
-                        if __schools[sch].god ~= player.pgod then
-                                if min then return min
-                                else return 1 end
-                        end
-                end
-
                 -- Take the basic skill value
-                r = s_info[(school(sch).skill) + 1].value
+                r = player.s_info[(school(sch).skill) + 1].value
 
         	-- Are we under sorcery effect ?
                 if __schools[sch].sorcery then
-                        s = s_info[SKILL_SORCERY + 1].value
+                        s = player.s_info[SKILL_SORCERY + 1].value
                 end
-
---[[
-                -- Are we under a god effect ?
-                if __schools[sch].gods then
-                        p = get_god_level(sch)
-                        if not p then p = 0 end
-                end
-]]
                 
                 -- Find the higher
                 ok = r
@@ -305,6 +289,7 @@ function book_spells_num(book)
 	for index, s in school_book[book] do
                 size = size + 1
         end
+
         return size
 end
 

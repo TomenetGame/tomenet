@@ -246,29 +246,80 @@ void init_lua()
 	}
 }
 
+void dump_lua_stack(int min, int max)
+{
+        int i;
+
+        c_msg_print("\377ylua_stack:");
+        for (i = min; i <= max; i++)
+        {
+                if (lua_isnumber(L, i)) c_msg_format("\377y%d [n] = %d", i, tolua_getnumber(L, i, 0));
+                else if (lua_isstring(L, i)) c_msg_format("\377y%d [s] = '%s'", i, tolua_getstring(L, i, 0));
+        }
+        c_msg_print("\377yEND lua_stack");
+}
+
 bool pern_dofile(int Ind, char *file)
 {
 	char buf[MAX_PATH_LENGTH];
 	int error;
         int oldtop = lua_gettop(L);
+        char ind[80];
 
 	/* Build the filename */
         path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, file);
 
-        lua_dostring(L, format("Ind = %d", Ind));
+        sprintf(ind, "Ind = %d", Ind);
+        lua_dostring(L, ind);
+        lua_settop(L, oldtop);
+
         error = lua_dofile(L, buf);
         lua_settop(L, oldtop);
 
         return (error?TRUE:FALSE);
 }
 
-bool exec_lua(int Ind, char *file)
+int exec_lua(int Ind, char *file)
 {
-        int oldtop = lua_gettop(L);
-        lua_dostring(L, format("Ind = %d", Ind));
-        lua_dostring(L, file);
+	int oldtop = lua_gettop(L);
+        int res;
+        char ind[80];
+
+        sprintf(ind, "Ind = %d", Ind);
+        lua_dostring(L, ind);
         lua_settop(L, oldtop);
-        return (FALSE);
+
+        if (!lua_dostring(L, file))
+        {
+                int size = lua_gettop(L) - oldtop;
+                res = tolua_getnumber(L, -size, 0);
+        }
+	else
+                res = 0;
+
+        lua_settop(L, oldtop);
+	return (res);
+}
+
+cptr string_exec_lua(int Ind, char *file)
+{
+	int oldtop = lua_gettop(L);
+	cptr res;
+        char ind[80];
+
+        sprintf(ind, "Ind = %d", Ind);
+        lua_dostring(L, ind);
+        lua_settop(L, oldtop);
+
+	if (!lua_dostring(L, file))
+        {
+                int size = lua_gettop(L) - oldtop;
+                res = tolua_getstring(L, -size, "");
+        }
+	else
+		res = "";
+        lua_settop(L, oldtop);
+	return (res);
 }
 
 static FILE *lua_file;

@@ -25,7 +25,7 @@ s16b find_skill(cptr name)
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
 		/* The name matches */
-		if (streq(s_info[i].name, name)) return (i);
+		if (streq((char*)s_info[i].name, name)) return (i);
 	}
 
 	/* No match found */
@@ -313,7 +313,7 @@ void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 
 	c_prt((p_ptr->skill_points) ? TERM_L_BLUE : TERM_L_RED,
 	      format("Skill points left: %d", p_ptr->skill_points), 1, 0);
-	print_desc_aux(s_info[table[sel][0]].desc, 2, 0);
+	print_desc_aux((char*)s_info[table[sel][0]].desc, 2, 0);
 
 	for (j = start; j < start + (hgt - 4); j++)
 	{
@@ -829,7 +829,7 @@ int do_cmd_activate_skill_aux()
 			/* Find the skill it is related to */
 			for (i = 1; i < MAX_SKILLS; i++)
 			{
-				if (s_info[i].action_desc && (!strcmp(buf, s_info[i].action_desc) && get_skill(i)))
+				if (s_info[i].action_desc && (!strcmp(buf, (char*)s_info[i].action_desc) && get_skill(i)))
 					break;
 				if (i == nb)
 //				if (i == s_info[nb].action_mkey)

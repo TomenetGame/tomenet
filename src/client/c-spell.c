@@ -879,7 +879,8 @@ void browse_school_spell(int book, int pval)
 	}
 #endif	// 0
 
-	num = exec_lua(0, format("return book_spells_num(%d)", book));
+        num = exec_lua(0, format("return book_spells_num(%d)", book));
+        c_msg_format("num %d", num);
 
 	/* Build a prompt (accept all spells) */
 	strnfmt(out_val, 78, "(Spells %c-%c, ESC=exit) cast which spell? ",
@@ -896,7 +897,7 @@ void browse_school_spell(int book, int pval)
 	while (get_com(out_val, &choice))
 	{
 		/* Display a list of spells */
-		where = exec_lua(0, format("return print_book(%d, %d)", book, pval));
+		where = exec_lua(0, format("return print_book(0, %d, %d)", book, pval));
 
 		/* Note verify */
 		ask = (isupper(choice));
@@ -918,7 +919,7 @@ void browse_school_spell(int book, int pval)
                 Term_load();
 
                 /* Display a list of spells */
-                where = exec_lua(0, format("return print_book(%d, %d)", book, pval));
+                where = exec_lua(0, format("return print_book(0, %d, %d)", book, pval));
                 exec_lua(0, format("print_spell_desc(spell_x(%d, %d, %d), %d)", book, pval, i, where));
 	}
 

@@ -134,7 +134,7 @@ CLI_SRCS = \
   client\c-files.c client\c-tables.c client\c-store.c client\c-init.c \
   client\variable.c client\main-win.c client\nclient.c client\c-birth.c \
   client\c-xtra1.c client\c-xtra2.c client\c-spell.c client\client.c \
-  client\readdib.c client\skills.c
+  client\readdib.c client\skills.c common\files.c server\lua_bind.c
 
 CLI_OBJS = \
   common\z-util.obj common\z-virt.obj common\z-form.obj common\z-rand.obj \
@@ -143,15 +143,15 @@ CLI_OBJS = \
   client\c-files.obj client\c-tables.obj client\c-store.obj client\c-init.obj \
   client\variable.obj client\main-win.obj client\nclient.obj client\c-birth.obj \
   client\c-xtra1.obj client\c-xtra2.obj client\c-spell.obj client\client.obj \
-  client\readdib.obj client\skills.obj
+  client\readdib.obj client\skills.obj common\files.obj server\lua_bind.obj
 
 CLI_LUASRCS = \
   client\c-script.c \
-  client\w_play.c client\w_util.c
+  client\w_play.c client\w_util.c client\w_spells.c
 
 CLI_LUAOBJS = \
   client\c-script.obj \
-  client\w_play.obj client\w_util.obj
+  client\w_play.obj client\w_util.obj client\w_spells.obj
 
 LUASRCS = \
   server\script.c server\lua_bind.c \
@@ -247,6 +247,11 @@ client\w_play.c: client\player.pkg $(TOLUA)
 client\w_util.c: client\util.pkg $(TOLUA)
 	cd client
 	..\server\tolua -n util -o w_util.c util.pkg
+	cd ..
+
+client\w_spells.c: client\spells.pkg $(TOLUA)
+	cd client
+	..\server\tolua -n spells -o w_spells.c spells.pkg
 	cd ..
 
 ########################### Implicit Rules ########################

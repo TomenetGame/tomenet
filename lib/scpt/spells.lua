@@ -6,19 +6,19 @@
 SCHOOL_CONVEYANCE = add_school
 {
 	["name"] = "Conveyance", 
-        ["skill"] = SKILL_CONVEYANCE,
+        ["skill"] = 1,
         ["sorcery"] = TRUE,
 }
 
 SCHOOL_MANA = add_school
 {
 	["name"] = "Mana", 
-        ["skill"] = SKILL_MANA,
+        ["skill"] = 1,
         ["sorcery"] = TRUE,
 }
 
 -- Put some spells
-pern_dofile("s_convey.lua")
+pern_dofile(Ind, "s_convey.lua")
 
 -- Create the book of beginner's cantrip
 -- Great book, eh? ;)

@@ -159,6 +159,22 @@ void do_xfers(){
 	}
 }
 
+/*
+ * Silly windows
+ * DarkGod slaps windows
+ */
+#ifdef WIN32
+int mkstemp(char *template)
+{
+        char f[400];
+        int fd;
+
+        if (!tmpnam(f)) return -1;
+        fd = open(f, O_RDWR | O_CREAT);
+        return fd;
+}
+#endif
+
 /* Open file for receive/writing */
 int local_file_init(int ind, unsigned short fnum, char *fname){
 	int num;
@@ -200,7 +216,7 @@ int local_file_close(int ind, unsigned short fnum){
 	return(1);
 }
 
-unsigned long long total;
+unsigned long total;
 
 void do_sum(unsigned char *buffer, int size){
 	int i;

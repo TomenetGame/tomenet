@@ -49,7 +49,8 @@ extern s32b intShiftr @ bshr(s32b a, s32b b);
 extern s32b intBitNot @ bnot(s32b b);
 
 extern bool pern_dofile(int Ind, char *file);
-extern bool exec_lua(int Ind, char *file);
+extern int exec_lua(int Ind, char *file);
+extern cptr string_exec_lua(int Ind, char *file);
 extern void cat_script(char *name);
 
 extern void prt(cptr str, int row, int col);
@@ -108,3 +109,5 @@ extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
 #define HOOK_LEVEL_END_GEN      43
 #define HOOK_NPCTEST		44
 */
+
+extern void c_msg_print(cptr msg);
