@@ -370,6 +370,7 @@ party_type parties[MAX_PARTIES];
 /* The information about houses */
 house_type *houses;
 u32b num_houses = 0;
+u32b house_alloc = 0;
 
 /* An array to access a Player's ID */
 long GetInd[MAX_ID];

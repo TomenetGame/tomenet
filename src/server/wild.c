@@ -1172,6 +1172,10 @@ static void wild_add_dwelling(int Depth, int x, int y)
 			houses[num_houses].owned = 0;
 #endif
 			num_houses++;
+			if((house_alloc-num_houses)<32){
+				GROW(houses, house_alloc, house_alloc+512, house_type);
+				house_alloc+=512;
+			}
 		}
 #ifdef NEWHOUSES
 		else{

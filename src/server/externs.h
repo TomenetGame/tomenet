@@ -285,6 +285,7 @@ extern player_type **Players;
 extern party_type parties[MAX_PARTIES];
 extern house_type *houses;
 extern u32b num_houses;
+extern u32b house_alloc;
 extern long GetInd[];
 /*extern char player_name[32];
 extern char player_base[32];

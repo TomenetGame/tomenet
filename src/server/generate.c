@@ -3861,6 +3861,10 @@ static void build_store(int n, int yy, int xx)
 
 			/* One more house */
 			num_houses++;
+			if((house_alloc-num_houses)<32){
+				GROW(houses, house_alloc, house_alloc+512, house_type);
+				house_alloc+=512;
+			}
 		}
 #ifdef NEWHOUSES
 		else{

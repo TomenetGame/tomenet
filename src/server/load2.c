@@ -2388,6 +2388,11 @@ errr rd_server_savefile()
 	{
 		rd_u32b(&num_houses);
 
+		while(house_alloc<num_houses){
+			GROW(houses, house_alloc, house_alloc+512, house_type);
+			house_alloc+=512;
+		}
+
 		/* Incompatible save files */
 		if (num_houses > MAX_HOUSES)
 		{
