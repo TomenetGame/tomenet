@@ -1229,21 +1229,24 @@ void do_cmd_steal(int Ind, int dir)
 		set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
 
 		/* Thief drops some items from the shock of blow */
-		for(i = rand_int(5); i < 5 ; i++ )
+		if (!cfg_newbies_cannot_drop || p_ptr->lev > 4)
 		{
-			j = rand_int(INVEN_TOTAL);
-			o_ptr = &(p_ptr->inventory[j]);
+			for(i = rand_int(5); i < 5 ; i++ )
+			{
+				j = rand_int(INVEN_TOTAL);
+				o_ptr = &(p_ptr->inventory[j]);
 
-			if (!o_ptr->tval) continue;
+				if (!o_ptr->tval) continue;
 
-			/* He never drops body-armour this way */
-			if (j == INVEN_BODY) continue;
+				/* He never drops body-armour this way */
+				if (j == INVEN_BODY) continue;
 
-			/* An artifact 'resists' */
-			if (artifact_p(o_ptr) && !o_ptr->name3 && rand_int(100) > 2)
-				continue;
+				/* An artifact 'resists' */
+				if (artifact_p(o_ptr) && !o_ptr->name3 && rand_int(100) > 2)
+					continue;
 
-			inven_drop(Ind, j, randint(o_ptr->number * 2));
+				inven_drop(Ind, j, randint(o_ptr->number * 2));
+			}
 		}
 
 		/* The target gets angry */

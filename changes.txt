@@ -361,4 +361,5 @@ Change list for PernMangband
 
 02/12/2001 (Jir)
 - Fortune cookie ported from PernA (by Mihi).
-- bugfix on /dis. Added /untag.
+- Bugfix on /dis. Added /untag.
+- Newbie(lv5-) no longer drops items when stealing fails.(thx Tanix)
