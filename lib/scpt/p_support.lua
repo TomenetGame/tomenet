@@ -4,7 +4,7 @@ HSANCTUARY = add_spell
 {
 	["name"] = 	"Sanctuary",
         ["school"] = 	{SCHOOL_HSUPPORT},
-        ["level"] = 	15,
+        ["level"] = 	1,
         ["mana"] = 	5,
         ["mana_max"] = 	15,
         ["fail"] = 	10,
@@ -33,19 +33,23 @@ HSATISFYHUNGER = add_spell
 {
 	["name"] = 	"Satisfy Hunger",
         ["school"] = 	{SCHOOL_HSUPPORT},
-        ["level"] = 	25,
+        ["level"] = 	15,
         ["mana"] = 	30,
         ["mana_max"] = 	30,
-        ["fail"] = 	10,
+        ["fail"] = 	40,
 	["stat"] =      A_WIS,
         ["spell"] = 	function()
 			set_food(Ind, PY_FOOD_MAX - 1)
+			if player.spell_project > 0 then
+				fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, player.spell_project, "")
+			end
 			end,
 	["info"] =	function()
 			return ""
 			end,
 	["desc"] =	{
 			"Satisfies your hunger.",
+			"***Affected by the Meta spell: Project Spell***",
 			}
 }
 
@@ -56,7 +60,7 @@ HDELCURSES = add_spell
 	["level"] =     10,
 	["mana"] =      20,
 	["mana_max"] =  40,
-	["fail"] =      10,
+	["fail"] =      40,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
 		local done
@@ -81,7 +85,7 @@ HSENSE = add_spell
 	["level"] =     10,
 	["mana"] =      20,
 	["mana_max"] =  50,
-	["fail"] =      10,
+	["fail"] =      25,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
 		set_tim_invis(Ind, 10 + get_level(Ind, HSENSE, 50))

@@ -81,7 +81,7 @@ HPROTEVIL = add_spell
 {
 	["name"] = 	"Protection From Evil",
         ["school"] = 	{SCHOOL_HDEFENSE},
-        ["level"] = 	20,
+        ["level"] = 	15,
         ["mana"] = 	20,
         ["mana_max"] = 	60,
         ["fail"] = 	20,

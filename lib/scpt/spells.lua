@@ -193,7 +193,7 @@ school_book[11] = {
 
 -- Create the book of Holy Offense
 school_book[12] = {
-        HGLOBELIGHT, HORBDRAIN, HEXORCISM, HHOLYWORD, HDRAINLIFE,
+        HGLOBELIGHT, HORBDRAIN, HEXORCISM, HRELSOULS, HDRAINLIFE,
 }
 
 -- Create the book of Holy Defense
@@ -203,7 +203,7 @@ school_book[13] = {
 
 -- Create the book of Holy Curing
 school_book[14] = {
-	HHEALING, HCURING, HSANITY, HRESURRECT,
+	HHEALING, HCURING, HSANITY, HRESURRECT, HDELFEAR,
 }
 
 -- Create the book of Holy Support

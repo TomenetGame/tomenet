@@ -7,7 +7,7 @@ HHEALING = add_spell
 	["level"] =     10,
 	["mana"] =      15,
 	["mana_max"] =  50,
-	["fail"] =      20,
+	["fail"] =      25,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
 		local hp = player.mhp * (15 + get_level(Ind, HHEALING, 35)) / 100
@@ -81,7 +81,7 @@ HSANITY = add_spell
 	["level"] =     20,
 	["mana"] =      50,
 	["mana_max"] =  100,
-	["fail"] =      20,
+	["fail"] =      50,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
 			set_image(Ind, 0)
@@ -135,4 +135,28 @@ HRESURRECT = add_spell
                         "Resurrects another player's ghost back to life.",
 			"The higher your skill is, the less experience he will lose.",
 		}
+}
+
+HDELFEAR = add_spell
+{
+	["name"] =	"Remove Fear",
+	["school"] =	{SCHOOL_HCURING},
+	["level"] = 	1,
+	["mana"] =	4,
+	["mana_max"] =	4,
+	["fail"] =	10,
+	["stat"] =	A_WIS,
+	["spell"] =	function()
+			set_afraid(Ind, 0)
+	                if player.spell_project > 0 then
+	                        fire_ball(Ind, GF_REMFEAR_PLAYER, 0, 1, player.spell_project, "")
+            		end
+			end,
+	["info"] =	function()
+			return ""
+			end,
+	["desc"] =	{
+			"Removes fear from your heart.",
+                	"***Affected by the Meta spell: Project Spell***",
+			}
 }

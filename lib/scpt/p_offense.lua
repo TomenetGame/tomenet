@@ -37,7 +37,7 @@ HORBDRAIN = add_spell
 {
 	["name"] = 	"Orb Of Draining",
         ["school"] = 	{SCHOOL_HOFFENSE},
-        ["level"] = 	10,
+        ["level"] = 	20,
         ["mana"] = 	5,
         ["mana_max"] = 	30,
         ["fail"] = 	30,
@@ -45,7 +45,7 @@ HORBDRAIN = add_spell
         ["direction"] = TRUE,
         ["spell"] = 	function(args)
                 local type
-        	type = GF_HOLY_FIRE
+        	type = GF_HOLY_ORB
     		fire_ball(Ind, type, args.dir, 20 + get_level(Ind, HORBDRAIN, 500), 2 + get_level(Ind, HORBDRAIN, 5), " casts a holy orb for")
 	end,
 	["info"] = 	function()
@@ -62,7 +62,7 @@ HEXORCISM = add_spell
         ["school"] = 	{SCHOOL_HOFFENSE},
         ["level"] = 	10,
         ["mana"] = 	5,
-        ["mana_max"] = 	70,
+        ["mana_max"] = 	100,
         ["fail"] = 	30,
 	["stat"] =      A_WIS,
         ["spell"] = 	function(args)
@@ -108,6 +108,27 @@ HDRAINLIFE = add_spell
         }
 }
 
+HRELSOULS = add_spell
+{
+	["name"] = 	"Release Souls",
+	["school"] =	{SCHOOL_HOFFENSE},
+	["level"] =	10,
+	["mana"] = 	5,
+	["max_mana"] =	100,
+	["fail"] =	25,
+	["stat"] =      A_WIS,
+	["spell"] =	function(args)
+			dispel_undead(Ind, 10 + get_level(Ind, HRELSOULS, 1000))
+			end,
+	["info"] = 	function()
+		return "dam "..(10 + get_level(Ind, HRELSOULS, 1000))
+	end,
+        ["desc"] =	{
+        		"Banishes nearby undead.",
+			}
+}
+
+--[[
 HHOLYWORD = add_spell
 {
 	["name"] = 	"Holy Word",
@@ -130,3 +151,4 @@ HHOLYWORD = add_spell
 			"Dispels evil, heals and cures you."
 			}
 }
+]]
