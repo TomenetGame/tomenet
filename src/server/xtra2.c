@@ -2496,6 +2496,9 @@ bool set_cut(int Ind, int v)
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
 
+	/* p_ptr->no_cut? for mimic forms that cannot bleed */
+	if (p_ptr->no_cut) v = 0;
+
 	/* a ghost never bleeds */
 	if (v && p_ptr->ghost) v = 0;
 
