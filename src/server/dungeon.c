@@ -135,7 +135,7 @@ static cptr value_check_aux1_magic(object_type *o_ptr)
 		case TV_ROD_MAIN:
 		{
 			/* "Cursed" scrolls/potions have a cost of 0 */
-			if (k_ptr->cost == 0) return "terrible";
+			if (k_ptr->cost == 0) return "bad";//"terrible";
 
 			/* Artifacts */
 			if (artifact_p(o_ptr)) return "special";
@@ -150,10 +150,10 @@ static cptr value_check_aux1_magic(object_type *o_ptr)
 			if (k_ptr->cost < 100) return "average";
 
 			/* Enchant Armor, *Identify*, Restore Stat, etc. */
-			if (k_ptr->cost < 10000) return "good";
+			if (k_ptr->cost < 4000) return "good";
 
 			/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
-			if (k_ptr->cost >= 10000) return "excellent";
+			if (k_ptr->cost >= 4000) return "excellent";
 
 			break;
 		}
@@ -162,7 +162,7 @@ static cptr value_check_aux1_magic(object_type *o_ptr)
 		case TV_FOOD:
 		{
 			/* "Cursed" food */
-			if (k_ptr->cost == 0) return "terrible";
+			if (k_ptr->cost == 0) return "bad";//"terrible";
 
 			/* Artifacts */
 			if (artifact_p(o_ptr)) return "special";
@@ -256,7 +256,7 @@ static cptr value_check_aux2_magic(object_type *o_ptr)
 		case TV_ROD:
 		{
 			/* "Cursed" scrolls/potions have a cost of 0 */
-			if (k_ptr->cost == 0) return "cursed";
+			if (k_ptr->cost == 0) return "bad";//"cursed";
 
 			/* Artifacts */
 			if (artifact_p(o_ptr)) return "good";
@@ -271,10 +271,10 @@ static cptr value_check_aux2_magic(object_type *o_ptr)
 			if (k_ptr->cost < 100) return "average";
 
 			/* Enchant Armor, *Identify*, Restore Stat, etc. */
-			if (k_ptr->cost < 10000) return "good";
+			if (k_ptr->cost < 4000) return "good";
 
 			/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
-			if (k_ptr->cost >= 10000) return "good";
+			if (k_ptr->cost >= 4000) return "good";
 
 			break;
 		}
@@ -283,7 +283,7 @@ static cptr value_check_aux2_magic(object_type *o_ptr)
 		case TV_FOOD:
 		{
 			/* "Cursed" food */
-			if (k_ptr->cost == 0) return "cursed";
+			if (k_ptr->cost == 0) return "bad";//"cursed";
 
 			/* Artifacts */
 			if (artifact_p(o_ptr)) return "good";

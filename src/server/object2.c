@@ -908,7 +908,8 @@ void object_known(object_type *o_ptr)
 		cptr q = quark_str(o_ptr->note);
 
 		/* Hack -- Remove auto-inscriptions */
-		if ((streq(q, "cursed")) ||
+		if ((streq(q, "bad")) ||
+		    (streq(q, "cursed")) ||
 		    (streq(q, "broken")) ||
 		    (streq(q, "good")) ||
 		    (streq(q, "average")) ||
