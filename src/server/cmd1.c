@@ -681,14 +681,15 @@ void carry(int Ind, int pickup, int confirm)
 			{
 				int slot;
 
+                                /* Own it */
+                                if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
+
 				/* Carry the item */
 				slot = inven_carry(Ind, o_ptr);
 
 				/* Get the item again */
 				o_ptr = &(p_ptr->inventory[slot]);
 
-                                /* Own it */
-                                if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
                                 if (!o_ptr->level)
                                 {
                                         if (p_ptr->dun_depth > 0) o_ptr->level = p_ptr->dun_depth;
