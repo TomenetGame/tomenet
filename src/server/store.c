@@ -2169,7 +2169,7 @@ void store_stole(int Ind, int item)
 	int amt = 1;
 	int chance = 0;
 
-	s32b		best, tbest;
+	s32b		best, tbest, tcadd;
 
 	object_type		sell_obj;
 	object_type		*o_ptr;
@@ -2252,24 +2252,23 @@ void store_stole(int Ind, int item)
 	/* NOTE: it's used to determine the penalty when stealing failed */
 	best = price_item(Ind, &sell_obj, ot_ptr->min_inflate, FALSE);
 
+        /* shopkeeper watches expensive items carefully */
+	tcadd=0;
+	tbest=object_value(Ind, o_ptr);
+        while(tbest/=2) tcadd++;
+        tcadd=tcadd*tcadd*tcadd*tcadd/200;
+
 	/* Player tries to stole it */
 #if 0	// Tome formula .. seemingly, high Stealing => more failure!
 	if (rand_int((40 - p_ptr->stat_ind[A_DEX]) +
-	    ((j_ptr->weight * amt) / (5 + get_skill_scale(SKILL_STEALING, 15))) +
+	    (((j_ptr->weight + tcadd) * amt) / (5 + get_skill_scale(SKILL_STEALING, 15))) +
 	    (get_skill_scale(SKILL_STEALING, 25))) <= 10)
 #endif	// 0
 	chance = (40 - p_ptr->stat_ind[A_DEX]) +
-	    ((sell_obj.weight * amt) /
+	    (((sell_obj.weight + tcadd) * amt) /
 	    (5 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
 	    (get_skill_scale(p_ptr, SKILL_STEALING, 25));
 	if (chance < 1) chance = 1;
-
-	/* shopkeeper watches expensive items carefully */
-	tbest=best;
-	while(tbest){
-		tbest/=10;
-		chance+=5;
-	}
 
 	/* always 1% chance to fail, so that ppl won't macro it */
 	/* 1% pfft. 5% and rising... */
