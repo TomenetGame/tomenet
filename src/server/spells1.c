@@ -5674,12 +5674,19 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Standard damage -- also poisons player */
 		case GF_POIS:
 		if (fuzzy) msg_print(Ind, "You are hit by poison!");
-		if (p_ptr->resist_pois) dam = (dam + 2) / 3;
-		if (p_ptr->oppose_pois) dam = (dam + 2) / 3;
-		take_hit(Ind, dam, killer);
-		if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+		if (p_ptr->immune_poison)
 		{
-			(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10);
+		    dam = 0;
+		}
+		else
+		{
+			if (p_ptr->resist_pois) dam = (dam + 2) / 3;
+			if (p_ptr->oppose_pois) dam = (dam + 2) / 3;
+			take_hit(Ind, dam, killer);
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+			{
+				(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10);
+			}
 		}
 		break;
 
@@ -5707,9 +5714,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		take_hit(Ind, dam, killer);
 		break;
 
-		/* Plasma -- XXX No resist */
+		/* Plasma -- XXX Fire helps a bit */
 		case GF_PLASMA:
 		if (fuzzy) msg_print(Ind, "You are hit by something!");
+		if (p_ptr->resist_fire) {
+		    dam *= 3;
+		    dam /= 5;
+		}
 		take_hit(Ind, dam, killer);
 		if (!p_ptr->resist_sound)
 		{
@@ -5757,20 +5768,34 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //			dam = (dam + 8) / 9;
 			dam = (dam + 3) / 4;
 		}
-		if (!p_ptr->resist_sound)
+		if (p_ptr->immune_water)
 		{
-			(void)set_stun(Ind, p_ptr->stun + randint(40));
+		    dam = 0;
 		}
-		if (!p_ptr->resist_conf)
+		else
 		{
-			(void)set_confused(Ind, p_ptr->confused + randint(5) + 5);
+			if (p_ptr->resist_water)
+			{
+			    dam = (dam + 2) / 3;
+			}
+			else
+			{
+	    			if (!p_ptr->resist_sound)
+				{
+					(void)set_stun(Ind, p_ptr->stun + randint(40));
+				}
+				if (!p_ptr->resist_conf)
+				{
+					(void)set_confused(Ind, p_ptr->confused + randint(5) + 5);
+				}
+			}
+			if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN && magik(20 + dam / 20))
+			{
+				inven_damage(Ind, set_water_destroy, 1);
+				if (magik(20)) minus_ac(Ind, 1);
+			}
+			take_hit(Ind, dam, killer);
 		}
-		if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN && magik(20 + dam / 20))
-		{
-			inven_damage(Ind, set_water_destroy, 1);
-			if (magik(20)) minus_ac(Ind, 1);
-		}
-		take_hit(Ind, dam, killer);
 		break;
 
 		/* Stun */
@@ -5905,7 +5930,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Inertia -- slowness */
 		case GF_INERTIA:
 		if (fuzzy) msg_print(Ind, "You are hit by something strange!");
-		(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 4);
+		if (!p_ptr->free_act)
+		{
+			(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 4);
+		}
+		else
+		{
+			(void)set_slow(Ind, p_ptr->slow + rand_int(3) + 1);
+		}
 		take_hit(Ind, dam, killer);
 		break;
 
@@ -5948,7 +5980,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			case 1: case 2: case 3: case 4: case 5:
 			msg_print(Ind, "You feel life has clocked back.");
-			lose_exp(Ind, 100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+			if (p_ptr->resist_time)
+			{
+				lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE / 4);
+			}
+			else
+			{
+				lose_exp(Ind, 100 + (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+			}
 			break;
 
 			case 6: case 7: case 8: case 9:
@@ -5965,7 +6004,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			msg_format(Ind, "You're not as %s as you used to be...", act);
 
-			p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
+			if (!p_ptr->resist_time)
+			{
+				p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
+			}
+			else
+			{
+				p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 6) / 7;
+			}
 			if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
 			p_ptr->update |= (PU_BONUS);
 			break;
@@ -5976,12 +6022,20 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			for (k = 0; k < 6; k++)
 			{
-				p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
+				if (!p_ptr->resist_time)
+				{
+					p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
+				}
+				else
+				{
+					p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 7) / 8;
+				}
 				if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;
 			}
 			p_ptr->update |= (PU_BONUS);
 			break;
 		}
+		if (p_ptr->resist_time) dam /= 3;
 		take_hit(Ind, dam, killer);
 		break;
 
@@ -5990,7 +6044,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (fuzzy) msg_print(Ind, "You are hit by something strange!");
 		msg_print(Ind, "Gravity warps around you.");
 		teleport_player(Ind, 5);
-		(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 4);
+		(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 3);
 		if (!p_ptr->resist_sound)
 		{
 			int k = (randint((dam > 90) ? 35 : (dam / 3 + 5)));
@@ -6007,6 +6061,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Pure damage */
 		case GF_MANA:
 		if (fuzzy) msg_print(Ind, "You are hit by something!");
+		if (p_ptr->resist_mana) dam /= 3;
 		take_hit(Ind, dam, killer);
 		break;
 
@@ -6341,7 +6396,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				(void)set_cut(Ind, p_ptr->  cut + ( dam / 2) );
 			}
 
-			if ((!p_ptr->resist_shard) || (randint(12)==1))
+			if (((!p_ptr->resist_shard) || (!p_ptr->resist_fire)) || (randint(3)==1))
+			if (((!p_ptr->resist_shard) && (!p_ptr->resist_fire)) || (randint(4)==1))
 			{
 				inven_damage(Ind, set_cold_destroy, 3);
 			}
@@ -6354,27 +6410,34 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_NUKE:
 		{
 			if (fuzzy) msg_print(Ind, "You are hit by radiation!");
-			if (p_ptr->resist_pois) dam = (2 * dam + 2) / 5;
-			if (p_ptr->oppose_pois) dam = (2 * dam + 2) / 5;
-			take_hit(Ind, dam, killer);
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+			if (p_ptr->immune_poison)
 			{
-				set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10);
+			    dam = 0;
+			}
+			else
+			{
+				if (p_ptr->resist_pois) dam = (2 * dam + 2) / 5;
+				if (p_ptr->oppose_pois) dam = (2 * dam + 2) / 5;
+				take_hit(Ind, dam, killer);
+				if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+				{
+					set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10);
 
 #if 0	// dang, later..
-				if (randint(5)==1) /* 6 */
-				{
-					msg_print("You undergo a freakish metamorphosis!");
-					if (randint(4)==1) /* 4 */
-						do_poly_self();
-					else
-                                                corrupt_player();
-				}
+					if (randint(5)==1) /* 6 */
+					{
+						msg_print("You undergo a freakish metamorphosis!");
+						if (randint(4)==1) /* 4 */
+							do_poly_self();
+						else
+                            	                    corrupt_player();
+					}
 #endif	// 0
 
-				if (randint(6)==1)
-				{
-					inven_damage(Ind, set_acid_destroy, 2);
+					if (randint(6)==1)
+					{
+						inven_damage(Ind, set_acid_destroy, 2);
+					}
 				}
 			}
 			break;

@@ -594,6 +594,11 @@ struct player_type
 	bool free_act;		/* Never paralyzed */
 	bool see_inv;		/* Can see invisible */
 	bool regenerate;	/* Regenerate hit pts */
+        bool resist_time;       /* Resist Time */
+        bool resist_mana;       /* Resist mana / magic */
+        bool immune_poison;     /* Poison Immunity */
+        bool immune_water;      /* Water Immunity, would also let you breathe under water. */
+	bool resist_water;	/* Resist Water */
 	bool hold_life;		/* Resist life draining */
 	bool telepathy;		/* Telepathy */
 	bool slow_digest;	/* Slower digestion */

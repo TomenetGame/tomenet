@@ -1687,6 +1687,11 @@ void calc_bonuses(int Ind)
 	p_ptr->free_act = FALSE;
 	p_ptr->slow_digest = FALSE;
 	p_ptr->regenerate = FALSE;
+	p_ptr->resist_time = FALSE;
+	p_ptr->resist_mana = FALSE;
+	p_ptr->immune_poison = FALSE;
+	p_ptr->immune_water = FALSE;
+	p_ptr->resist_water = FALSE;
 	p_ptr->regen_mana = FALSE;
 	p_ptr->feather_fall = FALSE;
 	p_ptr->hold_life = FALSE;
@@ -2169,6 +2174,11 @@ void calc_bonuses(int Ind)
 		if (f3 & TR3_XTRA_MIGHT) p_ptr->xtra_might++;
 		if (f3 & TR3_SLOW_DIGEST) p_ptr->slow_digest = TRUE;
 		if (f3 & TR3_REGEN) p_ptr->regenerate = TRUE;
+		if (f5 & TR5_RES_TIME) p_ptr->resist_time = TRUE;
+		if (f5 & TR5_RES_MANA) p_ptr->resist_mana = TRUE;
+		if (f5 & TR5_IM_POISON) p_ptr->immune_poison = TRUE;
+		if (f5 & TR5_IM_WATER) p_ptr->immune_water = TRUE;
+		if (f5 & TR5_RES_WATER) p_ptr->resist_water = TRUE;
 		if (f5 & TR5_REGEN_MANA) p_ptr->regen_mana = TRUE;
                 if (esp) p_ptr->telepathy |= esp;
 //		if (f3 & TR3_TELEPATHY) p_ptr->telepathy = TRUE;

@@ -3481,6 +3481,7 @@ void monster_death(int Ind, int m_idx)
 			invcopy(qq_ptr, lookup_kind(TV_RING, SV_RING_STEALTH));
 			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
+			qq_ptr->pval = 4;
 
 			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE);
 

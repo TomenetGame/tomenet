@@ -573,7 +573,7 @@ void setup_contact_socket(void)
 	/* really, server should DIE if this happens */
 	block_timer();
 	if((WorldSocket=CreateClientSocket(cfg.wserver, 18360))==-1){
-		s_printf("Unable to connect to world server\n");
+		s_printf("Unable to connect to world server %d %d\n", errno, sl_errno);
 		return;
 	}
 	allow_timer();

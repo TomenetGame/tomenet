@@ -4443,6 +4443,26 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
 		fprintf(fff, "It speeds your regenerative powers.\n");
 	}
+	if (f5 & (TR5_RES_TIME))
+	{
+		fprintf(fff, "It provides resistance to time.\n");
+	}
+	if (f5 & (TR5_RES_MANA))
+	{
+		fprintf(fff, "It provides resistance to magical energy.\n");
+	}
+	if (f5 & (TR5_IM_POISON))
+	{
+		fprintf(fff, "It provides immunity to poison.\n");
+	}
+	if (f5 & (TR5_IM_WATER))
+	{
+		fprintf(fff, "It provides complete protection from unleashed water.\n");
+	}
+	if (f5 & (TR5_RES_WATER))
+	{
+		fprintf(fff, "It provides resistance to unleashed water.\n");
+	}
 	if (f5 & (TR5_REGEN_MANA))
 	{
 		fprintf(fff, "It speeds your mana recharging.\n");

@@ -830,6 +830,22 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "You regenerate quickly.\n");
 	}
+	if (p_ptr->resist_time)
+	{
+		fprintf(fff, "You are resistant to time.\n");
+	}
+	if (p_ptr->resist_mana)
+	{
+		fprintf(fff, "You are resistant to magical energy.\n");
+	}
+	if (p_ptr->immune_water)
+	{
+		fprintf(fff, "You are completely protected from unleashed water.\n");
+	}
+	else if (p_ptr->resist_water)
+	{
+		fprintf(fff, "You are resistant to unleashed water.\n");
+	}
 	if (p_ptr->regen_mana)
 	{
 		fprintf(fff, "You accumulate mana quickly.\n");
@@ -970,7 +986,11 @@ void self_knowledge(int Ind)
 		fprintf(fff, "You are resistant to cold.\n");
 	}
 
-	if ((p_ptr->resist_pois) && (p_ptr->oppose_pois))
+	if (p_ptr->immune_poison)
+	{
+		fprintf(fff, "You are completely immune to poison.\n");
+	}
+	else if ((p_ptr->resist_pois) && (p_ptr->oppose_pois))
 	{
 		fprintf(fff, "You resist poison exceptionally well.\n");
 	}
