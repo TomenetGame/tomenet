@@ -1,7 +1,7 @@
 .=========================+==--.
 | TomeNET Beginners Guide |
 +=========================+-
-| Latest update: 6. June 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. June 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.0.0, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -2123,12 +2123,20 @@ Remove Curse	Breaks lesser curses on items, allowing you to unwear or
 Recharging		Recharges a magical rod/wand/staff.
 Rune of Protection	Creates a warding glyph on the floor that stops monsters
 					from crossing the field or summoning on it.
-*Destruction*	Causes a local earthquake, nearly completely wiping the area of
-				monsters and objects. Can save you!
+*Destruction*	Causes a local earthquake, nearly completely wiping the area
+				of monsters and objects. Can save you!
 Genocide		Removes all monsters of a certain kind from the current level.
 				Drains your HP for each one removed.
-Mass Genocide	Removes all monsters of the kind that stands closest to you.
+				The race will be determined by the monster which stands
+				closest to you when firing off the spell. For each monster you
+				will suffer 4+(monsterlevel/8) points of damage, which cannot
+				be absorbed by any magic shield or other protective effects!
+Mass Genocide	Removes all monsters that are close to you.
 				Drains your HP.
+				All monsters within a radius (equal to your	sight range)
+				around you are annihilated. For each monster you will suffer
+				3+(monsterlevel/8) points of damage, which cannot be absorbed
+				by any magic shield or other protective effects!
 Acquirement		Gives you a great item.
 *Acquirement*	Gives you two or three great items.
 Fire/Ice/Chaos	Fires a ball of the according type around you. Make sure you
@@ -3170,7 +3178,10 @@ Tempo
 					Lv15: Locks monsters in stasis for a while.
 Udun
 	Genocide		Genocides all monsters of a race on the level.
-					Lv15: Genocides all monsters near you.
+					Lv15: Alternatively genocides all monsters near you ("mass
+							genocide", choose 'y'. 'n' will do a normal geno).
+					For details on the effects "genocide" and "mass genocide"
+					of this spell, please see (5.8) scroll of geno/mass geno.
 	Wraithform		Turns your form immaterial.						(project)
 
 Istari/priest schools:
