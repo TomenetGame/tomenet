@@ -374,3 +374,6 @@ Change list for PernMangband
 - Allow URL on chat (eg. http://www.pernmangband.net/)
 - Admin command /wish
 - Client tries to use META_ADDRESS_2 in case.
+
+06/12/2001 (Jir)
+- Ego monsters. [version no. is 3.2.2 now]

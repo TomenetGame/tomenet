@@ -1491,7 +1491,7 @@ bool allow_unique_level(int r_idx, int Depth)
  * XXX XXX XXX Actually, do something similar for artifacts, to simplify
  * the "preserve" mode, and to make the "what artifacts" flag more useful.
  */
-static bool place_monster_one(int Depth, int y, int x, int r_idx, bool slp, bool clo)
+static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int randuni, bool slp, bool clo)
 {
         int                     i, Ind, j;
 
@@ -1539,6 +1539,13 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, bool slp, bool
 		/* Cannot create */
 		return (FALSE);
 	}
+
+        /* Ego Uniques are NOT to be created */
+        if ((r_ptr->flags1 & RF1_UNIQUE) && (ego || randuni)) return 0;
+
+        /* Now could we generate an Ego Monster */
+        r_ptr = race_info_idx(r_idx, ego, randuni);
+
 
 
 	/* Powerful monster */
@@ -1588,6 +1595,8 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, bool slp, bool
 
 	/* Save the race */
 	m_ptr->r_idx = r_idx;
+        m_ptr->ego = ego;
+//	m_ptr->name3 = randuni;		
 
 	/* Place the monster at the location */
 	m_ptr->fy = y;
@@ -1784,7 +1793,7 @@ static bool place_monster_group(int Depth, int y, int x, int r_idx, bool slp)
 			if (!cave_empty_bold(Depth, my, mx)) continue;
 
 			/* Attempt to place another monster */
-			if (place_monster_one(Depth, my, mx, r_idx, slp, FALSE))
+			if (place_monster_one(Depth, my, mx, r_idx, pick_ego_monster(r_idx, Depth), 0, slp, FALSE))
 			{
 				/* Add it to the "hack" set */
 				hack_y[hack_n] = my;
@@ -1860,7 +1869,7 @@ bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp, b
 
 
 	/* Place one monster, or fail */
-	if (!place_monster_one(Depth, y, x, r_idx, slp, clo)) return (FALSE);
+	if (!place_monster_one(Depth, y, x, r_idx, pick_ego_monster(r_idx, Depth), 0, slp, clo)) return (FALSE);
 
 
 	/* Require the "group" flag */
@@ -1916,7 +1925,7 @@ bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp, b
 			if (!z) break;
 
 			/* Place a single escort */
-			(void)place_monster_one(Depth, ny, nx, z, slp, FALSE);
+			(void)place_monster_one(Depth, ny, nx, z, pick_ego_monster(z, Depth), 0, slp, FALSE);
 
 			/* Place a "group" of escorts if needed */
 			if ((r_info[z].flags1 & RF1_FRIENDS) ||
@@ -2715,5 +2724,289 @@ cptr r_name_get(monster_type *m_ptr)
                 }
                 return (buf);
         }
+#ifdef RANDUNIS
+		else if(m_ptr->ego)
+		{
+			if (re_info[m_ptr->ego].before)
+			{
+				sprintf(buf, "%s %s", re_name + re_info[m_ptr->ego].name,
+						r_name + r_info[m_ptr->r_idx].name);
+			}
+			else
+			{
+				sprintf(buf, "%s %s", r_name + r_info[m_ptr->r_idx].name,
+						re_name + re_info[m_ptr->ego].name);
+			}
+			return (buf);
+		}
+#endif	// RANDUNIS
         else return (r_name + r_info[m_ptr->r_idx].name);
 }
+
+#ifdef RANDUNIS
+/* Will add, sub, .. */
+static s32b modify_aux(s32b a, s32b b, char mod)
+{
+        switch (mod)
+        {
+                case MEGO_ADD:
+                        return (a + b);
+                        break;
+                case MEGO_SUB:
+                        return (a - b);
+                        break;
+                case MEGO_FIX:
+                        return (b);
+                        break;
+                case MEGO_PRC:
+                        return (a * b / 100);
+                        break;
+                default:
+                        s_printf("WARNING, unmatching MEGO(%d).", mod);
+                        return (0);
+        }
+}
+
+#define MODIFY_AUX(o, n) ((o) = modify_aux((o), (n) >> 2, (n) & 3))
+#define MODIFY(o, n, min) MODIFY_AUX(o, n); (o) = ((o) < (min))?(min):(o)
+
+/* Is this ego ok for this monster ? */
+bool mego_ok(int r_idx, int ego)
+{
+        monster_ego *re_ptr = &re_info[ego];
+        monster_race *r_ptr = &r_info[r_idx];
+        bool ok = FALSE;
+        int i;
+
+		/* missing number */
+		if (!re_ptr->name) return FALSE;
+
+        /* needed flags */
+        if (re_ptr->flags1 && ((re_ptr->flags1 & r_ptr->flags1) != re_ptr->flags1)) return FALSE;
+        if (re_ptr->flags2 && ((re_ptr->flags2 & r_ptr->flags2) != re_ptr->flags2)) return FALSE;
+        if (re_ptr->flags3 && ((re_ptr->flags3 & r_ptr->flags3) != re_ptr->flags3)) return FALSE;
+#if 0
+        if (re_ptr->flags7 && ((re_ptr->flags7 & r_ptr->flags7) != re_ptr->flags7)) return FALSE;
+        if (re_ptr->flags8 && ((re_ptr->flags8 & r_ptr->flags8) != re_ptr->flags8)) return FALSE;
+        if (re_ptr->flags9 && ((re_ptr->flags9 & r_ptr->flags9) != re_ptr->flags9)) return FALSE;
+#endif
+
+        /* unwanted flags */
+        if (re_ptr->hflags1 && (re_ptr->hflags1 & r_ptr->flags1)) return FALSE;
+        if (re_ptr->hflags2 && (re_ptr->hflags2 & r_ptr->flags2)) return FALSE;
+        if (re_ptr->hflags3 && (re_ptr->hflags3 & r_ptr->flags3)) return FALSE;
+#if 0
+        if (re_ptr->hflags7 && (re_ptr->hflags7 & r_ptr->flags7)) return FALSE;
+        if (re_ptr->hflags8 && (re_ptr->hflags8 & r_ptr->flags8)) return FALSE;
+        if (re_ptr->hflags9 && (re_ptr->hflags9 & r_ptr->flags9)) return FALSE;
+#endif
+
+        /* Need good race -- IF races are specified */
+        if (re_ptr->r_char[0])
+        {
+                for (i = 0; i < 5; i++)
+                {
+                        if (r_ptr->d_char == re_ptr->r_char[i]) ok = TRUE;
+                }
+                if (!ok) return FALSE;
+        }
+        if (re_ptr->nr_char[0])
+        {
+                for (i = 0; i < 5; i++)
+                {
+                        if (r_ptr->d_char == re_ptr->nr_char[i]) return (FALSE);
+                }
+        }
+
+        /* Passed all tests ? */
+        return TRUE;
+}
+
+/* Choose an ego type */
+/* 'Level' is a transitional index for dun_depth.	- Jir -
+ */
+int pick_ego_monster(int r_idx, int Level)
+{
+        /* Assume no ego */
+        int ego = 0, lvl;
+        int tries = MAX_RE_IDX + 10;
+        monster_ego *re_ptr;
+
+        /* No townspeople ego */
+        if (!r_info[r_idx].level) return 0;
+
+        /* First are we allowed to find an ego */
+        if (!magik(MEGO_CHANCE)) return 0;
+
+
+        /* Lets look for one */
+        while(tries--)
+        {
+                /* Pick one */
+                ego = rand_range(1, MAX_RE_IDX - 1);
+                re_ptr = &re_info[ego];
+
+                /*  No hope so far */
+                if (!mego_ok(r_idx, ego)) continue;
+
+                /* Not too much OoD */
+                lvl = r_info[r_idx].level;
+                MODIFY(lvl, re_ptr->level, 0);
+                lvl -= ((Level / 2) + (rand_int(Level / 2)));
+                if (lvl < 1) lvl = 1;
+                if (rand_int(lvl)) continue;
+
+                /* Each ego types have a rarity */
+                if (rand_int(re_ptr->rarity)) continue;
+
+				s_printf("ego %d generated", ego);
+                /* We finanly got one ? GREAT */
+                return ego;
+        }
+
+        /* Found none ? so sad, well no ego for the time being */
+        return 0;
+}
+
+/* Pick a randuni (not implemented yet) */
+int pick_randuni(int r_idx, int Level)
+{
+	return 0;
+#if 0
+        /* Assume no ego */
+        int ego = 0, lvl;
+        int tries = max_re_idx + 10;
+        monster_ego *re_ptr;
+
+        /* No townspeople ego */
+        if (!r_info[r_idx].level) return 0;
+
+        /* First are we allowed to find an ego */
+        if (!magik(MEGO_CHANCE)) return 0;
+
+
+        /* Lets look for one */
+        while(tries--)
+        {
+                /* Pick one */
+                ego = rand_range(1, max_re_idx - 1);
+                re_ptr = &re_info[ego];
+
+                /*  No hope so far */
+                if (!mego_ok(r_idx, ego)) continue;
+
+                /* Not too much OoD */
+                lvl = r_info[r_idx].level;
+                MODIFY(lvl, re_ptr->level, 0);
+                lvl -= ((dun_level / 2) + (rand_int(dun_level / 2)));
+                if (lvl < 1) lvl = 1;
+                if (rand_int(lvl)) continue;
+
+                /* Each ego types have a rarity */
+                if (rand_int(re_ptr->rarity)) continue;
+
+                /* We finanly got one ? GREAT */
+                return ego;
+        }
+
+        /* Found none ? so sad, well no ego for the time being */
+        return 0;
+#endif
+}
+
+/*
+ * Return a (monster_race*) with the combinaison of the monster
+ * proprieties, the ego type and randuni id.
+ * (randuni parts are not done yet..	- Jir -)
+ */
+monster_race* race_info_idx(int r_idx, int ego, int randuni)
+{
+        static monster_race race;
+        monster_ego *re_ptr = &re_info[ego];
+        monster_race *r_ptr = &r_info[r_idx], *nr_ptr = &race;
+        int i;
+
+        /* No work needed */
+        if (!ego) return r_ptr;
+
+        /* Copy the base monster */
+        COPY(nr_ptr, r_ptr, monster_race);
+
+        /* Adjust the values */
+        for (i = 0; i < 4; i++)
+        {
+                s32b j, k;
+
+                j = modify_aux(nr_ptr->blow[i].d_dice, re_ptr->blow[i].d_dice, re_ptr->blowm[i][0]);
+                if (j < 0) j = 0;
+                k = modify_aux(nr_ptr->blow[i].d_side, re_ptr->blow[i].d_side, re_ptr->blowm[i][1]);
+                if (k < 0) k = 0;
+
+                nr_ptr->blow[i].d_dice = j;
+                nr_ptr->blow[i].d_side = k;
+
+                if (re_ptr->blow[i].method) nr_ptr->blow[i].method = re_ptr->blow[i].method;
+                if (re_ptr->blow[i].effect) nr_ptr->blow[i].effect = re_ptr->blow[i].effect;
+        }
+
+        MODIFY(nr_ptr->hdice, re_ptr->hdice, 1);
+        MODIFY(nr_ptr->hside, re_ptr->hside, 1);
+
+        MODIFY(nr_ptr->ac, re_ptr->ac, 0);
+
+        MODIFY(nr_ptr->sleep, re_ptr->sleep, 0);
+
+        MODIFY(nr_ptr->aaf, re_ptr->aaf, 1);
+        MODIFY(nr_ptr->speed, re_ptr->speed, 50);
+        MODIFY(nr_ptr->mexp, re_ptr->mexp, 0);
+
+//        MODIFY(nr_ptr->weight, re_ptr->weight, 10);
+
+        nr_ptr->freq_inate = re_ptr->freq_inate;
+        nr_ptr->freq_spell = re_ptr->freq_spell;
+
+        MODIFY(nr_ptr->level, re_ptr->level, 1);
+
+        /* Take off some flags */
+        nr_ptr->flags1 &= ~(re_ptr->nflags1);
+        nr_ptr->flags2 &= ~(re_ptr->nflags2);
+        nr_ptr->flags3 &= ~(re_ptr->nflags3);
+        nr_ptr->flags4 &= ~(re_ptr->nflags4);
+        nr_ptr->flags5 &= ~(re_ptr->nflags5);
+        nr_ptr->flags6 &= ~(re_ptr->nflags6);
+		/*
+        nr_ptr->flags7 &= ~(re_ptr->nflags7);
+        nr_ptr->flags8 &= ~(re_ptr->nflags8);
+        nr_ptr->flags9 &= ~(re_ptr->nflags9);
+		*/
+
+        /* Add some flags */
+        nr_ptr->flags1 |= re_ptr->mflags1;
+        nr_ptr->flags2 |= re_ptr->mflags2;
+        nr_ptr->flags3 |= re_ptr->mflags3;
+        nr_ptr->flags4 |= re_ptr->mflags4;
+        nr_ptr->flags5 |= re_ptr->mflags5;
+        nr_ptr->flags6 |= re_ptr->mflags6;
+		/*
+        nr_ptr->flags7 |= re_ptr->mflags7;
+        nr_ptr->flags8 |= re_ptr->mflags8;
+        nr_ptr->flags9 |= re_ptr->mflags9;
+		*/
+
+        /* Change the char/attr is needed */
+        if (re_ptr->d_char != MEGO_CHAR_ANY)
+        {
+                nr_ptr->d_char = re_ptr->d_char;
+                nr_ptr->x_char = re_ptr->d_char;
+        }
+        if (re_ptr->d_attr != MEGO_CHAR_ANY)
+        {
+                nr_ptr->d_attr = re_ptr->d_attr;
+                nr_ptr->x_attr = re_ptr->d_attr;
+        }
+
+        /* And finanly return a pointer to a fully working monster race */
+        return nr_ptr;
+}
+
+#endif	// RANDUNIS

@@ -5,6 +5,7 @@
 
 #include "angband.h"
 
+/* Note: This file is no longer used in PernMangband -Jir- */
 
 /*
  * This file handles "old" Angband savefiles (pre-2.7.0)

@@ -632,7 +632,15 @@
 #define USE_LUA
 
 /*
- * Option: Random Uniques and Ego Monsters.
+ * OPTION: Random Uniques and Ego Monsters.
  * not fully implemented yet.	-Jir-
+ * (3.2.2)
  */
-/* #define RANDUNIS */
+#define RANDUNIS
+
+/*
+ * OPTION: Determine if we use *.raw files.
+ * not implemented at all.	-Jir-
+ */
+/* #define USE_RAW_FILES */
+

@@ -29,6 +29,7 @@ Latest changes(digest):
 - {@Oc} on a book makes you use the 'c' spell for auto-retaliation.
 - {@Ox} on any items and auto-retaliator will be disabled.
 - Chat-line commands; enter '/' in chat-line for help.
+  + '/dis' DESTROYS everything w/o (non-system) inscription in your inventory.
 - You can check players' equipments with "'" key under certain conditions.
 - '/' key can do many things (a,A,e,E,F,i,m,p,q,r,t,w,z,Z)
 

@@ -144,9 +144,9 @@ static bool wearable_p(object_type *o_ptr)
 		case TV_LITE:
 		case TV_AMULET:
 		case TV_RING:
-		{
-			return (TRUE);
-		}
+			{
+				return (TRUE);
+			}
 	}
 
 	/* Nope */
@@ -297,7 +297,7 @@ static s16b convert_slot(int old)
 		case OLD_INVEN_OUTER: return (INVEN_OUTER);
 		case OLD_INVEN_LITE: return (INVEN_LITE);
 
-		/* Hack -- "hold" old aux items */
+							 /* Hack -- "hold" old aux items */
 		case OLD_INVEN_AUX: return (INVEN_WIELD - 1);
 	}
 
@@ -468,7 +468,7 @@ static byte convert_ego_item[128] =
  * a complete hack, items which are inscribed with "uncursed" will be
  * "uncursed" when imported from pre-2.7.9 savefiles.
  */
- /* For wilderness levels, dun_depth has been changed from 1 to 4 bytes. */
+/* For wilderness levels, dun_depth has been changed from 1 to 4 bytes. */
 static void rd_item(object_type *o_ptr)
 {
 	byte old_dd;
@@ -486,8 +486,8 @@ static void rd_item(object_type *o_ptr)
 	/* Hack -- wipe */
 	WIPE(o_ptr, object_type);
 
-        rd_s32b(&o_ptr->owner);
-        rd_s16b(&o_ptr->level);
+	rd_s32b(&o_ptr->owner);
+	rd_s16b(&o_ptr->level);
 
 	/* Kind */
 	rd_s16b(&o_ptr->k_idx);
@@ -495,7 +495,7 @@ static void rd_item(object_type *o_ptr)
 	/* Location */
 	rd_byte(&o_ptr->iy);
 	rd_byte(&o_ptr->ix);
-	
+
 	if (older_than(0,5,5))
 	{
 		rd_byte((char *)&o_ptr->dun_depth);
@@ -684,39 +684,39 @@ static void rd_item(object_type *o_ptr)
  */
 static void rd_monster_race(monster_race *r_ptr)
 {
-        int i;
+	int i;
 
-        rd_s16b(&r_ptr->name);
-        rd_s16b(&r_ptr->text);
-        rd_byte(&r_ptr->hdice);
-        rd_byte(&r_ptr->hside);
-        rd_s16b(&r_ptr->ac);
-        rd_s16b(&r_ptr->sleep);
-        rd_byte(&r_ptr->aaf);
-        rd_byte(&r_ptr->speed);
-        rd_s32b(&r_ptr->mexp);
-        rd_s16b(&r_ptr->extra);
-        rd_byte(&r_ptr->freq_inate);
-        rd_byte(&r_ptr->freq_spell);
-        rd_s32b(&r_ptr->flags1);
-        rd_s32b(&r_ptr->flags2);
-        rd_s32b(&r_ptr->flags3);
-        rd_s32b(&r_ptr->flags4);
-        rd_s32b(&r_ptr->flags5);
-        rd_s32b(&r_ptr->flags6);
-        rd_s16b(&r_ptr->level);
-        rd_byte(&r_ptr->rarity);
-        rd_byte(&r_ptr->d_attr);
-        rd_byte(&r_ptr->d_char);
-        rd_byte(&r_ptr->x_attr);
-        rd_byte(&r_ptr->x_char);
-        for (i = 0; i < 4; i++)
-        {
-                rd_byte(&r_ptr->blow[i].method);
-                rd_byte(&r_ptr->blow[i].effect);
-                rd_byte(&r_ptr->blow[i].d_dice);
-                rd_byte(&r_ptr->blow[i].d_side);
-        }
+	rd_s16b(&r_ptr->name);
+	rd_s16b(&r_ptr->text);
+	rd_byte(&r_ptr->hdice);
+	rd_byte(&r_ptr->hside);
+	rd_s16b(&r_ptr->ac);
+	rd_s16b(&r_ptr->sleep);
+	rd_byte(&r_ptr->aaf);
+	rd_byte(&r_ptr->speed);
+	rd_s32b(&r_ptr->mexp);
+	rd_s16b(&r_ptr->extra);
+	rd_byte(&r_ptr->freq_inate);
+	rd_byte(&r_ptr->freq_spell);
+	rd_s32b(&r_ptr->flags1);
+	rd_s32b(&r_ptr->flags2);
+	rd_s32b(&r_ptr->flags3);
+	rd_s32b(&r_ptr->flags4);
+	rd_s32b(&r_ptr->flags5);
+	rd_s32b(&r_ptr->flags6);
+	rd_s16b(&r_ptr->level);
+	rd_byte(&r_ptr->rarity);
+	rd_byte(&r_ptr->d_attr);
+	rd_byte(&r_ptr->d_char);
+	rd_byte(&r_ptr->x_attr);
+	rd_byte(&r_ptr->x_char);
+	for (i = 0; i < 4; i++)
+	{
+		rd_byte(&r_ptr->blow[i].method);
+		rd_byte(&r_ptr->blow[i].effect);
+		rd_byte(&r_ptr->blow[i].d_dice);
+		rd_byte(&r_ptr->blow[i].d_side);
+	}
 }
 
 
@@ -726,15 +726,15 @@ static void rd_monster_race(monster_race *r_ptr)
 
 static void rd_monster(monster_type *m_ptr)
 {
-        byte tmp8u, i;
+	byte tmp8u, i;
 
 	/* Hack -- wipe */
 	WIPE(m_ptr, monster_type);
 
-        rd_byte(&m_ptr->special);
+	rd_byte(&m_ptr->special);
 
-        /* Owner */
-        rd_s32b(&m_ptr->owner);
+	/* Owner */
+	rd_s32b(&m_ptr->owner);
 
 	/* Read the monster race */
 	rd_s16b(&m_ptr->r_idx);
@@ -743,32 +743,38 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->fy);
 	rd_byte(&m_ptr->fx);
 	rd_u16b(&m_ptr->dun_depth);
-        rd_s16b(&m_ptr->ac);
-        rd_byte(&m_ptr->speed);
-        rd_s32b(&m_ptr->exp);
-        rd_s16b(&m_ptr->level);
-        for (i = 0; i < 4; i++)
-        {
-                rd_byte(&(m_ptr->blow[i].method));
-                rd_byte(&(m_ptr->blow[i].effect));
-                rd_byte(&(m_ptr->blow[i].d_dice));
-                rd_byte(&(m_ptr->blow[i].d_side));
-        }
-        rd_s32b(&m_ptr->hp);
-        rd_s32b(&m_ptr->maxhp);
+	rd_s16b(&m_ptr->ac);
+	rd_byte(&m_ptr->speed);
+	rd_s32b(&m_ptr->exp);
+	rd_s16b(&m_ptr->level);
+	for (i = 0; i < 4; i++)
+	{
+		rd_byte(&(m_ptr->blow[i].method));
+		rd_byte(&(m_ptr->blow[i].effect));
+		rd_byte(&(m_ptr->blow[i].d_dice));
+		rd_byte(&(m_ptr->blow[i].d_side));
+	}
+	rd_s32b(&m_ptr->hp);
+	rd_s32b(&m_ptr->maxhp);
 	rd_s16b(&m_ptr->csleep);
 	rd_byte(&m_ptr->mspeed);
 	rd_byte(&m_ptr->energy);
 	rd_byte(&m_ptr->stunned);
 	rd_byte(&m_ptr->confused);
 	rd_byte(&m_ptr->monfear);
-        if (!older_than(3, 2, 1)) rd_s16b(&m_ptr->mind);
-        else m_ptr->mind = GOLEM_NONE;
-        if (m_ptr->special)
-        {
-                MAKE(m_ptr->r_ptr, monster_race);
-                rd_monster_race(m_ptr->r_ptr);
-        }
+	if (!older_than(3, 2, 1)) rd_s16b(&m_ptr->mind);
+	else m_ptr->mind = GOLEM_NONE;
+	if (m_ptr->special)
+	{
+		MAKE(m_ptr->r_ptr, monster_race);
+		rd_monster_race(m_ptr->r_ptr);
+	}
+
+	if (!older_than(3, 2, 2))
+	{
+		rd_u16b(&m_ptr->ego);
+		rd_s32b(&m_ptr->name3);
+	}
 }
 
 
@@ -895,10 +901,10 @@ static errr rd_store(int n)
 
 /*
  * Read some party info
- 
+
  FOUND THE BUIG!!!!!! the disapearing party bug. no more.
  I hope......
--APD-
+ -APD-
  */
 static void rd_party(int n)
 {
@@ -915,15 +921,15 @@ static void rd_party(int n)
 	rd_s32b(&party_ptr->created);
 
 	/* Hack -- repair dead parties 
-	I THINK this line was causing some problems....
-	lets find out
-	*/
+	   I THINK this line was causing some problems....
+	   lets find out
+	   */
 	if (!lookup_player_id(party_ptr->owner))
 	{
 		/*
-		Set to no people in party
-		party_ptr->num = 0;
-		*/
+		   Set to no people in party
+		   party_ptr->num = 0;
+		   */
 	}
 }
 
@@ -974,7 +980,7 @@ static void rd_house(int n)
 	rd_byte(&house_ptr->y_1);
 	rd_byte(&house_ptr->x_2);
 	rd_byte(&house_ptr->y_2);
-	
+
 	/* coordinates of the house door */
 	rd_byte(&house_ptr->door_y);
 	rd_byte(&house_ptr->door_x);
@@ -994,7 +1000,7 @@ static void rd_wild(int n)
 {
 	u32b tmp32u;
 	wilderness_type *w_ptr = &wild_info[-n];
-	
+
 	/* future use */
 	rd_u32b(&tmp32u);
 	/* the flags */
@@ -1023,10 +1029,10 @@ static void rd_randomizer(void)
 
 	/* Tmp */
 	rd_u16b(&tmp16u);
-	
+
 	/* Place */
 	rd_u16b(&Rand_place);
-	
+
 	/* State */
 	for (i = 0; i < RAND_DEG; i++)
 	{
@@ -1122,7 +1128,7 @@ static void rd_options(void)
 						/* Set */
 						option_flag[n] |= (1L << i);
 					}
-				
+
 					/* Clear */
 					else
 					{
@@ -1161,7 +1167,7 @@ static void rd_options(void)
 						/* Set */
 						window_flag[n] |= (1L << i);
 					}
-				
+
 					/* Clear */
 					else
 					{
@@ -1241,24 +1247,24 @@ static bool rd_extra(int Ind)
 	rd_byte(&p_ptr->male);
 	rd_byte(&p_ptr->party);
 	if (!older_than(3, 1, 0))
-	  {
-	    rd_byte(&p_ptr->mode);
-	  }
+	{
+		rd_byte(&p_ptr->mode);
+	}
 	else
-	  {
-	    p_ptr->mode = MODE_NORMAL;
-	  }
+	{
+		p_ptr->mode = MODE_NORMAL;
+	}
 
 	/* Special Race/Class info */
 	rd_byte(&p_ptr->hitdie);
 	if (!older_than(3, 0, 9))
-	  {
-	    rd_s16b(&p_ptr->expfact);
-	  }
+	{
+		rd_s16b(&p_ptr->expfact);
+	}
 	else
-	  {
-	    rd_byte(&p_ptr->expfact);
-	  }
+	{
+		rd_byte(&p_ptr->expfact);
+	}
 
 	/* Age/Height/Weight */
 	rd_s16b(&p_ptr->age);
@@ -1299,7 +1305,7 @@ static bool rd_extra(int Ind)
 
 	rd_s16b(&p_ptr->max_plv);
 	rd_s16b(&p_ptr->max_dlv);
-	
+
 	p_ptr->recall_depth = p_ptr->max_dlv;
 
 	rd_s16b(&p_ptr->py);
@@ -1319,7 +1325,7 @@ static bool rd_extra(int Ind)
 		strip_bytes(1);
 
 	/* More info */
-	
+
 	rd_s16b(&p_ptr->ghost);
 	rd_s16b(&p_ptr->sc);
 	rd_s16b(&p_ptr->fruit_bat);
@@ -1357,27 +1363,27 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->oppose_elec);
 	rd_s16b(&p_ptr->oppose_pois);
 	if (!older_than(3, 1, 2))
-	  {
-	    rd_s16b(&p_ptr->prob_travel);
-	  }
+	{
+		rd_s16b(&p_ptr->prob_travel);
+	}
 	else
-	  {
-	    p_ptr->prob_travel = 0;
-	  }
+	{
+		p_ptr->prob_travel = 0;
+	}
 	if (!older_than(3, 1, 3))
-	  {
-	    rd_s16b(&p_ptr->st_anchor);
-	    rd_s16b(&p_ptr->tim_esp);
-	    rd_s16b(&p_ptr->adrenaline);
-	    rd_s16b(&p_ptr->biofeedback);
-	  }
+	{
+		rd_s16b(&p_ptr->st_anchor);
+		rd_s16b(&p_ptr->tim_esp);
+		rd_s16b(&p_ptr->adrenaline);
+		rd_s16b(&p_ptr->biofeedback);
+	}
 	else
-	  {
-	    p_ptr->st_anchor = 0;
-	    p_ptr->tim_esp = 0;
-	    p_ptr->adrenaline = 0;
-	    p_ptr->biofeedback = 0;
-	  }
+	{
+		p_ptr->st_anchor = 0;
+		p_ptr->tim_esp = 0;
+		p_ptr->adrenaline = 0;
+		p_ptr->biofeedback = 0;
+	}
 
 	rd_byte(&p_ptr->confusing);
 	rd_s16b(&p_ptr->tim_wraith);
@@ -1388,27 +1394,27 @@ static bool rd_extra(int Ind)
 	rd_byte(&p_ptr->stunning);
 
 	if (!older_than(3, 0, 6))
-	  {
-	    rd_s16b(&p_ptr->body_monster);
-	    if (older_than(3, 1, 4)) p_ptr->body_monster = 0;
-	    rd_s16b(&p_ptr->auto_tunnel);
-	  }
+	{
+		rd_s16b(&p_ptr->body_monster);
+		if (older_than(3, 1, 4)) p_ptr->body_monster = 0;
+		rd_s16b(&p_ptr->auto_tunnel);
+	}
 
 	rd_s16b(&p_ptr->tim_meditation);
-	
+
 	if (!older_than(3, 0, 0))
 	{
 		rd_s16b(&p_ptr->tim_invisibility);
 		rd_s16b(&p_ptr->tim_invis_power);
-	
+
 		rd_s16b(&p_ptr->furry);
 	}
 
 	if (!older_than(3, 0, 1))
-	  {
-	    rd_s16b(&p_ptr->tim_manashield);
-	  }
-	
+	{
+		rd_s16b(&p_ptr->tim_manashield);
+	}
+
 	rd_s16b(&p_ptr->tim_traps);
 
 	if (!older_than(3, 0, 2))
@@ -1422,7 +1428,7 @@ static bool rd_extra(int Ind)
 	{
 		int i;
 		u16b tmp16u;
-		
+
 		/* Monster Memory */
 		rd_u16b(&tmp16u);
 
@@ -1432,22 +1438,22 @@ static bool rd_extra(int Ind)
 			note(format("Too many (%u) monster races!", tmp16u));
 			return (22);
 		}
-		
+
 		if (older_than(3, 0, 5))
-		  {
-		    for (i = 0; i < tmp16u; i++) rd_byte(&p_ptr->r_killed[i]);
-		  }
+		{
+			for (i = 0; i < tmp16u; i++) rd_byte(&p_ptr->r_killed[i]);
+		}
 		else
-		  {
-		    for (i = 0; i < tmp16u; i++) rd_s16b(&p_ptr->r_killed[i]);
-		  }
+		{
+			for (i = 0; i < tmp16u; i++) rd_s16b(&p_ptr->r_killed[i]);
+		}
 	}
 	else
 	{
 		int i;
 		for (i = 0; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = FALSE;
 	}
-	
+
 	/* Future use */
 	for (i = 0; i < 44; i++) rd_byte(&tmp8u);
 
@@ -1457,7 +1463,7 @@ static bool rd_extra(int Ind)
 
 	/* Hack -- the two "special seeds" */
 	/*rd_u32b(&seed_flavor);
-	rd_u32b(&seed_town);*/
+	  rd_u32b(&seed_town);*/
 
 
 	/* Special stuff */
@@ -1478,7 +1484,7 @@ static bool rd_extra(int Ind)
 
 	/* Read "feeling" */
 	/*rd_byte(&tmp8u);
-	feeling = tmp8u;*/
+	  feeling = tmp8u;*/
 
 	/* Turn of last "feeling" */
 	/*rd_s32b(&old_turn);*/
@@ -1629,7 +1635,7 @@ static errr rd_hostilities(int Ind)
 	/* Success */
 	return (0);
 }
-	
+
 
 #if 0
 
@@ -1844,7 +1850,7 @@ static errr rd_savefile_new_aux(int Ind)
 
 	/* Mention the savefile version */
 	/*note(format("Loading a %d.%d.%d savefile...",
-	            sf_major, sf_minor, sf_patch));*/
+	  sf_major, sf_minor, sf_patch));*/
 
 
 
@@ -2049,23 +2055,23 @@ static errr rd_savefile_new_aux(int Ind)
 	}
 
 	/* 
-	quick hack to fix messed up my spells...
-	added after the "chaos storm"	
-	-APD-
-	
-		
-	if (!(strcmp(p_ptr->name,"Tarik")))
-	{	
-		p_ptr->spell_learned1 = 0;
-		p_ptr->spell_learned2 = 0;
-		p_ptr->spell_worked1 = 0;
-		p_ptr->spell_worked2 = 0;
-		p_ptr->spell_forgotten1 = 0;
-		p_ptr->spell_forgotten2 = 0;
-		p_ptr->update |= PU_SPELLS;
-	}
-	
-	*/	
+	   quick hack to fix messed up my spells...
+	   added after the "chaos storm"	
+	   -APD-
+
+
+	   if (!(strcmp(p_ptr->name,"Tarik")))
+	   {	
+	   p_ptr->spell_learned1 = 0;
+	   p_ptr->spell_learned2 = 0;
+	   p_ptr->spell_worked1 = 0;
+	   p_ptr->spell_worked2 = 0;
+	   p_ptr->spell_forgotten1 = 0;
+	   p_ptr->spell_forgotten2 = 0;
+	   p_ptr->update |= PU_SPELLS;
+	   }
+
+*/	
 
 	/* Read the inventory */
 	if (rd_inventory(Ind))
@@ -2088,26 +2094,26 @@ static errr rd_savefile_new_aux(int Ind)
 	{
 		rd_cave_memory(Ind);
 	}
-	
+
 	/* read the wilderness map if new enough */
 	if (!older_than(0,5,5))
 	{
 		/* get the map size */
 		rd_u32b(&tmp32u);
-		
+
 		/* if too many map entries */
 		if (tmp32u > MAX_WILD)
 		{
 			return 23;
 		}
-		
+
 		/* read in the map */
 		for (i = 0; i < tmp32u; i++)
 		{
 			rd_byte(&p_ptr->wild_map[i]);
 		}
 	}
-	
+
 
 #if 0
 	/* Read the stores */
@@ -2213,15 +2219,15 @@ errr rd_savefile_new(int Ind)
 
 errr rd_server_savefile()
 {
-        int i;
+	int i;
 
 	errr err = 0;
 
 	char savefile[1024];
 
 	byte tmp8u;
-        u16b tmp16u;
-        u32b tmp32u;
+	u16b tmp16u;
+	u32b tmp32u;
 	s32b tmp32s;
 
 	/* Savefile name */
@@ -2233,54 +2239,54 @@ errr rd_server_savefile()
 	/* Paranoia */
 	if (!fff) return (-1);
 
-        /* Strip the version bytes */
-        strip_bytes(4);
+	/* Strip the version bytes */
+	strip_bytes(4);
 
-        /* Hack -- decrypt */
-        xor_byte = sf_extra;
-
-
-        /* Clear the checksums */
-        v_check = 0L;
-        x_check = 0L;
+	/* Hack -- decrypt */
+	xor_byte = sf_extra;
 
 
-        /* Operating system info */
-        rd_u32b(&sf_xtra);
-
-        /* Time of savefile creation */
-        rd_u32b(&sf_when);
-
-        /* Number of lives */
-        rd_u16b(&sf_lives);
-
-        /* Number of times played */
-        rd_u16b(&sf_saves);
+	/* Clear the checksums */
+	v_check = 0L;
+	x_check = 0L;
 
 
-        /* Later use (always zero) */
-        rd_u32b(&tmp32u);
+	/* Operating system info */
+	rd_u32b(&sf_xtra);
 
-        /* Later use (always zero) */
-        rd_u32b(&tmp32u);
+	/* Time of savefile creation */
+	rd_u32b(&sf_when);
 
-        /* Monster Memory */
-        rd_u16b(&tmp16u);
+	/* Number of lives */
+	rd_u16b(&sf_lives);
 
-        /* Incompatible save files */
-        if (tmp16u > MAX_R_IDX)
-        {
-                note(format("Too many (%u) monster races!", tmp16u));
-                return (21);
-        }
+	/* Number of times played */
+	rd_u16b(&sf_saves);
 
-        /* Read the available records */
-        for (i = 0; i < tmp16u; i++)
-        {
+
+	/* Later use (always zero) */
+	rd_u32b(&tmp32u);
+
+	/* Later use (always zero) */
+	rd_u32b(&tmp32u);
+
+	/* Monster Memory */
+	rd_u16b(&tmp16u);
+
+	/* Incompatible save files */
+	if (tmp16u > MAX_R_IDX)
+	{
+		note(format("Too many (%u) monster races!", tmp16u));
+		return (21);
+	}
+
+	/* Read the available records */
+	for (i = 0; i < tmp16u; i++)
+	{
 		monster_race *r_ptr;
 
-                /* Read the lore */
-                rd_lore(i);
+		/* Read the lore */
+		rd_lore(i);
 
 		/* Access the monster race */
 		r_ptr = &r_info[i];
@@ -2292,27 +2298,27 @@ errr rd_server_savefile()
 			if (r_ptr->flags1 & RF1_UNIQUE)
 				r_ptr->max_num = 1;
 		}
-        }
+	}
 
-        /* Load the Artifacts */
-        rd_u16b(&tmp16u);
+	/* Load the Artifacts */
+	rd_u16b(&tmp16u);
 
-        /* Incompatible save files */
-        if (tmp16u > MAX_A_IDX)
-        {
-                note(format("Too many (%u) artifacts!", tmp16u));
-                return (24);
-        }
+	/* Incompatible save files */
+	if (tmp16u > MAX_A_IDX)
+	{
+		note(format("Too many (%u) artifacts!", tmp16u));
+		return (24);
+	}
 
-        /* Read the artifact flags */
-        for (i = 0; i < tmp16u; i++)
-        {
-                rd_byte(&tmp8u);
-                a_info[i].cur_num = tmp8u;
-                rd_byte(&tmp8u);
-                rd_byte(&tmp8u);
-                rd_byte(&tmp8u);
-        }
+	/* Read the artifact flags */
+	for (i = 0; i < tmp16u; i++)
+	{
+		rd_byte(&tmp8u);
+		a_info[i].cur_num = tmp8u;
+		rd_byte(&tmp8u);
+		rd_byte(&tmp8u);
+		rd_byte(&tmp8u);
+	}
 
 	/* Read the stores */
 	rd_u16b(&tmp16u);
@@ -2437,13 +2443,13 @@ errr rd_server_savefile()
 	{
 		/* read how many wilderness levels */
 		rd_u32b(&tmp32u);
-		
+
 		if (tmp32u > MAX_WILD)
 		{
 			note("Too many wilderness levels");
 			return 28;
 		}
-	
+
 		for (i = 1; i < tmp32u; i++)
 		{
 			rd_wild(i);
@@ -2485,8 +2491,8 @@ errr rd_server_savefile()
 
 	rd_s32b(&turn);
 
-        /* Hack -- no ghosts */
-        r_info[MAX_R_IDX-1].max_num = 0;
+	/* Hack -- no ghosts */
+	r_info[MAX_R_IDX-1].max_num = 0;
 
 
 	/* Check for errors */

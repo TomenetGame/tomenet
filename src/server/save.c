@@ -567,17 +567,17 @@ static errr rd_savefile(void)
 		{
 			/* Done XXX XXX XXX */
 			case 0:
-			{
-				done = TRUE;
-				break;
-			}
+				{
+					done = TRUE;
+					break;
+				}
 
-			/* Grab the options */
+				/* Grab the options */
 			case TYPE_OPTIONS:
-			{
-				if (get_options()) err = -1;
-				break;
-			}
+				{
+					if (get_options()) err = -1;
+					break;
+				}
 		}
 
 		/* XXX XXX XXX verify "data_next" */
@@ -680,8 +680,8 @@ static void wr_string(cptr str)
  */
 static void wr_item(object_type *o_ptr)
 {
-        wr_s32b(o_ptr->owner);
-        wr_s16b(o_ptr->level);
+	wr_s32b(o_ptr->owner);
+	wr_s16b(o_ptr->level);
 
 	wr_s16b(o_ptr->k_idx);
 
@@ -739,39 +739,39 @@ static void wr_item(object_type *o_ptr)
  */
 static void wr_monster_race(monster_race *r_ptr)
 {
-        int i;
+	int i;
 
-        wr_s16b(r_ptr->name);
-        wr_s16b(r_ptr->text);
-        wr_byte(r_ptr->hdice);
-        wr_byte(r_ptr->hside);
-        wr_s16b(r_ptr->ac);
-        wr_s16b(r_ptr->sleep);
-        wr_byte(r_ptr->aaf);
-        wr_byte(r_ptr->speed);
-        wr_s32b(r_ptr->mexp);
-        wr_s16b(r_ptr->extra);
-        wr_byte(r_ptr->freq_inate);
-        wr_byte(r_ptr->freq_spell);
-        wr_s32b(r_ptr->flags1);
-        wr_s32b(r_ptr->flags2);
-        wr_s32b(r_ptr->flags3);
-        wr_s32b(r_ptr->flags4);
-        wr_s32b(r_ptr->flags5);
-        wr_s32b(r_ptr->flags6);
-        wr_s16b(r_ptr->level);
-        wr_byte(r_ptr->rarity);
-        wr_byte(r_ptr->d_attr);
-        wr_byte(r_ptr->d_char);
-        wr_byte(r_ptr->x_attr);
-        wr_byte(r_ptr->x_char);
-        for (i = 0; i < 4; i++)
-        {
-                wr_byte(r_ptr->blow[i].method);
-                wr_byte(r_ptr->blow[i].effect);
-                wr_byte(r_ptr->blow[i].d_dice);
-                wr_byte(r_ptr->blow[i].d_side);
-        }
+	wr_s16b(r_ptr->name);
+	wr_s16b(r_ptr->text);
+	wr_byte(r_ptr->hdice);
+	wr_byte(r_ptr->hside);
+	wr_s16b(r_ptr->ac);
+	wr_s16b(r_ptr->sleep);
+	wr_byte(r_ptr->aaf);
+	wr_byte(r_ptr->speed);
+	wr_s32b(r_ptr->mexp);
+	wr_s16b(r_ptr->extra);
+	wr_byte(r_ptr->freq_inate);
+	wr_byte(r_ptr->freq_spell);
+	wr_s32b(r_ptr->flags1);
+	wr_s32b(r_ptr->flags2);
+	wr_s32b(r_ptr->flags3);
+	wr_s32b(r_ptr->flags4);
+	wr_s32b(r_ptr->flags5);
+	wr_s32b(r_ptr->flags6);
+	wr_s16b(r_ptr->level);
+	wr_byte(r_ptr->rarity);
+	wr_byte(r_ptr->d_attr);
+	wr_byte(r_ptr->d_char);
+	wr_byte(r_ptr->x_attr);
+	wr_byte(r_ptr->x_char);
+	for (i = 0; i < 4; i++)
+	{
+		wr_byte(r_ptr->blow[i].method);
+		wr_byte(r_ptr->blow[i].effect);
+		wr_byte(r_ptr->blow[i].d_dice);
+		wr_byte(r_ptr->blow[i].d_side);
+	}
 }
 
 /*
@@ -779,39 +779,42 @@ static void wr_monster_race(monster_race *r_ptr)
  */
 static void wr_monster(monster_type *m_ptr)
 {
-        int i;
+	int i;
 
-        wr_byte(m_ptr->special);
-        wr_s32b(m_ptr->owner);
+	wr_byte(m_ptr->special);
+	wr_s32b(m_ptr->owner);
 	wr_s16b(m_ptr->r_idx);
 	wr_byte(m_ptr->fy);
 	wr_byte(m_ptr->fx);
 	wr_u16b(m_ptr->dun_depth);
-        wr_s16b(m_ptr->ac);
-        wr_byte(m_ptr->speed);
-        wr_s32b(m_ptr->exp);
-        wr_s16b(m_ptr->level);
-        for (i = 0; i < 4; i++)
-        {
-                wr_byte(m_ptr->blow[i].method);
-                wr_byte(m_ptr->blow[i].effect);
-                wr_byte(m_ptr->blow[i].d_dice);
-                wr_byte(m_ptr->blow[i].d_side);
-        }
-        wr_s32b(m_ptr->hp);
-        wr_s32b(m_ptr->maxhp);
+	wr_s16b(m_ptr->ac);
+	wr_byte(m_ptr->speed);
+	wr_s32b(m_ptr->exp);
+	wr_s16b(m_ptr->level);
+	for (i = 0; i < 4; i++)
+	{
+		wr_byte(m_ptr->blow[i].method);
+		wr_byte(m_ptr->blow[i].effect);
+		wr_byte(m_ptr->blow[i].d_dice);
+		wr_byte(m_ptr->blow[i].d_side);
+	}
+	wr_s32b(m_ptr->hp);
+	wr_s32b(m_ptr->maxhp);
 	wr_s16b(m_ptr->csleep);
 	wr_byte(m_ptr->mspeed);
 	wr_byte(m_ptr->energy);
 	wr_byte(m_ptr->stunned);
 	wr_byte(m_ptr->confused);
 	wr_byte(m_ptr->monfear);
-        wr_s16b(m_ptr->mind);
+	wr_s16b(m_ptr->mind);
 
-        if (m_ptr->special)
-        {
-                wr_monster_race(m_ptr->r_ptr);
-        }
+	if (m_ptr->special)
+	{
+		wr_monster_race(m_ptr->r_ptr);
+	}
+
+	wr_u16b(&m_ptr->ego);
+	wr_s32b(&m_ptr->name3);
 }
 
 /*
@@ -861,7 +864,7 @@ static void wr_lore(int r_idx)
 	wr_byte(r_ptr->max_num);
 
 	/* Killer */
-//	wr_s32b(r_ptr->killer);
+	//	wr_s32b(r_ptr->killer);
 
 	/* Later (?) */
 	wr_byte(0);
@@ -949,16 +952,16 @@ static errr wr_randomizer(void)
 
 	/* Zero */
 	wr_u16b(0);
-	
+
 	/* Place */
 	wr_u16b(Rand_place);
-	
+
 	/* State */
 	for (i = 0; i < RAND_DEG; i++)
 	{
 		wr_u32b(Rand_state[i]);
 	}
-	
+
 	/* Success */
 	return (0);
 }
@@ -1024,7 +1027,7 @@ static void wr_options(void)
 				/* Set */
 				option_flag[os] |= (1L << ob);
 			}
-			
+
 			/* Clear */
 			else
 			{
@@ -1107,7 +1110,7 @@ static void wr_house(house_type *house)
 	wr_byte(house->y_1);
 	wr_byte(house->x_2);
 	wr_byte(house->y_2);
-	
+
 	wr_byte(house->door_y);
 	wr_byte(house->door_x);
 	wr_byte(house->strength);
@@ -1248,14 +1251,14 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->auto_tunnel);
 
 	wr_s16b(p_ptr->tim_meditation);
-	
+
 	wr_s16b(p_ptr->tim_invisibility);
 	wr_s16b(p_ptr->tim_invis_power);
 
 	wr_s16b(p_ptr->furry);
 
 	wr_s16b(p_ptr->tim_manashield);
-	
+
 	wr_s16b(p_ptr->tim_traps);
 	wr_s16b(p_ptr->tim_mimic);
 	wr_s16b(p_ptr->tim_mimic_what);
@@ -1264,7 +1267,7 @@ static void wr_extra(int Ind)
 	tmp16u = MAX_R_IDX;
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++) wr_s16b(p_ptr->r_killed[i]);
-		
+
 	/* Future use */
 	for (i = 0; i < 44; i++) wr_byte(0);
 
@@ -1432,7 +1435,7 @@ static void wr_dungeon(int Depth)
 
 			/* if we are starting a new run */
 			if ((!runlength) || (c_ptr->feat != prev_feature) || (c_ptr->info != prev_info)
-			    || (runlength > 254))
+					|| (runlength > 254))
 			{
 				if (runlength)
 				{
@@ -1675,7 +1678,7 @@ static bool wr_savefile_new(int Ind)
 
 	/* Write the list of hostilities */
 	wr_hostilities(Ind);
-	
+
 	/* write the cave flags (our memory of our current level) */
 	wr_cave_memory(Ind);
 	/* write the wilderness map */
@@ -1886,15 +1889,15 @@ bool save_player(int Ind)
 
 static bool file_exist(char *buf)
 {
-        int fd;
+	int fd;
 
-        fd = fd_open(buf, O_RDONLY);
-        if (fd >= 0)
-        {
-                fd_close(fd);
-                return (TRUE);
-        }
-        else return (FALSE);
+	fd = fd_open(buf, O_RDONLY);
+	if (fd >= 0)
+	{
+		fd_close(fd);
+		return (TRUE);
+	}
+	else return (FALSE);
 }
 
 
@@ -1952,7 +1955,7 @@ bool load_player(int Ind)
 	/* XXX XXX XXX Fix this */
 
 	/* Verify the existance of the savefile */
-        if (!file_exist(p_ptr->savefile))
+	if (!file_exist(p_ptr->savefile))
 	{
 		/* Give a message */
 		s_printf("Savefile does not exist for player %s.\n", p_ptr->name);
@@ -2054,11 +2057,11 @@ bool load_player(int Ind)
 
 		/* Message (below) */
 		/*
-		if (err) { 
-			what = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-			(void)sprintf (what,"Cannot parse savefile error %d",err);
-		}; 
-		*/
+		   if (err) { 
+		   what = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+		   (void)sprintf (what,"Cannot parse savefile error %d",err);
+		   }; 
+		   */
 		if (err)what="Cannot parse savefile error";
 		if (err == 35) what = "Incorrect password";
 	}
@@ -2079,7 +2082,7 @@ bool load_player(int Ind)
 	{
 		/* Hack -- Verify the timestamp */
 		if (sf_when > (statbuf.st_ctime + 100) ||
-		    sf_when < (statbuf.st_ctime - 100))
+				sf_when < (statbuf.st_ctime - 100))
 		{
 			/* Message */
 			what = "Invalid timestamp";
@@ -2096,12 +2099,12 @@ bool load_player(int Ind)
 	{
 		/* Give a conversion warning */
 		if ((version_major != sf_major) ||
-		    (version_minor != sf_minor) ||
-		    (version_patch != sf_patch))
+				(version_minor != sf_minor) ||
+				(version_patch != sf_patch))
 		{
 			/* Message */
 			printf("Converted a %d.%d.%d savefile.\n",
-			           sf_major, sf_minor, sf_patch);
+					sf_major, sf_minor, sf_patch);
 		}
 
 		/* Player is dead */
@@ -2169,7 +2172,7 @@ bool load_player(int Ind)
 
 	/* Message */
 	Destroy_connection(p_ptr->conn, format("Error (%s) reading %d.%d.%d savefile.",
-	           what, sf_major, sf_minor, sf_patch));
+				what, sf_major, sf_minor, sf_patch));
 
 	/* Oops */
 	return (FALSE);
@@ -2177,81 +2180,81 @@ bool load_player(int Ind)
 
 static bool wr_server_savefile(void)
 {
-        int        i;
+	int        i;
 
-        u32b              now;
+	u32b              now;
 
-        byte            tmp8u;
-        u16b            tmp16u;
+	byte            tmp8u;
+	u16b            tmp16u;
 	u32b		tmp32u;
 
 
-        /* Guess at the current time */
-        now = time((time_t *)0);
+	/* Guess at the current time */
+	now = time((time_t *)0);
 
 
-        /* Note the operating system */
-        sf_xtra = 0L;
+	/* Note the operating system */
+	sf_xtra = 0L;
 
-        /* Note when the file was saved */
-        sf_when = now;
+	/* Note when the file was saved */
+	sf_when = now;
 
-        /* Note the number of saves */
-        sf_saves++;
-
-
-        /*** Actually write the file ***/
-
-        /* Dump the file header */
-        xor_byte = 0;
-        wr_byte(VERSION_MAJOR);
-        xor_byte = 0;
-        wr_byte(VERSION_MINOR);
-        xor_byte = 0;
-        wr_byte(VERSION_PATCH);
-        xor_byte = 0;
-        tmp8u = rand_int(256);
-        wr_byte(tmp8u);
+	/* Note the number of saves */
+	sf_saves++;
 
 
-        /* Reset the checksum */
-        v_stamp = 0L;
-        x_stamp = 0L;
+	/*** Actually write the file ***/
+
+	/* Dump the file header */
+	xor_byte = 0;
+	wr_byte(VERSION_MAJOR);
+	xor_byte = 0;
+	wr_byte(VERSION_MINOR);
+	xor_byte = 0;
+	wr_byte(VERSION_PATCH);
+	xor_byte = 0;
+	tmp8u = rand_int(256);
+	wr_byte(tmp8u);
 
 
-        /* Operating system */
-        wr_u32b(sf_xtra);
+	/* Reset the checksum */
+	v_stamp = 0L;
+	x_stamp = 0L;
 
 
-        /* Time file last saved */
-        wr_u32b(sf_when);
+	/* Operating system */
+	wr_u32b(sf_xtra);
 
-        /* Number of past lives */
-        wr_u16b(sf_lives);
 
-        /* Number of times saved */
-        wr_u16b(sf_saves);
+	/* Time file last saved */
+	wr_u32b(sf_when);
 
-        /* Space */
-        wr_u32b(0L);
-        wr_u32b(0L);
+	/* Number of past lives */
+	wr_u16b(sf_lives);
 
-        /* Dump the monster (unique) lore */
-        tmp16u = MAX_R_IDX;
-        wr_u16b(tmp16u);
-        for (i = 0; i < tmp16u; i++) wr_lore(i);
+	/* Number of times saved */
+	wr_u16b(sf_saves);
 
-        /* Hack -- Dump the artifacts */
-        tmp16u = MAX_A_IDX;
-        wr_u16b(tmp16u);
-        for (i = 0; i < tmp16u; i++)
-        {
-                artifact_type *a_ptr = &a_info[i];
-                wr_byte(a_ptr->cur_num);
-                wr_byte(0);
-                wr_byte(0);
-                wr_byte(0);
-        }
+	/* Space */
+	wr_u32b(0L);
+	wr_u32b(0L);
+
+	/* Dump the monster (unique) lore */
+	tmp16u = MAX_R_IDX;
+	wr_u16b(tmp16u);
+	for (i = 0; i < tmp16u; i++) wr_lore(i);
+
+	/* Hack -- Dump the artifacts */
+	tmp16u = MAX_A_IDX;
+	wr_u16b(tmp16u);
+	for (i = 0; i < tmp16u; i++)
+	{
+		artifact_type *a_ptr = &a_info[i];
+		wr_byte(a_ptr->cur_num);
+		wr_byte(0);
+		wr_byte(0);
+		wr_byte(0);
+	}
 
 
 	/* Note the stores */
@@ -2270,7 +2273,7 @@ static bool wr_server_savefile(void)
 
 
 	/* Dump the dungeons */
-	
+
 	/* get the number of levels to dump */
 	tmp32u = 0;
 	for (i = -MAX_WILD; i < MAX_DEPTH; i++)
@@ -2323,10 +2326,10 @@ static bool wr_server_savefile(void)
 	}
 
 	/* Note the size of the wilderness 
-	 change this to num_wild ? */
+	   change this to num_wild ? */
 	tmp32u = MAX_WILD;
 	wr_u32b(tmp32u);
-	 /* Dump the wilderness */
+	/* Dump the wilderness */
 	for (i = 1; i < tmp32u; i++) wr_wild(&wild_info[-i]);
 
 	/* Write the player name database */
@@ -2338,66 +2341,66 @@ static bool wr_server_savefile(void)
 	wr_s32b(player_id);
 	wr_s32b(turn);
 
-        /* Error in save */
-        if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;
+	/* Error in save */
+	if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;
 
-        /* Successful save */
-        return TRUE;
+	/* Successful save */
+	return TRUE;
 }
 
 
 static bool save_server_aux(char *name)
 {
-        bool    ok = FALSE;
+	bool    ok = FALSE;
 
-        int             fd = -1;
+	int             fd = -1;
 
-        int             mode = 0644;
-
-
-        /* No file yet */
-        fff = NULL;
+	int             mode = 0644;
 
 
-        /* File type is "SAVE" */
-        FILE_TYPE(FILE_TYPE_SAVE);
+	/* No file yet */
+	fff = NULL;
 
 
-        /* Create the savefile */
-        fd = fd_make(name, mode);
-
-        /* File is okay */
-        if (fd >= 0)
-        {
-                /* Close the "fd" */
-                (void)fd_close(fd);
-
-                /* Open the savefile */
-                fff = my_fopen(name, "wb");
-
-                /* Successful open */
-                if (fff)
-                {
-                        /* Write the savefile */
-                        if (wr_server_savefile()) ok = TRUE;
-
-                        /* Attempt to close it */
-                        if (my_fclose(fff)) ok = FALSE;
-                }
-
-                /* Remove "broken" files */
-                if (!ok) (void)fd_kill(name);
-        }
+	/* File type is "SAVE" */
+	FILE_TYPE(FILE_TYPE_SAVE);
 
 
-        /* Failure */
-        if (!ok) return (FALSE);
+	/* Create the savefile */
+	fd = fd_make(name, mode);
 
-        /* Successful save */
-        /*server_saved = TRUE;*/
+	/* File is okay */
+	if (fd >= 0)
+	{
+		/* Close the "fd" */
+		(void)fd_close(fd);
 
-        /* Success */
-        return (TRUE);
+		/* Open the savefile */
+		fff = my_fopen(name, "wb");
+
+		/* Successful open */
+		if (fff)
+		{
+			/* Write the savefile */
+			if (wr_server_savefile()) ok = TRUE;
+
+			/* Attempt to close it */
+			if (my_fclose(fff)) ok = FALSE;
+		}
+
+		/* Remove "broken" files */
+		if (!ok) (void)fd_kill(name);
+	}
+
+
+	/* Failure */
+	if (!ok) return (FALSE);
+
+	/* Successful save */
+	/*server_saved = TRUE;*/
+
+	/* Success */
+	return (TRUE);
 }
 
 
@@ -2420,7 +2423,7 @@ bool load_server_info(void)
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "server");
 
 	/* XXX XXX XXX Fix this */
-        if (!file_exist(buf))
+	if (!file_exist(buf))
 	{
 		/* Give message */
 		s_printf("Server savefile does not exist\n");
@@ -2429,78 +2432,78 @@ bool load_server_info(void)
 		return (TRUE);
 	}
 
-        /* Okay */
-        if (!err)
-        {
-                /* Open the savefile */
-                fd = fd_open(buf, O_RDONLY);
+	/* Okay */
+	if (!err)
+	{
+		/* Open the savefile */
+		fd = fd_open(buf, O_RDONLY);
 
-                /* No file */
-                if (fd < 0) err = -1;
+		/* No file */
+		if (fd < 0) err = -1;
 
-                /* Message (below) */
-                if (err) what = "Cannot open savefile";
-        }
+		/* Message (below) */
+		if (err) what = "Cannot open savefile";
+	}
 
-        /* Process file */
-        if (!err)
-        {
-                /* Read the first four bytes */
-                if (fd_read(fd, (char*)(vvv), 4)) err = -1;
+	/* Process file */
+	if (!err)
+	{
+		/* Read the first four bytes */
+		if (fd_read(fd, (char*)(vvv), 4)) err = -1;
 
-                /* What */
-                if (err) what = "Cannot read savefile";
+		/* What */
+		if (err) what = "Cannot read savefile";
 
-                /* Close the file */
-                (void)fd_close(fd);
-        }
+		/* Close the file */
+		(void)fd_close(fd);
+	}
 
-        /* Process file */
-        if (!err)
-        {
-                /* Extract version */
-                sf_major = vvv[0];
-                sf_minor = vvv[1];
-                sf_patch = vvv[2];
-                sf_extra = vvv[3];
+	/* Process file */
+	if (!err)
+	{
+		/* Extract version */
+		sf_major = vvv[0];
+		sf_minor = vvv[1];
+		sf_patch = vvv[2];
+		sf_extra = vvv[3];
 
-                /* Parse "MAngband" savefiles */
-                /* If I ever catch the one that put that STUPID UGLY IDIOT
-                 * HACK there he will know what *WRATH* means ... -- DG
-                 */
+		/* Parse "MAngband" savefiles */
+		/* If I ever catch the one that put that STUPID UGLY IDIOT
+		 * HACK there he will know what *WRATH* means ... -- DG
+		 */
 
-                /* Attempt to load */
-                err = rd_server_savefile();
+		/* Attempt to load */
+		err = rd_server_savefile();
 
-                /* Message (below) */
+		/* Message (below) */
 		/*
-		if (err) { 
-			what = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx";
-			(void)sprintf (what,"Cannot parse savefile error %d",err);
-		};
-		*/
+		   if (err) { 
+		   what = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx";
+		   (void)sprintf (what,"Cannot parse savefile error %d",err);
+		   };
+		   */
 		if (err) what ="Cannot parse savefile error %d";
 	}
 
-        /* Okay */
-        if (!err)
-        {
-                /* Give a conversion warning */
-                if ((version_major != sf_major) ||
-                    (version_minor != sf_minor) ||
-                    (version_patch != sf_patch))
-                {
-                        /* Message */
-                        printf("Converted a %d.%d.%d savefile.\n",
-                                   sf_major, sf_minor, sf_patch);
-                }
+	/* Okay */
+	if (!err)
+	{
+		/* Give a conversion warning */
+		if ((version_major != sf_major) ||
+				(version_minor != sf_minor) ||
+				(version_patch != sf_patch))
+		{
+			/* Message */
+			printf("Converted a %d.%d.%d savefile.\n",
+					sf_major, sf_minor, sf_patch);
+		}
 
-                /* The server state was loaded */
-                server_state_loaded = TRUE;
+		/* The server state was loaded */
+		server_state_loaded = TRUE;
 
-                /* Success */
-                return (TRUE);
-        }
+		/* Success */
+		return (TRUE);
+	}
 
 	/* Message */
 	s_printf("Error (%s) reading a %d.%d.%d server savefile.", what, sf_major, sf_minor, sf_patch);

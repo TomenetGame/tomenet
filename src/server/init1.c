@@ -61,7 +61,7 @@ extern u32b fake_text_size;
  */
 static cptr r_info_blow_method[] =
 {
-	"",
+	"*",
 	"HIT",
 	"TOUCH",
 	"PUNCH",
@@ -73,11 +73,11 @@ static cptr r_info_blow_method[] =
 	"BUTT",
 	"CRUSH",
 	"ENGULF",
-	"XXX2",
+	"XXX2",	// CHARGE
 	"CRAWL",
 	"DROOL",
 	"SPIT",
-	"XXX3",
+	"XXX3",	// EXPLODE
 	"GAZE",
 	"WAIL",
 	"SPORE",
@@ -85,7 +85,7 @@ static cptr r_info_blow_method[] =
 	"BEG",
 	"INSULT",
 	"MOAN",
-	"XXX5",
+	"XXX5",	// SHOW
 	NULL
 };
 
@@ -95,7 +95,7 @@ static cptr r_info_blow_method[] =
  */
 static cptr r_info_blow_effect[] =
 {
-	"",
+	"*",
 	"HURT",
 	"POISON",
 	"UN_BONUS",
@@ -127,6 +127,16 @@ static cptr r_info_blow_effect[] =
 	NULL
 };
 
+/*
+   "DISEASE",
+   "TIME",
+   "INSANITY",
+   "HALLU",
+   "PARASITE",
+
+   "FAMINE",
+   NULL
+*/
 
 /*
  * Monster race flags
@@ -174,20 +184,20 @@ static cptr r_info_flags2[] =
 {
 	"STUPID",
 	"SMART",
-	"XXX1X2",
-	"XXX2X2",
+	"XXX1X2",	// "CAN_SPEAK",
+	"XXX2X2",	// "REFLECTING",
 	"INVISIBLE",
 	"COLD_BLOOD",
 	"EMPTY_MIND",
 	"WEIRD_MIND",
-	"MULTIPLY",
+	"MULTIPLY",	// "DEATH_ORB",
 	"REGENERATE",
-	"XXX3X2",
-	"XXX4X2",
+	"XXX3X2",	// "SHAPECHANGER",
+	"XXX4X2",	// "ATTR_ANY",
 	"POWERFUL",
-	"XXX5X2",
-	"XXX7X2",
-	"XXX6X2",
+	"XXX5X2",	// "ELDRITCH_HORROR", 	
+	"XXX7X2",	// "AURA_FIRE",
+	"XXX6X2",	// "AURA_ELEC",
 	"OPEN_DOOR",
 	"BASH_DOOR",
 	"PASS_WALL",
@@ -219,26 +229,26 @@ static cptr r_info_flags3[] =
 	"UNDEAD",
 	"EVIL",
 	"ANIMAL",
-	"XXX1X3",
-	"XXX2X3",
-	"XXX3X3",
-        "IM_TELE",
+	"XXX1X3",	// "DRAGONRIDER",
+	"XXX2X3",	// "GOOD",
+	"XXX3X3",	// "AURA_COLD",
+        "IM_TELE",	// "NONLIVING",
 	"HURT_LITE",
 	"HURT_ROCK",
-	"HURT_FIRE",
-	"HURT_COLD",
+	"HURT_FIRE",	// "SUSCEP_FIRE",
+	"HURT_COLD",	// "SUSCEP_COLD",
 	"IM_ACID",
 	"IM_ELEC",
 	"IM_FIRE",
 	"IM_COLD",
 	"IM_POIS",
-	"IM_PSI",
+	"IM_PSI",	// "RES_TELE",
 	"RES_NETH",
 	"RES_WATE",
 	"RES_PLAS",
 	"RES_NEXU",
 	"RES_DISE",
-	"RES_PSI",
+	"RES_PSI",	// "UNIQUE_4",
 	"NO_FEAR",
 	"NO_STUN",
 	"NO_CONF",
@@ -251,9 +261,9 @@ static cptr r_info_flags3[] =
 static cptr r_info_flags4[] =
 {
 	"SHRIEK",
-	"XXX2X4",
-	"XXX3X4",
-	"XXX4X4",
+	"XXX2X4",	// "MULTIPLY",
+	"XXX3X4",	// "S_ANIMAL",
+	"XXX4X4",	// "ROCKET",
 	"ARROW_1",
 	"ARROW_2",
 	"ARROW_3",
@@ -278,10 +288,10 @@ static cptr r_info_flags4[] =
 	"BR_PLAS",
 	"BR_WALL",
 	"BR_MANA",
-	"XXX5X4",
-	"XXX6X4",
-	"XXX7X4",
-	"XXX8X4"
+	"XXX5X4",	// "BA_NUKE",
+	"XXX6X4",	// "BR_NUKE",
+	"XXX7X4",	// "BA_CHAO",
+	"XXX8X4"	// "BR_DISI",
 };
 
 /*
@@ -329,9 +339,9 @@ static cptr r_info_flags5[] =
 static cptr r_info_flags6[] =
 {
 	"HASTE",
-	"XXX1X6",
+	"XXX1X6",	// "HAND_DOOM",
 	"HEAL",
-	"XXX2X6",
+	"XXX2X6",	// "S_ANIMALS",
 	"BLINK",
 	"TPORT",
 	"XXX3X6",
@@ -360,6 +370,138 @@ static cptr r_info_flags6[] =
 	"S_HI_DRAGON",
 	"S_WRAITH",
 	"S_UNIQUE"
+};
+
+#if 0	// flags6
+	"ANIM_DEAD", /* ToDo: Implement ANIM_DEAD */
+        "S_BUG",
+        "S_RNG",
+        "S_DRAGONRIDER",  /* DG : Summon DragonRider */
+	"S_KIN",
+        "S_HI_DEMON",
+#endif
+
+/*
+ * r_info_flags7-9 are not implemented at all;
+ * for now, they're simply to 'deceive' parser.	- Jir -
+ */
+
+/*
+ * Monster race flags
+ */
+static cptr r_info_flags7[] =
+{
+	"AQUATIC",
+	"CAN_SWIM",
+	"CAN_FLY",
+	"FRIENDLY",
+        "PET",
+        "MORTAL",
+        "SPIDER",
+        "NAZGUL",
+        "DG_CURSE",
+        "POSSESSOR",
+        "NO_DEATH",
+        "NO_TARGET",
+        "AI_ANNOY",
+        "AI_SPECIAL",
+        "NEUTRAL",
+	"XXX7X15",
+	"XXX7X16",
+	"XXX7X17",
+	"XXX7X18",
+	"XXX7X19",
+	"XXX7X20",
+	"XXX7X21",
+	"XXX7X22",
+	"XXX7X23",
+	"XXX7X24",
+	"XXX7X25",
+	"XXX7X26",
+	"XXX7X27",
+	"XXX7X28",
+	"XXX7X29",
+	"XXX7X30",
+	"XXX7X31",
+};
+
+/*
+ * Monster race flags
+ */
+static cptr r_info_flags8[] =
+{
+	"WILD_ONLY",
+	"WILD_TOWN",
+	"XXX8X02",
+	"WILD_SHORE",
+	"WILD_OCEAN",
+	"WILD_WASTE",
+	"WILD_WOOD",
+	"WILD_VOLCANO",
+	"XXX8X08",
+	"WILD_MOUNTAIN",
+	"WILD_GRASS",
+        "NO_CUT",
+        "CTHANGBAND",
+        "PERNANGBAND",
+        "ZANGBAND",
+        "JOKEANGBAND",
+        "BASEANGBAND",
+	"XXX8X17",
+	"XXX8X18",
+	"XXX8X19",
+	"XXX8X20",
+	"XXX8X21",
+	"XXX8X22",
+	"XXX8X23",
+	"XXX8X24",
+	"XXX8X25",
+	"XXX8X26",
+	"XXX8X27",
+	"XXX8X28",
+	"XXX8X29",
+	"WILD_SWAMP",	/* ToDo: Implement Swamp */
+        "WILD_TOO",
+};
+
+
+/*
+ * Monster race flags - Drops
+ */
+static cptr r_info_flags9[] =
+{
+	"DROP_CORPSE",
+	"DROP_SKELETON",
+        "HAS_LITE",
+        "MIMIC",
+        "HAS_EGG",
+        "IMPRESED",
+        "SUSCEP_ACID",
+        "SUSCEP_ELEC",
+        "SUSCEP_POIS",
+        "KILL_TREES",
+        "WYRM_PROTECT",
+        "DOPPLEGANGER",
+        "ONLY_DEPTH",
+        "SPECIAL_GENE",
+        "NEVER_GENE",
+	"XXX9X15",
+	"XXX9X16",
+	"XXX9X17",
+	"XXX9X18",
+	"XXX9X19",
+	"XXX9X20",
+	"XXX9X21",
+	"XXX9X22",
+	"XXX9X23",
+	"XXX9X24",
+	"XXX9X25",
+	"XXX9X26",
+	"XXX9X27",
+	"XXX9X28",
+	"XXX9X29",
+	"XXX9X30",
+	"XXX9X31",
 };
 
 
@@ -2284,6 +2426,802 @@ errr init_r_info_txt(FILE *fp, char *buf)
 	/* Success */
 	return (0);
 }
+
+#ifdef RANDUNIS
+/*
+ * Grab one (basic) flag in a monster_race from a textual string
+ */
+static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add)
+{
+	int i;
+
+	/* Scan flags1 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags1[i]))
+		{
+                        if (add)
+                                re_ptr->mflags1 |= (1L << i);
+                        else
+                                re_ptr->nflags1 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Scan flags2 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags2[i]))
+		{
+                        if (add)
+                                re_ptr->mflags2 |= (1L << i);
+                        else
+                                re_ptr->nflags2 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Scan flags3 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags3[i]))
+		{
+                        if (add)
+                                re_ptr->mflags3 |= (1L << i);
+                        else
+                                re_ptr->nflags3 |= (1L << i);
+			return (0);
+		}
+	}
+#if 1
+	/* Scan flags7 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags7[i]))
+		{
+#if 0
+                        if (add)
+                                re_ptr->mflags7 |= (1L << i);
+                        else
+                                re_ptr->nflags7 |= (1L << i);
+#endif
+			return (0);
+		}
+	}
+
+	/* Scan flags8 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags8[i]))
+		{
+#if 0
+                        if (add)
+                                re_ptr->mflags8 |= (1L << i);
+                        else
+                                re_ptr->nflags8 |= (1L << i);
+#endif
+			return (0);
+		}
+	}
+
+	/* Scan flags9 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags9[i]))
+		{
+#if 0
+                        if (add)
+                                re_ptr->mflags9 |= (1L << i);
+                        else
+                                re_ptr->nflags9 |= (1L << i);
+#endif
+			return (0);
+		}
+	}
+#endif	// 0
+
+	/* Oops */
+	s_printf("Unknown monster flag '%s'.", what);
+
+	/* Failure */
+	return (1);
+}
+
+
+/*
+ * Grab one (spell) flag in a monster_race from a textual string
+ */
+static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add)
+{
+	int i;
+
+	/* Scan flags4 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags4[i]))
+		{
+                        if (add)
+                                re_ptr->mflags4 |= (1L << i);
+                        else
+                                re_ptr->nflags4 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Scan flags5 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags5[i]))
+		{
+                        if (add)
+                                re_ptr->mflags5 |= (1L << i);
+                        else
+                                re_ptr->nflags5 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Scan flags6 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags6[i]))
+		{
+                        if (add)
+                                re_ptr->mflags6 |= (1L << i);
+                        else
+                                re_ptr->nflags6 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Oops */
+	s_printf("Unknown monster flag '%s'.", what);
+
+	/* Failure */
+	return (1);
+}
+
+
+/* Values in re_info can be fixed, added, substracted or percented */
+static byte monster_ego_modify(char c)
+{
+        switch (c)
+        {
+                case '+': return MEGO_ADD;
+                case '-': return MEGO_SUB;
+                case '=': return MEGO_FIX;
+                case '%': return MEGO_PRC;
+                default:
+                {
+                        s_printf("Unknown monster ego value modifier %c.", c);
+                        return MEGO_ADD;
+                }
+        }
+}
+
+/*
+ * Grab one (basic) flag in a monster_race from a textual string
+ */
+static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must)
+{
+	int i;
+
+	/* Scan flags1 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags1[i]))
+		{
+                        if (must) re_ptr->flags1 |= (1L << i);
+                        else re_ptr->hflags1 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Scan flags2 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags2[i]))
+		{
+                        if (must) re_ptr->flags2 |= (1L << i);
+                        else re_ptr->hflags2 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Scan flags3 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags3[i]))
+		{
+                        if (must) re_ptr->flags3 |= (1L << i);
+                        else re_ptr->hflags3 |= (1L << i);
+			return (0);
+		}
+	}
+#if 1
+	/* Scan flags7 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags7[i]))
+		{
+#if 0
+                        if (must) re_ptr->flags7 |= (1L << i);
+                        else re_ptr->hflags7 |= (1L << i);
+#endif
+			return (0);
+		}
+	}
+
+	/* Scan flags8 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags8[i]))
+		{
+#if 0
+                        if (must) re_ptr->flags8 |= (1L << i);
+                        else re_ptr->hflags8 |= (1L << i);
+#endif
+			return (0);
+		}
+	}
+
+	/* Scan flags9 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags9[i]))
+		{
+#if 0
+                        if (must) re_ptr->flags9 |= (1L << i);
+                        else re_ptr->hflags9 |= (1L << i);
+#endif
+			return (0);
+		}
+	}
+#endif	// 0
+
+	/* Oops */
+	s_printf("Unknown monster flag '%s'.", what);
+
+	/* Failure */
+	return (1);
+}
+
+/*
+ * Initialize the "re_info" array, by parsing an ascii "template" file
+ */
+errr init_re_info_txt(FILE *fp, char *buf)
+{
+        int i, j;
+
+        byte blow_num = 0;
+        int r_char_number = 0, nr_char_number = 0;
+
+	char *s, *t;
+
+	/* Not ready yet */
+	bool okay = FALSE;
+
+	/* Current entry */
+        monster_ego *re_ptr = NULL;
+
+
+	/* Just before the first record */
+	error_idx = -1;
+
+	/* Just before the first line */
+	error_line = -1;
+
+
+	/* Start the "fake" stuff */
+        re_head->name_size = 0;
+        re_head->text_size = 0;
+
+	/* Parse */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* Advance the line number */
+		error_line++;
+
+		/* Skip comments and blank lines */
+		if (!buf[0] || (buf[0] == '#')) continue;
+
+		/* Verify correct "colon" format */
+		if (buf[1] != ':') return (1);
+
+
+		/* Hack -- Process 'V' for "Version" */
+		if (buf[0] == 'V')
+		{
+			int v1, v2, v3;
+
+			/* Scan for the values */
+			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+                            (v1 != re_head->v_major) ||
+                            (v2 != re_head->v_minor) ||
+                            (v3 != re_head->v_patch))
+			{
+				return (2);
+			}
+
+			/* Okay to proceed */
+			okay = TRUE;
+
+			/* Continue */
+			continue;
+		}
+
+		/* No version yet */
+		if (!okay) return (2);
+
+
+		/* Process 'N' for "New/Number/Name" */
+		if (buf[0] == 'N')
+		{
+			/* Find the colon before the name */
+			s = strchr(buf+2, ':');
+
+			/* Verify that colon */
+			if (!s) return (1);
+
+			/* Nuke the colon, advance to the name */
+			*s++ = '\0';
+
+			/* Paranoia -- require a name */
+			if (!*s) return (1);
+
+			/* Get the index */
+			i = atoi(buf+2);
+
+			/* Verify information */
+			if (i < error_idx) return (4);
+
+			/* Verify information */
+                        if (i >= re_head->info_num) return (2);
+
+			/* Save the index */
+			error_idx = i;
+
+			/* Point at the "info" */
+                        re_ptr = &re_info[i];
+
+			/* Hack -- Verify space */
+                        if (re_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+
+			/* Advance and Save the name index */
+                        if (!re_ptr->name) re_ptr->name = ++re_head->name_size;
+
+			/* Append chars to the name */
+                        strcpy(re_name + re_head->name_size, s);
+
+			/* Advance the index */
+                        re_head->name_size += strlen(s);
+
+                        /* Some inits */
+                        blow_num = 0;
+                        r_char_number = 0;
+                        nr_char_number = 0;
+                        for (j = 0; j < 5; j++) re_ptr->r_char[j] = 0;
+                        for (j = 0; j < 5; j++) re_ptr->nr_char[j] = 0;
+                        for (j = 0; j < 4; j++)
+                        {
+                                re_ptr->blow[j].method = 0;
+                                re_ptr->blow[j].effect = 0;
+                                re_ptr->blow[j].d_dice = 0;
+                                re_ptr->blow[j].d_side = 0;
+                                re_ptr->blowm[j][0] = MEGO_ADD;
+                                re_ptr->blowm[j][1] = MEGO_ADD;
+                        }
+
+			/* Next... */
+			continue;
+		}
+
+                /* There better be a current re_ptr */
+                if (!re_ptr) return (3);
+
+		/* Process 'G' for "Graphics" (one line only) */
+		if (buf[0] == 'G')
+		{
+			char sym;
+			int tmp;
+
+			/* Paranoia */
+			if (!buf[2]) return (1);
+			if (!buf[3]) return (1);
+			if (!buf[4]) return (1);
+
+			/* Extract the char */
+                        if (buf[2] != '*') sym = buf[2];
+                        else sym = MEGO_CHAR_ANY;
+
+			/* Extract the attr */
+                        if (buf[4] != '*') tmp = color_char_to_attr(buf[4]);
+                        else tmp = MEGO_CHAR_ANY;
+
+			/* Paranoia */
+			if (tmp < 0) return (1);
+
+			/* Save the values */
+                        re_ptr->d_char = sym;
+                        re_ptr->d_attr = tmp;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'I' for "Info" (one line only) */
+		if (buf[0] == 'I')
+		{
+			int spd, hp1, hp2, aaf, ac, slp;
+                        char mspd, mhp1, mhp2, maaf, mac, mslp;
+
+			/* Scan for the other values */
+                        if (12 != sscanf(buf+2, "%c%d:%c%dd%c%d:%c%d:%c%d:%c%d",
+                                &mspd, &spd, &mhp1, &hp1, &mhp2, &hp2, &maaf, &aaf, &mac, &ac, &mslp, &slp)) return (1);
+
+			/* Save the values */
+                        re_ptr->speed = (spd << 2) + monster_ego_modify(mspd);
+                        re_ptr->hdice = (hp1 << 2) + monster_ego_modify(mhp1);
+                        re_ptr->hside = (hp2 << 2) + monster_ego_modify(mhp2);
+                        re_ptr->aaf = (aaf << 2) + monster_ego_modify(maaf);
+                        re_ptr->ac = (ac << 2) + monster_ego_modify(mac);
+                        re_ptr->sleep = (slp << 2) + monster_ego_modify(mslp);
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'W' for "More Info" (one line only) */
+		if (buf[0] == 'W')
+		{
+                        int lev, rar, wt;
+                        char mlev, mwt, mexp, pos;
+			long exp;
+
+			/* Scan for the values */
+                        if (8 != sscanf(buf+2, "%c%d:%d:%c%d:%c%ld:%c",
+                                &mlev, &lev, &rar, &mwt, &wt, &mexp, &exp, &pos)) return (1);
+
+			/* Save the values */
+                        re_ptr->level = (lev << 2) + monster_ego_modify(mlev);
+                        re_ptr->rarity = rar;
+                        re_ptr->weight = (wt << 2) + monster_ego_modify(mwt);
+                        re_ptr->mexp = (exp << 2) + monster_ego_modify(mexp);
+                        re_ptr->before = (pos == 'B')?TRUE:FALSE;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'B' for "Blows" (up to four lines) */
+		if (buf[0] == 'B')
+		{
+                        int n1, n2, dice, side;
+                        char mdice, mside;
+
+			/* Oops, no more slots */
+                        if (blow_num == 4)
+						{
+							s_printf("no more slots!");
+							return (1);
+						}
+
+			/* Analyze the first field */
+			for (s = t = buf+2; *t && (*t != ':'); t++) /* loop */;
+
+			/* Terminate the field (if necessary) */
+			if (*t == ':') *t++ = '\0';
+
+			/* Analyze the method */
+			for (n1 = 0; r_info_blow_method[n1]; n1++)
+			{
+				if (streq(s, r_info_blow_method[n1])) break;
+			}
+
+			/* Invalid method */
+			if (!r_info_blow_method[n1])
+			{
+				s_printf("invalid method!");
+				return (1);
+			}
+
+			/* Analyze the second field */
+			for (s = t; *t && (*t != ':'); t++) /* loop */;
+
+			/* Terminate the field (if necessary) */
+			if (*t == ':') *t++ = '\0';
+
+			/* Analyze effect */
+			for (n2 = 0; r_info_blow_effect[n2]; n2++)
+			{
+				if (streq(s, r_info_blow_effect[n2])) break;
+			}
+
+			/* Invalid effect */
+			if (!r_info_blow_effect[n2])
+			{
+				s_printf("invalid effect!");
+				return (1);
+			}
+
+			/* Save the method */
+                        re_ptr->blow[blow_num].method = n1;
+
+			/* Save the effect */
+                        re_ptr->blow[blow_num].effect = n2;
+
+			/* Extract the damage dice and sides */
+                        if (4 != sscanf(t, "%c%dd%c%d",
+                                &mdice, &dice, &mside, &side))
+						{
+							s_printf("strange dice!");
+							return (1);
+						}
+
+                        re_ptr->blow[blow_num].d_dice = dice;
+                        re_ptr->blow[blow_num].d_side = side;
+                        re_ptr->blowm[blow_num][0] = monster_ego_modify(mdice);
+                        re_ptr->blowm[blow_num][1] = monster_ego_modify(mside);
+                        blow_num++;
+
+			/* Next... */
+			continue;
+		}
+
+                /* Process 'F' for "Flags monster must have" (multiple lines) */
+                if (buf[0] == 'F')
+		{
+                        char r_char;
+
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+                                /* XXX XXX XXX Hack -- Read monster symbols */
+                                if (1 == sscanf(s, "R_CHAR_%c", &r_char))
+                                {
+                                        /* Limited to 5 races */
+                                        if(r_char_number >= 5) continue;
+
+					/* Extract a "frequency" */
+                                        re_ptr->r_char[r_char_number++] = r_char;
+
+					/* Start at next entry */
+					s = t;
+
+					/* Continue */
+					continue;
+				}
+
+				/* Parse this entry */
+                                if (0 != grab_one_ego_flag(re_ptr, s, TRUE)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+                /* Process 'H' for "Flags monster must not have" (multiple lines) */
+                if (buf[0] == 'H')
+		{
+                        char r_char;
+
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+                                /* XXX XXX XXX Hack -- Read monster symbols */
+                                if (1 == sscanf(s, "R_CHAR_%c", &r_char))
+                                {
+                                        /* Limited to 5 races */
+                                        if(nr_char_number >= 5) continue;
+
+					/* Extract a "frequency" */
+                                        re_ptr->nr_char[nr_char_number++] = r_char;
+
+					/* Start at next entry */
+					s = t;
+
+					/* Continue */
+					continue;
+				}
+
+				/* Parse this entry */
+                                if (0 != grab_one_ego_flag(re_ptr, s, FALSE)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+                /* Process 'M' for "Basic Monster Flags" (multiple lines) */
+                if (buf[0] == 'M')
+		{
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+				/* Parse this entry */
+                                if (0 != grab_one_basic_ego_flag(re_ptr, s, TRUE)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+                /* Process 'O' for "Basic Monster -Flags" (multiple lines) */
+                if (buf[0] == 'O')
+		{
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+                                /* XXX XXX XXX Hack -- Read no flags */
+                                if (!strcmp(s, "MF_ALL"))
+				{
+                                        /* No flags */
+                                        re_ptr->nflags1 = re_ptr->nflags2 = re_ptr->nflags3 = re_ptr->nflags7 = re_ptr->nflags8 = re_ptr->nflags9 = 0xFFFFFFFF;
+
+					/* Start at next entry */
+					s = t;
+
+					/* Continue */
+					continue;
+				}
+
+				/* Parse this entry */
+                                if (0 != grab_one_basic_ego_flag(re_ptr, s, FALSE)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+                /* Process 'S' for "Spell Flags" (multiple lines) */
+                if (buf[0] == 'S')
+		{
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while ((*t == ' ') || (*t == '|')) t++;
+				}
+
+				/* XXX XXX XXX Hack -- Read spell frequency */
+				if (1 == sscanf(s, "1_IN_%d", &i))
+				{
+					/* Extract a "frequency" */
+                                        re_ptr->freq_spell = re_ptr->freq_inate = 100 / i;
+
+					/* Start at next entry */
+					s = t;
+
+					/* Continue */
+					continue;
+				}
+
+				/* Parse this entry */
+                                if (0 != grab_one_spell_ego_flag(re_ptr, s, TRUE)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+                }
+
+                /* Process 'T' for "Spell -Flags" (multiple lines) */
+                if (buf[0] == 'T')
+		{
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while ((*t == ' ') || (*t == '|')) t++;
+				}
+
+                                /* XXX XXX XXX Hack -- Read no flags */
+                                if (!strcmp(s, "MF_ALL"))
+				{
+                                        /* No flags */
+                                        re_ptr->nflags4 = re_ptr->nflags5 = re_ptr->nflags6 = 0xFFFFFFFF;
+
+					/* Start at next entry */
+					s = t;
+
+					/* Continue */
+					continue;
+				}
+
+				/* Parse this entry */
+                                if (0 != grab_one_spell_ego_flag(re_ptr, s, FALSE)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* Oops */
+		return (6);
+	}
+
+
+	/* Complete the "name" and "text" sizes */
+        ++re_head->name_size;
+
+	/* No version yet */
+	if (!okay) return (2);
+
+	/* Success */
+	return (0);
+}
+
+#endif	//	RANDUNIS
+
 
 
 #else	/* ALLOW_TEMPLATES */

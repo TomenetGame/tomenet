@@ -80,6 +80,7 @@ extern option_type option_info[];
 extern magic_type innate_powers[96];
 extern martial_arts ma_blows[MAX_MA];
 
+
 /* variable.c */
 extern cptr copyright[6];
 extern byte version_major;
@@ -167,6 +168,9 @@ extern s32b o_max;
 extern s32b m_max;
 extern s32b o_top;
 extern s32b m_top;
+extern header *re_head; 
+extern monster_ego *re_info;
+extern char *re_name;
 
 extern bool cfg_report_to_meta;
 extern char * cfg_meta_address;

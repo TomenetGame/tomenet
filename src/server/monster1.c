@@ -2,6 +2,8 @@
 
 /* Purpose: describe monsters (using monster memory) */
 
+/* All commented out, but still required in PernMangband?	- Jir - */
+
 /*
  * Copyright (c) 1989 James E. Wilson, Christopher J. Stuart
  *

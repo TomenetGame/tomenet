@@ -37,7 +37,7 @@
  
 #define VERSION_MAJOR	3
 #define VERSION_MINOR   2
-#define VERSION_PATCH   1
+#define VERSION_PATCH   2
 
 /*
  * This value specifys the suffix to the version info sent to the metaserver.
@@ -187,6 +187,8 @@
 #define MAX_E_IDX	128	/* Max size for "e_info[]" */
 #define MAX_R_IDX	563 /* Max size for "r_info[]"  551 + 12 (Tanix fix) */
 #define MAX_V_IDX 	256	/* Max size for "v_info[]" */
+#define MAX_RE_IDX	128	/* Max size for "re_info[]" */
+
 
 
 /*
@@ -2858,3 +2860,15 @@ extern int PlayerUID;
  * Utility
  */
 #define BITS(x)  (1 << (x))
+
+/* Ego monsters defines */
+#define MEGO_CHAR_ANY           127
+#define MEGO_ADD                0
+#define MEGO_SUB                1
+#define MEGO_FIX                2
+#define MEGO_PRC                3
+
+#define MEGO_CHANCE             18      /* % chances of getting ego monsters */
+
+#define race_inf(m_ptr) (race_info_idx((m_ptr)->r_idx, (m_ptr)->ego))
+

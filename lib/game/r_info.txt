@@ -124,7 +124,7 @@ N:1:Filthy street urchin
 G:t:D
 I:110:1d4:4:1:40
 W:0:2:0:0
-B:BEG
+B:BEG:*
 B:TOUCH:EAT_GOLD
 F:MALE |
 F:RAND_25 |  FRIENDS |
@@ -153,8 +153,8 @@ N:4:Farmer Maggot
 G:h:w
 I:110:35d10:40:10:3
 W:0:4:0:0
-B:MOAN
-B:MOAN
+B:MOAN:*
+B:MOAN:*
 F:UNIQUE | MALE |
 F:FORCE_MAXHP |
 F:ONLY_ITEM | DROP_90 | DROP_GOOD |
@@ -167,7 +167,7 @@ N:5:Blubbering idiot
 G:t:W
 I:110:1d2:6:1:0
 W:0:1:0:0
-B:DROOL
+B:DROOL:*
 F:MALE |
 F:RAND_25 |
 F:TAKE_ITEM
@@ -177,7 +177,7 @@ N:6:Boil-covered wretch
 G:t:g
 I:110:1d2:6:1:0
 W:0:1:0:0
-B:DROOL
+B:DROOL:*
 F:MALE |
 F:RAND_25 |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR
@@ -188,7 +188,7 @@ N:7:Village genious
 G:t:G
 I:120:4d4:6:1:0
 W:0:1:0:0
-B:DROOL
+B:DROOL:*
 F:MALE |
 F:RAND_25 |
 F:TAKE_ITEM
@@ -199,7 +199,7 @@ N:8:Pitiful looking mangband player
 G:t:U
 I:110:1d4:10:1:40
 W:0:1:0:0
-B:BEG
+B:BEG:*
 F:MALE |
 F:RAND_25 |
 F:TAKE_ITEM | OPEN_DOOR
@@ -209,7 +209,7 @@ N:9:Mangy looking leper
 G:t:u
 I:110:1d1:10:1:50
 W:0:1:0:0
-B:BEG
+B:BEG:*
 F:MALE |
 F:RAND_25 |
 F:TAKE_ITEM | OPEN_DOOR
@@ -231,7 +231,7 @@ N:11:Singing, happy drunk
 G:t:y
 I:110:2d3:10:1:0
 W:0:1:0:0
-B:BEG
+B:BEG:*
 F:MALE |
 F:RAND_50 |
 F:ONLY_GOLD | DROP_60 |
@@ -1694,8 +1694,8 @@ I:120:14d10:18:20:10
 W:10:3:0:80
 B:HIT:HURT:1d10
 B:HIT:HURT:1d9
-B:INSULT
-B:INSULT
+B:INSULT:*
+B:INSULT:*
 F:UNIQUE | MALE |
 F:FORCE_SLEEP | FORCE_MAXHP |
 F:ESCORT | ESCORTS |
