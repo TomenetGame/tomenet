@@ -584,6 +584,15 @@ taken by another player, you will be disconnected with an error message. In
 that case, try again with different names.
 Now that you have logged in you can create a new player character which will
 represent you in the virtual world of Middle Earth!
+Player characters are identified by 3 names:
+-Nickname (character's name)
+-Realname (account name)
+-Hostname (The hostname of the connecting computer)
+The hostname is not really important. However, make sure that all of these 3
+names may only consist of letters, numbers, spaces, and all other characters
+with an ASCII code between 32 (SPACE) and 122 ('z').
+The realname and hostname must not be empty. The nickname (character name)
+needs to start with a letter ('A'..'Z' or 'a'..'z').
 
 
 
@@ -4103,6 +4112,102 @@ PROBLEM:    When I start TomeNET I don't see anything except a small hollow
             hence invisible text.
 SOLUTION:   A rare problem that is not caused by TomeNET really. Restart your
             MS Windows system and the text should be visible again.
+PROBLEM:    I am disconnected during gameplay.
+SOLUTION:   This can have several reasons. On disconnection a message box will
+            appear, telling you about the problem. The following messages
+            might occur:
+            "client quit"
+                    This just shows up if you regularly quit your client.
+            "Committed suicide"
+                    You just committed suicide..
+            "resume conneection"
+                    This happens if you try to log in the same character with
+                    two TomeNET clients at once, the older client will quit
+                    and the client that just logged in will take over.
+            "Killed by..."
+                    Your character was finally killed/destroyed.
+            "Starving to death"
+                    If this happens in town, your life will be saved if you
+                    had full HP. Otherwise you died to starvation.
+            "Timeout 08"
+                    This happens if you 'lag out' on a slow connection or if
+                    the server or your computer is under very heavy load.
+            "Panic save failed"
+                    This means the server just crashed and even failed to save
+                    the characters :(. It will usually be back online after a
+                    minute or earlier.
+            "Panic save succeded"
+                    This means the server just crashed :(. It will usually
+                    be back online after a minute or earlier.
+            "Server shutdown (save succeeded)"
+                    The server was shut down regularly. It will usually be
+                    back online after a minute or earlier.
+            "Server shutdown (save failed!)"
+                    The server was shut down regularly but saving the
+                    characters failed for some reason (insufficient disk
+                    space). It will usually be back online after a minute or
+                    earlier.
+            "banned for ..."
+                    You were banned temporarily from the server (includes
+                    being kicked out).
+            "kicked out"
+                    You were kicked out of the server.
+            "read error"
+                    Can happen if you lag out or if packet loss occurs.
+            "write error"
+                    Can happen if you lag out or if packet loss occurs.
+            "flush error"
+                    Can happen if you lag out or if packet loss occurs.
+            "receive error in play"
+                    Can happen if you lag out or if packet loss occurs.
+PROBLEM:    I am disconnected from the server with an error message, this
+            happens before I can even start playing.
+SOLUTION:   Read the error message displayed in a message box on quitting.
+            Here is a list of possible errors and solutions:
+            "Your name is too long!"
+                    Don't use names longer than 15 characters.
+            "Your name contains control chars!"
+                    Don't use control chars in your name.
+            "No such character"
+                    Your client tried to log in with a
+                    non-existant character (shouldn't happen).
+            "You are temporarily banned"
+                    Self-explaining.
+            "disconnect in login"
+                    Don't take too long for your character
+                    creation or you might time out.
+            "login failure"
+                    A wrong account or password was entered.
+            "Name already owned"
+                    Account name already exists.
+            "Your client is outdated"
+                    Download the latest client, see (0.1).
+            "Server responds 'Unknown client version'"
+                    The server might be running an older
+                    version than your client is.
+            "Sorry, the game is full."
+                    Wow the game is really full!
+            "That nickname is already in use."
+                    Choose a different character name.
+            "The server didn't like your nickname, realname or hostname"
+                    Player characters are identified by 3 names:
+                    -Nickname (character's name)
+                    -Realname (account name)
+                    -Hostname (The hostname of the connecting computer)
+                    The hostname is not really important. However, make sure
+                    that all of these 3 names may only consist of letters,
+                    numbers, spaces, and all other characters with an ASCII
+                    code between 32 (SPACE) and 122 ('z').
+                    The realname and hostname must not be empty. The nickname
+                    (character name) needs to start with a letter ('A'..'Z'
+                    or 'a'..'z').
+            "There is already another character from this user/machine.."
+                    You tried to login with two characters from the same
+                    account or machine simultaneously, which is usually
+                    forbidden.
+            "Sorry, the server is for members only."
+                    Log in with 'guest'. You need to get an account for this
+                    private server in order to play. 
 
 
 
