@@ -369,7 +369,7 @@ void wild_add_monster(int Depth)
 	r_idx = get_mon_num(monster_level);
 	
 	/* place the monster */
-	place_monster_aux(Depth, monst_y, monst_x, r_idx, FALSE, TRUE);
+	place_monster_aux(Depth, monst_y, monst_x, r_idx, FALSE, TRUE, FALSE);
 	
 	/* hack -- restore the monster selection function */
 	get_mon_num_hook = NULL;
@@ -813,7 +813,7 @@ void wild_furnish_dwelling(int Depth, int x1, int y1, int x2, int y2, int type)
 		
 		/* place the owner */
 		
-		place_monster_aux(Depth, y,x, r_idx, FALSE, FALSE);
+		place_monster_aux(Depth, y,x, r_idx, FALSE, FALSE, FALSE);
 	}
 	
 	
@@ -830,7 +830,7 @@ void wild_furnish_dwelling(int Depth, int x1, int y1, int x2, int y2, int type)
 		{
 			for (x = x1; x <= x2; x++)
 			{
-				place_monster_aux(Depth, y,x, r_idx, FALSE, FALSE);
+				place_monster_aux(Depth, y,x, r_idx, FALSE, FALSE, FALSE);
 			}
 		}
 	}

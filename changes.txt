@@ -90,5 +90,12 @@ Change list for PernMangband
 
 27/07/2001 (evileye)
 - Fixed double experience bug on priests and sorcerors.
+
+28/07/2001 (darkgod)
 - Ghost cant gain experience
 - Diving as a ghost dont affect recall depth
+
+28/07/2001 (evileye)
+- Cloned monsters do not drop anymore, and yield no experience
+  Mimic count is no longer updated either.
+

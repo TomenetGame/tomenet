@@ -576,6 +576,7 @@ struct monster_type
 	u32b smart;			/* Field for "smart_learn" */
 
 #endif
+	bool clone;
 
 };
 

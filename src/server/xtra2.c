@@ -3459,16 +3459,17 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			}
 
 			/* Gain experience */
-			gain_exp(Ind, new_exp);
+			if(!m_ptr->clone)
+				gain_exp(Ind, new_exp);
 		}
 		else
 		{
 			/* Give experience to that party */
-			if (!player_is_king(Ind)) party_gain_exp(Ind, p_ptr->party, (long)r_ptr->mexp * r_ptr->level);
+			if (!player_is_king(Ind) && !m_ptr->clone) party_gain_exp(Ind, p_ptr->party, (long)r_ptr->mexp * r_ptr->level);
 		}
 
 		/* Generate treasure */
-		monster_death(Ind, m_idx);
+		if(!m_ptr->clone) monster_death(Ind, m_idx);
 
 		/* When the player kills a Unique, it stays dead */
 		/* No more, this is handled byt p_ptr->r_killed -- DG */
@@ -5219,7 +5220,7 @@ bool master_player(int Ind, char *parms){
 		case 'E':	/* offline editor */
 			for(i=1;i<=NumPlayers;i++){
 				if(!strcmp(Players[i]->name,&parms[1])){
-					msg_format("%s is currently playing",&parms[1]);
+					msg_format(Ind,"%s is currently playing",&parms[1]);
 					return(FALSE);
 				}
 			}

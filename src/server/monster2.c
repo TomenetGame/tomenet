@@ -1415,7 +1415,7 @@ bool allow_unique_level(int r_idx, int Depth)
  * XXX XXX XXX Actually, do something similar for artifacts, to simplify
  * the "preserve" mode, and to make the "what artifacts" flag more useful.
  */
-static bool place_monster_one(int Depth, int y, int x, int r_idx, bool slp)
+static bool place_monster_one(int Depth, int y, int x, int r_idx, bool slp, bool clo)
 {
 	int			i, Ind;
 
@@ -1572,6 +1572,9 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, bool slp)
 	/* No knowledge */
 	m_ptr->cdis = 0;
 
+	/* clone value */
+	m_ptr->clone=clo;
+
 	for (Ind = 1; Ind < NumPlayers + 1; Ind++)
 	{
 		if (Players[Ind]->conn == NOT_CONNECTED)
@@ -1680,7 +1683,7 @@ static bool place_monster_group(int Depth, int y, int x, int r_idx, bool slp)
 			if (!cave_empty_bold(Depth, my, mx)) continue;
 
 			/* Attempt to place another monster */
-			if (place_monster_one(Depth, my, mx, r_idx, slp))
+			if (place_monster_one(Depth, my, mx, r_idx, slp, FALSE))
 			{
 				/* Add it to the "hack" set */
 				hack_y[hack_n] = my;
@@ -1748,7 +1751,7 @@ static bool place_monster_okay(int r_idx)
  * Note the use of the new "monster allocation table" code to restrict
  * the "get_mon_num()" function to "legal" escort types.
  */
-bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp)
+bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp, bool clo)
 {
 	int			i;
 
@@ -1756,7 +1759,7 @@ bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp)
 
 
 	/* Place one monster, or fail */
-	if (!place_monster_one(Depth, y, x, r_idx, slp)) return (FALSE);
+	if (!place_monster_one(Depth, y, x, r_idx, slp, clo)) return (FALSE);
 
 
 	/* Require the "group" flag */
@@ -1812,7 +1815,7 @@ bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp)
 			if (!z) break;
 
 			/* Place a single escort */
-			(void)place_monster_one(Depth, ny, nx, z, slp);
+			(void)place_monster_one(Depth, ny, nx, z, slp, FALSE);
 
 			/* Place a "group" of escorts if needed */
 			if ((r_info[z].flags1 & RF1_FRIENDS) ||
@@ -1848,7 +1851,7 @@ bool place_monster(int Depth, int y, int x, bool slp, bool grp)
 	/*printf("Trying to place a monster (%d) at %d, %d.\n", r_idx, y, x);*/
 
 	/* Attempt to place the monster */
-	if (place_monster_aux(Depth, y, x, r_idx, slp, grp)) return (TRUE);
+	if (place_monster_aux(Depth, y, x, r_idx, slp, grp, FALSE)) return (TRUE);
 
 	/* Oops */
 	return (FALSE);
@@ -2169,7 +2172,7 @@ bool summon_specific(int Depth, int y1, int x1, int lev, int type)
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster (awake, allow groups) */
-	if (!place_monster_aux(Depth, y, x, r_idx, FALSE, TRUE)) return (FALSE);
+	if (!place_monster_aux(Depth, y, x, r_idx, FALSE, TRUE, FALSE)) return (FALSE);
 
 	/* Success */
 	return (TRUE);
@@ -2212,7 +2215,7 @@ bool summon_specific_race(int Depth, int y1, int x1, int r_idx, unsigned char si
 		if (!r_idx) return (FALSE);
 
 		/* Attempt to place the monster (awake, don't allow groups) */
-		if (!place_monster_aux(Depth, y, x, r_idx, FALSE, FALSE)) return (FALSE);
+		if (!place_monster_aux(Depth, y, x, r_idx, FALSE, FALSE, FALSE)) return (FALSE);
 	}
 
 	/* Success */
@@ -2290,7 +2293,7 @@ bool multiply_monster(int m_idx)
 		if (!cave_empty_bold(m_ptr->dun_depth, y, x)) continue;
 
 		/* Create a new monster (awake, no groups) */
-		result = place_monster_aux(m_ptr->dun_depth, y, x, m_ptr->r_idx, FALSE, FALSE);
+		result = place_monster_aux(m_ptr->dun_depth, y, x, m_ptr->r_idx, FALSE, FALSE, TRUE);
 
 		/* Done */
 		break;

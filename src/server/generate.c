@@ -2083,7 +2083,7 @@ static void build_type5(int Depth, int yval, int xval)
 			int r_idx = what[rand_int(64)];
 
 			/* Place that "random" monster (no groups) */
-			(void)place_monster_aux(Depth, y, x, r_idx, FALSE, FALSE);
+			(void)place_monster_aux(Depth, y, x, r_idx, FALSE, FALSE, FALSE);
 		}
 	}
 }
@@ -2436,51 +2436,51 @@ static void build_type6(int Depth, int yval, int xval)
 	/* Top and bottom rows */
 	for (x = xval - 9; x <= xval + 9; x++)
 	{
-		place_monster_aux(Depth, yval - 2, x, what[0], FALSE, FALSE);
-		place_monster_aux(Depth, yval + 2, x, what[0], FALSE, FALSE);
+		place_monster_aux(Depth, yval - 2, x, what[0], FALSE, FALSE, FALSE);
+		place_monster_aux(Depth, yval + 2, x, what[0], FALSE, FALSE, FALSE);
 	}
 
 	/* Middle columns */
 	for (y = yval - 1; y <= yval + 1; y++)
 	{
-		place_monster_aux(Depth, y, xval - 9, what[0], FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 9, what[0], FALSE, FALSE);
+		place_monster_aux(Depth, y, xval - 9, what[0], FALSE, FALSE, FALSE);
+		place_monster_aux(Depth, y, xval + 9, what[0], FALSE, FALSE, FALSE);
 
-		place_monster_aux(Depth, y, xval - 8, what[1], FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 8, what[1], FALSE, FALSE);
+		place_monster_aux(Depth, y, xval - 8, what[1], FALSE, FALSE, FALSE);
+		place_monster_aux(Depth, y, xval + 8, what[1], FALSE, FALSE, FALSE);
 
-		place_monster_aux(Depth, y, xval - 7, what[1], FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 7, what[1], FALSE, FALSE);
+		place_monster_aux(Depth, y, xval - 7, what[1], FALSE, FALSE, FALSE);
+		place_monster_aux(Depth, y, xval + 7, what[1], FALSE, FALSE, FALSE);
 
-		place_monster_aux(Depth, y, xval - 6, what[2], FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 6, what[2], FALSE, FALSE);
+		place_monster_aux(Depth, y, xval - 6, what[2], FALSE, FALSE, FALSE);
+		place_monster_aux(Depth, y, xval + 6, what[2], FALSE, FALSE, FALSE);
 
-		place_monster_aux(Depth, y, xval - 5, what[2], FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 5, what[2], FALSE, FALSE);
+		place_monster_aux(Depth, y, xval - 5, what[2], FALSE, FALSE, FALSE);
+		place_monster_aux(Depth, y, xval + 5, what[2], FALSE, FALSE, FALSE);
 
-		place_monster_aux(Depth, y, xval - 4, what[3], FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 4, what[3], FALSE, FALSE);
+		place_monster_aux(Depth, y, xval - 4, what[3], FALSE, FALSE, FALSE);
+		place_monster_aux(Depth, y, xval + 4, what[3], FALSE, FALSE, FALSE);
 
-		place_monster_aux(Depth, y, xval - 3, what[3], FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 3, what[3], FALSE, FALSE);
+		place_monster_aux(Depth, y, xval - 3, what[3], FALSE, FALSE, FALSE);
+		place_monster_aux(Depth, y, xval + 3, what[3], FALSE, FALSE, FALSE);
 
-		place_monster_aux(Depth, y, xval - 2, what[4], FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 2, what[4], FALSE, FALSE);
+		place_monster_aux(Depth, y, xval - 2, what[4], FALSE, FALSE, FALSE);
+		place_monster_aux(Depth, y, xval + 2, what[4], FALSE, FALSE, FALSE);
 	}
 
 	/* Above/Below the center monster */
 	for (x = xval - 1; x <= xval + 1; x++)
 	{
-		place_monster_aux(Depth, yval + 1, x, what[5], FALSE, FALSE);
-		place_monster_aux(Depth, yval - 1, x, what[5], FALSE, FALSE);
+		place_monster_aux(Depth, yval + 1, x, what[5], FALSE, FALSE, FALSE);
+		place_monster_aux(Depth, yval - 1, x, what[5], FALSE, FALSE, FALSE);
 	}
 
 	/* Next to the center monster */
-	place_monster_aux(Depth, yval, xval + 1, what[6], FALSE, FALSE);
-	place_monster_aux(Depth, yval, xval - 1, what[6], FALSE, FALSE);
+	place_monster_aux(Depth, yval, xval + 1, what[6], FALSE, FALSE, FALSE);
+	place_monster_aux(Depth, yval, xval - 1, what[6], FALSE, FALSE, FALSE);
 
 	/* Center monster */
-	place_monster_aux(Depth, yval, xval, what[7], FALSE, FALSE);
+	place_monster_aux(Depth, yval, xval, what[7], FALSE, FALSE, FALSE);
 }
 
 

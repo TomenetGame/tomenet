@@ -648,7 +648,7 @@ extern void update_mon(int m_idx, bool dist);
 extern void update_monsters(bool dist);
 extern void update_player(int Ind);
 extern void update_players(void);
-extern bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp);
+extern bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp, bool clo);
 extern bool place_monster(int Depth, int y, int x, bool slp, bool grp);
 extern bool alloc_monster(int Depth, int dis, int slp);
 extern bool summon_specific(int Depth, int y1, int x1, int lev, int type);

@@ -3596,7 +3596,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			delete_monster_idx(c_ptr->m_idx);
 
 			/* Create a new monster (no groups) */
-			(void)place_monster_aux(Depth, y, x, i, FALSE, FALSE);
+			(void)place_monster_aux(Depth, y, x, i, FALSE, FALSE, FALSE);
 
 			/* XXX XXX XXX Hack -- Assume success */
 
