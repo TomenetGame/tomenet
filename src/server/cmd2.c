@@ -3397,7 +3397,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Hack -- yet another anti-cheeze(yaac) */
 	if (!magic &&
-		(p_ptr->lev < cfg.newbies_cannot_drop || true_artifact_p(o_ptr)))
+		(p_ptr->lev < cfg.newbies_cannot_drop || true_artifact_p(o_ptr)) || p_ptr->inval)
 	{
 		o_ptr->level = 0;
 	}
@@ -3561,7 +3561,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 
 	/* Handle the newbies_cannot_drop option */
-	if (p_ptr->lev < cfg.newbies_cannot_drop)
+	if (p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval)
 	{
 		msg_format(Ind, "Please don't litter the %s.",
 			istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));

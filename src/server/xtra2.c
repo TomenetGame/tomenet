@@ -3868,7 +3868,7 @@ void player_death(int Ind)
 			p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING &&
 			p_ptr->fruit_bat != -1)
 	{
-		msg_print(Ind, "\377oYour amulet shatters into the pieces!");
+		msg_print(Ind, "\377oYour amulet shatters into pieces!");
 
 		inven_item_increase(Ind, INVEN_NECK, -99);
 //		inven_item_describe(Ind, INVEN_NECK);
@@ -4097,9 +4097,9 @@ void player_death(int Ind)
 			}
 		}
 
-		if (!is_admin(p_ptr) && p_ptr->max_plv >= cfg.newbies_cannot_drop){
+		if (!is_admin(p_ptr) && !p_ptr->inval && p_ptr->max_plv >= cfg.newbies_cannot_drop){
 #ifdef DEATH_ITEM_LOST
-			/* Apply penulty of death */
+			/* Apply penalty of death */
 			if (!artifact_p(o_ptr) && magik(DEATH_ITEM_LOST))
 				away = TRUE;
 			else

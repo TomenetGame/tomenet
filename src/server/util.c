@@ -3345,6 +3345,10 @@ static void player_talk_aux(int Ind, char *message)
 	/* Form a search string if we found a colon */
 	if (colon)
 	{
+		if(p_ptr->inval){
+			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
+			return;
+		}
 		/* Copy everything up to the colon to the search string */
 		strncpy(search, message, colon - message);
 

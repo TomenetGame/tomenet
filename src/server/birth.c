@@ -1674,6 +1674,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	if(c_acc){
 		p_ptr->account=c_acc->id;
 		p_ptr->noscore=(c_acc->flags & ACC_NOSCORE);
+		p_ptr->inval=(c_acc->flags & ACC_TRIAL);
 		KILL(c_acc, struct account);
 	}
 
@@ -1724,6 +1725,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	if(c_acc){
 		p_ptr->account=c_acc->id;
 		p_ptr->noscore=(c_acc->flags & ACC_NOSCORE);
+		p_ptr->inval=(c_acc->flags & ACC_TRIAL);
 		KILL(c_acc, struct account);
 	}
 

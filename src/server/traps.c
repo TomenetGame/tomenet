@@ -3460,7 +3460,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	}
 
 	/* Hack -- yet another anti-cheeze(yaac) */
-	if (p_ptr->lev < cfg.newbies_cannot_drop)
+	if (p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval)
 	{
 		o_ptr->level = 0;
 		j_ptr->level = 0;

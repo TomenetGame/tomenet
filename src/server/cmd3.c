@@ -770,6 +770,11 @@ void do_cmd_drop(int Ind, int item, int quantity)
 		}
 	}
 
+	if(p_ptr->inval){
+		msg_print(Ind, "You may not drop items. Ask an admin to validate your account.");
+		return;
+	}
+
 
 #if 0
 	/* Mega-Hack -- verify "dangerous" drops */
@@ -803,6 +808,11 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	if (p_ptr->lev < cfg.newbies_cannot_drop)
 	{
 		msg_print(Ind, "You are not experienced enough to drop gold.");
+		return;
+	}
+
+	if(p_ptr->inval){
+		msg_print(Ind, "You may not drop gold. Ask an admin to validate your account.");
 		return;
 	}
 	
@@ -1604,7 +1614,7 @@ void do_cmd_steal(int Ind, int dir)
 			p_ptr->pkill|=PKILL_KILLABLE;
 
 		/* Thief drops some items from the shock of blow */
-		if (cfg.newbies_cannot_drop <= p_ptr->lev)
+		if (cfg.newbies_cannot_drop <= p_ptr->lev && !p_ptr->inval)
 		{
 			for(i = rand_int(5); i < 5 ; i++ )
 			{
