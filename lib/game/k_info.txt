@@ -3018,8 +3018,8 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATE
 
 N:918:Pseudo Dragon Scale Mail~
 G:[:v
-I:38:10:0
-W:70:0:200:60000
+I:38:8:0
+W:60:0:200:40000
 A:70/16
 P:30:2d4:-2:0:10
 F:RES_LITE | RES_DARK | FLY |
@@ -6051,6 +6051,8 @@ F:INSTA_ART
 #A:0/1:10/2
 #P:0:2d4:0:0:0
 #F:SHOW_MODS
+
+#N:918:Pseudo Dragon Scale Mail: defined above below the other DSMs.
 
 
 #N:(No.):(name)

@@ -2471,6 +2471,10 @@ cptr item_activation(object_type *o_ptr)
 		{
 		  return "polymorph into an Ancient MultiHued Dragon every 200+d100 turns";
 		}
+	      case SV_DRAGON_PSEUDO:
+		{
+		  return "polymorph into a Pseudo Dragon every 200+d100 turns";
+		}
 	      case SV_DRAGON_BRONZE:
 		{
 		  return "polymorph into an Ancient Bronze Dragon every 200+d100 turns";

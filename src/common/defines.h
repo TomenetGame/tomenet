@@ -1829,6 +1829,7 @@ that keeps many algorithms happy.
 #define SV_DRAGON_RED                    4
 #define SV_DRAGON_GREEN                  5
 #define SV_DRAGON_MULTIHUED              6
+#define SV_DRAGON_PSEUDO		 8
 #define SV_DRAGON_SHINING               10
 #define SV_DRAGON_LAW                   12
 #define SV_DRAGON_BRONZE                14

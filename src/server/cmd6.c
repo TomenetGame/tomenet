@@ -4698,6 +4698,12 @@ void do_cmd_activate(int Ind, int item)
 				do_mimic_change(Ind, race_index("Ancient multi-hued dragon"), TRUE);
 				break;
 			}
+			case SV_DRAGON_PSEUDO:
+			{
+				//			do_mimic_change(Ind, 462);
+				do_mimic_change(Ind, race_index("Pseudo dragon"), TRUE);
+				break;
+			}
 			case SV_DRAGON_SHINING:
 			{
 				//			do_mimic_change(Ind, 463);
