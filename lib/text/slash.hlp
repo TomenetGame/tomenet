@@ -1,0 +1,130 @@
+<<Slash-commands reference manual>>
+
+This is help screen for Slash-commands.
+If you want a help for game-play itself, try '?' key in the game instead.
+
+'Slash-commands' are set of expanded commands available via chat-command(':').
+
+Commands: afk bed bug cast dis dress ex feel help ignore less me pkill
+          quest rec ref rfe shout tag target untag ver
+
+Note:
+(parameter) cannot be omitted.
+[parameter] can be omitted.
+
+[User-level commands]
+
+/ 
+    Displays a concise list of slash-commands available.
+
+/afk 
+    Toggle 'AFK'(Away From Keyboard) mode on/off.
+    AFK mode change will be announced to every players in the game.
+    Players in AFK mode are shown as such in '@' screen.
+    AFK players don't comsume food(if not hugry already).
+    AFK mode is automatically turned off when the player move.
+
+/bed {alias: /naked} 
+    Take everything off from the equipment slots.
+    Items with {!t} tag or those cursed cannot be taken off this way.
+
+/cast (book no. or slot no.) (spell sign) [target player's name] 
+    Cast the specified spell.
+    This is especially useful to cast an assistant spell to another player.
+    Exapmle: /cast 1 b DG
+        This casts 'b' spell of a book inscribed {@m1}(or {@p1} etc) to
+        a player named 'DG', if he is within your sight.
+        You can macro this like '\e:/cast 1 b DG\n'.
+    This command consumes 1 (casting) turn.
+    This command was coded by Tanix(Asclep).
+
+/dispose {shorthand: /dis} 
+    Destroys everything in your pack without inscription.
+    Items with following inscriptions are destroyed also:
+        discount tag (eg. {25% off}) 
+        pseudo-id tag ({good} or below) 
+    This can be very useful to get rid of useless items from your backpack.
+    This command consumes total of 1 turn(regardless of # of items destroyed).
+
+/dress {shorthand: /dr} 
+    Try to fill the equipment slots as much as possible.
+    Items with {!w} or {cursed} tags cannot be worn this way.
+    Be careful not to wield unexpected items using this!
+
+/extra {alias: /examine shorthand: /ex} 
+    Displays extra informations about your character.
+    Currently, this displays how sane you are.
+
+/feeling {shorthand: /fe}
+	Displays the feeling of the floor you are on.
+
+/help {alias: /? shorthand: /h}
+    Displays this help file.
+
+/ignore (player name) {shorthand: /ig} 
+    Toggle 'ignore' mode on/off for specified player/party.
+    If you're 'ignoring' someone, his/her chat msgs will never be sent to you.
+    (Added for anti-spamming purpose.)
+
+/less
+    If RFE file is open by setting, you can view the RFEs from everyone.
+
+/me [strings] 
+    Messages via this command will be sent in a special manner.
+    for example, '/me laughs at you!' is converted to 'DG laughs at you!'.
+
+/monster [monster letter/monster name] {shorthand: /mo}
+    Displays how many monsters of that kind you've slain so far.
+	If nothing is specified, it shows all the monsters.
+	Mimics receive the 'learning' status also.
+	ex) /mo Z
+
+/pkill
+	Toggles 'player-killing' mode.
+
+/quest [guild (name)]
+	Requests for a quest.
+	If you already have quests assigned, it displays the current quest status.
+
+/refresh {shorthand: /ref} 
+    Force the server to reflesh your states manually.
+
+/recall {worldpos} {shorthand: /rec} 
+    If you have an item with inscription {@R} (eg. WoR, RoR, spellbooks etc),
+    attempt to use that.
+    You can specify the destination, like:
+        /rec -1500
+        /rec 25,40
+
+/rfe (message) {alias: /bug /cookie}
+    Send a message to the admins(Dungeon Master), even when they're off.
+    Please use this for sending bug-reports, requests, your feelings or
+    new cookies.
+	If server option is configured, you can view RFEs via /less.
+
+/shout [message]
+    You shout.
+
+/tag [inscription] 
+    Inscribe every none-inscribed items in your backpack with [inscription].
+    If [inscription] is ommitted, {!k} will be inscribed.
+    Usually, this command is used in combination with /dis command.
+
+/target (X) (Y) 
+    Set the target(for spellcasting etc) to the specified location.
+    eg. '/target -4 1' sets the target to the position x:
+
+    ......@..
+    ..x......
+
+    (Based on an idea of Norcoth.)
+
+/untag [inscription] 
+    Uninscribe every items in your backpack inscribed [inscription].
+    If [inscription] is ommitted, {!k} inscription will be removed.
+
+/version [any letters] {shorthand: /ver}
+    Display the version information of running *SERVER*.
+    Client version is that one shown in meta-server list.
+    If called with any options, this shows the current server settings.
+        /ver a
