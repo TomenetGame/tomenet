@@ -278,7 +278,6 @@ F:HOLD_LIFE | REGEN | ESP_DRAGON |
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_POIS | FEATHER | FLY |
 F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK | ULTIMATE | 
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_BLIND | RES_CONF |
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD |
 F:ACTIVATE
 F:REGEN_MANA
 D:A suit of adamant, set with scales of every color, surrounded in a nimbus  
@@ -742,7 +741,6 @@ W:15:30:30:40000
 P:0:2d5:12:14:0
 F:KILL_DRAGON | IM_FIRE | ESP_DRAGON | RES_FEAR | 
 F:DEX | FREE_ACT | SEE_INVIS | 
-F:IGNORE_ACID | IGNORE_FIRE
 D:The weapon of Azaghal when he wounded Glaurung.  It is deadly 
 D:when fighting dragons and is said to make the breaths of fire 
 D:completely harmless.  
@@ -917,7 +915,7 @@ P:0:2d4:10:15:5
 F:DEX | HIDE_TYPE | STEALTH | SEARCH | BRAND_POIS | 
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | BRAND_ACID |
 F:FREE_ACT | RES_DARK | SUST_DEX | SEE_INVIS | ESP_EVIL | TUNNEL | 
-F:SHOW_MODS | IGNORE_ACID | IGNORE_FIRE
+F:SHOW_MODS
 D:Forged from meteoric iron, this long chopping dagger slices through  
 D:ordinary metal as easily as its title, "Iron Cleaver", suggests.
 
@@ -1720,7 +1718,7 @@ W:40:20:40:60000
 P:0:0d0:20:25:0
 F:DEX | STEALTH | HIDE_TYPE | 
 F:RES_DISEN | XTRA_SHOTS | SHOW_MODS
-F:FREE_ACT | IGNORE_ACID | IGNORE_FIRE
+F:FREE_ACT
 D:The great bow of Beleg, made of black yew and strung with elven hair that 
 D:faintly shines a pale clear gold.
 
@@ -2199,7 +2197,6 @@ P:50:2d4:-8:0:35
 F:FEATHER | FLY | ESP_DRAGON |
 F:RES_NEXUS | RES_CHAOS | REGEN | 
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_CONF |
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD |
 F:ACTIVATE
 F:REGEN_MANA
 D:A mighty suit of dragon armour, set with the scales of dragons of both 
@@ -2521,7 +2518,7 @@ W:75:60:200:0
 P:0:10d10:0:0:-30
 F:LIFE | CON | INT | WIS | ESP_ALL | LITE3 | LITE1
 F:CURSED | HEAVY_CURSE | TY_CURSE | DRAIN_EXP | 
-F:RES_BLIND | SEE_INVIS | ACTIVATE
+F:RES_BLIND | SEE_INVIS | ACTIVATE | INSTA_ART
 D:A shining white ball of unbreakable crystal, the ancient Palantiri 
 D:were used by kings of Numenor and later by the Exiles for rapid 
 D:communication between distant lands.  This Palantir, however, was 
@@ -2571,8 +2568,8 @@ F:ANTIMAGIC_30 | DRAIN_MANA
 D:The ultimate point an phylosopher had arrived, this amulet
 D:reveals the light of true belief.
 
-# The Dark Sword 'Schwerzuglauben'
-N:212:'Schwerzuglauben'
+# The Dark Sword 'Schmerzglaube'
+N:212:'Schmerzglaube'
 I:23:33:2
 W:50:30:70:120000
 P:5:5d7:10:10:0
@@ -2639,10 +2636,10 @@ D:and rebirths. For some time Moltor enjoyed his ale, and all was well.
 
 N:217:'Ocean Soul'
 I:35:8:0
-W:30:45:10:150000
+W:30:30:10:150000
 P:2:0d0:0:0:10
-F:IM_WATER | FLY | IM_COLD
-#F:IM_WATER | PASS_WATER | BREATHE_WATER | IM_COLD
+F:INSTA_ART | IM_WATER | FLY | IM_COLD
+#F:INSTA_ART | IM_WATER | PASS_WATER | BREATHE_WATER | IM_COLD
 D:Woven by the Noldor to honour the Valar Ulmo, mild ruler of the endless sea.
 D:This cloak allows its wearer to travel over the sea without need for a ship
 D:and at the same time protect him from the wrath of unleashed waves.
