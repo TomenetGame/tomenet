@@ -3017,7 +3017,16 @@ that keeps many algorithms happy.
 #define TR5_INVIS               0x10000000L
 #define TR5_SENS_FIRE           0x20000000L
 #define TR5_REFLECT             0x40000000L
+#define TR5_PASS_WATER		0x80000000L
+
 /*#define TR5_NO_NORM_ART         0x80000000L */
+
+/* Not yet implemented/used. Cold might be needed. For monsters, even susc-poison is implemented.
+   For the player I think fire and cold are enough. (C. Blue)
+#define TR6_SENS_COLD		0x00000001L
+#define TR6_SENS_ACID		0x00000002L
+#define TR6_SENS_ELEC		0x00000004L
+*/
 
 /* ESP defines */
 #define ESP_ORC                 0x00000001L
@@ -3549,6 +3558,25 @@ that keeps many algorithms happy.
 #define RF9_SPECIAL_GENE        0x00002000      /* The monster can only be generated in special conditions like quests, special dungeons, ... */
 #define RF9_NEVER_GENE          0x00004000      /* The monster cannot be normaly generated */
 
+/* no_conf, no_fear, no_sleep, res_<others> already exist (C. Blue) */
+/* These flags are added to r_info for improved logic in mimic forms (eg chaos hound gives res_chaos) */
+/* The resistance flags are added to distinguish between im_ and res_ now. Until now im_ was simply a strong res. */
+#define RF9_RES_ACID            0x00008000L
+#define RF9_RES_ELEC            0x00010000L
+#define RF9_RES_FIRE            0x00020000L
+#define RF9_RES_COLD            0x00040000L
+#define RF9_RES_POIS            0x00080000L
+#define RF9_RES_LITE            0x00100000L
+#define RF9_RES_DARK            0x00200000L
+#define RF9_RES_BLIND           0x00400000L
+#define RF9_RES_SOUND           0x00800000L
+#define RF9_RES_SHARDS          0x01000000L
+#define RF9_RES_CHAOS           0x02000000L
+#define RF9_RES_TIME		0x04000000L
+#define RF9_RES_MANA		0x08000000L
+#define RF9_IM_WATER		0x10000000L	/* Water immunity, should also let you breathe under water */
+/* Hm, fits in perfectly :) Fate? */
+
 /*
  * these flags are not in PernA nor in PernM-monsters,
  * but the code for them already exists in our code..
@@ -3557,6 +3585,8 @@ that keeps many algorithms happy.
 #define RF9_IM_TELE                     0x20000000      /* Resist teleportation */
 #define RF9_IM_PSI			0x40000000	/* Immune to (?) */
 #define RF9_RES_PSI			0x80000000	/* Resist (?) */
+
+
 
 /* 
 	Different types of terrain, used for the wilderness.
