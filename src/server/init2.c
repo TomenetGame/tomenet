@@ -2958,6 +2958,10 @@ void set_server_option(char * option, char * value)
 	{
 		cfg.game_port = atoi(value);
 	}
+	else if (!strcmp(option,"GW_PORT"))
+	{
+		cfg.gw_port = atoi(value);
+	}
 	else if (!strcmp(option,"MIN_UNSTATIC_LEVEL"))
 	{
 		cfg.min_unstatic_level = atoi(value);

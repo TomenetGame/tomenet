@@ -2479,6 +2479,7 @@ struct server_opts
 	s32b retire_timer;
 	s32b game_port;
 	s32b console_port;
+	s32b gw_port;
 	s32b spell_interfere;
 	s32b spell_stack_limit;
 	s16b fps;

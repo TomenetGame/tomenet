@@ -360,7 +360,14 @@ void client_init(char *argv1, bool skip)
 	else
 	{
 		/* Set the server's name */
-		strcpy(server_name, argv1);
+                strcpy(server_name, argv1);
+                if (strchr(server_name, ':'))
+                {
+
+                        char *port = strchr(server_name, ':');
+                        cfg_game_port = atoi(port + 1);
+                        *port = '\0';
+                }
 	}
 
 	/* Fix "localhost" */

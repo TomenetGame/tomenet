@@ -50,7 +50,7 @@ void world(int ser){
 
 		sl=select(mfd+1, &fds, NULL, NULL, NULL);
 		if(sl==-1){
-			fprintf(stderr, "select broke\n");
+                        fprintf(stderr, "select broke\n");
 			return;
 		}
 		if(FD_ISSET(ser, &fds)){
@@ -71,6 +71,7 @@ void world(int ser){
 			}
 #endif
 			addclient(sl);
+                        fprintf(stderr, "added!\n");
 		}
 
 		for(c_cl=clist; c_cl; c_cl=c_cl->next)
@@ -86,7 +87,8 @@ void world(int ser){
 
 void handle(struct client *ccl){
 	int x;
-	x=recv(ccl->fd, ccl->buf+ccl->blen, 1024-ccl->blen, 0);
+        fprintf(stderr, "handling\n");
+        x=recv(ccl->fd, ccl->buf+ccl->blen, 1024-ccl->blen, 0);
 	if(x==-1){
 		ccl->flags|=CL_QUIT;
 		return;
@@ -101,8 +103,9 @@ void handle(struct client *ccl){
 
 void wproto(struct client *ccl){
 	struct wpacket *wpk=(struct wpacket*)ccl->buf;
-	while(ccl->blen>=sizeof(struct wpacket)){
-		switch(wpk->type){
+        while(ccl->blen>=sizeof(struct wpacket)){
+                fprintf(stderr, "protoing... type %d\n", wpk->type);
+                switch(wpk->type){
 			case WP_LACCOUNT:
 				/* ignore unauthed servers
 				   only legitimate servers should
@@ -130,7 +133,7 @@ void wproto(struct client *ccl){
 				ccl->authed=pwcheck(wpk->d.auth.pass, wpk->d.auth.val);
 				break;
 			case WP_CHAT:
-				/* only relay all for now */
+                                /* only relay all for now */
 				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
 					char msg[160];
 					sprintf(msg, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);

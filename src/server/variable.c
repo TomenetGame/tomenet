@@ -127,7 +127,7 @@ server_opts cfg =
 	201,		// preserve_death_level
 	300,50000,	// unique_respawn_time, unique_max_respawn_time
 	6, 8,		// level_unstatic_chance, min_unstatic_level
-	-1,18348,18349,	// retire_timer, game_port, console_port
+	-1,18348,18349,18400,	// retire_timer, game_port, console_port, gw_port
 	0,200,		// spell_interfere, spell_stack_limit
 
 	/* s16b */

@@ -560,7 +560,7 @@ void setup_contact_socket(void)
 #endif
 #ifdef SERVER_GWPORT
 	/* evileye testing only */
-	if ((SGWSocket = CreateServerSocket(18400)) == -1)
+	if ((SGWSocket = CreateServerSocket(cfg.gw_port)) == -1)
 	{
 		s_printf("Couldn't create server gateway port\n");
 		return;

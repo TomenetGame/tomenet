@@ -48,6 +48,7 @@ char *rpgen(char *dest){
 /* return server number, or -1 on failure */
 short pwcheck(char *cpasswd, unsigned long val){
 	int i;
+	fprintf(stderr, "authing..\n");
 	for(i=0; i<snum; i++){
 		if(val==chk(slist[i].pass, cpasswd)){
 			return(i+1);
