@@ -730,18 +730,117 @@ static void process_command(void)
  /* This function returns a 0 if no attack has been performed, a 1 if an attack
   * has been performed and there are still monsters around, and a 2 if an attack
   * has been performed and all of the surrounding monsters are dead.
+  * (This difference between 1 and 2 isn't used anywhere... but I leave it for
+  *  future use. I added 4 to it when non-melee auto-retaliation took place for
+  *  energy calculation.		Jir)
   */
   /* We now intelligently try to decide which monster to autoattack.  Our current
    * algorithm is to fight first Q's, then any monster that is 20 levels higher
    * than its peers, then the most proportionatly wounded monster, then the highest
    * level monster, then the monster with the least hit points.
    */ 
+/* Now a player can choose the way of auto-retaliating;		- Jir -
+ * Item marked with inscription {@O} will be used automatically.
+ * For spellbooks this should be {@Oa} to specify which spell to use.
+ * You can also choose to 'do nothing' by inscribing it on not-suitable item.
+ *
+ * Fighters are allowed to use {@O-}, which is only used if his HP is 1/2 or less.
+ */
 static int auto_retaliate(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr, *p_target_ptr = NULL, *prev_p_target_ptr = NULL;
-	int i, tmp;
-	char friends = 0;
+	int i, target, prev_target, item = -1, flag = 0;
+//	char friends = 0;
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
+	unsigned char * inscription;
+
+	/* Check each monster */
+	for (i = 1; i < m_max; i++)
+	{
+		m_ptr = &m_list[i];
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Skip monsters that aren't at this depth */
+		if (p_ptr->dun_depth != m_ptr->dun_depth) continue;
+
+		/* Make sure that the player can see this monster */
+		if (!p_ptr->mon_vis[i]) continue;
+
+                if (p_ptr->id == m_ptr->owner) continue;
+
+		/* A monster is next to us */
+		if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) == 1)
+		{
+			/* Figure out if this is the best target so far */
+			if (m_target_ptr)
+			{
+				/* If it is a Q, then make it our new target. */
+				/* We don't handle the case of choosing between two
+				 * Q's because if the player is standing next to two Q's
+				 * he deserves whatever punishment he gets.
+				 */
+                                if (R_INFO(m_ptr)->d_char == 'Q')
+				{
+					prev_m_target_ptr = m_target_ptr;
+					m_target_ptr = m_ptr;
+					prev_target = target;
+					target = i;
+				}
+				/* Otherwise if it is 20 levels higher than everything
+				 * else attack it.
+				 */
+                                else if ((R_INFO(m_ptr)->level - 20) >=
+                                                R_INFO(m_target_ptr)->level)
+				{
+					prev_m_target_ptr = m_target_ptr;
+					m_target_ptr = m_ptr;
+					prev_target = target;
+					target = i;
+				}
+				/* Otherwise if it is the most proportionatly wounded monster
+				 * attack it.
+				 */
+				else if (m_ptr->hp * m_target_ptr->maxhp < m_target_ptr->hp * m_ptr->maxhp)
+				{
+					prev_m_target_ptr = m_target_ptr;
+					m_target_ptr = m_ptr;
+					prev_target = target;
+					target = i;
+				}
+				/* If it is a tie attack the higher level monster */
+				else if (m_ptr->hp * m_target_ptr->maxhp == m_target_ptr->hp * m_ptr->maxhp)
+				{
+                                        if (R_INFO(m_ptr)->level > R_INFO(m_target_ptr)->level)
+					{
+						prev_m_target_ptr = m_target_ptr;
+						m_target_ptr = m_ptr;
+						prev_target = target;
+						target = i;
+					}
+					/* If it is a tie attack the monster with less hit points */
+                                        else if (R_INFO(m_ptr)->level == R_INFO(m_target_ptr)->level)
+					{
+						if (m_ptr->hp < m_target_ptr->hp)
+						{
+							prev_m_target_ptr = m_target_ptr;
+							m_target_ptr = m_ptr;
+							prev_target = target;
+							target = i;
+						}
+					}
+				}
+			}
+			else
+			{
+				prev_m_target_ptr = m_target_ptr;
+				m_target_ptr = m_ptr;
+				prev_target = target;
+				target = i;
+			}
+		}
+	}
 
 	/* Check each player */
 	for (i = 1; i <= NumPlayers; i++)
@@ -812,101 +911,66 @@ static int auto_retaliate(int Ind)
 		}
 	}
 
-
-	/* Check each monster */
-	for (i = 1; i < m_max; i++)
+	/* Pick an item with {@O} inscription */
+	for (i = 0; i < INVEN_PACK; i++)
 	{
-		m_ptr = &m_list[i];
+		if (!p_ptr->inventory[i].tval) break;
 
-		/* Paranoia -- Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
+//		unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
+		inscription = (unsigned char *) quark_str(p_ptr->inventory[i].note);
 
-		/* Skip monsters that aren't at this depth */
-		if (p_ptr->dun_depth != m_ptr->dun_depth) continue;
+		/* check for a valid inscription */
+		if (inscription == NULL) continue;
 
-		/* Make sure that the player can see this monster */
-		if (!p_ptr->mon_vis[i]) continue;
-
-                if (p_ptr->id == m_ptr->owner) continue;
-
-		/* A monster is next to us */
-		if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) == 1)
+		/* scan the inscription for @O */
+		while (*inscription != '\0')
 		{
-			/* Figure out if this is the best target so far */
-			if (m_target_ptr)
+			if (*inscription == '@')
 			{
-				/* If it is a Q, then make it our new target. */
-				/* We don't handle the case of choosing between two
-				 * Q's because if the player is standing next to two Q's
-				 * he deserves whatever punishment he gets.
-				 */
-                                if (R_INFO(m_ptr)->d_char == 'Q')
-				{
-					prev_m_target_ptr = m_target_ptr;
-					m_target_ptr = m_ptr;
-				}
-				/* Otherwise if it is 20 levels higher than everything
-				 * else attack it.
-				 */
-                                else if ((R_INFO(m_ptr)->level - 20) >=
-                                                R_INFO(m_target_ptr)->level)
-				{
-					prev_m_target_ptr = m_target_ptr;
-					m_target_ptr = m_ptr;
-				}
-				/* Otherwise if it is the most proportionatly wounded monster
-				 * attack it.
-				 */
-				else if (m_ptr->hp * m_target_ptr->maxhp < m_target_ptr->hp * m_ptr->maxhp)
-				{
-					prev_m_target_ptr = m_target_ptr;
-					m_target_ptr = m_ptr;
-				}
-				/* If it is a tie attack the higher level monster */
-				else if (m_ptr->hp * m_target_ptr->maxhp == m_target_ptr->hp * m_ptr->maxhp)
-				{
-                                        if (R_INFO(m_ptr)->level > R_INFO(m_target_ptr)->level)
-					{
-						prev_m_target_ptr = m_target_ptr;
-						m_target_ptr = m_ptr;
-					}
-					/* If it is a tie attack the monster with less hit points */
-                                        else if (R_INFO(m_ptr)->level == R_INFO(m_target_ptr)->level)
-					{
-						if (m_ptr->hp < m_target_ptr->hp)
-						{
-							prev_m_target_ptr = m_target_ptr;
-							m_target_ptr = m_ptr;
-						}
-					}
+				inscription++;
+
+				/* a valid @O has been located */
+				if (*inscription == 'O')
+				{                       
+					inscription++;
+					item = i;
+					i = INVEN_PACK;
+					break;
 				}
 			}
-			else
-			{
-				prev_m_target_ptr = m_target_ptr;
-				m_target_ptr = m_ptr;
-			}
+			inscription++;
 		}
 	}
 
 	/* If we have a player target, attack him. */
 	if (p_target_ptr)
 	{
+		/* set the target */
+		p_ptr->target_who = 0 - p_target_ptr->id;
+
 		/* Attack him */
-		py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
+//		py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
+		if (retaliate_item(Ind, item, inscription))
+		{
+			flag = 4;
+		}
+		else
+		{
+			py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
+		}
 
 		/* Check if he is still alive or another targets exists */
 		if ((!p_target_ptr->death) || (prev_p_target_ptr) || (m_target_ptr))
 		{
 			/* We attacked something */
-			return 1;
+			return 1 + flag;
 		}
 		else
 		{
 			/* Otherwise return 2 to indicate we are no longer
 			 * autoattacking anything.
 			 */
-			return 2;
+			return 2 + flag;
 		}
 	}
 
@@ -916,26 +980,163 @@ static int auto_retaliate(int Ind)
 	/* If we have a target to attack, attack it! */
 	if (m_target_ptr)
 	{
+		/* set the target */
+		p_ptr->target_who = target;
+
 		/* Attack it */
-		py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
+//		py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
+		if (retaliate_item(Ind, item, inscription))
+		{
+			flag = 4;
+		}
+		else
+		{
+			py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
+		}
 
 		/* Check if it is still alive or another targets exists */
 		if ((m_target_ptr->r_idx) || (prev_m_target_ptr) || (p_target_ptr))
 		{
 			/* We attacked something */
-			return 1;
+			return 1 + flag;
 		}
 		else
 		{
 			/* Otherwise return 2 to indicate we are no longer
 			 * autoattacking anything.
 			 */
-			return 2;
+			return 2 + flag;
 		}
 	}
 
 	/* Nothing was attacked. */
 	return 0;
+}
+
+/*
+ * Handle items for auto-retaliation  - Jir -
+ * use_old_target is *strongly* recommended to actually make use of it.
+ */
+static bool retaliate_item(int Ind, int item, cptr inscription)
+{
+	player_type *p_ptr = Players[Ind];
+	int spell = 0;
+
+	if (item < 0) return FALSE;
+
+	/* 'Do nothing' inscription */
+	if (*inscription == 'x') return TRUE;
+
+	/* Fighter classes can use various items for this */
+	if ((p_ptr->pclass == CLASS_WARRIOR) ||
+		(p_ptr->pclass == CLASS_UNBELIEVER) ||
+		(p_ptr->pclass == CLASS_MONK))
+	{
+		/* item with {@O-} is used only when in danger */
+		if (*inscription == '-' && p_ptr->chp > p_ptr->mhp / 2) return FALSE;
+
+		switch (p_ptr->inventory[item].tval)
+		{
+			/* non-directional ones */
+			case TV_SCROLL:
+			{
+				do_cmd_read_scroll(Ind, item);
+				return TRUE;
+			}
+
+			case TV_POTION:
+			{
+				do_cmd_quaff_potion(Ind, item);
+				return TRUE;
+			}
+
+			case TV_STAFF:
+			{
+				do_cmd_use_staff(Ind, item);
+				return TRUE;
+			}
+
+			/* ambiguous one */
+			/* basically using rod for retaliation is not so good idea :) */
+			case TV_ROD:
+			{
+				p_ptr->current_rod = item;
+				do_cmd_zap_rod(Ind, item);
+				return TRUE;
+			}
+
+			case TV_WAND:
+			{
+				do_cmd_aim_wand(Ind, item, 5);
+				return TRUE;
+			}
+		}
+	}
+
+	/* Spell to cast */
+	if (inscription != NULL)
+	{
+		spell = *inscription - 96 - 1;
+		if (spell < 0 || spell > 9) spell = 0;
+	}
+
+	switch (p_ptr->inventory[item].tval)
+	{
+		/* directional ones */
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		{
+			do_cmd_fire(Ind, 5, item);
+			return TRUE;
+		}
+
+		case TV_PSI_BOOK:
+		{
+			do_cmd_psi(Ind, item, spell);
+			return TRUE;
+		}
+
+		case TV_MAGIC_BOOK:
+		{
+			do_cmd_cast(Ind, item, spell);
+			return TRUE;
+		}
+
+		case TV_PRAYER_BOOK:
+		{
+			do_cmd_pray(Ind, item, spell);
+			return TRUE;
+		}
+
+		case TV_SORCERY_BOOK:
+		{
+			do_cmd_sorc(Ind, item, spell);
+			return TRUE;
+		}
+
+		/* not likely :); */
+		case TV_FIGHT_BOOK:
+		{
+			do_cmd_fight(Ind, item, spell);
+			return TRUE;
+		}
+
+		case TV_SHADOW_BOOK:
+		{
+			do_cmd_shad(Ind, item, spell);
+			return TRUE;
+		}
+
+		case TV_HUNT_BOOK:
+		{
+			do_cmd_hunt(Ind, item, spell);
+			return TRUE;
+		}
+	}
+
+	/* If all fails, then melee */
+	return FALSE;
 }
 
 /*
@@ -1023,8 +1224,16 @@ static void process_player_end(int Ind)
 		 */
 		if ((attackstatus = auto_retaliate(Ind)))
 		{
-			/* Use energy */
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
+			/* If it was non-melee, energy is already used */
+			if (attackstatus > 4)
+			{
+				attackstatus -= 4;
+			}
+			else
+			{
+				/* Use energy */
+				p_ptr->energy -= level_speed(p_ptr->dun_depth);
+			}
 		}
 	}
 

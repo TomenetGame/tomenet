@@ -312,3 +312,6 @@ Change list for PernMangband
 20/11/01 (Jir)
 - You get stunned, confused and also drop some items when theft fails.
 - I have put a bug where OOD monsters are summoned; now fixed (thx Tanix)
+
+22/11/01 (Jir)
+- You can use {@O} inscription to control auto-retaliator.
