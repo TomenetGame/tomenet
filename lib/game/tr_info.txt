@@ -982,6 +982,11 @@ I:6:30:10:10:15:0d0:y:70
 D:Your purse suddenly squirms!
 F:FLOOR | CHEST
 
+N:207:Trap of Hide Traps
+I:10:100:0:10:24:0d0:o:20
+D:The whole room vibrates in a strange way...
+F:FLOOR | DOOR
+
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
 # I:diff:prob:            :minlevel:      :color:vanish

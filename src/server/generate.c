@@ -2496,7 +2496,10 @@ static bool vault_aux_treasure(int r_idx)
 	/* Decline unique monsters */
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
-	/* Require "priest" or Angel */
+	/* Hack -- allow mimics */
+	if (r_ptr->flags9 & (RF9_MIMIC)) return (TRUE);
+
+	/* Require Object form */
 	if (!((r_ptr->d_char == '!') || (r_ptr->d_char == '|') ||
 		(r_ptr->d_char == '$') || (r_ptr->d_char == '?') ||
 		(r_ptr->d_char == '=')))
@@ -2813,7 +2816,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0)
 			get_mon_num_hook = vault_aux_clone;
 		}
 	}
-	else if (tmp < 25)
+	else if (tmp < 35)	// 25
 		/* Monster nest (jelly) */
 	{
 		/* Describe */
@@ -2823,7 +2826,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0)
 		get_mon_num_hook = vault_aux_jelly;
 	}
 
-	else if (tmp < 50)
+	else if (tmp < 40)	// 50 ... we need mimics
 	{
 		name = "treasure";
 		get_mon_num_hook = vault_aux_treasure;

@@ -500,6 +500,9 @@ void client_init(char *argv1, bool skip)
 	/* Show the MOTD */
 	show_motd();
 
+	/* Clear the screen again */
+	Term_clear();
+
 			/* Flush the network output buffer */
 			Net_flush();	// meanless, most likely
 

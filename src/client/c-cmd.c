@@ -34,6 +34,13 @@ static bool item_tester_magicable(object_type *o_ptr)
 }
 #endif	// 0
 
+static bool item_tester_edible(object_type *o_ptr)
+{
+	if (o_ptr->tval == TV_FOOD) return TRUE;
+	if (o_ptr->tval == TV_FIRESTONE) return TRUE;
+
+	return FALSE;
+}
 void cmd_all_in_one(void)
 {
 	int item, dir;
@@ -104,6 +111,7 @@ void cmd_all_in_one(void)
 		}
 	
 		case TV_FOOD:
+		case TV_FIRESTONE:
 		{
 			Send_eat(item);
 			break;
@@ -486,7 +494,8 @@ void process_command()
 			break;
 
 		case '~':
-			cmd_artifacts();
+			cmd_check_misc();
+//			cmd_artifacts();
 			break;
 
 		case '|':
@@ -1111,7 +1120,8 @@ void cmd_eat(void)
 {
 	int item;
 
-	item_tester_tval = TV_FOOD;
+//	item_tester_tval = TV_FOOD;
+	item_tester_hook = item_tester_edible;
 
 	if (!c_get_item(&item, "Eat what? ", FALSE, TRUE, FALSE))
 	{
@@ -1356,6 +1366,95 @@ void cmd_help(void)
 
 	/* Call the file perusal */
 	peruse_file();
+}
+
+
+/*
+ * NOTE: the usage of Send_special_line is quite a hack;
+ * it sends a letter in place of cur_line...		- Jir -
+ */
+void cmd_check_misc(void)
+{
+	char i=0, choice;
+
+	Term_save();
+	Term_clear();
+	Term_putstr(0,  2, -1, TERM_BLUE, "Display current knowledge");
+	Term_putstr(5,  4, -1, TERM_WHITE, "(1) Unique monsters");
+	Term_putstr(5,  5, -1, TERM_WHITE, "(2) Artifacts");
+	Term_putstr(5,  6, -1, TERM_WHITE, "(3) Monsters");
+	Term_putstr(5,  7, -1, TERM_WHITE, "(4) Objects");
+	Term_putstr(5,  8, -1, TERM_WHITE, "(5) Traps");
+	Term_putstr(5,  9, -1, TERM_WHITE, "(6) Houses");
+	Term_putstr(5, 10, -1, TERM_WHITE, "(7) Recall depth");
+
+	Term_putstr(5, 12, -1, TERM_WHITE, "(a) Players online");
+	Term_putstr(5, 13, -1, TERM_WHITE, "(b) Other players' equipments");
+	Term_putstr(5, 14, -1, TERM_WHITE, "(c) Score list");
+	Term_putstr(5, 15, -1, TERM_WHITE, "(d) Server settings");
+	Term_putstr(5, 16, -1, TERM_WHITE, "(e) Opinions (if available)");
+	Term_putstr(5, 17, -1, TERM_WHITE, "(f) News (login message)");
+	Term_putstr(5, 18, -1, TERM_WHITE, "(?) Help");
+
+	while(i!=ESCAPE){
+		i=inkey();
+		choice = 0;
+		switch(i){
+			case '1':
+				/* Send it */
+				cmd_uniques();
+				break;
+			case '2':
+				cmd_artifacts();
+				break;
+			case '3':
+				get_com("What kind of monsters? (ESC for all):", &choice);
+				if (choice <= ESCAPE) choice = 0;
+				Send_special_line(SPECIAL_FILE_MONSTER, choice);
+				break;
+			case '4':
+				!get_com("What type of objects? (ESC for all):", &choice);
+				if (choice <= ESCAPE) choice = 0;
+				Send_special_line(SPECIAL_FILE_OBJECT, choice);
+				break;
+			case '5':
+				Send_special_line(SPECIAL_FILE_TRAP, 0);
+				break;
+			case '6':
+				Send_special_line(SPECIAL_FILE_HOUSE, 0);
+				break;
+			case '7':
+				Send_special_line(SPECIAL_FILE_RECALL, 0);
+				break;
+			case 'a':
+				cmd_players();
+				break;
+			case 'b':
+				cmd_player_equip();
+				break;
+			case 'c':
+				cmd_high_scores();
+				break;
+			case 'd':
+				Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0);
+				break;
+			case 'e':
+				Send_special_line(SPECIAL_FILE_RFE, 0);
+				break;
+			case 'f':
+				show_motd();
+				break;
+			case '?':
+				cmd_help();
+				break;
+			case ESCAPE:
+				break;
+			default:
+				bell();
+		}
+		c_msg_print(NULL);
+	}
+	Term_load();
 }
 
 void cmd_message(void)

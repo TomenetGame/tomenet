@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: files.c */
 
 /* Purpose: code dealing with files (and death) */
@@ -650,7 +651,8 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
  */
 void do_cmd_help(int Ind, int line)
 {
-	cptr name = "mangband.hlp";
+//	cptr name = "mangband.hlp";
+	cptr name = "tomenet.hlp";
 
 	/* Peruse the main help file */
 	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE);

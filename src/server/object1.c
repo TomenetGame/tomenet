@@ -397,7 +397,7 @@ static bool object_has_flavor(int i)
  *
  * XXX XXX XXX Add "EASY_KNOW" flag to "k_info.txt" file
  */
-bool object_easy_know(int i)
+static bool object_easy_know(int i)
 {
 	object_kind *k_ptr = &k_info[i];
 
@@ -3010,6 +3010,12 @@ cptr item_activation(object_type *o_ptr)
 				return "ball of acid and resist acid";
 			case SV_RING_TELEPORTATION:
 				return "teleportation and destruction of the ring";
+			case SV_RING_POLYMORPH:
+				if (o_ptr->pval)
+					return format("polymorph into %s",
+							r_info[o_ptr->pval].name + r_name);
+				else
+				return "memorize the form you are mimicing";
 			default:
 				return NULL;
 		}

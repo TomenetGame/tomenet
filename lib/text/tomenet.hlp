@@ -13,7 +13,7 @@ A resume, or 'read it and dive the hell!';)
 8. get killed? press '<' continuously. Go temple("4") and you resurrect
 9. press ctrl-x to save and quit, but do it in town!
 
-10.Get('G') new spell and cast('m' or 'p'); books required!
+10.Get('G') new skill and activate('m'); some skills need apropriate items.
 
 For further (and easy-to-read) documentation, please visit:
 
@@ -52,6 +52,7 @@ Latest changes for version 4.0.0a (digest):
   '2''8' or 'j''k' to move around. <CR> to open/close a fold.
   '6' or 'l' to use 1 skill point to the skill under the cursor. (no cancel!)
 - 'm' : activate a skill (eg. cast a spell). '/' is also available.
+- '~' : browse several data (like monster/object/trap lore)
 - 'I' : examine an item (item should be *ID*ed first).
 - "'" : check other players' equipments under certain conditions.
 - Control-S : Spike doors.
@@ -730,7 +731,7 @@ Part VII. -- Command list
  .  Run                                 ^Y  (unused)
  >  Go down staircase                   ^Z  (unused)
  \  (special - bypass keymap)            |  Check uniques
- `  (special - escape)                   ~  Check artifacts
+ `  (special - escape)                   ~  Check several knowledge
  /  (unused)                             ?  Help
 
 
@@ -796,7 +797,7 @@ Part VII. -- Command list
  .  stay still (with pickup)            ^Y  (tunnel - north west)
  >  go down staircase                   ^Z  (unused)
  \  (special - bypass keymap)            |  check uniques
- `  (special - escape)                   ~  check artifacts
+ `  (special - escape)                   ~  Check several knowledge
  /  (unused)                             ?  Help
 
  \h buy or sell a house

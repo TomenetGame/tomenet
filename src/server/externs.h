@@ -439,6 +439,12 @@ extern void do_cmd_check_artifacts(int Ind, int line);
 extern void do_cmd_check_uniques(int Ind, int line);
 extern void do_cmd_check_players(int Ind, int line);
 extern void do_cmd_check_player_equip(int Ind, int line);
+extern void do_cmd_check_server_settings(int Ind);
+extern void do_cmd_show_monster_killed_letter(int Ind, char *letter);
+extern void do_cmd_show_houses(int Ind);
+extern void do_cmd_show_known_item_letter(int Ind, char *letter);
+extern void do_cmd_knowledge_traps(int Ind);
+extern void do_cmd_knowledge_dungeons(int Ind);
 extern void do_cmd_check_other(int Ind, int line);
 extern void do_cmd_check_other_prepare(int Ind, char *path);
 
@@ -683,7 +689,6 @@ extern void Handle_direction(int Ind, int dir);
 
 /* object1.c */
 /* object2.c */
-extern bool object_easy_know(int i);
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
 extern s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void object_wipe(object_type *o_ptr);

@@ -767,6 +767,21 @@ static void image_object(byte *ap, char *cp)
 	(*ap) = randint(15);
 }
 
+/*
+ * Mega-Hack -- Mimic outlook
+ * (Pleaes bear with us till really implemented..)
+ */
+static void mimic_object(byte *ap, char *cp, int seed)
+{
+	int n = strlen(image_object_hack);
+
+	/* Random symbol from set above */
+	(*cp) = (image_object_hack[seed % n]);
+
+	/* Random color */
+	(*ap) = seed % 15 + 1;
+}
+
 
 /*
  * Hack -- Random hallucination
@@ -1443,22 +1458,28 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		/* Visible monster */
 		if (p_ptr->mon_vis[c_ptr->m_idx])
 		{
-                        monster_race *r_ptr = race_inf(m_ptr);
+			monster_race *r_ptr = race_inf(m_ptr);
 
 			/* Possibly GFX corrupts with egos;
 			 * in that case use m_ptr->r_ptr instead.	- Jir -
 			 */
 			/* Desired attr */
 			/* a = r_ptr->x_attr; */
-                        if (!m_ptr->special && p_ptr->use_r_gfx) a = p_ptr->r_attr[m_ptr->r_idx];
-                        else a = r_ptr->d_attr;
-//                        else a = m_ptr->r_ptr->d_attr;
+			if (!m_ptr->special && p_ptr->use_r_gfx) a = p_ptr->r_attr[m_ptr->r_idx];
+			else a = r_ptr->d_attr;
+			//                        else a = m_ptr->r_ptr->d_attr;
 
 			/* Desired char */
 			/* c = r_ptr->x_char; */
-                        if (!m_ptr->special && p_ptr->use_r_gfx) c = p_ptr->r_char[m_ptr->r_idx];
-                        else c = r_ptr->d_char;
-//                        else c = m_ptr->r_ptr->d_char;
+			if (!m_ptr->special && p_ptr->use_r_gfx) c = p_ptr->r_char[m_ptr->r_idx];
+			else c = r_ptr->d_char;
+			//                        else c = m_ptr->r_ptr->d_char;
+
+			/* Hack -- mimics */
+			if (r_ptr->flags9 & RF9_MIMIC)
+			{
+				mimic_object(&a, &c, c_ptr->m_idx);
+			}
 
 			/* Ignore weird codes */
 			if (avoid_other)
@@ -1502,8 +1523,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				{
 					{
 						(*cp) = (randint(25)==1?
-							image_object_hack[randint(strlen(image_object_hack))]:
-							image_monster_hack[randint(strlen(image_monster_hack))]);
+								 image_object_hack[randint(strlen(image_object_hack))]:
+								 image_monster_hack[randint(strlen(image_monster_hack))]);
 					}
 				}
 				else

@@ -1276,20 +1276,31 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Teleport Away Trap */
 		case TRAP_OF_TELEPORT_AWAY:
 		{
-			int item, amt;
+			int i, ty, tx, item, amt, rad = glev / 20 - 1;
 			object_type *o_ptr;
+			cave_type *cc_ptr;
 
-			/* teleport away all items */
-			while (c_ptr->o_idx != 0)
+			if (rad < 0) rad = 0;
+
+			for (i = 0; i < tdi[rad]; i++)
 			{
-				item = c_ptr->o_idx;
-				amt = o_list[item].number;
-				o_ptr = &o_list[item];
+				ty = y + tdy[i];
+				tx = x + tdx[i];
+				if (!in_bounds(ty, tx)) continue;
+				cc_ptr = &zcave[ty][tx];
 
-				ident = do_trap_teleport_away(Ind, o_ptr, y, x);
+				/* teleport away all items */
+				while (cc_ptr->o_idx != 0)
+				{
+					item = cc_ptr->o_idx;
+					amt = o_list[item].number;
+					o_ptr = &o_list[item];
 
-				floor_item_increase(item, -amt);
-				floor_item_optimize(item);
+					ident = do_trap_teleport_away(Ind, o_ptr, ty, tx);
+
+					floor_item_increase(item, -amt);
+					floor_item_optimize(item);
+				}
 			}
 			break;
 		}
@@ -2803,17 +2814,18 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				iy = o_ptr->iy;
 
 				/* Only within certain radius */
-				if (distance(y, x, iy, ix) > glev + 5) continue;
+				if (distance(y, x, iy, ix) > glev / 5 + 5) continue;
 
 				/* Mega-Hack -- preserve artifacts */
 				if (true_artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/)
 				{
+					if (a_info[o_ptr->name1].flags4 & TR4_SPECIAL_GENE)
+						continue;
+
 					a_info[o_ptr->name1].cur_num = 0;
 					a_info[o_ptr->name1].known = FALSE;
 					msg_print(Ind, "You have an accute feeling of loss!");
 				}
-
-				if (zcave) zcave[iy][ix].o_idx=0;
 
 				if (!p_ptr->blind && player_has_los_bold(Ind, iy, ix))
 				{
@@ -2825,8 +2837,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 					msg_format(Ind, "You suddenly don't see the %s anymore!", o_name);
 				}
 
+//				if (zcave) zcave[iy][ix].o_idx=0;
+				delete_object_idx(k);
+
 				/* Wipe the object */
-				WIPE(o_ptr, object_type);
+//				WIPE(o_ptr, object_type);
 			}
 			/* Compact the object list */
 			compact_objects(0, FALSE);
@@ -3086,6 +3101,33 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				p_ptr->redraw |= PR_GOLD;
 			}
 
+			break;
+		}
+		/* Trap of Hide Traps */
+		case TRAP_OF_HIDE_TRAPS:
+		{
+			s16b nx, ny;
+			cave_type *cc_ptr;
+			int rad = 8 + glev / 3;
+			for (nx=x-rad;nx<=x+rad;nx++)
+			{
+				for (ny=y-rad;ny<=y+rad;ny++)
+				{
+					if (!in_bounds (ny, nx)) continue;
+
+					cc_ptr = &zcave[ny][nx];
+
+					if (cc_ptr->special.type != CS_TRAPS) continue;
+					if (!cc_ptr->special.sc.trap.found) continue;
+
+					cc_ptr->special.sc.trap.found = FALSE;
+					ident = TRUE;
+
+					everyone_lite_spot(wpos, ny, nx);
+				}
+			}
+			if (ident) msg_print(Ind, "The floor vibrates in a strange way.");
+			ident = FALSE;	// naturally.
 			break;
 		}
 
@@ -3360,8 +3402,8 @@ void wiz_place_trap(int Ind, int trap)
 	/* no traps below their minlevel */
 	if (t_ptr->minlevel > getlevel(wpos))
 	{
-		msg_print(Ind, "The trap is out of depth!");
-		return;
+		msg_print(Ind, "Warning: The trap is out of depth!");
+//		return;
 	}
 
 	if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 

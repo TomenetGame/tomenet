@@ -6,8 +6,8 @@
             One Ring to bring them all and in the darkness bind them
                   In the land of Mordor where the shadows lie"
                                 "Lord of The Rings", J.R.R.Tolkien
- - TomeNET 4.0.0 development version, with new skill system (try 'G' key)
- - dungeon generator is improved.
+ - TomeNET 4.0.0 development version, with new skill/spell system(try 'G' key)
+ - dungeon generator is improved.  - simple lore browser (`~`)
  - Detect traps can NOT fail;  detection spells are radius-based now.
  - items can stack on the floor now. (but not inside a house!)
  - A guild system is implemented.  - Player alignment is coming soon?

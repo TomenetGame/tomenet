@@ -7179,6 +7179,28 @@ static int Receive_special_line(int ind)
 				if (is_admin(Players[player]) || cfg.public_rfe)
 					do_cmd_view_rfe(player, "tomenet.rfe", line);
  				break;
+			/*
+			 * Hack -- those special files actually use do_cmd_check_other
+			 * XXX redesign it
+			 */
+			case SPECIAL_FILE_SERVER_SETTING:
+				do_cmd_check_server_settings(player);
+ 				break;
+			case SPECIAL_FILE_MONSTER:
+				do_cmd_show_monster_killed_letter(player, &line);
+ 				break;
+			case SPECIAL_FILE_OBJECT:
+				do_cmd_show_known_item_letter(player, &line);
+ 				break;
+			case SPECIAL_FILE_HOUSE:
+				do_cmd_show_houses(player);
+ 				break;
+			case SPECIAL_FILE_TRAP:
+				do_cmd_knowledge_traps(player);
+ 				break;
+			case SPECIAL_FILE_RECALL:
+				do_cmd_knowledge_dungeons(player);
+ 				break;
 		}
 	}
 

@@ -916,6 +916,9 @@ void show_motd(void)
 	int i;
 	char ch;
 
+	/* Save the old screen */
+	Term_save();
+
 	/* Clear the screen */
 	Term_clear();
 
@@ -929,10 +932,14 @@ void show_motd(void)
 	Term_fresh();
 
 	/* Wait for a keypress */
-	Term_inkey(&ch, TRUE, TRUE);
+//	Term_inkey(&ch, TRUE, TRUE);
+	while (!inkey()) /* nothing -- it saves us from getting disconnected */;
+
+	/* Reload the old screen */
+	Term_load();
 
 	/* Clear the screen again */
-	Term_clear();
+//	Term_clear();
 }
 
 /*
@@ -983,7 +990,7 @@ void peruse_file(void)
 //			prt("Goto Line: ", 23, 0);
 			prt(format("Goto Line(max %d): ", max_line), 23, 0);
 			strcpy(tmp, "0");
-			if (askfor_aux(tmp, 80, 0))
+			if (askfor_aux(tmp, 10, 0))
 			{
 				cur_line = atoi(tmp);
 			}

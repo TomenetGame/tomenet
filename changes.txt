@@ -1262,10 +1262,20 @@ To find the latest change quickly, search ==== :)
 # most part of ToME generate.c imported.
 - faster choose_attack_spell imported from Angband3.0.0.
 - user command: /object
+- *ID* activation msg for mimic rings
+- firestones implemented (at least somewhat useful, that is)
 [P] dungeon generator (generate.c) .. d_info and f_info needed!!
 [H] 'Health' skill is a little more useful now (x1.5 regen)
 [H] GoI when changing floor is somewhat longer (due to the rule change of GoI)
 [H] skill table somewhat adjusted (Fighting Technic moved to Combat)
+[B] Cleaning trap was (maybe) broken.
+
+09/07/2002 (Jir)
+- '~' key can show misc. stuffs(/mo, /obj, /house etc. are integrated).
+  ('#', '|', '@', '\'' keys can be obsolete now.)
+- mangband.hlp is renamed to tomenet.hlp
+- monster mimic (lazily) implemented.
+[B] cheap items still had {on sale} tags even they are {0% off}.
 
 
 
@@ -1305,9 +1315,16 @@ concisely: what's hot now?
   + spell_info should be redone
   * a mage would just raise 'Sorcery' to 10 for Wraithform..
     is it within the design?
-- LUA hook
+- LUA hook (hooked, but not used for now)
 - csfunc
 - alignment (let's wait for EE :)
+
+
+=============================================================================
+Porting targets
+[P] show_file, for tagged file browsing
+[P] powers.c for misc activations
+
 
 =============================================================================
 below this line are the unfixed bugs known:
@@ -1332,6 +1349,8 @@ below this line are the unfixed bugs known:
 [B] Window refreshing fails sometimes, requiring ^R.
 [B] ghost gets 'The weight of your armor emcumbers your movement' msg.
 [B] isolated space can be generated (generate.c)
+[B] stairs/doors tend to disappear on NO_MAP floors
+[B] cannot specify some monster names in master summoning (&35)
 
 *below are bugs repoorted but not confirmed*
 (nothing so far)
@@ -1380,7 +1399,7 @@ memo and questions:
 - implement GF_* flags for exploding monsters(voir monster_death)
 - flavor variator (eg. 'light' + 'red' => 'light red potion')
 - reimplement /cast.
-- implement monster mimics
+- implement monster mimics in a nicer way
 - better vaults
   - between gates, patterns
 [C] chat-line cursor editing
@@ -1395,7 +1414,6 @@ memo and questions:
 - variety of dungeon/floor types (d_info.txt)
   - several flags
   - size (done)
-- better cave-generator (generate.c)
 - fully-implemented multiple towns (t_*.txt)
 - more kinds of stores / flexible store configuration (st_info.txt)
   + archery shop
@@ -1403,9 +1421,6 @@ memo and questions:
   + job centre (for lowbies died)
   + guild house
   + healer
-- item stacks/monster inventory
-  * vault treasures should be held by guardians
-- item themes (mage drops magic items, etc)
 (4.3)
 - quests (needing LUA-hooks) {hopefully DarkGod}
 - backbone scenario
@@ -1468,8 +1483,6 @@ memo and questions:
   + vision sharing among the members of a party
   + make wand of haste monster etc. friend-castable
 - monsters:
-  + disarming (like ratling duelist chez AD*M)
-  + monster digging should reflects the solidity of wall types
   + monster speech
   + 'water bolt' should wash players away.
   + aquatic should be hard to attack if underwater?
@@ -1479,6 +1492,7 @@ memo and questions:
   + better way to display egos/uniques
   + monsters should follow the player when climbling up/down staircase.
   + aquatic uniques
+  + vault treasures should be held by guardians
 - traps:
   + another check for Dexterity (with high Dex, you can avoid some)
   + missile traps should have AC check(check_hit)?
@@ -1499,8 +1513,7 @@ memo and questions:
   + upgrade some of arts, so that they'll be treasured.
   + more tools
 - anticheeze:
-  + items enchanted with spells of enchant armor/weapon should get discount.
-  + player shouldn't gain more than 1 levels at once (esp.from books)
+  + (nothing so far)
 - players:
   + thirst?
   + Asclep's '/spell' should be applicable to wands/rods?
@@ -1526,7 +1539,7 @@ memo and questions:
   + some methods(spell?) to detect vault entrance, so that ppl won't peek
     v_info.txt ...
 - user interface:
-  + query for selling/buying houses.
+  + query[Y/n] for selling/buying houses.
   + visual effect when teleporting, so that players won't lose sight of '@'.
   + add a command to *completely* redraw the screen.
   + smoother screen scroll (currently 1/2.. perhaps 1/4?)
@@ -1536,6 +1549,9 @@ memo and questions:
   + client option for verbosity;
     msg_print(Ind, importance, "Vlad was here!");
   + options ('=') should be revised.
+- stores:
+  + allow to eXamine items in the store inventory.
+  + one player shouldn't stay more than 1 minutes in a store?
 - misc:
   + some measures to 'cheezy' admins (at least some warnings)
   + some places that renders special services(eg. curing, id, *ID*, enchant etc)

@@ -401,6 +401,12 @@
 #define SPECIAL_FILE_PLAYER_EQUIP	7
 #define SPECIAL_FILE_LOG		8
 #define SPECIAL_FILE_RFE		9
+#define SPECIAL_FILE_SERVER_SETTING	10
+#define SPECIAL_FILE_MONSTER	11
+#define SPECIAL_FILE_OBJECT	12
+#define SPECIAL_FILE_HOUSE	13
+#define SPECIAL_FILE_TRAP	14
+#define SPECIAL_FILE_RECALL	15
 
 
 /*
@@ -1966,34 +1972,10 @@ that keeps many algorithms happy.
 
 #endif	// 0
 
-/* 'resurrected' ones */
-/* rearrangement is needed maybe.. */
-#define SV_FOOD_UNMAGIC			50
-
-#define	SV_FOOD_POTATO			20
-#define SV_FOOD_HEAD_OF_CABBAGE		21
-#define SV_FOOD_CARROT			22
-#define SV_FOOD_BEET			23
-#define	SV_FOOD_SQUASH			24
-#define	SV_FOOD_EAR_OF_CORN		25
 
 
-#define SV_RING_POLYMORPH	60
-#define SV_RING_STEALTH		61
-
-#define SV_SCROLL_ARTIFACT_CREATION             52
-#define SV_SCROLL_GOLEM                         55
-#define SV_SCROLL_LIFE				56	
-#define SV_SCROLL_HOUSE				57
-#define SV_SCROLL_BLOOD_BOND		58
-
-#define SV_SCROLL_LOTTERY			59
-#define SV_SCROLL_ID_ALL			60
-#define SV_SCROLL_VERMIN_CONTROL	61
-
-#define SV_WAND_ELEC_BOLT		33
-
-/* those items need some reworking. */
+/* items requiring hard-coded adjustments;
+ * those items need some reworking. */
 /*
 #define SV_AMULET_DOOM			0
 #define SV_AMULET_THE_MAGI		8
@@ -2363,6 +2345,10 @@ that keeps many algorithms happy.
 #define SV_RING_ELEC                    56
 /* 57 - DURIN (arts) */
 #define SV_RING_CRIT                    58
+/* ToME-NET additions */
+#define SV_RING_POLYMORPH	60
+#define SV_RING_STEALTH		61
+
 
 /* The "sval" codes for TV_STAFF */
 #define SV_STAFF_DARKNESS                0
@@ -2437,6 +2423,8 @@ that keeps many algorithms happy.
 #define SV_WAND_NOTHING                 30
 #define SV_WAND_WALL_CREATION           31
 #define SV_WAND_THRAIN                  32
+/* ToME-NET additions(?) */
+#define SV_WAND_ELEC_BOLT		33
 
 /* jk - the first valuable wand */
 #define SV_WAND_NASTY_WAND               3
@@ -2542,11 +2530,18 @@ that keeps many algorithms happy.
 #define SV_SCROLL_ICE                   49
 #define SV_SCROLL_CHAOS                 50
 #define SV_SCROLL_RUMOR                 51
-/*
-#define SV_SCROLL_ARTIFACT              52
-*/
+/* #define SV_SCROLL_ARTIFACT              52 */
+#define SV_SCROLL_ARTIFACT_CREATION             52
 #define SV_SCROLL_NOTHING               53
 #define SV_SCROLL_SPELL                 54
+/* ToME-NET additions */
+#define SV_SCROLL_GOLEM                         55
+#define SV_SCROLL_LIFE				56	
+#define SV_SCROLL_HOUSE				57
+#define SV_SCROLL_BLOOD_BOND		58
+#define SV_SCROLL_LOTTERY			59
+#define SV_SCROLL_ID_ALL			60
+#define SV_SCROLL_VERMIN_CONTROL	61
 
 
 /* The "sval" codes for TV_POTION */
@@ -2616,6 +2611,11 @@ that keeps many algorithms happy.
 #define SV_POTION_NEW_LIFE              63
 
 #define SV_POTION_LAST                  63
+/*
+ * NOTE: due to hard-coded flavor code, adding SV_POTION is bad idea.
+ * Add it to SV_POTION2 instead.
+ * (flavor variator is under construction.)		- Jir -
+ */
 
 /* The "sval" codes for TV_POTION2 */
 #define SV_POTION2_MIMIC_ABOMINATION     1
@@ -2664,6 +2664,14 @@ that keeps many algorithms happy.
 #define SV_FOOD_RESTORE_CON             18
 #define SV_FOOD_RESTORING               19
 /* many missing mushrooms */
+/* mangband-oriented wilderness crops */
+#define	SV_FOOD_POTATO			20
+#define SV_FOOD_HEAD_OF_CABBAGE		21
+#define SV_FOOD_CARROT			22
+#define SV_FOOD_BEET			23
+#define	SV_FOOD_SQUASH			24
+#define	SV_FOOD_EAR_OF_CORN		25
+/* normal foods again */
 #define SV_FOOD_BISCUIT                 32
 #define SV_FOOD_JERKY                   33
 #define SV_FOOD_RATION                  35
@@ -2672,8 +2680,10 @@ that keeps many algorithms happy.
 #define SV_FOOD_PINT_OF_ALE             38
 #define SV_FOOD_PINT_OF_WINE            39
 #define SV_FOOD_ATHELAS                 40
-#define SV_FOOD_GREAT_HEALTH            41
+#define SV_FOOD_GREAT_HEALTH            41	/* annuled for now */
 #define SV_FOOD_FORTUNE_COOKIE          42
+/* Another block for mushrooms */
+#define SV_FOOD_UNMAGIC			50
 
 /* The "sval" codes for TV_BATERIE */
 #define SV_BATERIE_POISON    1
@@ -3261,6 +3271,17 @@ that keeps many algorithms happy.
 #define TR3_XXX7			0x00000040L	/* Later */
 #define TR3_XXX8			0x00000080L	/* Later */
 #endif	/* 0 */
+/* Flags from ToME - Jir - */
+
+#define TR3_SH_FIRE             0x00000001L     /* Immolation (Fire) */
+#define TR3_SH_ELEC             0x00000002L     /* Electric Sheath */
+#define TR3_AUTO_CURSE          0x00000004L     /* The obj will recurse itself */
+#define TR3_DECAY               0x00000008L     /* Decay */
+#define TR3_NO_TELE             0x00000010L     /* Anti-teleportation */
+#define TR3_NO_MAGIC            0x00000020L     /* Anti-magic */
+#define TR3_WRAITH              0x00000040L     /* Wraithform */
+#define TR3_TY_CURSE            0x00000080L     /* The Ancient Curse */
+
 
 #define TR3_EASY_KNOW		0x00000100L	/* Aware -> Known */
 #define TR3_HIDE_TYPE		0x00000200L	/* Hide "pval" description */
@@ -3288,17 +3309,6 @@ that keeps many algorithms happy.
 #define TR3_CURSED			0x20000000L	/* Item is Cursed */
 #define TR3_HEAVY_CURSE		0x40000000L	/* Item is Heavily Cursed */
 #define TR3_PERMA_CURSE		0x80000000L	/* Item is Perma Cursed */
-
-/* Flags from ToME - Jir - */
-
-#define TR3_SH_FIRE             0x00000001L     /* Immolation (Fire) */
-#define TR3_SH_ELEC             0x00000002L     /* Electric Sheath */
-#define TR3_AUTO_CURSE          0x00000004L     /* The obj will recurse itself */
-#define TR3_DECAY               0x00000008L     /* Decay */
-#define TR3_NO_TELE             0x00000010L     /* Anti-teleportation */
-#define TR3_NO_MAGIC            0x00000020L     /* Anti-magic */
-#define TR3_WRAITH              0x00000040L     /* Wraithform */
-#define TR3_TY_CURSE            0x00000080L     /* The Ancient Curse */
 
 
 #define TR4_NEVER_BLOW          0x00000001L     /* Weapon can't attack */
@@ -4931,6 +4941,7 @@ extern int PlayerUID;
 #define TRAP_OF_FINGER_CATCHING	204
 #define TRAP_OF_ANIMATE_COINS	205
 #define TRAP_OF_REMITTANCE	206
+#define TRAP_OF_HIDE_TRAPS	207
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000

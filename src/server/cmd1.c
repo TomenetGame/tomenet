@@ -1570,12 +1570,21 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				{
 					if (marts > randint(r_ptr->level + resist_stun + 10))
 					{
+#if 0
 						if (m_ptr->stunned)
 							msg_format(Ind, "\377o%^s is still stunned.", m_name);
 						else
 							msg_format(Ind, "\377o%^s is stunned.", m_name);
+#endif	// 0
 
 						m_ptr->stunned += (stun_effect);
+
+						if (m_ptr->stunned > 100)
+							msg_format(Ind, "\377o%^s is knocked out.", m_name);
+						else if (m_ptr->stunned > 50)
+							msg_format(Ind, "\377o%^s is heavily stunned.", m_name);
+						else
+							msg_format(Ind, "\377o%^s is stunned.", m_name);
 					}
 				}
 			} else

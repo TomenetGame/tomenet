@@ -198,6 +198,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Hack -- handle find */
+		/* FIXME -- (x4) compressing seems to ruin it */
 		if (k == '/')
 		{
 			int z;

@@ -16,6 +16,12 @@
 #include "angband.h"
 
 
+/*
+ * Monster themes above this value in percent are told to the players
+ * via '/ver 1'. (If below ... that's "spice" ;)
+ */
+#define TELL_MONSTER_ABOVE	50
+
 
 /*
  * Check the status of "artifacts"
@@ -197,7 +203,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 		}
 
 		/* Hack -- Build the artifact name */
-		if (admin) fprintf(fff, "(%d)", k);
+		if (admin) fprintf(fff, "(%3d)", k);
 		fprintf(fff, "     The %s%s\n", base_name, admin && !a_ptr->known ?
 				" (unknown)" : "");
 	}
@@ -262,7 +268,7 @@ void do_cmd_check_uniques(int Ind, int line)
 				fprintf(fff, "%c", 'w');
 
 				/* Hack -- Show the ID for admin */
-				if (admin) fprintf(fff, "(%d) ", k);
+				if (admin) fprintf(fff, "(%4d) ", k);
 
 				/* Format message */
 //				fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
@@ -598,6 +604,674 @@ void do_cmd_check_player_equip(int Ind, int line)
 }
 
 
+/*
+ * List recall depths
+ */
+void do_cmd_knowledge_dungeons(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+//	msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
+
+	int		i, j, num, total = 0;
+	monster_race	*r_ptr;
+	bool	shown = FALSE;
+	bool	mimic = (get_skill(p_ptr, SKILL_MIMIC));
+	bool	admin = is_admin(p_ptr);
+
+	FILE *fff;
+
+	/* Paranoia */
+	// if (!letter) return;
+
+	/* Open a new file */
+	fff = my_fopen(p_ptr->infofile, "w");
+
+	/* Current file viewing */
+	strcpy(p_ptr->cur_file, p_ptr->infofile);
+
+	/* Let the player scroll through the info */
+	p_ptr->special_file_type = TRUE;
+
+	fprintf(fff, "The deepest point of Angband you've reached: -%d ft\n", p_ptr->max_dlv * 50);
+
+#if 0
+	/* Scan all dungeons */
+	for (y = 1; y < max_d_idx; y++)
+	{
+		/* The dungeon has a valid recall depth set */
+		if (max_dlv[y])
+		{
+			/* Describe the recall depth */
+			fprintf(fff, "       %c%s: Level %d (%d')\n",
+				(p_ptr->recall_dungeon == y) ? '*' : ' ',
+				d_name + d_info[y].name,
+				max_dlv[y], 50 * (max_dlv[y]));
+		}
+	}
+#endif	// 0
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Let the client know to expect some info */
+	Send_special_other(Ind);
+}
+
+/*
+ * Tell players of server settings, using temporary file. - Jir -
+ */
+void do_cmd_check_server_settings(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int		 k;
+
+	FILE *fff;
+
+#if 0
+	char file_name[MAX_PATH_LENGTH];
+
+	/* Temporary file */
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
+
+	strcpy(p_ptr->infofile, file_name);
+#endif
+
+	/* Open a new file */
+	fff = my_fopen(p_ptr->infofile, "w");
+
+	/* Current file viewing */
+	strcpy(p_ptr->cur_file, p_ptr->infofile);
+
+	/* Let the player scroll through the info */
+	p_ptr->special_file_type = TRUE;
+
+
+	/* Output color byte */
+//	fprintf(fff, "%c", 'G');
+
+	fprintf(fff, "%s\n", longVersion);
+	fprintf(fff, "======== Server Settings ========\n");
+
+	/* Output color byte */
+//	fprintf(fff, "%c", 'w');
+
+	/* General information */
+	fprintf(fff, "Game speed(FPS): %d (%+d%%)\n", cfg.fps, (cfg.fps-60)*100/60);
+	fprintf(fff, "Players' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
+	fprintf(fff, "While 'resting', HP/SP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
+
+	if (k=cfg.party_xp_boost)
+		fprintf(fff, "Party members get boosted exp(factor %d).\n", k);
+
+	/* Several restrictions */
+	if (!cfg.maximize)
+		fprintf(fff, "This server is *NOT* maximized!\n");
+
+	if (cfg.door_bump_open & BUMP_OPEN_DOOR)
+		fprintf(fff, "You'll try to open a door by bumping onto it.\n");
+	if (cfg.door_bump_open & BUMP_OPEN_HOUSE)
+		fprintf(fff, "You can 'walk through' your house door.\n");
+	if (cfg.door_bump_open & BUMP_OPEN_TRAP)
+		fprintf(fff, "You'll try to disarm a visible trap by stepping onto it.\n");
+
+	fprintf(fff,"\n");
+
+	if (k=cfg.newbies_cannot_drop)
+		fprintf(fff, "Players under exp.level %d are not allowed to drop items/golds.\n", k);
+
+	if (k=cfg.spell_interfere)
+		fprintf(fff, "Monsters adjacant to you have %d%% chance of interfering your spellcasting.\n", k);
+
+	if (k=cfg.spell_stack_limit)
+		fprintf(fff, "Duration of assistance spells is limited to %d turns.\n", k);
+
+	k=cfg.use_pk_rules;
+	switch (k)
+	{
+		case PK_RULES_DECLARE:
+			fprintf(fff, "You should use /pk first to attack other players.\n", k);
+			break;
+
+		case PK_RULES_NEVER:
+			fprintf(fff, "You are not allowed to attack/rob other players.\n", k);
+			break;
+
+		case PK_RULES_TRAD:
+		default:
+			fprintf(fff, "You can attack/rob other players(but not recommended).\n", k);
+			break;
+	}
+
+	fprintf(fff,"\n");
+
+	/* level preservation */
+	if (cfg.no_ghost)
+		fprintf(fff, "You disappear the moment you die, without becoming a ghost.\n");
+
+	fprintf(fff, "The floor will be erased about %d~%d seconds after you left.\n", cfg.anti_scum, cfg.anti_scum + 10);
+	if (k=cfg.level_unstatic_chance)
+		fprintf(fff, "When saving in dungeon, the floor is kept for %dx(level) minutes.\n", k);
+
+	if ((k=cfg.min_unstatic_level) > 0) 
+		fprintf(fff, "Shallow dungeon(till %d) will never be saved. Save in town!\n", k);
+
+	if ((k=cfg.preserve_death_level) < 201)
+		fprintf(fff, "Site of death under level %d will be static, allowing others to loot it.\n", k);
+
+
+	fprintf(fff,"\n");
+		
+
+	/* arts & winners */
+	if (cfg.anti_arts_horde)
+		fprintf(fff, "True-Artifacts will disappear if you drop/leave them.\n");
+
+	if ((k=cfg.retire_timer) > 0)
+		fprintf(fff, "The winner will automatically retire after %d minutes.\n", k);
+	else if (k == 0)
+		fprintf(fff, "The game ends the moment you beat the final foe, Morgoth.\n", k);
+
+	if (k !=0)
+	{
+		if (cfg.kings_etiquette)
+			fprintf(fff, "The winner is not allowed to carry/use artifacts(save Grond/Crown).\n");
+
+		if (k=cfg.unique_respawn_time)
+			fprintf(fff, "After winning the game, unique monsters will resurrect randomly.(%d)\n", k);
+	}
+
+	fprintf(fff,"\n");
+
+	/* monster-sets */
+	fprintf(fff, "Monsters:\n");
+	if (is_admin(p_ptr))
+	{
+		if (cfg.vanilla_monsters)
+			fprintf(fff, "  Vanilla-angband(default) monsters (%d%%)\n", cfg.vanilla_monsters);
+		if (cfg.zang_monsters)
+			fprintf(fff, "  Zelasny Angband additions (%d%%)\n", cfg.zang_monsters);
+		if (cfg.pern_monsters)
+			fprintf(fff, "  DragonRiders of Pern additions (%d%%)\n", cfg.pern_monsters);
+		if (cfg.cth_monsters)
+			fprintf(fff, "  Lovecraft additions (%d%%)\n", cfg.cth_monsters);
+		if (cfg.joke_monsters)
+			fprintf(fff, "  Joke-monsters (%d%%)\n", cfg.joke_monsters);
+		if (cfg.pet_monsters)
+			fprintf(fff, "  Pet/neutral monsters (%d%%)\n", cfg.pet_monsters);
+	}
+	else
+	{
+		if (cfg.vanilla_monsters > TELL_MONSTER_ABOVE)
+			fprintf(fff, "  Vanilla-angband(default) monsters\n");
+		if (cfg.zang_monsters > TELL_MONSTER_ABOVE)
+			fprintf(fff, "  Zelasny Angband additions\n");
+		if (cfg.pern_monsters > TELL_MONSTER_ABOVE)
+			fprintf(fff, "  DragonRiders of Pern additions\n");
+		if (cfg.cth_monsters > TELL_MONSTER_ABOVE)
+			fprintf(fff, "  Lovecraft additions\n");
+		if (cfg.joke_monsters > TELL_MONSTER_ABOVE)
+			fprintf(fff, "  Joke-monsters\n");
+	}
+
+	/* trivial */
+	if (cfg.public_rfe)
+//		fprintf(fff, "You can see RFE files via '&62' command.\n");
+		fprintf(fff, "You can see RFE files via '/less' command.\n");
+
+	if (!cfg.door_bump_open)
+		fprintf(fff, "You should use 'o' command explicitly to open a door.\n");
+
+	/* Administrative */
+	if (is_admin(p_ptr))
+	{
+		/* Output color byte */
+//		fprintf(fff, "%c\n", 'o');
+
+		fprintf(fff,"\n");
+		
+
+		fprintf(fff, "==== Administrative or hidden settings ====\n");
+
+		/* Output color byte */
+//		fprintf(fff, "%c\n", 'w');
+
+		fprintf(fff, "dun_unusual: %d (default = 200)\n", cfg.dun_unusual);
+		fprintf(fff, "Stores change their inventory every %d seconds(store_turns=%d).\n", cfg.store_turns * 10 / cfg.fps, cfg.store_turns);
+
+		fprintf(fff, "starting town: location [%d, %d], baselevel(%d)\n", cfg.town_x, cfg.town_y, cfg.town_base);
+		fprintf(fff, "Angband: baselevel(%d) depth(%d)\n", cfg.dun_base, cfg.dun_max);
+
+		if (cfg.auto_purge)
+			fprintf(fff, "Non-used monsters/objects are purged every 24H.\n");
+
+		if (cfg.mage_hp_bonus)
+			fprintf(fff, "mage_hp_bonus is applied.\n");
+		if (cfg.report_to_meta)
+			fprintf(fff, "Reporting to the meta-server.\n");
+		if (cfg.secret_dungeon_master)
+			fprintf(fff, "Dungeon Master is hidden.\n");
+		else
+			fprintf(fff, "Dungeon Master is *SHOWN*!!\n");
+		//	cfg.unique_max_respawn_time
+		//	cfg.game_port
+		//	cfg.console_port
+	}
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Let the client know to expect some info */
+	Send_special_other(Ind);
+}
+
+/*
+ * Tell players of the # of monsters killed, using temporary file. - Jir -
+ */
+void do_cmd_show_monster_killed_letter(int Ind, char *letter)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int		i, j, num, total = 0;
+	monster_race	*r_ptr;
+	bool	shown = FALSE, all = FALSE;
+	bool	mimic = (get_skill(p_ptr, SKILL_MIMIC));
+	bool	admin = is_admin(p_ptr);
+
+	FILE *fff;
+
+	/* Paranoia */
+	// if (!letter) return;
+
+	/* Open a new file */
+	fff = my_fopen(p_ptr->infofile, "w");
+
+	/* Current file viewing */
+	strcpy(p_ptr->cur_file, p_ptr->infofile);
+
+	/* Let the player scroll through the info */
+	p_ptr->special_file_type = TRUE;
+
+
+	/* Output color byte */
+//	fprintf(fff, "%c", 'G');
+
+	if (letter && *letter) fprintf(fff, "======== Killed List for Monster Group '%c' ========\n", *letter);
+	else
+	{
+		all = TRUE;
+		fprintf(fff, "======== Killed List ========\n");
+	}
+
+	/* for each monster race */
+	for (i = 1; i <= MAX_R_IDX; i++)
+	{
+		r_ptr = &r_info[i];
+//		if (letter && *letter != r_ptr->d_char) continue;
+		if (!all && !strchr(letter, r_ptr->d_char)) continue;
+		num = p_ptr->r_killed[i];
+		/* Hack -- always show townie */
+		// if (num < 1 && r_ptr->level) continue;
+		if (num < 1) continue;
+		if (!r_ptr->name) continue;
+
+		/* Let's not show uniques here */
+		if (r_ptr->flags1 & RF1_UNIQUE) continue;
+
+		if (admin) fprintf(fff, "(%4d) ", i);
+
+		if (mimic)
+		{
+			j = r_ptr->level - num;
+
+			if (j > 0)
+				fprintf(fff, "%s : %d (%d more to go)\n",
+						r_name + r_ptr->name, num, j);
+			else
+				fprintf(fff, "%s : %d (learnt)\n", r_name + r_ptr->name, num);
+		}
+		else
+		{
+			fprintf(fff, "%s : %d\n", r_name + r_ptr->name, num);
+		}
+		total += num;
+		shown = TRUE;
+	}
+
+	if (!shown) fprintf(fff, "Nothing so far.\n");
+	else fprintf(fff, "\nTotal : %d\n", total);
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Let the client know to expect some info */
+	Send_special_other(Ind);
+}
+
+
+/* Tell the player of her/his houses.	- Jir - */
+void do_cmd_show_houses(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	house_type *h_ptr;
+	struct dna_type *dna;
+	cptr name;
+
+	int		i, j, num, total = 0;
+	bool	shown = FALSE;
+	bool	admin = is_admin(p_ptr);
+
+	FILE *fff;
+
+	/* Paranoia */
+	// if (!letter) return;
+
+	/* Open a new file */
+	fff = my_fopen(p_ptr->infofile, "w");
+
+	/* Current file viewing */
+	strcpy(p_ptr->cur_file, p_ptr->infofile);
+
+	/* Let the player scroll through the info */
+	p_ptr->special_file_type = TRUE;
+
+
+	/* Output color byte */
+//	fprintf(fff, "%c", 'G');
+
+	fprintf(fff, "======== House List ========\n");
+
+	for(i=0;i<num_houses;i++)
+	{
+		//				if(!houses[i].dna->owner) continue;
+		//				if(!admin && houses[i].dna->owner != p_ptr->id) continue;
+		h_ptr = &houses[i];
+		dna = h_ptr->dna;
+
+		if (!access_door(Ind, h_ptr->dna)) continue;
+
+		shown = TRUE;
+		total++;
+
+		fprintf(fff, "%3d)   [%d,%d] in %s", total,
+				h_ptr->dy * 5 / MAX_HGT, h_ptr->dx * 5 / MAX_WID,
+				wpos_format(&h_ptr->wpos));
+//				h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
+
+		if (dna->creator == p_ptr->dna)
+		{
+			/* Take player's CHR into account */
+			int factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
+			int price = dna->price / 100 * factor;
+
+			if (price < 100) price = 100;
+			fprintf(fff, "  %dau", price / 2);
+		}
+
+		if (admin)
+		{
+#if 0
+			name = lookup_player_name(houses[i].dna->creator);
+			if (name) fprintf(fff, "  Creator:%s", name);
+			else fprintf(fff, "  Dead's. ID: %d", dna->creator);
+#endif	// 0
+			name = lookup_player_name(houses[i].dna->owner);
+			if (name) fprintf(fff, "  Owner:%s", name);
+			else fprintf(fff, "  ID: %d", dna->owner);
+		}
+
+#if 1
+		switch(dna->owner_type)
+		{
+			case OT_PLAYER:
+#if 0
+				if (dna->owner == dna->creator) break;
+				name = lookup_player_name(dna->owner);
+				if (name)
+				{
+					fprintf(fff, "  Legal owner:%s", name);
+				}
+#endif	// 0
+#if 0	// nothig so far.
+				else
+				{
+					s_printf("Found old player houses. ID: %d\n", houses[i].dna->owner);
+					kill_houses(houses[i].dna->owner, OT_PLAYER);
+				}
+#endif	// 0
+				break;
+
+			case OT_PARTY:
+				name = parties[dna->owner].name;
+				if(strlen(name))
+				{
+					fprintf(fff, "  as %s", name);
+				}
+#if 0	// nothig so far.
+				else
+				{
+					s_printf("Found old party houses. ID: %d\n", houses[i].dna->owner);
+					kill_houses(houses[i].dna->owner, OT_PARTY);
+				}
+#endif	// 0
+				break;
+			case OT_CLASS:
+				name = class_info[dna->owner].title;
+				if(strlen(name))
+				{
+					fprintf(fff, "  as %s", name);
+				}
+				break;
+			case OT_RACE:
+				name = race_info[dna->owner].title;
+				if(strlen(name))
+				{
+					fprintf(fff, "  as %s", name);
+				}
+				break;
+			case OT_GUILD:
+				name = guilds[dna->owner].name;
+				if(strlen(name))
+				{
+					fprintf(fff, "  as %s", name);
+				}
+				break;
+		}
+#endif	// 0
+
+		fprintf(fff, "\n");
+	}
+
+	if (!shown) fprintf(fff, "You're homeless for now.\n");
+//	else fprintf(fff, "\nTotal : %d\n", total);
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Let the client know to expect some info */
+	Send_special_other(Ind);
+}
+
+/*
+ * Tell players of the known items, using temporary file. - Jir -
+ */
+void do_cmd_show_known_item_letter(int Ind, char *letter)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int		i, j, num, total = 0;
+	object_kind	*k_ptr;
+	object_type forge;
+	char o_name[80];
+	bool shown = FALSE, all = FALSE;
+	bool admin = is_admin(p_ptr);
+
+	FILE *fff;
+
+	/* Paranoia */
+	// if (!letter) return;
+
+	/* Open a new file */
+	fff = my_fopen(p_ptr->infofile, "w");
+
+	/* Current file viewing */
+	strcpy(p_ptr->cur_file, p_ptr->infofile);
+
+	/* Let the player scroll through the info */
+	p_ptr->special_file_type = TRUE;
+
+
+	/* Output color byte */
+//	fprintf(fff, "%c", 'G');
+
+	if (letter && *letter) fprintf(fff, "======== Objects known (%c) ========\n", *letter);
+	else
+	{
+		all = TRUE;
+		fprintf(fff, "======== Objects known ========\n");
+	}
+
+	/* for each object kind */
+	for (i = 1; i <= MAX_K_IDX; i++)
+	{
+		k_ptr = &k_info[i];
+		if (!k_ptr->name) continue;
+		if (!all && *letter != k_ptr->d_char) continue;	// k_char ?
+//		if (!object_easy_know(i)) continue;
+//		if (!k_ptr->easy_know) continue;
+		if (!k_ptr->has_flavor) continue;
+		if (!p_ptr->obj_aware[i]) continue;
+
+		/* Create the object */
+		invcopy(&forge, i);
+
+		/* Describe the artifact */
+		object_desc_store(Ind, o_name, &forge, FALSE, 0);
+
+		/* Hack -- remove {0} */
+		j = strlen(o_name);
+		o_name[j-4] = '\0';
+
+		if (admin) fprintf(fff, "%3d, %3d) ", k_ptr->tval, k_ptr->sval);
+
+		fprintf(fff, "%s\n", o_name);
+
+		total++;
+		shown = TRUE;
+	}
+
+	if (!shown) fprintf(fff, "Nothing so far.\n");
+	else fprintf(fff, "\nTotal : %d\n", total);
+
+	fprintf(fff, "\n");
+
+	if (letter) fprintf(fff, "======== Objects tried (%c) ========\n", *letter);
+	else fprintf(fff, "======== Objects tried ========\n");
+
+	shown = FALSE;
+
+	/* for each object kind */
+	for (i = 1; i <= MAX_K_IDX; i++)
+	{
+		k_ptr = &k_info[i];
+		if (!k_ptr->name) continue;
+		if (letter && *letter != k_ptr->d_char) continue;	// k_char ?
+//		if (!object_easy_know(i)) continue;
+//		if (!k_ptr->easy_know) continue;
+		if (!k_ptr->has_flavor) continue;
+		if (p_ptr->obj_aware[i]) continue;
+		if (!p_ptr->obj_tried[i]) continue;
+
+		/* Create the object */
+		invcopy(&forge, i);
+
+		/* Describe the artifact */
+		object_desc(Ind, o_name, &forge, FALSE, 0);
+
+		/* Hack -- remove {0} */
+		j = strlen(o_name);
+		o_name[j-4] = '\0';
+
+		if (admin) fprintf(fff, "%3d, %3d) ", k_ptr->tval, k_ptr->sval);
+
+		fprintf(fff, "%s\n", o_name);
+
+		total++;
+		shown = TRUE;
+	}
+
+	fprintf(fff, "\n");
+
+	if (!shown) fprintf(fff, "Nothing so far.\n");
+//	else fprintf(fff, "\nTotal : %d\n", total);
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Let the client know to expect some info */
+	Send_special_other(Ind);
+}
+
+/*
+ * Check the status of traps
+ */
+void do_cmd_knowledge_traps(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int k;
+
+	FILE *fff;
+
+	trap_kind *t_ptr;
+
+	int	total = 0;
+	bool shown = FALSE;
+	bool admin = is_admin(p_ptr);
+
+	/* Open a new file */
+	fff = my_fopen(p_ptr->infofile, "w");
+
+	/* Current file viewing */
+	strcpy(p_ptr->cur_file, p_ptr->infofile);
+
+	/* Let the player scroll through the info */
+	p_ptr->special_file_type = TRUE;
+
+	fprintf(fff, "======== known traps ========\n");
+
+	/* Scan the traps */
+	for (k = 0; k < MAX_T_IDX; k++)
+	{
+		/* Get the trap */
+		t_ptr = &t_info[k];
+
+		/* Skip "empty" traps */
+		if (!t_ptr->name) continue;
+
+		/* Skip unidentified traps */
+		if(!p_ptr->trap_ident[k]) continue;
+
+		if (admin) fprintf(fff, "%3d)", k);
+
+		/* Hack -- Build the trap name */
+		fprintf(fff, "     %s\n", t_name + t_ptr->name);
+
+		total++;
+		shown = TRUE;
+	}
+
+	fprintf(fff, "\n");
+
+	if (!shown) fprintf(fff, "Nothing so far.\n");
+	else fprintf(fff, "\nTotal : %d\n", total);
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Let the client know to expect some info */
+	Send_special_other(Ind);
+}
 
 /*
  * Prepare to view already-existing text file. full path is needed.
@@ -624,6 +1298,7 @@ void do_cmd_check_other_prepare(int Ind, char *path)
 /*
  * Scroll through *ID* or Self Knowledge information.
  */
+//void do_cmd_check_other(int Ind, int line, int color)
 void do_cmd_check_other(int Ind, int line)
 {
 	player_type *p_ptr = Players[Ind];
@@ -633,8 +1308,8 @@ void do_cmd_check_other(int Ind, int line)
 	if (!p_ptr->special_file_type) return;
 
 	/* Display the file contents */
-//	show_file(Ind, p_ptr->infofile, "Extra Info", line, 0);
 	show_file(Ind, p_ptr->cur_file, "Extra Info", line, 0);
+//	show_file(Ind, p_ptr->cur_file, "Extra Info", line, color);
 
 #if 0
 	/* Remove the file */
