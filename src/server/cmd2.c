@@ -44,7 +44,7 @@ void do_cmd_go_up(int Ind)
 	{
 		struct worldpos twpos;
 		wpcopy(&twpos, wpos);
-		twpos.wz++;
+		if(twpos.wz<0) twpos.wz++;
 		if (!p_ptr->ghost)
 		{
 			msg_print(Ind, "I see no up staircase here.");
@@ -147,7 +147,7 @@ void do_cmd_go_down(int Ind)
 	{
 		struct worldpos twpos;
 		wpcopy(&twpos, wpos);
-		twpos.wz--;
+		if(twpos.wz>0) twpos.wz--;
 		if (!p_ptr->ghost)
 		{
 			msg_print(Ind, "I see no down staircase here.");
