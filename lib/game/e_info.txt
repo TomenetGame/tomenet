@@ -17,6 +17,8 @@
 # is possible for several "ego-item" types to have the same "textual name",
 # such as with "Armor of Resistance" and "Shield of Resistance".
 
+# N:187 is hard-coded(Stormbringer)!
+# If it is moved, you should change monster_death in xtra2.c also.
 
 # Version stamp (required)
 
@@ -1993,7 +1995,7 @@ F:MANA | FREE_ACT
 F:SHOW_MODS | HIDE_TYPE
 F:ABILITY
 
-# basically for monster drops (N:186 is hard-coded!)
+# basically for monster drops (N:187 is hard-coded!)
 N:187:'Stormbringer'
 T:23:30:30
 X:A:24:0

@@ -1101,8 +1101,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		for (l = 0; l < 99 ; l++)
 		{
 			k = rand_int(MAX_T_IDX);
-			if (!t_info[k].name || t_info[k].minlevel > glev || k == TRAP_OF_ACQUIREMENT) continue;
+			if (!t_info[k].name || t_info[k].minlevel > glev || k == TRAP_OF_ACQUIREMENT || k == TRAP_OF_RANDOM_EFFECT) continue;
 			trap = k;
+			break;
 		}
 	}
 

@@ -746,6 +746,7 @@ Change list for PernMangband
 [B] Panic save often enters into infinite loop.
 [B] House doors still seem to crash sometimes.
 [B] wpos display hides wound states(eg.'Deep Gash')
+[B] /rec won't work if to wilderness?
 
 ==== below this line are changes to be done in the future ====
 [minor ones]
@@ -774,6 +775,7 @@ Change list for PernMangband
 - total rebalancing for all of them
 - client updates necessary
 - item stacks/monster inventory
+- item themes (mage drops magic items, etc)
 - better vaults
 - fix gfx again {Asclep}
 - interactive spell system (like in C3)
@@ -783,7 +785,7 @@ Change list for PernMangband
 ==== below this line are RFEs collected so far (good or bad) ====
 - more equipment slots in general (like Bracer)
 - door spiking (with '/' key)
-- NPC/pet/golem {Evileye/DG?}
+- NPC/pet/golem/slave {Evileye/DG?}
 - monsters' interactions
 - player shouldn't gain more than 1 levels at once (esp.from books)
 - enhanced help system (imo we cannot beat web browsers anyway..)
@@ -800,4 +802,4 @@ Change list for PernMangband
 - new networking code (to kiss xpilot adieu :)
 - chat-line editor/history
 - vanilla-Angband style houses
-
+- some monster may become 'ghost' after being killed?

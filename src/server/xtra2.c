@@ -2901,7 +2901,7 @@ void monster_death(int Ind, int m_idx)
 		object_prep(qq_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
 
 		/* Megahack -- specify the ego */
-		qq_ptr->name2 = 186;
+		qq_ptr->name2 = 187;
 
 		apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE);
 

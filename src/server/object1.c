@@ -4413,7 +4413,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 			info[i++] = "It generates an antimagic field.";
 		else if (am >= 20)
 			info[i++] = "It generates a mellow antimagic field.";
-		else if (am) info[i++] = "It generates a feeble antimagic field.";
+		else if (am > 0) info[i++] = "It generates a feeble antimagic field.";
 
 	/* And then describe it fully */
 
