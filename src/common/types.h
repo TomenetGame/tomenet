@@ -956,6 +956,7 @@ struct quest
 #define DUNGEON_HELL 4	/* hellish dungeon - forces hellish mode on all */
 #define DUNGEON_NOMAP 8	/* player never gains level knowledge */
 
+typedef struct dun_level dun_level;
 struct dun_level{
 	int ondepth;
 	byte up_x,up_y;
@@ -969,6 +970,7 @@ struct dun_level{
  * Filter for races is not strict. It shall alter the probability.
  *
  */
+typedef struct dungeon_type dungeon_type;
 struct dungeon_type{
 	u16b id;		/* dungeon id */
 	u16b baselevel;		/* base level (1 - 50ft etc). */

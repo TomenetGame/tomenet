@@ -1445,6 +1445,48 @@ static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what)
 			return (0);
 		}
 	}
+#if 0
+
+        /* Check flags2 -- traps*/
+	for (i = 0; i < 32; i++)
+	{
+                if (streq(what, k_info_flags2_trap[i]))
+		{
+                        a_ptr->flags2 |= (1L << i);
+			return (0);
+		}
+	}
+
+        /* Check flags4 */
+	for (i = 0; i < 32; i++)
+	{
+                if (streq(what, k_info_flags4[i]))
+		{
+                        a_ptr->flags4 |= (1L << i);
+			return (0);
+		}
+	}
+
+        /* Check flags5 */
+	for (i = 0; i < 32; i++)
+	{
+                if (streq(what, k_info_flags5[i]))
+		{
+                        a_ptr->flags5 |= (1L << i);
+			return (0);
+		}
+	}
+
+        /* Check esp_flags */
+	for (i = 0; i < 32; i++)
+	{
+                if (streq(what, esp_flags[i]))
+		{
+                        a_ptr->esp |= (1L << i);
+			return (0);
+		}
+	}
+#endif	// 0
 
 	/* Oops */
 	s_printf("Unknown artifact flag '%s'.", what);
@@ -1658,6 +1700,30 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			/* Next... */
 			continue;
 		}
+
+#if 0
+                /* Process 'Z' for "Granted power" */
+                if (buf[0] == 'Z')
+		{
+                        int i;
+
+			/* Acquire the text */
+			s = buf+2;
+
+                        /* Find it in the list */
+                        for (i = 0; i < power_max; i++)
+                        {
+                                if (!stricmp(s, powers_type[i].name)) break;
+                        }
+
+                        if (i == power_max) return (6);
+
+                        a_ptr->power = i;
+
+			/* Next... */
+			continue;
+		}
+#endif	// 0
 
 		/* Hack -- Process 'F' for flags */
 		if (buf[0] == 'F')

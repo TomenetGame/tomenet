@@ -3893,10 +3893,12 @@ void map_area(int Ind)
 	byte            *w_ptr;
 
 #ifdef NEW_DUNGEON
+	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
 	struct worldpos *wpos;
 	cave_type **zcave;
 	wpos=&p_ptr->wpos;
 	if(!(zcave=getcave(wpos))) return;
+	if(d_ptr->flags & DUNGEON_NOMAP) return;
 #else
 	int Depth = p_ptr->dun_depth;
 #endif
@@ -3990,9 +3992,11 @@ void wiz_lite(int Ind)
 	byte            *w_ptr;
 
 #ifdef NEW_DUNGEON
+	dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+	if(d_ptr->flags & DUNGEON_NOMAP) return;
 #else
 	int Depth = p_ptr->dun_depth;
 #endif

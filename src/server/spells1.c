@@ -3045,7 +3045,8 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 	player_type *p_ptr;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	c_ptr=&zcave[y][x];
-	quiet = ((Ind <= 0) ? TRUE : (Ind == c_ptr->m_idx?TRUE:FALSE));
+	/* hack -- by trap */
+	quiet = ((Ind <= 0 || who == -999) ? TRUE : (Ind == c_ptr->m_idx?TRUE:FALSE));
 
 	if(quiet) return(FALSE);
 	p_ptr = Players[Ind];

@@ -472,3 +472,6 @@ Change list for PernMangband
 - Edge of world bug fixed
 - Fixed bug in wiz_lite.
 - Added signposts - all special info structs need to be stored.
+
+19/12/2001 (Jir)
+- Magic mapping disallowed inside NOMAP dungeons.
