@@ -2016,6 +2016,27 @@ static void do_lottery(int Ind, object_type *o_ptr)
 }
 
 /*
+ * Too much summon cheeze - check it before letting them summon - evileye
+ *
+ */
+static int check_self_summon(player_type *p_ptr){
+	cave_type **zcave, *c_ptr;
+
+	zcave=getcave(&p_ptr->wpos);
+	if(zcave){
+		c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+		/* not on wilderness edge */
+		if(p_ptr->wpos.wz || in_bounds(p_ptr->py, p_ptr->px)){
+			/* and not sitting on the stairs */
+			if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) return(TRUE);
+		}
+	}
+
+	return(FALSE);
+}
+
+/*
  * NOTE: seemingly, 'used_up' flag is used in a strange way to allow
  * item specification.  'keep' flag should be used for non-consuming
  * scrolls instead.		- Jir -
@@ -2194,6 +2215,8 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_SUMMON_MONSTER:
 			{
+				if(!check_self_summon(p_ptr)) break;
+
 				for (k = 0; k < randint(3); k++)
 				{
 					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, 0))
@@ -2211,27 +2234,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			   to prevent bad things from happening in town.
 			   */
 			case SV_SCROLL_LIFE:
-			{/*
-				for (y = -1; y <= 1; y++)
-				{
-				for (x = -1; x <= 1; x++)
-				{				
-				cave_type **zcave;
-				zcave=getcave(&p_ptr->wpos);
-				c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
-
-				if ((c_ptr->m_idx < 0) && (cave_floor_bold(zcave, p_ptr->py+y, p_ptr->px+x)))
-				{
-				if (Players[0 - c_ptr->m_idx]->ghost)
-				{
-				resurrect_player(0 - c_ptr->m_idx, 0);
-				break;
-				}
-				}
-
-				}
-				}
-				*/
+			{
 				/* only restore life levels if no resurrect */
 				if(!do_scroll_life(Ind))
 					restore_level(Ind);
@@ -2241,6 +2244,8 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_SUMMON_UNDEAD:
 			{
+				if(!check_self_summon(p_ptr)) break;
+
 				for (k = 0; k < randint(3); k++)
 				{
 					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_UNDEAD))
@@ -2951,6 +2956,8 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_SUMMONING:
 		{
+			if(!check_self_summon(p_ptr)) break;
+
 			for (k = 0; k < randint(4); k++)
 			{
 				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, 0))
@@ -7427,24 +7434,6 @@ bool unmagic(int Ind)
 			set_zeal(Ind, 0, 0)
 //			set_martyr(Ind, 0)
 			) ident = TRUE;
-
-#if 0	// now it's handled in set_tim_wraith
-	/* In town it only runs out if you are not on a wall
-	 * To prevent breaking into houses */
-	if (players_on_depth(&p_ptr->wpos)!= 0)
-	{
-			/* important! check for illegal spaces */
-		cave_type **zcave;
-		zcave=getcave(&p_ptr->wpos);
-		if (in_bounds(p_ptr->py, p_ptr->px))
-		{
-			if ((p_ptr->wpos.wz) || (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)))
-			{
-				if (set_tim_wraith(Ind, 0)) ident = TRUE;
-			}
-		}
-	}
-#endif	// 0
 
 	if (p_ptr->word_recall) ident |= set_recall_timer(Ind, 0);
 
