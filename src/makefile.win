@@ -355,7 +355,7 @@ date:
 #
 
 tomenet.server: $(SERV_OBJS) $(TOLUA)
-	$(CC) $(CFLAGS) -o mangband $(SERV_OBJS) $(LDFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) -o tomenet.server $(SERV_OBJS) $(LDFLAGS) $(LIBS)
 
 
 #
@@ -363,7 +363,7 @@ tomenet.server: $(SERV_OBJS) $(TOLUA)
 #
 
 tomenet: $(CLI_OBJS)
-	$(CC) $(CFLAGS) -o mangclient $(CLI_OBJS) $(LDFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) -o tomenet $(CLI_OBJS) $(LDFLAGS) $(LIBS)
 
 
 #
