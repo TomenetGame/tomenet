@@ -1999,6 +1999,33 @@ bool fill_house(house_type *h_ptr, int func){
 	int mw,mh;
 	bool success=TRUE;
 
+	if(h_ptr->flags&HF_RECT){
+		cave_type *c_ptr;
+		for(x=0;x<h_ptr->coords.rect.width;x++){
+			for(y=0;y<h_ptr->coords.rect.height;y++){
+ 				c_ptr=&cave[Depth][h_ptr->y+y][h_ptr->x+x];
+				if(func==2){
+					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
+						if((pick_house(Depth,h_ptr->y,h_ptr->x))!=-1)
+							success=FALSE;
+					}
+					else
+						c_ptr->feat=FEAT_DIRT;
+				}
+				if(func==1){
+					delete_object(Depth,y,x);
+				}
+				else{
+					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
+ 						c_ptr->feat=FEAT_FLOOR;
+ 						c_ptr->info|=CAVE_ICKY;
+					}
+				}
+			}
+		}
+		return(success);
+	}
+
 	maxx=minx=h_ptr->x;
 	maxy=miny=h_ptr->y;
 	x=h_ptr->x;
@@ -2120,19 +2147,8 @@ void wild_add_uhouse(house_type *h_ptr){
  			c_ptr=&cave[Depth][h_ptr->y+y][h_ptr->x+x];
  			c_ptr->feat=FEAT_PERM_EXTRA;
 		}
-		for(x=1;x<h_ptr->coords.rect.width-1;x++){
-			for(y=1;y<h_ptr->coords.rect.height-1;y++){
- 				c_ptr=&cave[Depth][h_ptr->y+y][h_ptr->x+x];
-				if(c_ptr->feat!=FEAT_PERM_EXTRA){
- 					c_ptr->feat=FEAT_FLOOR;
- 					c_ptr->info|=CAVE_ICKY;
-				}
-			}
-		}
 	}
-	else{
-		fill_house(h_ptr,0);
-	}
+	fill_house(h_ptr,0);
 	if(h_ptr->flags&HF_MOAT){
 		/* Draw a moat around our house */
 	}

@@ -4061,6 +4061,9 @@ bool poly_build(int Ind, char *args){
 		else dir=2;
 	}
 	if(y!=dy){
+		if(dir){
+			/* diagonal handler */
+		}
 		if(y>dy) dir|=4;
 		else dir|=8;
 	}
@@ -4079,16 +4082,24 @@ bool poly_build(int Ind, char *args){
 	if(p_ptr->px==sx && p_ptr->py==sy){		/* check for close */
 		vert[cvert++]=dx-lx;			/* last vertex */
 		vert[cvert++]=dy-ly;
-		if(cvert==10 /* || cvert==8 && door on corner */){
-			/*could be square...*/
-			/* optimise */
+		if(cvert==10 || cvert==8){
+			/*rectangle!*/
+			houses[num_houses].flags=HF_RECT;
+			houses[num_houses].x=minx;
+			houses[num_houses].y=miny;
+			houses[num_houses].coords.rect.width=maxx+1-minx;
+			houses[num_houses].coords.rect.height=maxy+1-miny;
+			houses[num_houses].dx=sx-minx;
+			houses[num_houses].dy=sy-miny;
 		}
-		houses[num_houses].x=sx;
-		houses[num_houses].y=sy;
-		houses[num_houses].flags=HF_NONE;	/* polygonal */
-		houses[num_houses].depth=p_ptr->dun_depth;;
+		else{
+			houses[num_houses].flags=HF_NONE;	/* polygonal */
+			houses[num_houses].x=sx;
+			houses[num_houses].y=sy;
+			houses[num_houses].coords.poly=vert;
+		}
+		houses[num_houses].depth=p_ptr->dun_depth;
 		houses[num_houses].dna=dna;
-		houses[num_houses].coords.poly=vert;
 		if(fill_house(&houses[num_houses],2)){
 			wild_add_uhouse(&houses[num_houses]);
 			msg_print(Ind,"You have completed your house");
@@ -4104,7 +4115,8 @@ bool poly_build(int Ind, char *args){
 		p_ptr->update|=PU_VIEW;
 		return TRUE;
 	}
-	if(depth==p_ptr->dun_depth){
+	/* no going off depth, and no spoiling moats */
+	if(depth==p_ptr->dun_depth && !(cave[depth][dy][dx].info&CAVE_ICKY)){
 		cave[p_ptr->dun_depth][dy][dx].feat=FEAT_PERM_EXTRA;
 		if(cvert<MAXCOORD) return TRUE;
 	}
@@ -4124,6 +4136,10 @@ void house_creation(int Ind){
 	/* set master_move_hook : a bit like a setuid really ;) */
 
 	if(p_ptr->dun_depth>=0) return;		/* Building in town??? no */
+	if((house_alloc-num_houses)<32){
+		GROW(houses, house_alloc, house_alloc+512, house_type);
+		house_alloc+=512;
+	}
 	p_ptr->master_move_hook=poly_build;
 	poly_build(Ind,1);
 	/* ok no sense checking, building bad houses is easy */

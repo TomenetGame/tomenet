@@ -2011,7 +2011,7 @@ static void calc_bonuses(int Ind)
 		if (f1 & TR1_IMPACT) p_ptr->impact = TRUE;
 
 		/* Boost shots */
-		if (f3 & TR3_KNOWLEDGE) p_ptr->auto_id = TRUE;;
+		if (f3 & TR3_KNOWLEDGE) p_ptr->auto_id = TRUE;
 
 		/* Boost shots */
 		if (f3 & TR3_XTRA_SHOTS) extra_shots++;
