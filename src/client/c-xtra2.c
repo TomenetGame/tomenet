@@ -89,6 +89,7 @@ void do_cmd_messages(void)
                         /* Handle "shower" */
                         if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
 
+#if 0
 			/* Handle message from other player */
 			/* Display messages in different colors -Zz */
 			if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL))
@@ -97,6 +98,7 @@ void do_cmd_messages(void)
 				a = TERM_L_BLUE;
 			else 
 				a = TERM_WHITE;
+#endif
 
                         /* Dump the messages, bottom to top */
                         Term_putstr(0, 21-j, -1, a, msg);
@@ -279,7 +281,7 @@ void do_cmd_messages_chatonly(void)
 		    (strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_destroyed) != NULL) || \
                     (strstr(msg, msg_unique) != NULL) || (strstr(msg, msg_suicide)   != NULL) || \
 		    (strstr(msg, msg_deadA)  != NULL) || (strstr(msg, msg_deadB)     != NULL) || \
-		    (strstr(msg, msg_telepath) != NULL))
+		    (strstr(msg, msg_telepath) != NULL) || (msg[2] == '['))
 		{
 			message_chat[nn] = msg;	
 			nn++;
@@ -319,6 +321,7 @@ void do_cmd_messages_chatonly(void)
                         /* Handle "shower" */
                         if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
 
+#if 0
 			/* Handle message from other player */
 			/* Display messages in different colors -Zz */
 			if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL))
@@ -327,7 +330,7 @@ void do_cmd_messages_chatonly(void)
 				a = TERM_L_BLUE;
 			else 
 				a = TERM_WHITE;
-
+#endif
                         /* Dump the messages, bottom to top */
                         Term_putstr(0, 21-j, -1, a, msg);
                 }
