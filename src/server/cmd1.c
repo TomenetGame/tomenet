@@ -2308,9 +2308,9 @@ void do_prob_travel(int Ind, int dir)
 void move_player(int Ind, int dir, int do_pickup)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos=&p_ptr->wpos, nwpos;
 
-	int                     y, x, old_world_x, old_world_y, oldx, oldy;
+	int                     y, x, oldx, oldy;
 	int i;
 
 	cave_type               *c_ptr;
@@ -2353,7 +2353,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		if (p_ptr->new_level_flag) return;
 		
 		/* save his old location */
-		old_world_x = p_ptr->wpos.wx; old_world_y = p_ptr->wpos.wy;
+		wpcopy(&nwpos, wpos);
 		oldx = p_ptr->px; oldy = p_ptr->py;
 		
 		/* we have gone off the map */
@@ -2363,33 +2363,31 @@ void move_player(int Ind, int dir, int do_pickup)
 			if (y <= 0)
 			{       
 				/* new player location */
-				p_ptr->wpos.wy++;
+				nwpos.wy++;
 				p_ptr->py = MAX_HGT-2;
 			}
 			if (y >= 65)
 			{                       
 				/* new player location */  
-				p_ptr->wpos.wy--;
+				nwpos.wy--;
 				p_ptr->py = 1;
 			}
 			if (x <= 0)
 			{
 				/* new player location */
-				p_ptr->wpos.wx--;
+				nwpos.wx--;
 				p_ptr->px = MAX_WID-2;
 			}
 			if (x >= 197)
 			{
 				/* new player location */
-				p_ptr->wpos.wx++;                       
+				nwpos.wx++;                       
 				p_ptr->px = 1;
 			}
 		
 			/* check to make sure he hasnt hit the edge of the world */
-			if(p_ptr->wpos.wx<0 || p_ptr->wpos.wx>=MAX_WILD_X || p_ptr->wpos.wy<0 || p_ptr->wpos.wy>=MAX_WILD_Y)
+			if(nwpos.wx<0 || nwpos.wx>=MAX_WILD_X || nwpos.wy<0 || nwpos.wy>=MAX_WILD_Y)
 			{
-				p_ptr->wpos.wx = old_world_x;
-				p_ptr->wpos.wy = old_world_y;
 				p_ptr->px = oldx;
 				p_ptr->py = oldy;
 				return;
@@ -2399,8 +2397,8 @@ void move_player(int Ind, int dir, int do_pickup)
 			zcave[oldy][oldx].m_idx = 0;
 			
 			/* Show everyone that's he left */
-			everyone_lite_spot(wpos, oldy, oldx);
-		
+			everyone_lite_spot(&p_ptr->wpos, oldy, oldx);
+
 			/* forget his light and viewing area */
 			forget_lite(Ind);
 			forget_view(Ind);                       
@@ -2408,6 +2406,9 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* Hack -- take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			
+			p_ptr->wpos.wx = nwpos.wx;
+			p_ptr->wpos.wy = nwpos.wy;
+		
 			/* A player has left this depth */
 			new_players_on_depth(wpos,-1,TRUE);
 			

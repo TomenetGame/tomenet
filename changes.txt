@@ -652,6 +652,7 @@ Change list for PernMangband
 - Cleaned up new dungeon code, removing old
 - Fixed targetting bug in new code
 - Some compilation warnings fixed (cleanup)
+- Light bug fixed when changing wilderness area
 
 
 ** [B] stands for Bugfix.
