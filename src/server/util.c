@@ -2528,6 +2528,10 @@ void msg_format_near(int Ind, cptr fmt, ...)
  * A message prefixed by a player name is sent only to that player.
  * Otherwise, it is sent to everyone.
  */
+/*
+ * This function is hacked *ALOT* to add extra-commands w/o
+ * client change.		- Jir -
+ */
 void player_talk_aux(int Ind, cptr message)
 {
  	int i, len, target = 0;
@@ -2579,7 +2583,7 @@ void player_talk_aux(int Ind, cptr message)
 		strcpy(sender, "Server Admin");
 	}
 
-	/* Special - shutdown command */
+	/* Special - shutdown command (for compatibility) */
 	if (prefix(message, "@!shutdown") && admin)
 	{
 		shutdown_server();

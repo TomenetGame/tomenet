@@ -2419,22 +2419,24 @@ void move_player(int Ind, int dir, int do_pickup)
 	{
 		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
 		bool myhome = FALSE;
-	if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
-	{
+		if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
+		{
 #ifndef NEWHOUSES
-	    i = pick_house(Depth, y, x);
-	    /* evileye hack new houses -demo */
-	    if(i==-1 && c_ptr->special){ /* orig house failure */
+			i = pick_house(Depth, y, x);
+			/* evileye hack new houses -demo */
+			if(i==-1 && c_ptr->special) /* orig house failure */
 #else
-	    if(c_ptr->special.type==DNA_DOOR){ /* orig house failure */
+			if(c_ptr->special.type==DNA_DOOR) /* orig house failure */
 #endif /* NEWHOUSES */
-		if(access_door(Ind, c_ptr->special.ptr))
+			{
+				if(access_door(Ind, c_ptr->special.ptr))
 				{
 					myhome = TRUE;
 					msg_print(Ind, "\377GYou walk through the door.");
 				}
 			}
 		}
+
 		if (!myhome)
 		{
 
@@ -2724,10 +2726,11 @@ static bool wraith_access(int Ind){
 
 	for(i=0;i<num_houses;i++){
 #ifdef NEW_DUNGEON
-		if(inarea(&houses[i].wpos, &p_ptr->wpos)){
+		if(inarea(&houses[i].wpos, &p_ptr->wpos))
 #else
-		if(houses[i].depth==p_ptr->dun_depth){
+		if(houses[i].depth==p_ptr->dun_depth)
 #endif
+		{
 			if(fill_house(&houses[i], 3, p_ptr)){
 				if(access_door(Ind, houses[i].dna))
 					return(TRUE);
@@ -3167,6 +3170,7 @@ static bool run_test(int Ind)
 
 	cave_type               *c_ptr;
 	byte                    *w_ptr;
+	trap_type	*t_ptr;
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
@@ -3219,6 +3223,13 @@ static bool run_test(int Ind)
 		{
 			/* Visible object */
 			if (p_ptr->obj_vis[c_ptr->o_idx]) return (TRUE);
+		}
+
+		/* Visible traps abort running */
+		if (c_ptr->special.type == CS_TRAPS)
+		{
+			t_ptr = c_ptr->special.ptr;
+			if (t_ptr->found) return TRUE;
 		}
 
 		/* Hack -- always stop in water */
