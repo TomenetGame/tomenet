@@ -5735,7 +5735,7 @@ void telekinesis_aux(int Ind, int item)
 	{
 		dungeon_type *d_ptr;
 
-		d_ptr=getdungeon(p2_ptr);
+		d_ptr=getdungeon(&p2_ptr->wpos);
 		if(d_ptr && d_ptr->flags & DUNGEON_IRON){
 			msg_print(Ind, "You are unable to contact that player");
 			return;
