@@ -614,12 +614,6 @@ struct trap_kind{
 /* heheh it's kludge.. */
 #define sc_is_pointer(type)	(type < 3 || type == 4 || 9 < type)
 
-#if 0
-struct c_special{
-	unsigned char type;
-	void *ptr;		/* lazy */
-};
-#else /* Jir - work still in progress (thx Yakina for advice) */
 typedef struct c_special c_special;
 
 struct c_special{
@@ -637,7 +631,6 @@ struct c_special{
 	} sc;
 	struct c_special *next;
 };
-#endif	// 0
 
 typedef struct cave_type cave_type;
 
@@ -1011,12 +1004,6 @@ struct setup_t
 	s16b frames_per_second;
 	byte max_race;
 	byte max_class;
-#if 0
-	char race_title[MAX_RACES][12];	// "Unbeliever" (10)
-	s32b race_choice[MAX_RACES];	// player_race.choice
-	char class_title[MAX_CLASS][12];	// "DragonRider"(11)
-//	byte max_subclass;	// etc
-#endif	// 0
 	int motd_len;
 	int setup_size;
 	char motd[80 * 23];
@@ -1085,30 +1072,6 @@ struct option_type
  */
 typedef struct store_type store_type;
 
-#if 0
-struct store_type
-{
-	byte num;			/* store type */
-	byte owner;				/* Owner index */
-	byte extra;				/* Unused for now */
-
-	s16b insult_cur;		/* Insult counter */
-
-	s16b good_buy;			/* Number of "good" buys */
-	s16b bad_buy;			/* Number of "bad" buys */
-
-	s32b store_open;		/* Closed until this turn */
-	s32b store_wrap;		/* Unused for now */
-
-	s16b table_num;			/* Table -- Number of entries */
-	s16b table_size;		/* Table -- Total Size of Array */
-	s16b *table;			/* Table -- Legal item kinds */
-
-	s16b stock_num;			/* Stock -- Number of entries */
-	s16b stock_size;		/* Stock -- Total Size of Array */
-	object_type *stock;		/* Stock -- Actual stock items */
-};
-#else	// 0
 struct store_type
 {
 	u16b st_idx;
@@ -1128,9 +1091,6 @@ struct store_type
 	s16b stock_size;		/* Stock -- Total Size of Array */
 	object_type *stock;		/* Stock -- Actual stock items */
 };
-#endif	// 0
-
-
 
 /*
  * Structure for the "quests"
@@ -1201,8 +1161,6 @@ struct quest_type{
    -APD-
 */
 
-#if 1 /* Evileye - work in progress */
-
 /*
  * struct for individual levels.
  */
@@ -1250,8 +1208,6 @@ struct town_type
 	u16b num_stores;	/* always 8 or unused atm. */
 	store_type *townstore;  /* pointer to the stores */
 };
-
-#endif
 
 typedef struct wilderness_type wilderness_type;
 
@@ -1672,24 +1628,6 @@ struct ip_ban{
  * Skills !
  */
 typedef struct skill_type skill_type;
-#if 0
-struct skill_type
-{
-	cptr name;                              /* Name */
-	cptr desc;                              /* Description */
-	cptr action_desc;                       /* Action Description */
-
-	s16b action_mkey;                       /* Action do to */
-
-	s16b action[MAX_SKILLS][2];             /* List of actions against other skills in th form: action[x] = {SKILL_FOO, 10} */
-
-	s16b father;                            /* Father in the skill tree */
-	s16b order;                             /* Order in the tree */
-
-	u32b flags1;                            /* Skill flags */
-	byte tval;	/* tval associated */
-};
-#else	// 0
 struct skill_type
 {
 	u32b name;                              /* Name */
