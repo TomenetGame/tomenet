@@ -3735,7 +3735,8 @@ void player_death(int Ind)
 		delete_player_name(p_ptr->name);
 
 		/* Put him on the high score list */
-		add_high_score(Ind);
+		if(!p_ptr->admin_dm && !p_ptr->admin_wiz)
+			add_high_score(Ind);
 
 		/* Format string */
 		sprintf(buf, "Killed by %s (%ld points)", p_ptr->died_from, total_points(Ind));
@@ -3870,7 +3871,8 @@ void player_death(int Ind)
 		delete_player_name(p_ptr->name);
 
 		/* Put him on the high score list */
-		add_high_score(Ind);
+		if(!p_ptr->admin_dm && !p_ptr->admin_wiz)
+			add_high_score(Ind);
 
 		/* Get rid of him */
 		Destroy_connection(p_ptr->conn, "Committed suicide");
