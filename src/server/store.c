@@ -1617,7 +1617,7 @@ static void store_create(store_type *st_ptr)
 			/* Random item (usually of given level) */
 			i = get_obj_num(level);
 			
-#if 0
+//#if 0
 			/* MEGA HACK */ /* XXX This will be removed */
 			if (black_market_potion == 1)
 			{
@@ -1657,7 +1657,7 @@ static void store_create(store_type *st_ptr)
 			    force_num = rand_range(2, 4);
 			  }
 #endif
-#endif	// 0
+//#endif	// 0
 
 			/* Handle failure */
 			if (!i) continue;
