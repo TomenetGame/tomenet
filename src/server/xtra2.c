@@ -4037,6 +4037,13 @@ void kill_quest(int Ind){
 	char temp[160];
 
 	id=p_ptr->quest_id;
+	for(i=0;i<20;i++){
+		if(quests[i].id==id){
+			id=i;
+			break;
+		}
+	}
+
 	sprintf(temp,"\377y%s has won the %s quest!", p_ptr->name, r_name+r_info[quests[id].type].name);
 	msg_broadcast(Ind, temp);
 	msg_format(Ind, "\377yYou have won the %s quest!", r_name+r_info[quests[id].type].name);
@@ -4069,7 +4076,7 @@ bool add_quest(s16b type, s16b num, int midlevel){
 		return(FALSE);
 	added=0;
 
-	for(i=1; i<NumPlayers; i++){
+	for(i=1; i<=NumPlayers; i++){
 		q_ptr=Players[i];
 		if(q_ptr && !q_ptr->quest_id){
 			if(ABS(q_ptr->lev-midlevel)>5) continue;
@@ -4080,9 +4087,13 @@ bool add_quest(s16b type, s16b num, int midlevel){
 			added++;
 		}
 	}
-	if(!added) del_quest(questid);
+	if(!added){
+		del_quest(questid);
+		return(FALSE);
+	}
 	questid++;
 	if(questid==0) questid=1;
+	return(TRUE);
 }
 
 /*
@@ -4216,14 +4227,20 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 		/* Generate treasure */
 		if(!m_ptr->clone){
+			int i;
 			monster_death(Ind, m_idx);
-			if(p_ptr->quest_id && m_ptr->r_idx==quests[p_ptr->quest_id].type){
-				p_ptr->quest_num--;
-				if(p_ptr->quest_num==0){
-					kill_quest(Ind);
+			for(i=0;i<20;i++){
+				if(quests[i].id==p_ptr->quest_id){
+					if(m_ptr->r_idx==quests[i].type){
+						p_ptr->quest_num--;
+						if(p_ptr->quest_num==0){
+							kill_quest(Ind);
+						}
+						else
+							msg_format(Ind, "%d more to go!", p_ptr->quest_num);
+					}
+					break;
 				}
-				else
-					msg_format(Ind, "%d more to go!", p_ptr->quest_num);
 			}
 		}
 

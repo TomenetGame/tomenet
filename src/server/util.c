@@ -2557,9 +2557,23 @@ static void do_slash_cmd(int Ind, cptr message)
 				return;
 			}
 			else if (prefix(message, "/quest")){
+				if(tk==1){
+					int qn;
+					if(!strcmp(token[1],"reset")){
+						for(qn=0;qn<20;qn++){
+							quests[qn].active=0;
+							quests[qn].type=0;
+							quests[qn].id=0;
+						}
+						msg_print(Ind, "\377yQuests are reset");
+						return;
+					}
+				}
 				if(tk==3){
-					add_quest(atoi(token[1]), atoi(token[2]), atoi(token[3]));
-					msg_print(Ind, "\377yQuest added successfully!");
+					if(add_quest(atoi(token[1]), atoi(token[2]), atoi(token[3])))
+						msg_print(Ind, "\377yQuest added successfully!");
+					else
+						msg_print(Ind, "\377rQuest addition failed!");
 					return;
 				}
 				msg_print(Ind, "\377oUsage: /quest type num level");
