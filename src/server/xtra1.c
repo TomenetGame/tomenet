@@ -1611,7 +1611,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if(r_ptr->flags9 & RF9_RES_TIME) p_ptr->resist_time = TRUE;
 	if(r_ptr->flags9 & RF9_RES_MANA) p_ptr->resist_mana = TRUE;
 
-	if(r_ptr->flags3 & RF3_RES_TELE) p_ptr->anti_tele = TRUE;
+	if(r_ptr->flags3 & RF3_RES_TELE) p_ptr->res_tele = TRUE;
 	if(r_ptr->flags3 & RF3_RES_PLAS)
 	{
 	    p_ptr->resist_fire = TRUE;
@@ -2008,6 +2008,7 @@ void calc_bonuses(int Ind)
 
 	p_ptr->immune_neth = FALSE;
 	p_ptr->anti_tele = FALSE;
+	p_ptr->res_tele = FALSE;
 	p_ptr->antimagic = 0;
 	p_ptr->antimagic_dis = 0;
 	p_ptr->xtra_crit = 0;
@@ -2572,7 +2573,7 @@ void calc_bonuses(int Ind)
 		if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
 
 		/* Limit use of disenchanted DarkSword for non-unbe */
-		minus = o_ptr->to_h + o_ptr->to_d + pval + o_ptr->to_a;
+		minus = o_ptr->to_h + o_ptr->to_d + pval + (o_ptr->to_a / 4);
 		if (minus < 0) minus = 0;
 
 		if (f4 & (TR4_ANTIMAGIC_50) && minus < 50)

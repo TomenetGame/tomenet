@@ -2301,7 +2301,8 @@ struct player_type
 	//        byte anti_magic_spell;    /* Anti-magic(newer one..) */
 	byte antimagic;    		/* Anti-magic(in percent) */
 	byte antimagic_dis;     /* Radius of the anti magic field */
-	bool anti_tele;     /* Prevent teleportation */
+	bool anti_tele;     /* Prevent any teleportation + phasing + recall */
+	bool res_tele;		/* Prevents being teleported from someone else */
 	/* in PernM, it's same as st_anchor */
 	bool resist_continuum;	/* non-timed -- Space/Time Anchor */
 	bool admin_wiz;		/* Is this char Wizard? */

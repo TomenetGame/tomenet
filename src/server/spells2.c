@@ -936,6 +936,10 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "You cannot teleport.\n");
 	}
+	if (p_ptr->res_tele)
+	{
+		fprintf(fff, "You resist incoming teleportation effects.\n");
+	}
 #endif	// 0
 
 	if (p_ptr->immune_acid)
@@ -1546,6 +1550,10 @@ void self_knowledge(int Ind)
 	if (p_ptr->anti_tele)
 	{
 		info[i++] = "You cannot teleport.";
+	}
+	if (p_ptr->anti_tele)
+	{
+		info[i++] = "You resist incoming teleportation effects.";
 	}
 #endif	// 0
 

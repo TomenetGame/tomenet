@@ -287,6 +287,7 @@ bool check_st_anchor(struct worldpos *wpos, int y, int x)
 
 //		if (!q_ptr->st_anchor) continue;
 //		if (!q_ptr->anti_tele) continue;
+//		if ((!q_ptr->res_tele) && (rand_int(100) < 67)) continue;
 		if (!q_ptr->resist_continuum) continue;
 
 		/* Compute distance */
@@ -2379,7 +2380,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 		{
 			if (!m_ptr) break;
 
-			if (p_ptr->anti_tele)
+			if (p_ptr->anti_tele || (p_ptr->res_tele  && (rand_int(100) < 67)))
 			{
 				msg_print(Ind, "You resist the effects!");
 				break;
@@ -2391,7 +2392,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 
 		case 1: case 2: case 3:
 		{
-			if (p_ptr->anti_tele)
+			if (p_ptr->anti_tele || (p_ptr->res_tele && (rand_int(100) < 67)))
 			{
 				msg_print(Ind, "You resist the effects!");
 				break;
@@ -2403,7 +2404,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 
 		case 6:
 		{
-			if (rand_int(100) < p_ptr->skill_sav || p_ptr->anti_tele)
+			if (rand_int(100) < p_ptr->skill_sav || p_ptr->anti_tele || (p_ptr->res_tele && (rand_int(100) < 67)))
 			{
 				msg_print(Ind, "You resist the effects!");
 				break;
@@ -2447,7 +2448,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 		{
 			if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break;
 
-			if (rand_int(100) < p_ptr->skill_sav || p_ptr->anti_tele)
+			if (rand_int(100) < p_ptr->skill_sav || p_ptr->anti_tele || (p_ptr->res_tele && (rand_int(100) < 67)))
 			{
 				msg_print(Ind, "You resist the effects!");
 				break;
@@ -5279,7 +5280,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* DEG Death message with damage. */
 			if ((r_ptr->flags1 & RF1_UNIQUE) && (!quiet && note))
 			{
-				msg_format(Ind, "%^s%s by \377p%d \377wdamage.", m_name, note, dam);
+				msg_format(Ind, "%^s%s by \377e%d \377wdamage.", m_name, note, dam);
 			}	
 			else	
 			if (!quiet && note) msg_format(Ind, "%^s%s by \377g%d \377wdamage.", m_name, note, dam);
@@ -5315,7 +5316,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			/* Give detailed messages if visible or destroyed */
 			/* DEG Changed for added damage message. */
-			if ((!quiet && note && seen)&&(r_ptr->flags1 & RF1_UNIQUE)) msg_format(Ind, "%^s%s and takes \377p%d \377wdamage.", m_name, note, dam);
+			if ((!quiet && note && seen)&&(r_ptr->flags1 & RF1_UNIQUE)) msg_format(Ind, "%^s%s and takes \377e%d \377wdamage.", m_name, note, dam);
 			else if (!quiet && note && seen) msg_format(Ind, "%^s%s and takes \377g%d \377wdamage.", m_name, note, dam);
 
 			/* Hack -- Pain message */
@@ -6615,6 +6616,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->anti_tele)
 			{
 				msg_print(Ind, "You are unaffected!");
+			}
+			else if (p_ptr->res_tele && (rand_int(100) < 67))
+			{
+				msg_print(Ind, "You resist the effect!");
 			}
 			else
 			{
