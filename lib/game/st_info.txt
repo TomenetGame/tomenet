@@ -297,16 +297,18 @@ W:36
 N:6:Black Market
 #potion of Speed
 T:100:71:29
+T:100:71:29
 #potion of Healing
+T:100:71:37
 T:100:71:37
 #scroll of Teleportation
 T:90:70:9
-I:100:Restore Mana
-I:50:Blood Bond
+#potion of Restore Mana
+T:100:71:40
+T:100:71:40
 #potion of resistance
-#T:5:71:60
-#T:10:71:60
-T:25:71:60
+#T:25:71:60
+T:50:71:60
 #scroll of *enchant weapon*
 T:10:70:21
 #scroll of *enchant armour*
@@ -320,7 +322,8 @@ T:10:70:61
 #pot of *healing* - added especially for Nether Realm visits
 T:5:71:38
 #pot of *restore mana* - shouldn't be buyable. too exquisite!
-#T:::
+#T:5:71:64
+I:50:Blood Bond
 A:30:0:1:2:3:4
 O:38:39:40:41
 G:7:D

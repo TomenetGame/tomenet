@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. November 2004; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.2.2b, http://www.tomenet.net/
+| Latest update: 8. February 2004; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.3.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
 +---
@@ -12,6 +12,8 @@
 | b) is all the time 100% accurate on every occasion.
 | Don't blame me if something differs or is missing; it shouldn't though.
 | Please send in suggestions, criticism or comments to mail@c-blue.de.
+| It's recommended to read this guide using a fixed-width font (Courier on
+| MS Windows machines) to see proper spacing instead of warped tables.
 \
 
 
@@ -40,7 +42,7 @@ Contents
     (3.2)   The display (user-interface)
     (3.3)   Start-up equipment & how to use it
     (3.4)   Preparing the first time for fighting enemies
-    (3.5)   Creating basic macros & inscribing items
+    (3.5)   Creating basic macros & inscribing items (IMPORTANT)
     (3.6)   Creating macros for ranged attacks & abilities (spells)
     (3.6a)  Ability codes [contained within (3.6)]
     (3.7)   Example macro sets
@@ -432,7 +434,6 @@ Items that induce random teleportation, like a 'ring of teleportation' or
     not separated from each other. Example:
     A Long Sword Of The Thunderlords (2d5) (+10,+15) {NxFAReg..}
 
-
 Items that 'can cause Earthquakes':
     !E          will make the item stop causing earthquakes randomly on
                 striking. (See (5.13) for more information.)
@@ -465,6 +466,11 @@ Spellbooks:
 
 Ammunition:
     !=          will make your character auto-pickup the ammo from the floor.
+    !M          makes ammunition stacks of same base type and same ego power
+                stack even if +hit or +dam enchantments are not equal. Those
+                will be averaged and rounded downwards. (Doesn't work for
+                cursed or artefact ammo.) Wield the !M stack first, then also
+                wield the stack you want to merge with the equipped ammo.
 
 An item that can be activated:
     @A1         pressing the keys 'A' and then '1' will activate that item.
@@ -925,9 +931,9 @@ resume playing. If the ghost dies, the character will finally be erased
 permanently, watch out!
 Depending on the server configuration the number of times a ghost is limited,
 standard is 3 lifes.
-If a normal player becomes a queen or king (defeats Morgoth), all remaining
-resurrections will be lost and the next time he dies it will be permanent,
-like it is for unworldly characters.
+(Outdated/wrong: If a normal player becomes a queen or king (defeats Morgoth),
+all remaining resurrections will be lost and the next time he dies it will be
+permanent, like it is for unworldly characters.)
 
 'Everlasting':
 --------------
@@ -1193,13 +1199,26 @@ user-<operating system>.prf (loaded if under the specific operating system)
 
 It is recommended to use only race/class/account/character preference files.
 
-Command macros:
+Command macros:  !WORKS DIFFERENT FROM MOST ROGUE-LIKES!
 ---------------
-Use 'create command macro' instead of 'create normal macro' in case you don't
-want the macro to appear on hitting the corresponding key in a normal chat
-message (for example useful for '-' key so it won't prevent you from inscribing your
-word-of-recall scrolls).
-(It is recommended to create command macros rather than normal macros.)
+Command macros are only executed if the game isn't currently waiting for a
+specific input, for example "quaff which potion?" or while you're typing chat
+messages. That means they won't "disrupt" any other command which is currently
+being run. This is convenient for keys which you use in chat, but can be
+dangerous if you define vital macros as command macros.
+It is recommended to make your most important macros normal macros or at least
+hybrid macros (for example a "panic key" macro). Command macros don't work
+in shops.
+
+Hybrid macros:
+--------------
+Use 'create hybrid macro' instead of 'create normal macro' and 'create command
+macro' in case you don't want the macro to appear on hitting the corresponding
+key in a normal chat message (for example useful for '-' key so it won't
+prevent you from inscribing your word-of-recall scrolls).
+Hybrid macros still work within input requests such as "quaff which potion?",
+just not in STRING INPUT such as chat lines, polymorph-codes or money amounts.
+Hybrid macros don't work in shops.
 
 Identity macros:
 ----------------
@@ -1463,7 +1482,7 @@ blindness resistance then! (Those two aren't needed to use a staff.)
 If you play Thunderlord, kill Dragonriders because they tend to drop a large
 amount of firestones. If a difficult combat starts, just eat several of them
 to get a larger amount of extra powers.
-(All macros in example_fighter.prf were defined as command macros.
+(All macros in example_fighter.prf were defined as hybrid macros.
 Note: The file example_fighter.prf is write-protected to avoid overwriting.)
 
 
@@ -1517,7 +1536,7 @@ movement, the keys +, - and 0 were used to allow quick access to his basic
 spells. - and 0 use his startup book 'Beginner Cantrips' while the macro on
 the + key requires that he bought a spellbook of noxious cloud (or any other
 attack spell, like fire flash) and inscribed it accordingly.
-(All macros in example_caster.prf were defined as command macros.)
+(All macros in example_caster.prf were defined as hybrid macros.)
 
 
 
@@ -1565,6 +1584,11 @@ Miscellanous escape sequences:
 \0?? or \1?? or \2?? or \3??
                 stands for an octal code. The code will be converted into an
                 ASCII character similar to \x?? hex mode, so \101 becomes 'A'.
+\w??            Waits (asynchronously) for ?? tenth seconds. (eg. 20 -> 2 s)
+                Use this for macros which contain several commands in a row
+                which depend on each others execution. You might have to
+                adjust the delay to your personal latency, depending on your
+                internet connection.
 
 (3.8a) Creating a chat macro for your party
 -------------------------------------------
@@ -1575,20 +1599,26 @@ On the other hand, entering your chat lines in this format
   <Party name>:<Text>
 all the time can get annoying since you have to repeat the party name over and
 over, although you can use just the first four letters or so as abbreviation.
-The best solution is, to create a macro for party chat, so you can write a
-party-message by hitting a single key, party-chatting becomes as easy as
-hitting ':' for normal chat.
-Enter the macro menu ('%'), enter a new action ('3'), enter the macro
-according to your party name. For example, if your party is called
-'Scarlet Knights', enter this string:
-:Scarlet:
-hit the Enter key to accept it, create a command macro ('4'), choose a key you
-wish to use for party chat from now on, and dump your macro ('2') to a file
-which is loaded automatically, like '<Your charname>.prf', for example
-Kinkan.prf.
-Using longer or shorter (at least 4 letters) strings works too of course, as
-long as there isn't a party of similar name which could get confused with
-yours.
+
+There are two different ways to easily talk to your party.
+1.) use the party wildcard '!'.
+    Simply start your chatline like this !:blabla..., using the '!' in place
+    of the party name. The text will be sent to your current party (if any).
+2.) Create a macro to chat with a specific party, so you can write a
+    party-message by hitting a single key, party-chatting becomes as easy as
+    hitting ':' for normal chat.
+    Enter the macro menu ('%'), enter a new action ('3'), enter the macro
+    according to your party name. For example, if your party is called
+    'Scarlet Knights', enter this string:
+        :Scarlet:
+    hit the Enter key to accept it, create a command macro ('4'), choose a
+    key you wish to use for party chat from now on, and dump your macro ('2')
+    to a file which is loaded automatically, like '<Your charname>.prf', for
+    example Kinkan.prf.
+    Using longer or shorter (at least 4 letters) strings works too of course,
+    as long as there isn't a party of similar name which could get confused
+    with yours.
+Solution (1.) is much easier than (2.) of course, and the recommended way.
 
 
 
@@ -1694,9 +1724,10 @@ but that's not recommended. Instead, you should go for resurrection!
 
 Ghosts can float up and down freely (just hit '<' or '>' key as if you take
 a staircase), so they can quickly float out of the dungeon without having to
-search for staircases. However, a ghost cannot float down to very deep dungeon
-levels which he hadn't visited yet when he was still alive. So 'Ghost-Diving'
-(means: simply continuing playing as a ghost) is somewhat limited.
+search for staircases. However, on some servers, a ghost cannot float down to
+very deep dungeon levels which he hadn't visited yet when he was still alive.
+So 'Ghost-Diving' (means: simply continuing playing as a ghost) is somewhat
+limited there.
 
 That will bring you back to life at the cost of experience (40% usually).
 There are 3 ways to be revived:
@@ -3405,8 +3436,8 @@ Detonations     Better not drink it.
 Scrolls
 --
 Blessing/Holy Chant/Holy Prayer
-                Increases your AC by 10/20/30, Holy prayer also increases your
-                to-hit bonus. (Temporarily)
+                Increases your AC by 10/20/30, also increases your to-hit
+                bonus. (Temporarily)
 Rumour          Entertains the audience.
 Life            Resurrects another player's ghost if standing on a directly
                 adjacent field to you when you read it. Does not work inside
@@ -3564,6 +3595,8 @@ Sprig of Athelas    Eat this one to cure Black Breath (see 1.5 for more
                     also cures poison/stun/cuts.
 Mushrooms of paranoia/cure paranoia
                     Cause/remove fear, cause/reduce hallucinations.
+Mushroom of Unmagic
+                  Removes all magical effects from your body if eaten.
 Firestones          Eath them only if you are a Thunderlord (Dragonrider).
                     They will randomly boost your powers for a short time.
                     See (5.9) for firestone details. If you eat too many of
@@ -3572,12 +3605,26 @@ Firestones          Eath them only if you are a Thunderlord (Dragonrider).
 Flint               Prevents your light from going out.
 Empty bottles       You can /fill these at fountains to turn them into
                     potions.
-Talisman (Amulet)   Increases your luck, helping you to find better loot.
-Mushroom of Unmagic     Removes all magical effects from your body if eaten.
 Skeletons/Bones/Skulls  You can create ammunition from these if your Archery
                         skill is sufficient.
 Rubble ':' on the floor You can create sling ammo from this. You cannot pick
                         up rubble, just stand next to it.
+Guild key               See (6.9).
+
+Jewelry
+--
+Talisman (Amulet)       Increases your luck, helps you finding better loot.
+Rings of Might          increase strength and constitution.
+Rings of Toughness      increase dexterity and constitution.
+Rings of Cunningness    increase strength and intelligence.
+Rings of Ready Wit      increase dexterity and intelligence.
+Amulets of Brilliance   increase intelligence and wisdom, provide light.
+Rings of Sustain Might          sustain strength and constitution.
+Rings of Sustain Ability        sustain strength and dexterity.
+Rings of Sustain Cunningness    sustain strength, intelligence and charisma.
+Rings of Sustain Steadiness     sustain wisdom and constitution.
+Rings of Sustain Ready Wit      sustain dexterity, intelligence and charisma.
+Rings of Sustain Brilliance     sustain intelligence and wisdom.
 Rings/Amulets of Slow Digestion will slow your food digestion so you have to
                         eat less often. Also prevents instant paralysation if
                         you hit a bowel cramps trap.
@@ -3592,7 +3639,6 @@ Amulet of Anti-Teleportation    If worn it will suppress all attemps to
                                 and then immediately kick in as soon as the
                                 amulet is taken off. This allows some
                                 interesting tactics..
-Guild key               See (6.9).
 
 Mushrooms with bad effects are also often poisonous.
 
@@ -4039,6 +4085,8 @@ Note that not every skill is available to every profession (class).
                                 archery.
                                 A very powerful one (combat 41) can also sense
                                 the use of magical items much better.
+                                The further you train Combat, the faster you
+                                will pseudo-id items.
                                 Increases Fear/Stun/Confuse duration of the
                                 target (if attacking causes those).
                                 Slightly increases melee and ranged to-hit
@@ -4988,11 +5036,11 @@ S: spell list
     fact magic spells, not if the monster cannot do anything except firing
     missiles, shrieking or shooting arrows (etc).
     If the creature is able to cast 1_IN_3, the player receives +1 INT and
-    +10% Mana bonus.
+    +10% Mana bonus (of base mana, same way +MANA items work).
     If the creature is able to cast 1_IN_2, the player receives +3 INT and
-    +30% Mana bonus.
+    +30% Mana bonus (of base mana, same way +MANA items work).
     If the creature is able to cast 1_IN_1, the player receives +5 INT and
-    +40% Mana bonus.
+    +40% Mana bonus (of base mana, same way +MANA items work).
     About specific spells:
     BR_xxx      (breathing) will give the according resistance to the player
                 (if that specific attack CAN be resisted at all).
@@ -5634,9 +5682,11 @@ Higher characters (up to 35)
   resistance intrinsically.
 + Try to Get Confusion Resistance
   Note that chaos resistance also provides confusion resistance.
++ Get Nexus Resistance. Nexus attacks can scramble your body, swapping your
+  stats, which can be very annoying. (See 5.6.)
 + Try to get Blindness Resistance
   Helms or Caps of seeing give this!
-+ Get Hold Life.
++ Try to get Hold Life.
   This prevents your life force from being drained, making you lose experience
   and going back in character level. Cloaks of Teleri Hold Life and provide
   Free Action.

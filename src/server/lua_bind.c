@@ -497,6 +497,7 @@ void remote_update_lua(int Ind, cptr file)
 	return;
 }
 
+/* Write a string to the log file */
 void lua_s_print(cptr logstr) {
 	s_printf(logstr);
 	return;
@@ -678,4 +679,22 @@ int lua_get_mon_lev(int r_idx) {
 /* Return a monster name */
 char *lua_get_mon_name(int r_idx) {
 	return(r_name + r_info[r_idx].name);
+}
+
+/* Reset all towns */
+void lua_towns_treset(void) {
+	int x, y;
+	struct worldpos wpos;
+
+	wpos.wz = 0;
+
+	for (x = 0; x < MAX_WILD_X; x++)
+	for (y = 0; y < MAX_WILD_Y; y++) {
+		wpos.wx = x;
+		wpos.wy = y;
+		if (istown(&wpos)) {
+			unstatic_level(&wpos);
+			if(getcave(&wpos)) dealloc_dungeon_level(&wpos);
+		}
+	}
 }

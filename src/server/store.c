@@ -1879,6 +1879,18 @@ void store_stole(int Ind, int item)
 		msg_print(Ind, "You dare not to! Your level needs to be 5 at least.");
 		return;
 	}
+	else if ((p_ptr->lev < 10) && (object_value(Ind, o_ptr) >= 200))
+	{
+		msg_print(Ind, "You dare not to steal this expensive item! Hit level 10 first.");
+		return;
+	}
+/*
+	else if ((p_ptr->lev < 15) && (object_value(Ind, o_ptr) >= 1000))
+	{
+		msg_print(Ind, "You dare not to steal this expensive item! Hit level 10 first.");
+		return;
+	}
+*/
 
 	/* I'm not saying this is the way to go, but they
 	   can cheeze by attempting repeatedly */
@@ -3499,7 +3511,7 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr)
 		j_ptr = &h_ptr->stock[slot];
 
 		/* The home acts just like the player */
-		if (object_similar(Ind, j_ptr, o_ptr))
+		if (object_similar(Ind, j_ptr, o_ptr, 0x0))
 		{
 			/* Save the new number of items */
 			object_absorb(Ind, j_ptr, o_ptr);
@@ -3657,7 +3669,7 @@ static bool home_check_num(int Ind, house_type *h_ptr, object_type *o_ptr)
 			j_ptr = &h_ptr->stock[i];
 
 			/* Can the new object be combined with the old one? */
-			if (object_similar(Ind, j_ptr, o_ptr)) return (TRUE);
+			if (object_similar(Ind, j_ptr, o_ptr, 0x0)) return (TRUE);
 		}
 	}
 	return (FALSE);

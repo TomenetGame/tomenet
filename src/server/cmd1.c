@@ -1638,7 +1638,7 @@ if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval 
 
 #if 1
 		/* Try to add to the quiver */
-		if (object_similar(Ind, o_ptr, &p_ptr->inventory[INVEN_AMMO]))
+		if (object_similar(Ind, o_ptr, &p_ptr->inventory[INVEN_AMMO], 0x0))
 		{
 			int slot = INVEN_AMMO, num = o_ptr->number;
 
@@ -2026,7 +2026,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
 			if(!imprison(Ind, 500, string)){
 				/* This wrath can be too much */
-				//			take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods");
+				//			take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods", 0);
 				/* It's prison here :) */
 				msg_print(Ind, "{yYou feel yourself bound hand and foot!");
 				set_paralyzed(Ind, p_ptr->paralyzed + rand_int(15) + 15);
@@ -2216,7 +2216,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 					teleport_player(0 - c_ptr->m_idx, 400);
 				}
 
-				take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
+				take_hit(0 - c_ptr->m_idx, k, p_ptr->name, Ind);
 			}
 			else
 			{
@@ -2231,7 +2231,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 					teleport_player(0 - c_ptr->m_idx, 400);
 				}
 
-				take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
+				take_hit(0 - c_ptr->m_idx, k, p_ptr->name, Ind);
 			}
 
 			if(!c_ptr->m_idx) break;
@@ -3414,7 +3414,7 @@ void touch_zap_player(int Ind, int m_idx)
 			if (p_ptr->resist_fire) aura_damage = (aura_damage+2) / 3;
 			if (p_ptr->sensible_fire) aura_damage = (aura_damage+2) * 2;
 
-			take_hit(Ind, aura_damage, aura_dam);
+			take_hit(Ind, aura_damage, aura_dam, 0);
 			r_ptr->r_flags2 |= RF2_AURA_FIRE;
 			handle_stuff(Ind);
 		}
@@ -3437,7 +3437,7 @@ void touch_zap_player(int Ind, int m_idx)
 			if (p_ptr->sensible_elec) aura_damage = (aura_damage+2) * 2;
 
 			msg_print(Ind, "You get zapped!");
-			take_hit(Ind, aura_damage, aura_dam);
+			take_hit(Ind, aura_damage, aura_dam, 0);
 			r_ptr->r_flags2 |= RF2_AURA_ELEC;
 			handle_stuff(Ind);
 		}
@@ -3460,7 +3460,7 @@ void touch_zap_player(int Ind, int m_idx)
 			if (p_ptr->sensible_cold) aura_damage = (aura_damage+2) * 2;
 
 			msg_print(Ind, "You are freezing!");
-			take_hit(Ind, aura_damage, aura_dam);
+			take_hit(Ind, aura_damage, aura_dam, 0);
 			r_ptr->r_flags3 |= RF3_AURA_COLD;
 			handle_stuff(Ind);
 		}

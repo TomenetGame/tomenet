@@ -6,6 +6,8 @@
 
 #include "angband.h"
 
+static int MACRO_WAIT = 96;
+
 /*
  * Extract the first few "tokens" from a buffer
  *
@@ -131,6 +133,12 @@ void text_to_ascii(char *buf, cptr str)
                         {
                                 *s = 16 * dehex(*++str);
                                 *s++ += dehex(*++str);
+                        }
+
+                        /* Specialty: Asynchronous delay for usage in complex macros - C. Blue */
+                        else if (*str == 'w')
+                        {
+                                *s++ = MACRO_WAIT;
                         }
 
                         /* Hack -- simple way to specify "backslash" */
@@ -784,7 +792,16 @@ errr process_pref_file_aux(char *buf)
         {
                 char tmp[1024];
                 text_to_ascii(tmp, buf+2);
-                macro_add(tmp, macro__buf, FALSE);
+                macro_add(tmp, macro__buf, FALSE, FALSE);
+                return (0);
+        }
+
+        /* Process "C:<str>" -- create hybrid macro */
+        else if (buf[0] == 'H')
+        {
+                char tmp[1024];
+                text_to_ascii(tmp, buf+2);
+                macro_add(tmp, macro__buf, FALSE, TRUE);
                 return (0);
         }
 
@@ -793,7 +810,7 @@ errr process_pref_file_aux(char *buf)
         {
                 char tmp[1024];
                 text_to_ascii(tmp, buf+2);
-                macro_add(tmp, macro__buf, TRUE);
+                macro_add(tmp, macro__buf, TRUE, FALSE);
                 return (0);
         }
 

@@ -1402,7 +1402,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		/* Hack ;) Remember if the player was a former winner */
 		if (the_score.how[strlen(the_score.how) - 1] == '\001')
 		{
-			strcpy(extra_info, ". (Formerly defeated Morgoth)");
+			strcpy(extra_info, ". (Defeated Morgoth)");
 			the_score.how[strlen(the_score.how) - 1] = '\0';
 		}
 

@@ -2599,7 +2599,7 @@ bool make_attack_spell(int Ind, int m_idx)
 
 
 				take_sanity_hit(Ind, damroll(6, 6), ddesc);/* 8,8 was too powerful */
-				//				take_hit(Ind, damroll(8, 8), ddesc);
+				//				take_hit(Ind, damroll(8, 8), ddesc, 0);
 			}
 			break;
 		}
@@ -2623,7 +2623,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else
 			{
 				msg_print(Ind, "Your mind is blasted by psionic energy.");
-				//				take_hit(Ind, damroll(12, 15), ddesc);
+				//				take_hit(Ind, damroll(12, 15), ddesc, 0);
 				take_sanity_hit(Ind, damroll(9,9), ddesc);/* 12,15 was too powerful */
 				if (!p_ptr->resist_blind)
 				{
@@ -2660,7 +2660,7 @@ bool make_attack_spell(int Ind, int m_idx)
 				}
 				else
 				{
-					take_hit(Ind, damroll(3, 8), ddesc);
+					take_hit(Ind, damroll(3, 8), ddesc, 0);
 				}
 				break;
 			}
@@ -2676,7 +2676,7 @@ bool make_attack_spell(int Ind, int m_idx)
 				}
 				else
 				{
-					take_hit(Ind, damroll(8, 8), ddesc);
+					take_hit(Ind, damroll(8, 8), ddesc, 0);
 				}
 				break;
 			}
@@ -2692,7 +2692,7 @@ bool make_attack_spell(int Ind, int m_idx)
 				}
 				else
 				{
-					take_hit(Ind, damroll(10, 15), ddesc);
+					take_hit(Ind, damroll(10, 15), ddesc, 0);
 				}
 				break;
 			}
@@ -2708,8 +2708,8 @@ bool make_attack_spell(int Ind, int m_idx)
 				}
 				else
 				{
-					//					take_hit(Ind, damroll(15, 15), ddesc);
-					take_hit(Ind, damroll(power / 4, 15), ddesc);
+					//					take_hit(Ind, damroll(15, 15), ddesc, 0);
+					take_hit(Ind, damroll(power / 4, 15), ddesc, 0);
 					(void)set_cut(Ind, p_ptr->cut + damroll(10, 10));
 				}
 				break;
@@ -2729,7 +2729,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			}
 			else
 			{
-				take_hit(Ind, damroll(3, 8), ddesc);
+				take_hit(Ind, damroll(3, 8), ddesc, 0);
 			}
 			break;
 		}
@@ -2748,7 +2748,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			}
 			else
 			{
-				take_hit(Ind, damroll(8, 8), ddesc);
+				take_hit(Ind, damroll(8, 8), ddesc, 0);
 			}
 			break;
 		}
@@ -2767,7 +2767,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			}
 			else
 			{
-				take_hit(Ind, damroll(10, 15), ddesc);
+				take_hit(Ind, damroll(10, 15), ddesc, 0);
 			}
 			break;
 		}
@@ -2786,7 +2786,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			}
 			else
 			{
-				take_hit(Ind, damroll(15, 15), ddesc);
+				take_hit(Ind, damroll(15, 15), ddesc, 0);
 				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10));
 			}
 			break;
@@ -3135,7 +3135,7 @@ bool make_attack_spell(int Ind, int m_idx)
 				if (p_ptr->chp - dummy < 1) dummy = p_ptr->chp - 1;
 				msg_print(Ind, "You feel your life fade away!");
 				bypass_invuln = TRUE;
-				take_hit(Ind, dummy, m_name);
+				take_hit(Ind, dummy, m_name, 0);
 				bypass_invuln = FALSE;
 				curse_equipment(Ind, 100, 20);
 
@@ -5647,7 +5647,13 @@ static void process_monster(int Ind, int m_idx)
 
 			/* Compute distance */
 			/* XXX value is same with that in process_monsters */
+#ifndef REDUCED_AGGRAVATION
 			if (distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px) >= 100)
+#else
+			/* Aggravation is not 'infecting' other players on the map */
+			if (Ind != i) continue;
+			if (distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px) >= 50)
+#endif
 				continue;
 
 			notice = 0;
@@ -7425,7 +7431,12 @@ void process_monsters(void)
 #else
 		else if (
 //		         (player_has_los_bold(closest, fy, fx)) ||
+#ifndef REDUCED_AGGRAVATION
 		          (p_ptr->aggravate && m_ptr->cdis <= MAX_SIGHT))
+#else
+		          (p_ptr->aggravate && m_ptr->cdis <= 50))
+#endif
+
 #endif	// 0
 		{
 			/* We can "see" or "feel" the player */

@@ -914,7 +914,7 @@ extern void object_known(object_type *o_ptr);
 extern void object_aware(int Ind, object_type *o_ptr);
 extern void object_tried(int Ind, object_type *o_ptr);
 extern s32b object_value(int Ind, object_type *o_ptr);
-extern bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr);
+extern bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance);
 extern void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr);
 extern s16b lookup_kind(int tval, int sval);
 extern void invwipe(object_type *o_ptr);
@@ -1024,11 +1024,11 @@ extern void teleport_player_to(int Ind, int ny, int nx);
 extern void teleport_player_level(int Ind);
 extern bool bypass_invuln;
 extern bool bypass_inscrption;
-extern void take_hit(int Ind, int damage, cptr kb_str);
-extern int acid_dam(int Ind, int dam, cptr kb_str);
-extern int elec_dam(int Ind, int dam, cptr kb_str);
-extern int fire_dam(int Ind, int dam, cptr kb_str);
-extern int cold_dam(int Ind, int dam, cptr kb_str);
+extern void take_hit(int Ind, int damage, cptr kb_str, int Ind_attacker);
+extern int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker);
+extern int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker);
+extern int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker);
+extern int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker);
 extern bool inc_stat(int Ind, int stat);
 extern bool dec_stat(int Ind, int stat, int amount, int mode);
 extern bool res_stat(int Ind, int stat);
@@ -1354,6 +1354,7 @@ extern void kill_house_contents(house_type *h_ptr);
 extern bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor);
 extern void check_quests(void);
 extern bool master_level_specific(int Ind, struct worldpos *wpos, char * parms);
+extern void unstatic_level(struct worldpos *wpos);
 
 /*
  * Hack -- conditional (or "bizarre") externs
@@ -1459,6 +1460,7 @@ void lua_check_player_for_true_arts(int Ind);
 int lua_get_mon_lev(int r_idx);
 char *lua_get_mon_name(int r_idx);
 extern bool first_player_joined;
+void lua_towns_treset(void);
 
 /* only called once, in util.c, referring to new file slash.c */
 extern void do_slash_cmd(int Ind, char *message);

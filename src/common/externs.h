@@ -643,7 +643,7 @@ extern void object_known(object_type *o_ptr);
 extern void object_aware(object_type *o_ptr);
 extern void object_tried(object_type *o_ptr);
 extern s32b object_value(object_type *o_ptr);
-extern bool object_similar(object_type *o_ptr, object_type *j_ptr);
+extern bool object_similar(object_type *o_ptr, object_type *j_ptr, s16b tolerance);
 extern void object_absorb(object_type *o_ptr, object_type *j_ptr);
 extern s16b lookup_kind(int tval, int sval);
 extern void invwipe(object_type *o_ptr);

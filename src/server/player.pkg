@@ -44,7 +44,7 @@ typedef unsigned int u32b;
 #define SKILL_MAX               50000           /* Maximun skill value */
 #define SKILL_STEP              1000            /* 1 skill point */
 
-#define SKILl_EXCLUSIVE         9999            /* Flag to tell exclusive skills */
+#define SKILL_EXCLUSIVE         9999            /* Flag to tell exclusive skills */
 
 #define SKILL_COMBAT            1
 #define SKILL_MASTERY           2

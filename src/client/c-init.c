@@ -17,6 +17,7 @@ static void init_arrays(void)
 	C_MAKE(macro__pat, MACRO_MAX, cptr);
 	C_MAKE(macro__act, MACRO_MAX, cptr);
 	C_MAKE(macro__cmd, MACRO_MAX, bool);
+	C_MAKE(macro__hyb, MACRO_MAX, bool);
 
 	/* Macro action buffer */
 	C_MAKE(macro__buf, 1024, char);

@@ -733,23 +733,35 @@ static bool player_allowed(char *name){
 	return(success);
 }
 
-static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr, bool check_for_resume)
+static void Trim_name(char *nick_name)
 {
-	player_type *p_ptr = NULL;
 	char *ptr;
-	int i;
-
-	if (real_name[0] == 0 || host_name[0] == 0 || nick_name[0] < 'A' ||
-		nick_name[0] > 'Z')
-		return E_INVAL;
-
 	for (ptr = &nick_name[strlen(nick_name)]; ptr-- > nick_name; )
 	{
 		if (isascii(*ptr) && isspace(*ptr))
 			*ptr = '\0';
 		else break;
 	}
+}
 
+static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr, bool check_for_resume)
+{
+	player_type *p_ptr = NULL;
+//	char *ptr;
+	int i;
+
+	if (real_name[0] == 0 || host_name[0] == 0 || nick_name[0] < 'A' ||
+		nick_name[0] > 'Z')
+		return E_INVAL;
+
+#if 0 /* see Trim_name() above */
+	for (ptr = &nick_name[strlen(nick_name)]; ptr-- > nick_name; )
+	{
+		if (isascii(*ptr) && isspace(*ptr))
+			*ptr = '\0';
+		else break;
+	}
+#endif
 	if (check_for_resume)
 	for (i = 1; i < NumPlayers + 1; i++)
 	{
@@ -1200,6 +1212,8 @@ bool Destroy_connection(int ind, char *reason)
 		return FALSE;
 	}
 
+	exec_lua(NumPlayers, format("player_leaves(%d, %d, \"%s\", \"%s\")", NumPlayers, connp->id, connp->c_name, showtime()));
+
 	sock = connp->w.sock;
 	if (sock != -1)
 	{
@@ -1246,6 +1260,10 @@ bool Destroy_connection(int ind, char *reason)
 	*/
 		Delete_player(GetInd[id]);
 	}
+
+	exec_lua(NumPlayers, format("player_has_left(%d, %d, \"%s\", \"%s\")", NumPlayers + 1, connp->id, connp->c_name, showtime()));
+	if (NumPlayers == 0) exec_lua(NumPlayers, format("last_player_has_left(%d, %d, \"%s\", \"%s\")", NumPlayers + 1, connp->id, connp->c_name, showtime()));
+
 	if (connp->real != NULL) free(connp->real);
 	if (connp->nick != NULL) free(connp->nick);
 	if (connp->addr != NULL) free(connp->addr);
@@ -1381,6 +1399,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 	connp->rtt_timeouts = 0;
 	connp->acks = 0;
 	connp->setup = 0;
+	connp->password_verified = FALSE;
 	Conn_set_state(connp, CONN_LISTENING, CONN_FREE);
 	if (connp->w.buf == NULL || connp->r.buf == NULL || connp->c.buf == NULL
 		|| connp->q.buf == NULL || connp->real == NULL || connp->nick == NULL
@@ -2473,6 +2492,7 @@ void do_quit(int ind, bool tellclient)
 		Destroy_connection(ind, "client quit");
 	}
 	// Otherwise wait for the timeout
+	else exec_lua(NumPlayers, format("player_leaves_timeout(%d, %d, \"%s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
 }
 
 
@@ -2523,6 +2543,7 @@ static int Receive_login(int ind){
 		Destroy_connection(ind, "receive error in login");
 		return -1;
 	}
+
 	if(strlen(choice)==0){
 		if (Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE) != SUCCESS)
 		{
@@ -2533,6 +2554,7 @@ static int Receive_login(int ind){
 			int *id_list, i;
 			byte tmpm;
 			char colour_sequence[3];
+			connp->password_verified = TRUE;
 			free(connp->pass);
 			connp->pass=NULL;
 			n=player_id_list(&id_list, l_acc->id);
@@ -2557,8 +2579,11 @@ static int Receive_login(int ind){
 		}
 		Sockbuf_flush(&connp->w);
 		return(0);
-	}
-	else {
+	} else if (connp->password_verified) {
+		/* Prevent EXPLOIT (adding a SPACE to foreign charname) */
+		s_printf("Player %s chooses character '%s' (strlen=%d)\n", connp->nick, choice, strlen(choice));
+		Trim_name(choice);
+
 		/* at this point, we are authorised as the owner
 		   of the account. any valid name will be
 		   allowed. */
@@ -2580,6 +2605,11 @@ static int Receive_login(int ind){
 			Destroy_connection(ind, "Name already owned");
 			return(-1);
 		}
+	} else {
+		/* fail login due to missing password */
+		s_printf("EXPLOIT: Missing password of player %s.\n", connp->nick);
+		Destroy_connection(ind, "Missing password");
+		return(-1);
 	}
 	if (connp->setup >= Setup.setup_size)
 		Conn_set_state(connp, CONN_LOGIN, CONN_LOGIN);
@@ -4851,7 +4881,8 @@ static int Receive_keepalive(int ind)
 		Ind=GetInd[connp->id];
 		p_ptr=Players[Ind];
 		if(!p_ptr->afk && p_ptr->auto_afk){	/* dont oscillate ;) */
-			if(++connp->inactive>45)	/* auto AFK timer (>1.5 min) */
+//			if(++connp->inactive>45)	/* auto AFK timer (>1.5 min) */
+			if(++connp->inactive>30)	/* auto AFK timer (>1 min) */
 				toggle_afk(Ind, "");
 		}
 	}

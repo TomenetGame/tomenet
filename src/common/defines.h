@@ -38,8 +38,8 @@
 
 /* MAJOR/MINOR/PATCH version should be 0-15.  */
 #define VERSION_MAJOR   4
-#define VERSION_MINOR   2
-#define VERSION_PATCH   2
+#define VERSION_MINOR   3
+#define VERSION_PATCH   0
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
@@ -75,6 +75,10 @@
 
 #define MY_VERSION (VERSION_MAJOR << 12 | VERSION_MINOR << 8 | VERSION_PATCH \
 	<< 4 | VERSION_EXTRA)
+
+
+/* Server running in 'Fun Mode'? Allows cheezing and cheating and everything. */
+/* #define FUN_SERVER */
 
 
 /* What kind of character creation method does the server use? - C. Blue
@@ -408,6 +412,11 @@
 #ifdef MORGOTH_GHOST_DEATH_LEVEL
 #define MORGOTH_NO_LIVE_SPAWN
 #endif
+
+
+/* Reduce the effect of aggravating equipment on the player
+   and especially fellow players? - C. Blue */
+#define REDUCED_AGGRAVATION
 
 
 /*
@@ -5160,8 +5169,7 @@ extern int PlayerUID;
 #define SKILL_MAX               50000           /* Maximun skill value */
 #define SKILL_STEP              1000            /* 1 skill point */
 
-/* why SKILl and not SKILL .. ? */
-#define SKILl_EXCLUSIVE         9999            /* Flag to tell exclusive skills */
+#define SKILL_EXCLUSIVE         9999            /* Flag to tell exclusive skills */
 
 #define SKILL_COMBAT            1
 #define SKILL_MASTERY           2

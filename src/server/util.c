@@ -1209,6 +1209,7 @@ void msg_print(int Ind, cptr msg)
 	int text_len, msg_scan = 0, space_scan, tab_spacer = 0;
 	char colour_code = 0;
 	bool first_character;
+	bool is_chat = ((msg != NULL) && (strlen(msg) > 2) && (msg[2] == '['));
 
 	/* Pfft, sorry to bother you.... --JIR-- */
 	if (suppress_message) return;
@@ -1225,6 +1226,7 @@ void msg_print(int Ind, cptr msg)
 
 		/* Tabbing the line? */
 		msg_minibuf[0] = ' ';
+		if (is_chat) msg_minibuf[0] = '~';
 		msg_minibuf[1] = '\0';
 		while (tab_spacer--) {
 			text_len++;
@@ -1704,7 +1706,7 @@ static void player_talk_aux(int Ind, char *message)
 		case '(':	case ')':
 		case '[':	case ']':
 		case '{':	case '}':
-		case '<':	case '>':
+//		case '<':	case '>':
 		case '\\':
 			colon = NULL;
 			break;
@@ -1785,6 +1787,18 @@ static void player_talk_aux(int Ind, char *message)
 	for(i=1; i<=NumPlayers; i++){
 		if(Players[i]->conn==NOT_CONNECTED) continue;
 		Players[i]->talk=0;
+	}
+
+	/* Special function '::' at beginning of message sends to own party - sorry for hack, C. Blue */
+//	if ((strlen(message) >= 1) && (message[0] == ':') && (!colon) && (p_ptr->party))
+	if ((strlen(message) >= 2) && (message[0] == '!') && (message[1] == ':') && (colon) && (p_ptr->party))
+	{
+		target = p_ptr->party;
+		/* Send message to target party */
+//		party_msg_format_ignoring(Ind, target, "\377G[%s:%s] %s", parties[target].name, sender, message + 1);
+		party_msg_format_ignoring(Ind, target, "\377G[%s:%s] %s", parties[target].name, sender, message + 2);
+		/* Done */
+		return;
 	}
 
 	/* Form a search string if we found a colon */
@@ -2435,6 +2449,6 @@ int gold_colour(int amt)
 void lua_intrusion(int Ind, char *problem_diz)
 {
 	s_printf(format("LUA INTRUSION: %s : %s\n", Players[Ind]->name, problem_diz));
-	take_hit(Ind, Players[Ind]->chp - 1, "");
+	take_hit(Ind, Players[Ind]->chp - 1, "", 0);
 	msg_print(Ind, "\377rThat was close huh?!");
 }

@@ -760,7 +760,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		}
 
 		msg_print(Ind, "You are hit!");
-		take_hit(Ind, damroll(dd, ds), format("a %s", name));
+		take_hit(Ind, damroll(dd, ds), format("a %s", name), 0);
 		redraw_stuff(Ind);
 		if (pdam > 0)
 		{
@@ -819,7 +819,7 @@ static void trap_hit(int Ind, s16b trap)
 
    dam = damroll(t_ptr->dd, t_ptr->ds);
 
-   take_hit(Ind, dam, format("a %s", t_name + t_ptr->name));
+   take_hit(Ind, dam, format("a %s", t_name + t_ptr->name), 0);
 }
 
 /*
@@ -1007,7 +1007,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_EXPLOSIVE_DEVICE:
 		{
 			msg_print(Ind, "A hidden explosive device explodes in your face.");
-			take_hit(Ind, damroll(5, 8), "an explosion");
+			take_hit(Ind, damroll(5, 8), "an explosion", 0);
 			ident=TRUE;
 			break;
 		}
@@ -1076,7 +1076,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_BOWEL_CRAMPS:
 		{
 			msg_print(Ind, "A wretched smelling gas cloud upsets your stomach.");
-			take_hit(Ind, 1, "bowel cramps");
+			take_hit(Ind, 1, "bowel cramps", 0);
 			if (p_ptr->chp < p_ptr->mhp) /* *invincibility* fix */
 				(void)set_food(Ind, PY_FOOD_STARVE - 1);
 			(void)set_poisoned(Ind, 0);
@@ -1223,8 +1223,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				inven_damage(Ind, set_cold_destroy, damroll(2, 8));
 
 				//			 int dam = damroll(2, 8);
-				//			 take_hit(Ind, dam, name);
-				take_hit(Ind, damroll(2, 8), "a trap door");
+				//			 take_hit(Ind, dam, name, 0);
+				take_hit(Ind, damroll(2, 8), "a trap door", 0);
 				take_sanity_hit(Ind, damroll(1, 2), "a trap door");
 			}
 			do_player_trap_change_depth(Ind, -1);
@@ -2276,13 +2276,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			{
 				msg_print(Ind, "You fall head over heels!!");
 				l = damroll(2, 8) << k;	// max 512, avg 72
-				//			 take_hit(Ind, dam, name);
+				//			 take_hit(Ind, dam, name, 0);
 
 				/* Inventory damage (Hack - use 'cold' type) */
 				inven_damage(Ind, set_cold_destroy, 15 * k);
 				inven_damage(Ind, set_all_destroy, 3 * k);
 
-				take_hit(Ind, l, "a chasm");
+				take_hit(Ind, l, "a chasm", 0);
 				take_sanity_hit(Ind, 1 << k, "a chasm");
 			}
 
@@ -2310,8 +2310,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				/* Inventory damage */
 				inven_damage(Ind, set_impact_destroy, l);
 
-				//			 take_hit(Ind, dam, name);
-				take_hit(Ind, l, "a pit");
+				//			 take_hit(Ind, dam, name, 0);
+				take_hit(Ind, l, "a pit", 0);
 				take_sanity_hit(Ind, 1 , "a pit");
 
 				/* Maybe better make them other types of traps? */

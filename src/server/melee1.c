@@ -973,7 +973,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					damage -= (damage * ((ac < 150) ? ac : 150) / 250);
 
 					/* Take damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					break;
 				}
@@ -981,7 +981,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_POISON:
 				{
 					/* Take some damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Take "poison" effect */
 					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
@@ -1001,7 +1001,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_UN_BONUS:
 				{
 					/* Take some damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Allow complete resist */
 					if (!p_ptr->resist_disen)
@@ -1019,7 +1019,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_UN_POWER:
 				{
 					/* Take some damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Saving throw by Magic Device skill (9%..99%) */
 					if (magik(117 - (2160 / (20 + get_skill_scale(p_ptr, SKILL_DEVICE, 100))))) break;
@@ -1102,7 +1102,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_EAT_GOLD:
 				{
 					/* Take some damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Obvious */
 					obvious = TRUE;
@@ -1145,7 +1145,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_EAT_ITEM:
 				{
 					/* Take some damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Saving throw (unless paralyzed) based on dex and level */
 #if 0
@@ -1196,7 +1196,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_EAT_FOOD:
 				{
 					/* Take some damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Steal some food */
 					for (k = 0; k < 10; k++)
@@ -1238,7 +1238,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_EAT_LITE:
 				{
 					/* Take some damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Access the lite */
 					o_ptr = &p_ptr->inventory[INVEN_LITE];
@@ -1280,11 +1280,11 @@ bool make_attack_normal(int Ind, int m_idx)
 						case RBM_CLAW: case RBM_BITE: case RBM_STING:
 						case RBM_BUTT: case RBM_CRUSH:
 							/* still take physical damage */
-							take_hit(Ind, (damage * 2) / 3, ddesc);
+							take_hit(Ind, (damage * 2) / 3, ddesc, 0);
 						}
 					else
 						/* take physical damage + elemental effect */
-						acid_dam(Ind, damage, ddesc);
+						acid_dam(Ind, damage, ddesc, 0);
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_ACID);
@@ -1307,11 +1307,11 @@ bool make_attack_normal(int Ind, int m_idx)
 						case RBM_CLAW: case RBM_BITE: case RBM_STING:
 						case RBM_BUTT: case RBM_CRUSH:
 							/* still take physical damage */
-							take_hit(Ind, (damage * 2) / 3, ddesc);
+							take_hit(Ind, (damage * 2) / 3, ddesc, 0);
 						}
 					else
 						/* take physical damage + elemental effect */
-						elec_dam(Ind, damage, ddesc);
+						elec_dam(Ind, damage, ddesc, 0);
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_ELEC);
@@ -1334,11 +1334,11 @@ bool make_attack_normal(int Ind, int m_idx)
 						case RBM_CLAW: case RBM_BITE: case RBM_STING:
 						case RBM_BUTT: case RBM_CRUSH:
 							/* still take physical damage */
-							take_hit(Ind, (damage * 2) / 3, ddesc);
+							take_hit(Ind, (damage * 2) / 3, ddesc, 0);
 						}
 					else
 						/* take physical damage + elemental effect */
-						fire_dam(Ind, damage, ddesc);
+						fire_dam(Ind, damage, ddesc, 0);
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_FIRE);
@@ -1361,11 +1361,11 @@ bool make_attack_normal(int Ind, int m_idx)
 						case RBM_CLAW: case RBM_BITE: case RBM_STING:
 						case RBM_BUTT: case RBM_CRUSH:
 							/* still take physical damage */
-							take_hit(Ind, (damage * 2) / 3, ddesc);
+							take_hit(Ind, (damage * 2) / 3, ddesc, 0);
 						}
 					else
 						/* take physical damage + elemental effect */
-						cold_dam(Ind, damage, ddesc);
+						cold_dam(Ind, damage, ddesc, 0);
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_COLD);
@@ -1376,7 +1376,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_BLIND:
 				{
 					/* Take damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "blind" */
 					if (!p_ptr->resist_blind)
@@ -1396,7 +1396,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_CONFUSE:
 				{
 					/* Take damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "confused" */
 					if (!p_ptr->resist_conf)
@@ -1416,7 +1416,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_TERRIFY:
 				{
 					/* Take damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "afraid" */
 					if (p_ptr->resist_fear)
@@ -1446,7 +1446,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_PARALYZE:
 				{
 					/* Take damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "paralyzed" */
 					if (p_ptr->free_act)
@@ -1476,7 +1476,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_STR:
 				{
 					/* Damage (physical) */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stat) */
 					if (do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -1487,7 +1487,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_INT:
 				{
 					/* Damage (physical) */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stat) */
 					if (do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -1498,7 +1498,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_WIS:
 				{
 					/* Damage (physical) */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stat) */
 					if (do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -1509,7 +1509,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_DEX:
 				{
 					/* Damage (physical) */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stat) */
 					if (do_dec_stat(Ind, A_DEX, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -1520,7 +1520,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_CON:
 				{
 					/* Damage (physical) */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stat) */
 					if (do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -1531,7 +1531,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_CHR:
 				{
 					/* Damage (physical) */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stat) */
 					if (do_dec_stat(Ind, A_CHR, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -1542,7 +1542,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_ALL:
 				{
 					/* Damage (physical) */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stats) */
 					if (do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -1564,7 +1564,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					damage -= (damage * ((ac < 150) ? ac : 150) / 250);
 
 					/* Take damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Radius 8 earthquake centered at the monster */
 					if (damage > 23) earthquake(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, 8);
@@ -1578,7 +1578,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					obvious = TRUE;
 
 					/* Take damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					if (p_ptr->hold_life && (rand_int(100) < 95))
 					{
@@ -1607,7 +1607,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					obvious = TRUE;
 
 					/* Take damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					if (p_ptr->hold_life && (rand_int(100) < 90))
 					{
@@ -1636,7 +1636,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					obvious = TRUE;
 
 					/* Take damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					if (p_ptr->hold_life && (rand_int(100) < 75))
 					{
@@ -1665,7 +1665,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					obvious = TRUE;
 
 					/* Take damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					if (p_ptr->hold_life && (rand_int(100) < 50))
 					{
@@ -1693,7 +1693,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				{
 					/* Take some damage */
 					//                                        carried_monster_hit = TRUE;
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Take "poison" effect */
 					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
@@ -1726,7 +1726,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_HALLU:
 				{
 					/* Take damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "image" */
 					if (!p_ptr->resist_chaos)
@@ -1786,7 +1786,7 @@ bool make_attack_normal(int Ind, int m_idx)
 							}
 					}
 					//                                        carried_monster_hit = TRUE;
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 					break;
 				}
 
@@ -1813,7 +1813,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					bool shield = p_ptr->inventory[INVEN_ARM].k_idx ? TRUE : FALSE;
 
 					/* Take damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					/* Bare-handed? oh.. */
 					if (!o_ptr->k_idx) {
@@ -1866,7 +1866,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_FAMINE:
 				{
 					/* Take some damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					set_food(Ind, p_ptr->food / 2);
 					msg_print(Ind, "You have a sudden attack of hunger!");
@@ -1878,7 +1878,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_SEDUCE:
 				{
 					/* Take some damage */
-					take_hit(Ind, damage, ddesc);
+					take_hit(Ind, damage, ddesc, 0);
 
 					gone = blinked = do_seduce(Ind, m_idx);
 

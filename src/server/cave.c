@@ -2477,6 +2477,7 @@ void lite_spot(int Ind, int y, int x)
 			}
 			
 			/* bugfix on MASSIVE deaths (det/death) */
+			if (p_ptr->fruit_bat) c = 'b';
 			if(p_ptr->chp<0) c='-';
 			else if (!p_ptr->tim_manashield) {
 				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) 
@@ -2493,12 +2494,8 @@ void lite_spot(int Ind, int y, int x)
 					c = '0'+num;
 				}
 			}
-
 			/*if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) c = '4';*/
-						
-			if (p_ptr->fruit_bat) c = 'b';
-			
-			
+
 		}
 
 		/* Normal */

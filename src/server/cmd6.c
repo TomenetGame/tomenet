@@ -252,7 +252,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_WEAKNESS:
 			{
-				take_hit(Ind, damroll(6, 6), "poisonous food.");
+				take_hit(Ind, damroll(6, 6), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -260,7 +260,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_SICKNESS:
 			{
-				take_hit(Ind, damroll(6, 6), "poisonous food.");
+				take_hit(Ind, damroll(6, 6), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -268,7 +268,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_STUPIDITY:
 			{
-				take_hit(Ind, damroll(8, 8), "poisonous food.");
+				take_hit(Ind, damroll(8, 8), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -276,7 +276,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_NAIVETY:
 			{
-				take_hit(Ind, damroll(8, 8), "poisonous food.");
+				take_hit(Ind, damroll(8, 8), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -284,7 +284,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_UNHEALTH:
 			{
-				take_hit(Ind, damroll(10, 10), "poisonous food.");
+				take_hit(Ind, damroll(10, 10), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -292,7 +292,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_DISEASE:
 			{
-				take_hit(Ind, damroll(10, 10), "poisonous food.");
+				take_hit(Ind, damroll(10, 10), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -752,7 +752,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 			case SV_POTION_RUINATION:
 				{
 					msg_print(Ind, "Your nerves and muscles feel weak and lifeless!");
-					take_hit(Ind, damroll(10, 10), "a potion of Ruination");
+					take_hit(Ind, damroll(10, 10), "a potion of Ruination", 0);
 					(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_NORMAL);
 					(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_NORMAL);
 					(void)dec_stat(Ind, A_CON, 25, STAT_DEC_NORMAL);
@@ -803,7 +803,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					msg_print(Ind, "Massive explosions rupture your body!");
 					msg_format_near(Ind, "%s blows up!", p_ptr->name);
-					take_hit(Ind, damroll(50, 20), "a potion of Detonation");
+					take_hit(Ind, damroll(50, 20), "a potion of Detonation", 0);
 					(void)set_stun(Ind, p_ptr->stun + 75);
 					(void)set_cut(Ind, p_ptr->cut + 5000);
 					ident = TRUE;
@@ -813,7 +813,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 			case SV_POTION_DEATH:
 				{
 					msg_print(Ind, "A feeling of Death flows through your body.");
-					take_hit(Ind, 5000, "a potion of Death");
+					take_hit(Ind, 5000, "a potion of Death", 0);
 					ident = TRUE;
 					break;
 				}
@@ -2627,8 +2627,8 @@ void do_cmd_read_scroll(int Ind, int item)
 				fire_ball(Ind, GF_FIRE, 0, 100, 4, p_ptr->attacker);
 				/* Note: "Double" damage since it is centered on the player ... */
 				if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
-					//                                take_hit(Ind, 50+randint(50)+(p_ptr->sensible_fire)?20:0, "a Scroll of Fire");
-					take_hit(Ind, 50+randint(50), "a Scroll of Fire");
+					//                                take_hit(Ind, 50+randint(50)+(p_ptr->sensible_fire)?20:0, "a Scroll of Fire", 0);
+					take_hit(Ind, 50+randint(50), "a Scroll of Fire", 0);
 				ident = TRUE;
 				break;
 			}
@@ -2639,7 +2639,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				sprintf(p_ptr->attacker, "%s enveloped by frost for", p_ptr->name);
 				fire_ball(Ind, GF_ICE, 0, 200, 4, p_ptr->attacker);
 				if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
-					take_hit(Ind, 100+randint(100), "a Scroll of Ice");
+					take_hit(Ind, 100+randint(100), "a Scroll of Ice", 0);
 				ident = TRUE;
 				break;
 			}
@@ -2649,7 +2649,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				sprintf(p_ptr->attacker, "%s is enveloped by raw chaos for", p_ptr->name);
 				fire_ball(Ind, GF_CHAOS, 0, 500, 4, p_ptr->attacker);
 				if (!p_ptr->resist_chaos)
-					take_hit(Ind, 111+randint(111), "a Scroll of Chaos");
+					take_hit(Ind, 111+randint(111), "a Scroll of Chaos", 0);
 				ident = TRUE;
 				break;
 			}
@@ -2903,7 +2903,7 @@ void do_cmd_use_staff(int Ind, int item)
 #if 1
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "An anti-magic shell disrupts your attempts.");	
+		msg_print(Ind, "Your anti-magic shell disrupts your attempt.");	
 		return;
 	}
 #endif
@@ -2912,6 +2912,11 @@ void do_cmd_use_staff(int Ind, int item)
 		msg_print(Ind, "You don't believe in magic.");	
 		return;
 	}
+        if (magik((p_ptr->antimagic * 8) / 5))
+        {
+                msg_print(Ind, "Your anti-magic field disrupts your attempt.");
+                return;
+        }
 
 	/* Restrict choices to wands */
 	item_tester_tval = TV_STAFF;
@@ -3381,7 +3386,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 #if 1	// anti_magic is not antimagic :)
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "An anti-magic shell disrupts your attempts.");	
+		msg_print(Ind, "Your anti-magic shell disrupts your attempt.");	
 		return;
 	}
 #endif	// 0
@@ -3390,6 +3395,11 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		msg_print(Ind, "You don't believe in magic.");	
 		return;
 	}
+        if (magik((p_ptr->antimagic * 8) / 5))
+        {
+                msg_print(Ind, "Your anti-magic field disrupts your attempt.");
+                return;
+        }
 
 	/* Restrict choices to wands */
 	item_tester_tval = TV_WAND;
@@ -3904,8 +3914,7 @@ void do_cmd_zap_rod(int Ind, int item)
 #if 1
 	if (p_ptr->anti_magic)
 	{
-//		msg_print(Ind, "An anti-magic field disrupts your attempts.");	
-		msg_print(Ind, "An anti-magic shell disrupts your attempts.");	
+		msg_print(Ind, "Your anti-magic shell disrupts your attempt.");	
 		return;
 	}
 #endif	// 0
@@ -3914,6 +3923,11 @@ void do_cmd_zap_rod(int Ind, int item)
 		msg_print(Ind, "You don't believe in magic.");	
 		return;
 	}
+        if (magik((p_ptr->antimagic * 8) / 5))
+        {
+                msg_print(Ind, "Your anti-magic field disrupts your attempt.");
+                return;
+        }
 
 	/* Restrict choices to rods */
 	item_tester_tval = TV_ROD;
@@ -4817,7 +4831,7 @@ void do_cmd_activate(int Ind, int item)
 
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "An anti-magic shell disrupts your attempts.");	
+		msg_print(Ind, "Your anti-magic shell disrupts your attempt.");	
 		return;
 	}
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
@@ -4825,6 +4839,11 @@ void do_cmd_activate(int Ind, int item)
 		msg_print(Ind, "You don't believe in magic.");	
 		return;
 	}
+        if (magik((p_ptr->antimagic * 8) / 5))
+        {
+                msg_print(Ind, "Your anti-magic field disrupts your attempt.");
+                return;
+        }
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -6200,7 +6219,7 @@ void do_cmd_activate(int Ind, int item)
 			{
 				identify_fully(Ind);
 				//                                take_sanity_hit(damroll(10, 7), "the sounds of deads");
-				take_hit(Ind, damroll(10, 7), "the sounds of deads");
+				take_hit(Ind, damroll(10, 7), "the sounds of deads", 0);
 				o_ptr->timeout = rand_int(200) + 100;
 				break;
 			}
@@ -6210,7 +6229,7 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "The phial wells with dark light...");
 				unlite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
-				take_hit(Ind, damroll(10, 10), "activating The Phial of Undeath");
+				take_hit(Ind, damroll(10, 10), "activating The Phial of Undeath", 0);
 				(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_PERMANENT);
 				(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_PERMANENT);
 				(void)dec_stat(Ind, A_CON, 25, STAT_DEC_PERMANENT);
@@ -6301,14 +6320,14 @@ void do_cmd_activate(int Ind, int item)
 					p_ptr->redraw |= (PR_MANA);
 				}
 
-				take_hit(Ind, damroll(1, 12), "perilous secrets");
+				take_hit(Ind, damroll(1, 12), "perilous secrets", 0);
 
 				/* Confusing. */
 				if (rand_int(5) == 0) (void)set_confused(Ind, p_ptr->confused +
 						randint(10));
 
 				/* Exercise a little care... */
-				if (rand_int(20) == 0) take_hit(Ind, damroll(4, 10), "perilous secrets");
+				if (rand_int(20) == 0) take_hit(Ind, damroll(4, 10), "perilous secrets", 0);
 				o_ptr->timeout = 1;
 				break;
 			}
@@ -6786,7 +6805,7 @@ void do_cmd_activate(int Ind, int item)
 				teleport_player(Ind, 200);
 
 				/* It explodes, doesnt it ? */
-				take_hit(Ind, damroll(2, 10), "an exploding ring");
+				take_hit(Ind, damroll(2, 10), "an exploding ring", 0);
 
 				inven_item_increase(Ind, item, -255);
 				inven_item_optimize(Ind, item);
@@ -6999,7 +7018,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "An anti-magic shell disrupts your attempts.");	
+		msg_print(Ind, "Your anti-magic shell disrupts your attempt.");	
 		return;
 	}
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
@@ -7007,6 +7026,11 @@ void do_cmd_activate_dir(int Ind, int dir)
 		msg_print(Ind, "You don't believe in magic.");	
 		return;
 	}
+        if (magik((p_ptr->antimagic * 8) / 5))
+        {
+                msg_print(Ind, "Your anti-magic field disrupts your attempt.");
+                return;
+        }
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -7869,13 +7893,13 @@ void do_cmd_fletchery(int Ind)
 
 		if (item >= 0)
 		{
-			inven_item_increase(Ind, item, -1);
+			inven_item_increase(Ind, item, -raw_materials);//, -1)
 			inven_item_describe(Ind, item);
 			inven_item_optimize(Ind, item);
 		}
 		else
 		{
-			floor_item_increase(0 - item, -1);
+			floor_item_increase(0 - item, -raw_materials);//, -1)
 			floor_item_describe(0 - item);
 			floor_item_optimize(0 - item);
 		}
@@ -7934,13 +7958,13 @@ void do_cmd_fletchery(int Ind)
 
 		if (item >= 0)
 		{
-			inven_item_increase(Ind, item, -1);
+			inven_item_increase(Ind, item, -raw_materials);//, -1)
 			inven_item_describe(Ind, item);
 			inven_item_optimize(Ind, item);
 		}
 		else
 		{
-			floor_item_increase(0 - item, -1);
+			floor_item_increase(0 - item, -raw_materials);//, -1)
 			floor_item_describe(0 - item);
 			floor_item_optimize(0 - item);
 		}

@@ -1922,8 +1922,13 @@ s32b object_value(int Ind, object_type *o_ptr)
  *
  * o_ptr and j_ptr no longer are simmetric;
  * j_ptr should be the new item or level-reqs gets meanless.
+ *
+ * 'tolerance' flag:
+ * 0	- no tolerance
+ * 0x1	- tolerance for ammo to_h and to_d enchantment
+ * -- C. Blue
  */
-bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
+bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance)
 {
 	player_type *p_ptr = NULL;
 	int total = o_ptr->number + j_ptr->number;
@@ -2092,9 +2097,15 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		case TV_ARROW:
 		case TV_SHOT:
 		{
-			/* Require identical "bonuses" */
-			if (o_ptr->to_h != j_ptr->to_h) return (FALSE);
-			if (o_ptr->to_d != j_ptr->to_d) return (FALSE);
+			/* Require identical "bonuses" -
+			   except for ammunition which carries special inscription (will merge!) */
+			if (!((tolerance & 0x1) && !(cursed_p(o_ptr) || cursed_p(j_ptr) ||
+			                    	    artifact_p(o_ptr) || artifact_p(j_ptr))) ||
+			    ((o_ptr->tval != TV_BOLT && o_ptr->tval != TV_ARROW && o_ptr->tval != TV_SHOT) ||
+			    (!check_guard_inscription(o_ptr->note, 'M') && !check_guard_inscription(j_ptr->note, 'M')))) {
+				if (o_ptr->to_h != j_ptr->to_h) return (FALSE);
+				if (o_ptr->to_d != j_ptr->to_d) return (FALSE);
+			}
 			if (o_ptr->to_a != j_ptr->to_a) return (FALSE);
 
 			/* Require identical "pval" code */
@@ -2160,7 +2171,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 	if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)
 		&& strcmp(quark_str(o_ptr->note), "on sale")
 		&& strcmp(quark_str(j_ptr->note), "on sale")
-		&& !is_book(o_ptr)) return (0);
+		&& !is_book(o_ptr)
+		&& !check_guard_inscription(o_ptr->note, 'M')
+		&& !check_guard_inscription(j_ptr->note, 'M')) return (0);
 
 	/* Hack -- normally require matching "inscriptions" */
 	if ((!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note)) return (0);
@@ -2194,6 +2207,18 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 {
 	int total = o_ptr->number + j_ptr->number;
 
+        /* Prepare ammo for possible combining */
+        int o_to_h, o_to_d;
+	bool merge_inscriptions = check_guard_inscription(o_ptr->note, 'M') || check_guard_inscription(j_ptr->note, 'M');
+	bool merge_ammo = ((o_ptr->tval == TV_BOLT || o_ptr->tval == TV_ARROW || o_ptr->tval == TV_SHOT) &&
+			    merge_inscriptions);
+
+	/* Combine ammo even of different enchantment grade! - C. Blue */
+	if (merge_ammo) {
+		o_ptr->to_h = ((o_ptr->to_h * o_ptr->number) + (j_ptr->to_h * j_ptr->number)) / (o_ptr->number + j_ptr->number);
+		o_ptr->to_d = ((o_ptr->to_d * o_ptr->number) + (j_ptr->to_d * j_ptr->number)) / (o_ptr->number + j_ptr->number);
+	}
+
 	/* Add together the item counts */
 	o_ptr->number = ((total < MAX_STACK_SIZE) ? total : (MAX_STACK_SIZE - 1));
 
@@ -2209,7 +2234,22 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- blend "inscriptions" */
 //	if (j_ptr->note) o_ptr->note = j_ptr->note;
 //	if (o_ptr->note) j_ptr->note = o_ptr->note;
-	if (!o_ptr->note && j_ptr->note) o_ptr->note = j_ptr->note;
+
+	/* Usually, the old object 'j_ptr' takes over the inscription of added object 'o_ptr'.
+	   However, in some cases it's reversed, if..
+	   o_ptr's inscription is empty or one of the automatic inscriptions AND j_ptr's
+	   inscription is not empty, or..
+	   o_ptr's inscription contains the !M tag and j_ptr does not and j_ptr isnt one of
+	   the automatic inscriptions. */
+	if (j_ptr->note &&
+	    (!o_ptr->note || streq(quark_str(o_ptr->note), "Handmade") || streq(quark_str(o_ptr->note), "stolen"))) {
+		o_ptr->note = j_ptr->note;
+	}
+	else if (merge_inscriptions) {
+		if (check_guard_inscription(o_ptr->note, 'M') && (!check_guard_inscription(j_ptr->note, 'M'))
+		    && (j_ptr->note) && strcmp(quark_str(j_ptr->note), "Handmade") && strcmp(quark_str(j_ptr->note), "stolen"))
+			o_ptr->note = j_ptr->note;
+	}
 
 	/* Hack -- could average discounts XXX XXX XXX */
 	/* Hack -- save largest discount XXX XXX XXX */
@@ -6645,7 +6685,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			next_o_idx = j_ptr->next_o_idx;
 
 			/* Check for possible combination */
-			if (object_similar(0, o_ptr, j_ptr)) comb = TRUE;
+			if (object_similar(0, o_ptr, j_ptr, 0x0)) comb = TRUE;
 
 			/* Count objects */
 			k++;
@@ -6736,7 +6776,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		next_o_idx = q_ptr->next_o_idx;
 
 		/* Check for combination */
-		if (object_similar(0, q_ptr, o_ptr))
+		if (object_similar(0, q_ptr, o_ptr, 0x0))
 		{
 			/* Combine the items */
 			object_absorb(0, q_ptr, o_ptr);
@@ -6846,7 +6886,11 @@ s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *
 	if (is_admin(p_ptr)) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 
 	/* Artifact always disappears, depending on tomenet.cfg flags */
-	if (true_artifact_p(o_ptr) && (cfg.anti_arts_hoard || p_ptr->total_winner) && !is_admin(p_ptr))
+	if (true_artifact_p(o_ptr) && !is_admin(p_ptr) && (cfg.anti_arts_hoard ||
+				    			  (p_ptr->total_winner && 
+				    				(o_ptr->name1 != 34) &&
+								(o_ptr->name1 != 111) &&
+								(o_ptr->name1 != 203))))
 	    //(cfg.anti_arts_hoard || (cfg.anti_arts_house && 0)) would be cleaner sometime in the future..
 	{
 		char	o_name[160];
@@ -7274,11 +7318,11 @@ bool inven_carry_okay(int Ind, object_type *o_ptr)
 		object_type *j_ptr = &p_ptr->inventory[i];
 
 		/* Check if the two items can be combined */
-		if (object_similar(Ind, j_ptr, o_ptr)) return (TRUE);
+		if (object_similar(Ind, j_ptr, o_ptr, 0x0)) return (TRUE);
 	}
 
 	/* Hack -- try quiver slot (see inven_carry) */
-//	if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr)) return (TRUE);
+//	if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr, 0x0)) return (TRUE);
 
 	/* Nope */
 	return (FALSE);
@@ -7311,7 +7355,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 
 #if 0	// This code makes it impossible to take ammos off, pfft
 	/* Try to add to the quiver */
-	if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr))
+	if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr, 0x0))
 	{
 		msg_print(Ind, "You add the ammo to your quiver.");
 
@@ -7344,7 +7388,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		n = j;
 
 		/* Check if the two items can be combined */
-		if (object_similar(Ind, j_ptr, o_ptr))
+		if (object_similar(Ind, j_ptr, o_ptr, 0x0))
 		{
 			/* Combine the items */
 			object_absorb(Ind, j_ptr, o_ptr);
@@ -7559,7 +7603,7 @@ void combine_pack(int Ind)
 			if (!j_ptr->k_idx) continue;
 
 			/* Can we drop "o_ptr" onto "j_ptr"? */
-			if (object_similar(Ind, j_ptr, o_ptr))
+			if (object_similar(Ind, j_ptr, o_ptr, 0x0))
 			{
 				/* Take note */
 				flag = TRUE;
@@ -7859,7 +7903,7 @@ s16b floor_carry(worldpos *wpos, int y, int x, object_type *j_ptr)
 		next_o_idx = o_ptr->next_o_idx;
 
 		/* Check for combination */
-		if (object_similar(o_ptr, j_ptr))
+		if (object_similar(o_ptr, j_ptr, 0x0))
 		{
 			/* Combine the items */
 			object_absorb(o_ptr, j_ptr);

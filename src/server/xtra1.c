@@ -2668,7 +2668,8 @@ void calc_bonuses(int Ind)
 		p_ptr->resist_conf = TRUE;
 		p_ptr->no_cut = TRUE;
 		p_ptr->reduce_insanity = 1;
-		/*p_ptr->fly = TRUE; redundant*/
+		p_ptr->fly = TRUE; /* redundant */
+		p_ptr->feather_fall = TRUE;
 		/*p_ptr->tim_wraith = 30000; redundant*/
 //		p_ptr->invis += 5; */ /* No. */
 	}
@@ -3520,8 +3521,8 @@ void calc_bonuses(int Ind)
 	{
 		p_ptr->to_a += p_ptr->blessed_power;
 		p_ptr->dis_to_a += p_ptr->blessed_power;
-		p_ptr->to_h += p_ptr->blessed_power;
-		p_ptr->dis_to_h += p_ptr->blessed_power;
+		p_ptr->to_h += p_ptr->blessed_power / 2;
+		p_ptr->dis_to_h += p_ptr->blessed_power / 2;
 	}
 
 	/* Temprory invisibility */
@@ -4361,12 +4362,32 @@ void calc_bonuses(int Ind)
 		p_ptr->sensible_acid=FALSE;
 
 
+	/* Limit mana capacity bonus */
+	if ((p_ptr->to_m > 300) && !is_admin(p_ptr)) p_ptr->to_m = 300;
+
+#ifdef FUNSERVER
+	/* Limit AC?.. */
+	if (!is_admin(p_ptr)) {
+		if ((p_ptr->to_a > 400) && (!p_ptr->total_winner)) p_ptr->to_a = 400; /* Lebohaum / Illuvatar bonus */
+		if ((p_ptr->to_a > 300) && (p_ptr->total_winner)) p_ptr->to_a = 300;
+	}
+#endif
+
+	/* Limit critical hits bonus */
+        if ((p_ptr->xtra_crit > 50) && !is_admin(p_ptr)) p_ptr->xtra_crit = 50;
+	/* Map critical hits bonus to a curve, similar to LUCK */
+//	p_ptr->xtra_crit = 60 - (600 / (p_ptr->xtra_crit + 10)); /* 1:6, 2:10, 3:15, 5:20, 7:25, 10:30, 15:36, 20:40 */
+	p_ptr->xtra_crit = 65 - (975 / (p_ptr->xtra_crit + 15)); /* 1:5, 2: 8, 3:11, 5:17, 7:21, 10:26, 15:33, 20:38 */
 
 	/* Limit speed penalty from total_weight */
-	if (p_ptr->pspeed < 10) p_ptr->pspeed = 10;
+	if ((p_ptr->pspeed < 10) && !is_admin(p_ptr)) p_ptr->pspeed = 10;
 	
+	/* Limit speed */
+	if ((p_ptr->pspeed > 210) && !is_admin(p_ptr)) p_ptr->pspeed = 210;
+
 	/* Limit blows per round (just paranoia^^) */
 	if (p_ptr->num_blow < 0) p_ptr->num_blow = 0;
+	if ((p_ptr->num_blow > 20) && !is_admin(p_ptr)) p_ptr->num_blow = 20;
 
 	/* XXX - Always resend skills */
 	p_ptr->redraw |= (PR_SKILLS);

@@ -1538,7 +1538,7 @@ D:its power of commanding legions of powerful immortal warriors...
 
 N:111:'Grond'
 I:21:50:3
-W:100:1:1000:500000
+W:100:1:666:500000
 P:0:9d9:25:25:10
 F:KILL_DRAGON | KILL_DEMON | KILL_UNDEAD |
 F:SLAY_EVIL | SLAY_ANIMAL | SLAY_TROLL | SLAY_ORC |
@@ -1546,7 +1546,7 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD |
 F:TUNNEL | LEVELS | LIFE | AGGRAVATE |
 F:CURSED | HEAVY_CURSE | PERMA_CURSE | 
 F:ACTIVATE | SPECIAL_GENE | SHOW_MODS | INSTA_ART |
-F:NO_MAGIC
+#F:NO_MAGIC
 F:IMPACT
 D:The mighty Hammer of the Underworld, blackened by doomspells of shattering, 
 D:whose wielder holds the lives of all Morgoth's servants in his hand.

@@ -1136,7 +1136,9 @@ void do_slash_cmd(int Ind, char *message)
 				r=get_mon_num(lev, 0);
 				k++;
 				if(k>100) lev--;
-			} while(((lev-5) > r_info[r].level) || r_info[r].flags1 & RF1_UNIQUE);
+			} while(	((lev-5) > r_info[r].level) || 
+					(r_info[r].flags1 & RF1_UNIQUE) || 
+					!(r_info[r].level > 2)); /* no Training Tower quests */
 			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 11 + randint(7);
 			add_quest(Ind, j, r, i, flags);
 			return;
@@ -1530,7 +1532,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			if ((notes >= 3) && !is_admin(p_ptr)) {
-				msg_print(Ind, "\377oYou have already reached the maximumm of 3 pending notes per player.");
+				msg_print(Ind, "\377oYou have already reached the maximum of 3 pending notes per player.");
 				return;
 			}
 			strcpy(priv_note_sender[found_note], p_ptr->name);
@@ -1539,6 +1541,88 @@ void do_slash_cmd(int Ind, char *message)
 			msg_format(Ind, "\377yNote for account '%s' has been stored.", priv_note_target[found_note]);
 			return;
 		}
+
+#ifdef FUN_SERVER /* make wishing available to players for fun, until rollback happens - C. Blue */
+		else if (prefix(message, "/wish"))
+		{
+			object_type	forge;
+			object_type	*o_ptr = &forge;
+			WIPE(o_ptr, object_type);
+			int tval, sval, kidx;
+
+			if (tk < 1 || !k)
+			{
+				msg_print(Ind, "\377oUsage: /wish (tval) (sval) (pval) [discount] [name] or /wish (o_idx)");
+				return;
+			}
+
+			if (tk > 1) {
+			    tval = k; sval = atoi(token[2]);
+			    kidx = lookup_kind(tval, sval);
+			}
+			else kidx = k;
+//			if (kidx == 238 || kidx == 909 || kidx == 888 || kidx == 920) return; /* Invuln pots, Learning pots, Invinc + Highland ammys */
+			if (kidx == 239 || kidx == 616 || kidx == 626 || kidx == 595 || kidx == 179) return; /* ..and rumour scrolls (spam) */
+			msg_print(Ind, format("%d",kidx));
+			invcopy(o_ptr, kidx);
+
+			if(tk>2) o_ptr->pval=(atoi(token[3]) < 15) ? atoi(token[3]) : 15;
+			/* the next check is not needed (bpval is used, not pval) */
+			if (kidx == 428 && o_ptr->pval > 3) o_ptr->pval = 3; //436  (limit EA ring +BLOWS)
+
+			/* Wish arts out! */
+			if (tk > 4)
+			{
+				int nom = atoi(token[5]);
+				if (nom == 203 || nom == 218) return; /* Phasing ring, Wizard cloak */
+				o_ptr->number = 1;
+
+				if (nom > 0) o_ptr->name1 = nom;
+				else
+				{
+					/* It's ego or randarts */
+					if (nom)
+					{
+						o_ptr->name2 = 0 - nom;
+						if (tk > 4) o_ptr->name2b = 0 - atoi(token[5]);
+						/* the next check might not be needed (bpval is used, not pval?) */
+						if ((o_ptr->name2 == 65 || o_ptr->name2b == 65 ||
+						    o_ptr->name2 == 70 || o_ptr->name2b == 70 ||
+						    o_ptr->name2 == 173 || o_ptr->name2b == 173 ||
+						    o_ptr->name2 == 176 || o_ptr->name2b == 176 ||
+						    o_ptr->name2 == 187 || o_ptr->name2b == 187)
+						    && (o_ptr->pval > 3)) /* all +BLOWS items */
+							o_ptr->pval = 3;
+					}
+					else o_ptr->name1 = ART_RANDART;
+
+					/* Piece together a 32-bit random seed */
+					o_ptr->name3 = rand_int(0xFFFF) << 16;
+					o_ptr->name3 += rand_int(0xFFFF);
+				}
+			}
+			else
+			{
+				o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
+			}
+
+			apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, TRUE);
+			if (tk > 3){
+				o_ptr->discount = atoi(token[4]);
+			}
+			else{
+				o_ptr->discount = 100;
+			}
+			object_known(o_ptr);
+			o_ptr->owner = 0;
+//			if(tk>2) o_ptr->pval=(atoi(token[3]) < 15) ? atoi(token[3]) : 15;
+			//o_ptr->owner = p_ptr->id;
+			o_ptr->level = 1;
+			(void)inven_carry(Ind, o_ptr);
+
+			return;
+		}
+#endif
 
 
 		/*
@@ -1980,6 +2064,7 @@ void do_slash_cmd(int Ind, char *message)
 			 * /wish 21 8 a117 d40
 			 * for Aule {40% off}
 			 */
+#ifndef FUN_SERVER /* disabled while server is being exploited */
 			else if (prefix(message, "/wish"))
 			{
 				object_type	forge;
@@ -2038,6 +2123,7 @@ void do_slash_cmd(int Ind, char *message)
 
 				return;
 			}
+#endif
 			else if (prefix(message, "/trap") ||
 					prefix(message, "/tr"))
 			{
@@ -2431,7 +2517,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				if (!j) return;
 				bypass_invuln = TRUE;
-			        take_hit(j, Players[j]->chp - 1, "");
+			        take_hit(j, Players[j]->chp - 1, "", 0);
 				bypass_invuln = FALSE;
 			        msg_format_near(j, "\377y%s is hit by a bolt from the blue!", Players[j]->name);
 			        msg_print(j, "\377rYou are hit by a bolt from the blue!");
@@ -2446,7 +2532,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				if (!j) return;
 				bypass_invuln = TRUE;
-			        take_hit(j, Players[j]->chp / 2, "");
+			        take_hit(j, Players[j]->chp / 2, "", 0);
 				bypass_invuln = FALSE;
 			        msg_print(j, "\377rYou are slapped by something invisible!");
 			        msg_format_near(j, "\377y%s is slapped by something invisible!", Players[j]->name);

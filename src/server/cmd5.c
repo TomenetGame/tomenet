@@ -407,7 +407,7 @@ void do_cmd_ghost_power(int Ind, int ability)
 	p_ptr->exp -= s_ptr->slevel * s_ptr->smana;
 
 	/* Too much can kill you */
-	if (p_ptr->exp < 0) take_hit(Ind, 5000, "the strain of ghostly powers");
+	if (p_ptr->exp < 0) take_hit(Ind, 5000, "the strain of ghostly powers", 0);
 
 	/* Check experience levels */
 	check_experience(Ind);
@@ -487,7 +487,7 @@ void do_cmd_ghost_power_aux(int Ind, int dir)
 	p_ptr->exp -= s_ptr->slevel * s_ptr->smana;
 
 	/* Too much can kill you */
-	if (p_ptr->exp < 0) take_hit(Ind, 5000, "the strain of ghostly powers");
+	if (p_ptr->exp < 0) take_hit(Ind, 5000, "the strain of ghostly powers", 0);
 
 	/* Check experience levels */
 	check_experience(Ind);
@@ -1474,6 +1474,12 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 	{
 	        msg_print(Ind, "Your anti-magic field disrupts your attempt.");
 	        return;
+	}
+	/* Not when confused */
+	if (p_ptr->confused)
+	{
+		msg_print(Ind, "You are too confused!");
+		return;
 	}
 
 	/* mimics can easily restore from chauve-souris fruit bat form */

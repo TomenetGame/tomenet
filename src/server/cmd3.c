@@ -680,7 +680,7 @@ void do_cmd_wield(int Ind, int item)
 			msg_print(Ind, "You are blasted by the Crown's power!");
 			/* This should pierce invulnerability */
 			bypass_invuln = TRUE;
-			take_hit(Ind, 10000, "the Massive Iron Crown of Morgoth");
+			take_hit(Ind, 10000, "the Massive Iron Crown of Morgoth", 0);
 			bypass_invuln = FALSE;
 			return;
 		}
@@ -750,7 +750,10 @@ void do_cmd_wield(int Ind, int item)
 	{
 		if (o_ptr->k_idx)
 		{
-			if (!object_similar(Ind, o_ptr, &tmp_obj))
+			/* !M inscription tolerates different +hit / +dam enchantments,
+			   which will be merged and averaged in object_absorb.
+			   However, this doesn't work for cursed items or artefacts. - C. Blue */
+			if (!object_similar(Ind, o_ptr, &tmp_obj, 0x1))
 			{
 				/* Take off existing item */
 				(void)inven_takeoff(Ind, slot, 255);
@@ -1128,7 +1131,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 		/* Nope */
 		return;
 	}
-
+#ifndef FUN_SERVER /* while server is being hacked, allow this (while /wish is also allowed) - C. Blue */
 	/* Artifacts cannot be destroyed */
 	if (artifact_p(o_ptr) && !is_admin(p_ptr))
 	{
@@ -1155,7 +1158,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 		/* Done */
 		return;
 	}
-
+#endif
 	/* Keys cannot be destroyed */
 	if (o_ptr->tval == TV_KEY && !is_admin(p_ptr))
 	{

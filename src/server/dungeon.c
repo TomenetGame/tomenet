@@ -2168,7 +2168,7 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->poisoned)
 	{
 		/* Take damage */
-		take_hit(Ind, 1, "poison");
+		take_hit(Ind, 1, "poison", 0);
 	}
 
 	/* Misc. terrain effects */
@@ -2229,7 +2229,7 @@ static bool process_player_end_aux(int Ind)
 							//							do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
 							dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
 						}
-						take_hit(Ind, hit, "drowning");
+						take_hit(Ind, hit, "drowning", 0);
 					}
 				}
 			}
@@ -2256,7 +2256,7 @@ static bool process_player_end_aux(int Ind)
 					//					do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
 					dec_stat(Ind, A_DEX, 10, STAT_DEC_TEMPORARY);
 				}
-				take_hit(Ind, hit, "anoxia");
+				take_hit(Ind, hit, "anoxia", 0);
 			}
 		}
 
@@ -2293,7 +2293,7 @@ static bool process_player_end_aux(int Ind)
 
 				//			cave_no_regen = TRUE;
 				if (amt > p_ptr->chp - 1) amt = p_ptr->chp - 1;
-				take_hit(Ind, amt, " walls ...");
+				take_hit(Ind, amt, " walls ...", 0);
 			}
 		}
 	}
@@ -2321,7 +2321,7 @@ static bool process_player_end_aux(int Ind)
 		}
 
 		/* Take damage */
-		take_hit(Ind, i, "a fatal wound");
+		take_hit(Ind, i, "a fatal wound", 0);
 	}
 
 	/*** Check the Food, and Regenerate ***/
@@ -2397,7 +2397,7 @@ static bool process_player_end_aux(int Ind)
 			i = (PY_FOOD_STARVE - p_ptr->food) / 10;
 
 			/* Take damage */
-			take_hit(Ind, i, "starvation");
+			take_hit(Ind, i, "starvation", 0);
 		}
 	}
 
@@ -3040,7 +3040,7 @@ static bool process_player_end_aux(int Ind)
 			if (magik(50)) {
 				msg_print(Ind, "\377oYou vomit!");
 				msg_format_near(Ind, "%s vomits!", p_ptr->name);
-				take_hit(Ind, 1, "circulation collapse");
+				take_hit(Ind, 1, "circulation collapse", 0);
 				if (p_ptr->chp < p_ptr->mhp) /* *invincibility* fix */
 					if (p_ptr->food > PY_FOOD_FAINT - 1)
 					        (void)set_food(Ind, PY_FOOD_FAINT - 1);
@@ -3152,7 +3152,7 @@ static bool process_player_end_aux(int Ind)
 	{
 		int drain = p_ptr->drain_life + rand_int(p_ptr->mhp / 100);
 
-		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining");
+		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);
 #if 0
 		p_ptr->chp -= (drain < p_ptr->chp ? drain : p_ptr->chp);
 
@@ -4130,11 +4130,12 @@ static void process_various(void)
 
 				if (!p_ptr->r_killed[i]) continue;
 
-				/* Hack -- Sauron and Morgoth are exceptions
+				/* Hack -- Sauron and Morgoth are exceptions (and all > Morgy-uniques)
 				   --- QUESTOR is currently NOT used!! - C. Blue */
 				if (r_ptr->flags1 & RF1_QUESTOR) continue;
 				/* ..hardcoding them instead: */
-				if (i == 860 || i == 862 || i == 1067 || i == 1085 || i == 1097) continue;
+//				if (i == 860 || i == 862 || i == 1032 || i == 1067 || i == 1085 || i == 1097) continue;
+				if (r_ptr->level >= 99) continue;
 
 				/* Special-dropping uniques too! */
 				/* if (r_ptr->flags1 & RF1_DROP_CHOSEN) continue; */

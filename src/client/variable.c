@@ -70,12 +70,13 @@ bool inkey_base = FALSE;
 bool inkey_scan = FALSE;
 bool inkey_flag = FALSE;
 bool inkey_interact_macros = FALSE;
-bool inkey_get_item = FALSE;
+bool inkey_msg = FALSE;
 
 s16b macro__num;
 cptr *macro__pat;
 cptr *macro__act;
 bool *macro__cmd;
+bool *macro__hyb;
 char *macro__buf;
 
 u16b message__next;

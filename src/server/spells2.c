@@ -2427,7 +2427,7 @@ bool detect_invisible(int Ind)
 		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 
 		/* Skip the dungeon master */
-		if (p_ptr->admin_dm) continue;
+		if (q_ptr->admin_dm) continue;
 
 		/* Detect all invisible players but not the dungeon master */
 		if (panel_contains(py, px) && q_ptr->ghost) 
@@ -4318,7 +4318,7 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ)
 		if (Ind > 0)
 		{
 			if (!p_ptr->admin_dm)
-				take_hit(Ind, randint(4 + (tmp >> 3)), "the strain of casting Genocide");
+				take_hit(Ind, randint(4 + (tmp >> 3)), "the strain of casting Genocide", 0);
 
 			/* Redraw */
 			p_ptr->redraw |= (PR_HP);
@@ -4341,7 +4341,7 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ)
 	{
 #ifdef SEVERE_GENO
 		if (!p_ptr->death && result && !p_ptr->admin_dm)
-			take_hit(Ind, p_ptr->chp >> 1, "the strain of casting Genocide");
+			take_hit(Ind, p_ptr->chp >> 1, "the strain of casting Genocide", 0);
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_HP);
@@ -4480,7 +4480,7 @@ bool mass_genocide(int Ind)
 		/* does not effect the dungeon master, because it disturbs his movement
 		 */
 		if (!p_ptr->admin_dm)
-			take_hit(Ind, randint(3 + (tmp >> 3)), "the strain of casting Genocide");
+			take_hit(Ind, randint(3 + (tmp >> 3)), "the strain of casting Genocide", 0);
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_HP);
@@ -4500,7 +4500,7 @@ bool mass_genocide(int Ind)
 
 #ifdef SEVERE_GENO
 	if (!p_ptr->death && result && !p_ptr->admin_dm)
-			take_hit(Ind, p_ptr->chp >> 1, "the strain of casting Genocide");
+			take_hit(Ind, p_ptr->chp >> 1, "the strain of casting Genocide", 0);
 
 	/* Redraw */
 	p_ptr->redraw |= (PR_HP);
@@ -4976,7 +4976,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				map[16+p_ptr->py-cy][16+p_ptr->px-cx] = FALSE;
 
 				/* Take some damage */
-				if (damage) take_hit(Ind, damage, "an earthquake");
+				if (damage) take_hit(Ind, damage, "an earthquake", 0);
 
 				/* Mega-Hack -- Forget the view and lite */
 				p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);

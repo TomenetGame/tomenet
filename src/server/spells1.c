@@ -1135,7 +1135,7 @@ byte spell_color(int type)
  */
 bool bypass_invuln = FALSE;
 
-void take_hit(int Ind, int damage, cptr hit_from)
+void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -1284,7 +1284,8 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		/* Hack -- Blond bond */
 		Ind2 = find_player(p_ptr->blood_bond);
 
-		if (Ind2 && !strcmp(Players[Ind2]->name, hit_from))
+//		if (Ind2 && !strcmp(Players[Ind2]->name, hit_from))
+		if (Ind2 && (Ind2 == Ind_attacker))
 		{
 			p_ptr->chp = p_ptr->mhp;
 			Players[Ind2]->chp = Players[Ind2]->mhp;
@@ -1961,7 +1962,7 @@ int minus_ac(int Ind, int water)
 /*
  * Hurt the player with Acid
  */
-int acid_dam(int Ind, int dam, cptr kb_str)
+int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -1987,7 +1988,7 @@ int acid_dam(int Ind, int dam, cptr kb_str)
 	if (minus_ac(Ind, 0)) dam = (dam + 1) / 2;
 
 	/* Take damage */
-	take_hit(Ind, dam, kb_str);
+	take_hit(Ind, dam, kb_str, Ind_attacker);
 
 	/* Inventory damage */
 	if (!(p_ptr->oppose_acid && p_ptr->resist_acid))
@@ -2000,7 +2001,7 @@ int acid_dam(int Ind, int dam, cptr kb_str)
 /*
  * Hurt the player with electricity
  */
-int elec_dam(int Ind, int dam, cptr kb_str)
+int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -2023,7 +2024,7 @@ int elec_dam(int Ind, int dam, cptr kb_str)
 		(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
-	take_hit(Ind, dam, kb_str);
+	take_hit(Ind, dam, kb_str, Ind_attacker);
 
 	/* Inventory damage */
 	if (!(p_ptr->oppose_elec && p_ptr->resist_elec))
@@ -2038,7 +2039,7 @@ int elec_dam(int Ind, int dam, cptr kb_str)
 /*
  * Hurt the player with Fire
  */
-int fire_dam(int Ind, int dam, cptr kb_str)
+int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -2061,7 +2062,7 @@ int fire_dam(int Ind, int dam, cptr kb_str)
 		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
-	take_hit(Ind, dam, kb_str);
+	take_hit(Ind, dam, kb_str, Ind_attacker);
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_fire && p_ptr->oppose_fire))
@@ -2074,7 +2075,7 @@ int fire_dam(int Ind, int dam, cptr kb_str)
 /*
  * Hurt the player with Cold
  */
-int cold_dam(int Ind, int dam, cptr kb_str)
+int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -2097,7 +2098,7 @@ int cold_dam(int Ind, int dam, cptr kb_str)
 		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
-	take_hit(Ind, dam, kb_str);
+	take_hit(Ind, dam, kb_str, Ind_attacker);
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_cold && p_ptr->oppose_cold))
@@ -6597,34 +6598,34 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Unresisted */	
 			if (!p_ptr->resist_conf) set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
 		}
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
    		break;
 
 
 		/* Standard damage -- hurts inventory too */
 		case GF_ACID:
-		dam = acid_dam(Ind, dam, killer);
+		dam = acid_dam(Ind, dam, killer, -who);
 		if (fuzzy) msg_format(Ind, "You are hit by acid for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		break;
 
 		/* Standard damage -- hurts inventory too */
 		case GF_FIRE:
-		dam = fire_dam(Ind, dam, killer);
+		dam = fire_dam(Ind, dam, killer, -who);
 		if (fuzzy) msg_format(Ind, "You are hit by fire for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		break;
 
 		/* Standard damage -- hurts inventory too */
 		case GF_COLD:
-		dam = cold_dam(Ind, dam, killer);
+		dam = cold_dam(Ind, dam, killer, -who);
 		if (fuzzy) msg_format(Ind, "You are hit by cold for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		break;
 
 		/* Standard damage -- hurts inventory too */
 		case GF_ELEC:
-		dam = elec_dam(Ind, dam, killer);
+		dam = elec_dam(Ind, dam, killer, -who);
 		if (fuzzy) msg_format(Ind, "You are hit by lightning for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		break;
@@ -6644,7 +6645,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->sensible_pois) dam = (dam + 2) * 2;
 			if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-			take_hit(Ind, dam, killer);
+			take_hit(Ind, dam, killer, -who);
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 			{
 				(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10);
@@ -6657,7 +6658,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->biofeedback) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		case GF_HELL_FIRE:
@@ -6669,7 +6670,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else if (p_ptr->sensible_fire) dam = ((dam + 2) * 5) / 3;
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Holy Orb -- Player only takes partial damage */
@@ -6680,7 +6681,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->pclass == CLASS_PALADIN) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		case GF_HOLY_FIRE:
@@ -6694,7 +6695,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->pclass == CLASS_PALADIN) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Arrow -- XXX no dodging */
@@ -6702,7 +6703,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->biofeedback) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something sharp for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Plasma -- XXX Fire helps a bit */
@@ -6720,7 +6721,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		if (fuzzy) msg_format(Ind, "You are hit by something hot for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		if (!p_ptr->resist_sound)
 		{
 			int k = (randint((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
@@ -6770,7 +6771,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				lose_exp(Ind, 200 + (p_ptr->exp/100) * MON_DRAIN_LIFE);
 			}
 		}
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Water -- stun/confuse */
@@ -6798,7 +6799,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				inven_damage(Ind, set_water_destroy, 1);
 				if (magik(20)) minus_ac(Ind, 1);
 			}
-			take_hit(Ind, dam, killer);
+			take_hit(Ind, dam, killer, -who);
 			if ((!p_ptr->resist_water) &&
 			    !(p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC)))
 			{
@@ -6858,7 +6859,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				lose_exp(Ind, 5000 + (p_ptr->exp/100) * MON_DRAIN_LIFE);
 			}
 		}
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Shards -- mostly cutting */
@@ -6870,7 +6871,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		if (fuzzy) msg_format(Ind, "You are hit by something sharp for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		if ((!p_ptr->resist_shard) && (!p_ptr->no_cut))
 			(void)set_cut(Ind, p_ptr->cut + dam);
 		break;
@@ -6891,7 +6892,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			(void)set_stun(Ind, p_ptr->stun + k);
 		}
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Pure confusion */
@@ -6908,7 +6909,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			(void)set_confused(Ind, p_ptr->confused + randint(20) + 10);
 		}
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Disenchantment -- see above */
@@ -6925,7 +6926,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			(void)apply_disenchant(Ind, 0);
 		}
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Nexus -- see above */
@@ -6942,7 +6943,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			apply_nexus(Ind, m_ptr);
 		}
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Force -- mostly stun */
@@ -6953,7 +6954,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			(void)set_stun(Ind, p_ptr->stun + randint(20));
 		}
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Inertia -- slowness */
@@ -6968,7 +6969,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			(void)set_slow(Ind, p_ptr->slow + rand_int(3) + 1);
 		}
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Lite -- blinding */
@@ -6987,7 +6988,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			(void)set_blind(Ind, p_ptr->blind + randint(5) + 2);
 		}
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Dark -- blinding */
@@ -7002,12 +7003,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			(void)set_blind(Ind, p_ptr->blind + randint(5) + 2);
 		}
-		take_hit(Ind, dam, killer);
+		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Time -- bolt fewer effects XXX */
 		case GF_TIME:
-			if (p_ptr->resist_time) dam *= 6; dam /= (randint(6) + 6);
+			if (p_ptr->resist_time) {
+				dam *= 6;
+				dam /= (randint(6) + 6);
+			}
 			if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			if (p_ptr->resist_time)
@@ -7053,7 +7057,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				break;
 			}
 
-			take_hit(Ind, dam, killer);
+			take_hit(Ind, dam, killer, -who);
 			break;
 
 		/* Gravity -- stun plus slowness plus teleport */
@@ -7073,7 +7077,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				int k = (randint((dam > 90) ? 35 : (dam / 3 + 5)));
 				(void)set_stun(Ind, p_ptr->stun + k);
 			}
-			take_hit(Ind, dam, killer);
+			take_hit(Ind, dam, killer, -who);
 			break;
 
 		/* Pure damage */
@@ -7081,14 +7085,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->resist_mana) dam *= 6; dam /= (randint(6) + 6);
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-			take_hit(Ind, dam, killer);
+			take_hit(Ind, dam, killer, -who);
 			break;
 
 		/* Pure damage */
 		case GF_METEOR:
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-			take_hit(Ind, dam, killer);
+			take_hit(Ind, dam, killer, -who);
 			break;
 
 		/* Ice -- cold plus stun plus cuts */
@@ -7098,10 +7102,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			k = (k * 2) / 5;/* 40% SHARDS damage, total shard damage is saved in 'k' */
 			if (p_ptr->biofeedback) k = (k * 2) / 3;
 			if (p_ptr->resist_shard) k *= 6; k /= (randint(6) + 6);
-			dam = cold_dam(Ind, dam, killer);
+			dam = cold_dam(Ind, dam, killer, -who);
 			if (fuzzy) msg_format(Ind, "You are hit by something sharp for \377%c%d \377wdamage!", damcol, dam + k);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam + k);
-			take_hit(Ind, k, killer);
+			take_hit(Ind, k, killer, -who);
 			dam = dam + k; /* adding it up just for fun =p */
 			if ((!p_ptr->resist_shard) && (!p_ptr->no_cut))
 				(void)set_cut(Ind, p_ptr->cut + damroll(5, 8));
@@ -7500,7 +7504,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				inven_damage(Ind, set_cold_destroy, 3);
 			}
 
-			take_hit(Ind, dam, killer);
+			take_hit(Ind, dam, killer, -who);
 			break;
 		}
 
@@ -7520,7 +7524,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (p_ptr->sensible_pois) dam = (5 * dam + 2) / 3;
 				if (fuzzy) msg_format(Ind, "You are hit by radiation for \377%c%d \377wdamage!", damcol, dam);
 				else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-				take_hit(Ind, dam, killer);
+				take_hit(Ind, dam, killer, -who);
 				if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 				{
 					set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10);
@@ -7551,7 +7555,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->body_monster && (r_ptr->flags3 & RF3_HURT_ROCK)) dam = (dam * 3) / 2;
 			if (fuzzy) msg_format(Ind, "You are hit by pure energy for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-			take_hit(Ind, dam, killer);
+			take_hit(Ind, dam, killer, -who);
 			break;
 		}
 
@@ -7642,7 +7646,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (p_ptr->chp - dummy < 1) dummy = p_ptr->chp - 1;
 				msg_print(Ind, "You feel your life fade away!");
 				bypass_invuln = TRUE;
-				take_hit(Ind, dummy, Players[0-who]->name);
+				take_hit(Ind, dummy, Players[0-who]->name, -who);
 				bypass_invuln = FALSE;
 				curse_equipment(Ind, 100, 20);
 			}
@@ -7833,7 +7837,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Message */
 				msg_print(Ind, "You shudder!");
 				dam /= 3; /* full dam is too harsh */
-				take_hit(Ind, dam, killer);
+				take_hit(Ind, dam, killer, -who);
 				}
 			}
 
@@ -7864,7 +7868,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Message */
 				msg_print(Ind, "You shudder!");
 				dam /= 3; /* full dam is too harsh */
-				take_hit(Ind, dam, killer);
+				take_hit(Ind, dam, killer, -who);
 				}
 			}
 
@@ -7893,7 +7897,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Message */
 				msg_print(Ind, "You shudder!");
 				dam /= 3; /* full dam is too harsh */
-				take_hit(Ind, dam, killer);
+				take_hit(Ind, dam, killer, -who);
 				}
 			}
 
@@ -7921,7 +7925,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					/* Message */
 					msg_print(Ind, "You shudder!");
 					dam /= 4; /* full dam is too harsh */
-					take_hit(Ind, dam, killer);
+					take_hit(Ind, dam, killer, -who);
 				}
 			}
 			break;

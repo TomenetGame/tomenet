@@ -126,14 +126,15 @@ extern int special_line_type;
 
 extern bool inkey_base;
 extern bool inkey_scan;
-extern bool inkey_flag; /* On reading keyboard input, command macros don't act */
+extern bool inkey_flag; /* We're currently reading keyboard input (via inkey()) */
 extern bool inkey_interact_macros; /* In macro menu, no macros may act */
-extern bool inkey_get_item;/* On reading keyboard input for choosing an item, all macros may act */
+extern bool inkey_msg;/* A chat message is currently being entered */
 
 extern s16b macro__num;
 extern cptr *macro__pat;
 extern cptr *macro__act;
 extern bool *macro__cmd;
+extern bool *macro__hyb;
 extern char *macro__buf;
 
 extern u16b message__next;
@@ -334,7 +335,7 @@ extern bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor);
 extern void move_cursor(int row, int col);
 extern void flush(void);
 extern void flush_now(void);
-extern void macro_add(cptr pat, cptr act, bool cmd_flag);
+extern void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag);
 extern char inkey(void);
 extern void keymap_init(void);
 extern void bell(void);

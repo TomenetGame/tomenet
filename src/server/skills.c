@@ -131,122 +131,16 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
 	}
 }
 
-/* Hrm this can be nasty for Sorcery/Antimagic */
-// void recalc_skills_theory(s16b *invest, s32b *base_val, u16b *base_mod, s32b *bonus)
-static void increase_related_skills(int Ind, int i)
-{
+/* Display messages to the player, telling him about newly gained abilities
+   from increasing a skill */
+static void msg_gained_abilities(int Ind, int old_value, int i) {
 	player_type *p_ptr = Players[Ind];
-	int j;
-
-	/* Modify related skills */
-	for (j = 1; j < MAX_SKILLS; j++)
-	{
-		/* Ignore self */
-		if (j == i) continue;
-
-		/* Exclusive skills */
-		if (s_info[i].action[j] == SKILl_EXCLUSIVE)
-		{
-			/* Turn it off */
-			p_ptr->s_info[j].value = 0;
-		}
-
-		/* Non-exclusive skills */
-		else
-		{
-			/* Increase / decrease with a % */
-			s32b val = p_ptr->s_info[j].value +
-				(p_ptr->s_info[j].mod * s_info[i].action[j] / 100);
-
-			/* Skill value cannot be negative */
-			if (val < 0) val = 0;
-
-			/* It cannot exceed SKILL_MAX */
-			if (val > SKILL_MAX) val = SKILL_MAX;
-
-			/* Save the modified value */
-			p_ptr->s_info[j].value = val;
-
-			/* Update the client */
-			Send_skill_info(Ind, j);
-		}
-	}
-}
-
-
-/*
- * Advance the skill point of the skill specified by i and
- * modify related skills
- * note that we *MUST* send back a skill_info packet
- */
-void increase_skill(int Ind, int i)
-{
-	player_type *p_ptr = Players[Ind];
-	int as, ws, old_value, new_value;
-
-	/* No skill points to be allocated */
-	if (p_ptr->skill_points <= 0)
-	{
-		Send_skill_info(Ind, i);
-		return;
-	}
-
-	/* The skill cannot be increased */
-	if (p_ptr->s_info[i].mod <= 0)
-	{
-		Send_skill_info(Ind, i);
-		return;
-	}
-
-	/* The skill is already maxed */
-	/* Some extra ability skills don't go over 1 ('1' meaning 'learnt') */
-	if ((p_ptr->s_info[i].value >= SKILL_MAX) ||
-	    ((p_ptr->s_info[i].value >= 1000) &&
-	    ((i == SKILL_CLIMB) || (i == SKILL_FLY) ||
-	    (i == SKILL_FREEACT) || (i == SKILL_RESCONF))))
-	{
-		Send_skill_info(Ind, i);
-		return;
-	}
-
-	/* Cannot allocate more than player level + 2 levels */
-	if ((p_ptr->s_info[i].value / SKILL_STEP) >= p_ptr->lev + 2)
-	{
-		Send_skill_info(Ind, i);
-		return;
-	}
-
-	/* Spend an unallocated skill point */
-	p_ptr->skill_points--;
-
-	/* Save previous value for telling the player about newly gained
-	   abilities later on. Round down extra-safely (just paranoia). */
-	old_value = (p_ptr->s_info[i].value - (p_ptr->s_info[i].value % SKILL_STEP)) / SKILL_STEP;
-
-	/* Increase the skill */
-	p_ptr->s_info[i].value += p_ptr->s_info[i].mod;
-	if (p_ptr->s_info[i].value >= SKILL_MAX) p_ptr->s_info[i].value = SKILL_MAX;
-
-	/* extra abilities cap at 1000 */
-	if ((p_ptr->s_info[i].value >= 1000) &&
-	    ((i == SKILL_CLIMB) || (i == SKILL_FLY) ||
-	    (i == SKILL_FREEACT) || (i == SKILL_RESCONF)))
-		p_ptr->s_info[i].value = 1000;
-
-	/* Increase the skill */
-	increase_related_skills(Ind, i);
-
-	/* Update the client */
-	Send_skill_info(Ind, i);
-
-	/* XXX updating is delayed till player leaves the skill screen */
-	p_ptr->update |= (PU_SKILL_MOD);
+	int new_value = get_skill(p_ptr, i);
+	int as = get_archery_skill(p_ptr);
+	int ws = get_weaponmastery_skill(p_ptr);
 
 	/* Tell the player about new abilities that he gained from the skill increase */
-	new_value = get_skill(p_ptr, i);
 	if (old_value == new_value) return;
-	as = get_archery_skill(p_ptr);
-	ws = get_weaponmastery_skill(p_ptr);
 	switch(i) {
 	case SKILL_CLIMB:	if (new_value == 1) msg_print(Ind, "\377GYou learn how to climb mountains!");;
 				break;
@@ -447,6 +341,127 @@ void increase_skill(int Ind, int i)
 		}
 	}
 #endif
+}
+
+/* Hrm this can be nasty for Sorcery/Antimagic */
+// void recalc_skills_theory(s16b *invest, s32b *base_val, u16b *base_mod, s32b *bonus)
+static void increase_related_skills(int Ind, int i)
+{
+	player_type *p_ptr = Players[Ind];
+	int j;
+
+	/* Modify related skills */
+	for (j = 1; j < MAX_SKILLS; j++)
+	{
+		/* Ignore self */
+		if (j == i) continue;
+
+		/* Exclusive skills */
+		if (s_info[i].action[j] == SKILL_EXCLUSIVE)
+		{
+			/* Turn it off */
+			p_ptr->s_info[j].value = 0;
+		}
+
+		/* Non-exclusive skills */
+		else
+		{
+			/* Save previous value */
+			int old_value = get_skill(p_ptr, j);
+
+			/* Increase / decrease with a % */
+			s32b val = p_ptr->s_info[j].value +
+				(p_ptr->s_info[j].mod * s_info[i].action[j] / 100);
+
+			/* Skill value cannot be negative */
+			if (val < 0) val = 0;
+
+			/* It cannot exceed SKILL_MAX */
+			if (val > SKILL_MAX) val = SKILL_MAX;
+
+			/* Save the modified value */
+			p_ptr->s_info[j].value = val;
+
+			/* Update the client */
+			Send_skill_info(Ind, j);
+			
+			/* Take care of gained abilities */
+			msg_gained_abilities(Ind, old_value, j);
+		}
+	}
+}
+
+
+/*
+ * Advance the skill point of the skill specified by i and
+ * modify related skills
+ * note that we *MUST* send back a skill_info packet
+ */
+void increase_skill(int Ind, int i)
+{
+	player_type *p_ptr = Players[Ind];
+	int as, ws, old_value, new_value;
+
+	/* No skill points to be allocated */
+	if (p_ptr->skill_points <= 0)
+	{
+		Send_skill_info(Ind, i);
+		return;
+	}
+
+	/* The skill cannot be increased */
+	if (p_ptr->s_info[i].mod <= 0)
+	{
+		Send_skill_info(Ind, i);
+		return;
+	}
+
+	/* The skill is already maxed */
+	/* Some extra ability skills don't go over 1 ('1' meaning 'learnt') */
+	if ((p_ptr->s_info[i].value >= SKILL_MAX) ||
+	    ((p_ptr->s_info[i].value >= 1000) &&
+	    ((i == SKILL_CLIMB) || (i == SKILL_FLY) ||
+	    (i == SKILL_FREEACT) || (i == SKILL_RESCONF))))
+	{
+		Send_skill_info(Ind, i);
+		return;
+	}
+
+	/* Cannot allocate more than player level + 2 levels */
+	if ((p_ptr->s_info[i].value / SKILL_STEP) >= p_ptr->lev + 2)
+	{
+		Send_skill_info(Ind, i);
+		return;
+	}
+
+	/* Spend an unallocated skill point */
+	p_ptr->skill_points--;
+
+	/* Save previous value for telling the player about newly gained
+	   abilities later on. Round down extra-safely (just paranoia). */
+	old_value = (p_ptr->s_info[i].value - (p_ptr->s_info[i].value % SKILL_STEP)) / SKILL_STEP;
+
+	/* Increase the skill */
+	p_ptr->s_info[i].value += p_ptr->s_info[i].mod;
+	if (p_ptr->s_info[i].value >= SKILL_MAX) p_ptr->s_info[i].value = SKILL_MAX;
+
+	/* extra abilities cap at 1000 */
+	if ((p_ptr->s_info[i].value >= 1000) &&
+	    ((i == SKILL_CLIMB) || (i == SKILL_FLY) ||
+	    (i == SKILL_FREEACT) || (i == SKILL_RESCONF)))
+		p_ptr->s_info[i].value = 1000;
+
+	/* Increase the skill */
+	increase_related_skills(Ind, i);
+
+	/* Update the client */
+	Send_skill_info(Ind, i);
+
+	/* XXX updating is delayed till player leaves the skill screen */
+	p_ptr->update |= (PU_SKILL_MOD);
+
+	/* Take care of gained abilities */
+	msg_gained_abilities(Ind, old_value, i);
 }
 /*
  * Given the name of a skill, returns skill index or -1 if no
@@ -729,7 +744,7 @@ void recalc_skills_theory(s16b *invest, s32b *base_val, u16b *base_mod, s32b *bo
                         if (j == i) continue;
 
                         /* Exclusive skills */
-                        if ((s_info[i].action[j] == SKILl_EXCLUSIVE) && s_info[i].value && invest[i])
+                        if ((s_info[i].action[j] == SKILL_EXCLUSIVE) && s_info[i].value && invest[i])
                         {
                                 /* Turn it off */
                                 s_info[j].value = 0;

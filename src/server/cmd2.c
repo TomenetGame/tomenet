@@ -250,7 +250,7 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 	{
 		int reduc = ((p_ptr->ac + p_ptr->to_a) / 50) + 1;
 
-		take_hit(Ind, distance(by, bx, p_ptr->py, p_ptr->px) / (10 * reduc), "going Between");
+		take_hit(Ind, distance(by, bx, p_ptr->py, p_ptr->px) / (10 * reduc), "going Between", 0);
 	}
 
 	swap_position(Ind, by, bx);
@@ -3345,7 +3345,7 @@ void do_cmd_fire(int Ind, int dir)
 								}
 
 								/* Take damage */
-								take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
+								take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name, Ind);
 
 								/* XXX confusion arrow is not handled right
 								 * in do_arrow_brand_effect */
@@ -4190,7 +4190,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 //less spam for now - C. Blue		if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 					/* Take damage */
-					take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
+					take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name, Ind);
 
 					/* Stop looking */
 					break;

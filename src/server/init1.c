@@ -2960,8 +2960,8 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			s2 = find_skill(sec);
 			if ((s1 == -1) || (s2 == -1)) return (1);
 
-			s_info[s1].action[s2] = SKILl_EXCLUSIVE;
-			s_info[s2].action[s1] = SKILl_EXCLUSIVE;
+			s_info[s1].action[s2] = SKILL_EXCLUSIVE;
+			s_info[s2].action[s1] = SKILL_EXCLUSIVE;
 
 			/* Next... */
 			continue;

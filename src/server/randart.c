@@ -2086,6 +2086,8 @@ try_an_other_ego:
 #endif	// 0
 
         /* Fix some limits */
+        /* Never have more than +15 bonus */
+        if (a_ptr->pval > 15) a_ptr->pval = 15;
 	/* Mage Staves don't have NO_MAGIC */
 	if (o_ptr->tval == TV_MSTAFF) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 	/* Dark Swords don't have MANA (or SPELL) flag */

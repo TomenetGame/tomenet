@@ -3,8 +3,11 @@
 
 #define MACRO_USE_CMD	0x01
 #define MACRO_USE_STD	0x02
+#define MACRO_USE_HYB	0x03
 
 #define NR_OPTIONS_SHOWN	20
+
+static int MACRO_WAIT = 96;
 
 static void ascii_to_text(char *buf, cptr str);
 
@@ -67,7 +70,8 @@ static int macro_maybe(cptr buf, int n)
 	for (i = n; i < macro__num; i++)
 	{
 		/* Skip inactive macros */
-		if (macro__cmd[i] && !inkey_flag && !inkey_get_item) continue;
+		if (macro__hyb[i] && (shopping || inkey_msg)) continue;
+		if (macro__cmd[i] && (!inkey_flag || inkey_msg)) continue;
 
 		/* Check for "prefix" */
 		if (prefix(macro__pat[i], buf))
@@ -93,7 +97,8 @@ static int macro_ready(cptr buf)
 	for (i = 0; i < macro__num; i++)
 	{
 		/* Skip inactive macros */
-		if (macro__cmd[i] && !inkey_flag && !inkey_get_item) continue;
+		if (macro__cmd[i] && (inkey_msg || !inkey_flag)) continue;
+		if (macro__hyb[i] && (shopping || inkey_msg)) continue;
 
 		/* Check for "prefix" */
 		if (!prefix(buf, macro__pat[i])) continue;
@@ -120,7 +125,7 @@ static int macro_ready(cptr buf)
  * If "cmd_flag" is set then this macro is only active when
  * the user is being asked for a command (see below).
  */
-void macro_add(cptr pat, cptr act, bool cmd_flag)
+void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag)
 {
         int n;
 
@@ -142,6 +147,9 @@ void macro_add(cptr pat, cptr act, bool cmd_flag)
 
                         /* Save the "cmd_flag" */
                         macro__cmd[n] = cmd_flag;
+                        
+                        /* Save the hybrid flag */
+                        macro__hyb[n] = hyb_flag;
 
                         /* All done */
                         return;
@@ -158,6 +166,9 @@ void macro_add(cptr pat, cptr act, bool cmd_flag)
         /* Save the "cmd_flag" */
         macro__cmd[macro__num] = cmd_flag;
 
+        /* Save the "hybrid flag" */
+        macro__hyb[macro__num] = hyb_flag;
+
         /* One more macro */
         macro__num++;
 
@@ -166,9 +177,57 @@ void macro_add(cptr pat, cptr act, bool cmd_flag)
         macro__use[(byte)(pat[0])] |= MACRO_USE_STD;
 
         /* Hack -- Note the "trigger" char of command macros */
-        if (cmd_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_CMD;
+        if (hyb_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_HYB;
+        else if (cmd_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_CMD;
 }
 
+
+static void sync_sleep(int milliseconds)
+{
+	int n;
+
+	int result;
+	int net_fd;
+	net_fd = Net_fd();
+
+	for (n = 0; n < milliseconds / 100; n++) {
+
+		usleep(1000);
+	
+		/* Flush output - maintain flickering/multi-hued characters */
+		do_flicker();
+		/* Update our timer and if neccecary send a keepalive packet
+		 */
+		update_ticks();
+		if(!c_quit)
+			do_keepalive();
+	
+		/* Flush the network output buffer */
+		Net_flush();
+		/* Wait for .001 sec, or until there is net input */
+		SetTimeout(0, 1000);
+		if(c_quit) continue;
+	
+		/* Parse net input if we got any */
+		if (SocketReadable(net_fd))
+		{
+			if ((result = Net_input()) == -1)
+			{
+				quit(NULL);
+			}
+	
+			/* Update the screen */
+			Term_fresh();
+	
+			/* Redraw windows if necessary */
+			if (p_ptr->window)
+			{
+				window_stuff();
+			}
+		}
+
+	}
+}
 
 /*
  * Helper function called only from "inkey()"
@@ -202,6 +261,8 @@ static char inkey_aux(void)
 	cptr	pat, act;
 
 	char	buf[1024];
+	
+	char	buf_atoi[3];
 
 	int net_fd;
 
@@ -275,6 +336,19 @@ static char inkey_aux(void)
 	/* Do not check "ascii 29" */
 	if (ch == 29) return (ch);
 
+	if (parse_macro && (ch == MACRO_WAIT)) {
+		buf_atoi[0] = '0';
+		buf_atoi[1] = '0';
+		buf_atoi[2] = '\0';
+		(void)(Term_inkey(&ch, FALSE, TRUE));
+		if (ch) buf_atoi[0] = ch;
+		(void)(Term_inkey(&ch, FALSE, TRUE));
+		if (ch) buf_atoi[1] = ch;
+		w = atoi(buf_atoi);
+		sync_sleep(w * 100L); /* w 1/10th seconds */
+		ch = 0;
+		w = 0;
+	}
 
 	/* Do not check macro actions */
 	if (parse_macro) return (ch);
@@ -290,7 +364,8 @@ static char inkey_aux(void)
 	if (!macro__use[(byte)(ch)]) return (ch);
 
 	/* Efficiency -- Ignore inactive macros */
-	if ((inkey_flag && (macro__use[(byte)(ch)] == MACRO_USE_CMD) && !inkey_get_item) || inkey_interact_macros) return (ch);
+	if (((!inkey_flag || inkey_msg) && (macro__use[(byte)(ch)] == MACRO_USE_CMD)) || inkey_interact_macros) return (ch);
+	if (((shopping || inkey_msg) && (macro__use[(byte)(ch)] == MACRO_USE_HYB)) || inkey_interact_macros) return (ch);
 
 
 	/* Save the first key, advance */
@@ -2068,7 +2143,8 @@ void c_msg_print(cptr msg)
 	char *t;
 
 	char buf[1024];
-
+	/* Copy it */
+	if (msg) strcpy(buf, msg);
 
 	/* For message separation (chat/non-chat): */
 	char nameA[20];
@@ -2166,20 +2242,19 @@ void c_msg_print(cptr msg)
 	    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) || \
 	    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_retire) != NULL) ||
 	    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
-	    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[')) {
+	    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[') || (msg[0] == '~')) {
 /*	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {*/
-		c_message_add_chat(msg);
+		if (msg[0] == '~') buf[0] = ' ';
+		c_message_add_chat(buf);
 	}
 /*#if 0*/
-	if (msg[2] != '[') {
-		c_message_add_msgnochat(msg);
+	if ((msg[2] != '[') && (msg[0] != '~')) {
+		c_message_add_msgnochat(buf);
 	}
 #endif
-	c_message_add(msg);
+	if (msg[0] == '~') buf[0] = ' ';
+	c_message_add(buf);
 
-
-	/* Copy it */
-	strcpy(buf, msg);
 
 	/* Analyze the buffer */
 	t = buf;
@@ -2360,6 +2435,11 @@ static void ascii_to_text(char *buf, cptr str)
 			*s++ = '\\';
 			*s++ = 'e';
 		}
+		else if (i == MACRO_WAIT)
+		{
+			*s++ = '\\';
+			*s++ = 'w';
+		}
 		else if (i == ' ')
 		{
 			*s++ = '\\';
@@ -2465,8 +2545,8 @@ static errr macro_dump(cptr fname)
 		ascii_to_text(buf, macro__pat[i]);
 
 		/* Dump command macro */
-		if (macro__cmd[i]) fprintf(fff, "C:%s\n", buf);
-
+		if (macro__hyb[i]) fprintf(fff, "H:%s\n", buf);
+		else if (macro__cmd[i]) fprintf(fff, "C:%s\n", buf);
 		/* Dump normal macros */
 		else fprintf(fff, "P:%s\n", buf);
 
@@ -2566,9 +2646,10 @@ void interact_macros(void)
 		Term_putstr(5,  5, -1, TERM_WHITE, "(2) Dump macros");
 		Term_putstr(5,  6, -1, TERM_WHITE, "(3) Enter a new action");
 		Term_putstr(5,  7, -1, TERM_WHITE, "(4) Create a command macro");
-		Term_putstr(5,  8, -1, TERM_WHITE, "(5) Create a normal macro");
-		Term_putstr(5,  9, -1, TERM_WHITE, "(6) Create a identity macro");
-		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Create an empty macro");
+		Term_putstr(5,  8, -1, TERM_WHITE, "(5) Create a hybrid macro");
+		Term_putstr(5,  9, -1, TERM_WHITE, "(6) Create a normal macro");
+		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Create a identity macro");
+		Term_putstr(5, 11, -1, TERM_WHITE, "(8) Create an empty macro");
 
 		/* Prompt */
 		Term_putstr(0, 15, -1, TERM_WHITE, "Command: ");
@@ -2649,14 +2730,33 @@ void interact_macros(void)
 			get_macro_trigger(buf);
 
 			/* Link the macro */
-			macro_add(buf, macro__buf, TRUE);
+			macro_add(buf, macro__buf, TRUE, FALSE);
+
+			/* Message */
+			c_msg_print("Created a new command macro.");
+		}
+
+		/* Create a hybrid macro */
+		else if (i == '5')
+		{
+			/* Prompt */
+			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Create a hybrid macro");
+
+			/* Prompt */
+			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
+
+			/* Get a macro trigger */
+			get_macro_trigger(buf);
+
+			/* Link the macro */
+			macro_add(buf, macro__buf, FALSE, TRUE);
 
 			/* Message */
 			c_msg_print("Created a new command macro.");
 		}
 
 		/* Create a normal macro */
-		else if (i == '5')
+		else if (i == '6')
 		{
 			/* Prompt */
 			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Create a normal macro");
@@ -2668,14 +2768,14 @@ void interact_macros(void)
 			get_macro_trigger(buf);
 
 			/* Link the macro */
-			macro_add(buf, macro__buf, FALSE);
+			macro_add(buf, macro__buf, FALSE, FALSE);
 
 			/* Message */
 			c_msg_print("Created a new normal macro.");
 		}
 
 		/* Create an identity macro */
-		else if (i == '6')
+		else if (i == '7')
 		{
 			/* Prompt */
 			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Create an identity macro");
@@ -2687,14 +2787,14 @@ void interact_macros(void)
 			get_macro_trigger(buf);
 
 			/* Link the macro */
-			macro_add(buf, buf, FALSE);
+			macro_add(buf, buf, FALSE, FALSE);
 
 			/* Message */
 			c_msg_print("Created a new identity macro.");
 		}
 
 		/* Create an empty macro */
-		else if (i == '7')
+		else if (i == '8')
 		{
 			/* Prompt */
 			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Create an empty macro");
@@ -2706,7 +2806,7 @@ void interact_macros(void)
 			get_macro_trigger(buf);
 
 			/* Link the macro */
-			macro_add(buf, "", FALSE);
+			macro_add(buf, "", FALSE, FALSE);
 
 			/* Message */
 			c_msg_print("Created a new empty macro.");

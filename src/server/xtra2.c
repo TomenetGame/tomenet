@@ -304,7 +304,7 @@ bool set_adrenaline(int Ind, int v)
 			{
 				msg_print(Ind, "You lose control of your blood flow!");
 				i = randint(randint(v));
-				take_hit(Ind, damroll(2, i),"adrenaline poisoning");
+				take_hit(Ind, damroll(2, i),"adrenaline poisoning", 0);
 				v = v - i + 1;
 				p_ptr->biofeedback = 0;
 			}
@@ -327,7 +327,7 @@ bool set_adrenaline(int Ind, int v)
 		{
 			msg_print(Ind, "Your body can't handle that much adrenaline!");
 			i = randint(randint(v));
-			take_hit(Ind, damroll(3, i * 2),"adrenaline poisoning");
+			take_hit(Ind, damroll(3, i * 2),"adrenaline poisoning", 0);
 			v = v - i + 1;
 		}		
 	}
@@ -4017,7 +4017,7 @@ if(cfg.unikill_format){
 								p_ptr2->retire_timer = cfg.retire_timer;
 								msg_format(Ind2, "Otherwise you will retire after %s minutes of tenure.", cfg.retire_timer);
 							}
-
+#if 0
 							/* Turn him into pseudo-noghost mode */
 							if (cfg.lifes && (p_ptr2->lives >= 1+1) &&
 					    		    !(p_ptr2->mode & MODE_IMMORTAL) &&
@@ -4026,6 +4026,7 @@ if(cfg.unikill_format){
 	        						msg_print(Ind2, "\377yTake care! As a winner, you have no more resurrections left!");
 								p_ptr2->lives = 1+1;
 							}
+#endif
 						}
 					}
 					/* Total winner */
@@ -4054,7 +4055,7 @@ if(cfg.unikill_format){
 						q_ptr->retire_timer = cfg.retire_timer;
 						msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg.retire_timer);
 					}
-					
+#if 0					
 					/* Turn him into pseudo-noghost mode */
 					if (cfg.lifes && (q_ptr->lives >= 1+1) &&
 			    		    !(q_ptr->mode & MODE_IMMORTAL) &&
@@ -4063,6 +4064,7 @@ if(cfg.unikill_format){
 						msg_print(i, "\377yTake care! As a winner, you have no more resurrections left!");
 						q_ptr->lives = 1+1;
 					}
+#endif
 				}
 			}	
 
@@ -4733,7 +4735,7 @@ void player_death(int Ind)
 	                        if (Players[Ind2]->total_winner) strcat(Players[Ind2]->died_from_list, "\001");
 			}
 			bypass_invuln = TRUE;
-			take_hit(Ind2, Players[Ind2]->chp+1, p_ptr->died_from);
+			take_hit(Ind2, Players[Ind2]->chp+1, p_ptr->died_from, 0);
 			bypass_invuln = FALSE;
 		}
 	}
@@ -4909,6 +4911,10 @@ void player_death(int Ind)
 			/* Drop no more than 32000 gold */
 //			if (p_ptr->au > 32000) p_ptr->au = 32000;
 			/* (actually, this if-clause is not necessary) */
+			if (p_ptr->au <= 50000) ;
+			else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
+			else p_ptr->au /= 2;
+
 			if(p_ptr->max_plv >= cfg.newbies_cannot_drop){
 				/* Set the amount */
 				p_ptr->inventory[INVEN_PACK].pval = p_ptr->au;
@@ -5149,6 +5155,10 @@ void player_death(int Ind)
 		/* Drop no more than 32000 gold */
 //		if (p_ptr->au > 32000) p_ptr->au = 32000;
 		/* (actually, this if-clause is not necessary) */
+		if (p_ptr->au <= 50000) ;
+		else if (p_ptr->au <= 500000) p_ptr->au = (((p_ptr->au) * 100) / (100 + ((p_ptr->au - 50000) / 4500)));
+		else p_ptr->au /= 2;
+
 		if(p_ptr->max_plv >= cfg.newbies_cannot_drop){
 			/* Set the amount */
 			p_ptr->inventory[INVEN_PACK].pval = p_ptr->au;
@@ -5857,7 +5867,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		/* Death by physical attack -- invisible monster */
 		else if (!p_ptr->mon_vis[m_idx])
 		{
-			msg_format_near(Ind, "\377y%s has killed %s.", p_ptr->name, m_name);
+			msg_format_near(Ind, "\377y%s has been killed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
 			msg_format(Ind, "\377yYou have killed %s.", m_name);
 		}
 
@@ -5867,14 +5877,14 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		         (r_ptr->flags2 & RF2_STUPID) ||
 		         (strchr("Evg", r_ptr->d_char)))
 		{
-			msg_format_near(Ind, "\377y%s has destroyed %s.", p_ptr->name, m_name);
+			msg_format_near(Ind, "\377y%s has been destroyed from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
 			msg_format(Ind, "\377yYou have destroyed %s.", m_name);
 		}
 
 		/* Death by Physical attack -- living monster */
 		else
 		{
-			msg_format_near(Ind, "\377y%s has slain %s.", p_ptr->name, m_name);
+			msg_format_near(Ind, "\377y%s has been slain from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name);
 			msg_format(Ind, "\377yYou have slain %s.", m_name);
 		}
 
@@ -7948,7 +7958,7 @@ int level_speed(struct worldpos *wpos){
 }
 #endif	// 0
 
-static void unstatic_level(struct worldpos *wpos){
+void unstatic_level(struct worldpos *wpos){
 	int i;
 
 	for (i = 1; i <= NumPlayers; i++)

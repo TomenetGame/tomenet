@@ -1329,11 +1329,16 @@ static void player_setup(int Ind, bool new)
 	/* If the player encountered a server crash last time he was saved (panic save),
 	   carry him out of that dungeon to make sure he doesn't die to the crash. */
 	if (p_ptr->panic) {
-		if (wpos->wz) {
+		if (wpos->wz || !strcmp("Appelmoes", p_ptr->name)) {
 			s_printf("Auto-recalled panic-saved player %s.\n", p_ptr->name);
 			wpos->wz = 0;
 			/* Don't accidentally recall into nirvana.. */
 			p_ptr->word_recall = 0;
+			/* Avoid critical border spots which might lead to segfaults.. (don't ask) */
+			if (p_ptr->px < 2) p_ptr->px = 2;
+			if (p_ptr->px > MAX_WID - 2) p_ptr->px = MAX_WID - 2;
+			if (p_ptr->py < 2) p_ptr->py = 2;
+			if (p_ptr->py > MAX_HGT - 2) p_ptr->py = MAX_HGT - 2;
 	    		/* Avoid landing in permanent rock or trees or mountains etc.
 		           after an auto-recall, caused by a previous panic save. */
    			p_ptr->auto_transport = AT_BLINK;

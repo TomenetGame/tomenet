@@ -1385,6 +1385,8 @@ void cmd_message(void)
 	int i;
 
 	buf[0] = '\0';
+	
+	inkey_msg = TRUE;
 
 	if (get_string("Message: ", buf, 59)){
 		for(i=0;i<60;i++){
@@ -1392,6 +1394,8 @@ void cmd_message(void)
 		}
 		Send_msg(buf);
 	}
+	
+	inkey_msg = FALSE;
 }
 
 void cmd_party(void)
