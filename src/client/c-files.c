@@ -1051,3 +1051,179 @@ void peruse_file(void)
 	/* Flush any events that came in */
 	Flush_queue();
 }
+
+/*
+ * Hack -- Dump a character description file
+ *
+ * XXX XXX XXX Allow the "full" flag to dump additional info,
+ * and trigger its usage from various places in the code.
+ */
+errr file_character(cptr name, bool full)
+{
+	int			i, j, x, y;
+	byte		a;
+	char		c;
+	cptr		paren = ")";
+	int			fd = -1;
+	FILE		*fff = NULL;
+	store_type  *st_ptr;
+	char		o_name[80];
+	char		buf[1024];
+	bool            spell_first = FALSE;
+
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, name);
+
+	/* File type is "TEXT" */
+	FILE_TYPE(FILE_TYPE_TEXT);
+
+	/* Open the non-existing file */
+	if (fd < 0) fff = my_fopen(buf, "w");
+
+
+	/* Invalid file */
+	if (!fff)
+	{
+		/* Message */
+		c_msg_print("Character dump failed!");
+		c_msg_print(NULL);
+
+		/* Error */
+		return (-1);
+	}
+
+
+	/* Begin dump */
+	fprintf(fff, "  [TomeNET %d.%d.%d @ %s Character Dump]\n\n",
+		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, server_name);
+
+
+	/* Display player */
+	display_player(0);
+
+	/* Dump part of the screen */
+	for (y = 2; y < 22; y++)
+	{
+		/* Dump each row */
+		for (x = 0; x < 79; x++)
+		{
+			/* Get the attr/char */
+			(void)(Term_what(x, y, &a, &c));
+
+			/* Dump it */
+			buf[x] = c;
+		}
+
+		/* Terminate */
+		buf[x] = '\0';
+
+		/* End the row */
+		fprintf(fff, "%s\n", buf);
+	}
+
+	/* Display history */
+	display_player(1);
+
+	/* Dump part of the screen */
+	for (y = 15; y < 20; y++)
+	{
+		/* Dump each row */
+		for (x = 0; x < 79; x++)
+		{
+			/* Get the attr/char */
+			(void)(Term_what(x, y, &a, &c));
+
+			/* Dump it */
+			buf[x] = c;
+		}
+
+		/* Terminate */
+		buf[x] = '\0';
+
+		/* End the row */
+		fprintf(fff, "%s\n", buf);
+	}
+
+#if 0 // DGDGDGDG -- make me work
+	{
+		char desc[80];
+		monster_race_desc(desc, p_ptr->body_monster, 0);
+		fprintf(fff, "\n Your body was %s.", desc);
+
+		if (p_ptr->tim_mimic) fprintf(fff, "\n Your were disguised into a %s.", p_ptr->mimic_name);
+	}
+#endif
+	/* Dump skills */
+	dump_skills(fff);
+
+#if 0 // DGDGDG - make me work
+	/* Monsters slain */
+	{
+		int k;
+		s32b Total = 0;
+
+		for (k = 1; k < max_r_idx-1; k++)
+		{
+			monster_race *r_ptr = &r_info[k];
+
+			if (r_ptr->flags1 & (RF1_UNIQUE))
+			{
+				bool dead = (r_ptr->max_num == 0);
+				if (dead)
+				{
+					Total++;
+				}
+			}
+			else
+			{
+				s16b This = r_ptr->r_pkills;
+				if (This > 0)
+				{
+					Total += This;
+				}
+			}
+		}
+
+		if (Total < 1)
+			fprintf(fff,"\n You have defeated no enemies yet.\n");
+		else if (Total == 1)
+			fprintf(fff,"\n You have defeated one enemy.\n");
+		else
+			fprintf(fff,"\n You have defeated %lu enemies.\n", Total);
+	}
+#endif
+
+	/* Skip some lines */
+	fprintf(fff, "\n\n");
+
+
+	/* Dump the equipment */
+        fprintf(fff, "  [Character Equipment]\n\n");
+        for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+        {
+                fprintf(fff, "%c%s %s\n",
+                        index_to_label(i), paren, inventory_name[i]);
+        }
+        fprintf(fff, "\n\n");
+
+        /* Dump the inventory */
+        fprintf(fff, "  [Character Inventory]\n\n");
+	for (i = 0; i < INVEN_PACK; i++)
+	{
+                fprintf(fff, "%c%s %s\n",
+                        index_to_label(i), paren, inventory_name[i]);
+	}
+	fprintf(fff, "\n\n");
+
+	/* Close it */
+	my_fclose(fff);
+
+
+	/* Message */
+	c_msg_print("Character dump successful.");
+	c_msg_print(NULL);
+
+	/* Success */
+	return (0);
+}

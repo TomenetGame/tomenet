@@ -306,6 +306,7 @@ extern errr process_pref_file_aux(char *buf);
 extern void show_motd(void);
 extern void peruse_file(void);
 extern errr my_fgets(FILE *fff, char *buf, huge n);
+extern errr file_character(cptr name, bool full);
 
 /* c-init.c */
 extern void initialize_all_pref_files(void);
@@ -482,6 +483,7 @@ extern int Send_skill_mod(int i);
 
 /* skills.c */
 extern bool hack_do_cmd_skill_wait;
+extern void dump_skills(FILE *fff);
 
 
 /*

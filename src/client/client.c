@@ -10,17 +10,147 @@
 #include "angband.h"
 
 
+static bool read_mangrc(void)
+{
+	char config_name[100];
+	FILE *config;
+	char buf[1024];
+	bool skip = FALSE;
+
+	/* Try to find home directory */
+	if (getenv("HOME"))
+	{
+		/* Use home directory as base */
+		strcpy(config_name, getenv("HOME"));
+	}
+
+	/* Otherwise use current directory */
+	else
+	{
+		/* Current directory */
+		strcpy(config_name, ".");
+	}
+
+	/* Append filename */
+	/* TODO: accept any names as rc-file */
+#ifdef USE_EMX
+	strcat(config_name, "\\tomenet.rc");
+#else
+	strcat(config_name, "/.tomenetrc");
+#endif
+
+	/* Attempt to open file */
+	if ((config = fopen(config_name, "r")))
+	{
+		/* Read until end */
+		while (!feof(config))
+		{
+			/* Get a line */
+			fgets(buf, 1024, config);
+
+			/* Skip comments, empty lines */
+			if (buf[0] == '\n' || buf[0] == '#')
+				continue;
+
+			/* Name line */
+			if (!strncmp(buf, "nick", 4))
+			{
+				char *name;
+
+				/* Extract name */
+				name = strtok(buf, " \t\n");
+				name = strtok(NULL, "\t\n");
+
+				/* Default nickname */
+				strcpy(nick, name);
+			}
+
+			/* Password line */
+			if (!strncmp(buf, "pass", 4))
+			{
+				char *p;
+
+				/* Extract password */
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+
+				/* Default password */
+				strcpy(pass, p);
+			}
+
+			/* server line */
+			if (!strncmp(buf, "server", 6))
+			{
+				char *p;
+
+				/* Extract password */
+				p = strtok(buf, " :\t\n");
+				p = strtok(NULL, ":\t\n");
+
+				/* Default password */
+				if (p)
+				{
+					strcpy(svname, p);
+					p = strtok(NULL, ":\t\n");
+					if (p) cfg_game_port = atoi(p);
+				}
+			}
+
+			/* port line */
+			if (!strncmp(buf, "port", 4))
+			{
+				char *p;
+
+				/* Extract password */
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+
+				/* Default password */
+				if (p) cfg_game_port = atoi(p);
+			}
+
+			/* Password line */
+			if (!strncmp(buf, "realname", 8))
+			{
+				char *p;
+
+				/* Extract password */
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+
+				/* Default password */
+				if (p) strcpy(real_name, p);
+			}
+
+			/* Path line */
+			if (!strncmp(buf, "path", 4))
+			{
+				char *p;
+
+				/* Extract password */
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+
+				/* Default path */
+				strcpy(path, p);
+			}
+
+			/* Auto-login */
+			if (!strncmp(buf, "fullauto", 8))
+				skip = TRUE;
+
+			/*** Everything else is ignored ***/
+		}
+	}
+	return (skip);
+}
+
+#if 0
 static void read_mangrc(void)
 {
 	char config_name[100];
 	FILE *config;
 	char buf[1024];
-	char *temp;
-
-#ifdef SET_UID
-	int player_uid;
-	struct passwd *pw;
-#endif
 
 	/* Try to find home directory */
 	if (getenv("HOME"))
@@ -41,43 +171,6 @@ static void read_mangrc(void)
 	strcat(config_name, "\\mang.rc");
 #else
 	strcat(config_name, "/.mangrc");
-#endif
-
-	/* Initial defaults */
-	strcpy(nick, "PLAYER");
-	strcpy(pass, "passwd");
-	strcpy(real_name, "PLAYER");
-
-
-	/* Get login name if a UNIX machine */
-#ifdef SET_UID
-	/* Get player UID */
-	player_uid = getuid();
-
-	/* Get password entry */
-	if ((pw = getpwuid(player_uid)))
-	{
-		/* Pull login id */
-		strcpy(nick, pw->pw_name);
-
-		/* Cut */
-		nick[16] = '\0';
-
-		/* Copy to real name */
-		strcpy(real_name, nick);
-	}
-#endif
-
-#ifdef AMIGA
-        if((GetVar("mang_name",real_name,80,0L))!=-1){
-          strcpy(nick,real_name);
-	}
-#endif
-#ifdef SET_UID
-	temp=getenv("ANGBAND_PLAYER");
-	if(temp) strcpy(nick, temp); 
-	temp=getenv("ANGBAND_USER");
-	if(temp) strcpy(real_name, temp); 
 #endif
 
 	/* Attempt to open file */
@@ -123,12 +216,59 @@ static void read_mangrc(void)
 		}
 	}
 }
+#endif	// 0
+
+static void default_set(void)
+{
+	char *temp;
+
+#ifdef SET_UID
+	int player_uid;
+	struct passwd *pw;
+#endif
+
+	/* Initial defaults */
+	strcpy(nick, "PLAYER");
+	strcpy(pass, "passwd");
+	strcpy(real_name, "PLAYER");
+
+
+	/* Get login name if a UNIX machine */
+#ifdef SET_UID
+	/* Get player UID */
+	player_uid = getuid();
+
+	/* Get password entry */
+	if ((pw = getpwuid(player_uid)))
+	{
+		/* Pull login id */
+		strcpy(nick, pw->pw_name);
+
+		/* Cut */
+		nick[16] = '\0';
+
+		/* Copy to real name */
+		strcpy(real_name, nick);
+	}
+#endif
+
+#ifdef AMIGA
+        if((GetVar("mang_name",real_name,80,0L))!=-1){
+          strcpy(nick,real_name);
+	}
+#endif
+#ifdef SET_UID
+	temp=getenv("ANGBAND_PLAYER");
+	if(temp) strcpy(nick, temp); 
+	temp=getenv("ANGBAND_USER");
+	if(temp) strcpy(real_name, temp); 
+#endif
+}
 
 int main(int argc, char **argv)
 {
-	int i;
-	char svname[80]="";
-	bool done = FALSE;
+	int i, modus = 0;
+	bool done = FALSE, skip = FALSE;
 
 	/* Save the program name */
 	argv0 = argv[0];
@@ -218,49 +358,114 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
+
+	/* Set default values */
+	default_set();
+
+	skip = read_mangrc();
+
 	/* Process the command line arguments */
 	for (i = 1; argv && (i < argc); i++)
 	{
 		/* Require proper options */
 		if (argv[i][0] != '-')
 		{
-			strcpy(svname, argv[i]);
+			if (modus && modus < 3)
+			{
+				if (modus == 2)
+				{
+					strcpy(pass, argv[i]);
+					modus = 3;
+				}
+				else
+				{
+//					strcpy(nick, argv[i][2]);
+					strcpy(nick, argv[i]);
+					modus = 2;
+				}
+			}
+			else strcpy(svname, argv[i]);
 			continue;
 		}
 
 		/* Analyze option */
 		switch (argv[i][1])
 		{
+		/* ignore rc files */
+		case 'i':
+			modus = 2;
+			skip = FALSE;
+			strcpy(svname, "");
+			i = argc;
+			break;
+			
 		case 'p':
-		{
 			cfg_game_port = atoi(&argv[i][2]);
 			break;
-		}
 		
+		case 'P':
+			strcpy(path, argv[i]+2);
+			break;
+		
+		/* Pull login id */
+		case 'l':
+			if (argv[i][2])	// Hack -- allow space after '-l'
+			{
+//				strcpy(nick, argv[i][2]);
+				strcpy(nick, argv[i]+2);
+				modus = 2;
+			}
+			else modus = 1;
+			break;
+
+		/* Pull 'real name' */
+		case 'n':
+//			strcpy(real_name, argv[i][2]);
+			if (argv[i][2])	// Hack -- allow space after '-l'
+			{
+				strcpy(real_name, argv[i]+2);
+				break;
+			}
+			/* Fall through */
+
 		default:
-			/* Dump usage information */
-			puts("Usage: mangclient [options] [servername]");
-			puts("  -p<num>  Change game port number");
-			quit(NULL);
+			modus = -1;
+			i = argc;
+			break;
 		}
 	}
-	
-	/* Attempt to read default name/password from mangrc file */
-	read_mangrc();
 
+	if (modus == 1 || modus < 0)
+	{
+		/* Dump usage information */
+		puts(TOMANG_VERSION_LONG_DATE);
+		puts("Usage  : mangclient [options] [servername]");
+		puts("Example: mangclient -lMorgoth MorgyPass -p18348 TomeNET.net");
+		puts("  -i                 Ignore .mangrc");
+		puts("  -l<nick> <passwd>  Login as");
+		puts("  -p<num>            Change game port number");
+		puts("  -P<path>           Set the lib directory path");
+		quit(NULL);
+	}
+
+	/* Attempt to read default name/password from mangrc file */
+//	if (modus < 2) modus = read_mangrc() ? 3 : modus;
+
+	done = (modus > 2 || skip) ? TRUE : FALSE;
+	
 #ifdef UNIX_SOCKETS
 	/* Always call with NULL argument */
-	client_init(NULL);
+	client_init(NULL, done);
 #else
 	if (strlen(svname)>0)
 	{
 		/* Initialize with given server name */
-		client_init(svname);
+		client_init(svname, done);
 	}
 	else
 	{
 		/* Initialize and query metaserver */
-		client_init(NULL);
+		client_init(NULL, done);
 	}
 #endif
 

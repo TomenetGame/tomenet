@@ -1230,7 +1230,8 @@ void cmd_look(void)
 void cmd_character(void)
 {
 	char ch = 0;
-	int hist = 0, done = 0;
+        int hist = 0, done = 0;
+        char tmp[100];
 
 	/* Save screen */
 	Term_save();
@@ -1241,7 +1242,7 @@ void cmd_character(void)
 		display_player(hist);
 
 		/* Display message */
-		prt("[ESC to quit, h to toggle history]", 21, 24);
+		prt("[ESC to quit, f to make a chardump, h to toggle history]", 21, 13);
 
 		/* Wait for key */
 		ch = inkey();
@@ -1251,7 +1252,20 @@ void cmd_character(void)
 		{
 			/* Toggle */
 			hist = !hist;
-		}
+                }
+
+                /* Dump */
+                if ((ch == 'f') || (ch == 'F'))
+                {
+                        strnfmt(tmp, 160, "%s.txt", nick);
+                        if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, 80))
+			{
+				if (tmp[0] && (tmp[0] != ' '))
+				{
+					file_character(tmp, FALSE);
+				}
+			}
+                }
 
 		/* Check for quit */
 		if (ch == 'q' || ch == 'Q' || ch == ESCAPE)
