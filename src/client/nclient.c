@@ -251,23 +251,37 @@ void Receive_login(void)
 	static char c_name[MAX_CHARS];	/* change later */
 	s16b c_race, c_class, level;
 	Term_clear();
-	c_put_str(TERM_L_BLUE, "Choose a character", 3, 8);
+	c_put_str(TERM_L_BLUE, "Character Overview", 1, 30);
+	c_put_str(TERM_L_BLUE, "(You can create up to 7 different characters to play with)", 2, 10);
+	c_put_str(TERM_L_BLUE, "Choose an existing character:", 5, 8);
 	while((n = Packet_scanf(&rbuf, "%c%s%hd%hd%hd", &ch, c_name, &level, &c_race, &c_class)) >0){
 		if(!strlen(c_name)){
 			break;
 		}
 		strcpy(names[i], c_name);
 		sprintf(tmp, "%c) %s the level %d %s %s", 'a'+i, c_name, level, race_info[c_race].title, class_info[c_class].title);
-		c_put_str(TERM_L_BLUE, tmp, 5+i, 11);
+		c_put_str(TERM_WHITE, tmp, 7+i, 11);
 		i++;
-		if(i==8) break;
+		if(i==8) break; /* should be changed to 7 */
 	}
+	for (n = (7 - i); n > 0; n--)
+		c_put_str(TERM_SLATE, "<free slot>", 7+i+n-1, 11);
+	n = i; /* buffer for i here for latter use below */
+	i = 7;
 	//sprintf(tmp, "%c) New character", 'a'+i);
-	sprintf(tmp, "N) New character");
-	c_put_str(TERM_L_BLUE, tmp, 5+i+1, 11);
-	c_put_str(TERM_L_BLUE, "Q) Quit", 8+i, 11);
+	if (n < 7)
+	{
+		c_put_str(TERM_L_BLUE, "N) Create a new character", 8+i, 8);
+	}
+	else
+	{
+		c_put_str(TERM_L_BLUE, "(Maximum of 7 character reached.", 8+i, 8);
+		c_put_str(TERM_L_BLUE, " Get rid of one (suicide) before creating another.)", 9+i, 8);
+	}
+	//c_put_str(TERM_L_BLUE, tmp, 5+i+1, 11);
+	c_put_str(TERM_L_BLUE, "Q) Quit the game", 14+i, 8);
 	//while(ch<'a' || ch>'a'+i){
-	while((ch<'a' || ch>='a'+i) && ch != 'N'){
+	while((ch<'a' || ch>='a'+n) && (ch != 'N' || n > (7-1))){
 		ch=inkey();
 		if (ch == 'Q') quit(NULL);
 	}
@@ -276,11 +290,11 @@ void Receive_login(void)
 		if (!strlen(cname)) strcpy(c_name, nick);
 		else strcpy(c_name, cname);
 
-		c_put_str(TERM_WHITE, "(ESC to pick a random name)", 8+i, 11);
+		c_put_str(TERM_WHITE, "(ESC to pick a random name)", 12+i, 11);
 
 		while (1)
 		{
-			c_put_str(TERM_YELLOW, "New name: ", 6+i, 11);
+			c_put_str(TERM_YELLOW, "New name: ", 10+i, 11);
 			askfor_aux(c_name, MAX_CHARS, 0);
 			if (strlen(c_name)) break;
 			create_random_name(0, c_name);
@@ -291,7 +305,7 @@ void Receive_login(void)
 	}
 	else strcpy(c_name, names[ch-'a']);
 #if 0
-	if(i==0){
+	if(n==0){
 		return(NULL);
 	}
 #endif

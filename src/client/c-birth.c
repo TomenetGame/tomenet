@@ -24,7 +24,15 @@ void choose_name(void)
 	char tmp[23];
 
 	/* Prompt and ask */
-	prt("Enter your player's name above (or hit ESCAPE).", 21, 2);
+	prt("*** Logging in with an account ***", 12, 2);
+	prt("In order to play, you need to create an account.", 14, 2);
+	prt("Your account can hold a maximum of 7 different characters to play with!", 15, 2);
+	prt("If you don't have an account yet, just create a new one now and make sure", 16, 2);
+	prt("that you remember its name and password. Each player should have not more", 17, 2);
+	prt("than 1 account. Ask a server administrator to 'validate' your account!", 18, 2);
+	prt("If an account is not validated, it has certain restrictions to prevent abuse.", 19, 2);
+	prt("Enter your account name above.", 21, 2);
+	//prt("Enter your account name above (or hit ESCAPE).", 21, 2);
 
 	/* Ask until happy */
 	while (1)
@@ -62,7 +70,8 @@ void enter_password(void)
 	char tmp[23];
 
 	/* Prompt and ask */
-	prt("Enter your password above (or hit ESCAPE).", 21, 2);
+	//prt("Enter your password above (or hit ESCAPE).", 21, 2);
+	prt("Enter your password above.", 21, 2);
 
 	/* Default */
 	strcpy(tmp, pass);
@@ -347,7 +356,8 @@ void choose_stat_order(void)
 		}
 
 		/* Hack -- it's obvious */
-		if (i > 4) hazard = TRUE;
+		/* if (i > 4) hazard = TRUE;
+		It confused too many noobiez. Taking it out for now. */
 
 		/* Get a stat */
 		while (1)
