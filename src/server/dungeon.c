@@ -3065,7 +3065,9 @@ void dungeon(void)
 					  break;
 					  
 			/* Over the river and through the woods */			  
-			case LEVEL_OUTSIDE: starty = p_ptr->py;
+			case LEVEL_OUTSIDE:
+			case LEVEL_OUTSIDE_HOUSE:
+					    starty = p_ptr->py;
 				            startx = p_ptr->px;
 				            break;
 			/* this is used instead of extending the level_rand_y/x
@@ -3102,7 +3104,8 @@ void dungeon(void)
 			if (!cave_empty_bold(zcave, y, x)) continue;
 
 			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
-			if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY))
+			/* Force icky if it is HOUSE */
+			if ((wpos->wz==0) && ((zcave[y][x].info & CAVE_ICKY) ^ (p_ptr->new_level_method==LEVEL_OUTSIDE_HOUSE)))
 			{
 				continue;
 			}

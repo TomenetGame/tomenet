@@ -343,6 +343,7 @@
 #define LEVEL_GHOST	3
 #define	LEVEL_OUTSIDE   4
 #define LEVEL_OUTSIDE_RAND 5
+#define LEVEL_OUTSIDE_HOUSE 6
 
 
 /*

@@ -769,7 +769,7 @@ bool check_antimagic(int Ind)
 		/* Compute distance */
 		dis = distance(p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px);
 
-		/* Compute the probability of the unbeliever to disrupt any magic attemps */
+		/* Compute the probability of the unbeliever to disrupt any magic attempts */
 		if ((q_ptr->pclass == CLASS_UNBELIEVER))
 		  {
 		    antichance += q_ptr->lev;
@@ -810,7 +810,7 @@ bool check_antimagic(int Ind)
 		/* Got disrupted ? */
 		if (magik(antichance))
 		  {
-		    msg_format(Ind, "%s's anti-magic shield disrupts your attemps.", q_ptr->name);
+		    msg_format(Ind, "%s's anti-magic shield disrupts your attempts.", q_ptr->name);
 		    return TRUE;
 		  }
 	  }
@@ -868,8 +868,8 @@ bool check_antimagic(int Ind)
 		/* Got disrupted ? */
 		if (magik(antichance))
 		{
-			if (i == Ind) msg_print(Ind, "Your own anti-magic shield disrupts your attemps.");
-			else msg_format(Ind, "%s's anti-magic shield disrupts your attemps.", q_ptr->name);
+			if (i == Ind) msg_print(Ind, "Your own anti-magic shield disrupts your attempts.");
+			else msg_format(Ind, "%s's anti-magic shield disrupts your attempts.", q_ptr->name);
 			return TRUE;
 		}
 	}
@@ -910,11 +910,11 @@ bool check_antimagic(int Ind)
 			{
 				char m_name[80];
 				monster_desc(Ind, m_name, m_idx, 0);
-				msg_format(Ind, "%^s's anti-magic shield disrupts your attemps.", m_name);
+				msg_format(Ind, "%^s's anti-magic shield disrupts your attempts.", m_name);
 			}
 			else
 			{
-				msg_print(Ind, "An anti-magic shield disrupts your attemps.");
+				msg_print(Ind, "An anti-magic shield disrupts your attempts.");
 			}
 			return TRUE;
 		}
@@ -955,11 +955,11 @@ bool check_antimagic(int Ind)
 				{
 					char m_name[80];
 					monster_desc(Ind, m_name, m_idx, 0);
-					msg_format(Ind, "%^s's anti-magic shield disrupts your attemps.", m_name);
+					msg_format(Ind, "%^s's anti-magic shield disrupts your attempts.", m_name);
 				}
 				else
 				{
-					msg_print(Ind, "An anti-magic shield disrupts your attemps.");
+					msg_print(Ind, "An anti-magic shield disrupts your attempts.");
 				}
 				return TRUE;
 			}

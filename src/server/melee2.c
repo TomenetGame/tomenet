@@ -848,8 +848,8 @@ bool monst_check_antimagic(int Ind, int m_idx)
 			monster_desc(Ind, m_name, m_idx, 0x00);
 
 //			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			if (i == Ind) msg_format(Ind, "\377oYour anti-magic shield disrupts %s's attemps.", m_name);
-			else msg_format(Ind, "%s's anti-magic shield disrupts %s's attemps.", q_ptr->name, m_name);
+			if (i == Ind) msg_format(Ind, "\377oYour anti-magic shield disrupts %s's attempts.", m_name);
+			else msg_format(Ind, "%s's anti-magic shield disrupts %s's attempts.", q_ptr->name, m_name);
 			return TRUE;
 		}
 	}
@@ -893,11 +893,11 @@ bool monst_check_antimagic(int Ind, int m_idx)
 				{
 					char m_name[80];
 					monster_desc(Ind, m_name, m_idx, 0);
-					msg_format(Ind, "%^s's anti-magic shield disrupts your attemps.", m_name);
+					msg_format(Ind, "%^s's anti-magic shield disrupts your attempts.", m_name);
 				}
 				else
 				{
-					msg_print(Ind, "An anti-magic shield disrupts your attemps.");
+					msg_print(Ind, "An anti-magic shield disrupts your attempts.");
 				}
 				return TRUE;
 			}
@@ -1126,7 +1126,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* Only do spells occasionally */
 	if (rand_int(100) >= chance) return (FALSE);
 
-	/* Compute the probability of the unbeliever to disrupt any magic attemps */
+	/* Compute the probability of the unbeliever to disrupt any magic attempts */
 #if 0
 	if ((p_ptr->pclass == CLASS_UNBELIEVER))
 	  {

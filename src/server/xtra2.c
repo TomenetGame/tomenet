@@ -6434,18 +6434,42 @@ void imprison(int Ind, char *reason){
 	struct dna_type *dna;
 	player_type *p_ptr=Players[Ind];
 	char string[160];
+	cave_type **zcave, **nzcave;
 
 	if(!p_ptr || !(id=lookup_player_id("Jailer"))) return;
 
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+
 	for(i=0; i<num_houses; i++){
-		if(!houses[i].flags&HF_JAIL) continue;
+		if(!(houses[i].flags&HF_JAIL)) continue;
 		dna=houses[i].dna;
 		if(dna->owner==id && dna->owner_type==OT_PLAYER){
-#if 0
-			sprintf(string, "%s was jailed for %s", p_ptr->name, reason);
+			/* lazy, single prison system */
+			/* hopefully no overcrowding! */
+			if(!(nzcave=getcave(&houses[i].wpos))){
+				alloc_dungeon_level(&houses[i].wpos);
+				generate_cave(&houses[i].wpos);
+				nzcave=getcave(&houses[i].wpos);
+			}
+			new_players_on_depth(&p_ptr->wpos, -1, TRUE);
+			zcave[p_ptr->py][p_ptr->px].m_idx=0;
+			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+			forget_lite(Ind);
+			forget_view(Ind);
+
+			wpcopy(&p_ptr->wpos, &houses[i].wpos);
+			p_ptr->py=houses[i].y;
+			p_ptr->px=houses[i].x;
+			nzcave[p_ptr->py][p_ptr->px].m_idx=(0-Ind);
+			new_players_on_depth(&p_ptr->wpos, 1, TRUE);
+
+			p_ptr->new_level_flag=TRUE;
+			p_ptr->new_level_method=LEVEL_OUTSIDE_HOUSE;
+
+			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+			sprintf(string, "\377v%s was jailed for %s", p_ptr->name, reason);
 			msg_broadcast(Ind, string);
-			msg_format(Ind, "You have been jailed for %s", reason);
-#endif
+			msg_format(Ind, "\377vYou have been jailed for %s", reason);
 			return;
 		}
 	}
