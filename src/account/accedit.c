@@ -129,6 +129,10 @@ int ListAccounts(int fpos){
 				tfpos=findacc();
 				if(tfpos>=0){
 					fpos=tfpos;
+					if(fpos>ifpos+(LINES-11))
+						ifpos=fpos-(LINES-11);
+					else if(fpos<ifpos)
+						ifpos=fpos;
 					reload=1;
 				}
 				break;
