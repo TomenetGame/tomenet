@@ -1212,16 +1212,20 @@ bool Destroy_connection(int ind, char *reason)
 	pkt[len - 1] = PKT_END;
 	pkt[len] = '\0';
 	/*len++;*/
+
 	if (sock != -1)
 	{
 #if 1	// sorry evileye, removing it causes SIGPIPE to the client
+
 		if (DgramWrite(sock, pkt, len) != len)
 		{
 			GetSocketError(sock);
-			DgramWrite(sock, pkt, len);
+//maybe remove this one too? Or have its error be cleared too? - C. Blue
+//    			DgramWrite(sock, pkt, len);
 		}
 #endif
 	}
+
 	s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\")\n",
 		showtime(),
 		connp->c_name ? connp->c_name : "",

@@ -1650,7 +1650,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	if (f7 & RF7_S_NOEXP) s_clone = 100;
 
 	/* Only innate spells */
-	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) f5 = f6 = 0;
+//(restricted it a bit, see guide)	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) f5 = f6 = 0;
 
 	/* radius of ball spells and breathes.
 	 * XXX this doesn't reflect some exceptions(eg. radius=4 spells). */
@@ -3250,6 +3250,20 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF6_OFFSET+4:
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
+
+			/* No teleporting within no-tele vaults and such */
+			if(!(zcave=getcave(wpos))) break;
+			if (zcave[oy][ox].info & CAVE_STCK)
+			{
+//				msg_format(Ind, "%^s fails to blink.", m_name);
+				break;
+			}
+			
+/*			if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+				msg_format(Ind, "%^s fails to blink.", m_name);
+				break;
+			}
+*/
 			//			if (monst_check_grab(Ind, m_idx)) break;
 			/* it's low b/c check for spellcast is already done */
 			if (monst_check_grab(m_idx, 50, "teleport")) break;
@@ -3265,6 +3279,20 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF6_OFFSET+5:
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
+
+			/* No teleporting within no-tele vaults and such */
+			if(!(zcave=getcave(wpos))) break;
+			if (zcave[oy][ox].info & CAVE_STCK)
+			{
+//				msg_format(Ind, "%^s fails to teleport.", m_name);
+				break;
+			}
+			
+/*			if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+				msg_format(Ind, "%^s fails to teleport.", m_name);
+				break;
+			}
+*/
 			//			if (monst_check_grab(Ind, m_idx)) break;
 			if (monst_check_grab(m_idx, 50, "teleport")) break;
 			if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && visible)
@@ -3311,7 +3339,12 @@ bool make_attack_spell(int Ind, int m_idx)
 				msg_format(Ind, "%^s fails to command you to return.", m_name);
 				break;
 			}
-
+			
+/*			if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+				msg_format(Ind, "%^s fails to command you to return.", m_name);
+				break;
+			}
+*/
 			disturb(Ind, 1, 0);
 			/* Hack -- duplicated check to avoid silly message */
 			if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) ||
@@ -3329,6 +3362,20 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF6_OFFSET+9:
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
+
+			/* No teleporting within no-tele vaults and such */
+			if(!(zcave=getcave(wpos))) break;
+			if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK))
+			{
+				msg_format(Ind, "%^s fails to teleport you away.", m_name);
+				break;
+			}
+			
+/*			if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+				msg_format(Ind, "%^s fails to teleport you away.", m_name);
+				break;
+			}
+*/
 			disturb(Ind, 1, 0);
 			/* Hack -- duplicated check to avoid silly message */
 			if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) || (p_ptr->res_tele && (rand_int(100) < 67)))
@@ -3345,6 +3392,20 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF6_OFFSET+10:
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
+
+			/* No teleporting within no-tele vaults and such */
+			if(!(zcave=getcave(wpos))) break;
+			if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK))
+			{
+				msg_format(Ind, "%^s fails to teleport you away.", m_name);
+				break;
+			}
+			
+/*			if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+				msg_format(Ind, "%^s fails to teleport you away.", m_name);
+				break;
+			}
+*/
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles strangely.", m_name);
 			else msg_format(Ind, "%^s gestures at your feet.", m_name);

@@ -868,7 +868,8 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	u32b f1, f2, f3, f4, f5, esp;
 
 	/* Handle the newbies_cannot_drop option */	
-	if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr))
+	if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
 	{
 		msg_print(Ind, "You are not experienced enough to drop items.");
 		return;
@@ -985,7 +986,8 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	/* Hack -- 'own' the gold */
 	tmp_obj.owner = p_ptr->id;
 
-	/* Non-everlasting can't take money from everlasting */
+	/* Non-everlasting can't take money from everlasting
+	   and vice versa, depending on server cfg. */
 	tmp_obj.owner_mode = p_ptr->mode;
 
 	/* Drop it */

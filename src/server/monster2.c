@@ -107,7 +107,7 @@ int pick_ego_monster(int r_idx, int Level);
 void monster_check_experience(int m_idx, bool silent)
 {
 	int		i, try;
-	u32b		levels_gained = 0, levels_gained_tmp = 0, levels_gained_melee = 0;
+	u32b		levels_gained = 0, levels_gained_tmp = 0, levels_gained_melee = 0, tmp_dice, tmp;
         monster_type    *m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
 
@@ -191,14 +191,16 @@ void monster_check_experience(int m_idx, bool silent)
 	levels_gained += 100;
 
 	/* very low level monsters get a boost for damage output */
-	levels_gained += 1600 / (r_ptr->level + 10);
+//	levels_gained += 1600 / (r_ptr->level + 10);
+	levels_gained += ((levels_gained - 100) * 57) / (r_ptr->level + 10);
 
 	/* calculate square root of the factor, to apply to dice & dice sides */
-	levels_gained *= 1000;
+	tmp = levels_gained;
+	tmp *= 1000;
 	levels_gained_tmp = 1;
-	while (levels_gained > 1000) {
-		levels_gained *= 1000;
-		levels_gained /= 1320;
+	while (tmp > 1000) {
+		tmp *= 1000;
+		tmp /= 1320;
 		levels_gained_tmp *= 1149;
 		if (levels_gained_tmp >= 1000000) levels_gained_tmp /= 1000;
 	}
@@ -206,14 +208,18 @@ void monster_check_experience(int m_idx, bool silent)
 	levels_gained_tmp /= 100; /* now is value * 100. so we have 2 extra accuracy figures */
 	
 	for (i = 0; i < 4; i++) {
+		/* to fix rounding issues and prevent super monsters (2d50 -> 3d50 at +1 level) */
+		tmp_dice = m_ptr->blow[i].d_dice;
+		if (!tmp_dice) continue;
+		/* Add a limit for insanity attacks */
+//disabled this, instead I just weakened Water Demons! - C. Blue -	if (m_ptr->blow[i].effect == RBE_SANITY) levels_gained_melee /= 2;
+		levels_gained_melee = levels_gained_tmp;
+
 //	    	m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * levels_gained) / 10;
 //		m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * levels_gained) / 10;
 //		m_ptr->blow[i].d_dice += levels_gained;
 
-		/* Add a limit for insanity attacks */
-		levels_gained_melee = levels_gained_tmp;
-//disabled this, instead I just weakened Water Demons! - C. Blue -	if (m_ptr->blow[i].effect == RBE_SANITY) levels_gained_melee /= 2;
-
+#if 0
 		/* round dice upwards sometimes */
 		if (((m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100) * 100) <
 		    (m_ptr->blow[i].d_dice * (levels_gained_melee - 100))) {
@@ -222,6 +228,27 @@ void monster_check_experience(int m_idx, bool silent)
 		} else {
 			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100);
 		}
+		
+		/* Catch rounding problems */
+		m_ptr->blow[i].d_dice = tmp_dice + (tmp_dice * (levels_gained_melee - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
+		levels_gained_melee = (((m_ptr->blow[i].d_dice - tmp_dice) * 100) / tmp_dice) + 100;
+		
+		/* round sides upwards sometimes */
+		if (((m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) * 100) <
+		    (m_ptr->blow[i].d_side * (levels_gained_melee - 100))) {
+			/* Don't round up for very low monsters, or they become very hard for low players at 7 levels ood */
+			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
+		} else {
+			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100);
+		}
+#endif
+		/* round dice downwards */
+		m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100);
+
+		/* Catch rounding problems */
+		levels_gained_melee = (((m_ptr->blow[i].d_dice - tmp_dice) * 100) / tmp_dice) + 100;
+		levels_gained_melee = (levels_gained_tmp * levels_gained_tmp) / (levels_gained_melee);
+
 		/* round sides upwards sometimes */
 		if (((m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) * 100) <
 		    (m_ptr->blow[i].d_side * (levels_gained_melee - 100))) {
@@ -2836,6 +2863,14 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 		l_ptr = getfloor(wpos);
 		l_ptr->flags1 |= LF1_NO_GHOST;
 #endif
+		/* Page all dungeon masters to notify them of a possible Morgoth-fight >:) - C. Blue */
+		if (watch_morgoth)
+		for (Ind = 1; Ind <= NumPlayers; Ind++)
+		{
+			if (Players[Ind]->conn == NOT_CONNECTED)
+				continue;
+			if (Players[Ind]->admin_dm && !(Players[Ind]->afk && !streq(Players[Ind]->afk_msg, "watch"))) Players[Ind]->paging = 4;
+		}
 	}
 	if (r_idx == 1032) s_printf("Tik'Svrzllat was created on %d\n", getlevel(wpos));
 	if (r_idx == 1067) s_printf("The Hellraiser was created on %d\n", getlevel(wpos));

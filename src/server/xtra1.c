@@ -894,6 +894,7 @@ static void calc_sanity(int Ind)
                         /* Hack -- Note death */
                         msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
 			(void)strcpy(p_ptr->died_from, "Insanity");
+			(void)strcpy(p_ptr->really_died_from, "Insanity");
 	                if (!p_ptr->ghost) {
 		                strcpy(p_ptr->died_from_list, "Insanity");
 		                p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
@@ -1496,6 +1497,9 @@ static int weight_limit(int Ind)
 static void calc_body_bonus(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+        cave_type **zcave;
+        if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
 	int n, d, i, j, toac = 0, body = 0, immunities = 0, immunity[7], immrand[3];
 	bool wepless = FALSE;
@@ -1832,7 +1836,15 @@ static void calc_body_bonus(int Ind)
 		p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
 	}
 	if(r_ptr->flags2 & RF2_REGENERATE) p_ptr->regenerate = TRUE;
-	if(r_ptr->flags2 & RF2_PASS_WALL) p_ptr->tim_wraith = 30000;
+	/* Immaterial forms (WRAITH / PASS_WALL) drain the mimic's HP! */
+	if(r_ptr->flags2 & RF2_PASS_WALL) {
+		if (!(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) &&
+                    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
+                {
+			p_ptr->tim_wraith = 30000;
+		}
+		p_ptr->drain_life++;
+	}
 	//        if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->auto_tunnel = 100;
 	/* quick hack */
 	if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->skill_dig = 20000;
@@ -2224,6 +2236,9 @@ void calc_bonuses(int Ind)
 	char tmp[80];
 
 	player_type *p_ptr = Players[Ind];
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+        cave_type **zcave;
+        if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
 	int			i, j, hold, minus, am;
 	long			w;
@@ -2982,7 +2997,11 @@ void calc_bonuses(int Ind)
                 if (f3 & (TR3_WRAITH))
 		{
 			//p_ptr->wraith_form = TRUE;
-			p_ptr->tim_wraith = 30000;
+			if (!(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) &&
+    		            !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
+	                {
+				p_ptr->tim_wraith = 30000;
+			}
 		}
                 if (f4 & (TR4_FLY)) p_ptr->fly = TRUE;
                 if (f4 & (TR4_CLIMB)) p_ptr->climb = TRUE;
@@ -3602,15 +3621,22 @@ void calc_bonuses(int Ind)
 
 	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
 	p_ptr->to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
-	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-	p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-	p_ptr->to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
+	p_ptr->to_d_melee += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+	p_ptr->to_h_melee += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+	p_ptr->to_h_melee += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128) / 2;
+//	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+//	p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+//	p_ptr->to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
 
 	/* Displayed Modifier Bonuses (Un-inflate stat bonuses) */
 	p_ptr->dis_to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
-	p_ptr->dis_to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-	p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-	p_ptr->dis_to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
+//	p_ptr->dis_to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+//	p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+//	p_ptr->dis_to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
+
+	/* Modify ranged weapon boni. DEX now very important for to_hit */
+//	p_ptr->to_h_ranged += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
+	p_ptr->to_h_ranged += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
 
 	/* Evaluate monster AC (if skin or armor etc) */
 	if (p_ptr->body_monster) {

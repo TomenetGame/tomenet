@@ -234,11 +234,11 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
  * Those flags are mainly for vaults, quests and non-Angband dungeons...
  * but none of them implemented, qu'a faire?
  */
-#define NO_MAGIC_CHANCE		1
-#define NO_GENO_CHANCE		3
-#define NO_MAP_CHANCE		2
-#define NO_MAGIC_MAP_CHANCE	3
-#define NO_DESTROY_CHANCE	3
+#define NO_MAGIC_CHANCE		4
+#define NO_GENO_CHANCE		4
+#define NO_MAP_CHANCE		4
+#define NO_MAGIC_MAP_CHANCE	4
+#define NO_DESTROY_CHANCE	4
 
 /*
  * Chances of a vault creating some special effects on the level, in %.
@@ -368,7 +368,7 @@ static room_data room[ROOM_MAX] =
 	{ 0, 0, -1, 1, 5 },		/* 5 = Monster nest (33x11) */
 	{ 0, 0, -1, 1, 5 },		/* 6 = Monster pit (33x11) */
 	{ 0, 1, -1, 1, 5 },		/* 7 = Lesser vault (33x22) */
-	{ -1, 2, -2, 3, 10 },	/* 8 = Greater vault (66x44) */
+	{ -1, 2, -2, 3, 10 },		/* 8 = Greater vault (66x44) */
 
 	{ 0, 1, 0, 1, 1 },		/* 9 = Circular rooms (22x22) */
 	{ 0, 1,	-1, 1, 3 },		/* 10 = Fractal cave (42x24) */
@@ -8185,6 +8185,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	wilderness_type *wild;
 	u32b flags1, flags2;		/* entire-dungeon flags */
 
+	/* Don't build one of these on 1x1 (super small) levels,
+	   to avoid insta(ghost)kill if a player recalls into that pit - C. Blue */
+	bool tiny_level = FALSE;
+
 	if(!(zcave=getcave(wpos))) return;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	flags1=(wpos->wz>0 ? wild->tower->flags1 : wild->dungeon->flags1);
@@ -8207,20 +8211,22 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	/* Are we in Nether Realm? Needed for shop creation later on */
 	if (dun_level >= 166) nether_level = TRUE;
 
-	/* Very small (1 x 1 panel) level */
-	if (!(d_ptr->flags1 & DF1_BIG) &&
-			(d_ptr->flags1 & DF1_SMALLEST))
+	/* Note that Ultra-small levels (1/2 x 1/2 panel) actually result
+	   from the rand_int in 'Small level', not from 'Very small'! - C. Blue */
+	/* Very small (1 x 1 panel) level - currently never occurs(!) (DF1_SMALLEST unused) */
+	if (!(d_ptr->flags1 & DF1_BIG) && (d_ptr->flags1 & DF1_SMALLEST))
 	{
 		dun->l_ptr->hgt = SCREEN_HGT;
 		dun->l_ptr->wid = SCREEN_WID;
 	}
 	/* Small level */
-	else if (!(d_ptr->flags1 & DF1_BIG) &&
-			( (d_ptr->flags1 & DF1_SMALL) ||
-			 (!rand_int(SMALL_LEVEL))))
+	else if (!(d_ptr->flags1 & DF1_BIG) && ( (d_ptr->flags1 & DF1_SMALL) || (!rand_int(SMALL_LEVEL))))
 	{
-		dun->l_ptr->wid = MAX_WID - rand_int(MAX_WID / SCREEN_WID * 2) * (SCREEN_WID / 2);
-		dun->l_ptr->hgt = MAX_HGT - rand_int(MAX_HGT / SCREEN_HGT * 2 - 1) * (SCREEN_HGT / 2);
+//		dun->l_ptr->wid = MAX_WID - rand_int(MAX_WID / SCREEN_WID * 2) * (SCREEN_WID / 2);
+//		dun->l_ptr->hgt = MAX_HGT - rand_int(MAX_HGT / SCREEN_HGT * 2 - 1) * (SCREEN_HGT / 2);*/
+/*		No more ultra-small levels for now (1/2 x 1/2 panel), and no max size here either :) - C. Blue*/
+		dun->l_ptr->wid = MAX_WID - randint(MAX_WID / SCREEN_WID * 2 - 2) * (SCREEN_WID / 2);
+		dun->l_ptr->hgt = MAX_HGT - randint(MAX_HGT / SCREEN_HGT * 2 - 2) * (SCREEN_HGT / 2);
 	}
 	/* Normal level */
 	else
@@ -8228,6 +8234,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		dun->l_ptr->wid = MAX_WID;
 		dun->l_ptr->hgt = MAX_HGT;
 	}
+
+//	if ((dun->l_ptr->wid <= SCREEN_WID) && (dun->l_ptr->hgt <= SCREEN_HGT)) tiny_level = TRUE;
 
 	/* So as not to generate too 'crowded' levels */
 	dun->ratio = 100 * dun->l_ptr->wid * dun->l_ptr->hgt / MAX_HGT / MAX_WID;
@@ -8394,7 +8402,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 			/* no caves when cavern exists: they look bad */
 			k = randint(100);
 
-			if (!cavern && (k < dun_level))
+			if (!cavern && (k < dun_level) && !tiny_level)
 			{
 				/* Type 10 -- Fractal cave */
 				if (room_build(wpos, y, x, 10, p_ptr)) continue;
@@ -8429,7 +8437,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 			k = rand_int(100);
 
 			/* Attempt a very unusual room */
-			if (rand_int(DUN_UNUSUAL) < dun_level)
+			if ((rand_int(DUN_UNUSUAL) < dun_level) && !tiny_level)
 			{
 				/* Type 8 -- Greater vault (10%) */
 				if ((k < 10) && room_build(wpos, y, x, 8, p_ptr)) continue;
@@ -8447,14 +8455,16 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 				if ((k < 60) && room_build(wpos, y, x, 11, p_ptr)) continue;
 			}
 
-			/* Type 4 -- Large room (25%) */
-			if ((k < 25) && room_build(wpos, y, x, 4, p_ptr)) continue;
+			if (!tiny_level) {
+				/* Type 4 -- Large room (25%) */
+				if ((k < 25) && room_build(wpos, y, x, 4, p_ptr)) continue;
 
-			/* Type 3 -- Cross room (20%) */
-			if ((k < 45) && room_build(wpos, y, x, 3, p_ptr)) continue;
+				/* Type 3 -- Cross room (20%) */
+				if ((k < 45) && room_build(wpos, y, x, 3, p_ptr)) continue;
 
-			/* Type 2 -- Overlapping (20%) */
-			if ((k < 65) && room_build(wpos, y, x, 2, p_ptr)) continue;
+				/* Type 2 -- Overlapping (20%) */
+				if ((k < 65) && room_build(wpos, y, x, 2, p_ptr)) continue;
+			}
 
 			/* Type 10 -- Fractal cave (15%) */
 			if ((k < 80) && room_build(wpos, y, x, 10, p_ptr)) continue;
@@ -8469,7 +8479,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 			}
 
 			/* Type 12 -- Crypt (10%) */
-			if ((k < 100) && room_build(wpos, y, x, 12, p_ptr)) continue;
+			if ((k < 100) && !tiny_level && room_build(wpos, y, x, 12, p_ptr)) continue;
 		}
 
 		/* Attempt a trivial room */

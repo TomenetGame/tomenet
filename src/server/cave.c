@@ -256,6 +256,15 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 		s_printf("new_players_on_depth.. %s  now:%d value:%d inc:%s\n", wpos_format(0, wpos), now, value, inc?"TRUE":"FALSE");
 #endif
 
+        /* Page all dungeon masters to notify them of a Nether Realm breach >:) - C. Blue */
+	if ((value > 0) && (getlevel(wpos) >= 166) && (watch_nr))
+        for (i = 1; i <= NumPlayers; i++)
+        {
+                if (Players[i]->conn == NOT_CONNECTED)
+                        continue;
+                if (Players[i]->admin_dm && !Players[i]->afk) Players[i]->paging = 2;
+        }
+
 	if (wpos->wz) {
 		struct dungeon_type *d_ptr;
 		struct dun_level *l_ptr;
@@ -367,6 +376,15 @@ void check_Morgoth(void)
 
 		/* if the last player leaves, don't reduce Morgy's power */
 		if (num_on_depth == 0) continue;
+
+		/* Page all dungeon masters to notify them of a possible Morgoth-fight >:) - C. Blue */
+		if (watch_morgoth)
+		for (i = 1; i <= NumPlayers; i++)
+		{
+		        if (Players[i]->conn == NOT_CONNECTED)
+	                        continue;
+	                if (Players[i]->admin_dm && !(Players[i]->afk && !streq(Players[i]->afk_msg, "watch"))) Players[i]->paging = 4;
+	        }
 
 		/* save coordinates to redraw the spot after deletion later */
 		x = m_ptr->fx;
@@ -5450,7 +5468,7 @@ void map_area(int Ind)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 /*	if(d_ptr && d_ptr->flags & DUNGEON_NOMAP) return; */
-	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC_MAP) return;
+	if(l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC_MAP)) return;
 
 	/* Pick an area to map */
 	y1 = p_ptr->panel_row_min - randint(10);

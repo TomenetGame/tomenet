@@ -1634,7 +1634,7 @@ D:invokes the strength of mountains to ward off the tumult of the elements.
 
 N:118:'Nar-i-vagil'
 I:21:3:3
-W:12:18:140:70000
+W:12:18:140:35000
 P:0:1d11:10:20:15
 F:INT | HIDE_TYPE | 
 F:SLAY_ANIMAL | BRAND_FIRE | RES_FIRE | SHOW_MODS | FREE_ACT
@@ -1646,7 +1646,7 @@ D:virtues of protection and thought.
 
 N:119:'Eriril'
 I:21:3:4
-W:16:18:140:60000
+W:16:18:140:70000
 P:0:1d11:9:8:10
 F:INT | WIS | HIDE_TYPE | ESP_EVIL |
 F:SLAY_EVIL | RES_LITE | SEE_INVIS | ACTIVATE | SHOW_MODS | FREE_ACT

@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. May 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. June 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -254,11 +254,12 @@ P               party screen. Form/disband/modify a party with other players
         The number shown in round brackets before each monster name is the
         number they have to enter for their 'Polymorph self into..' ability!
 X       quickly swap between two equippable items. They must be inscribed
-        @1@0 and @2@0.
+        '@w0'.
 {       inscribe an item.
 }       remove inscription from an item.
 _       drink from a fountain. You must stand on the fountain to do this.
-        Fountains can have good/bad/no effects.
+        Fountains can have good/bad/no effects. There is no fountain of death,
+        neither one of detonations, so you won't get instakilled.
 %       edit your macros.
 =       edit your preferences. (Contains many obsolete effectless entries.)
         Most important entries here are..
@@ -331,7 +332,8 @@ They all start with a slash '/':
  (/quest)   of time passes. The player who completes it gets a great item
             as reward. It will appear right below the player on the ground.
 /sip        drink from a fountain. You must stand on the fountain to do this.
-            Fountains can have good/bad/no effects.
+            Fountains can have good/bad/no effects. There is no fountain of
+            death, neither one of detonations, so you won't get instakilled.
             (It's easier to press '_' instead of using the /sip command.)
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
             fountain. You must stand on the fountain to do this.
@@ -724,6 +726,10 @@ see that list, or if other problems occur, see (8.5) for possible solutions.
 Now you will be prompted to enter your account name and password. You can
 choose these freely, the server will save that information and use it to
 remember which characters belonged to you the next time you log on.
+IMPORTANT: If you get kicked out with an error message after entering account
+and password, it's likely because that account name is already in use by
+someone else so your password was recognized as 'incorrect' since it was most
+likely different from that user's password. Just try a different account name.
 A player usually has exactly one account that can hold up to 7 characters.
 In most cases newly created accounts have to be "validated" by a server
 administrator to enable you to use the whole functionality of TomeNET. For
@@ -903,8 +909,8 @@ These are:
 -any speed changes above or below +0 are reduced by 50%
 -max number of melee attacks per round is reduced by 1.
 
-'Fruit bat':
-------------
+'Fruit bat' (Batty):
+--------------------
 A fruit bat is like a normal character, just not in humanoid shape but in bat
 form! Fruit bats usually can take way less damage than normal characters
 before they die, and they cannot wear certain equipment like boots, gloves or
@@ -1618,9 +1624,11 @@ Slowdown        Monsters can cast spells or breathe (inertia) to slow down
                 the player. This effect is temporary. 'Free Action' helps
                 a bit to reduce the effect from inertia breath.
 
-Stun    -Stun           Reduces your martial arts damage (no styles).
+Stun    -Stun           Reduces your martial arts damage (because you cannot
+                        perform MA special styles while stunned).
                         Also reduces to-hit and to-dam.
-        -Heavy stun     Reduces your martial arts damage (no styles).
+        -Heavy stun     Reduces your martial arts damage (because you cannot
+                        perform MA special styles while stunned).
                         Also reduces to-hit and to-dam greatly.
         -Knocked out    You cannot perform any action while knocked out,
                         it leaves your character completely helpless.
@@ -1798,7 +1806,7 @@ There are different types of dungeons. The main five are:
  Word-Of-Recall as well! Ghosts of dead players can float upwards.
  No-up dungeons/towers are marked by a red < or > symbol.
 -FORCE_DOWN. Same as NO_UP, but you can only recall at the bottom of the
- dungeon, similar to ironman.
+ dungeon, similar to ironman (except for the no-ghost death penalty).
  Force-down dungeons/towers are marked by an orange < or > symbol.
 -Ironman. Ironman dungeons or towers won't allow you to recall or to use
  staircases that lead upwards! If you die in such a dungeon or tower you won't
@@ -1810,7 +1818,8 @@ There are different types of dungeons. The main five are:
  Ironman dungeons/towers are marked by a dark grey < or > symbol.
 -Hellish. Players suffer no-ghost deaths inside hellish dungeons.
  Even if they're everlasting.
- Hellish dungeons/towers are marked by a fire-like flickering < or > symbol.
+ Hellish dungeons/towers are marked by a fire-like flickering < or > symbol
+ (red/yellow).
 -NO_DEATH. The Training Tower in Bree has this flag. Players who die inside a
  no-death dungeon won't turn into a ghost if they 'die' but just be teleported
  back to town! They still lose experience though.
@@ -1826,6 +1835,19 @@ A jail usually has an ironman tower inside.
 
 Sometimes you might find ruins of old staircases that don't lead to any
 dungeon or tower. Those have no further functionality and are coloured grey.
+
+
+Overview:
+Dungeon type  Death?  No-ghost? Recall          Staircase   Prob travel   +Exp
+------------------------------------------------------------------------------
+Normal        yes     (char)    yes             yes         yes           0%
+No death      no      no        yes             yes         yes           -50%
+No recall     yes     (char)    no              yes         no            +10%
+No rec down   yes     (char)    upwards only    yes         upwards       +5%
+No up         yes     (char)    yes             downwards   downwards     +5%
+Force down    yes     (char)    at bottom only  downwards   downwards     +10%
+Ironman       yes     yes       at bottom only  downwards   no            +15%
+Hellish       yes     yes       yes             yes         yes           +10%
 
 
 
@@ -1900,6 +1922,7 @@ you're not immune to fire.
 
 Fountains-
 '_' are fountains. To drink from them use /sip command or press the '_' key.
+See (0.2) for more details.
 
 
 Terrain features on the world map:
@@ -2165,8 +2188,9 @@ feeling about it, displayed in orange text.
 The feelings are as follows:
 "You feel an imminent danger!" ->   This dungeon level is *way* higher than
                                     your character level.
-"You feel a suppressive air..." ->  You cannot use magic on this level!
-                                    (NO_MAGIC, +10% experience bonus!)
+"You feel a suppressive air..." ->  You cannot use wraith form or probability
+                                    travel on this level.
+                                    (NO_MAGIC, +15% experience bonus!)
 "You have a feeling of peace..." -> You cannot use genocide on this level!
                                     (NO_GENO, +5% experience bonus!)
 "You lose all sense of direction..." -> You won't be able to auto-map this
@@ -2201,7 +2225,8 @@ feeling as soon as you are about to enter the vault:
 "The air in here feels very still." ->  Means that you cannot use any type of
                                         teleportation, including word-of-
                                         recall while inside the vault. Beware!
-                                        Further, Wraith Form won't work!
+                                        Further, Wraith Form and probability
+                                        travel won't work either!
 As soon as you leave such a no-teleport-vault you'll receive this feeling:
 "Fresh air greets you as you leave the vault."
 
@@ -2497,7 +2522,7 @@ those the dice are multiplied by 6. Same goes for SLAY flags.
 
 Combat Type | Dice multiplier for brands (fire/cold/acid/lightning/poison)
             | Monster..
-            | ..is immune   | ..resists | ..doesn't resist  | ..is suspectible
+            | ..is immune   | ..resists | ..doesn't resist  | ..is susceptible
 ------------|-----------------------------------------------------------------
 Melee Weapon|       1             2               3                   6
 Ranged Weap.|       1             1.4             1.8                 3
@@ -2628,23 +2653,31 @@ Fire/Heat               These attacks can burn items in your inventory.
                         you or your inventory getting harmed.
                         Fire bolts do (level/3)+(9d8) damage.
                         Fire balls do (level*7/2)+10 damage.
+                        Immunity or double resistance protects items in your
+                        inventory and equipment from getting harmed (5.10).
 Frost/Cold              These attacks can shatter potions.
                         Without resistance it can reduce your strength.
                         Frost bolts do (level/3)+(6d8) damage.
                         Cold balls do (level*2)+10 damage.
+                        Immunity or double resistance protects items in your
+                        inventory and equipment from getting harmed (5.10).
 Lightning/Electricity   These attacks can destroy rings and amulets.
                         Without resistance it can reduce your dexterity.
                         Lightning bolts do (level/3)+(4d8) damage.
                         Lightning balls do (level*3/2)+8 damage.
+                        Immunity or double resistance protects items in your
+                        inventory and equipment from getting harmed (5.10).
 Acid                    These attacks can destroy items in your inventory.
                         They can also damage your equipment if you don't
                         resist acid.
                         Without resistance it can reduce your charisma.
                         Acid bolts do (level/3)+(7d8) damage.
                         Acid balls do (level*3)+15 damage.
+                        Immunity or double resistance protects items in your
+                        inventory and equipment from getting harmed (5.10).
 Breath damage before capping is monster HP/3. Damage of these attacks is capped
 at 1200 (always before resistances are applied).
-If you resist them, the damage will be cut to 1/3. If you are suspectible to
+If you resist them, the damage will be cut to 1/3. If you are susceptible to
 them, like Ents to fire, you will take twice the damage! This also applies for
 aura attacks like hitting someone who wears a cloak of immolation.
 To prevent side-effects of the attacks on your inventory from occurring you
@@ -2733,7 +2766,7 @@ Chaos           Chaos attacks can also have nasty side-effects if you don't
                 Raw chaos invocation (chaos ball) does (level*4)+(10d10) dam.
 Light           Light effects can blind you if you don't resist it.
                 Resistance will cut damage to 4/7..4/12.
-                If you are mimicking a monster that is suspectible to light
+                If you are mimicking a monster that is susceptible to light
                 you will suffer double damage from attacks.
                 Breath damage is monster HP/6. Light breath caps at 400.
 Darkness        Darkness effects can blind you if you don't resist it.
@@ -2771,7 +2804,7 @@ Gravity         These attacks have very annoying side-effects:
                 Damage (breath only) is monster HP/3 and caps at 150.
 Mana            Mana is pure magical energy. There are only rumours
                 about items that provides resistance against it.
-                Resisting it will cut damage to 1/2.
+                Resisting it will cut damage to 6/7..6/12.
                 Breath damage is monster HP/3, breath caps at 250. Only very
                 few monsters (mostly uniques) can breathe mana.
                 Mana bolts do 50+(1...[level*7/2]) damage.
@@ -2783,7 +2816,7 @@ Time            Time is pure temporary distortion. There are only rumours
                 -One of your stats can be lowered (resistance will reduce the
                  amount).
                 -Drain all your stats (resistance will prevent this).
-                Resistance will cut damage to 1/2.
+                Resistance will cut damage to 6/7..6/12.
                 Breath damage is monster HP/3. Time breath caps at 150.
 Meteor          This is an irresistable attack of pure impact.
                 <Meteor attacks are currently not implemented.>
@@ -3294,8 +3327,8 @@ Holiness        Dispels nearby evil. Also protects you from evil for a while.
                 Cures poison/cuts, removes fear/stun, heals you somewhat.
 Dragon's Breath These wands fire a ball of dragon odem (more powerful than
                 normal ball spell wands.)
-Havoc           Fires balls or beams of chaos, the exact outcome is hard to
-                tell.. it's very powerful though.
+Havoc           Fires balls or beams of random type, the exact outcome is hard
+                to tell.. it's very powerful though.
 
 
 Misc
@@ -3654,7 +3687,7 @@ If another player is invisible and not of higher level than you..
         -you can see him easily if you can see invisible and he's not wearing
          a shadow cloak;
         -you see him 'flicker' if you lack seeing invisible or if he's wearing
-         a shadow cloak (or both). He will fade in and out if your sight.
+         a shadow cloak (or both). He will fade in and out of your sight.
          The lower his level, the more often you will be able to see him.
          If you want to look at his equipment then you'll need some timing,
          might take several tries.
@@ -3689,6 +3722,18 @@ For example an orcish shield (+2) that increases your strength by +2 and a
 kolla (+1) which also increases your strength (just by +1) will add up and
 your character's strength will be increased by +3 in total!
 Same goes for IV (Infra-Vision), luck, extra attacks, speed, etc.
+
+There are some abilities which are not flags although they might look like it.
+In fact, they add up / stack. Those are:
+-Extra shots (concerning ranged weapons)
+-Extra might (concerning ranged weapons)
+-Drain mana (note that 'mana regeneration' does NOT stack. So it can cancel
+ out the effect of only ONE item that drains mana, not of any more.)
+-Drain hit points ('Drains your life'. note that 'regeneration' does NOT
+ stack, so it can cancel out the effect of only ONE item that drains hit
+ points, not of any more. However, the 'Health' skill is able to further
+ increase your regeneration rate.)
+-Extra light radius
 
 
 
@@ -3802,7 +3847,9 @@ Note that not every skill is available to every profession (class).
                                 independent on weapon class and crit-skill.
                                 The probability will be small though, if you
                                 don't have +critical hit items or this skill
-                                to help out.
+                                to help out. Critical hit bonus on items
+                                counts slightly more than the skill, and it
+                                is applied to melee AND ranged attacks!
                                 If your weapon is lighter than 10.0 lb, your
                                 chances to score a critical hit will further
                                 increase.
@@ -3818,14 +3865,18 @@ Note that not every skill is available to every profession (class).
         .Polearm-mastery        See Sword-mastery
     +Archery                    Improves ranged to-damage bonus.
                                 Increases your chance to score critical hits.
-                                Also lets you create ammunition from bones,
+                                At 10 you may create ammunition from bones,
                                 skeletons and rubble on the floor (press 'm').
                                 (You can't pick up rubble; if you want to make
                                 ammunition from it, just stand next to it!)
-                                50 in archery grants +1 'extra might',
-                                increasing your launcher's multiplier by 1.
                                 Lets you pseudo-id ranged weapons and
                                 ammunition easier if raised to at least 11.
+                                At 20 the quality of your handmade ammunition
+                                becomes remarkably better.
+                                50 in archery grants +1 'extra might',
+                                increasing your launcher's multiplier by 1.
+                                NOTE: The extra might bonus does not apply
+                                to Boomerangs! All other boni do apply.
         .Sling-mastery          Imcreases hit chance (while using a sling).
                                 At 16,32,48 you will get +1 additional shot
                                 per round each (while using a sling).
@@ -4325,7 +4376,7 @@ Goblin      +0  -1  -5  +4  +2  -5      11      115%    30ft
             2   -3  -3  0   8   2   12  -5
 Ent         +8  -4  +2  -4  +8  -5      14      300%    50ft            
             5   0   20  -6  4   5   15  5
-Thunderlord +6  +2  +1  +1  +3  +5      14      350%    0ft             
+Thunderlord +6  +2  +1  +1  +3  +5      12      350%    0ft             
             6   0   10  -16 10  30  15  5
 
 
@@ -4554,11 +4605,13 @@ I: speed : hit points : vision : armor class : alertness
     30% of the monster's speed malus below 110.
     So a monster moving at 130 speed will give the mimic +12 speed.
   hit points:
-    The monster's hit dice xdy are multiplied. Now, if the mimic's HP
-    are less then the result, the mimic's HP will become approx.
-    ((3*x*y) + (2*normal_HP)) / 5. This value is capped against ~2500,
-    so gain might decrease in higher regions. (2/5 monster HP, 3/5 player HP.)
-    If the mimic's HP in player form (0) are greater than x*y, the
+    The monster's hit dice xdy are multiplied and then capped against ~2500,
+    so gain might decrease in higher regions. (Cap details: The monster HP is
+    calculated by the following formula before further calculations are made:
+    monster HP = 100000 / ((100000 / hdice*hsides) + 18) .)
+    Now, if the mimic's HP are less then the result, the mimic's HP will
+    become approx. ((3*x*y) + (2*normal_HP)) / 5. (2/5 monster HP, 3/5 player
+    HP.) If the mimic's HP in player form (0) are greater than x*y, the
     resulting HP will be ((x*y * 4) + (mimic_HP * 1)) / 5.
     (1/5 monster HP, 4/5 player HP!)
   armour class:
@@ -4586,6 +4639,8 @@ E: weapons : torso : arms : finger : head : leg
     These values indicate how many pieces of equipment the player can
     wear while using this form. For example snakes can only wear a helmet
     (E:0:0:0:0:1:0).
+    NOTE: Mimics can never wear MORE items than in their normal form. So
+    even a form with 8 legs would allow only 1 pair of boots to be equipped!
 B: attack method : attack effect : damage
   attack effect:
     If the monster poisons or infects with disease, this will result in
@@ -4643,6 +4698,8 @@ F: flag list
                 remaining ones will turn into resistances. Potions of
                 self-knowledge are helpful here.
     PASS_WALL   Will allow the mimic to pass walls like a ghost.
+                These immaterial forms also drain the hit points of their
+                user.
     KILL_WALL   The mimic will dig *easily* through walls.
     REGENERATE  Faster hit point regeneration.
     CAN_SWIM    The player can pass water fields without problems.
@@ -4851,10 +4908,12 @@ Conveyance
                     Lv10: Turns into a ball.
                     Lv20: Teleports away all monsters in sight.
     Recall          Works like Word Of Recall.                      (project)
+                    Inscribe your spellbook like you'd inscribe a scroll,
+                    in order to specify a destination.
     Probability Travel
                     Renders you instable, allowing to pass walls and to
                     float upwards/downwards.
-Divination (This school uses WISDOM to determine fail-rates)
+Divination
     Identify        Identifies items.
                     Lv17: Identifies all items that you carry/wear.
                     Lv27: Also identifies all items on the floor around you.
@@ -4913,6 +4972,15 @@ Meta (This school uses WISDOM to determine fail-rates)
     Project Spells  Makes several spells and prayers affect other players too,
                     in a radius around you that grows bigger depending on the
                     'Project Spells' level.
+                    You need to cast the Project spell once! This 'turns on'
+                    the area of effect for all other spells which are usable
+                    on fellow players. Casting the Project spell again will
+                    switch the area effect off again.
+                    When you switch it on, the radius will depend on your
+                    Project skill level, starting at a radius of 1 field.
+                    The closer another player stands to you, the more he will
+                    usually get out of the spell (eg healed HP amount,
+                    duration of resistances, etc..).
     Disperse Magic  Removes magical influences.
                     Lv1: Blindness.
                     Lv5: Confusion/Hallucination.
@@ -6066,6 +6134,8 @@ SOLUTION:   Read the error message displayed in a message box on quitting.
             "Sorry, the server is for members only."
                     Log in with 'guest'. You need to get an account for this
                     private server in order to play. 
+            If you get kicked out with an error message on the character
+            overview screen (which seems to be empty), also see PROBLEM 14.
 
 PROBLEM 09: I can't connect to the meta-server (the server that displays you
             a list of online TomeNET servers) or a specific TomeNET server.
@@ -6125,6 +6195,16 @@ SOLUTION:   This might be caused by a misconfigured router (some D-Link models
             for example). Try to establish an SSH-tunnel from your PC behind
             the router to a machine outside of your LAN for port 18348.
             (This might even reduce lag under certain circumstances.)
+
+PROBLEM 14: I get kicked out with an error message after entering an account
+            name and password.
+SOLUTION:   It's most likely because that account name is already in use by
+            someone else so your password was recognized as 'incorrect' since
+            it was most likely different from that user's password. Just try a
+            different account name.
+            Likewise, if that account indeed belongs to you, you have probably
+            made a typo while entering your password.
+
 
 
 

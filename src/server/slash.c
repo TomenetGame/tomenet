@@ -1724,6 +1724,16 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377rItems on %s are cleared.", wpos_format(Ind, &wp));
 				return;
 			}
+			/* erase ALL items (never use this when houses are on the map sector) */
+			else if (prefix(message, "/clear-extra") ||
+					prefix(message, "/xcli"))
+			{
+				/* Wipe even if town/wilderness */
+				wipe_o_list(&wp);
+
+				msg_format(Ind, "\377rItems on %s are cleared.", wpos_format(Ind, &wp));
+				return;
+			}
 			else if(prefix(message, "/cp")){
 				party_check(Ind);
 				account_check(Ind);
@@ -2399,30 +2409,31 @@ void do_slash_cmd(int Ind, char *message)
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 				return;
 			}
+			/* very dangerous if player is poisoned, very weak, or has hp draining */
 			else if (prefix(message, "/threaten") || prefix(message, "/thr")) { /* Nearly kill someone, as threat >:) */
-				int j;
+				int j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!tk) {
-					msg_print(Ind, "Usage: /threaten <player-Index>");
+					msg_print(Ind, "Usage: /threaten <player name>");
 					return;
 				}
-				/*j = name_lookup_loose(Ind, token[1], FALSE);
-				if (!j) return;*/
-				j = atoi(token[1]);
+				if (!j) return;
+				bypass_invuln = TRUE;
 			        take_hit(j, Players[j]->chp - 1, "");
+				bypass_invuln = FALSE;
 			        msg_print(j, "\377rYou are hit by a bolt from the blue!");
 			        msg_print(j, "\377rThat was close huh?!");
 				return;
 			}
 			else if (prefix(message, "/slap")) { /* Slap someone around, as threat :-o */
-				int j;
+				int j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!tk) {
-					msg_print(Ind, "Usage: /slap <player-Index>");
+					msg_print(Ind, "Usage: /slap <player name>");
 					return;
 				}
-				/*j = name_lookup_loose(Ind, token[1], FALSE);
-				if (!j) return;*/
-				j = atoi(token[1]);
-			        take_hit(j, Players[j]->chp / 4, "");
+				if (!j) return;
+				bypass_invuln = TRUE;
+			        take_hit(j, Players[j]->chp / 2, "");
+				bypass_invuln = FALSE;
 			        msg_print(j, "\377rYou are slapped by something invisible!");
 				return;
 			}

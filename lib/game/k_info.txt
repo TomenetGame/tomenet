@@ -2912,7 +2912,7 @@ P:0:1d1:0:0:0
 N:390:& Small Firestone~
 G:~:r
 I:3:6:0
-W:0:0:4:2
+W:0:0:10:2
 A:0/1
 P:0:1d1:0:0:0
 
@@ -3145,7 +3145,8 @@ N:929:Crystal Dragon Scale Mail~
 G:[:U
 I:38:41:0
 W:85:0:200:150000
-A:85/48
+#A:85/48 RES_MANA is powerful
+A:90/64
 P:30:2d4:-2:0:10
 F:RES_SHARDS | FLY | REFLECT | RES_MANA | 
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
@@ -3172,9 +3173,10 @@ N:932:Sky Dragon Scale Mail~
 G:[:B
 I:38:44:0
 W:95:0:200:150000
-A:95/32
+#A:95/32 two immunities now
+A:95/64
 P:40:2d4:-3:0:15
-F:FLY | RES_LITE | IM_ELEC | FEATHER | BRAND_ELEC | BRAND_COLD | SH_ELEC | RES_COLD
+F:FLY | RES_LITE | IM_ELEC | FEATHER | BRAND_ELEC | BRAND_COLD | SH_ELEC | IM_COLD
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 
 N:413:& Dragon Helm~
@@ -3494,7 +3496,7 @@ F:RES_NEXUS | RES_POIS
 N:474:Telepathic Awareness
 G:":d
 I:40:22:0
-W:50:0:3:20000
+W:50:0:3:10000
 #A:50/6:90/8
 A:50/8
 #F:ESP_ALL
@@ -6264,6 +6266,106 @@ G:":w
 I:40:40:0
 W:70:0:3:150000
 F:INSTA_ART
+
+
+# More stuff to play with ;) - C. Blue
+N:936:& White piece~
+G:*:w
+I:1:10:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:937:& Black piece~
+G:*:D
+I:1:11:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:938:& White Pawn~
+G:-:w
+I:1:12:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:939:& White King~
+G:+:w
+I:1:13:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:940:& White Queen~
+G:*:w
+I:1:14:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:941:& White Rook~
+G:#:w
+I:1:15:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:942:& White Knight~
+G:?:w
+I:1:16:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:943:& White Bishop~
+G:|:w
+I:1:17:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:944:& Black Pawn~
+G:-:D
+I:1:18:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:945:& Black King~
+G:+:D
+I:1:19:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:946:& Black Queen~
+G:*:D
+I:1:20:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:947:& Black Rook~
+G:#:D
+I:1:21:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:948:& Black Knight~
+G:?:D
+I:1:22:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
+
+N:949:& Black Bishop~
+G:|:D
+I:1:23:0
+W:127:0:1:0
+A:200/200
+P:0:1d1:0:0:0
 
 
 

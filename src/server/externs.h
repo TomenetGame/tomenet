@@ -1141,7 +1141,7 @@ extern bool item_tester_hook_recharge(object_type *o_ptr);
 
 extern bool do_res_stat_temp(int Ind, int stat);
 extern void swap_position(int Ind, int lty, int ltx);
-extern void call_chaos(int Ind, int dir);
+extern void call_chaos(int Ind, int dir, int extra_damage);
 extern bool turn_monsters(int Ind, int dam);
 
 
@@ -1444,5 +1444,10 @@ void lua_determine_level_req(int Ind, int item);
 
 /* only called once, in util.c, referring to new file slash.c */
 extern void do_slash_cmd(int Ind, char *message);
-extern int global_luck;
+extern int global_luck; /* Global +LUCK modifier for the whole server (change the 'weather' - C. Blue) */
 extern void lua_intrusion(int Ind, char *problem_diz);
+/* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue
+   Dungeon masters will be paged if they're not AFK or if they have
+   'watch' as AFK reason! */
+extern bool watch_nr;
+extern bool watch_morgoth;

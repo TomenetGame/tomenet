@@ -9,7 +9,7 @@ STARIDENTIFY = add_spell
         ["mana"] = 	30,
         ["mana_max"] = 	30,
         ["fail"] = 	10,
-        ["stat"] =      A_WIS,
+--        ["stat"] =      A_WIS,
         ["extra"] =     function () return get_check("Cast on yourself?") end,
         ["spell"] = 	function (args)
         		if args.aux == TRUE then
@@ -35,7 +35,7 @@ IDENTIFY = add_spell
         ["mana"] = 	10,
         ["mana_max"] = 	50,
         ["fail"] = 	10,
-        ["stat"] =      A_WIS,
+--        ["stat"] =      A_WIS,
         ["spell"] = 	function()
         		if get_level(Ind, IDENTIFY, 50) >= 27 then
                         	identify_pack(Ind)
@@ -69,7 +69,7 @@ VISION = add_spell
         ["level"] = 	15,
         ["mana"] = 	7,
         ["mana_max"] = 	55,
-        ["stat"] =      A_WIS,
+--        ["stat"] =      A_WIS,
         ["fail"] = 	10,
         ["spell"] = 	function()
         		if get_level(Ind, VISION, 50) >= 25 then
@@ -99,7 +99,7 @@ SENSEHIDDEN = add_spell
         ["mana"] = 	2,
         ["mana_max"] = 	10,
         ["fail"] = 	10,
-        ["stat"] =      A_WIS,
+--        ["stat"] =      A_WIS,
         ["spell"] = 	function()
         		detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN, 40, 0))
                         if player.spell_project > 0 then
@@ -134,7 +134,7 @@ REVEALWAYS = add_spell
         ["mana"] = 	3,
         ["mana_max"] = 	15,
         ["fail"] = 	10,
-        ["stat"] =      A_WIS,
+--        ["stat"] =      A_WIS,
         ["spell"] = 	function()
         		detect_sdoor(Ind, 10 + get_level(Ind, REVEALWAYS, 40, 0))
                         if player.spell_project > 0 then
@@ -158,7 +158,7 @@ SENSEMONSTERS = add_spell
         ["mana"] =      1,
         ["mana_max"] =  20,
         ["fail"] = 	10,
-        ["stat"] =      A_WIS,
+--        ["stat"] =      A_WIS,
         ["spell"] = 	function()
                         detect_creatures(Ind)
                         if player.spell_project > 0 then

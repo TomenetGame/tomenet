@@ -6568,7 +6568,7 @@ void golem_creation(int Ind, int max)
 }
 
 /* pernAngband Additions	- Jir - */
-void call_chaos(int Ind, int dir)
+void call_chaos(int Ind, int dir, int extra_damage)
 {
 	player_type *p_ptr = Players[Ind];
 	int Chaos_type, dummy;
@@ -6604,23 +6604,23 @@ void call_chaos(int Ind, int dir)
 			if (dummy-5)
 			{
 				if (line_chaos)
-					fire_beam(Ind, Chaos_type, dummy, 1500, p_ptr->attacker);
+					fire_beam(Ind, Chaos_type, dummy, 1500 + extra_damage, p_ptr->attacker);
 				else
-					fire_ball(Ind, Chaos_type, dummy, 1500, 2, p_ptr->attacker);
+					fire_ball(Ind, Chaos_type, dummy, 1500 + extra_damage, 2, p_ptr->attacker);
 			}
 		}
 	}
 	else if (randint(3)==1)
 	{
-		fire_ball(Ind, Chaos_type, 0, 1500, 8, p_ptr->attacker);
+		fire_ball(Ind, Chaos_type, 0, 1500 + extra_damage, 8, p_ptr->attacker);
 	}
 	else
 	{
 //		if (!get_aim_dir(&dir)) return;
 		if (line_chaos)
-			fire_beam(Ind, Chaos_type, dir, 1500, p_ptr->attacker);
+			fire_beam(Ind, Chaos_type, dir, 1500 + extra_damage, p_ptr->attacker);
 		else
-			fire_ball(Ind, Chaos_type, dir, 1500, 3 + (plev/35), p_ptr->attacker);
+			fire_ball(Ind, Chaos_type, dir, 1500 + extra_damage, 3 + (plev/35), p_ptr->attacker);
 	}
 }
 

@@ -1143,20 +1143,20 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f2 & TR2_RES_ELEC) total += 1250;
 	if (f2 & TR2_RES_FIRE) total += 1250;
 	if (f2 & TR2_RES_COLD) total += 1250;
-	if (f2 & TR2_RES_POIS) total += 2500;
-	if (f2 & TR2_RES_FEAR) total += 2500;
-	if (f2 & TR2_RES_LITE) total += 1750;
-	if (f2 & TR2_RES_DARK) total += 1750;
-	if (f2 & TR2_RES_BLIND) total += 2000;
-	if (f2 & TR2_RES_CONF) total += 2000;
-	if (f2 & TR2_RES_SOUND) total += 2000;
-	if (f2 & TR2_RES_SHARDS) total += 2000;
-	if (f2 & TR2_RES_NETHER) total += 2000;
-	if (f2 & TR2_RES_NEXUS) total += 2000;
-	if (f2 & TR2_RES_CHAOS) total += 2000;
-	if (f2 & TR2_RES_DISEN) total += 10000;
-	if (f3 & TR3_SH_FIRE) total += 5000;
-	if (f3 & TR3_SH_ELEC) total += 5000;
+	if (f2 & TR2_RES_POIS) total += 5000;
+	if (f2 & TR2_RES_FEAR) total += 2000;
+	if (f2 & TR2_RES_LITE) total += 2750;
+	if (f2 & TR2_RES_DARK) total += 2750;
+	if (f2 & TR2_RES_BLIND) total += 8000;
+	if (f2 & TR2_RES_CONF) total += 3500;
+	if (f2 & TR2_RES_SOUND) total += 10000;
+	if (f2 & TR2_RES_SHARDS) total += 4000;
+	if (f2 & TR2_RES_NETHER) total += 15000;
+	if (f2 & TR2_RES_NEXUS) total += 7000;
+	if (f2 & TR2_RES_CHAOS) total += 15000;
+	if (f2 & TR2_RES_DISEN) total += 20000;
+	if (f3 & TR3_SH_FIRE) total += 3000;
+	if (f3 & TR3_SH_ELEC) total += 3000;
         if (f3 & TR3_DECAY) total += 0;
 	if (f3 & TR3_NO_TELE) total += 2500;
 	if (f3 & TR3_NO_MAGIC) total += 2500;
@@ -4143,6 +4143,9 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 
 					/* Super-charge the ring */
 					while (rand_int(100) < 50) o_ptr->bpval++;
+					
+					/* Limit */
+					if (o_ptr->bpval > 15) o_ptr->bpval = 15;
 
 					/* Cursed Ring */
 					if (power < 0)
@@ -4162,7 +4165,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 
 				case SV_RING_LORDLY:
 				{
-#if 0	// lordly pfft ring..
+#if 0	/* lordly pfft ring.. */
 					do
 					{
 						random_resistance(o_ptr, FALSE, ((randint(20))+18));
@@ -4584,6 +4587,9 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					/* Super-charge the ring */
 					tries = 100;
 					while ((--tries) && rand_int(100) < 50) o_ptr->pval++;
+					
+					/* Limit */
+					if (o_ptr->pval > 15) o_ptr->pval = 15;
 
 					/* Cursed Ring */
 					if (power < 0)
@@ -5557,7 +5563,7 @@ if (verygreat) s_printf("verygreat apply_magic:\n");
 	if (o_ptr->name2b) ego_value2 = e_info[o_ptr->name2b].cost; else ego_value2 = 0;
 	if ((o_ptr->tval != TV_SHOT) && (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT)) {
                 char o_name[160];
-                object_desc(0, o_name, o_ptr, FALSE, 0);
+                object_desc(0, o_name, o_ptr, FALSE, 3);
 s_printf("depth %d, depthvalue %d, egovalue %d / %d, objectreal %d, flags %d (%s)\n", depth, depth_value, ego_value1, ego_value2, object_value_real(0, o_ptr), flag_cost(o_ptr, o_ptr->pval), o_name);
 		if ((ego_value1 >= depth_value) || (ego_value2 >= depth_value) ||
 		    (object_value_real(0, o_ptr) >= depth * 300)) break;
@@ -5676,6 +5682,21 @@ void determine_level_req(int level, object_type *o_ptr)
 		case SV_RING_ATTACKS:
 			base += o_ptr->bpval * 5;
 			break;
+		}
+	}
+
+	if (o_ptr->tval == TV_DRAG_ARMOR) {
+		switch(o_ptr->sval) {
+		case SV_DRAGON_MULTIHUED:
+		case SV_DRAGON_SHINING:
+		case SV_DRAGON_DEATH:
+			base += 10;
+			break;
+		case SV_DRAGON_POWER:
+			base += 5;
+			break;
+		default:
+			base += 0;
 		}
 	}
 
@@ -6692,6 +6713,10 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 			/* reset scan_objs timer */
 			o_ptr->marked = 0;
+			
+			/* Keep game pieces from disappearing */
+			if ((o_ptr->tval == 1) && (o_ptr->sval >= 9))
+				o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 
 			/* No monster */
 			o_ptr->held_m_idx = 0;
@@ -6746,6 +6771,9 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
 {
 	player_type *p_ptr=Players[Ind];
+
+	/* Items dropped by admins never disappear by 'time out' */
+	if (is_admin(p_ptr)) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 
 	/* Artifact always disappears, depending on tomenet.cfg flags */
 	if (true_artifact_p(o_ptr) && !is_admin(p_ptr) && cfg.anti_arts_hoard)

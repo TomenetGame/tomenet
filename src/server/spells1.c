@@ -679,18 +679,19 @@ void teleport_player(int Ind, int dis)
 	/* Space/Time Anchor */
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+	l_ptr = getfloor(wpos);
 
 	/* Hack -- Teleportation when died is always allowed */
 	if (!p_ptr->death)
 	{
 		if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px)) return;
 		if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+//		if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 		/* Hack -- on the wilderness one cannot teleport very far */
 		/* Double death isnt nice */
 		if (!wpos->wz && !istown(wpos) && dis > WILDERNESS_TELEPORT_RADIUS)
 			dis = WILDERNESS_TELEPORT_RADIUS;
 	}
-	l_ptr = getfloor(wpos);
 
 	/* Verify max distance once here */
 	if (dis > 150) dis = 150;
@@ -841,6 +842,7 @@ void teleport_player_to(int Ind, int ny, int nx)
 	if (p_ptr->anti_tele) return;
 	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 	l_ptr = getfloor(wpos);
+//	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 
 	if (ny < 1) ny = 1;
 	if (nx < 1) nx = 1;
@@ -934,10 +936,12 @@ void teleport_player_level(int Ind)
 	wilderness_type *w_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
 	struct worldpos new_depth;
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char *msg="\377rCritical bug!";
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+//	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 
 	/* Space/Time Anchor */
 	if (p_ptr->anti_tele) return;
@@ -6895,7 +6899,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Time -- bolt fewer effects XXX */
 		case GF_TIME:
-			if (p_ptr->resist_time) dam /= 2;
+			if (p_ptr->resist_time) dam *= 6; dam /= (randint(6) + 6);
 			if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			if (p_ptr->resist_time)
@@ -7010,7 +7014,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Pure damage */
 		case GF_MANA:
-			if (p_ptr->resist_mana) dam /= 2;
+			if (p_ptr->resist_mana) dam *= 6; dam /= (randint(6) + 6);
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer);

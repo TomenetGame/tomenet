@@ -1779,7 +1779,9 @@ static void player_talk_aux(int Ind, char *message)
 	else if (mycolor) c = *(message + 1);
 	else
 	{
-		if (p_ptr->mode & MODE_HELL) c = 'W';
+		if (p_ptr->mode & MODE_IMMORTAL) c = 'B';
+		else c = 'W';
+		if (p_ptr->mode & MODE_HELL) c = 's';
 		if (p_ptr->mode & MODE_NO_GHOST) c = 'D';
 		if (p_ptr->total_winner) c = 'v';
 		else if (p_ptr->ghost) c = 'r';
@@ -2168,8 +2170,11 @@ bool show_floor_feeling(int Ind)
 	if (!l_ptr) return(felt);
 
 	/* Hack^2 -- display the 'feeling' */
-	if (l_ptr->flags1 & LF1_NO_MAGIC)
+	if (l_ptr->flags1 & LF1_NO_MAGIC) {
 		msg_print(Ind, "\377oYou feel a suppressive air...");
+		/* Automatically dis/re-enable wraith form */
+	        p_ptr->update |= PU_BONUS;
+	}
 	if (l_ptr->flags1 & LF1_NO_GENO)
 		msg_print(Ind, "\377oYou have a feeling of peace...");
 	if (l_ptr->flags1 & LF1_NOMAP)

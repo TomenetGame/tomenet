@@ -2112,7 +2112,7 @@ void save_game_panic(void)
 	int i = 1;
 
 	/* If nothing important has happened, just quit */
-	if (!server_generated || server_saved) return;
+//	if (!server_generated || server_saved) return;
 
 	while (NumPlayers > (i - 1))
 	{

@@ -7053,7 +7053,8 @@ D:clean, and you are the biggest spot of dirt in sight.
 N:452:Deep one
 G:u:g
 I:120:35d12:20:50:20
-W:28:5:4000:150
+#W:28:5:4000:150
+W:28:4:4000:150
 E:1:1:1:2:1:1
 O:20:80:0:0
 B:CLAW:POISON:2d4
@@ -7718,7 +7719,8 @@ D:A lizard-like Great Old One worshipped by the men of Sarnath.
 N:490:Biclops
 G:P:u
 I:120:65d20:20:90:20
-W:48:5:3000:1700
+W:48:3:3000:1700
+#W:48:5:3000:1700
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:HURT:10d9
@@ -8287,7 +8289,8 @@ D:frame.
 N:521:Oriental vampire
 G:V:s
 I:110:40d30:20:60:10
-W:40:3:0:750
+#W:40:3:0:750
+W:40:5:0:750
 E:1:1:1:2:1:1
 O:10:45:35:0
 B:HIT:HURT:3d6
@@ -11916,7 +11919,8 @@ D:split stones and even the very rock of Isengard with its roots.
 N:709:Hru
 G:P:s
 I:120:40d100:30:180:15
-W:66:3:40000:14500
+W:66:2:40000:14500
+#W:66:3:40000:14500
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:HIT:SHATTER:14d13
@@ -13591,7 +13595,7 @@ D:with a huge gaping maw instead of a head.
 
 N:787:Gelugon
 G:U:w
-I:130:45d100:20:150:40
+I:130:45d100:20:100:40
 W:69:3:0:14000
 E:2:1:2:0:0:1
 O:20:60:20:0
@@ -13775,7 +13779,7 @@ D:her magic to do his bidding.
 
 N:795:Horned Reaper
 G:U:B
-I:130:50d100:40:160:40
+I:130:50d100:40:140:40
 W:72:3:0:18000
 E:1:1:1:2:1:1
 O:0:100:0:0
@@ -14152,7 +14156,7 @@ D:uncertain all of a sudden.
 
 N:812:Pit Fiend
 G:U:o
-I:130:60d100:30:180:35
+I:130:60d100:30:120:35
 W:77:3:0:22000
 E:1:1:1:2:1:1
 O:0:100:0:0
@@ -14698,7 +14702,7 @@ D:giants and fight against the other gods of Asgard.
 
 N:836:Star-spawn of Cthulhu
 G:U:G
-I:140:75d100:90:180:40
+I:140:75d100:90:135:40
 W:86:2:0:44000
 #E:0:0:0:0:0:0
 E:0:0:2:0:1:0
@@ -19024,7 +19028,7 @@ D:upon it to call the ultimate terror in case it detects any intruder.
 #Nether Realm only
 N:1068:Nether Guard
 G:N:G
-I:140:150d150:200:175:255
+I:140:150d150:250:175:0
 W:98:3:0:100000
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -19395,7 +19399,7 @@ D:A whirling maelstrom of force that will unleash powerful impact on you.
 #Nether Realm only
 N:1085:Dor
 G:e:w
-I:130:50d100:200:50:255
+I:130:50d100:200:50:0
 W:127:1:0:50000
 E:0:0:0:0:0:0
 O:0:0:0:0

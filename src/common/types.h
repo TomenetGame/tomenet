@@ -821,7 +821,10 @@ struct object_type
         u32b art_flags5;        /* Flags, set 5  PernAngband */
         u32b art_esp;           /* Flags, set esp  PernAngband */
 #endif	/* 0 */
-	
+
+	byte inven_order;	/* Inventory position if held by a player,
+				   only use is in xtra2.c when pack is ang_sort'ed */
+
 	u16b next_o_idx;	/* Next object in stack (if any) */
 	u16b held_m_idx;	/* Monster holding us (if any) */
 };

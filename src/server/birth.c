@@ -1691,7 +1691,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	struct account *c_acc;
 
 	/* To find out which characters crash the server */
-	s_printf("Trying to log in with character %s\n", name);
+	s_printf("Trying to log in with character %s...\n", name);
 
 	/* Do some consistency checks */
 	if (race < 0 || race >= MAX_RACES) race = 0;
@@ -1876,7 +1876,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->lives = cfg.lifes+1;
 
 	/* To find out which characters crash the server */
-	s_printf("Logged in with character %s\n", name);
+	s_printf("Logged in with character %s.\n", name);
 
 	/* Success */
 	return TRUE;

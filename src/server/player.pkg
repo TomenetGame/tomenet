@@ -198,6 +198,7 @@ struct worldpos{
 
 struct object_type
 {
+	s32b owner_mode;                /* Player that found it */
         s32b owner;                     /* Player that found it */
         s16b level;                     /* Level req */
 
@@ -613,6 +614,9 @@ struct player_type
 
 	bool ty_curse;		/* bad curses from artifacts */
 	bool dg_curse;
+
+        u16b quest_id;          /* Quest number */
+        s16b quest_num;         /* Number of kills needed */
 
 	bool sustain_str;	/* Keep strength */
 	bool sustain_int;	/* Keep intelligence */

@@ -283,7 +283,16 @@ void increase_skill(int Ind, int i)
 		}
 		break;
 	case SKILL_ARCHERY:
-		if (get_skill(p_ptr, i) == 50) msg_print(Ind, "\377GYour general shooting power gains extra might due to your training!");
+		switch (get_skill(p_ptr, i)) {
+		case 10: msg_print(Ind, "\377GYou learn how to create ammunition from bones and rubble!");
+			break;
+		case 11: msg_print(Ind, "\377GYou got better at recognizing the power of unknown ranged weapons!");
+			break;
+		case 20: msg_print(Ind, "\377GYour ability to create ammunition improved remarkably!");
+			break;
+		case 50: msg_print(Ind, "\377GYour general shooting power gains extra might due to your training!");
+			break;
+		}
 		break;
 	case SKILL_COMBAT:
 		switch (get_skill(p_ptr, i)) {

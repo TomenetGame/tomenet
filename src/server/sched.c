@@ -535,6 +535,7 @@ void sched(void)
 	    n = select(max_fd, &readmask, 0, 0, tvp);
 	    if (n < 0) {
 		if (errno != EINTR) {
+		    save_game_panic();
                     printf("Errno: %d\n",errno);
 		    /* plog("sched select error"); */
 		    core("sched select error");

@@ -117,7 +117,8 @@ function player_send(name, x, y, z, msg)
 	players(i).recall_pos.wx=x;
 	players(i).recall_pos.wy=y;
 	players(i).recall_pos.wz=z;
-	players(i).new_level_method=4;
+-- let's try LEVEL_OUTSIDE_RAND (5) instead of LEVEL_OUTSIDE (4) - C. Blue :)
+	players(i).new_level_method=5;
 	recall_player(i, msg);
 end
 

@@ -759,3 +759,8 @@ char guild_note[MAX_GUILDNOTES][80], guild_note_target[MAX_GUILDNOTES][80];
 char admin_note[MAX_ADMINNOTES][80];
 
 int global_luck = 0;
+/* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue
+   Dungeon masters will be paged if they're not AFK or if they have
+   'watch' as AFK reason! */
+bool watch_nr = 0;
+bool watch_morgoth = 0;

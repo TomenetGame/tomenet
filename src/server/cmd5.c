@@ -1513,7 +1513,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 
 	/* should it..? */
 	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
-	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) return;
+//(changed it to no_tele)	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) return;
 
 	if (!get_skill(p_ptr, SKILL_MIMIC))
 	{

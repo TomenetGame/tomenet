@@ -31,12 +31,12 @@
 #define DEATH_ITEM_SCATTER	0
 
 /* Chance of an item from the player's inventory getting lost (aka deleted)
-   when player dies, in percent [20]. - C. Blue */
-#define DEATH_PACK_ITEM_LOST	8
+   when player dies, in percent [20]. - C. Blue (limited to 4) */
+#define DEATH_PACK_ITEM_LOST	15
 
 /* Chance of an item from the player's equipment getting lost (aka deleted)
-   when player dies, in percent [10]. - C. Blue */
-#define DEATH_EQ_ITEM_LOST	8
+   when player dies, in percent [10]. - C. Blue (limited to 1) */
+#define DEATH_EQ_ITEM_LOST	10
 
 
 /* Level 50 limit or level 50..69 exp limit for non-kings: */
@@ -1098,6 +1098,7 @@ bool set_tim_wraith(int Ind, int v)
 
 	bool notice = FALSE;
 	cave_type **zcave;
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	if(!(zcave=getcave(&p_ptr->wpos))) return FALSE;
 
 	/* Hack -- Force good values */
@@ -1108,7 +1109,9 @@ bool set_tim_wraith(int Ind, int v)
 	{
 		if (!p_ptr->tim_wraith)
 		{
-			if(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK){
+			if ((zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) ||
+			    (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
+			{
 				msg_format(Ind, "You feel different for a moment");
 				v=0;
 			}
@@ -2511,7 +2514,7 @@ bool set_stun(int Ind, int v)
 
 
 	/* hack -- the admin wizard can not be stunned */
-	if (p_ptr->admin_wiz) return TRUE;
+//	if (p_ptr->admin_wiz) return TRUE;
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -3810,7 +3813,9 @@ void monster_death(int Ind, int m_idx)
 		/* Remember */
 		p_ptr->r_killed[m_ptr->r_idx]++;
 		if (i && i >= r_info[m_ptr->r_idx].level &&
-				p_ptr->r_killed[m_ptr->r_idx] == r_info[m_ptr->r_idx].level)
+		    ((p_ptr->r_killed[m_ptr->r_idx] == r_info[m_ptr->r_idx].level) ||
+		    /* for level 0 townspeople: */
+		    (p_ptr->r_killed[m_ptr->r_idx] == 1 && r_info[m_ptr->r_idx].level == 0)))
 		{
 			if (!(r_ptr->flags1 & RF1_UNIQUE))
 				msg_format(Ind, "\377UYou have learned the form of %s!",
@@ -4534,10 +4539,11 @@ void player_death(int Ind)
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char buf[1024], o_name[160];
-	int i, inventory_loss = 0, equipment_loss = 0;
+	int i, inventory_loss = 0, equipment_loss = 0, temp_sane;
 	//wilderness_type *wild;
 	bool hell=TRUE, secure = FALSE;
 	cptr titlebuf;
+	int inven_sort_map[INVEN_TOTAL];
 
 	/* prepare player's title */
 	if (p_ptr->lev < 60)
@@ -4630,6 +4636,20 @@ void player_death(int Ind)
 		return;
 	}
 
+#if 0 /*check this out, test it, etc.. <?>*/
+	/* By dropping the items on death, if this lowers sanity below 0,
+	   change the death to an insanity death. Otherwise he dies on
+	   being revived?! */
+	/* this part is too complicated since it had to be checked _after_
+	   the equipment is dropped, and then re-check for death!..
+	   So let's just fix the sanity later, after the eq was dropped =p */
+	if (p_ptr->csane < 0 && !streq(p_ptr->died_from, "Insanity")) {
+		strcpy(p_ptr->really_died_from, p_ptr->died_from);
+		strcpy(p_ptr->died_from, "Insanity");
+	}
+#else
+	temp_sane = p_ptr->csane; /* Sanity _before_ equipment was dropped */
+#endif
 
 	if((!(p_ptr->mode & MODE_NO_GHOST)) && !cfg.no_ghost){
 #if 0
@@ -4637,6 +4657,7 @@ void player_death(int Ind)
 		wild=&wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		dungeon=(p_ptr->wpos.wz > 0 ? wild->tower : wild->dungeon);
 #endif	// 0
+
 		if(!p_ptr->wpos.wz || !(d_ptr->flags2 & (DF2_HELL | DF2_IRON)))
 			hell=FALSE;
 	}
@@ -4805,6 +4826,7 @@ void player_death(int Ind)
 			invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
 			/* Change the mode of the gold accordingly */
 			p_ptr->inventory[INVEN_PACK].owner_mode = p_ptr->mode;
+			p_ptr->inventory[INVEN_PACK].owner = p_ptr->id; /* hack */
 	
 			/* Drop no more than 32000 gold */
 //			if (p_ptr->au > 32000) p_ptr->au = 32000;
@@ -4823,6 +4845,9 @@ void player_death(int Ind)
 			/* Setup the sorter */
 			ang_sort_comp = ang_sort_comp_value;
 			ang_sort_swap = ang_sort_swap_value;
+
+			/* Remember original position before sorting */
+	    		for (i = 0; i < INVEN_TOTAL; i++) p_ptr->inventory[i].inven_order = i;
 	
 			/* Sort the player's inventory according to value */
 			ang_sort(Ind, p_ptr->inventory, NULL, INVEN_TOTAL);
@@ -4831,6 +4856,7 @@ void player_death(int Ind)
 	    		for (i = 0; i < INVEN_TOTAL; i++)
 			{
 				bool away = FALSE, item_lost = FALSE;
+				int real_pos = p_ptr->inventory[i].inven_order;
 
 	    			o_ptr = &p_ptr->inventory[i];
 	
@@ -4858,15 +4884,15 @@ void player_death(int Ind)
 						continue;
 					}
 				}
-				
+
 #ifdef DEATH_PACK_ITEM_LOST
-				if ((i < INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST) && (inventory_loss < 4)) {
+				if ((real_pos < INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST) && (inventory_loss < 4)) {
 					inventory_loss++;
 					item_lost = TRUE;
 				}
 #endif
 #ifdef DEATH_EQ_ITEM_LOST
-				if ((i > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST) && (equipment_loss < 1)) {
+				if ((real_pos > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST) && (equipment_loss < 1)) {
 					equipment_loss++;
 					item_lost = TRUE;
 				}
@@ -4882,21 +4908,20 @@ void player_death(int Ind)
 					if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER) && !item_lost)
 						away = TRUE;
 					else
-#endif	// DEATH_ITEM_SCATTER
+#endif	/* DEATH_ITEM_SCATTER */
 					{
 						if (!item_lost) {
 							//* omg BUG! :) begone.. p_ptr->inventory[i].marked=3; /* LONG timeout */
 							/* try this instead: */
 							o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 
-							if (o_ptr->tval == TV_GOLD) o_ptr->owner_mode = p_ptr->mode;/* REDUNDANT */
-
 							/* Drop this one */
 				    			away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
 								<= 0 ? TRUE : FALSE;
 						} else {
 							object_desc(Ind, o_name, o_ptr, TRUE, 3);
-							s_printf("item_lost: %s (slot %d)\n", o_name, i);
+							if (object_value_real(0, o_ptr) >= 10000)
+							s_printf("item_lost: %s (slot %d)\n", o_name, real_pos);
 							if (true_artifact_p(o_ptr)) {
 								/* set the artifact as unfound */
 								a_info[o_ptr->name1].cur_num = 0;
@@ -5041,6 +5066,7 @@ void player_death(int Ind)
 		invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
 		/* Change the mode of the gold accordingly */
 		p_ptr->inventory[INVEN_PACK].owner_mode = p_ptr->mode;
+		p_ptr->inventory[INVEN_PACK].owner = p_ptr->id; /* hack */
 
 		/* Drop no more than 32000 gold */
 //		if (p_ptr->au > 32000) p_ptr->au = 32000;
@@ -5063,6 +5089,9 @@ void player_death(int Ind)
 		ang_sort_comp = ang_sort_comp_value;
 		ang_sort_swap = ang_sort_swap_value;
 
+		/* Remember original position before sorting */
+    		for (i = 0; i < INVEN_TOTAL; i++) p_ptr->inventory[i].inven_order = i;
+	
 		/* Sort the player's inventory according to value */
 		ang_sort(Ind, p_ptr->inventory, NULL, INVEN_TOTAL);
 
@@ -5070,6 +5099,7 @@ void player_death(int Ind)
 		for (i = 0; i < INVEN_TOTAL; i++)
 		{
 			bool away = FALSE, item_lost = FALSE;
+			int real_pos = p_ptr->inventory[i].inven_order;
 
 			o_ptr = &p_ptr->inventory[i];
 
@@ -5099,14 +5129,14 @@ void player_death(int Ind)
 			}
 
 #ifdef DEATH_PACK_ITEM_LOST
-			if ((i < INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST) && (inventory_loss < 4)) {
+			if ((real_pos < INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST) && (inventory_loss < 4)) {
 				inventory_loss++;
 				item_lost = TRUE;
 			}
 #endif
 
 #ifdef DEATH_EQ_ITEM_LOST
-			if ((i > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST) && (equipment_loss < 1)) {
+			if ((real_pos > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST) && (equipment_loss < 1)) {
 				item_lost = TRUE;
 				equipment_loss++;
 			}
@@ -5121,7 +5151,7 @@ void player_death(int Ind)
 				if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER) && !item_lost)
 					away = TRUE;
 				else
-#endif	// DEATH_ITEM_SCATTER
+#endif	/* DEATH_ITEM_SCATTER */
 				{
 					if (!item_lost) {
 						/* not again :) p_ptr->inventory[i].marked=3; /* LONG timeout */
@@ -5131,14 +5161,13 @@ void player_death(int Ind)
 						/* here we go: */
 						o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 #endif
-						if (o_ptr->tval == TV_GOLD) o_ptr->owner_mode = p_ptr->mode;/* REDUNDANT */
-
 						/* Drop this one */
 						away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
 							<= 0 ? TRUE : FALSE;
 					} else {
 						object_desc(Ind, o_name, o_ptr, TRUE, 3);
-						s_printf("item_lost: %s (slot %d)\n", o_name, i);
+						if (object_value_real(0, o_ptr) >= 10000)
+						s_printf("item_lost: %s (slot %d)\n", o_name, real_pos);
 						if (true_artifact_p(o_ptr)) {
 							/* set the artifact as unfound */
 							a_info[o_ptr->name1].cur_num = 0;
@@ -5247,7 +5276,11 @@ void player_death(int Ind)
 		if (p_ptr->cut) (void)set_cut(Ind, 0);
 		//	if (p_ptr->fruit_bat != -1) (void)set_food(Ind, PY_FOOD_MAX - 1);
 		/* if (p_ptr->food < PY_FOOD_FULL) */
-			(void)set_food(Ind, PY_FOOD_FULL - 1);
+		(void)set_food(Ind, PY_FOOD_FULL - 1);
+
+		/* Fix sanity _after_ equipment has been dropped,
+		   to avoid insanity auto-death at being resurrected */
+		if (p_ptr->csane < 0 && temp_sane >= 0) p_ptr->csane = 0;
 
 		/* Tell him */
 		msg_print(Ind, "\377RYou die.");
@@ -5524,7 +5557,7 @@ void kill_quest(int Ind){
 		int avg = ((r_info[quests[pos].type].level * 2) + (p_ptr->lev * 4)) / 2;
 		avg = avg > 100 ? 100 : avg;
 		msg_format(Ind, "\377yYou have won the %s quest!", r_name+r_info[quests[pos].type].name);
-		s_printf("%s won the %s quest\n", p_ptr->name, r_name+r_info[quests[pos].type].name);
+		s_printf("r_info quest: %s won the %s quest\n", p_ptr->name, r_name+r_info[quests[pos].type].name);
 		/*
 		   Temporary prize ... Too good perhaps...
 		   it will do for now though
@@ -5658,8 +5691,12 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
         int dun_level2 = getlevel(&p_ptr->wpos);
         dungeon_type *dt_ptr2 = getdungeon(&p_ptr->wpos);
-        int dun_type2 = dt_ptr2->type;
-        dungeon_info_type *d_ptr2 = &d_info[dun_type2];
+	int dun_type2;
+	dungeon_info_type *d_ptr2;
+	if (p_ptr->wpos.wz) {
+	        dun_type2 = dt_ptr2->type;
+	        d_ptr2 = &d_info[dun_type2];
+	}
 
 
 	/* Redraw (later) if needed */
@@ -5698,11 +5735,24 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		if (l_ptr)
 		{
 			int factor = 100;
+			if (l_ptr->flags1 & LF1_NO_MAGIC)     factor += 15;
 			if (l_ptr->flags1 & LF1_NOMAP)        factor += 15;
-			if (l_ptr->flags1 & LF1_NO_MAGIC)     factor += 10;
 			if (l_ptr->flags1 & LF1_NO_MAGIC_MAP) factor += 5;
 			if (l_ptr->flags1 & LF1_NO_DESTROY)   factor += 5;
 			if (l_ptr->flags1 & LF1_NO_GENO)      factor += 5;
+			tmp_exp = (tmp_exp * factor) / 100;
+		}
+
+		if (p_ptr->wpos.wz)
+		{
+			int factor = 100;
+			if (d_ptr2->flags1 & DF1_NO_UP)		factor += 5;
+			if (d_ptr2->flags2 & DF2_NO_RECALL_DOWN)factor += 5;
+			if (d_ptr2->flags1 & DF1_NO_RECALL)	factor += 10;
+			if (d_ptr2->flags1 & DF1_FORCE_DOWN)	factor += 10;
+			if (d_ptr2->flags2 & DF2_IRON)		factor += 15;
+			if (d_ptr2->flags2 & DF2_HELL)		factor += 10;
+			if (d_ptr2->flags2 & DF2_NO_DEATH)	factor -= 50;
 			tmp_exp = (tmp_exp * factor) / 100;
 		}
 
@@ -5752,13 +5802,14 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 		if (p_ptr->wpos.wz != 0)
 		{
+#if 0 //coded at d_ptr2 above
 			/* Monsters in the Training Tower give 50% exp (C. Blue) */
 //			if ((p_ptr->wpos.wx == 32) && (p_ptr->wpos.wy == 32) && (p_ptr->wpos.wz > 0))
 			if (dt_ptr2->type == 30)
 			{
 				tmp_exp /= 2;
 			}
-
+#endif
 			/* Monsters in the Nether Realm give extra-high exp,
 			   +2% per floor! (C. Blue) */
 			if (dt_ptr2->type == 6)

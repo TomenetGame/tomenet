@@ -336,16 +336,16 @@ static void sense_inventory(int Ind)
 	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) ok_magic = TRUE;
 	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_PRAY, 130))) ok_curse = TRUE;
 	if (!ok_combat && !ok_magic && !ok_archery) return;
-	heavy = (get_skill(p_ptr, SKILL_COMBAT) > 10) ? TRUE : FALSE;
-	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) > 10) ? TRUE : FALSE;
-	heavy_archery = (get_skill(p_ptr, SKILL_ARCHERY) > 10) ? TRUE : FALSE;
+	heavy = (get_skill(p_ptr, SKILL_COMBAT) >= 11) ? TRUE : FALSE;
+	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) >= 11) ? TRUE : FALSE;
+	heavy_archery = (get_skill(p_ptr, SKILL_ARCHERY) >= 11) ? TRUE : FALSE;
 
 	/* A powerful warrior can pseudo-id ranged weapons and ammo too,
 	   even if (s)he's not good at archery in general */
-	if (get_skill(p_ptr, SKILL_COMBAT) > 30)
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 31)
 	    heavy_archery = TRUE;
 	/* A very powerful warrior can even distinguish magic items */
-	if (get_skill(p_ptr, SKILL_COMBAT) > 40)
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 41)
 	    heavy_magic = TRUE;
 
 
@@ -2140,6 +2140,7 @@ static bool process_player_end_aux(int Ind)
 	object_type		*o_ptr;
 	int		i, j;
 	int		regen_amount, NumPlayers_old=NumPlayers;
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	/* Unbelievers "resist" magic */
 	//		int minus = (p_ptr->anti_magic)?3:1;
@@ -3317,7 +3318,10 @@ static bool process_player_end_aux(int Ind)
 	bypass_invuln = FALSE;
 
 	/* Evileye, please tell me if it's right */
-	if(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) p_ptr->tim_wraith=0;
+	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) p_ptr->tim_wraith=0;
+
+	/* No wraithform on NO_MAGIC levels - C. Blue */
+	if (p_ptr->wpos.wz && l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) p_ptr->tim_wraith=0;
 
 	return (TRUE);
 }
@@ -3898,13 +3902,18 @@ static void scan_objs(){
 						/* Artifacts and objects that were inscribed and dropped by
 						the dungeon master or by unique monsters on their death
 						stay n times as long as cfg.surface_item_removal specifies */
-/*						if(++o_ptr->marked==((artifact_p(o_ptr) ||
+#if 1
+						if((++o_ptr->marked==((artifact_p(o_ptr) ||
 						    (o_ptr->note && !o_ptr->owner))?
 						    cfg.surface_item_removal*6 : cfg.surface_item_removal))
-*/						if((++o_ptr->marked==((artifact_p(o_ptr) ||
+#else
+						if((++o_ptr->marked==((artifact_p(o_ptr) ||
 						    o_ptr->note)?
 						    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal))
-						    && (o_ptr->marked2 != ITEM_REMOVAL_NEVER)) /* and not dropped by dead player or generated on the floor? */
+#endif
+						/* and not dropped by dead player or generated on the floor,
+						   (new!:) and not dropped by the dungeon master */
+						    && (o_ptr->marked2 != ITEM_REMOVAL_NEVER))
 						{
 							delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
 							dcnt++;

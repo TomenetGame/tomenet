@@ -157,9 +157,9 @@ function status(name)
     msg_print(Ind, "Exp:  "..players(p).exp.."   MEx:  "..players(p).max_exp.."   E2A:  "..(player_exp[players(p).lev] / 100 * players(p).expfact))
     if players(p).body_monster > 0 then
 --	msg_print(Ind, "Body: "..players(p).body_monster.." ("..r_info[players(p).body_monster].name..")")
-	msg_print(Ind, "Body: "..players(p).body_monster.."  -  Lifes: "..players(p).lives)
+	msg_print(Ind, "Body: "..players(p).body_monster.."  -  Lifes: "..players(p).lives.."  -  Houses: "..players(p).houses_owned)
     else
-	msg_print(Ind, "Normal Body".."  -  Lifes: "..players(p).lives)
+	msg_print(Ind, "Normal Body".."  -  Lifes: "..players(p).lives.."  -  Houses: "..players(p).houses_owned)
     end
     msg_print(Ind, " ".." ")
 end
@@ -214,4 +214,23 @@ function tki(i)
 	players(i).total_winner = 1
 	msg_print(Ind, "Player "..i.." is now a king")
     end
+end
+
+-- Display owner mode of an item
+function gownmode(name, i)
+    local p
+    p = ind(name)
+    msg_print(Ind, "owner_mode for item on inventory slot "..i.." of player "..name.." is "..players(p).inventory[i].owner_mode)
+end
+
+-- Examine an item (*ID*)
+function xitem(name, i)
+    lua_examine_item(Ind, name, i - 1)
+end
+
+-- Recalculate an item's level requirements
+function det_lev_req(name, i)
+    local p
+    p = ind(name)
+    lua_determine_level_req(p, i)
 end

@@ -15,7 +15,7 @@
 
 #include "angband.h"
 
-#define MAX_VAMPIRIC_DRAIN 35	/* was 50 */
+#define MAX_VAMPIRIC_DRAIN 25	/* was 50 */
 #define NON_WEAPON_VAMPIRIC_CHANCE 67 /* chance to drain if VAMPIRIC is given be a non-weapon item */
 
 /*
@@ -1469,17 +1469,15 @@ void carry(int Ind, int pickup, int confirm)
 
 		if ((cfg.charmode_trading_restrictions > 0) &&
 		    (o_ptr->owner) &&
-		    (o_ptr->owner_mode & MODE_IMMORTAL) && !(p_ptr->mode & MODE_IMMORTAL) &&
-		    !is_admin(p_ptr)) {
+		    (o_ptr->owner_mode & MODE_IMMORTAL) && !(p_ptr->mode & MODE_IMMORTAL)) {
 			msg_print(Ind, "You cannot take money of everlasting players.");
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 		if ((cfg.charmode_trading_restrictions > 1) &&
 		    (o_ptr->owner) &&
-		    !(o_ptr->owner_mode & MODE_IMMORTAL) && (p_ptr->mode & MODE_IMMORTAL) &&
-		    !is_admin(p_ptr)) {
+		    !(o_ptr->owner_mode & MODE_IMMORTAL) && (p_ptr->mode & MODE_IMMORTAL)) {
 			msg_print(Ind, "You cannot take money of non-everlasting players.");
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 
 		/* Message */
@@ -1547,17 +1545,47 @@ void carry(int Ind, int pickup, int confirm)
 
 		if ((cfg.charmode_trading_restrictions > 0) &&
 		    (o_ptr->owner) &&
-		    (o_ptr->owner_mode & MODE_IMMORTAL) && !(p_ptr->mode & MODE_IMMORTAL) &&
-		    !is_admin(p_ptr)) {
-			msg_print(Ind, "You cannot take items of everlasting players.");
-			return;
+		    (o_ptr->owner_mode & MODE_IMMORTAL) && !(p_ptr->mode & MODE_IMMORTAL)) {
+			/* Make an exception for WoR scrolls in case of rescue missions (become 100% off tho) */
+			if (o_ptr->tval == TV_SCROLL && o_ptr->sval== SV_SCROLL_WORD_OF_RECALL) {
+				o_ptr->number = 1;
+				o_ptr->discount = 100;
+				if (o_ptr->level <= p_ptr->lev) {
+//					o_ptr->owner = p_ptr->id;
+					o_ptr->owner_mode = p_ptr->mode;
+				}
+			/* Game pieces are free to be used */
+			} else if ((o_ptr->tval == TV_SKELETON) && (o_ptr->sval >= 9)) {
+				if (o_ptr->level <= p_ptr->lev) {
+//					o_ptr->owner = p_ptr->id;
+					o_ptr->owner_mode = p_ptr->mode;
+				}
+			} else {
+				msg_print(Ind, "You cannot take items of everlasting players.");
+				if (!is_admin(p_ptr)) return;
+			}
 		}
 		if ((cfg.charmode_trading_restrictions > 1) &&
 		    (o_ptr->owner) &&
-		    !(o_ptr->owner_mode & MODE_IMMORTAL) && (p_ptr->mode & MODE_IMMORTAL) &&
-		    !is_admin(p_ptr)) {
-			msg_print(Ind, "You cannot take items of non-everlasting players.");
-			return;
+		    !(o_ptr->owner_mode & MODE_IMMORTAL) && (p_ptr->mode & MODE_IMMORTAL)) {
+			/* Make an exception for WoR scrolls in case of rescue missions (become 100% off tho) */
+			if (o_ptr->tval == TV_SCROLL && o_ptr->sval== SV_SCROLL_WORD_OF_RECALL) {
+				o_ptr->number = 1;
+				o_ptr->discount = 100;
+				if (o_ptr->level <= p_ptr->lev) {
+//					o_ptr->owner = p_ptr->id;
+					o_ptr->owner_mode = p_ptr->mode;
+				}
+			/* Game pieces are free to be used */
+			} else if ((o_ptr->tval == TV_SKELETON) && (o_ptr->sval >= 9)) {
+				if (o_ptr->level <= p_ptr->lev) {
+//					o_ptr->owner = p_ptr->id;
+					o_ptr->owner_mode = p_ptr->mode;
+				}
+			} else {
+				msg_print(Ind, "You cannot take items of non-everlasting players.");
+				if (!is_admin(p_ptr)) return;
+			}
 		}
 
 		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))
@@ -3064,7 +3092,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 				if (drain_result > 0) /* Did we really hurt it? */
 				{
-					drain_heal = damroll(2,(drain_result / 8));/* was 4,../6 */
+					drain_heal = randint(2) + damroll(2,(drain_result / 16));/* was 4,../6 -- was 8 for 50 max_drain */
 
 					if (drain_left)
 					{
@@ -3524,6 +3552,7 @@ void do_prob_travel(int Ind, int dir)
   bool do_move = TRUE;
   struct worldpos *wpos=&p_ptr->wpos;
   cave_type **zcave;
+  dun_level *l_ptr = getfloor(&p_ptr->wpos);
   if(!(zcave=getcave(wpos))) return;
 
   /* Paranoia */
@@ -3532,6 +3561,9 @@ void do_prob_travel(int Ind, int dir)
 
   /* No probability travel in sticky vaults */
   if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+
+  /* Neither on NO_MAGIC levels */
+  if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 
   x += ddx[dir];
   y += ddy[dir];
@@ -4491,7 +4523,18 @@ int see_wall(int Ind, int dir, int y, int x)
 
 	/* Illegal grids are blank */
 	/* XXX this should be blocked by permawalls, hopefully. */
-//	if (!in_bounds2(wpos, y, x)) return (FALSE);
+	/* Had a crash occuring in cave_floor_bold check, y = 1, x = -1, 32,32,-500
+	   So I'm trying an ugly hack - C. Blue */
+	if (!in_bounds2(wpos, y, x)) {
+		/* Hack be sure the player is inbounds */
+		if (p_ptr->px < 1) p_ptr->px = 1;
+		if (p_ptr->py < 1) p_ptr->py = 1;
+		if (p_ptr->px >= MAX_WID) p_ptr->px = MAX_WID - 1;
+		if (p_ptr->py >= MAX_HGT) p_ptr->py = MAX_HGT - 1;
+		/* Update the location's player index */
+		zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
+		return (FALSE);
+	}
 
 	/* Must actually block motion */
 	if (cave_floor_bold(zcave, y, x)) return (FALSE);

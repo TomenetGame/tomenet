@@ -43,7 +43,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   2
-#define SF_VERSION_PATCH   2
+#define SF_VERSION_PATCH   3
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -5275,7 +5275,11 @@ extern int PlayerUID;
 #define STORE_HOME      7
 #define STORE_BOOK      8
 #define STORE_PET       9
-#define STORE_SECRETBM	60
+#define STORE_JEWELX	42
+#define STORE_SHOESX	45
+#define STORE_BLACKX	48
+#define STORE_MINING	59
+#define STORE_BLACKS	60
 #define STORE_BTSUPPLY	61
 #define STORE_HERBALIST 62
 

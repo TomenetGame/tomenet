@@ -15,8 +15,8 @@
 
 #include "angband.h"
 
-#define MAX_VAMPIRIC_DRAIN_RANGED 50
-#define NON_WEAPON_VAMPIRIC_CHANCE_RANGED 50 /* chance to drain if VAMPIRIC is given be a non-weapon/non-ammo item */
+#define MAX_VAMPIRIC_DRAIN_RANGED 25
+#define NON_WEAPON_VAMPIRIC_CHANCE_RANGED 33 /* chance to drain if VAMPIRIC is given be a non-weapon/non-ammo item */
 
 /* chance of walking in a random direction when confused and trying to climb,
  * in percent. [50]
@@ -97,12 +97,14 @@ void do_cmd_go_up(int Ind)
 			msg_print(Ind, "I see no up staircase here.");
 			return;
 		}
-		else if (p_ptr->max_dlv + 5 <= getlevel(&twpos))
+#if 0	// no need for this anymore - C. Blue
+		else if ((p_ptr->max_dlv + 5 <= getlevel(&twpos)) && (twpos.wz != 0)) /* player may return to town though! */
 		{
 			/* anti Ghost-dive */
 			msg_print(Ind, "A mysterious force prevents you from going up.");
 			return;
 		}
+#endif
 	}
 	if(wpos->wz==0 && !(wild_info[wpos->wy][wpos->wx].flags&WILD_F_UP))
 	{
@@ -131,7 +133,7 @@ void do_cmd_go_up(int Ind)
 		}
 	} else {
 		if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
-		    !p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL)){
+		    !p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN))){
 			msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
 			if (!is_admin(p_ptr)) return;
 		}
@@ -356,12 +358,14 @@ void do_cmd_go_down(int Ind)
 			msg_print(Ind, "I see no down staircase here.");
 			return;
 		}
-		else if (p_ptr->max_dlv + 5 <= getlevel(&twpos))
+#if 0	// no need for this anymore - C. Blue
+		else if ((p_ptr->max_dlv + 5 <= getlevel(&twpos)) && (twpos.wz != 0)) /* player may return to town though! */
 		{
 			/* anti Ghost-dive */
 			msg_print(Ind, "A mysterious force prevents you from going down.");
 			return;
 		}
+#endif
 	}
 	if (wpos->wz==0 && !(wild_info[wpos->wy][wpos->wx].flags&WILD_F_DOWN))
 	{
@@ -387,7 +391,7 @@ void do_cmd_go_down(int Ind)
 #if 1
 	if (tower) {
 		if((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE) &&
-		    (!p_ptr->ghost) && (wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL)) {
+		    (!p_ptr->ghost) && (wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_NO_RECALL | DF1_NO_UP))) {
 			msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
 			if (!is_admin(p_ptr)) return;
 		}
@@ -3095,7 +3099,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Get extra "power" from "extra might" */
 //	if (p_ptr->xtra_might) tmul++;
-	tmul += p_ptr->xtra_might;
+	if (!boomerang) tmul += p_ptr->xtra_might;
 
 	/* Base range */
 	tdis = 10 + 5 * tmul;
@@ -3511,7 +3515,7 @@ void do_cmd_fire(int Ind, int dir)
 						
 							if (drain_result > 0) /* Did we really hurt it? */
 							{
-								drain_heal = damroll(2,(drain_result / 8));/* was 4,../6 */
+								drain_heal = randint(2) + damroll(2,(drain_result / 16));/* was 4,../6 -- was /8 for 50 max_drain */
 
 								if (drain_left) {
 									if (drain_heal < drain_left) {

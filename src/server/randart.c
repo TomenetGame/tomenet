@@ -518,7 +518,7 @@ static void add_ability (artifact_type *a_ptr)
 				else if (r < 25)
 				{
 					a_ptr->dd += 1 + rand_int (2) + rand_int (2);
-					if (a_ptr->dd > 9) a_ptr->dd = 9;
+//					if (a_ptr->dd > 9) a_ptr->dd = 9;
 				}
 				else if (r < 27)
 				{ 
@@ -1572,7 +1572,27 @@ artifact_type *randart_make(object_type *o_ptr)
 	   too lazy to find out which ones need it and which ones don't. */
 	if (a_ptr->pval) a_ptr->flags3 |= TR3_HIDE_TYPE;
 
+
         /* Fix some limits */
+
+	/* Never have more than +11 bonus */
+	if (a_ptr->pval > 11) a_ptr->pval = 11;
+
+	/* Don't exaggerate at weapon dice */
+//	while (((a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?(75-15):(40-10)))
+	while (((a_ptr->dd) * (a_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?(75-15):(40-10)))
+		&& (a_ptr->dd > 1))
+		a_ptr->dd -= 1; /* No overpowered randart */
+	/* fix lower limit (paranoia) */
+	if (a_ptr->dd < 1) a_ptr->dd = 1;
+	/* Don't increase it too much, like if it were a 'slaying' weapon */
+	if (k_ptr->dd >= 7) {
+		if (a_ptr->dd > k_ptr->dd + 3) a_ptr->dd = k_ptr->dd + 3;
+	} else {
+		if (a_ptr->dd > k_ptr->dd + 2) a_ptr->dd = k_ptr->dd + 2;
+	}
+	if (a_ptr->ds > k_ptr->ds + 2) a_ptr->ds = k_ptr->ds + 2;
+
 	/* Mage staves never have NO_MAGIC but their pval always adds to MANA */
 	if (a_ptr->tval == TV_MSTAFF) {
 		a_ptr->flags3 &= ~TR3_NO_MAGIC;
@@ -1598,10 +1618,24 @@ artifact_type *randart_make(object_type *o_ptr)
 	/* No more than +4 IV on helms and crowns */
 	if ((a_ptr->tval == TV_HELM || a_ptr->tval == TV_CROWN) &&
 	    (a_ptr->flags1 & TR1_INFRA) && (a_ptr->pval > 4)) a_ptr->pval = 4;
-	/* If an item increases SPEED _and_ CRIT by over 7
+
+	/* If an item increases all three, SPEED, CRIT, MANA,
 	   then reduce pval to 2/3 to balance */
-	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT) &&
-	    (a_ptr->pval > 7)) a_ptr->pval = (a_ptr->pval * 2) / 3;
+	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT) && (a_ptr->flags5 & TR1_MANA))
+	{
+		a_ptr->pval /= 2;
+		if (!a_ptr->pval) a_ptr->pval = 1;
+	}
+	/* If an item increases two of SPEED, CRIT, MANA by over 7
+	   then reduce pval to 2/3 to balance */
+	else if ((((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT)) ||
+	    ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR1_MANA)) ||
+	    ((a_ptr->flags1 & TR1_MANA) && (a_ptr->flags5 & TR5_CRIT))))
+	{
+		a_ptr->pval = (a_ptr->pval * 2) / 3;
+		if (!a_ptr->pval) a_ptr->pval = 1;
+	}
+
 	/* No more than +6 stealth */
 	if ((a_ptr->flags1 & TR1_STEALTH) && (a_ptr->pval > 5)) a_ptr->pval = 5;/* was 6, but I think that's too much Stealth in one item?.. */
 	/* No more than +5 luck */
@@ -1998,6 +2032,12 @@ try_an_other_ego:
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
         }
+	/* Back Hack :( */
+	if ((o_ptr->name2 == EGO_VAMPIRIC || o_ptr->name2b == EGO_VAMPIRIC) &&
+	    o_ptr->pval >= 0 && o_ptr->bpval >= 0) {
+		if (o_ptr->bpval > 0) o_ptr->bpval = o_ptr->bpval > 2 ? -2 : 0 - o_ptr->bpval;
+		else o_ptr->pval = o_ptr->pval > 2 ? -2 : 0 - o_ptr->pval;
+	}
 	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 3))
 	{
 		a_ptr->pval = 3;
