@@ -2613,7 +2613,7 @@ F:ESP_ANIMAL | SEE_INVIS |
 
 # The Pint of Ale of Dwarves :)
 
-N:216:of Dwarves
+N:216:of the Dwarves
 I:80:38:500
 P:0:0d0:20:25:0
 W:10:40:3:5000
