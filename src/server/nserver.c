@@ -539,7 +539,7 @@ int Setup_net_server(void)
 	}
 	if(metapid==0){
 		char buf[80];
-		char *cmd="/usr/local/src/pm/evilmeta";
+		char *cmd="./evilmeta";
 		char *args[]={cmd, NULL};
 
 		getwd(buf);
