@@ -25,9 +25,11 @@
 
 # include <winsock.h>
 /* Hack - my errno doesn't include EWOULDBLOCK * - GP */
+#ifndef DUMB_WIN
 # define EWOULDBLOCK WSAEWOULDBLOCK
 /* this next one redefines va_start and va_end, but it is necessary -GP*/
 # include <varargs.h>
+#endif
 #else
 # include <unistd.h>
 # include <stdlib.h>

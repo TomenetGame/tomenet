@@ -18,7 +18,9 @@
 #define CLIENT
 #include "angband.h"
 #include "netclient.h"
+#ifndef DUMB_WIN
 #include <unistd.h>
+#endif
 
 int			ticks = 0; // Keeps track of time in 100ms "ticks"
 static bool		request_redraw;

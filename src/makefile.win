@@ -138,10 +138,10 @@ CC = c:\code\cygnus\h-i586~1\bin\gcc
 # including "USE_GETCH" and "USE_CURS_SET".  Note that "config.h" will
 # attempt to "guess" at many of these flags based on your system.
 #
-CFLAGS = -Wall -O2 -D"USE_WIN" -DWIN32 -D"USE_GRAPHICS"
+CFLAGS = -Wall -O2 -DUSE_WIN -DWIN32 -DUSE_GRAPHICS -DDUMB_WIN
 LIBS = -luser32 -lwsock32 -lgdi32 -lcomdlg32
 
-SCFLAGS = -Wall -O2 -D"USE_WIN"
+SCFLAGS = -Wall -O2 -DUSE_WIN -DDUMB_WIN
 SLIBS = -luser32 -lwsock32
 
 

@@ -196,7 +196,7 @@
 /*
  * Include the ??? files
  */
-#include <mmsystem.h>
+//#include <mmsystem.h>
 #include <commdlg.h>
 
 /*
@@ -1466,8 +1466,8 @@ static errr Term_xtra_win_react(void)
 	if (use_graphics && !old_use_graphics)
 	{
 		/* Hack -- set the player picture */
-		r_info[0].x_attr = 0x87;
-		r_info[0].x_char = 0x80 | (10 * p_ptr->pclass + p_ptr->prace);
+//		r_info[0].x_attr = 0x87;
+//		r_info[0].x_char = 0x80 | (10 * p_ptr->pclass + p_ptr->prace);
 	}
 
 	/* Remember */
@@ -2178,12 +2178,12 @@ static void setup_menus(void)
 #ifdef MNU_SUPPORT
 	/* Save player */
 	EnableMenuItem(hm, IDM_FILE_SAVE,
- 	               MF_BYCOMMAND | MF_ENABLED | MF_GRAYED));
+                       MF_BYCOMMAND | MF_ENABLED | MF_GRAYED);
  
 
 	/* Exit with save */
 	EnableMenuItem(hm, IDM_FILE_EXIT,
- 	               MF_BYCOMMAND | MF_ENABLED | MF_GRAYED));
+                       MF_BYCOMMAND | MF_ENABLED | MF_GRAYED);
  
 
 	/* Window font options */
@@ -2483,7 +2483,7 @@ static void process_menus(WORD wCmd)
 			Term_activate(term_screen);
 
 			/* Reset the visuals */
-			reset_visuals();
+//                        reset_visuals();
 
 			/* Toggle "graphics" */
 			use_graphics = !use_graphics;
@@ -2561,26 +2561,6 @@ static void process_menus(WORD wCmd)
 			break;
 		}
 #endif
-
-		case IDM_HELP_GENERAL:
-		{
-			char buf[1024];
-			char tmp[1024];
-			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "angband.hlp");
-			sprintf(buf, "winhelp.exe %s", tmp);
-			WinExec(buf, SW_NORMAL);
-			break;
-		}
-
-		case IDM_HELP_SPOILERS:
-		{
-			char buf[1024];
-			char tmp[1024];
-			path_build(tmp, 1024, ANGBAND_DIR_XTRA_HELP, "spoilers.hlp");
-			sprintf(buf, "winhelp.exe %s", tmp);
-			WinExec(buf, SW_NORMAL);
-			break;
-		}
 	}
 #endif	/* MNU_SUPPORT */
 }

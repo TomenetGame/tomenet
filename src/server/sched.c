@@ -25,6 +25,9 @@
 
 #include "angband.h"
 #include <signal.h>
+#ifdef DUMB_WIN
+#include <sys/time.h>
+#endif
 
 /*char sched_version[] = VERSION;*/
 
