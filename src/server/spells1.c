@@ -496,7 +496,7 @@ void teleport_to_player(int Ind, int m_idx)
 			/* ...nor onto the Pattern */
 			if ((cave[ny][nx].feat >= FEAT_PATTERN_START) &&
 			    (cave[ny][nx].feat <= FEAT_PATTERN_XTRA2)) continue;
-#endif	// 0
+#endif	/* 0 */
 
 			/* No teleporting into vaults and such */
 			/* if (cave[ny][nx].info & (CAVE_ICKY)) continue; */
@@ -916,33 +916,6 @@ void teleport_player_level(int Ind)
 	check_Morgoth();
 }
 
-
-
-
-
-
-/*
- * Get a legal "multi-hued" color for drawing "spells"
- */
-#if 0
-static byte mh_attr(void)
-{
-	switch (randint(9))
-	{
-		case 1: return (TERM_RED);
-		case 2: return (TERM_GREEN);
-		case 3: return (TERM_BLUE);
-		case 4: return (TERM_YELLOW);
-		case 5: return (TERM_ORANGE);
-		case 6: return (TERM_VIOLET);
-		case 7: return (TERM_L_RED);
-		case 8: return (TERM_L_GREEN);
-		case 9: return (TERM_L_BLUE);
-	}
-
-	return (TERM_WHITE);
-}
-#else
 static byte mh_attr(int max)
 {
 	switch (randint(max))
@@ -966,9 +939,6 @@ static byte mh_attr(int max)
 
 	return (TERM_WHITE);
 }
-#endif	// 0
-
-
 
 /*
  * Return a color to use for the bolt/ball spells
@@ -979,43 +949,6 @@ byte spell_color(int type)
 	if (!use_color) return (TERM_WHITE);
 
 	/* Analyze */
-#if 0
-	switch (type)
-	{
-		case GF_MISSILE:	return (TERM_MULTI);
-		case GF_ACID:		return (TERM_SLATE);
-		case GF_ELEC:		return (TERM_BLUE);
-		case GF_FIRE:		return (TERM_RED);
-		case GF_COLD:		return (TERM_WHITE);
-		case GF_POIS:		return (TERM_GREEN);
-		case GF_HOLY_ORB:	return (TERM_L_DARK);
-		case GF_HOLY_FIRE:      return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
-		case GF_HELL_FIRE:      return (randint(6)==1?TERM_RED:TERM_L_DARK);
-		case GF_MANA:		return (TERM_L_DARK);
-		case GF_ARROW:		return (TERM_WHITE);
-		case GF_WATER:		return (TERM_SLATE);
-		case GF_NETHER:		return (TERM_L_GREEN);
-		case GF_CHAOS:		return (TERM_MULTI);
-		case GF_DISENCHANT:	return (TERM_VIOLET);
-		case GF_NEXUS:		return (TERM_L_RED);
-		case GF_CONFUSION:	return (TERM_L_UMBER);
-		case GF_SOUND:		return (TERM_YELLOW);
-		case GF_SHARDS:		return (TERM_UMBER);
-		case GF_FORCE:		return (TERM_UMBER);
-		case GF_INERTIA:	return (TERM_L_WHITE);
-		case GF_GRAVITY:	return (TERM_L_WHITE);
-		case GF_TIME:		return (TERM_L_BLUE);
-		case GF_LITE_WEAK:	return (TERM_ORANGE);
-		case GF_LITE:		return (TERM_ORANGE);
-		case GF_DARK_WEAK:	return (TERM_L_DARK);
-		case GF_DARK:		return (TERM_L_DARK);
-		case GF_PLASMA:		return (TERM_RED);
-		case GF_METEOR:		return (TERM_RED);
-		case GF_ICE:		return (TERM_WHITE);
-			case GF_NUKE:           return (TERM_MULTI);
-			case GF_DISINTEGRATE:   return (0x05);
-	}
-#else	// 0
 	switch (type)	/* colourful ToME ones :) */
 	{
 		case GF_MISSILE:        return (TERM_SLATE);
@@ -1052,22 +985,11 @@ byte spell_color(int type)
 		case GF_METEOR:         return (randint(3)==1?TERM_RED:TERM_UMBER);
 		case GF_ICE:            return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);
 		case GF_ROCKET:         return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
-#if 0
-		case GF_DEATH:
-		case GF_DEATH_RAY:
-								return (TERM_L_DARK);
-#endif	// 0
 		case GF_NUKE:           return (mh_attr(2));
 		case GF_DISINTEGRATE:   return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_L_UMBER));
 		case GF_PSI:
-#if 0
-		case GF_PSI_DRAIN:
-		case GF_TELEKINESIS:
-		case GF_DOMINATION:
-#endif	// 0
-								return (randint(3)!=1?TERM_L_BLUE:TERM_WHITE);
+			return (randint(3)!=1?TERM_L_BLUE:TERM_WHITE);
 	}
-#endif	// 0
 
 	/* Standard "color" */
 	return (TERM_WHITE);
@@ -1257,13 +1179,6 @@ void take_hit(int Ind, int damage, cptr hit_from)
 
 			return;
 		}
-		else{
-			/* Only mention death if not BB! */
-#if 0
-			msg_print(Ind, "\377RYou die.");
-			msg_print(Ind, NULL);
-#endif	// 0
-		}
 
 		/* Note cause of death */
 		/* To preserve the players original (pre-ghost) cause
@@ -1286,19 +1201,6 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		/* Dead */
 		return;
 	}
-
-#if 0	// moved to client
-	/* Hack -- hitpoint warning */
-	if (warning && (p_ptr->chp <= warning))
-	{
-		/* Hack -- bell on first notice */
-		/*if (alert_hitpoint && (old_chp > warning)) bell();*/
-
-		/* Message */
-		msg_print(Ind, "*** LOW HITPOINT WARNING! ***");
-		msg_print(Ind, NULL);
-	}
-#endif	// 0
 }
 
 
@@ -1388,21 +1290,6 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 		msg_print(Ind, "\377yYou feel insanity creep into your mind..");
 		msg_print(Ind, NULL);
 	}
-
-#if 0
-	/* Sanity warning */
-	if (p_ptr->csane < warning)
-	{
-		/* Hack -- bell on first notice */
-		if (alert_hitpoint && (old_csane > warning)) bell();
-
-		sound(SOUND_WARN);		
-
-		/* Message */
-		msg_print(Ind, TERM_RED, "*** LOW SANITY WARNING! ***");
-		msg_print(Ind, NULL);
-	}
-#endif	// 0
 }
 
 /* Decrease player's exp. This is another copy of the function above.
@@ -2197,12 +2084,6 @@ bool dec_stat(int Ind, int stat, int amount, int mode)
 			if (amount > 20) loss++;
 			loss++;
 			cur -= loss;
-#if 0
-			if (amount > 90) cur--;
-			if (amount > 50) cur--;
-			if (amount > 20) cur--;
-			cur--;
-#endif	// 0
 		}
 
 		/* Handle "high" values */
@@ -2817,31 +2698,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					everyone_lite_spot(wpos, y, x);
 				}
 			}
-#if 0
-			/* Destroy visible traps */
-			if ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-			    (c_ptr->feat <= FEAT_TRAP_TAIL))
-			{
-				/* Hack -- special message */
-				if (!quiet && (*w_ptr & CAVE_MARK))
-				{
-					msg_print(Ind, "There is a bright flash of light!");
-					obvious = TRUE;
-				}
-
-				/* Destroy the trap */
-				c_ptr->feat = FEAT_FLOOR;
-
-				if (!quiet)
-				{
-					/* Notice */
-					note_spot(Ind, y, x);
-
-					/* Redraw */
-					everyone_lite_spot(wpos, y, x);
-				}
-			}
-#endif	// 0
 
 			/* Secret / Locked doors are found and unlocked */
 			else if ((c_ptr->feat == FEAT_SECRET) ||
@@ -6678,19 +6534,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			if (fuzzy) msg_print(Ind, "You feel less constant!");
 			else msg_format(Ind, "%^s turns you into a wraith!", killer);
-#if 0 /* removed stacking */
-			if (!p_ptr->tim_wraith)
-			{
-				set_tim_wraith(Ind, dam);
-			}
-			else
-			{
-				(void)set_tim_wraith(Ind, p_ptr->tim_wraith + randint(dam) / 2 + 1);
-			}
-#else
-				set_tim_wraith(Ind, dam);
-#endif
-			//set_tim_wraith(Ind, p_ptr->tim_wraith + dam);
+			set_tim_wraith(Ind, dam);
 			break;
                 }
 
