@@ -827,6 +827,14 @@ Change list for PernMangband
 16/03/2002 (evileye)
 - Litter removal added as part of a general object management
   system.
+
+17/03/2002 (evileye)
+- House scanner checks player and party houses for suspect items.
+- Dungeon master can no longer be private messaged.
+- msg_print_near does not report the dungeon master's actions.
+- /kick now allows the user to specify a ban time (default 5 minutes)
+- Major bug fixed in /clv fixed.
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)

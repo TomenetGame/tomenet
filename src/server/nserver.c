@@ -133,6 +133,8 @@ char *showtime(void)
 
 void add_banlist(int Ind, int time){
 	struct ip_ban *ptr;
+	if(!time) return;
+
 	ptr=malloc(sizeof(struct ip_ban));
 	if(ptr==(struct ip_ban*)NULL) return; /* unimportant failure */
 

@@ -1531,6 +1531,8 @@ void msg_print_near(int Ind, cptr msg)
 	struct worldpos *wpos;
 	wpos=&p_ptr->wpos;
 
+	if(p_ptr->admin_dm) return;
+
 	y = p_ptr->py;
 	x = p_ptr->px;
 
@@ -2544,8 +2546,7 @@ static void do_slash_cmd(int Ind, cptr message)
 					{
 						/* Success maybe :) */
 						msg_format(Ind, "Kicking %s out...", Players[j]->name);
-						add_banlist(j, 5);
-
+						add_banlist(j, (tk>1 ? atoi(token[2]) : 5));
 						/* Kick him */
 						Destroy_connection(Players[j]->conn, "kicked out");
 					}
@@ -3137,6 +3138,8 @@ int name_lookup_loose(int Ind, cptr name, bool party)
 
 			/* Skip if disconnected */
 			if (q_ptr->conn == NOT_CONNECTED) continue;
+
+			if (q_ptr->admin_dm) continue;
 
 			/* Check name */
 			if (!strncasecmp(q_ptr->name, name, len))
