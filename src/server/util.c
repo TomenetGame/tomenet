@@ -2591,6 +2591,9 @@ static void do_slash_cmd(int Ind, cptr message)
 				msg_format(Ind, "\377rItems/monsters/traps on %s are cleared.", wpos_format(&wp));
 				return;
 			}
+			else if(prefix(message, "/cp")){
+				party_check(Ind);
+			}
 			else if (prefix(message, "/geno-level") ||
 					prefix(message, "/geno"))
 			{

@@ -135,6 +135,27 @@ int guild_create(int Ind, cptr name){
 	guilds[index].num=1;
 }
 
+/* 
+ * New party check function - to be timed 
+ *
+ */
+int party_check(int Ind){
+	int i, id;
+	for (i = 1; i < MAX_PARTIES; i++)
+	{
+		if (parties[i].num != 0){
+			if(!(id=lookup_player_id(parties[i].owner))){
+				msg_format(Ind, "Lost party %s (%s)\n", parties[i].name, parties[i].owner);
+			}
+			else{
+				if((lookup_player_party(id)!=id)){
+					msg_format(Ind, "Disowned party %s (%s)\n", parties[i].name, parties[i].owner);
+				}
+			}
+		}
+	}
+}
+
 /*
  * Create a new party, owned by "Ind", and called
  * "name".
