@@ -2179,7 +2179,7 @@ static void process_player_end(int Ind)
 				    p_ptr->word_recall++;
 				}
 			}
-
+#if 0
 			/* Rework needed! */
 			/* Activate the recall */
       			if (!p_ptr->word_recall)
@@ -2310,6 +2310,7 @@ static void process_player_end(int Ind)
 				/* He'll be safe for 2 turns */
 				set_invuln_short(Ind, 2);
 			}
+#endif
 
 #if 0 /* sorry - evileye */
 			/* Activate the recall */
