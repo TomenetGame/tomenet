@@ -4590,8 +4590,8 @@ static void process_monster(int Ind, int m_idx)
 		}
 
 		/* Monster destroys walls (and doors) */
-		else if (r_ptr->flags2 & RF2_KILL_WALL || (!rand_int(3000) &&
-				!(r_ptr->flags1 & RF1_NEVER_MOVE)))
+		else if (r_ptr->flags2 & RF2_KILL_WALL || (!rand_int(9000) &&
+				!(r_ptr->flags1 & RF1_NEVER_MOVE && !r_ptr->flags2 & RF2_EMPTY_MIND && !r_ptr->flags2 & RF2_STUPID)))
 		{
 			/* Eat through walls/doors/rubble */
 			do_move = TRUE;
