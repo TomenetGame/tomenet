@@ -154,7 +154,8 @@ struct server_opts
 	bool winners_find_randarts; /* Total winners cannot find true arts anymore */
 	s16b arts_level_req;	/* Do artifacts have normal level reqs, or level 0? */
 	bool surface_summoning;	/* May players summon in towns / on the worldmap? Very cheezy! */
-	s16b clone_summoning; /* how many summons are not yet clones, from a summoner? */
+	s16b clone_summoning;	/* how many summons are not yet clones, from a summoner? */
+	s16b henc_strictness;	/* how easily monster adjust their exp to their highest player encounter */
 };
 
 extern s32b turn;

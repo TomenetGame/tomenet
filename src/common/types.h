@@ -443,6 +443,8 @@ struct monster_blow
 	byte effect;
 	byte d_dice;
 	byte d_side;
+	byte org_d_dice;
+	byte org_d_side;
 };
 
 
@@ -875,9 +877,11 @@ struct monster_type
         monster_blow blow[4];           /* Up to four blows per round */
         byte speed;                     /* Monster "speed" - better s16b? */
         s16b ac;                        /* Armour Class */
+        s16b org_ac;                /* Armour Class */
 
         s32b hp;                        /* Current Hit points */
         s32b maxhp;                     /* Max Hit points */
+        s32b org_maxhp;                     /* Max Hit points */
 
 	s16b csleep;		/* Inactive counter */
 
@@ -937,6 +941,13 @@ struct monster_type
 
 	u16b ai_state;		/* What special behaviour this monster takes now? */
 	s16b last_target;	/* For C. Blue's anti-cheeze AI in melee2.c */
+
+	s16b highest_encounter;	/* My final anti-cheeze strike I hope ;) - C. Blue
+				   This keeps track of the highest player which the monster
+				   has 'encountered' (might offer various definitions of this
+				   by different #defines) and adjusts its own experience value
+				   towards that player, so low players who get powerful help
+				   will get less exp out of it. */
 };
 
 typedef struct monster_ego monster_ego;
@@ -2372,6 +2383,10 @@ struct player_type
 	
 	/* C. Blue - was the last shutdown a panic save? */
 	bool panic;
+
+	/* Anti-cheeze */
+	s16b supported_by;		/* level of the highest supporter */
+	s16b support_timer;		/* safe maximum possible duration of the support spells */
 };
 
 /* For Monk martial arts */
@@ -2581,6 +2596,7 @@ struct server_opts
 	s16b arts_level_req;
 	bool surface_summoning;
 	s16b clone_summoning;
+	s16b henc_strictness;
 };
 
 /* Client option struct */

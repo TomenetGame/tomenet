@@ -2194,7 +2194,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	if (c_ptr->o_idx)
 	{
 		/* Memorized object */
-		if (p_ptr->obj_vis[c_ptr->o_idx]) return (TRUE);
+		if (p_ptr->obj_vis[c_ptr->o_idx] || p_ptr->admin_dm) return (TRUE); /* finally, poor dm - C. Blue */
 	}
 
 	/* Traps */

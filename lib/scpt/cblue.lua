@@ -146,7 +146,7 @@ end
 function status(name)
     local p
     p = ind(name)
-    msg_print(Ind, "\255UStatus for "..name.." (ID "..p..")")
+    msg_print(Ind, "\255UStatus for "..name.." (Index "..p..")")
     msg_print(Ind, "HP :  "..players(p).chp.." / "..players(p).mhp.."    SP :  "..players(p).csp.." / "..players(p).msp.."    San:  "..players(p).csane.." / "..players(p).msane)
     msg_print(Ind, "AC :  "..players(p).ac.."  +AC: "..players(p).to_a.."  Total AC: "..(players(p).ac+players(p).to_a))
     msg_print(Ind, "Spd:  "..players(p).pspeed.."  MDLev: "..players(p).max_dlv)
@@ -168,7 +168,7 @@ end
 function resist(name)
     local p
     p = ind(name)
-    msg_print(Ind, "\255UResistances for "..name.." (ID "..p..")")
+    msg_print(Ind, "\255UResistances for "..name.." (Index "..p..")")
     msg_print(Ind, "  \255bElec: "..players(p).resist_elec.."  \255wFrost: "..players(p).resist_cold.."  \255sAcid: "..players(p).resist_acid.."  \255rFire: "..players(p).resist_fire.."  \255gPoison: "..players(p).resist_pois.."  \255BWater: "..players(p).resist_water)
     msg_print(Ind, "  \255bELEC: "..players(p).immune_elec.."  \255wFROST: "..players(p).immune_cold.."  \255sACID: "..players(p).immune_acid.."  \255rFIRE: "..players(p).immune_fire.."  \255gPOISON: "..players(p).immune_poison.."  \255BWATER: "..players(p).immune_water)
 --.."\255W-  \255gNETHER: "..players(p).immune_neth)

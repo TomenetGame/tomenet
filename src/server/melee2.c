@@ -2572,7 +2572,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			disturb(Ind, 1, 0);
 			if (!seen)
 			{
-				msg_print(Ind, "You feel something focusing on your mind.");
+				msg_print(Ind, "You feel something focussing on your mind.");
 			}
 			else
 			{
@@ -2609,7 +2609,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			disturb(Ind, 1, 0);
 			if (!seen)
 			{
-				msg_print(Ind, "You feel something focusing on your mind.");
+				msg_print(Ind, "You feel something focussing on your mind.");
 			}
 			else
 			{
@@ -4497,7 +4497,7 @@ static bool monster_can_pickup(monster_race *r_ptr, object_type *o_ptr)
 	u32b f1, f2, f3, f4, f5, esp;
 	u32b flg3 = 0L;
 
-	if (artifact_p(o_ptr)) return (FALSE);
+	if (artifact_p(o_ptr) && (rand_int(150) > r_ptr->level)) return (FALSE);
 
 	/* Extract some flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -4516,7 +4516,7 @@ static bool monster_can_pickup(monster_race *r_ptr, object_type *o_ptr)
 	if (f1 & TR1_SLAY_EVIL) flg3 |= RF3_EVIL;
 
 	/* The object cannot be picked up by the monster */
-	if (r_ptr->flags3 & flg3) return (FALSE);
+	if ((r_ptr->flags3 & flg3) && (rand_int(150) > r_ptr->level)) return (FALSE);
 
 	/* Ok */
 	return (TRUE);
@@ -5768,7 +5768,7 @@ static void process_monster(int Ind, int m_idx)
 			m_ptr->monfear = 0;
 
 			/* Visual note */
-			msg_print_near_monster(m_idx, "recovers its courage.");
+			msg_print_near_monster(m_idx, "recovers the courage.");
 #if 0
 			if (p_ptr->mon_vis[m_idx])
 			{
@@ -7261,6 +7261,17 @@ void process_monsters(void)
 			/* Compute distance */ 
 			j = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx); 
 
+		        /* Change monster's highest player encounter - mode 3: monster is awake and player is within its area of awareness */
+			if (cfg.henc_strictness == 3 && !m_ptr->csleep) {
+		                r_ptr = race_inf(m_ptr);
+				if (j <= r_ptr->aaf)
+				{
+					if (m_ptr->wpos.wx != 32 || m_ptr->wpos.wy != 32 || m_ptr->wpos.wz != 0) { /* not in Bree, because of Halloween :) */
+		    				if (m_ptr->highest_encounter < p_ptr->lev) m_ptr->highest_encounter = p_ptr->lev;
+					}
+				}
+			}
+
 			/* Skip if the monster can't see the player */ 
 //			if (player_invis(pl, m_ptr, j)) continue;	/* moved */
 
@@ -7276,8 +7287,8 @@ void process_monsters(void)
 			if (((blos >= new_los) && (j > dis_to_closest)) || (blos > new_los)) 
 				continue; 
 
-			/* Glaur. Skip if same distance and stronger and same visibility*/ 
-			if ((j == dis_to_closest) && (p_ptr->chp > lowhp) && (blos == new_los)) 
+			/* Glaur. Skip if same distance and stronger and same visibility*/
+			if ((j == dis_to_closest) && (p_ptr->chp > lowhp) && (blos == new_los))
 				continue; 
 			
 			/* Skip if player wears amulet of invincibility - C. Blue */
@@ -7289,7 +7300,7 @@ void process_monsters(void)
 			blos = new_los; 
 			dis_to_closest = j; 
 			closest = pl; 
-			lowhp = p_ptr->chp; 
+			lowhp = p_ptr->chp;
 		} 
 
 
@@ -7301,7 +7312,10 @@ void process_monsters(void)
 		m_ptr->closest_player = closest;
 
 		/* Hack -- Require proximity */
-		if (m_ptr->cdis >= 100) continue;
+// TAKEN OUT EXPERIMENTALLY - C. BLUE
+//		if (m_ptr->cdis >= 100) continue;
+// alternatively try this, if needed at all:
+//		if (m_ptr->cdis >= (r_ptr->aaf > 100 ? r_ptr->aaf : 100)) continue;
 
 		p_ptr = Players[closest];
 
@@ -7358,6 +7372,10 @@ void process_monsters(void)
 		/* Do nothing */
 		if (!test) continue;
 
+	        /* Change monster's highest player encounter (mode 1+ : monster actively targets a player) */
+		if (!m_ptr->csleep && (m_ptr->wpos.wx != 32 || m_ptr->wpos.wy != 32 || m_ptr->wpos.wz != 0)) { /* not in Bree, because of Halloween :) */
+	    		if (m_ptr->highest_encounter < p_ptr->lev) m_ptr->highest_encounter = p_ptr->lev;
+		}
 
 		/* Process the monster */
 		if (!m_ptr->special)

@@ -108,14 +108,14 @@ HSANITY = add_spell
 					player.csane = (player.msane * 6 / 12)
 				end
 		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 6, player.spell_project, " waves over your eyes, murmuring some words.")
+		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 6 * 2, player.spell_project, " waves over your eyes, murmuring some words.")
 	            		end
 	                elseif get_level(Ind, HSANITY, 50) >= 10 then
 				if player.csane < (player.msane * 3 / 12) then
 					player.csane = (player.msane * 3 / 12)
 				end
 		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 3, player.spell_project, " waves over your eyes, murmuring some words.")
+		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 3 * 2, player.spell_project, " waves over your eyes, murmuring some words.")
 	            		end
 			else
 		                if player.spell_project > 0 then
@@ -144,7 +144,7 @@ HRESURRECT = add_spell
 	["fail"] =      70,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
-			fire_ball(Ind, GF_RESURRECT_PLAYER, 0, get_level(Ind, HRESURRECT, 48), 1, " resurrects you!")
+			fire_ball(Ind, GF_RESURRECT_PLAYER, 0, get_level(Ind, HRESURRECT, 46*2), 1, " resurrects you!")
 		        end,
 	["info"] =      function()
 		        return "exp -"..get_exp_loss().."%"
@@ -165,11 +165,11 @@ HDELFEAR = add_spell
 	["fail"] =	10,
 	["stat"] =	A_WIS,
 	["spell"] =	function()
+	                if player.spell_project > 0 then
+	                        fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, HDELFEAR, 50 * 2), player.spell_project, " speaks some faithful words and you lose your fear.")
+            		end
 			set_afraid(Ind, 0)
 			player.res_fear_temp = get_level(Ind, HDELFEAR, 50)
-	                if player.spell_project > 0 then
-	                        fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, HDELFEAR, 50), player.spell_project, " speaks some faithful words and you lose your fear.")
-            		end
 			end,
 	["info"] =	function()
 			return "dur "..get_level(Ind, HDELFEAR, 50)

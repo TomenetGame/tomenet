@@ -3822,6 +3822,11 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
 			dam = 300;
 			rad = 2;
 			break;		
+		case SV_ROD_HAVOC:
+			typ = GF_CHAOS;
+			dam = 500;
+			rad = 5;
+			break;		
 		default:
 			return (FALSE);
 	}
@@ -3870,23 +3875,29 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 		case SV_STAFF_DETECT_ITEM:	
 		case SV_STAFF_MAPPING:
 		case SV_STAFF_PROBING:
-		case SV_STAFF_REMOVE_CURSE:	
 		case SV_STAFF_THE_MAGI:
 			return (FALSE);		
 			
+		case SV_STAFF_REMOVE_CURSE:
+			typ = GF_DISP_EVIL;
+			rad = 2;
+			dam = 30;
+			break;
 		case SV_STAFF_DARKNESS:
 //			unlite_room(y, x);
 			typ = GF_DARK_WEAK;
 			dam = 10;
-			rad = 3;
+			rad = 4;
 			break;
 		case SV_STAFF_SLOWNESS:
 			typ = GF_OLD_SLOW;
 			dam = damroll(5, 10);
+			rad = 2;
 			break;		
 		case SV_STAFF_HASTE_MONSTERS:
 			typ = GF_OLD_SPEED;
 			dam = damroll(5, 10);
+			rad = 2;
 			rad = 5;	/* hack */
 			break;
 		case SV_STAFF_SUMMONING:
@@ -3950,7 +3961,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 		        break;
 		case SV_STAFF_HOLINESS:
 		        typ = GF_DISP_EVIL;
-		        dam = 120;
+		        dam = 180;
 		        rad = 5;
 		        break;
 #if 0
@@ -3996,8 +4007,8 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 {
 	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
 	worldpos wpos = m_ptr->wpos;
-//	monster_race    *r_ptr = race_inf(m_ptr);
 	int dam = 0, typ = 0;
 	int rad = 0;
         int y = m_ptr->fy;
@@ -4018,8 +4029,6 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 		case SV_SCROLL_MAPPING:			
 		case SV_SCROLL_DETECT_GOLD:
 		case SV_SCROLL_DETECT_ITEM:
-		case SV_SCROLL_REMOVE_CURSE:
-		case SV_SCROLL_STAR_REMOVE_CURSE:
 		case SV_SCROLL_ENCHANT_ARMOR:	
 		case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
 		case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:	
@@ -4095,7 +4104,6 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 			break;
 		case SV_SCROLL_GENOCIDE:
 		{
-			monster_race    *r_ptr = race_inf(m_ptr);
 			genocide_aux(0, &wpos, r_ptr->d_char);
 			/* although there's no point in a multiple genocide trap... */
 //			return (!(r_ptr->flags1 & RF1_UNIQUE));
@@ -4112,6 +4120,34 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 		case SV_SCROLL_STAR_ACQUIREMENT:
                         acquirement(&wpos, y, x, randint(2) + 1, TRUE, !Players[who]->total_winner);
 			return (FALSE);
+		case SV_SCROLL_REMOVE_CURSE:
+			typ = GF_DISP_EVIL;
+			rad = 5;
+			dam = 30;
+			break;
+		case SV_SCROLL_STAR_REMOVE_CURSE:
+			typ = GF_DISP_EVIL;
+			rad = 5;
+			dam = 200;
+			break;
+		case SV_SCROLL_LIFE:
+			if (r_ptr->d_char == 'G') delete_monster(&wpos, y, x, TRUE);
+			return (TRUE);
+		case SV_SCROLL_FIRE:
+			typ = GF_FIRE;
+			rad = 3;
+			dam = 250;
+			break;
+		case SV_SCROLL_ICE:
+			typ = GF_ICE;
+			rad = 3;
+			dam = 200;
+			break;
+		case SV_SCROLL_CHAOS:
+			typ = GF_CHAOS;
+			rad = 3;
+			dam = 300;
+			break;
 		default:
 			return (FALSE);
 	}
@@ -4242,16 +4278,16 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 			break;
 		case SV_WAND_ANNIHILATION:
 			typ = GF_OLD_DRAIN;
-			dam = 600;
+			dam = 300;
 			break;
 		case SV_WAND_DRAGON_FIRE:
 			typ = GF_FIRE;
-			dam = 500;
+			dam = 200;
 			rad = 3;
 			break;
 		case SV_WAND_DRAGON_COLD:
 			typ = GF_COLD;
-			dam = 400;
+			dam = 150;
 			rad = 3;
 			break;
 		case SV_WAND_DRAGON_BREATH:
@@ -4263,12 +4299,23 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 				case 4: typ = GF_COLD; break;
 				case 5: typ = GF_POIS; break;
 			}
-			dam = 450; /* hack */
+			dam = 175; /* hack */
 			rad = 3;
 			break;
 		case SV_WAND_TELEPORT_TO:
 			typ = GF_TELE_TO;
 			break;
+		case SV_WAND_ROCKETS:
+			typ = GF_ROCKET;
+			dam = 500;
+			rad = 3;
+			break;
+		case SV_WAND_WALL_CREATION:
+			/* create a stone prison same as the istari spell - C. Blue */
+			project(PROJECTOR_TRAP, 1, &m_ptr->wpos, y, x, 1, GF_STONE_WALL,
+				PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM, "");
+			return (FALSE);
+
 		default:
 			return (FALSE);
 	}
@@ -4290,7 +4337,8 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 {
 	monster_type *m_ptr = &m_list[m_idx];
-        int dam = 0, typ = 0, rad = 1;
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        int dam = 0, typ = 0, rad = 1, i;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
         int sval = o_ptr->sval;
@@ -4306,13 +4354,6 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 			case SV_POTION_WATER:
 			case SV_POTION_APPLE_JUICE:
 			case SV_POTION_SLIME_MOLD:
-			case SV_POTION_SALT_WATER:
-			case SV_POTION_DEC_STR:
-			case SV_POTION_DEC_INT:	
-			case SV_POTION_DEC_WIS:
-			case SV_POTION_DEC_DEX:
-			case SV_POTION_DEC_CON:
-			case SV_POTION_DEC_CHR:
 			case SV_POTION_INFRAVISION:
 			case SV_POTION_DETECT_INVIS:
 			case SV_POTION_SLOW_POISON:
@@ -4322,103 +4363,181 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 			case SV_POTION_RESTORE_MANA:
 			case SV_POTION_STAR_RESTORE_MANA:
 			case SV_POTION_RESTORE_EXP:
-			case SV_POTION_RES_STR:
-			case SV_POTION_RES_INT:
-			case SV_POTION_RES_WIS:
-			case SV_POTION_RES_DEX:
-			case SV_POTION_RES_CON:
-			case SV_POTION_RES_CHR:
-			case SV_POTION_INC_STR:
-			case SV_POTION_INC_INT:
-			case SV_POTION_INC_WIS:
-			case SV_POTION_INC_DEX:
-			case SV_POTION_INC_CON:
-			case SV_POTION_INC_CHR:
-			case SV_POTION_AUGMENTATION:
-			case SV_POTION_RUINATION:	/* ??? */		
 			case SV_POTION_ENLIGHTENMENT:
 			case SV_POTION_STAR_ENLIGHTENMENT:
 			case SV_POTION_SELF_KNOWLEDGE:
 				return (FALSE);
 
-			case SV_POTION_EXPERIENCE:
-				if (m_ptr->level < MONSTER_LEVEL_MAX)
-				{
-					m_ptr->exp = MONSTER_EXP(m_ptr->level + 1);
-					monster_check_experience(m_idx, FALSE);
+			case SV_POTION_SALT_WATER:
+/*				if (!r_ptr->flags3 & RF3_NO_STUN) {
+					m_ptr->stunned += 5;
+					msg_print_near_monster(m_idx, "appears stunned");
 				}
+				return (FALSE);*/
+				typ = GF_BLIND;
+				dam = damroll(3, 2);
+				break;
+			case SV_POTION_DEC_STR:
+				typ = GF_DEC_STR;
+				dam = 1; /*dummmy*/
+				break;
+			case SV_POTION_DEC_INT:	
+//				m_ptr->aaf--;
+			case SV_POTION_DEC_WIS:
 				return (FALSE);
+			case SV_POTION_DEC_DEX:
+				typ = GF_DEC_DEX;
+				dam = 1; /*dummmy*/
+				break;
+			case SV_POTION_DEC_CON:
+				typ = GF_DEC_CON;
+				dam = 1; /*dummmy*/
+				break;
+			case SV_POTION_DEC_CHR:
+				return (FALSE);
+			case SV_POTION_RES_STR:
+				typ = GF_RES_STR;
+				dam = 1; /*dummmy*/
+				break;
+			case SV_POTION_RES_INT:
+			case SV_POTION_RES_WIS:
+				return (FALSE);
+			case SV_POTION_RES_DEX:
+				typ = GF_RES_DEX;
+				dam = 1; /*dummmy*/
+				break;
+			case SV_POTION_RES_CON:
+				typ = GF_RES_CON;
+				dam = 1; /*dummmy*/
+				break;
+			case SV_POTION_RES_CHR:
+				return (FALSE);
+			case SV_POTION_INC_STR:
+				typ = GF_INC_STR;
+				dam = 1; /*dummmy*/
+				break;
+			case SV_POTION_INC_INT:
+			case SV_POTION_INC_WIS:
+				return (FALSE);
+			case SV_POTION_INC_DEX:
+				typ = GF_INC_DEX;
+				dam = 1; /*dummmy*/
+				break;
+			case SV_POTION_INC_CON:
+				typ = GF_INC_CON;
+				dam = 1; /*dummmy*/
+				break;
+			case SV_POTION_INC_CHR:
+				return (FALSE);
+			case SV_POTION_AUGMENTATION:
+				typ = GF_AUGMENTATION;
+				dam = 1; /*dummmy*/
+				break;
+			case SV_POTION_RUINATION:	/* ??? */		
+				typ = GF_RUINATION;
+				dam = 1; /*dummmy*/
+				break;
+			case SV_POTION_EXPERIENCE:
+				typ = GF_EXP;
+				dam = 1; /* level */
+				break;
 			case SV_POTION_SLOWNESS:
+				rad = 2;
 				typ = GF_OLD_SLOW;
 				dam = damroll(4, 6);
 				break;
 			case SV_POTION_POISON:
 				typ = GF_POIS;
 				dam = damroll(8, 6);
-				rad = 2;
+				rad = 3;
 				break;
 			case SV_POTION_CONFUSION:
+				rad = 3;
 				typ = GF_CONFUSION;
-				dam = damroll(4, 6);
+				dam = damroll(5, 4);
 				break;
 			case SV_POTION_BLINDNESS:
-				typ = GF_DARK;
+				rad = 3;
+//				typ = GF_DARK;
+				typ = GF_BLIND;
 				dam = 10;
 				break;
 			case SV_POTION_SLEEP:
+				rad = 3;
 				typ = GF_OLD_SLEEP;
 				dam = damroll (4, 6);
 				break;
 			case SV_POTION_LOSE_MEMORIES:
+				rad = 2;
 				typ = GF_OLD_CONF;
-				dam = damroll(10, 10);
+				dam = damroll(10, 5);
 				break;			
 			case SV_POTION_DETONATIONS:
-				typ = GF_DISINTEGRATE;
+//				typ = GF_DISINTEGRATE;
+				typ = GF_ROCKET;
 				dam = damroll(40, 20);
 				rad = 3;
 				break;
 			case SV_POTION_DEATH:
+				rad = 3;
 				typ = GF_NETHER;
 				dam = damroll(100, 20);
 				break;
 			case SV_POTION_BOLDNESS:
+/*				if (m_ptr->monfear) msg_print_near_monster(m_idx, "recovers the courage");
 				m_ptr->monfear = 0;
-				return (FALSE);
+				return (FALSE);*/
+				rad = 4;
+				typ = GF_REMFEAR;
+				dam = 1; /*dummy*/
+				break;
 			case SV_POTION_SPEED:
+				rad = 2;
 				typ = GF_OLD_SPEED;
 				dam = damroll(5, 10);
 				break;
 			case SV_POTION_HEROISM:
 			case SV_POTION_BESERK_STRENGTH:
+/*				if (m_ptr->monfear) msg_print_near_monster(m_idx, "recovers the courage");
 				m_ptr->monfear = 0;
-				typ = GF_OLD_HEAL;
+				typ = GF_OLD_HEAL;*/
+				typ = GF_HERO_MONSTER;
 				dam = damroll(2, 10);
+				rad = 2;
 				break;
 			case SV_POTION_CURE_LIGHT:
 				typ = GF_OLD_HEAL;
 				dam = damroll(3, 4);
+				rad = 2;
 				break;
 			case SV_POTION_CURE_SERIOUS:
 				typ = GF_OLD_HEAL;
 				dam = damroll(4, 6);
+				rad = 2;
 				break;
 			case SV_POTION_CURE_CRITICAL:
 				typ = GF_OLD_HEAL;
 				dam = damroll(6, 8);
+				rad = 2;
+				break;
+			case SV_POTION_CURING:
+				typ = GF_OLD_HEAL;
+				dam = 300;
+				rad = 3;
 				break;
 			case SV_POTION_HEALING:
 				typ = GF_OLD_HEAL;
 				dam = 300;
+				rad = 3;
 				break;
 			case SV_POTION_STAR_HEALING:
 				typ = GF_OLD_HEAL;
 				dam = 700;
+				rad = 4;
 				break;
 			case SV_POTION_LIFE:
 				{
-					monster_race *r_ptr = &r_info[m_ptr->r_idx];
-					if (r_ptr->flags3 & RF3_UNDEAD)
+/*					if (r_ptr->flags3 & RF3_UNDEAD)
 					{
 						typ = GF_HOLY_FIRE;
 						dam = damroll(20, 20);
@@ -4427,7 +4546,10 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 					{	
 						typ = GF_OLD_HEAL;
 						dam = 5000;
-					}
+					}*/
+					typ = GF_LIFEHEAL;
+					dam = damroll(50, 20); /* Holy Fire damage vs undead */
+					rad = 3;
 					break;
 				}				
 			default:
@@ -4743,7 +4865,7 @@ bool mon_hit_trap(int m_idx)
 							monster_desc(who, m_name, m_idx, 0);
 
 							/* Print a message */
-							msg_format(who, "%^s is hit by a missile.", m_name);           		
+							msg_format(who, "%^s is hit by a missile.", m_name);
 						}
 #endif	// 0
 						msg_print_near_monster(m_idx, "is hit by a missile.");
@@ -4776,7 +4898,7 @@ bool mon_hit_trap(int m_idx)
 							{
 								/* Generate treasure, etc */
 								//			if (!quiet) monster_death(Ind, c_ptr->m_idx);
-								/* if treasure is generated, change TRUE to FALSE in below delete_monster_idx !
+								/* if treasure is generated, change TRUE to FALSE in below delete_monster_idx ! */
 								/* Delete the monster */
 								delete_monster_idx(c_ptr->m_idx,TRUE);
 
@@ -4823,7 +4945,8 @@ bool mon_hit_trap(int m_idx)
 								if (fear) 
 								{
 									/* Message */
-									msg_format(who, "%^s flees in terror!", m_name);
+//									msg_format(who, "%^s flees in terror!", m_name);
+									msg_print_near_monster(m_idx, "flees in terror!");
 								}
 							}
 						}

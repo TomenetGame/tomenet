@@ -1006,17 +1006,32 @@ void do_cmd_check_server_settings(int Ind)
 			break;
 	}
 
-	fprintf(fff,"\n");
-
 	/* level preservation */
 	if (cfg.no_ghost)
 		fprintf(fff, "You disappear the moment you die, without becoming a ghost.\n");
 	if (cfg.lifes)
 		fprintf(fff, "Players with ghosts can be resurrected up to %d times until their soul\n will escape and their bodies will be permanently destroyed.\n", cfg.lifes);
 	if (cfg.houses_per_player)
-		fprintf(fff, "Players may own up to level/%d houses at once.\n", cfg.houses_per_player);
+		fprintf(fff, "Players may own up to level/%d houses (caps at level 50) at once.\n", cfg.houses_per_player);
 	else
 		fprintf(fff, "Players may own as many houses at once as they like.\n");	    
+
+	fprintf(fff,"\n");
+
+	if (cfg.henc_strictness) fprintf(fff, "Monster exp for non-kings is affected in the following way:\n");
+	switch (cfg.henc_strictness) {
+	case 4:
+		fprintf(fff, "Monster exp value adjusts towards highest player on the same dungeon level.\n");
+	case 3:
+		fprintf(fff, "Non-sleeping monsters adjust to highest player within their awareness area.\n");
+	case 2:
+		fprintf(fff, "Level of a player casting support spells on you affects exp for %d turns.\n", (cfg.spell_stack_limit ? cfg.spell_stack_limit : 200));
+	case 1:
+		fprintf(fff, "Monsters' exp value is affected by highest attacking or targetted player.\n");
+		break;
+	}
+
+	fprintf(fff,"\n");
 
 	fprintf(fff, "The floor will be erased about %d~%d seconds after you left.\n", cfg.anti_scum, cfg.anti_scum + 10);
 	if ((k=cfg.level_unstatic_chance))
@@ -1043,13 +1058,13 @@ void do_cmd_check_server_settings(int Ind)
 
 	/* arts & winners */
 	if (cfg.anti_arts_hoard)
-		fprintf(fff, "True-Artifacts will disappear if you drop/leave them.\n");
+		fprintf(fff, "True artifacts will disappear if you drop/leave them.\n");
 	else if (cfg.anti_arts_house)
-		fprintf(fff, "True-Artifacts will disappear if you drop/leave them inside a house.\n");
+		fprintf(fff, "True artifacts will disappear if you drop/leave them inside a house.\n");
 	if (cfg.anti_arts_pickup)
-		fprintf(fff, "True-Artifacts cannot be transferred to a character of too low a level.\n");
+		fprintf(fff, "Artifacts cannot be transferred to a character of too low a level.\n");
 	if (cfg.anti_arts_send)
-		fprintf(fff, "True-Artifacts cannot be sent via telekinesis.\n");
+		fprintf(fff, "Artifacts cannot be sent via telekinesis.\n");
 
 	if ((k=cfg.retire_timer) > 0)
 		fprintf(fff, "The winner will automatically retire after %d minutes.\n", k);
@@ -1331,7 +1346,7 @@ void do_cmd_show_houses(int Ind)
 			else fprintf(fff, "  Dead's. ID: %d", dna->creator);
 #endif	// 0
 			name = lookup_player_name(houses[i].dna->owner);
-			if (name) fprintf(fff, "  Owner:%s", name);
+			if (name) fprintf(fff, "  ID: %ld  Owner: %s", dna->owner, name);
 			else fprintf(fff, "  ID: %ld", dna->owner);
 		}
 
@@ -1360,7 +1375,7 @@ void do_cmd_show_houses(int Ind)
 				name = parties[dna->owner].name;
 				if(strlen(name))
 				{
-					fprintf(fff, "  as %s", name);
+					fprintf(fff, "  as party %s", name);
 				}
 #if 0	// nothig so far.
 				else
@@ -1374,21 +1389,21 @@ void do_cmd_show_houses(int Ind)
 				name = class_info[dna->owner].title;
 				if(strlen(name))
 				{
-					fprintf(fff, "  as %s", name);
+					fprintf(fff, "  as class %s", name);
 				}
 				break;
 			case OT_RACE:
 				name = race_info[dna->owner].title;
 				if(strlen(name))
 				{
-					fprintf(fff, "  as %s", name);
+					fprintf(fff, "  as race %s", name);
 				}
 				break;
 			case OT_GUILD:
 				name = guilds[dna->owner].name;
 				if(strlen(name))
 				{
-					fprintf(fff, "  as %s", name);
+					fprintf(fff, "  as guild %s", name);
 				}
 				break;
 		}

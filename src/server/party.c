@@ -2404,6 +2404,33 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 }
 
 /*
+ * Verify a player's data against the hash table. - C. Blue
+ */
+void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, byte party, byte guild, u16b quest, time_t laston)
+{
+	hash_entry *ptr = lookup_player(id);
+
+	/* Check for consistency */
+#if 0 /* old stuff < 4.2.2 */
+	ptr->name = strdup(name);
+	ptr->laston = laston;
+	ptr->id = id;
+	ptr->account = account;
+	ptr->level = level;
+	ptr->party = party;
+	ptr->guild = guild;
+	ptr->quest = quest;
+	ptr->race = race;
+	ptr->class = class;
+#endif
+	/* For savegame conversion 4.2.0 -> 4.2.2: */
+	if (ptr->mode != mode) {
+		s_printf("hash_entry: fixing mode of %s.\n", ptr->name);
+		ptr->mode = mode;
+	}
+}
+
+/*
  * Delete an entry from the table, by ID.
  */
 void delete_player_id(int id)

@@ -8888,6 +8888,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	}
 #endif
 
+	/* Check for half void jump gates, resulting from partial vaults
+	   which contain void gates and were cut at the level border - C. Blue */
+/*..	*/
+
+
 	/* Create secret dungeon shop entrances (never on Morgoth's depth) -C. Blue */
 	/* Nether Realm has an overriding shop creation routing. */
 	if (!nether_level) {

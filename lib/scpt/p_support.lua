@@ -20,7 +20,7 @@ HSANCTUARY = add_spell
 	["stat"] =      A_WIS,
         ["spell"] = 	function()
                 if get_level(Ind, HSANCTUARY, 50) < 20 then
-			project(0 - Ind, get_level(Ind, HSANCTUARY, 10), player.wpos, player.py, player.px, 3 + get_level(Ind, HSANCTUARY, 30), GF_OLD_SLEEP, 64+16+8, "")
+			project(0 - Ind, get_level(Ind, HSANCTUARY, 10), player.wpos, player.py, player.px, (3 + get_level(Ind, HSANCTUARY, 30)) * 2, GF_OLD_SLEEP, 64+16+8, "")
 		else
 			project_los(Ind, GF_OLD_SLEEP, 3 + get_level(Ind, HSANCTUARY, 25))
 		end
@@ -171,7 +171,7 @@ HZEAL = add_spell
 		p = get_zeal_power()
 		set_zeal(Ind, p, d)
 		if player.spell_project > 0 then
-			fire_ball(Ind, GF_ZEAL_PLAYER, 0, p, player.spell_project, "")
+			fire_ball(Ind, GF_ZEAL_PLAYER, 0, (p * 4) / 3, player.spell_project, "")
 		end
 	end,
 	["info"] =      function()

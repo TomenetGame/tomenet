@@ -184,8 +184,9 @@ server_opts cfg =
 	TRUE,		// total winners may not find true arts anymore? (winners_find_randarts)
 	1,		// arts_level_req - Only SPECIAL_GENE arts from DROP_CHOSEN have 0.
 	FALSE,		// surface_summoning is disabled by default to prevent BAD cheeze.
-	3,	/* clone_summoning - how many times may a monster summon before the summmons become clones
+	3,		/* clone_summoning - how many times may a monster summon before the summmons become clones
 				    (and summon -if they can do that- more clones themselves).*/
+	3,		/* henc_strictness - how easily monsters adjust their exp to their highest player encounter */
 };
 
 struct ip_ban *banlist=NULL;

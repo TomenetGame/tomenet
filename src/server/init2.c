@@ -3170,6 +3170,10 @@ static void set_server_option(char * option, char * value)
 	{
 		cfg.clone_summoning = atoi(value);
 	}
+	else if (!strcmp(option,"HENC_STRICTNESS"))
+	{
+		cfg.henc_strictness = atoi(value);
+	}
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }
 

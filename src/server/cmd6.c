@@ -6780,8 +6780,8 @@ void do_cmd_activate(int Ind, int item)
 						}
 
 						/* Make the ring last only over a certain period of time >:) - C. Blue */
-						o_ptr->timeout = 10000 + get_skill_scale(p_ptr, SKILL_DEVICE, 7000) +
-								rand_int(10001 - get_skill_scale(p_ptr, SKILL_DEVICE, 7000));
+						o_ptr->timeout = 3000 + get_skill_scale(p_ptr, SKILL_DEVICE, 2000) +
+								rand_int(3001 - get_skill_scale(p_ptr, SKILL_DEVICE, 2000));
 
 #if 0
 						/* Reduce player's kill count by the monster level */
@@ -7529,6 +7529,9 @@ bool unmagic(int Ind)
 			) ident = TRUE;
 
 	if (p_ptr->word_recall) ident |= set_recall_timer(Ind, 0);
+
+/*	p_ptr->supported_by = 0;
+	p_ptr->support_timer = 0; -- taken out because it circumvents the HEALING spell anti-cheeze */
 
 	return (ident);
 }

@@ -2867,6 +2867,13 @@ static bool process_player_end_aux(int Ind)
 		(void)set_cut(Ind, p_ptr->cut - (adjust + recovery) * (recovery + 1));
 	}
 
+	/* Still possible effects from another player's support spell on this player? */
+	if (p_ptr->support_timer)
+	{
+		p_ptr->support_timer--;
+		if (!p_ptr->support_timer) p_ptr->supported_by = 0;
+	}
+
 
 	/* Check polymorph rings with timeouts */
 	for (i == INVEN_LEFT; i <= INVEN_RIGHT; i++) {

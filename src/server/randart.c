@@ -1649,6 +1649,13 @@ artifact_type *randart_make(object_type *o_ptr)
 		if (a_ptr->to_d > 30) a_ptr->to_d = 30;
 	}
 
+	/* Ensure a bonus for certain items */
+	if ((a_ptr->tval == TV_AMULET && a_ptr->sval == SV_AMULET_LUCK) &&
+	    (!a_ptr->pval)) {
+		if (cursed_p(o_ptr)) a_ptr->pval = -1;
+		else a_ptr->pval = 1;
+	}
+
 	/* Hack -- DarkSword randarts should have this */
 	if ((a_ptr->tval == TV_SWORD) && (a_ptr->sval == SV_DARK_SWORD))
 	{

@@ -516,7 +516,7 @@
 /*
  * Store constants
  */
-#define STORE_INVEN_MAX	48		/* Max number of discrete objs in inven */
+#define STORE_INVEN_MAX	48		/* Max number of discrete objs in inven [48] */
 #define STORE_CHOICES	56 /*34*/	/* Number of items to choose stock from */
 #define STORE_OBJ_LEVEL	5		/* Magic Level for normal stores */
 #define STORE_TURNOVER	9		/* Normal shop turnover, per day */
@@ -644,6 +644,8 @@
  * Player constants
  */
 #define PY_MAX_EXP	999999999L	/* Maximum exp */
+/*#define PY_MAX_EXP	4899999996L	/* Maximum exp (Thunderlord Mimic 3.5*1.4) */
+/*#define PY_MAX_EXP	3899999997L	/* Maximum exp (Thunderlord Mimic 3.5+0.4) */
 #define PY_MAX_GOLD	999999999L	/* Maximum gold */
 #define PY_MAX_LEVEL	100		/* Maximum level */
 
@@ -2807,6 +2809,23 @@ that keeps many algorithms happy.
 
 #define GF_MAKE_GLYPH   85
 #define GF_ROCKET       91
+
+/* for traps.h :) - C. Blue */
+#define GF_REMFEAR	92
+#define GF_HERO_MONSTER	93
+#define GF_LIFEHEAL	94
+#define GF_DEC_STR	95
+#define GF_DEC_DEX	96
+#define GF_DEC_CON	97
+#define GF_RES_STR	98
+#define GF_RES_DEX	99
+#define GF_RES_CON	100
+#define GF_INC_STR	101
+#define GF_INC_DEX	102
+#define GF_INC_CON	103
+#define GF_AUGMENTATION	104
+#define GF_RUINATION	105
+#define GF_EXP		106
 
 #define GF_NUKE         110
 #define GF_BLIND	111

@@ -789,6 +789,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				default:
 				return (FALSE);
 			}
+			break;
 		/* Bordertravel supplies */
 		case STORE_BTSUPPLY:
 		{

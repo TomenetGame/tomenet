@@ -15,7 +15,7 @@ HGLOBELIGHT = add_spell
                 if get_level(Ind, HGLOBELIGHT, 50) > 3 then lite_area(Ind, 10, 4)
                 else lite_room(Ind, player.wpos, player.py, player.px) end
                 if get_level(Ind, HGLOBELIGHT, 50) > 15 then
-		        fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, HGLOBELIGHT, 100), 5 + get_level(Ind, HGLOBELIGHT, 6), " calls a globe of light of")
+		        fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, HGLOBELIGHT, 100)) * 2, 5 + get_level(Ind, HGLOBELIGHT, 6), " calls a globe of light of")
 		end
 		msg_print(Ind, "You are surrounded by a globe of light")
 	end,

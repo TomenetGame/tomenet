@@ -675,7 +675,7 @@ F:SPEED | AGGRAVATE
 ### Weapons ###
 
 N:65:of Aman
-T:15:0:255
+#T:15:0:255 - too easy +3 EA here, sorry
 T:21:0:255
 T:22:0:255
 T:23:0:255
@@ -730,7 +730,7 @@ F:BLESSED | ABILITY
 F:REGEN_MANA
 
 N:68:of Life
-T:15:0:255
+#T:15:0:255 -- too easy +6 LIFE (w/ weapon) here, sorry
 T:21:0:255
 T:22:0:255
 T:23:0:255

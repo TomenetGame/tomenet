@@ -1831,13 +1831,13 @@ F:FOUNTAIN
 
 # Note! Invulnerability decreases your food...
 
-N:238:Invulnerability
-G:!:d
-I:71:62:-2500
-W:90:0:4:100000
-#A:90/9
-A:90/32
-P:0:1d1:0:0:0
+#N:238:Invulnerability
+#G:!:d
+#I:71:62:-2500
+#W:90:0:4:100000
+##A:90/9
+#A:90/32
+#P:0:1d1:0:0:0
 
 #N:239:New Life
 #G:!:d
@@ -3992,14 +3992,14 @@ N:549:Arrow
 G:`:r
 I:46:2:0
 W:10:0:60:150
-A:10/2:50/2
+A:5/2:10/2:50/2
 F:SHOW_MODS
 
 N:550:Bolt
 G:`:o
 I:46:3:0
 W:20:0:220:300
-A:20/2:50/2
+A:10/2:20/2:50/2
 F:SHOW_MODS
 
 N:551:& Fauchard~
@@ -4079,7 +4079,7 @@ N:560:Fumes
 G:`:G
 I:46:4:0
 W:2:0:20:50
-A:2/2:30/2
+A:3/2:30/2
 
 N:561:Stone and Hide Armour~
 G:(:U
@@ -4094,14 +4094,14 @@ N:562:Magic
 G:`:g
 I:46:5:0
 W:5:0:20:50
-A:5/2:40/2
+A:5/2:15/2:40/2
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD | IGNORE_ELEC | IGNORE_WATER
 
 N:563:Device
 G:`:v
 I:46:6:0
 W:20:0:20:50
-A:20/2:40/2:60/2
+A:10/2:20/2:40/2
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_COLD | IGNORE_ELEC | IGNORE_WATER
 
 N:564:Nothing

@@ -28,7 +28,15 @@
  * This is to balance death penalty after item stacking was implemented.
  * To disable, comment it out.
  */
-#define DEATH_ITEM_LOST	0
+#define DEATH_ITEM_SCATTER	0
+
+/* Chance of an item from the player's inventory getting lost (aka deleted)
+   when player dies, in percent [20]. - C. Blue */
+#define DEATH_PACK_ITEM_LOST	8
+
+/* Chance of an item from the player's equipment getting lost (aka deleted)
+   when player dies, in percent [10]. - C. Blue */
+#define DEATH_EQ_ITEM_LOST	8
 
 
 /* Level 50 limit or level 50..69 exp limit for non-kings: */
@@ -40,9 +48,6 @@
    All other class/race combinations will get less, down to 0 for
    max exp penalty of 472,5 %. Must be integer within 0..50. */
 #define WEAK_SKILLBONUS 25
-
-/* How many turns may magical effects stack? Like paralyzation, blessing.. */
-#define MAGIC_FX_STACK_LIMIT 1000
 
 /*
  * Modifier of semi-promised artifact drops, in percent.
@@ -74,7 +79,7 @@ bool set_tim_thunder(int Ind, int v, int p1, int p2)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -130,7 +135,7 @@ bool set_tim_regen(int Ind, int v, int p)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -179,7 +184,7 @@ bool set_tim_ffall(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -228,7 +233,7 @@ bool set_tim_fly(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -281,7 +286,7 @@ bool set_adrenaline(int Ind, int v)
         int i;
 	
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -339,10 +344,6 @@ bool set_adrenaline(int Ind, int v)
 		}
 	}
 
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
-
 	/* Use the value */
 	p_ptr->adrenaline = v;
 
@@ -373,7 +374,7 @@ bool set_biofeedback(int Ind, int v)
 	bool notice = FALSE;
 	
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -413,10 +414,6 @@ bool set_biofeedback(int Ind, int v)
 			v -= 20;
 	}
 
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
-
 	/* Use the value */
 	p_ptr->biofeedback = v;
 
@@ -448,7 +445,7 @@ bool set_tim_esp(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -469,10 +466,6 @@ bool set_tim_esp(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->tim_esp = v;
@@ -504,7 +497,7 @@ bool set_st_anchor(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -525,10 +518,6 @@ bool set_st_anchor(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->st_anchor = v;
@@ -559,7 +548,7 @@ bool set_prob_travel(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -580,10 +569,6 @@ bool set_prob_travel(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->prob_travel = v;
@@ -614,7 +599,7 @@ bool set_brand(int Ind, int v, int t, int p)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -671,10 +656,6 @@ bool set_brand(int Ind, int v, int t, int p)
 		}
 	}
 
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
-
 	/* Use the value */
 	p_ptr->brand = v;
 	p_ptr->brand_t = t;
@@ -707,7 +688,7 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -764,10 +745,6 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 		}
 	}
 
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
-
 	/* Use the value */
 	p_ptr->bow_brand = v;
 	p_ptr->bow_brand_t = t;
@@ -801,7 +778,7 @@ bool set_mimic(int Ind, int v, int p)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -822,10 +799,6 @@ bool set_mimic(int Ind, int v, int p)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->tim_mimic = v;
@@ -861,7 +834,7 @@ bool set_tim_manashield(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -882,10 +855,6 @@ bool set_tim_manashield(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->tim_manashield = v;
@@ -919,7 +888,7 @@ bool set_tim_traps(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -940,10 +909,6 @@ bool set_tim_traps(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->tim_traps = v;
@@ -974,7 +939,7 @@ bool set_invis(int Ind, int v, int p)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -998,10 +963,6 @@ bool set_invis(int Ind, int v, int p)
 		}
 		p = 0;
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->tim_invisibility = v;
@@ -1033,7 +994,7 @@ bool set_fury(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1054,10 +1015,6 @@ bool set_fury(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->fury = v;
@@ -1089,7 +1046,7 @@ bool set_tim_meditation(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1112,10 +1069,6 @@ bool set_tim_meditation(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->tim_meditation = v;
@@ -1148,7 +1101,7 @@ bool set_tim_wraith(int Ind, int v)
 	if(!(zcave=getcave(&p_ptr->wpos))) return FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1221,10 +1174,6 @@ bool set_tim_wraith(int Ind, int v)
 		}
 	}
 
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
-
 	/* Use the value */
 	p_ptr->tim_wraith = v;
 
@@ -1262,7 +1211,7 @@ bool set_blind(int Ind, int v)
 	if (p_ptr->admin_wiz) return 1;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1331,7 +1280,7 @@ bool set_confused(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1385,7 +1334,7 @@ bool set_poisoned(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1437,7 +1386,7 @@ bool set_afraid(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1491,7 +1440,7 @@ bool set_paralyzed(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1547,7 +1496,7 @@ bool set_image(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1607,7 +1556,7 @@ bool set_fast(int Ind, int v, int p)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1630,10 +1579,6 @@ bool set_fast(int Ind, int v, int p)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->fast = v;
@@ -1666,7 +1611,7 @@ bool set_slow(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1720,7 +1665,7 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1742,9 +1687,6 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2)
 		}
 	}
 
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->shield = v;
@@ -1781,7 +1723,7 @@ bool set_blessed(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1805,10 +1747,6 @@ bool set_blessed(int Ind, int v)
 			p_ptr->blessed_power = 0;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit * 2 < v)
-		v = cfg.spell_stack_limit * 2;
 
 	/* Use the value */
 	p_ptr->blessed = v;
@@ -1840,7 +1778,7 @@ bool set_hero(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1863,10 +1801,6 @@ bool set_hero(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->hero = v;
@@ -1901,7 +1835,7 @@ bool set_shero(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1924,10 +1858,6 @@ bool set_shero(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->shero = v;
@@ -1962,7 +1892,7 @@ bool set_protevil(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -1983,10 +1913,6 @@ bool set_protevil(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->protevil = v;
@@ -2015,7 +1941,7 @@ bool set_zeal(int Ind, int p, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* set EA */
 	p_ptr->zeal_power = p;
@@ -2039,10 +1965,6 @@ bool set_zeal(int Ind, int p, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->zeal = v;
@@ -2070,7 +1992,7 @@ bool set_martyr(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -2116,10 +2038,6 @@ bool set_martyr(int Ind, int v)
 		}
 	}
 
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
-
 	/* Use the value */
 	p_ptr->martyr = v;
 
@@ -2149,7 +2067,7 @@ bool set_invuln(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -2173,10 +2091,6 @@ bool set_invuln(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->invuln = v;
@@ -2212,7 +2126,7 @@ bool set_invuln_short(int Ind, int v)
 	if (p_ptr->invuln > v) return (FALSE);
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Use the value */
 	p_ptr->invuln = v;
@@ -2237,7 +2151,7 @@ bool set_tim_invis(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -2258,10 +2172,6 @@ bool set_tim_invis(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->tim_invis = v;
@@ -2296,7 +2206,7 @@ bool set_tim_infra(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -2317,10 +2227,6 @@ bool set_tim_infra(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->tim_infra = v;
@@ -2355,7 +2261,7 @@ bool set_oppose_acid(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -2376,10 +2282,6 @@ bool set_oppose_acid(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->oppose_acid = v;
@@ -2408,7 +2310,7 @@ bool set_oppose_elec(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -2429,10 +2331,6 @@ bool set_oppose_elec(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->oppose_elec = v;
@@ -2461,7 +2359,7 @@ bool set_oppose_fire(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -2482,10 +2380,6 @@ bool set_oppose_fire(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->oppose_fire = v;
@@ -2514,7 +2408,7 @@ bool set_oppose_cold(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -2535,10 +2429,6 @@ bool set_oppose_cold(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->oppose_cold = v;
@@ -2567,7 +2457,7 @@ bool set_oppose_pois(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -2588,10 +2478,6 @@ bool set_oppose_pois(int Ind, int v)
 			notice = TRUE;
 		}
 	}
-
-	/* apply the maximum value if any */
-	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
-		v = cfg.spell_stack_limit;
 
 	/* Use the value */
 	p_ptr->oppose_pois = v;
@@ -2628,7 +2514,7 @@ bool set_stun(int Ind, int v)
 	if (p_ptr->admin_wiz) return TRUE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Knocked out */
 	if (p_ptr->stun > 100)
@@ -2762,7 +2648,7 @@ bool set_cut(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* p_ptr->no_cut? for mimic forms that cannot bleed */
 	if (p_ptr->no_cut) v = 0;
@@ -4775,7 +4661,7 @@ void player_death(int Ind)
 	}
 
 	/* Morgoth's level might be NO_GHOST! */
-	if (l_ptr->flags1 & LF1_NO_GHOST) hell = TRUE;
+	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_GHOST)) hell = TRUE;
 
 	/* Get rid of him if he's a ghost */
 /*	if (((p_ptr->ghost || (hell && p_ptr->alive)) && p_ptr->fruit_bat != -1) ||
@@ -4942,8 +4828,8 @@ void player_death(int Ind)
 			/* Starting with the most valuable, drop things one by one */
 	    		for (i = 0; i < INVEN_TOTAL; i++)
 			{
-				bool away = FALSE;
-	
+				bool away = FALSE, item_lost = FALSE;
+
 	    			o_ptr = &p_ptr->inventory[i];
 	
 				/* Make sure we have an object */
@@ -4970,25 +4856,38 @@ void player_death(int Ind)
 						continue;
 					}
 				}
-	
+				
+#ifdef DEATH_PACK_ITEM_LOST
+				if ((i <= INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST)) item_lost = TRUE;
+#endif
+#ifdef DEATH_EQ_ITEM_LOST
+				if ((i > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST)) item_lost = TRUE;
+#endif
+
 				if (!is_admin(p_ptr) && !p_ptr->inval && (p_ptr->max_plv >= cfg.newbies_cannot_drop) &&
 				    /* Don't drop Morgoth's crown */
 				    !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND))
 
 				{
-#ifdef DEATH_ITEM_LOST
+#ifdef DEATH_ITEM_SCATTER
 					/* Apply penalty of death */
-					if (!artifact_p(o_ptr) && magik(DEATH_ITEM_LOST))
+					if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER) && !item_lost)
 						away = TRUE;
 					else
-#endif	// DEATH_ITEM_LOST
+#endif	// DEATH_ITEM_SCATTER
 					{
-						//* omg BUG! :) begone.. p_ptr->inventory[i].marked=3; /* LONG timeout */
-						/* try this instead: */
-						o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-						/* Drop this one */
-						away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
-							<= 0 ? TRUE : FALSE;
+						if (!item_lost) {
+							//* omg BUG! :) begone.. p_ptr->inventory[i].marked=3; /* LONG timeout */
+							/* try this instead: */
+							o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+							/* Drop this one */
+				    			away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
+								<= 0 ? TRUE : FALSE;
+						} else if (true_artifact_p(o_ptr)) {
+							/* set the artifact as unfound */
+							a_info[o_ptr->name1].cur_num = 0;
+							a_info[o_ptr->name1].known = FALSE;
+						}
 					}
 
 					if (away)
@@ -5153,7 +5052,7 @@ void player_death(int Ind)
 		/* Starting with the most valuable, drop things one by one */
 		for (i = 0; i < INVEN_TOTAL; i++)
 		{
-			bool away = FALSE;
+			bool away = FALSE, item_lost = FALSE;
 
 			o_ptr = &p_ptr->inventory[i];
 
@@ -5182,27 +5081,41 @@ void player_death(int Ind)
 				}
 			}
 
+#ifdef DEATH_PACK_ITEM_LOST
+			if ((i <= INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST)) item_lost = TRUE;
+#endif
+
+#ifdef DEATH_EQ_ITEM_LOST
+			if ((i > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST)) item_lost = TRUE;
+#endif
+
 			if (!is_admin(p_ptr) && !p_ptr->inval && (p_ptr->max_plv >= cfg.newbies_cannot_drop) &&
 			    /* Don't drop Morgoth's crown */
 			    !(o_ptr->name1 == ART_MORGOTH) && !(o_ptr->name1 == ART_GROND))
 			{
-#ifdef DEATH_ITEM_LOST
+#ifdef DEATH_ITEM_SCATTER
 				/* Apply penalty of death */
-				if (!artifact_p(o_ptr) && magik(DEATH_ITEM_LOST))
+				if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER) && !item_lost)
 					away = TRUE;
 				else
-#endif	// DEATH_ITEM_LOST
+#endif	// DEATH_ITEM_SCATTER
 				{
-					/* not again :) p_ptr->inventory[i].marked=3; /* LONG timeout */
+					if (!item_lost) {
+						/* not again :) p_ptr->inventory[i].marked=3; /* LONG timeout */
 #if 0
-					p_ptr->inventory[i].marked=3;
+						p_ptr->inventory[i].marked=3;
 #else
-					/* here we go: */
-					o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+						/* here we go: */
+						o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 #endif
-					/* Drop this one */
-					away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
-						<= 0 ? TRUE : FALSE;
+						/* Drop this one */
+						away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
+							<= 0 ? TRUE : FALSE;
+					} else if (true_artifact_p(o_ptr)) {
+						/* set the artifact as unfound */
+						a_info[o_ptr->name1].cur_num = 0;
+						a_info[o_ptr->name1].known = FALSE;
+					}
 				}
 
 				if (away)
@@ -5710,6 +5623,11 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	/* Redraw (later) if needed */
 	update_health(m_idx);
 
+	/* Change monster's highest player encounter - mode 1+ : a player targetted this monster */
+	if (m_ptr->wpos.wx != 32 || m_ptr->wpos.wy != 32 || m_ptr->wpos.wz != 0) { /* not in Bree, because of Halloween :) */
+		if (m_ptr->highest_encounter < p_ptr->lev) m_ptr->highest_encounter = p_ptr->lev;
+	}
+
         /* Some mosnters are immune to death */
         if (r_ptr->flags7 & RF7_NO_DEATH) return FALSE;
 	
@@ -5806,7 +5724,14 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 				tmp_exp = ((((-p_ptr->wpos.wz) * 2) + 100) * tmp_exp) / 100;
 			}
 		}
-		
+
+		/* highest player which that monster encountered influences the experience given. (not for kings) */
+		/* also, highest player who boosted this player (by support spells) influences the exp given */
+		if (cfg.henc_strictness && !p_ptr->total_winner) {
+			if (m_ptr->highest_encounter - p_ptr->lev > 7) tmp_exp = 0; /* zonk */
+			if (p_ptr->supported_by - p_ptr->lev > 7) tmp_exp = 0; /* zonk */
+		}
+
 		/* Higher characters who farm monsters on low levels compared to
 		   their clvl will gain less exp - EXPERIMENTAL */
 		if (p_ptr->lev >= 20) {
@@ -7398,7 +7323,7 @@ bool set_recall_timer(int Ind, int v)
 	bool notice = FALSE;
 
 	/* Hack -- Force good values */
-	v = (v > MAGIC_FX_STACK_LIMIT) ? MAGIC_FX_STACK_LIMIT : (v < 0) ? 0 : v;
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
 	/* Open */
 	if (v)
@@ -7495,7 +7420,7 @@ void telekinesis_aux(int Ind, int item)
 	    return;
 	}
 
-	if(cfg.anti_arts_send && true_artifact_p(q_ptr))
+	if(cfg.anti_arts_send && artifact_p(q_ptr))
 	{
 		msg_print(Ind, "The artifact resists telekinesis!");
 		return;

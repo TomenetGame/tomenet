@@ -1473,20 +1473,6 @@ void carry(int Ind, int pickup, int confirm)
 		bool force_pickup = check_guard_inscription(o_ptr->note, '=')
 			&& p_ptr->id == o_ptr->owner;
 
-		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))
-		{
-			if (cfg.anti_cheeze_pickup)
-			{
-				msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
-				return;
-			}
-			if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
-			{
-				msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
-				return;
-			}
-		}
-
 		/* Hack -- disturb */
 		disturb(Ind, 0, 0);
 
@@ -1501,9 +1487,25 @@ void carry(int Ind, int pickup, int confirm)
 			Send_floor(Ind, o_ptr->tval);
 			return;
 		}
+
+		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))
+		{
+			if (cfg.anti_cheeze_pickup)
+			{
+				msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
+				return;
+			}
+//			if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
+			if (artifact_p(o_ptr) && cfg.anti_arts_pickup)
+			{
+				msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
+				return;
+			}
+		}
+
 #if 1
 		/* Try to add to the quiver */
-		else if (object_similar(Ind, o_ptr, &p_ptr->inventory[INVEN_AMMO]))
+		if (object_similar(Ind, o_ptr, &p_ptr->inventory[INVEN_AMMO]))
 		{
 			int slot = INVEN_AMMO, num = o_ptr->number;
 
@@ -4309,7 +4311,8 @@ void move_player(int Ind, int dir, int do_pickup)
 				if (p_ptr->lev > 1 && !p_ptr->admin_dm)
 				{
 					/* int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100:100; */
-					int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100 + (p_ptr->lev / 10) * (p_ptr->lev / 10) * 800:100;
+//					int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100 + (p_ptr->lev / 10) * (p_ptr->lev / 10) * 800:100;
+					int i = (p_ptr->lev > 4) ? 100 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 5 : 100;
 					msg_format(Ind, "The temple priest gives you %ld gold pieces for your revival!", i);
 					p_ptr->au += i;
 				}

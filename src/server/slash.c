@@ -2373,12 +2373,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "Usage: /counthouses <player-Index>");
 					return;
 				}
-				Players[atoi(token[1])]->houses_owned = 0;
-        			for (i = 0; i < num_houses; i++) {
-	                    		if ((houses[i].dna->owner_type==OT_PLAYER) &&
-				           (houses[i].dna->owner == Players[atoi(token[1])]->id))
-					       Players[atoi(token[1])]->houses_owned++;
-				}
+				lua_count_houses(atoi(token[1]));
 				return;
 			}
 			/* fix insane hit dice of a golem manually - gotta solve the bug really */
@@ -2408,6 +2403,95 @@ void do_slash_cmd(int Ind, char *message)
 				s_printf("$CRASHING$\n");
 				s_printf("%d %s", "game over man", 666);
 				return; /* ^^ */
+			}
+			/* Assign all houses of a <party> or <guild> to a <player> instead (chown) - C. BLue */
+			else if (prefix(message, "/citychown")) {
+				int i, c = 0;
+#if 0
+				int p; - after 'return': p = name_lookup_loose(Ind, token[2], FALSE);
+				if (tk < 2) {
+					msg_print(Ind, "\377oUsage: /citychown <party|guild> <player>");
+					msg_print(Ind, "\377oExample: /citychown Housekeepers Janitor");
+#else /* improved version */
+				if (tk < 3) {
+					msg_print(Ind, "\377oUsage: /citychown p|g <party-id|guild-id> <player-Index>");
+					msg_print(Ind, "\377oExample: /citychown g 127 5");
+#endif
+					return;
+				}
+				msg_format(Ind, "Changing house owner of all %s to %s...", token[1], token[2]);
+				for (i = 0; i < num_houses; i++) {
+					struct dna_type *dna=houses[i].dna;
+#if 0
+                                        if (((dna->owner_type == OT_PARTY) && (!strcmp(parties[dna->owner].name, token[1]))) ||
+					     ((dna->owner_type == OT_GUILD) && (!strcmp(guilds[dna->owner].name, token[1]))))
+                                        if (((dna->owner_type == OT_PARTY) || (dna->owner_type == OT_GUILD)) &&
+					    (dna->owner == atoi(token[1])))
+					{
+						dna->creator = Players[p]->dna;
+						dna->owner = lookup_player_id_messy(token[2]);
+						dna->owner_type = OT_PLAYER; /* Single player (code 1) is new owner */
+						c++; /* :) */
+					}
+#else /* improved version: */
+					if ((((token[1][0] == 'p') && (dna->owner_type == OT_PARTY)) ||
+					    ((token[1][0] == 'g') && (dna->owner_type == OT_GUILD))) &&
+					    (dna->owner == atoi(token[2])))
+					{
+						dna->creator = Players[atoi(token[3])]->dna;
+						dna->owner = Players[atoi(token[3])]->id;
+						dna->owner_type = OT_PLAYER; /* Single player (code 1) is new owner */
+						c++; /* :) */
+					}
+#endif
+				}
+				msg_format(Ind, "%d houses have been changed.", c);
+				lua_count_houses(atoi(token[3]));
+				return;
+			}
+			/* This one is to fix houses which were changed by an outdated version of /citychown =p */
+			else if (prefix(message, "/fixchown")) {
+				int i, c = 0;
+				int p;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /fixchown <player>");
+					return;
+				}
+				p = name_lookup_loose(Ind, token[1], FALSE);
+				msg_format(Ind, "Fixing house owner %s...", token[1]);
+				for (i = 0; i < num_houses; i++) {
+					struct dna_type *dna=houses[i].dna;
+//                                        if ((dna->owner_type == OT_PLAYER) && (!strcmp(lookup_player_name(dna->owner), token[1])))
+                                        if ((dna->owner_type == OT_PLAYER) && (dna->owner == lookup_player_id_messy(token[1])))
+					{
+						dna->creator = Players[p]->dna;
+						c++; /* :) */
+					}
+				}
+				msg_format(Ind, "%d houses have been changed.", c);
+				lua_count_houses(p);
+				return;
+			}
+			/* Check house number */
+			else if (prefix(message, "/listhouses")) {
+				int i, cp = 0, cy = 0, cg = 0;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /listhouses <owner-name>");
+					return;
+				}
+				for (i = 0; i < num_houses; i++) {
+					struct dna_type *dna=houses[i].dna;
+					if (!dna->owner) ;
+						/* not owned */
+                                        else if ((dna->owner_type == OT_PLAYER) && (dna->owner == lookup_player_id(message2 + 12)))
+						cp++;
+                                        else if ((dna->owner_type == OT_PARTY) && (!strcmp(parties[dna->owner].name, message2 + 12)))
+						cy++;
+					else if ((dna->owner_type == OT_GUILD) && (!strcmp(guilds[dna->owner].name, message2 + 12)))
+						cg++;
+				}
+				msg_format(Ind, "%s has houses: Player %d, Party %d, Guild %d.", token[1], cp, cy, cg);
+				return;
 			}
 		}
 	}

@@ -245,6 +245,10 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	struct wilderness_type *w_ptr;
 	time_t now;
 
+	int henc_level = 0, i;
+	player_type *p_ptr;
+	monster_type *m_ptr;
+
 	now=time(&now);
 
 	w_ptr=&wild_info[wpos->wy][wpos->wx];
@@ -275,6 +279,35 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 		if(w_ptr->ondepth < 0) w_ptr->ondepth=0;
 		if(!w_ptr->ondepth) w_ptr->lastused=0;
 		if(value>0) w_ptr->lastused=now;
+	}
+
+
+	/* Perform henc_strictness anti-cheeze - mode 4 : monster is on the same dungeon level as a player */
+	/* If a player enters a new level */
+	if ((value <= 0) || (cfg.henc_strictness < 4)) return;
+	if (wpos->wx == 32 && wpos->wy == 32 && wpos->wz == 0) return; /* not in Bree, because of Halloween :) */
+
+	/* Who is the highest player around? */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		/* skip disconnected players */
+		if (Players[i]->conn == NOT_CONNECTED)
+	    		continue;
+		/* skip admins */
+		if (admin_p(i)) continue;
+		/* player on this depth? */
+		p_ptr = Players[i];
+		if (inarea(&p_ptr->wpos, wpos) && (henc_level < p_ptr->lev)) henc_level = p_ptr->lev;
+	}
+
+	/* Process the monsters, check against the highest player around */
+	for (i = m_top - 1; i >= 0; i--)
+	{
+		/* Access the monster */
+		m_ptr = &m_list[m_fast[i]];
+		/* On this level? Test its highest encounter so far */
+		if (inarea(&m_ptr->wpos, wpos) && (m_ptr->highest_encounter < henc_level))
+			m_ptr->highest_encounter = henc_level;
 	}
 }
 

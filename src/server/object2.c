@@ -3997,7 +3997,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 							o_ptr->level = 15;
 						}
 						/* Make the ring last only over a certain period of time >:) - C. Blue */
-						o_ptr->timeout = 10000 + rand_int(10001);
+						o_ptr->timeout = 3000 + rand_int(3001);
 					}
 					else o_ptr->level=1;
 					break;

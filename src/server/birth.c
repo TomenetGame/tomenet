@@ -540,7 +540,9 @@ static void get_extra(int Ind)
 	p_ptr->lev = 1;
 
 	/* Experience factor */
+/* This one is too harsh for TLs and too easy on yeeks
 	p_ptr->expfact = p_ptr->rp_ptr->r_exp * (100 + p_ptr->cp_ptr->c_exp) / 100;
+*/	p_ptr->expfact = p_ptr->rp_ptr->r_exp + p_ptr->cp_ptr->c_exp;
 
 	/* Hitdice */
 	p_ptr->hitdie = p_ptr->rp_ptr->r_mhp + p_ptr->cp_ptr->c_mhp;
@@ -978,7 +980,7 @@ static byte player_init[MAX_CLASS][3][2] =
 		/* Rogue */
 		{ TV_SWORD, SV_MAIN_GAUCHE },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
-		{ TV_TRAPKIT, SV_TRAPKIT_SLING },
+		{ 0, 0},
 	},
 
 	{
@@ -1224,7 +1226,22 @@ static void player_outfit(int Ind)
 			do_player_outfit();
 		}
 	}
-	
+
+	/* Rogue / Ranger get a random trapkit */
+	if (p_ptr->pclass == CLASS_RANGER) {
+		invcopy(o_ptr, lookup_kind(TV_TRAPKIT, SV_TRAPKIT_SLING));
+		o_ptr->number = 1;
+		do_player_outfit();
+	}
+	if (p_ptr->pclass == CLASS_ROGUE) {
+		if (randint(2))
+		invcopy(o_ptr, lookup_kind(TV_TRAPKIT, SV_TRAPKIT_SLING));
+		else
+		invcopy(o_ptr, lookup_kind(TV_TRAPKIT, SV_TRAPKIT_POTION));
+		o_ptr->number = 1;
+		do_player_outfit();
+	}
+
 	/* Firestones for Dragonriders */
 	if (p_ptr->prace == RACE_DRIDER)
 	{
@@ -1486,6 +1503,11 @@ static void player_setup(int Ind, bool new)
 		time_t ttime;
 		/* Add */
 		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, time(&ttime));
+	} else {
+	/* Verify his data - only needed for 4.2.0 -> 4.2.2 savegame conversion :) - C. Blue */
+		time_t ttime;
+		/* Verify mode */
+		verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, time(&ttime));
 	}
 
 	/* Set his "current activities" variables */

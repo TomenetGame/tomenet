@@ -2810,6 +2810,17 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 		m_ptr->hold_o_idx=0;
 	}*/
 
+	/* Remember this monster's starting values in case they get temporarily decreased (by traps!) */
+	/* STR */
+	for (j = 0; j < 4; j++) {
+		m_ptr->blow[j].org_d_dice = r_ptr->blow[j].d_dice;
+		m_ptr->blow[j].org_d_side = r_ptr->blow[j].d_side;
+	}
+	/* DEX */
+	m_ptr->org_ac = m_ptr->ac;
+	/* CON */
+	m_ptr->org_maxhp = m_ptr->maxhp;
+
 	/* Success */
 	/* Report some very interesting monster creating: */
 	if (r_idx == 860) s_printf("Sauron was created on %d\n", getlevel(wpos));

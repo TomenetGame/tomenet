@@ -2115,7 +2115,8 @@ int calc_blows(int Ind, object_type *o_ptr)
 		num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
 	}
 
-	if (p_ptr->zeal) num_blow += ((p_ptr->zeal_power / 10) > 3) ? 3 : (p_ptr->zeal_power / 10);
+	/* At least +1, max. +3 */
+	if (p_ptr->zeal) num_blow += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
 
 	return (num_blow);
 }

@@ -155,7 +155,7 @@ I:45:34:1
 W:70:30:2:100000
 P:0:1d1:6:6:0
 F:STR | INT | WIS | DEX | CON | CHR | SPEED | HIDE_TYPE | LUCK |
-F:ACTIVATE | FREE_ACT | SEE_INVIS | 
+F:ACTIVATE | FREE_ACT | SEE_INVIS | ESP_EVIL
 F:SUST_STR | SUST_CON | SUST_WIS | SUST_CHR | SPECIAL_GENE |
 F:IM_FIRE | RES_NETHER | RES_FEAR | REGEN | 
 F:INSTA_ART
@@ -189,7 +189,7 @@ W:90:50:2:300000
 P:0:1d1:12:12:0
 F:STR | INT | WIS | DEX | CON | CHR | SPEED | HIDE_TYPE | LUCK |
 F:ACTIVATE | HOLD_LIFE | FREE_ACT | SEE_INVIS | 
-F:FEATHER | SLOW_DIGEST | REGEN | 
+F:FEATHER | SLOW_DIGEST | REGEN | ESP_ALL
 F:SUST_STR | SUST_DEX | SUST_CON | 
 F:IM_ELEC | RES_POIS | RES_DISEN | 
 F:INSTA_ART
@@ -1216,8 +1216,8 @@ D:dismay to creatures natural and unnatural.
 # The Small Sword 'Sting'
 
 N:88:'Sting'
-I:23:8:2
-W:20:205:75:100000
+I:23:8:1
+W:20:40:75:75000
 P:0:1d6:7:8:0
 F:STR | DEX | CON | BLOWS | SPEED | LEVELS | 
 F:ESP_ORC | ESP_UNDEAD | ESP_SPIDER | 
@@ -1541,10 +1541,11 @@ P:0:9d9:25:25:10
 F:KILL_DRAGON | KILL_DEMON | KILL_UNDEAD |
 F:SLAY_EVIL | SLAY_ANIMAL | SLAY_TROLL | SLAY_ORC |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD |
-F:IMPACT | TUNNEL | LEVELS | LIFE | AGGRAVATE |
+F:TUNNEL | LEVELS | LIFE | AGGRAVATE |
 F:CURSED | HEAVY_CURSE | PERMA_CURSE | 
 F:ACTIVATE | SPECIAL_GENE | SHOW_MODS | INSTA_ART |
 F:NO_MAGIC
+F:IMPACT
 D:The mighty Hammer of the Underworld, blackened by doomspells of shattering, 
 D:whose wielder holds the lives of all Morgoth's servants in his hand.
 
@@ -3000,8 +3001,8 @@ D:Where Quietus hits, silence follows.
 
 N:243:'Icon Of Life'
 I:23:29:3
-W:80:50:310:200000
-P:0:6d7:0:0:30
+W:80:50:300:150000
+P:0:4d9:0:0:30
 F:SHOW_MODS | LIFE | LITE2 | BLESSED | 
 F:RES_DARK | RES_LITE | RES_NETHER | RES_WATER | RES_TIME
 D:A sacred artifact to defend life rather than to threaten it.
@@ -3019,6 +3020,15 @@ F:ACTIVATE | HOLD_LIFE | FREE_ACT | INFRA | ESP_UNDEAD
 #F:WRAITH
 D:A translucent shard that shimmers in white and silver.
 
+
+# Combined item (3 pieces) Halberd 'Ang-Tir-Calad'
+
+#N:245:'Ang-Tir-Calad'
+#I:22:15:0
+#W:200:255:240:1000000
+#P:0:9d9:20:20:20
+#F:SHOW_MODS | LITE2 | BLESSED | 
+#F:RES_DARK | RES_LITE | IM_ELEC
 
 
 #N:(No.):(name)

@@ -707,20 +707,39 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 	/* to prevent house amount cheeze (houses_owned)
 	   let's just say house ownership can't be transferred.
 	   Changing the door access should be sufficient. */
-	if (!is_admin(p_ptr)) return(FALSE);
+/*	msg_print(Ind,"\377ySorry, this feature is not available"); -- see below
+	if (!is_admin(p_ptr)) return(FALSE);*/
 
 	if (!is_admin(p_ptr))
 	{
 		if(dna->creator!=p_ptr->dna) return(FALSE);
-		if(args[1]>='3' && args[1]<'5') return(FALSE);
+//(covered below)		if(args[1]>='3' && args[1]<'5') return(FALSE);
 		/* maybe make party leader only chown party */
 	}
 	switch(args[1]){
 		case '1':
+			/* Check house limit of target player! */
+			i = name_lookup_loose(Ind, &args[2], FALSE);
+			if (!i) {
+				msg_print(Ind, "Target player isn't logged on.");
+				return(FALSE);
+			}
+			if(cfg.houses_per_player && (Players[i]->houses_owned >= ((Players[i]->lev > 50 ? 50 : Players[i]->lev) / cfg.houses_per_player)) && !is_admin(Players[i])) {
+				if ((int)(Players[i]->lev / cfg.houses_per_player) == 0)
+					msg_format(Ind, "That player needs to be at least level %d to own a house!", cfg.houses_per_player);
+				else
+					msg_print(Ind, "At his current level, that player cannot own more houses!");
+				return (FALSE);
+			}
+			/* Finally change the owner */
 			newowner=lookup_player_id_messy(&args[2]);
 			if(!newowner) newowner=-1;
 			break;
-		case '2':
+		default:
+			msg_print(Ind,"\377ySorry, this feature is not available");
+			if (!is_admin(p_ptr)) return(FALSE);
+	}
+/*		case '2':
 			newowner=party_lookup(&args[2]);
 			break;
 		case '3':
@@ -738,7 +757,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 		case '5':
 			newowner=guild_lookup(&args[2]);
 			break;
-	}
+	}*/
 	if(newowner!=-1){
 		if(args[1]=='1'){
 			for(i=1;i<=NumPlayers;i++){     /* in game? maybe long winded */
@@ -747,6 +766,10 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 					dna->owner=newowner;
 					dna->owner_type=args[1]-'0';
 					dna->a_flags=ACF_NONE;
+
+					Players[i]->houses_owned++;
+					p_ptr->houses_owned--;
+
 					return(TRUE);
 				}
 			}
@@ -761,6 +784,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 
 bool access_door(int Ind, struct dna_type *dna){
 	player_type *p_ptr=Players[Ind];
+	if (!dna->owner) return(FALSE); /* house doesn't belong to anybody */
 /*	if (is_admin(p_ptr))
 		return(TRUE); - moved to allow more overview for admins when looking at
 				house door colours on the world surface - C. Blue */
@@ -772,6 +796,7 @@ bool access_door(int Ind, struct dna_type *dna){
 			if(p_ptr->id==dna->owner && p_ptr->dna==dna->creator)
 				return(TRUE);
 			if(dna->a_flags & ACF_PARTY){
+				if(!p_ptr->party) return(FALSE);
 				if(!strcmp(parties[p_ptr->party].owner,lookup_player_name(dna->owner)))
 					return(TRUE);
 			}
@@ -781,6 +806,7 @@ bool access_door(int Ind, struct dna_type *dna){
 				return(TRUE);
 			break;
 		case OT_PARTY:
+			if(!p_ptr->party) return(FALSE);
 			if(player_in_party(dna->owner, Ind)) return(TRUE);
 			break;
 		case OT_CLASS:
@@ -790,6 +816,7 @@ bool access_door(int Ind, struct dna_type *dna){
 			if(p_ptr->prace==dna->owner) return(TRUE);
 			break;
 		case OT_GUILD:
+			if(!p_ptr->guild) return(FALSE);
 			if(p_ptr->guild==dna->owner) return(TRUE);
 			break;
 	}
@@ -2659,7 +2686,7 @@ int breakage_chance(object_type *o_ptr)
 		/* seldom break */
 		case TV_BOOMERANG:
 		{
-			return (5);
+			return (2);
 		}
 	}
 
@@ -2805,7 +2832,7 @@ void do_cmd_fire(int Ind, int dir)
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
 
-	int                     i, j, y, x, ny, nx, ty, tx, bx, by;
+	long                    i, j, y, x, ny, nx, ty, tx, bx, by;
 	int                     tdam, tdis, thits, tmul;
 	int                     bonus, chance;
 	int                     cur_dis, visible;
@@ -3520,7 +3547,7 @@ void do_cmd_fire(int Ind, int dir)
 		/* finer resolution to match reduced break rate of boomerangs - C. Blue */
 		j = (hit_body ? breakage_chance(o_ptr) : 0) * 100;
 		if (archery == SKILL_BOOMERANG)
-			j = (j * (100 - get_skill_scale(p_ptr, archery, 98))) / 100;
+			j = (j * (1000 - get_skill_scale(p_ptr, archery, 950))) / 1000;
 		else
 			j = (j * (100 - get_skill_scale(p_ptr, archery, 80))) / 100;
 
@@ -4459,11 +4486,11 @@ void do_cmd_purchase_house(int Ind, int dir)
 			msg_print(Ind,"You do not have enough gold!");
 			return;
 		}
-		if(cfg.houses_per_player && (p_ptr->houses_owned >= (p_ptr->lev / cfg.houses_per_player)) && !is_admin(p_ptr)) {
+		if(cfg.houses_per_player && (p_ptr->houses_owned >= ((p_ptr->lev > 50 ? 50 : p_ptr->lev) / cfg.houses_per_player)) && !is_admin(p_ptr)) {
 			if ((int)(p_ptr->lev / cfg.houses_per_player) == 0)
 			msg_format(Ind, "You need to be at least level %d to buy a house!", cfg.houses_per_player);
 			else
-			msg_format(Ind, "At your level, you cannot own more than %d houses at once!", (int)(p_ptr->lev / cfg.houses_per_player));
+			msg_format(Ind, "At your level, you cannot own more than %d houses at once!", (int)((p_ptr->lev > 50 ? 50 : p_ptr->lev) / cfg.houses_per_player));
 			return;
 		}
 		msg_format(Ind, "You buy the house for %ld gold.", price);

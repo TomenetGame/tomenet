@@ -5182,7 +5182,7 @@ B:BITE:POISON:1d8
 B:CLAW:HURT:3d3
 B:CLAW:HURT:3d3
 F:FORCE_SLEEP | 
-F:FRIENDS | CAN_FLY |
+F:FRIENDS | CAN_FLY | WILD_MOUNTAIN | 
 F:BASH_DOOR | DROP_SKELETON | DROP_CORPSE | 
 F:ANIMAL | IM_POIS | MORTAL | BASEANGBAND
 S:1_IN_10 | 
@@ -14191,7 +14191,7 @@ D:devil."
 
 N:815:Unmaker
 G:E:v
-I:120:6d66:60:50:60
+I:120:6d66:255:50:0
 #W:77:4:0:10000
 W:77:3:0:10000
 E:0:0:0:0:0:0
@@ -14202,7 +14202,7 @@ B:TOUCH:UN_POWER:10d10
 F:KILL_WALL | KILL_ITEM | KILL_BODY | NO_FEAR |
 F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY | 
 F:ATTR_MULTI | SHAPECHANGER | ATTR_ANY |
-F:DROP_60 | DROP_GOOD | POWERFUL | AURA_ELEC | AURA_FIRE | AURA_COLD |
+F:DROP_60 | DROP_GOOD | POWERFUL | AURA_ELEC | AURA_FIRE | AURA_COLD | RES_MANA | 
 F:BASH_DOOR | IM_ELEC | IM_FIRE | RES_NEXU | IM_COLD | ZANGBAND | RES_CHAOS | 
 F:IM_POIS | IM_ACID | RES_PLAS | RES_DISE | COLD_BLOOD | NONLIVING | RAND_50
 F:NO_CUT
@@ -15325,7 +15325,7 @@ F:UNIQUE | CAN_SPEAK | MALE |
 F:FORCE_SLEEP | FORCE_MAXHP | FORCE_DEPTH | 
 F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | DROP_3D2 | DROP_4D2 | RES_CHAOS | 
 F:DROP_GOOD | DROP_GREAT | DROP_CHOSEN | RES_NETH | RES_MANA | RES_PLAS | 
-F:SMART | KILL_WALL | MOVE_BODY | AURA_COLD | RES_DARK |
+F:SMART | KILL_WALL | MOVE_BODY | AURA_COLD | RES_DARK | KILL_ITEM | 
 F:REGENERATE | POWERFUL | PASS_WALL
 F:CAN_SWIM | CAN_FLY
 F:EVIL | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
@@ -19010,7 +19010,10 @@ F:KILL_ITEM | EMPTY_MIND | COLD_BLOOD | BASH_DOOR | BLUEBAND | NO_CUT
 S:1_IN_5
 S:BA_NETH | HEAL | TELE_TO
 #S:BA_NETH | HEAL | TPORT | TELE_LEVEL | TELE_TO
-D:Bound to guard the nether realm that no mortal would set foot in it.
+D:Bound to guard the nether realm that no mortal would set foot in it,
+D:The smooth polished-looking green skin of this tall humanoid creature
+D:is hard as black ore, its four arms end in plasma blades glowing blueish,
+D:while three widely opened green and lidless eyes seem to surveye everything.
 
 N:1069:Gorm
 G:R:D
@@ -19169,6 +19172,8 @@ F:RES_ACID | IM_FIRE | IM_COLD | IM_ELEC | RES_POIS |
 F:NO_CONF | NO_SLEEP | RES_TELE | NO_FEAR | NO_STUN | 
 F:MORTAL | BLUEBAND | HAS_LITE | ATTR_ANY
 D:Founder of the Yagyu school, maybe the greatest swordsman ever.
+D:His left eye is covered by a patch, but there is no sign of any
+D:weakness on this fighter.
 
 N:1076:Pirotessa, Succubus Empress
 G:U:v
@@ -19188,7 +19193,7 @@ F:OPEN_DOOR | BASH_DOOR | IM_POIS | IM_COLD | DEMON | EVIL | ATTR_ANY
 S:1_IN_3 |
 S:CURSE | BA_NETH | S_HI_DEMON |
 S:FORGET | MIND_BLAST | DARKNESS
-D:Direct descendant of Lucifer, mother of Glaryssa, all Angels seeking
+D:Direct descendant of Lucifer, mother of Glaryssa, all angels seeking
 D:to destroy her fell to her serpent kiss.
 
 #N:1077:C. Blue, The Mad Balancer
@@ -19254,7 +19259,8 @@ B:BITE:HURT:1d12
 F:FORCE_MAXHP | KILL_BODY | DROP_SKELETON | 
 F:WEIRD_MIND | BASH_DOOR | GOOD | 
 F:ANIMAL | RES_SOUND | MORTAL | BLUEBAND
-D:A giant ant covered in shaggy fur. Its powerful jaws glow with heat. 
+D:A giant ant covered in shaggy fur. Its powerful jaws glow with heat,
+D:and it's causing quite some noise.
 
 #Nether Realm only
 N:1080:Minion of Doom
@@ -19334,7 +19340,8 @@ S:1_IN_8 |
 S:UNMAGIC | HOLD
 D:An artificial bird completely made of hardened iron, kept in the air
 D:by magical forces. It's a drone to scout intruders, not a weapon to
-D:destroy them.
+D:destroy them. This animated enormously massive piece of metal is nearly
+D:impossible to destroy.
 
 #Nether Realm only
 N:1084:Force vortex
@@ -19370,7 +19377,8 @@ F:NO_CONF | NO_SLEEP | CAN_FLY | POWERFUL | COLD_BLOOD | ATTR_ANY |
 S:1_IN_1
 S:ROCKET
 D:This golem beholder is the perfect sentry and won't let anything come close.
-
+D:White mouldy flesh covered by metal plating holds a black lidless eye,
+D:slowly turning around and around forever.
 
 
 #Halloween time! Presented by C. Blue ;)
@@ -19585,8 +19593,8 @@ I:140:300d200:200:200:255
 W:127:1:0:100000
 E:0:0:0:0:0:0
 O:0:0:0:0
-B:HIT:HURT:60d5
-B:HIT:HURT:60d5
+B:HIT:HURT:70d5
+B:HIT:HURT:70d5
 B:GAZE:INSANITY:5d5
 F:UNIQUE | NONLIVING | NO_FEAR | FORCE_MAXHP | REFLECTING | RES_MANA | SMART | 
 F:MOVE_BODY | KILL_WALL | IM_FIRE | IM_ELEC | IM_POIS | IM_ACID | IM_COLD |
@@ -19597,8 +19605,10 @@ F:KILL_ITEM | EMPTY_MIND | COLD_BLOOD | BASH_DOOR | BLUEBAND | NO_CUT
 S:1_IN_5
 S:BA_NETH | HEAL | TELE_TO | BA_MANA
 #S:BA_NETH | HEAL | TPORT | TELE_LEVEL | TELE_TO | BA_MANA
-D:Guarding the border between nether dimensions and the mundane cosmos
-D:this being has a clear mission.
+D:Guarding the border between outer dimensions and the mundane cosmos
+D:this being has a clear mission. His patience seems to be infinite,
+D:and its appearance doesn't reveal if this creature actually lives or not.
+D:Its power seems to be great enough to even hold back gods who were banished.
 
 
 #Shores of Valinor - C. Blue
