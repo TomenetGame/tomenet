@@ -25,6 +25,10 @@
 # DARKGOD, EVILEYE, WRITE THE CHANGELOGS!!!!!!!  CVS log does NO HELP!!!!
 # - Jir -
 
+20/08/2002 (evileye)
+- changed file transfers so that they use lists.
+- non valid accounts have more restrictions added.
+
 19/08/2002 (evileye)
 - delete tempfiles when used (/tmp won't fill up)
 - windows mkstemp allows for this by filling string.
