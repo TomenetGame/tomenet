@@ -234,7 +234,7 @@ int mkstemp(char *template)
 /* Open file for receive/writing */
 int local_file_init(int ind, unsigned short fnum, char *fname){
 	struct ft_data *c_fd;
-	char tname[30]="/tmp/tomexfer.XXXXXX";
+	char tname[30]="tomexfer.XXXXXX";
 	c_fd=getfile(ind, 0);		/* get empty space */
 	if(c_fd==(struct ft_data*)NULL) return(0);
 
