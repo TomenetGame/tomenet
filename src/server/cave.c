@@ -1397,25 +1397,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				/* Is it a shapechanger? */
 				if (r_ptr->flags2 & (RF2_SHAPECHANGER))
 				{
-#if 0	// this never works, for sure! ;(
-					if (use_graphics)
-					{
-						if (!(streq(ANGBAND_SYS, "ibm")))
-						{
-                                                        (*cp) = (hack_map_info_default)?r_info[randint(max_r_idx-2)].d_char:r_info[randint(max_r_idx-2)].x_char;
-                                                        (*ap) = (hack_map_info_default)?r_info[randint(max_r_idx-2)].d_attr:r_info[randint(max_r_idx-2)].x_attr;
-						}
-						else
-						{
-							int n =  strlen(image_monster_hack_ibm);
-							(*cp) = (image_monster_hack_ibm[rand_int(n)]);
-
-							/* Random color */
-							(*ap) = randint(15);
-						}
-					}
-					else
-#endif	// 0
 					{
 						(*cp) = (randint(25)==1?
 							image_object_hack[randint(strlen(image_object_hack))]:
@@ -2036,9 +2017,6 @@ void display_map(int Ind, int *cy, int *cx)
 	/* Display each map line in order */
 	for (y = 0; y < MAP_HGT+2; ++y)
 	{
-		/* Start a new line */
-		/*Term_gotoxy(0, y);*/
-
 		/* Clear the old info first */
 		for (x = 0; x < 80; x++)
 		{
@@ -2201,9 +2179,6 @@ void wild_display_map(int Ind)
 	/* Display each map line in order */
 	for (y = 0; y < MAP_HGT+2; ++y)
 	{
-		/* Start a new line */
-		/*Term_gotoxy(0, y);*/
-
 		/* Clear the old info first */
 		for (x = 0; x < 80; x++)
 		{

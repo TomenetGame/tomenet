@@ -829,209 +829,6 @@ void display_player(int Ind)
 	Send_history(Ind, i, p_ptr->history[i]);
 }
 
-
-
-
-/*
- * Hack -- Dump a character description file
- *
- * XXX XXX XXX Allow the "full" flag to dump additional info,
- * and trigger its usage from various places in the code.
- *
- * FIXME -- This is currently disabled, because either the character dump
- *  will just end up on the server, or a lot more network interface will have
- *  to be defined to transfer this back to the client machine.  Ugh.
- */
-#if 0
-errr file_character(cptr name, bool full)
-{
-	int                     i, x, y;
-
-	byte            a;
-	char            c;
-
-#if 0
-	cptr            other = "(";
-#endif
-
-	cptr            paren = ")";
-
-	int                     fd = -1;
-
-	FILE            *fff = NULL;
-
-	store_type              *st_ptr = &store[7];
-
-	char            o_name[160];
-
-	char            buf[1024];
-
-
-	/* Drop priv's */
-	safe_setuid_drop();
-
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, name);
-
-	/* File type is "TEXT" */
-	FILE_TYPE(FILE_TYPE_TEXT);
-
-	/* Check for existing file */
-	fd = fd_open(buf, O_RDONLY);
-
-	/* Existing file */
-	if (fd >= 0)
-	{
-		char out_val[160];
-
-		/* Close the file */
-		(void)fd_close(fd);
-
-		/* Build query */
-		(void)sprintf(out_val, "Replace existing file %s? ", buf);
-
-		/* Ask */
-		if (get_check(out_val)) fd = -1;
-	}
-
-	/* Open the non-existing file */
-	if (fd < 0) fff = my_fopen(buf, "w");
-
-	/* Grab priv's */
-	safe_setuid_grab();
-
-
-	/* Invalid file */
-	if (!fff)
-	{
-		/* Message */
-		msg_format("Character dump failed!");
-		msg_print(NULL);
-
-		/* Error */
-		return (-1);
-	}
-
-
-	/* Begin dump */
-	fprintf(fff, "  [Angband %d.%d.%d Character Dump]\n\n",
-		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
-
-
-	/* Save screen */
-	Term_save();
-
-	/* Display the player (with various) */
-	display_player(FALSE);
-
-	/* Dump part of the screen */
-	for (y = 2; y < 22; y++)
-	{
-		/* Dump each row */
-		for (x = 0; x < 79; x++)
-		{
-			/* Get the attr/char */
-			(void)(Term_what(x, y, &a, &c));
-
-			/* Dump it */
-			buf[x] = c;
-		}
-
-		/* Terminate */
-		buf[x] = '\0';
-
-		/* End the row */
-		fprintf(fff, "%s\n", buf);
-	}
-
-	/* Display the player (with history) */
-	display_player(TRUE);
-
-	/* Dump part of the screen */
-	for (y = 15; y < 20; y++)
-	{
-		/* Dump each row */
-		for (x = 0; x < 79; x++)
-		{
-			/* Get the attr/char */
-			(void)(Term_what(x, y, &a, &c));
-
-			/* Dump it */
-			buf[x] = c;
-		}
-
-		/* Terminate */
-		buf[x] = '\0';
-
-		/* End the row */
-		fprintf(fff, "%s\n", buf);
-	}
-
-	/* Restore screen */
-	Term_load();
-
-	/* Skip some lines */
-	fprintf(fff, "\n\n");
-
-
-	/* Dump the equipment */
-	if (equip_cnt)
-	{
-		fprintf(fff, "  [Character Equipment]\n\n");
-		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-		{
-			object_desc(o_name, &inventory[i], TRUE, 3);
-			fprintf(fff, "%c%s %s\n",
-				index_to_label(i), paren, o_name);
-		}
-		fprintf(fff, "\n\n");
-	}
-
-	/* Dump the inventory */
-	fprintf(fff, "  [Character Inventory]\n\n");
-	for (i = 0; i < INVEN_PACK; i++)
-	{
-		object_desc(o_name, &inventory[i], TRUE, 3);
-		fprintf(fff, "%c%s %s\n",
-			index_to_label(i), paren, o_name);
-	}
-	fprintf(fff, "\n\n");
-
-
-	/* Dump the Home (page 1) */
-	fprintf(fff, "  [Home Inventory (page 1)]\n\n");
-	for (i = 0; i < 12; i++)
-	{
-		object_desc(o_name, &st_ptr->stock[i], TRUE, 3);
-		fprintf(fff, "%c%s %s\n", I2A(i%12), paren, o_name);
-	}
-	fprintf(fff, "\n\n");
-
-	/* Dump the Home (page 2) */
-	fprintf(fff, "  [Home Inventory (page 2)]\n\n");
-	for (i = 12; i < 24; i++)
-	{
-		object_desc(o_name, &st_ptr->stock[i], TRUE, 3);
-		fprintf(fff, "%c%s %s\n", I2A(i%12), paren, o_name);
-	}
-	fprintf(fff, "\n\n");
-
-
-	/* Close it */
-	my_fclose(fff);
-
-
-	/* Message */
-	msg_print("Character dump successful.");
-	msg_print(NULL);
-
-	/* Success */
-	return (0);
-}
-#endif
-
-
-
 /*
  * Recursive "help file" perusal.  Return FALSE on "ESCAPE".
  *
@@ -1241,116 +1038,6 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 			find = NULL;
 			return (TRUE);
 		}
-
-
-#if 0
-		/* Show a general "title" */
-		prt(format("[Angband %d.%d.%d, %s, Line %d/%d]",
-			   VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,
-			   caption, line, size), 0, 0);
-
-
-		/* Prompt -- menu screen */
-		if (menu)
-		{
-			/* Wait for it */
-			prt("[Press a Number, or ESC to exit.]", 23, 0);
-		}
-
-		/* Prompt -- small files */
-		else if (size <= 20)
-		{
-			/* Wait for it */
-			prt("[Press ESC to exit.]", 23, 0);
-		}
-
-		/* Prompt -- large files */
-		else
-		{
-			/* Wait for it */
-			prt("[Press Return, Space, -, =, /, or ESC to exit.]", 23, 0);
-		}
-
-		/* Get a keypress */
-		k = inkey();
-
-		/* Hack -- return to last screen */
-		if (k == '?') break;
-
-		/* Hack -- try showing */
-		if (k == '=')
-		{
-			prt("Show: ", 23, 0);
-			(void)askfor_aux(shower, 80);
-		}
-
-		/* Hack -- try finding */
-		if (k == '/')
-		{
-			prt("Find: ", 23, 0);
-			if (askfor_aux(finder, 80))
-			{
-				find = finder;
-				back = line;
-				line = line + 1;
-			}
-		}
-
-		/* Hack -- go to a specific line */
-		if (k == '#')
-		{
-			char tmp[80];
-			prt("Goto Line: ", 23, 0);
-			strcpy(tmp, "0");
-			if (askfor_aux(tmp, 80))
-			{
-				line = atoi(tmp);
-			}
-		}
-
-		/* Hack -- go to a specific file */
-		if (k == '%')
-		{
-			char tmp[80];
-			prt("Goto File: ", 23, 0);
-			strcpy(tmp, "help.hlp");
-			if (askfor_aux(tmp, 80))
-			{
-				if (!do_cmd_help_aux(tmp, NULL, 0)) k = ESCAPE;
-			}
-		}
-
-		/* Hack -- Allow backing up */
-		if (k == '-')
-		{
-			line = line - 10;
-			if (line < 0) line = 0;
-		}
-
-		/* Hack -- Advance a single line */
-		if ((k == '\n') || (k == '\r'))
-		{
-			line = line + 1;
-		}
-
-		/* Advance one page */
-		if (k == ' ')
-		{
-			line = line + 20;
-		}
-
-		/* Recurse on numbers */
-		if (menu && isdigit(k) && hook[k-'0'][0])
-		{
-			/* Recurse on that file */
-			if (!do_cmd_help_aux(hook[k-'0'], NULL, 0)) k = ESCAPE;
-		}
-
-		/* Exit on escape */
-		if (k == ESCAPE) break;
-	}
-
-#endif
 
 	/* Close the file */
 	my_fclose(fff);
@@ -1568,9 +1255,6 @@ void do_cmd_save_game(int Ind)
 	/* Message */
 	msg_print(Ind, "Saving game...");
 
-	/* Refresh */
-	/*Term_fresh();*/
-
 	/* The player is not dead */
 	(void)strcpy(p_ptr->died_from, "(saved)");
 
@@ -1592,9 +1276,6 @@ void do_cmd_save_game(int Ind)
 	/* Allow suspend again */
 	signals_handle_tstp();
 
-	/* Refresh */
-	/*Term_fresh();*/
-
 	/* Note that the player is not dead */
 	(void)strcpy(p_ptr->died_from, "(alive and well)");
 }
@@ -1613,162 +1294,6 @@ long total_points(int Ind)
 	if (p_ptr->mode == MODE_HELL) return (((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 3 / 2)*i);
 	else return ((p_ptr->max_exp + (100 * p_ptr->max_dlv) + p_ptr->au)*i);
 }
-
-
-
-
-/*
- * Display some character info
- *
- * FIXME -- This is very broken.  There is no home.  There is no way to get
- *   most of this information transferred to the client.  This isn't used all
- *   that often.  I'll worry about it later.  --KLJ--
- */
-static void show_info(int Ind)
-{
-#if 0
-	int                     i, j, k;
-
-	object_type             *o_ptr;
-
-	store_type              *st_ptr = &store[7];
-
-
-	/* Hack -- Know everything in the inven/equip */
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
-		o_ptr = &inventory[i];
-		if (o_ptr->k_idx)
-		{
-			object_aware(o_ptr);
-			object_known(o_ptr);
-		}
-	}
-
-	/* Hack -- Know everything in the home */
-	for (i = 0; i < st_ptr->stock_num; i++)
-	{
-		o_ptr = &st_ptr->stock[i];
-		if (o_ptr->k_idx)
-		{
-			object_aware(o_ptr);
-			object_known(o_ptr);
-		}
-	}
-
-	/* Hack -- Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
-
-	/* Handle stuff */
-	handle_stuff();
-
-	/* Flush all input keys */
-	flush();
-
-	/* Flush messages */
-	msg_print(NULL);
-
-
-	/* Describe options */
-	prt("You may now dump a character record to one or more files.", 21, 0);
-	prt("Then, hit RETURN to see the character, or ESC to abort.", 22, 0);
-
-	/* Dump character records as requested */
-	while (TRUE)
-	{
-		char out_val[160];
-
-		/* Prompt */
-		put_str("Filename: ", 23, 0);
-
-		/* Default */
-		strcpy(out_val, "");
-
-		/* Ask for filename (or abort) */
-		if (!askfor_aux(out_val, 60)) return;
-
-		/* Return means "show on screen" */
-		if (!out_val[0]) break;
-
-		/* Dump a character file */
-		(void)file_character(out_val, FALSE);
-	}
-
-
-	/* Show player on screen */
-	display_player(FALSE);
-
-	/* Prompt for inventory */
-	prt("Hit any key to see more information (ESC to abort): ", 23, 0);
-
-	/* Allow abort at this point */
-	if (inkey() == ESCAPE) return;
-
-
-	/* Show equipment and inventory */
-
-	/* Equipment -- if any */
-	if (equip_cnt)
-	{
-		Term_clear();
-		item_tester_full = TRUE;
-		show_equip();
-		prt("You are using: -more-", 0, 0);
-		if (inkey() == ESCAPE) return;
-	}
-
-	/* Inventory -- if any */
-	if (inven_cnt)
-	{
-		Term_clear();
-		item_tester_full = TRUE;
-		show_inven();
-		prt("You are carrying: -more-", 0, 0);
-		if (inkey() == ESCAPE) return;
-	}
-
-
-
-	/* Home -- if anything there */
-	if (st_ptr->stock_num)
-	{
-		/* Display contents of the home */
-		for (k = 0, i = 0; i < st_ptr->stock_num; k++)
-		{
-			/* Clear screen */
-			Term_clear();
-
-			/* Show 12 items */
-			for (j = 0; (j < 12) && (i < st_ptr->stock_num); j++, i++)
-			{
-				char o_name[160];
-				char tmp_val[80];
-
-				/* Acquire item */
-				o_ptr = &st_ptr->stock[i];
-
-				/* Print header, clear line */
-				sprintf(tmp_val, "%c) ", I2A(j));
-				prt(tmp_val, j+2, 4);
-
-				/* Display object description */
-				object_desc(o_name, o_ptr, TRUE, 3);
-				c_put_str(tval_to_attr[o_ptr->tval], o_name, j+2, 7);
-			}
-
-			/* Caption */
-			prt(format("Your home contains (page %d): -more-", k+1), 0, 0);
-
-			/* Wait for it */
-			if (inkey() == ESCAPE) return;
-		}
-	}
-#endif
-}
-
-
-
-
 
 /*
  * Semi-Portable High Score List Entry (128 bytes) -- BEN
@@ -2091,10 +1616,6 @@ static errr top_twenty(int Ind)
 
 	time_t ct = time((time_t*)0);
 
-
-	/* Clear screen */
-	/*Term_clear();*/
-
 	/* No score file */
 	if (highscore_fd < 0)
 	{
@@ -2410,13 +1931,6 @@ void close_game(void)
 			/* Save memories */
 			if (!save_player(i)) msg_print(i, "death save failed!");
 
-			/* Dump bones file 
-			make_bones(i);
-			*/
-
-			/* Show more info */
-			show_info(i);
-	
 			/* Handle score, show Top scores */
 			top_twenty(i);
 		}
@@ -2429,9 +1943,6 @@ void close_game(void)
 
 			/* Prompt for scores XXX XXX XXX */
 			/*prt("Press Return (or Escape).", 0, 40);*/
-	
-			/* Predict score (or ESCAPE) */
-			/*if (inkey() != ESCAPE) predict_score();*/
 		}
 
 
@@ -2478,9 +1989,6 @@ void display_scores(int Ind, int line)
 		/* Quit */
 		return;
 	}
-
-	/* Clear screen */
-	/* Term_clear(); */
 
 	/* Display the scores */
 	predict_score(Ind, line);
@@ -2767,27 +2275,12 @@ static void handle_signal_suspend(int sig)
 
 #ifdef SIGSTOP
 
-	/* Flush output */
-	/*Term_fresh();*/
-
-	/* Suspend the "Term" */
-	/*Term_xtra(TERM_XTRA_ALIVE, 0);*/
-
 	/* Suspend ourself */
 #ifndef WINDOWS
 	(void)kill(0, SIGSTOP);
 #else
 	raise(SIGSTOP);
 #endif
-
-	/* Resume the "Term" */
-	/*Term_xtra(TERM_XTRA_ALIVE, 1);*/
-
-	/* Redraw the term */
-	/*Term_redraw();*/
-
-	/* Flush the term */
-	/*Term_fresh();*/
 
 #endif
 
@@ -2843,25 +2336,6 @@ static void handle_signal_simple(int sig)
 	else if (signal_count >= 4)
 	{
 		s_printf("Warning: Next signal kills server!\n");
-
-		/* Make a noise */
-		/*Term_xtra(TERM_XTRA_NOISE, 0);*/
-
-		/* Clear the top line */
-		/*Term_erase(0, 0, 255);*/
-
-		/* Display the cause */
-		/*Term_putstr(0, 0, -1, TERM_WHITE, "Contemplating suicide!");*/
-
-		/* Flush */
-		/*Term_fresh();*/
-	}
-
-	/* Give warning (after 2) */
-	else if (signal_count >= 2)
-	{
-		/* Make a noise */
-		/*Term_xtra(TERM_XTRA_NOISE, 0);*/
 	}
 
 	/* Restore handler */

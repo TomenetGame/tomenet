@@ -2898,9 +2898,6 @@ bool genocide(int Ind)
 		/* Handle */
 		handle_stuff(Ind);
 
-		/* Fresh */
-		/* Term_fresh(); */
-
 		/* Delay */
 		Send_flush(Ind);
 
@@ -2968,9 +2965,6 @@ bool mass_genocide(int Ind)
 
 		/* Handle */
 		handle_stuff(Ind);
-
-		/* Fresh */
-		/*Term_fresh();*/
 
 		/* Delay */
 		Send_flush(Ind);

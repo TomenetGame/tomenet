@@ -1871,9 +1871,6 @@ static void display_store(int Ind)
 
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 
-	/* Clear screen */
-	/*Term_clear();*/
-
 	/* Display the current gold */
 	store_prt_gold(Ind);
 

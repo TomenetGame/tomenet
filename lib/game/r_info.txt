@@ -17006,30 +17006,6 @@ S:SCARE | BR_POIS | BR_DARK
 D:Fed with horrid meats and grown to enormous size, this slavering creature 
 D:seeks livelier prey. 
 
-N:969:The Princess
-G:p:y
-I:110:1d1:40:250:3
-W:0:4:730:0
-E:0:1:1:2:1:1
-O:0:0:1:0
-F:FEMALE | CAN_SPEAK
-F:FORCE_MAXHP | SPECIAL_GENE | NO_TARGET
-F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_DEATH
-F:MORTAL | BASEANGBAND | UNIQUE | PET | 
-D:The princess of an unknown kingdom, you need to save her! 
-
-N:970:Merton Proudfoot, the lost hobbit
-G:h:v
-I:110:1d1:40:250:3
-W:1:1:730:0
-E:0:1:1:2:1:1
-O:0:0:0:1
-F:MALE | CAN_SPEAK
-F:FORCE_MAXHP | SPECIAL_GENE
-F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
-F:MORTAL | BASEANGBAND | UNIQUE | PET | NO_DEATH
-D:The poor hobbit got lost in the dreadful maze! 
-
 N:971:The Wight-King of the Barrow-downs
 G:W:v
 I:120:38d22:30:45:0
@@ -18385,30 +18361,6 @@ S:BA_ACID | BA_FIRE | BA_COLD | BA_ELEC |
 S:S_MONSTER | S_KIN | SHRIEK | BRAIN_SMASH | TRAPS
 D:A strange creature that disguises itself as an object to lure 
 D:unsuspecting adventurers within reach of its venomous claws. 
-
-N:1041:Melinda Proudfoot
-G:h:v
-I:110:1d1:40:250:3
-W:1:1:730:0
-E:0:1:1:2:1:1
-O:0:0:0:1
-F:FEMALE | CAN_SPEAK
-F:FORCE_MAXHP | SPECIAL_GENE
-F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
-F:MORTAL | BASEANGBAND | UNIQUE | NEUTRAL | NO_DEATH
-D:She seems to seek someone, you may help...
-
-N:1042:Thrain, the King Under the Mountain
-G:h:B
-I:110:1d1:40:250:3
-W:60:1:730:0
-E:0:1:1:2:1:1
-O:0:0:0:1
-F:MALE | CAN_SPEAK
-F:FORCE_MAXHP | SPECIAL_GENE
-F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
-F:MORTAL | BASEANGBAND | UNIQUE | NEUTRAL | NO_DEATH
-D:He must have suffered horrible tortures...
 
 # PernMangband Additions
 

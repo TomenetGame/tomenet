@@ -267,9 +267,6 @@ void show_news(void)
 
 	/*** Display the "news" file ***/
 
-	/* Clear screen */
-	/*Term_clear();*/
-
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_TEXT, "news.txt");
 
@@ -290,10 +287,6 @@ void show_news(void)
 		/* Close */
 		my_fclose(fp);
 	}
-
-	/* Flush it */
-	/*Term_fresh();*/
-
 
 	/*** Verify (or create) the "high score" file ***/
 
@@ -328,23 +321,6 @@ void show_news(void)
 	/* Close it */
 	(void)fd_close(fd);
 }
-
-
-
-/*
- * Hack -- take notes on line 23
- */
-#if 0
-static void note(cptr str)
-{
-	Term_erase(0, 23, 255);
-	Term_putstr(20, 23, -1, TERM_WHITE, str);
-	Term_fresh();
-}
-#endif
-
-
-
 
 #ifdef ALLOW_TEMPLATES
 

@@ -97,28 +97,6 @@ static bool older_than(byte x, byte y, byte z)
 	return (FALSE);
 }
 
-
-/*
- * Show information on the screen, one line at a time.
- * Start at line 2, and wrap, if needed, back to line 2.
- */
-static void note(cptr msg)
-{
-#if 0
-	static int y = 2;
-
-	/* Draw the message */
-	prt(msg, y, 0);
-
-	/* Advance one line (wrap if needed) */
-	if (++y >= 24) y = 2;
-
-	/* Flush it */
-	Term_fresh();
-#endif
-}
-
-
 /*
  * Hack -- determine if an item is "wearable" (or a missile)
  */
@@ -1381,7 +1359,6 @@ static bool rd_extra(int Ind)
 		/* Incompatible save files */
 		if (tmp16u > MAX_R_IDX)
 		{
-//			note(format("Too many (%u) monster races!", tmp16u));
 			s_printf("Too many (%u) monster races!", tmp16u);
 			return (22);
 		}
@@ -1531,8 +1508,7 @@ static errr rd_inventory(int Ind)
 		/* Warning -- backpack is full */
 		else if (p_ptr->inven_cnt == INVEN_PACK)
 		{
-			/* Oops */
-			/*note("Too many items in the inventory!");*/
+			s_printf("Too many items in the inventory!");
 
 			/* Fail */
 			return (54);
@@ -1820,13 +1796,6 @@ static errr rd_savefile_new_aux(int Ind)
 	u32b o_x_check, o_v_check;
 #endif
 
-
-	/* Mention the savefile version */
-	/*note(format("Loading a %d.%d.%d savefile...",
-	  sf_major, sf_minor, sf_patch));*/
-
-
-
 	/* Strip the version bytes */
 	strip_bytes(4);
 
@@ -1858,55 +1827,13 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Later use (always zero) */
 	rd_u32b(&tmp32u);
 
-#if 0
-
-	/* Read RNG state */
-	rd_randomizer();
-	if (arg_fiddle) note("Loaded Randomizer Info");
-
-
-	/* Then the options */
-	rd_options();
-	if (arg_fiddle) note("Loaded Option Flags");
-
-
-	/* Then the "messages" */
-	rd_messages();
-	if (arg_fiddle) note("Loaded Messages");
-
-
-	/* Monster Memory */
-	rd_u16b(&tmp16u);
-
-	/* Incompatible save files */
-	if (tmp16u > MAX_R_IDX)
-	{
-		note(format("Too many (%u) monster races!", tmp16u));
-		return (21);
-	}
-
-	/* Read the available records */
-	for (i = 0; i < tmp16u; i++)
-	{
-		monster_race *r_ptr;
-
-		/* Read the lore */
-		rd_lore(i);
-
-		/* Access that monster */
-		r_ptr = &r_info[i];
-	}
-	if (arg_fiddle) note("Loaded Monster Memory");
-#endif
-
-
 	/* Object Memory */
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
 	if (tmp16u > MAX_K_IDX)
 	{
-		note(format("Too many (%u) object kinds!", tmp16u));
+		s_printf(format("Too many (%u) object kinds!", tmp16u));
 		return (22);
 	}
 
@@ -1920,7 +1847,6 @@ static errr rd_savefile_new_aux(int Ind)
 		Players[Ind]->obj_aware[i] = (tmp8u & 0x01) ? TRUE : FALSE;
 		Players[Ind]->obj_tried[i] = (tmp8u & 0x02) ? TRUE : FALSE;
 	}
-	/*if (arg_fiddle) note("Loaded Object Memory");*/
 
 	/* Trap Memory */
 	rd_u16b(&tmp16u);
@@ -1928,7 +1854,7 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Incompatible save files */
 	if (tmp16u > MAX_T_IDX)
 	{
-		note(format("Too many (%u) trap kinds!", tmp16u));
+		s_printf(format("Too many (%u) trap kinds!", tmp16u));
 		return (22);
 	}
 
@@ -1949,7 +1875,7 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Incompatible save files */
 	if (tmp16u > 4)
 	{
-		note(format("Too many (%u) quests!", tmp16u));
+		s_printf(format("Too many (%u) quests!", tmp16u));
 		return (23);
 	}
 
@@ -1962,7 +1888,7 @@ static errr rd_savefile_new_aux(int Ind)
 		rd_byte(&tmp8u);
 		rd_byte(&tmp8u);
 	}
-	if (arg_fiddle) note("Loaded Quests");
+	if (arg_fiddle) s_printf("Loaded Quests");
 
 
 	/* Load the Artifacts */
@@ -1971,7 +1897,7 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Incompatible save files */
 	if (tmp16u > MAX_A_IDX)
 	{
-		note(format("Too many (%u) artifacts!", tmp16u));
+		s_printf(format("Too many (%u) artifacts!", tmp16u));
 		return (24);
 	}
 
@@ -1984,15 +1910,13 @@ static errr rd_savefile_new_aux(int Ind)
 		rd_byte(&tmp8u);
 		rd_byte(&tmp8u);
 	}
-	if (arg_fiddle) note("Loaded Artifacts");
+	if (arg_fiddle) s_printf("Loaded Artifacts");
 #endif
 
 
 	/* Read the extra stuff */
 	if (rd_extra(Ind))
 		return 35;
-	/*if (arg_fiddle) note("Loaded extra information");*/
-
 
 	/* Read the player_hp array */
 	rd_u16b(&tmp16u);
@@ -2001,7 +1925,7 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Incompatible save files */
 	if (tmp16u > PY_MAX_LEVEL)
 	{
-		note(format("Too many (%u) hitpoint entries!", tmp16u));
+		s_printf(format("Too many (%u) hitpoint entries!", tmp16u));
 		return (25);
 	}
 #endif
@@ -2056,7 +1980,7 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Read the inventory */
 	if (rd_inventory(Ind))
 	{
-		/*note("Unable to read inventory");*/
+		s_printf("Unable to read inventory");
 		return (21);
 	}
 
@@ -2102,10 +2026,10 @@ static errr rd_savefile_new_aux(int Ind)
 	if (!death)
 	{
 		/* Dead players have no dungeon */
-		note("Restoring Dungeon...");
+		s_printf("Restoring Dungeon...");
 		if (rd_dungeon())
 		{
-			note("Error reading dungeon data");
+			s_printf("Error reading dungeon data");
 			return (34);
 		}
 
@@ -2126,7 +2050,7 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Verify */
 	if (o_v_check != n_v_check)
 	{
-		note("Invalid checksum");
+		s_printf("Invalid checksum");
 		return (11);
 	}
 
@@ -2141,7 +2065,7 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Verify */
 	if (o_x_check != n_x_check)
 	{
-		note("Invalid encoded checksum");
+		s_printf("Invalid encoded checksum");
 		return (11);
 	}
 
@@ -2252,7 +2176,7 @@ errr rd_server_savefile()
 	/* Incompatible save files */
 	if (tmp16u > MAX_R_IDX)
 	{
-		note(format("Too many (%u) monster races!", tmp16u));
+		s_printf(format("Too many (%u) monster races!", tmp16u));
 		return (21);
 	}
 
@@ -2274,7 +2198,7 @@ errr rd_server_savefile()
 	/* Incompatible save files */
 	if (tmp16u > MAX_A_IDX)
 	{
-		note(format("Too many (%u) artifacts!", tmp16u));
+		s_printf(format("Too many (%u) artifacts!", tmp16u));
 		return (24);
 	}
 	/* Read the artifact flags */
@@ -2302,7 +2226,7 @@ errr rd_server_savefile()
 	/* Incompatible save files */
 	if (tmp16u > MAX_PARTIES)
 	{
-		note(format("Too many (%u) parties!", tmp16u));
+		s_printf(format("Too many (%u) parties!", tmp16u));
 		return (25);
 	}
 
@@ -2325,7 +2249,7 @@ errr rd_server_savefile()
 		rd_u32b(&tmp32u);
 		if (tmp32u > MAX_M_IDX)
 		{
-			note(format("Too many (%u) monsters!", tmp16u));
+			s_printf(format("Too many (%u) monsters!", tmp16u));
 			return (29);
 		}
 		/* load the monsters */
@@ -2343,7 +2267,7 @@ errr rd_server_savefile()
 		/* Incompatible save files */
 		if (tmp16u > MAX_O_IDX)
 		{
-			note(format("Too many (%u) objects!", tmp16u));
+			s_printf(format("Too many (%u) objects!", tmp16u));
 			return (26);
 		}
 
@@ -2365,7 +2289,7 @@ errr rd_server_savefile()
 		/* Incompatible save files */
 		if (tmp16u > MAX_TR_IDX)
 		{
-			note(format("Too many (%u) traps!", tmp16u));
+			s_printf(format("Too many (%u) traps!", tmp16u));
 			return (26);
 		}
 
@@ -2392,7 +2316,7 @@ errr rd_server_savefile()
 		/* Incompatible save files */
 		if (num_houses > MAX_HOUSES)
 		{
-			note(format("Too many (%u) houses!", num_houses));
+			s_printf(format("Too many (%u) houses!", num_houses));
 			return (27);
 		}
 

@@ -4968,59 +4968,6 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	/* Gave knowledge */
 	return (TRUE);
-
-#if 0
-	/* No special effects */
-	if (!i) return (FALSE);
-
-        if (fff != NULL)
-        {
-                /* We will print on top of the map (column 13) */
-                for (j = 0; j < i; j++)
-                {
-                        /* Show the info */
-                        fprintf(fff, "   %s\n", info[j]);
-                }
-        }
-        else
-        {
-                /* Save the screen */
-                character_icky = TRUE;
-                Term_save();
-
-                /* Erase the screen */
-                Term_clear();
-
-                /* Label the information */
-                prt("Item Attributes:", 1, 31);
-
-                /* We will print on top of the map (column 13) */
-                for (k = 2, j = 0; j < i; j++)
-                {
-                        /* Show the info */
-                        c_prt(color[j], info[j], k++, 10);
-
-                        /* Every 20 entries (lines 2 to 21), start over */
-                        if ((k == 22) && (j+1 < i))
-                        {
-                                prt("-- more --", k, 15);
-                                inkey();
-                                for (; k > 2; k--) prt("", k, 0);
-                        }
-                }
-
-                /* Wait for it */
-                prt("[Press any key to continue]", k, 26);
-                inkey();
-
-                /* Restore the screen */
-                Term_load();
-                character_icky = FALSE;
-        }
-
-	/* Gave knowledge */
-	return (TRUE);
-#endif	// 0
 }
 
 

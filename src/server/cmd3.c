@@ -218,10 +218,6 @@ void do_cmd_inven(void)
 	/* Note that we are in "inventory" mode */
 	/*command_wrk = FALSE;*/
 
-
-	/* Save the screen */
-	/*Term_save();*/
-
 	/* Hack -- show empty slots */
 	/*item_tester_full = TRUE;*/
 
@@ -237,13 +233,6 @@ void do_cmd_inven(void)
 
 	/* Get a command */
 	/*prt(out_val, 0, 0);*/
-
-	/* Get a new command */
-	/*command_new = inkey();*/
-
-	/* Restore the screen */
-	/*Term_load();*/
-
 
 	/* Process "Escape" */
 	/*if (command_new == ESCAPE)
@@ -275,10 +264,6 @@ void do_cmd_equip(void)
 	/* Note that we are in "equipment" mode */
 	/*command_wrk = TRUE;*/
 
-
-	/* Save the screen */
-	/*Term_save();*/
-
 	/* Hack -- show empty slots */
 	/*item_tester_full = TRUE;*/
 
@@ -294,13 +279,6 @@ void do_cmd_equip(void)
 
 	/* Get a command */
 	/*prt(out_val, 0, 0);*/
-
-	/* Get a new command */
-	/*command_new = inkey();*/
-
-	/* Restore the screen */
-	/*Term_load();*/
-
 
 	/* Process "Escape" */
 	/*if (command_new == ESCAPE)

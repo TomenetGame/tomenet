@@ -3533,15 +3533,6 @@ void play_game(bool new_game)
 {
 	int i, n;
 
-
-	/* Hack -- Character is "icky" */
-	/*character_icky = TRUE;*/
-
-
-	/* Hack -- turn off the cursor */
-	/*(void)Term_set_cursor(0);*/
-
-
 	/* Attempt to load the server state information */
 	if (!load_server_info())
 	{

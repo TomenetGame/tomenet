@@ -1022,16 +1022,6 @@ static void player_outfit(int Ind)
 	o_ptr->level = 0;
 	(void)inven_carry(Ind, o_ptr);
 
-	/*
-	 * Some chars are always fruit bats :)
-	 */
-#if 0	// available from normal character creation now :)
-	 if (!strcmp(p_ptr->name, "Olofruit") || !strcmp(p_ptr->name, "Olobat") || !strcmp(p_ptr->name, "Norcofruit") || !strcmp(p_ptr->name, "Norcobat") || !strcmp(p_ptr->name, "Durbat"))
-	 {
-		p_ptr->fruit_bat = 1;
-	 }
-#endif	// 0
-	
 	 if (!strcmp(p_ptr->name, "Moltor"))
 	 {
 		 invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
@@ -1054,16 +1044,6 @@ static void player_outfit(int Ind)
 
 		/* Hack -- assume the player has an initial knowledge of the area close to town */
 		for (i = 0; i < MAX_WILD_X*MAX_WILD_Y; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
-#if 0
-		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_HOUSE));
-		o_ptr->number = 99;
-		o_ptr->discount = 100;
-		object_known(o_ptr);
-		object_aware(Ind, o_ptr);
-		o_ptr->owner = p_ptr->id;
-		o_ptr->level = 1;
-		(void)inven_carry(Ind, o_ptr);
-#endif
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;

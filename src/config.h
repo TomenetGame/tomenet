@@ -75,6 +75,8 @@
  */
 /* #define SPECIAL_BSD */
 
+#define NETBSD
+
 
 /*
  * OPTION: Use the POSIX "termios" methods in "main-gcu.c"

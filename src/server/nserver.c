@@ -439,22 +439,6 @@ static sockbuf_t ibuf;
 
 void setup_contact_socket(void)
 {
-#if 0
-	Old UDP code
-	if ((Socket = CreateDgramSocket(18346)) == -1)
-	{
-		quit("Could not create Dgram socket");
-	}
-	if (SetSocketNonBlocking(Socket, 1) == -1)
-	{
-		quit("Can't make contact socket non-blocking");
-	}
-	if (Sockbuf_init(&ibuf, Socket, SERVER_SEND_SIZE,
-		SOCKBUF_READ | SOCKBUF_WRITE | SOCKBUF_DGRAM) == -1)
-	{
-		quit("No memory for contact buffer");
-	}
-#endif
 	plog("Create TCP socket..."); 
 	while ((Socket = CreateServerSocket(cfg.game_port)) == -1)
 	{
@@ -512,17 +496,6 @@ static int Reply(char *host_addr, int fd)
 {
 	int i, result;
 
-#if 0
-	old UDP stuff
-	for (i = 0; i < 3; i++)
-	{
-		if ((result = DgramSend(ibuf.sock, host_addr, port, ibuf.buf, ibuf.len)) == -1)
-		{
-			GetSocketError(ibuf.sock);
-		}
-		else break;
-	}
-#endif
 	// No silly redundancy with TCP
 	if ((result = DgramWrite(fd, ibuf.buf, ibuf.len)) == -1)
 	{
@@ -1061,21 +1034,6 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 
 	// A TCP connection already exists with the client, use it.
 	sock = fd;
-#if 0
-	// Old UDP code, remove this once TCP is done
-	if ((sock = CreateDgramSocket(0)) == -1)
-	{
-		plog(format("Cannot create datagram socket (%d)", sl_errno));
-		return -1;
-	}
-	if (sock >= MAX_SELECT_FD)
-	{
-		errno = 0;
-		plog("Socket filedescriptor too big");
-		DgramClose(sock);
-		return -1;
-	}
-#endif
 
 	if ((my_port = GetPortNum(sock)) == 0)
 	{
@@ -1098,11 +1056,6 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 	if (SetSocketSendBufferSize(sock, SERVER_SEND_SIZE + 256) == -1)
 		plog(format("Cannot set send buffer size to %d", SERVER_SEND_SIZE + 256));
 
-#if 0
-	old UDP code, delete this once we are done TCP
-	Sockbuf_init(&connp->w, sock, SERVER_SEND_SIZE, SOCKBUF_WRITE | SOCKBUF_DGRAM);
-	Sockbuf_init(&connp->r, sock, SERVER_RECV_SIZE, SOCKBUF_WRITE | SOCKBUF_READ | SOCKBUF_DGRAM);
-#endif
 	Sockbuf_init(&connp->w, sock, SERVER_SEND_SIZE, SOCKBUF_WRITE);
 	Sockbuf_init(&connp->r, sock, SERVER_RECV_SIZE, SOCKBUF_WRITE | SOCKBUF_READ);
 	Sockbuf_init(&connp->c, -1, MAX_SOCKBUF_SIZE, SOCKBUF_WRITE | SOCKBUF_READ | SOCKBUF_LOCK);
@@ -1363,17 +1316,6 @@ static int Handle_listening(int ind)
 	}
 
 	printf("\n"); */
-
-#if 0
-	//UDP stuff
-	if (DgramConnect(connp->w.sock, connp->addr, connp->his_port) == -1)
-	{
-		plog(format("Cannot connect datagram socket (%s,%d)",
-			connp->host, connp->his_port));
-		Destroy_connection(ind, "connect error");
-		return -1;
-	}
-#endif
 
 	/* Read the stat order */
 	for (i = 0; i < 6; i++)

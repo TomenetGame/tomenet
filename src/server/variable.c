@@ -124,11 +124,6 @@ u16b noscore;                   /* Track various "cheating" conditions */
 
 s16b signal_count = 0;          /* Hack -- Count interupts */
 
-bool inkey_base;                /* See the "inkey()" function */
-bool inkey_xtra;                /* See the "inkey()" function */
-bool inkey_scan;                /* See the "inkey()" function */
-bool inkey_flag;                /* See the "inkey()" function */
-
 s16b coin_type;                 /* Hack -- force coin type */
 
 bool opening_chest;             /* Hack -- prevent chest generation */
@@ -520,13 +515,6 @@ u32b option_mask[8];
  */
 u32b window_flag[8];
 u32b window_mask[8];
-
-
-/*
- * The array of window pointers
- */
-/*term *ang_term[8];*/
-
 
 /*
  * The array of indexes of "live" objects

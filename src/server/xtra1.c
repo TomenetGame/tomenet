@@ -719,12 +719,6 @@ static void fix_equip(int Ind)
 	display_equip(Ind);
 }
 
-
-/*
- * XXX XXX XXX XXX
- */
-extern void display_spell_list(void);
-
 /*
  * Hack -- display equipment in sub-windows
  */
@@ -758,35 +752,6 @@ static void fix_spell(int Ind)
 			do_cmd_browse(Ind, i);
 		}
 	}
-
-	
-#if 0
-	int j;
-
-	/* Scan windows */
-	for (j = 0; j < 8; j++)
-	{
-		term *old = Term;
-
-		/* No window */
-		if (!ang_term[j]) continue;
-
-		/* No relevant flags */
-		if (!(window_flag[j] & PW_SPELL)) continue;
-
-		/* Activate */
-		Term_activate(ang_term[j]);
-
-		/* Display spell list */
-		display_spell_list();
-
-		/* Fresh */
-		Term_fresh();
-
-		/* Restore */
-		Term_activate(old);
-	}
-#endif
 }
 
 
@@ -3124,7 +3089,6 @@ void redraw_stuff(int Ind)
 	{
 		p_ptr->redraw &= ~PR_WIPE;
 		msg_print(Ind, NULL);
-		/*Term_clear();*/
 	}
 
 

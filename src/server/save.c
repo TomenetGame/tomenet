@@ -2107,9 +2107,6 @@ bool load_player(int Ind)
 		sf_patch = vvv[2];
 		sf_extra = vvv[3];
 
-		/* Clear screen */
-		/*Term_clear();*/
-
 		/* Attempt to load */
 		err = rd_savefile_new(Ind);
 

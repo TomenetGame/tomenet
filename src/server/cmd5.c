@@ -18,29 +18,6 @@
 #define MONSTER_ANTIDIS		8
 
 /*
- * XXX XXX XXX XXX
- */
-extern void display_spell_list(void);
-
-/*
- * Hack -- Display all known spells in a window
- *
- * XXX XXX XXX Need to analyze size of the window.
- *
- * XXX XXX XXX Need more color coding.
- *
- * I dunno about this -- I've never found it very useful, so it'll be
- * gone from MAngband (for a while, at least).  I'll eventually just transmit
- * all of this information to client and let it handle it if the user wants
- * to have this in a window --KLJ--
- */
-void display_spell_list(void)
-{
-}
-
-
-
-/*
  * Returns spell chance of failure for spell		-RAK-
  */
 static s16b spell_chance(int Ind, magic_type *s_ptr)

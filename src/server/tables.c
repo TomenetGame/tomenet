@@ -3864,23 +3864,6 @@ cptr stat_names_reduced[6] =
 	"Str: ", "Int: ", "Wis: ", "Dex: ", "Con: ", "Chr: "
 };
 
-
-/*
- * Standard window names
- */
-cptr ang_term_name[8] =
-{
-	"Angband",
-	"Mirror",
-	"Recall",
-	"Choice",
-	"Term-4",
-	"Term-5",
-	"Term-6",
-	"Term-7"
-};
-
-
 /*
  * Certain "screens" always use the main screen, including News, Birth,
  * Dungeon, Tomb-stone, High-scores, Macros, Colors, Visuals, Options.

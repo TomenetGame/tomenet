@@ -2127,83 +2127,6 @@ void do_cmd_stay(int Ind, int pickup)
 	carry(Ind, pickup, 1);
 }
 
-
-
-
-
-
-/*
- * Resting allows a player to safely restore his hp     -RAK-
- */
-#if 0
-void do_cmd_rest(void)
-{
-	/* Prompt for time if needed */
-	if (command_arg <= 0)
-	{
-		cptr p = "Rest (0-9999, '*' for HP/SP, '&' as needed): ";
-
-		char out_val[80];
-
-		/* Default */
-		strcpy(out_val, "&");
-
-		/* Ask for duration */
-		if (!get_string(p, out_val, 4)) return;
-
-		/* Rest until done */
-		if (out_val[0] == '&')
-		{
-			command_arg = (-2);
-		}
-
-		/* Rest a lot */
-		else if (out_val[0] == '*')
-		{
-			command_arg = (-1);
-		}
-
-		/* Rest some */
-		else
-		{
-			command_arg = atoi(out_val);
-			if (command_arg <= 0) return;
-		}
-	}
-
-
-	/* Paranoia */
-	if (command_arg > 9999) command_arg = 9999;
-
-
-	/* Take a turn XXX XXX XXX (?) */
-	energy -= level_speed(&p_ptr->wpos);
-
-	/* Save the rest code */
-	resting = command_arg;
-
-	/* Cancel searching */
-	p_ptr->searching = FALSE;
-
-	/* Recalculate bonuses */
-	p_ptr->update |= (PU_BONUS);
-
-	/* Redraw the state */
-	p_ptr->redraw |= (PR_STATE);
-
-	/* Handle stuff */
-	handle_stuff();
-
-	/* Refresh */
-	Term_fresh();
-}
-#endif
-
-
-
-
-
-
 /*
  * Determines the odds of an object breaking when thrown at a monster
  *
@@ -2604,13 +2527,6 @@ void do_cmd_fire(int Ind, int dir, int item)
 
 					/* Restore */
 					lite_spot(i, y, x);
-				}
-
-				/* The player cannot see the missile */
-				else
-				{
-					/* Pause anyway, for consistancy */
-					/*Term_xtra(TERM_XTRA_DELAY, msec);*/
 				}
 			}
 
@@ -3028,13 +2944,6 @@ void do_cmd_fire(int Ind, int dir, int item)
 					/* Restore */
 					lite_spot(i, y, x);
 				}
-
-				/* The player cannot see the missile */
-				else
-				{
-					/* Pause anyway, for consistancy */
-					/*Term_xtra(TERM_XTRA_DELAY, msec);*/
-				}
 			}
 		}
 		/* Restore the player pointer */
@@ -3356,13 +3265,6 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 				/* Restore */
 				lite_spot(i, y, x);
-			}
-
-			/* The player cannot see the missile */
-			else
-			{
-				/* Pause anyway, for consistancy */
-				/*Term_xtra(TERM_XTRA_DELAY, msec);*/
 			}
 		}
 
