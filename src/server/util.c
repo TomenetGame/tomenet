@@ -2963,6 +2963,7 @@ void player_talk_aux(int Ind, cptr message)
 					{
 						wp.wx = k % MAX_WILD_X;
 						wp.wy = atoi(token[2]) % MAX_WILD_Y;
+						wp.wz = 0;
 						break;
 					}
 
