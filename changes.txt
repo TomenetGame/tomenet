@@ -22,22 +22,125 @@
 
 # bug.txt should follow the exact same format
 
+13/11/2002
+[O]- Adjusted 2h-only weapons.
+     Artefacts now sell for the intended values.
+     Changed former Amulet Of Suspicion into Amulet Of Rage.
+     Adjusted ego lights' prices.
+[G]- *ID* services cost more now, making *ID* scrolls an alternative again.
+[P]- Adjusted adj_con_mhp so that 18/200..18/220 makes a slight difference.
+
+12/11/2002
+[O]- Adjusted 2h-only weapons. Added Thunder Axe to axe class weapons.
+[G]- Fixed resisting GF_PLASMA.
+
+11/11/2002
+[O]- Greatly reworked 2h-only weapons.
+     Adjusted missile launchers.
+     Adjusted polymorph ring costs.
+     Adjusted artefacts.
+[M]- Changed REFLECT to RES_MANA for monsters.
+     Removed HAND_DOOM. Adjusted Holy prefix.
+[P]- Admins won't receive Grond anymore.
+
 09/11/2002
 [O]- Only darkswords can give antimagic
+
+07/11/2002
+[O]- Adjusted polymorph rings. Weapon classes are now displayed on examining.
+
+06/11/2002
+[G]- Highscore is now calculated in a more sensible way (I hope).
+
+05/11/2002
+[I]- Enhanced account/character-overview screen.
+[P]- Adjusted Ents & Thunderlord due to forum thread.
+[O]- Uncheezed polymorph rings. They can break now. Poly-player rings
+     can also be traded now.
+
+01/11/2002
+[I]- Display maxed out stats in L_UMBER for better control.
+
+30/10/2002
+[P]- Added resist_tele against foreign attempts to teleport the player.
+     Fixed Polymorphing if DSMs are equipped/taken off.
+     Adjusted mimics' paralyze-spell. Adjusted mimic spell costs/fail chances.
+[O]- Adjusted influence of AC on anti-magic. Adjusted Pseudo DSM.
+
+27/10/2002
+[P]- Adjusted brands, damage-messages, descriptions.
+
+24/10/2002
+[P]- +Hit/+Dam from masteries is now applied correctly.
+     Backstabbing message is displayed correctly.
+     Ghosts/Undead players get further properties.
+     Fixed NO_CUT. Fixed Berserk potions.
+     Ghosts don't starve.
+[O]- Adjusted some rings. Added Artefacts from Jacko. Adjusted Travak.
+
+23/10/2002
+[O]- Adjusted missile launchers.
+[P]- Enhanced mimics.
+[G]- Split ANTI_ARTS_HORDE into _HOARD, _HOUSE, _SHOP.
+
+22/10/2002
+[P]- Mimics can polymorph self into a specific form.
+[G]- Fixed inscribing .. to suppress teleportation.
+
+21/10/2002
+[O]- Adjusted artefact ammo.
+[M]- Adjusted MIND_BLAST & BRAIN_SMASH.
+[P]- Added missing hit-messages. Added message whether FA from MA is applied.
+[G]- Fixed brands.
+
+20/10/2002
+[B]- Fixed brands/slay getting applied at all in certain situations.
+[G]- Added branding messages. Adjusted monsters' blow-fx.
+[O]- Adjusted DSMs.
+
+19/10/2002
+[O]- Brought Pseudo DSMs back to live.
+[G]- Enhanced mimics, applied the
+     monsters' blow-fx to mimics when they melee in a form.
+
+17/10/2002
+[o]- Artefacts reworked. Lightsources changed. DSMs made useful.
+     Uncursed items can be inscribed .. to suppress teleportation. Minor item changes.
+[P]- Added several resistances and real immunities for monsters and
+     players (mimics) who take their forms. Added player susceptibilities
+     for the base elements & poison, added NO_CUT for players who are
+     in a form that cannot bleed. Fixed ESP_DRAGON to show Dragonriders
+     (who ride on the Dragons that the player can see).
 
 28/09/2002
 [P]- Probability travel spell in Conveyance school
 
+21/09/2002
+[B]- Cleaned the horrible code mess in store.c that was created accidentally.
+
+17/09/2002
+[G]- Discarded the highly cheezy Steal-From-Shop algorithm, made a
+     balanced one.
+
 11/09/2002
 [D]- Adjusted some traps
+
+10/09/2002
+[O]- Added IGNORE_WATER to game and to several objects (Leather clothes etc).
 
 09/09/2002
 [P]- Casting spells cost a turn ;)
 [m]- New news.txt
 
+07/09/2002
+[G]- Added further immunities and resistances for players.
+
 06/09/2002
 [I]- Spells can ask for items client side directly
 [P]- Telekinesis spell, Mind/Conveyance school
+[O]- Artefacts reworked completely.
+     Improved Smeagol's Ring-Drop. Raised money ghosts get from temple.
+[P]- Added water resistance for players. Added Ocean Soul artefact.
 
 05/09/2002
 [O]- Artifact ammo returns just like magci arrows, thanks to Cblue
