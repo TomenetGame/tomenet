@@ -622,7 +622,7 @@ int party_add(int adder, cptr name)
 
 	/* Set pointer */
 	p_ptr = Players[Ind];
-
+#if 0 // It's really a prob that the owner can't add his own chars..so if0
 	/* Make sure this isn't an impostor */
 	if (!streq(parties[party_id].owner, q_ptr->name))
 	{
@@ -632,7 +632,7 @@ int party_add(int adder, cptr name)
 		/* Abort */
 		return FALSE;
 	}
-
+#endif
 	/* Make sure this added person is neutral */
 	if (p_ptr->party != 0)
 	{
