@@ -208,7 +208,7 @@
  * Maximum array bounds for template based arrays
  */
  
-#define MAX_F_IDX	128	/* Max size for "f_info[]" */
+#define MAX_F_IDX	256	/* Max size for "f_info[]" */
 #define MAX_K_IDX	1024 /* Max size for "k_info[]" */
 #define MAX_A_IDX	256	/* Max size for "a_info[]" */
 #define MAX_E_IDX	256 /* Max size for "e_info[]" */
@@ -868,6 +868,11 @@ that keeps many algorithms happy.
 #define FEAT_PERM_INNER	0x7D
 #define FEAT_PERM_OUTER	0x7E
 #define FEAT_PERM_SOLID	0x7F
+
+/* XXX Temporary Additions	- Jir - */
+//#define FEAT_MON_TRAP           0xAF /* 175 */
+#define FEAT_MON_TRAP           0x80 /* 128 */
+
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
@@ -2595,6 +2600,21 @@ that keeps many algorithms happy.
 #define TR1_BRAND_FIRE		0x40000000L
 #define TR1_BRAND_COLD		0x80000000L
 
+
+/* ToME hack for trapkits */
+#define TRAP2_AUTOMATIC_5       0x00000001L     /* Trap automatically rearms itself, 1 in 5 failure */
+#define TRAP2_AUTOMATIC_99      0x00000002L     /* Trap automatically rearms itself */
+#define TRAP2_KILL_GHOST        0x00000004L     /* Trap also affects PASS_WALL creatures */
+#define TRAP2_TELEPORT_TO       0x00000008L     /* After everything else, teleport to player */
+#define TRAP2_ONLY_DRAGON       0x00000010L     /* Affect only dragons & other AFFECTed creatures */
+#define TRAP2_ONLY_DEMON        0x00000020L     /* Affect only demons & other AFFECTed creatures */
+#define TRAP2_ONLY_ANIMAL       0x00000100L     /* Affect only animals & other AFFECTed creatures */
+#define TRAP2_ONLY_UNDEAD       0x00000200L     /* Affect only undead & others */
+#define TRAP2_ONLY_EVIL         0x00000400L     /* Affect only evil creatures &c. */
+
+#define TRAP2_ONLY_MASK		(TRAP2_ONLY_DRAGON | TRAP2_ONLY_DEMON | TRAP2_ONLY_ANIMAL | \
+				 TRAP2_ONLY_UNDEAD | TRAP2_ONLY_EVIL )
+
 #define TR2_SUST_STR		0x00000001L
 #define TR2_SUST_INT		0x00000002L
 #define TR2_SUST_WIS		0x00000004L
@@ -2691,6 +2711,7 @@ that keeps many algorithms happy.
 #define TR4_CLONE               0x00000200L     /* Can clone monsters */
 #define TR4_SPECIAL_GENE        0x00000400L     /* The object can only be generated in special conditions like quests, special dungeons, ... */
 #define TR4_CLIMB               0x00000800L     /* Allow climbing mountains */
+/* rods only -- consider make them like trapkits - Jir - */
 #define TR4_FAST_CAST           0x00001000L     /* Rod is x2 time faster to use */
 #define TR4_CAPACITY            0x00002000L     /* Rod can take x2 mana */
 #define TR4_CHARGING            0x00004000L     /* Rod recharge faster */
@@ -3752,6 +3773,10 @@ that keeps many algorithms happy.
 #define in_bounds(Y,X) \
    (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT-1) && ((X) < MAX_WID-1))
 
+/* loosest check for seg fault */
+#define in_bounds_array(Y,X) \
+   (((Y) >= 0) && ((X) >= 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID))
+
 
 /*
  * Determines if a map location is on or inside the outer walls
@@ -4360,6 +4385,7 @@ extern int PlayerUID;
 #define PROJECTOR_TRAP		-1001
 #define PROJECTOR_POTION	-1002
 #define PROJECTOR_TERRAIN	-1003
+#define PROJECTOR_MON_TRAP	-1004
 
 
 #define TRUE_ARTS(o_ptr) ((artifact_p(o_ptr)) && (!o_ptr->name3))
@@ -4480,6 +4506,7 @@ extern int PlayerUID;
 
 #define MKEY_DODGE              8
 #define MKEY_FLETCHERY			9
+#define MKEY_TRAP               10
 
 /*
  * Skills
@@ -4535,6 +4562,7 @@ extern int PlayerUID;
 #define SKILL_HEALTH			43
 #define SKILL_DIG				44
 #define SKILL_SPELLRAD			45
+#define SKILL_TRAPPING          46
 
 #if 0	// skills to come	- Jir -
 #define SKILL_CLIMB

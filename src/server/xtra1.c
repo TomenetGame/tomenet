@@ -2476,6 +2476,8 @@ static void calc_bonuses(int Ind)
 		/* Hack -- do not apply "bow" bonuses */
 		if (i == INVEN_BOW) continue;
 
+		if (i == INVEN_AMMO || i == INVEN_TOOL) continue;
+
 		/* Apply the bonuses to hit/damage */
 		p_ptr->to_h += o_ptr->to_h;
 		p_ptr->to_d += o_ptr->to_d;
@@ -2885,14 +2887,14 @@ static void calc_bonuses(int Ind)
 		}
 	}
 
-	if (p_ptr->mode & MODE_HELL)
-	  {
-	    int speed = p_ptr->pspeed - 110;
+	if (p_ptr->mode & MODE_HELL && p_ptr->pspeed > 110)
+	{
+		int speed = p_ptr->pspeed - 110;
 
-	    speed /= 2;
+		speed /= 2;
 
-	    p_ptr->pspeed = speed + 110;
-	  }
+		p_ptr->pspeed = speed + 110;
+	}
 
 	/* Display the speed (if needed) */
 	if (p_ptr->pspeed != old_speed) p_ptr->redraw |= (PR_SPEED);
@@ -2911,10 +2913,10 @@ static void calc_bonuses(int Ind)
 	p_ptr->dis_to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
 
 	if (p_ptr->mode & MODE_HELL)
-	  {
-	    p_ptr->dis_to_a /= 2;
-	    p_ptr->to_a /= 2;
-	  }
+	{
+		if (p_ptr->dis_to_a > 0) p_ptr->dis_to_a /= 2;
+		if (p_ptr->to_a > 0) p_ptr->to_a /= 2;
+	}
 
 
 	/* Redraw armor (if needed) */
@@ -3026,6 +3028,11 @@ static void calc_bonuses(int Ind)
 	if(o_ptr->k_idx && o_ptr->tval == TV_DIGGING)
 	{
 		p_ptr->skill_dig += (o_ptr->weight / 10);
+
+		/* Hack -- to_h/to_d added to digging (otherwise meanless) */
+		p_ptr->skill_dig += o_ptr->to_h;
+		p_ptr->skill_dig += o_ptr->to_d;
+
 		p_ptr->skill_dig += p_ptr->skill_dig *
 			get_skill_scale(p_ptr, SKILL_DIG, 300) / 100;
 	}
@@ -3157,13 +3164,13 @@ static void calc_bonuses(int Ind)
 	/* Hell mode is HARD */
 	if ((p_ptr->mode & MODE_HELL) && (p_ptr->num_blow > 1)) p_ptr->num_blow--;
 
-        /* Combat bonus to damage */
-        if (get_skill(p_ptr, SKILL_COMBAT))
+	/* Combat bonus to damage */
+	if (get_skill(p_ptr, SKILL_COMBAT))
 	{
-                int lev = get_skill_scale(p_ptr, SKILL_COMBAT, 10);
+		int lev = get_skill_scale(p_ptr, SKILL_COMBAT, 10);
 
-                p_ptr->to_d += lev;
-                p_ptr->dis_to_d += lev;
+		p_ptr->to_d += lev;
+		p_ptr->dis_to_d += lev;
 	}
 
 	if (get_skill(p_ptr, SKILL_DODGE))

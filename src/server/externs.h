@@ -417,6 +417,7 @@ extern void do_cmd_purchase_house(int Ind, int dir);
 extern int pick_house(struct worldpos *wpos, int y, int x);
 extern void house_admin(int Ind, int dir, char *args);
 extern bool twall(int Ind, int y, int x);
+extern int breakage_chance(object_type *o_ptr);
 
 /* cmd3.c */
 extern void inven_drop(int Ind, int item, int amt);
@@ -721,7 +722,7 @@ extern cptr describe_use(int Ind, int i);
 extern void inven_item_charges(int Ind, int item);
 extern void inven_item_describe(int Ind, int item);
 extern void inven_item_increase(int Ind, int item, int num);
-extern void inven_item_optimize(int Ind, int item);
+extern bool inven_item_optimize(int Ind, int item);
 extern void floor_item_charges(int item);
 extern void floor_item_describe(int item);
 extern void floor_item_increase(int item, int num);
@@ -1180,6 +1181,9 @@ extern void player_activate_door_trap(int Ind, s16b y, s16b x);
 extern void place_trap(struct worldpos *wpos, int y, int x, int mod);
 extern void place_trap_object(object_type *o_ptr);
 // extern void wiz_place_trap(int y, int x, int idx);
+extern void do_cmd_set_trap(int Ind, int item_kit, int item_load);
+extern void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x);
+extern bool mon_hit_trap(int m_idx);
 
 /* wild.c */
 extern void initwild(void);

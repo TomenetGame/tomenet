@@ -932,9 +932,15 @@ static byte player_init[MAX_CLASS][3][2] =
 
 	{
 		/* Rogue */
-		{ TV_SHADOW_BOOK, 0 },
+#if 0
+		{ TV_SHADOW_BOOK, 0 },	// this will be changed soon
 		{ TV_SWORD, SV_SMALL_SWORD },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR }
+#else	// 0
+		{ TV_SHADOW_BOOK, 0 },	// this will be changed soon
+		{ TV_SWORD, SV_RAPIER },
+		{ TV_TRAPKIT, SV_TRAPKIT_SLING }
+#endif	// 0
 	},
 
 	{

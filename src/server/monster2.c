@@ -16,6 +16,11 @@
 #include "angband.h"
 
 /*
+ * Chance of cloned ego monster being the same ego type, in percent. [50]
+ */
+#define CLONE_EGO_CHANCE	50
+
+/*
  * Descriptions from PernAngband.	- Jir -
  */
 #define MAX_HORROR 20
@@ -375,8 +380,18 @@ void compact_monsters(int size, bool purge)
 
 		/* Skip real monsters */
 		/* real monsters in unreal location are not skipped. */
+#if 0
 		if (m_ptr->r_idx &&
 			((!m_ptr->wpos.wz && !purge) || getcave(&m_ptr->wpos))) continue;
+#else
+		if (m_ptr->r_idx)
+		{
+			if ((!m_ptr->wpos.wz && !purge) || getcave(&m_ptr->wpos)) continue;
+
+			/* Delete the monster */
+			delete_monster_idx(i);
+		}
+#endif	// 0
 
 		/* One less monster */
 		m_max--;
@@ -396,6 +411,7 @@ void compact_monsters(int size, bool purge)
 
 #ifdef MONSTER_INVENTORY
 			/* Repair objects being carried by monster */
+//			for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
 			for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
 			{
 				object_type *o_ptr;
@@ -3211,8 +3227,15 @@ bool multiply_monster(int m_idx)
 		scatter(&m_ptr->wpos, &y, &x, m_ptr->fy, m_ptr->fx, d, 0);
 		/* Require an "empty" floor grid */
 		if (!cave_empty_bold(zcave, y, x)) continue;
+#if 0
 		/* Create a new monster (awake, no groups) */
 		result = place_monster_aux(&m_ptr->wpos, y, x, m_ptr->r_idx, FALSE, FALSE, m_ptr->clone+10);
+#else
+		result = place_monster_one(&m_ptr->wpos, y, x, m_ptr->r_idx,
+				(m_ptr->ego && magik(CLONE_EGO_CHANCE)) ? m_ptr->ego :
+				pick_ego_monster(m_ptr->r_idx, getlevel(&m_ptr->wpos)),
+				0, FALSE, m_ptr->clone + 10);
+#endif	// 0
 
 		/* Done */
 		break;

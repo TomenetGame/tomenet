@@ -176,6 +176,7 @@ void cmd_all_in_one(void)
 		case TV_HUNT_BOOK:
 		case TV_FIGHT_BOOK:
 		case TV_PRAYER_BOOK:
+		case TV_TRAPKIT:
 		default:
 		{
 			int i;

@@ -678,7 +678,7 @@ static cptr k_info_flags3[] =
 
 #if 1	// under construction
 
-#if 0	// vs.monst traps flags. not implemented yet.
+#if 1	// vs.monst traps flags. implemented.
 /*
  * Trap flags
  */
@@ -1865,7 +1865,7 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
 		}
 	}
 
-#if 0
+#if 1
         /* Check flags2 -- traps*/
 	for (i = 0; i < 32; i++)
 	{
@@ -2277,7 +2277,7 @@ static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what)
 			return (0);
 		}
 	}
-#if 0
+#if 1
 
         /* Check flags2 -- traps (huh? - Jir -) */
 	for (i = 0; i < 32; i++)
@@ -2676,7 +2676,7 @@ static bool grab_one_ego_item_flag(ego_item_type *e_ptr, cptr what, int n)
 			return (0);
 		}
 	}
-#if 0
+#if 1
         /* Check flags2 -- traps */
 	for (i = 0; i < 32; i++)
 	{

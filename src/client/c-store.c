@@ -39,7 +39,7 @@ static void display_entry(int pos)
                 /* Describe the object */
 		strcpy(o_name, store_names[pos]);
                 o_name[maxwid] = '\0';
-                c_put_str(o_ptr->sval, o_name, i+6, 3);
+                c_put_str(o_ptr->xtra1, o_name, i+6, 3);
 
                 /* Show weights */
                 if (c_cfg.show_weights)
@@ -62,7 +62,7 @@ static void display_entry(int pos)
                 /* Describe the object (fully) */
 		strcpy(o_name, store_names[pos]);
                 o_name[maxwid] = '\0';
-                c_put_str(o_ptr->sval, o_name, i+6, 3);
+                c_put_str(o_ptr->xtra1, o_name, i+6, 3);
 
                 /* Show weights */
                 if (c_cfg.show_weights)

@@ -1430,6 +1430,8 @@ void do_cmd_tunnel(int Ind, int dir)
 				{
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
+					if (p_ptr->prace == RACE_ENT)
+						msg_print(Ind, "You have a bad feeling about it.");
 					
 					/* Notice */
 					note_spot_depth(wpos, y, x);
@@ -1496,6 +1498,7 @@ void do_cmd_tunnel(int Ind, int dir)
 }
 
 
+
 /*
  * Disarms a trap, or chest     -RAK-
  */
@@ -1552,7 +1555,8 @@ void do_cmd_disarm(int Ind, int dir)
 //			!(c_ptr->special.sc.ptr->found)) &&
 #endif	// 0
 		if ((!t_idx || !c_ptr->special.sc.trap.found) &&
-		    (o_ptr->tval != TV_CHEST))
+		    (o_ptr->tval != TV_CHEST) &&
+			(c_ptr->special.type != CS_MON_TRAP))
 		{
 			/* Message */
 			msg_print(Ind, "You see nothing there to disarm.");
@@ -1639,6 +1643,14 @@ void do_cmd_disarm(int Ind, int dir)
 				msg_print(Ind, "You set off a trap!");
 				chest_trap(Ind, y, x, c_ptr->o_idx);
 			}
+		}
+		/* Disarm the trap */
+		else if (c_ptr->feat == FEAT_MON_TRAP)
+//		else if (c_ptr->special.type == CS_MON_TRAP) /* same thing.. */
+		{
+			msg_print(Ind, "You disarm the monster trap.");
+			do_cmd_disarm_mon_trap_aux(wpos, y, x);
+			more = FALSE;
 		}
 
 		/* Disarm a trap */
@@ -2238,7 +2250,7 @@ void do_cmd_stay(int Ind, int pickup)
  *
  * Note that artifacts never break, see the "drop_near()" function.
  */
-static int breakage_chance(object_type *o_ptr)
+int breakage_chance(object_type *o_ptr)
 {
 	/* artifacts never break */
 	if (artifact_p(o_ptr)) return (0);

@@ -48,6 +48,7 @@ extern void rd_u32b(u32b *ip);
 extern void rd_s32b(s32b *ip);
 extern void rd_string(char *str, int max);
 
+#if 0
 void defload(void *ptr, cave_type *c_ptr);
 void defsave(void *ptr);
 void defsee(void *ptr, int Ind);
@@ -70,20 +71,8 @@ void betweenload(void *ptr, cave_type *c_ptr);
 void betweensave(void *ptr);
 //void betweensee(void *ptr, int Ind);
 void betweenhit(void *ptr, int Ind);
+#endif	// 0
 
-struct sfunc csfunc[]={
-	{ defload, defsave, defsee, defhit },	/* CS_NONE */
-	{ dnaload, dnasave, defsee, dnahit },	/* DNA_DOOR */
-	{ keyload, keysave, defsee, keyhit },	/* KEY_DOOR */
-	{ tload, tsave, tsee, thit },			/* CS_TRAPS */
-	{ defload, defsave, defsee, defhit },	/* CS_INSCRIP */
-	{ defload, defsave, defsee, defhit },	/* CS_FOUNTAIN */
-	{ betweenload, betweensave, defsee, betweenhit },	/* CS_FOUNTAIN */
-	/* CS_FOUNTAIN, CS_BETWEEN, CS_BETWEEN2 to come */
-/*
-	{ iload, isave, isee, ihit }
-*/
-};
 
 void defload(void *ptr, cave_type *c_ptr){
 }
@@ -158,6 +147,23 @@ void betweenhit(void *ptr, int Ind){
 	printf("thit: %d\n", Ind);
 }
 
+/*
+ * Monster_traps (inner-floor version)
+ */
+void montrapload(void *ptr, cave_type *c_ptr)
+{
+	rd_u16b(&c_ptr->special.sc.montrap.trap_kit);
+	rd_byte(&c_ptr->special.sc.montrap.difficulty);
+	rd_byte(&c_ptr->special.sc.montrap.feat);
+}
+void montrapsave(void *ptr)
+{
+	struct c_special *cs_ptr = ptr;
+	wr_u16b(cs_ptr->sc.montrap.trap_kit);
+	wr_byte(cs_ptr->sc.montrap.difficulty);
+	wr_byte(cs_ptr->sc.montrap.feat);
+}
+
 
 void cs_erase(cave_type *c_ptr)
 {
@@ -165,3 +171,21 @@ void cs_erase(cave_type *c_ptr)
 	c_ptr->special.type = 0;
 	c_ptr->special.sc.ptr = NULL;
 }
+
+
+struct sfunc csfunc[]={
+	{ defload, defsave, defsee, defhit },	/* CS_NONE */
+	{ dnaload, dnasave, defsee, dnahit },	/* DNA_DOOR */
+	{ keyload, keysave, defsee, keyhit },	/* KEY_DOOR */
+	{ tload, tsave, tsee, thit },			/* CS_TRAPS */
+	{ defload, defsave, defsee, defhit },	/* CS_INSCRIP */
+	{ defload, defsave, defsee, defhit },	/* CS_FOUNTAIN */
+	{ betweenload, betweensave, defsee, betweenhit },	/* CS_BETWEEN */
+	{ defload, defsave, defsee, defhit },	/* CS_BETWEEN2 */
+	{ montrapload, montrapsave, defsee, defhit },	/* CS_MON_TRAP */
+	/* CS_FOUNTAIN, CS_BETWEEN, CS_BETWEEN2 to come */
+/*
+	{ iload, isave, isee, ihit }
+*/
+};
+

@@ -37,11 +37,23 @@
 [M]- Quylthulgs can cast as much as before. (Q_ENERGY_EXCEPTION)
 [M]- Quylthulgs can no longer summon from out of sight.
 [M]- Summoners can use tactic spells well.
+[M]- Cloned ego monster can be of the same ego type. (CLONE_EGO_CHANCE)
 [D]- Arena levels backported.
 [B]- new player was sometimes generated on the north-west of town.
 [B]- player didn't teleport when died on NO_TELE floor.
 [B]- command repetition wasn't disturbed when attacked.
 
+27/07/2002 (Jir)
+[G]- monster traps backported from ToME.
+[G]- backstabbing reinforced (double dmg was way too small to be meaningful)
+[O]- digger to_d/to_h are added to skill_dig.
+[P]- food comsumption is faster with invis/wraithform etc.
+[P]- HP damage for staying inside a wall w/o wraithform.
+[m]- removed the mangband hack in client which swaps sval/xtra1
+[B]- 'leveled' monster didn't give boosted exp when killing.
+[B]- apartment caused wrong houses[] (build_store)
+[B]- ammo/pick To-Dam/To-Hit were computed in.
+[B]- (nothing) bug is fixed (I hope - compact_monsters)
 
 
 
@@ -1486,6 +1498,7 @@ things to do before 4.0.0
   + timed 'cave-affecting' spells
   + spell flags transmitted to the client
   + less packets
+  + spells should be exported to LUA?
 - implement guest-account
 - rebalance skill-points
 - devise a nice way to control ego-item generation w/o luck
@@ -1553,7 +1566,10 @@ below this line are the unfixed bugs known:
 [B] 'Nothng to buy here.' when sunrise/sunset
 [B][C] X11 client doesn't accept keystrokes if screen is less than 80x24
 [B] 'You are shooting with a Boomerang.' is not so cool a msg
-[B] macro 'w0w0' doesn't work correctly (no way to fix under current netcode)
+[B] macro 'w0w0' doesn't work correctly (unfixable - workaround with /dr)
+[B] 'look' command is almost unusable since the msg gets wiped at once
+[B] store '3' sells tons of Aman daggers when reset.
+[B] admin cannot summon townies.
 [B] deallocator deallocates the floor that ghost is on!
 1 players on -1950ft of (32,32).
 Key_monk was killed by a Night mare.
@@ -1671,7 +1687,6 @@ memo and questions:
 - savedata snapshot (via this, player can report bugs with savedata)
 - slash-commands should have info file (like sl_info.txt)
 - put CVS keyword($ID$) to every file.
-- remove the hack in client which swaps sval/xtra1 ;(
 - obsolete c-tables.c
 - send flags for each spell, so that we can obsolete do_cmd_cast_aux etc.
 - integrate p_ptr->fruit_bat into p_ptr->body_monster

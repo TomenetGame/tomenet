@@ -812,6 +812,91 @@ int do_cmd_activate_skill_aux()
 }
 
 /*
+ * Hook to determine if an object is a device
+ */
+static bool item_tester_hook_device(object_type *o_ptr)
+{
+	if ((o_ptr->tval == TV_ROD) ||
+	    (o_ptr->tval == TV_STAFF) ||
+	    (o_ptr->tval == TV_WAND)) return (TRUE);
+
+	/* Assume not */
+	return (FALSE);
+}
+
+/*
+ * Hook to determine if an object is a potion
+ */
+static bool item_tester_hook_potion(object_type *o_ptr)
+{
+	if ((o_ptr->tval == TV_POTION) ||
+	    (o_ptr->tval == TV_POTION2)) return (TRUE);
+
+	/* Assume not */
+	return (FALSE);
+}
+
+/*
+ * set a trap .. it's out of place somewhat.	- Jir -
+ */
+void do_trap(int item_kit)
+{
+//	int item_kit, item_load;
+	int item_load;
+	object_type *o_ptr, *j_ptr, *i_ptr;
+
+	if (item_kit < 0)
+	{
+		item_tester_tval = TV_TRAPKIT;
+		if (!c_get_item(&item_kit, "Use which trapping kit? ", FALSE, TRUE, FALSE))
+		{
+			if (item_kit == -2)
+				c_msg_print("You have no trapping kits.");
+			return;
+		}
+	}
+
+	o_ptr = &inventory[item_kit];
+
+	/* Trap kits need a second object */
+	switch (o_ptr->sval)
+	{
+		case SV_TRAPKIT_BOW:
+			item_tester_tval = TV_ARROW;
+			break;
+		case SV_TRAPKIT_XBOW:
+			item_tester_tval = TV_BOLT;
+			break;
+		case SV_TRAPKIT_SLING:
+			item_tester_tval = TV_SHOT;
+			break;
+		case SV_TRAPKIT_POTION:
+			item_tester_hook = item_tester_hook_potion;
+			break;
+		case SV_TRAPKIT_SCROLL:
+			item_tester_tval = TV_SCROLL;
+			break;
+		case SV_TRAPKIT_DEVICE:
+			item_tester_hook = item_tester_hook_device;
+			break;
+		default:
+			c_msg_print("Unknown trapping kit type!");
+			break;
+	}
+
+	if (!c_get_item(&item_load, "Load with what? ", TRUE, TRUE, FALSE))
+	{
+		if (item_load == -2)
+			c_msg_print("You have nothing to load that trap with.");
+		return;
+	}
+
+
+	/* Send it */
+	Send_activate_skill(MKEY_TRAP, item_kit, item_load, 0);
+}
+
+/*
  * Handle the mkey according to the types.
  * if item is less than zero, ask for an item if needed.
  */
@@ -827,6 +912,10 @@ void do_activate_skill(int x_idx, int item)
 		{
 			case MKEY_MIMICRY:
 				do_mimic();
+//				cmd_mimic();
+				break;
+			case MKEY_TRAP:
+				do_trap(item);
 //				cmd_mimic();
 				break;
 			default:

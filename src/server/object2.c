@@ -104,7 +104,10 @@ void excise_object_idx(int o_idx)
 		int x = j_ptr->ix;
 
 		/* Grid */
-		if(!(zcave=getcave(&j_ptr->wpos))) return;
+		if (!(zcave=getcave(&j_ptr->wpos))) return;
+
+		/* Somewhere out of this world */
+		if (!in_bounds2(&j_ptr->wpos, y, x)) return;
 		
 		c_ptr=&zcave[y][x];
 
@@ -400,9 +403,12 @@ void compact_objects(int size, bool purge)
 		/* Reorder */
 		if (i != o_max)
 		{
+#if 0	// not used
 			ny = o_list[o_max].iy;
 			nx = o_list[o_max].ix;
+#endif	// 0
 			wpos=&o_list[o_max].wpos;
+
 			/* Update the cave */
 #if 0
 			/* Hack -- with wilderness objects, sometimes the cave is not allocated,
@@ -458,15 +464,39 @@ void compact_objects(int size, bool purge)
 				x = o_ptr->ix;
 
 				/* Acquire grid */
-				if ((zcave=getcave(wpos))){
-					c_ptr=&zcave[y][x];
-					//			zcave[ny][nx].o_idx = i;
+				if (zcave=getcave(wpos)){
+					if (in_bounds2(wpos, y, x)){
+						c_ptr=&zcave[y][x];
+						//			zcave[ny][nx].o_idx = i;
 
-					/* Repair grid */
-					if (c_ptr->o_idx == o_max)
+						/* Repair grid */
+						if (c_ptr->o_idx == o_max)
+						{
+							/* Repair */
+							c_ptr->o_idx = i;
+						}
+					}
+					/* Hack -- monster trap maybe */
+					else
 					{
-						/* Repair */
-						c_ptr->o_idx = i;
+						y = 255 - y;
+						if (in_bounds2(wpos, y, x)){
+							c_ptr=&zcave[y][x];
+							if (c_ptr->feat == FEAT_MON_TRAP)
+							{
+								if (c_ptr->special.sc.montrap.trap_kit == o_max)
+								{
+									c_ptr->special.sc.montrap.trap_kit = i;
+								}
+							}
+							else
+							{
+								s_printf("Strange located item detected(dropped)!\n");
+								o_ptr->iy = y;
+//								o_ptr->ix = x;
+							}
+						}
+						else s_printf("Utterly out-of-bound item detected!\n");
 					}
 				}
 			}
@@ -558,7 +588,9 @@ void wipe_o_list(struct worldpos *wpos)
 		/* Dungeon */
 		else
 #endif	// MONSTER_INVENTORY
-		if (flag) zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
+//		if (flag && in_bounds2(wpos, o_ptr->iy, o_ptr->ix))
+		if (flag && in_bounds_array(o_ptr->iy, o_ptr->ix))
+			zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
 
 		/* Wipe the object */
 		WIPE(o_ptr, object_type);
@@ -626,7 +658,7 @@ void wipe_o_list_safely(struct worldpos *wpos)
 		}
 
 		/* Dungeon */
-		else
+		else if (in_bounds_array(o_ptr->iy, o_ptr->ix))
 #endif	// MONSTER_INVENTORY
 		{
 			zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
@@ -6205,17 +6237,17 @@ void inven_item_increase(int Ind, int item, int num)
 /*
  * Erase an inventory slot if it has no more items
  */
-void inven_item_optimize(int Ind, int item)
+bool inven_item_optimize(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
 
 	object_type *o_ptr = &p_ptr->inventory[item];
 
 	/* Only optimize real items */
-	if (!o_ptr->k_idx) return;
+	if (!o_ptr->k_idx) return (FALSE);
 
 	/* Only optimize empty items */
-	if (o_ptr->number) return;
+	if (o_ptr->number) return (FALSE);
 
 	/* The item is in the pack */
 	if (item < INVEN_WIELD)
@@ -6258,6 +6290,8 @@ void inven_item_optimize(int Ind, int item)
 	/* Window stuff */
 //	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+	return (TRUE);
 }
 
 
@@ -6917,6 +6951,9 @@ void setup_objects(void)
 		/* Skip carried objects */
 		if (o_ptr->held_m_idx) continue;
 
+//		if (!in_bounds2(&o_ptr->wpos, o_ptr->iy, o_ptr->ix)) continue;
+		if (in_bounds_array(o_ptr->iy, o_ptr->ix))
+
 #if 0	// excise_object_idx() should do this
 		/* Build the stack */
 		if (j = zcave[o_ptr->iy][o_ptr->ix].o_idx)
@@ -6950,3 +6987,82 @@ void object_copy(object_type *o_ptr, object_type *j_ptr)
 	COPY(o_ptr, j_ptr, object_type);
 }
 
+
+/* ToME function -- not used for now */
+#if 0
+/*
+ * Let the floor carry an object
+ */
+s16b floor_carry(worldpos *wpos, int y, int x, object_type *j_ptr)
+{
+	int n = 0;
+
+	s16b o_idx;
+
+	s16b this_o_idx, next_o_idx = 0;
+
+
+	/* Scan objects in that grid for combination */
+	for (this_o_idx = cave[y][x].o_idx; this_o_idx; this_o_idx = next_o_idx)
+	{
+		object_type *o_ptr;
+
+		/* Acquire object */
+		o_ptr = &o_list[this_o_idx];
+
+		/* Acquire next object */
+		next_o_idx = o_ptr->next_o_idx;
+
+		/* Check for combination */
+		if (object_similar(o_ptr, j_ptr))
+		{
+			/* Combine the items */
+			object_absorb(o_ptr, j_ptr);
+
+			/* Result */
+			return (this_o_idx);
+		}
+
+		/* Count objects */
+		n++;
+	}
+
+
+	/* Make an object */
+	o_idx = o_pop();
+
+	/* Success */
+	if (o_idx)
+	{
+		object_type *o_ptr;
+
+		/* Acquire object */
+		o_ptr = &o_list[o_idx];
+
+		/* Structure Copy */
+		object_copy(o_ptr, j_ptr);
+
+		/* Location */
+		o_ptr->iy = y;
+		o_ptr->ix = x;
+
+		/* Forget monster */
+		o_ptr->held_m_idx = 0;
+
+		/* Build a stack */
+		o_ptr->next_o_idx = cave[y][x].o_idx;
+
+		/* Place the object */
+		cave[y][x].o_idx = o_idx;
+
+		/* Notice */
+		note_spot(y, x);
+
+		/* Redraw */
+		lite_spot(y, x);
+	}
+
+	/* Result */
+	return (o_idx);
+}
+#endif	// 0

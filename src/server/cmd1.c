@@ -86,14 +86,20 @@ bool test_hit_norm(int chance, int ac, int vis)
  */
 s16b critical_shot(int Ind, int weight, int plus, int dam)
 {
-	player_type *p_ptr = Players[Ind];
+//	player_type *p_ptr = Players[Ind];
 
 	int i, k;
 
 	/* Extract "shot" power */
-	i = (weight + ((p_ptr->to_h + plus) * 4) +
-		 get_skill_scale(p_ptr, SKILL_ARCHERY, 100));
-        i += 50 * p_ptr->xtra_crit;
+	if (Ind > 0)
+	{
+		player_type *p_ptr = Players[Ind];
+
+		i = (weight + ((p_ptr->to_h + plus) * 4) +
+				get_skill_scale(p_ptr, SKILL_ARCHERY, 100));
+		i += 50 * p_ptr->xtra_crit;
+	}
+	else i = weight;
 
 	/* Critical hit */
 	if (randint(5000) <= i)
@@ -192,13 +198,14 @@ s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit
  * Note that most brands and slays are x3, except Slay Animal (x2),
  * Slay Evil (x2), and Kill dragon (x5).
  */
+/* accepts Ind <=0 */
 s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 {
-	player_type *p_ptr = Players[Ind];
+//	player_type *p_ptr = Players[Ind];
 
 	int mult = 1;
 
-        monster_race *r_ptr = race_inf(m_ptr);
+	monster_race *r_ptr = race_inf(m_ptr);
 
 	u32b f1, f2, f3, f4, f5, esp;
 //	bool brand_pois = FALSE;
@@ -207,28 +214,33 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Hack -- extract temp branding */
-	if (p_ptr->bow_brand)
-	  {
-	    switch (p_ptr->bow_brand_t)
-	      {
-	      case BOW_BRAND_ELEC:
-		f1 |= TR1_BRAND_ELEC;
-		break;
-	      case BOW_BRAND_COLD:
-		f1 |= TR1_BRAND_COLD;
-		break;
-	      case BOW_BRAND_FIRE:
-		f1 |= TR1_BRAND_FIRE;
-		break;
-	      case BOW_BRAND_ACID:
-		f1 |= TR1_BRAND_ACID;
-		break;
-	      case BOW_BRAND_POIS:
-		f1 |= TR1_BRAND_POIS;
-//		brand_pois = TRUE;
-		break;
-	      }
-	  }
+	if (Ind > 0)
+	{
+		player_type *p_ptr = Players[Ind];
+		if (p_ptr->bow_brand)
+		{
+
+			switch (p_ptr->bow_brand_t)
+			{
+				case BOW_BRAND_ELEC:
+					f1 |= TR1_BRAND_ELEC;
+					break;
+				case BOW_BRAND_COLD:
+					f1 |= TR1_BRAND_COLD;
+					break;
+				case BOW_BRAND_FIRE:
+					f1 |= TR1_BRAND_FIRE;
+					break;
+				case BOW_BRAND_ACID:
+					f1 |= TR1_BRAND_ACID;
+					break;
+				case BOW_BRAND_POIS:
+					f1 |= TR1_BRAND_POIS;
+					//		brand_pois = TRUE;
+					break;
+			}
+		}
+	}
 
 	/* Some "weapons" and "ammo" do extra damage */
 	switch (o_ptr->tval)
@@ -1707,15 +1719,13 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 
 				if (backstab)
 				{
-					k += (k * (nolite ? 3 : 1),
-							get_skill_scale(p_ptr, SKILL_BACKSTAB,
-								100)) / 100;
+					k += (k * (nolite ? 3 : 1) *
+						get_skill_scale(p_ptr, SKILL_BACKSTAB, 300)) / 100;
 				}
 				else if (stab_fleeing)
 				{
-					k += (k * (nolite2 ? 2 : 1),
-							get_skill_scale(p_ptr, SKILL_BACKSTAB, 70)) /
-						100;
+					k += (k * (nolite2 ? 2 : 1) *
+						get_skill_scale(p_ptr, SKILL_BACKSTAB, 210)) / 100;
 				}
 
 				/* Select a chaotic effect (50% chance) */

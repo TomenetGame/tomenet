@@ -627,9 +627,10 @@ struct trap_type
 #define CS_FOUNTAIN 5
 #define CS_BETWEEN	6	/* petit jump type */
 #define CS_BETWEEN2	7	/* world traveller type */
+#define CS_MON_TRAP	8	/* monster traps */
 
 /* heheh it's kludge.. */
-#define sc_is_pointer(type)	(type < 3 || type == 4 || 7 < type)
+#define sc_is_pointer(type)	(type < 3 || type == 4 || 8 < type)
 
 #if 0
 struct c_special{
@@ -647,6 +648,8 @@ struct c_special{
 		struct { byte fy, fx; } between;
 		struct { byte wx, wy; s16b wz; } wpos;	/* XXX */
 		struct { byte type, rest; bool known; } fountain;
+		struct { u16b trap_kit; byte difficulty, feat; } montrap;
+//		struct { u16b trap_kit, trap_load; } montrap;
 	} sc;
 };
 #endif	// 0

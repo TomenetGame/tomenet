@@ -5061,6 +5061,9 @@ static int Receive_activate_skill(int ind)
 			case MKEY_FLETCHERY:
 				do_cmd_fletchery(player);
 				break;
+			case MKEY_TRAP:
+				do_cmd_set_trap(player, book, spell);
+				break;
 		}
 		return 2;
 	}

@@ -3958,8 +3958,9 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	if (f1 & (TR1_STEALTH))
 	{
-		fprintf(fff, "It affects your stealth.\n");
 #if 0
+		fprintf(fff, "It affects your stealth.\n");
+#else	// 0
 		if (o_ptr->tval != TV_TRAPKIT)
 			fprintf(fff, "It affects your stealth.\n");
 		else
@@ -4107,46 +4108,46 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
 		fprintf(fff, "It affects your hit points.\n");
 	}
-	//        if (o_ptr->tval != TV_TRAPKIT)
-	//        {
-	if (f2 & (TR2_SUST_STR))
+	if (o_ptr->tval != TV_TRAPKIT)
 	{
-		fprintf(fff, "It sustains your strength.\n");
+		if (f2 & (TR2_SUST_STR))
+		{
+			fprintf(fff, "It sustains your strength.\n");
+		}
+		if (f2 & (TR2_SUST_INT))
+		{
+			fprintf(fff, "It sustains your intelligence.\n");
+		}
+		if (f2 & (TR2_SUST_WIS))
+		{
+			fprintf(fff, "It sustains your wisdom.\n");
+		}
+		if (f2 & (TR2_SUST_DEX))
+		{
+			fprintf(fff, "It sustains your dexterity.\n");
+		}
+		if (f2 & (TR2_SUST_CON))
+		{
+			fprintf(fff, "It sustains your constitution.\n");
+		}
+		if (f2 & (TR2_SUST_CHR))
+		{
+			fprintf(fff, "It sustains your charisma.\n");
+		}
+		if (f2 & (TR2_IM_ACID))
+		{
+			fprintf(fff, "It provides immunity to acid.\n");
+		}
+		if (f2 & (TR2_IM_ELEC))
+		{
+			fprintf(fff, "It provides immunity to electricity.\n");
+		}
+		if (f2 & (TR2_IM_FIRE))
+		{
+			fprintf(fff, "It provides immunity to fire.\n");
+		}
 	}
-	if (f2 & (TR2_SUST_INT))
-	{
-		fprintf(fff, "It sustains your intelligence.\n");
-	}
-	if (f2 & (TR2_SUST_WIS))
-	{
-		fprintf(fff, "It sustains your wisdom.\n");
-	}
-	if (f2 & (TR2_SUST_DEX))
-	{
-		fprintf(fff, "It sustains your dexterity.\n");
-	}
-	if (f2 & (TR2_SUST_CON))
-	{
-		fprintf(fff, "It sustains your constitution.\n");
-	}
-	if (f2 & (TR2_SUST_CHR))
-	{
-		fprintf(fff, "It sustains your charisma.\n");
-	}
-	if (f2 & (TR2_IM_ACID))
-	{
-		fprintf(fff, "It provides immunity to acid.\n");
-	}
-	if (f2 & (TR2_IM_ELEC))
-	{
-		fprintf(fff, "It provides immunity to electricity.\n");
-	}
-	if (f2 & (TR2_IM_FIRE))
-	{
-		fprintf(fff, "It provides immunity to fire.\n");
-	}
-	//        }
-#if 0
+#if 1
 	else
 	{
 		if (f2 & (TRAP2_AUTOMATIC_5))
@@ -4308,7 +4309,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 			if (esp & ESP_SPIDER) fprintf(fff, "It allows you to sense the presence of spiders.\n");
 			if (esp & ESP_GIANT) fprintf(fff, "It allows you to sense the presence of giants.\n");
 			if (esp & ESP_DEMON) fprintf(fff, "It allows you to sense the presence of demons.\n");
-			if (esp & ESP_UNDEAD) fprintf(fff, "It allows you to sense presence of undead.\n");
+			if (esp & ESP_UNDEAD) fprintf(fff, "It allows you to sense the presence of undead.\n");
 			if (esp & ESP_EVIL) fprintf(fff, "It allows you to sense the presence of evil beings.\n");
 			if (esp & ESP_ANIMAL) fprintf(fff, "It allows you to sense the presence of animals.\n");
 			if (esp & ESP_DRAGONRIDER) fprintf(fff, "It allows you to sense the presence of dragonriders.\n");

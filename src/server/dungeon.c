@@ -532,7 +532,7 @@ static void process_world(int Ind)
 
 	int		x, y, i, j;
 
-	int		regen_amount, NumPlayers_old=NumPlayers;
+//	int		regen_amount, NumPlayers_old=NumPlayers;
 
 	cave_type		*c_ptr;
 	byte			*w_ptr;
@@ -642,17 +642,6 @@ static void process_world(int Ind)
 		/*  taken out entirely for now --KLJ-- */
 	}
 
-	/* Tell a day passed */
-	if (((turn + (DAY_START * 10L)) % (10L * DAY)) == 0)
-	{
-		char buf[20];
-
-		sprintf(buf, get_day(bst(YEAR, turn) + START_YEAR));
-		msg_broadcast_format(0,
-				"\377GToday it is %s of the %s year of the third age.",
-				get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
-	}
-
 
 	/*** Process the monsters ***/
 	/* Note : since monsters are added at a constant rate in real time,
@@ -687,37 +676,6 @@ static void process_world(int Ind)
 
 		disturb(Ind, 0, 0);
 	}
-#if 0	// it's handled by p_ptr->black_breath_tmp
-	if (!(turn % 3000) && (p_ptr->black_breath))
-	{
-		u32b f1, f2, f3, f4, f5;
-
-		bool be_silent = FALSE;
-
-		/* check all equipment for the Black Breath flag. */
-		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-		{
-			o_ptr = &inventory[i];
-
-			/* Skip non-objects */
-			if (!o_ptr->k_idx) continue;
-
-			/* Extract the item flags */
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-			/* No messages if object has the flag, to avoid annoyance. */
-			if (f4 & (TR4_BLACK_BREATH)) be_silent = TRUE;
-
-		}
-		/* If we are allowed to speak, warn and disturb. */
-
-		if (!be_silent)
-		{
-			cmsg_print(TERM_L_DARK, "The Black Breath saps your soul!");
-			disturb(0, 0);
-		}
-	}
-#endif	// 0
 
 	/* Cold Turkey  */
 	i = (p_ptr->csane << 7) / p_ptr->msane;
@@ -1491,25 +1449,1130 @@ static void process_player_begin(int Ind)
 
 
 /*
- * Player processing that occurs at the end of a turn
- */
-/*
+ * Handle misc. 'timed' things on the player.
+ *
  * TODO: find a better way for timed spells(set_*).
+ */
+static void process_player_end_aux(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	cave_type		*c_ptr;
+	object_type		*o_ptr;
+	int		x, y, i, j;
+	int		regen_amount, NumPlayers_old=NumPlayers;
+
+	/* Unbelievers "resist" magic */
+	//		int minus = (p_ptr->anti_magic)?3:1;
+	int minus = 1 + get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 3);
+	int recovery = magik(get_skill_scale(p_ptr, SKILL_HEALTH, 100))?3:0;
+
+	cave_type **zcave;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	/* Anything done here cannot be reduced by GoI */
+	bypass_invuln = TRUE;
+
+	/*** Damage over Time ***/
+
+	/* Take damage from poison */
+	if (p_ptr->poisoned)
+	{
+		/* Take damage */
+		take_hit(Ind, 1, "poison");
+	}
+
+	/* Drowning, but not ghosts */
+	//		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER && !p_ptr->ghost && !p_ptr->fly)
+	if(c_ptr->feat==FEAT_WATER)
+	{
+		if(!p_ptr->ghost && !p_ptr->fly)
+		{
+			/* Take damage */
+			if (!(p_ptr->body_monster) || (
+						!(r_info[p_ptr->body_monster].flags7 &
+							(RF7_AQUATIC | RF7_CAN_SWIM)) &&
+						!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
+			{
+				int hit = p_ptr->mhp>>6;
+				int swim = get_skill_scale(p_ptr, SKILL_SWIM, 80);
+				hit += randint(p_ptr->mhp>>5);
+				if(!hit) hit=1;
+
+				/* temporary abs weight calc */
+				if(p_ptr->wt+p_ptr->total_weight/10 > 170 + swim)	// 190
+				{
+					int factor=(p_ptr->wt+p_ptr->total_weight/10)-150-swim;	// 170
+					/* too heavy, always drown? */
+					if(factor<300)
+					{
+						if(randint(factor)<20) hit=0;
+					}
+
+					/* Hack: Take STR and DEX into consideration (max 51%) */
+					if (magik(adj_str_wgt[p_ptr->stat_ind[A_STR]]) ||
+							magik(adj_str_wgt[p_ptr->stat_ind[A_DEX]]))
+						hit = 0;
+
+					if (magik(swim)) hit = 0;
+
+					if (hit)
+					{
+						msg_print(Ind,"\377rYou're drowning!");
+					}
+
+					/* harm equipments (even hit == 0) */
+					if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
+							magik(WATER_ITEM_DAMAGE_CHANCE))
+					{
+						inven_damage(Ind, set_water_destroy, 1);
+						if (magik(20)) minus_ac(Ind, 1);
+					}
+
+					if(randint(1000-factor)<10)
+					{
+						msg_print(Ind,"\377rYou are weakened by the exertion of swimming!");
+						//							do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
+						dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
+					}
+					take_hit(Ind, hit, "drowning");
+				}
+			}
+		}
+	}
+	/* Aquatic anoxia */
+	else if(!p_ptr->ghost)
+	{
+		/* Take damage */
+		if((p_ptr->body_monster) && (
+					(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
+					!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
+		{
+			int hit = p_ptr->mhp>>6;
+			hit += randint(p_ptr->mhp>>5);
+			if(!hit) hit=1;
+
+			/* Take CON into consideration(max 30%) */
+			if (!magik(adj_str_wgt[p_ptr->stat_ind[A_CON]])) hit = 0;
+			if (hit) msg_print(Ind,"\377rYou cannot breathe air!");
+
+			if(randint(1000)<10)
+			{
+				msg_print(Ind,"\377rYou find it hard to stir!");
+				//					do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
+				dec_stat(Ind, A_DEX, 10, STAT_DEC_TEMPORARY);
+			}
+			take_hit(Ind, hit, "anoxia");
+		}
+	}
+
+	/* Spectres -- take damage when moving through walls */
+
+	/*
+	 * Added: ANYBODY takes damage if inside through walls
+	 * without wraith form -- NOTE: Spectres will never be
+	 * reduced below 0 hp by being inside a stone wall; others
+	 * WILL BE!
+	 */
+	if (!p_ptr->ghost && !cave_floor_bold(zcave, p_ptr->py, p_ptr->px))
+	{
+		/* Player can walk through trees */
+		//		if ((PRACE_FLAG(PR1_PASS_TREE) || (get_skill(SKILL_DRUID) > 15)) && (cave[py][px].feat == FEAT_TREES))
+		if (p_ptr->prace == RACE_ENT && (c_ptr->feat == FEAT_TREE))
+		{
+			/* Do nothing */
+		}
+		//		else if (PRACE_FLAG(PR1_SEMI_WRAITH) && (!p_ptr->wraith_form) && (f_info[cave[py][px].feat].flags1 & FF1_CAN_PASS))
+		else if (!p_ptr->tim_wraith)
+		{
+			int amt = 1 + ((p_ptr->lev)/5) + p_ptr->mhp / 100;
+
+			//			cave_no_regen = TRUE;
+			if (amt > p_ptr->chp - 1) amt = p_ptr->chp - 1;
+			take_hit(Ind, amt, " walls ...");
+		}
+	}
+
+
+	/* Take damage from cuts */
+	if (p_ptr->cut)
+	{
+		/* Mortal wound or Deep Gash */
+		if (p_ptr->cut > 200)
+		{
+			i = 3;
+		}
+
+		/* Severe cut */
+		else if (p_ptr->cut > 100)
+		{
+			i = 2;
+		}
+
+		/* Other cuts */
+		else
+		{
+			i = 1;
+		}
+
+		/* Take damage */
+		take_hit(Ind, i, "a fatal wound");
+	}
+
+	/*** Check the Food, and Regenerate ***/
+
+	/* Ghosts don't need food */
+	/* Allow AFK-hivernation if not hungry */
+	if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food > PY_FOOD_ALERT))
+	{
+		/* Digest normally */
+		if (p_ptr->food < PY_FOOD_MAX)
+		{
+			/* Every 50/6 level turns */
+			//			        if (!(turn%((level_speed((&p_ptr->wpos))*10)/12)))
+			if (!(turn%((level_speed((&p_ptr->wpos))/12)*10)))
+			{
+				/* Basic digestion rate based on speed */
+				i = extract_energy[p_ptr->pspeed] * 2;
+
+				/* Adrenaline takes more food */
+				if (p_ptr->adrenaline) i *= 5;
+
+				/* Biofeedback takes more food */
+				if (p_ptr->biofeedback) i *= 2;
+
+				/* Regeneration takes more food */
+				if (p_ptr->regenerate) i += 30;
+
+				/* DragonRider and Half-Troll take more food */
+				if (p_ptr->prace == RACE_DRIDER
+						|| p_ptr->prace == RACE_HALF_TROLL) i += 15;
+
+				/* Invisibility consume a lot of food */
+				i += p_ptr->invis / 2;
+
+				/* Invulnerability consume a lot of food */
+				if (p_ptr->invuln) i += 40;
+
+				/* Wraith Form consume a lot of food */
+				if (p_ptr->tim_wraith) i += 30;
+
+				/* Hitpoints multiplier consume a lot of food */
+				if (p_ptr->to_l) i += p_ptr->to_l * 5;
+
+				/* Slow digestion takes less food */
+				/* XXX Hrm this won't help so much.. */
+				if (p_ptr->slow_digest) i -= 10;
+
+				/* Digest some food */
+				(void)set_food(Ind, p_ptr->food - i);
+
+				/* Hack -- check to see if we have been kicked off
+				 * due to starvation 
+				 */
+
+				if (NumPlayers != NumPlayers_old) return;
+			}
+		}
+
+		/* Digest quickly when gorged */
+		else
+		{
+			/* Digest a lot of food */
+			(void)set_food(Ind, p_ptr->food - 100);
+		}
+
+		/* Starve to death (slowly) */
+		if (p_ptr->food < PY_FOOD_STARVE)
+		{
+			/* Calculate damage */
+			i = (PY_FOOD_STARVE - p_ptr->food) / 10;
+
+			/* Take damage */
+			take_hit(Ind, i, "starvation");
+		}
+	}
+
+	/* Default regeneration */
+	regen_amount = PY_REGEN_NORMAL;
+
+	/* Getting Weak */
+	if (p_ptr->food < PY_FOOD_WEAK)
+	{
+		/* Lower regeneration */
+		if (p_ptr->food < PY_FOOD_STARVE)
+		{
+			regen_amount = 0;
+		}
+		else if (p_ptr->food < PY_FOOD_FAINT)
+		{
+			regen_amount = PY_REGEN_FAINT;
+		}
+		else
+		{
+			regen_amount = PY_REGEN_WEAK;
+		}
+
+		/* Getting Faint */
+		if (!p_ptr->ghost && p_ptr->food < PY_FOOD_FAINT)
+		{
+			/* Faint occasionally */
+			if (!p_ptr->paralyzed && (rand_int(100) < 10))
+			{
+				/* Message */
+				msg_print(Ind, "You faint from the lack of food.");
+				disturb(Ind, 1, 0);
+
+				/* Hack -- faint (bypass free action) */
+				(void)set_paralyzed(Ind, p_ptr->paralyzed + 1 + rand_int(5));
+			}
+		}
+	}
+
+	/* Resting */
+	if (p_ptr->resting && !p_ptr->searching)
+	{
+		regen_amount = regen_amount * RESTING_RATE;
+	}
+
+	/* Regenerate the mana */
+	/* Hack -- regenerate mana 5/3 times faster */
+	if (p_ptr->csp < p_ptr->msp)
+	{
+		regenmana(Ind, (regen_amount * 5) * (p_ptr->regen_mana ? 2 : 1) / 3);
+	}
+
+	/* Regeneration ability */
+	if (p_ptr->regenerate)
+	{
+		regen_amount = regen_amount * 2;
+	}
+
+	if (recovery)
+	{
+		regen_amount = regen_amount * 3 / 2;
+	}
+
+	/* Poisoned or cut yields no healing */
+	if (p_ptr->poisoned) regen_amount = 0;
+	if (p_ptr->cut) regen_amount = 0;
+
+	/* But Biofeedback always helps */
+	if (p_ptr->biofeedback) regen_amount += randint(0x400) + regen_amount;
+
+	/* Regenerate Hit Points if needed */
+	if (p_ptr->chp < p_ptr->mhp)
+	{
+		regenhp(Ind, regen_amount);
+	}
+
+	/* Disturb if we are done resting */
+	if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp) && (p_ptr->csp == p_ptr->msp))
+	{
+		disturb(Ind, 0, 0);
+	}
+
+	/* Finally, at the end of our turn, update certain counters. */
+	/*** Timeout Various Things ***/
+
+	/* Handle temporary stat drains */
+	for (i = 0; i < 6; i++)
+	{
+		if (p_ptr->stat_cnt[i] > 0)
+		{
+			p_ptr->stat_cnt[i] -= 1 - recovery;
+			if (p_ptr->stat_cnt[i] <= 0)
+			{
+				do_res_stat_temp(Ind, i);
+			}
+		}
+	}
+
+	/* Adrenaline */
+	if (p_ptr->adrenaline)
+	{
+		(void)set_adrenaline(Ind, p_ptr->adrenaline - 1);
+	}
+
+	/* Biofeedback */				
+	if (p_ptr->biofeedback)
+	{
+		(void)set_biofeedback(Ind, p_ptr->biofeedback - 1);
+	}
+
+	/* Hack -- Bow Branding */
+	if (p_ptr->bow_brand)
+	{
+		(void)set_bow_brand(Ind, p_ptr->bow_brand - minus, p_ptr->bow_brand_t, p_ptr->bow_brand_d);
+	}
+
+	/* Hack -- Timed ESP */
+	if (p_ptr->tim_esp)
+	{
+		(void)set_tim_esp(Ind, p_ptr->tim_esp - minus);
+	}
+
+	/* Hack -- Space/Time Anchor */
+	if (p_ptr->st_anchor)
+	{
+		(void)set_st_anchor(Ind, p_ptr->st_anchor - minus);
+	}
+
+	/* Hack -- Prob travel */
+	if (p_ptr->prob_travel)
+	{
+		(void)set_prob_travel(Ind, p_ptr->prob_travel - minus);
+	}
+
+	/* Hack -- Avoid traps */
+	if (p_ptr->tim_traps)
+	{
+		(void)set_tim_traps(Ind, p_ptr->tim_traps - minus);
+	}
+
+	/* Hack -- Mimicry */
+	if (p_ptr->tim_mimic)
+	{
+		(void)set_mimic(Ind, p_ptr->tim_mimic - 1, p_ptr->tim_mimic_what);
+	}
+
+	/* Hack -- Timed manashield */
+	if (p_ptr->tim_manashield)
+	{
+		set_tim_manashield(Ind, p_ptr->tim_manashield - minus);
+	}
+	if (cfg.use_pk_rules == PK_RULES_DECLARE)
+	{
+		if(p_ptr->tim_pkill){
+			p_ptr->tim_pkill--;
+			if(!p_ptr->tim_pkill){
+				if(p_ptr->pkill&PKILL_SET){
+					msg_print(Ind, "You may now kill other players");
+					p_ptr->pkill|=PKILL_KILLER;
+				}
+				else{
+					msg_print(Ind, "You are now protected from other players");
+					p_ptr->pkill&=~PKILL_KILLABLE;
+				}
+			}
+		}
+	}
+	if(p_ptr->tim_jail && !p_ptr->wpos.wz){
+		int jy, jx;
+		p_ptr->tim_jail--;
+		if(!p_ptr->tim_jail){
+			msg_print(Ind, "\377GYou are free to go!");
+			jy=p_ptr->py;
+			jx=p_ptr->px;
+			zcave[jy][jx].info &= ~CAVE_STCK;
+			teleport_player(Ind, 1);
+			zcave[jy][jx].info |= CAVE_STCK;
+		}
+	}
+#if 0	// moved to process_player_change_wpos
+	if(!p_ptr->wpos.wz && p_ptr->tim_susp){
+		imprison(Ind, 0, "old crimes");
+		return;
+	}
+#endif	// 0
+
+	/* Hack -- Tunnel */
+#if 0	// not used
+	if (p_ptr->auto_tunnel)
+	{
+		p_ptr->auto_tunnel--;
+	}
+#endif	// 0
+
+	/* Hack -- Meditation */
+	if (p_ptr->tim_meditation)
+	{
+		(void)set_tim_meditation(Ind, p_ptr->tim_meditation - minus);
+	}
+
+	/* Hack -- Wraithform */
+	if (p_ptr->tim_wraith)
+	{
+		(void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus);
+	}
+
+	/* Hack -- Hallucinating */
+	if (p_ptr->image)
+	{
+		(void)set_image(Ind, p_ptr->image - 1 - recovery);
+	}
+
+	/* Blindness */
+	if (p_ptr->blind)
+	{
+		(void)set_blind(Ind, p_ptr->blind - 1 - recovery);
+	}
+
+	/* Times see-invisible */
+	if (p_ptr->tim_invis)
+	{
+		(void)set_tim_invis(Ind, p_ptr->tim_invis - minus);
+	}
+
+	/* Times invisibility */
+	if (p_ptr->tim_invisibility)
+	{
+		if (p_ptr->aggravate)
+		{
+			msg_print(Ind, "Your invisibility shield is broken by your aggravation.");
+			(void)set_invis(Ind, 0, 0);
+		}		    
+		else
+		{
+			(void)set_invis(Ind, p_ptr->tim_invisibility - minus, p_ptr->tim_invis_power);
+		}
+	}
+
+	/* Timed infra-vision */
+	if (p_ptr->tim_infra)
+	{
+		(void)set_tim_infra(Ind, p_ptr->tim_infra - minus);
+	}
+
+	/* Paralysis */
+	if (p_ptr->paralyzed)
+	{
+		(void)set_paralyzed(Ind, p_ptr->paralyzed - 1 - recovery);
+	}
+
+	/* Confusion */
+	if (p_ptr->confused)
+	{
+		(void)set_confused(Ind, p_ptr->confused - minus - recovery);
+	}
+
+	/* Afraid */
+	if (p_ptr->afraid)
+	{
+		(void)set_afraid(Ind, p_ptr->afraid - minus);
+	}
+
+	/* Fast */
+	if (p_ptr->fast)
+	{
+		(void)set_fast(Ind, p_ptr->fast - minus);
+	}
+
+	/* Slow */
+	if (p_ptr->slow)
+	{
+		(void)set_slow(Ind, p_ptr->slow - minus - recovery);
+	}
+
+	/* Protection from evil */
+	if (p_ptr->protevil)
+	{
+		(void)set_protevil(Ind, p_ptr->protevil - 1);
+	}
+
+	/* Invulnerability */
+	/* Hack -- make -1 permanent invulnerability */
+	if (p_ptr->invuln)
+	{
+		if (p_ptr->invuln > 0)
+			(void)set_invuln(Ind, p_ptr->invuln - minus);
+	}
+
+	/* Heroism */
+	if (p_ptr->hero)
+	{
+		(void)set_hero(Ind, p_ptr->hero - 1);
+	}
+
+	/* Super Heroism */
+	if (p_ptr->shero)
+	{
+		(void)set_shero(Ind, p_ptr->shero - 1);
+	}
+
+	/* Furry */
+	if (p_ptr->fury)
+	{
+		(void)set_fury(Ind, p_ptr->fury - 1);
+	}
+
+	/* Blessed */
+	if (p_ptr->blessed)
+	{
+		(void)set_blessed(Ind, p_ptr->blessed - 1);
+	}
+
+	/* Shield */
+	if (p_ptr->shield)
+	{
+		(void)set_shield(Ind, p_ptr->shield - minus);
+	}
+
+	/* Oppose Acid */
+	if (p_ptr->oppose_acid)
+	{
+		(void)set_oppose_acid(Ind, p_ptr->oppose_acid - 1);
+	}
+
+	/* Oppose Lightning */
+	if (p_ptr->oppose_elec)
+	{
+		(void)set_oppose_elec(Ind, p_ptr->oppose_elec - 1);
+	}
+
+	/* Oppose Fire */
+	if (p_ptr->oppose_fire)
+	{
+		(void)set_oppose_fire(Ind, p_ptr->oppose_fire - 1);
+	}
+
+	/* Oppose Cold */
+	if (p_ptr->oppose_cold)
+	{
+		(void)set_oppose_cold(Ind, p_ptr->oppose_cold - 1);
+	}
+
+	/* Oppose Poison */
+	if (p_ptr->oppose_pois)
+	{
+		(void)set_oppose_pois(Ind, p_ptr->oppose_pois - 1);
+	}
+
+	/*** Poison and Stun and Cut ***/
+
+	/* Poison */
+	if (p_ptr->poisoned)
+	{
+		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
+
+		/* Apply some healing */
+		(void)set_poisoned(Ind, p_ptr->poisoned - adjust - recovery * 2);
+	}
+
+	/* Stun */
+	if (p_ptr->stun)
+	{
+		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
+
+		/* Apply some healing */
+		(void)set_stun(Ind, p_ptr->stun - adjust - recovery * 2);
+	}
+
+	/* Cut */
+	if (p_ptr->cut)
+	{
+		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
+
+		/* Hack -- Truly "mortal" wound */
+		if (p_ptr->cut > 1000) adjust = 0;
+
+		/* Biofeedback always helps */
+		if (p_ptr->biofeedback) adjust += adjust + 10;
+
+		/* Apply some healing */
+		(void)set_cut(Ind, p_ptr->cut - adjust - recovery * 2);
+	}
+
+	/*** Process Light ***/
+
+	/* Check for light being wielded */
+	o_ptr = &p_ptr->inventory[INVEN_LITE];
+
+	/* Burn some fuel in the current lite */
+	if (o_ptr->tval == TV_LITE)
+	{
+		u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
+		/* Hack -- Use some fuel (sometimes) */
+#if 0
+		if (!artifact_p(o_ptr) && !(o_ptr->sval == SV_LITE_DWARVEN)
+				&& !(o_ptr->sval == SV_LITE_FEANOR) && (o_ptr->pval > 0) && (!o_ptr->name3))
+#endif	// 0
+
+			/* Extract the item flags */
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+		/* Hack -- Use some fuel */
+		if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0))
+		{
+			/* Decrease life-span */
+			o_ptr->timeout--;
+
+			/* Hack -- notice interesting fuel steps */
+			if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
+			{
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+			}
+
+			/* Hack -- Special treatment when blind */
+			if (p_ptr->blind)
+			{
+				/* Hack -- save some light for later */
+				if (o_ptr->timeout == 0) o_ptr->timeout++;
+			}
+
+			/* The light is now out */
+			else if (o_ptr->timeout == 0)
+			{
+				bool refilled = FALSE;
+
+				disturb(Ind, 0, 0);
+
+				/* If flint is ready, refill at once */
+				if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_FLINT &&
+						!p_ptr->paralyzed)
+				{
+					msg_print(Ind, "You prepare a flint...");
+					refilled = do_auto_refill(Ind);
+					if (!refilled)
+						msg_print(Ind, "Oops, you're out of fuel!");
+				}
+
+				if (!refilled)
+				{
+					msg_print(Ind, "Your light has gone out!");
+					/* Calculate torch radius */
+					p_ptr->update |= (PU_TORCH|PU_BONUS);
+				}
+
+				/* Torch disappears */
+				if (o_ptr->sval == SV_LITE_TORCH && !o_ptr->timeout)
+				{
+					/* Decrease the item, optimize. */
+					inven_item_increase(Ind, INVEN_LITE, -1);
+					//						inven_item_describe(Ind, INVEN_LITE);
+					inven_item_optimize(Ind, INVEN_LITE);
+				}
+			}
+
+			/* The light is getting dim */
+			else if ((o_ptr->timeout < 100) && (!(o_ptr->timeout % 10)))
+			{
+				if (p_ptr->disturb_minor) disturb(Ind, 0, 0);
+				msg_print(Ind, "Your light is growing faint.");
+			}
+		}
+	}
+
+	/* Calculate torch radius */
+	//		p_ptr->update |= (PU_TORCH|PU_BONUS);
+
+	/*** Process Inventory ***/
+
+	/* Handle experience draining */
+	if (p_ptr->exp_drain && magik(10))
+		//			take_xp_hit(Ind, 1, "Draining", TRUE, FALSE);
+		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L,
+				"Draining", TRUE, FALSE);
+#if 0
+	{
+		if ((rand_int(100) < 10) && (p_ptr->exp > 0))
+		{
+			p_ptr->exp--;
+			p_ptr->max_exp--;
+			check_experience(Ind);
+		}
+	}
+#endif	// 0
+
+	/* Handle experience draining.  In Oangband, the effect
+	 * is worse, especially for high-level characters.
+	 * As per Tolkien, hobbits are resistant.
+	 */
+	if ((p_ptr->black_breath || p_ptr->black_breath_tmp) &&
+			rand_int(200) < (p_ptr->prace == RACE_HOBBIT ? 2 : 5))
+	{
+		(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
+		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L,
+				"Black Breath", TRUE, TRUE);
+#if 0
+		byte chance = (p_ptr->prace == RACE_HOBBIT) ? 2 : 5;
+		int plev = p_ptr->lev;
+
+		//                if (PRACE_FLAG(PR1_RESIST_BLACK_BREATH)) chance = 2;
+
+		//                if ((rand_int(100) < chance) && (p_ptr->exp > 0))
+		/* Toned down a little, considering it's realtime. */
+		if ((rand_int(200) < chance))
+			take_xp_hit(Ind, 1 + plev / 5 + p_ptr->max_exp / 10000L,
+					"Black Breath", TRUE, TRUE);
+		{
+			int reduce = 1 + plev / 5 + p_ptr->max_exp / 10000L;
+			p_ptr->exp -= reduce;
+			p_ptr->max_exp -= reduce;
+			//                        (void)do_dec_stat(Ind, randint(6)+1, STAT_DEC_NORMAL);
+			(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
+			check_experience(Ind);
+
+			/* Now you can die from this :) */
+			if (p_ptr->exp < 1 && !p_ptr->ghost)
+			{
+				p_ptr->chp=-3;
+				strcpy(p_ptr->died_from, "Black Breath");
+				player_death(Ind);
+			}
+		}
+#endif	// 0
+	}
+
+	/* Drain Mana */
+	if (p_ptr->drain_mana && p_ptr->csp)
+	{
+		p_ptr->csp -= p_ptr->drain_mana;
+		if (magik(30)) p_ptr->csp -= p_ptr->drain_mana;
+
+		if (p_ptr->csp < 0) p_ptr->csp = 0;
+
+		/* Redraw */
+		p_ptr->redraw |= (PR_MANA);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_PLAYER);
+	}
+
+	/* Drain Hitpoints */
+	if (p_ptr->drain_life)
+	{
+		int drain = p_ptr->drain_life + rand_int(p_ptr->mhp / 100);
+
+		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining");
+#if 0
+		p_ptr->chp -= (drain < p_ptr->chp ? drain : p_ptr->chp);
+
+		/* Redraw */
+		p_ptr->redraw |= (PR_HP);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_PLAYER);
+#endif	// 0
+	}
+
+	/* Note changes */
+	j = 0;
+
+	/* Process equipment */
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	{
+		/* Get the object */
+		o_ptr = &p_ptr->inventory[i];
+
+		/* Skip non-objects */
+		if (!o_ptr->k_idx) continue;
+
+		/* Recharge activatable objects */
+		/* (well, light-src should be handled here too? -Jir- */
+		if ((o_ptr->timeout > 0) && ((o_ptr->tval != TV_LITE) || o_ptr->name1))
+		{
+			/* Recharge */
+			o_ptr->timeout--;
+
+			/* Notice changes */
+			if (!(o_ptr->timeout)) j++;
+		}
+	}
+
+	/* Recharge rods */
+	/* this should be moved to 'timeout'? */
+	for (i = 0; i < INVEN_PACK; i++)
+	{
+		o_ptr = &p_ptr->inventory[i];
+
+		/* Examine all charging rods */
+		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval))
+		{
+			/* Charge it */
+			o_ptr->pval--;
+
+			/* Charge it further */
+			if (o_ptr->pval && magik(p_ptr->skill_dev))
+				o_ptr->pval--;
+
+			/* Notice changes */
+			if (!(o_ptr->pval)) j++;
+		}
+	}
+
+	/* Notice changes */
+	if (j)
+	{
+		/* Combine pack */
+		p_ptr->notice |= (PN_COMBINE);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	}
+
+	/* Feel the inventory */
+	sense_inventory(Ind);
+
+	/*** Involuntary Movement ***/
+
+
+	/* Delayed mind link */
+	if (p_ptr->esp_link_end)
+	{
+		p_ptr->esp_link_end--;
+
+		/* Activate the break */
+		if (!p_ptr->esp_link_end)
+		{
+			int Ind2;
+
+			if (p_ptr->esp_link_type && p_ptr->esp_link)
+			{
+				Ind2 = find_player(p_ptr->esp_link);
+
+				if (!Ind2)
+					end_mind(Ind, TRUE);
+				else
+				{
+					player_type *p_ptr2 = Players[Ind2];
+
+					msg_format(Ind, "\377RYou break the mind link with %s.", p_ptr2->name);
+					msg_format(Ind2, "\377R%s breaks the mind link with you.", p_ptr->name);
+					p_ptr->esp_link = 0;
+					p_ptr->esp_link_type = 0;
+					p_ptr->esp_link_flags = 0;
+					p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+					p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
+					p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
+					p_ptr2->esp_link = 0;
+					p_ptr2->esp_link_type = 0;
+					p_ptr2->esp_link_flags = 0;
+					p_ptr2->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+					p_ptr2->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
+					p_ptr2->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
+				}
+			}
+		}
+	}
+
+	/* Don't do AFK in a store */
+	if (p_ptr->tim_store)
+	{
+		if (p_ptr->store_num < 0) p_ptr->tim_store = 0;
+		else
+		{
+			/* Count down towards turnout */
+			p_ptr->tim_store--;
+
+			/* Check if that town is 'crowded' */
+			if (p_ptr->tim_store <= 0)
+			{
+				player_type *q_ptr;
+				bool bye = FALSE;
+
+				for (j = 1; j < NumPlayers + 1; j++)
+				{
+					q_ptr = Players[j];
+					if (Ind == j) continue;
+					if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue; 
+					if (q_ptr->afk) continue;
+
+					bye = TRUE;
+					break;
+				}
+
+				if (bye) store_kick(Ind);
+				else p_ptr->tim_store = STORE_TURNOUT;
+			}
+		}
+	}
+
+	/* Delayed Word-of-Recall */
+	if (p_ptr->word_recall)
+	{
+		/* Count down towards recall */
+		p_ptr->word_recall--;
+
+		/* MEGA HACK: no recall if icky, or in a shop */
+		if( ! p_ptr->word_recall ) 
+		{
+			//				if(p_ptr->anti_tele ||
+			if((p_ptr->store_num > 0) || p_ptr->anti_tele ||
+					check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) ||
+					zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK)
+			{
+				p_ptr->word_recall++;
+			}
+		}
+
+		/* XXX Rework needed! */
+		/* Activate the recall */
+		if (!p_ptr->word_recall)
+		{
+			/* sorta circumlocution? */
+			worldpos new_pos;
+			bool recall_ok=TRUE;
+
+			/* Disturbing! */
+			disturb(Ind, 0, 0);
+
+			/* Determine the level */
+			/* recalling to surface */
+			if(p_ptr->wpos.wz)
+			{
+				struct dungeon_type *d_ptr;
+				d_ptr=getdungeon(&p_ptr->wpos);
+
+				/* Messages */
+				if(d_ptr->flags & DUNGEON_IRON && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)){
+					msg_print(Ind, "You feel yourself being pulled toward the surface!");
+					recall_ok=FALSE;
+				}
+				else{
+					if(p_ptr->wpos.wz > 0)
+					{
+						msg_print(Ind, "You feel yourself yanked downwards!");
+						msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
+					}
+					else
+					{
+						msg_print(Ind, "You feel yourself yanked upwards!");
+						msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
+					}
+
+					/* New location */
+					new_pos.wx = p_ptr->wpos.wx;
+					new_pos.wy = p_ptr->wpos.wy;
+					new_pos.wz = 0;
+#if 0
+					p_ptr->new_level_method = ( istown(&new_pos) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND );
+#endif
+					p_ptr->new_level_method = (p_ptr->wpos.wz>0 ? LEVEL_DOWN : LEVEL_UP);
+				}
+			}
+			/* beware! bugs inside! (jir) */
+			/* world travel */
+			/* why wz again? (jir) */
+			else if (!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN) ))
+			{
+				if ((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] & (1 << (wild_idx(&p_ptr->recall_pos))%8))) ||
+						inarea(&p_ptr->wpos, &p_ptr->recall_pos))
+				{
+					/* lazy -- back to the centre of the world
+					 * this should be changed so that it lands him/her
+					 * back to the last town (s)he visited.	*/
+					p_ptr->recall_pos.wx = p_ptr->town_x;
+					p_ptr->recall_pos.wy = p_ptr->town_y;
+				}
+
+				new_pos.wx = p_ptr->recall_pos.wx;
+				new_pos.wy = p_ptr->recall_pos.wy;
+				new_pos.wz = 0;
+
+
+				/* Messages */
+				msg_print(Ind, "You feel yourself yanked sideways!");
+				msg_format_near(Ind, "%s is yanked sideways!", p_ptr->name);
+
+				/* New location */
+				p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;												
+			}
+
+			/* into dungeon/tower */
+			else if(cfg.runlevel>4)
+			{
+				wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+				/* Messages */
+				if(p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN)
+				{
+					if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz)
+						p_ptr->recall_pos.wz = w_ptr->dungeon->baselevel - p_ptr->max_dlv - 1;
+
+					if (-p_ptr->recall_pos.wz > w_ptr->dungeon->maxdepth)
+						p_ptr->recall_pos.wz = 0 - w_ptr->dungeon->maxdepth;
+
+					if (p_ptr->recall_pos.wz >= 0)
+					{
+						p_ptr->recall_pos.wz = 0;
+					}
+					else
+					{
+						msg_print(Ind, "You feel yourself yanked downwards!");
+						msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
+					}
+				}
+				else if(p_ptr->recall_pos.wz > 0 && w_ptr->flags & WILD_F_UP)
+				{
+					if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz + 1)
+						p_ptr->recall_pos.wz = 0 - w_ptr->tower->baselevel + p_ptr->max_dlv + 1;
+
+					if (p_ptr->recall_pos.wz > w_ptr->tower->maxdepth)
+						p_ptr->recall_pos.wz = w_ptr->tower->maxdepth;
+
+					if (p_ptr->recall_pos.wz <= 0)
+					{
+						p_ptr->recall_pos.wz = 0;
+					}
+					else
+					{
+						msg_print(Ind, "You feel yourself yanked upwards!");
+						msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
+					}
+				}
+				else
+				{
+					p_ptr->recall_pos.wz = 0;
+				}
+
+				new_pos.wx = p_ptr->wpos.wx;
+				new_pos.wy = p_ptr->wpos.wy;
+				new_pos.wz = p_ptr->recall_pos.wz;
+				if (p_ptr->recall_pos.wz == 0)
+				{
+					msg_print(Ind, "You feel yourself yanked toward nowhere...");
+					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+				}
+				else p_ptr->new_level_method = LEVEL_RAND;
+			}
+
+			if(recall_ok){
+				/* One less person here */
+				new_players_on_depth(&p_ptr->wpos,-1,TRUE);
+
+				/* Remove the player */
+				zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+				/* Show everyone that he's left */
+				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+				/* Forget his lite and view */
+				forget_lite(Ind);
+				forget_view(Ind);
+
+				wpcopy(&p_ptr->wpos, &new_pos);
+
+				/* One more person here */
+				new_players_on_depth(&p_ptr->wpos,1,TRUE);
+
+				p_ptr->new_level_flag = TRUE;
+
+				/* He'll be safe for 2 turns */
+				set_invuln_short(Ind, 5);	// It runs out if attacking anyway
+			}
+		}
+	}
+
+	bypass_invuln = FALSE;
+
+	/* Evileye, please tell me if it's right */
+	if(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) p_ptr->tim_wraith=0;
+}
+
+
+/*
+ * Player processing that occurs at the end of a turn
  */
 static void process_player_end(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
 //	int		x, y, i, j, new_depth, new_world_x, new_world_y;
-	int		x, y, i, j;
-	int		regen_amount, NumPlayers_old=NumPlayers;
+//	int		regen_amount, NumPlayers_old=NumPlayers;
 	char		attackstatus;
 
-	cave_type		*c_ptr;
-	byte			*w_ptr;
-	object_type		*o_ptr;
-	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+//	byte			*w_ptr;
 
 	if (Players[Ind]->conn == NOT_CONNECTED)
 		return;
@@ -1558,1068 +2621,7 @@ static void process_player_end(int Ind)
 	 * 1750 feet.
 	 */
 	if (!(turn%(level_speed(&p_ptr->wpos)/12)))
-	{
-		/* Unbelievers "resist" magic */
-//		int minus = (p_ptr->anti_magic)?3:1;
-		int minus = 1 + get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 3);
-		int recovery = magik(get_skill_scale(p_ptr, SKILL_HEALTH, 100))?3:0;
-		
-		/* Anything done here cannot be reduced by GoI */
-		bypass_invuln = TRUE;
-
-		/*** Damage over Time ***/
-
-		/* Take damage from poison */
-		if (p_ptr->poisoned)
-		{
-			/* Take damage */
-			take_hit(Ind, 1, "poison");
-		}
-
-		/* Drowning, but not ghosts */
-//		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER && !p_ptr->ghost && !p_ptr->fly)
-		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER)
-		{
-			if(!p_ptr->ghost && !p_ptr->fly)
-			{
-				/* Take damage */
-				if (!(p_ptr->body_monster) || (
-					!(r_info[p_ptr->body_monster].flags7 &
-						(RF7_AQUATIC | RF7_CAN_SWIM)) &&
-					!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
-				{
-					int hit = p_ptr->mhp>>6;
-					int swim = get_skill_scale(p_ptr, SKILL_SWIM, 80);
-					hit += randint(p_ptr->mhp>>5);
-					if(!hit) hit=1;
-
-					/* temporary abs weight calc */
-					if(p_ptr->wt+p_ptr->total_weight/10 > 170 + swim)	// 190
-					{
-						int factor=(p_ptr->wt+p_ptr->total_weight/10)-150-swim;	// 170
-						/* too heavy, always drown? */
-						if(factor<300)
-						{
-							if(randint(factor)<20) hit=0;
-						}
-
-						/* Hack: Take STR and DEX into consideration (max 51%) */
-						if (magik(adj_str_wgt[p_ptr->stat_ind[A_STR]]) ||
-								magik(adj_str_wgt[p_ptr->stat_ind[A_DEX]]))
-							hit = 0;
-
-						if (magik(swim)) hit = 0;
-
-						if (hit)
-						{
-							msg_print(Ind,"\377rYou're drowning!");
-						}
-
-						/* harm equipments (even hit == 0) */
-						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
-								magik(WATER_ITEM_DAMAGE_CHANCE))
-						{
-							inven_damage(Ind, set_water_destroy, 1);
-							if (magik(20)) minus_ac(Ind, 1);
-						}
-
-						if(randint(1000-factor)<10)
-						{
-							msg_print(Ind,"\377rYou are weakened by the exertion of swimming!");
-//							do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
-							dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
-						}
-						take_hit(Ind, hit, "drowning");
-					}
-				}
-			}
-		}
-		/* Aquatic anoxia */
-		else if(!p_ptr->ghost)
-		{
-			/* Take damage */
-			if((p_ptr->body_monster) && (
-				(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
-				!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
-			{
-				int hit = p_ptr->mhp>>6;
-				hit += randint(p_ptr->mhp>>5);
-				if(!hit) hit=1;
-
-				/* Take CON into consideration(max 30%) */
-				if (!magik(adj_str_wgt[p_ptr->stat_ind[A_CON]])) hit = 0;
-				if (hit) msg_print(Ind,"\377rYou cannot breathe air!");
-
-				if(randint(1000)<10)
-				{
-					msg_print(Ind,"\377rYou find it hard to stir!");
-//					do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
-					dec_stat(Ind, A_DEX, 10, STAT_DEC_TEMPORARY);
-				}
-				take_hit(Ind, hit, "anoxia");
-			}
-		}
-
-		/* Take damage from cuts */
-		if (p_ptr->cut)
-		{
-			/* Mortal wound or Deep Gash */
-			if (p_ptr->cut > 200)
-			{
-				i = 3;
-			}
-
-			/* Severe cut */
-			else if (p_ptr->cut > 100)
-			{
-				i = 2;
-			}
-
-			/* Other cuts */
-			else
-			{
-				i = 1;
-			}
-
-			/* Take damage */
-			take_hit(Ind, i, "a fatal wound");
-		}
-
-		/*** Check the Food, and Regenerate ***/
-
-		/* Ghosts don't need food */
-		/* Allow AFK-hivernation if not hungry */
-		if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food > PY_FOOD_ALERT))
-		{
-			/* Digest normally */
-			if (p_ptr->food < PY_FOOD_MAX)
-			{
-				/* Every 50/6 level turns */
-//			        if (!(turn%((level_speed((&p_ptr->wpos))*10)/12)))
-				if (!(turn%((level_speed((&p_ptr->wpos))/12)*10)))
-				{
-					/* Basic digestion rate based on speed */
-					i = extract_energy[p_ptr->pspeed] * 2;
-
-					/* Adrenaline takes more food */
-					if (p_ptr->adrenaline) i *= 5;
-			
-					/* Biofeedback takes more food */
-					if (p_ptr->biofeedback) i *= 2;
-
-					/* Regeneration takes more food */
-					if (p_ptr->regenerate) i += 30;
-
-					/* Slow digestion takes less food */
-					if (p_ptr->slow_digest) i -= 10;
-
-					/* Digest some food */
-					(void)set_food(Ind, p_ptr->food - i);
-
-					/* Hack -- check to see if we have been kicked off
-					 * due to starvation 
-					 */
-
-					if (NumPlayers != NumPlayers_old) return;
-				}
-			}
-
-			/* Digest quickly when gorged */
-			else
-			{
-				/* Digest a lot of food */
-				(void)set_food(Ind, p_ptr->food - 100);
-			}
-
-			/* Starve to death (slowly) */
-			if (p_ptr->food < PY_FOOD_STARVE)
-			{
-				/* Calculate damage */
-				i = (PY_FOOD_STARVE - p_ptr->food) / 10;
-
-				/* Take damage */
-				take_hit(Ind, i, "starvation");
-			}
-		}
-
-		/* Default regeneration */
-		regen_amount = PY_REGEN_NORMAL;
-
-		/* Getting Weak */
-		if (p_ptr->food < PY_FOOD_WEAK)
-		{
-			/* Lower regeneration */
-			if (p_ptr->food < PY_FOOD_STARVE)
-			{
-				regen_amount = 0;
-			}
-			else if (p_ptr->food < PY_FOOD_FAINT)
-			{
-				regen_amount = PY_REGEN_FAINT;
-			}
-			else
-			{
-				regen_amount = PY_REGEN_WEAK;
-			}
-
-			/* Getting Faint */
-			if (!p_ptr->ghost && p_ptr->food < PY_FOOD_FAINT)
-			{
-				/* Faint occasionally */
-				if (!p_ptr->paralyzed && (rand_int(100) < 10))
-				{
-					/* Message */
-					msg_print(Ind, "You faint from the lack of food.");
-					disturb(Ind, 1, 0);
-
-					/* Hack -- faint (bypass free action) */
-					(void)set_paralyzed(Ind, p_ptr->paralyzed + 1 + rand_int(5));
-				}
-			}
-		}
-
-		/* Resting */
-		if (p_ptr->resting && !p_ptr->searching)
-		{
-			regen_amount = regen_amount * RESTING_RATE;
-		}
-
-		/* Regenerate the mana */
-		/* Hack -- regenerate mana 5/3 times faster */
-		if (p_ptr->csp < p_ptr->msp)
-		{
-			regenmana(Ind, (regen_amount * 5) * (p_ptr->regen_mana ? 2 : 1) / 3);
-		}
-
-		/* Regeneration ability */
-		if (p_ptr->regenerate)
-		{
-			regen_amount = regen_amount * 2;
-		}
-
-		if (recovery)
-		{
-			regen_amount = regen_amount * 3 / 2;
-		}
-
-		/* Poisoned or cut yields no healing */
-		if (p_ptr->poisoned) regen_amount = 0;
-		if (p_ptr->cut) regen_amount = 0;
-
-		/* But Biofeedback always helps */
-		if (p_ptr->biofeedback) regen_amount += randint(0x400) + regen_amount;
-
-		/* Regenerate Hit Points if needed */
-		if (p_ptr->chp < p_ptr->mhp)
-		{
-			regenhp(Ind, regen_amount);
-		}
-
-		/* Disturb if we are done resting */
-		if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp) && (p_ptr->csp == p_ptr->msp))
-		{
-			disturb(Ind, 0, 0);
-		}
-
-		/* Finally, at the end of our turn, update certain counters. */
-		/*** Timeout Various Things ***/
-
-		/* Handle temporary stat drains */
-		for (i = 0; i < 6; i++)
-		{
-			if (p_ptr->stat_cnt[i] > 0)
-			{
-				p_ptr->stat_cnt[i] -= 1 - recovery;
-				if (p_ptr->stat_cnt[i] <= 0)
-				{
-					do_res_stat_temp(Ind, i);
-				}
-			}
-		}
-
-		/* Adrenaline */
-		if (p_ptr->adrenaline)
-		{
-		  (void)set_adrenaline(Ind, p_ptr->adrenaline - 1);
-		}
-		
-		/* Biofeedback */				
-		if (p_ptr->biofeedback)
-                {
-		  (void)set_biofeedback(Ind, p_ptr->biofeedback - 1);
-                }
-
-		/* Hack -- Bow Branding */
-		if (p_ptr->bow_brand)
-		{
-			(void)set_bow_brand(Ind, p_ptr->bow_brand - minus, p_ptr->bow_brand_t, p_ptr->bow_brand_d);
-		}
-
-		/* Hack -- Timed ESP */
-		if (p_ptr->tim_esp)
-		{
-			(void)set_tim_esp(Ind, p_ptr->tim_esp - minus);
-		}
-
-		/* Hack -- Space/Time Anchor */
-		if (p_ptr->st_anchor)
-		{
-			(void)set_st_anchor(Ind, p_ptr->st_anchor - minus);
-		}
-
-		/* Hack -- Prob travel */
-		if (p_ptr->prob_travel)
-		{
-			(void)set_prob_travel(Ind, p_ptr->prob_travel - minus);
-		}
-
-		/* Hack -- Avoid traps */
-		if (p_ptr->tim_traps)
-		{
-			(void)set_tim_traps(Ind, p_ptr->tim_traps - minus);
-		}
-
-		/* Hack -- Mimicry */
-		if (p_ptr->tim_mimic)
-		{
-			(void)set_mimic(Ind, p_ptr->tim_mimic - 1, p_ptr->tim_mimic_what);
-		}
-
-		/* Hack -- Timed manashield */
-		if (p_ptr->tim_manashield)
-		  {
-		    set_tim_manashield(Ind, p_ptr->tim_manashield - minus);
-		  }
-		if (cfg.use_pk_rules == PK_RULES_DECLARE)
-		{
-			if(p_ptr->tim_pkill){
-				p_ptr->tim_pkill--;
-				if(!p_ptr->tim_pkill){
-					if(p_ptr->pkill&PKILL_SET){
-						msg_print(Ind, "You may now kill other players");
-						p_ptr->pkill|=PKILL_KILLER;
-					}
-					else{
-						msg_print(Ind, "You are now protected from other players");
-						p_ptr->pkill&=~PKILL_KILLABLE;
-					}
-				}
-			}
-		}
-		if(p_ptr->tim_jail && !p_ptr->wpos.wz){
-			int jy, jx;
-			p_ptr->tim_jail--;
-			if(!p_ptr->tim_jail){
-				msg_print(Ind, "\377GYou are free to go!");
-				jy=p_ptr->py;
-				jx=p_ptr->px;
-				zcave[jy][jx].info &= ~CAVE_STCK;
-				teleport_player(Ind, 1);
-				zcave[jy][jx].info |= CAVE_STCK;
-			}
-		}
-#if 0	// moved to process_player_change_wpos
-		if(!p_ptr->wpos.wz && p_ptr->tim_susp){
-			imprison(Ind, 0, "old crimes");
-			return;
-		}
-#endif	// 0
-
-		/* Hack -- Tunnel */
-#if 0	// not used
-		if (p_ptr->auto_tunnel)
-		{
-			p_ptr->auto_tunnel--;
-		}
-#endif	// 0
-
-		/* Hack -- Meditation */
-		if (p_ptr->tim_meditation)
-		{
-			(void)set_tim_meditation(Ind, p_ptr->tim_meditation - minus);
-		}
-
-		/* Hack -- Wraithform */
-		if (p_ptr->tim_wraith)
-		{
-#if 0
-			/* In town it only runs out if you are not on a wall
-			   To prevent breaking into houses */
-			if (players_on_depth(&p_ptr->wpos) != 0) {
-				/* important! check for illegal spaces */
-				if (in_bounds(p_ptr->py, p_ptr->px)) {
-					if ((p_ptr->wpos.wz) ||
-							(cave_floor_bold(zcave, p_ptr->py, p_ptr->px)) ||
-							p_ptr->tim_wraith > minus)
-					{
-						(void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus);
-					}
-				}
-			}
-#else	// 0
-			(void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus);
-#endif	// 0
-		}
-
-		/* Hack -- Hallucinating */
-		if (p_ptr->image)
-		{
-			(void)set_image(Ind, p_ptr->image - 1 - recovery);
-		}
-
-		/* Blindness */
-		if (p_ptr->blind)
-		{
-			(void)set_blind(Ind, p_ptr->blind - 1 - recovery);
-		}
-
-		/* Times see-invisible */
-		if (p_ptr->tim_invis)
-		{
-			(void)set_tim_invis(Ind, p_ptr->tim_invis - minus);
-		}
-
-		/* Times invisibility */
-		if (p_ptr->tim_invisibility)
-		{
-		  if (p_ptr->aggravate)
-		    {
-		      msg_print(Ind, "Your invisibility shield is broken by your aggravation.");
-		      (void)set_invis(Ind, 0, 0);
-		    }		    
-		  else
-		    {
-		      (void)set_invis(Ind, p_ptr->tim_invisibility - minus, p_ptr->tim_invis_power);
-		    }
-		}
-
-		/* Timed infra-vision */
-		if (p_ptr->tim_infra)
-		{
-			(void)set_tim_infra(Ind, p_ptr->tim_infra - minus);
-		}
-
-		/* Paralysis */
-		if (p_ptr->paralyzed)
-		{
-			(void)set_paralyzed(Ind, p_ptr->paralyzed - 1 - recovery);
-		}
-
-		/* Confusion */
-		if (p_ptr->confused)
-		{
-			(void)set_confused(Ind, p_ptr->confused - minus - recovery);
-		}
-
-		/* Afraid */
-		if (p_ptr->afraid)
-		{
-			(void)set_afraid(Ind, p_ptr->afraid - minus);
-		}
-
-		/* Fast */
-		if (p_ptr->fast)
-		{
-			(void)set_fast(Ind, p_ptr->fast - minus);
-		}
-
-		/* Slow */
-		if (p_ptr->slow)
-		{
-			(void)set_slow(Ind, p_ptr->slow - minus - recovery);
-		}
-
-		/* Protection from evil */
-		if (p_ptr->protevil)
-		{
-			(void)set_protevil(Ind, p_ptr->protevil - 1);
-		}
-
-		/* Invulnerability */
-		/* Hack -- make -1 permanent invulnerability */
-		if (p_ptr->invuln)
-		{
-			if (p_ptr->invuln > 0)
-				(void)set_invuln(Ind, p_ptr->invuln - minus);
-		}
-
-		/* Heroism */
-		if (p_ptr->hero)
-		{
-			(void)set_hero(Ind, p_ptr->hero - 1);
-		}
-
-		/* Super Heroism */
-		if (p_ptr->shero)
-		{
-			(void)set_shero(Ind, p_ptr->shero - 1);
-		}
-
-		/* Furry */
-		if (p_ptr->fury)
-		{
-			(void)set_fury(Ind, p_ptr->fury - 1);
-		}
-
-		/* Blessed */
-		if (p_ptr->blessed)
-		{
-			(void)set_blessed(Ind, p_ptr->blessed - 1);
-		}
-
-		/* Shield */
-		if (p_ptr->shield)
-		{
-			(void)set_shield(Ind, p_ptr->shield - minus);
-		}
-
-		/* Oppose Acid */
-		if (p_ptr->oppose_acid)
-		{
-			(void)set_oppose_acid(Ind, p_ptr->oppose_acid - 1);
-		}
-
-		/* Oppose Lightning */
-		if (p_ptr->oppose_elec)
-		{
-			(void)set_oppose_elec(Ind, p_ptr->oppose_elec - 1);
-		}
-
-		/* Oppose Fire */
-		if (p_ptr->oppose_fire)
-		{
-			(void)set_oppose_fire(Ind, p_ptr->oppose_fire - 1);
-		}
-
-		/* Oppose Cold */
-		if (p_ptr->oppose_cold)
-		{
-			(void)set_oppose_cold(Ind, p_ptr->oppose_cold - 1);
-		}
-
-		/* Oppose Poison */
-		if (p_ptr->oppose_pois)
-		{
-			(void)set_oppose_pois(Ind, p_ptr->oppose_pois - 1);
-		}
-
-		/*** Poison and Stun and Cut ***/
-
-		/* Poison */
-		if (p_ptr->poisoned)
-		{
-			int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
-
-			/* Apply some healing */
-			(void)set_poisoned(Ind, p_ptr->poisoned - adjust - recovery * 2);
-		}
-
-		/* Stun */
-		if (p_ptr->stun)
-		{
-			int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
-
-			/* Apply some healing */
-			(void)set_stun(Ind, p_ptr->stun - adjust - recovery * 2);
-		}
-
-		/* Cut */
-		if (p_ptr->cut)
-		{
-			int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
-
-			/* Hack -- Truly "mortal" wound */
-			if (p_ptr->cut > 1000) adjust = 0;
-
-			/* Biofeedback always helps */
-			if (p_ptr->biofeedback) adjust += adjust + 10;
-
-			/* Apply some healing */
-			(void)set_cut(Ind, p_ptr->cut - adjust - recovery * 2);
-		}
-
-		/*** Process Light ***/
-
-		/* Check for light being wielded */
-		o_ptr = &p_ptr->inventory[INVEN_LITE];
-
-		/* Burn some fuel in the current lite */
-		if (o_ptr->tval == TV_LITE)
-		{
-			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
-			/* Hack -- Use some fuel (sometimes) */
-#if 0
-			if (!artifact_p(o_ptr) && !(o_ptr->sval == SV_LITE_DWARVEN)
-					&& !(o_ptr->sval == SV_LITE_FEANOR) && (o_ptr->pval > 0) && (!o_ptr->name3))
-#endif	// 0
-
-			/* Extract the item flags */
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-			/* Hack -- Use some fuel */
-			if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0))
-			{
-				/* Decrease life-span */
-				o_ptr->timeout--;
-
-				/* Hack -- notice interesting fuel steps */
-				if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
-				{
-					/* Window stuff */
-					p_ptr->window |= (PW_INVEN | PW_EQUIP);
-				}
-
-				/* Hack -- Special treatment when blind */
-				if (p_ptr->blind)
-				{
-					/* Hack -- save some light for later */
-					if (o_ptr->timeout == 0) o_ptr->timeout++;
-				}
-
-				/* The light is now out */
-				else if (o_ptr->timeout == 0)
-				{
-					bool refilled = FALSE;
-
-					disturb(Ind, 0, 0);
-
-					/* If flint is ready, refill at once */
-					if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_FLINT &&
-						!p_ptr->paralyzed)
-					{
-						msg_print(Ind, "You prepare a flint...");
-						refilled = do_auto_refill(Ind);
-						if (!refilled)
-							msg_print(Ind, "Oops, you're out of fuel!");
-					}
-
-					if (!refilled)
-					{
-						msg_print(Ind, "Your light has gone out!");
-						/* Calculate torch radius */
-						p_ptr->update |= (PU_TORCH|PU_BONUS);
-					}
-
-					/* Torch disappears */
-					if (o_ptr->sval == SV_LITE_TORCH && !o_ptr->timeout)
-					{
-						/* Decrease the item, optimize. */
-						inven_item_increase(Ind, INVEN_LITE, -1);
-						//						inven_item_describe(Ind, INVEN_LITE);
-						inven_item_optimize(Ind, INVEN_LITE);
-					}
-				}
-
-				/* The light is getting dim */
-				else if ((o_ptr->timeout < 100) && (!(o_ptr->timeout % 10)))
-				{
-					if (p_ptr->disturb_minor) disturb(Ind, 0, 0);
-					msg_print(Ind, "Your light is growing faint.");
-				}
-			}
-		}
-
-		/* Calculate torch radius */
-//		p_ptr->update |= (PU_TORCH|PU_BONUS);
-
-		/*** Process Inventory ***/
-
-		/* Handle experience draining */
-		if (p_ptr->exp_drain && magik(10))
-//			take_xp_hit(Ind, 1, "Draining", TRUE, FALSE);
-			take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L,
-					"Draining", TRUE, FALSE);
-#if 0
-		{
-			if ((rand_int(100) < 10) && (p_ptr->exp > 0))
-			{
-				p_ptr->exp--;
-				p_ptr->max_exp--;
-				check_experience(Ind);
-			}
-		}
-#endif	// 0
-
-        /* Handle experience draining.  In Oangband, the effect
-		 * is worse, especially for high-level characters.
-		 * As per Tolkien, hobbits are resistant.
-         */
-        if ((p_ptr->black_breath || p_ptr->black_breath_tmp) &&
-			rand_int(200) < (p_ptr->prace == RACE_HOBBIT ? 2 : 5))
-		{
-			(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
-			take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L,
-					"Black Breath", TRUE, TRUE);
-#if 0
-			byte chance = (p_ptr->prace == RACE_HOBBIT) ? 2 : 5;
-			int plev = p_ptr->lev;
-
-			//                if (PRACE_FLAG(PR1_RESIST_BLACK_BREATH)) chance = 2;
-
-			//                if ((rand_int(100) < chance) && (p_ptr->exp > 0))
-			/* Toned down a little, considering it's realtime. */
-			if ((rand_int(200) < chance))
-				take_xp_hit(Ind, 1 + plev / 5 + p_ptr->max_exp / 10000L,
-						"Black Breath", TRUE, TRUE);
-			{
-				int reduce = 1 + plev / 5 + p_ptr->max_exp / 10000L;
-				p_ptr->exp -= reduce;
-				p_ptr->max_exp -= reduce;
-				//                        (void)do_dec_stat(Ind, randint(6)+1, STAT_DEC_NORMAL);
-				(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
-				check_experience(Ind);
-
-				/* Now you can die from this :) */
-				if (p_ptr->exp < 1 && !p_ptr->ghost)
-				{
-					p_ptr->chp=-3;
-					strcpy(p_ptr->died_from, "Black Breath");
-					player_death(Ind);
-				}
-			}
-#endif	// 0
-		}
-
-		/* Drain Mana */
-		if (p_ptr->drain_mana && p_ptr->csp)
-		{
-			p_ptr->csp -= p_ptr->drain_mana;
-			if (magik(30)) p_ptr->csp -= p_ptr->drain_mana;
-
-			if (p_ptr->csp < 0) p_ptr->csp = 0;
-
-			/* Redraw */
-			p_ptr->redraw |= (PR_MANA);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_PLAYER);
-		}
-
-		/* Drain Hitpoints */
-		if (p_ptr->drain_life)
-		{
-			int drain = p_ptr->drain_life + rand_int(p_ptr->mhp / 100);
-
-			take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining");
-#if 0
-			p_ptr->chp -= (drain < p_ptr->chp ? drain : p_ptr->chp);
-
-			/* Redraw */
-			p_ptr->redraw |= (PR_HP);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_PLAYER);
-#endif	// 0
-		}
-
-		/* Note changes */
-		j = 0;
-
-		/* Process equipment */
-		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-		{
-			/* Get the object */
-			o_ptr = &p_ptr->inventory[i];
-
-			/* Skip non-objects */
-			if (!o_ptr->k_idx) continue;
-
-			/* Recharge activatable objects */
-			/* (well, light-src should be handled here too? -Jir- */
-			if ((o_ptr->timeout > 0) && ((o_ptr->tval != TV_LITE) || o_ptr->name1))
-			{
-				/* Recharge */
-				o_ptr->timeout--;
-
-				/* Notice changes */
-				if (!(o_ptr->timeout)) j++;
-			}
-		}
-
-		/* Recharge rods */
-		/* this should be moved to 'timeout'? */
-		for (i = 0; i < INVEN_PACK; i++)
-		{
-			o_ptr = &p_ptr->inventory[i];
-
-			/* Examine all charging rods */
-			if ((o_ptr->tval == TV_ROD) && (o_ptr->pval))
-			{
-				/* Charge it */
-				o_ptr->pval--;
-
-				/* Charge it further */
-				if (o_ptr->pval && magik(p_ptr->skill_dev))
-					o_ptr->pval--;
-
-				/* Notice changes */
-				if (!(o_ptr->pval)) j++;
-			}
-		}
-
-		/* Notice changes */
-		if (j)
-		{
-			/* Combine pack */
-			p_ptr->notice |= (PN_COMBINE);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP);
-		}
-
-		/* Feel the inventory */
-		sense_inventory(Ind);
-
-		/*** Involuntary Movement ***/
-
-
-		/* Delayed mind link */
-		if (p_ptr->esp_link_end)
-		{
-			p_ptr->esp_link_end--;
-
-			/* Activate the break */
-      			if (!p_ptr->esp_link_end)
-			{
-			  int Ind2;
-
-			  if (p_ptr->esp_link_type && p_ptr->esp_link)
-			    {
-			      Ind2 = find_player(p_ptr->esp_link);
-		    
-			      if (!Ind2)
-				end_mind(Ind, TRUE);
-			      else
-				{
-				  player_type *p_ptr2 = Players[Ind2];
-
-				  msg_format(Ind, "\377RYou break the mind link with %s.", p_ptr2->name);
-				  msg_format(Ind2, "\377R%s breaks the mind link with you.", p_ptr->name);
-				  p_ptr->esp_link = 0;
-				  p_ptr->esp_link_type = 0;
-				  p_ptr->esp_link_flags = 0;
-				  p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-				  p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-				  p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-				  p_ptr2->esp_link = 0;
-				  p_ptr2->esp_link_type = 0;
-				  p_ptr2->esp_link_flags = 0;
-				  p_ptr2->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-				  p_ptr2->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-				  p_ptr2->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-				}
-			    }
-			}
-		}
-
-		/* Don't do AFK in a store */
-		if (p_ptr->tim_store)
-		{
-			if (p_ptr->store_num < 0) p_ptr->tim_store = 0;
-			else
-			{
-				/* Count down towards turnout */
-				p_ptr->tim_store--;
-
-				/* Check if that town is 'crowded' */
-				if (p_ptr->tim_store <= 0)
-				{
-					player_type *q_ptr;
-					bool bye = FALSE;
-
-					for (j = 1; j < NumPlayers + 1; j++)
-					{
-						q_ptr = Players[j];
-						if (Ind == j) continue;
-						if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue; 
-						if (q_ptr->afk) continue;
-
-						bye = TRUE;
-						break;
-					}
-
-					if (bye) store_kick(Ind);
-					else p_ptr->tim_store = STORE_TURNOUT;
-				}
-			}
-		}
-
-		/* Delayed Word-of-Recall */
-		if (p_ptr->word_recall)
-		{
-			/* Count down towards recall */
-			p_ptr->word_recall--;
-
-		       /* MEGA HACK: no recall if icky, or in a shop */
-			if( ! p_ptr->word_recall ) 
-			{
-//				if(p_ptr->anti_tele ||
-				if((p_ptr->store_num > 0) || p_ptr->anti_tele ||
-					check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) ||
-					zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK)
-				{
-				    p_ptr->word_recall++;
-				}
-			}
-
-			/* XXX Rework needed! */
-			/* Activate the recall */
-			if (!p_ptr->word_recall)
-			{
-				/* sorta circumlocution? */
-				worldpos new_pos;
-				bool recall_ok=TRUE;
-
-				/* Disturbing! */
-				disturb(Ind, 0, 0);
-
-				/* Determine the level */
-				/* recalling to surface */
-				if(p_ptr->wpos.wz)
-				{
-					struct dungeon_type *d_ptr;
-					d_ptr=getdungeon(&p_ptr->wpos);
-
-					/* Messages */
-					if(d_ptr->flags & DUNGEON_IRON && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)){
-						msg_print(Ind, "You feel yourself being pulled toward the surface!");
-						recall_ok=FALSE;
-					}
-					else{
-						if(p_ptr->wpos.wz > 0)
-						{
-							msg_print(Ind, "You feel yourself yanked downwards!");
-							msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
-						}
-						else
-						{
-							msg_print(Ind, "You feel yourself yanked upwards!");
-							msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
-						}
-
-						/* New location */
-						new_pos.wx = p_ptr->wpos.wx;
-						new_pos.wy = p_ptr->wpos.wy;
-						new_pos.wz = 0;
-#if 0
-						p_ptr->new_level_method = ( istown(&new_pos) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND );
-#endif
-						p_ptr->new_level_method = (p_ptr->wpos.wz>0 ? LEVEL_DOWN : LEVEL_UP);
-					}
-				}
-				/* beware! bugs inside! (jir) */
-				/* world travel */
-				/* why wz again? (jir) */
-				else if (!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN) ))
-				{
-					if ((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] & (1 << (wild_idx(&p_ptr->recall_pos))%8))) ||
-						inarea(&p_ptr->wpos, &p_ptr->recall_pos))
-					{
-						/* lazy -- back to the centre of the world
-						 * this should be changed so that it lands him/her
-						 * back to the last town (s)he visited.	*/
-						p_ptr->recall_pos.wx = p_ptr->town_x;
-						p_ptr->recall_pos.wy = p_ptr->town_y;
-					}
-
-					new_pos.wx = p_ptr->recall_pos.wx;
-					new_pos.wy = p_ptr->recall_pos.wy;
-					new_pos.wz = 0;
-
-
-					/* Messages */
-					msg_print(Ind, "You feel yourself yanked sideways!");
-					msg_format_near(Ind, "%s is yanked sideways!", p_ptr->name);
-					
-					/* New location */
-					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;												
-				}
-
-				/* into dungeon/tower */
-				else if(cfg.runlevel>4)
-				{
-					wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-					/* Messages */
-					if(p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN)
-					{
-						if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz)
-							p_ptr->recall_pos.wz = w_ptr->dungeon->baselevel - p_ptr->max_dlv - 1;
-
-						if (-p_ptr->recall_pos.wz > w_ptr->dungeon->maxdepth)
-							p_ptr->recall_pos.wz = 0 - w_ptr->dungeon->maxdepth;
-
-						if (p_ptr->recall_pos.wz >= 0)
-						{
-							p_ptr->recall_pos.wz = 0;
-						}
-						else
-						{
-							msg_print(Ind, "You feel yourself yanked downwards!");
-							msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
-						}
-					}
-					else if(p_ptr->recall_pos.wz > 0 && w_ptr->flags & WILD_F_UP)
-					{
-						if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz + 1)
-							p_ptr->recall_pos.wz = 0 - w_ptr->tower->baselevel + p_ptr->max_dlv + 1;
-
-						if (p_ptr->recall_pos.wz > w_ptr->tower->maxdepth)
-							p_ptr->recall_pos.wz = w_ptr->tower->maxdepth;
-
-						if (p_ptr->recall_pos.wz <= 0)
-						{
-							p_ptr->recall_pos.wz = 0;
-						}
-						else
-						{
-							msg_print(Ind, "You feel yourself yanked upwards!");
-							msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
-						}
-					}
-					else
-					{
-						p_ptr->recall_pos.wz = 0;
-					}
-					
-					new_pos.wx = p_ptr->wpos.wx;
-					new_pos.wy = p_ptr->wpos.wy;
-					new_pos.wz = p_ptr->recall_pos.wz;
-					if (p_ptr->recall_pos.wz == 0)
-					{
-						msg_print(Ind, "You feel yourself yanked toward nowhere...");
-						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-					}
-					else p_ptr->new_level_method = LEVEL_RAND;
-				}
-				
-				if(recall_ok){
-				/* One less person here */
-				new_players_on_depth(&p_ptr->wpos,-1,TRUE);
-				
-				/* Remove the player */
-				zcave[p_ptr->py][p_ptr->px].m_idx = 0;
-				/* Show everyone that he's left */
-				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-
-				/* Forget his lite and view */
-				forget_lite(Ind);
-				forget_view(Ind);
-
-				wpcopy(&p_ptr->wpos, &new_pos);
-
-				/* One more person here */
-				new_players_on_depth(&p_ptr->wpos,1,TRUE);
-
-				p_ptr->new_level_flag = TRUE;
-
-				/* He'll be safe for 2 turns */
-				set_invuln_short(Ind, 5);	// It runs out if attacking anyway
-				}
-			}
-		}
-
-		bypass_invuln = FALSE;
-	}
+		process_player_end_aux(Ind);
 
 
 	/* HACK -- redraw stuff a lot, this should reduce perceived latency. */
@@ -2630,7 +2632,7 @@ static void process_player_end(int Ind)
 	/* Update stuff (if needed) */
 	if (p_ptr->update) update_stuff(Ind);
 
-	if(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) p_ptr->tim_wraith=0;
+//	if(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) p_ptr->tim_wraith=0;
 	
 	/* Redraw stuff (if needed) */
 	if (p_ptr->redraw) redraw_stuff(Ind);
@@ -2638,6 +2640,7 @@ static void process_player_end(int Ind)
 	/* Redraw stuff (if needed) */
 	if (p_ptr->window) window_stuff(Ind);
 }
+
 
 static bool stale_level(struct worldpos *wpos, int grace)
 {
@@ -2871,16 +2874,26 @@ void scan_objs(){
 	int i, cnt=0, dcnt=0;
 	object_type *o_ptr;
 	cave_type **zcave;
-	for(i=0;i<MAX_O_IDX;i++){
+//	for(i=0;i<MAX_O_IDX;i++){
+	for(i=0;i<o_max;i++){	// minimal job :)
 		/* We leave non owned objects */
 		o_ptr=&o_list[i];
 		if(o_ptr->k_idx && o_ptr->owner && !o_ptr->name1){
 			if(!o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos))){
-				/* ick suggests a store, so leave) */
-				if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
-					if(++o_ptr->marked==2){
-						delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx);
-						dcnt++;
+				/* XXX noisy warning, eh? */
+				if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
+					in_bounds_array(255 - o_ptr->iy, o_ptr->ix))
+				{
+					o_ptr->iy = 255 - o_ptr->iy;
+				}
+				if (in_bounds_array(o_ptr->iy, o_ptr->ix)) // monster trap?
+				{
+					/* ick suggests a store, so leave) */
+					if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
+						if(++o_ptr->marked==2){
+							delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx);
+							dcnt++;
+						}
 					}
 				}
 	/* Once hourly cheeze check. (logs would fill the hd otherwise ;( */
@@ -3746,6 +3759,17 @@ void dungeon(void)
 
 		/* Hack -- Compact the trap list occasionally */
 //		if (t_top + 160 > MAX_TR_IDX) compact_traps(320, TRUE);
+
+		/* Tell a day passed */
+		if (((turn + (DAY_START * 10L)) % (10L * DAY)) == 0)
+		{
+			char buf[20];
+
+			sprintf(buf, get_day(bst(YEAR, turn) + START_YEAR));
+			msg_broadcast_format(0,
+					"\377GToday it is %s of the %s year of the third age.",
+					get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
+		}
 
 		for (i = 1; i < NumPlayers + 1; i++)
 		{

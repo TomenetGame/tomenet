@@ -17,7 +17,7 @@
 
 # Version stamp (required)
 
-V:3.4.0
+V:4.0.0
 
 # 0x00 --> nothing
 
@@ -478,4 +478,21 @@ M:124
 N:127:permanent wall
 G:#:w
 M:124
+
+# XXX ToME addition -- backport flags first!!!	- Jir -
+# 0x80 --> monster trap XXX
+N:128:monster trap
+G:;:v
+#F:FLOOR
+
+#N:176:Void Jumpgate
+#G:+:v
+#F:FLOOR | REMEMBER | NOTICE | PERMANENT | CAN_RUN
+#D:0:A dark rift opens to the void here.
+
+# 0x02 -> fountain
+#N:2:fountain
+#G:_:w
+#F:FLOOR | NOTICE | REMEMBER | CAN_RUN
+#D:0:The liquid here seems magical.
 

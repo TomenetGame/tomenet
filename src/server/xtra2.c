@@ -4499,7 +4499,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	{
 		char m_name[80];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
-		long tmp_exp = (long)r_ptr->mexp * r_ptr->level;
+//		long tmp_exp = (long)r_ptr->mexp * r_ptr->level;
+		long tmp_exp = (long)r_ptr->mexp * m_ptr->level;
 
 		/* Hack -- remove possible suppress flag */
 		suppress_message = FALSE;
@@ -4842,7 +4843,8 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note)
 	if (m_ptr->hp < 0)
 	{
                 /* Give some experience */
-                new_exp = ((long)r_ptr->mexp * r_ptr->level) / am_ptr->level;
+//                new_exp = ((long)r_ptr->mexp * r_ptr->level) / am_ptr->level;
+                new_exp = ((long)r_ptr->mexp * m_ptr->level) / am_ptr->level;
 
                 /* Gain experience */
                 if((new_exp*(100-m_ptr->clone))/100)
@@ -6777,7 +6779,9 @@ u16b master_summon_aux_monster_type( char monster_type, char * monster_parms)
 				master_specific_race_char = monster_parms[0];
 				get_mon_num_hook = master_summon_specific_aux;
 				get_mon_num_prep();
-				tmp = get_mon_num(rand_int(100) + 10);
+//				tmp = get_mon_num(rand_int(100) + 10);
+				tmp = get_mon_num((monster_parms[0] == 't') ?
+						0 : rand_int(100) + 10);
 
 				/* restore monster generator */
 				get_mon_num_hook = dungeon_aux;
@@ -6890,7 +6894,7 @@ bool master_summon(int Ind, char * parms)
 	static u16b r_idx = 0; /* which monser to actually summon, from previous variables */
 	unsigned char size = 0;  /* how many monsters to actually summon */
 
-	if (!p_ptr->admin_dm && !p_ptr->admin_wiz && (!player_is_king(Ind))) return FALSE;
+	if (!is_admin(p_ptr) && (!player_is_king(Ind))) return FALSE;
 	
 	/* extract arguments.  If none are found, summon previous type. */
 	if (parms)

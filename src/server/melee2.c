@@ -3056,13 +3056,15 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF6_BLINK */
 		case RF6_OFFSET+4:
 		{
-			disturb(Ind, 1, 0);
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			//			if (monst_check_grab(Ind, m_idx)) break;
 			/* it's low b/c check for spellcast is already done */
 			if (monst_check_grab(m_idx, 40, "teleport")) break;
 			if (teleport_away(m_idx, 10) && visible)
+			{
+				disturb(Ind, 1, 0);
 				msg_format(Ind, "%^s blinks away.", m_name);
+			}
 			break;
 		}
 
@@ -3070,11 +3072,13 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF6_OFFSET+5:
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
-			disturb(Ind, 1, 0);
 			//			if (monst_check_grab(Ind, m_idx)) break;
 			if (monst_check_grab(m_idx, 40, "teleport")) break;
 			if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && visible)
+			{
+				disturb(Ind, 1, 0);
 				msg_format(Ind, "%^s teleports away.", m_name);
+			}
 			break;
 		}
 
@@ -5428,6 +5432,13 @@ static void process_monster(int Ind, int m_idx)
 				if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
 			}
 		}
+		/* Floor is trapped? */
+		else if (c_ptr->feat == FEAT_MON_TRAP)
+		{
+			/* Go ahead and move */
+			do_move = TRUE;
+		}
+
 
 
 		/* Hack -- check for Glyph of Warding */
@@ -5792,6 +5803,12 @@ static void process_monster(int Ind, int m_idx)
 					}
 #endif	// 0
 				}
+			}
+
+			/* Check for monster trap */
+			if (c_ptr->feat == FEAT_MON_TRAP)
+			{
+				if (mon_hit_trap(m_idx)) return;
 			}
 		}
 

@@ -583,7 +583,7 @@ static void display_inven(void)
 		n = strlen(o_name);
 
 		/* Clear the line with the (possibly indented) index */
-		Term_putstr(3, i, n, o_ptr->sval, o_name);
+		Term_putstr(3, i, n, o_ptr->xtra1, o_name);
 
 		/* Erase the rest of the line */
 		Term_erase(3+n, i, 255);
@@ -648,7 +648,7 @@ static void display_equip(void)
 		n = strlen(o_name);
 
 		/* Clear the line with the (possibly indented) index */
-		Term_putstr(3, i - INVEN_WIELD, n, o_ptr->sval, o_name);
+		Term_putstr(3, i - INVEN_WIELD, n, o_ptr->xtra1, o_name);
 
 		/* Erase the rest of the line */
 		Term_erase(3+n, i - INVEN_WIELD, 255);
@@ -730,7 +730,7 @@ void show_inven(void)
 
 		/* Save the object index, color, and descrtiption */
 		out_index[k] = i;
-		out_color[k] = o_ptr->sval;
+		out_color[k] = o_ptr->xtra1;
 		(void)strcpy(out_desc[k], o_name);
 
 		/* Find the predicted "line length" */
@@ -843,7 +843,7 @@ void show_equip(void)
 
 		/* Save the object index, color, and descrtiption */
 		out_index[k] = i;
-		out_color[k] = o_ptr->sval;
+		out_color[k] = o_ptr->xtra1;
 		(void)strcpy(out_desc[k], o_name);
 
 		/* Find the predicted "line length" */

@@ -4995,6 +4995,9 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Redraw (later) if needed */
 		update_health(c_ptr->m_idx);
 
+        /* Some mosnters are immune to death */
+        if (r_ptr->flags7 & RF7_NO_DEATH) dam = 0;
+
 		/* Wake the monster up */
 		m_ptr->csleep = 0;
 

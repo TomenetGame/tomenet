@@ -1500,6 +1500,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '%', 110,
                         },
+                        {
+                                SKILL_DODGE,
+                                '+', 1000,
+                                '+', 200,
+                        },
 				},
 	},
 
@@ -1721,6 +1726,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_STEALTH,
                                 '+', 0,
                                 '%', 110,
+                        },
+                        {
+                                SKILL_DODGE,
+                                '+', 1000,
+                                '+', 300,
                         },
 				},
 	},
@@ -1994,6 +2004,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_DISARM,
                                 '+', 1000,
                                 '+', 700,
+                        },
+                        {
+                                SKILL_TRAPPING,
+                                '+', 0,
+                                '+', 500,
                         },
                         {
                                 SKILL_BACKSTAB,
@@ -2452,6 +2467,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                         },
                         {
+                                SKILL_TRAPPING,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
                                 SKILL_STEALING,
                                 '+', 1000,
                                 '+', 1000,
@@ -2643,8 +2663,8 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_DEVICE,
-                                '+', 300,
-                                '+', 300,
+                                '+', 500,
+                                '+', 400,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -2662,9 +2682,19 @@ player_class class_info[MAX_CLASS] =
                                 '+', 500,
                         },
                         {
+                                SKILL_TRAPPING,
+                                '+', 0,
+                                '+', 400,
+                        },
+                        {
                                 SKILL_DODGE,
                                 '+', 1000,
                                 '+', 700,
+                        },
+                        {
+                                SKILL_ANTIMAGIC,
+                                '+', 0,
+                                '+', 300,
                         },
 						/* Health tree */
                         {
@@ -4683,7 +4713,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Archery",
-                "General ability to use ranged weapons",
+                "General ability to use ranged weapons\nIt also allows you to evaluate/create ammo",
 
                 /* Mkey desc/mkey */
 #if 0
@@ -5583,6 +5613,29 @@ skill_type s_info[MAX_SKILLS] =
 				/* Tval */
 				0,
         },
+        {
+                "Trapping",
+                "Ability to set monster traps",
+
+                /* Mkey desc/mkey */
+                "Set trap",
+                MKEY_TRAP,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+				(SKF1_MKEY_HARDCODE),
+
+				/* Tval */
+				TV_TRAPKIT,	/* Though it's hardcoded anyway.. */
+        },
 };
 
 /*
@@ -5622,6 +5675,7 @@ int skill_tree_init[MAX_SKILLS][2] =
         { -1, SKILL_SNEAKINESS },
         { SKILL_SNEAKINESS, SKILL_STEALTH },
         { SKILL_SNEAKINESS, SKILL_DISARM },
+        { SKILL_SNEAKINESS, SKILL_TRAPPING },
         { SKILL_SNEAKINESS, SKILL_STEALING },
         { SKILL_SNEAKINESS, SKILL_BACKSTAB },
         { SKILL_SNEAKINESS, SKILL_DODGE },

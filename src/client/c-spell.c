@@ -19,7 +19,7 @@ static void print_spells(object_type *o_ptr)
 	else
 	{
 		realm = find_realm(o_ptr->tval);
-		num = o_ptr->xtra1;
+		num = o_ptr->sval;
 	}
 
 
@@ -114,7 +114,7 @@ int get_spell(int *sn, cptr prompt, int book, bool known)
 	object_type *o_ptr = &inventory[book];
 	int realm = find_realm(o_ptr->tval);
 	/* see Receive_inven .. one of the dirtiest hack ever :( */
-	int sval = o_ptr->xtra1;
+	int sval = o_ptr->sval;
 
 	p = "spell";
 

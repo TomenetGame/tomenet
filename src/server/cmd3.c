@@ -2000,6 +2000,12 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 		if (c_ptr->special.sc.trap.found) return (TRUE);
 	}
 
+	/* Monster Traps */
+	if (c_ptr->special.type == CS_MON_TRAP)
+	{
+		return (TRUE);
+	}
+
 	/* Interesting memorized features */
 	if (*w_ptr & CAVE_MARK)
 	{

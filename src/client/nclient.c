@@ -1252,9 +1252,10 @@ int Receive_inven(void)
         /* Hack -- The color is stored in the sval, since we don't use it for anything else */
         /* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
 		/* I'm one of those who really hate it .. Jir */
-	inventory[pos - 'a'].sval = attr;
+		/* I hated it too much I swapped them	- Jir - */
+	inventory[pos - 'a'].sval = sval;
 	inventory[pos - 'a'].tval = tval;
-	inventory[pos - 'a'].xtra1 = sval;
+	inventory[pos - 'a'].xtra1 = attr;
 	inventory[pos - 'a'].weight = wgt;
 	inventory[pos - 'a'].number = amt;
 
@@ -1280,9 +1281,9 @@ int Receive_equip(void)
 		return n;
 	}
 
-	inventory[pos - 'a' + INVEN_WIELD].sval = attr;
+	inventory[pos - 'a' + INVEN_WIELD].sval = sval;
 	inventory[pos - 'a' + INVEN_WIELD].tval = tval;
-	inventory[pos - 'a' + INVEN_WIELD].xtra1 = sval;
+	inventory[pos - 'a' + INVEN_WIELD].xtra1 = attr;
 	inventory[pos - 'a' + INVEN_WIELD].weight = wgt;
 	inventory[pos - 'a' + INVEN_WIELD].number = amt;
 
@@ -2169,13 +2170,13 @@ int Receive_store(void)
 		return n;
 	}
 
-	store.stock[(int)pos].sval = attr;
+	store.stock[(int)pos].sval = sval;
 	store.stock[(int)pos].weight = wgt;
 	store.stock[(int)pos].number = num;
 	store_prices[(int) pos] = price;
 	strncpy(store_names[(int) pos], name, 80);
 	store.stock[(int)pos].tval = tval;
-	store.stock[(int)pos].xtra1 = sval;	/* GRRRR.. I *REALLY* hate it */
+	store.stock[(int)pos].xtra1 = attr;
 
 	/* Make sure that we're in a store */
 	if (shopping)

@@ -7,7 +7,7 @@
 # You should manually write the total # of rumous (lines - 10).
 
 N:*:Default
-683
+684
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -691,5 +691,6 @@ Foudinni said: cutting throad under daylight? You bonehead!!
 They say that an invisible man carrying lantern is suitable role for Chaplin.
 Ever activated the Book of the Deads?
 They say that Smeagol can help you to get rid of *cursed* Ring.
+They say that Polymorph Ring of {rGoldfish {wworthes while creating.
 They say that 
 They say that 
