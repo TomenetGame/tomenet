@@ -1655,7 +1655,7 @@ static bool wr_savefile_new(int Ind)
 	wr_byte(p_ptr->guild);
 
 	wr_s16b(p_ptr->quest_id);
-	wr_w16b(p_ptr->quest_num);
+	wr_s16b(p_ptr->quest_num);
 
 	/* Write the "value check-sum" */
 	wr_u32b(v_stamp);
