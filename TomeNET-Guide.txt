@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. September 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. October 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2b, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -178,14 +178,19 @@ The first key is of the 'original Angband key set', the second key is of the
 in the options menu, which you invoke with '=' key.
 
 
-Directions:
+Walk into a direction:
     Original key set        Rogue-like key set      Rogue-like (running)
         7   8   9               y   k   u               Y   K   U
         4   5   6               h       l               H       L
         1   2   3               b   j   n               B   J   N
 
-You can also use the arrow keys for movement.
+You can also use the arrow keys instead of the Numpad keys for movement.
 Pressing '5' will cause you to spend a turn with doing nothing.
+
+SHIFT+<direction key>
+        runs into that direction. Numlock must probably be turned off,
+        depending on your system.
+        You can also run by pressing the dot '.' followed by a direction key.
 
 
 i       i       display your inventory.
@@ -316,9 +321,6 @@ _       drink from a fountain. You must stand on the fountain to do this.
         sight.
 <,>     go upstairs/downstairs. Press '>' to use a void gate (violet '+').
         Void jump gates teleport you to their counterpart and vice versa.
-SHIFT+<direction key>
-        runs into that direction. Numlock must be turned off probably.
-        You can also run by pressing the dot '.' followed by a direction key.
 CTRL+P  view previous messages.
 CTRL+O  view previous chat messages.
 CTRL+X  save your character & quit the game.
@@ -3919,34 +3921,44 @@ Thunderlord Istari has an intelligence cap of 18/100 + 2 (Thunderlord) + 3
 Stats can be raised over the character's cap by equipment. The total possible
 maximum of an attribute is always 18/220 (40), which is displayed as 18/***.
 
-Strength (STR)      
+Strength (STR)
     -How heavy may your weapon and bow be? You can't fight with a weapon that
      is too heavy for you.
     -How heavy may your armour be? You will lose mana or Martial Arts abilties
      if it's too heavy for you.
     -How much damage do you inflict on enemies?
     -Are you able to deliver several blows per round with your weapon?
-Intelligence (INT)  
+Intelligence (INT)
     -How much mana for spellcasting do you have?
     -How well can you cast spells?
     -How well can you handle and use magic devices?
-Wisdom (WIS)        
-    -How well can you cast priest prayers? (certain spells that are for priests)
+Wisdom (WIS)
+    -How well can you cast priest prayers? (certain spells that are for
+     priests)
     -How well can you resist malicious influences like poison, paralyzation,
      or insanity?
     -Wisdom directly increases your sanity. Be careful! If you're very low on
      sanity taking off a +wisdom item can mean your death, in case your sanity
      drops to 0 by taking off the item.
-Dexterity (DEX) 
+Dexterity (DEX)
     -Has positive influence on your armour class and on your chance to hit
-     enemies.
+     enemies, also quite important for ranged weapons.
     -How well can you steal (from shops)? (A high DEX won't help much if your
      'Stealing' skill is zero by the way ;)
     -Are you able to deliver several blows per round with your weapon?
-Constitution (CON)  
+Constitution (CON)
     -How many HP (hit points) do you have? Very essential.
-Charisma (CHR)      
+     Note that CON effect caps depending on your character level. Roughly:
+     At level 20 you can't utilize more than 18/60 CON. That means even if
+     you raise your constitution above that value, your Hit Points won't
+     increase as long as your character is level 20.
+     At level 30, CON cap is 18/130, at level 40 it's 18/190, and at level
+     45 and higher the full CON bonus is utilized for determining Hit Points.
+Charisma (CHR)
     -Do you get good prices in shops? :)
+     Note that shop prices also depend on racial preferences of the
+     shopkeepers vs their customers. It is said, that Half-Trolls have an
+     especially hard time.
 
 
 
@@ -6154,7 +6166,8 @@ Light sources
      Emperor) created the artifact or killed the monster which dropped the
      artifact. The mod will only have effect on..
      a) winners (Queens/Kings/Empresses/Emperors)
-     b) players whose current level is at least as high as the item level.
+     b) players whose current level is at least as high as the item level
+        (even if they are the rightful owner of the randart).
 
 
 General mods:
