@@ -2799,7 +2799,8 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 //			if ((power == 1) && !o_ptr->name2 && o_ptr->sval != SV_AMMO_MAGIC)
 			else if ((power == 1) && !o_ptr->name2)
 			{
-				if (randint(100) < 7)
+//				if (randint(100) < 7)
+				if (randint(500) < level + 5)
 				{
 					/* Exploding missile */
 					int power[27]={GF_ELEC, GF_POIS, GF_ACID,
@@ -2979,7 +2980,7 @@ while ((--tries) && (rand_int(10L * o_ptr->dd * o_ptr->ds) == 0)) o_ptr->dd++;
 			else if (power < -1)
 			{
 				/* Roll for ego-item */
-                                if (rand_int(MAX_DEPTH_OBJ) < level)
+				if (rand_int(MAX_DEPTH_OBJ * 4) < level)
 				{
 					o_ptr->name2 = EGO_MORGUL;
 				}
@@ -5425,6 +5426,8 @@ static bool kind_is_good(int k_idx)
 }
 
 
+/* Hack -- inscribe items that a unique drops */
+s16b unique_quark = 0;
 
 /*
  * Attempt to place an object (normal or good/great) at the given location.
@@ -5527,6 +5530,9 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 			case TV_BOLT:
 				forge.number = damroll(6, 7);
 		}
+
+	/* Hack -- inscribe items that a unique drops */
+	if (unique_quark) forge.note = unique_quark;
 
 	drop_near(&forge, -1, wpos, y, x);
 

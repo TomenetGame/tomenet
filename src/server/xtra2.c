@@ -3017,6 +3017,7 @@ void monster_death(int Ind, int m_idx)
 	bool do_item = (!(r_ptr->flags1 & RF1_ONLY_GOLD));
 
 	int force_coin = get_coin_type(r_ptr);
+	s16b local_quark = 0;
 	object_type forge;
 	object_type *qq_ptr;
 	struct worldpos *wpos;
@@ -3152,6 +3153,13 @@ void monster_death(int Ind, int m_idx)
 	if (r_ptr->flags1 & RF1_DROP_3D2) number += damroll(3, 2);
 	if (r_ptr->flags1 & RF1_DROP_4D2) number += damroll(4, 2);
 
+	/* Hack -- inscribe items that a unique drops */
+	if (r_ptr->flags1 & RF1_UNIQUE)
+	{
+		local_quark = quark_add(r_name + r_ptr->name);
+		unique_quark = local_quark;
+	}
+
 	/* Drop some objects */
 	for (j = 0; j < number; j++)
 	{
@@ -3213,6 +3221,9 @@ void monster_death(int Ind, int m_idx)
 #endif	// 0
 		}
 	}
+
+	/* Forget it */
+	unique_quark = 0;
 
 	/* Take note of any dropped treasure */
 	/* XXX this doesn't work for now.. (not used anyway) */
@@ -3456,6 +3467,7 @@ void monster_death(int Ind, int m_idx)
 			//                        invcopy(qq_ptr, lookup_kind(TV_RING, SV_RING_INVIS));
 			invcopy(qq_ptr, lookup_kind(TV_RING, SV_RING_STEALTH));
 			qq_ptr->number = 1;
+			qq_ptr->note = local_quark;
 
 			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE);
 
@@ -3570,6 +3582,7 @@ void monster_death(int Ind, int m_idx)
 					qq_ptr->to_h = a_ptr->to_h;
 					qq_ptr->to_d = a_ptr->to_d;
 					qq_ptr->weight = a_ptr->weight;
+					qq_ptr->note = local_quark;
 
 					/* Hack -- acquire "cursed" flag */
 					if (a_ptr->flags3 & (TR3_CURSED)) qq_ptr->ident |= (ID_CURSED);
@@ -3831,7 +3844,9 @@ void player_death(int Ind)
 	}
 
 	/* Hack -- amulet of life saving */
-	if (p_ptr->alive && p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING && p_ptr->fruit_bat != -1)
+	if (p_ptr->alive && p_ptr->inventory[INVEN_NECK].k_idx &&
+			p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING &&
+			p_ptr->fruit_bat != -1)
 	{
 		msg_print(Ind, "\377oYour amulet shatters into the pieces!");
 
@@ -3855,10 +3870,14 @@ void player_death(int Ind)
 
 		/* Remove the death flag */
 		p_ptr->death = 0;
+		p_ptr->ghost = 0;
 
 		/* Give him his hit points back */
 		p_ptr->chp = p_ptr->mhp;
 		p_ptr->chp_frac = 0;
+
+		/* Went mad? */
+		if (p_ptr->csane < 0) p_ptr->csane = p_ptr->msane / 10;
 
 		/* Wow! You may return!! */
 		return;

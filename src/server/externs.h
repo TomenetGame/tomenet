@@ -715,6 +715,7 @@ extern void Handle_clear_buffer(int Ind);
 
 /* object1.c */
 /* object2.c */
+extern s16b unique_quark;
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
 extern s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void object_wipe(object_type *o_ptr);

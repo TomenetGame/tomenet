@@ -1308,91 +1308,100 @@ void display_player(int hist)
 		put_str(format("%d feet", p_ptr->see_infra * 10), 19, 69);
 	}
 
-        /* Dump the bonuses to hit/dam */
-        prt_num("+To MHit    ", p_ptr->dis_to_h + p_ptr->to_h_melee, 9, 1, TERM_L_BLUE);
-        prt_num("+To MDamage ", p_ptr->dis_to_d + p_ptr->to_d_melee, 10, 1, TERM_L_BLUE);
-        prt_num("+To RHit    ", p_ptr->dis_to_h + p_ptr->to_h_ranged, 11, 1, TERM_L_BLUE);
-//        prt_num("+To RDamage ", p_ptr->dis_to_d + p_ptr->to_d_ranged, 12, 1, TERM_L_BLUE);
-        prt_num("+To RDamage ", p_ptr->to_d_ranged, 12, 1, TERM_L_BLUE);
+	/* Dump the bonuses to hit/dam */
+	prt_num("+To MHit    ", p_ptr->dis_to_h + p_ptr->to_h_melee, 9, 1, TERM_L_BLUE);
+	prt_num("+To MDamage ", p_ptr->dis_to_d + p_ptr->to_d_melee, 10, 1, TERM_L_BLUE);
+	prt_num("+To RHit    ", p_ptr->dis_to_h + p_ptr->to_h_ranged, 11, 1, TERM_L_BLUE);
+	//        prt_num("+To RDamage ", p_ptr->dis_to_d + p_ptr->to_d_ranged, 12, 1, TERM_L_BLUE);
+	prt_num("+To RDamage ", p_ptr->to_d_ranged, 12, 1, TERM_L_BLUE);
 
-        /* Dump the armor class bonus */
-        prt_num("+ To AC     ", p_ptr->dis_to_a, 13, 1, TERM_L_BLUE);
+	/* Dump the armor class bonus */
+	prt_num("+ To AC     ", p_ptr->dis_to_a, 13, 1, TERM_L_BLUE);
 
-        /* Dump the total armor class */
-        prt_num("  Base AC   ", p_ptr->dis_ac, 14, 1, TERM_L_BLUE);
+	/* Dump the total armor class */
+	prt_num("  Base AC   ", p_ptr->dis_ac, 14, 1, TERM_L_BLUE);
 
-        prt_num("Level      ", (int)p_ptr->lev, 9, 28, TERM_L_GREEN);
+	prt_num("Level      ", (int)p_ptr->lev, 9, 28, TERM_L_GREEN);
 
-        if (p_ptr->exp >= p_ptr->max_exp)
-        {
-                prt_lnum("Experience ", p_ptr->exp, 10, 28, TERM_L_GREEN);
-        }
-        else
-        {
-                prt_lnum("Experience ", p_ptr->exp, 10, 28, TERM_YELLOW);
-        }
+	if (p_ptr->exp >= p_ptr->max_exp)
+	{
+		prt_lnum("Experience ", p_ptr->exp, 10, 28, TERM_L_GREEN);
+	}
+	else
+	{
+		prt_lnum("Experience ", p_ptr->exp, 10, 28, TERM_YELLOW);
+	}
 
-        prt_lnum("Max Exp    ", p_ptr->max_exp, 11, 28, TERM_L_GREEN);
+	prt_lnum("Max Exp    ", p_ptr->max_exp, 11, 28, TERM_L_GREEN);
 
-        if (p_ptr->lev >= PY_MAX_LEVEL)
-        {
-                put_str("Exp to Adv.", 12, 28);
-                c_put_str(TERM_L_GREEN, "    *****", 12, 28+11);
-        }
-        else
-        {
-                prt_lnum("Exp to Adv.", exp_adv, 12, 28, TERM_L_GREEN);
-        }
+	if (p_ptr->lev >= PY_MAX_LEVEL)
+	{
+		put_str("Exp to Adv.", 12, 28);
+		c_put_str(TERM_L_GREEN, "    *****", 12, 28+11);
+	}
+	else
+	{
+		prt_lnum("Exp to Adv.", exp_adv, 12, 28, TERM_L_GREEN);
+	}
 
-        prt_lnum("Gold       ", p_ptr->au, 13, 28, TERM_L_GREEN);
+	prt_lnum("Gold       ", p_ptr->au, 13, 28, TERM_L_GREEN);
 
-        prt_num("Max Hit Points ", p_ptr->mhp, 9, 52, TERM_L_GREEN);
+	prt_num("Max Hit Points ", p_ptr->mhp, 9, 52, TERM_L_GREEN);
 
-        if (p_ptr->chp >= p_ptr->mhp)
-        {
-                prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_L_GREEN);
-        }
-        else if (p_ptr->chp > (p_ptr->mhp) / 10)
-        {
-                prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_YELLOW);
-        }
-        else
-        {
-                prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_RED);
-        }
+	if (p_ptr->chp >= p_ptr->mhp)
+	{
+		prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_L_GREEN);
+	}
+	else if (p_ptr->chp > (p_ptr->mhp) / 10)
+	{
+		prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_YELLOW);
+	}
+	else
+	{
+		prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_RED);
+	}
 
-        prt_num("Max SP (Mana)  ", p_ptr->msp, 11, 52, TERM_L_GREEN);
+	prt_num("Max SP (Mana)  ", p_ptr->msp, 11, 52, TERM_L_GREEN);
 
-        if (p_ptr->csp >= p_ptr->msp)
-        {
-                prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_L_GREEN);
-        }
-        else if (p_ptr->csp > (p_ptr->msp) / 10)
-        {
-                prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_YELLOW);
-        }
-        else
-        {
-                prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_RED);
-        }
+	if (p_ptr->csp >= p_ptr->msp)
+	{
+		prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_L_GREEN);
+	}
+	else if (p_ptr->csp > (p_ptr->msp) / 10)
+	{
+		prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_YELLOW);
+	}
+	else
+	{
+		prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_RED);
+	}
 #ifdef SHOW_SANITY
 #if 0	// client no longer holds these values
-		if (p_ptr->msane)
-		{
-			if((100*p_ptr->csane)/p_ptr->msane>99)
-				prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_L_GREEN);
-			else if((100*p_ptr->csane)/p_ptr->msane>30)
-				prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_YELLOW);
-			else
-				prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_RED);
-		}
+	if (p_ptr->msane)
+	{
+		if((100*p_ptr->csane)/p_ptr->msane>99)
+			prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_L_GREEN);
+		else if((100*p_ptr->csane)/p_ptr->msane>30)
+			prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_YELLOW);
+		else
+			prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_RED);
+	}
 #else	// 0
-        put_str("Cur Sanity", 13, 52);
+	put_str("Cur Sanity", 13, 52);
 
-        c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, 13, 67);
+	c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, 13, 67);
 
 #endif	// 0
 #endif	// SHOW_SANITY
+
+
+	/* Show location (better description needed XXX) */
+	if (c_cfg.depth_in_feet)
+		put_str(format("You are at %dft of (%d, %d).", p_ptr->wpos.wz * 50, 
+					p_ptr->wpos.wy, p_ptr->wpos.wx), 20, hist ? 10 : 1);
+	else
+		put_str(format("You are at level %d of (%d, %d).", p_ptr->wpos.wz, 
+					p_ptr->wpos.wy, p_ptr->wpos.wx), 20, hist ? 10 : 1);
 }
 
 /*

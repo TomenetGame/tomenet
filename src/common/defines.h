@@ -880,6 +880,9 @@ that keeps many algorithms happy.
 //#define FEAT_MON_TRAP           0xAF /* 175 */
 #define FEAT_MON_TRAP           0x80 /* 128 */
 
+/* Dirty Hack till feature code will be redone */
+#define is_door(feat)	(feat == FEAT_OPEN || feat == FEAT_BROKEN || \
+		(FEAT_DOOR_HEAD <= feat && feat <= FEAT_SECRET))
 
 /*
  * Number of effects

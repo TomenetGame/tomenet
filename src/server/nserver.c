@@ -7023,7 +7023,14 @@ static int Receive_store_leave(int ind)
         p_ptr->window |= (PW_OVERHEAD);
 
 	/* Update store info */
-	p_ptr->store_num = -1;
+	if (p_ptr->store_num > -1)
+	{
+		p_ptr->store_num = -1;
+
+		/* Hack -- don't stand in the way */
+		teleport_player(player, 1);
+//		do_cmd_walk(player, 10 - p_ptr->last_dir, p_ptr->always_pickup);
+	}
 
 	/* hack -- update night/day in wilderness levels */
 	/* XXX it's not so good place to do such things -

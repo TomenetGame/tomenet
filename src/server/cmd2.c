@@ -2377,7 +2377,8 @@ static void do_arrow_brand_effect(int Ind, int y, int x)
 }
 
 /* Exploding arrow */
-static void do_arrow_explode(int Ind, object_type *o_ptr, int y, int x)
+//static void do_arrow_explode(int Ind, object_type *o_ptr, int y, int x)
+void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
 	int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2;
@@ -2939,7 +2940,7 @@ void do_cmd_fire(int Ind, int dir)
 									do_arrow_brand_effect(Ind, y, x);
 
 								if (!magic && o_ptr->pval) 
-									do_arrow_explode(Ind, o_ptr, y, x);
+									do_arrow_explode(Ind, o_ptr, wpos, y, x);
 
 								/* Stop looking */
 								if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP) || boomerang) break;
@@ -3085,7 +3086,7 @@ void do_cmd_fire(int Ind, int dir)
 						do_arrow_brand_effect(Ind, y, x);
 
 					if (!magic && o_ptr->pval) 
-						do_arrow_explode(Ind, o_ptr, y, x);
+						do_arrow_explode(Ind, o_ptr, wpos, y, x);
 
 					/* Stop looking */
 					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP) || boomerang) break;

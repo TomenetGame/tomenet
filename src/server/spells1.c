@@ -5495,6 +5495,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* TODO: add potion name */
 		sprintf(killer, "An evaporating potion");
 	}
+	/* hack -- by shattering potion */
+	else if (who <= PROJECTOR_UNUSUAL)
+	{
+		/* TODO: add potion name */
+		sprintf(killer, "Something weird");
+	}
 #if 0
 	else if (who == PROJECTOR_TERRAIN)
 	{

@@ -1308,7 +1308,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 					if (k_ptr->number > 1) continue;
 					slot2=wield_slot(Ind, k_ptr);
 					/* a chance of 4 in 5 of switching something, then 2 in 5 to do it again */
-					if ((slot1==slot2) && (rand_int(100)<(80-ident*40)))
+					if (slot1 && (slot1==slot2) && (rand_int(100)<(80-ident*40)))
 					{
 						object_type tmp_obj;
 						tmp_obj = p_ptr->inventory[j];
@@ -4678,22 +4678,30 @@ bool mon_hit_trap(int m_idx)
 
 					}
 
-					/* Copy and decrease ammo */
-					object_copy(j_ptr, load_o_ptr);
+					/* KABOOM! */
+					do_arrow_explode(who, load_o_ptr, &wpos, my, mx);
 
-					j_ptr->number = 1;
-
-					load_o_ptr->number--;
-
-					if (load_o_ptr->number <= 0)
+					if (load_o_ptr->tval != TV_ARROW ||
+						load_o_ptr->sval != SV_AMMO_MAGIC)
 					{
-						remove = TRUE;
-						delete_object_idx(kit_o_ptr->next_o_idx);
-						kit_o_ptr->next_o_idx = 0;
-					}
 
-					/* Drop (or break) near that location */
-					drop_near(j_ptr, breakage_chance(j_ptr), &wpos, my, mx);				
+						/* Copy and decrease ammo */
+						object_copy(j_ptr, load_o_ptr);
+
+						j_ptr->number = 1;
+
+						load_o_ptr->number--;
+
+						if (load_o_ptr->number <= 0)
+						{
+							remove = TRUE;
+							delete_object_idx(kit_o_ptr->next_o_idx);
+							kit_o_ptr->next_o_idx = 0;
+						}
+
+						/* Drop (or break) near that location */
+						drop_near(j_ptr, breakage_chance(j_ptr), &wpos, my, mx);				
+					}
 
 				}
 

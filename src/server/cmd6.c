@@ -6731,10 +6731,12 @@ static int fletchery_items(int Ind)
 #define do_fletchery_aux() \
 	object_aware(Ind, q_ptr); \
 	object_known(q_ptr); \
-	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 10))?TRUE:FALSE); \
+	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE); \
 	q_ptr->note = quark_add("Handmade"); \
 	q_ptr->discount = 50 + 25 * rand_int(3); \
 	msg_print(Ind, "You make some ammo.")
+
+//	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 10))?TRUE:FALSE); \
 
 /*
  * do_cmd_cast calls this function if the player's class
@@ -6770,7 +6772,7 @@ void do_cmd_fletchery(int Ind)
 		return;
 	}
 
-	if (get_skill(p_ptr, SKILL_ARCHERY) < 20)
+	if (get_skill(p_ptr, SKILL_ARCHERY) < 10)	/* 20 */
 	{
 		msg_print(Ind, "You don't know how to create ammos well.");
 		return;
@@ -6910,7 +6912,7 @@ void do_cmd_fletchery(int Ind)
 		/* Get local object */
 		q_ptr = &forge;
 
-		/* Hack -- Give the player some arrow */
+		/* Hack -- Give the player some arrows */
 		invcopy(q_ptr, lookup_kind(TV_ARROW, m_bonus(1, tlev) + 1));
 //		q_ptr->number = (byte)rand_range(15,25);
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
@@ -6968,7 +6970,7 @@ void do_cmd_fletchery(int Ind)
 		/* Get local object */
 		q_ptr = &forge;
 
-		/* Hack -- Give the player some small firestones */
+		/* Hack -- Give the player some bolts */
 		invcopy(q_ptr, lookup_kind(TV_BOLT, m_bonus(1, tlev) + 1));
 //		q_ptr->number = (byte)rand_range(15,25);
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);

@@ -3037,7 +3037,7 @@ cptr item_activation(object_type *o_ptr)
 			case SV_AMULET_THE_MOON:
 				return "sleep monsters every 100+d100 turns";
 			case SV_AMULET_SERPENT:
-				return "vemon breathing every 40+d60 turns";
+				return "venom breathing every 40+d60 turns";
 			default:
 				return NULL;
 		}
@@ -4473,7 +4473,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		fprintf(fff, "It regenerates its mana faster.\n");
 	}
 
-#if 0
+#if 1
 	if (f5 & (TR5_NO_ENCHANT))
 	{
 		fprintf(fff, "It cannot be enchanted by any means.\n");

@@ -6471,6 +6471,25 @@ static void gen_life_level(worldpos *wpos)
 /* XXX XXX Here ends the big lump of ToME cake */
 
 
+/* Copy (y, x) feat(usually door) to (y2,x2), and trap it if needed.
+ * - Jir - */
+static void duplicate_door(worldpos *wpos, int y, int x, int y2, int x2)
+{
+#ifdef WIDE_CORRIDORS
+	int tmp;
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+
+	/* Place the same type of door */
+	zcave[y2][x2].feat = zcave[y][x].feat;
+
+	/* let's trap this too ;) */
+	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
+			rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) return;
+	place_trap(wpos, y2, x2, 0);
+#endif
+}
+
 
 
 /*
@@ -6736,6 +6755,7 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 				}
 
 #ifdef WIDE_CORRIDORS
+#if 0
 				/* Save the next door location */
 				if (dun->door_n < DOOR_MAX)
 				{
@@ -6754,6 +6774,7 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 						dun->door_n++;
 					}
 				}
+#endif	// 0
 #endif
 
 				/* No door in next grid */
@@ -6814,10 +6835,10 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 			/* Place a random door */
 			place_random_door(wpos, y, x);
 
+#ifdef WIDE_CORRIDORS
 			/* Remember type of door */
 			feat = zcave[y][x].feat;
 
-#ifdef WIDE_CORRIDORS
 			/* Make sure both halves get a door */
 			if (i % 2)
 			{
@@ -6899,7 +6920,35 @@ static int next_to_corr(struct worldpos *wpos, int y1, int x1)
  *
  * Assumes "in_bounds(y,x)"
  */
+#if 0
 static bool possible_doorway(struct worldpos *wpos, int y, int x)
+{
+        cave_type **zcave;
+        if(!(zcave=getcave(wpos))) return(FALSE);
+
+        /* Count the adjacent corridors */
+        if (next_to_corr(wpos, y, x) >= 2)
+        {
+                /* Check Vertical */
+                if ((zcave[y-1][x].feat >= FEAT_MAGMA) &&
+                    (zcave[y+1][x].feat >= FEAT_MAGMA))
+                {
+                        return (TRUE);
+                }
+
+                /* Check Horizontal */
+                if ((zcave[y][x-1].feat >= FEAT_MAGMA) &&
+                    (zcave[y][x+1].feat >= FEAT_MAGMA))
+                {
+                        return (TRUE);
+                }
+        }
+
+        /* No doorway */
+        return (FALSE);
+}
+#else	// 0
+static int possible_doorway(struct worldpos *wpos, int y, int x)
 {
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
@@ -6907,26 +6956,63 @@ static bool possible_doorway(struct worldpos *wpos, int y, int x)
 	/* Count the adjacent corridors */
 	if (next_to_corr(wpos, y, x) >= 2)
 	{
+		/* Hack -- avoid doors next to doors */
+		if (is_door(zcave[y-1][x].feat) ||
+			is_door(zcave[y+1][x].feat) ||
+			is_door(zcave[y][x-1].feat) ||
+			is_door(zcave[y][x+1].feat))
+			return (-1);
+
 		/* Check Vertical */
 		if ((zcave[y-1][x].feat >= FEAT_MAGMA) &&
 		    (zcave[y+1][x].feat >= FEAT_MAGMA))
 		{
-			return (TRUE);
+			return (8);
 		}
+#if 1
+		if (in_bounds(y-2, x) &&
+			(zcave[y-2][x].feat >= FEAT_MAGMA) &&
+		    (zcave[y+1][x].feat >= FEAT_MAGMA))
+		{
+			return (1);
+		}
+		if (in_bounds(y+2, x) &&
+			(zcave[y-1][x].feat >= FEAT_MAGMA) &&
+		    (zcave[y+2][x].feat >= FEAT_MAGMA))
+		{
+			return (0);
+		}
+#endif	// 0
 
 		/* Check Horizontal */
 		if ((zcave[y][x-1].feat >= FEAT_MAGMA) &&
 		    (zcave[y][x+1].feat >= FEAT_MAGMA))
 		{
-			return (TRUE);
+			return (8);
 		}
+#if 1
+		if (in_bounds(y, x-2) &&
+			(zcave[y][x-2].feat >= FEAT_MAGMA) &&
+		    (zcave[y][x+1].feat >= FEAT_MAGMA))
+		{
+			return (3);
+		}
+		if (in_bounds(y, x+2) &&
+			(zcave[y][x-1].feat >= FEAT_MAGMA) &&
+		    (zcave[y][x+2].feat >= FEAT_MAGMA))
+		{
+			return (2);
+		}
+#endif	// 0
 	}
 
 	/* No doorway */
-	return (FALSE);
+	return (-1);
 }
+#endif	// 0
 
 
+#if 0
 /*
  * Places door at y, x position if at least 2 walls found
  */
@@ -6938,7 +7024,6 @@ static void try_door(struct worldpos *wpos, int y, int x)
 	/* Paranoia */
 	if (!in_bounds(y, x)) return;
 
-#ifdef NEW_DUNGEON
 	/* Ignore walls */
 	if (zcave[y][x].feat >= FEAT_MAGMA) return;
 
@@ -6951,20 +7036,129 @@ static void try_door(struct worldpos *wpos, int y, int x)
 		/* Place a door */
 		place_random_door(wpos, y, x);
 	}
-#else
-	/* Ignore walls */
-	if (cave[Depth][y][x].feat >= FEAT_MAGMA) return;
+}
+#endif	// 0
 
-	/* Ignore room grids */
-	if (cave[Depth][y][x].info & CAVE_ROOM) return;
+/*
+ * Places doors around y, x position
+ */
+static void try_doors(worldpos *wpos, int y, int x)
+{
+	bool dir_ok[4];
+	int dir_next[4];
+	int i, k, n;
+	int yy, xx;
 
-	/* Occasional door (if allowed) */
-	if ((rand_int(100) < DUN_TUN_JCT) && possible_doorway(Depth, y, x))
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+
+	/* Paranoia */
+//	if (!in_bounds(y, x)) return;
+
+	/* Some dungeons don't have doors at all */
+//	if (d_info[dungeon_type].flags1 & (DF1_NO_DOORS)) return;
+
+	/* Reset tally */
+	n = 0;
+
+	/* Look four cardinal directions */
+	for (i = 0; i < 4; i++)
 	{
-		/* Place a door */
-		place_random_door(Depth, y, x);
+		/* Assume NG */
+		dir_ok[i] = FALSE;
+
+		/* Access location */
+		yy = y + ddy_ddd[i];
+		xx = x + ddx_ddd[i];
+
+		/* Out of level boundary */
+		if (!in_bounds(yy, xx)) continue;
+
+		/* Ignore walls */
+//		if (f_info[cave[yy][xx].feat].flags1 & (FF1_WALL)) continue;
+		if (zcave[y][x].feat >= FEAT_MAGMA) continue;
+
+		/* Ignore room grids */
+//		if (cave[yy][xx].info & (CAVE_ROOM)) continue;
+		if (zcave[y][x].info & CAVE_ROOM) continue;
+
+		/* Not a doorway */
+//		if (!possible_doorway(wpos, yy, xx)) continue;
+		if ((dir_next[i]=possible_doorway(wpos, yy, xx)) < 0) continue;
+
+		/* Accept the direction */
+		dir_ok[i] = TRUE;
+
+		/* Count good spots */
+		n++;
 	}
-#endif
+
+	/* Use the traditional method 75% of time */
+	if (rand_int(100) < 75)
+	{
+		for (i = 0; i < 4; i++)
+		{
+			/* Bad locations */
+			if (!dir_ok[i]) continue;
+
+			/* Place one of various kinds of doors */
+			if (rand_int(100) < DUN_TUN_JCT)
+			{
+				/* Access location */
+				yy = y + ddy_ddd[i];
+				xx = x + ddx_ddd[i];
+
+				/* Place a door */
+				place_random_door(wpos, yy, xx);
+
+				duplicate_door(wpos, yy, xx, yy + ddy_ddd[dir_next[i]], xx + ddx_ddd[dir_next[i]]);
+			}
+		}
+	}
+
+	/* Use alternative method */
+	else
+	{
+		/* A crossroad */
+		if (n == 4)
+		{
+			/* Clear OK flags XXX */
+			for (i = 0; i < 4; i++) dir_ok[i] = FALSE;
+
+			/* Put one or two secret doors */
+			dir_ok[rand_int(4)] = TRUE;
+			dir_ok[rand_int(4)] = TRUE;
+		}
+
+		/* A T-shaped intersection or two possible doorways */
+		else if ((n == 3) || (n == 2))
+		{
+			/* Pick one random location from the list */
+			k = rand_int(n);
+
+			for (i = 0; i < 4; i++)
+			{
+				/* Reject all but k'th OK direction */
+				if (dir_ok[i] && (k-- != 0)) dir_ok[i] = FALSE;
+			}
+		}
+
+		/* Place secret door(s) */
+		for (i = 0; i < 4; i++)
+		{
+			/* Bad location */
+			if (!dir_ok[i]) continue;
+
+			/* Access location */
+			yy = y + ddy_ddd[i];
+			xx = x + ddx_ddd[i];
+
+			/* Place a secret door */
+			place_secret_door(wpos, yy, xx);
+
+			duplicate_door(wpos, yy, xx, yy + ddy_ddd[dir_next[i]], xx + ddx_ddd[dir_next[i]]);
+		}
+	}
 }
 
 
@@ -7080,7 +7274,7 @@ static void cave_gen(struct worldpos *wpos)
 	bool destroyed = FALSE;
 	bool empty_level = FALSE, dark_empty = TRUE;
 	bool cavern = FALSE;
-	bool maze = FALSE, permaze = FALSE;
+	bool maze = FALSE, permaze = FALSE, bonus = FALSE;
 
 	dun_data dun_body;
 
@@ -7429,10 +7623,13 @@ static void cave_gen(struct worldpos *wpos)
 			x = dun->door[i].x;
 
 			/* Try placing doors */
+#if 0
 			try_door(wpos, y, x - 1);
 			try_door(wpos, y, x + 1);
 			try_door(wpos, y - 1, x);
 			try_door(wpos, y + 1, x);
+#endif	// 0
+			try_doors(wpos, y , x);
 		}
 
 
@@ -7507,6 +7704,11 @@ static void cave_gen(struct worldpos *wpos)
 	k = k * dun->ratio / 100 + 1;
 	if (k < 2) k = 2;
 
+	if (empty_level || maze)
+	{
+		k *= 2;
+		bonus = TRUE;
+	}
 
 	/* Pick a base number of monsters */
 	i = MIN_M_ALLOC_LEVEL + randint(8);
@@ -7520,7 +7722,8 @@ static void cave_gen(struct worldpos *wpos)
 
 
 	/* Place some traps in the dungeon */
-	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint(k * (empty_level ? 5 : 1)));
+	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
+			randint(k * (bonus ? 3 : 1)));
 
 	/* Put some rubble in corridors */
 	alloc_object(wpos, ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k));

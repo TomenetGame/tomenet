@@ -5157,12 +5157,39 @@ static void process_monster(int Ind, int m_idx)
 	if (m_ptr->csleep)
 	{
 		u32b notice = 0;
+		bool aggravated = FALSE;
 
 		/* Hack -- handle non-aggravation */
+#if 0
 		if (!p_ptr->aggravate) notice = rand_int(1024);
+#else
+		/* check everyone on the floor */
+		notice = rand_int(1024);
+		for (i = 1; i <= NumPlayers; i++)
+		{
+			player_type *q_ptr = Players[i];
+
+			/* Skip disconnected players */
+			if (q_ptr->conn == NOT_CONNECTED) continue;
+
+			if (!q_ptr->aggravate) continue;
+
+			/* Skip players not on this depth */
+			if (!inarea(&q_ptr->wpos, wpos)) continue;
+
+			/* Compute distance */
+			/* XXX value is same with that in process_monsters */
+			if (distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px) >= 100)
+				continue;
+
+			notice = 0;
+			aggravated = TRUE;
+			break;
+		}
+#endif	// 0
 
 		/* Hack -- See if monster "notices" player */
-		if ((notice * notice * notice) <= noise)
+		if ((notice * notice * notice) <= noise || aggravated)
 		{
 			/* Hack -- amount of "waking" */
 			int d = 1;
@@ -5174,7 +5201,8 @@ static void process_monster(int Ind, int m_idx)
 			if (m_ptr->cdis < 50) d = (100 / m_ptr->cdis);
 
 			/* Hack -- handle aggravation */
-			if (p_ptr->aggravate) d = m_ptr->csleep;
+//			if (p_ptr->aggravate) d = m_ptr->csleep;
+			if (aggravated) d = m_ptr->csleep;
 
 			/* Still asleep */
 			if (m_ptr->csleep > d)
@@ -5633,12 +5661,12 @@ static void process_monster(int Ind, int m_idx)
 		{
 			bool may_bash = TRUE;
 
-			/* Take a turn */
-			do_turn = TRUE;
-
 			/* Creature can open doors. */
 			if (r_ptr->flags2 & RF2_OPEN_DOOR)
 			{
+				/* Take a turn */
+				do_turn = TRUE;
+
 				/* Closed doors and secret doors */
 				if ((c_ptr->feat == FEAT_DOOR_HEAD) ||
 				    (c_ptr->feat == FEAT_SECRET))
@@ -5680,6 +5708,9 @@ static void process_monster(int Ind, int m_idx)
 			if (may_bash && (r_ptr->flags2 & RF2_BASH_DOOR))
 			{
 				int k;
+
+				/* Take a turn */
+				do_turn = TRUE;
 
 				/* Door power */
 				k = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);

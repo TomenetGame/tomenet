@@ -2541,7 +2541,7 @@ int Receive_pause(void)
 		return n;
 	}
 
-#if 0
+#if 1
 	/* Show the most recent changes to the screen */
 	Term_fresh();
 

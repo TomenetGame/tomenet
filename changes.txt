@@ -21,10 +21,23 @@
 
 # bug.txt should follow the exact same format
 
+07/08/2002 (Jir)
+[O]- Amulet of Life Saving helps from sanity death.
+[O]- (Hack) Morgul is 4 times rarer now.
+[O]- generation of exploding arrows is depth dependant.
+[m]- aggravation can no longer be 'shadowed' by other player(process_monster)
+[m]- new megos: Mutant, Druid.  Rogue can pick items up now.
+[I]- wpos on character dump.
+[I]- items that a unique drops have inscription (idea from EyAngband)
+[G]- monster trap can handle exploding/magic ammons right.
+[D]- doors on corridor junctions (very kludgy - FIXME)
+[B]- Silent Switching Trap made players to wield potions.
+[B]- ball() in evil.lua still caused crash.
+
 06/08/2002 (Jir)
 [O]- randart/ego rings/amus/lites needs ID now.
 [G]- SKILL_DISARM grants small chance of IDing traps when disarming.
-[G]- examine('I') command tells how many blows that wep gives.
+[G]- examine('I') command tells how many blows that wep gives(EyAngband idea)
 [B]- "destroyed" msg was shown when no-ghost player died.
 
 05/08/2002 (Jir)
@@ -1690,7 +1703,11 @@ below this line are the unfixed bugs known:
 [B]- 'look' command is almost unusable since the msg gets wiped at once
 [B]- store '3' sells tons of Aman daggers when reset.
 [B]- Warrior gets ugly char-dump; Device skill under Combat (dump_skills)
-[B]- Cannot resume connection (status 9)
+[B]- gray dot left after disarming monster-trap
+[B]- T/X corridor intersections never have doors.
+     try_door/try_doors proved out to do nothing!
+     
+
 [B]- apartment doors can displace? (disabled)
      Program received signal SIGSEGV, Segmentation fault.
      access_door (Ind=2, dna=0x0) at server/cmd2.c:666
@@ -1807,6 +1824,7 @@ below this line are the unfixed bugs known:
 [B]- p_ptr->to_d_ranged is always 0.
 [B]- Yeek seems to receive the best store prices.
 [B]- meanless double egos like Elven Robe of Fire Resistance
+
 
 
 =============================================================================

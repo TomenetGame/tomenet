@@ -1308,7 +1308,7 @@ void cmd_character(void)
 		display_player(hist);
 
 		/* Display message */
-		prt("[ESC to quit, f to make a chardump, h to toggle history]", 21, 13);
+		prt("[ESC to quit, f to make a chardump, h to toggle history]", 22, 13);
 
 		/* Wait for key */
 		ch = inkey();
