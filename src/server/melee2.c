@@ -2916,14 +2916,16 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF6_OFFSET+0:
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
-			disturb(Ind, 1, 0);
-			if (blind)
-			{
-				msg_format(Ind, "%^s mumbles.", m_name);
-			}
-			else
-			{
-				msg_format(Ind, "%^s concentrates on %s body.", m_name, m_poss);
+			if (visible){
+				disturb(Ind, 1, 0);
+				if (blind)
+				{
+					msg_format(Ind, "%^s mumbles.", m_name);
+				}
+				else
+				{
+					msg_format(Ind, "%^s concentrates on %s body.", m_name, m_poss);
+				}
 			}
 
 			/* Allow quick speed increases to base+10 */
@@ -2974,10 +2976,10 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF6_OFFSET+2:
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
-			disturb(Ind, 1, 0);
 
 			/* Message */
 			if (visible){
+				disturb(Ind, 1, 0);
 				if (blind)
 				{
 					msg_format(Ind, "%^s mumbles.", m_name);

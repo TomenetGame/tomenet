@@ -17,8 +17,8 @@ struct svlist{
 	char name[30];
 };
 
-struct rplist *rpmlist=NULL;
-struct svlist *svlist=NULL;
+struct list *rpmlist=NULL;
+struct list *svlist=NULL;
 
 struct wpacket spk;
 
@@ -29,6 +29,44 @@ void add_server(struct sinfo *sinfo);
 bool world_check_ignore(int Ind, unsigned long id, short server);
 void world_update_players(void);
 int world_find_server(char *pname);
+
+/* Generic list handling function */
+struct list *addlist(struct list **head, int dsize){
+	struct list *newlp;
+	newlp=malloc(sizeof(struct list));
+	if(newlp){
+		newlp->data=malloc(dsize);
+		if(newlp->data!=NULL){
+			newlp->next=*head;
+			*head=newlp;
+			return(newlp);
+		}
+		free(newlp);
+	}
+	return(NULL);
+}
+
+/* Generic list handling function */
+struct list *remlist(struct list **head, struct list *dlp){
+	struct list *lp;
+	lp=*head;
+	if(dlp==*head){
+		*head=lp->next;
+		free(dlp->data);
+		free(dlp);
+		return(*head);
+	}
+	while(lp){
+		if(lp->next==dlp){
+			lp->next=dlp->next;
+			free(dlp->data);
+			free(dlp);
+			return(lp->next);
+		}
+		lp=lp->next;
+	}
+	return(dlp->next);
+}
 
 void world_update_players(){
 	int i;
@@ -60,12 +98,14 @@ void world_comm(int fd, int arg){
 	struct wpacket *wpk;
 	x=recv(fd, buffer+(bpos+blen), 1024-(bpos+blen), 0);
 	if(x==0){
-		struct rplist *c_pl, *n_pl;
+		//struct rplist *c_pl, *n_pl;
 		/* This happens... we are screwed (fortunately SIGPIPE isnt handled) */
 		s_printf("pfft. world server closed\n");
 		remove_input(WorldSocket);
 		close(WorldSocket);	/* ;) this'll fix it... */
 		/* Clear all the world players quietly */
+		while(remlist(&rpmlist, rpmlist));
+#if 0
 		c_pl=rpmlist;
 		while(c_pl){
 			n_pl=c_pl->next;
@@ -73,6 +113,7 @@ void world_comm(int fd, int arg){
 			c_pl=n_pl;
 		}
 		rpmlist=NULL;
+#endif
 		WorldSocket=-1;
 	}
 	blen+=x;
@@ -144,64 +185,74 @@ void world_comm(int fd, int arg){
 
 /* returns authed server id or 0 */
 int world_find_server(char *pname){
+	struct list *lp;
 	struct rplist *c_pl;
-	c_pl=rpmlist;
+	lp=rpmlist;
 
-	while(c_pl){
+	while(lp){
+		c_pl=(struct rplist*)lp->data;
 		if(!strcmp(c_pl->name, pname)){
 			return(c_pl->server);
 		}
-		c_pl=c_pl->next;
+		lp=lp->next;
 	}
 	return(0);
 }
 
 /* returns list entry, or NULL */
 struct rplist *world_find_player(char *pname, short server){
+	struct list *lp;
 	struct rplist *c_pl;
-	c_pl=rpmlist;
+	lp=rpmlist;
 
-	while(c_pl){
+	while(lp){
+		c_pl=(struct rplist*)lp->data;
 		if(!stricmp(c_pl->name, pname) && (!server || server==c_pl->server)){
 			return(c_pl);
 		}
-		c_pl=c_pl->next;
+		lp=lp->next;
 	}
 	return(NULL);
 }
 
 /* proper data will come with merge */
 void world_remote_players(FILE *fff){
+	struct list *lp, *slp;
 	struct rplist *c_pl;
 	struct svlist *c_sv;
 	char servername[30];
-	c_pl=rpmlist;
-	if(c_pl){
+	lp=rpmlist;
+	if(lp){
 		fprintf(fff, "y  Remote players\nr\n");
 	}
-	while(c_pl){
-		c_sv=svlist;
+	while(lp){
+		c_pl=(struct rplist*)lp->data;
+		slp=svlist;
 		sprintf(servername, "%d", c_pl->server);
-		while(c_sv){
+		while(slp){
+			c_sv=(struct svlist*)slp->data;
 			if(c_sv->sid==c_pl->server){
 				strncpy(servername, c_sv->name, 30);
 				break;
 			}
-			c_sv=c_sv->next;
+			slp=slp->next;
 		}
 		
 		fprintf(fff, "%c   %s@%s\n", c_pl->server ? 'o' : 's', c_pl->name, servername);
-		c_pl=c_pl->next;
+		lp=lp->next;
 	}
 }
 
 /* When a server logs in, we get information about it */
 void add_server(struct sinfo *sinfo){
+	struct list *lp;
 	struct svlist *c_sr;
+/*
 	c_sr=malloc(sizeof(struct svlist));
-	if(c_sr){
-		/* Insert it at the start */
-		c_sr->next=svlist;
+*/
+	lp=addlist(&svlist, sizeof(struct svlist));
+	if(lp){
+		c_sr=(struct svlist*)lp->data;
 		strncpy(c_sr->name, sinfo->name, 30);
 		c_sr->sid=sinfo->sid;
 	}
@@ -209,75 +260,60 @@ void add_server(struct sinfo *sinfo){
 
 /* This is called when a remote server disconnects */
 void rem_server(short id){
-	struct rplist *c_pl, *p_pl, *d_pl;
-	struct svlist *c_sr, *p_sr, *d_sr;
+	struct rplist *c_pl;
+	struct svlist *c_sr;
 
-	/* delete the server info */
-	c_pl=rpmlist;
-	p_pl=c_pl;
-	while(c_pl){
-		d_pl=NULL;
+	struct list *lp;
+
+	/* remove all the old players */
+	lp=rpmlist;
+	while(lp){
+		c_pl=(struct rplist*)lp->data;
 		if(c_pl->server==id){
-			if(c_pl==rpmlist)
-				rpmlist=c_pl->next;
-			else
-				p_pl->next=c_pl->next;
-			d_pl=c_pl;
+			lp=remlist(&rpmlist, lp);
 		}
-		p_pl=c_pl;
-		c_pl=c_pl->next;
-		if(d_pl) free(d_pl);
+		else lp=lp->next;
 	}
 
 	/* Delete the server info */
-	c_sr=svlist;
-	p_sr=c_sr;
-	while(c_sr){
-		d_sr=NULL;
+	lp=svlist;
+	while(lp){
+		c_sr=(struct svlist*)lp->data;
 		if(c_sr->sid==id){
-			if(c_sr==svlist)
-				svlist=c_sr->next;
-			else
-				p_sr->next=c_sr->next;
-			d_sr=c_sr;
+			lp=remlist(&svlist, lp);
 		}
-		p_sr=c_sr;
-		c_sr=c_sr->next;
-		if(d_sr) free(d_sr);
+		else lp=lp->next;
 	}
 }
 
 void add_rplayer(struct wpacket *wpk){
+	struct list *lp;
 	struct rplist *n_pl, *c_pl;
 	unsigned short found=0;
 	if(!wpk->d.play.silent)
 		msg_broadcast_format(0, "\377s%s has %s the game.", wpk->d.play.name, (wpk->type==WP_NPLAYER ? "entered" : "left"));
 
 	if(wpk->type==WP_NPLAYER && !wpk->d.play.server) return;
-	c_pl=rpmlist;
-	while(c_pl){
+	lp=rpmlist;
+	while(lp){
+		c_pl=(struct rplist*)lp->data;
 		if(/* c_pl->id==wpk->d.play.id && */ !(strcmp(c_pl->name, wpk->d.play.name))){
 			found=1;
 			break;
 		}
-		n_pl=c_pl;
-		c_pl=c_pl->next;
+		lp=lp->next;
 	}
 	if(wpk->type==WP_NPLAYER && !found){
-		n_pl=malloc(sizeof(struct rplist));
-		n_pl->next=rpmlist;
-		n_pl->id=wpk->d.play.id;
-		n_pl->server=wpk->d.play.server;
-		strncpy(n_pl->name, wpk->d.play.name, 30);
-		rpmlist=n_pl;
+		lp=addlist(&rpmlist, sizeof(struct rplist));
+		if(lp){
+			n_pl=(struct rplist*)lp->data;
+			n_pl->id=wpk->d.play.id;
+			n_pl->server=wpk->d.play.server;
+			strncpy(n_pl->name, wpk->d.play.name, 30);
+		}
 	}
-	else if(wpk->type==WP_QPLAYER && found){
-		if(c_pl==rpmlist)
-			rpmlist=c_pl->next;
-		else
-			n_pl->next=c_pl->next;
-		free(c_pl);
-	}
+	else if(wpk->type==WP_QPLAYER && found)
+		remlist(&rpmlist, lp);
 }
 
 void world_pmsg_send(unsigned long id, char *name, char *pname, char *text){
