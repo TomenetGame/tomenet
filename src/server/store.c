@@ -2165,7 +2165,7 @@ void store_purchase(int Ind, int item, int amt)
 						msg_print(Ind, "The shopkeeper retires.");
 
 						/* Shuffle the store */
-						store_shuffle(p_ptr->store_num);
+						store_shuffle(st_ptr);
 					}
 
 					/* Maintain */
@@ -2179,7 +2179,7 @@ void store_purchase(int Ind, int item, int amt)
 					for (i = 0; i < 10; i++)
 					{
 						/* Maintain the store */
-						store_maint(p_ptr->store_num);
+						store_maint(st_ptr);
 					}
 
 					/* Redraw everything */
@@ -2320,8 +2320,12 @@ void store_sell(int Ind, int item, int amt)
 	/* Remove any inscription for stores */
 	if (p_ptr->store_num != 7) sold_obj.note = 0;
 
+	/* Access the store */
+//	i=gettown(Ind);
+//	store_type *st_ptr = &town[townval].townstore[i];
+
 	/* Is there room in the store (or the home?) */
-	if (!store_check_num(p_ptr->store_num, &sold_obj))
+	if (!store_check_num(&town[gettown(Ind)].townstore[p_ptr->store_num], &sold_obj))
 	{
 		if (p_ptr->store_num == 7) msg_print(Ind, "Your home is full.");
 		else msg_print(Ind, "I have not the room in my store to keep it.");
@@ -2465,7 +2469,8 @@ void store_confirm(int Ind)
 
 	/* The store gets that (known) item */
 	if(sold_obj.tval!=8)
-		item_pos = store_carry(p_ptr->store_num, &sold_obj);
+		item_pos = store_carry(&town[gettown(Ind)].townstore[p_ptr->store_num], &sold_obj);
+//		item_pos = store_carry(p_ptr->store_num, &sold_obj);
 
 	/* Resend the basic store info */
 	display_store(Ind);

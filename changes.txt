@@ -453,4 +453,7 @@ Change list for PernMangband
 - Fixed a bug where vault didn't contain monsters.
 - Given version number v3.3.0alpha (it'll be v4.0.0 soon :)
 - Version warnings for older(/newer) initialize files.
+
+17/12/2001 (Jir)
 - Fixed a bug where creating a tower caused crash.
+- Fixed a bug where selling an item to a store caused crash.
