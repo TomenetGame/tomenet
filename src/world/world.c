@@ -132,8 +132,8 @@ void wproto(struct client *ccl){
 			case WP_QPLAYER:
 				/* STORE players here */
 				if(ccl->authed && (ccl->authed>0 || secure.play)){
-					add_rplayer(wpk);
 					wpk->d.play.server=ccl->authed;
+					add_rplayer(wpk);
 					relay(wpk, ccl);
 				}
 				break;
