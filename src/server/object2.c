@@ -3216,6 +3216,11 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 		if (make_artifact(Depth, o_ptr)) break;
 	}
 
+	/* virgin */
+	o_ptr->owner = 0;
+
+	/* determine level-requirement */
+	determine_level_req(lev, o_ptr);
 
 	/* Hack -- analyze artifacts */
 	if (o_ptr->name1)
@@ -3321,12 +3326,14 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 		}
 	}
 
-        /* Unowned yet */
-        o_ptr->owner = 0;
-        o_ptr->level = ((lev * 2 / 4) > 100)?100:(lev * 2 / 4);
-        if (lev > 0) o_ptr->level = ((lev * 2 / 4) > 100)?100:(lev * 2 / 4);
-        else o_ptr->level = -((lev * 2 / 4) > 100)?100:(lev * 2 / 4);
-		if (o_ptr->level < 1) o_ptr->level = 1;
+#if 0
+	/* Unowned yet */
+	o_ptr->owner = 0;
+//	o_ptr->level = ((lev * 2 / 4) > 100)?100:(lev * 2 / 4);
+	if (lev > 0) o_ptr->level = ((lev * 2 / 4) > 100)?100:(lev * 2 / 4);
+	else o_ptr->level = -((lev * 2 / 4) > 100)?100:(lev * 2 / 4);
+	if (o_ptr->level < 1) o_ptr->level = 1;
+#endif
 
 	/* Hack -- analyze ego-items */
 	if (o_ptr->name2)
@@ -3472,6 +3479,62 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 	}
 }
 
+/*
+ * determine level requirement.
+ * based on C.Blue's idea.	- Jir -
+ */
+void determine_level_req(int Depth, object_type *o_ptr)
+{
+	int i, j, base = k_info[o_ptr->k_idx].level;
+
+	/* Unowned yet */
+//	o_ptr->owner = 0;
+
+	/* Wilderness? (Obviously ridiculous) */
+	Depth = (Depth > 0) ? Depth : -Depth;
+
+#if 0	/* older routine */
+//	o_ptr->level = ((Depth * 2 / 4) > 100)?100:(Depth * 2 / 4);
+	if (Depth > 0) o_ptr->level = ((Depth * 2 / 4) > 100)?100:(Depth * 2 / 4);
+	else o_ptr->level = -((Depth * 2 / 4) > 100)?100:(Depth * 2 / 4);
+	if (o_ptr->level < 1) o_ptr->level = 1;
+#endif
+
+	/* artifact */
+	if (o_ptr->name1)
+	{
+	 	artifact_type *a_ptr;
+	 	
+	 	/* Randart */
+		if (o_ptr->name1 == ART_RANDART)
+		{
+			a_ptr =	randart_make(o_ptr);
+
+			/* level of randarts tends to be outrageous */
+			base = a_ptr->level / 2;
+		}
+		/* Normal artifacts */
+		else
+		{
+			a_ptr = &a_info[o_ptr->name1];
+			base = a_ptr->level;
+		}
+	}
+
+	/* Hack -- analyze ego-items */
+	else if (o_ptr->name2)
+	{
+//		ego_item_type *e_ptr = &e_info[o_ptr->name2];
+		base += e_info[o_ptr->name2].rating;
+	}
+
+	/* '17/72' == 0.2361... < 1/4 :) */
+	base >>= 1;
+	i = Depth - base;
+	j = (i * (i > 0 ? 1 : 2) / 4  + base) * rand_range(95,105) / 100;
+	o_ptr->level = j < 100 ? (j > 1 ? j : 1) : 100;
+
+}
 
 
 /*
