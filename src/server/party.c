@@ -1494,80 +1494,6 @@ bool remove_hostility(int Ind, cptr name)
 		}
 	}
 	return(FALSE);
-
-#if 0
-	/* Initialize lock-step */
-	i_ptr = NULL;
-
-	/* Search entries */
-	for (h_ptr = p_ptr->hostile; h_ptr; i_ptr = h_ptr, h_ptr = h_ptr->next)
-	{
-		/* Lookup name of this entry */
-		if (h_ptr->id > 0)
-		{
-			/* Look up name */
-			p = lookup_player_name(h_ptr->id);
-
-			/* Check player name */
-			if (p && streq(p, name))
-			{
-				/* Delete this entry */
-				if (i_ptr)
-				{
-					/* Skip over */
-					i_ptr->next = h_ptr->next;
-				}
-				else
-				{
-					/* Adjust beginning of list */
-					p_ptr->hostile = h_ptr->next;
-				}
-
-				/* Message */
-				msg_format(Ind, "No longer hostile toward %s.", name);
-
-				/* Delete node */
-				KILL(h_ptr, hostile_type);
-
-				/* Success */
-				return TRUE;
-			}
-		}
-		else
-		{
-			/* Assume this is a party */
-			if (streq(parties[0 - h_ptr->id].name, name))
-			{
-				/* Delete this entry */
-				if (i_ptr)
-				{
-					/* Skip over */
-					i_ptr->next = h_ptr->next;
-				}
-				else
-				{
-					/* Adjust beginning of list */
-					p_ptr->hostile = h_ptr->next;
-				}
-
-				/* Message */
-				msg_format(Ind, "No longer hostile toward party '%s'.", name);
-
-				/* Delete node */
-				KILL(h_ptr, hostile_type);
-
-				/* Success */
-				return TRUE;
-			}
-		}
-	}
-
-	/* Message */
-	msg_format(Ind, "You are not hostile toward %s.", name);
-
-	/* Failure */
-	return FALSE;
-#endif
 }
 
 /*
@@ -1610,7 +1536,9 @@ bool add_ignore(int Ind, cptr name)
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	hostile_type *h_ptr, *i_ptr;
 	int i;
+	int snum=0;
 	cptr p, q = NULL;
+	char search[80], *pname;
 
 	/* Check for silliness */
 	if (!name)
@@ -1620,8 +1548,44 @@ bool add_ignore(int Ind, cptr name)
 		return FALSE;
 	}
 
-	i = name_lookup_loose(Ind, name, TRUE);
+	if((pname=strchr(name, '@'))){
+		struct remote_ignore *curr, *prev=NULL;
+		strncpy(search, name, pname-name);
+		search[pname-name]='\0';
+		snum=atoi(pname+1);
+		pname=world_find_player(search);
+		if(!pname){
+			msg_print(Ind, "Could not find %s in the world");
+			return(FALSE);
+		}
+		curr=p_ptr->w_ignore;
+		while(curr){
+			if(!strcmp(curr->name, search)) break;
+			prev=curr;
+			curr=curr->next;
+		}
+		if(!curr){
+			msg_format(Ind, "Ignoring %s across the world", search);
+			curr=malloc(sizeof(struct remote_ignore));
+			strcpy(curr->name, search);
+			curr->serverid=snum;
+			if(prev)
+				prev->next=curr;
+			else
+				p_ptr->w_ignore=curr;
+		}
+		else{
+			msg_format(Ind, "Hearing %s from across the world", search);
+			if(!prev)
+				p_ptr->w_ignore=curr->next;
+			else
+				prev->next=curr->next;
+			free(curr);
+		}
+		return(TRUE);
+	}
 
+	i = name_lookup_loose(Ind, name, TRUE);
 	if (!i)
 	{
 		return FALSE;
@@ -1756,64 +1720,6 @@ bool add_ignore(int Ind, cptr name)
 		/* Success */
 		return TRUE;
 	}
-
-#if 0
-	/* Search for player to add */
-	for (i = 1; i <= NumPlayers; i++)
-	{
-		q_ptr = Players[i];
-
-		/* Check name */
-		if (!streq(q_ptr->name, name)) continue;
-
-		/* Create a new hostility node */
-		MAKE(h_ptr, hostile_type);
-
-		/* Set ID in node */
-		h_ptr->id = q_ptr->id;
-
-		/* Put this node at the beginning of the list */
-		h_ptr->next = p_ptr->ignore;
-		p_ptr->ignore = h_ptr;
-
-		/* Message */
-		msg_format(Ind, "You aren't hearing %s any more.", q_ptr->name);
-
-		/* Success */
-		return TRUE;
-	}
-
-	/* Search for party to add */
-	if ((i = party_lookup(name)) != -1)
-	{
-		if (player_in_party(i, Ind))
-		{
-			msg_print(Ind, "You cannot ignore your own party.");
-			return FALSE;
-		}
-			
-		/* Create a new hostility node */
-		MAKE(h_ptr, hostile_type);
-
-		/* Set ID in node */
-		h_ptr->id = 0 - i;
-
-		/* Put this node at the beginning of the list */
-		h_ptr->next = p_ptr->ignore;
-		p_ptr->ignore = h_ptr;
-
-		/* Message */
-		msg_format(Ind, "You aren't hearing party '%s' any more.", parties[i].name);
-
-		/* Success */
-		return TRUE;
-	}
-
-	/* Couldn't find player */
-	msg_format(Ind, "%^s is not currently in the game.", name);
-
-	return FALSE;
-#endif
 }
 
 /*
@@ -2432,64 +2338,6 @@ bool pilot_set(int Ind, cptr name)
 		/* Success */
 		return TRUE;
 	}
-
-#if 0
-	/* Search for player to add */
-	for (i = 1; i <= NumPlayers; i++)
-	{
-		q_ptr = Players[i];
-
-		/* Check name */
-		if (!streq(q_ptr->name, name)) continue;
-
-		/* Create a new hostility node */
-		MAKE(h_ptr, hostile_type);
-
-		/* Set ID in node */
-		h_ptr->id = q_ptr->id;
-
-		/* Put this node at the beginning of the list */
-		h_ptr->next = p_ptr->ignore;
-		p_ptr->ignore = h_ptr;
-
-		/* Message */
-		msg_format(Ind, "You aren't hearing %s any more.", q_ptr->name);
-
-		/* Success */
-		return TRUE;
-	}
-
-	/* Search for party to add */
-	if ((i = party_lookup(name)) != -1)
-	{
-		if (player_in_party(i, Ind))
-		{
-			msg_print(Ind, "You cannot ignore your own party.");
-			return FALSE;
-		}
-			
-		/* Create a new hostility node */
-		MAKE(h_ptr, hostile_type);
-
-		/* Set ID in node */
-		h_ptr->id = 0 - i;
-
-		/* Put this node at the beginning of the list */
-		h_ptr->next = p_ptr->ignore;
-		p_ptr->ignore = h_ptr;
-
-		/* Message */
-		msg_format(Ind, "You aren't hearing party '%s' any more.", parties[i].name);
-
-		/* Success */
-		return TRUE;
-	}
-
-	/* Couldn't find player */
-	msg_format(Ind, "%^s is not currently in the game.", name);
-
-	return FALSE;
-#endif
 }
 #endif	// 0
 
