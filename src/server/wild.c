@@ -2672,7 +2672,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 								id=(fgetc(gfp)<<8);
 								id|=fgetc(gfp);
 								/* XXX it's double check */
-								if(!(GetCS(c_ptr, CS_KEYDOOR))){
+								if(!(cs_ptr=GetCS(c_ptr, CS_KEYDOOR))){	/* no, not really. - evileye */
 									cs_ptr=AddCS(c_ptr, CS_KEYDOOR);
 									MAKE(cs_ptr->sc.ptr, struct key_type);
 //									cs_ptr->type=CS_KEYDOOR;

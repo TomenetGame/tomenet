@@ -67,7 +67,7 @@ void dnasave(c_special *cs_ptr){
 }
 int dnahit(c_special *cs_ptr, int y, int x, int Ind){
 	/* we have to know from where we are called! */
-	struct dna *dna=cs_ptr->sc.ptr;
+	struct dna_type *dna=cs_ptr->sc.ptr;
 #if 0
 #ifdef USE_MANG_HOUSE	// 'passing'..? -Jir
 	if (((cfg.door_bump_open & BUMP_OPEN_HOUSE) || passing)
@@ -77,7 +77,6 @@ int dnahit(c_special *cs_ptr, int y, int x, int Ind){
 	{
 		if(access_door(Ind, dna))
 		{
-			printf("access door...\n");
 #ifdef USE_MANG_HOUSE
 			msg_print(Ind, "\377GYou walk through the door.");
 #endif	//USE_MANG_HOUSE
@@ -148,7 +147,7 @@ void keysee(c_special *cs_ptr, char *c, byte *a, int Ind){
 			*a=TERM_L_DARK;
 		}
 	}
-	return(FALSE);	/* ok I don't change it, but this function is 'void'.. */
+	return;
 }
 
 /*
@@ -199,6 +198,7 @@ int thit(c_special *cs_ptr, int y, int x, int Ind){
 	}
 	return(TRUE);
 #endif
+	return(0);	/* temp... */
 }
 
 void insc_load(c_special *cs_ptr){
@@ -254,7 +254,7 @@ void fountsave(c_special *cs_ptr)
 	wr_byte(cs_ptr->sc.fountain.rest);
 	wr_byte(cs_ptr->sc.fountain.known);
 }
-void fountsee(c_special *cs_ptr, int Ind){
+void fountsee(c_special *cs_ptr, char *c, byte *a, int Ind){
 	/* TODO: tell what kind if 'known' */
 	printf("fountsee %d\n", Ind);
 }

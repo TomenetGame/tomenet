@@ -1,6 +1,9 @@
 /* experimental code - evileye */
 /* this does not necessarily follow any sensible design */
 
+#include <sys/types.h>
+#include <sys/socket.h>
+
 #include "angband.h"
 
 #ifdef TOMENET_WORLDS
@@ -20,7 +23,7 @@ unsigned long chk(unsigned char *s1, unsigned char *s2);
 void rem_players(short id);
 void add_rplayer(struct wpacket *wpk);
 
-int world_comm(int fd, int arg){
+void world_comm(int fd, int arg){
 	static char buffer[1024];
 	static char bpos=0;
 	int x;
@@ -67,7 +70,6 @@ int world_comm(int fd, int arg){
 		close(WorldSocket);	/* ;) this'll fix it... */
 		WorldSocket=-1;
 	}
-	return(0);
 }
 
 /* proper data will come with merge */

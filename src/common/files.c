@@ -196,7 +196,6 @@ void kill_xfers(int ind){
 void do_xfers(){
 	int x;
 	struct ft_data *trav;
-	int ct=1;
 	trav=fdata;
 	for(; trav; trav=trav->next){
 		if(!trav->id) continue;	/* non existent */
@@ -279,7 +278,6 @@ int local_file_close(int ind, unsigned short fnum){
 	int size=4096;
 	int success=0;
 	FILE *wp;
-	int fd;
 	c_fd=getfile(ind, fnum);
 	if(c_fd==(struct ft_data*)NULL) return(0);
 

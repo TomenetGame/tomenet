@@ -16,11 +16,13 @@
 /* #include "netserver.h" */
 
 #ifdef TOMENET_WORLDS
-extern int world_comm(int fd, int arg);
+extern void world_comm(int fd, int arg);
 extern int WorldSocket;
 
 extern void world_msg(char *text);
 extern void world_player(unsigned long id, char *name, unsigned short enter, byte quiet);
+extern void world_chat(unsigned long id, char *text);
+extern void world_remote_players(FILE *fff);
 #endif
 
 /* common/common.c */
@@ -661,6 +663,7 @@ extern errr init_f_info_txt(FILE *fp, char *buf);
 extern errr init_k_info_txt(FILE *fp, char *buf);
 extern errr init_a_info_txt(FILE *fp, char *buf);
 extern errr init_e_info_txt(FILE *fp, char *buf);
+extern errr init_d_info_txt(FILE *fp, char *buf);
 extern errr init_r_info_txt(FILE *fp, char *buf);
 extern errr init_re_info_txt(FILE *fp, char *buf);
 extern errr init_t_info_txt(FILE *fp, char *buf);
@@ -915,6 +918,9 @@ extern int party_remove(int remover, cptr name);
 extern void party_leave(int Ind);
 extern void party_msg_format(int party_id, cptr fmt, ...);
 extern void party_gain_exp(int Ind, int party_id, s32b amount);
+extern int guild_create(int Ind, cptr name);
+extern int guild_add(int adder, cptr name);
+extern int guild_remove(int remover, cptr name);
 extern void guild_leave(int Ind);
 extern void guild_msg_format(int guild_id, cptr fmt, ...);
 extern bool add_hostility(int Ind, cptr name);
@@ -1201,6 +1207,7 @@ extern int calc_blows(int Ind, object_type *o_ptr);
 /* xtra2.c */
 extern s16b questid;
 extern bool imprison(int Ind, u16b time, char *reason);
+extern bool guild_build(int Ind);
 extern bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags);
 extern bool set_invuln_short(int Ind, int v);
 extern bool set_biofeedback(int Ind, int v);
