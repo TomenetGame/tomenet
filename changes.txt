@@ -672,6 +672,9 @@ Change list for PernMangband
 - aquatic monsters should not leave the water now.
 - aquatic monsters always start in water.
 
+18/01/2002 (Evileye)
+- Ironman recalling done (maximum level of tower or dungeon)
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)
