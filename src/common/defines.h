@@ -189,13 +189,9 @@
  */
  
 #define MAX_F_IDX	128	/* Max size for "f_info[]" */
-//#define MAX_K_IDX	543	/* Max size for "k_info[]" */
-//#define MAX_K_IDX	1024	/* Max size for "k_info[]" */
 #define MAX_K_IDX	768 /* Max size for "k_info[]" */
-//#define MAX_A_IDX	128	/* Max size for "a_info[]" */
 #define MAX_A_IDX	256	/* Max size for "a_info[]" */
 #define MAX_E_IDX	256 /* Max size for "e_info[]" */
-//#define MAX_R_IDX	563 /* Max size for "r_info[]"  551 + 12 (Tanix fix) */
 #define MAX_R_IDX	1152	/* Max size for "r_info[]" */
 #define MAX_V_IDX 	256	/* Max size for "v_info[]" */
 #define MAX_RE_IDX	128	/* Max size for "re_info[]" */
@@ -630,7 +626,7 @@
 #if 1
 #define ROW_INFO		20
 #define COL_INFO		0	/* "xxxxxxxxxxxx" */
-#endif	// 0
+#endif	/* if 1 */
 
 #define ROW_CUT			21
 #define COL_CUT			0	/* <cut> */
@@ -1980,24 +1976,25 @@ that keeps many algorithms happy.
 #define SV_WAND_ELEC_BOLT		33
 
 /* those items need some reworking. */
+/*
+#define SV_AMULET_DOOM			0
+#define SV_AMULET_THE_MAGI		8
+*/
+#define SV_SET_OF_ELVEN_GLOVES		4
 #define SV_ORCISH_SHIELD                7
-#define SV_KOLLA                                        7
+#define SV_KOLLA                        7
 #define SV_PAIR_OF_WITAN_BOOTS          8
 #define SV_AMULET_TERKEN		30
 #define SV_AMULET_SPEED			31
-#define SV_SET_OF_ELVEN_GLOVES			4
 #define SV_AMULET_LIFE                  32	// 'Immortality'
-//#define SV_AMULET_THE_MAGI		8
 #define SV_AMULET_THE_MOON              33
-//#define SV_AMULET_DOOM			0
 #define SV_AMULET_SUSPICION		34
-#define SV_AMULET_LIFE_SAVING	35
+#define SV_AMULET_LIFE_SAVING		35
 
 /*
  * Special "sval" limit -- first "normal" food
  */
 #define SV_FOOD_MIN_FOOD	20
-//#define SV_FOOD_MIN_FOOD	32
 #define SV_FOOD_MAX_FOOD    49
 
 /*
@@ -2341,7 +2338,7 @@ that keeps many algorithms happy.
 #define SV_RING_FLYING                  54
 #define SV_RING_WRAITH                  55
 #define SV_RING_ELEC                    56
-// 57 - DURIN (arts)
+/* 57 - DURIN (arts) */
 #define SV_RING_CRIT                    58
 
 /* The "sval" codes for TV_STAFF */
@@ -2377,7 +2374,7 @@ that keeps many algorithms happy.
 #define SV_STAFF_DESTRUCTION            29
 #define SV_STAFF_NOTHING                30
 #define SV_STAFF_WISHING                31
-#define SV_STAFF_GANDALF                32	// sorta hack? (tval=6)
+#define SV_STAFF_GANDALF                32	/* sorta hack? (tval=6) */
 
 /* jk - the first valuable staff */
 #define SV_STAFF_NASTY_STAFF              4
@@ -2521,7 +2518,9 @@ that keeps many algorithms happy.
 #define SV_SCROLL_ICE                   49
 #define SV_SCROLL_CHAOS                 50
 #define SV_SCROLL_RUMOR                 51
-//#define SV_SCROLL_ARTIFACT              52
+/*
+#define SV_SCROLL_ARTIFACT              52
+*/
 #define SV_SCROLL_NOTHING               53
 #define SV_SCROLL_SPELL                 54
 
@@ -3130,7 +3129,7 @@ that keeps many algorithms happy.
 #define TR1_CON			0x00000010L	/* CON += "pval" */
 #define TR1_CHR			0x00000020L	/* CHR += "pval" */
 #define TR1_MANA		0x00000040L	/* SP += "pval" * SP / 10 */
-//#define TR1_SPELL_SPEED	0x00000080L	/* Spell Speed += pval */
+/* #define TR1_SPELL_SPEED	0x00000080L */	/* Spell Speed += pval */
 #define TR1_SPELL		0x00000080L	/* Spell Speed += pval */
 #define TR1_STEALTH		0x00000100L	/* Stealth += "pval" */
 #define TR1_SEARCH		0x00000200L	/* Search += "pval" */
@@ -3178,7 +3177,7 @@ that keeps many algorithms happy.
 #define TR2_RES_FIRE		0x00040000L
 #define TR2_RES_COLD		0x00080000L
 #define TR2_RES_POIS		0x00100000L
-//#define TR2_ANTI_MAGIC		0x00200000L
+/* #define TR2_ANTI_MAGIC		0x00200000L */
 #define TR2_RES_FEAR		0x00200000L
 #define TR2_RES_LITE		0x00400000L
 #define TR2_RES_DARK		0x00800000L
@@ -3200,17 +3199,17 @@ that keeps many algorithms happy.
 #define TR3_XXX6			0x00000020L	/* Later */
 #define TR3_XXX7			0x00000040L	/* Later */
 #define TR3_XXX8			0x00000080L	/* Later */
-#endif	// 0
+#endif	/* 0 */
 
 #define TR3_EASY_KNOW		0x00000100L	/* Aware -> Known */
 #define TR3_HIDE_TYPE		0x00000200L	/* Hide "pval" description */
 #define TR3_SHOW_MODS		0x00000400L	/* Always show Tohit/Todam */
 #define TR3_INSTA_ART		0x00000800L	/* Item must be an artifact */
 #define TR3_FEATHER	 		0x00001000L	/* Feather Falling */
-//#define TR3_LITE			0x00002000L	/* Permanent Light */
+/* #define TR3_LITE			0x00002000L */	/* Permanent Light */
 #define TR3_LITE1			0x00002000L	/* Permanent Light */
 #define TR3_SEE_INVIS		0x00004000L	/* See Invisible */
-//#define TR3_TELEPATHY		0x00008000L	/* Telepathy */
+/* #define TR3_TELEPATHY		0x00008000L */	/* Telepathy */
 #define TR3_NO_NORM_ART		0x00008000L	/* */
 #define TR3_SLOW_DIGEST		0x00010000L	/* Item slows down digestion */
 #define TR3_REGEN			0x00020000L	/* Item induces regeneration */

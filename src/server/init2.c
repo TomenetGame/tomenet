@@ -440,7 +440,6 @@ static errr init_f_info(void)
 		s_printf("Error %d at line %d of 'f_info.txt'.", err, error_line);
 		s_printf("Record %d contains a '%s' error.", error_idx, oops);
 		s_printf("Parsing '%s'.", buf);
-		/*msg_print(NULL);*/
 
 		/* Quit */
 		quit("Error in 'f_info.txt' file.");
@@ -530,7 +529,6 @@ static errr init_k_info(void)
 		s_printf("Error %d at line %d of 'k_info.txt'.", err, error_line);
 		s_printf("Record %d contains a '%s' error.", error_idx, oops);
 		s_printf("Parsing '%s'.", buf);
-		/*msg_print(NULL);*/
 
 		/* Quit */
 		quit("Error in 'k_info.txt' file.");
@@ -621,7 +619,6 @@ static errr init_a_info(void)
 		s_printf("Error %d at line %d of 'a_info.txt'.", err, error_line);
 		s_printf("Record %d contains a '%s' error.", error_idx, oops);
 		s_printf("Parsing '%s'.", buf);
-		/*msg_print(NULL);*/
 
 		/* Quit */
 		quit("Error in 'a_info.txt' file.");
@@ -712,7 +709,6 @@ static errr init_e_info(void)
 		s_printf("Error %d at line %d of 'e_info.txt'.", err, error_line);
 		s_printf("Record %d contains a '%s' error.", error_idx, oops);
 		s_printf("Parsing '%s'.", buf);
-		/*msg_print(NULL);*/
 
 		/* Quit */
 		quit("Error in 'e_info.txt' file.");
@@ -800,7 +796,6 @@ static errr init_r_info(void)
 		s_printf("Error %d at line %d of 'r_info.txt'.", err, error_line);
 		s_printf("Record %d contains a '%s' error.", error_idx, oops);
 		s_printf("Parsing '%s'.", buf);
-		/*msg_print(NULL);*/
 
 		/* Quit */
 		quit("Error in 'r_info.txt' file.");
@@ -990,7 +985,6 @@ static errr init_t_info(void)
 		s_printf("Error %d at line %d of 'tr_info.txt'.", err, error_line);
 		s_printf("Record %d contains a '%s' error.", error_idx, oops);
 		s_printf("Parsing '%s'.", buf);
-//		msg_print(NULL);
 
 		/* Quit */
 		quit("Error in 'tr_info.txt' file.");
@@ -1083,7 +1077,6 @@ static errr init_v_info(void)
 		s_printf("Error %d at line %d of 'v_info.txt'.", err, error_line);
 		s_printf("Record %d contains a '%s' error.", error_idx, oops);
 		s_printf("Parsing '%s'.", buf);
-		/*msg_print(NULL);*/
 
 		/* Quit */
 		quit("Error in 'v_info.txt' file.");

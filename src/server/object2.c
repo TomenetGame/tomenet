@@ -1728,46 +1728,6 @@ s16b m_bonus(int max, int level)
 	return (value);
 }
 
-
-
-#if 0
-
-/*
- * Cheat -- describe a created object for the user
- */
-static void object_mention(object_type *o_ptr)
-{
-	char o_name[160];
-
-	/* Describe */
-	object_desc_store(o_name, o_ptr, FALSE, 0);
-
-	/* Artifact */
-	if (artifact_p(o_ptr))
-	{
-		/* Silly message */
-		msg_format("Artifact (%s)", o_name);
-	}
-
-	/* Ego-item */
-	else if (ego_item_p(o_ptr))
-	{
-		/* Silly message */
-		msg_format("Ego-item (%s)", o_name);
-	}
-
-	/* Normal item */
-	else
-	{
-		/* Silly message */
-		msg_format("Object (%s)", o_name);
-	}
-}
-
-#endif
-
-
-
 /*
  * Mega-Hack -- Attempt to create one of the "Special Objects"
  *

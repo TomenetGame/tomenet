@@ -390,27 +390,6 @@ static void print_spells(int Ind, int book, byte *spell, int num)
 	}
 }
 
-
-
-/*
- * Allow user to choose a spell/prayer from the given book.
- *
- * If a valid spell is chosen, saves it in '*sn' and returns TRUE
- * If the user hits escape, returns FALSE, and set '*sn' to -1
- * If there are no legal choices, returns FALSE, and sets '*sn' to -2
- *
- * The "prompt" should be "cast", "recite", or "study"
- * The "known" should be TRUE for cast/pray, FALSE for study
- */
-#if 0
-static int get_spell(int Ind, int *sn, cptr prompt, int sval, bool known)
-{
-}
-#endif
-
-
-
-
 /*
  * Peruse the spells/prayers in a Book
  *

@@ -1274,10 +1274,6 @@ try_an_other_ego:
 	}
 #endif	// 0
 
-	/* Cheat -- describe the item */
-	//                if ((cheat_peek)||(p_ptr->precognition)) object_mention(a_ptr);
-
-
 	/* Restore RNG */
 	Rand_quick = FALSE;
 

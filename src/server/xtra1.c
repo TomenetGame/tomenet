@@ -2141,7 +2141,6 @@ static void calc_bonuses(int Ind)
 		if (f3 & (TR3_NO_TELE)) p_ptr->anti_tele = TRUE;
 
 		/* Additional flags from PernAngband */
-//		if (f4 & (TR4_PRECOGNITION)) p_ptr->precognition = TRUE;
 
 		if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
 

@@ -1906,7 +1906,6 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s32b *price)
 	{
 		/* Message */
 		msg_print(Ind, "You instantly agree upon the price.");
-		/*msg_print(NULL);*/
 
 		/* Offer full purse */
 		final_ask = purse;
@@ -1917,7 +1916,6 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s32b *price)
 	{
 		/* Message */
 		msg_print(Ind, "You eventually agree upon the price.");
-		/*msg_print(NULL);*/
 	}
 
 	/* Final price */
@@ -2068,7 +2066,6 @@ void store_purchase(int Ind, int item, int amt)
 
 			/* Message */
 			msg_format("Buying %s (%c).", o_name, I2A(item));
-			msg_print(NULL);
 
 			/* Haggle for a final price */
 			choice = purchase_haggle(&sell_obj, &price);
@@ -2317,7 +2314,6 @@ void store_sell(int Ind, int item, int amt)
 	{
 		/* Describe the transaction */
 		msg_format(Ind, "Selling %s (%c).", o_name, index_to_label(item));
-		/*msg_print(NULL);*/
 
 		/* Haggle for it */
 		choice = sell_haggle(Ind, &sold_obj, &price);
