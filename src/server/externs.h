@@ -943,6 +943,7 @@ extern void window_stuff(int Ind);
 extern void handle_stuff(int Ind);
 
 /* xtra2.c */
+extern s16b questid;
 extern bool set_invuln_short(int Ind, int v);
 extern bool set_biofeedback(int Ind, int v);
 extern bool set_adrenaline(int Ind, int v);

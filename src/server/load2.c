@@ -890,6 +890,7 @@ static errr rd_store(store_type *st_ptr)
 
 static void rd_quests(){
 	int i;
+	rd_s16b(&questid);
 	for(i=0; i<20; i++){
 		rd_s16b(&quests[i].active);
 		rd_s16b(&quests[i].id);
@@ -1865,7 +1866,6 @@ static errr rd_savefile_new_aux(int Ind)
 	}
 	if(!older_than(3,4,3)){
 		rd_s16b(&p_ptr->quest_id);
-		rd_s16b(&p_ptr->quest_type);
 		rd_s16b(&p_ptr->quest_num);
 	}
 

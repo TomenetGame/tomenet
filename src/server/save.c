@@ -949,6 +949,7 @@ static void wr_store(store_type *st_ptr)
 
 static void wr_quests(){
 	int i;
+	wr_s16b(questid);
 	for(i=0; i<20; i++){
 		wr_s16b(quests[i].active);
 		wr_s16b(quests[i].id);
@@ -1654,7 +1655,6 @@ static bool wr_savefile_new(int Ind)
 	wr_byte(p_ptr->guild);
 
 	wr_byte(p_ptr->quest_id);
-	wr_byte(p_ptr->quest_type);
 	wr_byte(p_ptr->quest_num);
 
 	/* Write the "value check-sum" */
