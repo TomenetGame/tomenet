@@ -1180,8 +1180,10 @@ static void wild_add_dwelling(int Depth, int x, int y)
 #ifdef NEWHOUSES
 		else{
 /* evileye temporary fix */
+#if 0
 			houses[tmp].coords.rect.width=houses[num_houses].coords.rect.width;
 			houses[tmp].coords.rect.height=houses[num_houses].coords.rect.height;
+#endif
 /* end evileye fix */
 			/* malloc madness otherwise */
 			KILL(houses[num_houses].dna, struct dna_type);
