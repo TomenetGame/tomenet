@@ -731,27 +731,84 @@ static void wr_item(object_type *o_ptr)
 	}
 }
 
+/*
+ * Write a "monster" record
+ */
+static void wr_monster_race(monster_race *r_ptr)
+{
+        int i;
+
+        wr_s16b(r_ptr->name);
+        wr_s16b(r_ptr->text);
+        wr_byte(r_ptr->hdice);
+        wr_byte(r_ptr->hside);
+        wr_s16b(r_ptr->ac);
+        wr_s16b(r_ptr->sleep);
+        wr_byte(r_ptr->aaf);
+        wr_byte(r_ptr->speed);
+        wr_s32b(r_ptr->mexp);
+        wr_s16b(r_ptr->extra);
+        wr_byte(r_ptr->freq_inate);
+        wr_byte(r_ptr->freq_spell);
+        wr_s32b(r_ptr->flags1);
+        wr_s32b(r_ptr->flags2);
+        wr_s32b(r_ptr->flags3);
+        wr_s32b(r_ptr->flags4);
+        wr_s32b(r_ptr->flags5);
+        wr_s32b(r_ptr->flags6);
+        wr_s16b(r_ptr->level);
+        wr_byte(r_ptr->rarity);
+        wr_byte(r_ptr->d_char);
+        wr_byte(r_ptr->x_attr);
+        wr_byte(r_ptr->d_char);
+        wr_byte(r_ptr->x_attr);
+        for (i = 0; i < 4; i++)
+        {
+                wr_byte(r_ptr->blow[i].method);
+                wr_byte(r_ptr->blow[i].effect);
+                wr_byte(r_ptr->blow[i].d_dice);
+                wr_byte(r_ptr->blow[i].d_side);
+        }
+}
 
 /*
  * Write a "monster" record
  */
 static void wr_monster(monster_type *m_ptr)
 {
+        int i;
+
+        wr_byte(m_ptr->special);
+        wr_s32b(m_ptr->owner);
 	wr_s16b(m_ptr->r_idx);
 	wr_byte(m_ptr->fy);
 	wr_byte(m_ptr->fx);
 	wr_u16b(m_ptr->dun_depth);
-	wr_s16b(m_ptr->hp);
-	wr_s16b(m_ptr->maxhp);
+        wr_s16b(m_ptr->ac);
+        wr_byte(m_ptr->speed);
+        wr_s32b(m_ptr->exp);
+        wr_s16b(m_ptr->level);
+        for (i = 0; i < 4; i++)
+        {
+                wr_byte(m_ptr->blow[i].method);
+                wr_byte(m_ptr->blow[i].effect);
+                wr_byte(m_ptr->blow[i].d_dice);
+                wr_byte(m_ptr->blow[i].d_side);
+        }
+        wr_s32b(m_ptr->hp);
+        wr_s32b(m_ptr->maxhp);
 	wr_s16b(m_ptr->csleep);
 	wr_byte(m_ptr->mspeed);
 	wr_byte(m_ptr->energy);
 	wr_byte(m_ptr->stunned);
 	wr_byte(m_ptr->confused);
 	wr_byte(m_ptr->monfear);
-	wr_byte(0);
-}
 
+        if (m_ptr->special)
+        {
+                wr_monster_race(m_ptr->r_ptr);
+        }
+}
 
 /*
  * Write a "lore" record
@@ -1198,7 +1255,6 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->own2);
 	wr_u16b(p_ptr->retire_timer);
 	wr_u16b(p_ptr->noscore);
-
 
 	/* Write death */
 	wr_byte(p_ptr->death);

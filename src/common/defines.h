@@ -446,7 +446,7 @@
  */
 #define PY_MAX_EXP	99999999L	/* Maximum exp */
 #define PY_MAX_GOLD	999999999L	/* Maximum gold */
-#define PY_MAX_LEVEL	50		/* Maximum level */
+#define PY_MAX_LEVEL    100             /* Maximum level */
 
 /*
  * Player "food" crucial values
@@ -469,7 +469,7 @@
 
 
 /* Randart rarity */
-#define RANDART_RARITY	60
+#define RANDART_RARITY  80
 
 
 /*
@@ -1032,10 +1032,11 @@ that keeps many algorithms happy.
  */
 
 #define TV_SKELETON      1	/* Skeletons ('s') */
-#define TV_BOTTLE		 2	/* Empty bottles ('!') */
+#define TV_BOTTLE        2      /* Empty bottles ('!') */
 #define TV_JUNK          3	/* Sticks, Pottery, etc ('~') */
 #define TV_KEY		 4      /* Keys (';') */
 #define TV_SPIKE         5	/* Spikes ('~') */
+#define TV_GOLEM         6      /* Golem parts */
 #define TV_CHEST         7	/* Chests ('~') */
 #define TV_SHOT			16	/* Ammo for slings */
 #define TV_ARROW        17	/* Ammo for bows */
@@ -1077,6 +1078,20 @@ that keeps many algorithms happy.
 /* Maximum "tval" */
 #define TV_MAX		100
 
+/* Sval for golems */
+#define SV_GOLEM_WOOD           0
+#define SV_GOLEM_COPPER         1
+#define SV_GOLEM_IRON           2
+#define SV_GOLEM_ALUM           3
+#define SV_GOLEM_SILVER         4
+#define SV_GOLEM_GOLD           5
+#define SV_GOLEM_MITHRIL        6
+#define SV_GOLEM_ADAM           7
+#define SV_GOLEM_LEG            8
+#define SV_GOLEM_ARM            9
+#define SV_GOLEM_ATTACK         200
+#define SV_GOLEM_FOLLOW         201
+#define SV_GOLEM_GUARD          202
 
 /* The "sval" codes for TV_SHOT/TV_ARROW/TV_BOLT */
 #define SV_AMMO_LIGHT		0	/* pebbles */
@@ -1416,7 +1431,7 @@ that keeps many algorithms happy.
 #define SV_SCROLL_STAR_ENCHANT_ARMOR	20
 #define SV_SCROLL_STAR_ENCHANT_WEAPON	21
 #define SV_SCROLL_RECHARGING			22
-/* xxx */
+#define SV_SCROLL_GOLEM                         23
 #define SV_SCROLL_LIGHT					24
 #define SV_SCROLL_MAPPING				25
 #define SV_SCROLL_DETECT_GOLD			26
@@ -2196,7 +2211,7 @@ that keeps many algorithms happy.
 #define RF3_XXX1			0x00000100	/* (?) */
 #define RF3_XXX2			0x00000200	/* (?) */
 #define RF3_XXX3			0x00000400	/* Non-Vocal (?) */
-#define RF3_XXX4			0x00000800	/* Non-Living (?) */
+#define RF3_IM_TELE                     0x00000800      /* Resist teleportation */
 #define RF3_HURT_LITE		0x00001000	/* Hurt by lite */
 #define RF3_HURT_ROCK		0x00002000	/* Hurt by rock remover */
 #define RF3_HURT_FIRE		0x00004000	/* Hurt badly by fire */
@@ -2805,3 +2820,15 @@ extern int PlayerUID;
 #define LINKF_MISC      0x0010 /* Share misc things */
 #define LINKF_OPEN      0x0020 /* Mind Open */
 
+/* Monster gaining levels */
+#define MONSTER_LEVEL_MAX       500
+#define MONSTER_EXP(level)      ((((level) > MONSTER_LEVEL_MAX)?MONSTER_LEVEL_MAX:(level)) * (((level) > MONSTER_LEVEL_MAX)?MONSTER_LEVEL_MAX:(level)) * (((level) > MONSTER_LEVEL_MAX)?MONSTER_LEVEL_MAX:(level)) * 9)
+#define R_INFO(m_ptr)           (r_info_get(m_ptr))
+
+/*
+ * Golem defines
+ */
+#define GOLEM_NONE      0x00
+#define GOLEM_ATTACK    0x01
+#define GOLEM_FOLLOW    0x02
+#define GOLEM_GUARD     0x04

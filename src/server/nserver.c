@@ -2516,7 +2516,7 @@ int Send_ac(int ind, int base, int plus)
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_AC, base, plus);
 }
 
-int Send_experience(int ind, int lev, int max, int cur, s32b adv)
+int Send_experience(int ind, int lev, s32b max, s32b cur, s32b adv)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 

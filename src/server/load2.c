@@ -676,6 +676,46 @@ static void rd_item(object_type *o_ptr)
 
 
 
+/*
+ * Read a "monster" record
+ */
+static void rd_monster_race(monster_race *r_ptr)
+{
+        int i;
+
+        rd_s16b(&r_ptr->name);
+        rd_s16b(&r_ptr->text);
+        rd_byte(&r_ptr->hdice);
+        rd_byte(&r_ptr->hside);
+        rd_s16b(&r_ptr->ac);
+        rd_s16b(&r_ptr->sleep);
+        rd_byte(&r_ptr->aaf);
+        rd_byte(&r_ptr->speed);
+        rd_s32b(&r_ptr->mexp);
+        rd_s16b(&r_ptr->extra);
+        rd_byte(&r_ptr->freq_inate);
+        rd_byte(&r_ptr->freq_spell);
+        rd_s32b(&r_ptr->flags1);
+        rd_s32b(&r_ptr->flags2);
+        rd_s32b(&r_ptr->flags3);
+        rd_s32b(&r_ptr->flags4);
+        rd_s32b(&r_ptr->flags5);
+        rd_s32b(&r_ptr->flags6);
+        rd_s16b(&r_ptr->level);
+        rd_byte(&r_ptr->rarity);
+        rd_byte(&r_ptr->d_char);
+        rd_byte(&r_ptr->x_attr);
+        rd_byte(&r_ptr->d_char);
+        rd_byte(&r_ptr->x_attr);
+        for (i = 0; i < 4; i++)
+        {
+                rd_byte(&r_ptr->blow[i].method);
+                rd_byte(&r_ptr->blow[i].effect);
+                rd_byte(&r_ptr->blow[i].d_dice);
+                rd_byte(&r_ptr->blow[i].d_side);
+        }
+}
+
 
 /*
  * Read a monster
@@ -683,10 +723,15 @@ static void rd_item(object_type *o_ptr)
 
 static void rd_monster(monster_type *m_ptr)
 {
-	byte tmp8u;
+        byte tmp8u, i;
 
 	/* Hack -- wipe */
 	WIPE(m_ptr, monster_type);
+
+        rd_byte(&m_ptr->special);
+
+        /* Owner */
+        rd_s32b(&m_ptr->owner);
 
 	/* Read the monster race */
 	rd_s16b(&m_ptr->r_idx);
@@ -695,19 +740,32 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->fy);
 	rd_byte(&m_ptr->fx);
 	rd_u16b(&m_ptr->dun_depth);
-	rd_s16b(&m_ptr->hp);
-	rd_s16b(&m_ptr->maxhp);
+        rd_s16b(&m_ptr->ac);
+        rd_byte(&m_ptr->speed);
+        rd_s32b(&m_ptr->exp);
+        rd_s16b(&m_ptr->level);
+        for (i = 0; i < 4; i++)
+        {
+                rd_byte(&(m_ptr->blow[i].method));
+                rd_byte(&(m_ptr->blow[i].effect));
+                rd_byte(&(m_ptr->blow[i].d_dice));
+                rd_byte(&(m_ptr->blow[i].d_side));
+        }
+        rd_s32b(&m_ptr->hp);
+        rd_s32b(&m_ptr->maxhp);
 	rd_s16b(&m_ptr->csleep);
 	rd_byte(&m_ptr->mspeed);
 	rd_byte(&m_ptr->energy);
 	rd_byte(&m_ptr->stunned);
 	rd_byte(&m_ptr->confused);
 	rd_byte(&m_ptr->monfear);
-	rd_byte(&tmp8u);
+
+        if (m_ptr->special)
+        {
+                MAKE(m_ptr->r_ptr, monster_race);
+                rd_monster_race(m_ptr->r_ptr);
+        }
 }
-
-
-
 
 
 /*
@@ -1373,7 +1431,6 @@ static bool rd_extra(int Ind)
 	if (!older_than(0,7,0))
 		rd_u16b(&p_ptr->retire_timer);
 	rd_u16b(&p_ptr->noscore);
-
 
 	/* Read "death" */
 	rd_byte(&tmp8u);

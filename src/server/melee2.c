@@ -72,7 +72,7 @@ static bool int_outof(monster_race *r_ptr, int prob)
 static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 {
 	monster_type *m_ptr = &m_list[m_idx];
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
 	u32b f4 = (*f4p);
 	u32b f5 = (*f5p);
@@ -357,7 +357,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp)
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 
 	monster_type *m_ptr = &m_list[m_idx];
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
 	/* Determine the radius of the blast */
 	rad = (r_ptr->flags2 & RF2_POWERFUL) ? 3 : 2;
@@ -432,7 +432,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	u32b		f4, f5, f6;
 
 	monster_type	*m_ptr = &m_list[m_idx];
-	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+        monster_race    *r_ptr = R_INFO(m_ptr);
 
 	object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
@@ -1614,14 +1614,14 @@ bool make_attack_spell(int Ind, int m_idx)
 			}
 
 			/* Allow quick speed increases to base+10 */
-			if (m_ptr->mspeed < r_ptr->speed + 10)
+                        if (m_ptr->mspeed < m_ptr->speed + 10)
 			{
 				msg_format(Ind, "%^s starts moving faster.", m_name);
 				m_ptr->mspeed += 10;
 			}
 
 			/* Allow small speed increases to base+20 */
-			else if (m_ptr->mspeed < r_ptr->speed + 20)
+                        else if (m_ptr->mspeed < m_ptr->speed + 20)
 			{
 				msg_format(Ind, "%^s starts moving faster.", m_name);
 				m_ptr->mspeed += 2;
@@ -2228,7 +2228,7 @@ static int mon_will_run(int Ind, int m_idx)
 
 #ifdef ALLOW_TERROR
 
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
 	u16b p_lev, m_lev;
 	u16b p_chp, p_mhp;
@@ -2313,7 +2313,7 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 	cave_type *c_ptr;
 
 	monster_type *m_ptr = &m_list[m_idx];
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
 	/* Monster flowing disabled */
 	if (!flow_by_sound) return (FALSE);
@@ -2585,6 +2585,256 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	}
 }
 
+/*
+ * Choose "logical" directions for monster golem movement
+ * Returns TRUE to move, FALSE to stand still
+ */
+static bool get_moves_golem(int Ind, int m_idx, int *mm)
+{
+        player_type *p_ptr;
+
+	monster_type *m_ptr = &m_list[m_idx];
+
+	int y, ay, x, ax;
+
+	int move_val = 0;
+
+        int tm_idx = 0;
+
+        int y2, x2;
+
+        if (Ind > 0) p_ptr = Players[Ind];
+        else p_ptr = NULL;
+
+        /* Lets find a target */
+        if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK))
+        {
+                tm_idx = p_ptr->target_who;
+        }
+        else if (m_ptr->mind & GOLEM_GUARD)
+        {
+                int sx, sy;
+                s32b max_hp = 0;
+
+                /* Scan grids around */
+                for (sx = m_ptr->fx - 1; sx <= m_ptr->fx + 1; sx++)
+                for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++)
+                {
+                        cave_type *c_ptr;
+
+                        if (!in_bounds(m_ptr->dun_depth, sy, sx)) continue;
+
+                        c_ptr = &cave[m_ptr->dun_depth][sy][sx];
+
+                        if (c_ptr->m_idx > 0)
+                        {
+                                if (max_hp < m_list[c_ptr->m_idx].maxhp)
+                                {
+                                        max_hp = m_list[c_ptr->m_idx].maxhp;
+                                        tm_idx = c_ptr->m_idx;
+                                }
+                        }
+                        else
+                        {
+                                if ((max_hp < Players[-c_ptr->m_idx]->mhp) && (m_ptr->owner != Players[-c_ptr->m_idx]->id))
+                                {
+                                        max_hp = Players[-c_ptr->m_idx]->mhp;
+                                        tm_idx = c_ptr->m_idx;
+                                }
+                        }
+                }
+        }
+        /* Nothing else to do ? */
+        if ((p_ptr != NULL) && !tm_idx && (m_ptr->mind & GOLEM_FOLLOW))
+        {
+                tm_idx = Ind;
+        }
+
+        if (!tm_idx) return FALSE;
+
+        y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[tm_idx]->py;
+        x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[tm_idx]->px;
+
+	/* Extract the "pseudo-direction" */
+	y = m_ptr->fy - y2;
+	x = m_ptr->fx - x2;
+
+
+	/* Apply fear if possible and necessary */
+	if (mon_will_run(Ind, m_idx))
+	{
+		/* XXX XXX Not very "smart" */
+		y = (-y), x = (-x);
+	}
+
+
+	/* Extract the "absolute distances" */
+	ax = ABS(x);
+	ay = ABS(y);
+
+	/* Do something weird */
+	if (y < 0) move_val += 8;
+	if (x > 0) move_val += 4;
+
+	/* Prevent the diamond maneuvre */
+	if (ay > (ax << 1))
+	{
+		move_val++;
+		move_val++;
+	}
+	else if (ax > (ay << 1))
+	{
+		move_val++;
+	}
+
+	/* Extract some directions */
+	switch (move_val)
+	{
+		case 0:
+		mm[0] = 9;
+		if (ay > ax)
+		{
+			mm[1] = 8;
+			mm[2] = 6;
+			mm[3] = 7;
+			mm[4] = 3;
+		}
+		else
+		{
+			mm[1] = 6;
+			mm[2] = 8;
+			mm[3] = 3;
+			mm[4] = 7;
+		}
+		break;
+		case 1:
+		case 9:
+		mm[0] = 6;
+		if (y < 0)
+		{
+			mm[1] = 3;
+			mm[2] = 9;
+			mm[3] = 2;
+			mm[4] = 8;
+		}
+		else
+		{
+			mm[1] = 9;
+			mm[2] = 3;
+			mm[3] = 8;
+			mm[4] = 2;
+		}
+		break;
+		case 2:
+		case 6:
+		mm[0] = 8;
+		if (x < 0)
+		{
+			mm[1] = 9;
+			mm[2] = 7;
+			mm[3] = 6;
+			mm[4] = 4;
+		}
+		else
+		{
+			mm[1] = 7;
+			mm[2] = 9;
+			mm[3] = 4;
+			mm[4] = 6;
+		}
+		break;
+		case 4:
+		mm[0] = 7;
+		if (ay > ax)
+		{
+			mm[1] = 8;
+			mm[2] = 4;
+			mm[3] = 9;
+			mm[4] = 1;
+		}
+		else
+		{
+			mm[1] = 4;
+			mm[2] = 8;
+			mm[3] = 1;
+			mm[4] = 9;
+		}
+		break;
+		case 5:
+		case 13:
+		mm[0] = 4;
+		if (y < 0)
+		{
+			mm[1] = 1;
+			mm[2] = 7;
+			mm[3] = 2;
+			mm[4] = 8;
+		}
+		else
+		{
+			mm[1] = 7;
+			mm[2] = 1;
+			mm[3] = 8;
+			mm[4] = 2;
+		}
+		break;
+		case 8:
+		mm[0] = 3;
+		if (ay > ax)
+		{
+			mm[1] = 2;
+			mm[2] = 6;
+			mm[3] = 1;
+			mm[4] = 9;
+		}
+		else
+		{
+			mm[1] = 6;
+			mm[2] = 2;
+			mm[3] = 9;
+			mm[4] = 1;
+		}
+		break;
+		case 10:
+		case 14:
+		mm[0] = 2;
+		if (x < 0)
+		{
+			mm[1] = 3;
+			mm[2] = 1;
+			mm[3] = 6;
+			mm[4] = 4;
+		}
+		else
+		{
+			mm[1] = 1;
+			mm[2] = 3;
+			mm[3] = 4;
+			mm[4] = 6;
+		}
+		break;
+		case 12:
+		mm[0] = 1;
+		if (ay > ax)
+		{
+			mm[1] = 2;
+			mm[2] = 4;
+			mm[3] = 3;
+			mm[4] = 7;
+		}
+		else
+		{
+			mm[1] = 4;
+			mm[2] = 2;
+			mm[3] = 7;
+			mm[4] = 3;
+		}
+		break;
+	}
+
+        return TRUE;
+}
+
 
 
 /*
@@ -2628,7 +2878,7 @@ static void process_monster(int Ind, int m_idx)
 	int Depth = p_ptr->dun_depth;
 
 	monster_type	*m_ptr = &m_list[m_idx];
-	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+        monster_race    *r_ptr = R_INFO(m_ptr);
 
 	int			i, d, oy, ox, ny, nx;
 
@@ -3216,7 +3466,7 @@ static void process_monster(int Ind, int m_idx)
 		/* A monster is in the way */
 		if (do_move && c_ptr->m_idx > 0)
 		{
-			monster_race *z_ptr = &r_info[y_ptr->r_idx];
+                        monster_race *z_ptr = R_INFO(y_ptr);
 
 			/* Assume no movement */
 			do_move = FALSE;
@@ -3463,13 +3713,428 @@ static void process_monster(int Ind, int m_idx)
 	}
 }
 
+static void process_monster_golem(int Ind, int m_idx)
+{
+        player_type *p_ptr;
+
+	monster_type	*m_ptr = &m_list[m_idx];
+        monster_race    *r_ptr = R_INFO(m_ptr);
+        int             Depth = m_ptr->dun_depth;
+
+	int			i, d, oy, ox, ny, nx;
+
+	int			mm[8];
+
+	cave_type    	*c_ptr;
+	object_type 	*o_ptr;
+	monster_type	*y_ptr;
+
+	bool		do_turn;
+	bool		do_move;
+	bool		do_view;
+
+	bool		did_open_door;
+	bool		did_bash_door;
+	bool		did_take_item;
+	bool		did_kill_item;
+	bool		did_move_body;
+	bool		did_kill_body;
+	bool		did_pass_wall;
+	bool		did_kill_wall;
+
+
+        /* Hack -- don't process monsters on wilderness levels that have not
+	   been regenerated yet.
+	*/
+	if (cave[Depth] == NULL) return;
+
+        if (Ind > 0) p_ptr = Players[Ind];
+        else p_ptr = NULL;
+
+	/* Handle "stun" */
+	if (m_ptr->stunned)
+	{
+		int d = 1;
+
+		/* Make a "saving throw" against stun */
+		if (rand_int(5000) <= r_ptr->level * r_ptr->level)
+		{
+			/* Recover fully */
+			d = m_ptr->stunned;
+		}
+
+		/* Hack -- Recover from stun */
+		if (m_ptr->stunned > d)
+		{
+			/* Recover somewhat */
+			m_ptr->stunned -= d;
+		}
+
+		/* Fully recover */
+		else
+		{
+			/* Recover fully */
+			m_ptr->stunned = 0;
+		}
+
+		/* Still stunned */
+		if (m_ptr->stunned) 
+		{
+			m_ptr->energy -= level_speed(m_ptr->dun_depth);
+			return;
+		}
+	}
+
+
+	/* Handle confusion */
+	if (m_ptr->confused)
+	{
+		/* Amount of "boldness" */
+		int d = randint(r_ptr->level / 10 + 1);
+
+		/* Still confused */
+		if (m_ptr->confused > d)
+		{
+			/* Reduce the confusion */
+			m_ptr->confused -= d;
+		}
+
+		/* Recovered */
+		else
+		{
+			/* No longer confused */
+			m_ptr->confused = 0;
+		}
+	}
+
+	/* Get the origin */
+	oy = m_ptr->fy;
+	ox = m_ptr->fx;
+	
+#if 0 /* No golem spells -- yet */
+	/* Attempt to cast a spell */
+	if (make_attack_spell(Ind, m_idx)) 
+	{
+		m_ptr->energy -= level_speed(m_ptr->dun_depth);
+		return;
+	}
+#endif
+
+	/* Hack -- Assume no movement */
+	mm[0] = mm[1] = mm[2] = mm[3] = 0;
+	mm[4] = mm[5] = mm[6] = mm[7] = 0;
+
+
+	/* Confused -- 100% random */
+	if (m_ptr->confused)
+	{
+		/* Try four "random" directions */
+		mm[0] = mm[1] = mm[2] = mm[3] = 5;
+	}
+	/* Normal movement */
+	else
+	{
+		/* Logical moves */
+                if (!get_moves_golem(Ind, m_idx, mm)) return;
+	}
+
+
+	/* Assume nothing */
+	do_turn = FALSE;
+	do_move = FALSE;
+	do_view = FALSE;
+
+	/* Assume nothing */
+	did_open_door = FALSE;
+	did_bash_door = FALSE;
+	did_take_item = FALSE;
+	did_kill_item = FALSE;
+	did_move_body = FALSE;
+	did_kill_body = FALSE;
+	did_pass_wall = FALSE;
+	did_kill_wall = FALSE;
+
+
+	/* Take a zero-terminated array of "directions" */
+	for (i = 0; mm[i]; i++)
+	{
+		/* Get the direction */
+		d = mm[i];
+
+		/* Hack -- allow "randomized" motion */
+		if (d == 5) d = ddd[rand_int(8)];
+
+		/* Get the destination */
+		ny = oy + ddy[d];
+		nx = ox + ddx[d];			
+		
+		/* Access that cave grid */
+		c_ptr = &cave[Depth][ny][nx];
+
+		/* Access that cave grid's contents */
+		o_ptr = &o_list[c_ptr->o_idx];
+
+		/* Access that cave grid's contents */
+		y_ptr = &m_list[c_ptr->m_idx];
+
+
+		/* Tavern entrance? */
+		if (c_ptr->feat == FEAT_SHOP_TAIL)
+		{
+			/* Nothing */
+		}
+
+		/* Floor is open? */
+		else if (cave_floor_bold(Depth, ny, nx))
+		{
+			/* Go ahead and move */
+			do_move = TRUE;
+		}
+
+		/* Player ghost in wall XXX */
+		else if (c_ptr->m_idx < 0)
+		{
+			/* Move into player */
+			do_move = TRUE;
+		}
+
+		/* Permanent wall */
+		else if ( (c_ptr->feat >= FEAT_PERM_EXTRA) || (c_ptr->feat == FEAT_PERM_CLEAR) )
+		{
+			/* Nothing */
+		}
+
+		/* Monster moves through walls (and doors) */
+		else if (r_ptr->flags2 & RF2_PASS_WALL)
+		{
+			/* Pass through walls/doors/rubble */
+			do_move = TRUE;
+
+			/* Monster went through a wall */
+			did_pass_wall = TRUE;
+		}
+
+		/* Monster destroys walls (and doors) */
+		else if (r_ptr->flags2 & RF2_KILL_WALL)
+		{
+			/* Eat through walls/doors/rubble */
+			do_move = TRUE;
+
+			/* Monster destroyed a wall */
+			did_kill_wall = TRUE;
+
+			/* Create floor */
+			c_ptr->feat = FEAT_FLOOR;
+
+			/* Forget the "field mark", if any */
+			everyone_forget_spot(Depth, ny, nx);
+
+			/* Notice */
+			note_spot_depth(Depth, ny, nx);
+
+			/* Redraw */
+			everyone_lite_spot(Depth, ny, nx);
+
+			/* Note changes to viewable region */
+			if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
+		}
+
+		/* Handle doors and secret doors */
+		else if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
+		          (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
+		         (c_ptr->feat == FEAT_SECRET))
+		{
+			bool may_bash = TRUE;
+
+			/* Take a turn */
+			do_turn = TRUE;
+
+			/* Creature can open doors. */
+			if (r_ptr->flags2 & RF2_OPEN_DOOR)
+			{
+				/* Closed doors and secret doors */
+				if ((c_ptr->feat == FEAT_DOOR_HEAD) ||
+				    (c_ptr->feat == FEAT_SECRET))
+				{
+					/* The door is open */
+					did_open_door = TRUE;
+
+					/* Do not bash the door */
+					may_bash = FALSE;
+				}
+
+				/* Locked doors (not jammed) */
+				else if (c_ptr->feat < FEAT_DOOR_HEAD + 0x08)
+				{
+					int k;
+
+					/* Door power */
+					k = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);
+
+#if 0
+					/* XXX XXX XXX XXX Old test (pval 10 to 20) */
+					if (randint((m_ptr->hp + 1) * (50 + o_ptr->pval)) <
+					    40 * (m_ptr->hp - 10 - o_ptr->pval));
+#endif
+
+					/* Try to unlock it XXX XXX XXX */
+					if (rand_int(m_ptr->hp / 10) > k)
+					{
+						/* Unlock the door */
+						c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+
+						/* Do not bash the door */
+						may_bash = FALSE;
+					}
+				}
+			}
+
+			/* Stuck doors -- attempt to bash them down if allowed */
+			if (may_bash && (r_ptr->flags2 & RF2_BASH_DOOR))
+			{
+				int k;
+
+				/* Door power */
+				k = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);
+
+#if 0
+				/* XXX XXX XXX XXX Old test (pval 10 to 20) */
+				if (randint((m_ptr->hp + 1) * (50 + o_ptr->pval)) <
+				    40 * (m_ptr->hp - 10 - o_ptr->pval));
+#endif
+
+				/* Attempt to Bash XXX XXX XXX */
+				if (rand_int(m_ptr->hp / 10) > k)
+				{
+					/* The door was bashed open */
+					did_bash_door = TRUE;
+
+					/* Hack -- fall into doorway */
+					do_move = TRUE;
+				}
+			}
+
+
+			/* Deal with doors in the way */
+			if (did_open_door || did_bash_door)
+			{
+				/* Break down the door */
+				if (did_bash_door && (rand_int(100) < 50))
+				{
+					c_ptr->feat = FEAT_BROKEN;
+				}
+
+				/* Open the door */
+				else
+				{
+					c_ptr->feat = FEAT_OPEN;
+				}
+
+				/* Notice */
+				note_spot_depth(Depth, ny, nx);
+
+				/* Redraw */
+				everyone_lite_spot(Depth, ny, nx);
+			}
+		}
+
+		/* The player is in the way.  Attack him. */
+                if (do_move && (c_ptr->m_idx < 0))
+		{
+			/* Do the attack */
+                        if (Players[c_ptr->m_idx]->id != m_ptr->owner) (void)make_attack_normal(0 - c_ptr->m_idx, m_idx);
+
+			/* Do not move */
+			do_move = FALSE;
+
+			/* Took a turn */
+			do_turn = TRUE;
+		}
+
+		/* A monster is in the way */
+		if (do_move && c_ptr->m_idx > 0)
+		{
+#if 0
+                        /* Attack it ! */
+                        if (m_ptr->owner != y_ptr->owner) monster_attack_normal(c_ptr->m_idx, m_idx)
+#endif
+			/* Assume no movement */
+			do_move = FALSE;
+
+			/* Take a turn */
+			do_turn = TRUE;
+		}
+
+
+		/* Creature has been allowed move */
+		if (do_move)
+		{
+			/* Take a turn */
+			do_turn = TRUE;
+
+			/* Hack -- Update the old location */
+			cave[Depth][oy][ox].m_idx = c_ptr->m_idx;
+
+			/* Mega-Hack -- move the old monster, if any */
+			if (c_ptr->m_idx > 0)
+			{
+				/* Move the old monster */
+				y_ptr->fy = oy;
+				y_ptr->fx = ox;
+
+				/* Update the old monster */
+				update_mon(c_ptr->m_idx, TRUE);
+			}
+
+			/* Hack -- Update the new location */
+			c_ptr->m_idx = m_idx;
+
+			/* Move the monster */
+			m_ptr->fy = ny;
+			m_ptr->fx = nx;
+
+			/* Update the monster */
+			update_mon(m_idx, TRUE);
+
+			/* Redraw the old grid */
+			everyone_lite_spot(Depth, oy, ox);
+
+			/* Redraw the new grid */
+			everyone_lite_spot(Depth, ny, nx);
+		}
+
+		/* Stop when done */
+		if (do_turn) 
+		{
+			m_ptr->energy -= level_speed(m_ptr->dun_depth);
+			break;
+		}
+	}
+
+#if 0
+	/* Notice changes in view */
+	if (do_view)
+	{
+		/* Update some things */
+		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+	}
+#endif
+
+	/* Hack -- get "bold" if out of options */
+	if (!do_turn && !do_move && m_ptr->monfear)
+	{
+		/* No longer afraid */
+		m_ptr->monfear = 0;
+	}
+}
+
 
 /* Determine whether the player is invisible to a monster */
 static bool player_invis(int Ind, monster_type *m_ptr)
 {
 	player_type *p_ptr = Players[Ind];
 	s16b inv, mlv;
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
         inv = p_ptr->invis;
 
@@ -3582,8 +4247,7 @@ void process_monsters(void)
 		i = m_fast[k];
 
 		/* Access the monster */
-		m_ptr = &m_list[i];
-
+                m_ptr = &m_list[i];
 
 		/* Excise "dead" monsters */
 		if (!m_ptr->r_idx)
@@ -3594,7 +4258,6 @@ void process_monsters(void)
 			/* Skip */
 			continue;
 		}
-
 
 		/* Obtain the energy boost */
 		e = extract_energy[m_ptr->mspeed];
@@ -3669,7 +4332,7 @@ void process_monsters(void)
 
 
 		/* Access the race */
-		r_ptr = &r_info[m_ptr->r_idx];
+                r_ptr = R_INFO(m_ptr);
 
 		/* Access the location */
 		fx = m_ptr->fx;
@@ -3713,7 +4376,13 @@ void process_monsters(void)
 
 
 		/* Process the monster */
-		process_monster(closest, i);
+                if (!m_ptr->special) process_monster(closest, i);
+                else
+                {
+                        int p = find_player(m_ptr->owner);
+
+                        process_monster_golem(p, i);
+                }
 
 		/* Hack -- notice death or departure */
 		if (!p_ptr->alive || p_ptr->death || p_ptr->new_level_flag) break;
@@ -3733,7 +4402,7 @@ void process_monsters(void)
 			if (!m_ptr->r_idx) continue;
 
 			/* Access the monster race */
-			r_ptr = &r_info[m_ptr->r_idx];
+                        r_ptr = R_INFO(m_ptr);
 
 			/* Skip non-multi-hued monsters */
 			if (!(r_ptr->flags1 & RF1_ATTR_MULTI)) continue;

@@ -133,7 +133,7 @@ static void prt_title(int Ind)
 	/* Normal */
 	else
 	{
-		p = player_title[p_ptr->pclass][(p_ptr->lev-1)/5];
+                p = player_title[p_ptr->pclass][(p_ptr->lev-1)/10];
 	}
 
 	/* Ghost */
@@ -168,7 +168,7 @@ static void prt_exp(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int adv_exp;
+        s32b adv_exp;
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 		adv_exp = 0;
@@ -1232,7 +1232,7 @@ static void calc_mana(int Ind)
 
 	if (Ind2)
 	  {
-	    new_mana += p_ptr2->msp;
+            new_mana += p_ptr2->msp / 2;
 	  }
 
 	/* Mana can never be negative */
@@ -1372,11 +1372,6 @@ static void calc_hitpoints(int Ind)
 	    int rhp = r_info[p_ptr->body_monster].hdice * r_info[p_ptr->body_monster].hside;
 
 	    mhp = (mhp * 6 / 10) + (rhp * 3 / 22);
-	  }
-
-	if (Ind2)
-	  {
-	    mhp += p_ptr2->mhp;
 	  }
 
 	/* Always have at least one hitpoint per level */

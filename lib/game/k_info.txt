@@ -3236,22 +3236,111 @@ W:10:0:30:25
 A:10/3
 P:0:1d1:0:0:0
 
-##### XXX Items 440 to 444 reserved (old "fake" objects) #####
+N:439:& Massive~ Piece of Wood
+G:*:y
+I:6:0:0
+W:10:0:2500:500
+A:10/40
+P:0:1d1:0:0:0
 
+N:440:& Massive~ Piece of Copper
+G:*:y
+I:6:1:0
+W:30:0:3000:500
+A:30/50
+P:0:1d1:0:0:0
+
+N:441:& Massive~ Piece of Iron
+G:*:y
+I:6:2:0
+W:50:0:3500:500
+A:50/60
+P:0:1d1:0:0:0
+
+N:442:& Massive~ Piece of Aluminium
+G:*:y
+I:6:3:0
+W:70:0:3500:500
+A:70/70
+P:0:1d1:0:0:0
+
+N:443:& Massive~ Piece of Silver
+G:*:y
+I:6:4:0
+W:80:0:4000:500
+A:80/80
+P:0:1d1:0:0:0
+
+N:444:& Massive~ Piece of Gold
+G:*:y
+I:6:5:0
+W:90:0:4500:500
+A:90/90
+P:0:1d1:0:0:0
+
+N:445:& Massive~ Piece of Mithril
+G:*:y
+I:6:6:0
+W:110:0:3500:500
+A:110/110
+P:0:1d1:0:0:0
+
+N:446:& Massive~ Piece of Adamantite
+G:*:y
+I:6:7:0
+W:120:0:6000:500
+A:120/200
+P:0:1d1:0:0:0
+
+N:447:& Golem Arm~
+G:*:v
+I:6:8:0
+W:10:0:400:500
+A:10/30
+P:0:1d1:0:0:0
+
+N:448:& Golem Leg~
+G:*:v
+I:6:9:0
+W:10:0:400:500
+A:10/30
+P:0:1d1:0:0:0
+
+N:449:& Golem Scroll~ of Attack
+G:*:s
+I:6:200:0
+W:10:0:10:500
+A:10/30
+P:0:1d1:0:0:0
+F:ACTIVATE
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+
+N:450:& Golem Scroll~ of Following
+G:*:s
+I:6:201:0
+W:10:0:10:500
+A:20/40
+P:0:1d1:0:0:0
+F:ACTIVATE
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+
+N:451:& Golem Scroll~ of Guard
+G:*:s
+I:6:202:0
+W:15:0:10:500
+A:15/30
+P:0:1d1:0:0:0
+F:ACTIVATE
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+
+N:452:Golem Creation
+G:?:d
+I:70:23:0
+W:10:0:5:1250
+A:10/20
+
+# XXX
 ##### Items 445 to 479 reserved (old "terrain" objects) #####
-
-
-# The old "notice_seams" option is currently unused, but much of its
-# old functionality can be obtained by clever use of 'F' commands in
-# a pref file which define "quartz" and "magma" to look like "granite".
-
-# Note that the "player" picture does not really fit in anywhere, and I
-# have no idea how to go about allowing "redefinition" of that picture.
-# Perhaps by using "monster 0" or "object 0" or "feature 0" or even a
-# special "player picture" which might yield a simple way to show the
-# player in different colors or whatever for different "states", or even
-# a different picture for various "class" or "race" choices.
-
 
 ##### And here starts the gold/gems #####
 

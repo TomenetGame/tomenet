@@ -222,7 +222,7 @@ static cptr r_info_flags3[] =
 	"XXX1X3",
 	"XXX2X3",
 	"XXX3X3",
-	"XXX4X3",
+        "IM_TELE",
 	"HURT_LITE",
 	"HURT_ROCK",
 	"HURT_FIRE",

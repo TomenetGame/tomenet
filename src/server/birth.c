@@ -760,8 +760,8 @@ static void get_money(int Ind)
 	{
 		/* the admin wizard can basically do what he wants */
 		p_ptr->au = 50000000;
-		p_ptr->lev = 50;
-		p_ptr->exp = 15000000;
+                p_ptr->lev = 100;
+                p_ptr->exp = 999999999;
 		p_ptr->noscore = 1;
 		/* permanent invulnerability */
 		//p_ptr->invuln = -1;
@@ -773,8 +773,8 @@ static void get_money(int Ind)
 	}
 	if (!strcmp(p_ptr->name,cfg_dungeon_master))
 	{
-		p_ptr->lev = 50;
-		p_ptr->exp = 15000000;
+                p_ptr->lev = 100;
+                p_ptr->exp = 999999999;
 		p_ptr->invuln = -1;
 		p_ptr->ghost = 1;
 		p_ptr->noscore = 1;
@@ -1007,19 +1007,28 @@ static void player_outfit(int Ind)
 	 if (!strcmp(p_ptr->name,cfg_admin_wizard) || !strcmp(p_ptr->name, cfg_dungeon_master))
 	 {
 
-	   /* Hack -- assume the player has an initial knowledge of the area close to town */
-	   for (i = 0; i < MAX_WILD; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
+                /* Hack -- assume the player has an initial knowledge of the area close to town */
+                for (i = 0; i < MAX_WILD; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
 
 
-	   for (i = 1; i < 6; i++)
-	   {
-	     invcopy(o_ptr, lookup_kind(TV_PSI_BOOK, i));
-	     o_ptr->number = 1;
-	     apply_magic(100, o_ptr, 100, TRUE, TRUE, TRUE);
-	     object_aware(Ind, o_ptr);
-	     object_known(o_ptr);		
-	     (void)inven_carry(Ind, o_ptr);
-	   }
+                for (i = 7; i < 203; i++)
+                {
+                        int k = lookup_kind(TV_GOLEM, i);
+                        if (!k) continue;
+
+                        invcopy(o_ptr, k);
+                        o_ptr->number = 4;
+                        apply_magic(100, o_ptr, 100, TRUE, TRUE, TRUE);
+                        object_aware(Ind, o_ptr);
+                        object_known(o_ptr);        
+                        (void)inven_carry(Ind, o_ptr);
+                }
+
+                invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_GOLEM));
+		o_ptr->number = 99;
+		o_ptr->discount = 100;
+		object_known(o_ptr);
+		(void)inven_carry(Ind, o_ptr);
 
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
 		o_ptr->number = 99;
@@ -1046,6 +1055,12 @@ static void player_outfit(int Ind)
 		(void)inven_carry(Ind, o_ptr);
 
 		invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_LIFE));
+		o_ptr->number = 99;
+		o_ptr->discount = 0;
+		object_known(o_ptr);
+		(void)inven_carry(Ind, o_ptr);
+
+                invcopy(o_ptr, lookup_kind(TV_RING, SV_RING_SEE_INVIS));
 		o_ptr->number = 99;
 		o_ptr->discount = 0;
 		object_known(o_ptr);

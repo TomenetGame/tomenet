@@ -124,7 +124,7 @@ bool make_attack_normal(int Ind, int m_idx)
 
 	monster_type	*m_ptr = &m_list[m_idx];
 
-	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+        monster_race    *r_ptr = R_INFO(m_ptr);
 
 	int			ap_cnt;
 
@@ -176,10 +176,10 @@ bool make_attack_normal(int Ind, int m_idx)
 		cptr act = NULL;
 
 		/* Extract the attack infomation */
-		int effect = r_ptr->blow[ap_cnt].effect;
-		int method = r_ptr->blow[ap_cnt].method;
-		int d_dice = r_ptr->blow[ap_cnt].d_dice;
-		int d_side = r_ptr->blow[ap_cnt].d_side;
+                int effect = m_ptr->blow[ap_cnt].effect;
+                int method = m_ptr->blow[ap_cnt].method;
+                int d_dice = m_ptr->blow[ap_cnt].d_dice;
+                int d_side = m_ptr->blow[ap_cnt].d_side;
 
 
 		/* Hack -- no more attacks */

@@ -16,7 +16,7 @@
 #include "angband.h"
 
 /* How much power is assigned to randarts */
-#define RANDART_QUALITY	50
+#define RANDART_QUALITY 40
 
 /* How many attempts to add abilities */
 #define MAX_TRIES 200
@@ -979,6 +979,17 @@ artifact_type *randart_make(object_type *o_ptr)
 	   too lazy to find out which ones need it and which ones don't. */
 	if (a_ptr->pval)
 		a_ptr->flags3 |= TR3_HIDE_TYPE;
+
+        /* Fix some limits */
+        if (a_ptr->flags1 & TR1_BLOWS)
+        {
+                if (a_ptr->pval > 2) a_ptr->pval = 2;
+        }
+
+        if (a_ptr->flags1 & TR1_MANA)
+        {
+                if (a_ptr->pval > 7) a_ptr->pval = 7;
+        }
 
 
 	/* Restore RNG */

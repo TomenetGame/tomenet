@@ -2498,7 +2498,6 @@ void check_experience(int Ind)
 	/* Handle stuff */
 	handle_stuff(Ind);
 
-
 	/* Lose levels while possible */
 	while ((p_ptr->lev > 1) &&
 	       (p_ptr->exp < (player_exp[p_ptr->lev-2] *
@@ -2520,9 +2519,8 @@ void check_experience(int Ind)
 		handle_stuff(Ind);
 	}
 
-
 	/* Gain levels while possible */
-	while ((p_ptr->lev < PY_MAX_LEVEL) &&
+        while ((p_ptr->lev < PY_MAX_LEVEL) &&
 	       (p_ptr->exp >= (player_exp[p_ptr->lev-1] *
 	                       p_ptr->expfact / 100L)))
 	{
@@ -2720,7 +2718,7 @@ void monster_death(int Ind, int m_idx)
 
 	monster_type	*m_ptr = &m_list[m_idx];
 
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
 	bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
 
@@ -2852,11 +2850,11 @@ void monster_death(int Ind, int m_idx)
 		/* give credit to the killer by default */
 		if (!Ind2)
 		  {
-		    sprintf(buf,"%s was slain by %s.",(r_name + r_ptr->name), p_ptr->name);
+                    sprintf(buf,"%s was slain by %s.", r_name_get(m_ptr), p_ptr->name);
 		  }
 		else
 		  {
-		    sprintf(buf,"%s was slain by fusion %s-%s.",(r_name + r_ptr->name), p_ptr->name, p_ptr2->name);
+                    sprintf(buf,"%s was slain by fusion %s-%s.", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 		  }
 		
 		/* give credit to the party if there is a teammate on the 
@@ -2867,7 +2865,7 @@ void monster_death(int Ind, int m_idx)
 			{
 				if ( (Players[i]->party == p_ptr->party) && (Players[i]->dun_depth == p_ptr->dun_depth) && (i != Ind) && (p_ptr->dun_depth) )
 				{
-					sprintf(buf, "%s was slain by %s.",(r_name + r_ptr->name),parties[p_ptr->party].name);
+                                        sprintf(buf, "%s was slain by %s.", r_name_get(m_ptr),parties[p_ptr->party].name);
 					break; 
 				} 
 			
@@ -3001,6 +2999,7 @@ void monster_death(int Ind, int m_idx)
 			}
 		}
 
+                FREE(m_ptr->r_ptr, monster_race);
 		return;
 	}
 
@@ -3055,6 +3054,8 @@ void monster_death(int Ind, int m_idx)
 		/* Remember to update everything */
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 	}
+
+        FREE(m_ptr->r_ptr, monster_race);
 }
 
 
@@ -3383,7 +3384,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 	monster_type	*m_ptr = &m_list[m_idx];
 
-	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+        monster_race    *r_ptr = R_INFO(m_ptr);
 
 	s32b		new_exp, new_exp_frac;
 
@@ -3641,7 +3642,7 @@ void verify_panel(int Ind)
 cptr look_mon_desc(int m_idx)
 {
 	monster_type *m_ptr = &m_list[m_idx];
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
 	bool          living = TRUE;
 	int           perc;
@@ -4269,7 +4270,7 @@ bool target_set(int Ind, int dir)
 		c_ptr = &cave[Depth][y][x];
 
 		m_ptr = &m_list[idx];
-		r_ptr = &r_info[m_ptr->r_idx];
+                r_ptr = R_INFO(m_ptr);
 
 		/* Hack -- Track that monster race */
 		recent_track(m_ptr->r_idx);
@@ -4282,8 +4283,9 @@ bool target_set(int Ind, int dir)
 
 		/* Describe, prompt for recall */
 		sprintf(out_val,
-			"%s (%s) [<dir>, q, t] ",
-			(r_name + r_ptr->name),
+                        "%s{%d} (%s) [<dir>, q, t] ",
+                        r_name_get(m_ptr),
+                        m_ptr->level,
 			look_mon_desc(idx));
 
 		/* Tell the client about it */

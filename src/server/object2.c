@@ -2990,6 +2990,20 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 		if (o_ptr->pval > 55) o_ptr->pval = 55 + rand_int(5);
 
 		break;
+
+                case TV_GOLEM:
+                {
+                        switch (o_ptr->sval)
+                        {
+                                case SV_GOLEM_ARM:
+                                        o_ptr->pval = 1 + m_bonus(15, level);
+                                        break;
+                                case SV_GOLEM_LEG:
+                                        o_ptr->pval = 1 + m_bonus(8, level);
+                                        break;
+                        }
+                        break;
+                }
 	}
 }
 

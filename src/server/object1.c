@@ -425,6 +425,11 @@ static byte default_tval_to_attr(int tval)
 			return (TERM_SLATE);
 		}
 
+                case TV_GOLEM:
+		{
+                        return (TERM_VIOLET);
+		}
+
 		case TV_AMULET:
 		{
 			return (TERM_ORANGE);
@@ -1248,7 +1253,6 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			break;
 		}
 
-
 			/* Armour */
 		case TV_BOOTS:
 		case TV_GLOVES:
@@ -1264,6 +1268,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			break;
 		}
 
+
+                case TV_GOLEM:
+		{
+			break;
+		}
 
 			/* Lites (including a few "Specials") */
 		case TV_LITE:
@@ -1849,7 +1858,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 
 	/* Dump "pval" flags for wearable items */
-	if (known && (f1 & TR1_PVAL_MASK))
+        if (known && ((f1 & TR1_PVAL_MASK) || (o_ptr->tval == TV_GOLEM)))
 	{
 		/* Hack -- first display any base pval bonuses.  
 		 * The "bpval" flags are never displayed.  */

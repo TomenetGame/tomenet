@@ -1127,6 +1127,13 @@ void do_cmd_read_scroll(int Ind, int item)
 	/* Analyze the scroll */
 	switch (o_ptr->sval)
 	{
+                case SV_SCROLL_GOLEM:
+	        {	    
+                        msg_print(Ind, "This is a golem creation scroll.");
+			ident = TRUE;
+                        golem_creation(Ind);
+			break;
+            	}
 	        case SV_SCROLL_BLOOD_BOND:
 	        {
 	    
@@ -3410,6 +3417,73 @@ void do_cmd_activate(int Ind, int item)
 		  o_ptr->timeout = 200 + rand_int(100);
 		  return;
 	}
+        if (o_ptr->tval == TV_GOLEM)
+        {
+                int m_idx = 0, k;
+                monster_type *m_ptr;
+
+                /* Process the monsters */
+                for (k = m_top - 1; k >= 0; k--)
+                {
+                        /* Access the index */
+                        i = m_fast[k];
+
+                        /* Access the monster */
+                        m_ptr = &m_list[i];
+
+                        /* Excise "dead" monsters */
+                        if (!m_ptr->r_idx) continue;
+
+                        if (m_ptr->owner != p_ptr->id) continue;
+
+                        m_idx = i;
+                        break;
+                }
+
+                if (!m_idx) return;
+                m_ptr = &m_list[m_idx];
+
+                switch (o_ptr->sval)
+                {
+                        case SV_GOLEM_ATTACK:
+                                if (m_ptr->mind & (1 << (o_ptr->sval - 200)))
+                                {
+                                        msg_print(Ind, "I wont attack your target anymore, master.");
+                                        m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
+                                }
+                                else
+                                {
+                                        msg_print(Ind, "I will attack your target, master.");
+                                        m_ptr->mind |= (1 << (o_ptr->sval - 200));
+                                }
+                                break;
+                        case SV_GOLEM_FOLLOW:
+                                if (m_ptr->mind & (1 << (o_ptr->sval - 200)))
+                                {
+                                        msg_print(Ind, "I wont follow you, master.");
+                                        m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
+                                }
+                                else
+                                {
+                                        msg_print(Ind, "I will follow you, master.");
+                                        m_ptr->mind |= (1 << (o_ptr->sval - 200));
+                                }
+                                break;
+                        case SV_GOLEM_GUARD:
+                                if (m_ptr->mind & (1 << (o_ptr->sval - 200)))
+                                {
+                                        msg_print(Ind, "I wont guard my position anymore, master.");
+                                        m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
+                                }
+                                else
+                                {
+                                        msg_print(Ind, "I will guard my position, master.");
+                                        m_ptr->mind |= (1 << (o_ptr->sval - 200));
+                                }
+                                break;
+                }
+                return;
+        }
 
 	/* Artifacts activate by name */
 	if (o_ptr->name1)

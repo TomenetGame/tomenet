@@ -538,6 +538,7 @@ extern void screen_roff(int r_idx);
 extern void display_roff(int r_idx);
 
 /* monster.c */
+extern cptr r_name_get(monster_type *m_ptr);
 extern void delete_monster_idx(int i);
 extern void delete_monster(int Depth, int y, int x);
 extern void compact_monsters(int size);

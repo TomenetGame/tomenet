@@ -99,3 +99,19 @@ Change list for PernMangband
 - Cloned monsters do not drop anymore, and yield no experience
   Mimic count is no longer updated either.
 
+30/07/2007
+- Telepaths dont share hp anymore, it was:
+  1) silyl given the idea of only the spirit of the telepath moving
+  2) cheezy
+- Telepaths only share half their mana
+- Player levels now goes up to 100
+- Monster can ain levels up to 500
+
+02/08/2001
+- Randarts rarer
+- Randart power reduced
+- Max 2 EA on randarts
+- Max +7 mana on randarts
+- Tidal Wave mana/level increased
+- Healing in hellish mode is now only 3/4 instead of 1/2
+- Player Golems! One can find pieces of golem and make a powerfull ally

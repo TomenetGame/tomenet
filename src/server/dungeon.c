@@ -416,7 +416,7 @@ static void regen_monsters(void)
 	{
 		/* Check the i'th monster */
 		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+                monster_race *r_ptr = R_INFO(m_ptr);
 
 		/* Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -827,6 +827,8 @@ static int auto_retaliate(int Ind)
 		/* Make sure that the player can see this monster */
 		if (!p_ptr->mon_vis[i]) continue;
 
+                if (p_ptr->id == m_ptr->owner) continue;
+
 		/* A monster is next to us */
 		if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) == 1)
 		{
@@ -838,7 +840,7 @@ static int auto_retaliate(int Ind)
 				 * Q's because if the player is standing next to two Q's
 				 * he deserves whatever punishment he gets.
 				 */
-				if (r_info[m_ptr->r_idx].d_char == 'Q')
+                                if (R_INFO(m_ptr)->d_char == 'Q')
 				{
 					prev_m_target_ptr = m_target_ptr;
 					m_target_ptr = m_ptr;
@@ -846,8 +848,8 @@ static int auto_retaliate(int Ind)
 				/* Otherwise if it is 20 levels higher than everything
 				 * else attack it.
 				 */
-				else if ((r_info[m_ptr->r_idx].level - 20) >=
-						r_info[m_target_ptr->r_idx].level)
+                                else if ((R_INFO(m_ptr)->level - 20) >=
+                                                R_INFO(m_target_ptr)->level)
 				{
 					prev_m_target_ptr = m_target_ptr;
 					m_target_ptr = m_ptr;
@@ -863,13 +865,13 @@ static int auto_retaliate(int Ind)
 				/* If it is a tie attack the higher level monster */
 				else if (m_ptr->hp * m_target_ptr->maxhp == m_target_ptr->hp * m_ptr->maxhp)
 				{
-					if (r_info[m_ptr->r_idx].level > r_info[m_target_ptr->r_idx].level)
+                                        if (R_INFO(m_ptr)->level > R_INFO(m_target_ptr)->level)
 					{
 						prev_m_target_ptr = m_target_ptr;
 						m_target_ptr = m_ptr;
 					}
 					/* If it is a tie attack the monster with less hit points */
-					else if (r_info[m_ptr->r_idx].level == r_info[m_target_ptr->r_idx].level)
+                                        else if (R_INFO(m_ptr)->level == R_INFO(m_target_ptr)->level)
 					{
 						if (m_ptr->hp < m_target_ptr->hp)
 						{

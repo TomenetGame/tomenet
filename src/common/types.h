@@ -535,6 +535,11 @@ typedef struct monster_type monster_type;
 
 struct monster_type
 {
+        bool special;                   /* Does it use a special r_info ? */
+        monster_race *r_ptr;            /* The aforementionned r_info */
+
+        s32b owner;                     /* Player owning it */
+
 	s16b r_idx;			/* Monster race index */
 
 	byte fy;			/* Y location on map */
@@ -542,8 +547,15 @@ struct monster_type
 
 	s16b dun_depth;			/* Level of the dungeon */
 
-	s16b hp;			/* Current Hit points */
-	s16b maxhp;			/* Max Hit points */
+        s32b exp;                       /* Experience of the monster */
+        s16b level;                     /* Level of the monster */
+
+        monster_blow blow[4];           /* Up to four blows per round */
+        byte speed;                     /* Monster "speed" */
+        s16b ac;                        /* Armour Class */
+
+        s32b hp;                        /* Current Hit points */
+        s32b maxhp;                     /* Max Hit points */
 
 	s16b csleep;		/* Inactive counter */
 
@@ -579,6 +591,7 @@ struct monster_type
 #endif
 	bool clone;
 
+        byte mind;                      /* Current action -- golems */
 };
 
 
@@ -1440,16 +1453,15 @@ struct player_type
 	
 	bool anti_magic;	/* Can the player resist magic */
 
-  s32b blood_bond; /* Norc is now happy :) */
+        s32b blood_bond; /* Norc is now happy :) */
 
-  byte mode; /* Difficulty MODE */
+        byte mode; /* Difficulty MODE */
 
-  s32b esp_link; /* Mental link */
-  byte esp_link_type;
-  u16b esp_link_flags;
-  u16b esp_link_end; /* Time before actual end */
+        s32b esp_link; /* Mental link */
+        byte esp_link_type;
+        u16b esp_link_flags;
+        u16b esp_link_end; /* Time before actual end */
 	bool (*master_move_hook)(int Ind, char * args);
-
 };
 
 /* For Monk martial arts */

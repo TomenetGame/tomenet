@@ -1671,13 +1671,13 @@ void do_cmd_look(int Ind, int dir)
 	}
 	else if (c_ptr->m_idx > 0)
 	{
-		monster_race *r_ptr = &r_info[m_list[c_ptr->m_idx].r_idx];
+                monster_race *r_ptr = R_INFO(&m_list[c_ptr->m_idx]);
 
 		/* Track health */
 		if (p_ptr->mon_vis[c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
 
 		/* Format string */
-		sprintf(out_val, "%s (%s)", r_name + r_ptr->name, look_mon_desc(c_ptr->m_idx));
+                sprintf(out_val, "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
 	}
 	else if (c_ptr->o_idx)
 	{

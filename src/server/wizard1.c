@@ -1354,7 +1354,7 @@ static void spoil_mon_desc(cptr fname)
 		}
 
 		/* Armor Class */
-		sprintf(ac, "%d", r_ptr->ac);
+                sprintf(ac, "%d", m_ptr->ac);
 
 		/* Hitpoints */
 		if ((r_ptr->flags1 & RF1_FORCE_MAXHP) || (r_ptr->hside == 1))
@@ -1604,7 +1604,7 @@ static void spoil_mon_info(cptr fname)
 		spoil_out(buf);
 
 		/* Armor Class */
-		sprintf(buf, "Ac:%d  ", r_ptr->ac);
+                sprintf(buf, "Ac:%d  ", m_ptr->ac);
 		spoil_out(buf);
 
 		/* Experience */

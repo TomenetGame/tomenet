@@ -867,17 +867,19 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		monster_type *m_ptr = &m_list[c_ptr->m_idx];
 
 		/* Visible monster */
-		if (p_ptr->mon_vis[c_ptr->m_idx])
+                if (p_ptr->mon_vis[c_ptr->m_idx])
 		{
-			monster_race *r_ptr = &r_info[m_ptr->r_idx];
+                        monster_race *r_ptr = R_INFO(m_ptr);
 
 			/* Desired attr */
 			/* a = r_ptr->x_attr; */
-			a = p_ptr->r_attr[m_ptr->r_idx];
+                        if (!m_ptr->special) a = p_ptr->r_attr[m_ptr->r_idx];
+                        else a = m_ptr->r_ptr->d_attr;
 
 			/* Desired char */
 			/* c = r_ptr->x_char; */
-			c = p_ptr->r_char[m_ptr->r_idx];
+                        if (!m_ptr->special) c = p_ptr->r_char[m_ptr->r_idx];
+                        else c = m_ptr->r_ptr->d_char;
 
 			/* Ignore weird codes */
 			if (avoid_other)

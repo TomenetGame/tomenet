@@ -15,6 +15,62 @@
 #include "angband.h"
 
 
+/* Monster gain a few levels ? */
+void monster_check_experience(int m_idx, bool silent)
+{
+        monster_type    *m_ptr = &m_list[m_idx];
+        monster_race    *r_ptr = R_INFO(m_ptr);
+
+	/* Gain levels while possible */
+        while ((m_ptr->level < MONSTER_LEVEL_MAX) &&
+               (m_ptr->exp >= (MONSTER_EXP(m_ptr->level + 1))))
+	{
+		/* Gain a level */
+                m_ptr->level++;
+
+                /* Gain hp */
+                if (magik(80))
+                {
+                        m_ptr->maxhp += r_ptr->hside;
+                        m_ptr->hp += r_ptr->hside;
+                }
+
+                /* Gain speed */
+                if (magik(40))
+                {
+                        int speed = randint(3);
+                        m_ptr->speed += speed;
+                        m_ptr->mspeed += speed;
+                }
+
+                /* Gain ac */
+                if (magik(50))
+                {
+                        m_ptr->ac += (r_ptr->ac / 10)?r_ptr->ac / 10:1;
+                }
+
+                /* Gain melee power */
+                if (magik(30))
+                {
+                        int i = rand_int(4), try = 20;
+
+                        while ((try--) && !m_ptr->blow[i].d_dice) i = rand_int(4);
+
+                        m_ptr->blow[i].d_dice++;
+                }
+        }
+}
+
+/* Monster gain some xp */
+void monster_gain_exp(int m_idx, u32b exp, bool silent)
+{
+        monster_type *m_ptr = &m_list[m_idx];
+
+        m_ptr->exp += exp;
+
+        monster_check_experience(m_idx, silent);
+}
+
 
 /*
  * Delete a monster by index.
@@ -36,7 +92,7 @@ void delete_monster_idx(int i)
 
 	monster_type *m_ptr = &m_list[i];
 
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
 	/* Get location */
 	y = m_ptr->fy;
@@ -79,6 +135,7 @@ void delete_monster_idx(int i)
 	everyone_lite_spot(Depth, y, x);
 
 	/* Wipe the Monster */
+        FREE(m_ptr->r_ptr, monster_race);
 	WIPE(m_ptr, monster_type);
 }
 
@@ -141,7 +198,7 @@ void compact_monsters(int size)
 		{
 			monster_type *m_ptr = &m_list[i];
 
-			monster_race *r_ptr = &r_info[m_ptr->r_idx];
+                        monster_race *r_ptr = R_INFO(m_ptr);
 
 			/* Paranoia -- skip "dead" monsters */
 			if (!m_ptr->r_idx) continue;
@@ -258,7 +315,7 @@ void wipe_m_list(int Depth)
 	{
 		monster_type *m_ptr = &m_list[i];
 
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+                monster_race *r_ptr = R_INFO(m_ptr);
 
 		/* Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -667,13 +724,12 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 
 	cptr		res;
 
-	monster_type *m_ptr = &m_list[m_idx];
-	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+        monster_type    *m_ptr = &m_list[m_idx];
+        monster_race    *r_ptr = R_INFO(m_ptr);
 
-	cptr		name = (r_name + r_ptr->name);
+        cptr            name = r_name_get(m_ptr);
 
 	bool		seen, pron;
-
 
 	/* Check for bad player number */
 	if (Ind > 0)
@@ -682,7 +738,7 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 	
 		/* Can we "see" it (exists + forced, or visible + not unforced) */
 		seen = (m_ptr && ((mode & 0x80) || (!(mode & 0x40) && p_ptr->mon_vis[m_idx])));
-	}
+        }
 	else
 	{
 		seen = (m_ptr && ((mode & 0x80) || (!(mode & 0x40))));
@@ -807,7 +863,7 @@ void lore_do_probe(int m_idx)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
 	/* Hack -- Memorize some flags */
 	r_ptr->r_flags1 = r_ptr->flags1;
@@ -836,7 +892,7 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
 	/* Note the number of things dropped */
 	if (num_item > r_ptr->r_drop_item) r_ptr->r_drop_item = num_item;
@@ -902,7 +958,7 @@ void update_mon(int m_idx, bool dist)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
 	player_type *p_ptr;
 
@@ -1015,13 +1071,14 @@ void update_mon(int m_idx, bool dist)
 			/* Telepathy can see all "nearby" monsters with "minds" */
 			if (p_ptr->telepathy || (p_ptr->prace == RACE_DRIDER))
 			{
-			  bool see = FALSE;
+                                bool see = FALSE;
 
-			  if (p_ptr->mode == MODE_NORMAL) see = TRUE;
-			  if ((p_ptr->mode == MODE_HELL) && (m_ptr->cdis < MAX_SIGHT)) see = TRUE;
-			  if (!p_ptr->telepathy && (p_ptr->prace == RACE_DRIDER) && (m_ptr->cdis > (p_ptr->lev / 2))) see = FALSE;
+                                if (p_ptr->mode == MODE_NORMAL) see = TRUE;
+                                if ((p_ptr->mode == MODE_HELL) && (m_ptr->cdis < MAX_SIGHT)) see = TRUE;
+                                if (!p_ptr->telepathy && (p_ptr->prace == RACE_DRIDER) && (m_ptr->cdis > (p_ptr->lev / 2))) see = FALSE;
 
-			  if (see)
+                                if (see)
+                                {
 				/* Empty mind, no telepathy */
 				if (r_ptr->flags2 & RF2_EMPTY_MIND)
 				{
@@ -1048,6 +1105,7 @@ void update_mon(int m_idx, bool dist)
 					if (r_ptr->flags2 & RF2_SMART) r_ptr->r_flags2 |= RF2_SMART;
 					if (r_ptr->flags2 & RF2_STUPID) r_ptr->r_flags2 |= RF2_STUPID;
 				}
+                                }
 			}
 
 			/* Hack -- Wizards have "perfect telepathy" */
@@ -1417,13 +1475,13 @@ bool allow_unique_level(int r_idx, int Depth)
  */
 static bool place_monster_one(int Depth, int y, int x, int r_idx, bool slp, bool clo)
 {
-	int			i, Ind;
+        int                     i, Ind, j;
 
 	cave_type		*c_ptr;
 
 	monster_type	*m_ptr;
 
-	monster_race	*r_ptr = &r_info[r_idx];
+        monster_race    *r_ptr = &r_info[r_idx];
 
 	char buf[80];
 
@@ -1518,6 +1576,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, bool slp, bool
 	m_ptr->fx = x;
 	m_ptr->dun_depth = Depth;
 
+        m_ptr->special = FALSE;
 
 	/* Hack -- Count the monsters on the level */
 	r_ptr->cur_num++;
@@ -1542,13 +1601,28 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, bool slp, bool
 
 
 	/* Extract the monster base speed */
-	m_ptr->mspeed = r_ptr->speed;
+        m_ptr->speed = r_ptr->speed;
+        m_ptr->mspeed = m_ptr->speed;
+
+        /* Extract base ac and  other things */
+        m_ptr->ac = r_ptr->ac;
+
+        for (j = 0; j < 4; j++)
+        {
+                m_ptr->blow[j].effect = r_ptr->blow[j].effect;
+                m_ptr->blow[j].method = r_ptr->blow[j].method;
+                m_ptr->blow[j].d_dice = r_ptr->blow[j].d_dice;
+                m_ptr->blow[j].d_side = r_ptr->blow[j].d_side;
+        }
+        m_ptr->level = r_ptr->level;
+        m_ptr->exp = MONSTER_EXP(m_ptr->level);
+        m_ptr->owner = 0;
 
 	/* Hack -- small racial variety */
 	if (!(r_ptr->flags1 & RF1_UNIQUE))
 	{
 		/* Allow some small variation per monster */
-		i = extract_energy[r_ptr->speed] / 10;
+                i = extract_energy[m_ptr->speed] / 10;
 		if (i) m_ptr->mspeed += rand_spread(0, i);
 	}
 
@@ -2272,7 +2346,7 @@ bool summon_specific_race_somewhere(int Depth, int r_idx, unsigned char size)
 bool multiply_monster(int m_idx)
 {
 	monster_type	*m_ptr = &m_list[m_idx];
-	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race    *r_ptr = R_INFO(m_ptr);
 
 	int			i, y, x;
 
@@ -2318,7 +2392,7 @@ void message_pain(int Ind, int m_idx, int dam)
 	int				percentage;
 
 	monster_type		*m_ptr = &m_list[m_idx];
-	monster_race		*r_ptr = &r_info[m_ptr->r_idx];
+        monster_race            *r_ptr = R_INFO(m_ptr);
 
 	char			m_name[80];
 
@@ -2429,7 +2503,7 @@ void update_smart_learn(int m_idx, int what)
 
 	monster_type *m_ptr = &m_list[m_idx];
 
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
 
 	/* Not allowed to learn */
@@ -2570,3 +2644,46 @@ int race_index(char * name)
 	return 0;
 }
 
+monster_race* r_info_get(monster_type *m_ptr)
+{
+        if (m_ptr->special) return (m_ptr->r_ptr);
+        else return (&r_info[m_ptr->r_idx]);
+}
+
+cptr r_name_get(monster_type *m_ptr)
+{
+        static char buf[100];
+
+        if (m_ptr->special)
+        {
+                switch (m_ptr->r_idx - 1)
+                {
+                        case SV_GOLEM_WOOD:
+                                sprintf(buf, "Wood Golem");
+                                break;
+                        case SV_GOLEM_COPPER:
+                                sprintf(buf, "Copper Golem");
+                                break;
+                        case SV_GOLEM_IRON:
+                                sprintf(buf, "Iron Golem");
+                                break;
+                        case SV_GOLEM_ALUM:
+                                sprintf(buf, "Aluminium Golem");
+                                break;
+                        case SV_GOLEM_SILVER:
+                                sprintf(buf, "Silver Golem");
+                                break;
+                        case SV_GOLEM_GOLD:
+                                sprintf(buf, "Gold Golem");
+                                break;
+                        case SV_GOLEM_MITHRIL:
+                                sprintf(buf, "Mithril Golem");
+                                break;
+                        case SV_GOLEM_ADAM:
+                                sprintf(buf, "Adamantite Golem");
+                                break;
+                }
+                return (buf);
+        }
+        else return (r_name + r_info[m_ptr->r_idx].name);
+}

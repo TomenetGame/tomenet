@@ -977,7 +977,7 @@ void cmd_activate(void)
 {
 	int item;
 
-	if (!c_get_item(&item, "Activate what? ", TRUE, FALSE, FALSE))
+        if (!c_get_item(&item, "Activate what? ", TRUE, TRUE, FALSE))
 	{
 		return;
 	}

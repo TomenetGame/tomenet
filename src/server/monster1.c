@@ -837,7 +837,7 @@ static void roff_aux(int r_idx)
 	{
 		/* Armor */
 		roff(format("%^s has an armor rating of %d",
-		            wd_he[msex], r_ptr->ac));
+                            wd_he[msex], m_ptr->ac));
 
 		/* Maximized hitpoints */
 		if (flags1 & RF1_FORCE_MAXHP)

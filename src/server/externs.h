@@ -68,7 +68,7 @@ extern magic_type ghost_spells[64];
 extern u32b spell_flags[7][9][2];
 extern cptr spell_names[8][64];
 extern byte chest_traps[64];
-extern cptr player_title[MAX_CLASS][PY_MAX_LEVEL/5];
+extern cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10];
 extern cptr color_names[16];
 extern cptr sound_names[SOUND_MAX];
 extern cptr stat_names[6];
@@ -635,6 +635,8 @@ extern void screen_roff(int r_idx);
 extern void display_roff(int r_idx);
 
 /* monster.c */
+extern cptr r_name_get(monster_type *m_ptr);
+extern monster_race* r_info_get(monster_type *m_ptr);
 extern void delete_monster_idx(int i);
 extern void delete_monster(int Depth, int y, int x);
 extern void compact_monsters(int size);
@@ -670,7 +672,7 @@ extern int Setup_net_server(void);
 extern bool Destroy_connection(int Ind, char *reason);
 extern int Send_plusses(int Ind, int tohit, int todam);
 extern int Send_ac(int Ind, int base, int plus);
-extern int Send_experience(int Ind, int lev, int max_exp, int cur_exp, s32b adv_exp);
+extern int Send_experience(int Ind, int lev, s32b max_exp, s32b cur_exp, s32b adv_exp);
 extern int Send_gold(int Ind, s32b gold);
 extern int Send_hp(int Ind, int mhp, int chp);
 extern int Send_sp(int Ind, int msp, int csp);
@@ -844,6 +846,7 @@ extern bool project_hook(int Ind, int typ, int dir, int dam, int flg);
 extern bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int flg);
 
 /* spells2.c */
+extern void golem_creation(int Ind);
 extern bool hp_player(int Ind, int num);
 extern bool hp_player_quiet(int Ind, int num);
 extern void warding_glyph(int Ind);

@@ -104,6 +104,7 @@ void teleport_away(int m_idx, int dis)
 	bool		look = TRUE;
 
 	monster_type	*m_ptr = &m_list[m_idx];
+        monster_race    *r_ptr = R_INFO(m_ptr);
 
 
 	/* Paranoia */
@@ -111,6 +112,8 @@ void teleport_away(int m_idx, int dis)
 
 	/* Space/Time Anchor */
 	if (check_st_anchor(m_ptr->dun_depth)) return;
+
+        if (r_ptr->flags3 & RF3_IM_TELE) return;
 
 	/* Save the old location */
 	oy = m_ptr->fy;
@@ -2450,7 +2453,7 @@ static bool project_i(int Ind, int who, int r, int Depth, int y, int x, int dam,
 static bool psi_backlash(int Ind, int m_idx, int dam)
 {
 	monster_type *m_ptr = &m_list[m_idx];
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 	char m_name[80];
 	player_type *p_ptr;
 
@@ -2589,10 +2592,10 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
  	m_ptr = &m_list[c_ptr->m_idx];
 
 	/* Acquire race pointer */
-	r_ptr = &r_info[m_ptr->r_idx];
+        r_ptr = R_INFO(m_ptr);
 
 	/* Acquire name */
-	name = (r_name + r_ptr->name);
+        name = r_name_get(m_ptr);
 
 	/* Never affect projector */
 	if ((who > 0) && (c_ptr->m_idx == who)) return (FALSE);
@@ -3337,6 +3340,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		case GF_AWAY_UNDEAD:
 		{
 			/* Only affect undead */
+                        if (!(r_ptr->flags3 & RF3_IM_TELE))
 			if (r_ptr->flags3 & RF3_UNDEAD)
 			{
 				if (seen) obvious = TRUE;
@@ -3354,6 +3358,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		case GF_AWAY_EVIL:
 		{
 			/* Only affect undead */
+                        if (!(r_ptr->flags3 & RF3_IM_TELE))
 			if (r_ptr->flags3 & RF3_EVIL)
 			{
 				if (seen) obvious = TRUE;
@@ -3370,12 +3375,15 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			/* Teleport monster (Use "dam" as "power") */
 		case GF_AWAY_ALL:
 		{
-			/* Obvious */
-			if (seen) obvious = TRUE;
+                        if (!(r_ptr->flags3 & RF3_IM_TELE))
+                        if (!(r_ptr->flags3 & RF3_IM_TELE))
+                        {
+                                /* Obvious */
+                                if (seen) obvious = TRUE;
 
-			/* Prepare to teleport */
-			do_dist = dam;
-
+                                /* Prepare to teleport */
+                                do_dist = dam;
+                        }
 			/* No "real" damage */
 			dam = 0;
 			break;
@@ -3604,7 +3612,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			m_ptr = &m_list[c_ptr->m_idx];
 
 			/* Hack -- Get new race */
-			r_ptr = &r_info[m_ptr->r_idx];
+                        r_ptr = R_INFO(m_ptr);
 		}
 	}
 

@@ -181,7 +181,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 
 	int mult = 1;
 
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        monster_race *r_ptr = R_INFO(m_ptr);
 
 	u32b f1, f2, f3;
 	bool brand_pois = FALSE;
@@ -1333,7 +1333,7 @@ void py_attack_mon(int Ind, int y, int x)
 	cave_type		*c_ptr = &cave[Depth][y][x];
 
 	monster_type	*m_ptr = &m_list[c_ptr->m_idx];
-	monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+        monster_race    *r_ptr = R_INFO(m_ptr);
 
 	object_type		*o_ptr;
 
@@ -1352,6 +1352,50 @@ void py_attack_mon(int Ind, int y, int x)
 	/* Extract monster name (or "it") */
 	monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
+        if (m_ptr->owner == p_ptr->id)
+        {
+                int ox = m_ptr->fx, oy = m_ptr->fy, nx = p_ptr->px, ny = p_ptr->py;
+
+                msg_format(Ind, "You swap positions with %s.", m_name);
+                
+                /* Update the new location */
+                cave[Depth][ny][nx].m_idx = c_ptr->m_idx;
+
+                /* Update the old location */
+                cave[Depth][oy][ox].m_idx = 0;
+
+                /* Move the monster */
+                m_ptr->fy = ny;
+                m_ptr->fx = nx;
+                p_ptr->py = oy;
+                p_ptr->px = ox;
+
+                /* Update the monster (new location) */
+                update_mon(cave[Depth][ny][nx].m_idx, TRUE);
+
+                /* Redraw the old grid */
+                everyone_lite_spot(Depth, oy, ox);
+
+                /* Redraw the new grid */
+                everyone_lite_spot(Depth, ny, nx);
+
+                /* Check for new panel (redraw map) */
+                verify_panel(Ind);
+
+                /* Update stuff */
+                p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+
+                /* Update the monsters */
+                p_ptr->update |= (PU_DISTANCE);
+
+                /* Window stuff */
+                p_ptr->window |= (PW_OVERHEAD);
+
+                /* Handle stuff XXX XXX XXX */
+                handle_stuff(Ind);
+
+                return;
+        }
 
 	/* Auto-Recall if possible and visible */
 	if (p_ptr->mon_vis[c_ptr->m_idx]) recent_track(m_ptr->r_idx);
@@ -1395,7 +1439,7 @@ void py_attack_mon(int Ind, int y, int x)
 	while (num++ < p_ptr->num_blow)
 	{
 		/* Test for hit */
-		if (test_hit_norm(chance, r_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]))
+                if (test_hit_norm(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]))
 		{
 			/* Sound */
 			sound(Ind, SOUND_HIT);
@@ -1404,9 +1448,9 @@ void py_attack_mon(int Ind, int y, int x)
 			if ((!backstab) && (!stab_fleeing))
 				msg_format(Ind, "You hit %s.", m_name);
 			else if(backstab)
-				msg_format(Ind, "You cruelly stab the helpless, sleeping %s!", (r_name + r_info[m_ptr->r_idx].name));
+                                msg_format(Ind, "You cruelly stab the helpless, sleeping %s!", r_name_get(m_ptr));
 			else
-				msg_format(Ind, "You backstab the fleeing %s!", (r_name + r_info[m_ptr->r_idx].name));
+                                msg_format(Ind, "You backstab the fleeing %s!", r_name_get(m_ptr));
 
 			/* Hack -- bare hands do one damage */
 			k = 1;

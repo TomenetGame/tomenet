@@ -48,7 +48,7 @@
 
 SERV_SRCS = \
   common/z-util.c common/z-virt.c common/z-form.c common/z-rand.c \
-  common/net-unix.c common/sockbuf.c server/variable.c server/control.c \
+  common/net-win.c common/sockbuf.c server/variable.c server/control.c \
   server/party.c server/tables.c server/util.c server/cave.c \
   server/object1.c server/object2.c server/monster1.c server/monster2.c \
   server/xtra1.c server/xtra2.c server/spells1.c server/spells2.c \
@@ -61,7 +61,7 @@ SERV_SRCS = \
 
 SERV_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
-  common/net-unix.o common/sockbuf.o server/variable.o server/control.o \
+  common/net-win.o common/sockbuf.o server/variable.o server/control.o \
   server/party.o server/tables.o server/util.o server/cave.o \
   server/object1.o server/object2.o server/monster1.o server/monster2.o \
   server/xtra1.o server/xtra2.o server/spells1.o server/spells2.o \
@@ -176,7 +176,7 @@ mangband: $(SERV_OBJS)
 	ranlib libserv.a
 	ar cq libcomm.a common/*.o
 	ranlib libcomm.a
-	$(CC) $(SCFLAGS) -o ../mangband libserv.a libcomm.a $(LDFLAGS) $(SLIBS)
+	$(CC) $(SCFLAGS) -o ../mangband.exe libserv.a libcomm.a $(LDFLAGS) $(SLIBS)
 
 
 #

@@ -32,7 +32,7 @@ bool hp_player(int Ind, int num)
 	/* Hell mode is .. hard */
 	if (p_ptr->mode == MODE_HELL)
 	  {
-	    num /= 2;
+            num = num * 3 / 4;
 	  }
 
 	if (p_ptr->chp < p_ptr->mhp)
@@ -1122,7 +1122,7 @@ bool detect_invisible(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+                monster_race *r_ptr = R_INFO(m_ptr);
 
 		int fy = m_ptr->fy;
 		int fx = m_ptr->fx;
@@ -1212,7 +1212,7 @@ bool detect_evil(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+                monster_race *r_ptr = R_INFO(m_ptr);
 
 		int fy = m_ptr->fy;
 		int fx = m_ptr->fx;
@@ -1271,7 +1271,7 @@ bool detect_creatures(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+                monster_race *r_ptr = R_INFO(m_ptr);
 
 		int fy = m_ptr->fy;
 		int fx = m_ptr->fx;
@@ -2522,7 +2522,7 @@ void aggravate_monsters(int Ind, int who)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type	*m_ptr = &m_list[i];
-		monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+                monster_race    *r_ptr = R_INFO(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -2549,10 +2549,10 @@ void aggravate_monsters(int Ind, int who)
 		if (player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx))
 		{
 			/* Speed up (instantly) to racial base + 10 */
-			if (m_ptr->mspeed < r_ptr->speed + 10)
+                        if (m_ptr->mspeed < m_ptr->speed + 10)
 			{
 				/* Speed up */
-				m_ptr->mspeed = r_ptr->speed + 10;
+                                m_ptr->mspeed = m_ptr->speed + 10;
 				speed = TRUE;
 			}
 		}
@@ -2589,7 +2589,7 @@ bool genocide(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+                monster_race *r_ptr = R_INFO(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -2621,7 +2621,7 @@ bool genocide(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type	*m_ptr = &m_list[i];
-		monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+                monster_race    *r_ptr = R_INFO(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -2636,7 +2636,8 @@ bool genocide(int Ind)
 		if (p_ptr->dun_depth != m_ptr->dun_depth) continue;
 
 		/* Delete the monster */
-		delete_monster_idx(i);
+                if (!(r_ptr->flags3 & RF3_IM_TELE)) delete_monster_idx(i);
+                else continue;
 
 		/* Take damage */
 		take_hit(Ind, randint(4), "the strain of casting Genocide");
@@ -2688,7 +2689,7 @@ bool mass_genocide(int Ind)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type	*m_ptr = &m_list[i];
-		monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+                monster_race    *r_ptr = R_INFO(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -2703,7 +2704,8 @@ bool mass_genocide(int Ind)
 		if (m_ptr->cdis > MAX_SIGHT) continue;
 
 		/* Delete the monster */
-		delete_monster_idx(i);
+                if (!(r_ptr->flags3 & RF3_IM_TELE)) delete_monster_idx(i);
+                else continue;
 
 		/* Hack -- visual feedback */
 		/* does not effect the dungeon master, because it disturbs his movement
@@ -2898,7 +2900,12 @@ void destroy_area(int Depth, int y1, int x1, int r, bool full)
 			if ((y == y1) && (x == x1)) continue;
 
 			/* Delete the monster (if any) */
-			delete_monster(Depth, y, x);
+                        if (c_ptr->m_idx > 0)
+                        {
+                                monster_race *r_ptr = R_INFO(&m_list[c_ptr->m_idx]);
+                                if (!(r_ptr->flags3 & RF3_IM_TELE)) delete_monster(Depth, y, x);
+                                else continue;
+                        }
 
 			/* Destroy "valid" grids */
 			if ((cave_valid_bold(Depth, y, x)) && !(c_ptr->info&CAVE_ICKY))
@@ -3186,7 +3193,7 @@ void earthquake(int Depth, int cy, int cx, int r)
 			if (c_ptr->m_idx > 0)
 			{
 				monster_type *m_ptr = &m_list[c_ptr->m_idx];
-				monster_race *r_ptr = &r_info[m_ptr->r_idx];
+                                monster_race *r_ptr = R_INFO(m_ptr);
 
 				/* Most monsters cannot co-exist with rock */
 				if (!(r_ptr->flags2 & RF2_KILL_WALL) &&
@@ -3387,7 +3394,12 @@ void wipe_spell(int Depth, int cy, int cx, int r)
 			c_ptr->feat = FEAT_FLOOR;
 			
 			/* Delete monsters */
-			delete_monster(Depth, yy, xx);
+                        if (c_ptr->m_idx > 0)
+                        {
+                                monster_race *r_ptr = R_INFO(&m_list[c_ptr->m_idx]);
+                                if (!(r_ptr->flags3 & RF3_IM_TELE)) delete_monster(Depth, y, x);
+                                else continue;
+                        }
 			
 			/* Delete objects */
 			delete_object(Depth, yy, xx);
@@ -3444,7 +3456,7 @@ static void cave_temp_room_lite(int Ind)
 
 			monster_type	*m_ptr = &m_list[c_ptr->m_idx];
 
-			monster_race	*r_ptr = &r_info[m_ptr->r_idx];
+                        monster_race    *r_ptr = R_INFO(m_ptr);
 
 			/* Update the monster */
 			update_mon(c_ptr->m_idx, FALSE);
@@ -3964,4 +3976,255 @@ bool sleep_monsters_touch(int Ind)
 
 	int flg = PROJECT_KILL | PROJECT_HIDE;
 	return (project(0 - Ind, 1, p_ptr->dun_depth, p_ptr->py, p_ptr->px, p_ptr->lev, GF_OLD_SLEEP, flg));
+}
+
+/* Scan magical powers for the golem */
+void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
+{
+        u32b f1, f2, f3;        
+
+	object_flags(o_ptr, &f1, &f2, &f3);
+
+        if (f1 & TR1_LIFE) r_ptr->hdice += o_ptr->pval;
+        if (f1 & TR1_SPEED) r_ptr->speed += o_ptr->pval * 2 / 3;
+        if (f1 & TR1_TUNNEL) r_ptr->flags2 |= RF2_KILL_WALL;
+        if (f2 & TR2_RES_FIRE) r_ptr->flags3 |= RF3_IM_FIRE;
+        if (f2 & TR2_RES_ACID) r_ptr->flags3 |= RF3_IM_ACID;
+        if (f2 & TR2_RES_NETHER) r_ptr->flags3 |= RF3_RES_NETH;
+        if (f2 & TR2_RES_NEXUS) r_ptr->flags3 |= RF3_RES_NEXU;
+        if (f2 & TR2_RES_DISEN) r_ptr->flags3 |= RF3_RES_DISE;
+}
+
+/* Create a mindless servant ! */
+void golem_creation(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+        monster_race *r_ptr;
+        monster_type *m_ptr;
+        int i;
+        int golem_type = -1;
+        int golem_arms[4], golem_m_arms = 0;
+        int golem_legs[30], golem_m_legs = 0;
+        s16b golem_flags = 0;
+        cave_type *c_ptr;
+        int x, y;
+        bool ok = FALSE;
+
+        for (x = p_ptr->px - 1; x <= p_ptr->px; x++)        
+        for (y = p_ptr->py - 1; y <= p_ptr->py; y++)
+        {
+                /* Verify location */
+                if (!in_bounds(p_ptr->dun_depth, y, x)) continue;
+
+                /* Require empty space */
+                if (!cave_empty_bold(p_ptr->dun_depth, y, x)) continue;
+
+                /* Hack -- no creation on glyph of warding */
+                if (cave[p_ptr->dun_depth][y][x].feat == FEAT_GLYPH) continue;
+
+                if ((p_ptr->px == x) || (p_ptr->py == y)) continue;
+
+                ok = TRUE;
+                break;
+        }
+
+	/* Access the location */
+        c_ptr = &cave[p_ptr->dun_depth][y][x];
+
+	/* Make a new monster */
+	c_ptr->m_idx = m_pop();
+
+	/* Mega-Hack -- catch "failure" */
+        if (!c_ptr->m_idx) return;
+
+        /* Grab and allocate */
+        m_ptr = &m_list[c_ptr->m_idx];
+        MAKE(m_ptr->r_ptr, monster_race);
+        m_ptr->special = TRUE;
+        r_ptr = m_ptr->r_ptr;
+
+        r_ptr->flags1 = 0;
+        r_ptr->flags2 = 0;
+        r_ptr->flags3 = 0;
+        r_ptr->flags4 = 0;
+        r_ptr->flags5 = 0;
+        r_ptr->flags6 = 0;
+
+        msg_print(Ind, "Some of your items begins to consume in roaring flames.");
+
+        /* Find items used for "golemification" */
+        for (i = 0; i < INVEN_WIELD; i++)
+        {
+                object_type *o_ptr = &p_ptr->inventory[i];
+                unsigned char *inscription = (unsigned char *) quark_str(o_ptr->note);
+
+                if (o_ptr->tval == TV_GOLEM)
+                {
+                        if (o_ptr->sval <= SV_GOLEM_ADAM)
+                        {
+                                golem_type = o_ptr->sval;
+                        }
+                        else if (o_ptr->sval == SV_GOLEM_ARM)
+                        {
+                                int k;
+
+                                for (k = 0; k < o_ptr->number; k++)
+                                        golem_arms[golem_m_arms++] = o_ptr->pval;
+                        }
+                        else if (o_ptr->sval == SV_GOLEM_LEG)
+                        {
+                                int k;
+
+                                for (k = 0; k < o_ptr->number; k++)
+                                        golem_legs[golem_m_legs++] = o_ptr->pval;
+                        }
+                        else
+                        {
+                                golem_flags |= 1 << (o_ptr->sval - 200);
+                        }
+                }
+        }
+
+        /* Ahah FAIL !!! */
+        if ((golem_type == -1) || (golem_m_legs < 2))
+        {
+                msg_print(Ind, "The spell fails! You lose all your material.");
+                return;
+        }
+
+        r_ptr->text = 0;
+        r_ptr->name = 0;
+        r_ptr->sleep = 0;
+        r_ptr->aaf = 20;
+        r_ptr->speed = 100;
+        for (i = 0; i < golem_m_legs; i++)
+        {
+                r_ptr->speed += golem_legs[i];
+        }
+        r_ptr->mexp = 1;
+
+        r_ptr->d_attr = TERM_YELLOW;
+        r_ptr->d_char = 'g';
+        r_ptr->x_attr = TERM_YELLOW;
+        r_ptr->x_char = 'g';
+
+        r_ptr->freq_inate = 0;
+        r_ptr->freq_spell = 0;
+        r_ptr->flags1 |= RF1_FORCE_MAXHP;
+        r_ptr->flags2 |= RF2_STUPID | RF2_EMPTY_MIND | RF2_REGENERATE | RF2_POWERFUL | RF2_BASH_DOOR | RF2_MOVE_BODY;
+        r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP | RF3_IM_TELE;
+
+        switch (golem_type)
+        {
+                case SV_GOLEM_WOOD:
+                        r_ptr->hdice = 10;
+                        r_ptr->hside = 10;
+                        r_ptr->ac = 20;
+                        break;
+                case SV_GOLEM_COPPER:
+                        r_ptr->hdice = 10;
+                        r_ptr->hside = 20;
+                        r_ptr->ac = 40;
+                        break;
+                case SV_GOLEM_IRON:
+                        r_ptr->hdice = 10;
+                        r_ptr->hside = 40;
+                        r_ptr->ac = 70;
+                        break;
+                case SV_GOLEM_ALUM:
+                        r_ptr->hdice = 10;
+                        r_ptr->hside = 60;
+                        r_ptr->ac = 90;
+                        break;
+                case SV_GOLEM_SILVER:
+                        r_ptr->hdice = 10;
+                        r_ptr->hside = 70;
+                        r_ptr->ac = 100;
+                        break;
+                case SV_GOLEM_GOLD:
+                        r_ptr->hdice = 10;
+                        r_ptr->hside = 80;
+                        r_ptr->ac = 130;
+                        break;
+                case SV_GOLEM_MITHRIL:
+                        r_ptr->hdice = 10;
+                        r_ptr->hside = 100;
+                        r_ptr->ac = 160;
+                        break;
+                case SV_GOLEM_ADAM:
+                        r_ptr->hdice = 10;
+                        r_ptr->hside = 150;
+                        r_ptr->ac = 210;
+                        break;
+        }
+        r_ptr->extra = golem_flags;
+#if 0
+        /* Find items used for "golemification" */
+        for (i = 0; i < INVEN_WIELD; i++)
+        {
+                object_type *o_ptr = &p_ptr->inventory[i];
+                unsigned char *inscription = (unsigned char *) quark_str(o_ptr->note);
+
+                /* Additionnal items ? */
+                if (inscription != NULL)
+                {
+                        /* scan the inscription for @P */
+                        while ((*inscription != '\0') && !ok)
+                        {
+		
+                                if (*inscription == '@')
+                                {
+                                        inscription++;
+			
+                                        /* a valid @G has been located */
+                                        if (*inscription == 'G')
+                                        {                
+                                                inscription++;
+
+                                                scan_golem_flags(o_ptr, r_ptr);
+                                        }
+                                }
+                                inscription++;
+                        }
+                }
+        }
+#endif
+        m_ptr->speed = r_ptr->speed;
+        m_ptr->mspeed = m_ptr->speed;
+        m_ptr->ac = r_ptr->ac;
+        m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
+        m_ptr->hp = maxroll(r_ptr->hdice, r_ptr->hside);
+        m_ptr->clone = TRUE;
+
+        for (i = 0; i < golem_m_arms; i++)
+        {
+                r_ptr->blow[i].method = r_ptr->blow[i].method = RBM_HIT;
+                r_ptr->blow[i].effect = r_ptr->blow[i].effect = RBE_HURT;
+                r_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice = (golem_type + 1) * 3;
+                r_ptr->blow[i].d_side = r_ptr->blow[i].d_side = 3 + golem_arms[i];
+        }
+
+        m_ptr->owner = p_ptr->id;
+        m_ptr->r_idx = 1 + golem_type;
+
+        m_ptr->level = p_ptr->lev;
+        m_ptr->exp = MONSTER_EXP(m_ptr->level);
+
+	/* Assume no sleeping */
+	m_ptr->csleep = 0;
+        m_ptr->dun_depth = p_ptr->dun_depth;
+        m_ptr->fx = x;
+        m_ptr->fy = y;
+
+	/* No "damage" yet */
+	m_ptr->stunned = 0;
+	m_ptr->confused = 0;
+	m_ptr->monfear = 0;
+
+	/* No knowledge */
+	m_ptr->cdis = 0;
+        m_ptr->mind = GOLEM_NONE;
+
+	/* Update the monster */
+	update_mon(c_ptr->m_idx, TRUE);
 }

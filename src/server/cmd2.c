@@ -2515,7 +2515,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 			cave_type *c_ptr = &cave[Depth][y][x];
 
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
-			monster_race *r_ptr = &r_info[m_ptr->r_idx];
+                        monster_race *r_ptr = R_INFO(m_ptr);
 
 			/* Check the visibility */
 			visible = p_ptr->mon_vis[c_ptr->m_idx];
@@ -2524,7 +2524,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 			hit_body = TRUE;
 
 			/* Did we hit it (penalize range) */
-			if (test_hit_fire(chance - cur_dis, r_ptr->ac, visible))
+                        if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible))
 			{
 				bool fear = FALSE;
 
@@ -2923,7 +2923,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 			cave_type *c_ptr = &cave[Depth][y][x];
 
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
-			monster_race *r_ptr = &r_info[m_ptr->r_idx];
+                        monster_race *r_ptr = R_INFO(m_ptr);
 
 			/* Check the visibility */
 			visible = p_ptr->mon_vis[c_ptr->m_idx];
@@ -2932,7 +2932,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 			hit_body = TRUE;
 
 			/* Did we hit it (penalize range) */
-			if (test_hit_fire(chance - cur_dis, r_ptr->ac, visible))
+                        if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible))
 			{
 				bool fear = FALSE;
 
