@@ -927,6 +927,9 @@ bool check_antimagic(int Ind)
 			/* Enforce a "circular" explosion */
 			if ((dis = distance(y2, x2, y, x)) > MONSTER_ANTIDIS) continue;
 
+			/* dont use removed monsters */
+			if(!m_ptr->r_idx) continue;
+
 			m_ptr = &m_list[m_idx];	// pfft, bad design
 			r_ptr = race_inf(m_ptr);
 
