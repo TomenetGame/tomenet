@@ -1439,8 +1439,6 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (power > 20) dice += 2;
 			if (power > 30) dice += 2;
 #endif
-			printf("rlev: %d\n", rlev);
-			printf("%d %dd6\n", fois, dice);
 			disturb(Ind, 1, 0);
 			for (k = 0; k < fois; k++)
 			{
