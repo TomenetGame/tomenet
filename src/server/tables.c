@@ -1696,6 +1696,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,
                         },
+                        {
+                                SKILL_MARTIAL_ARTS,
+                                '+', 0,
+                                '+', 300,
+                        },
 
                         /* Magic tree */
                         {
@@ -1865,6 +1870,12 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 700,
                         },
+                        {
+                                SKILL_MARTIAL_ARTS,
+                                '+', 0,
+                                '+', 600,
+                        },
+
                         {
                                 SKILL_DEVICE,
                                 '+', 300,
@@ -2068,6 +2079,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_ARCHERY,
                                 '+', 0,
                                 '+', 800,
+                        },
+                        {
+                                SKILL_XBOW,
+                                '+', 0,
+                                '+', 700,
                         },
                         {
                                 SKILL_MAGIC,
@@ -4712,6 +4728,26 @@ skill_type s_info[MAX_SKILLS] =
                 /* Flags */
                 0,
         },
+        {
+                "Martial Arts",
+				"Ability to combat bare-handed.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
 };
 
 /*
@@ -4733,6 +4769,7 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_ARCHERY, SKILL_BOW },
         { SKILL_ARCHERY, SKILL_XBOW },
         { SKILL_ARCHERY, SKILL_HUNTING },
+        { SKILL_COMBAT, SKILL_MARTIAL_ARTS},
 
         { -1, SKILL_MAGIC },
         { SKILL_MAGIC, SKILL_DEVICE },

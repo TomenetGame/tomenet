@@ -1610,11 +1610,12 @@ void calc_body_bonus(int Ind)
 
 bool monk_heavy_armor(int Ind)
 {
-#if 0 // DGDGDGDG -- no more monks for the time being
+#if 1 // DGDGDGDG -- no more monks for the time being
         player_type *p_ptr = Players[Ind];
 	u16b monk_arm_wgt = 0;
 
-	if (!(p_ptr->pclass == CLASS_MONK)) return FALSE;
+//	if (!(p_ptr->pclass == CLASS_MONK)) return FALSE;
+	if (!get_skill(p_ptr, SKILL_MARTIAL_ARTS)) return FALSE;
 
 	/* Weight the armor */
 	monk_arm_wgt += p_ptr->inventory[INVEN_BODY].weight;
@@ -1624,7 +1625,8 @@ bool monk_heavy_armor(int Ind)
 	monk_arm_wgt += p_ptr->inventory[INVEN_HANDS].weight;
 	monk_arm_wgt += p_ptr->inventory[INVEN_FEET].weight;
 
-	return (monk_arm_wgt > ( 100 + (p_ptr->lev * 4))) ;
+//	return (monk_arm_wgt > ( 100 + (p_ptr->lev * 4))) ;
+	return (monk_arm_wgt > 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 100));
 #endif
 }
 
@@ -1990,8 +1992,16 @@ static void calc_bonuses(int Ind)
 			break;
 	}
 #else	// 0
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(Ind))
+	{
+		p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
 
-			p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
+			/* Free action if unencumbered at level 25 */
+			if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 24)
+				p_ptr->free_act = TRUE;
+	}
+
+	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
 #endif	// 0
 
 	/* Compute antimagic */
@@ -2446,41 +2456,43 @@ static void calc_bonuses(int Ind)
 			p_ptr->window |= (PW_PLAYER);
 		}
 	}
-#if 0 // DGDGDGDGDG - no monks ffor the time being
+#if 1 // DGDGDGDGDG - no monks ffor the time being
 	/* Monks get extra ac for armour _not worn_ */
-	if ((p_ptr->pclass == CLASS_MONK) && !(monk_heavy_armor(Ind)))
-	  {
-	    if (!(p_ptr->inventory[INVEN_BODY].k_idx))
-	      {
-		p_ptr->to_a += (p_ptr->lev * 3) / 2;
-		p_ptr->dis_to_a += (p_ptr->lev * 3) / 2;
-	      }
-	    if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (p_ptr->lev > 15))
-	      {
-		p_ptr->to_a += ((p_ptr->lev - 13) / 3);
-		p_ptr->dis_to_a += ((p_ptr->lev - 13) / 3);
-	      }
-	    if (!(p_ptr->inventory[INVEN_ARM].k_idx) && (p_ptr->lev > 10))
-	      {
-		p_ptr->to_a += ((p_ptr->lev - 8) / 3);
-		p_ptr->dis_to_a += ((p_ptr->lev - 8) / 3);
-	      }
-	    if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (p_ptr->lev > 4))
-	      {
-		p_ptr->to_a += (p_ptr->lev - 2) / 3;
-		p_ptr->dis_to_a += (p_ptr->lev -2) / 3;
-	      }
-	    if (!(p_ptr->inventory[INVEN_HANDS].k_idx))
-	      {
-		p_ptr->to_a += (p_ptr->lev / 2);
-		p_ptr->dis_to_a += (p_ptr->lev / 2);
-	      }
-	    if (!(p_ptr->inventory[INVEN_FEET].k_idx))
-	      {
-		p_ptr->to_a += (p_ptr->lev / 3);
-		p_ptr->dis_to_a += (p_ptr->lev / 3);
-	      }
-	  }
+//	if ((p_ptr->pclass == CLASS_MONK) && !(monk_heavy_armor(Ind)))
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !(monk_heavy_armor(Ind)))
+	{
+		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
+		if (!(p_ptr->inventory[INVEN_BODY].k_idx))
+		{
+			p_ptr->to_a += (marts * 3) / 2;
+			p_ptr->dis_to_a += (marts * 3) / 2;
+		}
+		if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15))
+		{
+			p_ptr->to_a += ((marts - 13) / 3);
+			p_ptr->dis_to_a += ((marts - 13) / 3);
+		}
+		if (!(p_ptr->inventory[INVEN_ARM].k_idx) && (marts > 10))
+		{
+			p_ptr->to_a += ((marts - 8) / 3);
+			p_ptr->dis_to_a += ((marts - 8) / 3);
+		}
+		if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4))
+		{
+			p_ptr->to_a += (marts - 2) / 3;
+			p_ptr->dis_to_a += (marts -2) / 3;
+		}
+		if (!(p_ptr->inventory[INVEN_HANDS].k_idx))
+		{
+			p_ptr->to_a += (marts / 2);
+			p_ptr->dis_to_a += (marts / 2);
+		}
+		if (!(p_ptr->inventory[INVEN_FEET].k_idx))
+		{
+			p_ptr->to_a += (marts / 3);
+			p_ptr->dis_to_a += (marts / 3);
+		}
+	}
 #endif
 	/* Apply temporary "stun" */
 	if (p_ptr->stun > 50)
@@ -2891,18 +2903,20 @@ static void calc_bonuses(int Ind)
         }
 
 	/* Different calculation for monks with empty hands */
-#if 0 // DGDGDGDG -- no more monks for the time being
-        if (p_ptr->pclass == CLASS_MONK)
+#if 1 // DGDGDGDG -- no more monks for the time being
+//	if (p_ptr->pclass == CLASS_MONK)
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx)
 	{
+		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
 		p_ptr->num_blow = 0;
 
-		if (p_ptr->lev >  9) p_ptr->num_blow++;
-		if (p_ptr->lev > 19) p_ptr->num_blow++;
-		if (p_ptr->lev > 29) p_ptr->num_blow++;
-		if (p_ptr->lev > 34) p_ptr->num_blow++;
-		if (p_ptr->lev > 39) p_ptr->num_blow++;
-		if (p_ptr->lev > 44) p_ptr->num_blow++;
-		if (p_ptr->lev > 49) p_ptr->num_blow++;
+		if (marts >  9) p_ptr->num_blow++;
+		if (marts > 19) p_ptr->num_blow++;
+		if (marts > 29) p_ptr->num_blow++;
+		if (marts > 34) p_ptr->num_blow++;
+		if (marts > 39) p_ptr->num_blow++;
+		if (marts > 44) p_ptr->num_blow++;
+		if (marts > 49) p_ptr->num_blow++;
 
 		if (monk_heavy_armor(Ind)) p_ptr->num_blow /= 2;
 
@@ -2910,11 +2924,11 @@ static void calc_bonuses(int Ind)
 
 		if (!monk_heavy_armor(Ind))
 		{
-			p_ptr->to_h += (p_ptr->lev / 3);
-			p_ptr->to_d += (p_ptr->lev / 3);
+			p_ptr->to_h += (marts / 3);
+			p_ptr->to_d += (marts / 3);
 
-			p_ptr->dis_to_h += (p_ptr->lev / 3);
-			p_ptr->dis_to_d += (p_ptr->lev / 3);
+			p_ptr->dis_to_h += (marts / 3);
+			p_ptr->dis_to_d += (marts / 3);
 		}
 	}
 #endif

@@ -1346,24 +1346,27 @@ void py_attack_player(int Ind, int y, int x, bool old)
 				k = p_ptr->lev;
 			if (p_ptr->fruit_bat)
 				k = p_ptr->lev * ((p_ptr->lev / 10) + 1);
-#if 0 // DGDGDG -- monks are no more
-			if (p_ptr->pclass == CLASS_MONK)
+#if 1 // DGDGDG -- monks are no more
+//			if (p_ptr->pclass == CLASS_MONK)
+			if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx
+					&& !p_ptr->inventory[INVEN_ARM].k_idx)
 			{
 				int special_effect = 0, stun_effect = 0, times = 0;
 				martial_arts *ma_ptr = &ma_blows[0], *old_ptr = &ma_blows[0];
 				int resist_stun = 0;
+				int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
 				if (q_ptr->resist_conf) resist_stun += 44;
 				if (q_ptr->free_act) resist_stun += 44;
 
-				for (times = 0; times < (p_ptr->lev<7?1:p_ptr->lev/7); times++)
+				for (times = 0; times < (marts<7?1:marts/7); times++)
 				/* Attempt 'times' */
 				{
 					do
 					{
 						ma_ptr = &ma_blows[rand_int(MAX_MA)];
 					}
-					while ((ma_ptr->min_level > p_ptr->lev)
-					    || (randint(p_ptr->lev)<ma_ptr->chance));
+					while ((ma_ptr->min_level > marts)
+					    || (randint(marts)<ma_ptr->chance));
 
 					/* keep the highest level attack available we found */
 					if ((ma_ptr->min_level > old_ptr->min_level) &&
@@ -1400,7 +1403,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 					msg_format(Ind, ma_ptr->desc, q_ptr->name);
 				}
 
-				k = critical_norm(Ind, p_ptr->lev * (randint(10)), ma_ptr->min_level, k, FALSE);
+				k = critical_norm(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < q_ptr->chp))
 				{
@@ -1411,7 +1414,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 
 				if (stun_effect && ((k + p_ptr->to_d) < q_ptr->chp))
 				{
-					if (p_ptr->lev > randint((q_ptr->lev * 2) + resist_stun + 10))
+					if (marts > randint((q_ptr->lev * 2) + resist_stun + 10))
 					{
 						msg_format(Ind, "\377o%^s is stunned.", q_ptr->name);
 
@@ -1419,7 +1422,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 					}
 				}
 			} else
-#endif
+#endif	// 0 (Martial arts)
 			/* Handle normal weapon */
 			if (o_ptr->k_idx)
 			{
@@ -1730,27 +1733,30 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				
 			if (p_ptr->fruit_bat)
 				k = p_ptr->lev * ((p_ptr->lev / 10) + 1);
-#if 0 // DGHDGDGDG -- monks are no more
-			if (p_ptr->pclass == CLASS_MONK)
+#if 1 // DGHDGDGDG -- monks are no more
+//			if (p_ptr->pclass == CLASS_MONK)
+			if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx
+					&& !p_ptr->inventory[INVEN_ARM].k_idx)
 			{
 				int special_effect = 0, stun_effect = 0, times = 0;
 				martial_arts * ma_ptr = &ma_blows[0], * old_ptr = &ma_blows[0];
 				int resist_stun = 0;
+				int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
 				if (r_ptr->flags1 & RF1_UNIQUE) resist_stun += 88;
 				if (r_ptr->flags3 & RF3_NO_CONF) resist_stun += 44;
 				if (r_ptr->flags3 & RF3_NO_SLEEP) resist_stun += 44;
 				if (r_ptr->flags3 & RF3_UNDEAD)
 					resist_stun += 88;
 
-				for (times = 0; times < (p_ptr->lev<7?1:p_ptr->lev/7); times++)
+				for (times = 0; times < (marts<7?1:marts/7); times++)
 				/* Attempt 'times' */
 				{
 					do
 					{
 						ma_ptr = &ma_blows[(randint(MAX_MA))-1];
 					}
-					while ((ma_ptr->min_level > p_ptr->lev)
-					    || (randint(p_ptr->lev)<ma_ptr->chance));
+					while ((ma_ptr->min_level > marts)
+					    || (randint(marts)<ma_ptr->chance));
 
 					/* keep the highest level attack available we found */
 					if ((ma_ptr->min_level > old_ptr->min_level) &&
@@ -1797,7 +1803,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 					msg_format(Ind, ma_ptr->desc, m_name);
 				}
 
-				k = critical_norm(Ind, p_ptr->lev * (randint(10)), ma_ptr->min_level, k, FALSE);
+				k = critical_norm(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < m_ptr->hp))
 				{
@@ -1809,7 +1815,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				else if ((special_effect == MA_SLOW) && ((k + p_ptr->to_d) < m_ptr->hp))
 				{
 					if (!(r_ptr->flags1 & RF1_UNIQUE) &&
-					    (randint(p_ptr->lev * 2) > r_ptr->level) &&
+					    (randint(marts * 2) > r_ptr->level) &&
 					    m_ptr->mspeed > 60)
 					{
 						msg_format(Ind, "\377o%^s starts limping slower.", m_name);
@@ -1819,7 +1825,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 
 				if (stun_effect && ((k + p_ptr->to_d) < m_ptr->hp))
 				{
-					if (p_ptr->lev > randint(r_ptr->level + resist_stun + 10))
+					if (marts > randint(r_ptr->level + resist_stun + 10))
 					{
 						if (m_ptr->stunned)
 							msg_format(Ind, "\377o%^s is still stunned.", m_name);
@@ -1830,7 +1836,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 					}
 				}
 			} else
-#endif
+#endif	// 0 (martial arts)
 			/* Handle normal weapon */
 			if (o_ptr->k_idx)
 			{
