@@ -1983,6 +1983,32 @@ void bleed_with_neighbors(int Depth)
 	Rand_quick = rand_old;
 }
 
+void wild_add_uhouses(int Depth){
+#ifdef NEWHOUSES
+	int i;
+ 	cave_type *c_ptr;
+ 	house_type *h_ptr;
+	for(i=0;i<num_houses;i++){
+		if(houses[i].depth==Depth && !(houses[i].flags&HF_STOCK)){
+ 			int x,y;
+ 			h_ptr=&houses[i];
+			/* draw our user defined house */
+ 			if(h_ptr->flags&HF_RECT){
+ 				for(y=0;y<h_ptr->coords.rect.height;y++){
+ 					for(x=0;x<h_ptr->coords.rect.width;x++){
+ 						c_ptr=&cave[Depth][y][x];
+ 						c_ptr->feat=FEAT_PERM_EXTRA;
+ 					}
+ 				}
+			}
+			else{
+				/* polygonal house */
+			}
+		}
+	}
+#endif
+}
+
 static void wilderness_gen_hack(int Depth)
 {
 	int y, x, x1, x2, y1, y2;
@@ -2063,6 +2089,8 @@ static void wilderness_gen_hack(int Depth)
 		}
 		terrain.dwelling -= 50;
 	}		
+
+	wild_add_uhouses(Depth);
 	
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = rand_old;
@@ -2072,8 +2100,6 @@ static void wilderness_gen_hack(int Depth)
 	/* Hack -- reattach existing monsters to the map */
 	setup_monsters();
 }
-
-
 
 
 /* Generates a wilderness level. */
