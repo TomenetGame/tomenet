@@ -35,7 +35,7 @@ void world_comm(int fd, int arg){
 				/* private message from afar -authed */
 				for(i=1; i<=NumPlayers; i++){
 					if(!strcmp(Players[i]->name, wpk->d.pmsg.victim)){
-						msg_format(i, "\377o[%s] %s", wpk->d.pmsg.player, wpk->d.pmsg.ctxt);
+						msg_format(i, "\377o[%s:%s] %s", wpk->d.pmsg.player, Players[i]->name, wpk->d.pmsg.ctxt);
 					}
 				}
 				break;
