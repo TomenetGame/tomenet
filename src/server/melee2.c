@@ -2607,6 +2607,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
         else p_ptr = NULL;
 
         /* Lets find a target */
+
         if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK))
         {
                 tm_idx = p_ptr->target_who;
@@ -2623,6 +2624,14 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
                         cave_type *c_ptr;
 
                         if (!in_bounds(m_ptr->dun_depth, sy, sx)) continue;
+
+			/* ignore ourself */
+			if(sx==m_ptr->fx && sy==m_ptr->fy) continue;
+
+			/* no point if there are no players on depth */
+			/* and it would crash anyway ;) */
+
+			if(!cave[m_ptr->dun_depth]) return FALSE;
 
                         c_ptr = &cave[m_ptr->dun_depth][sy][sx];
 			if(!c_ptr->m_idx) continue;
