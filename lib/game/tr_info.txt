@@ -234,7 +234,7 @@ F:FLOOR | CHEST | DOOR
 N:39:Trap of Sinking
 I:2:50:0:0:3:0d0:w
 D:A trapdoor opens up under you!
-F:FLOOR | CHEST | DOOR
+F:FLOOR
 
 N:40:Trap of Mana Drain
 I:4:100:50:3:4:0d0:r
@@ -895,7 +895,7 @@ I:12:10:5:5:38:0d0:W
 D:You feel very despondent..
 F:FLOOR | DOOR
 
-N:190:Trap of Despoir
+N:190:Trap of Despair
 I:8:10:5:5:10:0d0:y
 D:You are driven to despair.
 F:FLOOR | DOOR | CHEST

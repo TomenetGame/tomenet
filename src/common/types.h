@@ -1047,6 +1047,33 @@ struct quest
 	int max_num;	/* Number required (unused) */
 };
 
+/* Quests, random or preset by the dungeon master */
+
+#if 0
+/* Quest prize types */
+#define QPRIZE_CASH 1
+#define QPRIZE_GOOD 2
+#define QPRIZE_EXC 3
+#define QPRIZE_ART 4	/* Must be rare, hard, and only ever by DM */
+
+/* Quest types */
+#define QUEST_RANDOM 1	/* Random quest, not set by the DM */
+#define QUEST_MONSTER 2 /* Kill some normal monsters. */
+#define QUEST_UNIQUE 4  /* Kill unique monster (unkilled by players) */
+#define QUEST_OBJECT 8	/* Find some object. Must not be owned, or found
+			   in the town. */
+#define QUEST_RACE 16	/* Race quest - ie, not personal */
+#define QUEST_GUILD 32	/* Guildmaster's quest (no prize) */
+
+struct quest_type{
+	s16b id;		/* Quest ID. Value of 0 means inactive */
+	byte type;		/* Quest type */
+	byte prize;		/* Prize type. */
+
+};
+
+#endif
+
 /* evileye - same as above, but multiplayerized. */
 struct quest_type{
 	s16b active;		/* quest is active? */

@@ -2157,6 +2157,7 @@ static void calc_bonuses(int Ind)
 		if (f2 & TR2_RES_FIRE) p_ptr->resist_fire = TRUE;
 		if (f2 & TR2_RES_COLD) p_ptr->resist_cold = TRUE;
 		if (f2 & TR2_RES_POIS) p_ptr->resist_pois = TRUE;
+		if (f2 & TR2_RES_FEAR) p_ptr->resist_fear = TRUE;
 		if (f2 & TR2_RES_CONF) p_ptr->resist_conf = TRUE;
 		if (f2 & TR2_RES_SOUND) p_ptr->resist_sound = TRUE;
 		if (f2 & TR2_RES_LITE) p_ptr->resist_lite = TRUE;

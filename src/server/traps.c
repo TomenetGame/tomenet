@@ -992,10 +992,10 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 
    if (num == 1)
 //      msg_format(Ind, "Suddenly %s hits you!", i_name);
-      msg_format(Ind, "Suddenly %s are shot at you!", i_name);
+      msg_format(Ind, "Suddenly %s is shot at you!", i_name);
    else
 //      msg_format(Ind, "Suddenly %s hit you!", i_name);
-      msg_format(Ind, "Suddenly %s is shot at you!", i_name);
+      msg_format(Ind, "Suddenly %s are shot at you!", i_name);
 
    for (i=0; i < num; i++)
    {
@@ -1254,7 +1254,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          break;
       /* Bitter Regret Trap */
       case TRAP_OF_BITTER_REGRET:
-         msg_print(Ind, "An age-old and hideous sounding spell reverbs of the walls.");
+         msg_print(Ind, "An age-old and hideous sounding spell reverbs off the walls.");
 //		ident |= dec_stat(Ind, A_DEX, 25, TRUE);	// TRUE..!?
          ident |= dec_stat(Ind, A_DEX, 25, STAT_DEC_NORMAL);
          ident |= dec_stat(Ind, A_WIS, 25, STAT_DEC_NORMAL);
@@ -1385,6 +1385,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		 ident = TRUE;
 		 vanish = 0;
 		 msg_print(Ind, "You fell through a trap door!");
+		 if(p_ptr->fly){
+			msg_print(Ind, "You found a trap door!");
+			break;
+		 }
 		 if (p_ptr->feather_fall)
 		 {
 			 msg_print(Ind, "You float gently down to the next level.");
@@ -2354,13 +2358,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 			ident = TRUE;
 			vanish = 0;
-			msg_print(Ind, "You fell into a chasm!");
 			if (p_ptr->fly)
 			{
-				msg_print(Ind, "You flew back to the floor.");
+				msg_print(Ind, "You notice a deep chasm below you.");
 				break;
 			}
-			else if (p_ptr->feather_fall)
+			msg_print(Ind, "You fell into a chasm!");
+			if (p_ptr->feather_fall)
 			{
 				msg_print(Ind, "You float gently down the chasm.");
 			}
@@ -2386,6 +2390,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	 	{
 			ident = TRUE;
 			vanish = 0;
+			if (p_ptr->fly){
+				/* dont notice it */
+				break;
+			}
 			msg_print(Ind, "You fell into a pit!");
 			if (p_ptr->feather_fall)
 			{
