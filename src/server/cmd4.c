@@ -218,6 +218,9 @@ void do_cmd_check_uniques(int Ind, int line)
 				for (i = 1; i <= NumPlayers; i++)
 				{
 					player_type *q_ptr = Players[i];
+					
+					/* skip dungeon master */
+					if (q_ptr->admin_dm) continue;
 
 					if (q_ptr->r_killed[k])
 					{
