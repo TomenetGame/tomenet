@@ -186,9 +186,9 @@ A:6:Use an archery book
 I:1000:95
 F:MKEY_SPELL | MKEY_TVAL
 
-N:32:Fighting Technic
-D:Ability to perform special fighting technics
-A:5:Use a fighting technic
+N:32:Fighting Technique
+D:Ability to perform special fighting techniquess
+A:5:Use a fighting technique
 I:1000:93
 F:MKEY_SPELL | MKEY_TVAL
 
@@ -373,7 +373,7 @@ f:Crossbow-mastery:Combat%7
 f:Boomerang-mastery:Combat%7
 f:Hunting Lore:Combat%7
 #f:Ricochet:Combat%7
-f:Fighting Technic:Combat%25
+f:Fighting Technique:Combat%25
 f:Martial Arts:Combat%50
 
 # Sorcery and Weaponmastery arent exactly friendly to each other
@@ -491,7 +491,7 @@ T:Archery:Crossbow-mastery
 T:Archery:Boomerang-mastery
 T:Archery:Hunting Lore
 #T:Archery:Ricochet
-T:Combat:Fighting Technic
+T:Combat:Fighting Technique
 T:Combat:Martial Arts
 #T:Combat:Bearform-combat
 #T:Combat:Antimagic
