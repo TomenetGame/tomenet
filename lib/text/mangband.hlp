@@ -1,3 +1,38 @@
+A resume, or 'read it and dive the hell!';)
+
+0. print out the commands summary(available on the webpages below)
+1. chat with ':'(colon) key as soon as you log on. (ex:hi!I'm newbie)
+2. check your inventory('i') and equipments('e').
+3. eat('E') some foods first; don't starve
+4. equip items with 'w'. Never dive the dungeon naked!
+5. shop in town; Buy('p') armors in "2", missiles in "3" etc.
+6. look for ">" with 'M' key -- it's the dungeon:) hit '>' over it
+7. you attack monsters next to u automatically. run with '.' or shift
+8. get killed? press '<' continuously. Go temple("4") and you resurrect
+9. press ctrl-x to save and quit, but do it in town!
+
+10.Get('G') new spell and cast('m' or 'p'); books required!
+
+For further (and easy-to-read) documentation, please visit:
+
+Official Site   - http://www.pernmangband.org/
+Newbie Tutorial - http://www.ctt.ne.jp/~sap/mang/
+
+Latest changes(digest):
+- YOU LOSE YOUR ARTIFACT IF YOU LOOSE YOUR GRIP ON IT!
+- 50-350ft in dungeon cannot be static, so please SAVE IN TOWN.
+- Some anti-cheeze rules are applied.
+- Temple priest gives you some $ when resurrecting, so don't suicide :)
+- Inscription {!=} forces you to pick it up; use it on your arrows.
+- Inscribe {@O} on missiles, and you'll fire them for auto-retaliation.
+- {@Oc} on a book makes you use the 'c' spell for auto-retaliation.
+- {@Ox} on any items and auto-retaliator will be disabled.
+- Chat-line commands; enter '/' in chat-line for help.
+- You can check players' equipments with "'" key under certain conditions.
+- '/' key can do many things (a,A,e,E,F,i,m,p,q,r,t,w,z,Z)
+
+[Please see the ChangeLog on the official site for details.]
+
 Mangband newbie FAQ / survival guide
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 Version .35, late april/early may 1999
@@ -283,12 +318,16 @@ game and leave the level.
 
 8. Help, I just died!  What do I do now?
 
-	If you are high level (yeah, right), you may be able to get a
+      If you are high level (yeah, right), you may be able to get a
 sympathetic PC to come ressurect you.
 
 9. If I am deep in the dungeon, how do I easily return to town?
 
-       Buy a word o
+      Buy a scroll of Word of Recall (WoR). Read it and you'll be in
+town after like 30 seconds.
+      Reading it in town will land you onto the dungeon. You can
+inscribe {@R500} to specify the depth you want to go (but you cannot
+go to the depth you've never been before).
 
 
 Part III -- Macros
