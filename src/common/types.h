@@ -2357,6 +2357,7 @@ struct client_opts
 	bool wide_scroll_margin;
 	bool fail_no_melee;
 	bool always_show_lists;
+	bool target_history;
 };
 
 /*

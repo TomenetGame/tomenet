@@ -2696,7 +2696,8 @@ option_type option_info[OPT_MAX] =
 	/*** Game-Play ***/
 
 	{ &c_cfg.auto_afk,			FALSE,	3,	1, 0,	// former auto_haggle
-	"auto_afk",			"Allow automatic AFKing" },
+//	"auto_afk",				"Allow automatic AFKing" },
+	"auto_afk",				"Set 'AFK mode' automatically" },
 
 	{ &c_cfg.auto_scum,			FALSE,	3,	1, 1,	// XXX
 	"auto_scum",			"(obsolete) Auto-scum for good levels" },
@@ -2839,6 +2840,9 @@ option_type option_info[OPT_MAX] =
 
 	{ &c_cfg.always_show_lists,		FALSE,	5,	9, 73,
 	"always_show_lists",	"Always show lists in item/skill selection" },
+
+	{ &c_cfg.target_history,		FALSE,	5,	9, 74,
+	"target_history",		"Add target informations to the message history" },
 
 #if 0
 	{ &c_cfg.speak_unique,                TRUE,   2,      13,

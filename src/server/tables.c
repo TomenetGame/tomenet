@@ -2244,7 +2244,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1200,
+                                '+', 1400,
                         },
                         {
                                 SKILL_TRAINING,

@@ -25,6 +25,12 @@
 # DARKGOD, EVILEYE, WRITE THE CHANGELOGS!!!!!!!  CVS log does NO HELP!!!!
 # - Jir -
 
+12/08/2002 (Jir)
+[I]- Warnings concerning 'development' version.
+[I]- You can activate empty bottle to fill it with fountain content.
+[I]- target_history: this should make 'look' command more useful.
+[O]- {on sale} tag no longer hinders stacking.
+[P]- Bard never lose race-oriented skills.
 
 11/08/2002 (Jir)
 [D]- more on terrain features. (most of obvious problems are fixed I hope)
@@ -1702,6 +1708,22 @@ Porting targets
 [P] powers.c for misc activations
 [P] display_player (character dump)
 [P] do_cmd_html_dump (screenshot)
+
+[P] School spells/client-LUA (under 'fix it pls, anyone?' status..)
+(client-side)
+seemingly c-init.lua is not loaded even though the path is correctly
+built internally (testtest() LUA function is to test it.)
+
+(server-side)
+spells.lua seems to fail; something is wrong in s_aux.lua but I cannot
+figure out where (all LUA interpreter gives me as clue is 'nil value', pfft).
+
+(other issues)
+- c-s_aux.lua is obsoleted; I hacked the client to use Players[] array.
+- '&6' menu contains 'execute local LUA script' command.
+- since bind_lua.c refers to hard-coded tables like adj_mag_stat[],
+  the LUA code rather increase client-side hard coded things (I had to
+  add adj_mag_stat[] etc to client, that is)
 
 
 =============================================================================

@@ -1662,6 +1662,62 @@ static void process_player_begin(int Ind)
 
 
 /*
+ * Generate the feature effect
+ */
+void apply_effect(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int y = p_ptr->py, x = p_ptr->px;
+	cave_type *c_ptr;
+	feature_type *f_ptr;
+
+	cave_type **zcave;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+
+	c_ptr = &zcave[y][x];
+	f_ptr = &f_info[c_ptr->feat];
+
+
+	if (f_ptr->d_frequency[0] != 0)
+	{
+		int i;
+
+		for (i = 0; i < 4; i++)
+		{
+			/* Check the frequency */
+			if (f_ptr->d_frequency[i] == 0) continue;
+
+			/* XXX it's no good to use 'turn' here */
+//			if (((turn % f_ptr->d_frequency[i]) == 0) &&
+			if ((!rand_int(f_ptr->d_frequency[i])) &&
+			    ((f_ptr->d_side[i] != 0) || (f_ptr->d_dice[i] != 0)))
+			{
+				int l, dam = 0;
+				int d = f_ptr->d_dice[i], s = f_ptr->d_side[i];
+
+				if (d == -1) d = p_ptr->lev;
+				if (s == -1) s = p_ptr->lev;
+
+				/* Roll damage */
+				for (l = 0; l < d; l++)
+				{
+					dam += randint(s);
+				}
+
+				/* Apply damage */
+				project(PROJECTOR_TERRAIN, 0, &p_ptr->wpos, y, x, dam, f_ptr->d_type[i],
+				        PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP);
+
+				/* Hack -- notice death */
+//				if (!alive || death) return;
+				if (p_ptr->death) return;
+			}
+		}
+	}
+}
+
+
+/*
  * Handle misc. 'timed' things on the player.
  * returns FALSE if player no longer exists.
  *
@@ -1685,7 +1741,7 @@ static bool process_player_end_aux(int Ind)
 
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-	/* Anything done here cannot be reduced by GoI */
+	/* Anything done here cannot be reduced by GoI/Manashield etc */
 	bypass_invuln = TRUE;
 
 	/*** Damage over Time ***/
@@ -1697,115 +1753,122 @@ static bool process_player_end_aux(int Ind)
 		take_hit(Ind, 1, "poison");
 	}
 
-	/* Drowning, but not ghosts */
-	//		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER && !p_ptr->ghost && !p_ptr->fly)
-	if(c_ptr->feat==FEAT_DEEP_WATER)
+	/* Misc. terrain effects */
+	if (!p_ptr->ghost)
 	{
-		if(!p_ptr->ghost && !p_ptr->fly)
+		/* Generic terrain effects */
+		apply_effect(Ind);
+
+		/* Drowning, but not ghosts */
+		if(c_ptr->feat==FEAT_DEEP_WATER)
 		{
-			/* Take damage */
-			if (!(p_ptr->body_monster) || (
-						!(r_info[p_ptr->body_monster].flags7 &
-							(RF7_AQUATIC | RF7_CAN_SWIM)) &&
-						!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
+			if(!p_ptr->fly)
 			{
-				int hit = p_ptr->mhp>>6;
-				int swim = get_skill_scale(p_ptr, SKILL_SWIM, 90);
-				hit += randint(p_ptr->mhp>>5);
-				if(!hit) hit=1;
-
-				/* temporary abs weight calc */
-				if(p_ptr->wt+p_ptr->total_weight/10 > 170 + swim * 2)	// 190
+				/* Take damage */
+				if (!(p_ptr->body_monster) || (
+							!(r_info[p_ptr->body_monster].flags7 &
+								(RF7_AQUATIC | RF7_CAN_SWIM)) &&
+							!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
 				{
-					int factor=(p_ptr->wt+p_ptr->total_weight/10)-150-swim * 2;	// 170
-					/* too heavy, always drown? */
-					if(factor<300)
+					int hit = p_ptr->mhp>>6;
+					int swim = get_skill_scale(p_ptr, SKILL_SWIM, 90);
+					hit += randint(p_ptr->mhp>>5);
+					if(!hit) hit=1;
+
+					/* temporary abs weight calc */
+					if(p_ptr->wt+p_ptr->total_weight/10 > 170 + swim * 2)	// 190
 					{
-						if(randint(factor)<20) hit=0;
+						int factor=(p_ptr->wt+p_ptr->total_weight/10)-150-swim * 2;	// 170
+						/* too heavy, always drown? */
+						if(factor<300)
+						{
+							if(randint(factor)<20) hit=0;
+						}
+
+						/* Hack: Take STR and DEX into consideration (max 28%) */
+						if (magik(adj_str_wgt[p_ptr->stat_ind[A_STR]] / 2) ||
+								magik(adj_str_wgt[p_ptr->stat_ind[A_DEX]]) / 2)
+							hit = 0;
+
+						if (magik(swim)) hit = 0;
+
+						if (hit)
+						{
+							msg_print(Ind,"\377rYou're drowning!");
+						}
+
+						/* harm equipments (even hit == 0) */
+						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
+								magik(WATER_ITEM_DAMAGE_CHANCE))
+						{
+							inven_damage(Ind, set_water_destroy, 1);
+							if (magik(20)) minus_ac(Ind, 1);
+						}
+
+						if(randint(1000-factor)<10)
+						{
+							msg_print(Ind,"\377rYou are weakened by the exertion of swimming!");
+							//							do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
+							dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
+						}
+						take_hit(Ind, hit, "drowning");
 					}
-
-					/* Hack: Take STR and DEX into consideration (max 51%) */
-					if (magik(adj_str_wgt[p_ptr->stat_ind[A_STR]]) ||
-							magik(adj_str_wgt[p_ptr->stat_ind[A_DEX]]))
-						hit = 0;
-
-					if (magik(swim)) hit = 0;
-
-					if (hit)
-					{
-						msg_print(Ind,"\377rYou're drowning!");
-					}
-
-					/* harm equipments (even hit == 0) */
-					if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
-							magik(WATER_ITEM_DAMAGE_CHANCE))
-					{
-						inven_damage(Ind, set_water_destroy, 1);
-						if (magik(20)) minus_ac(Ind, 1);
-					}
-
-					if(randint(1000-factor)<10)
-					{
-						msg_print(Ind,"\377rYou are weakened by the exertion of swimming!");
-						//							do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
-						dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
-					}
-					take_hit(Ind, hit, "drowning");
 				}
 			}
 		}
-	}
-	/* Aquatic anoxia */
-	else if(!p_ptr->ghost)
-	{
-		/* Take damage */
-		if((p_ptr->body_monster) && (
-					(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
-					!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
+		/* Aquatic anoxia */
+		else if (c_ptr->feat!=FEAT_SHAL_WATER)
 		{
-			int hit = p_ptr->mhp>>6;
-			hit += randint(p_ptr->mhp>>5);
-			if(!hit) hit=1;
-
-			/* Take CON into consideration(max 30%) */
-			if (!magik(adj_str_wgt[p_ptr->stat_ind[A_CON]])) hit = 0;
-			if (hit) msg_print(Ind,"\377rYou cannot breathe air!");
-
-			if(randint(1000)<10)
+			/* Take damage */
+			if((p_ptr->body_monster) && (
+						(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
+						!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
 			{
-				msg_print(Ind,"\377rYou find it hard to stir!");
-				//					do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
-				dec_stat(Ind, A_DEX, 10, STAT_DEC_TEMPORARY);
+				int hit = p_ptr->mhp>>6;
+				hit += randint(p_ptr->mhp>>5);
+				if(!hit) hit=1;
+
+				/* Take CON into consideration(max 30%) */
+				if (!magik(adj_str_wgt[p_ptr->stat_ind[A_CON]])) hit = 0;
+				if (hit) msg_print(Ind,"\377rYou cannot breathe air!");
+
+				if(randint(1000)<10)
+				{
+					msg_print(Ind,"\377rYou find it hard to stir!");
+					//					do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
+					dec_stat(Ind, A_DEX, 10, STAT_DEC_TEMPORARY);
+				}
+				take_hit(Ind, hit, "anoxia");
 			}
-			take_hit(Ind, hit, "anoxia");
 		}
-	}
 
-	/* Spectres -- take damage when moving through walls */
+		/* Spectres -- take damage when moving through walls */
 
-	/*
-	 * Added: ANYBODY takes damage if inside through walls
-	 * without wraith form -- NOTE: Spectres will never be
-	 * reduced below 0 hp by being inside a stone wall; others
-	 * WILL BE!
-	 */
-	if (!p_ptr->ghost && !cave_floor_bold(zcave, p_ptr->py, p_ptr->px))
-	{
-		/* Player can walk through trees */
-		//		if ((PRACE_FLAG(PR1_PASS_TREE) || (get_skill(SKILL_DRUID) > 15)) && (cave[py][px].feat == FEAT_TREES))
-		if (p_ptr->prace == RACE_ENT && (c_ptr->feat == FEAT_TREES))
+		/*
+		 * Added: ANYBODY takes damage if inside through walls
+		 * without wraith form -- NOTE: Spectres will never be
+		 * reduced below 0 hp by being inside a stone wall; others
+		 * WILL BE!
+		 */
+		/* Seemingly the comment above is wrong, dunno */
+		if (!cave_floor_bold(zcave, p_ptr->py, p_ptr->px))
 		{
-			/* Do nothing */
-		}
-		else if (c_ptr->feat == FEAT_HOME_HEAD){/* rien */}
-		//		else if (PRACE_FLAG(PR1_SEMI_WRAITH) && (!p_ptr->wraith_form) && (f_info[cave[py][px].feat].flags1 & FF1_CAN_PASS))
-		else if (!p_ptr->tim_wraith)
-		{
-			int amt = 1 + ((p_ptr->lev)/5) + p_ptr->mhp / 100;
+			/* Player can walk through trees */
+			//if ((PRACE_FLAG(PR1_PASS_TREE) || (get_skill(SKILL_DRUID) > 15)) && (cave[py][px].feat == FEAT_TREES))
+			if (p_ptr->prace == RACE_ENT && (c_ptr->feat == FEAT_TREES))
+			{
+				/* Do nothing */
+			}
+			else if (c_ptr->feat == FEAT_HOME_HEAD){/* rien */}
+			//else if (PRACE_FLAG(PR1_SEMI_WRAITH) && (!p_ptr->wraith_form) && (f_info[cave[py][px].feat].flags1 & FF1_CAN_PASS))
+			else if (!p_ptr->tim_wraith)
+			{
+				int amt = 1 + ((p_ptr->lev)/5) + p_ptr->mhp / 100;
 
-			//			cave_no_regen = TRUE;
-			if (amt > p_ptr->chp - 1) amt = p_ptr->chp - 1;
-			take_hit(Ind, amt, " walls ...");
+				//			cave_no_regen = TRUE;
+				if (amt > p_ptr->chp - 1) amt = p_ptr->chp - 1;
+				take_hit(Ind, amt, " walls ...");
+			}
 		}
 	}
 

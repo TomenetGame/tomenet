@@ -4092,6 +4092,8 @@ that keeps many algorithms happy.
  * Line 3 -- forbid normal monsters
  * Line 4 -- forbid any player
  */
+/* Hrm, the new one allows to create stairs/fountains etc on a open door.
+ * Should it be banned? */
 #define cave_naked_bold(ZCAVE,Y,X) \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) && \
 	 !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) && \
@@ -4105,6 +4107,11 @@ that keeps many algorithms happy.
      !(ZCAVE[Y][X].m_idx))
 /*     (ZCAVE[Y][X].feat <= FEAT_DIRT) && \ */
 #endif	// 0
+
+#define cave_naked_bold2(Y,X) \
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) && \
+	  (ZCAVE[Y][X].o_idx == 0) && \
+	  (ZCAVE[Y][X].m_idx == 0))
 
 
 /*

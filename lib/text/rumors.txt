@@ -7,7 +7,7 @@
 # You should manually write the total # of rumous (lines - 10).
 
 N:*:Default
-685
+687
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -693,5 +693,7 @@ Ever activated the Book of the Deads?
 They say that Smeagol can help you to get rid of *cursed* Ring.
 They say that Polymorph Ring of {rGoldfish {wworthes while creating.
 Ever fired arrows made of your own bones?
+They say that never drink from a fountain.
+They say that never drink from a fountain beneath 2000'.
 They say that 
 They say that 

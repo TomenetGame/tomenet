@@ -2,8 +2,27 @@
                  <  Adventurer's guide to the Middle Earth  >
                   \----------------------------------------/
                                    
+##### WARNING!
 
-Welcome to the ToME-NET!
+Your reading this parchment means you're playing UNSTABLE DEVELOPING
+EXPERIMENTAL version of TomeNET 4.0.0 WITHOUT ANY KIND OF SUPPORT/WARRANTY.
+
+Your characters will be easily LOST and your client will be OBSOLETED (become
+unusable) almost everyday, and the dev-team has NO intension to help it.
+
+Most part of documentation is OBSOLETE and MISLEADING.
+
+Spell system is BADLY BROKEN and OFF-BALANCED;  in short, they are 'relics' of
+old versions.  The former spells (red/green/orange/gray books) will be REMOVED
+very soon (and will be replaced with schooled spells).
+Many other parts are still left UNIMPLEMENTED in a similar way.
+
+If you want to play normally, please choose 3.x versions instead.
+
+
+
+
+##### Welcome to the ToME-NET!
 
 First of all, please press '@' key on the game screen to see who are playing
 on the server; if any, press ':' to chat with them.  They could be of great
@@ -92,6 +111,11 @@ For example, inscribe {@O} on your bow and see what will happen.
 
 Pay extra attention when climbing stairs or doing recall;  monsters may start
 attacking you before you're ready!
+
+
+Some monsters can be of *MUCH* more threat under realtime - for example, Cave
+spiders and Maggot's dogs (and townies).  If you're not accustomed to the game
+system well yet, stick to -50ft till you gain levels enough.
 
 
 Alright - Happy Diving!

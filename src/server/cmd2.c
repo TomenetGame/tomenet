@@ -2064,6 +2064,8 @@ bool get_something_tval(int Ind, int tval, int *ip)
 		/* Check the "tval" code */
 		if (o_ptr->tval == tval)
 		{
+			if (!can_use(Ind, o_ptr)) continue;
+
 			/* Save the spike index */
 			(*ip) = i;
 

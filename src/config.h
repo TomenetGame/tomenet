@@ -673,7 +673,7 @@
  * 3 - most of cheeze msgs (noisy)
  *     item transaction
  * 4 - everything
- *     cheeze() log every minutes
+ *     cheeze() log every minute
  */
 #define CHEEZELOG_LEVEL 3
 

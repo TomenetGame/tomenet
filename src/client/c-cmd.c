@@ -179,6 +179,7 @@ void cmd_all_in_one(void)
 		}
 
 		/* Presume it's sort of spellbook */
+		case TV_BOOK:
 		case TV_PSI_BOOK:
 		case TV_MAGIC_BOOK:
 		case TV_SORCERY_BOOK:

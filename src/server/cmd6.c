@@ -1503,6 +1503,8 @@ void do_cmd_fill_bottle(int Ind)
 	q_ptr = &forge;
 	object_prep(q_ptr, k_idx);
 	q_ptr->number = 1;
+//	q_ptr->owner = p_ptr->id;
+	determine_level_req(getlevel(&p_ptr->wpos), q_ptr);
 
 //	if (c_ptr->info & CAVE_IDNT)
 	if (cs_ptr->sc.fountain.known)
@@ -4514,6 +4516,13 @@ void do_cmd_activate(int Ind, int item)
 	/* Test the item */
 	if (!item_tester_hook_activate(Ind, o_ptr))
 	{
+		/* Hack -- activating bottles */
+		if (o_ptr->tval == TV_BOTTLE)
+		{
+			do_cmd_fill_bottle(Ind);
+			return;
+		}
+
 		msg_print(Ind, "You cannot activate that item.");
 		return;
 	}

@@ -1983,6 +1983,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- require semi-matching "inscriptions" */
 	/* Hack^2 -- books do merge.. it's to prevent some crashes */
 	if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)
+		&& strcmp(quark_str(o_ptr->note), "on sale")
+		&& strcmp(quark_str(j_ptr->note), "on sale")
 		&& !is_book(o_ptr)) return (0);
 
 	/* Hack -- normally require matching "inscriptions" */
@@ -5092,12 +5094,12 @@ void determine_level_req(int level, object_type *o_ptr)
 	/* Unowned yet */
 //	o_ptr->owner = 0;
 
+#if 0	/* older routine */
 	/* Wilderness? (Obviously ridiculous) */
 #ifndef NEW_DUNGEON
 	Depth = (Depth > 0) ? Depth : -Depth;
 #endif
 
-#if 0	/* older routine */
 //	o_ptr->level = ((Depth * 2 / 4) > 100)?100:(Depth * 2 / 4);
 	if (Depth > 0) o_ptr->level = ((Depth * 2 / 4) > 100)?100:(Depth * 2 / 4);
 	else o_ptr->level = -((Depth * 2 / 4) > 100)?100:(Depth * 2 / 4);

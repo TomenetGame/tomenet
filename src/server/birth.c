@@ -1513,7 +1513,8 @@ static void player_setup(int Ind, bool new)
 static void do_bard_skill(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int i;
+	int i, j, k;
+	int value, mod;
 
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
@@ -1525,6 +1526,45 @@ static void do_bard_skill(int Ind)
 
 		if (magik(67))
 		{
+			bool resist = FALSE;
+			/* Racial skill 'resist' */
+			for (j = 0; j < MAX_SKILLS; j++)
+			{
+				/* Efficiency */
+				if (!p_ptr->rp_ptr->skills[j].skill) break;
+
+				if (p_ptr->rp_ptr->skills[j].skill == i)
+				{
+					value = p_ptr->rp_ptr->skills[j].value;
+					mod = p_ptr->rp_ptr->skills[j].mod;
+
+					if (!value && !mod) continue;
+					if (p_ptr->rp_ptr->skills[j].vmod == '=')
+					{
+						resist = TRUE;
+						break;
+					}
+					if (p_ptr->rp_ptr->skills[j].vmod == '+')
+					{
+						if (!resist)
+						{
+							p_ptr->s_info[i].value = value;
+							p_ptr->s_info[i].mod = mod;
+							resist = TRUE;
+						}
+						/* Two plusses? bad manner, but we'll handle it.. */
+						else
+						{
+							p_ptr->s_info[i].value += value;
+							p_ptr->s_info[i].mod += mod;
+						}
+						continue;
+					}
+				}
+			}
+
+			if (resist) continue;
+
 			p_ptr->s_info[i].value = 0;
 			p_ptr->s_info[i].mod = 0;
 		}

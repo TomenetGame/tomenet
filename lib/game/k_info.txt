@@ -210,7 +210,7 @@ N:25:& Lembas~
 #N:25:& Piece~ of Elvish Waybread
 G:,:B
 I:80:37:0
-W:5:0:3:10
+W:5:0:3:100
 A:5/1:10/1:20/1
 
 N:26:& Pint~ of Fine Ale

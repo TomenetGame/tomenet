@@ -6,18 +6,18 @@
             One Ring to bring them all and in the darkness bind them
                   In the land of Mordor where the shadows lie"
                                 "Lord of The Rings", J.R.R.Tolkien
- - TomeNET 4.0.0 development version, with new skill/spell system(try 'G' key)
- - account control introduced.     - quiver/tool slot implemented.
+ *** spell system is BROKEN. savedata/client will be OBSOLETED/LOST everyday.
+ - TomeNET 4.0.0 development version (experimental/no support at all)
+ - Client ver. 4.0.0 is needed. (will be available from URL below)
+ - account control introduced.     - new skill/spell system(try 'G' key)
  - dungeon generator is improved.  - simple lore browser (`~`)
- - Detect traps can NOT fail;  detection spells are radius-based now.
+ - detect traps can NOT fail(pfft) - quiver/tool slots
  - items can stack on the floor now. (but not inside a house!)
  - A guild system is implemented.  - Player alignment is coming soon?
- - Simple quests are available (say /quest)
- - Monster AI is improved further; use your head, too!
+ - Simple quests (/quest)          - Monster AI is improved further
  - Save the game in town as far as possible, so as not to be buried alive.
  - Please don't abuse the system, so as not to have your character removed.
- - Client ver. 4.0.0 is needed. (will be available from URL below)
- ** To learn about new features/changes, please see the help screen('?').
+ ... To learn about new features/changes, please see the help screen('?').
 
     Official TomeNET site - http://t-o-m-e.net/main.php?tome_current=1
-    PernMAngband 4.x: DarkGod(darkgod@t-o-m-e.net) / TomeNET dev-team
+     TomeNET 3.x-4.x: DarkGod(darkgod@t-o-m-e.net) / TomeNET dev-team
