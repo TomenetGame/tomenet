@@ -1784,7 +1784,6 @@ static errr rd_dungeon(void)
 	rd_s16b(&wpos.wz);
 	if(wpos.wx==0x7fff && wpos.wy==0x7fff && wpos.wz==0x7fff)
 		return(1);
-	printf("Reading dungeon (%d,%d,%d)\n",wpos.wx,wpos.wy,wpos.wz);
 #else
 	rd_s32b(&depth);
 #endif
@@ -2477,7 +2476,6 @@ errr rd_server_savefile()
 
 		/* get the number of monsters to be loaded */
 		rd_u32b(&tmp32u);
-		printf("monsters: %ld\n",tmp32u);
 		if (tmp32u > MAX_M_IDX)
 		{
 			note(format("Too many (%u) monsters!", tmp16u));
@@ -2494,7 +2492,6 @@ errr rd_server_savefile()
 	if (!older_than(0,4,0))
 	{
 		rd_u16b(&tmp16u);
-		printf("objects: %d\n",tmp16u);  
 
 		/* Incompatible save files */
 		if (tmp16u > MAX_O_IDX)
@@ -2517,7 +2514,6 @@ errr rd_server_savefile()
 	if (!older_than(0,4,0))
 	{
 		rd_u32b(&num_houses);
-		printf("houses: %ld\n",num_houses);
 
 		while(house_alloc<num_houses){
 			GROW(houses, house_alloc, house_alloc+512, house_type);
@@ -2641,14 +2637,11 @@ void new_rd_wild(){
 		for(x=0;x<MAX_WILD_X;x++){
 			wptr=&wild_info[y][x];
 			rd_wild(wptr);
-			if(y==32 && x==32){
-				printf("flags: %x\n",wptr->flags);
-			}
 			if(wptr->flags & WILD_F_DOWN){
-				printf("allocing dungeon for (%d,%d)\n",x,y);
 				MAKE(d_ptr, struct dungeon_type);
 				rd_byte(&wptr->up_x);
 				rd_byte(&wptr->up_y);
+				rd_u16b(&d_ptr->id);
 				rd_u16b(&d_ptr->baselevel);
 				rd_u16b(&d_ptr->flags);
 				rd_byte(&d_ptr->maxdepth);
@@ -2656,10 +2649,10 @@ void new_rd_wild(){
 				wptr->dungeon=d_ptr;
 			}
 			if(wptr->flags & WILD_F_UP){
-				printf("allocing tower for (%d,%d)\n",x,y);
 				MAKE(d_ptr, struct dungeon_type);
 				rd_byte(&wptr->dn_x);
 				rd_byte(&wptr->dn_y);
+				rd_u16b(&d_ptr->id);
 				rd_u16b(&d_ptr->baselevel);
 				rd_u16b(&d_ptr->flags);
 				rd_byte(&d_ptr->maxdepth);

@@ -3920,21 +3920,23 @@ void house_admin(int Ind, int dir, char *args){
 #endif
 		if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL)
 		{
-			if(c_ptr->special.type==DNA_DOOR && access_door(Ind, dna)){
+			if(c_ptr->special.type==DNA_DOOR){
 				dna=c_ptr->special.ptr;
-				switch(args[0]){
-					case 'O':
-						success=chown_door(Ind, dna, args);
-						break;
-					case 'M':
-						success=chmod_door(Ind, dna, args);
-						break;
-					case 'K':
-						destroy_house(Ind, dna);
-						return;
-				}
-				if(success){
-					msg_format(Ind,"\377gDoor change successful");
+				if(access_door(Ind, dna)){
+					switch(args[0]){
+						case 'O':
+							success=chown_door(Ind, dna, args);
+							break;
+						case 'M':
+							success=chmod_door(Ind, dna, args);
+							break;
+						case 'K':
+							destroy_house(Ind, dna);
+							return;
+					}
+					if(success){
+						msg_format(Ind,"\377gDoor change successful");
+					}
 				}
 				else msg_format(Ind,"\377oDoor change failed");
 			}

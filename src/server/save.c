@@ -2444,6 +2444,7 @@ static void new_wr_wild(){
 			if(w_ptr->flags & WILD_F_DOWN){
 				wr_byte(w_ptr->up_x);
 				wr_byte(w_ptr->up_y);
+				wr_u16b(w_ptr->dungeon->id);
 				wr_u16b(w_ptr->dungeon->baselevel);
 				wr_u16b(w_ptr->dungeon->flags);
 				wr_byte(w_ptr->dungeon->maxdepth);
@@ -2451,6 +2452,7 @@ static void new_wr_wild(){
 			if(w_ptr->flags & WILD_F_UP){
 				wr_byte(w_ptr->dn_x);
 				wr_byte(w_ptr->dn_y);
+				wr_u16b(w_ptr->tower->id);
 				wr_u16b(w_ptr->tower->baselevel);
 				wr_u16b(w_ptr->tower->flags);
 				wr_byte(w_ptr->tower->maxdepth);
