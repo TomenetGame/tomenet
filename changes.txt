@@ -475,3 +475,4 @@ Change list for PernMangband
 
 19/12/2001 (Jir)
 - Magic mapping disallowed inside NOMAP dungeons.
+- Traps can be generated under items.

@@ -535,9 +535,9 @@ static cptr k_info_flags1[] =
 	"SLAY_GIANT",
 	"SLAY_DRAGON",
 	"KILL_DRAGON",
-	"XXX5",
+	"XXX5",		//"VORPAL",
 	"IMPACT",
-	"XXX6",
+	"XXX6",		//"BRAND_POIS",
 	"BRAND_ACID",
 	"BRAND_ELEC",
 	"BRAND_FIRE",
@@ -555,14 +555,14 @@ static cptr k_info_flags2[] =
 	"SUST_DEX",
 	"SUST_CON",
 	"SUST_CHR",
-        "REDUC_FIRE",
-        "REDUC_COLD",
+        "REDUC_FIRE",	//"INVIS",
+        "REDUC_COLD",	//"LIFE",
 	"IM_ACID",
 	"IM_ELEC",
 	"IM_FIRE",
 	"IM_COLD",
-        "REDUC_ELEC",
-        "REDUC_ACID",
+        "REDUC_ELEC",	//"SENS_FIRE",
+        "REDUC_ACID",	//"REFLECT",
 	"FREE_ACT",
 	"HOLD_LIFE",
 	"RES_ACID",
@@ -622,7 +622,6 @@ static cptr k_info_flags3[] =
 	"PERMA_CURSE"
 };
 
-
 /*
  * Trap flags (PernAngband)
  */
@@ -662,6 +661,125 @@ static cptr t_info_flags[] =
    "XXX32"
 };
 
+#if 0	// under construction
+/*
+ * Object flags
+ */
+cptr k_info_flags4[] =
+{
+        "NEVER_BLOW",
+        "PRECOGNITION",
+        "BLACK_BREATH",
+        "RECHARGE",
+        "FLY",
+        "DG_CURSE",
+        "COULD2H",
+        "MUST2H",
+        "LEVELS",
+        "CLONE",
+        "SPECIAL_GENE",
+        "CLIMB",
+        "FAST_CAST",
+        "CAPACITY",
+        "CHARGING",
+        "CHEAPNESS",
+        "FOUNTAIN",
+        "ANTIMAGIC_50",
+        "ANTIMAGIC_30",
+        "ANTIMAGIC_20",
+        "ANTIMAGIC_10",
+        "EASY_USE",
+        "IM_NETHER",
+        "RECHARGED",
+        "ULTIMATE",
+        "AUTO_ID",
+        "LITE2",
+        "LITE3",
+        "FUEL_LITE",
+        "ART_EXP",
+        "CURSE_NO_DROP",
+        "NO_RECHARGE"
+};
+
+/*
+ * Object flags
+ */
+cptr k_info_flags5[] =
+{
+        "TEMPORARY",
+        "DRAIN_MANA",
+        "DRAIN_HP",
+        "KILL_DEMON",
+        "KILL_UNDEAD",
+        "CRIT",
+        "ATTR_MULTI",
+        "WOUNDING",
+        "FULL_NAME",
+        "LUCK",
+        "IMMOVABLE",
+	"XXX8X22",
+	"XXX8X22",
+	"XXX8X02",
+	"XXX8X02",
+	"XXX8X02",
+	"XXX8X02",
+	"XXX8X17",
+	"XXX8X18",
+	"XXX8X19",
+	"XXX8X20",
+	"XXX8X21",
+	"XXX8X22",
+	"XXX8X23",
+	"XXX8X24",
+	"XXX8X25",
+	"XXX8X26",
+	"XXX8X27",
+	"XXX8X28",
+	"XXX8X29",
+	"XXX8X02",
+	"XXX8X22",
+};
+
+/*
+ * ESP flags
+ */
+cptr esp_flags[] =
+{
+        "ESP_ORC",
+        "ESP_TROLL",
+        "ESP_DRAGON",
+        "ESP_GIANT",
+        "ESP_DEMON",
+        "ESP_UNDEAD",
+        "ESP_EVIL",
+        "ESP_ANIMAL",
+        "ESP_DRAGONRIDER",
+        "ESP_GOOD",
+        "ESP_NONLIVING",
+        "ESP_UNIQUE",
+        "ESP_SPIDER",
+	"XXX8X02",
+	"XXX8X02",
+	"XXX8X02",
+	"XXX8X02",
+	"XXX8X17",
+	"XXX8X18",
+	"XXX8X19",
+	"XXX8X20",
+	"XXX8X21",
+	"XXX8X22",
+	"XXX8X23",
+	"XXX8X24",
+	"XXX8X25",
+	"XXX8X26",
+	"XXX8X27",
+	"XXX8X28",
+	"XXX8X29",
+	"XXX8X02",
+        "ESP_ALL",
+};
+
+#endif	// 0
 
 
 /*** Initialize from ascii template files ***/

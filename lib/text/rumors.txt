@@ -1,5 +1,5 @@
 N:*:Default
-496
+506
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -496,3 +496,13 @@ They say that some dungeons have no exit.
 Dance a tap with Witan boots on!
 They say that you should stop and think it twice if someone chuckles at you.
 They say that a true thief never makes a sound.
+They say that sorcs often carry about a sling even though they never shoot.
+They say that a pair of boots of Eryn Lasgalen is not so useful.
+Afraid of chemical weapons? Wear mirkie!
+They say that boots made of woods are too noisy for dungeoneering.
+They say that in some areas a map is kept in secrecy.
+They say that the deeper you go, the nastier the traps are.
+They say that chaotic creatures can be healed with chaos blasts.
+Around the next corner waits you a pack of hounds.
+They say that a priest can dispel other player's ghost too.
+They say that beneath an item on the floor can lie a trap.

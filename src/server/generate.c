@@ -839,12 +839,16 @@ static void alloc_object(int Depth, int set, int typ, int num)
 			case ALLOC_TYP_GOLD:
 			{
 				place_gold(wpos, y, x);
+				/* hack -- trap can be hidden under gold */
+				if (rand_int(100) < 3) place_trap(wpos, y, x);
 				break;
 			}
 
 			case ALLOC_TYP_OBJECT:
 			{
 				place_object(wpos, y, x, FALSE, FALSE);
+				/* hack -- trap can be hidden under an item */
+				if (rand_int(100) < 2) place_trap(wpos, y, x);
 				break;
 			}
 #else
@@ -3500,7 +3504,8 @@ void build_vault(int Depth, int yval, int xval, int ymax, int xmax, cptr data)
 				{
 					place_object(wpos, y, x, FALSE, FALSE);
 				}
-				else
+//				else	// now cumulative :)
+				if (rand_int(100) < 25)
 				{
 					place_trap(wpos, y, x);
 				}
