@@ -670,7 +670,7 @@ void teleport_player(int Ind, int dis)
 	player_type *p_ptr = Players[Ind];
 
 	int d, i, min, ox, oy, x = p_ptr->py, y = p_ptr->px;
-	int xx , yy, m_idx;
+	int xx , yy, m_idx, tries = 0;
 	worldpos *wpos=&p_ptr->wpos;
 	dun_level *l_ptr;
 
@@ -704,7 +704,7 @@ void teleport_player(int Ind, int dis)
 #endif	// TELEPORTATION_MIN_LIMIT
 
 	/* Look until done */
-	while (look)
+	while (look && (tries < 3000))
 	{
 		/* Verify max distance */
 		if (dis > 150) dis = 150;   /* 200 */
@@ -712,6 +712,9 @@ void teleport_player(int Ind, int dis)
 		/* Try several locations */
 		for (i = 0; i < 500; i++)
 		{
+			/* Avoid server hang-up on 100%-tree-maps */
+			tries++;
+
 			/* Pick a (possibly illegal) location */
 			while (1)
 			{
@@ -751,6 +754,9 @@ void teleport_player(int Ind, int dis)
 		/* Decrease the minimum distance */
 		min = min / 2;
 	}
+
+	/* No empty field on this map o_O */
+	if (tries > 3000) return;
 
 	/* Save the old location */
 	oy = p_ptr->py;
