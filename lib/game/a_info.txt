@@ -2685,6 +2685,26 @@ D:till Durin III was slain. Found by Balin son of Fundin,
 D:Uzbadkhazaddumu, the last Lord of Moria.
 
 
+# The Pebble of Moon-Stone
+
+N:221:of Moon-Stone
+I:16:0:0
+W:40:20:4:50000
+P:0:1d2:0:10:0
+F:SLAY_EVIL | KILL_DEMON | KILL_DRAGON
+D:A mysterious shard that fell down from heaven.
+
+
+# The Iron Shot 'Ripper'
+
+N:222:'Ripper'
+I:16:1:0
+W:20:10:5:15000
+P:0:3d4:0:0:0
+D:Made of alloy of iron and black ore, a *hard* material.
+D:Strange enough, noone managed to enchant it yet.
+
+
 #N:(No.):(name)
 #G:(appearence):(colour)
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
