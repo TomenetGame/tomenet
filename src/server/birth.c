@@ -896,8 +896,8 @@ static byte player_init[MAX_CLASS][3][2] =
 {
 	{
 		/* Adventurer */
-//		{ TV_RING, SV_RING_SEE_INVIS },
-		{ TV_BOOK, 50 },
+		{ TV_RING, SV_RING_SEE_INVIS },
+//		{ TV_BOOK, 50 },
 		{ TV_SWORD, SV_SABRE },
 		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR }
 	},
@@ -912,13 +912,16 @@ static byte player_init[MAX_CLASS][3][2] =
 	{
 		/* Mage */
 		{ TV_SWORD, SV_DAGGER },
-		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL }
+		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+		{ TV_BOOK, 50 },
 	},
 
 	{
 		/* Priest */
 		{ TV_HAFTED, SV_MACE },
-		{ TV_POTION, SV_POTION_HEALING }
+		{ TV_POTION, SV_POTION_HEALING },
+		/* XXX Some kind of prayer book should be here */
+		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL },
 	},
 
 	{
@@ -938,7 +941,8 @@ static byte player_init[MAX_CLASS][3][2] =
 	{
 		/* Archer */
 		{ TV_ARROW, SV_AMMO_MAGIC },
-		{ TV_BOW, SV_LONG_BOW }
+		{ TV_BOW, SV_LONG_BOW },
+		{ TV_BOW, SV_SLING }	/* was Hunting book */
 	},
 
 	{
@@ -1164,7 +1168,7 @@ static void player_outfit(int Ind)
 	else
 	{
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
-		o_ptr->number = rand_range(2, 4);
+		o_ptr->number = rand_range(3, 7);
 	}
 	do_player_outfit();
 
@@ -1278,6 +1282,7 @@ static void player_setup(int Ind, bool new)
 	/* Make sure he's supposed to be here -- if not, then the level has
 	 * been unstaticed and so he should forget his memory of the old level.
 	 */
+	/* FIXME: seemingly this code is helplessly wrong	- Jir - */
 	if (count >= players_on_depth(wpos))
 	{
 		/* Clear the "marked" and "lit" flags for each cave grid */

@@ -2914,6 +2914,7 @@ bool create_artifact_aux(int Ind, int item)
 
 	if (o_ptr->number > 1) return FALSE;
 	if (o_ptr->name1) return FALSE;
+	if (o_ptr->name2 || o_ptr->name2b) return FALSE;
 	
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);

@@ -1168,10 +1168,11 @@ static void calc_hitpoints(int Ind)
 		mhp = mhp * 3 / 5;
 	}
 
-        /* Sorcery reduces hp */
+	/* Sorcery reduces hp */
 	if (get_skill(p_ptr, SKILL_SORCERY))
 	{
-		mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 20)) / 100;
+		// mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 20)) / 100;
+		mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 50)) / 100;
 	}
 
 	/* Disruption Shield */

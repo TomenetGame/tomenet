@@ -20,7 +20,7 @@ server TomeNET.net
 # server 127.0.0.1:18348
 
 # default path for data directory
-path ~/TomeNET/lib/
+#path /usr/local/lib/tomenet/lib
 
 
 # If you have a line starting with 'fullauto', the client will try to connect

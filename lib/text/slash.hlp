@@ -142,7 +142,7 @@ Note:
     new cookies.
     If server option is configured, you can view RFEs via /less.
 
-/shout [message]
+/shout [message] {shorthand: /sho}
     You shout.
 
 /sip

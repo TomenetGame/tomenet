@@ -108,7 +108,7 @@ school_book[3] = {
         STONESKIN, DIG, STONEPRISON, SHAKE, STRIKE,
 }
 
--- The book of the unstopable wave
+-- The book of the everrunning wave
 school_book[4] = {
         ENTPOTION, TIDALWAVE, ICESTORM,
 }
@@ -120,7 +120,9 @@ school_book[5] = {
 
 -- Create the book of beginner's cantrip
 school_book[50] = {
-        STONESKIN, DIG, STONEPRISON, SHAKE, STRIKE,
+--        STONESKIN, DIG, STONEPRISON, SHAKE, STRIKE,
+        MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK,
+--		SENSEMONSTERS, SENSEHIDDEN,
 }
 
 

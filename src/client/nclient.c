@@ -2452,9 +2452,9 @@ int Receive_store(void)
 	int	n, price;
 	char	ch, pos, name[1024], tval, sval;
 	byte	attr;
-	s16b	wgt, num;
+	s16b	wgt, num, pval;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%s%c%c", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%s%c%c%hd", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval)) <= 0)
 	{
 		return n;
 	}
@@ -2466,6 +2466,7 @@ int Receive_store(void)
 	strncpy(store_names[(int) pos], name, 80);
 	store.stock[(int)pos].tval = tval;
 	store.stock[(int)pos].xtra1 = attr;
+	store.stock[(int)pos].pval = pval;
 
 	/* Make sure that we're in a store */
 	if (shopping)

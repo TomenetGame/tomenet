@@ -531,7 +531,9 @@ void do_cmd_check_players(int Ind, int line)
 		fprintf(fff, "\n");
 
 	}
+#ifdef TOMENET_WORLDS
 	world_remote_players(fff);
+#endif	// TOMENET_WORLDS
 
 	/* Close the file */
 	my_fclose(fff);

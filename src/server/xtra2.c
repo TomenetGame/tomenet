@@ -2846,7 +2846,9 @@ void check_experience(int Ind)
 
 		sprintf(str, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
 		clockin(Ind, 1);	/* Set player level */
+#ifdef TOMENET_WORLDS
 		world_msg(str);
+#endif	// TOMENET_WORLDS
 		msg_broadcast(Ind, str);
 
 		/* Update the skill points info on the client */
@@ -3305,7 +3307,10 @@ void monster_death(int Ind, int m_idx)
 
 		} 
 
+#ifdef TOMENET_WORLDS
 		world_msg(buf);
+#endif	// TOMENET_WORLDS
+
 		/* Tell every player */
 		msg_broadcast(Ind, buf);
 	}
@@ -3981,10 +3986,14 @@ void player_death(int Ind)
 				p_ptr->name, p_ptr->died_from);
 		else sprintf(buf, "\377r%s was killed and destroyed by %s.",
 				p_ptr->name, p_ptr->died_from);
+#ifdef TOMENET_WORLDS
 		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
+#endif	// TOMENET_WORLDS
 
 		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)){
+#ifdef TOMENET_WORLDS
 			world_msg(buf);
+#endif	// TOMENET_WORLDS
 			msg_broadcast(Ind, buf);
 		}
 
@@ -4062,7 +4071,9 @@ void player_death(int Ind)
 	/* handle the secret_dungeon_master option */
 	/* bug??? evileye - shouldnt it be && */
 	if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
+#ifdef TOMENET_WORLDS
 		world_msg(buf);
+#endif	// TOMENET_WORLDS
 		if(p_ptr->lev>1)
 			msg_broadcast(Ind, buf);
 		else{
@@ -4226,7 +4237,10 @@ void player_death(int Ind)
 		if(!p_ptr->admin_dm && !p_ptr->admin_wiz && !p_ptr->noscore)
 			add_high_score(Ind);
 
+#ifdef TOMENET_WORLDS
 		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
+#endif	// TOMENET_WORLDS
+
 		/* Get rid of him */
 		Destroy_connection(p_ptr->conn, "Committed suicide");
 
@@ -7273,7 +7287,9 @@ bool master_player(int Ind, char *parms){
 			break;
 		case 'B':
 			/* This could be fun - be wise dungeon master */
+#ifdef TOMENET_WORLDS
 			world_msg(&parms[1]);
+#endif	// TOMENET_WORLDS
 			msg_broadcast(0, &parms[1]);
 			break;
 		case 'r':

@@ -264,7 +264,7 @@ N:48:Conveyance
 D:Ability to learn and use spells from the Conveyance school
 D:Spells use the intelligence stat
 A:11:Cast a spell
-I:1000:0
+I:1000:111
 
 N:49:Spell-power
 D:Ability to Increase the power of known spells
@@ -274,61 +274,61 @@ N:50:Mana
 D:Ability to learn and use spells from the Mana school
 D:Spells use the intelligence stat
 A:11:Cast a spell
-I:1000:0
+I:1000:111
 
 N:51:Fire
 D:Ability to learn and use spells from the Fire school
 D:Spells use the intelligence stat
 A:11:Cast a spell
-I:1000:0
+I:1000:111
 
 N:52:Air
 D:Ability to learn and use spells from the Air school
 D:Spells use the intelligence stat
 A:11:Cast a spell
-I:1000:0
+I:1000:111
 
 N:53:Water
 D:Ability to learn and use spells from the Water school
 D:Spells use the intelligence stat
 A:11:Cast a spell
-I:1000:0
+I:1000:111
 
 N:54:Nature
 D:Ability to learn and use spells from the Nature school
 D:Spells use the intelligence stat
 A:11:Cast a spell
-I:1000:0
+I:1000:111
 
 N:55:Earth
 D:Ability to learn and use spells from the Earth school
 D:Spells use the intelligence stat
 A:11:Cast a spell
-I:1000:0
+I:1000:111
 
 N:56:Divination
 D:Ability to learn and use spells from the Divination school
 D:Spells use the intelligence stat
 A:11:Cast a spell
-I:1000:0
+I:1000:111
 
 N:57:Temporal
 D:Ability to learn and use spells from the Temporal school
 D:Spells use the intelligence stat
 A:11:Cast a spell
-I:1000:0
+I:1000:111
 
 N:58:Meta
 D:Ability to learn and use spells from the Meta school
 D:Spells use the intelligence stat
 A:11:Cast a spell
-I:1000:0
+I:1000:111
 
 N:59:Mind
 D:Ability to learn and use spells from the Mind school
 D:Spells use the intelligence stat
 A:11:Cast a spell
-I:1000:0
+I:1000:111
 
 #
 # Skill interactions

@@ -23,6 +23,19 @@
 # bug.txt should follow the exact same format
 
 
+02/09/2002 (Jir)
+[m]- '#ifdef TOMENET_WORLDS' added (so that I can compile it :)
+[O]- randart ego items can no longer be created.
+[I]- school spellbooks are browsable in stores.
+[I]- '/'(cmd_all_in_one) can handle schooled books.
+[I]- always_show_list option works for school books too
+[P]- HP penalty of Sorcery skill is 50% now
+[B]- a trap under chest couldn't be disarmed (XXX not fixed well tho -
+     do_cmd_disarm needs rewriting)
+[B]- /shutdown was shadowed by /shout. (now shorthand for /shout is /sho)
+[B]- wiz_lite (eg. Potion of Enlightenment) didn't work well
+[B]- a bad line is removed from .tomenetrc
+
 01/09/2002 (Jir)
 [D]- FEAT_WAY_LESS/FEAT_WAY_MORE for DF1_FLAT dungeons.
 [D]- tree/water/lava streamers (build_streamer2)
@@ -37,7 +50,7 @@
 [D]- CS_MIMIC allows FEAT_SECRET to mimic the surroundings.
 [G]- high archery+mastery yields *ID* on ammo made.
 [I]- 'Identify possessions' uses 'I' key in place of 'i' (same with Inventory)
-[I]- Orchast activation (detect_monsters_xxx)
+[O]- Orchast activation (detect_monsters_xxx)
 [M]- monster AI is tuned for new terrains.
 [O]- store buys (*Defender*) as if it's (+0, +0)
 [O]- Mummy Wrapping (tool 
@@ -126,20 +139,20 @@
 [B]- HP/SP/SN displays weren't updated when restoring stats
 
 25/08/2002 (evileye)
-- server for php/perl added
+[m]- server for php/perl added
 
 24/08/2002 (evileye)
-- fixed house creation, bug in guildhall saving fixed.
-- new cs activate method. (please be careful ;( )
-- cs save/load key doors.
-- old key door code in "open" left in.
-- guildhall key doors will be saved twice in rare cases 
-  known, do not change
-- do not delete/modify any of the above changes please
-- inscriptions moved to csfunc
-- known problem: wall blocking way etc ignore this
-  there are nice ways round this. there are some nasty
-  ways round it too.
+[B]- fixed house creation, bug in guildhall saving fixed.
+[m]- new cs activate method. (please be careful ;( )
+[m]- cs save/load key doors.
+[m]- old key door code in "open" left in.
+[m]- guildhall key doors will be saved twice in rare cases 
+      known, do not change
+# do not delete/modify any of the above changes please
+[m]- inscriptions moved to csfunc
+#- known problem: wall blocking way etc ignore this
+#  there are nice ways round this. there are some nasty
+#  ways round it too.
 
 # consider moving traps activation to this.
 # they are incompatible now though. i will have
@@ -1847,10 +1860,15 @@ To find the latest change quickly, search ==== :)
 =============================================================================
 TODO: things to do before 4.0.0
 
-- backport ToME spells! (..well, temporally stopped..)
-  + spell flags transmitted to the client
-  + less packets
-  + spells should be exported to LUA?
+- backport ToME spells
+  + spells that specify items
+  + auto-target
+  + auto-retaliator
+  + Prayer/Fighting/Hunting/Ghost ?
+  + good price for good 'random' spellbooks
+  + check if the player actually have the book
+  + item owner check
+  + interference
 - login code
   (RFEs)
   + If you care, would you add temporal account banning (like IP
@@ -1866,57 +1884,51 @@ TODO: things to do before 4.0.0
   + tomenet.acc contains death/winning counter
 
 
-- rebalance skill-points
+- rebalance skill-points (after spell)
 - rebalance mimics (they are way too hard, seemingly)
-- fix gfx
-- refine pk code (just set as option?)
+- fix gfx if possible
 - source-code cleanup
 - sort ?_info.txt (they are quite messy now)
 - export configurable things to tomenet.cfg
 - a spoonful of documentation for skill system
 - rewrite this changes.txt into the 'new' format
 - total rebalancing for all of them
-
-(multi-dungeon, multi-town, terrains, pets etc. are put off after 4.0.0 ...)
-
-
-=============================================================================
-concisely: what's hot now?
+- clear the licence out!
 
 - multiple-dungeons stuff
   + we should preserve level_up_y etc. for manually-added dungeons/towers.
-- quest system
-  + consider a little more 'complicated' quests.. (but maybe for v5)
-- skill system
-  + SKILL_CLIMB
 - LUA hook (hooked, but not used for now)
 - csfunc
   + save/load perfectly work. hit/see need some works, maybe.
-- alignment (let's wait for EE :)
 - mimics
   + new skill 'Ego Powers', 'Innate Powers'
   + RBM and RBE
+- 'world server'
+
+(likely to be postponed till v5?)
+- alignment
+- a little more complicated quest system (no offense, but something a little
+  more than 'kill 5 jackals')
+- refine pk code (just set as option?)
 
 
 =============================================================================
 Porting targets
 [P] show_file, for tagged file browsing
     (but maybe ##### tag is bad methinks - cannot draw ascii-art dungeon!)
-[P] powers.c for misc activations
+[P] powers.c for misc activations {DG seems to have another plan}
 [P] display_player (character dump)
 [P] do_cmd_html_dump (screenshot)
 
-[P] School spells/client-LUA (under 'fix it pls, anyone?' status..)
-(client-side)
-seemingly spells/schools are not initialized (failing to read s_aux.lua?)
-(other issues)
-- since bind_lua.c refers to hard-coded tables like adj_mag_stat[],
-  the LUA code rather increase client-side hard coded things (I had to
-  add adj_mag_stat[] etc to client, that is)
 
 
 =============================================================================
 below this line are the unfixed bugs known:
+
+** Major Bugs **
+[B]- 'Ghost power' doesn't work at all!! (it used fix_spell..) we should
+     either reimplement it, or make it a pseudo school..
+
 
 ** Minor Bugs **
 [B]- wpos display hides wound states(eg.'Deep Gash')
@@ -1943,8 +1955,6 @@ below this line are the unfixed bugs known:
 [B]- [C] X11 client doesn't accept keystrokes if screen is less than 80x24
 [B]- 'You are shooting with a Boomerang.' is not so cool a msg
 [B]- macro 'w0w0' doesn't work correctly (unfixable - workaround with /dr)
-[B]- 'look' command is almost unusable since the msg gets wiped at once
-[B]- store '3' sells tons of Aman daggers when reset.
 [B]- Warrior gets ugly char-dump; Device skill under Combat (dump_skills)
  - Combat                                         14.000 [0.600]
      - Weaponmastery                              01.000 [0.600]
@@ -2046,6 +2056,8 @@ below this line are the unfixed bugs known:
 [B]- ever-charging arts (eg.star)
 [B]- cave can be erased prematurely after loading.
 [B]- /rec won't work if to wilderness? (admin)
+[B]- store '3' sells tons of Aman daggers when reset.
+[B]- apartment doors can displace? (seemingly Evileye fixed it :)
 
 [B]- crash the moment one die (maybe fixed - in_bounds4)
      Laggwyrm was killed by a Great Storm Wyrm.
@@ -2059,19 +2071,6 @@ below this line are the unfixed bugs known:
      #3  0x807b75a in teleport_player (Ind=1, dis=300) at server/spells1.c:710
      #4  0x80748a5 in player_death (Ind=1) at server/xtra2.c:4205
      #5  0x80f195f in dungeon () at server/dungeon.c:3866
-
-[B]- apartment doors can displace? (seemingly Evileye fixed it :)
-     Program received signal SIGSEGV, Segmentation fault.
-     access_door (Ind=2, dna=0x0) at server/cmd2.c:666
-     666             if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
-     (gdb) bt
-     #0  access_door (Ind=2, dna=0x0) at server/cmd2.c:666
-     #1  0x80560a4 in map_info (Ind=2, y=46, x=120, ap=0xbfbfefda "\005+<霓衰\006\b\002", 
-        cp=0xbfbfefdb "+<霓衰\006\b\002") at server/cave.c:1330
-     #2  0x8056c4d in prt_map (Ind=2) at server/cave.c:1898
-     #3  0x806eeea in redraw_stuff (Ind=2) at server/xtra1.c:3621
-     #4  0x80edd3a in process_player_end (Ind=2) at server/dungeon.c:2638
-     #5  0x80ef862 in dungeon () at server/dungeon.c:3700
 
 [B]- file transfer code crashes, trying to send file to disconnected client
      (maybe already fixed?)
@@ -2146,7 +2145,6 @@ below this line are the unfixed bugs known:
      (b/c they're "cave" and not object - but might as well be 'fixed')
 [B]- one can raise father skill beyond limit by increasing the children
      (eg. Weaponmastery=>Combat)
-[B]- admin cannot delete FEAT_WALL_XTRA(basically, townwalls are not erasable)
 
 
 
@@ -2186,6 +2184,8 @@ memo and questions:
 + towns
   - hint players of town locations (like 'Lorien is south-east to Bree')
   - illuminate the Bree tavern :)
+- administrative:
+  + revise 'dungeon generation' commands (it lacks most of flags etc)
 [C] chat-line cursor editing
 
 [major ones]
@@ -2518,3 +2518,5 @@ Program terminated with signal 10, Bus error.
   - features vs. speed
   - long-term gameplay(ala UO) vs. quick game(ala Populous3)
   - terminal base(ascii+vi) vs modernity(gui+mouse)
+
+ vim:tw=78:fo=tcq2:isk=!-~,^*,^\|,^\":ts=8:ft=memo:norl:

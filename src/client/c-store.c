@@ -257,6 +257,8 @@ static void store_examine(void)
 
 	/* Tell the server */
 	if (is_book(o_ptr)) show_browse(o_ptr);
+	else if (o_ptr->tval == TV_BOOK)
+		browse_school_spell(o_ptr->sval, o_ptr->pval);
 	else Send_store_examine(item);
 }
 

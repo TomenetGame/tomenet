@@ -1832,8 +1832,9 @@ static void do_slash_cmd(int Ind, char *message)
 		}
 		return;
 	}
+	/* Oops conflict; took 'never duplicate' principal */
 	else if (prefix(message, "/shout") ||
-			(prefix(message, "/sh") && !prefix(message, "/shutdown")))
+			prefix(message, "/sho"))
 	{
 		aggravate_monsters(Ind, 1);
 		if (colon)

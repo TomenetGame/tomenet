@@ -1,8 +1,5 @@
---[[
-test
-of 
-block remark
-]]
+-- $Id$
+
 --
 -- simple scripts to examine/modify players' status.
 -- 
@@ -20,7 +17,7 @@ local p = players(i)
 end
 
 -- display some information about a specified object in inventory.
--- (prolly easier to use gdb..
+-- (prolly easier to use gdb..)
 function o_in(i, j)
 -- +1 offset
 local o = players(i).inventory[j+1]

@@ -2401,7 +2401,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_MANA,
-                                '+', 0,
+                                '+', 1000,	/* Allow to cast Manathrust */
                                 '+', 900,
                         },
                         {

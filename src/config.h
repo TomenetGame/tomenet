@@ -229,10 +229,11 @@
  */
 #define TOMENET_WORLDS
 
-#if 0	/* Sorry Jir, but this IS used sometimes. */
+#if 0
 #define BIND_NAME "TomeNET.net"
 #define	BIND_IP "64.53.71.115"
 #endif
+
 
 #if 0	/* not used for good, most likely. DELETEME */
 /*

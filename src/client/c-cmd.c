@@ -193,8 +193,10 @@ void cmd_all_in_one(void)
 					{
 						do_activate_skill(i, item);
 						done = TRUE;
+						break;
 					}
-					break;
+					/* Now a number of skills shares same mkey */
+					// break;
 				}
 			}
 			if (!done)

@@ -18,6 +18,9 @@
 #ifdef TOMENET_WORLDS
 extern int world_comm(int fd, int arg);
 extern int WorldSocket;
+
+extern void world_msg(char *text);
+extern void world_player(unsigned long id, char *name, unsigned short enter);
 #endif
 
 /* common/common.c */
@@ -793,7 +796,8 @@ extern int Send_flush(int Ind);
 extern int Send_line_info(int Ind, int y);
 extern int Send_mini_map(int Ind, int y);
 //extern int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name);
-extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval);
+//extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval);
+extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval);
 //extern int Send_store_info(int Ind, int num, int owner, int items);
 extern int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse);
 //extern int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse, byte num_actions);

@@ -1912,7 +1912,7 @@ static void display_entry(int Ind, int pos)
 		wgt = o_ptr->weight;
 
 		/* Send the info */
-		Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval);
+		Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 	}
 
 	/* Describe an item (fully) in a store */
@@ -1937,7 +1937,7 @@ static void display_entry(int Ind, int pos)
 		x = price_item(Ind, o_ptr, ot_ptr->min_inflate, FALSE);
 
 		/* Send the info */
-		Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval);
+		Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 	}
 }
 
@@ -4208,7 +4208,7 @@ static void display_house_entry(int Ind, int pos)
 	wgt = o_ptr->weight;
 
 	/* Send the info */
-	Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval);
+	Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
 }
 
 

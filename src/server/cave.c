@@ -5177,7 +5177,7 @@ void wiz_lite(int Ind)
 			}
 
 			/* Process all non-walls */
-			if (c_ptr->feat < FEAT_SECRET)
+			//if (c_ptr->feat < FEAT_SECRET)
 			{
 				/* Scan all neighbors */
 				for (i = 0; i < 9; i++)

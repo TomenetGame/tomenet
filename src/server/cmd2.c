@@ -1632,7 +1632,7 @@ void do_cmd_disarm(int Ind, int dir)
 	trap_kind *t_ptr;
 	int t_idx = 0;
 
-	bool            more = FALSE;
+	bool more = FALSE, done = FALSE;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -1684,6 +1684,7 @@ void do_cmd_disarm(int Ind, int dir)
 		{
 			/* Message */
 			msg_print(Ind, "You see nothing there to disarm.");
+			done = TRUE;
 		}
 
 		/* Monster in the way */
@@ -1697,6 +1698,8 @@ void do_cmd_disarm(int Ind, int dir)
 
 			/* Attack */
 			py_attack(Ind, y, x, TRUE);
+
+			done = TRUE;
 		}
 
 		/* Normal disarm */
@@ -1719,7 +1722,6 @@ void do_cmd_disarm(int Ind, int dir)
 
 			/* Extract the difficulty */
 			j = i - t_ptr->difficulty * 3;
-//			j = i - o_ptr->pval;
 
 			/* Always have a small chance of success */
 			if (j < 2) j = 2;
@@ -1736,22 +1738,14 @@ void do_cmd_disarm(int Ind, int dir)
 				msg_print(Ind, "The chest is not trapped.");
 			}
 
-#if 0
-			/* No traps to find. */
-			else if (!chest_traps[o_ptr->pval])
-			{
-				msg_print(Ind, "The chest is not trapped.");
-			}
-#endif	// 0
-
 			/* Success (get a lot of experience) */
 			else if (rand_int(100) < j)
 			{
 				msg_print(Ind, "You have disarmed the chest.");
 				gain_exp(Ind, t_ptr->difficulty * 3);
-//				gain_exp(Ind, o_ptr->pval);
 				o_ptr->pval = (0 - o_ptr->pval);
 				do_id_trap(Ind, o_ptr->pval);
+				done = TRUE;
 			}
 
 			/* Failure -- Keep trying */
@@ -1759,6 +1753,7 @@ void do_cmd_disarm(int Ind, int dir)
 			{
 				/* We may keep trying */
 				more = TRUE;
+				done = TRUE;
 				msg_print(Ind, "You failed to disarm the chest.");
 			}
 
@@ -1767,19 +1762,27 @@ void do_cmd_disarm(int Ind, int dir)
 			{
 				msg_print(Ind, "You set off a trap!");
 				chest_trap(Ind, y, x, c_ptr->o_idx);
+				done = TRUE;
 			}
+
+			/* XXX hrm it's ugly */
+			if ((!t_idx || !cs_ptr->sc.trap.found) &&
+					!(cs_ptr=GetCS(c_ptr, CS_MON_TRAP)))
+				done = TRUE;
 		}
+
 		/* Disarm the trap */
 /*		else if (c_ptr->feat == FEAT_MON_TRAP) */
-		else if (cs_ptr->type == CS_MON_TRAP) /* same thing.. */
+		if (!done && cs_ptr->type == CS_MON_TRAP) /* same thing.. */
 		{
 			msg_print(Ind, "You disarm the monster trap.");
 			do_cmd_disarm_mon_trap_aux(wpos, y, x);
 			more = FALSE;
+			done = TRUE;
 		}
 
 		/* Disarm a trap */
-		else
+		if(!done && (t_idx && cs_ptr->sc.trap.found))
 		{
 			cptr name;
 
@@ -1863,6 +1866,9 @@ void do_cmd_disarm(int Ind, int dir)
 				/* Move the player onto the trap */
 				move_player(Ind, dir, FALSE);
 			}
+
+			/* only aesthetic */
+			done = TRUE;
 		}
 	}
 

@@ -985,6 +985,26 @@ void do_activate_skill(int x_idx, int item)
 		}
 		return;
 	}
+	else if (s_info[x_idx].action_mkey == MKEY_SCHOOL)
+	{
+		//int item;
+
+		/* Ask for a spell, allow cancel */
+		if ((spell = get_school_spell("cast", &item)) == -1) return;
+
+		/* Ask for a direction? */
+		dir = -1;
+		if (exec_lua(0, format("return pre_exec_spell_dir(%d)", spell)))
+			if (!get_dir(&dir))
+				return;
+
+		/* TODO: ask for an item or whatever */
+
+		/* Send it */
+		Send_activate_skill(MKEY_SCHOOL, item, spell, dir);
+
+		return;
+	}
 	else if (s_info[x_idx].flags1 & SKF1_MKEY_SPELL)
 	{
 		if (item < 0)
@@ -1003,24 +1023,6 @@ void do_activate_skill(int x_idx, int item)
 
 		/* Send it */
 		Send_activate_skill(s_info[x_idx].action_mkey, item, spell, dir);
-
-		return;
-	}
-	else if (s_info[x_idx].action_mkey == MKEY_SCHOOL)
-        {
-                int item;
-
-		/* Ask for a spell, allow cancel */
-		if ((spell = get_school_spell("cast", &item)) == -1) return;
-
-                /* Ask for a direction? */
-                dir = -1;
-                if (exec_lua(0, format("return pre_exec_spell_dir(%d)", spell)))
-                        if (!get_dir(&dir))
-                                return;
-
-		/* Send it */
-		Send_activate_skill(MKEY_SCHOOL, item, spell, dir);
 
 		return;
 	}

@@ -371,7 +371,8 @@ errr get_safe_file(char *buf, cptr file)
 
 	for (i = 1; i <= 9999; i++)
 	{
-		sprintf(tmp, "%s%#4d.txt", file, i);
+		//sprintf(tmp, "%s%#4d.txt", file, i);
+		sprintf(tmp, "%s%4d.txt", file, i);
 		if (my_freadable(tmp)) continue;
 
 		strcpy(buf, tmp);

@@ -994,7 +994,9 @@ static void Delete_player(int Ind)
 			}
 		}
 
+#ifdef TOMENET_WORLDS
 		world_player(p_ptr->id, p_ptr->name, FALSE, FALSE);
+#endif	// TOMENET_WORLDS
 
 		for (i = 1; i < NumPlayers + 1; i++)
 		{
@@ -1881,7 +1883,9 @@ static int Handle_login(int ind)
 	/* Handle the cfg_secret_dungeon_master option */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) return 0;
 
+#ifdef TOMENET_WORLDS
 	world_player(p_ptr->id, p_ptr->name, TRUE, FALSE);
+#endif	// TOMENET_WORLDS
 
 	/* Tell everyone about our new player */
 	for (i = 1; i < NumPlayers; i++)
@@ -3405,6 +3409,9 @@ int Send_history(int ind, int line, cptr hist)
 	return Packet_printf(&connp->c, "%c%hu%s", PKT_HISTORY, line, hist);
 }
 
+/* XXX 'pval' is sent only when the item is TV_BOOK (same with Send_equip)
+ * otherwise you can use badly-cracked client :)	- Jir -
+ */
 int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
@@ -4182,7 +4189,7 @@ int Send_mini_map(int ind, int y)
 }
 
 //int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name)
-int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval)
+int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -4194,6 +4201,9 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 			ind, connp->state, connp->id));
 		return 0;
 	}
+
+	/* Hack -- send pval only if it's School book */
+	if (tval != TV_BOOK) pval = 0;
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
 	  {
@@ -4208,11 +4218,11 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%s%c%c", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval);
+		Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%s%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
 	      }
 	  }
 
-	return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval);
+	return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
 }
 
 /*
