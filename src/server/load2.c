@@ -2156,7 +2156,7 @@ void rd_towns()
 	}
 }
 
-load_guildhalls(struct worldpos *wpos){
+void load_guildhalls(struct worldpos *wpos){
 	int i;
 	FILE *gfp;
 	struct guildsave data;

@@ -29,6 +29,7 @@ int local_file_check(char *fname, unsigned long *sum);
 int local_file_ack(int ind, unsigned short fnum);
 int local_file_err(int ind, unsigned short fnum);
 void do_xfers();
+void kill_xfers(int ind);
 int check_return(int ind, unsigned short fnum, unsigned long sum);
 int remote_update(int ind, char *fname);
 
@@ -645,6 +646,10 @@ extern errr init_e_info_txt(FILE *fp, char *buf);
 extern errr init_r_info_txt(FILE *fp, char *buf);
 extern errr init_re_info_txt(FILE *fp, char *buf);
 extern errr init_t_info_txt(FILE *fp, char *buf);
+extern errr init_ow_info_txt(FILE *fp, char *buf);
+extern errr init_ba_info_txt(FILE *fp, char *buf);
+extern errr init_st_info_txt(FILE *fp, char *buf);
+extern errr init_s_info_txt(FILE *fp, char *buf);
 
 /* init.c */
 extern errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int ymax, int xmax, bool init);
@@ -656,6 +661,7 @@ extern bool load_server_cfg(void);
 /*extern errr rd_savefile_old(void);*/
 
 /* load2.c */
+extern void load_guildhalls(struct worldpos *wpos);
 extern void save_guildhalls(struct worldpos *wpos);
 extern errr rd_savefile_new(int Ind);
 extern errr rd_server_savefile(void);
@@ -783,6 +789,7 @@ extern void Handle_clear_buffer(int Ind);
 
 /* object1.c */
 /* object2.c */
+extern int divide_charged_item(object_type *o_ptr, int amt);
 extern s16b unique_quark;
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
 extern s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
@@ -1291,4 +1298,7 @@ extern void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i);
 //extern bool init_s_info();
 
 /* hooks.c */
-bool process_hooks(int h_idx, char *fmt, ...);
+extern bool process_hooks(int h_idx, char *fmt, ...);
+extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
+extern void dump_hooks();
+extern void wipe_hooks();

@@ -351,7 +351,7 @@ bool do_player_trap_call_out(int Ind)
 	cave_type **zcave;
 	zcave=getcave(&p_ptr->wpos);
 
-	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return;
+	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return(FALSE);
 
    for (i = 1; i < m_max; i++)
    {
@@ -422,7 +422,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
 //		c_ptr=&zcave[y][x];
 	}
 	else return(FALSE);
-	if (check_st_anchor(&p_ptr->wpos, y, x)) return;
+	if (check_st_anchor(&p_ptr->wpos, y, x)) return(FALSE);
 
 	if (i_ptr == NULL) return(FALSE);
 

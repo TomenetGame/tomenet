@@ -1460,7 +1460,7 @@ void place_floor_respectedly(worldpos *wpos, int y, int x)
 static bool get_is_floor(worldpos *wpos, int x, int y)
 {
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave=getcave(wpos))) return(FALSE);
 
 	/* Out of bounds */
 	if (!in_bounds(y, x)) return (FALSE);	/* XXX */
@@ -4205,7 +4205,7 @@ void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, int grd,
 static bool hack_isnt_wall(worldpos *wpos, int y, int x, int cutoff)
 {
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave=getcave(wpos))) return(FALSE);
 
 	/* Already done */
 	if (zcave[y][x].info & CAVE_ICKY)
@@ -4285,7 +4285,7 @@ bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysize,
 	int x, y, i, amount, xhsize, yhsize;
 	cave_type *c_ptr;
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave=getcave(wpos))) return(FALSE);
 
 	/* Offsets to middle from corner */
 	xhsize = xsize / 2;

@@ -84,6 +84,7 @@ void defsave(c_special *cs_ptr){
 void defsee(void *ptr, int Ind){
 }
 int defhit(void *ptr, int Ind){
+	return(1);
 }
 
 /*void dnaload(void *ptr, cave_type *c_ptr){ */

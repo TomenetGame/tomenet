@@ -2128,6 +2128,7 @@ bool should_we_bleed(struct worldpos *wpos, char dir)
 	}
 	else return FALSE;
 #endif /*if 0 - evil - temp */
+	return(FALSE);
 }
 
 

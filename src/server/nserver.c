@@ -2718,24 +2718,26 @@ static int Receive_file(int ind){
 		Packet_printf(&connp->c, "%c%c%hd", PKT_FILE, x?PKT_FILE_ACK:PKT_FILE_ERR, fnum);
 	}
 	else printf("error file packet\n");
+	return(1);
 }
 
 int Receive_file_data(int ind, unsigned short len, char *buffer){
 	connection_t *connp = &Conn[ind];
 	memcpy(buffer, connp->r.ptr, len);
 	Sockbuf_advance(&connp->r, len + connp->r.ptr - connp->r.buf);
+	return(1);
 }
 
 int Send_file_check(int ind, unsigned short id, char *fname){
 	connection_t *connp = &Conn[ind];
 	Packet_printf(&connp->c, "%c%c%hd%s", PKT_FILE, PKT_FILE_CHECK, id, fname);
-	return(0);
+	return(1);
 }
 
 int Send_file_init(int ind, unsigned short id, char *fname){
 	connection_t *connp = &Conn[ind];
 	Packet_printf(&connp->c, "%c%c%hd%s", PKT_FILE, PKT_FILE_INIT, id, fname);
-	return(0);
+	return(1);
 }
 
 int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
@@ -2744,13 +2746,13 @@ int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
 	if (Sockbuf_write(&connp->c, buf, len) != len){
 		printf("failed sending file data\n");
 	}
-	return(0);
+	return(1);
 }
 
 int Send_file_end(int ind, unsigned short id){
 	connection_t *connp = &Conn[ind];
 	Packet_printf(&connp->c, "%c%c%hd", PKT_FILE, PKT_FILE_END, id);
-	return(0);
+	return(1);
 }
 
 int Send_reliable(int ind)

@@ -5295,7 +5295,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //		msg_format(Ind, "You are too afraid to attack %s!", p_name);
 
 		/* Done */
-		return;
+		return(FALSE);
 	}
 
 	/* Bolt attack from a monster, a player or a trap */
@@ -5360,7 +5360,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		project(0, 0, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL));
 
 		disturb(1, 0);
-		return TRUE;
+		return(TRUE);
 	}
 #endif	// 0
 
@@ -5534,7 +5534,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if((cfg.use_pk_rules == PK_RULES_DECLARE &&
 							!(p_ptr->pkill & PKILL_KILLER)) &&
 						!magik(NEUTRAL_FIRE_CHANCE))
-					return FALSE;
+					return(FALSE);
 			}
 			else
 			{
@@ -5543,7 +5543,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				dam = (dam + 2) / 3;
 				if (!magik(FRIEND_FIRE_CHANCE))
 #endif
-				return FALSE;
+				return(FALSE);
 			}
 		}	
 	}
