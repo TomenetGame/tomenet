@@ -73,12 +73,12 @@ int guild_create(int Ind, cptr name){
 	object_type forge, *o_ptr=&forge;
 	char temp[160];
 
-	if(p_ptr->lev<40){
+	if(p_ptr->lev<30){
 		msg_print(Ind, "You are not high enough level to start a guild.");
 		return FALSE;
 	}
 	/* This could probably be improved. */
-	if(p_ptr->au<4000000){
+	if(p_ptr->au<2000000){
 		msg_print(Ind, "You need more cash to start a guild.");
 		return FALSE;
 	}
