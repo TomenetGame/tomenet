@@ -1021,8 +1021,10 @@ struct high_score
 	char cur_dun[4];                /* Current Dungeon Level (number) */
 	char max_lev[4];                /* Max Player Level (number) */
 	char max_dun[4];                /* Max Dungeon Level (number) */
+	
+	char mode[1];		/* Difficulty/character mode */
 
-	char how[32];           /* Method of death (string) */
+	char how[50];           /* Method of death (string) */
 };
 
 int highscore_send(char *buffer, int max){
@@ -1034,7 +1036,7 @@ int highscore_send(char *buffer, int max){
 	hsp=fopen(buf, "r");
 	if(hsp==(FILE*)NULL) return(0);
 	while(fread(&score, sizeof(struct high_score), 1, hsp) && (len+sizeof(struct high_score))<max){
-		len+=sprintf(&buffer[len], "score=%s\nwho=%s\nhow=%s\nsrace=%s\nslevel=%s\n", score.pts, score.who, score.how, race_info[atoi(score.p_r)].title, score.cur_lev);
+		len+=sprintf(&buffer[len], "score=%s\nwho=%s\nhow=%s\nsrace=%s\nslevel=%s\nmode=%s\n", score.pts, score.who, score.how, race_info[atoi(score.p_r)].title, score.cur_lev, score.mode);
 	}
 	fclose(hsp);
 	return(len);
@@ -1208,7 +1210,8 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 	for (j = from, place = j+1; j < i; j++, place++)
 	{
 		int pr, pc, clev, mlev, cdun, mdun;
-
+		byte modebuf;
+		char modestr[20], modecol[5];
 		cptr gold, when, aged;
 
 
@@ -1250,9 +1253,29 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		for (gold = the_score.gold; isspace(*gold); gold++) /* loop */;
 		for (aged = the_score.turns; isspace(*aged); aged++) /* loop */;
 
+		modebuf = the_score.mode[0];
+		switch (modebuf) {
+                case MODE_HELL:
+			strcpy(modestr, "purgatorial ");
+			strcpy(modecol, "");
+	    	        break;
+                case MODE_NO_GHOST:
+			strcpy(modestr, "unworldly ");
+			strcpy(modecol, "\377D");
+	                break;
+		case (MODE_HELL + MODE_NO_GHOST):
+			strcpy(modestr, "hellish ");
+			strcpy(modecol, "\377D");
+			break;
+                case MODE_NORMAL:
+		default:
+			strcpy(modestr, "");
+			strcpy(modecol, "");
+                        break;
+		}
 		/* Dump some info */
-		sprintf(out_val, "%3d.%10s  %s the %s %s, Level %d",
-			place, the_score.pts, the_score.who,
+		sprintf(out_val, "%3d.%10s %s%s the %s%s %s\377w, Level %d",
+			place, the_score.pts, modecol, the_score.who, modestr, 
 			race_info[pr].title, class_info[pc].title,
 			clev);
 
@@ -1264,16 +1287,18 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 
 		/* Another line of info */
 		if (strcmp(the_score.how, "winner"))
-			sprintf(out_val, "               Killed by %s on %s %d",
-			the_score.how, "Dungeon Level", cdun);
+			sprintf(out_val, "               Killed by %s\n"
+					 "               on %s %d",
+					 the_score.how, "Dungeon Level", cdun);
 		else
-			sprintf(out_val, "               Retired after a legendary career");
+			sprintf(out_val, "               \377vRetired after a legendary career");
 
 		/* Hack -- some people die in the town */
 		if ((!cdun) && (strcmp(the_score.how, "winner")))
 		{
-			sprintf(out_val, "               Killed by %s in the Town",
-				the_score.how);
+			sprintf(out_val, "               Killed by %s\n"
+					 "               in the Town",
+					 the_score.how);
 		}
 
 		/* Append a "maximum level" */
@@ -1388,8 +1413,11 @@ static errr top_twenty(int Ind)
 
 	/* Save the cause of death (31 chars) */
 	/* HACKED to take the saved cause of death of the character, not the ghost */
-	sprintf(the_score.how, "%-.31s", p_ptr->died_from_list);
+	sprintf(the_score.how, "%-.49s", p_ptr->died_from_list);
 
+	/* Save the modus (hellish, bat..) */
+//	sprintf(the_score.mode, "%c", p_ptr->mode);
+	the_score.mode[0] = p_ptr->mode;
 
 	/* Lock (for writing) the highscore file, or fail */
 	if (fd_lock(highscore_fd, F_WRLCK)) return (1);
@@ -1474,6 +1502,8 @@ static errr predict_score(int Ind, int line)
 	/* Hack -- no cause of death */
 	strcpy(the_score.how, "nobody (yet!)");
 
+	/* Modus.. */
+	the_score.mode[0] = p_ptr->mode;
 
 	/* See where the entry would be placed */
 	j = highscore_where(&the_score);
@@ -1524,7 +1554,7 @@ void kingly(int Ind)
 	p_ptr->lev = p_ptr->max_plv;
 
 	/* Hack -- Player gets an XP bonus for beating the game */
-	p_ptr->exp = p_ptr->max_exp += 10000000L;
+	/* p_ptr->exp = p_ptr->max_exp += 10000000L; */
 }
 
 
