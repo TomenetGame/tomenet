@@ -1558,7 +1558,6 @@ void do_slash_cmd(int Ind, cptr message){
 	char *token[9];
 	worldpos wp;
 	bool admin = p_ptr->admin_wiz || p_ptr->admin_dm;
-	bool me = FALSE;
 
 	wpcopy(&wp, &p_ptr->wpos);
 
@@ -1581,10 +1580,6 @@ void do_slash_cmd(int Ind, cptr message){
 			msg_print(Ind, "\377oUsage: /lua (LUA script command)");
 		}
 		return;
-	}
-	else if (prefix(message, "/me "))
-	{
-		me = TRUE;
 	}
 	else
 	{
@@ -2513,8 +2508,11 @@ void player_talk_aux(int Ind, cptr message)
 	}
 
 	if(message[0]=='/'){
-		do_slash_cmd(Ind, message);	/* add check */
-		return;
+		if(!strncmp(message, "/me", 3)) me=TRUE;
+		else{
+			do_slash_cmd(Ind, message);	/* add check */
+			return;
+		}
 	}
 
 	/* Default to no search string */
@@ -2547,74 +2545,7 @@ void player_talk_aux(int Ind, cptr message)
 	if (len)
 	{
 		target = name_lookup_loose(Ind, search, TRUE);
-#if 0
-		/* First check parties */
-		for (i = 1; i < MAX_PARTIES; i++)
-		{
-			/* Skip if empty */
-			if (!parties[i].num) continue;
 
-			/* Check name */
-			if (!strncasecmp(parties[i].name, search, len))
-			{
-				/* Set target if not set already */
-				if (!target)
-				{
-					target = 0 - i;
-				}
-				else
-				{
-					/* Matching too many parties */
-					problem = "parties";
-				}
-
-				/* Check for exact match */
-				if (len == strlen(parties[i].name))
-				{
-					/* Never a problem */
-					problem = "";
-
-					/* Finished looking */
-					break;
-				}
-			}
-		}
-
-		/* Then check players */
-		for (i = 1; i <= NumPlayers; i++)
-		{
-			/* Check this one */
-			q_ptr = Players[i];
-
-			/* Skip if disconnected */
-			if (q_ptr->conn == NOT_CONNECTED) continue;
-
-			/* Check name */
-			if (!strncasecmp(q_ptr->name, search, len))
-			{
-				/* Set target if not set already */
-				if (!target)
-				{
-					target = i;
-				}
-				else
-				{
-					/* Matching too many people */
-					problem = "players";
-				}
-
-				/* Check for exact match */
-				if (len == strlen(q_ptr->name))
-				{
-					/* Never a problem */
-					problem = "";
-
-					/* Finished looking */
-					break;
-				}
-			}
-		}
-#endif /* 0 */
 		/* Move colon pointer forward to next word */
 		while (*colon && (isspace(*colon) || *colon == ':')) colon++;
 
@@ -2628,33 +2559,6 @@ void player_talk_aux(int Ind, cptr message)
 			return;
 		}
 	}
-#if 0
-	/* Check for recipient set but no match found */
-	if (len && !target)
-	{
-		/* Bounce message to player who sent it */
-		msg_format(Ind, "[%s] %s", p_ptr->name, colon);
-
-		/* Send an error message */
-		msg_format(Ind, "Could not match name '%s'.", search);
-
-		/* Give up */
-		return;
-	}
-
-	/* Check for multiple recipients found */
-	if (strlen(problem))
-	{
-		/* Bounce message to player who sent it */
-		msg_format(Ind, "[%s] %s", p_ptr->name, colon);
-
-		/* Send an error message */
-		msg_format(Ind, "'%s' matches too many %s.", search, problem);
-
-		/* Give up */
-		return;
-	}
-#endif /* 0 */
 
 	/* Send to appropriate player */
 	if ((len && target > 0) && (!check_ignore(target, Ind)))
@@ -2691,8 +2595,6 @@ void player_talk_aux(int Ind, cptr message)
 		return;
 	}
 
-	/* Look for leading ':', but ignore "smileys" */
-	/* -APD- I don't like this new fangled talking system, reverting to the old way */
 	if (strlen(message) > 1) mycolor = (prefix(message, "}") && (color_char_to_attr(*(message + 1)) != -1))?2:0;
 
 	if (!Ind) c = 'y';

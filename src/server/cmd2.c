@@ -2157,11 +2157,11 @@ void do_cmd_fire(int Ind, int dir, int item)
 		return;
 	}
 
-    if (!can_use(Ind, o_ptr))
-    {
-	    msg_print(Ind, "You are not high level enough.");
-			    return;
-    }
+	if (!can_use(Ind, o_ptr))
+	{
+		msg_print(Ind, "You are not high level enough.");
+		return;
+	}
 
 
 	if (o_ptr->tval != p_ptr->tval_ammo && !boomerang)
