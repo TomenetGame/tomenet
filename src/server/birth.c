@@ -1018,11 +1018,26 @@ static void player_outfit(int Ind)
 	/*
 	 * Some chars are always fruit bats :)
 	 */
+#if 0	// available from normal character creation now :)
 	 if (!strcmp(p_ptr->name, "Olofruit") || !strcmp(p_ptr->name, "Olobat") || !strcmp(p_ptr->name, "Norcofruit") || !strcmp(p_ptr->name, "Norcobat") || !strcmp(p_ptr->name, "Durbat"))
 	 {
 		p_ptr->fruit_bat = 1;
 	 }
+#endif	// 0
 	
+	 if (!strcmp(p_ptr->name, "Moltor"))
+	 {
+		 invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
+		 o_ptr->name2 = 187;	// Bud ;)
+		 o_ptr->number = 9;
+		 apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
+		 o_ptr->discount = 72;
+		 o_ptr->owner = p_ptr->id;
+		 o_ptr->level = 1;
+		 object_known(o_ptr);
+		 object_aware(Ind, o_ptr);
+		 (void)inven_carry(Ind, o_ptr);
+	 }
 #if 1
 	/*
 	 * Give the cfg_admin_wizard some interesting stuff.
@@ -1605,18 +1620,17 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	return TRUE;
 }
 
+/* Disallow non-authorized admin (improvement needed!!) */
 /* returns FALSE if bogus admin - Jir - */
 bool confirm_admin(int Ind, cptr name, cptr pass)
 {
 	player_type *p_ptr = Players[Ind];
 
-	/* Disallow non-authorized admin (improvement needed!!) */
 	if (!strcmp(name,cfg.admin_wizard))
 	{
 		if (strcmp(pass, cfg.console_password)) return FALSE;
 		else p_ptr->admin_wiz = TRUE;
 	}
-	/* Disallow non-authorized admin (improvement needed!!) */
 	else if (!strcmp(name, cfg.dungeon_master)) 
 	{
 		if (strcmp(pass, cfg.console_password)) return FALSE;

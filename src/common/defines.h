@@ -3375,7 +3375,8 @@ that keeps many algorithms happy.
 #define ETR4_TH_M2             0x00100000L     /* Item has +(up to 2) to hit */
 #define ETR4_TH_M3             0x00200000L     /* Item has +(up to 3) to hit */
 #define ETR4_TH_M5             0x00400000L     /* Item has +(up to 5) to hit */
-#define ETR4_TD_M1             0x00800000L     /* Item has +1 to dam */
+//#define ETR4_TD_M1             0x00800000L     /* Item has +1 to dam */
+#define ETR4_R_ESP             0x00800000L     /* Item has +1 to dam */
 #define ETR4_TD_M2             0x01000000L     /* Item has +(up to 2) to dam */
 #define ETR4_TD_M3             0x02000000L     /* Item has +(up to 3) to dam */
 #define ETR4_TD_M5             0x04000000L     /* Item has +(up to 5) to dam */

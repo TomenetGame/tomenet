@@ -2535,7 +2535,7 @@ F:LITE1
 F:RES_BLIND | RES_FEAR | RES_CHAOS | RES_DISEN
 F:SUST_INT | SUST_WIS
 F:FEATHER | SLOW_DIGEST | HOLD_LIFE |
-F:ANTIMAGIC_20 | DRAIN_MANA
+F:ANTIMAGIC_30 | DRAIN_MANA
 D:The ultimate point an phylosopher had arrived, this amulet
 D:reveals the light of true belief.
 
@@ -2553,6 +2553,17 @@ F:FREE_ACT | RES_NETHER | HOLD_LIFE
 F:SUST_STR | SUST_DEX | SUST_CON | 
 F:ANTIMAGIC_20 | ANTIMAGIC_50 | DRAIN_MANA
 # | NO_MAGIC
+
+# The Long Bow 'Doublezee'
+
+N:213:'Doublezee'
+I:19:13:3
+W:40:25:40:50000
+P:0:0d0:25:15:0
+F:CHR | SEARCH | HIDE_TYPE | 
+F:XTRA_SHOTS | SHOW_MODS
+F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_SOUND
+F:ESP_ANIMAL | ANTIMAGIC_20
 
 #N:(No.):(name)
 #G:(appearence):(colour)

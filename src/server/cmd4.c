@@ -433,6 +433,7 @@ void do_cmd_check_artifacts(int Ind, int line)
  */
 void do_cmd_check_uniques(int Ind, int line)
 {
+	player_type *p_ptr = Players[Ind];
 	int k;
 
 	FILE *fff;
@@ -462,8 +463,12 @@ void do_cmd_check_uniques(int Ind, int line)
 				byte ok = FALSE;
 				bool full = FALSE;
 
+				/* Output color byte */
+				fprintf(fff, "%c", 'w');
+
 				/* Format message */
-				fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
+//				fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
+				fprintf(fff, "%s has been killed by", r_name + r_ptr->name);
 
 				for (i = 1; i <= NumPlayers; i++)
 				{
@@ -471,9 +476,27 @@ void do_cmd_check_uniques(int Ind, int line)
 
 					if (q_ptr->r_killed[k])
 					{
+						byte attr = 'U';
 						//							fprintf(fff, "        %s\n", q_ptr->name);
+						if (!ok)
+						{
+							fprintf(fff, ":\n");
+							ok = TRUE;
+						}
+						/* Print self in green */
+						if (Ind == k) attr = 'G';
+
+						/* Print party members in blue */
+						else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
+
+						/* Print hostile players in red */
+						else if (check_hostile(Ind, i)) attr = 'r';
+
+						/* Output color byte */
+						fprintf(fff, "%c", attr);
+
+
 						fprintf(fff, "  %16.16s", q_ptr->name);
-						ok = TRUE;
 						j++;
 						full = FALSE;
 						if (j == 4)
@@ -485,7 +508,13 @@ void do_cmd_check_uniques(int Ind, int line)
 					}
 				}
 //				if (!ok) fprintf(fff, "       Nobody\n");
-				if (!ok) fprintf(fff, "       Nobody");
+				if (!ok)
+				{
+					/* Output color byte */
+//					fprintf(fff, "%c", 'y');
+
+					fprintf(fff, " Nobody.");
+				}
 				/* Terminate line */
 				/*                              fprintf(fff, "\n");*/
 				if (!full) fprintf(fff, "\n");
@@ -498,7 +527,7 @@ void do_cmd_check_uniques(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Known Uniques", line, 0);
+	show_file(Ind, file_name, "Known Uniques", line, 1);
 
 	/* Remove the file */
 	fd_kill(file_name);

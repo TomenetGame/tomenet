@@ -612,3 +612,6 @@ Change list for PernMangband
 - antimagic shield of party member disturbs spellcasting less.
 - use of magic-device is penalized according to the antimagic power(and not 0)
 [B] antimagic of weapon was not counted.
+
+5/1/2001 (Jir)
+- unique-list is slightly improved.

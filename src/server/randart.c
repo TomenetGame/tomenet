@@ -1276,6 +1276,24 @@ try_an_other_ego:
 	/* Return a pointer to the artifact_type */	
 	return (a_ptr);
 }
+static void add_random_esp(artifact_type *a_ptr, int all)
+{
+	int rr = rand_int (26 + all);
+	if (rr < 1) a_ptr->esp |= (ESP_ORC);
+	else if (rr < 2) a_ptr->esp |= (ESP_TROLL);
+	else if (rr < 3) a_ptr->esp |= (ESP_DRAGON);
+	else if (rr < 4) a_ptr->esp |= (ESP_GIANT);
+	else if (rr < 5) a_ptr->esp |= (ESP_DEMON);
+	else if (rr < 8) a_ptr->esp |= (ESP_UNDEAD);
+	else if (rr < 12) a_ptr->esp |= (ESP_EVIL);
+	else if (rr < 14) a_ptr->esp |= (ESP_ANIMAL);
+	else if (rr < 16) a_ptr->esp |= (ESP_DRAGONRIDER);
+	else if (rr < 19) a_ptr->esp |= (ESP_GOOD);
+	else if (rr < 21) a_ptr->esp |= (ESP_NONLIVING);
+	else if (rr < 24) a_ptr->esp |= (ESP_UNIQUE);
+	else if (rr < 26) a_ptr->esp |= (ESP_SPIDER);
+	else a_ptr->esp |= (ESP_ALL);
+}
 
 /* Add a random flag to the ego item */
 /*
@@ -1330,21 +1348,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 //			case 4: a_ptr->esp |= (ESP_ALL);   break;
 			case 4:
 			{
-				int rr = rand_int (29);
-				if (rr < 1) a_ptr->esp |= (ESP_ORC);
-				else if (rr < 2) a_ptr->esp |= (ESP_TROLL);
-				else if (rr < 3) a_ptr->esp |= (ESP_DRAGON);
-				else if (rr < 4) a_ptr->esp |= (ESP_GIANT);
-				else if (rr < 5) a_ptr->esp |= (ESP_DEMON);
-				else if (rr < 8) a_ptr->esp |= (ESP_UNDEAD);
-				else if (rr < 12) a_ptr->esp |= (ESP_EVIL);
-				else if (rr < 14) a_ptr->esp |= (ESP_ANIMAL);
-				else if (rr < 16) a_ptr->esp |= (ESP_DRAGONRIDER);
-				else if (rr < 19) a_ptr->esp |= (ESP_GOOD);
-				else if (rr < 21) a_ptr->esp |= (ESP_NONLIVING);
-				else if (rr < 24) a_ptr->esp |= (ESP_UNIQUE);
-				else if (rr < 26) a_ptr->esp |= (ESP_SPIDER);
-				else a_ptr->esp |= (ESP_ALL);
+				add_random_esp(a_ptr, 3);
 				break;
 			}
 			case 5: a_ptr->flags3 |= (TR3_SLOW_DIGEST); break;
@@ -1499,10 +1503,17 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		/* Increase to hit */
 		a_ptr->to_h += m_bonus(5, dun_level);
 	}
+#if 0
 	if (fego & ETR4_TD_M1)
 	{
 		/* Increase to dam */
 		a_ptr->to_d++;
+	}
+#endif
+
+	if (fego & ETR4_R_ESP)
+	{
+		add_random_esp(a_ptr, 1);
 	}
 
 	if (fego & ETR4_TD_M2)

@@ -377,7 +377,7 @@ void do_cmd_eat_food(int Ind, int item)
 				/* Methyl! */
 				if (magik(o_ptr->name2? 0 : 3))
 					set_blind(Ind, p_ptr->blind + 10 + randint(10));
-				if (rand_int(100) > p_ptr->food * 80 / PY_FOOD_MAX)
+				if (rand_int(100) < p_ptr->food * magik(o_ptr->name2? 40 : 60) / PY_FOOD_MAX)
 				{
 					msg_print(Ind, "You become nauseous and vomit!");
 					msg_format_near(Ind, "%s vomits!", p_ptr->name);
