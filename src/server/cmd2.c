@@ -3420,6 +3420,8 @@ void do_cmd_purchase_house(int Ind, int dir)
 		return;
 	}       
 
+	if(dir>9) dir=0;	/* temp hack */
+
 	/* Be sure we have a direction */
 	if (dir)
 	{
