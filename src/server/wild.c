@@ -1339,8 +1339,8 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		/* hack -- only add a house if it is not already in memory */
 		if ((tmp=pick_house(wpos, door_y, door_x)) == -1)
 		{
-			cs_ptr=AddCS(c_ptr);
-			cs_ptr->type=CS_DNADOOR;
+			cs_ptr=AddCS(c_ptr, CS_DNADOOR);	/* XXX this can fail? */
+//			cs_ptr->type=CS_DNADOOR;
 			cs_ptr->sc.ptr=houses[num_houses].dna;
 			houses[num_houses].dx = door_x;
 			houses[num_houses].dy = door_y;
@@ -1353,7 +1353,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			}
 		}
 		else{
-			cs_ptr=AddCS(c_ptr);
+			cs_ptr=AddCS(c_ptr, CS_DNADOOR);
 /* evileye temporary fix */
 #if 1
 			houses[tmp].coords.rect.width=houses[num_houses].coords.rect.width;
@@ -1362,7 +1362,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 /* end evileye fix */
 			/* malloc madness otherwise */
 			KILL(houses[num_houses].dna, struct dna_type);
-			cs_ptr->type=CS_DNADOOR;
+//			cs_ptr->type=CS_DNADOOR;
 			cs_ptr->sc.ptr=houses[tmp].dna;
 		}
 	}
@@ -2401,10 +2401,11 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 							if(c_ptr->feat==FEAT_HOME_HEAD){
 								id=(fgetc(gfp)<<8);
 								id|=fgetc(gfp);
+								/* XXX it's double check */
 								if(!(GetCS(c_ptr, CS_KEYDOOR))){
-									cs_ptr=AddCS(c_ptr);
+									cs_ptr=AddCS(c_ptr, CS_KEYDOOR);
 									MAKE(cs_ptr->sc.ptr, struct key_type);
-									cs_ptr->type=CS_KEYDOOR;
+//									cs_ptr->type=CS_KEYDOOR;
 								}
 								key=cs_ptr->sc.ptr;
 								key->id=id;
@@ -2505,8 +2506,8 @@ void wild_add_uhouse(house_type *h_ptr){
 	}
 	c_ptr=&zcave[h_ptr->y+h_ptr->dy][h_ptr->x+h_ptr->dx];
 	c_ptr->feat=FEAT_HOME_HEAD;
-	cs_ptr=AddCS(c_ptr);
-	cs_ptr->type=CS_DNADOOR;
+	cs_ptr=AddCS(c_ptr, CS_DNADOOR);
+//	cs_ptr->type=CS_DNADOOR;
 	cs_ptr->sc.ptr=h_ptr->dna;
 }
 

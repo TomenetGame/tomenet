@@ -74,7 +74,8 @@ void betweenhit(void *ptr, int Ind);
 #endif	// 0
 
 
-void defload(void *ptr, cave_type *c_ptr){
+//void defload(void *ptr, cave_type *c_ptr){
+void defload(void *ptr, c_special *cs_ptr){
 }
 void defsave(void *ptr){
 }
@@ -83,7 +84,8 @@ void defsee(void *ptr, int Ind){
 void defhit(void *ptr, int Ind){
 }
 
-void dnaload(void *ptr, cave_type *c_ptr){
+//void dnaload(void *ptr, cave_type *c_ptr){
+void dnaload(void *ptr, c_special *cs_ptr){
 }
 void dnasave(void *ptr){
 }
@@ -96,7 +98,8 @@ void dnahit(void *ptr, int Ind){
 	printf("no access!\n");
 }
 
-void keyload(void *ptr, cave_type *c_ptr){
+//void keyload(void *ptr, cave_type *c_ptr){
+void keyload(void *ptr, c_special *cs_ptr){
 }
 void keysave(void *ptr){
 }
@@ -108,13 +111,22 @@ void keyhit(void *ptr, int Ind){
  * Traps
  */
 /* *ptr is not used, but is still needed. */
+#if 0
 void tload(void *ptr, cave_type *c_ptr)
 {
 	struct c_special *cs_ptr;
-	cs_ptr=AddCS(c_ptr);
+//	cs_ptr=AddCS(c_ptr);
+	cs_ptr=GetCS(c_ptr, CS_TRAPS);
 	rd_byte(&cs_ptr->sc.trap.t_idx);
 	rd_byte(&cs_ptr->sc.trap.found);
 }
+#else
+void tload(void *ptr, c_special *cs_ptr)
+{
+	rd_byte(&cs_ptr->sc.trap.t_idx);
+	rd_byte(&cs_ptr->sc.trap.found);
+}
+#endif	// 0
 void tsave(void *ptr)
 {
 	struct c_special *cs_ptr = ptr;
@@ -131,13 +143,22 @@ void thit(void *ptr, int Ind){
 /*
  * Between gates (inner-floor version)
  */
+#if 0
 void betweenload(void *ptr, cave_type *c_ptr)
 {
 	struct c_special *cs_ptr;
-	cs_ptr=AddCS(c_ptr);
+//	cs_ptr=AddCS(c_ptr);
+	cs_ptr=GetCS(c_ptr, CS_BETWEEN);
 	rd_byte(&cs_ptr->sc.between.fy);
 	rd_byte(&cs_ptr->sc.between.fx);
 }
+#else
+void betweenload(void *ptr, c_special *cs_ptr)
+{
+	rd_byte(&cs_ptr->sc.between.fy);
+	rd_byte(&cs_ptr->sc.between.fx);
+}
+#endif	// 0
 void betweensave(void *ptr)
 {
 	struct c_special *cs_ptr = ptr;
@@ -154,14 +175,24 @@ void betweenhit(void *ptr, int Ind){
 /*
  * Monster_traps (inner-floor version)
  */
+#if 0
 void montrapload(void *ptr, cave_type *c_ptr)
 {
 	struct c_special *cs_ptr;
-	cs_ptr=AddCS(c_ptr);
+//	cs_ptr=AddCS(c_ptr);
+	cs_ptr=GetCS(c_ptr, CS_MON_TRAP);
 	rd_u16b(&cs_ptr->sc.montrap.trap_kit);
 	rd_byte(&cs_ptr->sc.montrap.difficulty);
 	rd_byte(&cs_ptr->sc.montrap.feat);
 }
+#else	// 0
+void montrapload(void *ptr, c_special *cs_ptr)
+{
+	rd_u16b(&cs_ptr->sc.montrap.trap_kit);
+	rd_byte(&cs_ptr->sc.montrap.difficulty);
+	rd_byte(&cs_ptr->sc.montrap.feat);
+}
+#endif	// 0
 void montrapsave(void *ptr)
 {
 	struct c_special *cs_ptr = ptr;
@@ -170,6 +201,7 @@ void montrapsave(void *ptr)
 	wr_byte(cs_ptr->sc.montrap.feat);
 }
 
+#if 0
 void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr)
 {
 	struct c_special *trav, *prev;
@@ -184,6 +216,28 @@ void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr)
 		}
 	}
 }
+#else // 0
+void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr)
+{
+	struct c_special *trav, *prev;
+	bool flag = FALSE;
+	if (!c_ptr) return;
+
+	prev=trav=c_ptr->special;
+	while(trav){
+		if(trav==cs_ptr){
+			if (flag) prev->next=trav->next;
+			else c_ptr->special = trav->next;
+
+			KILL(trav, struct c_special);
+			return;
+		}
+		flag = TRUE;
+		prev=trav;
+		trav=trav->next;
+	}
+}
+#endif	// 0
 
 
 struct sfunc csfunc[]={

@@ -1054,16 +1054,16 @@ static void rd_house(int n)
 		if (house_ptr->flags&HF_STOCK)
 		{
 			/* add dna to static levels even though town-generated */
-			cs_ptr=AddCS(&zcave[house_ptr->dy][house_ptr->dx]);
+			cs_ptr=AddCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR);
 
-			cs_ptr->type=CS_DNADOOR;
+//			cs_ptr->type=CS_DNADOOR;
 			cs_ptr->sc.ptr=house_ptr->dna;
 		}
 		else
 		{
 			/* add dna to static levels */
-			cs_ptr=AddCS(&zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx]);
-			cs_ptr->type=CS_DNADOOR;
+			cs_ptr=AddCS(&zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx], CS_DNADOOR);
+//			cs_ptr->type=CS_DNADOOR;
 			cs_ptr->sc.ptr=house_ptr->dna;
 		}
 	}
@@ -1730,17 +1730,17 @@ static errr rd_dungeon(void)
 			rd_byte(&n);	/* Number of c_special to add */
 
 			/* terminated? */
-			if (x == 255 && y == 255 && k == 255) break;
+			if (x == 255 && y == 255 && n == 255) break;
 
 			c_ptr = &zcave[y][x];
 			while(n--){
 				rd_byte(&k);
-				cs_ptr=AddCS(c_ptr);
-				cs_ptr->type = k;
+				cs_ptr=AddCS(c_ptr, k);
+//				cs_ptr->type = k;
 			
 				/* csfunc will take care of it :) */
 				csfunc[k].load(sc_is_pointer(k) ?
-					cs_ptr->sc.ptr : cs_ptr, c_ptr);
+					cs_ptr->sc.ptr : cs_ptr, cs_ptr);
 			}
 		}
 	}

@@ -24,6 +24,7 @@
 03/08/2002 (Jir)
 # sorry, I cannot help fixing bugs ;)
 [B]- CS saving was broken
+[m]- csfunc touched a little
 [O]- new artifact 'Pint of Ale of Dwarves' :)
 
 02/08/2002 (Jir)

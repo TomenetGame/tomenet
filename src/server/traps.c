@@ -2980,8 +2980,8 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 		{
 			//	 c_ptr->t_idx = trap;
 			more = FALSE;
-			cs_ptr=AddCS(c_ptr);
-			cs_ptr->type = CS_TRAPS;
+			if (!(cs_ptr=AddCS(c_ptr, CS_TRAPS))) return;
+//			cs_ptr->type = CS_TRAPS;
 			cs_ptr->sc.trap.t_idx = trap;
 			cs_ptr->sc.trap.found = FALSE;
 
@@ -3135,8 +3135,8 @@ void wiz_place_trap(int Ind, int trap)
 
 	//	 c_ptr->t_idx = trap;
 
-	cs_ptr=AddCS(c_ptr);
-	cs_ptr->type = CS_TRAPS;
+	if (!(cs_ptr=AddCS(c_ptr, CS_TRAPS))) return;
+//	cs_ptr->type = CS_TRAPS;
 	cs_ptr->sc.trap.t_idx = trap;
 	cs_ptr->sc.trap.found = FALSE;
 	//				c_ptr=&zcave[y][x];
@@ -3285,6 +3285,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 #endif	// 0
 
 	/* Only set traps on clean floor grids */
+	/* TODO: allow to set traps on poisoned floor */
 	if (!cave_clean_bold(zcave, py, px) ||
 			c_ptr->special)
 	{
@@ -3426,8 +3427,8 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	
 	/* Drop it here */
 //	cave[py][px].special = floor_carry(py, px, i_ptr);
-	cs_ptr=AddCS(c_ptr);
-	cs_ptr->type = CS_MON_TRAP;
+	if (!(cs_ptr=AddCS(c_ptr, CS_MON_TRAP))) return;
+//	cs_ptr->type = CS_MON_TRAP;
 //	cs_ptr->sc.montrap.trap_load = pop_montrap(i_ptr);
 	i = pop_montrap(Ind, i_ptr, 0);
 

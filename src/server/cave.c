@@ -1011,6 +1011,7 @@ struct c_special *GetCS(cave_type *c_ptr, unsigned char type){
 	return(NULL);				/* returns ** to the structs. always dealloc */
 }
 
+#if 0
 struct c_special *AddCS(cave_type *c_ptr){
 	struct c_special *cs_ptr;
 	MAKE(cs_ptr, struct c_special);
@@ -1019,6 +1020,19 @@ struct c_special *AddCS(cave_type *c_ptr){
 	c_ptr->special=cs_ptr;
 	return(cs_ptr);
 }
+#else	// 0
+/* check for duplication, and also sets the type	- Jir - */
+struct c_special *AddCS(cave_type *c_ptr, byte type){
+	struct c_special *cs_ptr;
+	MAKE(cs_ptr, struct c_special);
+	if(!cs_ptr) return(NULL);
+	if (GetCS(c_ptr, type)) return(NULL);	/* already exists! */
+	cs_ptr->next=c_ptr->special;
+	c_ptr->special=cs_ptr;
+	cs_ptr->type = type;
+	return(cs_ptr);
+}
+#endif	// 0
 
 /*
  * Extract the attr/char to display at the given (legal) map location

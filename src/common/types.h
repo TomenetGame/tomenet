@@ -638,6 +638,8 @@ struct c_special{
 	void *ptr;		/* lazy */
 };
 #else /* Jir - work still in progress (thx Yakina for advice) */
+typedef struct c_special c_special;
+
 struct c_special{
 	unsigned char type;
 	union	/* 32bits */
@@ -659,7 +661,8 @@ typedef struct cave_type cave_type;
 
 struct sfunc{		/* structure containing calls for specials */
 //	void (*load)(void *ptr);		/* load function */
-	void (*load)(void *ptr, cave_type *c_ptr);		/* load function */
+//	void (*load)(void *ptr, cave_type *c_ptr);		/* load function */
+	void (*load)(void *ptr, c_special *cs_ptr);		/* load function */
 	void (*save)(void *ptr);		/* save function */
 	void (*see)(void *ptr, int Ind);	/* sets player view */
 	void (*activate)(void *ptr, int Ind);	/* walk on/bump */

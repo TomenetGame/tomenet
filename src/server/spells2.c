@@ -5295,8 +5295,8 @@ bool poly_build(int Ind, char *args)
 			return FALSE;
 		}
 		zcave[curr->sy][curr->sx].feat=FEAT_HOME_OPEN;
-		if((curr->cs=AddCS(&zcave[curr->sy][curr->sx]))){
-			curr->cs->type=CS_DNADOOR;
+		if((curr->cs=AddCS(&zcave[curr->sy][curr->sx], CS_DNADOOR))){
+//			curr->cs->type=CS_DNADOOR;
 			curr->cs->sc.ptr=curr->dna;
 		}
 		builders=curr;

@@ -7902,8 +7902,8 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 					/* Store door location information */
 					c_ptr->feat = FEAT_HOME_HEAD;
-					if((cs_ptr=AddCS(c_ptr))){
-						cs_ptr->type=CS_DNADOOR;
+					if((cs_ptr=AddCS(c_ptr, CS_DNADOOR))){
+//						cs_ptr->type=CS_DNADOOR;
 						cs_ptr->sc.ptr = houses[num_houses].dna;
 					}
 					houses[num_houses].dx=dx;
@@ -7921,8 +7921,8 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				else{
 					KILL(houses[num_houses].dna, struct dna_type);
 					c_ptr->feat=FEAT_HOME_HEAD;
-					if((cs_ptr=AddCS(c_ptr))){
-						cs_ptr->type=CS_DNADOOR;
+					if((cs_ptr=AddCS(c_ptr, CS_DNADOOR))){
+//						cs_ptr->type=CS_DNADOOR;
 						cs_ptr->sc.ptr=houses[tmp].dna;
 					}
 				}
@@ -7986,8 +7986,8 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		{
 			/* Store door location information */
 			c_ptr->feat = FEAT_HOME_HEAD;
-			if((cs_ptr=AddCS(c_ptr))){
-				cs_ptr->type=CS_DNADOOR;
+			if((cs_ptr=AddCS(c_ptr, CS_DNADOOR))){
+//				cs_ptr->type=CS_DNADOOR;
 				cs_ptr->sc.ptr = houses[num_houses].dna;
 			}
 			houses[num_houses].dx=x;
@@ -8005,8 +8005,8 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		else{
 			KILL(houses[num_houses].dna, struct dna_type);
 			c_ptr->feat=FEAT_HOME_HEAD;
-			if((cs_ptr=AddCS(c_ptr))){
-				cs_ptr->type=CS_DNADOOR;
+			if((cs_ptr=AddCS(c_ptr, CS_DNADOOR))){
+//				cs_ptr->type=CS_DNADOOR;
 				cs_ptr->sc.ptr=houses[i].dna;
 			}
 		}
