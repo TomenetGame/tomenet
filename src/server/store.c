@@ -715,7 +715,8 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 	owner_type *ot_ptr;
 	int     factor;
 	int     adjust;
-	s32b    price;
+	/*s32b    price;*/
+	s64b    price;
 	int i;
 
 	i=gettown(Ind);

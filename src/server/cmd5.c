@@ -2208,36 +2208,36 @@ void do_cmd_sorc(int Ind, int book, int spell)
                         break;
                 case 49: /* Mind Vision */
 		{
-			  int Ind2 = get_player(Ind, o_ptr);
+			int Ind2 = get_player(Ind, o_ptr);
 
-			  if (!Ind2) break;
+			if (!Ind2) break;
 
-			  if (Ind == Ind2)
-			    {
-			      msg_print(Ind, "\377RYou cannot mind vision yourself.");
-			      break;
-			    }
-			  if (p_ptr->esp_link)
-			    {
-			      msg_print(Ind, "\377RYour mind is already linked.");
-			      break;
-			    }
-			  if (Players[Ind2]->esp_link)
-			    {
-			      msg_format(Ind, "\377R%s mind is already linked.", Players[Ind2]->name);
-			      break;
-			    }
+			if (Ind == Ind2)
+			{
+				msg_print(Ind, "\377RYou cannot mind vision yourself.");
+				break;
+			}
+			if (p_ptr->esp_link)
+			{
+				msg_print(Ind, "\377RYour mind is already linked.");
+				break;
+			}
+			if (Players[Ind2]->esp_link)
+			{
+				msg_format(Ind, "\377R%s mind is already linked.", Players[Ind2]->name);
+				break;
+			}
 
-			  msg_format(Ind2, "\377R%s infiltrates your mind.", p_ptr->name);
-			  msg_format(Ind, "\377RYou infiltrate %s mind.", Players[Ind2]->name);
-			  p_ptr->esp_link = Players[Ind2]->id;
-			  p_ptr->esp_link_type = LINK_DOMINANT;
-			  p_ptr->esp_link_flags = 0;
+			msg_format(Ind2, "\377R%s infiltrates your mind.", p_ptr->name);
+			msg_format(Ind, "\377RYou infiltrate %s mind.", Players[Ind2]->name);
+			p_ptr->esp_link = Players[Ind2]->id;
+			p_ptr->esp_link_type = LINK_DOMINANT;
+			p_ptr->esp_link_flags = 0;
 
-			  Players[Ind2]->esp_link = p_ptr->id;
-			  Players[Ind2]->esp_link_type = LINK_DOMINATED;
-			  Players[Ind2]->esp_link_flags = LINKF_VIEW;
-			  break;
+			Players[Ind2]->esp_link = p_ptr->id;
+			Players[Ind2]->esp_link_type = LINK_DOMINATED;
+			Players[Ind2]->esp_link_flags = LINKF_VIEW;
+			break;
 		}
                 case 50: /* Forcefull Graze */
 			p_ptr->current_spell = j;
@@ -2247,7 +2247,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
                         recharge(Ind, 40);
                         break;
                 case 52: /* Telekinesis */
-		  telekinesis(Ind, o_ptr);
+			telekinesis(Ind, o_ptr);
                         break;
                 case 53: /* Self-Scan */
 			self_knowledge(Ind);

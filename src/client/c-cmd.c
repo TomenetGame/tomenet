@@ -2625,7 +2625,7 @@ void cmd_master_aux_player(){
 	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Invoke wrath");
 	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Static player");
 	Term_putstr(5, 8, -1, TERM_WHITE, "(5) Unstatic player");
-	Term_putstr(5, 9, -1, TERM_WHITE, "(6) Unstatic player");
+	Term_putstr(5, 9, -1, TERM_WHITE, "(6) Telekinesis");
 	Term_putstr(5, 10, -1, TERM_WHITE, "(7) Broadcast");
 	
 	Term_putstr(0, 12, -1, TERM_WHITE, "Command: ");
@@ -2664,10 +2664,10 @@ void cmd_master_aux_player(){
 				buf[0]='B';
 				get_string("Message:",&buf[1],69);
 				{
-				  int j;
-				  for(j=0;j<60;j++){
-				    if(buf[j]=='{') buf[j]='\377';
-				  }
+					int j;
+					for(j=0;j<60;j++){
+						if(buf[j]=='{') buf[j]='\377';
+					}
 				}
 				break;
 			case ESCAPE:

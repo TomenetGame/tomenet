@@ -1572,6 +1572,7 @@ void calc_body_bonus(int Ind)
         if(r_ptr->flags3 & RF3_NO_FEAR) p_ptr->resist_fear = TRUE;
         if(r_ptr->flags3 & RF3_NO_SLEEP) p_ptr->free_act = TRUE;
         if(r_ptr->flags3 & RF3_NO_CONF) p_ptr->resist_conf = TRUE;
+	if(r_ptr->flags7 & RF7_CAN_FLY) p_ptr->fly = TRUE;
 
 	/* If not change,d spells didnt changed too, no need to send them */
 	if (!p_ptr->body_changed) return;
@@ -1729,6 +1730,7 @@ static void calc_bonuses(int Ind)
 	p_ptr->immune_elec = FALSE;
 	p_ptr->immune_fire = FALSE;
 	p_ptr->immune_cold = FALSE;
+	p_ptr->fly = FALSE;
         p_ptr->reduc_fire = 0;
         p_ptr->reduc_cold = 0;
         p_ptr->reduc_elec = 0;
