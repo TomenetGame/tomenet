@@ -484,7 +484,7 @@ struct object_type
 	byte iy;			/* Y-position on map, or zero */
 	byte ix;			/* X-position on map, or zero */
 
-	s16b dun_depth;			/* Depth into the dungeon */
+	s32b dun_depth;			/* Depth into the dungeon */
 
 	byte tval;			/* Item type (from kind) */
 	byte sval;			/* Item sub-type (from kind) */
@@ -1073,7 +1073,7 @@ struct player_type
 
 	s16b py;		/* Player location in dungeon */
 	s16b px;
-	s16b dun_depth;		/* Player depth -- wilderness level offset */
+	s32b dun_depth;		/* Player depth -- wilderness level offset */
 
 	s16b cur_hgt;		/* Height and width of their dungeon level */
 	s16b cur_wid;

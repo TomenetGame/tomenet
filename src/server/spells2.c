@@ -870,7 +870,7 @@ void self_knowledge(int Ind)
 			info[i++] = "Your weapon is a great bane of dragons.";
 		}
 	}
-
+	info[i]=NULL;
 
 	/* Let the client know to expect some info */
 	Send_special_other(Ind);

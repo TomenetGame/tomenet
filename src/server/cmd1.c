@@ -401,10 +401,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
  * Note that "flasks of oil" do NOT do fire damage, although they
  * certainly could be made to do so.  XXX XXX
  */
-s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *p_ptr)
+s16b tot_dam_aux_player(object_type *o_ptr, int tdam, player_type *p_ptr)
 {
-	player_type *p_ptr = Players[Ind];
-
 	int mult = 1;
 
 	u32b f1, f2, f3;
@@ -1204,7 +1202,7 @@ void py_attack_player(int Ind, int y, int x)
 			else if (o_ptr->k_idx)
 			{
 				k = damroll(o_ptr->dd, o_ptr->ds);
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr);
+				k = tot_dam_aux_player(o_ptr, k, q_ptr);
 				if (p_ptr->impact && (k > 50)) do_quake = TRUE;
 				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h, k);
 				k += o_ptr->to_d;

@@ -2749,6 +2749,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		info[i++] = "It cannot be harmed by cold.";
 	}
 
+	info[i]=NULL;
 
 	/* No special effects */
 	if (!i) return (FALSE);

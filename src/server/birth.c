@@ -1228,6 +1228,7 @@ static void player_setup(int Ind)
 
 	/* Set his "current activities" variables */
 	p_ptr->current_spell = p_ptr->current_rod = p_ptr->current_activation = -1;
+	p_ptr->current_mind = -1;
 	p_ptr->current_selling = p_ptr->store_num = -1;
 	p_ptr->current_char = 0;
 

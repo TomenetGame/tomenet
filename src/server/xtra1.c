@@ -741,8 +741,8 @@ static void fix_spell(int Ind)
 	}
 
 	/* Warriors don't need this */
-	//	if (!p_ptr->mp_ptr->spell_book)
-	//		return;
+		if (!p_ptr->mp_ptr->spell_book)
+			return;
 
 	/* Check for blindness and no lite and confusion */
 	if (p_ptr->blind || no_lite(Ind) || p_ptr->confused)

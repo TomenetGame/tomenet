@@ -2032,6 +2032,13 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
                 msg_print(Ind, "The item's inscription prevents it");
                 return;
         }; 
+
+	if (o_ptr->tval != TV_WAND)
+	{
+		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
+		return;
+	}
+
 	/* Mega-Hack -- refuse to aim a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1))
 	{
