@@ -2468,6 +2468,7 @@ struct server_opts
 	char * console_password;
 	char * admin_wizard;
 	char * dungeon_master;
+	char * wserver;
 	s32b preserve_death_level;
 	s32b unique_respawn_time;
 	s32b unique_max_respawn_time;
