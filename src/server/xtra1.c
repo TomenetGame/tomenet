@@ -3589,6 +3589,9 @@ void calc_bonuses(int Ind)
 		d /= 4;
 		/* Cap the to-dam if it's too great */
 		if (d > 0) d = (15000 / ((10000 / d) + 100)) + 1;
+/*too powerful:
+		if (d > 0) d = (25000 / ((10000 / d) + 100)) + 1;
+		if (d > 0) d = (20000 / ((10000 / d) + 100)) + 1;*/
 
 		if (d < (p_ptr->to_d + p_ptr->to_d_melee)) {
 			p_ptr->to_d = ((p_ptr->to_d * 3) + (d * 1)) / 4;
