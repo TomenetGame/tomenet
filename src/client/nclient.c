@@ -118,9 +118,10 @@ static void Receive_init(void)
 	receive_tbl[PKT_FLOOR]		= Receive_floor;
 	receive_tbl[PKT_PICKUP_CHECK]	= Receive_pickup_check;
 	receive_tbl[PKT_PARTY]		= Receive_party;
-	receive_tbl[PKT_SKILLS]	= Receive_skills;
+	receive_tbl[PKT_SKILLS]		= Receive_skills;
 	receive_tbl[PKT_PAUSE]		= Receive_pause;
-	receive_tbl[PKT_MONSTER_HEALTH]= Receive_monster_health;
+	receive_tbl[PKT_MONSTER_HEALTH]	= Receive_monster_health;
+	receive_tbl[PKT_SANITY]		= Receive_sanity;
 }
 
 // I haven't really figured out this function yet.  It looks to me like
@@ -1084,6 +1085,31 @@ int Receive_quit(void)
 		quit(format("Quitting: %s", reason));
 	}
 	return -1;
+}
+
+int Receive_sanity(void){
+	int n;
+	char ch;
+	s16b max, cur;
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0)
+	{
+		return n;
+	}
+	p_ptr->msane=max;
+	p_ptr->csane=cur;
+	if (!screen_icky && !shopping){
+		printf("received sanity\n");
+		prt_sane(stat, max, cur);
+	}
+	else
+		if ((n = Packet_printf(&qbuf, "%c%hd%hd", ch, stat, max, cur)) <= 0)
+		{
+			return n;
+		}
+	/* Window stuff */
+	p_ptr->window |= (PW_PLAYER);
+
+	return 1;
 }
 
 int Receive_stat(void)

@@ -205,11 +205,10 @@ void prt_sp(int max, int cur)
 	c_put_str(color, tmp, ROW_CURSP, COL_CURSP + 7);
 }
 
-#if 0
 /*
  * Prints the player's current sanity.
  */
-static void prt_sane(void) {
+void prt_sane(void) {
   char tmp[32];
   byte color;
   int perc;
@@ -226,15 +225,14 @@ static void prt_sane(void) {
 
   if (perc >= 100) {
     color = TERM_L_GREEN;
-  } else if (perc > (10 * hitpoint_warn)) {
+  } else /* if (perc > (10 * hitpoint_warn)) */ {
     color = TERM_YELLOW;
-  } else {
+  } /* else {
     color = TERM_RED;
-  }
+  } */
 
   c_put_str(color, tmp, ROW_SANITY, COL_SANITY+2);
 }
-#endif
 
 /*
  * Prints depth into the dungeon

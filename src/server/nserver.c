@@ -2535,6 +2535,39 @@ int Send_gold(int ind, s32b au)
 	return Packet_printf(&connp->c, "%c%d", PKT_GOLD, au);
 }
 
+int Send_sanity(int ind, int msane, int csane)
+{
+	connection_t *connp = &Conn[Players[ind]->conn];
+
+	player_type *p_ptr = Players[ind];
+	printf("sanity send!\n");
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for hp (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
+	  {
+	    int Ind2 = find_player(p_ptr->esp_link);
+	    player_type *p_ptr2;
+	    connection_t *connp2;
+
+	    if (!Ind2)
+	      end_mind(ind, TRUE);
+	    else
+	      {
+		p_ptr2 = Players[Ind2];
+		connp2 = &Conn[p_ptr2->conn];
+
+		Packet_printf(&connp2->c, "%c%hd%hd", PKT_SANITY, msane, csane);
+	      }
+	  }
+	return Packet_printf(&connp->c, "%c%hd%hd", PKT_SANITY, msane, csane);
+}
+
 int Send_hp(int ind, int mhp, int chp)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];

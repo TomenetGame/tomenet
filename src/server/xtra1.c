@@ -200,6 +200,10 @@ static void prt_ac(int Ind)
 	Send_ac(Ind, p_ptr->dis_ac, p_ptr->dis_to_a);
 }
 
+static void prt_sanity(int Ind){
+	player_type *p_ptr=Players[Ind];
+	Send_hp(Ind, p_ptr->msane, p_ptr->csane);
+}
 
 /*
  * Prints Cur/Max hit points
@@ -3185,6 +3189,10 @@ void redraw_stuff(int Ind)
 	{
 		p_ptr->redraw &= ~(PR_HP);
 		prt_hp(Ind);
+	}
+
+	if(p_ptr->redraw & PR_SANITY){
+		prt_sanity(Ind);
 	}
 
 	if (p_ptr->redraw & PR_MANA)

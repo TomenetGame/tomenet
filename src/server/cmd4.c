@@ -531,7 +531,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 				for (i=admin?0:INVEN_WIELD; i<INVEN_TOTAL; i++)
 				{
 					object_type *o_ptr = &q_ptr->inventory[i];
-					char o_name[80];
+					char o_name[160];
 					if (o_ptr->tval) {
 						object_desc(Ind, o_name, o_ptr, TRUE, 3);
 						fprintf(fff, "%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);

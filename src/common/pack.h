@@ -138,6 +138,8 @@
 #define PKT_CLEAR_BUFFER	123
 #define PKT_SCRIPT		124
 
+#define PKT_SANITY		130
+
 
 /* Packet types 150- are hacks */
 #define PKT_FLUSH		150
