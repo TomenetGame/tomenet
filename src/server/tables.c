@@ -1947,17 +1947,17 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_COMBAT,
                                 '+', 2000,
-                                '+', 600,
+                                '+', 650,
                         },
                         {
                                 SKILL_MASTERY,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 650,
                         },
                         {
                                 SKILL_SWORD,
                                 '+', 0,
-                                '+', 500,
+                                '+', 550,
                         },
                         {
                                 SKILL_CRITS,
@@ -1967,42 +1967,42 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_AXE,
                                 '+', 0,
-                                '+', 500,
+                                '+', 550,
                         },
                         {
                                 SKILL_HAFTED,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_POLEARM,
                                 '+', 0,
-                                '+', 500,
+                                '+', 550,
                         },
                         {
                                 SKILL_ARCHERY,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 650,
                         },
                         {
                                 SKILL_SLING,
                                 '+', 0,
-                                '+', 500,
+                                '+', 650,
                         },
                         {
                                 SKILL_BOW,
                                 '+', 0,
-                                '+', 500,
+                                '+', 550,
                         },
                         {
                                 SKILL_XBOW,
                                 '+', 0,
-                                '+', 500,
+                                '+', 550,
                         },
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 /* let's keep it low for now - offbalancing */
@@ -2020,7 +2020,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 650,
                         },
                         {
                                 SKILL_DEVICE,
@@ -2040,52 +2040,52 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MANA,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 500,
                         },
                         {
                                 SKILL_FIRE,
                                 '+', 0,
-                                '+', 600,
+                                '+', 650,
                         },
                         {
                                 SKILL_AIR,
                                 '+', 0,
-                                '+', 600,
+                                '+', 650,
                         },
                         {
                                 SKILL_EARTH,
                                 '+', 0,
-                                '+', 600,
+                                '+', 650,
                         },
                         {
                                 SKILL_WATER,
                                 '+', 0,
-                                '+', 600,
+                                '+', 650,
                         },
                         {
                                 SKILL_NATURE,
                                 '+', 0,
-                                '+', 600,
+                                '+', 650,
                         },
                         {
                                 SKILL_DIVINATION,
                                 '+', 0,
-                                '+', 600,
+                                '+', 550,
                         },
                         {
                                 SKILL_META,
                                 '+', 0,
-                                '+', 600,
+                                '+', 500,
                         },
                         {
                                 SKILL_MIND,
                                 '+', 0,
-                                '+', 600,
+                                '+', 550,
                         },
                         {
                                 SKILL_TEMPORAL,
                                 '+', 0,
-                                '+', 600,
+                                '+', 500,
                         },
                         {
                                 SKILL_MIMIC,
@@ -2107,7 +2107,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_TRAPPING,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_BACKSTAB,
@@ -2170,7 +2170,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 1250,
                         },
                         {
                                 SKILL_TRAINING,
@@ -2218,22 +2218,22 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWORD,
                                 '+', 0,
-                                '+', 700,
+                                '+', 800,
                         },
                         {
                                 SKILL_AXE,
                                 '+', 0,
-                                '+', 700,
+                                '+', 800,
                         },
                         {
                                 SKILL_HAFTED,
                                 '+', 0,
-                                '+', 700,
+                                '+', 800,
                         },
                         {
                                 SKILL_POLEARM,
                                 '+', 0,
-                                '+', 700,
+                                '+', 800,
                         },
                         {
                                 SKILL_ARCHERY,
@@ -2560,7 +2560,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1200,
+                                '+', 1100,
                         },
                         {
                                 SKILL_TRAINING,
@@ -2734,17 +2734,52 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_COMBAT,
                                 '+', 3000,
-                                '+', 700,
+                                '+', 800,
                         },
                         {
                                 SKILL_MASTERY,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 750,
+                        },
+                        {
+                                SKILL_SWORD,
+                                '+', 0,
+                                '+', 630,
+                        },
+                        {
+                                SKILL_AXE,
+                                '+', 0,
+                                '+', 630,
+                        },
+                        {
+                                SKILL_HAFTED,
+                                '+', 0,
+                                '+', 630,
+                        },
+                        {
+                                SKILL_POLEARM,
+                                '+', 0,
+                                '+', 630,
                         },
                         {
                                 SKILL_ARCHERY,
                                 '+', 1000,
                                 '+', 600,
+                        },
+                        {
+                                SKILL_SLING,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_BOOMERANG,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_MARTIAL_ARTS,
+                                '+', 0,
+                                '+', 650,
                         },
                         {
                                 SKILL_MAGIC,
@@ -2759,7 +2794,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 800,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -2795,7 +2830,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 0,
-                                '+', 800,
+                                '+', 900,
                         },
 						/* Misc tree */
                         {
