@@ -2548,6 +2548,7 @@ void move_player(int Ind, int dir, int do_pickup)
 
 	int                     y, x, oldx, oldy;
 	int i;
+	bool do_move = FALSE;
 
 	cave_type               *c_ptr;
 	c_special *cs_ptr;
@@ -2856,7 +2857,9 @@ void move_player(int Ind, int dir, int do_pickup)
 				if(access_door(Ind, cs_ptr->sc.ptr))
 				{
 					myhome = TRUE;
+#ifdef USE_MANG_HOUSE
 					msg_print(Ind, "\377GYou walk through the door.");
+#endif	//USE_MANG_HOUSE
 				}
 			}
 		}
@@ -2880,7 +2883,9 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 			else
 #endif	// 0
-				if(c_ptr->feat == FEAT_WALL_HOUSE)
+
+			/* XXX maybe needless anymore */
+			if(c_ptr->feat == FEAT_WALL_HOUSE)
 			{
 				if (!wraith_access_virtual(Ind, y, x))
 				{
@@ -3001,53 +3006,6 @@ void move_player(int Ind, int dir, int do_pickup)
 		} /* 'if (!myhome)' ends here */
 	}
 
-#if 0
-#ifdef WRAITH_THROUGH_TOWNWALL
-	/* Wraiths trying to walk into a house */
-	if (p_ptr->tim_wraith){
-		/*if(zcave[y][x].info & CAVE_STCK) p_ptr->tim_wraith=0;*/
-		/*else*/{
-			if (((c_ptr->feat == FEAT_HOME) ||
-		 	((zcave[y][x].info & CAVE_ICKY) && (wpos->wz==0))) && (!wraith_access(Ind)))
-			{
-				disturb(Ind, 0, 0);
-				return;
-			}
-		}
-	}
-
-	/* Wraiths can't enter vaults so easily :) trying to walk into a permanent wall */
-	/* XXX Hrm ghost cannot enter house - but maybe no pb */
-//	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA && (wpos->wz))
-	if (p_ptr->tim_wraith && f_info[c_ptr->feat].flags1 & (FF1_PERMANENT) &&
-			f_info[c_ptr->feat].flags1 & (FF1_NO_WALK) && wpos->wz)
-#else
-//	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA)
-	if (p_ptr->tim_wraith && f_info[c_ptr->feat].flags1 & (FF1_PERMANENT) &&
-			f_info[c_ptr->feat].flags1 & (FF1_NO_WALK))
-#endif	// 0
-	{
-		/* Message */
-		msg_print(Ind, "The wall blocks your movement.");
-
-		disturb(Ind, 0, 0);
-		return;
-	}
-#endif	// 0
-
-#if 0
-	/* Ghost trying to walk into a permanent wall */
-//	if ((p_ptr->ghost || p_ptr->tim_wraith) && c_ptr->feat >= FEAT_PERM_SOLID)
-	if (p_ptr->tim_wraith && f_info[c_ptr->feat].flags1 & (FF1_PERMANENT) &&
-			f_info[c_ptr->feat].flags1 & (FF1_NO_WALK))
-	{
-		/* Message */
-		msg_print(Ind, "The wall blocks your movement.");
-
-		disturb(Ind, 0, 0);
-		return;
-	}
-#endif	// 0
 
 	/* XXX fly? */
 	else if ((c_ptr->feat == FEAT_DARK_PIT) && !p_ptr->feather_fall &&
@@ -3150,6 +3108,15 @@ void move_player(int Ind, int dir, int do_pickup)
 				p_ptr->au += i;
 			}
 		}
+#ifndef USE_MANG_HOUSE
+		else if ((c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
+				&& !p_ptr->ghost)
+		{
+			do_cmd_trad_house(Ind);
+			return;
+		}
+#endif	// USE_MANG_HOUSE
+
 
 		/* Discover invisible traps */
 //		else if (c_ptr->feat == FEAT_INVIS)

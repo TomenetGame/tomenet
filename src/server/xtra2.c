@@ -3745,6 +3745,9 @@ void monster_death(int Ind, int m_idx)
 
 static void kill_house_contents(house_type *h_ptr){
 	struct worldpos *wpos=&h_ptr->wpos;
+	object_type *o_ptr;
+	int i;
+#ifdef USE_MANG_HOUSE
 	if(h_ptr->flags&HF_RECT){
 		int sy,sx,ey,ex,x,y;
 		sy=h_ptr->y+1;
@@ -3761,6 +3764,20 @@ static void kill_house_contents(house_type *h_ptr){
 		fill_house(h_ptr, FILL_CLEAR, NULL);
 		/* Polygonal house */
 	}
+
+#else	// USE_MANG_HOUSE
+	for (i = 0; i < h_ptr->stock_num; i++)
+	{
+		o_ptr = &h_ptr->stock[i];
+		if (o_ptr->k_idx && true_artifact_p(o_ptr))
+		{
+			a_info[o_ptr->name1].cur_num = 0;
+			a_info[o_ptr->name1].known = FALSE;
+		}
+		invwipe(o_ptr);
+	}
+	h_ptr->stock_num = 0;
+#endif	// USE_MANG_HOUSE
 }
 
 void kill_houses(int id, int type){

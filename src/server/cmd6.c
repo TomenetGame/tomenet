@@ -2013,6 +2013,7 @@ void do_cmd_read_scroll(int Ind, int item)
 		{
 			case SV_SCROLL_HOUSE:
 			{
+#if 0
 				//			unsigned char *ins=quark_str(o_ptr->note);
 				cptr ins=quark_str(o_ptr->note);
 				bool floor=TRUE;
@@ -2034,6 +2035,10 @@ void do_cmd_read_scroll(int Ind, int item)
 					}
 				}
 				house_creation(Ind, floor, jail);
+#endif	// 0
+				msg_print(Ind, "This is a broken house creation scroll.");
+				ident = TRUE;
+				keep = TRUE;
 				break;
 			}
 

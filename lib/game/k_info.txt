@@ -6011,7 +6011,9 @@ G:?:d
 #I:70:49:0
 I:70:57:0
 W:40:0:5:25000
-A:40/20
+#A:40/20
+# XXX broken
+A:127/255
 
 ##### Items 445 to 479 reserved (old "terrain" objects) #####
 

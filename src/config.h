@@ -762,6 +762,12 @@
  */
 #define USE_OLD_UPDATE_VIEW
 
+/* OPTION: Use mangband-style houses in place of Vanilla/ToME ones.
+ * (make clean!)
+ */
+//#define USE_MANG_HOUSE
+
+
 
 /*
  * Below this line are client-only options.

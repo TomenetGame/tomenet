@@ -1065,6 +1065,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		plot_xlen, plot_ylen, house_xlen, house_ylen, 
 		door_x, door_y, drawbridge_x[3], drawbridge_y[3], 
 		tmp, type, area, price, num_door_attempts;
+	int size;
 	char wall_feature, door_feature, has_moat = 0;
 	cave_type *c_ptr;
 	bool rand_old = Rand_quick;
@@ -1313,6 +1314,10 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		}
 	}		
 		
+	/* TODO: use coloured roof, so that they look cute :) */
+#ifndef USE_MANG_HOUSE
+	if (type != WILD_TOWN_HOME)
+#endif	// USE_MANG_HOUSE
 	/* make it hollow */
 	for (y = h_y1 + 1; y < h_y2; y++)
 	{
@@ -1377,6 +1382,23 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			houses[num_houses].dy = door_y;
 			houses[num_houses].dna->creator=0L;
 			houses[num_houses].dna->owner=0L;
+
+#ifndef USE_MANG_HOUSE
+			/* This can be changed later - house capacity doesn't need
+			 * to be bound to the house size any more.
+			 * TODO: add 'extension' command
+			 * TODO: implement 'bank'
+			 */
+			/* XXX maybe new owner will be unhappy if area>STORE_INVEN_MAX;
+			 * this will be fixed when STORE_INVEN_MAX will be removed. - Jir
+			 */
+			size = (area >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : area;
+			houses[num_houses].stock_size = size;
+			houses[num_houses].stock_num = 0;
+			/* TODO: pre-allocate some when launching the server */
+			C_MAKE(houses[num_houses].stock, size, object_type);
+#endif	// USE_MANG_HOUSE
+
 			num_houses++;
 			if((house_alloc-num_houses)<32){
 				GROW(houses, house_alloc, house_alloc+512, house_type);

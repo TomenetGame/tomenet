@@ -1021,6 +1021,7 @@ static void rd_party(int n)
  */
 static void rd_house(int n)
 {
+	int i;
 	house_type *house_ptr = &houses[n];
 	cave_type **zcave;
 
@@ -1077,7 +1078,7 @@ static void rd_house(int n)
 		rd_byte(&house_ptr->coords.rect.height);
 	}
 	else{
-		int i=-2;
+		i=-2;
 		C_MAKE(house_ptr->coords.poly, MAXCOORD, char);
 		do{
 			i+=2;
@@ -1086,6 +1087,16 @@ static void rd_house(int n)
 		}while(house_ptr->coords.poly[i] || house_ptr->coords.poly[i+1]);
 		GROW(house_ptr->coords.poly, MAXCOORD, i+2, byte);
 	}
+
+#ifndef USE_MANG_HOUSE
+	rd_s16b(&house_ptr->stock_num);
+	rd_s16b(&house_ptr->stock_size);
+	C_MAKE(house_ptr->stock, house_ptr->stock_size, object_type);
+	for (i = 0; i < house_ptr->stock_num; i++)
+	{
+		rd_item(&house_ptr->stock[i]);
+	}
+#endif	// USE_MANG_HOUSE
 }
 
 static void rd_wild(wilderness_type *w_ptr)

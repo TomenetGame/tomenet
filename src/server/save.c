@@ -1061,6 +1061,8 @@ static void wr_ghost(void)
  */
 static void wr_house(house_type *house)
 {
+	int i;
+
 	wr_byte(house->x);
 	wr_byte(house->y);
 	wr_byte(house->dx);
@@ -1082,13 +1084,22 @@ static void wr_house(house_type *house)
 		wr_byte(house->coords.rect.height);
 	}
 	else{
-		int i=-2;
+		i=-2;
 		do{
 			i+=2;
 			wr_byte(house->coords.poly[i]);
 			wr_byte(house->coords.poly[i+1]);
 		}while(house->coords.poly[i] || house->coords.poly[i+1]);
 	}
+
+#ifndef USE_MANG_HOUSE
+	wr_s16b(house->stock_num);
+	wr_s16b(house->stock_size);
+	for (i = 0; i < house->stock_num; i++)
+	{
+		wr_item(&house->stock[i]);
+	}
+#endif	// USE_MANG_HOUSE
 }
 
 

@@ -24,6 +24,13 @@
 
 static int gettown(int Ind);
 
+void home_sell(int Ind, int item, int amt);
+void home_purchase(int Ind, int item, int amt);
+void home_examine(int Ind, int item);
+static void display_house_entry(int Ind, int pos);
+static void display_house_inventory(int Ind);
+static void display_trad_house(int Ind);
+
 /*
  * Hack -- Objects sold in the stores -- by tval/sval pair.
  */
@@ -1857,7 +1864,7 @@ static void display_inventory(int Ind)
 	for (k = 0; k < STORE_INVEN_MAX; k++)
 	{
 		/* Do not display "dead" items */
-		if (k >= st_ptr->stock_num) break;
+		if (k && k >= st_ptr->stock_num) break;
 
 		/* Display that line */
 		display_entry(Ind, k);
@@ -2003,6 +2010,12 @@ void store_purchase(int Ind, int item, int amt)
 	object_type		*o_ptr;
 
 	char		o_name[160];
+
+	if (p_ptr->store_num == 7)
+	{
+		home_purchase(Ind, item, amt);
+		return;
+	}
 
 	i=gettown(Ind);
 	if(i==-1) return;
@@ -2307,6 +2320,12 @@ void store_sell(int Ind, int item, int amt)
 
 	char		o_name[160];
 
+	if (p_ptr->store_num == 7)
+	{
+		home_sell(Ind, item, amt);
+		return;
+	}
+
 	/* sanity check - Yakina - */
 	if (p_ptr->store_num==-1){
 		msg_print(Ind,"You left the shop!");
@@ -2562,6 +2581,12 @@ void store_examine(int Ind, int item)
 	object_type		*o_ptr;
 
 	char		o_name[160];
+
+	if (p_ptr->store_num == 7)
+	{
+		home_examine(Ind, item);
+		return;
+	}
 
 	i=gettown(Ind);
 	if(i==-1) return;
@@ -2946,41 +2971,780 @@ void store_kick(int Ind)
 	teleport_player(Ind, 1);
 }
 
-#if 0
-void store_kick(int Ind)
+
+#ifndef USE_MANG_HOUSE
+/*
+ * TomeNET functions for 'Vanilla-like' houses.		- Jir -
+ *
+ * Since hundreds of houses exist for dozens of players, we cannot handle
+ * houses as 'one of stores'; these functions are reimplementation of store
+ * functions using different arrays in houses[].
+ *
+ * Another possble solution is to make houses[] have store_type arrays, and
+ * rewrite store functions to use store pointer;
+ * this should be reconsidered after new ToME store code comes.
+ *
+ * (Yet another is to make struct like
+ * store_contents
+ * {
+ *		s16b stock_num;
+ *		s16b stock_size;
+ *		object_type *stock;
+ * };
+ * and to make both house_type and store_type contain this)
+ *
+ * Unlike server-side, client will handle house as (almost) normal store.
+ */
+/*
+ * Also, probably it's not so good design to bind store arrays to towns
+ * (town_type).  This will eventually be changed, so that we can place stores
+ * everywhere in the wilderness/dungeons.
+ */
+
+/*
+ * Add the item "o_ptr" to the inventory of the "Home"
+ *
+ * In all cases, return the slot (or -1) where the object was placed
+ *
+ * Note that this is a hacked up version of "inven_carry()".
+ *
+ * Also note that it may not correctly "adapt" to "knowledge" bacoming
+ * known, the player may have to pick stuff up and drop it again.
+ */
+/* It's ToME code */
+static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr)
 {
-	player_type *p_ptr = Players[Ind];
+	int 				slot;
+	s32b			   value, j_value;
+	int 	i;
+	object_type *j_ptr;
 
-//	msg_print(Ind, "The shopkeeper turns you out!");
-	store_leave(Ind);
-	Send_store_kick(Ind);
 
+	/* Check each existing item (try to combine) */
+	for (slot = 0; slot < h_ptr->stock_num; slot++)
+	{
+		/* Get the existing item */
+		j_ptr = &h_ptr->stock[slot];
+
+		/* The home acts just like the player */
+		if (object_similar(Ind, j_ptr, o_ptr))
+		{
+			/* Save the new number of items */
+			object_absorb(Ind, j_ptr, o_ptr);
+
+			/* All done */
+			return (slot);
+		}
+	}
+
+	/* No space? */
+	if (h_ptr->stock_num >= h_ptr->stock_size) return (-1);
+
+
+	/* Determine the "value" of the item */
+	value = object_value(Ind, o_ptr);
+
+	/* Check existing slots to see if we must "slide" */
+	for (slot = 0; slot < h_ptr->stock_num; slot++)
+	{
+		/* Get that item */
+		j_ptr = &h_ptr->stock[slot];
+
+		/* Hack -- readable books always come first */
+#if 0
+		if ((o_ptr->tval == cp_ptr->spell_book) &&
+			(j_ptr->tval != cp_ptr->spell_book)) break;
+		if ((j_ptr->tval == cp_ptr->spell_book) &&
+			(o_ptr->tval != cp_ptr->spell_book)) continue;
+#endif	// 0
+
+		/* Objects sort by decreasing type */
+		if (o_ptr->tval > j_ptr->tval) break;
+		if (o_ptr->tval < j_ptr->tval) continue;
+
+		/* Can happen in the home */
+		if (!object_aware_p(Ind, o_ptr)) continue;
+		if (!object_aware_p(Ind, j_ptr)) break;
+
+		/* Objects sort by increasing sval */
+		if (o_ptr->sval < j_ptr->sval) break;
+		if (o_ptr->sval > j_ptr->sval) continue;
+
+		/* Objects in the home can be unknown */
+		if (!object_known_p(Ind, o_ptr)) continue;
+		if (!object_known_p(Ind, j_ptr)) break;
+
+
+		/*
+		 * Hack:  otherwise identical rods sort by
+		 * increasing recharge time --dsb
+		 */
+#if 0
+		if (o_ptr->tval == TV_ROD_MAIN)
+		{
+			if (o_ptr->timeout < j_ptr->timeout) break;
+			if (o_ptr->timeout > j_ptr->timeout) continue;
+		}
+#endif	// 0
+
+		/* Objects sort by decreasing value */
+		j_value = object_value(Ind, j_ptr);
+		if (value > j_value) break;
+		if (value < j_value) continue;
+	}
+
+	/* Slide the others up */
+	for (i = h_ptr->stock_num; i > slot; i--)
+	{
+		h_ptr->stock[i] = h_ptr->stock[i-1];
+	}
+
+	/* More stuff now */
+	h_ptr->stock_num++;
+
+	/* Insert the new item */
+	h_ptr->stock[slot] = *o_ptr;
+
+	/* Return the location */
+	return (slot);
 }
 
-void store_leave(int Ind)
+/*
+ * Increase, by a given amount, the number of a certain item
+ * in a certain store.  This can result in zero items.
+ */
+static void home_item_increase(house_type *h_ptr, int item, int num)
+{
+	int         cnt;
+	object_type *o_ptr;
+
+	/* Get the item */
+	o_ptr = &h_ptr->stock[item];
+
+	/* Verify the number */
+	cnt = o_ptr->number + num;
+	if (cnt > 255) cnt = 255;
+	else if (cnt < 0) cnt = 0;
+	num = cnt - o_ptr->number;
+
+	/* Save the new number */
+	o_ptr->number += num;
+}
+
+
+/*
+ * Remove a slot if it is empty
+ */
+static void home_item_optimize(house_type *h_ptr, int item)
+{
+	int         j;
+	object_type *o_ptr;
+
+	/* Get the item */
+	o_ptr = &h_ptr->stock[item];
+
+	/* Must exist */
+	if (!o_ptr->k_idx) return;
+
+	/* Must have no items */
+	if (o_ptr->number) return;
+
+	/* One less item */
+	h_ptr->stock_num--;
+
+	/* Slide everyone */
+	for (j = item; j < h_ptr->stock_num; j++)
+	{
+		h_ptr->stock[j] = h_ptr->stock[j + 1];
+	}
+
+	/* Nuke the final slot */
+	invwipe(&h_ptr->stock[j]);
+}
+
+/*
+ * Re-displays a single store entry
+ *
+ * Actually re-sends a single store entry --KLJ--
+ */
+//static bool store_check_num_house(store_type *st_ptr, object_type *o_ptr)
+static bool home_check_num(int Ind, house_type *h_ptr, object_type *o_ptr)
+{
+	int        i;
+	object_type *j_ptr;
+
+	/* Free space is always usable */
+	if (h_ptr->stock_num < h_ptr->stock_size) return TRUE;
+
+	/* The "home" acts like the player */
+	{
+		/* Check all the items */
+		for (i = 0; i < h_ptr->stock_num; i++)
+		{
+			/* Get the existing item */
+			j_ptr = &h_ptr->stock[i];
+
+			/* Can the new object be combined with the old one? */
+			if (object_similar(Ind, j_ptr, o_ptr)) return (TRUE);
+		}
+	}
+	return (FALSE);
+}
+
+/*
+ * Sell an item to the store (or home)
+ */
+void home_sell(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
 
-	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE);
-	p_ptr->update |= (PU_MONSTERS);
+	int			choice, h_idx, item_pos;
 
-	/* Redraw stuff */
-	p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA);
+	s32b		price;
 
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
+	object_type		sold_obj;
+	object_type		*o_ptr;
+
+	char		o_name[160];
+
+	house_type *h_ptr;
+
+	/* This should never happen */
+	if (p_ptr->store_num != 7)
+	{
+		msg_print(Ind,"You left the house!");
+		return;
+	}
+
+	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+	if (h_idx == -1) return;
+
+	h_ptr = &houses[h_idx];
+
+
+	/* You can't sell 0 of something. */
+	if (amt <= 0) return;
+
+	/* Get the item (in the pack) */
+	if (item >= 0)
+	{
+		o_ptr = &p_ptr->inventory[item];
+	}
+
+	/* Get the item (on the floor) */
+	else /* Never.. */
+	{
+		o_ptr = &o_list[0 - item];
+	}
+
+#if 1
+
+	/* Not gonna happen XXX inscribe */
+	/* Nah, gonna happen */
+	/* TODO: CURSE_NO_DROP */
+	if (cursed_p(o_ptr))
+	{
+		u32b f1, f2, f3, f4, f5, esp;
+		if (item >= INVEN_WIELD)
+		{
+			/* Oops */
+			msg_print(Ind, "Hmmm, it seems to be cursed.");
+
+			/* Stop */
+			return;
+		}
+
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+		if (f4 & TR4_CURSE_NO_DROP)
+		{
+			/* Oops */
+			msg_print(Ind, "Hmmm, you seem to be unable to drop it.");
+
+			/* Nope */
+			return;
+		}
+	}
+
+#endif
+
+	if (cfg.anti_arts_horde && true_artifact_p(o_ptr))
+	{
+		/* Oops */
+		msg_print(Ind, "You cannot stock artifacts.");
+
+		/* Stop */
+		return;
+	}
+
+	/* Create the object to be sold (structure copy) */
+	sold_obj = *o_ptr;
+	sold_obj.number = amt;
+
+	/* Get a full description */
+	object_desc(Ind, o_name, &sold_obj, TRUE, 3);
+
+	/* Is there room in the store (or the home?) */
+	if (!home_check_num(Ind, h_ptr, &sold_obj))
+	{
+		msg_print(Ind, "Your home is full.");
+		return;
+	}
+
+
+
+	/* Get the inventory item */
+	o_ptr = &p_ptr->inventory[item];
+
+	/* Combine / Reorder the pack (later) */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
-	/* Update store info */
-	p_ptr->store_num = -1;
+	/*
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
+	 * charges need to be allocated between the two stacks.  If all the items 
+	 * are being dropped, it makes for a neater message to leave the original 
+	 * stack's pval alone. -LM-
+	 */
+	if (o_ptr->tval == TV_WAND)
+	{
+		if (o_ptr->tval == TV_WAND)
+		{
+			sold_obj.pval = divide_charged_item(o_ptr, amt);
+		}
+	}
 
-	/* hack -- update night/day in wilderness levels */
-	if ((!p_ptr->wpos.wz) && (IS_DAY)) wild_apply_day(&p_ptr->wpos); 
-	if ((!p_ptr->wpos.wz) && (IS_NIGHT)) wild_apply_night(&p_ptr->wpos);
+	/* Get the description all over again */
+	object_desc(Ind, o_name, &sold_obj, TRUE, 3);
 
+	/* Describe the result (in message buffer) */
+//		msg_format("You drop %s (%c).", o_name, index_to_label(item));
+	msg_format(Ind, "You drop %s.", o_name);
+
+	/* Analyze the prices (and comment verbally) */
+	/*purchase_analyze(price, value, dummy);*/
+
+	/* Take the item from the player, describe the result */
+	inven_item_increase(Ind, item, -amt);
+	inven_item_describe(Ind, item);
+	inven_item_optimize(Ind, item);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Artifact won't be sold in a store */
+	if (cfg.anti_arts_horde && true_artifact_p(&sold_obj))
+	{
+		a_info[sold_obj.name1].cur_num = 0;
+		a_info[sold_obj.name1].known = FALSE;
+		return;
+	}
+
+	/* The store gets that (known) item */
+//	if(sold_obj.tval!=8)	// What was it for.. ?
+	item_pos = home_carry(Ind, h_ptr, &sold_obj);
+//		item_pos = store_carry(p_ptr->store_num, &sold_obj);
+
+	/* Resend the basic store info */
+	display_trad_house(Ind);
+
+	/* Re-display if item is now in store */
+	if (item_pos >= 0)
+	{
+		display_house_inventory(Ind);
+	}
 }
 
+
+/*
+ * Buy an item from a store				-RAK-
+ */
+void home_purchase(int Ind, int item, int amt)
+{
+	player_type *p_ptr = Players[Ind];
+
+
+	int			i, choice;
+	int			item_new;
+	int h_idx;
+
+	s32b		price, best;
+
+	object_type		sell_obj;
+	object_type		*o_ptr;
+
+	char		o_name[160];
+
+	house_type *h_ptr;
+
+	if (p_ptr->store_num==-1){
+		msg_print(Ind,"You left the shop!");
+		return;
+	}
+
+	/* This should never happen */
+	if (p_ptr->store_num != 7) return;
+
+	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+	if (h_idx == -1) return;
+
+	h_ptr = &houses[h_idx];
+
+	/* Empty? */
+	if (h_ptr->stock_num <= 0)
+	{
+		msg_print(Ind, "Your home is empty.");
+		return;
+	}
+
+
+	/* Get the actual item */
+	o_ptr = &h_ptr->stock[item];
+
+	/* Assume the player wants just one of them */
+	/*amt = 1;*/
+
+	/* Hack -- get a "sample" object */
+	sell_obj = *o_ptr;
+	sell_obj.number = amt;
+
+	/*
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
+	 * charges need to be allocated between the two stacks.  If all the items 
+	 * are being dropped, it makes for a neater message to leave the original 
+	 * stack's pval alone. -LM-
+	 */
+	if (o_ptr->tval == TV_WAND)
+	{
+		if (o_ptr->tval == TV_WAND)
+		{
+			sell_obj.pval = divide_charged_item(o_ptr, amt);
+		}
+	}
+
+	/* Hack -- require room in pack */
+	if (!inven_carry_okay(Ind, &sell_obj))
+	{
+		msg_print(Ind, "You cannot carry that many different items.");
+		return;
+	}
+
+
+
+	/* Home is much easier */
+	{
+		/* Carry the item */
+		item_new = inven_carry(Ind, &sell_obj);
+
+		/* Describe just the result */
+		object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
+
+		/* Message */
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item_new));
+
+		/* Handle stuff */
+		handle_stuff(Ind);
+
+		/* Take note if we take the last one */
+		i = h_ptr->stock_num;
+
+		/* Remove the items from the home */
+		home_item_increase(h_ptr, item, -amt);
+		home_item_optimize(h_ptr, item);
+
+		/* Resend the basic store info */
+		display_trad_house(Ind);
+
+		/* Hack -- Item is still here */
+		if (i == h_ptr->stock_num && i)
+		{
+			/* Redraw the item */
+			display_house_entry(Ind, item);
+		}
+
+		/* The item is gone */
+		else
+		{
+			/* Redraw everything */
+			display_house_inventory(Ind);
+		}
+	}
+
+	/* Not kicked out */
+	return;
+}
+
+
+/*
+ * Examine an item in a store			   -JDL-
+ */
+void home_examine(int Ind, int item)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int st = p_ptr->store_num;
+
+	int			i, choice, h_idx;
+	int			item_new;
+
+	s32b		price, best;
+
+	object_type		sell_obj;
+	object_type		*o_ptr;
+
+	char		o_name[160];
+
+	house_type *h_ptr;
+
+	/* This should never happen */
+	if (p_ptr->store_num != 7) return;
+
+	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+	if (h_idx == -1) return;
+
+	h_ptr = &houses[h_idx];
+
+	/* Empty? */
+	if (h_ptr->stock_num <= 0)
+	{
+		msg_print(Ind, "Your home is empty.");
+		return;
+	}
+
+	/* Get the actual item */
+	o_ptr = &h_ptr->stock[item];
+
+	/* Assume the player wants just one of them */
+	/*amt = 1;*/
+
+	/* Hack -- get a "sample" object */
+	sell_obj = *o_ptr;
+
+
+
+	/* Require full knowledge */
+	if (!(o_ptr->ident & (ID_MENTAL)))
+	{
+		/* This can only happen in the home */
+		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
+		{
+			int blows = calc_blows(Ind, o_ptr);
+			msg_format(Ind, "With it, you can usually attack %d time%s/turn.",
+					blows, blows > 1 ? "s" : "");
+		}
+		else msg_print(Ind, "You have no special knowledge about that item.");
+		return;
+	}
+
+	/* Description */
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+	/* Describe */
+//	msg_format(Ind, "Examining %s...", o_name);
+
+	/* Describe it fully */
+	if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
+
+#if 0
+	if (o_ptr->tval < TV_BOOK)
+	{
+		if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
+		/* Books are read */
+	}
+	else
+	{
+		do_cmd_browse_aux(o_ptr);
+	}
 #endif	// 0
+
+	return;
+}
+
+static void display_house_entry(int Ind, int pos)
+{
+	player_type *p_ptr = Players[Ind];
+
+	object_type		*o_ptr;
+	s32b		x;
+
+	char		o_name[160];
+	byte		attr;
+	int		wgt;
+	int		i, h_idx;
+
+	int maxwid = 75;
+
+	house_type *h_ptr;
+
+	/* This should never happen */
+	if (p_ptr->store_num != 7) return;
+
+	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+	if (h_idx == -1) return;
+
+	h_ptr = &houses[h_idx];
+
+
+
+	/* Get the item */
+	o_ptr = &h_ptr->stock[pos];
+
+#if 0
+	/* Get the "offset" */
+	i = (pos % 12);
+
+	/* Label it, clear the line --(-- */
+	(void)sprintf(out_val, "%c) ", I2A(i));
+	prt(out_val, i+6, 0);
+#endif
+
+
+	/* Describe the object */
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+	o_name[maxwid] = '\0';
+
+	attr = tval_to_attr[o_ptr->tval];
+
+	/* Only show the weight of an individual item */
+	wgt = o_ptr->weight;
+
+	/* Send the info */
+	Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval);
+}
+
+
+/*
+ * Displays a store's inventory			-RAK-
+ * All prices are listed as "per individual object".  -BEN-
+ *
+ * The inventory is "sent" not "displayed". -KLJ-
+ */
+static void display_house_inventory(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int k;
+	int i, h_idx;
+	
+	house_type *h_ptr;
+
+	/* This should never happen */
+	if (p_ptr->store_num != 7) return;
+
+	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+	if (h_idx == -1) return;
+
+	h_ptr = &houses[h_idx];
+
+
+	/* Display the next 48 items */
+	for (k = 0; k < STORE_INVEN_MAX; k++)
+	{
+		/* Do not display "dead" items */
+		/* But tell the client that it's empty now */
+		if (k && k >= h_ptr->stock_num) break;
+
+		/* Display that line */
+		display_house_entry(Ind, k);
+	}
+}
+
+/*
+ * Displays store (after clearing screen)		-RAK-
+ */
+static void display_trad_house(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	house_type *h_ptr;
+	int i, h_idx;
+
+	/* This should never happen */
+	if (p_ptr->store_num != 7) return;
+
+	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+	if (h_idx == -1) return;
+
+	h_ptr = &houses[h_idx];
+
+	/* Display the current gold */
+	store_prt_gold(Ind);
+
+	/* Draw in the inventory */
+	display_house_inventory(Ind);
+
+	/* The "Home" is special */
+	if (p_ptr->store_num == 7)
+	{
+		/* Send the store info */
+		Send_store_info(Ind, p_ptr->store_num, 0, h_ptr->stock_num);
+	}
+}
+
+/* Enter a house, and interact with it.	- Jir - */
+void do_cmd_trad_house(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int			which;
+	int i;
+
+	cave_type		*c_ptr;
+	struct c_special *cs_ptr;
+
+	/* Access the player grid */
+	cave_type **zcave;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	/* Verify a store */
+#if 0
+	if (!((c_ptr->feat >= FEAT_SHOP_HEAD) &&
+	      (c_ptr->feat <= FEAT_SHOP_TAIL)))
+#endif	// 0
+#if 0
+	if (c_ptr->feat != FEAT_HOME)
+	{
+		msg_print(Ind, "You see no house here.");
+		return;
+	}
+#endif	// 0
+
+	if (c_ptr->feat == FEAT_HOME)
+	{
+		/* Check access like former move_player */
+		if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))) /* orig house failure */
+		{
+			if(!access_door(Ind, cs_ptr->sc.ptr))
+			{
+				msg_print(Ind, "\377oThe door is locked.");
+				return;
+			}
+		}
+		else return;
+	}
+	/* Open door == free access */
+	else if (c_ptr->feat == FEAT_HOME_OPEN)
+	{
+		/* Check access like former move_player */
+		if(!(cs_ptr=GetCS(c_ptr, CS_DNADOOR))) return;
+	}
+	/* Not a house */
+	else return;
+
+	/* Save the store number */
+	p_ptr->store_num = 7;
+
+	/* Set the timer */
+	/* XXX well, don't kick her out of her own house :) */
+	p_ptr->tim_store = 30000;
+
+	/* Display the store */
+	display_trad_house(Ind);
+
+	/* Do not leave */
+	leave_store = FALSE;
+}
+
+
+
+#endif	// USE_MANG_HOUSE

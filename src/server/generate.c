@@ -7973,9 +7973,13 @@ static void cave_gen(struct worldpos *wpos)
 /*
  * XXX hrm apartment allows wraithes to intrude..
  */
+/* NOTE: This function no longer is used for normal town generation;
+ * this can be used to build 'extra' towns for some purpose, though.
+ */
 static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 {
 	int                 i, y, x, y0, x0, y1, x1, y2, x2, tmp;
+	int size;
 	cave_type		*c_ptr;
 	bool flat = FALSE;
 	struct c_special *cs_ptr;
@@ -8215,6 +8219,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	{
 		int price;
 
+#ifdef USE_MANG_HOUSE
 		for (y = y1 + 1; y < y2; y++)
 		{
 			for (x = x1 + 1; x < x2; x++)
@@ -8229,13 +8234,15 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				c_ptr->info |= CAVE_ICKY;
 			}
 		}
+#endif	// USE_MANG_HOUSE
 
 		if (!flat)
 		{
 			/* Setup some "house info" */
-			price = (x2 - x1 - 1) * (y2 - y1 - 1);
+//			price = (x2 - x1 - 1) * (y2 - y1 - 1);
+			size = (x2 - x1 - 1) * (y2 - y1 - 1);
 			/*price *= 20 * price; -APD- price is now proportional to size*/
-			price *= 20;
+			price = size * 20;
 			price *= 80 + randint(40);
 
 			/* Remember price */
@@ -8280,9 +8287,10 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 			/* Setup some "house info" */
 			/* XXX slightly 'bad bargain' */
-			price = (x2 - x1 - 2) * (y2 - y1 - 2) / 4;
+//			price = (x2 - x1 - 2) * (y2 - y1 - 2) / 4;
+			size = ((x2 - x1) / 2 - 1) * ((y2 - y1) / 2 - 1);
 			/*price *= 20 * price; -APD- price is now proportional to size*/
-			price *= 20;
+			price = size * 20;
 			price *= 80 + randint(40);
 
 
@@ -8333,6 +8341,18 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 					houses[num_houses].dy=dy;
 					houses[num_houses].dna->creator=0L;
 					houses[num_houses].dna->owner=0L;
+
+#ifndef USE_MANG_HOUSE
+					/* This can be changed later */
+					/* XXX maybe new owner will be unhappy if size>STORE_INVEN_MAX;
+					 * this will be fixed when STORE_INVEN_MAX will be removed. - Jir
+					 */
+					size = (size >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : size;
+					houses[num_houses].stock_size = size;
+					houses[num_houses].stock_num = 0;
+					/* TODO: pre-allocate some when launching the server */
+					C_MAKE(houses[num_houses].stock, size, object_type);
+#endif	// USE_MANG_HOUSE
 
 					/* One more house */
 					num_houses++;
@@ -8416,6 +8436,18 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			houses[num_houses].dy=y;
 			houses[num_houses].dna->creator=0L;
 			houses[num_houses].dna->owner=0L;
+
+#ifndef USE_MANG_HOUSE
+			/* This can be changed later */
+			/* XXX maybe new owner will be unhappy if size>STORE_INVEN_MAX;
+			 * this will be fixed when STORE_INVEN_MAX will be removed. - Jir
+			 */
+			size = (size >= STORE_INVEN_MAX) ? STORE_INVEN_MAX : size;
+			houses[num_houses].stock_size = size;
+			houses[num_houses].stock_num = 0;
+			/* TODO: pre-allocate some when launching the server */
+			C_MAKE(houses[num_houses].stock, size, object_type);
+#endif	// USE_MANG_HOUSE
 
 			/* One more house */
 			num_houses++;

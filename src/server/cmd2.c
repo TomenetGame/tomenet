@@ -945,8 +945,12 @@ void do_cmd_open(int Ind, int dir)
 			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
 				if(access_door(Ind, cs_ptr->sc.ptr))
 				{
+#if USE_MANG_HOUSE || TRUE /* let'em open it, so that thevery can take place :) */
 					/* Open the door */
 					c_ptr->feat=FEAT_HOME_OPEN;
+#else	// USE_MANG_HOUSE
+					msg_print(Ind, "Just walk in.");
+#endif	// USE_MANG_HOUSE
 					/* Take half a turn */
 					p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
 					/* Notice */

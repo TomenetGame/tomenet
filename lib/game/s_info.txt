@@ -175,7 +175,7 @@ I:1000:0
 N:31:Hunting Lore
 D:Ability to cast hunting spells
 A:6:Use an archery book
-I:1000:0
+I:1000:95
 F:MKEY_SPELL | MKEY_TVAL
 
 N:32:Fighting Technic

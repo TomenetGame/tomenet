@@ -26,6 +26,9 @@
 # - Jir -
 
 
+17/08/2002 (Jir)
+[G]- Vanilla-style (storelike) houses resurrected.
+
 16/08/2002 (Jir)
 [m]- monsters run in random direction when in bad effect(poison cloud).
 [B]- wraith couldn't access polygon house(FEAT_PERM_EXTRA => FEAT_WALL_HOUSE)
@@ -36,6 +39,7 @@
 # more on new terrain code / new ToME town code :)
 [D]- predefined town code is backported. (process_dungeon_file)
 [D]- FEAT_WALL_HOUSE introduced.
+[D]- (slightly) better shop illumination
 [P]- ghost/wraith can only pass through house walls of their own.
 [m]- admin-DM can no longer use always_pickup ('g' is still usable)
 [B]- Player could stack on another player when logging on. (player_setup)
@@ -2165,7 +2169,6 @@ memo and questions:
         worldpos wpos;
         int time;
         char ly, lx, event_kind, magnitude;};
-- vanilla-Angband style houses
 - horizontal-connected caves (eg.[32,32,-40]=>[32,31,-40])
 - (re)new classes/races
   + Paladin/Ranger
