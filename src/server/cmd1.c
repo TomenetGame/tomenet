@@ -178,10 +178,10 @@ s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit
 	{
 		/* _If_ a critical hit is scored then it will deal
 		more damage if the weapon is heavier */
-		k = weight + randint(650);
+		k = weight + randint(700);
                 if (allow_skill_crit)
                 {
-                        k += get_skill_scale(p_ptr, SKILL_CRITS, 600);
+                        k += get_skill_scale(p_ptr, SKILL_CRITS, 700);
                 }
 
 		if (k < 400)
