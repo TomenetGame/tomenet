@@ -2644,7 +2644,6 @@ D:Woven by the Noldor to honour the Valar Ulmo, mild ruler of the endless sea.
 D:This cloak allows its wearer to travel over the sea without need for a ship
 D:and at the same time protect him from the wrath of unleashed waves.
 
-
 # The Shadow Cloak of the Dungeon Wizard
 
 N:218:of the Dungeon Wizard
@@ -2658,6 +2657,32 @@ F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_BLIND | RES_CONF | RES_MANA | RES_TIM
 F:FREE_ACT | HOLD_LIFE | FEATHER | FLY
 F:REGEN_MANA | REGEN
 D:Not to be found by players. (C. Blue)
+
+# The Battle Axe of Dain Ironfoot
+
+N:219:of Dain Ironfoot
+I:24:22:5
+W:30:20:170:100000
+P:0:6d8:8:15:0
+F:STR | CON | ESP_ORC | ESP_TROLL | RES_FEAR | 
+F:SLAY_TROLL | SLAY_ORC | FREE_ACT | 
+F:IM_FIRE | RES_LITE | RES_DARK | SUST_STR | SUST_CON | BRAND_FIRE
+D:The axe that beheaded Azog, Orc king of Moria. He stood over the fallen 
+D:body of Brand, King of Dale, during the War of the Rings. Valiant till the 
+D:very end. Baruk Khazad! 
+
+# The Mithril Helm of the Durin // Steel helm for now, we don't have M.Helm atm.
+
+N:220:of the Durin
+I:32:6:4
+W:20:2:60:100000
+P:9:0d0:0:0:25 
+F:STR | CON | HIDE_TYPE | RES_FEAR | SUST_STR | SUST_CON | 
+F:IM_FIRE | RES_CONF | SEARCH | SEE_INVIS | LITE1 
+D:A helm wrought with the image of what Durin saw when he first gazed 
+D:into the Kheled-zaram. Passed down to each Lord of Khazad-dum, 
+D:till Durin III was slain. Found by Balin son of Fundin, 
+D:Uzbadkhazaddumu, the last Lord of Moria.
 
 
 #N:(No.):(name)
