@@ -5743,7 +5743,7 @@ bool master_generate(int Ind, char * parms)
 			switch(parms[1])
 			{
 				case '#':
-					v_ptr = &v_info[parms[2]];
+					v_ptr = &v_info[parms[2] + 127];
 					break;
 				case 'n':
 					v_ptr = get_vault(&parms[2]);

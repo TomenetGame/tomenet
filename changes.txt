@@ -344,4 +344,5 @@ Change list for PernMangband
 - Admin commands: /static-level, /unstatic-level (/sta, /unst)
 - Client suppresses repeated messages.
 - 12 more vaults borrowed from ZAngband (thx, the creators!)
-- 3 original vaults
+- 3 original vaults. Also, 2 'Between Vaults' are now normal vaults.
+- DM can now specify vault 128-255 by number.

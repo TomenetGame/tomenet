@@ -1812,7 +1812,7 @@ void cmd_master_aux_generate_vault(void)
 		else if (i == '1')
 		{
 			buf[1] = '#';
-			buf[2] = c_get_quantity("Vault number? ", 127);
+			buf[2] = c_get_quantity("Vault number? ", 255) - 127;
 			if(!buf[2]) redo_hack = 1;
 			buf[3] = 0;
 		}
