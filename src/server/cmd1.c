@@ -223,6 +223,11 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 	cave_type *c_ptr;
 	char m_name[80];
 
+	object_type *e_ptr;
+	u32b ef1, ef2, ef3, ef4, ef5, eesp;
+	int brands_total, brand_msgs_added;
+	char brand_msg[80];
+
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
 	bool apply_monster_brands = TRUE;
 	int i, monster_brands = 0;
@@ -342,7 +347,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 
 		/* Modify damage */
 		if (apply_monster_brands) f1 |= monster_brand_chosen;
-#if 1
+#if 0
 		/* Display message */
 		switch (monster_brand_chosen)
 		{
@@ -350,7 +355,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 				msg_format(Ind, "%^s is covered in acid!", m_name);
 				break;
 			case TR1_BRAND_ELEC:
-				msg_format(Ind, "%^s struck by electricity!", m_name);
+				msg_format(Ind, "%^s is struck by electricity!", m_name);
 				break;
 			case TR1_BRAND_FIRE:
 				msg_format(Ind, "%^s is enveloped in flames!", m_name);
@@ -364,6 +369,152 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 #endif
 	}
 
+	/* Add brands/slaying from non-weapon items (gloves, frost-armour) */
+        for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+        {
+                e_ptr = &p_ptr->inventory[i];
+                /* k_ptr = &k_info[e_ptr->k_idx];
+                pval = e_ptr->pval; not needed */
+	        /* Skip missing items */
+        	if (!e_ptr->k_idx) continue;
+	        /* Extract the item flags */
+                object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &eesp);
+
+		/* Weapon/Bow brands don't have general effect on all attacks */
+		/* All other items have general effect! */
+		if (!((i == INVEN_WIELD) || (i == INVEN_BOW))) f1 |= ef1;
+	}
+
+#if 1 /* for debugging only, so far: */
+	/* Display message for all applied brands each */
+	brands_total = 0;
+	brand_msgs_added = 0;
+	if (f1 & TR1_BRAND_ACID) brands_total++;
+	if (f1 & TR1_BRAND_ELEC) brands_total++;
+	if (f1 & TR1_BRAND_FIRE) brands_total++;
+	if (f1 & TR1_BRAND_COLD) brands_total++;
+	if (f1 & TR1_BRAND_POIS) brands_total++;
+	strcpy(brand_msg,"%^s is ");
+	switch (brands_total)
+	{
+		/* full messages for only 1 brand */
+		case 1:
+		if (f1 & TR1_BRAND_ACID) strcat(brand_msg,"covered in acid");
+		if (f1 & TR1_BRAND_ELEC) strcat(brand_msg,"struck by electricity");
+		if (f1 & TR1_BRAND_FIRE) strcat(brand_msg,"enveloped in flames");
+		if (f1 & TR1_BRAND_COLD) strcat(brand_msg,"covered with frost");
+		if (f1 & TR1_BRAND_POIS) strcat(brand_msg,"contacted with poison");
+		break;
+		/* fully combined messages for 2 brands */
+		case 2:
+		strcpy(brand_msg,"%^s is ");
+		if (f1 & TR1_BRAND_ACID)
+		{
+			strcat(brand_msg,"covered in acid");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_COLD)
+		{
+			/* cold is grammatically combined with acid since the verbum 'covered' is identical */
+			if (brand_msgs_added > 0)
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and frost");
+			    else strcat(brand_msg,", frost");
+			}
+			else strcat(brand_msg,"covered with frost");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_ELEC)
+		{
+			if (brand_msgs_added > 0)
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"struck by electricity");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_FIRE)
+		{
+			if (brand_msgs_added > 0)
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"enveloped in flames");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_POIS)
+		{
+			if (brand_msgs_added > 0)
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"contacted with poison");
+			brand_msgs_added++;
+		}
+		break;
+		/* shorter messages if more brands have to fit in the message-line */
+		case 3:		case 4:
+		strcpy(brand_msg,"%^s is hit by ");
+		if (f1 & TR1_BRAND_ACID)
+		{
+			strcat(brand_msg,"acid");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_COLD)
+		{
+			if (!(brand_msg == ""))
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"frost");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_ELEC)
+		{
+			if (!(brand_msg == ""))
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"electricity");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_FIRE)
+		{
+			if (!(brand_msg == ""))
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"flames");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_POIS)
+		{
+			if (!(brand_msg == ""))
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"poison");
+			brand_msgs_added++;
+		}
+		break;
+		/* short and simple for all brands */
+		case 5:
+		if (f1 & TR1_BRAND_ACID) strcat(brand_msg,"hit by the elements");
+		break;
+	}
+	if (brands_total > 0)
+	{
+		strcat(brand_msg,"!");
+		msg_format(Ind, brand_msg, m_name);
+	}
+#endif
 	/* Some "weapons" and "ammo" do extra damage */
 	switch (o_ptr->tval)
 	{
@@ -660,6 +811,11 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 	player_type *p_ptr = Players[Ind];
 
+	object_type *e_ptr;
+	u32b ef1, ef2, ef3, ef4, ef5, eesp;
+	int brands_total, brand_msgs_added;
+	char brand_msg[80];
+
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
 	bool apply_monster_brands = TRUE;
 	int i, monster_brands = 0;
@@ -742,7 +898,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 		/* Modify damage */
 		if (apply_monster_brands) f1 |= monster_brand_chosen;
-#if 1
+#if 0
 		/* Display message */
 		switch (monster_brand_chosen)
 		{
@@ -750,7 +906,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 				msg_format(Ind, "%^s is covered in acid!", q_ptr->name);
 				break;
 			case TR1_BRAND_ELEC:
-				msg_format(Ind, "%^s struck by electricity!", q_ptr->name);
+				msg_format(Ind, "%^s is struck by electricity!", q_ptr->name);
 				break;
 			case TR1_BRAND_FIRE:
 				msg_format(Ind, "%^s is enveloped in flames!", q_ptr->name);
@@ -764,6 +920,152 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 #endif
 	}
 
+	/* Add brands/slaying from non-weapon items (gloves, frost-armour) */
+        for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+        {
+                e_ptr = &p_ptr->inventory[i];
+                /* k_ptr = &k_info[e_ptr->k_idx];
+                pval = e_ptr->pval; not needed */
+	        /* Skip missing items */
+        	if (!e_ptr->k_idx) continue;
+	        /* Extract the item flags */
+                object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &eesp);
+
+		/* Weapon/Bow brands don't have general effect on all attacks */
+		/* All other items have general effect! */
+		if (!((i == INVEN_WIELD) || (i == INVEN_BOW))) f1 |= ef1;
+	}
+
+#if 1 /* for debugging only, so far: */
+	/* Display message for all applied brands each */
+	brands_total = 0;
+	brand_msgs_added = 0;
+	if (f1 & TR1_BRAND_ACID) brands_total++;
+	if (f1 & TR1_BRAND_ELEC) brands_total++;
+	if (f1 & TR1_BRAND_FIRE) brands_total++;
+	if (f1 & TR1_BRAND_COLD) brands_total++;
+	if (f1 & TR1_BRAND_POIS) brands_total++;
+	strcpy(brand_msg,"%^s is ");
+	switch (brands_total)
+	{
+		/* full messages for only 1 brand */
+		case 1:
+		if (f1 & TR1_BRAND_ACID) strcat(brand_msg,"covered in acid");
+		if (f1 & TR1_BRAND_ELEC) strcat(brand_msg,"struck by electricity");
+		if (f1 & TR1_BRAND_FIRE) strcat(brand_msg,"enveloped in flames");
+		if (f1 & TR1_BRAND_COLD) strcat(brand_msg,"covered with frost");
+		if (f1 & TR1_BRAND_POIS) strcat(brand_msg,"contacted with poison");
+		break;
+		/* fully combined messages for 2 brands */
+		case 2:
+		strcpy(brand_msg,"%^s is ");
+		if (f1 & TR1_BRAND_ACID)
+		{
+			strcat(brand_msg,"covered in acid");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_COLD)
+		{
+			/* cold is grammatically combined with acid since the verbum 'covered' is identical */
+			if (brand_msgs_added > 0)
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and frost");
+			    else strcat(brand_msg,", frost");
+			}
+			else strcat(brand_msg,"covered with frost");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_ELEC)
+		{
+			if (brand_msgs_added > 0)
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"struck by electricity");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_FIRE)
+		{
+			if (brand_msgs_added > 0)
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"enveloped in flames");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_POIS)
+		{
+			if (brand_msgs_added > 0)
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"contacted with poison");
+			brand_msgs_added++;
+		}
+		break;
+		/* shorter messages if more brands have to fit in the message-line */
+		case 3:		case 4:
+		strcpy(brand_msg,"%^s is hit by ");
+		if (f1 & TR1_BRAND_ACID)
+		{
+			strcat(brand_msg,"acid");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_COLD)
+		{
+			if (!(brand_msg == ""))
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"frost");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_ELEC)
+		{
+			if (!(brand_msg == ""))
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"electricity");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_FIRE)
+		{
+			if (!(brand_msg == ""))
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"flames");
+			brand_msgs_added++;
+		}
+		if (f1 & TR1_BRAND_POIS)
+		{
+			if (!(brand_msg == ""))
+			{
+			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
+			    else strcat(brand_msg,", ");
+			}
+			strcat(brand_msg,"poison");
+			brand_msgs_added++;
+		}
+		break;
+		/* short and simple for all brands */
+		case 5:
+		if (f1 & TR1_BRAND_ACID) strcat(brand_msg,"hit by the elements");
+		break;
+	}
+	if (brands_total > 0)
+	{
+		strcat(brand_msg,"!");
+		msg_format(Ind, brand_msg, q_ptr->name);
+	}
+#endif
 	/* Some "weapons" and "ammo" do extra damage */
 	switch (o_ptr->tval)
 	{
@@ -2289,7 +2591,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			/* handle bare fists/bat/ghost */
 			else
 			{
-				k = tot_dam_aux_player(Ind, o_ptr, k, m_ptr);
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr);
 			}
 
 			/* Apply the player damage bonuses */
