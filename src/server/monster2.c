@@ -1976,10 +1976,6 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Access the location */
 	c_ptr = &zcave[y][x];
 
-	if(r_ptr->flags7 & RF7_AQUATIC){
-		printf("Aquatic!\n");
-		if(c_ptr->feat==FEAT_WATER) printf("ok\n");
-	}
 	if((r_ptr->flags7 & RF7_AQUATIC) && c_ptr->feat!=FEAT_WATER) return FALSE;
 
 	/* Make a new monster */
@@ -3502,7 +3498,7 @@ int pick_ego_monster(int r_idx, int Level)
                 if (rand_int(re_ptr->rarity)) continue;
 
 				/* (Remove me) */
-				s_printf("ego %d(%s)(%s) is generated.\n", ego, re_name + re_ptr->name, r_name + r_info[r_idx].name);
+				/* s_printf("ego %d(%s)(%s) is generated.\n", ego, re_name + re_ptr->name, r_name + r_info[r_idx].name); */
 
                 /* We finanly got one ? GREAT */
                 return ego;
