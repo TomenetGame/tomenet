@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: store.c */
 
 /* Purpose: Store commands */
@@ -42,7 +43,7 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 		{ TV_LITE, SV_LITE_TORCH },
 		{ TV_LITE, SV_LITE_TORCH },
 		{ TV_LITE, SV_LITE_TORCH },
-		{ TV_LITE, SV_LITE_LANTERN },
+		{ TV_LITE, SV_LITE_TORCH },
 		{ TV_LITE, SV_LITE_LANTERN },
 
 		{ TV_FLASK, 0 },
@@ -196,7 +197,7 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
 		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
 		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
-//		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
+		{ TV_SCROLL, SV_SCROLL_IDENTIFY },
 		{ TV_SCROLL, SV_SCROLL_LIGHT },
 
 		{ TV_SCROLL, SV_SCROLL_PHASE_DOOR },
@@ -217,7 +218,6 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
 //		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
 
-		{ TV_SCROLL, SV_SCROLL_DETECT_TRAP },
 		{ TV_SCROLL, SV_SCROLL_DETECT_TRAP },
 
 		{ TV_POTION, SV_POTION_RESIST_HEAT },
@@ -1052,6 +1052,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_BOLT:
 				case TV_DIGGING:
 				case TV_CLOAK:
+				case TV_TOOL:
 				break;
 				default:
 				return (FALSE);
@@ -1588,7 +1589,7 @@ static void store_create(store_type *st_ptr)
 		/* Apply some "low-level" magic (no artifacts) */
 		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, FALSE, FALSE);
 
-		/* Hack -- Charge lite's */
+		/* Hack -- Charge lite uniformly */
 		if (o_ptr->tval == TV_LITE)
 		{
 			u32b f1, f2, f3, f4, f5, esp;
@@ -1620,6 +1621,13 @@ static void store_create(store_type *st_ptr)
 
 			/* No "worthless" items */
 			/* if (object_value(o_ptr) <= 0) continue; */
+
+			/* Hack -- No POTION2 items */
+			if (o_ptr->tval == TV_POTION2) continue;
+
+			/* Hack -- less athelas */
+			if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_ATHELAS &&
+				magik(80)) continue;
 		}
 
 		/* Prune normal stores */
@@ -2024,17 +2032,6 @@ void store_purchase(int Ind, int item, int amt)
 		if (amt <= 0) return;
 	}
 #endif
-
-	/* Create the object to be sold (structure copy) */
-	sell_obj = *o_ptr;
-	sell_obj.number = amt;
-
-	/* Hack -- require room in pack */
-	if (!inven_carry_okay(Ind, &sell_obj))
-	{
-		msg_print(Ind, "You cannot carry that many items.");
-		return;
-	}
 
 	/* Attempt to buy it */
 	if (p_ptr->store_num != 7)

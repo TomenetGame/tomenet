@@ -2477,6 +2477,20 @@ static void do_slash_cmd(int Ind, char *message)
 		else if ((prefix(message, "/refresh")) ||
 				prefix(message, "/ref"))
 		{
+			object_type *o_ptr;
+
+			/* Hack -- fix the inventory count */
+			p_ptr->inven_cnt = 0;
+			for (k = 0; k < INVEN_PACK; k++)
+			{
+				o_ptr = &p_ptr->inventory[k];
+
+				/* Skip empty items */
+				if (!o_ptr->k_idx) continue;
+
+				p_ptr->inven_cnt++;
+			}
+
 			/* Clear the target */
 			p_ptr->target_who = 0;
 

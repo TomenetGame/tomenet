@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: tables.c */
 
 /* Purpose: Angband Tables */
@@ -1620,6 +1621,7 @@ player_race race_info[MAX_RACES] =
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp
  */
+/* TODO: let's move them to p_info.txt */
 player_class class_info[MAX_CLASS] =
 {
 	{
@@ -1667,7 +1669,20 @@ player_class class_info[MAX_CLASS] =
 		{-5, 3, 0, 1, -2, 1},
 		30, 36, 30, 2,  16, 20, 34, 20,
 		7,  13, 9,  0,  0,  0,  15, 15,
-		0, 30
+		0, 30,
+				/* XXX copied from sorc ones */
+                {
+                        {
+                                SKILL_MAGIC,
+                                '+', 6000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_MAGERY,
+                                '+', 1000,
+                                '+', 900,
+                        },
+                }
 	},
 
 	{
@@ -1675,7 +1690,7 @@ player_class class_info[MAX_CLASS] =
 		{-1, -3, 3, -1, 0, 2},
 		25, 30, 32, 2,  16, 8, 48, 35,
 		7,  10, 12, 0,  0,  0, 20, 20,
-		2, 20
+		2, 20,
 	},
 
 	{
@@ -1723,7 +1738,35 @@ player_class class_info[MAX_CLASS] =
 		{ 2, 2, 0, 1, 1, 1},
 		30, 32, 28, 3,  24, 16, 56, 72,
 		8,  10, 10, 0,  0,  0,  30, 45,
-		4, 30
+		4, 30,
+				/* XXX copied from sorc and mimic ones */
+                {
+                        {
+                                SKILL_MAGIC,
+                                '+', 2000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_MAGERY,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_COMBAT,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_ARCHERY,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                }
 	},
 
 	{
@@ -1799,7 +1842,40 @@ player_class class_info[MAX_CLASS] =
 		{ 5, -5, -5, 3, 3, 1},
 		25, 3, 32, 2,  18, 4, 75, 55,
 		15, 2, 14, 0,  0,  0, 50, 45,
-		9,  20
+		9,  20,
+				/* XXX mere copy of that of Warrior */
+                {
+                        {
+                                SKILL_COMBAT,
+                                '+', 3000,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_SWORD,
+                                '+', 0,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_HAFTED,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_POLEARM,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_ARCHERY,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                }
 	},
 
 	{
@@ -1807,7 +1883,40 @@ player_class class_info[MAX_CLASS] =
 		{ 1, 0, 2, 3, 1, -1},
 		30, 32, 28, 2,  24, 20, 56, 82,
 		8,  10, 10, 0,  0,  0,  30, 55,
-		4, 30
+		4, 30,
+				/* XXX mere copy of that of Warrior */
+                {
+                        {
+                                SKILL_COMBAT,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_SWORD,
+                                '+', 0,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_HAFTED,
+                                '+', 0,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_POLEARM,
+                                '+', 0,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_ARCHERY,
+                                '+', 3000,
+                                '+', 1000,
+                        },
+                }
 	},
 
 	{
@@ -4099,7 +4208,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Combat",
-                "General ability to fight and to pseudo-id armors and weapons.\nIt also allows to use heavier armors without penalities",
+                "General ability to fight and to pseudo-id armors and weapons.\nIt also allows to use heavier armors without penalties",
 
                 /* Mkey desc/mkey */
                 NULL,
@@ -4159,7 +4268,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Critical-strike",
-                "Ability to use land more critial hits with light swords",
+                "Ability to land more critial hits with light swords",
 
                 /* Mkey desc/mkey */
                 NULL,

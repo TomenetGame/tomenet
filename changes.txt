@@ -1083,10 +1083,11 @@ To find the latest change quickly, search ==== :)
 - MONSTER_ITEM_CONSUME to keep monsters from dropping too much.
 [B] wipeout_needless_objects() did nasties. commented out.
 
-18/06/2002 (Jir)
+19/06/2002 (Jir)
 - cloned monsters drop what they had picked up.
 - object code optimized somewhat.
 - death mold trap
+[B] a lv1 sorc could cast 30 magic missles each turn
 
 
 
@@ -1115,7 +1116,6 @@ concisely: what's hot now?
 =============================================================================
 below this line are the unfixed bugs known:
 
-[B] game starts with map screen. huh?
 [B] House doors still seem to crash sometimes. (door even vanishes??)
 [B] wpos display hides wound states(eg.'Deep Gash')
 [B] ever-charging arts (eg.star)

@@ -1,5 +1,13 @@
+# $Id$
+
+# ToME-NET rumours file, based on ToME rumours.txt.
+# You can colour the rumours with '{' tag. Use '{{' to write literal '{'.
+# Any lines above 'N:' will be ignored.
+
+# You should manually write the total # of rumous (lines - 10).
+
 N:*:Default
-578
+609
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -560,7 +568,6 @@ They say that you should learn to activate telapathic crystals.
 They say that a potion of curing is just an alias of that of healing.
 They say that a potion of curing cures more than your body.
 They say that falling into a chasm may drive you mad.
-They say that a trapdoor won't give you the time to open your wings, if any.
 They say that reflection works *well* against ammos.
 They say that reflection helps you to think things.
 They say that bottles of potion are made of glass.
@@ -579,5 +586,36 @@ Doorway too broad? Jam some!
 (AD) Send us new cookies via /rfe command!
 They say that shopkeepers crafty, they beat prices down if your lore is poor.
 They say that every shopkeeper is racist.
+A failed alpinist said; that peak was way too high!
+They say that do not meddle in the affairs of wizards, because they are...
+They say that you should always think of why '{DStormbringer{w' is named so.
+Can you swim with ENIAC on your shoulder?
+Wanna be the Guild master? Just get rid of the current one!
+They say that some traps are unidentifiable b/c you cannot see the effect.
+You saw a signpost: {yKeep the law and happy murdering!
+Foudinni said: just don't kill a hen that lays {ygolden {weggs.
+Never forget to knock the door!
+They say that not all the swords are obedient. Don't cut yourself!
+They say that you should learn why people would shout in the midst of dungeon.
+They say that some vaults are protected by some kinds of magic.
+If you noticed you left something behind you, never hesitate to fetch it.
+Wanna retreat? Retrace your steps!
+When there's a open door, why one would dig a hole next to it??
+They say that from disadvantage you can learn a lot.
+They say that some intellectuals take armours as cramps.
+They say that {DStormbringer {wbrings you storms, good or bad.
+They say that Always prepare one more easy way out.
+They say that a monk will never get given the slip.
+They say that one can still learn to swim.
+Foudinni said: Wanna rob? Make him dead drunk first!	
+They say that abuse of The Speed will lead you to the jail.
+They say that you should be extremely careful when carrying explosives.
+They say that you should be *vigilant* to survive 1000'.
+They say that you should avoid every egg if you find a ring of egg resistance.
+They say that be kind enough to give thirsty marker some paper.
+Afraid of dropping your weapon? Grasp it tight with both hands!
+Ever laid a carpet of potions?
+They say that never genocide the thieves.
+Ever wondered why you can see a {rj {w from afar while you cannot see a {bj{w?
 They say that 
 They say that 
