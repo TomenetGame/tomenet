@@ -1139,17 +1139,14 @@ static void calc_hitpoints(int Ind)
 	u32b mHPLim, finalHP;
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
-	  {
-		Ind2 = find_player(p_ptr->esp_link);
+	{
+	    Ind2 = find_player(p_ptr->esp_link);
 
-		if (!Ind2)
-	      end_mind(Ind, FALSE);
+	    if (!Ind2)
+	    	end_mind(Ind, FALSE);
 	    else
-	      {
 		p_ptr2 = Players[Ind2];
-	      }
-	  }
-
+	}
 
 	/* Un-inflate "half-hitpoint bonus per level" value */
 	bonus = ((int)(adj_con_mhp[p_ptr->stat_ind[A_CON]]) - 128);
@@ -1158,24 +1155,31 @@ static void calc_hitpoints(int Ind)
 	if (p_ptr->fruit_bat) mhp = (p_ptr->player_hp[p_ptr->lev-1] / 4) + (bonus * p_ptr->lev);
 	else mhp = p_ptr->player_hp[p_ptr->lev-1] + (bonus * p_ptr->lev / 2);
 
+#if 0 // DGDGDGDG why ?
+	/* Option : give mages a bonus hitpoint / lvl */
+	if (cfg.mage_hp_bonus)
+		if (p_ptr->pclass == CLASS_MAGE) mhp += p_ptr->lev;
+#endif
+
+	/* Sorcery reduces hp */
+	if (get_skill(p_ptr, SKILL_SORCERY))
+	{
+		// mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 20)) / 100;
+		mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 25)) / 100;
+	}
+
 	if (p_ptr->body_monster)
-	  {
+	{
 	    int rhp = r_info[p_ptr->body_monster].hdice * r_info[p_ptr->body_monster].hside;
 
 	    /* limit HP against ~3200 in total: */
 	    mHPLim = (100000 / ((100000 / rhp) + 15));
 	    finalHP = (mHPLim < mhp ) ? (((mhp * 3) + (mHPLim * 2)) / 5) : ((mHPLim + mhp) / 2);
 	    mhp = finalHP;
-	  }
+	}
 
 	/* Always have at least one hitpoint per level */
 	if (mhp < p_ptr->lev + 1) mhp = p_ptr->lev + 1;
-
-#if 0 // DGDGDGDG why ?
-	/* Option : give mages a bonus hitpoint / lvl */
-	if (cfg.mage_hp_bonus)
-		if (p_ptr->pclass == CLASS_MAGE) mhp += p_ptr->lev;
-#endif
 
 	/* Factor in the hero / superhero settings */
 	if (p_ptr->hero) mhp += 10;
@@ -1187,13 +1191,6 @@ static void calc_hitpoints(int Ind)
 	if (p_ptr->tim_meditation)
 	{
 		mhp = mhp * 3 / 5;
-	}
-
-	/* Sorcery reduces hp */
-	if (get_skill(p_ptr, SKILL_SORCERY))
-	{
-		// mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 20)) / 100;
-		mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 25)) / 100;
 	}
 
 	/* Disruption Shield */

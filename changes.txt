@@ -27,6 +27,7 @@
      Fixed COULD_2H encumberment penalty (now 2/3 for player-stat-based
      and for player-mastery-skill-based to-hit/to-dam boni. Penalty does
      not apply to the weapon's boni!)
+[P]- Hopefully fixed mimic-sorc-adventurer's HP bug.
 
 11/02/2003
 [O]- Changed silly 'Amulet of ESP' to something more cooler and less ooc.
