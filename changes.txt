@@ -22,6 +22,9 @@
 
 # bug.txt should follow the exact same format
 
+28/09/2002
+[P]- Probability travel spell in Conveyance school
+
 11/09/2002
 [D]- Adjusted some traps
 

@@ -81,7 +81,7 @@
  */
 /* #define SPECIAL_BSD */
 
-#define NETBSD /* pfft */
+/* #define NETBSD pfft -- indeed should go in makefile ;) */
 
 /*
  * For server: can use crypt() for doing passwords

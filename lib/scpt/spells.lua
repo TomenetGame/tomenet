@@ -40,7 +40,7 @@ SCHOOL_WATER = add_school
 
 SCHOOL_EARTH = add_school
 {
-	["name"] = "Earh",
+	["name"] = "Earth",
         ["skill"] = SKILL_EARTH,
         ["sorcery"] = TRUE,
 }
@@ -128,7 +128,7 @@ school_book[4] = {
 
 -- Create the book of translocation
 school_book[5] = {
-        DISARM, BLINK, TELEPORT, TELEAWAY, RECALL,
+        DISARM, BLINK, TELEPORT, TELEAWAY, RECALL, PROBABILITY_TRAVEL,
 }
 
 -- Create the book of the tree

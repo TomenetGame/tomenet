@@ -120,3 +120,24 @@ RECALL = add_spell
                         "***Affected by the Meta spell: Project Spell***",
         }
 }
+
+PROBABILITY_TRAVEL = add_spell
+{
+	["name"] = 	"Probability Travel",
+        ["school"] = 	{SCHOOL_CONVEYANCE},
+        ["level"] = 	35,
+        ["mana"] = 	30,
+        ["mana_max"] = 	50,
+        ["fail"] = 	50,
+        ["spell"] = 	function()
+                        set_proba_travel(Ind, randint(20) + get_level(Ind, PROBABILITY_TRAVEL, 60))
+	end,
+	["info"] = 	function()
+        		return "dur "..get_level(Ind, PROBABILITY_TRAVEL, 60).."+d20"
+	end,
+        ["desc"] =	{
+        		"Renders you instable, when you hit a wall you travel throught it and",
+                        "instantly appear on the other side of it. You can also float up and down",
+                        "at will"
+        }
+}
