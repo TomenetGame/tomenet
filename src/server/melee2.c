@@ -2067,7 +2067,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			int power = rlev / 2 + randint(rlev);
 			if (!direct) break;
 			disturb(Ind, 1, 0);
-			if (power < 10)
+			if (power < 15)
 			{
 				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 				else msg_format(Ind, "%^s points at you and curses.", m_name);
@@ -2083,7 +2083,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			}
 
 			/* RF5_CAUSE_2 */
-			else if (power < 25)
+			else if (power < 35)
 			{
 				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 				else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
@@ -2099,7 +2099,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			}
 
 			/* RF5_CAUSE_3 */
-			else if (power < 40)
+			else if (power < 50)
 			{
 				if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 				else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
