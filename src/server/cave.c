@@ -2009,7 +2009,9 @@ void lite_spot(int Ind, int y, int x)
 				a=TERM_VIOLET;
 			}
 			
-			if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) 
+			/* bugfix on MASSIVE deaths (det/death) */
+			if(p_ptr->chp<0) c='-';
+			else if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) 
 			{
 				sprintf((unsigned char *)&kludge,"%d",(p_ptr->chp * 95) / (p_ptr->mhp*10)); 
 				c = kludge;
