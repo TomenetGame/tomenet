@@ -24,6 +24,27 @@
 # Oh, thank you, Evileye :)
 # - Jir -
 
+24/08/2002 (evileye)
+- fixed house creation, bug in guildhall saving fixed.
+- new cs activate method. (please be careful ;( )
+- cs save/load key doors.
+- old key door code in "open" left in.
+- guildhall key doors will be saved twice in rare cases 
+  known, do not change
+- do not delete/modify any of the above changes please
+- inscriptions moved to csfunc
+- known problem: wall blocking way etc ignore this
+  there are nice ways round this. there are some nasty
+  ways round it too.
+
+# consider moving traps activation to this.
+# they are incompatible now though. i will have
+# to change activation method again first.
+# it still needs work remember. if you would
+# rather wait until it is finished that is ok
+# it will probably fail just now. 
+# do not delete
+
 22/08/2002 (evileye)
 - deletion of old spell stuff
 - work on new spell stuff
