@@ -353,6 +353,40 @@ void party_check(int Ind){
 }
 
 /*
+ * as with party checker, scan ALL player entries
+ * if they are not linked to an existing account,
+ * delete them.
+ */
+void account_check(int Ind){	/* Temporary Ind */
+	hash_entry *ptr;
+	int i;
+	player_type *p_ptr=Player[Ind];
+
+	/* Search in each array slot */
+	for (i = 0; i < NUM_HASH_ENTRIES; i++)
+	{
+		/* Acquire pointer to this chain */
+		ptr = hash_table[i];
+
+		/* Check all entries in this chain */
+		while (ptr)
+		{
+			/* Check this name */
+			if(!GetAccountID(ptr->id)){
+				s_printf("Lost player: %s\n", ptr->name);
+				msg_format(Ind, Lost player: %s", ptr->name);
+			}
+
+			/* Next entry in chain */
+			ptr = ptr->next;
+		}
+	}
+
+	/* Not found */
+	return 0;
+}
+
+/*
  * Create a new party, owned by "Ind", and called
  * "name".
  */

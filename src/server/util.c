@@ -2769,6 +2769,7 @@ static void do_slash_cmd(int Ind, char *message)
 			}
 			else if(prefix(message, "/cp")){
 				party_check(Ind);
+				account_check(Ind);
 				return;
 			}
 			else if (prefix(message, "/geno-level") ||
