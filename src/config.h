@@ -1,6 +1,9 @@
 /* $Id$ */
 /* File: config.h */
 
+#ifndef TOMENET_CONFIG_H
+#define TOMENET_CONFIG_H
+
 /* Purpose: Angband specific configuration stuff */
 
 /* Note : Much of the functionality of this file is being phased into
@@ -793,4 +796,4 @@
 #define EVIL_TEST
 
 #define CLIENT_SHIMMER
-
+#endif
