@@ -74,3 +74,4 @@ Change list for PernMangband
   recently deceased players.
 - Blood bond should not crash now.
 - Added curse item spell for rogues (not fully implemented).
+- Furry, Dig, Spin warrior technics

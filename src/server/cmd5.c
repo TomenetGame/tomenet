@@ -3718,12 +3718,40 @@ void do_cmd_fight(int Ind, int book, int spell)
 				set_shield(Ind, p_ptr->shield + 20 + randint(20) + plev);
 				break;
 			}
+
+                        /* Dig */
+                        case 9:
+			{
+				get_aim_dir(Ind);
+				p_ptr->current_spell = j;
+				return;
+			}
 			
 			/* Furry */
-			case 9:
+                        case 10:
 			{
 				msg_format_near(Ind, "%s enters a battle *RAGE*.", p_ptr->name);
 				set_shield(Ind, p_ptr->furry + 10 + randint(10) + (plev / 2));
+				break;
+			}
+			
+                        /* Spin */
+                        case 10:
+			{
+                                int d;
+
+                                for (d = 1; d <= 9; d++)
+                                {
+                                        int x, y;
+
+                                        if (d == 5) continue;
+
+                                        x = p_ptr->px + ddirx[d];
+                                        y = p_ptr->py + ddiry[d];
+
+                                        if (!in_bounds(p_ptr->dun_depth, y, x)) continue;
+                                        py_attack(Ind, y, x);
+                                }
 				break;
 			}
 		}
@@ -3822,7 +3850,7 @@ void do_cmd_fight_aux(int Ind, int dir)
 	/* We assume that the technic can be used, and so forth */
 	switch(p_ptr->current_spell)
 	{
-		case 2:
+                case 2:
 		{
 			int ty, tx, rad = 2 + (plev / 10);
 		
@@ -3845,6 +3873,32 @@ void do_cmd_fight_aux(int Ind, int dir)
 		
 			msg_format_near(Ind, "%s jumps.", p_ptr->name);
 			teleport_player_to(Ind, ty, tx);
+			break;
+		}
+                /* Dig */
+                case 9:
+		{
+                        int ty, tx;
+		
+			/* Use the given direction */
+                        tx = p_ptr->px + ddx[dir];
+                        ty = p_ptr->py + ddy[dir];
+
+			/* Hack -- Use an actual "target" */
+			if ((dir == 5) && target_okay(Ind))
+			{
+				tx = p_ptr->target_col;
+				ty = p_ptr->target_row;
+			
+                                if (distance(ty, tx, p_ptr->py, p_ptr->px) > 1)
+				{
+                                        msg_print(Ind, "You can not dig that far.");
+					return;
+				}
+			}
+		
+                        msg_format_near(Ind, "%s hacks at the wall.", p_ptr->name);
+                        project(0 - Ind, 0, p_ptr->dun_depth, ty, tx, 1, GF_KILL_WALL, PROJECT_BEAM | PROJECT_GRID);
 			break;
 		}
 		default:  /* For some reason we got called for a technic that */

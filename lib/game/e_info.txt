@@ -317,7 +317,7 @@ F:SHOW_MODS | HIDE_TYPE
 
 # One power resist
 
-N:53:of Magic
+N:53:of the Magi
 X:34:20
 W:0:0:0:50000
 C:-5:-5:10:10
