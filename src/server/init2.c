@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: init2.c */
 
 /* Purpose: Initialization (part 2) -BEN- */
@@ -806,6 +807,7 @@ static errr init_r_info(void)
 }
 
 
+#ifdef RANDUNIS
 /*
  * Initialize the "re_info" array
  *
@@ -898,6 +900,7 @@ static errr init_re_info(void)
 	/* Success */
 	return (0);
 }
+#endif	// RANDUNIS
 
 
 /*
@@ -931,7 +934,7 @@ static errr init_t_info(void)
 
 	/* Save the "record" information */
 	t_head->info_num = MAX_T_IDX;
-	t_head->info_len = sizeof(trap_type);
+	t_head->info_len = sizeof(trap_kind);
 
 	/* Save the size of "t_head" and "t_info" */
 	t_head->head_size = sizeof(header);
@@ -1369,6 +1372,9 @@ static void prepare_distance()
 		}
 		tdi[d] = count;
 	}
+	/* Hack -- terminate */
+	tdi[PREPARE_RADIUS] = count + 1;
+	
 #if DEBUG_LEVEL > 2
 	s_printf("last count: %d\n", count);
 #endif
@@ -1392,7 +1398,7 @@ static errr init_other(void)
 	C_MAKE(m_list, MAX_M_IDX, monster_type);
 
 	/* Allocate and Wipe the traps list */
-	C_MAKE(t_list, MAX_TR_IDX, trap_type);
+//	C_MAKE(t_list, MAX_TR_IDX, trap_type);
 
 	/*** Init the wild_info array... for more information see wilderness.c ***/
 	init_wild_info();
@@ -1771,23 +1777,23 @@ void set_server_option(char * option, char * value)
 	}
 	else if (!strcmp(option,"ZANG_MONSTERS"))
 	{
-		cfg.zang_monsters = str_to_boolean(value);
+		cfg.zang_monsters = atoi(value);
 	}
 	else if (!strcmp(option,"PERN_MONSTERS"))
 	{
-		cfg.pern_monsters = str_to_boolean(value);
+		cfg.pern_monsters = atoi(value);
 	}
 	else if (!strcmp(option,"CTH_MONSTERS"))
 	{
-		cfg.cth_monsters = str_to_boolean(value);
+		cfg.cth_monsters = atoi(value);
 	}
 	else if (!strcmp(option,"JOKE_MONSTERS"))
 	{
-		cfg.joke_monsters = str_to_boolean(value);
+		cfg.joke_monsters = atoi(value);
 	}
 	else if (!strcmp(option,"VANILLA_MONSTERS"))
 	{
-		cfg.vanilla_monsters = str_to_boolean(value);
+		cfg.vanilla_monsters = atoi(value);
 	}
 	else if (!strcmp(option,"RUNNING_SPEED"))
 	{
@@ -1828,6 +1834,18 @@ void set_server_option(char * option, char * value)
 	else if (!strcmp(option,"PUBLIC_RFE"))
 	{
 		cfg.public_rfe = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"AUTO_PURGE"))
+	{
+		cfg.auto_purge = str_to_boolean(value);
+	}
+	else if (!strcmp(option, "RESTING_RATE"))
+	{
+		cfg.resting_rate = atoi(value);
+	}
+	else if (!strcmp(option, "PARTY_XP_BOOST"))
+	{
+		cfg.party_xp_boost = atoi(value);
 	}
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }
@@ -1908,7 +1926,7 @@ void load_server_cfg_aux(FILE * cfg)
  * options thave have historically been #defined in config.h.
  */
 
-void load_server_cfg(void)
+bool load_server_cfg(void)
 {
 	FILE * cfg;
 	
@@ -1921,7 +1939,7 @@ void load_server_cfg(void)
 	{
 //		printf("Error : cannot open file tomenet.cfg\n");
 		printf("Error : cannot open file %s\n", MANGBAND_CFG);
-		return;
+		return (FALSE);
 	}
 
 	/* Actually parse the file */
@@ -1930,6 +1948,7 @@ void load_server_cfg(void)
 	/* Close it */
 	fclose(cfg);
 
+	return (TRUE);
 }
 
 
@@ -1969,9 +1988,11 @@ void init_some_arrays(void)
 	s_printf("[Initializing arrays... (monsters)]\n");
 	if (init_r_info()) quit("Cannot initialize monsters");
 
+#ifdef RANDUNIS
 	/* Initialize ego monster info */
 	s_printf("[Initializing arrays... (ego-monsters)]\n");
 	if (init_re_info()) quit("Cannot initialize ego monsters");
+#endif	// RANDUNIS
 
 	/* Initialize feature info */
 	s_printf("[Initializing arrays... (vaults)]\n");

@@ -74,7 +74,7 @@ extern unsigned _ovrbuffer = 0x1500;
  */
 static void init_stuff(void)
 {
-	char path[1024];
+	char path[MAX_PATH_LENGTH];
 
 #if defined(AMIGA) || defined(VM)
 
@@ -114,6 +114,7 @@ static void init_stuff(void)
 int main(int argc, char *argv[])
 {
 	bool new_game = FALSE;
+	bool config_specified = FALSE;
 	char buf[1024];
 	int catch_signals = TRUE;
 #ifdef DUMB_WIN
@@ -228,6 +229,7 @@ int main(int argc, char *argv[])
 			case 'm':
 			case 'M':
 			MANGBAND_CFG = &argv[0][2];
+			config_specified = TRUE;
 			break;
 
 
@@ -260,7 +262,8 @@ int main(int argc, char *argv[])
 	show_news();
 
 	/* Load the tomenet.cfg options */
-	load_server_cfg();
+	if (!load_server_cfg() && config_specified)
+		quit(NULL);
 
 	/* Initialize the arrays */
 	init_some_arrays();

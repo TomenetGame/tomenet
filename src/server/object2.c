@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: object.c */
 
 /* Purpose: misc code for objects */
@@ -14,6 +15,137 @@
 
 #include "angband.h"
 
+
+
+/*
+ * Excise a dungeon object from any stacks
+ * Borrowed from ToME.
+ */
+void excise_object_idx(int o_idx)
+{
+	object_type *j_ptr, *o_ptr;
+
+	u16b this_o_idx, next_o_idx = 0;
+
+	u16b prev_o_idx = 0;
+
+
+	/* Object */
+	j_ptr = &o_list[o_idx];
+
+#ifdef MONSTER_INVENTORY
+	/* Monster */
+	if (j_ptr->held_m_idx)
+	{
+		monster_type *m_ptr;
+
+		/* Monster */
+		m_ptr = &m_list[j_ptr->held_m_idx];
+
+		/* Scan all objects the monster has */
+		for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+		{
+			/* Acquire object */
+			o_ptr = &o_list[this_o_idx];
+
+			/* Acquire next object */
+			next_o_idx = o_ptr->next_o_idx;
+
+			/* Done */
+			if (this_o_idx == o_idx)
+			{
+				/* No previous */
+				if (prev_o_idx == 0)
+				{
+					/* Remove from list */
+					m_ptr->hold_o_idx = next_o_idx;
+				}
+
+				/* Real previous */
+				else
+				{
+					object_type *k_ptr;
+
+					/* Previous object */
+					k_ptr = &o_list[prev_o_idx];
+
+					/* Remove from list */
+					k_ptr->next_o_idx = next_o_idx;
+				}
+
+				/* Forget next pointer */
+				o_ptr->next_o_idx = 0;
+
+				/* Done */
+				break;
+			}
+
+			/* Save prev_o_idx */
+			prev_o_idx = this_o_idx;
+		}
+		return;
+	}
+#endif	// MONSTER_INVENTORY
+
+	/* Dungeon */
+//	else
+	{
+		cave_type *c_ptr;
+		cave_type **zcave;
+
+		int y = j_ptr->iy;
+		int x = j_ptr->ix;
+
+		/* Grid */
+		if((zcave=getcave(&j_ptr->wpos)))
+		{
+			c_ptr=&zcave[y][x];
+		}
+
+
+		/* Scan all objects in the grid */
+		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+		{
+			/* Acquire object */
+			o_ptr = &o_list[this_o_idx];
+
+			/* Acquire next object */
+			next_o_idx = o_ptr->next_o_idx;
+
+			/* Done */
+			if (this_o_idx == o_idx)
+			{
+				/* No previous */
+				if (prev_o_idx == 0)
+				{
+					/* Remove from list */
+					if (c_ptr) c_ptr->o_idx = next_o_idx;
+				}
+
+				/* Real previous */
+				else
+				{
+					object_type *k_ptr;
+
+					/* Previous object */
+					k_ptr = &o_list[prev_o_idx];
+
+					/* Remove from list */
+					k_ptr->next_o_idx = next_o_idx;
+				}
+
+				/* Forget next pointer */
+				o_ptr->next_o_idx = 0;
+
+				/* Done */
+				break;
+			}
+
+			/* Save prev_o_idx */
+			prev_o_idx = this_o_idx;
+		}
+	}
+}
 
 
 
@@ -33,22 +165,23 @@ void delete_object_idx(int o_idx)
 	cave_type *c_ptr;
 
 	/* Artifact becomes 'not found' status */
-	if ((artifact_p(o_ptr)) && (!o_ptr->name3))
+	if (true_artifact_p(o_ptr))
 	{
 		 a_info[o_ptr->name1].cur_num = 0;
 		 a_info[o_ptr->name1].known = FALSE;
 	}
 
+	/* Excise */
+	excise_object_idx(o_idx);
+
+#if 0
 	/* Object is gone */
 	if((zcave=getcave(wpos)))
 	{
 		c_ptr=&zcave[y][x];
-#if 0
-	if(cave[Depth]){
-		c_ptr=&cave[Depth][y][x];
-#endif	// 0
 		c_ptr->o_idx = 0;
 	}
+#endif	// 0
 
 	/* No one can see it anymore */
 	for (i = 1; i < NumPlayers + 1; i++)
@@ -73,7 +206,10 @@ void delete_object(struct worldpos *wpos, int y, int x) /* maybe */
 	/* Refuse "illegal" locations */
 	if (!in_bounds(y, x)) return;
 
-	if((zcave=getcave(wpos))){
+	if((zcave=getcave(wpos)))
+	{
+		u16b this_o_idx, next_o_idx = 0;
+
 		c_ptr=&zcave[y][x];
 #if 0
 	/* Refuse "illegal" locations */
@@ -85,7 +221,27 @@ void delete_object(struct worldpos *wpos, int y, int x) /* maybe */
 #endif	// 0
 
 		/* Delete the object */
-		if (c_ptr->o_idx) delete_object_idx(c_ptr->o_idx);
+//		if (c_ptr->o_idx) delete_object_idx(c_ptr->o_idx);
+
+		/* Scan all objects in the grid */
+		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+		{
+			object_type *o_ptr;
+
+			/* Acquire object */
+			o_ptr = &o_list[this_o_idx];
+
+			/* Acquire next object */
+			next_o_idx = o_ptr->next_o_idx;
+
+			/* Wipe the object */
+			delete_object_idx(this_o_idx);
+		}
+
+		/* Objects are gone */
+		c_ptr->o_idx = 0;
+
+//		everyone_lite_spot(wpos, y, x);
 	}
 	else{			/* Cave depth not static (houses etc) - do slow method */
 		int i;
@@ -117,11 +273,13 @@ void delete_object(struct worldpos *wpos, int y, int x) /* maybe */
  */
 void compact_objects(int size, bool purge)
 {
-	int i, y, x, num, cnt, Ind;
+	int i, j, y, x, num, cnt, Ind, ny, nx;
 
 	int cur_val, cur_lev, cur_dis, chance;
-			struct worldpos *wpos;
-			cave_type **zcave;
+	struct worldpos *wpos;
+	cave_type **zcave;
+	object_type *q_ptr;
+	cave_type *c_ptr;
 
 
 	/* Compact */
@@ -218,21 +376,84 @@ void compact_objects(int size, bool purge)
 			((!o_ptr->wpos.wz && (!purge || o_ptr->owner)) ||
 			 getcave(&o_ptr->wpos))) continue;
 
+
 		/* One less object */
 		o_max--;
 
 		/* Reorder */
 		if (i != o_max)
 		{
-			int ny = o_list[o_max].iy;
-			int nx = o_list[o_max].ix;
+			ny = o_list[o_max].iy;
+			nx = o_list[o_max].ix;
 			wpos=&o_list[o_max].wpos;
 			/* Update the cave */
+#if 0
 			/* Hack -- with wilderness objects, sometimes the cave is not allocated,
 			   so check that it is. */
 			if ((zcave=getcave(wpos))){
 				zcave[ny][nx].o_idx = i;
 			}
+#endif	// 0
+
+			/* Repair objects */
+			for (j = 1; j < o_max; j++)
+			{
+				/* Acquire object */
+				q_ptr = &o_list[j];
+
+				/* Skip "dead" objects */
+				if (!q_ptr->k_idx) continue;
+
+				/* Repair "next" pointers */
+				if (q_ptr->next_o_idx == o_max)
+				{
+					/* Repair */
+					q_ptr->next_o_idx = i;
+				}
+			}
+
+			/* Acquire object */
+			o_ptr = &o_list[o_max];
+
+#ifdef MONSTER_INVENTORY
+			/* Monster */
+			if (o_ptr->held_m_idx)
+			{
+				monster_type *m_ptr;
+
+				/* Acquire monster */
+				m_ptr = &m_list[o_ptr->held_m_idx];
+
+				/* Repair monster */
+				if (m_ptr->hold_o_idx == o_max)
+				{
+					/* Repair */
+					m_ptr->hold_o_idx = i;
+				}
+			}
+
+			/* Dungeon */
+			else
+#endif	// MONSTER_INVENTORY
+			{
+				/* Acquire location */
+				y = o_ptr->iy;
+				x = o_ptr->ix;
+
+				/* Acquire grid */
+				if ((zcave=getcave(wpos))){
+					c_ptr=&zcave[y][x];
+					//			zcave[ny][nx].o_idx = i;
+
+					/* Repair grid */
+					if (c_ptr->o_idx == o_max)
+					{
+						/* Repair */
+						c_ptr->o_idx = i;
+					}
+				}
+			}
+
 			/* Structure copy */
 			o_list[i] = o_list[o_max];
 
@@ -290,7 +511,7 @@ void wipe_o_list(struct worldpos *wpos)
 		/* Mega-Hack -- preserve artifacts */
 		/* Hack -- Preserve unknown artifacts */
 		/* We now preserve ALL artifacts, known or not */
-		if (artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/)
+		if (true_artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/)
 		{
 			/* Info */
 			/* s_printf("Preserving artifact %d.\n", o_ptr->name1); */
@@ -716,7 +937,8 @@ static s32b object_value_base(int Ind, object_type *o_ptr)
 		case TV_FOOD: return (5L);
 
 		/* Un-aware Potions */
-		case TV_POTION: return (20L);
+		case TV_POTION:
+		case TV_POTION2: return (20L);
 
 		/* Un-aware Scrolls */
 		case TV_SCROLL: return (20L);
@@ -804,7 +1026,8 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f5 & TR5_CHAOTIC) total += 10000;
 	if (f1 & TR1_VAMPIRIC) total += 13000;
 	if (f1 & TR1_STEALTH) total += (250 * plusses);
-	if (f1 & TR1_SEARCH) total += (100 * plusses);
+	if (f5 & TR5_DISARM) total += (100 * plusses);
+	if (f1 & TR1_SEARCH) total += (500 * plusses);
 	if (f1 & TR1_INFRA) total += (150 * plusses);
 	if (f1 & TR1_TUNNEL) total += (175 * plusses);
 	if ((f1 & TR1_SPEED) && (plusses > 0))
@@ -838,7 +1061,8 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f2 & TR2_SUST_CON) total += 850;
 	if (f2 & TR2_SUST_CHR) total += 250;
         if (f5 & TR5_INVIS) total += 30000;
-        if (f5 & TR5_LIFE) total += (5000 * plusses);
+//        if (f5 & TR5_LIFE) total += (5000 * plusses);
+        if (f1 & TR1_LIFE) total += (5000 * plusses);
 	if (f2 & TR2_IM_ACID) total += 10000;
 	if (f2 & TR2_IM_ELEC) total += 10000;
 	if (f2 & TR2_IM_FIRE) total += 10000;
@@ -1008,7 +1232,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (o_ptr->tval == TV_ARROW ||
 		o_ptr->tval == TV_SHOT ||
 		o_ptr->tval == TV_BOLT)
-		total >>= 3;
+		total >>= 2;
 
 	return total;
 }
@@ -1192,7 +1416,8 @@ static s32b object_value_real(int Ind, object_type *o_ptr)
 				/* Give credit for stealth and searching */
 //				if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
 				if (f1 & TR1_STEALTH) value += pval * pval * 100L;
-				if (f1 & TR1_SEARCH) value += pval * pval * 100L;
+				if (f1 & TR1_SEARCH) value += pval * pval * 200L;
+				if (f5 & TR5_DISARM) value += pval * pval * 100L;
 
 				/* Give credit for infra-vision and tunneling */
 				if (f1 & TR1_INFRA) value += pval * pval * 100L;
@@ -1300,14 +1525,19 @@ static s32b object_value_real(int Ind, object_type *o_ptr)
 		case TV_BOW:
 		case TV_BOOMERANG:
 		case TV_AXE:
-		case TV_MSTAFF:
 		case TV_DIGGING:
 		case TV_HAFTED:
 		case TV_SWORD:
 		case TV_POLEARM:
+		case TV_MSTAFF:
 		{
 			/* Hack -- negative hit/damage bonuses */
-			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
+			if (o_ptr->to_h + o_ptr->to_d < 0)
+			{
+				/* Hack -- negative hit/damage are of no importance */
+				if (o_ptr->tval == TV_MSTAFF) break;
+				else return (0L);
+			}
 
 			/* Factor in the bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
@@ -1438,7 +1668,7 @@ s32b object_value(int Ind, object_type *o_ptr)
  */
 bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 {
-	player_type *p_ptr = Players[Ind];
+	player_type *p_ptr;
 	int total = o_ptr->number + j_ptr->number;
 
 
@@ -1448,12 +1678,17 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		/* Require same owner or convertable to same owner */
 //
 /*		if (o_ptr->owner != j_ptr->owner) return (0); */
+	if (Ind)
+	{
+		p_ptr = Players[Ind];
 		if (((o_ptr->owner != j_ptr->owner)
 			&& ((p_ptr->lev < j_ptr->level)
 			|| (j_ptr->level < 1)))
 			&& (j_ptr->owner)) return (0);
 		if ((o_ptr->owner != p_ptr->id)
 			&& (o_ptr->owner != j_ptr->owner)) return (0);
+	}
+	else if (o_ptr->owner != j_ptr->owner) return (0);
 
 	/* Analyze the items */
 	switch (o_ptr->tval)
@@ -1484,7 +1719,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		case TV_WAND:
 		{
 			/* Require knowledge */
-			if (!object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return (0);
+			if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return (0);
 
 			/* Fall through */
 		}
@@ -1493,7 +1728,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		case TV_ROD:
 		{
 			/* Require permission */
-			if (!p_ptr->stack_allow_wands) return (0);
+			if (!Ind || !p_ptr->stack_allow_wands) return (0);
 
 			/* Require identical charges */
 			if (o_ptr->pval != j_ptr->pval) return (0);
@@ -1524,7 +1759,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		case TV_DRAG_ARMOR:
 		{
 			/* Require permission */
-			if (!p_ptr->stack_allow_items) return (0);
+			if (!Ind || !p_ptr->stack_allow_items) return (0);
 
 			/* XXX XXX XXX Require identical "sense" status */
 			/* if ((o_ptr->ident & ID_SENSE) != */
@@ -1537,9 +1772,11 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		case TV_RING:
 		case TV_AMULET:
 		case TV_LITE:
+		case TV_TOOL:
 		{
 			/* Require full knowledge of both items */
-			if (!object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr) || (o_ptr->name3)) return (0);
+			if (!Ind || !object_known_p(Ind, o_ptr) ||
+					!object_known_p(Ind, j_ptr) || (o_ptr->name3)) return (0);
 			if (o_ptr->bpval != j_ptr->bpval) return(FALSE);
 
 			/* Fall through */
@@ -1593,7 +1830,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		default:
 		{
 			/* Require knowledge */
-			if (!object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return (0);
+			if (Ind && (!object_known_p(Ind, o_ptr) ||
+					!object_known_p(Ind, j_ptr))) return (0);
 
 			/* Probably okay */
 			break;
@@ -1614,10 +1852,10 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		&& !is_book(o_ptr)) return (0);
 
 	/* Hack -- normally require matching "inscriptions" */
-	if (!p_ptr->stack_force_notes && (o_ptr->note != j_ptr->note)) return (0);
+	if ((!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note)) return (0);
 
 	/* Hack -- normally require matching "discounts" */
-	if (!p_ptr->stack_force_costs && (o_ptr->discount != j_ptr->discount)) return (0);
+	if ((!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount)) return (0);
 
 
 	/* Maximal "stacking" limit */
@@ -1640,7 +1878,7 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 	o_ptr->number = ((total < MAX_STACK_SIZE) ? total : (MAX_STACK_SIZE - 1));
 
 	/* Hack -- blend "known" status */
-	if (object_known_p(Ind, j_ptr)) object_known(o_ptr);
+	if (Ind && object_known_p(Ind, j_ptr)) object_known(o_ptr);
 
 	/* Hack -- blend "rumour" status */
 	if (j_ptr->ident & ID_RUMOUR) o_ptr->ident |= ID_RUMOUR;
@@ -1717,11 +1955,13 @@ void invcopy(object_type *o_ptr, int k_idx)
 //	o_ptr->pval = k_ptr->pval;
 	if (o_ptr->tval == TV_POTION ||
 		o_ptr->tval == TV_POTION2 ||
-		o_ptr->tval == TV_LITE ||
 		o_ptr->tval == TV_FLASK ||
 		o_ptr->tval == TV_FOOD)
 		o_ptr->pval = k_ptr->pval;
-	else if (!o_ptr->tval == TV_ROD)
+	else if (o_ptr->tval == TV_LITE)
+		o_ptr->timeout = k_ptr->pval;
+
+	else if (o_ptr->tval != TV_ROD)
 		o_ptr->bpval = k_ptr->pval;
 
 	/* Default number */
@@ -2221,6 +2461,7 @@ static void charge_staff(object_type *o_ptr)
 		case SV_STAFF_GENOCIDE:			o_ptr->pval = randint(2)  + 1; break;
 		case SV_STAFF_EARTHQUAKES:		o_ptr->pval = randint(5)  + 3; break;
 		case SV_STAFF_DESTRUCTION:		o_ptr->pval = randint(3)  + 1; break;
+		case SV_STAFF_STAR_IDENTIFY:	o_ptr->pval = randint(5)  + 3; break;
 	}
 }
 
@@ -2343,7 +2584,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 		{
 			if (o_ptr->sval == SV_AMMO_MAGIC)
 			{
-				o_ptr->to_h = o_ptr->to_d = o_ptr->pval = 0;
+				o_ptr->to_h = o_ptr->to_d = o_ptr->pval = o_ptr->name2 = 0;
 				break;
 			}
 
@@ -3720,6 +3961,30 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				{
 					o_ptr->bpval = -1;
 				}
+
+				/* Amulet of speed */
+				case SV_AMULET_SPEED:
+				{
+					// Amulets of speed can't give very
+					// much, and are rarely +3.
+					o_ptr->bpval = randint(randint(3)); 
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Broken */
+						o_ptr->ident |= ID_BROKEN;
+
+						/* Cursed */
+						o_ptr->ident |= ID_CURSED;
+
+						/* Reverse bonuses */
+						o_ptr->bpval = 0 - (o_ptr->bpval);
+					}
+
+					break;
+				}
+
 			}
 
 			break;
@@ -4857,6 +5122,11 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
 		wpcopy(&o_ptr->wpos, wpos);
 
 		c_ptr=&zcave[y][x];
+
+		/* Build a stack */
+		o_ptr->next_o_idx = c_ptr->o_idx;
+
+		/* Place the object */
 		c_ptr->o_idx = o_idx;
 
 		/* Make sure no one sees it at first */
@@ -5016,6 +5286,10 @@ void place_gold(struct worldpos *wpos, int y, int x)
 		/* check zcave? NEW_DUNGEON */
 		c_ptr=&zcave[y][x];
 
+		/* Build a stack */
+		o_ptr->next_o_idx = c_ptr->o_idx;
+
+		/* Place the object */
 		c_ptr->o_idx = o_idx;
 
 		/* Hack -- Base coin cost */
@@ -5054,22 +5328,44 @@ void place_gold(struct worldpos *wpos, int y, int x)
  *
  * XXX XXX XXX Consider allowing objects to combine on the ground.
  */
+/* XXX XXX XXX DIRTY! DIRTY! DIRTY!		- Jir - */
 s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
 {
-	int		k, d, ny, nx, y1, x1, o_idx;
+	int		k, d, ny, nx, y1, x1, o_idx, i, s;
+	int bs, bn;
+	int by, bx;
+	int ty, tx;
+	int flag = 0;	// 1 = normal, 2 = combine, 3 = crash
 
 	cave_type	*c_ptr;
 
-	bool flag = FALSE;
+	bool arts = artifact_p(o_ptr), crash, done = FALSE;
+	u16b this_o_idx, next_o_idx = 0;
 
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(-1);
 
+	/* Handle normal "breakage" */
+	if (!arts && magik(chance))
+	{
+#if 0
+		/* Message */
+		msg_format("The %s disappear%s.",
+			   o_name, (plural ? "" : "s"));
+
+		/* Debug */
+		if (wizard) msg_print("(breakage)");
+#endif	// 0
+		/* Failure */
+		return (0);
+	}
+
+#if 0
 	/* Start at the drop point */
 	ny = y1 = y;  nx = x1 = x;
 
 	/* See if the object "survives" the fall */
-	if (artifact_p(o_ptr) || (rand_int(100) >= chance))
+//	if (artifact_p(o_ptr) || (rand_int(100) >= chance))
 	{
 		/* Start at the drop point */
 		ny = y1 = y; nx = x1 = x;
@@ -5091,13 +5387,13 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	}
 
 	/* Try really hard to place an artifact */
-	if (!flag && artifact_p(o_ptr))
+//	if (!flag && artifact_p(o_ptr))
 	{
 		/* Start at the drop point */
 		ny = y1 = y;  nx = x1 = x;
 
 		/* Try really hard to drop it */
-		for (k = 0; !flag && (k < 1000); k++)
+		for (k = 0; !flag && (k < (artifact_p(o_ptr) ? 1000 : 20)); k++)
 		{
 			d = 1;
 
@@ -5139,18 +5435,159 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			/*msg_format("The %s crashes to the floor.", o_name);*/
 		}
 	}
+#endif	// 0
 
+	/* Score */
+	bs = -1;
+
+	/* Picker */
+	bn = 0;
+
+	/* Default */
+	by = y;
+	bx = x;
+
+	d = 0;
+
+	/* Scan local grids */
+	for (i = 0; i < tdi[3]; i++)
+	{
+		bool comb = FALSE;
+
+		if (i >= tdi[d]) d++;
+
+		/* Location */
+		ny = y + tdy[i];
+		nx = x + tdx[i];
+
+		/* Skip illegal grids */
+		if (!in_bounds(ny, nx)) continue;
+
+		/* Require line of sight */
+		if (!los(wpos, y, x, ny, nx)) continue;
+
+		/* Obtain grid */
+		c_ptr = &zcave[ny][nx];
+
+		/* Require floor space (or shallow terrain) -KMW- */
+//		if (!(f_info[c_ptr->feat].flags1 & FF1_FLOOR)) continue;
+		if (!cave_floor_bold(zcave, ny, nx)) continue;
+
+		/* No traps */
+//		if (c_ptr->t_idx) continue;
+
+		/* No objects */
+		k = 0;
+
+		/* Scan objects in that grid */
+		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+		{
+			object_type *j_ptr;
+
+			/* Acquire object */
+			j_ptr = &o_list[this_o_idx];
+
+			/* Acquire next object */
+			next_o_idx = j_ptr->next_o_idx;
+
+			/* Check for possible combination */
+			if (object_similar(0, o_ptr, j_ptr)) comb = TRUE;
+
+			/* Count objects */
+			k++;
+		}
+
+		/* Add new object */
+		if (!comb) k++;
+
+		/* No stacking (allow combining) */
+//		if (!testing_stack && (k > 1)) continue;
+
+		/* Hack -- no stacking inside houses */
+		crash = (!wpos->wz && k > 1 && !comb && (c_ptr->info&CAVE_ICKY));
+		if (!arts && crash) continue;
+
+		/* Paranoia */
+		if (k > 99) continue;
+
+		/* Calculate score */
+		s = 10000 - (d + k * 5 + (crash ? 2000 : 0));
+
+		/* Skip bad values */
+		if (s < bs) continue;
+
+		/* New best value */
+		if (s > bs) bn = 0;
+
+		/* Apply the randomizer to equivalent values */
+		if ((++bn >= 2) && (rand_int(bn) != 0)) continue;
+
+		/* Keep score */
+		bs = s;
+
+		/* Track it */
+		by = ny;
+		bx = nx;
+
+		/* Okay */
+		flag = crash ? 3 : (comb ? 2 : 1);
+	}
+
+	/* Poor little object */
+	if (!flag)
+	{
+		/* Describe */
+		/*object_desc(o_name, o_ptr, FALSE, 0);*/
+
+		/* Message */
+		/*msg_format("The %s disappear%s.",
+		           o_name, ((o_ptr->number == 1) ? "s" : ""));*/
+		return (-1);
+	}
+
+	ny = by;
+	nx = bx;
+	c_ptr = &zcave[ny][nx];
+
+	/* Scan objects in that grid for combination */
+	if (flag == 2)
+	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	{
+		object_type *q_ptr;
+
+		/* Acquire object */
+		q_ptr = &o_list[this_o_idx];
+
+		/* Acquire next object */
+		next_o_idx = q_ptr->next_o_idx;
+
+		/* Check for combination */
+		if (object_similar(0, q_ptr, o_ptr))
+		{
+			/* Combine the items */
+			object_absorb(0, q_ptr, o_ptr);
+
+			/* Success */
+			done = TRUE;
+
+			/* Done */
+			break;
+		}
+	}
 
 	/* Successful drop */
-	if (flag)
+//	if (flag)
+	else
 	{
 		/* Assume fails */
-		flag = FALSE;
+//		flag = FALSE;
 
 		/* XXX XXX XXX */
 
+//		c_ptr = &zcave[ny][nx];
+
 		/* Crush anything under us (for artifacts) */
-		delete_object(wpos, ny, nx);
+		if (flag == 3) delete_object(wpos, ny, nx);
 
 		/* Make a new object */
 		o_idx = o_pop();
@@ -5169,8 +5606,11 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			o_ptr->ix = nx;
 			wpcopy(&o_ptr->wpos,wpos);
 
+			/* Build a stack */
+			o_ptr->next_o_idx = c_ptr->o_idx;
+
 			/* Place */
-			c_ptr = &zcave[ny][nx];
+//			c_ptr = &zcave[ny][nx];
 			c_ptr->o_idx = o_idx;
 
 			/* Clear visibility flags */
@@ -5197,21 +5637,10 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			}*/
 
 			/* Success */
-			flag = TRUE;
+//			flag = TRUE;
 		}
 	}
 
-
-	/* Poor little object */
-	if (!flag)
-	{
-		/* Describe */
-		/*object_desc(o_name, o_ptr, FALSE, 0);*/
-
-		/* Message */
-		/*msg_format("The %s disappear%s.",
-		           o_name, ((o_ptr->number == 1) ? "s" : ""));*/
-	}
 
 	/* Result */
 	return (o_idx);
@@ -5246,6 +5675,7 @@ s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *
  * Actually, it is not this routine, but the "trap instantiation"
  * code, which should also check for "trap doors" on quest levels.
  */
+/* The note above is completely obsoleted.	- Jir -	*/
 void pick_trap(struct worldpos *wpos, int y, int x)
 {
 //	int feat;
@@ -5253,7 +5683,6 @@ void pick_trap(struct worldpos *wpos, int y, int x)
 
 	cave_type **zcave;
 	cave_type *c_ptr;
-	trap_type *t_ptr;
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
@@ -5285,9 +5714,7 @@ void pick_trap(struct worldpos *wpos, int y, int x)
 	/* Paranoia */
 	if (c_ptr->special.type != CS_TRAPS) return;
 
-	t_ptr = c_ptr->special.ptr;
-	
-	t_ptr->found = TRUE;
+	c_ptr->special.sc.trap.found = TRUE;
 
 	/* Notice */
 	note_spot_depth(wpos, y, x);
@@ -5556,6 +5983,9 @@ bool inven_carry_okay(int Ind, object_type *o_ptr)
 		if (object_similar(Ind, j_ptr, o_ptr)) return (TRUE);
 	}
 
+	/* Hack -- try quiver slot (see inven_carry) */
+//	if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr)) return (TRUE);
+
 	/* Nope */
 	return (FALSE);
 }
@@ -5585,6 +6015,28 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 	object_type	*j_ptr;
         u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
 
+#if 0	// This code makes it impossible to take ammos off, pfft
+	/* Try to add to the quiver */
+	if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr))
+	{
+		msg_print(Ind, "You add the ammo to your quiver.");
+
+		/* Combine the items */
+		object_absorb(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr);
+
+		/* Increase the weight */
+		p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
+
+		/* Recalculate bonuses */
+		p_ptr->update |= (PU_BONUS);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+
+		/* Success */
+		return (INVEN_AMMO);
+	}
+#endif	// 0
 
 	/* Check for combining */
 	for (j = 0; j < INVEN_PACK; j++)
@@ -5743,6 +6195,10 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 	p_ptr->inventory[i].wpos.wx = 0;
 	p_ptr->inventory[i].wpos.wy = 0;
 	p_ptr->inventory[i].wpos.wz = 0;
+	/* Clean out unused fields */
+	p_ptr->inventory[i].next_o_idx = 0;
+	p_ptr->inventory[i].held_m_idx = 0;
+
 
 	/* Increase the weight, prepare to redraw */
 	p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
@@ -5967,7 +6423,7 @@ void process_objects(void)
 
 
 	/* Hack -- only every ten game turns */
-	if ((turn % 10) != 5) return;
+//	if ((turn % 10) != 5) return;
 
 
 	/* Process objects */
@@ -6029,7 +6485,7 @@ void process_objects(void)
  */
 void setup_objects(void)
 {
-	int i;
+	int i, j;
 	cave_type **zcave;
 
 	for (i = 0; i < o_max; i++)
@@ -6041,6 +6497,16 @@ void setup_objects(void)
 
 		/* Skip objects on depths that aren't allocated */
 		if (!(zcave=getcave(&o_ptr->wpos))) continue;
+
+		/* Skip carried objects */
+		if (o_ptr->held_m_idx) continue;
+
+#if 0	// excise_object_idx() should do this
+		/* Build the stack */
+		if (j = zcave[o_ptr->iy][o_ptr->ix].o_idx)
+			o_ptr->next_o_idx = j;
+		else o_ptr->next_o_idx = 0;
+#endif	// 0
 
 		/* Set the o_idx correctly */
 		zcave[o_ptr->iy][o_ptr->ix].o_idx = i;

@@ -1041,11 +1041,12 @@ TODO: the newest should appear the first!
 - Monsters can pick up gold.
 - digging is harder if w/o proper tool.
 - intelligent monsters' digging speed differs according to the wall type.
+- quits if '-m' is specified but cannot actually read the file.
 [B] house(dna) data was broken if bedtown was static when saving.
     (hand-made dungeon/tower still causes infinite loop prolly.)
 [B] p_ptr->total_weight went wrong when adding ammo to the quiver.
 [B] TOOL_EQUIPPED ignored tval.
-[B] TV_POTION2 was white when in the inventory.
+[B] TV_POTION2 was white when in the inventory/0au when non-id-ed.
 
 
 
