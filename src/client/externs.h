@@ -403,12 +403,14 @@ extern int ticks;
 extern void update_ticks();
 extern void do_keepalive();
 extern int Net_setup(void);
-extern int Net_verify(char *real, char *nick, char *pass, int sex, int race, int class);
+//extern int Net_verify(char *real, char *nick, char *pass, int sex, int race, int class);
+extern int Net_verify(char *real, char *nick, char *pass);
 extern int Net_init(char *server, int port);
 extern void Net_cleanup(void);
 extern int Net_flush(void);
 extern int Net_fd(void);
-extern int Net_start(void);
+//extern int Net_start(void);
+extern int Net_start(int sex, int race, int class);
 extern int Net_input(void);
 extern int Flush_queue(void);
 

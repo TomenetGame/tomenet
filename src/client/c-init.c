@@ -429,11 +429,13 @@ void client_init(char *argv1, bool skip)
 	/* Server returned error code */
 	if (status == E_NEED_INFO)
 	{
+#if 0	// fall through..
 		/* Hack -- display the nick */
 		if (skip) prt(format("Name        : %s", nick), 2, 1);
 
 		/* Get sex/race/class */
 		get_char_info();
+#endif	// 0
 	}
 	else if (status)
 	{
@@ -476,7 +478,8 @@ void client_init(char *argv1, bool skip)
 	initialize_all_pref_files();
 
 	/* Verify that we are on the correct port */
-	if (Net_verify(real_name, nick, pass, sex, race, class) == -1)
+//	if (Net_verify(real_name, nick, pass, sex, race, class) == -1)
+	if (Net_verify(real_name, nick, pass) == -1)
 	{
 		Net_cleanup();
 		quit("Network verify failed!\n");
@@ -489,6 +492,15 @@ void client_init(char *argv1, bool skip)
 		quit("Network setup failed!\n");
 	}
 
+	if (status == E_NEED_INFO)
+	{
+		/* Hack -- display the nick */
+		if (skip) prt(format("Name        : %s", nick), 2, 1);
+
+		/* Get sex/race/class */
+		get_char_info();
+	}
+
 	/* Setup the key mappings */
 	keymap_init();
 
@@ -496,7 +508,7 @@ void client_init(char *argv1, bool skip)
 	show_motd();
 
 	/* Start the game */
-	if (Net_start() == -1)
+	if (Net_start(sex, race, class) == -1)
 	{
 		Net_cleanup();
 		quit("Network start failed!\n");

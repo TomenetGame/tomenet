@@ -979,7 +979,8 @@ struct setup_t
 	byte max_race;
 	byte max_class;
 	char race_title[MAX_RACES][12];	// "Unbeliever" (10)
-	char class_title[MAX_RACES][12];	// "DragonRider"(11)
+	s32b race_choice[MAX_RACES];	// player_race.choice
+	char class_title[MAX_CLASS][12];	// "DragonRider"(11)
 //	byte max_subclass;	// etc
 	int motd_len;
 	int setup_size;

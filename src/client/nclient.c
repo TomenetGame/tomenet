@@ -158,13 +158,19 @@ int Net_setup(void)
 					quit("Can't read setup info from reliable data buffer");
 				}
 				/* test -Jir- */
+				/* TODO: allocate the arrays after loading;
+				 * currently, we cannot handle race/class addition/deletion */
 				{
 					int i;
 					for (i = 0; i < Setup.max_race; i++)
 					{
 
-						Packet_scanf(&cbuf, "%s", &Setup.race_title[i]);
-						printf("r %d: %s\n", i, Setup.race_title[i]);
+						Packet_scanf(&cbuf, "%s%ld", &Setup.race_title[i],
+								&Setup.race_choice[i]);
+						printf("r %d: %s (%d)\n", i, Setup.race_title[i],
+								Setup.race_choice[i]);
+						race_info[i].title = &Setup.race_title[i];
+						race_info[i].choice = Setup.race_choice[i];
 					}
 
 					for (i = 0; i < Setup.max_class; i++)
@@ -172,6 +178,7 @@ int Net_setup(void)
 						//			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
 						Packet_scanf(&cbuf, "%s", &Setup.class_title[i]);
 						printf("c %d: %s\n", i, Setup.class_title[i]);
+						class_info[i].title = &Setup.class_title[i];
 					}
 				}
 
@@ -287,20 +294,24 @@ int Net_setup(void)
  * is from the right UDP connection, it already has
  * this info from the ENTER_GAME_pack.
  */
-int Net_verify(char *real, char *nick, char *pass, int sex, int race, int class)
+//int Net_verify(char *real, char *nick, char *pass, int sex, int race, int class)
+int Net_verify(char *real, char *nick, char *pass)
 {
 	int	i, n,
 		type,
 		result;
 
 	Sockbuf_clear(&wbuf);
-	n = Packet_printf(&wbuf, "%c%s%s%s%hd%hd%hd", PKT_VERIFY, real, nick, pass, sex, race, class);
+//	n = Packet_printf(&wbuf, "%c%s%s%s%hd%hd%hd", PKT_VERIFY, real, nick, pass, sex, race, class);
+	n = Packet_printf(&wbuf, "%c%s%s%s", PKT_VERIFY, real, nick, pass);
 
+#if 0
 	/* Send the desired stat order */
 	for (i = 0; i < 6; i++)
 	{
 		Packet_printf(&wbuf, "%hd", stat_order[i]);
 	}
+#endif	// 0
 
 	/* Send class_extra */
 	/*		Packet_printf(&wbuf, "%hd", class_extra); */
@@ -537,14 +548,25 @@ int Net_fd(void)
  * we have initialized all our other stuff like the user interface
  * and we also have the map already.
  */
-int Net_start(void)
+//int Net_start(void)
+int Net_start(int sex, int race, int class)
 {
+	int	i, n;
 	int		type,
 			result;
 
 	Sockbuf_clear(&wbuf);
-	if (Packet_printf(&wbuf, "%c", PKT_PLAY) <= 0
-		|| Sockbuf_flush(&wbuf) == -1)
+	n = Packet_printf(&wbuf, "%c", PKT_PLAY);
+	Packet_printf(&wbuf, "%hd%hd%hd", sex, race, class);
+
+	/* Send the desired stat order */
+	for (i = 0; i < 6; i++)
+	{
+		Packet_printf(&wbuf, "%hd", stat_order[i]);
+	}
+
+
+	if (Sockbuf_flush(&wbuf) == -1)
 	{
 		quit("Can't send start play packet");
 	}

@@ -1124,6 +1124,8 @@ To find the latest change quickly, search ==== :)
 - updates needed for bcc.  Thanks Yakina for courtesy.
 
 23/06/2002 (Jir)
+- login is done according to the informations sent by the server.
+  (race/class addition still needs client update, tho)
 [B] potion of learning.
 
 

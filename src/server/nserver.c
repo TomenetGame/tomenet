@@ -285,6 +285,7 @@ static int Init_setup(void)
 	for (i = 0; i < MAX_RACES; i++)
 	{
 		strncpy(&Setup.race_title[i], race_info[i].title, 12);
+		Setup.race_choice[i] = race_info[i].choice;
 	}
 
 	for (i = 0; i < MAX_CLASS; i++)
@@ -1204,7 +1205,7 @@ static int Handle_setup(int ind)
         for (i = 0; i < MAX_RACES; i++)
         {
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
-			Packet_printf(&connp->c, "%s", Setup.race_title[i]);
+			Packet_printf(&connp->c, "%s%ld", Setup.race_title[i], Setup.race_choice[i]);
         }
 
         for (i = 0; i < MAX_CLASS; i++)
@@ -1262,7 +1263,7 @@ static int Handle_listening(int ind)
 	connection_t *connp = &Conn[ind];
 	unsigned char type;
 	int i, n, oldlen, result;
-	s16b sex, race, class;
+//	s16b sex, race, class;
 	char nick[MAX_NAME_LEN], real[MAX_NAME_LEN], pass[MAX_NAME_LEN];
 
 	if (connp->state != CONN_LISTENING)
@@ -1308,7 +1309,8 @@ static int Handle_listening(int ind)
 		Destroy_connection(ind, "not connecting");
 		return -1;
 	}
-	if ((n = Packet_scanf(&connp->r, "%c%s%s%s%hd%hd%hd", &type, real, nick, pass, &sex, &race, &class)) <= 0)
+//	if ((n = Packet_scanf(&connp->r, "%c%s%s%s%hd%hd%hd", &type, real, nick, pass, &sex, &race, &class)) <= 0)
+	if ((n = Packet_scanf(&connp->r, "%c%s%s%s", &type, real, nick, pass)) <= 0)
 	{
 		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
 		Send_reliable(ind);
@@ -1423,6 +1425,7 @@ static int Handle_listening(int ind)
 
 	printf("\n"); */
 
+#if 0
 	/* Read the stat order */
 	for (i = 0; i < 6; i++)
 	{
@@ -1434,6 +1437,7 @@ static int Handle_listening(int ind)
 			return -1;
 		}
 	}
+#endif	// 0
 	
 	/* Read class extra */	
 //	n = Packet_scanf(&connp->r, "%hd", &connp->class_extra);
@@ -1532,9 +1536,12 @@ static int Handle_listening(int ind)
 	
 	/* Set his character info */
 	connp->pass = strdup(pass);
+#if 0
 	connp->sex = sex;
 	connp->race = race;
 	connp->class = class;
+#endif	// 0
+
 
 
 
@@ -2265,7 +2272,8 @@ static int Receive_play(int ind)
 {
 	connection_t *connp = &Conn[ind];
 	unsigned char ch;
-	int n;
+	int i, n;
+	s16b sex, race, class;
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) != 1)
 	{
@@ -2276,11 +2284,39 @@ static int Receive_play(int ind)
 	}
 	if (ch != PKT_PLAY)
 	{
+		/* Year it's noisy, but let's keep it for now */
 	  //		errno = 0;
 	  plog("Packet is not of play type");
 	  //Destroy_connection(ind, "not play");
 	  //return -1;
-	  //return 0;
+	  return 0;
+	}
+//	else
+	{
+		if ((n = Packet_scanf(&connp->r, "%hd%hd%hd", &sex, &race, &class)) <= 0)
+		{
+			errno = 0;
+			plog("Play packet is broken");
+			Destroy_connection(ind, "receive error");
+			return -1;
+		}
+
+		/* Set his character info */
+		connp->sex = sex;
+		connp->race = race;
+		connp->class = class;
+
+		/* Read the stat order */
+		for (i = 0; i < 6; i++)
+		{
+			n = Packet_scanf(&connp->r, "%hd", &connp->stat_order[i]);
+
+			if (n <= 0)
+			{
+				Destroy_connection(ind, "Misread stat order");
+				return -1;
+			}
+		}
 	}
 	if (connp->state != CONN_LOGIN)
 	{
