@@ -1061,6 +1061,7 @@ extern bool master_build(int Ind, char * parms);
 extern bool master_summon(int Ind, char * parms);
 extern bool master_generate(int Ind, char * parms);
 extern bool master_acquire(int Ind, char * parms);
+extern bool master_player(int Ind, char * parms);
 
 /*extern bool get_rep_dir(int *dp);*/
 

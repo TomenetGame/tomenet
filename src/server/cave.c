@@ -339,6 +339,9 @@ bool player_can_see_bold(int Ind, int y, int x)
 	/* Blind players see nothing */
 	if (p_ptr->blind) return (FALSE);
 
+	/* temp bug fix - evileye */
+	if(!cave[Depth]) return(FALSE);
+
 	/* Access the cave grid */
 	c_ptr = &cave[Depth][y][x];
 	w_ptr = &p_ptr->cave_flag[y][x];
