@@ -66,7 +66,7 @@ SLOWMONSTER = add_spell
 
 ESSENSESPEED = add_spell
 {
-	["name"] = 	"Essense of Speed",
+	["name"] = 	"Essence of Speed",
         ["school"] = 	{SCHOOL_TEMPORAL},
         ["level"] = 	15,
         ["mana"] = 	20,

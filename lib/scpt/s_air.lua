@@ -14,10 +14,10 @@ NOXIOUSCLOUD = add_spell
 
                         if get_level(Ind, NOXIOUSCLOUD, 50) >= 30 then type = GF_UNBREATH
                         else type = GF_POIS end
-		        fire_cloud(Ind, type, args.dir, 7 + get_level(Ind, NOXIOUSCLOUD, 150), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40))
+		        fire_cloud(Ind, type, args.dir, ((1 + get_level(Ind, NOXIOUSCLOUD, 150)/2) + (get_level(Ind,MANATHRUST,50) * 2)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40))
 	end,
 	["info"] = 	function()
-			return "dam "..(7 + get_level(Ind, NOXIOUSCLOUD, 150)).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD, 40))
+			return "dam "..((1 + (get_level(Ind, NOXIOUSCLOUD, 150))/2) + (get_level(Ind,MANATHRUST,50) * 2)).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD, 40))
 	end,
         ["desc"] =	{
         		"Creates a cloud of poison",
@@ -35,10 +35,8 @@ AIRWINGS = add_spell
         ["mana_max"] = 	40,
         ["fail"] = 	70,
         ["spell"] = 	function()
-			if get_level(AIRWINGS, 50) >= 16 then
-                        	set_tim_fly(randint(10) + 5 + get_level(AIRWINGS, 25))
-                        else
-                        	set_tim_ffall(randint(10) + 5 + get_level(AIRWINGS, 25))
+			if get_level(Ind, AIRWINGS, 50) >= 16 then set_tim_fly(Ind, randint(10) + 5 + get_level(AIRWINGS, 25))
+                        else set_tim_ffall(Ind, randint(10) + 5 + get_level(AIRWINGS, 25))
                         end
 	end,
 	["info"] = 	function()
