@@ -102,7 +102,11 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 	p = "spell";
 
 	if (p_ptr->ghost)
+	{
 		p = "power";
+		realm = REALM_GHOST;
+		book = 0;
+	}
 
 	/* Assume no usable spells */
 	okay = FALSE;
@@ -114,7 +118,9 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 	for (i = 0; i < 9; i++)
 	{
 		/* Look for "okay" spells */
-		if (spell_info[realm][book][i][0])
+		//if (spell_info[realm][book][i][0])
+		/* quite a hack.. FIXME */
+		if (!spell_info[realm][book][i][0])
 		{
 			okay = TRUE;
 			num++;

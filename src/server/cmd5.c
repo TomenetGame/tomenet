@@ -358,7 +358,7 @@ static void spell_info(int Ind, char *p, int realm, int j)
 /*
  * Print a list of spells (for browsing or casting)
  */
-static void print_spells(int Ind, int realm, int book, byte *spell, int num)
+void print_spells(int Ind, int realm, int book, byte *spell, int num)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -444,6 +444,7 @@ void do_cmd_browse(int Ind, object_type	*o_ptr)
 
 	byte		spell[64], num = 0;
 
+#if 0	// pointless..
 	/* No lite */
 	if (p_ptr->blind || no_lite(Ind))
 	{
@@ -457,10 +458,19 @@ void do_cmd_browse(int Ind, object_type	*o_ptr)
 		msg_print(Ind, "You are too confused!");
 		return;
 	}
+#endif	// 0
 
 	/* Access the item's sval */
-	sval = o_ptr->sval;
-        realm = find_realm(o_ptr->tval);
+	if (o_ptr)	/* paranoia */
+	{
+		sval = o_ptr->sval;
+		realm = find_realm(o_ptr->tval);
+	}
+	else
+	{
+		sval = 0;
+		realm = REALM_GHOST;
+	}
 
 	/* Extract spells */
 	for (i = 0; i < 64; i++)
@@ -477,7 +487,7 @@ void do_cmd_browse(int Ind, object_type	*o_ptr)
 
 
 	/* Display the spells */
-	print_spells(Ind, realm, o_ptr->sval, spell, num);
+	print_spells(Ind, realm, sval, spell, num);
 }
 
 

@@ -732,17 +732,38 @@ void do_cmd_activate_skill()
 	switch (s_info[x_idx].action_mkey)
 	{
 		case MKEY_SORCERY:
-		case MKEY_MAGERY:
-		case MKEY_SHADOW:
-		case MKEY_ARCHERING:
-			cmd_cast();
+			item_tester_tval = TV_SORCERY_BOOK;
+			cmd_cast_skill();
 			break;
+		case MKEY_MAGERY:
+			item_tester_tval = TV_MAGIC_BOOK;
+			cmd_cast_skill();
+			break;
+		case MKEY_SHADOW:
+			item_tester_tval = TV_SHADOW_BOOK;
+			cmd_cast_skill();
+			break;
+		case MKEY_ARCHERING:
+			item_tester_tval = TV_HUNT_BOOK;
+			cmd_cast_skill();
+			break;
+#if 0	// not implemeted yet.
+		case MKEY_PSI:
+			item_tester_tval = TV_PSI_BOOK;
+			cmd_cast_skill();
+			break;
+#endif	// 0
 		case MKEY_MIMICRY:
 			cmd_mimic();
 			break;
 		case MKEY_FIGHTING:
 			/* Note - cmd_cast() will do */
+#if 0
+			item_tester_tval = TV_FIGHT_BOOK;
+			cmd_cast_skill();
+#else	// 0
 			cmd_fight();
+#endif	// 0
 			break;
 		default:
 			break;

@@ -1618,6 +1618,23 @@ void cmd_cast(void)
 	do_cast(item);
 }
 
+/* Replacement of cmd_cast. */
+void cmd_cast_skill(void)
+{
+	int item;
+
+//	item_tester_hook = item_tester_magicable;
+
+	if (!c_get_item(&item, "Cast from what book? ", FALSE, TRUE, FALSE))
+	{
+		if (item == -2) c_msg_print("You have no books that you can cast from.");
+		return;
+	}
+
+	/* Pick a spell and do it */
+	do_cast(item);
+}
+
 void cmd_pray(void)
 {
 	int item;

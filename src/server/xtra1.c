@@ -732,13 +732,36 @@ static void fix_equip(int Ind)
 	display_equip(Ind);
 }
 
+static void fix_spell_aux(int Ind, int realm, int sval)
+{
+	int i;
+	byte		spell[64], num = 0;
+
+	/* Extract spells */
+	for (i = 0; i < 64; i++)
+	{
+		/* Check for this spell */
+		if ((i < 32) ?
+		    (spell_flags[realm][sval][0] & (1L << i)) :
+		    (spell_flags[realm][sval][1] & (1L << (i - 32))))
+		{
+			/* Collect this spell */
+			spell[num++] = i;
+		}
+	}
+
+
+	/* Display the spells */
+	print_spells(Ind, realm, sval, spell, num);
+}
+
 /*
  * Hack -- display equipment in sub-windows
  */
 static void fix_spell(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int i;
+	int i, j;
 
 	/* Ghosts get a different set */
 	if (p_ptr->ghost)
@@ -754,6 +777,7 @@ static void fix_spell(int Ind)
 	}
 
 	/* Scan for appropriate books */
+#if 1
 	for (i = 0; i < INVEN_WIELD; i++)
 	{
 		if (is_book((&p_ptr->inventory[i])))
@@ -761,6 +785,11 @@ static void fix_spell(int Ind)
 			do_cmd_browse(Ind, &p_ptr->inventory[i]);
 		}
 	}
+#else	// 0
+	for (i = 0; i < MAX_REALM; i++)
+		for (j = 0; j < 9; j++)
+			fix_spell_aux(Ind, i, j);
+#endif	// 0
 }
 
 
