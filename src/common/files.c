@@ -120,7 +120,7 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 	if(!fdata[num].state&FS_CHECK){
 		return(0);
 	}
-	if(lsum!=sum || 1){
+	if(lsum!=sum){
 		path_build(buf, 4096, ANGBAND_DIR, fdata[num].fname);
 		fd=open(buf, O_RDONLY);
 		if(fd==-1){
