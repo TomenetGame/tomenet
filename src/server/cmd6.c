@@ -301,7 +301,7 @@ void do_cmd_eat_food(int Ind, int item)
 			char Rumor[80];
 
 			msg_print(Ind, "That tastes good.");
-			if (p_ptr->blind)
+			if (p_ptr->blind || no_lite(Ind))
 			{
 				msg_print(Ind, "You feel a paper in it - what a pity you cannot see!");
 			}
