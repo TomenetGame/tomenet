@@ -1263,8 +1263,11 @@ static void player_setup(int Ind, bool new)
 	if (new) {
 		p_ptr->wpos.wx=cfg.town_x;
 		p_ptr->wpos.wy=cfg.town_y;
+		p_ptr->wpos.wz=0;
+#if 0	// moved afterwards (since town can be non-allocated here)
 		p_ptr->py=level_down_y(wpos);
 		p_ptr->px=level_down_x(wpos);
+#endif	// 0
 		p_ptr->town_x=p_ptr->wpos.wx;
 		p_ptr->town_y=p_ptr->wpos.wy;
 	}
@@ -1351,12 +1354,18 @@ static void player_setup(int Ind, bool new)
 	if ((!wpos->wz) && (IS_DAY)) wild_apply_day(wpos); 
 	if ((!wpos->wz) && (IS_NIGHT)) wild_apply_night(wpos);
 
+	if (new) {
+		p_ptr->py=level_down_y(wpos);
+		p_ptr->px=level_down_x(wpos);
+	}
+
 	/* Hack be sure the player is inbounds */
 	if (p_ptr->px < 1) p_ptr->px = 1;
 	if (p_ptr->py < 1) p_ptr->py = 1;
 	if (p_ptr->px >= MAX_WID) p_ptr->px = MAX_WID - 1;
 	if (p_ptr->py >= MAX_HGT) p_ptr->py = MAX_HGT - 1;
 
+#if 0	// nonsense
 	/* Re-Place the player correctly */
 	for (i = 0; i < 3000; i++)
 	{
@@ -1389,6 +1398,10 @@ static void player_setup(int Ind, bool new)
 	/* Set the player's location */
 	p_ptr->py = y;
 	p_ptr->px = x;
+#else
+	x = p_ptr->px;
+	y = p_ptr->py;
+#endif	// 0
 
 	/* Update the location's player index */
 	zcave[y][x].m_idx = 0 - Ind;

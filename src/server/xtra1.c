@@ -2987,7 +2987,7 @@ static void calc_bonuses(int Ind)
 			p_ptr->to_h_ranged += get_skill_scale(p_ptr, archery, 25);
 			/* Isn't 4 shots/turn too small? */
 			p_ptr->num_fire += (get_skill(p_ptr, archery) / 16);
-//				+ get_skill_scale(p_ptr, SKILL_ARCHERY, 1);
+				+ get_skill_scale(p_ptr, SKILL_ARCHERY, 1);
 			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 25);
 #if 0	// not so meaningful (25,30,50)
 			switch (archery)

@@ -1643,6 +1643,7 @@ static void sync_options(int Ind, bool *options)
 	p_ptr->autooff_retaliator = options[70];
 	p_ptr->wide_scroll_margin = options[71];
 	p_ptr->always_repeat = options[6];
+	p_ptr->fail_no_melee = options[72];
 	// bool speak_unique;
 
 }
@@ -7217,6 +7218,26 @@ static int Receive_rest(int ind)
 	return 1;
 }
 
+void Handle_clear_buffer(int Ind)
+{
+	if (Ind)
+	{
+		player_type *p_ptr = Players[Ind];
+		connection_t *connp = &Conn[p_ptr->conn];
+
+		/* Clear the buffer */
+		Sockbuf_clear(&connp->q);
+		Sockbuf_clear(&connp->r);
+#if 0
+		Sockbuf_clear(&connp->c);
+		Sockbuf_clear(&connp->w);
+#endif	// 0
+
+		/* Clear 'current spell' */
+		p_ptr->current_spell = -1;
+	}
+}
+
 static int Receive_clear_buffer(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -7251,6 +7272,7 @@ static int Receive_clear_buffer(int ind)
 		return n;
 	}
 
+#if 0
 	if (player)
 	{
 		/* Clear the buffer */
@@ -7264,6 +7286,9 @@ static int Receive_clear_buffer(int ind)
 		/* Clear 'current spell' */
 		p_ptr->current_spell = -1;
 	}
+#endif	// 0
+
+	Handle_clear_buffer(player);
 
 	return 1;
 }

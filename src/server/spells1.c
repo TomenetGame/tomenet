@@ -611,7 +611,7 @@ void teleport_player(int Ind, int dis)
 			if (zcave[y][x].info & CAVE_ICKY) continue;
 
 			/* Never break into st-anchor */
-			if (check_st_anchor(wpos, y, x)) return;
+			if (!p_ptr->death && check_st_anchor(wpos, y, x)) return;
 
 			/* This grid looks good */
 			look = FALSE;

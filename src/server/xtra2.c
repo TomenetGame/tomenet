@@ -3839,11 +3839,11 @@ void player_death(int Ind)
 		if (p_ptr->cut) (void)set_cut(Ind, 0);
 		if (p_ptr->food < PY_FOOD_ALERT) (void)set_food(Ind, PY_FOOD_FULL - 1);
 
-		/* Remove the death flag */
-		p_ptr->death = 0;
-
 		/* Teleport him */
 		teleport_player(Ind, 200);
+
+		/* Remove the death flag */
+		p_ptr->death = 0;
 
 		/* Give him his hit points back */
 		p_ptr->chp = p_ptr->mhp;

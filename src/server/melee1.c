@@ -591,7 +591,8 @@ bool make_attack_normal(int Ind, int m_idx)
 		/* Monster hits player */
 		if (!effect || check_hit(Ind, power, rlev * factor / 100, bypass_ac))
 		{
-			int chance = p_ptr->dodge_chance - ((rlev * 5) / 6);
+			int chance = p_ptr->dodge_chance - ((rlev * 5) / 6)
+						- UNAWARENESS(p_ptr) * 2;
 
 			/* always 10% chance to hit */
 			if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;

@@ -1803,7 +1803,7 @@ struct player_type
 	bool autooff_retaliator;
 	bool wide_scroll_margin;
 	bool always_repeat;
-	bool dummy_option_6;
+	bool fail_no_melee;
 	bool dummy_option_7;
 	bool dummy_option_8;
 
@@ -2302,6 +2302,7 @@ struct client_opts
 	bool auto_target;
 	bool autooff_retaliator;
 	bool wide_scroll_margin;
+	bool fail_no_melee;
 };
 
 /* from spells1.c */

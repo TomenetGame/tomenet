@@ -647,6 +647,7 @@ static void print_skill_batch(int *p, int start, int max, bool mode)
 //                        continue;
                 else if (p[i] > 0)
 			sprintf(buff, "  %c-%3d) %-30s", I2A(j), p[i] + 1, s_info[p[i]].action_desc);
+//			sprintf(buff, "  %c-%3d) %-30s", I2A(j), s_info[p[i]].action_mkey + 1, s_info[p[i]].action_desc);
 		else
 			sprintf(buff, "  %c-%3d) %-30s", I2A(j), 1, "Change melee style");
 
@@ -772,6 +773,7 @@ int do_cmd_activate_skill_aux()
 				if (s_info[i].action_desc && (!strcmp(buf, s_info[i].action_desc) && get_skill(i)))
 					break;
 				if (i == nb)
+//				if (i == s_info[nb].action_mkey)
 					break;
 			}
 			if ((i < MAX_SKILLS))

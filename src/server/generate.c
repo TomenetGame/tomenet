@@ -222,12 +222,6 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 
 #define DUN_MAZE_FACTOR		1000	/* depth/DUN_MAZE_FACTOR chance of maze */
 
-/*
- * chance of getting 'smaller' floor, in percent.	[20]
- * TODO: monster/obj/trap generation should be reduced as such.
- * TODO: support underground-towns
- */
-#define SMALL_FLOOR_CHANCE	20
 
 /*
  * Those flags are mainly for vaults, quests and non-Angband dungeons...
@@ -265,6 +259,9 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
  */
 #define DUN_CAVERN     30	/* chance/depth of having a cavern level */
 #define DUN_CAVERN2    20	/* 1/chance extra check for cavern level */
+#define EMPTY_LEVEL    15	/* 1/chance of being 'empty' (15)*/
+#define DARK_EMPTY      5	/* 1/chance of arena level NOT being lit (2)*/
+#define SMALL_LEVEL     3	/* 1/chance of smaller size (3)*/
 
 /*
  * Simple structure to hold a map location
@@ -7080,6 +7077,7 @@ static void cave_gen(struct worldpos *wpos)
 	int i, k, y, x, y1, x1, glev;
 
 	bool destroyed = FALSE;
+	bool empty_level = FALSE, dark_empty = TRUE;
 	bool cavern = FALSE;
 	bool maze = FALSE;
 
@@ -7102,7 +7100,7 @@ static void cave_gen(struct worldpos *wpos)
 
 	dun->l_ptr = getfloor(wpos);
 
-	if (magik(SMALL_FLOOR_CHANCE))
+	if (!rand_int(SMALL_LEVEL))
 	{
 		dun->l_ptr->wid = MAX_WID - rand_int(MAX_WID / SCREEN_WID * 2) * (SCREEN_WID / 2);
 		dun->l_ptr->hgt = MAX_HGT - rand_int(MAX_HGT / SCREEN_HGT * 2 - 1) * (SCREEN_HGT / 2);
@@ -7115,31 +7113,6 @@ static void cave_gen(struct worldpos *wpos)
 		dun->l_ptr->hgt = MAX_HGT;
 
 		dun->ratio = 100;
-	}
-
-	/* Hack -- Start with permawalls
-	 * Hope run-length do a good job :) */
-	for (y = 0; y < MAX_HGT; y++)
-	{
-		for (x = 0; x < MAX_WID; x++)
-		{
-			cave_type *c_ptr = &zcave[y][x];
-
-			/* Create granite wall */
-			c_ptr->feat = FEAT_PERM_SOLID;
-		}
-	}
-
-	/* Hack -- then curve with basic granite */
-	for (y = 1; y < dun->l_ptr->hgt - 1; y++)
-	{
-		for (x = 1; x < dun->l_ptr->wid - 1; x++)
-		{
-			cave_type *c_ptr = &zcave[y][x];
-
-			/* Create granite wall */
-			c_ptr->feat = FEAT_WALL_EXTRA;
-		}
 	}
 
 	dun->l_ptr->flags1 = 0;
@@ -7190,6 +7163,42 @@ static void cave_gen(struct worldpos *wpos)
 
 //	maze = (rand_int(DUN_MAZE_FACTOR) < glev - 10 && !watery) ? TRUE : FALSE;
 	maze = (!cavern && rand_int(DUN_MAZE_FACTOR) < glev - 10) ? TRUE : FALSE;
+
+//	if ((d_ptr->flags1 & (DF1_EMPTY)) ||
+	if (!maze && !cavern && !rand_int(EMPTY_LEVEL))
+	{
+		empty_level = TRUE;
+		if ((randint(DARK_EMPTY)!=1 || (randint(100) > glev)))
+			dark_empty = FALSE;
+	}
+
+	/* Hack -- Start with permawalls
+	 * Hope run-length do a good job :) */
+	for (y = 0; y < MAX_HGT; y++)
+	{
+		for (x = 0; x < MAX_WID; x++)
+		{
+			cave_type *c_ptr = &zcave[y][x];
+
+			/* Create granite wall */
+			c_ptr->feat = FEAT_PERM_SOLID;
+
+			/* Illuminate Arena if needed */
+			if (empty_level && !dark_empty) c_ptr->info |= CAVE_GLOW;
+		}
+	}
+
+	/* Hack -- then curve with basic granite */
+	for (y = 1; y < dun->l_ptr->hgt - 1; y++)
+	{
+		for (x = 1; x < dun->l_ptr->wid - 1; x++)
+		{
+			cave_type *c_ptr = &zcave[y][x];
+
+			/* Create granite wall */
+			c_ptr->feat = empty_level ? FEAT_FLOOR : FEAT_WALL_EXTRA;
+		}
+	}
 
 	/* Actual maximum number of rooms on this level */
 /*	dun->row_rooms = MAX_HGT / BLOCK_HGT;

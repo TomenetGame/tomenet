@@ -695,6 +695,7 @@ extern int Send_pause(int ind);
 extern int Send_monster_health(int ind, int num, byte attr);
 
 extern void Handle_direction(int Ind, int dir);
+extern void Handle_clear_buffer(int Ind);
 
 
 

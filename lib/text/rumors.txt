@@ -1,13 +1,13 @@
 # $Id$
 
-# ToME-NET rumours file, based on ToME rumours.txt.
+# ToME-NET rumours file, based on ToME rumours.txt (first 200, they are).
 # You can colour the rumours with '{' tag. Use '{{' to write literal '{'.
 # Any lines above 'N:' will be ignored.
 
 # You should manually write the total # of rumous (lines - 10).
 
 N:*:Default
-677
+683
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -681,9 +681,15 @@ They say that a {rfirestone {wis not for you.
 They say that a tripe is to a dog as a firestone is to a dragon.
 You cannot pick things up from the bottom of {bwater {wwithout getting wet.
 They say that martial artists often are sensual.
+They say that a monk has splendid night life.
 Catch the Disembodied Hand That Strangled People for extra ring fingers.
 They say that clever dungeoneers always open a door without touching the knob.
 Alas, you died? Never forget to gather your ashes!
 They say that identifying useless items is useful somewhat.
+They say that Mandragora is just another kind of Shrieker Mushroom Patch.
+Foudinni said: cutting throad under daylight? You bonehead!!
+They say that an invisible man carrying lantern is suitable role for Chaplin.
+Ever activated the Book of the Deads?
+They say that Smeagol can help you to get rid of *cursed* Ring.
 They say that 
 They say that 

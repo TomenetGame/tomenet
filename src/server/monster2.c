@@ -137,6 +137,7 @@ void monster_check_experience(int m_idx, bool silent)
 		}
 
 		/* Gain melee power */
+		/* XXX 20d1 monster can be too horrible (20d5) */
 		if (magik(50))
 		{
 			int i = rand_int(4), try = 20;

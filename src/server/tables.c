@@ -4399,8 +4399,8 @@ magic_type innate_powers[96] =
   {0, 50, 50, 0},
 // 0x40000000
   {0, 0, 0, 0},
-// 0x80000000
-  {0, 0, 0, 0},
+// RF4_BOULDER
+  {0, 2, 10, 0},
 
 /*
  * New monster race bit flags

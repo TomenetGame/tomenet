@@ -1,10 +1,9 @@
 # $Id$
 
-# Keys: I = Interface, M = Monster, O = Objectf, G = Gameplay
-# m = Misc P = Player D = Dungeon B = Bug, V = version
+# Keys: I = Interface, M = Monster, O = Objectf, G = Gameplay(spell,power..)
+# m = Misc(internal), P = Player, D = Dungeon, B = Bug, V = version
+# N = Network(client)
 # if you need others tell me
-# -- hrm, T = Tome backports, R = rebalancement
-# i = internal, N = network, C = client, S = spell ?
 
 # date is always this format
 02/1/2002
@@ -17,9 +16,36 @@
 23/07/2002 - T.o.M.E 2.0.0 aka "Point of No Return"
 
 # special tag to specify the current version
-[V]  TomeNET 4.0.0 aka "Ping of No Return"
+[V]  TomeNET 4.0.0 aka "Packet of No Return"
 
 # bug.txt should follow the exact same format
+
+24/07/2002 (Jir)
+# changelog format changed.
+[B]- *ID* shown wrong anti-magic power if with minus modifiers.
+[B]- arrows had strange svals. (k_info.txt)
+[M]- boulder from Vanilla.
+[m]- calendar. (/ex - do_cmd_time)
+[G]- SKILL_FLETCHERY. (do_cmd_fletchery)
+[G]- destruction cannot affect vaults(CAVE_ICKY).
+[G]- meditation takes 2 turns.
+
+25/07/2002 (Jir)
+[I]- 'look' command can tell a little more about monsters.
+[I]- fail_no_melee. item-retaliation stops when low-sp/no-ammo
+[M]- awakened monster always get move if has los.
+[M]- Quylthulgs can cast as much as before. (Q_ENERGY_EXCEPTION)
+[M]- Quylthulgs can no longer summon from out of sight.
+[M]- Summoners can use tactic spells well.
+[D]- Arena levels backported.
+[B]- new player was sometimes generated on the north-west of town.
+[B]- player didn't teleport when died on NO_TELE floor.
+[B]- command repetition wasn't disturbed when attacked.
+
+
+
+
+# below this line are old changelogs under old format
 
 Change list and TODO list for ToME-NET(PernMangband)
 TODO: the newest should appear the first!
@@ -1446,17 +1472,6 @@ To find the latest change quickly, search ==== :)
 [H] arrow range limitation is removed again, due to monster AI improvements
 [H] r_killed is halved in place of becoming 0 when forging a mimic ring.
 
-24/07/2002 (Jir)
-# changelog format changed.
-[B]- *ID* shown wrong anti-magic power if with minus modifiers.
-[B]- arrows had strange svals. (k_info.txt)
-[M]- boulder from Vanilla.
-[T]- calendar. (/ex - do_cmd_time)
-[T]- SKILL_FLETCHERY. (do_cmd_fletchery)
-[R]- destruction cannot affect vaults(CAVE_ICKY).
-[R]- meditation takes 2 turns.
-
-
 
 (valid till 19/07/2002)
 ** [B] stands for Bugfix.
@@ -1539,7 +1554,6 @@ below this line are the unfixed bugs known:
 [B][C] X11 client doesn't accept keystrokes if screen is less than 80x24
 [B] 'You are shooting with a Boomerang.' is not so cool a msg
 [B] macro 'w0w0' doesn't work correctly (no way to fix under current netcode)
-[B] new player is sometimes generated on the north-west of town.
 [B] deallocator deallocates the floor that ghost is on!
 1 players on -1950ft of (32,32).
 Key_monk was killed by a Night mare.
@@ -1676,6 +1690,8 @@ memo and questions:
 - turn mmove2 functions into arrays
 - bottlenecks: process_monsters, update_view(MAX_SIGHT), lite_spot, map_info,
     AI codes
+- cave generation (cave_gen) is another bottleneck and causes 'freezing'
+  when a player changes the floor.
 - force view_reduce_lite
 
 [balance matters]
@@ -1756,6 +1772,7 @@ memo and questions:
   + avoid landing in the middle of a lake (river is ok)
   + some methods(spell?) to detect vault entrance, so that ppl won't peek
     v_info.txt ...
+  + 'Negate Time' spell (this should be great in real-time :)
 - user interface:
   + query[Y/n] for selling/buying houses.
   + visual effect when teleporting, so that players won't lose sight of '@'.

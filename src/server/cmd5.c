@@ -5658,8 +5658,11 @@ static void do_mimic_power(int Ind, int power)
 //#define RF4_XXX7			0x40000000
     case 30:
       break;
-// #define RF4_XXX8			0x80000000
+// #define RF4_BOULDER			0x80000000
     case 31:
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
       break;
 
 /* RF5 */
@@ -5984,6 +5987,8 @@ void do_mimic_power_aux(int Ind, int dir)
 	switch(p_ptr->current_spell)
 	{
 //#define RF4_ARROW_1			0x00000010	/* Fire arrow(s) */
+		/* XXX: ARROW_1 gives extra-shot to the player; we'd better
+		 * remove this 'innate' power? (see calc_body_bonus) */
     case 4:
 	{
 		int k;
@@ -6093,6 +6098,10 @@ void do_mimic_power_aux(int Ind, int dir)
 	  fire_ball(Ind, GF_NUKE, dir,
 			  ((p_ptr->chp / 3) > 800 ? 800 : (p_ptr->chp / 3)), rad);
 	  break;
+	/* RF4_BOULDER */
+    case 31:
+      fire_bolt(Ind, GF_ARROW, dir, damroll(1 + rlev / 7, 12));
+      break;
 		 
 
 /* RF5 */

@@ -777,6 +777,7 @@ static int retaliate_mimic_power(int Ind, int power)
 static bool retaliate_item(int Ind, int item, cptr inscription)
 {
 	player_type *p_ptr = Players[Ind];
+	object_type		*o_ptr;
 	int spell = 0;
 
 	if (item < 0) return FALSE;
@@ -887,9 +888,21 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 		case TV_ARROW:
 		case TV_BOLT:
 		case TV_BOW:
-		case TV_BOOMERANG:
+//		case TV_BOOMERANG:
 //		case TV_INSTRUMENT:
 			if (item == INVEN_BOW || item == INVEN_AMMO)
+			{
+				if (!p_ptr->inventory[INVEN_AMMO].k_idx ||
+					!p_ptr->inventory[INVEN_AMMO].number)
+					break;
+
+				do_cmd_fire(Ind, 5);
+				return TRUE;
+			}
+			break;
+
+		case TV_BOOMERANG:
+			if (item == INVEN_BOW)
 			{
 				do_cmd_fire(Ind, 5);
 				return TRUE;
@@ -898,24 +911,28 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 
 		case TV_PSI_BOOK:
 		{
+			if (p_ptr->csp < p_ptr->msp / 10) break;
 			do_cmd_psi(Ind, item, spell);
 			return TRUE;
 		}
 
 		case TV_MAGIC_BOOK:
 		{
+			if (p_ptr->csp < p_ptr->msp / 10) break;
 			do_cmd_cast(Ind, item, spell);
 			return TRUE;
 		}
 
 		case TV_PRAYER_BOOK:
 		{
+			if (p_ptr->csp < p_ptr->msp / 10) break;
 			do_cmd_pray(Ind, item, spell);
 			return TRUE;
 		}
 
 		case TV_SORCERY_BOOK:
 		{
+			if (p_ptr->csp < p_ptr->msp / 10) break;
 			do_cmd_sorc(Ind, item, spell);
 			return TRUE;
 		}
@@ -923,25 +940,29 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 		/* not likely :) */
 		case TV_FIGHT_BOOK:
 		{
+			if (p_ptr->csp < p_ptr->msp / 10) break;
 			do_cmd_fight(Ind, item, spell);
 			return TRUE;
 		}
 
 		case TV_SHADOW_BOOK:
 		{
+			if (p_ptr->csp < p_ptr->msp / 10) break;
 			do_cmd_shad(Ind, item, spell);
 			return TRUE;
 		}
 
 		case TV_HUNT_BOOK:
 		{
+			if (p_ptr->csp < p_ptr->msp / 10) break;
 			do_cmd_hunt(Ind, item, spell);
 			return TRUE;
 		}
 	}
 
 	/* If all fails, then melee */
-	return FALSE;
+//	return FALSE;
+	return (p_ptr->fail_no_melee);
 }
 
 

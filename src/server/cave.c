@@ -4566,6 +4566,9 @@ void disturb(int Ind, int stop_search, int unused_flag)
 		/* Cancel */
 		p_ptr->command_rep = 0;
 
+		/* Hack -- Clear the buffer */
+		Handle_clear_buffer(Ind);
+
 		/* Redraw the state (later) */
 		p_ptr->redraw |= (PR_STATE);
 	}

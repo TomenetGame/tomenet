@@ -6637,7 +6637,7 @@ char random_colour()
  */
 
 /*
- * Hook to determine if an object is contertible in an arrow/bolt
+ * Hook to determine if an object is convertible in an arrow/bolt
  */
 #if 0
 static bool item_tester_hook_convertible(object_type *o_ptr)
@@ -6760,7 +6760,7 @@ void do_cmd_fletchery(int Ind)
 		return;
 	}
 
-	tlev = get_skill_scale(p_ptr, SKILL_ARCHERY, 25)
+	tlev = get_skill_scale(p_ptr, SKILL_ARCHERY, 50) - 20
 		+ get_skill_scale(p_ptr, ext, 35);
 
 	/* Prepare for object creation */
@@ -6934,5 +6934,7 @@ void do_cmd_fletchery(int Ind)
 
 		(void)inven_carry(Ind, q_ptr);
 	}
+
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
 }
 

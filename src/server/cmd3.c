@@ -2204,7 +2204,10 @@ void do_cmd_look(int Ind, int dir)
 		if (p_ptr->mon_vis[c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
 
 		/* Format string */
-                sprintf(out_val, "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
+//                sprintf(out_val, "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
+		sprintf(out_val, "%s (Lv %d, %s%s)", r_name_get(&m_list[c_ptr->m_idx]),
+				m_ptr->level, look_mon_desc(c_ptr->m_idx),
+				m_ptr->clone ? ", clone" : "");
 	}
 	else if (c_ptr->o_idx)
 	{

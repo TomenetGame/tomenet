@@ -77,11 +77,6 @@
  */
 //#define	STUPID_MONSTER_SPELLS
 
-/* though Quylthulgs are intelligent by nature, for the balance's sake
- * this flag bans Qs from casting spells indirectly (just like vanilla ones).
- */
-#define		STUPID_Q
-
 /*
  * Animal packs try to get the player out of corridors
  * (...unless they can move through walls -- TY)
@@ -108,7 +103,7 @@
 #define	SAFETY_RADIUS	0
 #define	INDIRECT_FREQ	0
 #define	INDIRECT_SUMMONING_RADIUS	0
-#define	STUPID_Q
+//#define	STUPID_Q
 #define	STUPID_MONSTER_SPELLS
 //#define		MONSTERS_GREEDY	30
 //#define MONSTERS_HIDE_HEADS
@@ -159,6 +154,22 @@
  * the chance of consuming.
  */
 #define		MONSTER_ITEM_CONSUME	30
+
+/* Notes on Qs:
+ * Quylthulgs do have spell-frequency (1_IN_n), but since they never use
+ * their energy to moving(NEVER_MOVE) they all act as if they have (1_IN_1).
+ * We can 'fix' it by making them spend energy by *not* casting a spell, but
+ * that made them way too weak.
+ *
+ * if you want it 'fixed', undef this option.
+ */
+#define Q_ENERGY_EXCEPTION
+/* This flag ban Quylthulgs from summoning out of sight. */
+#define Q_LOS_EXCEPTION
+/* though Quylthulgs are intelligent by nature, for the balance's sake
+ * this flag bans Qs from casting spells indirectly (just like vanilla ones).
+ */
+//#define		STUPID_Q
 
 
 /*
@@ -994,7 +1005,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6)
 		/* Player is close and we have attack spells, blink away */
 //		else if (has_tactic && (distance(py, px, m_ptr->fy, m_ptr->fx) < 4) &&
 		else if (has_tactic && (m_ptr->cdis < 4) &&
-		         has_attack && (rand_int(100) < 75))
+		         (has_attack || has_summon) && (rand_int(100) < 75))
 		{
 			/* Choose tactical spell */
 			f4_mask = (RF4_TACTIC_MASK);
@@ -1580,6 +1591,9 @@ bool make_attack_spell(int Ind, int m_idx)
 #ifdef STUPID_Q
 			if (r_ptr->d_char == 'Q') return (FALSE);
 #endif	// STUPID_Q
+#ifdef Q_LOS_EXCEPTION
+			if (r_ptr->d_char == 'Q') summon = FALSE;
+#endif	// Q_LOS_EXCEPTION
 
 			if (!magik(INDIRECT_FREQ)) return (FALSE);
 
@@ -1587,8 +1601,8 @@ bool make_attack_spell(int Ind, int m_idx)
 
 			/* effort to avoid bottlenecks.. */
 			if (summon ||
-				f4 & RF4_RADIUS_SPELLS ||
-				f5 & RF5_RADIUS_SPELLS)
+					f4 & RF4_RADIUS_SPELLS ||
+					f5 & RF5_RADIUS_SPELLS)
 				rad = near_hit(m_idx, &y, &x,
 						srad > INDIRECT_SUMMONING_RADIUS ?
 						srad : INDIRECT_SUMMONING_RADIUS);
@@ -5507,7 +5521,10 @@ static void process_monster(int Ind, int m_idx)
 			do_move = FALSE;
 
 			/* Hack -- use up the turn */
-			do_turn = TRUE;
+#ifdef Q_ENERGY_EXCEPTION
+			if (r_ptr->d_char != 'Q')
+#endif	// Q_ENERGY_EXCEPTION
+				do_turn = TRUE;
 		}
 
 		/* restrict aquatic life to the pond */
@@ -6456,7 +6473,7 @@ void process_monsters(void)
 		test = FALSE;
 
 		/* Handle "sensing radius" */
-		if (m_ptr->cdis <= r_ptr->aaf)
+		if (m_ptr->cdis <= r_ptr->aaf || (blos && !m_ptr->csleep))
 		{
 			/* We can "sense" the player */
 			test = TRUE;
@@ -6469,7 +6486,7 @@ void process_monsters(void)
 		          p_ptr->aggravate))
 #else
 		else if (
-		         (player_has_los_bold(closest, fy, fx)) ||
+//		         (player_has_los_bold(closest, fy, fx)) ||
 		          (p_ptr->aggravate && m_ptr->cdis <= MAX_SIGHT))
 #endif	// 0
 		{

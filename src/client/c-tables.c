@@ -2831,6 +2831,9 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.wide_scroll_margin,	FALSE,	5,	9, 71,
 	"wide_scroll_margin",	"Scroll the screen more frequently" },
 
+	{ &c_cfg.fail_no_melee,		FALSE,	5,	9, 72,
+	"fail_no_melee",		"Stay still when item-retaliation fails" },
+
 #if 0
 	{ &c_cfg.speak_unique,                TRUE,   2,      13,
 	"speak_unique",                 "Allow shopkeepers and uniques to speak" },
@@ -2876,7 +2879,7 @@ cptr monster_spells4[32] =
   "Breath Disintegration",
   "Breath Toxic Waste",
   "XXX",
-  "XXX",
+  "Boulder",	// "XXX",
 };
 
 /*
