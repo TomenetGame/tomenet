@@ -524,6 +524,13 @@ struct c_special{
 	unsigned char type;
 	void *ptr;		/* lazy */
 };
+
+struct sfunc{		/* structure containing calls for specials */
+	void (*load)(void);		/* load function */
+	void (*save)(void);		/* save function */
+	void (*see)(int Ind);		/* sets player view */
+	void (*activate)(int Ind);	/* walk on/bump */
+};
 #endif
 
 typedef struct cave_type cave_type;

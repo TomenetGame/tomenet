@@ -3360,6 +3360,7 @@ void player_death(int Ind)
 			/* Set the amount */
 			p_ptr->inventory[INVEN_PACK].pval = p_ptr->au;
 		}
+		else p_ptr->inventory[INVEN_PACK].k_idx = 0;
 
 		/* No more gold */
 		p_ptr->au = 0;

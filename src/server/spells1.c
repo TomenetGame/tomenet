@@ -5632,6 +5632,7 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 			x = gx[i];
 
 #ifdef NEW_DUNGEON
+			if(!in_bounds(y,x)) continue;
 			/* Affect the feature */
 			if (project_f(0 - who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
 #else

@@ -473,6 +473,11 @@ Change list for PernMangband
 - Fixed bug in wiz_lite.
 - Added signposts - all special info structs need to be stored.
 
+19/12/2001 (Evileye)
+- Got rid of dropping 0 gold pieces
+- Added c_ptr->special calling design.
+- Bug fixed in project_f (bounds check)
+
 19/12/2001 (Jir)
 - Magic mapping disallowed inside NOMAP dungeons.
 - Traps can be generated under items.

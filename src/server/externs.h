@@ -15,6 +15,8 @@
 
 /* #include "netserver.h" */
 
+extern struct sfunc csfunc[];
+
 /* netserver.c */
 extern long Id;
 extern int NumPlayers;

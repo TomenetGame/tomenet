@@ -2532,6 +2532,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			{
 				msg_print(Ind, "There is a wall blocking your way.");
 			}
+			csfunc[c_ptr->special.type].activate(Ind);
 		}
 		return;
 		} /* 'if (!myhome)' ends here */
