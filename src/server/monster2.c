@@ -2133,7 +2133,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 
 	/* XXX makeshift; to be replaced with more generic function */
 //	if((r_ptr->flags7 & RF7_AQUATIC) && c_ptr->feat!=FEAT_WATER) return FALSE;
-	if(c_ptr->feat == FEAT_WATER)
+	if(c_ptr->feat == FEAT_DEEP_WATER)
 	{
 		if (!(r_ptr->flags3 & RF3_UNDEAD) &&
 			!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY)))

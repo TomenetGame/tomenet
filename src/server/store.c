@@ -2659,15 +2659,19 @@ void do_cmd_store(int Ind)
 	if(i==-1) return;
 
 	/* Verify a store */
+#if 0
 	if (!((c_ptr->feat >= FEAT_SHOP_HEAD) &&
 	      (c_ptr->feat <= FEAT_SHOP_TAIL)))
+#endif	// 0
+	if (c_ptr->feat != FEAT_SHOP)
 	{
 		msg_print(Ind, "You see no store here.");
 		return;
 	}
 
 	/* Extract the store code */
-	which = (c_ptr->feat - FEAT_SHOP_HEAD);
+//	which = (c_ptr->feat - FEAT_SHOP_HEAD);
+	which = rand_int(7);	/* lol... FIXME */
 
 	/* Hack -- Check the "locked doors" */
 	if (town[i].townstore[which].store_open >= turn)

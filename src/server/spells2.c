@@ -4687,7 +4687,8 @@ static void cave_temp_room_unlite(int Ind)
 		c_ptr->info &= ~CAVE_GLOW;
 
 		/* Hack -- Forget "boring" grids */
-		if (c_ptr->feat <= FEAT_INVIS)
+//		if (c_ptr->feat <= FEAT_INVIS)
+		if (cave_plain_floor_grid(c_ptr))
 		{
 			/* Forget the grid */
 			p_ptr->cave_flag[y][x] &= ~CAVE_MARK;
@@ -5389,7 +5390,7 @@ bool poly_build(int Ind, char *args)
 	}
 	/* no going off depth, and no spoiling moats */
 #ifdef NEW_DUNGEON
-	if(inarea(&curr->wpos, &p_ptr->wpos) && !(zcave[curr->dy][curr->dx].info&CAVE_ICKY && zcave[curr->dy][curr->dx].feat==FEAT_WATER)){
+	if(inarea(&curr->wpos, &p_ptr->wpos) && !(zcave[curr->dy][curr->dx].info&CAVE_ICKY && zcave[curr->dy][curr->dx].feat==FEAT_DEEP_WATER)){
 		zcave[curr->dy][curr->dx].feat=FEAT_WALL_EXTRA;
 		if(curr->cvert<MAXCOORD && (--curr->moves)>0) return TRUE;
 		p_ptr->update|=PU_VIEW;

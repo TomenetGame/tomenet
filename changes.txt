@@ -22,12 +22,16 @@
 # bug.txt should follow the exact same format
 
 10/08/2002 (Jir)
+# dangerous version!
+[D]- basement for ToME terrain feature code is backported.
 [m]- more on client-side LUA stuff (but it is becoming to be out of my hands)
 [P]- 'Bard' class (random skills).
 [G]- Fletchery never produces cursed ammos (minus mods are still possible)
 [G]- Aura of shiver reinforced (since stunning doesn't always mean paralysis)
 [G]- Aura of Fear no longer scares RF3_NO_FEAR monsters. (is it right, DG?)
 [G]- Auras have *small* effect even when SKILL_AURA_POWER is 0.
+[I]- some msgs added for monsters' special attacks (insanity/disarm).
+[I]- alert_hitpoint reimplemented (but far from useful)
 
 09/08/2002 (Jir)
 [m]- basements for schooled spells (not working at all :p)
@@ -2059,6 +2063,7 @@ memo and questions:
   + allow 'guest' account for invite-only server
   + water should 'flow'
   + score list should show middle-earth time (and not raw turn).
+  + spiked/locked door should be *tougher* (cf. Vanilla)
   
 [major ones]
 - monsters' interactions

@@ -3568,7 +3568,7 @@ int mon_will_run(int Ind, int m_idx)
 	/* Hack -- aquatic life outa water */
 	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE); // I'll run instead!
 
-	if (zcave[m_ptr->fy][m_ptr->fx].feat != FEAT_WATER)
+	if (zcave[m_ptr->fy][m_ptr->fx].feat != FEAT_DEEP_WATER)
 	{
 		if (r_ptr->flags7 & RF7_AQUATIC) return (TRUE);
 	}
@@ -3783,8 +3783,8 @@ static bool monster_is_comfortable(monster_race *r_ptr, cave_type *c_ptr)
 		return (TRUE);
 
 	/* I'd like to be under the sea ./~ */
-	if (r_ptr->flags7 & RF7_AQUATIC) return (c_ptr->feat == FEAT_WATER);
-	else return (c_ptr->feat != FEAT_WATER);
+	if (r_ptr->flags7 & RF7_AQUATIC) return (c_ptr->feat == FEAT_DEEP_WATER);
+	else return (c_ptr->feat != FEAT_DEEP_WATER);
 }
 
 #if SAFETY_RADIUS > 0
@@ -3896,10 +3896,10 @@ static bool find_terrain(int m_idx, int *yp, int *xp)
 	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
 
 	/* What do you want? */
-	if (r_ptr->flags7 & RF7_AQUATIC) feat == FEAT_WATER;
+	if (r_ptr->flags7 & RF7_AQUATIC) feat == FEAT_DEEP_WATER;
 	else
 	{
-		feat = FEAT_WATER;
+		feat = FEAT_DEEP_WATER;
 		negate = TRUE;
 	}
 //	else return (TRUE);
@@ -4282,8 +4282,8 @@ static int digging_difficulty(byte feat)
 		else return (50);
 	}
 	else if (feat == FEAT_RUBBLE) return (30);
-	else if (feat == FEAT_TREE) return (50);
-	else if (feat == FEAT_EVIL_TREE) return (30);	/* hehe it's evil */
+	else if (feat == FEAT_TREES) return (50);
+	else if (feat == FEAT_DEAD_TREE) return (30);	/* hehe it's evil */
 
 	/* huh? ...it's not our role */
 	return (3000);
@@ -5571,7 +5571,8 @@ static void process_monster(int Ind, int m_idx)
 
 
 		/* Tavern entrance? */
-		if (c_ptr->feat == FEAT_SHOP_TAIL - 1)
+//		if (c_ptr->feat == FEAT_SHOP_TAIL - 1)
+		if (c_ptr->feat == FEAT_SHOP)
 		{
 			/* Nothing */
 		}
@@ -5873,16 +5874,16 @@ static void process_monster(int Ind, int m_idx)
 
 		/* restrict aquatic life to the pond */
 		if(do_move && (r_ptr->flags7 & RF7_AQUATIC)){
-			if((c_ptr->feat != FEAT_WATER) &&
-				(zcave[oy][ox].feat == FEAT_WATER)) do_move=FALSE;
+			if((c_ptr->feat != FEAT_DEEP_WATER) &&
+				(zcave[oy][ox].feat == FEAT_DEEP_WATER)) do_move=FALSE;
 		}
 
 		/* Hack -- those that hate water */
-		if (do_move && c_ptr->feat == FEAT_WATER)
+		if (do_move && c_ptr->feat == FEAT_DEEP_WATER)
 		{
 			if (!(r_ptr->flags3 & RF3_UNDEAD) &&
 				!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ) &&
-				(zcave[oy][ox].feat != FEAT_WATER))
+				(zcave[oy][ox].feat != FEAT_DEEP_WATER))
 				do_move = FALSE;
 		}
 
@@ -6380,7 +6381,8 @@ static void process_monster_golem(int Ind, int m_idx)
 
 
 		/* Tavern entrance? */
-		if (c_ptr->feat == FEAT_SHOP_TAIL)
+//		if (c_ptr->feat == FEAT_SHOP_TAIL)
+		if (c_ptr->feat == FEAT_SHOP)
 		{
 			/* Nothing */
 		}

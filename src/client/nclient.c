@@ -1257,6 +1257,13 @@ int Receive_sanity(void)
 	c_p_ptr->sanity_attr = attr;
 	if (!screen_icky && !shopping){
 		prt_sane(attr, (char*)buf);
+		if (c_cfg.alert_hitpoint && (attr == TERM_MULTI)) 
+		{
+			if (c_cfg.ring_bell) bell();
+
+			/* Server should be sending similar msg */
+//			c_msg_print("\377r*** LOW HITPOINT WARNING! ***");
+		}
 	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c%s", ch, attr, buf)) <= 0)
@@ -1316,7 +1323,14 @@ int Receive_hp(void)
 	p_ptr->chp = cur;
 
 	if (!screen_icky && !shopping)
+	{
 		prt_hp(max, cur);
+		if (c_cfg.alert_hitpoint && (cur < max / 5)) 
+		{
+			if (c_cfg.ring_bell) bell();
+			c_msg_print("\377r*** LOW HITPOINT WARNING! ***");
+		}
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hd%hd", ch, max, cur)) <= 0)
 		{

@@ -160,11 +160,11 @@ struct feature_type
 {
 	u16b name;			/* Name (offset) */
 	u16b text;			/* Text (offset) */
-#if 0
-        u32b tunnel;            /* Text for tunneling */
-        u32b block;             /* Text for blocking */
+#if 1
+	u32b tunnel;            /* Text for tunneling */
+	u32b block;             /* Text for blocking */
 
-        u32b flags1;            /* First set of flags */
+	u32b flags1;            /* First set of flags */
 #endif
 
 	byte mimic;			/* Feature to mimic */
@@ -173,19 +173,20 @@ struct feature_type
 
 	s16b unused;		/* Extra bytes (unused) */
 
+	/* NOTE: it's d_ and x_ in ToME */
 	byte f_attr;		/* Object "attribute" */
 	char f_char;		/* Object "symbol" */
 
 	byte z_attr;		/* The desired attr for this feature */
 	char z_char;		/* The desired char for this feature */
 
-#if 0
-        byte shimmer[7];        /* Shimmer colors */
+#if 1
+	byte shimmer[7];        /* Shimmer colors */
 
-        int d_dice[4];                  /* Number of dices */
-        int d_side[4];                  /* Number of sides */
-        int d_frequency[4];             /* Frequency of damage (1 is the minimum) */
-        int d_type[4];                  /* Type of damage */
+	int d_dice[4];                  /* Number of dices */
+	int d_side[4];                  /* Number of sides */
+	int d_frequency[4];             /* Frequency of damage (1 is the minimum) */
+	int d_type[4];                  /* Type of damage */
 #endif
 };
 

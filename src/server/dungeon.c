@@ -821,7 +821,8 @@ static void process_world(int Ind)
 						w_ptr = &p_ptr->cave_flag[y][x];
 
 						/*  Darken "boring" features */
-						if (c_ptr->feat <= FEAT_INVIS && !(c_ptr->info & CAVE_ROOM))
+//						if (c_ptr->feat <= FEAT_INVIS && !(c_ptr->info & CAVE_ROOM))
+						if (cave_plain_floor_grid(c_ptr) && !(c_ptr->info & CAVE_ROOM))
 						{
 							  /* Forget the grid */ 
 							c_ptr->info &= ~CAVE_GLOW;
@@ -1698,7 +1699,7 @@ static bool process_player_end_aux(int Ind)
 
 	/* Drowning, but not ghosts */
 	//		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER && !p_ptr->ghost && !p_ptr->fly)
-	if(c_ptr->feat==FEAT_WATER)
+	if(c_ptr->feat==FEAT_DEEP_WATER)
 	{
 		if(!p_ptr->ghost && !p_ptr->fly)
 		{
@@ -1792,7 +1793,7 @@ static bool process_player_end_aux(int Ind)
 	{
 		/* Player can walk through trees */
 		//		if ((PRACE_FLAG(PR1_PASS_TREE) || (get_skill(SKILL_DRUID) > 15)) && (cave[py][px].feat == FEAT_TREES))
-		if (p_ptr->prace == RACE_ENT && (c_ptr->feat == FEAT_TREE))
+		if (p_ptr->prace == RACE_ENT && (c_ptr->feat == FEAT_TREES))
 		{
 			/* Do nothing */
 		}
@@ -3604,7 +3605,8 @@ static void process_player_change_wpos(int Ind)
 				c_ptr = &zcave[y][x];
 
 				/* Memorize if daytime or "interesting" */
-				if (dawn || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
+//				if (dawn || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
+				if (dawn || !cave_plain_floor_grid(c_ptr) || c_ptr->info & CAVE_ROOM)
 					*w_ptr |= CAVE_MARK;
 			}
 		}
@@ -3679,7 +3681,7 @@ static void process_player_change_wpos(int Ind)
 							  startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID)-3)+1;
 						  }
 						  while (  (zcave[starty][startx].info & CAVE_ICKY)
-								  || (zcave[starty][startx].feat==FEAT_WATER)
+								  || (zcave[starty][startx].feat==FEAT_DEEP_WATER)
 								  || (!cave_floor_bold(zcave, starty, startx)) );
 						  break;
 	}

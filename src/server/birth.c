@@ -1359,7 +1359,8 @@ static void player_setup(int Ind, bool new)
 				c_ptr = &zcave[y][x];
 
 				/* If day or interesting, memorize */
-				if (IS_DAY || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
+//				if (IS_DAY || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
+				if (IS_DAY || !cave_plain_floor_grid(c_ptr) || c_ptr->info & CAVE_ROOM)
 					*w_ptr |= CAVE_MARK;
 			}
 		}
@@ -1508,7 +1509,8 @@ static void player_setup(int Ind, bool new)
 
 
 /* Hack -- give the bard random skills	- Jir - */
-void do_bard_skill(int Ind)
+/* TODO: racial skills should be preserved */
+static void do_bard_skill(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int i;
@@ -1518,6 +1520,7 @@ void do_bard_skill(int Ind)
 		if (i == SKILL_COMBAT || i == SKILL_MASTERY ||
 				i == SKILL_ARCHERY || i == SKILL_MAGIC ||
 				i == SKILL_SNEAKINESS || i == SKILL_HEALTH ||
+//				i == SKILL_NECROMANCY ||
 				i == SKILL_AURA_POWER) continue;
 
 		if (magik(67))
@@ -1746,9 +1749,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		}
 	}
 
-	/* Bards receive really random skills
-	 * XXX weird tree can be generated (eg. Revelation w/o Prayer)
-	 */
+	/* Bards receive really random skills */
 	if (p_ptr->pclass == CLASS_BARD)
 	{
 		do_bard_skill(Ind);

@@ -2052,13 +2052,11 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 		if (c_ptr->feat == FEAT_MORE) return (TRUE);
 
 		/* Notice shops */
+		if (c_ptr->feat == FEAT_SHOP) return (TRUE);
+#if 0
 		if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
 		    (c_ptr->feat <= FEAT_SHOP_TAIL)) return (TRUE);
-#if 0
-		/* Notice traps */
-		if ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-		    (c_ptr->feat <= FEAT_TRAP_TAIL)) return (TRUE);
-#endif
+#endif	// 0
 
 		/* Notice doors */
 		if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
@@ -2281,7 +2279,8 @@ void do_cmd_look(int Ind, int dir)
 		}
 
 		/* Hack -- special description for store doors */
-		if ((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL))
+//		if ((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL))
+		if (feat == FEAT_SHOP)
 		{
 			p1 = "The entrance to the ";
 		}

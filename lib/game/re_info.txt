@@ -486,6 +486,7 @@ G:*:*
 I:+0:+0d+0:+0:+0:+0
 W:+5:20:+0:%150:B
 F:ANIMAL
+H:EMPTY_MIND | WEIRD_MIND
 M:AI_ANNOY
 
 N:37:Demented

@@ -1028,7 +1028,7 @@ void carry(int Ind, int pickup, int confirm)
 	}
 
 	/* splash! harm equipments */
-	if (c_ptr->feat == FEAT_WATER &&
+	if (c_ptr->feat == FEAT_DEEP_WATER &&
 			TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
 //			magik(WATER_ITEM_DAMAGE_CHANCE))
 			magik(3))
@@ -2658,7 +2658,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 
 		/* Hack -- Exception for trees (in a bad way :-/) */
-		if (!myhome && c_ptr->feat == FEAT_TREE &&
+		if (!myhome && c_ptr->feat == FEAT_TREES &&
 				(p_ptr->fly || p_ptr->prace == RACE_ENT))
 			myhome = TRUE;
 
@@ -2690,7 +2690,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 
 			/* Tree */
-			else if (c_ptr->feat == FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE)
+			else if (c_ptr->feat == FEAT_TREES || c_ptr->feat==FEAT_DEAD_TREE)
 			{
 				msg_print(Ind, "\377GYou feel a tree blocking your way.");
 				*w_ptr |= CAVE_MARK;
@@ -2738,7 +2738,7 @@ void move_player(int Ind, int dir, int do_pickup)
 					msg_print(Ind, "There is rubble blocking your way.");
 				}
 				/* Tree */
-				else if (c_ptr->feat == FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE)
+				else if (c_ptr->feat == FEAT_TREES || c_ptr->feat==FEAT_DEAD_TREE)
 				{
 					msg_print(Ind, "There is a tree blocking your way.");
 				}
@@ -2874,8 +2874,11 @@ void move_player(int Ind, int dir, int do_pickup)
 
 		/* Handle "store doors" */
 		if ((!p_ptr->ghost) &&
+		    (c_ptr->feat == FEAT_SHOP))
+#if 0
 		    (c_ptr->feat >= FEAT_SHOP_HEAD) &&
 		    (c_ptr->feat <= FEAT_SHOP_TAIL))
+#endif	// 0
 		{
 			/* Disturb */
 			disturb(Ind, 0, 0);
@@ -2886,7 +2889,8 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 
 		/* Handle resurrection */
-		else if (p_ptr->ghost && c_ptr->feat == FEAT_SHOP_HEAD + 3)
+//		else if (p_ptr->ghost && c_ptr->feat == FEAT_SHOP_HEAD + 3)
+		else if (p_ptr->ghost && c_ptr->feat == FEAT_SHOP)	/* FIXME */
 		{
 			/* Resurrect him */
 			resurrect_player(Ind);
@@ -3409,7 +3413,7 @@ static bool run_test(int Ind)
 		if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && cs_ptr->sc.trap.found) return TRUE;
 
 		/* Hack -- basically stop in water */
-		if (c_ptr->feat == FEAT_WATER && !aqua)
+		if (c_ptr->feat == FEAT_DEEP_WATER && !aqua)
 			return TRUE;
 
 		/* Assume unknown */
@@ -3442,7 +3446,7 @@ static bool run_test(int Ind)
 
 				/* Grass, trees, and dirt */
 				case FEAT_GRASS:
-				case FEAT_TREE:
+				case FEAT_TREES:
 				case FEAT_DIRT:
 
 				/* Walls */
@@ -3486,7 +3490,7 @@ static bool run_test(int Ind)
 				}
 
 				/* Water */
-				case FEAT_WATER:
+				case FEAT_DEEP_WATER:
 				{
 					if (aqua) notice = FALSE;
 

@@ -1229,6 +1229,7 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		return;
 	}
 
+#if 0	// moved to client
 	/* Hack -- hitpoint warning */
 	if (warning && (p_ptr->chp <= warning))
 	{
@@ -1239,6 +1240,7 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		msg_print(Ind, "*** LOW HITPOINT WARNING! ***");
 		msg_print(Ind, NULL);
 	}
+#endif	// 0
 }
 
 
@@ -1601,6 +1603,7 @@ static bool hates_water(object_type *o_ptr)
 		case TV_FIGHT_BOOK:
 		case TV_SHADOW_BOOK:
 		case TV_HUNT_BOOK:
+		case TV_BOOK:
 		{
 			return (TRUE);
 		}
@@ -2661,7 +2664,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //		case GF_HELL_FIRE:
 		{
 			/* Destroy trees */
-			if (c_ptr->feat == FEAT_TREE)
+			if (c_ptr->feat == FEAT_TREES)
 			{
 				/* Hack -- special message */
 				if (!quiet && player_can_see_bold(Ind, y, x))
@@ -2803,9 +2806,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Destroy all visible traps and open doors */
 			if ((c_ptr->feat == FEAT_OPEN) ||
-			    (c_ptr->feat == FEAT_BROKEN) ||
-			    ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-			     (c_ptr->feat <= FEAT_TRAP_TAIL)))
+			    (c_ptr->feat == FEAT_BROKEN)) 
 			{
 				/* Hack -- special message */
 				if (!quiet && (*w_ptr & CAVE_MARK))
@@ -3086,7 +3087,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			c_ptr->info &= ~CAVE_GLOW;
 
 			/* Hack -- Forget "boring" grids */
-			if (c_ptr->feat <= FEAT_INVIS)
+//			if (c_ptr->feat <= FEAT_INVIS)
+			if (cave_plain_floor_grid(c_ptr))
 			{
 				/* Forget the wall */
 				everyone_forget_spot(wpos, y, x);
@@ -3159,11 +3161,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			    (c_ptr->feat == FEAT_GRASS))
 			{
 				/* 35% chance to create shallow water */
-//				p1 = 35; f1 = FEAT_SHAL_WATER;
-				p1 = 35; f1 = FEAT_WATER;
+				p1 = 35; f1 = FEAT_SHAL_WATER;
+//				p1 = 35; f1 = FEAT_WATER;
 
 				/* 5% chance to create deep water */
-//				p2 = 40; f2 = FEAT_DEEP_WATER;
+				p2 = 40; f2 = FEAT_DEEP_WATER;
 			}
 #if 0
 			else if ((c_ptr->feat == FEAT_MAGMA) ||

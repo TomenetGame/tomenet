@@ -940,7 +940,7 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 		}
 
 		/* Hack^2 - place watery monsters */
-		if (feat == FEAT_WATER && magik(2)) vault_monsters(wpos, y, x, 1);
+		if (feat == FEAT_DEEP_WATER && magik(2)) vault_monsters(wpos, y, x, 1);
 
 		/* Advance the streamer */
 		y += ddy[dir];
@@ -977,7 +977,7 @@ static void lake_level(struct worldpos *wpos)
 		/* Access the grid */
 		c_ptr = &zcave[y1][x1];
 
-		if (c_ptr->feat != FEAT_WATER) continue;
+		if (c_ptr->feat != FEAT_DEEP_WATER) continue;
 
 		rad = rand_range(8, 18);
 		distort = magik(50 - rad * 2);
@@ -1025,7 +1025,7 @@ static void lake_level(struct worldpos *wpos)
 					if (t < 174)
 					{
 						/* Create granite wall */
-						c_ptr->feat = FEAT_WATER;
+						c_ptr->feat = FEAT_DEEP_WATER;
 					}
 					else if (t < 180)
 					{
@@ -1319,7 +1319,7 @@ static bool get_is_floor(worldpos *wpos, int x, int y)
 	/* Do the real check: */
 //	if (f_info[cave[y][x].feat].flags1 & FF1_FLOOR) return (TRUE);
 	if (zcave[y][x].feat == FEAT_FLOOR ||
-		zcave[y][x].feat == FEAT_WATER) return (TRUE);
+		zcave[y][x].feat == FEAT_DEEP_WATER) return (TRUE);
 
 	return (FALSE);
 }
@@ -3039,7 +3039,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 		for (x = x1 - 1; x <= x2 + 1; x++)
 		{
 			c_ptr = &zcave[y][x];
-			c_ptr->feat = aqua ? FEAT_WATER : FEAT_FLOOR;
+			c_ptr->feat = aqua ? FEAT_DEEP_WATER : FEAT_FLOOR;
 			c_ptr->info |= CAVE_ROOM;
 		}
 	}
@@ -4309,7 +4309,7 @@ bool generate_fracave(worldpos *wpos, int y0, int x0, int xsize, int ysize,
 
 			/* A floor grid to be converted */
 //			if ((f_info[c_ptr->feat].flags1 & FF1_FLOOR) &&
-			if ((c_ptr->feat == FEAT_FLOOR || c_ptr->feat == FEAT_WATER) &&
+			if ((c_ptr->feat == FEAT_FLOOR || c_ptr->feat == FEAT_DEEP_WATER) &&
 			    (c_ptr->info & CAVE_ICKY))
 
 			{
@@ -4603,7 +4603,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 
 			 /* If floor, shallow water or lava */
 			if (get_is_floor(wpos, x, y) ||
-			    (zcave[y][x].feat == FEAT_WATER))
+			    (zcave[y][x].feat == FEAT_DEEP_WATER))
 
 #if 0
 			    (cave[y][x].feat == FEAT_SHAL_WATER) ||
@@ -7655,7 +7655,7 @@ static void cave_gen(struct worldpos *wpos)
 
 			for (i = 0; i < DUN_STR_WAT; i++)
 			{
-				build_streamer(wpos, FEAT_WATER, 0, TRUE);
+				build_streamer(wpos, FEAT_DEEP_WATER, 0, TRUE);
 			}
 
 			lake_level(wpos);
@@ -7872,7 +7872,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 			c_ptr = &zcave[y][x];
 
-			c_ptr->feat = FEAT_TREE;
+			c_ptr->feat = FEAT_TREES;
 		}
 
 		return;
@@ -7889,7 +7889,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				c_ptr = &zcave[y][x];
 
 				/* Fill with water */
-				c_ptr->feat = FEAT_WATER;
+				c_ptr->feat = FEAT_DEEP_WATER;
 			}
 		}
 
@@ -7984,7 +7984,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 				/* Put some trees */
 				if (randint(100) < chance)
-					c_ptr->feat = FEAT_TREE;
+					c_ptr->feat = FEAT_TREES;
 			}
 		}
 
@@ -8223,7 +8223,8 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	else
 	{
 		/* Clear previous contents, add a store door */
-		c_ptr->feat = FEAT_SHOP_HEAD + n;
+//		c_ptr->feat = FEAT_SHOP_HEAD + n;
+		c_ptr->feat = FEAT_SHOP;	/* TODO: put CS_SHOP */
 		c_ptr->info |= CAVE_NOPK;
 
 		for (y1 = y - 1; y1 <= y + 1; y1++)
@@ -8346,7 +8347,7 @@ static void town_gen_hack(struct worldpos *wpos)
 
 			else if (rand_int(100) < 15)
 			{
-				c_ptr->feat = FEAT_TREE;
+				c_ptr->feat = FEAT_TREES;
 			}
 		}
 	}

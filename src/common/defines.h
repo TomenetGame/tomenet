@@ -801,6 +801,7 @@
 
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
+#if 0
 /* Reform scheduled!! */
 
 /* Nothing */
@@ -884,6 +885,181 @@ that keeps many algorithms happy.
 /* Dirty Hack till feature code will be redone */
 #define is_door(feat)	(feat == FEAT_OPEN || feat == FEAT_BROKEN || \
 		(FEAT_DOOR_HEAD <= feat && feat <= FEAT_SECRET))
+
+#else	// 0
+/*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
+
+/* Nothing */
+#define FEAT_NONE               0x00
+
+/* Basic features */
+#define FEAT_FLOOR              0x01
+#define FEAT_FOUNTAIN           0x02
+#define FEAT_GLYPH              0x03
+#define FEAT_OPEN               0x04
+#define FEAT_BROKEN             0x05
+#define FEAT_LESS               0x06
+#define FEAT_MORE               0x07
+
+/* Quest features -KMW- */
+#define FEAT_QUEST_ENTER        0x08
+#define FEAT_QUEST_EXIT         0x09
+#define FEAT_QUEST_DOWN         0x0A
+#define FEAT_QUEST_UP           0x0B
+
+/* Shafts -GSN- */
+#define FEAT_SHAFT_DOWN         0x0D
+#define FEAT_SHAFT_UP           0x0E
+
+/* Basic feature */
+#define FEAT_EMPTY_FOUNTAIN     0x0F
+
+/* Feature 0x10 -- web */
+
+/* Traps */
+#define FEAT_TRAP               0x11
+
+/* Features 0x12 - 0x1F -- unused */
+/* Resurrected ones from Mangband/TomeNET */
+#define FEAT_CROP			0x12
+#define FEAT_LOOSE_DIRT		0x13
+#define FEAT_HOME_OPEN		0x14
+#define FEAT_SIGN			0x15
+#define FEAT_PERM_CLEAR		0x16
+#define FEAT_LOGS			0x17
+#define FEAT_DRAWBRIDGE		0x18
+#define FEAT_HOME			0x19
+
+/* Backward compatibility Hack */
+#define FEAT_HOME_HEAD	0x19
+#define FEAT_HOME_TAIL	0x19
+
+
+/* Doors */
+#define FEAT_DOOR_HEAD          0x20
+#define FEAT_DOOR_TAIL          0x2F
+
+/* Extra */
+#define FEAT_SECRET             0x30
+#define FEAT_RUBBLE             0x31
+
+/* Seams */
+#define FEAT_MAGMA              0x32
+#define FEAT_QUARTZ             0x33
+#define FEAT_MAGMA_H            0x34
+#define FEAT_QUARTZ_H           0x35
+#define FEAT_MAGMA_K            0x36
+#define FEAT_QUARTZ_K           0x37
+
+/* Walls */
+#define FEAT_WALL_EXTRA         0x38
+#define FEAT_WALL_INNER         0x39
+#define FEAT_WALL_OUTER         0x3A
+#define FEAT_WALL_SOLID         0x3B
+#define FEAT_PERM_EXTRA         0x3C
+#define FEAT_PERM_INNER         0x3D
+#define FEAT_PERM_OUTER         0x3E
+#define FEAT_PERM_SOLID         0x3F
+
+/* Explosive rune */
+#define FEAT_MINOR_GLYPH        0x40
+
+/* Pattern */
+#define FEAT_PATTERN_START      0x41
+#define FEAT_PATTERN_1          0x42
+#define FEAT_PATTERN_2          0x43
+#define FEAT_PATTERN_3          0x44
+#define FEAT_PATTERN_4          0x45
+#define FEAT_PATTERN_END        0x46
+#define FEAT_PATTERN_OLD        0x47
+#define FEAT_PATTERN_XTRA1      0x48
+#define FEAT_PATTERN_XTRA2      0x49
+
+/* Shops */
+#define FEAT_SHOP               0x4A
+
+/* Permanent walls for quests */
+#define FEAT_QUEST1             0x4B
+#define FEAT_QUEST2             0x4C
+#define FEAT_QUEST3             0x4D
+#define FEAT_QUEST4             0x4E
+
+/* Features 0x4F - 0x53 -- unused */
+
+/* Additional terrains */
+#define FEAT_SHAL_WATER         0x54
+#define FEAT_DEEP_LAVA          0x55
+#define FEAT_SHAL_LAVA          0x56
+#define FEAT_DARK_PIT           0x57
+#define FEAT_DIRT               0x58
+#define FEAT_GRASS              0x59
+#define FEAT_ICE                0x5A
+#define FEAT_SAND               0x5B
+#define FEAT_DEAD_TREE          0x5C
+#define FEAT_ASH                0x5D
+#define FEAT_MUD                0x5E
+#define FEAT_ICE_WALL           0x5F
+#define FEAT_TREES              0x60
+#define FEAT_MOUNTAIN           0x61
+#define FEAT_SANDWALL           0x62
+#define FEAT_SANDWALL_H         0x63
+#define FEAT_SANDWALL_K         0x64
+/* Feature 0x65 -- high mountain chain */
+/* Feature 0x66 -- nether mist */
+
+/* Features 0x67 - 0x9F -- unused */
+
+#define FEAT_BETWEEN            0xA0 /* 160 */
+
+/* Altars */
+#define FEAT_ALTAR_HEAD         0xA1 /* 161 */
+#define FEAT_ALTAR_TAIL         0xAB /* 171 */
+
+#define FEAT_MARKER             0xAC /* 172 */
+/* Feature 0xAD -- Underground Tunnel */
+#define FEAT_TAINTED_WATER      0xAE /* 174 */
+#define FEAT_MON_TRAP           0xAF /* 175 */
+#define FEAT_BETWEEN2           0xB0 /* 176 */
+/* Feature 0xB1 -- lava wall */
+#define FEAT_GREAT_FIRE         0xB2 /* 178 */
+#define FEAT_WAY_MORE           0xB3 /* 179 */
+#define FEAT_WAY_LESS           0xB4 /* 180 */
+/* Feature 0xB5 -- field */
+#define FEAT_EKKAIA             0xB6 /* 182 */
+
+/* Features 0xB7 - 0xBA -- unused */
+
+#define FEAT_DEEP_WATER         0xBB /* 187 */
+#define FEAT_GLASS_WALL         0xBC /* 188 */
+#define FEAT_ILLUS_WALL         0xBD /* 189 */
+/* Feature 0xBE -- grass roof */
+/* Feature 0xBF -- grass roof top */
+/* Feature 0xC0 -- grass roof chimney */
+/* Feature 0xC1 -- brick roof */
+/* Feature 0xC2 -- brick roof top */
+/* Feature 0xC3 -- brick roof chimney */
+/* Feature 0xC4 -- window */
+/* Feature 0xC5 -- small window */
+/* Feature 0xC6 -- rain barrel */
+#define FEAT_FLOWER             0xC7 /* 199 */
+/* Feature 0xC8 -- cobblestone road */
+/* Feature 0xC9 -- cobblestone with outlet */
+#define FEAT_SMALL_TREES        0xCA /* 202 */
+#define FEAT_TOWN               0xCB /* 203 */
+/* Feature 0xCC -- Underground Tunnel */
+#define FEAT_FIRE               0xCD /* 205 */
+/* Feature 0xCE -- pile of rubble (permanent) */
+
+/* Features 0xCF - 0xFF -- unused */
+
+
+#define MAX_BETWEEN_EXITS       2
+
+/* former Dirty Hack (XXX this can overlook spiked door!) */
+#define is_door(feat) (f_info[feat].flags1 & FF1_DOOR)
+
+#endif	// 0
+
 
 /*
  * Number of effects
@@ -3390,7 +3566,6 @@ that keeps many algorithms happy.
 #define WILD_F_LOCKDOWN		64
 
 
-#if 0
 /*** Features flags -- DG ***/
 #define FF1_NO_WALK             0x00000001L
 #define FF1_NO_VISION           0x00000002L
@@ -3411,6 +3586,7 @@ that keeps many algorithms happy.
 #define FF1_WEB                 0x00010000L
 #define FF1_ATTR_MULTI          0x00020000L
 
+#if 0
 /*** Dungeon type flags -- DG ***/
 #define DF1_PRINCIPAL           0x00000001L
 #define DF1_MAZE                0x00000002L
@@ -3877,7 +4053,8 @@ that keeps many algorithms happy.
  * do not, allowing an extremely fast single bit check below.
  */
 #define cave_floor_bold(ZCAVE,Y,X) \
-    (!(ZCAVE[Y][X].feat & 0x20))
+	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR)
+//    (!(ZCAVE[Y][X].feat & 0x20))
 
 /*
  * Determine if a "legal" grid is a "clean" floor grid
@@ -3886,10 +4063,15 @@ that keeps many algorithms happy.
  * Line 2 -- forbid normal objects
  */
 #define cave_clean_bold(ZCAVE,Y,X) \
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) && \
+	 (ZCAVE[Y][X].o_idx == 0) && \
+	 !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT))
+#if 0
     ((ZCAVE[Y][X].feat >= FEAT_FLOOR) && \
      (ZCAVE[Y][X].feat <= FEAT_MUD) && \
      (!ZCAVE[Y][X].o_idx))
 /*     (ZCAVE[Y][X].feat <= FEAT_LOOSE_DIRT) && \   */
+#endif	// 0
 
 /*
  * Determine if a "legal" grid is an "empty" floor grid
@@ -3911,11 +4093,18 @@ that keeps many algorithms happy.
  * Line 4 -- forbid any player
  */
 #define cave_naked_bold(ZCAVE,Y,X) \
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) && \
+	 !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) && \
+	  (ZCAVE[Y][X].o_idx == 0) && \
+	  (ZCAVE[Y][X].m_idx == 0))
+
+#if 0
     ((ZCAVE[Y][X].feat >= FEAT_FLOOR) && \
      (ZCAVE[Y][X].feat <= FEAT_MUD) && \
      !(ZCAVE[Y][X].o_idx) && \
      !(ZCAVE[Y][X].m_idx))
 /*     (ZCAVE[Y][X].feat <= FEAT_DIRT) && \ */
+#endif	// 0
 
 
 /*
@@ -3927,6 +4116,8 @@ that keeps many algorithms happy.
  * Lines 5-6 -- home doors
  */
 #define cave_perma_bold(ZCAVE,Y,X) \
+	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT)
+#if 0
     ((ZCAVE[Y][X].feat >= FEAT_PERM_EXTRA) || \
      ((ZCAVE[Y][X].feat == FEAT_LESS) || \
       (ZCAVE[Y][X].feat == FEAT_MORE)) || \
@@ -3934,6 +4125,7 @@ that keeps many algorithms happy.
       (ZCAVE[Y][X].feat <= FEAT_SHOP_TAIL)) || \
      ((ZCAVE[Y][X].feat >= FEAT_HOME_HEAD) && \
       (ZCAVE[Y][X].feat <= FEAT_HOME_TAIL))) 
+#endif	// 0
 
 /*
  * Is a given location "valid" for placing things?
@@ -3960,16 +4152,28 @@ that keeps many algorithms happy.
  * Grid based version of "cave_floor_bold()"
  */
 #define cave_floor_grid(C) \
-    (!((C)->feat & 0x20))
+    (f_info[(C)->feat].flags1 & FF1_FLOOR)
+//    (!((C)->feat & 0x20))
+
+
+/*
+ * Grid based version of "cave_plain_floor_bold()"
+ */
+#define cave_plain_floor_grid(C) \
+	((f_info[(C)->feat].flags1 & FF1_FLOOR) && \
+	 !(f_info[(C)->feat].flags1 & FF1_REMEMBER))
 
 
 /*
  * Grid based version of "cave_clean_bold()"
  */
 #define cave_clean_grid(C) \
+    ((f_info[(C)->feat].flags1 & FF1_FLOOR) && (!(C)->o_idx))
+#if 0
     (((C)->feat >= FEAT_FLOOR) && \
      ((C)->feat <= FEAT_DIRT) && \
      (!(C)->o_idx))
+#endif	// 0
 
 /*
  * Grid based version of "cave_empty_bold()"
@@ -3982,21 +4186,30 @@ that keeps many algorithms happy.
  * Grid based version of "cave_empty_bold()"
  */
 #define cave_naked_grid(C) \
+    ((f_info[(C)->feat].flags1 & FF1_FLOOR) && \
+     !((C)->o_idx) && \
+     !((C)->m_idx) && \
+     !((C) == &cave[py][px]))
+#if 0
     (((C)->feat >= FEAT_FLOOR) && \
      ((C)->feat <= FEAT_DIRT) && \
      !((C)->o_idx) && \
      !((C)->m_idx))
+#endif	// 0
 
 
 /*
  * Grid based version of "cave_perma_bold()"
  */
 #define cave_perma_grid(C) \
+       (f_info[(C)->feat].flags1 & FF1_PERMANENT)
+#if 0
     (((C)->feat >= FEAT_PERM_EXTRA) || \
      (((C)->feat == FEAT_LESS) || \
       ((C)->feat == FEAT_MORE)) || \
      (((C)->feat >= FEAT_SHOP_HEAD) && \
       ((C)->feat <= FEAT_SHOP_TAIL)))
+#endif	// 0
 
 
 /*

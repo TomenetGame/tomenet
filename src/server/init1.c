@@ -877,7 +877,6 @@ static cptr ego_flags[] =
 
 #endif	// 0
 
-#if 0	// flags from ToME, for next expansion
 /*
  * Feature flags
  */
@@ -917,6 +916,7 @@ static cptr f_info_flags1[] =
 	"XXX1"
 };
 
+#if 0	// flags from ToME, for next expansion
 /*
  * Dungeon flags
  */
@@ -1030,6 +1030,59 @@ static cptr v_info_flags1[] =
 	"NO_MIRROR",
 	"NO_ROTATE"
 };
+
+
+/*
+ * Dungeon effect types (used in E:damage:frequency:type entry in d_info.txt)
+ */
+static struct
+{
+	cptr name;
+	int feat;
+} d_info_dtypes[] =
+{
+	{"ELEC", GF_ELEC},
+	{"POISON", GF_POIS},
+	{"ACID", GF_ACID},
+	{"COLD", GF_COLD},
+	{"FIRE", GF_FIRE},
+	{"MISSILE", GF_MISSILE},
+	{"ARROW", GF_ARROW},
+	{"PLASMA", GF_PLASMA},
+	{"WATER", GF_WATER},
+	{"LITE", GF_LITE},
+	{"DARK", GF_DARK},
+	{"LITE_WEAK", GF_LITE_WEAK},
+	{"LITE_DARK", GF_DARK_WEAK},
+	{"SHARDS", GF_SHARDS},
+	{"SOUND", GF_SOUND},
+	{"CONFUSION", GF_CONFUSION},
+	{"FORCE", GF_FORCE},
+	{"INERTIA", GF_INERTIA},
+	{"MANA", GF_MANA},
+	{"METEOR", GF_METEOR},
+	{"ICE", GF_ICE},
+	{"CHAOS", GF_CHAOS},
+	{"NETHER", GF_NETHER},
+	{"DISENCHANT", GF_DISENCHANT},
+	{"NEXUS", GF_NEXUS},
+	{"TIME", GF_TIME},
+	{"GRAVITY", GF_GRAVITY},
+	{"ROCKET", GF_ROCKET},
+	{"NUKE", GF_NUKE},
+	{"HOLY_FIRE", GF_HOLY_FIRE},
+	{"HELL_FIRE", GF_HELL_FIRE},
+	{"DISINTEGRATE", GF_DISINTEGRATE},
+#if 0	// implement them first
+	{"DESTRUCTION", GF_DESTRUCTION},
+	{"RAISE", GF_RAISE},
+#else	// 0
+	{"DESTRUCTION", 0},
+	{"RAISE", 0},
+#endif	// 0
+	{NULL, 0}
+};
+
 /*** Initialize from ascii template files ***/
 
 /*
@@ -1262,7 +1315,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 }
 
 
-#if 1
+#if 0
 /*
  * Initialize the "f_info" array, by parsing an ascii "template" file
  */
@@ -1727,8 +1780,13 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			if (tmp < 0) return (1);
 
 			/* Save the values */
+#if 0
 			f_ptr->d_attr = tmp;
 			f_ptr->d_char = buf[2];
+#else	// 0
+			f_ptr->f_attr = tmp;
+			f_ptr->f_char = buf[2];
+#endif	// 0
 
 			/* Next... */
 			continue;

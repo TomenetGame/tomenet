@@ -2619,14 +2619,14 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			if (!c_ptr) break;
 			if (!p_ptr->blind) msg_print(Ind, "A pool of water appears under you!");
 			//			c_ptr->feat = FEAT_WATER;
-			cave_set_feat(wpos, y, x, FEAT_WATER);
+			cave_set_feat(wpos, y, x, FEAT_DEEP_WATER);
 			break;
 		}
 		case TRAP_OF_MOAT_II:
 		{
 			msg_print(Ind, "As you touch the trap, the ground starts to shake.");
-			destroy_area(wpos, y, x, 10, TRUE, FEAT_WATER);
-			if (c_ptr) c_ptr->feat = FEAT_WATER;
+			destroy_area(wpos, y, x, 10, TRUE, FEAT_DEEP_WATER);
+			if (c_ptr) c_ptr->feat = FEAT_DEEP_WATER;
 			break;
 		}
 		/* why not? :) */
@@ -2998,7 +2998,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 
 	/* Require empty, clean, floor grid */
 	/* Hack - '+1' for secret doors */
-	if (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_WATER) flags = FTRAP_FLOOR;
+	if (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_DEEP_WATER) flags = FTRAP_FLOOR;
 	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) && 
 			(c_ptr->feat <= FEAT_DOOR_TAIL + 1))
 		flags = FTRAP_DOOR;

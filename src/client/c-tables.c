@@ -2686,8 +2686,8 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.disturb_other,		TRUE,	2,	0, 25,
 	"disturb_other",		"Disturb whenever various things happen" },
 
-	{ &c_cfg.alert_hitpoint,		FALSE,	2,	0, 26,	// XXX
-	"alert_hitpoint",		"(broken) Alert user to critical hitpoints" },
+	{ &c_cfg.alert_hitpoint,		FALSE,	2,	0, 26,
+	"alert_hitpoint",		"Alert user to critical hitpoints/sanity" },
 
 	{ &c_cfg.alert_failure,		FALSE,	2,	0, 27,	// XXX
 	"alert_failure",		"(broken) Alert user to various failures" },

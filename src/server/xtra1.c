@@ -228,7 +228,8 @@ static void prt_sanity(int Ind)
 	}
 	else if (ratio < 10)
 	{
-		attr = TERM_RED;
+//		attr = TERM_RED;
+		attr = TERM_MULTI;
 		strcpy(buf, "      Mad");
 	}
 	else if (ratio < 25)

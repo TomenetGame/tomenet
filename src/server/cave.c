@@ -322,6 +322,40 @@ int distance(int y1, int x1, int y2, int x2)
 	return (d);
 }
 
+/*
+ * Returns TRUE if a grid is considered to be a wall for the purpose
+ * of magic mapping / clairvoyance
+ */
+static bool is_wall(cave_type *c_ptr)
+{
+	byte feat;
+
+#if 0
+	/* Handle feature mimics */
+	if (c_ptr->mimic) feat = c_ptr->mimic;
+	else feat = c_ptr->feat;
+#endif	// 0
+	feat = c_ptr->feat;
+
+	/* Paranoia */
+	if (feat >= MAX_F_IDX) return FALSE;
+
+	/* Vanilla floors and doors aren't considered to be walls */
+	if (feat < FEAT_SECRET) return FALSE;
+
+	/* Exception #1: a glass wall is a wall but doesn't prevent LOS */
+	if (feat == FEAT_GLASS_WALL) return FALSE;
+
+	/* Exception #2: an illusion wall is not a wall but obstructs view */
+	if (feat == FEAT_ILLUS_WALL) return TRUE;
+
+	/* Exception #3: a small tree is a floor but obstructs view */
+	if (feat == FEAT_SMALL_TREES) return TRUE;
+
+	/* Normal cases: use the WALL flag in f_info.txt */
+	return (f_info[feat].flags1 & FF1_WALL) ? TRUE : FALSE;
+}
+
 
 /*
  * A simple, fast, integer-based line-of-sight algorithm.  By Joseph Hall,
@@ -1242,9 +1276,13 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	/* Feature code */
 	feat = c_ptr->feat;
 
+	/* Access floor */
+	f_ptr = &f_info[feat];
+
 	/* Floors (etc) */
 	/* XXX XXX Erm, it is DIRTY.  should be replaced soon */
-	if (feat <= FEAT_INVIS)
+//	if (feat <= FEAT_INVIS)
+	if (f_ptr->flags1 & (FF1_FLOOR))
 	{
 		/* Memorized (or visible) floor */
 		/* Hack -- space are visible to the dungeon master */
@@ -1300,7 +1338,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 						}
 
 						/* Hack -- always l.blue if underwater */
-						if (feat == FEAT_WATER)
+						if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
 							a = TERM_L_BLUE;
 					}
 				}
@@ -1563,7 +1601,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			(*ap) = object_attr(o_ptr);
 
 			/* Hack -- always l.blue if underwater */
-			if (feat == FEAT_WATER)
+//			if (feat == FEAT_WATER)
+			if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
 				(*ap) = TERM_L_BLUE;
 
 			/* Abnormal attr */
@@ -1842,7 +1881,8 @@ void note_spot(int Ind, int y, int x)
 		if (player_can_see_bold(Ind, y, x))
 		{
 			/* Memorize normal features */
-			if (c_ptr->feat > FEAT_INVIS) 
+//			if (c_ptr->feat > FEAT_INVIS) 
+			if (!cave_plain_floor_grid(c_ptr))
 			{
 				/* Memorize */
 				*w_ptr |= CAVE_MARK;
@@ -2100,10 +2140,10 @@ static byte priority_table[][2] =
 	{ FEAT_GRASS, 4 },
 
 	/* Tree */
-	{ FEAT_TREE, 5 },
+	{ FEAT_TREES, 5 },
 
 	/* Water */
-	{ FEAT_WATER, 6 },
+	{ FEAT_DEEP_WATER, 6 },
 
 	/* Floors */
 	{ FEAT_FLOOR, 7 },
@@ -4961,10 +5001,12 @@ void map_area(int Ind)
 			w_ptr = &p_ptr->cave_flag[y][x];
 
 			/* All non-walls are "checked" */
-			if (c_ptr->feat < FEAT_SECRET)
+//			if (c_ptr->feat < FEAT_SECRET)
+			if (!is_wall(c_ptr))
 			{
 				/* Memorize normal features */
-				if (c_ptr->feat > FEAT_INVIS)
+//				if (c_ptr->feat > FEAT_INVIS)
+				if (!cave_plain_floor_grid(c_ptr))
 				{
 					/* Memorize the object */
 					*w_ptr |= CAVE_MARK;
@@ -4977,7 +5019,8 @@ void map_area(int Ind)
 					w_ptr = &p_ptr->cave_flag[y+ddy_ddd[i]][x+ddx_ddd[i]];
 
 					/* Memorize walls (etc) */
-					if (c_ptr->feat >= FEAT_SECRET)
+//					if (c_ptr->feat >= FEAT_SECRET)
+					if (is_wall(c_ptr))
 					{
 						/* Memorize the walls */
 						*w_ptr |= CAVE_MARK;
@@ -5062,7 +5105,8 @@ void wiz_lite(int Ind)
 					c_ptr->info |= (CAVE_GLOW);
 
 					/* Memorize normal features */
-					if (c_ptr->feat > FEAT_INVIS)
+//					if (c_ptr->feat > FEAT_INVIS)
+					if (!cave_plain_floor_grid(c_ptr))
 					{
 						/* Memorize the grid */
 						*w_ptr |= CAVE_MARK;

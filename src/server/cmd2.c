@@ -190,8 +190,11 @@ void do_cmd_go_down(int Ind)
 
 	/* Hack -- Enter a store (and between gates, etc) */
 	if ((!p_ptr->ghost) &&
+			(c_ptr->feat == FEAT_SHOP))
+#if 0
 			(c_ptr->feat >= FEAT_SHOP_HEAD) &&
 			(c_ptr->feat <= FEAT_SHOP_TAIL))
+#endif	// 0
 	{
 		/* Disturb */
 		disturb(Ind, 0, 0);
@@ -1144,9 +1147,9 @@ byte twall_erosion(worldpos *wpos, int y, int x)
 		if (!in_bounds(ty, tx)) continue;
 
 		c_ptr=&zcave[ty][tx];
-		if (c_ptr->feat == FEAT_WATER)
+		if (c_ptr->feat == FEAT_DEEP_WATER)
 		{
-			feat = FEAT_WATER;
+			feat = FEAT_DEEP_WATER;
 			break;
 		}
 	}
@@ -1423,7 +1426,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				}
 			}
 			
-			else if (c_ptr->feat == FEAT_TREE)
+			else if (c_ptr->feat == FEAT_TREES)
 			{
 				/* mow down the vegetation */
 				if ((power > rand_int(400)) && twall(Ind, y, x)) /* 400 */
@@ -1447,7 +1450,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				}
 			}
 			
-			else if (c_ptr->feat == FEAT_EVIL_TREE)
+			else if (c_ptr->feat == FEAT_DEAD_TREE)
 			{
 				/* mow down the vegetation */
 				if ((power > rand_int(600)) && twall(Ind, y, x)) /* 600 */
@@ -2276,8 +2279,11 @@ void do_cmd_stay(int Ind, int pickup)
 
 
 	/* Hack -- enter a store if we are on one */
+	if (c_ptr->feat == FEAT_SHOP)
+#if 0
 	if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
 	    (c_ptr->feat <= FEAT_SHOP_TAIL))
+#endif	// 0
 	{
 		/* Disturb */
 		disturb(Ind, 0, 0);

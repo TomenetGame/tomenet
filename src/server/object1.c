@@ -569,6 +569,7 @@ static byte default_tval_to_attr(int tval)
 
 		case TV_POTION:
 		case TV_POTION2:
+		case TV_BOOK:	/* Right? */
 		{
 			return (TERM_L_BLUE);
 		}

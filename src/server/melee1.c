@@ -1648,6 +1648,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_SANITY:
 				{
 					obvious = TRUE;
+					msg_print(Ind, "You shiver with abomination..");
 
 					take_sanity_hit(Ind, damage, ddesc);
 					break;
@@ -1665,6 +1666,8 @@ bool make_attack_normal(int Ind, int m_idx)
 					/* Bare-handed? oh.. */
 					if (!o_ptr->k_idx) break;
 
+					msg_format(Ind, "\377r%^s tries to disarms you.", m_name);
+
 					if (artifact_p(o_ptr) && magik(50)) break;
 
 					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -1678,8 +1681,8 @@ bool make_attack_normal(int Ind, int m_idx)
 					if (rand_int(p_ptr->skill_thn) * (p_ptr->heavy_wield ? 1 : 3)
 							< (rlev + damage + UNAWARENESS(p_ptr)))
 					{
-//						msg_print(Ind, "You lose the grip of your weapon!");
-						msg_format(Ind, "\377r%^s disarms you!", m_name);
+						msg_print(Ind, "\377rYou lose the grip of your weapon!");
+//						msg_format(Ind, "\377r%^s disarms you!", m_name);
 
 						if (cfg.anti_arts_horde && true_artifact_p(o_ptr)
 								&& magik(98))

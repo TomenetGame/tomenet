@@ -1997,7 +1997,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SORCERY,
                                 '+', 0,
-                                '+', 600,
+                                '+', 400,	// 600.. too useful
                         },
                         {
                                 SKILL_CASTSPEED,
@@ -2007,12 +2007,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MAGERY,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 400,	// 600.. too useful
                         },
                         {
                                 SKILL_SHADOW,
                                 '+', 0,
-                                '+', 600,
+                                '+', 500,	// 600.. too useful
                         },
                         {
                                 SKILL_SPELLLENGTH,
@@ -2027,7 +2027,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_PRAY,
                                 '+', 0,
-                                '+', 600,
+                                '+', 500,	// 600.. too useful
                         },
                         {
                                 SKILL_SPELLRAD,
@@ -2773,6 +2773,7 @@ player_class class_info[MAX_CLASS] =
 
 #if 1
 	/* Basically it's copy of Adventurer */
+	/* TODO: devise another name - Bard is for music class */
 	{
                 "Bard",
                 TERM_ORANGE,
@@ -2883,7 +2884,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SORCERY,
                                 '+', 0,
-                                '+', 600,
+                                '+', 400,	// 600.. too useful
                         },
                         {
                                 SKILL_CASTSPEED,
@@ -2893,12 +2894,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MAGERY,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 400,	// 600.. too useful
                         },
                         {
                                 SKILL_SHADOW,
                                 '+', 0,
-                                '+', 600,
+                                '+', 500,	// 600.. too useful
                         },
                         {
                                 SKILL_SPELLLENGTH,
@@ -2913,7 +2914,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_PRAY,
                                 '+', 0,
-                                '+', 600,
+                                '+', 500,	// 600.. too useful
                         },
                         {
                                 SKILL_SPELLRAD,

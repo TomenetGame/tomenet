@@ -628,8 +628,8 @@ void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *x2, int
 		
 		/* hack -- buildings and farms can partially, but not completly,
 		   be built on water. */
-		if ( (zcave[*y1][*x1].feat == FEAT_WATER) &&
-		     (zcave[*y2][*x2].feat == FEAT_WATER) ) plot_clear = 0;
+		if ( (zcave[*y1][*x1].feat == FEAT_DEEP_WATER) &&
+		     (zcave[*y2][*x2].feat == FEAT_DEEP_WATER) ) plot_clear = 0;
 			
 		/* if we have a clear plot, reserve it and return */
 		if (plot_clear) 
@@ -1267,7 +1267,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		c_ptr = &zcave[door_y][door_x];
 		num_door_attempts++;
 	}	
-	while ((c_ptr->feat == FEAT_WATER) && (num_door_attempts < 30));
+	while ((c_ptr->feat == FEAT_DEEP_WATER) && (num_door_attempts < 30));
 				
 	/* Build a rectangular building */
 	for (y = h_y1; y <= h_y2; y++)
@@ -1309,19 +1309,19 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		/* North / South */
 		for (x = h_x1-2; x <= h_x2+2; x++)
 		{
-			zcave[h_y1-2][x].feat = FEAT_WATER; zcave[h_y1-2][x].info |= CAVE_ICKY;
-			zcave[h_y1-3][x].feat = FEAT_WATER; zcave[h_y1-3][x].info |= CAVE_ICKY;
-			zcave[h_y2+2][x].feat = FEAT_WATER; zcave[h_y2+2][x].info |= CAVE_ICKY;
-			zcave[h_y2+3][x].feat = FEAT_WATER; zcave[h_y2+3][x].info |= CAVE_ICKY;
+			zcave[h_y1-2][x].feat = FEAT_DEEP_WATER; zcave[h_y1-2][x].info |= CAVE_ICKY;
+			zcave[h_y1-3][x].feat = FEAT_DEEP_WATER; zcave[h_y1-3][x].info |= CAVE_ICKY;
+			zcave[h_y2+2][x].feat = FEAT_DEEP_WATER; zcave[h_y2+2][x].info |= CAVE_ICKY;
+			zcave[h_y2+3][x].feat = FEAT_DEEP_WATER; zcave[h_y2+3][x].info |= CAVE_ICKY;
 		}		
 		/* East / West */
 		for (y = h_y1-2; y <= h_y2+2; y++)
 		{
 			/* Get the grid */
-			zcave[y][h_x1-2].feat = FEAT_WATER; zcave[y][h_x1-2].info |= CAVE_ICKY;
-			zcave[y][h_x1-3].feat = FEAT_WATER; zcave[y][h_x1-3].info |= CAVE_ICKY;
-			zcave[y][h_x2+2].feat = FEAT_WATER; zcave[y][h_x2+2].info |= CAVE_ICKY;
-			zcave[y][h_x2+3].feat = FEAT_WATER; zcave[y][h_x2+3].info |= CAVE_ICKY;
+			zcave[y][h_x1-2].feat = FEAT_DEEP_WATER; zcave[y][h_x1-2].info |= CAVE_ICKY;
+			zcave[y][h_x1-3].feat = FEAT_DEEP_WATER; zcave[y][h_x1-3].info |= CAVE_ICKY;
+			zcave[y][h_x2+2].feat = FEAT_DEEP_WATER; zcave[y][h_x2+2].info |= CAVE_ICKY;
+			zcave[y][h_x2+3].feat = FEAT_DEEP_WATER; zcave[y][h_x2+3].info |= CAVE_ICKY;
 		}		
 		zcave[drawbridge_y[0]][drawbridge_x[0]].feat = FEAT_DRAWBRIDGE;
 		zcave[drawbridge_y[0]][drawbridge_x[0]].info |= CAVE_ICKY;
@@ -1689,9 +1689,9 @@ char terrain_spot(terrain_type * terrain)
 	feat = FEAT_DIRT;
 
 	if (rand_int(1000) < terrain->grass) feat = FEAT_GRASS;
-	if (rand_int(1000) < terrain->tree) feat = FEAT_TREE;
-	if (rand_int(1000) < terrain->eviltree) feat = FEAT_EVIL_TREE;
-	if (rand_int(1000) < terrain->water) feat = FEAT_WATER;
+	if (rand_int(1000) < terrain->tree) feat = FEAT_TREES;
+	if (rand_int(1000) < terrain->eviltree) feat = FEAT_DEAD_TREE;
+	if (rand_int(1000) < terrain->water) feat = FEAT_DEEP_WATER;
 	if (rand_int(1000) < terrain->mud) feat = FEAT_MUD;
 	return feat;
 }
@@ -2271,7 +2271,8 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 					}
 					else{
 						c_ptr->feat=fgetc(((struct guildsave*)data)->fp);
-						if(c_ptr->feat>FEAT_INVIS)
+//						if(c_ptr->feat>FEAT_INVIS)
+						if(!cave_plain_floor_grid(c_ptr))
 							c_ptr->info &= ~(CAVE_ROOM);
 					}
 				}
@@ -2396,7 +2397,8 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						}
 						else{
 							c_ptr->feat=fgetc(((struct guildsave*)data)->fp);
-							if(c_ptr->feat>FEAT_INVIS)
+//							if(c_ptr->feat>FEAT_INVIS)
+							if(!cave_plain_floor_grid(c_ptr))
 								c_ptr->info &= ~(CAVE_ROOM);
 							if(c_ptr->feat==FEAT_HOME_HEAD){
 								id=(fgetc(gfp)<<8);
