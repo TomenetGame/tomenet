@@ -4958,15 +4958,24 @@ bool master_build(int Ind, char * parms)
 	c_ptr->feat = new_feat;
 	if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL){
 		struct dna_type *c_dna;
+		int id;
 		if(c_ptr->special) return(FALSE);
 		MAKE(c_dna, struct dna_type);
 		c_ptr->special=c_dna;
 #ifdef NEWHOUSES /* a server reset/player savefile change needed */
 		c_dna->creator=p_ptr->dna;	/* unique extra */
 #endif
+		c_dna->owner=p_ptr->id;
 		/* sorry, its only for testing, so quick */
-		if(!(parms && parms[2] && (c_dna->owner=lookup_player_id(&parms[2]))))
-			c_dna->owner=p_ptr->id;
+		if(!(parms && parms[2] && (id=lookup_player_id(&parms[2])))){
+			int i;
+			for(i=1;i<=NumPlayers;i++){
+				if(Players[i]->id==id){
+					c_dna->creator=Players[i]->dna;
+					c_dna->owner=id;
+				}
+			}
+		}
 		c_dna->owner_type=OT_PLAYER;
 		c_dna->a_flags=ACF_NONE;
 		c_dna->min_level=1;
