@@ -1997,10 +1997,19 @@ static void calc_bonuses(int Ind)
 
 			/* Affect blows */
 			if (k_ptr->flags1 & TR1_BLOWS) extra_blows += o_ptr->bpval;
+                if (f5 & (TR5_CRIT)) p_ptr->xtra_crit += o_ptr->bpval;
 
 			/* Affect spells */
 			if (k_ptr->flags1 & TR1_SPELL) extra_spells += o_ptr->bpval;
 //			if (k_ptr->flags1 & TR1_SPELL_SPEED) extra_spells += o_ptr->bpval;
+
+                /* Affect mana capacity */
+                if (f1 & (TR1_MANA)) p_ptr->to_m += o_ptr->bpval;
+
+                /* Affect life capacity */
+                if (f1 & (TR1_LIFE)) p_ptr->to_l += o_ptr->bpval;
+
+//                if (f5 & (TR5_LUCK)) p_ptr->luck_cur += o_ptr->bpval;
 		}
 
 		/* Next, add our ego bonuses */
@@ -2008,12 +2017,23 @@ static void calc_bonuses(int Ind)
 		 * bonus but not the ego bonus so we don't add them twice.
 		*/
 #if 1
-		if (o_ptr->name2 && o_ptr->tval!=TV_RING)
+//		if (o_ptr->name2 && o_ptr->tval!=TV_RING) // pls see apply_magic ;)
+		if (o_ptr->name2)
 		{
 			artifact_type *a_ptr;
 	 	
 			a_ptr =	ego_make(o_ptr);
 			f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
+			f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
+		}
+
+		if (o_ptr->name1 == ART_RANDART)
+		{
+			artifact_type *a_ptr;
+	 	
+			a_ptr =	randart_make(o_ptr);
+			f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
+			f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
 		}
 #endif
 

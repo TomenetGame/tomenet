@@ -2898,7 +2898,7 @@ void monster_death(int Ind, int m_idx)
 		qq_ptr = &forge;
 
 		/* Prepare to make the Stormbringer */
-		object_prep(qq_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
+		invcopy(qq_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
 
 		/* Megahack -- specify the ego */
 		qq_ptr->name2 = 187;
@@ -2967,7 +2967,7 @@ void monster_death(int Ind, int m_idx)
 		qq_ptr = &forge;
 
                 /* Prepare to make a Raal's Tome of Destruction */
-                object_prep(qq_ptr, lookup_kind(TV_MAGIC_BOOK, 8));
+                invcopy(qq_ptr, lookup_kind(TV_MAGIC_BOOK, 8));
 
 		/* Drop it in the dungeon */
                 drop_near(qq_ptr, -1, wpos, y, x);
@@ -3258,7 +3258,7 @@ void monster_death(int Ind, int m_idx)
 			q_ptr = &forge;
 
 			/* Mega-Hack -- Prepare to make "Grond" */
-			object_prep(q_ptr, lookup_kind(TV_HAFTED, SV_GROND));
+			invcopy(q_ptr, lookup_kind(TV_HAFTED, SV_GROND));
 
 			/* Mega-Hack -- Mark this item as "Grond" */
 			q_ptr->name1 = ART_GROND;
@@ -3273,7 +3273,7 @@ void monster_death(int Ind, int m_idx)
 			q_ptr = &forge;
 
 			/* Mega-Hack -- Prepare to make "Morgoth" */
-			object_prep(q_ptr, lookup_kind(TV_CROWN, SV_MORGOTH));
+			invcopy(q_ptr, lookup_kind(TV_CROWN, SV_MORGOTH));
 
 			/* Mega-Hack -- Mark this item as "Morgoth" */
 			q_ptr->name1 = ART_MORGOTH;
@@ -3294,8 +3294,8 @@ void monster_death(int Ind, int m_idx)
 
 			/* Mega-Hack -- Prepare to make a ring of invisibility */
 			/* Sorry, =inv is too nice.. */
-			//                        object_prep(qq_ptr, lookup_kind(TV_RING, SV_RING_INVIS));
-			object_prep(qq_ptr, lookup_kind(TV_RING, SV_RING_STEALTH));
+			//                        invcopy(qq_ptr, lookup_kind(TV_RING, SV_RING_INVIS));
+			invcopy(qq_ptr, lookup_kind(TV_RING, SV_RING_STEALTH));
 			qq_ptr->number = 1;
 
 			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE);
@@ -3311,7 +3311,7 @@ void monster_death(int Ind, int m_idx)
 			object_wipe(qq_ptr);
 
 			/* Mega-Hack -- Prepare to make a Ring of Power */
-			object_prep(qq_ptr, lookup_kind(TV_RING, SV_RING_SPECIAL));
+			invcopy(qq_ptr, lookup_kind(TV_RING, SV_RING_SPECIAL));
 			qq_ptr->number = 1;
 
 			qq_ptr->name1 = ART_RANDART;
@@ -3393,7 +3393,7 @@ void monster_death(int Ind, int m_idx)
 					I_kind = lookup_kind(a_ptr->tval, a_ptr->sval);
 
 					/* Create the artifact */
-					object_prep(qq_ptr, I_kind);
+					invcopy(qq_ptr, I_kind);
 
 					/* Save the name */
 					qq_ptr->name1 = a_idx;
@@ -3430,7 +3430,7 @@ void monster_death(int Ind, int m_idx)
 		qq_ptr = &forge;
 
 		/* Prepare to make some Firestone */
-		object_prep(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRESTONE));
+		invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRESTONE));
 		qq_ptr->number = (byte)rand_range(10,20);
 
 		/* Drop it in the dungeon */

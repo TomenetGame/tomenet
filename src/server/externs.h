@@ -647,7 +647,6 @@ extern void Handle_direction(int Ind, int dir);
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
 extern s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void object_wipe(object_type *o_ptr);
-extern void object_prep(object_type *o_ptr, int k_idx);
 extern bool can_use(int Ind, object_type *o_ptr);
 extern void flavor_init(void);
 extern void reset_visuals(void);

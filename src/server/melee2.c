@@ -2989,6 +2989,7 @@ int mon_will_run(int Ind, int m_idx)
 
 	monster_type *m_ptr = &m_list[m_idx];
 
+	cave_type **zcave;
 #ifdef ALLOW_TERROR
 
         monster_race *r_ptr = race_inf(m_ptr);
@@ -2997,6 +2998,20 @@ int mon_will_run(int Ind, int m_idx)
 	u16b p_chp, p_mhp;
 	u16b m_chp, m_mhp;
 	u32b p_val, m_val;
+
+	/* Hack -- aquatic life outa water */
+	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE); // I'll run instead!
+
+	if (zcave[m_ptr->fy][m_ptr->fx].feat != FEAT_WATER)
+	{
+		if (r_ptr->flags7 & RF7_AQUATIC) return (TRUE);
+	}
+	else
+	{
+		if (!(r_ptr->flags3 & RF3_UNDEAD) &&
+				!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ))
+			return(TRUE);
+	}
 
 #endif
 
@@ -3325,6 +3340,9 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 
 /*
  * Choose "logical" directions for monster movement
+ */
+/*
+ * TODO: Aquatic out of water should rush for one
  */
 static void get_moves(int Ind, int m_idx, int *mm)
 {
@@ -4158,6 +4176,20 @@ static void process_monster(int Ind, int m_idx)
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
 	
+#if 0	// too bad hack!
+	/* Hack -- aquatic life outa water */
+	if (zcave[oy][ox].feat != FEAT_WATER)
+	{
+		if (r_ptr->flags7 & RF7_AQUATIC) m_ptr->monfear = 50;
+	}
+	else
+	{
+		if (!(r_ptr->flags3 & RF3_UNDEAD) &&
+				!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ))
+			m_ptr->monfear = 50;
+	}
+#endif	// 0
+
 
 	/* attempt to "mutiply" if able and allowed */
 
@@ -4526,7 +4558,17 @@ static void process_monster(int Ind, int m_idx)
 
 		/* restrict aquatic life to the pond */
 		if(do_move && (r_ptr->flags7 & RF7_AQUATIC)){
-			if(c_ptr->feat != FEAT_WATER) do_move=FALSE;
+			if((c_ptr->feat != FEAT_WATER) &&
+				(zcave[oy][ox].feat == FEAT_WATER)) do_move=FALSE;
+		}
+
+		/* Hack -- those that hate water */
+		if (do_move && c_ptr->feat == FEAT_WATER)
+		{
+			if (!(r_ptr->flags3 & RF3_UNDEAD) &&
+				!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ) &&
+				(zcave[oy][ox].feat != FEAT_WATER))
+				do_move = FALSE;
 		}
 
 		/* A monster is in the way */

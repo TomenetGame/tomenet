@@ -281,6 +281,7 @@ void do_cmd_wield(int Ind, int item)
 	cptr act;
 
 	char o_name[160];
+        u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
 
 
 	/* Restrict the choices */
@@ -445,6 +446,15 @@ void do_cmd_wield(int Ind, int item)
 
 	/* Message */
 	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(slot));
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	/* Auto Curse */
+	if (f3 & TR3_AUTO_CURSE)
+	{
+		/* The object recurse itself ! */
+		o_ptr->ident |= ID_CURSED;
+	}
 
 	/* Cursed! */
 	if (cursed_p(o_ptr))

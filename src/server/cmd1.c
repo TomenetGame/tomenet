@@ -819,14 +819,14 @@ static void hit_trap(int Ind)
 	trap_type *t_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
-//	int                     i, num, dam;
 
 	cave_type               *c_ptr;
-	byte                    *w_ptr;
 
 #if 0
+	int                     i, num, dam;
+	byte                    *w_ptr;
 	cptr            name = "a trap";
-#endif
+#endif	// 0
 	bool ident=FALSE;
 
 	/* Ghosts ignore traps */
@@ -838,7 +838,7 @@ static void hit_trap(int Ind)
 	/* Get the cave grid */
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
-	w_ptr = &p_ptr->cave_flag[p_ptr->py][p_ptr->px];
+//	w_ptr = &p_ptr->cave_flag[p_ptr->py][p_ptr->px];
 	t_ptr = c_ptr->special.ptr;
 
 	if (t_ptr->t_idx != 0)
@@ -3277,7 +3277,7 @@ static bool run_test(int Ind)
 		}
 
 		/* Hack -- always stop in water */
-		if (c_ptr->feat == FEAT_WATER) return TRUE;
+		if (c_ptr->feat == FEAT_WATER && !p_ptr->fly) return TRUE;
 
 		/* Assume unknown */
 		inv = TRUE;

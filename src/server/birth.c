@@ -1132,13 +1132,14 @@ void admin_outfit(int Ind)
 		(void)inven_carry(Ind, o_ptr);
 
 		/* gimme books :) */
-		for (i = p_ptr->pclass == CLASS_WARRIOR?0:1; i < 9; i++)
+//		for (i = p_ptr->pclass == CLASS_WARRIOR?0:1; i < 9; i++)
+		for (i = 0; i < 9; i++)
 		{
 			int k = lookup_kind(p_ptr->mp_ptr->spell_book, i);
 			if (!k) continue;
 			invcopy(o_ptr, k);
-			o_ptr->number = 3;
-			o_ptr->discount = 100;
+			o_ptr->number = 9;
+			o_ptr->discount = 72;
 			object_known(o_ptr);
 			o_ptr->owner = p_ptr->id;
 			o_ptr->level = 1;

@@ -770,6 +770,7 @@ Change list for PernMangband
 - monsters also cast spells even when out of sight.
 - *ID*ed items are marked with '*'.
 - /unc(urse)
+[H] makeshift underground watery area added for exhibition.
 [B] client crushed when having 2 same books with different inscription.
     (not really fixed; just hacked around)
 
@@ -792,18 +793,6 @@ Change list for PernMangband
     ./mangclient: Received unknown packet type (86, 41), dropping
 [B][C] chat-history contains lines with 'mindcrafter'. 
 [B] log-file viewer leaves messy screen when done.
-	Program received signal SIGSEGV, Segmentation fault.
-	0x80526bf in message_str (age=0) at client/c-util.c:1340
-	1340            o = message__ptr[x];
-	(gdb) bt
-	#0  0x80526bf in message_str (age=0) at client/c-util.c:1340
-	#1  0x80659f1 in fix_message () at client/c-xtra1.c:1067
-	#2  0x80666d0 in window_stuff () at client/c-xtra1.c:1407
-	#3  0x805b0f5 in Input_loop () at client/c-init.c:229
-	#4  0x805b5b0 in client_init (argv1=0x0) at client/c-init.c:464
-	#5  0x806822a in main (argc=1, argv=0xbfbff740) at client/client.c:263
-	#6  0x804a311 in _start ()
-	
 
 ==== below this line are changes to be done in the future ====
 [minor ones]
@@ -894,6 +883,42 @@ Change list for PernMangband
 - new networking code (to kiss xpilot adieu :)
 - redefine packets in a way more generic
 - ./configure
+- warriors.prf, priest.prf etc. should be bandled with client distribution?
 [lunatic ones]
 - 3-D gfx and full-audio support
 - full-mouse operation
+
+==== below this line are backtraces collected so far (bad or mad.) ====
+Program received signal SIGSEGV, Segmentation fault.
+0x80879d3 in project_i (Ind=1, who=-1, r=0, wpos=0x8d3ca2c, y=121, x=179, 
+		dam=500, typ=13) at server/spells1.c:2606
+2606            o_ptr = &o_list[c_ptr->o_idx];
+(gdb) bt
+#0  0x80879d3 in project_i (Ind=1, who=-1, r=0, wpos=0x8d3ca2c, y=121, x=179, 
+		dam=500, typ=13) at server/spells1.c:2606
+#1  0x808d8b1 in project (who=-1, rad=16, wpos=0x8d3ca2c, y=121, x=179, 
+		dam=500, typ=13, flg=120) at server/spells1.c:5850
+#2  0x8095348 in fire_ball (Ind=1, typ=13, dir=6, dam=500, rad=16)
+at server/spells2.c:4082
+#3  0x80c3441 in do_cmd_pray_aux (Ind=1, dir=6) at server/cmd5.c:3365
+#4  0x810fd7f in Handle_direction (Ind=1, dir=6) at server/nserver.c:6736
+#5  0x810e0f1 in Receive_direction (ind=0) at server/nserver.c:5891
+#6  0x8103d5a in process_pending_commands (ind=0) at server/nserver.c:1717
+#7  0x8103fdc in Handle_input (fd=10, arg=0) at server/nserver.c:1862
+#8  0x80e3f45 in sched () at server/sched.c:549
+#9  0x80f8aef in play_game (new_game=0 '\000') at server/dungeon.c:3462
+#10 0x8110c70 in main (argc=0, argv=0xbfbff740) at server/main.c:269
+#11 0x8049d99 in _start ()
+
+Program received signal SIGSEGV, Segmentation fault.
+0x80526bf in message_str (age=0) at client/c-util.c:1340
+1340            o = message__ptr[x];
+(gdb) bt
+#0  0x80526bf in message_str (age=0) at client/c-util.c:1340
+#1  0x80659f1 in fix_message () at client/c-xtra1.c:1067
+#2  0x80666d0 in window_stuff () at client/c-xtra1.c:1407
+#3  0x805b0f5 in Input_loop () at client/c-init.c:229
+#4  0x805b5b0 in client_init (argv1=0x0) at client/c-init.c:464
+#5  0x806822a in main (argc=1, argv=0xbfbff740) at client/client.c:263
+#6  0x804a311 in _start ()
+

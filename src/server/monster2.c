@@ -1981,7 +1981,16 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Access the location */
 	c_ptr = &zcave[y][x];
 
-	if((r_ptr->flags7 & RF7_AQUATIC) && c_ptr->feat!=FEAT_WATER) return FALSE;
+	/* XXX makeshift; to be replaced with more generic function */
+//	if((r_ptr->flags7 & RF7_AQUATIC) && c_ptr->feat!=FEAT_WATER) return FALSE;
+	if(c_ptr->feat == FEAT_WATER)
+	{
+		if (!(r_ptr->flags3 & RF3_UNDEAD) &&
+			!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY)))
+			return FALSE;
+	}
+	else if(r_ptr->flags7 & RF7_AQUATIC) return FALSE;
+
 
 	/* Make a new monster */
 	c_ptr->m_idx = m_pop();
@@ -2325,7 +2334,7 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 			if (!z) break;
 
 			/* Place a single escort */
-			(void)place_monster_one(wpos, ny, nx, z, pick_ego_monster(z, getlevel(wpos)), 0, slp, FALSE);
+			(void)place_monster_one(wpos, ny, nx, z, pick_ego_monster(z, level), 0, slp, FALSE);
 
 			/* Place a "group" of escorts if needed */
 			if ((r_info[z].flags1 & RF1_FRIENDS) ||
@@ -2888,7 +2897,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int type)
 
 
 	/* Pick a monster, using the level calculation */
-	/* Exception for Morgoth (so that he won't summon townies)
+	/* XXX: Exception for Morgoth (so that he won't summon townies)
 	 * This fix presumes Morgie and Morgie only has level 100 */
 #ifdef NEW_DUNGEON
 //	r_idx = (lev != 100)?get_mon_num((getlevel(wpos) + lev) / 2 + 5) : 100;

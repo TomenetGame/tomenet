@@ -742,24 +742,59 @@ static s32b object_value_base(int Ind, object_type *o_ptr)
 	return (0L);
 }
 
+static void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp)
+{
+	s16b j, e_idx = o_ptr->name2;
+	ego_item_type *e_ptr = &e_info[e_idx];
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+	/* Hack -- eliminate Base object powers */
+	(*f1) &= ~k_ptr->flags1;
+	(*f2) &= ~k_ptr->flags2;
+	(*f3) &= ~k_ptr->flags3;
+        (*f4) &= ~k_ptr->flags4;
+        (*f5) &= ~k_ptr->flags5;
+        (*esp) &= ~k_ptr->esp;
+
+	/* Hack -- eliminate 'promised' extra powers */
+	for (j = 0; j < 5; j++)
+	{
+		/* Rarity check */
+		if (e_ptr->rar[j] > 99)
+		{
+			*(f1) &= ~e_ptr->flags1[j];
+			*(f2) &= ~e_ptr->flags2[j];
+			*(f3) &= ~e_ptr->flags3[j];
+			*(f4) &= ~e_ptr->flags4[j];
+			*(f5) &= ~e_ptr->flags5[j];
+			*(esp) &= ~e_ptr->esp[j];
+		}
+	}
+}
+
 /* Return the value of the flags the object has... */
 s32b flag_cost(object_type * o_ptr, int plusses)
 {
 	s32b total = 0;
-        u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, esp, am;
 
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-        if (f5 & TR5_TEMPORARY)
-        {
-                return 0;
-        }
-        if (f4 & TR4_CURSE_NO_DROP)
-        {
-                return 0;
-        }
+	if (f5 & TR5_TEMPORARY)
+	{
+		return 0;
+	}
+	/*
+	if (f4 & TR4_CURSE_NO_DROP)
+	{
+		return 0;
+	}
+	*/
 
-#if 0
+	/* Hack - This shouldn't be here, still.. */
+	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+#if 0	// stat changes are observable w/o *ID*
 	if (f1 & TR1_STR) total += (1000 * plusses);
 	if (f1 & TR1_INT) total += (1000 * plusses);
 	if (f1 & TR1_WIS) total += (1000 * plusses);
@@ -872,13 +907,21 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f3 & TR3_HEAVY_CURSE) total -= 12500;
 	if (f3 & TR3_PERMA_CURSE) total -= 15000;
 	if (f3 & TR3_FEATHER) total += 1250;
-        if (f4 & TR4_FLY) total += 10000;
-        if (f4 & TR4_NEVER_BLOW) total -= 15000;
-        if (f4 & TR4_PRECOGNITION) total += 250000;
-        if (f4 & TR4_BLACK_BREATH) total -= 12500;
-        if (f4 & TR4_DG_CURSE) total -= 25000;
-        if (f4 & TR4_CLONE) total -= 10000;
-//        if (f4 & TR4_LEVELS) total += o_ptr->elevel * 2000;
+
+	if (f4 & TR4_FLY) total += 10000;
+	if (f4 & TR4_NEVER_BLOW) total -= 15000;
+	if (f4 & TR4_PRECOGNITION) total += 250000;
+	if (f4 & TR4_BLACK_BREATH) total -= 12500;
+	if (f4 & TR4_DG_CURSE) total -= 25000;
+	if (f4 & TR4_CLONE) total -= 10000;
+	//        if (f4 & TR4_LEVELS) total += o_ptr->elevel * 2000;
+
+	am = ((f4 & (TR4_ANTIMAGIC_50)) ? 5 : 0)
+		+ ((f4 & (TR4_ANTIMAGIC_30)) ? 3 : 0)
+		+ ((f4 & (TR4_ANTIMAGIC_20)) ? 2 : 0)
+		+ ((f4 & (TR4_ANTIMAGIC_10)) ? 1 : 0)
+		+ ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? -5 : 0);
+	if (am > 0) total += PRICE_BOOST(am, 1, 1)* 2000L;
 
 	/* Also, give some extra for activatable powers... */
 
@@ -999,6 +1042,8 @@ s32b flag_cost(object_type * o_ptr, int plusses)
  * pval brings exponensial price boost, so that =int+6 is *much*
  * more expensive than =int+2.
  * Probably, it's not formula job but that of table..?
+ *
+ * XXX: 'Ego randarts' are not handled correltly, so be careful!
  */
 static s32b object_value_real(int Ind, object_type *o_ptr)
 {
@@ -1078,6 +1123,11 @@ static s32b object_value_real(int Ind, object_type *o_ptr)
 		}
 	}
 
+	/* Hack */
+	if ((f4 & TR4_CURSE_NO_DROP) || (f3 & TR3_AUTO_CURSE))
+	{
+		return 0;
+	}
 
 	/* Analyze pval bonus */
 	switch (o_ptr->tval)
@@ -1118,7 +1168,8 @@ static s32b object_value_real(int Ind, object_type *o_ptr)
 				int count = 0;
 
 				/* No pval */
-				if (!pval)
+//				if (!pval)
+				if (pval <= 0)
 				{
 					pval = o_ptr->pval;
 					continue;
@@ -1137,14 +1188,16 @@ static s32b object_value_real(int Ind, object_type *o_ptr)
 				if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 200L;
 
 				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 500L);
+//				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 500L);
 
 				/* Give credit for stealth and searching */
-				if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
-				if (f1 & TR1_SEARCH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
+//				if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
+				if (f1 & TR1_STEALTH) value += pval * pval * 100L;
+				if (f1 & TR1_SEARCH) value += pval * pval * 100L;
 
 				/* Give credit for infra-vision and tunneling */
-				if (f1 & TR1_INFRA) value += (PRICE_BOOST(pval, 3, 1) * 50L);
-				if (f1 & TR1_TUNNEL) value += (PRICE_BOOST(pval, 3, 1) * 50L);
+				if (f1 & TR1_INFRA) value += pval * pval * 100L;
+				if (f1 & TR1_TUNNEL) value += pval * pval * 50L;
 
 				/* Give credit for extra attacks */
 				if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
@@ -1178,6 +1231,7 @@ static s32b object_value_real(int Ind, object_type *o_ptr)
 
 					a_ptr =	ego_make(o_ptr);
 					f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
+					f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
 				}
 			}
 			break;
@@ -1592,7 +1646,8 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 	if (j_ptr->ident & ID_MENTAL) o_ptr->ident |= ID_MENTAL;
 
 	/* Hack -- blend "inscriptions" */
-	if (j_ptr->note) o_ptr->note = j_ptr->note;
+//	if (j_ptr->note) o_ptr->note = j_ptr->note;
+	if (o_ptr->note) j_ptr->note = o_ptr->note;
 
 	/* Hack -- could average discounts XXX XXX XXX */
 	/* Hack -- save largest discount XXX XXX XXX */
@@ -1656,7 +1711,14 @@ void invcopy(object_type *o_ptr, int k_idx)
 	o_ptr->sval = k_ptr->sval;
 
 	/* Default "pval" */
-	o_ptr->pval = k_ptr->pval;
+//	o_ptr->pval = k_ptr->pval;
+	if (o_ptr->tval == TV_POTION ||
+		o_ptr->tval == TV_POTION2 ||
+		o_ptr->tval == TV_LITE ||
+		o_ptr->tval == TV_FOOD)
+		o_ptr->pval = k_ptr->pval;
+	else if (!o_ptr->tval == TV_ROD)
+		o_ptr->bpval = k_ptr->pval;
 
 	/* Default number */
 	o_ptr->number = 1;
@@ -2655,7 +2717,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 		case TV_CLOAK:
 		{
 			if (o_ptr->sval == SV_ELVEN_CLOAK)
-                                o_ptr->pval = randint(4);       /* No cursed elven cloaks...? */
+                                o_ptr->bpval = randint(4);       /* No cursed elven cloaks...? */
 #if 1
 			/* Set the Kolla cloak's base bonuses*/
 			if(o_ptr->sval == SV_KOLLA)
@@ -3506,7 +3568,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				/* Amulet of Terken -- never cursed */
 				case SV_AMULET_TERKEN:
 				{
-					o_ptr->pval = randint(5) + m_bonus(5, level);
+					o_ptr->bpval = randint(5) + m_bonus(5, level);
 					//o_ptr->to_h = randint(5);
 					//o_ptr->to_d = randint(5);
 
@@ -3521,7 +3583,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				/* Amulet of the Moon -- never cursed */
 				case SV_AMULET_THE_MOON:
 				{
-					o_ptr->pval = randint(5) + m_bonus(5, level);
+					o_ptr->bpval = randint(5) + m_bonus(5, level);
 					o_ptr->to_h = randint(5);
 					o_ptr->to_d = randint(5);
 
@@ -3536,14 +3598,14 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
                                 case SV_AMULET_TRICKERY:
                                 case SV_AMULET_DEVOTION:
 				{
-                                        o_ptr->pval = 1 + m_bonus(3, level);
+                                        o_ptr->bpval = 1 + m_bonus(3, level);
 
 					break;
 				}
 
                                 case SV_AMULET_WEAPONMASTERY:
 				{
-                                        o_ptr->pval = 1 + m_bonus(2, level);
+                                        o_ptr->bpval = 1 + m_bonus(2, level);
                                         o_ptr->to_a = 1 + m_bonus(4, level);
                                         o_ptr->to_h = 1 + m_bonus(5, level);
                                         o_ptr->to_d = 1 + m_bonus(5, level);
@@ -3557,7 +3619,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
                                 case SV_AMULET_WISDOM:
                                 case SV_AMULET_INFRA:
 				{
-					o_ptr->pval = 1 + m_bonus(5, level);
+					o_ptr->bpval = 1 + m_bonus(5, level);
 
 					/* Cursed */
 					if (power < 0)
@@ -3566,7 +3628,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						o_ptr->ident |= (ID_CURSED);
 
 						/* Reverse bonuses */
-						o_ptr->pval = 0 - (o_ptr->pval);
+						o_ptr->bpval = 0 - (o_ptr->bpval);
 					}
 
 					break;
@@ -3575,7 +3637,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
                                 /* Amulet of the Serpents */
                                 case SV_AMULET_SERPENT:
 				{
-                                        o_ptr->pval = 1 + m_bonus(5, level);
+                                        o_ptr->bpval = 1 + m_bonus(5, level);
                                         o_ptr->to_a = 1 + m_bonus(6, level);
 
 					/* Cursed */
@@ -3585,7 +3647,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						o_ptr->ident |= (ID_CURSED);
 
 						/* Reverse bonuses */
-						o_ptr->pval = 0 - (o_ptr->pval);
+						o_ptr->bpval = 0 - (o_ptr->bpval);
 					}
 
 					break;
@@ -3612,7 +3674,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				/* Amulet of searching */
 				case SV_AMULET_SEARCHING:
 				{
-					o_ptr->pval = randint(5) + m_bonus(5, level);
+					o_ptr->bpval = randint(5) + m_bonus(5, level);
 
 					/* Cursed */
 					if (power < 0)
@@ -3621,7 +3683,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						o_ptr->ident |= (ID_CURSED);
 
 						/* Reverse bonuses */
-						o_ptr->pval = 0 - (o_ptr->pval);
+						o_ptr->bpval = 0 - (o_ptr->bpval);
 					}
 
 					break;
@@ -3630,7 +3692,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				/* Amulet of the Magi -- never cursed */
 				case SV_AMULET_THE_MAGI:
 				{
-                                        o_ptr->pval = 1 + m_bonus(3, level);
+                                        o_ptr->bpval = 1 + m_bonus(3, level);
 
 //					if (randint(3)==1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
 
@@ -3644,7 +3706,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					o_ptr->ident |= (ID_CURSED);
 
 					/* Penalize */
-					o_ptr->pval = 0 - (randint(5) + m_bonus(5, level));
+					o_ptr->bpval = 0 - (randint(5) + m_bonus(5, level));
 					o_ptr->to_a = 0 - (randint(5) + m_bonus(5, level));
 
 					break;
@@ -5644,6 +5706,8 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		o_ptr->note = quark_add(c);
 	}
 
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
 	/* Auto Curse */
 	if (f3 & TR3_AUTO_CURSE)
 	{
@@ -5963,56 +6027,6 @@ void setup_objects(void)
 	}
 }
 
-/*
- * Prepare an object based on an object kind.
- */
-void object_prep(object_type *o_ptr, int k_idx)
-{
-	object_kind *k_ptr = &k_info[k_idx];
-
-	/* Clear the record */
-        o_ptr = WIPE(o_ptr, object_type);
-
-	/* Save the kind index */
-	o_ptr->k_idx = k_idx;
-
-	/* Efficiency -- tval/sval */
-	o_ptr->tval = k_ptr->tval;
-	o_ptr->sval = k_ptr->sval;
-
-	/* Default "pval" */
-	o_ptr->pval = k_ptr->pval;
-
-	/* Default number */
-	o_ptr->number = 1;
-
-	/* Default weight */
-	o_ptr->weight = k_ptr->weight;
-
-	/* Default magic */
-	o_ptr->to_h = k_ptr->to_h;
-	o_ptr->to_d = k_ptr->to_d;
-	o_ptr->to_a = k_ptr->to_a;
-
-	/* Default power */
-	o_ptr->ac = k_ptr->ac;
-	o_ptr->dd = k_ptr->dd;
-	o_ptr->ds = k_ptr->ds;
-
-	/* Hack -- cursed items are always "cursed" */
-	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (ID_CURSED);
-//	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (ID_CURSED);
-#if 0
-        /* Hack give a basic exp/exp level to an object that needs it */
-        if(k_ptr->flags4 & TR4_LEVELS)
-        {
-                o_ptr->elevel = (k_ptr->level / 10) + 1;
-                o_ptr->exp = player_exp[o_ptr->elevel - 1];
-                o_ptr->pval2 = 1;       /* Start with one point */
-                o_ptr->pval3 = 0;       /* No flags groups */
-        }
-#endif
-}
 
 
 /*

@@ -196,6 +196,14 @@
 #define TRAPPED_DOOR_BASE	30
 
 /*
+ * makeshift river for 3.x
+ */
+#define DUN_RIVER_CHANCE	20
+#define DUN_STR_WAT			4
+#define DUN_LAKE_TRY		8	/* how many tries to generate lake on river */
+
+
+/*
  * Simple structure to hold a map location
  */
 
@@ -257,6 +265,8 @@ struct dun_data
 
 	/* Hack -- there is a pit/nest on this level */
 	bool crowded;
+
+	bool watery;
 };
 
 
@@ -718,7 +728,40 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
 	}
 }
 
+/*
+ * Helper function for "monster nest (undead)"
+ */
+static bool vault_aux_aquatic(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
 
+	/* Decline unique monsters */
+	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+
+	/* Require Aquatique */
+	if (!(r_ptr->flags7 & RF7_AQUATIC)) return (FALSE);
+
+	/* Okay */
+	return (TRUE);
+}
+
+#if 0
+static void aqua_monsters(struct worldpos *wpos, int y1, int x1, int num)
+{
+	get_mon_num_hook = vault_aux_aquatic;
+
+	/* Prepare allocation table */
+	get_mon_num_prep();
+
+	vault_monsters(wpos, y1, x1, num)
+
+	/* Remove restriction */
+	get_mon_num_hook = dungeon_aux;
+
+	/* Prepare allocation table */
+	get_mon_num_prep();
+}
+#endif	// 0
 
 /*
  * Places "streamers" of rock through dungeon
@@ -728,7 +771,7 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
  * basic vein, one with hidden gold, and one with known gold.  The
  * hidden gold types are currently unused.
  */
-static void build_streamer(struct worldpos *wpos, int feat, int chance)
+static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pierce)
 {
 	int		i, tx, ty;
 	int		y, x, dir;
@@ -765,22 +808,117 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance)
 			c_ptr = &zcave[ty][tx];
 
 			/* Only convert "granite" walls */
-			if (c_ptr->feat < FEAT_WALL_EXTRA) continue;
-			if (c_ptr->feat > FEAT_WALL_SOLID) continue;
+			if (pierce)
+			{
+				if (cave_perma_bold(zcave, ty, tx)) continue;
+			}
+			else
+			{
+				if (c_ptr->feat < FEAT_WALL_EXTRA) continue;
+				if (c_ptr->feat > FEAT_WALL_SOLID) continue;
+			}
 
 			/* Clear previous contents, add proper vein type */
 			c_ptr->feat = feat;
 
 			/* Hack -- Add some (known) treasure */
-			if (rand_int(chance) == 0) c_ptr->feat += 0x04;
+			if (chance && rand_int(chance) == 0) c_ptr->feat += 0x04;
 		}
+
+		/* Hack^2 - place watery monsters */
+		if (feat == FEAT_WATER && magik(2)) vault_monsters(wpos, y, x, 1);
 
 		/* Advance the streamer */
 		y += ddy[dir];
 		x += ddx[dir];
 
+
 		/* Quit before leaving the dungeon */
 		if (!in_bounds(y, x)) break;
+	}
+}
+
+
+/*
+ * Build an underground lake 
+ */
+static void lake_level(struct worldpos *wpos)
+{
+	int y1, x1, y, x, k, t, n;
+	cave_type *c_ptr;
+
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+
+	/* Drop a few epi-centers (usually about two) */
+	for (n = 0; n < DUN_LAKE_TRY; n++)
+	{
+		/* Pick an epi-center */
+		y1 = rand_range(5, MAX_HGT - 6);
+		x1 = rand_range(5, MAX_WID - 6);
+
+		/* Access the grid */
+		c_ptr = &zcave[y1][x1];
+
+		if (c_ptr->feat != FEAT_WATER) continue;
+
+		/* Big area of affect */
+		for (y = (y1 - 15); y <= (y1 + 15); y++)
+		{
+			for (x = (x1 - 15); x <= (x1 + 15); x++)
+			{
+				/* Skip illegal grids */
+				if (!in_bounds(y, x)) continue;
+
+				/* Extract the distance */
+				k = distance(y1, x1, y, x);
+
+				/* Stay in the circle of death */
+				if (k >= 16) continue;
+
+				/* Delete the monster (if any) */
+//				delete_monster(wpos, y, x);
+
+				/* Destroy valid grids */
+				if (cave_valid_bold(zcave, y, x))
+				{
+					/* Delete the object (if any) */
+//					delete_object(wpos, y, x);
+
+					/* Access the grid */
+					c_ptr = &zcave[y][x];
+
+					/* Wall (or floor) type */
+					t = rand_int(200);
+
+					/* Water */
+					if (t < 174)
+					{
+						/* Create granite wall */
+						c_ptr->feat = FEAT_WATER;
+					}
+					else if (t < 180)
+					{
+						/* Create dirt */
+						c_ptr->feat = FEAT_DIRT;
+					}
+					else if (t < 182)
+					{
+						/* Create dirt */
+						c_ptr->feat = FEAT_MUD;
+					}
+
+					if (t < 2) vault_monsters(wpos, y, x, 2);
+
+					/* No longer part of a room or vault */
+					c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
+
+					/* No longer illuminated or known */
+					c_ptr->info &= ~CAVE_GLOW;
+				}
+			}
+		}
+		break;
 	}
 }
 
@@ -942,7 +1080,7 @@ static void vault_trap_aux(struct worldpos *wpos, int y, int x, int yd, int xd)
 		}
 
 		/* Require "naked" floor grids */
-		if (!cave_naked_bold(zcave, y1, x1)) continue;
+//		if (!cave_naked_bold(zcave, y1, x1)) continue;
 
 		/* Place the trap */
 		place_trap(wpos, y1, x1);
@@ -970,7 +1108,7 @@ static void vault_traps(struct worldpos *wpos, int y, int x, int yd, int xd, int
 /*
  * Hack -- Place some sleeping monsters near the given location
  */
-static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num)
+void vault_monsters(struct worldpos *wpos, int y1, int x1, int num)
 {
 	int          k, i, y, x;
 	cave_type **zcave;
@@ -1031,7 +1169,7 @@ static void build_type1(struct worldpos *wpos, int yval, int xval)
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Choose lite or dark */
-	light = (getlevel(wpos) <= randint(25));
+	light = (getlevel(wpos) <= randint(25)) || magik(2);
 
 	/* Pick a room size */
 	y1 = yval - randint(4);
@@ -1827,6 +1965,8 @@ static void build_type4(struct worldpos *wpos, int yval, int xval)
 bool dungeon_aux(int r_idx){
 	monster_race *r_ptr = &r_info[r_idx];
 
+	if (dun->watery) return(TRUE);
+
 	/* No aquatic life in the dungeon */
 	if (r_ptr->flags7 & RF7_AQUATIC) return(FALSE);
 	return TRUE;
@@ -2218,7 +2358,7 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 
 	int			i, j, y, x, y1, x1, y2, x2;
 
-	bool		empty = FALSE;
+	bool		empty = FALSE, aqua = magik(dun->watery? 50 : 10);
 
 	cave_type		*c_ptr;
 
@@ -2239,7 +2379,7 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 		for (x = x1 - 1; x <= x2 + 1; x++)
 		{
 			c_ptr = &zcave[y][x];
-			c_ptr->feat = FEAT_FLOOR;
+			c_ptr->feat = aqua ? FEAT_WATER : FEAT_FLOOR;
 			c_ptr->info |= CAVE_ROOM;
 		}
 	}
@@ -2297,8 +2437,18 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 	/* Choose a pit type */
 	tmp = randint(getlevel(wpos));
 
+	/* Watery pit */
+	if (aqua)
+	{
+		/* Message */
+		name = "aquatic";
+
+		/* Restrict monster selection */
+		get_mon_num_hook = vault_aux_aquatic;
+	}
+
 	/* Orc pit */
-	if (tmp < 20)
+	else if (tmp < 20)
 	{
 		/* Message */
 		name = "orc";
@@ -2583,7 +2733,7 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
  */
 void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, cptr data)
 {
-	int dx, dy, x, y;
+	int dx, dy, x, y, lev = getlevel(wpos);
 
 	cptr t;
 
@@ -2641,7 +2791,8 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 					place_object(wpos, y, x, FALSE, FALSE);
 				}
 //				else	// now cumulative :)
-				if (rand_int(100) < 25)
+//				if (rand_int(100) < 25)
+				if (rand_int(100) < 40)
 				{
 					place_trap(wpos, y, x);
 				}
@@ -2650,6 +2801,10 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 				/* Secret doors */
 				case '+':
 				place_secret_door(wpos, y, x);
+				if (magik(20))
+				{
+					place_trap(wpos, y, x);
+				}
 				break;
 
 				/* Trap */
@@ -2683,37 +2838,37 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 #ifdef NEW_DUNGEON
 				/* Monster */
 				case '&':
-				monster_level = getlevel(wpos) + 5;
+				monster_level = lev + 5;
 				place_monster(wpos, y, x, TRUE, TRUE);
-				monster_level = getlevel(wpos);
+				monster_level = lev;
 				break;
 
 				/* Meaner monster */
 				case '@':
-				monster_level = getlevel(wpos) + 11;
+				monster_level = lev + 11;
 				place_monster(wpos, y, x, TRUE, TRUE);
-				monster_level = getlevel(wpos);
+				monster_level = lev;
 				break;
 
 				/* Meaner monster, plus treasure */
 				case '9':
-				monster_level = getlevel(wpos) + 9;
+				monster_level = lev + 9;
 				place_monster(wpos, y, x, TRUE, TRUE);
-				monster_level = getlevel(wpos);
-				object_level = getlevel(wpos) + 7;
+				monster_level = lev;
+				object_level = lev + 7;
 				place_object(wpos, y, x, TRUE, FALSE);
-				object_level = getlevel(wpos);
+				object_level = lev;
 				if (magik(40)) place_trap(wpos, y, x);
 				break;
 
 				/* Nasty monster and treasure */
 				case '8':
-				monster_level = getlevel(wpos) + 40;
+				monster_level = lev + 40;
 				place_monster(wpos, y, x, TRUE, TRUE);
-				monster_level = getlevel(wpos);
-				object_level = getlevel(wpos) + 20;
+				monster_level = lev;
+				object_level = lev + 20;
 				place_object(wpos, y, x, TRUE, TRUE);
-				object_level = getlevel(wpos);
+				object_level = lev;
 				if (magik(80)) place_trap(wpos, y, x);
 				break;
 
@@ -2721,15 +2876,15 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 				case ',':
 				if (rand_int(100) < 50)
 				{
-					monster_level = getlevel(wpos) + 3;
+					monster_level = lev + 3;
 					place_monster(wpos, y, x, TRUE, TRUE);
-					monster_level = getlevel(wpos);
+					monster_level = lev;
 				}
 				if (rand_int(100) < 50)
 				{
-					object_level = getlevel(wpos) + 7;
+					object_level = lev + 7;
 					place_object(wpos, y, x, FALSE, FALSE);
-					object_level = getlevel(wpos);
+					object_level = lev;
 				}
 				break;
 #else
@@ -2876,7 +3031,7 @@ static void build_type8(struct worldpos *wpos, int yval, int xval)
  */
 static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, int col2)
 {
-	int			i, y, x;
+	int			i, y, x, tmp;
 	int			tmp_row, tmp_col;
 	int                 row_dir, col_dir;
 	int                 start_row, start_col;
@@ -3204,6 +3359,11 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 
 			/* Place the same type of door */
 			zcave[y][x].feat = feat;
+
+			/* let's trap this too ;) */
+			if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
+					rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) continue;
+			place_trap(wpos, y, x);
 #endif
 		}
 	}
@@ -3460,6 +3620,8 @@ static void cave_gen(struct worldpos *wpos)
 	/* Possible "destroyed" level */
 	if ((getlevel(wpos) > 10) && (rand_int(DUN_DEST) == 0)) destroyed = TRUE;
 
+	dun->watery = magik(DUN_RIVER_CHANCE);
+
 	/* Hack -- No destroyed "quest" levels */
 	if (is_quest(wpos)) destroyed = FALSE;
 
@@ -3634,13 +3796,35 @@ static void cave_gen(struct worldpos *wpos)
 	/* Hack -- Add some magma streamers */
 	for (i = 0; i < DUN_STR_MAG; i++)
 	{
-		build_streamer(wpos, FEAT_MAGMA, DUN_STR_MC);
+		build_streamer(wpos, FEAT_MAGMA, DUN_STR_MC, FALSE);
 	}
 
 	/* Hack -- Add some quartz streamers */
 	for (i = 0; i < DUN_STR_QUA; i++)
 	{
-		build_streamer(wpos, FEAT_QUARTZ, DUN_STR_QC);
+		build_streamer(wpos, FEAT_QUARTZ, DUN_STR_QC, FALSE);
+	}
+
+	/* Hack -- Add some water streamers */
+	if (dun->watery)
+	{
+		get_mon_num_hook = vault_aux_aquatic;
+
+		/* Prepare allocation table */
+		get_mon_num_prep();
+
+		for (i = 0; i < DUN_STR_WAT; i++)
+		{
+			build_streamer(wpos, FEAT_WATER, 0, TRUE);
+		}
+
+		lake_level(wpos);
+
+		/* Remove restriction */
+		get_mon_num_hook = dungeon_aux;
+
+		/* Prepare allocation table */
+		get_mon_num_prep();
 	}
 
 

@@ -13,6 +13,8 @@
 #include "angband.h"
 #include "externs.h"
 
+/* chance of townie respawning like other monsters, in % */
+#define TOWNIE_RESPAWN_CHANCE	50
 
 
 /*
@@ -575,7 +577,7 @@ static void process_world(int Ind)
 	 */
 
 	/* Check for creature generation */
-	if ((rand_int(MAX_M_ALLOC_CHANCE) == 0) && ((!istown(&p_ptr->wpos)) || (rand_int(10)<5)))
+	if ((rand_int(MAX_M_ALLOC_CHANCE) == 0) && ((!istown(&p_ptr->wpos)) || magik(TOWNIE_RESPAWN_CHANCE)))
 	{
 		/* Set the monster generation depth */
 		monster_level = getlevel(&p_ptr->wpos);
@@ -1403,24 +1405,33 @@ static void process_player_end(int Ind)
 		}
 
 		/* Drowning, but not ghosts */
-		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER && !p_ptr->ghost && !p_ptr->fly){
+		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER && !p_ptr->ghost && !p_ptr->fly)
+		{
 			int hit=p_ptr->mhp/10;
 			if(!hit) hit=1;
 
+			//			s_printf("Water!\n");
+
 			/* Take damage */
 			if(!(p_ptr->pclass==CLASS_MIMIC) || (
-				!(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
-				!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD)
-				))
+						!(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
+						!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
 			{
 				/* temporary abs weight calc */
-				if(p_ptr->wt+p_ptr->total_weight/10 > 170){
+				if(p_ptr->wt+p_ptr->total_weight/10 > 170)
+				{
 					int factor=(p_ptr->wt+p_ptr->total_weight/10)-150;
+					//			s_printf("Factor = %c\n", factor);
 					/* too heavy, always drown? */
-					if(factor<300){
+					if(factor<300)
+					{
 						if(randint(factor)<20) hit=0;
 					}
-					if(randint(1000-factor)<10){
+
+					if (hit) msg_print(Ind,"\377rYou're drowning!");
+
+					if(randint(1000-factor)<10)
+					{
 						msg_print(Ind,"\377rYou are weakened by the exertion of swimming!");
 						do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
 					}

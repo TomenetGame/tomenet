@@ -4394,8 +4394,8 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
 			+ ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
 			+ ((f4 & (TR4_ANTIMAGIC_20)) ? 20 : 0)
-			+ ((f4 & (TR4_ANTIMAGIC_10)) ? 10 : 0)
-			- o_ptr->to_h - o_ptr->to_d - o_ptr->pval - o_ptr->to_a;
+			+ ((f4 & (TR4_ANTIMAGIC_10)) ? 10 : 0);
+		if (am) am += 0 - o_ptr->to_h - o_ptr->to_d - o_ptr->pval - o_ptr->to_a;
 
 		if (am >= 100)
 			info[i++] = "It generates a perfect antimagic field.";

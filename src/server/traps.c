@@ -579,7 +579,7 @@ bool do_player_trap_garbage(int Ind, int times)
 		if (!k_info[l].tval || k_info[l].cost || k_info[l].level > lv || k_info[l].level > 30) continue;
 
 		o_ptr = &forge;
-		object_prep(o_ptr, l);
+		invcopy(o_ptr, l);
 
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 		if (f3 & TR3_INSTA_ART) continue;
@@ -978,7 +978,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
    char        i_name[80];
 
    o_ptr = &forge;
-   object_prep(o_ptr, k_idx);
+   invcopy(o_ptr, k_idx);
    o_ptr->number = num;
    apply_magic(&p_ptr->wpos, o_ptr, getlevel(&p_ptr->wpos), FALSE, FALSE, FALSE);
    object_desc(Ind, i_name, o_ptr, TRUE, 0);
@@ -2185,7 +2185,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			{
 				object_type *o_ptr, forge;
 				o_ptr = &forge;
-				object_prep(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
+				invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
 
 				if (amt > 10) amt = 10;
 				amt = randint(amt);
@@ -2499,13 +2499,13 @@ void player_activate_door_trap(int Ind, s16b y, s16b x)
  * The location must be a valid, empty, clean, floor grid.
  */
 /*
- * pfft, no trapped-doors till f_info reform comes	- Jir -
+ * FEAT_DOOR stuffs should be revised after f_info reform	- Jir -
  */
 //void place_trap(int y, int x)
 void place_trap(struct worldpos *wpos, int y, int x)
 {
 	bool           more       = TRUE;
-	s16b           trap, t_idx;
+	s16b           trap, t_idx, lv;
 	trap_kind	*t_ptr;
 	trap_type	*tt_ptr;
 
@@ -2521,14 +2521,16 @@ void place_trap(struct worldpos *wpos, int y, int x)
 	if (!in_bounds(y, x)) return;
 	c_ptr = &zcave[y][x];
 
-	/* Require empty, clean, floor grid */
-	/* Hack - '+1' for secret doors */
-	if (!cave_floor_grid(c_ptr) &&
-		((c_ptr->feat < FEAT_DOOR_HEAD) ||
-		(c_ptr->feat > FEAT_DOOR_TAIL + 1))) return;
-
 	/* No traps over traps/house doors etc */
 	if (c_ptr->special.type) return;
+
+	/* Require empty, clean, floor grid */
+	/* Hack - '+1' for secret doors */
+	if (cave_floor_grid(c_ptr) || c_ptr->feat == FEAT_WATER) flags = FTRAP_FLOOR;
+	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+			(c_ptr->feat <= FEAT_DOOR_TAIL + 1))
+		flags = FTRAP_DOOR;
+	else return;
 
 //	if (!cave_naked_bold(zcave, y, x)) return;
 //	if (!cave_floor_bold(zcave, y, x)) return;
@@ -2550,19 +2552,17 @@ void place_trap(struct worldpos *wpos, int y, int x)
 		flags = FTRAP_DOOR;
 	else flags = FTRAP_FLOOR;
 #endif	// 0
-	if ((c_ptr->feat >= FEAT_DOOR_HEAD) && 
-		(c_ptr->feat <= FEAT_DOOR_TAIL + 1))
-		flags = FTRAP_DOOR;
-	else flags = FTRAP_FLOOR;
+
+	lv = getlevel(wpos);
 
 	/* try 100 times */
 	while ((more) && (cnt++)<100)
 	{
-		trap = randint(MAX_T_IDX - 1);
+		trap = rand_int(MAX_T_IDX);
 		t_ptr = &t_info[trap];
 
 		/* no traps below their minlevel */
-		if (t_ptr->minlevel > getlevel(wpos)) continue;
+		if (t_ptr->minlevel > lv) continue;
 
 		/* is this a correct trap now?   */
 		if (!(t_ptr->flags & flags)) continue;

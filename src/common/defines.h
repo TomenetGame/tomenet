@@ -3340,7 +3340,7 @@ that keeps many algorithms happy.
 #else
 #define TR1_PVAL_MASK   \
 	(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | \
-     TR1_CON | TR1_CHR | \
+     TR1_CON | TR1_CHR | TR1_LIFE | \
 	 TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
      TR1_SPEED | TR1_BLOWS | TR1_MANA | TR1_SPELL)
 #endif	// 0
@@ -4116,8 +4116,9 @@ that keeps many algorithms happy.
  */
 #define cave_clean_bold(ZCAVE,Y,X) \
     ((ZCAVE[Y][X].feat >= FEAT_FLOOR) && \
-     (ZCAVE[Y][X].feat <= FEAT_LOOSE_DIRT) && \
+     (ZCAVE[Y][X].feat <= FEAT_MUD) && \
      (!ZCAVE[Y][X].o_idx))
+//     (ZCAVE[Y][X].feat <= FEAT_LOOSE_DIRT) && \
 
 /*
  * Determine if a "legal" grid is an "empty" floor grid
@@ -4140,9 +4141,10 @@ that keeps many algorithms happy.
  */
 #define cave_naked_bold(ZCAVE,Y,X) \
     ((ZCAVE[Y][X].feat >= FEAT_FLOOR) && \
-     (ZCAVE[Y][X].feat <= FEAT_DIRT) && \
+     (ZCAVE[Y][X].feat <= FEAT_MUD) && \
      !(ZCAVE[Y][X].o_idx) && \
      !(ZCAVE[Y][X].m_idx))
+//     (ZCAVE[Y][X].feat <= FEAT_DIRT) && \
 
 
 /*

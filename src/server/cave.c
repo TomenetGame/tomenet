@@ -1348,6 +1348,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* Normal attr */
 			(*ap) = object_attr(o_ptr);
 
+			/* Hack -- always l.blue if underwater */
+			if (feat == FEAT_WATER)
+				(*ap) = TERM_L_BLUE;
+
 			/* Abnormal attr */
 //                        if ((!avoid_other) && (!(((*ap) & 0x80) && ((*cp) & 0x80))) && (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)) (*ap) = get_shimmer_color();
 			if (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)
