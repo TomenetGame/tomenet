@@ -1739,8 +1739,12 @@ static errr rd_dungeon(void)
 //				cs_ptr->type = k;
 			
 				/* csfunc will take care of it :) */
+#if 0
 				csfunc[k].load(sc_is_pointer(k) ?
 					cs_ptr->sc.ptr : cs_ptr, cs_ptr);
+#else	// 0
+				csfunc[k].load(cs_ptr);
+#endif	// 0
 			}
 		}
 	}

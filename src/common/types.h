@@ -661,9 +661,11 @@ typedef struct cave_type cave_type;
 
 struct sfunc{		/* structure containing calls for specials */
 //	void (*load)(void *ptr);		/* load function */
+//	void (*save)(void *ptr);		/* save function */
 //	void (*load)(void *ptr, cave_type *c_ptr);		/* load function */
-	void (*load)(void *ptr, c_special *cs_ptr);		/* load function */
-	void (*save)(void *ptr);		/* save function */
+//	void (*load)(void *ptr, c_special *cs_ptr);		/* load function */
+	void (*load)(c_special *cs_ptr);		/* load function */
+	void (*save)(c_special *cs_ptr);		/* save function */
 	void (*see)(void *ptr, int Ind);	/* sets player view */
 	void (*activate)(void *ptr, int Ind);	/* walk on/bump */
 	//void (*kill)(void *ptr);		/* removal */

@@ -75,9 +75,10 @@ void betweenhit(void *ptr, int Ind);
 
 
 //void defload(void *ptr, cave_type *c_ptr){
-void defload(void *ptr, c_special *cs_ptr){
+//void defload(void *ptr, c_special *cs_ptr){
+void defload(c_special *cs_ptr){
 }
-void defsave(void *ptr){
+void defsave(c_special *cs_ptr){
 }
 void defsee(void *ptr, int Ind){
 }
@@ -85,9 +86,9 @@ void defhit(void *ptr, int Ind){
 }
 
 //void dnaload(void *ptr, cave_type *c_ptr){
-void dnaload(void *ptr, c_special *cs_ptr){
+void dnaload(c_special *cs_ptr){
 }
-void dnasave(void *ptr){
+void dnasave(c_special *cs_ptr){
 }
 void dnahit(void *ptr, int Ind){
 	/* we have to know from where we are called! */
@@ -99,9 +100,9 @@ void dnahit(void *ptr, int Ind){
 }
 
 //void keyload(void *ptr, cave_type *c_ptr){
-void keyload(void *ptr, c_special *cs_ptr){
+void keyload(c_special *cs_ptr){
 }
-void keysave(void *ptr){
+void keysave(c_special *cs_ptr){
 }
 void keyhit(void *ptr, int Ind){
 	printf("keyhit: %d\n", Ind);
@@ -121,15 +122,14 @@ void tload(void *ptr, cave_type *c_ptr)
 	rd_byte(&cs_ptr->sc.trap.found);
 }
 #else
-void tload(void *ptr, c_special *cs_ptr)
+void tload(c_special *cs_ptr)
 {
 	rd_byte(&cs_ptr->sc.trap.t_idx);
 	rd_byte(&cs_ptr->sc.trap.found);
 }
 #endif	// 0
-void tsave(void *ptr)
+void tsave(c_special *cs_ptr)
 {
-	struct c_special *cs_ptr = ptr;
 	wr_byte(cs_ptr->sc.trap.t_idx);
 	wr_byte(cs_ptr->sc.trap.found);
 }
@@ -153,15 +153,14 @@ void betweenload(void *ptr, cave_type *c_ptr)
 	rd_byte(&cs_ptr->sc.between.fx);
 }
 #else
-void betweenload(void *ptr, c_special *cs_ptr)
+void betweenload(c_special *cs_ptr)
 {
 	rd_byte(&cs_ptr->sc.between.fy);
 	rd_byte(&cs_ptr->sc.between.fx);
 }
 #endif	// 0
-void betweensave(void *ptr)
+void betweensave(c_special *cs_ptr)
 {
-	struct c_special *cs_ptr = ptr;
 	wr_byte(cs_ptr->sc.between.fy);
 	wr_byte(cs_ptr->sc.between.fx);
 }
@@ -186,16 +185,15 @@ void montrapload(void *ptr, cave_type *c_ptr)
 	rd_byte(&cs_ptr->sc.montrap.feat);
 }
 #else	// 0
-void montrapload(void *ptr, c_special *cs_ptr)
+void montrapload(c_special *cs_ptr)
 {
 	rd_u16b(&cs_ptr->sc.montrap.trap_kit);
 	rd_byte(&cs_ptr->sc.montrap.difficulty);
 	rd_byte(&cs_ptr->sc.montrap.feat);
 }
 #endif	// 0
-void montrapsave(void *ptr)
+void montrapsave(c_special *cs_ptr)
 {
-	struct c_special *cs_ptr = ptr;
 	wr_u16b(cs_ptr->sc.montrap.trap_kit);
 	wr_byte(cs_ptr->sc.montrap.difficulty);
 	wr_byte(cs_ptr->sc.montrap.feat);
