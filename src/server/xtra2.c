@@ -2626,10 +2626,8 @@ void check_experience(int Ind)
 
 	int		i;
 
-
 	/* Note current level */
 	i = p_ptr->lev;
-
 
 	/* Hack -- lower limit */
 	if (p_ptr->exp < 0) p_ptr->exp = 0;
@@ -2678,7 +2676,6 @@ void check_experience(int Ind)
                (p_ptr->exp >= ((s64b)((s64b)player_exp[p_ptr->lev-1] *
                                (s64b)p_ptr->expfact / 100L))))
 	{
-		char str[160];
 		/* Gain a level */
 		p_ptr->lev++;
 
@@ -2687,11 +2684,6 @@ void check_experience(int Ind)
 
 		/* Sound */
 		sound(Ind, SOUND_LEVEL);
-
-		/* Message */
-		msg_format(Ind, "Welcome to level %d.", p_ptr->lev);
-		sprintf(str, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
-		msg_broadcast(Ind, str);
 
 		/* Update some stuff */
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS | PU_SANITY);
@@ -2704,6 +2696,13 @@ void check_experience(int Ind)
 
 		/* Handle stuff */
 		handle_stuff(Ind);
+	}
+	if(i < p_ptr->lev){
+		char str[160];
+		/* Message */
+		msg_format(Ind, "Welcome to level %d.", p_ptr->lev);
+		sprintf(str, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
+		msg_broadcast(Ind, str);
 	}
 }
 
