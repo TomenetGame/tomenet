@@ -488,14 +488,20 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 			break;
 	}
 	if(newowner!=-1){
-		for(i=1;i<=NumPlayers;i++){	/* in game? maybe long winded */
-			if(Players[i]->id==newowner){
-				dna->creator=Players[i]->dna;
-				dna->owner=newowner;
-				dna->owner_type=args[1]-'0';
-				return(TRUE);
+		if(args[1]=='1'){
+			for(i=1;i<=NumPlayers;i++){	/* in game? maybe long winded */
+				if(Players[i]->id==newowner){
+					dna->creator=Players[i]->dna;
+					dna->owner=newowner;
+					dna->owner_type=args[1]-'0';
+					return(TRUE);
+				}
 			}
+			return(FALSE);
 		}
+		dna->owner=newowner;
+		dna->owner_type=args[1]-'0';
+		return(TRUE);
 	}
 	return FALSE;
 }
@@ -770,9 +776,29 @@ void do_cmd_open(int Ind, int dir)
 				}
 				else{
 					struct dna_type *dna=c_ptr->special;
-					if(dna->owner)
-						msg_print(Ind,"That house is owned already.");
-					
+					if(dna->owner){
+						char string[80];
+						char *name;
+						int i;
+						switch(dna->owner_type){
+							case OT_PLAYER:
+								if((name=lookup_player_name(dna->owner)))
+									strcpy(string,name);
+								break;
+							case OT_PARTY:
+								strcpy(string, parties[dna->owner].name);
+								break;
+							case OT_CLASS:
+								strcpy(string,class_info[dna->owner].title);
+								strcat(string,"s");
+								break;
+							case OT_RACE:
+								strcpy(string,race_info[dna->owner].title);
+								strcat(string,"s");
+								break;
+						}
+						msg_format(Ind,"That house is owned by %s.",string);
+					}
 					else{
 						int factor,price;
 						factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
