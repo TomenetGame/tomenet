@@ -2589,6 +2589,7 @@ void player_talk_aux(int Ind, cptr message)
 	char search[80], sender[80];
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	cptr colon, problem = "";
+        bool me = FALSE;
 
 	/* Get sender's name */
 	if (Ind)
@@ -2765,11 +2766,14 @@ void player_talk_aux(int Ind, cptr message)
 	/*if (!strncasecmp(message, "All:", 4) ||
 	      (message[0] == ':' && !strchr(")(-", message[1])))
 	  { */
+                me = prefix(message, "/me ");
+
 		/* Send to everyone */
 		for (i = 1; i <= NumPlayers; i++)
 		{
 			/* Send message */
-			msg_format(i, "[%s] %s", sender, message);
+                        if (!me) msg_format(i, "[%s] %s", sender, message);
+                        else msg_format(i, "%s %s", sender, message + 4);
 		}
 	/*}
 	 else

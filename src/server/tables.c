@@ -3191,7 +3191,7 @@ cptr spell_names[8][64] =
                 /* Fingolfin's Combat Technics */
                 "Iron Skin",
                 "Dig",
-                "Furry",
+                "Fury",
                 "Spin",
                 "",
                 "",

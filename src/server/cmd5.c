@@ -3707,7 +3707,7 @@ void do_cmd_fight(int Ind, int book, int spell)
 			case 4:
 			{
 				msg_format_near(Ind, "%s enters in a battle RAGE.", p_ptr->name);
-				set_shero(Ind, p_ptr->hero + 20 + randint(20));
+                                set_shero(Ind, p_ptr->shero + 20 + randint(20));
 				break;
 			}
 			
@@ -3731,7 +3731,7 @@ void do_cmd_fight(int Ind, int book, int spell)
                         case 10:
 			{
 				msg_format_near(Ind, "%s enters a battle *RAGE*.", p_ptr->name);
-				set_shield(Ind, p_ptr->furry + 10 + randint(10) + (plev / 2));
+                                set_furry(Ind, p_ptr->furry + 10 + randint(10) + (plev / 2));
 				break;
 			}
 			
