@@ -839,6 +839,7 @@ Change list for PernMangband
 18/03/2002 (evileye)
 - Dungeon master can now pick up items (no chown)
 - Bug fix in the look command where dungeon master could be seen.
+- Reflection bug should be fixed.
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.

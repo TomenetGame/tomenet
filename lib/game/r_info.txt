@@ -18623,7 +18623,7 @@ D:Beautiful and expensive fish for ponds.
 N:1056:Gunfish
 G:~:W
 I:120:5d8:14:10:20
-W:9:1:800:20
+W:13:1:800:20
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:HIT:HURT:1d8

@@ -1455,7 +1455,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 //			int power = rlev / 2 + randint(rlev / 2),
 //				fois = 1 + rlev / 20;
-			int	dice = 5 + rlev / 15;
+			int	dice = 3 + rlev / 15;
 #if 0
 			if (power > 8) dice += 2;
 			if (power > 20) dice += 2;

@@ -2554,10 +2554,11 @@ void cmd_master_aux_player()
 	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Invoke wrath");
 	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Static player");
 	Term_putstr(5, 8, -1, TERM_WHITE, "(5) Unstatic player");
-	Term_putstr(5, 9, -1, TERM_WHITE, "(6) Telekinesis");
-	Term_putstr(5, 10, -1, TERM_WHITE, "(7) Broadcast");
+	Term_putstr(5, 9, -1, TERM_WHITE, "(6) Delete player");
+	Term_putstr(5, 10, -1, TERM_WHITE, "(7) Telekinesis");
+	Term_putstr(5, 11, -1, TERM_WHITE, "(8) Broadcast");
 	
-	Term_putstr(0, 12, -1, TERM_WHITE, "Command: ");
+	Term_putstr(0, 13, -1, TERM_WHITE, "Command: ");
 
 	while(i!=ESCAPE){
 		/* Get a key */
@@ -2585,11 +2586,15 @@ void cmd_master_aux_player()
 				get_string("Enter player name:",&buf[1],15);
 				break;
 			case '6':
+				buf[0]='r';
+				get_string("Enter player name:",&buf[1],15);
+				break;
+			case '7':
 				/* DM to player telekinesis */
 				buf[0]='t';
 				get_string("Enter player name:",&buf[1],15);
 				break;
-			case '7':
+			case '8':
 				{
 					int j;
 					buf[0]='B';

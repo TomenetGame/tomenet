@@ -8,6 +8,7 @@
 
 #ifdef USE_X11
 
+#define USE_GRAPHICS
 
 #include "../common/z-util.h"
 #include "../common/z-virt.h"
@@ -1510,6 +1511,12 @@ struct term_data
 
 	infowin *outer;
 	infowin *inner;
+
+#ifdef USE_GRAPHICS
+
+	XImage *tiles;
+
+#endif
 };
 
 
@@ -2149,6 +2156,61 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s)
 	return (0);
 }
 
+#ifdef USE_GRAPHICS
+
+/*
+ * Draw some graphical characters.
+ */
+#if 0
+static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp)
+#endif
+static errr Term_pict_x11(int x, int y, byte a, byte c)
+{
+	int i;
+
+#if 0
+	byte a;
+	char c;
+#endif
+
+	term_data *td = (term_data*)(Term->data);
+
+#if 0
+	printf("pict: %x, %x\n");
+#endif
+	y *= Infofnt->hgt;
+	x *= Infofnt->wid;
+
+#if 0
+	for (i = 0; i < n; ++i)
+	{
+		a = *ap++;
+		c = *cp++;
+#endif
+
+		XPutImage(Metadpy->dpy, td->inner->win,
+		          clr[15]->gc,
+		          td->tiles,
+#if 0
+		          (c&0x7F) * td->fnt->wid + 1,
+		          (a&0x7F) * td->fnt->hgt + 1,
+#endif
+		          (c&0x7F) * td->fnt->wid + 1,
+		          (a&0x7F) * td->fnt->hgt + 1,
+		          x, y,
+		          td->fnt->wid, td->fnt->hgt);
+
+#if 0
+		x += td->fnt->wid;
+	}
+#endif
+
+	/* Success */
+	return (0);
+}
+
+#endif /* USE_GRAPHICS */
+
 
 
 /*
@@ -2189,6 +2251,11 @@ static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
 	Infowin_set_mask(ExposureMask);
 	Infowin_map();
 
+#ifdef USE_GRAPHICS
+	/* No graphics yet */
+	td->tiles = NULL;
+#endif /* USE_GRAPHICS */
+
 	/* Initialize the term (full size) */
 	term_init(t, 80, 24, num);
 
@@ -2205,6 +2272,21 @@ static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
 	t->wipe_hook = Term_wipe_x11;
 	t->text_hook = Term_text_x11;
 
+#ifdef USE_GRAPHICS
+
+	/* Use graphics */
+	if (use_graphics)
+	{
+		printf("Setup hook\n");
+		/* Graphics hook */
+		t->pict_hook = Term_pict_x11;
+
+		/* Use graphics sometimes */
+		t->higher_pict = TRUE;
+	}
+
+#endif /* USE_GRAPHICS */
+
 	/* Save the data */
 	t->data = td;
 
@@ -2214,7 +2296,6 @@ static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
 	/* Success */
 	return (0);
 }
-
 
 /*
  * Names of the 16 colors
@@ -2245,6 +2326,216 @@ static cptr color_name[16] =
 	"#ffcc80",      /* LIGHTBROWN */
 };
 
+#ifdef USE_GRAPHICS
+
+
+typedef struct BITMAPFILEHEADER
+{
+     u16b bfAlign;    /* HATE this */
+     u16b bfType;
+     u32b bfSize;
+     u16b bfReserved1;
+     u16b bfReserved2;
+     u32b bfOffBits;
+} BITMAPFILEHEADER;
+
+typedef struct BITMAPINFOHEADER
+{
+     u32b biSize;
+     u32b biWidth;
+     u32b biHeight;
+     u16b biPlanes;
+     u16b biBitCount;
+     u32b biCompresion;
+     u32b biSizeImage;
+     u32b biXPelsPerMeter;
+     u32b biYPelsPerMeter;
+     u32b biClrUsed;
+     u32b biClrImportand;
+} BITMAPINFOHEADER;
+
+typedef struct RGB
+{
+     unsigned char r,g,b;
+     unsigned char filler;
+} RGB;
+
+static Pixell Infoclr_Pixell(cptr name);
+/*
+ * Read a BMP file. XXX XXX XXX
+ *
+ * Replaced ReadRaw & RemapColors.
+ */
+static XImage *ReadBMP(Display *disp, char Name[])
+{
+	FILE *f;
+
+	BITMAPFILEHEADER fileheader;
+	BITMAPINFOHEADER infoheader;
+
+	XImage *Res = NULL;
+
+	char *Data,cname[8];
+
+	int ncol,depth,x,y;
+
+	RGB clrg;
+
+	Pixell clr_Pixells[256];
+
+	f = fopen(Name, "r");
+
+	if (f != NULL)
+	{
+		fread((vptr)((int)&fileheader + 2),sizeof(fileheader)-2,1,f);
+		fread(&infoheader,sizeof(infoheader),1,f);
+		if((fileheader.bfType != 19778) || (infoheader.biSize != 40)) {
+				plog_fmt("Incorrect file format %s",Name);
+				quit("Bad BMP format");};
+	
+		/* Compute number of colors recorded */
+		ncol = (fileheader.bfOffBits - 54) / 4;
+		
+		for(x=0;x<ncol;++x) {
+		   fread(&clrg,4,1,f);
+		   sprintf(cname,"#%02x%02x%02x",clrg.r,clrg.g,clrg.b);
+		   clr_Pixells[x] = Infoclr_Pixell(cname); }
+
+		depth = DefaultDepth(disp, DefaultScreen(disp));
+		
+		x = 1;
+		y = (depth-1) >> 2;
+		while (y>>=1) x<<=1;
+		
+		Data = (char *)malloc(infoheader.biSizeImage*x);
+
+		if (Data != NULL)
+		{
+			Res = XCreateImage(disp,
+			                   DefaultVisual(disp, DefaultScreen(disp)),
+			                   depth, ZPixmap, 0, Data,
+			                   infoheader.biWidth, infoheader.biHeight, 8, 0);
+
+			if (Res != NULL)
+			{
+			   for(y=0 ; y<infoheader.biHeight; ++y){
+			       for(x=0; x<infoheader.biWidth; ++x){
+				    XPutPixel(Res, x, infoheader.biHeight - y -1, clr_Pixells[getc(f)]);
+			       }
+			   }
+			}
+			else
+			{
+				free(Data);
+			}
+		}
+
+		fclose(f);
+	}
+
+	return Res;
+}
+
+
+
+/*
+ * Resize an image. XXX XXX XXX
+ *
+ * Also appears in "main-xaw.c".
+ */
+static XImage *ResizeImage(Display *disp, XImage *Im,
+                           int ix, int iy, int ox, int oy)
+{
+	int width1, height1, width2, height2;
+	int x1, x2, y1, y2, Tx, Ty;
+	int *px1, *px2, *dx1, *dx2;
+	int *py1, *py2, *dy1, *dy2;
+
+	XImage *Tmp;
+
+	char *Data;
+
+
+	width1 = Im->width;
+	height1 = Im->height;
+
+	width2 = ox * width1 / ix;
+	height2 = oy * height1 / iy;
+	printf("w1: %d h1:%d w2:%d h2:%d\n",width1, height1, width2, height2);
+
+	Data = (char *)malloc(width2 * height2 * Im->bits_per_pixel / 8);
+
+	Tmp = XCreateImage(disp,
+	                   DefaultVisual(disp, DefaultScreen(disp)),
+	                   Im->depth, ZPixmap, 0, Data, width2, height2,
+	                   32, 0);
+
+	if (ix > ox)
+	{
+		px1 = &x1;
+		px2 = &x2;
+		dx1 = &ix;
+		dx2 = &ox;
+	}
+	else
+	{
+		px1 = &x2;
+		px2 = &x1;
+		dx1 = &ox;
+		dx2 = &ix;
+	}
+
+	if (iy > oy)
+	{
+		py1 = &y1;
+		py2 = &y2;
+		dy1 = &iy;
+		dy2 = &oy;
+	}
+	else
+	{
+		py1 = &y2;
+		py2 = &y1;
+		dy1 = &oy;
+		dy2 = &iy;
+	}
+
+	Ty = *dy1;
+
+	for (y1=0, y2=0; (y1 < height1) && (y2 < height2); )
+	{
+		Tx = *dx1;
+
+		for (x1=0, x2=0; (x1 < width1) && (x2 < width2); )
+		{
+			XPutPixel(Tmp, x2, y2, XGetPixel(Im, x1, y1));
+
+			(*px1)++;
+
+			Tx -= *dx2;
+			if (Tx < 0)
+			{
+				Tx += *dx1;
+				(*px2)++;
+			}
+		}
+
+		(*py1)++;
+
+		Ty -= *dy2;
+		if (Ty < 0)
+		{
+			Ty += *dy1;
+			(*py2)++;
+		}      
+	}
+
+	return Tmp;
+}
+
+
+#endif /* USE_GRAPHICS */
+
 
 /*
  * Initialization function for an "X11" module to Angband
@@ -2257,6 +2548,35 @@ errr init_x11(void)
 
 	cptr dpy_name = "";
 
+#ifdef USE_GRAPHICS
+
+	char filename[1024];
+	char path[1024];
+
+#endif
+
+#ifdef USE_GRAPHICS
+	init_file_paths(path);
+	/* Try graphics */
+	if (getenv("TOMENET_GRAPHICS"))
+	{
+		int gfd;
+		/* Build the name of the "graf" file */
+		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
+		strcpy(filename, "/usr/local/mangband/lib/xtra/graf/16x16.bmp");
+
+		printf("Trying for graphics file: %s\n", filename);
+		/* Use graphics if bitmap file exists */
+		if ((gfd=open(filename, 0, O_RDONLY))!=-1)
+		{
+			printf("Got graphics file\n");
+			close(gfd);
+			/* Use graphics */
+			use_graphics = TRUE;
+		}
+	}
+
+#endif /* USE_GRAPHICS */
 
 	/* Init the Metadpy if possible */
 	if (Metadpy_init_name(dpy_name)) return (-1);
@@ -2278,7 +2598,6 @@ errr init_x11(void)
 		Infoclr_init_ccn (cname, "bg", "cpy", 0);
 	}
 
-
 	/* Check environment for "screen" font */
 	fnt_name = getenv("ANGBAND_X11_FONT_SCREEN");
 
@@ -2291,6 +2610,31 @@ errr init_x11(void)
 	/* Initialize the screen */
 	term_data_init(&screen, TRUE, "Angband", fnt_name);
 	term_screen = Term;
+
+#ifdef USE_GRAPHICS
+
+	/* Load graphics */
+	if (use_graphics)
+	{
+		XImage *tiles_raw;
+
+		//ANGBAND_GRAF = "old";
+
+		/* Load the graphics XXX XXX XXX */
+		tiles_raw = ReadBMP(Metadpy->dpy, filename);
+
+#if 0
+		/* Resize tiles */
+		screen.tiles = ResizeImage(Metadpy->dpy, tiles_raw, 8, 8,
+		                        screen.fnt->wid, screen.fnt->hgt);
+#endif
+		/* Resize tiles */
+		screen.tiles = ResizeImage(Metadpy->dpy, tiles_raw, 16, 16,
+		                        screen.fnt->wid, screen.fnt->hgt);
+	}
+
+#endif /* USE_GRAPHICS */
+
 
 
 #ifdef GRAPHIC_MIRROR
@@ -2351,7 +2695,6 @@ errr init_x11(void)
 	/* Raise the "Angband" window */
 	Infowin_set(screen.outer);
 	Infowin_raise();
-
 
 	/* Success */
 	return (0);
