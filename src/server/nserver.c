@@ -1348,11 +1348,13 @@ static int Handle_listening(int ind)
 	 * etc are much bigger than before;  however, let's follow the saying
 	 * 'Never touch what works' ;)		- Jir -
 	 */
+#if 0
 	if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
 	{
 		connp->r.ptr = connp->r.buf;
 		return 1;
 	}
+#endif	// 0
 	
 	/* toast this after fix
 	*If we don't, then
@@ -1430,7 +1432,7 @@ static int Handle_listening(int ind)
 
 	printf("\n"); */
 
-#if 0
+#if 0	// moved to Receive_play
 	/* Read the stat order */
 	for (i = 0; i < 6; i++)
 	{
@@ -1442,7 +1444,6 @@ static int Handle_listening(int ind)
 			return -1;
 		}
 	}
-#endif	// 0
 	
 	/* Read class extra */	
 //	n = Packet_scanf(&connp->r, "%hd", &connp->class_extra);
@@ -1528,6 +1529,7 @@ static int Handle_listening(int ind)
 #endif
 		}
 	}
+#endif	// 0
 
 	if (strcmp(real, connp->real))
 	{
@@ -2313,6 +2315,12 @@ static int Receive_play(int ind)
 		connp->race = race;
 		connp->class = class;
 
+		if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
+		{
+			connp->r.ptr = connp->r.buf;
+			return 1;
+		}
+#if 1	// moved from Handle_listening
 		/* Read the stat order */
 		for (i = 0; i < 6; i++)
 		{
@@ -2324,6 +2332,92 @@ static int Receive_play(int ind)
 				return -1;
 			}
 		}
+
+		/* Read class extra */	
+		//	n = Packet_scanf(&connp->r, "%hd", &connp->class_extra);
+
+		if (n <= 0)
+		{
+			Destroy_connection(ind, "Misread class extra");
+			return -1;
+		}
+
+		/* Read the options */
+		for (i = 0; i < 64; i++)
+		{
+			n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
+
+			if (n <= 0)
+			{
+				Destroy_connection(ind, "Misread options");
+				return -1;
+			}
+		}
+
+		/* Read the "unknown" char/attrs */
+		for (i = 0; i < TV_MAX; i++)
+		{
+			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
+
+			if (n <= 0)
+			{
+				break;
+
+#if 0
+				Destroy_connection(ind, "Misread unknown redefinitions");
+				return -1;
+#endif
+			}
+		}
+
+		/* Read the "feature" char/attrs */
+		for (i = 0; i < MAX_F_IDX; i++)
+		{
+			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
+
+			if (n <= 0)
+			{
+				break;
+
+#if 0
+				Destroy_connection(ind, "Misread feature redefinitions");
+				return -1;
+#endif
+			}
+		}
+
+		/* Read the "object" char/attrs */
+		for (i = 0; i < MAX_K_IDX; i++)
+		{
+			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
+
+			if (n <= 0)
+			{
+				break;
+
+#if 0
+				Destroy_connection(ind, "Misread object redefinitions");
+				return -1;
+#endif
+			}
+		}
+
+		/* Read the "monster" char/attrs */
+		for (i = 0; i < MAX_R_IDX; i++)
+		{
+			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
+
+			if (n <= 0)
+			{
+				break;
+
+#if 0
+				Destroy_connection(ind, "Misread monster redefinitions");
+				return -1;
+#endif
+			}
+		}
+#endif	// 0
 	}
 	if (connp->state != CONN_LOGIN)
 	{

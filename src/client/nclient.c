@@ -281,13 +281,12 @@ int Net_verify(char *real, char *nick, char *pass)
 //	n = Packet_printf(&wbuf, "%c%s%s%s%hd%hd%hd", PKT_VERIFY, real, nick, pass, sex, race, class);
 	n = Packet_printf(&wbuf, "%c%s%s%s", PKT_VERIFY, real, nick, pass);
 
-#if 0
+#if 0	// moved to Net_start
 	/* Send the desired stat order */
 	for (i = 0; i < 6; i++)
 	{
 		Packet_printf(&wbuf, "%hd", stat_order[i]);
 	}
-#endif	// 0
 
 	/* Send class_extra */
 	/*		Packet_printf(&wbuf, "%hd", class_extra); */
@@ -323,6 +322,7 @@ int Net_verify(char *real, char *nick, char *pass)
 		Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
 	}
 #endif
+#endif	// 0
 
 	if (n <= 0 || Sockbuf_flush(&wbuf) <= 0)
 	{
@@ -535,12 +535,48 @@ int Net_start(int sex, int race, int class)
 	n = Packet_printf(&wbuf, "%c", PKT_PLAY);
 	Packet_printf(&wbuf, "%hd%hd%hd", sex, race, class);
 
+#if 1	// moved from Net_verify
 	/* Send the desired stat order */
 	for (i = 0; i < 6; i++)
 	{
 		Packet_printf(&wbuf, "%hd", stat_order[i]);
 	}
 
+	/* Send class_extra */
+	/*		Packet_printf(&wbuf, "%hd", class_extra); */
+			
+	/* Send the options */
+	for (i = 0; i < 64; i++)
+	{
+		Packet_printf(&wbuf, "%c", Client_setup.options[i]);
+	}
+
+#ifndef BREAK_GRAPHICS
+	/* Send the "unknown" redefinitions */
+	for (i = 0; i < TV_MAX; i++)
+	{
+		Packet_printf(&wbuf, "%c%c", Client_setup.u_attr[i], Client_setup.u_char[i]);
+	}
+
+	/* Send the "feature" redefinitions */
+	for (i = 0; i < MAX_F_IDX; i++)
+	{
+		Packet_printf(&wbuf, "%c%c", Client_setup.f_attr[i], Client_setup.f_char[i]);
+	}
+
+	/* Send the "object" redefinitions */
+	for (i = 0; i < MAX_K_IDX; i++)
+	{
+		Packet_printf(&wbuf, "%c%c", Client_setup.k_attr[i], Client_setup.k_char[i]);
+	}
+
+	/* Send the "monster" redefinitions */
+	for (i = 0; i < MAX_R_IDX; i++)
+	{
+		Packet_printf(&wbuf, "%c%c", Client_setup.r_attr[i], Client_setup.r_char[i]);
+	}
+#endif
+#endif	// 0
 
 	if (Sockbuf_flush(&wbuf) == -1)
 	{

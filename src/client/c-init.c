@@ -474,9 +474,6 @@ void client_init(char *argv1, bool skip)
 		quit("Network initialization failed!\n");
 	}
 
-	/* Initialize the pref files */
-	initialize_all_pref_files();
-
 	/* Verify that we are on the correct port */
 //	if (Net_verify(real_name, nick, pass, sex, race, class) == -1)
 	if (Net_verify(real_name, nick, pass) == -1)
@@ -501,6 +498,9 @@ void client_init(char *argv1, bool skip)
 		/* XXX this function sends PKT_KEEPALIVE */
 		get_char_info();
 	}
+
+	/* Initialize the pref files */
+	initialize_all_pref_files();
 
 	/* Setup the key mappings */
 	keymap_init();

@@ -1152,6 +1152,7 @@ To find the latest change quickly, search ==== :)
 
 25/06/2002 (Jir)
 - SKILL_SPELLRAD('Revelation')
+- netcode modification in progress.
 
 
 
