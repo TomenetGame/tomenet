@@ -1881,6 +1881,15 @@ static int Handle_login(int ind)
 		}
 	}
 
+	/* Brand-new players get super-short instructions presented here: */
+#if 1
+	if (p_ptr->inval) {
+		msg_print(NumPlayers, "\377RTurn off numlock and hit SHIFT + numkeys to run (move quickly).");
+		msg_print(NumPlayers, "\377RHit '?' key for help. Hit ':' to chat. Hit '@' to see who is online.");
+//		msg_print(NumPlayers, "\377R<< Welcome to TomeNET! >>");
+	}
+#endif
+
 	/* Admin messages */
 	if (p_ptr->admin_dm && (cfg.runlevel == 2048))
 		msg_print(NumPlayers, "\377y* Empty-server-shutdown command pending *");
