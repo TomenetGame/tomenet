@@ -644,7 +644,6 @@ int	fd;
 
     cmw_priv_assert_netaccess();
     retval = accept(fd, (struct sockaddr*)&sl_dgram_lastaddr, &socklen);
-    //retval = accept(fd, NULL, 0);
     cmw_priv_deassert_netaccess();
 
     return retval;

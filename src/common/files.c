@@ -169,7 +169,6 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 		return(0);
 	}
 	local_file_check(c_fd->fname, &lsum);
-	printf("local file: %ld  remote file: %ld\n", sum, lsum);
 	if(!c_fd->state&FS_CHECK){
 		return(0);
 	}
@@ -295,7 +294,7 @@ int local_file_close(int ind, unsigned short fnum){
 
 	path_build(buf, 4096, ANGBAND_DIR, c_fd->fname);
 
-	wp=fopen(buf, "w");
+	wp=fopen(buf, "wb");	/* b for windows */
 	if(wp!=(FILE*)NULL){
 		lseek(c_fd->fd, 0, SEEK_SET);
 		do{
@@ -312,11 +311,19 @@ int local_file_close(int ind, unsigned short fnum){
 
 unsigned long total;
 
+/* uses adler checksum now - (client/server) compat essential */
 static void do_sum(unsigned char *buffer, int size){
-	int i;
-	for(i=0; i<size; i++){
-		total+=buffer[i];
+	unsigned long s1, s2;
+	int n;
+
+	s1 = total & 0xffff;
+	s2 = (total >> 16) & 0xffff;
+
+	for(n=0; n<size; n++){
+		s1=(s1+buffer[n]) % 65521;
+		s2=(s1+s1) % 65521;
 	}
+	total=(s2 << 16)+s1;
 }
 
 /* Get checksum of file */
@@ -327,18 +334,18 @@ int local_file_check(char *fname, unsigned long *sum){
 	int success=0;
 	int size=4096;
 	unsigned long tbytes=0;
-	unsigned long pos, r;
+	unsigned long pos;
 	char buf[256];
 
 	path_build(buf, 256, ANGBAND_DIR, fname);
 
-	fp=fopen(buf, "r");
+	fp=fopen(buf, "rb");	/* b for windows.. */
 	if(fp==(FILE*)NULL){
 		return(0);
 	}
-	buffer=(char*)malloc(size);
+	buffer=(unsigned char*)malloc(size);
 	if(buffer){
-		total=0L;
+		total=1L;
 		while(size){
 			pos=ftell(fp);
 			if(fread(buffer, size, 1, fp)){
@@ -357,9 +364,7 @@ int local_file_check(char *fname, unsigned long *sum){
 		if(!size) success=1;
 		free(buffer);
 	}
-	r=total % 0x10000 + (total % 0x100000000) / 0x10000;
-	*sum=(r%0x10000)+r/0x10000;
-	printf("sum: %s %ld\n", fname, *sum);
 	fclose(fp);
+	*sum=total;
 	return(success);
 }

@@ -209,7 +209,6 @@
 
 #define	RECOVERY_DELAY		(FPS*3)
 
-//#define MAX_ID			4096		    /* Should suffice :) */
 #define EXPIRED_MINE_ID		4096   /* assume no player has this id */
 #define MAX_PSEUDO_PLAYERS      16
 

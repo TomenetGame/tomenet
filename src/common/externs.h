@@ -548,7 +548,6 @@ extern void update_monsters(bool dist);
 extern bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp);
 extern bool place_monster(int Depth, int y, int x, bool slp, bool grp);
 extern bool alloc_monster(int Depth, int dis, int slp);
-//extern bool summon_specific(int Depth, int y1, int x1, int lev, int s_clone, int type);
 extern bool multiply_monster(int m_idx);
 extern void update_smart_learn(int m_idx, int what);
 
@@ -687,7 +686,6 @@ extern bool dec_stat(int Ind, int stat, int amount, int permanent);
 extern bool res_stat(int Ind, int stat);
 extern bool apply_disenchant(int Ind, int mode);
 extern bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int flg, char attacker[80]);
-//extern bool lua_project(int who, int rad, int Depth, int y, int x, int dam, int typ, int flg, char *attacker);
 
 /* spells2.c */
 extern bool hp_player(int Ind, int num);

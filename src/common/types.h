@@ -187,7 +187,7 @@ struct recall_depth
 	u16b id;	/* dungeon id (see dungeon_type) */
 	s16b depth;	/* max recall-depth */
 }
-#endif	// 0
+#endif	/* 0 */
 
 
 /*
@@ -264,7 +264,6 @@ struct object_kind
 	byte sval;			/* Object sub type */
 
 	s16b pval;			/* Object extra info */
-//		s32b pval2;                     /* Object extra info */
 
 	s16b to_h;			/* Bonus to hit */
 	s16b to_d;			/* Bonus to damage */
@@ -359,10 +358,8 @@ struct artifact_type
 	u32b flags1;		/* Artifact Flags, set 1 */
 	u32b flags2;		/* Artifact Flags, set 2 */
 	u32b flags3;		/* Artifact Flags, set 3 */
-#if 1
         u32b flags4;            /* Artifact Flags, set 4 */
         u32b flags5;            /* Artifact Flags, set 5 */
-#endif	// 0
 
 	byte level;			/* Artifact level */
 	byte rarity;		/* Artifact rarity */
@@ -375,7 +372,7 @@ struct artifact_type
         s16b power;                     /* Power granted(if any) */
 
         s16b set;               /* Does it belongs to a set ?*/
-#endif	// 0
+#endif	/* 0 */
 
 	bool known;			/* Is this artifact already IDed? */
 };
@@ -398,7 +395,6 @@ struct ego_item_type
         byte min_sval[6];
         byte max_sval[6];
 
-//	byte slot;			/* Standard slot value */
 	byte rating;		/* Rating boost */
 
 	byte level;			/* Minimum level */
@@ -413,24 +409,18 @@ struct ego_item_type
 
 	s32b cost;			/* Ego-item "cost" */
 
-#if 0
-	u32b flags1;		/* Ego-Item Flags, set 1 */
-	u32b flags2;		/* Ego-Item Flags, set 2 */
-	u32b flags3;		/* Ego-Item Flags, set 3 */
-#endif	// 0
-
         byte rar[5];
         u32b flags1[5];            /* Ego-Item Flags, set 1 */
         u32b flags2[5];            /* Ego-Item Flags, set 2 */
         u32b flags3[5];            /* Ego-Item Flags, set 3 */
-#if 1
         u32b flags4[5];            /* Ego-Item Flags, set 4 */
         u32b flags5[5];            /* Ego-Item Flags, set 5 */
         u32b esp[5];                       /* ESP flags */
         u32b fego[5];                       /* ego flags */
 
-//        s16b power;                     /* Power granted(if any) */
-#endif	// 0
+#if 0
+        s16b power;                     /* Power granted(if any) */
+#endif
 };
 
 
@@ -602,7 +592,7 @@ struct vault_type
 
 	s16b mon[10];                   /* special monster */
 	int item[3];                   /* number of item (usually artifact) */
-#endif	// 0
+#endif	/* 0 */
 };
 
 struct swear{
@@ -622,7 +612,7 @@ struct trap_kind{
   byte color;       /* what is the color on screen */
   byte vanish;       /* probability of disappearence */
   u32b flags;       /* where can these traps go - and perhaps other flags */
-#if 0	// Handled in player_type
+#if 0	/* Handled in player_type */
   bool ident;       /* do we know the name */
   s16b known;       /* how well is this trap known */
 #endif
@@ -684,7 +674,6 @@ struct c_special{
 		struct { byte wx, wy; s16b wz; } wpos;	/* XXX */
 		struct { byte type, rest; bool known; } fountain;
 		struct { u16b trap_kit; byte difficulty, feat; } montrap;
-//		struct { u16b trap_kit, trap_load; } montrap;
 	} sc;
 	struct c_special *next;
 };
@@ -697,7 +686,6 @@ struct sfunc{
 	void (*save)(c_special *cs_ptr);		/* save function */
 	void (*see)(c_special *cs_ptr, char *c, byte *a, int Ind);	/* sets player view */
 	int (*activate)(c_special *cs_ptr, int y, int x, int Ind);	/* walk on/bump */
-	//void (*kill)(void *ptr);		/* removal */
 };
 #endif
 
@@ -820,7 +808,7 @@ struct object_type
 
 	u16b note;			/* Inscription index */
 
-#if 0	// from pernA.. consumes memory, but quick. shall we?
+#if 0	/* from pernA.. consumes memory, but quick. shall we? */
         u16b art_name;      /* Artifact name (random artifacts) */
 
         u32b art_flags1;        /* Flags, set 1  Alas, these were necessary */
@@ -829,7 +817,7 @@ struct object_type
         u32b art_flags4;        /* Flags, set 4  PernAngband */
         u32b art_flags5;        /* Flags, set 5  PernAngband */
         u32b art_esp;           /* Flags, set esp  PernAngband */
-#endif	// 0
+#endif	/* 0 */
 	
 	u16b next_o_idx;	/* Next object in stack (if any) */
 	u16b held_m_idx;	/* Monster holding us (if any) */
@@ -1234,10 +1222,10 @@ struct dun_level
 	byte rn_x,rn_y;
 
 	u32b flags1;		/* LF1 flags */
-//	u32b flags2;		/* LF2 flags */
+/*	u32b flags2; */		/* LF2 flags */
 	byte hgt;			/* Vault height */
 	byte wid;			/* Vault width */
-//	char feeling[80]	/* feeling description */
+/*	char feeling[80] */	/* feeling description */
 
 	cave_type **cave;	/* Leave this the last entry (for aesthetic reason) */
 };
@@ -1258,10 +1246,10 @@ struct dungeon_type
 	byte maxdepth;		/* max height/depth */
 #if 0
 	rule_type rules[5];             /* Monster generation rules */
-#else	// 0
+#else	/* 0 */
 	char r_char[10];	/* races allowed */
 	char nr_char[10];	/* races prevented */
-#endif	// 0
+#endif	/* 0 */
 	struct dun_level *level;	/* array of dungeon levels */
 };
 
@@ -1610,7 +1598,7 @@ struct house_type{
 	s16b stock_num;			/* Stock -- Number of entries */
 	s16b stock_size;		/* Stock -- Total Size of Array */
 	object_type *stock;		/* Stock -- Actual stock items */
-#endif	// USE_MANG_HOUSE
+#endif	/* USE_MANG_HOUSE_ONLY */
 };
 
 #define OT_PLAYER 1
@@ -1654,7 +1642,7 @@ struct trad_house_type
 	s16b stock_size;		/* Stock -- Total Size of Array */
 	object_type *stock;		/* Stock -- Actual stock items */
 };
-#endif	// 0
+#endif	/* 0 */
 
 
 /*
@@ -1698,7 +1686,6 @@ struct skill_type
 
 	s16b rate;                              /* Modifier decreasing rate */
 
-//	s16b action[MAX_SKILLS][2];             /* List of actions against other skills in th form: action[x] = {SKILL_FOO, 10} */
 	s16b action[MAX_SKILLS];             /* List of actions against other skills in th form: action[x] = {SKILL_FOO, 10} */
 
 	s16b father;                            /* Father in the skill tree */
@@ -1800,7 +1787,6 @@ struct player_type
 
         skill_player s_info[MAX_SKILLS]; /* Player skills */
         s16b skill_points;      /* number of skills assignable */
-//        s16b skill_last_level;  /* last level we gained a skill point */
 	
 	s16b class_extra;	/* Class extra info */
 
@@ -1895,7 +1881,6 @@ struct player_type
 	byte target_x[TEMP_MAX];
 	s16b target_idx[TEMP_MAX];
 
-//	cptr info[128];		/* Temp storage of *ID* and Self Knowledge info */
 	char infofile[MAX_PATH_LENGTH];		/* Temp storage of *ID* and Self Knowledge info */
 	char cur_file[MAX_PATH_LENGTH];		/* Filename this player's viewing */
 	byte special_file_type;	/* Is he using *ID* or Self Knowledge? */
@@ -1914,10 +1899,7 @@ struct player_type
 	bool obj_tried[MAX_K_IDX]; /* Has the player tried this obj type? */
 
 	bool trap_ident[MAX_T_IDX];       /* do we know the name */
-//	s16b trap_known[MAX_T_IDX];       /* how well is this trap known */
 
-//	bool options[64];	/* Player's options */
-//	bool options[OPT_MAX];	/* obsolete */
 	byte d_attr[MAX_K_IDX];
 	char d_char[MAX_K_IDX];
 	byte f_attr[MAX_F_IDX];
@@ -1964,7 +1946,7 @@ struct player_type
 	bool taciturn_messages;
 	bool last_words;
 	bool limit_chat;
-	// bool speak_unique;
+	/* bool speak_unique; */
 
 	/* 'make clean; make' consumes time :) */
 	bool depth_in_feet;
@@ -2221,7 +2203,6 @@ struct player_type
 	bool resist_plasma;	/* Resist Plasma */
 	bool regen_mana;	/* Regenerate mana */
 	bool hold_life;		/* Resist life draining */
-//	bool telepathy;		/* Telepathy */
 	u32b telepathy;		/* Telepathy */
 	bool slow_digest;	/* Slower digestion */
 	bool bless_blade;	/* Blessed blade */
@@ -2288,12 +2269,12 @@ struct player_type
 	byte esp_link_type;
 	u16b esp_link_flags;
 	u16b esp_link_end; /* Time before actual end */
-	bool (*master_move_hook)(int Ind, char * args);
+	bool (*master_move_hook)(int Ind, char *args);
 
 	/* some new borrowed flags (saved) */
 	bool black_breath;      /* The Tolkien's Black Breath */
 	bool black_breath_tmp;	/* (NOT saved) BB induced by an item */
-	//        u32b malady;      /* TODO: Flags for malady */
+	/*        u32b malady; */     /* TODO: Flags for malady */
 
 	s16b msane;                   /* Max sanity */
 	s16b csane;                   /* Cur sanity */
@@ -2329,7 +2310,7 @@ struct player_type
 	
 	int luck_cur;	/* Extra luck of this player */
 
-	//        byte anti_magic_spell;    /* Anti-magic(newer one..) */
+	/*        byte anti_magic_spell;    *//* Anti-magic(newer one..) */
 	byte antimagic;    		/* Anti-magic(in percent) */
 	byte antimagic_dis;     /* Radius of the anti magic field */
 	bool anti_tele;     /* Prevent any teleportation + phasing + recall */
@@ -2348,7 +2329,7 @@ struct player_type
 
 	s16b to_l;                      /* Bonus to life */
 	s16b to_m;                      /* Bonus to mana */
-	//        s16b to_s;                      /* Bonus to spell(num_spell) */
+	/*        s16b to_s; */                     /* Bonus to spell(num_spell) */
 	s16b dodge_chance;		/* Chance of dodging blows/missiles */
 
 	s32b balance;		/* Deposit/debt */
@@ -2365,7 +2346,7 @@ struct player_type
 	byte pgod;                      /* Your God. */
 	bool praying;                   /* Praying to your god. */
 	s16b melkor_sacrifice;          /* How much hp has been sacrified for damage */
-#endif	// 0
+#endif	/* 0 */
 
         byte spell_project;             /* Do the spells(some) affect nearby party members ? */
 
@@ -2499,16 +2480,16 @@ struct server_opts
 	s16b runlevel;		/* Glorified shutdown mode */
 	time_t runtime;		/* Server start time */
 	time_t closetime;	/* Server closedown time */
-	char * meta_address;
+	char *meta_address;
 	s16b meta_port;
 	
-	char * bind_name;
-	char * console_password;
-	char * admin_wizard;
-	char * dungeon_master;
-	char * wserver;
+	char *bind_name;
+	char *console_password;
+	char *admin_wizard;
+	char *dungeon_master;
+	char *wserver;
 	
-	char * pass;
+	char *pass;
 	s32b preserve_death_level;
 	s32b unique_respawn_time;
 	s32b unique_max_respawn_time;
@@ -2575,7 +2556,7 @@ struct server_opts
 	bool log_u;
 	s16b replace_hiscore;
 	s16b unikill_format;
-	char * server_notes;
+	char *server_notes;
 	bool arts_disabled;
 };
 
@@ -2650,7 +2631,6 @@ struct client_opts
 	bool view_granite_lite;
 	bool view_special_lite;
 
-	//bool dummy_option;	/* for options not used in client */
 	bool easy_open;
 	bool easy_disarm;
 	bool easy_tunnel;
@@ -2691,11 +2671,8 @@ struct c_store_extra
 	char owner_name[40];
 	char store_name[40];
 	s32b max_cost;			/* Purse limit */
-//	s16b store_num;			/* XXX makeshift - will be removed soon */
 
 	/* list of command */
-//	store_action_type actions[6];
-//	byte num_actions;
 	u16b actions[6];                /* Actions(refers to ba_info) */
 	u16b bact[6];                /* ba_ptr->action */
 	char action_name[6][40];

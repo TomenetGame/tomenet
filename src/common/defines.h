@@ -33,7 +33,7 @@
  */
 
 /* Enable/disable Halloween Event Mode- by C. Blue :) */
-//#define HALLOWEEN
+/* #define HALLOWEEN */
 
 /* MAJOR/MINOR/PATCH version should be 0-15.  */
 #define VERSION_MAJOR   4
@@ -475,10 +475,10 @@
 #if 0
 #define STORE_MIN_KEEP	12		/* Min slots to "always" keep full */
 #define STORE_MAX_KEEP	36		/* Max slots to "always" keep full */
-#else	// 0
+#else	/* 0 */
 #define STORE_MIN_KEEP	6		/* Min slots to "always" keep full */
 #define STORE_MAX_KEEP	24		/* Max slots to "always" keep full */
-#endif	// 0
+#endif	/* 0 */
 #define STORE_SHUFFLE	20		/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNOUT	60		/* Max turns a player may stay in a store if crowded */
 #define STORE_TURNS	(cfg.store_turns)	/* Number of turns between turnovers */
@@ -923,14 +923,13 @@ that keeps many algorithms happy.
 #define FEAT_PERM_SOLID	0x7F
 
 /* XXX Temporary Additions	- Jir - */
-//#define FEAT_MON_TRAP           0xAF /* 175 */
 #define FEAT_MON_TRAP           0x80 /* 128 */
 
 /* Dirty Hack till feature code will be redone */
 #define is_door(feat)	(feat == FEAT_OPEN || feat == FEAT_BROKEN || \
 		(FEAT_DOOR_HEAD <= feat && feat <= FEAT_SECRET))
 
-#else	// 0
+#else	/* 0 */
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
 
 /* Nothing */
@@ -1106,7 +1105,7 @@ that keeps many algorithms happy.
 /* former Dirty Hack (XXX this can overlook spiked door!) */
 #define is_door(feat) (f_info[feat].flags1 & FF1_DOOR)
 
-#endif	// 0
+#endif	/* 0 */
 
 
 /*
@@ -2739,24 +2738,24 @@ that keeps many algorithms happy.
 #if 0	/* Let's implement one by one.. */
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
 #define GF_DISP_LIVING  71
-#define GF_NUKE         73	// *
-#define GF_STASIS       75	// *
-#define GF_STONE_WALL   76	// *
+#define GF_NUKE         73
+#define GF_STASIS       75
+#define GF_STONE_WALL   76
 #define GF_DEATH_RAY    77
-#define GF_STUN         78	// *
-#define GF_HOLY_FIRE    79	// *
-#define GF_HELL_FIRE    80	// *
-#define GF_DISINTEGRATE 81	// -
+#define GF_STUN         78
+#define GF_HOLY_FIRE    79
+#define GF_HELL_FIRE    80
+#define GF_DISINTEGRATE 81
 #define GF_CHARM        82
 #define GF_CONTROL_UNDEAD   83
 #define GF_CONTROL_ANIMAL   84
-#define GF_PSI         85	// **
+#define GF_PSI         85
 #define GF_PSI_DRAIN   86
 #define GF_TELEKINESIS  87
 #define GF_JAM_DOOR     88
 #define GF_DOMINATION   89
 #define GF_DISP_GOOD    90
-#define GF_IDENTIFY     91	// **
+#define GF_IDENTIFY     91
 #define GF_RAISE        92
 #define GF_STAR_IDENTIFY 93
 #define GF_DESTRUCTION  94
@@ -3130,7 +3129,7 @@ that keeps many algorithms happy.
      TR1_CON | TR1_CHR | TR1_LIFE | \
 	 TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
      TR1_SPEED | TR1_BLOWS | TR1_MANA | TR1_SPELL)
-//#define PW_SPELL	0x00000004L	/* Display spell list */
+/*#define PW_SPELL	0x00000004L*/	/* Display spell list */
 #endif	/* 0 */
 
 #define TR5_PVAL_MASK   \
@@ -3321,25 +3320,17 @@ that keeps many algorithms happy.
  */
 #define RF2_STUPID			0x00000001	/* Monster is stupid */
 #define RF2_SMART			0x00000002	/* Monster is smart */
-//#define RF2_XXX1			0x00000004	/* (?) */
-//#define RF2_XXX2			0x00000008	/* (?) */
 #define RF2_CAN_SPEAK            0x00000004  /* TY: can speak */
 #define RF2_REFLECTING                  0x00000008      /* Reflects bolts */
 #define RF2_INVISIBLE		0x00000010	/* Monster avoids vision */
 #define RF2_COLD_BLOOD		0x00000020	/* Monster avoids infra */
 #define RF2_EMPTY_MIND		0x00000040	/* Monster avoids telepathy */
 #define RF2_WEIRD_MIND		0x00000080	/* Monster avoids telepathy? */
-//#define RF2_MULTIPLY		0x00000100	/* Monster reproduces */
 #define RF2_DEATH_ORB           0x00000100      /* Death Orb */
 #define RF2_REGENERATE		0x00000200	/* Monster regenerates */
 #define RF2_SHAPECHANGER        0x00000400  /* TY: shapechanger */
 #define RF2_ATTR_ANY            0x00000800  /* TY: Attr_any */
-//#define RF2_XXX3			0x00000400	/* (?) */
-//#define RF2_XXX4			0x00000800	/* (?) */
 #define RF2_POWERFUL		0x00001000	/* Monster has strong breath */
-//#define RF2_XXX5			0x00002000	/* (?) */
-//#define RF2_XXX7			0x00004000	/* (?) */
-//#define RF2_XXX6			0x00008000	/* (?) */
 #define RF2_ELDRITCH_HORROR             0x00002000      /* Sanity-blasting horror    */
 #define RF2_AURA_FIRE                   0x00004000      /* Burns in melee */
 #define RF2_AURA_ELEC                   0x00008000      /* Shocks in melee */
@@ -3371,18 +3362,12 @@ that keeps many algorithms happy.
 #define RF3_UNDEAD			0x00000020	/* Undead */
 #define RF3_EVIL			0x00000040	/* Evil */
 #define RF3_ANIMAL			0x00000080	/* Animal */
-//#define RF3_XXX1			0x00000100	/* (?) */
-//#define RF3_XXX2			0x00000200	/* (?) */
-//#define RF3_XXX3			0x00000400	/* Non-Vocal (?) */
-//#define RF3_IM_TELE                     0x00000800      /* Resist teleportation */
 #define RF3_DRAGONRIDER            0x00000100  /* DG: DragonRider */
 #define RF3_GOOD                        0x00000200      /* Good */
 #define RF3_AURA_COLD                        0x00000400      /* Freezes in melee */
 #define RF3_NONLIVING           0x00000800  /* TY: Non-Living (?) */
 #define RF3_HURT_LITE		0x00001000	/* Hurt by lite */
 #define RF3_HURT_ROCK		0x00002000	/* Hurt by rock remover */
-//#define RF3_HURT_FIRE		0x00004000	/* Hurt badly by fire */
-//#define RF3_HURT_COLD		0x00008000	/* Hurt badly by cold */
 #define RF3_SUSCEP_FIRE           0x00004000      /* Hurt badly by fire */
 #define RF3_SUSCEP_COLD           0x00008000      /* Hurt badly by cold */
 #define RF3_IM_ACID			0x00010000	/* Resist acid a lot */
@@ -3390,14 +3375,12 @@ that keeps many algorithms happy.
 #define RF3_IM_FIRE			0x00040000	/* Resist fire a lot */
 #define RF3_IM_COLD			0x00080000	/* Resist cold a lot */
 #define RF3_IM_POIS			0x00100000	/* Resist poison a lot */
-//#define RF3_IM_PSI			0x00200000	/* Immune to (?) */
 #define RF3_RES_TELE                    0x00200000      /* Resist teleportation */
 #define RF3_RES_NETH		0x00400000	/* Resist nether a lot */
 #define RF3_RES_WATE		0x00800000	/* Resist water */
 #define RF3_RES_PLAS		0x01000000	/* Resist plasma */
 #define RF3_RES_NEXU		0x02000000	/* Resist nexus */
 #define RF3_RES_DISE		0x04000000	/* Resist disenchantment */
-//#define RF3_RES_PSI			0x08000000	/* Resist (?) */
 #define RF3_UNIQUE_4                    0x08000000      /* Is a "Nazgul" unique */
 #define RF3_NO_FEAR			0x10000000	/* Cannot be scared */
 #define RF3_NO_STUN			0x20000000	/* Cannot be stunned */
@@ -3408,17 +3391,17 @@ that keeps many algorithms happy.
  * New monster race bit flags
  */
 #define RF4_SHRIEK			0x00000001	/* Shriek for help */
-//#define RF4_MULTIPLY                    0x00000002  /* Monster reproduces */
 #define RF4_UNMAGIC			0x00000002	/* Cancel player's timed spell */
 #define RF4_S_ANIMAL                    0x00000004  /* Summon animals */
 #define RF4_ROCKET                      0x00000008  /* TY: Rocket */
-//#define RF4_XXX2			0x00000002	/* (?) */
-//#define RF4_XXX3			0x00000004	/* (?) */
-//#define RF4_XXX4			0x00000008	/* (?) */
 #define RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
 #define RF4_ARROW_2			0x00000020	/* Fire an arrow (heavy) */
-//#define RF4_ARROW_3			0x00000040	/* Fire missiles (light) */
-//#define RF4_ARROW_4			0x00000080	/* Fire missiles (heavy) */
+
+#if 0
+#define RF4_ARROW_3			0x00000040	/* Fire missiles (light) */
+#define RF4_ARROW_4			0x00000080	/* Fire missiles (heavy) */
+#endif
+
 #define RF4_BR_ACID			0x00000100	/* Breathe Acid */
 #define RF4_BR_ELEC			0x00000200	/* Breathe Elec */
 #define RF4_BR_FIRE			0x00000400	/* Breathe Fire */
@@ -3441,22 +3424,14 @@ that keeps many algorithms happy.
 #define RF4_BR_MANA			0x08000000	/* Breathe Mana */
 #define RF4_BR_DISI                     0x10000000  /* Breathe Disintegration */
 #define RF4_BR_NUKE                     0x20000000  /* TY: Toxic Breath */
-//#define RF4_XXX5			0x10000000
-//#define RF4_XXX6			0x20000000
 #define RF4_MOAN			0x40000000	/* For Halloween event :) -C. Blue */
-//#define RF4_XXX7			0x40000000
-//#define RF4_XXX8			0x80000000
 #define RF4_BOULDER			0x80000000  /* Hurl Boulder (Vanilla) */
-
-//#define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA)
 
 #define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | RF4_BR_DISI | RF4_BR_NUKE)
 
 /* NOTE: BR_DISI is not considered as 'radius spell', since this can
  * eliminate walls between the caster and the player. */
-//#define RF4_RADIUS_SPELLS (0xefffff08) /* Hack ;) */
 #define RF4_RADIUS_SPELLS (0xafffff08) /* Changed for Halloween event, now includes ranged MOAN. -C. Blue */
-//#define RF5_RADIUS_SPELLS (0x000001ff) /* Hack ;) */
 #define RF5_RADIUS_SPELLS ( RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | \
 		RF5_BA_COLD | RF5_BA_POIS | RF5_BA_NETH | RF5_BA_WATE | \
 		RF5_BA_MANA | RF5_BA_DARK | RF5_BA_NUKE | RF5_BA_CHAO )
@@ -3501,7 +3476,6 @@ that keeps many algorithms happy.
 #define RF5_CONF			0x20000000	/* Confuse Player */
 #define RF5_SLOW			0x40000000	/* Slow Player */
 #define RF5_HOLD			0x80000000	/* Paralyze Player */
-//#define RF5_PLAYER_SPELLS (0xffffffff) /* Simply all */
 #define RF5_PLAYER_SPELLS (0xffffffff & ~(RF5_DRAIN_MANA | RF5_BLIND))
 
 /*
@@ -3509,27 +3483,19 @@ that keeps many algorithms happy.
  */
 #define RF6_HASTE			0x00000001	/* Speed self */
 #define RF6_HAND_DOOM                   0x00000002      /* Hand of Doom */
-//#define RF6_XXX1			0x00000002	/* Speed a lot (?) */
 #define RF6_HEAL			0x00000004	/* Heal self */
 #define RF6_S_ANIMALS                   0x00000008      /* Summon animals */
-//#define RF6_XXX2			0x00000008	/* Heal a lot (?) */
 #define RF6_BLINK			0x00000010	/* Teleport Short */
 #define RF6_TPORT			0x00000020	/* Teleport Long */
-//#define RF6_XXX3			0x00000040	/* Move to Player (?) */
-//#define RF6_XXX4			0x00000080	/* Move to Monster (?) */
 #define RF6_RAISE_DEAD                  0x00000040      /* Raise Dead */
 #define RF6_S_BUG                       0x00000080      /* Summon Software bug */
 #define RF6_TELE_TO			0x00000100	/* Move player to monster */
 #define RF6_TELE_AWAY		0x00000200	/* Move player far away */
 #define RF6_TELE_LEVEL		0x00000400	/* Move player vertically */
-//#define RF6_XXX5			0x00000800	/* Move player (?) */
 #define RF6_S_RNG                       0x00000800      /* Summon RNG */
 #define RF6_DARKNESS		0x00001000	/* Create Darkness */
 #define RF6_TRAPS			0x00002000	/* Create Traps */
 #define RF6_FORGET			0x00004000	/* Cause amnesia */
-//#define RF6_XXX6			0x00008000	/* ??? */
-//#define RF6_XXX7			0x00010000	/* Summon (?) */
-//#define RF6_XXX8			0x00020000	/* Summon (?) */
 #define RF6_S_DRAGONRIDER               0x00008000      /* Summon DragonRiders */
 #define RF6_S_KIN                       0x00010000      /* Summon "kin" */
 #define RF6_S_HI_DEMON                  0x00020000      /* Summon greater demons! */
@@ -3784,7 +3750,7 @@ that keeps many algorithms happy.
 #define DF2_ADJUST_LEVEL_1_2    0x00000001L	/* Minimum monster level will be half the dungeon level */
 #define DF2_NO_SHAFT            0x00000002L	/* No shafts */
 #define DF2_ADJUST_LEVEL_PLAYER 0x00000004L	/* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
-#else	// 0
+#else	/* 0 */
 
 /* Maybe better DF2_PRELOADED? */
 #define DF2_RANDOM              0x00000001L /* random dungeon - not preloaded */
@@ -3792,7 +3758,7 @@ that keeps many algorithms happy.
 #define DF2_IRON                0x00000002L /* one way dungeon - return portal at max level */
 #define DF2_HELL                0x00000004L /* hellish dungeon - forces hellish mode on all */
 /* DF2_NOMAP => DF1_FORGET */
-//#define DF2_NOMAP               0x00000008L /* player never gains level knowledge */
+/*#define DF2_NOMAP		0x00000008L *//* player never gains level knowledge */
 
 #define DF2_NO_MAGIC_MAP        0x00000010L /* non magic-mappable */
 
@@ -3803,7 +3769,7 @@ that keeps many algorithms happy.
 #define DF2_ADJUST_LEVEL_PLAYER 0x40000000L /* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
 
 #define DF2_DELETED             0x80000000L /* Deleted, but not yet removed */
-#endif	// 0
+#endif	/* 0 */
 
 
 
@@ -3876,7 +3842,7 @@ that keeps many algorithms happy.
  */
 #define RF4_INDIRECT_MASK \
 	(RF4_MOAN)
-//	(0L)	-	Ranged MOAN needed for Halloween event -C. Blue
+/*	(0L)	-	Ranged MOAN needed for Halloween event -C. Blue */
 
 #define RF5_INDIRECT_MASK \
 	(0L)
@@ -3989,7 +3955,7 @@ that keeps many algorithms happy.
  */
 #define RF4_ANNOY_MASK \
 	(RF4_SHRIEK | RF4_UNMAGIC | RF4_MOAN)
-//	(RF4_SHRIEK | RF4_UNMAGIC)  ranged MOAN added for Halloween event. -C. Blue
+/*	(RF4_SHRIEK | RF4_UNMAGIC)  ranged MOAN added for Halloween event. -C. Blue */
 
 #define RF5_ANNOY_MASK \
 	(RF5_DRAIN_MANA | RF5_MIND_BLAST | RF5_BRAIN_SMASH | \
@@ -4060,7 +4026,6 @@ that keeps many algorithms happy.
     (((T)->ident & ID_KNOWN) || \
      (k_info[(T)->k_idx].easy_know && Players[IND]->obj_aware[(T)->k_idx] && \
 	 !(T)->name1 && !(T)->name2 && !(T)->name2b))
-//     (k_info[(T)->k_idx].easy_know && Players[IND]->obj_aware[(T)->k_idx]))
 
 #define object_fully_known_p(IND, T) \
 	(object_known_p(IND,T) && ((T)->ident & ID_MENTAL))
@@ -4218,7 +4183,6 @@ that keeps many algorithms happy.
  */
 #define cave_floor_bold(ZCAVE,Y,X) \
 	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR)
-//    (!(ZCAVE[Y][X].feat & 0x20))
 
 /* for summoning on mountains */
 #define cave_empty_mountain(ZCAVE,Y,X) \
@@ -4242,7 +4206,7 @@ that keeps many algorithms happy.
      (ZCAVE[Y][X].feat <= FEAT_MUD) && \
      (!ZCAVE[Y][X].o_idx))
 /*     (ZCAVE[Y][X].feat <= FEAT_LOOSE_DIRT) && \   */
-#endif	// 0
+#endif	/* 0 */
 
 /*
  * Determine if a "legal" grid is an "empty" floor grid
@@ -4277,7 +4241,7 @@ that keeps many algorithms happy.
      !(ZCAVE[Y][X].o_idx) && \
      !(ZCAVE[Y][X].m_idx))
 /*     (ZCAVE[Y][X].feat <= FEAT_DIRT) && \ */
-#endif	// 0
+#endif	/* 0 */
 
 #define cave_naked_bold2(Y,X) \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) && \
@@ -4303,7 +4267,7 @@ that keeps many algorithms happy.
       (ZCAVE[Y][X].feat <= FEAT_SHOP_TAIL)) || \
      ((ZCAVE[Y][X].feat >= FEAT_HOME_HEAD) && \
       (ZCAVE[Y][X].feat <= FEAT_HOME_TAIL))) 
-#endif	// 0
+#endif	/* 0 */
 
 /*
  * Is a given location "valid" for placing things?
@@ -4331,7 +4295,6 @@ that keeps many algorithms happy.
  */
 #define cave_floor_grid(C) \
     (f_info[(C)->feat].flags1 & FF1_FLOOR)
-//    (!((C)->feat & 0x20))
 
 
 /*
@@ -4351,7 +4314,7 @@ that keeps many algorithms happy.
     (((C)->feat >= FEAT_FLOOR) && \
      ((C)->feat <= FEAT_DIRT) && \
      (!(C)->o_idx))
-#endif	// 0
+#endif	/* 0 */
 
 /*
  * Grid based version of "cave_empty_bold()"
@@ -4373,7 +4336,7 @@ that keeps many algorithms happy.
      ((C)->feat <= FEAT_DIRT) && \
      !((C)->o_idx) && \
      !((C)->m_idx))
-#endif	// 0
+#endif	/* 0 */
 
 
 /*
@@ -4387,7 +4350,7 @@ that keeps many algorithms happy.
       ((C)->feat == FEAT_MORE)) || \
      (((C)->feat >= FEAT_SHOP_HEAD) && \
       ((C)->feat <= FEAT_SHOP_TAIL)))
-#endif	// 0
+#endif	/* 0 */
 
 
 /*
@@ -5229,7 +5192,7 @@ extern int PlayerUID;
 #define BACT_DEPOSIT				54
 #define BACT_WITHDRAW				55
 #define BACT_EXTEND_HOUSE			56
-// If one adds new BACT_ do NOT forget to increase max_bact in variables.c
+/* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_INFO for TomeNET	- Jir - */
 
 #define BACT_F_NOTHING		0x00
