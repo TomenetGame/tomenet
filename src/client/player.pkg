@@ -77,6 +77,7 @@ typedef unsigned int u32b;
 #define SKILL_TEMPORAL          57
 #define SKILL_META              58
 #define SKILL_MIND              59
+#define SKILL_UDUN              60
 
 
 /* Ugly but needed */

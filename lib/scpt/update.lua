@@ -13,6 +13,8 @@ __update_table =
 	"scpt/s_divin.lua",
 	"scpt/s_tempo.lua",
 	"scpt/s_meta.lua",
+	"scpt/s_nature.lua",
+	"scpt/s_udun.lua",
 }
 
 function update_client()

@@ -80,6 +80,13 @@ SCHOOL_DIVINATION = add_school
         ["sorcery"] = TRUE,
 }
 
+SCHOOL_UDUN = add_school
+{
+	["name"] = "Udun",
+        ["skill"] = SKILL_DIVINATION,
+        ["sorcery"] = TRUE,
+}
+
 -- Put some spells
 pern_dofile(Ind, "s_mana.lua")
 pern_dofile(Ind, "s_fire.lua")
@@ -91,6 +98,7 @@ pern_dofile(Ind, "s_divin.lua")
 pern_dofile(Ind, "s_tempo.lua")
 pern_dofile(Ind, "s_meta.lua")
 pern_dofile(Ind, "s_nature.lua")
+pern_dofile(Ind, "s_udun.lua")
 
 -- Create the crystal of mana
 school_book[0] = {
@@ -142,6 +150,11 @@ school_book[9] = {
         RECHARGE, DISPERSEMAGIC,
 }
 
+-- Create the book of hellflame
+school_book[11] = {
+        GENOCIDE, WRAITHFORM,
+}
+
 -- Create the book of beginner's cantrip
 school_book[50] = {
         MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK, SENSEMONSTERS, SENSEHIDDEN,
@@ -154,11 +167,6 @@ school_book[50] = {
 -- Create the book of the mind
 school_book[10] = {
         CHARM, CONFUSE, ARMOROFFEAR, STUN,
-}
-
--- Create the book of hellflame
-school_book[11] = {
-        DRAIN, GENOCIDE, WRAITHFORM, FLAMEOFUDUN,
 }
 }
 ]]

@@ -330,6 +330,12 @@ D:Spells use the intelligence stat
 A:11:Cast a spell
 I:1000:111
 
+N:60:Udun
+D:Ability to learn and use spells from the Udun school
+D:Spells use the intelligence stat
+A:11:Cast a spell
+I:1000:111
+
 #
 # Skill interactions
 #
@@ -395,7 +401,7 @@ f:Nature:Magic%10
 f:Temporal:Magic%10
 f:Meta:Magic%10
 f:Mind:Magic%10
-#f:Udun:Magic%10
+f:Udun:Magic%10
 #f:Demonology:Magic%10
 #f:Necromancy:Magic%4
 #f:Runecraft:Magic%12
@@ -426,7 +432,7 @@ f:Nature:Magic%10
 f:Temporal:Magic%10
 f:Meta:Magic%10
 f:Mind:Magic%10
-#f:Udun:Magic%10
+f:Udun:Magic%10
 #f:Demonology:Magic%10
 #f:Necromancy:Magic%4
 #f:Runecraft:Magic%12
@@ -506,7 +512,7 @@ T:Magic:Divination
 T:Magic:Temporal
 T:Magic:Mind
 T:Magic:Nature
-#T:Magic:Udun
+T:Magic:Udun
 #T:Magic:Demonology
 #T:Magic:Necromancy
 #T:Magic:Runecraft

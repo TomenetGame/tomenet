@@ -4942,6 +4942,7 @@ extern int PlayerUID;
 #define SKILL_TEMPORAL          57
 #define SKILL_META              58
 #define SKILL_MIND              59
+#define SKILL_UDUN              60
 
 
 #if 0	/* skills to come	- Jir - */
