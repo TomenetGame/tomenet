@@ -106,7 +106,7 @@ static void print_mimic_spells()
 
 /* modified to accept certain capital letters for priest spells. -AD- */ 
  
-int get_spell(int *sn, cptr prompt, int book, bool known)
+int get_spell(s32b *sn, cptr prompt, int book, bool known)
 {
 	int		i, num = 0;
 	bool		flag, redraw, okay;
@@ -304,7 +304,7 @@ void show_browse(object_type *o_ptr)
  */
 void do_study(int book)
 {
-	int j;
+	s32b j;
 	cptr p = "spell";
 
 	/* Priest -- Learn random spell */
@@ -329,7 +329,7 @@ void do_study(int book)
  */
 void do_cast(int book)
 {
-	int j;
+	s32b j;
 
 	/* Ask for a spell, allow cancel */
 	if (!get_spell(&j, "cast", book, FALSE)) return;
@@ -343,7 +343,7 @@ void do_cast(int book)
  */
 void do_pray(int book)
 {
-	int j;
+	s32b j;
 
 	/* Ask for a spell, allow cancel */
 	if (!get_spell(&j, "pray", book, FALSE)) return;
@@ -540,7 +540,7 @@ void do_mimic()
  */
 void do_fight(int book)
 {
-	int j;
+	s32b j;
 
 	/* Ask for a spell, allow cancel */
 	if (!get_spell(&j, "use", book, FALSE)) return;
@@ -556,7 +556,7 @@ void do_fight(int book)
 /* XXX XXX This doesn't work at all!! */
 void do_ghost(void)
 {
-	int j;
+	s32b j;
 
 	/* Ask for an ability, allow cancel */
 	if (!get_spell(&j, "use", 0, FALSE)) return;

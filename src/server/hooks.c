@@ -16,6 +16,9 @@
 #include "tolua.h"
 extern lua_State* L;
 
+bool check_hook(int h_idx);
+void del_hook_name(int h_idx, cptr name);
+
 /******** Hooks stuff *********/
 FILE *hook_file;
 

@@ -10,6 +10,12 @@
 static void new_rd_wild();
 static void new_rd_dungeons();
 void rd_towns();
+void rd_byte(byte *ip);
+void rd_u16b(u16b *ip);
+void rd_s16b(s16b *ip);
+void rd_u32b(u32b *ip);
+void rd_s32b(s32b *ip);
+void rd_string(char *str, int max);
 
 /*
  * This file is responsible for loading all "2.7.X" savefiles

@@ -770,7 +770,7 @@ void do_activate_skill(int x_idx, int item)
 	}
 	else if (s_info[x_idx].action_mkey == MKEY_SCHOOL)
 	{
-		int item_obj = -1, aux;
+		int item_obj = -1, aux=0;
 
 		/* Ask for a spell, allow cancel */
 		if ((spell = get_school_spell("cast", &item)) == -1) return;

@@ -190,27 +190,12 @@ bool can_go_down(struct worldpos *wpos)
 	return((wild->flags&WILD_F_DOWN)?TRUE:FALSE);
 }
 
-#if 0	/* macroed. */
-bool istown(struct worldpos *wpos)
-{
-	if(!wpos->wz && wild_info[wpos->wy][wpos->wx].type==WILD_TOWN) return(TRUE);
-	return(FALSE);
-}
-#endif	/* 0 */
-
 void wpcopy(struct worldpos *dest, struct worldpos *src)
 {
 	dest->wx=src->wx;
 	dest->wy=src->wy;
 	dest->wz=src->wz;
 }
-
-#if 0	/* macroed. */
-int wild_idx(worldpos *wpos)
-{
-	return (wpos->wx + wpos->wy * MAX_WILD_X);
-}
-#endif	/* 0 */
 
 void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 {
@@ -265,13 +250,6 @@ int players_on_depth(struct worldpos *wpos)
 		return(d_ptr->level[ABS(wpos->wz)-1].ondepth);
 	}
 }
-
-#if 0	/* macroed. */
-bool inarea(struct worldpos *apos, struct worldpos *bpos)
-{
-	return(apos->wx==bpos->wx && apos->wy==bpos->wy && apos->wz==bpos->wz);
-}
-#endif	/* 0 */
 
 int getlevel(struct worldpos *wpos)
 {
@@ -1569,25 +1547,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* Apply "mimic" field */
 			//feat = f_info[feat].mimic;
 
-#if 0	// old hack -- DELETEME
-			/* Hack -- hide the secret door */
-			if (feat == FEAT_SECRET && p_ptr->wpos.wz)
-			{
-				dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
-				dungeon_info_type *di_ptr = &d_info[d_ptr->type];
-
-				feat = di_ptr->fill_type1;
-			}
-#if 1
-			else if (feat == FEAT_PERM_SOLID && p_ptr->wpos.wz)
-			{
-				dungeon_type	*d_ptr = getdungeon(&p_ptr->wpos);
-				dungeon_info_type *di_ptr = &d_info[d_ptr->type];
-
-				feat = di_ptr->outer_wall;
-			}
-#endif	// 1
-#endif	// 0
 			/* Hack -- hide the secret door */
 			//if (feat == FEAT_SECRET && (cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
@@ -1850,11 +1809,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			if((( p2_ptr->chp * 95) /
 						(p2_ptr->mhp*10)) >= 7)
 			{
-#if 0
-				if (p2_ptr->body_monster) c = r_info[p2_ptr->body_monster].d_char;
-#else	// 0
 				if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], c_ptr, &a, &c);
-#endif	// 0
 				else if (p2_ptr->fruit_bat) c = 'b';
 				else c='@';
 			}
@@ -2068,12 +2023,6 @@ void lite_spot(int Ind, int y, int x)
 			}
 				
 			/*if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) c = '4';*/
-#if 0			
-			if (!(strcmp(p_ptr->name,"Strider")))
-			{
-				sprintf(&c,"%d",(p_ptr->chp * 95) / (p_ptr->mhp*10));
-			}
-#endif	/* 0 */
 						
 			if (p_ptr->fruit_bat) c = 'b';
 			
@@ -3534,14 +3483,8 @@ void update_view(int Ind)
 
 	int full, over;
 
-#if 0
-	int y_max = p_ptr->cur_hgt - 1;
-	int x_max = p_ptr->cur_wid - 1;
-#else	/* Inefficient, but prevents south-west dead angle bug.. */
 	int y_max = MAX_HGT - 1;
 	int x_max = MAX_WID - 1;
-#endif	/* 0 */
-
 
 	cave_type *c_ptr;
 	byte *w_ptr;
@@ -3600,12 +3543,6 @@ void update_view(int Ind)
 
 		/* Mark the grid as not in "view" */
 		*w_ptr &= ~(CAVE_VIEW);
-#if 0	/* moved to the end of this function */
-		/* NOTE: this makes the player forget stairs/doors even when
-		 * they are still within the sight.  FIXME */
-		if(unmap)
-			*w_ptr &= ~CAVE_MARK;
-#endif	/* 0 */
 
 		/* Mark the grid as "seen" */
 		c_ptr->info |= CAVE_TEMP;

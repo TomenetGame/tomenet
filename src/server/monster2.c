@@ -27,6 +27,8 @@
 #define MAX_FUNNY 22
 #define MAX_COMMENT 5
 
+int pick_randuni(int r_idx, int Level);
+
 static cptr horror_desc[MAX_HORROR] =
 {
 	"abominable",

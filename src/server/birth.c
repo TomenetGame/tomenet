@@ -249,16 +249,6 @@ static hist_type bg[] =
 	{"leprous skin.",                                               100, 66, 0, 50},
 
 
-#if 0
-	{"You are one of several children of a DragonRider. ", 85, 89, 91, 50  },
-	{"You are the only child of a DragonRider. ", 100, 89, 91, 60 },
-
-	{"You have a Green Dragon.", 30, 91, 0, 40 },
-	{"You have a Blue Dragon.", 55, 91, 0, 60 },
-	{"You have a Brown Dragon.", 80, 91, 0, 80 },
-	{"You have a Bronze Dragon.", 90, 91, 0, 100 },
-	{"You have a Gold Dragon.", 100, 91, 0, 120},
-#else	// 0
 	/* XXX lol.. change it */
 	{"You are one of several children of a Thunderlord. ", 85, 89, 91, 50  },
 	{"You are the only child of a Thunderlord. ", 100, 89, 91, 60 },
@@ -268,7 +258,6 @@ static hist_type bg[] =
 	{"You have a Brown Eagle.", 80, 91, 0, 80 },
 	{"You have a Bronze Eagle.", 90, 91, 0, 100 },
 	{"You have a Gold Eagle.", 100, 91, 0, 120},
-#endif	// 0
 
 	{"You are of an unknown generation of the Ents.",        30, 94, 95, 30},
 	{"You are of the third generation of the Ents.",         40, 94, 95, 50},
@@ -800,11 +789,6 @@ static void get_money(int Ind)
 		p_ptr->exp = 999999999;
 		p_ptr->noscore = 1;
 		/* permanent invulnerability */
-#if 0
-		//p_ptr->invuln = -1;
-		
-		// This is a KING(or QUEEN :)
-#endif
 		p_ptr->total_winner = TRUE;
 		p_ptr->max_dlv = 200;
 		p_ptr->max_plv = 99;
@@ -1064,11 +1048,7 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->number = 99;
 	o_ptr->note = note;
 	do_admin_outfit();
-#if 0
-	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL));
-	o_ptr->number = 98;
-	do_admin_outfit();
-#endif
+
 	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_AUGMENTATION));
 	o_ptr->number = 99;
 	do_admin_outfit();
@@ -1095,31 +1075,6 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->number = 98;
 	do_admin_outfit();
 
-#if 0
-	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_INVIS));
-	o_ptr->number = 9;
-	do_admin_outfit();
-
-	/* Ifrit bug report */
-	invcopy(o_ptr, lookup_kind(TV_SWORD, SV_BROAD_SWORD));
-	o_ptr->name1 = ART_GLAMDRING;
-	apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
-	o_ptr->number = 1;
-	do_admin_outfit();
-
-	invcopy(o_ptr, lookup_kind(TV_GLOVES, SV_SET_OF_CESTI));
-	o_ptr->name1 = ART_FINGOLFIN;
-	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
-	o_ptr->number = 1;
-	do_admin_outfit();
-#endif
-#if 0 //it's annoying that each admin gets this imho :)
-	invcopy(o_ptr, lookup_kind(TV_HAFTED, SV_GROND));
-	o_ptr->name1 = ART_GROND;
-	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
-	o_ptr->number = 1;
-	do_admin_outfit();
-#endif
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
 	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
 	o_ptr->number = 1;

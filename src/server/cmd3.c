@@ -1243,9 +1243,9 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
  * you'll meet him again and again... so I stop implementing this.
  * - Jir -
  */
-#if 0
 void do_cmd_steal_from_monster(int Ind, int dir)
 {
+#if 0
 	player_type *p_ptr = Players[Ind], *q_ptr;
 
 	cave_type **zcave;
@@ -1443,8 +1443,8 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 
 	/* Take a turn */
 	energy_use = 100;
-}
 #endif	// 0
+}
 
 
 /*
@@ -1478,20 +1478,17 @@ void do_cmd_steal(int Ind, int dir)
 
 	/* May only steal from players */
 	if (c_ptr->m_idx >= 0)
-//	if (c_ptr->m_idx = 0)	/* single =/== bug there.. - evileye */
 	{
 		/* Message */
 		msg_print(Ind, "You see nothing there to steal from.");
 
 		return;
 	}
-#if 0	// No, since for now it's way too cheezy..
 	else if (c_ptr->m_idx > 0)
 	{
-		do_cmd_steal_from_monster(int Ind, int dir);
+		do_cmd_steal_from_monster(Ind, dir);
 		return;
 	}
-#endif	// 0
 
 	/* Examine target */
 	q_ptr = Players[0 - c_ptr->m_idx];
@@ -1690,13 +1687,7 @@ void do_cmd_steal(int Ind, int dir)
 		if (player_in_party(q_ptr->party, Ind))
 		{
 			int party=p_ptr->party;
-#if 0
-			/* Lose a member */
-			parties[q_ptr->party].num--;
 
-			/* Set his party number back to "neutral" */
-			p_ptr->party = 0;
-#endif
 			/* Temporary leave for the message */
 			p_ptr->party = 0;
 

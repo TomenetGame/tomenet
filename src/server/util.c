@@ -1788,7 +1788,6 @@ static void do_slash_cmd(int Ind, char *message)
 	int i = 0;
 	int k = 0, tk = 0;
 	player_type *p_ptr = Players[Ind];
- 	/* cptr colon; */
  	char *colon;
 	char *token[9];
 	worldpos wp;
@@ -3238,11 +3237,11 @@ static void player_talk_aux(int Ind, char *message)
  	int i, len, target = 0;
 	char search[80], sender[80];
 	player_type *p_ptr = Players[Ind], *q_ptr;
- 	cptr colon; // , problem = "";
+ 	char *colon;
 	bool me = FALSE;
 	char c = 'B';
 	int mycolor = 0;
-	bool admin;
+	bool admin=0;
 	bool broadcast = FALSE;
 
 #ifdef TOMENET_WORLDS

@@ -24,6 +24,8 @@
 
 int  tolua_util_open (lua_State *L);
 int  tolua_player_open (lua_State *L);
+void dump_lua_stack_stdout(int min, int max);
+void dump_lua_stack(int min, int max);
 
 /*
  * Lua state

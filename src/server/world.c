@@ -17,6 +17,9 @@ struct wpacket spk;
 unsigned long chk(unsigned char *s1, unsigned char *s2);
 void rem_players(short id);
 void add_rplayer(struct wpacket *wpk);
+bool world_check_ignore(int Ind, unsigned long id, short server);
+void world_update_players(void);
+int world_find_server(char *pname);
 
 void world_update_players(){
 	int i;

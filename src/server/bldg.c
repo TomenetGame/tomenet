@@ -31,7 +31,7 @@ static int building_loc = 0;
 /*
  * A helper function for is_state
  */
-bool is_state_aux(int Ind, store_type *s_ptr, int state)
+static bool is_state_aux(int Ind, store_type *s_ptr, int state)
 {
 	player_type *p_ptr = Players[Ind];
 	owner_type *ot_ptr = &ow_info[s_ptr->owner];

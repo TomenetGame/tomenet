@@ -677,8 +677,14 @@ bool get_server_name(void)
 {
         s32b i;
         cptr tmp;
+
+#ifdef EXPERIMENTAL_META
+	int j, bytes, socket;
+	char buf[80192], c;
+#else
 	int j, k, l, bytes, socket, offsets[20], lines = 0;
 	char buf[80192], *ptr, c, out_val[260];
+#endif
 
         /* We NEED lua here, so if it aint initialized yet, do it */
         init_lua();

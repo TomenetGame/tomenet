@@ -23,6 +23,8 @@ extern void world_msg(char *text);
 extern void world_player(unsigned long id, char *name, unsigned short enter, byte quiet);
 extern void world_chat(unsigned long id, char *text);
 extern void world_remote_players(FILE *fff);
+struct rplist *world_find_player(char *pname, short server);
+void world_pmsg_send(unsigned long id, char *name, char *pname, char *text);
 #endif
 
 /* common/common.c */
@@ -506,6 +508,7 @@ extern void do_cmd_observe(int Ind, int item);
 extern void do_cmd_uninscribe(int Ind, int item);
 extern void do_cmd_inscribe(int Ind, int item, cptr inscription);
 extern void do_cmd_steal(int Ind, int dir);
+extern void do_cmd_steal_from_monster(int Ind, int dir);
 extern void do_cmd_refill(int Ind, int item);
 extern bool do_auto_refill(int Ind);
 extern void do_cmd_target(int Ind, int dir);
@@ -584,6 +587,7 @@ extern void NewConsole(int fd, int arg);
 extern bool InitNewConsole(int write_fd);
 
 /* dungeon.c */
+extern void recall_player(int Ind, char *message);
 extern int find_player(s32b id);
 extern int find_player_name(char *name);
 extern void play_game(bool new_game);
@@ -599,6 +603,7 @@ extern void cheeze_trad_house(void);
 
 
 /* files.c */
+extern int highscore_send(char *buffer, int max);
 //extern s16b tokenize(char *buf, s16b num, char **tokens);
 extern s16b tokenize(char *buf, s16b num, char **tokens, char delim1, char delim2);
 extern void display_player(int Ind);
@@ -1221,6 +1226,7 @@ extern int calc_blows(int Ind, object_type *o_ptr);
 
 
 /* xtra2.c */
+extern bool set_brand(int Ind, int v, int t, int p);
 extern s16b questid;
 extern bool imprison(int Ind, u16b time, char *reason);
 extern bool guild_build(int Ind);

@@ -513,24 +513,6 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 
 				/* No longer opening a chest */
 				opening_chest = FALSE;
-
-#if 0
-				/* Notice it */
-				note_spot(Ind, ny, nx);
-
-				/* Display it */
-				everyone_lite_spot(wpos, ny, nx);
-
-				/* Under the player */
-				if ((ny == p_ptr->py) && (nx == p_ptr->px))
-				{
-					msg_print(Ind, "\377GYou feel something roll beneath your feet.");
-				}
-
-				/* Successful placement */
-				break;
-			}
-#endif	// 0
 		}
 	}
 
@@ -1681,11 +1663,6 @@ void do_cmd_disarm(int Ind, int dir)
 //			!(c_ptr->special.sc.ptr->found)) &&
 #endif	// 0
 
-#if 0 /* the old code here */
-		if ((!t_idx || !c_ptr->special.sc.trap.found) &&
-		    (o_ptr->tval != TV_CHEST) &&
-			(c_ptr->special.type != CS_MON_TRAP))
-#endif
 		if((!t_idx || !cs_ptr->sc.trap.found) &&
 			(o_ptr->tval!=TV_CHEST) &&
 			!(cs_ptr=GetCS(c_ptr, CS_MON_TRAP)))
@@ -2632,7 +2609,6 @@ int get_shooter_mult(object_type *o_ptr)
 /* Added a lot of hacks to handle boomerangs.	- Jir - */
 /* Added another lot of hacks to handle quiver-slot.	- Jir - */
 /* XXX it's... way too dirty. consider using 'project()' */
-//void do_cmd_fire(int Ind, int dir, int item)
 void do_cmd_fire(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -2679,37 +2655,6 @@ void do_cmd_fire(int Ind, int dir)
 	}
 #endif	// 0
 
-
-#if 0
-	/* Require proper missile */
-	item_tester_tval = p_ptr->tval_ammo;
-
-	/* Access the item (if in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &(p_ptr->inventory[item]);
-	}
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
-
-	if (o_ptr->tval == TV_BOOMERANG) boomerang = TRUE;
-	else
-	{
-
-		/* Get the "bow" (if any) */
-		j_ptr = &(p_ptr->inventory[INVEN_BOW]);
-
-		/* Require a launcher */
-		if (!j_ptr->tval)
-		{
-			msg_print(Ind, "You have nothing to fire with.");
-			return;
-		}
-	}
-
-#else	// 0
 	/* Get the "bow" (if any) */
 	j_ptr = &(p_ptr->inventory[INVEN_BOW]);
 
@@ -2727,8 +2672,6 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 	o_ptr = &(p_ptr->inventory[item]);
-#endif	// 0
-
 
 	if( check_guard_inscription( o_ptr->note, 'f' )) {
 		msg_print(Ind, "The item's inscription prevents it.");

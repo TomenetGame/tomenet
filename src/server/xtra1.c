@@ -890,7 +890,7 @@ static void calc_mana(int Ind)
 	player_type *p_ptr2=(player_type*)NULL;
 
 	int levels, cur_wgt, max_wgt;
-	s32b new_mana;
+	s32b new_mana=0;
 
 	object_type	*o_ptr;
 

@@ -32,7 +32,6 @@
  * csfunc[c_ptr->special.type].load(&c_ptr->special)
  */
 
-/* of course, we can write'em in externs.h .. */
 /* save.c */
 extern void wr_byte(byte v);
 extern void wr_u16b(u16b v);
@@ -48,6 +47,61 @@ extern void rd_s16b(s16b *ip);
 extern void rd_u32b(u32b *ip);
 extern void rd_s32b(s32b *ip);
 extern void rd_string(char *str, int max);
+
+#define CS_LOAD(xxx) void xxx(c_special *cs_ptr)
+#define CS_SAVE(xxx) void xxx(c_special *cs_ptr)
+#define CS_SEE(xxx) void xxx(c_special *cs_ptr, char *c, byte *a, int Ind)
+#define CS_HIT(xxx) int xxx(c_special *cs_ptr, int y, int x, int Ind)
+
+CS_LOAD(defload);
+CS_SAVE(defsave);
+CS_SEE(defsee);
+CS_HIT(defhit);
+CS_LOAD(dnaload);
+CS_SAVE(dnasave);
+CS_SEE(dnasee);
+CS_HIT(dnahit);
+CS_LOAD(keyload);
+CS_SAVE(keysave);
+CS_SEE(keysee);
+CS_HIT(keyhit);
+CS_LOAD(tload);
+CS_SAVE(tsave);
+CS_SEE(tsee);
+CS_HIT(thit);
+CS_LOAD(insc_load);
+CS_SAVE(insc_save);
+CS_HIT(insc_hit);
+CS_LOAD(betweenload);
+CS_SAVE(betweensave);
+CS_SEE(betweensee);
+CS_HIT(betweenhit);
+CS_LOAD(fountload);
+CS_SAVE(fountsave);
+CS_SEE(fountsee);
+CS_LOAD(montrapload);
+CS_SAVE(montrapsave);
+CS_LOAD(s32bload);
+CS_SAVE(s32bsave);
+
+#if 0
+void defload(c_special *cs_ptr);
+void defsave(c_special *cs_ptr);
+void defsee(c_special *cs_ptr, char *c, byte *a, int Ind);
+int defhit(c_special *cs_ptr, int y, int x, int Ind);
+void dnaload(c_special *cs_ptr);
+void dnasave(c_special *cs_ptr);
+void dnasee(c_special *cs_ptr, char *c, byte *a, int Ind);
+int dnahit(c_special *cs_ptr, int y, int x, int Ind);
+void keyload(c_special *cs_ptr);
+void keysave(c_special *cs_ptr);
+void keysee(c_special *cs_ptr, char *c, byte *a, int Ind);
+int keyhit(c_special *cs_ptr, int y, int x, int Ind);
+void tload(c_special *cs_ptr);
+void tsave(c_special *cs_ptr);
+void tsee(c_special *cs_ptr, char *c, byte *a, int Ind);
+int thit(c_special *cs_ptr, int y, int x, int Ind);
+#endif
 
 void defload(c_special *cs_ptr){
 }
@@ -234,7 +288,7 @@ void betweensave(c_special *cs_ptr)
 	wr_byte(cs_ptr->sc.between.fy);
 	wr_byte(cs_ptr->sc.between.fx);
 }
-void betweensee(c_special *cs_ptr, int Ind){
+void betweensee(c_special *cs_ptr, char *c, byte *a, int Ind){
 	printf("tsee %d\n", Ind);
 }
 int betweenhit(c_special *cs_ptr, int y, int x, int Ind){

@@ -69,7 +69,7 @@ s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale)
 }
 
 /* Will add, sub, .. */
-s32b modify_aux(s32b a, s32b b, char mod)
+static s32b modify_aux(s32b a, s32b b, char mod)
 {
 	switch (mod)
 	{
@@ -133,7 +133,7 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
 
 /* Hrm this can be nasty for Sorcery/Antimagic */
 // void recalc_skills_theory(s16b *invest, s32b *base_val, u16b *base_mod, s32b *bonus)
-void increase_related_skills(int Ind, int i)
+static void increase_related_skills(int Ind, int i)
 {
 	player_type *p_ptr = Players[Ind];
 	int j;
@@ -274,7 +274,7 @@ s16b get_skill_scale(int skill, u32b scale)
 /*
  *
  */
-int get_idx(int i)
+static int get_idx(int i)
 {
 	int j;
 

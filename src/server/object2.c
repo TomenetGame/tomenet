@@ -6561,7 +6561,9 @@ void floor_item_optimize(int item)
 void auto_inscribe(int Ind, object_type *o_ptr, int flags)
 {
 	player_type *p_ptr = Players[Ind];
+#if 0
 	char c[] = "@m ";
+#endif
 
 	if (!o_ptr->tval) return;
 

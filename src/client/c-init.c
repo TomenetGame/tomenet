@@ -331,7 +331,7 @@ void client_init(char *argv1, bool skip)
 	int login_port;
 	int bytes, retries;
 	char host_name[80];
-	u16b version = MY_VERSION;
+	/* u16b version = MY_VERSION; */
         s32b temp;
 //        char max_class;
 

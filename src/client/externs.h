@@ -319,7 +319,7 @@ extern void c_close_game(cptr reason);
 /* c-spell.c */
 //extern void show_browse(int book);
 s32b get_school_spell(cptr do_what, int *item_book);
-extern int get_spell(int *sn, cptr prompt, int book, bool known);
+extern int get_spell(s32b *sn, cptr prompt, int book, bool known);
 extern void show_browse(object_type *o_ptr);
 extern void browse_school_spell(int book, int pval);
 extern void do_study(int book);
@@ -504,6 +504,7 @@ extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern cptr longVersion;
 extern cptr shortVersion;
 extern void version_build(void);
+extern int find_realm(int book);
 
 /* common/files.c */
 int local_file_init(int ind, unsigned short fnum, char *fname);

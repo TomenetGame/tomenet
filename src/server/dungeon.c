@@ -2633,8 +2633,12 @@ static bool process_player_end_aux(int Ind)
 			/* Ignore "dead" monsters */
 			if (!m_ptr->r_idx) continue;
 
+			/* pfft. not even our level */
+
+			if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 			/* Cant see ? cant hit */
 			if (!los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) continue;
+			if (distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) > 15) continue;
 
 			/* Do not hurt friends! */
 			/* if (is_friend(m_ptr) >= 0) continue; */
@@ -2645,14 +2649,14 @@ static bool process_player_end_aux(int Ind)
 		{
 			char m_name[80];
 
-			monster_desc(Ind, m_name, m_ptr, 0);
-			msg_format("Lightning strikes %s.", m_name);
-			project(0, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_ELEC,
-			        PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE);
-			project(0, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_LITE,
-			        PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE);
-			project(0, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_SOUND,
-			        PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE);
+			monster_desc(Ind, m_name, i, 0);
+			msg_format(Ind, "Lightning strikes %s.", m_name, i, dam/3);
+			project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_ELEC,
+			        PROJECT_KILL | PROJECT_ITEM);
+			project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_LITE,
+			        PROJECT_KILL | PROJECT_ITEM);
+			project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_SOUND,
+			        PROJECT_KILL | PROJECT_ITEM);
 		}
 
 		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - 1, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
