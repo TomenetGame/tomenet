@@ -1200,6 +1200,10 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->biofeedback);
 
 	wr_byte(p_ptr->confusing);
+	wr_u16b(p_ptr->tim_jail);
+	wr_u16b(p_ptr->tim_susp);
+	wr_u16b(p_ptr->pkill);
+	wr_u16b(p_ptr->tim_pkill);
 	wr_s16b(p_ptr->tim_wraith);
 	wr_byte(p_ptr->wraith_in_wall);
 	wr_byte(p_ptr->searching);

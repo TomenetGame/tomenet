@@ -396,6 +396,10 @@ void do_cmd_check_players(int Ind, int line)
 		{
 			fprintf(fff, " AFK");
 		}
+		if(q_ptr->pkill & PKILL_SET)
+		{
+			fprintf(fff, " PK");
+		}
 				
 		/* Newline */
 		/* -AD- will this work? */

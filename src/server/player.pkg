@@ -582,7 +582,7 @@ struct player_type
 extern void teleport_player(int Ind, int dis);
 extern void teleport_player_to(int Ind, int ny, int nx);
 extern void teleport_player_level(int Ind);
-extern void imprison(int Ind, int time, char *reason);
+extern bool imprison(int Ind, int time, char *reason);
 
 extern int NumPlayers;
 extern player_type *Players[0xFFFFF] @ Players_real;

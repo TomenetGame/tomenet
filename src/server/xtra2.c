@@ -6456,25 +6456,25 @@ bool master_summon(int Ind, char * parms)
 	return TRUE;
 }
 
-void imprison(int Ind, u16b time, char *reason){
+bool imprison(int Ind, u16b time, char *reason){
 	int id, i;
 	struct dna_type *dna;
 	player_type *p_ptr=Players[Ind];
 	char string[160];
 	cave_type **zcave, **nzcave;
 
-	if(!p_ptr || !(id=lookup_player_id("Jailer"))) return;
+	if(!p_ptr || !(id=lookup_player_id("Jailer"))) return(FALSE);
 
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
 	if(p_ptr->wpos.wz){
 		p_ptr->tim_susp+=time;
-		return;
+		return(FALSE);
 	}
 
 	if(p_ptr->tim_jail){
 		p_ptr->tim_jail+=time;
-		return;
+		return(TRUE);
 	}
 
 	for(i=0; i<num_houses; i++){
@@ -6511,9 +6511,10 @@ void imprison(int Ind, u16b time, char *reason){
 			msg_format(Ind, "\377vYou have been jailed for %s", reason);
 			p_ptr->tim_jail=time+p_ptr->tim_susp;
 			p_ptr->tim_susp=0;
-			return;
+			return(TRUE);
 		}
 	}
+	return(FALSE);
 }
 
 void player_edit(char *name){

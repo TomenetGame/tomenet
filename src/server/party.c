@@ -896,7 +896,11 @@ bool add_hostility(int Ind, cptr name)
 	{
 		/* Message */
 		msg_print(Ind, "You cannot be hostile toward yourself.");
+		return FALSE;
+	}
 
+	if(!(p_ptr->pkill & PKILL_KILLER)){
+		msg_print(Ind, "You may not be hostile to other players.");
 		return FALSE;
 	}
 

@@ -1727,6 +1727,8 @@ struct player_type
 	s16b tim_wraith;	/* Timed -- Wraithform */
 	u16b tim_jail;		/* Timed -- Jailed */
 	u16b tim_susp;		/* Suspended sentence (dungeon) */
+	u16b tim_pkill;		/* pkill changeover timer */
+	u16b pkill;		/* pkill flags */
 	bool wraith_in_wall;
 	s16b tim_meditation;	/* Timed -- Meditation */
 	s16b tim_invisibility;		/* Timed -- Invisibility */

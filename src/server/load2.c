@@ -1218,6 +1218,18 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->biofeedback);
 
 	rd_byte(&p_ptr->confusing);
+	if(!older_than(3,4,6)){
+		rd_u16b(&p_ptr->tim_jail);
+		rd_u16b(&p_ptr->tim_susp);
+		rd_u16b(&p_ptr->pkill);
+		rd_u16b(&p_ptr->tim_pkill);
+	}
+	else{
+		p_ptr->tim_jail=0;
+		p_ptr->tim_susp=0;
+		p_ptr->pkill=PKILL_KILLABLE;
+		p_ptr->tim_pkill=0;
+	}
 	rd_s16b(&p_ptr->tim_wraith);
 	rd_byte((byte *)&p_ptr->wraith_in_wall);
 	rd_byte(&p_ptr->searching);

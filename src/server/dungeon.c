@@ -1647,6 +1647,19 @@ static void process_player_end(int Ind)
 		  {
 		    set_tim_manashield(Ind, p_ptr->tim_manashield - minus);
 		  }
+		if(p_ptr->tim_pkill){
+			p_ptr->tim_pkill--;
+			if(!p_ptr->tim_pkill){
+				if(p_ptr->pkill&PKILL_SET){
+					msg_print(Ind, "You may now kill other players");
+					p_ptr->pkill|=PKILL_KILLER;
+				}
+				else{
+					msg_print(Ind, "You are now protected from other players");
+					p_ptr->pkill&=~PKILL_KILLABLE;
+				}
+			}
+		}
 		if(p_ptr->tim_jail && !p_ptr->wpos.wz){
 			int jy, jx;
 			p_ptr->tim_jail--;

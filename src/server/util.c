@@ -2495,6 +2495,25 @@ static void do_slash_cmd(int Ind, char *message)
 			if (tk) server_knowledge(Ind);
 			msg_print(Ind, longVersion);
 		}
+		else if(prefix(message, "/pkill")){
+			p_ptr->tim_pkill=200;	/* so many turns */
+			p_ptr->pkill^=PKILL_SET; /* Toggle value */
+			if(p_ptr->pkill&PKILL_SET){
+				msg_print(Ind, "\377rYou wish to kill other players");
+				p_ptr->pkill|=PKILL_KILLABLE;
+			}
+			else{
+				hostile_type *t_host;
+				msg_print(Ind, "\377gYou do not wish to kill other players");
+				p_ptr->pkill&=~PKILL_KILLER;
+				/* Remove all hostilities */
+				while(p_ptr->hostile){
+					t_host=p_ptr->hostile;
+					p_ptr->hostile=t_host->next;
+					KILL(t_host, hostile_type);
+				}
+			}
+		}
 		else if(!admin && prefix(message, "/quest")){
 			int i;
 			s16b r;

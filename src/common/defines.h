@@ -33,7 +33,7 @@
 
 #define VERSION_MAJOR	3
 #define VERSION_MINOR   4
-#define VERSION_PATCH   5
+#define VERSION_PATCH   6
 
 /*
  * Current version number of TomeNET:
@@ -345,6 +345,12 @@
 #define LEVEL_OUTSIDE_RAND 5
 #define LEVEL_HOUSE 6
 
+/*
+ * Pkill flags
+ */
+#define PKILL_SET	1	/* On/off */
+#define PKILL_KILLABLE	2	/* Can be killed */
+#define PKILL_KILLER	4	/* Can kill */
 
 /*
  * The types of special file perusal.

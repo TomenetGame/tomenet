@@ -1541,6 +1541,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	p_ptr->male = sex;
 	p_ptr->pclass = class;
 	p_ptr->prace = race;
+	p_ptr->pkill=(PKILL_KILLABLE);
 
 	/* Set pointers */
 	p_ptr->rp_ptr = &race_info[race];
