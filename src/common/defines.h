@@ -182,7 +182,7 @@
  */
  
 #define MAX_F_IDX	128	/* Max size for "f_info[]" */
-#define MAX_K_IDX	531	/* Max size for "k_info[]" */
+#define MAX_K_IDX	541	/* Max size for "k_info[]" */
 #define MAX_A_IDX	128	/* Max size for "a_info[]" */
 #define MAX_E_IDX	128	/* Max size for "e_info[]" */
 #define MAX_R_IDX	551     /* Max size for "r_info[]" */
