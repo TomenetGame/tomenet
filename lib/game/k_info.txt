@@ -6149,6 +6149,12 @@ A:50/4
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW
 
+N:926:& Heavy Ball~
+G:*:u
+I:1:9:0
+W:120:0:2000:0
+A:200/200
+P:0:1d1:0:0:0
 
 #N:(No.):(name)
 #G:(appearence):(colour)
