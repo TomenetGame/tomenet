@@ -103,6 +103,7 @@ extern void cat_script(int Ind, char *name);
 extern void msg_print(int Ind, cptr msg);
 extern void msg_broadcast(int Ind, cptr msg);
 extern void msg_print_near(int Ind, cptr msg);
+extern void msg_admin(cptr msg);
 
 /* maintain hooks with LUA, not with server code */
 extern void wipe_hooks(void);
