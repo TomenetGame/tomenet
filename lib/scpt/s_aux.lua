@@ -98,7 +98,7 @@ end
 -- pgod? 100% sure it won't work
 --[[
 function get_god_level(i, sch)
-	local player = players(i)
+--	local player = players(i)
         if __schools[sch].gods[player.pgod] then
                 return (s_info[__schools[sch].gods[player.pgod].skill + 1].value * __schools[sch].gods[player.pgod].mul) / __schools[sch].gods[player.pgod].div
         else
@@ -127,12 +127,10 @@ function get_level_school(i, s, max, min)
                 -- Take the basic skill value
                 r = player.s_info[(school(sch).skill) + 1].value
 
-	c_msg_print("r:"..r)
         	-- Are we under sorcery effect ?
                 if __schools[sch].sorcery then
                         s = player.s_info[SKILL_SORCERY + 1].value
                 end
-	c_msg_print("s:"..s)
                 
                 -- Find the higher
                 ok = r
@@ -183,7 +181,7 @@ end
 
 -- Return the amount of power(mana, piety, whatever) for the spell
 function get_power(i, s)
-	local player = players(i)
+--	local player = players(i)
         if check_affect(s, "piety", FALSE) then
                 return player.grace
         else
@@ -391,7 +389,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 		end
 
 		-- Enough mana
-		if (get_mana(i, s) > get_power(s)) then
+		if (get_mana(i, s) > get_power(i, s)) then
 --                        if (get_check("You do not have enough "..get_power_name(s)..", do you want to try anyway?") == FALSE) then return end
 				return
 	        end
@@ -423,7 +421,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 
 	if use == TRUE then
 	        -- Reduce mana
-		adjust_power(s, -get_mana(i, s))
+		adjust_power(i, s, -get_mana(i, s))
 
 --[[ DGDGDGDG - Later
 	        -- Take a turn

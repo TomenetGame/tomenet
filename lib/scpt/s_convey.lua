@@ -10,7 +10,7 @@ BLINK = add_spell
         ["mana_max"] =  3,
         ["fail"] = 	10,
         ["spell"] = 	function()
-			teleport_player(10 + get_level(Ind, BLINK, 8))
+			teleport_player(Ind, 10 + get_level(Ind, BLINK, 8))
 	end,
 	["info"] = 	function()
                 	return "distance "..(10 + get_level(Ind, BLINK, 8))
@@ -33,10 +33,10 @@ BLINK = add_spell
         	        if get_level(BLINK, 50) >= 30 then
                                 local oy, ox = py, px
 
-        	        	teleport_player(10 + get_level(BLINK, 8))
+        	        	teleport_player(Ind, 10 + get_level(BLINK, 8))
                                 create_between_gate(0, oy, ox)
                 	else
-        	        	teleport_player(10 + get_level(BLINK, 8))
+        	        	teleport_player(Ind, 10 + get_level(BLINK, 8))
 	                end
 	end,
 	["info"] = 	function()
@@ -83,7 +83,7 @@ TELEPORT = add_spell
         ["fail"] = 	50,
         ["spell"] = 	function()
         		player.energy = player.energy - (25 - get_level(TELEPORT, 50))
-			teleport_player(100 + get_level(TELEPORT, 100))
+			teleport_player(Ind, 100 + get_level(TELEPORT, 100))
 	end,
 	["info"] = 	function()
         		return ""
