@@ -35,3 +35,12 @@ function cureall(name)
     player.chp = player.mhp
     player.chp_frac = 0
 end
+
+-- Prepares a character for testing purposes
+function mktest(name)
+    local p
+    p = ind(name)
+    player.lev = 50
+    player.skill_points = 9999
+    player.score = 1
+end
