@@ -59,11 +59,9 @@ short pwcheck(char *cpasswd, long val){
 
 /* unified, hopefully unique password check function */
 long chk(char *s1, char *s2){
-	int i, j=0;
+	unsigned int i, j=0;
 	int m1, m2;
 	static long rval[2]={0, 0};
-	rval[0]=0L;
-	rval[1]=0L;
 	m1=strlen(s1);
 	m2=strlen(s2);
 	for(i=0; i<m1; i++){
@@ -78,8 +76,9 @@ long chk(char *s1, char *s2){
 		rval[1]+=s1[i];
 		rval[1]<<=(3+rval[0]%5);
 		rval[0]+=s2[j];
+		j=(unsigned long)rval[0]%m2;
 		rval[0]<<=(3+rval[1]%3);
-		j=rval[0]%m2;
+		printf("j:%d\n", j);
 	}
 	return(rval[0]+rval[1]);
 }
