@@ -24,10 +24,12 @@ void choose_name(void)
 	char tmp[23];
 
 	/* Prompt and ask */
+	prt("If you are new to TomeNET, read this:", 7, 2);
+	prt("http://www.c-blue.de/rogue/tomenet-guide.txt.", 8, 2);
 	prt("*** Logging in with an account ***", 12, 2);
 	prt("In order to play, you need to create an account.", 14, 2);
 	prt("Your account can hold a maximum of 7 different characters to play with!", 15, 2);
-	prt("If you don't have an account yet, just create a new one now and make sure", 16, 2);
+	prt("If you don't have an account yet, just enter one of your choice and make sure", 16, 2);
 	prt("that you remember its name and password. Each player should have not more", 17, 2);
 	prt("than 1 account. Ask a server administrator to 'validate' your account!", 18, 2);
 	prt("If an account is not validated, it has certain restrictions to prevent abuse.", 19, 2);

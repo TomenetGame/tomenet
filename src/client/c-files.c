@@ -958,7 +958,7 @@ errr process_pref_file(cptr name)
  *
  * It is given in the "Setup" info sent by the server.
  */
-void show_motd(void)
+void show_motd(int delay)
 {
 	int i;
 
@@ -977,6 +977,9 @@ void show_motd(void)
 
 	/* Show it */
 	Term_fresh();
+
+	/* Wait a few seconds if needed */
+	usleep(delay * 10000L);
 
 	/* Wait for a keypress */
 //	Term_inkey(&ch, TRUE, TRUE);

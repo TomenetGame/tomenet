@@ -1414,7 +1414,7 @@ void cmd_check_misc(void)
 				peruse_file();
 				break;
 			case 'f':
-				show_motd();
+				show_motd(0);
 				break;
 			case 'g':
 				do_cmd_messages();

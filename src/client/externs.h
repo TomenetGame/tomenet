@@ -270,7 +270,7 @@ extern errr my_fclose(FILE *fff);
 extern void init_file_paths(char *path);
 extern errr process_pref_file(cptr buf);
 extern errr process_pref_file_aux(char *buf);
-extern void show_motd(void);
+extern void show_motd(int delay);
 extern void peruse_file(void);
 extern errr my_fgets(FILE *fff, char *buf, huge n);
 extern errr file_character(cptr name, bool full);
