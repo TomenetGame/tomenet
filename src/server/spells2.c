@@ -2839,19 +2839,18 @@ bool genocide(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		i, tmp;
+	int		i;
 
 	char	typ;
 
 	bool	result = FALSE;
 
-//	int d = 999, tmp;
+	int d = 999, tmp;
 
 	worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return FALSE;
 
-#if 0	// what does this do??
 	/* Search all monsters and find the closest */
 	for (i = 1; i < m_max; i++)
 	{
@@ -2883,7 +2882,6 @@ bool genocide(int Ind)
 	{
 		return FALSE;
 	}
-#endif	// 0
 
 	bypass_invuln = TRUE;
 
