@@ -594,7 +594,7 @@ static bool enter_server_name(void)
 
 bool get_server_name(void)
 {
-	int i, j, k, bytes, socket, offsets[20], lines = 0;
+	int i, j, k, l, bytes, socket, offsets[20], lines = 0;
 	char buf[8192], *ptr, c, out_val[160];
 
 	/* Message */
@@ -634,6 +634,7 @@ bool get_server_name(void)
 	/* Start at the beginning */
 	ptr = buf;
 	i = 0;
+	Term_clear();
 
 	/* Print each server */
 	while (ptr - buf < bytes)
@@ -659,6 +660,21 @@ bool get_server_name(void)
 		/* Strip off offending characters */
 //		out_val[strlen(out_val) - 1] = '\0';
 		out_val[j - 1] = '\0';
+		out_val[j]='\0';
+
+		k=0;
+		while(j){
+			l=strlen(&out_val[k]);
+			if(j > 75){
+				l=75;
+				while(out_val[k+l]!=' ') l--;
+				out_val[l]='\0';
+			}
+			prt(out_val+k, lines++, (k ? 4 : 1));
+			k+=(l+1);
+			j=strlen(&out_val[k]);
+		}
+#if 0
 
 		prt(out_val, lines++, 1);
 
@@ -671,6 +687,7 @@ bool get_server_name(void)
 
 			k += 77;
 		}
+#endif
 
 		/* Go to next metaserver entry */
 		ptr += strlen(ptr) + 1;
