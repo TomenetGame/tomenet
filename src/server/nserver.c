@@ -728,7 +728,6 @@ void world_connect(int Ind){
 		s_printf("Unable to connect to world server %d %d\n", errno, sl_errno);
 #endif
 		if(Ind!=-1) msg_print(Ind, "\377rFailed to connect to the world server");
-                return;
 	}
 	else{
 		install_input(world_comm, WorldSocket, 0);
@@ -1542,7 +1541,7 @@ static bool validstrings(char *nick, char *real, char *host){
 	int rval=1;
 
 	for(i=0; nick[i]; i++){
-		if(nick[i]<'A' || nick[i]>'z'){
+		if(nick[i]<'0' || nick[i]>'z'){
 			nick[i]='\0';
 			rval=0;
 		}
