@@ -4623,12 +4623,16 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	}
 #endif	// 0
 
-	if ((f3 & (TR3_IGNORE_ACID)) && (f3 & (TR3_IGNORE_FIRE)) && (f3 & (TR3_IGNORE_COLD)) && (f3 & (TR3_IGNORE_ELEC)))
+	if ((f5 & (TR5_IGNORE_WATER)) && (f3 & (TR3_IGNORE_ACID)) && (f3 & (TR3_IGNORE_FIRE)) && (f3 & (TR3_IGNORE_COLD)) && (f3 & (TR3_IGNORE_ELEC)))
 	{
-		fprintf(fff, "It cannot be harmed by acid, cold, lightning or fire.\n");
+		fprintf(fff, "It cannot be harmed by water, acid, cold, lightning or fire.\n");
 	}
 	else
 	{
+		if (f5 & (TR5_IGNORE_WATER))
+		{
+			fprintf(fff, "It cannot be harmed by water.\n");
+		}
 		if (f3 & (TR3_IGNORE_ACID))
 		{
 			fprintf(fff, "It cannot be harmed by acid.\n");
@@ -5059,6 +5063,10 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	}
 
 
+	if (f5 & TR3_IGNORE_WATER)
+	{
+		info[i++] = "It cannot be harmed by water.";
+	}
 	if (f3 & TR3_IGNORE_ACID)
 	{
 		info[i++] = "It cannot be harmed by acid.";
@@ -5913,12 +5921,16 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
                 info[i++] = "It regenerates its mana faster.";
 	}
 
-        if ((f3 & (TR3_IGNORE_ACID)) && (f3 & (TR3_IGNORE_FIRE)) && (f3 & (TR3_IGNORE_COLD)) && (f3 & (TR3_IGNORE_ELEC)))
+        if ((f5 & (TR5_IGNORE_WATER)) && (f3 & (TR3_IGNORE_ACID)) && (f3 & (TR3_IGNORE_FIRE)) && (f3 & (TR3_IGNORE_COLD)) && (f3 & (TR3_IGNORE_ELEC)))
         {
-                info[i++] = "It cannot be harmed by acid, cold, lightning or fire.";
+                info[i++] = "It cannot be harmed by water, acid, cold, lightning or fire.";
         }
         else
         {
+                if (f5 & (TR5_IGNORE_WATER))
+                {
+                        info[i++] = "It cannot be harmed by water.";
+                }
                 if (f3 & (TR3_IGNORE_ACID))
                 {
                         info[i++] = "It cannot be harmed by acid.";

@@ -1034,6 +1034,7 @@ artifact_type *randart_make(object_type *o_ptr)
 			   TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
 	a_ptr->flags4 = k_ptr->flags4;
 	a_ptr->flags5 = k_ptr->flags5;
+	a_ptr->flags5 |= TR5_IGNORE_WATER;
 
 	/* Ensure weapons have some bonus to hit & dam */
 	if ((a_ptr->tval==TV_DIGGING) ||
@@ -1659,6 +1660,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 				{
 					a_ptr->flags2 |= TR2_IM_ACID;
 					a_ptr->flags3 |= TR3_IGNORE_ACID;
+					a_ptr->flags5 |= TR5_IGNORE_WATER;
 					break;
 				}
 			case 3:

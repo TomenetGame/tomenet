@@ -2193,6 +2193,8 @@ void store_stole(int Ind, int item)
 	   can cheeze by attempting repeatedly */
 	if(p_ptr->tim_blacklist){
 		msg_print(Ind, "Bastard Thief! Get out of my shop!!!");
+		if(p_ptr->tim_blacklist < 10000000)	/* 10 million turns is LONG ENOUGH */
+			p_ptr->tim_blacklist += 1000;	/* add a little */
 		store_kick(Ind, FALSE);
 		return;
 	}
@@ -2260,7 +2262,6 @@ void store_stole(int Ind, int item)
 	    ((sell_obj.weight * amt) / (5 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
 	    (get_skill_scale(p_ptr, SKILL_STEALING, 25));
 	if (chance < 1) chance = 1;
-	if (p_ptr->tim_blacklist) chance += 200;
 
 	/* always 1% chance to fail, so that ppl won't macro it */
 	if (rand_int(chance) <= 10 && !magik(1))
@@ -2364,6 +2365,7 @@ void store_stole(int Ind, int item)
 
 	else
 	{
+		object_kind *k_ptr=&k_info[o_ptr->k_idx];
 		/* Complain */
 		// say_comment_4();
 		msg_print(Ind, "\377yBastard\377L!!!");
@@ -2375,9 +2377,7 @@ void store_stole(int Ind, int item)
 		st_ptr->bad_buy = 0;
 
 		/* Kicked out for a LONG time */
-		//st_ptr->store_open = turn + 500000 + randint(500000);
-
-		p_ptr->tim_blacklist += best * amt / 10 + 10000;
+		p_ptr->tim_blacklist += k_ptr->cost * amt / 10 + 10000;
 
 		/* Of course :) */
 		store_kick(Ind, FALSE);

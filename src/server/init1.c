@@ -781,7 +781,7 @@ static cptr k_info_flags5[] =
 	"XXX8X02",
 	"XXX8X02",
 	"XXX8X17",
-	"XXX8X18",
+	"IGNORE_WATER",
 	"RES_TIME",
 	"RES_MANA",
 	"IM_POISON",
@@ -2656,6 +2656,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			a_ptr->flags3 |= (TR3_IGNORE_ELEC);
 			a_ptr->flags3 |= (TR3_IGNORE_FIRE);
 			a_ptr->flags3 |= (TR3_IGNORE_COLD);
+			a_ptr->flags5 |= (TR5_IGNORE_WATER);
 
 			/* Next... */
 			continue;

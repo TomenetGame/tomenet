@@ -1205,6 +1205,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f5 & TR5_REGEN_MANA) total += 2500;
 	if (f3 & TR3_XTRA_MIGHT) total += 2250;
 	if (f3 & TR3_XTRA_SHOTS) total += 10000;
+	if (f3 & TR5_IGNORE_WATER) total += 0;
 	if (f3 & TR3_IGNORE_ACID) total += 100;
 	if (f3 & TR3_IGNORE_ELEC) total += 100;
 	if (f3 & TR3_IGNORE_COLD) total += 100;

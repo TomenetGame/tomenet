@@ -26,6 +26,41 @@ static u32b new_accid(void);
 /* The hash table itself */
 static hash_entry *hash_table[NUM_HASH_ENTRIES];
 
+/* admin only - account edit function */
+bool ChangeAccount(cptr name, long flags){
+	int fd;
+	FILE *fp;
+	short found=0;
+	struct account c_acc;
+
+#ifdef NETBSD
+	fd=open("tomenet.acc", O_RDWR|O_EXLOCK|O_NONBLOCK);
+#else
+	fd=open("tomenet.acc", O_RDWR|O_NONBLOCK);
+#endif
+	if(fd<0) return(FALSE);
+#ifndef NETBSD
+	if((flock(fd, LOCK_EX))!=0) return(FALSE);
+#endif
+	fp=fdopen(fd, "r+");
+	if(fp!=(FILE*)NULL){
+		while(!feof(fp) && !found){
+			fread(&c_acc, sizeof(struct account), 1, fp);
+			if(c_acc.flags & ACC_DELD) continue;
+			if(!strcmp(c_acc.name, name)) found=1;
+		}
+		if(found){
+			/* Do the write according to new flags */
+		}
+		fclose(fp);
+	}
+#ifndef NETBSD
+	while((flock(fd, LOCK_UN))!=0);
+#endif
+	close(fd);
+	return(found);
+}
+
 /* most account type stuff was already in here.
    a separate file should probably be made in
    order to split party/guild from account

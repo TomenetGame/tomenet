@@ -1671,7 +1671,7 @@ int set_water_destroy(object_type *o_ptr)
 	if (!hates_water(o_ptr)) return (FALSE);
 			  /* Extract the flags */
 			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-	if (f3 & TR3_IGNORE_ACID) return (FALSE);
+	if (f5 & TR5_IGNORE_WATER) return (FALSE);
 	return (TRUE);
 }
 
@@ -1823,8 +1823,9 @@ int minus_ac(int Ind, int water)
 	if (o_ptr->ac + o_ptr->to_a <= 0) return (FALSE);
 
 	/* Hack -- Leather gears are immune to water (need IGNORE_WATER!) */
-	if (water && (strstr((k_name + k_info[o_ptr->k_idx].name),"Leather") ||
+	/* if (water && (strstr((k_name + k_info[o_ptr->k_idx].name),"Leather") ||
 				strstr((k_name + k_info[o_ptr->k_idx].name),"Robe")))
+	now water flag is used, look below */
 		return(FALSE);
 
 	/* Describe */
@@ -1832,6 +1833,9 @@ int minus_ac(int Ind, int water)
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	if (water && (f5 & TR5_IGNORE_WATER))
+		return(FALSE);
 
 	/* Object resists */
 	if (f3 & TR3_IGNORE_ACID)
@@ -3346,8 +3350,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
 				note_kill = (plural ? " is soaked!" : " are soaked!");
 				do_kill = TRUE;
-				/* Hack -- borrow acid flag */
-				if (f3 & TR3_IGNORE_ACID) ignore = TRUE;
+				if (f5 & TR5_IGNORE_WATER) ignore = TRUE;
 			}
 			break;
 		}
@@ -5302,6 +5305,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Hack -- messages */
 	cptr act = NULL;
+	
+	/* For resist_time: Limit randomization of effect */
+	int time_influence_choices;
 
 	/* Bad player number */
 	if (Ind <= 0)
@@ -5971,7 +5977,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Time -- bolt fewer effects XXX */
 		case GF_TIME:
 		if (fuzzy) msg_print(Ind, "You are hit by something strange!");
-		switch (randint(10))
+		if (p_ptr->resist_time)
+		{
+			time_influence_choices = randint(9);
+		}
+		else
+		{
+			time_influence_choices = randint(10);
+		}
+		switch (time_influence_choices)
 		{
 			case 1: case 2: case 3: case 4: case 5:
 			msg_print(Ind, "You feel life has clocked back.");
