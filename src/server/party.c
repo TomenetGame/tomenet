@@ -1581,10 +1581,6 @@ bool check_ignore(int attacker, int target)
 /* The hash table itself */
 static hash_entry *hash_table[NUM_HASH_ENTRIES];
 
-/* lookup function */
-hash_entry *lookup_player(int id);
-
-
 /*
  * Return the slot in which an ID should be stored.
  */

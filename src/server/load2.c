@@ -974,7 +974,7 @@ static void rd_guilds(){
 		return;
 	}
 	for(i=0; i<tmp16u; i++){
-		rd_string(&guilds[i].name, 80);
+		rd_string(guilds[i].name, 80);
 		rd_s32b(&guilds[i].master);
 		rd_s32b(&guilds[i].num);
 		rd_u32b(&guilds[i].flags);
@@ -1694,7 +1694,9 @@ static errr rd_dungeon(void)
 		rd_byte(&feature);
 		if(!older_than(3,4,4))
 			rd_u16b(&flags);
-		else rd_byte(&flags);
+		else rd_byte((byte*)&flags);	/* remember order -
+						   really this is beyond
+						   compatibility now */
 
 		/* Apply the RLE info */
 		for (i = 0; i < runlength; i++)

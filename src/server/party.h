@@ -1,5 +1,6 @@
 /* party.h - evileye*/
 /* The struct to hold a data entry */
+
 typedef struct hash_entry hash_entry;
 
 struct hash_entry
@@ -18,3 +19,5 @@ struct hash_entry
 	struct hash_entry *next;	/* Next entry in the chain */
 };
 
+/* lookup function */
+hash_entry *lookup_player(int id);

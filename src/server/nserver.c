@@ -1783,7 +1783,7 @@ static int Handle_login(int ind)
 		else p_ptr->use_r_gfx = TRUE;
 	}
 
-	sync_options(NumPlayers + 1, &options);
+	sync_options(NumPlayers + 1, options);
 
 	GetInd[Id] = NumPlayers + 1;
 
@@ -7305,7 +7305,7 @@ static int Receive_options(int ind)
 		}
 
 		/* Sync named options */
-		sync_options(player, &options);
+		sync_options(player, options);
 	}
 
 	return 1;
