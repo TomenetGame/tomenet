@@ -609,6 +609,7 @@ bool get_item_hook_find_spell(int *item)
 	}
 	return FALSE;
 }
+#endif
 
 /*
  * Get a spell from a book
@@ -627,24 +628,19 @@ u32b get_school_spell(cptr do_what)
         int tmp;
         int sval, pval;
 
-        hack_force_spell = -1;
-        get_item_extra_hook = get_item_hook_find_spell;
-        item_tester_hook = hook_school_spellable;
+//        hack_force_spell = -1;
+// DGDGDG -- someone fix it please        get_item_extra_hook = get_item_hook_find_spell;
+        item_tester_tval = TV_BOOK;
 	sprintf(buf2, "You have no book to %s from", do_what);
-        if (!get_item(&item, format("%^s from which book?", do_what), buf2, USE_INVEN | USE_EQUIP | USE_EXTRA )) return -1;
+        if (!get_item(&item, format("%^s from which book?", do_what), buf2, USE_INVEN | USE_EQUIP )) return -1;
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
 	{
-		o_ptr = &inventory[item];
+		o_ptr = &p_ptr->inventory[item];
 	}
 
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
-
+#if 0 //someome fix ;)
         /* If it can be wielded, it must */
         if ((wield_slot(o_ptr) != -1) && (item < INVEN_WIELD))
         {
@@ -656,22 +652,12 @@ u32b get_school_spell(cptr do_what)
         {
                 return tmp;
         }
-
+#endif
 	/* Nothing chosen yet */
 	flag = FALSE;
 
 	/* No redraw yet */
 	redraw = FALSE;
-
-	/* Show choices */
-	if (show_choices)
-	{
-		/* Update */
-		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
-	}
 
 	/* No spell to cast by default */
 	spell = -1;
@@ -682,13 +668,13 @@ u32b get_school_spell(cptr do_what)
                 sval = o_ptr->sval;
                 pval = o_ptr->pval;
         }
-        else
+/* DGDGDG        else
         {
                 sval = 255;
                 pval = o_ptr->pval2;
-        }
+        }*/
 
-        if (hack_force_spell == -1)
+//        if (hack_force_spell == -1)
         {
                 num = exec_lua(format("return book_spells_num(%d)", sval));
 
@@ -709,7 +695,6 @@ u32b get_school_spell(cptr do_what)
                                         redraw = TRUE;
 
                                         /* Save the screen */
-                                        character_icky = TRUE;
                                         Term_save();
 
                                         /* Display a list of spells */
@@ -725,7 +710,6 @@ u32b get_school_spell(cptr do_what)
 
                                         /* Restore the screen */
                                         Term_load();
-                                        character_icky = FALSE;
                                 }
 
                                 /* Redo asking */
@@ -759,8 +743,6 @@ u32b get_school_spell(cptr do_what)
                                         redraw = TRUE;
 
                                         /* Save the screen */
-                                        character_icky = TRUE;
-                                        /* Term_load(); */ /* evil temp */
                                         Term_save();
 
                                 }
@@ -772,7 +754,7 @@ u32b get_school_spell(cptr do_what)
                                 }
 
                                 /* Display a list of spells */
-                                where = exec_lua(format("return print_book(%d, %d)", sval, pval));
+                                where = exec_lua(format("return print_book(0, %d, %d)", sval, pval));
                                 exec_lua(format("print_spell_desc(spell_x(%d, %d, %d), %d)", sval, pval, i, where));
                         }
                         else
@@ -781,7 +763,7 @@ u32b get_school_spell(cptr do_what)
                                 spell = exec_lua(format("return spell_x(%d, %d, %d)", sval, pval, i));
 
                                 /* Require "okay" spells */
-                                if (!exec_lua(format("return is_ok_spell(%d)", spell)))
+                                if (!exec_lua(format("return is_ok_spell(0, %d)", spell)))
                                 {
                                         bell();
                                         msg_format("You may not %s that spell.", do_what);
@@ -794,10 +776,11 @@ u32b get_school_spell(cptr do_what)
                         }
                 }
         }
+#if 0 // DGDGDGDG
         else
         {
                 /* Require "okay" spells */
-                if (exec_lua(format("return is_ok_spell(%d)", hack_force_spell)))
+                if (exec_lua(format("return is_ok_spell(0, %d)", hack_force_spell)))
                 {
                         flag = TRUE;
                         spell = hack_force_spell;
@@ -809,24 +792,12 @@ u32b get_school_spell(cptr do_what)
                         spell = -1;
                 }
         }
-
+#endif
 
 	/* Restore the screen */
 	if (redraw)
 	{
 		Term_load();
-		character_icky = FALSE;
-	}
-
-
-	/* Show choices */
-	if (show_choices)
-	{
-		/* Update */
-		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
 	}
 
 
@@ -834,30 +805,9 @@ u32b get_school_spell(cptr do_what)
 	if (!flag) return -1;
 
         tmp = spell;
-        repeat_push(tmp);
+//        repeat_push(tmp);
 	return spell;
 }
-
-void cast_school_spell()
-{
-	int spell;
-
-	/* No magic */
-	if (p_ptr->antimagic)
-	{
-		msg_print("Your anti-magic field disrupts any magic attempts.");
-		return;
-	}
-
-	spell = get_school_spell("cast");
-
-	/* Actualy cast the choice */
-	if (spell != -1)
-	{
-		exec_lua(format("cast_school_spell(%d, spell(%d))", spell, spell));
-	}
-}
-#endif	// 0
 
 void browse_school_spell(int book, int pval)
 {

@@ -58,7 +58,7 @@ function finish_spell(must_i)
         assert(s.info, "No spell info!")
         assert(s.desc, "No spell desc!")
        	if not s.direction then s.direction = FALSE end
-       	if not s.item then s.item = FALSE end
+       	if not s.item then s.item = -1 end
 
         i = new_spell(must_i, s.name)
         assert(i == must_i, "ACK ! i != must_i ! please contact the maintainer")
@@ -360,7 +360,8 @@ end
 
 -- XXX server only
 -- one question.. why this should be LUA anyway?
-function cast_school_spell(i, s, s_ptr, no_cost)
+-- because accessing lua table is so badly easier in lua
+function cast_school_spell(i, s, s_ptr, no_cost, other)
 	local player = players(i)
 	local use = FALSE
 
@@ -371,6 +372,7 @@ function cast_school_spell(i, s, s_ptr, no_cost)
         end
 
 	-- TODO: check the ownership
+        -- uh?
 
 	-- if it costs something then some condition must be met
 	if not no_cost then
@@ -394,7 +396,7 @@ function cast_school_spell(i, s, s_ptr, no_cost)
         
 		-- Invoke the spell effect
 	        if (magik(spell_chance(i, s)) == FALSE) then
-			if (__spell_spell[s]() == nil) then
+			if (__spell_spell[s](other) == nil) then
 	        		use  = TRUE
 			end
 		else
@@ -414,16 +416,18 @@ function cast_school_spell(i, s, s_ptr, no_cost)
 			use  = TRUE
 		end
 	else
-        	__spell_spell[s]()
+        	__spell_spell[s](other)
         end
 
 	if use == TRUE then
 	        -- Reduce mana
 		adjust_power(s, -get_mana(i, s))
 
+--[[ DGDGDGDG - Later
 	        -- Take a turn
         	if is_magestaff() == TRUE then energy_use = 80
 	        else energy_use = 100 end
+]]
 	end
 
 	player.redraw = bor(player.redraw, PR_MANA)
@@ -471,4 +475,8 @@ function have_object(mode, type, find, find2)
                 i = i + 1
         end
         return -1
+end
+
+function pre_exec_spell_dir(s)
+        if __tmp_spells[s].direction then return __tmp_spells[s].direction end
 end

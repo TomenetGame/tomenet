@@ -5416,7 +5416,10 @@ static int Receive_activate_skill(int ind)
 			case MKEY_TRAP:
 				do_cmd_set_trap(player, book, spell);
 				break;
-		}
+                case MKEY_SCHOOL:
+                        cast_school_spell(player, spell, dir, book)
+
+                }
 		return 2;
 	}
 #endif	// 0
