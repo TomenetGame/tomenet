@@ -661,9 +661,10 @@ static void mass_produce(object_type *o_ptr)
 		case TV_ARROW:
 		case TV_BOLT:
 		{
-			if (cost <= 5L) size += mass_roll(5, 5);
-			if (cost <= 50L) size += mass_roll(5, 5);
-			if (cost <= 500L) size += mass_roll(5, 5);
+			if (cost <= 10L) size += mass_roll(4, 4);
+			if (cost <= 100L) size += mass_roll(5, 5);
+			//if (cost <= 500L) 
+			size += mass_roll(6, 6);
 			break;
 		}
 	}
@@ -3016,7 +3017,7 @@ void store_confirm(int Ind)
 	handle_stuff(Ind);
 
 	/* Artifact won't be sold in a store */
-	if (cfg.anti_arts_horde && true_artifact_p(&sold_obj) && !museum)
+	if (cfg.anti_arts_shop && true_artifact_p(&sold_obj) && !museum)
 	{
 		a_info[sold_obj.name1].cur_num = 0;
 		a_info[sold_obj.name1].known = FALSE;
@@ -3849,7 +3850,7 @@ void home_sell(int Ind, int item, int amt)
 
 #endif
 
-	if (cfg.anti_arts_horde && true_artifact_p(o_ptr))
+	if (cfg.anti_arts_house && true_artifact_p(o_ptr))
 	{
 		/* Oops */
 		msg_print(Ind, "You cannot stock artifacts.");
@@ -3916,7 +3917,7 @@ void home_sell(int Ind, int item, int amt)
 	handle_stuff(Ind);
 
 	/* Artifact won't be sold in a store */
-	if (cfg.anti_arts_horde && true_artifact_p(&sold_obj))
+	if (cfg.anti_arts_shop && true_artifact_p(&sold_obj))
 	{
 		a_info[sold_obj.name1].cur_num = 0;
 		a_info[sold_obj.name1].known = FALSE;

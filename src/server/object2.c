@@ -5828,6 +5828,8 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	int o_idx=-1;
 	int flag = 0;	// 1 = normal, 2 = combine, 3 = crash
 
+	bool inside_house = FALSE;
+
 	cave_type	*c_ptr;
 
 	bool arts = artifact_p(o_ptr), crash, done = FALSE;
@@ -6042,6 +6044,25 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	nx = bx;
 	c_ptr = &zcave[ny][nx];
 
+	/* Artifact always disappears, depending on tomenet.cfg flags */
+	/* this should be in drop_near_severe, would be cleaner sometime in the future.. */
+	//if (true_artifact_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz) && cfg.anti_arts_house && ((pick_house(wpos, ny, nx) != -1))
+	for (i = 0; i < num_houses; i++)
+		/* anyone willing to implement non-rectangular houses? */
+		if ((houses[i].flags & HF_RECT) && inarea(&houses[i].wpos, wpos))
+			for (bx = houses[i].x; bx < (houses[i].x + houses[i].coords.rect.width - 1); bx++)
+				for (by = houses[i].y; by < (houses[i].y + houses[i].coords.rect.height - 1); by++)
+					if ((bx == nx) && (by == ny)) inside_house = TRUE;
+	if (true_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house)
+	{
+		//char	o_name[160];
+		//object_desc(Ind, o_name, o_ptr, TRUE, 0);
+		//msg_format(Ind, "%s fades into the air!", o_name);
+		a_info[o_ptr->name1].cur_num = 0;
+		a_info[o_ptr->name1].known = FALSE;
+		return (-1);
+	}
+
 	/* Scan objects in that grid for combination */
 	if (flag == 2)
 	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -6154,8 +6175,9 @@ s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *
 {
 	player_type *p_ptr=Players[Ind];
 
-	/* Artifact always disappears */
-	if (cfg.anti_arts_horde && true_artifact_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))
+	/* Artifact always disappears, depending on tomenet.cfg flags */
+	if (true_artifact_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz) && cfg.anti_arts_hoard)
+	    //(cfg.anti_arts_hoard || (cfg.anti_arts_house && 0)) would be cleaner sometime in the future..
 	{
 		char	o_name[160];
 		object_desc(Ind, o_name, o_ptr, TRUE, 0);

@@ -4355,7 +4355,7 @@ void player_death(int Ind)
 				//		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
 
 				/* Artifacts cannot be dropped after all */	
-				if (cfg.anti_arts_horde) 
+				if (cfg.anti_arts_hoard) 
 				{
 					/* set the artifact as unfound */
 					a_info[o_ptr->name1].cur_num = 0;
@@ -6535,7 +6535,7 @@ void telekinesis_aux(int Ind, int item)
 	p2_ptr = Players[Ind2];
 
 	/* You cannot send artifact */
-	if(cfg.anti_arts_horde && true_artifact_p(q_ptr))
+	if(cfg.anti_arts_hoard && true_artifact_p(q_ptr))
 	{
 		msg_print(Ind, "You have an acute feeling of loss!");
 		a_info[q_ptr->name1].cur_num = 0;

@@ -1714,7 +1714,7 @@ bool make_attack_normal(int Ind, int m_idx)
 						msg_print(Ind, "\377rYou lose the grip of your weapon!");
 //						msg_format(Ind, "\377r%^s disarms you!", m_name);
 
-						if (cfg.anti_arts_horde && true_artifact_p(o_ptr)
+						if (cfg.anti_arts_hoard && true_artifact_p(o_ptr)
 								&& magik(98))
 							inven_takeoff(Ind, INVEN_WIELD, 1);
 						else inven_drop(Ind, INVEN_WIELD, 1);

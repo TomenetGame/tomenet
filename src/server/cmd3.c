@@ -259,6 +259,8 @@ bool item_tester_hook_wear(int Ind, int slot)
 				if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
 				break;
 			case INVEN_LITE:
+				/* Always allow to carry light source? :/ */
+				/* return (TRUE); break; */
 			case INVEN_BODY:
 			case INVEN_OUTER:
 			case INVEN_AMMO:
@@ -1515,7 +1517,7 @@ void do_cmd_steal(int Ind, int dir)
 			}
 
 			/* True artifact is HARD to steal */
-			else if (cfg.anti_arts_horde && true_artifact_p(o_ptr)
+			else if (cfg.anti_arts_hoard && true_artifact_p(o_ptr)
 				&& ((q_ptr->exp > p_ptr->exp) || (rand_int(500) > success )))
 			{
 				msg_print(Ind, "The object itself seems to evade your hand!");

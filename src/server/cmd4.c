@@ -906,8 +906,10 @@ void do_cmd_check_server_settings(int Ind)
 		
 
 	/* arts & winners */
-	if (cfg.anti_arts_horde)
+	if (cfg.anti_arts_hoard)
 		fprintf(fff, "True-Artifacts will disappear if you drop/leave them.\n");
+	else if (cfg.anti_arts_house)
+		fprintf(fff, "True-Artifacts will disappear if you drop/leave them inside a house.\n");
 
 	if ((k=cfg.retire_timer) > 0)
 		fprintf(fff, "The winner will automatically retire after %d minutes.\n", k);

@@ -2970,9 +2970,17 @@ void set_server_option(char * option, char * value)
 	{
 		cfg.console_port = atoi(value);
 	}
-	else if (!strcmp(option,"ANTI_ARTS_HORDE"))
+	else if (!strcmp(option,"ANTI_ARTS_HOARD"))
 	{
-		cfg.anti_arts_horde = str_to_boolean(value);
+		cfg.anti_arts_hoard = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"ANTI_ARTS_HOUSE"))
+	{
+		cfg.anti_arts_house = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"ANTI_ARTS_SHOP"))
+	{
+		cfg.anti_arts_shop = str_to_boolean(value);
 	}
 	else if (!strcmp(option,"SPELL_STACK_LIMIT"))
 	{

@@ -176,7 +176,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 		if (!tmp_obj.k_idx) continue;
 		if (randint(100)>chance) continue;
 		if (tmp_obj.name1 == ART_POWER) continue;
-		if (cfg.anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
+		if (cfg.anti_arts_hoard && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
 		{
 			char	o_name[160];
 			object_desc(Ind, o_name, &tmp_obj, TRUE, 0);
@@ -242,7 +242,7 @@ bool do_player_scatter_items(int Ind, int chance, int rad)
 			if (!cave_floor_bold(zcave, cy,cx)) continue;
 			o_ptr = &p_ptr->inventory[i];
 			tmp_obj = p_ptr->inventory[i];
-			if (cfg.anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
+			if (cfg.anti_arts_hoard && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
 			{
 				char	o_name[160];
 				object_desc(Ind, o_name, &tmp_obj, TRUE, 0);
@@ -432,7 +432,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
 
 	/* God save the arts :) */
 	if (i_ptr->name1 == ART_POWER) return (FALSE);
-	if (cfg.anti_arts_horde && (artifact_p(i_ptr)) && (!i_ptr->name3) && (rand_int(100)>9)) return(FALSE);
+	if (cfg.anti_arts_hoard && (artifact_p(i_ptr)) && (!i_ptr->name3) && (rand_int(100)>9)) return(FALSE);
 
 	while (o_idx == 0)
 	{
