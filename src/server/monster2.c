@@ -2347,8 +2347,12 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		int on_level, who_killed;
 		for (i = 1; i <= NumPlayers; i++)
 		{
+			/* Skip the dungeon master */
+			if (Players[i]->admin_dm) continue;
+
 			/* Count how many players are here */
 			on_level++;
+
 			/* Count how many of them have killed this unique monster */
 			if (inarea(&Players[i]->wpos, wpos) &&
 			    Players[i]->r_killed[r_idx])
