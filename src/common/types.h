@@ -2290,6 +2290,7 @@ typedef struct server_opts server_opts;
 struct server_opts
 {
 	s16b runlevel;		/* Glorified shutdown mode */
+	time_t runtime;		/* Server start time */
 	time_t closetime;	/* Server closedown time */
 	char * meta_address;
 	char * bind_name;
