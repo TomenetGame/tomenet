@@ -219,7 +219,7 @@
  * bad design.
  */
 #define	META_ADDRESS "meta.tomenet.net"
-#define	META_ADDRESS_2 "64.53.71.113"  
+#define	META_ADDRESS_2 "darkgod.tomenet.net"
 
 /*
  * Server gateway: Provide raw data for applications
