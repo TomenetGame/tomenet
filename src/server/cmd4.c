@@ -454,8 +454,9 @@ void do_cmd_check_uniques(int Ind, int line)
 				/* Only display known uniques */
 				if (r_ptr->r_sights)
 				{
-					int i;
+					int i, j = 0;
 					byte ok = FALSE;
+					bool k = FALSE;
 			
 					/* Format message */
 					fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
@@ -466,8 +467,17 @@ void do_cmd_check_uniques(int Ind, int line)
 						
 						if (q_ptr->r_killed[k])
 						{
-							fprintf(fff, "        %s\n", q_ptr->name);
+//							fprintf(fff, "        %s\n", q_ptr->name);
+							fprintf(fff, "  %16.16s", q_ptr->name);
 							ok = TRUE;
+							j++;
+							k = FALSE;
+							if (j == 4)
+							{
+								fprintf(fff, "\n");
+								j = 0;
+								k = TRUE;
+							}
 						}
 					}
 					if (!ok) fprintf(fff, "       Nobody\n");
@@ -475,6 +485,7 @@ void do_cmd_check_uniques(int Ind, int line)
 
 				/* Terminate line */
 				/*                              fprintf(fff, "\n");*/
+				if (!k) fprintf(fff, "\n");
 			}
 		}
 	}

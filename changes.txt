@@ -571,3 +571,4 @@ Change list for PernMangband
 31/12/2001 (Jir)
 - Boomerang/Axe/MageStaff randarts.
 - New monster spells are implemented(flags4-6).
+- (Slightly) easy-to-read unique list.

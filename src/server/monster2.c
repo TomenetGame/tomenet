@@ -1447,7 +1447,7 @@ void update_player(int Ind)
 			}
 			
 			/* hack -- dungeon masters are invisible */
-			if (p_ptr->admin_dm) flag = FALSE;
+			if (q_ptr->admin_dm) flag = FALSE;
 			
 			/* Can we see invisibvle players ? */
 			if ((!p_ptr->see_inv || ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) && q_ptr->invis)
