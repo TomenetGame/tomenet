@@ -850,6 +850,7 @@ struct dun_level{
 };
 
 struct dungeon_type{
+	u16b id;		/* dungeon id */
 	u16b baselevel;		/* base level (1 - 50ft etc). */
 	u16b flags;		/* dungeon flags */
 	byte maxdepth;		/* max height/depth */
