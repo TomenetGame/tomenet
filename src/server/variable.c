@@ -186,6 +186,10 @@ s32b cfg_unique_respawn_time = 300;
 s32b cfg_unique_max_respawn_time = 50000;
 s32b cfg_level_unstatic_chance = 60;
 s32b cfg_retire_timer = -1;
+bool cfg_maximize = 1;
+s32b cfg_game_port = 18348;
+s32b cfg_console_port = 18349;
+
 
 
 /*
@@ -743,6 +747,11 @@ cptr ANGBAND_DIR_SAVE;
  */
 cptr ANGBAND_DIR_USER;
 
+/*
+ * Mangband configuration file
+ * Usually it's 'mangband.cfg'
+ */
+cptr MANGBAND_CFG;
 
 /*
  * Total Hack -- allow all items to be listed (even empty ones)

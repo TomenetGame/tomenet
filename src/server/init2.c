@@ -1682,6 +1682,18 @@ void set_server_option(char * option, char * value)
 	{
 		cfg_retire_timer = atoi(value);
 	}
+	else if (!strcmp(option,"MAXIMIZE"))
+	{
+		cfg_maximize = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"GAME_PORT"))
+	{
+		cfg_game_port = atoi(value);
+	}
+	else if (!strcmp(option,"CONSOLE_PORT"))
+	{
+		cfg_console_port = atoi(value);
+	}
 	else printf("Error : unrecognized mangband.cfg option %s\n", option);
 }
 
@@ -1752,12 +1764,14 @@ void load_server_cfg(void)
 	FILE * cfg;
 	
 	/* Attempt to open the file */
-	cfg = fopen("mangband.cfg", "r");
+//	cfg = fopen("mangband.cfg", "r");
+	cfg = fopen(MANGBAND_CFG, "r");
 
 	/* Failure */
 	if (cfg == (FILE*)NULL)
 	{
-		printf("Error : cannot open file mangband.cfg\n");
+//		printf("Error : cannot open file mangband.cfg\n");
+		printf("Error : cannot open file %s\n", MANGBAND_CFG);
 		return;
 	}
 

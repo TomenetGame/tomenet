@@ -240,3 +240,71 @@ Change list for PernMangband
 28/10/2001
 - Added multi player simultaneous building. Seems to work.
   MAX_BUILDERS allows a limit to be set on builders.
+
+18/11/2001 (Jir)
+[Applied all the past patches.. http://www.ctt.ne.jp/~sap/mang/patches.html]
+- Inscription '!=' forces to pick it up. (nice for arrows etc)
+- YOU LOSE YOUR ARTIFACT IF YOU DROP IT! (randarts are ok)
+  [This prevents arts-exhaustion which occurs everywhere - fixed version]
+- You can no longer use/sell equipments of other new characters.
+- Smarter stacking codes for level-reqs
+- You can see other players' equipment with "'" (need a patched client)
+  [original code written by Yakina.. thx!]
+- Some detection spells gives off message "You sense the absence of..".
+- You can set 'Maximization' in mangband.cfg.
+- 'Potion of Invisibility' is added.
+- If an item's owner disappears, tag will look like {-,5} and not {5}.
+- Cursed magic arrows won't return nor get (+0,+0) when are shot.
+- Coloured message headers of chat if king(v)/hellish(D)/ghost(r).
+- You can specify the colour of chat header([Jir]) by '}' tag.
+- Spellbooks will be automatically inscribed in the proper way.
+- Antimagic of DS(-n,-n) are limited somewhat save unbelievers.
+- You can walk through your house door w/o opening it.
+- Wizard will be born with all the appropriate books.
+- 'Mushroom of Unmagic' is added (tho useless nowadays..)
+- You become 'furious' when you notice someone stealing from you.
+- You won't become 'hostile' when higher-xp player steals from you.
+- Respawning chance of townie is halved.
+- Console command 'get unique list' won't crash the server any more.
+- Client uses IP-address in place of hostname for metaserver.
+- Everyone can see his/her score with '#' command.
+- Priest gives you some gold to restart when resurrect in temple.
+- A ghost cannot go so deeper(250ft margin) than his best-depth.
+- More chance of success when digging.
+- You can open the door with tunnel command also.
+- A torch will disappear when burnt out.
+- Fixes a bug where archer branding spell lasts forever.
+- 25 new vaults borrowed from PernAngband(2 of them are w/o entrance).
+- Slight changes in ?_info.txt files
+- You can change your party's name with 'Create A Party' command.
+- You'll be protected by GoI for 2 turns after recall/stairs.
+- Pack overflow will take inscription {!d} into consideration.
+- Overflows while polymorphing are handled in a better way now.
+- Maximum radius of teleport is reduced for high-leveled magicusers.
+- Chat-line user commands: /afk, /ignore
+- Chat-line admin commands: /art, /cfg, /clv, /kick, /shutdown
+- Name abbreviations are available in most situations.
+- New command line option -m, which specify configuration file to load.
+- Client will receive final score when ghost is destroyed.
+- Added 'FreeBSD 4.3R' in makefile
+- Fixed a bug where Morgoth summoned townies etc.
+- If one kills the same unique more than once, it'll be handled as 'cloned'.
+- DM can specify monsters to summon by ID number.
+- Fixed: Store command when sunrise/sunset crashed. (Yakina)
+- Port numbers are now changeable with configuration file. (Yakina)
+- Other small bug-fixes, typos and ameliorations(deteriorations?)
+[client changes]
+- You can type, for example, '15k' for 15000au and '3m' for 3,000,000au.
+- You can see your gold as soon as you enter a store.
+- You can see other players' equipment.(*)
+- You can choose to be a bat(wo)man when creating new character.(*)
+- 'no-direction cancels' bug is fixed.
+- New command '/', which can handle miscellaneous types of items.
+- You can scroll chat-history with ctrl-o.
+- "'" command is supported(see above).
+- Graphics bug in win-client is fixed (by Tanix)
+ 
+19/11/01 (Jir)
+- Some xp bonus to encourage partying (C.Blue's idea)
+- Revised conditions to check equipments.
+- Bugfix on /ignore command code.

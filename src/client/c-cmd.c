@@ -353,6 +353,12 @@ void process_command()
 			break;
 		}
 
+        case '\'':
+        {
+            cmd_player_equip();
+            break;
+        }
+
 		case '@':
 		{
 			cmd_players();
@@ -450,6 +456,12 @@ void process_command()
 		case 'h':
 		{
 			cmd_purchase_house();
+			break;
+		}
+
+		case '/':
+		{
+			cmd_all_in_one();
 			break;
 		}
 
@@ -1195,6 +1207,15 @@ void cmd_players(void)
 	peruse_file();
 }
 
+void cmd_player_equip(void)
+{
+    /* Set the hook */
+    special_line_type = SPECIAL_FILE_PLAYER_EQUIP;
+
+    /* Call the file perusal */
+    peruse_file();
+}
+
 void cmd_high_scores(void)
 {
 	/* Set the hook */
@@ -1371,7 +1392,8 @@ void cmd_throw(void)
 		return;
 	}
 
-	get_dir(&dir);
+	if (!get_dir(&dir))
+		return;
 
 	/* Send it */
 	Send_throw(item, dir);
@@ -2585,4 +2607,172 @@ void cmd_king()
 	if (!get_check("Do you really want to own this land ?")) return;
 	
 	Send_King(KING_OWN);
+}
+
+void cmd_all_in_one(void)
+{
+	int item, dir;
+
+	if (!c_get_item(&item, "Use which item? ", TRUE, TRUE, FALSE))
+	{
+		return;
+	}
+
+	if (INVEN_WIELD <= item)
+	{
+		Send_activate(item);
+		return;
+	}
+
+	switch (inventory[item].tval)
+	{
+		case TV_POTION:
+		{
+			Send_quaff(item);
+			break;
+		}
+
+		case TV_SCROLL:
+		{
+			Send_read(item);
+			break;
+		}
+
+		case TV_WAND:
+		{
+			get_dir(&dir);
+			Send_aim(item, dir);
+			break;
+		}
+
+		case TV_STAFF:
+		{
+			Send_use(item);
+			break;
+		}
+
+		case TV_ROD:
+		{
+			Send_zap(item);
+			break;
+		}
+
+		case TV_LITE:
+		{
+			if (inventory[INVEN_LITE].tval)
+			{
+				Send_fill(item);
+			}
+			else
+			{ 
+				Send_wield(item);
+			}
+			break;
+		}
+
+		case TV_FLASK:
+		{
+			Send_fill(item);
+			break;
+		}
+	
+		case TV_FOOD:
+		{
+			Send_eat(item);
+			break;
+		}
+
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		{
+			if (!get_dir(&dir))
+				return;
+
+			Send_fire(item, dir);
+			break;
+		}
+
+		case TV_PSI_BOOK:
+		case TV_MAGIC_BOOK:
+		case TV_SORCERY_BOOK:
+		case TV_SHADOW_BOOK:
+		case TV_HUNT_BOOK:
+		{
+			if ((*item_tester_magicable)(&inventory[item]))
+			{
+				 do_cast(item);
+			}
+			else
+			{
+				c_msg_print("You tried to decipher the contents in vain.");
+			}
+			break;
+		}
+
+		case TV_FIGHT_BOOK:
+		{
+//			if ((*item_tester_magicable)(&inventory[item]))
+			if (p_ptr->pclass == CLASS_WARRIOR)
+			{
+				 do_fight(item);
+			}
+			else
+			{
+//				c_msg_print("You are not strong enough.");
+				c_msg_print("You find it hard to follow those acrobatic instructions.");
+			}
+			break;
+		}
+
+
+
+		case TV_PRAYER_BOOK:
+		{
+			if (class != CLASS_PRIEST && class != CLASS_PALADIN)
+        	{
+				c_msg_print("You pray.");
+			}
+			else
+			{
+				do_pray(item);
+			}
+			break;
+        }
+
+		case TV_BOW:
+		case TV_DIGGING:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_DRAG_ARMOR:
+		case TV_AMULET:
+		case TV_RING:
+		{
+			Send_wield(item);
+			break;
+		}
+
+		default:
+		{
+			prt("Sorry I cannot handle that.", 0, 0);
+			break;
+		}
+	}
+
+		/* prototype
+		case :
+		{
+			
+			break;
+		}
+		*/
 }

@@ -309,7 +309,7 @@ void client_init(char *argv1)
 	nick[0] = toupper(nick[0]);
 
 	// Create the net socket and make the TCP connection
-	if ((Socket = CreateClientSocket(server_name, 18348)) == -1)
+	if ((Socket = CreateClientSocket(server_name, cfg_game_port)) == -1)
 	{
 		quit("That server either isn't up, or you mistyped the hostname.\n");
 	}
@@ -367,9 +367,9 @@ void client_init(char *argv1)
 
 	/* Connect to server */
 #ifdef UNIX_SOCKETS
-	if ((DgramConnect(Socket, server_name, 18348)) == -1)
+	if ((DgramConnect(Socket, server_name, cfg_game_port)) == -1)
 #else
-	// UDP stuffif ((DgramConnect(Socket, server_name, 18348)) == -1)
+	// UDP stuffif ((DgramConnect(Socket, server_name, cfg_game_port)) == -1)
 #endif
 	//{
 	//	quit("That server either isn't up, or you mistyped the host name.\n");

@@ -182,10 +182,10 @@
  */
  
 #define MAX_F_IDX	128	/* Max size for "f_info[]" */
-#define MAX_K_IDX	541	/* Max size for "k_info[]" */
+#define MAX_K_IDX	543	/* Max size for "k_info[]" */
 #define MAX_A_IDX	128	/* Max size for "a_info[]" */
 #define MAX_E_IDX	128	/* Max size for "e_info[]" */
-#define MAX_R_IDX	551     /* Max size for "r_info[]" */
+#define MAX_R_IDX	563 /* Max size for "r_info[]"  551 + 12 (Tanix fix) */
 #define MAX_V_IDX 	256	/* Max size for "v_info[]" */
 
 
@@ -336,6 +336,7 @@
 #define SPECIAL_FILE_OTHER	4
 #define SPECIAL_FILE_SCORES	5
 #define SPECIAL_FILE_HELP	6
+#define SPECIAL_FILE_PLAYER_EQUIP      7
 
 
 /*
@@ -1530,6 +1531,7 @@ that keeps many algorithms happy.
 #define SV_POTION_STAR_ENLIGHTENMENT	57
 #define SV_POTION_SELF_KNOWLEDGE		58
 #define SV_POTION_EXPERIENCE			59
+#define SV_POTION_INVIS					60
 
 /* The "sval" codes for TV_FOOD */
 #define SV_FOOD_POISON			0
@@ -1571,11 +1573,14 @@ that keeps many algorithms happy.
 #define SV_FOOD_PINT_OF_WINE		39
 
 
+/* rearrangement is needed maybe.. */
+#define SV_FOOD_UNMAGIC			50
 
 /*
  * Special "sval" limit -- first "normal" food
  */
 #define SV_FOOD_MIN_FOOD	20
+#define SV_FOOD_MAX_FOOD    49
 
 /*
  * Special "sval" limit -- first "aimed" rod

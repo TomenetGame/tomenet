@@ -512,14 +512,20 @@ void do_cmd_check_players(int Ind, int line)
 				q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[q_ptr->prace].title, 
 				class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
 				parties[q_ptr->party].name);
-	    	}
-	    	else
-	    	{
+		}
+		else
+		{
 			fprintf(fff, "     %s the %s%s %s (%sLevel %d, %s)",
 				q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[q_ptr->prace].title, 
 				class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
 				parties[q_ptr->party].name);
-	    	}
+    	}
+
+		/* AFK */
+		if(q_ptr->afk)
+		{
+			fprintf(fff, " AFK");
+		}
 				
 		/* Print extra info if these people are in the same party */
 		/* Hack -- always show extra info to dungeon master */
@@ -544,6 +550,142 @@ void do_cmd_check_players(int Ind, int line)
 	/* Remove the file */
 	fd_kill(file_name);
 }
+ /*
+ * Check the equipments of other player.
+ */
+void do_cmd_check_player_equip(int Ind, int line)
+{
+       int i, k;
+
+       FILE *fff;
+
+       char file_name[1024];
+
+       player_type *p_ptr = Players[Ind];
+
+		bool admin = (!strcmp(p_ptr->name,cfg_admin_wizard)
+					|| !strcmp(p_ptr->name,cfg_dungeon_master))?TRUE:FALSE;
+
+       /* Temporary file */
+       if (path_temp(file_name, 1024)) return;
+
+       /* Open a new file */
+       fff = my_fopen(file_name, "w");
+
+		/* Scan the player races */
+		for (k = 1; k < NumPlayers + 1; k++)
+		{
+		        player_type *q_ptr = Players[k];
+		        byte attr = 'w';
+
+		        /* Only print connected players */
+		        if (q_ptr->conn == NOT_CONNECTED)
+		                continue;
+
+		        /* don't display the dungeon master if the secret_dungeon_master
+		         * option is set
+		         */
+		        if ((!strcmp(q_ptr->name,cfg_dungeon_master)) &&
+		           (cfg_secret_dungeon_master)) continue;
+
+		        /*** Determine color ***/
+
+				attr = 'G';
+
+		        /* Skip myself */
+		        if (Ind == k) continue;
+
+		        /* Print party members in blue */
+		        else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
+
+		        /* Print hostile players in red */
+		        else if (check_hostile(Ind, k)) attr = 'r';
+
+				/* Print newbies/lowbies in white */
+				else if (q_ptr->lev < 10) attr = 'w';
+
+		        /* Party member & hostile players only */
+		        /* else continue; */
+
+				/* Only party member or those on the same dungeon level */
+//				if ((attr != 'B') && (p_ptr->dun_depth != q_ptr->dun_depth)) continue;
+				if ((attr != 'B') && (attr != 'w') && !admin)
+				{
+                	/* Make sure this player is at this depth */
+                	if (p_ptr->dun_depth != q_ptr->dun_depth) continue;
+
+                	/* Can he see this player? */
+                	if (!(p_ptr->cave_flag[q_ptr->py][q_ptr->px] & CAVE_VIEW)) continue;
+				}
+
+				/* Skip invisible players */
+#if 0
+				if ((!p_ptr->see_inv || ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) && q_ptr->invis)
+				{
+					if ((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) > (q_ptr->lev / 2)))
+						continue;
+				}
+#endif
+
+				if (q_ptr->invis && !admin &&
+					(!p_ptr->see_inv ||
+					 ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) &&
+					 ((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) < (q_ptr->lev / 2))))
+					 continue;
+
+		        /* Output color byte */
+		        fprintf(fff, "%c", attr);
+
+		        /* Print a message */
+				if(q_ptr->fruit_bat)
+				{
+					fprintf(fff, "     %s the %s%s %s (%sFruit bat, Level %d, %s)",
+					q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[ q_ptr->prace].title,
+					class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
+					parties[q_ptr->party].name);
+				}
+				else
+				{
+					fprintf(fff, "     %s the %s%s %s (%sLevel %d, %s)",
+					q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[ q_ptr->prace].title,
+					class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
+					parties[q_ptr->party].name);
+				}
+
+				/*
+		        fprintf(fff, "%s the %s %s (Level %d, %s)\n",
+		                q_ptr->name, race_info[q_ptr->prace].title,
+		                class_info[q_ptr->pclass].title, q_ptr->lev,
+		                parties[q_ptr->party].name);
+				*/
+				fprintf(fff, "\n");
+              
+				/* Print equipments */
+				for (i=INVEN_WIELD; i<INVEN_TOTAL; i++)
+				{
+					object_type *o_ptr = &q_ptr->inventory[i];
+					char o_name[80];
+					if (o_ptr->tval) {
+						object_desc(Ind, o_name, o_ptr, TRUE, 3);
+						fprintf(fff, "%c %s\n", 'w', o_name);
+					}
+				}
+
+		        /* Add blank line */
+		        fprintf(fff, "%c\n", 'w');
+
+		}
+
+       /* Close the file */
+       my_fclose(fff);
+
+       /* Display the file contents */
+       show_file(Ind, file_name, "Someone's equipments", line, 1);
+
+       /* Remove the file */
+       fd_kill(file_name);
+}
+
 
 
 /*

@@ -770,16 +770,19 @@ static void get_money(int Ind)
 		// This is a KING(or QUEEN :)
 #endif
 		p_ptr->total_winner = TRUE;
+		p_ptr->max_dlv = 200;
 
 		for (i = 1; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = r_info[i].level;
 	}
 	if (!strcmp(p_ptr->name,cfg_dungeon_master))
 	{
+		p_ptr->au = 50000000;
                 p_ptr->lev = 100;
                 p_ptr->exp = 999999999;
 		p_ptr->invuln = -1;
 		p_ptr->ghost = 1;
 		p_ptr->noscore = 1;
+		p_ptr->max_dlv = 200;
 	}
 	
 }
@@ -986,7 +989,7 @@ static void player_outfit(int Ind)
 	object_aware(Ind, o_ptr);
 	object_known(o_ptr);
         o_ptr->owner = p_ptr->id;
-        o_ptr->level = 1;
+        o_ptr->level = 0;
 	(void)inven_carry(Ind, o_ptr);
 
 	/* Hack -- Give the player some torches */
@@ -995,7 +998,7 @@ static void player_outfit(int Ind)
 	o_ptr->pval = rand_range(3, 7) * 500;
 	object_known(o_ptr);
         o_ptr->owner = p_ptr->id;
-        o_ptr->level = 1;
+        o_ptr->level = 0;
 	(void)inven_carry(Ind, o_ptr);
 
 	/*
@@ -1016,32 +1019,6 @@ static void player_outfit(int Ind)
                 /* Hack -- assume the player has an initial knowledge of the area close to town */
                 for (i = 0; i < MAX_WILD; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
 
-
-                for (i = 1; i < 8; i++)
-                {
-                        int k = lookup_kind(TV_SORCERY_BOOK, i);
-                        if (!k) continue;
-
-                        invcopy(o_ptr, k);
-                        o_ptr->number = 1;
-                        apply_magic(100, o_ptr, 100, TRUE, TRUE, TRUE);
-                        object_aware(Ind, o_ptr);
-                        object_known(o_ptr);
-                        o_ptr->owner = p_ptr->id;
-                        o_ptr->level = 1;
-                        (void)inven_carry(Ind, o_ptr);
-                }
-
-		invcopy(o_ptr, lookup_kind(TV_CROWN, SV_MORGOTH));
-		o_ptr->name1 = ART_MORGOTH;
-		apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
-		o_ptr->number = 1;
-		o_ptr->discount = 100;
-		object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
-		(void)inven_carry(Ind, o_ptr);
-
                 invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_HOUSE));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
@@ -1057,7 +1034,7 @@ static void player_outfit(int Ind)
                 o_ptr->level = 1;
 		object_known(o_ptr);
 		(void)inven_carry(Ind, o_ptr);
-
+#if 1
 		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_EXPERIENCE));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
@@ -1065,8 +1042,16 @@ static void player_outfit(int Ind)
                 o_ptr->owner = p_ptr->id;
                 o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
-
+#endif
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
+		o_ptr->number = 99;
+		o_ptr->discount = 100;
+		object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
+		(void)inven_carry(Ind, o_ptr);
+
+		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
 		object_known(o_ptr);
@@ -1083,14 +1068,15 @@ static void player_outfit(int Ind)
 		(void)inven_carry(Ind, o_ptr);
 
 		invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_LIFE));
-		o_ptr->number = 99;
+		o_ptr->number = 9;
 		o_ptr->discount = 0;
+		o_ptr->pval = 10;
 		object_known(o_ptr);
                 o_ptr->owner = p_ptr->id;
                 o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
-                invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_PROBING));
+		invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_PROBING));
                 o_ptr->number = 1;
                 o_ptr->pval = 30000;
 		o_ptr->discount = 0;
@@ -1098,6 +1084,60 @@ static void player_outfit(int Ind)
                 o_ptr->owner = p_ptr->id;
                 o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
+#if 0
+		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_INVIS));
+		o_ptr->number = 9;
+		o_ptr->discount = 100;
+		object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
+		(void)inven_carry(Ind, o_ptr);
+#endif
+
+		/* Ifrit bug report */
+        invcopy(o_ptr, lookup_kind(TV_SWORD, SV_BROAD_SWORD));
+		o_ptr->name1 = ART_GLAMDRING;
+		apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
+        o_ptr->number = 1;
+        o_ptr->discount = 0;
+        object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
+        (void)inven_carry(Ind, o_ptr);
+
+        invcopy(o_ptr, lookup_kind(TV_GLOVES, SV_SET_OF_CESTI));
+		o_ptr->name1 = ART_FINGOLFIN;
+		apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
+        o_ptr->number = 1;
+        o_ptr->discount = 0;
+        object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
+        (void)inven_carry(Ind, o_ptr);
+
+        invcopy(o_ptr, lookup_kind(TV_SWORD, SV_SCIMITAR));
+		o_ptr->name1 = ART_HARADEKKET;
+		apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
+        o_ptr->number = 1;
+        o_ptr->discount = 0;
+        object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
+        (void)inven_carry(Ind, o_ptr);
+
+		/* gimme books :) */
+		for (i = p_ptr->pclass == CLASS_WARRIOR?0:1; i < 9; i++)
+		{
+			int k = lookup_kind(p_ptr->mp_ptr->spell_book, i);
+			if (!k) continue;
+			invcopy(o_ptr, k);
+			o_ptr->number = 3;
+			o_ptr->discount = 100;
+			object_known(o_ptr);
+			o_ptr->owner = p_ptr->id;
+			o_ptr->level = 1;
+			(void)inven_carry(Ind, o_ptr);
+		}
 	}
 #endif
 	
@@ -1110,7 +1150,7 @@ static void player_outfit(int Ind)
 		object_aware(Ind, o_ptr);
 		object_known(o_ptr);
                 o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
+                o_ptr->level = 0;
 		(void)inven_carry(Ind, o_ptr);
 	}
 	
@@ -1347,7 +1387,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	/* Do some consistency checks */
 	if (race < 0 || race >= MAX_RACES) race = 0;
 	if (class < 0 || class >= MAX_CLASS) class = 0;
-	if (sex < 0 || sex > 3) sex = 0;
+	if (sex < 0 || sex > 7) sex = 0;
 
 	/* Allocate memory for him */
 	MAKE(Players[Ind], player_type);
@@ -1402,7 +1442,11 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	if (!process_player_name(Ind, TRUE)) return FALSE;
 
 	/* Set info */
-
+	if (sex > 3)
+		{
+			sex -= 4;
+			p_ptr->fruit_bat = 1;
+		}
 	if (sex > 1)
 	  {
 	    sex -= 2;
@@ -1429,7 +1473,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	p_ptr->id = newid();
 
 	/* Actually Generate */
-	p_ptr->maximize = TRUE;
+	p_ptr->maximize = cfg_maximize?TRUE:FALSE;
 
 	/* No autoroller */
 	get_stats(Ind, stat_order);

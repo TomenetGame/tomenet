@@ -427,7 +427,7 @@ void do_cmd_messages_chatonly(void)
                 }
 
                 /* Recall 20 older messages */
-                if ((k == 'p') || (k == KTRL('P')) || (k == ' '))
+                if ((k == 'p') || (k == KTRL('P')) || (k == ' ') || (k == KTRL('O')))
                 {
                         /* Go older if legal */
                         if (i + 20 < n) i += 20;

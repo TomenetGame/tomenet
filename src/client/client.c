@@ -126,12 +126,30 @@ static void read_mangrc(void)
 
 int main(int argc, char **argv)
 {
+	int i;
+	char svname[80]="";
 	bool done = FALSE;
 
 	/* Save the program name */
 	argv0 = argv[0];
 
 	/* Attempt to initialize a visual module */
+
+#ifdef USE_GTK
+	/* Attempt to use the "main-gtk.c" support */
+//	if (!done && (!mstr || (streq(mstr, "gtk"))))
+	if (!done)
+	{
+		extern errr init_gtk(int, char**);
+		if (0 == init_gtk(argc, argv))
+		{
+			ANGBAND_SYS = "gtk";
+			done = TRUE;
+		}
+	}
+#endif
+
+
 #ifdef USE_XAW
 	/* Attempt to use the "main-xaw.c" support */
 	if (!done)
@@ -200,6 +218,33 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
+	/* Process the command line arguments */
+	for (i = 1; argv && (i < argc); i++)
+	{
+		/* Require proper options */
+		if (argv[i][0] != '-')
+		{
+			strcpy(svname, argv[i]);
+			continue;
+		}
+
+		/* Analyze option */
+		switch (argv[i][1])
+		{
+		case 'p':
+		{
+			cfg_game_port = atoi(&argv[i][2]);
+			break;
+		}
+		
+		default:
+			/* Dump usage information */
+			puts("Usage: mangclient [options] [servername]");
+			puts("  -p<num>  Change game port number");
+			quit(NULL);
+		}
+	}
+	
 	/* Attempt to read default name/password from mangrc file */
 	read_mangrc();
 
@@ -207,10 +252,10 @@ int main(int argc, char **argv)
 	/* Always call with NULL argument */
 	client_init(NULL);
 #else
-	if (argc == 2)
+	if (strlen(svname)>0)
 	{
 		/* Initialize with given server name */
-		client_init(argv[1]);
+		client_init(svname);
 	}
 	else
 	{

@@ -1195,14 +1195,13 @@ static void calc_mana(int Ind)
 	if (p_ptr->tim_meditation)
 	{
 		new_mana += new_mana / 2;
-        }
+	}
 
-        /* Disruption Shield now increases hp at the cost of mana */
-        if (p_ptr->tim_manashield)
-        {
-                new_mana -= new_mana / 2;
-        }
-
+	/* Disruption Shield now increases hp at the cost of mana */
+	if (p_ptr->tim_manashield)
+	{
+		new_mana -= new_mana / 2;
+	}
 	
 	/* Warrior dont get much */
 	if (p_ptr->pclass == CLASS_WARRIOR)
@@ -1394,11 +1393,11 @@ static void calc_hitpoints(int Ind)
 		mhp = mhp * 3 / 5;
 	}
 
-        /* Disruption Shield */
-        if (p_ptr->tim_manashield)
-        {
-                mhp += p_ptr->msp * 2 / 3;
-        }
+	/* Disruption Shield */
+	if (p_ptr->tim_manashield)
+	{
+		mhp += p_ptr->msp * 2 / 3;
+	}
 
 
 	/* Get the gloves */

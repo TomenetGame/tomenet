@@ -679,6 +679,7 @@ errr process_pref_file_aux(char *buf)
                 if (tokenize(buf+2, 3, zz) == 3)
                 {
                         i = (huge)strtol(zz[0], NULL, 0);
+						i += 12;	/* gfx-fix by Tanix */
                         n1 = strtol(zz[1], NULL, 0);
                         n2 = strtol(zz[2], NULL, 0);
                         if (i >= MAX_R_IDX) return (1);

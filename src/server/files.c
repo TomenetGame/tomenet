@@ -1627,9 +1627,10 @@ void do_cmd_save_game(int Ind)
 long total_points(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	int i = p_ptr->r_killed[4]? 1 : 2;
 
-	if (p_ptr->mode == MODE_HELL) return ((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 3 / 2);
-	else return (p_ptr->max_exp + (100 * p_ptr->max_dlv) + p_ptr->au);
+	if (p_ptr->mode == MODE_HELL) return (((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 3 / 2)*i);
+	else return ((p_ptr->max_exp + (100 * p_ptr->max_dlv) + p_ptr->au)*i);
 }
 
 
@@ -2011,6 +2012,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 			score = NULL;
 			note = -1;
 			j--;
+			i--;
 		}
 
 		/* Read a normal record */
@@ -2303,7 +2305,7 @@ static errr predict_score(int Ind, int line)
 
 
 	/* Hack -- Display the top fifteen scores */
-	if (j < 10)
+	if (j < 19)  /* 10 */
 	{
 		display_scores_aux(Ind, line, j, &the_score);
 	}
@@ -2311,7 +2313,7 @@ static errr predict_score(int Ind, int line)
 	/* Display some "useful" scores */
 	else
 	{
-		display_scores_aux(Ind, line, -1, NULL);
+		display_scores_aux(Ind, line, 19, &the_score);	/* -1, NULL */
 	}
 
 
@@ -2813,7 +2815,8 @@ static void handle_signal_simple(int sig)
 		Report_to_meta(META_DIE);
 
 		/* Save everything and quit the game */
-		exit_game_panic();
+//		exit_game_panic();
+		shutdown_server();
 	}
 
 	/* Give warning (after 4) */

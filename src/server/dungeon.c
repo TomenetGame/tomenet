@@ -570,7 +570,7 @@ static void process_world(int Ind)
 	 */
 
 	/* Check for creature generation */
-	if (rand_int(MAX_M_ALLOC_CHANCE) == 0)
+	if ((rand_int(MAX_M_ALLOC_CHANCE) == 0) && ((p_ptr->dun_depth !=0) || (rand_int(10)<5)))
 	{
 		/* Set the monster generation depth */
 		if (p_ptr->dun_depth >= 0)		
@@ -1040,15 +1040,27 @@ static void process_player_end(int Ind)
 	if (p_ptr->notice) notice_stuff(Ind);
 
 	/* XXX XXX XXX Pack Overflow */
+	pack_overflow(Ind);
+#if 0
 	if (p_ptr->inventory[INVEN_PACK].k_idx)
 	{
-		int		amt;
+		int		amt, j = 0;
 
 		char	o_name[160];
 
-
 		/* Choose an item to spill */
-		i = INVEN_PACK;
+//		i = INVEN_PACK;
+
+		for(i = INVEN_PACK; i >= 0; i--)
+		{
+			if(!check_guard_inscription( (p_ptr->inventory[i]).note, 'd' ))
+			{
+				j = 1;
+				break;
+			}
+		}
+
+		if (!j) i = INVEN_PACK;
 
 		/* Access the slot to be dropped */
 		o_ptr = &p_ptr->inventory[i];
@@ -1069,12 +1081,13 @@ static void process_player_end(int Ind)
 		msg_format(Ind, "You drop %s.", o_name);
 
 		/* Drop it (carefully) near the player */
-		drop_near(o_ptr, 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
+		drop_near_severe(Ind, o_ptr, 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
 
 		/* Decrease the item, optimize. */
 		inven_item_increase(Ind, i, -amt);
 		inven_item_optimize(Ind, i);
 	}
+#endif /* 0 */
 
 
 	/* Process things such as regeneration. */
@@ -1547,6 +1560,15 @@ static void process_player_end(int Ind)
 				{
 					disturb(Ind, 0, 0);
 					msg_print(Ind, "Your light has gone out!");
+
+					/* Torch disappears */
+					if (o_ptr->sval == SV_LITE_TORCH)
+					{
+						/* Decrease the item, optimize. */
+						inven_item_increase(Ind, INVEN_LITE, -1);
+//						inven_item_describe(Ind, INVEN_LITE);
+						inven_item_optimize(Ind, INVEN_LITE);
+					}
 				}
 
 				/* The light is getting dim */
@@ -1756,6 +1778,9 @@ static void process_player_end(int Ind)
 
 				/* One more person here */
 				players_on_depth[p_ptr->dun_depth]++;
+
+				/* He'll be safe for 2 turn */
+				set_invuln_short(Ind, 2);
 
 				p_ptr->new_level_flag = TRUE;
 			}
@@ -2767,4 +2792,58 @@ void shutdown_server(void)
 	Report_to_meta(META_DIE);
 
 	quit("Server state saved");
+}
+
+void pack_overflow(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	int i;
+	
+	/* XXX XXX XXX Pack Overflow */
+	if (p_ptr->inventory[INVEN_PACK].k_idx)
+	{
+		int		amt, j = 0;
+
+		char	o_name[160];
+
+		/* Choose an item to spill */
+//		i = INVEN_PACK;
+
+		for(i = INVEN_PACK; i >= 0; i--)
+		{
+			if(!check_guard_inscription( (p_ptr->inventory[i]).note, 'd' ))
+			{
+				j = 1;
+				break;
+			}
+		}
+
+		if (!j) i = INVEN_PACK;
+
+		/* Access the slot to be dropped */
+		o_ptr = &p_ptr->inventory[i];
+
+		/* Drop all of that item */
+		amt = o_ptr->number;
+
+		/* Disturbing */
+		disturb(Ind, 0, 0);
+
+		/* Warning */
+		msg_print(Ind, "Your pack overflows!");
+
+		/* Describe */
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+		/* Message */
+		msg_format(Ind, "You drop %s.", o_name);
+
+		/* Drop it (carefully) near the player */
+		drop_near_severe(Ind, o_ptr, 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
+
+		/* Decrease the item, optimize. */
+		inven_item_increase(Ind, i, -amt);
+		inven_item_optimize(Ind, i);
+	}
 }

@@ -86,6 +86,9 @@ static void inven_takeoff(int Ind, int item, int amt)
 	/* Carry the object, saving the slot it went in */
 	posn = inven_carry(Ind, &tmp_obj);
 
+	/* Handles overflow */
+	pack_overflow(Ind);
+
 	/* Describe the result */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
@@ -181,7 +184,7 @@ static void inven_drop(int Ind, int item, int amt)
 	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(item));
 
 	/* Drop it (carefully) near the player */
-	drop_near(&tmp_obj, 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
+	drop_near_severe(Ind, &tmp_obj, 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
 
 	/* Decrease the item, optimize. */
 	inven_item_increase(Ind, item, -amt);
@@ -715,7 +718,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	object_type tmp_obj;
 
 	/* Handle the newbies_cannot_drop option */
-	if ((p_ptr->lev == 1) && (cfg_newbies_cannot_drop))
+	if ((p_ptr->lev < 5) && (cfg_newbies_cannot_drop))
 	{
 		msg_print(Ind, "You are not experienced enough to drop gold.");
 		return;
@@ -1079,6 +1082,10 @@ void do_cmd_steal(int Ind, int dir)
 		notice -= 3 * p_ptr->lev;
 	}
 
+	/* Always small chance to fail */
+	if (success > 95) success = 95;
+//	if (notice < 5) notice = 5;
+
 	/* Hack -- Always small chance to succeed */
 	if (success < 2) success = 2;
 
@@ -1104,15 +1111,22 @@ void do_cmd_steal(int Ind, int dir)
 				/* Tell thief */
 				msg_format(Ind, "You steal %ld gold.", amt);
 
+				/* Always small chance to be noticed */
+				if (notice < 5) notice = 5;
+
 				/* Check for target noticing */
 				if (rand_int(100) < notice)
 				{
 					/* Make target hostile */
-					add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+//					add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+					if (Players[0 - c_ptr->m_idx]->exp > p_ptr->exp - 200)add_hostility(0 - c_ptr->m_idx, p_ptr->name);
 
 					/* Message */
-					msg_format(0 - c_ptr->m_idx, "You notice %s stealing %ld gold!",
+					msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %ld gold!",
 					           p_ptr->name, amt);
+
+					/* The target gets angry */
+					set_furry(0 - c_ptr->m_idx, Players[0 - c_ptr->m_idx]->furry + 20 + randint(20));
 				}
 			}
 		}
@@ -1129,30 +1143,47 @@ void do_cmd_steal(int Ind, int dir)
 			o_ptr = &q_ptr->inventory[item];
 			forge = *o_ptr;
 
-			/* Give one item to thief */
-			forge.number = 1;
-			inven_carry(Ind, &forge);
+			/* True artifact is HARD to steal */
+			if ((artifact_p(o_ptr)) && (!o_ptr->name3)
+				&& ((Players[0 - c_ptr->m_idx]->exp > p_ptr->exp)
+					|| (rand_int(500) > success )))
+			{
+				msg_print(Ind, "The object itself seems to evade your hand!");
+			}
+			else
+			{
+				/* Give one item to thief */
+				forge.number = 1;
+				inven_carry(Ind, &forge);
 
-			/* Take one from target */
-			inven_item_increase(0 - c_ptr->m_idx, item, -1);
-			inven_item_optimize(0 - c_ptr->m_idx, item);
+				/* Take one from target */
+				inven_item_increase(0 - c_ptr->m_idx, item, -1);
+				inven_item_optimize(0 - c_ptr->m_idx, item);
 
-			/* Tell thief what he got */
-			object_desc(Ind, o_name, &forge, TRUE, 3);
-			msg_format(Ind, "You stole %s.", o_name);
+				/* Tell thief what he got */
+				object_desc(Ind, o_name, &forge, TRUE, 3);
+				msg_format(Ind, "You stole %s.", o_name);
+			}
 
 			/* Easier to notice heavier objects */
 			notice += forge.weight;
+
+			/* Always small chance to be noticed */
+			if (notice < 5) notice = 5;
 
 			/* Check for target noticing */
 			if (rand_int(100) < notice)
 			{
 				/* Make target hostile */
-				add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+//				add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+				if (Players[0 - c_ptr->m_idx]->exp > p_ptr->exp - 200)add_hostility(0 - c_ptr->m_idx, p_ptr->name);
 
 				/* Message */
-				msg_format(0 - c_ptr->m_idx, "You notice %s stealing %s!",
+				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %s!",
 				           p_ptr->name, o_name);
+
+				/* The target gets angry */
+				set_furry(0 - c_ptr->m_idx, Players[0 - c_ptr->m_idx]->furry + 20 + randint(20));
 			}
 		}
 	}
@@ -1165,11 +1196,15 @@ void do_cmd_steal(int Ind, int dir)
 		if (rand_int(100) < notice + 50)
 		{
 			/* Make target hostile */
-			add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+//			add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+			if (Players[0 - c_ptr->m_idx]->exp > p_ptr->exp - 200)add_hostility(0 - c_ptr->m_idx, p_ptr->name);
 
 			/* Message */
-			msg_format(0 - c_ptr->m_idx, "You notice %s try to steal from you!",
+			msg_format(0 - c_ptr->m_idx, "\377rYou notice %s try to steal from you!",
 			           p_ptr->name);
+
+			/* The target gets angry */
+			set_furry(0 - c_ptr->m_idx, Players[0 - c_ptr->m_idx]->furry + 20 + randint(20));
 		}
 	}
 

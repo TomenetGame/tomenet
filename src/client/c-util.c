@@ -1748,6 +1748,13 @@ s32b c_get_quantity(cptr prompt, int max)
 	/* Extract a number */
 	amt = atoi(buf);
 
+	/* Analyse abreviation like '15k' */
+	if (strchr(buf, 'k'))
+		amt = amt * 1000;
+	else
+		if (strchr(buf,'m'))
+			amt=amt * 1000000;
+
 	/* A letter means "all" */
 	if (isalpha(buf[0])) amt = max;
 

@@ -57,6 +57,12 @@ void delete_object_idx(int o_idx)
 	}
 #endif /* NEWHOUSES */
 
+	/* Artifact becomes 'not found' status */
+	if ((artifact_p(o_ptr)) && (!o_ptr->name3))
+	{
+		 a_info[o_ptr->name1].cur_num = 0;
+	}
+
 	/* Wipe the object */
 	WIPE(o_ptr, object_type);
 
@@ -258,8 +264,6 @@ void compact_objects(int size)
 }
 
 
-
-
 /*
  * Delete all the items when player leaves the level
  *
@@ -320,6 +324,80 @@ void wipe_o_list(int Depth)
 #endif /* NEWHOUSES */
 
 		/* Wipe the object */
+		WIPE(o_ptr, object_type);
+	}
+
+	/* Compact the object list */
+	compact_objects(0);
+}
+
+
+/*
+ * Delete all the items, but except those in houses.  - Jir -
+ *
+ * Note -- we do NOT visually reflect these (irrelevant) changes
+ * (cave[Depth][y][x].info & CAVE_ICKY)
+ */
+ 
+
+void wipe_o_list_safely(int Depth)
+{
+	int i, x, y;
+
+	/* Delete the existing objects */
+	for (i = 1; i < o_max; i++)
+	{
+		object_type *o_ptr = &o_list[i];
+
+		/* Skip dead objects */
+		if (!o_ptr->k_idx) continue;
+
+		/* Skip objects not on this depth */
+		if (o_ptr->dun_depth != Depth)
+			continue;
+
+		/* Skip objects inside a house(or something) */
+		if (cave[o_ptr->dun_depth][o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)
+			continue;
+
+		/* Mega-Hack -- preserve artifacts */
+		/* Hack -- Preserve unknown artifacts */
+		/* We now preserve ALL artifacts, known or not */
+		if (artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/)
+		{
+			/* Info */
+			/* s_printf("Preserving artifact %d.\n", o_ptr->name1); */
+
+			/* Mega-Hack -- Preserve the artifact */
+			a_info[o_ptr->name1].cur_num = 0;
+		}
+
+		/* Delete it */
+
+#ifndef NEWHOUSES
+		/* First, if this is a key, we need to reset the house */
+		/* it belongs to.  This is probably a hack. */
+		if (o_ptr->tval == TV_KEY)
+		{
+			/* Disown the house */
+			/* delete the objects inside it. -APD*/
+			if (houses[o_ptr->pval].owned)
+			{
+				for (y = houses[o_ptr->pval].y_1; y <= houses[o_ptr->pval].y_2; y++)
+				{
+					for (x = houses[o_ptr->pval].x_1; x <= houses[o_ptr->pval].x_2; x++)
+					{
+						delete_object(houses[o_ptr->pval].depth,y,x); 
+					}
+				}
+			houses[o_ptr->pval].owned--;			
+			}			
+			
+		}
+#endif /* NEWHOUSES */
+
+		/* Wipe the object */
+		cave[o_ptr->dun_depth][o_ptr->iy][o_ptr->ix].o_idx = 0;
 		WIPE(o_ptr, object_type);
 	}
 
@@ -1028,6 +1106,9 @@ s32b object_value(int Ind, object_type *o_ptr)
  *
  * Ego items may stack as long as they have the same ego-item type.
  * This is primarily to allow ego-missiles to stack.
+ *
+ * o_ptr and j_ptr no longer are simmetric;
+ * j_ptr should be the new item or level-reqs gets meanless.
  */
 bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 {
@@ -1038,9 +1119,15 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 	/* Require identical object types */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
 
-        /* Require same owner */
+		/* Require same owner or convertable to same owner */
 //
-        if (o_ptr->owner != j_ptr->owner) return (0);
+/*		if (o_ptr->owner != j_ptr->owner) return (0); */
+		if (((o_ptr->owner != j_ptr->owner)
+			&& ((p_ptr->lev < j_ptr->level)
+			|| (j_ptr->level < 1)))
+			&& (j_ptr->owner)) return (0);
+		if ((o_ptr->owner != p_ptr->id)
+			&& (o_ptr->owner != j_ptr->owner)) return (0);
 
 	/* Analyze the items */
 	switch (o_ptr->tval)
@@ -1219,6 +1306,9 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- could average discounts XXX XXX XXX */
 	/* Hack -- save largest discount XXX XXX XXX */
 	if (o_ptr->discount < j_ptr->discount) o_ptr->discount = j_ptr->discount;
+
+	/* blend level-req into lower one */
+	if (o_ptr->level > j_ptr->level) o_ptr->level = j_ptr->level;
 }
 
 
@@ -3233,9 +3323,10 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 
         /* Unowned yet */
         o_ptr->owner = 0;
-        o_ptr->level = ((lev * 2 / 3) > 100)?100:(lev * 2 / 3);
-        if (lev > 0) o_ptr->level = ((lev * 2 / 3) > 100)?100:(lev * 2 / 3);
-        else o_ptr->level = -((lev * 2 / 3) > 100)?100:(lev * 2 / 3);
+        o_ptr->level = ((lev * 2 / 4) > 100)?100:(lev * 2 / 4);
+        if (lev > 0) o_ptr->level = ((lev * 2 / 4) > 100)?100:(lev * 2 / 4);
+        else o_ptr->level = -((lev * 2 / 4) > 100)?100:(lev * 2 / 4);
+		if (o_ptr->level < 1) o_ptr->level = 1;
 
 	/* Hack -- analyze ego-items */
 	if (o_ptr->name2)
@@ -3925,7 +4016,24 @@ void drop_near(object_type *o_ptr, int chance, int Depth, int y, int x)
 		           o_name, ((o_ptr->number == 1) ? "s" : ""));*/
 	}
 }
+/* This function make the artifact disapper at once (cept randarts),
+ * and call the normal dropping function otherwise.
+ */
 
+void drop_near_severe(int Ind, object_type *o_ptr, int chance, int Depth, int y, int x)
+{
+	/* Artifact always disappears */
+	if ((artifact_p(o_ptr)) && (!o_ptr->name3))
+	{
+		char	o_name[160];
+		object_desc(Ind, o_name, o_ptr, TRUE, 0);
+
+		msg_format(Ind, "%s fades into the air!", o_name);
+		a_info[o_ptr->name1].cur_num = 0;
+		return;
+	}
+	else drop_near(o_ptr,chance,Depth,y,x);
+}
 
 
 
@@ -4374,12 +4482,24 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 	}
 
         if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
+#if 0
         if (!o_ptr->level)
         {
                 if (p_ptr->dun_depth > 0) o_ptr->level = p_ptr->dun_depth;
                 else o_ptr->level = -p_ptr->dun_depth;
                 if (o_ptr->level > 100) o_ptr->level = 100;
         }
+#endif
+
+	/* Auto-inscriber */
+	if ((o_ptr->tval == p_ptr->mp_ptr->spell_book) && (!o_ptr->note) && (can_use(Ind, o_ptr)))
+	{
+		char c[] = "@m ";
+		c[1] = ((p_ptr->pclass == CLASS_PRIEST) || (p_ptr->pclass == CLASS_PALADIN)? 'p':'m');
+		if (p_ptr->pclass == CLASS_WARRIOR) c[1] = 'n';
+		c[2] = o_ptr->sval +1 +48;
+		o_ptr->note = quark_add(c);
+	}
 
 	/* Structure copy to insert the new item */
 	p_ptr->inventory[i] = (*o_ptr);

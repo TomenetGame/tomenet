@@ -84,6 +84,9 @@ void do_cmd_go_up(int Ind)
 
 	p_ptr->new_level_flag = TRUE;
 
+	/* He'll be safe for 2 turn */
+	set_invuln_short(Ind, 2);
+
 	/* Create a way back */
 	create_down_stair = TRUE;
 }
@@ -107,10 +110,20 @@ void do_cmd_go_down(int Ind)
 	c_ptr = &cave[Depth][p_ptr->py][p_ptr->px];
 
 	/* Verify stairs */
-	if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
+//	if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
+	if ((strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
 	{
-		msg_print(Ind, "I see no down staircase here.");
-		return;
+		if (!p_ptr->ghost)
+		{
+			msg_print(Ind, "I see no down staircase here.");
+			return;
+		}
+		else if (p_ptr->max_dlv + 5 <= p_ptr->dun_depth)
+		{
+			/* anti Ghost-dive */
+			msg_print(Ind, "A mysterious force prevents you from going down.");
+			return;
+		}
 	}
 	else
 	{
@@ -164,6 +177,9 @@ void do_cmd_go_down(int Ind)
 	players_on_depth[p_ptr->dun_depth]++;
 
 	p_ptr->new_level_flag = TRUE;
+
+    /* He'll be safe for 2 turn */
+    set_invuln_short(Ind, 2);
 
 	/* Create a way back */
 	create_up_stair = TRUE;
@@ -1124,7 +1140,11 @@ void do_cmd_tunnel(int Ind, int dir)
 		else if (c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_HOME_HEAD)
 		{
 			/* Message */
-			msg_print(Ind, "You cannot tunnel through doors.");
+//			msg_print(Ind, "You cannot tunnel through doors.");
+
+			/* Try opening it instead */
+			do_cmd_open(Ind, dir);
+			return;
 		}
 
 		/* A monster is in the way */
@@ -1156,7 +1176,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
 				/* Tunnel */
-				if ((p_ptr->skill_dig > 40 + rand_int(1600)) && twall(Ind, y, x))
+				if ((p_ptr->skill_dig > 40 + rand_int(800)) && twall(Ind, y, x))	/* 1600 */
 				{
 					msg_print(Ind, "You have finished the tunnel.");
 				}
@@ -1186,13 +1206,13 @@ void do_cmd_tunnel(int Ind, int dir)
 				/* Quartz */
 				if (hard)
 				{
-					okay = (p_ptr->skill_dig > 20 + rand_int(800));
+					okay = (p_ptr->skill_dig > 20 + rand_int(400));	/* 800 */
 				}
 
 				/* Magma */
 				else
 				{
-					okay = (p_ptr->skill_dig > 10 + rand_int(400));
+					okay = (p_ptr->skill_dig > 10 + rand_int(250)); /* 400 */
 				}
 
 				/* Success */
@@ -1276,7 +1296,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			else if (c_ptr->feat == FEAT_TREE)
 			{
 				/* mow down the vegetation */
-				if ((p_ptr->skill_dig > rand_int(400)) && twall(Ind, y, x))
+				if ((p_ptr->skill_dig > rand_int(250)) && twall(Ind, y, x)) /* 400 */
 				{
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
@@ -1298,7 +1318,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			else if (c_ptr->feat == FEAT_EVIL_TREE)
 			{
 				/* mow down the vegetation */
-				if ((p_ptr->skill_dig > rand_int(600)) && twall(Ind, y, x))
+				if ((p_ptr->skill_dig > rand_int(400)) && twall(Ind, y, x)) /* 600 */
 				{
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
@@ -1893,16 +1913,31 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 			/* Get requested grid */
 			c_ptr = &cave[p_ptr->dun_depth][p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
 
-			if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
-			      (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-			    ((c_ptr->feat >= FEAT_HOME_HEAD) &&
-			      (c_ptr->feat <= FEAT_HOME_TAIL))) 
+			if ((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+				(c_ptr->feat <= FEAT_DOOR_TAIL))
 			{
 				do_cmd_open(Ind, dir);
 				return;
 			}
+			else
+			if ((c_ptr->feat >= FEAT_HOME_HEAD) &&
+				(c_ptr->feat <= FEAT_HOME_TAIL)) 
+			{
+#ifndef NEWHOUSES
+				i = pick_house(Depth, y, x);
+				/* evileye hack new houses -demo */
+				if(i==-1 && c_ptr->special){ /* orig house failure */
+#else
+				if(c_ptr->special){ /* orig house failure */
+#endif /* NEWHOUSES */
+					if(!access_door(Ind, c_ptr->special))
+					{
+						do_cmd_open(Ind, dir);
+						return;
+					}
+				}
+			}
 		}
-
 		/* Actually move the character */
 		move_player(Ind, dir, pickup);
 
@@ -2261,6 +2296,12 @@ void do_cmd_fire(int Ind, int dir, int item)
                 return;
         }
 
+    if (!can_use(Ind, o_ptr))
+    {
+            msg_print(Ind, "You are not high level enough.");
+			    return;
+    }
+
 
 	if (o_ptr->tval != p_ptr->tval_ammo)
 	{
@@ -2268,7 +2309,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 		return;
 	}
 
-	magic = (o_ptr->sval == SV_AMMO_MAGIC)?TRUE:FALSE;
+	magic = ((o_ptr->sval == SV_AMMO_MAGIC) && !cursed_p(o_ptr))?TRUE:FALSE;
 
 	/* Only fire in direction 5 if we have a target */
 	if ((dir == 5) && !target_okay(Ind))
@@ -3136,7 +3177,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 	j = (hit_body ? breakage_chance(o_ptr) : 0);
 
 	/* Drop (or break) near that location */
-	drop_near(o_ptr, j, Depth, y, x);
+	drop_near_severe(Ind, o_ptr, j, Depth, y, x);
 }
 
 void destroy_house(int Ind, struct dna_type *dna){

@@ -2065,12 +2065,13 @@ bool check_guard_inscription( s16b quark, char what ) {
 		return TRUE; /* exact match, stop */
 	    }
 	    if(*ax =='*') {
-		switch( what ) { /* check for paraniod tags */
+		switch( what ) { /* check for paranoid tags */
 		    case 'd': /* no drop */
 		    case 'h': /* no house ( sell a a key ) */
 		    case 'k': /* no destroy */
 		    case 's': /* no sell */
 		    case 'v': /* no thowing */
+			case '=': /* force pickup */
 		      return TRUE;
 		};
             };  
@@ -2511,6 +2512,8 @@ void player_talk_aux(int Ind, cptr message)
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	cptr colon, problem = "";
         bool me = FALSE;
+		char c = 'B';
+		int mycolor = 0;
 
 	/* Get sender's name */
 	if (Ind)
@@ -2522,6 +2525,155 @@ void player_talk_aux(int Ind, cptr message)
 	{
 		/* Default name */
 		strcpy(sender, "Server Admin");
+	}
+
+	/* Special - shutdown command */
+	if (prefix(message, "@!shutdown")
+		&& (!strcmp(p_ptr->name,cfg_admin_wizard)
+			|| !strcmp(p_ptr->name,cfg_dungeon_master)))
+	{
+		shutdown_server();
+		return;
+	}
+
+	/* Special - '/' commands */
+	if (prefix(message, "/"))
+	{
+		int k = 0;
+
+		/* Default to no search string */
+		strcpy(search, "");
+
+		/* Look for a player's name followed by a colon */
+		colon = strchr(message, ' ');
+
+		/* Form a search string if we found a colon */
+		if (colon)
+		{
+			k = atoi(colon);
+
+			/* Copy everything up to the colon to the search string */
+			strncpy(search, message, colon - message);
+
+			/* Add a trailing NULL */
+			search[colon - message] = '\0';
+
+			/* Cut off the space */
+			colon++;
+		}
+
+		/* Ignore command */
+		if (prefix(message, "/ignore ") ||
+			prefix(message, "/ig"))
+		{
+			add_ignore(Ind, colon);
+			return;
+		}
+		else if (prefix(message, "/afk"))
+		{
+			if (p_ptr->afk)
+			{
+				msg_print(Ind, "AFK mode is turned \377GOFF\377w.");
+				p_ptr->afk = FALSE;
+			}
+			else
+			{
+				msg_print(Ind, "AFK mode is turned \377rON\377w.");
+				p_ptr->afk = TRUE;
+			}
+			return;
+		}
+		else if (prefix(message, "/me "))
+		{
+			me = TRUE;
+		}
+		/* Admin commands */
+		else if (!strcmp(p_ptr->name,cfg_admin_wizard)
+			|| !strcmp(p_ptr->name,cfg_dungeon_master))
+		{
+			if (prefix(message, "/shutdown"))
+			{
+				shutdown_server();
+			}
+			else if (prefix(message, "/kick "))
+			{
+				int j = name_lookup_loose(Ind, colon, FALSE);
+				if (j)
+				{
+					/* Success maybe :) */
+					msg_format(Ind, "Kicking %s out...", Players[j]->name);
+
+					/* Kick him */
+					Destroy_connection(Players[j]->conn, "kicked out");
+			
+					return;
+		        }
+				/* Failed */
+				return;
+			}
+			/* erase items and monsters */
+			else if (prefix(message, "/clear-level") ||
+					prefix(message, "/clv"))
+			{
+				/* depth in feet */
+				k = k / 50;
+				if (!colon) k = p_ptr->dun_depth;
+
+				/* Wipe even if town/wilderness */
+				wipe_o_list_safely(k);
+				wipe_m_list(k);
+
+				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
+				return;
+			}
+			else if (prefix(message, "/artifact") ||
+					prefix(message, "/art"))
+			{
+				if (k)
+				{
+					if (a_info[k].cur_num)
+					{
+						a_info[k].cur_num = 0;
+						msg_format(Ind, "Artifact %d is now \377Gfindable\377w.", k);
+					}
+					else
+					{
+						a_info[k].cur_num = 1;
+						msg_format(Ind, "Artifact %d is now \377runfindable\377w.", k);
+					}
+				}
+				else 
+				{
+					msg_print(Ind, "Usage: /artifact No.");
+				}
+				return;
+			}
+			else if (prefix(message, "/reload-config") ||
+					prefix(message, "/cfg"))
+			{
+				if (colon)
+				{
+					MANGBAND_CFG = string_make(colon);
+				}
+
+//				msg_print(Ind, "Reloading server option(mangband.cfg).");
+				msg_format(Ind, "Reloading server option(%s).", MANGBAND_CFG);
+
+				/* Reload the server preferences */
+				load_server_cfg();
+				return;
+			}
+			else
+			{
+				msg_print(Ind, "Commands: afk ignore me; art cfg clv kick shutdown");
+				return;
+			}
+		}
+		else
+		{
+			msg_print(Ind, "Commands: afk ignore me");
+			return;
+		}
 	}
 
 	/* Default to no search string */
@@ -2554,6 +2706,8 @@ void player_talk_aux(int Ind, cptr message)
 	/* Look for a recipient who matches the search string */
 	if (len)
 	{
+		target = name_lookup_loose(Ind, search, TRUE);
+#if 0
 		/* First check parties */
 		for (i = 1; i < MAX_PARTIES; i++)
 		{
@@ -2620,11 +2774,21 @@ void player_talk_aux(int Ind, cptr message)
 				}
 			}
 		}
-
+#endif /* 0 */
 		/* Move colon pointer forward to next word */
 		while (*colon && (isspace(*colon) || *colon == ':')) colon++;
-	}
 
+		/* lookup failed */
+		if (!target)
+		{
+			/* Bounce message to player who sent it */
+			msg_format(Ind, "[%s] %s", p_ptr->name, colon);
+
+			/* Give up */
+			return;
+		}
+	}
+#if 0
 	/* Check for recipient set but no match found */
 	if (len && !target)
 	{
@@ -2650,9 +2814,10 @@ void player_talk_aux(int Ind, cptr message)
 		/* Give up */
 		return;
 	}
+#endif /* 0 */
 
 	/* Send to appropriate player */
-	if (len && target > 0)
+	if ((len && target > 0) && (!check_ignore(target, Ind)))
 	{
 		/* Set target player */
 		q_ptr = Players[target];
@@ -2663,6 +2828,8 @@ void player_talk_aux(int Ind, cptr message)
 		/* Also send back to sender */
 		msg_format(Ind, "\377g[%s:%s] %s", q_ptr->name, sender, colon);
 
+		if (q_ptr->afk) msg_format(Ind, "\377o%s seems to be Away From Keyboard.", q_ptr->name);
+
 		/* Done */
 		return;
 	}
@@ -2671,7 +2838,7 @@ void player_talk_aux(int Ind, cptr message)
 	if (len && target < 0)
 	{
 		/* Send message to target party */
-		party_msg_format(0 - target, "\377G[%s:%s] %s",
+		party_msg_format_ignoring(Ind, 0 - target, "\377G[%s:%s] %s",
 		                 parties[0 - target].name, sender, colon);
 
 		/* Also send back to sender if not in that party */
@@ -2689,14 +2856,30 @@ void player_talk_aux(int Ind, cptr message)
 	/*if (!strncasecmp(message, "All:", 4) ||
 	      (message[0] == ':' && !strchr(")(-", message[1])))
 	  { */
-                me = prefix(message, "/me ");
+//		me = prefix(message, "/me ");
+		if (strlen(message) > 1) mycolor = (prefix(message, "}") && (color_char_to_attr(*(message + 1)) != -1))?2:0;
+
+		if (!Ind) c = 'y';
+		else if (mycolor) c = *(message + 1);
+		else
+		{
+			if (p_ptr->mode == MODE_HELL) c = 'D';
+			if (p_ptr->total_winner) c = 'v';
+			else if (p_ptr->ghost) c = 'r';
+		}
 
 		/* Send to everyone */
 		for (i = 1; i <= NumPlayers; i++)
 		{
+			if (check_ignore(i, Ind)) continue;
+
 			/* Send message */
-                        if (!me) msg_format(i, "\377%c[%s] %s", Ind ? 'B' : 'y', sender, message);
-                        else msg_format(i, "%s %s", sender, message + 4);
+			if (!me)
+			{
+				msg_format(i, "\377%c[%s] \377B%s", c, sender, message + mycolor);
+				/* msg_format(i, "\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
+			} 
+			else msg_format(i, "%s %s", sender, message + 4);
 		}
 	/*}
 	 else
@@ -2704,6 +2887,8 @@ void player_talk_aux(int Ind, cptr message)
 		 Send to everyone at this depth 
 		for (i = 1; i <= NumPlayers; i++)
 		{
+			if (check_ignore(i, Ind)) continue;
+
 			q_ptr = Players[i];
 
 			 Check depth 
@@ -2786,4 +2971,119 @@ bool is_a_vowel(int ch)
 	}
 
 	return (FALSE);
+}
+
+/*
+ * Look up a player/party name, allowing abbreviations.  - Jir -
+ * (looking up party name this way can be rather annoying though)
+ *
+ * returns 0 if not found/error(, minus value if party.)
+ *
+ * if 'party' is TRUE, party name is also looked up.
+ */
+int name_lookup_loose(int Ind, cptr name, bool party)
+{
+	int i, len, target = 0;
+	player_type *q_ptr;
+	cptr problem = "";
+
+	/* Acquire length of search string */
+	len = strlen(name);
+
+	/* Look for a recipient who matches the search string */
+	if (len)
+	{
+		if (party)
+		{
+			/* First check parties */
+			for (i = 1; i < MAX_PARTIES; i++)
+			{
+				/* Skip if empty */
+				if (!parties[i].num) continue;
+
+				/* Check name */
+				if (!strncasecmp(parties[i].name, name, len))
+				{
+					/* Set target if not set already */
+					if (!target)
+					{
+						target = 0 - i;
+					}
+					else
+					{
+						/* Matching too many parties */
+						problem = "parties";
+					}
+
+					/* Check for exact match */
+					if (len == strlen(parties[i].name))
+					{
+						/* Never a problem */
+						problem = "";
+
+						/* Finished looking */
+						break;
+					}
+				}
+			}
+		}
+
+		/* Then check players */
+		for (i = 1; i <= NumPlayers; i++)
+		{
+			/* Check this one */
+			q_ptr = Players[i];
+
+			/* Skip if disconnected */
+			if (q_ptr->conn == NOT_CONNECTED) continue;
+
+			/* Check name */
+			if (!strncasecmp(q_ptr->name, name, len))
+			{
+				/* Set target if not set already */
+				if (!target)
+				{
+					target = i;
+				}
+				else
+				{
+					/* Matching too many people */
+					problem = "players";
+				}
+
+				/* Check for exact match */
+				if (len == strlen(q_ptr->name))
+				{
+					/* Never a problem */
+					problem = "";
+
+					/* Finished looking */
+					break;
+				}
+			}
+		}
+	}
+
+	/* Check for recipient set but no match found */
+	if ((len && !target) || (target < 0 && !party))
+	{
+		/* Send an error message */
+		msg_format(Ind, "Could not match name '%s'.", name);
+
+		/* Give up */
+		return 0;
+	}
+
+	/* Check for multiple recipients found */
+	if (strlen(problem))
+	{
+		/* Send an error message */
+		msg_format(Ind, "'%s' matches too many %s.", name, problem);
+
+		/* Give up */
+		return 0;
+	}
+
+	/* Success */
+	return target;
 }

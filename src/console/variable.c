@@ -28,3 +28,5 @@ cptr ANGBAND_DIR_INFO;
 cptr ANGBAND_DIR_SAVE;
 cptr ANGBAND_DIR_USER;
 cptr ANGBAND_DIR_XTRA;
+
+s32b cfg_console_port = 18349;

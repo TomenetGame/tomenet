@@ -319,6 +319,54 @@ void do_cmd_eat_food(int Ind, int item)
 			ident = TRUE;
 			break;
 		}
+
+		case SV_FOOD_UNMAGIC:
+		{
+			/*
+			set_adrenaline(Ind, 0);
+			set_biofeedback(Ind, 0);
+			set_tim_esp(Ind, 0);
+			set_st_anchor(Ind, 0);
+			set_prob_travel( Ind, 0);
+			*/
+			if (
+				set_bow_brand(Ind, 0, 0, 0) |
+				set_mimic(Ind, 0, 0) |
+				set_tim_manashield(Ind, 0) |
+				set_tim_traps(Ind, 0) |
+				set_invis(Ind, 0, 0) |
+				set_furry(Ind, 0) |
+				set_tim_meditation(Ind, 0) |
+//				set_tim_wraith(Ind, 0) |
+				set_fast(Ind, 0) |
+				set_shield(Ind, 0) |
+				set_blessed(Ind, 0) |
+				set_hero(Ind, 0) |
+				set_shero(Ind, 0) |
+				set_protevil(Ind, 0) |
+				set_invuln(Ind, 0) |
+				set_tim_invis(Ind, 0) |
+				set_tim_infra(Ind, 0) |
+				set_oppose_acid(Ind, 0) |
+				set_oppose_elec(Ind, 0) |
+				set_oppose_fire(Ind, 0) |
+				set_oppose_cold(Ind, 0) |
+				set_oppose_pois(Ind, 0)
+				) ident = TRUE;
+
+				/* In town it only runs out if you are not on a wall
+				 * To prevent breaking into houses */
+				if (players_on_depth[p_ptr->dun_depth] != 0) {
+				/* important! check for illegal spaces */
+					if (in_bounds(p_ptr->dun_depth, p_ptr->py, p_ptr->px)) {
+						if ((p_ptr->dun_depth > 0) || (cave_floor_bold(p_ptr->dun_depth, p_ptr->py, p_ptr->px))) {
+							if (set_tim_wraith(Ind, 0)) ident = TRUE;
+						}
+					}
+				}
+
+			break;
+		}
 	}
 
 
@@ -733,6 +781,8 @@ void do_cmd_quaff_potion(int Ind, int item)
 		{
 			if (p_ptr->csp < p_ptr->msp)
 			{
+//				p_ptr->csp += 300;
+//				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
 				p_ptr->csp = p_ptr->msp;
 				p_ptr->csp_frac = 0;
 				msg_print(Ind, "Your feel your head clear.");
@@ -874,6 +924,15 @@ void do_cmd_quaff_potion(int Ind, int item)
 				if (ee > 100000L) ee = 100000L;
 				msg_print(Ind, "\377GYou feel more experienced.");
 				gain_exp(Ind, ee);
+				ident = TRUE;
+			}
+			break;
+		}
+
+		case SV_POTION_INVIS:
+		{
+			if (set_invis(Ind, p_ptr->tim_invisibility + randint(20) + 20, p_ptr->tim_invis_power))
+			{
 				ident = TRUE;
 			}
 			break;

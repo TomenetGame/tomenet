@@ -153,7 +153,7 @@ static void console_uniques()
 				byte ok = FALSE;
 			
 				/* Format message */
-				sprintf(buf, "%s has been killed by:\n");
+				sprintf(buf, "%s has been killed by:\n", r_name + r_ptr->name);
 				
 				for (i = 1; i <= NumPlayers; i++)
 				{
@@ -161,7 +161,7 @@ static void console_uniques()
 				
 					if (q_ptr->r_killed[k])
 					{
-						sprintf(buf, "        %s\n");
+						sprintf(buf, "        %s\n", q_ptr->name);
 						ok = TRUE;
 					}
 				}

@@ -429,7 +429,7 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		if (p_ptr->store_num == 6) price = price / 4;
 
 		/* To prevent cheezing */
-		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) price = 200;
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) price = 100;
 	}
 
 	/* Shop is selling */
@@ -832,6 +832,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 	/* XXX Never OK to sell keys */
 	if (o_ptr->tval == TV_KEY) return (FALSE);
 
+	/* This prevents suicide-cheeze */
+	if ((o_ptr->level < 1) && (o_ptr->owner != p_ptr->id)) return (FALSE);
+
 	/* Assume okay */
 	return (TRUE);
 }
@@ -1218,6 +1221,14 @@ static void store_create(int st)
 			    black_market_potion--;
 			    force_num = rand_range(2, 4);
 			  }
+#if 0
+			if (black_market_potion == 6)
+			  {
+			    i = lookup_kind(TV_FOOD, SV_FOOD_UNMAGIC);
+			    black_market_potion--;
+			    force_num = rand_range(2, 4);
+			  }
+#endif
 
 			/* Handle failure */
 			if (!i) continue;
@@ -1898,6 +1909,9 @@ void store_sell(int Ind, int item, int amt)
 
 	char		o_name[160];
 
+	/* sanity check - Yakina - */
+	if (p_ptr->store_num < 0) return;
+
 	/* You can't sell 0 of something. */
 	if (amt <= 0) return;
 
@@ -2079,6 +2093,13 @@ void store_confirm(int Ind)
 
 	/* Handle stuff */
 	handle_stuff(Ind);
+
+	/* Artifact won't be sold in a store */
+	if ((artifact_p(&sold_obj)) && (!sold_obj.name3))
+	{
+		a_info[sold_obj.name1].cur_num = 0;
+		return;
+	}
 
 	/* The store gets that (known) item */
 	if(sold_obj.tval!=8)

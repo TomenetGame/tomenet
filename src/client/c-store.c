@@ -404,6 +404,13 @@ void display_store(void)
 
                 /* Label the asking price (in stores) */
                 put_str("Price", 5, 72);
+
+                /* Display the players remaining gold */
+                prt("Gold Remaining: ", 19, 53);
+
+                sprintf(buf, "%9ld", (long) p_ptr->au);
+                prt(buf, 19, 68);
+
 	}
 
 	/* Display the inventory */

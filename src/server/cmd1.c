@@ -651,7 +651,7 @@ void carry(int Ind, int pickup, int confirm)
 		disturb(Ind, 0, 0);
 
 		/* Describe the object */
-		if (!pickup)
+		if ((!pickup) && (!check_guard_inscription( o_ptr->note, '=' )))
 		{
 			msg_format(Ind, "You see %s.", o_name);
 			Send_floor(Ind, o_ptr->tval);
@@ -683,8 +683,9 @@ void carry(int Ind, int pickup, int confirm)
 			{
 				int slot;
 
-                                /* Own it */
-                                if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
+				/* Own it */
+				if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
+				can_use(Ind, o_ptr);
 
 				/* Carry the item */
 				slot = inven_carry(Ind, o_ptr);
@@ -692,12 +693,14 @@ void carry(int Ind, int pickup, int confirm)
 				/* Get the item again */
 				o_ptr = &(p_ptr->inventory[slot]);
 
+#if 0
                                 if (!o_ptr->level)
                                 {
                                         if (p_ptr->dun_depth > 0) o_ptr->level = p_ptr->dun_depth;
                                         else o_ptr->level = -p_ptr->dun_depth;
                                         if (o_ptr->level > 100) o_ptr->level = 100;
                                 }
+#endif
 
 				/* Describe the object */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
@@ -2061,10 +2064,11 @@ void move_player(int Ind, int dir, int do_pickup)
 			disturb(Ind, 1, 0);
 			disturb(Ind2, 1, 0);
 		}
+		return;
 	}
 
 	/* Hack -- attack monsters */
-	else if (c_ptr->m_idx > 0)
+	if (c_ptr->m_idx > 0)
 	{
 		/* Hack -- the dungeon master switches places with his monsters */
 		if (!strcmp(p_ptr->name,cfg_dungeon_master))
@@ -2088,17 +2092,40 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 		/* Attack */
 		else py_attack(Ind, y, x);
+		return;
 	}
 
 	/* Prob travel */
-	else if (p_ptr->prob_travel && (!cave_floor_bold(Depth, y, x)))
+	if (p_ptr->prob_travel && (!cave_floor_bold(Depth, y, x)))
 	  {
 	    do_prob_travel(Ind, dir);
+		return;
 	  }
 
 	/* Player can not walk through "walls", but ghosts can */
-	else if ((!p_ptr->ghost) && (!p_ptr->tim_wraith) && (!cave_floor_bold(Depth, y, x)))
+	if ((!p_ptr->ghost) && (!p_ptr->tim_wraith) && (!cave_floor_bold(Depth, y, x)))
 	{
+		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
+		bool myhome = FALSE;
+        if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
+        {
+#ifndef NEWHOUSES
+            i = pick_house(Depth, y, x);
+            /* evileye hack new houses -demo */
+            if(i==-1 && c_ptr->special){ /* orig house failure */
+#else
+            if(c_ptr->special){ /* orig house failure */
+#endif /* NEWHOUSES */
+                if(access_door(Ind, c_ptr->special))
+				{
+					myhome = TRUE;
+					msg_print(Ind, "\377GYou walk through the door.");
+				}
+			}
+		}
+		if (!myhome)
+		{
+
 		/* Disturb the player */
 		disturb(Ind, 0, 0);
 
@@ -2168,31 +2195,36 @@ void move_player(int Ind, int dir, int do_pickup)
 				msg_print(Ind, "There is a wall blocking your way.");
 			}
 		}
+		return;
+		} /* 'if (!myhome)' ends here */
 	}
 
 	/* Wraiths trying to walk into a house */
-	else if (p_ptr->tim_wraith && (((c_ptr->feat >= FEAT_HOME_HEAD) && (c_ptr->feat <= FEAT_HOME_TAIL)) ||
+	if (p_ptr->tim_wraith && (((c_ptr->feat >= FEAT_HOME_HEAD) && (c_ptr->feat <= FEAT_HOME_TAIL)) ||
 	         ((cave[Depth][y][x].info & CAVE_ICKY) && (Depth <= 0))) && !wraith_access(Ind))
 	{
 		disturb(Ind, 0, 0);
+		return;
 	}
 
 	/* Wraiths can't enter vaults so easily :) trying to walk into a permanent wall */
-	else if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA && (Depth > 0))
+	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA && (Depth > 0))
 	{
 		/* Message */
 		msg_print(Ind, "The wall blocks your movement.");
 
 		disturb(Ind, 0, 0);
+		return;
 	}
 
 	/* Ghost trying to walk into a permanent wall */
-	else if ((p_ptr->ghost || p_ptr->tim_wraith) && c_ptr->feat >= FEAT_PERM_SOLID)
+	if ((p_ptr->ghost || p_ptr->tim_wraith) && c_ptr->feat >= FEAT_PERM_SOLID)
 	{
 		/* Message */
 		msg_print(Ind, "The wall blocks your movement.");
 
 		disturb(Ind, 0, 0);
+		return;
 	}
 
 	/* Normal movement */
@@ -2272,6 +2304,14 @@ void move_player(int Ind, int dir, int do_pickup)
 		{
 			/* Resurrect him */
 			resurrect_player(Ind);
+
+			/* Give him some gold to restart */
+			if (p_ptr->lev > 1)
+			{
+				int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100:100;
+				msg_format(Ind, "The temple priest gives you %ld gold pieces for your revival!", i);
+				p_ptr->au += i;
+			}
 		}
 
 		/* Discover invisible traps */

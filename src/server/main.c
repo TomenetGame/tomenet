@@ -293,6 +293,7 @@ int main(int argc, char *argv[])
 
 #endif
 
+	MANGBAND_CFG = string_make("mangband.cfg");
 
 	/* Process the command line arguments */
 	for (--argc, ++argv; argc > 0; --argc, ++argv)
@@ -361,6 +362,12 @@ int main(int argc, char *argv[])
 			break;
 #endif
 
+			case 'm':
+			case 'M':
+			MANGBAND_CFG = &argv[0][2];
+			break;
+
+
 			default:
 			usage:
 
@@ -374,6 +381,7 @@ int main(int argc, char *argv[])
 			puts("  -c<path> Look for pref files in the directory <path>");
 			puts("  -d<path> Look for save files in the directory <path>");
 			puts("  -i<path> Look for info files in the directory <path>");
+			puts("  -m<file> Specify configuration <file>");
 
 			/* Actually abort the process */
 			quit(NULL);

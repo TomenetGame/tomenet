@@ -494,6 +494,12 @@ bool make_attack_spell(int Ind, int m_idx)
 	    if (f2 & TR2_ANTI_MAGIC)
 	      {
 		int minus = o_ptr->to_h + o_ptr->to_d + o_ptr->pval;
+		/* if ((minus < 0) && (p_ptr->pclass != CLASS_UNBELIEVER)) minus = 0; */
+		if (p_ptr->pclass != CLASS_UNBELIEVER)
+		{
+			if (minus < -p_ptr->lev / 2) minus = -p_ptr->lev / 2;
+			if (minus < -40) minus = -40;
+		}
 
 		/* Enchanting DarkSwords is not a wise thing */
 		antichance += 50 - minus;

@@ -300,7 +300,7 @@ void console_init(void)
 
 
 	/* Create net socket */
-	if ((Socket = CreateClientSocket(server_name, 18349)) == -1)
+	if ((Socket = CreateClientSocket(server_name, cfg_console_port)) == -1)
 	{
 		quit("Could not connect to console port\n");
 	}

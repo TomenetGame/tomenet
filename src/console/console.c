@@ -12,11 +12,37 @@
 
 int main(int argc, char **argv)
 {
+	int i;
+
 	/* Save the program name */
 	argv0 = argv[0];
 
-	/* get the server from the command line if specified */
-	if (argc > 1) strcpy(server_name, argv[1]);
+	/* Process the command line arguments */
+	for (i = 1; argv && (i < argc); i++)
+	{
+		/* Require proper options */
+		if (argv[i][0] != '-')
+		{
+			strcpy(server_name, argv[i]);
+			continue;
+		}
+
+		/* Analyze option */
+		switch (argv[i][1])
+		{
+		case 'p':
+		{
+			cfg_console_port = atoi(&argv[i][2]);
+			break;
+		}
+		
+		default:
+			/* Dump usage information */
+			puts("Usage: mangconsole [options] [servername]");
+			puts("  -p<num>  Change console port number");
+			quit(NULL);
+		}
+	}
 
 	/* Call the initialization function */
 	console_init();

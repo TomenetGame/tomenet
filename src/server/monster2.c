@@ -2257,7 +2257,10 @@ bool summon_specific(int Depth, int y1, int x1, int lev, int type)
 
 
 	/* Pick a monster, using the level calculation */
-	r_idx = get_mon_num((Depth + lev) / 2 + 5);
+	/* Exception for Morgoth (so that he won't summon townies)
+	 * This fix presumes Morgie and Morgie only has level 100 */
+//	r_idx = get_mon_num((Depth + lev) / 2 + 5);
+	r_idx = get_mon_num((lev != 100)?get_mon_num((Depth + lev) / 2 + 5) : 100);
 
 
 	/* Remove restriction */

@@ -336,6 +336,45 @@ void choose_stat_order(void)
 }
 
 /*
+ * Choose to be a batman or not       -Jir-
+ */
+static void choose_bat(void)
+{
+	char        c;
+
+	put_str("y) Yes, bat me!", 20, 2);
+	put_str("n) Who cares?", 21, 2);
+
+	while (1)
+	{
+		put_str("You wanna be a fruit bat? (? for Help, Q to Quit): ", 19, 2);
+		c = inkey();
+		if (c == 'Q') quit(NULL);
+		if (c == 'y')
+		{
+			sex += 4;
+			c_put_str(TERM_L_BLUE, "Fruit Bat", 15, 15);
+			break;
+		}
+		else if (c == 'n')
+		{
+			c_put_str(TERM_L_BLUE, "Normal Form", 15, 15);
+			break;
+		}
+		else if (c == '?')
+		{
+			/*do_cmd_help("help.hlp");*/
+		}
+		else
+		{
+			bell();
+		}
+	}
+
+	clear_from(20);
+}
+
+/*
  * Gets a character class				-JWT-
  */
 static void choose_class_mage(void)
@@ -423,7 +462,7 @@ void get_char_info(void)
 	put_str("Race        :", 5, 1);
 	put_str("Class       :", 6, 1);
 	put_str("Stat order  :", 8, 1);
-
+	put_str("Form        :",15, 1);
 
 	/* Clear bottom of screen */
 	clear_from(20);
@@ -451,6 +490,9 @@ void get_char_info(void)
 		
 	/* Choose stat order */
 	choose_stat_order();
+
+	/* Choose form */
+	choose_bat();
 
 	/* Clear */
 	clear_from(20);

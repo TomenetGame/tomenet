@@ -389,6 +389,8 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 		{
 			msg_print(Ind, "\377oYour ammos seem normal again.");
 			notice = TRUE;
+			t = 0;
+			p = 0;
 		}
 	}
 
@@ -513,7 +515,7 @@ bool set_tim_manashield(int Ind, int v)
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
 	/* Recalculate bonuses */
-        p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
+	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -1563,6 +1565,32 @@ bool set_invuln(int Ind, int v)
 	return (TRUE);
 }
 
+/*
+ * Set "p_ptr->invuln", but not notice observable changes
+ * It should be used to protect players from recall-instadeath.  - Jir -
+ */
+bool set_invuln_short(int Ind, int v)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* not cumulative */
+	if (p_ptr->invuln) return (FALSE);
+
+	/* Hack -- Force good values */
+	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
+
+	/* Use the value */
+	p_ptr->invuln = v;
+
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result (never noticeable) */
+	return (FALSE);
+}
 
 /*
  * Set "p_ptr->tim_invis", notice observable changes
@@ -3149,7 +3177,7 @@ void player_death(int Ind)
 		add_high_score(Ind);
 
 		/* Format string */
-		sprintf(buf, "Killed by %s", p_ptr->died_from);
+		sprintf(buf, "Killed by %s (%d points)", p_ptr->died_from, total_points(Ind));
 
 		/* Get rid of him */
 		Destroy_connection(p_ptr->conn, buf);
@@ -3193,8 +3221,8 @@ void player_death(int Ind)
 		p_ptr->au = 0;
 	}
 
-	/* Polymorph back to player */
-	if (p_ptr->body_monster) do_mimic_change(Ind, 0);
+	/* Polymorph back to player (moved)*/
+	/* if (p_ptr->body_monster) do_mimic_change(Ind, 0); */
 
 	/* Setup the sorter */
 	ang_sort_comp = ang_sort_comp_value;
@@ -3222,7 +3250,10 @@ void player_death(int Ind)
 		if (!p_ptr->alive && !artifact_p(&p_ptr->inventory[i])) continue;
 
 		/* hack -- total winners do not drop artifacts when they suicide */
-		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
+//		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i])) 
+
+		/* Artifacts cannot be dropped after all */	
+		if (!p_ptr->alive && artifact_p(&p_ptr->inventory[i])) 
 		{
 			/* set the artifact as unfound */
 			a_info[p_ptr->inventory[i].name1].cur_num = 0;
@@ -3288,6 +3319,9 @@ void player_death(int Ind)
 
 	/* Tell him */
 	msg_format(Ind, "\377RYou have been killed by %s.", p_ptr->died_from);
+
+	/* Polymorph back to player */
+	if (p_ptr->body_monster) do_mimic_change(Ind, 0);
 
 	/* Turn him into a ghost */
 	p_ptr->ghost = 1;
@@ -3469,6 +3503,12 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		{
 			msg_format_near(Ind, "\377y%s has slain %s.", p_ptr->name, m_name);
 			msg_format(Ind, "\377yYou have slain %s.", m_name);
+		}
+
+		/* Check if it's cloned unique */
+		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx])
+		{
+			m_ptr->clone = TRUE;
 		}
 
 		/* Split experience if in a party */
@@ -4860,10 +4900,10 @@ void telekinesis_aux(int Ind, int item)
 {
   player_type *p_ptr = Players[Ind], *p2_ptr;
   object_type *q_ptr, *o_ptr = p_ptr->current_telekinesis;
-  bool ok = FALSE;
+//bool ok = FALSE;
   int Ind2;
 
-	unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
+//	unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
 
 	p_ptr->current_telekinesis = NULL;
 
@@ -4879,7 +4919,12 @@ void telekinesis_aux(int Ind, int item)
 	  msg_print(Ind, "You must carry the object to teleport it.");
 	  return;
 	}
-	
+
+	Ind2 = get_player(Ind, o_ptr);
+
+	if (!Ind2) return;
+
+#if 0	
 	/* check for a valid inscription */
 	if (inscription == NULL)
 	  {
@@ -4895,12 +4940,13 @@ void telekinesis_aux(int Ind, int item)
 		{
 			inscription++;
 			
-			/* a valid @R has been located */
+			/* a valid @P has been located */
 			if (*inscription == 'P')
 			{			
 				inscription++;
 				
-				Ind2 = find_player_name(inscription);
+//				Ind2 = find_player_name(inscription);
+				Ind2 = name_lookup_loose(Ind, inscription, FALSE);
 				if (Ind2) ok = TRUE;
 			}
 		}
@@ -4909,20 +4955,33 @@ void telekinesis_aux(int Ind, int item)
 	
         if (!ok)
 	  {
-	    msg_print(Ind, "Player is not on.");
+//	    msg_print(Ind, "Player is not on.");
+	    msg_print(Ind, "Could not find the recipient.");
 	    return;
 	  }
+#endif
 
 	p2_ptr = Players[Ind2];
 
-	/* Actually teleport the object to the player inventory */
-	inven_carry(Ind2, q_ptr);
+	/* You cannot send artifact */
+	if((artifact_p(q_ptr)) && (!q_ptr->name3))
+	{
+		msg_print(Ind, "You have an acute feeling of loss!");
+		a_info[q_ptr->name1].cur_num = 0;
+	}
+	else
+	{
+		/* Actually teleport the object to the player inventory */
+		inven_carry(Ind2, q_ptr);
 
-	/* Combine the pack */
-	p2_ptr->notice |= (PN_COMBINE);
+		/* Combine the pack */
+		p2_ptr->notice |= (PN_COMBINE);
 
-	/* Window stuff */
-	p2_ptr->window |= (PW_INVEN | PW_EQUIP);
+		/* Window stuff */
+		p2_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+		msg_format(Ind2, "You are hit by a powerfull magic wave from %s.", p_ptr->name);
+	}
 
 	/* Wipe it */
 	inven_item_increase(Ind, item, -99);
@@ -4935,7 +4994,6 @@ void telekinesis_aux(int Ind, int item)
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
-	msg_format(Ind2, "You are hit by a powerfull magic wave from %s.", p_ptr->name);
 }
 
 int get_player(int Ind, object_type *o_ptr)
@@ -4949,7 +5007,8 @@ int get_player(int Ind, object_type *o_ptr)
        	/* check for a valid inscription */
 	if (inscription == NULL)
 	  {
-	    msg_print(Ind, "Nobody to use the power with.");
+//	    msg_print(Ind, "Nobody to use the power with.");
+	    msg_print(Ind, "No target player specified.");
 	    return 0;
 	  }
 	
@@ -4966,7 +5025,8 @@ int get_player(int Ind, object_type *o_ptr)
 			{			
 				inscription++;
 				
-				Ind2 = find_player_name(inscription);
+//				Ind2 = find_player_name(inscription);
+				Ind2 = name_lookup_loose(Ind, inscription, FALSE);
 				if (Ind2) ok = TRUE;
 			}
 		}
@@ -4975,9 +5035,15 @@ int get_player(int Ind, object_type *o_ptr)
 	
         if (!ok)
 	  {
-	    msg_print(Ind, "Player is not on.");
+	    msg_print(Ind, "Couldn't find the target.");
 	    return 0;
 	  }
+
+	if (Ind == Ind2)
+	{
+		msg_print(Ind, "You cannot do that on yourself.");
+		return 0;
+	}
 
 	return Ind2;
 }
@@ -4985,9 +5051,13 @@ int get_player(int Ind, object_type *o_ptr)
 void blood_bond(int Ind, object_type *o_ptr)
 {
         player_type *p_ptr = Players[Ind], *p2_ptr;
-        bool ok = FALSE;
+//      bool ok = FALSE;
         int Ind2;
 
+	Ind2 = get_player(Ind, o_ptr);
+	if (!Ind2) return;
+
+#if 0
 	unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
 
        	/* check for a valid inscription */
@@ -5022,6 +5092,7 @@ void blood_bond(int Ind, object_type *o_ptr)
 	    msg_print(Ind, "Player is not on.");
 	    return;
 	  }
+#endif
 
 	p2_ptr = Players[Ind2];
 
@@ -5262,6 +5333,10 @@ u16b master_summon_aux_monster_type( char monster_type, char * monster_parms)
 		/* specific monster specified */
 		case 's': 
 		{
+			/* allows specification by monster No. */
+			tmp = atoi(monster_parms);
+			if (tmp > 0) return tmp;
+
 			/* if the name was specified, summon this exact race */
 			if (strlen(monster_parms) > 1) return race_index(monster_parms);
 			/* otherwise, summon a monster that looks like us */
@@ -5514,36 +5589,44 @@ bool master_player(int Ind, char *parms){
 
 			break;
 		case 'A':	/* acquirement */
+#if 0
 			for(i=1;i<=NumPlayers;i++){
 				if(!strcmp(Players[i]->name,&parms[1])){
 					Ind2=i;
 					break;
 				}
 			}
+#endif
+			Ind2 = name_lookup_loose(Ind, &parms[1], FALSE);
 			if(Ind2)
-                        {
-                                player_type *p_ptr2 = Players[Ind2];
-                                acquirement(p_ptr2->dun_depth, p_ptr2->py, p_ptr2->px, 1, TRUE);
+			{
+				player_type *p_ptr2 = Players[Ind2];
+				acquirement(p_ptr2->dun_depth, p_ptr2->py, p_ptr2->px, 1, TRUE);
+				msg_format(Ind, "%s is granted an item.", p_ptr2->name);
+				msg_format(Ind2, "You feel a divine favor!");
 				return(FALSE);
 			}
-			msg_print(Ind, "That player is not in the game.");
+//			msg_print(Ind, "That player is not in the game.");
 			break;
 		case 'k':	/* admin wrath */
+#if 0
 			for(i=1;i<=NumPlayers;i++){
 				if(!strcmp(Players[i]->name,&parms[1])){
 					Ind2=i;
 					break;
 				}
 			}
+#endif
+			Ind2 = name_lookup_loose(Ind, &parms[1], FALSE);
 			if(Ind2){
 				q_ptr=Players[Ind2];
-				msg_print(Ind2, "You are hit by a bolt from the skies!");
+				msg_print(Ind2, "You are hit by a bolt from the blue!");
 				strcpy(q_ptr->died_from,"divine wrath");
 				//q_ptr->alive=FALSE;
 				player_death(Ind2);
 				return(TRUE);
 			}
-			msg_print(Ind, "That player is not in the game.");
+//			msg_print(Ind, "That player is not in the game.");
 
 			break;
 		case 'S':	/* Static a regular */
@@ -5613,5 +5696,4 @@ bool master_generate(int Ind, char * parms)
 	}
 	return TRUE;
 }
-
 

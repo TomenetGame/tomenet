@@ -189,4 +189,4 @@ bool view_bright_lite;
 bool view_granite_lite;
 bool view_special_lite;
 
- 
+u32b cfg_game_port = 18348; 

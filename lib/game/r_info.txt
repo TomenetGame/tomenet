@@ -183,7 +183,8 @@ F:RAND_25 |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR
 D:Ugly doesn't begin to describe him.
 
-N:7:Village idiot
+#N:7:Village idiot
+N:7:Village genious
 G:t:G
 I:120:4d4:6:1:0
 W:0:1:0:0
@@ -193,7 +194,8 @@ F:RAND_25 |
 F:TAKE_ITEM
 D:Drooling and comical, but then, what do you expect?
 
-N:8:Pitiful looking beggar
+#N:8:Pitiful looking beggar
+N:8:Pitiful looking mangband player
 G:t:U
 I:110:1d4:10:1:40
 W:0:1:0:0
@@ -251,27 +253,27 @@ D:amulets of adornment to buy.
 # These guys should be banisehd to the outer town
 # I will do that later, for now I am temporarily
 # disabling them.
-#
-#N:13:Mean looking mercenary
-#G:t:r
-#I:110:5d8:10:20:250
-#W:-1:1:0:0
-#B:HIT:HURT:1d10
-#F:MALE |
-#F:RAND_50 | DROP_90 |
-#F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
-#F:EVIL
-#D:No job is too low for him.
+# (Oops, mad admin has set'em free!!)
+N:13:Mean looking mercenary
+G:t:r
+I:110:5d8:10:20:250
+W:0:3:0:0
+B:HIT:HURT:1d10
+F:MALE |
+F:RAND_50 | DROP_90 |
+F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
+F:EVIL
+D:No job is too low for him.
 
-#N:14:Battle scarred veteran
-#G:t:B
-#I:110:7d8:10:30:250
-#W:-1:1:0:0
-#B:HIT:HURT:2d6
-#F:MALE |
-#F:RAND_50 | DROP_90 |
-#F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR
-#D:He doesn't take to strangers kindly.
+N:14:Battle scarred veteran
+G:t:B
+I:110:7d8:10:30:250
+W:0:5:0:0
+B:HIT:HURT:2d6
+F:MALE |
+F:RAND_50 | DROP_90 |
+F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR
+D:He doesn't take to strangers kindly.
 
 
 ##### Normal monsters #####

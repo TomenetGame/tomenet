@@ -205,6 +205,7 @@ extern bool view_bright_lite;
 extern bool view_granite_lite;
 extern bool view_special_lite;
 
+extern u32b cfg_game_port;
 
 
 /*

@@ -453,7 +453,7 @@ void setup_contact_socket(void)
 	}
 #endif
 	plog("Create TCP socket..."); 
-	while ((Socket = CreateServerSocket(18348)) == -1)
+	while ((Socket = CreateServerSocket(cfg_game_port)) == -1)
 	{
 		sleep(1);
 	}
@@ -485,7 +485,7 @@ void setup_contact_socket(void)
 #endif
 
 #ifdef NEW_SERVER_CONSOLE
-	if ((ConsoleSocket = CreateServerSocket(18349)) == -1)
+	if ((ConsoleSocket = CreateServerSocket(cfg_console_port)) == -1)
 	{
 		s_printf("Couldn't create console socket\n");
 		return;
@@ -846,6 +846,19 @@ static void Delete_player(int Ind)
 	if (p_ptr->alive && !p_ptr->death && 
 	   (strcmp(p_ptr->name, cfg_dungeon_master) || !cfg_secret_dungeon_master))
 	{
+		cptr title = "";
+		if (p_ptr->total_winner)
+		{
+			if (p_ptr->mode == MODE_HELL)
+			{
+				title = (p_ptr->male)?"God ":"Goddess ";
+			}
+			else
+			{
+				title = (p_ptr->male)?"King ":"Queen ";
+			}
+		}
+
 		for (i = 1; i < NumPlayers + 1; i++)
 		{
 			if (Players[i]->conn == NOT_CONNECTED)
@@ -855,7 +868,7 @@ static void Delete_player(int Ind)
 			if (i == Ind) continue;
 
 			/* Send a little message */
-			msg_format(i, "%s has left the game.", p_ptr->name);
+			msg_format(i, "%s%s has left the game.", title, p_ptr->name);
 		}
 	}
 
@@ -6571,6 +6584,9 @@ static int Receive_special_line(int ind)
 			case SPECIAL_FILE_PLAYER:
 				do_cmd_check_players(player, line);
 				break;
+            case SPECIAL_FILE_PLAYER_EQUIP:
+                do_cmd_check_player_equip(player, line);
+                break;
 			case SPECIAL_FILE_OTHER:
 				do_cmd_check_other(player, line);
 				break;

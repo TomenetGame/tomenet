@@ -1514,6 +1514,10 @@ struct player_type
         u16b esp_link_flags;
         u16b esp_link_end; /* Time before actual end */
 	bool (*master_move_hook)(int Ind, char * args);
+
+	/* elements under this line won't be saved...for now. - Jir - */
+	hostile_type	*ignore;  /* List of players whose chat we wish to ignore */
+	bool	afk;		/* player is afk */
 };
 
 /* For Monk martial arts */

@@ -56,6 +56,18 @@ int party_create(int Ind, cptr name)
 		return FALSE;
 	}
 
+    /* If he's party owner, it's name change */
+	if (streq(parties[p_ptr->party].owner, p_ptr->name))
+	{
+		strcpy(parties[p_ptr->party].name, name);
+
+		/* Tell the party about its new name */
+		party_msg_format(p_ptr->party, "Your party is now called '%s'.", name);
+
+		Send_party(Ind);
+		return TRUE;
+	}
+
 	/* Make sure this guy isn't in some other party already */
 	if (p_ptr->party != 0)
 	{
@@ -111,7 +123,7 @@ int party_add(int adder, cptr name)
 	player_type *p_ptr;
 	player_type *q_ptr = Players[adder];
 	int party_id = q_ptr->party, Ind = 0, i;
-
+#if 0
 	/* Find name */
 	for (i = 1; i <= NumPlayers; i++)
 	{
@@ -130,6 +142,13 @@ int party_add(int adder, cptr name)
 		/* Oops */
 		msg_print(adder, "That player is not currently in the game.");
 
+		return FALSE;
+	}
+#endif
+	Ind = name_lookup_loose(adder, name, FALSE);
+
+	if (Ind <= 0)
+	{
 		return FALSE;
 	}
 
@@ -218,6 +237,7 @@ int party_remove(int remover, cptr name)
 	player_type *q_ptr = Players[remover];
 	int party_id = q_ptr->party, Ind = 0, i;
 
+#if 0
 	/* Find name */
 	for (i = 1; i <= NumPlayers; i++)
 	{
@@ -239,6 +259,7 @@ int party_remove(int remover, cptr name)
 
 		return FALSE;
 	}
+#endif
 
 	/* Make sure this is the owner */
 	if (!streq(parties[party_id].owner, q_ptr->name))
@@ -249,6 +270,15 @@ int party_remove(int remover, cptr name)
 		/* Abort */
 		return FALSE;
 	}
+
+	Ind = name_lookup_loose(remover, name, FALSE);
+
+	if (Ind <= 0)
+	{
+		return FALSE;
+	}
+
+	p_ptr = Players[Ind];
 
 	/* Make sure they were in the party to begin with */
 	if (!player_in_party(party_id, Ind))
@@ -366,6 +396,48 @@ void party_msg_format(int party_id, cptr fmt, ...)
 }
 
 /*
+ * Send a message to everyone in a party, considering ignorance.
+ */
+void party_msg_ignoring(int sender, int party_id, cptr msg)
+{
+	int i;
+
+	/* Check for this guy */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
+
+		if (check_ignore(i, sender))
+			continue;
+
+		/* Check this guy */
+		if (player_in_party(party_id, i))
+			msg_print(i, msg);
+	}
+}
+
+/*
+ * Send a formatted message to a party.
+ */
+void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...)
+{
+	va_list vp;
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Display */
+	party_msg_ignoring(sender, party_id, buf);
+}
+/*
  * Split some experience among party members.
  *
  * This should ONLY be used while killing monsters.  The amount
@@ -461,10 +533,16 @@ void party_gain_exp(int Ind, int party_id, s32b amount)
 						
 			}
 			
-			
+			/*			
 			new_exp = (amount * modified_level) / (average_lev * num_members * p_ptr->lev);
 			new_exp_frac = ((((amount * modified_level) % (average_lev * num_members * p_ptr->lev) )
 			                * 0x10000L ) / (average_lev * num_members * p_ptr->lev)) + p_ptr->exp_frac;
+			*/
+
+			/* Some bonus is applied to encourage partying	- Jir - */
+			new_exp = (amount * modified_level * 3 * num_members) / (average_lev * num_members * p_ptr->lev * (num_members + 2));
+			new_exp_frac = ((((amount * modified_level * 3 * num_members) % (average_lev * num_members * p_ptr->lev * (num_members + 2)) )
+			                * 0x10000L ) / (average_lev * num_members * p_ptr->lev * (num_members + 2))) + p_ptr->exp_frac;
 
 			/* Keep track of experience */
 			if (new_exp_frac >= 0x10000L)
@@ -492,6 +570,100 @@ bool add_hostility(int Ind, cptr name)
 	hostile_type *h_ptr;
 	int i;
 
+	i = name_lookup_loose(Ind, name, TRUE);
+
+	if (!i)
+	{
+		return FALSE;
+	}
+
+	/* Check for sillyness */
+	if (i == Ind)
+	{
+		/* Message */
+		msg_print(Ind, "You cannot be hostile toward yourself.");
+
+		return FALSE;
+	}
+
+	if (i > 0)
+	{
+		q_ptr = Players[i];
+
+		/* Make sure players aren't in the same party */
+		if (p_ptr->party && player_in_party(p_ptr->party, i))
+		{
+			/* Message */
+			msg_format(Ind, "%^s is in your party!", q_ptr->name);
+
+			return FALSE;
+		}
+
+		/* Ensure we don't add the same player twice */
+		for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next)
+		{
+			/* Check this ID */
+			if (h_ptr->id == q_ptr->id)
+			{
+				/* Message */
+				msg_format(Ind, "You are already hostile toward %s.", q_ptr->name);
+
+				return FALSE;
+			}
+		}
+
+		/* Create a new hostility node */
+		MAKE(h_ptr, hostile_type);
+
+		/* Set ID in node */
+		h_ptr->id = q_ptr->id;
+
+		/* Put this node at the beginning of the list */
+		h_ptr->next = p_ptr->hostile;
+		p_ptr->hostile = h_ptr;
+
+		/* Message */
+		msg_format(Ind, "You are now hostile toward %s.", q_ptr->name);
+
+		/* Success */
+		return TRUE;
+	}
+	else
+	{
+		/* Tweak - inverse i once more */
+		i = 0 - i;
+
+		/* Ensure we don't add the same party twice */
+		for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next)
+		{
+			/* Check this ID */
+			if (h_ptr->id == 0 - i)
+			{
+				/* Message */
+				msg_format(Ind, "You are already hostile toward party '%s'.", parties[i].name);
+
+				return FALSE;
+			}
+		}
+
+		/* Create a new hostility node */
+		MAKE(h_ptr, hostile_type);
+
+		/* Set ID in node */
+		h_ptr->id = 0 - i;
+
+		/* Put this node at the beginning of the list */
+		h_ptr->next = p_ptr->hostile;
+		p_ptr->hostile = h_ptr;
+
+		/* Message */
+		msg_format(Ind, "You are now hostile toward party '%s'.", parties[i].name);
+
+		/* Success */
+		return TRUE;
+	}
+
+#if 0
 	/* Check for sillyness */
 	if (streq(name, p_ptr->name))
 	{
@@ -585,6 +757,7 @@ bool add_hostility(int Ind, cptr name)
 	msg_format(Ind, "%^s is not currently in the game.", name);
 
 	return FALSE;
+#endif
 }
 
 /*
@@ -594,8 +767,104 @@ bool remove_hostility(int Ind, cptr name)
 {
 	player_type *p_ptr = Players[Ind];
 	hostile_type *h_ptr, *i_ptr;
-	cptr p;
+	cptr p, q;
+	int i = name_lookup_loose(Ind, name, TRUE);
 
+	if (!i)
+	{
+		return FALSE;
+	}
+
+	/* Check for another silliness */
+	if (i == Ind)
+	{
+		/* Message */
+		msg_print(Ind, "You are not hostile toward yourself.");
+
+		return FALSE;
+	}
+
+	/* Forge name */
+	if (i > 0)
+	{
+		q = Players[i]->name;
+	}
+
+	/* Initialize lock-step */
+	i_ptr = NULL;
+
+	/* Search entries */
+	for (h_ptr = p_ptr->hostile; h_ptr; i_ptr = h_ptr, h_ptr = h_ptr->next)
+	{
+		/* Lookup name of this entry */
+		if (h_ptr->id > 0)
+		{
+			/* Efficiency */
+			if (i < 0) continue;
+
+			/* Look up name */
+			p = lookup_player_name(h_ptr->id);
+
+			/* Check player name */
+//			if (p && (streq(p, q) || streq(p, name)))
+			if (p && streq(p, q))
+			{
+				/* Delete this entry */
+				if (i_ptr)
+				{
+					/* Skip over */
+					i_ptr->next = h_ptr->next;
+				}
+				else
+				{
+					/* Adjust beginning of list */
+					p_ptr->hostile = h_ptr->next;
+				}
+
+				/* Message */
+				msg_format(Ind, "No longer hostile toward %s.", p);
+
+				/* Delete node */
+				KILL(h_ptr, hostile_type);
+
+				/* Success */
+				return TRUE;
+			}
+		}
+		else
+		{
+			/* Efficiency */
+			if (i >= 0) continue;
+
+			/* Assume this is a party */
+//			if (streq(parties[0 - h_ptr->id].name, q))
+			if (i == h_ptr->id)
+			{
+				/* Delete this entry */
+				if (i_ptr)
+				{
+					/* Skip over */
+					i_ptr->next = h_ptr->next;
+				}
+				else
+				{
+					/* Adjust beginning of list */
+					p_ptr->hostile = h_ptr->next;
+				}
+
+				/* Message */
+				msg_format(Ind, "No longer hostile toward party '%s'.", parties[0 - i].name);
+
+				/* Delete node */
+				KILL(h_ptr, hostile_type);
+
+				/* Success */
+				return TRUE;
+			}
+		}
+	}
+
+#if 0
 	/* Initialize lock-step */
 	i_ptr = NULL;
 
@@ -667,6 +936,7 @@ bool remove_hostility(int Ind, cptr name)
 
 	/* Failure */
 	return FALSE;
+#endif
 }
 
 /*
@@ -699,6 +969,251 @@ bool check_hostile(int attacker, int target)
 	return FALSE;
 }
 
+
+/*
+ * Add/remove a player to/from another player's list of ignorance.
+ * These functions should be common with hostilityes in the future. -Jir-
+ */
+bool add_ignore(int Ind, cptr name)
+{
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	hostile_type *h_ptr, *i_ptr;
+	int i;
+	cptr p,q;
+
+	/* Check for silliness */
+	if (!name)
+	{
+		msg_print(Ind, "Usage: /ignore foobar");
+
+		return FALSE;
+	}
+
+	i = name_lookup_loose(Ind, name, TRUE);
+
+	if (!i)
+	{
+		return FALSE;
+	}
+
+	/* Check for another silliness */
+	if (i == Ind)
+	{
+		/* Message */
+		msg_print(Ind, "You cannot ignore yourself.");
+
+		return FALSE;
+	}
+
+	/* Forge name */
+	if (i > 0)
+	{
+		q = Players[i]->name;
+	}
+
+	/* Initialize lock-step */
+	i_ptr = NULL;
+
+	/* Toggle ignorance if already on the list */
+	for (h_ptr = p_ptr->ignore; h_ptr; i_ptr = h_ptr, h_ptr = h_ptr->next)
+	{
+		/* Lookup name of this entry */
+		if (h_ptr->id > 0)
+		{
+			/* Efficiency */
+			if (i < 0) continue;
+
+			/* Look up name */
+			p = lookup_player_name(h_ptr->id);
+
+			/* Check player name */
+			if (p && streq(p, q))
+			{
+				/* Delete this entry */
+				if (i_ptr)
+				{
+					/* Skip over */
+					i_ptr->next = h_ptr->next;
+				}
+				else
+				{
+					/* Adjust beginning of list */
+					p_ptr->ignore = h_ptr->next;
+				}
+
+				/* Message */
+				msg_format(Ind, "Now listening to %s again.", p);
+
+				/* Delete node */
+				KILL(h_ptr, hostile_type);
+
+				/* Success */
+				return TRUE;
+			}
+		}
+		else
+		{
+			/* Efficiency */
+			if (i > 0) continue;
+
+			/* Assume this is a party */
+//			if (streq(parties[0 - h_ptr->id].name, q))
+			if (i == h_ptr->id)
+			{
+				/* Delete this entry */
+				if (i_ptr)
+				{
+					/* Skip over */
+					i_ptr->next = h_ptr->next;
+				}
+				else
+				{
+					/* Adjust beginning of list */
+					p_ptr->ignore = h_ptr->next;
+				}
+
+				/* Message */
+				msg_format(Ind, "Now listening to party '%s' again.", parties[0 - i].name);
+
+				/* Delete node */
+				KILL(h_ptr, hostile_type);
+
+				/* Success */
+				return TRUE;
+			}
+		}
+	}
+
+	if (i > 0)
+	{
+		q_ptr = Players[i];
+
+		/* Create a new hostility node */
+		MAKE(h_ptr, hostile_type);
+
+		/* Set ID in node */
+		h_ptr->id = q_ptr->id;
+
+		/* Put this node at the beginning of the list */
+		h_ptr->next = p_ptr->ignore;
+		p_ptr->ignore = h_ptr;
+
+		/* Message */
+		msg_format(Ind, "You aren't hearing %s any more.", q_ptr->name);
+
+		/* Success */
+		return TRUE;
+	}
+	else
+	{
+		/* Tweak - inverse i once more */
+		i = 0 - i;
+
+		/* Create a new hostility node */
+		MAKE(h_ptr, hostile_type);
+
+		/* Set ID in node */
+		h_ptr->id = 0 - i;
+
+		/* Put this node at the beginning of the list */
+		h_ptr->next = p_ptr->ignore;
+		p_ptr->ignore = h_ptr;
+
+		/* Message */
+		msg_format(Ind, "You aren't hearing party '%s' any more.", parties[i].name);
+
+		/* Success */
+		return TRUE;
+	}
+
+#if 0
+	/* Search for player to add */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		q_ptr = Players[i];
+
+		/* Check name */
+		if (!streq(q_ptr->name, name)) continue;
+
+		/* Create a new hostility node */
+		MAKE(h_ptr, hostile_type);
+
+		/* Set ID in node */
+		h_ptr->id = q_ptr->id;
+
+		/* Put this node at the beginning of the list */
+		h_ptr->next = p_ptr->ignore;
+		p_ptr->ignore = h_ptr;
+
+		/* Message */
+		msg_format(Ind, "You aren't hearing %s any more.", q_ptr->name);
+
+		/* Success */
+		return TRUE;
+	}
+
+	/* Search for party to add */
+	if ((i = party_lookup(name)) != -1)
+	{
+		if (player_in_party(i, Ind))
+		{
+			msg_print(Ind, "You cannot ignore your own party.");
+			return FALSE;
+		}
+			
+		/* Create a new hostility node */
+		MAKE(h_ptr, hostile_type);
+
+		/* Set ID in node */
+		h_ptr->id = 0 - i;
+
+		/* Put this node at the beginning of the list */
+		h_ptr->next = p_ptr->ignore;
+		p_ptr->ignore = h_ptr;
+
+		/* Message */
+		msg_format(Ind, "You aren't hearing party '%s' any more.", parties[i].name);
+
+		/* Success */
+		return TRUE;
+	}
+
+	/* Couldn't find player */
+	msg_format(Ind, "%^s is not currently in the game.", name);
+
+	return FALSE;
+#endif
+}
+
+/*
+ * Check if one player is ignoring the other
+ */
+bool check_ignore(int attacker, int target)
+{
+	player_type *p_ptr = Players[attacker];
+	hostile_type *h_ptr;
+
+	/* Scan list */
+	for (h_ptr = p_ptr->ignore; h_ptr; h_ptr = h_ptr->next)
+	{
+		/* Check ID */
+		if (h_ptr->id > 0)
+		{
+			/* Identical ID's yield hostility */
+			if (h_ptr->id == Players[target]->id)
+				return TRUE;
+		}
+		else
+		{
+			/* Check if target belongs to hostile party */
+			if (Players[target]->party == 0 - h_ptr->id)
+				return TRUE;
+		}
+	}
+
+	/* Not hostile */
+	return FALSE;
+}
 
 /*
  * The following is a simple hash table, which is used for mapping a player's

@@ -2170,6 +2170,9 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Hack -- no ghosts */
 	r_info[MAX_R_IDX-1].max_num = 0;
 
+	/* Initialize a little more */
+	p_ptr->ignore = NULL;
+	p_ptr->afk = FALSE;
 
 	/* Success */
 	return (0);

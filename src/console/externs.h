@@ -41,6 +41,7 @@ extern cptr ANGBAND_DIR_SAVE;
 extern cptr ANGBAND_DIR_USER;
 extern cptr ANGBAND_DIR_XTRA;
 
+extern s32b cfg_console_port;
 
 /*
  * Not-so-Automatically generated "function declarations"

@@ -207,6 +207,9 @@ void teleport_player(int Ind, int dis)
 	/* Space/Time Anchor */
 	if (check_st_anchor(p_ptr->dun_depth)) return;
 
+	/* Verify max distance once here */
+	if (dis > 200) dis = 200;
+
 	/* Minimum distance */
 	min = dis / 2;
 
@@ -214,7 +217,7 @@ void teleport_player(int Ind, int dis)
 	while (look)
 	{
 		/* Verify max distance */
-		if (dis > 200) dis = 200;
+		if (dis > 150) dis = 150;   /* 200 */
 
 		/* Try several locations */
 		for (i = 0; i < 500; i++)
@@ -633,7 +636,7 @@ void take_hit(int Ind, int damage, cptr hit_from)
 	       }
 	  }
 #endif
-        
+		
 	/* Hurt the player */
 	p_ptr->chp -= damage;
 

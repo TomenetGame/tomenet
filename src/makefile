@@ -186,6 +186,14 @@ LIBS = -L/usr/X11R6/lib -lX11 -lcurses
 
 
 ##
+## Variation -- FreeBSD 4.3R
+##
+#PREFIX = /usr/local
+#CFLAGS = -g -pipe -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"${PREFIX}/lib/pmangband\""
+#LIBS = -L${X11BASE}/lib -lX11 -lcurses
+
+
+##
 ## Variation -- Only support "main-x11.c" (not "main-gcu.c")
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11"
@@ -228,6 +236,14 @@ LIBS = -L/usr/X11R6/lib -lX11 -lcurses
 ## Variation -- Only work on simple vt100 terminals
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_CAP" -D"USE_HARDCODE"
+
+
+##
+## Variation -- FreeBSD 4.3R
+##
+#PREFIX = /usr/local
+#CFLAGS = -Wall -g -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"${PREFIX}/lib/pmangband\""
+#LIBS = -L${X11BASE}/lib -lX11 -lcurses
 
 
 ##

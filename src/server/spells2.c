@@ -1190,6 +1190,11 @@ bool detect_invisible(int Ind)
 		update_monsters(FALSE);
 		update_players();
 	}
+	else
+	{
+        msg_print(Ind, "You sense the absence of invisible creatures.");
+        msg_print(Ind, NULL);
+	}
 
 	/* Result */
 	return (flag);
@@ -1249,6 +1254,11 @@ bool detect_evil(int Ind)
 		/* Mega-Hack -- Fix the monsters */
 		update_monsters(FALSE);
 	}
+    else
+    {
+        msg_print(Ind, "You sense the absence of evil.");
+        msg_print(Ind, NULL);
+    }
 
 	/* Result */
 	return (flag);
@@ -1339,6 +1349,11 @@ bool detect_creatures(int Ind)
 		update_monsters(FALSE);
 		update_players();
 	}
+    else
+    {
+        msg_print(Ind, "You sense the absence of creatures.");
+        msg_print(Ind, NULL);
+    }
 
 	/* Result */
 	return (flag);

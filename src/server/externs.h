@@ -183,6 +183,10 @@ extern s32b cfg_unique_respawn_time;
 extern s32b cfg_unique_max_respawn_time;
 extern s32b cfg_level_unstatic_chance;
 extern s32b cfg_retire_timer;
+extern bool cfg_maximize;
+extern s32b cfg_game_port;
+extern s32b cfg_console_port;
+
 
 extern bool rogue_like_commands;
 extern bool quick_messages;
@@ -382,6 +386,7 @@ extern cptr ANGBAND_DIR_GAME;
 extern cptr ANGBAND_DIR_SAVE;
 extern cptr ANGBAND_DIR_TEXT;
 extern cptr ANGBAND_DIR_USER;
+extern cptr MANGBAND_CFG;
 extern bool item_tester_full;
 extern byte item_tester_tval;
 extern bool (*item_tester_hook)(object_type *o_ptr);

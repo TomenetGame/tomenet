@@ -33,8 +33,8 @@
 #define MAX_AMULETS    16       /* Used with amulets (min 13) */
 #define MAX_WOODS      32       /* Used with staffs (min 30) */
 #define MAX_METALS     32       /* Used with wands/rods (min 29/28) */
-#define MAX_COLORS     60       /* Used with potions (min 60) */
-#define MAX_SHROOM     20       /* Used with mushrooms (min 20) */
+#define MAX_COLORS     61       /* Used with potions (min 60) */
+#define MAX_SHROOM     21       /* Used with mushrooms (min 20) */
 #define MAX_TITLES     50       /* Used with scrolls (min 48) */
 #define MAX_SYLLABLES 158       /* Used with scrolls (see below) */
 
@@ -165,6 +165,7 @@ static cptr food_adj[MAX_SHROOM] =
 	"Dark Green", "Dark Red", "Yellow", "Furry", "Green",
 	"Grey", "Light Blue", "Light Green", "Violet", "Red",
 	"Slimy", "Tan", "White", "White Spotted", "Wrinkled",
+	"Pink"
 };
 
 static byte food_col[MAX_SHROOM] =
@@ -195,7 +196,8 @@ static cptr potion_adj[MAX_COLORS] =
 	"Red", "Red Speckled", "Silver Speckled", "Smoky", "Tangerine",
 	"Violet", "Vermilion", "White", "Yellow", "Violet Speckled",
 	"Pungent", "Clotted Red", "Viscous Pink", "Oily Yellow", "Gloopy Green",
-	"Shimmering", "Coagulated Crimson", "Yellow Speckled", "Gold"
+	"Shimmering", "Coagulated Crimson", "Yellow Speckled", "Gold",
+	"Transparent"
 };
 
 static byte potion_col[MAX_COLORS] =
@@ -211,7 +213,8 @@ static byte potion_col[MAX_COLORS] =
 	TERM_RED, TERM_RED, TERM_L_WHITE, TERM_L_DARK, TERM_ORANGE,
 	TERM_VIOLET, TERM_RED, TERM_WHITE, TERM_YELLOW, TERM_VIOLET,
 	TERM_L_RED, TERM_RED, TERM_L_RED, TERM_YELLOW, TERM_GREEN,
-	TERM_MULTI, TERM_RED, TERM_YELLOW, TERM_YELLOW
+	TERM_MULTI, TERM_RED, TERM_YELLOW, TERM_YELLOW,
+	TERM_WHITE
 };
 
 
@@ -284,7 +287,7 @@ static bool object_has_flavor(int i)
 		/* Hack -- food SOMETIMES has a flavor */
 		case TV_FOOD:
 		{
-			if (k_ptr->sval < SV_FOOD_MIN_FOOD) return (TRUE);
+			if ((k_ptr->sval < SV_FOOD_MIN_FOOD) || (k_ptr->sval > SV_FOOD_MAX_FOOD)) return (TRUE);
 			return (FALSE);
 		}
 	}
@@ -1364,7 +1367,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_FOOD:
 		{
 			/* Ordinary food is "boring" */
-			if (o_ptr->sval >= SV_FOOD_MIN_FOOD) break;
+			if ((o_ptr->sval >= SV_FOOD_MIN_FOOD) && (o_ptr->sval <= SV_FOOD_MAX_FOOD)) break;
 
 			/* Color the object */
 			modstr = food_adj[indexx];
@@ -1643,8 +1646,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
                 if (name != NULL)
                 {
                         t = object_desc_str(t, name);
-                        t = object_desc_chr(t, ',');
                 }
+				else
+				{
+						t = object_desc_chr(t, '-');
+				}
+                t = object_desc_chr(t, ',');
         }
         t = object_desc_num(t, o_ptr->level);
         t = object_desc_chr(t, '}');
@@ -3217,6 +3224,12 @@ bool can_use(int Ind, object_type *o_ptr)
         /* Owner always can use */
         if (p_ptr->id == o_ptr->owner) return (TRUE);
 
-        if (p_ptr->lev >= o_ptr->level) return (TRUE);
+		if (o_ptr->level < 1) return (FALSE);
+
+        if (p_ptr->lev >= o_ptr->level)
+			{
+				o_ptr->owner = p_ptr->id;
+				return (TRUE);
+			}
         else return (FALSE);
 }
