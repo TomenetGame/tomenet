@@ -16,7 +16,7 @@ struct rplist{
 
 struct wpacket spk;
 
-unsigned long chk(char *s1, char *s2);
+unsigned long chk(unsigned char *s1, unsigned char *s2);
 void rem_players(short id);
 void add_rplayer(struct wpacket *wpk);
 
@@ -167,7 +167,7 @@ void world_player(unsigned long id, char *name, unsigned short enter, byte quiet
 }
 
 /* unified, hopefully unique password check function */
-unsigned long chk(char *s1, char *s2){
+unsigned long chk(unsigned char *s1, unsigned char *s2){
 	unsigned int i, j=0;
 	int m1, m2;
 	static unsigned long rval[2]={0, 0};
