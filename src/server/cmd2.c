@@ -325,7 +325,7 @@ void do_cmd_search(int Ind)
 #endif	// CHATTERBOX_LEVEL
 
 	/* Repeat if requested */
-	if (p_ptr->always_repeat) p_ptr->command_rep = 1;
+	if (p_ptr->always_repeat) p_ptr->command_rep = PKT_SEARCH;
 
 	/* Search */
 	search(Ind);
@@ -999,7 +999,7 @@ void do_cmd_open(int Ind, int dir)
 
 	/* Cancel repeat unless we may continue */
 	if (!more) disturb(Ind, 0, 0);
-	else if (p_ptr->always_repeat) p_ptr->command_rep = 1;
+	else if (p_ptr->always_repeat) p_ptr->command_rep = PKT_OPEN;
 }
 
 
@@ -1497,7 +1497,7 @@ void do_cmd_tunnel(int Ind, int dir)
 
 	/* Cancel repetition unless we can continue */
 	if (!more) disturb(Ind, 0, 0);
-	else if (p_ptr->always_repeat) p_ptr->command_rep = 1;
+	else if (p_ptr->always_repeat) p_ptr->command_rep = PKT_TUNNEL;
 }
 
 
@@ -1788,7 +1788,7 @@ void do_cmd_disarm(int Ind, int dir)
 
 	/* Cancel repeat unless told not to */
 	if (!more) disturb(Ind, 0, 0);
-	else if (p_ptr->always_repeat) p_ptr->command_rep = 1;
+	else if (p_ptr->always_repeat) p_ptr->command_rep = PKT_DISARM;
 }
 
 
@@ -1949,7 +1949,7 @@ void do_cmd_bash(int Ind, int dir)
 
 	/* Unless valid action taken, cancel bash */
 	if (!more) disturb(Ind, 0, 0);
-	else if (p_ptr->always_repeat) p_ptr->command_rep = 1;
+	else if (p_ptr->always_repeat) p_ptr->command_rep = PKT_BASH;
 }
 
 

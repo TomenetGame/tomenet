@@ -4473,6 +4473,8 @@ static int Receive_walk(int ind)
 		return n;
 	}
 
+	/* bugged here if !p_ptr */
+
 	/* Disturb if running or resting */
 	if (p_ptr->running || p_ptr->resting)
 	{
@@ -4480,6 +4482,9 @@ static int Receive_walk(int ind)
 		return 1;
 	}
 
+	if(p_ptr->command_rep){
+		p_ptr->command_rep=-1;
+	}
 
 	if (player && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -4541,6 +4546,10 @@ static int Receive_run(int ind)
 			p_ptr = Players[Ind2];
 		      }
 		  }
+	}
+	
+	if(p_ptr->command_rep){
+		p_ptr->command_rep=-1;
 	}
 
 	/* If not the dungeon master, who can always run */
@@ -4608,7 +4617,7 @@ static int Receive_run(int ind)
 static int Receive_tunnel(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr=NULL;
 
 	char ch, dir;
 
@@ -4638,6 +4647,17 @@ static int Receive_tunnel(int ind)
 		if (n == -1)
 			Destroy_connection(ind, "read error");
 		return n;
+	}
+
+	/* all this is temp just to make it work */
+	if(p_ptr->command_rep==-1){
+		p_ptr->command_rep=0;
+		return(0);
+	}
+
+	/* please redesign ALL of this out of higher level */
+	if(p_ptr && p_ptr->command_rep!=PKT_TUNNEL){
+		p_ptr->command_rep=-1;
 	}
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -5267,7 +5287,7 @@ static int Receive_activate_skill(int ind)
 static int Receive_open(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr=NULL;
 
 	char ch, dir;
 
@@ -5297,6 +5317,15 @@ static int Receive_open(int ind)
 		if (n == -1)
 			Destroy_connection(ind, "read error");
 		return n;
+	}
+
+	/* all this is temp just to make it work */
+	if(p_ptr->command_rep==-1){
+		p_ptr->command_rep=0;
+		return(0);
+	}
+	if(p_ptr && p_ptr->command_rep!=PKT_OPEN){
+		p_ptr->command_rep=-1;
 	}
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -5667,7 +5696,7 @@ static int Receive_read(int ind)
 static int Receive_search(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr=NULL;
 
 	char ch;
 
@@ -5697,6 +5726,15 @@ static int Receive_search(int ind)
 		if (n == -1)
 			Destroy_connection(ind, "read error");
 		return n;
+	}
+
+	/* all this is temp just to make it work */
+	if(p_ptr->command_rep==-1){
+		p_ptr->command_rep=0;
+		return(0);
+	}
+	if(p_ptr && p_ptr->command_rep!=PKT_SEARCH){
+		p_ptr->command_rep=-1;
 	}
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -6194,7 +6232,7 @@ static int Receive_activate(int ind)
 static int Receive_bash(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr=NULL;
 
 	char ch, dir;
 
@@ -6226,6 +6264,14 @@ static int Receive_bash(int ind)
 		return n;
 	}
 
+	/* all this is temp just to make it work */
+	if(p_ptr->command_rep==-1){
+		p_ptr->command_rep=0;
+		return(0);
+	}
+	if(p_ptr && p_ptr->command_rep!=PKT_BASH){
+		p_ptr->command_rep=-1;
+	}
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
 		do_cmd_bash(player, dir);
@@ -6244,7 +6290,7 @@ static int Receive_bash(int ind)
 static int Receive_disarm(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr=NULL;
 
 	char ch, dir;
 
@@ -6275,6 +6321,14 @@ static int Receive_disarm(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* all this is temp just to make it work */
+	if(p_ptr->command_rep==-1){
+		p_ptr->command_rep=0;
+		return(0);
+	}
+	if(p_ptr && p_ptr->command_rep!=PKT_DISARM)
+		p_ptr->command_rep=-1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
