@@ -81,3 +81,40 @@ STUN = add_spell
                         "At level 20 it turns into a ball",
         }
 }
+
+TELEKINESIS = add_spell
+{
+	["name"] = 	"Telekinesis",
+        ["school"] = 	{SCHOOL_MIND, SCHOOL_CONVEYANCE},
+        ["level"] = 	25,
+        ["mana"] = 	25,
+        ["mana_max"] = 	25,
+        ["fail"] =      20,
+        ["get_item"] =  {
+                        ["prompt"] = 	"Teleport which object? ",
+                        ["inven"] = 	TRUE,
+                        ["get"] = 	function (obj)
+	                                if obj.weight <= 4 + get_level(Ind, TELEKINESIS, 250, 0) then
+        	                        	return TRUE
+                	                end
+                        	        return FALSE
+                        end,
+        },
+        ["spell"] = 	function(args)
+                        if args.item == -1 then return end
+			if player.inventory[1 + args.item].weight <= 4 + get_level(Ind, TELEKINESIS, 250, 0) then
+                        	player.current_telekinesis = player.inventory[1 + args.book]
+                                telekinesis_aux(Ind, args.item)
+                        else
+                                msg_print(Ind, "Pfft trying to hack your client ? pretty lame ...")
+                        end
+	end,
+	["info"] = 	function()
+			return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 250, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 250, 0), 10))
+	end,
+        ["desc"] =	{
+        		"Inscribe your book wiht @Pplayername, cast it, select an item",
+                        "and the item will be teleported to that player whereever he/she might",
+                        "be in the Universe",
+        }
+}

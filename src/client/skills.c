@@ -955,7 +955,7 @@ void do_trap(int item_kit)
 
 
 	/* Send it */
-	Send_activate_skill(MKEY_TRAP, item_kit, item_load, 0);
+	Send_activate_skill(MKEY_TRAP, item_kit, item_load, 0, 0, 0);
 }
 
 /*
@@ -987,7 +987,7 @@ void do_activate_skill(int x_idx, int item)
 	}
 	else if (s_info[x_idx].action_mkey == MKEY_SCHOOL)
 	{
-		//int item;
+		int item_obj = -1, aux;
 
 		/* Ask for a spell, allow cancel */
 		if ((spell = get_school_spell("cast", &item)) == -1) return;
@@ -998,13 +998,20 @@ void do_activate_skill(int x_idx, int item)
 			if (!get_dir(&dir))
 				return;
 
+                /* Ask for something? */
                 if (exec_lua(0, format("return pre_exec_spell_extra(%d)", spell)))
                 {
-                        dir = exec_lua(0, "return __pre_exec_extra");
+                        aux = exec_lua(0, "return __pre_exec_extra");
+                }
+
+                /* Ask for an item? */
+                if (exec_lua(0, format("return pre_exec_spell_item(%d)", spell)))
+                {
+                        item_obj = exec_lua(0, "return __pre_exec_item");
                 }
 
 		/* Send it */
-		Send_activate_skill(MKEY_SCHOOL, item, spell, dir);
+		Send_activate_skill(MKEY_SCHOOL, item, spell, dir, item_obj, aux);
 
 		return;
 	}
@@ -1025,7 +1032,7 @@ void do_activate_skill(int x_idx, int item)
 		if (!get_spell(&spell, "cast", item, FALSE)) return;
 
 		/* Send it */
-		Send_activate_skill(s_info[x_idx].action_mkey, item, spell, dir);
+		Send_activate_skill(s_info[x_idx].action_mkey, item, spell, dir, 0, 0);
 
 		return;
 	}
@@ -1046,7 +1053,7 @@ void do_activate_skill(int x_idx, int item)
 	}
 
 	/* Send it */
-	Send_activate_skill(s_info[x_idx].action_mkey, item, spell, dir);
+	Send_activate_skill(s_info[x_idx].action_mkey, item, spell, dir, 0, 0);
 }
 
 /* Ask & execute a skill */

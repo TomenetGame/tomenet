@@ -72,7 +72,7 @@ GENOCIDE = add_spell
                         if type == 0 then
                                 genocide(Ind)
                         else
-                                if args.dir == TRUE then
+                                if args.aux == TRUE then
                                         mass_genocide(Ind)
                                 else
                                 	genocide(Ind)

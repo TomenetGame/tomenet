@@ -3261,12 +3261,12 @@ int Send_gain(int book, int spell)
 }
 #endif	// 0
 
-int Send_activate_skill(int mkey, int book, int spell, int dir)
+int Send_activate_skill(int mkey, int book, int spell, int dir, int item, int aux)
 {
 	int	n;
 
-	if ((n = Packet_printf(&wbuf, "%c%c%hd%hd%c", PKT_ACTIVATE_SKILL,
-					mkey, book, spell, dir)) <= 0)
+	if ((n = Packet_printf(&wbuf, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL,
+					mkey, book, spell, dir, item, aux)) <= 0)
 	{
 		return n;
 	}

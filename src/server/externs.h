@@ -531,7 +531,7 @@ extern void do_cmd_check_other(int Ind, int line);
 extern void do_cmd_check_other_prepare(int Ind, char *path);
 
 /* cmd5.c */
-extern void cast_school_spell(int Ind, int spell, int dir, int item);
+extern void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux);
 extern void do_cmd_browse(int Ind, object_type *o_ptr);
 extern void do_cmd_study(int Ind, int book, int spell);
 extern void do_cmd_psi(int Ind, int book, int spell);

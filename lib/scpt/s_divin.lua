@@ -11,7 +11,7 @@ STARIDENTIFY = add_spell
         ["fail"] = 	10,
         ["extra"] =     function () return get_check("Cast on yourself?") end,
         ["spell"] = 	function (args)
-        		if args.dir == TRUE then
+        		if args.aux == TRUE then
                         	self_knowledge(Ind)
                         else
                         	identify_fully(Ind)

@@ -1460,10 +1460,10 @@ void do_cmd_mimic(int Ind, int spell)
 /* Hrm, 'item' should be used for spells like Identify;
  * TODO: revise the PKT_ACTIVATE_SKILL packet type
  */
-void cast_school_spell(int Ind, int spell, int dir, int item)
+void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr = &p_ptr->inventory[item];
+	object_type *o_ptr = &p_ptr->inventory[book];
 
 	if (!can_use(Ind, o_ptr))
 	{
@@ -1505,6 +1505,6 @@ void cast_school_spell(int Ind, int spell, int dir, int item)
 	/* Actualy cast the choice */
 	if (spell != -1)
 	{
-		exec_lua(Ind, format("cast_school_spell(%d, %d, spell(%d), nil, {dir = %d, book = %d})", Ind, spell, spell, dir, item));
+		exec_lua(Ind, format("cast_school_spell(%d, %d, spell(%d), nil, {dir = %d, book = %d, item = %d, aux = %d})", Ind, spell, spell, dir, book, item, aux));
 	}
 }

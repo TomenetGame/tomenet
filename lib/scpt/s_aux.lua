@@ -493,3 +493,20 @@ function pre_exec_spell_extra(s)
                 return TRUE
         end
 end
+
+function pre_exec_spell_item(s)
+        if __tmp_spells[s].get_item then
+                if type(__tmp_spells[s].get_item.get) == "function" then
+	        	__get_item_hook_default = __tmp_spells[s].get_item.get
+			lua_set_item_tester(0, "__get_item_hook_default")
+                else
+			lua_set_item_tester(lua__tmp_spells[s].get_item.get, "")
+                end
+                if not __tmp_spells[s].get_item.inven then __tmp_spells[s].get_item.inven = FALSE end
+                if not __tmp_spells[s].get_item.equip then __tmp_spells[s].get_item.equip = FALSE end
+                if not __tmp_spells[s].get_item.floor then __tmp_spells[s].get_item.floor = FALSE end
+                local ret
+                ret, __pre_exec_item = get_item_aux(0, __tmp_spells[s].get_item.prompt, __tmp_spells[s].get_item.equip, __tmp_spells[s].get_item.inven, __tmp_spells[s].get_item.floor)
+                return ret
+        end
+end

@@ -6330,43 +6330,6 @@ void telekinesis_aux(int Ind, int item)
 
 	if (!Ind2) return;
 
-#if 0	
-	/* check for a valid inscription */
-	if (inscription == NULL)
-	  {
-	    msg_print(Ind, "Nobody to send to.");
-	    return;
-	  }
-	
-	/* scan the inscription for @P */
-	while ((*inscription != '\0') && !ok)
-	{
-		
-		if (*inscription == '@')
-		{
-			inscription++;
-			
-			/* a valid @P has been located */
-			if (*inscription == 'P')
-			{			
-				inscription++;
-				
-//				Ind2 = find_player_name(inscription);
-				Ind2 = name_lookup_loose(Ind, inscription, FALSE);
-				if (Ind2) ok = TRUE;
-			}
-		}
-		inscription++;
-	}
-	
-        if (!ok)
-	  {
-//	    msg_print(Ind, "Player is not on.");
-	    msg_print(Ind, "Could not find the recipient.");
-	    return;
-	  }
-#endif
-
 	p2_ptr = Players[Ind2];
 
 	/* You cannot send artifact */

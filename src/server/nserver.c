@@ -3216,7 +3216,7 @@ int Send_sanity(int ind, int msane, int csane)
 		return 0;
 	}
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
+	  {                                                        g
 	    int Ind2 = find_player(p_ptr->esp_link);
 	    player_type *p_ptr2;
 	    connection_t *connp2;
@@ -5271,7 +5271,7 @@ static int Receive_activate_skill(int ind)
 
 	int n, player = -1, old = -1;
 
-	s16b book, spell;
+	s16b book, spell, item, aux;
 
 	if (connp->id != -1)
 	{
@@ -5293,7 +5293,7 @@ static int Receive_activate_skill(int ind)
 		  }
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c%c%hd%hd%c", &ch, &mkey, &book, &spell, &dir)) <= 0)
+	if ((n = Packet_scanf(&connp->r, "%c%c%hd%hd%c%hd%hd", &ch, &mkey, &book, &spell, &dir, &item, &aux)) <= 0)
 	{
 		if (n == -1)
 			Destroy_connection(ind, "read error");
@@ -5322,12 +5322,6 @@ static int Receive_activate_skill(int ind)
 			{
 				set_tim_manashield(player, 0);
 			}
-#if 0
-			if (p_ptr->tim_wraith)
-			{
-				set_tim_wraith(player, 0);
-			}
-#endif	// 0
 		}
 
 		switch (mkey)
@@ -5348,7 +5342,7 @@ static int Receive_activate_skill(int ind)
 				do_cmd_set_trap(player, book, spell);
 				break;
                 	case MKEY_SCHOOL:
-				cast_school_spell(player, spell, dir, book);
+				cast_school_spell(player, book, spell, dir, item, aux);
 
                 }
 		return 2;
@@ -5357,7 +5351,7 @@ static int Receive_activate_skill(int ind)
 	{
 		p_ptr->current_spell = -1;
 		p_ptr->current_mind = -1;
-		Packet_printf(&connp->q, "%c%c%hd%hd%c", ch, mkey, book, spell, dir);
+		Packet_printf(&connp->q, "%c%c%hd%hd%c%hd%hd", ch, mkey, book, spell, dir, item, aux);
 		return 0;
 	}
 

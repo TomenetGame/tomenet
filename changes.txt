@@ -22,6 +22,10 @@
 
 # bug.txt should follow the exact same format
 
+06/09/2002
+[I]- Spells can ask for items client side directly
+[P]- Telekinesis spell, Mind/Conveyance school
+
 05/09/2002
 [O]- Artifact ammo returns just like magci arrows, thanks to Cblue
 [m]- Savefile version independant of game version

@@ -461,7 +461,7 @@ extern int Send_spike(int dir);
 extern int Send_skill_mod(int i);
 extern int Send_store_examine(int item);
 extern int Send_store_command(int action, int item, int item2, int amt, int gold);
-extern int Send_activate_skill(int mkey, int book, int spell, int dir);
+extern int Send_activate_skill(int mkey, int book, int spell, int dir, int item, int aux);
 
 
 /* skills.c */
@@ -481,6 +481,10 @@ extern void master_script_end();
 extern void master_script_line(char *buf);
 extern void master_script_exec(int Ind, char *name);
 extern void cat_script(char *name);
+
+/* lua_bind.c */
+extern void lua_set_item_tester(int tval, char *fct);
+
 
 /* common/common.c */
 extern errr path_build(char *buf, int max, cptr path, cptr file);

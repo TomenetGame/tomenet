@@ -153,7 +153,7 @@ school_book[9] = {
 
 -- Create the book of the mind
 school_book[10] = {
-        CONFUSE, STUN,
+        CONFUSE, STUN, TELEKINESIS,
 }
 
 -- Create the book of hellflame

@@ -509,7 +509,7 @@ void do_mimic()
 
   /* Tell the server */
 //  Send_mimic(spell);
-  Send_activate_skill(MKEY_MIMICRY, 0, spell, 0);
+  Send_activate_skill(MKEY_MIMICRY, 0, spell, 0, 0, 0);
 }
 
 
