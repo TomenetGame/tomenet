@@ -2806,10 +2806,6 @@ void do_cmd_throw(int Ind, int dir, int item)
 	if(o_ptr->tval==0){
 		char temp[160];
 		msg_print(Ind, "\377rYou cannot throw that");
-		/* Remove this bit once it is well known */
-		sprintf(temp, "\377G%s tries to cheeze but fails.",p_ptr->name);
-		msg_broadcast(Ind, temp);
-		/* to here. :) */
 		return;
 	}
         if( check_guard_inscription( o_ptr->note, 'v' )) {
