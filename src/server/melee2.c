@@ -2617,6 +2617,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+3:
 		{
 			disturb(Ind, 1, 0);
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons some animals!", m_name);
 			for (k = 0; k < 4; k++)
@@ -2780,6 +2781,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+15:
 		{
 			disturb(Ind, 1, 0);
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons a DragonRider!", m_name);
 			for (k = 0; k < 1; k++)
@@ -2796,6 +2798,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+16:
 		{
 			disturb(Ind, 1, 0);
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons %s %s.",
 					m_name, m_poss,
@@ -2817,6 +2820,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+17:
 		{
 			disturb(Ind, 1, 0);
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons greater demons!", m_name);
 			if (blind && count) msg_print(Ind, "You hear heavy steps nearby.");
