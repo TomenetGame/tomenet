@@ -4533,8 +4533,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		cave_type **zcave;
 		trap_type *t_ptr;
 		if((zcave=getcave(wpos))){
-			t_ptr = zcave[p_ptr->py][p_ptr->px].special.ptr;
-			sprintf(killer, t_name + t_info[t_ptr->t_idx].name);
+			if(p_ptr->px!=x || p_ptr->py!=y){
+				/* Assume chest trap (hacky) */
+				object_type *o_ptr=&o_list[zcave[y][x].o_idx];
+				sprintf(killer, t_name + t_info[o_ptr->pval].name);
+			}
+			else{
+				t_ptr = zcave[p_ptr->py][p_ptr->px].special.ptr;
+				sprintf(killer, t_name + t_info[t_ptr->t_idx].name);
+			}
 		}
 	}
 	else if (who < 0)
