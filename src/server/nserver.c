@@ -588,9 +588,10 @@ bool Report_to_meta(int flag)
                 strcat(buf_meta, "</version></server>");
         }
 
-        s_printf("Sending meta info...");
+        s_printf("Sending meta info...\n");
 
 	/* If we haven't setup the meta connection yet, abort */
+        block_timer();
         sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == -1)
 		return FALSE;
@@ -604,18 +605,21 @@ bool Report_to_meta(int flag)
 		iaddr.sin_addr.s_addr = resolved_ip;
 		if (connect(sock, (struct sockaddr*)&iaddr, sizeof (iaddr)) == -1)
 		{
+			s_printf("Meta Info NOT sent to the meta : connect %s\n", strerror(errno));
 			close(sock);
 			return FALSE;
 		}
 
 		if (write(sock, buf_meta, strlen(buf_meta)) == -1)
 		{
+			s_printf("Meta Info NOT sent to the meta : write\n");
 			close(sock);
 			return FALSE;
 		}
 		s_printf("Info sent to the meta\n");
                 close(sock);
 	}
+        allow_timer();
 	return TRUE;
 }
 #endif
