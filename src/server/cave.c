@@ -281,8 +281,10 @@ void check_Morgoth(void)
 		if (!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) continue;
 		wpos = &m_ptr->wpos;
 		
+#if 0
 		/* log - done in place_monster_one now -C. Blue */
-//		s_printf("Morgoth generated on %d\n", getlevel(wpos));
+		s_printf("Morgoth generated on %d\n", getlevel(wpos));
+#endif
 
 		/* check if players are on his depth */
 		num_on_depth = 0;
@@ -387,16 +389,6 @@ void check_Morgoth(void)
 			s_printf("Morgoth grows stronger\n");
 			/* Tell everyone related to Morgy's depth */
 			msg_print_near_monster(m_idx, "becomes stronger!");
-#if 0
-			for (i = 1; i <= NumPlayers; i++)
-			{
-				if (Players[i]->conn == NOT_CONNECTED)
-			    		continue;
-				/* Player on Morgy depth? */
-				if (inarea(&Players[i]->wpos, wpos))
-					msg_print(i, "\377sMorgoth, the Lord of Darkness becomes stronger!");
-			}
-#endif
 			return;
 		}
 		/* Less players here than Morgy has power for? */
@@ -415,16 +407,6 @@ void check_Morgoth(void)
 			s_printf("Morgoth weakens\n");
 			/* Tell everyone related to Morgy's depth */
 			msg_print_near_monster(m_idx, "becomes weaker!");
-#if 0
-			for (i = 1; i <= NumPlayers; i++)
-			{
-				if (Players[i]->conn == NOT_CONNECTED)
-				        continue;
-				/* Player on Morgy depth? */
-				if (inarea(&Players[i]->wpos, wpos))
-					msg_print(i, "\377sMorgoth, the Lord of Darkness becomes weaker.");
-			}
-#endif
 			return;
 		}
 	}
@@ -472,7 +454,6 @@ int getlevel(struct worldpos *wpos)
 /* NOTE only ONE of each type !!! */
 struct c_special *GetCS(cave_type *c_ptr, unsigned char type){
 	struct c_special *trav;
-//	int i=0;
 
 	if(!c_ptr->special) return(NULL);
 	trav=c_ptr->special;
@@ -553,11 +534,6 @@ static bool is_wall(cave_type *c_ptr)
 {
 	byte feat;
 
-#if 0
-	/* Handle feature mimics */
-	if (c_ptr->mimic) feat = c_ptr->mimic;
-	else feat = c_ptr->feat;
-#endif	// 0
 	feat = c_ptr->feat;
 
 	/* Paranoia */
@@ -1634,7 +1610,6 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 void map_info(int Ind, int y, int x, byte *ap, char *cp)
 {
 	player_type *p_ptr = Players[Ind];
-	int kludge; /* You don't want to know what this is for.... -APD */
 
 	cave_type *c_ptr;
 	byte *w_ptr;
@@ -2060,7 +2035,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		    (c_ptr->feat == FEAT_WAY_LESS) || (c_ptr->feat == FEAT_LESS)) {
 		    int type;
 		    struct dungeon_type *d_ptr;
-		    bool tower = FALSE;
 		    worldpos *tpos = &p_ptr->wpos;
 		    wilderness_type *wild=&wild_info[tpos->wy][tpos->wx];
 
@@ -2169,14 +2143,16 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			{
 				if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], c_ptr, &a, &c);
 				else if (p2_ptr->fruit_bat) c = 'b';
-				else c='@';
+				else c = '@';
 			}
 			else
 			{
-				if(p2_ptr->chp<0) c='-';
+				if(p2_ptr->chp < 0) c='-';
 				else{
-					sprintf((unsigned char *)&kludge,"%d", ((p2_ptr->chp * 95) / (p2_ptr->mhp*10)));
-					c = kludge;
+					int num;
+					num=(p2_ptr->chp*95) / (p2_ptr->mhp*10);
+
+					c = '0'+num;
 				}
 			}
 			
@@ -2185,8 +2161,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			{
 				if((( p2_ptr->csp * 100) / (p2_ptr->msp*10)) < 10)
 				{
-					sprintf((unsigned char *)&kludge,"%d", ((p2_ptr->csp * 100) / (p2_ptr->msp*10)));
-					c = kludge;
+					int num;
+					num=(p2_ptr->csp*100) / (p2_ptr->msp*10);
+					c = '0'+num;
 				}
 			}
 
@@ -2265,7 +2242,6 @@ void note_spot(int Ind, int y, int x)
 		if (player_can_see_bold(Ind, y, x))
 		{
 			/* Memorize normal features */
-//			if (c_ptr->feat > FEAT_INVIS) 
 			if (!cave_plain_floor_grid(c_ptr))
 			{
 				/* Memorize */
@@ -2361,8 +2337,6 @@ void lite_spot(int Ind, int y, int x)
 	{
 		int dispx, dispy;
 
-		int kludge;
-
 		byte a;
 		char c;
 
@@ -2414,14 +2388,16 @@ void lite_spot(int Ind, int y, int x)
 			else if (!p_ptr->tim_manashield) {
 				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) 
 				{
-					sprintf((unsigned char *)&kludge,"%d",(p_ptr->chp * 95) / (p_ptr->mhp*10)); 
-					c = kludge;
+					int num;
+					num=(p_ptr->chp*95) / (p_ptr->mhp*10);
+					c = '0'+num;
 				}
 			} else {
 				if (((p_ptr->csp * 95) / (p_ptr->msp*10)) < 7) 
 				{
-					sprintf((unsigned char *)&kludge,"%d",(p_ptr->csp * 95) / (p_ptr->msp*10)); 
-					c = kludge;
+					int num;
+					num=(p_ptr->csp*95) / (p_ptr->msp*10);
+					c = '0'+num;
 				}
 			}
 
@@ -2739,11 +2715,11 @@ void display_map(int Ind, int *cy, int *cx)
 				else if((( p_ptr->chp * 95)/ (p_ptr->mhp*10)) >= 7) tc = '@';
 				else 
 				{
-					int kludge;
 					if(p_ptr->chp<0) tc='-';
 					else{
-						sprintf((unsigned char *)&kludge,"%d", ((p_ptr->chp * 95) / (p_ptr->mhp*10)));
-						tc = kludge;
+						int num;
+						num=(p_ptr->chp*95) / (p_ptr->mhp*10);
+						tc = '0'+num;
 					}
 				}                       
 			}
@@ -3899,13 +3875,8 @@ void update_view(int Ind)
 	if(!(zcave=getcave(wpos))) return;
 	if(p_ptr->wpos.wz)
 	{
-		dun_level		*l_ptr = getfloor(&p_ptr->wpos);
+		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 		if(l_ptr && l_ptr->flags1 & LF1_NOMAP) unmap = TRUE;
-#if 0
-		struct dungeon_type *d_ptr;
-		d_ptr=(p_ptr->wpos.wz>0? wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower : wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon);
-		if(d_ptr->flags & DUNGEON_NOMAP) unmap=TRUE;
-#endif	/* 0 */
 	}
 
 
@@ -4841,11 +4812,6 @@ void update_view(int Ind)
 	{
 		dun_level		*l_ptr = getfloor(&p_ptr->wpos);
 		if(l_ptr && l_ptr->flags1 & LF1_NOMAP) unmap = TRUE;
-#if 0
-		struct dungeon_type *d_ptr;
-		d_ptr=(p_ptr->wpos.wz>0? wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower : wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon);
-		if(d_ptr->flags & DUNGEON_NOMAP) unmap=TRUE;
-#endif	/* 0 */
 	}
 
 
@@ -5730,7 +5696,6 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 
 
 
-
 /*
  * Calculate "incremental motion". Used by project() and shoot().
  * Assumes that (*y,*x) lies on the path from (y1,x1) to (y2,x2).
@@ -6012,7 +5977,6 @@ void disturb(int Ind, int stop_search, int unused_flag)
 	/* Cancel auto-commands */
 	/* command_new = 0; */
 
-#if 1
 	/* Cancel repeated commands */
 	if (p_ptr->command_rep)
 	{
@@ -6025,7 +5989,6 @@ void disturb(int Ind, int stop_search, int unused_flag)
 		/* Redraw the state (later) */
 		p_ptr->redraw |= (PR_STATE);
 	}
-#endif
 
 	/* Cancel Resting */
 	if (p_ptr->resting)
