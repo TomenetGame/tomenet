@@ -994,7 +994,7 @@ static void Delete_player(int Ind)
 			}
 		}
 
-		world_player(p_ptr->id, p_ptr->name, FALSE);
+		world_player(p_ptr->id, p_ptr->name, FALSE, FALSE);
 
 		for (i = 1; i < NumPlayers + 1; i++)
 		{
@@ -1881,7 +1881,7 @@ static int Handle_login(int ind)
 	/* Handle the cfg_secret_dungeon_master option */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) return 0;
 
-	world_player(p_ptr->id, p_ptr->name, TRUE);
+	world_player(p_ptr->id, p_ptr->name, TRUE, FALSE);
 
 	/* Tell everyone about our new player */
 	for (i = 1; i < NumPlayers; i++)

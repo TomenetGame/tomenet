@@ -3981,6 +3981,7 @@ void player_death(int Ind)
 		else sprintf(buf, "\377r%s was killed and destroyed by %s.",
 				p_ptr->name, p_ptr->died_from);
 		world_msg(buf);
+		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
 
 		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master))
 			msg_broadcast(Ind, buf);
@@ -4223,6 +4224,7 @@ void player_death(int Ind)
 		if(!p_ptr->admin_dm && !p_ptr->admin_wiz && !p_ptr->noscore)
 			add_high_score(Ind);
 
+		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
 		/* Get rid of him */
 		Destroy_connection(p_ptr->conn, "Committed suicide");
 
@@ -4398,7 +4400,7 @@ void check_quests(){
 	struct player_type *q_ptr;
 	for(i=0; i<20; i++){
 		if(quests[i].active && quests[i].id){
-			if(turn-quests[i].turn>MAX_QUEST_TURNS){
+			if((turn-quests[i].turn)/10 >MAX_QUEST_TURNS){
 				for(j=1; j<=NumPlayers; j++){
 					q_ptr=Players[j];
 					if(q_ptr && q_ptr->quest_id==quests[i].id){

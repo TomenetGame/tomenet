@@ -531,6 +531,7 @@ void do_cmd_check_players(int Ind, int line)
 		fprintf(fff, "\n");
 
 	}
+	world_remote_players(fff);
 
 	/* Close the file */
 	my_fclose(fff);
