@@ -103,6 +103,7 @@
 #define MAX_MOTD_SIZE			(30*1024)
 #define MAX_MOTD_LOOPS			120
 
+static bool validstrings(char *nick, char *real, char *host);
 
 connection_t	*Conn = NULL;
 static int		max_connections = 0;
@@ -473,8 +474,9 @@ bool Report_to_meta(int flag)
         block_timer();
         sock = socket(AF_INET, SOCK_STREAM, 0);
 #endif
-	if (sock == -1)
+	if (sock == -1){
 		return FALSE;
+	}
 
 	{
 #ifndef EVIL_METACLIENT
@@ -502,6 +504,7 @@ bool Report_to_meta(int flag)
                 close(sock);
 	}
 #ifdef EVIL_METACLIENT
+	/* kill it or update it */
 	kill(metapid, (flag & META_DIE ? SIGTERM : SIGUSR1));
 #else
         allow_timer();
@@ -538,24 +541,26 @@ int Setup_net_server(void)
 	/* Tell the metaserver that we're starting up */
 	Report_to_meta(META_START);
 #ifdef EVIL_METACLIENT
-	metapid=fork();
-	if(metapid==-1){
-		/* didnt work.. we should die */
-		fprintf(stderr, "bah\n");
-		exit(-5);
-	}
-	if(metapid==0){
-		char buf[80];
-		char *cmd="./evilmeta";
-		char *args[]={cmd, NULL};
-
-		getwd(buf);
-		printf("in %s\n", buf);
-		/* We are the meta client */
-		execve(args[0], args, NULL);
-		/* GONE */
-		printf("shit! [%d - %s]\n", errno, strerror(errno));
-		exit(-20);
+	if(cfg.report_to_meta){
+		metapid=fork();
+		if(metapid==-1){
+			/* didnt work.. we should die */
+			fprintf(stderr, "bah\n");
+			exit(-5);
+		}
+		if(metapid==0){
+			char buf[80];
+			char *cmd="./evilmeta";
+			char *args[]={cmd, NULL};
+	
+			getcwd(buf, 80);
+			printf("in %s\n", buf);
+			/* We are the meta client */
+			execve(args[0], args, NULL);
+			/* GONE */
+			printf("exec failed! [%d - %s]\n", errno, strerror(errno));
+			exit(-20);
+		}
 	}
 #endif
 
