@@ -1452,7 +1452,7 @@ D:allows rapid recovery from their blows.
 N:105:of the Dwarves
 I:24:28:10
 W:30:8:250:100000
-P:0:3d8:12:17:0
+P:0:3d6:12:17:0
 F:SLAY_EVIL | TUNNEL | INFRA | SEARCH | SLAY_GIANT | SLAY_EVIL | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_FEAR |
 F:SHOW_MODS
@@ -2054,7 +2054,7 @@ D:the Sandworm Queen.
 N:154:'Dragonbane'
 I:24:28:2
 W:70:20:260:173000
-P:0:3d8:20:20:0
+P:0:3d6:20:20:0
 F:BLOWS | KILL_DRAGON | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
 F:RES_POIS | SHOW_MODS | RES_SHARDS | FREE_ACT
 D:Forged by the Dwarves to defend their home of Khazad-dum from dragons, 
