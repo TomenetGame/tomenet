@@ -76,9 +76,11 @@ int local_file_err(int ind, unsigned short fnum){
 /* initialise an file to send */
 int local_file_send(int ind, char *fname){
 	int num, fd;
+	char buf[1024];
 	num=getfile(ind, 0);
 	if(num==-1) return(0);
-	fd=open(fname, O_RDONLY);
+	path_build(buf, 1024, ANGBAND_DIR, fname);
+	fd=open(buf, O_RDONLY);
 	if(fd==-1) return(0);
 	fdata[num].fd=fd;
 	fdata[num].ind=ind;
@@ -174,7 +176,7 @@ int mkstemp(char *template)
 /* Open file for receive/writing */
 int local_file_init(int ind, unsigned short fnum, char *fname){
 	int num;
-	char tname[30]="/tmp/tomexfer.XXXX";
+	char tname[30]="/tmp/tomexfer.XXXXXX";
 	num=getfile(ind, 0);		/* get empty space */
 	if(num==-1) return(0);
 
