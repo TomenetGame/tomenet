@@ -1885,6 +1885,7 @@ void process_pending_commands(int ind)
 	while ((connp->r.ptr < connp->r.buf + connp->r.len))
 	{
 		type = (connp->r.ptr[0] & 0xFF);
+		if(type != PKT_KEEPALIVE) connp->inactive=0;
 		result = (*receive_tbl[type])(ind);
 		if (connp->state == CONN_PLAYING)
 		{
@@ -4226,9 +4227,10 @@ int Send_monster_health(int ind, int num, byte attr)
 // This does absolutly nothing other than keep our connection active.
 static int Receive_keepalive(int ind)
 {
-	int n;
+	int n, Ind;
 	connection_t *connp = &Conn[ind];
 	char ch;
+	player_type *p_ptr;
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
 	{
@@ -4236,6 +4238,17 @@ static int Receive_keepalive(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+	/* If client has not been hacked, this should set AFK after 1 minute
+	   of no activity. */
+	if(connp->id != -1){
+		Ind=GetInd[connp->id];
+		p_ptr=Players[Ind];
+		if(!p_ptr->afk){			/* dont oscillate ;) */
+			if(++connp->inactive>45)	/* auto AFK timer (>1.5 min) */
+				toggle_afk(Ind);
+		}
+	}
+
 	return 2;
 }
 

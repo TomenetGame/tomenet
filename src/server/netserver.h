@@ -56,6 +56,7 @@ typedef struct {
 	char		*addr;
 	char		*host;
 	char		*pass;
+	byte		inactive;
 	int		race;
 	int		class;
 	int		sex;
