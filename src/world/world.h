@@ -27,9 +27,13 @@ struct client{
 	char buf[1024];
 };
 
+/* The structures of these packets will be
+   changed when we merge data */
+
 struct player{
 	unsigned long id;	/* UNIQUE player id */
 	char name[30];
+	unsigned char silent;	/* Left due to death for instance */
 };
 
 struct chat{
