@@ -7434,6 +7434,8 @@ void Handle_item(int Ind, int item)
 bool player_is_king(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+
+	return FALSE;
 	
 	if (p_ptr->total_winner && ((p_ptr->own1 == p_ptr->dun_depth) || (p_ptr->own2 == p_ptr->dun_depth)))
 	{
