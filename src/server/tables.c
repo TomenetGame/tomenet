@@ -1785,6 +1785,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,
                         },
+                        {
+                                SKILL_DODGE,
+                                '+', 0,
+                                '+', 500,
+                        },
 
                         /* Necromancy tree */
                         {
@@ -1917,6 +1922,12 @@ player_class class_info[MAX_CLASS] =
                                 '+', 500,
                         },
                         {
+                                SKILL_DODGE,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+
+                        {
                                 SKILL_ANTIMAGIC,
                                 '+', 0,
                                 '+', 600,
@@ -2003,6 +2014,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
                         {
+                                SKILL_DODGE,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
                                 SKILL_CALMNESS,
                                 '+', 0,
                                 '+', 500,
@@ -2073,6 +2089,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_STEALTH,
                                 '+', 0,
                                 '+', 700,
+                        },
+                        {
+                                SKILL_DODGE,
+                                '+', 0,
+                                '+', 500,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -2171,6 +2192,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                         },
                         {
+                                SKILL_DODGE,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
                                 SKILL_AGILITY,
                                 '+', 1000,
                                 '+', 350,
@@ -2247,6 +2273,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
                         {
+                                SKILL_DODGE,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
                                 SKILL_TRAINING,
                                 '+', 3000,
                                 '+', 1000,
@@ -2321,6 +2352,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_DISARM,
                                 '+', 500,
                                 '+', 500,
+                        },
+                        {
+                                SKILL_DODGE,
+                                '+', 1000,
+                                '+', 1000,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -4850,7 +4886,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Boomerang-mastery",
-                "Ability to use (and not to destroy) boomerang.",
+                "Ability to use (and not to destroy) boomerangs.",
 
                 /* Mkey desc/mkey */
                 NULL,
@@ -4908,6 +4944,26 @@ skill_type s_info[MAX_SKILLS] =
                 /* Flags */
                 0,
         },
+        {
+                "Dodging",
+				"Ability to dodge blows and bolts.\nYou cannot dodge very well with heavy armour!",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
 };
 
 /*
@@ -4948,6 +5004,7 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_SNEAKINESS, SKILL_DISARM },
         { SKILL_SNEAKINESS, SKILL_STEALING },
         { SKILL_SNEAKINESS, SKILL_BACKSTAB },
+        { SKILL_SNEAKINESS, SKILL_DODGE },
 
         { -1, SKILL_NECROMANCY },
         { SKILL_NECROMANCY, SKILL_AURA_POWER },

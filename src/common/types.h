@@ -2096,6 +2096,7 @@ struct player_type
         s16b to_l;                      /* Bonus to life */
         s16b to_m;                      /* Bonus to mana */
 //        s16b to_s;                      /* Bonus to spell(num_spell) */
+        s16b dodge_chance;                      /* Bonus to mana */
 
 };
 

@@ -134,7 +134,9 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 	for (i = 0; i < 9; i++)
 	{
 		/* Look for "okay" spells */
-		if (spell_info[realm][sval][i][0])
+		if (spell_info[realm][sval][i][0] &&
+				/* Hack -- This presumes the spells are sorted by level */
+				!strstr(spell_info[realm][sval][i],"unknown"))
 //		if (spell_info[realm][book][i])
 		/* quite a hack.. FIXME */
 //		if (!spell_info[realm][book][i][0])

@@ -1138,9 +1138,15 @@ To find the latest change quickly, search ==== :)
 [B] 'n' and 'p' didn't work well in the skill screen (common with ToME)
 [C] 'c' and 'o' key available in skill screen (for quick browsing)
 
+24/06/2002 (Jir)
+[P] SKILL_DODGE
+
 24/06/2002
 [C]- .mangrc changed to .tomenetrc
 [C]- Chardump ability in the char screen
+
+
+
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
@@ -1156,6 +1162,7 @@ concisely: what's hot now?
 - skill system
   + SKILL_CLIMB
   + spell_info should be redone
+  + bare-handed combat?
 - LUA hook
 - csfunc
 - alignment (let's wait for EE :)

@@ -937,7 +937,7 @@ bool monst_check_grab(int m_idx, cptr desc)
 		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 80);
 
 		/* Apply Martial-arts bonus */
-		if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(i)
+		if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(q_ptr)
 				&& !q_ptr->inventory[INVEN_WIELD].k_idx)
 			grabchance += get_skill_scale(q_ptr, SKILL_MARTIAL_ARTS, 50);
 

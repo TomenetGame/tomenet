@@ -240,8 +240,16 @@ bool make_attack_normal(int Ind, int m_idx)
 		/* Monster hits player */
 		if (!effect || check_hit(Ind, power, rlev))
 		{
+			int chance = p_ptr->dodge_chance - ((rlev * 5) / 6);
+
 			/* Always disturbing */
 			disturb(Ind, 1, 0);
+
+			if ((chance > 0) && magik(chance))
+			{
+				msg_format(Ind, "You dodge %s attack!", m_name);
+				continue;
+			}
 
 
 			/* Hack -- Apply "protection from evil" */

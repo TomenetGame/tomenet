@@ -4841,6 +4841,20 @@ extern int PlayerUID;
 		p_ptr->inventory[INVEN_TOOL].tval == TV_TOOL ? \
 		p_ptr->inventory[INVEN_TOOL].sval : -1)
 
+#define armour_weight(p_ptr) \
+	( p_ptr->inventory[INVEN_BODY].weight \
+	+ p_ptr->inventory[INVEN_HEAD].weight \
+	+ p_ptr->inventory[INVEN_ARM].weight \
+	+ p_ptr->inventory[INVEN_OUTER].weight \
+	+ p_ptr->inventory[INVEN_HANDS].weight \
+	+ p_ptr->inventory[INVEN_FEET].weight)
+
+#define monk_heavy_armor(p_ptr) \
+	(get_skill(p_ptr, SKILL_MARTIAL_ARTS) && \
+	 armour_weight(p_ptr) > \
+	 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 100))
+
+
 /* replacement of helper functions in cave.c */
 /* prolly compilers will do this job anyway..? */
 #define level_speed(wpos) \
@@ -4979,6 +4993,7 @@ extern int PlayerUID;
 #define SKILL_BOOMERANG			39
 #define SKILL_TRAINING			40
 #define SKILL_INTERCEPT			41
+#define SKILL_DODGE				42
 
 #if 0	// skills to come	- Jir -
 #define SKILL_CLIMB

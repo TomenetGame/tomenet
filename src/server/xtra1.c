@@ -16,6 +16,11 @@
 #include "angband.h"
 
 
+/*
+ * Modifier for martial-arts AC bonus; it's needed to balance martial-arts
+ * and dodging skills. in percent. [50]
+ */
+#define MARTIAL_ARTS_AC_ADJUST	50
 
 
 /*
@@ -1607,28 +1612,32 @@ void calc_body_bonus(int Ind)
 	Send_spell_info(Ind, 0, 0, 0, "nothing");
 }
 
-
+#if 0	// moved to defines.h
 bool monk_heavy_armor(int Ind)
 {
 #if 1 // DGDGDGDG -- no more monks for the time being
-        player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind];
 	u16b monk_arm_wgt = 0;
 
 //	if (!(p_ptr->pclass == CLASS_MONK)) return FALSE;
 	if (!get_skill(p_ptr, SKILL_MARTIAL_ARTS)) return FALSE;
 
 	/* Weight the armor */
+	monk_arm_wgt = armour_weight(p_ptr);
+#if 0
 	monk_arm_wgt += p_ptr->inventory[INVEN_BODY].weight;
 	monk_arm_wgt += p_ptr->inventory[INVEN_HEAD].weight;
 	monk_arm_wgt += p_ptr->inventory[INVEN_ARM].weight;
 	monk_arm_wgt += p_ptr->inventory[INVEN_OUTER].weight;
 	monk_arm_wgt += p_ptr->inventory[INVEN_HANDS].weight;
 	monk_arm_wgt += p_ptr->inventory[INVEN_FEET].weight;
+#endif	// 0
 
 //	return (monk_arm_wgt > ( 100 + (p_ptr->lev * 4))) ;
 	return (monk_arm_wgt > 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 100));
 #endif
 }
+#endif	// 0
 
 /* Are all the weapons wielded of the right type ? */
 int get_weaponmastery_skill(player_type *p_ptr)
@@ -1839,6 +1848,7 @@ static void calc_bonuses(int Ind)
 	p_ptr->antimagic = 0;
 	p_ptr->antimagic_dis = 0;
 	p_ptr->xtra_crit = 0;
+	p_ptr->dodge_chance = 0;
 
 	p_ptr->sensible_fire = FALSE;
 
@@ -1991,7 +2001,7 @@ static void calc_bonuses(int Ind)
 			break;
 	}
 #else	// 0
-	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(Ind))
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(p_ptr))
 	{
 		p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
 
@@ -2461,39 +2471,39 @@ static void calc_bonuses(int Ind)
 #if 1 // DGDGDGDGDG - no monks ffor the time being
 	/* Monks get extra ac for armour _not worn_ */
 //	if ((p_ptr->pclass == CLASS_MONK) && !(monk_heavy_armor(Ind)))
-	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !(monk_heavy_armor(Ind)) &&
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !(monk_heavy_armor(p_ptr)) &&
 		!(p_ptr->inventory[INVEN_BOW].k_idx))
 	{
 		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
 		if (!(p_ptr->inventory[INVEN_BODY].k_idx))
 		{
-			p_ptr->to_a += (marts * 3) / 2;
-			p_ptr->dis_to_a += (marts * 3) / 2;
+			p_ptr->to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
+			p_ptr->dis_to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
 		}
 		if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15))
 		{
-			p_ptr->to_a += ((marts - 13) / 3);
-			p_ptr->dis_to_a += ((marts - 13) / 3);
+			p_ptr->to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			p_ptr->dis_to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
 		}
 		if (!(p_ptr->inventory[INVEN_ARM].k_idx) && (marts > 10))
 		{
-			p_ptr->to_a += ((marts - 8) / 3);
-			p_ptr->dis_to_a += ((marts - 8) / 3);
+			p_ptr->to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			p_ptr->dis_to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
 		}
 		if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4))
 		{
-			p_ptr->to_a += (marts - 2) / 3;
-			p_ptr->dis_to_a += (marts -2) / 3;
+			p_ptr->to_a += (marts - 2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
+			p_ptr->dis_to_a += (marts -2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
 		}
 		if (!(p_ptr->inventory[INVEN_HANDS].k_idx))
 		{
-			p_ptr->to_a += (marts / 2);
-			p_ptr->dis_to_a += (marts / 2);
+			p_ptr->to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
+			p_ptr->dis_to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
 		}
 		if (!(p_ptr->inventory[INVEN_FEET].k_idx))
 		{
-			p_ptr->to_a += (marts / 3);
-			p_ptr->dis_to_a += (marts / 3);
+			p_ptr->to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			p_ptr->dis_to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
 		}
 	}
 #endif
@@ -2927,11 +2937,11 @@ static void calc_bonuses(int Ind)
 		if (marts > 44) p_ptr->num_blow++;
 		if (marts > 49) p_ptr->num_blow++;
 
-		if (monk_heavy_armor(Ind)) p_ptr->num_blow /= 2;
+		if (monk_heavy_armor(p_ptr)) p_ptr->num_blow /= 2;
 
 		p_ptr->num_blow += 1 + extra_blows;
 
-		if (!monk_heavy_armor(Ind))
+		if (!monk_heavy_armor(p_ptr))
 		{
 			p_ptr->to_h += (marts / 3);
 			p_ptr->to_d += (marts / 3);
@@ -2952,6 +2962,24 @@ static void calc_bonuses(int Ind)
 
                 p_ptr->to_d += lev;
                 p_ptr->dis_to_d += lev;
+	}
+
+	if (get_skill(p_ptr, SKILL_DODGE))
+	{
+		/* Get the armor weight */
+		int cur_wgt = armour_weight(p_ptr);
+
+		/* Base dodge chance */
+		p_ptr->dodge_chance = get_skill_scale(p_ptr, SKILL_DODGE, 150);
+
+		/* Armor weight bonus/penalty */
+		p_ptr->dodge_chance -= cur_wgt * 2;
+
+		/* Encumberance bonus/penalty */
+		p_ptr->dodge_chance = p_ptr->dodge_chance - (p_ptr->total_weight / 100);
+
+		/* Never below 0 */
+		if (p_ptr->dodge_chance < 0) p_ptr->dodge_chance = 0;
 	}
 
 	/* Assume okay */

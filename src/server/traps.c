@@ -993,6 +993,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 	object_type *o_ptr, forge;
 	s16b        i, deflect = 0, k_idx = lookup_kind(tval, sval);
 	char        i_name[80];
+	int	dodge = p_ptr->dodge_chance - (dd * ds) / 2;
 
 	o_ptr = &forge;
 	invcopy(o_ptr, k_idx);
@@ -1013,8 +1014,16 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		if (p_ptr->reflect && magik(50))
 		{
 			deflect++;
+			msg_print(Ind, "You deflect the attack!");
 			continue;
 		}
+		if ((dodge > 0) && magik(dodge))
+		{
+			msg_print(Ind, "You dodge the attack!");
+			continue;
+		}
+
+		msg_print(Ind, "You are hit!");
 		take_hit(Ind, damroll(dd, ds), name);
 		redraw_stuff(Ind);
 		if (pdam > 0)
@@ -1026,9 +1035,11 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		}
 	}
 
+#if 0
 	if (deflect && !p_ptr->death)
 		msg_format(Ind, "You %s deflect the attack%s!", (deflect == num) ?
 				"completely" : "partially", (num > 1) ? "s" : "");
+#endif	// 0
 
 	drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 

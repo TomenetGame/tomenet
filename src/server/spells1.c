@@ -4892,6 +4892,36 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (who <= 0 && who >= PROJECTOR_UNUSUAL) return (FALSE);
 #endif
 
+	/* Bolt attack from a monster, a player or a trap */
+//	if ((!rad) && get_skill(p_ptr, SKILL_DODGE) && (who > 0))
+	if (get_skill(p_ptr, SKILL_DODGE))
+	{
+		if ((!rad) && (who > PROJECTOR_POTION))
+		{
+			//		int chance = (p_ptr->dodge_chance - ((r_info[who].level * 5) / 6)) / 3;
+			/* Hack -- let's use 'dam' for now */
+			int chance = (p_ptr->dodge_chance - dam / 6) / 3;
+
+			if ((chance > 0) && magik(chance))
+			{
+				msg_print(Ind, "You dodge a magical attack!");
+				return (TRUE);
+			}
+		}
+		/* MEGAHACK -- allow to dodge 'bolt' traps */
+		else if ((rad < 2) && (who == PROJECTOR_TRAP))
+		{
+			/* Hack -- let's use 'dam' for now */
+			int chance = (p_ptr->dodge_chance - dam / 4) / 4;
+
+			if ((chance > 0) && magik(chance))
+			{
+				msg_print(Ind, "You dodge a magical attack!");
+				return (TRUE);
+			}
+		}
+	}
+
 	/* Reflection */
 #if 0
         /* Effects done by the plane cannot bounce */
