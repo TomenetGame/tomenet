@@ -754,7 +754,10 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		if (p_ptr->store_num == 6) price = price / 4;
 
 		/* To prevent cheezing */
-		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) price = 100;
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)){
+			price = 100;
+			if(o_ptr->pval==0) o_ptr->level=0;
+		}
 	}
 
 	/* Shop is selling */
