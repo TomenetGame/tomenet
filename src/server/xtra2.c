@@ -4204,7 +4204,6 @@ void player_death(int Ind)
 #endif	// TOMENET_WORLDS
 			msg_broadcast(Ind, buf);
 		}
-		if(!p_ptr->ghost) Send_chardump(Ind);
 
 		/* wipe artifacts (s)he had */
 		for (i = 0; i < INVEN_TOTAL; i++)
