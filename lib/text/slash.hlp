@@ -63,8 +63,11 @@ Note:
 /feeling {shorthand: /fe}
     Displays the feeling of the floor you are on.
 
-/help {alias: /? shorthand: /h}
+/help {alias: /? shorthand: /he}
     Displays this help file.
+
+/house {shorthand: /ho}
+    Displays the list of houses into which you are allowed to enter.
 
 /ignore (player name) {shorthand: /ig} 
     Toggle 'ignore' mode on/off for specified player/party.

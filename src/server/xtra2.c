@@ -4120,11 +4120,25 @@ void player_death(int Ind)
 		p_ptr->mhp = (p_ptr->player_hp[p_ptr->lev-1] / 4) + (((adj_con_mhp[p_ptr->stat_ind[A_CON]]) - 128) * p_ptr->lev);
 		p_ptr->chp = p_ptr->mhp;
 		p_ptr->chp_frac = 0;
+		p_ptr->fruit_bat = 2;
 	}
 	else
 	{
+		/* Cure him from various maladies */
+		p_ptr->black_breath = FALSE;
+		if (p_ptr->image) (void)set_image(Ind, 0);
+		if (p_ptr->blind) (void)set_blind(Ind, 0);
+		if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
+		if (p_ptr->confused) (void)set_confused(Ind, 0);
+		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0);
+		if (p_ptr->stun) (void)set_stun(Ind, 0);
+		if (p_ptr->cut) (void)set_cut(Ind, 0);
+		//	if (p_ptr->fruit_bat != -1) (void)set_food(Ind, PY_FOOD_MAX - 1);
+		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
 		/* Tell him */
+			msg_print(Ind, "\377RYou die.");
+//			msg_print(Ind, NULL);
 		msg_format(Ind, "\377RYou have been killed by %s.", p_ptr->died_from);
 
 #if CHATTERBOX_LEVEL > 2
@@ -4168,17 +4182,6 @@ void player_death(int Ind)
 	
 	
 	
-	/* Cure him from various maladies */
-	p_ptr->black_breath = FALSE;
-	if (p_ptr->image) (void)set_image(Ind, 0);
-	if (p_ptr->blind) (void)set_blind(Ind, 0);
-	if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
-	if (p_ptr->confused) (void)set_confused(Ind, 0);
-	if (p_ptr->poisoned) (void)set_poisoned(Ind, 0);
-	if (p_ptr->stun) (void)set_stun(Ind, 0);
-	if (p_ptr->cut) (void)set_cut(Ind, 0);
-	if (p_ptr->fruit_bat != -1) (void)set_food(Ind, PY_FOOD_MAX - 1);
-	else p_ptr->fruit_bat = 2;
 	/* Remove the death flag */
 	p_ptr->death = 0;
 

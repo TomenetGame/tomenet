@@ -2331,7 +2331,7 @@ static int Receive_play(int ind)
 	{
 	  //		errno = 0;
 #if DEBUG_LEVEL > 1
-#if DEBUG_LEVEL > 2
+#if DEBUG_LEVEL < 3
 		if (ch != PKT_KEEPALIVE)
 #endif	// DEBUG_LEVEL(2)
 			plog(format("Packet is not of play type (%d)", ch));

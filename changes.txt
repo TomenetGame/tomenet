@@ -1236,6 +1236,11 @@ To find the latest change quickly, search ==== :)
 [B] pet attacked its master.
 [B] couldn't establish a connection due to too large packet size.
 
+06/07/2002 (Jir)
+- user command: /house
+- house door colouring
+[H] order of death msgs rearranged ("You're full!" no longer is last word)
+
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
@@ -1245,6 +1250,7 @@ To find the latest change quickly, search ==== :)
 =============================================================================
 things to do before 4.0.0
 
+- backport ToME spells!
 - implement guest-account
 - rebalance skill-points
 - devise a nice way to control ego-item generation w/o luck
@@ -1261,7 +1267,6 @@ things to do before 4.0.0
 =============================================================================
 concisely: what's hot now?
 
-- new spells!
 - multiple-dungeons stuff
   + we should preserve level_up_y etc. for manually-added dungeons/towers.
 - quest system
@@ -1564,6 +1569,7 @@ memo and questions:
     and the client just displays it and send the answer back.
   - another solution is to put those things in a file like plug-ins.
 - resurrect 'targetting cursor'
+- write gaming options changed by '=' to the local pref files.
 
 [lunatic ones]
 - 3-D gfx and full-audio support

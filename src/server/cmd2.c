@@ -3742,7 +3742,8 @@ void do_cmd_purchase_house(int Ind, int dir)
 	int y, x;
 	int factor;
 //	int64_t price; /* I'm hoping this will be 64 bits.  I dont know if it will be portable. */
-	s64b price;
+//	s64b price;
+	u32b price;
 
 	cave_type *c_ptr;
 	struct dna_type *dna;
@@ -3781,14 +3782,11 @@ void do_cmd_purchase_house(int Ind, int dir)
 		dna=c_ptr->special.sc.ptr;
 		/* Take player's CHR into account */
 		factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
-#if 0
-		if (houses[i].price < 3000000)
-#endif
-		price = dna->price * factor / 100;
-		/* Hack -- ignore CHR to prevent overflow */
-#if 0
-		else price = houses[i].price;
-#endif
+
+		/* Let's simply omit the fractions	- Jir - */
+		price = dna->price / 100 * factor;
+		if (price < 100) price = 100;
+//		price = dna->price * factor / 100;
 
 		/* Check for already-owned house */
 		if(dna->owner){

@@ -2986,150 +2986,24 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 
 				/* Monster and/or object */
 				case ',':
-				if (rand_int(100) < 50)
+				if (magik(50))
 				{
 					monster_level = lev + 3;
 					place_monster(wpos, y, x, TRUE, TRUE);
 					monster_level = lev;
 				}
-				if (rand_int(100) < 50)
+				if (magik(50))
 				{
 					object_level = lev + 7;
 					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
 					object_level = lev;
 				}
+				if (magik(50)) place_trap(wpos, y, x, 0);
 				break;
 			}
 		}
 	}
 
-#if 0	// why 2 phases??
-	/* Place dungeon monsters and objects */
-	for (t = data, dy = 0; dy < ymax; dy++)
-	{
-		for (dx = 0; dx < xmax; dx++, t++)
-		{
-			/* Extract the grid */
-			x = xval - (xmax/2) + dx;
-			y = yval - (ymax/2) + dy;
-
-			/* FIXME - find a better solution */
-			if(!in_bounds(y,x))
-				continue;
-
-			/* Hack -- skip "non-grids" */
-			if (*t == ' ') continue;
-
-			/* Analyze the symbol */
-			switch (*t)
-			{
-#ifdef NEW_DUNGEON
-				/* Monster */
-				case '&':
-				monster_level = lev + 5;
-				place_monster(wpos, y, x, TRUE, TRUE);
-				monster_level = lev;
-				break;
-
-				/* Meaner monster */
-				case '@':
-				monster_level = lev + 11;
-				place_monster(wpos, y, x, TRUE, TRUE);
-				monster_level = lev;
-				break;
-
-				/* Meaner monster, plus treasure */
-				case '9':
-				monster_level = lev + 9;
-				place_monster(wpos, y, x, TRUE, TRUE);
-				monster_level = lev;
-				object_level = lev + 7;
-				place_object(wpos, y, x, TRUE, FALSE);
-				object_level = lev;
-				if (magik(40)) place_trap(wpos, y, x, 0);
-				break;
-
-				/* Nasty monster and treasure */
-				case '8':
-				monster_level = lev + 40;
-				place_monster(wpos, y, x, TRUE, TRUE);
-				monster_level = lev;
-				object_level = lev + 20;
-				place_object(wpos, y, x, TRUE, TRUE);
-				object_level = lev;
-				if (magik(80)) place_trap(wpos, y, x, 0);
-				break;
-
-				/* Monster and/or object */
-				case ',':
-				if (rand_int(100) < 50)
-				{
-					monster_level = lev + 3;
-					place_monster(wpos, y, x, TRUE, TRUE);
-					monster_level = lev;
-				}
-				if (rand_int(100) < 50)
-				{
-					object_level = lev + 7;
-					place_object(wpos, y, x, FALSE, FALSE);
-					object_level = lev;
-				}
-				break;
-#else
-				/* Monster */
-				case '&':
-				monster_level = Depth + 5;
-				place_monster(Depth, y, x, TRUE, TRUE);
-				monster_level = Depth;
-				break;
-
-				/* Meaner monster */
-				case '@':
-				monster_level = Depth + 11;
-				place_monster(Depth, y, x, TRUE, TRUE);
-				monster_level = Depth;
-				break;
-
-				/* Meaner monster, plus treasure */
-				case '9':
-				monster_level = Depth + 9;
-				place_monster(Depth, y, x, TRUE, TRUE);
-				monster_level = Depth;
-				object_level = Depth + 7;
-				place_object(Depth, y, x, TRUE, FALSE);
-				object_level = Depth;
-				break;
-
-				/* Nasty monster and treasure */
-				case '8':
-				monster_level = Depth + 40;
-				place_monster(Depth, y, x, TRUE, TRUE);
-				monster_level = Depth;
-				object_level = Depth + 20;
-				place_object(Depth, y, x, TRUE, TRUE);
-				object_level = Depth;
-				break;
-
-				/* Monster and/or object */
-				case ',':
-				if (rand_int(100) < 50)
-				{
-					monster_level = Depth + 3;
-					place_monster(Depth, y, x, TRUE, TRUE);
-					monster_level = Depth;
-				}
-				if (rand_int(100) < 50)
-				{
-					object_level = Depth + 7;
-					place_object(Depth, y, x, FALSE, FALSE);
-					object_level = Depth;
-				}
-				break;
-#endif
-			}
-		}
-	}
-#endif	// 0
 
 	/* Reproduce itself */
 	/* TODO: make a better routine! */

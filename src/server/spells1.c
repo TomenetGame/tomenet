@@ -1115,8 +1115,10 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		}
 		else{
 			/* Only mention death if not BB! */
+#if 0
 			msg_print(Ind, "\377RYou die.");
 			msg_print(Ind, NULL);
+#endif	// 0
 		}
 
 		/* Note cause of death */

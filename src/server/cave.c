@@ -1268,6 +1268,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					}
 				}
 			}
+			/* Hack -- gee it's great to be back home */
+			else if ((c_ptr->special.type == DNA_DOOR) )
+			{
+				if(access_door(Ind, c_ptr->special.sc.ptr))
+				{
+					a = TERM_L_GREEN;
+				}
+			}
 
 			/* Special lighting effects */
 			if (p_ptr->view_granite_lite && (a == TERM_WHITE) && (feat >= FEAT_SECRET))

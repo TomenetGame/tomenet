@@ -1937,6 +1937,148 @@ static void do_show_monster_killed_letter(int Ind, char *letter)
 	Send_special_other(Ind);
 }
 
+/* Tell the player of her/his houses.	- Jir - */
+static void do_show_houses(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	house_type *h_ptr;
+	struct dna_type *dna;
+	cptr name;
+
+	int		i, j, num, total = 0;
+	bool	shown = FALSE;
+	bool	admin = is_admin(p_ptr);
+
+	FILE *fff;
+
+	/* Paranoia */
+	// if (!letter) return;
+
+	/* Open a new file */
+	fff = my_fopen(p_ptr->infofile, "w");
+
+	/* Current file viewing */
+	strcpy(p_ptr->cur_file, p_ptr->infofile);
+
+	/* Let the player scroll through the info */
+	p_ptr->special_file_type = TRUE;
+
+
+	/* Output color byte */
+//	fprintf(fff, "%c", 'G');
+
+	fprintf(fff, "======== House List ========\n");
+
+	for(i=0;i<num_houses;i++)
+	{
+		//				if(!houses[i].dna->owner) continue;
+		//				if(!admin && houses[i].dna->owner != p_ptr->id) continue;
+		h_ptr = &houses[i];
+		dna = h_ptr->dna;
+
+		if (!access_door(Ind, h_ptr->dna)) continue;
+
+		shown = TRUE;
+		total++;
+
+		fprintf(fff, "%d)   [%d,%d] in %s", total,
+				h_ptr->dy * 5 / MAX_HGT, h_ptr->dx * 5 / MAX_WID,
+				wpos_format(&h_ptr->wpos));
+//				h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
+
+		if (dna->creator == p_ptr->dna)
+		{
+			/* Take player's CHR into account */
+			int factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
+			int price = dna->price / 100 * factor;
+
+			if (price < 100) price = 100;
+			fprintf(fff, "  %dau", price / 2);
+		}
+
+		if (admin)
+		{
+#if 0
+			name = lookup_player_name(houses[i].dna->creator);
+			if (name) fprintf(fff, "  Creator:%s", name);
+			else fprintf(fff, "  Dead's. ID: %d", dna->creator);
+#endif	// 0
+			name = lookup_player_name(houses[i].dna->owner);
+			if (name) fprintf(fff, "  Owner:%s", name);
+			else fprintf(fff, "  ID: %d", dna->owner);
+		}
+
+#if 1
+		switch(dna->owner_type)
+		{
+			case OT_PLAYER:
+#if 0
+				if (dna->owner == dna->creator) break;
+				name = lookup_player_name(dna->owner);
+				if (name)
+				{
+					fprintf(fff, "  Legal owner:%s", name);
+				}
+#endif	// 0
+#if 0	// nothig so far.
+				else
+				{
+					s_printf("Found old player houses. ID: %d\n", houses[i].dna->owner);
+					kill_houses(houses[i].dna->owner, OT_PLAYER);
+				}
+#endif	// 0
+				break;
+
+			case OT_PARTY:
+				name = parties[dna->owner].name;
+				if(strlen(name))
+				{
+					fprintf(fff, "  as %s", name);
+				}
+#if 0	// nothig so far.
+				else
+				{
+					s_printf("Found old party houses. ID: %d\n", houses[i].dna->owner);
+					kill_houses(houses[i].dna->owner, OT_PARTY);
+				}
+#endif	// 0
+				break;
+			case OT_CLASS:
+				name = class_info[dna->owner].title;
+				if(strlen(name))
+				{
+					fprintf(fff, "  as %s", name);
+				}
+				break;
+			case OT_RACE:
+				name = race_info[dna->owner].title;
+				if(strlen(name))
+				{
+					fprintf(fff, "  as %s", name);
+				}
+				break;
+			case OT_GUILD:
+				name = guilds[dna->owner].name;
+				if(strlen(name))
+				{
+					fprintf(fff, "  as %s", name);
+				}
+				break;
+		}
+#endif	// 0
+
+		fprintf(fff, "\n");
+	}
+
+	if (!shown) fprintf(fff, "You're homeless for now.\n");
+//	else fprintf(fff, "\nTotal : %d\n", total);
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Let the client know to expect some info */
+	Send_special_other(Ind);
+}
 
 /* Takes a trap name and returns an index, or 0 if no such trap
  * was found. (NOT working!)
@@ -2004,8 +2146,8 @@ static void do_slash_brief_help(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 
-	msg_print(Ind, "Commands: afk at bed bug cast dis dress ex feel help ignore less me monster");	// pet ?
-	msg_print(Ind, "  news pk quest rec ref rfe shout tag target untag ver;");
+	msg_print(Ind, "Commands: afk at bed bug cast dis dress ex feel help house ignore less me");	// pet ?
+	msg_print(Ind, "  monster news pk quest rec ref rfe shout tag target untag ver;");
 
 	if (is_admin(p_ptr))
 	{
@@ -2736,7 +2878,7 @@ static void do_slash_cmd(int Ind, char *message)
 			return;
 		}
 		else if (prefix(message, "/help") ||
-				prefix(message, "/h") ||
+				prefix(message, "/he") ||
 				prefix(message, "/?"))
 		{
 			char    path[MAX_PATH_LENGTH];
@@ -2929,6 +3071,12 @@ static void do_slash_cmd(int Ind, char *message)
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+			return;
+		}
+		else if (prefix(message, "/house") ||
+				prefix(message, "/ho"))
+		{
+			do_show_houses(Ind);
 			return;
 		}
 
