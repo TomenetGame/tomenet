@@ -26,7 +26,7 @@ void do_cmd_messages(void)
 	char finder[80] = "";
 
 	cptr message_recall[MESSAGE_MAX] = {0};
-	cptr msg, msg2;
+	cptr msg = "", msg2;
 
 	/* Display messages in different colors -Zz */
 	char nameA[20];
@@ -554,5 +554,108 @@ void do_cmd_messages_chatonly(void)
 
 	/* Flush any queued events */
 	Flush_queue();
+}
+
+/*
+ * dump message history to a file.	- Jir -
+ *
+ * XXX The beginning of dump can be corrupted. FIXME
+ */
+void dump_messages(FILE *fff, int lines)
+{
+	int i, j, k, n, nn, q, r, s, t=0;
+
+	cptr message_recall[MESSAGE_MAX] = {0};
+	cptr msg = "", msg2;
+
+	cptr nomsg_target = "Target Selected.";
+	cptr nomsg_map = "Map sector ";
+
+	char buf[160];
+
+	/* Total messages */
+	n = message_num();
+	nn = 0;  // number of new messages
+
+	/* Filter message buffer for "unimportant messages" add to message_recall
+	 * "Target Selected" messages are too much clutter for archers to remove 
+	 * from msg recall
+	 */
+
+	j = 0;
+	msg = NULL;
+	for (i = 0; i < n; i++)
+	{
+		msg = message_str(i);
+
+		if (strstr(msg, nomsg_target) ||
+				strstr(msg, nomsg_map))
+			continue;	
+
+		message_recall[nn] = msg;	
+		nn++;
+	}
+
+
+	/* Start on first message */
+	//	i = 0;
+	i = nn - lines;
+	if (i < 0) i = 0;
+
+	/* Start at leftmost edge */
+	q = 0;
+
+	/* Save the screen */
+	//	Term_save();
+
+	n = nn;  // new total # of messages in our new array
+	r = 0;	// how many times the message is Repeated
+	s = 0;	// how many lines Saved
+	k = 0;	// end of buffer flag
+
+
+	/* Dump up to 20 lines of messages */
+//	for (j = 0; i + j + s < n; j++)
+	for (j = 0; j + s < MIN(n, lines); j++)
+	{
+		byte a = TERM_WHITE;
+
+		msg2 = msg;
+//		msg = message_recall[i+j+s];
+		msg = message_recall[MIN(n, lines) - (j+s) - 1];
+
+		/* Handle repeated messages */
+		if (msg == msg2)
+		{
+			r++;
+			j--;
+			s++;
+//			if (i + j + s < n - 1) continue;
+			if (j + s < MIN(n, lines) - 1) continue;
+			k = 1;
+		}
+
+		if (r)
+		{
+			fprintf(fff, " (x%d)", r + 1);
+			r = 0;
+		}
+
+		fprintf(fff, "\n");
+		
+		if (k) break;
+
+		strcpy(buf, msg);
+
+		/* XXX Erase '\377' */
+		for(t=0;t<strlen(buf);t++){
+			if(buf[t]=='\377') buf[t]='{';
+		}
+
+		/* Dump the messages, bottom to top */
+//		fprintf(fff, "%s%s\n", buf, r ? format(" (x%d)", r + 1) : "");
+		fprintf(fff, buf);
+	}
+	fprintf(fff, "\n\n");
 }
 

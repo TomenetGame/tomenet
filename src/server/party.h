@@ -1,3 +1,4 @@
+/* $Id$ */
 /* party.h - evileye*/
 /* The struct to hold a data entry */
 

@@ -735,7 +735,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 
 	/* Cannot remove cursed items */
-	if (cursed_p(o_ptr))
+	if (cursed_p(o_ptr) && !p_ptr->admin_dm)	/* Hack -- DM can */
 	{
 		if ((item >= INVEN_WIELD) )
 		{

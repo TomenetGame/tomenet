@@ -195,6 +195,7 @@ void print_desc_aux(cptr txt, int y, int xx)
  * Dump the skill tree
  */
 void dump_skills(FILE *fff)
+#if 0
 {
 	int i, j, max = 0;
 	int table[MAX_SKILLS][2];
@@ -237,6 +238,56 @@ void dump_skills(FILE *fff)
 
 	fprintf(fff, "\n");
 }
+#else	// 0
+{
+	int i, j, max = 0;
+	int table[MAX_SKILLS][2];
+	char buf[80];
+
+	init_table(table, &max, TRUE);
+
+	Term_clear();
+
+	fprintf(fff, "\nSkills (points left: %d)", p_ptr->skill_points);
+
+	for (j = 0; j < max; j++)
+	{
+		int z;
+
+		i = table[j][0];
+
+		/* XXX this causes strange dump when one has SKILL_DEVICE and not
+		 * SKILL_MAGIC, for example.
+		 * We should make sure the skill doesn't have 'valid' children!
+		 */
+		if ((p_ptr->s_info[i].value == 0) && (i != SKILL_MISC))
+		{
+			if (p_ptr->s_info[i].mod == 0) continue;
+		}
+
+//		sprintf(buf, "\n");
+		fprintf(fff, "\n");
+		sprintf(buf, "");
+
+		for (z = 0; z < table[j][1]; z++) strcat(buf, "    ");
+
+		if (!has_child(i))
+		{
+			strcat(buf, format(" . %s", s_info[i].name));
+		}
+		else
+		{
+			strcat(buf, format(" - %s", s_info[i].name));
+		}
+
+		fprintf(fff, "%-50s%02ld.%03ld [%01d.%03d]",
+		        buf, p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
+		        p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000);
+	}
+
+	fprintf(fff, "\n");
+}
+#endif	// 0
 
 /*
  * Draw the skill tree

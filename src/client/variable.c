@@ -44,6 +44,11 @@ s16b cur_line;				/* Current displayed line of "special" info */
 player_type player;			/* The client-side copy of some of the player information */
 player_type *p_ptr = &player;
 
+c_player_extra c_player;
+c_player_extra *c_p_ptr = &c_player;
+// char body_name[80];			/* Form of Player */
+
+
 s32b exp_adv;				/* Amount of experience required to advance a level */
 
 s16b command_see;
@@ -149,3 +154,5 @@ u32b cfg_game_port = 18348;
 skill_type s_info[MAX_SKILLS];
 
 s16b flush_count = 0;
+
+// char reason[MAX_CHARS];	/* Receive_quit */

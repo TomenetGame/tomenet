@@ -70,6 +70,9 @@ extern s16b max_line;
 
 extern player_type player;
 extern player_type *p_ptr;
+extern c_player_extra c_player;
+extern c_player_extra *c_p_ptr;
+// extern char body_name[80];
 extern s32b exp_adv;
 
 extern s16b command_see;
@@ -162,6 +165,8 @@ extern skill_type s_info[MAX_SKILLS];
 
 extern s16b flush_count;
 
+extern char reason[MAX_CHARS];	/* Receive_quit */
+
 /*
  * Not-so-Automatically generated "function declarations"
  */
@@ -253,6 +258,8 @@ extern void show_motd(void);
 extern void peruse_file(void);
 extern errr my_fgets(FILE *fff, char *buf, huge n);
 extern errr file_character(cptr name, bool full);
+extern bool my_freadable(cptr file);
+extern errr get_safe_file(char *buf, cptr file);
 
 /* c-init.c */
 extern void initialize_all_pref_files(void);
@@ -292,6 +299,7 @@ extern void prt_num(cptr header, int num, int row, int col, byte color);
 extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);
 extern void interact_macros(void);
 extern void do_cmd_options(void);
+//extern void close_game(cptr reason);
 
 /* c-spell.c */
 //extern void show_browse(int book);
@@ -344,6 +352,7 @@ extern void prt_sane(byte attr, cptr buf);
 /* c-xtra2.c */
 extern void do_cmd_messages(void);
 extern void do_cmd_messages_chatonly(void);
+extern void dump_messages(FILE *fff, int lines);
 
 /* client.c */
 

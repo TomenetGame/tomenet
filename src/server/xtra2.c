@@ -3954,6 +3954,9 @@ void player_death(int Ind)
 	else if (p_ptr->alive){
 		sprintf(buf, "\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from);
 		s_printf("%s was killed by %s.\n", p_ptr->name, p_ptr->died_from);
+
+		/* Hack -- tell the client to generate a chardump */
+//		Send_chardump(Ind);
 	}
 	else if (!p_ptr->total_winner)
 		sprintf(buf, "\377r%s committed suicide.", p_ptr->name);
@@ -3967,6 +3970,21 @@ void player_death(int Ind)
 			msg_broadcast(Ind, buf);
 	}
 
+	/* Unown land */
+	if (p_ptr->total_winner)
+	{
+#ifdef NEW_DUNGEON
+/* FIXME */
+/*
+		msg_broadcast(Ind, format("%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50));
+		wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
+*/
+#else
+		msg_broadcast(Ind, format("%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50));
+		wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
+#endif
+	}	
+	
 	/* Drop gold if player has any */
 	if (p_ptr->alive && p_ptr->au)
 	{
@@ -3996,21 +4014,6 @@ void player_death(int Ind)
 	/* Sort the player's inventory according to value */
 	ang_sort(Ind, p_ptr->inventory, NULL, INVEN_TOTAL);
 
-	/* Unown land */
-	if (p_ptr->total_winner)
-	{
-#ifdef NEW_DUNGEON
-/* FIXME */
-/*
-		msg_broadcast(Ind, format("%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50));
-		wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
-*/
-#else
-		msg_broadcast(Ind, format("%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50));
-		wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
-#endif
-	}	
-	
 	/* Starting with the most valuable, drop things one by one */
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
@@ -4166,6 +4169,9 @@ void player_death(int Ind)
 			msg_print(Ind, death_message);
 		}
 #endif	// CHATTERBOX_LEVEL
+
+		/* Hack -- tell the client to generate a chardump */
+		Send_chardump(Ind);
 
 		/* Turn him into a ghost */
 		p_ptr->ghost = 1;

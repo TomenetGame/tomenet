@@ -1547,15 +1547,15 @@ void do_cmd_time(Ind)
 				 (hour % 12 == 0) ? 12 : (hour % 12),
 				 min, (hour < 12) ? "AM" : "PM");
 
-#if 0
+#if CHATTERBOX_LEVEL > 2
 	/* Find the path */
 	if (!rand_int(10) || p_ptr->image)
 	{
-		path_build(buf, 1024, ANGBAND_DIR_FILE, "timefun.txt");
+		path_build(buf, 1024, ANGBAND_DIR_TEXT, "timefun.txt");
 	}
 	else
 	{
-		path_build(buf, 1024, ANGBAND_DIR_FILE, "timenorm.txt");
+		path_build(buf, 1024, ANGBAND_DIR_TEXT, "timenorm.txt");
 	}
 
 	/* Open this file */
@@ -1613,7 +1613,7 @@ void do_cmd_time(Ind)
 	}
 
 	/* Message */
-	msg_print(desc);
+	msg_print(Ind, desc);
 
 	/* Close the file */
 	my_fclose(fff);

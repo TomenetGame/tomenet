@@ -1799,6 +1799,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			//	 sp_ptr = &sex_info[p_ptr->psex];
 			p_ptr->male = FALSE;
 			ident = TRUE;
+			p_ptr->redraw |= PR_MISC;
 			break;
 		}
 		case TRAP_OF_MASCULINITY:
@@ -1810,6 +1811,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			//	 sp_ptr = &sex_info[p_ptr->psex];
 			p_ptr->male = TRUE;
 			ident = TRUE;
+			p_ptr->redraw |= PR_MISC;
 			break;
 		}
 		case TRAP_OF_NEUTRALITY:
@@ -1821,6 +1823,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			p_ptr->male = FALSE;
 			ident = TRUE;
 			trap_hit(Ind, trap);
+	p_ptr->redraw |= PR_MISC;
 #endif
 			break;
 		}
@@ -1831,6 +1834,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			p_ptr->age += randint((p_ptr->rp_ptr->b_age));
 			ident = TRUE;
 			trap_hit(Ind, trap);
+			p_ptr->redraw |= PR_VARIOUS;
 			break;
 		}
 		case TRAP_OF_GROWING:
@@ -1847,6 +1851,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			p_ptr->ht += randint(tmp/4);
 			ident = TRUE;
 			trap_hit(Ind, trap);
+			p_ptr->redraw |= PR_VARIOUS;
 			break;
 		}
 		case TRAP_OF_SHRINKING:
@@ -1863,6 +1868,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			if (p_ptr->ht <= tmp/4) p_ptr->ht = tmp/4;
 			ident = TRUE;
 			trap_hit(Ind, trap);
+			p_ptr->redraw |= PR_VARIOUS;
 			break;
 		}
 
@@ -2831,6 +2837,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		ident = FALSE;
 	}
 
+	p_ptr->redraw |= PR_VARIOUS | PR_MISC;
+	
 	/* Had the player seen it? */
 	if (never_id || p_ptr->image || p_ptr->confused || p_ptr->blind ||
 			no_lite(Ind) || !inarea(&p_ptr->wpos, wpos) ||

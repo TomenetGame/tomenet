@@ -509,6 +509,7 @@ static byte default_tval_to_attr(int tval)
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
+		case TV_AXE:
 		{
 			return (TERM_L_WHITE);
 		}

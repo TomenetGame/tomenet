@@ -943,7 +943,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 			if (hp_player(Ind, damroll(6, 8))) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
-			if (set_poisoned(Ind, 0)) ident = TRUE;
+//			if (set_poisoned(Ind, 0)) ident = TRUE;	/* use specialized pots */
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0)) ident = TRUE;
 			break;

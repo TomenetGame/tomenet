@@ -2308,6 +2308,20 @@ struct client_opts
 	bool fail_no_melee;
 };
 
+/*
+ * Extra information on client-side that the server player_type
+ * doesn't contain.		- Jir -
+ *
+ * Most variables in client/variable.c should be bandled here maybe.
+ */
+typedef struct c_player_extra c_player_extra;
+struct c_player_extra
+{
+	char body_name[80];	/* Form of Player */
+	char sanity[10];	/* Sanity strings */
+	byte sanity_attr;	/* Colour to display sanity */
+};
+
 /* from spells1.c */
 typedef int (*inven_func)(object_type *);
 

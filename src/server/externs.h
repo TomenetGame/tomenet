@@ -650,7 +650,8 @@ extern int Send_gold(int Ind, s32b gold);
 extern int Send_hp(int Ind, int mhp, int chp);
 extern int Send_sp(int Ind, int msp, int csp);
 extern int Send_char_info(int Ind, int race, int class, int sex);
-extern int Send_various(int Ind, int height, int weight, int age, int sc);
+//extern int Send_various(int Ind, int height, int weight, int age, int sc);
+extern int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body);
 extern int Send_stat(int Ind, int stat, int max, int cur);
 extern int Send_history(int Ind, int line, cptr hist);
 extern int Send_inven(int Ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, cptr name);
@@ -694,6 +695,7 @@ extern int Send_special_other(int ind);
 extern int Send_skills(int ind);
 extern int Send_pause(int ind);
 extern int Send_monster_health(int ind, int num, byte attr);
+extern int Send_chardump(int ind);
 
 extern void Handle_direction(int Ind, int dir);
 extern void Handle_clear_buffer(int Ind);

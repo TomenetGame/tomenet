@@ -503,7 +503,7 @@ static void prt_various(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	Send_various(Ind, p_ptr->ht, p_ptr->wt, p_ptr->age, p_ptr->sc);
+	Send_various(Ind, p_ptr->ht, p_ptr->wt, p_ptr->age, p_ptr->sc, r_name + r_info[p_ptr->body_monster].name);
 }
 
 static void prt_plusses(int Ind)

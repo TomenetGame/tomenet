@@ -7,8 +7,8 @@
 
 # date is always this format
 02/1/2002
-# tags are always this form: '[x]- ' thi is 5 chars, so if the line must continue
-# on a new line it is alsio 5 spaces that are needed
+# tags are always this form: '[x]- ' this is 5 chars, so if the line must
+# continue on a new line it is alsio 5 spaces that are needed
 [m]- blahalhjaljkalkjlajazkljklqjsd qslkdjqs lkdjqsl
      qmlfkmzkk qskdjfmqslfk mlqzemfj qmlj mldf
 
@@ -19,6 +19,50 @@
 [V]  TomeNET 4.0.0 aka "Packet of No Return"
 
 # bug.txt should follow the exact same format
+
+29/07/2002 (Jir)
+# comfortable death set :)
+[m]- timefun.txt/timenorm.txt.
+[I]- message history is added to the character dump.
+[I]- mimic form is shown in the character screen('C').
+[I]- auto char-dump when died. (screenshot would be nifty..)
+[I]- at last! tombscreen implemented.
+[O]- cure critical pot no longer cures poison. (EyAngband influence)
+[O]- some items were not on 'good' list (kind_is_good).
+[B]- effects of traps of aging/growing/feminity etc didn't reflected at once.
+[B]- skill filedump had wrong indents.
+[B]- sanity display was broken in character screen.
+
+28/07/2002 (Jir)
+[P]- sanity display depends on Health skill.
+[I]- 'Target selected.' is less annoying.
+[G]- Scroll of Lottery touched. (I want colosseum, tbh)
+[m]- apartment door displaceing is disabled (it caused crashes - FIXME)
+[m]- wraithes can no longer pass through permawalls on the surface, sry
+     (otherwise they can enter apartments of someone else)
+[B]- received dmg by walking through the house door.
+
+27/07/2002 (Jir)
+[G]- monster traps backported from ToME.
+[G]- backstabbing reinforced (double dmg was way too small to be meaningful)
+[G]- GF_HOLY_FIRE/GF_HELL_FIRE. Mimic in evil form takes double dmg.
+[G]- genocide monster traps implemented. (genocide_aux)
+[O]- digger to_d/to_h are added to skill_dig.
+[P]- food comsumption is faster with invis/wraithform etc.
+[P]- HP damage for staying inside a wall w/o wraithform.
+[P]- high Swimming (30) allows to 'run' in the water.
+[P]- Axe-mastery.
+[m]- removed the mangband hack in client which swaps sval/xtra1
+[m]- cheezelog for item-transaction.
+[m]- colourful spell display from ToME (spell_color)
+[B]- 'leveled' monster didn't give boosted exp when killing.
+[B]- apartment caused wrong houses[] (build_store)
+[B]- ammo/pick To-Dam/To-Hit were computed in.
+[B]- (nothing) bug is fixed (I hope - compact_monsters)
+[B]- admin couldn't summon 't's in town. (specification by Level still not)
+[B]- random vault crashed. (build_type11)
+[B]- to_h_ranged did nothing!!
+[B]- pfft, Polearm-mastery was as broken as that of ToME
 
 24/07/2002 (Jir)
 # changelog format changed.
@@ -43,36 +87,7 @@
 [B]- player didn't teleport when died on NO_TELE floor.
 [B]- command repetition wasn't disturbed when attacked.
 
-27/07/2002 (Jir)
-[G]- monster traps backported from ToME.
-[G]- backstabbing reinforced (double dmg was way too small to be meaningful)
-[G]- GF_HOLY_FIRE/GF_HELL_FIRE. Mimic in evil form takes double dmg.
-[G]- genocide monster traps implemented. (genocide_aux)
-[O]- digger to_d/to_h are added to skill_dig.
-[P]- food comsumption is faster with invis/wraithform etc.
-[P]- HP damage for staying inside a wall w/o wraithform.
-[P]- high Swimming (30) allows to 'run' in the water.
-[P]- Axe-mastery.
-[m]- removed the mangband hack in client which swaps sval/xtra1
-[m]- cheezelog for item-transaction.
-[m]- colourful spell display from ToME (spell_color)
-[B]- 'leveled' monster didn't give boosted exp when killing.
-[B]- apartment caused wrong houses[] (build_store)
-[B]- ammo/pick To-Dam/To-Hit were computed in.
-[B]- (nothing) bug is fixed (I hope - compact_monsters)
-[B]- admin couldn't summon 't's in town. (specification by Level still not)
-[B]- random vault crashed. (build_type11)
-[B]- to_h_ranged did nothing!!
-[B]- pfft, Polearm-mastery was as broken as that of ToME
 
-28/07/2002 (Jir)
-[P]- sanity display depends on Health skill.
-[I]- 'Target selected.' is less annoying.
-[G]- Scroll of Lottery touched. (I want colosseum, tbh)
-[m]- apartment door displaceing is disabled (it caused crashes - FIXME)
-[m]- wraithes can no longer pass through permawalls on the surface, sry
-     (otherwise they can enter apartments of someone else)
-[B]- received dmg by walking through the house door.
 
 
 # below this line are old changelogs under old format
@@ -1590,14 +1605,15 @@ below this line are the unfixed bugs known:
 [B]- cannot specify 0-depth monsters in admin summoning.
 [B]- Forest wight (Lv 4098, undamaged, clone) [<dir>, q] (on 5550')
      (it's actually lv77 - shown in a wrong way only for DM)
-[B]- apartment doors can displace?
+[B]- Warrior gets ugly char-dump; Device skill under Combat (dump_skills)
+[B]- apartment doors can displace? (disabled)
      Program received signal SIGSEGV, Segmentation fault.
      access_door (Ind=2, dna=0x0) at server/cmd2.c:666
      666             if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
      (gdb) bt
      #0  access_door (Ind=2, dna=0x0) at server/cmd2.c:666
      #1  0x80560a4 in map_info (Ind=2, y=46, x=120, ap=0xbfbfefda "\005+<霓衰\006\b\002", 
-		cp=0xbfbfefdb "+<霓衰\006\b\002") at server/cave.c:1330
+        cp=0xbfbfefdb "+<霓衰\006\b\002") at server/cave.c:1330
      #2  0x8056c4d in prt_map (Ind=2) at server/cave.c:1898
      #3  0x806eeea in redraw_stuff (Ind=2) at server/xtra1.c:3621
      #4  0x80edd3a in process_player_end (Ind=2) at server/dungeon.c:2638
@@ -1620,6 +1636,26 @@ below this line are the unfixed bugs known:
      saving server info...
      1 players on -1950ft of (32,32).
      deallocating -1950ft of (32,32)
+
+[B]-
+     Program received signal SIGSEGV, Segmentation fault.
+     update_view (Ind=1) at server/cave.c:3384
+     3384                    c_ptr->info |= CAVE_XTRA;
+     (gdb) bt
+     #0  update_view (Ind=1) at server/cave.c:3384
+     #1  0x806efcd in update_stuff (Ind=1) at server/xtra1.c:3627
+     #2  0x806fc9e in handle_stuff (Ind=1) at server/xtra1.c:3948
+     #3  0x807b0bc in teleport_player (Ind=1, dis=300) at server/spells1.c:710
+     #4  0x8074261 in player_death (Ind=1) at server/xtra2.c:4198
+     #5  0x80f01c7 in dungeon () at server/dungeon.c:3672
+     #6  0x80d7d31 in sched () at server/sched.c:508
+     #7  0x80f08a0 in play_game (new_game=0 '\000') at server/dungeon.c:4069
+     #8  0x8102dbb in main (argc=2, argv=0xbfbff6c0) at server/main.c:276
+     #9  0x8049d65 in _start ()
+     (gdb) print y
+     $2 = 65
+     (gdb) print x
+     $3 = 174
 
 
 *below are bugs repoorted but not confirmed*
@@ -1683,8 +1719,6 @@ memo and questions:
 (4.1)
 - recall-depth array for each dungeons/towers
 - full colour-support in show_file
-- tombstone screen (maybe CONN_TOMB)
-  + which should be displayed, died or destroyed?
 - display "non-scoring mode" in '@' screen
 - torch/lantern shouldn't be EASY_KNOWN.
 - Nazgul rings should have corresponding names
@@ -1863,6 +1897,9 @@ memo and questions:
   + auto-inscriber for item attributes (eg. {StDxNeFASI})
   + resurrect 'repeat' (eg. '099^j' to dig etc.)
   + let players target monsters outside the screen (scrolling)
+  - character screen / chardump
+    + Identify the items when in tombstone screens.
+    + change default file name if already exists.
 - stores:
   + one player shouldn't stay more than 1 minutes in a store?
   + stores should buy {cursed} potions/scrolls/wands etc?

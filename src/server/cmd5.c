@@ -6310,6 +6310,9 @@ void do_mimic_change(int Ind, int r_idx)
 	/* Recalculate mana */
 	p_ptr->update |= (PU_MANA | PU_HP | PU_BONUS | PU_VIEW);
 
+	/* Tell the client */
+	p_ptr->redraw |= PR_VARIOUS;
+
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 }

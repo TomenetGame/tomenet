@@ -5324,6 +5324,8 @@ static bool kind_is_good(int k_idx)
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_DIGGING:
+		case TV_AXE:
+		case TV_BOOMERANG:
 		{
 			if (k_ptr->to_h < 0) return (FALSE);
 			if (k_ptr->to_d < 0) return (FALSE);
@@ -5333,16 +5335,21 @@ static bool kind_is_good(int k_idx)
 		/* Ammo -- Arrows/Bolts are good */
 		case TV_BOLT:
 		case TV_ARROW:
+//		case TV_SHOT:	/* are Shots bad? */
+		case TV_MSTAFF:
 		{
 			return (TRUE);
 		}
 
 		/* Books -- High level books are good */
 		case TV_MAGIC_BOOK:
-	        case TV_PRAYER_BOOK:
-	case TV_SORCERY_BOOK:
-	case TV_SHADOW_BOOK:
-		  {
+		case TV_PRAYER_BOOK:
+		case TV_SORCERY_BOOK:
+		case TV_SHADOW_BOOK:
+		case TV_PSI_BOOK:
+		case TV_HUNT_BOOK:
+		case TV_FIGHT_BOOK:
+		{
 			if (k_ptr->sval >= SV_BOOK_MIN_GOOD) return (TRUE);
 			return (FALSE);
 		}

@@ -124,6 +124,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_SKILL_INIT]	= Receive_skill_init;
 	receive_tbl[PKT_SKILL_MOD] 	= Receive_skill_info;
 	receive_tbl[PKT_STORE_LEAVE] 	= Receive_store_kick;
+	receive_tbl[PKT_CHARDUMP] 	= Receive_chardump;
 }
 
 // I haven't really figured out this function yet.  It looks to me like
@@ -1118,6 +1119,18 @@ int Receive_quit(void)
 		if (Packet_scanf(sbuf, "%s", reason) <= 0)
 			strcpy(reason, "unknown reason");
 		errno = 0;
+#if 1
+		/* Cleanup network stuff */
+//		Net_cleanup();
+
+		/* TERAHACK */
+		initialized = FALSE;
+
+		/* Hack -- tombstone */
+		if (strstr(reason, "Killed by") ||
+				strstr(reason, "Committed suicide"))
+			c_close_game(reason);
+#endif	// 0
 		quit(format("Quitting: %s", reason));
 	}
 	return -1;
@@ -1148,13 +1161,12 @@ int Receive_sanity(void)
 	int n;
 	char ch, buf[10];
 	byte attr;
-	s16b max, cur;
 	if ((n = Packet_scanf(&rbuf, "%c%c%s", &ch, &attr, buf)) <= 0)
 	{
 		return n;
 	}
-	p_ptr->msane=max;
-	p_ptr->csane=cur;
+	strcpy(c_p_ptr->sanity, buf);
+	c_p_ptr->sanity_attr = attr;
 	if (!screen_icky && !shopping){
 		prt_sane(attr, &buf);
 	}
@@ -1364,10 +1376,10 @@ int Receive_char_info(void)
 int Receive_various(void)
 {
 	int	n;
-	char	ch;
+	char	ch, buf[80];
 	s16b	hgt, wgt, age, sc;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%hu", &ch, &hgt, &wgt, &age, &sc)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%hu%s", &ch, &hgt, &wgt, &age, &sc, buf)) <= 0)
 	{
 		return n;
 	}
@@ -1376,6 +1388,7 @@ int Receive_various(void)
 	p_ptr->wt = wgt;
 	p_ptr->age = age;
 	p_ptr->sc = sc;
+	strcpy(c_p_ptr->body_name, buf);
 
 	/*printf("Received various info: height %d, weight %d, age %d, sc %d\n", hgt, wgt, age, sc);*/
 
@@ -2474,6 +2487,24 @@ int Receive_monster_health(void)
 			return n;
 		}
 	}
+
+	return 1;
+}
+
+int Receive_chardump(void)
+{
+	char	ch;
+	int	n;
+	char tmp[100];
+
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
+	{
+		return n;
+	}
+
+	strnfmt(tmp, 160, "%s-death.txt", nick);
+	file_character(tmp, FALSE);
+
 
 	return 1;
 }

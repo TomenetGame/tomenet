@@ -2864,6 +2864,290 @@ void do_cmd_options(void)
 }
 
 
+/*
+ * Centers a string within a 31 character string		-JWT-
+ */
+static void center_string(char *buf, cptr str)
+{
+	int i, j;
+
+	/* Total length */
+	i = strlen(str);
+
+	/* Necessary border */
+	j = 15 - i / 2;
+
+	/* Mega-Hack */
+	(void)sprintf(buf, "%*s%s%*s", j, "", str, 31 - i - j, "");
+}
+
+
+/*
+ * Display a "tomb-stone"
+ */
+/* ToME parts. */
+// static void print_tomb(void)
+static void print_tomb(cptr reason)
+{
+	bool done = FALSE;
+
+#if 0
+	/* Do we use a special tombstone ? */
+	if (tombstone_aux)
+	{
+		/* Use tombstone hook */
+		done = (*tombstone_aux)();
+	}
+#endif	// 0
+
+	/* Print the text-tombstone */
+	if (!done)
+	{
+		cptr	p;
+
+		char	tmp[160];
+
+		char	buf[1024];
+		char    dummy[80];
+
+		FILE        *fp;
+
+		time_t	ct = time((time_t)0);
+
+
+		/* Clear screen */
+		Term_clear();
+
+		/* Build the filename */
+//		path_build(buf, 1024, ANGBAND_DIR_HELP, !magik(50) ? "dead.txt" : "dead2.txt");
+		path_build(buf, 1024, ANGBAND_DIR_HELP, ct % 2 ? "dead.txt" : "dead2.txt");
+
+		/* Grab permission */
+//		safe_setuid_grab();
+
+		/* Open the News file */
+		fp = my_fopen(buf, "r");
+
+		/* Drop permission */
+//		safe_setuid_drop();
+
+		/* Dump */
+		if (fp)
+		{
+			int i = 0;
+
+			/* Dump the file to the screen */
+			while (0 == my_fgets(fp, buf, 1024))
+			{
+				/* Display and advance */
+//				display_message(0, i++, strlen(buf), TERM_WHITE, buf);
+				Term_putstr(0, i++, -1, TERM_WHITE, buf);
+			}
+
+			/* Close */
+			my_fclose(fp);
+		}
+
+#if 0	// make the server send those info!
+		/* King or Queen */
+		if (total_winner || (p_ptr->lev > PY_MAX_LEVEL))
+		{
+			p = "Magnificent";
+		}
+
+		/* Normal */
+		else
+		{
+			p =  cp_ptr->titles[(p_ptr->lev-1)/5] + c_text;
+		}
+#endif	// 0
+
+		center_string(buf, nick);
+		put_str(buf, 6, 11);
+
+#if 0
+		center_string(buf, "the");
+		put_str(buf, 7, 11);
+
+		center_string(buf, p);
+		put_str(buf, 8, 11);
+#endif	// 0
+
+		center_string(buf, "the");
+		put_str(buf, 7, 11);
+
+        center_string(buf, race_info[race].title);
+		put_str(buf, 8, 11);
+
+        center_string(buf, class_info[class].title);
+		put_str(buf, 9, 11);
+
+#if 0
+		center_string(buf, spp_ptr->title + c_name);
+		put_str(buf, 10, 11);
+#endif	// 0
+
+		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
+		center_string(buf, tmp);
+		put_str(buf, 11, 11);
+
+		(void)sprintf(tmp, "Exp: %ld", (long)p_ptr->exp);
+		center_string(buf, tmp);
+		put_str(buf, 12, 11);
+
+		/* XXX usually 0 */
+		(void)sprintf(tmp, "AU: %ld", (long)p_ptr->au);
+		center_string(buf, tmp);
+		put_str(buf, 13, 11);
+
+#if 0
+		(void)sprintf(tmp, "Killed on Level %d", dun_level);
+		center_string(buf, tmp);
+		put_str(buf, 14, 11);
+
+
+		if (strlen(died_from) > 24)
+		{
+			strncpy(dummy, died_from, 24);
+			dummy[24] = '\0';
+			(void)sprintf(tmp, "by %s.", dummy);
+		}
+		else
+			(void)sprintf(tmp, "by %s.", died_from);
+
+		center_string(buf, tmp);
+		put_str(buf, 15, 11);
+#endif	// 0
+
+
+		(void)sprintf(tmp, "%-.24s", ctime(&ct));
+		center_string(buf, tmp);
+		put_str(buf, 17, 11);
+
+		put_str(reason, 21, 10);
+	}
+}
+
+/*
+ * Display some character info	- Jir -
+ * For now, only when losing the character.
+ */
+//void close_game(void)
+void c_close_game(cptr reason)
+{
+	int k;
+	char tmp[1024];
+
+
+	/* Save the screen */
+//	Term_save();
+
+	/* You are dead */
+	print_tomb(reason);
+
+	put_str("ESC to quit, 'f' to dump the record or any other key to proceed", 23, 0);
+
+	while (1)
+	{
+		/* Get command */
+		k = inkey();
+
+		/* Exit */
+		if (k == ESCAPE || k == KTRL('X') || k == 'q' || k == 'Q') return;
+
+		/* Dump */
+		else if ((k == 'f') || (k == 'F'))
+		{
+			strnfmt(tmp, 160, "%s.txt", nick);
+			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, 80))
+			{
+				if (tmp[0] && (tmp[0] != ' '))
+				{
+					file_character(tmp, FALSE);
+				}
+			}
+		}
+
+		else if (k) break;
+	}
+
+#if 1
+	/* Interact */
+	while (1)
+	{
+		/* Clear screen */
+		Term_clear();
+
+		/* Why are we here */
+		prt("Your tracks", 2, 0);
+
+		/* Give some choices */
+		prt("(1) Character", 4, 5);
+		prt("(2) Inventory", 5, 5);
+		prt("(3) Equipments", 6, 5);
+		prt("(4) Messages", 7, 5);
+		prt("(5) Chat messages", 8, 5);
+
+		/* What a pity no score list here :-/ */
+
+		/* Prompt */
+		prt("Command: ", 17, 0);
+
+		/* Get command */
+		k = inkey();
+
+		/* Exit */
+		if (k == ESCAPE || k == KTRL('X')) break;
+
+		/* Character screen */
+		if (k == '1' || k == 'C')
+		{
+			cmd_character();
+		}
+
+		/* Inventory */
+		else if (k == '2' || k == 'i')
+		{
+			cmd_inven();
+		}
+
+		/* Equipments */
+		else if (k == '3' || k == 'e')
+		{
+			/* Process the running options */
+			cmd_equip();
+		}
+
+		/* Message history */
+		else if (k == '4' || k == KTRL('P'))
+		{
+			do_cmd_messages();
+		}
+
+		/* Chat history */
+		else if (k == '5' || k == KTRL('O'))
+		{
+			do_cmd_messages_chatonly();
+		}
+
+#if 0
+		/* Skill browsing ... is not available for now */
+		else if (k == '6' || k == KTRL('G'))
+		{
+			do_cmd_skill();
+		}
+#endif	// 0
+
+		/* Unknown option */
+		else
+		{
+			/* Oops */
+			bell();
+		}
+	}
+#endif	// 0
+}
+
 
 
 #ifdef SET_UID

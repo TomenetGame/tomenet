@@ -191,7 +191,7 @@ s32b artifact_power (artifact_type *a_ptr)
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_AXE:
-		case TV_MSTAFF:
+		case TV_MSTAFF:	// maybe this needs another entry
 		{
 			p += (a_ptr->dd * a_ptr->ds + 1) / 2;
 			if (a_ptr->flags1 & TR1_SLAY_EVIL) p = (p * 3) / 2;

@@ -339,6 +339,52 @@ errr my_fclose(FILE *fff)
 }
 
 /*
+ * MetaHack -- check if the specified file already exists	- Jir -
+ */
+bool my_freadable(cptr file)
+{
+	FILE *fff;
+	fff = my_fopen(file, "r");
+
+	if (fff) return (FALSE);
+	
+	my_fclose(fff);
+	return (TRUE);
+}
+
+/*
+ * Get a safe filename from given strings.	- Jir -
+ * eg. "./lib/text/Jir" => "./lib/text/Jir0004.txt"
+ *
+ * TODO: handle extender neatly. REWRITE ME
+ */
+errr get_safe_file(char *buf, cptr file)
+{
+	int i;
+	char tmp[1024];
+
+	/* Assume no result */
+	buf[0] = '\0';
+
+	/* No file? */
+	if (!file) return (-1);
+
+	for (i = 1; i <= 9999; i++)
+	{
+		sprintf(tmp, "%s%#4d.txt", file, i);
+		if (my_freadable(tmp)) continue;
+
+		strcpy(buf, tmp);
+		return (0);
+	}
+	
+	/* Failure */
+	return (-1);
+}
+
+
+
+/*
  * Hack -- replacement for "fgets()"
  *
  * Read a string, without a newline, to a file
@@ -515,7 +561,8 @@ void init_file_paths(char *path)
         ANGBAND_DIR_FILE = string_make(path);
 
         /* Build a path name */
-        strcpy(tail, "help");
+//        strcpy(tail, "help");
+        strcpy(tail, "text");
         ANGBAND_DIR_HELP = string_make(path);
 
         /* Build a path name */
@@ -1153,6 +1200,8 @@ errr file_character(cptr name, bool full)
 	}
 
 #if 0 // DGDGDGDG -- make me work
+	/* body_monster is shown in Character screen instead.	- Jir - */
+
 	{
 		char desc[80];
 		monster_race_desc(desc, p_ptr->body_monster, 0);
@@ -1165,6 +1214,9 @@ errr file_character(cptr name, bool full)
 	dump_skills(fff);
 
 #if 0 // DGDGDG - make me work
+	/* Well, sorry, that'd be hard. We should put new 'connection-status'
+	 * for tombscreen maybe..	- Jir */
+
 	/* Monsters slain */
 	{
 		int k;
@@ -1206,21 +1258,26 @@ errr file_character(cptr name, bool full)
 
 
 	/* Dump the equipment */
-        fprintf(fff, "  [Character Equipment]\n\n");
-        for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-        {
-                fprintf(fff, "%c%s %s\n",
-                        index_to_label(i), paren, inventory_name[i]);
-        }
-        fprintf(fff, "\n\n");
+	fprintf(fff, "  [Character Equipment]\n\n");
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	{
+		fprintf(fff, "%c%s %s\n",
+				index_to_label(i), paren, inventory_name[i]);
+	}
+	fprintf(fff, "\n\n");
 
-        /* Dump the inventory */
-        fprintf(fff, "  [Character Inventory]\n\n");
+	/* Dump the inventory */
+	fprintf(fff, "  [Character Inventory]\n\n");
 	for (i = 0; i < INVEN_PACK; i++)
 	{
                 fprintf(fff, "%c%s %s\n",
                         index_to_label(i), paren, inventory_name[i]);
 	}
+	fprintf(fff, "\n\n");
+
+	/* Dump the last messages */
+	fprintf(fff, "  [Last Messages]\n\n");
+	dump_messages(fff, 50);
 	fprintf(fff, "\n\n");
 
 	/* Close it */

@@ -1188,11 +1188,13 @@ void display_player(int hist)
         put_str("Sex         :", 3, 1);
         put_str("Race        :", 4, 1);
         put_str("Class       :", 5, 1);
+        put_str("Body        :", 6, 1);
 
         c_put_str(TERM_L_BLUE, nick, 2, 15);
         c_put_str(TERM_L_BLUE, (p_ptr->male ? "Male" : "Female"), 3, 15);
         c_put_str(TERM_L_BLUE, race_info[race].title, 4, 15);
         c_put_str(TERM_L_BLUE, class_info[class].title, 5, 15);
+        c_put_str(TERM_L_BLUE, c_p_ptr->body_name, 6, 15);
 
         /* Age, Height, Weight, Social */
         prt_num("Age          ", (int)p_ptr->age, 2, 32, TERM_L_BLUE);
@@ -1374,6 +1376,7 @@ void display_player(int hist)
                 prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_RED);
         }
 #ifdef SHOW_SANITY
+#if 0	// client no longer holds these values
 		if (p_ptr->msane)
 		{
 			if((100*p_ptr->csane)/p_ptr->msane>99)
@@ -1383,7 +1386,13 @@ void display_player(int hist)
 			else
 				prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_RED);
 		}
-#endif
+#else	// 0
+        put_str("Cur Sanity", 13, 52);
+
+        c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, 13, 67);
+
+#endif	// 0
+#endif	// SHOW_SANITY
 }
 
 /*

@@ -279,7 +279,7 @@ static void sense_inventory(int Ind)
 		if ((i < INVEN_WIELD) &&
 				(magik(80) || UNAWARENESS(p_ptr))) continue;
 
-		feel = 0;
+		feel = NULL;
 
 		/* Valid "tval" codes */
 		switch (o_ptr->tval)

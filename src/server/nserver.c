@@ -3042,7 +3042,7 @@ int Send_char_info(int ind, int race, int class, int sex)
 	return Packet_printf(&connp->c, "%c%hd%hd%hd", PKT_CHAR_INFO, race, class, sex);
 }
 
-int Send_various(int ind, int hgt, int wgt, int age, int sc)
+int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 
@@ -3053,7 +3053,7 @@ int Send_various(int ind, int hgt, int wgt, int age, int sc)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	return Packet_printf(&connp->c, "%c%hu%hu%hu%hu", PKT_VARIOUS, hgt, wgt, age, sc);
+	return Packet_printf(&connp->c, "%c%hu%hu%hu%hu%s", PKT_VARIOUS, hgt, wgt, age, sc, body);
 }
 
 int Send_stat(int ind, int stat, int max, int cur)
@@ -4248,6 +4248,39 @@ int Send_monster_health(int ind, int num, byte attr)
 	  }
 
 	return Packet_printf(&connp->c, "%c%c%c", PKT_MONSTER_HEALTH, num, attr);
+}
+
+int Send_chardump(int ind)
+{
+	connection_t *connp = &Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for chardump (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+#if 0
+	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
+	  {
+	    int Ind2 = find_player(p_ptr->esp_link);
+	    player_type *p_ptr2;
+	    connection_t *connp2;
+
+	    if (!Ind2)
+	      end_mind(ind, TRUE);
+	    else
+	      {
+		p_ptr2 = Players[Ind2];
+		connp2 = &Conn[p_ptr2->conn];
+
+		Packet_printf(&connp2->c, "%c", PKT_FLUSH);
+	      }
+	  }
+#endif
+	return Packet_printf(&connp->c, "%c", PKT_CHARDUMP);
 }
 
 /*

@@ -155,6 +155,7 @@
 #define PKT_SKILL_INIT		154
 #define PKT_ACTIVATE_SKILL	155
 #define PKT_RAW_KEY		156
+#define PKT_CHARDUMP	157
 /* HACK -- used for SKILL_INIT */
 #define PKT_SKILL_INIT_NAME     0
 #define PKT_SKILL_INIT_DESC     1
