@@ -2431,7 +2431,7 @@ static bool wr_server_savefile(void)
 /* write the wilderness and dungeon structure */
 static void new_wr_wild(){
 	wilderness_type *w_ptr;
-	int x,y;
+	int x,y,i;
 	u32b temp;
 
 	temp=MAX_WILD_Y;
@@ -2450,6 +2450,10 @@ static void new_wr_wild(){
 				wr_u16b(w_ptr->dungeon->baselevel);
 				wr_u16b(w_ptr->dungeon->flags);
 				wr_byte(w_ptr->dungeon->maxdepth);
+				for(i=0;i<10;i++){
+					wr_byte(w_ptr->dungeon->r_char[i]);
+					wr_byte(w_ptr->dungeon->nr_char[i]);
+				}
 			}
 			if(w_ptr->flags & WILD_F_UP){
 				wr_byte(w_ptr->dn_x);
@@ -2458,6 +2462,10 @@ static void new_wr_wild(){
 				wr_u16b(w_ptr->tower->baselevel);
 				wr_u16b(w_ptr->tower->flags);
 				wr_byte(w_ptr->tower->maxdepth);
+				for(i=0;i<10;i++){
+					wr_byte(w_ptr->dungeon->r_char[i]);
+					wr_byte(w_ptr->dungeon->nr_char[i]);
+				}
 			}
 		}
 	}

@@ -5869,7 +5869,7 @@ void dealloc_dungeon_level(int Depth)
 
 
 #ifdef NEW_DUNGEON
-void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, bool tower){
+void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, char *race, char *exclude, bool tower){
 	int i;
 	wilderness_type *wild;
 	struct dungeon_type *d_ptr;
@@ -5880,6 +5880,16 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, boo
 	d_ptr->baselevel=baselevel;
 	d_ptr->flags=flags; 
 	d_ptr->maxdepth=maxdep;
+	for(i=0;i<10;i++){
+		d_ptr->r_char[i]='\0';
+		d_ptr->nr_char[i]='\0';
+	}
+	if(race!=(char*)NULL){
+		strcpy(d_ptr->r_char, race);
+	}
+	if(exclude!=(char*)NULL){
+		strcpy(d_ptr->nr_char, exclude);
+	}
 	C_MAKE(d_ptr->level, maxdep, struct dun_level);
 	for(i=0;i<maxdep;i++){
 		d_ptr->level[i].ondepth=0;
@@ -5990,7 +6000,7 @@ void generate_cave(int Depth)
 #ifdef NEW_DUNGEON
 			if(wpos->wx==MAX_WILD_X/2 && wpos->wy==MAX_WILD_Y/2 && !wpos->wz){
 				/* town of angband */
-				adddungeon(wpos, 1, 200, DUNGEON_RANDOM, FALSE);
+				adddungeon(wpos, 1, 200, DUNGEON_RANDOM, NULL, NULL, FALSE);
 			}
 #endif
 			/* Make a town */

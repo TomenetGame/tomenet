@@ -878,11 +878,18 @@ struct dun_level{
 	cave_type **cave;
 };
 
+/* dungeon_type structure
+ *
+ * Filter for races is not strict. It shall alter the probability.
+ *
+ */
 struct dungeon_type{
 	u16b id;		/* dungeon id */
 	u16b baselevel;		/* base level (1 - 50ft etc). */
 	u32b flags;		/* dungeon flags */
 	byte maxdepth;		/* max height/depth */
+	char r_char[10];	/* races allowed */
+	char nr_char[10];	/* races prevented */
 	struct dun_level *level;	/* array of dungeon levels */
 };
 

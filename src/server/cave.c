@@ -28,6 +28,15 @@ cave_type **getcave(struct worldpos *wpos){
 	}
 }
 
+/* an afterthought - it is often needed without up/down info */
+struct dungeon_type *getdungeon(struct worldpos *wpos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) return NULL;
+	else
+		return(wpos->wz>0 ? wild->tower:wild->dungeon);
+}
+
 void new_level_up_x(struct worldpos *wpos, int pos){
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];

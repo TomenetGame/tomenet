@@ -2154,9 +2154,38 @@ bool place_monster(int Depth, int y, int x, bool slp, bool grp)
 #endif
 {
 	int r_idx;
+	struct dungeon_type *d_ptr;
 
-	/* Pick a monster */
-	r_idx = get_mon_num(monster_level);
+	d_ptr=getdungeon(wpos);
+	/* Specific filter - should be made more useful */
+	/* */
+	 
+	if(d_ptr && (d_ptr->r_char[0] || d_ptr->nr_char[0])){
+		int i;
+		monster_race *r_ptr;
+		while((r_idx=get_mon_num(monster_level))){
+			r_ptr=&r_info[r_idx];
+			if(d_ptr->r_char[0]){
+                		for (i = 0; i < 10; i++)
+                		{
+                        		if (r_ptr->d_char == d_ptr->r_char[i]) break;
+                		}
+				if(i<10) break;
+				continue;
+			}
+			if(d_ptr->nr_char[0]){
+                		for (i = 0; i < 10; i++)
+                		{
+                        		if (r_ptr->d_char == d_ptr->r_char[i]) continue;
+                		}
+				break;
+			}
+		}
+	}
+	else{
+		/* Pick a monster */
+		r_idx = get_mon_num(monster_level);
+	}
 
 	/* Handle failure */
 	if (!r_idx) return (FALSE);

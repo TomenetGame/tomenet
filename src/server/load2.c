@@ -2633,7 +2633,7 @@ errr rd_server_savefile()
 
 #ifdef NEW_DUNGEON
 void new_rd_wild(){
-	int x,y;
+	int x,y,i;
 	wilderness_type *wptr;
 	struct dungeon_type *d_ptr;
 	u32b tmp;
@@ -2651,6 +2651,10 @@ void new_rd_wild(){
 				rd_u16b(&d_ptr->baselevel);
 				rd_u16b(&d_ptr->flags);
 				rd_byte(&d_ptr->maxdepth);
+				for(i=0;i<10;i++){
+					rd_byte(&d_ptr->r_char[i]);
+					rd_byte(&d_ptr->nr_char[i]);
+				}
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 				wptr->dungeon=d_ptr;
 			}
@@ -2662,6 +2666,10 @@ void new_rd_wild(){
 				rd_u16b(&d_ptr->baselevel);
 				rd_u16b(&d_ptr->flags);
 				rd_byte(&d_ptr->maxdepth);
+				for(i=0;i<10;i++){
+					rd_byte(&d_ptr->r_char[i]);
+					rd_byte(&d_ptr->nr_char[i]);
+				}
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 				wptr->tower=d_ptr;
 			}
