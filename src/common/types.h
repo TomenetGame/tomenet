@@ -2203,6 +2203,7 @@ struct player_type
 	byte xtra_might;	/* Extra might bow */
 	bool impact;		/* Earthquake blows */
         bool auto_id; /* Pickup = Id */
+	bool reduce_insanity;	/* For mimic forms with weird/empty mind */
 	
 	s16b invis;		/* Invisibility */
 
@@ -2280,14 +2281,20 @@ struct player_type
 	byte drain_life;        /* hp draining */
 
 	bool sensible_fire;     /* Fire does more damage on the player */
+	bool sensible_cold;     /* Cold does more damage on the player */
+	bool sensible_acid;     /* Acid does more damage on the player */
+	bool sensible_elec;     /* Electricity does more damage on the player */
+	bool sensible_pois;     /* Poison does more damage on the player */
 
 	bool reflect;       /* Reflect 'bolt' attacks */
+	bool no_cut;	    /* For mimic forms */
 	bool sh_fire;       /* Fiery 'immolation' effect */
 	bool sh_elec;       /* Electric 'immolation' effect */
 	bool wraith_form;   /* wraithform */
 	bool immune_neth;       /* Immunity to nether */
 	bool climb;             /* Can climb mountains */
 	bool fly;               /* Can fly over some features */
+	bool can_swim;		/* Can swim like a fish (or Lizard..whatever) */
 
 	//        byte anti_magic_spell;    /* Anti-magic(newer one..) */
 	byte antimagic;    		/* Anti-magic(in percent) */
