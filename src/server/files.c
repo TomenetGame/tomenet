@@ -1022,9 +1022,9 @@ struct high_score
 	char max_lev[4];                /* Max Player Level (number) */
 	char max_dun[4];                /* Max Dungeon Level (number) */
 	
-	char mode[1];		/* Difficulty/character mode */
-
 	char how[50];           /* Method of death (string) */
+
+	char mode[1];		/* Difficulty/character mode */
 };
 
 int highscore_send(char *buffer, int max){
@@ -1274,7 +1274,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
                         break;
 		}
 		/* Dump some info */
-		sprintf(out_val, "%3d.%10s %s%s the %s%s %s\377w, Level %d",
+		sprintf(out_val, "%3d.%10s %s%s the %s%s %s, Level %d",
 			place, the_score.pts, modecol, the_score.who, modestr, 
 			race_info[pr].title, class_info[pc].title,
 			clev);
