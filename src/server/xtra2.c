@@ -812,11 +812,17 @@ bool set_tim_wraith(int Ind, int v)
 	{
 		if (!p_ptr->tim_wraith)
 		{
-			msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);
-			msg_print(Ind, "You turn into a wraith!");
-			notice = TRUE;
+			if(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK){
+				msg_format(Ind, "You feel different for a moment");
+				v=0;
+			}
+			else{
+				msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);
+				msg_print(Ind, "You turn into a wraith!");
+				notice = TRUE;
 			
-			p_ptr->wraith_in_wall = TRUE;
+				p_ptr->wraith_in_wall = TRUE;
+			}
 		}
 	}
 
