@@ -2700,6 +2700,7 @@ void check_experience(int Ind)
                (p_ptr->exp >= ((s64b)((s64b)player_exp[p_ptr->lev-1] *
                                (s64b)p_ptr->expfact / 100L))))
 	{
+		process_hooks(HOOK_PLAYER_LEVEL, "d", Ind);
 		/* Gain a level */
 		p_ptr->lev++;
 
@@ -2913,6 +2914,8 @@ void monster_death(int Ind, int m_idx)
 	x = m_ptr->fx;
 	wpos=&m_ptr->wpos;
 	if(!(zcave=getcave(wpos))) return;
+
+	process_hooks(HOOK_MONSTER_DEATH, "d", Ind);
 
 	/* PernAngband additions */
 
@@ -6543,7 +6546,7 @@ bool imprison(int Ind, u16b time, char *reason){
 
 	if(p_ptr->wpos.wz){
 		p_ptr->tim_susp+=time;
-		return(FALSE);
+		return(TRUE);
 	}
 
 	if(p_ptr->tim_jail){

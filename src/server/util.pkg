@@ -104,6 +104,10 @@ extern void msg_print(int Ind, cptr msg);
 extern void msg_broadcast(int Ind, cptr msg);
 extern void msg_print_near(int Ind, cptr msg);
 
+/* maintain hooks with LUA, not with server code */
+extern void wipe_hooks(void);
+extern void dump_hooks(void);
+extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
 
 #define HOOK_MONSTER_DEATH      0
 #define HOOK_OPEN               1
