@@ -4077,12 +4077,14 @@ bool poly_build(int Ind, char *args){
 		houses[num_houses].depth=p_ptr->dun_depth;;
 		houses[num_houses].dna=dna;
 		houses[num_houses].coords.poly=vert;
+		fill_house(&houses[num_houses],2);
 		num_houses++;
 		p_ptr->master_move_hook=NULL;
 		curr=NULL;
 		dna=NULL;
 		vert=NULL;
 		msg_print(Ind,"You have completed your house");
+		p_ptr->update|=PU_VIEW;
 		return TRUE;
 	}
 	cave[p_ptr->dun_depth][dy][dx].feat=FEAT_PERM_EXTRA;

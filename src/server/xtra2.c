@@ -3078,6 +3078,7 @@ kill_house_contents(house_type *h_ptr){
 		}
 	}
 	else{
+		fill_house(h_ptr, 1);
 		/* Polygonal house */
 	}
 }

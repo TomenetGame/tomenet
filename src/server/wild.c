@@ -1984,6 +1984,132 @@ void bleed_with_neighbors(int Depth)
 	Rand_quick = rand_old;
 }
 
+bool check_point(house_type *h_ptr, int fx, int fy){
+	int sx, sy;
+	int dx,dy;
+	int x,y;
+	cptr coord=h_ptr->coords.poly;
+	sx=h_ptr->x;
+	sy=h_ptr->y;
+	x=sx;
+	y=sy;
+	while(coord[0] || coord[1]){
+		dx=coord[0];
+		dy=coord[1];
+		if(dx){		/* dx/dy mutually exclusive */
+			if(dx<0){
+				for(x=sx;x>(sx+dx);x--){
+					if(fx==x && fy==y) return TRUE;
+				}
+			}
+			else{
+				for(x=sx;x<(sx+dx);x++){
+					if(fx==x && fy==y) return TRUE;
+				}
+			}
+			sx=x;
+		}
+		else{
+			if(dy<0){
+				for(y=sy;y>(sy+dy);y--){
+					if(fx==x && fy==y) return TRUE;
+				}
+			}
+			else{
+				for(y=sy;y<(sy+dy);y++){
+					if(fx==x && fy==y) return TRUE;
+				}
+			}
+			sy=y;
+		}
+		coord+=2;
+	}
+	return FALSE;
+}
+
+void fill_house(house_type *h_ptr, int func){
+	int minx, miny;
+	int maxx, maxy;
+	int x,y;
+	cptr coord=h_ptr->coords.poly;
+	cptr matrix;
+	maxx=minx=h_ptr->x;
+	maxy=miny=h_ptr->y;
+	x=minx;
+	y=miny;
+
+	/* get maxima/minima */
+	while(coord[0] || coord[1]){
+		x+=coord[0];
+		y+=coord[1];
+		minx=MIN(x, minx);
+		miny=MIN(y, miny);
+		maxx=MAX(x, maxx);
+		maxy=MAX(y, maxy);
+		coord+=2;
+	}
+	C_MAKE(matrix,(maxx+1-minx)*(maxy+1-miny),byte);
+	//C_WIPE(matrix,(maxx+1-minx)*(maxy+1-miny),byte);
+
+	for(x=minx;x<=maxx;x++){
+		int cw,sy,py;
+		cw=0;
+		sy=0;
+		for(y=miny;y<=maxy;y++){
+			if(check_point(h_ptr, x, y)){
+				if(sy){
+					for(py=sy;py<y;py++){
+						matrix[(x-minx)+(py-miny)*(maxx+1-minx)]=1;
+					}
+					sy=0;
+				}
+				cw=1;
+			}
+			else{
+				if(cw){
+					sy=y;
+				}
+				cw=0;
+			}
+		}
+	}
+
+	for(y=miny;y<=maxy;y++){
+		int cw,sx,px;
+		cw=0;
+		sx=0;
+		for(x=minx;x<=maxx;x++){
+			if(check_point(h_ptr, x, y)){
+				if(sx){
+					for(px=sx;px<x;px++){
+						if(!matrix[(px-minx)+(y-miny)*(maxx+1-minx)])
+							continue;
+						switch(func){
+							case 1:
+								delete_object(h_ptr->depth,y,px);
+								break;
+							case 2:
+								cave[h_ptr->depth][y][px].feat=FEAT_FLOOR;
+							case 3:
+								cave[h_ptr->depth][y][px].info|=CAVE_ICKY;
+								break;
+						}
+					}
+					sx=0;
+				}
+				cw=1;
+			}
+			else{
+				if(cw){
+					sx=x;
+				}
+				cw=0;
+			}
+		}
+	}
+	C_KILL(matrix,(maxx+1-minx)*(maxy+1-miny),byte);
+}
+
 void wild_add_uhouse(house_type *h_ptr){
  	int x,y;
 	int Depth=h_ptr->depth;
@@ -2061,6 +2187,10 @@ void wild_add_uhouse(house_type *h_ptr){
 			}
 			coord+=2;
 		}
+		if(!(h_ptr->flags&HF_NOFLOOR))
+			fill_house(h_ptr,2);
+		else
+			fill_house(h_ptr,3);
 	}
 	if(h_ptr->flags&HF_MOAT){
 		/* Draw a moat around our house */
