@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. Mar 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 13. Apr 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -64,7 +64,7 @@ Contents
     (5.2)   Ranged weapons, brands
     (5.3)   Martial Arts, brands
     (5.4)   Slaying vs brands
-    (5.5)   Weight of weapons
+    (5.5)   Weight of weapons and armour
     (5.6)   Resistances & caps, Immunities, Susceptibilities
     (5.7)   Qualitative classification of items
     (5.8)   Special abilities of items
@@ -76,6 +76,7 @@ Contents
     (5.14)  Curses
     (5.15)  Vampirism
     (5.16)  Invisibility
+    (5.17)  How abilities, resistances and boni stack
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills
@@ -336,9 +337,11 @@ They all start with a slash '/':
  (/dress)   not {worthless}, not {terrible}, known to you.
 /mar        Tells a prayer-user if he may use the prayer 'Holy Martyr'.
  (/martyr)
-/note <player> <text>
+/note <player>:<text>
             Leave a note to another player.
-/notes      Display own pending notes.
+/note <player>
+            Delete all pending notes that were addressed to that player.
+/notes      Display all pending notes that you wrote to other players.
 /notep <text>
             Leave a note to the party you own.
 /noteg <text>
@@ -377,10 +380,9 @@ Items that induce random teleportation, like a 'ring of teleportation' or
     A Long Sword Of The Thunderlords (2d5) (+10,+15) {NxFAReg..}
 
 
-(CURRENTLY DISABLED - ITEMS WILL ALWAYS HAVE A CHANCE TO CAUSE AN EARTHQUAKE:
 Items that 'can cause Earthquakes':
     !E          will make the item stop causing earthquakes randomly on
-                striking.)
+                striking.
 
 Word-Of-Recall scrolls:
     @R500       will teleport you to depth 500ft (tower).
@@ -1494,7 +1496,9 @@ but that's not recommended. Instead, you should go for resurrection!
 That will bring you back to life at the cost of experience (40% usually).
 There are 3 ways to be revived:
 -the ghost can visit a temple (green '4' in town). The temple priest will also
- give him some money.
+ give him some money. The temple priest will turn the ghost away without
+ resurrecting it, if the town isn't the last one visited by the player when
+ he was still alive. ('The temple priest turns you away')
 -another living player reads a 'scroll of life' when standing directly next to
  a ghost.
 -another living player speaks a prayer of 'resurrection' when standing
@@ -2470,8 +2474,8 @@ If several multipliers match the highest one will be used.
 
 
 
-(5.5) Weight of weapons
------------------------
+(5.5) Weight of weapons and armour
+----------------------------------
 If your melee weapon or ranged weapon is too heavy you will hardly be able
 to use it, resulting in reduced attack number per round and less damage.
 You will get the message "You have trouble wielding such a heavy weapon/bow"
@@ -2502,6 +2506,16 @@ character's strength:
         30          18/10-18/19             100         18/200-18/209
         35          18/20-18/29             100         18/210-18/219
         40          18/30-18/39             100         18/220+
+
+
+Wearing armour which is too bulky gives you this message:
+"The weight of your armour encumbers your movement."
+That means your mana will be (severely) reduced. To counter this effect,
+train your 'Combat' skill.
+Very heavy armour and/or heavy items in your inventory may also slow you down
+(reduce your moving speed) if your STRength isn't very great.
+Armour weight also affects Martial Arts, see (5.3) for more information if
+you are a Martial Artist.
 
 
 
@@ -2568,7 +2582,7 @@ Lightning/Electricity   These attacks can destroy rings and amulets.
                         Without resistance it can reduce your dexterity.
                         Lightning bolts do (level/3)+(4d8) damage.
                         Lightning balls do (level*3/2)+8 damage.
-Acid.                   These attacks can destroy items in your inventory.
+Acid                    These attacks can destroy items in your inventory.
                         They can also damage your equipment if you don't
                         resist acid.
                         Without resistance it can reduce your charisma.
@@ -2895,6 +2909,9 @@ LIFE ('It affects your hit points')
         Sword of life (+2) increases your HP by 20%.
         LIFE items _add_ to each other, they aren't multiplied.
         The maximum total +LIFE bonus a character can achieve is +3 (cap).
+        (For mimics, the +LIFE effect might be less since their HP in
+        player form or monster form might be low. The +LIFE isn't applied
+        to mimics' final HP but the lower base HP.)
 AGGRAVATE ('It aggravates nearby creatures')
         Wakes up all monsters in whose radius of awareness you are.
 LUCK ('The item increases your luck')
@@ -3139,6 +3156,7 @@ Wands/Rods/Staves
 --
 Genocide        See 'Scrolls'.
 *Destruction*   See 'Scrolls'.
+Wonder          Wands of wonder cast random magic spells.
 Curing          Satisfies hunger, removes blindness/confusion/stun,
                 cures poison/cuts.
 Probing         Tells you hit points, melee attacks and speed of monsters in
@@ -3147,6 +3165,7 @@ Detection       Detects treasures, objects, traps, secret doors, creatures.
 Perception      Identifies a specific item.
 Enlightenment   Magically maps your surroundings.
 Polymorph       Polymorphs your target randomly into another form.
+                Doesn't works on players who resist nexus.
 Drain Life      Wand: Drains 10..20% life from your target, giving you 50% of
                 the drained life force.
                 Rod: Drains 15..30% life from your target, giving you 33% of
@@ -3302,7 +3321,13 @@ Rods
 Lamps                       x
 Potions                     x       x       x       x
 Flasks                              x       x
-Books/Tomes                                         x
+Books/Tomes                 x                       x
+
+
+Items, even tomes, resist certain elements if they have the according
+resistance due to ego powers (for example a leather shield of resist fire)
+or -in case of tomes- according content :)
+For example a Tome of the Eternal Flame cannot be harmed by fire.
 
 
 
@@ -3516,6 +3541,37 @@ If another player is invisible and not of higher level than you..
 
 
 
+(5.17) How abilities, resistances and boni stack
+------------------------------------------------
+The same resistance from two or more items in your equipment don't add to each
+other. For example you only need one item that provides fire resistance. If
+you equip two such items you won't get better resistance than with just one
+item.
+This rule applies to all resistances and abilities that don't use a bonus
+number to indicate their effectiveness, like faster mana recharging or hit
+point regeneration, telepathic powers, slow digestion, etc.
+
+However, there is a way to further increase your resistances temporarily:
+Use an item that provides some temporary resistance. Temporary resistance and
+permanent (such from your equipment) resistance stack and their effects are
+multiplied! For example if you wear a shield of resist fire and you quaff a
+potion of resist heat you'll have double fire resistance as long as the potion
+lasts, resulting in fire damage being cut down to 1/9 instead of 1/3! This is
+nearly as good as having fire immunity. (1/3 perm res * 1/3 temp res =
+1/9 total res).
+Not only potions can boost your resistances temporarily, some items can also
+be activated for temporary resistance, for example cloaks of lordly resistance
+or elemental protection rings or certain artifacts.
+
+Stat increases or ability increases that are not 'flags' (flag means you either
+have it or you don't) but that use bonus numbers will add to each other.
+For example an orcish shield (+2) that increases your strength by +2 and a
+kolla (+1) which also increases your strength (just by +1) will add up and
+your character's strength will be increased by +3 in total!
+Same goes for IV (Infra-Vision), luck, extra attacks, speed, etc.
+
+
+
 (6) Tables
 ==========
 (6.1) Attributes
@@ -3678,12 +3734,12 @@ Note that not every skill is available to every profession (class).
                                 At 50 a martial artist will learn the
                                 technique of flying!
                                 Under certain conditions MA abilities cannot
-                                be used and lose effect, see section (5.3).
+                                be used and lose their effect, see (5.3)!
                                 The dice of martial arts special techniques
                                 (which your character will use automatically
                                 depending on your MA skill) are affected by
-                                elemental brands, but slightly less (2/3 as
-                                much) as normal weapons.
+                                elemental brands, but slightly less than
+                                normal weapons (2/3 as much).
                                 Martial Arts gives you a chance / adds to your
                                 chance of intercepting an enemy! See
                                 'Interception' skill below.
@@ -3814,10 +3870,19 @@ Note that not every skill is available to every profession (class).
                                 the corresponding aura to react to an attack,
                                 not their damage. The damage/duration of all
                                 auras is only increased by 'Aura power'.
+                                (Aura power doesn't affect auras from items,
+                                for example fire auras of cloaks.)
     .Aura of Fear               Monsters that hit you are stroke by fear.
     .Shivering Aura             Monsters that hit you are stunned.
+                                At a skill of 30 the aura is so strong that
+                                your melee attacks (weapon as well as martial
+                                arts will be branded by it. (Cold brand.)
     .Aura of Death              Monsters that hit you are hit by waves
                                 of plasma and ice.
+                                At a skill of 40 the aura is so strong that
+                                your melee attacks (weapon as well as martial
+                                arts) will be branded by it.
+                                (Alternating fire or cold brand.)
     .Antimagic                  Generated from your strong disbelief in magic
                                 an anti-magic field surrounds you, preventing
                                 attempts from other casters to cast spells or
@@ -3855,10 +3920,14 @@ Note that not every skill is available to every profession (class).
                                 skillpoint or even a stat-point on level ups.
                                 Note that all characters already have a slim
                                 chance to get an additional skill/stat-point
-                                on level ups. The weaker an attribute is, the
-                                more likely it's raised.
-                                (If random(0..99) < training you will receive
-                                an extra skill point on level up.)
+                                on level ups even without Training skill.
+                                The weaker an attribute is, the more likely
+                                it's raised. (This stat increase counts like
+                                a stat potion you'd quaffed.)
+                                Everytime you gain a level, a random number
+                                between 0 and 99 will be generated. If it's
+                                smaller than your Training skill, you will
+                                receive an extra skill point.
     .Swimming                   Self-explaining
     .Digging                    Self-explaining
     .Climbing                   You need this at 01.000 to learn climbing.
@@ -3866,7 +3935,7 @@ Note that not every skill is available to every profession (class).
     .Free Action                You need this at 01.000 to resist paralysis.
     .Confusion Resistance       You need this at 01.000 to resist confusion.
 
-In my opinion, 'Health' and its sub-skills should be avoided. There are more
+In my opinion, the sub-skills of 'Health' should be avoided. There are more
 important skills to care about.
 
 Here is what the numbers mean (we will use the Axe-Mastery skill for this
@@ -4235,6 +4304,9 @@ Mimic
     To find out how many monsters you already killed and how many you need
     in total to learn a form, press the '~' key followed by '3'.
     To polymorph into a form, press 'm' key, like casting a magic spell.
+    (Forms that have DISBELIEVE ability are skipped when using the normal
+    'Polymorph Self' spell. You have to use 'Polymorph Self Into..' if you
+    want to use these forms.)
     To find out the special abilities of a monster form, see section (6.7).
 Archer
     Archers aren't good at fighting, but can deliever extremely high damage
@@ -4688,7 +4760,7 @@ Mind
                     Lv25: Turns into a ball.
     Telekinesis     Inscribe your book with @PPlayername, cast it, select an
                     item that you wish to teleport to the player's inventory.
-Tempo
+Temporal
     Magelock        Magically locks a door.
                     Lv30: Creates a Glyph Of Warding on the ground that stops
                           monsters from crossing the field or summoning on it.
