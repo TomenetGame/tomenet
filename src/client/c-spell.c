@@ -407,6 +407,18 @@ static int get_mimic_spell(int *sn)
 	strnfmt(out_val, 78, "(Powers %c-%c, *=List, ESC=exit) use which power? ",
 		I2A(0), I2A(num - 1));
 
+	if (c_cfg.always_show_lists)
+	{
+		/* Show list */
+		redraw = TRUE;
+
+		/* Save the screen */
+		Term_save();
+
+		/* Display a list of spells */
+		print_mimic_spells();
+	}
+
 	/* Get a spell from the user */
 	while (!flag && get_com(out_val, &choice))
 	{

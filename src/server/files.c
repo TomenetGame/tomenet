@@ -881,6 +881,8 @@ void do_cmd_save_game(int Ind)
 /*
  * Hack -- Calculates the total number of points earned         -JWT-
  */
+/* FIXME: this function returns bad value when max_exp is stupidly large
+ * (usually admin chars) */
 long total_points(int Ind)
 {
 	player_type *p_ptr = Players[Ind];

@@ -1270,8 +1270,11 @@ errr file_character(cptr name, bool full)
 	fprintf(fff, "  [Character Inventory]\n\n");
 	for (i = 0; i < INVEN_PACK; i++)
 	{
-                fprintf(fff, "%c%s %s\n",
-                        index_to_label(i), paren, inventory_name[i]);
+		if (!strncmp(inventory_name[i], "(nothing)", 9)) continue;
+//		if (!strlen(inventory_name[i])) continue;
+
+		fprintf(fff, "%c%s %s\n",
+				index_to_label(i), paren, inventory_name[i]);
 	}
 	fprintf(fff, "\n\n");
 

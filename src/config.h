@@ -217,7 +217,7 @@
 #define	META_ADDRESS "www.mangband.org"
 #define	META_ADDRESS_2 "64.53.71.113"  
 
-#if 0	// not used for good, most likely. DELETEME
+#if 0	/* not used for good, most likely. DELETEME */
 /*
  * OPTION: Set a vhost bind address.  This is only used if you have
  * multiple IP's on a single box, and care which one the server
@@ -260,7 +260,7 @@
  * the code that has a 'store 9' in it.
  */
  /* #define	DEVEL_TOWN_COMPATIBILITY */ 
-#endif	// 0
+#endif	/* 0 */
 
 /*
  * OPTION: Use wider corrdiors (room for two people abreast).
@@ -273,7 +273,7 @@
  * harm other players when they hit.
  */
 /* obsolete - set USE_PK_RULES in tomenet.cfg instead. */
-//#define PLAYER_INTERACTION
+/*#define PLAYER_INTERACTION */
 
 /*
  * OPTION: Hack -- Compile in support for "Spoiler Generation"
@@ -456,7 +456,7 @@
 #ifdef WINDOWS
 
 /* Do not handle signals */
-// # undef HANDLE_SIGNALS
+/* # undef HANDLE_SIGNALS */
 
 #endif
 
@@ -742,7 +742,7 @@
  * TODO: DEFAULT_RADIUS_SPELL should be based on skills!
  */
 #define DEFAULT_RADIUS			18
-//#define DEFAULT_RADIUS_SPELL(p_ptr)	(DEFAULT_RADIUS - 5 + p_ptr->lev / 5)
+/*#define DEFAULT_RADIUS_SPELL(p_ptr)	(DEFAULT_RADIUS - 5 + p_ptr->lev / 5) */
 #define DEFAULT_RADIUS_DEV(p_ptr)	(DEFAULT_RADIUS - 5 + p_ptr->skill_dev / 8)
 /* NOTE: skill_dev is already affected by SKILL_DEVICE
  * get_skill_scale(p_ptr, SKILL_DEVICE, 100) */
@@ -754,10 +754,18 @@
  */
 #define TELL_MONSTER_ABOVE	15
 
+/*
+ * OPTION: Use 'old' update_view function (init2.c, cave.c)
+ * The older one proved out to be more effective and fast, so define it.
+ * (Newer one allows more excellent LOS handling, and it should be faster
+ *  if update_lite is integrated with it.)
+ */
+#define USE_OLD_UPDATE_VIEW
+
 
 /*
  * Below this line are client-only options.
- * Probably we'd better separated into another file?	- Jir -
+ * Probably we'd better separate them to another file?	- Jir -
  */
 
 /* 

@@ -21,6 +21,16 @@
 
 # bug.txt should follow the exact same format
 
+02/08/2002 (Jir)
+[G]- one needs at least 1 kill count to mimic that form (namely townies)
+[G]- darkness, traps, hold mimic spells implemented.
+[G]- unavailable mimic spells are removed from the list.
+[D]- more traps for empty(arena) level (it was too sparse)
+[I]- chardump omits empty inventory slot.
+[I]- killed monster list improved for mimicry
+[B]- msg history in chardump was garbled if contains '%'
+[B]- store buying limit display was wrong.
+
 01/08/2002 (Jir)
 [m]- m_ptr->ai_state handles what a monster is doing.
 [m]- fleeing monster no longer teleports if out of sight.
@@ -1547,7 +1557,6 @@ To find the latest change quickly, search ==== :)
 things to do before 4.0.0
 
 - backport ToME spells! (..is anyone working on it..?)
-  + timed 'cave-affecting' spells
   + spell flags transmitted to the client
   + less packets
   + spells should be exported to LUA?
@@ -1590,7 +1599,7 @@ Porting targets
     (but maybe ##### tag is bad methinks - cannot draw ascii-art dungeon!)
 [P] powers.c for misc activations
 [P] display_player (character dump)
-[P] update_view (for faster algorithm)
+[P] do_cmd_html_dump (screenshot)
 
 
 =============================================================================
@@ -1615,6 +1624,7 @@ below this line are the unfixed bugs known:
 [B]- [C] GCU client doesn't show the motd when using 'fullauto'
 [B]- monsters sometimes drop '(nothing)' (Dread?)
 [B]- strange gray spots in the dark. (info=26; room filler leaks maybe)
+[B]- sometimes you can see monsters over the door.
 [B]- 'Nothng to buy here.' when sunrise/sunset
 [B]- [C] X11 client doesn't accept keystrokes if screen is less than 80x24
 [B]- 'You are shooting with a Boomerang.' is not so cool a msg
@@ -1625,6 +1635,7 @@ below this line are the unfixed bugs known:
 [B]- Forest wight (Lv 4098, undamaged, clone) [<dir>, q] (on 5550')
      (it's actually lv77 - shown in a wrong way only for DM)
 [B]- Warrior gets ugly char-dump; Device skill under Combat (dump_skills)
+[B]- Cannot resume connection (status 9)
 [B]- apartment doors can displace? (disabled)
      Program received signal SIGSEGV, Segmentation fault.
      access_door (Ind=2, dna=0x0) at server/cmd2.c:666
@@ -1921,8 +1932,9 @@ memo and questions:
   - character screen / chardump
     + Identify the items when in tombstone screens.
     + change default file name if already exists.
-    + screenshot!
+    + screenshot! (do_cmd_html_dump)
   + chat-history/spell window
+  + inventory/equipment display should accept next command directly.
 - stores:
   + one player shouldn't stay more than 1 minutes in a store?
   + stores should buy {cursed} potions/scrolls/wands etc?

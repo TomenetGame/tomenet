@@ -93,7 +93,7 @@
  * This is the number of "frames" to produce per second.  It determines
  * the speed of the game.
  */
-//#define FPS 60
+/*#define FPS 60 */
 #define FPS (cfg.fps)
 
 /* maximum respawn time for uniques.... from japanese patch */
@@ -167,7 +167,7 @@
 /*
  * Maximum number of player "race" types (see "table.c", etc)
  */
-//#define MAX_RACES	14
+/*#define MAX_RACES	14 */
 #define MAX_RACES	15
 
 /*
@@ -235,7 +235,6 @@
  */
 #define MAX_O_IDX	32768	/* Max size for "o_list[]" */
 #define MAX_M_IDX 	32768	/* Max size for "m_list[]" */
-//#define MAX_TR_IDX 	32768	/* Max size for "tr_list[]" */
 
 
 /*
@@ -443,11 +442,11 @@
 #define STORE_MIN_KEEP	12		/* Min slots to "always" keep full */
 #define STORE_MAX_KEEP	36		/* Max slots to "always" keep full */
 #define STORE_SHUFFLE	20		/* 1/Chance (per day) of an owner changing */
-// #define STORE_TURNS	200		/* Number of turns between turnovers */
-// moved to tomenet.cfg
 #define STORE_TURNOUT	60		/* Max turns a player may stay in a store if crowded */
+#define STORE_PURSE_BOOST	10	/* Multiplier for max_cost (15) */
 
 #if 0
+#define STORE_TURNS	200		/* Number of turns between turnovers */
 #define STORE_SHUFFLE	25		/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNS	500		/* Number of turns between turnovers */
 #endif
@@ -457,8 +456,10 @@
  * Misc constants
  */
 #define SERVER_SAVE	500		/* How often to save the server state (100) */
-//#define TOWN_DAWN		10000	/* Number of turns from dawn to dawn XXX */
-//#define TOWN_DAWN		(DAY / 2) /* Number of turns from dawn to dawn XXX */
+#if 0
+#define TOWN_DAWN		10000	/* Number of turns from dawn to dawn XXX */
+#define TOWN_DAWN		(DAY / 2) /* Number of turns from dawn to dawn XXX */
+#endif	/* 0 */
 #define GROW_TREE	5000		/* How often to grow a new tree in town */
 #define BREAK_GLYPH		550		/* Rune of protection resistance */
 #define BTH_PLUS_ADJ	3		/* Adjust BTH per plus-to-hit */
@@ -524,16 +525,15 @@
 #if 0
 #define		IS_DAY	 ((turn % (10L * TOWN_DAWN)) <= (10L * TOWN_DAWN / 2))
 #define		IS_NIGHT ((turn % (10L * TOWN_DAWN)) > (10L * TOWN_DAWN / 2))	
-#else	// 0
+#else	/* 0 */
 #define		IS_NIGHT	((bst(HOUR, turn) < 6) || (bst(HOUR, turn) >= 18))
 #define		IS_DAY		(!IS_NIGHT)	
-#endif	// 0
+#endif	/* 0 */
 
 /*
  * Misc constants ( see bst(), do_cmd_time() )
  */
-//#define DAY                     11520                   /* Number of turns per day */
-#define DAY                     23040					/* Number of turns per day */
+#define DAY                     23040					/* Number of turns per day (11520) */
 #define YEAR                    (DAY * 365)             /* Number of turns per year */
 #define HOUR                    (DAY / 24)              /* Number of turns per hour */
 #define MINUTE                  (HOUR / 60)             /* Number of turns per minute */
@@ -580,7 +580,7 @@
 
 
 /*** Option Definitions ***/
-#define OPT_MAX		96	// 64
+#define OPT_MAX		96	/* 64 */
 
 
 /*
@@ -623,7 +623,7 @@
 #define INVEN_AMMO      36 /* 1 quiver -- TORSO */
 #define INVEN_TOOL      37 /* 1 tool -- ARMS */
 
-#if 0	// ToME ones - later, later :)
+#if 0	/* ToME ones - later, later :) */
 #define INVEN_WIELD     24 /* 3 weapons -- WEAPONS */
 #define INVEN_BOW       27 /* 1 bow -- WEAPON */
 #define INVEN_RING      28 /* 6 rings -- FINGER */
@@ -638,7 +638,7 @@
 #define INVEN_CARRY     49 /* 1 carried monster -- TORSO */
 #define INVEN_AMMO      50 /* 1 quiver -- TORSO */
 #define INVEN_TOOL      51 /* 1 tool -- ARMS */
-#endif	// 0
+#endif	/* 0 */
 
 
 /*
@@ -884,7 +884,7 @@ that keeps many algorithms happy.
 /*
  * Number of effects
  */
-#define MAX_EFFECTS             256	// 128
+#define MAX_EFFECTS             256	/* 128 */
 #define MAX_EFFECTS_PLAYER      32
 #define EFF_WAVE                0x00000001      /* A circle whose radius increase */
 #define EFF_LAST                0x00000002      /* The wave lasts */
@@ -1316,7 +1316,7 @@ that keeps many algorithms happy.
 #define TV_DRUID_BOOK   124
 #define TV_DAEMON_BOOK  125
 #define TV_SPIRIT_BOOK  126
-#endif  // 0
+#endif  /* 0 */
 
 /* pernM ones (resurrected) */
 #define TV_KEY		 51      /* Keys (';') */
@@ -1370,7 +1370,7 @@ that keeps many algorithms happy.
 #define SV_PAIR_OF_WITAN_BOOTS          8
 #define SV_AMULET_TERKEN		30
 #define SV_AMULET_SPEED			31
-#define SV_AMULET_LIFE                  32	// 'Immortality'
+#define SV_AMULET_LIFE                  32	/* 'Immortality' */
 #define SV_AMULET_THE_MOON              33
 #define SV_AMULET_SUSPICION		34
 #define SV_AMULET_LIFE_SAVING		35
@@ -2122,11 +2122,16 @@ that keeps many algorithms happy.
 #define CAVE_NOPK	0x0100	/* no pkill (arena?, tavern) */
 #define CAVE_STCK	0x0200	/* sticky, not icky (prison?) */
 
-#if 0	// for future expansion..
+#if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?
  * we'll do 'smells of carrot' thingie? :) */
-#define CAVE_SPEC	0x0400    /* special mark(quests) */
-#define CAVE_FREE	0x0800    /* no random generation on it */
+#define CAVE_TRDT       0x0100    /* trap detected */
+#define CAVE_IDNT       0x0200    /* grid identified (fountains) */
+#define CAVE_SPEC       0x0400    /* special mark(quests) */
+#define CAVE_FREE       0x0800    /* no random generation on it */
+#define CAVE_DETECT     0x1000    /* Traps detected here */
+#define CAVE_PLIT       0x2000    /* Player lit grid */
+#define CAVE_MLIT       0x4000    /* Monster lit grid */
 #endif
 
 
@@ -2152,7 +2157,7 @@ that keeps many algorithms happy.
 #define PROJECT_HIDE	0x00000080
 
 /* ToME expansions */
-#if 0	// soon
+#if 0	/* soon */
 #define PROJECT_VIEWABLE   0x00000100   /* Affect monsters in LOS */
 #define PROJECT_METEOR_SHOWER 0x00000200        /* Affect random grids */
 #define PROJECT_BLAST      0x00000400   /* Like Mega_blast, but will only affect viewable grids */
@@ -2161,7 +2166,7 @@ that keeps many algorithms happy.
 #define PROJECT_WALL       0x00002000
 #define PROJECT_MANA_PATH  0x00004000   /* Follow a mana path. */
 #define PROJECT_ABSORB_MANA 0x00008000   /* The spell increase in power as it absord grid's mana. */
-#endif	// 0
+#endif	/* 0 */
 #define PROJECT_STAY       0x00010000
 
 
@@ -2456,12 +2461,13 @@ that keeps many algorithms happy.
 
 #define GF_TELE_TO		150
 #define GF_HAND_DOOM	151
+#define GF_STASIS       152
 
-#if 0	// Let's implement one by one..
+#if 0	/* Let's implement one by one.. */
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
 #define GF_DISP_LIVING  71
 #define GF_NUKE         73	// *
-#define GF_STASIS       75
+#define GF_STASIS       75	// *
 #define GF_STONE_WALL   76	// *
 #define GF_DEATH_RAY    77
 #define GF_STUN         78	// *
@@ -2498,7 +2504,7 @@ that keeps many algorithms happy.
 
 #define MAX_GF          133
 
-#endif	// 0
+#endif	/* 0 */
 
 /*
  * Some things which induce learning
@@ -2781,7 +2787,7 @@ that keeps many algorithms happy.
 #define TR5_IMMOVABLE           0x00000400L     /* Cannot move */
 
 /* XXX */
-//#define TR5_LIFE                0x04000000L
+/*#define TR5_LIFE                0x04000000L */
 #define TR5_REGEN_MANA			0x01000000L	/* Item induces regeneration */
 #define TR5_DISARM				0x02000000L
 #define TR5_NO_ENCHANT			0x04000000L
@@ -2789,7 +2795,7 @@ that keeps many algorithms happy.
 #define TR5_INVIS               0x10000000L
 #define TR5_SENS_FIRE           0x20000000L
 #define TR5_REFLECT             0x40000000L
-//#define TR5_NO_NORM_ART         0x80000000L
+/*#define TR5_NO_NORM_ART         0x80000000L */
 
 /* ESP defines */
 #define ESP_ORC                 0x00000001L
@@ -2805,7 +2811,7 @@ that keeps many algorithms happy.
 #define ESP_NONLIVING           0x00000400L
 #define ESP_UNIQUE              0x00000800L
 #define ESP_SPIDER              0x00001000L
-// #define ESP_PLAYER			0x40000000L
+/* #define ESP_PLAYER			0x40000000L */
 #define ESP_ALL                 0x80000000L
 
 /* Number of group of flags to choose from */
@@ -2830,7 +2836,7 @@ that keeps many algorithms happy.
      TR1_CON | TR1_CHR | TR1_LIFE | \
 	 TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
      TR1_SPEED | TR1_BLOWS | TR1_MANA | TR1_SPELL)
-#endif	// 0
+#endif	/* 0 */
 
 #define TR5_PVAL_MASK   \
         (TR5_CRIT | TR5_LUCK | TR5_DISARM)
@@ -2860,8 +2866,10 @@ that keeps many algorithms happy.
 #define ETR4_TH_M2             0x00100000L     /* Item has +(up to 2) to hit */
 #define ETR4_TH_M3             0x00200000L     /* Item has +(up to 3) to hit */
 #define ETR4_TH_M5             0x00400000L     /* Item has +(up to 5) to hit */
-//#define ETR4_TD_M1             0x00800000L     /* Item has +1 to dam */
-//#define ETR4_TD_M2             0x01000000L     /* Item has +(up to 2) to dam */
+#if 0
+#define ETR4_TD_M1             0x00800000L     /* Item has +1 to dam */
+#define ETR4_TD_M2             0x01000000L     /* Item has +(up to 2) to dam */
+#endif	/* 0 */
 #define ETR4_R_ESP             0x00800000L     /* Item has a random ESP */
 #define ETR4_NO_SEED           0x01000000L     /* Item doesn't have random seed */
 #define ETR4_TD_M3             0x02000000L     /* Item has +(up to 3) to dam */
@@ -2911,11 +2919,11 @@ that keeps many algorithms happy.
 #define RBM_BUTT	9
 #define RBM_CRUSH	10
 #define RBM_ENGULF	11
-//#define RBM_XXX2	12
+/*#define RBM_XXX2	12 */
 #define RBM_CRAWL	13
 #define RBM_DROOL	14
 #define RBM_SPIT	15
-//#define RBM_XXX3	16
+/*#define RBM_XXX3	16 */
 #define RBM_GAZE	17
 #define RBM_WAIL	18
 #define RBM_SPORE	19
@@ -2923,7 +2931,7 @@ that keeps many algorithms happy.
 #define RBM_BEG		21
 #define RBM_INSULT	22
 #define RBM_MOAN	23
-//#define RBM_XXX5	24
+/*#define RBM_XXX5	24 */
 
 #define RBM_ANY          0
 #define RBM_CHARGE      12
@@ -3196,7 +3204,8 @@ that keeps many algorithms happy.
 #define RF5_CONF			0x20000000	/* Confuse Player */
 #define RF5_SLOW			0x40000000	/* Slow Player */
 #define RF5_HOLD			0x80000000	/* Paralyze Player */
-#define RF5_PLAYER_SPELLS (0xffffffff) /* Simply all */
+//#define RF5_PLAYER_SPELLS (0xffffffff) /* Simply all */
+#define RF5_PLAYER_SPELLS (0xffffffff & ~(RF5_DRAIN_MANA | RF5_BLIND))
 
 /*
  * New monster race bit flags
@@ -3418,7 +3427,7 @@ that keeps many algorithms happy.
 #define DF1_HOT                 0x00002000L
 #define DF1_COLD                0x00004000L
 #define DF1_FORCE_DOWN          0x00008000L
-#define DF1_FORGET              0x00010000L	// DUNGEON_NOMAP
+#define DF1_FORGET              0x00010000L	/* DUNGEON_NOMAP */
 #define DF1_NO_DESTROY          0x00020000L
 #define DF1_SAND_VEIN           0x00040000L
 #define DF1_CIRCULAR_ROOMS      0x00080000L
@@ -3446,7 +3455,7 @@ that keeps many algorithms happy.
 #define LF1_DESC                0x00000020L
 #define LF1_NO_GENO             0x00000040L
 
-#endif	// 0
+#endif	/* 0 */
 
 /* dungeon flags for dungeon_type 
  * they should be renamed to DFx_*
@@ -3557,7 +3566,7 @@ that keeps many algorithms happy.
  */
 #define RF4_BOLT_MASK \
   (RF4_ARROW_1 | RF4_ARROW_2 | RF4_BOULDER)
-//  (RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4)
+/*  (RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4) */
 
 #define RF5_BOLT_MASK \
    (RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | \
@@ -3607,7 +3616,7 @@ that keeps many algorithms happy.
 	 RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | \
 	 RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | \
 	 RF4_BR_NUKE | RF4_BR_DISI | RF4_BOULDER)
-//	 RF4_BA_NUKE | RF4_BR_NUKE | RF4_BA_CHAO | RF4_BR_DISI)
+/*	 RF4_BA_NUKE | RF4_BR_NUKE | RF4_BA_CHAO | RF4_BR_DISI) */
 
 #define RF5_ATTACK_MASK \
 	(RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | RF5_BA_COLD | RF5_BA_POIS | \
@@ -3784,7 +3793,7 @@ that keeps many algorithms happy.
  */
 #define is_ego_p(T, e) \
 	(((T)->name2 == (e)) || ((T)->name2b == (e)))
-//	((T)->name2 == (e))
+/*	((T)->name2 == (e)) */
 
 
 /*
@@ -3832,8 +3841,10 @@ that keeps many algorithms happy.
  */
 #define in_bounds3(WPOS,l_ptr,Y,X) \
 	(istown(WPOS) ? in_bounds2(WPOS,Y,X) : in_bounds4(l_ptr,Y,X))
-//   (istown(WPOS) ? (((Y) >= 0) && ((X) >= 0) && ((Y) < (l_ptr)->hgt) && ((X) < (l_ptr)->wid)) \
-//           : (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID))))
+#if 0
+   (istown(WPOS) ? (((Y) >= 0) && ((X) >= 0) && ((Y) < (l_ptr)->hgt) && ((X) < (l_ptr)->wid)) \
+           : (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID))))
+#endif	/* 0 */
 
 /* replacement of in_bound. */
 #define in_bounds4(l_ptr,Y,X) \
@@ -3841,7 +3852,7 @@ that keeps many algorithms happy.
 	(((Y) > 0) && ((X) > 0) && ((Y) < (l_ptr)->hgt - 1) && ((X) < (l_ptr)->wid - 1)) \
 	: in_bounds(Y,X))
 
-//   (((Y) > 0) && ((X) > 0) && ((Y) < (l_ptr)->hgt) && ((X) < (l_ptr)->wid)) 
+/*   (((Y) > 0) && ((X) > 0) && ((Y) < (l_ptr)->hgt) && ((X) < (l_ptr)->wid))  */
 
 /*
  * Determines if a map location is currently "on screen" -RAK-
@@ -3935,12 +3946,12 @@ that keeps many algorithms happy.
  * Line 2-3 -- forbid grids containing artifacts
  * Line 4 -- forbit house doors
  */
-#if 0	// moved to cave.c
+#if 0	/* moved to cave.c */
 #define cave_valid_bold(ZCAVE,Y,X) \
     (!cave_perma_bold(ZCAVE,Y,X) && \
      (!ZCAVE[Y][X].o_idx || \
       !artifact_p(&o_list[ZCAVE[Y][X].o_idx])))
-#endif	// 0
+#endif	/* 0 */
 
 /*
  * Grid based version of "cave_floor_bold()"
@@ -4119,7 +4130,7 @@ extern int PlayerUID;
 #if 0
 #define MODE_HELL		0x0001	/* Penalized */
 #define MODE_NO_GHOST	0x0002	/* traditional 'hellish' is 3 */
-#endif	// 0
+#endif	/* 0 */
 
 /* Monk martial arts... */
 # define MAX_MA 17
@@ -4221,7 +4232,7 @@ extern int PlayerUID;
 #define FTRAP_XXX29      0x010000000
 #define FTRAP_XXX30      0x020000000
 #define FTRAP_XXX31      0x040000000
-#define FTRAP_NO_ID      0x080000000	// nominally implemented (but not used)
+#define FTRAP_NO_ID      0x080000000	/* nominally implemented (but not used) */
 
 /* jk */
 #define STAT_DEC_TEMPORARY 1
@@ -4487,7 +4498,7 @@ extern int PlayerUID;
 /*
 #define inarea(apos, bpos) \
 	(apos->wx==bpos->wx && apos->wy==bpos->wy && apos->wz==bpos->wz)
-//	(apos.wx==bpos.wx && apos.wy==bpos.wy && apos.wz==bpos.wz)
+	(apos.wx==bpos.wx && apos.wy==bpos.wy && apos.wz==bpos.wz)
 */
 
 
@@ -4610,13 +4621,13 @@ extern int PlayerUID;
 #define SKILL_TRAPPING          46
 #define SKILL_AXE				47	/* hrm, bad order */
 
-#if 0	// skills to come	- Jir -
+#if 0	/* skills to come	- Jir - */
 #define SKILL_CLIMB
-#define SKILL_INNATE_POWER	// in mimicry tree
+#define SKILL_INNATE_POWER	/* in mimicry tree */
 #define SKILL_EGO_POWER
-#endif	// 0
+#endif	/* 0 */
 
-//#define MAX_SKILLS              70
+/*#define MAX_SKILLS              70 */
 #define MAX_SKILLS              128
 
 /* SKill flags */

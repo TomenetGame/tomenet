@@ -3050,9 +3050,10 @@ void c_close_game(cptr reason)
 //	Term_save();
 
 	/* Let the player view the last scene */
-	put_str("...Press any key to proceed", 0, 0);
+//	put_str("...Press any key to proceed", 0, 0);
+	put_str(format("%s ...Press '0' key to proceed", reason), 0, 0);
 
-	while (!inkey());
+	while (inkey() != '0');
 
 	/* You are dead */
 	print_tomb(reason);
@@ -3077,10 +3078,13 @@ void c_close_game(cptr reason)
 				if (tmp[0] && (tmp[0] != ' '))
 				{
 					file_character(tmp, FALSE);
+					break;
 				}
 			}
-			break;
+			continue;
 		}
+		/* Safeguard */
+		else if (k == '0') continue;
 
 		else if (k) break;
 	}

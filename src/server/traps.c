@@ -3141,7 +3141,7 @@ void wiz_place_trap(int Ind, int trap)
 #endif	// 0
 }
 
-#if 1	// soon
+
 /*
  * Here begin monster traps code
  */
@@ -4770,4 +4770,3 @@ bool mon_hit_trap(int m_idx)
 	/* did it die? */
 	return (dead);
 }
-#endif	// 0

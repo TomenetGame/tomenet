@@ -561,6 +561,7 @@ void do_cmd_messages_chatonly(void)
  *
  * XXX The beginning of dump can be corrupted. FIXME
  */
+/* FIXME: result can be garbled if contains '%' */
 void dump_messages(FILE *fff, int lines)
 {
 	int i, j, k, n, nn, q, r, s, t=0;
@@ -654,7 +655,8 @@ void dump_messages(FILE *fff, int lines)
 
 		/* Dump the messages, bottom to top */
 //		fprintf(fff, "%s%s\n", buf, r ? format(" (x%d)", r + 1) : "");
-		fprintf(fff, buf);
+//		fprintf(fff, buf);
+		fputs(buf, fff);
 	}
 	fprintf(fff, "\n\n");
 }

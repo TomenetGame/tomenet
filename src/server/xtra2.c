@@ -2856,7 +2856,8 @@ void gain_exp(int Ind, s32b amount)
 
 	/* You cant gain xp on your land */
 	if (player_is_king(Ind)) return;
-        if (p_ptr->ghost) amount/=1.5;	/* allow own kills to be gained */
+//        if (p_ptr->ghost) amount/=1.5;	/* allow own kills to be gained */
+	if (p_ptr->ghost) amount = (amount * 2) / 3;	/* 1.5 = 1, none? :) */
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
 	{
@@ -3941,7 +3942,7 @@ void player_death(int Ind)
 			add_high_score(Ind);
 
 		/* Format string */
-		sprintf(buf, "Killed by %s (%ld points)", p_ptr->died_from, total_points(Ind));
+		sprintf(buf, "Killed by %s (%ld pts)", p_ptr->died_from, total_points(Ind));
 
 		/* Get rid of him */
 		Destroy_connection(p_ptr->conn, buf);

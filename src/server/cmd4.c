@@ -736,7 +736,6 @@ void do_cmd_knowledge_dungeons(int Ind)
 	int		i, j, num, total = 0;
 	monster_race	*r_ptr;
 	bool	shown = FALSE;
-	bool	mimic = (get_skill(p_ptr, SKILL_MIMIC));
 	bool	admin = is_admin(p_ptr);
 
 	FILE *fff;
@@ -1006,7 +1005,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 	int		i, j, num, total = 0;
 	monster_race	*r_ptr;
 	bool	shown = FALSE, all = FALSE;
-	bool	mimic = (get_skill(p_ptr, SKILL_MIMIC));
+	byte	mimic = (get_skill_scale(p_ptr, SKILL_MIMIC, 100));
 	bool	admin = is_admin(p_ptr);
 
 	FILE *fff;
@@ -1052,7 +1051,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 
 		if (admin) fprintf(fff, "(%4d) ", i);
 
-		if (mimic)
+		if (mimic && mimic >= r_ptr->level)
 		{
 			j = r_ptr->level - num;
 
@@ -1060,7 +1059,13 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 				fprintf(fff, "%s : %d (%d more to go)\n",
 						r_name + r_ptr->name, num, j);
 			else
-				fprintf(fff, "%s : %d (learnt)\n", r_name + r_ptr->name, num);
+			{
+				if (p_ptr->body_monster == i)
+					fprintf(fff, "%s : %d  ** Your current form **\n",
+							r_name + r_ptr->name, num);
+				else fprintf(fff, "%s : %d (learnt)\n",
+						r_name + r_ptr->name, num);
+			}
 		}
 		else
 		{

@@ -7519,9 +7519,8 @@ static void cave_gen(struct worldpos *wpos)
 	}
 
 
-#ifdef NEW_DUNGEON
 	/* Place some traps in the dungeon */
-	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint(k));
+	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint(k * (empty_level ? 5 : 1)));
 
 	/* Put some rubble in corridors */
 	alloc_object(wpos, ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k));
@@ -7532,20 +7531,6 @@ static void cave_gen(struct worldpos *wpos)
 	/* Put some objects/gold in the dungeon */
 	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3) * dun->ratio / 100 + 1);
 	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3) * dun->ratio / 100 + 1);
-#else
-	/* Place some traps in the dungeon */
-	alloc_object(Depth, ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint(k));
-
-	/* Put some rubble in corridors */
-	alloc_object(Depth, ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k));
-
-	/* Put some objects in rooms */
-	alloc_object(Depth, ALLOC_SET_ROOM, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ROOM, 3));
-
-	/* Put some objects/gold in the dungeon */
-	alloc_object(Depth, ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3));
-	alloc_object(Depth, ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3));
-#endif
 }
 
 

@@ -5852,7 +5852,9 @@ static void do_mimic_power(int Ind, int power)
       break;
 // RF5_HOLD			0x80000000	/* Paralyze Player */
     case 63:
-      msg_print(Ind, "Haha, you wish ... :)");
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
       break;
 
 // RF6_HASTE			0x00000001	/* Speed self */
@@ -5891,7 +5893,6 @@ static void do_mimic_power(int Ind, int power)
       get_aim_dir(Ind);
       p_ptr->current_spell = j;
       return;
-//      msg_print(Ind, "Haha, you wish ... :)");
       break;
 // RF6_TELE_AWAY		0x00000200	/* Move player far away */
     case 73:
@@ -5901,18 +5902,20 @@ static void do_mimic_power(int Ind, int power)
       break;
 // RF6_TELE_LEVEL		0x00000400	/* Move player vertically */
     case 74:
-      teleport_player_level(Ind);
+      teleport_player_level(Ind);	/* wrong way, but useful */
       break;
 // RF6_XXX5			0x00000800	/* Move player (?) */
     case 75:
       break;
 // RF6_DARKNESS		0x00001000	/* Create Darkness */
     case 76:
-      msg_print(Ind, "Haha, you wish ... :)");
+	  unlite_area(Ind, 10, 3);
       break;
 // RF6_TRAPS			0x00002000	/* Create Traps */
     case 77:
-      msg_print(Ind, "Haha, you wish ... :)");
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
       break;
 // RF6_FORGET			0x00004000	/* Cause amnesia */
     case 78:
@@ -6222,6 +6225,9 @@ void do_mimic_power_aux(int Ind, int dir)
     case 62:
       fire_bolt(Ind, GF_OLD_SLOW, dir, damroll(2, 6) + (rlev / 3));
       break;
+// RF5_HOLD			0x80000000	/* Paralyze Player */
+    case 63:
+      fire_bolt(Ind, GF_STASIS, dir, damroll(2, 6) + (rlev / 3));
 // RF6_HAND_DOOM		0x00000002	/* Should we...? */ /* YES! */
     case 65:
 	  (void)project_hook(Ind, GF_HAND_DOOM, dir, 1, PROJECT_STOP | PROJECT_KILL);
@@ -6234,6 +6240,11 @@ void do_mimic_power_aux(int Ind, int dir)
 	case 73:
           (void)fire_beam(Ind, GF_AWAY_ALL, dir, rlev);
 	  break;
+// RF6_TRAPS			0x00002000	/* Create Traps */
+    case 77:
+	  /* I dunno if you're happy with it :) */
+      fire_ball(Ind, GF_MAKE_TRAP, dir, 1, 1 + rlev / 30);
+      break;
 
 		default:  /* For some reason we got called for a spell that */
 		{         /* doesn't require a direction */
@@ -6349,6 +6360,7 @@ void do_cmd_mimic(int Ind, int spell)
 			if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) continue;
 			if (r_info[j].flags1 & RF1_UNIQUE) continue;
 			if (p_ptr->r_killed[j] < r_info[j].level) continue;
+			if (p_ptr->r_killed[j] < 1) continue;
 			if (strlen(r_info[j].name + r_name) <= 1) continue;
 			if (!r_info[j].level && !mon_allowed(&r_info[j])) continue;
 

@@ -4959,6 +4959,30 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
+		/* Sleep (Use "dam" as "power") */
+		case GF_STASIS:
+		{
+			if (seen) obvious = TRUE;
+
+			/* Attempt a saving throw */
+			if ((r_ptr->flags1 & (RF1_UNIQUE)) ||
+			    (m_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
+			{
+				note = " is unaffected!";
+				obvious = FALSE;
+			}
+			else
+			{
+				/* Go to sleep (much) later */
+				note = " is suspended!";
+				do_sleep = 500;
+			}
+
+			/* No "real" damage */
+			dam = 0;
+			break;
+		}
+
 			/* Default */
 		default:
 		{

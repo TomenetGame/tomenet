@@ -1149,7 +1149,8 @@ byte old_blows_table[11][12] =
  * Store owners (exactly four "possible" owners per store, chosen randomly)
  * { name, purse, max greed, min greed, haggle_per, tolerance, race, unused }
  */
-#define STORE_PURSE_BOOST	10	// 15	(let's period the infration)
+/* XXX well, it's silly that both server/tables.c and client/c-table.c
+ * contains this table; it should be sent from the server.	- Jir - */
 owner_type owners[MAX_STORES][MAX_OWNERS] =
 {
 	{

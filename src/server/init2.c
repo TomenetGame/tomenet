@@ -1391,6 +1391,11 @@ static errr init_other(void)
 
 	/*** Prepare the "dungeon" information ***/
 
+#ifndef USE_OLD_UPDATE_VIEW
+	/* Used by "update_view()" */
+	(void)vinfo_init();
+#endif	/* USE_OLD_UPDATE_VIEW */
+
 	/* Allocate and Wipe the object list */
 	C_MAKE(o_list, MAX_O_IDX, object_type);
 
