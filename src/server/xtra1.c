@@ -1465,8 +1465,11 @@ void calc_body_bonus(int Ind)
 		case 929:	case 930:	case 931:	case 932:	case 933:
 		case 967:	case 973:	case 974:
 		{
+			/* I'd prefer ghosts having a radius of awareness, like a 'pseudo-light source',
+			since atm ghosts are completely blind in the dark :( -C. Blue */
 			p_ptr->see_inv = TRUE;
-			p_ptr->see_infra += 5;
+			p_ptr->see_infra += 3;
+	//		p_ptr->invis += 5; */ /* No. */
 			break;
 		}
 	}
@@ -1488,19 +1491,19 @@ void calc_body_bonus(int Ind)
 	if(r_ptr->flags3 & RF3_UNDEAD)
 	{
 		/* p_ptr->see_inv = TRUE;
-		p_ptr->resist_neth = TRUE;*/
+		p_ptr->resist_neth = TRUE;
 		p_ptr->hold_life = TRUE;
-		/* p_ptr->free_act = TRUE;
-		p_ptr->see_infra += 3; */
-    		p_ptr->resist_fear = TRUE;
+		p_ptr->free_act = TRUE;
+		p_ptr->see_infra += 3;
+    		p_ptr->resist_fear = TRUE;*/
 		/*p_ptr->resist_conf = TRUE;*/
 		p_ptr->resist_dark = TRUE;
 		p_ptr->resist_blind = TRUE;
-		p_ptr->resist_pois = TRUE; /* instead of immune */
-		p_ptr->resist_cold = TRUE;
+		/* p_ptr->resist_pois = TRUE; /* instead of immune */
+		/* p_ptr->resist_cold = TRUE; */
 		p_ptr->no_cut = TRUE;
 		p_ptr->reduce_insanity = 1;
-//		p_ptr->invis += 5; */ /* No. */
+		p_ptr->see_infra += 1;
 	}
 
 	//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
@@ -2191,18 +2194,18 @@ void calc_bonuses(int Ind)
 	if (p_ptr->ghost)
 	{
 		p_ptr->see_inv = TRUE;
-		p_ptr->resist_neth = TRUE;
-		p_ptr->hold_life = TRUE;
+		/* p_ptr->resist_neth = TRUE;
+		p_ptr->hold_life = TRUE; */
 		p_ptr->free_act = TRUE;
 		p_ptr->see_infra += 3;
-		p_ptr->resist_fear = TRUE;
-		p_ptr->resist_conf = TRUE;
 		p_ptr->resist_dark = TRUE;
 		p_ptr->resist_blind = TRUE;
-		p_ptr->immune_poison = TRUE;
+		p_ptr->resist_pois = TRUE; /* instead of immune_poison */
 		p_ptr->resist_cold = TRUE;
+		p_ptr->resist_fear = TRUE;
+		p_ptr->resist_conf = TRUE;
 		p_ptr->no_cut = TRUE;
-		p_ptr->reduce_insanity = 2;
+		p_ptr->reduce_insanity = 1;
 //		p_ptr->invis += 5; */ /* No. */
 	}
 
