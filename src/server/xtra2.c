@@ -6429,7 +6429,7 @@ bool master_summon(int Ind, char * parms)
 	return TRUE;
 }
 
-void imprison(int Ind, char *reason){
+void imprison(int Ind, u16b time, char *reason){
 	int id, i;
 	struct dna_type *dna;
 	player_type *p_ptr=Players[Ind];
@@ -6472,6 +6472,7 @@ void imprison(int Ind, char *reason){
 			sprintf(string, "\377v%s was jailed for %s", p_ptr->name, reason);
 			msg_broadcast(Ind, string);
 			msg_format(Ind, "\377vYou have been jailed for %s", reason);
+			p_ptr->tim_jail=time;
 			return;
 		}
 	}

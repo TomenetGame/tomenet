@@ -1647,6 +1647,18 @@ static void process_player_end(int Ind)
 		  {
 		    set_tim_manashield(Ind, p_ptr->tim_manashield - minus);
 		  }
+		if(p_ptr->tim_jail){
+			int jy, jx;
+			p_ptr->tim_jail--;
+			if(!p_ptr->tim_jail){
+				msg_print(Ind, "\377GYou are free to go!");
+				jy=p_ptr->py;
+				jx=p_ptr->px;
+				zcave[jy][jx].info &= ~CAVE_STCK;
+				teleport_player(Ind, 1);
+				zcave[jy][jx].info |= CAVE_STCK;
+			}
+		}
 
 		/* Hack -- Tunnel */
 		if (p_ptr->auto_tunnel)
