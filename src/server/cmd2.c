@@ -35,10 +35,19 @@ void do_cmd_go_up(int Ind)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Verify stairs if not a ghost, or admin wizard */
-	if (!p_ptr->ghost && !p_ptr->admin_wiz && c_ptr->feat != FEAT_LESS && !p_ptr->prob_travel)
+	if (!p_ptr->admin_wiz && c_ptr->feat != FEAT_LESS && !p_ptr->prob_travel)
 	{
-		msg_print(Ind, "I see no up staircase here.");
-		return;
+		if (!p_ptr->ghost)
+		{
+			msg_print(Ind, "I see no up staircase here.");
+			return;
+		}
+		else if (p_ptr->max_dlv + 5 <= getlevel(&p_ptr->wpos))
+		{
+			/* anti Ghost-dive */
+			msg_print(Ind, "A mysterious force prevents you from going up.");
+			return;
+		}
 	}
 	if(wpos->wz==0 && !(wild_info[wpos->wy][wpos->wx].flags&WILD_F_UP))
 	{

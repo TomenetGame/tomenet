@@ -61,7 +61,7 @@ void cnv_stat(int val, char *out_val)
  */
 s16b modify_stat_value(int value, int amount)
 {
-	int    i;
+	int i;
 
 	/* Reward */
 	if (amount > 0)
@@ -133,7 +133,7 @@ static void prt_title(int Ind)
 	/* Normal */
 	else
 	{
-                p = player_title[p_ptr->pclass][(p_ptr->lev-1)/10];
+		p = player_title[p_ptr->pclass][(p_ptr->lev-1)/10];
 	}
 
 	/* Ghost */
@@ -151,11 +151,11 @@ static void prt_level(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-        s64b adv_exp;
+	s64b adv_exp;
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 		adv_exp = 0;
-        else adv_exp = (s64b)((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
+	else adv_exp = (s64b)((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
 
 	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp);
 }
@@ -168,11 +168,11 @@ static void prt_exp(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-        s64b adv_exp;
+	s64b adv_exp;
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 		adv_exp = 0;
-        else adv_exp = (s64b)((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
+	else adv_exp = (s64b)((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
 
 	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp);
 }
@@ -810,9 +810,9 @@ static void calc_spells(int Ind)
 
 	cptr p = ((p_ptr->mp_ptr->spell_book == TV_PRAYER_BOOK) ? "prayer" : "spell");
 
-        if (p_ptr->pclass == CLASS_WARRIOR)
-        {
-        	p = "technique";
+	if (p_ptr->pclass == CLASS_WARRIOR)
+	{
+		p = "technique";
  	}
 	
 	/* Hack -- must be literate */
@@ -827,7 +827,7 @@ static void calc_spells(int Ind)
 
 	/* Extract total allowed spells */
 	num_allowed = (adj_mag_study[p_ptr->stat_ind[p_ptr->mp_ptr->spell_stat]] *
-	               levels / 2);
+		levels / 2);
 
 	/* Assume none known */
 	num_known = 0;
@@ -837,8 +837,8 @@ static void calc_spells(int Ind)
 	{
 		/* Count known spells */
 		if ((j < 32) ?
-		    (p_ptr->spell_learned1 & (1L << j)) :
-		    (p_ptr->spell_learned2 & (1L << (j - 32))))
+			(p_ptr->spell_learned1 & (1L << j)) :
+			(p_ptr->spell_learned2 & (1L << (j - 32))))
 		{
 			num_known++;
 		}
@@ -869,8 +869,8 @@ static void calc_spells(int Ind)
 
 		/* Is it known? */
 		if ((j < 32) ?
-		    (p_ptr->spell_learned1 & (1L << j)) :
-		    (p_ptr->spell_learned2 & (1L << (j - 32))))
+			(p_ptr->spell_learned1 & (1L << j)) :
+			(p_ptr->spell_learned2 & (1L << (j - 32))))
 		{
 			/* Mark as forgotten */
 			if (j < 32)
@@ -894,7 +894,7 @@ static void calc_spells(int Ind)
 
 			/* Message */
 			msg_format(Ind, "You have forgotten the %s of %s.", p,
-			           spell_names[p_ptr->mp_ptr->spell_type][j]);
+				spell_names[p_ptr->mp_ptr->spell_type][j]);
 
 			/* One more can be learned */
 			p_ptr->new_spells++;
@@ -919,8 +919,8 @@ static void calc_spells(int Ind)
 
 		/* Forget it (if learned) */
 		if ((j < 32) ?
-		    (p_ptr->spell_learned1 & (1L << j)) :
-		    (p_ptr->spell_learned2 & (1L << (j - 32))))
+			(p_ptr->spell_learned1 & (1L << j)) :
+			(p_ptr->spell_learned2 & (1L << (j - 32))))
 		{
 			/* Mark as forgotten */
 			if (j < 32)
@@ -944,7 +944,7 @@ static void calc_spells(int Ind)
 
 			/* Message */
 			msg_format(Ind, "You have forgotten the %s of %s.", p,
-			           spell_names[p_ptr->mp_ptr->spell_type][j]);
+				spell_names[p_ptr->mp_ptr->spell_type][j]);
 
 			/* One more can be learned */
 			p_ptr->new_spells++;
@@ -975,8 +975,8 @@ static void calc_spells(int Ind)
 
 		/* First set of spells */
 		if ((j < 32) ?
-		    (p_ptr->spell_forgotten1 & (1L << j)) :
-		    (p_ptr->spell_forgotten2 & (1L << (j - 32))))
+			(p_ptr->spell_forgotten1 & (1L << j)) :
+			(p_ptr->spell_forgotten2 & (1L << (j - 32))))
 		{
 			/* No longer forgotten */
 			if (j < 32)
@@ -1000,7 +1000,7 @@ static void calc_spells(int Ind)
 
 			/* Message */
 			msg_format(Ind, "You have remembered the %s of %s.",
-			           p, spell_names[p_ptr->mp_ptr->spell_type][j]);
+				p, spell_names[p_ptr->mp_ptr->spell_type][j]);
 
 			/* One less can be learned */
 			p_ptr->new_spells--;
@@ -1022,8 +1022,8 @@ static void calc_spells(int Ind)
 
 		/* Skip spells we already know */
 		if ((j < 32) ?
-		    (p_ptr->spell_learned1 & (1L << j)) :
-		    (p_ptr->spell_learned2 & (1L << (j - 32))))
+			(p_ptr->spell_learned1 & (1L << j)) :
+			(p_ptr->spell_learned2 & (1L << (j - 32))))
 		{
 			continue;
 		}
@@ -1104,34 +1104,34 @@ static void calc_mana(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *p_ptr2;
 
-        int             levels, cur_wgt, max_wgt;
-        s32b    new_mana;
+	int levels, cur_wgt, max_wgt;
+	s32b new_mana;
 
 	object_type	*o_ptr;
 
-	    u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, esp;
 
 	int Ind2 = 0;
 
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
 	  {
-	    Ind2 = find_player(p_ptr->esp_link);
+		Ind2 = find_player(p_ptr->esp_link);
 
-	    if (!Ind2)
-	      end_mind(Ind, FALSE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
-	      }
-	  }
+		if (!Ind2)
+			end_mind(Ind, FALSE);
+		else
+		{
+			p_ptr2 = Players[Ind2];
+		}
+	}
 
 	/* Hack -- Must be literate */
 	if ((!p_ptr->mp_ptr->spell_book) && (p_ptr->pclass != CLASS_MIMIC) && (!Ind2))
-	  {
-	    p_ptr->msp = p_ptr->csp = 0;
-	    return;
-	  }
+	{
+		p_ptr->msp = p_ptr->csp = 0;
+		return;
+	}
 
 
 	/* Extract "effective" player level */
@@ -1238,13 +1238,13 @@ static void calc_mana(int Ind)
 		p_ptr->cumber_armor = TRUE;
 
 		/* Reduce mana */
-                new_mana -= ((cur_wgt - max_wgt) * 2 / 3);
+		new_mana -= ((cur_wgt - max_wgt) * 2 / 3);
 	}
 
 	if (Ind2)
-	  {
-            new_mana += p_ptr2->msp / 2;
-	  }
+	{
+		new_mana += p_ptr2->msp / 2;
+	}
 
 	/* Mana can never be negative */
 	if (new_mana < 0) new_mana = 0;
@@ -1265,7 +1265,9 @@ static void calc_mana(int Ind)
 		else if (!p_ptr->msp)
 		{
 			/* Reset mana */
+#if 0 /* completely cheezable restoration */
 			p_ptr->csp = new_mana;
+#endif
 			p_ptr->csp_frac = 0;
 		}
 
@@ -1277,7 +1279,7 @@ static void calc_mana(int Ind)
 			/* change current mana proportionately to change of max mana, */
 			/* divide first to avoid overflow, little loss of accuracy */
 			value = ((((long)p_ptr->csp << 16) + p_ptr->csp_frac) /
-			         p_ptr->msp * new_mana);
+				p_ptr->msp * new_mana);
 
 			/* Extract mana components */
 			p_ptr->csp = (value >> 16);
@@ -1349,15 +1351,15 @@ static void calc_hitpoints(int Ind)
 	player_type *p_ptr = Players[Ind], *p_ptr2;
 
 //	object_type *o_ptr;
-//	    u32b f1, f2, f3, f4, f5, esp;
+//	u32b f1, f2, f3, f4, f5, esp;
 
 	int bonus, mhp, Ind2 = 0;
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
 	  {
-	    Ind2 = find_player(p_ptr->esp_link);
+		Ind2 = find_player(p_ptr->esp_link);
 
-	    if (!Ind2)
+		if (!Ind2)
 	      end_mind(Ind, FALSE);
 	    else
 	      {
