@@ -3034,7 +3034,7 @@ static void do_slash_cmd(int Ind, char *message)
 //				if (tk < 2 || !k || !(l = atoi(token[2])))
 				if (tk < 1 || !k)
 				{
-					msg_print(Ind, "\377oUsage: /wish (tval) (sval) [name1] or /wish (o_idx)");
+					msg_print(Ind, "\377oUsage: /wish (tval) (sval) [discount] [name] or /wish (o_idx)");
 					return;
 				}
 
@@ -3045,9 +3045,9 @@ static void do_slash_cmd(int Ind, char *message)
 
 				/* Wish arts out! */
 //				if (token[3])
-				if (tk > 2)
+				if (tk > 3)
 				{
-					int nom = atoi(token[3]);
+					int nom = atoi(token[4]);
 					o_ptr->number = 1;
 
 					if (nom > 0) o_ptr->name1 = nom;
@@ -3072,9 +3072,15 @@ static void do_slash_cmd(int Ind, char *message)
 				}
 
 				apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE);
-				o_ptr->discount = 99;
+				if (tk > 2){
+					o_ptr->discount = atoi(token[3]);
+				}
+				else{
+					o_ptr->discount = 100;
+				}
 				object_known(o_ptr);
-				o_ptr->owner = p_ptr->id;
+				o_ptr->owner = 0;
+				//o_ptr->owner = p_ptr->id;
 				o_ptr->level = 1;
 				(void)inven_carry(Ind, o_ptr);
 
