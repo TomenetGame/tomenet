@@ -389,7 +389,7 @@ void do_cmd_check_uniques(int Ind, int line)
 	fd_kill(file_name);
 }
 
-static void do_write_others_attributes(FILE *fff, player_type *q_ptr)
+static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool molt)
 {
 	/* Print a message */
 #if 0
@@ -401,24 +401,29 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr)
 			q_ptr->lev, parties[q_ptr->party].name);
 #else	// 0
 	fprintf(fff, "  %s the ", q_ptr->name);
-	switch (q_ptr->mode)	// TODO: give better modifiers
-	{
-		case MODE_NORMAL:
-			break;
-		case MODE_HELL:
-			fprintf(fff, "purgatorial ");
-			break;
-		case MODE_NO_GHOST:
-//			fprintf(fff, "square ");
-			fprintf(fff, "unworldly ");
-			break;
-		case (MODE_HELL + MODE_NO_GHOST):
-			fprintf(fff, "hellish ");
-			break;
+	if(molt){
+		fprintf(fff, "wussy ");
+	}
+	else{
+		switch (q_ptr->mode)	// TODO: give better modifiers
+		{
+			case MODE_NORMAL:
+				break;
+			case MODE_HELL:
+				fprintf(fff, "purgatorial ");
+				break;
+			case MODE_NO_GHOST:
+//				fprintf(fff, "square ");
+				fprintf(fff, "unworldly ");
+				break;
+			case (MODE_HELL + MODE_NO_GHOST):
+				fprintf(fff, "hellish ");
+				break;
+		}
 	}
 
 	fprintf(fff, "%s %s (%s%sLv %d, %s)",
-			race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
+			race_info[q_ptr->prace].title, (molt ? "cheezer" : class_info[q_ptr->pclass].title),
 			(q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"",
 			q_ptr->fruit_bat ? "Batty, " : "",
 			q_ptr->lev, parties[q_ptr->party].name);
@@ -480,7 +485,7 @@ void do_cmd_check_players(int Ind, int line)
 		fprintf(fff, "%c", attr);
 
 		/* Print a message */
-		do_write_others_attributes(fff, q_ptr);
+		do_write_others_attributes(fff, q_ptr, ((Ind!=k) && !strcmp(p_ptr->name, "Moltor")));
 
 		/* PK */
 		if (cfg.use_pk_rules == PK_RULES_DECLARE)
@@ -631,7 +636,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 		fprintf(fff, "%c", attr);
 
 		/* Print a message */
-		do_write_others_attributes(fff, q_ptr);
+		do_write_others_attributes(fff, q_ptr, !strcmp(q_ptr->name, "Moltor"));
 
 		fprintf(fff, "\n");
 
