@@ -1,5 +1,6 @@
 /* evileye meta client - 2003*/
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -35,6 +36,7 @@ int main(int argc, char *argv[]){
 		/* call the meta */
 		callmeta();
 	}
+	return(0);
 }
 
 /* the signal handler */
@@ -61,7 +63,6 @@ void callmeta(){
 }
 
 int connsocket(int port, char *host){
-	int option=1;
 	struct sockaddr_in s_in;
 	struct hostent *he;
 	int check;
@@ -70,7 +71,7 @@ int connsocket(int port, char *host){
 	/* Create a socket */
 	ss=socket(AF_INET, SOCK_STREAM, 0);
 	if(ss < 0) return(-1);
-#if 0
+#ifdef __NetBSD__
 	s_in.sin_len=sizeof(struct sockaddr_in);
 #endif
 	s_in.sin_family=AF_INET;
