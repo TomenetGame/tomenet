@@ -6,6 +6,8 @@
 #include "angband.h"
 #include "party.h"
 
+#include "../world/world.h"
+
 /*
  * Give some exp-bonus to encourage partying (aka "C.Blue party bonus") [2]
  * formula: (PARTY_XP_BOOST+1)/(PARTY_XP_BOOST + (# of applicable players))
@@ -1550,25 +1552,26 @@ bool add_ignore(int Ind, cptr name)
 
 	if((pname=strchr(name, '@'))){
 		struct remote_ignore *curr, *prev=NULL;
+		struct rplist *w_player;
 		strncpy(search, name, pname-name);
 		search[pname-name]='\0';
 		snum=atoi(pname+1);
-		pname=world_find_player(search);
-		if(!pname){
-			msg_print(Ind, "Could not find %s in the world");
+		w_player=world_find_player(search, snum);
+		if(!w_player){
+			msg_format(Ind, "Could not find %s in the world", search);
 			return(FALSE);
 		}
 		curr=p_ptr->w_ignore;
 		while(curr){
-			if(!strcmp(curr->name, search)) break;
+			if(curr->serverid==w_player->server && curr->id==w_player->id) break;
 			prev=curr;
 			curr=curr->next;
 		}
 		if(!curr){
-			msg_format(Ind, "Ignoring %s across the world", search);
+			msg_format(Ind, "Ignoring %s across the world", w_player->name);
 			curr=malloc(sizeof(struct remote_ignore));
-			strcpy(curr->name, search);
-			curr->serverid=snum;
+			curr->serverid=w_player->server;
+			curr->id=w_player->id;
 			if(prev)
 				prev->next=curr;
 			else

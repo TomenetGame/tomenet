@@ -7,6 +7,7 @@
 #define SERVER
 
 #include "angband.h"
+#include "../world/world.h"
 
 
 #ifndef HAS_MEMSET
@@ -3005,7 +3006,8 @@ static void do_slash_cmd(int Ind, char *message)
 				}
 				object_known(o_ptr);
 				o_ptr->owner = 0;
-				o_ptr->pval=atoi(token[3]);
+				if(tk>2)
+					o_ptr->pval=atoi(token[3]);
 				//o_ptr->owner = p_ptr->id;
 				o_ptr->level = 1;
 				(void)inven_carry(Ind, o_ptr);
@@ -3350,7 +3352,7 @@ static void player_talk_aux(int Ind, char *message)
 	/* Look for a recipient who matches the search string */
 	if (len)
 	{
-		char *pname;
+		struct rplist *w_player;
 		if(!stricmp(search, "Guild")){
 			if(!p_ptr->guild){
 				msg_print(Ind, "You are not in a guild");
@@ -3358,13 +3360,13 @@ static void player_talk_aux(int Ind, char *message)
 			else guild_msg_format(p_ptr->guild, "\377v[\377w%s\377v]\377y %s", p_ptr->name, colon+1);
 			return;
 		}
-		pname=world_find_player(search);
+		w_player=world_find_player(search, 0);
 		/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
-		if(!pname)
+		if(!w_player)
 			target = name_lookup_loose(Ind, search, TRUE);
 		else{
-			world_pmsg_send(p_ptr->id, p_ptr->name, pname, colon+1);
-			msg_format(Ind, "\377o[%s:%s] %s", p_ptr->name, pname, colon+1);
+			world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon+1);
+			msg_format(Ind, "\377o[%s:%s] %s", p_ptr->name, w_player->name, colon+1);
 			return;
 		}
 
