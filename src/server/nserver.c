@@ -1036,6 +1036,9 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	//int status;
 
 	*login_port = 0;
+	
+	if(!validstrings(nick, real, host))
+		return E_INVAL;
 
 	if (NumPlayers >= MAX_SELECT_FD)
 		return E_GAME_FULL;
@@ -1531,6 +1534,35 @@ static int Handle_setup(int ind)
 }
 
 /*
+ * No spaces/strange characters in the account name, 
+ * real name or hostname.
+ */
+static bool validstrings(char *nick, char *real, char *host){
+	int i;
+	int rval=1;
+
+	for(i=0; nick[i]; i++){
+		if(nick[i]<'A' || nick[i]>'z'){
+			nick[i]='\0';
+			rval=0;
+		}
+	}
+	for(i=0; real[i]; i++){
+		if(real[i]<'A' || real[i]>'z'){
+			real[i]='\0';
+			rval=0;
+		}
+	}
+	for(i=0; host[i]; i++){
+		if(host[i]<'A' || host[i]>'z'){
+			host[i]='\0';
+			rval=0;
+		}
+	}
+	return(rval);
+}
+
+/*
  * Handle a connection that is in the listening state.
  */
 static int Handle_listening(int ind)
@@ -1631,7 +1663,7 @@ static int Handle_listening(int ind)
 		return 1;
 	}
 #endif	// 0
-	
+
 	/* toast this after fix
 	*If we don't, then
 	* wait a bit for more to arrive.  Waiting causes the game to "freeze"

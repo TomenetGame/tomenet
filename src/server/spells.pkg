@@ -355,6 +355,7 @@ extern bool set_recall(int Ind, int v, object_type * o_ptr);
 
 /* xtra2.c */
 extern bool set_brand(int Ind, int v, int t, int p);
+extern bool set_bow_brand(int Ind, int v, int t, int p);
 
 /*
  * The spell function must provide the desc

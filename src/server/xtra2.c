@@ -605,7 +605,7 @@ bool set_brand(int Ind, int v, int t, int p)
 	/* Open */
 	if (v)
 	{
-		if (!p_ptr->brand)
+		if (!p_ptr->brand && p_ptr->inventory[INVEN_WIELD].k_idx)
 		{
 		  switch (t)
 		    {
@@ -648,7 +648,7 @@ bool set_brand(int Ind, int v, int t, int p)
 	/* Shut */
 	else
 	{
-		if (p_ptr->brand)
+		if (p_ptr->brand && p_ptr->inventory[INVEN_WIELD].k_idx)
 		{
 			msg_print(Ind, "\377oYour weapon seems normal again.");
 			notice = TRUE;

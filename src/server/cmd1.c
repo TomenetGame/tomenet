@@ -215,7 +215,6 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	monster_race *r_ptr = race_inf(m_ptr);
 
 	u32b f1, f2, f3, f4, f5, esp;
-//	bool brand_pois = FALSE;
 	player_type *p_ptr = Players[Ind];
 
 	struct worldpos *wpos=&p_ptr->wpos;
@@ -271,7 +270,6 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 						break;
 					case BRAND_POIS:
 						f1 |= TR1_BRAND_POIS;
-						//		brand_pois = TRUE;
 						break;
 				}
 			}
@@ -378,6 +376,32 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
 		/* All other items have general effect! */
 		if ((i != INVEN_WIELD) && (i != INVEN_BOW) && (i != INVEN_AMMO) && (i != INVEN_TOOL)) f1 |= ef1;
+	}
+
+	/* Temporary weapon branding */
+	if(p_ptr->brand && p_ptr->inventory[INVEN_WIELD].k_idx){
+		if (!((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))){
+			if(p_ptr->brand){
+				switch (p_ptr->brand_t)
+				{
+					case BRAND_ELEC:
+						f1 |= TR1_BRAND_ELEC;
+						break;
+					case BRAND_COLD:
+						f1 |= TR1_BRAND_COLD;
+						break;
+					case BRAND_FIRE:
+						f1 |= TR1_BRAND_FIRE;
+						break;
+					case BRAND_ACID:
+						f1 |= TR1_BRAND_ACID;
+						break;
+					case BRAND_POIS:
+						f1 |= TR1_BRAND_POIS;
+						break;
+				}
+			}
+		}
 	}
 
 #if 1 /* for debugging only, so far: */
@@ -751,7 +775,6 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 
 			/* Brand (Pois) */
-//			if (brand_pois)
 			if (f1 & TR1_BRAND_POIS)
 			{
 				/* Notice immunity */
