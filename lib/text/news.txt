@@ -1,5 +1,5 @@
 ':' to chat **********************************************************
-'?' to help ** PernMAngband 3.2.1  **  The Troubles of Middle Earth **
+'?' to help ** PernMAngband 3.2.2  **  The Troubles of Middle Earth **
             **********************************************************
 
                "One Ring to rule them all, One Ring to find them
@@ -12,7 +12,7 @@
  - (non-random) artifacts are no longer transferable.
    Dropping/throwing/selling(etc) will make them disappear, so be warned.
  - Save the game in town as far as possible, so as not to be buried alive.
- - Be good to Farmar Maggot and you'll be rewarded.
+ - Ego monsters added; monsters with special abilities can be generated.
  - Please don't abuse the system too much ('cheezing'),
    so that we don't have to remove your save data :)
  - Please keep in mind: Game server is a public space. Don't be too selfish.
