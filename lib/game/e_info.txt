@@ -363,7 +363,6 @@ F:LITE1 | RES_LITE
 
 N:33:of Telepathy
 X:A:33:20
-#W:0:1:8:50000
 W:0:1:32:150000
 T:33:0:99
 R:100
@@ -2171,6 +2170,21 @@ R:20
 F:R_ESP
 R:20
 F:R_ESP
+
+#Telepathic Awareness. Name must be slit because it's an insta-ego (C. Blue)
+N:197:Awareness
+X:A:40:20
+W:0:1:32:50000
+T:40:0:99
+R:100
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
+F:R_ESP_ANY
+R:50
+F:R_ESP_HIGH
+R:25
+F:R_ESP_LOW
+R:5
+F:ESP_ALL
 
 
 #N:(No.):(name)

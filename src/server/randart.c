@@ -1217,7 +1217,7 @@ void randart_name(object_type *o_ptr, char *buffer)
 artifact_type *ego_make(object_type *o_ptr)
 {
 	ego_item_type *e_ptr;
-	int j;
+	int j, rr;
 	bool limit_blows = FALSE;
 //	u32b f1, f2, f3, f4, f5, esp;
 	s16b e_idx;
@@ -1256,6 +1256,46 @@ try_an_other_ego:
 			a_ptr->flags4 |= e_ptr->flags4[j];
 			a_ptr->flags5 |= e_ptr->flags5[j];
 			a_ptr->esp |= e_ptr->esp[j];
+
+			/* evaluate R_ESP_ flags to actual ESP */
+			if (a_ptr->esp & R_ESP_LOW) {
+			        rr = rand_int(16) - 1;
+		        	if (rr < 2) a_ptr->esp |= (ESP_ORC);
+			        else if (rr < 4) a_ptr->esp |= (ESP_TROLL);
+			        else if (rr < 6) a_ptr->esp |= (ESP_GIANT);
+			        else if (rr < 8) a_ptr->esp |= (ESP_ANIMAL);
+			        else if (rr < 10) a_ptr->esp |= (ESP_DRAGONRIDER);
+			        else if (rr < 12) a_ptr->esp |= (ESP_GOOD);
+			        else if (rr < 14) a_ptr->esp |= (ESP_NONLIVING);
+			        else a_ptr->esp |= (ESP_SPIDER);
+			        a_ptr->esp &= (~R_ESP_LOW);
+			}
+			if (a_ptr->esp & R_ESP_HIGH) {
+			        rr = rand_int(10) - 1;
+			        if (rr < 2) a_ptr->esp |= (ESP_DRAGON);
+			        else if (rr < 4) a_ptr->esp |= (ESP_DEMON);
+			        else if (rr < 7) a_ptr->esp |= (ESP_UNDEAD);
+				else if (rr < 8) a_ptr->esp |= (ESP_EVIL);
+				else a_ptr->esp |= (ESP_UNIQUE);
+				a_ptr->esp &= (~R_ESP_HIGH);
+			}
+			if (a_ptr->esp & R_ESP_ANY) {
+			        rr = rand_int(26) - 1;
+				if (rr < 1) a_ptr->esp |= (ESP_ORC);
+				else if (rr < 2) a_ptr->esp |= (ESP_TROLL);
+				else if (rr < 3) a_ptr->esp |= (ESP_DRAGON);
+				else if (rr < 4) a_ptr->esp |= (ESP_GIANT);
+				else if (rr < 5) a_ptr->esp |= (ESP_DEMON);
+				else if (rr < 8) a_ptr->esp |= (ESP_UNDEAD);
+				else if (rr < 12) a_ptr->esp |= (ESP_EVIL);
+				else if (rr < 14) a_ptr->esp |= (ESP_ANIMAL);
+				else if (rr < 16) a_ptr->esp |= (ESP_DRAGONRIDER);
+				else if (rr < 19) a_ptr->esp |= (ESP_GOOD);
+				else if (rr < 21) a_ptr->esp |= (ESP_NONLIVING);
+				else if (rr < 24) a_ptr->esp |= (ESP_UNIQUE);
+				else a_ptr->esp |= (ESP_SPIDER);
+				a_ptr->esp &= (~R_ESP_ANY);
+			}
 
 			add_random_ego_flag(a_ptr, e_ptr->fego[j], &limit_blows, o_ptr->level);
 		}

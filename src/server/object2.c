@@ -3758,6 +3758,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 static void a_m_aux_3(object_type *o_ptr, int level, int power)
 {
 	//int tries;
+	int rr;
 
 	artifact_bias = 0;
 
@@ -3778,7 +3779,50 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
         }
 
 
-		/* prolly something should be done..	- Jir - */
+#if 0 //sorry about this large if 0 block- C. Blue
+	/* Apply limited ESP powers, evaluated from R_ESP_ flags */
+        if (o_ptr->esp & R_ESP_LOW) {
+                rr = rand_int(16) - 1;
+                if (rr < 2) o_ptr->esp |= (ESP_ORC);
+                else if (rr < 4) o_ptr->esp |= (ESP_TROLL);
+        	else if (rr < 6) o_ptr->esp |= (ESP_GIANT);
+	        else if (rr < 8) o_ptr->esp |= (ESP_ANIMAL);
+	        else if (rr < 10) o_ptr->esp |= (ESP_DRAGONRIDER);
+                else if (rr < 12) o_ptr->esp |= (ESP_GOOD);
+                else if (rr < 14) o_ptr->esp |= (ESP_NONLIVING);
+                else o_ptr->esp |= (ESP_SPIDER);
+                //not needed atm-  o_ptr->esp &= (~R_ESP_LOW);
+        }
+	if (o_ptr->esp & R_ESP_HIGH) {
+		rr = rand_int(10) - 1;
+    		if (rr < 2) o_ptr->esp |= (ESP_DRAGON);
+		else if (rr < 4) o_ptr->esp |= (ESP_DEMON);
+	    	else if (rr < 7) o_ptr->esp |= (ESP_UNDEAD);
+		else if (rr < 8) o_ptr->esp |= (ESP_EVIL);
+		else o_ptr->esp |= (ESP_UNIQUE);
+		//not needed atm-  o_ptr->esp &= (~R_ESP_HIGH);
+	}
+	if (o_ptr->esp & R_ESP_ANY) {
+		rr = rand_int(26) - 1;
+		if (rr < 1) o_ptr->esp |= (ESP_ORC);
+		else if (rr < 2) o_ptr->esp |= (ESP_TROLL);
+		else if (rr < 3) o_ptr->esp |= (ESP_DRAGON);
+		else if (rr < 4) o_ptr->esp |= (ESP_GIANT);
+		else if (rr < 5) o_ptr->esp |= (ESP_DEMON);
+		else if (rr < 8) o_ptr->esp |= (ESP_UNDEAD);
+		else if (rr < 12) o_ptr->esp |= (ESP_EVIL);
+		else if (rr < 14) o_ptr->esp |= (ESP_ANIMAL);
+		else if (rr < 16) o_ptr->esp |= (ESP_DRAGONRIDER);
+		else if (rr < 19) o_ptr->esp |= (ESP_GOOD);
+		else if (rr < 21) o_ptr->esp |= (ESP_NONLIVING);
+		else if (rr < 24) o_ptr->esp |= (ESP_UNIQUE);
+		else o_ptr->esp |= (ESP_SPIDER);
+		//not needed atm-  o_ptr->esp &= (~R_ESP_ANY);
+	}
+#endif
+
+
+	/* prolly something should be done..	- Jir - */
 	/* Apply magic (good or bad) according to type */
 	switch (o_ptr->tval)
 	{
@@ -4233,7 +4277,13 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 
 					break;
 				}
-
+				
+				/* Formerly Amulet of ESP */
+				case SV_AMULET_ESP:
+				{
+					o_ptr->name2 = EGO_ESP;
+					break;
+				}
 			}
 
 			break;
@@ -4305,7 +4355,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					o_ptr->pval = randint(5) + m_bonus(5, level);
 
 					/* Super-charge the ring */
-tries = 100;
+					tries = 100;
 					while ((--tries) && rand_int(100) < 50) o_ptr->pval++;
 
 					/* Cursed Ring */

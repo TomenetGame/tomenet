@@ -1443,7 +1443,8 @@ that keeps many algorithms happy.
 /* megahack */
 #define EGO_CLOAK_LORDLY_RES	180 
 #define EGO_NUMENOR             183
-#define EGO_STORMBRINGER		187
+#define EGO_STORMBRINGER	187
+#define EGO_ESP			197	/* amulet of telepathic awareness, formerly ESP */
 
 /*** Object "tval" and "sval" codes ***/
 
@@ -1878,6 +1879,7 @@ that keeps many algorithms happy.
 #define SV_AMULET_NOTHING               16
 #define SV_AMULET_SERPENT               17
 #define SV_AMULET_TORIS_MEJISTOS        18
+#define SV_AMULET_ESP			22
 #define SV_AMULET_TRICKERY              23
 #define SV_AMULET_DEVOTION              25
 #define SV_AMULET_WEAPONMASTERY         24
@@ -3048,7 +3050,10 @@ that keeps many algorithms happy.
 #define ESP_NONLIVING           0x00000400L
 #define ESP_UNIQUE              0x00000800L
 #define ESP_SPIDER              0x00001000L
-/* #define ESP_PLAYER			0x40000000L */
+/* #define ESP_PLAYER			0x08000000L */
+#define R_ESP_LOW               0x10000000L /* animal,giant,orc,troll,dr,good,nonliving,spider */
+#define R_ESP_HIGH              0x20000000L /* dragon,demon,undead,evil,unique */
+#define R_ESP_ANY               0x40000000L /* random esp == R_ESP from ego flags */
 #define ESP_ALL                 0x80000000L
 
 /* Number of group of flags to choose from */
@@ -5010,9 +5015,9 @@ extern int PlayerUID;
 #define SKILL_MIND              59
 #define SKILL_UDUN              60
 
+#define SKILL_CLIMB		70
 
 #if 0	/* skills to come	- Jir - */
-#define SKILL_CLIMB
 #define SKILL_INNATE_POWER	/* in mimicry tree */
 #define SKILL_EGO_POWER
 #endif	/* 0 */
