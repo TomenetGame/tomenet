@@ -3120,7 +3120,9 @@ void do_cmd_fire(int Ind, int dir)
 				visible = p_ptr->mon_vis[c_ptr->m_idx];
 
 				/* Note the collision */
-				hit_body = TRUE;
+				/* Note the collision */
+				if(!(o_ptr->tval==1 && o_ptr->sval==9))
+					hit_body = TRUE;
 
 				/* Did we hit it (penalize range) */
 				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible))
@@ -3679,6 +3681,11 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 	/* Hack -- Distance -- Reward strength, penalize weight */
 	tdis = (adj_str_blow[p_ptr->stat_ind[A_STR]] + 20) * mul / div;
+
+	/* hack for rugby - all throws capped */
+	if(o_ptr->tval==1 && o_ptr->sval==9){
+		if(tdis<5) tdis=5;
+	}
 
 	/* Max distance of 10 */
 	if (tdis > 10) tdis = 10;
