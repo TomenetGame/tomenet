@@ -703,6 +703,11 @@ Change list for PernMangband
   if interrupted before play started.
 - Removed some of the extra stairs on comfortable levels.
 
+31/01/2002 (Evileye)
+- Mimic (server) bugfix.
+- Shop bugfix.
+- Mimic code moved, and fix applied to prevent bad townie forms.
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)
