@@ -2628,7 +2628,13 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 				if (stun_effect && ((k + p_ptr->to_d) < m_ptr->hp))
 				{
-					if (marts > randint(r_ptr->level + resist_stun + 10))
+					/* Stun the monster */
+					if (r_ptr->flags3 & RF3_NO_STUN)
+					{
+						/* nothing:
+						msg_format(Ind, "%^s is unaffected.", m_name);*/
+					}
+					else if (marts > randint(r_ptr->level + resist_stun + 10))
 					{
 						m_ptr->stunned += (stun_effect);
 
