@@ -34,6 +34,7 @@ Latest changes for version 3.3.2 (digest):
   + {@RW22,8} will lands you to (22,8) of the world map.
   + {@RT} lands you to the first town (where you start the game).
 - Inscription {!=} forces you to pick it up; use it on your arrows.
+- Inscription {!g} forces the ammo to disappear when fired(no litters).
 - Inscribe {@O} on missiles, and you'll fire them for auto-retaliation.
 - {@Oc} on a book makes you use the 'c' spell for auto-retaliation.
 - {@Ox} on any items and auto-retaliator will be disabled.

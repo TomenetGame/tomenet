@@ -258,7 +258,7 @@ static cptr syllables[MAX_SYLLABLES] =
 #define MAX_METALS     39       /* Used with wands/rods (min 32/30) */
 #define MAX_COLORS     66       /* Used with potions (min 62) */
 #define MAX_SHROOM     20       /* Used with mushrooms (min 20) */
-#define MAX_TITLES     55       /* Used with scrolls (min 55) */
+#define MAX_TITLES     60       /* Used with scrolls (min 55) */
 #define MAX_SYLLABLES 164       /* Used with scrolls (see below) */
 
 

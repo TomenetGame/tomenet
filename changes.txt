@@ -520,3 +520,4 @@ Change list for PernMangband
 - "Leather Jacket/Sickle" bug fixed.
 - Exploding ammos/boomerangs/Ricochet
 - Ammo inscribed {!g} never drops(=never litter the floor).
+- Other bugfixes.

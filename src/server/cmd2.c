@@ -2788,7 +2788,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 	int                     tdam, tdis, thits, tmul;
 	int                     bonus, chance;
 	int                     cur_dis, visible;
-        int breakage = -1, num_ricochet = 0;
+        int breakage = 0, num_ricochet = 0;
 
 	object_type         throw_obj;
 	object_type             *o_ptr;
