@@ -375,7 +375,15 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
 		/* All other items have general effect! */
-		if ((i != INVEN_WIELD) && (i != INVEN_BOW) && (i != INVEN_AMMO) && (i != INVEN_TOOL)) f1 |= ef1;
+		if ((i != INVEN_WIELD) && (i != INVEN_AMMO) && (i != INVEN_TOOL)) f1 |= ef1;
+
+		/* Add bow branding on correct ammo types */
+		if(i==INVEN_BOW && e_ptr->tval==TV_BOW){
+			if(( (e_ptr->sval==SV_SHORT_BOW || e_ptr->sval==SV_LONG_BOW) && o_ptr->tval==TV_ARROW) ||
+			   ( (e_ptr->sval==SV_LIGHT_XBOW || e_ptr->sval==SV_HEAVY_XBOW) && o_ptr->tval==TV_BOLT) ||
+			   (e_ptr->sval==SV_SLING && o_ptr->tval==TV_SHOT))
+			   f1|=ef1;
+		}
 	}
 
 	/* Temporary weapon branding */
