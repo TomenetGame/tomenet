@@ -4640,7 +4640,7 @@ void summon_pet(int Ind, int max){
         m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
         m_ptr->hp = maxroll(r_ptr->hdice, r_ptr->hside);
 
-	m_ptr->clone = TRUE;
+	m_ptr->clone = 100;
         m_ptr->owner = p_ptr->id;
         for (i = 0; i < 4; i++)
         {
@@ -4922,7 +4922,7 @@ void golem_creation(int Ind, int max)
         m_ptr->ac = r_ptr->ac;
         m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
         m_ptr->hp = maxroll(r_ptr->hdice, r_ptr->hside);
-        m_ptr->clone = TRUE;
+        m_ptr->clone = 100;
 
         for (i = 0; i < golem_m_arms; i++)
         {

@@ -1881,7 +1881,7 @@ bool allow_unique_level(int r_idx, struct worldpos *wpos)
  * XXX XXX XXX Actually, do something similar for artifacts, to simplify
  * the "preserve" mode, and to make the "what artifacts" flag more useful.
  */
-static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, bool clo)
+static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, char clo)
 {
 	int                     i, Ind, j;
 
@@ -3046,6 +3046,7 @@ bool multiply_monster(int m_idx)
 	struct worldpos *wpos=&m_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
+	if(m_ptr->clone>90) return(FALSE);
 
 	/* NO UNIQUES */
 	if (r_ptr->flags1 & RF1_UNIQUE) return FALSE;
@@ -3060,7 +3061,7 @@ bool multiply_monster(int m_idx)
 		/* Require an "empty" floor grid */
 		if (!cave_empty_bold(zcave, y, x)) continue;
 		/* Create a new monster (awake, no groups) */
-		result = place_monster_aux(&m_ptr->wpos, y, x, m_ptr->r_idx, FALSE, FALSE, TRUE);
+		result = place_monster_aux(&m_ptr->wpos, y, x, m_ptr->r_idx, FALSE, FALSE, m_ptr->clone+10);
 
 		/* Done */
 		break;

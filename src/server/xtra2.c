@@ -4239,7 +4239,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		/* Check if it's cloned unique */
 		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx])
 		{
-			m_ptr->clone = TRUE;
+			m_ptr->clone = 90;
 		}
 
 		/* Split experience if in a party */
@@ -4262,8 +4262,9 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			}
 
 			/* Gain experience */
-			if(!m_ptr->clone)
-				gain_exp(Ind, new_exp);
+			if((new_exp*(100-m_ptr->clone))/100){
+				gain_exp(Ind, (new_exp*(100-m_ptr->clone))/100);
+			}
 		}
 		else
 		{
@@ -4501,8 +4502,8 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note)
                 new_exp = ((long)r_ptr->mexp * r_ptr->level) / am_ptr->level;
 
                 /* Gain experience */
-                if(!m_ptr->clone)
-                        monster_gain_exp(am_idx, new_exp, TRUE);
+                if((new_exp*(100-m_ptr->clone))/100)
+                        monster_gain_exp(am_idx, (new_exp*(100-m_ptr->clone))/100, TRUE);
 
 		/* Generate treasure */
                 if (!m_ptr->clone) monster_death_mon(am_idx, m_idx);

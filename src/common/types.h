@@ -807,7 +807,7 @@ struct monster_type
 	u32b smart;			/* Field for "smart_learn" */
 
 #endif
-	bool clone;
+	u16b clone;			/* clone value */
 
 	s16b mind;                      /* Current action -- golems */
 

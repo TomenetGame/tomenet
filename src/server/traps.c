@@ -2538,7 +2538,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				{
 					monster_race    *r_ptr = race_inf(m_ptr);
 					if (!(r_ptr->flags1 & RF1_UNIQUE))
-						m_ptr->clone = TRUE;
+						m_ptr->clone = 100;
 				}
 			}
 			msg_print(Ind, "You feel very despondent..");
