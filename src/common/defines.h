@@ -4669,3 +4669,7 @@ extern int PlayerUID;
 #define PRICE_BOOST(value, base, step) \
 			(value > base ? value << ((value - base)/step) : value )	
 
+#define is_fighter(p_ptr) \
+	((p_ptr->pclass == CLASS_WARRIOR) || \
+	 (p_ptr->pclass == CLASS_UNBELIEVER) || \
+	 (p_ptr->pclass == CLASS_MONK))

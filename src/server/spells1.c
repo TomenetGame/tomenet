@@ -384,7 +384,7 @@ void teleport_player(int Ind, int dis)
 #endif
 
 	/* Verify max distance once here */
-	if (dis > 200) dis = 200;
+	if (dis > 150) dis = 150;
 
 	/* Minimum distance */
 	min = dis / 2;

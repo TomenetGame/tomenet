@@ -3285,8 +3285,9 @@ void player_talk_aux(int Ind, cptr message)
 					/* Wipe even if town/wilderness */
 					wipe_o_list_safely(&wp);
 					wipe_m_list(&wp);
+					wipe_t_list(&wp);
 
-					msg_format(Ind, "\377rItems and monsters on %s are cleared.", wpos_format(&wp));
+					msg_format(Ind, "\377rItems/monsters/traps on %s are cleared.", wpos_format(&wp));
 					return;
 				}
 				else if (prefix(message, "/geno-level") ||

@@ -811,9 +811,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 	if (*inscription == 'x') return TRUE;
 
 	/* Fighter classes can use various items for this */
-	if ((p_ptr->pclass == CLASS_WARRIOR) ||
-		(p_ptr->pclass == CLASS_UNBELIEVER) ||
-		(p_ptr->pclass == CLASS_MONK))
+	if (is_fighter(p_ptr))
 	{
 #if 0
 		/* item with {@O-} is used only when in danger */

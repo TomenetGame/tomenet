@@ -541,6 +541,11 @@ struct trap_kind{
   s16b text;        /* longer description once you've met this trap */
 };
 
+/*
+ * Probably this struct can be used for non-trap 'cave-special's
+ * in the same way? If so, we can use t_list for omnipurpose :)
+ * - Jir -
+ */
 typedef struct trap_type trap_type;
 struct trap_type
 {

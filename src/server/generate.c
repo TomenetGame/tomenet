@@ -5855,6 +5855,8 @@ void dealloc_dungeon_level(int Depth)
 	if (Depth > 0) wipe_o_list(Depth);
 #endif
 
+	if (wpos->wz) wipe_t_list(wpos);
+
 #ifdef NEW_DUNGEON
 	zcave=getcave(wpos);
 	for (i = 0; i < MAX_HGT; i++)

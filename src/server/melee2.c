@@ -21,6 +21,9 @@
 /* distance for AI_ANNOY */
 #define		ANNOY_DISTANCE	5
 
+/* How frequent they change colours? */
+#define 	MULTI_HUED_UPDATE	5
+
 #ifdef DRS_SMART_OPTIONS
 
 
@@ -5518,7 +5521,8 @@ void process_monsters(void)
 	}
 
 	/* Only when needed, every five game turns */
-	if (scan_monsters && (!(turn%5)))
+//	if (scan_monsters && (!(turn%5)))
+	if (scan_monsters && (!(turn % MULTI_HUED_UPDATE)))
 	{
 		/* Shimmer multi-hued monsters */
 		for (i = 1; i < m_max; i++)
@@ -5534,7 +5538,10 @@ void process_monsters(void)
                         r_ptr = race_inf(m_ptr);
 
 			/* Skip non-multi-hued monsters */
-			if (!(r_ptr->flags1 & RF1_ATTR_MULTI)) continue;
+//			if (!(r_ptr->flags1 & RF1_ATTR_MULTI)) continue;
+			if (!((r_ptr->flags1 & RF1_ATTR_MULTI) ||
+					(r_ptr->flags1 & RF1_UNIQUE) ||
+					(m_ptr->ego) )) continue;
 
 			/* Shimmer Multi-Hued Monsters */
 #ifdef NEW_DUNGEON

@@ -294,6 +294,8 @@ void compact_monsters(int size)
 	int             i, num, cnt, Ind;
 
 	int             cur_lev, cur_dis, chance;
+			cave_type **zcave;
+			struct worldpos *wpos;
 
 
 	/* Message (only if compacting) */
@@ -361,7 +363,8 @@ void compact_monsters(int size)
 		monster_type *m_ptr = &m_list[i];
 
 		/* Skip real monsters */
-		if (m_ptr->r_idx) continue;
+		/* real monsters in unreal location are not skipped. */
+		if (m_ptr->r_idx && (!m_ptr->wpos.wz || getcave(&m_ptr->wpos))) continue;
 
 		/* One less monster */
 		m_max--;
@@ -372,8 +375,7 @@ void compact_monsters(int size)
 			int ny = m_list[m_max].fy;
 			int nx = m_list[m_max].fx;
 #ifdef NEW_DUNGEON
-			cave_type **zcave;
-			struct worldpos *wpos = &m_list[m_max].wpos;
+			wpos = &m_list[m_max].wpos;
 #else
 			int Depth = m_list[m_max].dun_depth;
 #endif
@@ -1587,7 +1589,10 @@ void update_mon(int m_idx, bool dist)
 			if (do_invisible) r_ptr->r_flags2 |= RF2_INVISIBLE;
 
 			/* Efficiency -- Notice multi-hued monsters */
-			if (r_ptr->flags1 & RF1_ATTR_MULTI) scan_monsters = TRUE;
+//			if (r_ptr->flags1 & RF1_ATTR_MULTI) scan_monsters = TRUE;
+			if ((r_ptr->flags1 & RF1_ATTR_MULTI) ||
+					(r_ptr->flags1 & RF1_UNIQUE) ||
+					(m_ptr->ego ) ) scan_monsters = TRUE;
 		}
 
 		/* The monster is not visible */

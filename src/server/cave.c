@@ -6,6 +6,12 @@
 
 #include "angband.h"
 
+/*
+ * monsters with 'RF1_ATTR_MULTI' uses colour according to their
+ * breath if it is on. (possible bottleneck, tho)
+ */
+#define MULTI_HUED_PROPER
+
 #ifdef NEW_DUNGEON
 
 /*
@@ -765,6 +771,158 @@ static void image_random(byte *ap, char *cp)
 	}
 }
 
+/* 
+ * Some eye-candies from PernAngband :)		- Jir -
+ */
+char get_shimmer_color()
+{
+        switch (randint(7))
+        {
+                case 1:
+                        return TERM_RED;
+                case 2:
+                        return TERM_L_RED;
+                case 3:
+                        return TERM_WHITE;
+                case 4:
+                        return TERM_L_GREEN;
+                case 5:
+                        return TERM_BLUE;
+                case 6:
+                        return TERM_L_DARK;
+                case 7:
+                        return TERM_GREEN;
+        }
+        return (TERM_VIOLET);
+}
+
+/* 
+ * Table of breath colors.  Must match listings in a single set of 
+ * monster spell flags.
+ *
+ * The value "255" is special.  Monsters with that kind of breath 
+ * may be any color.
+ */
+static byte breath_to_attr[32][2] = 
+{
+	{  0,  0 },
+	{  0,  0 },
+	{  0,  0 },
+	{  0,  0 },
+	{  0,  0 },
+	{  0,  0 },
+	{  0,  0 },
+	{  0,  0 },
+	{  TERM_SLATE, TERM_L_DARK },       /* RF4_BRTH_ACID */
+	{  TERM_BLUE,  TERM_L_BLUE },       /* RF4_BRTH_ELEC */
+	{  TERM_RED,  TERM_L_RED },         /* RF4_BRTH_FIRE */
+	{  TERM_WHITE,  TERM_L_WHITE },     /* RF4_BRTH_COLD */
+	{  TERM_GREEN,  TERM_L_GREEN },     /* RF4_BRTH_POIS */
+	{  TERM_L_GREEN,  TERM_GREEN },     /* RF4_BRTH_NETHR */
+	{  TERM_YELLOW,  TERM_ORANGE },     /* RF4_BRTH_LITE */
+	{  TERM_L_DARK,  TERM_SLATE },      /* RF4_BRTH_DARK */
+	{  TERM_L_UMBER,  TERM_UMBER },     /* RF4_BRTH_CONFU */
+	{  TERM_YELLOW,  TERM_L_UMBER },    /* RF4_BRTH_SOUND */
+        {  255,  255 },   /* (any color) */ /* RF4_BRTH_CHAOS */
+	{  TERM_VIOLET,  TERM_VIOLET },     /* RF4_BRTH_DISEN */
+	{  TERM_L_RED,  TERM_VIOLET },      /* RF4_BRTH_NEXUS */
+	{  TERM_L_BLUE,  TERM_L_BLUE },     /* RF4_BRTH_TIME */
+	{  TERM_L_WHITE,  TERM_SLATE },     /* RF4_BRTH_INER */
+	{  TERM_L_WHITE,  TERM_SLATE },     /* RF4_BRTH_GRAV */
+	{  TERM_UMBER,  TERM_L_UMBER },     /* RF4_BRTH_SHARD */
+	{  TERM_ORANGE,  TERM_RED },        /* RF4_BRTH_PLAS */
+	{  TERM_UMBER,  TERM_L_UMBER },     /* RF4_BRTH_FORCE */
+	{  TERM_L_BLUE,  TERM_WHITE },      /* RF4_BRTH_MANA */
+	{  0,  0 },     /*  */
+	{  TERM_GREEN,  TERM_L_GREEN },     /* RF4_BRTH_NUKE */
+	{  0,  0 },     /*  */
+	{  TERM_WHITE,  TERM_L_RED },       /* RF4_BRTH_DISINT */
+};
+/*
+ * Multi-hued monsters shimmer acording to their breaths.
+ *
+ * If a monster has only one kind of breath, it uses both colors 
+ * associated with that breath.  Otherwise, it just uses the first 
+ * color for any of its breaths.
+ *
+ * If a monster does not breath anything, it can be any color.
+ */
+static byte multi_hued_attr(monster_race *r_ptr)
+{
+	byte allowed_attrs[15];
+
+	int i, j;
+
+	int stored_colors = 0;
+	int breaths = 0;
+	int first_color = 0;
+	int second_color = 0;
+
+
+	/* Monsters with no ranged attacks can be any color */
+	if (!r_ptr->freq_inate) return (get_shimmer_color());
+
+	/* Check breaths */
+	for (i = 0; i < 32; i++)
+	{
+		bool stored = FALSE;
+
+		/* Don't have that breath */
+		if (!(r_ptr->flags4 & (1L << i))) continue;
+
+		/* Get the first color of this breath */
+		first_color = breath_to_attr[i][0];
+
+		/* Breath has no color associated with it */
+		if (first_color == 0) continue;
+
+		/* Monster can be of any color */
+		if (first_color == 255) return (randint(15));
+
+
+		/* Increment the number of breaths */
+		breaths++;
+
+		/* Monsters with lots of breaths may be any color. */
+		if (breaths == 6) return (randint(15));
+
+
+		/* Always store the first color */
+		for (j = 0; j < stored_colors; j++)
+		{
+			/* Already stored */
+			if (allowed_attrs[j] == first_color) stored = TRUE;
+		}
+		if (!stored)
+		{
+			allowed_attrs[stored_colors] = first_color;
+			stored_colors++;
+		}
+
+		/* 
+		 * Remember (but do not immediately store) the second color 
+		 * of the first breath.
+		 */
+		if (breaths == 1)
+		{
+			second_color = breath_to_attr[i][1];
+		}
+	}
+
+	/* Monsters with no breaths may be of any color. */
+	if (breaths == 0) return (get_shimmer_color());
+
+	/* If monster has one breath, store the second color too. */
+	if (breaths == 1)
+	{
+		allowed_attrs[stored_colors] = second_color;
+		stored_colors++;
+	}
+
+	/* Pick a color at random */
+	return (allowed_attrs[rand_int(stored_colors)]);
+}
+
 
 /*
  * Return the correct "color" of another player
@@ -1247,8 +1405,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			(*ap) = object_attr(o_ptr);
 
 			/* Abnormal attr */
+//                        if ((!avoid_other) && (!(((*ap) & 0x80) && ((*cp) & 0x80))) && (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)) (*ap) = get_shimmer_color();
 			if (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)
-				(*ap) = randint(15);
+				(*ap) = get_shimmer_color();
+//				(*ap) = randint(15);
 
 			/* Hack -- hallucination */
 			if (p_ptr->image) image_object(ap, cp);
@@ -1301,14 +1461,69 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				(*ap) = a;
 			}
 
+			/* Hack -- Unique/Ego 'glitters' sometimes */
+			else if ((((r_ptr->flags1 & RF1_UNIQUE) && magik(30)) ||
+						(m_ptr->ego && magik(5)) ) &&
+					(!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)) &&
+					 !(r_ptr->flags2 & (RF2_SHAPECHANGER))))
+			{
+				(*cp) = c;
+
+				/* Multi-hued attr */
+				if (r_ptr->flags2 & (RF2_ATTR_ANY))
+					(*ap) = randint(15);
+				else (*ap) = get_shimmer_color();
+			}
+
 			/* Multi-hued monster */
 			else if (r_ptr->flags1 & RF1_ATTR_MULTI)
 			{
+				/* Is it a shapechanger? */
+				if (r_ptr->flags2 & (RF2_SHAPECHANGER))
+				{
+#if 0	// this never works, for sure! ;(
+					if (use_graphics)
+					{
+						if (!(streq(ANGBAND_SYS, "ibm")))
+						{
+                                                        (*cp) = (hack_map_info_default)?r_info[randint(max_r_idx-2)].d_char:r_info[randint(max_r_idx-2)].x_char;
+                                                        (*ap) = (hack_map_info_default)?r_info[randint(max_r_idx-2)].d_attr:r_info[randint(max_r_idx-2)].x_attr;
+						}
+						else
+						{
+							int n =  strlen(image_monster_hack_ibm);
+							(*cp) = (image_monster_hack_ibm[rand_int(n)]);
+
+							/* Random color */
+							(*ap) = randint(15);
+						}
+					}
+					else
+#endif	// 0
+					{
+						(*cp) = (randint(25)==1?
+							image_object_hack[randint(strlen(image_object_hack))]:
+							image_monster_hack[randint(strlen(image_monster_hack))]);
+					}
+				}
+				else
+					(*cp) = c;
+
+				/* Multi-hued attr */
+				if (r_ptr->flags2 & (RF2_ATTR_ANY))
+					(*ap) = randint(15);
+#ifdef MULTI_HUED_PROPER
+				else (*ap) = multi_hued_attr(r_ptr);
+#else
+				else (*ap) = get_shimmer_color();
+#endif	// MULTI_HUED_PROPER
+#if 0
 				/* Normal char */
 				(*cp) = c;
 
 				/* Multi-hued attr */
 				(*ap) = randint(15);
+#endif	// 0
 			}
 
 			/* Normal monster (not "clear" in any way) */

@@ -162,6 +162,8 @@ void compact_objects(int size)
 	int i, y, x, num, cnt, Ind;
 
 	int cur_val, cur_lev, cur_dis, chance;
+			struct worldpos *wpos;
+			cave_type **zcave;
 
 
 	/* Compact */
@@ -251,7 +253,10 @@ void compact_objects(int size)
 		object_type *o_ptr = &o_list[i];
 
 		/* Skip real objects */
-		if (o_ptr->k_idx) continue;
+		/* real objects in unreal location are not skipped. */
+		/* hack -- items on wilderness are preserved, since
+		 * they can be house contents. */
+		if (o_ptr->k_idx && !o_ptr->wpos.wz && getcave(&o_ptr->wpos)) continue;
 
 		/* One less object */
 		o_max--;
@@ -262,8 +267,7 @@ void compact_objects(int size)
 			int ny = o_list[o_max].iy;
 			int nx = o_list[o_max].ix;
 #ifdef NEW_DUNGEON
-			struct worldpos *wpos=&o_list[o_max].wpos;
-			cave_type **zcave;
+			wpos=&o_list[o_max].wpos;
 #else
 			int Depth = o_list[o_max].dun_depth;
 #endif

@@ -6247,6 +6247,7 @@ bool master_level(int Ind, char * parms)
 			/* clean level first! */
 			wipe_m_list(&p_ptr->wpos);
 			wipe_o_list(&p_ptr->wpos);
+			wipe_t_list(&p_ptr->wpos);
 
 			/* dont do this where there are houses! */
 			for(i=0;i<num_houses;i++){

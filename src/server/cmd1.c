@@ -2452,6 +2452,7 @@ void move_player(int Ind, int dir, int do_pickup)
 #endif
 
 	int                     y, x, old_world_x, old_world_y, oldx, oldy;
+	int i;
 
 	cave_type               *c_ptr;
 	object_type             *o_ptr;
@@ -2472,23 +2473,21 @@ void move_player(int Ind, int dir, int do_pickup)
 	if (r_ptr->flags1 & RF1_NEVER_MOVE) return;
 
 	/* Find the result of moving */
-	if ((r_ptr->flags1 & RF1_RAND_50) && magik(50))
-	  {
-	    int i = rand_int(10);
-	    y = p_ptr->py + ddy[i];
-	    x = p_ptr->px + ddx[i];
-	  }
-	else if ((r_ptr->flags1 & RF1_RAND_25) && magik(25))
-	  {
-	    int i = rand_int(10);
-	    y = p_ptr->py + ddy[i];
-	    x = p_ptr->px + ddx[i];
-	  }
+	if (((r_ptr->flags1 & RF1_RAND_50) && magik(50)) ||
+		((r_ptr->flags1 & RF1_RAND_25) && magik(25)))
+	{
+		do
+		{
+			i = randint(9);
+			y = p_ptr->py + ddy[i];
+			x = p_ptr->px + ddx[i];
+		} while (i != 5);
+	}
 	else
-	  {
-	    y = p_ptr->py + ddy[dir];
-	    x = p_ptr->px + ddx[dir];
-	  }
+	{
+		y = p_ptr->py + ddy[dir];
+		x = p_ptr->px + ddx[dir];
+	}
 
 	/* Update wilderness positions */
 #ifdef NEW_DUNGEON

@@ -14,6 +14,13 @@
 
 #include "angband.h"
 
+/*
+ * Limit the starting stats to max. of 18/40, so that some players
+ * won't keep on suiciding for better stats(esp. 18/50+).
+ * This option also bottom-up the starting stats somewhat to
+ * compensate it.		- Jir -
+ */
+#define STARTING_STAT_LIMIT
 
 /*
  * Forward declare
@@ -396,7 +403,11 @@ static void get_stats(int Ind, int stat_order[6])
 		}
 
 		/* Verify totals */
+#ifdef STARTING_STAT_LIMIT
+		if ((j > 48) && (j < 58)) break;
+#else
 		if ((j > 42) && (j < 54)) break;
+#endif
 	}
 
 	/* Acquire the stats */
@@ -441,6 +452,12 @@ static void get_stats(int Ind, int stat_order[6])
 		/* Variable stat maxes */
 		if (p_ptr->maximize)
 		{
+#ifdef STARTING_STAT_LIMIT
+			if (!is_fighter(p_ptr))
+				while (modify_stat_value(p_ptr->stat_max[i], bonus) > 18 + 40)
+					p_ptr->stat_max[i]--;
+
+#endif	//STARTING_STAT_LIMIT
 			/* Start fully healed */
 			p_ptr->stat_cur[i] = p_ptr->stat_max[i];
 

@@ -198,7 +198,8 @@ void init_wild_info_aux(int x, int y)
 */
 
 #ifdef NEW_DUNGEON
-void addtown(int y, int x, int base, u16b flags){
+void addtown(int y, int x, int base, u16b flags)
+{
 	int n;
 	if(numtowns)
 		GROW(town, numtowns, numtowns+1, struct town_type);
@@ -228,7 +229,8 @@ void addtown(int y, int x, int base, u16b flags){
 	numtowns++;
 }
 
-void init_wild_info(){
+void init_wild_info()
+{
 	int x,y;
 	memset(&wild_info[0][0],0,sizeof(wilderness_type)*(MAX_WILD_Y*MAX_WILD_X));
 	for(y=0;y<MAX_WILD_Y;y++){

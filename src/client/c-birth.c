@@ -237,6 +237,7 @@ static void choose_class(void)
 	char         c;
 
 	char	 out_val[160];
+	bool hazard = FALSE;
 
 
 	/* Prepare to list */
@@ -268,15 +269,16 @@ static void choose_class(void)
 	while (1)
 	{
 		put_str("Choose a class (? for Help, * for random, Q to Quit): ", 20, 2);
-		c = inkey();
+		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 
-		if (c == '*') j = rand_int(MAX_CLASS);
+		if (c == '*') hazard = TRUE;
+		if (hazard) j = rand_int(MAX_CLASS);
 		else j = (islower(c) ? A2I(c) : -1);
 
 		if ((j < MAX_CLASS) && (j >= 0))
 		{
-                        if (!(rp_ptr->choice & BITS(j))) continue;
+			if (!(rp_ptr->choice & BITS(j))) continue;
 
 			class = j;
 			cp_ptr = &class_info[j];

@@ -180,6 +180,8 @@ void compact_traps(int size)
 	int i, y, x, num, cnt, Ind;
 
 	int cur_val, cur_lev, cur_dis, chance;
+			struct worldpos *wpos=&t_list[t_max].wpos;
+			cave_type **zcave;
 
 
 	/* Compact */
@@ -252,7 +254,8 @@ void compact_traps(int size)
 		trap_type *t_ptr = &t_list[i];
 
 		/* Skip real traps */
-		if (t_ptr->t_idx) continue;
+		/* real traps in unreal location are not skipped. */
+		if (t_ptr->t_idx && (!t_ptr->wpos.wz || getcave(&t_ptr->wpos))) continue;
 
 		/* One less trap */
 		t_max--;
@@ -263,26 +266,26 @@ void compact_traps(int size)
 			int ny = t_list[t_max].iy;
 			int nx = t_list[t_max].ix;
 #ifdef NEW_DUNGEON
-//			struct worldpos *wpos=&t_list[t_max].wpos;
-//			cave_type **zcave;
+			wpos = &m_list[m_max].wpos;
 #else
 			int Depth = t_list[t_max].dun_depth;
 #endif
-#if 0
+
+			/* Structure copy */
+			t_list[i] = t_list[t_max];
+
+#if 1
 			/* Update the cave */
 			/* Hack -- with wilderness traps, sometimes the cave is not allocated,
 			   so check that it is. */
 #ifdef NEW_DUNGEON
 			if ((zcave=getcave(wpos))){
-				zcave[ny][nx].t_idx = i;
+				zcave[ny][nx].special.ptr = &t_list[i];
 			}
 #else
 			if (cave[Depth]) cave[Depth][ny][nx].t_idx = i;
 #endif
 #endif	// 0
-			/* Structure copy */
-			t_list[i] = t_list[t_max];
-
 			/* Wipe the hole */
 			WIPE(&t_list[t_max], trap_type);
 		}
