@@ -1127,7 +1127,7 @@ To find the latest change quickly, search ==== :)
 - login is done according to the informations sent by the server.
   (race/class addition still needs client update, tho)
 - SKILL_MISC, SKILL_AGILITY, SKILL_CALMNESS, SKILL_SWIM, SKILL_RICOCHET,
-  SKILL_BOOMERANG, SKILL_MARTIAL_ARTS, SKILL_TRAINING
+  SKILL_BOOMERANG, SKILL_MARTIAL_ARTS, SKILL_TRAINING, SKILL_INTERCEPT
 - bow/xbow/sling/boomerang skills can prevent ammos from breaking.
 [B] potion of learning.
 
@@ -1145,11 +1145,7 @@ concisely: what's hot now?
   + we should preserve level_up_y etc. for manually-added dungeons/towers.
 - quest system
 - skill system
-  + interfere() should be affected by archery/wizardly skills?
-  + no SKILL_BOOMERANG ?
-  + SKILL_SWIM, AGILITY(+sp), CALMNESS
-  + Archery and Hunting should be separate skills?
-    (Hunting books for non-archers are too strong)
+  + SKILL_CLIMB
   + spell_info should be redone
 - LUA hook
 - csfunc

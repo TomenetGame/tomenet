@@ -78,7 +78,7 @@
 /* though Quylthulgs are intelligent by nature, for the balance's sake
  * this flag bans Qs from casting spells indirectly (just like vanilla ones).
  */
-//#define		STUPID_Q
+#define		STUPID_Q
 
 /*
  * Animal packs try to get the player out of corridors
@@ -904,7 +904,8 @@ static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
 	return (0);
 }
 
-bool monst_check_grab(int Ind, int m_idx)
+//bool monst_check_grab(int Ind, int m_idx, cptr desc)
+bool monst_check_grab(int m_idx, cptr desc)
 {
 //	player_type *p_ptr;
 	monster_type	*m_ptr = &m_list[m_idx];
@@ -933,7 +934,18 @@ bool monst_check_grab(int Ind, int m_idx)
 		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed)
 			continue;
 
-		grabchance = 50 + q_ptr->lev/2 - (q_ptr->blind?30:0);
+		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 80);
+
+		/* Apply Martial-arts bonus */
+		if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(i)
+				&& !q_ptr->inventory[INVEN_WIELD].k_idx)
+			grabchance += get_skill_scale(q_ptr, SKILL_MARTIAL_ARTS, 50);
+
+		if (q_ptr->blind) grabchance -= 30;
+
+		if (grabchance < 1) continue;
+
+//		grabchance = 50 + q_ptr->lev/2 - (q_ptr->blind?30:0);
 		if (grabchance > 95) grabchance = 95;
 
 		/* Got disrupted ? */
@@ -941,15 +953,15 @@ bool monst_check_grab(int Ind, int m_idx)
 		{
 			char		m_name[80];
 			/* Get the monster name (or "it") */
-			monster_desc(Ind, m_name, m_idx, 0x00);
+			monster_desc(i, m_name, m_idx, 0x00);
 
 //			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
 #if 0
 			if (i == Ind) msg_format(Ind, "\377oYou grab %s back from teleportation!", m_name);
 			else msg_format(Ind, "%s grabs %s back from teleportation!", q_ptr->name, m_name);
 #else	// 0
-			msg_format(i, "\377oYou grab %s back from teleportation!", m_name);
-			msg_format_near(Ind, "%s grabs %s back from teleportation!", q_ptr->name, m_name);
+			msg_format(i, "\377oYou intercept %s's attempt to %s!", m_name, desc);
+			msg_format_near(i, "%s intercepts %s's attempt to %s!", q_ptr->name, m_name, desc);
 #endif	// 0
 			return TRUE;
 		}
@@ -1517,25 +1529,18 @@ bool make_attack_spell(int Ind, int m_idx)
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 
 #ifndef STUPID_MONSTER_SPELLS
-#if 0
-	/* Calculate spell failure rate */
-	failrate = 25 - (rlev + 3) / 4;
-
-	/* Hack -- Stupid monsters will never fail (for jellies and such) */
-	if (r_ptr->flags2 & (RF2_STUPID)) failrate = 0;
-
-	/* Check for spell failure (inate attacks never fail) */
-	if (!(r_ptr->flags2 & (RF2_STUPID)))
-	if ((thrown_spell >= 128) && (rand_int(100) < failrate))
-#endif	// 0
-	if (!stupid && thrown_spell >= 128 && magik(25 - (rlev + 3) / 4))
-//	if (!stupid && magik(25 - (rlev + 3) / 4))
+	if (!stupid && thrown_spell >= 128)
 	{
-		/* Message */
-		if (direct)
-			msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
+		if (magik(25 - (rlev + 3) / 4))
+		{
+			/* Message */
+			if (direct)
+				msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
 
-		return (TRUE);
+			return (TRUE);
+		}
+
+		if (monst_check_grab(m_idx, "cast")) return (TRUE);
 	}
 #endif	// STUPID_MONSTER_SPELLS
 
@@ -1622,6 +1627,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (power > 30) dice += 2;
 #endif
 			disturb(Ind, 1, 0);
+			if (monst_check_grab(m_idx, "fire")) break;
 			for (k = 0; k < fois; k++)
 			{
 				if (blind) msg_format(Ind, "%^s makes a strange noise.", m_name);
@@ -2819,7 +2825,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			disturb(Ind, 1, 0);
 			if (monst_check_antimagic(Ind, m_idx)) break;
-			if (monst_check_grab(Ind, m_idx)) break;
+//			if (monst_check_grab(Ind, m_idx)) break;
 			if (teleport_away(m_idx, 10) && visible)
 				msg_format(Ind, "%^s blinks away.", m_name);
 			break;
@@ -2830,7 +2836,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (monst_check_grab(Ind, m_idx)) break;
+//			if (monst_check_grab(Ind, m_idx)) break;
 			if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && visible)
 				msg_format(Ind, "%^s teleports away.", m_name);
 			break;
@@ -5172,6 +5178,12 @@ static void process_monster(int Ind, int m_idx)
 
 				/* XXX XXX XXX Message */
 			}
+		}
+
+		/* Hack -- player hinders its movement */
+		if (do_move && monst_check_grab(m_idx, "run"))
+		{
+				do_move = FALSE;
 		}
 
 

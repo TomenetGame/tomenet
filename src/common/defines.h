@@ -4978,6 +4978,7 @@ extern int PlayerUID;
 #define SKILL_RICOCHET			38
 #define SKILL_BOOMERANG			39
 #define SKILL_TRAINING			40
+#define SKILL_INTERCEPT			41
 
 #if 0	// skills to come	- Jir -
 #define SKILL_CLIMB

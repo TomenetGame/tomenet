@@ -1831,12 +1831,17 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 1400,
                         },
                         {
                                 SKILL_TRAINING,
                                 '+', 3000,
                                 '+', 1000,
+                        },
+                        {
+                                SKILL_INTERCEPT,
+                                '+', 0,
+                                '+', 500,
                         },
 
                 }
@@ -1935,6 +1940,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_TRAINING,
                                 '+', 3000,
                                 '+', 1000,
+                        },
+                        {
+                                SKILL_INTERCEPT,
+                                '+', 1000,
+                                '+', 800,
                         },
                 }
 	},
@@ -2072,7 +2082,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1500,
+                                '+', 1700,
                         },
                         {
                                 SKILL_TRAINING,
@@ -2173,12 +2183,17 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1500,
+                                '+', 1800,
                         },
                         {
                                 SKILL_TRAINING,
                                 '+', 3000,
                                 '+', 1000,
+                        },
+                        {
+                                SKILL_INTERCEPT,
+                                '+', 1000,
+                                '+', 600,
                         },
                 }
         },
@@ -2259,8 +2274,8 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_ARCHERY,
+                                '+', 2000,
                                 '+', 1000,
-                                '+', 900,
                         },
                         {
                                 SKILL_SLING,
@@ -2269,7 +2284,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_BOW,
-                                '+', 1000,
+                                '+', 2000,
                                 '+', 1000,
                         },
                         {
@@ -2289,8 +2304,13 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_RICOCHET,
-                                '+', 1000,
+                                '+', 0,
                                 '+', 600,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 300,
+                                '+', 300,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -2310,7 +2330,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 1500,
+                                '+', 1800,
                         },
                         {
                                 SKILL_TRAINING,
@@ -4829,7 +4849,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
         },
         {
-                "Boomerag-mastery",
+                "Boomerang-mastery",
                 "Ability to use (and not to destroy) boomerang.",
 
                 /* Mkey desc/mkey */
@@ -4851,6 +4871,26 @@ skill_type s_info[MAX_SKILLS] =
         {
                 "Training",
                 "Ability to train yourself and overcome weak points.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Interception",
+                "Ability to hinder your opponents around you.",
 
                 /* Mkey desc/mkey */
                 NULL,
@@ -4919,6 +4959,7 @@ int skill_tree_init[MAX_SKILLS][2] =
         { -1, SKILL_MISC },
         { SKILL_MISC, SKILL_AGILITY },
         { SKILL_MISC, SKILL_CALMNESS },
+        { SKILL_MISC, SKILL_INTERCEPT },
         { SKILL_MISC, SKILL_SWIM },
         { SKILL_MISC, SKILL_TRAINING },
 };
