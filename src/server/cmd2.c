@@ -2505,7 +2505,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 					hit_body = TRUE;
 
 					if(!(p_ptr->pkill & PKILL_KILLER) || zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
-						if(visible && (!player_in_party(Players[0 - who]->party, Ind)))
+						if(visible && (!player_in_party(Players[0 - c_ptr->m_idx]->party, Ind))){
 							p_ptr->target_who=0;
 							if(!(p_ptr->pkill & PKILL_KILLER)){
 								do_player_drop_items(Ind, 40, FALSE);
