@@ -214,7 +214,7 @@
  * Probably almost never used.
 */
 #if 0
-#define BIND_NAME "pernmangband.net"
+#define BIND_NAME "TomeNET.net"
 #define	BIND_IP "64.53.71.115"
 #endif
 
@@ -520,7 +520,7 @@
 /*
  * OPTION: Person to bother if something goes wrong.
  */
-#define MAINTAINER	"darkgod@pernangband.org"
+#define MAINTAINER	"darkgod@t-o-m-e.net"
 
 
 /*
