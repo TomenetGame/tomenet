@@ -1842,6 +1842,9 @@ static bool item_tester_hook_weapon(object_type *o_ptr)
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:
+		case TV_MSTAFF:
+		case TV_BOOMERANG:
+		case TV_AXE:
 		{
 			return (TRUE);
 		}
