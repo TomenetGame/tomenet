@@ -5145,9 +5145,9 @@ void do_cmd_activate(int Ind, int item)
                                 r_ptr->r_flags4 = r_ptr->flags4;
                                 r_ptr->r_flags5 = r_ptr->flags5;
                                 r_ptr->r_flags6 = r_ptr->flags6;
-                                r_ptr->r_flags4 = r_ptr->flags7;
-                                r_ptr->r_flags5 = r_ptr->flags8;
-                                r_ptr->r_flags6 = r_ptr->flags9;
+                                r_ptr->r_flags7 = r_ptr->flags7;
+                                r_ptr->r_flags8 = r_ptr->flags8;
+                                r_ptr->r_flags9 = r_ptr->flags9;
 
                                 o_ptr->timeout = rand_int(200) + 500;
                                 break;

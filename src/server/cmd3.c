@@ -242,7 +242,14 @@ static bool item_tester_hook_wear(int Ind, int slot)
 	  if ((p_ptr->pclass == CLASS_MONK) && ((slot == INVEN_WIELD) || (slot == INVEN_BOW))) return FALSE;
 
 		/* Check for a usable slot */
-		if (slot >= INVEN_WIELD) return (TRUE);
+		if (slot >= INVEN_WIELD){
+			if(slot==INVEN_BOW && p_ptr->inventory[INVEN_WIELD].k_idx){
+				u32b f1, f2, f3, f4, f5, esp;
+				object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &esp);
+				if(f4 & TR4_MUST2H) return(FALSE);
+			}
+			return (TRUE);
+		}
 	}
 
 	/* Assume not wearable */

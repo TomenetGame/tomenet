@@ -1588,8 +1588,10 @@ void calc_body_bonus(int Ind)
 	if (!p_ptr->body_changed) return;
 	p_ptr->body_changed = FALSE;
 
+#if 0	/* moved so that 2 handed weapons etc can be checked for */
 	/* Take off what is no more usable */
 	do_takeoff_impossible(Ind);
+#endif
 
 	/* Update the innate spells */
 	p_ptr->innate_spells[0] = r_ptr->flags4 & RF4_PLAYER_SPELLS;
@@ -1900,6 +1902,8 @@ static void calc_bonuses(int Ind)
 				p_ptr->free_act = TRUE;
 			break;
 	}
+	/* Take off what is no more usable */
+	do_takeoff_impossible(Ind);
 
 	/* Ghost */
 	if (p_ptr->ghost)

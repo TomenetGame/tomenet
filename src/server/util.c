@@ -2614,6 +2614,10 @@ static void do_slash_cmd(int Ind, char *message)
 							quests[qn].id=0;
 						}
 						msg_print(Ind, "\377yQuests are reset");
+						for(i=1; i<NumPlayers; i++){
+							if(Players[i]->conn==NOT_CONNECTED) continue;
+							Players[i]->quest_id=0;
+						}
 						return;
 					}
 				}
