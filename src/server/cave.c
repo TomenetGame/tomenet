@@ -421,7 +421,7 @@ void check_Morgoth(void)
 						}
 					
 						/* get him out of here */
-						p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_DOWN:LEVEL_UP);
+						p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_RECALL_DOWN:LEVEL_RECALL_UP);
 						p_ptr->recall_pos.wx=p_ptr->wpos.wx;
 						p_ptr->recall_pos.wy=p_ptr->wpos.wy;
 						p_ptr->recall_pos.wz=0;

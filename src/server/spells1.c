@@ -6539,6 +6539,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			dam = 0;
 			if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		}
 		else
 		{
@@ -7491,6 +7492,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Standard damage */
 		case GF_DISINTEGRATE:
 		{
+			if (p_ptr->body_monster && (r_ptr->flags3 & RF3_HURT_ROCK)) dam = (dam * 3) / 2;
 			if (fuzzy) msg_format(Ind, "You are hit by pure energy for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer);

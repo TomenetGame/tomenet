@@ -461,6 +461,8 @@
 #define	LEVEL_OUTSIDE   4
 #define LEVEL_OUTSIDE_RAND 5
 #define LEVEL_HOUSE 6
+#define LEVEL_RECALL_UP 7
+#define LEVEL_RECALL_DOWN 8
 
 /*
  * Pkill flags
@@ -2301,6 +2303,8 @@ that keeps many algorithms happy.
 #define SV_SCROLL_VERMIN_CONTROL	61
 #define SV_SCROLL_CANCELLATION		62
 #define SV_SCROLL_WILDERNESS_MAP	63
+/* more stuff - C. Blue */
+#define SV_SCROLL_CONJURE_MONSTER       64
 
 
 /* The "sval" codes for TV_POTION */
@@ -4138,6 +4142,25 @@ that keeps many algorithms happy.
 	(RF6_HEAL)
 
 
+/* Masks to find out if a monster is really a spellcaster,
+   which uses magic spells, or if the 'spells' are merely
+   actions as firing arrows or hurling boulders.. - C. Blue */
+#define	RF4_SPELLCASTER_MASK \
+	(RF4_S_ANIMAL)
+#define	RF5_SPELLCASTER_MASK \
+	(RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | RF5_BA_COLD | RF5_BA_POIS | \
+	RF5_BA_NETH | RF5_BA_WATE | RF5_BA_MANA | RF5_BA_DARK | \
+	RF5_DRAIN_MANA | RF5_CURSE | RF5_BA_NUKE | RF5_BA_CHAO | \
+	RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | RF5_BO_POIS |\
+	RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | RF5_BO_PLAS | \
+	RF5_BO_ICEE | RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
+	/* RF6_TRAPS and RF6_FORGET don't count as spells (trapping / telepathy) */
+#define RF6_SPELLCASTER_MASK \
+	(RF6_HASTE | RF6_HAND_DOOM | RF6_HEAL | RF6_S_ANIMALS | RF6_BLINK | RF6_TPORT | \
+	RF6_RAISE_DEAD | RF6_S_BUG | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL | RF6_S_RNG | RF6_DARKNESS | \
+	RF6_S_DRAGONRIDER | RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
+	RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_ANGEL | RF6_S_DEMON | RF6_S_UNDEAD | RF6_S_DRAGON | \
+	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | RF6_S_WRAITH | RF6_S_UNIQUE)
 
 /*** Macro Definitions ***/
 

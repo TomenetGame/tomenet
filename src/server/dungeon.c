@@ -1941,7 +1941,7 @@ static void do_recall(int Ind, bool bypass)
 #if 0
 			p_ptr->new_level_method = ( istown(&new_pos) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND );
 #endif
-			p_ptr->new_level_method = (p_ptr->wpos.wz>0 ? LEVEL_DOWN : LEVEL_UP);
+			p_ptr->new_level_method = (p_ptr->wpos.wz>0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 		}
 	}
 	/* beware! bugs inside! (jir) (no longer I hope) */
@@ -4400,49 +4400,51 @@ static void process_player_change_wpos(int Ind)
 	switch (p_ptr->new_level_method)
 	{
 		/* Climbed down */
-		case LEVEL_DOWN:  starty = level_down_y(wpos);
-						  startx = level_down_x(wpos);
-						  break;
+		case LEVEL_RECALL_DOWN:
+		case LEVEL_DOWN:  		starty = level_down_y(wpos);
+						startx = level_down_x(wpos);
+						break;
 
-						  /* Climbed up */
-		case LEVEL_UP:    starty = level_up_y(wpos);
-						  startx = level_up_x(wpos);
-						  break;
+		/* Climbed up */
+		case LEVEL_RECALL_UP:
+		case LEVEL_UP:    		starty = level_up_y(wpos);
+						startx = level_up_x(wpos);
+						break;
 
-						  /* Teleported level */
-		case LEVEL_RAND:  starty = level_rand_y(wpos);
-						  startx = level_rand_x(wpos);
-						  break;
+		/* Teleported level */
+		case LEVEL_RAND:  		starty = level_rand_y(wpos);
+						startx = level_rand_x(wpos);
+						break;
 
-						  /* Used ghostly travel */
+		/* Used ghostly travel */
 		case LEVEL_GHOST: starty = p_ptr->py;
-						  startx = p_ptr->px;
-						  break;
+						startx = p_ptr->px;
+						break;
 
-						  /* Over the river and through the woods */
+		/* Over the river and through the woods */
 		case LEVEL_OUTSIDE:
 		case LEVEL_HOUSE:
-						  starty = p_ptr->py;
-						  startx = p_ptr->px;
-						  break;
-						  /* this is used instead of extending the level_rand_y/x
-							 into the negative direction to prevent us from
-							 alocing so many starting locations.  Although this does
-							 not make players teleport to simmilar locations, this
-							 could be achieved by seeding the RNG with the depth.
-							 */
-		case LEVEL_OUTSIDE_RAND: 
+						starty = p_ptr->py;
+						startx = p_ptr->px;
+						break;
+						/* this is used instead of extending the level_rand_y/x
+							into the negative direction to prevent us from
+							alocing so many starting locations.  Although this does
+							not make players teleport to simmilar locations, this
+							could be achieved by seeding the RNG with the depth.
+							*/
+		case LEVEL_OUTSIDE_RAND:
 
-						  /* make sure we aren't in an "icky" location */
-						  do
-						  {
-							  starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT)-3)+1;
-							  startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID)-3)+1;
-						  }
-						  while (  (zcave[starty][startx].info & CAVE_ICKY)
-								  || (zcave[starty][startx].feat==FEAT_DEEP_WATER)
-								  || (!cave_floor_bold(zcave, starty, startx)) );
-						  break;
+						/* make sure we aren't in an "icky" location */
+						do
+						{
+							starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT)-3)+1;
+							startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID)-3)+1;
+						}
+						while (  (zcave[starty][startx].info & CAVE_ICKY)
+								|| (zcave[starty][startx].feat==FEAT_DEEP_WATER)
+								|| (!cave_floor_bold(zcave, starty, startx)) );
+						break;
 	}
 
 	/* Hack -- handle smaller floors */
@@ -4461,22 +4463,29 @@ static void process_player_change_wpos(int Ind)
 	//printf("finding area (%d,%d)\n",startx,starty);
 	/* Place the player in an empty space */
 	//for (j = 0; j < 1500; ++j)
-	for (j = 0; j < 1500; j++)
+	for (j = 0; j < 3000; j++)
 	{
 		/* Increasing distance */
 		d = (j + 149) / 150;
 
 		/* Pick a location */
 		scatter(wpos, &y, &x, starty, startx, d, 1);
+
 		/* Must have an "empty" grid */
 		if (!cave_empty_bold(zcave, y, x)) continue;
 
 		/* Not allowed to go onto a icky location (house) if Depth <= 0 */
-
 		if(wpos->wz==0){
 			if((zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method!=LEVEL_HOUSE)) continue;
 			if(!(zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method==LEVEL_HOUSE)) continue;
 		}
+
+		/* Prevent recalling into no-tele vaults! - C. Blue */
+	        if((zcave[y][x].info & CAVE_STCK) &&
+		    (p_ptr->new_level_method == LEVEL_RECALL_UP || p_ptr->new_level_method == LEVEL_RECALL_DOWN ||
+		    p_ptr->new_level_method == LEVEL_RAND || p_ptr->new_level_method == LEVEL_OUTSIDE_RAND))
+			continue;
+
 		break;
 	}
 
@@ -4614,8 +4623,9 @@ static void process_player_change_wpos(int Ind)
 	/* Clear the flag */
 	p_ptr->new_level_flag = FALSE;
 
-	 /* Did we enter a no-tele vault? */
-         if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) msg_print(Ind, "\377DThe air in here feels very still.");
+	/* Did we enter a no-tele vault? */
+        if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)
+		msg_print(Ind, "\377DThe air in here feels very still.");
 
 	/* Hack -- jail her/him */
 	if(!p_ptr->wpos.wz && p_ptr->tim_susp){

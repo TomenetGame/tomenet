@@ -2069,6 +2069,8 @@ static void do_lottery(int Ind, object_type *o_ptr)
 static int check_self_summon(player_type *p_ptr){
 	cave_type **zcave, *c_ptr;
 
+	if (is_admin(p_ptr)) return(TRUE);
+
 	if ((!cfg.surface_summoning) && (p_ptr->wpos.wz == 0)) return(FALSE);
 
 	zcave=getcave(&p_ptr->wpos);
@@ -2097,6 +2099,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 	int	k, ident, lev, d_no, d_tries, x, y, antichance;
 	bool	used_up, keep = FALSE;
+	char	m_name[80];
 
 	object_type	*o_ptr;
 
@@ -2275,6 +2278,23 @@ void do_cmd_read_scroll(int Ind, int item)
 					{
 						ident = TRUE;
 					}
+				}
+				break;
+			}
+
+			case SV_SCROLL_CONJURE_MONSTER: /* clone to avoid heavy mimic cheeze (and maybe exp cheeze) */
+			{
+				if(!check_self_summon(p_ptr)) break;
+				k = get_monster(Ind, o_ptr);
+				if(!k) break;
+				if (r_info[k].flags1 & RF1_UNIQUE) break;
+
+				monster_race_desc(Ind, m_name, k, 0x88);
+		                msg_format(Ind, "\377oYou conjure %s!", m_name);
+				msg_format_near(Ind, "\377o%s conjures %s", p_ptr->name, m_name);
+				if (summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, k, 100, 1))
+				{
+					ident = TRUE;
 				}
 				break;
 			}

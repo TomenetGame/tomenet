@@ -2420,6 +2420,7 @@ void do_slash_cmd(int Ind, char *message)
 				bypass_invuln = TRUE;
 			        take_hit(j, Players[j]->chp - 1, "");
 				bypass_invuln = FALSE;
+			        msg_format_near(j, "\377y%s is hit by a bolt from the blue!", Players[j]->name);
 			        msg_print(j, "\377rYou are hit by a bolt from the blue!");
 			        msg_print(j, "\377rThat was close huh?!");
 				return;
@@ -2435,6 +2436,7 @@ void do_slash_cmd(int Ind, char *message)
 			        take_hit(j, Players[j]->chp / 2, "");
 				bypass_invuln = FALSE;
 			        msg_print(j, "\377rYou are slapped by something invisible!");
+			        msg_format_near(j, "\377y%s is slapped by something invisible!", Players[j]->name);
 				return;
 			}
 			else if (prefix(message, "/deltown")){

@@ -4612,7 +4612,7 @@ void player_death(int Ind)
 
 		if (secure)
 		{
-			p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_DOWN:LEVEL_UP);
+			p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_RECALL_DOWN:LEVEL_RECALL_UP);
 			p_ptr->recall_pos.wx=p_ptr->wpos.wx;
 			p_ptr->recall_pos.wy=p_ptr->wpos.wy;
 			p_ptr->recall_pos.wz=0;
@@ -7630,6 +7630,56 @@ int get_player(int Ind, object_type *o_ptr)
 	}
 
 	return Ind2;
+}
+
+int get_monster(int Ind, object_type *o_ptr)
+{
+        bool ok1 = TRUE, ok2 = TRUE;
+	int r_idx=0;
+
+	unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
+
+       	/* check for a valid inscription */
+	if (inscription == NULL)
+	{
+		msg_print(Ind, "No monster specified.");
+		return 0;
+	}
+	
+	/* scan the inscription for @M */
+	while ((*inscription != '\0') && ok1 && ok2)
+	{
+		
+		if (*inscription == '@')
+		{
+			inscription++;
+			
+			/* a valid @M has been located */
+			if (*inscription == 'M')
+			{			
+				inscription++;
+				
+				r_idx = atoi((cptr)inscription);
+				if (r_idx < 1 && r_idx > alloc_race_size) ok1 = FALSE;
+				else if (!Players[Ind]->r_killed[r_idx]) ok2 = FALSE;
+			}
+		}
+		inscription++;
+	}
+	
+        if (!ok1)
+	{
+		msg_print(Ind, "That monster does not exist.");
+		return 0;
+	}
+
+	if (!ok2)
+	{
+		msg_print(Ind, "You haven't killed one of these monsters yet.");
+		return 0;
+	}
+
+	return r_idx;
 }
 
 void blood_bond(int Ind, object_type *o_ptr)

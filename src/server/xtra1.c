@@ -1626,17 +1626,35 @@ static void calc_body_bonus(int Ind)
 	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
 
 	/* Extra fire if good archer */
-	if (r_ptr->flags4 & RF4_ARROW_1)
+	if ((r_ptr->flags4 & RF4_ARROW_1) &&
+	    (p_ptr->inventory[INVEN_BOW].k_idx) && (p_ptr->inventory[INVEN_BOW].tval == TV_BOW))
 	{
 		p_ptr->num_fire++;	// Free
-		if (r_ptr->freq_inate > 30) p_ptr->num_fire++;	// 1_IN_3
-		if (r_ptr->freq_inate > 60) p_ptr->num_fire++;	// 1_IN_1
+		if (r_ptr->freq_inate > 30) p_ptr->num_fire++;	// 1_IN_3 (ranger 1/4, chieftain 1/3)
+/*		if (r_ptr->freq_inate == 100) p_ptr->num_fire++;	// 1_IN_1
+   this doesnt occur anyways, and grand master thief (1_IN_2) would already be too powerful
+   if 1_IN_1 gets lowered to that.. */
 	}
-	else
+
 	/* Extra casting if good spellcaster */
-	{
-		if (r_ptr->freq_inate > 30) p_ptr->num_spell++;	// 1_IN_3
-		if (r_ptr->freq_inate > 60) p_ptr->num_spell++;	// 1_IN_1
+	if ((r_ptr->flags4 & RF4_SPELLCASTER_MASK) ||
+	    (r_ptr->flags5 & RF5_SPELLCASTER_MASK) ||
+	    (r_ptr->flags6 & RF6_SPELLCASTER_MASK)) {
+		if (r_ptr->freq_inate > 30) {
+			p_ptr->num_spell++;	// 1_IN_3
+			p_ptr->stat_add[A_INT] += 1;
+			p_ptr->to_m += 10;
+		}
+		if (r_ptr->freq_inate >= 50) {
+			p_ptr->num_spell++;	// 1_IN_2
+			p_ptr->stat_add[A_INT] += 2;
+			p_ptr->to_m += 20;
+		}
+		if (r_ptr->freq_inate == 100) { /* well, _which_ monster would that be? :) */
+			p_ptr->num_spell++;	// 1_IN_1
+			p_ptr->stat_add[A_INT] += 2;
+			p_ptr->to_m += 10;
+		}
 	}
 
 
@@ -1942,7 +1960,8 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if(r_ptr->flags9 & RF9_RES_CHAOS) p_ptr->resist_chaos = TRUE;
 	if(r_ptr->flags9 & RF9_RES_TIME) p_ptr->resist_time = TRUE;
 	if(r_ptr->flags9 & RF9_RES_MANA) p_ptr->resist_mana = TRUE;
-	if(r_ptr->flags9 & RF9_RES_SHARDS) p_ptr->resist_shard = TRUE;
+	if((r_ptr->flags9 & RF9_RES_SHARDS) || (r_ptr->flags3 & RF3_HURT_ROCK))
+		p_ptr->resist_shard = TRUE;
 
 	if(r_ptr->flags3 & RF3_RES_TELE) p_ptr->res_tele = TRUE;
 	if(r_ptr->flags3 & RF3_RES_PLAS)
@@ -3775,6 +3794,9 @@ void calc_bonuses(int Ind)
 
 		/* Require at least one shot */
 		if (p_ptr->num_fire < 1) p_ptr->num_fire = 1;
+
+		/* Cap shots per round at 5 */
+		if (p_ptr->num_fire > 5) p_ptr->num_fire = 5;
 	}
 
 	/* Add in the "bonus spells" */
