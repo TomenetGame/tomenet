@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. Apr 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. May 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -109,19 +109,34 @@ Contents
 -Get the latest client from www.tomenet.net or www.c-blue.de/rogue.html .
 -Extract it, run tomenet4.exe.
 -Choose a server from the meta list that appears on your screen.
--Create a character, half-troll warrior is good for beginners.
-Good stats order for it is STR,CON,DEX,WIS,INT,CHR
-Make sure you choose (n)ormal mode. Not 'fruit bat' or something.
-Now you're in the game and should see the town (Bree) :)
+-Create a character, Half-Troll warrior is good for beginners.
+ In case you choose Half-Troll warrior, read this:
+  Good stats order for it is STR,CON,DEX,WIS,INT,CHR.
+  Or, if the server allows to manually choose your stats, try this:
+  STR 18/30, CON as high as possible, INT as low as possible,
+  spare points into DEX, WIS or CHR. Explanation:
+   CON affects your hit points, more CON -> more HP.
+   STR (and DEX) determine your number of attacks per round. 18/30 in STR is
+   enough to get 3 attacks per round with very light weapons, regardless of
+   how you modify your DEX. To get the 3 blows per round (bpr) you'll need to
+   sell your heavy sword and buy a light weapon (3.0 lbs or less) like dagger
+   or whip. That is more efficient than 1 or 2 bpr with your original sword!
+   Later on when your character becomes more powerful you can switch back to
+   heavier weaponry.
+   Warriors don't really need INT so you should reduce it to spend the points
+   on other attributes. WIS isn't really needed either, but it can be useful
+   to resist sanity-reducing effects.
+-Make sure you choose [n]ormal mode (or [e]verlasting). Not 'fruit bat' :).
+ Now you're in the game and should see the town (Bree) :)
 -To chat, press the colon key ':' . Don't hesitate to ask other players
-if you have any problems with getting started.
+ if you have any problems with getting started.
 -To run, press SHIFT+<direction key> where direction keys are on
-the number pad 7,8,9, 4,6, 1,2,3. Running often requires that
-numlock is turned off (press the 'num' key so the green light is off).
-If SHIFT+<direction> doesn't work on your system, you can press the dot '.'
-followed by a direction key.
+ the number pad 7,8,9, 4,6, 1,2,3. Running often requires that
+ numlock is turned off (press the 'num' key so the green light is off).
+ If SHIFT+<direction> doesn't work on your system, you can press the dot '.'
+ followed by a direction key.
 -You can wear/wield your armour/weapons by pressing 'w' and choosing them
-from your inventory which is displayed in the window labeled Recall'.
+ from your inventory which is displayed in the window labeled Recall'.
 -You can pick up items if you stand on them and press 'g'.
 -You can enter stairs down/upwards by standing on them and pressing the
 corresponding key '<' or '>'.
@@ -138,6 +153,9 @@ While you're a ghost you can freely float up/down by pressing '<' and '>'.
 your inventory (Recall window) you should read those by pressing 'r' to read.
 -If your character gains a new level it also gains skill points. To distribute
 those, invoke the skill screen with 'G'.
+-If you don't like your character and want to delete it, you may commit
+suicide by pressing SHIFT+q or CTRL+c and double-confirming the following
+questions with 'y' and '@'.
 
 
 
@@ -437,6 +455,10 @@ resistances or abilities.
 (0.4) Typical slang/abbreviations
 ---------------------------------
 Art         Artifact from the a_info.txt file. Also called 'True Art'.
+Auto-ID     A special ability of some items. If you equip an item that grants
+            you 'Auto-ID' all items you touch will automatically be
+            identified! Items who grant their wielder Auto-Identification are
+            highly sought after. Randart helmets or gloves sometimes have it.
 BM          Black Market (Store '7').
 Cheeze      Questionable action, not quite cheating but close to it.
             This can be transferring items to a store character (mule)
@@ -834,6 +856,7 @@ You can also choose e), that will give your character an infinite amount of
 resurrecionts, while 'normal' characters often have a limited amount of lives
 (depending on the server configuration).
 
+
 'Normal':
 ---------
 A normal character will turn into a ghost if he dies. The ghost can be revived
@@ -881,6 +904,7 @@ form! Fruit bats usually can take way less damage than normal characters
 before they die, and they cannot wear certain equipment like boots, gloves or
 weapons. However they are twice as fast and hard to hit. Fruit bats are said
 to make good explorers.
+
 
 Hard / Unworldly characters will receive 25% bonus on their high score.
 Hellish (Hard + Unworldly) characters receive 50% bonus on their high score.
@@ -1500,6 +1524,12 @@ Normal/everlasting characters will turn into ghosts if they die. When you
 become a ghost, your title will change to 'Ghost' until you get revived.
 You can continue playing as a ghost, getting a slight experience penalty,
 but that's not recommended. Instead, you should go for resurrection!
+
+Ghosts can float up and down freely (just hit '<' or '>' key as if you take
+a staircase), so they can quickly float out of the dungeon without having to
+search for staircases. However, a ghost cannot float down to very deep dungeon
+levels which he hadn't visited yet when he was still alive. So 'Ghost-Diving'
+(means: simply continuing playing as a ghost) is somewhat limited.
 
 That will bring you back to life at the cost of experience (40% usually).
 There are 3 ways to be revived:
@@ -2463,9 +2493,9 @@ Combat Type | Dice multiplier for brands (fire/cold/acid/lightning/poison)
             | Monster..
             | ..is immune   | ..resists | ..doesn't resist  | ..is suspectible
 ------------|-----------------------------------------------------------------
-Melee Weapon|       1               2               3                   6
-Ranged Weap.|       1               1.4             1.8                 3
-Martial Arts|       1               1.33            1.67                2.67
+Melee Weapon|       1             2               3                   6
+Ranged Weap.|       1             1.4             1.8                 3
+Martial Arts|       1             1.33            1.67                2.67
 
 Slaying     | Dice multiplier | Description
 ------------|-----------------------------------------------------------------
@@ -2637,8 +2667,8 @@ Blindness       You cannot read scrolls or books while you're blind.
 Confusion       While confused you cannot move, shoot or fight straight.
                 Further, you're unable to read scrolls or books.
                 However, you still can use staves, wands and rods.
-                Quaffing a potion of Healing, Curing or Cure Critical Wounds
-                will remove the confusion.
+                Quaffing a potion of Healing, Curing or Cure Serious/Critical
+                Wounds will remove the confusion.
                 Resisting confusion or chaos will lower damage to 5/7..5/12.
                 Breath damage is monster HP/6. Confusion damage caps at 400.
 Paralysis       Paralysis can be caused by bashing doors, lack of food and by
@@ -3239,8 +3269,8 @@ Genocide        See 'Scrolls'.
 Wonder          Wands of wonder cast random magic spells.
 Curing          Satisfies hunger, removes blindness/confusion/stun,
                 cures poison/cuts.
-Probing         Tells you hit points, melee attacks and speed of monsters in
-                your line of sight.
+Probing         Tells you hit points, melee attacks, speed and armour class of
+                monsters in your line of sight.
 Detection       Detects treasures, objects, traps, secret doors, creatures.
 Perception      Identifies a specific item.
 Enlightenment   Magically maps your surroundings.
@@ -3309,7 +3339,9 @@ Mushrooms of paranoia/cure paranoia
                     Cause/remove fear, cause/reduce hallucinations.
 Firestones          Eath them only if you are a Thunderlord (Dragonrider).
                     They will randomly boost your powers for a short time.
-                    See (5.9) for firestone details.
+                    See (5.9) for firestone details. If you eat too many of
+                    them over a short period of time you might get poisoned
+                    by adrenaline overdose, with lethal results.
 Flint               Prevents your light from going out.
 Empty bottles       You can /fill these at fountains to turn them into
                     potions.
@@ -4635,6 +4667,9 @@ F: flag list
                 The player (like the monster) can pass trees.
     WILD_MOUNTAIN or WILD_VOLCANO
                 The player (like the monster) can climb mountains.
+    WILD_TOO without any other WILD_xxx flags:
+                Combines all WILD_xxx effects (such as WILD_WOOD and
+                WILD_MOUNTAIN)!
     INVISIBLE   The player becomes invisible.
     AURA_FIRE or AURA_ELEC
                 The player receives an aura.
