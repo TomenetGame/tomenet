@@ -451,3 +451,5 @@ Change list for PernMangband
 16/12/2001 (Jir)
 - PernA traps (about 160 kinds) and trap system ported.
 - Fixed a bug where vault didn't contain monsters.
+- Given version number v3.3.0alpha (it'll be v4.0.0 soon :)
+- Version warnings for older(/newer) initialize files.

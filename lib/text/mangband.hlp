@@ -18,12 +18,13 @@ For further (and easy-to-read) documentation, please visit:
 Official Site   - http://www.pernmangband.org/
 Newbie Tutorial - http://www.ctt.ne.jp/~sap/mang/
 
-Latest changes(digest):
-- Ego monsters added; beware, they can be MUCH nastier!
+Latest changes for version 3.3.0 (digest):
 - Multiple towns/dungeons/towers implemented - try exploring the wilderness!
 - You can use the following inscriptions for Word of Recall:
   + {@RW22,8} will lands you to (22,8) of the world map.
   + {@RT} lands you to the first town (where you start the game).
+- About 160 new traps added; They now are nasty foes!
+- Ego monsters added; beware, they can be MUCH nastier!
 - YOU LOSE YOUR (non-random) ARTIFACT IF YOU LOOSE YOUR GRIP ON IT!
 - 50-350ft in dungeon cannot be static, so please SAVE IN TOWN.
 - You'll be protected by GoI for 2-turns after recall/stairs.

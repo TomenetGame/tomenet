@@ -971,7 +971,7 @@ static errr init_re_info(void)
                 s_printf("Error %d at line %d of 're_info.txt'.", err, error_line);
 		s_printf("Record %d contains a '%s' error.", error_idx, oops);
 		s_printf("Parsing '%s'.", buf);
-		s_printf(NULL);
+//		s_printf(NULL);
 
 		/* Quit */
                 quit("Error in 're_info.txt' file.");

@@ -1,5 +1,5 @@
 ':' to chat **********************************************************
-'?' to help ** PernMAngband 3.2.2  **  The Troubles of Middle Earth **
+'?' to help ** PernMAngband 3.3.0  **  The Troubles of Middle Earth **
             **********************************************************
 
                "One Ring to rule them all, One Ring to find them
@@ -8,9 +8,9 @@
                                 "Lord of The Rings", J.R.R.Tolkien
 
  - Multiple towns/dungeons/towers implemented. Try exploring the wilderness!
+ - About 160 new traps added; They now are nasty foes!
  - Ego monsters added; monsters with special abilities can be generated.
- - (non-random) artifacts are no longer transferable.
-   Dropping/throwing/selling(etc) will make them disappear, so be warned.
+ - Dropping/throwing/selling(etc) will make non-random artifacts disappear!
  - Save the game in town as far as possible, so as not to be buried alive.
  - Please don't abuse the system too much ('cheezing'),
    so that we don't have to remove your save data :)
