@@ -7487,22 +7487,19 @@ static int Receive_rest(int ind)
 
 void Handle_clear_buffer(int Ind)
 {
-	if (Ind)
-	{
-		player_type *p_ptr = Players[Ind];
-		connection_t *connp = &Conn[p_ptr->conn];
+	player_type *p_ptr = Players[Ind];
+	connection_t *connp = &Conn[p_ptr->conn];
 
-		/* Clear the buffer */
-		Sockbuf_clear(&connp->q);
-		Sockbuf_clear(&connp->r);
-#if 0
-		Sockbuf_clear(&connp->c);
-		Sockbuf_clear(&connp->w);
-#endif	// 0
+	/* Clear the buffer */
 
-		/* Clear 'current spell' */
-		p_ptr->current_spell = -1;
-	}
+	/* No energy commands are placed in 'q' */
+	Sockbuf_clear(&connp->q);
+
+	/* New commands are in 'r' - clear this and its gone. */
+	/* Sockbuf_clear(&connp->r); */
+
+	/* Clear 'current spell' */
+	p_ptr->current_spell = -1;
 }
 
 static int Receive_clear_buffer(int ind)
@@ -7539,23 +7536,7 @@ static int Receive_clear_buffer(int ind)
 		return n;
 	}
 
-#if 0
-	if (player)
-	{
-		/* Clear the buffer */
-		Sockbuf_clear(&connp->q);
-		Sockbuf_clear(&connp->r);
-#if 0
-		Sockbuf_clear(&connp->c);
-		Sockbuf_clear(&connp->w);
-#endif	// 0
-
-		/* Clear 'current spell' */
-		p_ptr->current_spell = -1;
-	}
-#endif	// 0
-
-	Handle_clear_buffer(player);
+	if(player) Handle_clear_buffer(player);
 
 	return 1;
 }
