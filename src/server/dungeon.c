@@ -1647,7 +1647,7 @@ static void process_player_end(int Ind)
 		  {
 		    set_tim_manashield(Ind, p_ptr->tim_manashield - minus);
 		  }
-		if(p_ptr->tim_jail){
+		if(p_ptr->tim_jail && !p_ptr->wpos.wz){
 			int jy, jx;
 			p_ptr->tim_jail--;
 			if(!p_ptr->tim_jail){
@@ -1658,6 +1658,10 @@ static void process_player_end(int Ind)
 				teleport_player(Ind, 1);
 				zcave[jy][jx].info |= CAVE_STCK;
 			}
+		}
+		if(!p_ptr->wpos.wz && p_ptr->tim_susp){
+			imprison(Ind, 0, "old crimes");
+			return;
 		}
 
 		/* Hack -- Tunnel */

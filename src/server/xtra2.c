@@ -6440,6 +6440,16 @@ void imprison(int Ind, u16b time, char *reason){
 
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
+	if(p_ptr->wpos.wz){
+		p_ptr->tim_susp+=time;
+		return;
+	}
+
+	if(p_ptr->tim_jail){
+		p_ptr->tim_jail+=time;
+		return;
+	}
+
 	for(i=0; i<num_houses; i++){
 		if(!(houses[i].flags&HF_JAIL)) continue;
 		dna=houses[i].dna;
@@ -6472,7 +6482,8 @@ void imprison(int Ind, u16b time, char *reason){
 			sprintf(string, "\377v%s was jailed for %s", p_ptr->name, reason);
 			msg_broadcast(Ind, string);
 			msg_format(Ind, "\377vYou have been jailed for %s", reason);
-			p_ptr->tim_jail=time;
+			p_ptr->tim_jail=time+p_ptr->tim_susp;
+			p_ptr->tim_susp=0;
 			return;
 		}
 	}
