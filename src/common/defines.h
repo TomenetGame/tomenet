@@ -2628,8 +2628,9 @@ that keeps many algorithms happy.
 #define SV_POTION2_CURE_WATER            18
 
 #define SV_POTION2_CHAUVE_SOURIS		19
+#define SV_POTION2_LEARNING				20
 
-#define SV_POTION2_LAST                  19
+#define SV_POTION2_LAST                  20
 
 /* The "sval" codes for TV_FOOD */
 #define SV_FOOD_POISON                   0

@@ -1019,7 +1019,7 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->level = 1;
 	(void)inven_carry(Ind, o_ptr);
 
-	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_LEARNING));
+	invcopy(o_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
 	o_ptr->number = 99;
 	o_ptr->discount = 100;
 	object_known(o_ptr);

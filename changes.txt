@@ -1123,6 +1123,9 @@ To find the latest change quickly, search ==== :)
 22/06/2002 (Yakina)
 - updates needed for bcc.  Thanks Yakina for courtesy.
 
+23/06/2002 (Jir)
+[B] potion of learning.
+
 
 
 ** [B] stands for Bugfix.
