@@ -1859,6 +1859,8 @@ int calc_blows(int Ind, object_type *o_ptr)
  */
 void calc_bonuses(int Ind)
 {
+	cptr inscription = NULL;
+
 	player_type *p_ptr = Players[Ind];
 
 	int			i, j, hold, minus;
@@ -2438,10 +2440,32 @@ void calc_bonuses(int Ind)
 
 		/* Various flags */
 		if (f3 & TR3_AGGRAVATE) p_ptr->aggravate = TRUE;
-		if ((f3 & TR3_TELEPORT) &&
-		    ((!strcmp(quark_str(o_ptr->note), ".")) ||
-			(o_ptr->ident & ID_CURSED)))
-			    p_ptr->teleport = TRUE;
+//		if (f3 & TR3_TELEPORT) p_ptr->teleport = TRUE;
+		if (f3 & TR3_TELEPORT){
+			p_ptr->teleport = TRUE;
+			//inscription = (unsigned char *) quark_str(o_ptr->note);
+			inscription = quark_str(p_ptr->inventory[i].note);
+			/* check for a valid inscription */
+			if ((inscription != NULL) && (!(o_ptr->ident & ID_CURSED)))
+			{
+				/* scan the inscription for .. */
+				while (*inscription != '\0')
+				{
+					if (*inscription == '.')
+					{
+						inscription++;
+						/* a valid .. has been located */
+						if (*inscription == '.')
+						{
+							inscription++;
+							p_ptr->teleport = FALSE;
+							break;
+						}
+					}
+					inscription++;
+				}
+			}
+		}
 		if (f3 & TR3_DRAIN_EXP) p_ptr->exp_drain = TRUE;
                 if (f5 & (TR5_DRAIN_MANA)) p_ptr->drain_mana++;
                 if (f5 & (TR5_DRAIN_HP)) p_ptr->drain_life++;
