@@ -60,7 +60,7 @@ SERV_SRCS = \
   server/sched.c server/generate.c server/wild.c server/dungeon.c \
   server/init1.c server/init2.c server/nserver.c server/printout.c \
   server/main.c server/traps.c server/csfunc.c server/skills.c \
-  common/files.o
+  common/files.c common/w_z_pack.c
 
 SERV_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -75,7 +75,7 @@ SERV_OBJS = \
   server/sched.o server/generate.o server/wild.o server/dungeon.o \
   server/init1.o server/init2.o server/nserver.o server/printout.o \
   server/main.o server/traps.o server/csfunc.o server/skills.o \
-  common/files.o
+  common/files.o common/w_z_pack.o
 
 
 CLI_SRCS = \
@@ -209,7 +209,7 @@ X11BASE = /usr/X11R6
 ##
 #PREFIX = /usr/local
 CFLAGS = -g -pipe -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O3
-LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcurses -lcrypt 
+LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt 
 
 
 ##
@@ -405,8 +405,8 @@ $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
 #
 
 clean:
-	cd server; rm -f *.o
-	cd client; rm -f *.o
+	cd server; rm -f *.o w_play.c w_util.c w_spells.c
+	cd client; rm -f *.o w_play.c w_util.c w_spells.c
 	cd common; rm -f *.o
 	cd console; rm -f *.o
 
@@ -424,6 +424,9 @@ server/w_play.c: server/player.pkg $(TOLUA)
 
 server/w_spells.c: server/spells.pkg $(TOLUA)
 	cd server; ./tolua -n spells -o w_spells.c spells.pkg; cd ..
+
+common/w_z_pack.c: common/z_pack.pkg $(TOLUA)
+	cd common; ../server/tolua -n z_pack -o w_z_pack.c z_pack.pkg; cd ..
 
 client/w_play.c: client/player.pkg $(TOLUA)
 	cd client; ../server/tolua -n player -o w_play.c player.pkg; cd ..
