@@ -225,6 +225,7 @@ void init_lua()
 	tolua_util_open(L);
 	tolua_player_open(L);
 	tolua_spells_open(L);
+	tolua_z_pack_open(L);
 
 	/* Load the first lua file */
 	pern_dofile(0, "init.lua");

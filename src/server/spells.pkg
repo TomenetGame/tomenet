@@ -18,6 +18,8 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
+#define PR_MANA		128
+
 #define SKILL_CONVEYANCE		48
 
 #define DEFAULT_RADIUS			18
