@@ -51,7 +51,8 @@ extern object_type inventory[INVEN_TOTAL];
 extern char inventory_name[INVEN_TOTAL][80];
 
 extern store_type store;
-extern owner_type store_owner;
+//extern owner_type store_owner;
+extern c_store_extra c_store;
 extern int store_prices[STORE_INVEN_MAX];
 extern char store_names[STORE_INVEN_MAX][80];
 extern s16b store_num;

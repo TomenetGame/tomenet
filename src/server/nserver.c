@@ -4131,7 +4131,12 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 	return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval);
 }
 
-int Send_store_info(int ind, int num, int owner, int items)
+/*
+ * This function is supposed to handle 'store actions' too,
+ * like 'buy' 'identify' 'heal' 'bid to an auction'		- Jir -
+ */
+//int Send_store_info(int ind, int num, int owner, int items)
+int Send_store_info(int ind, int num, cptr owner, int items, int purse)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -4140,28 +4145,30 @@ int Send_store_info(int ind, int num, int owner, int items)
 	{
 		errno = 0;
 		plog(format("Connection not ready for store info (%d.%d.%d)",
-			ind, connp->state, connp->id));
+					ind, connp->state, connp->id));
 		return 0;
 	}
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
+	{
+		int Ind2 = find_player(p_ptr->esp_link);
+		player_type *p_ptr2;
+		connection_t *connp2;
 
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		if (!Ind2)
+			end_mind(ind, TRUE);
+		else
+		{
+			p_ptr2 = Players[Ind2];
+			connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
-	      }
-	  }
+//			Packet_printf(&connp2->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
+			Packet_printf(&connp2->c, "%c%hd%s%hd%d", PKT_STORE_INFO, num, owner, items, purse);
+		}
+	}
 
-	return Packet_printf(&connp->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
+	return Packet_printf(&connp->c, "%c%hd%s%hd%d", PKT_STORE_INFO, num, owner, items, purse);
+//	return Packet_printf(&connp->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
 }
 
 int Send_store_sell(int ind, int price)

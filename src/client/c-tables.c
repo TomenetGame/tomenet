@@ -1153,6 +1153,8 @@ byte old_blows_table[11][12] =
  */
 /* XXX well, it's silly that both server/tables.c and client/c-table.c
  * contains this table; it should be sent from the server.	- Jir - */
+/* so it is :) */
+#if 0
 owner_type owners[MAX_STORES][MAX_OWNERS] =
 {
 	{
@@ -1214,7 +1216,6 @@ owner_type owners[MAX_STORES][MAX_OWNERS] =
 
 
 
-#if 0
 
 /*
  * This table allows quick conversion from "speed" to "energy"

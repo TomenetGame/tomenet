@@ -26,8 +26,16 @@
 # - Jir -
 
 
+18/08/2002 (Jir)
+[G]- ow_info.txt backported. (st_info and ba_info will come next;
+     till then it'll be somewhat silly)
+
 17/08/2002 (Jir)
+# remove savedata (character is ok) and make clean pls
 [G]- Vanilla-style (storelike) houses resurrected.
+[G]- Stealth mode is *MUCH* useful with high Stealth point.
+[P]- player is safe from attacks/spells when in stores/houses.
+[I]- speed-down from stealth mode is shown to the player now.
 
 16/08/2002 (Jir)
 [m]- monsters run in random direction when in bad effect(poison cloud).
@@ -1863,6 +1871,7 @@ below this line are the unfixed bugs known:
      #4  0x80f5e82 in play_game (new_game=0 '\000') at server/dungeon.c:4212
      #5  0x810a4d3 in main (argc=3, argv=0xbfbff6b0) at server/main.c:276
      #6  0x8049df9 in _start ()
+[B]- (tho it doesn't crash) 'You hit it.' when building houses.
 
 
 
@@ -1959,6 +1968,9 @@ memo and questions:
 + phase/recall may land you on water.
 + randarts lantern/torch may need fueling (and non-lit one doesn't give
   any resistances/abilities).
++ Sirene(1100') at 750' (see get_mon_num() and NASTY_MON)
+  roughly, 1/40 chance for +250', 1/2500 chance for +500' (same with Vanilla)
+  (also +100' for lake/pit/nest)
 
 ==== TODO: below this line are changes to be done in the future ====
 [minor ones]

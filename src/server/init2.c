@@ -1324,6 +1324,233 @@ static errr init_v_info(void)
 }
 
 
+/*
+ * Initialize the "ow_info" array
+ *
+ * Note that we let each entry have a unique "name" and "short name" string,
+ * even if the string happens to be empty (everyone has a unique '\0').
+ */
+static errr init_ow_info(void)
+{
+	int fd;
+
+	int mode = 0644;
+
+	errr err = 0;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+
+	/*** Make the header ***/
+
+	/* Allocate the "header" */
+	MAKE(ow_head, header);
+
+	/* Save the "version" */
+	ow_head->v_major = VERSION_MAJOR;
+	ow_head->v_minor = VERSION_MINOR;
+	ow_head->v_patch = VERSION_PATCH;
+	ow_head->v_extra = 0;
+
+	/* Save the "record" information */
+	ow_head->info_num = MAX_OW_IDX;
+	ow_head->info_len = sizeof(owner_type);
+
+	/* Save the size of "head" and "ow_info" */
+	ow_head->head_size = sizeof(header);
+	ow_head->info_size = ow_head->info_num * ow_head->info_len;
+
+
+#ifdef ALLOW_TEMPLATES
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "ow_info.raw");
+
+	/* Grab permission */
+//	safe_setuid_grab();
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Drop permission */
+//	safe_setuid_drop();
+
+	/* Process existing "raw" file */
+	if (fd >= 0)
+	{
+#ifdef CHECK_MODIFICATION_TIME
+
+		err = check_modification_date(fd, "ow_info.txt");
+
+#endif /* CHECK_MODIFICATION_TIME */
+
+		/* Attempt to parse the "raw" file */
+		if (!err)
+			err = init_ow_info_raw(fd);
+
+		/* Close it */
+		(void)fd_close(fd);
+
+		/* Success */
+		if (!err) return (0);
+
+		/* Information */
+		msg_print("Ignoring obsolete/defective 'ow_info.raw' file.");
+		msg_print(NULL);
+	}
+#endif	// USE_RAW_FILES
+
+
+	/*** Make the fake arrays ***/
+
+	/* Assume the size of "ow_name" and "ow_text" */
+#if 0
+	fake_name_size = FAKE_NAME_SIZE;
+#else	// 0
+	fake_name_size = 20 * 1024L;
+#endif	// 0
+
+
+	/* Allocate the "ow_info" array */
+	C_MAKE(ow_info, ow_head->info_num, owner_type);
+
+	/* Hack -- make "fake" arrays */
+	C_MAKE(ow_name, fake_name_size, char);
+
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "ow_info.txt");
+
+	/* Grab permission */
+//	safe_setuid_grab();
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Drop permission */
+//	safe_setuid_drop();
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 'ow_info.txt' file.");
+
+	/* Parse the file */
+	err = init_ow_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		s_printf("Error %d at line %d of 'ow_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
+
+		/* Quit */
+		quit("Error in 'ow_info.txt' file.");
+	}
+
+
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+	/*** Dump the binary image file ***/
+
+	/* File type is "DATA" */
+	FILE_TYPE(FILE_TYPE_DATA);
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "ow_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Kill the old file */
+	(void)fd_kill(buf);
+
+	/* Attempt to create the raw file */
+	fd = fd_make(buf, mode);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Dump to the file */
+	if (fd >= 0)
+	{
+		/* Dump it */
+		fd_write(fd, (char*)(ow_head), ow_head->head_size);
+
+		/* Dump the "r_info" array */
+		fd_write(fd, (char*)(ow_info), ow_head->info_size);
+
+		/* Dump the "r_name" array */
+		fd_write(fd, (char*)(ow_name), ow_head->name_size);
+
+		/* Close */
+		(void)fd_close(fd);
+	}
+
+
+	/*** Kill the fake arrays ***/
+
+	/* Free the "ow_info" array */
+	C_KILL(ow_info, ow_head->info_num, owner_type);
+
+	/* Hack -- Free the "fake" arrays */
+	C_KILL(ow_name, fake_name_size, char);
+
+	/* Forget the array sizes */
+	fake_name_size = 0;
+	fake_text_size = 0;
+
+#endif	// USE_RAW_FILES
+#endif	/* ALLOW_TEMPLATES */
+
+
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "ow_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Process existing "raw" file */
+	if (fd < 0) quit("Cannot load 'ow_info.raw' file.");
+
+	/* Attempt to parse the "raw" file */
+	err = init_ow_info_raw(fd);
+
+	/* Close it */
+	(void)fd_close(fd);
+
+	/* Error */
+	if (err) quit("Cannot parse 'ow_info.raw' file.");
+#endif	// USE_RAW_FILES
+
+	/* Success */
+	return (0);
+}
+
 
 
 /*** Initialize others ***/
@@ -2271,6 +2498,22 @@ void init_some_arrays(void)
 	/* Initialize trap info */
 	s_printf("[Initializing arrays... (traps)]\n");
 	if (init_t_info()) quit("Cannot initialize traps");
+
+#if 0
+	/* Initialize actions type info */
+	note("[Initializing arrays... (action types)]");
+	if (init_ba_info()) quit("Cannot initialize action types");
+#endif	// 0
+
+	/* Initialize owners type info */
+	s_printf("[Initializing arrays... (owners types)]\n");
+	if (init_ow_info()) quit("Cannot initialize owners types");
+
+#if 0
+	/* Initialize stores type info */
+	note("[Initializing arrays... (stores types)]");
+	if (init_st_info()) quit("Cannot initialize stores types");
+#endif	// 0
 
 	/* Initialize some other arrays */
 	s_printf("[Initializing arrays... (other)]\n");

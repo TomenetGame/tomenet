@@ -2013,6 +2013,10 @@ void do_cmd_read_scroll(int Ind, int item)
 		{
 			case SV_SCROLL_HOUSE:
 			{
+				/* With my fix, this scroll causes crash when rebooting server.
+				 * w/o my fix, this scroll causes crash when finishing house
+				 * creation.  Pfft
+				 */
 #if 0
 				//			unsigned char *ins=quark_str(o_ptr->note);
 				cptr ins=quark_str(o_ptr->note);
@@ -2035,11 +2039,12 @@ void do_cmd_read_scroll(int Ind, int item)
 					}
 				}
 				house_creation(Ind, floor, jail);
-#endif	// 0
+#else	// 0
 				msg_print(Ind, "This is a broken house creation scroll.");
 				ident = TRUE;
 				keep = TRUE;
 				break;
+#endif	// 0
 			}
 
 			case SV_SCROLL_GOLEM:

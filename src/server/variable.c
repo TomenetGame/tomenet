@@ -415,6 +415,32 @@ skill_type *s_info;
 char *s_name;
 char *s_text;
 
+#if 0
+/*
+ * The store/building types arrays
+ */
+header *st_head;
+store_info_type *st_info;
+char *st_name;
+/* char *st_text; */
+
+/*
+ * The building actions types arrays
+ */
+header *ba_head;
+store_action_type *ba_info;
+char *ba_name;
+/* char *ba_text; */
+#endif	// 0
+
+/*
+ * The owner types arrays
+ */
+header *ow_head;
+owner_type *ow_info;
+char *ow_name;
+/* char *ow_text; */
+
 
 /*
  * Hack -- The special Angband "System Suffix"

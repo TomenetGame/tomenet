@@ -453,8 +453,12 @@ static void prt_speed(int Ind)
 
 	int i = p_ptr->pspeed;
 
+#if 0	/* methinks we'd better tell it to players.. - Jir - */
 	/* Hack -- Visually "undo" the Search Mode Slowdown */
-	if (p_ptr->searching) i+=(p_ptr->mode&MODE_HELL ? 5 : 10);
+	/* And this formula can be wrong for hellish */
+//	if (p_ptr->searching) i+=(p_ptr->mode&MODE_HELL ? 5 : 10);
+	if (p_ptr->searching) i += 10;
+#endif	// 0
 
 	Send_speed(Ind, i - 110);
 }
@@ -3040,11 +3044,14 @@ static void calc_bonuses(int Ind)
 	/* -APD- adding "stealth mode" for rogues... will probably need to tweek this */
 	if (p_ptr->searching) 
 	{
-		if (get_skill(p_ptr, SKILL_STEALTH) >= 10) p_ptr->pspeed -= 10;
-		else 
+		int stealth = get_skill(p_ptr, SKILL_STEALTH);
+		p_ptr->pspeed -= 10;
+
+		if (stealth >= 10)
 		{
-			p_ptr->pspeed -= 10;
-			p_ptr->skill_stl *= 3;
+//			p_ptr->skill_stl *= 3;
+			p_ptr->skill_stl *=
+				(stealth >= 40) ? 4 : ((stealth > 25) ? 3 : 2);
 		}
 	}
 

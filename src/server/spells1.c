@@ -5311,6 +5311,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (cfg.use_pk_rules == PK_RULES_NEVER && who <= 0 &&
 			who > PROJECTOR_UNUSUAL) return (FALSE);
 
+
+	/* Store/house is safe */
+	if (p_ptr->store_num > -1)
+	{
+		/* Message */
+//		msg_format(Ind, "You are too afraid to attack %s!", p_name);
+
+		/* Done */
+		return;
+	}
+
 	/* Bolt attack from a monster, a player or a trap */
 //	if ((!rad) && get_skill(p_ptr, SKILL_DODGE) && (who > 0))
 	/* Hack -- HIDE(direct) spell cannot be dodged */

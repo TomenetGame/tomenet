@@ -601,6 +601,7 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
  * Buying and selling adjustments for race combinations.
  * Entry[owner][player] gives the basic "cost inflation".
  */
+#if 0
 static byte rgold_adj[MAX_RACES][MAX_RACES] =
 {
 	/*Hum, HfE, Elf,  Hal, Gno, Dwa, HfO, HfT, Dun, HiE, Yeek, Gob*/
@@ -641,6 +642,7 @@ static byte rgold_adj[MAX_RACES][MAX_RACES] =
 	/* Goblin */
 	{ 115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 90, 105},
 };
+#endif	// 0
 
 
 void alloc_stores(int townval){
@@ -703,6 +705,59 @@ void alloc_stores(int townval){
 }
 
 /*
+ * A helper function for is_state
+ */
+bool is_state_aux(int Ind, store_type *s_ptr, int state)
+{
+	player_type *p_ptr = Players[Ind];
+	owner_type *ot_ptr = &ow_info[s_ptr->owner];
+
+
+	/* Check race */
+	if (ot_ptr->races[state][p_ptr->prace / 32] & (1 << p_ptr->prace))
+	{
+		return (TRUE);
+	}
+
+	/* Check class */
+	if (ot_ptr->classes[state][p_ptr->prace / 32] & (1 << p_ptr->pclass))
+	{
+		return (TRUE);
+	}
+
+#if 0
+	/* Check realms */
+	if ((ot_ptr->realms[state][p_ptr->prace / 32] & (1 << p_ptr->realm1)) ||
+	    (ot_ptr->realms[state][p_ptr->prace / 32] & (1 << p_ptr->realm2)))
+	{
+		return (TRUE); 
+	}
+#endif	// 0
+
+	/* All failed */
+	return (FALSE);
+}
+
+
+/*
+ * Test if the state accords with the player
+ */
+bool is_state(int Ind, store_type *s_ptr, int state)
+{
+	if (state == STORE_NORMAL)
+	{
+		if (is_state_aux(Ind, s_ptr, STORE_LIKED)) return (FALSE);
+		if (is_state_aux(Ind, s_ptr, STORE_HATED)) return (FALSE);
+		return (TRUE);
+	}
+
+	else
+	{
+		return (is_state_aux(Ind, s_ptr, state));
+	}
+}
+
+/*
  * Determine the price of an item (qty one) in a store.
  *
  * This function takes into account the player's charisma, and the
@@ -725,6 +780,7 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 {
 	player_type *p_ptr = Players[Ind];
 	owner_type *ot_ptr;
+	store_type *st_ptr;
 	int     factor;
 	int     adjust;
 	/*s32b    price;*/
@@ -734,7 +790,9 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 	i=gettown(Ind);
 	if(i==-1) return(0);
 
-	ot_ptr = &owners[p_ptr->store_num][town[i].townstore[p_ptr->store_num].owner];
+	st_ptr = &town[i].townstore[p_ptr->store_num];
+//	ot_ptr = &owners[p_ptr->store_num][town[i].townstore[p_ptr->store_num].owner];
+	ot_ptr = &ow_info[town[i].townstore[p_ptr->store_num].owner];
 
 	/* Get the value of one of the items */
 	price = object_value(flip ? Ind : 0, o_ptr);
@@ -744,7 +802,21 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 
 
 	/* Compute the racial factor */
-	factor = rgold_adj[ot_ptr->owner_race][p_ptr->prace];
+//	factor = rgold_adj[ot_ptr->owner_race][p_ptr->prace];
+
+	/* Compute the racial factor */
+	if (is_state(Ind, st_ptr, STORE_LIKED))
+	{
+		factor = ot_ptr->costs[STORE_LIKED];
+	}
+	else if (is_state(Ind, st_ptr, STORE_HATED))
+	{
+		factor = ot_ptr->costs[STORE_HATED];
+	}
+	else
+	{
+		factor = ot_ptr->costs[STORE_NORMAL];
+	}
 
 	/* Add in the charisma factor */
 	factor += adj_chr_gold[p_ptr->stat_ind[A_CHR]];
@@ -1780,7 +1852,8 @@ static void display_entry(int Ind, int pos)
 	if(i==-1) return;
 	
 	st_ptr = &town[i].townstore[p_ptr->store_num];
-	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];
+//	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];
+	ot_ptr = &ow_info[st_ptr->owner];
 
 	/* Get the item */
 	o_ptr = &st_ptr->stock[pos];
@@ -1890,12 +1963,14 @@ static void display_store(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
+	owner_type *ot_ptr;
 	int i;
 
 	i=gettown(Ind);
 	if(i==-1) return;
 
 	st_ptr = &town[i].townstore[p_ptr->store_num];
+	ot_ptr = &ow_info[st_ptr->owner];
 
 	/* Display the current gold */
 	store_prt_gold(Ind);
@@ -1904,17 +1979,19 @@ static void display_store(int Ind)
 	display_inventory(Ind);
 
 	/* The "Home" is special */
-	if (p_ptr->store_num == 7)
+	if (p_ptr->store_num == 7)	/* This shouldn't happen */
 	{
 		/* Send the store info */
-		Send_store_info(Ind, p_ptr->store_num, 0, st_ptr->stock_num);
+//		Send_store_info(Ind, p_ptr->store_num, 0, st_ptr->stock_num);
+		Send_store_info(Ind, p_ptr->store_num, "", st_ptr->stock_num, st_ptr->stock_size);
 	}
 
 	/* Normal stores */
 	else
 	{
 		/* Send the store info */
-		Send_store_info(Ind, p_ptr->store_num, st_ptr->owner, st_ptr->stock_num);
+//		Send_store_info(Ind, p_ptr->store_num, st_ptr->owner, st_ptr->stock_num);
+		Send_store_info(Ind, p_ptr->store_num, ow_name + ot_ptr->name, st_ptr->stock_num, ot_ptr->max_cost);
 	}
 
 }
@@ -1944,7 +2021,8 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s32b *price)
 	if(i==-1) return(FALSE);
 
 	st_ptr = &town[i].townstore[p_ptr->store_num];
-	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];
+//	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];
+	ot_ptr = &ow_info[st_ptr->owner];
 
 	*price = 0;
 
@@ -2026,7 +2104,8 @@ void store_purchase(int Ind, int item, int amt)
 	}
 
 	st_ptr = &town[i].townstore[st];
-	ot_ptr = &owners[st][st_ptr->owner];
+//	ot_ptr = &owners[st][st_ptr->owner];
+	ot_ptr = &ow_info[st_ptr->owner];
 
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)
@@ -2592,7 +2671,8 @@ void store_examine(int Ind, int item)
 	if(i==-1) return;
 
 	st_ptr = &town[i].townstore[st];
-	ot_ptr = &owners[st][st_ptr->owner];
+//	ot_ptr = &owners[st][st_ptr->owner];
+	ot_ptr = &ow_info[st_ptr->owner];
 
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)
@@ -2790,7 +2870,8 @@ void store_shuffle(store_type *st_ptr)
 	}
 
 	/* Activate the new owner */
-	ot_ptr = &owners[st_ptr->num][st_ptr->owner];
+//	ot_ptr = &owners[st_ptr->num][st_ptr->owner];
+	ot_ptr = &ow_info[st_ptr->owner];
 
 
 	/* Reset the owner data */
@@ -2856,7 +2937,8 @@ void store_maint(store_type *st_ptr)
 	}
 
 	/* Activate the owner */
-	ot_ptr = &owners[st_ptr->num][st_ptr->owner];
+//	ot_ptr = &owners[st_ptr->num][st_ptr->owner];
+	ot_ptr = &ow_info[st_ptr->owner];
 
 
 	/* Store keeper forgives the player */
@@ -2938,10 +3020,13 @@ void store_init(store_type *st_ptr)
 
 
 	/* Pick an owner */
-	st_ptr->owner = rand_int(MAX_OWNERS);
+//	st_ptr->owner = rand_int(MAX_OWNERS);
+	/* XXX XXX makeshift till st_info backport!! XXX XXX */
+	st_ptr->owner = rand_int(MAX_OW_IDX);
 
 	/* Activate the new owner */
-	ot_ptr = &owners[st_ptr->num][st_ptr->owner];
+//	ot_ptr = &owners[st_ptr->num][st_ptr->owner];
+	ot_ptr = &ow_info[st_ptr->owner];
 
 
 	/* Initialize the store */
@@ -3673,12 +3758,9 @@ static void display_trad_house(int Ind)
 	/* Draw in the inventory */
 	display_house_inventory(Ind);
 
-	/* The "Home" is special */
-	if (p_ptr->store_num == 7)
-	{
-		/* Send the store info */
-		Send_store_info(Ind, p_ptr->store_num, 0, h_ptr->stock_num);
-	}
+	/* Send the store info */
+	//Send_store_info(Ind, p_ptr->store_num, 0, h_ptr->stock_num);
+	Send_store_info(Ind, p_ptr->store_num, "", h_ptr->stock_num, h_ptr->stock_size);
 }
 
 /* Enter a house, and interact with it.	- Jir - */

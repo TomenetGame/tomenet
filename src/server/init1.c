@@ -1123,6 +1123,82 @@ static struct
 
 /*** Initialize from ascii template files ***/
 
+
+/*
+ * Grab one race flag from a textual string
+ */
+static bool unknown_shut_up = FALSE;
+static errr grab_one_class_flag(s32b *choice, cptr what)
+{
+	int i;
+	cptr s;
+
+	/* Scan classes flags */
+//	for (i = 0; i < max_c_idx && (s = class_info[i].title + c_name); i++)
+	for (i = 0; i < MAX_CLASS && (s = class_info[i].title); i++)
+	{
+		if (streq(what, s))
+		{
+			(choice[i / 32]) |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Oops */
+	if (!unknown_shut_up) s_printf("Unknown class flag '%s'.\n", what);
+
+	/* Failure */
+	return (1);
+}
+static errr grab_one_race_allow_flag(s32b *choice, cptr what)
+{
+	int i;
+	cptr s;
+
+	/* Scan classes flags */
+//	for (i = 0; i < max_rp_idx && (s = race_info[i].title + rp_name); i++)
+	for (i = 0; i < MAX_RACES && (s = race_info[i].title); i++)
+	{
+		if (streq(what, s))
+		{
+			(choice[i / 32]) |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Oops */
+	if (!unknown_shut_up) s_printf("(1)Unknown race flag '%s'.\n", what);
+
+	/* Failure */
+	return (1);
+}
+
+/*
+ * Grab one realm from a textual string
+ */
+static errr grab_one_player_realm_flag(s32b *realms, cptr what)
+{
+	int i;
+
+#if 0	// basically, always fail
+	/* Check flags1 */
+	for (i = 1; i < MAX_REALM; i++)
+	{
+		if (streq(what, realm_names[i][0]))
+		{
+			(realms[(i - 1) / 32]) |= (1L << (i - 1));
+			return (0);
+		}
+	}
+#endif	// 0
+
+	/* Oops */
+	if (!unknown_shut_up) s_printf("Unknown realm name '%s'.\n", what);
+
+	/* Error */
+	return (1);
+}
+
 /*
  * Grab one flag in a vault_type from a textual string
  */
@@ -1141,7 +1217,7 @@ static errr grab_one_vault_flag(vault_type *v_ptr, cptr what)
 	}
 
 	/* Oops */
-	s_printf("Unknown vault flag '%s'.", what);
+	s_printf("Unknown vault flag '%s'.\n", what);
 
 	/* Error */
 	return (1);
@@ -5152,6 +5228,278 @@ errr init_t_info_txt(FILE *fp, char *buf)
 	/* No version yet */
 	if (!okay) return (2);
 
+
+	/* Success */
+	return (0);
+}
+
+
+
+/*
+ * Grab one race flag from a textual string
+ */
+static errr grab_one_race_flag(owner_type *ow_ptr, int state, cptr what)
+{
+	/* int i;
+	cptr s; */
+
+	/* Scan race flags */
+	unknown_shut_up = TRUE;
+	if (!grab_one_race_allow_flag(ow_ptr->races[state], what))
+	{
+		unknown_shut_up = FALSE;
+		return (0);
+	}
+
+	/* Scan classes flags */
+	if (!grab_one_class_flag(ow_ptr->classes[state], what))
+	{
+		unknown_shut_up = FALSE;
+		return (0);
+	}
+
+	/* Scan realms flags */
+	if (!grab_one_player_realm_flag(ow_ptr->realms[state], what))
+	{
+		unknown_shut_up = FALSE;
+		return (0);
+	}
+
+	/* Oops */
+	unknown_shut_up = FALSE;
+	s_printf("Unknown race/class/realm flag '%s'.\n", what);
+
+	/* Failure */
+	return (1);
+}
+
+/*
+ * Initialize the "ow_info" array, by parsing an ascii "template" file
+ */
+errr init_ow_info_txt(FILE *fp, char *buf)
+{
+	int i;
+
+	char *s, *t;
+
+	/* Not ready yet */
+	bool okay = FALSE;
+
+	/* Current entry */
+	owner_type *ow_ptr = NULL;
+
+
+	/* Just before the first record */
+	error_idx = -1;
+
+	/* Just before the first line */
+	error_line = -1;
+
+
+	/* Start the "fake" stuff */
+	ow_head->name_size = 0;
+	ow_head->text_size = 0;
+
+	/* Parse */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* Advance the line number */
+		error_line++;
+
+		/* Skip comments and blank lines */
+		if (!buf[0] || (buf[0] == '#')) continue;
+
+		/* Verify correct "colon" format */
+		if (buf[1] != ':') return (1);
+
+
+		/* Hack -- Process 'V' for "Version" */
+		if (buf[0] == 'V')
+		{
+			int v1, v2, v3;
+
+#ifdef VERIFY_VERSION_STAMP
+
+			/* Scan for the values */
+			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			    (v1 != ow_head->v_major) ||
+			    (v2 != ow_head->v_minor) ||
+			    (v3 != ow_head->v_patch))
+			{
+				return (2);
+			}
+
+#else /* VERIFY_VERSION_STAMP */
+
+			/* Scan for the values */
+			if (3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+
+#endif /* VERIFY_VERSION_STAMP */
+
+			/* Okay to proceed */
+			okay = TRUE;
+
+			/* Continue */
+			continue;
+		}
+
+		/* No version yet */
+		if (!okay) return (2);
+
+
+		/* Process 'N' for "New/Number/Name" */
+		if (buf[0] == 'N')
+		{
+			/* Find the colon before the name */
+			s = strchr(buf+2, ':');
+
+			/* Verify that colon */
+			if (!s) return (1);
+
+			/* Nuke the colon, advance to the name */
+			*s++ = '\0';
+
+			/* Paranoia -- require a name */
+			if (!*s) return (1);
+
+			/* Get the index */
+			i = atoi(buf+2);
+
+			/* Verify information */
+			if (i < error_idx) return (4);
+
+			/* Verify information */
+			if (i >= ow_head->info_num) return (2);
+
+			/* Save the index */
+			error_idx = i;
+
+			/* Point at the "info" */
+			ow_ptr = &ow_info[i];
+
+			/* Hack -- Verify space */
+			if (ow_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+
+			/* Advance and Save the name index */
+			if (!ow_ptr->name) ow_ptr->name = ++ow_head->name_size;
+
+			/* Append chars to the name */
+			strcpy(ow_name + ow_head->name_size, s);
+
+			/* Advance the index */
+			ow_head->name_size += strlen(s);
+
+			/* Next... */
+			continue;
+		}
+
+		/* There better be a current ow_ptr */
+		if (!ow_ptr) return (3);
+
+
+		/* Process 'C' for "Costs" (one line only) */
+		if (buf[0] == 'C')
+		{
+			int ch, cn, cl;
+
+			/* Scan for the values */
+			if (3 != sscanf(buf+2, "%d:%d:%d",
+				&ch, &cn, &cl)) return (1);
+
+			/* Save the values */
+			ow_ptr->costs[STORE_HATED] = ch;
+			ow_ptr->costs[STORE_NORMAL] = cn;
+			ow_ptr->costs[STORE_LIKED] = cl;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'I' for "Info" (multiple lines line only) */
+		if (buf[0] == 'I')
+		{
+			int cost, max_inf, min_inf, haggle, insult;
+
+			/* Scan for the values */
+			if (5 != sscanf(buf+2, "%d:%d:%d:%d:%d",
+				&cost, &max_inf, &min_inf, &haggle, &insult)) return (1);
+
+			/* Save the values */
+//			ow_ptr->max_cost = cost;
+			ow_ptr->max_cost = cost * 10 + 50000;	/* XXX XXX XXX makeshift!! */
+			ow_ptr->max_inflate = max_inf;
+			ow_ptr->min_inflate = min_inf;
+			ow_ptr->haggle_per = haggle;
+			ow_ptr->insult_max = insult;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'L' for "Liked races/classes/realms" (multiple lines) */
+		if (buf[0] == 'L')
+		{
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+				/* Parse this entry */
+				if (0 != grab_one_race_flag(ow_ptr, STORE_LIKED, s)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+		/* Process 'H' for "Hated races/classes/realms" (multiple lines) */
+		if (buf[0] == 'H')
+		{
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+				/* Parse this entry */
+				if (0 != grab_one_race_flag(ow_ptr, STORE_HATED, s)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* Oops */
+		return (6);
+	}
+
+
+	/* Complete the "name" and "text" sizes */
+	++ow_head->name_size;
+	++ow_head->text_size;
+
+	/* No version yet */
+	if (!okay) return (2);
 
 	/* Success */
 	return (0);

@@ -21,7 +21,8 @@ object_type inventory[INVEN_TOTAL];	/* The client-side copy of the inventory */
 char inventory_name[INVEN_TOTAL][80];	/* The client-side copy of the inventory names */
 
 store_type store;			/* The general info about the current store */
-owner_type store_owner;			/* The current owner of the store */
+//owner_type store_owner;			/* The current owner of the store */
+c_store_extra c_store;	/* Extra info about the current store */
 int store_prices[STORE_INVEN_MAX];			/* The prices of the items in the store */
 char store_names[STORE_INVEN_MAX][80];		/* The names of the stuff in the store */
 s16b store_num;				/* The current store number */

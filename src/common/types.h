@@ -1259,6 +1259,7 @@ struct wilderness_type
 
 typedef struct owner_type owner_type;
 
+#if 0
 struct owner_type
 {
 	cptr owner_name;	/* Name */
@@ -1276,6 +1277,28 @@ struct owner_type
 
 	byte unused;		/* Unused */
 };
+#else	// 0
+struct owner_type
+{
+	u32b name;                      /* Name (offset) */
+
+	s32b max_cost;                  /* Purse limit */
+
+	byte max_inflate;               /* Inflation (max) */
+	byte min_inflate;               /* Inflation (min) */
+
+	byte haggle_per;                /* Haggle unit */
+
+	byte insult_max;                /* Insult limit */
+
+	s32b races[2][2];                  /* Liked/hated races */
+	s32b classes[2][2];                /* Liked/hated classes */
+	s32b realms[2][2];                 /* Liked/hated realms */
+
+	s16b costs[3];                  /* Costs for liked people */
+};
+#endif	// 0
+
 
 /*
  * The "name" of spell 'N' is stored as spell_names[X][N],
@@ -2414,6 +2437,17 @@ struct c_player_extra
 	char body_name[80];	/* Form of Player */
 	char sanity[10];	/* Sanity strings */
 	byte sanity_attr;	/* Colour to display sanity */
+};
+
+typedef struct c_store_extra c_store_extra;
+struct c_store_extra
+{
+	char owner_name[40];
+	char store_name[40];
+	s32b max_cost;			/* Purse limit */
+//	s16b store_num;			/* XXX makeshift - will be removed soon */
+
+	/* TODO: list of command */
 };
 
 /* from spells1.c */

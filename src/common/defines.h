@@ -214,6 +214,9 @@
 /*
  * Maximum array bounds for template based arrays
  */
+/*
+ * TODO: make them redefinable w/o client update
+ */
  
 #define MAX_F_IDX	256	/* Max size for "f_info[]" */
 #define MAX_K_IDX	1024 /* Max size for "k_info[]" */
@@ -223,6 +226,7 @@
 #define MAX_V_IDX 	256	/* Max size for "v_info[]" */
 #define MAX_RE_IDX	128	/* Max size for "re_info[]" */
 #define MAX_T_IDX	256 /* Max size for "t_info[]" */
+#define MAX_OW_IDX	128 /* Max size for "ow_info[]" */
 
 
 
@@ -443,9 +447,10 @@
 #define STORE_MAX_KEEP	36		/* Max slots to "always" keep full */
 #define STORE_SHUFFLE	20		/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNOUT	60		/* Max turns a player may stay in a store if crowded */
-#define STORE_PURSE_BOOST	10	/* Multiplier for max_cost (15) */
 
 #if 0
+#define STORE_PURSE_BOOST	10	/* Multiplier for max_cost (15) */
+
 #define STORE_TURNS	200		/* Number of turns between turnovers */
 #define STORE_SHUFFLE	25		/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNS	500		/* Number of turns between turnovers */
@@ -4898,4 +4903,9 @@ extern int PlayerUID;
 /* Skill points per level (xtra2.c) */
 #define SKILL_NB_BASE           5
 
+
+/* Stores/buildings defines */
+#define STORE_HATED     0
+#define STORE_LIKED     1
+#define STORE_NORMAL    2
 

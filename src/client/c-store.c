@@ -418,7 +418,7 @@ void display_store(void)
 	store_top = 0;
 
 	/* Find the "store name" */
-	switch (store_num)
+	switch (store_num)	/* This will change.. */
 	{
 		case 0: feature = "General store"; break;
 		case 1: feature = "Armoury"; break;
@@ -434,27 +434,30 @@ void display_store(void)
 	if (store_num == 7)
 	{
 		/* Put the owner name */
-                put_str("Your Home", 3, 30);
+		put_str("Your Home", 3, 30);
+		put_str(format("Capacity: %d", c_store.max_cost), 3, 60);
 
-                /* Label the item descriptions */
-                put_str("Item Description", 5, 3);
+		/* Label the item descriptions */
+		put_str("Item Description", 5, 3);
 
-                /* If showing weights, show label */
-                if (c_cfg.show_weights)
-                {
-                        put_str("Weight", 5, 70);
-                }
+		/* If showing weights, show label */
+		if (c_cfg.show_weights)
+		{
+			put_str("Weight", 5, 70);
+		}
 	}
 
 	/* Normal stores */
 	else
 	{
                 /* Put the owner name and race */
-                sprintf(buf, "%s (%s)", store_owner.owner_name, race_info[store_owner.owner_race].title);
+//                sprintf(buf, "%s (%s)", store_owner.owner_name, race_info[store_owner.owner_race].title);
+                sprintf(buf, "%s", c_store.owner_name);
                 put_str(buf, 3, 10);
 
                 /* Show the max price in the store (above prices) */
-                sprintf(buf, "%s (%ld)", feature, (long)(store_owner.max_cost));
+//                sprintf(buf, "%s (%ld)", feature, (long)(store_owner.max_cost));
+                sprintf(buf, "%s (%ld)", feature, (long)(c_store.max_cost));
                 prt(buf, 3, 50);
 
                 /* Label the item descriptions */

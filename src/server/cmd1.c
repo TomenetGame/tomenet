@@ -1192,6 +1192,15 @@ void py_attack_player(int Ind, int y, int x, bool old)
 		return;
 	}
 
+	if (q_ptr->store_num == 7)
+	{
+		/* Message */
+//		msg_format(Ind, "You are too afraid to attack %s!", p_name);
+
+		/* Done */
+		return;
+	}
+
 	/* Access the weapon */
 	o_ptr = &(p_ptr->inventory[INVEN_WIELD]);
 
@@ -2848,8 +2857,10 @@ void move_player(int Ind, int dir, int do_pickup)
 			cs_ptr=cs_ptr->next;
 		}
 
+#ifdef USE_MANG_HOUSE
 		if (((cfg.door_bump_open & BUMP_OPEN_HOUSE) || passing)
 					&& c_ptr->feat == FEAT_HOME)
+#endif	//USE_MANG_HOUSE
 		{
 			struct c_special *cs_ptr;
 			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))) /* orig house failure */
@@ -2864,7 +2875,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 		}
 		/* XXX quick fix */
-		else if (passing)
+		if (passing)
 		{
 #if 0
 			if (c_ptr->feat == FEAT_HOME)
@@ -3113,7 +3124,7 @@ void move_player(int Ind, int dir, int do_pickup)
 				&& !p_ptr->ghost)
 		{
 			do_cmd_trad_house(Ind);
-			return;
+//			return;	/* allow builders to build */
 		}
 #endif	// USE_MANG_HOUSE
 

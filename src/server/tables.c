@@ -1122,6 +1122,7 @@ byte blows_table[12][12] =
 
 /* Store price maxes have now been increased by 15x, and 25x in the BM. */
 /* It's done with STORE_PURSE_BOOST now */
+#if 0	/* obsolete - DELETEME */
 owner_type owners[MAX_STORES][MAX_OWNERS] =
 {
 	{
@@ -1180,6 +1181,7 @@ owner_type owners[MAX_STORES][MAX_OWNERS] =
 		{ "Your home",				0,      100, 100,  0, 99, 99}
 	}
 };
+#endif	// 0
 
 
 

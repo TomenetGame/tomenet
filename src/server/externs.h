@@ -170,6 +170,17 @@ extern header *s_head;
 extern skill_type *s_info;
 extern char *s_name;
 extern char *s_text;
+#if 0
+extern header *st_head;
+extern store_info_type *st_info;
+extern char *st_name;
+extern header *ba_head;
+extern store_action_type *ba_info;
+extern char *ba_name;
+#endif	// 0
+extern header *ow_head;
+extern owner_type *ow_info;
+extern char *ow_name;
 
 #if 0
 extern bool cfg_report_to_meta;
@@ -710,7 +721,8 @@ extern int Send_line_info(int Ind, int y);
 extern int Send_mini_map(int Ind, int y);
 //extern int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name);
 extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval);
-extern int Send_store_info(int Ind, int num, int owner, int items);
+//extern int Send_store_info(int Ind, int num, int owner, int items);
+extern int Send_store_info(int ind, int num, cptr owner, int items, int purse);
 extern int Send_store_sell(int Ind, int price);
 extern int Send_store_kick(int Ind);
 extern int Send_target_info(int ind, int x, int y, cptr buf);
