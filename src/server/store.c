@@ -2337,8 +2337,6 @@ void store_stole(int Ind, int item)
 /*
  * Buy an item from a store				-RAK-
  */
-/* XXX seemingly, amt is not checked correctly;
- * hacked client can buy more than # of stocks */
 void store_purchase(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
@@ -2357,6 +2355,13 @@ void store_purchase(int Ind, int item, int amt)
 	object_type		*o_ptr;
 
 	char		o_name[160];
+
+	if (amt < 1)
+	{
+		s_printf("$INTRUSION$ Bad amount %d! Bought by %s.", p_ptr->name);
+		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
+		return;
+	}
 
 	if (p_ptr->store_num == 7)
 	{
@@ -3978,6 +3983,13 @@ void home_purchase(int Ind, int item, int amt)
 	char		o_name[160];
 
 	house_type *h_ptr;
+
+	if (amt < 1)
+	{
+		s_printf("$INTRUSION$ Bad amount %d! (Home) Bought by %s.", p_ptr->name);
+		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
+		return;
+	}
 
 	if (p_ptr->store_num==-1){
 		msg_print(Ind,"You left the shop!");
