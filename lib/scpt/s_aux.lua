@@ -432,7 +432,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 
 	player.redraw = bor(player.redraw, PR_MANA)
 	player.window = bor(player.window, PW_PLAYER)
-	player.window = bor(player.window, PW_SPELL)
+	--player.window = bor(player.window, PW_SPELL)
 end
 
 
