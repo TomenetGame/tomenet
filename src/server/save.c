@@ -2310,10 +2310,13 @@ static bool wr_server_savefile(void)
 
 	/* Note the number of houses */
 	wr_u32b(num_houses);
+	printf("num houses %ld\n",num_houses);
 
 	/* Dump the houses */
-	for (i = 0; i < num_houses; i++)
+	for (i = 0; i < num_houses; i++){
+		printf("wr house %d\n",i);
 		wr_house(&houses[i]); 
+	}
 
 	/* Note the size of the wilderness 
 	 change this to num_wild ? */
