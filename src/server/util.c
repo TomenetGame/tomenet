@@ -2695,7 +2695,7 @@ void player_talk_aux(int Ind, cptr message)
 		for (i = 1; i <= NumPlayers; i++)
 		{
 			/* Send message */
-                        if (!me) msg_format(i, "\377%c[%s] %s", p_ptr->male ? 'B' : 'R', sender, message);
+                        if (!me) msg_format(i, "\377%c[%s] %s", Ind ? ( p_ptr->male ? 'B' : 'R' ) : 'y', sender, message);
                         else msg_format(i, "%s %s", sender, message + 4);
 		}
 	/*}

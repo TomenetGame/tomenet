@@ -215,3 +215,6 @@ Change list for PernMangband
 04/10/2001
 - Console password request fixed (in line with client)
 - Male/female differentiation in public chat.
+
+05/10/2001
+- Server admin messages fixed (in yellow, after I broke them)
