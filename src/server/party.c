@@ -56,10 +56,12 @@ bool WriteAccount(struct account *r_acc, bool new){
 		}
 		if(found){
 			fseek(fp, -sizeof(struct account), SEEK_CUR);
+			fwrite(r_acc, sizeof(struct account), 1, fp);
 		}
-		if(new && delpos!=-1L)
+		if(new && delpos!=-1L){
 			fseek(fp, delpos, SEEK_SET);
-		fwrite(r_acc, sizeof(struct account), 1, fp);
+			fwrite(r_acc, sizeof(struct account), 1, fp);
+		}
 		fclose(fp);
 	}
 #ifndef NETBSD
