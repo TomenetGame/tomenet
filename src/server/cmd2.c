@@ -78,7 +78,7 @@ void do_cmd_go_up(int Ind)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Verify stairs if not a ghost, or admin wizard */
-	if (!p_ptr->admin_wiz && c_ptr->feat != FEAT_LESS && !p_ptr->prob_travel)
+	if (!p_ptr->admin_dm && !p_ptr->admin_wiz && c_ptr->feat != FEAT_LESS && !p_ptr->prob_travel)
 	{
 		struct worldpos twpos;
 		wpcopy(&twpos, wpos);
@@ -224,7 +224,7 @@ void do_cmd_go_down(int Ind)
 
 	/* Verify stairs */
 //      if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
-	if (!p_ptr->admin_wiz && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
+	if (!p_ptr->admin_dm && !p_ptr->admin_wiz && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
 	{
 		struct worldpos twpos;
 		wpcopy(&twpos, wpos);
