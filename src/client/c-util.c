@@ -1039,9 +1039,8 @@ bool askfor_aux(char *buf, int len, char private)
 		}
 		else
 		{
-			/* Hack -- erase the default passwd exactly once */
-			if (k == 1) Term_erase(x, y, len);
-			Term_putch(x+k-1, y, TERM_WHITE, 'x');
+			Term_erase(x+k, y, len-k);
+			if(k) Term_putch(x+k-1, y, TERM_WHITE, 'x');
 		}
 	}
 
@@ -1611,7 +1610,7 @@ static void msg_flush(int x)
  */
 void c_msg_print(cptr msg)
 {
-	static p = 0;
+	static int p = 0;
 
 	int n;
 

@@ -2286,7 +2286,7 @@ static errr predict_score(int Ind, int line)
 
 	/* Save the level and such */
 	sprintf(the_score.cur_lev, "%3d", p_ptr->lev);
-	sprintf(the_score.cur_dun, "%3d", p_ptr->dun_depth);
+	sprintf(the_score.cur_dun, "%3ld", p_ptr->dun_depth);
 	sprintf(the_score.max_lev, "%3d", p_ptr->max_plv);
 	sprintf(the_score.max_dun, "%3d", p_ptr->max_dlv);
 
