@@ -145,7 +145,16 @@
  * If defined, monsters will pick up the gold like normal items.
  * Ever wondered why monster rogues never do that? :)
  */
-#define		MONSTERS_PICKUP_GOLD
+#define		MONSTER_PICKUP_GOLD
+
+/*
+ * Chance of an item picked up by a monster to disappear, in %. [30]
+ * Stolen items are not affected by this value.
+ *
+ * TODO: best if timed ... ie. the longer a monster holds it, the more
+ * the chance of consuming.
+ */
+#define		MONSTER_ITEM_CONSUME	30
 
 
 /*
@@ -3923,9 +3932,9 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		{
 			object_type *o_ptr = &o_list[zcave[m_ptr->fy][m_ptr->fx].o_idx];
 			if (o_ptr->k_idx &&
-#ifndef MONSTERS_PICKUP_GOLD
+#ifndef MONSTER_PICKUP_GOLD
 				(o_ptr->tval != TV_GOLD) &&
-#endif	// MONSTERS_PICKUP_GOLD
+#endif	// MONSTER_PICKUP_GOLD
 				(o_ptr->tval != TV_KEY) &&
 				(monster_can_pickup(r_ptr, o_ptr)))
 			{
@@ -3952,9 +3961,9 @@ static void get_moves(int Ind, int m_idx, int *mm)
 				{
 					object_type *o_ptr = &o_list[zcave[y2][x2].o_idx];
 					if (o_ptr->k_idx &&
-#ifndef MONSTERS_PICKUP_GOLD
+#ifndef MONSTER_PICKUP_GOLD
 							(o_ptr->tval != TV_GOLD) &&
-#endif	// MONSTERS_PICKUP_GOLD
+#endif	// MONSTER_PICKUP_GOLD
 							(o_ptr->tval != TV_KEY) &&
 							(monster_can_pickup(r_ptr, o_ptr)))
 					{
@@ -5224,9 +5233,9 @@ static void process_monster(int Ind, int m_idx)
 
 			/* Take or Kill objects (not "gold") on the floor */
 			if (o_ptr->k_idx &&
-#ifndef MONSTERS_PICKUP_GOLD
+#ifndef MONSTER_PICKUP_GOLD
 				(o_ptr->tval != TV_GOLD) &&
-#endif	// MONSTERS_PICKUP_GOLD
+#endif	// MONSTER_PICKUP_GOLD
 			    (o_ptr->tval != TV_KEY) &&
 			    ((r_ptr->flags2 & RF2_TAKE_ITEM) ||
 			     (r_ptr->flags2 & RF2_KILL_ITEM)))
@@ -5278,24 +5287,35 @@ static void process_monster(int Ind, int m_idx)
 					}
 
 #ifdef MONSTER_INVENTORY
-					/* Excise the object */
 					this_o_idx = c_ptr->o_idx;
-					excise_object_idx(this_o_idx);
 
-					/* Forget mark */
-//					o_ptr->marked = FALSE;
+#ifdef MONSTER_ITEM_CONSUME
+					if (magik(MONSTER_ITEM_CONSUME))
+					{
+						/* Delete the object */
+						delete_object_idx(this_o_idx);
+					}
+					else
+#endif	// MONSTER_ITEM_CONSUME
+					{
+						/* Excise the object */
+						excise_object_idx(this_o_idx);
 
-					/* Forget location */
-					o_ptr->iy = o_ptr->ix = 0;
+						/* Forget mark */
+						//					o_ptr->marked = FALSE;
 
-					/* Memorize monster */
-					o_ptr->held_m_idx = m_idx;
+						/* Forget location */
+						o_ptr->iy = o_ptr->ix = 0;
 
-					/* Build a stack */
-					o_ptr->next_o_idx = m_ptr->hold_o_idx;
+						/* Memorize monster */
+						o_ptr->held_m_idx = m_idx;
 
-					/* Carry object */
-					m_ptr->hold_o_idx = this_o_idx;
+						/* Build a stack */
+						o_ptr->next_o_idx = m_ptr->hold_o_idx;
+
+						/* Carry object */
+						m_ptr->hold_o_idx = this_o_idx;
+					}
 #else
 					/* Delete the object */
 					delete_object(wpos, ny, nx);

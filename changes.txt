@@ -1080,8 +1080,13 @@ To find the latest change quickly, search ==== :)
   we should separate types.h into two(server-client) or add some hack to
   actually be able to change # of races/classes on the fly.
 - obj_theme implemented (for monster drops).
+- MONSTER_ITEM_CONSUME to keep monsters from dropping too much.
 [B] wipeout_needless_objects() did nasties. commented out.
 
+18/06/2002 (Jir)
+- cloned monsters drop what they had picked up.
+- object code optimized somewhat.
+- death mold trap
 
 
 

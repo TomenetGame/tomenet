@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: traps.c */
 
 /* Purpose: handle traps */
@@ -18,7 +19,13 @@
  */
 #include "angband.h"
 
+/*
+ * Modify the damage induced by missile traps, in percent. [100]
+ * Adjust this value according to how wimpy your players are :)
+ */
+#define MISSILE_TRAP_FACTOR 75
 
+#if 0	// DELETEME!
 /*
  * Acquires and returns the index of a "free" trap.
  *
@@ -128,7 +135,7 @@ void delete_trap_idx(trap_type *t_ptr)
 	 */
 	if((zcave=getcave(wpos))){
 		zcave[y][x].special.type=0;
-		zcave[y][x].special.ptr = NULL;
+		zcave[y][x].special.sc.ptr = NULL;
 		t_ptr->t_idx=0;
 	}
 
@@ -195,7 +202,7 @@ void compact_traps(int size, bool purge)
 		cur_dis = 5 * (20 - cnt);
 
 		/* Examine the traps */
-		for (i = 1; i < o_max; i++)
+		for (i = 1; i < t_max; i++)
 		{
 			trap_type *t_ptr = &t_list[i];
 
@@ -261,7 +268,7 @@ void compact_traps(int size, bool purge)
 			/* Hack -- with wilderness traps, sometimes the cave is not allocated,
 			   so check that it is. */
 			if ((zcave=getcave(wpos))){
-				zcave[ny][nx].special.ptr = &t_list[i];
+				zcave[ny][nx].special.sc.ptr = &t_list[i];
 			}
 #endif	// 0
 			/* Wipe the hole */
@@ -313,7 +320,7 @@ void wipe_t_list(struct worldpos *wpos)
 		if(zcave)
 		{
 			zcave[t_ptr->iy][t_ptr->ix].special.type = CS_NONE;
-			zcave[t_ptr->iy][t_ptr->ix].special.ptr = NULL;
+			zcave[t_ptr->iy][t_ptr->ix].special.sc.ptr = NULL;
 		}
 
 		/* Wipe the trap */
@@ -345,9 +352,10 @@ void setup_traps(void)
 
 		/* Set the t_idx correctly */
 		zcave[t_ptr->iy][t_ptr->ix].special.type = CS_TRAPS;
-		zcave[t_ptr->iy][t_ptr->ix].special.ptr = t_ptr;
+		zcave[t_ptr->iy][t_ptr->ix].special.sc.ptr = t_ptr;
 	}
 }
+#endif	// 0
 
 /*
  * This function can be *much* shorter if we use functions in
@@ -452,6 +460,8 @@ static bool player_handle_trap_of_hostility(int Ind)
 	}
 	p_ptr->pkill=(PKILL_SET|PKILL_KILLER|PKILL_KILLABLE);
 	p_ptr->tim_pkill=0;
+
+	return (ident);
 }
 
 bool do_trap_of_silliness(int Ind, int power)
@@ -487,7 +497,6 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 		if (!p_ptr->inventory[i].k_idx) continue;
 		if (randint(100)>chance) continue;
 		if (p_ptr->inventory[i].name1 == ART_POWER) continue;
-		tmp_obj = p_ptr->inventory[i];
 		if (cfg.anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
 		{
 			char	o_name[160];
@@ -496,6 +505,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 			msg_format(Ind, "%s resists the effect!", o_name);
 			continue;
 		}
+		tmp_obj = p_ptr->inventory[i];
 		/* drop carefully */
 		drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		inven_item_increase(Ind, i,-999);
@@ -976,50 +986,53 @@ static bool player_handle_trap_of_walls(void)
  *
  * return value = ident (always TRUE)
  */
-static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, s16b dd, s16b ds,
-                                     s16b pdam, cptr name)
+static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
+		s16b sval, s16b dd, s16b ds, s16b pdam, cptr name)
 {
 	player_type *p_ptr = Players[Ind];
-   object_type *o_ptr, forge;
-   s16b        i, deflect = 0, k_idx = lookup_kind(tval, sval);
-   char        i_name[80];
+	object_type *o_ptr, forge;
+	s16b        i, deflect = 0, k_idx = lookup_kind(tval, sval);
+	char        i_name[80];
 
-   o_ptr = &forge;
-   invcopy(o_ptr, k_idx);
-   o_ptr->number = num;
-   apply_magic(&p_ptr->wpos, o_ptr, getlevel(&p_ptr->wpos), FALSE, FALSE, FALSE);
-   object_desc(Ind, i_name, o_ptr, TRUE, 0);
+	o_ptr = &forge;
+	invcopy(o_ptr, k_idx);
+	o_ptr->number = num;
+	apply_magic(&p_ptr->wpos, o_ptr, getlevel(&p_ptr->wpos), FALSE, FALSE, FALSE);
+	object_desc(Ind, i_name, o_ptr, TRUE, 0);
+	dd = dd * MISSILE_TRAP_FACTOR / 100;
 
-   if (num == 1)
-//      msg_format(Ind, "Suddenly %s hits you!", i_name);
-      msg_format(Ind, "Suddenly %s is shot at you!", i_name);
-   else
-//      msg_format(Ind, "Suddenly %s hit you!", i_name);
-      msg_format(Ind, "Suddenly %s are shot at you!", i_name);
+	if (num == 1)
+		//      msg_format(Ind, "Suddenly %s hits you!", i_name);
+		msg_format(Ind, "Suddenly %s is shot at you!", i_name);
+	else
+		//      msg_format(Ind, "Suddenly %s hit you!", i_name);
+		msg_format(Ind, "Suddenly %s are shot at you!", i_name);
 
-   for (i=0; i < num; i++)
-   {
-	   if (p_ptr->reflect && magik(50))
-	   {
-		   deflect++;
-		   continue;
-	   }
-      take_hit(Ind, damroll(dd, ds), name);
-      redraw_stuff(Ind);
-      if (pdam > 0)
-      {
-         if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
-         {
-            (void)set_poisoned(Ind, p_ptr->poisoned + pdam);
-         }
-      }
-   }
+	for (i=0; i < num; i++)
+	{
+		if (p_ptr->reflect && magik(50))
+		{
+			deflect++;
+			continue;
+		}
+		take_hit(Ind, damroll(dd, ds), name);
+		redraw_stuff(Ind);
+		if (pdam > 0)
+		{
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+			{
+				(void)set_poisoned(Ind, p_ptr->poisoned + pdam);
+			}
+		}
+	}
 
-   if (deflect && !p_ptr->death) msg_format(Ind, "You %s deflect the attack%s!", (deflect == num)?"completely":"partially", (num > 1)?"s":"");
+	if (deflect && !p_ptr->death)
+		msg_format(Ind, "You %s deflect the attack%s!", (deflect == num) ?
+				"completely" : "partially", (num > 1) ? "s" : "");
 
-   drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
-   return TRUE;
+	return TRUE;
 }
 
 /*
@@ -1028,23 +1041,24 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap)
 {
 	player_type *p_ptr = Players[Ind];
-   trap_kind *t_ptr = &t_info[trap];
-   bool       ident;
-   s16b       my_dd, my_ds, dam;
+	trap_kind *t_ptr = &t_info[trap];
+	bool       ident;
+	s16b       my_dd, my_ds, dam;
 
-   my_dd = t_ptr->dd;
-   my_ds = t_ptr->ds;
+	my_dd = t_ptr->dd;
+	my_ds = t_ptr->ds;
 
-   /* these traps gets nastier as levels progress */
-   if (getlevel(&p_ptr->wpos)> (2* t_ptr->minlevel))
-   {
-      my_dd += (getlevel(&p_ptr->wpos) / 15);
-      my_ds += (getlevel(&p_ptr->wpos) / 15);
-   }
-   dam = damroll(my_dd, my_ds);
+	/* these traps gets nastier as levels progress */
+	if (getlevel(&p_ptr->wpos)> (2* t_ptr->minlevel))
+	{
+		my_dd += (getlevel(&p_ptr->wpos) / 15);
+		my_ds += (getlevel(&p_ptr->wpos) / 15);
+	}
+	dam = damroll(my_dd, my_ds);
 
-   ident = project(-999, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, type, PROJECT_KILL | PROJECT_JUMP);
-   return (ident);
+	ident = project(PROJECTOR_TRAP, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, type,
+			PROJECT_KILL | PROJECT_JUMP);
+	return (ident);
 }
 
 /*
@@ -1064,23 +1078,17 @@ static void trap_hit(int Ind, s16b trap)
  * this function activates one trap type, and returns
  * a bool indicating if this trap is now identified
  */
-/*
- * 'never_id' and 'vanish' flags should be handled in tr_info.txt
- * in the future.		- Jir -
- */
-//bool player_activate_trap_type(s16b y, s16b x, object_type *i_ptr, s16b item)
 bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b item)
 {
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos = &p_ptr->wpos;
 	bool ident = FALSE, never_id = FALSE;
-	s16b trap, vanish = 10;
+	s16b trap, vanish;
 	//   dungeon_info_type *d_ptr = &d_info[dungeon_type];
 
 	s16b k, l, glev = getlevel(wpos);
 	cave_type *c_ptr;
-	trap_type *tt_ptr;
-//	trap_kind *t_ptr;
+	trap_kind *t_ptr;
 
 	/* Paranoia */
 	cave_type **zcave;
@@ -1091,8 +1099,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 		if (item < 0)
 		{
-			tt_ptr = c_ptr->special.ptr;
-			trap=tt_ptr->t_idx;
+			trap = c_ptr->special.sc.trap.t_idx;
 		}
 	}
 
@@ -1111,11 +1118,18 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		for (l = 0; l < 99 ; l++)
 		{
 			k = rand_int(MAX_T_IDX);
-			if (!t_info[k].name || t_info[k].minlevel > glev || k == TRAP_OF_ACQUIREMENT || k == TRAP_OF_RANDOM_EFFECT) continue;
+			if (!t_info[k].name || t_info[k].minlevel > glev ||
+					k == TRAP_OF_ACQUIREMENT || k == TRAP_OF_RANDOM_EFFECT)
+				continue;
+
 			trap = k;
 			break;
 		}
 	}
+
+	t_ptr = &t_info[trap];
+	vanish = t_ptr->vanish;
+	never_id = never_id || (t_ptr->flags & FTRAP_NO_ID);
 
    switch(trap)
    {
@@ -1142,12 +1156,22 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
       /* Trap of Curse Weapon */
       case TRAP_OF_CURSE_WEAPON:
-         ident = curse_weapon(Ind);
-         break;
+		if (rand_int(120) < p_ptr->skill_sav)
+		{
+			msg_print(Ind, "You resist the effects!");
+			break;
+		}
+		ident = curse_weapon(Ind);
+		break;
       /* Trap of Curse Armor */
       case TRAP_OF_CURSE_ARMOR:
-         ident = curse_armor(Ind);
-         break;
+		if (rand_int(120) < p_ptr->skill_sav)
+		{
+			msg_print(Ind, "You resist the effects!");
+			break;
+		}
+		ident = curse_armor(Ind);
+		break;
       /* Earthquake Trap */
       case TRAP_OF_EARTHQUAKE:
          msg_print(Ind, "As you touch the trap, the ground starts to shake.");
@@ -1173,7 +1197,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
             msg_print(Ind, "A spell hangs in the air.");
 //            for (k = 0; k < randint(3); k++) ident |= summon_specific(y, x, max_dlv[dungeon_type], SUMMON_UNDEAD);	// max?
             for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0);
-			vanish = 50;
             break;
          }
       /* Summon Undead Trap */
@@ -1181,7 +1204,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          {
             msg_print(Ind, "A mighty spell hangs in the air.");
             for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, SUMMON_UNDEAD);
-			vanish = 50;
             break;
          }
       /* Summon Greater Undead Trap */
@@ -1189,7 +1211,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          {
             msg_print(Ind, "An old and evil spell hangs in the air.");
             for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, SUMMON_HI_UNDEAD);
-			vanish = 50;
             break;
          }
       /* Teleport Trap */
@@ -1266,10 +1287,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       /* Bowel Cramps Trap */
       case TRAP_OF_BOWEL_CRAMPS:
          msg_print(Ind, "A wretched smelling gas cloud upsets your stomach.");
-	 take_hit(Ind, 1, "bowel cramps");
+		 take_hit(Ind, 1, "bowel cramps");
          (void)set_food(Ind, PY_FOOD_STARVE - 1);
          (void)set_poisoned(Ind, 0);
-         if (!p_ptr->free_act)
+         if (!p_ptr->free_act && !p_ptr->slow_digest)
          {
             (void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(10) + 10);
          }
@@ -1315,14 +1336,17 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       case TRAP_OF_STEAL_ITEM:
          {
             /* please note that magical stealing is not so easily circumvented */
-            if (!p_ptr->paralyzed &&
-                (rand_int(160) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-                                  p_ptr->lev)))
+			 if ((!p_ptr->paralyzed &&
+				 (rand_int(160 + UNAWARENESS(p_ptr)) <
+				  (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev))) ||
+				 (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION &&
+				  magik (50)) )
             {
                /* Saving throw message */
                msg_print(Ind, "Your backpack seems to vibrate strangely!");
                break;
             }
+
             /* Find an item */
             for (k = 0; k < rand_int(10); k++)
             {
@@ -1384,11 +1408,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		 }
 		 ident = TRUE;
 		 vanish = 0;
-		 msg_print(Ind, "You fell through a trap door!");
 		 if(p_ptr->fly){
 			msg_print(Ind, "You found a trap door!");
 			break;
 		 }
+		 msg_print(Ind, "You fell through a trap door!");
 		 if (p_ptr->feather_fall)
 		 {
 			 msg_print(Ind, "You float gently down to the next level.");
@@ -1436,7 +1460,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
             if (gold > 5000) gold = (p_ptr->au / 20) + randint(3000);
             if (gold > p_ptr->au) gold = p_ptr->au;
             p_ptr->au -= gold;
-            if (gold <= 0)
+            if ((gold <= 0) ||
+				(TOOL_EQUIPPED(p_ptr) == SV_TOOL_MONEY_BELT && magik(50)) )
             {
                 msg_print(Ind, "You feel something touching you.");
             }
@@ -1457,43 +1482,48 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          break;
       /* Trap of No Return */
       case TRAP_OF_NO_RETURN:
-         {
-            object_type *j_ptr;
-            s16b j;
+		 {
+			 object_type *j_ptr;
+			 s16b j;
+			 u32b f1, f2, f3, f4, f5, esp;
 
-            for (j=0;j<INVEN_WIELD;j++)
-            {
-               if (!p_ptr->inventory[j].k_idx) continue;
-               j_ptr = &p_ptr->inventory[j];
-               if ((j_ptr->tval==TV_SCROLL)
-                    && (j_ptr->sval==SV_SCROLL_WORD_OF_RECALL))
-               {
-		  inven_item_increase(Ind, j, -j_ptr->number);
-                  inven_item_optimize(Ind, j);
-                  combine_pack(Ind);
-                  reorder_pack(Ind);
-                  if (!ident)
-                     msg_print(Ind, "A small fire works it's way through your backpack. Some scrolls are burnt.");
-                  else
-                     msg_print(Ind, "The fire hasn't finished.");
-                  ident=TRUE;
-               }
-//               else if ((j_ptr->tval==TV_ROD_MAIN) && (j_ptr->pval == SV_ROD_RECALL))
-               else if ((j_ptr->tval==TV_ROD) && (j_ptr->pval == SV_ROD_RECALL))
-               {
-//                  j_ptr->timeout = 0; /* a long time */
-                  j_ptr->pval = 999; /* a long time */
-                  if (!ident) msg_print(Ind, "You feel the air stabilize around you.");
-                  ident=TRUE;
-               }
-            }
-            if ((!ident) && (p_ptr->word_recall))
-            {
-               msg_print(Ind, "You feel like staying around.");
-               p_ptr->word_recall = 0;
-               ident=TRUE;
-            }
-         }
+			 for (j=0;j<INVEN_WIELD;j++)
+			 {
+				 if (!p_ptr->inventory[j].k_idx) continue;
+				 j_ptr = &p_ptr->inventory[j];
+				 if ((j_ptr->tval==TV_SCROLL)
+						 && (j_ptr->sval==SV_SCROLL_WORD_OF_RECALL))
+				 {
+					 /* handle 'fireproof' scrolls */
+					 object_flags(j_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+					 if (f3 & TR3_IGNORE_FIRE) continue;
+
+					 inven_item_increase(Ind, j, -j_ptr->number);
+					 inven_item_optimize(Ind, j);
+					 combine_pack(Ind);
+					 reorder_pack(Ind);
+					 if (!ident)
+						 msg_print(Ind, "A small fire works it's way through your backpack. Some scrolls are burnt.");
+					 else
+						 msg_print(Ind, "The fire hasn't finished.");
+					 ident=TRUE;
+				 }
+				 //               else if ((j_ptr->tval==TV_ROD_MAIN) && (j_ptr->pval == SV_ROD_RECALL))
+				 else if ((j_ptr->tval==TV_ROD) && (j_ptr->pval == SV_ROD_RECALL))
+				 {
+					 //                  j_ptr->timeout = 0; /* a long time */
+					 j_ptr->pval = 999; /* a long time */
+					 if (!ident) msg_print(Ind, "You feel the air stabilize around you.");
+					 ident=TRUE;
+				 }
+			 }
+			 if ((!ident) && (p_ptr->word_recall))
+			 {
+				 msg_print(Ind, "You feel like staying around.");
+				 p_ptr->word_recall = 0;
+				 ident=TRUE;
+			 }
+		 }
          break;
       /* Trap of Silent Switching */
       case TRAP_OF_SILENT_SWITCHING:
@@ -1725,7 +1755,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
             /* if we're on a floor or on a door, place a new trap */
             if ((item == -1) || (item == -2))
             {
-				delete_trap_idx(tt_ptr);
+				cs_erase(c_ptr);
 				place_trap(wpos, y , x, 0);
                   if (player_has_los_bold(Ind, y, x))
                   {
@@ -1752,7 +1782,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			 acquirement(wpos, y, x, 1, TRUE);
 //			 acquirement(wpos, y, x, 1, TRUE, FALSE);	// last is 'known' flag
 
-			 delete_trap_idx(tt_ptr);
+			 cs_erase(c_ptr);
 			 /* if we're on a floor or on a door, place a new trap */
 			 if ((item == -1) || (item == -2))
 			 {
@@ -1897,29 +1927,29 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
        */
 
       case TRAP_OF_ARROW_I:
-         ident = player_handle_missile_trap(Ind, 1, TV_ARROW, SV_AMMO_NORMAL, 2, 8, 0, "Arrow Trap"); break;
+         ident = player_handle_missile_trap(Ind, 1, TV_ARROW, SV_AMMO_NORMAL, 4, 8, 0, "Arrow Trap"); break;
       case TRAP_OF_ARROW_II:
-         ident = player_handle_missile_trap(Ind, 1, TV_BOLT, SV_AMMO_NORMAL, 5, 8, 0, "Bolt Trap"); break;
+         ident = player_handle_missile_trap(Ind, 1, TV_BOLT, SV_AMMO_NORMAL, 10, 8, 0, "Bolt Trap"); break;
       case TRAP_OF_ARROW_III:
-         ident = player_handle_missile_trap(Ind, 1, TV_ARROW, SV_AMMO_HEAVY, 6, 12, 0, "Seeker Arrow Trap"); break;
+         ident = player_handle_missile_trap(Ind, 1, TV_ARROW, SV_AMMO_HEAVY, 12, 12, 0, "Seeker Arrow Trap"); break;
       case TRAP_OF_ARROW_IV:
-         ident = player_handle_missile_trap(Ind, 1, TV_BOLT, SV_AMMO_HEAVY, 6, 16, 0, "Seeker Bolt Trap"); break;
+         ident = player_handle_missile_trap(Ind, 1, TV_BOLT, SV_AMMO_HEAVY, 12, 16, 0, "Seeker Bolt Trap"); break;
       case TRAP_OF_POISON_ARROW_I:
-         ident = player_handle_missile_trap(Ind, 1, TV_ARROW, SV_AMMO_NORMAL, 2, 8, 10+randint(20), "Poison Arrow Trap"); break;
+         ident = player_handle_missile_trap(Ind, 1, TV_ARROW, SV_AMMO_NORMAL, 4, 8, 10+randint(20), "Poison Arrow Trap"); break;
       case TRAP_OF_POISON_ARROW_II:
-         ident = player_handle_missile_trap(Ind, 1, TV_BOLT, SV_AMMO_NORMAL, 5, 8, 15+randint(30), "Poison Bolt Trap"); break;
+         ident = player_handle_missile_trap(Ind, 1, TV_BOLT, SV_AMMO_NORMAL, 10, 8, 15+randint(30), "Poison Bolt Trap"); break;
       case TRAP_OF_POISON_ARROW_III:
-         ident = player_handle_missile_trap(Ind, 1, TV_ARROW, SV_AMMO_HEAVY, 6, 12, 30+randint(50), "Poison Seeker Arrow Trap"); break;
+         ident = player_handle_missile_trap(Ind, 1, TV_ARROW, SV_AMMO_HEAVY, 12, 12, 30+randint(50), "Poison Seeker Arrow Trap"); break;
       case TRAP_OF_POISON_ARROW_IV:
-         ident = player_handle_missile_trap(Ind, 1, TV_BOLT, SV_AMMO_HEAVY, 6, 16, 40+randint(70), "Poison Seeker Bolt Trap"); break;
+         ident = player_handle_missile_trap(Ind, 1, TV_BOLT, SV_AMMO_HEAVY, 12, 16, 40+randint(70), "Poison Seeker Bolt Trap"); break;
       case TRAP_OF_DAGGER_I:
-         ident = player_handle_missile_trap(Ind, 1, TV_SWORD, SV_BROKEN_DAGGER, 2, 8, 0, "Dagger Trap"); break;
+         ident = player_handle_missile_trap(Ind, 1, TV_SWORD, SV_BROKEN_DAGGER, 4, 8, 0, "Dagger Trap"); break;
       case TRAP_OF_DAGGER_II:
-         ident = player_handle_missile_trap(Ind, 1, TV_SWORD, SV_DAGGER, 5, 8, 0, "Dagger Trap"); break;
+         ident = player_handle_missile_trap(Ind, 1, TV_SWORD, SV_DAGGER, 10, 8, 0, "Dagger Trap"); break;
       case TRAP_OF_POISON_DAGGER_I:
-         ident = player_handle_missile_trap(Ind, 1, TV_SWORD, SV_BROKEN_DAGGER, 2, 8, 15+randint(20), "Poison Dagger Trap"); break;
+         ident = player_handle_missile_trap(Ind, 1, TV_SWORD, SV_BROKEN_DAGGER, 4, 8, 15+randint(20), "Poison Dagger Trap"); break;
       case TRAP_OF_POISON_DAGGER_II:
-         ident = player_handle_missile_trap(Ind, 1, TV_SWORD, SV_DAGGER, 10, 4, 20+randint(30), "Poison Dagger Trap"); break;
+         ident = player_handle_missile_trap(Ind, 1, TV_SWORD, SV_DAGGER, 10, 8, 20+randint(30), "Poison Dagger Trap"); break;
 
       /*
        * multiple missile traps
@@ -1927,29 +1957,29 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
        */
 
       case TRAP_OF_ARROWS_I:
-         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_NORMAL, 2, 8, 0, "Arrow Trap"); break;
+         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_NORMAL, 4, 8, 0, "Arrow Trap"); break;
       case TRAP_OF_ARROWS_II:
-         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_NORMAL, 5, 8, 0, "Bolt Trap"); break;
+         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_NORMAL, 10, 8, 0, "Bolt Trap"); break;
       case TRAP_OF_ARROWS_III:
-         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_HEAVY, 6, 12, 0, "Seeker Arrow Trap"); break;
+         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_HEAVY, 12, 12, 0, "Seeker Arrow Trap"); break;
       case TRAP_OF_ARROWS_IV:
-         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_HEAVY, 6, 16, 0, "Seeker Bolt Trap"); break;
+         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_HEAVY, 12, 16, 0, "Seeker Bolt Trap"); break;
       case TRAP_OF_POISON_ARROWS_I:
-         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_NORMAL, 2, 8, 10+randint(20), "Poison Arrow Trap"); break;
+         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_NORMAL, 4, 8, 10+randint(20), "Poison Arrow Trap"); break;
       case TRAP_OF_POISON_ARROWS_II:
-         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_NORMAL, 5, 8, 15+randint(30), "Poison Bolt Trap"); break;
+         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_NORMAL, 10, 8, 15+randint(30), "Poison Bolt Trap"); break;
       case TRAP_OF_POISON_ARROWS_III:
-         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_HEAVY, 6, 12, 30+randint(50), "Poison Seeker Arrow Trap"); break;
+         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_HEAVY, 12, 12, 30+randint(50), "Poison Seeker Arrow Trap"); break;
       case TRAP_OF_POISON_ARROWS_IV:
-         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_HEAVY, 6, 16, 40+randint(70), "Poison Seeker Bolt Trap"); break;
+         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_HEAVY, 12, 16, 40+randint(70), "Poison Seeker Bolt Trap"); break;
       case TRAP_OF_DAGGERS_I:
-         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_BROKEN_DAGGER, 2, 8, 0, "Dagger Trap"); break;
+         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_BROKEN_DAGGER, 4, 8, 0, "Dagger Trap"); break;
       case TRAP_OF_DAGGERS_II:
-         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_DAGGER, 5, 8, 0, "Dagger Trap"); break;
+         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_DAGGER, 10, 8, 0, "Dagger Trap"); break;
       case TRAP_OF_POISON_DAGGERS_I:
-         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_BROKEN_DAGGER, 2, 8, 15+randint(20), "Poison Dagger Trap"); break;
+         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_BROKEN_DAGGER, 4, 8, 15+randint(20), "Poison Dagger Trap"); break;
       case TRAP_OF_POISON_DAGGERS_II:
-         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_DAGGER, 5, 8, 20+randint(30), "Poison Dagger Trap"); break;
+         ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_DAGGER, 10, 8, 20+randint(30), "Poison Dagger Trap"); break;
 
 		 /* it was '20,90,70'... */
       case TRAP_OF_DROP_ITEMS:
@@ -2304,10 +2334,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			{
 				p_ptr->word_recall = rand_int(20) + 15;
 				msg_print(Ind, "\377oThe air about you becomes charged...");
-				message = TRUE;
+				ident = TRUE;
 			}
-			ident |= do_player_scatter_items(Ind, 50);
-
+			ident &= do_player_scatter_items(Ind, 50);
          }
          break;
       case TRAP_OF_PRESENT_EXCHANGE:
@@ -2426,7 +2455,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				if (p_ptr->inventory[i].name1 == ART_POWER) continue;
 
 				if (j > 8) j -= j >> 3;
-				/* drop carefully */
 				inven_item_increase(Ind, i, 1-j);
 				inven_item_optimize(Ind, i);
 				p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -2445,50 +2473,91 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Scribble Trap */
 		case TRAP_OF_SCRIBBLE:
 		{
-			int i, j;
+			int i, j, k, k_idx;
 			object_type *o_ptr;
+			object_type     forge;
+			object_type     *q_ptr = &forge;
 
 			for (i=0;i<INVEN_TOTAL;i++)
 			{
-				cptr str;
 				o_ptr = &p_ptr->inventory[i];
 
 				if (!o_ptr->k_idx) continue;
-				if (o_ptr->name1 == ART_POWER) continue;
-				if ((j = rand_int(100)) > 20 + glev) continue;
+				if (o_ptr->tval != TV_SCROLL || o_ptr->sval != SV_SCROLL_NOTHING)
+					continue;
 
 				ident = TRUE;
+				vanish = 100;
 
-				if (!(j % 3)) str = "Vlad was here!!";
-				else if (is_book(o_ptr)) str = "!*!m!n!p";
-				else switch (o_ptr->tval)
+				j = o_ptr->number;
+				j = randint(j < 5 ? j : 5);
+
+				inven_item_increase(Ind, i, -j);
+				inven_item_describe(Ind, i);
+				inven_item_optimize(Ind, i);
+
+				for (k = 0; k < j; k++)
 				{
-					case TV_SCROLL:
-						str = "!*!r";
-						break;
-					case TV_POTION:
-					case TV_POTION2:
-						str = "!*!q";
-						break;
-					case TV_FOOD:
-						str = "!*!E";
-						break;
-					case TV_ROD:
-					case TV_WAND:
-					case TV_STAFF:
-						str = "!*!a!u!z";
-						break;
-					default:
-						str = "!*!f!t!w!A!F";
+					for (k_idx = 0; !k_idx; k_idx = lookup_kind(TV_SCROLL, rand_int(SV_SCROLL_NOTHING)))
+						/* nothing */;
+
+					invcopy(q_ptr, k_idx);
+					q_ptr->number = 1;
+					q_ptr->discount = o_ptr->discount;
+					q_ptr->owner = o_ptr->owner;
+					q_ptr->level = o_ptr->level;
+					q_ptr->note = o_ptr->note;
+					(void)inven_carry(Ind, q_ptr);
 				}
 
-				o_ptr->note = quark_add(str);
+				break;
 			}
+
+			if (!ident)
+				for (i=0;i<INVEN_TOTAL;i++)
+				{
+					cptr str;
+					o_ptr = &p_ptr->inventory[i];
+
+					if (!o_ptr->k_idx) continue;
+					if (o_ptr->name1 == ART_POWER) continue;
+					if ((j = rand_int(100)) > 20 + glev) continue;
+
+					ident = TRUE;
+
+					if (!(j % 3)) str = "Vlad was here!!";
+					else if (is_book(o_ptr)) str = "!*!m!n!p";
+					else switch (o_ptr->tval)
+					{
+						case TV_SCROLL:
+							str = "!*!r";
+							break;
+						case TV_POTION:
+						case TV_POTION2:
+							str = "!*!q";
+							break;
+						case TV_FOOD:
+							str = "!*!E";
+							break;
+						case TV_ROD:
+						case TV_WAND:
+						case TV_STAFF:
+							str = "!*!a!u!z";
+							break;
+						default:
+							str = "!*!f!t!w!A!F";
+					}
+
+					o_ptr->note = quark_add(str);
+				}
 
 			if (ident && !p_ptr->blind)
 			{
 				msg_print(Ind, "A magic marker dances around you!");
 			}
+
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
 			break;
 		}
 		/* Slump Trap */
@@ -2520,12 +2589,16 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				q_ptr = Players[k];
 				if (q_ptr->conn == NOT_CONNECTED) continue;
 
-				if (inarea(wpos, &q_ptr->wpos)) continue;
+				if (!inarea(wpos, &q_ptr->wpos)) continue;
 
 				msg_print(k, "A fragrant mist fills the air...");
 				hp_player(k, 9999);
+				if (q_ptr->black_breath && magik(50))
+				{
+					msg_print(k, "The hold of the Black Breath on you is broken!");
+					q_ptr->black_breath = FALSE;
+				}
 			}
-			vanish = 101;
 			break;
 		}
 		/* Lost Labor Trap */
@@ -2571,8 +2644,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				o_ptr->level = 0;
 				(void)inven_carry(Ind, o_ptr);
 
-				vanish = 101;
-
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 				break;
@@ -2593,8 +2664,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				o_ptr->level = 0;
 				o_ptr->note = quark_add("!*");
 				(void)inven_carry(Ind, o_ptr);
-
-				vanish = 101;
 
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
@@ -2621,10 +2690,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
 		}
 		/* Cleaning Trap */
-		/* TODO: make radius version of this trap */
 		case TRAP_OF_CLEANING:
 		{
-			int x, y;
+			int ix, iy;
 			char o_name[80];
 
 			/* Delete the existing objects */
@@ -2642,6 +2710,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				 * in the rescue scene */
 				if (o_ptr->owner) continue;
 
+				ix = o_ptr->ix;
+				iy = o_ptr->iy;
+
+				/* Only within certain radius */
+				if (distance(y, x, iy, ix) > glev + 5) continue;
+
 				/* Mega-Hack -- preserve artifacts */
 				if (true_artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/)
 				{
@@ -2650,15 +2724,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 					msg_print(Ind, "You have an accute feeling of loss!");
 				}
 
-				x = o_ptr->ix;
-				y = o_ptr->iy;
+				if (zcave) zcave[iy][ix].o_idx=0;
 
-				if (zcave) zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
-
-				if (!p_ptr->blind && player_has_los_bold(Ind, y, x))
+				if (!p_ptr->blind && player_has_los_bold(Ind, iy, ix))
 				{
-					note_spot(Ind, y,x);
-					lite_spot(Ind, y,x);
+					note_spot(Ind, iy,ix);
+					lite_spot(Ind, iy,ix);
 					ident=TRUE;
 					object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
@@ -2675,7 +2746,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Preparation Trap */
 		case TRAP_OF_PREPARE:
 		{
-			/* Delete the existing objects */
+			/* Look for the existing objects */
 			for (k = 1; k < o_max; k++)
 			{
 				object_type *o_ptr = &o_list[k];
@@ -2691,6 +2762,51 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			msg_print(Ind, "You feel uneasy.");
 			break;
 		}
+		case TRAP_OF_MOAT_I:
+			if (p_ptr->fly){
+				/* dont notice it */
+				vanish = 0;
+				break;
+			}
+			if (!c_ptr) break;
+			if (!p_ptr->blind) msg_print(Ind, "A pool of water appears under you!");
+//			c_ptr->feat = FEAT_WATER;
+			cave_set_feat(wpos, y, x, FEAT_WATER);
+			break;
+		case TRAP_OF_MOAT_II:
+			msg_print(Ind, "As you touch the trap, the ground starts to shake.");
+			destroy_area(wpos, y, x, 10, TRUE, FEAT_WATER);
+			if (c_ptr) c_ptr->feat = FEAT_WATER;
+			break;
+		/* why not? :) */
+		case TRAP_OF_DISINTEGRATION_I: ident=player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap); break;
+		case TRAP_OF_DISINTEGRATION_II: ident=player_handle_breath_trap(Ind, 3, GF_DISINTEGRATE, trap); break;
+		case TRAP_OF_BATTLE_FIELD:
+			ident=player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap);
+            for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0);
+			break;
+      /* Death Molds Trap */
+      case TRAP_OF_DEATH_MOLDS:
+		 l = rand_range(1, 2);
+         for (k = tdi[l]; k < tdi[l + 1]; k++)
+         {
+			 s16b cx = p_ptr->px + tdx[k];
+			 s16b cy = p_ptr->py + tdy[k];
+
+			 if (!in_bounds(cy,cx)) continue;
+
+			 /* paranoia */
+			 if (!cave_empty_bold(zcave, cy, cx)) continue;
+
+			 ident |= (place_monster_aux(wpos, cy, cx,
+				race_index("Death mold"), FALSE, FALSE, FALSE) &&
+					 player_has_los_bold(Ind, cy, cx));
+         }
+         if (ident)
+         {
+            msg_print(Ind, "You suddenly see a lump of malice!");
+         }
+         break;
 
 		default:
 		{
@@ -2701,59 +2817,53 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
    /* some traps vanish */
    if (magik(vanish))
    {
-	   if (item < 0) delete_trap_idx(tt_ptr);
+	   if (item < 0) cs_erase(c_ptr);
 	   else i_ptr->pval = 0;
 	   ident = FALSE;
    }
 
-   if (never_id || p_ptr->image || p_ptr->confused || p_ptr->blind) return (FALSE);
+   if (never_id || p_ptr->image || p_ptr->confused || p_ptr->blind || no_lite(Ind)) return (FALSE);
    else return ident;
 }
 
-/*
- * though door traps cannot be created for now...	- Jir -
- */
 void player_activate_door_trap(int Ind, s16b y, s16b x)
 {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr;
-	trap_type *t_ptr;
 	bool ident = FALSE;
-	int trap = 0;
+	int t_idx = 0;
 
 	/* Paranoia */
 	cave_type **zcave;
 	if (!in_bounds(y, x)) return;
-	if((zcave=getcave(&p_ptr->wpos)))
-	{
-		c_ptr=&zcave[y][x];
-		t_ptr = c_ptr->special.ptr;
-		trap=t_ptr->t_idx;
-	}
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
+	c_ptr=&zcave[y][x];
+	t_idx = c_ptr->special.sc.trap.t_idx;
 
 	/* Return if trap or door not found */
 //	if ((c_ptr->t_idx == 0) ||
 //	    !(f_info[c_ptr->feat].flags1 & FF1_DOOR)) return;
 
-	if (!trap) return;
+	if (!t_idx) return;
 
 	/* Disturb */
 	disturb(Ind, 0, 0);
 
 	/* Message */
-	msg_print(Ind, "You found a trap!");
+//	msg_print(Ind, "You found a trap!");
+	msg_print(Ind, "You triggered a trap!");
 
 	/* Pick a trap */
 	pick_trap(&p_ptr->wpos, y, x);
 
 	/* Hit the trap */
 	ident = player_activate_trap_type(Ind, y, x, NULL, -1);
-	if (ident && !p_ptr->trap_ident[trap])
+	if (ident && !p_ptr->trap_ident[t_idx])
 	{
-		p_ptr->trap_ident[trap] = TRUE;
-                msg_format(Ind, "You identified that trap as %s.",
-			   t_name + t_info[trap].name);
+		p_ptr->trap_ident[t_idx] = TRUE;
+		msg_format(Ind, "You identified that trap as %s.",
+				t_name + t_info[t_idx].name);
 	}
 }
 
@@ -2771,7 +2881,6 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	bool           more       = TRUE;
 	s16b           trap, t_idx, lv;
 	trap_kind	*t_ptr;
-	trap_type	*tt_ptr;
 
 	s16b           cnt        = 0;
 	u32b flags;
@@ -2801,7 +2910,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 
 
 	/* no traps in town or on first level */
-	//   if (dun_level<=1) return;
+	//   if (dlev<=1) return;
 
 	/* traps only appears on empty floor */
 	//   if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
@@ -2832,7 +2941,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 		if (!(t_ptr->flags & flags)) continue;
 
 		/* hack, no trap door at the bottom of dungeon or in flat(non dungeon) places */
-		//      if (((d_ptr->maxdepth == dun_level) || (d_ptr->flags1 & DF1_FLAT)) && (trap == TRAP_OF_SINKING)) continue;
+		//      if (((d_ptr->maxdepth == dlev) || (d_ptr->flags1 & DF1_FLAT)) && (trap == TRAP_OF_SINKING)) continue;
 
 		/* how probable is this trap   */
 		if (rand_int(100)<t_ptr->probability)
@@ -2840,24 +2949,11 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 			//	 c_ptr->t_idx = trap;
 			more = FALSE;
 
-			/* Make a trap */
-			t_idx = t_pop();
+			c_ptr->special.type = CS_TRAPS;
+			c_ptr->special.sc.trap.t_idx = trap;
+			c_ptr->special.sc.trap.found = FALSE;
 
-			/* Success */
-			if (t_idx)
-			{
-				tt_ptr = &t_list[t_idx];
-				c_ptr->special.type = CS_TRAPS;
-				c_ptr->special.ptr = tt_ptr;
-
-				tt_ptr->iy = y;
-				tt_ptr->ix = x;
-				tt_ptr->t_idx = trap;
-				tt_ptr->found = FALSE;
-
-				wpcopy(&tt_ptr->wpos, wpos);
-//				c_ptr=&zcave[y][x];
-			}
+			//				c_ptr=&zcave[y][x];
 		}
 	}
 
@@ -2877,7 +2973,7 @@ void place_trap_object(object_type *o_ptr)
    s16b           cnt        = 0;
 
    /* no traps in town or on first level */
-//   if (dun_level<=1) return;
+//   if (dlev<=1) return;
 
    /* try 100 times */
    while ((more) && (cnt++)<100)
@@ -2912,7 +3008,6 @@ void wiz_place_trap(int Ind, int trap)
 	worldpos *wpos = &p_ptr->wpos;
 	s16b           t_idx;
 	trap_kind	*t_ptr;
-	trap_type	*tt_ptr;
 
 	s16b           cnt        = 0;
 	u32b flags;
@@ -2948,7 +3043,7 @@ void wiz_place_trap(int Ind, int trap)
 
 
 	/* no traps in town or on first level */
-	//   if (dun_level<=1) return;
+	//   if (dlev<=1) return;
 
 	/* traps only appears on empty floor */
 	//   if (!cave_floor_grid(c_ptr) && (!(f_info[c_ptr->feat].flags1 & FF1_DOOR))) return;
@@ -2999,33 +3094,14 @@ void wiz_place_trap(int Ind, int trap)
 	}
 
 	/* hack, no trap door at the bottom of dungeon or in flat(non dungeon) places */
-	//      if (((d_ptr->maxdepth == dun_level) || (d_ptr->flags1 & DF1_FLAT)) && (trap == TRAP_OF_SINKING)) continue;
+	//      if (((d_ptr->maxdepth == dlev) || (d_ptr->flags1 & DF1_FLAT)) && (trap == TRAP_OF_SINKING)) continue;
 
 	//	 c_ptr->t_idx = trap;
 
-	/* Make a trap */
-	t_idx = t_pop();
-
-	/* Success */
-	if (t_idx)
-	{
-		tt_ptr = &t_list[t_idx];
-		c_ptr->special.type = CS_TRAPS;
-		c_ptr->special.ptr = tt_ptr;
-
-		tt_ptr->iy = y;
-		tt_ptr->ix = x;
-		tt_ptr->t_idx = trap;
-		tt_ptr->found = FALSE;
-
-		wpcopy(&tt_ptr->wpos, wpos);
-		//				c_ptr=&zcave[y][x];
-	}
-	else
-	{
-		msg_print(Ind, "Failed to allocate t_list[]!");
-		return;
-	}
+	c_ptr->special.type = CS_TRAPS;
+	c_ptr->special.sc.trap.t_idx = trap;
+	c_ptr->special.sc.trap.found = FALSE;
+	//				c_ptr=&zcave[y][x];
 
 	return;
 
@@ -3332,7 +3408,7 @@ bool mon_hit_trap_aux_rod(int m_idx, object_type *o_ptr)
 	}
 	
 	/* Actually hit the monster */
-	if (typ) (void) project(-999, rad, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP);
+	if (typ) (void) project(PROJECTOR_TRAP, rad, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP);
 
 	/* Set rod recharge time */
         o_ptr->timeout -= (f4 & TR4_CHEAPNESS)?tip_ptr->pval / 2:tip_ptr->pval;
@@ -3386,7 +3462,7 @@ bool mon_hit_trap_aux_staff(int m_idx, int sval)
 			break;
 		case SV_STAFF_SUMMONING:
 			for (k = 0; k < randint(4) ; k++)
-                                (void)summon_specific(y, x, dun_level, 0);
+                                (void)summon_specific(y, x, dlev, 0);
 			return (FALSE);
 		case SV_STAFF_TELEPORTATION:	
 			typ = GF_AWAY_ALL;
@@ -3521,10 +3597,10 @@ bool mon_hit_trap_aux_scroll(int m_idx, int sval)
 		      	aggravate_monsters(m_idx);
 		      	return (FALSE);
 		case SV_SCROLL_SUMMON_MONSTER:
-                        for (k = 0; k < randint(3) ; k++) summon_specific(y, x, dun_level, 0);
+                        for (k = 0; k < randint(3) ; k++) summon_specific(y, x, dlev, 0);
 			return (FALSE);	
 		case SV_SCROLL_SUMMON_UNDEAD:	
-                        for (k = 0; k < randint(3) ; k++) summon_specific(y, x, dun_level, SUMMON_UNDEAD);
+                        for (k = 0; k < randint(3) ; k++) summon_specific(y, x, dlev, SUMMON_UNDEAD);
 			return (FALSE);	
 		case SV_SCROLL_PHASE_DOOR:
 			typ = GF_AWAY_ALL;

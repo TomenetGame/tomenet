@@ -3123,10 +3123,6 @@ void monster_death(int Ind, int m_idx)
 		}
 	}
 
-#ifdef MONSTER_INVENTORY
-	monster_drop_carried_objects(m_ptr);
-#endif	// MONSTER_INVENTORY
-
 	/* Take note of any dropped treasure */
 	/* XXX this doesn't work for now.. (not used anyway) */
 	if (visible && (dump_item || dump_gold))
@@ -4431,6 +4427,11 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 				}
 			}
 		}
+
+#ifdef MONSTER_INVENTORY
+	monster_drop_carried_objects(m_ptr);
+#endif	// MONSTER_INVENTORY
+
 
 		/* When the player kills a Unique, it stays dead */
 		/* No more, this is handled byt p_ptr->r_killed -- DG */

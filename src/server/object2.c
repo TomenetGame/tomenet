@@ -85,10 +85,10 @@ void excise_object_idx(int o_idx)
 		}
 		return;
 	}
+	else
 #endif	// MONSTER_INVENTORY
 
 	/* Dungeon */
-//	else
 	{
 		cave_type *c_ptr;
 		cave_type **zcave;
@@ -172,7 +172,7 @@ void delete_object_idx(int o_idx)
 	/* Excise */
 	excise_object_idx(o_idx);
 
-#if 1
+#if 0
 	/* Object is gone */
 	if((zcave=getcave(wpos)))
 	{
@@ -5361,7 +5361,9 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 		forge.number = damroll(6, 7);
 	}
 
+	drop_near(&forge, -1, wpos, y, x);
 
+#if 0
 	/* Make an object */
 	o_idx = o_pop();
 
@@ -5377,7 +5379,6 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 		(*o_ptr) = (forge);
 
 		drop_near(o_ptr, -1, wpos, y, x);
-#if 0
 		o_ptr->iy = y;
 		o_ptr->ix = x;
 		wpcopy(&o_ptr->wpos, wpos);
@@ -5399,8 +5400,8 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 			/* He can't see it */
 			Players[i]->obj_vis[o_idx] = FALSE;
 		}
-#endif	// 0
 	}
+#endif	// 0
 }
 
 
@@ -5502,7 +5503,8 @@ void place_gold(struct worldpos *wpos, int y, int x)
 	s32b	base;
 
 	cave_type	*c_ptr;
-	object_type	*o_ptr;
+//	object_type	*o_ptr;
+	object_type	forge;
 
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -5529,6 +5531,20 @@ void place_gold(struct worldpos *wpos, int y, int x)
 	if (i > SV_GOLD_MAX) i = SV_GOLD_MAX;
 
 
+		invcopy(&forge, lookup_kind(TV_GOLD, i));
+
+		/* Hack -- Base coin cost */
+//		base = k_info[OBJ_GOLD_LIST+i].cost;
+		base = k_info[lookup_kind(TV_GOLD, i)].cost;
+
+		/* Determine how much the treasure is "worth" */
+		forge.pval = (base + (8L * randint(base)) + randint(8));
+
+		/* Drop it */
+		drop_near(&forge, -1, wpos, y, x);
+
+
+#if 0
 	/* Make an object */
 	o_idx = o_pop();
 
@@ -5575,6 +5591,7 @@ void place_gold(struct worldpos *wpos, int y, int x)
 		/* Drop it */
 		drop_near(o_ptr, -1, wpos, y, x);
 	}
+#endif	// 0
 }
 
 
@@ -6467,13 +6484,13 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 	p_ptr->inventory[i] = (*o_ptr);
 
 	/* Forget the old location */
-	o_ptr->iy = p_ptr->inventory[i].ix = 0;
-	o_ptr->wpos.wx = 0;
-	o_ptr->wpos.wy = 0;
-	o_ptr->wpos.wz = 0;
+	p_ptr->inventory[i].iy = p_ptr->inventory[i].ix = 0;
+	p_ptr->inventory[i].wpos.wx = 0;
+	p_ptr->inventory[i].wpos.wy = 0;
+	p_ptr->inventory[i].wpos.wz = 0;
 	/* Clean out unused fields */
-	o_ptr->next_o_idx = 0;
-	o_ptr->held_m_idx = 0;
+	p_ptr->inventory[i].next_o_idx = 0;
+	p_ptr->inventory[i].held_m_idx = 0;
 
 
 	/* Increase the weight, prepare to redraw */

@@ -532,4 +532,4 @@ s16b count_project = 0;
 
 /* Hack -- 'default' values for obj_theme.	- Jir -
  * Only a makeshift till d_info thingie will be implemented. */
-obj_theme default_obj_theme = {25, 25, 25, 25};
+obj_theme default_obj_theme = {20, 20, 20, 20};

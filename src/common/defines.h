@@ -4800,6 +4800,7 @@ extern int PlayerUID;
 #define TRAP_OF_DISINTEGRATION_I	197
 #define TRAP_OF_DISINTEGRATION_II	198
 #define TRAP_OF_BATTLE_FIELD	199
+#define TRAP_OF_DEATH_MOLDS	200
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
