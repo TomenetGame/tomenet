@@ -38,14 +38,11 @@ void send_rplay(struct client *ccl){
 	struct wpacket spk;
 
 	/* Send online server info */
-	clp=clist;
-
 	for(clp=clist; clp; clp=clp->next){
 		c_cl=(struct client*)clp->data;
 		if(c_cl==ccl) continue;
 		if(c_cl->authed<=0) continue;
 		send_sinfo(c_cl, ccl);
-		clp=clp->next;
 	}
 
 	/* Send online player login packets */
