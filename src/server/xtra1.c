@@ -1940,7 +1940,7 @@ void calc_bonuses(int Ind)
 	p_ptr->hold_life = FALSE;
 	p_ptr->telepathy = 0;
 	p_ptr->lite = FALSE;
-			p_ptr->cur_lite = 0;
+		p_ptr->cur_lite = 0;
 	p_ptr->sustain_str = FALSE;
 	p_ptr->sustain_int = FALSE;
 	p_ptr->sustain_wis = FALSE;
@@ -1971,15 +1971,15 @@ void calc_bonuses(int Ind)
 	p_ptr->sh_elec = FALSE;
 	p_ptr->fly = FALSE;
 	p_ptr->can_swim = FALSE;
+	p_ptr->climb = FALSE;
         p_ptr->reduc_fire = 0;
         p_ptr->reduc_cold = 0;
         p_ptr->reduc_elec = 0;
         p_ptr->reduc_acid = 0;
 	p_ptr->anti_magic = FALSE;
 	p_ptr->auto_id = FALSE;
-/*	p_ptr->reflect = FALSE;*/
-	p_ptr->no_cut = FALSE;
 	p_ptr->reflect = FALSE;
+	p_ptr->no_cut = FALSE;
 	p_ptr->reduce_insanity = 0;
 //		p_ptr->to_s = 0;
 		p_ptr->to_m = 0;
