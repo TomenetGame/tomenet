@@ -4964,9 +4964,17 @@ extern int PlayerUID;
 #define SKILL_SHADOW            18
 #define SKILL_PRAY              19
 #define SKILL_SPELLLENGTH       20
-//#define SKILL_PSI,				21
+#define SKILL_SNEAKINESS        21
+#define SKILL_DISARM            22
+#define SKILL_STEALTH           23
+#define SKILL_STEALING          24
+#define SKILL_NECROMANCY        25
+#define SKILL_ANTIMAGIC         26
+#define SKILL_AURA_POWER        27
+#define SKILL_AURA_FEAR         28
+#define SKILL_AURA_SHIVER       29
+#define SKILL_AURA_DEATH        30
 
-/* Ugly but needed */
 #define MAX_SKILLS              70
 
 /* SKill flags */

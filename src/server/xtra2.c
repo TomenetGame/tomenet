@@ -2748,6 +2748,7 @@ void check_experience(int Ind)
 
 			/* gain skill points */
 			p_ptr->skill_points += SKILL_NB_BASE;
+                        p_ptr->redraw |= PR_STUDY;
 
 			newlv = TRUE;
 
@@ -4453,6 +4454,18 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			/* Seemingly it's severe to cloning, but maybe it's ok :) */
 			if (!player_is_king(Ind) && !m_ptr->clone) party_gain_exp(Ind, p_ptr->party, tmp_exp);
 		}
+
+                /*
+                 * Necromancy skill regenerates you
+                 * Cannot drain an undead or nonliving monster
+                 */
+                if (get_skill(p_ptr, SKILL_NECROMANCY) && (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING)))
+                {
+                        int gain = r_ptr->level + get_skill(p_ptr, SKILL_NECROMANCY);
+
+                        msg_print(Ind, "You absorb the life energy of the dying soul.");
+                        hp_player(Ind, gain);
+                }
 
 		/* Generate treasure */
 		if(!m_ptr->clone){

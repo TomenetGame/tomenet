@@ -421,13 +421,13 @@ void prt_speed(int speed)
 }
 
 /*
- * Prints ability to gain spells
+ * Prints ability to gain skillss
  */
 void prt_study(bool study)
 {
 	if (study)
 	{
-		put_str("Study", ROW_STUDY, COL_STUDY);
+		put_str("Skill", ROW_STUDY, COL_STUDY);
 	}
 	else
 	{

@@ -392,7 +392,7 @@ static void prt_study(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	if (p_ptr->new_spells)
+	if (p_ptr->skill_points)
 	{
 		Send_study(Ind, TRUE);
 	}
@@ -1986,13 +1986,15 @@ static void calc_bonuses(int Ind)
 		case CLASS_ROGUE:
 			p_ptr->pspeed += p_ptr->lev / 6;
 			break;
-
-		case CLASS_UNBELIEVER:
-			p_ptr->anti_magic = TRUE;
-			p_ptr->antimagic = p_ptr->lev;
-			p_ptr->antimagic_dis = 1 + (p_ptr->lev / 11);
 	}
 
+        /* Compute antimagic */
+        if (get_skill(p_ptr, SKILL_ANTIMAGIC))
+        {
+                p_ptr->anti_magic = TRUE;
+                p_ptr->antimagic = get_skill(p_ptr, SKILL_ANTIMAGIC);
+                p_ptr->antimagic_dis = 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 11);
+        }
 
 	/* Take off what is no more usable */
 	do_takeoff_impossible(Ind);
@@ -3011,7 +3013,7 @@ static void calc_bonuses(int Ind)
 	p_ptr->skill_dig += adj_str_dig[p_ptr->stat_ind[A_STR]];
 
 	/* Affect Skill -- disarming (Level, by Class) */
-	p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * p_ptr->lev / 10);
+	p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * get_skill(p_ptr, SKILL_DISARM) / 10);
 
 	/* Affect Skill -- magic devices (Level, by Class) */
 	p_ptr->skill_dev += (p_ptr->cp_ptr->x_dev * get_skill(p_ptr, SKILL_DEVICE) / 10);
@@ -3020,13 +3022,13 @@ static void calc_bonuses(int Ind)
 	p_ptr->skill_sav += (p_ptr->cp_ptr->x_sav * p_ptr->lev / 10);
 
 	/* Affect Skill -- stealth (Level, by Class) */
-	p_ptr->skill_stl += (p_ptr->cp_ptr->x_stl * p_ptr->lev / 10);
+	p_ptr->skill_stl += (p_ptr->cp_ptr->x_stl * get_skill(p_ptr, SKILL_STEALTH) / 10);
 
 	/* Affect Skill -- search ability (Level, by Class) */
-	p_ptr->skill_srh += (p_ptr->cp_ptr->x_srh * p_ptr->lev / 10);
+	p_ptr->skill_srh += (p_ptr->cp_ptr->x_srh * get_skill(p_ptr, SKILL_SNEAKINESS) / 10);
 
 	/* Affect Skill -- search frequency (Level, by Class) */
-	p_ptr->skill_fos += (p_ptr->cp_ptr->x_fos * p_ptr->lev / 10);
+	p_ptr->skill_fos += (p_ptr->cp_ptr->x_fos * get_skill(p_ptr, SKILL_SNEAKINESS) / 10);
 
 	/* Affect Skill -- combat (normal) (Level, by Class) */
         p_ptr->skill_thn += (p_ptr->cp_ptr->x_thn * (((7 * get_skill(p_ptr, SKILL_MASTERY)) + (3 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);

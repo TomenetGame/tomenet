@@ -2723,8 +2723,7 @@ player_magic magic_info[MAX_REALM] =
         },
 
         /* Ghost */
-        {
-        NULL,
+        { 0
         },
 };
 /*
@@ -3899,7 +3898,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -3919,7 +3918,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_FIGHTING,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -3939,7 +3938,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -3959,7 +3958,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -3979,7 +3978,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -3999,7 +3998,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4019,7 +4018,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_ARCHERING,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4039,7 +4038,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4059,7 +4058,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4079,7 +4078,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4099,7 +4098,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4119,7 +4118,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4139,7 +4138,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4159,7 +4158,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_SORCERY,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4179,7 +4178,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_MAGERY,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4199,7 +4198,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_MIMICRY,
 
                  /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4219,7 +4218,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                  /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4239,7 +4238,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_SHADOW,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4259,7 +4258,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_PRAY,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4279,7 +4278,207 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {NULL},
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Sneakiness",
+                "General ability at your sneakiness skills, and improves perception",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Disarming",
+                "Ability to disarm various traps",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Stealth",
+                "Ability to move without waking up monsters",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Stealing",
+                "Ability to steal objects or money from other people",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Necromancy",
+                "General ability at necromantic skills. Provides life drain on monster death.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Antimagic",
+                "Aura that surrounds you and prevents monsters from casting spells.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Aura power",
+                "Increases you auras power",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Aura of Fear",
+                "Aura that surrounds you and strikes fear in monsters that melee you.\nMaking them run away.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Shivering Aura",
+                "Aura that surrounds you and stuns monsters that melee you.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Aura of Death",
+                "Aura that surrounds you and creates waves of plasma/ice when monsters melee you.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
 
                 /* Father skills */
                 0,
@@ -4295,6 +4494,7 @@ skill_type s_info[MAX_SKILLS] =
 /*
  * Pairs of skill in the format: father, child
  * Used to fill in father and order of s_info in a nice way
+ * -1 means no father
  */
 int skill_tree_init[MAX_SKILLS][2] =
 {
@@ -4308,7 +4508,7 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_ARCHERY, SKILL_SLING },
         { SKILL_ARCHERY, SKILL_BOW },
         { SKILL_ARCHERY, SKILL_XBOW },
-        { SKILL_COMBAT, SKILL_BACKSTAB },
+
         { -1, SKILL_MAGIC },
         { SKILL_MAGIC, SKILL_DEVICE },
         { SKILL_MAGIC, SKILL_SORCERY },
@@ -4318,4 +4518,17 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_SHADOW, SKILL_SPELLLENGTH},
         { SKILL_MAGIC, SKILL_MIMIC },
         { SKILL_MAGIC, SKILL_PRAY },
+
+        { -1, SKILL_SNEAKINESS },
+        { SKILL_SNEAKINESS, SKILL_STEALTH },
+        { SKILL_SNEAKINESS, SKILL_DISARM },
+        { SKILL_SNEAKINESS, SKILL_STEALING },
+        { SKILL_SNEAKINESS, SKILL_BACKSTAB },
+
+        { -1, SKILL_NECROMANCY },
+        { SKILL_NECROMANCY, SKILL_AURA_POWER },
+        { SKILL_NECROMANCY, SKILL_AURA_FEAR },
+        { SKILL_NECROMANCY, SKILL_AURA_SHIVER },
+        { SKILL_NECROMANCY, SKILL_AURA_DEATH },
+        { SKILL_NECROMANCY, SKILL_ANTIMAGIC },
 };

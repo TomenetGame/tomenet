@@ -163,7 +163,7 @@ static void spell_info(int Ind, char *p, int realm, int j)
 	/* Mage spells */
 	if (realm == REALM_MAGERY)
 	{
-		int plev = ;
+		int plev = get_skill(p_ptr, SKILL_MAGERY);
 
 		/* Analyze the spell */
 		switch (j)
@@ -208,7 +208,7 @@ static void spell_info(int Ind, char *p, int realm, int j)
 	/* Priest spells */
 	if (realm == REALM_PRAYER)
 	{
-		int plev = get_skill(p_ptr, SKILL_PRAYER);
+		int plev = get_skill(p_ptr, SKILL_PRAY);
 
 		/* See below */
 		int orb = (plev / ((p_ptr->pclass == 2) ? 2 : 4));
@@ -660,83 +660,6 @@ void do_cmd_study(int Ind, int book, int spell)
 	/* Update the spell info */
 	p_ptr->window |= (PW_SPELL);
 }
-
-/* let's hack this :)	- Jir - */
-#if 0
-bool check_antimagic(int Ind)
-{
-	player_type *p_ptr = Players[Ind];
-
-	int i;
-
-	for (i = 1; i <= NumPlayers; i++)
-	  {
-		player_type *q_ptr = Players[i];
-		int dis, antichance = 0, antidis = 0;
-		object_type *o_ptr;
-
-		/* Skip disconnected players */
-		if (q_ptr->conn == NOT_CONNECTED) continue;
-
-		/* Skip players not on this depth */
-		if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) continue;
-
-		if (!q_ptr->anti_magic) continue;
-
-		/* Compute distance */
-		dis = distance(p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px);
-
-		/* Compute the probability of the unbeliever to disrupt any magic attempts */
-		if ((q_ptr->pclass == CLASS_UNBELIEVER))
-		  {
-		    antichance += q_ptr->lev;
-		    antidis += 1 + (q_ptr->lev / 11);
-		  }
-		
-		o_ptr = &q_ptr->inventory[INVEN_WIELD];
-	        if (o_ptr->k_idx)
-		  {
-			  u32b f1, f2, f3, f4, f5, esp;
-
-			  /* Extract the flags */
-			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-//		    if (f2 & TR2_ANTI_MAGIC)
-		    if (f3 & TR3_NO_MAGIC)
-		      {
-			int minus = o_ptr->to_h + o_ptr->to_d + o_ptr->pval;
-			/* if ((minus < 0) && (q_ptr->pclass != CLASS_UNBELIEVER)) minus = 0; */
-			if (q_ptr->pclass != CLASS_UNBELIEVER)
-			{
-				if (minus < -q_ptr->lev / 2) minus = -q_ptr->lev / 2;
-				if (minus < -40) minus = -40;
-			}
-		
-			/* Enchanting DarkSwords is not a wise thing */
-			antichance += 50 - minus;
-			antidis += 4 - (minus / 10);
-		      }
-		  }
-
-		antichance -= p_ptr->lev;
-		
-		if (antichance > 95) antichance = 95;
-	
-		if (dis > antidis) antichance = 0;
-
-		/* Got disrupted ? */
-		if (magik(antichance))
-		  {
-		    msg_format(Ind, "%s's anti-magic shield disrupts your attempts.", q_ptr->name);
-		    return TRUE;
-		  }
-	  }
-
-	/* Assume no antimagic */
-	return FALSE;
-}
-#endif	// 0
-
 
 /* ok, it's hacked :) */
 /* of course, you can optimize it further by bandling
@@ -2896,7 +2819,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 	player_type *p_ptr = Players[Ind];
 
 	int item, sval, j, chance, i;
-	int plev = get_skill(p_ptr, SKILL_PRAYER);
+	int plev = get_skill(p_ptr, SKILL_PRAY);
 	int	rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
 
 	object_type	*o_ptr;
@@ -3220,7 +3143,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 19:
 			{
-				(void)set_protevil(Ind, p_ptr->protevil + randint(25) + 3 * get_skill(p_ptr, SKILL_PRAYER));
+				(void)set_protevil(Ind, p_ptr->protevil + randint(25) + 3 * get_skill(p_ptr, SKILL_PRAY));
 				break;
 			}
 
@@ -3660,7 +3583,7 @@ void do_cmd_pray_aux(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int plev = get_skill(p_ptr, SKILL_PRAYER);
+	int plev = get_skill(p_ptr, SKILL_PRAY);
 	
 	magic_type *s_ptr = &magic_info[REALM_PRAYER].info[p_ptr->current_spell];
 

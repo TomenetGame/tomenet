@@ -1538,6 +1538,53 @@ bool make_attack_normal(int Ind, int m_idx)
 				}
 #endif	// 0
 
+                                /*
+                                 * Apply the necromantic auras
+                                 */
+                                /* Aura of fear is NOT affected by the monster level */
+                                if (get_skill(p_ptr, SKILL_AURA_FEAR) && (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING)) && (!(r_ptr->flags1 & RF1_UNIQUE)))
+                                {
+                                        int chance = get_skill_scale(p_ptr, SKILL_AURA_FEAR, 30) + 1;
+
+                                        if (magik(chance))
+                                        {
+                                                msg_format(Ind, "%^s appears afraid.", m_name);
+                                                m_ptr->monfear = get_skill_scale(p_ptr, SKILL_AURA_POWER, 10);
+                                        }
+                                }
+
+                                /* Shivering Aura is affected by the monster level */
+                                if (get_skill(p_ptr, SKILL_AURA_SHIVER) && (!(r_ptr->flags1 & RF1_UNIQUE)))
+                                {
+                                        int chance = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 20) + 1;
+
+                                        if (magik(chance) && (r_ptr->level < get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 99)))
+                                        {
+                                                msg_format(Ind, "%^s appears frozen.", m_name);
+                                                m_ptr->stunned = get_skill_scale(p_ptr, SKILL_AURA_POWER, 20);
+                                        }
+                                }
+
+                                /* Aura of death is NOT affected by monster level*/
+                                if (get_skill(p_ptr, SKILL_AURA_DEATH))
+                                {
+                                        int chance = get_skill_scale(p_ptr, SKILL_AURA_DEATH, 50);
+
+                                        if (magik(chance))
+                                        {
+                                                if (magik(50))
+                                                {
+                                                        msg_format(Ind, "%^s disrupts your aura of death which explodes into a wave of plasma.", m_name);
+                                                        fire_ball(Ind, GF_PLASMA, 0, 10 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1);
+                                                }
+                                                else
+                                                {
+                                                        msg_format(Ind, "%^s disrupts your aura of death which explodes into a wave of ice.", m_name);
+                                                        fire_ball(Ind, GF_ICE, 0, 10 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1);
+                                                }
+                                        }
+                                }
+
 				touched = FALSE;
 			}
 		}

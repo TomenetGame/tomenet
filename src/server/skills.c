@@ -163,6 +163,7 @@ void increase_skill(int Ind, int i)
 
 	/* Update the spells */
 	p_ptr->window |= PW_SPELL;
+        p_ptr->redraw |= PR_STUDY;
 }
 
 

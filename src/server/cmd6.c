@@ -2074,7 +2074,7 @@ void do_cmd_use_staff(int Ind, int item)
 		return;
 	}
 #endif
-	if (p_ptr->pclass == CLASS_UNBELIEVER)
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
 		msg_print(Ind, "You don't believe in magic.");	
 		return;
@@ -2531,7 +2531,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		return;
 	}
 #endif	// 0
-	if (p_ptr->pclass == CLASS_UNBELIEVER)
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
 		msg_print(Ind, "You don't believe in magic.");	
 		return;
@@ -3002,7 +3002,7 @@ void do_cmd_zap_rod(int Ind, int item)
 		return;
 	}
 #endif	// 0
-	if (p_ptr->pclass == CLASS_UNBELIEVER)
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
 		msg_print(Ind, "You don't believe in magic.");	
 		return;
