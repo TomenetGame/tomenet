@@ -3172,8 +3172,11 @@ void player_death(int Ind)
 			party_leave(Ind);
 		}
 
-		/* One less player here */
-		players_on_depth[p_ptr->dun_depth]--;
+                /* Ghosts dont static the lvl if under cfg_preserve_death_level ft. DEG */
+                if ((p_ptr->dun_depth) < cfg_preserve_death_level)
+                {
+                players_on_depth[p_ptr->dun_depth]--;
+                }
 
 		/* Remove him from the player name database */
 		delete_player_name(p_ptr->name);

@@ -1662,6 +1662,14 @@ void set_server_option(char * option, char * value)
 	{
 		cfg_newbies_cannot_drop = str_to_boolean(value);
 	}
+	else if (!strcmp(option,"PRESERVE_DEATH_LEVEL"))
+	{
+		cfg_preserve_death_level = atoi(value);
+	}
+	else if (!strcmp(option,"NO_GHOST"))
+	{
+		cfg_no_ghost = str_to_boolean(value);
+	}
 	else if (!strcmp(option,"DOOR_BUMP_OPEN"))
 	{
 		cfg_door_bump_open = str_to_boolean(value);

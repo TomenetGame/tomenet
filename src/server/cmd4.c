@@ -508,14 +508,14 @@ void do_cmd_check_players(int Ind, int line)
 		/* Print a message */
 		if(q_ptr->fruit_bat)
 		{
-			fprintf(fff, "     %s the %s%s %s (%sFruit bat, Level %d, %s)",
+			fprintf(fff, "  %s the %s%s %s (%sFruit bat, Lv %d, %s)",
 				q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[q_ptr->prace].title, 
 				class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
 				parties[q_ptr->party].name);
 		}
 		else
 		{
-			fprintf(fff, "     %s the %s%s %s (%sLevel %d, %s)",
+			fprintf(fff, "  %s the %s%s %s (%sLv %d, %s)",
 				q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[q_ptr->prace].title, 
 				class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
 				parties[q_ptr->party].name);
@@ -537,6 +537,9 @@ void do_cmd_check_players(int Ind, int line)
 		/* Newline */
 		/* -AD- will this work? */
 		fprintf(fff, "\n");
+		if (!strcmp(p_ptr->name,cfg_admin_wizard) ||
+			!strcmp(p_ptr->name, cfg_dungeon_master))
+			fprintf(fff, "    (%d)", k);
 		fprintf(fff, "         %s@%s\n", q_ptr->realname, q_ptr->hostname);
 
 	}
@@ -639,14 +642,14 @@ void do_cmd_check_player_equip(int Ind, int line)
 		        /* Print a message */
 				if(q_ptr->fruit_bat)
 				{
-					fprintf(fff, "     %s the %s%s %s (%sFruit bat, Level %d, %s)",
+					fprintf(fff, "  %s the %s%s %s (%sFruit bat, Lv %d, %s)",
 					q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[ q_ptr->prace].title,
 					class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
 					parties[q_ptr->party].name);
 				}
 				else
 				{
-					fprintf(fff, "     %s the %s%s %s (%sLevel %d, %s)",
+					fprintf(fff, "  %s the %s%s %s (%sLv %d, %s)",
 					q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[ q_ptr->prace].title,
 					class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
 					parties[q_ptr->party].name);

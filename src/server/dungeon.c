@@ -2374,8 +2374,25 @@ void dungeon(void)
 		/* Check for death */
 		if (Players[i]->death)
 		{
-			/* Kill him */
-			player_death(i);
+	player_type *p_ptr = Players[i];
+		if (p_ptr->mode == MODE_HELL)
+                        {
+                                /* Kill him */
+                                player_death(i);
+                        }
+                        else
+                        {
+                                /* Kill him */
+                                player_death(i);
+
+                                /* Kill them again so that they Die! DEG */
+                                if (cfg_no_ghost)
+                                {
+                                        player_death(i);
+                                }
+                        }
+
+
 		}
 	}
 
@@ -2693,8 +2710,25 @@ void dungeon(void)
 		/* Check for death */
 		if (Players[i]->death)
 		{
-			/* Kill him */
-			player_death(i);
+                       player_type *p_ptr = Players[i];
+                       if (p_ptr->mode == MODE_HELL)
+                        {
+                                /* Kill him */
+                                player_death(i);
+                        }
+                        else
+                        {
+                                /* Kill him */
+                                player_death(i);
+
+                                /* Kill them again so that they Die! DEG */
+                                if (cfg_no_ghost)
+                                {
+                                        player_death(i);
+                                }
+                        }
+
+
 		}
 	}
 

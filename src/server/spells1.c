@@ -4507,9 +4507,12 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 	}
 
 
-	/* Disturb */
-	disturb(Ind, 1, 0);
-
+       /* Skip non-connected players */
+       if (!p_ptr->conn == NOT_CONNECTED)
+        {
+        /* Disturb */
+        disturb(Ind, 1, 0);
+        }
 
 	/* Return "Anything seen?" */
 	return (obvious);
