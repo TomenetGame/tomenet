@@ -929,7 +929,7 @@ void add_player_name(cptr name, int id, time_t laston)
 		if(now-laston>7776000){		/* 90 days in seconds */
 			int i;
 			for(i=0; i<MAX_PARTIES; i++){
-				if(!streq(parties[i].owner, name)){
+				if(streq(parties[i].owner, name)){
 					del_party(i);
 					break;
 				}

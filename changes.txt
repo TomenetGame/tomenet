@@ -231,3 +231,5 @@ Change list for PernMangband
 - Fixed MAJOR house security bug.
 - Fixed bug in savefile delete - party, houses were not reset.
 
+25/10/2001
+- The previous bugfix (timeout player) now works.
