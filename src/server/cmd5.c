@@ -2445,7 +2445,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
 			p_ptr->current_spell = j;
 			get_aim_dir(Ind);
 			return;
-                case 59: /* Olbivion Blast */
+                case 59: /* Oblivion Blast */
                         mass_genocide(Ind);
                         break;
                 case 60: /* Mana Spin */

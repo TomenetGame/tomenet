@@ -3562,7 +3562,10 @@ void aggravate_monsters(int Ind, int who)
 		if (i == who) continue;
 
 		/* Wake up nearby sleeping monsters */
+		if(distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)<MAX_SIGHT*2)
+#if 0
 		if (m_ptr->cdis < MAX_SIGHT * 2)
+#endif
 		{
 			/* Wake up */
 			if (m_ptr->csleep)
@@ -3760,7 +3763,11 @@ bool mass_genocide(int Ind)
 		if (r_ptr->flags1 & RF1_UNIQUE) continue;
 
 		/* Skip distant monsters */
-		if (m_ptr->cdis > MAX_SIGHT) continue;
+		if(distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)>MAX_SIGHT)
+#if 0
+		if (m_ptr->cdis > MAX_SIGHT)
+#endif
+			continue;
 
 		/* Skip those immune */
 		if (r_ptr->flags9 & RF9_IM_TELE) continue;
