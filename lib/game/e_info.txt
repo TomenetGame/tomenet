@@ -22,7 +22,7 @@
 
 # Version stamp (required)
 
-V:2.8.1
+V:3.4.0
 
 ### Mage Staff ###
 
@@ -232,7 +232,7 @@ X:A:32:20
 W:0:2:22:15000
 C:0:0:5:0
 R:100
-F:REFLECT
+F:REFLECT |
 F:IGNORE_ELEC | IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE
 
 # Metal shields only
@@ -306,7 +306,7 @@ W:0:1:8:2000
 C:0:0:0:3
 T:33:0:99
 R:100
-F:STR | DEX | CON | SUST_STR | SUST_DEX | SUST_CON | FREE_ACT
+F:STR | DEX | CON | SUST_STR | SUST_DEX | SUST_CON | FREE_ACT |
 F:R_HIGH
 
 N:29:of Lordliness
@@ -315,7 +315,7 @@ W:0:1:8:2000
 C:0:0:0:3
 T:33:0:99
 R:100
-F:WIS | CHR | SUST_WIS | SUST_CHR
+F:WIS | CHR | SUST_WIS | SUST_CHR |
 F:R_HIGH
 
 N:30:of Seeing

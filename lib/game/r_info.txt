@@ -184,7 +184,7 @@
 
 # Version stamp (required)
 
-V:2.8.1
+V:3.4.0
 
 ##### The Player #####
 

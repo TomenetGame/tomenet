@@ -8,7 +8,7 @@
 
 # Version stamp (required)
 
-V:3.3.0
+V:3.4.0
 # Most values can be used with the +, -, % and = operators, = will set the
 # monster value, + and - will modify it based on the normal monster
 # % will apply that percentage to the monster value

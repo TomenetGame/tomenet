@@ -36,7 +36,7 @@
 # I:diff:prob:            :minlevel:      :color
 # D:description
 
-V:3.3.0
+V:3.4.0
 
 #
 # stat traps
