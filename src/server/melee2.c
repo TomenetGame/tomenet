@@ -4483,7 +4483,7 @@ static void process_monster(int Ind, int m_idx)
 
 			/* Kill weaker monsters */
 			if ((r_ptr->flags2 & RF2_KILL_BODY) &&
-			    (r_ptr->mexp > z_ptr->mexp))
+			    (r_ptr->mexp > z_ptr->mexp) && !y_ptr->owner)
 			{
 				/* Allow movement */
 				do_move = TRUE;
