@@ -3416,6 +3416,7 @@ static void player_talk_aux(int Ind, char *message)
 	else{
 		/* Why not... */
 		if (strlen(message) > 4) mycolor = (prefix(&message[4], "}") && (color_char_to_attr(*(message + 5)) != -1))?2:0;
+		else return;
 		if(mycolor) c=message[5];
 		sprintf(tmessage, "\377%c%s %s", c, sender, message + 4+mycolor);
 	}
