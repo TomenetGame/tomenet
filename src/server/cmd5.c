@@ -1018,7 +1018,11 @@ void do_cmd_cast(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-		if (interfere(Ind, cfg.spell_interfere)) return;
+//		if (interfere(Ind, cfg.spell_interfere)) return;
+		if (interfere(Ind, cfg.spell_interfere *
+					(100 - get_skill_scale(p_ptr, SKILL_MAGERY, 50)) / 100))
+			return;
+
 
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
@@ -2137,7 +2141,11 @@ void do_cmd_sorc(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-		if (interfere(Ind, cfg.spell_interfere)) return;
+//		if (interfere(Ind, cfg.spell_interfere)) return;
+		if (interfere(Ind, cfg.spell_interfere *
+					(100 - get_skill_scale(p_ptr, SKILL_SORCERY, 50)) / 100))
+			return;
+
 
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
@@ -2998,7 +3006,10 @@ void do_cmd_pray(int Ind, int book, int spell)
 	{
 		/* Check interference */
 //		if (interfere(Ind, p_ptr->pclass == CLASS_PRIEST ? 2 : 3)) return;
-		if (interfere(Ind, cfg.spell_interfere)) return;
+//		if (interfere(Ind, cfg.spell_interfere)) return;
+		if (interfere(Ind, cfg.spell_interfere *
+					(100 - get_skill_scale(p_ptr, SKILL_PRAY, 50)) / 100))
+			return;
 
 		if (spell >= 64) j += 64;
 		switch (j)
@@ -4658,7 +4669,11 @@ void do_cmd_shad(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-		if (interfere(Ind, cfg.spell_interfere * 2 / 3)) return;
+//		if (interfere(Ind, cfg.spell_interfere * 2 / 3)) return;
+		if (interfere(Ind, cfg.spell_interfere *
+					(100 - get_skill_scale(p_ptr, SKILL_SHADOW, 50)) / 100))
+			return;
+
 
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = plev / 2;
@@ -5114,7 +5129,12 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	else
 	{
 		/* Check interference */
-		if (interfere(Ind, cfg.spell_interfere * 2)) return;
+//		if (interfere(Ind, cfg.spell_interfere * 2)) return;
+		/* XXX this should be different skill (like SKILL_HUNT) */
+		if (interfere(Ind, cfg.spell_interfere * 2 *
+					(100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
+			return;
+
 
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = plev / 2;
@@ -6449,6 +6469,12 @@ void do_cmd_psi(int Ind, int book, int spell)
 		/* Check interference */
 //		if (interfere(Ind2, Ind == Ind2 ? 10 : 2)) return;
 		if (interfere(Ind, cfg.spell_interfere * ( Ind == Ind2 ? 9 : 2) / 3)) return;
+#if 0	// SKILL_PSI not existant yet
+		if (interfere(Ind, cfg.spell_interfere * 2 *
+					(100 - get_skill_scale(p_ptr, SKILL_PSI, 50)) / 100))
+			return;
+#endif	// 0
+
 
 	  /* Hack -- chance of "beam" instead of "bolt" */
 	  beam = plev / 2;

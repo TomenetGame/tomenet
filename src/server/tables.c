@@ -1684,6 +1684,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 900,
                         },
+                        {
+                                SKILL_DEVICE,
+                                '+', 1000,
+                                '+', 1000,
+                        },
                 }
 	},
 
@@ -1693,6 +1698,39 @@ player_class class_info[MAX_CLASS] =
 		25, 30, 32, 2,  16, 8, 48, 35,
 		7,  10, 12, 0,  0,  0, 20, 20,
 		2, 20,
+				/* XXX copied from sorc and mimic ones */
+                {
+                        {
+                                SKILL_MAGIC,
+                                '+', 2000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_PRAY,
+                                '+', 1000,
+                                '+', 1100,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_COMBAT,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_POLEARM,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                }
 	},
 
 	{
@@ -1712,6 +1750,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 800,
                         },
+						/* cool if SKILL_DAGGER, none? :) */
                         {
                                 SKILL_SWORD,
                                 '+', 0,
@@ -1729,6 +1768,21 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_ARCHERY,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_MAGIC,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_SHADOW,
+                                '+', 1000,
+                                '+', 1100,
+                        },
+                        {
+                                SKILL_DEVICE,
                                 '+', 1000,
                                 '+', 800,
                         },
@@ -1754,6 +1808,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
                         {
+                                SKILL_DEVICE,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
                                 SKILL_COMBAT,
                                 '+', 1000,
                                 '+', 700,
@@ -1776,7 +1835,50 @@ player_class class_info[MAX_CLASS] =
 		{ 3, -3, 1, 0, 2, 2},
 		20, 24, 25, 1,  12, 2, 68, 40,
 		7,  10, 11, 0,  0,  0,  35, 30,
-		6, 35
+		6, 35,
+				/* XXX copied from sorc and mimic ones */
+                {
+                        {
+                                SKILL_MAGIC,
+                                '+', 2000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_MAGERY,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_COMBAT,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_ARCHERY,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_MAGIC,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_PRAY,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                }
 	},
 
 	{
@@ -1800,6 +1902,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_SORCERY,
                                 '+', 1000,
                                 '+', 900,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 1000,
+                                '+', 1000,
                         },
                 }
 	},
@@ -1835,6 +1942,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_MIMIC,
                                 '+', 1000,
                                 '+', 900,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 1000,
+                                '+', 600,
                         },
                 }
 	},
@@ -1926,7 +2038,7 @@ player_class class_info[MAX_CLASS] =
 		{ 2, -1, 1, 3, 2, 1},
 		45, 32, 28, 5, 32, 24, 64, 60,
 		15, 11, 10, 0,  0,  0, 40, 30,
-		6, 40
+		6, 40,
 	},
 
 	{
@@ -1934,7 +2046,42 @@ player_class class_info[MAX_CLASS] =
 		{ -1, 1, 3, 0, 0, 4},
 		30, 30, 30, 1,  26, 30, 42, 30,
 		7,  13, 6,  0,  0,  0,  20, 20,
-		0, 20
+		0, 20,
+				/* XXX copied from sorc and mimic ones */
+                {
+                        {
+                                SKILL_MAGIC,
+                                '+', 2000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 1000,
+                                '+', 800,
+                        },
+#if 0
+                        {
+                                SKILL_PSI,
+                                '+', 1000,
+                                '+', 1100,
+                        },
+#endif	// 0
+                        {
+                                SKILL_MAGERY,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_COMBAT,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                }
 	},
 };
 /*

@@ -2323,7 +2323,10 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Check if monsters around him/her hinder this */
 	/* TODO: this should be affected by 'archery' skill */
-	if (interfere(Ind, p_ptr->pclass == CLASS_ARCHER ? 12 : 15)) return;
+//	if (interfere(Ind, p_ptr->pclass == CLASS_ARCHER ? 12 : 15)) return;
+	if (interfere(Ind, 20 *
+				(100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
+		return;
 
 	if (!boomerang && cursed_p(o_ptr) && magik(50))
 	{

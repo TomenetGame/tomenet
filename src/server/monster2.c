@@ -2905,6 +2905,13 @@ static bool summon_specific_okay(int r_idx)
 			break;
 		}
 
+		case SUMMON_IMMOBILE:
+		{
+			okay = (r_ptr->flags1 & RF1_NEVER_MOVE) &&
+				!(r_ptr->flags4 && r_ptr->flags5 && r_ptr->flags6);
+			break;
+		}
+
 #ifdef USE_LUA
 #if 0	// let's leave it to DG :)
 		case SUMMON_LUA:

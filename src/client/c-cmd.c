@@ -18,7 +18,7 @@ static bool item_tester_magicable(object_type *o_ptr)
 
 	if (get_skill(SKILL_SORCERY) && (o_ptr->tval == TV_SORCERY_BOOK)) return TRUE;
 
-	if (o_ptr->tval == TV_SHADOW_BOOK) return TRUE;
+	if (get_skill(SKILL_SHADOW) && o_ptr->tval == TV_SHADOW_BOOK) return TRUE;
 
 	if (o_ptr->tval == TV_HUNT_BOOK) return TRUE;
 
@@ -26,7 +26,7 @@ static bool item_tester_magicable(object_type *o_ptr)
 
 	/* two more for expansion */
 	if (o_ptr->tval == TV_FIGHT_BOOK) return TRUE;
-	if (o_ptr->tval == TV_PRAYER_BOOK) return TRUE;
+	if (get_skill(SKILL_PRAY) && o_ptr->tval == TV_PRAYER_BOOK) return TRUE;
 
 	return FALSE;
 }
@@ -1545,8 +1545,22 @@ static bool item_tester_browsable(object_type *o_ptr)
 		return TRUE;
 	}
         return FALSE;
-#else
-        return TRUE;
+#else	// same with item_tester_magicable
+	if ((o_ptr->tval == TV_MAGIC_BOOK)) return TRUE;
+
+	if ((o_ptr->tval == TV_SORCERY_BOOK)) return TRUE;
+
+	if (o_ptr->tval == TV_SHADOW_BOOK) return TRUE;
+
+	if (o_ptr->tval == TV_HUNT_BOOK) return TRUE;
+
+	if (o_ptr->tval == TV_PSI_BOOK) return TRUE;
+
+	/* two more for expansion */
+	if (o_ptr->tval == TV_FIGHT_BOOK) return TRUE;
+	if (o_ptr->tval == TV_PRAYER_BOOK) return TRUE;
+
+        return FALSE;
 #endif
 }
 

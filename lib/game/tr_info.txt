@@ -952,6 +952,11 @@ I:8:50:10:10:47:0d0:v:50
 D:You suddenly see a lump of malice!
 F:FLOOR | CHEST | DOOR
 
+N:201:Summon Death sword Trap
+I:7:40:10:10:11:0d0:v:50
+D:You suddenly see a siege of malicious blades!
+F:FLOOR | CHEST | DOOR
+
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
 # I:diff:prob:            :minlevel:      :color:vanish

@@ -6455,6 +6455,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 #endif
 
 	/* Auto-inscriber */
+#if 0	// not working well with the new skill system
 	if ((o_ptr->tval == p_ptr->mp_ptr->spell_book) && (!o_ptr->note) && (can_use(Ind, o_ptr)))
 	{
 		char c[] = "@m ";
@@ -6463,6 +6464,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		c[2] = o_ptr->sval +1 +48;
 		o_ptr->note = quark_add(c);
 	}
+#endif	// 0
 
 	if (!o_ptr->note && p_ptr->obj_aware[o_ptr->k_idx])
 	{

@@ -1425,10 +1425,29 @@ that keeps many algorithms happy.
 #define TV_FLASK        77
 #define TV_FOOD         80
 #define TV_HYPNOS       99      /* To wield monsters !:) */
-#define TV_GOLD         100     /* Gold can only be picked up by players */
+#define TV_GOLD         100     /* Gold can only be picked up by players(?) */
 #define TV_RANDART      102     /* Random Artifacts */
 #define TV_RUNE1        104      /* Base runes */
 #define TV_RUNE2        105      /* Modifier runes */
+
+#if 0   /* (reserved) we'll use TomeNET books :) */
+#define TV_VALARIN_BOOK 111
+#define TV_MAGERY_BOOK  112
+#define TV_SHADOW_BOOK  113
+#define TV_CHAOS_BOOK   114
+#define TV_NETHER_BOOK  115
+#define TV_CRUSADE_BOOK 116
+#define TV_SIGALDRY_BOOK 117
+#define TV_SYMBIOTIC_BOOK 118
+#define TV_MUSIC_BOOK   119
+#define TV_MAGIC_BOOK   120
+#define TV_PRAYER_BOOK  121
+#define TV_ILLUSION_BOOK 122
+#define TV_TRIBAL_BOOK  123
+#define TV_DRUID_BOOK   124
+#define TV_DAEMON_BOOK  125
+#define TV_SPIRIT_BOOK  126
+#endif  // 0
 
 /* pernM ones (resurrected) */
 #define TV_KEY		 51      /* Keys (';') */
@@ -2910,6 +2929,7 @@ that keeps many algorithms happy.
 
 /* Again, TomeNET one(s)	- Jir - */
 #define SUMMON_VERMIN		59
+#define SUMMON_IMMOBILE		60
 
 
 /*
@@ -4796,6 +4816,7 @@ extern int PlayerUID;
 #define TRAP_OF_DISINTEGRATION_II	198
 #define TRAP_OF_BATTLE_FIELD	199
 #define TRAP_OF_DEATH_MOLDS	200
+#define TRAP_OF_DEATH_SWORDS	201
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
@@ -4936,6 +4957,7 @@ extern int PlayerUID;
 #define SKILL_SHADOW            18
 #define SKILL_PRAY              19
 #define SKILL_SPELLLENGTH       20
+//#define SKILL_PSI,				21
 
 /* Ugly but needed */
 #define MAX_SKILLS              70

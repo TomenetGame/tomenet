@@ -1938,7 +1938,7 @@ bool load_server_cfg(void)
 	if (cfg == (FILE*)NULL)
 	{
 //		printf("Error : cannot open file tomenet.cfg\n");
-		printf("Error : cannot open file %s\n", MANGBAND_CFG);
+		printf("Error : cannot open file '%s'\n", MANGBAND_CFG);
 		return (FALSE);
 	}
 

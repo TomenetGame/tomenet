@@ -734,12 +734,14 @@ void do_cmd_activate_skill()
 		case MKEY_SORCERY:
 		case MKEY_MAGERY:
 		case MKEY_SHADOW:
+		case MKEY_ARCHERING:
 			cmd_cast();
 			break;
 		case MKEY_MIMICRY:
 			cmd_mimic();
 			break;
 		case MKEY_FIGHTING:
+			/* Note - cmd_cast() will do */
 			cmd_fight();
 			break;
 		default:

@@ -2750,6 +2750,8 @@ void check_experience(int Ind)
 			p_ptr->skill_points += SKILL_NB_BASE;
 
 			newlv = TRUE;
+
+			/* TODO: give some stats */
 		}
 
 		/* Sound */

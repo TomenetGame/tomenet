@@ -318,7 +318,7 @@ extern char summon_kin_type;
 extern bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, int sex, int stat_order[]);
 extern bool confirm_admin(int Ind, cptr name, cptr pass);
 extern void server_birth(void);
-extern void admin_outfit(int Ind);
+extern void admin_outfit(int Ind, int realm);
 
 /* cave.c */
 extern dun_level *getfloor(struct worldpos *wpos);

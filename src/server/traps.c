@@ -2650,6 +2650,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			}
 		case TRAP_OF_RARE_BOOKS:
 			{
+#if 0	// disabled
 				object_type     forge;
 				object_type     *o_ptr = &forge;
 
@@ -2666,7 +2667,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				(void)inven_carry(Ind, o_ptr);
 
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-
+#endif	// 0
 				break;
 			}
 		/* Wrong Target Trap */
@@ -2787,6 +2788,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
       /* Death Molds Trap */
       case TRAP_OF_DEATH_MOLDS:
+      case TRAP_OF_DEATH_SWORDS:
 		 l = rand_range(1, 2);
          for (k = tdi[l]; k < tdi[l + 1]; k++)
          {
@@ -2799,12 +2801,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			 if (!cave_empty_bold(zcave, cy, cx)) continue;
 
 			 ident |= (place_monster_aux(wpos, cy, cx,
-				race_index("Death mold"), FALSE, FALSE, FALSE) &&
+				race_index(trap == TRAP_OF_DEATH_MOLDS ?
+					"Death mold" : "Death sword"), FALSE, FALSE, FALSE) &&
 					 player_has_los_bold(Ind, cy, cx));
          }
          if (ident)
          {
-            msg_print(Ind, "You suddenly see a lump of malice!");
+            msg_print(Ind, "You suddenly see a siege of malice!");
          }
          break;
 

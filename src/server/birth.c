@@ -990,7 +990,7 @@ static byte player_init[MAX_CLASS][3][2] =
 /*
  * Give the cfg_admin_wizard some interesting stuff.
  */
-void admin_outfit(int Ind)
+void admin_outfit(int Ind, int realm)
 {
 	player_type *p_ptr = Players[Ind];
 	int             i, tv, sv;
@@ -1137,10 +1137,18 @@ void admin_outfit(int Ind)
 
 	/* gimme books :) */
 	//		for (i = p_ptr->pclass == CLASS_WARRIOR?0:1; i < 9; i++)
-	if (p_ptr->mp_ptr->spell_book)
+//	if (p_ptr->mp_ptr->spell_book)
+	if (0 <= realm && realm < MAX_REALM)
+	{
+		char c[] = "@m ";
+		/* soon this will be obsolete tho */
+		c[1] = ((realm == REALM_PRAYER)? 'p':'m');
+		if (realm == REALM_FIGHTING) c[1] = 'n';
+
 		for (i = 0; i < 9; i++)
 		{
-			int k = lookup_kind(p_ptr->mp_ptr->spell_book, i);
+			//			int k = lookup_kind(p_ptr->mp_ptr->spell_book, i);
+			int k = lookup_kind(magic_info[realm].spell_book, i);
 			u32b f1, f2, f3, f4, f5, esp;
 			if (!k) continue;
 			invcopy(o_ptr, k);
@@ -1149,12 +1157,16 @@ void admin_outfit(int Ind)
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 			o_ptr->number = (f3 & TR3_IGNORE_FIRE) ? 1 : 30;
 
+			c[2] = i +1 +48;
+			o_ptr->note = quark_add(c);
+
 			o_ptr->discount = 72;
 			object_known(o_ptr);
 			o_ptr->owner = p_ptr->id;
 			o_ptr->level = 1;
 			(void)inven_carry(Ind, o_ptr);
 		}
+	}
 }
 
 

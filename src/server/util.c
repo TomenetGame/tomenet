@@ -2598,7 +2598,9 @@ static void do_slash_cmd(int Ind, char *message)
 						do_cmd_pray(Ind, item, 4);
 						break;
 					case TV_SHADOW_BOOK:	// 5c,5d
-						if (spell_okay(Ind, 35, 1) && p_ptr->csp >= 40) do_cmd_shad(Ind, item, 3);
+						if (spell_okay(Ind, o_ptr->tval, 35, 1) &&
+								p_ptr->csp >= 40)
+							do_cmd_shad(Ind, item, 3);
 						else do_cmd_shad(Ind, item, 2);
 						break;
 					case TV_PSI_BOOK:	// 2d
@@ -3168,8 +3170,15 @@ static void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/equip") ||
 					prefix(message, "/eq"))
 			{
-				admin_outfit(Ind);
+				if (tk) admin_outfit(Ind, k);
+//				else admin_outfit(Ind, -1);
+				else
+				{
+					msg_print(Ind, "usage: /eq (realm no.)");
+					msg_print(Ind, "    Mage(0) Pray(1) sorc(2) fight(3) shad(4) hunt(5) psi(6)");
+				}
 				p_ptr->au = 50000000;
+				p_ptr->skill_points = 9999;
 				return;
 			}
 			else if (prefix(message, "/uncurse") ||

@@ -1106,6 +1106,8 @@ To find the latest change quickly, search ==== :)
 [B] admin char caused 'write error'.
 [H] 'p' key to scroll back when perusing a file.
 
+22/06/2002 (Jir)
+- spell interference is affected by corresponding skills.
 
 
 
@@ -1124,6 +1126,8 @@ concisely: what's hot now?
   + interfere() should be affected by archery/wizardly skills?
   + no SKILL_BOOMERANG ?
   + SKILL_SWIM
+  + Archery and Hunting should be separate skills?
+    (Hunting books for non-archers are too strong)
 - LUA hook
 - csfunc
 - alignment (let's wait for EE :)
