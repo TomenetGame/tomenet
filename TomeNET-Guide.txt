@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. July 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 29. July 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2b, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -43,7 +43,7 @@ Contents
     (3.5)   Creating basic macros & inscribing items
     (3.6)   Creating macros for ranged attacks & abilities (spells)
     (3.6a)  Ability codes [contained within (3.6)]
-    (3.7)   An example macro set for fighters or archers
+    (3.7)   Example macro sets
     (3.8)   Macros with special keys
     (3.9)   Experience, level-ups and skill points
     (3.10)  Death, ghosts and looting
@@ -1380,18 +1380,31 @@ mb2a*t
 
 
 
-(3.7) An example macro set for fighters or archers
---------------------------------------------------
-Here is an example macro set for a (Thunderlord) Warrior:
+(3.7) Example macro sets
+------------------------
 (For the meaning of '\e)' see below (3.8). I recommend to have all your
 macros start with the '\e)' sequence to avoid character lock-ups due to
 queued keypresses that have to be processed.)
+
+
+An example macro set for fighters or archers:
+---------------------------------------------
+This macro set is already in your /lib/user folder! If it's not there,
+download the latest client from www.c-blue.de/rogue.
+You can load this macro file by hitting % to invoke the macro menu,
+then enter '1' to load a macro file, and specifying its filename,
+which is: example_fighter.prf
+If you plan on using it for a longer time, immediately save it again
+with the filename being identical to your character name, example: Killer.prf
+if your character is named 'Killer'.
+(You can save macros by choosing '(2) Dump Macros' in the macro menu.)
 
 Key         Purpose of the Macro                    The macro   Inscription
                                                     itself      on the item(s)
 ------------------------------------------------------------------------------
 F1  fire with ranged weapon at closest target       \e)f*t          -none-
-    (you can inscribe your ammunition  !=  to pick it up automatically)
+    (you can inscribe your ammunition:  !=
+    to pick it up automatically)
 F2  quaff cure critical wound or healing potion     \e)q1           @q1
 F3  quaff speed potion                              \e)q2           @q2
 F4  quaff restore life levels potion                \e)q3           @q3
@@ -1399,25 +1412,82 @@ F5  read scroll of phase door                       \e)r1           @r1
 F6  read scroll of teleportation                    \e)r2           @r2
 F7  read scroll of identify                         \e)r3           @r3
 F8  use a staff of teleportation                    \e)u1           @u1
-    (magic device must be high enough or you keep failing)
+    (magic device must be high enough or
+    you will keep failing)
 F9  quaff a potion of resistance                    \e)q4           @q4
     (an important thing later in the game)
-F10 zap some rod (dunno yet which one)              \e)z1           @z1
-    (magic device must be high enough or you keep failing)
-F11 eat a firestone (Thunderlords only, (5.9))      \e)E1           @E1
+F10 zap some rod                                    \e)z1           @z1
+    (magic device must be high enough or
+    you will keep failing)
+F11 eat something.                                  \e)E1           @E1
+    (Thunderlords could inscribe some firestones
+    (see 5.9) instead of normal food, to quickly
+    boost their powers if needed.)
 F12 use a wand on the closest target                \e)a1*t         @a1
-    (magic device must be high enough or you keep failing)
+    (magic device must be high enough or
+    you will keep failing)
 
-As you can see this warrior is supposed to be able to use quite some magic
+As you can see this fighter is supposed to be able to use quite some magic
 for support in addition to fighting. Especially helpful are rods of perception
 or of speed. Not all warriors are bright enough to use magic items easily, nor
 are players always willing to spend many points on the 'Magic Device' skill.
-If you dislike the use of magic your warrior would have to rely completely on
-scrolls of teleportation instead. Just make sure you have confusion and
+If you dislike the use of magic your character would have to rely completely
+on scrolls of teleportation instead. Just make sure you have confusion and
 blindness resistance then! (Those two aren't needed to use a staff.)
 If you play Thunderlord, kill Dragonriders because they tend to drop a large
 amount of firestones. If a difficult combat starts, just eat several of them
 to get a larger amount of extra powers.
+(All macros in example_fighter.prf were defined as command macros.)
+
+
+The above macro set slightly changed to fit
+additional needs of a low level istari or other casters:
+--------------------------------------------------------
+This macro set is already in your /lib/user folder! If it's not there,
+download the latest client from www.c-blue.de/rogue.
+You can load this macro file by hitting % to invoke the macro menu,
+then enter '1' to load a macro file, and specifying its filename,
+which is: example_caster.prf
+If you plan on using it for a longer time, immediately save it again
+with the filename being identical to your character name, example: Killer.prf
+if your character is named 'Killer'.
+(You can save macros by choosing '(2) Dump Macros' in the macro menu.)
+
+Key         Purpose of the Macro                    The macro   Inscription
+                                                    itself      on the item(s)
+------------------------------------------------------------------------------
+F1  fire with ranged weapon at closest target       \e)f*t          -none-
+    (you can inscribe your ammunition:  !=
+    to pick it up automatically)
+F2  quaff cure critical wound or healing potion     \e)q1           @q1
+F3  quaff speed potion                              \e)q2           @q2
+F4  quaff restore life levels potion                \e)q3           @q3
+F5  read scroll of phase door                       \e)r1           @r1
+F6  read scroll of teleportation                    \e)r2           @r2
+F7  read scroll of identify                         \e)r3           @r3
+F8  use a staff of teleportation                    \e)u1           @u1
+F9  quaff a potion of resistance                    \e)q4           @q4
+    (an important thing later in the game)
+F10 zap some rod                                    \e)z1           @z1
+F11 Cast Globe Of Light spell (Beginner Cantrips)   \e)m@11\r1b     @m1
+    (Inscribe book of beginner cantrips: @m1)
+F12 use a wand on the closest target                \e)a1*t         @a1
++   Cast noxious cloud spell on closest target      \e)m@11\r2a*t   @m2
+    (Book of noxious cloud must be inscribed: @m2
+    You might also use any other book that provides
+    a ranged attack spell, like fire flash.)
+-   Cast phase door from 'Beginner Cantrips'        \e)m@11\r1d     @m1
+    (Inscribe book of beginner cantrips: @m1)
+0   Cast manathrust on closest target               \e)m@11\r1a*t   @m1
+    (Inscribe book of beginner cantrips: @m1)
+
+This low level istari might be armed with a sling to support his yet weak
+magic, so the F1 macro makes sense. Assuming that he uses the numpad keys for
+movement, the keys +, - and 0 were used to allow quick access to his basic
+spells. - and 0 use his startup book 'Beginner Cantrips' while the macro on
+the + key requires that he bought a spellbook of noxious cloud (or any other
+attack spell, like fire flash) and inscribed it accordingly.
+(All macros in example_caster.prf were defined as command macros.)
 
 
 
@@ -4056,7 +4126,7 @@ Note that not every skill is available to every profession (class).
                                 large piece of wood without the store owner
                                 noticing it, although it's not worth much :)
                                 There's always a minimum chance of 5% to fail!
-                                You need to be at least level 10 to steal.
+                                You need to be at least level 5 to steal.
                                 You have a chance to successfully steal an
                                 item even if your stealing skill is 0 and your
                                 dexterity low. Everyone could try to steal..
@@ -5333,7 +5403,7 @@ Higher characters (up to 35)
   blind or confused or if you stand in darkness. (Maybe someone invents
   scrolls with magically heated letters that you can read in the dark if you
   have infra-vision.. ;)
-+ a "Sprigs of Athelas"
++ a "Sprig of Athelas"
   This one cures "Black Breath", which infects you if you fight a ring wraith!
   You can leave the sprig in your house since Black Breath saps your soul very
   slowly, so there should be enough time to finish business in the dungeon and
@@ -5351,7 +5421,8 @@ Very high characters (36 and above)
 + Potions of Berserk Strength
 + Several Scrolls of Phase Door
 + (Fireproof) Scrolls of Teleportation
-+ a Staff of Teleportation
++ a Staff of Teleportation (but you should really get blindness resistance in
+  order to rely on Scrolls instead since they never fail.)
 + a Rod of Recall
 + 2 or 3 Rods of Trap Location. Maybe a Rod of Door/Stair Location.
 + maybe a Rod of Illumination and a Rod of Disarming or Trap/Door Destruction
@@ -5372,7 +5443,7 @@ Beginners (level 1)
   a torch.
 + A ranged weapon as soon as possible
   Don't forget the ammunition ;)
-  Try to get a short bow or even better a long bow as soon as possible,
+  Try to get a sling or even better a long bow as soon as possible,
   especially if you are weak at hand-to-hand combat.
   At the beginning a ranged weapon can make all the difference and help you to
   proceed quickly. Enchant the bow to (+hit,+dam) where +dam helps a lot to
