@@ -1939,7 +1939,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 
 				/* Messages */
 				msg_format(Ind, "You hit %s for \377o%d \377wdamage.", p_name, k);
-				msg_format(0 - c_ptr->m_idx, "%s hits you.", p_ptr->name);
+				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 				if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 				if(q_ptr->chp<5){
@@ -1954,7 +1954,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 
 				/* Messages */
 				msg_format(Ind, "You hit %s for \377o%d \377wdamage.", p_name, k);
-				msg_format(0 - c_ptr->m_idx, "%s hits you.", p_ptr->name);
+				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 				if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 				if(q_ptr->chp<5){
@@ -2662,14 +2662,14 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			{
 				backstab = FALSE;
 				if (r_ptr->flags1 & RF1_UNIQUE)
-				msg_format(Ind, "You %s stab the helpless, sleeping %s for \377p%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
+				msg_format(Ind, "You %s stab the helpless, sleeping %s for \377e%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
 				else msg_format(Ind, "You %s stab the helpless, sleeping %s for \377p%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
 			}
 			else if (stab_fleeing)
 			{
 				stab_fleeing = FALSE;
 				if (r_ptr->flags1 & RF1_UNIQUE)
-				msg_format(Ind, "You %s the fleeing %s for \377p%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
+				msg_format(Ind, "You %s the fleeing %s for \377e%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
 				else msg_format(Ind, "You %s the fleeing %s for \377g%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
 			}
 //			else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
@@ -2677,7 +2677,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			else
 			{
 				if (r_ptr->flags1 & RF1_UNIQUE)
-				msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
+				msg_format(Ind, "You hit %s for \377e%d \377wdamage.", m_name, k);
 				else msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
 			}
 			if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);

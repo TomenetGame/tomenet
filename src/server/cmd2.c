@@ -3103,7 +3103,10 @@ void do_cmd_fire(int Ind, int dir)
 								{
 									/* Messages */
 									msg_format(Ind, "The %s hits %s for \377o%d \377wdamage.", o_name, p_name, tdam);
-									msg_format(0 - c_ptr->m_idx, "%^s hits you with a %s.", p_ptr->name, o_name);
+									if ((o_name[0] == 'A') || (o_name[0] == 'E') || (o_name[0] == 'I') || (o_name[0] == 'O') || (o_name[0] == 'U') ||
+									    (o_name[0] == 'a') || (o_name[0] == 'e') || (o_name[0] == 'i') || (o_name[0] == 'o') || (o_name[0] == 'u'))
+										msg_format(0 - c_ptr->m_idx, "%^s hits you with an %s for \377R%d \377wdamage.", p_ptr->name, o_name, tdam);
+									else	msg_format(0 - c_ptr->m_idx, "%^s hits you with a %s for \377R%d \377wdamage.", p_ptr->name, o_name, tdam);
 
 									/* Track this player's health */
 									health_track(Ind, c_ptr->m_idx);
@@ -3871,7 +3874,10 @@ void do_cmd_throw(int Ind, int dir, int item)
 					{
 						/* Messages */
 						msg_format(Ind, "The %s hits %s for \377o%d \377wdamage.", o_name, p_name, tdam);
-						msg_format(0 - c_ptr->m_idx, "%s hits you with a %s!", p_ptr->name, o_name);
+						if ((o_name[0] == 'A') || (o_name[0] == 'E') || (o_name[0] == 'I') || (o_name[0] == 'O') || (o_name[0] == 'U') ||
+						    (o_name[0] == 'a') || (o_name[0] == 'e') || (o_name[0] == 'i') || (o_name[0] == 'o') || (o_name[0] == 'u'))
+							msg_format(0 - c_ptr->m_idx, "%^s hits you with an %s for \377R%d \377wdamage.", p_ptr->name, o_name, tdam);
+						else	msg_format(0 - c_ptr->m_idx, "%^s hits you with a %s for \377R%d \377wdamage.", p_ptr->name, o_name, tdam);
 
 						/* Track player's health */
 						health_track(Ind, c_ptr->m_idx);

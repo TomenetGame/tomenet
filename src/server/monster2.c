@@ -3536,19 +3536,19 @@ void message_pain(int Ind, int m_idx, int dam)
 	if (strchr("jmvQ", r_ptr->d_char) && (r_ptr->flags1 & RF1_UNIQUE))
 	{
 		if (percentage > 95)
-			msg_format(Ind, "%^s barely notices the \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s barely notices the \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 75)
-			msg_format(Ind, "%^s flinches from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s flinches from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 50)
-			msg_format(Ind, "%^s squelches from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s squelches from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 35)
-			msg_format(Ind, "%^s quivers in pain from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s quivers in pain from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 20)
-			msg_format(Ind, "%^s writhes about from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s writhes about from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 10)
-			msg_format(Ind, "%^s writhes in agony from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s writhes in agony from \377e%d \377wdamage.", m_name, dam);
 		else
-			msg_format(Ind, "%^s jerks limply from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s jerks limply from \377e%d \377wdamage.", m_name, dam);
 	}
 	else if (strchr("jmvQ", r_ptr->d_char))
 	{
@@ -3572,19 +3572,19 @@ void message_pain(int Ind, int m_idx, int dam)
 	else if (strchr("CZ", r_ptr->d_char) && (r_ptr->flags1 & RF1_UNIQUE))
 	{
 		if (percentage > 95)
-			msg_format(Ind, "%^s shrugs off the attack of \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s shrugs off the attack of \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 75)
-			msg_format(Ind, "%^s snarls with pain from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s snarls with pain from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 50)
-			msg_format(Ind, "%^s yelps in pain from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s yelps in pain from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 35)
-			msg_format(Ind, "%^s howls in pain from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s howls in pain from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 20)
-			msg_format(Ind, "%^s howls in agony from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s howls in agony from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 10)
-			msg_format(Ind, "%^s writhes in agony from \377p%d \377wdamage.", m_name,dam);
+			msg_format(Ind, "%^s writhes in agony from \377e%d \377wdamage.", m_name,dam);
 		else
-			msg_format(Ind, "%^s yelps feebly from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s yelps feebly from \377e%d \377wdamage.", m_name, dam);
 	}
 	else if (strchr("CZ", r_ptr->d_char))
 	{
@@ -3608,19 +3608,19 @@ void message_pain(int Ind, int m_idx, int dam)
 	else if (strchr("FIKMRSXabclqrst", r_ptr->d_char) && (r_ptr->flags1 & RF1_UNIQUE))
 	{
 		if (percentage > 95)
-			msg_format(Ind, "%^s ignores the attack of \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s ignores the attack of \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 75)
-			msg_format(Ind, "%^s grunts with pain from \377p%d \377wdamage.", m_name ,dam);
+			msg_format(Ind, "%^s grunts with pain from \377e%d \377wdamage.", m_name ,dam);
 		else if (percentage > 50)
-			msg_format(Ind, "%^s squeals in pain from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s squeals in pain from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 35)
-			msg_format(Ind, "%^s shrieks in pain from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s shrieks in pain from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 20)
-			msg_format(Ind, "%^s shrieks in agony from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s shrieks in agony from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 10)
-			msg_format(Ind, "%^s writhes in agony from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s writhes in agony from \377e%d \377wdamage.", m_name, dam);
 		else
-			msg_format(Ind, "%^s cries out feebly from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s cries out feebly from \377e%d \377wdamage.", m_name, dam);
 	}
 
 	/* Another type of monsters (shrug,cry,scream) */
@@ -3646,19 +3646,19 @@ void message_pain(int Ind, int m_idx, int dam)
 	else if (r_ptr->flags1 & RF1_UNIQUE)
 	{
 		if (percentage > 95)
-			msg_format(Ind, "%^s shrugs off the attack of \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s shrugs off the attack of \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 75)
-			msg_format(Ind, "%^s grunts with pain from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s grunts with pain from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 50)
-			msg_format(Ind, "%^s cries out in pain from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s cries out in pain from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 35)
-			msg_format(Ind, "%^s screams in pain from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s screams in pain from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 20)
-			msg_format(Ind, "%^s screams in agony from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s screams in agony from \377e%d \377wdamage.", m_name, dam);
 		else if (percentage > 10)
-			msg_format(Ind, "%^s writhes in agony from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s writhes in agony from \377e%d \377wdamage.", m_name, dam);
 		else
-			msg_format(Ind, "%^s cries out feebly from \377p%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s cries out feebly from \377e%d \377wdamage.", m_name, dam);
 	}
 	else
 	{
