@@ -48,7 +48,7 @@
  * Thresholds for scrolling.	[2,4]
  * They really should be client-side options.	- Jir -
  */
-#define	SCROLL_MERGIN_ROW	4
+#define	SCROLL_MERGIN_ROW	3
 #define	SCROLL_MERGIN_COL	8
 
 

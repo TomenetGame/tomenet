@@ -158,6 +158,7 @@ void cmd_all_in_one(void)
 			break;
 		}
 
+		/* Presume it's sort of spellbook */
 		case TV_PSI_BOOK:
 		case TV_MAGIC_BOOK:
 		case TV_SORCERY_BOOK:
@@ -175,7 +176,7 @@ void cmd_all_in_one(void)
 				{
 					if (s_info[i].action_mkey && p_ptr->s_info[i].value)
 					{
-						do_activate_skill(i);
+						do_activate_skill(i, item);
 						done = TRUE;
 					}
 					break;

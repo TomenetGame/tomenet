@@ -775,11 +775,11 @@ int do_cmd_activate_skill_aux()
 	return ret;
 }
 
-void do_activate_skill(int x_idx)
+void do_activate_skill(int x_idx, int item)
 {
-	int item, dir, spell;
+	int dir, spell;
 
-	item = dir = spell = 0;
+	dir = spell = 0;
 
 	if (s_info[x_idx].flags1 & SKF1_MKEY_HARDCODE)
 	{
@@ -796,11 +796,15 @@ void do_activate_skill(int x_idx)
 	}
 	else if (s_info[x_idx].flags1 & SKF1_MKEY_SPELL)
 	{
-		item_tester_tval = s_info[x_idx].tval;
-		if (!c_get_item(&item, "Cast from which book? ", FALSE, TRUE, FALSE))
+		if (!item)
 		{
-			if (item == -2) c_msg_print("You have no books that you can cast from.");
-			return;
+			item_tester_tval = s_info[x_idx].tval;
+			if (!c_get_item(&item, "Cast from which book? ", FALSE, TRUE, FALSE))
+			{
+				if (item == -2)
+					c_msg_print("You have no books that you can cast from.");
+				return;
+			}
 		}
 
 		/* Ask for a spell, allow cancel */
@@ -812,7 +816,7 @@ void do_activate_skill(int x_idx)
 		return;
 	}
 
-	if (s_info[x_idx].flags1 & SKF1_MKEY_ITEM)
+	if (!item && s_info[x_idx].flags1 & SKF1_MKEY_ITEM)
 	{
 		item_tester_tval = s_info[x_idx].tval;
 		if (!c_get_item(&item, "Which item? ", TRUE, TRUE, FALSE))
@@ -852,7 +856,7 @@ void do_cmd_activate_skill()
 #endif
 	if (x_idx == -1) return;
 
-	do_activate_skill(x_idx);
+	do_activate_skill(x_idx, 0);
 
 //	if (!x_idx)
 //	{
