@@ -1268,8 +1268,10 @@ static int Handle_setup(int ind)
         }
 
 		connp->setup = (char *) &Setup.motd[0] - (char *) &Setup;
+		connp->setup=0;
 	}
-	else if (connp->setup < Setup.setup_size)
+	/* else if (connp->setup < Setup.setup_size) */
+	else if (connp->setup < Setup.motd_len)
 	{
 		if (connp->c.len > 0)
 		{
@@ -1279,7 +1281,8 @@ static int Handle_setup(int ind)
 				return -1;
 		}
 	}
-	if (connp->setup < Setup.setup_size)
+	/* if (connp->setup < Setup.setup_size) */
+	if (connp->setup < Setup.motd_len)
 	{
 		len = MIN(connp->c.size, 4096) - connp->c.len;
 		if (len <= 0)
@@ -1287,10 +1290,18 @@ static int Handle_setup(int ind)
 			/* Wait for acknowledgement of previously transmitted data. */
 			return 0;
 		}
+	/*
 		if (len > Setup.setup_size - connp->setup)
 			len = Setup.setup_size - connp->setup;
+	*/
 
-		buf = (char *) &Setup;
+		if(len>Setup.motd_len-connp->setup){
+			len=Setup.motd_len-connp->setup;
+			len=Setup.motd_len;
+		}
+
+	/*	buf = (char *) &Setup; */
+		buf = (char *) &Setup.motd[0];
 		if (Sockbuf_write(&connp->c, &buf[connp->setup], len) != len)
 		{
 			Destroy_connection(ind, "sockbuf write setup error");
@@ -1301,7 +1312,8 @@ static int Handle_setup(int ind)
 			connp->start += (len * cfg.fps) / (8 * 512) + 1;
 	}
 
-	if (connp->setup >= Setup.setup_size)
+	/* if (connp->setup >= Setup.setup_size) */
+	if (connp->setup >= Setup.motd_len)
 		//Conn_set_state(connp, CONN_DRAIN, CONN_LOGIN);
 		Conn_set_state(connp, CONN_LOGIN, CONN_LOGIN);
 
