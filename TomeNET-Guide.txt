@@ -456,13 +456,13 @@ Ammunition:
     !=          will make your character auto-pickup the ammo from the floor.
 
 An item that can be activated:
-    @A1         pressing A1 will activate that item.
+    @A1         pressing the keys 'A' and then '1' will activate that item.
 
 A potion:
-    @q3         pressing q3 will quaff that potion.
+    @q3         pressing 'q' then '3' will quaff that potion.
 
 A magic scroll:
-    @r0         pressing r0 will read that scroll.
+    @r0         pressing the keys 'r' and '0' will read that scroll.
 
 etc.. you get the idea. :)
 
@@ -1397,7 +1397,8 @@ which is: example_fighter.prf
 If you plan on using it for a longer time, immediately save it again
 with the filename being identical to your character name, example: Killer.prf
 if your character is named 'Killer'.
-(You can save macros by choosing '(2) Dump Macros' in the macro menu.)
+(You can save macros by choosing '(2) Dump Macros' in the macro menu.
+Note: The file example_fighter.prf is write-protected to avoid overwriting.)
 
 Key         Purpose of the Macro                    The macro   Inscription
                                                     itself      on the item(s)
@@ -1437,7 +1438,8 @@ blindness resistance then! (Those two aren't needed to use a staff.)
 If you play Thunderlord, kill Dragonriders because they tend to drop a large
 amount of firestones. If a difficult combat starts, just eat several of them
 to get a larger amount of extra powers.
-(All macros in example_fighter.prf were defined as command macros.)
+(All macros in example_fighter.prf were defined as command macros.
+Note: The file example_fighter.prf is write-protected to avoid overwriting.)
 
 
 The above macro set slightly changed to fit
