@@ -584,6 +584,9 @@ extern void teleport_player_to(int Ind, int ny, int nx);
 extern void teleport_player_level(int Ind);
 extern bool imprison(int Ind, int time, char *reason);
 
+/* This could have some good uses */
+extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg);
+
 extern int NumPlayers;
 extern player_type *Players[0xFFFFF] @ Players_real;
 extern int get_playerind(char *name);
