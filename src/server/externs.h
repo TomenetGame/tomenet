@@ -90,6 +90,7 @@ extern int skill_tree_init[MAX_SKILLS][2];
 
 
 /* variable.c */
+obj_theme default_obj_theme;
 extern s16b count_project;
 extern char tdy[662];
 extern char tdx[662];
@@ -716,7 +717,8 @@ extern void wipe_o_list(struct worldpos *wpos);
 extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great);
 extern void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great);
 extern void determine_level_req(int level, object_type *o_ptr);
-extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great);
+//extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great);
+extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, obj_theme theme);
 extern void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great);
 extern void place_gold(struct worldpos *wpos, int y, int x);
 extern s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);

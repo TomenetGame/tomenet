@@ -672,6 +672,8 @@ static void whats_under_your_feet(int Ind)
 	/* Get the object */
 	o_ptr = &o_list[c_ptr->o_idx];
 
+	if (!o_ptr->k_idx) return;
+
 	/* Auto id ? */
 	if (p_ptr->auto_id)
 	{

@@ -390,7 +390,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* Otherwise drop an item */
 				else
 				{
-					place_object(wpos, ny, nx, FALSE, FALSE);
+					place_object(wpos, ny, nx, FALSE, FALSE, default_obj_theme);
 				}
 
 				/* Reset the object level */
@@ -1306,7 +1306,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					/* Hack -- place an object */
 					if (rand_int(100) < 10)
 					{
-						place_object(wpos, y, x, FALSE, FALSE);
+						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
 						if (player_can_see_bold(Ind, y, x))
 						{
 							msg_print(Ind, "You have found something!");

@@ -3823,7 +3823,7 @@ void shutdown_server(void)
 
 	/* Now wipe every object, to preserve artifacts on the ground */
 #ifdef NEW_DUNGEON
-#if 1	// though AUTO_PURGE does this job anyway..
+#if 0	// though AUTO_PURGE does this job anyway..
 	wipeout_needless_objects();
 #endif	// 0
 #else

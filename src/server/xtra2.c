@@ -3095,7 +3095,7 @@ void monster_death(int Ind, int m_idx)
 			/* Place Object */
 			else
 			{
-				place_object(wpos, y, x, good, great);
+				place_object(wpos, y, x, good, great, r_ptr->drops);
 //				if (player_can_see_bold(Ind, ny, nx)) dump_item++;
 			}
 
@@ -4585,7 +4585,7 @@ void monster_death_mon(int am_idx, int m_idx)
 			/* Place Object */
 			else
 			{
-				place_object(wpos, ny, nx, good, great);
+				place_object(wpos, ny, nx, good, great, default_obj_theme);
 			}
 
 			/* Reset the object level */

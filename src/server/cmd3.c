@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: cmd3.c */
 
 /* Purpose: Inventory commands */
@@ -75,6 +76,16 @@ void inven_takeoff(int Ind, int item, int amt)
 	{
 		act = "Light source was";
 	}
+	/* Took off ammo */
+	else if (item == INVEN_AMMO)
+	{
+		act = "You were carrying in your quiver";
+	}
+	/* Took off tool */
+	else if (item == INVEN_TOOL)
+	{
+		act = "You were using";
+	}
 	else
 	{
 		act = "Was wearing";
@@ -121,7 +132,7 @@ void inven_takeoff(int Ind, int item, int amt)
 /*
  * Drops (some of) an item from inventory to "near" the current location
  */
-static void inven_drop(int Ind, int item, int amt)
+void inven_drop(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -239,15 +250,23 @@ static bool item_tester_hook_wear(int Ind, int slot)
 	}
 	else
 	{
-	  if ((p_ptr->pclass == CLASS_MONK) && ((slot == INVEN_WIELD) || (slot == INVEN_BOW))) return FALSE;
+		if ((p_ptr->pclass == CLASS_MONK) &&
+			(slot == INVEN_WIELD || slot == INVEN_BOW || slot == INVEN_AMMO) )
+			return FALSE;
 
 		/* Check for a usable slot */
-		if (slot >= INVEN_WIELD){
+		if (slot >= INVEN_WIELD)
+		{
+#if 0
+			/* use of shield is banned in do_cmd_wield if with 2H weapon.
+			 * 3 slots are too severe.. thoughts?	- Jir -
+			 */
 			if(slot==INVEN_BOW && p_ptr->inventory[INVEN_WIELD].k_idx){
 				u32b f1, f2, f3, f4, f5, esp;
 				object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &esp);
 				if(f4 & TR4_MUST2H) return(FALSE);
 			}
+#endif	// 0
 			return (TRUE);
 		}
 	}
@@ -262,15 +281,16 @@ void do_takeoff_impossible(int Ind)
   int k;
   player_type *p_ptr = Players[Ind];
 
+  bypass_inscrption = TRUE;
   for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
     {
       if ((p_ptr->inventory[k].k_idx) && (!item_tester_hook_wear(Ind, k)))
 	{
 	  /* Ahah TAKE IT OFF ! */
-          bypass_inscrption = TRUE;
 	  inven_takeoff(Ind, k, 255);
 	}
     }
+  bypass_inscrption = FALSE;
 }
 
 /*
@@ -280,7 +300,7 @@ void do_cmd_wield(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int slot;
+	int slot, num = 1;
 	object_type tmp_obj;
 	object_type *o_ptr;
 	object_type *x_ptr;
@@ -343,6 +363,42 @@ void do_cmd_wield(int Ind, int item)
 		return;
 	}
 
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	/* Two handed weapons can't be wielded with a shield */
+	/* TODO: move to item_tester_hook_wear? */
+#if 0
+	if ((is_slot_ok(slot - INVEN_WIELD + INVEN_ARM)) &&
+	    (f4 & TR4_MUST2H) &&
+	    (inventory[slot - INVEN_WIELD + INVEN_ARM].k_idx != 0))
+#endif	// 0
+	if ( (f4 & TR4_MUST2H) &&
+	    (p_ptr->inventory[INVEN_ARM].k_idx != 0))
+	{
+		object_desc(Ind, o_name, o_ptr, FALSE, 0);
+		msg_format(Ind, "You cannot wield your %s with a shield.", o_name);
+		return;
+	}
+
+//	if (is_slot_ok(slot - INVEN_ARM + INVEN_WIELD)) {
+
+	//		i_ptr = &inventory[slot - INVEN_ARM + INVEN_WIELD];
+	if (o_ptr->tval == TV_SHIELD && (x_ptr = &p_ptr->inventory[INVEN_WIELD]))
+	{
+		/* Extract the flags */
+		object_flags(x_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+		/* Prevent shield from being put on if wielding 2H */
+		if ((f4 & TR4_MUST2H) && (x_ptr->k_idx) )
+			//		    (p_ptr->body_parts[slot - INVEN_WIELD] == INVEN_ARM))
+		{
+			object_desc(Ind, o_name, o_ptr, FALSE, 0);
+			msg_format(Ind, "You cannot wield your %s with a two-handed weapon.", o_name);
+			return;
+		}
+	}
+
 	x_ptr = &(p_ptr->inventory[slot]);
 
 	if( check_guard_inscription( x_ptr->note, 't' )) {
@@ -391,19 +447,21 @@ void do_cmd_wield(int Ind, int item)
 
 	/* Get a copy of the object to wield */
 	tmp_obj = *o_ptr;
-	tmp_obj.number = 1;
+	
+	if(slot == INVEN_AMMO) num = o_ptr->number; 
+	tmp_obj.number = num;
 
 	/* Decrease the item (from the pack) */
 	if (item >= 0)
 	{
-		inven_item_increase(Ind, item, -1);
+		inven_item_increase(Ind, item, -num);
 		inven_item_optimize(Ind, item);
 	}
 
 	/* Decrease the item (from the floor) */
 	else
 	{
-		floor_item_increase(0 - item, -1);
+		floor_item_increase(0 - item, -num);
 		floor_item_optimize(0 - item);
 	}
 
@@ -420,14 +478,42 @@ void do_cmd_wield(int Ind, int item)
 #endif	// 0
 	  {
 
+#if 0
 	/* Take off the "entire" item if one is there */
 	if (p_ptr->inventory[slot].k_idx) inven_takeoff(Ind, slot, 255);
+#else	// 0
+	/* Take off existing item */
+	if(slot != INVEN_AMMO)
+	{
+		if (o_ptr->k_idx)
+		{
+			/* Take off existing item */
+			(void)inven_takeoff(Ind, slot, 255);
+		}
+	}
+	else
+	{
+		if (o_ptr->k_idx)
+		{
+			if (!object_similar(Ind, o_ptr, &tmp_obj))
+			{
+				/* Take off existing item */
+				(void)inven_takeoff(Ind, slot, 255);
+			}
+			else
+			{
+				// tmp_obj.number += o_ptr->number;
+				object_absorb(Ind, &tmp_obj, o_ptr);
+			}
+		}                
+	}
+#endif	// 0
 
 	/* Wear the new stuff */
 	*o_ptr = tmp_obj;
 
 	/* Increase the weight */
-	p_ptr->total_weight += o_ptr->weight;
+	p_ptr->total_weight += o_ptr->weight * num;
 
 	/* Increment the equip counter by hand */
 	p_ptr->equip_cnt++;
@@ -444,6 +530,14 @@ void do_cmd_wield(int Ind, int item)
 	else if (slot == INVEN_LITE)
 	{
 		act = "Your light source is";
+	}
+	else if (slot == INVEN_AMMO)
+	{
+		act = "In your quiver you have";
+	}
+	else if (slot == INVEN_TOOL)
+	{
+		act = "You are using";
 	}
 	else
 	{
@@ -956,8 +1050,221 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 
 
 /*
+ * Steal an object from a monster
+ */
+/*
+ * This is quite abusable.. you can rob Wormie, leave the floor, and
+ * you'll meet him again and again... so I stop implementing this.
+ * - Jir -
+ */
+#if 0
+void do_cmd_steal_from_monster(int Ind, int dir)
+{
+	player_type *p_ptr = Players[Ind], *q_ptr;
+
+	cave_type **zcave;
+
+	int x, y, dir = 0, item = -1, k = -1;
+
+	cave_type *c_ptr;
+
+	monster_type *m_ptr;
+
+	object_type *o_ptr, forge;
+
+	byte num = 0;
+
+	bool done = FALSE;
+
+	int monst_list[23];
+
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+
+	/* Only works on adjacent monsters */
+	if (!get_rep_dir(&dir)) return;
+	y = py + ddy[dir];
+	x = px + ddx[dir];
+	c_ptr = &cave[y][x];
+
+	if (!(c_ptr->m_idx))
+	{
+		msg_print("There is no monster there!");
+		return;
+	}
+
+	m_ptr = &m_list[c_ptr->m_idx];
+
+	/* There were no non-gold items */
+	if (!m_ptr->hold_o_idx)
+	{
+		msg_print("That monster has no objects!");
+		return;
+	}
+
+#if 0
+	/* The monster is immune */
+	if (r_info[m_ptr->r_idx].flags7 & (RF7_NO_THEFT))
+	{
+		msg_print("The monster is guarding the treasures.");
+		return;
+	}
+
+	screen_save();
+
+	num = show_monster_inven(c_ptr->m_idx, monst_list);
+
+	/* Repeat until done */
+	while (!done)
+	{
+		char tmp_val[80];
+		char which = ' ';
+
+		/* Build the prompt */
+		strnfmt(tmp_val, 80, "Choose an item to steal (a-%c) or ESC:",
+				'a' - 1 + num);
+
+		/* Show the prompt */
+		prt(tmp_val, 0, 0);
+
+		/* Get a key */
+		which = inkey();
+
+		/* Parse it */
+		switch (which)
+		{
+			case ESCAPE:
+			{
+				done = TRUE;
+
+				break;
+			}
+
+			default:
+			{
+				int ver;
+
+				/* Extract "query" setting */
+				ver = isupper(which);
+				which = tolower(which);
+
+				k = islower(which) ? A2I(which) : -1;
+				if (k < 0 || k >= num)
+				{
+					bell();
+
+					break;
+				}
+
+				/* Verify the item */
+				if (ver && !verify("Try", 0 - monst_list[k]))
+				{
+					done = TRUE;
+
+					break;
+				}
+
+				/* Accept that choice */
+				item = monst_list[k];
+				done = TRUE;
+
+				break;
+			}
+		}
+	}
+#endif	// 0
+
+	if (item != -1)
+	{
+		int chance;
+
+		chance = 40 - p_ptr->stat_ind[A_DEX];
+		chance +=
+			o_list[item].weight / (get_skill_scale(SKILL_STEALING, 19) + 1);
+		chance += get_skill_scale(SKILL_STEALING, 29) + 1;
+		chance -= (m_ptr->csleep) ? 10 : 0;
+		chance += m_ptr->level;
+
+		/* Failure check */
+		if (rand_int(chance) > 1 + get_skill_scale(SKILL_STEALING, 25))
+		{
+			/* Take a turn */
+			energy_use = 100;
+
+			/* Wake up */
+			m_ptr->csleep = 0;
+
+			/* Speed up because monsters are ANGRY when you try to thief them */
+			m_ptr->mspeed += 5;
+
+			screen_load();
+
+			msg_print("Oops ! The monster is now really *ANGRY*.");
+
+			return;
+		}
+
+		/* Reconnect the objects list */
+		if (num == 1) m_ptr->hold_o_idx = 0;
+		else
+		{
+			if (k > 0) o_list[monst_list[k - 1]].next_o_idx = monst_list[k + 1];
+			if (k + 1 >= num) o_list[monst_list[k - 1]].next_o_idx = 0;
+			if (k == 0) m_ptr->hold_o_idx = monst_list[k + 1];
+		}
+
+		/* Rogues gain some xp */
+		if (PRACE_FLAGS(PR1_EASE_STEAL))
+		{
+			s32b max_point;
+
+			/* Max XP gained from stealing */
+			max_point = (o_list[item].weight / 2) + (m_ptr->level * 10);
+
+			/* Randomise it a bit, with half a max guaranteed */
+			gain_exp((max_point / 2) + (randint(max_point) / 2));
+
+			/* Allow escape */
+			if (get_check("Phase door?")) teleport_player(10);
+		}
+
+		/* Get the item */
+		o_ptr = &forge;
+
+		/* Special handling for gold */
+		if (o_list[item].tval == TV_GOLD)
+		{
+			/* Collect the gold */
+			p_ptr->au += o_list[item].pval;
+
+			/* Redraw gold */
+			p_ptr->redraw |= (PR_GOLD);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_PLAYER);
+		}
+		else
+		{
+			object_copy(o_ptr, &o_list[item]);
+
+			inven_carry(o_ptr, FALSE);
+		}
+
+		/* Delete it */
+		o_list[item].k_idx = 0;
+	}
+
+	screen_load();
+
+	/* Take a turn */
+	energy_use = 100;
+}
+#endif	// 0
+
+
+/*
  * Attempt to steal from another player
  */
+/* TODO: Make it possible to steal from monsters.. */
 void do_cmd_steal(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -975,25 +1282,34 @@ void do_cmd_steal(int Ind, int dir)
 	        return;
 	}	                                                        
 
+	/* May not steal from yourself */
+	if (!dir || dir == 5) return;
+
 	/* Examine target grid */
 	c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
 
 	/* May only steal from players */
 	if (c_ptr->m_idx >= 0)
+//	if (c_ptr->m_idx = 0)
 	{
 		/* Message */
 		msg_print(Ind, "You see nothing there to steal from.");
 
 		return;
 	}
-
-	/* May not steal from yourself */
-	if (!dir || dir == 5) return;
+#if 0	// No, since for now it's way too cheezy..
+	else if (c_ptr->m_idx > 0)
+	{
+		do_cmd_steal_from_monster(int Ind, int dir);
+		return;
+	}
+#endif	// 0
 
 	/* Examine target */
 	q_ptr = Players[0 - c_ptr->m_idx];
 
 	/* May not steal from hostile players */
+	/* I doubt if it's reasonable..dunno	- Jir - */
 	if (check_hostile(0 - c_ptr->m_idx, Ind))
 	{
 		/* Message */
@@ -1013,9 +1329,11 @@ void do_cmd_steal(int Ind, int dir)
 
 	/* Compute chance of success */
 	success = 3 * (adj_dex_safe[p_ptr->stat_ind[A_DEX]] - adj_dex_safe[q_ptr->stat_ind[A_DEX]]);
+	success += 2 * (UNAWARENESS(q_ptr) - UNAWARENESS(p_ptr));
 
 	/* Compute base chance of being noticed */
 	notice = 5 * (adj_mag_stat[q_ptr->stat_ind[A_INT]] - p_ptr->skill_stl);
+	notice += 1 * (UNAWARENESS(q_ptr) - UNAWARENESS(p_ptr));
 
 	/* Hack -- Rogues get bonuses to chances */
 	if (p_ptr->pclass == CLASS_ROGUE)
@@ -1040,6 +1358,13 @@ void do_cmd_steal(int Ind, int dir)
 		{
 			int amt = q_ptr->au / 10;
 
+			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_MONEY_BELT && magik (70))
+			{
+				/* Saving throw message */
+				msg_print(Ind, "You couldn't find any money!");
+				amt = 0;
+			}
+
 			/* Transfer gold */
 			if (amt)
 			{
@@ -1053,19 +1378,19 @@ void do_cmd_steal(int Ind, int dir)
 
 				/* Tell thief */
 				msg_format(Ind, "You steal %ld gold.", amt);
+			}
 
-				/* Always small chance to be noticed */
-				if (notice < 5) notice = 5;
+			/* Always small chance to be noticed */
+			if (notice < 5) notice = 5;
 
-				/* Check for target noticing */
-				if (rand_int(100) < notice)
-				{
-					/* Message */
-					msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %ld gold!",
-					           p_ptr->name, amt);
+			/* Check for target noticing */
+			if (rand_int(100) < notice)
+			{
+				/* Message */
+				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %ld gold!",
+						p_ptr->name, amt);
 
-					caught = TRUE;
-				}
+				caught = TRUE;
 			}
 		}
 		else
@@ -1081,10 +1406,16 @@ void do_cmd_steal(int Ind, int dir)
 			o_ptr = &q_ptr->inventory[item];
 			forge = *o_ptr;
 
+			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik (70))
+			{
+				/* Saving throw message */
+				msg_print(Ind, "Your attempt to steal was interfered by a strange device!");
+				notice += 50;
+			}
+
 			/* True artifact is HARD to steal */
-			if (cfg.anti_arts_horde && (artifact_p(o_ptr)) && (!o_ptr->name3)
-				&& ((q_ptr->exp > p_ptr->exp)
-					|| (rand_int(500) > success )))
+			else if (cfg.anti_arts_horde && true_artifact_p(o_ptr)
+				&& ((q_ptr->exp > p_ptr->exp) || (rand_int(500) > success )))
 			{
 				msg_print(Ind, "The object itself seems to evade your hand!");
 			}
@@ -1177,6 +1508,7 @@ void do_cmd_steal(int Ind, int dir)
 
 		set_stun(Ind, p_ptr->stun + randint(50));
 		set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
+		p_ptr->pkill|=PKILL_KILLABLE;
 
 		/* Thief drops some items from the shock of blow */
 		if (cfg.newbies_cannot_drop <= p_ptr->lev)
@@ -1274,6 +1606,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 
 	/* Refuel */
 	j_ptr->timeout += (o_ptr->tval == TV_FLASK)?o_ptr->pval:o_ptr->timeout;
+//	j_ptr->timeout += o_ptr->timeout;
 
 	/* Message */
 	msg_print(Ind, "You fuel your lamp.");
@@ -1522,9 +1855,8 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	/* Traps */
 	if (c_ptr->special.type == CS_TRAPS)
 	{
-		trap_type *t_ptr = c_ptr->special.ptr;
-		/* Revealed traps */
-		if (t_ptr->found) return (TRUE);
+		/* Revealed trap */
+		if (c_ptr->special.sc.trap.found) return (TRUE);
 	}
 
 	/* Interesting memorized features */
@@ -1733,7 +2065,8 @@ void do_cmd_look(int Ind, int dir)
 		/* Obtain an object description */
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-		sprintf(out_val, "You see %s", o_name);
+		sprintf(out_val, "You see %s%s", o_name,
+				o_ptr->next_o_idx ? " on a pile" : "");
 	}
 	else
 	{
@@ -1746,11 +2079,11 @@ void do_cmd_look(int Ind, int dir)
 		/* Hack -- add trap description */
 		if (c_ptr->special.type == CS_TRAPS)
 		{
-			trap_type *t_ptr = c_ptr->special.ptr;
-			if (t_ptr->found)
+			int t_idx = c_ptr->special.sc.trap.t_idx;
+			if (c_ptr->special.sc.trap.found)
 			{
-				if (p_ptr->trap_ident[t_ptr->t_idx])
-					p1 = t_name + t_info[t_ptr->t_idx].name;
+				if (p_ptr->trap_ident[t_idx])
+					p1 = t_name + t_info[t_idx].name;
 				else
 					p1 = "A trap";
 			}

@@ -4533,7 +4533,6 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 }
 
 
-
 /*
  * Complete the "creation" of an object by applying "magic" to the item
  *
@@ -4984,6 +4983,196 @@ void determine_level_req(int level, object_type *o_ptr)
 }
 
 
+/*
+ * Object-theme codes borrowed from ToME.	- Jir -
+ */
+
+/* The themed objects to use */
+static obj_theme match_theme;
+
+/*
+ * XXX XXX XXX It relies on the fact that obj_theme is a four byte structure
+ * for its efficient operation. A horrendous hack, I'd say.
+ */
+void init_match_theme(obj_theme theme)
+{
+	/* Save the theme */
+	match_theme = theme;
+}
+
+#if 0
+/*
+ * Ditto XXX XXX XXX
+ */
+static bool theme_changed(obj_theme theme)
+{
+	/* Any of the themes has been changed */
+	if (theme.treasure != match_theme.treasure) return (TRUE);
+	if (theme.combat != match_theme.combat) return (TRUE);
+	if (theme.magic != match_theme.magic) return (TRUE);
+	if (theme.tools != match_theme.tools) return (TRUE);
+
+	/* No changes */
+	return (FALSE);
+}
+#endif	// 0
+
+
+/*
+ * Maga-Hack -- match certain types of object only.
+ */
+bool kind_is_theme(int k_idx)
+{
+	object_kind *k_ptr = &k_info[k_idx];
+
+	s32b prob = 0;
+
+
+	/*
+	 * Paranoia -- Prevent accidental "(Nothing)"
+	 * that are results of uninitialised theme structs.
+	 *
+	 * Caution: Junks go into the allocation table.
+	 */
+	if (match_theme.treasure + match_theme.combat +
+	    match_theme.magic + match_theme.tools == 0) return (TRUE);
+
+
+	/* Pick probability to use */
+	switch (k_ptr->tval)
+	{
+		case TV_SKELETON:
+		case TV_BOTTLE:
+		case TV_JUNK:
+		case TV_FIRESTONE:
+		case TV_CORPSE:
+		case TV_EGG:
+		{
+			/*
+			 * Degree of junk is defined in terms of the other
+			 * 4 quantities XXX XXX XXX
+			 * The type of prob should be *signed* as well as
+			 * larger than theme components, or we would see
+			 * unexpected, well, junks.
+			 */
+			prob = 100 - (match_theme.treasure + match_theme.combat +
+			              match_theme.magic + match_theme.tools);
+			break;
+		}
+		case TV_CHEST:          prob = match_theme.treasure; break;
+		case TV_CROWN:          prob = match_theme.treasure; break;
+		case TV_DRAG_ARMOR:     prob = match_theme.treasure; break;
+		case TV_AMULET:         prob = match_theme.treasure; break;
+		case TV_RING:           prob = match_theme.treasure; break;
+
+		case TV_SHOT:           prob = match_theme.combat; break;
+		case TV_ARROW:          prob = match_theme.combat; break;
+		case TV_BOLT:           prob = match_theme.combat; break;
+		case TV_BOOMERANG:      prob = match_theme.combat; break;
+		case TV_BOW:            prob = match_theme.combat; break;
+		case TV_HAFTED:         prob = match_theme.combat; break;
+		case TV_POLEARM:        prob = match_theme.combat; break;
+		case TV_SWORD:          prob = match_theme.combat; break;
+		case TV_AXE:            prob = match_theme.combat; break;
+		case TV_GLOVES:         prob = match_theme.combat; break;
+		case TV_HELM:           prob = match_theme.combat; break;
+		case TV_SHIELD:         prob = match_theme.combat; break;
+		case TV_SOFT_ARMOR:     prob = match_theme.combat; break;
+		case TV_HARD_ARMOR:     prob = match_theme.combat; break;
+
+		case TV_MSTAFF:         prob = match_theme.magic; break;
+		case TV_STAFF:          prob = match_theme.magic; break;
+		case TV_WAND:           prob = match_theme.magic; break;
+		case TV_ROD:            prob = match_theme.magic; break;
+		case TV_ROD_MAIN:       prob = match_theme.magic; break;
+		case TV_SCROLL:         prob = match_theme.magic; break;
+		case TV_PARCHEMENT:     prob = match_theme.magic; break;
+		case TV_POTION:         prob = match_theme.magic; break;
+		case TV_POTION2:        prob = match_theme.magic; break;
+#if 0
+		case TV_BATERIE:        prob = match_theme.magic; break;
+		case TV_RANDART:        prob = match_theme.magic; break;
+		case TV_RUNE1:          prob = match_theme.magic; break;
+		case TV_RUNE2:          prob = match_theme.magic; break;
+		case TV_BOOK:           prob = match_theme.magic; break;
+		case TV_SYMBIOTIC_BOOK: prob = match_theme.magic; break;
+		case TV_MUSIC_BOOK:     prob = match_theme.magic; break;
+		case TV_DRUID_BOOK:     prob = match_theme.magic; break;
+		case TV_DAEMON_BOOK:    prob = match_theme.magic; break;
+#endif	// 0
+
+		case TV_LITE:           prob = match_theme.tools; break;
+		case TV_CLOAK:          prob = match_theme.tools; break;
+		case TV_BOOTS:          prob = match_theme.tools; break;
+		case TV_SPIKE:          prob = match_theme.tools; break;
+		case TV_DIGGING:        prob = match_theme.tools; break;
+		case TV_FLASK:          prob = match_theme.tools; break;
+		case TV_FOOD:           prob = match_theme.tools; break;
+		case TV_TOOL:           prob = match_theme.tools; break;
+		case TV_INSTRUMENT:     prob = match_theme.tools; break;
+		case TV_TRAPKIT:        prob = match_theme.tools; break;
+	}
+
+	/* Roll to see if it can be made */
+	if (rand_int(100) < prob) return (TRUE);
+
+	/* Not a match */
+	return (FALSE);
+}
+
+/*
+ * Determine if an object must not be generated.
+ */
+int kind_is_legal_special = -1;
+bool kind_is_legal(int k_idx)
+{
+	object_kind *k_ptr = &k_info[k_idx];
+
+	if (!kind_is_theme(k_idx)) return FALSE;
+
+#if 0
+	if (k_ptr->flags4 & TR4_SPECIAL_GENE)
+	{
+		if (k_allow_special[k_idx]) return TRUE;
+		else return FALSE;
+	}
+
+	/* No 2 times the same normal artifact */
+	if ((k_ptr->flags3 & TR3_NORM_ART) && (k_ptr->artifact))
+	{
+		return FALSE;
+	}
+
+	if (k_ptr->tval == TV_CORPSE)
+	{
+		if (k_ptr->sval != SV_CORPSE_SKULL && k_ptr->sval != SV_CORPSE_SKELETON &&
+			 k_ptr->sval != SV_CORPSE_HEAD && k_ptr->sval != SV_CORPSE_CORPSE)
+		{
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	if (k_ptr->tval == TV_HYPNOS) return FALSE;
+
+	if ((k_ptr->tval == TV_SCROLL) && (k_ptr->sval == SV_SCROLL_SPELL)) return FALSE;
+#endif	// 0
+
+	/* Used only for the Nazgul rings */
+	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_SPECIAL)) return FALSE;
+
+	/* Are we forced to one tval ? */
+	if ((kind_is_legal_special != -1) && (kind_is_legal_special != k_ptr->tval)) return (FALSE);
+
+	/* Assume legal */
+	return TRUE;
+}
+
+
+
 
 /*
  * Hack -- determine if a template is "good"
@@ -5080,7 +5269,8 @@ static bool kind_is_good(int k_idx)
  *
  * This routine requires a clean floor grid destination.
  */
-void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
+//void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
+void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, obj_theme theme)
 {
 	int			o_idx, prob, base;
 
@@ -5119,11 +5309,28 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
 			/* Prepare allocation table */
 			get_obj_num_prep();
 		}
+		/* Normal objects */
+		else
+		{
+			/* Select items based on "theme" */
+			init_match_theme(theme);
+
+			/* Activate normal restriction */
+			get_obj_num_hook = kind_is_legal;
+
+			/* Prepare allocation table */
+			get_obj_num_prep();
+
+			/* The table is synchronised */
+//			alloc_kind_table_valid = TRUE;
+		}
+
 
 		/* Pick a random object */
 		k_idx = get_obj_num(base);
 
 		/* Good objects */
+#if 0	// commented out for efficiency
 		if (good)
 		{
 			/* Clear restriction */
@@ -5132,6 +5339,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
 			/* Prepare allocation table */
 			get_obj_num_prep();
 		}
+#endif	// 0
 
 		/* Handle failure */
 		if (!k_idx) return;
@@ -5221,7 +5429,7 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great)
 			/* Must have a clean grid */
 			if (!cave_clean_bold(zcave, y, x)) continue;
 			/* Place a good (or great) object */
-			place_object(wpos, y, x, TRUE, great);
+			place_object(wpos, y, x, TRUE, great, default_obj_theme);
 			/* Notice */
 			note_spot_depth(wpos, y, x);
 

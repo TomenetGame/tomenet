@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: variable.c */
 
 /* Purpose: Angband variables */
@@ -60,6 +61,7 @@ u16b sf_saves;                  /* Number of "saves" during this life */
  */
 bool server_generated;          /* The character exists */
 bool server_dungeon;            /* The character has a dungeon */
+//bool central_town_loaded = FALSE;
 bool server_state_loaded;       /* The server state was loaded from a savefile */
 bool server_saved;              /* The character was just saved to a savefile */
 
@@ -109,31 +111,42 @@ s32b m_top = 0;                 /* Monster top size */
 
 server_opts cfg =
 {
+	/* others */
 	6, 0,		// runlevel, closetime (NOT config options)
 
+	/* char * */
 	"mangband.org",		// meta_address
 	"",		// bind_name
 	"changeme",		// console_password
 	"Serverchez",		// admin_wizard
 	"DungeonMaster",	// dungeon_master
+
+	/* s32b */
 	201,		// preserve_death_level
 	300,50000,	// unique_respawn_time, unique_max_respawn_time
 	6, 8,		// level_unstatic_chance, min_unstatic_level
 	-1,18348,18349,	// retire_timer, game_port, console_port
 	0,200,		// spell_interfere, spell_stack_limit
+
+	/* s16b */
 	60,5,5,		// fps, newbies_cannot_drop, running_speed,
 	25, 150,	// anti_scum, dun_unusual,
-
 	32,32,		// town_x, town_y
 	0, 1,		// town_base, dun_base
 	127, 200,	// dun_max, store_turns
 
+	/* char */
+	3, 2,		// resting_rate, party_xp_boost
+
+	10, 100, 100,	// zang_monsters, pern_monsters, cth_monsters
+	1, 100,			// joke_monsters, vanilla_monsters
+
+	/* bool */
 	TRUE,TRUE,	// report_to_meta, secret_dungeon_master
 	TRUE,FALSE, // anti_arts_horde, mage_hp_bonus
 	TRUE,FALSE,	// door_bump_open, no_ghost
 	TRUE,TRUE,	// maximize, kings_etiquette
-	FALSE,TRUE,TRUE,	// zang_monsters, pern_monsters, cth_monsters
-	FALSE,TRUE	// joke_monsters, vanilla_monsters
+	FALSE,FALSE	// public_rfe, auto_purge
 };
 
 struct ip_ban *banlist=NULL;
@@ -180,7 +193,7 @@ u32b house_alloc = 0;
 long GetInd[MAX_ID];
 
 /* Buffer to hold the current savefile name */
-char savefile[1024];
+//char savefile[MAX_PATH_LENGTH];
 
 
 /*
@@ -217,10 +230,12 @@ s16b o_fast[MAX_O_IDX];
  */
 s16b m_fast[MAX_M_IDX];
 
+#if 0	// DELETEME
 /*
  * The array of indexes of "live" traps
  */
 s16b t_fast[MAX_TR_IDX];
+#endif	// 0
 
 
 /*
@@ -360,13 +375,15 @@ char *e_text;
 /* jk / Jir */
 /* the trap-arrays/variables */
 header *t_head;
-trap_type *t_list;
 trap_kind *t_info;
 char *t_name;
 char *t_text;
+#if 0	// DELETEME
+trap_type *t_list;
 s32b t_nxt = 1;
 s32b t_max = 1;
 s32b t_top = 0;
+#endif	// 0
 
 
 /*
@@ -506,5 +523,13 @@ char summon_kin_type;
  */
 char tdy[662];
 char tdx[662];
-s32b tdi[16];
+s32b tdi[18];	// PREPARE_RADIUS + 2
 
+/* How many times project() is called in this turn? */
+#ifdef PROJECTION_FLUSH_LIMIT
+s16b count_project = 0;
+#endif	// PROJECTION_FLUSH_LIMIT
+
+/* Hack -- 'default' values for obj_theme.	- Jir -
+ * Only a makeshift till d_info thingie will be implemented. */
+obj_theme default_obj_theme = {25, 25, 25, 25};

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: wilderness.c */
 
 /* Purpose: Wilderness generation */
@@ -128,7 +129,7 @@ void init_wild_info_aux(int x, int y){
 
 }
 
-static void initwild(){
+void initwild(){
 	int i,j;
 	for(i=0;i<MAX_WILD_X;i++){
 		for(j=0;j<MAX_WILD_Y;j++){
@@ -278,6 +279,11 @@ static bool wild_monst_aux_town(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
+	if (r_ptr->flags8 & RF8_WILD_TOWN)
+		return TRUE;
+	else
+		return FALSE;
+#if 0
 	/* Maggot is allowed :) */
 	if (!strcmp(&r_name[r_ptr->name],"Farmer Maggot")) return TRUE;
 
@@ -289,6 +295,7 @@ static bool wild_monst_aux_town(int r_idx)
 
 	/* OK */
 	return TRUE;
+#endif	// 0
 }
 
 
@@ -301,6 +308,9 @@ static bool wild_monst_aux_lake(int r_idx)
 
 	/* no reproducing monsters allowed */
 	if (r_ptr->flags7 & RF7_MULTIPLY) return FALSE;
+
+	if (r_ptr->flags2 & RF2_AURA_FIRE)
+		return FALSE;
 
 	/* animals are OK */
 	if (r_ptr->flags3 & RF3_ANIMAL) return TRUE;
@@ -321,6 +331,15 @@ static bool wild_monst_aux_grassland(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
+	/* no reproducing monsters allowed */
+	if (r_ptr->flags7 & RF7_MULTIPLY) return FALSE;
+
+	if (r_ptr->flags8 & RF8_WILD_GRASS)
+		return TRUE;
+	else
+		return FALSE;
+
+#if 0
 	/* no aquatic life here */
 	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
 
@@ -340,6 +359,7 @@ static bool wild_monst_aux_grassland(int r_idx)
 	if (!r_ptr->level) return TRUE;
 
 	return FALSE;
+#endif	// 0
 }
 
 /*
@@ -349,6 +369,11 @@ static bool wild_monst_aux_forest(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 	
+	if (r_ptr->flags8 & RF8_WILD_WOOD)
+		return TRUE;
+	else
+		return FALSE;
+#if 0
 	/* snakes, wolves, beetles, and felines are OK */
 	if (strchr("JCKf", r_ptr->d_char)) return (TRUE);
 	if (!strcmp(&r_name[r_ptr->name],"Wood spider")) return TRUE;
@@ -361,6 +386,7 @@ static bool wild_monst_aux_forest(int r_idx)
 	if (!strcmp(&r_name[r_ptr->name],"Mystic")) return TRUE;
 	
 	return FALSE;
+#endif	// 0
 }
 
 /*
@@ -370,6 +396,11 @@ static bool wild_monst_aux_swamp(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 		
+	if (r_ptr->flags8 & RF8_WILD_SWAMP)
+		return TRUE;
+	else
+		return FALSE;
+#if 0
 	/* swamps are full of annoying monsters */
 	if (strchr("Jwj,FGILMQRSVWceilmsz", r_ptr->d_char)) return TRUE;
 	if (!strcmp(&r_name[r_ptr->name],"Dark elven mage")) return TRUE;
@@ -377,21 +408,29 @@ static bool wild_monst_aux_swamp(int r_idx)
 	if (!strcmp(&r_name[r_ptr->name],"Dark elven druid")) return TRUE;
 	
 	return FALSE;
+#endif	// 0
 }
 
 /*
  * Helper function for wild_add_monster
  */
+/* Hrm.. now it's exactly same with normal forest.. */
 static bool wild_monst_aux_denseforest(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 	
+	if (r_ptr->flags8 & RF8_WILD_WOOD)
+		return TRUE;
+	else
+		return FALSE;
+#if 0
 	if (!strcmp(&r_name[r_ptr->name],"Forest Troll")) return TRUE;
 	if (!strcmp(&r_name[r_ptr->name],"Mirkwood spider")) return TRUE;
 	if (!strcmp(&r_name[r_ptr->name],"Forest wight")) return TRUE;
 	if (!strcmp(&r_name[r_ptr->name],"Dark elven druid")) return TRUE;
 	
 	return FALSE;
+#endif	// 0
 		
 }
 
@@ -402,6 +441,11 @@ static bool wild_monst_aux_wasteland(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 	
+	if (r_ptr->flags8 & RF8_WILD_WASTE)
+		return TRUE;
+	else
+		return FALSE;
+#if 0
 	/* no aquatic life here */
 	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
 
@@ -412,9 +456,40 @@ static bool wild_monst_aux_wasteland(int r_idx)
 	if (!r_ptr->level) return TRUE;
 		
 	return FALSE;	
+#endif	// 0
 		
 }
 
+
+bool wild_monst_aux_ocean(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	if (r_ptr->flags8 & RF8_WILD_OCEAN)
+		return TRUE;
+	else
+		return FALSE;
+}
+
+bool wild_monst_aux_shore(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	if (r_ptr->flags8 & RF8_WILD_SHORE)
+		return TRUE;
+	else
+		return FALSE;
+}
+
+bool wild_monst_aux_volcano(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	if (r_ptr->flags8 & RF8_WILD_VOLCANO)
+		return TRUE;
+	else
+		return FALSE;
+}
 
 
 
@@ -832,7 +907,7 @@ void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2, int y2
 		if (cave_clean_bold(zcave,y,x))
 		{			
 			object_level = w_ptr->radius/2 +1;
-			place_object(wpos,y,x,FALSE,FALSE);
+			place_object(wpos,y,x,FALSE,FALSE,default_obj_theme);
 			num_objects--;
 		}
 		trys++;	
@@ -1253,7 +1328,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		if ((tmp=pick_house(wpos, door_y, door_x)) == -1)
 		{
 			c_ptr->special.type=DNA_DOOR;
-			c_ptr->special.ptr=houses[num_houses].dna;
+			c_ptr->special.sc.ptr=houses[num_houses].dna;
 			houses[num_houses].dx = door_x;
 			houses[num_houses].dy = door_y;
 			houses[num_houses].dna->creator=0L;
@@ -1274,7 +1349,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			/* malloc madness otherwise */
 			KILL(houses[num_houses].dna, struct dna_type);
 			c_ptr->special.type=DNA_DOOR;
-			c_ptr->special.ptr=houses[tmp].dna;
+			c_ptr->special.sc.ptr=houses[tmp].dna;
 		}
 	}
 		
@@ -2297,7 +2372,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 							fputc(c_ptr->feat, gfp);
 							if(c_ptr->feat==FEAT_HOME_HEAD){
 								id=0;
-								if((c_ptr->special.type==KEY_DOOR) && (key=c_ptr->special.ptr))
+								if((c_ptr->special.type==KEY_DOOR) && (key=c_ptr->special.sc.ptr))
 									id=key->id;
 								fputc((id>>8), gfp);
 								fputc(id&0xff, gfp);
@@ -2312,10 +2387,10 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 								id=(fgetc(gfp)<<8);
 								id|=fgetc(gfp);
 								if((c_ptr->special.type!=KEY_DOOR)){
-									MAKE(c_ptr->special.ptr, struct key_type);
+									MAKE(c_ptr->special.sc.ptr, struct key_type);
 									c_ptr->special.type=KEY_DOOR;
 								}
-								key=c_ptr->special.ptr;
+								key=c_ptr->special.sc.ptr;
 								key->id=id;
 							}
 						}
@@ -2414,7 +2489,7 @@ void wild_add_uhouse(house_type *h_ptr){
 	c_ptr=&zcave[h_ptr->y+h_ptr->dy][h_ptr->x+h_ptr->dx];
 	c_ptr->feat=FEAT_HOME_HEAD;
 	c_ptr->special.type=DNA_DOOR;
-	c_ptr->special.ptr=h_ptr->dna;
+	c_ptr->special.sc.ptr=h_ptr->dna;
 }
 
 void wild_add_uhouses(struct worldpos *wpos){

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: spells1.c */
 
 /* Purpose: Spell code (part 1) */
@@ -13,6 +14,195 @@
 #define SERVER
 
 #include "angband.h"
+
+
+/* 1/x chance of reducing stats (for elemental attacks) */
+#define HURT_CHANCE 16
+
+/* chance of equipments getting hurt from attacks, in percent [2] */
+#define HARM_EQUIP_CHANCE	2
+
+/* macro to determine the way stat gets reduced by element attacks */
+#define	DAM_STAT_TYPE(inv) \
+	(magik(inv*25) ? STAT_DEC_NORMAL : STAT_DEC_TEMPORARY)
+
+/* 
+ * Maximum lower limit for player teleportation.	[30]
+ * This should make teleportation of high-lv players look 'more random'.
+ * To disable, comment it out.
+ */
+#define TELEPORT_MIN_LIMIT	30
+
+
+ /*
+  * Potions "smash open" and cause an area effect when
+  * (1) they are shattered while in the player's inventory,
+  * due to cold (etc) attacks;
+  * (2) they are thrown at a monster, or obstacle;
+  * (3) they are shattered by a "cold ball" or other such spell
+  * while lying on the floor.
+  *
+  * Arguments:
+  *    who   ---  who caused the potion to shatter (0=player)
+  *          potions that smash on the floor are assumed to
+  *          be caused by no-one (who = 1), as are those that
+  *          shatter inside the player inventory.
+  *          (Not anymore -- I changed this; TY)
+  *    y, x  --- coordinates of the potion (or player if
+  *          the potion was in her inventory);
+  *    o_ptr --- pointer to the potion object.
+  */
+/*
+ * Copy & Pasted from ToME :)	- Jir -
+ * NOTE: 
+ * seemingly TV_POTION2 are not haldled right (ToME native bug?).
+ */
+bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
+{
+	int     radius = 2;
+	int     dt = 0;
+	int     dam = 0;
+	bool    ident = FALSE;
+	bool    angry = FALSE;
+
+	switch(o_sval)
+	{
+		case SV_POTION_SALT_WATER:
+		case SV_POTION_SLIME_MOLD:
+		case SV_POTION_LOSE_MEMORIES:
+		case SV_POTION_DEC_STR:
+		case SV_POTION_DEC_INT:
+		case SV_POTION_DEC_WIS:
+		case SV_POTION_DEC_DEX:
+		case SV_POTION_DEC_CON:
+		case SV_POTION_DEC_CHR:
+		case SV_POTION_WATER:   /* perhaps a 'water' attack? */
+		case SV_POTION_APPLE_JUICE:
+			return TRUE;
+
+		case SV_POTION_INFRAVISION:
+		case SV_POTION_DETECT_INVIS:
+		case SV_POTION_SLOW_POISON:
+		case SV_POTION_CURE_POISON:
+		case SV_POTION_BOLDNESS:
+		case SV_POTION_RESIST_HEAT:
+		case SV_POTION_RESIST_COLD:
+		case SV_POTION_HEROISM:
+		case SV_POTION_BESERK_STRENGTH:
+		case SV_POTION_RESTORE_EXP:
+		case SV_POTION_RES_STR:
+		case SV_POTION_RES_INT:
+		case SV_POTION_RES_WIS:
+		case SV_POTION_RES_DEX:
+		case SV_POTION_RES_CON:
+		case SV_POTION_RES_CHR:
+		case SV_POTION_INC_STR:
+		case SV_POTION_INC_INT:
+		case SV_POTION_INC_WIS:
+		case SV_POTION_INC_DEX:
+		case SV_POTION_INC_CON:
+		case SV_POTION_INC_CHR:
+		case SV_POTION_AUGMENTATION:
+		case SV_POTION_ENLIGHTENMENT:
+		case SV_POTION_STAR_ENLIGHTENMENT:
+		case SV_POTION_SELF_KNOWLEDGE:
+		case SV_POTION_EXPERIENCE:
+		case SV_POTION_RESISTANCE:
+		case SV_POTION_INVULNERABILITY:
+		case SV_POTION_NEW_LIFE:
+			/* All of the above potions have no effect when shattered */
+			return FALSE;
+		case SV_POTION_SLOWNESS:
+			dt = GF_OLD_SLOW;
+			dam = 5;
+			ident = TRUE;
+			angry = TRUE;
+			break;
+		case SV_POTION_POISON:
+			dt = GF_POIS;
+			dam = 3;
+			ident = TRUE;
+			angry = TRUE;
+			break;
+		case SV_POTION_BLINDNESS:
+			dt = GF_DARK;
+			ident = TRUE;
+			angry = TRUE;
+			break;
+		case SV_POTION_CONFUSION: /* Booze */
+			dt = GF_OLD_CONF;
+			ident = TRUE;
+			angry = TRUE;
+			break;
+		case SV_POTION_SLEEP:
+			dt = GF_OLD_SLEEP;
+			angry = TRUE;
+			ident = TRUE;
+			break;
+		case SV_POTION_RUINATION:
+		case SV_POTION_DETONATIONS:
+			dt = GF_SHARDS;
+			dam = damroll(25, 25);
+			angry = TRUE;
+			ident = TRUE;
+			break;
+		case SV_POTION_DEATH:
+//			dt = GF_DEATH_RAY;    /* !! */	/* not implemented yet. */
+			dt = GF_MANA;		/* let's use mana damage for now.. */
+			dam = damroll(30,30);
+			angry = TRUE;
+			radius = 1;
+			ident = TRUE;
+			break;
+		case SV_POTION_SPEED:
+			dt = GF_OLD_SPEED;
+			ident = TRUE;
+			break;
+		case SV_POTION_CURE_LIGHT:
+			dt = GF_OLD_HEAL;
+			dam = damroll(2,3);
+			ident = TRUE;
+			break;
+		case SV_POTION_CURE_SERIOUS:
+			dt = GF_OLD_HEAL;
+			dam = damroll(4,3);
+			ident = TRUE;
+			break;
+		case SV_POTION_CURE_CRITICAL:
+		case SV_POTION_CURING:
+			dt = GF_OLD_HEAL;
+			dam = damroll(6,3);
+			ident = TRUE;
+			break;
+		case SV_POTION_HEALING:
+			dt = GF_OLD_HEAL;
+			dam = damroll(10,10);
+			ident = TRUE;
+			break;
+		case SV_POTION_STAR_HEALING:
+		case SV_POTION_LIFE:
+			dt = GF_OLD_HEAL;
+			dam = damroll(50,50);
+			radius = 1;
+			ident = TRUE;
+			break;
+		case SV_POTION_RESTORE_MANA:   /* MANA */
+			dt = GF_MANA;
+			dam = damroll(10,10);
+			radius = 1;
+			ident = TRUE;
+			break;
+		default:
+			/* Do nothing */  ;
+	}
+
+	(void) project(who, radius, wpos, y, x, dam, dt,
+	               (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL));
+
+	/* XXX	those potions that explode need to become "known" */
+	return angry;
+}
+
 
 /*
  * Helper function -- return a "nearby" race for polymorphing
@@ -36,8 +226,8 @@ s16b poly_r_idx(int r_idx)
 	for (i = 0; i < 1000; i++)
 	{
 		/* Pick a new race, using a level calculation */
-		/* Don't base this on "dun_level" */
-		/*r = get_mon_num((dun_level + r_ptr->level) / 2 + 5);*/
+		/* Don't base this on "dlev" */
+		/*r = get_mon_num((dlev + r_ptr->level) / 2 + 5);*/
 		r = get_mon_num(r_ptr->level + 5);
 
 		/* Handle failure */
@@ -63,9 +253,16 @@ s16b poly_r_idx(int r_idx)
 	return (r_idx);
 }
 
+/*
+ * XXX: this should be radius-determined like antimagic?
+ * It prevents everyone from using WoR in town..
+ */
 bool check_st_anchor(struct worldpos *wpos)
 {
 	int i;
+
+	dun_level		*l_ptr = getfloor(wpos);
+	if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) return TRUE;
 
 	for (i = 1; i <= NumPlayers; i++)
 	  {
@@ -97,7 +294,7 @@ bool check_st_anchor(struct worldpos *wpos)
  *
  * But allow variation to prevent infinite loops.
  */
-void teleport_away(int m_idx, int dis)
+bool teleport_away(int m_idx, int dis)
 {
 	int			ny, nx, oy, ox, d, i, min;
 
@@ -105,23 +302,25 @@ void teleport_away(int m_idx, int dis)
 
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
+	dun_level *l_ptr;
 	struct worldpos *wpos;
 	cave_type **zcave;
 
 	/* Paranoia */
-	if (!m_ptr->r_idx) return;
+	if (!m_ptr->r_idx) return FALSE;
 
 	/* Space/Time Anchor */
-	if (check_st_anchor(&m_ptr->wpos)) return;
+	if (check_st_anchor(&m_ptr->wpos)) return FALSE;
 
-        if (r_ptr->flags9 & RF9_IM_TELE) return;
+        if (r_ptr->flags9 & RF9_IM_TELE) return FALSE;
 
 	/* Save the old location */
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
 
 	wpos=&m_ptr->wpos;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave=getcave(wpos))) return FALSE;
+	l_ptr = getfloor(wpos);
 
 	/* Minimum distance */
 	min = dis / 2;
@@ -145,7 +344,7 @@ void teleport_away(int m_idx, int dis)
 			}
 
 			/* Ignore illegal locations */
-			if (!in_bounds(ny, nx)) continue;
+			if (!in_bounds4(l_ptr, ny, nx)) continue;
 
 			/* Require "empty" floor space */
 			if (!cave_empty_bold(zcave, ny, nx)) continue;
@@ -187,6 +386,9 @@ void teleport_away(int m_idx, int dis)
 
 	/* Redraw the new grid */
 	everyone_lite_spot(wpos, ny, nx);
+
+	/* Succeeded. */
+	return TRUE;
 }
 
 
@@ -205,7 +407,9 @@ void teleport_to_player(int Ind, int m_idx)
 //	int attempts = 500;
 	int attempts = 200;
 
-	struct worldpos *wpos;
+	struct worldpos *wpos=&m_ptr->wpos;
+	dun_level		*l_ptr = getfloor(wpos);
+
 	cave_type **zcave;
 //        if(p_ptr->resist_continuum) {msg_print("The space-time continuum can't be disrupted."); return;}
 
@@ -215,8 +419,9 @@ void teleport_to_player(int Ind, int m_idx)
 	/* "Skill" test */
         if (randint(100) > m_ptr->level) return;
 
-	wpos=&m_ptr->wpos;
 	if(!(zcave=getcave(wpos))) return;
+	if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) return;
+//	if (check_st_anchor(wpos)) return;
 
 	/* Save the old location */
 	oy = m_ptr->fy;
@@ -314,7 +519,8 @@ void teleport_player(int Ind, int dis)
 
 	int d, i, min, ox, oy, x = p_ptr->py, y = p_ptr->px;
 	int xx , yy, m_idx;
-	struct worldpos *wpos=&p_ptr->wpos;
+	worldpos *wpos=&p_ptr->wpos;
+	dun_level *l_ptr;
 
 	bool look = TRUE;
 
@@ -323,12 +529,17 @@ void teleport_player(int Ind, int dis)
 	if(!(zcave=getcave(wpos))) return;
 	if (check_st_anchor(wpos)) return;
 	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+	l_ptr = getfloor(wpos);
 
 	/* Verify max distance once here */
 	if (dis > 150) dis = 150;
 
 	/* Minimum distance */
 	min = dis / 2;
+
+#ifdef TELEPORTATION_MIN_LIMIT
+	if (min > TELEPORT_MIN_LIMIT) min = TELEPORT_MIN_LIMIT;
+#endif	// TELEPORTATION_MIN_LIMIT
 
 	/* Look until done */
 	while (look)
@@ -351,7 +562,7 @@ void teleport_player(int Ind, int dis)
 			}
 
 			/* Ignore illegal locations */
-			if (!in_bounds(y, x)) continue;
+			if (!in_bounds4(l_ptr, y, x)) continue;
 
 			/* Require floor space if not ghost */
 			if (!p_ptr->ghost && !cave_naked_bold(zcave, y, x)) continue;
@@ -402,7 +613,7 @@ void teleport_player(int Ind, int dis)
 		xx = ox + ddx[d];
 		yy = oy + ddy[d];
 
-		if (!in_bounds(yy, xx)) continue;
+		if (!in_bounds4(l_ptr, yy, xx)) continue;
 
 		if ((m_idx = zcave[yy][xx].m_idx))
 		{
@@ -470,9 +681,11 @@ void teleport_player_to(int Ind, int ny, int nx)
 	int y, x, oy, ox, dis = 1, ctr = 0;
 	struct worldpos *wpos=&p_ptr->wpos;
 	int tries = 200;
+	dun_level *l_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+	l_ptr = getfloor(wpos);
 
 	if (ny < 1) ny = 1;
 	if (nx < 1) nx = 1;
@@ -490,7 +703,7 @@ void teleport_player_to(int Ind, int ny, int nx)
 		{
 			y = rand_spread(ny, dis);
 			x = rand_spread(nx, dis);
-			if (in_bounds(y, x)) break;
+			if (in_bounds4(l_ptr, y, x)) break;
 		}
 
 		/* Cant telep in houses */
@@ -1160,6 +1373,8 @@ static bool hates_fire(object_type *o_ptr)
 		case TV_PRAYER_BOOK:
 		case TV_FIGHT_BOOK:
 		case TV_SORCERY_BOOK:
+		case TV_SHADOW_BOOK:
+		case TV_HUNT_BOOK:
 		{
 			return (TRUE);
 		}
@@ -1173,6 +1388,13 @@ static bool hates_fire(object_type *o_ptr)
 		/* Staffs/Scrolls burn */
 		case TV_STAFF:
 		case TV_SCROLL:
+		{
+			return (TRUE);
+		}
+
+		/* Potions evaporate */
+		case TV_POTION:
+		case TV_POTION2:
 		{
 			return (TRUE);
 		}
@@ -1190,6 +1412,7 @@ static bool hates_cold(object_type *o_ptr)
 	switch (o_ptr->tval)
 	{
 		case TV_POTION:
+		case TV_POTION2:
 		case TV_FLASK:
 		case TV_BOTTLE:
 		{
@@ -1197,6 +1420,31 @@ static bool hates_cold(object_type *o_ptr)
 		}
 	}
 
+	return (FALSE);
+}
+
+
+/*
+ * Does a given object (usually) hate water?
+ */
+static bool hates_water(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_POTION:		/* dilutes */
+		case TV_POTION2:	/* dilutes */
+		case TV_SCROLL:		/* fades */
+//		case TV_PSI_BOOK:	/* It's crystal */
+		case TV_MAGIC_BOOK:
+		case TV_PRAYER_BOOK:
+		case TV_SORCERY_BOOK:
+		case TV_FIGHT_BOOK:
+		case TV_SHADOW_BOOK:
+		case TV_HUNT_BOOK:
+		{
+			return (TRUE);
+		}
+	}
 	return (FALSE);
 }
 
@@ -1263,6 +1511,21 @@ int set_cold_destroy(object_type *o_ptr)
 	return (TRUE);
 }
 
+
+/*
+ * Soak something
+ */
+int set_water_destroy(object_type *o_ptr)
+{
+	    u32b f1, f2, f3, f4, f5, esp;
+	if (!hates_water(o_ptr)) return (FALSE);
+			  /* Extract the flags */
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	if (f3 & TR3_IGNORE_ACID) return (FALSE);
+	return (TRUE);
+}
+
+
 /*
  * Every things
  */
@@ -1309,8 +1572,13 @@ int inven_damage(int Ind, inven_func typ, int perc)
 	k = 0;
 
 	/* Scan through the slots backwards */
-	for (i = 0; i < INVEN_PACK; i++)
+//	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < INVEN_TOTAL; i++)	/* Let's see what will happen.. */
 	{
+		/* Hack -- equipments are harder to be harmed */
+		if (i >= INVEN_PACK && i != INVEN_AMMO && !magik(HARM_EQUIP_CHANCE))
+			continue;
+
 		/* Get the item in that slot */
 		o_ptr = &p_ptr->inventory[i];
 
@@ -1340,6 +1608,13 @@ int inven_damage(int Ind, inven_func typ, int perc)
 				           o_name, index_to_label(i),
 				           ((amt > 1) ? "were" : "was"));
 
+				/* Potions smash open */
+				if (k_info[o_ptr->k_idx].tval == TV_POTION &&
+					typ != set_water_destroy)	/* MEGAHACK */
+				{
+					(void)potion_smash_effect(0, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
+				}
+
 				/* Destroy "amt" items */
 				inven_item_increase(Ind, i, -amt);
 				inven_item_optimize(Ind, i);
@@ -1364,7 +1639,7 @@ int inven_damage(int Ind, inven_func typ, int perc)
  *
  * If any armor is damaged (or resists), the player takes less damage.
  */
-static int minus_ac(int Ind)
+int minus_ac(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -1444,6 +1719,10 @@ void acid_dam(int Ind, int dam, cptr kb_str)
 	if (p_ptr->resist_acid) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_acid) dam = (dam + 2) / 3;
 
+	if ((!(p_ptr->oppose_acid || p_ptr->resist_acid)) &&
+	    randint(HURT_CHANCE)==1)
+		(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE(inv));
+
 	/* If any armor gets hit, defend the player */
 	if (minus_ac(Ind)) dam = (dam + 1) / 2;
 
@@ -1451,7 +1730,8 @@ void acid_dam(int Ind, int dam, cptr kb_str)
 	take_hit(Ind, dam, kb_str);
 
 	/* Inventory damage */
-	inven_damage(Ind, set_acid_destroy, inv);
+	if (!(p_ptr->oppose_acid && p_ptr->resist_acid))
+		inven_damage(Ind, set_acid_destroy, inv);
 }
 
 
@@ -1475,11 +1755,16 @@ void elec_dam(int Ind, int dam, cptr kb_str)
 	if (p_ptr->oppose_elec) dam = (dam + 2) / 3;
 	if (p_ptr->resist_elec) dam = (dam + 2) / 3;
 
+	if ((!(p_ptr->oppose_elec || p_ptr->resist_elec)) &&
+	    randint(HURT_CHANCE)==1)
+		(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE(inv));
+
 	/* Take damage */
 	take_hit(Ind, dam, kb_str);
 
 	/* Inventory damage */
-	inven_damage(Ind, set_elec_destroy, inv);
+	if (!(p_ptr->oppose_elec && p_ptr->resist_elec))
+		inven_damage(Ind, set_elec_destroy, inv);
 }
 
 
@@ -1502,14 +1787,20 @@ void fire_dam(int Ind, int dam, cptr kb_str)
 	if (p_ptr->immune_fire || (dam <= 0)) return;
 
 	/* Resist the damage */
+	if (p_ptr->sensible_fire) dam = (dam + 2) * 2;
 	if (p_ptr->resist_fire) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_fire) dam = (dam + 2) / 3;
+
+	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) &&
+	    randint(HURT_CHANCE)==1)
+		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
 	take_hit(Ind, dam, kb_str);
 
 	/* Inventory damage */
-	inven_damage(Ind, set_fire_destroy, inv);
+	if (!(p_ptr->resist_fire && p_ptr->oppose_fire))
+		inven_damage(Ind, set_fire_destroy, inv);
 }
 
 
@@ -1533,11 +1824,16 @@ void cold_dam(int Ind, int dam, cptr kb_str)
 	if (p_ptr->resist_cold) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_cold) dam = (dam + 2) / 3;
 
+	if ((!(p_ptr->oppose_cold || p_ptr->resist_cold)) &&
+	    randint(HURT_CHANCE)==1)
+		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
+
 	/* Take damage */
 	take_hit(Ind, dam, kb_str);
 
 	/* Inventory damage */
-	inven_damage(Ind, set_cold_destroy, inv);
+	if (!(p_ptr->resist_cold && p_ptr->oppose_cold))
+		inven_damage(Ind, set_cold_destroy, inv);
 }
 
 
@@ -2179,8 +2475,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //			if (c_ptr->feat == FEAT_INVIS)
 			if (c_ptr->special.type == CS_TRAPS)
 			{
-				trap_type *t_ptr = c_ptr->special.ptr;
-
 				/* Hack -- special message */
 				if (!quiet && player_can_see_bold(Ind, y, x))
 				{
@@ -2190,7 +2484,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				/* Destroy the trap */
 //				c_ptr->feat = FEAT_FLOOR;
-				delete_trap_idx(t_ptr);
+				cs_erase(c_ptr);
 
 				if (!quiet)
 				{
@@ -2262,7 +2556,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //			if (c_ptr->feat == FEAT_INVIS)
 			if (c_ptr->special.type == CS_TRAPS)
 			{
-				trap_type *t_ptr = c_ptr->special.ptr;
 				/* Hack -- special message */
 				if (!quiet && player_can_see_bold(Ind, y, x))
 				{
@@ -2272,7 +2565,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				/* Destroy the feature */
 //				c_ptr->feat = FEAT_FLOOR;
-				delete_trap_idx(t_ptr);
+				cs_erase(c_ptr);
 
 				/* Forget the wall */
 				everyone_forget_spot(wpos, y, x);
@@ -2427,8 +2720,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 						obvious = TRUE;
 					}
 
-					/* Place gold */
-					place_object(wpos, y, x, FALSE, FALSE);
+					/* Place object */
+					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
 				}
 			}
 
@@ -2654,20 +2947,18 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 {
 	player_type *p_ptr=NULL;
 
+	u16b this_o_idx, next_o_idx = 0;
+
 	bool	obvious = FALSE;
 
-	bool	is_art = FALSE;
-	bool	ignore = FALSE;
-	bool	plural = FALSE;
-	bool	do_kill = FALSE;
-
 	bool quiet = ((Ind <= 0) ? TRUE : FALSE);
-
-	cptr	note_kill = NULL;
 
 	    u32b f1, f2, f3, f4, f5, esp;
 
 	char	o_name[160];
+
+	int o_sval = 0;
+	bool is_potion = FALSE;
 
 	int		div;
 	cave_type **zcave;
@@ -2675,7 +2966,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	object_type *o_ptr;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	c_ptr=&zcave[y][x];
-	o_ptr = &o_list[c_ptr->o_idx];
+//	o_ptr = &o_list[c_ptr->o_idx];
 
 	/* Nothing here */
 	if (!c_ptr->o_idx) return (FALSE);
@@ -2694,6 +2985,21 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* XXX XXX */
 	who = who ? who : 0;
 
+	/* Scan all objects in the grid */
+	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	{
+	bool	is_art = FALSE;
+	bool	ignore = FALSE;
+	bool	plural = FALSE;
+	bool	do_kill = FALSE;
+
+	cptr	note_kill = NULL;
+
+	/* Acquire object */
+	o_ptr = &o_list[this_o_idx];
+
+	/* Acquire next object */
+	next_o_idx = o_ptr->next_o_idx;
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -2703,6 +3009,11 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Check for artifact */
 	if (artifact_p(o_ptr)) is_art = TRUE;
+
+	o_sval = o_ptr->sval;
+	/* XXX POTION2 is not handled right! */
+//	is_potion = ((k_info[o_ptr->k_idx].tval == TV_POTION)||(k_info[o_ptr->k_idx].tval == TV_POTION2));
+	is_potion = (k_info[o_ptr->k_idx].tval == TV_POTION);
 
 	/* Analyze the type */
 	switch (typ)
@@ -2748,7 +3059,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (hates_fire(o_ptr))
 			{
 				do_kill = TRUE;
-				note_kill = (plural ? " burn up!" : " burns up!");
+				note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
+					: (plural ? " burn up!" : " burns up!");
 				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
 			}
 			break;
@@ -2762,6 +3074,19 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note_kill = (plural ? " shatter!" : " shatters!");
 				do_kill = TRUE;
 				if (f3 & TR3_IGNORE_COLD) ignore = TRUE;
+			}
+			break;
+		}
+
+		/* Cold -- potions and flasks */
+		case GF_WATER:
+		{
+			if (hates_water(o_ptr))
+			{
+				note_kill = (plural ? " is soaked!" : " are soaked!");
+				do_kill = TRUE;
+				/* Hack -- borrow acid flag */
+				if (f3 & TR3_IGNORE_ACID) ignore = TRUE;
 			}
 			break;
 		}
@@ -2860,7 +3185,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					object_known(o_ptr);
 
 					/* Notice */
-					if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
+//					if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
+					if (!quiet && p_ptr->obj_vis[this_o_idx])
 					{
 						msg_print(Ind, "Click!");
 						obvious = TRUE;
@@ -2874,10 +3200,12 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 	/* Attempt to destroy the object */
-	if(do_kill && (wpos->wz))
+//	if(do_kill && (wpos->wz))
+	if(do_kill)
 	{
 		/* Effect "observed" */
-		if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
+//		if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
+		if (!quiet && p_ptr->obj_vis[this_o_idx])
 		{
 			obvious = TRUE;
 			object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -2887,7 +3215,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (is_art || ignore)
 		{
 			/* Observe the resist */
-			if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
+//			if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
+			if (!quiet && p_ptr->obj_vis[this_o_idx])
 			{
 				msg_format(Ind, "The %s %s unaffected!",
 				           o_name, (plural ? "are" : "is"));
@@ -2898,13 +3227,21 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else
 		{
 			/* Describe if needed */
-			if (!quiet && p_ptr->obj_vis[c_ptr->o_idx] && note_kill)
+//			if (!quiet && p_ptr->obj_vis[c_ptr->o_idx] && note_kill)
+			if (!quiet && p_ptr->obj_vis[this_o_idx] && note_kill)
 			{
 				msg_format(Ind, "The %s%s", o_name, note_kill);
 			}
 
 			/* Delete the object */
-			delete_object(wpos, y, x);
+//			delete_object(wpos, y, x);
+			delete_object_idx(this_o_idx);
+
+			/* Potions produce effects when 'shattered' */
+			if (is_potion)
+			{
+				(void)potion_smash_effect(who, wpos, y, x, o_sval);
+			}
 
 			if (!quiet)
 			{
@@ -2914,6 +3251,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 	}
 
+	}
 	/* Return "Anything seen?" */
 	return (obvious);
 }
@@ -3055,7 +3393,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	c_ptr=&zcave[y][x];
 	/* hack -- by trap */
-	quiet = ((Ind <= 0 || who == -999) ? TRUE : (Ind == c_ptr->m_idx?TRUE:FALSE));
+	quiet = ((Ind <= 0 || who < PROJECTOR_UNUSUAL) ? TRUE : (Ind == c_ptr->m_idx?TRUE:FALSE));
 
 	if(quiet) return(FALSE);
 	p_ptr = Players[Ind];
@@ -3083,7 +3421,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if ((who > 0) && (c_ptr->m_idx == who)) return (FALSE);
 
         /* Never hurt golem */
-        if (who < 0 && who != -999)
+        if (who < 0 && who >= PROJECTOR_UNUSUAL)
         {
                 if (Players[-who]->id == m_ptr->owner) return (FALSE);
         }
@@ -3502,6 +3840,9 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_GRAVITY:
 		{
 			bool resist_tele = FALSE;
+			dun_level		*l_ptr = getfloor(wpos);
+			if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) break;
+
 			if (seen) obvious = TRUE;
 			
 			if (r_ptr->flags3 & (RF3_RES_TELE))
@@ -3940,6 +4281,8 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_AWAY_ALL:
 		{
 			bool resists_tele = FALSE;
+			dun_level		*l_ptr = getfloor(wpos);
+			if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) break;
 
 			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
 				(r_ptr->flags3 & (RF3_RES_TELE)))
@@ -4257,6 +4600,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		note = " disappears!";
 
 		/* Teleport */
+		/* TODO: handle failure (eg. st-anchor)
 		teleport_away(c_ptr->m_idx, do_dist);
 
 		/* Hack -- get new location */
@@ -4441,6 +4785,9 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
  */
 /*
  * Megahack -- who == -999 means 'by trap'.		- Jir -
+ * 
+ * NOTE: unlike the note above, 'rad' seems not to be used for damage-
+ * reducing purpose, I don't know why.
  */
 static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int rad)
 {
@@ -4489,7 +4836,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #ifndef PLAYER_INTERACTION
 	/* Mega-Hack -- Players cannot hurt other players */
-	if (who <= 0 && who != -999) return (FALSE);
+	if (who <= 0 && who >= PROJECTOR_UNUSUAL) return (FALSE);
 #endif
 
 	/* Reflection */
@@ -4527,8 +4874,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif	// 0
 
         /* Effects done by the plane cannot bounce */
-        if (p_ptr->reflect && !rad &&
-			rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 8 : 2))
+        if (p_ptr->reflect && !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
+			rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 7 : 2))
 
 	{
                 int t_y, t_x, ay, ax;
@@ -4537,7 +4884,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (blind) msg_print(Ind, "Something bounces!");
 		else msg_print(Ind, "The attack bounces!");
 
-		if (who != -999 && who)
+		if (who != PROJECTOR_TRAP && who)
 		{
 			if (who < 0)
 			{
@@ -4558,8 +4905,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				t_x = ax - 1 + randint(3);
 				max_attempts--;
 			}
+#if 0
 			while (max_attempts && in_bounds2(wpos, t_y, t_x) &&
 					!(player_has_los_bold(Ind, t_y, t_x)));
+#else	// 0
+			while (max_attempts && (!in_bounds2(wpos, t_y, t_x) ||
+					!(player_has_los_bold(Ind, t_y, t_x))));
+#endif	// 0
 
 			if (max_attempts < 1)
 			{
@@ -4567,7 +4919,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				t_x = ax;
 			}
 
-			project(0, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL));
+//			project(0, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL));
+			project(0 - Ind, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL));
 		}
 
 		disturb(Ind, 1, 0);
@@ -4592,7 +4945,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (blind) fuzzy = TRUE;
 
 	/* If the player is hit by a trap, be more descritive */
-	if (who == -999) fuzzy = TRUE;
+	if (who < PROJECTOR_UNUSUAL) fuzzy = TRUE;
 
 	if (who > 0)
 	{
@@ -4606,20 +4959,21 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		monster_desc(Ind, killer, who, 0x88);
 	}
 	/* hack -- by trap */
-	else if (who == -999)
+	else if (who == PROJECTOR_TRAP)
 	{
 		cave_type **zcave;
 		cave_type *c_ptr;
-		trap_type *t_ptr=(trap_type*)NULL;
+		int t_idx = 0;
 
 		if((zcave=getcave(wpos))){
 			c_ptr=&zcave[p_ptr->py][p_ptr->px];
 			if(c_ptr->special.type==CS_TRAPS)
-				t_ptr=c_ptr->special.ptr;
+				t_idx = c_ptr->special.sc.trap.t_idx;
 
-			if(t_ptr && t_ptr->t_idx==typ){
-				t_ptr = zcave[p_ptr->py][p_ptr->px].special.ptr;
-				sprintf(killer, t_name + t_info[t_ptr->t_idx].name);
+			if(t_idx && t_idx==typ){
+				/* huh? */
+				// t_ptr = zcave[p_ptr->py][p_ptr->px].special.sc.ptr;
+				sprintf(killer, t_name + t_info[t_idx].name);
 			}
 			else if(c_ptr->o_idx){
 				/* Chest (object) trap */
@@ -4632,12 +4986,37 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 		}
 	}
+	/* hack -- by shattering potion */
+	else if (who == PROJECTOR_POTION)
+	{
+		/* TODO: add potion name */
+		sprintf(killer, "An evaporated potion");
+	}
+#if 0
+	else if (who == PROJECTOR_TERRAIN)
+	{
+		/* TODO: implement me! */
+		sprintf(killer, "A terrain effect");
+	}
+#endif	// 0
 	else if (who < 0)
 	{
 		strcpy(killer, p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");
 
 		/* Do not become hostile if it was a healing or teleport spell */
-		if ((typ != GF_HEAL_PLAYER) && (typ != GF_AWAY_ALL) && (typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) && (typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) && (typ != GF_BLESS_PLAYER) && (typ != GF_REMFEAR_PLAYER) && (typ != GF_SATHUNGER_PLAYER) && (typ != GF_RESFIRE_PLAYER) && (typ != GF_RESCOLD_PLAYER) && (typ != GF_CUREPOISON_PLAYER) && (typ != GF_SEEINVIS_PLAYER) && (typ != GF_SEEMAP_PLAYER) && (typ != GF_CURECUT_PLAYER) && (typ != GF_CURESTUN_PLAYER) && (typ != GF_DETECTCREATURE_PLAYER) && (typ != GF_DETECTDOOR_PLAYER) && (typ != GF_DETECTTRAP_PLAYER) && (typ != GF_TELEPORTLVL_PLAYER) && (typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) && (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) && (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER)) 
+		if ((typ != GF_HEAL_PLAYER) && (typ != GF_AWAY_ALL) &&
+			(typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) &&
+			(typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) &&
+			(typ != GF_BLESS_PLAYER) && (typ != GF_REMFEAR_PLAYER) &&
+			(typ != GF_SATHUNGER_PLAYER) && (typ != GF_RESFIRE_PLAYER) &&
+			(typ != GF_RESCOLD_PLAYER) && (typ != GF_CUREPOISON_PLAYER) &&
+			(typ != GF_SEEINVIS_PLAYER) && (typ != GF_SEEMAP_PLAYER) &&
+			(typ != GF_CURECUT_PLAYER) && (typ != GF_CURESTUN_PLAYER) &&
+			(typ != GF_DETECTCREATURE_PLAYER) && (typ != GF_DETECTDOOR_PLAYER) &&
+			(typ != GF_DETECTTRAP_PLAYER) && (typ != GF_TELEPORTLVL_PLAYER) &&
+			(typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) &&
+			(typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
+			(typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER)) 
 		{		
 			/* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind))
@@ -4654,12 +5033,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{			
 				/* XXX Reduce damage by 1/3 */
 				dam = (dam + 2) / 3;
-				if(!(p_ptr->pkill & PKILL_KILLER))
+				if(!(p_ptr->pkill & PKILL_KILLER) &&
+						!magik(NEUTRAL_FIRE_CHANCE))
 					return FALSE;
 			}
 			else
 			{
 				/* Players in the same party can't harm each others */
+#if FRIEND_FIRE_CHANCE
+				if (!magik(FRIEND_FIRE_CHANCE))
+#endif
 				return FALSE;
 			}
 		}	
@@ -4821,6 +5204,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (!p_ptr->resist_conf)
 		{
 			(void)set_confused(Ind, p_ptr->confused + randint(5) + 5);
+		}
+		if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN && magik(20 + dam / 20))
+		{
+			inven_damage(Ind, set_water_destroy, 1);
+			if (magik(20)) minus_ac(Ind);
 		}
 		take_hit(Ind, dam, killer);
 		break;
@@ -5656,13 +6044,22 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	int grids = 0;
 
 	/* Coordinates of the affected grids */
+//	byte gx[256], gy[256];
+//	byte gx[tdi[PREPARE_RADIUS]], gy[tdi[PREPARE_RADIUS]];
 	byte gx[512], gy[512];
 
 	/* Encoded "radius" info (see above) */
-	byte gm[16];
+//	byte gm[16];
+	byte gm[PREPARE_RADIUS];
 
+	dun_level *l_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos)))  return(FALSE);
+	l_ptr = getfloor(wpos);
+
+#ifdef PROJECTION_FLUSH_LIMIT
+	count_project++;
+#endif	// PROJECTION_FLUSH_LIMIT
 
 	/* Location of player */
 	/*y0 = py;
@@ -5719,7 +6116,8 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 
 
 	/* Hack -- Assume there will be no blast (max radius 16) */
-	for (dist = 0; dist < 16; dist++) gm[dist] = 0;
+//	for (dist = 0; dist < 16; dist++) gm[dist] = 0;
+	for (dist = 0; dist <= PREPARE_RADIUS; dist++) gm[dist] = 0;
 
 
 	/* Hack -- Handle stuff */
@@ -5740,7 +6138,9 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			gy[grids] = y;
 			gx[grids] = x;
 			grids++;
-			if(grids>500) printf("grids %d\n", grids);
+#if DEBUG_LEVEL > 1
+			if(grids>500) s_printf("grids %d\n", grids);
+#endif	// DEBUG_LEVEL
 		}
 
 		/* Check the grid */
@@ -5806,17 +6206,34 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 				/* neutral people hit each other */			
 				if (!Players[0 - who]->party) break;
 			
-				/* people not in the same party hit each other */			
-				if (!player_in_party(Players[0 - who]->party, 0 - c_ptr->m_idx)) break;	
+			/* people not in the same party hit each other */			
+				if (!player_in_party(Players[0 - who]->party, 0 - c_ptr->m_idx))
+#if FRIEND_FIRE_CHANCE
+					if (!magik(FRIEND_FIRE_CHANCE))
+#endif
+						break;	
 			}
-			else break;
+//			else break;	// Huh? always break? XXX XXX
 		}
 
-                if((c_ptr->m_idx != 0) && dist && ((typ == GF_HEAL_PLAYER) || (typ == GF_WRAITH_PLAYER) || (typ == GF_SPEED_PLAYER) || (typ == GF_SHIELD_PLAYER) || (typ == GF_RECALL_PLAYER) || (typ == GF_BLESS_PLAYER) || (typ == GF_REMFEAR_PLAYER) || (typ == GF_SATHUNGER_PLAYER) || (typ == GF_RESFIRE_PLAYER) || (typ == GF_RESCOLD_PLAYER) || (typ == GF_CUREPOISON_PLAYER) || (typ == GF_SEEINVIS_PLAYER) || (typ == GF_SEEMAP_PLAYER) || (typ == GF_CURECUT_PLAYER) || (typ == GF_CURESTUN_PLAYER) || (typ == GF_DETECTCREATURE_PLAYER) || (typ == GF_DETECTDOOR_PLAYER) || (typ == GF_DETECTTRAP_PLAYER) || (typ == GF_TELEPORTLVL_PLAYER) || (typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) || (typ == GF_RESACID_PLAYER) || (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER)))
+		if((c_ptr->m_idx != 0) && dist &&
+			((typ == GF_HEAL_PLAYER) || (typ == GF_WRAITH_PLAYER) ||
+			 (typ == GF_SPEED_PLAYER) || (typ == GF_SHIELD_PLAYER) || 
+			 (typ == GF_RECALL_PLAYER) || (typ == GF_BLESS_PLAYER) || 
+			 (typ == GF_REMFEAR_PLAYER) || (typ == GF_SATHUNGER_PLAYER) || 
+			 (typ == GF_RESFIRE_PLAYER) || (typ == GF_RESCOLD_PLAYER) || 
+			 (typ == GF_CUREPOISON_PLAYER) || (typ == GF_SEEINVIS_PLAYER) || 
+			 (typ == GF_SEEMAP_PLAYER) || (typ == GF_CURECUT_PLAYER) || 
+			 (typ == GF_CURESTUN_PLAYER) || (typ == GF_DETECTCREATURE_PLAYER) || 
+			 (typ == GF_DETECTDOOR_PLAYER) || (typ == GF_DETECTTRAP_PLAYER) || 
+			 (typ == GF_TELEPORTLVL_PLAYER) || (typ == GF_RESPOIS_PLAYER) || 
+			 (typ == GF_RESELEC_PLAYER) || (typ == GF_RESACID_PLAYER) || 
+			 (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) || 
+			 (typ == GF_SHERO_PLAYER)))
 		{
 			if (!(c_ptr->m_idx > 0))
-		        break;
-                }
+				break;
+		}
 
 
 		/* Calculate the new location */
@@ -5835,6 +6252,9 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 
 		/* Only do visual effects (and delay) if requested */
 		if (!(flg & PROJECT_HIDE))
+#ifdef PROJECTION_FLUSH_LIMIT
+			if (count_project < PROJECTION_FLUSH_LIMIT)
+#endif	// PROJECTION_FLUSH_LIMIT
 		{
 			for (j = 1; j < NumPlayers + 1; j++)
 			{
@@ -5910,6 +6330,9 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			if (i == tdi[dist])
 			{
 				gm[++dist] = grids; 
+#if DEBUG_LEVEL > 2
+				s_printf("dist:%d  i:%d\n", dist, i);
+#endif
 				if (dist > rad) break;
 			}
 
@@ -5917,7 +6340,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			x = x2 + tdx[i];
 
 			/* Ignore "illegal" locations */
-			if (!in_bounds2(wpos, y, x)) continue;
+			if (!in_bounds3(wpos, l_ptr, y, x)) continue;
 
 #if 1
 			if (typ == GF_DISINTEGRATE)
@@ -5998,6 +6421,9 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 
 	/* Display the "blast area" */
 	if (!(flg & PROJECT_HIDE))
+#ifdef PROJECTION_FLUSH_LIMIT
+			if (count_project < PROJECTION_FLUSH_LIMIT)
+#endif	// PROJECTION_FLUSH_LIMIT
 	{
 		/* Then do the "blast", from inside out */
 		for (t = 0; t <= rad; t++)
@@ -6226,7 +6652,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		}
 
 		/* Mega-Hack */
-		if ((who < 0) && (project_m_n == 1) && (who != -999))
+		if ((who < 0) && (project_m_n == 1) && (who >= PROJECTOR_UNUSUAL))
 		{
 			/* Location */
 			x = project_m_x;

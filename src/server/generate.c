@@ -783,7 +783,7 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
 
 			case ALLOC_TYP_OBJECT:
 			{
-				place_object(wpos, y, x, FALSE, FALSE);
+				place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
 				/* hack -- trap can be hidden under an item */
 				if (rand_int(100) < 2) place_trap(wpos, y, x, 0);
 				break;
@@ -1121,7 +1121,7 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num)
 			/* Place an item */
 			if (rand_int(100) < 75)
 			{
-				place_object(wpos, j, k, FALSE, FALSE);
+				place_object(wpos, j, k, FALSE, FALSE, default_obj_theme);
 			}
 
 			/* Place gold */
@@ -1608,7 +1608,7 @@ static void build_type3(struct worldpos *wpos, int yval, int xval)
 		}
 
 		/* Place a treasure in the vault */
-		place_object(wpos, yval, xval, FALSE, FALSE);
+		place_object(wpos, yval, xval, FALSE, FALSE, default_obj_theme);
 
 		/* Let's guard the treasure well */
 		vault_monsters(wpos, yval, xval, rand_int(2) + 3);
@@ -1827,7 +1827,7 @@ static void build_type4(struct worldpos *wpos, int yval, int xval)
 		/* Object (80%) */
 		if (rand_int(100) < 80)
 		{
-			place_object(wpos, yval, xval, FALSE, FALSE);
+			place_object(wpos, yval, xval, FALSE, FALSE, default_obj_theme);
 		}
 
 		/* Stairs (20%) */
@@ -1911,8 +1911,8 @@ static void build_type4(struct worldpos *wpos, int yval, int xval)
 			vault_monsters(wpos, yval, xval + 2, randint(2));
 
 			/* Objects */
-			if (rand_int(3) == 0) place_object(wpos, yval, xval - 2, FALSE, FALSE);
-			if (rand_int(3) == 0) place_object(wpos, yval, xval + 2, FALSE, FALSE);
+			if (rand_int(3) == 0) place_object(wpos, yval, xval - 2, FALSE, FALSE, default_obj_theme);
+			if (rand_int(3) == 0) place_object(wpos, yval, xval + 2, FALSE, FALSE, default_obj_theme);
 #else
 			c_ptr = &cave[Depth][yval][xval-5];
 			c_ptr->feat = FEAT_WALL_INNER;
@@ -1928,8 +1928,8 @@ static void build_type4(struct worldpos *wpos, int yval, int xval)
 			vault_monsters(Depth, yval, xval + 2, randint(2));
 
 			/* Objects */
-			if (rand_int(3) == 0) place_object(Depth, yval, xval - 2, FALSE, FALSE);
-			if (rand_int(3) == 0) place_object(Depth, yval, xval + 2, FALSE, FALSE);
+			if (rand_int(3) == 0) place_object(Depth, yval, xval - 2, FALSE, FALSE, default_obj_theme);
+			if (rand_int(3) == 0) place_object(Depth, yval, xval + 2, FALSE, FALSE, default_obj_theme);
 #endif
 		}
 
@@ -2918,7 +2918,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				case '*':
 				if (rand_int(100) < 75)
 				{
-					place_object(wpos, y, x, FALSE, FALSE);
+					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
 				}
 //				else	// now cumulative :)
 //				if (rand_int(100) < 25)
@@ -2962,7 +2962,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				place_monster(wpos, y, x, TRUE, TRUE);
 				monster_level = lev;
 				object_level = lev + 7;
-				place_object(wpos, y, x, TRUE, FALSE);
+				place_object(wpos, y, x, TRUE, FALSE, default_obj_theme);
 				object_level = lev;
 				if (magik(40)) place_trap(wpos, y, x, 0);
 				break;
@@ -2973,7 +2973,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				place_monster(wpos, y, x, TRUE, TRUE);
 				monster_level = lev;
 				object_level = lev + 20;
-				place_object(wpos, y, x, TRUE, TRUE);
+				place_object(wpos, y, x, TRUE, TRUE, default_obj_theme);
 				object_level = lev;
 				if (magik(80)) place_trap(wpos, y, x, 0);
 				break;
@@ -2989,7 +2989,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				if (rand_int(100) < 50)
 				{
 					object_level = lev + 7;
-					place_object(wpos, y, x, FALSE, FALSE);
+					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
 					object_level = lev;
 				}
 				break;

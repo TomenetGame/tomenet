@@ -135,6 +135,22 @@ struct recall_depth
 
 
 /*
+ * "Themed" objects.
+ * Probability in percent for each class of objects to be dropped.
+ * This could perhaps be an array - but that wouldn't be as clear.
+ */
+/* Borrowed from ToME	- Jir - */
+typedef struct obj_theme obj_theme;
+struct obj_theme
+{
+	byte treasure;
+	byte combat;
+	byte magic;
+	byte tools;
+};
+
+
+/*
  * Information about terrain "features"
  */
 
@@ -497,8 +513,8 @@ struct monster_race
 	u32b r_flags8;			/* Observed racial flags */
 	u32b r_flags9;			/* Observed racial flags */
 
-	obj_theme drops;		/* The drops type */
 #endif
+	obj_theme drops;		/* The drops type */
 };
 
 

@@ -1740,7 +1740,7 @@ void wipeout_needless_objects()
 			cwpos.wx=x;
 			cwpos.wz=0;
 			w_ptr=&wild_info[y][x];
-			if(getcave(&cwpos) && !players_on_depth(&cwpos)) wipe_o_list(&cwpos);
+//			if(getcave(&cwpos) && !players_on_depth(&cwpos)) wipe_o_list(&cwpos);
 			if(w_ptr->flags & WILD_F_DOWN){
 				d_ptr=w_ptr->dungeon;
 				for(z=1;z<=d_ptr->maxdepth;z++){
@@ -1827,7 +1827,7 @@ void exit_game_panic(void)
 		}
 	}
 
-	wipeout_needless_objects();
+//	wipeout_needless_objects();
 
 	/* Stop the timer */
 	teardown_timer();

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: init1.c */
 
 /* Purpose: Initialization (part 1) -BEN- */
@@ -129,6 +130,8 @@ static cptr r_info_blow_effect[] =
         "INSANITY",
         "HALLU",
         "PARASITE",
+	"DISARM",	// ToME-NET ones
+//	"SEDUCE",
 	NULL
 };
 
@@ -550,7 +553,7 @@ static cptr t_info_flags[] =
    "XXX29",
    "XXX30",
    "XXX31",
-   "XXX32"
+   "NO_ID"
 };
 
 /*
@@ -672,17 +675,7 @@ static cptr k_info_flags3[] =
 
 #if 1	// under construction
 
-#if 0	// flags3
-	"KNOWLEDGE",
-	"XXX2",
-	"XXX3",
-	"XXX4",
-	"XXX5",
-	"XXX6",
-	"XXX7",
-	"XXX8",
-#endif	// 0
-#if 0
+#if 0	// vs.monst traps flags. not implemented yet.
 /*
  * Trap flags
  */
@@ -792,8 +785,8 @@ static cptr k_info_flags5[] =
 	"XXX8X22",
 	"XXX8X23",
 	"XXX8X24",
-	"XXX8X25",
-	"XXX8X25",
+	"DISARM",	// "XXX8X25",
+	"NO_ENCHANT",	// "XXX8X25",
 //	"LIFE",		//"XXX8X27",
 	"CHAOTIC",	//"XXX8X26",
 	"INVIS",	//"XXX8X28",
@@ -881,8 +874,184 @@ static cptr ego_flags[] =
 
 #endif	// 0
 
+#if 0	// flags from ToME, for next expansion
+/*
+ * Feature flags
+ */
+static cptr f_info_flags1[] =
+{
+	"NO_WALK",
+	"NO_VISION",
+	"CAN_LEVITATE",
+	"CAN_PASS",
+	"FLOOR",
+	"WALL",
+	"PERMANENT",
+	"CAN_FLY",
+	"REMEMBER",
+	"NOTICE",
+	"DONT_NOTICE_RUNNING",
+	"CAN_RUN",
+	"DOOR",
+	"SUPPORT_LIGHT",
+	"CAN_CLIMB",
+	"TUNNELABLE",
+	"WEB",
+	"ATTR_MULTI",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1"
+};
 
+/*
+ * Dungeon flags
+ */
+static cptr d_info_flags1[] =
+{
+	"PRINCIPAL",
+	"MAZE",
+	"SMALLEST",
+	"SMALL",
+	"BIG",
+	"NO_DOORS",
+	"WATER_RIVER",
+	"LAVA_RIVER",
+	"WATER_RIVERS",
+	"LAVA_RIVERS",
+	"CAVE",
+	"CAVERN",
+	"NO_UP",
+	"HOT",
+	"COLD",
+	"FORCE_DOWN",
+	"FORGET",
+	"NO_DESTROY",
+	"SAND_VEIN",
+	"CIRCULAR_ROOMS",
+	"EMPTY",
+	"DAMAGE_FEAT",
+	"FLAT",
+	"TOWER",
+	"RANDOM_TOWNS",
+	"DOUBLE",
+	"LIFE_LEVEL",
+	"EVOLVE",
+	"ADJUST_LEVEL_1",
+	"ADJUST_LEVEL_2",
+	"NO_RECALL",
+	"NO_STREAMERS"
+};
+
+static cptr d_info_flags2[] =
+{
+	"ADJUST_LEVEL_1_2",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1"
+};
+
+#endif	// 0
+
+static cptr v_info_flags1[] =
+{
+	"FORCE_FLAGS",
+	"NO_TELE",
+	"NO_GENO",
+	"NOMAP",
+	"NO_MAGIC_MAP",
+	"NO_DESTROY",
+	"NO_MAGIC",
+	"XXX1",		// ASK_LEAVE
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",		// DESC
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"NO_PENETR",
+	"HIVES",
+	"NO_MIRROR",
+	"NO_ROTATE"
+};
 /*** Initialize from ascii template files ***/
+
+/*
+ * Grab one flag in a vault_type from a textual string
+ */
+static errr grab_one_vault_flag(vault_type *v_ptr, cptr what)
+{
+	int i;
+
+	/* Check flags1 */
+	for (i = 0; i < 32; i++)
+	{
+                if (streq(what, v_info_flags1[i]))
+		{
+                        v_ptr->flags1 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Oops */
+	s_printf("Unknown vault flag '%s'.", what);
+
+	/* Error */
+	return (1);
+}
 
 
 /*
@@ -892,7 +1061,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 {
 	int i;
 
-	char *s;
+	char *s, *t;
 
 	/* Not ready yet */
 	bool okay = FALSE;
@@ -1044,6 +1213,32 @@ errr init_v_info_txt(FILE *fp, char *buf)
 			continue;
 		}
 
+		/* Hack -- Process 'F' for flags */
+		if (buf[0] == 'F')
+		{
+			/* Parse every entry textually */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+				/* Parse this entry */
+				if (0 != grab_one_vault_flag(v_ptr, s)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
 
 		/* Oops */
 		return (6);
@@ -3249,7 +3444,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
                 /* Process 'O' for "Object type" (one line only) */
                 if (buf[0] == 'O')
 		{
-#if 0
+#if 1
                         int treasure, combat, magic, tools;
 
 			/* Scan for the values */
@@ -3463,6 +3658,16 @@ errr init_r_info_txt(FILE *fp, char *buf)
 
 	/* Hack -- Try to prevent a few "potential" bugs */
 	r_ptr->mexp = 1L;
+
+	for (i = 1; i < MAX_R_IDX; i++)
+	{
+		/* Invert flag WILD_ONLY <-> RF8_DUNGEON */
+		r_info[i].flags8 ^= 1L;
+
+		/* WILD_TOO without any other wilderness flags enables all flags */
+		if ((r_info[i].flags8 & RF8_WILD_TOO) && !(r_info[i].flags8 & 0x7FFFFFFE))
+			r_info[i].flags8 = 0x0463;
+	}
 
 
 	/* No version yet */
@@ -4402,14 +4607,14 @@ errr init_t_info_txt(FILE *fp, char *buf)
 		{
 			int probability, another, p1valinc, difficulty;
 			int minlevel;
-			int dd,ds;
+			int dd, ds, vanish;
 			char color;
 
 			/* Scan for the values */
-			if (8 != sscanf(buf+2, "%d:%d:%d:%d:%d:%dd%d:%c",
+			if (9 != sscanf(buf+2, "%d:%d:%d:%d:%d:%dd%d:%c:%d",
 					&difficulty, &probability, &another,
 					&p1valinc, &minlevel, &dd, &ds,
-					&color)) return (1);
+					&color, &vanish)) return (1);
 
 			t_ptr->difficulty  = (byte)difficulty;
 			t_ptr->probability = (s16b)probability;
@@ -4419,6 +4624,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			t_ptr->dd          = (s16b)dd;
 			t_ptr->ds          = (s16b)ds;
 			t_ptr->color       = color_char_to_attr(color);
+			t_ptr->vanish      = (byte)vanish;
 
 			/* Megahack -- move pernA-oriented instakill traps deeper */
 			if (19 < error_idx && error_idx < 134)
