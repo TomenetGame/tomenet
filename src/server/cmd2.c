@@ -552,7 +552,7 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 
 bool access_door(int Ind, struct dna_type *dna){
 	player_type *p_ptr=Players[Ind];
-	if (p_ptr->admin_wiz && p_ptr->admin_dm)
+	if (p_ptr->admin_wiz || p_ptr->admin_dm)
 		return(TRUE);
 	if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
 		return(FALSE); /* defies logic a bit, but for speed */
