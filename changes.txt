@@ -25,6 +25,8 @@
 08/02/2003
 [M]- Toned down boosts if monsters were 50+ levels ood.
      New algorithm for boosting.
+     Reduced INDIRECT_SUMMONING_RADIUS from 3 to 2.
+     Reduced radius for ball spells/breathes from 3/2 to 2/1 (smart/stupid mob).
 
 30/01/2003
 [I]- Fixed character dumps on windows
