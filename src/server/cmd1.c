@@ -1752,6 +1752,11 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 
 /*
  * Attacking something, figure out what and spawn appropriately.
+ *
+ * If 'old' is TRUE, it's just same as ever; player will attack
+ * (num_blow) times, and energy consumption is not calculated here.
+ * If FALSE, player attacks only once, no matter what num_blow is,
+ * and (1/num_blow) turn is consumed.	- Jir -
  */
 void py_attack(int Ind, int y, int x, bool old)
 {
