@@ -151,7 +151,7 @@ HZEAL = add_spell
 {
 	["name"] =      "Zeal",
 	["school"] =    SCHOOL_HSUPPORT,
-	["level"] =     30,
+	["level"] =     31,
 	["mana"] =      50,
 	["mana_max"] =  150,
 	["fail"] =      15,

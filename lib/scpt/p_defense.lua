@@ -61,7 +61,7 @@ HRESISTS = add_spell
 {
 	["name"] = 	"Holy Resistance",
         ["school"] = 	{SCHOOL_HDEFENSE},
-        ["level"] = 	10,
+        ["level"] = 	11,
         ["mana"] = 	4,
         ["mana_max"] = 	45,
         ["fail"] = 	15,
@@ -138,9 +138,9 @@ HRUNEPROT = add_spell
 	["name"] =	"Glyph Of Warding",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["level"] =	40,
-	["mana"]=	50,
-	["mana_max"] =	50,
-	["fail"] = 	10,
+	["mana"]=	20,
+	["mana_max"] =	20,
+	["fail"] = 	0,
 	["stat"] =      A_WIS,
 	["spell"] = 	function()
                         local x, y
@@ -163,7 +163,7 @@ HMARTYR = add_spell
 	["level"] =	40,
 	["mana"]=	50,
 	["mana_max"] =	50,
-	["fail"] = 	40,
+	["fail"] = 	0,
 	["stat"] =      A_WIS,
 	["spell"] = 	function()
 			if player.martyr_timeout > 0 then

@@ -1023,7 +1023,9 @@ static void calc_mana(int Ind)
 
 	/* adjustment so paladins won't become OoD sentry guns and
 	   rangers won't become invulnerable manashield tanks, and
-	   priests won't become OoD wizards.. (C. Blue) */
+	   priests won't become OoD wizards.. (C. Blue)
+	   Removed ranger mana penalty here, added handicap in spells1.c
+	   where disruption shield is calculated. (C. Blue) */
 	switch(p_ptr->pclass) {
 	case CLASS_MAGE:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 10;
@@ -1036,7 +1038,7 @@ static void calc_mana(int Ind)
 	case CLASS_ADVENTURER:
 	case CLASS_ROGUE:
 	default:
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 15;
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 10;
 		break;
 	}
 
@@ -1383,15 +1385,16 @@ static void calc_body_bonus(int Ind)
 	bool wepless = FALSE;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	
-	Rand_value = p_ptr->mimic_seed;
-	Rand_quick = TRUE;
-	
 	immunity[1] = 0; immunity[2] = 0; immunity[3] = 0;
 	immunity[4] = 0; immunity[5] = 0; immunity[6] = 0;
 	immrand[1] = 0; immrand[2] = 0;
 
 	/* If in the player body nothing have to be done */
 	if (!p_ptr->body_monster) return;
+
+	/* keep random monster-body abilities static over quit/rejoin */
+	Rand_value = p_ptr->mimic_seed;
+	Rand_quick = TRUE;
 
 	if (!r_ptr->body_parts[BODY_WEAPON])
 	{
@@ -1566,6 +1569,7 @@ static void calc_body_bonus(int Ind)
 			//if (p_ptr->prace != RACE_ENT) 
 			p_ptr->pspeed -= 2;
 			p_ptr->sensible_fire = TRUE;
+			p_ptr->resist_water = TRUE;
 
 			if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
 
@@ -1796,7 +1800,12 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if(r_ptr->flags4 & RF4_BR_INER) p_ptr->free_act = TRUE;
 
 	/* If not changed, spells didnt changed too, no need to send them */
-	if (!p_ptr->body_changed) return;
+	if (!p_ptr->body_changed)
+	{
+		/* restore RNG */
+		Rand_quick = FALSE;
+		return;
+	}
 	p_ptr->body_changed = FALSE;
 
 #if 0	/* moved so that 2 handed weapons etc can be checked for */
@@ -2308,6 +2317,7 @@ void calc_bonuses(int Ind)
 	{
 		p_ptr->slow_digest = TRUE;
 		p_ptr->sensible_fire = TRUE;
+		p_ptr->resist_water = TRUE;
 
 		/* not while in mimicried form */
 		if(!p_ptr->body_monster)
@@ -3612,16 +3622,16 @@ void calc_bonuses(int Ind)
 		if (f4 & TR4_COULD2H)
 		{                
 			/* Reduce the real bonuses */
-			if (p_ptr->to_h > 0) p_ptr->to_h = (2 * p_ptr->to_h) / 4;
-			if (p_ptr->to_d > 0) p_ptr->to_d = (2 * p_ptr->to_d) / 4;
+			if (p_ptr->to_h > 0) p_ptr->to_h = (3 * p_ptr->to_h) / 5;
+			if (p_ptr->to_d > 0) p_ptr->to_d = (3 * p_ptr->to_d) / 5;
 
 			/* Reduce the mental bonuses */
-			if (p_ptr->dis_to_h > 0) p_ptr->dis_to_h = (2 * p_ptr->dis_to_h) / 4;
-			if (p_ptr->dis_to_d > 0) p_ptr->dis_to_d = (2 * p_ptr->dis_to_d) / 4;
+			if (p_ptr->dis_to_h > 0) p_ptr->dis_to_h = (3 * p_ptr->dis_to_h) / 5;
+			if (p_ptr->dis_to_d > 0) p_ptr->dis_to_d = (3 * p_ptr->dis_to_d) / 5;
 			
 			/* Reduce the weaponmastery bonuses */
-			if (p_ptr->to_h_melee > 0) p_ptr->to_h_melee = (2 * p_ptr->to_h_melee) / 4;
-			if (p_ptr->to_d_melee > 0) p_ptr->to_d_melee = (2 * p_ptr->to_d_melee) / 4;
+			if (p_ptr->to_h_melee > 0) p_ptr->to_h_melee = (3 * p_ptr->to_h_melee) / 5;
+			if (p_ptr->to_d_melee > 0) p_ptr->to_d_melee = (3 * p_ptr->to_d_melee) / 5;
 
 			p_ptr->awkward_wield = TRUE;
 		}
@@ -3637,16 +3647,16 @@ void calc_bonuses(int Ind)
 		/* Reduce the real bonuses */
 		/*p_ptr->to_h -= 2;
 		p_ptr->to_d -= 2;*/
-		p_ptr->to_h = p_ptr->to_h * 2 / 4;
-		p_ptr->to_d = p_ptr->to_d * 2 / 4;
-		p_ptr->to_h_melee = p_ptr->to_h_melee * 2 / 4;
-		p_ptr->to_d_melee = p_ptr->to_d_melee * 2 / 4;
+		p_ptr->to_h = p_ptr->to_h * 3 / 5;
+		p_ptr->to_d = p_ptr->to_d * 3 / 5;
+		p_ptr->to_h_melee = p_ptr->to_h_melee * 3 / 5;
+		p_ptr->to_d_melee = p_ptr->to_d_melee * 3 / 5;
 		
 		/* Reduce the mental bonuses */
 		/*p_ptr->dis_to_h -= 2;
 		p_ptr->dis_to_d -= 2;*/
-		p_ptr->dis_to_h = p_ptr->dis_to_h * 2 / 4;
-		p_ptr->dis_to_d = p_ptr->dis_to_d * 2 / 4;
+		p_ptr->dis_to_h = p_ptr->dis_to_h * 3 / 5;
+		p_ptr->dis_to_d = p_ptr->dis_to_d * 3 / 5;
 
 		/* Icky weapon */
 		p_ptr->icky_wield = TRUE;

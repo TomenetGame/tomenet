@@ -1531,7 +1531,7 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_BOW,
                                 '+', 1000,
-                                '+', 200,
+                                '%', 120,
                         },
                         {
                                 SKILL_MAGIC,
@@ -1556,7 +1556,7 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 1000,
-                                '+', 200,
+                                '+', 150,
                         },
                         {
                                 SKILL_CLIMB,
@@ -1596,7 +1596,7 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_SLING,
                                 '+', 1000,
-                                '+', 300,
+                                '+', 100,
                         },
                         {
                                 SKILL_STEALTH,
@@ -1606,12 +1606,12 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 2000,
-                                '+', 300,
+                                '+', 150,
                         },
                         {
                                 SKILL_DODGE,
                                 '+', 1000,
-                                '+', 400,
+                                '+', 300,
                         },
                         {
                                 SKILL_CLIMB,
@@ -1651,7 +1651,7 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_XBOW,
                                 '+', 1000,
-                                '+', 200,
+                                '%', 120,
                         },
                         {
                                 SKILL_MAGIC,
@@ -1746,7 +1746,7 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_BACKSTAB,
                                 '+', 1000,
-                                '+', 200,
+                                '+', 50,
                         },
                         {
                                 SKILL_DISARM,
@@ -1919,7 +1919,7 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_BOW,
                                 '+', 1000,
-                                '+', 200,
+                                '+', 50,
                         },
                         {
                                 SKILL_MAGIC,
@@ -1934,7 +1934,7 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_DODGE,
                                 '+', 1000,
-                                '+', 300,
+                                '+', 200,
                         },
                         {
                                 SKILL_AGILITY,
@@ -1944,7 +1944,7 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 2000,
-                                '+', 300,
+                                '+', 150,
                         },
                         {
                                 SKILL_CLIMB,
@@ -2022,12 +2022,12 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_BOOMERANG,
                                 '+', 1000,
-                                '+', 400,
+                                '+', 100,
                         },
                         {
                                 SKILL_STEALING,
                                 '+', 0,
-                                '%', 120,
+                                '%', 110,
                         },
                         {
                                 SKILL_CLIMB,
@@ -2065,11 +2065,6 @@ player_race race_info[MAX_RACES] =
                 90,
                 {
                         {
-                                SKILL_MARTIAL_ARTS,
-                                '+', 0,
-                                '+', 200,
-                        },
-                        {
                                 SKILL_HEALTH,
                                 '+', 1000,
                                 '%', 120,
@@ -2077,7 +2072,7 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_CALMNESS,
                                 '+', 1000,
-                                '+', 200,
+                                '+', 150,
                         },
                         /* Ent loves water and the Earth */
                         {
@@ -2139,13 +2134,13 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_AURA_FEAR,
                                 '+', 2000,
-                                '+', 300,
+                                '+', 150,
                         },
                         /* TL is jumpy */
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
-                                '+', 200,
+                                '+', 150,
                         },
                         {
                                 SKILL_FIRE,
@@ -2774,7 +2769,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_COMBAT,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 500,
                         },
                         {
                                 SKILL_MASTERY,
@@ -2902,7 +2897,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_COMBAT,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 600,
                         },
                         {
                                 SKILL_MASTERY,
@@ -2927,12 +2922,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOW,
                                 '+', 0,
-                                '+', 450,
+                                '+', 400,
                         },
                         {
                                 SKILL_XBOW,
                                 '+', 0,
-                                '+', 450,
+                                '+', 400,
                         },
                         {
                                 SKILL_BOOMERANG,
@@ -3203,7 +3198,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_COMBAT,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 650,
                         },
                         {
                                 SKILL_MASTERY,
@@ -3477,7 +3472,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_COMBAT,
                                 '+', 1500,
-                                '+', 500,
+                                '+', 650,
                         },
                         {
                                 SKILL_MASTERY,
@@ -3517,7 +3512,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOW,
                                 '+', 1000,
-                                '+', 550,
+                                '+', 450,
                         },
                         {
                                 SKILL_XBOW,

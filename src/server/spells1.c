@@ -1157,11 +1157,28 @@ void take_hit(int Ind, int damage, cptr hit_from)
 	{
 		if (p_ptr->csp > 0)
 		{
-			int taken = (damage * 2 ) / 2;//mana shield works with a ratio of SP<->damage points
+			int taken;
+
+			switch(p_ptr->pclass) {
+			case CLASS_MAGE:
+			taken = (damage * 2 ) / 2;//mana shield works with a ratio of SP<->damage points
+			break;
+			default:
+			taken = (damage * 2 ) / 1;
+			break;
+			}
 
 			if (p_ptr->csp < taken)
 			{
+				switch(p_ptr->pclass) {
+				case CLASS_MAGE:
 				damage = ((taken - p_ptr->csp) / 2) * 2;
+				break;
+				default:
+				damage = ((taken - p_ptr->csp) / 2) * 1;
+				break;
+				}
+
 				p_ptr->csp = 0;
 				/* mana shield stops on empty mana! */
 				set_tim_manashield(Ind, 0);

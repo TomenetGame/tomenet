@@ -1615,6 +1615,11 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	}
 
 	/* No magic */
+	if (p_ptr->anti_magic)
+	{
+		msg_print(Ind, "Your anti-magic shell disrupts any magic attempts.");
+		return;
+	}
 	if (p_ptr->antimagic)
 	{
 		msg_print(Ind, "Your anti-magic field disrupts any magic attempts.");

@@ -155,6 +155,16 @@ function get_level_school(i, s, max, min)
 	        lvl = lua_get_level(i, s, lvl, max, min, bonus)
         end
 
+--	--Hack: Disruption Shield only for Istari. Not for Adventurer/Ranger.
+--	if spell(s).name == "Disruption Shield" then
+--		if player.pclass == 0 then
+--			lvl = 0
+--		end
+--		if player.pclass == 8 then
+--			lvl = 0
+--		end
+--	end
+
         return lvl
 end
 

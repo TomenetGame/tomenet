@@ -29,7 +29,7 @@ HCURING = add_spell
 {
 	["name"] =      "Curing",
 	["school"] =    {SCHOOL_HCURING},
-	["level"] =     15,
+	["level"] =     16,
 	["mana"] =      10,
 	["mana_max"] =  25,
 	["fail"] =      20,
@@ -78,7 +78,7 @@ HSANITY = add_spell
 {
 	["name"] =      "Mind Focus",
 	["school"] =    {SCHOOL_HCURING},
-	["level"] =     20,
+	["level"] =     21,
 	["mana"] =      50,
 	["mana_max"] =  100,
 	["fail"] =      50,
@@ -123,7 +123,7 @@ HRESURRECT = add_spell
 	["level"] =     30,
 	["mana"] =      200,
 	["mana_max"] =  500,
-	["fail"] =      50,
+	["fail"] =      70,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
 			fire_ball(Ind, GF_RESURRECT_PLAYER, 0, get_level(Ind, HRESURRECT, 20), 1, " resurrects you!")
@@ -165,10 +165,10 @@ HDELBB = add_spell
 {
 	["name"] =      "Soul Curing",
 	["school"] =    {SCHOOL_HCURING},
-	["level"] =     40,
+	["level"] =     45,
 	["mana"] =      200,
 	["mana_max"] =  200,
-	["fail"] =      60,
+	["fail"] =      0,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
 			msg_print(Ind, "You feel a calming warmth touching your soul.");

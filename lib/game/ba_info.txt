@@ -127,28 +127,28 @@ C:220:200:180
 I:21:0:c:128
 
 N:24:Enchant weapon
-C:750:700:150
+C:750:700:650
 I:23:0:w:0
 
 N:25:Enchant armor
-C:750:700:150
+C:750:700:650
 I:24:0:a:0
 
 N:26:Recharge item
-C:350:300:75
+C:350:300:250
 I:25:0:r:2
 
 N:27:Identify possessions
-C:900:800:100
+C:900:800:700
 #I:26:0:i:0
 I:26:0:I:0
 
 N:28:Healing prayer
-C:600:400:0
+C:600:400:200
 I:28:0:h:0
 
 N:29:Restoration
-C:600:5000:100
+C:6000:5000:4000
 I:29:0:r:0
 
 N:30:Get share of stolen gold
@@ -156,11 +156,11 @@ C:0:0:0
 I:7:2:g:0
 
 N:31:Enchant arrows
-C:550:500:100
+C:550:500:450
 I:30:0:a:0
 
 N:32:Enchant bow
-C:550:500:100
+C:550:500:450
 I:31:0:b:0
 
 N:33:Recall to dungeon
@@ -168,7 +168,7 @@ C:300:200:100
 I:33:0:r:0
 
 N:34:Teleport to dungeon-level
-C:15000:10000:1000
+C:15000:10000:5000
 I:34:0:t:0
 
 N:35:Get a quest
@@ -189,11 +189,11 @@ C:0:0:0
 I:49:0:q:0
 
 N:39:Herbal Healing
-C:32000:10000:0
+C:15000:10000:7500
 I:50:0:h:0
 
 N:40:Song of Lore
-C:2000:800:50
+C:2000:1500:1000
 I:26:0:s:0
 
 N:41:Distribute earnings
@@ -201,7 +201,7 @@ C:0:0:0
 I:7:2:d:0
 
 N:42:Morph restoration
-C:3000:1500:750
+C:3000:1500:1000
 I:37:0:r:0
 
 #for The Mirror
@@ -221,43 +221,43 @@ I:1:0:a:2
 
 #for Star-Dome
 N:46:Identify possessions
-C:1200:1000:250
+C:1200:1000:800
 #I:26:0:i:0
 I:26:0:I:0
 
 #for Star-Dome
 N:47:Recharge item
-C:1200:1000:150
+C:1200:1000:750
 I:25:0:r:2
 
 #for Valarin Temple
 N:48:Restoration
-C:1200:5000:200
+C:6200:5000:4000
 I:29:0:r:0
 
 #for Sea-Dome
 N:49:Morph restoration
-C:1500:15000:1500
+C:1500:1500:1500
 I:37:0:r:0
 
 #for The Golden Flower
 N:50:Enchant arrows
-C:1100:1000:200
+C:1100:1000:800
 I:30:0:a:0
 
 #for The Golden Flower
 N:51:Enchant bow
-C:1100:1000:200
+C:1100:1000:800
 I:31:0:b:0
 
 #for The Fountain
 N:52:Enchant armor
-C:1100:1000:200
+C:1100:1000:900
 I:24:0:a:0
 
 #for The Fountain
 N:53:See Healers
-C:1100:1000:0
+C:1100:1000:900
 I:28:0:h:0
 
 N:54:Drop an item

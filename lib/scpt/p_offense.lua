@@ -60,7 +60,7 @@ HEXORCISM = add_spell
 {
 	["name"] = 	"Exorcism",
         ["school"] = 	{SCHOOL_HOFFENSE},
-        ["level"] = 	10,
+        ["level"] = 	11,
         ["mana"] = 	15,
         ["mana_max"] = 	100,
         ["fail"] = 	30,
