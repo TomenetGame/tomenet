@@ -2551,13 +2551,15 @@ void do_cmd_read_scroll(int Ind, int item)
 				dungeon_type *d_ptr;
 				if (rand_int(100) < 50) {
 				    x = 0;
-				    for (d_tries = 0; d_tries < MAX_D_IDX; d_tries++)
+				    /* first dungeon (d_tries = 0) is always 'wildernis'
+				    -> ignore it by skipping to d_tries = 1: */
+				    for (d_tries = 1; d_tries < MAX_D_IDX; d_tries++)
 				    {
 					if (d_info[d_tries].name) x++;
 				    }
-				    d_no = rand_int(x);
+				    d_no = randint(x);
 				    y = 0;
-				    for (d_tries = 0; d_tries < MAX_D_IDX; d_tries++)
+				    for (d_tries = 1; d_tries < MAX_D_IDX; d_tries++)
 				    {
 					if (d_info[d_tries].name) y++;
 					if (y == d_no) {
