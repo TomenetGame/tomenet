@@ -1,5 +1,5 @@
 N:*:Default
-342
+385
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -235,7 +235,7 @@ Morgul weapons are utterly useless - but there's one notable exception...
 They say that a stone is just a stone.
 They say that a phial is just a mundane glass with decorations.
 They say that a star is a badge for sheriffs.
-Have you ever seen a broken stick of *slay* lag?
+Ever seen a broken stick of *slay* lag?
 They say that you should be good to the poor farmer.
 Never forget to lock the door when you leave your house!
 They say that The Lady hates to have her *real* name called.
@@ -252,7 +252,7 @@ Ever tried a batman monk?
 Ever tried a female Ent?
 They say that you should enter jelly-pit naked.
 Just call the police if you find a hideout of evil above 1000'
-They say that better ask veterans better than pray to a goddess.
+They say that better ask veterans than pray to a goddess.
 They say that there's a world called 'potland'.
 They say that cloning technology is prohibited by the U.S. government.
 They say that a warrior starts his adventure by selling his Broad Sword.
@@ -342,3 +342,46 @@ They say that you should learn how to use ghost powers.
 They say that you don't have to save the world.
 They say that you still don't need an amulet to save the world.
 They say that no hell below us, above us only sky so no use praying to Gods.
+They say that quick dive, quick die.
+"So when I die, the first thing I will see is #@# ?"
+They say that an average dungeoneer carries 20 books all the way.
+I wonder why some priests would cast Orb onto a messy floor.
+Dig your own grave and you'll survive longer.
+They say that you should be extremely vigilant the moment you recall.
+They say that very often a dagger(+0,+0) is greater than a Broad Sword(+5,+5).
+They say that archers never care for damage rings.
+Try inscribing #'Ringil' on your Long Sword.
+Try inscribing #of Feanor on your Hard Leather Boots.
+Ever tried to eat a ring?
+Ever asked The Lady for a date?
+You feel the Windows (Xp) on your hard disk is as broken as all the others...
+They say that playing angband on Windoze is a bad joke.
+Darn, that rogue casted the spell of Summon Lag!
+They say that you should learn to dive, though it's not in the water.
+They say that when you have Chaos resistance, why bother Confusion one?
+They say that when you have Hold Life, why bother Nether resistance?
+They say that when you have Shock resistance, why bother Sound one?
+When you have all the resistances, why bother casting resistance spell?
+Once upon a time, a stupid player couldn't beat Morgie even with his Ringil.
+They say that why people even bothers storing Amulet of Charisma in house?
+They say that massive pieces of wood is essential for bridge building.
+Troubles? Please ask THE PERSON IN CHARGE, and not me!
+They say that many apprentice warlocks genocided themselves.
+They say that Glove of Invulnerability doesn't work fully nowadays.
+Ever tried to combat while meditating?
+Ever wondered why your AC changes sometimes?
+Found a Fishing Pole? Go to the Sea to the South of the town and fish!
+Ever wondered why a mimic eagarly hunts spiders?
+They say that speed rings so precious, some people still prefers damage rings.
+They say that you'd love to drop anchor when in a vault.
+Ever found a hound pit?
+Ever met a cookie monster?
+Found 10 mushrooms of Hallucination? Time to throw a party!
+They say that hjkl dancer benefits more nowadays.
+Lost deep in the dungeon? Carry string of Ariadne next time around!
+I wonder why some players would scatter the floor with their recall scrolls..
+Ever tried to polymorph other players?
+Ever eaten an eye?
+They say that angband players are of less gourmant.
+They say that silence is a requirement for enjoying music.
+Ever heard the sound of silence? Oops, everyone /ignore you!
