@@ -67,7 +67,7 @@ static int macro_maybe(cptr buf, int n)
 	for (i = n; i < macro__num; i++)
 	{
 		/* Skip inactive macros */
-		if (macro__cmd[i] && !inkey_flag) continue;
+		if (macro__cmd[i] && inkey_msg_flag) continue;
 
 		/* Check for "prefix" */
 		if (prefix(macro__pat[i], buf))
@@ -93,7 +93,7 @@ static int macro_ready(cptr buf)
 	for (i = 0; i < macro__num; i++)
 	{
 		/* Skip inactive macros */
-		if (macro__cmd[i] && !inkey_flag) continue;
+		if (macro__cmd[i] && inkey_msg_flag) continue;
 
 		/* Check for "prefix" */
 		if (!prefix(buf, macro__pat[i])) continue;
@@ -290,7 +290,7 @@ static char inkey_aux(void)
 	if (!macro__use[(byte)(ch)]) return (ch);
 
 	/* Efficiency -- Ignore inactive macros */
-	if (!inkey_flag && (macro__use[(byte)(ch)] == MACRO_USE_CMD)) return (ch);
+	if (inkey_msg_flag && (macro__use[(byte)(ch)] == MACRO_USE_CMD)) return (ch);
 
 
 	/* Save the first key, advance */
@@ -2092,8 +2092,6 @@ void c_msg_print(cptr msg)
 	cptr msg_bloodbond = "blood bond";
 	cptr msg_retire = "has retired";
 	cptr msg_fruitbat = "turned into a fruit bat";
-	cptr msg_afk1 = "seems to be AFK now";
-	cptr msg_afk2 = "has returned from AFK";
 	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
 	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
 
@@ -2151,7 +2149,6 @@ void c_msg_print(cptr msg)
 	    (strstr(msg, msg_deadA) != NULL) || (strstr(msg, msg_deadB) != NULL) || \
 	    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) || \
 	    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_retire) != NULL) ||
-	    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
 	    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[')) {
 /*	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {*/
 		c_message_add_chat(msg);

@@ -127,6 +127,7 @@ extern int special_line_type;
 extern bool inkey_base;
 extern bool inkey_scan;
 extern bool inkey_flag;
+extern bool inkey_msg_flag;
 
 extern s16b macro__num;
 extern cptr *macro__pat;

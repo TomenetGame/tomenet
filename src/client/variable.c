@@ -69,6 +69,7 @@ int special_line_type;
 bool inkey_base = FALSE;
 bool inkey_scan = FALSE;
 bool inkey_flag = FALSE;
+bool inkey_msg_flag = FALSE;
 
 s16b macro__num;
 cptr *macro__pat;
