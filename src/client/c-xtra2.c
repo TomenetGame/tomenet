@@ -19,7 +19,7 @@
  */
 void do_cmd_messages(void)
 {
-	int i, j, k, n, nn, q, r, s;
+	int i, j, k, n, nn, q, r, s, t;
 
 	char shower[80] = "";
 	char finder[80] = "";
@@ -80,6 +80,7 @@ void do_cmd_messages(void)
 		n = nn;  // new total # of messages in our new array
 		r = 0;	// how many times the message is Repeated
 		s = 0;	// how many lines Saved
+		k = 0;	// end of buffer flag
 
 
 		/* Dump up to 20 lines of messages */
@@ -97,13 +98,17 @@ void do_cmd_messages(void)
 				j--;
 				s++;
 				if (i + j + s < n - 1) continue;
+				k = 1;
 			}
 
 			if (r)
 			{
-				msg = format("    (the message below repeated %d times)", r + 1);
+//				msg = format("    (the message below repeated %d times)", r + 1);
+//				Term_putstr(72, 21-j+1-k, -1, a, format(" (x%d)", r + 1));
+				Term_putstr(t < 72 ? t : 72, 21-j+1-k, -1, a, format(" (x%d)", r + 1));
 				r = 0;
-				s--;
+//				continue;
+//				s--;
 			}
 
 			/* Apply horizontal scroll */
@@ -125,6 +130,7 @@ void do_cmd_messages(void)
 
 			/* Dump the messages, bottom to top */
 			Term_putstr(0, 21-j, -1, a, msg);
+			t = strlen(msg);
 		}
 
 		/* Display header XXX XXX XXX */

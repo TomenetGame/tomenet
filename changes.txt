@@ -389,3 +389,4 @@ Change list for PernMangband
 - SPELL_INTERFERE option in *.cfg.
 - Failing to cast a spell takes a turn now.
 - wizard/DM can view all the players' inventory via "'".
+- Repeated messages are shown in more decent way.(client)
