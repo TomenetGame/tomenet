@@ -737,6 +737,12 @@ Change list for PernMangband
 - Borrowed a *_info.txt renumbering script.
   http://www.fragment.com/~jl8e/angband/
 
+01/03/2002 (Jir)
+[B] strange colouring in unique list
+[B] some traps create 'phial' (INSTA_ARTS)
+[B] breeders won't breed
+[B] stormbringer was way too powerful (+8 attacks!!)
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)
@@ -748,9 +754,8 @@ Change list for PernMangband
 [B] wpos display hides wound states(eg.'Deep Gash')
 [B] /rec won't work if to wilderness?
 [B] ever-charging arts (eg.star)
-[B] some traps create 'phial' (INSTA_ARTS)
-[B] strange colouring in unique list
-[B] CURSE_x does 100+ dmg on 50ft
+[B] CURSE_x does 100+ dmg on 50ft?
+[B] =attack+3 doesn't work?
 
 ==== below this line are changes to be done in the future ====
 [minor ones]

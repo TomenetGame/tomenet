@@ -569,6 +569,7 @@ bool do_player_trap_garbage(int Ind, int times)
 	int k, l, lv = getlevel(&p_ptr->wpos);
 	bool ident = FALSE;
 	object_type *o_ptr, forge;
+	u32b f1, f2, f3, f4, f5, esp;
 
 	for(k = 0; k < times; k++)
 	{
@@ -579,6 +580,9 @@ bool do_player_trap_garbage(int Ind, int times)
 
 		o_ptr = &forge;
 		object_prep(o_ptr, l);
+
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		if (f3 & TR3_INSTA_ART) continue;
 
 		ident = TRUE;
 		if (inven_carry(Ind, o_ptr) < 0)

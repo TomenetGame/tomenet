@@ -291,6 +291,7 @@ void do_cmd_check_uniques(int Ind, int line)
 						if (j == 4)
 						{
 							fprintf(fff, "\n");
+							fprintf(fff, "%c", 'B');
 							j = 0;
 							full = TRUE;
 						}
