@@ -911,12 +911,13 @@ static void mass_produce(object_type *o_ptr)
  *
  * See "object_similar()" for the same function for the "player"
  */
+/* o_ptr is one in store, j_ptr is one in new. */
 static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 {
 	/* Hack -- Identical items cannot be stacked */
 	if (o_ptr == j_ptr) return (0);
 
-        if (o_ptr->owner != j_ptr->owner) return (0);
+//	if (o_ptr->owner != j_ptr->owner) return (0);
 
 	/* Different objects cannot be stacked */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
@@ -963,9 +964,14 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 /*
  * Allow a store item to absorb another item
  */
+/* o_ptr is item in store, j_ptr is new item bought. */
 static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
 {
 	int total = o_ptr->number + j_ptr->number;
+
+	if (!j_ptr->owner) o_ptr->owner = 0;
+	if (j_ptr->level < o_ptr->level) o_ptr->level = j_ptr->level;
+	if (o_ptr->level < 1) o_ptr->level = 1;
 
 	/* Combine quantity, lose excess items */
 	o_ptr->number = (total > 99) ? 99 : total;

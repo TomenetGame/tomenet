@@ -595,3 +595,5 @@ Change list for PernMangband
 
 3/1/2001 (Jir)
 - new(?) traps: pit, chasm
+- Shopkeepers always benefit from transaction(STORE_BENEFIT).
+- Store can merge items in a reasonable way.

@@ -866,12 +866,14 @@ s32b flag_cost(object_type * o_ptr, int plusses)
         {
                 return 0;
         }
+#if 0
 	if (f1 & TR1_STR) total += (1000 * plusses);
 	if (f1 & TR1_INT) total += (1000 * plusses);
 	if (f1 & TR1_WIS) total += (1000 * plusses);
 	if (f1 & TR1_DEX) total += (1000 * plusses);
 	if (f1 & TR1_CON) total += (1000 * plusses);
 	if (f1 & TR1_CHR) total += (250 * plusses);
+#endif	// 0
 	if (f5 & TR5_CHAOTIC) total += 10000;
 	if (f1 & TR1_VAMPIRIC) total += 13000;
 	if (f1 & TR1_STEALTH) total += (250 * plusses);
