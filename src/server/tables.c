@@ -2749,8 +2749,8 @@ player_magic magic_info[MAX_REALM] =
 #endif // 0
 
 			/* Wrath of God(9) */
-#if 0
 			{ 15,  7, 70,  25},
+#if 0
 			{ 20, 10, 75,  60},
 			{ 25, 25, 80, 250},
 			{ 35, 35, 80, 115},

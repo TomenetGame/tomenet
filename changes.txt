@@ -1197,6 +1197,9 @@ To find the latest change quickly, search ==== :)
 [B] when logging in, the player was slightly displaced.
 [B] Receive_activate_skill did nasties when out of energy.
 
+28/06/2002 (Jir)
+[B] prayer realm level check was broken.
+
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.

@@ -2921,7 +2921,8 @@ void do_cmd_pray(int Ind, int book, int spell)
 	/* heal other prayers */
 	else j = spells[spell-64];
 	
-	if (!spell_okay(Ind, o_ptr->tval, j, 1))
+//	if (!spell_okay(Ind, o_ptr->tval, j, 1))
+	if (!spell_okay(Ind, REALM_PRAYER, j, 1))
 	{
 		msg_print(Ind, "You cannot pray that prayer.");
 		return;
