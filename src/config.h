@@ -218,7 +218,7 @@
  * server uses those in mangband.cfg.
  * bad design.
  */
-#define	META_ADDRESS "meta.tomenet.net"
+#define	META_ADDRESS "www.tomenet.net"
 #define	META_ADDRESS_2 "64.53.71.113"  
 
 /*
