@@ -1,7 +1,7 @@
 .=========================+==--.
 | TomeNET Beginners Guide |
 +=========================+-
-| Latest update: 23. May 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. May 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.0.0, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -68,6 +68,7 @@ Contents
 	(7.1) 	Preparing the inventory for diving into the dungeon
 	(7.2)	Preparing the equipment for diving into the dungeon
 	(7.3)	Surviving critical situations
+	(7.4)	Spoiler files
 (8) Miscellanous
 	(8.1)	'The Art Not To Die'
 	(8.2)	Character dumps
@@ -1950,7 +1951,7 @@ Experience		Gives you additionally half your experience plus 10,
 				or 100,000 experience points depending on what is less.
 Self-Knowledge	Tells you everything about yourself :)
 chauve-souris	Turns you into a fruit bat. Quaff another one to be restored
-				to your original form.
+				to your original form. A wand/rod of polymorph might help too.
 *Enlightenment*	Raises your intelligence and wisdom, detect treasures,
 				objects, secret doors, traps. Identifies all items. Does the
 				same as a potion of Self-Knowledge.
@@ -2270,6 +2271,10 @@ Note that not every skill is available to every profession (class).
 								an extra skill point on level up.)
 	.Swimming					Self-explaining
 	.Digging					Self-explaining
+	.Climbing					You need this at 01.000 to learn climbing.
+	.Flying						You need this at 01.000 to learn how to fly.
+	.Free Action				You need this at 01.000 to resist paralysis.
+	.Confusion Resistance		You need this at 01.000 to resist confusion.
 
 In my opinion, 'Health' and its sub-skills should be avoided. There are more
 important skills to care about.
@@ -2447,6 +2452,42 @@ Thunderlord (also known as Dragonrider)
 	feather falling from birth.
 
 
+Here is a table showing boni/mali of the different races:
+
+			STR	INT	WIS	DEX	CON	CHR		HPdice	Exp%	Infra-Vision
+			Disarm	SavThr	Perc	Fighting
+				MagDev.	Stealth	Search	Bows/Throw
+------------------------------------------------------------------------------
+Human		+0 	+0	+0	+0	+0	+0		10		100%	0ft				
+			0	0	0	0	10	0	0	0
+Half-Elf	-1	+1	+0	+1	-1	+1		9		110%	20ft			
+			2	3	3	1	11	6	-1	6
+Elf			-1	+2	+1	+1	-2	+1		8		120%	30ft			
+			5	6	6	1	1	8	-5	15
+Hobbit		-2	+2	+1	+3	+2	+1		7		110%	40ft			
+			15	18	18	4	15	12	-10	20
+Gnome		-1	+2	+0	+2	+1	-2		8		125%	40ft			
+			10	12	12	3	13	6	-8	12
+Dwarf		+2	-3	+2	-2	+2	-3		11		120%	50ft			
+			2	9	9	-1	10	7	15	0
+Half-Orc	+2	-1	+0	+0	+1	-4		11		100%	30ft			
+			-3	-3	-3	-1	7	0	12	-5
+Half-Troll	+4	-4	-2	-4	+3	-6		12		120%	30ft			
+			-5	-8	-8	-2	5	-1	20	-10
+Dunadan		+1	+2	+2	+2	+3	+2		10		180%	0ft				
+			4	5	5	2	13	3	15	10
+High-Elf	+1	+3	-1	+3	+1	+5		10		200%	40ft			
+			4	20	20	3	14	3	10	25
+Yeek		-5	-5	-5	-5	-5	-5		8		35%		0ft				
+			0	0	0	0	10	0	0	0
+Goblin		+0	-1	-5	+4	+2	-5		11		115%	30ft			
+			2	-3	-3	0	8	2	12	-5
+Ent			+8	-4	+2	-4	+8	-5		14		300%	50ft			
+			5	0	20	-6	4	5	15	5
+Thunderlord	+6	+2	+1	+1	+3	+8		14		350%	0ft				
+			6	0	10	-16	10	30	15	5
+
+
 
 (6.5) Classes/Professions, titles
 ---------------------------------
@@ -2567,6 +2608,32 @@ Ranger
 If you raise in levels, you will get new titles. These are displayed between
 your class name and your character level in the main window. If you died and
 become a ghost, the title will change to 'Ghost' until you get revived.
+
+
+Here is a table showing boni/mali of the different races:
+
+			STR	INT	WIS	DEX	CON	CHR		HPdice	Exp%
+			Disarm	SavThr	Perc	Fighting
+				MagDev.	Stealth	Search	Bows/Throw
+------------------------------------------------------------------------------
+Adventurer	+0	+0	+0	+0	+0	+0		+6		*100%
+			20	20	20	2	15	15	50	50
+Warrior		+5	-2	-2	+2	+2	-1		+10		*100%
+			25	18	18	1	2	14	70	55
+Istari		-5	+3	+0	+1	-2	+1		+0		*130%
+			30	36	30	2	20	16	34	20
+Priest		-1	-3	+3	-1	+0	+2		+3		*120%
+			25	30	32	2	8	16	48	35
+Rogue		+2	+1	-2	+3	+1	-1		+7		*125%
+			45	32	28	5	32	24	60	66
+Mimic		+1	+0	+0	+1	+1	-4		+5		*125%
+			25	35	28	7	18	18	60	66
+Archer		+1	+0	+2	+3	+1	-1		+4		*130%
+			30	32	28	2	20	24	56	82
+Paladin		+3	-3	+1	+0	+2	+2		+9		*130%
+			10	21	54	1	16	13	60	29
+Ranger		+2	+2	-1	+1	+2	+0		+6		*135%
+			34	32	30	5	30	30	50	60
 
 
 
@@ -3391,6 +3458,21 @@ be more careful. Playing TomeNET means learning a lot about the monsters/items.
 
 -Team up with fellow players that are approximately at your character level.
 This means more fun and less danger. Your teammates can save your life.
+
+
+
+(7.4) Spoiler files
+-------------------
+In the folder tomenet-bin/lib/game you find several data files containing
+various information about all monsters, items and other features of TomeNET.
+These files are named X_info.txt and can be read via a normal text editor.
+The most important files are:
+r_info.txt	contains all monsters.
+k_info.txt	contains all base item types.
+e_info.txt	contains all ego item types.
+a_info.txt	contains all artefacts.
+All files contain a block of information, either at the beginning or at the
+end, which explains the meaning of each discrete info-line.
 
 
 
