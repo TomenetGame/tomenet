@@ -1796,8 +1796,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		  else
 		  {
 			if(Players[0 - c_ptr->m_idx]->chp<0) c='-';
-			else sprintf((unsigned char *)&kludge,"%d", ((Players[0 - c_ptr->m_idx]->chp * 95) / (Players[0 - c_ptr->m_idx]->mhp*10)));
-			c = kludge;
+			else{
+				sprintf((unsigned char *)&kludge,"%d", ((Players[0 - c_ptr->m_idx]->chp * 95) / (Players[0 - c_ptr->m_idx]->mhp*10)));
+				c = kludge;
+			}
 		  }                       
 
 			a = player_color(0 - c_ptr->m_idx);
@@ -2322,8 +2324,10 @@ void display_map(int Ind, int *cy, int *cx)
 				{
 					int kludge;
 					if(p_ptr->chp<0) tc='-';
-					else sprintf((unsigned char *)&kludge,"%d", ((p_ptr->chp * 95) / (p_ptr->mhp*10)));
-					tc = kludge;
+					else{
+						sprintf((unsigned char *)&kludge,"%d", ((p_ptr->chp * 95) / (p_ptr->mhp*10)));
+						tc = kludge;
+					}
 				}                       
 			}
 
