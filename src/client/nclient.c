@@ -702,7 +702,7 @@ int Net_flush(void)
  */
 int Net_fd(void)
 {
-	if (!initialized)
+	if (!initialized || c_quit)
 		return -1;
 	return rbuf.sock;
 }
