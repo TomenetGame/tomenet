@@ -6472,6 +6472,28 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* PvP often gives same message output as fuzzy */
 	if (!strcmp(attacker,"") || !strcmp(m_name,"")) fuzzy = TRUE;
 
+    /* Ghost-check */
+    if (p_ptr->ghost && ((typ == GF_HEAL_PLAYER) || /*(typ == GF_AWAY_ALL) ||*/
+	(typ == GF_WRAITH_PLAYER) || (typ == GF_SPEED_PLAYER) ||
+	/*(typ == GF_SHIELD_PLAYER) || (typ == GF_RECALL_PLAYER) ||*/
+	(typ == GF_BLESS_PLAYER) || (typ == GF_REMFEAR_PLAYER) ||
+	(typ == GF_SATHUNGER_PLAYER) || /*(typ == GF_RESFIRE_PLAYER) ||
+	(typ == GF_RESCOLD_PLAYER) ||*/ (typ == GF_CUREPOISON_PLAYER) ||
+	(typ == GF_SEEINVIS_PLAYER) || (typ == GF_SEEMAP_PLAYER) ||
+	(typ == GF_CURECUT_PLAYER) || /*(typ == GF_CURESTUN_PLAYER) ||*/
+	(typ == GF_DETECTCREATURE_PLAYER) || (typ == GF_DETECTDOOR_PLAYER) ||
+	(typ == GF_DETECTTRAP_PLAYER) || /*(typ == GF_TELEPORTLVL_PLAYER) ||
+	(typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) ||
+	(typ == GF_RESACID_PLAYER) ||*/ (typ == GF_HPINCREASE_PLAYER) ||
+        (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER) ||
+        /*(typ == GF_TELEPORT_PLAYER) ||*/ (typ == GF_ZEAL_PLAYER) ||
+	(typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
+        (typ == GF_CURE_PLAYER) || /*(typ == GF_RESURRECT_PLAYER) ||
+        (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
+	(typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
+	(typ == GF_OLD_POLY)))
+    { /* No effect on ghosts */
+
 	/* Analyze the damage */
 	switch (typ)
 	{
@@ -7894,6 +7916,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	}
 
+    /* Ghost-check end */
+    }
 
 	/* Skip non-connected players */
 	if (!p_ptr->conn == NOT_CONNECTED)
