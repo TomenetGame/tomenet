@@ -3490,12 +3490,15 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			do_kill = TRUE;
 			note_kill = (plural ? " are destroyed!" : " is destroyed!");
+			break;
 		}
 
 		case GF_DISINTEGRATE:
 		{
 			do_kill = TRUE;
-			note_kill = (plural ? " evaporate!" : " evaporates!");
+			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
+					    : (plural ? " is pulverized!" : " is pulverized!");
+//			note_kill = (plural ? " evaporate!" : " evaporates!");
 			break;
 		}
 
@@ -6115,6 +6118,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer);
+		break;
 
 		case GF_HOLY_FIRE:
 		if (p_ptr->body_monster && r_ptr->flags3 & RF3_EVIL) dam *= 2;
