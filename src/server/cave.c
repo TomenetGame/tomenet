@@ -1924,7 +1924,10 @@ void wild_display_map(int Ind)
 			/* Hack -- serverchez has knowledge of the full world */
 			if (strcmp(p_ptr->name,cfg_admin_wizard))
 #ifdef NEW_DUNGEON
+//			wild_idx=twpos.wx+twpos.wy*MAX_WILD_Y;
+//			wild_idx=wild_idx(twpos);
 			wild_idx=twpos.wx+twpos.wy*MAX_WILD_X;
+
 			if (!(p_ptr->wild_map[wild_idx / 8] & (1 << (wild_idx % 8)))) type = -1;
 #else
 			if (!(p_ptr->wild_map[-wild_idx / 8] & (1 << (-wild_idx % 8)))) type = -1;

@@ -3080,13 +3080,13 @@ void player_talk_aux(int Ind, cptr message)
 					load_server_cfg();
 					return;
 				}
-#if 0
+				/* not fully implemented. */
 				else if (prefix(message, "/recall") ||
 						prefix(message, "/rec"))
 				{
 					/* depth in feet */
 					k = tk ? k / 50 : 0;
-
+#if 0
 					if (-MAX_WILD >= k || k >= MAX_DEPTH)
 					{
 						msg_print(Ind, "\377oIlligal depth.  Usage: /recall [depth in feet]");
@@ -3098,10 +3098,15 @@ void player_talk_aux(int Ind, cptr message)
 
 						msg_print(Ind, "\377oOmnipresent you are...");
 					}
+#endif
+					/* do it on your own risk.. pfft */
+					p_ptr->recall_depth = k;
+					p_ptr->word_recall = 1;
+
+					msg_print(Ind, "\377oOmnipresent you are...");
 
 					return;
 				}
-#endif
 				else if (prefix(message, "/wish"))
 				{
 					int l;

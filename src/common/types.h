@@ -476,6 +476,7 @@ struct cave_type
  * it may seem cumbersome, but better than having
  * extra variables in each struct. (its standard).
  */
+typedef struct worldpos worldpos;
 
 struct worldpos{
 	s16b wx;	/* west to east */

@@ -656,6 +656,9 @@ void teleport_player_level(int Ind)
 #endif
 		
 #ifdef NEW_DUNGEON
+		/* update the players wilderness map */
+//		p_ptr->wild_map[(wild_idx(new_depth))/8] |= (1<<((wild_idx(new_depth))%8));
+		p_ptr->wild_map[(new_depth.wx + new_depth.wy*MAX_WILD_X)/8] |= (1<<((new_depth.wx + new_depth.wy*MAX_WILD_X)%8));
 #else
 		/* update the players wilderness map */
 		p_ptr->wild_map[(new_depth)/8] |= (1<<((new_depth)%8));

@@ -1427,7 +1427,8 @@ static void process_player_end(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		x, y, i, j, new_depth, new_world_x, new_world_y;
+//	int		x, y, i, j, new_depth, new_world_x, new_world_y;
+	int		x, y, i, j;
 	int		regen_amount, NumPlayers_old=NumPlayers;
 	char		attackstatus;
 	int 		minus;
@@ -1436,6 +1437,7 @@ static void process_player_end(int Ind)
 	byte			*w_ptr;
 	object_type		*o_ptr;
 #ifdef NEW_DUNGEON
+	worldpos new_depth;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 #endif
@@ -2172,17 +2174,18 @@ static void process_player_end(int Ind)
 			if( ! p_ptr->word_recall ) 
 			{
 #ifdef NEW_DUNGEON
-				if(character_icky || (p_ptr->store_num > 0) || check_st_anchor(&p_ptr->wpos)) {
+				if(character_icky || (p_ptr->store_num > 0) || check_st_anchor(&p_ptr->wpos))
 #else
-				if(character_icky || (p_ptr->store_num > 0) || check_st_anchor(p_ptr->dun_depth)) {
+				if(character_icky || (p_ptr->store_num > 0) || check_st_anchor(p_ptr->dun_depth))
 #endif
+				{
 				    p_ptr->word_recall++;
 				}
 			}
-#if 0
+
 			/* Rework needed! */
 			/* Activate the recall */
-      			if (!p_ptr->word_recall)
+			if (!p_ptr->word_recall)
 			{
 				/* Disturbing! */
 				disturb(Ind, 0, 0);
@@ -2195,12 +2198,23 @@ static void process_player_end(int Ind)
 #endif
 				{
 					/* Messages */
+					if(p_ptr->wpos.wz > 0)
+					{
+					msg_print(Ind, "You feel yourself yanked downwards!");
+					msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
+					}
+					else
+					{
 					msg_print(Ind, "You feel yourself yanked upwards!");
 					msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
+					}
 					
 					/* New location */
 #ifdef NEW_DUNGEON
-					p_ptr->wpos.wz=0;
+//					p_ptr->wpos.wz=0;
+					new_depth.wx = p_ptr->wpos.wx;
+					new_depth.wy = p_ptr->wpos.wy;
+					new_depth.wz = 0;
 #else
 					new_depth = 0;
 					new_world_x = p_ptr->world_x;
@@ -2209,7 +2223,10 @@ static void process_player_end(int Ind)
 					
 					p_ptr->new_level_method = LEVEL_RAND;
 				}
+#if 0
+				/* beware! bugs inside! (jir) */
 #ifdef NEW_DUNGEON
+				/* why wz again? (jir) */
 				else if ((p_ptr->wpos.wz) || (p_ptr->recall_depth < 0))
 #else
 				else if ((p_ptr->dun_depth < 0) || (p_ptr->recall_depth < 0))
@@ -2242,13 +2259,26 @@ static void process_player_end(int Ind)
 					}
 					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;												
 				}
+#endif	// 0
 				else
 				{
 					/* Messages */
+					if(p_ptr->recall_depth < 0)
+					{
 					msg_print(Ind, "You feel yourself yanked downwards!");
 					msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
+					}
+					else
+					{
+					msg_print(Ind, "You feel yourself yanked upwards!");
+					msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
+					}
+					
 #ifdef NEW_DUNGEON
-					p_ptr->wpos.wz=p_ptr->recall_depth;
+//					p_ptr->wpos.wz=p_ptr->recall_depth;
+					new_depth.wx = p_ptr->wpos.wx;
+					new_depth.wy = p_ptr->wpos.wy;
+					new_depth.wz = p_ptr->recall_depth;
 #else
 					new_depth = p_ptr->recall_depth;
 					new_world_x = p_ptr->world_x;
@@ -2310,8 +2340,8 @@ static void process_player_end(int Ind)
 				/* He'll be safe for 2 turns */
 				set_invuln_short(Ind, 2);
 			}
-#endif
 
+			/* EE's original */
 #if 0 /* sorry - evileye */
 			/* Activate the recall */
       			if (!p_ptr->word_recall)

@@ -2198,11 +2198,15 @@ void move_player(int Ind, int dir, int do_pickup)
 #endif
 			
 #ifndef NEW_DUNGEON
-			/* Calculate the new level index */
+			/* calculate the new level index */
 			p_ptr->dun_depth = world_index(p_ptr->world_x, p_ptr->world_y);
 		
 			/* update the wilderness map */
 			p_ptr->wild_map[(-p_ptr->dun_depth)/8] |= (1<<((-p_ptr->dun_depth)%8));
+#else
+			/* update the wilderness map */
+//			p_ptr->wild_map[wild_idx(p_ptr->wpos)/8] |= (1<<(wild_idx(p_ptr->wpos)%8));
+			p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)/8] |= (1<<((p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)%8));
 #endif
 			
 #ifdef NEW_DUNGEON

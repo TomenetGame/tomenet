@@ -218,6 +218,7 @@
 #ifdef NEW_DUNGEON
 #define MAX_WILD_X	64
 #define MAX_WILD_Y	64
+#define MAX_WILD	(MAX_WILD_X*MAX_WILD_Y)
 #define MAX_WILD_8	((MAX_WILD_X*MAX_WILD_Y)/8)
 #else
 #define MAX_DEPTH       201
@@ -2936,3 +2937,6 @@ extern int PlayerUID;
  */
 #define race_inf(m_ptr) r_info_get(m_ptr)
 
+/* wpos to old-fashioned wilderness 'height' */
+/* #define wild_idx(p_ptr) (p_ptr->wpos.wx+p_ptr->wpos.wy*MAX_WILD_X); */
+#define wild_idx(wpos) (wpos.wx + wpos.wy * MAX_WILD_X);

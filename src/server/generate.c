@@ -5979,7 +5979,7 @@ void generate_cave(int Depth)
 #ifdef NEW_DUNGEON
 			if(wpos->wx==MAX_WILD_X/2 && wpos->wy==MAX_WILD_Y/2 && !wpos->wz){
 				/* town of angband */
-				adddungeon(wpos, 1, 7, DUNGEON_RANDOM, FALSE);
+				adddungeon(wpos, 1, 200, DUNGEON_RANDOM, FALSE);
 			}
 #endif
 			/* Make a town */
