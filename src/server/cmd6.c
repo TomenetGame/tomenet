@@ -4701,7 +4701,8 @@ void do_cmd_activate(int Ind, int item)
 			case SV_DRAGON_PSEUDO:
 			{
 				//			do_mimic_change(Ind, 462);
-				do_mimic_change(Ind, race_index("Pseudo dragon"), TRUE);
+				//do_mimic_change(Ind, race_index("Pseudo dragon"), TRUE);
+				do_mimic_change(Ind, race_index("Ethereal drake"), TRUE);
 				break;
 			}
 			case SV_DRAGON_SHINING:

@@ -114,7 +114,8 @@ void inven_takeoff(int Ind, int item, int amt)
 			case SV_DRAGON_MULTIHUED:
 			j = race_index("Ancient multi-hued dragon"); break;
 			case SV_DRAGON_PSEUDO:
-			j = race_index("Pseudo dragon"); break;
+			j = race_index("Ethereal drake"); break;
+			//j = race_index("Pseudo dragon"); break;
 			case SV_DRAGON_SHINING:
 			j = race_index("Ethereal dragon"); break;
 			case SV_DRAGON_LAW:
@@ -278,7 +279,8 @@ void inven_drop(int Ind, int item, int amt)
 			case SV_DRAGON_MULTIHUED:
 			j = race_index("Ancient multi-hued dragon"); break;
 			case SV_DRAGON_PSEUDO:
-			j = race_index("Pseudo dragon"); break;
+			j = race_index("Ethereal drake"); break;
+			//j = race_index("Pseudo dragon"); break;
 			case SV_DRAGON_SHINING:
 			j = race_index("Ethereal dragon"); break;
 			case SV_DRAGON_LAW:
