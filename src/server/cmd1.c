@@ -206,7 +206,7 @@ s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit
  * Slay Evil (x2), and Kill dragon (x5).
  */
 /* accepts Ind <=0 */
-s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
+s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, char *brand_msg)
 {
 //	player_type *p_ptr = Players[Ind];
 
@@ -226,7 +226,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 	object_type *e_ptr;
 	u32b ef1, ef2, ef3, ef4, ef5, eesp;
 	int brands_total, brand_msgs_added;
-	char brand_msg[80];
+	/* char brand_msg[80];*/
 
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
 	bool apply_monster_brands = TRUE;
@@ -302,10 +302,17 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 		}
 		/* change a.m.b.=TRUE to =FALSE at declaration above if u use this if0-part again */
 #endif
+		/* If monster is using range weapons, the player gets the brand(s) even on range attacks */
+		if ((!pr_ptr->flags4 & RF4_ARROW_1) &&
+		    ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT)))
+			apply_monster_brands = FALSE;
 		/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
         	/* If monster is fighting without weapons, the player gets the brand(s) only if
 		he fights with bare hands/martial arts */
-		if (!pr_ptr->body_parts[BODY_WEAPON])
+		/* However, if the monster doesn't use weapons but nevertheless fires ammo, the player
+		gets the brand(s) on ranged attacks */
+		if ((!pr_ptr->body_parts[BODY_WEAPON]) &&
+		    (!((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))))
 			if (o_ptr->k_idx) apply_monster_brands = FALSE;
 
 		/* Get monster brands. If monster has several, choose one randomly */
@@ -394,7 +401,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 	if (f1 & TR1_BRAND_FIRE) brands_total++;
 	if (f1 & TR1_BRAND_COLD) brands_total++;
 	if (f1 & TR1_BRAND_POIS) brands_total++;
-	strcpy(brand_msg,"%^s is ");
+	strcpy(brand_msg,m_name);
+	strcat(brand_msg," is ");//"%^s is ");
 	switch (brands_total)
 	{
 		/* full messages for only 1 brand */
@@ -407,7 +415,6 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 		break;
 		/* fully combined messages for 2 brands */
 		case 2:
-		strcpy(brand_msg,"%^s is ");
 		if (f1 & TR1_BRAND_ACID)
 		{
 			strcat(brand_msg,"covered in acid");
@@ -457,7 +464,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 		break;
 		/* shorter messages if more brands have to fit in the message-line */
 		case 3:		case 4:
-		strcpy(brand_msg,"%^s is hit by ");
+		strcat(brand_msg,"hit by ");
 		if (f1 & TR1_BRAND_ACID)
 		{
 			strcat(brand_msg,"acid");
@@ -509,11 +516,12 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 		if (f1 & TR1_BRAND_ACID) strcat(brand_msg,"hit by the elements");
 		break;
 	}
+	strcat(brand_msg,"!");
 	if (brands_total > 0)
 	{
-		strcat(brand_msg,"!");
-		msg_format(Ind, brand_msg, m_name);
+		//msg_format(Ind, brand_msg, m_name);
 	}
+	else strcpy(brand_msg,"");
 #endif
 	/* Some "weapons" and "ammo" do extra damage */
 	switch (o_ptr->tval)
@@ -803,7 +811,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
  * Note that "flasks of oil" do NOT do fire damage, although they
  * certainly could be made to do so.  XXX XXX
  */
-s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr)
+s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, char *brand_msg)
 {
 	int mult = 1;
 
@@ -814,7 +822,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	object_type *e_ptr;
 	u32b ef1, ef2, ef3, ef4, ef5, eesp;
 	int brands_total, brand_msgs_added;
-	char brand_msg[80];
+	/* char brand_msg[80]; */
 
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
 	bool apply_monster_brands = TRUE;
@@ -853,10 +861,17 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		}
 		/* change a.m.b.=TRUE to =FALSE at declaration above if u use this if0-part again */
 #endif
+		/* If monster is using range weapons, the player gets the brand(s) even on range attacks */
+		if ((!pr_ptr->flags4 & RF4_ARROW_1) &&
+		    ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT)))
+			apply_monster_brands = FALSE;
 		/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
         	/* If monster is fighting without weapons, the player gets the brand(s) only if
 		he fights with bare hands/martial arts */
-		if (!pr_ptr->body_parts[BODY_WEAPON])
+		/* However, if the monster doesn't use weapons but nevertheless fires ammo, the player
+		gets the brand(s) on ranged attacks */
+		if ((!pr_ptr->body_parts[BODY_WEAPON]) &&
+		    (!((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))))
 			if (o_ptr->k_idx) apply_monster_brands = FALSE;
 
 		/* Get monster brands. If monster has several, choose one randomly */
@@ -945,7 +960,8 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	if (f1 & TR1_BRAND_FIRE) brands_total++;
 	if (f1 & TR1_BRAND_COLD) brands_total++;
 	if (f1 & TR1_BRAND_POIS) brands_total++;
-	strcpy(brand_msg,"%^s is ");
+	strcpy(brand_msg,q_ptr->name);
+	strcat(brand_msg," is ");//"%^s is ");
 	switch (brands_total)
 	{
 		/* full messages for only 1 brand */
@@ -958,7 +974,6 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		break;
 		/* fully combined messages for 2 brands */
 		case 2:
-		strcpy(brand_msg,"%^s is ");
 		if (f1 & TR1_BRAND_ACID)
 		{
 			strcat(brand_msg,"covered in acid");
@@ -1008,7 +1023,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		break;
 		/* shorter messages if more brands have to fit in the message-line */
 		case 3:		case 4:
-		strcpy(brand_msg,"%^s is hit by ");
+		strcat(brand_msg,"hit by ");
 		if (f1 & TR1_BRAND_ACID)
 		{
 			strcat(brand_msg,"acid");
@@ -1060,11 +1075,12 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		if (f1 & TR1_BRAND_ACID) strcat(brand_msg,"hit by the elements");
 		break;
 	}
+	strcat(brand_msg,"!");
 	if (brands_total > 0)
 	{
-		strcat(brand_msg,"!");
-		msg_format(Ind, brand_msg, q_ptr->name);
+		//msg_format(Ind, brand_msg, q_ptr->name);
 	}
+	else strcpy(brand_msg,"");
 #endif
 	/* Some "weapons" and "ammo" do extra damage */
 	switch (o_ptr->tval)
@@ -1727,7 +1743,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 
 	object_type *o_ptr;
 
-	char p_name[80];
+	char p_name[80], brand_msg[80];
 
 	bool do_quake = FALSE;
 
@@ -1828,10 +1844,6 @@ void py_attack_player(int Ind, int y, int x, bool old)
 			/* Sound */
 			sound(Ind, SOUND_HIT);
 
-			/* Messages */
-			msg_format(Ind, "You hit %s.", p_name);
-			msg_format(0 - c_ptr->m_idx, "%s hits you.", p_ptr->name);
-
 			/* Hack -- bare hands do one damage */
 			k = 1;
 
@@ -1898,7 +1910,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 					msg_format(Ind, ma_ptr->desc, q_ptr->name);
 				}
 
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr);
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg);
 				k = critical_norm(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < q_ptr->chp))
@@ -1923,7 +1935,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 			if (o_ptr->k_idx)
 			{
 				k = damroll(o_ptr->dd, o_ptr->ds);
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr);
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg);
 				if (p_ptr->impact && (k > 50)) do_quake = TRUE;
 				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
 				k += o_ptr->to_d;
@@ -1931,7 +1943,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 			/* handle bare fists/bat/ghost */
 			else
 			{
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr);
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg);
 			}
 			
 			/* Apply the player damage bonuses */
@@ -1948,13 +1960,33 @@ void py_attack_player(int Ind, int y, int x, bool old)
 			   zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
 				if(k>q_ptr->chp) k-=q_ptr->chp;
 				take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
+
+				/* Messages */
+				msg_format(Ind, "You hit %s for \377o%d \377wdamage.", p_name, k);
+				msg_format(0 - c_ptr->m_idx, "%s hits you.", p_ptr->name);
+				if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+
 				if(q_ptr->chp<5){
 					msg_format(Ind, "You have beaten %s", q_ptr->name);
 					msg_format(0-c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
 					teleport_player(0 - c_ptr->m_idx, 400);
 				}
 			}
-			else take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
+			else
+			{
+				take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
+
+				/* Messages */
+				msg_format(Ind, "You hit %s for \377o%d \377wdamage.", p_name, k);
+				msg_format(0 - c_ptr->m_idx, "%s hits you.", p_ptr->name);
+				if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+
+				if(q_ptr->chp<5){
+					msg_format(Ind, "You have beaten %s", q_ptr->name);
+					msg_format(0-c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
+					teleport_player(0 - c_ptr->m_idx, 400);
+				}
+			}
 
 			if(!c_ptr->m_idx) break;
 
@@ -2195,7 +2227,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 
         object_type             *o_ptr;
 
-	char            m_name[80];
+	char            m_name[80], brand_msg[80];
 
 	monster_type	*m_ptr;
 	monster_race    *r_ptr;
@@ -2460,7 +2492,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 					msg_format(Ind, ma_ptr->desc, m_name);
 				}
 
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr);
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg);
 				k = critical_norm(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < m_ptr->hp))
@@ -2501,7 +2533,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			if (o_ptr->k_idx)
 			{
 				k = damroll(o_ptr->dd, o_ptr->ds);
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr);
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg);
 
 				if (backstab)
 				{
@@ -2591,7 +2623,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			/* handle bare fists/bat/ghost */
 			else
 			{
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr);
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg);
 			}
 
 			/* Apply the player damage bonuses */
@@ -2607,14 +2639,26 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 
 			/* DEG Updated hit message to include damage */
 			if(backstab)
-				msg_format(Ind, "You %s stab the helpless, sleeping %s!",
-						nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr));
+			{
+				if (r_ptr->flags1 & RF1_UNIQUE)
+				msg_format(Ind, "You %s stab the helpless, sleeping %s for \377p%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
+				else msg_format(Ind, "You %s stab the helpless, sleeping %s for \377p%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
+			}
 			else if (stab_fleeing)
-				msg_format(Ind, "You %s the fleeing %s!",
-						nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr));
-			else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
+			{
+				if (r_ptr->flags1 & RF1_UNIQUE)
+				msg_format(Ind, "You %s the fleeing %s for \377p%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
+				else msg_format(Ind, "You %s the fleeing %s for \377g%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
+			}
+//			else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
 //			else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
-			else msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
+			else
+			{
+				if (r_ptr->flags1 & RF1_UNIQUE)
+				msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
+				else msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
+			}
+			if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 			/* Damage, check for fear and death */
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) break;

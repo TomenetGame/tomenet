@@ -2655,6 +2655,8 @@ void do_cmd_fire(int Ind, int dir)
 
 	int                     missile_attr;
 	int                     missile_char;
+	
+	char brand_msg[80];
 
 	char            o_name[160];
 	bool magic = FALSE, boomerang = FALSE;
@@ -2868,22 +2870,14 @@ void do_cmd_fire(int Ind, int dir)
 
 	if (!boomerang)
 	{
-		/* Base damage from thrown object plus launcher bonus */
-		tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d + j_ptr->to_d;
-
-		if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
-
 		/* Actually "fire" the object */
 		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h + j_ptr->to_h);
 		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
-        tmul = get_shooter_mult(j_ptr);
+    		tmul = get_shooter_mult(j_ptr);
 	}
 	else
 	{
-		/* Base damage from thrown object */
-		tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d;
-
 		/* Actually "fire" the object */
 		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h);
 		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
@@ -2898,9 +2892,6 @@ void do_cmd_fire(int Ind, int dir)
 	/* Get extra "power" from "extra might" */
 //	if (p_ptr->xtra_might) tmul++;
 	tmul += p_ptr->xtra_might;
-
-	/* Boost the damage */
-	tdam *= tmul;
 
 	/* Base range */
 	tdis = 10 + 5 * tmul;
@@ -3069,6 +3060,35 @@ void do_cmd_fire(int Ind, int dir)
 
 							if (!dodged)	// 'goto' would be cleaner
 							{
+								if (!boomerang)
+								{
+									/* Base damage from thrown object plus launcher bonus */
+									tdam = damroll(o_ptr->dd, o_ptr->ds);
+									tdam += o_ptr->to_d;
+									if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
+									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg);
+									tdam += j_ptr->to_d;
+								}
+								else
+								{
+									 /* Base damage from thrown object */
+								        tdam = damroll(o_ptr->dd, o_ptr->ds);
+									tdam += o_ptr->to_d;
+									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg);
+								}
+
+								/* Boost the damage */
+								tdam *= tmul;
+
+								/* Apply special damage XXX XXX XXX */
+								tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
+
+								/* No negative damage */
+								if (tdam < 0) tdam = 0;
+
+								/* XXX Reduce damage by 1/3 */
+								tdam = (tdam + 2) / 3;
+
 								/* Handle unseen player */
 								if (!visible)
 								{
@@ -3081,7 +3101,7 @@ void do_cmd_fire(int Ind, int dir)
 								else
 								{
 									/* Messages */
-									msg_format(Ind, "The %s hits %s.", o_name, p_name);
+									msg_format(Ind, "The %s hits %s for \377o%d \377wdamage.", o_name, p_name, tdam);
 									msg_format(0 - c_ptr->m_idx, "%^s hits you with a %s.", p_ptr->name, o_name);
 
 									/* Track this player's health */
@@ -3097,17 +3117,7 @@ void do_cmd_fire(int Ind, int dir)
 										add_hostility(0 - c_ptr->m_idx, p_ptr->name);
 									}
 								}
-
-								/* Apply special damage XXX XXX XXX */
-								tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr);
-								tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
-
-								/* No negative damage */
-								if (tdam < 0) tdam = 0;
-
-								/* XXX Reduce damage by 1/3 */
-								tdam = (tdam + 2) / 3;
-
+								if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 								if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) && !q_ptr->resist_conf && !boomerang)
 								{
@@ -3193,8 +3203,29 @@ void do_cmd_fire(int Ind, int dir)
 						if (visible) health_track(Ind, c_ptr->m_idx);
 					}
 
+					if (!boomerang)
+					{
+						/* Base damage from thrown object plus launcher bonus */
+						tdam = damroll(o_ptr->dd, o_ptr->ds);
+						tdam += o_ptr->to_d;
+						if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
+						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg);
+						tdam += j_ptr->to_d;
+					}
+					else
+					{
+						 /* Base damage from thrown object */
+					        tdam = damroll(o_ptr->dd, o_ptr->ds);
+						tdam += o_ptr->to_d;
+						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg);
+					}
+
+					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+
+					/* Boost the damage */
+					tdam *= tmul;
+
 					/* Apply special damage XXX XXX XXX */
-					tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr);
 					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
 
 					/* No negative damage */
@@ -3566,6 +3597,8 @@ void do_cmd_throw(int Ind, int dir, int item)
 	char            o_name[160];
 	u32b f1, f2, f3, f4, f5, esp;
 
+	char brand_msg[80];
+
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -3680,9 +3713,6 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 	/* Max distance of 10 */
 	if (tdis > 10) tdis = 10;
-
-	/* Hack -- Base damage from thrown object */
-	tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d;
 
 	/* Chance of hitting */
 	chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));
@@ -3812,6 +3842,20 @@ void do_cmd_throw(int Ind, int dir, int item)
 					/* Get his name */
 					strcpy(p_name, q_ptr->name);
 
+					/* Hack -- Base damage from thrown object */
+					tdam = damroll(o_ptr->dd, o_ptr->ds);
+					tdam += o_ptr->to_d;
+					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg);
+					/* Apply special damage XXX XXX XXX */
+					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
+					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+
+					/* No negative damage */
+					if (tdam < 0) tdam = 0;
+
+					/* XXX Reduce damage by 1/3 */
+					tdam = (tdam + 2) / 3;
+
 					/* Handle unseen player */
 					if (!visible)
 					{
@@ -3824,22 +3868,13 @@ void do_cmd_throw(int Ind, int dir, int item)
 					else
 					{
 						/* Messages */
-						msg_format(Ind, "The %s hits %s.", o_name, p_name);
+						msg_format(Ind, "The %s hits %s for \377o%d \377wdamage.", o_name, p_name, tdam);
 						msg_format(0 - c_ptr->m_idx, "%s hits you with a %s!", p_ptr->name, o_name);
 
 						/* Track player's health */
 						health_track(Ind, c_ptr->m_idx);
 					}
-
-					/* Apply special damage XXX XXX XXX */
-					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr);
-					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
-
-					/* No negative damage */
-					if (tdam < 0) tdam = 0;
-
-					/* XXX Reduce damage by 1/3 */
-					tdam = (tdam + 2) / 3;
+					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 					/* Take damage */
 					take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
@@ -3908,9 +3943,13 @@ void do_cmd_throw(int Ind, int dir, int item)
 					if (visible) health_track(Ind, c_ptr->m_idx);
 				}
 
+				/* Hack -- Base damage from thrown object */
+				tdam = damroll(o_ptr->dd, o_ptr->ds);
+				tdam += o_ptr->to_d;
+				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg);
 				/* Apply special damage XXX XXX XXX */
-				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr);
 				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
+				if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;
