@@ -279,7 +279,7 @@ bool Report_to_meta(int flag)
 	bool hidden_dungeon_master = 0;
 
 	/* Abort if the user doesn't want to report */
-	if (!cfg.report_to_meta)
+	if (!cfg.report_to_meta || cfg.runlevel<4)
 		return FALSE;
 
 	/* If this is the first time called, initialize our hostname */

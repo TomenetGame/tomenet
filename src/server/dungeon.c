@@ -2189,7 +2189,7 @@ static void process_player_end(int Ind)
 				}
 
 				/* into dungeon/tower */
-				else
+				else if(cfg.runlevel>4)
 				{
 					wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 					/* Messages */
@@ -2785,6 +2785,9 @@ void dungeon(void)
 	/* Return if no one is playing */
 	/* if (!NumPlayers) return; */
 
+	if(cfg.runlevel<6 && time(NULL)-cfg.closetime>120)
+		set_runlevel(cfg.runlevel-1);
+
 	/* Check for death.  Go backwards (very important!) */
 	for (i = NumPlayers; i > 0; i--)
 	{
@@ -3246,6 +3249,44 @@ void dungeon(void)
 	Net_output();
 }
 
+void set_runlevel(int val){
+	static bool meta=TRUE;
+	switch(val){
+		case 0:
+			shutdown_server();
+		case 1:
+			/* Logout all remaining players except admins */
+			break;
+		case 2:
+			/* Force recalling of all players to town if
+			   configured */
+			msg_broadcast(0, "\377rServer about to close down. Recall soon");
+			break;
+		case 3:
+			/* Hide from the meta - server socket still open */
+			Report_to_meta(META_DIE);
+			meta=FALSE;
+			msg_broadcast(0, "\377rServer will close soon.");
+			break;
+		case 4:
+			/* Dungeons are closed */
+			msg_broadcast(0, "\377yThe dungeons are now closed.");
+			break;
+		case 5:
+			/* Shutdown warning mode, automatic timer */
+			msg_broadcast(0, "\377yWarning. Server shutdown will take place in ten minutes.");
+			break;
+		case 6:
+			/* Cancelled shutdown */
+			msg_broadcast(0, "\377GServer shutdown cancelled.");
+			Report_to_meta(META_START);
+			meta=TRUE;
+			break;
+	}
+	time(&cfg.closetime);
+	cfg.runlevel=val;
+}
+
 /*
  * Actually play a game
  *
@@ -3400,6 +3441,8 @@ void play_game(bool new_game)
 	/* scan for inactive players */
 	scan_players();
 	scan_houses();
+
+	cfg.runlevel=6;		/* Server is running */
 
 	/* Set up the main loop */
 	install_timer_tick(dungeon, cfg.fps);

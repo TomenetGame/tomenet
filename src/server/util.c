@@ -2146,7 +2146,9 @@ void do_slash_cmd(int Ind, cptr message){
 			if (prefix(message, "/shutdown") ||
 					prefix(message, "/quit"))
 			{
-				shutdown_server();
+				set_runlevel((cfg.runlevel<6 ? 6 : 5));
+				msg_format(Ind, "Runlevel set to %d", cfg.runlevel);
+				time(&cfg.closetime);
 			}
 			else if (prefix(message, "/kick"))
 			{
@@ -2178,7 +2180,7 @@ void do_slash_cmd(int Ind, cptr message){
 
 				if (-MAX_WILD >= k || k >= MAX_DEPTH)
 				{
-					msg_print(Ind, "\377oIlligal depth.  Usage: /clv [depth in feet]");
+					msg_print(Ind, "\377oIllegal depth.  Usage: /clv [depth in feet]");
 					return;
 				}
 #endif
@@ -2201,7 +2203,7 @@ void do_slash_cmd(int Ind, cptr message){
 
 				if (-MAX_WILD >= k || k >= MAX_DEPTH)
 				{
-					msg_print(Ind, "\377oIlligal depth.  Usage: /geno [depth in feet]");
+					msg_print(Ind, "\377oIllegal depth.  Usage: /geno [depth in feet]");
 					return;
 				}
 #endif	// 0
@@ -2222,7 +2224,7 @@ void do_slash_cmd(int Ind, cptr message){
 
 				if (-MAX_WILD >= k || k >= MAX_DEPTH)
 				{
-					msg_print(Ind, "\377oIlligal depth.  Usage: /unst [depth in feet]");
+					msg_print(Ind, "\377oIllegal depth.  Usage: /unst [depth in feet]");
 					return;
 				}
 #endif
@@ -2241,7 +2243,7 @@ void do_slash_cmd(int Ind, cptr message){
 
 				if (-MAX_WILD >= k || k >= MAX_DEPTH)
 				{
-					msg_print(Ind, "\377oIlligal depth.  Usage: /sta [depth in feet]");
+					msg_print(Ind, "\377oIllegal depth.  Usage: /sta [depth in feet]");
 					return;
 				}
 #endif // 0
@@ -2340,7 +2342,7 @@ void do_slash_cmd(int Ind, cptr message){
 
 				if (-MAX_WILD >= k || k >= MAX_DEPTH)
 				{
-					msg_print(Ind, "\377oIlligal depth.  Usage: /recall [depth in feet]");
+					msg_print(Ind, "\377oIllegal depth.  Usage: /recall [depth in feet]");
 				}
 				else
 				{

@@ -31,6 +31,11 @@ void do_cmd_go_up(int Ind)
 	if (p_ptr->new_level_flag)
 		return;
 
+	if(cfg.runlevel<5 && !p_ptr->wpos.wz){
+		msg_print(Ind,"The dungeon is closed");
+		return;
+	}
+
 	/* Player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
@@ -127,6 +132,11 @@ void do_cmd_go_down(int Ind)
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
 		return;
+	
+	if(cfg.runlevel<5 && !p_ptr->wpos.wz){
+		msg_print(Ind,"The dungeon is closed");
+		return;
+	}
 
 	/* Player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
