@@ -535,7 +535,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 	lev = k_info[o_ptr->k_idx].level;
 
 	/* Analyze the potion */
-	if (o_ptr->tval != TV_POTION)
+	if (o_ptr->tval == TV_POTION)
 	{
 
 	switch (o_ptr->sval)
