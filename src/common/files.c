@@ -6,6 +6,12 @@
  * not need to worry about this.
  */
 
+/*
+ * TODO: i shall implement a linked list for file
+ * transfers, because an array is totally unsuitable
+ * due to the dynamic nature.
+ */
+
 #include <stdio.h>
 #include <fcntl.h>
 
@@ -135,6 +141,17 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 	}
 	fdata[num].id=0;
 	return(1);
+}
+
+void kill_xfers(int ind){
+	int i;
+	for(i=0; i<8; i++){
+		if(!fdata[i].id) continue;
+		if(fdata[i].ind==ind){
+			fdata[i].id=0;
+			close(fdata[i].fd);
+		}
+	}
 }
 
 /* handle all current SEND type file transfers */
