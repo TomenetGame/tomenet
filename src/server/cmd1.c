@@ -2816,7 +2816,10 @@ static bool run_test(int Ind)
 		if (c_ptr->m_idx > 0)
 		{
 			/* Visible monster */
-			if (p_ptr->mon_vis[c_ptr->m_idx] && !(m_list[c_ptr->m_idx].special)) return (TRUE);
+			if (p_ptr->mon_vis[c_ptr->m_idx] &&
+					!(m_list[c_ptr->m_idx].special) &&
+					r_info[m_list[c_ptr->m_idx].r_idx].d_char != 't')
+					return (TRUE);
 		}
 
 		/* Visible objects abort running */

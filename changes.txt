@@ -367,3 +367,4 @@ Change list for PernMangband
 
 03/12/2001 (Jir)
 - hibernation/annoucement/auto-off for AFK-mode.
+- 't' won't disturb players' running (but still cannot start running).

@@ -1147,7 +1147,7 @@ void update_mon(int m_idx, bool dist)
 				if (r_ptr->r_sights < MAX_SHORT) r_ptr->r_sights++;
 
 				/* Disturb on appearance */
-				if(!m_list[m_idx].special)
+				if(!m_list[m_idx].special && r_ptr->d_char != 't')
 					if (p_ptr->disturb_move) disturb(Ind, 1, 0);
 			}
 
@@ -1177,7 +1177,7 @@ void update_mon(int m_idx, bool dist)
 				if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
 
 				/* Disturb on disappearance*/
-				if(!m_list[m_idx].special)
+				if(!m_list[m_idx].special && r_ptr->d_char != 't')
 					if (p_ptr->disturb_move) disturb(Ind, 1, 0);
 			}
 		}
@@ -1193,7 +1193,7 @@ void update_mon(int m_idx, bool dist)
 				p_ptr->mon_los[m_idx] = TRUE;
 
 				/* Disturb on appearance */
-				if(!m_list[m_idx].special)
+				if(!m_list[m_idx].special && r_ptr->d_char != 't')
 					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
 			}
 		}
@@ -1208,7 +1208,7 @@ void update_mon(int m_idx, bool dist)
 				p_ptr->mon_los[m_idx] = FALSE;
 
 				/* Disturb on disappearance */
-				if(!m_list[m_idx].special)
+				if(!m_list[m_idx].special && r_ptr->d_char != 't')
 					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
 			}
 		}
