@@ -320,7 +320,7 @@ static void rd_item(object_type *o_ptr)
 
 	rd_s32b(&o_ptr->owner);
 	rd_s16b(&o_ptr->level);
-        if (!older_than(4, 0, 8))
+        if (!older_than(4, 1, 7))
 		rd_s32b(&o_ptr->owner_mode);
 
 	/* Kind (discarded though - Jir -) */
@@ -782,7 +782,7 @@ static void rd_party(int n)
 	rd_s32b(&party_ptr->created);
 	
 	/* Party type and members */
-	if (!s_older_than(4,0,7))
+	if (!s_older_than(4,1,7))
 		rd_byte(&party_ptr->mode);
 	else
 		party_ptr->mode = 0;

@@ -2055,7 +2055,8 @@ static int Handle_login(int ind)
 	}
 
 	if(!(p_ptr->mode & MODE_NO_GHOST) &&
-	    !(p_ptr->mode & MODE_HELL) &&
+/*obsolete  !(p_ptr->mode & MODE_HELL) &&*/
+	    !(p_ptr->mode & MODE_IMMORTAL) &&
 	    !cfg.no_ghost && cfg.lifes)
 	{
 		/* if total_winner char was loaded from old save game that

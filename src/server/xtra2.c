@@ -4013,7 +4013,9 @@ void monster_death(int Ind, int m_idx)
 					}
 					
 					/* Turn him into pseudo-noghost mode */
-					if (cfg.lifes && (p_ptr->lives >= 1+1) && !(p_ptr->mode & MODE_NO_GHOST))
+					if (cfg.lifes && (p_ptr->lives >= 1+1) &&
+			    		    !(p_ptr->mode & MODE_IMMORTAL) &&
+					    !(p_ptr->mode & MODE_NO_GHOST))
 					{
 						msg_print(i, "\377yTake care! As a winner, you have no more resurrections left!");
 						p_ptr->lives = 1+1;
@@ -4838,7 +4840,7 @@ void player_death(int Ind)
 		delete_player_name(p_ptr->name);
 
 		/* Put him on the high score list */
-		if(!p_ptr->admin_dm && !p_ptr->admin_wiz && !p_ptr->noscore)
+		if(!p_ptr->admin_dm && !p_ptr->admin_wiz && !p_ptr->noscore && !(p_ptr->mode & MODE_IMMORTAL))
 			add_high_score(Ind);
 
 		/* Format string */
@@ -5228,13 +5230,16 @@ void resurrect_player(int Ind, int exploss)
 	/* (was in player_death: Take care of ghost suiciding before final resurrection (p_ptr->alive check, C. Blue)) */
 	/*if (p_ptr->alive && ((p_ptr->lives > 0+1) && cfg.lifes)) p_ptr->lives--;*/
 	/* Tell him his remaining lifes */
-	if ((!(p_ptr->mode & MODE_IMMORTAL)) && (p_ptr->lives > 1+1)) p_ptr->lives--;
-	if (cfg.lifes)
+	if (!(p_ptr->mode & MODE_IMMORTAL))
 	{
-		if (p_ptr->lives == 1+1)
-			msg_format(Ind, "\377GYou have no more resurrections left!");
-		else
-			msg_format(Ind, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
+		if (p_ptr->lives > 1+1) p_ptr->lives--;
+		if (cfg.lifes)
+		{
+			if (p_ptr->lives == 1+1)
+				msg_format(Ind, "\377GYou have no more resurrections left!");
+			else
+				msg_format(Ind, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
+		}
 	}
 
 	/* Redraw */
@@ -7177,10 +7182,14 @@ void telekinesis_aux(int Ind, int item)
 	}
 
 	Ind2 = get_player(Ind, o_ptr);
-
 	if (!Ind2) return;
-
 	p2_ptr = Players[Ind2];
+
+	if ((p_ptr->mode & MODE_IMMORTAL) && !(p2_ptr->mode & MODE_IMMORTAL))
+	{
+	    msg_print(Ind, "You can only contact everlasting beings!");
+	    return;
+	}
 
 	if(cfg.anti_arts_send && true_artifact_p(q_ptr))
 	{
