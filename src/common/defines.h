@@ -1845,7 +1845,6 @@ that keeps many algorithms happy.
 #define SV_POTION_STAR_ENLIGHTENMENT	57
 #define SV_POTION_SELF_KNOWLEDGE		58
 #define SV_POTION_EXPERIENCE			59
-#define SV_POTION_INVIS					60
 
 /* The "sval" codes for TV_FOOD */
 #define SV_FOOD_POISON			0
