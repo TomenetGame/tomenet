@@ -119,12 +119,20 @@ static cptr desc_insult[] =
 /*
  * Hack -- possible "moan" messages
  */
+/* The else branch is used for Halloween event :) -C. Blue */
 static cptr desc_moan[] =
 {
+#ifndef HALLOWEEN
 	"seems sad about something.",
 	"asks if you have seen his dogs.",
 	"tells you to get off his land.",
 	"mumbles something about mushrooms."
+#else
+	"screams: Trick or treat!",
+	"says: Happy Halloween!",
+	"moans loudly.",
+	"says: Have you seen The Great Pumpkin?"
+#endif
 };
 
 
@@ -869,6 +877,12 @@ bool make_attack_normal(int Ind, int m_idx)
 			
 			if ((act) && (damage < 1))
 			{
+#ifdef HALLOWEEN
+				/* Colour change for ranged MOAN for Halloween event -C. Blue */
+				if (method == RBM_MOAN)
+				msg_format(Ind, "\377o%^s %s.", m_name, act);
+				else
+#endif
 				msg_format(Ind, "%^s %s.", m_name, act);
 			}
 			else
@@ -901,6 +915,8 @@ bool make_attack_normal(int Ind, int m_idx)
 			  )
 
 			{
+				/* The Great Pumpkin of Halloween event shouldn't give BB, lol. -C. Blue */
+				if ((m_ptr->r_idx != 1086) && (m_ptr->r_idx != 1087) && (m_ptr->r_idx != 1088))
 				set_black_breath(Ind);
 			}
 
@@ -942,7 +958,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Take "poison" effect */
-					if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
 					{
 						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5))
 						{
@@ -1199,7 +1215,18 @@ bool make_attack_normal(int Ind, int m_idx)
 					msg_print(Ind, "You are covered in acid!");
 
 					/* Special damage */
-					acid_dam(Ind, damage, ddesc);
+					if (p_ptr->immune_acid || p_ptr->resist_acid || p_ptr->oppose_acid)
+						switch (method) {
+						case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+						case RBM_CLAW: case RBM_BITE: case RBM_STING:
+						case RBM_BUTT: case RBM_CRUSH:
+							/* still take physical damage */
+							take_hit(Ind, (damage * 2) / 3, ddesc);
+						default: /* no damage for non-physical assaults */	
+						}
+					else
+						/* take physical damage + elemental effect */
+						acid_dam(Ind, damage, ddesc);
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_ACID);
@@ -1216,7 +1243,18 @@ bool make_attack_normal(int Ind, int m_idx)
 					msg_print(Ind, "You are struck by electricity!");
 
 					/* Special damage */
-					elec_dam(Ind, damage, ddesc);
+					if (p_ptr->immune_elec || p_ptr->resist_elec || p_ptr->oppose_elec)
+						switch (method) {
+						case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+						case RBM_CLAW: case RBM_BITE: case RBM_STING:
+						case RBM_BUTT: case RBM_CRUSH:
+							/* still take physical damage */
+							take_hit(Ind, (damage * 2) / 3, ddesc);
+						default: /* no damage for non-physical assaults */
+						}
+					else
+						/* take physical damage + elemental effect */
+						elec_dam(Ind, damage, ddesc);
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_ELEC);
@@ -1233,7 +1271,18 @@ bool make_attack_normal(int Ind, int m_idx)
 					msg_print(Ind, "You are enveloped in flames!");
 
 					/* Special damage */
-					fire_dam(Ind, damage, ddesc);
+					if (p_ptr->immune_fire || p_ptr->resist_fire || p_ptr->oppose_fire)
+						switch (method) {
+						case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+						case RBM_CLAW: case RBM_BITE: case RBM_STING:
+						case RBM_BUTT: case RBM_CRUSH:
+							/* still take physical damage */
+							take_hit(Ind, (damage * 2) / 3, ddesc);
+						default: /* no damage for non-physical assaults */
+						}
+					else
+						/* take physical damage + elemental effect */
+						fire_dam(Ind, damage, ddesc);
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_FIRE);
@@ -1250,7 +1299,18 @@ bool make_attack_normal(int Ind, int m_idx)
 					msg_print(Ind, "You are covered with frost!");
 
 					/* Special damage */
-					cold_dam(Ind, damage, ddesc);
+					if (p_ptr->immune_cold || p_ptr->resist_cold || p_ptr->oppose_cold)
+						switch (method) {
+						case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+						case RBM_CLAW: case RBM_BITE: case RBM_STING:
+						case RBM_BUTT: case RBM_CRUSH:
+							/* still take physical damage */
+							take_hit(Ind, (damage * 2) / 3, ddesc);
+						default: /* no damage for non-physical assaults */
+						}
+					else
+						/* take physical damage + elemental effect */
+						cold_dam(Ind, damage, ddesc);
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_COLD);
@@ -1626,7 +1686,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				}
 				case RBE_TIME:
 				{
-					switch (randint(10))
+					switch (p_ptr->resist_time?randint(9):randint(10))
 					{
 						case 1: case 2: case 3: case 4: case 5:
 							{

@@ -583,7 +583,12 @@ static bool summon_possible(worldpos *wpos, int y1, int x1)
 #endif	// 0
 
 		/* Require empty floor grid in line of sight */
+		/* Changed to allow summoning on mountains */
 		if (cave_empty_bold(zcave,y,x) && los(wpos, y1,x1,y,x)) return (TRUE);
+#if 0
+		if ((cave_empty_bold(zcave,y,x) || cave_empty_mountain(zcave,y,x)) &&
+		     los(wpos, y1,x1,y,x)) return (TRUE);
+#endif
 	}
 
 #if 0	
@@ -612,7 +617,12 @@ static bool summon_possible(worldpos *wpos, int y1, int x1)
 #endif	// 0
 			
 			/* Require empty floor grid in line of sight */
+			/* Changed for summoning on mountains */
 			if (cave_empty_bold(zcave,y,x) && los(wpos, y1,x1,y,x)) return (TRUE);
+#if 0
+			if ((cave_empty_bold(zcave,y,x) || cave_empty_mountain(zcave,y,x)) && 
+			    los(wpos, y1,x1,y,x)) return (TRUE);
+#endif
 		}
 	}
 #endif	// 0
@@ -1106,6 +1116,74 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 	{
 		if (f6 & (1L << i)) spells[num++] = i + RF6_OFFSET;
 	}
+
+#ifdef HALLOWEEN
+	/* Halloween event hack: The Great Pumpkin -C. Blue */
+	//if (!strcmp(r_ptr->name,"The Great Pumpkin"))
+	if ((m_ptr->r_idx == 1086) || (m_ptr->r_idx == 1087) || (m_ptr->r_idx == 1088))
+	{
+		/* more than 1/3 HP: Moan much, tele rarely */
+		if (m_ptr->hp > (m_ptr->maxhp / 3))
+		switch(rand_int(17))
+		{
+		case 0:	case 1:
+			if(f5 & (1L << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
+			break;
+		case 2:	case 3: case 4:
+			if(f5 & (1L << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
+			break;	
+		case 5:	case 6:	case 7:	case 8:
+			if(f5 & (1L << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
+			break;
+		case 9: case 10:
+			if(f6 & (1L << 5)) return(RF6_OFFSET + 5);		//RF6_TPORT
+			break;
+		default:
+			if(f4 & (1L << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
+			break;
+		}
+		/* Just more than 1/6 HP: Moan less, tele more often */
+		else if (m_ptr->hp > (m_ptr->maxhp / 6))
+		switch(rand_int(17))
+		{
+		case 0:	case 1:
+			if(f5 & (1L << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
+			break;
+		case 2:	case 3: case 4:
+			if(f5 & (1L << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
+			break;
+		case 5:	case 6:	case 7:	case 8:
+			if(f5 & (1L << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
+			break;
+		case 9: case 10: case 11: case 12:
+			if(f6 & (1L << 5)) return(RF6_OFFSET + 5);		//RF6_TPORT
+			break;
+		default:
+			if(f4 & (1L << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
+			break;
+		}
+		/* Nearly dead: Moan rarely, tele often */
+		else
+		switch(rand_int(17))
+		{
+		case 0:	case 1:
+			if(f5 & (1L << 30)) return(RF5_OFFSET + 30);	//RF5_SLOW
+			break;
+		case 2:	case 3: case 4:
+			if(f5 & (1L << 27)) return(RF5_OFFSET + 27);	//RF5_SCARE
+			break;
+		case 5:	case 6:	case 7:	case 8:
+			if(f5 & (1L << 31)) return(RF5_OFFSET + 31);	//RF5_HOLD
+			break;
+		case 9: case 10: case 11: case 12: case 13: case 14:
+			if(f6 & (1L << 5)) return(RF6_OFFSET + 5);		//RF6_TPORT
+			break;
+		default:
+			if(f4 & (1L << 30)) return(RF4_OFFSET + 30);	//RF4_MOAN
+			break;
+		}
+	}
+#endif
 
 	/* Paranoia */
 	if (num == 0) return 0;
@@ -2259,6 +2337,27 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF4_XXX7X4 */
 		case RF4_OFFSET+30:
 		{
+#ifdef HALLOWEEN
+			/* Halloween event code for ranged MOAN -C. Blue */
+
+			disturb(Ind, 1, 0);
+			switch(rand_int(4))
+			{
+			/* Colour change for Halloween */
+			case 0:
+				msg_format(Ind, "\377o%^s screams: Trick or treat!", m_name);
+				break;
+			case 1:
+				msg_format(Ind, "\377o%^s says: Happy halloween!", m_name);
+				break;
+			case 2:
+				msg_format(Ind, "\377o%^s moans loudly.", m_name);
+				break;
+			case 3:
+				msg_format(Ind, "\377o%^s says: Have you seen The Great Pumpkin?", m_name);
+				break;
+			}
+#endif
 			break;
 		}
 

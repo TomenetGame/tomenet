@@ -13,6 +13,8 @@
 
 #define SERVER
 
+//#define DEBUG1	/* for monster generation in place_monster_one */
+
 #include "angband.h"
 
 /*
@@ -2329,6 +2331,13 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	if (!in_bounds(y, x)) return (FALSE);
 	/* Require empty space */
 	if (!cave_empty_bold(zcave, y, x)) return (FALSE);
+#if 0
+	if (!(cave_empty_bold(zcave, y, x) || 
+	    (cave_empty_mountain(zcave, y, x) &&
+	    ((r_ptr->flags2 && RF2_PASS_WALL) ||
+	     (r_ptr->flags8 && RF8_WILD_MOUNTAIN) || 
+	     (r_ptr->flags8 && RF8_WILD_VOLCANO))))) return (FALSE);
+#endif
 	/* Hack -- no creation on glyph of warding */
 	if (zcave[y][x].feat == FEAT_GLYPH) return (FALSE);
 
@@ -2339,7 +2348,9 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 
 	/* Paranoia */
 	if (!r_ptr->name) return (FALSE);
-
+#ifdef DEBUG1
+if (r_idx == 862) s_printf("Ok 1\n");
+#endif
 /* BEGIN of ugly hack */
 	/* Check if the monster is already on the level -
 	   I put this in after someone told me about 3 Glaurungs on the same
@@ -2357,6 +2368,9 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		if (inarea(wpos, &m_ptr->wpos)) already_on_level = TRUE;
 	}
 /* END of ugly hack */
+#ifdef DEBUG1
+if (r_idx == 862) s_printf("Ok 2\n");
+#endif
 
 	/* Hack -- "unique" monsters must be "unique" */
 	if ((r_ptr->flags1 & RF1_UNIQUE) &&
@@ -2366,6 +2380,9 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		/* Cannot create */
 		return (FALSE);
 	}
+#ifdef DEBUG1
+if (r_idx == 862) s_printf("Ok 3\n");
+#endif
 
 	/* Depth monsters may NOT be created out of depth */
 	if ((r_ptr->flags1 & RF1_FORCE_DEPTH) && (getlevel(wpos) < r_ptr->level))
@@ -2373,6 +2390,9 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		/* Cannot create */
 		return (FALSE);
 	}
+#ifdef DEBUG1
+if (r_idx == 862) s_printf("Ok 4\n");
+#endif
 
 	/* hard-coded -C. Blue */
 	/* Wight-King of the Barrow-downs might not occur anywhere else */
@@ -2388,6 +2408,9 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Zu-Aon guards the bottom of the Nether Realm now */
 	if ((r_idx == 1085) &&
 	    (getlevel(wpos) < (166 + 30))) return (FALSE);
+#ifdef DEBUG1
+if (r_idx == 862) s_printf("Ok 5\n");
+#endif
 
         /* Ego Uniques are NOT to be created */
         if ((r_ptr->flags1 & RF1_UNIQUE) && (ego || randuni)) return 0;
@@ -2415,6 +2438,9 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		/* If all of them already killed it it must not be spawned */
 		if (on_level == who_killed) return(FALSE);
 	}
+#ifdef DEBUG1
+if (r_idx == 862) s_printf("Ok 6\n");
+#endif
 
         /* Now could we generate an Ego Monster */
         r_ptr = race_info_idx(r_idx, ego, randuni);
@@ -2472,14 +2498,18 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 #endif	// DEBUG_LEVEL
 		return FALSE;
 	}
-
+#ifdef DEBUG1
+if (r_idx == 862) s_printf("Ok 7\n");
+#endif
 
 	/* Make a new monster */
 	c_ptr->m_idx = m_pop();
 
 	/* Mega-Hack -- catch "failure" */
 	if (!c_ptr->m_idx) return (FALSE);
-
+#ifdef DEBUG1
+if (r_idx == 862) s_printf("Ok 8\n");
+#endif
 	/* Get a new monster record */
 	m_ptr = &m_list[c_ptr->m_idx];
 
@@ -2718,8 +2748,10 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 			int my = hy + ddy_ddd[i];
 
 			/* Walls and Monsters block flow */
+			/* Commented out for summoning on mountains */
+#if 1
 			if (!cave_empty_bold(zcave, my, mx)) continue;
-
+#endif
 			/* Attempt to place another monster */
 			if (place_monster_one(wpos, my, mx, r_idx, pick_ego_monster(r_idx, getlevel(wpos)), 0, slp, s_clone))
 			{
@@ -3423,8 +3455,15 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 		scatter(wpos, &y, &x, y1, x1, d, 0);
 
 		/* Require "empty" floor grid */
+		/* Changed for summoning on mountains */
 		if (!cave_empty_bold(zcave, y, x)) continue;
-
+#if 0
+	        if (!(cave_empty_bold(zcave, y, x) ||
+	            (cave_empty_mountain(zcave, y, x) &&
+	            ((r_ptr->flags2 && RF2_PASS_WALL) ||
+	             (r_ptr->flags8 && RF8_WILD_MOUNTAIN) ||
+	              (r_ptr->flags8 && RF8_WILD_VOLCANO))))) continue;
+#endif
 		/* Hack -- no summon on glyph of warding */
 		if (zcave[y][x].feat == FEAT_GLYPH) continue;
 

@@ -147,6 +147,7 @@ struct server_opts
 	s16b replace_hiscore;	/* new entries replace old entries? rules? */
 	s16b unikill_format;	/* format of unique monster kill message */
 	char * server_notes;	/* comments to be displayed in meta server */
+	bool arts_disabled;	/* May artifacts be created? For maintenance reasons */
 };
 
 extern s32b turn;
@@ -250,3 +251,11 @@ extern u16b max_d_idx;
 extern u16b max_o_idx;
 extern u16b max_m_idx;
 extern u16b max_t_idx;
+
+/*
+ * The monster race arrays
+  */
+////extern monster_race *r_info;
+//extern monster_race *r_info[0xFFFFF] @ Monsters_real;
+////extern player_type Players[2] @ Players_real;
+  

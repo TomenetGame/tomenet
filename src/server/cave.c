@@ -5660,6 +5660,22 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 
 	c_ptr = &zcave[y][x];
 
+	/* grow_trees sets FEAT_TREES via this function */
+	/* GF_STONE_WALL is projected by Stone Prison and sets FEAT_WALL_EXTRA
+	   without calling this function */
+	/* No runes of protection / glyphs of warding on non-empty grids!!- C. Blue */
+	if ((feat == FEAT_GLYPH) &&
+	    !((c_ptr->feat == FEAT_NONE) || 
+	    (c_ptr->feat == FEAT_FLOOR) || 
+	    (c_ptr->feat == FEAT_DIRT) || 
+	    (c_ptr->feat == FEAT_GRASS) || 
+	    (c_ptr->feat == FEAT_ICE) || 
+	    (c_ptr->feat == FEAT_SAND) || 
+	    (c_ptr->feat == FEAT_ASH) || 
+	    (c_ptr->feat == FEAT_MUD) || 
+	    (c_ptr->feat == FEAT_FLOWER)))
+	    return;
+
 	/* Change the feature */
 	c_ptr->feat = feat;
 

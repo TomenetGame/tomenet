@@ -386,7 +386,8 @@ static bool do_player_trap_call_out(int Ind)
                 cx = p_ptr->px + ddx[i];
                 cy = p_ptr->py + ddy[i];
                 /* Skip non-empty grids */
-                if (!cave_valid_bold(zcave, cy, cx)) continue;
+                if (!cave_valid_bold(zcave, cy, cx)) continue; /* This wasn't really enough.. */
+		if (!cave_empty_bold(zcave, cy, cx)) continue; /* better added this one;) -C. Blue */
                 if (zcave[cy][cx].feat == FEAT_GLYPH) continue;
                 if ((cx==p_ptr->px) && (cy==p_ptr->py)) continue;
                 sn++;
@@ -872,6 +873,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	t_ptr = &t_info[trap];
 	vanish = t_ptr->vanish;
 	never_id = never_id || (t_ptr->flags & FTRAP_NO_ID);
+
+	/* Debugging trap crash */
+	s_printf("Trap %d triggered.\n", trap);
 
 	switch(trap)
 	{

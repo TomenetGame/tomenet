@@ -1858,7 +1858,7 @@ static void do_slash_cmd(int Ind, char *message)
 		if ((token[0]=strtok(message," ")))
 		{
 //			s_printf("%d : %s", tk, token[0]);
-			for (i=1;i<=9;i++)
+			for (i=1;i<9;i++)
 			{
 				token[i]=strtok(NULL," ");
 				if (token[i]==NULL)
@@ -1895,7 +1895,10 @@ static void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/afk"))
 		{
-			toggle_afk(Ind);
+			if (strlen(message2 + 4) > 0)
+			    toggle_afk(Ind, message2 + 5);
+			else
+			    toggle_afk(Ind, "");
 			return;
 		}
 
@@ -3644,6 +3647,33 @@ static void do_slash_cmd(int Ind, char *message)
 				else msg_print(Ind, "log_u is off");
 				return;
 			}
+
+			else if (prefix(message, "/noarts"))
+			{
+				if (tk)
+				{
+					if(!strcmp(string_make(token[1]),"on"))
+					{
+						msg_print(Ind, "artifact generation is now supressed");
+						cfg.arts_disabled = TRUE;
+						return;
+					}
+					else if(!strcmp(string_make(token[1]),"off"))
+					{
+						msg_print(Ind, "artifact generation is now back to normal");
+						cfg.arts_disabled = FALSE;
+						return;
+					}
+					else
+					{
+						msg_print(Ind, "valid parameters are 'on' or 'off'");
+						return;
+					}
+				}
+				if (cfg.arts_disabled) msg_print(Ind, "artifact generation is currently supressed");
+				else msg_print(Ind, "artifact generation is currently allowed");
+				return;
+			}
 		}
 	}
 
@@ -3908,13 +3938,15 @@ static void player_talk_aux(int Ind, char *message)
 	if (strlen(message) > 1) mycolor = (prefix(message, "}") && (color_char_to_attr(*(message + 1)) != -1))?2:0;
 
 	if (!Ind) c = 'y';
-	else if (mycolor) c = *(message + 1);
+/*	Disabled this for now to avoid confusion.
+	else if (mycolor) c = *(message + 1);*/
 	else
 	{
 		if (p_ptr->mode & MODE_HELL) c = 'W';
 		if (p_ptr->mode & MODE_NO_GHOST) c = 'D';
 		if (p_ptr->total_winner) c = 'v';
 		else if (p_ptr->ghost) c = 'r';
+		if (p_ptr->admin_wiz || p_ptr->admin_dm) c = 'b';
 	}
 	switch((i=censor(message))){
 		case 0:
@@ -3977,22 +4009,39 @@ static void player_talk_aux(int Ind, char *message)
 /*
  * toggle AFK mode on/off.	- Jir -
  */
-void toggle_afk(int Ind)
+void toggle_afk(int Ind, char *msg)
 {
 	player_type *p_ptr = Players[Ind];
 
 	if (p_ptr->afk)
 	{
-		msg_print(Ind, "AFK mode is turned \377GOFF\377w.");
+		if (strlen(p_ptr->afk_msg) == 0)
+			msg_print(Ind, "AFK mode is turned \377GOFF\377w.");
+		else
+			msg_format(Ind, "AFK mode is turned \377GOFF\377w. (%s)", p_ptr->afk_msg);
 		if (!p_ptr->admin_dm)
-			msg_broadcast(Ind, format("\377o%s has returned from AFK.", p_ptr->name));
+		{
+			if (strlen(p_ptr->afk_msg) == 0)
+				msg_broadcast(Ind, format("\377o%s has returned from AFK.", p_ptr->name));
+			else
+				msg_broadcast(Ind, format("\377o%s has returned from AFK. (%s)", p_ptr->name, p_ptr->afk_msg));
+		}
 		p_ptr->afk = FALSE;
 	}
 	else
 	{
-		msg_print(Ind, "AFK mode is turned \377rON\377w.");
+		strcpy(p_ptr->afk_msg, msg);
+		if (strlen(p_ptr->afk_msg) == 0)
+			msg_print(Ind, "AFK mode is turned \377rON\377w.");
+		else
+			msg_format(Ind, "AFK mode is turned \377rON\377w. (%s)", p_ptr->afk_msg);
 		if (!p_ptr->admin_dm)
-			msg_broadcast(Ind, format("\377o%s seems to be AFK now.", p_ptr->name));
+		{
+			if (strlen(p_ptr->afk_msg) == 0)
+				msg_broadcast(Ind, format("\377o%s seems to be AFK now.", p_ptr->name));
+			else
+				msg_broadcast(Ind, format("\377o%s seems to be AFK now. (%s)", p_ptr->name, p_ptr->afk_msg));
+		}
 		p_ptr->afk = TRUE;
 	}
 	return;

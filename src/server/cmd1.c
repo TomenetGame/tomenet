@@ -2026,7 +2026,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 
 				/* Apply the player damage bonuses */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
-				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
+				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100)));
 			}
 			/* handle bare fists/bat/ghost */
 			else
@@ -2778,7 +2778,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				/* Critical strike moved here, since it works best
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
-				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
+				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100)));
 			}
 			/* handle bare fists/bat/ghost */
 			else
@@ -3694,7 +3694,7 @@ void move_player(int Ind, int dir, int do_pickup)
 
 
 	/* (S)He's no longer AFK, lol */
-	if (p_ptr->afk) toggle_afk(Ind);
+	if (p_ptr->afk) toggle_afk(Ind, "");
 
 	/* Can we move ? */
 	if (r_ptr->flags1 & RF1_NEVER_MOVE)

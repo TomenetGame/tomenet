@@ -1468,10 +1468,6 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 	/* Bad items don't sell. Good items with some bad modifiers DO sell ((*defenders)). -C. Blue */
 	switch (o_ptr->tval)
 	{
-	case TV_DIGGING:
-	case TV_HAFTED:
-	case TV_POLEARM:
-	case TV_SWORD:
 	case TV_BOOTS:
 	case TV_GLOVES:
 	case TV_HELM:
@@ -1481,6 +1477,20 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 	case TV_SOFT_ARMOR:
 	case TV_HARD_ARMOR:
 	case TV_DRAG_ARMOR:
+		if ((((o_ptr->to_h) < 0 && ((o_ptr->to_h - k_ptr->to_h) < 0)) ||
+		    ((o_ptr->to_d) < 0 && ((o_ptr->to_d - k_ptr->to_d) < 0 || k_ptr->to_d < 0)) ||
+		    ((o_ptr->to_a) < 0 && ((o_ptr->to_a - k_ptr->to_a) < 0 || k_ptr->to_a < 0)) ||
+		    (o_ptr->pval < 0) || (o_ptr->bpval < 0)) &&
+		    !(((o_ptr->to_h) > 0) ||
+		    ((o_ptr->to_d) > 0) ||
+		    ((o_ptr->to_a) > 0) ||
+		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return (0L);
+	        break;
+
+	case TV_DIGGING:
+	case TV_HAFTED:
+	case TV_POLEARM:
+	case TV_SWORD:
 	case TV_AXE:
 	case TV_SHOT:
 	case TV_ARROW:
@@ -1511,9 +1521,9 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 		    ((o_ptr->to_d) > 0) ||
 		    ((o_ptr->to_a) > 0) ||
 		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return (0L);
-*/		if ((((o_ptr->to_h) < 0 && (o_ptr->to_h - k_ptr->to_h) < 0) ||
-		    ((o_ptr->to_d) < 0 && (o_ptr->to_d - k_ptr->to_d) < 0) ||
-		    ((o_ptr->to_a) < 0 && (o_ptr->to_a - k_ptr->to_a) < 0) ||
+*/		if ((((o_ptr->to_h) < 0 && ((o_ptr->to_h - k_ptr->to_h) < 0 || k_ptr->to_h < 0)) ||
+		    ((o_ptr->to_d) < 0 && ((o_ptr->to_d - k_ptr->to_d) < 0 || k_ptr->to_d < 0)) ||
+		    ((o_ptr->to_a) < 0 && ((o_ptr->to_a - k_ptr->to_a) < 0 || k_ptr->to_a < 0)) ||
 		    (o_ptr->pval < 0) || (o_ptr->bpval < 0)) &&
 		    !(((o_ptr->to_h) > 0) ||
 		    ((o_ptr->to_d) > 0) ||
@@ -1711,9 +1721,9 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			/* Give credit for bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += ((PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4) +
-				PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4) + 
-				PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 9, 4)) * 100L);
+			value += (((o_ptr->to_h < 0)? 0 : PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4)) +
+				((o_ptr->to_d < 0)? 0 : PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4)) + 
+				((o_ptr->to_a < 0)? 0 : PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 9, 4))) * 100L;
 
 			/* Done */
 			break;
@@ -1743,9 +1753,9 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			/* Factor in the bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += ((PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4) + 
-				PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4) + 
-				PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 9, 4)) * 100L);
+			value += (((o_ptr->to_h < 0)? 0 : PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4)) + 
+				((o_ptr->to_d < 0)? 0 : PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4)) + 
+				((o_ptr->to_a < 0)? 0 : PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 9, 4))) * 100L;
 
 			/* Hack -- Factor in extra damage dice */
 			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
@@ -1768,8 +1778,8 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			/* Factor in the bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
 			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += ((PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4) + 
-				PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4)) * 5L);
+			value += (((o_ptr->to_h < 0)? 0 : PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4)) + 
+				((o_ptr->to_d < 0)? 0 : PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4))) * 5L;
 
 			/* Hack -- Factor in extra damage dice */
 			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
@@ -2337,6 +2347,10 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr)
 	int			k_idx = 0;
 
 
+	/* Check if artifact generation is currently disabled -
+	   added this for maintenance reasons -C. Blue */
+	if (cfg.arts_disabled) return (FALSE);
+
 	/* No artifacts in the town */
 	if (istown(wpos)) return (FALSE);
 
@@ -2421,50 +2435,55 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr)
 	/* Paranoia -- no "plural" artifacts */
 	if (o_ptr->number != 1) return (FALSE);
 
-	/* Check the artifact list (skip the "specials") */
-//	for (i = ART_MIN_NORMAL; i < MAX_A_IDX; i++)
-        for (i = 0; i < MAX_A_IDX; i++)
-	{
-		artifact_type *a_ptr = &a_info[i];
+        /* Check if true artifact generation is currently disabled -
+	added this for maintenance reasons -C. Blue */
+	if (!cfg.arts_disabled) {
 
-		/* Skip "empty" items */
-		if (!a_ptr->name) continue;
-
-		/* Cannot make an artifact twice */
-		if (a_ptr->cur_num) continue;
-
-                /* Cannot generate special ones */
-                if (a_ptr->flags3 & TR3_INSTA_ART) continue;
-
-                /* Cannot generate some artifacts because they can only exists in special dungeons/quests/... */
-//                if ((a_ptr->flags4 & TR4_SPECIAL_GENE) && (!a_allow_special[i]) && (!vanilla_town)) continue;
-                if (a_ptr->flags4 & TR4_SPECIAL_GENE) continue;
-
-		/* Must have the correct fields */
-		if (a_ptr->tval != o_ptr->tval) continue;
-		if (a_ptr->sval != o_ptr->sval) continue;
-
-		/* XXX XXX Enforce minimum "depth" (loosely) */
-		if (a_ptr->level > getlevel(wpos))
+		/* Check the artifact list (skip the "specials") */
+	//	for (i = ART_MIN_NORMAL; i < MAX_A_IDX; i++)
+	        for (i = 0; i < MAX_A_IDX; i++)
 		{
-			/* Acquire the "out-of-depth factor" */
-			int d = (a_ptr->level - getlevel(wpos)) * 2;
+			artifact_type *a_ptr = &a_info[i];
 
-			/* Roll for out-of-depth creation */
-			if (rand_int(d) != 0) continue;
+			/* Skip "empty" items */
+			if (!a_ptr->name) continue;
+
+			/* Cannot make an artifact twice */
+			if (a_ptr->cur_num) continue;
+
+	                /* Cannot generate special ones */
+	                if (a_ptr->flags3 & TR3_INSTA_ART) continue;
+
+	                /* Cannot generate some artifacts because they can only exists in special dungeons/quests/... */
+	//                if ((a_ptr->flags4 & TR4_SPECIAL_GENE) && (!a_allow_special[i]) && (!vanilla_town)) continue;
+	                if (a_ptr->flags4 & TR4_SPECIAL_GENE) continue;
+
+			/* Must have the correct fields */
+			if (a_ptr->tval != o_ptr->tval) continue;
+			if (a_ptr->sval != o_ptr->sval) continue;
+
+			/* XXX XXX Enforce minimum "depth" (loosely) */
+			if (a_ptr->level > getlevel(wpos))
+			{
+				/* Acquire the "out-of-depth factor" */
+				int d = (a_ptr->level - getlevel(wpos)) * 2;
+
+				/* Roll for out-of-depth creation */
+				if (rand_int(d) != 0) continue;
+			}
+
+			/* We must make the "rarity roll" */
+			if (rand_int(a_ptr->rarity) != 0) continue;
+
+			/* Hack -- mark the item as an artifact */
+			o_ptr->name1 = i;
+
+			/* Hack -- Mark the artifact as "created" */
+			a_ptr->cur_num = 1;
+
+			/* Success */
+			return (TRUE);
 		}
-
-		/* We must make the "rarity roll" */
-		if (rand_int(a_ptr->rarity) != 0) continue;
-
-		/* Hack -- mark the item as an artifact */
-		o_ptr->name1 = i;
-
-		/* Hack -- Mark the artifact as "created" */
-		a_ptr->cur_num = 1;
-
-		/* Success */
-		return (TRUE);
 	}
 
 	/* An extra chance at being a randart. XXX RANDART */
@@ -4362,7 +4381,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				/* Talisman (Amulet of Luck) */
 				case SV_AMULET_LUCK:
 				{
-					o_ptr->bpval = magik(40)?randint(3):randint(5);
+					o_ptr->bpval = magik(40)?randint(3):(magik(40)?randint(4):randint(5));
 
 					/* Cursed */
 					if (power < 0)
@@ -5014,6 +5033,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	determine_level_req(lev, o_ptr);
 
 	/* Hack -- analyze artifacts */
+#if 0
+//	avoid +h/+d,+a randarts with +0,+0,+0 :(
+	if ((o_ptr->name1) && (o_ptr->name1 != ART_RANDART))
+#endif
 	if (o_ptr->name1)
 	{
 	 	artifact_type *a_ptr;
@@ -5303,6 +5326,58 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	}
 #endif	// 0
 
+#if 0
+	/* avoid randarts with +t/+d,+a = +0,+0,+0 :( */
+	/* Hack -- analyze artifacts */
+	if ((o_ptr->name1) && (o_ptr->name1 == ART_RANDART))
+	{
+	 	artifact_type *a_ptr;
+	 	
+	 	/* Randart */
+		if (o_ptr->name1 == ART_RANDART)
+		{
+			a_ptr =	randart_make(o_ptr);
+		}
+		/* Normal artifacts */
+		else
+		{
+			a_ptr = &a_info[o_ptr->name1];
+		}
+		if(a_ptr==(artifact_type*)NULL){
+			o_ptr->name1=0;
+			return;
+		}
+
+		/* Hack -- Mark the artifact as "created" */
+		a_ptr->cur_num = 1;
+
+		/* Info */
+		/* s_printf("Created artifact %d.\n", o_ptr->name1); */
+
+		/* Extract the other fields */
+		o_ptr->pval = a_ptr->pval;
+		o_ptr->ac = a_ptr->ac;
+		o_ptr->dd = a_ptr->dd;
+		o_ptr->ds = a_ptr->ds;
+		o_ptr->to_a = a_ptr->to_a;
+		o_ptr->to_h = a_ptr->to_h;
+		o_ptr->to_d = a_ptr->to_d;
+		o_ptr->weight = a_ptr->weight;
+
+		/* Hack -- no bundled arts (esp.missiles) */
+		o_ptr->number = 1;
+		o_ptr->timeout = 0;
+
+		/* Hack -- extract the "broken" flag */
+		if (!a_ptr->cost) o_ptr->ident |= ID_BROKEN;
+
+		/* Hack -- extract the "cursed" flag */
+		if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= ID_CURSED;
+
+		/* Done */
+		return;
+	}
+#endif
 
 	/* Examine real objects */
 	if (o_ptr->k_idx)
@@ -5701,7 +5776,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 	/* max luck = 40 */
 	luck = 200 - (8000 / (luck + 40));
 	if ((!good) && magik(luck / 2)) good = TRUE;
-	else if (good && (!great) && magik(luck / 5)) {great = TRUE; good = TRUE;}
+	else if (good && (!great) && magik(luck / 15)) {great = TRUE; good = TRUE;}
 
 	/* Chance of "special object" */
 	prob = (good ? 10 : 1000);

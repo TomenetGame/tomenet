@@ -494,10 +494,17 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	if(q_ptr->afk)
 	{
 		text_afk = TRUE;
-		if (text_pk || text_silent)
-			fprintf(fff, ", AFK");
-		else
-			fprintf(fff, "   (AFK");
+		if (text_pk || text_silent) {
+//			if (strlen(q_ptr->afk_msg) == 0)
+				fprintf(fff, ", AFK");
+//			else
+//				fprintf(fff, ", AFK: %s", q_ptr->afk_msg);
+		} else {
+//			if (strlen(q_ptr->afk_msg) == 0)
+				fprintf(fff, "   (AFK");
+//			else
+//				fprintf(fff, "   (AFK: %s", q_ptr->afk_msg);
+		}
 	}
 	if (text_pk || text_silent || text_afk) fprintf(fff, ")");
 
@@ -591,7 +598,6 @@ void do_cmd_check_players(int Ind, int line)
 		/* not needed anymore since we have linebreak now
 		fprintf(fff, "\377%c)", attr);*/
 
-
 		/* Newline */
 		/* -AD- will this work? - Sure -C. Blue- */
 		fprintf(fff, "\n\377U");
@@ -614,8 +620,10 @@ void do_cmd_check_players(int Ind, int line)
 				fprintf(fff, " [%s]", guilds[q_ptr->guild].name);
 			fprintf(fff, " \377%c", (q_ptr->quest_id?'Q':' '));
 		}
-		fprintf(fff, "\n\n");
-
+		if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg))
+			fprintf(fff, "\n\n");
+		else
+			fprintf(fff, "\n     \377U(%s)\n", q_ptr->afk_msg);
 	}
 #ifdef TOMENET_WORLDS
 	world_remote_players(fff);

@@ -108,7 +108,7 @@ void do_cmd_go_up(int Ind)
 	}
 	if(wpos->wz<0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){
 		msg_print(Ind,"\377rThis is an ironman dungeon, you may not ascend.");
-		return;
+		if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
 	}
 	if(wpos->wz==0){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].tower;
@@ -117,15 +117,19 @@ void do_cmd_go_up(int Ind)
 			(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
 		{
 			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
-			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
-			return;
+			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) {
+				set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+				return;
+			}
 		}
 		/* Nether Realm only for Kings/Queens*/
 		if ((d_ptr->type == 6) && !p_ptr->total_winner)
 		{
 			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
-			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
-			return;
+			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) {
+				set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+				return;
+			}
 		}
 	}
 	if(p_ptr->inval && p_ptr->wpos.wz>=10){
@@ -327,7 +331,7 @@ void do_cmd_go_down(int Ind)
 
 	if(wpos->wz>0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){
 		msg_print(Ind,"\377rThis is an ironman tower, you may not descend.");
-		return;
+		if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
 	}
 	if(wpos->wz==0){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
@@ -338,15 +342,19 @@ void do_cmd_go_down(int Ind)
 			(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
 		{
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
-			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
-			return;
+			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) {
+				set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+				return;
+			}
 		}
 		/* Nether Realm only for Kings/Queens*/
 		if ((d_ptr->type == 6) && !p_ptr->total_winner)
 		{
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
-			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
-			return;
+			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) {
+				set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+				return;
+			}
 		}
 	}
 	if(p_ptr->inval && p_ptr->wpos.wz<=-10){

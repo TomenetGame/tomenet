@@ -4957,7 +4957,7 @@ static int Receive_keepalive(int ind)
 		p_ptr=Players[Ind];
 		if(!p_ptr->afk && p_ptr->auto_afk){	/* dont oscillate ;) */
 			if(++connp->inactive>45)	/* auto AFK timer (>1.5 min) */
-				toggle_afk(Ind);
+				toggle_afk(Ind, "");
 		}
 	}
 

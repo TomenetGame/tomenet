@@ -1522,12 +1522,12 @@ static void calc_body_bonus(int Ind)
 	if (r_ptr->speed < 110)
 	{
 		/* let slowdown not be that large that players will never try that form */
-		p_ptr->pspeed = 110 - (((110 - r_ptr->speed) * 40) / 100);
+		p_ptr->pspeed = 110 - (((110 - r_ptr->speed) * 30) / 100);
 	}
 	else
 	{
 		/* let speed bonus not be that high that players won't try any slower form */
-		p_ptr->pspeed = (((r_ptr->speed - 110) * 60) / 100) + 110;
+		p_ptr->pspeed = (((r_ptr->speed - 110) * 50) / 100) + 110;
 	}
 
 	/* Base skill -- searching ability */
@@ -1537,6 +1537,17 @@ static void calc_body_bonus(int Ind)
 	/* Base skill -- searching frequency */
 	p_ptr->skill_fos /= 2;
 	p_ptr->skill_fos += r_ptr->aaf / 10;
+
+	/* Stealth ability is influenced by weight (-> size) of the monster */
+	if (r_ptr->weight <= 500) p_ptr->skill_stl += 2;
+	else if (r_ptr->weight <= 500) p_ptr->skill_stl += 2;
+	else if (r_ptr->weight <= 1000) p_ptr->skill_stl += 1;
+	else if (r_ptr->weight <= 1500) p_ptr->skill_stl += 0;
+	else if (r_ptr->weight <= 4500) p_ptr->skill_stl -= 1;
+	else if (r_ptr->weight <= 20000) p_ptr->skill_stl -= 2;
+	else if (r_ptr->weight <= 100000) p_ptr->skill_stl -= 3;
+	else p_ptr->skill_stl -= 4;
+	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
 
 	/* Extra fire if good archer */
 	if (r_ptr->flags4 & RF4_ARROW_1)
@@ -3016,7 +3027,7 @@ void calc_bonuses(int Ind)
 #else	// 0
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(p_ptr))
 	{
-		int k = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
+		int k = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 6);
 
 		if (k)
 		{

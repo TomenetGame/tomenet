@@ -1215,7 +1215,7 @@ extern void msg_format_near(int Ind, cptr fmt, ...);
 extern void msg_print_near_site(int y, int x, worldpos *wpos, cptr msg);
 extern void msg_format_near_site(int y, int x, worldpos *wpos, cptr fmt, ...);
 extern void msg_print_near_monster(int m_idx, cptr msg);
-extern void toggle_afk(int Ind);
+extern void toggle_afk(int Ind, char *msg);
 extern void player_talk(int Ind, char *msg);
 extern bool is_a_vowel(int ch);
 extern char *wpos_format(int Ind, worldpos *wpos);

@@ -3106,7 +3106,7 @@ bool set_food(int Ind, int v)
 			 * destroy his conneciton (this will hopefully prevent
 			 * people from starving while afk)
 			 */
-			if (p_ptr->chp == p_ptr->mhp)
+			if (p_ptr->chp >= p_ptr->mhp) /* changed it due to CHP = MHP-1 bug.. -C. Blue */
 			{
 				/* Use the value */
 				p_ptr->food = v;
@@ -3792,7 +3792,7 @@ void monster_death(int Ind, int m_idx)
 		unique_quark = local_quark;
 
 		/* make uniques drop a bit better than normal monsters */
-		tmp_luck += 10;
+		tmp_luck += 20;
 		/* luck caps at 40 */
 		if (tmp_luck > 40) tmp_luck = 40;
 	}

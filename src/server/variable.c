@@ -178,7 +178,8 @@ server_opts cfg =
 
 	FALSE,FALSE,	// public_rfe, auto_purge
 	FALSE,2,0,	// log_u, replace_hiscore, unikill_format
-	""		// server notes for meta list
+	"",		// server notes for meta list
+	FALSE		// artifact creation disabled for maintenance reasons?
 };
 
 struct ip_ban *banlist=NULL;

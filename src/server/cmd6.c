@@ -1208,8 +1208,9 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					/* FRUIT BAT!!!!!! */
 
-					msg_print(Ind, "You have been turned into a fruit bat!");				
+					msg_print(Ind, "You have been turned into a fruit bat!");
 					strcpy(p_ptr->died_from,"Potion of Chauve-Souris");
+					do_mimic_change(Ind, 0, TRUE);
 					p_ptr->fruit_bat = -1;
 					p_ptr->deathblow = 0;
 					player_death(Ind);

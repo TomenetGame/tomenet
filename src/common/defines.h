@@ -32,6 +32,9 @@
  * You have been warned.
  */
 
+/* Enable/disable Halloween Event Mode- by C. Blue :) */
+//#define HALLOWEEN
+
 /* MAJOR/MINOR/PATCH version should be 0-15.  */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   1
@@ -3440,6 +3443,7 @@ that keeps many algorithms happy.
 #define RF4_BR_NUKE                     0x20000000  /* TY: Toxic Breath */
 //#define RF4_XXX5			0x10000000
 //#define RF4_XXX6			0x20000000
+#define RF4_MOAN			0x40000000	/* For Halloween event :) -C. Blue */
 //#define RF4_XXX7			0x40000000
 //#define RF4_XXX8			0x80000000
 #define RF4_BOULDER			0x80000000  /* Hurl Boulder (Vanilla) */
@@ -3450,7 +3454,8 @@ that keeps many algorithms happy.
 
 /* NOTE: BR_DISI is not considered as 'radius spell', since this can
  * eliminate walls between the caster and the player. */
-#define RF4_RADIUS_SPELLS (0xefffff08) /* Hack ;) */
+//#define RF4_RADIUS_SPELLS (0xefffff08) /* Hack ;) */
+#define RF4_RADIUS_SPELLS (0xafffff08) /* Changed for Halloween event, now includes ranged MOAN. -C. Blue */
 //#define RF5_RADIUS_SPELLS (0x000001ff) /* Hack ;) */
 #define RF5_RADIUS_SPELLS ( RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | \
 		RF5_BA_COLD | RF5_BA_POIS | RF5_BA_NETH | RF5_BA_WATE | \
@@ -3870,7 +3875,8 @@ that keeps many algorithms happy.
  * Spells castable even when farther than MAX_RANGE
  */
 #define RF4_INDIRECT_MASK \
-	(0L)
+	(RF4_MOAN)
+//	(0L)	-	Ranged MOAN needed for Halloween event -C. Blue
 
 #define RF5_INDIRECT_MASK \
 	(0L)
@@ -3982,7 +3988,8 @@ that keeps many algorithms happy.
  * Annoying spells
  */
 #define RF4_ANNOY_MASK \
-	(RF4_SHRIEK | RF4_UNMAGIC)
+	(RF4_SHRIEK | RF4_UNMAGIC | RF4_MOAN)
+//	(RF4_SHRIEK | RF4_UNMAGIC)  ranged MOAN added for Halloween event. -C. Blue
 
 #define RF5_ANNOY_MASK \
 	(RF5_DRAIN_MANA | RF5_MIND_BLAST | RF5_BRAIN_SMASH | \
@@ -4212,6 +4219,13 @@ that keeps many algorithms happy.
 #define cave_floor_bold(ZCAVE,Y,X) \
 	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR)
 //    (!(ZCAVE[Y][X].feat & 0x20))
+
+/* for summoning on mountains */
+#define cave_empty_mountain(ZCAVE,Y,X) \
+    (cave_mountain_bold(ZCAVE,Y,X) && \
+     !(ZCAVE[Y][X].m_idx))
+#define cave_mountain_bold(ZCAVE,Y,X) \
+	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_CLIMB)
 
 /*
  * Determine if a "legal" grid is a "clean" floor grid

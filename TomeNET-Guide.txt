@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. October 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. Nov 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -47,7 +47,7 @@ Contents
     (4.2)   Level and owner of items
     (4.3)   Dungeons and towers
     (4.4)   Terrain
-    (4.5)   Towns
+    (4.5)   Towns and shops
     (4.6)   Pits and vaults
     (4.7)   Traps
     (4.8)   Level & vault feelings, Jail, Ironman
@@ -65,6 +65,8 @@ Contents
     (5.9)   What does item xxx do exactly?
     (5.10)  Destruction of items by elemental attacks
     (5.11)  Armour Class vs monster attacks
+    (5.12)  Monster attack brands and effects
+    (5.13)  Earthquakes
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills
@@ -295,6 +297,9 @@ They all start with a slash '/':
             -you're beginning to starve due to lack of food AND
             -your HP are fully healed! A HP-draining item prevents this.
             So always use /afk to be on the safe side.
+/afk <msg>  You can specify a reason that will be displayed to the other
+            players, so they know why you are currently AFK or when you will
+            be back.
 /que        gives a quest! It needs to be fulfilled before a certain period
  (/quest)   of time passes. The player who completes it gets a great item
             as reward. It will appear right below the player on the ground.
@@ -384,6 +389,7 @@ Weapons:
 
 Ranged weapons:
     @O          Auto-retaliate with it (shooting ammo). ('O' is the letter)
+                Note: @O must be on your ammunition, not on the bow!
 
 Spellbooks:
     @Oc         You will auto-retaliate by casting the spell 'c)' from this
@@ -608,9 +614,9 @@ sometimes you have to look a bit for him, like for all other monsters/uniques.
 -If a player who hasn't killed Sauron yet or who has already beaten Morgoth
 enters a dungeon level where Morgoth is currently on, Morgoth will instantly
 teleport to a different dungeon level.
--If there's already another player on that level, who has beaten Sauron but
-not yet Morgoth, the 'intruder' player will be teleported to town instead and
-Morgoth will remain on the level.
+-If there's already another player on that level who has beaten Sauron but
+hasn't acquired the title of a King or Queen yet, the 'intruder' player will
+be teleported to town instead and Morgoth will remain on the level.
 -If a party of players encounters him he will be a bit thougher than
 he appears to a solo player, depending on the size of the party.
 -There are hardly any walls that can hold Morgoth back for long.
@@ -727,6 +733,15 @@ Here is a list of colour codes (try not to annoy your fellow players :)
 
     a   acidic          c   cold            e   electric        f   fire
     p   poison          L   light flicker   h   half-multi      m   multi
+
+
+Character names in chat lines have different colours to indicate their status:
+
+Light blue      Normal / everlasting player.
+Light grey      Hard-mode player.
+Dark grey       No-ghost / hellish player.
+Violet          Player character is king / queen.
+Dark blue       Player is admin.
 
 
 
@@ -1597,8 +1612,8 @@ are displayed as yellow 'T' on the world map.
 
 
 
-(4.5) Towns
------------
+(4.5) Towns and shops
+---------------------
 If you create a new character, it will start in 'Bree', a town located at
 position 32,32 on the world map (same position on all servers!).
 The world map however, ranging from 0,0 (bottom left corner) to 63,63
@@ -1670,8 +1685,10 @@ Dol Guldur                      | 2850..3550/ 57..71    |       28
 Mount Doom                      | 4250..5000/ 85..100   |       38
 Nether Realm                    | 8300..9850/166..196   |       40 (*)
 
-The Europe server currently also has an 'ironman' dungeon (see (4.8)):
-Wilderness                      |  100..1100/  2..22    |        0
+The Europe server usually has one or several 'ironman' dungeons (see (4.8)),
+their entrances (stairs) waiting to be discovered by some bold explorers.
+Such custom dungeons appear as 'Wildernis' in the "Recall depths and Towns"
+list, the minimum required character level to enter is usually 0.
 
 (*) To enter the Nether Realm a player must carry the 'King'/'Queen' title,
 acquired by beating Morgoth, The Lord of Darkness.
@@ -1681,6 +1698,49 @@ So fighting at 250ft would give 5*20% = +100% bonus, hence doubling the
 experience you gain. The amount of experience is already very high even
 without the depth-bonus, since creatures in the Nether Realm are of a very
 high level.
+
+
+Shops:
+------
+Each town has several shops, displayed as numbers 1..9 and some '+'.
+The 1..9 are standard shops, namely..
+1       General Store   Sells food, lanterns, ammunition, cloaks and shrooms.
+2       Armoury         Offers various basic armour. Rarely excellent pieces.
+3       Weapon Shop     Offers various basic weapons. Rarely excellent pieces.
+4       Temple          Player ghosts will be revived here, and receive some
+                        money. The temple sells weapons for priests, scrolls
+                        and potions.
+5       Alchemist       Sells various scrolls and potions.
+6       Magic Shop      Sells wands, staves, rings and amulets.
+7       Black Market    Sells many different items, mostly very good ones.
+                        This shop is very expensive and buys for very little
+                        in return. Better not sell your items to this shop,
+                        as long as a regular store will pay you better.
+                        Some items cannot be sold elsewhere though.
+8       The Inn         In Bree it's The Prancing Pony. Inside the inn,
+                        players are relatively safe from monsters.
+9       Bookstore       Sells books for istari, priests and all other (hybrid)
+                        magic users.
++       These are different everywhere. Some examples are..
+        The Bank        Several towns have a bank where you can deposit and
+                        withdraw money, so you won't lose it accidentally on a
+                        dungeon trip.
+        Casino.         Minas Anor has a casino.
+        ID service      Will identify all items you currently carry for a fee.
+        *ID* Service    Will *identify* an item for a fee.
+        Herbal Healing  Will cure black breath for a high fee.
+        Enchant Services
+                        These will enchant weapons, arrows, or all armour
+                        parts you currently have equipped.
+
+Shops that buy and sell items will have a price limit that they will pay for
+an item a players wants to sell. The limit varies from 50,000 to 300,000 Au
+depending on the shop owner. The shop owners change regularly, if a shop makes
+you a bad offer (the cap price) just wait for the owner to change or visit a
+different shop. Shops in different towns are run by different owners although
+they may use the same number '0'..'9' for their entrance symbol.
+If the item is worth more than 300,000 Au maybe you can find a fellow player
+who is wealthy and in urgent need of your items.
 
 
 
@@ -1936,7 +1996,9 @@ The "auto-retaliator" (see 5.1) also works if you fight bare-handed.
 Training Martial Arts will give you..
 -a bonus to-hit and to-dam.
 -special combat techniques which your character will use automatically.
--special abilities and resistances (like Free Action, see 6.2).
+ These techniques do a lot of extra damage and often additionally stun or slow
+ your opponent.
+-special abilities and resistances (like Free Action, see (6.2) for details).
 -extra speed and stealth bonus.
 -extra AC bonus for each part of armour that is NOT worn.
  Increasing your martial arts skill lets you wear light and even medium armour
@@ -2894,6 +2956,66 @@ reduce their power.
 
 
 
+(5.12) Monster attack types and brands
+--------------------------------------
+Monsters can strike you with branded attacks, for example acidic hits, or hits
+that poison you if you get hit. If you resist the according brand you won't be
+affected by it alot, and the overall damage will be reduced. If you're immune
+you won't be affected at all and only take a physical part of the damage -
+if there is a physical part. This depends on the attack type.
+Here is a list of attack types and brands:
+
+Brand           Needed resistance       Type      Contact/Cut/Stun/Bypasses AC
+-------------------------------------   --------------------------------------
+HURT            Only AC - raw damage.   HIT                            +/+/+/-
+Acd,Ele,Fir,Col according element.      PUNCH,KICK,BUTT,CRUSH          +/-/+/-
+POISON          poison.                 CLAW, BITE                     +/+/-/-
+BLIND           blindness.              TOUCH,STING,ENGULF,CHARGE,CRAWL+/-/-/-
+CONFUSE         confusion (or chaos).   SPIT,                          -/-/-/-
+TERRIFY         fear.                   GAZE,WAIL,SPORE,EXPLODE,BEG,   -/-/-/+
+PARALYZE        free action.            INSULT,MOAN,DROOL,SHOW,WHISPER -/-/-/+
+EXP_xx          hold life.      
+LOSE_xxx        sustain stats.
+EAT_xxx         DEX,stealing skill.
+                Device of theft
+                prevention.
+                Won't help against
+                EAT_FOOD/EAT_LITE.
+UN_BONUS        disenchantment.
+UN_POWER        none.(drains charges)
+TIME            time.
+DISEASE         poison. This attack
+                can also decrease
+                your constitution.
+SANITY          none. (mimics using a
+                WEIRD_MIND/EMPTY_MIND
+                form resist slightly)
+HALLU           chaos.
+PARASITE        <no effect>
+DISARM          fighting skill, weapons
+                worn 2-handed are
+                harder to disarm.
+FAMINE          none. Makes you hungry.
+SEDUCE          none. Makes you take off
+                equipped items.
+SHATTER         hits & causes an
+                earthquake.
+                Very dangerous.
+
+Getting hit by higher undead creatures may also infect you with the
+Black Breath!
+
+
+
+(5.13) Earthquakes
+------------------
+Earthquakes deals 300 damage if you cannot evade the falling rocks and
+shifting ground. Depending on the number of unchanged adjacent fields to the
+player there is a chance to evade and take much less damage. Earthquakes can
+also stun you.
+
+
+
 (6) Tables
 ==========
 (6.1) Attributes
@@ -2988,11 +3110,18 @@ Note that not every skill is available to every profession (class).
         +Sword-mastery          Greatly improves to-dam/to-hit with swords.
                                 At 25 and 50 you will get +1 blow per round.
             .Critical-strike    Ability to score 2x/3x/4x damage hits.
-                                Critical strike skill works with light
-                                weapons.
-                                Weight cap is 10.0 lb, above this the chance
-                                to hit your target critically won't be worse
-                                than with a 10.0 lb weapon.
+                                Critical strike skill works only with light
+                                swords, up to 10.0 lb. It improves the chance
+                                to score critical hits and adds to crit bonus
+                                from your equipment.
+                                NOTE:
+                                You can always score critical hits,
+                                independent on weapon class and crit-skill.
+                                The lighter a weapon is the more likely you
+                                will score a crit. Weight cap is 10.0 lb,
+                                above this the chance to hit your target
+                                critically won't be worse than with a 10.0 lb
+                                weapon.
                                 Although your chance of hitting critical spots
                                 is better with lighter weapons, the damage of
                                 your critical strike -IF you manage to execute
@@ -3029,14 +3158,8 @@ Note that not every skill is available to every profession (class).
                                 cross even highest mountains.
                                 At 50 a martial artist will learn the
                                 technique of flying!
-                                A heavy backpack (inventory) will nullify the
-                                Free Action. You will see a message, telling
-                                you that your backpack isn't comfortable.
-                                Using a shield will nullify the special combat
-                                styles, reducing your damage.
-                                Using too heavy armour will disable your MA.
-                                Using any melee or ranged weapon disables your
-                                Martial Arts skills completely.
+                                Under certain conditions MA abilities cannot
+                                be used and lose effect, see section (5.3).
                                 The dice of martial arts special techniques
                                 (which your character will use automatically
                                 depending on your MA skill) are affected by
@@ -3045,6 +3168,7 @@ Note that not every skill is available to every profession (class).
                                 Martial Arts gives you a chance / adds to your
                                 chance of intercepting an enemy! See
                                 'Interception' skill below.
+                                For more details about MA see section (5.3).
 +Magic                          Improves your spellcasting abilities and
                                 increases your mana capacity.
                                 Lets you pseudo-id magic items, potions and
@@ -3649,12 +3773,16 @@ W: depth : rarity : corpse weight : experience for kill
   depth:
     The depth is also the basic level of these monsters. It tells you how
     many of them you need to kill to learn mimicking their form.
+  corpse weight:
+    The weight of the form has impact on its stealth. A huge form that weighs
+    a lot will give a stealth penalty, while small and light forms may give a
+    bonus.
 I: speed : hit points : vision : armor class : alertness
   speed:
     110 means normal speed. If the monster is faster, the mimic will
-    receive a speed bonus of 60% of the monster's speed above 110.
+    receive a speed bonus of 50% of the monster's speed above 110.
     If the monster is slower, the mimic will receive a speed malus of
-    40% of the monster's speed malus below 110.
+    30% of the monster's speed malus below 110.
     So a monster moving at 130 speed will give the mimic +12 speed.
   hit points:
     The monster's hit dice xdy are multiplied. Now, if the mimic's HP
@@ -3680,11 +3808,11 @@ I: speed : hit points : vision : armor class : alertness
     (3/4 player_base_AC) + (3/4 player_magical_to_AC) + (1/4 calc_ac).
     Otherwise, the final AC will be
     (1/2 player_base_AC) + (1/2 player_magical_to_AC) + (1/2 calc_ac).
-  Alertness:
+  vision:
     Searching ability of the player =
-    (player_searching / 2) + (monster_alertness / 10)
+    (player_searching / 2) + (monster_vision / 10)
     Perception of the player = 
-    (player_perception / 2) + (monster_alertness / 10)
+    (player_perception / 2) + (monster_vision / 10)
 E: weapons : torso : arms : finger : head : leg
     These values indicate how many pieces of equipment the player can
     wear while using this form. For example snakes can only wear a helmet
@@ -4041,7 +4169,8 @@ Holy Defense
                     Works very well, as long as the creature isn't of a higher
                     level than you.
     Glyph Of Warding
-                    Creates a rune on the ground, stopping monsters.
+                    Creates a rune on the ground that monsters cannot cross
+                    nor summon on. Powerful monsters may break it.
     Eternal Martyr  Burns you in holy fire, making you invulnerable.
                     When your martyrium ends, you will be left with 1 HP.
                     The gods won't accept another martyrium until 1000 turns
@@ -4092,6 +4221,7 @@ Here you can..
     levels to each other and on the same dungeon/tower level respectively
     the same worldmap/wildernis sector. A slight experience bonus is applied
     for killing monsters in a party.
+    Kings/Queens and normal players don't share experience in a party.
     'Anti-magic fields' of fellow party members have greatly reduced effect
     on spell-users in the same party, to allow the party to still be a vital
     combination.
@@ -4828,6 +4958,7 @@ SOLUTION:   This is a typical problem on Windows XP. There are 3
              example C:\tomenet-bin\.. .
             -to edit your "tomenet4.ini" file and specify a host directly by
              specifying "HOST=europe.tomenet.net".
+             Or you can even give the IP address "HOST=62.210.141.11".
 
 PROBLEM 02: I get to a server list, but it doesn't show any servers. It just
             says 'Press Q to enter a server manually' and that's it.
@@ -5024,6 +5155,14 @@ PROBLEM 11: The main window doesn't display the floor dots in certain
             dungeons, like the Training Tower and Angband.
 SOLUTION:   None so far :/ Seems to happen on non-MS Windows machines
             sometimes.
+
+PROBLEM 12: Every time I connect to the server it will automatically download
+            LUA script files. However, they will have a size of 0 Bytes.
+SOLUTION:   Currently not resolved problem. Workaround: Make sure you really
+            have the latest LUA files in /pm/lib/scpt (you can download them
+            from http://www.c-blue.de/rogue.html). Then set all LUA files in
+            that directory to write-protected. This will prevent TomeNET from
+            overwriting them with 0 Byte files.
 
 
 

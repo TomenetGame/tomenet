@@ -15,7 +15,11 @@
 #include "externs.h"
 
 /* chance of townie respawning like other monsters, in % [50] */
-#define TOWNIE_RESPAWN_CHANCE	50
+#ifndef HALLOWEEN
+#define TOWNIE_RESPAWN_CHANCE	67
+#else
+#define TOWNIE_RESPAWN_CHANCE	100	/* better for Helloween event */
+#endif
 
 /* if defined, player ghost loses exp slowly. [10000]
  * see GHOST_XP_CASHBACK in xtra2.c also.
@@ -4593,7 +4597,10 @@ void dungeon(void)
 			for(i=NumPlayers; i>0 ;i--)
 			{
 				if(Players[i]->conn==NOT_CONNECTED) continue;
+				/* Ignore admins that are loged in */
 				if(Players[i]->admin_dm || Players[i]->admin_wiz) continue;
+				/* Ignore characters that are afk and not in a dungeon/tower */
+				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
 				break;
 			}
 			if(!i) shutdown_server();

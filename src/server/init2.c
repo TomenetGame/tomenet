@@ -3142,6 +3142,10 @@ static void set_server_option(char * option, char * value)
 	{
 		cfg.server_notes = strdup(value);
 	}
+	else if (!strcmp(option,"ARTS_DISABLED"))
+	{
+		cfg.arts_disabled = str_to_boolean(value);
+	}
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }
 

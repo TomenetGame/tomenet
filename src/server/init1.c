@@ -302,7 +302,7 @@ static cptr r_info_flags4[] =
 	"BR_MANA",
 	"BR_DISI",	// "XXX8X4"
 	"BR_NUKE",	// "XXX6X4",
-	"XXX",
+	"MOAN",		//"XXX",    <- MOAN is for Helloween event :) -C. Blue
 	"BOULDER",	// "XXX",
 };
 
@@ -3773,6 +3773,19 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what)
 			return (0);
 		}
 	}
+
+	/* For Halloween Event we need new MOAN in RF8 -C. Blue */
+	/* Scan flags8 */
+#ifdef HALLOWEEN
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags8[i]))
+		{
+			r_ptr->flags8 |= (1L << i);
+			return (0);
+		}
+	}
+#endif
 
 	/* Oops */
 	s_printf("Unknown monster flag '%s'.", what);

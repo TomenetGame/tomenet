@@ -2303,6 +2303,7 @@ struct player_type
 	hostile_type	*ignore;  /* List of players whose chat we wish to ignore */
 	struct remote_ignore	*w_ignore;  /* List of players whose chat we wish to ignore */
 	bool	afk;		/* player is afk */
+	char	afk_msg[80];	/* afk reason */
 	bool	use_r_gfx;	/* hack - client uses gfx? */
 
 	byte drain_mana;        /* mana draining */
@@ -2575,6 +2576,7 @@ struct server_opts
 	s16b replace_hiscore;
 	s16b unikill_format;
 	char * server_notes;
+	bool arts_disabled;
 };
 
 /* Client option struct */
