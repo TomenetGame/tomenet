@@ -19096,10 +19096,12 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_NEXU |
 F:RES_CHAOS | RES_DISE | ATTR_MULTI | UNIQUE | ESCORT
 S:1_IN_3
 S:BA_MANA | TELE_TO | S_ANGEL
-D:Formed from the swirling base matter of the Universe itself, Maximus was
-D:brought forth by God to be the have-all, end-all Celestial being.
-D:Encompassing the strength of Michael, the knowledge of Yves, the solidity
-D:of David, the speed of Janus, and the pure ineffability of the Lord Himself.
+D:Through many succeeding cycles of time, as Ray after Ray provided The Pathway
+D:for the descent of new Spirits, Lord Michael has remained as the Guardian
+D:Overlord of the Angelic Host, the Elemental Kingdom and humanity. He shall
+D:not fold his Cosmic Wings about him to return home until the final Angelic
+D:Being is freed, the last man is redeemed and the last Elemental returned to
+D:its perfect state.
 
 N:1075:Lord Jubei, the legendary swordsmaster
 G:p:u
