@@ -892,6 +892,7 @@ void do_cmd_suicide(int Ind)
 	if (p_ptr->total_winner) kingly(Ind);
 
 	/* Kill him */
+	p_ptr->deathblow = 0;
 	player_death(Ind);
 }
 
@@ -950,6 +951,7 @@ void do_cmd_save_game(int Ind)
  * (usually admin chars) */
 long total_points(int Ind)
 {
+	u32b points;
 	player_type *p_ptr = Players[Ind];
 	
 	/* kill maggot for 100% bonus on total score? -> no
@@ -960,7 +962,9 @@ long total_points(int Ind)
 	   max_dlv? just enter the staircase in lothlorien and back up. -> no
 	   For now let's calc it basing on pure progress in gameplay!: */
 	//exp counts mainly, level factors in
-	return (p_ptr->max_exp * (p_ptr->max_plv + 30) / 30);
+//	return (p_ptr->max_exp * (p_ptr->max_plv + 30) / 30);
+	points = ((u32b)(p_ptr->max_exp) * ((u32b)(p_ptr->lev) + 30L) / 30L);
+	return points;
 	//level counts mainly, exp factors in at higher levels
 	//return (p_ptr->max_plv * (300 + (p_ptr->max_exp / 100000)) / 300);
 #if 0

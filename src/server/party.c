@@ -386,6 +386,7 @@ int guild_create(int Ind, cptr name){
 	(void)inven_carry(Ind, o_ptr);
 
 	/* Give the guildmaster some scrolls for a hall */
+#if 0	//scrolls are broken
 	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_HOUSE));
 	o_ptr->number=6;
 	o_ptr->level=p_ptr->lev;
@@ -394,7 +395,7 @@ int guild_create(int Ind, cptr name){
 	object_known(o_ptr);
 	object_aware(Ind, o_ptr);
 	(void)inven_carry(Ind, o_ptr);
-
+#endif
 	/* Set party name */
 	strcpy(guilds[index].name, name);
 
@@ -563,10 +564,10 @@ int guild_add(int adder, cptr name){
 	p_ptr = Players[Ind];
 
 	/* Make sure this isn't an impostor */
-	if (guilds[guild_id].master!=q_ptr->id)
+	if (guilds[guild_id].master!=q_ptr->id && !q_ptr->admin_dm && !q_ptr->admin_wiz)
 	{
 		/* Message */
-		msg_print(adder, "Only the guildmaster may add new members.");
+		msg_print(adder, "Only the guildmaster or a dungeon wizard may add new members.");
 
 		/* Abort */
 		return FALSE;
@@ -724,12 +725,15 @@ int guild_remove(int remover, cptr name){
 	int guild_id = q_ptr->guild, Ind = 0;
 
 	if(!guild_id){
-		msg_print(remover, "You are not in a guild");
-		return FALSE;
+		if(!q_ptr->admin_dm && !q_ptr->admin_wiz)
+		{
+			msg_print(remover, "You are not in a guild");
+			return FALSE;
+		}
 	}
 
 	/* Make sure this is the owner */
-	if (guilds[guild_id].master!=q_ptr->id)
+	if (guilds[guild_id].master!=q_ptr->id && !q_ptr->admin_dm && !q_ptr->admin_wiz)
 	{
 		/* Message */
 		msg_print(remover, "You must be the owner to delete someone.");
@@ -751,6 +755,11 @@ int guild_remove(int remover, cptr name){
 	}
 
 	p_ptr = Players[Ind];
+
+	if(!guild_id && (q_ptr->admin_dm || q_ptr->admin_wiz))
+	{
+		guild_id = p_ptr->guild;
+	}
 
 	/* Make sure they were in the guild to begin with */
 	if (guild_id!=p_ptr->guild)
@@ -799,7 +808,7 @@ int party_remove(int remover, cptr name)
 	int party_id = q_ptr->party, Ind = 0;
 
 	/* Make sure this is the owner */
-	if (!streq(parties[party_id].owner, q_ptr->name))
+	if (!streq(parties[party_id].owner, q_ptr->name) && !q_ptr->admin_dm && !q_ptr->admin_wiz)
 	{
 		/* Message */
 		msg_print(remover, "You must be the owner to delete someone.");
@@ -816,6 +825,11 @@ int party_remove(int remover, cptr name)
 	}
 
 	p_ptr = Players[Ind];
+
+	if((!party_id || !streq(parties[party_id].owner, q_ptr->name)) && (q_ptr->admin_dm || q_ptr->admin_wiz))
+	{
+		party_id = p_ptr->party;
+	}
 
 	/* Make sure they were in the party to begin with */
 	if (!player_in_party(party_id, Ind))
@@ -1118,6 +1132,7 @@ void party_gain_exp(int Ind, int party_id, s32b amount)
 			num_members++;
 		}
 	}
+	average_lev /= num_members;
 
 	/* Now, distribute the experience */
 	for (i = 1; i <= NumPlayers; i++)
@@ -1134,19 +1149,19 @@ void party_gain_exp(int Ind, int party_id, s32b amount)
 		{
 			/* Calculate this guy's experience */
 			
-			if (p_ptr->lev * num_members < average_lev) // below average
+			if (p_ptr->lev < average_lev) // below average
 			{
-				if ((average_lev - p_ptr->lev * num_members) > 2 * num_members )
+				if ((average_lev - p_ptr->lev) > 2)
 				{
-					modified_level = p_ptr->lev * num_members + 2 * num_members;
+					modified_level = p_ptr->lev + 2;
 				}				
 				else modified_level = average_lev;
 			}
 			else
 			{
-				if ((p_ptr->lev * num_members - average_lev) > 2 * num_members )
+				if ((p_ptr->lev - average_lev) > 2)
 				{
-					modified_level = p_ptr->lev * num_members - 2 * num_members;
+					modified_level = p_ptr->lev - 2;
 				}				
 				else modified_level = average_lev;
 						
@@ -1159,9 +1174,11 @@ void party_gain_exp(int Ind, int party_id, s32b amount)
 			*/
 
 			/* Some bonus is applied to encourage partying	- Jir - */
-			new_exp = (amount * modified_level * (PARTY_XP_BOOST + 1) * num_members) / (average_lev * num_members * p_ptr->lev * (num_members + PARTY_XP_BOOST));
-			new_exp_frac = ((((amount * modified_level * (PARTY_XP_BOOST + 1) * num_members) % (average_lev * num_members * p_ptr->lev * (num_members + PARTY_XP_BOOST)) )
-			                * 0x10000L ) / (average_lev * num_members * p_ptr->lev * (num_members + PARTY_XP_BOOST))) + p_ptr->exp_frac;
+			new_exp = (amount * modified_level * (PARTY_XP_BOOST + 1)) /
+				(average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST));
+			new_exp_frac = (  (((amount * modified_level * (PARTY_XP_BOOST + 1)) %
+				(average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) * 0x10000L) /
+			        (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) + p_ptr->exp_frac;
 
 			/* Keep track of experience */
 			if (new_exp_frac >= 0x10000L)

@@ -974,11 +974,22 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					if (p_ptr->csp < p_ptr->msp)
 					{
-						//				p_ptr->csp += 300;
-						//				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+						p_ptr->csp += 500;
+						if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+						msg_print(Ind, "You feel your head clearing.");
+						p_ptr->redraw |= (PR_MANA);
+						p_ptr->window |= (PW_PLAYER);
+						ident = TRUE;
+					}
+					break;
+				}
+			case SV_POTION_STAR_RESTORE_MANA:
+				{
+					if (p_ptr->csp < p_ptr->msp)
+					{
 						p_ptr->csp = p_ptr->msp;
 						p_ptr->csp_frac = 0;
-						msg_print(Ind, "You feel your head clearing.");
+						msg_print(Ind, "You feel your head clearing!");
 						p_ptr->redraw |= (PR_MANA);
 						p_ptr->window |= (PW_PLAYER);
 						ident = TRUE;
@@ -1132,8 +1143,16 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					if (set_stun(Ind, 0)) ident = TRUE;
 					if (set_cut(Ind, 0)) ident = TRUE;
 					if (set_image(Ind, 0)) ident = TRUE;
-					if (heal_insanity(Ind, 50)) ident = TRUE;
-					break;
+					if (heal_insanity(Ind, 40)) ident = TRUE;
+		                        if (p_ptr->food >= PY_FOOD_MAX)
+		                        if (set_food(Ind, PY_FOOD_MAX - 1 - pval)) ident = TRUE;
+					(void)do_res_stat(Ind, A_STR);
+					(void)do_res_stat(Ind, A_CON);
+					(void)do_res_stat(Ind, A_DEX);
+					(void)do_res_stat(Ind, A_WIS);
+					(void)do_res_stat(Ind, A_INT);
+					(void)do_res_stat(Ind, A_CHR);
+ 					break;
 				}
 
 			case SV_POTION_INVULNERABILITY:
@@ -1161,21 +1180,24 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 	{
 		switch (sval)
 		{
+			//max sanity of a player can go up to around 900 later!
 			case SV_POTION2_CURE_LIGHT_SANITY:
 				if (heal_insanity(Ind, damroll(4,8))) ident = TRUE;
 				(void)set_image(Ind, 0);
 				break;
 			case SV_POTION2_CURE_SERIOUS_SANITY:
-				if (heal_insanity(Ind, damroll(8,8))) ident = TRUE;
+//				if (heal_insanity(Ind, damroll(6,13))) ident = TRUE;
+				if (heal_insanity(Ind, damroll(8,12))) ident = TRUE;
 				(void)set_image(Ind, 0);
 				break;
 			case SV_POTION2_CURE_CRITICAL_SANITY:
-				if (heal_insanity(Ind, damroll(12,8))) ident = TRUE;
+//				if (heal_insanity(Ind, damroll(9,20))) ident = TRUE;
+				if (heal_insanity(Ind, damroll(16,18))) ident = TRUE;
 				(void)set_image(Ind, 0);
 				break;
 			case SV_POTION2_CURE_SANITY:
-				//				if (heal_insanity(Ind, damroll(10,100))) ident = TRUE;
-				if (heal_insanity(Ind, damroll(10,20))) ident = TRUE;
+//				if (heal_insanity(Ind, damroll(14,32))) ident = TRUE;
+				if (heal_insanity(Ind, damroll(32,27))) ident = TRUE;
 				(void)set_image(Ind, 0);
 				break;
 			case SV_POTION2_CHAUVE_SOURIS:
@@ -1187,6 +1209,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					msg_print(Ind, "You have been turned into a fruit bat!");				
 					strcpy(p_ptr->died_from,"Potion of Chauve-Souris");
 					p_ptr->fruit_bat = -1;
+					p_ptr->deathblow = 0;
 					player_death(Ind);
 				}
 				else if(p_ptr->fruit_bat==2) {
@@ -1558,6 +1581,50 @@ void do_cmd_fill_bottle(int Ind)
 		cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_EMPTY_FOUNTAIN);
 		cs_erase(c_ptr, cs_ptr);
 	}
+
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+}
+
+
+/*
+ * Empty a potion in the backpack
+ */
+void do_cmd_empty_potion(int Ind, int slot)
+{
+	player_type *p_ptr = Players[Ind];
+
+	//bool ident;
+	int tval, sval, k_idx, item;
+
+	object_type *o_ptr, *q_ptr, forge;
+	//cptr q, s;
+
+	o_ptr = &p_ptr->inventory[slot];
+	if (!o_ptr->k_idx) return;
+
+	tval = o_ptr->tval;
+	sval = o_ptr->sval;
+	if (tval != TV_POTION && tval != TV_POTION2)
+	{
+		msg_print(Ind, "\377oThat's not a potion!");
+		return;
+	}
+
+	/* Create an empty bottle */
+	q_ptr = &forge;
+	object_wipe(q_ptr);
+	q_ptr->number = 1;
+	invcopy(q_ptr, lookup_kind(TV_BOTTLE, 1));//no SVAL defined??
+	q_ptr->level = o_ptr->level;
+
+	/* Destroy a potion in the pack */
+	inven_item_increase(Ind, slot, -1);
+	inven_item_describe(Ind, slot);
+	inven_item_optimize(Ind, slot);
+
+	/* let the player carry the bottle */
+	inven_carry(Ind, q_ptr);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2421,7 +2488,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_DISPEL_UNDEAD:
 			{
-				if (dispel_undead(Ind, 60)) ident = TRUE;
+				if (dispel_undead(Ind, 100 + p_ptr->lev * 8)) ident = TRUE;
 				break;
 			}
 
@@ -2443,14 +2510,20 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_ACQUIREMENT:
 			{
-				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE);
+/*				int obj_tmp = object_level;
+				object_level = p_ptr->wpos.wz / 2;
+*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE);
+/*				object_level = obj_tmp; //just paranoia, dunno if needed.*/
 				ident = TRUE;
 				break;
 			}
 
 			case SV_SCROLL_STAR_ACQUIREMENT:
 			{
-				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE);
+/*				int obj_tmp = object_level;
+				object_level = p_ptr->wpos.wz / 2;
+*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE);
+/*				object_level = obj_tmp; //just paranoia, dunno if needed.*/
 				ident = TRUE;
 				break;
 			}
@@ -2458,7 +2531,8 @@ void do_cmd_read_scroll(int Ind, int item)
 			/* New Zangband scrolls */
 			case SV_SCROLL_FIRE:
 			{
-				fire_ball(Ind, GF_FIRE, 0, 150, 4);
+				sprintf(p_ptr->attacker, " is enveloped by fire for", p_ptr->name);
+				fire_ball(Ind, GF_FIRE, 0, 100, 4, p_ptr->attacker);
 				/* Note: "Double" damage since it is centered on the player ... */
 				if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
 					//                                take_hit(Ind, 50+randint(50)+(p_ptr->sensible_fire)?20:0, "a Scroll of Fire");
@@ -2470,7 +2544,8 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_ICE:
 			{
-				fire_ball(Ind, GF_ICE, 0, 175, 4);
+				sprintf(p_ptr->attacker, " enveloped by frost for", p_ptr->name);
+				fire_ball(Ind, GF_ICE, 0, 200, 4, p_ptr->attacker);
 				if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
 					take_hit(Ind, 100+randint(100), "a Scroll of Ice");
 				ident = TRUE;
@@ -2479,7 +2554,8 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_CHAOS:
 			{
-				fire_ball(Ind, GF_CHAOS, 0, 222, 4);
+				sprintf(p_ptr->attacker, " is enveloped by raw chaos for", p_ptr->name);
+				fire_ball(Ind, GF_CHAOS, 0, 500, 4, p_ptr->attacker);
 				if (!p_ptr->resist_chaos)
 					take_hit(Ind, 111+randint(111), "a Scroll of Chaos");
 				ident = TRUE;
@@ -2720,11 +2796,11 @@ void do_cmd_use_staff(int Ind, int item)
 	{
 		set_invuln(Ind, 0);
 	}
+#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_wraith)
 	{
 		set_tim_wraith(Ind, 0);
@@ -2986,6 +3062,8 @@ void do_cmd_use_staff(int Ind, int item)
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0)) ident = TRUE;
+                        if (p_ptr->food >= PY_FOOD_MAX)
+                	if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 			break;
 		}
 
@@ -3046,19 +3124,19 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_DISPEL_EVIL:
 		{
-			if (dispel_evil(Ind, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 70))) ident = TRUE;
+			if (dispel_evil(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300) + p_ptr->lev * 2)) ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_POWER:
 		{
-			if (dispel_monsters(Ind, 120 + get_skill_scale(p_ptr, SKILL_DEVICE, 120))) ident = TRUE;
+			if (dispel_monsters(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_HOLINESS:
 		{
-			if (dispel_evil(Ind, 120 + get_skill_scale(p_ptr, SKILL_DEVICE, 120))) ident = TRUE;
+			if (dispel_evil(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
 			k = get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			if (set_protevil(Ind, p_ptr->protevil + randint(25) + k)) ident = TRUE;
 			if (set_poisoned(Ind, 0)) ident = TRUE;
@@ -3194,11 +3272,11 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	{
 		set_invuln(Ind, 0);
 	}
+#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_wraith)
 	{
 		set_tim_wraith(Ind, 0);
@@ -3410,7 +3488,11 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 		case SV_WAND_DRAIN_LIFE:
 		{
-			if (drain_life(Ind, dir, 75 + get_skill_scale(p_ptr, SKILL_DEVICE, 75))) ident = TRUE;
+			if(drain_life(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) {
+				ident = TRUE;
+				hp_player(Ind, p_ptr->ret_dam / 2);
+				p_ptr->ret_dam = 0;
+			}
 			break;
 		}
 
@@ -3423,47 +3505,53 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_STINKING_CLOUD:
 		{
 			msg_format_near(Ind, "%s fires a stinking cloud.", p_ptr->name);
-			fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2);
+			sprintf(p_ptr->attacker, " fires a stinking cloud for", p_ptr->name);
+			fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_MAGIC_MISSILE:
 		{
-			msg_format_near(Ind, "%s fires a magic missile.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_MISSILE, dir, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 6));
+			msg_format_near(Ind, " fires a magic missile.", p_ptr->name);
+			sprintf(p_ptr->attacker, " fires a magic missile for", p_ptr->name);
+			fire_bolt_or_beam(Ind, 20, GF_MISSILE, dir, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 6), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_ACID_BOLT:
 		{
-			msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_ACID, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8));
+			msg_format_near(Ind, " fires an acid bolt.", p_ptr->name);
+			sprintf(p_ptr->attacker, " fires an acid bolt for", p_ptr->name);
+			fire_bolt_or_beam(Ind, 20, GF_ACID, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_ELEC_BOLT:
 		{
-			msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_ELEC, dir, damroll(3 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8));
+			msg_format_near(Ind, " fires a lightning bolt.", p_ptr->name);
+			sprintf(p_ptr->attacker, " fires a lightning bolt for", p_ptr->name);
+			fire_bolt_or_beam(Ind, 20, GF_ELEC, dir, damroll(3 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_FIRE_BOLT:
 		{
-			msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_FIRE, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8));
+			msg_format_near(Ind, " fires a fire bolt.", p_ptr->name);
+			sprintf(p_ptr->attacker, " fires a fire bolt for", p_ptr->name);
+			fire_bolt_or_beam(Ind, 20, GF_FIRE, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_COLD_BOLT:
 		{
-			msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_COLD, dir, damroll(3 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8));
+			msg_format_near(Ind, " fires a frost bolt.", p_ptr->name);
+			sprintf(p_ptr->attacker, " fires a frost bolt for", p_ptr->name);
+			fire_bolt_or_beam(Ind, 20, GF_COLD, dir, damroll(3 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3471,7 +3559,8 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_ACID_BALL:
 		{
 			msg_format_near(Ind, "%s fires a ball of acid.", p_ptr->name);
-			fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 60), 2);
+			sprintf(p_ptr->attacker, " fires a ball of acid for", p_ptr->name);
+			fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 60), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3479,7 +3568,8 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_ELEC_BALL:
 		{
 			msg_format_near(Ind, "%s fires a ball of electricity.", p_ptr->name);
-			fire_ball(Ind, GF_ELEC, dir, 32 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2);
+			sprintf(p_ptr->attacker, " fires a ball of electricity for", p_ptr->name);
+			fire_ball(Ind, GF_ELEC, dir, 32 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3487,7 +3577,8 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_FIRE_BALL:
 		{
 			msg_format_near(Ind, "%s fires a fire ball.", p_ptr->name);
-			fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2);
+			sprintf(p_ptr->attacker, " fires a fire ball for", p_ptr->name);
+			fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3495,7 +3586,8 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_COLD_BALL:
 		{
 			msg_format_near(Ind, "%s fires a frost ball.", p_ptr->name);
-			fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2);
+			sprintf(p_ptr->attacker, " fires a frost ball for", p_ptr->name);
+			fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3509,7 +3601,8 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_DRAGON_FIRE:
 		{
 			msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
-			fire_ball(Ind, GF_FIRE, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
+			sprintf(p_ptr->attacker, " shoots dragon fire for", p_ptr->name);
+			fire_ball(Ind, GF_FIRE, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3517,7 +3610,8 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_DRAGON_COLD:
 		{
 			msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
-			fire_ball(Ind, GF_COLD, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 80), 3);
+			sprintf(p_ptr->attacker, " shoots dragon frost for", p_ptr->name);
+			fire_ball(Ind, GF_COLD, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 80), 3, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3529,35 +3623,40 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 				case 1:
 					{
 						msg_format_near(Ind, "%s shoots dragon acid!", p_ptr->name);
-						fire_ball(Ind, GF_ACID, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
+						sprintf(p_ptr->attacker, " shoots dragon acid for", p_ptr->name);
+						fire_ball(Ind, GF_ACID, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3, p_ptr->attacker);
 						break;
 					}
 
 				case 2:
 					{
 						msg_format_near(Ind, "%s shoots dragon lightning!", p_ptr->name);
-						fire_ball(Ind, GF_ELEC, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
+						sprintf(p_ptr->attacker, " shoots dragon lightning for", p_ptr->name);
+						fire_ball(Ind, GF_ELEC, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3, p_ptr->attacker);
 						break;
 					}
 
 				case 3:
 					{
 						msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
-						fire_ball(Ind, GF_FIRE, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
+						sprintf(p_ptr->attacker, " shoots dragon fire for", p_ptr->name);
+						fire_ball(Ind, GF_FIRE, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3, p_ptr->attacker);
 						break;
 					}
 
 				case 4:
 					{
 						msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
-						fire_ball(Ind, GF_COLD, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
+						sprintf(p_ptr->attacker, " shoots dragon frost for", p_ptr->name);
+						fire_ball(Ind, GF_COLD, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3, p_ptr->attacker);
 						break;
 					}
 
 				default:
 					{
 						msg_format_near(Ind, "%s shoots dragon poison!", p_ptr->name);
-						fire_ball(Ind, GF_POIS, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
+						sprintf(p_ptr->attacker, " shoots dragon poison for", p_ptr->name);
+						fire_ball(Ind, GF_POIS, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3, p_ptr->attacker);
 						break;
 					}
 			}
@@ -3568,7 +3667,11 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 		case SV_WAND_ANNIHILATION:
 		{
-			if (drain_life(Ind, dir, 125 + get_skill_scale(p_ptr, SKILL_DEVICE, 125))) ident = TRUE;
+			if(drain_life(Ind, dir, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 15))) {
+				ident = TRUE;
+				hp_player(Ind, p_ptr->ret_dam / 4);
+				p_ptr->ret_dam = 0;
+			}
 			break;
 		}
 
@@ -3576,7 +3679,8 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_ROCKETS:
 		{
 			msg_print(Ind, "You launch a rocket!");
-			fire_ball(Ind, GF_ROCKET, dir, 75 + (randint(50) + get_skill_scale(p_ptr, SKILL_DEVICE, 100)), 2);
+			sprintf(p_ptr->attacker, " launches a rocket for", p_ptr->name);
+			fire_ball(Ind, GF_ROCKET, dir, 75 + (randint(50) + get_skill_scale(p_ptr, SKILL_DEVICE, 100)), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3593,7 +3697,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 		case SV_WAND_WALL_CREATION:
 		{
-			project_hook(Ind, GF_STONE_WALL, dir, 1, PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID);
+			project_hook(Ind, GF_STONE_WALL, dir, 1, PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID, "");
 			ident = TRUE;
 			break;
 		}
@@ -3601,7 +3705,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		/* TomeNET addition */
 		case SV_WAND_TELEPORT_TO:
 		{
-			ident = project_hook(Ind, GF_TELE_TO, dir, 1, PROJECT_STOP | PROJECT_KILL);
+			ident = project_hook(Ind, GF_TELE_TO, dir, 1, PROJECT_STOP | PROJECT_KILL, "");
 			break;
 		}
 
@@ -3692,11 +3796,11 @@ void do_cmd_zap_rod(int Ind, int item)
 	{
 		set_invuln(Ind, 0);
 	}
+#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_wraith)
 	{
 		set_tim_wraith(Ind, 0);
@@ -3895,6 +3999,8 @@ void do_cmd_zap_rod(int Ind, int item)
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0)) ident = TRUE;
+                        if (p_ptr->food >= PY_FOOD_MAX)
+                        if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 			o_ptr->pval = 999;
 			break;
 		}
@@ -4155,7 +4261,11 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 		case SV_ROD_DRAIN_LIFE:
 		{
-			if (drain_life(Ind, dir, 75)) ident = TRUE;
+			if(drain_life(Ind, dir, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 15))) {
+				ident = TRUE;
+				hp_player(Ind, p_ptr->ret_dam / 3);
+				p_ptr->ret_dam = 0;
+			}
 			o_ptr->pval = 23;
 			break;
 		}
@@ -4170,7 +4280,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_ACID_BOLT:
 		{
 			msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 10, GF_ACID, dir, damroll(6, 8));
+			sprintf(p_ptr->attacker, " fires an acid bolt for", p_ptr->name);
+			fire_bolt_or_beam(Ind, 10, GF_ACID, dir, damroll(6, 8), p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 12;
 			break;
@@ -4179,7 +4290,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_ELEC_BOLT:
 		{
 			msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 10, GF_ELEC, dir, damroll(3, 8));
+			sprintf(p_ptr->attacker, " fires a lightning bolt for", p_ptr->name);
+			fire_bolt_or_beam(Ind, 10, GF_ELEC, dir, damroll(3, 8), p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 11;
 			break;
@@ -4188,7 +4300,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_FIRE_BOLT:
 		{
 			msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 10, GF_FIRE, dir, damroll(8, 8));
+			sprintf(p_ptr->attacker, " fires a fire bolt for", p_ptr->name);
+			fire_bolt_or_beam(Ind, 10, GF_FIRE, dir, damroll(8, 8), p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 15;
 			break;
@@ -4197,7 +4310,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_COLD_BOLT:
 		{
 			msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 10, GF_COLD, dir, damroll(5, 8));
+			sprintf(p_ptr->attacker, " fires a frost bolt for", p_ptr->name);
+			fire_bolt_or_beam(Ind, 10, GF_COLD, dir, damroll(5, 8), p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 13;
 			break;
@@ -4206,7 +4320,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_ACID_BALL:
 		{
 			msg_format_near(Ind, "%s fires an acid ball.", p_ptr->name);
-			fire_ball(Ind, GF_ACID, dir, 60, 2);
+			sprintf(p_ptr->attacker, " fires an acid ball for", p_ptr->name);
+			fire_ball(Ind, GF_ACID, dir, 60, 2, p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 27;
 			break;
@@ -4215,7 +4330,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_ELEC_BALL:
 		{
 			msg_format_near(Ind, "%s fires a lightning ball.", p_ptr->name);
-			fire_ball(Ind, GF_ELEC, dir, 32, 2);
+			sprintf(p_ptr->attacker, " fires a lightning ball for", p_ptr->name);
+			fire_ball(Ind, GF_ELEC, dir, 32, 2, p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 23;
 			break;
@@ -4224,7 +4340,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_FIRE_BALL:
 		{
 			msg_format_near(Ind, "%s fires a fire ball.", p_ptr->name);
-			fire_ball(Ind, GF_FIRE, dir, 72, 2);
+			sprintf(p_ptr->attacker, " fires a fire ball for", p_ptr->name);
+			fire_ball(Ind, GF_FIRE, dir, 72, 2, p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 30;
 			break;
@@ -4233,7 +4350,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_COLD_BALL:
 		{
 			msg_format_near(Ind, "%s fires a frost ball.", p_ptr->name);
-			fire_ball(Ind, GF_COLD, dir, 48, 2);
+			sprintf(p_ptr->attacker, " fires a frost ball for", p_ptr->name);
+			fire_ball(Ind, GF_COLD, dir, 48, 2, p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 25;
 			break;
@@ -4310,6 +4428,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0)) ident = TRUE;
+			if (p_ptr->food >= PY_FOOD_MAX)
+			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 			o_ptr->pval = 999;
 			break;
 		}
@@ -4493,7 +4613,8 @@ static void ring_of_power(int Ind, int dir)
 		case 6:
 		{
 			/* Mana Ball */
-			fire_ball(Ind, GF_MANA, dir, 300, 3);
+			sprintf(p_ptr->attacker, " invokes a mana storm for", p_ptr->name);
+			fire_ball(Ind, GF_MANA, dir, 300, 3, p_ptr->attacker);
 
 			break;
 		}
@@ -4504,7 +4625,8 @@ static void ring_of_power(int Ind, int dir)
 		case 10:
 		{
 			/* Mana Bolt */
-			fire_bolt(Ind, GF_MANA, dir, 250);
+			sprintf(p_ptr->attacker, " fires a mana bolt for", p_ptr->name);
+			fire_bolt(Ind, GF_MANA, dir, 250, p_ptr->attacker);
 
 			break;
 		}
@@ -4587,11 +4709,11 @@ void do_cmd_activate(int Ind, int item)
 	{
 		set_invuln(Ind, 0);
 	}
+#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_wraith)
 	{
 		set_tim_wraith(Ind, 0);
@@ -5235,7 +5357,8 @@ void do_cmd_activate(int Ind, int item)
 			case ART_RAZORBACK:
 			{
 				msg_print(Ind, "You are surrounded by lightning!");
-				for (i = 0; i < 8; i++) fire_ball(Ind, GF_ELEC, ddd[i], 150, 3);
+				sprintf(p_ptr->attacker, " casts a lightning ball for", p_ptr->name);
+				for (i = 0; i < 8; i++) fire_ball(Ind, GF_ELEC, ddd[i], 150, 3, p_ptr->attacker);
 				o_ptr->timeout = 1000;
 				break;
 			}
@@ -5287,7 +5410,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_INGWE:
 			{
 				msg_print(Ind, "An aura of good floods the area...");
-				dispel_evil(Ind, p_ptr->lev * 5);
+				dispel_evil(Ind, p_ptr->lev * 10);
 				o_ptr->timeout = rand_int(300) + 300;
 				break;
 			}
@@ -5710,7 +5833,8 @@ void do_cmd_activate(int Ind, int item)
 			case ART_RAZORBACK:
 			{
 				msg_print(Ind, "You are surrounded by lightning!");
-				for (i = 0; i < 8; i++) fire_ball(Ind, GF_ELEC, ddd[i], 150, 3);
+				sprintf(p_ptr->attacker, " casts a lightning ball for", p_ptr->name);
+				for (i = 0; i < 8; i++) fire_ball(Ind, GF_ELEC, ddd[i], 150, 3, p_ptr->attacker);
 				o_ptr->timeout = 1000;
 				break;
 			}
@@ -5762,7 +5886,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_INGWE:
 			{
 				msg_print(Ind, "An aura of good floods the area...");
-				dispel_evil(Ind, p_ptr->lev * 5);
+				dispel_evil(Ind, p_ptr->lev * 10);
 				o_ptr->timeout = rand_int(300) + 300;
 				break;
 			}
@@ -5827,7 +5951,7 @@ void do_cmd_activate(int Ind, int item)
 			{
 				for (k = 1; k < 10; k++)
 				{
-					if (k - 5) fire_beam(Ind, GF_LITE, k, 75);
+					if (k - 5) fire_beam(Ind, GF_LITE, k, 75, " emits a beam of light for");
 				}
 
 				o_ptr->timeout = rand_int(75) + 75;
@@ -5860,7 +5984,7 @@ void do_cmd_activate(int Ind, int item)
 
 			case ART_FUNDIN:
 			{
-				dispel_evil(Ind, p_ptr->lev * 4);
+				dispel_evil(Ind, p_ptr->lev * 8);
 				o_ptr->timeout = rand_int(100) + 100;
 				break;
 			}
@@ -5993,7 +6117,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_BARAHIR:
 			{
 				msg_print(Ind, "You exterminate small life.");
-				(void)dispel_monsters(Ind, 4);
+				(void)dispel_monsters(Ind, 100);
 				o_ptr->timeout = rand_int(55) + 55;
 				break;
 			}
@@ -6294,7 +6418,8 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "Your horn emits a loud sound.");
 				if (!get_aim_dir(Ind)) return;
-				fire_ball(GF_SOUND, dir, 300, 6);
+				sprintf(p_ptr->attacker, "'s horn emits a loud sound for", p_ptr->name);
+				fire_ball(GF_SOUND, dir, 300, 6, p_ptr->attacker);
 				o_ptr->timeout = 300;
 				break;
 			}
@@ -6348,7 +6473,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_NATUREBANE:
 			{
 				msg_print(Ind, "Your axe glows blood red...");
-				dispel_monsters(300);
+				dispel_monsters(500);
 				o_ptr->timeout = 200 + randint(200);
 				break;
 			}
@@ -6503,11 +6628,13 @@ void do_cmd_activate(int Ind, int item)
 				{
 					if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
 						msg_print(Ind, "Nothing happens");
+					else if (r_info[p_ptr->body_monster].level == 0)
+						msg_print(Ind, "The ring starts to glow but fades");
 					else{
 						msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
 						o_ptr->pval = p_ptr->body_monster;
 						if (r_info[p_ptr->body_monster].level > 0) {
-							o_ptr->level = 15 + (1000 / ((2000 / r_info[p_ptr->body_monster].level) + 10));
+							o_ptr->level = 15 + (1000 / ((2000 / (r_info[p_ptr->body_monster].level + 1)) + 10));
 						} else {
 							o_ptr->level = 15;
 						}
@@ -6543,6 +6670,9 @@ void do_cmd_activate(int Ind, int item)
 						return;
 					}
 					
+					/* Poly first, break then :) */
+					do_mimic_change(Ind, o_ptr->pval, FALSE);
+
 					if (rand_int(100) < (11 + (1000 / ((1010 / (r_info[p_ptr->body_monster].level + 1)) + 10 +
 					    (get_skill(p_ptr, SKILL_MIMIC) * get_skill(p_ptr, SKILL_MIMIC) / 30)))))
 					{
@@ -6565,8 +6695,6 @@ void do_cmd_activate(int Ind, int item)
 						}
 						return;
 					}
-
-					do_mimic_change(Ind, o_ptr->pval, FALSE);
 #if 0
 					monster_race *r_ptr = &r_info[o_ptr->pval];
 
@@ -6692,84 +6820,98 @@ void do_cmd_activate_dir(int Ind, int dir)
 		{
 			case ART_NARTHANC:
 			{
-				fire_bolt(Ind, GF_FIRE, dir, damroll(9, 8));
+				sprintf(p_ptr->attacker, " fires a fire bolt for", p_ptr->name);
+				fire_bolt(Ind, GF_FIRE, dir, damroll(9, 8), p_ptr->attacker);
 				o_ptr->timeout = rand_int(8) + 8;
 				break;
 			}
 
 			case ART_NIMTHANC:
 			{
-				fire_bolt(Ind, GF_COLD, dir, damroll(6, 8));
+				sprintf(p_ptr->attacker, " fires a frost bolt for", p_ptr->name);
+				fire_bolt(Ind, GF_COLD, dir, damroll(6, 8), p_ptr->attacker);
 				o_ptr->timeout = rand_int(7) + 7;
 				break;
 			}
 
 			case ART_DETHANC:
 			{
-				fire_bolt(Ind, GF_ELEC, dir, damroll(4, 8));
+				sprintf(p_ptr->attacker, " fires a lightning bolt for", p_ptr->name);
+				fire_bolt(Ind, GF_ELEC, dir, damroll(4, 8), p_ptr->attacker);
 				o_ptr->timeout = rand_int(6) + 6;
 				break;
 			}
 
 			case ART_RILIA:
 			{
-				fire_ball(Ind, GF_POIS, dir, 12, 3);
+				sprintf(p_ptr->attacker, " casts a stinking cloud for", p_ptr->name);
+				fire_ball(Ind, GF_POIS, dir, 12, 3, p_ptr->attacker);
 				o_ptr->timeout = rand_int(4) + 4;
 				break;
 			}
 
 			case ART_BELANGIL:
 			{
-				fire_ball(Ind, GF_COLD, dir, 48, 2);
+				sprintf(p_ptr->attacker, " casts a cold ball for", p_ptr->name);
+				fire_ball(Ind, GF_COLD, dir, 48, 2, p_ptr->attacker);
 				o_ptr->timeout = rand_int(5) + 5;
 				break;
 			}
 
 			case ART_RINGIL:
 			{
-				fire_ball(Ind, GF_COLD, dir, 100, 2);
+				sprintf(p_ptr->attacker, " casts a cold ball for", p_ptr->name);
+				fire_ball(Ind, GF_COLD, dir, 100, 2, p_ptr->attacker);
 				o_ptr->timeout = 300;
 				break;
 			}
 
 			case ART_ANDURIL:
 			{
-				fire_ball(Ind, GF_FIRE, dir, 72, 2);
+				sprintf(p_ptr->attacker, " casts a fire ball for", p_ptr->name);
+				fire_ball(Ind, GF_FIRE, dir, 72, 2, p_ptr->attacker);
 				o_ptr->timeout = 400;
 				break;
 			}
 
 			case ART_FIRESTAR:
 			{
-				fire_ball(Ind, GF_FIRE, dir, 72, 3);
+				sprintf(p_ptr->attacker, " casts a fire ball for", p_ptr->name);
+				fire_ball(Ind, GF_FIRE, dir, 72, 3, p_ptr->attacker);
 				o_ptr->timeout = 100;
 				break;
 			}
 
 			case ART_THEODEN:
 			{
-				drain_life(Ind, dir, 120);
+				if(drain_life(Ind, dir, 25))
+					hp_player(Ind, p_ptr->ret_dam / 3);
+				p_ptr->ret_dam = 0;
 				o_ptr->timeout = 400;
 				break;
 			}
 
 			case ART_TURMIL:
 			{
-				drain_life(Ind, dir, 90);
+				if(drain_life(Ind, dir, 15))
+					hp_player(Ind, p_ptr->ret_dam / 2);
+				p_ptr->ret_dam = 0;
 				o_ptr->timeout = 70;
 				break;
 			}
 
 			case ART_ARUNRUTH:
 			{
-				fire_bolt(Ind, GF_COLD, dir, damroll(12, 8));
+				sprintf(p_ptr->attacker, " fires a frost bolt for", p_ptr->name);
+				fire_bolt(Ind, GF_COLD, dir, damroll(12, 8), p_ptr->attacker);
 				o_ptr->timeout = 500;
 				break;
 			}
 
 			case ART_AEGLOS:
 			{
-				fire_ball(Ind, GF_COLD, dir, 100, 2);
+				sprintf(p_ptr->attacker, " casts a cold ball for", p_ptr->name);
+				fire_ball(Ind, GF_COLD, dir, 100, 2, p_ptr->attacker);
 				o_ptr->timeout = 500;
 				break;
 			}
@@ -6797,63 +6939,72 @@ void do_cmd_activate_dir(int Ind, int dir)
 
 			case ART_CAMMITHRIM:
 			{
-				fire_bolt(Ind, GF_MISSILE, dir, damroll(2, 6));
+				sprintf(p_ptr->attacker, " fires a missile for", p_ptr->name);
+				fire_bolt(Ind, GF_MISSILE, dir, damroll(2, 6), p_ptr->attacker);
 				o_ptr->timeout = 2;
 				break;
 			}
 
 			case ART_PAURHACH:
 			{
-				fire_bolt(Ind, GF_FIRE, dir, damroll(9, 8));
+				sprintf(p_ptr->attacker, " fires a fire bolt for", p_ptr->name);
+				fire_bolt(Ind, GF_FIRE, dir, damroll(9, 8), p_ptr->attacker);
 				o_ptr->timeout = rand_int(8) + 8;
 				break;
 			}
 
 			case ART_PAURNIMMEN:
 			{
-				fire_bolt(Ind, GF_COLD, dir, damroll(6, 8));
+				sprintf(p_ptr->attacker, " fires a frost bolt for", p_ptr->name);
+				fire_bolt(Ind, GF_COLD, dir, damroll(6, 8), p_ptr->attacker);
 				o_ptr->timeout = rand_int(7) + 7;
 				break;
 			}
 
 			case ART_PAURAEGEN:
 			{
-				fire_bolt(Ind, GF_ELEC, dir, damroll(4, 8));
+				sprintf(p_ptr->attacker, " fires a lightning bolt for", p_ptr->name);
+				fire_bolt(Ind, GF_ELEC, dir, damroll(4, 8), p_ptr->attacker);
 				o_ptr->timeout = rand_int(6) + 6;
 				break;
 			}
 
 			case ART_PAURNEN:
 			{
-				fire_bolt(Ind, GF_ACID, dir, damroll(5, 8));
+				sprintf(p_ptr->attacker, " fires an acid bolt for", p_ptr->name);
+				fire_bolt(Ind, GF_ACID, dir, damroll(5, 8), p_ptr->attacker);
 				o_ptr->timeout = rand_int(5) + 5;
 				break;
 			}
 
 			case ART_FINGOLFIN:
 			{
-				fire_bolt(Ind, GF_ARROW, dir, 150);
+				sprintf(p_ptr->attacker, " fires an arrow for", p_ptr->name);
+				fire_bolt(Ind, GF_ARROW, dir, 150, p_ptr->attacker);
 				o_ptr->timeout = rand_int(90) + 90;
 				break;
 			}
 
 			case ART_NARYA:
 			{
-				fire_ball(Ind, GF_FIRE, dir, 120, 3);
+				sprintf(p_ptr->attacker, " casts a fire ball for", p_ptr->name);
+				fire_ball(Ind, GF_FIRE, dir, 120, 3, p_ptr->attacker);
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
 
 			case ART_NENYA:
 			{
-				fire_ball(Ind, GF_COLD, dir, 200, 3);
+				sprintf(p_ptr->attacker, " casts a cold ball for", p_ptr->name);
+				fire_ball(Ind, GF_COLD, dir, 200, 3, p_ptr->attacker);
 				o_ptr->timeout = rand_int(325) + 325;
 				break;
 			}
 
 			case ART_VILYA:
 			{
-				fire_ball(Ind, GF_ELEC, dir, 250, 3);
+				sprintf(p_ptr->attacker, " casts a lightning ball for", p_ptr->name);
+				fire_ball(Ind, GF_ELEC, dir, 250, 3, p_ptr->attacker);
 				o_ptr->timeout = rand_int(425) + 425;
 				break;
 			}
@@ -6869,7 +7020,8 @@ void do_cmd_activate_dir(int Ind, int dir)
 			{
 				if (!get_aim_dir(Ind)) return;
 				msg_print(Ind, "You breathe the elements.");
-				fire_ball(Ind, GF_MISSILE, dir, 300, 4);
+				sprintf(p_ptr->attacker, " breathes the elements for", p_ptr->name);
+				fire_ball(Ind, GF_MISSILE, dir, 300, 4, p_ptr->attacker);
 				msg_print(Ind, "Your armor glows many colours...");
 				(void)set_afraid(Ind, 0);
 				(void)set_shero(Ind, p_ptr->shero + randint(50) + 50);
@@ -6886,13 +7038,15 @@ void do_cmd_activate_dir(int Ind, int dir)
 
                         case ART_AXE_GOTHMOG:
                         {
-                                fire_ball(Ind, GF_FIRE, dir, 300, 4);
+				sprintf(p_ptr->attacker, " casts a fireball for", p_ptr->name);
+                                fire_ball(Ind, GF_FIRE, dir, 300, 4, p_ptr->attacker);
                                 o_ptr->timeout = 200+rand_int(200);
                                 break;
                         }
                         case ART_MELKOR:
                         {
-                                fire_ball(Ind, GF_DARK, dir, 150, 3);
+				sprintf(p_ptr->attacker, " casts a darkness storm for", p_ptr->name);
+                                fire_ball(Ind, GF_DARK, dir, 150, 3, p_ptr->attacker);
                                 o_ptr->timeout = 100;
                                 break;
                         }
@@ -6901,8 +7055,9 @@ void do_cmd_activate_dir(int Ind, int dir)
 				int i;
 				for (i = 0; i < 3; i++)
 				{
-					if (drain_life(Ind, dir, 100))
-						hp_player(Ind, 100);
+					if(drain_life(Ind, dir, 7))
+						hp_player(Ind, p_ptr->ret_dam / 2);
+					p_ptr->ret_dam = 0;
 				}
 				o_ptr->timeout = 250;
 				break;
@@ -6916,14 +7071,16 @@ void do_cmd_activate_dir(int Ind, int dir)
 
                         case ART_EOL:
                         {
-                                fire_bolt(Ind, GF_MANA, dir, damroll(9, 8));
+				sprintf(p_ptr->attacker, " fires a mana bolt for", p_ptr->name);
+                                fire_bolt(Ind, GF_MANA, dir, damroll(9, 8), p_ptr->attacker);
                                 o_ptr->timeout = rand_int(7) + 7;
                                 break;
                         }
 
                         case ART_UMBAR:
                         {
-                                fire_bolt(Ind, GF_MISSILE, dir, damroll(10, 10));
+				sprintf(p_ptr->attacker, " fires a missile for", p_ptr->name);
+                                fire_bolt(Ind, GF_MISSILE, dir, damroll(10, 10), p_ptr->attacker);
                                 o_ptr->timeout = rand_int(20) + 20;
                                 break;
                         }
@@ -6944,7 +7101,8 @@ void do_cmd_activate_dir(int Ind, int dir)
 	else if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_SERPENT))
         {
                 msg_print(Ind, "You breathe venom...");
-                fire_ball(Ind, GF_POIS, dir, 100, 2);
+		sprintf(p_ptr->attacker, " breathes venom for", p_ptr->name);
+                fire_ball(Ind, GF_POIS, dir, 100, 2, p_ptr->attacker);
                 o_ptr->timeout = rand_int(60) + 40;
         }
 
@@ -6955,7 +7113,8 @@ void do_cmd_activate_dir(int Ind, int dir)
                         case SV_RING_ELEC:
 			{
                                 /* Get a direction for breathing (or abort) */
-                                fire_ball(Ind, GF_ELEC, dir, 50, 2);
+				sprintf(p_ptr->attacker, " casts a lightning ball for", p_ptr->name);
+                                fire_ball(Ind, GF_ELEC, dir, 50, 2, p_ptr->attacker);
                                 (void)set_oppose_elec(Ind, p_ptr->oppose_elec + randint(20) + 20);
 				o_ptr->timeout = rand_int(50) + 50;
 				break;
@@ -6964,7 +7123,8 @@ void do_cmd_activate_dir(int Ind, int dir)
 			case SV_RING_ACID:
 			{
                                 /* Get a direction for breathing (or abort) */
-				fire_ball(Ind, GF_ACID, dir, 50, 2);
+				sprintf(p_ptr->attacker, " casts an acid ball for", p_ptr->name);
+				fire_ball(Ind, GF_ACID, dir, 50, 2, p_ptr->attacker);
 				(void)set_oppose_acid(Ind, p_ptr->oppose_acid + randint(20) + 20);
 				o_ptr->timeout = rand_int(50) + 50;
 				break;
@@ -6973,7 +7133,8 @@ void do_cmd_activate_dir(int Ind, int dir)
 			case SV_RING_ICE:
 			{
                                 /* Get a direction for breathing (or abort) */
-				fire_ball(Ind, GF_COLD, dir, 50, 2);
+				sprintf(p_ptr->attacker, " casts a cold ball for", p_ptr->name);
+				fire_ball(Ind, GF_COLD, dir, 50, 2, p_ptr->attacker);
 				(void)set_oppose_cold(Ind, p_ptr->oppose_cold + randint(20) + 20);
 				o_ptr->timeout = rand_int(50) + 50;
 				break;
@@ -6982,7 +7143,8 @@ void do_cmd_activate_dir(int Ind, int dir)
 			case SV_RING_FLAMES:
 			{
                                 /* Get a direction for breathing (or abort) */
-				fire_ball(Ind, GF_FIRE, dir, 50, 2);
+				sprintf(p_ptr->attacker, " casts a fire ball for", p_ptr->name);
+				fire_ball(Ind, GF_FIRE, dir, 50, 2, p_ptr->attacker);
 				(void)set_oppose_fire(Ind, p_ptr->oppose_fire + randint(20) + 20);
 				o_ptr->timeout = rand_int(50) + 50;
 				break;
@@ -7155,12 +7317,12 @@ static int fletchery_items(int Ind)
 	object_aware(Ind, q_ptr); \
 	object_known(q_ptr); \
 	if (tlev > 50) q_ptr->ident |= ID_MENTAL; \
-	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE); \
+	apply_magic(&p_ptr->wpos, q_ptr, tlev, FALSE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE); \
 	q_ptr->ident &= ~ID_CURSED; \
 	q_ptr->note = quark_add("Handmade"); \
 	q_ptr->discount = 50 + 25 * rand_int(3); \
 	msg_print(Ind, "You make some ammo.")
-
+//	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE); \
 //	apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 10))?TRUE:FALSE);
 
 /*

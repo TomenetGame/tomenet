@@ -225,7 +225,11 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 			if (p_ptr->s_info[i].mod == 0) color = TERM_L_DARK;
 			else color = TERM_ORANGE;
 		}
-		else if (p_ptr->s_info[i].value == SKILL_MAX) color = TERM_L_BLUE;
+		else if ((p_ptr->s_info[i].value == SKILL_MAX) ||
+			((p_ptr->s_info[i].value == 1000) &&
+			((i == SKILL_CLIMB) || (i == SKILL_FLY) ||
+			(i == SKILL_FREEACT) || (i == SKILL_RESCONF))))
+			color = TERM_L_BLUE;
 		if (p_ptr->s_info[i].hidden) color = TERM_L_RED;
 		if (j == sel)
 		{

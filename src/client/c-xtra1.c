@@ -1166,7 +1166,7 @@ static cptr likert(int x, int y)
 	}
 
 	/* Analyze the value */
-	switch ((x / y))
+	switch (((x * 10) / y))
 	{
 		case 0:
 		case 1:
@@ -1330,36 +1330,36 @@ void display_player(int hist)
 		
 		/* Display "skills" */
 		put_str("Fighting    :", 16, 1);
-		desc = likert(p_ptr->skill_thn, 12);
+		desc = likert(p_ptr->skill_thn, 120);
 		c_put_str(likert_color, desc, 16, 15);
 
 		put_str("Bows/Throw  :", 17, 1);
-		desc = likert(p_ptr->skill_thb, 12);
+		desc = likert(p_ptr->skill_thb, 120);
 		c_put_str(likert_color, desc, 17, 15);
 
 		put_str("Saving Throw:", 18, 1);
-		desc = likert(p_ptr->skill_sav, 6);
+		desc = likert(p_ptr->skill_sav, 52);//was 6.0 before x10 increase
 		c_put_str(likert_color, desc, 18, 15);
 
 		put_str("Stealth     :", 19, 1);
-		desc = likert(p_ptr->skill_stl, 1);
+		desc = likert(p_ptr->skill_stl, 10);
 		c_put_str(likert_color, desc, 19, 15);
 
 
 		put_str("Perception  :", 16, 28);
-		desc = likert(p_ptr->skill_fos, 6);
+		desc = likert(p_ptr->skill_fos, 60);
 		c_put_str(likert_color, desc, 16, 42);
 
 		put_str("Searching   :", 17, 28);
-		desc = likert(p_ptr->skill_srh, 6);
+		desc = likert(p_ptr->skill_srh, 60);
 		c_put_str(likert_color, desc, 17, 42);
 
 		put_str("Disarming   :", 18, 28);
-		desc = likert(p_ptr->skill_dis, 8);
+		desc = likert(p_ptr->skill_dis, 80);
 		c_put_str(likert_color, desc, 18, 42);
 
 		put_str("Magic Device:", 19, 28);
-		desc = likert(p_ptr->skill_dev, 6);
+		desc = likert(p_ptr->skill_dev, 60);
 		c_put_str(likert_color, desc, 19, 42);
 
 

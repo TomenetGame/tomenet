@@ -79,6 +79,17 @@ typedef unsigned int u32b;
 #define SKILL_MIND              59
 #define SKILL_UDUN              60
 
+/* Priests/Paladins */
+#define SKILL_HOFFENSE		70
+#define SKILL_HDEFENSE		71
+#define SKILL_HCURING		72
+#define SKILL_HSUPPORT		73
+
+/* additional ones */
+#define SKILL_CLIMB             90
+#define SKILL_FLY               91
+#define SKILL_FREEACT           92
+#define SKILL_RESCONF           93
 
 /* Ugly but needed */
 #define MAX_SKILLS              128

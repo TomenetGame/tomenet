@@ -334,7 +334,7 @@ s16b randnor(int mean, int stand)
 /*
  * Generates damage for "2d6" style dice rolls
  */
-s16b damroll(int num, int sides)
+s32b damroll(int num, int sides)
 {
 	int i, sum = 0;
 	for (i = 0; i < num; i++) sum += randint(sides);
@@ -345,7 +345,7 @@ s16b damroll(int num, int sides)
 /*
  * Same as above, but always maximal
  */
-s16b maxroll(int num, int sides)
+s32b maxroll(int num, int sides)
 {
 	return (num * sides);
 }

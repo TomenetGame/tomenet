@@ -80,8 +80,8 @@ extern void Rand_state_init(u32b seed);
 extern s32b Rand_mod(s32b m);
 extern s32b Rand_div(s32b m);
 extern s16b randnor(int mean, int stand);
-extern s16b damroll(int num, int sides);
-extern s16b maxroll(int num, int sides);
+extern s32b damroll(int num, int sides);
+extern s32b maxroll(int num, int sides);
 
 
 #endif

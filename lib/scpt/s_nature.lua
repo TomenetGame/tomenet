@@ -33,7 +33,7 @@ HEALING = add_spell
                         local hp = player.mhp * (15 + get_level(Ind, HEALING, 35)) / 100
         		hp_player(Ind, hp)
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_HEAL_PLAYER, 0, (hp * 3) / 2, player.spell_project)
+                                fire_ball(Ind, GF_HEAL_PLAYER, 0, (hp * 3) / 2, player.spell_project, "")
                         end
 	end,
 	["info"] = 	function()
@@ -60,8 +60,8 @@ RECOVERY = add_spell
                         	set_poisoned(Ind, 0)
                                 set_cut(Ind, 0)
 	                        if player.spell_project > 0 then
-        	                        fire_ball(Ind, GF_CURECUT_PLAYER, 0, 1, player.spell_project)
-        	                        fire_ball(Ind, GF_CUREPOISON_PLAYER, 0, 1, player.spell_project)
+        	                        fire_ball(Ind, GF_CURECUT_PLAYER, 0, 1, player.spell_project, "")
+        	                        fire_ball(Ind, GF_CUREPOISON_PLAYER, 0, 1, player.spell_project, "")
                 	        end
                         end
                         if get_level(Ind, RECOVERY, 50) >= 20 then
@@ -109,7 +109,7 @@ REGENERATION = add_spell
 }
 
 --[[
-SUMMONANNIMAL = add_spell
+SUMMONANIMAL = add_spell
 {
         ["name"] =      "Summon Animal",
         ["school"] = 	{SCHOOL_NATURE},
@@ -119,11 +119,11 @@ SUMMONANNIMAL = add_spell
         ["fail"] = 	20,
         ["stat"] =      A_WIS,
         ["spell"] = 	function()
-        		summon_specific_level = 25 + get_level(SUMMONANNIMAL, 50)
+        		summon_specific_level = 25 + get_level(SUMMONANIMAL, 50)
         		summon_monster(py, px, dun_level, TRUE, SUMMON_ANIMAL)
 	end,
 	["info"] = 	function()
-			return "level "..(25 + get_level(SUMMONANNIMAL, 50))
+			return "level "..(25 + get_level(SUMMONANIMAL, 50))
 	end,
         ["desc"] =	{
         		"Summons a leveled animal to your aid",

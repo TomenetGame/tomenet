@@ -391,11 +391,13 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 		-- Enough mana
 		if (get_mana(i, s) > get_power(i, s)) then
 --                        if (get_check("You do not have enough "..get_power_name(s)..", do you want to try anyway?") == FALSE) then return end
+			msg_print(i, "You do not have enough mana to cast "..spell(s).name..".")
 				return
 	        end
         
 		-- Invoke the spell effect
 	        if (magik(spell_chance(i, s)) == FALSE) then
+			msg_print(i, "You successfully cast the spell "..spell(s).name..".")
 			if (__spell_spell[s](other) == nil) then
 	        		use  = TRUE
 			end
@@ -407,7 +409,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 			if (flush_failure) then flush() end
 ]]
 
-                        msg_print(i, "You failed to get the spell off!")
+                        msg_print(i, "You failed to get the spell "..spell(s).name.." off!")
 			for index, sch in __spell_school[s] do
 	                        if __schools[sch].fail then
         	                        __schools[sch].fail(spell_chance(i, s))

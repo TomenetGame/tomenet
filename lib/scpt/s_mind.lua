@@ -15,9 +15,9 @@ CHARM = add_spell
                         if get_level(Ind, CHARM, 50) >= 35 then
                                 project_los(Ind, GF_CHARM, 10 + get_level(Ind, CHARM, 150))
                         elseif get_level(Ind, CHARM, 50) >= 15 then
-                                fire_ball(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), 3)
+                                fire_ball(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), 3, "")
                         else
-                                fire_bolt(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150))
+                                fire_bolt(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), "")
                         end
 	end,
 	["info"] = 	function()
@@ -44,9 +44,9 @@ CONFUSE = add_spell
                         if get_level(Ind, CONFUSE, 50) >= 35 then
                                 project_los(Ind, GF_OLD_CONF, 10 + get_level(Ind, CONFUSE, 150))
                         elseif get_level(Ind, CONFUSE, 50) >= 15 then
-                                fire_ball(Ind, GF_OLD_CONF, args.dir, 10 + get_level(Ind, CONFUSE, 150), 3)
+                                fire_ball(Ind, GF_OLD_CONF, args.dir, 10 + get_level(Ind, CONFUSE, 150), 3, "")
                         else
-                                fire_bolt(Ind, GF_OLD_CONF, args.dir, 10 + get_level(Ind, CONFUSE, 150))
+                                fire_bolt(Ind, GF_OLD_CONF, args.dir, 10 + get_level(Ind, CONFUSE, 150), "")
                         end
 	end,
 	["info"] = 	function()
@@ -71,9 +71,9 @@ STUN = add_spell
         ["direction"] = TRUE,
         ["spell"] = 	function(args)
                         if get_level(Ind, STUN, 50) >= 25 then
-                                fire_ball(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 150), 3)
+                                fire_ball(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 150), 3, "")
                         else
-                                fire_bolt(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 150))
+                                fire_bolt(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 150), "")
                         end
 	end,
 	["info"] = 	function()

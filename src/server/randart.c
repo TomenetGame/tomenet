@@ -413,7 +413,9 @@ static void add_ability (artifact_type *a_ptr)
 
 	
 	r = rand_int (10);
-	if (r < 5)		/* Pick something dependent on item type. */
+	/* if r < 5 -> Pick something dependent on item type. */
+	if ((r < 5) || (a_ptr->tval == TV_SHOT) ||
+	(a_ptr->tval == TV_ARROW) || (a_ptr->tval == TV_BOLT))
 	{
 		r = rand_int (100);
 		switch (a_ptr->tval)
@@ -588,6 +590,76 @@ static void add_ability (artifact_type *a_ptr)
 					}
 #endif	// 0
 
+				break;
+			}
+			case TV_SHOT:
+			case TV_ARROW:
+			case TV_BOLT:
+			{
+				if (r < 4)
+				{
+					a_ptr->flags1 |= TR1_BRAND_ACID;
+				}
+				else if (r < 8)
+				{
+					a_ptr->flags1 |= TR1_BRAND_ELEC;
+				}
+				else if (r < 12)
+				{
+					a_ptr->flags1 |= TR1_BRAND_FIRE;
+				}
+				else if (r < 16)
+				{
+					a_ptr->flags1 |= TR1_BRAND_COLD;
+				}
+				else if (r < 20)
+				{
+					a_ptr->flags1 |= TR1_BRAND_POIS;
+				}
+				else if (r < 28)
+				{ 
+					a_ptr->flags1 |= TR1_KILL_DRAGON;
+				}
+				else if (r < 36)
+				{
+					a_ptr->flags1 |= TR1_SLAY_DRAGON;
+				}
+				else if (r < 44)
+				{
+					a_ptr->flags1 |= TR1_SLAY_EVIL;
+				}
+				else if (r < 52)
+				{
+					a_ptr->flags1 |= TR1_SLAY_ANIMAL;
+				}
+				else if (r < 60)
+				{
+					a_ptr->flags1 |= TR1_SLAY_UNDEAD;
+				}
+				else if (r < 68)
+				{
+					a_ptr->flags1 |= TR1_SLAY_DEMON;
+				}
+				else if (r < 72)
+				{
+					a_ptr->flags1 |= TR1_SLAY_ORC;
+				}
+				else if (r < 80)
+				{
+					a_ptr->flags1 |= TR1_SLAY_TROLL;
+				}
+				else if (r < 88)
+				{
+					a_ptr->flags1 |= TR1_SLAY_GIANT;
+				}
+				else if (r < 92)
+				{
+					a_ptr->flags1 |= TR1_VAMPIRIC;
+				}
+				else
+				{
+				    /* bad luck */
+				}
 				break;
 			}
 			case TV_BOOTS:
@@ -955,7 +1027,10 @@ artifact_type *randart_make(object_type *o_ptr)
 
 	/* Screen for disallowed TVALS */
 	if ((k_ptr->tval!=TV_BOW) &&
-//	    (k_ptr->tval!=TV_DIGGING) &&	/* better ban it? */
+//	    (k_ptr->tval!=TV_DIGGING) &&	 /* better ban it? */
+//	    (k_ptr->tval!=TV_TOOL) &&
+//	    (k_ptr->tval!=TV_INSTRUMENT) &&
+	    (k_ptr->tval != TV_SHOT) && (k_ptr->tval != TV_ARROW) && (k_ptr->tval != TV_BOLT) &&
 	    (k_ptr->tval!=TV_HAFTED) &&
 	    (k_ptr->tval!=TV_POLEARM) &&
 	    (k_ptr->tval!=TV_SWORD) &&
@@ -973,11 +1048,15 @@ artifact_type *randart_make(object_type *o_ptr)
 	    (k_ptr->tval!=TV_HARD_ARMOR) &&
 	    (k_ptr->tval!=TV_RING) &&
 	    (k_ptr->tval!=TV_LITE) &&
-	    (k_ptr->tval != TV_AMULET))
+	    (k_ptr->tval!=TV_AMULET))
 	{
 		/* Not an allowed type */
 		return(NULL);
 	}
+
+        /* Randart ammo doesn't keep (exploding) from normal item */
+        if ((k_ptr->tval == TV_SHOT) || (k_ptr->tval == TV_ARROW) ||
+            (k_ptr->tval == TV_BOLT)) k_ptr->pval = 0;
 
 	/* Mega Hack -- forbig randart polymorph rings(pval would be BAD) */
 	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_POLYMORPH))
@@ -1012,6 +1091,14 @@ artifact_type *randart_make(object_type *o_ptr)
 			aggravate_me = TRUE;
 		}
 	}
+	
+	if ((k_ptr->tval == TV_SHOT) ||
+	    (k_ptr->tval == TV_ARROW) ||
+	    (k_ptr->tval == TV_BOLT)) {
+		aggravate_me = FALSE;
+//		power /= 3;
+	}
+
 
 	/* Default values */
 	a_ptr->cur_num = 0;
@@ -1019,6 +1106,12 @@ artifact_type *randart_make(object_type *o_ptr)
 	a_ptr->tval = k_ptr->tval;
 	a_ptr->sval = k_ptr->sval;
 	a_ptr->pval = k_ptr->pval;
+
+	/* rings of speed would become too powerful otherwise: */
+/*wrong:if (o_ptr->bpval) a_ptr->pval =	(o_ptr->pval < o_ptr->bpval)?
+		o_ptr->bpval : o_ptr->pval;
+	o_ptr->bpval = 0;*/
+
 	if (k_ptr->tval == TV_LITE) a_ptr->pval = 0;
 	a_ptr->to_h = k_ptr->to_h;
 	a_ptr->to_d = k_ptr->to_d;
@@ -1041,10 +1134,46 @@ artifact_type *randart_make(object_type *o_ptr)
 	    (a_ptr->tval==TV_HAFTED) ||
 	    (a_ptr->tval==TV_POLEARM) ||
 	    (a_ptr->tval==TV_SWORD) ||
+	    (a_ptr->tval==TV_AXE) ||
 	    (a_ptr->tval==TV_BOW))
 	{
 		a_ptr->to_d += 1 + rand_int(5);
 		a_ptr->to_h += 1 + rand_int(5);
+	}
+
+	/* Ammo doesn't get large bonus */
+	if ((a_ptr->tval==TV_SHOT) ||
+	    (a_ptr->tval==TV_ARROW) ||
+	    (a_ptr->tval==TV_BOLT))
+	{
+		/* exploding art ammo is very rare */
+		if (magik(10)) {
+			int power[27]={GF_ELEC, GF_POIS, GF_ACID,
+			GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
+			GF_DARK, GF_SHARDS, GF_SOUND,
+			GF_CONFUSION, GF_FORCE, GF_INERTIA,
+			GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
+			GF_NETHER, GF_NEXUS, GF_TIME,
+			GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
+			GF_TURN_ALL, GF_NUKE, GF_STUN,
+			GF_DISINTEGRATE};
+			a_ptr->pval = power[rand_int(27)];
+		}
+
+		a_ptr->to_d = 0;
+		a_ptr->to_h = 0;
+		if (magik(30)) {
+			a_ptr->to_d += randint(3);
+			a_ptr->to_h += randint(5);
+		}
+		if (magik(20)) {
+			a_ptr->to_d += randint(3);
+			a_ptr->to_h += randint(5);
+		}
+		if (magik(10)) {
+			a_ptr->dd += 1;
+			a_ptr->ds += rand_int(3);
+		}
 	}
 	
 	/* Ensure armour has some bonus to ac */
@@ -1058,7 +1187,7 @@ artifact_type *randart_make(object_type *o_ptr)
 	    (k_ptr->tval==TV_DRAG_ARMOR) ||
 	    (k_ptr->tval==TV_HARD_ARMOR))
 	{
-		a_ptr->to_a += 1 + rand_int(5);
+		a_ptr->to_a += 1 + rand_int(20);
 	}
 		
 	/* First draft: add two abilities, then curse it three times. */
@@ -1073,6 +1202,14 @@ artifact_type *randart_make(object_type *o_ptr)
 		ap = artifact_power(a_ptr);
 	}
 
+	else if ((k_ptr->tval == TV_SHOT) ||
+	    (k_ptr->tval == TV_ARROW) ||
+	    (k_ptr->tval == TV_BOLT)) {
+		add_ability (a_ptr);
+		if (magik(50)) add_ability (a_ptr);
+		if (magik(25)) add_ability (a_ptr);
+		if (magik(10)) add_ability (a_ptr);
+	}
 	else
 	{
 		/* Select a random set of abilities which roughly matches the
@@ -1138,19 +1275,86 @@ artifact_type *randart_make(object_type *o_ptr)
         /* Fix some limits */
         if (a_ptr->flags1 & TR1_BLOWS)
         {
-                if (a_ptr->pval > 2) a_ptr->pval = 2;
+                if (a_ptr->pval > 3) a_ptr->pval = 3;
         }
 
         if (a_ptr->flags1 & TR1_MANA)
         {
-                if (a_ptr->pval > 7) a_ptr->pval = 7;
+                if (a_ptr->pval > 10) a_ptr->pval = 10;
         }
-#if 0
-		/* Hack -- DarkSword randarts should have this */
-		if (o_ptr->tval == TV_SWORD &&
-			o_ptr->sval == SV_DARK_SWORD)
-			a_ptr->flags4 |= TR4_ANTIMAGIC_50;
-#endif
+	/* Hack -- DarkSword randarts should have this */
+	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD)
+	{
+		/* Remove all old ANTIMAGIC flags that might have been
+		set by a curse or random ability */
+		a_ptr->flags4 &= ((~TR4_ANTIMAGIC_30) & (~TR4_ANTIMAGIC_20) & (~TR4_ANTIMAGIC_10));
+		
+		/* Start with basic Antimagic */
+		a_ptr->flags4 |= TR4_ANTIMAGIC_50;
+
+		/* If they have large tohit/dam boni they can get more AM even */
+		if ((a_ptr->to_h + a_ptr->to_d) >= 50)
+		{
+			if (magik(50))
+				while (a_ptr->to_h + a_ptr->to_d > 50) {
+					a_ptr->to_h--;
+					if (a_ptr->to_h + a_ptr->to_d > 50) a_ptr->to_d--;
+				}
+		
+			if (magik(40)) a_ptr->flags4 |= TR4_ANTIMAGIC_30 | TR4_ANTIMAGIC_20;
+			else if (magik(60)) a_ptr->flags4 |= TR4_ANTIMAGIC_30 | TR4_ANTIMAGIC_10;
+			else if (magik(80)) a_ptr->flags4 |= TR4_ANTIMAGIC_30;
+			else if (magik(90)) a_ptr->flags4 |= TR4_ANTIMAGIC_20;
+			else if (magik(95)) a_ptr->flags4 |= TR4_ANTIMAGIC_10;
+		}
+		else if ((a_ptr->to_h + a_ptr->to_d) >= 40)
+		{
+			if (magik(50))
+				while (a_ptr->to_h + a_ptr->to_d > 40) {
+					a_ptr->to_h--;
+					if (a_ptr->to_h + a_ptr->to_d > 40) a_ptr->to_d--;
+				}
+
+			if (magik(50)) a_ptr->flags4 |= TR4_ANTIMAGIC_30 | TR4_ANTIMAGIC_10;
+			else if (magik(65)) a_ptr->flags4 |= TR4_ANTIMAGIC_30;
+			else if (magik(80)) a_ptr->flags4 |= TR4_ANTIMAGIC_20;
+			else if (magik(90)) a_ptr->flags4 |= TR4_ANTIMAGIC_10;
+		}
+		else if ((a_ptr->to_h + a_ptr->to_d) >= 30)
+		{
+			if (magik(50))
+				while (a_ptr->to_h + a_ptr->to_d > 30) {
+					a_ptr->to_h--;
+					if (a_ptr->to_h + a_ptr->to_d > 30) a_ptr->to_d--;
+				}
+
+			if (magik(60)) a_ptr->flags4 |= TR4_ANTIMAGIC_30;
+			else if (magik(75)) a_ptr->flags4 |= TR4_ANTIMAGIC_20;
+			else if (magik(90)) a_ptr->flags4 |= TR4_ANTIMAGIC_10;
+		}
+		else if ((a_ptr->to_h + a_ptr->to_d) >= 20)
+		{
+			if (magik(50))
+				while (a_ptr->to_h + a_ptr->to_d > 20) {
+					a_ptr->to_h--;
+					if (a_ptr->to_h + a_ptr->to_d > 20) a_ptr->to_d--;
+				}
+
+			if (magik(70)) a_ptr->flags4 |= TR4_ANTIMAGIC_20;
+			else if (magik(85)) a_ptr->flags4 |= TR4_ANTIMAGIC_10;
+		}
+		else if ((a_ptr->to_h + a_ptr->to_d) >= 10)
+		{
+			if (magik(50))
+			        while (a_ptr->to_h + a_ptr->to_d > 10) {
+					a_ptr->to_h--;
+					if (a_ptr->to_h + a_ptr->to_d > 10) a_ptr->to_d--;
+				}
+
+			if (magik(80)) a_ptr->flags4 |= TR4_ANTIMAGIC_10;
+		}
+	}
+	
 	/* Restore RNG */
 	Rand_quick = FALSE;
 
@@ -1256,50 +1460,60 @@ try_an_other_ego:
 			a_ptr->flags4 |= e_ptr->flags4[j];
 			a_ptr->flags5 |= e_ptr->flags5[j];
 			a_ptr->esp |= e_ptr->esp[j];
-
-			/* evaluate R_ESP_ flags to actual ESP */
-			if (a_ptr->esp & R_ESP_LOW) {
-			        rr = rand_int(16) - 1;
-		        	if (rr < 2) a_ptr->esp |= (ESP_ORC);
-			        else if (rr < 4) a_ptr->esp |= (ESP_TROLL);
-			        else if (rr < 6) a_ptr->esp |= (ESP_GIANT);
-			        else if (rr < 8) a_ptr->esp |= (ESP_ANIMAL);
-			        else if (rr < 10) a_ptr->esp |= (ESP_DRAGONRIDER);
-			        else if (rr < 12) a_ptr->esp |= (ESP_GOOD);
-			        else if (rr < 14) a_ptr->esp |= (ESP_NONLIVING);
-			        else a_ptr->esp |= (ESP_SPIDER);
-			        a_ptr->esp &= (~R_ESP_LOW);
-			}
-			if (a_ptr->esp & R_ESP_HIGH) {
-			        rr = rand_int(10) - 1;
-			        if (rr < 2) a_ptr->esp |= (ESP_DRAGON);
-			        else if (rr < 4) a_ptr->esp |= (ESP_DEMON);
-			        else if (rr < 7) a_ptr->esp |= (ESP_UNDEAD);
-				else if (rr < 8) a_ptr->esp |= (ESP_EVIL);
-				else a_ptr->esp |= (ESP_UNIQUE);
-				a_ptr->esp &= (~R_ESP_HIGH);
-			}
-			if (a_ptr->esp & R_ESP_ANY) {
-			        rr = rand_int(26) - 1;
-				if (rr < 1) a_ptr->esp |= (ESP_ORC);
-				else if (rr < 2) a_ptr->esp |= (ESP_TROLL);
-				else if (rr < 3) a_ptr->esp |= (ESP_DRAGON);
-				else if (rr < 4) a_ptr->esp |= (ESP_GIANT);
-				else if (rr < 5) a_ptr->esp |= (ESP_DEMON);
-				else if (rr < 8) a_ptr->esp |= (ESP_UNDEAD);
-				else if (rr < 12) a_ptr->esp |= (ESP_EVIL);
-				else if (rr < 14) a_ptr->esp |= (ESP_ANIMAL);
-				else if (rr < 16) a_ptr->esp |= (ESP_DRAGONRIDER);
-				else if (rr < 19) a_ptr->esp |= (ESP_GOOD);
-				else if (rr < 21) a_ptr->esp |= (ESP_NONLIVING);
-				else if (rr < 24) a_ptr->esp |= (ESP_UNIQUE);
-				else a_ptr->esp |= (ESP_SPIDER);
-				a_ptr->esp &= (~R_ESP_ANY);
-			}
-
 			add_random_ego_flag(a_ptr, e_ptr->fego[j], &limit_blows, o_ptr->level);
 		}
 	}
+	
+	/* Hack - Amulet of telepathic awareness (formerly of ESP) */
+#if 1
+	{
+		/* Apply limited ESP powers, evaluated from R_ESP_ flags */
+		if (a_ptr->esp & R_ESP_LOW) {
+		//if (rand_int(100) < 25) {
+			rr = rand_int(16) - 1;
+			if (rr < 2) a_ptr->esp |= (ESP_ORC);
+			else if (rr < 4) a_ptr->esp |= (ESP_TROLL);
+	    		else if (rr < 6) a_ptr->esp |= (ESP_GIANT);
+	    		else if (rr < 8) a_ptr->esp |= (ESP_ANIMAL);
+			else if (rr < 10) a_ptr->esp |= (ESP_DRAGONRIDER);
+			else if (rr < 12) a_ptr->esp |= (ESP_GOOD);
+			else if (rr < 14) a_ptr->esp |= (ESP_NONLIVING);
+			else a_ptr->esp |= (ESP_SPIDER);
+			a_ptr->esp &= (~R_ESP_LOW);
+		}
+		if (a_ptr->esp & R_ESP_HIGH) {
+		//if (rand_int(100) < 50) {
+			rr = rand_int(10) - 1;
+			if (rr < 2) a_ptr->esp |= (ESP_DRAGON);
+			else if (rr < 4) a_ptr->esp |= (ESP_DEMON);
+			else if (rr < 7) a_ptr->esp |= (ESP_UNDEAD);
+			else if (rr < 8) a_ptr->esp |= (ESP_EVIL);
+			else a_ptr->esp |= (ESP_UNIQUE);
+			a_ptr->esp &= (~R_ESP_HIGH);
+		}
+		if (a_ptr->esp & R_ESP_ANY)
+		{
+			rr = rand_int(26) - 1;
+			if (rr < 1) a_ptr->esp |= (ESP_ORC);
+			else if (rr < 2) a_ptr->esp |= (ESP_TROLL);
+			else if (rr < 3) a_ptr->esp |= (ESP_DRAGON);
+			else if (rr < 4) a_ptr->esp |= (ESP_GIANT);
+			else if (rr < 5) a_ptr->esp |= (ESP_DEMON);
+			else if (rr < 8) a_ptr->esp |= (ESP_UNDEAD);
+			else if (rr < 12) a_ptr->esp |= (ESP_EVIL);
+			else if (rr < 14) a_ptr->esp |= (ESP_ANIMAL);
+			else if (rr < 16) a_ptr->esp |= (ESP_DRAGONRIDER);
+			else if (rr < 19) a_ptr->esp |= (ESP_GOOD);
+			else if (rr < 21) a_ptr->esp |= (ESP_NONLIVING);
+		        else if (rr < 24) a_ptr->esp |= (ESP_UNIQUE);
+			else a_ptr->esp |= (ESP_SPIDER);
+			a_ptr->esp &= (~R_ESP_ANY);
+		}
+		//if (rand_int(100) < 5) a_ptr->esp |= ESP_ALL;
+		//if (a_ptr->esp & R_ESP_ALL)
+	}
+	if (a_ptr->esp & ESP_ALL) a_ptr->esp = ESP_ALL;
+#endif
 
 	/* No insane number of blows */  
 	if (limit_blows && (a_ptr->flags1 & TR1_BLOWS))

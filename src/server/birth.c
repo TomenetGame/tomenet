@@ -1279,7 +1279,6 @@ static void player_setup(int Ind, bool new)
 		 */
 		unstaticed = 1;
 	}
-
 	/* Rebuild the level if necessary */
 	if(!(zcave=getcave(wpos))){
 		if(p_ptr->wpos.wz){
@@ -1758,6 +1757,9 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	{
 		do_bard_skill(Ind);
 	}
+
+	/* Give the player some resurrections */
+	p_ptr->lives = cfg.lifes+1;
 
 	/* Success */
 	return TRUE;

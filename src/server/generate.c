@@ -548,7 +548,14 @@ static void place_fountain(struct worldpos *wpos, int y, int x)
 			cs_ptr->sc.fountain.type = SV_POTION_WATER;
 		else cs_ptr->sc.fountain.type = svals[rand_int(maxsval)];
 
-		cs_ptr->sc.fountain.rest = damroll(3, 4);
+		cs_ptr->sc.fountain.rest = damroll(1, 4);/* was 3d4, resulting in
+		someone sip 12 times from a +stats fountain! -> no thx :) */
+	
+		/* some hacks: */
+		/* make it hard to polymorph back at a bat fountain by sipping again */
+		if (cs_ptr->sc.fountain.type == SV_POTION2_CHAUVE_SOURIS)
+			cs_ptr->sc.fountain.rest = rand_int(7) / 3;
+	
 		cs_ptr->sc.fountain.known = FALSE;
 #if 0
 		cs_ptr->type = CS_TRAPS;
@@ -987,7 +994,7 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
 
 			case ALLOC_TYP_OBJECT:
 			{
-				place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+				place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
 				/* hack -- trap can be hidden under an item */
 				if (rand_int(100) < 2) place_trap(wpos, y, x, 0);
 				break;
@@ -1447,13 +1454,13 @@ static void destroy_level(struct worldpos *wpos)
 				if (k >= 16) continue;
 
 				/* Delete the monster (if any) */
-				delete_monster(wpos, y, x);
+				delete_monster(wpos, y, x, TRUE);
 
 				/* Destroy valid grids */
 				if (cave_valid_bold(zcave, y, x))
 				{
 					/* Delete the object (if any) */
-					delete_object(wpos, y, x);
+					delete_object(wpos, y, x, TRUE);
 
 					/* Access the grid */
 					c_ptr = &zcave[y][x];
@@ -1534,7 +1541,7 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num)
 			/* Place an item */
 			if (rand_int(100) < 75)
 			{
-				place_object(wpos, j, k, FALSE, FALSE, default_obj_theme);
+				place_object(wpos, j, k, FALSE, FALSE, default_obj_theme, 0);
 			}
 
 			/* Place gold */
@@ -2514,7 +2521,7 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0)
 		}
 
 		/* Place a treasure in the vault */
-		place_object(wpos, yval, xval, FALSE, FALSE, default_obj_theme);
+		place_object(wpos, yval, xval, FALSE, FALSE, default_obj_theme, 0);
 
 		/* Let's guard the treasure well */
 		vault_monsters(wpos, yval, xval, rand_int(2) + 3);
@@ -2738,7 +2745,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 		/* Object (80%) */
 		if (rand_int(100) < 80)
 		{
-			place_object(wpos, yval, xval, FALSE, FALSE, default_obj_theme);
+			place_object(wpos, yval, xval, FALSE, FALSE, default_obj_theme, 0);
 		}
 
 		/* Stairs (20%) */
@@ -2821,8 +2828,8 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 			vault_monsters(wpos, yval, xval + 2, randint(2));
 
 			/* Objects */
-			if (rand_int(3) == 0) place_object(wpos, yval, xval - 2, FALSE, FALSE, default_obj_theme);
-			if (rand_int(3) == 0) place_object(wpos, yval, xval + 2, FALSE, FALSE, default_obj_theme);
+			if (rand_int(3) == 0) place_object(wpos, yval, xval - 2, FALSE, FALSE, default_obj_theme, 0);
+			if (rand_int(3) == 0) place_object(wpos, yval, xval + 2, FALSE, FALSE, default_obj_theme, 0);
 		}
 
 		break;
@@ -4071,7 +4078,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				case '*':
 				if (rand_int(100) < 75)
 				{
-					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
 				}
 //				else	// now cumulative :)
 //				if (rand_int(100) < 25)
@@ -4115,7 +4122,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				place_monster(wpos, y, x, TRUE, TRUE);
 				monster_level = lev;
 				object_level = lev + 7;
-				place_object(wpos, y, x, TRUE, FALSE, default_obj_theme);
+				place_object(wpos, y, x, TRUE, FALSE, default_obj_theme, 0);
 				object_level = lev;
 				if (magik(40)) place_trap(wpos, y, x, 0);
 				break;
@@ -4126,7 +4133,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				place_monster(wpos, y, x, TRUE, TRUE);
 				monster_level = lev;
 				object_level = lev + 20;
-				place_object(wpos, y, x, TRUE, TRUE, default_obj_theme);
+				place_object(wpos, y, x, TRUE, TRUE, default_obj_theme, 0);
 				object_level = lev;
 				if (magik(80)) place_trap(wpos, y, x, 0);
 				break;
@@ -4142,7 +4149,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				if (magik(50))
 				{
 					object_level = lev + 7;
-					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
 					object_level = lev;
 				}
 				if (magik(50)) place_trap(wpos, y, x, 0);
@@ -5188,7 +5195,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					place_monster(wpos, y, x, TRUE, TRUE);
 					monster_level = dun_level;
 					object_level = dun_level + 20;
-					place_object(wpos, y, x, TRUE, FALSE, default_obj_theme);
+					place_object(wpos, y, x, TRUE, FALSE, default_obj_theme, 0);
 					object_level = dun_level;
 				}
 				else if (value < 5)
@@ -5198,7 +5205,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					place_monster(wpos, y, x, TRUE, TRUE);
 					monster_level = dun_level;
 					object_level = dun_level + 10;
-					place_object(wpos, y, x, TRUE, FALSE, default_obj_theme);
+					place_object(wpos, y, x, TRUE, FALSE, default_obj_theme, 0);
 					object_level = dun_level;
 				}
 				else if (value < 10)
@@ -5224,7 +5231,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					/* Object or trap */
 					if (rand_int(100) < 25)
 					{
-						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
 					}
 					// else
 					if (rand_int(100) < 75)
@@ -5252,7 +5259,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					if (rand_int(100) < 50)
 					{
 						object_level = dun_level + 7;
-						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
 						object_level = dun_level;
 					}
 				}
@@ -5276,7 +5283,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					}
 					else if (rand_int(100) < 50)
 					{
-						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
 					}
 				}
 
@@ -6595,7 +6602,7 @@ static void build_type12(worldpos *wpos, int by0, int bx0)
 		build_small_room(wpos, x0, y0);
 
 		/* Place a treasure in the vault */
-		place_object(wpos, y0, x0, FALSE, FALSE, default_obj_theme);
+		place_object(wpos, y0, x0, FALSE, FALSE, default_obj_theme, 0);
 
 		/* Let's guard the treasure well */
 		vault_monsters(wpos, y0, x0, rand_int(2) + 3);
@@ -8215,6 +8222,9 @@ static void cave_gen(struct worldpos *wpos)
 	bool cavern = FALSE;
 	bool maze = FALSE, permaze = FALSE, bonus = FALSE;
 
+	cave_type *cr_ptr, *csbm_ptr;
+	struct c_special *cs_ptr;
+
 	dun_data dun_body;
 
 	cave_type **zcave;
@@ -8908,6 +8918,168 @@ static void cave_gen(struct worldpos *wpos)
 	/* It's done */
 	cave_set_quietly = FALSE;
 
+	/* Create secret black market entrance; never on Morgoth's depth */
+	if ((dungeon_store_timer) || (dun_level < 60) || (dun_level == 100)) return;
+	dungeon_store_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
+	if (rand_int(1000) < cfg.dungeon_shop_chance)
+	{
+		/* Try hard to place one */
+		for (i = 0; i<300; i++)
+		{
+			y = rand_int(dun->l_ptr->hgt-4)+2;
+			x = rand_int(dun->l_ptr->wid-4)+2;
+			csbm_ptr = &zcave[y][x];
+			/* Must be in a wall, must not be in perma wall. Outside of vaults. */
+			if ((csbm_ptr->feat != FEAT_PERM_SOLID) &&
+			    (csbm_ptr->feat != FEAT_PERM_INNER) &&
+			    (csbm_ptr->feat != FEAT_PERM_EXTRA) &&
+			    (csbm_ptr->feat != FEAT_PERM_OUTER) &&
+			    (!(csbm_ptr->info & CAVE_ICKY)) &&
+			    ((csbm_ptr->feat == FEAT_WALL_SOLID) ||
+			    (csbm_ptr->feat == FEAT_WALL_INNER) ||
+			    (csbm_ptr->feat == FEAT_WALL_EXTRA) ||
+			    (csbm_ptr->feat == FEAT_WALL_OUTER) ||
+//			    (csbm_ptr->feat == FEAT_TREE) ||
+//			    (csbm_ptr->feat == FEAT_EVIL_TREE) ||
+			    (csbm_ptr->feat == FEAT_MAGMA) ||
+			    (csbm_ptr->feat == FEAT_QUARTZ) ||
+			    (csbm_ptr->feat == FEAT_MAGMA_H) ||
+			    (csbm_ptr->feat == FEAT_QUARTZ_H) ||
+			    (csbm_ptr->feat == FEAT_MAGMA_K) ||
+			    (csbm_ptr->feat == FEAT_QUARTZ_K) ||
+			    (csbm_ptr->feat == FEAT_ICE_WALL) ||
+			    (csbm_ptr->feat == FEAT_TREES) ||
+			    (csbm_ptr->feat == FEAT_DEAD_TREE) ||
+			    (csbm_ptr->feat == FEAT_MOUNTAIN) ||
+			    (csbm_ptr->feat == FEAT_SANDWALL) ||
+			    (csbm_ptr->feat == FEAT_SANDWALL_H) ||
+			    (csbm_ptr->feat == FEAT_SANDWALL_K)))
+			{
+				/* must have at least 1 'free' adjacent field */
+				bool found1free = FALSE;
+				for (k = 0; k < 8; k++)
+				{
+					switch(k)
+					{
+					case 0:x1 = x - 1; y1 = y - 1; break;
+					case 1:x1 = x; y1 = y - 1; break;
+					case 2:x1 = x + 1; y1 = y - 1; break;
+					case 3:x1 = x + 1; y1 = y; break;
+					case 4:x1 = x + 1; y1 = y + 1; break;
+					case 5:x1 = x; y1 = y + 1; break;
+					case 6:x1 = x - 1; y1 = y + 1; break;
+					case 7:x1 = x - 1; y1 = y; break;
+					}
+					cr_ptr = &zcave[y1][x1];
+		    			if ((cr_ptr->feat != FEAT_PERM_SOLID) &&
+		    			    (cr_ptr->feat != FEAT_PERM_INNER) &&
+	    				    (cr_ptr->feat != FEAT_PERM_EXTRA) &&
+	    				    (cr_ptr->feat != FEAT_PERM_OUTER) &&
+		    			    (cr_ptr->feat != FEAT_WALL_SOLID) &&
+		    			    (cr_ptr->feat != FEAT_WALL_INNER) &&
+	    				    (cr_ptr->feat != FEAT_WALL_EXTRA) &&
+	    				    (cr_ptr->feat != FEAT_WALL_OUTER) &&
+//					    (cr_ptr->feat != FEAT_TREE) &&
+//					    (cr_ptr->feat != FEAT_EVIL_TREE) &&
+					    (cr_ptr->feat != FEAT_MAGMA) && 
+					    (cr_ptr->feat != FEAT_QUARTZ) &&
+					    (cr_ptr->feat != FEAT_MAGMA_H) &&
+					    (cr_ptr->feat != FEAT_QUARTZ_H) &&
+					    (cr_ptr->feat != FEAT_MAGMA_K) &&
+					    (cr_ptr->feat != FEAT_QUARTZ_K) &&
+					    (cr_ptr->feat != FEAT_ICE_WALL) &&
+//					    (cr_ptr->feat != FEAT_DARK_PIT) && //often in Paths of the Dead
+					    (cr_ptr->feat != FEAT_TREES) &&      
+					    (cr_ptr->feat != FEAT_DEAD_TREE) &&
+					    (cr_ptr->feat != FEAT_MOUNTAIN) &&
+					    (cr_ptr->feat != FEAT_SANDWALL) &&
+					    (cr_ptr->feat != FEAT_SANDWALL_H) &&
+					    (cr_ptr->feat != FEAT_SANDWALL_K))
+					found1free = TRUE;
+				}
+
+				if(found1free)
+				{
+					/* Must have at least 3 solid adjacent fields,
+					that are also adjacent to each other,
+					and the 3-chain mustn't start at a corner! >:) Mwhahaha.. */
+					int r = 0; /* Counts adjacent solid fields */
+					for (k = 0; k < (8-1+3); k++)
+					if(r<3)
+					{
+						switch(k % 8)
+						{
+						case 0:x1 = x - 1; y1 = y - 1; break;
+						case 1:x1 = x; y1 = y - 1; break;
+						case 2:x1 = x + 1; y1 = y - 1; break;
+						case 3:x1 = x + 1; y1 = y; break;
+						case 4:x1 = x + 1; y1 = y + 1; break;
+						case 5:x1 = x; y1 = y + 1; break;
+						case 6:x1 = x - 1; y1 = y + 1; break;
+						case 7:x1 = x - 1; y1 = y; break;
+						}
+						cr_ptr = &zcave[y1][x1];
+	    		    			if (!((cr_ptr->feat != FEAT_PERM_SOLID) &&
+			    			    (cr_ptr->feat != FEAT_PERM_INNER) &&
+    						    (cr_ptr->feat != FEAT_PERM_EXTRA) &&
+    						    (cr_ptr->feat != FEAT_PERM_OUTER) &&
+			    			    (cr_ptr->feat != FEAT_WALL_SOLID) &&
+	    		    			    (cr_ptr->feat != FEAT_WALL_INNER) &&
+		    				    (cr_ptr->feat != FEAT_WALL_EXTRA) &&
+		    				    (cr_ptr->feat != FEAT_WALL_OUTER) &&
+//						    (cr_ptr->feat != FEAT_TREE) &&
+//						    (cr_ptr->feat != FEAT_EVIL_TREE) &&
+						    (cr_ptr->feat != FEAT_MAGMA) && 
+						    (cr_ptr->feat != FEAT_QUARTZ) &&
+						    (cr_ptr->feat != FEAT_MAGMA_H) &&
+						    (cr_ptr->feat != FEAT_QUARTZ_H) &&
+						    (cr_ptr->feat != FEAT_MAGMA_K) &&
+						    (cr_ptr->feat != FEAT_QUARTZ_K) &&
+						    (cr_ptr->feat != FEAT_ICE_WALL) &&
+//						    (cr_ptr->feat != FEAT_DARK_PIT) && //often in Paths of the Dead
+						    (cr_ptr->feat != FEAT_TREES) &&      
+						    (cr_ptr->feat != FEAT_DEAD_TREE) &&
+						    (cr_ptr->feat != FEAT_MOUNTAIN) &&
+						    (cr_ptr->feat != FEAT_SANDWALL) &&
+						    (cr_ptr->feat != FEAT_SANDWALL_H) &&
+						    (cr_ptr->feat != FEAT_SANDWALL_K)))
+						{
+							if (r!=0) r++;
+							/* chain mustn't start in a diagonal corner..: */
+							if ((r==0) && ((k % 2)==1)) r++;
+						}
+						else
+						{
+							r=0;
+						}
+					}
+					if (r >= 3)
+					{
+						/* Ok, create a secret store! */
+						csbm_ptr->feat = FEAT_SHOP;        /* TODO: put CS_SHOP */
+						csbm_ptr->info |= CAVE_NOPK;
+						if((cs_ptr=AddCS(csbm_ptr, CS_SHOP))){
+							if (cfg.dungeon_shop_type == 999){
+							switch(rand_int(3)){
+							case 1:cs_ptr->sc.omni = 42;break; //Rare Jewelry Shop
+							case 2:cs_ptr->sc.omni = 45;break; //Rare Footwear Shop
+							default:cs_ptr->sc.omni = 60;break; //The Secret Black Market
+							}} else {
+							cs_ptr->sc.omni = cfg.dungeon_shop_type;
+							}
+						}
+			    			/* Declare this to be a room & illuminate */
+	    					csbm_ptr->info |= CAVE_ROOM | CAVE_GLOW;
+						return;
+					}
+				}
+			}
+		}
+
+		/* Creation failed because no spot was found! */
+		/* So let's allow it on the next level then.. */
+		dungeon_store_timer = 0;
+	}
 }
 
 

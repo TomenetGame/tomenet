@@ -148,7 +148,7 @@ C:600:400:0
 I:28:0:h:0
 
 N:29:Restoration
-C:600:500:100
+C:600:5000:100
 I:29:0:r:0
 
 N:30:Get share of stolen gold
@@ -232,12 +232,12 @@ I:25:0:r:2
 
 #for Valarin Temple
 N:48:Restoration
-C:1200:1000:200
+C:1200:5000:200
 I:29:0:r:0
 
 #for Sea-Dome
 N:49:Morph restoration
-C:1500:1500:1500
+C:1500:15000:1500
 I:37:0:r:0
 
 #for The Golden Flower

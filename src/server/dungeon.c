@@ -32,6 +32,8 @@
  * TODO: Add another method to allow wilderness travels */
 #define RECALL_MAX_RANGE	24
 
+/* duration of GoI when getting recalled.        [2] */
+#define RECALL_GOI_LENGTH        3
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
@@ -55,6 +57,11 @@ static cptr value_check_aux1(object_type *o_ptr)
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) return "worthless";
 
 		/* Normal */
+		/* exploding ammo is excellent */
+		if (((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) ||
+		    (o_ptr->tval == TV_BOLT)) && (o_ptr->pval != 0)) return "excellent";
+		
+		if (object_value(0, o_ptr) < 4000) return "good";
 		return "excellent";
 	}
 
@@ -265,6 +272,14 @@ static void sense_inventory(int Ind)
 	heavy = (get_skill(p_ptr, SKILL_COMBAT) > 10) ? TRUE : FALSE;
 	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) > 10) ? TRUE : FALSE;
 	heavy_archery = (get_skill(p_ptr, SKILL_ARCHERY) > 10) ? TRUE : FALSE;
+
+	/* A powerful warrior can pseudo-id ranged weapons and ammo too,
+	   even if (s)he's not good at archery in general */
+	if (get_skill(p_ptr, SKILL_COMBAT) > 30)
+	    heavy_archery = TRUE;
+	/* A very powerful warrior can even distinguish magic items */
+	if (get_skill(p_ptr, SKILL_COMBAT) > 40)
+	    heavy_magic = TRUE;
 
 
 	/*** Sense everything ***/
@@ -626,7 +641,7 @@ static void process_effects(void)
 				{
 					/* Apply damage */
 					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
-							PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP);
+							PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
 
 					/* Oh, destroyed? RIP */
 					if (who < 0 && who != PROJECTOR_EFFECT &&
@@ -824,6 +839,8 @@ static void process_world(int Ind)
 			/* Day breaks */
 			if (dawn)
 			{
+				night_surface = FALSE;
+
 				/* Message */
 				msg_print(Ind, "The sun has risen.");
 	
@@ -838,6 +855,7 @@ static void process_world(int Ind)
 
 						/* Assume lit */
 						c_ptr->info |= CAVE_GLOW;
+						c_ptr->info &= ~CAVE_DARKEN;
 
 						/* Hack -- Memorize lit grids if allowed */
 						if ((istown(wpos)) && (p_ptr->view_perma_grids)) *w_ptr |= CAVE_MARK;
@@ -854,6 +872,8 @@ static void process_world(int Ind)
 			{
 				int stores = 0, y1, x1;
 				byte sx[255], sy[255];
+
+				night_surface = TRUE;
 
 				/* Message  */
 				msg_print(Ind, "The sun has fallen.");
@@ -878,6 +898,8 @@ static void process_world(int Ind)
 							/* Hack -- Notice spot */
 							note_spot(Ind, y, x);
 						}						
+
+						c_ptr->info |= CAVE_DARKEN;
 
 						if (c_ptr->feat == FEAT_SHOP)
 						{
@@ -1705,7 +1727,6 @@ static void apply_effect(int Ind)
 	c_ptr = &zcave[y][x];
 	f_ptr = &f_info[c_ptr->feat];
 
-
 	if (f_ptr->d_frequency[0] != 0)
 	{
 		int i;
@@ -1717,6 +1738,7 @@ static void apply_effect(int Ind)
 
 			/* XXX it's no good to use 'turn' here */
 //			if (((turn % f_ptr->d_frequency[i]) == 0) &&
+
 			if ((!rand_int(f_ptr->d_frequency[i])) &&
 			    ((f_ptr->d_side[i] != 0) || (f_ptr->d_dice[i] != 0)))
 			{
@@ -1734,7 +1756,7 @@ static void apply_effect(int Ind)
 
 				/* Apply damage */
 				project(PROJECTOR_TERRAIN, 0, &p_ptr->wpos, y, x, dam, f_ptr->d_type[i],
-				        PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP);
+				        PROJECT_KILL | PROJECT_HIDE | PROJECT_JUMP, "");
 
 				/* Hack -- notice death */
 //				if (!alive || death) return;
@@ -1786,11 +1808,18 @@ void recall_player(int Ind, char *message){
 
 	p_ptr->new_level_flag = TRUE;
 
-	/* He'll be safe for 2 turns */
-	set_invuln_short(Ind, 5);	// It runs out if attacking anyway
+	/* He'll be safe for some turns */
+	set_invuln_short(Ind, RECALL_GOI_LENGTH);	// It runs out if attacking anyway
+
+	check_Morgoth();
 
 	/* cancel any user recalls */
 	p_ptr->word_recall=0;
+
+        /* Did we enter a no-tele vault? */
+        //wpos=&p_ptr->wpos;
+        if(!(zcave=getcave(&p_ptr->wpos))) return;
+        if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) msg_print(Ind, "\377DThe air in here feels very still.");
 }
 
 
@@ -1993,8 +2022,10 @@ static void do_recall(int Ind, bool bypass)
 
 		p_ptr->new_level_flag = TRUE;
 
-		/* He'll be safe for 2 turns */
-		set_invuln_short(Ind, 5);	// It runs out if attacking anyway
+		/* He'll be safe for some turns */
+		set_invuln_short(Ind, RECALL_GOI_LENGTH);	// It runs out if attacking anyway
+		
+		check_Morgoth();
 #endif
 	}
 }
@@ -2432,6 +2463,7 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, p_ptr->tim_manashield - minus);
+		if (p_ptr->tim_manashield == 10) msg_print(Ind, "\377vThe disruption shield starts to flicker and fade...");
 	}
 	if (cfg.use_pk_rules == PK_RULES_DECLARE)
 	{
@@ -2566,8 +2598,8 @@ static bool process_player_end_aux(int Ind)
 	/* Hack -- make -1 permanent invulnerability */
 	if (p_ptr->invuln)
 	{
-		if (p_ptr->invuln > 0)
-			(void)set_invuln(Ind, p_ptr->invuln - minus);
+		if (p_ptr->invuln > 0) (void)set_invuln(Ind, p_ptr->invuln - minus);
+		if (p_ptr->invuln == 5) msg_print(Ind, "\377vThe invulnerability shield starts to flicker and fade...");
 	}
 
 	/* Heroism */
@@ -2652,11 +2684,11 @@ static bool process_player_end_aux(int Ind)
 			monster_desc(Ind, m_name, i, 0);
 			msg_format(Ind, "Lightning strikes %s.", m_name, i, dam/3);
 			project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_ELEC,
-			        PROJECT_KILL | PROJECT_ITEM);
+			        PROJECT_KILL | PROJECT_ITEM, "");
 			project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_LITE,
-			        PROJECT_KILL | PROJECT_ITEM);
+			        PROJECT_KILL | PROJECT_ITEM, "");
 			project(-Ind, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_SOUND,
-			        PROJECT_KILL | PROJECT_ITEM);
+			        PROJECT_KILL | PROJECT_ITEM, "");
 		}
 
 		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - 1, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
@@ -2866,6 +2898,7 @@ static bool process_player_end_aux(int Ind)
 			{
 				p_ptr->chp=-3;
 				strcpy(p_ptr->died_from, "Black Breath");
+				p_ptr->deathblow = 0;
 				player_death(Ind);
 			}
 		}
@@ -3101,9 +3134,15 @@ static void process_player_end(int Ind)
 	if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ)) return;
 
 	/* Check for auto-retaliate */
+#if 0
 	if ((p_ptr->energy >= level_speed(&p_ptr->wpos)) && !p_ptr->confused &&
 			(!p_ptr->autooff_retaliator ||
 			 !(p_ptr->invuln || p_ptr->tim_manashield)))
+#else
+	if ((p_ptr->energy >= level_speed(&p_ptr->wpos)) && !p_ptr->confused &&
+			(!p_ptr->autooff_retaliator ||
+			 !p_ptr->invuln))
+#endif
 	{
 		/* Check for nearby monsters and try to kill them */
 		/* If auto_retaliate returns nonzero than we attacked
@@ -3455,11 +3494,12 @@ static void scan_objs(){
 	int i, cnt=0, dcnt=0;
 	object_type *o_ptr;
 	cave_type **zcave;
+	if (!cfg.surface_item_removal) return;
 //	for(i=0;i<MAX_O_IDX;i++){
 	for(i=0;i<o_max;i++){	// minimal job :)
 		/* We leave non owned objects */
 		o_ptr=&o_list[i];
-		if(o_ptr->k_idx && o_ptr->owner && !o_ptr->name1){
+		if(o_ptr->k_idx){ // && o_ptr->owner && !o_ptr->name1){
 			if(!o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos))){
 				/* XXX noisy warning, eh? */
 				if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
@@ -3471,8 +3511,13 @@ static void scan_objs(){
 				{
 					/* ick suggests a store, so leave) */
 					if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
-						if(++o_ptr->marked==2){
-							delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx);
+						/* Artefacts and objects that were inscribed and dropped by
+						the dungeon master or by unique monsters on their death
+						stay 6 times as long as cfg.surface_item_removal specifies */
+						if(++o_ptr->marked==((artifact_p(o_ptr) ||
+						    (o_ptr->note && !o_ptr->owner))?
+						    cfg.surface_item_removal*6 : cfg.surface_item_removal)){
+							delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
 							dcnt++;
 						}
 					}
@@ -3608,6 +3653,8 @@ static void process_various(void)
 
 		check_banlist();	/* unban some players */
 		scan_objs();		/* scan objects and houses */
+
+		if (dungeon_store_timer) dungeon_store_timer--; /* Timeout */
 
 		/* Update the player retirement timers */
 		for (i = 1; i <= NumPlayers; i++)
@@ -4357,7 +4404,7 @@ void dungeon(void)
 	/* Process all of the objects */
 	if ((turn % 10) == 5) process_objects();
 
-	/* Probess the world */
+	/* Process the world */
 	if (!(turn % 50))
 	{
 		if(cfg.runlevel<6 && time(NULL)-cfg.closetime>120)
@@ -4431,6 +4478,15 @@ void dungeon(void)
 
 		/* Window stuff */
 		if (p_ptr->window) window_stuff(i);
+	}
+	
+	/* Animate player's @ in his own view here on server side */
+	/* This animation is only for mana shield / GOI indication */
+	if (!(turn % 5))
+	for (i = 1; i < NumPlayers + 1; i++)
+	{
+		/* Colour animation is done in lite_spot */
+		lite_spot(i, Players[i]->py, Players[i]->px);
 	}
 
 	/* Send any information over the network */

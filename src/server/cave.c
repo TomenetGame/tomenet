@@ -236,6 +236,176 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	}
 }
 
+/* This lets Morgoth become stronger, weaker or teleport himself away if
+ * a King/Queen joins his level or if a player enters it who hasn't killed 
+ * Sauron, the Sorceror yet - C. Blue
+ */
+void check_Morgoth(void)
+{
+	int k, i, x, y, num_on_depth = 0;
+	player_type *p_ptr;
+	monster_type *m_ptr;
+	struct worldpos *wpos;
+	char msg[80];
+
+	/* Let Morgoth, The Lord of Darkness gain additional power
+	for each player who joins the depth */
+	
+	/* Process the monsters */
+	for (k = m_top - 1; k >= 0; k--)
+	{
+		/* Access the index */
+		i = m_fast[k];
+		/* Access the monster */
+		m_ptr = &m_list[i];
+		/* Excise "dead" monsters */
+		if (!m_ptr->r_idx)
+		{
+		        /* Excise the monster */
+	    		m_fast[k] = m_fast[--m_top];
+		        /* Skip */
+		        continue;
+		}
+
+		/* search for Morgy */
+		if (!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) continue;
+		wpos = &m_ptr->wpos;
+		
+		/* log */
+		s_printf("Morgoth generated on %d\n", getlevel(wpos));
+
+		/* check if players are on his depth */
+		for (i = 1; i <= NumPlayers; i++)
+		{
+			/* skip disconnected players */
+			if (Players[i]->conn == NOT_CONNECTED)
+		    		continue;
+			/* player on this depth? */
+			p_ptr = Players[i];
+			if (inarea(&p_ptr->wpos, wpos)) num_on_depth++;
+		}
+
+		/* if the last player leaves, don't reduce Morgy's power */
+		if (num_on_depth == 0) continue;
+
+		/* save coordinates to redraw the spot after deletion later */
+		x = m_ptr->fx;
+		y = m_ptr->fy;
+
+		/* If a King/Queen or a Sauron-missing player enters Morgy's level:
+		   if there was an allowed player already on the level, the bad player
+		   will be insta-recalled to town. Otherwise, Morgy will be removed.
+		   Invalid player alone with Morgy?: Yes->Remove Morgy, No->recall */
+		for (i = 1; i <= NumPlayers; i++)
+		{
+			p_ptr = Players[i];
+			if (inarea(&p_ptr->wpos, wpos) &&
+			    (p_ptr->total_winner || (p_ptr->r_killed[860] == 0)))
+			{
+				/* Tell everyone related to Morgy's depth */
+				if (num_on_depth > 1)
+				{
+					/* HACK: avoid recall_player loops! */
+//					if (p_ptr->word_recall != -666)
+//					{
+						/* tell a message to the player */
+						if (p_ptr->total_winner) {
+							sprintf(msg, "\377sA hellish force drives you out of this dungeon!");
+							/* log */
+							s_printf("Morgoth recalled winner %s\n", p_ptr->name);
+						} else {
+							sprintf(msg, "\377sYou hear Sauron's laughter as his spell drives you out of the dungeon!");
+							/* log */
+							s_printf("Morgoth recalled Sauron-misser %s\n", p_ptr->name);
+						}
+					
+						/* get him out of here */
+						p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_DOWN:LEVEL_UP);
+						p_ptr->recall_pos.wx=p_ptr->wpos.wx;
+						p_ptr->recall_pos.wy=p_ptr->wpos.wy;
+						p_ptr->recall_pos.wz=0;
+//						p_ptr->word_recall=-666;/*HACK: avoid recall_player loops! */
+						recall_player(i, msg);
+//					}
+				}
+				else
+				{
+					/* tell a message to the player */
+					sprintf(msg, "\377sMorgoth, the Lord of Darkness teleports to a different dungeon floor!");
+					for (i = 1; i <= NumPlayers; i++)
+					{
+						if (Players[i]->conn == NOT_CONNECTED)
+					    		continue;
+						/* Player on Morgy depth? */
+						if (inarea(&Players[i]->wpos, wpos))
+							msg_print(i, msg);
+					}
+
+					/* log */
+					s_printf("Morgoth left level due to %s\n", p_ptr->name);
+					/* remove morgy here */
+					delete_monster_idx(k, TRUE);
+	                                /* Notice */
+	    		                note_spot_depth(wpos, y, x);
+		                        /* Display */
+	                                everyone_lite_spot(wpos, y, x);
+				}
+				return;
+			}
+		}
+
+		/* More players here than Morgy has power for? */
+    		if (((m_ptr->speed + 6 - 140) / 6) < num_on_depth)
+		{
+			s32b tmphp = m_ptr->maxhp * 3 / (3 + ((num_on_depth - 2) * 2));
+			if (m_ptr->maxhp < tmphp + (tmphp * num_on_depth * 2 / 3))
+			{
+				m_ptr->hp += tmphp * 2 / 3;
+				m_ptr->maxhp += tmphp * 2 / 3;
+			}
+			m_ptr->speed = (140 - 6) + (6 * num_on_depth);
+			
+			/* log */
+			s_printf("Morgoth grows stronger\n");
+			/* Tell everyone related to Morgy's depth */
+			for (i = 1; i <= NumPlayers; i++)
+			{
+				if (Players[i]->conn == NOT_CONNECTED)
+			    		continue;
+				/* Player on Morgy depth? */
+				if (inarea(&Players[i]->wpos, wpos))
+					msg_print(i, "\377sMorgoth, the Lord of Darkness becomes stronger!");
+			}
+			return;
+		}
+		/* Less players here than Morgy has power for? */
+		else if (((m_ptr->speed + 6 - 140) / 6) > num_on_depth)
+		{
+			s32b tmphp = m_ptr->maxhp * 3 / (3 + ((num_on_depth - 0) * 2));
+			/* anti-cheeze */
+			if (m_ptr->hp == m_ptr->maxhp)
+			{
+				m_ptr->hp -= tmphp * 2 / 3;
+				m_ptr->maxhp -= tmphp * 2 / 3;
+			}
+			m_ptr->speed = (140 - 6) + (6 * num_on_depth);
+
+			/* log */
+			s_printf("Morgoth weakens\n");
+			/* Tell everyone related to Morgy's depth */
+			for (i = 1; i <= NumPlayers; i++)
+			{
+				if (Players[i]->conn == NOT_CONNECTED)
+				        continue;
+				/* Player on Morgy depth? */
+				if (inarea(&Players[i]->wpos, wpos))
+					msg_print(i, "\377sMorgoth, the Lord of Darkness becomes weaker.");
+			}
+			return;
+		}
+	}
+}
+
 int players_on_depth(struct worldpos *wpos)
 {
 	if(wpos->wx>MAX_WILD_X || wpos->wx<0 || wpos->wy>MAX_WILD_Y || wpos->wy<0) return(0);
@@ -1085,7 +1255,11 @@ static byte player_color(int Ind)
 	int pcolor = p_ptr->pclass;
 
 	/* Ghosts are black */
-	if (p_ptr->ghost) return TERM_L_DARK;
+	if (p_ptr->ghost)
+	{
+		if (p_ptr->admin_wiz) return TERM_L_DARK + TERM_BNW;
+		return TERM_L_DARK;
+	}
 
 	/* Black Breath carriers emit malignant aura sometimes.. */
 	if (p_ptr->black_breath && magik(50)) return TERM_L_DARK;
@@ -1105,6 +1279,47 @@ static byte player_color(int Ind)
 	
 	if (p_ptr->tim_mimic) pcolor = p_ptr->tim_mimic_what;
 
+	/* Mana Shield and GOI also flicker */
+#if 1
+//	if ((p_ptr->tim_manashield > 10)) return p_ptr->cp_ptr->color + TERM_SHIELDM;
+//	if ((p_ptr->invuln > 5)) return p_ptr->cp_ptr->color + TERM_SHIELDI;
+	if ((p_ptr->tim_manashield > 10)) return TERM_SHIELDM;
+	if ((p_ptr->invuln > 5)) return TERM_SHIELDI;
+#else
+/*	if ((p_ptr->tim_manashield > 10) && (randint(2)==1)){
+		byte a = p_ptr->cp_ptr->color;
+*/	if (p_ptr->tim_manashield > 10)
+/*		if (a!=TERM_VIOLET)
+		a=(randint(2) < 2) ? TERM_VIOLET : TERM_ORANGE;
+		else
+		a=(randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
+		return a;*/
+		byte a = p_ptr->cp_ptr->color;
+		switch(randint(3)){
+		case 1:a=TERM_VIOLET;break;
+		case 2:a=TERM_L_RED;break;
+		case 3:a=TERM_ORANGE;break;
+		}
+		return a;
+	}
+//	else if ((p_ptr->invuln > 5) && (randint(4)!=1)){
+	else if (p_ptr->invuln > 5){
+		byte a = p_ptr->cp_ptr->color;
+		switch(randint(5)) {
+		case 1: a=TERM_L_RED;break;
+		case 2: a=TERM_L_GREEN;break;
+		case 3: a=TERM_L_BLUE;break;
+		case 4: a=TERM_YELLOW;break;
+		case 5: a=TERM_VIOLET;break;
+/*              case 1: return (TERM_L_RED);
+		case 2: return (TERM_VIOLET);
+		case 3: return (TERM_RED);
+		case 4: return (TERM_L_DARK);
+		case 5: return (TERM_WHITE);
+*/		}
+		return a;
+	}
+#endif
 	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
 	if (p_ptr->admin_wiz) return p_ptr->cp_ptr->color + TERM_BNW;
 
@@ -1519,6 +1734,28 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				}
 			}
 
+			/* Darkness on the world surface at night */
+			if ((p_ptr->wpos.wz == 0) && (night_surface) && !(c_ptr->info & CAVE_GLOW))
+			switch (a)
+	    		{
+			case TERM_DARK: a = TERM_DARK; break;
+			case TERM_WHITE: a = TERM_SLATE; break;
+			case TERM_SLATE: a = TERM_L_DARK; break;
+			case TERM_ORANGE: a = TERM_UMBER; break;
+			case TERM_RED: a = TERM_RED; break;
+			case TERM_GREEN: a = TERM_GREEN; break;
+			case TERM_BLUE: a = TERM_BLUE; break;
+			case TERM_UMBER: a = TERM_UMBER; break;
+			case TERM_L_DARK: a = TERM_L_DARK; break;
+			case TERM_L_WHITE: a = TERM_SLATE; break;
+			case TERM_VIOLET: a = TERM_VIOLET; break;
+			case TERM_YELLOW: a = TERM_L_UMBER; break;
+			case TERM_L_RED: a = TERM_RED; break;
+			case TERM_L_GREEN: a = TERM_GREEN; break;
+			case TERM_L_BLUE: a = TERM_BLUE; break;
+			case TERM_L_UMBER: a = TERM_UMBER; break;
+			}
+
 			/* The attr */
 			(*ap) = a;
 		}
@@ -1683,8 +1920,31 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				}
 			}
 
+			/* Darkness on the world surface at night */
+			if ((p_ptr->wpos.wz == 0) && (night_surface) && !(c_ptr->info & CAVE_GLOW))
+			switch (a)
+	    		{
+			case TERM_DARK: a = TERM_DARK; break;
+			case TERM_WHITE: a = TERM_SLATE; break;
+			case TERM_SLATE: a = TERM_L_DARK; break;
+			case TERM_ORANGE: a = TERM_UMBER; break;
+			case TERM_RED: a = TERM_RED; break;
+			case TERM_GREEN: a = TERM_GREEN; break;
+			case TERM_BLUE: a = TERM_BLUE; break;
+			case TERM_UMBER: a = TERM_UMBER; break;
+			case TERM_L_DARK: a = TERM_L_DARK; break;
+			case TERM_L_WHITE: a = TERM_SLATE; break;
+			case TERM_VIOLET: a = TERM_VIOLET; break;
+			case TERM_YELLOW: a = TERM_L_UMBER; break;
+			case TERM_L_RED: a = TERM_RED; break;
+			case TERM_L_GREEN: a = TERM_GREEN; break;
+			case TERM_L_BLUE: a = TERM_BLUE; break;
+			case TERM_L_UMBER: a = TERM_UMBER; break;
+			}
+
 			/* The attr */
 			(*ap) = a;
+
 			for(cs_ptr=c_ptr->special; cs_ptr; cs_ptr=cs_ptr->next){
 				/* testing only - need c/a PRIORITIES!!! */
 				csfunc[cs_ptr->type].see(cs_ptr, cp, ap, Ind);
@@ -1707,6 +1967,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		}
 	}
 
+
 	/**** Apply special random effects ****/
 /*	if (!avoid_other) */
 	if (((*w_ptr & CAVE_MARK) ||
@@ -1728,7 +1989,32 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		 * they shimmer when player isn't moving */
 		else if (f_ptr->flags1 & FF1_ATTR_MULTI)
 		{
-			(*ap) = f_ptr->shimmer[rand_int(7)];
+			a = f_ptr->shimmer[rand_int(7)];
+
+			if (rand_int(8) != 1)
+			/* Darkness on the world surface at night */
+			if ((p_ptr->wpos.wz == 0) && (night_surface) && !(c_ptr->info & CAVE_GLOW))
+			switch (a)
+	    		{
+			case TERM_DARK: a = TERM_DARK; break;
+			case TERM_WHITE: a = TERM_SLATE; break;
+			case TERM_SLATE: a = TERM_L_DARK; break;
+			case TERM_ORANGE: a = TERM_UMBER; break;
+			case TERM_RED: a = TERM_RED; break;
+			case TERM_GREEN: a = TERM_GREEN; break;
+			case TERM_BLUE: a = TERM_BLUE; break;
+			case TERM_UMBER: a = TERM_UMBER; break;
+			case TERM_L_DARK: a = TERM_L_DARK; break;
+			case TERM_L_WHITE: a = TERM_SLATE; break;
+			case TERM_VIOLET: a = TERM_VIOLET; break;
+			case TERM_YELLOW: a = TERM_L_UMBER; break;
+			case TERM_L_RED: a = TERM_RED; break;
+			case TERM_L_GREEN: a = TERM_GREEN; break;
+			case TERM_L_BLUE: a = TERM_BLUE; break;
+			case TERM_L_UMBER: a = TERM_UMBER; break;
+			}
+			
+			(*ap) = a;
 		}
 #endif	/* 0 */
 	}
@@ -2016,6 +2302,27 @@ void lite_spot(int Ind, int y, int x)
 			if(p_ptr->invis && !p_ptr->body_monster){
 				/* special invis colour */
 				a=TERM_VIOLET;
+			}
+			/* Mana Shield and GOI also flicker */
+			if ((p_ptr->tim_manashield > 10) && (randint(2)==1)){
+				if (a!=TERM_VIOLET)
+				a=(randint(2) < 2) ? TERM_VIOLET : TERM_ORANGE;
+				else
+				a=(randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
+			}
+			else if ((p_ptr->invuln > 5) && (randint(4)!=1)){
+				switch(randint(5)) {
+				case 1: a=TERM_L_RED;break;
+				case 2: a=TERM_L_GREEN;break;
+				case 3: a=TERM_L_BLUE;break;
+				case 4: a=TERM_YELLOW;break;
+				case 5: a=TERM_VIOLET;break;
+		/*              case 1: return (TERM_L_RED);
+				case 2: return (TERM_VIOLET);
+				case 3: return (TERM_RED);
+				case 4: return (TERM_L_DARK);
+				case 5: return (TERM_WHITE);
+		*/              }
 			}
 			
 			/* bugfix on MASSIVE deaths (det/death) */

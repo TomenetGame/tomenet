@@ -39,10 +39,10 @@ IDENTIFY = add_spell
         ["spell"] = 	function()
         		if get_level(Ind, IDENTIFY, 50) >= 27 then
                         	identify_pack(Ind)
-                                fire_ball(Ind, GF_IDENTIFY, 0, 1, get_level(Ind, IDENTIFY, 3))
+                                fire_ball(Ind, GF_IDENTIFY, 0, 1, get_level(Ind, IDENTIFY, 3), "")
         		elseif get_level(Ind, IDENTIFY, 50) >= 17 then
                         	identify_pack(Ind)
-                                fire_ball(Ind, GF_IDENTIFY, 0, 1, 0)
+                                fire_ball(Ind, GF_IDENTIFY, 0, 1, 0, "")
                         else
                         	ident_spell(Ind)
                         end
@@ -78,7 +78,7 @@ VISION = add_spell
                         	map_area(Ind)
                         end
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, player.spell_project)
+                                fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, player.spell_project, "")
                         end
 	end,
 	["info"] = 	function()
@@ -103,12 +103,12 @@ SENSEHIDDEN = add_spell
         ["spell"] = 	function()
         		detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN, 40, 0))
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, player.spell_project)
+                                fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, player.spell_project, "")
                         end
         		if get_level(Ind, SENSEHIDDEN, 50) >= 10 then
                         	set_tim_invis(Ind, 10 + randint(20) + get_level(Ind, SENSEHIDDEN, 40))
 	                        if player.spell_project > 0 then
-        	                        fire_ball(Ind, GF_SEEINVIS_PLAYER, 0, 10 + randint(20) + get_level(Ind, SENSEHIDDEN, 40), player.spell_project)
+        	                        fire_ball(Ind, GF_SEEINVIS_PLAYER, 0, 10 + randint(20) + get_level(Ind, SENSEHIDDEN, 40), player.spell_project, "")
                 	        end
                         end
 	end,
@@ -138,7 +138,7 @@ REVEALWAYS = add_spell
         ["spell"] = 	function()
         		detect_sdoor(Ind, 10 + get_level(Ind, REVEALWAYS, 40, 0))
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_DETECTDOOR_PLAYER, 0, 1, player.spell_project)
+                                fire_ball(Ind, GF_DETECTDOOR_PLAYER, 0, 1, player.spell_project, "")
                         end
 	end,
 	["info"] = 	function()
@@ -162,7 +162,7 @@ SENSEMONSTERS = add_spell
         ["spell"] = 	function()
                         detect_creatures(Ind)
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_DETECTCREATURE_PLAYER, 0, 1, player.spell_project)
+                                fire_ball(Ind, GF_DETECTCREATURE_PLAYER, 0, 1, player.spell_project, "")
                         end
         		if get_level(Ind, SENSEMONSTERS, 50) >= 30 then
                         	set_tim_esp(Ind, 10 + randint(10) + get_level(Ind, SENSEMONSTERS, 20))

@@ -2662,6 +2662,27 @@ static void do_slash_cmd(int Ind, char *message)
 			do_cmd_fill_bottle(Ind);
 			return;
 		}
+		else if (prefix(message, "/empty") || prefix(message, "/emp"))
+		{
+			int slot;
+			return;//disabled for anti-cheeze
+			if (!tk)
+			{
+				msg_print(Ind, "\377oUsage: /empty (inventory slot letter)");
+				return;
+			}
+			slot = (char)(token[1][0]);
+			/* convert to upper case ascii code */
+			if (slot >= 97 && slot <= 122) slot -= 32;
+			/* check for valid inventory slot */
+			if (slot < 65 || slot > (90 - 3))
+			{
+				msg_print(Ind, "\377oValid inventory slots are a-w (or A-W). Please try again.");
+				return;
+			}
+			do_cmd_empty_potion(Ind, slot - 65);
+			return;
+		}
 		else if (prefix(message, "/dice"))
 		{
 			int rn;
@@ -3136,6 +3157,33 @@ static void do_slash_cmd(int Ind, char *message)
 
 				return;
 			}
+			/* Empty a store */
+			else if (prefix(message, "/stnew"))
+			{
+				if (!k) {
+					msg_print(Ind, "\377oUsage: /stnew <store#>");
+					return;
+				}
+				for(i=0;i<numtowns;i++)
+				{
+					int what, num;
+					object_type *o_ptr;
+					store_type *st_ptr;
+
+					st_ptr = &town[i].townstore[k];
+					/* Pick a random slot */
+					what = rand_int(st_ptr->stock_num);
+					/* Determine how many items are here */
+					o_ptr = &st_ptr->stock[what];
+					num = o_ptr->number;
+
+//					store_item_increase(st_ptr, what, -num);
+//					store_item_optimize(st_ptr, what);
+//					st_ptr->stock[what].num=0;
+				}
+				msg_print(Ind, "\377oStores were emptied!");
+				return;
+			}
 			/* take 'cheezelog'
 			 * result is output to the logfile */
 			else if (prefix(message, "/cheeze")) 
@@ -3211,6 +3259,32 @@ static void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 #endif	// 0
+			else if (prefix(message, "/log_u"))
+			{
+				if (tk)
+				{
+					if(!strcmp(string_make(token[1]),"on"))
+					{
+						msg_print(Ind, "log_u is now on");
+						cfg.log_u = TRUE;
+						return;
+					}
+					else if(!strcmp(string_make(token[1]),"off"))
+					{
+						msg_print(Ind, "log_u is now off");
+						cfg.log_u = FALSE;
+						return;
+					}
+					else
+					{
+						msg_print(Ind, "valid parameters are 'on' or 'off'");
+						return;
+					}
+				}
+				if (cfg.log_u) msg_print(Ind, "log_u is on");
+				else msg_print(Ind, "log_u is off");
+				return;
+			}
 		}
 	}
 
@@ -3284,6 +3358,8 @@ static void player_talk_aux(int Ind, char *message)
 		strcpy(sender, "Server Admin");
 	}
 
+	if(cfg.log_u) s_printf("[%s] %s\n", sender, message);
+
 	/* Special - shutdown command (for compatibility) */
 	if (prefix(message, "@!shutdown") && admin)
 	{
@@ -3319,6 +3395,7 @@ static void player_talk_aux(int Ind, char *message)
 					p_ptr->chp=-3;
 					strcpy(p_ptr->died_from, "hypoxia");
 					p_ptr->spam=1;
+					p_ptr->deathblow = 0;
 					player_death(Ind);
 					return;
 			}

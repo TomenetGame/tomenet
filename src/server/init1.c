@@ -1136,28 +1136,28 @@ static cptr st_info_flags1[] =
 	"RANDOM",
 	"FORCE_LEVEL",
 	"MUSEUM",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
+	"NO_DISCOUNT",
+	"NO_DISCOUNT2",
+	"EGO",
+	"RARE_EGO",
+	"PRICE1",
+	"PRICE2",
+	"PRICE4",
+	"PRICE16",
+	"GOOD",
+	"GREAT",
+	"PRICY_ITEMS1",
+	"PRICY_ITEMS2",
+	"PRICY_ITEMS3",
+	"PRICY_ITEMS4",
+	"HARD_STEAL",
+	"VHARD_STEAL",
+	"NO_STEAL",
 	"XXX1",
 	"XXX1",
 	"XXX1",
 	"XXX1"
+//	"XXX1",
 };
 
 /*** Initialize from ascii template files ***/
@@ -1990,7 +1990,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			else
 				f_ptr->d_type[i] = type;
 
-			freq *= 10;
+			freq *= 1;//was 10
 			/* Save the values */
 			f_ptr->d_side[i] = side;
 			f_ptr->d_dice[i] = dice;
@@ -7186,7 +7186,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				 */
 				if (rand_int(100) < 75)
 				{
-					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
 				}
 				// else
 				if (rand_int(100) < 25)
@@ -7206,25 +7206,25 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 //					object_level = quest[p_ptr->inside_quest].level + object_index;
 					object_level = getlevel(wpos) + object_index;
 					if (rand_int(100) < 75)
-						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
 					else if (rand_int(100) < 80)
-						place_object(wpos, y, x, TRUE, FALSE, default_obj_theme);
+						place_object(wpos, y, x, TRUE, FALSE, default_obj_theme, 0);
 					else
-						place_object(wpos, y, x, TRUE, TRUE, default_obj_theme);
+						place_object(wpos, y, x, TRUE, TRUE, default_obj_theme, 0);
 
 					object_level = level;
 				}
 				else if (rand_int(100) < 75)
 				{
-					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
 				}
 				else if (rand_int(100) < 80)
 				{
-					place_object(wpos, y, x, TRUE, FALSE, default_obj_theme);
+					place_object(wpos, y, x, TRUE, FALSE, default_obj_theme, 0);
 				}
 				else
 				{
-					place_object(wpos, y, x, TRUE, TRUE, default_obj_theme);
+					place_object(wpos, y, x, TRUE, TRUE, default_obj_theme, 0);
 				}
 			}
 			/* Random trap */

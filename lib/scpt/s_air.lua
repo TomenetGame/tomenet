@@ -15,8 +15,8 @@ NOXIOUSCLOUD = add_spell
                         if get_level(Ind, NOXIOUSCLOUD, 50) >= 30 then type = GF_UNBREATH
                         else type = GF_POIS end
 --			type = GF_POIS
---		        fire_cloud(Ind, type, args.dir, ((1 + get_level(Ind, NOXIOUSCLOUD, 150)/2) + (get_level(Ind,MANATHRUST,50) * 2)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40))
-		        fire_cloud(Ind, type, args.dir, (1 + get_level(Ind, NOXIOUSCLOUD, 150)/2), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40))
+--		        fire_cloud(Ind, type, args.dir, ((1 + get_level(Ind, NOXIOUSCLOUD, 150)/2) + (get_level(Ind,MANATHRUST,50) * 2)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40), " fires a noxious cloud of")
+		        fire_cloud(Ind, type, args.dir, (1 + get_level(Ind, NOXIOUSCLOUD, 150)/2), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40), " fires a noxious cloud of")
 	end,
 	["info"] = 	function()
 			return "dam "..(1 + (get_level(Ind, NOXIOUSCLOUD, 150))/2).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD, 40))
@@ -59,7 +59,8 @@ INVISIBILITY = add_spell
         ["mana_max"] = 	20,
         ["fail"] = 	70,
         ["spell"] = 	function()
-                       	if player.tim_invisibility == 0 then set_invis(Ind, randint(20) + 15 + get_level(Ind, INVISIBILITY, 50), 20 + get_level(Ind, INVISIBILITY, 50)) end
+--                       	if player.tim_invisibility == 0 then set_invis(Ind, randint(20) + 15 + get_level(Ind, INVISIBILITY, 50), 20 + get_level(Ind, INVISIBILITY, 50)) end
+			set_invis(Ind, randint(20) + 15 + get_level(Ind, INVISIBILITY, 50), 20 + get_level(Ind, INVISIBILITY, 50))
        	end,
 	["info"] = 	function()
 			return "dur "..(15 + get_level(Ind, INVISIBILITY, 50)).."+d20 power "..(20 + get_level(Ind, INVISIBILITY, 50))

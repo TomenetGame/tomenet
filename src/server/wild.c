@@ -1095,7 +1095,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 		if (cave_clean_bold(zcave,y,x))
 		{			
 			object_level = w_ptr->radius/2 +1;
-			place_object(wpos,y,x,FALSE,FALSE,default_obj_theme);
+			place_object(wpos,y,x,FALSE,FALSE,default_obj_theme, 0);
 			num_objects--;
 		}
 		trys++;	
@@ -2563,7 +2563,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						c_ptr->feat=FEAT_DIRT;
 				}
 				else if(func==FILL_CLEAR){
-					delete_object(wpos,y,x);
+					delete_object(wpos,y,x,TRUE);
 				}
 				else if(func==FILL_BUILD){
 					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
@@ -2703,7 +2703,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						break;
 					}
 					if(func==FILL_CLEAR){
-						delete_object(wpos, miny+(y-1), minx+(x-1));
+						delete_object(wpos, miny+(y-1), minx+(x-1), TRUE);
 						break;
 					}
 					if(func==FILL_BUILD){

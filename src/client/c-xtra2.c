@@ -335,10 +335,20 @@ void do_cmd_messages_chatonly(void)
 	char nameB[20];
 	cptr msg_deadA = "You have been killed";
 	cptr msg_deadB = "You die";
-	cptr msg_unique = "was slain by";
-	cptr msg_killed = "was killed by";
-	cptr msg_destroyed = "ghost was destroyed by";
+	cptr msg_unique = "was slain by ";
+	cptr msg_killed = "was killed ";
+	cptr msg_killed2 = "was annihilated ";
+	cptr msg_killed3 = "was vaporized ";
+	cptr msg_destroyed = "was destroyed ";
 	cptr msg_suicide = "committed suicide.";
+	cptr msg_entered = "has entered the game.";
+	cptr msg_left = "has left the game.";
+	cptr msg_quest = "has won the";
+	cptr msg_dice = "dice and get";
+	cptr msg_level = "Welcome to level";
+	cptr msg_level2 = "has attained level";
+	cptr msg_inven_destroy1 = "was destroyed!";
+	cptr msg_inven_destroyx = "were destroyed!";
 	//cptr msg_telepath = "mind";
 
 
@@ -355,12 +365,17 @@ void do_cmd_messages_chatonly(void)
 	{
 		cptr msg = message_str(i);
 
-		if ((strstr(msg, nameA)      != NULL) || (strstr(msg, nameB)         != NULL) || (msg[0] == '[') || \
-				(strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_destroyed) != NULL) || \
-				(strstr(msg, msg_unique) != NULL) || (strstr(msg, msg_suicide)   != NULL) || \
-				(strstr(msg, msg_deadA)  != NULL) || (strstr(msg, msg_deadB)     != NULL) || \
-//				(strstr(msg, msg_telepath) != NULL) || (msg[2] == '['))
-				(msg[2] == '['))
+		if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[0] == '[') || \
+		    (strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_killed2) != NULL) || \
+		    (strstr(msg, msg_killed3) != NULL) || (strstr(msg, msg_destroyed) != NULL) || \
+		    (strstr(msg, msg_unique) != NULL) || (strstr(msg, msg_suicide)   != NULL) || \
+		    (strstr(msg, msg_entered) != NULL) || (strstr(msg, msg_left)   != NULL) || \
+		    (strstr(msg, msg_quest) != NULL) || (strstr(msg, msg_dice) != NULL) || \
+		    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) || \
+		    (strstr(msg, msg_deadA)  != NULL) || (strstr(msg, msg_deadB)     != NULL) || \
+		    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroyx) != NULL) || \
+//			(strstr(msg, msg_telepath) != NULL) || (msg[2] == '['))
+		    (msg[2] == '['))
 		{
 			message_chat[nn] = msg;	
 			nn++;

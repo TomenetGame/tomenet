@@ -166,6 +166,13 @@ void do_cmd_go_up(int Ind)
 
 	/* Create a way back */
 	create_down_stair = TRUE;
+
+	check_Morgoth();
+
+	/* Did we enter a no-tele vault? */
+	//wpos=&p_ptr->wpos;
+	if(!(zcave=getcave(wpos))) return;
+	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) msg_print(Ind, "\377DThe air in here feels very still.");
 }
 
 /*
@@ -376,6 +383,13 @@ void do_cmd_go_down(int Ind)
 
 	/* Create a way back */
 	create_up_stair = TRUE;
+
+	check_Morgoth();
+
+	/* Did we enter a no-tele vault? */
+	//wpos=&p_ptr->wpos;
+	if(!(zcave=getcave(wpos))) return;
+	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) msg_print(Ind, "\377DThe air in here feels very still.");
 }
 
 
@@ -505,7 +519,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* Otherwise drop an item */
 				else
 				{
-					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, p_ptr->luck_cur);
 				}
 
 				/* Reset the object level */
@@ -1337,7 +1351,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					{
 //						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
 						place_object(wpos, y, x, magik(mining), magik(mining / 10),
-								default_obj_theme);
+								default_obj_theme, p_ptr->luck_cur);
 						if (player_can_see_bold(Ind, y, x))
 						{
 							msg_print(Ind, "You have found something!");
@@ -2486,26 +2500,26 @@ static void do_arrow_brand_effect(int Ind, int y, int x)
 	switch (p_ptr->bow_brand_t)
 	{
 		case BRAND_BALL_FIRE:
-			project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+			project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 			break;
 		case BRAND_BALL_COLD:
-			project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+			project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 			break;
 		case BRAND_BALL_ELEC:
-			project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+			project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 			break;
 		case BRAND_BALL_ACID:
-			project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+			project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 			break;
 		case BRAND_BALL_SOUND:
-			project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+			project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL, "");
 			break;
 		case BRAND_SHARP:
 			/* Nothing here */
 			break;
 		case BRAND_CONF:
 			/* XXX This allows the target player to 'dodge' the effect... */
-			project(0 - Ind, 0, &p_ptr->wpos, y, x, 1, GF_CONFUSION, PROJECT_JUMP | PROJECT_KILL);
+			project(0 - Ind, 0, &p_ptr->wpos, y, x, 1, GF_CONFUSION, PROJECT_JUMP | PROJECT_KILL, "");
 			break;
 	}
 }
@@ -2523,9 +2537,11 @@ void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x)
 		case SV_AMMO_LIGHT: rad = 2; dam /= 2; break;
 		case SV_AMMO_NORMAL: rad = 3; break;
 		case SV_AMMO_HEAVY: rad = 4; dam *= 2; break;
+		//case SV_AMMO_MAGIC <- magic arrows only, don't explode
+		case SV_AMMO_SILVER: rad = 3; break;
 	}
 
-	project(0 - Ind, rad, wpos, y, x, dam, o_ptr->pval, flag);
+	project(0 - Ind, rad, wpos, y, x, dam, o_ptr->pval, flag, "");
 }
 
 /*
@@ -2644,11 +2660,11 @@ void do_cmd_fire(int Ind, int dir)
 	{
 		set_invuln(Ind, 0);
 	}
+#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_wraith)
 	{
 		set_tim_wraith(Ind, 0);
@@ -2722,7 +2738,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Is this Magic Arrow? */
 	magic = ((o_ptr->sval == SV_AMMO_MAGIC) &&
-			(!cursed_p(o_ptr) || true_artifact_p(o_ptr)))?TRUE:FALSE;
+			(!cursed_p(o_ptr) || artifact_p(o_ptr)))?TRUE:FALSE;
 
 	/* Ricochets ? */
 #if 0 // DG - no
@@ -2749,7 +2765,7 @@ void do_cmd_fire(int Ind, int dir)
 	if (!boomerang)
 	{
 		/* C. Blue - Artifact ammo never runs out (similar to magic arrows:) */
-		if (true_artifact_p(o_ptr))
+		if (artifact_p(o_ptr))
 		{
 			if (item >= 0)
 			{
@@ -2781,7 +2797,7 @@ void do_cmd_fire(int Ind, int dir)
 			/* Magic Ammo are NOT allowed to be enchanted */
 		{
 			/* C. Blue - Except magic artifact ammo: */
-			if (!true_artifact_p(o_ptr))
+			if (!artifact_p(o_ptr))
 				o_ptr->to_h = o_ptr->to_d = o_ptr->name2 = o_ptr->pval = 0;
 			if (item >= 0)
 			{
@@ -3045,7 +3061,7 @@ void do_cmd_fire(int Ind, int dir)
 								else
 								{
 									/* Messages */
-									msg_format(Ind, "The %s hits %s for \377o%d \377wdamage.", o_name, p_name, tdam);
+									msg_format(Ind, "The %s hits %s for \377y%d \377wdamage.", o_name, p_name, tdam);
 									if ((o_name[0] == 'A') || (o_name[0] == 'E') || (o_name[0] == 'I') || (o_name[0] == 'O') || (o_name[0] == 'U') ||
 									    (o_name[0] == 'a') || (o_name[0] == 'e') || (o_name[0] == 'i') || (o_name[0] == 'o') || (o_name[0] == 'u'))
 										msg_format(0 - c_ptr->m_idx, "%^s hits you with an %s for \377R%d \377wdamage.", p_ptr->name, o_name, tdam);
@@ -3406,7 +3422,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Drop (or break) near that location */
 	/* by C. Blue - Now art ammo never drops, since it doesn't run out */
-	if ((!magic) && (!true_artifact_p(o_ptr))) drop_near(o_ptr, breakage, wpos, y, x);
+	if ((!magic) && (!artifact_p(o_ptr))) drop_near(o_ptr, breakage, wpos, y, x);
 
 	suppress_message = FALSE;
 }
@@ -3555,11 +3571,11 @@ void do_cmd_throw(int Ind, int dir, int item)
 	{
 		set_invuln(Ind, 0);
 	}
+#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_wraith)
 	{
 		set_tim_wraith(Ind, 0);
@@ -3816,7 +3832,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 					else
 					{
 						/* Messages */
-						msg_format(Ind, "The %s hits %s for \377o%d \377wdamage.", o_name, p_name, tdam);
+						msg_format(Ind, "The %s hits %s for \377y%d \377wdamage.", o_name, p_name, tdam);
 						if ((o_name[0] == 'A') || (o_name[0] == 'E') || (o_name[0] == 'I') || (o_name[0] == 'O') || (o_name[0] == 'U') ||
 						    (o_name[0] == 'a') || (o_name[0] == 'e') || (o_name[0] == 'i') || (o_name[0] == 'o') || (o_name[0] == 'u'))
 							msg_format(0 - c_ptr->m_idx, "%^s hits you with an %s for \377R%d \377wdamage.", p_ptr->name, o_name, tdam);

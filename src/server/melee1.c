@@ -1973,13 +1973,15 @@ bool make_attack_normal(int Ind, int m_idx)
 							/* Our client cannot handle message wrapping.. */
 //							msg_format(Ind, "%^s disrupts your aura of death which explodes into a wave of plasma.", m_name);
 							msg_print(Ind, "It explodes into a wave of plasma!");
-							fire_ball(Ind, GF_PLASMA, 0, 10 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1);
+							sprintf(p_ptr->attacker, " eradiates a wave of plasma for", p_ptr->name);
+							fire_ball(Ind, GF_PLASMA, 0, 10 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
 						}
 						else
 						{
 //							msg_format(Ind, "%^s disrupts your aura of death which explodes into a wave of ice.", m_name);
 							msg_print(Ind, "It explodes into a wave of ice!");
-							fire_ball(Ind, GF_ICE, 0, 10 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1);
+							sprintf(p_ptr->attacker, " eradiates a wave of ice for", p_ptr->name);
+							fire_ball(Ind, GF_ICE, 0, 10 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
 						}
 					}
 				}

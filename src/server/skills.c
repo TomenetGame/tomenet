@@ -198,7 +198,11 @@ void increase_skill(int Ind, int i)
 	}
 
 	/* The skill is already maxed */
-	if (p_ptr->s_info[i].value >= SKILL_MAX)
+	/* Some extra ability skills don't go over 1 ('1' meaning 'learnt') */
+	if ((p_ptr->s_info[i].value >= SKILL_MAX) ||
+	    ((p_ptr->s_info[i].value >= 1000) &&
+	    ((i == SKILL_CLIMB) || (i == SKILL_FLY) ||
+	    (i == SKILL_FREEACT) || (i == SKILL_RESCONF))))
 	{
 		Send_skill_info(Ind, i);
 		return;
@@ -218,6 +222,13 @@ void increase_skill(int Ind, int i)
 	p_ptr->s_info[i].value += p_ptr->s_info[i].mod;
 	if (p_ptr->s_info[i].value >= SKILL_MAX) p_ptr->s_info[i].value = SKILL_MAX;
 
+	/* extra abilities cap at 1000 */
+	if ((p_ptr->s_info[i].value >= 1000) &&
+	    ((i == SKILL_CLIMB) || (i == SKILL_FLY) ||
+	    (i == SKILL_FREEACT) || (i == SKILL_RESCONF)))
+		p_ptr->s_info[i].value = 1000;
+
+	/* Increase the skill */
 	increase_related_skills(Ind, i);
 
 	/* Update the client */
@@ -408,7 +419,12 @@ void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 			if (s_info[i].mod == 0) color = TERM_L_DARK;
 			else color = TERM_ORANGE;
 		}
-		else if (s_info[i].value == SKILL_MAX) color = TERM_L_BLUE;
+		else if ((s_info[i].value == SKILL_MAX) ||
+			((s_info[i].value == 1000) &&
+	    		((i == SKILL_CLIMB) || (i == SKILL_FLY) ||
+			(i == SKILL_FREEACT) || (i == SKILL_RESCONF))))
+			color = TERM_L_BLUE;
+
 		if (s_info[i].hidden) color = TERM_L_RED;
 		if (j == sel)
 		{

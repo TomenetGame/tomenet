@@ -13,13 +13,13 @@ MAGELOCK = add_spell
         		if get_level(Ind, MAGELOCK, 50) >= 30 then
 	        		local ret, x, y, c_ptr
 
-                		if get_level(Ind, MAGELOCK, 50) >= 40 then
-        	                	ret, x, y = tgt_pt()
-		                        if ret == FALSE then return end
-                                else
+--                		if get_level(Ind, MAGELOCK, 50) >= 40 then
+--        	                	ret, x, y = tgt_pt()
+--		                        if ret == FALSE then return end
+--                                else
                                 	y = player.py
                                         x = player.px
-                                end
+--                                end
                         	cave_set_feat(player.wpos, y, x, 3)
                         else
                                 wizard_lock(Ind, args.dir)
@@ -30,8 +30,8 @@ MAGELOCK = add_spell
 	end,
         ["desc"] =	{
         		"Magicaly locks a door",
-                        "At level 30 it creates a glyph of warding",
-                        "At level 40 the glyph can be placed anywhere in the field of vision"
+                        "At level 30 it creates a glyph of warding"
+--                        ,"At level 40 the glyph can be placed anywhere in the field of vision"
         }
 }
 
@@ -46,9 +46,9 @@ SLOWMONSTER = add_spell
         ["direction"] = TRUE,
         ["spell"] = 	function(args)
                         if get_level(Ind, SLOWMONSTER, 50) >= 20 then
-                        	fire_ball(Ind, GF_OLD_SLOW, args.dir, 40 + get_level(Ind, SLOWMONSTER, 160), 1)
+                        	fire_ball(Ind, GF_OLD_SLOW, args.dir, 40 + get_level(Ind, SLOWMONSTER, 160), 1, "")
                         else
-                        	fire_bolt(Ind, GF_OLD_SLOW, args.dir, 40 + get_level(Ind, SLOWMONSTER, 160))
+                        	fire_bolt(Ind, GF_OLD_SLOW, args.dir, 40 + get_level(Ind, SLOWMONSTER, 160), "")
                         end
 	end,
 	["info"] = 	function()
@@ -75,7 +75,7 @@ ESSENSESPEED = add_spell
         ["spell"] = 	function()
         		set_fast(Ind, 10 + randint(10) + get_level(Ind, ESSENSESPEED, 50), 5 + get_level(Ind, ESSENSESPEED, 20))
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_SPEED_PLAYER, 0, 50 + get_level(Ind, ESSENSESPEED, 50), player.spell_project)
+                                fire_ball(Ind, GF_SPEED_PLAYER, 0, 50 + get_level(Ind, ESSENSESPEED, 50), player.spell_project, "")
                         end
 	end,
 	["info"] = 	function()

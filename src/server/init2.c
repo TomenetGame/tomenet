@@ -2934,6 +2934,10 @@ static void set_server_option(char * option, char * value)
 	{
 		cfg.no_ghost = str_to_boolean(value);
 	}
+	else if (!strcmp(option,"MAX_LIFES"))
+	{
+		cfg.lifes = atoi(value);
+	}
 	else if (!strcmp(option,"DOOR_BUMP_OPEN"))
 	{
 		cfg.door_bump_open = atoi(value);
@@ -2989,6 +2993,34 @@ static void set_server_option(char * option, char * value)
 	else if (!strcmp(option,"ANTI_ARTS_SHOP"))
 	{
 		cfg.anti_arts_shop = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"ANTI_ARTS_PICKUP"))
+	{
+		cfg.anti_arts_pickup = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"ANTI_ARTS_SEND"))
+	{
+		cfg.anti_arts_send = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"ANTI_CHEEZE_PICKUP"))
+	{
+		cfg.anti_cheeze_pickup = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"SURFACE_ITEM_REMOVAL"))
+	{
+		cfg.surface_item_removal = atoi(value);
+	}
+	else if (!strcmp(option,"DUNGEON_SHOP_CHANCE"))
+	{
+		cfg.dungeon_shop_chance = atoi(value);
+	}
+	else if (!strcmp(option,"DUNGEON_SHOP_TYPE"))
+	{
+		cfg.dungeon_shop_type = atoi(value);
+	}
+	else if (!strcmp(option,"DUNGEON_SHOP_TIMEOUT"))
+	{
+		cfg.dungeon_shop_timeout = atoi(value);
 	}
 	else if (!strcmp(option,"SPELL_STACK_LIMIT"))
 	{
@@ -3081,6 +3113,10 @@ static void set_server_option(char * option, char * value)
 	else if (!strcmp(option, "QUIT_BAN_MODE"))
 	{
 		cfg.quit_ban_mode = atoi(value);
+	}
+	else if (!strcmp(option,"LOG_U"))
+	{
+		cfg.log_u = str_to_boolean(value);
 	}
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }

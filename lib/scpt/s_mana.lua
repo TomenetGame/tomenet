@@ -14,7 +14,7 @@ MANATHRUST = add_spell
         ["fail"] = 	10,
         ["direction"] = TRUE,
         ["spell"] = 	function(args)
-	        	fire_bolt(Ind, GF_MANA, args.dir, damroll(get_manathrust_dam()))
+	        	fire_bolt(Ind, GF_MANA, args.dir, damroll(get_manathrust_dam()), " casts a mana bolt for")
 	end,
 	["info"] = 	function()
 	        	local x, y
@@ -61,15 +61,19 @@ RESISTS = add_spell
         ["mana_max"] = 	20,
         ["fail"] = 	40,
         ["spell"] = 	function()
-                       	if player.oppose_fire == 0 then set_oppose_fire(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50)) end
-                       	if player.oppose_cold == 0 then set_oppose_cold(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50)) end
-                       	if player.oppose_elec == 0 then set_oppose_elec(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50)) end
-                       	if player.oppose_acid == 0 then set_oppose_acid(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50)) end
+--                       	if player.oppose_fire == 0 then set_oppose_fire(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50)) end
+--                       	if player.oppose_cold == 0 then set_oppose_cold(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50)) end
+--                       	if player.oppose_elec == 0 then set_oppose_elec(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50)) end
+--                       	if player.oppose_acid == 0 then set_oppose_acid(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50)) end
+                           	set_oppose_fire(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
+                           	set_oppose_cold(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
+                           	set_oppose_elec(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
+                           	set_oppose_acid(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50))
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_RESFIRE_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), player.spell_project)
-                                fire_ball(Ind, GF_RESCOLD_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), player.spell_project)
-                                fire_ball(Ind, GF_RESELEC_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), player.spell_project)
-                                fire_ball(Ind, GF_RESACID_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), player.spell_project)
+                                fire_ball(Ind, GF_RESFIRE_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), player.spell_project, "")
+                                fire_ball(Ind, GF_RESCOLD_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), player.spell_project, "")
+                                fire_ball(Ind, GF_RESELEC_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), player.spell_project, "")
+                                fire_ball(Ind, GF_RESACID_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), player.spell_project, "")
                         end
 	end,
 	["info"] = 	function()
@@ -85,28 +89,29 @@ MANASHIELD = add_spell
 {
 	["name"] = 	"Disruption Shield",
         ["school"] = 	SCHOOL_MANA,
-        ["level"] = 	45,
+--        ["level"] = 	45,
+        ["level"] = 	40,
         ["mana"] = 	50,
         ["mana_max"] = 	50,
         ["fail"] = 	-200,
         ["spell"] = 	function()
-        		if get_level(Ind, MANASHIELD, 50) >= 5 then
-	                       	if (player.invuln == 0) then
-                                	set_invuln(Ind, randint(5) + 15 + get_level(Ind, MANASHIELD, 15))
-                                end
-			else
-	                       	if (player.tim_manashield == 0) then
-                                	set_tim_manashield(Ind, randint(5) + 15 + get_level(Ind, MANASHIELD, 15))
-                                end
-                        end
+--        		if get_level(Ind, MANASHIELD, 50) >= 5 then
+--	                       	if (player.invuln == 0) then
+--                                	set_invuln(Ind, randint(5) + 15 + get_level(Ind, MANASHIELD, 15))
+--				end
+--			else
+--	                       	if (player.tim_manashield == 0) then
+                                	set_tim_manashield(Ind, randint(5) + 20 + get_level(Ind, MANASHIELD, 75))
+--                                end
+--			end
         end,
 	["info"] = 	function()
-			return "dur "..(15 + get_level(Ind, MANASHIELD, 15)).."+d5"
+			return "dur "..(5 + get_level(Ind, MANASHIELD, 45)).."+d5"
 	end,
         ["desc"] =	{
-        		"Uses mana instead of hp to take damage",
-        		"At level 5 switches to globe of invulnerability",
-                        "The spell breaks as soon as a melee, shooting,",
-                        "throwing or magical skill action is attempted"
+        		"Uses mana instead of hp to take damage"
+--        		"At level 5 switches to globe of invulnerability",
+--                        "The spell breaks as soon as a melee, shooting,",
+--                        "throwing or magical skill action is attempted"
 		}
 }

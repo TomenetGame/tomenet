@@ -57,54 +57,81 @@ extern int lookup_player_id(cptr name);
 struct server_opts
 {
 	s16b runlevel;		/* Glorified shutdown mode */
+        time_t runtime;         /* Server start time */
 	time_t closetime;	/* Server closedown time */
 	char * meta_address;
+        s16b meta_port;
+
 	char * bind_name;
-	/* char * console_password; */
+	char * console_password;
 	char * admin_wizard;
 	char * dungeon_master;
+        char * wserver;
+
+        char * pass;
 	s32b preserve_death_level;
 	s32b unique_respawn_time;
 	s32b unique_max_respawn_time;
 	s32b level_unstatic_chance;
+
 	s32b min_unstatic_level;
 	s32b retire_timer;
 	s32b game_port;
 	s32b console_port;
+        s32b gw_port;
+
 	s32b spell_interfere;
 	s32b spell_stack_limit;
 	s16b fps;
 	s16b newbies_cannot_drop;
 	s16b running_speed;
+
 	s16b anti_scum;
 	s16b dun_unusual;
 	s16b town_x;
 	s16b town_y;
 	s16b town_base;
+
 	s16b dun_base;
 	s16b dun_max;
 	s16b store_turns;
 	char resting_rate;
 	char party_xp_boost;
+
 	char use_pk_rules;
 	char quit_ban_mode;
 	char zang_monsters;
 	char pern_monsters;
 	char cth_monsters;
+
 	char joke_monsters;
 	char vanilla_monsters;
 	char pet_monsters;
 	bool report_to_meta;
 	bool secret_dungeon_master;
+
+	bool anti_arts_hoard;
 	bool anti_arts_house;
 	bool anti_arts_shop;
+	bool anti_arts_pickup;
+	bool anti_arts_send;
+
+	bool anti_cheeze_pickup;
+	s16b surface_item_removal; /* minutes before items are cleared */
+	s16b dungeon_shop_chance; /* chance in percent * 10 of generation */
+	s16b dungeon_shop_type; /* type of generation (999=random) */
+	s16b dungeon_shop_timeout; /* time until it can be generated again */
+
 	bool mage_hp_bonus;
 	char door_bump_open;
 	bool no_ghost;
+	int lifes;
 	bool maximize;
 	bool kings_etiquette;
+
 	bool public_rfe;
 	bool auto_purge;
+	bool log_u;
 };
 
 extern s32b turn;
@@ -193,3 +220,6 @@ extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
 #define HOOK_LEVEL_END_GEN      43
 #define HOOK_NPCTEST		44	/* undecided on npc hooks atm */
 					/* this one is proximity activated */
+
+extern s32b dungeon_store_timer;	/* Keeps track of its generation */
+extern bool night_surface;		/* Is it night outside? */

@@ -1178,7 +1178,7 @@ static void Delete_player(int Ind)
 			if (i == Ind) continue;
 
 			/* Send a little message */
-			msg_format(i, "%s%s has left the game.", title, p_ptr->name);
+			msg_format(i, "\377U%s%s has left the game.", title, p_ptr->name);
 		}
 	}
 
@@ -1219,6 +1219,9 @@ static void Delete_player(int Ind)
 	}
 
 	NumPlayers--;
+
+	/* Update Morgoth eventually if the player was on his level */
+	check_Morgoth();
 
 	/* Tell the metaserver about the loss of a player */	
 	Report_to_meta(META_UPDATE);
@@ -2080,6 +2083,9 @@ static int Handle_login(int ind)
 
 	save_server_info();
 
+	/* Check Morgoth, if player had saved a level where he was generated */
+	check_Morgoth();
+
 	/* Handle the cfg_secret_dungeon_master option */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) return 0;
 
@@ -2094,7 +2100,6 @@ static int Handle_login(int ind)
 
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
-
 		if (p_ptr->total_winner)
 		  {
 			if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST))
@@ -2106,8 +2111,7 @@ static int Handle_login(int ind)
 			title = (p_ptr->male)?"King ":"Queen ";
 		      }
 		  }
-
-		msg_format(i, "%s%s has entered the game.", title, p_ptr->name);
+		msg_format(i, "\377U%s%s has entered the game.", title, p_ptr->name);
 	}
 
 	if(p_ptr->quest_id){
@@ -2119,6 +2123,16 @@ static int Handle_login(int ind)
 		}
 	}
 
+	if(!(p_ptr->mode & MODE_NO_GHOST) &&
+	    !(p_ptr->mode & MODE_HELL) &&
+	    !cfg.no_ghost && cfg.lifes)
+	{
+		if (p_ptr->lives-1 == 1)
+    			msg_format(NumPlayers, "\377GYou have no more resurrections left!");
+	        else
+			msg_format(NumPlayers, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
+	}
+	
 	/* Tell the meta server about the new player */
 	Report_to_meta(META_UPDATE);
 
@@ -5532,10 +5546,12 @@ static int Receive_activate_skill(int ind)
 			{
 				set_invuln(player, 0);
 			}
+#if 0
 			if (p_ptr->tim_manashield)
 			{
 				set_tim_manashield(player, 0);
 			}
+#endif
 		}
 
 		switch (mkey)

@@ -491,7 +491,8 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 	int i;
 
 	i=gettown(Ind);
-	if(i==-1) return(0);
+//	if(i==-1) return(0);	//DUNGEON STORES
+	if(i==-1) i = 0;
 
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 //	ot_ptr = &owners[p_ptr->store_num][town[i].townstore[p_ptr->store_num].owner];
@@ -573,9 +574,11 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		/* Never get "silly" */
 		if (adjust < 100 + STORE_BENEFIT) adjust = 100 + STORE_BENEFIT;
 
-		/* Mega-Hack -- Black market sucks */
-		//if (p_ptr->store_num == 6) price = price * 4;
-		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price *= 4;
+		/* some shops are extra expensive */
+		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE16) price *= 16;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE4) price *= 4;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE2) price *= 2;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE1) price = (price * 3) / 2;
 
 		/* You're not a welcomed customer.. */
 		if (p_ptr->tim_blacklist) price = price * 4;
@@ -673,10 +676,10 @@ static void mass_produce(object_type *o_ptr)
 		case TV_ARROW:
 		case TV_BOLT:
 		{
-			if (cost <= 10L) size += mass_roll(4, 4);
-			if (cost <= 100L) size += mass_roll(5, 5);
+			if (cost <= 10L) size += damroll(10, 2);
+			if (cost <= 100L) size += damroll(5, 3);
 			//if (cost <= 500L) 
-			size += mass_roll(6, 6);
+			size += damroll(20, 2);
 			break;
 		}
 	}
@@ -1444,6 +1447,9 @@ static void store_create(store_type *st_ptr)
 	object_type		tmp_obj;
 	object_type		*o_ptr = &tmp_obj;
 	int force_num = 0;
+        object_kind *k_ptr;
+	ego_item_type *e_ptr, *e2_ptr;
+	bool good, great;
 
 
 	/* Paranoia -- no room left */
@@ -1468,11 +1474,11 @@ static void store_create(store_type *st_ptr)
 			/* Does it pass the rarity check ? */
 			/* Balancing check for other items!!! */
 			if (!magik(chance) || magik(60)) i=0;
-			else{
+			else {
 				/* Hack -- mass-produce for black-market promised items */
 				if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
 				{
-					force_num = rand_range(3, 9);
+					force_num = rand_range(2, 5);//was 3,9
 				}
 			}
 
@@ -1482,13 +1488,13 @@ static void store_create(store_type *st_ptr)
 
 				/* Clear restriction */
 				get_obj_num_hook = NULL;
-
+	
 				/* Prepare allocation table */
 				get_obj_num_prep();
-
+	
 				/* Random item (usually of given level) */
 				i = get_obj_num(level);
-			
+    				
 				/* Handle failure */
 				if (!i) continue;
 			}
@@ -1542,12 +1548,15 @@ static void store_create(store_type *st_ptr)
 			if (!i) continue;
 		}
 
-
-		/* Create a new object of the chosen kind */
 		invcopy(o_ptr, i);
 
 		/* Apply some "low-level" magic (no artifacts) */
-		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, FALSE, FALSE);
+		/* ego flags check */
+		if (st_info[st_ptr->st_idx].flags1 & SF1_GOOD) good = TRUE;
+		else good = FALSE;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_GREAT) great = TRUE;
+		else great = FALSE;
+		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, good, great);
 
 		/* Hack -- Charge lite uniformly */
 		if (o_ptr->tval == TV_LITE)
@@ -1563,7 +1572,6 @@ static void store_create(store_type *st_ptr)
 			}
 		}
 
-
 		/* The item is "known" */
 		object_known(o_ptr);
 
@@ -1573,12 +1581,12 @@ static void store_create(store_type *st_ptr)
 
 		/* Prune the black market */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
-		{
+	    	{
 			/* Hack -- No "crappy" items */
 			if (black_market_crap(o_ptr)) continue;
 
 			/* Hack -- No "cheap" items */
-			if (object_value(0, o_ptr) < 10) continue;
+			if (object_value(0, o_ptr) <= 50) continue; //was <10
 
 			/* No "worthless" items */
 			/* if (object_value(o_ptr) <= 0) continue; */
@@ -1601,19 +1609,98 @@ static void store_create(store_type *st_ptr)
 			if (object_value(0, o_ptr) <= 0) continue;
 
 			/* ego rarity control for normal stores */
-			if ((o_ptr->name2 || o_ptr->name2b) && !magik(STORE_EGO_CHANCE))
-				continue;
+			if ((o_ptr->name2 || o_ptr->name2b))
+			{
+				if ((!(st_info[st_ptr->st_idx].flags1 & SF1_EGO)) &&
+				    !magik(STORE_EGO_CHANCE))
+					continue;
+			}
 
 			/* Hack -- General store shouldn't sell too much aman cloaks etc */
 			if (st_ptr->st_idx == 0 && object_value(0, o_ptr) > 1000 &&
-					magik(33)) continue;
+			    magik(33) && 
+			    !(st_info[st_ptr->st_idx].flags1 & SF1_EGO))
+				continue;
 		}
 
+		/* Shop has many egos? */
+		if (!(o_ptr->name2 || o_ptr->name2b))
+		{
+			if ((st_info[st_ptr->st_idx].flags1 & SF1_EGO) &&
+			    (magik(50)))
+				continue;
+		}
+		/* Shop has extra rare egos? */
+		if ((o_ptr->name2 || o_ptr->name2b))
+		{
+			if ((st_info[st_ptr->st_idx].flags1 & SF1_RARE_EGO) &&
+			    (object_value(0, o_ptr) < 25000) &&
+			    (magik(50)))
+				continue;
+		}
+
+		/* Is the item too cheap for this shop? */
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS1) && (object_value(0, o_ptr) < 3000))
+			continue;
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS1) && (object_value(0, o_ptr) < 8000))
+			continue;
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS2) && (object_value(0, o_ptr) < 15000))
+			continue;
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS4) && (object_value(0, o_ptr) < 20000))
+			continue;
+
+		/* Further store flag checks */
+		k_ptr = &k_info[o_ptr->k_idx];
+		e_ptr = &e_info[o_ptr->name2]; //unused atm
+		e2_ptr = &e_info[o_ptr->name2b];//unused atm
+		/* Rare enough? */
+		/* Interesting numbers: 3+, 6+, 8+, 16+ */
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_VERY_RARE))
+		{
+	    		if ((k_ptr->chance[0] < 8) && (k_ptr->chance[1] < 8) &&
+    			    (k_ptr->chance[2] < 8) && (k_ptr->chance[3] < 8))
+				continue;
+		}
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_RARE))
+		{
+    			if ((k_ptr->chance[0] < 3) && (k_ptr->chance[1] < 3) &&
+    			    (k_ptr->chance[2] < 3) && (k_ptr->chance[3] < 3))
+				continue;
+		}
+
+#if 0
+/* MEDIUM_LEVEL and DEEP_LEVEL are already checked in apply_magic,
+let's depend on SF1*RARE flags here.. */
+		/* Deep enough? */
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_DEEP_LEVEL) &&
+		    ((k_ptr->locale[0] < 50) && (k_ptr->locale[1] < 50) &&
+		    (k_ptr->locale[2] < 50) && (k_ptr->locale[3] < 50)))
+			continue;	
+		else if ((st_info[st_ptr->st_idx].flags1 & SF1_MEDIUM_LEVEL) &&
+		    ((k_ptr->locale[0] < 25) && (k_ptr->locale[1] < 25) &&
+		    (k_ptr->locale[2] < 25) && (k_ptr->locale[3] < 25)))
+			continue;
+#endif
 
 		/* Mass produce and/or Apply discount */
 		mass_produce(o_ptr);
-		
-		if (force_num) o_ptr->number = force_num;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT2) {
+		    /* Reduce discount */
+		    if (o_ptr->discount == 10) o_ptr->discount = 0;
+		    if (o_ptr->discount == 25) o_ptr->discount = 10;
+		    if (o_ptr->discount == 50) o_ptr->discount = 20;
+		    if (o_ptr->discount == 75) o_ptr->discount = 25;
+		    if (o_ptr->discount == 90) o_ptr->discount = 25;
+		    if (o_ptr->discount == 100) o_ptr->discount = 25;
+		}
+		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT) {
+		    /* Reduce discount */
+		    o_ptr->discount = 0;
+		}
+
+		if ((force_num) && (o_ptr->tval != TV_SHOT) &&
+		    (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT))
+			o_ptr->number = force_num;
 
 		/* Attempt to carry the (known) item */
 		(void)store_carry(st_ptr, o_ptr);
@@ -1697,7 +1784,8 @@ static void display_entry(int Ind, int pos)
 	int maxwid = 75;
 
 	i=gettown(Ind);
-	if(i==-1) return;
+//	if(i==-1) return;	//DUNGEON STORES
+	if(i==-1) i=0;
 	
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 //	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];
@@ -1777,7 +1865,8 @@ static void display_inventory(int Ind)
 	int i;
 	
 	i=gettown(Ind);
-	if(i==-1) return;
+//	if(i==-1) return;	//DUNGEON STORES
+	if(i==-1) i=0;
 
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 
@@ -1817,7 +1906,8 @@ static void display_store(int Ind)
 	int i;
 
 	i=gettown(Ind);
-	if(i==-1) return;
+//	if(i==-1) return;	//DUNGEON STORES
+	if(i==-1) i=0;
 
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 	ot_ptr = &ow_info[st_ptr->owner];
@@ -1888,7 +1978,8 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s32b *price)
 	int i;
 
 	i=gettown(Ind);
-	if(i==-1) return(FALSE);
+//	if(i==-1) return(FALSE);       //DUNGEON STORES
+        if(i==-1) i=0;
 
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 //	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];
@@ -2021,7 +2112,8 @@ void store_stole(int Ind, int item)
 	}
 
 	i=gettown(Ind);
-	if(i==-1) return;
+//	if(i==-1) return;       //DUNGEON STORES
+        if(i==-1) i=0;
 
 	if (p_ptr->store_num==-1){
 		msg_print(Ind,"You left the shop!");
@@ -2069,6 +2161,13 @@ void store_stole(int Ind, int item)
 		return;
 	}
 
+	/* shopkeepers in special shops are often especially careful */
+	if (st_info[st_ptr->st_idx].flags1 & SF1_NO_STEAL)
+	{
+		msg_print(Ind, "The shopkeeper watches the items extremely cautiously!");
+		return;
+	}
+
 	/* Determine the "best" price (per item) */
 	/* NOTE: it's used to determine the penalty when stealing failed */
 	best = price_item(Ind, &sell_obj, ot_ptr->min_inflate, FALSE);
@@ -2076,6 +2175,7 @@ void store_stole(int Ind, int item)
 	/* shopkeeper watches expensive items carefully */
 	tcadd = 100;
 	tbest = object_value(Ind, o_ptr);
+
 	if (tbest > 10000000) tbest = 10000000;
 	tccompare = 10;
 	while((tccompare / 10) < tbest)
@@ -2098,6 +2198,12 @@ void store_stole(int Ind, int item)
 	    (5 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
 	    (get_skill_scale(p_ptr, SKILL_STEALING, 25));
 	if (chance < 1) chance = 1;
+
+	/* shopkeepers in special shops are often especially careful */
+	if (st_info[st_ptr->st_idx].flags1 & SF1_VHARD_STEAL)
+		chance += 30;
+	else if (st_info[st_ptr->st_idx].flags1 & SF1_HARD_STEAL)
+		chance += 15;
 
 	/* always 1% chance to fail, so that ppl won't macro it */
 	/* 1% pfft. 5% and rising... */
@@ -2259,7 +2365,8 @@ void store_purchase(int Ind, int item, int amt)
 	}
 
 	i=gettown(Ind);
-	if(i==-1) return;
+//	if(i==-1) return;       //DUNGEON STORES
+        if(i==-1) i=0;
 
 	if (p_ptr->store_num==-1){
 		msg_print(Ind,"You left the shop!");
@@ -2309,6 +2416,21 @@ void store_purchase(int Ind, int item, int amt)
 
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
+
+	/* Check if the player is powerful enough for that item */
+        if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev))
+        {
+                if (cfg.anti_cheeze_pickup)
+                {
+                        msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
+                        return;
+                }
+                if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
+                {
+                        msg_print(Ind, "You aren't powerful enough yet to pick up that artefact!");
+                        return;
+                }
+	}
 
 	/* Assume the player wants just one of them */
 	/*amt = 1;*/
@@ -2653,11 +2775,21 @@ void store_sell(int Ind, int item, int amt)
 //	store_type *st_ptr = &town[townval].townstore[i];
 
 	/* Is there room in the store (or the home?) */
+	if (gettown(Ind)!=-1)	//DUNGEON STORES
+	{
 	if (!store_check_num(&town[gettown(Ind)].townstore[p_ptr->store_num], &sold_obj))
 	{
 		if (p_ptr->store_num == 7) msg_print(Ind, "Your home is full.");
 		else msg_print(Ind, "I have not the room in my store to keep it.");
 		return;
+	}
+	}else{
+	if (!store_check_num(&town[0].townstore[p_ptr->store_num], &sold_obj))
+	{
+		if (p_ptr->store_num == 7) msg_print(Ind, "Your home is full.");
+		else msg_print(Ind, "I have not the room in my store to keep it.");
+		return;
+	}
 	}
 
 	/* Museum */
@@ -2846,7 +2978,10 @@ void store_confirm(int Ind)
 
 	/* The store gets that (known) item */
 //	if(sold_obj.tval!=8)	// What was it for.. ?
+	if(gettown(Ind)!=-1) //DUNGEON STORES
 		item_pos = store_carry(&town[gettown(Ind)].townstore[p_ptr->store_num], &sold_obj);
+	else
+		item_pos = store_carry(&town[0].townstore[p_ptr->store_num], &sold_obj);
 //		item_pos = store_carry(p_ptr->store_num, &sold_obj);
 
 	/* Resend the basic store info */
@@ -2886,7 +3021,8 @@ void store_examine(int Ind, int item)
 	}
 
 	i=gettown(Ind);
-	if(i==-1) return;
+//	if(i==-1) return;       //DUNGEON STORES
+        if(i==-1) i=0;
 
 	st_ptr = &town[i].townstore[st];
 //	ot_ptr = &owners[st][st_ptr->owner];
@@ -3005,8 +3141,10 @@ void do_cmd_store(int Ind)
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
 	i=gettown(Ind);
-	if(i==-1) return;
+//	if(i==-1) return;	//DUNGEON STORES
+	if(i == -1) i = 0;	// INITIATING MAD HACK >:) (C. Blue)
 
 	/* Verify a store */
 #if 0
@@ -3032,12 +3170,13 @@ void do_cmd_store(int Ind)
 		return;
 	}
 
-
-	/* Hack -- Check the "locked doors" */
-	if (town[i].townstore[which].store_open >= turn)
-	{
-		msg_print(Ind, "The doors are locked.");
-		return;
+	if (i != -1){
+		/* Hack -- Check the "locked doors" */
+		if (town[i].townstore[which].store_open >= turn)
+		{
+			msg_print(Ind, "The doors are locked.");
+			return;
+		}
 	}
 
 	/* Hack -- Ignore the home */
@@ -3063,19 +3202,40 @@ void do_cmd_store(int Ind)
 	/* No automatic command */
 	/*command_new = 0;*/
 
-	st_ptr = &town[i].townstore[which];
+	if (gettown(Ind) != -1){
+		st_ptr = &town[i].townstore[which];
 
-	/* Make sure if someone is already in */
-	for (i = 1; i <= NumPlayers; i++)
-	{
-		/* Check this player */
-		j=gettown(i);
-		if(j!=-1){
-			if(st_ptr==&town[j].townstore[Players[i]->store_num])
-			{
-				msg_print(Ind, "The store is full.");
-				store_kick(Ind, FALSE);
-				return;
+		/* Make sure if someone is already in */
+		for (i = 1; i <= NumPlayers; i++)
+		{
+			/* Check this player */
+			j=gettown(i);
+			if(j!=-1){
+				if(st_ptr==&town[j].townstore[Players[i]->store_num])
+				{
+					msg_print(Ind, "The store is full.");
+					store_kick(Ind, FALSE);
+					return;
+				}
+			}
+		}
+	} else {
+		//DUNGEON STORES
+//		st_ptr =
+		st_ptr = &town[i].townstore[which];
+
+		/* Make sure if someone is already in */
+		for (i = 1; i <= NumPlayers; i++)
+		{
+			/* Check this player */
+			j=gettown(i);
+			if(j==-1){
+				if(st_ptr==&town[0].townstore[Players[i]->store_num])
+				{
+					msg_print(Ind, "The store is full.");
+					store_kick(Ind, FALSE);
+					return;
+				}
 			}
 		}
 	}
@@ -3145,6 +3305,10 @@ void store_shuffle(store_type *st_ptr)
 			if(st_ptr==&town[j].townstore[Players[i]->store_num])
 				return;
 		}
+		if(j==-1){	//DUNGEON STORES
+			if(st_ptr==&town[0].townstore[Players[i]->store_num])
+				return;
+		}
 	}
 
 	/* Pick a new owner */
@@ -3184,8 +3348,19 @@ void store_shuffle(store_type *st_ptr)
 		/* Hack -- Items are no longer "fixed price" */
 		o_ptr->ident &= ~ID_FIXED;
 
-		/* Mega-Hack -- Note that the item is "on sale" */
-		o_ptr->note = quark_add("on sale");
+		/* Some stores offer less or no discount */
+		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT) {
+		        o_ptr->discount = 0;
+		}
+		else if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT2) {
+			o_ptr->discount = 15;
+		        /* Mega-Hack -- Note that the item is "on sale" */
+			o_ptr->note = quark_add("15% off");
+		}
+		else {
+			/* Mega-Hack -- Note that the item is "on sale" */
+			o_ptr->note = quark_add("on sale");
+		}
 	}
 }
 
@@ -3222,6 +3397,13 @@ void store_maint(store_type *st_ptr)
 				else return;
 			}
 		}
+		if(j==-1){	//DUNGEON STORES
+			if(st_ptr==&town[0].townstore[Players[i]->store_num])
+			{
+				if (magik(40) && Players[i]->tim_store < STORE_TURNOUT / 2)
+					store_kick(i, TRUE);
+				else return;
+			}
 	}
 #endif	// 0
 
@@ -3369,7 +3551,8 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 
 
 	i=gettown(Ind);
-	if(i==-1) return;
+//	if(i==-1) return;       //DUNGEON STORES
+        if(i==-1) i=0;
 
 	/* sanity check - Yakina - */
 	if (p_ptr->store_num==-1){
@@ -3819,6 +4002,21 @@ void home_purchase(int Ind, int item, int amt)
 
 	/* Get the actual item */
 	o_ptr = &h_ptr->stock[item];
+
+	/* Check if the player is powerful enough for that item */
+        if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev))
+        {
+                if (cfg.anti_cheeze_pickup)
+                {
+                        msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
+                        return;
+                }
+                if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
+                {
+                        msg_print(Ind, "You aren't powerful enough yet to pick up that artefact!");
+                        return;
+                }
+	}
 
 	/* Assume the player wants just one of them */
 	/*amt = 1;*/

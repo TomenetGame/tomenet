@@ -398,7 +398,8 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 		//if(!strcmp(q_ptr->name,"")) modify_number=1; //wussy Cheezer
 		//if(!strcmp(q_ptr->name,"")) modify_number=2; //silyl Slacker
 		//if(!strcmp(q_ptr->name,"Duncan McLeod")) modify_number=3; //Highlander games Judge ;) Bread and games to them!!
-		//if(!strcmp(q_ptr->name,"Tomenet")) modify_number=4;//Server-specific Dungeon Masters
+		if(!strcmp(q_ptr->name,"Tomenet")) modify_number=4;//Server-specific Dungeon Masters
+		if(!strcmp(q_ptr->name,"C. Blue")) modify_number=4;//Server-specific Dungeon Masters
 	}
 	/* Print a message */
 #if 0
@@ -924,6 +925,8 @@ void do_cmd_check_server_settings(int Ind)
 	/* level preservation */
 	if (cfg.no_ghost)
 		fprintf(fff, "You disappear the moment you die, without becoming a ghost.\n");
+	if (cfg.lifes)
+		fprintf(fff, "Players with ghosts can be resurrected up to %d times until their soul\n will escape and their bodies will be permanently destroyed.\n", cfg.lifes);
 
 	fprintf(fff, "The floor will be erased about %d~%d seconds after you left.\n", cfg.anti_scum, cfg.anti_scum + 10);
 	if ((k=cfg.level_unstatic_chance))
@@ -938,12 +941,23 @@ void do_cmd_check_server_settings(int Ind)
 
 	fprintf(fff,"\n");
 		
+        /* Items */
+	if (cfg.anti_cheeze_pickup)
+		fprintf(fff, "Items cannot be transferred to a character of too low a level.\n");
+	if (cfg.surface_item_removal)
+		fprintf(fff, "Items on the world surface will be removed after %d minutes.\n", cfg.surface_item_removal);
+
+	fprintf(fff,"\n");
 
 	/* arts & winners */
 	if (cfg.anti_arts_hoard)
 		fprintf(fff, "True-Artifacts will disappear if you drop/leave them.\n");
 	else if (cfg.anti_arts_house)
 		fprintf(fff, "True-Artifacts will disappear if you drop/leave them inside a house.\n");
+	if (cfg.anti_arts_pickup)
+		fprintf(fff, "True-Artifacts cannot be transferred to a character of too low a level.\n");
+	if (cfg.anti_arts_send)
+		fprintf(fff, "True-Artifacts cannot be sent via telekinesis.\n");
 
 	if ((k=cfg.retire_timer) > 0)
 		fprintf(fff, "The winner will automatically retire after %d minutes.\n", k);

@@ -102,7 +102,7 @@ WRAITHFORM = add_spell
                         local dur = randint(30) + 20 + get_level(Ind, WRAITHFORM, 40)
                        	set_tim_wraith(Ind, dur)
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_WRAITH_PLAYER, 0, dur, player.spell_project)
+                                fire_ball(Ind, GF_WRAITH_PLAYER, 0, dur, player.spell_project, "")
                         end
 	end,
 	["info"] = 	function()

@@ -72,7 +72,7 @@ DISPERSEMAGIC = add_spell
                         end
                         if get_level(Ind, DISPERSEMAGIC, 50) >= 15 then
 	                        set_stun(Ind, 0)
-	                        set_meditation(Ind, 0)
+	                        -- set_meditation(Ind, 0)
 	                        set_cut(Ind, 0)
                         end
                         if get_level(Ind, DISPERSEMAGIC, 50) >= 20 then
@@ -91,7 +91,8 @@ DISPERSEMAGIC = add_spell
                         "Level 1: blindness",
                         "Level 5: confusion and hallucination",
                         "Level 10: speed (both bad or good)",
-                        "Level 15: stunning, meditation, cuts",
+                        -- "Level 15: stunning, meditation, cuts",
+			"Level 15: stunning, cuts",
                         "Level 20: hero, super hero, bless, shields, afraid",
         }
 }

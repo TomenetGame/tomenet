@@ -906,13 +906,11 @@ errr init_gcu(void)
 	  can_use_color = TRUE;
 	  COLORS=16;
 	  COLOR_PAIRS=16;
-
 #ifdef REDEFINE_COLORS
 	/* Can we change colors? */
 	can_fix_color = (can_use_color && can_change_color() &&
 	                 (COLOR_PAIRS >= 16));
 #endif
-
 	/* Attempt to use customized colors */
 	if (can_fix_color)
 	{
@@ -945,13 +943,42 @@ errr init_gcu(void)
 		init_color(13,    0, 1000,    0);	/* Light Green */
 		init_color(14,    0, 1000, 1000);	/* Light Blue */
 		init_color(15,  750,  500,  250);	/* Light Brown */
+
+		/* if (can_use_color) { */
+		init_pair(0, 0, 0);//black
+		init_pair(1, 1, 0);//white
+		init_pair(2, 2, 0);//grey
+		init_pair(3, 3, 0);//orange
+		init_pair(4, 4, 0);//red
+		init_pair(5, 5, 0);//green
+		init_pair(6, 6, 0);//blue
+		init_pair(7, 7, 0);//brown
+
+		/* Prepare the "Angband Colors" */
+		colortable[0] = (COLOR_PAIR(0) | A_NORMAL);	/* Black */
+		colortable[1] = (COLOR_PAIR(1) | A_NORMAL);	/* White */
+		colortable[2] = (COLOR_PAIR(2) | A_NORMAL);	/* Grey XXX */
+		colortable[3] = (COLOR_PAIR(3) | A_NORMAL);	/* Orange XXX */
+		colortable[4] = (COLOR_PAIR(4) | A_NORMAL);	/* Red */
+		colortable[5] = (COLOR_PAIR(5) | A_NORMAL);	/* Green */
+		colortable[6] = (COLOR_PAIR(6) | A_NORMAL);	/* Blue */
+		colortable[7] = (COLOR_PAIR(7) | A_NORMAL);	/* Umber */
+
+		colortable[8] = (COLOR_PAIR(0) | A_BRIGHT);	/* Dark-grey XXX */
+		colortable[9] = (COLOR_PAIR(1) | A_BRIGHT);	/* Light-grey XXX */
+		colortable[10] = (COLOR_PAIR(2) | A_BRIGHT);	/* Purple */
+		colortable[11] = (COLOR_PAIR(3) | A_BRIGHT);	/* Yellow */
+		colortable[12] = (COLOR_PAIR(4) | A_BRIGHT);	/* Light Red XXX */
+		colortable[13] = (COLOR_PAIR(5) | A_BRIGHT);	/* Light Green */
+		colortable[14] = (COLOR_PAIR(6) | A_BRIGHT);	/* Light Blue */
+		colortable[15] = (COLOR_PAIR(7) | A_NORMAL);	/* Light Umber XXX */
+		/* } */
 	}
 
 	/* Attempt to use colors */
-	/*else*/ if (can_use_color)
+	else if (can_use_color)
 	{
 		/* Color-pair 0 is *always* WHITE on BLACK */
-
 		/* Prepare the color pairs */
 		init_pair(1, COLOR_RED,     COLOR_BLACK);
 		init_pair(2, COLOR_GREEN,   COLOR_BLACK);
@@ -961,25 +988,30 @@ errr init_gcu(void)
 		init_pair(6, COLOR_CYAN,    COLOR_BLACK);
 		init_pair(7, COLOR_BLACK,   COLOR_BLACK);
 
-		/* Prepare the "Angband Colors" -- Bright white is too bright */
+		/* Prepare the "Angband Colors" */
 		colortable[0] = (COLOR_PAIR(7) | A_NORMAL);	/* Black */
-		colortable[1] = (COLOR_PAIR(0) | A_NORMAL);	/* White */
-		colortable[2] = (COLOR_PAIR(6) | A_NORMAL);	/* Grey XXX */
-		colortable[3] = (COLOR_PAIR(1) | A_BRIGHT);	/* Orange XXX */
+//		colortable[1] = (COLOR_PAIR(0) | A_NORMAL);	/* White */
+colortable[1] = (COLOR_PAIR(0) | A_BRIGHT);
+//		colortable[2] = (COLOR_PAIR(6) | A_NORMAL);	/* Grey XXX */
+colortable[2] = (COLOR_PAIR(0) | A_NORMAL);
+//		colortable[3] = (COLOR_PAIR(1) | A_BRIGHT);	/* Orange XXX */
+colortable[3] = (COLOR_PAIR(3) | A_NORMAL);
 		colortable[4] = (COLOR_PAIR(1) | A_NORMAL);	/* Red */
 		colortable[5] = (COLOR_PAIR(2) | A_NORMAL);	/* Green */
 		colortable[6] = (COLOR_PAIR(4) | A_NORMAL);	/* Blue */
 		colortable[7] = (COLOR_PAIR(3) | A_NORMAL);	/* Umber */
 		colortable[8] = (COLOR_PAIR(7) | A_BRIGHT);	/* Dark-grey XXX */
-		colortable[9] = (COLOR_PAIR(6) | A_BRIGHT);	/* Light-grey XXX */
+//		colortable[9] = (COLOR_PAIR(6) | A_BRIGHT);	/* Light-grey XXX */
+colortable[9] = (COLOR_PAIR(1) | A_BRIGHT);
 		colortable[10] = (COLOR_PAIR(5) | A_NORMAL);	/* Purple */
 		colortable[11] = (COLOR_PAIR(3) | A_BRIGHT);	/* Yellow */
-		colortable[12] = (COLOR_PAIR(5) | A_BRIGHT);	/* Light Red XXX */
+//		colortable[12] = (COLOR_PAIR(5) | A_BRIGHT);	/* Light Red XXX */
+		colortable[12] = (COLOR_PAIR(1) | A_BRIGHT);
 		colortable[13] = (COLOR_PAIR(2) | A_BRIGHT);	/* Light Green */
 		colortable[14] = (COLOR_PAIR(4) | A_BRIGHT);	/* Light Blue */
 		colortable[15] = (COLOR_PAIR(3) | A_NORMAL);	/* Light Umber XXX */
+//		colortable[15] = (COLOR_PAIR(3) | A_BRIGHT);
 	}
-
 #endif
 
 

@@ -107,5 +107,5 @@ extern bool Rand_quick;
 extern u32b Rand_value;
 	       
 /**** Available Functions ****/
-extern s16b damroll(int num, int sides);
-extern s16b maxroll(int num, int sides);
+extern s32b damroll(int num, int sides);
+extern s32b maxroll(int num, int sides);

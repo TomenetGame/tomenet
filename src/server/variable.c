@@ -104,6 +104,8 @@ s32b m_max = 1;                 /* Monster heap size */
 s32b o_top = 0;                 /* Object top size */
 s32b m_top = 0;                 /* Monster top size */
 
+s32b dungeon_store_timer = 0;	/* Timemout. Keeps track of its generation */
+bool night_surface = FALSE;
 
 /*
  * Server options, set in tomenet.cfg
@@ -118,39 +120,54 @@ server_opts cfg =
 	/* char * */
         "mangband.org",		// meta_address
         8800,           // meta port
+
 	"",		// bind_name
 	"changeme",		// console_password
 	"Serverchez",		// admin_wizard
 	"DungeonMaster",	// dungeon_master
-	"", "",	// wserver, pass
+	"", 	// wserver,
 
+	"",	// pass
 	/* s32b */
 	201,		// preserve_death_level
 	300,50000,	// unique_respawn_time, unique_max_respawn_time
-	6, 8,		// level_unstatic_chance, min_unstatic_level
+	6,		// level_unstatic_chance,
+	
+	8,		// min_unstatic_level
 	-1,18348,18349,18400,	// retire_timer, game_port, console_port, gw_port
-	0,200,		// spell_interfere, spell_stack_limit
 
+	0,200,		// spell_interfere, spell_stack_limit
 	/* s16b */
 	60,5,5,		// fps, newbies_cannot_drop, running_speed,
+
 	25, 150,	// anti_scum, dun_unusual,
 	32,32,		// town_x, town_y
-	0, 1,		// town_base, dun_base
+	0, 		// town_base, 
+	
+	1,		//dun_base
 	127, 200,	// dun_max, store_turns
-
 	/* char */
 	3, 2,		// resting_rate, party_xp_boost
+
 	0, 1,		// use_pk_rules, quit_ban_mode
-
 	10, 100, 100,	// zang_monsters, pern_monsters, cth_monsters
-	1, 100, 0,		// joke_monsters, vanilla_monsters, pet_monsters
 
+	1, 100, 0,		// joke_monsters, vanilla_monsters, pet_monsters
 	/* bool */
 	TRUE,TRUE,	// report_to_meta, secret_dungeon_master
-	FALSE,TRUE,FALSE,FALSE, // anti_arts_hoard, anti_arts_house, anti_arts_shop, mage_hp_bonus
-	7,FALSE,	// door_bump_open, no_ghost
+
+	// anti_arts_hoard, anti_arts_house, anti_arts_shop, anti_arts_pickup, 
+	FALSE,TRUE,FALSE,TRUE,TRUE,
+	FALSE, //anti_arts_send, anti_cheeze_pickup
+	10,		// surface_item_removal (minutes for scan_objs)
+	100, 999, 5,		// dungeon_shop_chance (*10), dungeon_shop_type (999=random), dungeon_shop_timeout
+
+	FALSE,		// mage_hp_bonus
+	7,FALSE,0,	// door_bump_open, no_ghost, lifes (0 = infinite)
 	TRUE,TRUE,	// maximize, kings_etiquette
+
 	FALSE,FALSE,	// public_rfe, auto_purge
+	FALSE		// log_u
 };
 
 struct ip_ban *banlist=NULL;

@@ -160,7 +160,7 @@ void excise_object_idx(int o_idx)
 /*
  * Delete a dungeon object
  */
-void delete_object_idx(int o_idx)
+void delete_object_idx(int o_idx, bool unfound_art)
 {
 	object_type *o_ptr = &o_list[o_idx];
 	int i;
@@ -173,7 +173,7 @@ void delete_object_idx(int o_idx)
 	//cave_type *c_ptr;
 
 	/* Artifact becomes 'not found' status */
-	if (true_artifact_p(o_ptr))
+	if (true_artifact_p(o_ptr) && unfound_art)
 	{
 		 a_info[o_ptr->name1].cur_num = 0;
 		 a_info[o_ptr->name1].known = FALSE;
@@ -208,7 +208,7 @@ void delete_object_idx(int o_idx)
 /*
  * Deletes object from given location
  */
-void delete_object(struct worldpos *wpos, int y, int x) /* maybe */
+void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) /* maybe */
 {
 	cave_type *c_ptr;
 
@@ -245,7 +245,7 @@ void delete_object(struct worldpos *wpos, int y, int x) /* maybe */
 			next_o_idx = o_ptr->next_o_idx;
 
 			/* Wipe the object */
-			delete_object_idx(this_o_idx);
+			delete_object_idx(this_o_idx, unfound_art);
 		}
 
 		/* Objects are gone */
@@ -260,7 +260,7 @@ void delete_object(struct worldpos *wpos, int y, int x) /* maybe */
 			if(o_ptr->k_idx && inarea(wpos, &o_ptr->wpos))
 			{
 				if(y==o_ptr->iy && x==o_ptr->ix){
-					delete_object_idx(i);
+					delete_object_idx(i, unfound_art);
 				}
 			}
 		}
@@ -364,7 +364,7 @@ void compact_objects(int size, bool purge)
 			if (rand_int(100) < chance) continue;
 
 			/* Delete it */
-			delete_object_idx(i);
+			delete_object_idx(i, TRUE);
 
 			/* Count it */
 			num++;
@@ -393,7 +393,7 @@ void compact_objects(int size, bool purge)
 					getcave(&o_ptr->wpos)) continue;
 
 			/* Delete it first */
-			delete_object_idx(i);
+			delete_object_idx(i, TRUE);
 		}
 
 
@@ -977,10 +977,11 @@ void object_known(object_type *o_ptr)
 	/* Now we know about the item */
 	o_ptr->ident |= ID_KNOWN;
 
-	/* Artifact becomes 'found' status */
+	/* Artifact becomes 'found' status - omg it must already become
+	'found' if a player picks it up! That gave headaches! */
 	if (true_artifact_p(o_ptr))
 	{
-		 a_info[o_ptr->name1].cur_num = 1;	// parano
+		 a_info[o_ptr->name1].cur_num = 1;	// parano - indeed
 		 a_info[o_ptr->name1].known = TRUE;
 	}
 
@@ -1203,8 +1204,21 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 		if (f3 & TR3_IGNORE_FIRE) total += 100;
 	}
 	if (f3 & TR3_SEE_INVIS) total += 2000;
-        if (esp) total += (12500 * count_bits(esp));
-        if (esp & ESP_ALL) total += 100000;
+	if (esp & ESP_ORC) total += 5000;
+	if (esp & ESP_TROLL) total += 10000;
+	if (esp & ESP_DRAGON) total += 20000;
+	if (esp & ESP_GIANT) total += 15000;
+	if (esp & ESP_DEMON) total += 20000;
+	if (esp & ESP_UNDEAD) total += 20000;
+	if (esp & ESP_EVIL) total += 50000;
+	if (esp & ESP_ANIMAL) total += 15000;
+	if (esp & ESP_DRAGONRIDER) total += 10000;
+	if (esp & ESP_GOOD) total += 10000;
+	if (esp & ESP_NONLIVING) total += 20000;
+	if (esp & ESP_UNIQUE) total += 20000;
+	if (esp & ESP_SPIDER) total += 10000;
+//        if (esp) total += (12500 * count_bits(esp));
+        if (esp & ESP_ALL) total += 125000;
 	if (f3 & TR3_SLOW_DIGEST) total += 750;
 	if (f3 & TR3_REGEN) total += 2500;
 	if (f5 & TR5_REGEN_MANA) total += 2500;
@@ -2376,6 +2390,9 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr)
 		/* Hack -- mark the item as an artifact */
 		o_ptr->name1 = i;
 
+		/* Hack -- Mark the artifact as "created" */
+		a_ptr->cur_num = 1;
+
 		/* Success */
 		return (TRUE);
 	}
@@ -2383,7 +2400,11 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr)
 	/* An extra chance at being a randart. XXX RANDART */
 	if (!rand_int(RANDART_RARITY))
 	{
-		o_ptr->name1 = ART_RANDART;
+	        /* Randart ammo should be very rare! */
+	        if (((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) ||
+	            (o_ptr->tval == TV_BOLT)) && (rand_int(100) < 95)) return(FALSE);
+
+    		o_ptr->name1 = ART_RANDART;
 
 		/* Piece together a 32-bit random seed */
 		o_ptr->name3 = rand_int(0xFFFF) << 16;
@@ -3758,8 +3779,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 static void a_m_aux_3(object_type *o_ptr, int level, int power)
 {
 	//int tries;
-	int rr;
-
 	artifact_bias = 0;
 
         /* Very good */
@@ -3778,48 +3797,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
                 make_ego_item(level, o_ptr, FALSE);
         }
 
-
-#if 0 //sorry about this large if 0 block- C. Blue
-	/* Apply limited ESP powers, evaluated from R_ESP_ flags */
-        if (o_ptr->esp & R_ESP_LOW) {
-                rr = rand_int(16) - 1;
-                if (rr < 2) o_ptr->esp |= (ESP_ORC);
-                else if (rr < 4) o_ptr->esp |= (ESP_TROLL);
-        	else if (rr < 6) o_ptr->esp |= (ESP_GIANT);
-	        else if (rr < 8) o_ptr->esp |= (ESP_ANIMAL);
-	        else if (rr < 10) o_ptr->esp |= (ESP_DRAGONRIDER);
-                else if (rr < 12) o_ptr->esp |= (ESP_GOOD);
-                else if (rr < 14) o_ptr->esp |= (ESP_NONLIVING);
-                else o_ptr->esp |= (ESP_SPIDER);
-                //not needed atm-  o_ptr->esp &= (~R_ESP_LOW);
-        }
-	if (o_ptr->esp & R_ESP_HIGH) {
-		rr = rand_int(10) - 1;
-    		if (rr < 2) o_ptr->esp |= (ESP_DRAGON);
-		else if (rr < 4) o_ptr->esp |= (ESP_DEMON);
-	    	else if (rr < 7) o_ptr->esp |= (ESP_UNDEAD);
-		else if (rr < 8) o_ptr->esp |= (ESP_EVIL);
-		else o_ptr->esp |= (ESP_UNIQUE);
-		//not needed atm-  o_ptr->esp &= (~R_ESP_HIGH);
-	}
-	if (o_ptr->esp & R_ESP_ANY) {
-		rr = rand_int(26) - 1;
-		if (rr < 1) o_ptr->esp |= (ESP_ORC);
-		else if (rr < 2) o_ptr->esp |= (ESP_TROLL);
-		else if (rr < 3) o_ptr->esp |= (ESP_DRAGON);
-		else if (rr < 4) o_ptr->esp |= (ESP_GIANT);
-		else if (rr < 5) o_ptr->esp |= (ESP_DEMON);
-		else if (rr < 8) o_ptr->esp |= (ESP_UNDEAD);
-		else if (rr < 12) o_ptr->esp |= (ESP_EVIL);
-		else if (rr < 14) o_ptr->esp |= (ESP_ANIMAL);
-		else if (rr < 16) o_ptr->esp |= (ESP_DRAGONRIDER);
-		else if (rr < 19) o_ptr->esp |= (ESP_GOOD);
-		else if (rr < 21) o_ptr->esp |= (ESP_NONLIVING);
-		else if (rr < 24) o_ptr->esp |= (ESP_UNIQUE);
-		else o_ptr->esp |= (ESP_SPIDER);
-		//not needed atm-  o_ptr->esp &= (~R_ESP_ANY);
-	}
-#endif
 
 
 	/* prolly something should be done..	- Jir - */
@@ -3850,12 +3827,13 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 							if (!r_ptr->name) continue;
 							if (r_ptr->flags1 & RF1_UNIQUE) continue;
 							if (r_ptr->level >= level + (power * 5)) continue;
+							if (!mon_allowed(r_ptr)) continue;
 
 							break;
 						}
 						o_ptr->pval = i;
-						/* Let's give found poly rings random levels
-						to allow surprises :)
+						/* Let's have the following level req code commented out
+						to give found poly rings random levels to allow surprises :)
 						if (r_info[i].level > 0) {
 							o_ptr->level = 15 + (1000 / ((2000 / r_info[i].level) + 10));
 						} else {
@@ -4244,8 +4222,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_AMULET_RAGE:
 				{
 					o_ptr->bpval = 1 + m_bonus(4, level);
-					o_ptr->to_a = -1 - m_bonus(15, level);
-					o_ptr->to_h = 1 + m_bonus(15, level);
+					//o_ptr->to_a = -1 - m_bonus(15, level);
+					o_ptr->to_h = -1 - m_bonus(10, level);//15
 					o_ptr->to_d = 1 + m_bonus(15, level);
 					
 					if (rand_int(100) < 33) {
@@ -4259,8 +4237,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_AMULET_SPEED:
 				{
 					// Amulets of speed can't give very
-					// much, and are rarely +3.
-					o_ptr->bpval = randint(randint(3)); 
+					// much, and are rarely +5.
+					o_ptr->bpval = randint(randint(5)); 
 
 					/* Cursed */
 					if (power < 0)
@@ -4281,7 +4259,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				/* Formerly Amulet of ESP */
 				case SV_AMULET_ESP:
 				{
-					o_ptr->name2 = EGO_ESP;
+//					o_ptr->name2 = EGO_ESP;
+			                make_ego_item(level, o_ptr, TRUE);
 					break;
 				}
 			}
@@ -4586,8 +4565,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_AMULET_SPEED:
 				{
 					// Amulets of speed can't give very
-					// much, and are rarely +3.
-					o_ptr->pval = randint(randint(3)); 
+					// much, and are rarely +5.
+					o_ptr->pval = randint(randint(5)); 
 
 					/* Cursed */
 					if (power < 0)
@@ -5588,7 +5567,7 @@ s16b unique_quark = 0;
  * This routine requires a clean floor grid destination.
  */
 //void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
-void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, obj_theme theme)
+void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, obj_theme theme, int luck)
 {
 	int prob, base;
 
@@ -5602,6 +5581,11 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 
 	/* Require clean floor space */
 //	if (!cave_clean_bold(zcave, y, x)) return;
+
+	/* max luck = 40 */
+	luck = 200 - (8000 / (luck + 40));
+	if (!good && magik(luck / 2)) good = TRUE;
+	else if (!great && magik(luck / 5)) {great = TRUE; good = TRUE;}
 
 	/* Chance of "special object" */
 	prob = (good ? 10 : 1000);
@@ -5680,7 +5664,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 			case TV_ARROW:
 			case TV_BOLT:
 				forge.number = damroll(6,
-						(forge.sval == SV_AMMO_MAGIC) ? 2 : 7);
+						(forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
 		}
 
 	/* Hack -- inscribe items that a unique drops */
@@ -5755,7 +5739,7 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great)
 			/* Must have a clean grid */
 			if (!cave_clean_bold(zcave, y, x)) continue;
 			/* Place a good (or great) object */
-			place_object(wpos, y, x, TRUE, great, default_obj_theme);
+			place_object(wpos, y, x, TRUE, great, default_obj_theme, 0);
 			/* Notice */
 			note_spot_depth(wpos, y, x);
 
@@ -6169,7 +6153,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 //		c_ptr = &zcave[ny][nx];
 
 		/* Crush anything under us (for artifacts) */
-		if (flag == 3) delete_object(wpos, ny, nx);
+		if (flag == 3) delete_object(wpos, ny, nx, TRUE);
 
 		/* Make a new object */
 		o_idx = o_pop();
@@ -6187,6 +6171,9 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			o_ptr->iy = ny;
 			o_ptr->ix = nx;
 			wpcopy(&o_ptr->wpos,wpos);
+
+			/* reset scan_objs timer */
+			o_ptr->marked = 0;
 
 			/* No monster */
 			o_ptr->held_m_idx = 0;
@@ -6230,7 +6217,6 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 //			flag = TRUE;
 		}
 	}
-
 
 	/* Result */
 	return (o_idx);
@@ -6598,7 +6584,7 @@ void floor_item_optimize(int item)
 	if (o_ptr->number) return;
 
 	/* Delete it */
-	delete_object_idx(item);
+	delete_object_idx(item, TRUE);
 }
 
 

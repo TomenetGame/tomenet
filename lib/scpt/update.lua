@@ -17,6 +17,12 @@ __update_table =
 	"scpt/s_nature.lua",
 	"scpt/s_mind.lua",
 	"scpt/s_udun.lua",
+
+	"scpt/p_offense.lua",
+	"scpt/p_defense.lua",
+	"scpt/p_curing.lua",
+	"scpt/p_support.lua",
+
 	"scpt/powers.lua",
         "scpt/meta.lua",
 }

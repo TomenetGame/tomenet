@@ -185,8 +185,8 @@ extern bool inc_stat(int Ind, int stat);
 extern bool dec_stat(int Ind, int stat, int amount, int mode);
 extern bool res_stat(int Ind, int stat);
 extern bool apply_disenchant(int Ind, int mode);
-extern bool project_hook(int Ind, int typ, int dir, int dam, int flg);
-extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg);
+extern bool project_hook(int Ind, int typ, int dir, int dam, int flg, char attacker[80]);
+extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char attacker[80]);
 extern int set_all_destroy(object_type *o_ptr);
 extern int set_cold_destroy(object_type *o_ptr);
 extern int set_impact_destroy(object_type *o_ptr);
@@ -314,13 +314,13 @@ extern void lite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern bool lite_area(int Ind, int dam, int rad);
 extern bool unlite_area(int Ind, int dam, int rad);
-extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad);
-extern bool fire_wall(int Ind, int typ, int dir, int dam, int time);
-extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time);
-extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff);
-extern bool fire_bolt(int Ind, int typ, int dir, int dam);
-extern bool fire_beam(int Ind, int typ, int dir, int dam);
-extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam);
+extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker);
+extern bool fire_wall(int Ind, int typ, int dir, int dam, int time, char *attacker);
+extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, char *attacker);
+extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff, char *attacker);
+extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);
+extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
+extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker);
 extern bool lite_line(int Ind, int dir);
 extern bool drain_life(int Ind, int dir, int dam);
 extern bool wall_to_mud(int Ind, int dir);
@@ -383,7 +383,7 @@ extern void teleport_player_level(int Ind);
 
 /* This could have some good uses */
 extern s16b project_time;
-extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg);
+extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char attacker[80]);
 
 /* lua_bind.c */
 extern s16b new_school(int i, cptr name, s16b skill);

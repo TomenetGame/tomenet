@@ -207,7 +207,8 @@ I:45:37:5
 W:100:100:2:5000000
 P:0:1d1:15:15:0
 F:STR | INT | WIS | DEX | CON | CHR | SPEED | HIDE_TYPE | 
-F:ACTIVATE | AUTO_CURSE | HEAVY_CURSE | INVIS | SPELL | MANA |
+F:ACTIVATE | AUTO_CURSE | HEAVY_CURSE | INVIS | MANA |
+#SPELL |
 F:SEE_INVIS | REGEN | FREE_ACT | CURSED | CURSE_NO_DROP | 
 F:IM_FIRE | IM_COLD | IM_ELEC | IM_ACID | PERMA_CURSE |
 F:SUST_STR | SUST_DEX | SUST_CON | 
@@ -257,10 +258,10 @@ D:understanding as you stare into its depths.
 
 N:16:'Razorback'
 I:38:6:0
-W:75:9:500:300000
-P:30:2d4:-4:0:25
-F:FREE_ACT | IM_ELEC | SPECIAL_GENE | RES_ACID | RES_FEAR | 
-F:RES_FIRE | RES_COLD | RES_POIS | RES_LITE | RES_DARK | 
+W:75:9:500:350000
+P:30:2d4:-4:0:30
+F:FREE_ACT | IM_ELEC | SPECIAL_GENE | IM_ACID | RES_FEAR | 
+F:IM_FIRE | IM_COLD | RES_POIS | RES_LITE | RES_DARK | 
 F:LITE1 | SEE_INVIS | ESP_DRAGON |
 F:ACTIVATE
 D:A massive suit of heavy dragon scales deeply saturated with many colors.  
@@ -330,7 +331,7 @@ D:warding and stability deeply engraved into its surface.
 N:21:of the Rohirrim
 I:37:9:2
 W:30:3:200:100000
-P:19:1d4:0:0:15
+P:19:1d4:0:0:20
 F:STR | DEX | SPEED | HIDE_TYPE | RES_FEAR | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_CONF | RES_SOUND
 D:A stiff suit of armor composed of small metal plates sewn to an 
@@ -398,7 +399,7 @@ D:enhance body and mind lie within, and no door can hope to resist the wearer.
 
 N:26:of Mardra
 I:36:16:4
-W:70:3:80:250000
+W:70:30:80:250000
 P:9:0d0:0:0:25
 F:FREE_ACT | RES_BLIND | RES_CONF | RES_FEAR | DRAIN_MANA | 
 F:REFLECT | RES_NEXUS | SH_FIRE | SUST_INT | SUST_CON | SUST_CHR |
@@ -441,8 +442,8 @@ D:leather whose wearer moves with agility and assurance.
 
 N:29:of Wormtongue
 I:30:2:3
-W:20:20:20:50000
-P:2:1d1:-10:-10:10
+W:20:20:20:140000
+P:2:1d1:-10:-10:15
 F:INT | DEX | CHR | STEALTH | SEARCH | SPEED | HIDE_TYPE | 
 F:FREE_ACT | FEATHER | RES_DARK | RES_LITE | ESP_GOOD | ESP_UNIQUE
 Z:panic hit
@@ -468,7 +469,7 @@ D:this little metal shield is proof against the Element of Earth.
 
 N:31:of Celegorm
 I:34:4:0
-W:18:3:60:30000
+W:18:3:60:50000
 P:4:1d2:0:0:20
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_DARK
 D:This shield emblazoned with a multitude of creatures not seen for ages 
@@ -481,7 +482,7 @@ D:that contains the conflicts of the elements.
 N:32:of Anarion
 I:34:5:0
 W:40:9:120:160000
-P:5:1d3:0:0:20
+P:5:1d3:0:0:25
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | SUST_STR | SUST_INT | 
 F:SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR | ESP_EVIL
 D:The great metal-bound shield of Anarion, son of Elendil, who Sauron found 
@@ -579,7 +580,7 @@ I:32:7:4
 W:40:12:75:250000
 P:8:1d3:0:0:20
 F:STR | DEX | CON | HIDE_TYPE | 
-F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_BLIND | 
+F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_BLIND | REGEN | 
 F:LITE1 | SEE_INVIS | ESP_DRAGON | ESP_DRAGONRIDER | ACTIVATE
 D:The legendary dragon helm of Turin Turambar, a object of dread to the 
 D:servants of Morgoth.
@@ -698,7 +699,7 @@ D:as he adventured under the name of Thorongil.
 
 N:48:'Colannon'
 I:35:1:3
-W:5:20:10:40000
+W:5:20:10:55000
 P:1:0d0:0:0:15
 F:STEALTH | SPEED | RES_NEXUS | 
 F:RES_ACID | ACTIVATE
@@ -712,7 +713,7 @@ D:trouble.
 N:49:of Luthien
 I:35:6:2
 W:30:40:5:85000
-P:6:0d0:0:0:20
+P:6:0d0:0:0:25
 F:INT | WIS | CHR | HIDE_TYPE | SPEED | STEALTH | INVIS | LUCK |
 F:RES_ACID | RES_FIRE | RES_COLD | SPECIAL_GENE | ACTIVATE
 F:REGEN_MANA
@@ -727,7 +728,7 @@ D:being that ever knew death.
 N:50:of Tuor
 I:35:6:4
 W:20:40:5:65000
-P:6:0d0:0:0:12
+P:6:0d0:0:0:22
 F:STEALTH | DEX | HIDE_TYPE | INVIS |
 F:FREE_ACT | IM_ACID | SEE_INVIS | CLIMB
 D:From the ruin of Gondolin did Tuor escape, through secret ways and travail, 
@@ -1425,7 +1426,7 @@ D:evil at a word, and grants Maia-like powers of body and mind.
 
 N:103:of Balli Stonehand
 I:24:22:3
-W:30:15:170:90000
+W:30:20:170:90000
 P:0:3d9:8:21:5
 F:STR | CON | STEALTH | HIDE_TYPE | ESP_NONLIVING |
 F:SLAY_DEMON | SLAY_TROLL | SLAY_ORC | FREE_ACT | 
@@ -1451,7 +1452,7 @@ D:allows rapid recovery from their blows.
 
 N:105:of the Dwarves
 I:24:28:10
-W:30:8:250:100000
+W:30:12:250:100000
 P:0:3d7:12:17:0
 F:SLAY_EVIL | TUNNEL | INFRA | SEARCH | SLAY_GIANT | SLAY_EVIL | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_FEAR |
@@ -1714,10 +1715,10 @@ D:known for never having lost in combat.
 
 N:124:'Belthronding'
 I:19:13:5
-W:40:20:40:60000
+W:40:20:40:75000
 P:0:0d0:20:25:0
 F:DEX | STEALTH | HIDE_TYPE | 
-F:RES_DISEN | XTRA_SHOTS | SHOW_MODS
+F:RES_DISEN | XTRA_SHOTS | SHOW_MODS | XTRA_MIGHT
 F:FREE_ACT
 D:The great bow of Beleg, made of black yew and strung with elven hair that 
 D:faintly shines a pale clear gold.
@@ -1727,10 +1728,10 @@ D:faintly shines a pale clear gold.
 
 N:125:of Bard
 I:19:13:2
-W:30:20:40:40000
-P:0:0d0:27:19:0
-F:DEX | HIDE_TYPE | ESP_DRAGON | LUCK |
-F:FREE_ACT | XTRA_MIGHT | SHOW_MODS
+W:60:25:40:100000
+P:0:0d0:27:24:0
+F:DEX | HIDE_TYPE | ESP_DRAGON | LUCK | KILL_DRAGON | 
+F:FREE_ACT | XTRA_MIGHT | SHOW_MODS | XTRA_SHOTS
 D:The great yew bow of grim-faced Bard, who shot the mightiest arrow that 
 D:songs record.
 
@@ -1755,7 +1756,8 @@ N:127:of Gandalf
 I:6:1:12
 W:127:220:20:9000000
 P:0:1d1:-19:-19:0
-F:INT | CHR | WIS | MANA | SPELL | ACTIVATE |
+F:INT | CHR | WIS | MANA | ACTIVATE |
+#SPELL | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | LUCK |
 F:SEE_INVIS | ESP_EVIL | ESP_DEMON | NEVER_BLOW | INFRA
 F:PRECOGNITION | IM_FIRE | ULTIMATE
@@ -1794,11 +1796,11 @@ D:of desertion.
 
 N:130:of Incanus
 I:36:2:3
-W:30:20:20:60000
+W:40:15:20:75000
 P:2:0d0:0:0:20
 F:INT | WIS | SEARCH | HIDE_TYPE | 
 F:SUST_INT | SUST_WIS | FREE_ACT | SEE_INVIS | 
-F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
+F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_MANA |
 F:REGEN_MANA
 Z:weigh magic
 D:Gandalf's long, flowing robe.  It provides insight and allows the
@@ -1809,7 +1811,7 @@ D:wearer to see things not seen by all.
 
 N:134:'Lasher'
 I:21:2:3
-W:20:5:30:220000
+W:20:5:30:125000
 P:0:1d6:12:15:0
 F:DEX | BLOWS | HIDE_TYPE | 
 F:SLAY_ANIMAL | SLAY_ORC | BRAND_POIS | VORPAL | 
@@ -1949,7 +1951,7 @@ D:spells of evil make it unsafe in any hands but of the original wielder.
 
 N:146:of Gondor
 I:17:2:0
-W:55:5:3:100000
+W:55:35:3:100000
 P:0:8d6:0:0:0
 F:SLAY_EVIL | KILL_DEMON
 F:BRAND_ELEC | BRAND_FIRE | BRAND_COLD
@@ -1978,7 +1980,7 @@ D:the inhabitants of Angband.
 # The Robe of Great Luck
 
 N:148:of Great Luck
-I:36:2:60
+I:36:2:25
 W:50:80:20:60000
 P:2:0d0:0:0:5
 F:LUCK | HIDE_TYPE |
@@ -2043,7 +2045,7 @@ D:is perfect against the terrible powers of Morgoth.
 N:153:of the Sandworm
 I:36:4:5
 W:30:3:80:65000
-P:30:0d0:0:0:10
+P:30:0d0:0:0:20
 F:RES_POIS | RES_ELEC | RES_FIRE | RES_ACID | SPECIAL_GENE
 F:TUNNEL | STR | STEALTH | INFRA | ESP_ANIMAL
 D:This powerful piece of armour was made using the remains of 
@@ -2053,7 +2055,7 @@ D:the Sandworm Queen.
 
 N:154:'Dragonbane'
 I:24:28:2
-W:70:20:260:173000
+W:70:45:260:173000
 P:0:3d7:20:20:0
 F:BLOWS | KILL_DRAGON | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
 F:RES_POIS | SHOW_MODS | RES_SHARDS | FREE_ACT
@@ -2231,7 +2233,7 @@ D:truly more than it appears.
 N:169:of Gil-galad
 I:34:10:5
 W:60:4:80:165000
-P:10:1d3:0:0:20
+P:10:1d3:0:0:30
 F:ACTIVATE | 
 F:LITE1 | WIS | CHR | SEARCH | LUCK
 F:RES_ELEC | RES_ACID | RES_DISEN | RES_DARK | HIDE_TYPE | 
@@ -2244,10 +2246,13 @@ N:170:of Celebrimbor
 I:32:3:3
 W:55:12:20:245000
 P:3:1d1:0:0:18
-F:INT | DEX | CHR | SPELL | SEARCH | 
+F:INT | DEX | CHR | SEARCH | 
+#SPELL | 
 F:IM_FIRE | IM_ACID | RES_DISEN | RES_SHARDS | 
 F:ACTIVATE
 F:REGEN_MANA
+#since SPELL doesn't work atm:
+F:MANA
 D:This once belonged to Celebrimbor, maker of the Rings of Power.  One who 
 D:knows both fire and acid, from the business of forging and engraving, will 
 D:fear neither: nor have his enchantments ever faded. Celebrimbor was even 
@@ -2334,7 +2339,7 @@ D:who seek life beyond death.
 
 N:176:of the Haradrim
 I:34:4:2
-W:15:12:120:25000
+W:15:12:120:30000
 P:4:1d2:0:0:15
 F:ACTIVATE | 
 F:STR | CON | SUST_STR | SUST_CON | HIDE_TYPE | 
@@ -2376,7 +2381,7 @@ D:that he could channel in battle.
 
 N:179:of Nevrast
 I:30:3:3
-W:20:8:40:135000
+W:20:8:40:75000
 P:3:1d1:0:0:13
 F:STEALTH | CON | SPEED | HIDE_TYPE
 D:Footgear made of bear leather and set with opals, which grant the wearer 
@@ -2388,7 +2393,7 @@ D:silent, hasted movement.
 N:180:of Gimli
 I:30:6:4
 W:30:8:60:82500
-P:4:1d1:5:5:10
+P:4:1d1:5:5:30
 F:INFRA | SEARCH | TUNNEL | CLIMB | HIDE_TYPE
 Z:magic map
 D:A set of iron-shod boots stamped by Gimli's combat prowess, a peerless 
@@ -2441,7 +2446,7 @@ N:203:of Phasing
 I:45:55:15
 W:110:0:2:3000000
 P:0:1d1:0:0:0
-F:SPEED | SEE_INVIS | LUCK |
+F:SPEED | SEE_INVIS | LUCK | 
 F:CURSED | HEAVY_CURSE | REGEN
 F:WRAITH | IM_NETHER | DRAIN_EXP | HOLD_LIFE | SPECIAL_GENE |
 F:INSTA_ART
@@ -2456,14 +2461,17 @@ D:this ring as far from you as possible.
 
 N:204:'Toris Mejistos'
 I:40:18:2
-W:50:10:3:90000
+W:60:10:3:140000
 Z:restore life
 F:INT | WIS | HIDE_TYPE | MANA | LUCK
 F:SUST_INT | SUST_WIS | LITE2 | REGEN
 F:SLOW_DIGEST | AUTO_CURSE | HEAVY_CURSE
 F:ESP_GOOD | ESP_EVIL | HOLD_LIFE
 F:INSTA_ART | SPECIAL_GENE
-F:REGEN_MANA
+F:REGEN_MANA | 
+#SPELL |
+#since SPELL doesn't work atm:
+F:MANA
 D:A blue stone, with an incredible number of incredibly small runes of power 
 D:on it. It carries many secrets.
 
@@ -2592,12 +2600,12 @@ P:0:0d0:25:15:0
 F:CHR | SEARCH | HIDE_TYPE | 
 F:XTRA_SHOTS | SHOW_MODS
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_SOUND
-F:ESP_ANIMAL
+F:ESP_ANIMAL | SLAY_ANIMAL
 
 # The Picklock of Bilbo Baggins
 
 N:214:of Bilbo Baggins
-I:12:2:3
+I:12:2:5
 W:25:40:2:30000
 P:0:1d1:0:0:0
 F:DEX | SUST_DEX | SEE_INVIS | STEALTH | DISARM | SEARCH
@@ -2662,7 +2670,7 @@ D:Not to be found by players. (C. Blue)
 
 N:219:of Dain Ironfoot
 I:24:22:5
-W:60:20:170:100000
+W:60:30:170:100000
 P:0:5d9:8:15:0
 F:STR | CON | ESP_ORC | ESP_TROLL | RES_FEAR | 
 F:SLAY_TROLL | SLAY_ORC | FREE_ACT | 
@@ -2699,7 +2707,7 @@ D:A mysterious shard that fell down from heaven.
 
 N:222:'Ripper'
 I:16:1:0
-W:20:10:5:15000
+W:20:5:5:15000
 P:0:3d4:0:0:0
 D:Made of alloy of iron and black ore, a *hard* material.
 D:Strange enough, noone managed to enchant it yet.
@@ -2709,7 +2717,7 @@ D:Strange enough, noone managed to enchant it yet.
 
 N:223:'Soul Reaver'
 I:22:30:5
-W:80:38:300:500000
+W:90:70:300:500000
 P:0:15d4:50:0:0
 F:DRAIN_MANA | DRAIN_EXP | DRAIN_HP | CURSED | HEAVY_CURSE | AGGRAVATE |
 F:SHOW_MODS | HIDE_TYPE | KILL_UNDEAD | SLAY_EVIL | VAMPIRIC |
@@ -2728,7 +2736,7 @@ D:you scream out in terror.
 
 N:224:of the Guardian
 I:22:15:0
-W:40:20:220:100000
+W:35:20:220:100000
 P:0:5d8:20:20:0
 F:RES_FEAR | FREE_ACT | ESP_EVIL | SLAY_EVIL | SLOW_DIGEST |
 F:RES_COLD | RES_ELEC | RES_DARK | RES_DISEN
@@ -2739,7 +2747,7 @@ D:The guard on duty's best friend.
 
 N:225:of the Abyss Rider
 I:22:29:-10
-W:20:23:400:100000
+W:50:23:400:100000
 P:0:6d8:0:13:0
 F:CHR | HIDE_TYPE | RES_FEAR | SLAY_ANIMAL | SLAY_DRAGON | KILL_DEMON |
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS |
@@ -2748,6 +2756,78 @@ F:CHAOTIC
 D:Belonging to one of the riders of doom, surprising is the separation
 D:from its wielder. Maybe the lance itself is hunting for a new rider
 D:to enslave him.
+
+
+# The Filthy Rags that were forgotten
+
+N:226:that were forgotten
+I:36:1:4
+W:50:25:20:40000
+P:1:0d0:0:0:-1
+F:RES_TIME | WIS | INT | ESP_UNIQUE
+#SPELL | 
+#since SPELL doesn't work atm:
+F:MANA
+D:Noone knows who once forgot those rags, but they surely endured ages.
+
+
+# The Ribbed Plate Armour of black ore
+
+N:227:of black ore
+I:37:18:0
+W:65:40:400:100000
+P:60:0d0:0:0:0
+F:RES_MANA | NO_MAGIC | 
+F:RES_ACID | IM_ELEC | RES_DISEN
+D:Made of black ore this mighty armour has an extraordinarily hard surface.
+D:It seems to absorb any form of energy.
+
+
+# The Silver Bolt of Thunder
+
+N:228:of Thunder
+I:18:4:21
+W:60:40:2:60000
+P:0:4d6:0:0:0
+F:KILL_UNDEAD | SLAY_EVIL | BRAND_ELEC
+D:A bolt that electrocutes its targets and leaves them stunned.
+
+
+# The Guisarme 'Zodia'
+
+N:229:'Zodia'
+I:22:16:3
+W:70:45:360:180000
+P:0:6d9:0:0:0
+F:SHOW_MODS | BLOWS | BRAND_ELEC | DEX | RES_NEXUS |
+F:FREE_ACT | IM_ELEC | MUST2H
+D:This huge guisarme was forged by the storm giants and grants its
+D:wearer the power of lightning, letting him strike as fast as the wind.
+
+
+# The Heavy Crossbow of the Goblins
+
+N:230:of the Goblins
+I:19:24:0
+W:70:40:200:100000
+P:0:4d1:10:22:0
+F:XTRA_SHOTS | XTRA_MIGHT | BRAND_COLD | 
+F:RES_DISEN | REGEN | ESP_UNIQUE | DRAIN_MANA | SLAY_DEMON | SLAY_DRAGON | 
+F:HIDE_TYPE | SHOW_MODS
+D:A black crossbow that shimmers white here and then. 
+
+
+# The Long Bow of Domination
+
+N:231:of Domination
+I:19:13:0
+W:90:65:60:270000
+P:0:0d0:50:30:0
+F:HIDE_TYPE | ESP_EVIL | KILL_DRAGON | KILL_DEMON | SLAY_EVIL | KILL_UNDEAD | 
+F:FREE_ACT | XTRA_MIGHT | SHOW_MODS | XTRA_SHOTS | RES_DISEN | RES_NETHER
+D:This mighty bow is surrounded by wild flashes of ethereal blue and red
+D:fire, showing the mad will within it to dominate all beasts that hell
+D:could possibly bear.
 
 
 #N:(No.):(name)

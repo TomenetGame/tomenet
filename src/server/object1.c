@@ -4089,11 +4089,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		+ ((f4 & (TR4_ANTIMAGIC_10)) ? 10 : 0);
 	if (am)
 	{
-		j = o_ptr->to_h + o_ptr->to_d + o_ptr->pval + o_ptr->to_a;
+		j = o_ptr->to_h + o_ptr->to_d;// + o_ptr->pval + o_ptr->to_a;
 		if (j > 0) am -= j;
+		if (am > 50) am = 50;
 	}
 
-	if (am >= 100)
+/*	if (am >= 100)
 		fprintf(fff, "It generates a perfect antimagic field.\n");
 	else if (am >= 80)
 		fprintf(fff, "It generates a mighty antimagic field.\n");
@@ -4104,6 +4105,9 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	else if (am >= 20)
 		fprintf(fff, "It generates a mellow antimagic field.\n");
 	else if (am > 0) fprintf(fff, "It generates a feeble antimagic field.\n");
+*/
+	if (am > 0) fprintf(fff, "It generates an antimagic field that has %d%% chance of supressing magic.\n", am);
+	if (am < 0) fprintf(fff, "It generates a suppressed antimagic field.\n");
 
 	/* And then describe it fully */
 
@@ -5431,12 +5435,14 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
         }
 #endif	// 0
 
-		am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
-			+ ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
-			+ ((f4 & (TR4_ANTIMAGIC_20)) ? 20 : 0)
-			+ ((f4 & (TR4_ANTIMAGIC_10)) ? 10 : 0);
-		if (am) am += 0 - o_ptr->to_h - o_ptr->to_d - o_ptr->pval - o_ptr->to_a;
-
+	am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
+		+ ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
+		+ ((f4 & (TR4_ANTIMAGIC_20)) ? 20 : 0)
+		+ ((f4 & (TR4_ANTIMAGIC_10)) ? 10 : 0);
+	j = o_ptr->to_h + o_ptr->to_d;// + o_ptr->pval + o_ptr->to_a;
+	if (j > 0) am -= j;
+	if (am > 50) am = 50;
+/*
 		if (am >= 100)
 			info[i++] = "It generates a perfect antimagic field.";
 		else if (am >= 80)
@@ -5448,6 +5454,10 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		else if (am >= 20)
 			info[i++] = "It generates a mellow antimagic field.";
 		else if (am > 0) info[i++] = "It generates a feeble antimagic field.";
+*/
+	if (am > 0) info[i++] = format("It generates an antimagic field that has %d%% chance of supressing magic.", am);
+	if (am < 0) info[i++] = "It generates a suppressed antimagic field.";
+
 
 	/* And then describe it fully */
 

@@ -113,19 +113,29 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
 	{
 		k = weight + randint(500);
 
-		if (k < 500)
+		if (k < 300)
 		{
 			msg_print(Ind, "It was a good hit!");
-			dam = 2 * dam + 5;
+			dam = (4 * dam) / 3 + 5;
 		}
-		else if (k < 1000)
+		else if (k < 600)
 		{
 			msg_print(Ind, "It was a great hit!");
+			dam = (5 * dam) / 3 + 10;
+		}
+		else if (k < 900)
+		{
+			msg_print(Ind, "It was a superb hit!");
 			dam = 2 * dam + 10;
+		}
+		else if (k < 1200)
+		{
+			msg_print(Ind, "It was a *GREAT* hit!");
+			dam = (5 * dam) / 2 + 10;
 		}
 		else
 		{
-			msg_print(Ind, "It was a superb hit!");
+			msg_print(Ind, "It was a *SUPERB* hit!");
 			dam = 3 * dam + 15;
 		}
 	}
@@ -156,7 +166,6 @@ s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit
 	/* Extract "blow" power */
 	i = (weight + ((p_ptr->to_h + plus) * 5) +
                  get_skill_scale(p_ptr, SKILL_MASTERY, 150));
-        i += 50 * p_ptr->xtra_crit;
 #else
 	/* Extract critical maneuver potential (interesting term..) */
 	/* The larger the weapon the more difficult to quickly strike
@@ -167,6 +176,7 @@ s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit
 	if (w < 10) w = 10; /* shouldn't happen anyways */
 	i = (w * 2) + ((p_ptr->to_h + plus) * 5) + get_skill_scale(p_ptr, SKILL_MASTERY, 150);
 #endif
+        i += 50 * p_ptr->xtra_crit;
 
         if (allow_skill_crit)
         {
@@ -1438,7 +1448,7 @@ void carry(int Ind, int pickup, int confirm)
 
 		/* Delete gold */
 //		delete_object(wpos, p_ptr->py, p_ptr->px);
-		delete_object_idx(c_ptr->o_idx);
+		delete_object_idx(c_ptr->o_idx, FALSE);
 
 		/* Hack -- tell the player of the next object on the pile */
 		whats_under_your_feet(Ind);
@@ -1449,6 +1459,20 @@ void carry(int Ind, int pickup, int confirm)
 	{
 		bool force_pickup = check_guard_inscription(o_ptr->note, '=')
 			&& p_ptr->id == o_ptr->owner;
+
+		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev))
+		{
+			if (cfg.anti_cheeze_pickup)
+			{
+				msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
+				return;
+			}
+			if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
+			{
+				msg_print(Ind, "You aren't powerful enough yet to pick up that artefact!");
+				return;
+			}
+		}
 
 		/* Hack -- disturb */
 		disturb(Ind, 0, 0);
@@ -1490,16 +1514,22 @@ void carry(int Ind, int pickup, int confirm)
 
 			/* Message */
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
-
+			
 			/* Delete original */
 //			delete_object(wpos, p_ptr->py, p_ptr->px);
-			delete_object_idx(c_ptr->o_idx);
+			delete_object_idx(c_ptr->o_idx, FALSE);
 
 			/* Hack -- tell the player of the next object on the pile */
 			whats_under_your_feet(Ind);
 
 			/* Tell the client */
-			Send_floor(Ind, 0);
+			//Send_floor(Ind, 0);
+
+                        /* Note the spot */
+                        note_spot_depth(wpos, p_ptr->py, p_ptr->px);
+
+	                /* Draw the spot */
+                        everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
 
 			/* Refresh */
 			p_ptr->window |= PW_EQUIP;
@@ -1514,6 +1544,7 @@ void carry(int Ind, int pickup, int confirm)
 			msg_print(Ind, "You add the ammo to your quiver.");
 
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			o_ptr->marked=0;
 
 			/* Auto Curse */
 			if (f3 & TR3_AUTO_CURSE)
@@ -1560,7 +1591,7 @@ void carry(int Ind, int pickup, int confirm)
 
 			/* Delete original */
 			//			delete_object(wpos, p_ptr->py, p_ptr->px);
-			delete_object_idx(c_ptr->o_idx);
+			delete_object_idx(c_ptr->o_idx, FALSE);
 
 			/* Hack -- tell the player of the next object on the pile */
 			whats_under_your_feet(Ind);
@@ -1622,6 +1653,7 @@ void carry(int Ind, int pickup, int confirm)
 				can_use(Ind, o_ptr);
 
 				/* Carry the item */
+				o_ptr->marked=0;
 				slot = inven_carry(Ind, o_ptr);
 
 				/* Get the item again */
@@ -1655,7 +1687,7 @@ void carry(int Ind, int pickup, int confirm)
 
 				/* Delete original */
 //				delete_object(wpos, p_ptr->py, p_ptr->px);
-				delete_object_idx(c_ptr->o_idx);
+				delete_object_idx(c_ptr->o_idx, FALSE);
 
 				/* Hack -- tell the player of the next object on the pile */
 				whats_under_your_feet(Ind);
@@ -1668,9 +1700,9 @@ void carry(int Ind, int pickup, int confirm)
 
 	/* splash! harm equipments */
 	if (c_ptr->feat == FEAT_DEEP_WATER &&
-			TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
+	    TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
 //			magik(WATER_ITEM_DAMAGE_CHANCE))
-			magik(3))
+	    magik(3))
 	{
 		inven_damage(Ind, set_water_destroy, 1);
 		if (magik(20)) minus_ac(Ind, 1);
@@ -1943,6 +1975,9 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg);
 				k = critical_norm(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
 
+				/* Apply the player damage bonuses */
+				k += p_ptr->to_d + p_ptr->to_d_melee;
+
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < q_ptr->chp))
 				{
 					msg_format(Ind, "%^s moans in agony!", q_ptr->name);
@@ -1967,18 +2002,21 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				k = damroll(o_ptr->dd, o_ptr->ds);
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg);
 				if (p_ptr->impact && (k > 50)) do_quake = TRUE;
-				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
 				k += o_ptr->to_d;
+
+				/* Apply the player damage bonuses */
+				k += p_ptr->to_d + p_ptr->to_d_melee;
+				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
 			}
 			/* handle bare fists/bat/ghost */
 			else
 			{
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg);
+
+				/* Apply the player damage bonuses */
+				k += p_ptr->to_d + p_ptr->to_d_melee;
 			}
 			
-			/* Apply the player damage bonuses */
-			k += p_ptr->to_d + p_ptr->to_d_melee;
-
 			/* No negative damage */
 			if (k < 0) k = 0;
 
@@ -1992,7 +2030,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
 
 				/* Messages */
-				msg_format(Ind, "You hit %s for \377o%d \377wdamage.", p_name, k);
+				msg_format(Ind, "You hit %s for \377y%d \377wdamage.", p_name, k);
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 				if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
@@ -2007,7 +2045,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
 
 				/* Messages */
-				msg_format(Ind, "You hit %s for \377o%d \377wdamage.", p_name, k);
+				msg_format(Ind, "You hit %s for \377y%d \377wdamage.", p_name, k);
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 				if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
@@ -2603,6 +2641,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 							msg_format(Ind, "\377o%^s is stunned.", m_name);
 					}
 				}
+
+				/* Apply the player damage bonuses */
+				/* (should this also cancelled by nazgul?(for now not)) */
+				k += p_ptr->to_d + p_ptr->to_d_melee;
 			} else
 #endif	// 1 (martial arts)
 			/* Handle normal weapon */
@@ -2669,7 +2711,6 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 				if ((p_ptr->impact && (k > 50)) || chaos_effect == 2) do_quake = TRUE;
 
-				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
 				if (vorpal_cut)
 				{
 					int step_k = k;
@@ -2684,7 +2725,6 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 				k += o_ptr->to_d;
 
-
 				/* May it clone the monster ? */
 				if ((f4 & TR4_CLONE) && magik(30))
 				{
@@ -2695,16 +2735,24 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				/* heheheheheh */
 				do_nazgul(Ind, &k, &num, r_ptr, o_ptr);
 
+				/* Apply the player damage bonuses */
+				/* (should this also cancelled by nazgul?(for now not)) */
+				k += p_ptr->to_d + p_ptr->to_d_melee;
+
+				/* Critical strike moved here, since it works best
+				with light weapons, which have low dice. So for gain
+				we need the full damage including all to-dam boni */
+				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight < 50)));
 			}
 			/* handle bare fists/bat/ghost */
 			else
 			{
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg);
-			}
 
-			/* Apply the player damage bonuses */
-			/* (should this also cancelled by nazgul?(for now not)) */
-			k += p_ptr->to_d + p_ptr->to_d_melee;
+				/* Apply the player damage bonuses */
+				/* (should this also cancelled by nazgul?(for now not)) */
+				k += p_ptr->to_d + p_ptr->to_d_melee;
+			}
 
 			/* Penalty for could-2H when having a shield */
 			if ((f4 & TR4_COULD2H) &&
@@ -2938,7 +2986,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						(void)place_monster_aux(wpos, y, x, tmp, FALSE, FALSE, m_ptr->clone);
 
 						/* "Kill" the "old" monster */
-						delete_monster_idx(c_ptr->m_idx);
+						delete_monster_idx(c_ptr->m_idx, TRUE);
 
 						/* XXX XXX XXX Hack -- Assume success */
 
@@ -3084,11 +3132,11 @@ void py_attack(int Ind, int y, int x, bool old)
 	{
 		set_invuln(Ind, 0);
 	}
+#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_wraith)
 	{
 		set_tim_wraith(Ind, 0);
@@ -3185,15 +3233,24 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 
 		if ((!o_ptr->name2) && (!artifact_p(o_ptr)))
 		{
-			msg_print(Ind, "\377rYour weapon *DISINTEGRATES*!");
-			*k = 0;
-			inven_item_increase(Ind, INVEN_WIELD + weap, -1);
-			inven_item_optimize(Ind, INVEN_WIELD + weap);
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f5 & TR5_KILL_UNDEAD))
+			{
+				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
+				*k = 0;
+			}
 
-			/* To stop attacking */
-//			*num = num_blow;
+			/* Dark Swords resist somewhat */
+			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(20) : magik(100))
+			{
+				msg_print(Ind, "\377rYour weapon *DISINTEGRATES*!");
+				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+				inven_item_optimize(Ind, INVEN_WIELD + weap);
+
+				/* To stop attacking */
+	//			*num = num_blow;
+			}
 		}
-		else if (artifact_p(o_ptr))
+		else if (artifact_p(o_ptr) || (o_ptr->name2 == EGO_STORMBRINGER))
 		{
 			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f5 & TR5_KILL_UNDEAD))
 			{
@@ -3202,7 +3259,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 			}
 
 //			apply_disenchant(Ind, INVEN_WIELD + weap);
-			apply_disenchant(Ind, weap);
+//			apply_disenchant(Ind, weap);
 
 			/* 1/1000 chance of getting destroyed */
 			if (!rand_int(1000))
@@ -3229,8 +3286,9 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 				*k = 0;
 			}
 
-			/* 25% chance of getting destroyed */
-			if (magik(25))
+			/* Dark Swords resist the magic, other weapons
+			   have a high chance of getting destroyed */
+			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(4) : magik(20))
 			{
 				msg_print(Ind, "\377rYour weapon is destroyed !");
 				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
@@ -3279,6 +3337,9 @@ void do_prob_travel(int Ind, int dir)
   /* Paranoia */
   if (dir == 5) return;
   if ((dir < 1) || (dir > 9)) return;
+
+  /* No probability travel in sticky vaults */
+  if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 
   x += ddx[dir];
   y += ddy[dir];
@@ -3687,6 +3748,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			
 			/* A player has left this depth */
 			new_players_on_depth(wpos,-1,TRUE);
+			check_Morgoth();
 
 			p_ptr->wpos.wx = nwpos.wx;
 			p_ptr->wpos.wy = nwpos.wy;
@@ -3696,6 +3758,7 @@ void move_player(int Ind, int dir, int do_pickup)
 				p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)/8] |= (1<<((p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)%8));
 			
 			new_players_on_depth(wpos,1,TRUE);
+			check_Morgoth();
 			p_ptr->new_level_flag = TRUE;
 			p_ptr->new_level_method = LEVEL_OUTSIDE;
 #if 0	// it's done in process_player_change_wpos
@@ -4119,6 +4182,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		else if ((c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
 				&& !p_ptr->ghost)
 		{
+			disturb(Ind, 0, 0);
 			do_cmd_trad_house(Ind);
 //			return;	/* allow builders to build */
 		}

@@ -509,9 +509,38 @@ static char get_shimmer_color()
 #endif
 
 static byte flick_colour(byte attr){
-	if ((attr >= TERM_BNW) && (attr <= TERM_RLE)){
+	if ((attr >= TERM_BNW) && (attr < TERM_RLE)){
 		if (randint(7)<6) return (attr - TERM_BNW);
 		return (randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
+	}
+	if (attr == TERM_SHIELDM) {
+/*	if ((attr >= TERM_SHIELDM) && (attr < TERM_SHIELDI)){
+		if (randint(2)==1) return (attr - TERM_SHIELDM);
+		if ((attr - TERM_SHIELDM) != TERM_VIOLET)
+		return((randint(2) == 1) ? TERM_VIOLET : TERM_ORANGE);
+		else
+		return((randint(2) == 1) ? TERM_L_RED : TERM_ORANGE);
+*/		switch(randint(3)){
+		case 1:return TERM_VIOLET;
+		case 2:return TERM_L_RED;
+		case 3:return TERM_ORANGE;
+		}
+	}
+	if (attr == TERM_SHIELDI) {
+/*	if ((attr >= TERM_SHIELDI) && (attr <= 0xFF)){
+		if (randint(4)==1) return (attr - TERM_SHIELDI);
+*/		switch(randint(5)) {
+		case 1: return (TERM_L_RED);
+		case 2: return (TERM_L_GREEN);
+		case 3: return (TERM_L_BLUE);
+		case 4: return (TERM_YELLOW);
+		case 5: return (TERM_VIOLET);
+/*		case 1: return (TERM_L_RED);
+		case 2: return (TERM_VIOLET);
+		case 3: return (TERM_RED);
+		case 4: return (TERM_L_DARK);
+		case 5: return (TERM_WHITE);
+*/		}
 	}
 	switch(attr){
 		case TERM_MULTI:

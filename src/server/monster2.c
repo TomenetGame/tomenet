@@ -129,14 +129,14 @@ void monster_check_experience(int m_idx, bool silent)
 			m_ptr->maxhp += r_ptr->hside;
 			m_ptr->hp += r_ptr->hside;
 #endif // no thx :)
-			m_ptr->maxhp += (r_ptr->hside * r_ptr->hdice) / 10;
-			m_ptr->hp += (r_ptr->hside * r_ptr->hdice) / 10;
+			m_ptr->maxhp += (r_ptr->hside * r_ptr->hdice) / 20;//10
+			m_ptr->hp += (r_ptr->hside * r_ptr->hdice) / 20;//10
 		}
 
 		/* Gain speed */
-		if (magik(30))
+		if (magik(50))//30
 		{
-			int speed = randint(3);
+			int speed = randint(2);
 			m_ptr->speed += speed;
 			m_ptr->mspeed += speed;
 
@@ -168,9 +168,9 @@ void monster_check_experience(int m_idx, bool silent)
 		}
 	}
 
-	for (i = 1; i < 4; i++) {
-	    m_ptr->blow[i].d_dice += m_ptr->blow[i].d_dice * levels_gained / 10;
-	    m_ptr->blow[i].d_side += m_ptr->blow[i].d_side * levels_gained / 10;
+	for (i = 0; i < 4; i++) {
+	    m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * levels_gained) / 10;
+	    m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * levels_gained) / 10;
 	}
 }
 
@@ -199,7 +199,7 @@ void monster_gain_exp(int m_idx, u32b exp, bool silent)
  * to verify that the "r_idx" field is non-zero.  All references
  * to "m_list[c_ptr->m_idx]" are guaranteed to be valid, see below.
  */
-void delete_monster_idx(int i)
+void delete_monster_idx(int i, bool unfound_arts)
 {
 	int x, y, Ind;
 	struct worldpos *wpos;
@@ -264,14 +264,14 @@ void delete_monster_idx(int i)
 		o_ptr->held_m_idx = 0;
 
 		/* Hack -- Preserve unknown artifacts */
-		if (true_artifact_p(o_ptr))
+/*		if (true_artifact_p(o_ptr))
 		{
 			a_info[o_ptr->name1].cur_num = 0;
 			a_info[o_ptr->name1].known = FALSE;
 		}
-
+*/
 		/* Delete the object */
-		delete_object_idx(this_o_idx);
+		delete_object_idx(this_o_idx, unfound_arts);
 	}
 #endif	// MONSTER_INVENTORY
 
@@ -284,7 +284,7 @@ void delete_monster_idx(int i)
 /*
  * Delete the monster, if any, at a given location
  */
-void delete_monster(struct worldpos *wpos, int y, int x)
+void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_arts)
 {
 	cave_type *c_ptr;
 
@@ -295,7 +295,7 @@ void delete_monster(struct worldpos *wpos, int y, int x)
 		/* Check the grid */
 		c_ptr=&zcave[y][x];
 		/* Delete the monster (if any) */
-		if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx);
+		if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx, unfound_arts);
 	}
 	else{                           /* still delete the monster, just slower method */
 		int i;
@@ -304,7 +304,7 @@ void delete_monster(struct worldpos *wpos, int y, int x)
 			if(m_ptr->r_idx && inarea(wpos, &m_ptr->wpos))
 			{
 				if(y==m_ptr->fy && x==m_ptr->fx)
-					delete_monster_idx(i);
+					delete_monster_idx(i, unfound_arts);
 			}
 		}
 	}
@@ -384,7 +384,7 @@ void compact_monsters(int size, bool purge)
 			if (rand_int(100) < chance) continue;
 
 			/* Delete the monster */
-			delete_monster_idx(i);
+			delete_monster_idx(i, TRUE);
 
 			/* Count the monster */
 			num++;
@@ -409,7 +409,7 @@ void compact_monsters(int size, bool purge)
 			if ((!m_ptr->wpos.wz && !purge) || getcave(&m_ptr->wpos)) continue;
 
 			/* Delete the monster */
-			delete_monster_idx(i);
+			delete_monster_idx(i, TRUE);
 		}
 #endif	// 0
 
@@ -543,7 +543,7 @@ void wipe_m_list(struct worldpos *wpos)
 		monster_type *m_ptr = &m_list[i];
 
 		if (inarea(&m_ptr->wpos,wpos))
-			delete_monster_idx(i);
+			delete_monster_idx(i, TRUE);
 	}
 
 	/* Compact the monster list */
@@ -4251,7 +4251,7 @@ void monster_drop_carried_objects(monster_type *m_ptr)
 		q_ptr->next_o_idx=0;
 
 		/* Delete the object */
-		delete_object_idx(this_o_idx);
+		delete_object_idx(this_o_idx, FALSE);
 
 		/* Drop it */
 		drop_near(q_ptr, -1, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);

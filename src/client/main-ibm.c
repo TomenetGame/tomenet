@@ -275,15 +275,18 @@ static long ibm_color_complex[16] =
 static byte ibm_color_simple[16] =
 {
 	VID_BLACK,			/* Dark */
-	VID_WHITE,			/* White */
-	VID_CYAN,			/* Slate XXX */
+//	VID_WHITE,			/* White */
+VID_WHITE | VID_BRIGHT,
+//	VID_CYAN,			/* Slate XXX */
+VID_BLUE | VID_BRIGHT,
 	VID_RED | VID_BRIGHT,	/* Orange XXX */
 	VID_RED,			/* Red */
 	VID_GREEN,			/* Green */
 	VID_BLUE,			/* Blue */
 	VID_YELLOW,			/* Umber XXX */
 	VID_BLACK | VID_BRIGHT,	/* Light Dark */
-	VID_CYAN | VID_BRIGHT,	/* Light Slate XXX */
+//	VID_CYAN | VID_BRIGHT,	/* Light Slate XXX */
+VID_WHITE,
 	VID_MAGENTA,		/* Violet */
 	VID_YELLOW | VID_BRIGHT,	/* Yellow */
 	VID_MAGENTA | VID_BRIGHT,	/* Light Red XXX */

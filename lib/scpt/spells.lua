@@ -87,6 +87,34 @@ SCHOOL_UDUN = add_school
         ["sorcery"] = TRUE,
 }
 
+-- Priests / Paladins
+
+SCHOOL_HOFFENSE = add_school
+{
+	["name"] = "Holy Offense",
+        ["skill"] = SKILL_HOFFENSE,
+        ["sorcery"] = FALSE,
+}
+SCHOOL_HDEFENSE = add_school
+{
+	["name"] = "Holy Defense",
+        ["skill"] = SKILL_HDEFENSE,
+        ["sorcery"] = FALSE,
+}
+SCHOOL_HCURING = add_school
+{
+	["name"] = "Holy Curing",
+        ["skill"] = SKILL_HCURING,
+        ["sorcery"] = FALSE,
+}
+SCHOOL_HSUPPORT = add_school
+{
+	["name"] = "Holy Support",
+        ["skill"] = SKILL_HSUPPORT,
+        ["sorcery"] = FALSE,
+}
+
+
 -- Put some spells
 pern_dofile(Ind, "s_mana.lua")
 pern_dofile(Ind, "s_fire.lua")
@@ -100,6 +128,11 @@ pern_dofile(Ind, "s_meta.lua")
 pern_dofile(Ind, "s_nature.lua")
 pern_dofile(Ind, "s_mind.lua")
 pern_dofile(Ind, "s_udun.lua")
+
+pern_dofile(Ind, "p_offense.lua")
+pern_dofile(Ind, "p_defense.lua")
+pern_dofile(Ind, "p_curing.lua")
+pern_dofile(Ind, "p_support.lua")
 
 -- Create the crystal of mana
 school_book[0] = {
@@ -131,7 +164,7 @@ school_book[5] = {
         DISARM, BLINK, TELEPORT, TELEAWAY, RECALL, PROBABILITY_TRAVEL,
 }
 
--- Create the book of the tree
+-- Create the book of the tree * SUMMONANIMAL requires pets first
 school_book[6] = {
         GROWTREE, HEALING, RECOVERY, REGENERATION,
 }
@@ -151,14 +184,36 @@ school_book[9] = {
         RECHARGE, PROJECT_SPELLS, DISPERSEMAGIC,
 }
 
--- Create the book of the mind
+-- Create the book of the mind * CHARM requires pets first
 school_book[10] = {
         CONFUSE, STUN, TELEKINESIS,
 }
 
--- Create the book of hellflame
+-- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing
 school_book[11] = {
         GENOCIDE, WRAITHFORM,
+}
+
+-- Priests / Paladins:
+
+-- Create the book of Holy Offense
+school_book[12] = {
+        HGLOBELIGHT, HORBFIRE,
+}
+
+-- Create the book of Holy Defense
+school_book[13] = {
+        HGLOBELIGHT,
+}
+
+-- Create the book of Holy Curing
+school_book[14] = {
+        HORBFIRE,
+}
+
+-- Create the book of Holy Support
+school_book[15] = {
+        HORBFIRE, HGLOBELIGHT,
 }
 
 -- Create the book of beginner's cantrip

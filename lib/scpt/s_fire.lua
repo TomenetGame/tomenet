@@ -14,7 +14,7 @@ GLOBELIGHT = add_spell
                 if get_level(Ind, GLOBELIGHT, 50) > 3 then lite_area(Ind, 10, 4)
                 else lite_room(Ind, player.wpos, player.py, player.px) end
                 if get_level(Ind, GLOBELIGHT, 50) > 15 then
-		        fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, GLOBELIGHT, 100), 5 + get_level(Ind, GLOBELIGHT, 6))
+		        fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, GLOBELIGHT, 100), 5 + get_level(Ind, GLOBELIGHT, 6), " calls a globe of light of")
 		end
 		msg_print(Ind, "You are surrounded by a globe of light")
 	end,
@@ -45,10 +45,11 @@ FIREFLASH = add_spell
                 local type
         	if (get_level(Ind, FIREFLASH, 50) >= 20) then
 	        	type = GF_HOLY_FIRE
+	    		fire_ball(Ind, type, args.dir, 20 + get_level(Ind, FIREFLASH, 500), 2 + get_level(Ind, FIREFLASH, 5), " casts a ball of holy fire for")
         	else
         		type = GF_FIRE
+			fire_ball(Ind, type, args.dir, 20 + get_level(Ind, FIREFLASH, 500), 2 + get_level(Ind, FIREFLASH, 5), " casts a fire ball for")
 	        end
-	        fire_ball(Ind, type, args.dir, 20 + get_level(Ind, FIREFLASH, 500), 2 + get_level(Ind, FIREFLASH, 5))
 	end,
 	["info"] = 	function()
 		return "dam "..(20 + get_level(Ind, FIREFLASH, 500)).." rad "..(2 + get_level(Ind, FIREFLASH, 5))
@@ -101,7 +102,7 @@ FIREWALL = add_spell
 --        	else
         		type = GF_FIRE
 --	        end
-	        fire_wall(Ind, type, args.dir, 20 + get_level(Ind, FIREWALL, 150), 6 + get_level(Ind, FIREWALL, 14))
+	        fire_wall(Ind, type, args.dir, 20 + get_level(Ind, FIREWALL, 150), 6 + get_level(Ind, FIREWALL, 14), " summons a fire wall for")
 	end,
 	["info"] = 	function()
 		return "dam "..(20 + get_level(Ind, FIREWALL, 150)).." dur "..(6 + get_level(Ind, FIREWALL, 14))

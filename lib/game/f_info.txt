@@ -557,13 +557,13 @@ F:DONT_NOTICE_RUNNING
 # -1 = player level
 N:85:pool of deep lava
 G:.:R
-E:-1d2:1:FIRE
+E:8d4:4:FIRE
 F:FLOOR | CAN_LEVITATE | CAN_FLY | REMEMBER | SUPPORT_LIGHT
 D:0:The lava BURNS you.
 
 N:86:stream of shallow lava
 G:.:r
-E:-1d1:1:FIRE
+E:4d4:4:FIRE
 F:FLOOR | CAN_LEVITATE | CAN_FLY | REMEMBER | SUPPORT_LIGHT
 D:0:The lava burns you.
 
@@ -755,7 +755,7 @@ D:2:a lava wall blocking your way
 N:178:Great Fire
 G:%:v
 S:R:R:y:v:y:v:R
-E:150d2:1:HELL_FIRE
+E:150d2:10:HELL_FIRE
 F:ATTR_MULTI
 F:FLOOR | REMEMBER | NOTICE | PERMANENT
 D:0:This fire is so powerful it could destroy even the most powerful artifacts.
@@ -889,7 +889,7 @@ D:0:Oh, an underground tunnel!
 N:205:a blazing fire
 G:%:y
 S:y:y:y:R:r:y:R
-E:-1d2:1:FIRE
+E:2d5:4:FIRE
 D:0:The blazing fire burns you!
 F:ATTR_MULTI
 F:FLOOR | CAN_FLY | REMEMBER | SUPPORT_LIGHT

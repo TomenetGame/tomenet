@@ -67,14 +67,14 @@ STONEPRISON = add_spell
 --                                x = px
 --                        end
 -- DGDGD we need client side tgt_pt			wall_stone(y, x)
-                        fire_ball(Ind, GF_STONE_WALL, 0, 1, 1)
+                        fire_ball(Ind, GF_STONE_WALL, 0, 1, 1, "")
 	end,
 	["info"] = 	function()
         		return ""
 	end,
         ["desc"] =	{
-        		"Creates a prison of walls around you",
-                        "At level 10 it allows you to target a monster"
+        		"Creates a prison of walls around you"
+--                        ,"At level 10 it allows you to target a monster"
 		}
 }
 
@@ -89,9 +89,9 @@ STRIKE = add_spell
         ["direction"] = TRUE,
         ["spell"] = 	function(args)
                         if get_level(Ind, STRIKE, 50) >= 12 then
-		        	fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 1)
+		        	fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 1, " casts a force ball of")
                         else
-		        	fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 0)
+		        	fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE, 50), 0, " casts a force bolt of")
                         end
 	end,
 	["info"] = 	function()
@@ -117,20 +117,20 @@ SHAKE = add_spell
         ["mana_max"] = 	30,
         ["fail"] = 	30,
         ["spell"] = 	function()
-                        if get_level(Ind, SHAKE, 50) >= 10 then
-	                       	ret, x, y = tgt_pt()
-                                if ret == FALSE then return end
-                        else
-                        	x = px
-                                y = py
-                        end
-			earthquake(player.wpos, y, x, 4 + get_level(SHAKE, 10));
+--                        if get_level(Ind, SHAKE, 50) >= 10 then
+--	                       	ret, x, y = tgt_pt()
+--                                if ret == FALSE then return end
+--                        else
+--                        	x = player.px
+--                                y = player.py
+--                        end
+			earthquake(player.wpos, player.py, player.px, 2 + get_level(Ind, SHAKE, 50));
 	end,
 	["info"] = 	function()
-			return "rad "..(4 + get_level(Ind, SHAKE, 10))
+			return "rad "..(2 + get_level(Ind, SHAKE, 50))
 	end,
         ["desc"] =	{
-        		"Creates a localized earthquake",
-                        "At level 10 it can be targeted at any location"
+        		"Creates a localized earthquake"
+--                        ,"At level 10 it can be targeted at any location"
         }
 }

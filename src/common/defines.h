@@ -2213,8 +2213,9 @@ that keeps many algorithms happy.
 #define SV_POTION_CURING                61
 #define SV_POTION_INVULNERABILITY       62
 #define SV_POTION_NEW_LIFE              63
+#define SV_POTION_STAR_RESTORE_MANA	64
 
-#define SV_POTION_LAST                  63
+#define SV_POTION_LAST                  64
 /*
  * NOTE: due to hard-coded flavor code, adding SV_POTION is bad idea.
  * Add it to SV_POTION2 instead.
@@ -2340,18 +2341,20 @@ that keeps many algorithms happy.
 #define CAVE_NOPK	0x0100	/* no pkill (arena?, tavern) */
 #define CAVE_STCK	0x0200	/* sticky, not icky (prison?) */
 
+/* world surface at night */
+#define CAVE_DARKEN	0x0400	/* change colours to darker variants */
+
 #if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?
  * we'll do 'smells of carrot' thingie? :) */
-#define CAVE_TRDT       0x0100    /* trap detected */
-#define CAVE_IDNT       0x0200    /* grid identified (fountains) */
-#define CAVE_SPEC       0x0400    /* special mark(quests) */
-#define CAVE_FREE       0x0800    /* no random generation on it */
-#define CAVE_DETECT     0x1000    /* Traps detected here */
-#define CAVE_PLIT       0x2000    /* Player lit grid */
-#define CAVE_MLIT       0x4000    /* Monster lit grid */
+#define CAVE_TRDT       0x0800    /* trap detected */
+#define CAVE_IDNT       0x1000    /* grid identified (fountains) */
+#define CAVE_SPEC       0x2000    /* special mark(quests) */
+#define CAVE_FREE       0x4000    /* no random generation on it */
+#define CAVE_DETECT     0x8000    /* Traps detected here */
+#define CAVE_PLIT       0x0    /* Player lit grid */
+#define CAVE_MLIT       0x0    /* Monster lit grid */
 #endif
-
 
 /*
  * Bit flags for the "project()" function
@@ -4397,6 +4400,9 @@ extern int PlayerUID;
 #define TERM_DARKNESS	26
 #define TERM_HALF	31	/* only the brighter colours */
 
+#define TERM_SHIELDM	0x27	/* 64: mana shield */
+#define TERM_SHIELDI	0x28	/* 128: invulnerability */
+
 #define TERM_BNW	0x20	/* 32: black & white MASK, for admin wizards */
 
 /* Reserved attr values - do not exceed */
@@ -5015,7 +5021,16 @@ extern int PlayerUID;
 #define SKILL_MIND              59
 #define SKILL_UDUN              60
 
-#define SKILL_CLIMB		70
+#define SKILL_HOFFENSE          70
+#define SKILL_HDEFENSE          71
+#define SKILL_HCURING           72
+#define SKILL_HSUPPORT          73
+
+/* additional ones */
+#define SKILL_CLIMB		90
+#define SKILL_FLY		91
+#define SKILL_FREEACT		92
+#define SKILL_RESCONF		93
 
 #if 0	/* skills to come	- Jir - */
 #define SKILL_INNATE_POWER	/* in mimicry tree */
@@ -5061,6 +5076,23 @@ extern int PlayerUID;
 #define SF1_RANDOM              0x00000100L
 #define SF1_FORCE_LEVEL         0x00000200L
 #define SF1_MUSEUM              0x00000400L
+#define SF1_NO_DISCOUNT		0x00000800L	/* no discount at all */
+#define SF1_NO_DISCOUNT2	0x00001000L	/* no 50%/75%/90% off */
+#define SF1_EGO     	      	0x00002000L     /* often has ego items */
+#define SF1_RARE_EGO            0x00004000L	/* reroll on cheap ego items (value<25000) at 67% probability */
+#define SF1_PRICE1     	      	0x00008000L     /* prices * 1.5 */
+#define SF1_PRICE2     	      	0x00010000L     /* double prices */
+#define SF1_PRICE4            	0x00020000L	/* prices * 4 */
+#define SF1_PRICE16            	0x00040000L	/* prices * 16 */
+#define SF1_GOOD     	      	0x00080000L     /* apply_magic good */
+#define SF1_GREAT            	0x00100000L	/* apply_magic great */
+#define SF1_PRICY_ITEMS1     	0x00200000L     /* items are worth 1000+ */
+#define SF1_PRICY_ITEMS2      	0x00400000L     /* items are worth 5000+ */
+#define SF1_PRICY_ITEMS3      	0x00800000L	/* items are worth 10000+ */
+#define SF1_PRICY_ITEMS4      	0x01000000L	/* items are worth 20000+ */
+#define SF1_HARD_STEAL 	      	0x02000000L     /* apply_magic good */
+#define SF1_VHARD_STEAL	      	0x04000000L     /* apply_magic good */
+#define SF1_NO_STEAL   	      	0x08000000L     /* apply_magic good */
 
 /*
  * Total number of stores (see "store.c", etc)

@@ -1786,6 +1786,7 @@ struct player_type
 	bool inval;		/* Non validated account */
 	bool alive;		/* Are we alive */
 	bool death;		/* Have we died */
+	int deathblow;          /* How much damage the final blow afflicted */
 	s16b ghost;		/* Are we a ghost */
 	s16b fruit_bat;		/* Are we a fruit bat */
 	byte lives;         /* number of times we have ressurected */
@@ -2312,6 +2313,8 @@ struct player_type
 	bool fly;               /* Can fly over some features */
 	bool can_swim;		/* Can swim like a fish (or Lizard..whatever) */
 	bool pass_trees;	/* Can pass thick forest */
+	
+	int luck_cur;	/* Extra luck of this player */
 
 	//        byte anti_magic_spell;    /* Anti-magic(newer one..) */
 	byte antimagic;    		/* Anti-magic(in percent) */
@@ -2337,6 +2340,8 @@ struct player_type
 
 	s32b balance;		/* Deposit/debt */
 	s32b tim_blacklist;		/* Player is on the 'Black List' */
+	int ret_dam;                    /* Drained life from a monster */
+	char attacker[80];		/* Monster doing a ranged attack on the player */
 #if 0
 	s16b mtp;                       /* Max tank pts */
 	s16b ctp;                       /* Cur tank pts */
@@ -2480,56 +2485,77 @@ struct server_opts
 	time_t closetime;	/* Server closedown time */
 	char * meta_address;
 	s16b meta_port;
+	
 	char * bind_name;
 	char * console_password;
 	char * admin_wizard;
 	char * dungeon_master;
 	char * wserver;
+	
 	char * pass;
 	s32b preserve_death_level;
 	s32b unique_respawn_time;
 	s32b unique_max_respawn_time;
 	s32b level_unstatic_chance;
+
 	s32b min_unstatic_level;
 	s32b retire_timer;
 	s32b game_port;
 	s32b console_port;
 	s32b gw_port;
+
 	s32b spell_interfere;
 	s32b spell_stack_limit;
 	s16b fps;
 	s16b newbies_cannot_drop;
 	s16b running_speed;
+
 	s16b anti_scum;
 	s16b dun_unusual;
 	s16b town_x;
 	s16b town_y;
 	s16b town_base;
+
 	s16b dun_base;
 	s16b dun_max;
 	s16b store_turns;
 	char resting_rate;
 	char party_xp_boost;
+
 	char use_pk_rules;
 	char quit_ban_mode;
 	char zang_monsters;
 	char pern_monsters;
 	char cth_monsters;
+
 	char joke_monsters;
 	char vanilla_monsters;
 	char pet_monsters;
 	bool report_to_meta;
 	bool secret_dungeon_master;
+
 	bool anti_arts_hoard;
 	bool anti_arts_house;
 	bool anti_arts_shop;
+	bool anti_arts_pickup;
+	bool anti_arts_send;
+
+	bool anti_cheeze_pickup;
+	s16b surface_item_removal; /* minutes before items are cleared */
+	s16b dungeon_shop_chance;
+	s16b dungeon_shop_type;
+	s16b dungeon_shop_timeout;
+
 	bool mage_hp_bonus;	/* DELETEME (replace it, that is) */
 	char door_bump_open;
 	bool no_ghost;
+	int lifes;		/* number of times a ghost player can be resurrected */
 	bool maximize;
 	bool kings_etiquette;
+
 	bool public_rfe;
 	bool auto_purge;
+	bool log_u;
 };
 
 /* Client option struct */

@@ -12,7 +12,7 @@ BLINK = add_spell
                 	local dist = 10 + get_level(Ind, BLINK, 8)
 			teleport_player(Ind, dist)
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_TELEPORT_PLAYER, 0, dist, player.spell_project)
+                                fire_ball(Ind, GF_TELEPORT_PLAYER, 0, dist, player.spell_project, "")
                         end
 	end,
 	["info"] = 	function()
@@ -55,7 +55,7 @@ TELEPORT = add_spell
                         local dist = 100 + get_level(Ind, TELEPORT, 100)
 			teleport_player(Ind, dist)
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_TELEPORT_PLAYER, 0, dist, player.spell_project)
+                                fire_ball(Ind, GF_TELEPORT_PLAYER, 0, dist, player.spell_project, "")
                         end
 	end,
 	["info"] = 	function()
@@ -80,7 +80,7 @@ TELEAWAY = add_spell
         		if get_level(Ind, TELEAWAY, 50) >= 20 then
                                 project_los(Ind, GF_AWAY_ALL, 100)
                         elseif get_level(Ind, TELEAWAY, 50) >= 10 then
-                                fire_ball(Ind, GF_AWAY_ALL, args.dir, 100, 3 + get_level(Ind, TELEAWAY, 4))
+                                fire_ball(Ind, GF_AWAY_ALL, args.dir, 100, 3 + get_level(Ind, TELEAWAY, 4), "")
                         else
                                 teleport_monster(Ind, args.dir)
 			end
@@ -109,7 +109,7 @@ RECALL = add_spell
                         if args.book < 0 then return end
         		set_recall(Ind, dur, player.inventory[1 + args.book])
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_RECALL_PLAYER, 0, dur, player.spell_project)
+                                fire_ball(Ind, GF_RECALL_PLAYER, 0, dur, player.spell_project, "")
                         end
 	end,
 	["info"] = 	function()
@@ -130,7 +130,7 @@ PROBABILITY_TRAVEL = add_spell
         ["mana_max"] = 	50,
         ["fail"] = 	50,
         ["spell"] = 	function()
-                        set_proba_travel(Ind, randint(10) + get_level(Ind, PROBABILITY_TRAVEL, 60))
+                        set_prob_travel(Ind, randint(10) + get_level(Ind, PROBABILITY_TRAVEL, 60))
 	end,
 	["info"] = 	function()
         		return "dur "..get_level(Ind, PROBABILITY_TRAVEL, 60).."+d20"

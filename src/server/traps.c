@@ -340,6 +340,7 @@ static void do_player_trap_change_depth(int Ind, int dis)
 	new_players_on_depth(&p_ptr->wpos,-1,TRUE);
 	p_ptr->wpos.wz += dis;
 	new_players_on_depth(&p_ptr->wpos,1,TRUE);
+	check_Morgoth();
 }
 
 static bool do_player_trap_call_out(int Ind)
@@ -582,7 +583,7 @@ static bool player_handle_trap_of_walls(void)
                      /* Message */
                      msg_format("%^s is entombed in the rock!", m_name);
                      /* Delete the monster */
-                     delete_monster_idx(cave[cy][cx].m_idx);
+                     delete_monster_idx(cave[cy][cx].m_idx, TRUE);
                      /* No longer safe */
                      sn = 0;
                   }
@@ -780,7 +781,7 @@ static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap)
 	dam = damroll(my_dd, my_ds);
 
 	ident = project(PROJECTOR_TRAP, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, type,
-			PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM);
+			PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM, "");
 //			PROJECT_KILL | PROJECT_JUMP);
 	return (ident);
 }
@@ -2621,7 +2622,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				}
 
 //				if (zcave) zcave[iy][ix].o_idx=0;
-				delete_object_idx(k);
+				delete_object_idx(k, TRUE);
 
 				/* Wipe the object */
 //				WIPE(o_ptr, object_type);
@@ -3653,7 +3654,7 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x)
 		object_copy(q_ptr, o_ptr);
 
 		/* Delete the object */
-		delete_object_idx(this_o_idx);
+		delete_object_idx(this_o_idx, FALSE);
 
 		/* Drop it */
 		drop_near(q_ptr, -1, wpos, y, x);
@@ -3777,7 +3778,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr)
 	}
 	
 	/* Actually hit the monster */
-	if (typ) (void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP);
+	if (typ) (void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
 
 	/* Set rod recharge time */
 	o_ptr->timeout -= (f4 & TR4_CHEAPNESS)?tip_ptr->pval / 2:tip_ptr->pval;
@@ -3925,7 +3926,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 	}
 	
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP);
+	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
 	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE); 
 }
 
@@ -3998,7 +3999,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 			dam = 100;
 			break;
 		case SV_SCROLL_TELEPORT_LEVEL:
-			delete_monster(&wpos, y, x);
+			delete_monster(&wpos, y, x, TRUE);
 			return (TRUE);
 		case SV_SCROLL_LIGHT:		
 //			lite_room(y, x);
@@ -4044,8 +4045,8 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 		}
 		case SV_SCROLL_MASS_GENOCIDE:	// Hrm uniques too?
 			for (k = 0; k < 8; k++)
-				delete_monster(&wpos, y+ddy[k], x+ddx[k]);
-			delete_monster(&wpos, y, x);
+				delete_monster(&wpos, y+ddy[k], x+ddx[k], TRUE);
+			delete_monster(&wpos, y, x, TRUE);
 			return(TRUE);
 		case SV_SCROLL_ACQUIREMENT:
                         acquirement(&wpos, y, x, 1, TRUE);
@@ -4058,7 +4059,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 	}
 	
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP);
+	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
         return (zcave[y][x].m_idx == 0 ? TRUE : FALSE); 
 }
 
@@ -4207,7 +4208,7 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 	}
 	
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP);
+	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP, "");
         return (zcave[y][x].m_idx == 0 ? TRUE : FALSE); 
 }
 
@@ -4249,6 +4250,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 			case SV_POTION_RESIST_HEAT:
 			case SV_POTION_RESIST_COLD:
 			case SV_POTION_RESTORE_MANA:
+			case SV_POTION_STAR_RESTORE_MANA:
 			case SV_POTION_RESTORE_EXP:
 			case SV_POTION_RES_STR:
 			case SV_POTION_RES_INT:
@@ -4369,7 +4371,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 	/* Actually hit the monster */
 //	(void) project_m(who, 0, y, x, dam, typ);
 	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ,
-	               (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL));
+	               (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL), "");
 
         return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
@@ -4691,9 +4693,9 @@ bool mon_hit_trap(int m_idx)
 							{
 								/* Generate treasure, etc */
 								//			if (!quiet) monster_death(Ind, c_ptr->m_idx);
-
+								/* if treasure is generated, change TRUE to FALSE in below delete_monster_idx !
 								/* Delete the monster */
-								delete_monster_idx(c_ptr->m_idx);
+								delete_monster_idx(c_ptr->m_idx,TRUE);
 
 								dead = TRUE;
 
@@ -4763,7 +4765,7 @@ bool mon_hit_trap(int m_idx)
 						if (load_o_ptr->number <= 0)
 						{
 							remove = TRUE;
-							delete_object_idx(kit_o_ptr->next_o_idx);
+							delete_object_idx(kit_o_ptr->next_o_idx, FALSE);
 							kit_o_ptr->next_o_idx = 0;
 						}
 
@@ -4816,7 +4818,7 @@ bool mon_hit_trap(int m_idx)
 					if (load_o_ptr->number <= 0)
 					{
 						remove = TRUE;
-						delete_object_idx(kit_o_ptr->next_o_idx);
+						delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
 						kit_o_ptr->next_o_idx = 0;
 					}
 				}
@@ -4864,7 +4866,7 @@ bool mon_hit_trap(int m_idx)
 					if (load_o_ptr->number <= 0)
 					{
 						remove = TRUE;
-						delete_object_idx(kit_o_ptr->next_o_idx);
+						delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
 						kit_o_ptr->next_o_idx = 0;
 					}
 				}

@@ -338,6 +338,50 @@ D:Spells use the intelligence stat
 A:11:Cast a spell
 I:1000:111
 
+# priest
+
+N:70:Holy Offense
+D:Ability to learn and use holy prayers for attacking
+D:Spells use the wisdom stat
+A:11:Cast a spell
+I:1000:111
+
+N:71:Holy Defense
+D:Ability to learn and use holy prayers for defending
+D:Spells use the wisdom stat
+A:11:Cast a spell
+I:1000:111
+
+N:72:Holy Curing
+D:Ability to learn and use holy prayers for curing purpose
+D:Spells use the wisdom stat
+A:11:Cast a spell
+I:1000:111
+
+N:73:Holy Support
+D:Ability to learn and use miscellanous supporting prayers
+D:Spells use the wisdom stat
+A:11:Cast a spell
+I:1000:111
+
+# additional ones
+
+N:90:Climbing
+D:Ability to climb highest mountains withouth problems
+I:1000:0
+
+N:91:Flying
+D:Ability to fly over the ground
+I:1000:0
+
+N:92:Free Action
+D:Immunity to paralyzing attacks
+I:1000:0
+
+N:93:Confusion Resistance
+D:Resistance to confusion in general
+I:1000:0
+
 #
 # Skill interactions
 #
@@ -446,6 +490,10 @@ E:Prayer:Antimagic
 ##E:Revelation:Antimagic
 E:Hunting Lore:Antimagic
 
+f:Holy Offense:Magic%10
+f:Holy Defense:Magic%10
+f:Holy Curing:Magic%10
+f:Holy Support:Magic%10
 
 f:Stealth:Sneakiness%15
 f:Disarming:Sneakiness%10
@@ -464,7 +512,10 @@ f:Training:Health%25
 f:Agility:Health%25
 f:Swimming:Health%25
 f:Digging:Health%25
-
+f:Climbing:Health%25
+f:Flying:Health%15
+f:Free Action:Health%15
+f:Confusion Resistance:Health%15
 
 # I'm not quite sure if they should affect the Necromancy
 
@@ -515,6 +566,11 @@ T:Magic:Udun
 #T:Magic:Alchemy
 T:Magic:Mimicry
 
+T:Magic:Holy Offense
+T:Magic:Holy Defense
+T:Magic:Holy Curing
+T:Magic:Holy Support
+
 #T:Main:Spirituality
 #T:Spirituality:Prayer
 #T:Spirituality:Druidistic
@@ -550,6 +606,10 @@ T:Health:Training
 T:Health:Agility
 T:Health:Swimming
 T:Health:Digging
+T:Health:Climbing
+T:Health:Flying
+T:Health:Free Action
+T:Health:Confusion Resistance
 
 #T:Main:Miscellaneous
 #T:Miscellaneous:Calmness

@@ -271,6 +271,7 @@ F:R_CHAR_A
 M:EVIL | FORCE_MAXHP
 # no 'Fallen Fallen Angel' :)
 H:EVIL
+O:RES_LITE | GOOD
 S:BO_NETH
 T:S_ANGEL
 

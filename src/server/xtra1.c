@@ -923,13 +923,13 @@ static void calc_mana(int Ind)
 	    (p_ptr->pclass == CLASS_RANGER) ||
 	    (p_ptr->pclass == CLASS_ARCHER) ||
 	    (p_ptr->pclass == CLASS_MIMIC) ||
-	    (p_ptr->pclass == CLASS_WARRIOR))
+	    (p_ptr->pclass == CLASS_WARRIOR) ||
+	    (p_ptr->pclass == CLASS_RANGER))
 		/* 75% Int, 25% Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 75 * levels / (5 * 100)) + (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 25 * levels / (5 * 100));
 	
 	if ((p_ptr->pclass == CLASS_PRIEST) || 
-	    (p_ptr->pclass == CLASS_PALADIN) || 
-	    (p_ptr->pclass == CLASS_RANGER))
+	    (p_ptr->pclass == CLASS_PALADIN))
 		/* 25% Int, 75% Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 25 * levels / (5 * 100)) + (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 75 * levels / (5 * 100));
 	
@@ -966,6 +966,14 @@ static void calc_mana(int Ind)
 		}
 	}
 
+	/* Forms that don't have proper 'hands' (arms) have mana penalty.
+	   this will hopefully stop the masses of D form Istari :/ */
+	if (p_ptr->body_monster)
+	{
+		monster_race *r_ptr = &r_info[p_ptr->body_monster];
+		if (!r_ptr->body_parts[BODY_ARMS]) new_mana = (new_mana * 1) / 2;
+	}
+
 	if (new_mana <= 0) new_mana = 1;
 
 	/* Sorcery helps mana */
@@ -996,14 +1004,6 @@ static void calc_mana(int Ind)
 	/* commented out (evileye for power) */
 	/*	new_mana -= new_mana / 2; */
 	}
-#if 0 // DGDGDG
-	/* Warrior dont get much */
-	if (p_ptr->pclass == CLASS_WARRIOR)
-	{
-		new_mana /= 8;
-		if (!new_mana) new_mana++;
-	}
-#endif
 	/* Assume player not encumbered by armor */
 	p_ptr->cumber_armor = FALSE;
 
@@ -1031,6 +1031,12 @@ static void calc_mana(int Ind)
 	/* Mana can never be negative */
 	if (new_mana < 0) new_mana = 0;
 
+	/* Some classes dont use mana */
+	if ((p_ptr->pclass == CLASS_WARRIOR) ||
+	    (p_ptr->pclass == CLASS_ARCHER))
+	{
+		new_mana = 0;
+	}
 
 	/* Maximum mana has changed */
 	if (p_ptr->msp != new_mana)
@@ -1165,7 +1171,7 @@ static void calc_hitpoints(int Ind)
 	if (get_skill(p_ptr, SKILL_SORCERY))
 	{
 		// mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 20)) / 100;
-		mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 25)) / 100;
+		mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 33)) / 100;
 	}
 
 	if (p_ptr->body_monster)
@@ -1559,15 +1565,25 @@ static void calc_body_bonus(int Ind)
 		p_ptr->see_infra += 3;
     		p_ptr->resist_fear = TRUE;*/
 		/*p_ptr->resist_conf = TRUE;*/
-		p_ptr->resist_dark = TRUE;
-		p_ptr->resist_blind = TRUE;
 		/* p_ptr->resist_pois = TRUE; */ /* instead of immune */
 		/* p_ptr->resist_cold = TRUE; */
+
+		p_ptr->resist_pois = TRUE;
+		p_ptr->resist_dark = TRUE;
+		p_ptr->resist_blind = TRUE;
 		p_ptr->no_cut = TRUE;
 		p_ptr->reduce_insanity = 1;
 		p_ptr->see_infra += 1;
 	}
 
+	/* Non-living got a nice ability set too ;) */
+	if(r_ptr->flags3 & RF3_NONLIVING)
+	{
+		p_ptr->resist_pois = TRUE;
+		p_ptr->resist_fear = TRUE;
+		p_ptr->reduce_insanity = 2;
+	}
+	
 	//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
 	if(r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 2;
 	if(r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 2;
@@ -1691,6 +1707,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if(r_ptr->flags8 & RF8_NO_CUT) p_ptr->no_cut = TRUE;
 	if(r_ptr->flags7 & RF7_CAN_FLY) p_ptr->fly = TRUE;
 	if(r_ptr->flags7 & RF7_CAN_SWIM) p_ptr->can_swim = TRUE;
+	if(r_ptr->flags2 & RF2_REFLECTING) p_ptr->reflect = TRUE;
 	if(r_ptr->flags7 & RF7_DISBELIEVE)
 	{
 		p_ptr->antimagic += r_ptr->level / 2 + 20;
@@ -1944,10 +1961,12 @@ int calc_blows(int Ind, object_type *o_ptr)
 void calc_bonuses(int Ind)
 {
 	cptr inscription = NULL;
+	
+	char tmp[80];
 
 	player_type *p_ptr = Players[Ind];
 
-	int			i, j, hold, minus;
+	int			i, j, hold, minus, am;
 
 	int			old_speed;
 
@@ -2064,6 +2083,7 @@ void calc_bonuses(int Ind)
 	p_ptr->can_swim = FALSE;
 	p_ptr->climb = FALSE;
 	p_ptr->pass_trees = FALSE;
+	p_ptr->luck_cur = 0;
         p_ptr->reduc_fire = 0;
         p_ptr->reduc_cold = 0;
         p_ptr->reduc_elec = 0;
@@ -2268,6 +2288,12 @@ void calc_bonuses(int Ind)
 	if (p_ptr->pclass == CLASS_RANGER)
 	    if (p_ptr->lev >= 20) p_ptr->pass_trees = TRUE;
 
+	/* Check ability skills */
+	if (get_skill(p_ptr, SKILL_CLIMB) >= 1) p_ptr->climb = TRUE;
+	if (get_skill(p_ptr, SKILL_FLY) >= 1) p_ptr->fly = TRUE;
+	if (get_skill(p_ptr, SKILL_FREEACT) >= 1) p_ptr->free_act = TRUE;
+	if (get_skill(p_ptr, SKILL_RESCONF) >= 1) p_ptr->resist_conf = TRUE;
+
 	/* Compute antimagic */
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
@@ -2428,7 +2454,7 @@ void calc_bonuses(int Ind)
 		{
 			if (f5 & (TR5_CRIT)) p_ptr->xtra_crit += o_ptr->bpval;
 			if (f5 & (TR5_DISARM)) p_ptr->skill_dis += (o_ptr->bpval) * 10;
-//			if (f5 & (TR5_LUCK)) p_ptr->luck_cur += o_ptr->bpval;
+			if (f5 & (TR5_LUCK)) p_ptr->luck_cur += o_ptr->bpval;
 		}
 
 		/* Next, add our ego bonuses */
@@ -2478,8 +2504,8 @@ void calc_bonuses(int Ind)
 		if (f1 & TR1_CON) p_ptr->stat_add[A_CON] += pval;
 		if (f1 & TR1_CHR) p_ptr->stat_add[A_CHR] += pval;
 
-
-//                if (f5 & (TR5_LUCK)) p_ptr->luck_cur += pval;
+                /* Affect luck */
+                if (f5 & (TR5_LUCK)) p_ptr->luck_cur += pval;
 
                 /* Affect spell power */
 //                if (f1 & (TR1_SPELL)) p_ptr->to_s += pval;
@@ -2643,7 +2669,11 @@ void calc_bonuses(int Ind)
 		if (f2 & TR2_SUST_CHR) p_ptr->sustain_chr = TRUE;
 
 		/* PernA flags */
-//                if (f3 & (TR3_WRAITH)) p_ptr->wraith_form = TRUE;
+                if (f3 & (TR3_WRAITH))
+		{
+			//p_ptr->wraith_form = TRUE;
+			p_ptr->tim_wraith = 30000;
+		}
                 if (f4 & (TR4_FLY)) p_ptr->fly = TRUE;
                 if (f4 & (TR4_CLIMB)) p_ptr->climb = TRUE;
                 if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
@@ -2658,28 +2688,20 @@ void calc_bonuses(int Ind)
 		if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
 
 		/* Limit use of disenchanted DarkSword for non-unbe */
-		minus = o_ptr->to_h + o_ptr->to_d + pval + (o_ptr->to_a / 4);
+		minus = o_ptr->to_h + o_ptr->to_d; // + pval;// + (o_ptr->to_a / 4);
 		if (minus < 0) minus = 0;
-
-		if (f4 & (TR4_ANTIMAGIC_50) && minus < 50)
+		am = 0;
+		if (f4 & TR4_ANTIMAGIC_50) am += 50;
+		if (f4 & TR4_ANTIMAGIC_30) am += 30;
+		if (f4 & TR4_ANTIMAGIC_20) am += 20;
+		if (f4 & TR4_ANTIMAGIC_10) am += 10;
+		am -= minus;
+		/* Weapons may not give more than 50% AM */
+		if (am > 50) am = 50;
+		if (am > 0)
 		{
-			p_ptr->antimagic += 50 - minus;
-			p_ptr->antimagic_dis += 5 - (minus / 15);
-		}
-		if (f4 & (TR4_ANTIMAGIC_30) && minus < 30)
-		{
-			p_ptr->antimagic += 30 - minus;
-			p_ptr->antimagic_dis += 3 - (minus / 15);
-		}
-		if (f4 & (TR4_ANTIMAGIC_20) && minus < 20)
-		{
-			p_ptr->antimagic += 20 - minus;
-			p_ptr->antimagic_dis += 2 - (minus / 15);
-		}
-		if (f4 & (TR4_ANTIMAGIC_10) && minus < 10)
-		{
-			p_ptr->antimagic += 10 - minus;
-			p_ptr->antimagic_dis += 1 - (minus / 15);
+			p_ptr->antimagic += am;
+			p_ptr->antimagic_dis += (am / 15);
 		}
 
 		if (f4 & (TR4_BLACK_BREATH)) p_ptr->black_breath_tmp = TRUE;
@@ -2717,6 +2739,9 @@ void calc_bonuses(int Ind)
 		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_d += o_ptr->to_d;
 
 	}
+
+	if (p_ptr->antimagic > 95) p_ptr->antimagic = 95;
+	if (p_ptr->luck_cur > 40) p_ptr->luck_cur = 40; /* luck caps at 40 */
 
 
 	/* Calculate stats */
@@ -2844,20 +2869,24 @@ void calc_bonuses(int Ind)
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 9)
 					p_ptr->feather_fall = TRUE;
 
-				/* Fear Resistance if unencumbered at level 20 */
-				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 19)
+				/* Fear Resistance if unencumbered at level 15 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 14)
 					p_ptr->resist_fear = TRUE;
+
+				/* Confusion Resistance if unencumbered at level 20 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 19)
+					p_ptr->resist_conf = TRUE;
 
 				/* Free action if unencumbered at level 25 */
 				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 24)
 					p_ptr->free_act = TRUE;
 
-				/* Swimming if unencumbered at level 35 */
-				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 34)
+				/* Swimming if unencumbered at level 30 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 29)
 					p_ptr->can_swim = TRUE;
 
-				/* Climbing if unencumbered at level 45 */
-				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 44)
+				/* Climbing if unencumbered at level 40 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 39)
 					p_ptr->climb = TRUE;
 
 				/* Flying if unencumbered at level 50 */
@@ -2925,7 +2954,7 @@ void calc_bonuses(int Ind)
 	}
 
 	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
-	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 5);
+	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 7);
 #endif	// 0
 
 #if 0 // DGDGDGDGDG - no monks ffor the time being
@@ -3422,10 +3451,10 @@ void calc_bonuses(int Ind)
 
 		if (!monk_heavy_armor(p_ptr))
 		{
-			p_ptr->to_h += (marts / 3);
+			p_ptr->to_h += (marts / 3) * 2;
 			p_ptr->to_d += (marts / 3);
 
-			p_ptr->dis_to_h += (marts / 3);
+			p_ptr->dis_to_h += (marts / 3) * 2;
 			p_ptr->dis_to_d += (marts / 3);
 		}
 	}
@@ -3497,7 +3526,8 @@ void calc_bonuses(int Ind)
 
 	/* Priest weapon penalty for non-blessed edged weapons */
 //	if ((p_ptr->pclass == 2) && (!p_ptr->bless_blade) &&
-	if ((get_skill(p_ptr, SKILL_PRAY)) && (!p_ptr->bless_blade) &&
+//	if ((get_skill(p_ptr, SKILL_PRAY)) && (!p_ptr->bless_blade) &&
+	if ((p_ptr->pclass == CLASS_PRIEST) && (!p_ptr->bless_blade) &&
 	    ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM) ||
 	    (o_ptr->tval == TV_AXE)))
 	{

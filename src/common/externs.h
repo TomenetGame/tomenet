@@ -529,8 +529,8 @@ extern void display_roff(int r_idx);
 
 /* monster.c */
 extern cptr r_name_get(monster_type *m_ptr);
-extern void delete_monster_idx(int i);
-extern void delete_monster(int Depth, int y, int x);
+extern void delete_monster_idx(int i, bool unfound_art);
+extern void delete_monster(int Depth, int y, int x, bool unfound_art);
 extern void compact_monsters(int size);
 extern void wipe_m_list(int Depth);
 extern s16b m_pop(void);
@@ -625,8 +625,8 @@ extern void display_equip(int Ind);
 extern void show_equip(void);
 extern void toggle_inven_equip(void);
 extern bool get_item(int Ind, int *cp, cptr pmt, bool equip, bool inven, bool floor);*/
-extern void delete_object_idx(int i);
-extern void delete_object(int Depth, int y, int x);
+extern void delete_object_idx(int i, bool unfound_art);
+extern void delete_object(int Depth, int y, int x, bool unfound_art);
 extern void compact_objects(int size);
 extern void wipe_o_list(int Depth);
 extern s16b o_pop(void);
@@ -642,7 +642,7 @@ extern s16b lookup_kind(int tval, int sval);
 extern void invwipe(object_type *o_ptr);
 extern void invcopy(object_type *o_ptr, int k_idx);
 extern void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great);
-extern void place_object(int Depth, int y, int x, bool good, bool great);
+extern void place_object(int Depth, int y, int x, bool good, bool great, int luck);
 extern void acquirement(int Depth, int y1, int x1, int num, bool great);
 extern void place_trap(int Depth, int y, int x);
 extern void place_gold(int Depth, int y, int x);

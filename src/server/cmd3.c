@@ -142,6 +142,9 @@ void inven_takeoff(int Ind, int item, int amt)
 		}*/
 	}
 
+	/* Check if item gave WRAITH form */
+	if(k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) p_ptr->tim_wraith = 1;
+
 	/* Carry the object, saving the slot it went in */
 	posn = inven_carry(Ind, &tmp_obj);
 
@@ -589,7 +592,9 @@ void do_cmd_wield(int Ind, int item)
 		{
 			msg_print(Ind, "You are blasted by the Crown's power!");
 			/* This should pierce invulnerability */
+			bypass_invuln = TRUE;
 			take_hit(Ind, 10000, "the Massive Iron Crown of Morgoth");
+			bypass_invuln = FALSE;
 			return;
 		}
 		/* Attempting to wield Grond isn't so bad. */

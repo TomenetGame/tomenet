@@ -1,6 +1,6 @@
 -- evileye functions for evil admins
 
-function ball(name, rad, type, harm, dam, flg, time)
+function ball(name, rad, type, harm, dam, flg, time, "")
 	local i;
 	local w;
 	i=ind(name);
@@ -12,12 +12,12 @@ function ball(name, rad, type, harm, dam, flg, time)
 end
 
 function wallin(name)
-	ball(name, 2, 71, 0, 0, 176, 0);
+	ball(name, 2, 71, 0, 0, 176, 0, "");
 	msg_print(Ind, "Walling in "..name);
 end
 
 function dom(name)
-	ball(name, 2, 113, 0, 0, 192, 0); 
+	ball(name, 2, 113, 0, 0, 192, 0, ""); 
 	msg_print(Ind, "Dominate - "..name);
 end
 
@@ -27,38 +27,38 @@ function evilrumour(text)
 end
 
 function trap(name)
-	ball(name, 2, 47, 0, 0, 176, 0);
+	ball(name, 2, 47, 0, 0, 176, 0, "");
 	msg_print(Ind, "Trapping "..name);
 end
 
 function manaball(name)
-	ball(name, 2, 26, 1, 1000, 73, 0);
+	ball(name, 2, 26, 1, 1000, 73, 0, "");
 	msg_print(Ind, "Blasted "..name);
 end
 
 function firelit(name)
-	ball(name, 2, 5, 0, 0, 65536+176, 500);
+	ball(name, 2, 5, 0, 0, 65536+176, 500, "");
 	msg_print(Ind, "firelit "..name);
 end
 
 function lightness(name)
-	ball(name, 2, 15, 0, 0, 65536+176, 500);
+	ball(name, 2, 15, 0, 0, 65536+176, 500, "");
 	msg_print(Ind, "lit "..name);
 end
 
 function feed(name)
-	ball(name, 0, 116, 1, 1000, 73, 0);
+	ball(name, 0, 116, 1, 1000, 73, 0, "");
 	msg_print(Ind, "Fed "..name);
 end
 
 function darkness(name)
-	ball(name, 4, 16, 0, 0, 65536+176, 500);
+	ball(name, 4, 16, 0, 0, 65536+176, 500, "");
 	msg_print(Ind, "darkened "..name);
 end
 
 -- 40 stm 81 disin
 function openarea(name)
-	ball(name, 8, 81, 0, 0, 176, 0);
+	ball(name, 8, 81, 0, 0, 176, 0, "");
 	msg_print(Ind, "Opening up area for "..name);
 end
 

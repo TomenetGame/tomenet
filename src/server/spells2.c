@@ -884,14 +884,16 @@ void self_knowledge(int Ind)
 	if (p_ptr->antimagic)	// older (percent)
 	{
 //		fprintf(fff, "You are surrounded by an anti-magic shield.\n");
-		if (p_ptr->antimagic >= 100)
+		if (p_ptr->antimagic >= 95)
 			fprintf(fff, "You are surrounded by a complete anti-magic shield.\n");
-		else if (p_ptr->antimagic >= 80)
+		else if (p_ptr->antimagic >= 85)
 			fprintf(fff, "You are surrounded by a mighty anti-magic shield.\n");
-		else if (p_ptr->antimagic >= 60)
+		else if (p_ptr->antimagic >= 70)
 			fprintf(fff, "You are surrounded by a strong anti-magic shield.\n");
-		else if (p_ptr->antimagic >= 40)
+		else if (p_ptr->antimagic >= 50)
 			fprintf(fff, "You are surrounded by an anti-magic shield.\n");
+		else if (p_ptr->antimagic >= 30)
+			fprintf(fff, "You are surrounded by a weaker anti-magic shield.\n");
 		else fprintf(fff, "You are surrounded by a feeble anti-magic shield.\n");
 
 	}
@@ -1174,7 +1176,16 @@ void self_knowledge(int Ind)
                 fprintf(fff, "Your ability to score critical hits is affected by your equipment.\n");
 	}
 
-
+	if (p_ptr->luck_cur == 40)
+		fprintf(fff, "You are ultimatively lucky!\n");
+	else if (p_ptr->luck_cur >= 30)
+		fprintf(fff, "You are lucky very frequently!\n");
+	else if (p_ptr->luck_cur >= 20)
+		fprintf(fff, "You are lucky often.\n");
+	else if (p_ptr->luck_cur >= 10)
+		fprintf(fff, "You are lucky here and there.\n");
+	else if (p_ptr->luck_cur > 0)
+		fprintf(fff, "You are lucky sometimes.\n");
 
 	/* Access the current weapon */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
@@ -1506,14 +1517,16 @@ void self_knowledge(int Ind)
 	if (p_ptr->antimagic)	// older (percent)
 	{
 //		info[i++] = "You are surrounded by an anti-magic shield.";
-		if (p_ptr->antimagic >= 100)
+		if (p_ptr->antimagic >= 95)
 			info[i++] = "You are surrounded by a complete anti-magic shield.";
-		else if (p_ptr->antimagic >= 80)
+		else if (p_ptr->antimagic >= 85)
 			info[i++] = "You are surrounded by a mighty anti-magic shield.";
-		else if (p_ptr->antimagic >= 60)
+		else if (p_ptr->antimagic >= 70)
 			info[i++] = "You are surrounded by a strong anti-magic shield.";
-		else if (p_ptr->antimagic >= 40)
+		else if (p_ptr->antimagic >= 50)
 			info[i++] = "You are surrounded by an anti-magic shield.";
+		else if (p_ptr->antimagic >= 30)
+			info[i++] = "You are surrounded by a weaker anti-magic shield.";
 		else info[i++] = "You are surrounded by a feeble anti-magic shield.";
 
 	}
@@ -1781,6 +1794,16 @@ void self_knowledge(int Ind)
                 info[i++] = "Your ability to score critical hits is affected by your equipment.";
 	}
 
+	if (p_ptr->luck_cur == 40)
+		info[i++] = "You are ultimatively lucky!";
+	else if (p_ptr->luck_cur >= 30)
+		info[i++] = "You are lucky very frequently!";
+	else if (p_ptr->luck_cur >= 20)
+		info[i++] = "You are lucky often.";
+	else if (p_ptr->luck_cur >= 10)
+		info[i++] = "You are lucky here and there.";
+	else if (p_ptr->luck_cur > 0)
+		info[i++] = "You are lucky sometimes.";
 
 
 	/* Access the current weapon */
@@ -2774,7 +2797,7 @@ void stair_creation(int Ind)
 	}
 
 	/* Hack -- Delete old contents */
-	delete_object(wpos, p_ptr->py, p_ptr->px);
+	delete_object(wpos, p_ptr->py, p_ptr->px, TRUE);
 
 	/* Create a staircase */
 	if (can_go_down(wpos) && !can_go_up(wpos))
@@ -2891,7 +2914,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 	if (f5 & TR5_NO_ENCHANT) return (FALSE);
 	
 	/* Artifacts cannot be enchanted. */
-	if (true_artifact_p(o_ptr)) return (FALSE);
+	if (artifact_p(o_ptr)) return (FALSE);
 	
 	/* Large piles resist enchantment */
 	prob = o_ptr->number * 100;
@@ -3019,10 +3042,10 @@ bool create_artifact(int Ind)
 
 bool create_artifact_aux(int Ind, int item)
 {
-  player_type *p_ptr = Players[Ind];
-
-  object_type *o_ptr;
-  char o_name[160];
+    player_type *p_ptr = Players[Ind];
+    object_type *o_ptr;
+    char o_name[160];
+    s32b old_owner;/* anti-cheeze :) */
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -3035,11 +3058,26 @@ bool create_artifact_aux(int Ind, int item)
 	{
 		o_ptr = &o_list[0 - item];
 	}
+	old_owner = o_ptr->owner;
 
+	if (o_ptr->name1) {
+		msg_format(Ind, "The creation fails due to the powerful magic of the target object!");
+		return FALSE;
+	}
+	if (o_ptr->name2 || o_ptr->name2b) {
+		msg_format(Ind, "The creation fails due to the strong magic of the target object!");
+		return FALSE;
+		o_ptr->name2 = 0;
+		o_ptr->name2b = 0;
+		msg_format(Ind, "The strong magic of that object dissolves!");
+	}
+	if (o_ptr->number > 1) {
+/*		msg_format(Ind, "The creation fails because the magic is split to multiple targets!");
+		return FALSE;*/
+		o_ptr->number = 1;
+		msg_format(Ind, "The stack of objects magically dissolves, leaving only a single item!");
+	}
 
-	if (o_ptr->number > 1) return FALSE;
-	if (o_ptr->name1) return FALSE;
-	if (o_ptr->name2 || o_ptr->name2b) return FALSE;
 	
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -3049,25 +3087,37 @@ bool create_artifact_aux(int Ind, int item)
 	           ((item >= 0) ? "Your" : "The"), o_name,
 	           ((o_ptr->number > 1) ? "" : "s"));
 
-	       	o_ptr->name1 = ART_RANDART;
+	o_ptr->name1 = ART_RANDART;
 
-		/* Piece together a 32-bit random seed */
-		o_ptr->name3 = rand_int(0xFFFF) << 16;
-		o_ptr->name3 += rand_int(0xFFFF);
+	/* anti speed ring cheeze */
+	if (o_ptr->bpval > o_ptr->pval) o_ptr->pval = o_ptr->bpval;
+	o_ptr->bpval = 0;
 
-		/* Check the tval is allowed */
-		if (randart_make(o_ptr) == NULL)
-		{
-			/* If not, wipe seed. No randart today */
-			o_ptr->name1 = 0;
-			o_ptr->name3 = 0L;
+	/* Piece together a 32-bit random seed */
+	o_ptr->name3 = rand_int(0xFFFF) << 16;
+	o_ptr->name3 += rand_int(0xFFFF);
 
-			return FALSE;
-		}
+	/* Check the tval is allowed */
+	if (randart_make(o_ptr) == NULL)
+	{
+		/* If not, wipe seed. No randart today */
+		o_ptr->name1 = 0;
+		o_ptr->name3 = 0L;
 
-		o_ptr->timeout=0;
-		apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE);
+		return FALSE;
+	}
 
+	o_ptr->timeout=0;
+	apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE);
+#if 0
+	/* If the player's level < artefact level he can't use it :) */
+	while ((o_ptr->level > 20) &&
+	    ((s64b)(player_exp[o_ptr->level]) >
+	    ((s64b)(p_ptr->max_exp) * 100L / (s64b)(p_ptr->expfact))))
+		o_ptr->level--;
+#else
+	o_ptr->owner = old_owner;
+#endif
 	/* Mark the item as NOT fully known */
 	o_ptr->ident &= ~(ID_MENTAL);
 
@@ -3080,9 +3130,9 @@ bool create_artifact_aux(int Ind, int item)
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
-
-		p_ptr->current_artifact = FALSE;
-		return TRUE;
+	/* Art creation finished */
+	p_ptr->current_artifact = FALSE;
+	return TRUE;
 }
 
 bool curse_spell(int Ind){	// could be void
@@ -3215,7 +3265,7 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	if (enchant(Ind, o_ptr, num_ac, ENCH_TOAC)) okay = TRUE;
 	
 	/* Artifacts cannot be enchanted. */
-	if (true_artifact_p(o_ptr)) msg_format(Ind,"Your %s %s unaffected.",o_name,((o_ptr->number != 1)?"are":"is"));
+	if (artifact_p(o_ptr)) msg_format(Ind,"Your %s %s unaffected.",o_name,((o_ptr->number != 1)?"are":"is"));
 
 	/* Failure */
 	if (!okay)
@@ -3666,7 +3716,7 @@ bool project_hack(int Ind, int typ, int dam)
 		if (!player_has_los_bold(Ind, y, x)) continue;
 
 		/* Jump directly to the target monster */
-		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg)) obvious = TRUE;
+		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, "")) obvious = TRUE;
 	}
 
 	/* Result */
@@ -3893,7 +3943,7 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ)
 #endif	// NO_GENO_ON_ICKY
 
 		/* Delete the monster */
-		delete_monster_idx(i);
+		delete_monster_idx(i, TRUE);
 
 		/* Take damage */
 		if (Ind > 0)
@@ -4054,7 +4104,7 @@ bool mass_genocide(int Ind)
 #endif	// NO_GENO_ON_ICKY
 
 		/* Delete the monster */
-		delete_monster_idx(i);
+		delete_monster_idx(i, TRUE);
 
 		/* Hack -- visual feedback */
 		/* does not effect the dungeon master, because it disturbs his movement
@@ -4279,7 +4329,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
                         if (c_ptr->m_idx > 0)
                         {
                                 monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
-                                if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, y, x);
+                                if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, y, x, TRUE);
                                 else continue;
                         }
 
@@ -4289,7 +4339,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			{
 				struct c_special *cs_ptr;
 				/* Delete the object (if any) */
-				delete_object(wpos, y, x);
+				delete_object(wpos, y, x, TRUE);
 
 				/* Wall (or floor) type */
 				t = rand_int(200);
@@ -4645,7 +4695,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 						/*msg_format("%^s is embedded in the rock!", m_name);*/
 
 						/* Delete the monster */
-						delete_monster(wpos, yy, xx);
+						delete_monster(wpos, yy, xx, TRUE);
 
 						/* No longer safe */
 						sn = 0;
@@ -4705,7 +4755,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				bool floor = cave_floor_bold(zcave, yy, xx);
 
 				/* Delete any object that is still there */
-				delete_object(wpos, yy, xx);
+				delete_object(wpos, yy, xx, TRUE);
 
 				/* Wall (or floor) type */
 				t = (floor ? rand_int(100) : 200);
@@ -4790,12 +4840,12 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 			if (c_ptr->m_idx > 0)
 			{
 				monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
-				if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, yy, xx);
+				if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, yy, xx, TRUE);
 				else continue;
 			}
 
 			/* Delete objects */
-			delete_object(wpos, yy, xx);
+			delete_object(wpos, yy, xx, TRUE);
 
 			everyone_lite_spot(wpos, yy, xx);
 		}
@@ -5089,7 +5139,7 @@ bool lite_area(int Ind, int dam, int rad)
 	}
 
 	/* Hook into the "project()" function */
-	(void)project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, GF_LITE_WEAK, flg);
+	(void)project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, GF_LITE_WEAK, flg, "");
 
 	/* Lite up the room */
 	lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -5116,7 +5166,7 @@ bool unlite_area(int Ind, int dam, int rad)
 	}
 
 	/* Hook into the "project()" function */
-	(void)project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, GF_DARK_WEAK, flg);
+	(void)project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, GF_DARK_WEAK, flg, "");
 
 	/* Lite up the room */
 	unlite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -5133,10 +5183,10 @@ bool unlite_area(int Ind, int dam, int rad)
  * Allow "target" mode to pass over monsters
  * Affect grids, objects, and monsters
  */
-bool fire_ball(int Ind, int typ, int dir, int dam, int rad)
+bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 {
 	player_type *p_ptr = Players[Ind];
-
+	char pattacker[80];
 	int tx, ty;
 
 	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
@@ -5154,7 +5204,8 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad)
 	}
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
-	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg));
+	sprintf(pattacker, "%s%s", p_ptr->name, attacker);
+	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
 /*
@@ -5163,12 +5214,14 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad)
  * Allow "target" mode to pass over monsters
  * Affect grids, objects, and monsters
  */
-bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time)
+bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, char *attacker)
 {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 
 	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
+
+	char pattacker[80];
 
 	/* Use the given direction */
 	tx = p_ptr->px + 99 * ddx[dir];
@@ -5183,8 +5236,10 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time)
 	}
 	project_time = time;
 
+    	sprintf(pattacker,"%s%s", Players[Ind]->name, attacker);
+
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
-	return (project(0 - Ind, (rad > 16)?16:rad, &p_ptr->wpos, ty, tx, dam, typ, flg));
+	return (project(0 - Ind, (rad > 16)?16:rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
 /*
@@ -5193,10 +5248,10 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time)
  * Allow "target" mode to pass over monsters
  * Affect grids, objects, and monsters
  */
-bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff)
+bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff, char *attacker)
 {
 	project_time_effect = eff;
-	return (fire_cloud(Ind, typ, dir, dam, rad, time));
+	return (fire_cloud(Ind, typ, dir, dam, rad, time, attacker));
 }
 
 /*
@@ -5368,7 +5423,7 @@ void swap_position(int Ind, int lty, int ltx)
 /*
  * Hack -- apply a "projection()" in a direction (or at the target)
  */
-bool project_hook(int Ind, int typ, int dir, int dam, int flg)
+bool project_hook(int Ind, int typ, int dir, int dam, int flg, char attacker[80])
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -5389,7 +5444,7 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg)
 	}
 
 	/* Analyze the "dir" and the "target", do NOT explode */
-	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg));
+	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
 
 
@@ -5398,10 +5453,12 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg)
  * Stop if we hit a monster, as a "bolt"
  * Affect monsters (not grids or objects)
  */
-bool fire_bolt(int Ind, int typ, int dir, int dam)
+bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker)
 {
+	char pattacker[80];
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, typ, dir, dam, flg));
+	sprintf(pattacker,"%s%s", Players[Ind]->name, attacker);
+	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
 }
 
 /*
@@ -5409,10 +5466,12 @@ bool fire_bolt(int Ind, int typ, int dir, int dam)
  * Pass through monsters, as a "beam"
  * Affect monsters (not grids or objects)
  */
-bool fire_beam(int Ind, int typ, int dir, int dam)
+bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
 {
+        char pattacker[80];
 	int flg = PROJECT_BEAM | PROJECT_KILL;
-	return (project_hook(Ind, typ, dir, dam, flg));
+        sprintf(pattacker,"%s%s", Players[Ind]->name, attacker);
+	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
 }
 
 /*
@@ -5421,7 +5480,7 @@ bool fire_beam(int Ind, int typ, int dir, int dam)
  * Allow "target" mode to pass over monsters
  * Affect grids, objects, and monsters
  */
-bool fire_wall(int Ind, int typ, int dir, int dam, int time)
+bool fire_wall(int Ind, int typ, int dir, int dam, int time, char *attacker)
 {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
@@ -5441,21 +5500,21 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time)
 	project_time = time;
 
 	/* Analyze the "dir" and the "target", do NOT explode */
-	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg));
+	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
 
 /*
  * Cast a bolt spell, or rarely, a beam spell
  */
-bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam)
+bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker)
 {
 	if (rand_int(100) < prob)
 	{
-		return (fire_beam(Ind, typ, dir, dam));
+		return (fire_beam(Ind, typ, dir, dam, attacker));
 	}
 	else
 	{
-		return (fire_bolt(Ind, typ, dir, dam));
+		return (fire_bolt(Ind, typ, dir, dam, attacker));
 	}
 }
 
@@ -5468,37 +5527,38 @@ bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam)
 bool lite_line(int Ind, int dir)
 {
 	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_KILL;
-	return (project_hook(Ind, GF_LITE_WEAK, dir, damroll(6, 8), flg));
+	return (project_hook(Ind, GF_LITE_WEAK, dir, damroll(6, 8), flg, ""));
 }
 
 bool drain_life(int Ind, int dir, int dam)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_OLD_DRAIN, dir, dam, flg));
+	return(project_hook(Ind, GF_OLD_DRAIN, dir, dam, flg, ""));
 }
 
 bool wall_to_mud(int Ind, int dir)
 {
 	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-	return (project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg));
+	return (project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg, ""));
 }
 
 bool destroy_door(int Ind, int dir)
 {
 	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
-	return (project_hook(Ind, GF_KILL_DOOR, dir, 0, flg));
+	return (project_hook(Ind, GF_KILL_DOOR, dir, 0, flg, ""));
 }
 
 bool disarm_trap(int Ind, int dir)
 {
 	int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM;
-	return (project_hook(Ind, GF_KILL_TRAP, dir, 0, flg));
+	return (project_hook(Ind, GF_KILL_TRAP, dir, 0, flg, ""));
 }
 
 bool heal_monster(int Ind, int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_OLD_HEAL, dir, damroll(4, 6), flg));
+	sprintf(Players[Ind]->attacker, "%s heals you for", Players[Ind]->name);
+	return (project_hook(Ind, GF_OLD_HEAL, dir, damroll(4, 6), flg, Players[Ind]->attacker));
 }
 
 bool speed_monster(int Ind, int dir)
@@ -5506,7 +5566,7 @@ bool speed_monster(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_OLD_SPEED, dir, p_ptr->lev, flg));
+	return (project_hook(Ind, GF_OLD_SPEED, dir, p_ptr->lev, flg, ""));
 }
 
 bool slow_monster(int Ind, int dir)
@@ -5514,7 +5574,7 @@ bool slow_monster(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_OLD_SLOW, dir, p_ptr->lev, flg));
+	return (project_hook(Ind, GF_OLD_SLOW, dir, p_ptr->lev, flg, ""));
 }
 
 bool sleep_monster(int Ind, int dir)
@@ -5522,13 +5582,13 @@ bool sleep_monster(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_OLD_SLEEP, dir, p_ptr->lev, flg));
+	return (project_hook(Ind, GF_OLD_SLEEP, dir, p_ptr->lev, flg, ""));
 }
 
 bool confuse_monster(int Ind, int dir, int plev)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_OLD_CONF, dir, plev, flg));
+	return (project_hook(Ind, GF_OLD_CONF, dir, plev, flg, ""));
 }
 
 bool poly_monster(int Ind, int dir)
@@ -5536,49 +5596,53 @@ bool poly_monster(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_OLD_POLY, dir, p_ptr->lev, flg));
+	return (project_hook(Ind, GF_OLD_POLY, dir, p_ptr->lev, flg, ""));
 }
 
 bool clone_monster(int Ind, int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_OLD_CLONE, dir, 0, flg));
+	return (project_hook(Ind, GF_OLD_CLONE, dir, 0, flg, ""));
 }
 
 bool fear_monster(int Ind, int dir, int plev)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_TURN_ALL, dir, plev, flg));
+	return (project_hook(Ind, GF_TURN_ALL, dir, plev, flg, ""));
 }
 
 bool teleport_monster(int Ind, int dir)
 {
 	int flg = PROJECT_BEAM | PROJECT_KILL;
-	return (project_hook(Ind, GF_AWAY_ALL, dir, MAX_SIGHT * 5, flg));
+	return (project_hook(Ind, GF_AWAY_ALL, dir, MAX_SIGHT * 5, flg, ""));
 }
 
 bool cure_light_wounds_proj(int Ind, int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(2, 10), flg));
+	sprintf(Players[Ind]->attacker,"%s heals you for", Players[Ind]->name);
+	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(2, 10), flg, Players[Ind]->attacker));
 }
 
 bool cure_serious_wounds_proj(int Ind, int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(4, 10), flg));
+	sprintf(Players[Ind]->attacker,"%s heals you for", Players[Ind]->name);
+	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(4, 10), flg, Players[Ind]->attacker));
 }
 
 bool cure_critical_wounds_proj(int Ind, int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(6, 10), flg));
+	sprintf(Players[Ind]->attacker,"%s heals you for", Players[Ind]->name);
+	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(6, 10), flg, Players[Ind]->attacker));
 }
 
 bool heal_other_proj(int Ind, int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	return (project_hook(Ind, GF_HEAL_PLAYER, dir, 2000, flg));
+	sprintf(Players[Ind]->attacker,"%s heals you for", Players[Ind]->name);
+	return (project_hook(Ind, GF_HEAL_PLAYER, dir, 2000, flg, Players[Ind]->attacker));
 }
 
 
@@ -5592,7 +5656,7 @@ bool door_creation(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg));
+	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg, ""));
 }
 
 bool trap_creation(int Ind, int mod, int rad)
@@ -5600,7 +5664,7 @@ bool trap_creation(int Ind, int mod, int rad)
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, mod, GF_MAKE_TRAP, flg));
+	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, mod, GF_MAKE_TRAP, flg, ""));
 }
 
 bool destroy_doors_touch(int Ind, int rad)
@@ -5608,7 +5672,7 @@ bool destroy_doors_touch(int Ind, int rad)
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg));
+	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg, ""));
 }
 
 bool sleep_monsters_touch(int Ind)
@@ -5616,7 +5680,7 @@ bool sleep_monsters_touch(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_KILL | PROJECT_HIDE;
-	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev, GF_OLD_SLEEP, flg));
+	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev, GF_OLD_SLEEP, flg, ""));
 }
 
 /* Scan magical powers for the golem */
@@ -6134,7 +6198,7 @@ void golem_creation(int Ind, int max)
 	if ((golem_type == -1) || (golem_m_legs < 2))
 	{
 		msg_print(Ind, "The spell fails! You lose all your material.");
-		delete_monster_idx(c_ptr->m_idx);
+		delete_monster_idx(c_ptr->m_idx, TRUE);
 		return;
 	}
 
@@ -6303,6 +6367,8 @@ void call_chaos(int Ind, int dir)
 	Chaos_type = hurt_types[randint(28) - 1];
 	if (randint(4) == 1) line_chaos = TRUE;
 
+	sprintf(p_ptr->attacker, " invokes raw chaos for", p_ptr->name);
+
 #if 0
 	/* Probably a meaningless line, a remnant from earlier code */
 	while (Chaos_type > GF_GRAVITY && Chaos_type < GF_ROCKET);
@@ -6315,23 +6381,23 @@ void call_chaos(int Ind, int dir)
 			if (dummy-5)
 			{
 				if (line_chaos)
-					fire_beam(Ind, Chaos_type, dummy, 75);
+					fire_beam(Ind, Chaos_type, dummy, 1500, p_ptr->attacker);
 				else
-					fire_ball(Ind, Chaos_type, dummy, 75, 2);
+					fire_ball(Ind, Chaos_type, dummy, 1500, 2, p_ptr->attacker);
 			}
 		}
 	}
 	else if (randint(3)==1)
 	{
-		fire_ball(Ind, Chaos_type, 0, 300, 8);
+		fire_ball(Ind, Chaos_type, 0, 1500, 8, p_ptr->attacker);
 	}
 	else
 	{
 //		if (!get_aim_dir(&dir)) return;
 		if (line_chaos)
-			fire_beam(Ind, Chaos_type, dir, 150);
+			fire_beam(Ind, Chaos_type, dir, 1500, p_ptr->attacker);
 		else
-			fire_ball(Ind, Chaos_type, dir, 150, 3 + (plev/35));
+			fire_ball(Ind, Chaos_type, dir, 1500, 3 + (plev/35), p_ptr->attacker);
 	}
 }
 
@@ -6364,11 +6430,11 @@ bool heal_insanity(int Ind, int val)
 		p_ptr->redraw |= PR_SANITY;
 		p_ptr->window |= (PW_PLAYER);
 
-		if (val < 5) {
+		if (val < (p_ptr->msane/8)) {
 			msg_print(Ind, "You feel a little saner.");
-		} else if (val < 15) {
+		} else if (val < (p_ptr->msane/4)) {
 			msg_print(Ind, "You feel saner.");
-		} else if (val < 35) {
+		} else if (val < (p_ptr->msane/2)) {
 			msg_print(Ind, "You feel much saner.");
 		} else {
 			msg_print(Ind, "You feel very sane.");
