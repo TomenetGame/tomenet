@@ -1,6 +1,6 @@
 
 function curse(i)
-	local j = 0;
+	local j = 1;
 	players(i).black_breath=1;
 	players(i).au=0;
 	while(j<7)
