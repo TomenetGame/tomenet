@@ -4065,10 +4065,10 @@ void wiz_dark(int Ind)
 		{
 			if (((o_ptr->sval == SV_LITE_TORCH) || (o_ptr->sval == SV_LITE_LANTERN)) && (!o_ptr->name3))
 			{
-				msg_print(Ind, "Your light suddently empty.");
+				msg_print(i, "Your light suddenly empties.");
 				
 				/* No more light, it's Rogues day today :) */
-				o_ptr->pval = 0;
+				o_ptr->timeout = 0;
 			}
 		}
 	
