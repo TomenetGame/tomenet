@@ -10,6 +10,9 @@ struct hash_entry
 	u32b account;			/* account id */
 	cptr name;			/* Player name */
 	byte race,class;		/* Race/class */
+	
+	/* new in savegame version 4.2.2 (4.2.0c server) - C. Blue */
+	byte mode;			/* Character mode (for account overview screen) */
 
 	/* new in 3.4.2 */
 	byte level;			/* Player maximum level */

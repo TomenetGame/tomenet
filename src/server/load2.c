@@ -349,7 +349,10 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&o_ptr->name1);
 	rd_byte(&o_ptr->name2);
 	rd_s32b(&o_ptr->name3);
-	rd_s16b(&o_ptr->timeout);
+        if (!older_than(4, 2, 1))
+		rd_s32b(&o_ptr->timeout);
+	else
+		rd_s16b(&o_ptr->timeout);
 
 	rd_s16b(&o_ptr->to_h);
 	rd_s16b(&o_ptr->to_d);
@@ -878,11 +881,18 @@ static bool rd_extra(int Ind)
 
 	int i;
 	monster_race *r_ptr;
+	char login_char_name[80];
 
-	byte tmp8u;
+	byte tmp8u, panic;
 	u16b tmp16b;
 
+	/* 'Savegame filename character conversion' exploit fix - C. Blue */
+	strcpy(login_char_name, p_ptr->name);
 	rd_string(p_ptr->name, 32);
+	if (strcmp(p_ptr->name, login_char_name)) {
+		s_printf("$INTRUSION$ - %s tried to use savegame %s\n", p_ptr->name, login_char_name);
+		return (1);
+	}
 
 	rd_string(p_ptr->died_from, 80);
 
@@ -1000,6 +1010,16 @@ static bool rd_extra(int Ind)
 	/* If the server's life amount was reduced, apply it to players */
 	if (cfg.lifes && (p_ptr->lives > cfg.lifes+1)) p_ptr->lives = cfg.lifes+1;
 
+        if (!older_than(4, 2, 0)) {
+		rd_byte(&p_ptr->houses_owned);
+	} else {
+		for (i = 0; i < num_houses; i++) {
+			if ((houses[i].dna->owner_type==OT_PLAYER) &&
+			    (houses[i].dna->owner == p_ptr->id))
+				p_ptr->houses_owned++;
+		}
+	}
+
 	/* hack */
 	rd_byte(&tmp8u);
 	rd_s16b(&p_ptr->blind);
@@ -1099,7 +1119,10 @@ static bool rd_extra(int Ind)
 
 		if (p_ptr->r_killed[i] && !r_ptr->r_tkills &&
 				(r_ptr->flags1 & RF1_UNIQUE))
+		{
 			r_ptr->r_tkills = r_ptr->r_pkills = r_ptr->r_sights = 1;
+			s_printf("TKILL FIX: Player %s killed unique %d\n", p_ptr->name, i);
+		}
 	}
 
 
@@ -1119,7 +1142,12 @@ static bool rd_extra(int Ind)
 	else p_ptr->martyr_timeout = 0;
 
 	/* Special stuff */
-	rd_u16b(&panic_save);
+	rd_u16b(&panic);
+        if (panic) {
+                Players[Ind]->panic = TRUE;
+                s_printf("loaded a panic-saved player %s\n", Players[Ind]->name);
+        }
+
 	rd_u16b(&p_ptr->total_winner);
 
 	rd_s16b(&p_ptr->own1.wx);
@@ -1488,8 +1516,9 @@ static errr rd_savefile_new_aux(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int i;
+	int i, err_code = 0;
 
+	byte panic;
 	u16b tmp16u;
 	u32b tmp32u;
 
@@ -1572,7 +1601,10 @@ static errr rd_savefile_new_aux(int Ind)
 	}
 
 	/* Read the extra stuff */
-	if (rd_extra(Ind))
+	err_code = rd_extra(Ind);
+	if (err_code == 1)
+		return 1;
+	else if (err_code)
 		return 35;
 
 	/* Read the player_hp array */
@@ -1736,7 +1768,7 @@ errr rd_server_savefile()
 
 	char savefile[MAX_PATH_LENGTH];
 
-	byte tmp8u;
+	byte tmp8u, panic = 0;
 	u16b tmp16u;
 	u32b tmp32u;
 	s32b tmp32s;
@@ -1781,6 +1813,9 @@ errr rd_server_savefile()
 	/* Number of times played */
 	rd_u16b(&sf_saves);
 
+	/* Was the last shutdown a panic save? - C. Blue */
+	if (!older_than(4, 2, 2)) rd_byte(&panic); /* no further use yet */
+	if (panic) s_printf("Last server shutdown was a panic save.\n");
 
 	/* Later use (always zero) */
 	rd_u32b(&tmp32u);
@@ -1910,7 +1945,7 @@ errr rd_server_savefile()
 	/* Read the player name database if new enough */
 	{
 		char name[80];
-		byte level, party, guild, race, class;
+		byte level, party, guild, race, class, mode;
 		u32b acct;
 		u16b quest;
 
@@ -1927,6 +1962,7 @@ errr rd_server_savefile()
 			rd_s32b(&laston);
 			rd_byte(&race);
 			rd_byte(&class);
+		        if (!older_than(4, 2, 2)) rd_byte(&mode); else mode = 0;
 			rd_byte(&level);
 			rd_byte(&party);
 			rd_byte(&guild);
@@ -1936,7 +1972,7 @@ errr rd_server_savefile()
 			rd_string(name, 80);
 
 			/* Store the player name */
-			add_player_name(name, tmp32s, acct, race, class, level, party, guild, quest, laston);
+			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, quest, laston);
 		}
 	}
 

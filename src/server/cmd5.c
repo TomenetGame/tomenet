@@ -348,6 +348,9 @@ void do_cmd_ghost_power(int Ind, int ability)
 		return;
 	}
 
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
+
 	/* Spell effects */
 	switch(i)
 	{
@@ -433,6 +436,9 @@ void do_cmd_ghost_power_aux(int Ind, int dir)
 
 	/* Acquire spell pointer */
 	s_ptr = &ghost_spells[p_ptr->current_spell];
+
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
 
 	/* We assume everything is still OK to cast */
 	switch (p_ptr->current_spell)
@@ -554,6 +560,9 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
 		msg_print(Ind, "You do not have enough mana.");
 		return;
 	}
+
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
 
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -1452,10 +1461,25 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 		return;
 	}
 
+        /* No magic */
+	if (p_ptr->anti_magic && !force)
+	{
+	        msg_print(Ind, "Your anti-magic shell disrupts your attempt.");
+	        return;
+	}
+	if (p_ptr->antimagic && !force)
+	{
+	        msg_print(Ind, "Your anti-magic field disrupts your attempt.");
+	        return;
+	}
+
+	/* mimics can easily restore from chauve-souris fruit bat form */
+	if (p_ptr->fruit_bat == 2) p_ptr->fruit_bat = 0;
+
 	p_ptr->body_monster = r_idx;
 	p_ptr->body_changed = TRUE;
 
-	p_ptr->tim_wraith = 0; /* in xtra2.c it would prevent regular wraithform on istari */
+	if (p_ptr->tim_wraith) p_ptr->tim_wraith = 1; /* in xtra2.c it would prevent regular wraithform on istari */
 
 	msg_format(Ind, "You polymorph into a %s !", r_info[r_idx].name + r_name);
 	msg_format_near(Ind, "%s polymorphs into a % !", p_ptr->name, r_info[r_idx].name + r_name);
@@ -1526,6 +1550,10 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			/* Ok we found */
 			break;
 		}
+
+		/* (S)he is no longer afk */
+		if (p_ptr->afk) toggle_afk(Ind, "");
+
 		do_mimic_change(Ind, j, FALSE);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 	}
@@ -1568,11 +1596,17 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			return;
 		}
 
+		/* (S)he is no longer afk */
+		if (p_ptr->afk) toggle_afk(Ind, "");
+
 		/* Ok we found */
 		do_mimic_change(Ind, j, FALSE);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 	}
 	else {
+		/* (S)he is no longer afk */
+		if (p_ptr->afk) toggle_afk(Ind, "");
+
 		do_mimic_power(Ind, spell - 2, dir); /* 2 polymorph self abilities *///w0t0w
 	}
 }
@@ -1625,6 +1659,9 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	}
 
 	/* TODO: use energy */
+
+	/* (S)he is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
 
 	/* Actualy cast the choice */
 	if (spell != -1)

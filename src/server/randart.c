@@ -197,17 +197,20 @@ static s32b artifact_power (artifact_type *a_ptr)
 		case TV_MSTAFF:	// maybe this needs another entry
 		{
 			p += (a_ptr->dd * a_ptr->ds + 1) / 2;
-			if (a_ptr->flags1 & TR1_SLAY_EVIL) p = (p * 3) / 2;
 			if (a_ptr->flags1 & TR1_KILL_DRAGON) p = (p * 3) / 2;
+			if (a_ptr->flags1 & TR1_KILL_DEMON) p = (p * 3) / 2;
+			if (a_ptr->flags1 & TR1_KILL_UNDEAD) p = (p * 3) / 2;
+
+			if (a_ptr->flags1 & TR1_SLAY_EVIL) p = (p * 3) / 2;
 			if (a_ptr->flags1 & TR1_SLAY_ANIMAL) p = (p * 4) / 3;
 			if (a_ptr->flags1 & TR1_SLAY_UNDEAD) p = (p * 4) / 3;
 			if (a_ptr->flags1 & TR1_SLAY_DRAGON) p = (p * 4) / 3;
-			if (a_ptr->flags1 & TR1_SLAY_DEMON) p = (p * 5) / 4;
+			if (a_ptr->flags1 & TR1_SLAY_DEMON) p = (p * 4) / 3;
 			if (a_ptr->flags1 & TR1_SLAY_TROLL) p = (p * 5) / 4;
 			if (a_ptr->flags1 & TR1_SLAY_ORC) p = (p * 5) / 4;
 			if (a_ptr->flags1 & TR1_SLAY_GIANT) p = (p * 6) / 5;
 
-			if (a_ptr->flags1 & TR1_BRAND_ACID) p = p * 2;
+			if (a_ptr->flags1 & TR1_BRAND_ACID) p = (p * 3) / 2;
 			if (a_ptr->flags1 & TR1_BRAND_ELEC) p = (p * 3) / 2;
 			if (a_ptr->flags1 & TR1_BRAND_FIRE) p = (p * 4) / 3;
 			if (a_ptr->flags1 & TR1_BRAND_COLD) p = (p * 4) / 3;
@@ -215,6 +218,7 @@ static s32b artifact_power (artifact_type *a_ptr)
 			p += (a_ptr->to_d + 2 * sign (a_ptr->to_d)) / 3;
 			if (a_ptr->to_d > 15) p += (a_ptr->to_d - 14) / 2;
 
+			if (a_ptr->flags1 & TR1_BLOWS) p += (a_ptr->pval) * 6;
 
 			if ((a_ptr->flags1 & TR1_TUNNEL) &&
 			    (a_ptr->tval != TV_DIGGING))
@@ -237,6 +241,22 @@ static s32b artifact_power (artifact_type *a_ptr)
 		case TV_SOFT_ARMOR:
 		case TV_HARD_ARMOR:
 		{
+			if (a_ptr->flags1 & TR1_BLOWS) p += (a_ptr->pval) * 8;
+
+			if (a_ptr->flags1 & TR1_SLAY_EVIL) p += 15;
+			if (a_ptr->flags1 & TR1_SLAY_ANIMAL) p += 10;
+			if (a_ptr->flags1 & TR1_SLAY_UNDEAD) p += 13;
+			if (a_ptr->flags1 & TR1_SLAY_DRAGON) p += 15;
+			if (a_ptr->flags1 & TR1_SLAY_DEMON) p += 15;
+			if (a_ptr->flags1 & TR1_SLAY_TROLL) p += 10;
+			if (a_ptr->flags1 & TR1_SLAY_ORC) p += 8;
+			if (a_ptr->flags1 & TR1_SLAY_GIANT) p += 6;
+
+			if (a_ptr->flags1 & TR1_BRAND_ACID) p += 15;
+			if (a_ptr->flags1 & TR1_BRAND_ELEC) p += 13;
+			if (a_ptr->flags1 & TR1_BRAND_FIRE) p += 11;
+			if (a_ptr->flags1 & TR1_BRAND_COLD) p += 10;
+
 			p += (a_ptr->ac + 4 * sign (a_ptr->ac)) / 5;
 			p += (a_ptr->to_h + sign (a_ptr->to_h)) / 2;
 			p += (a_ptr->to_d + sign (a_ptr->to_d)) / 2;
@@ -248,6 +268,9 @@ static s32b artifact_power (artifact_type *a_ptr)
 		{
 //			p += 35;
 			p += 25;
+			if ((a_ptr->flags4 & ~TR4_FUEL_LITE) &&
+			    (k_info[lookup_kind(a_ptr->tval, a_ptr->sval)].flags4 & TR4_FUEL_LITE))
+				p += 10;
 			break;
 		}
 		case TV_RING:
@@ -274,6 +297,7 @@ static s32b artifact_power (artifact_type *a_ptr)
 		if (a_ptr->flags1 & TR1_DEX) p += a_ptr->pval * a_ptr->pval;
 		if (a_ptr->flags1 & TR1_CON) p += a_ptr->pval * a_ptr->pval;
 		if (a_ptr->flags1 & TR1_STEALTH) p += a_ptr->pval * a_ptr->pval;
+		if (a_ptr->flags1 & TR1_SEARCH) p += a_ptr->pval * a_ptr->pval;
 	}
 	else if (a_ptr->pval < 0)	/* hack: don't give large negatives */
 	{
@@ -283,11 +307,15 @@ static s32b artifact_power (artifact_type *a_ptr)
 		if (a_ptr->flags1 & TR1_DEX) p += a_ptr->pval;
 		if (a_ptr->flags1 & TR1_CON) p += a_ptr->pval;
 		if (a_ptr->flags1 & TR1_STEALTH) p += a_ptr->pval;
+		if (a_ptr->flags1 & TR1_SEARCH) p += a_ptr->pval;
 	}
 	if (a_ptr->flags1 & TR1_CHR) p += a_ptr->pval;
 	if (a_ptr->flags1 & TR1_INFRA) p += (a_ptr->pval + sign (a_ptr->pval)) / 2;
         if (a_ptr->flags1 & TR1_SPEED) p += a_ptr->pval * 2;
         if (a_ptr->flags1 & TR1_MANA) p += a_ptr->pval * 2;
+        if (a_ptr->flags5 & TR5_CRIT) p += a_ptr->pval * 2;
+
+        if (a_ptr->flags1 & TR1_VAMPIRIC) p += a_ptr->pval * 2;
 
 	if (a_ptr->flags2 & TR2_SUST_STR) p += 6;
 	if (a_ptr->flags2 & TR2_SUST_INT) p += 4;
@@ -318,6 +346,7 @@ static s32b artifact_power (artifact_type *a_ptr)
 	if (immunities > 1) p += 16;
 	if (immunities > 2) p += 16;
 	if (immunities > 3) p += 20000;		/* inhibit */
+	if (a_ptr->flags2 & TR2_RES_FEAR) p += 4;
 	if (a_ptr->flags2 & TR2_FREE_ACT) p += 8;
 	if (a_ptr->flags2 & TR2_HOLD_LIFE) p += 10;
 	if (a_ptr->flags2 & TR2_RES_ACID) p += 6;
@@ -368,8 +397,15 @@ static s32b artifact_power (artifact_type *a_ptr)
 	if (a_ptr->flags3 & TR3_CURSED) p -= 4;
 	if (a_ptr->flags3 & TR3_HEAVY_CURSE) p -= 20;
 /*	if (a_ptr->flags3 & TR3_PERMA_CURSE) p -= 40; */
-	if (a_ptr->flags4 & TR4_ANTIMAGIC_10) p += 8;
+/*	if (a_ptr->flags4 & TR4_ANTIMAGIC_10) p += 8; */
 	if (a_ptr->flags5 & TR5_INVIS) p += 20;
+
+        if (a_ptr->flags1 & TR1_VAMPIRIC) p += 15;
+        if (a_ptr->flags5 & TR5_REFLECT) p += 15;
+        if (a_ptr->flags4 & TR4_FLY) p += 15;
+        if (a_ptr->flags4 & TR4_CLIMB) p += 15;
+        if (a_ptr->flags3 & TR3_SH_FIRE) p += 5;
+        if (a_ptr->flags3 & TR3_SH_ELEC) p += 5;
 
 	return p;
 }
@@ -993,6 +1029,8 @@ static void add_ability (artifact_type *a_ptr)
 				else a_ptr->to_a += 3 + rand_int(3);
 				break;
 			}
+			case TV_DRAG_ARMOR:
+				break;
 			case TV_SOFT_ARMOR:
 			case TV_HARD_ARMOR:
 			{
@@ -1028,6 +1066,8 @@ static void add_ability (artifact_type *a_ptr)
 				if (!(r % 5)) a_ptr->flags4 &= ~TR4_FUEL_LITE;
 				break;
 			}
+			default:
+				break;
 		}
 	}
 	else			/* Pick something universally useful. */
@@ -1340,9 +1380,19 @@ artifact_type *randart_make(object_type *o_ptr)
 	a_ptr->pval = k_ptr->pval;
 
 	/* rings of speed would become too powerful otherwise: */
-/*wrong:if (o_ptr->bpval) a_ptr->pval =	(o_ptr->pval < o_ptr->bpval)?
-		o_ptr->bpval : o_ptr->pval;
-	o_ptr->bpval = 0;*/
+	/* Alright, changed it so it only works for rings/amulets!
+	   Reason is: All other items keep their base-type abilties,
+	   and those abilties only count as bpval.
+	   Jewelry however has only 1 base ability (and never ego powers)
+	   which is supposed to be influenced by exactly 1 perameter.
+	   It would be silly to have a randart ring of strength with
+	   bpval +6 to STR and pval +6 getting STR as general mod accidentally.
+	   -- Unfortunately we need it for all items :/ Kolla +2 +6 ..lol.
+	   Someone rewrite the item system!! */
+	if ((o_ptr->tval != TV_RING) || (o_ptr->sval != SV_RING_SPECIAL)) {
+		if (o_ptr->bpval) a_ptr->pval = (o_ptr->pval < o_ptr->bpval)? o_ptr->bpval : o_ptr->pval;
+		o_ptr->bpval = 0;
+	}
 
 	if (k_ptr->tval == TV_LITE) a_ptr->pval = 0;
 	/* Amulets and Rings keep their (+hit,+dam)[+AC] instead of having it
@@ -1448,7 +1498,7 @@ artifact_type *randart_make(object_type *o_ptr)
 		if (magik(50)) add_ability (a_ptr);
 		if (magik(25)) add_ability (a_ptr);
 		if (magik(10)) add_ability (a_ptr);
-		ap = artifact_power (a_ptr) + RANDART_QUALITY + 15; /* in general ~5k+0+15k value */
+		ap = artifact_power (a_ptr) + RANDART_QUALITY + 15; /* in general ~5k+(40-40)+15k value */
 	}
 	else
 	{
@@ -1462,7 +1512,7 @@ artifact_type *randart_make(object_type *o_ptr)
 			a_old = *a_ptr;
 			add_ability (a_ptr);
 			ap = artifact_power (a_ptr);
-			
+
 			if (ap > (power * 11) / 10 + 1)
 			{	/* too powerful -- put it back */
 				*a_ptr = a_old;
@@ -1481,6 +1531,12 @@ artifact_type *randart_make(object_type *o_ptr)
 				break;
 			}
 		}		/* end of power selection */
+
+		/* jewelry can be cursed from a_m_aux_3, fix that by overriding
+		   that apply_magic curse chance by the randart-cursed-chance: */
+		if ((o_ptr->tval != TV_RING) || (o_ptr->sval != SV_RING_SPECIAL)) {
+			if (cursed_p(o_ptr)) o_ptr->ident &= ~ID_CURSED;
+		}
 
 		if (aggravate_me)
 		{
@@ -1516,6 +1572,8 @@ artifact_type *randart_make(object_type *o_ptr)
 		a_ptr->flags3 &= ~TR3_NO_MAGIC;
 		if (a_ptr->pval) a_ptr->flags1 |= TR1_MANA;
 		/* reduce +hit/+dam depending on +MANA bonus */
+		if (a_ptr->to_h > 10) a_ptr->to_h = 15;
+		if (a_ptr->to_d > 10) a_ptr->to_d = 15;
 		a_ptr->to_h -= (a_ptr->pval + rand_int(5)) * 3;
 		a_ptr->to_d -= (a_ptr->pval + rand_int(5)) * 3;
 	}

@@ -1110,10 +1110,10 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
         if (f5 & TR5_INVIS) total += 30000;
 //        if (f5 & TR5_LIFE) total += (5000 * plusses);
         if (f1 & TR1_LIFE) total += (5000 * plusses);
-	if (f2 & TR2_IM_ACID) total += 10000;
-	if (f2 & TR2_IM_ELEC) total += 10000;
-	if (f2 & TR2_IM_FIRE) total += 10000;
-	if (f2 & TR2_IM_COLD) total += 10000;
+	if (f2 & TR2_IM_ACID) total += 15000;
+	if (f2 & TR2_IM_ELEC) total += 15000;
+	if (f2 & TR2_IM_FIRE) total += 15000;
+	if (f2 & TR2_IM_COLD) total += 15000;
         if (f5 & TR5_SENS_FIRE) total -= 100;
 /* f6 Not yet implemented in object_flags/eliminate_common_ego_flags etc. Really needed??
         if (f6 & TR6_SENS_COLD) total -= 100;
@@ -1542,8 +1542,19 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 				if (f1 & TR1_DEX) count++;
 				if (f1 & TR1_CON) count++;
 				if (f1 & TR1_CHR) count++;
-
-				if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 200L;
+				
+				/* hack for double-stat rings - C. Blue */
+				if ((o_ptr->tval == TV_RING) && (
+				    (o_ptr->sval == SV_RING_STR) ||
+				    (o_ptr->sval == SV_RING_INT) ||
+				    (o_ptr->sval == SV_RING_DEX) ||
+				    (o_ptr->sval == SV_RING_CON))
+				    )	{
+					count /= 2;
+					if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 300L;
+				} else {
+					if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 200L;
+				}
 
 //				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
 				if (f5 & (TR5_CRIT)) value += pval * pval * 10000L;/* was 20k, but speed is only 10k */
@@ -2008,6 +2019,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 
 		/* Rings, Amulets, Lites */
 		case TV_RING:
+			/* no more, due to their 'timeout' ! */
+			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) return (FALSE);
 		case TV_AMULET:
 		case TV_LITE:
 		case TV_TOOL:
@@ -2344,7 +2357,7 @@ s16b m_bonus(int max, int level)
  *
  * Note -- see "make_artifact()" and "apply_magic()"
  */
-static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr)
+static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, bool true_art)
 {
 	int			i;
 
@@ -2357,6 +2370,10 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr)
 
 	/* No artifacts in the town */
 	if (istown(wpos)) return (FALSE);
+
+	/* swallow true artifacts if king/queen finds them
+	   (dropped by monsters) */
+	if (!true_art) return (FALSE);
 
 	/* Check the artifact list (just the "specials") */
 //	for (i = 0; i < ART_MIN_NORMAL; i++)
@@ -2428,7 +2445,7 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr)
  *
  * Note -- see "make_artifact_special()" and "apply_magic()"
  */
-static bool make_artifact(struct worldpos *wpos, object_type *o_ptr)
+static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, bool true_art)
 {
 	int i;
 
@@ -2478,6 +2495,10 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr)
 
 			/* We must make the "rarity roll" */
 			if (rand_int(a_ptr->rarity) != 0) continue;
+
+			/* swallow true artifacts if true_art isn't allowed
+			   (meaning that a king/queen did the monster kill!) */
+			if (!true_art) return (FALSE); /* Don't replace them with randarts! */
 
 			/* Hack -- mark the item as an artifact */
 			o_ptr->name1 = i;
@@ -3975,6 +3996,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						} else {
 							o_ptr->level = 15;
 						}
+						/* Make the ring last only over a certain period of time >:) - C. Blue */
+						o_ptr->timeout = 10000 + rand_int(10001);
 					}
 					else o_ptr->level=1;
 					break;
@@ -4025,6 +4048,23 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_RING_CON:
 				case SV_RING_DEX:
 				case SV_RING_INT:
+				{
+					/* Stat bonus */
+					o_ptr->bpval = 1 + m_bonus(4, level); /* (5, level) for single-stat rings (traditional) */
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse bpval */
+						o_ptr->bpval = 0 - (o_ptr->bpval);
+					}
+
+					break;
+				}
+
 				case SV_RING_SEARCHING:
 				case SV_RING_STEALTH:
 				{
@@ -4466,7 +4506,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_RING_INT:
 				{
 					/* Stat bonus */
-					o_ptr->pval = 1 + m_bonus(5, level);
+					o_ptr->pval = 1 + m_bonus(4, level); /* (5, level) for single-stat rings (traditional) */
 
 					/* Cursed */
 					if (power < 0)
@@ -4982,11 +5022,18 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
  * a chance that an artifact will be created.  This is true even if both the
  * "good" and "great" arguments are false.  As a total hack, if "great" is
  * true, then the item gets 3 extra "attempts" to become an artifact.
+ * 
+ * Added "true_art" to disallow true artifacts in case a king/queen kills a
+ * monster, they cannot carry true artifacts anyways (but they would usually
+ * find heaps of them..) - C. Blue
  */
-void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great)
+void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool true_art)
 {
 	int i, rolls, f1, f2, power;
 
+	/* if true arts aren't forbidden, allow them to get a chance of being generated
+	   (goes in hand with the same check in apply_magic) - C. Blue */
+	if (!cfg.winners_find_randarts) true_art = TRUE;
 	
 	/* Fix for reasonable level reqs on DROP_CHOSEN/SPECIAL_GENE items -C. Blue */
 	if (lev == -2) lev = getlevel(wpos);
@@ -5048,7 +5095,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	for (i = 0; i < rolls; i++)
 	{
 		/* Roll for an artifact */
-		if (make_artifact(wpos, o_ptr)) break;
+		if (make_artifact(wpos, o_ptr, true_art)) break;
 	}
 
 	/* virgin */
@@ -5439,7 +5486,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
  * This 'utter hack' function is to allow item-generation w/o specifing
  * worldpos.
  */
-void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great)
+void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool true_art)
 {
 	worldpos wpos;
 
@@ -5447,7 +5494,7 @@ void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool g
 	wpos.wx = cfg.town_x;
 	wpos.wy = cfg.town_y;
 	wpos.wz = Depth > 0 ? 0 - Depth : Depth;
-	apply_magic(&wpos, o_ptr, lev, okay, good, great);
+	apply_magic(&wpos, o_ptr, lev, okay, good, great, true_art);
 }
 
 
@@ -5530,6 +5577,17 @@ void determine_level_req(int level, object_type *o_ptr)
 			break;
 		}
 	}
+	/* Certain items harder to cheeze-transfer */
+	if (o_ptr->tval == TV_RING) {
+		switch(o_ptr->sval) {
+		case SV_RING_SPEED:
+			base += o_ptr->bpval * 2;
+			break;
+		case SV_RING_ATTACKS:
+			base += o_ptr->bpval * 5;
+			break;
+		}
+	}
 
 	/* Hack -- analyze ego-items */
 	if (o_ptr->name2 || o_ptr->name2b)
@@ -5597,6 +5655,13 @@ void determine_level_req(int level, object_type *o_ptr)
 	j = (i * (i > 0 ? 3 : 3) / 12  + base) * rand_range(95,105) / 100;/* was 1:2 / 4 */
 	o_ptr->level = (j < 100) ? ((j > 1) ? j : 1) : 100;
 
+	/* Anti-cheeze hack =p */
+	if ((o_ptr->tval == TV_POTION) && (o_ptr->sval == SV_POTION_EXPERIENCE)) o_ptr->level = 0;
+
+	/* tone down deep randarts a bit to allow winner-trading */
+	if (o_ptr->name1 == ART_RANDART) {
+		if (o_ptr->level > 51) o_ptr->level = 51 + ((o_ptr->level - 51) / 3);
+	}
 }
 
 
@@ -5883,7 +5948,7 @@ s16b unique_quark = 0;
  * This routine requires a clean floor grid destination.
  */
 //void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
-void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, obj_theme theme, int luck)
+void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool true_art, obj_theme theme, int luck, byte removal_marker)
 {
 	int prob, base, tmp_luck;
 
@@ -5897,6 +5962,10 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 
 	/* Require clean floor space */
 //	if (!cave_clean_bold(zcave, y, x)) return;
+
+	/* if true arts aren't forbidden, allow them to get a chance of being generated
+	   (goes in hand with the same check in apply_magic) - C. Blue */
+	if (!cfg.winners_find_randarts) true_art = TRUE;
 
 	/* Check luck */
 	luck += global_luck;
@@ -5926,7 +5995,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 	invwipe(&forge);
 
 	/* Generate a special object, or a normal object */
-	if ((rand_int(prob) != 0) || !make_artifact_special(wpos, &forge))
+	if ((rand_int(prob) != 0) || !make_artifact_special(wpos, &forge, true_art))
 	{
 		int k_idx;
 
@@ -5979,7 +6048,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 	}
 
 	/* Apply magic (allow artifacts) */
-	apply_magic(wpos, &forge, object_level, TRUE, good, great);
+	apply_magic(wpos, &forge, object_level, TRUE, good, great, true_art);
 
 	/* Hack -- generate multiple spikes/missiles */
 	if (!forge.name1)
@@ -6000,6 +6069,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 	/* Hack -- inscribe items that a unique drops */
 	if (unique_quark) forge.note = unique_quark;
 
+	forge.marked2 = removal_marker;
 	drop_near(&forge, -1, wpos, y, x);
 
 #if 0
@@ -6048,7 +6118,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 /*
  * Scatter some "great" objects near the player
  */
-void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great)
+void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool true_art)
 {
 	int        y, x, i, d;
 	cave_type **zcave;
@@ -6069,7 +6139,7 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great)
 			/* Must have a clean grid */
 			if (!cave_clean_bold(zcave, y, x)) continue;
 			/* Place a good (or great) object */
-			place_object(wpos, y, x, TRUE, great, default_obj_theme, 0);
+			place_object(wpos, y, x, TRUE, great, true_art, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
 			/* Notice */
 			note_spot_depth(wpos, y, x);
 
@@ -6428,7 +6498,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 	/* Artifact always disappears, depending on tomenet.cfg flags */
 	/* this should be in drop_near_severe, would be cleaner sometime in the future.. */
-	//if (true_artifact_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz) && cfg.anti_arts_house && ((pick_house(wpos, ny, nx) != -1))
+	//if (true_artifact_p(o_ptr) && !is_admin(p_ptr) && cfg.anti_arts_house && ((pick_house(wpos, ny, nx) != -1))
 	for (i = 0; i < num_houses; i++)
 		/* anyone willing to implement non-rectangular houses? */
 		if ((houses[i].flags & HF_RECT) && inarea(&houses[i].wpos, wpos))
@@ -6560,7 +6630,7 @@ s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *
 	player_type *p_ptr=Players[Ind];
 
 	/* Artifact always disappears, depending on tomenet.cfg flags */
-	if (true_artifact_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz) && cfg.anti_arts_hoard)
+	if (true_artifact_p(o_ptr) && !is_admin(p_ptr) && cfg.anti_arts_hoard)
 	    //(cfg.anti_arts_hoard || (cfg.anti_arts_house && 0)) would be cleaner sometime in the future..
 	{
 		char	o_name[160];
@@ -7185,7 +7255,10 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 	if (f3 & TR3_AUTO_CURSE)
 	{
 		/* The object recurse itself ! */
-		o_ptr->ident |= ID_CURSED;
+		if (!(o_ptr->ident & ID_CURSED)) {
+			o_ptr->ident |= ID_CURSED;
+			o_ptr->note = quark_add("cursed");
+		}
 	}
 
 	/* Structure copy to insert the new item */
@@ -7449,6 +7522,10 @@ void process_objects(void)
 
 		/* Recharge rods on the ground */
 		if ((o_ptr->tval == TV_ROD) && (o_ptr->pval)) o_ptr->pval--;
+		
+		/* Recharge rod trap sets */
+		if (o_ptr->tval == TV_TRAPKIT && o_ptr->sval == SV_TRAPKIT_DEVICE &&
+		    o_ptr->timeout) o_ptr->timeout--;
 	}
 
 

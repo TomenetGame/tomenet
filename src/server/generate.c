@@ -937,7 +937,7 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 /*
  * Allocates some objects (using "place" and "type")
  */
-static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
+static void alloc_object(struct worldpos *wpos, int set, int typ, int num, player_type *p_ptr)
 {
 	int y, x, k;
 	int try = 1000;
@@ -1010,7 +1010,7 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
 
 			case ALLOC_TYP_OBJECT:
 			{
-				place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
+				place_object(wpos, y, x, FALSE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				/* hack -- trap can be hidden under an item */
 				if (rand_int(100) < 2) place_trap(wpos, y, x, 0);
 				break;
@@ -1506,7 +1506,7 @@ static void destroy_level(struct worldpos *wpos)
  * Create up to "num" objects near the given coordinates
  * Only really called by some of the "vault" routines.
  */
-static void vault_objects(struct worldpos *wpos, int y, int x, int num)
+static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_type *p_ptr)
 {
 	int        i, j, k;
 	cave_type **zcave;
@@ -1533,7 +1533,7 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num)
 			/* Place an item */
 			if (rand_int(100) < 75)
 			{
-				place_object(wpos, j, k, FALSE, FALSE, default_obj_theme, 0);
+				place_object(wpos, j, k, FALSE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 			}
 
 			/* Place gold */
@@ -2086,7 +2086,7 @@ static void add_river(worldpos *wpos, int feat1, int feat2)
 /*
  * Type 1 -- normal rectangular rooms
  */
-static void build_type1(struct worldpos *wpos, int by0, int bx0)
+static void build_type1(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	int y, x = 1, y2, x2, yval, xval;
 	int y1, x1, xsize, ysize;
@@ -2201,7 +2201,7 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0)
 /*
  * Type 2 -- Overlapping rectangular rooms
  */
-static void build_type2(struct worldpos *wpos, int by0, int bx0)
+static void build_type2(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	int y, x, yval, xval;
 	int			y1a, x1a, y2a, x2a;
@@ -2326,7 +2326,7 @@ static void build_type2(struct worldpos *wpos, int by0, int bx0)
  * the code below will work (with "bounds checking") for 5x5, or even
  * for unsymetric values like 4x3 or 5x3 or 3x4 or 3x5, or even larger.
  */
-static void build_type3(struct worldpos *wpos, int by0, int bx0)
+static void build_type3(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	int			y, x, dy, dx, wy, wx;
 	int			y1a, x1a, y2a, x2a;
@@ -2493,7 +2493,7 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0)
 		}
 
 		/* Place a treasure in the vault */
-		place_object(wpos, yval, xval, FALSE, FALSE, default_obj_theme, 0);
+		place_object(wpos, yval, xval, FALSE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 
 		/* Let's guard the treasure well */
 		vault_monsters(wpos, yval, xval, rand_int(2) + 3);
@@ -2580,7 +2580,7 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0)
  *	4 - Inner room has a maze
  *	5 - A set of four inner rooms
  */
-static void build_type4(struct worldpos *wpos, int by0, int bx0)
+static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	int        y, x, y1, x1;
 	int y2, x2, tmp, yval, xval;
@@ -2715,7 +2715,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 		/* Object (80%) */
 		if (rand_int(100) < 80)
 		{
-			place_object(wpos, yval, xval, FALSE, FALSE, default_obj_theme, 0);
+			place_object(wpos, yval, xval, FALSE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 		}
 
 		/* Stairs (20%) */
@@ -2798,8 +2798,8 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 			vault_monsters(wpos, yval, xval + 2, randint(2));
 
 			/* Objects */
-			if (rand_int(3) == 0) place_object(wpos, yval, xval - 2, FALSE, FALSE, default_obj_theme, 0);
-			if (rand_int(3) == 0) place_object(wpos, yval, xval + 2, FALSE, FALSE, default_obj_theme, 0);
+			if (rand_int(3) == 0) place_object(wpos, yval, xval - 2, FALSE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+			if (rand_int(3) == 0) place_object(wpos, yval, xval + 2, FALSE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 		}
 
 		break;
@@ -2839,7 +2839,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 		vault_traps(wpos, yval, xval + 3, 2, 8, randint(3));
 
 		/* Mazes should have some treasure too. */
-		vault_objects(wpos, yval, xval, 3);
+		vault_objects(wpos, yval, xval, 3, p_ptr);
 
 		break;
 
@@ -2878,7 +2878,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 		}
 
 		/* Treasure, centered at the center of the cross */
-		vault_objects(wpos, yval, xval, 2 + randint(2));
+		vault_objects(wpos, yval, xval, 2 + randint(2), p_ptr);
 
 		/* Gotta have some monsters. */
 		vault_monsters(wpos, yval + 1, xval - 4, randint(4));
@@ -3235,7 +3235,7 @@ static bool vault_aux_demon(int r_idx)
  *
  * Note that "monster nests" will never contain "unique" monsters.
  */
-static void build_type5(struct worldpos *wpos, int by0, int bx0)
+static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	int y, x, y1, x1, y2, x2, xval, yval;
 
@@ -3475,7 +3475,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0)
 			int r_idx = what[rand_int(64)];
 
 			/* Place that "random" monster (no groups) */
-			(void)place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE);
+			(void)place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE, 0);
 		}
 	}
 }
@@ -3526,7 +3526,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0)
  * Note that "monster pits" will never contain "unique" monsters.
  */
 #define BUILD_6_MONSTER_TABLE	32
-static void build_type6(struct worldpos *wpos, int by0, int bx0)
+static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	int			tmp, what[BUILD_6_MONSTER_TABLE];
 
@@ -3878,51 +3878,51 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 	/* Top and bottom rows */
 	for (x = xval - 9; x <= xval + 9; x++)
 	{
-		place_monster_aux(wpos, yval - 2, x, what[0], FALSE, FALSE, FALSE);
-		place_monster_aux(wpos, yval + 2, x, what[0], FALSE, FALSE, FALSE);
+		place_monster_aux(wpos, yval - 2, x, what[0], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, yval + 2, x, what[0], FALSE, FALSE, FALSE, 0);
 	}
 
 	/* Middle columns */
 	for (y = yval - 1; y <= yval + 1; y++)
 	{
-		place_monster_aux(wpos, y, xval - 9, what[0], FALSE, FALSE, FALSE);
-		place_monster_aux(wpos, y, xval + 9, what[0], FALSE, FALSE, FALSE);
+		place_monster_aux(wpos, y, xval - 9, what[0], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 9, what[0], FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 8, what[1], FALSE, FALSE, FALSE);
-		place_monster_aux(wpos, y, xval + 8, what[1], FALSE, FALSE, FALSE);
+		place_monster_aux(wpos, y, xval - 8, what[1], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 8, what[1], FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 7, what[1], FALSE, FALSE, FALSE);
-		place_monster_aux(wpos, y, xval + 7, what[1], FALSE, FALSE, FALSE);
+		place_monster_aux(wpos, y, xval - 7, what[1], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 7, what[1], FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 6, what[2], FALSE, FALSE, FALSE);
-		place_monster_aux(wpos, y, xval + 6, what[2], FALSE, FALSE, FALSE);
+		place_monster_aux(wpos, y, xval - 6, what[2], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 6, what[2], FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 5, what[2], FALSE, FALSE, FALSE);
-		place_monster_aux(wpos, y, xval + 5, what[2], FALSE, FALSE, FALSE);
+		place_monster_aux(wpos, y, xval - 5, what[2], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 5, what[2], FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 4, what[3], FALSE, FALSE, FALSE);
-		place_monster_aux(wpos, y, xval + 4, what[3], FALSE, FALSE, FALSE);
+		place_monster_aux(wpos, y, xval - 4, what[3], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 4, what[3], FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 3, what[3], FALSE, FALSE, FALSE);
-		place_monster_aux(wpos, y, xval + 3, what[3], FALSE, FALSE, FALSE);
+		place_monster_aux(wpos, y, xval - 3, what[3], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 3, what[3], FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 2, what[4], FALSE, FALSE, FALSE);
-		place_monster_aux(wpos, y, xval + 2, what[4], FALSE, FALSE, FALSE);
+		place_monster_aux(wpos, y, xval - 2, what[4], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 2, what[4], FALSE, FALSE, FALSE, 0);
 	}
 
 	/* Above/Below the center monster */
 	for (x = xval - 1; x <= xval + 1; x++)
 	{
-		place_monster_aux(wpos, yval + 1, x, what[5], FALSE, FALSE, FALSE);
-		place_monster_aux(wpos, yval - 1, x, what[5], FALSE, FALSE, FALSE);
+		place_monster_aux(wpos, yval + 1, x, what[5], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, yval - 1, x, what[5], FALSE, FALSE, FALSE, 0);
 	}
 
 	/* Next to the center monster */
-	place_monster_aux(wpos, yval, xval + 1, what[6], FALSE, FALSE, FALSE);
-	place_monster_aux(wpos, yval, xval - 1, what[6], FALSE, FALSE, FALSE);
+	place_monster_aux(wpos, yval, xval + 1, what[6], FALSE, FALSE, FALSE, 0);
+	place_monster_aux(wpos, yval, xval - 1, what[6], FALSE, FALSE, FALSE, 0);
 
 	/* Center monster */
-	place_monster_aux(wpos, yval, xval, what[7], FALSE, FALSE, FALSE);
+	place_monster_aux(wpos, yval, xval, what[7], FALSE, FALSE, FALSE, 0);
 }
 
 
@@ -3930,7 +3930,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 /*
  * Hack -- fill in "vault" rooms
  */
-void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
+void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, player_type *p_ptr)
 {
 	int bwy[8], bwx[8], i;
 	int dx, dy, x, y, cx, cy, lev = getlevel(wpos);
@@ -4041,7 +4041,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				case '*':
 				if (rand_int(100) < 75)
 				{
-					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
+					place_object(wpos, y, x, FALSE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 				if (rand_int(100) < 40)
 				{
@@ -4083,7 +4083,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				place_monster(wpos, y, x, TRUE, TRUE);
 				monster_level = lev;
 				object_level = lev + 7;
-				place_object(wpos, y, x, TRUE, FALSE, default_obj_theme, 0);
+				place_object(wpos, y, x, TRUE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				object_level = lev;
 				if (magik(40)) place_trap(wpos, y, x, 0);
 				break;
@@ -4094,7 +4094,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				place_monster(wpos, y, x, TRUE, TRUE);
 				monster_level = lev;
 				object_level = lev + 20;
-				place_object(wpos, y, x, TRUE, TRUE, default_obj_theme, 0);
+				place_object(wpos, y, x, TRUE, TRUE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				object_level = lev;
 				if (magik(80)) place_trap(wpos, y, x, 0);
 				break;
@@ -4110,7 +4110,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 				if (magik(50))
 				{
 					object_level = lev + 7;
-					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
+					place_object(wpos, y, x, FALSE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					object_level = lev;
 				}
 				if (magik(50)) place_trap(wpos, y, x, 0);
@@ -4178,7 +4178,12 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 		}
 	}
 
-#if 1
+	/* overridden by MORGOTH_NO_TELE_VAULTS:
+	   instead of making just that vault no-tele,
+	   now all vaults on the level are no-tele;
+	   performed in cave_gen (in generate.c too) */
+#ifdef MORGOTH_NO_TELE_VAULT
+#ifndef MORGOTH_NO_TELE_VAULTS
 	if (morgoth_inside)
 	{
 		/* Check if Morgoth occurs in this vault. If so, make it NO_TELEPORT! -C. Blue */
@@ -4206,15 +4211,16 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 		}
 	}
 #endif
+#endif
 
 	/* Reproduce itself */
 	/* TODO: make a better routine! */
 	if (hives)
 	{
 		if (magik(HIVE_CHANCE(lev)) && !magik(ymax))
-			build_vault(wpos, yval + ymax, xval, v_ptr);
+			build_vault(wpos, yval + ymax, xval, v_ptr, p_ptr);
 		if (magik(HIVE_CHANCE(lev)) && !magik(xmax))
-			build_vault(wpos, yval, xval + xmax, v_ptr);
+			build_vault(wpos, yval, xval + xmax, v_ptr, p_ptr);
 	}
 }
 
@@ -4223,7 +4229,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 /*
  * Type 7 -- simple vaults (see "v_info.txt")
  */
-static void build_type7(struct worldpos *wpos, int by0, int bx0)
+static void build_type7(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	vault_type	*v_ptr;
 	int xval, yval;
@@ -4247,7 +4253,7 @@ static void build_type7(struct worldpos *wpos, int by0, int bx0)
 	}
 
 	/* Hack -- Build the vault */
-	build_vault(wpos, yval, xval, v_ptr);
+	build_vault(wpos, yval, xval, v_ptr, p_ptr);
 }
 
 
@@ -4255,7 +4261,7 @@ static void build_type7(struct worldpos *wpos, int by0, int bx0)
 /*
  * Type 8 -- greater vaults (see "v_info.txt")
  */
-static void build_type8(struct worldpos *wpos, int by0, int bx0)
+static void build_type8(struct worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	vault_type	*v_ptr;
 	int xval, yval;
@@ -4279,7 +4285,7 @@ static void build_type8(struct worldpos *wpos, int by0, int bx0)
 	}
 
 	/* Hack -- Build the vault */
-	build_vault(wpos, yval, xval, v_ptr);
+	build_vault(wpos, yval, xval, v_ptr, p_ptr);
 }
 
 
@@ -4294,7 +4300,7 @@ static void build_type8(struct worldpos *wpos, int by0, int bx0)
  * If its less, make it a normal grid. If it's == make it an outer
  * wall.
  */
-static void build_type9(worldpos *wpos, int by0, int bx0)
+static void build_type9(worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	int rad, x, y, x0, y0;
 
@@ -4977,9 +4983,9 @@ static void build_cavern(worldpos *wpos)
 /*
  * Driver routine to create fractal cave system
  */
-static void build_type10(worldpos *wpos, int by0, int bx0)
+static void build_type10(worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
-	int grd, roug, cutoff, xsize, ysize, y0, x0;
+	int grd, roug, cutoff, xsize, ysize, y0, x0, i, j;
 
 	bool done, light, room;
 	int dun_level = getlevel(wpos);
@@ -5004,7 +5010,10 @@ static void build_type10(worldpos *wpos, int by0, int bx0)
 		 */
 
 		/* Testing values for these parameters feel free to adjust */
-		grd = 2^(randint(4));
+/*		grd = 2^(randint(4)); -- Ahem, I thought we didn't want to do this - C. Blue */
+		grd = 1;
+		j = randint(4);
+		for (i = 0; i < j; i++) grd *= 2;
 
 		/* Want average of about 16 */
 		roug = randint(8) * randint(4);
@@ -5135,7 +5144,7 @@ static void add_door(worldpos *wpos, int x, int y)
 /*
  * Fill the empty areas of a room with treasure and monsters.
  */
-static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int difficulty)
+static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int difficulty, player_type *p_ptr)
 {
 	int x, y, cx, cy, size;
 	s32b value;
@@ -5182,7 +5191,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					place_monster(wpos, y, x, TRUE, TRUE);
 					monster_level = dun_level;
 					object_level = dun_level + 20;
-					place_object(wpos, y, x, TRUE, FALSE, default_obj_theme, 0);
+					place_object(wpos, y, x, TRUE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					object_level = dun_level;
 				}
 				else if (value < 5)
@@ -5192,7 +5201,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					place_monster(wpos, y, x, TRUE, TRUE);
 					monster_level = dun_level;
 					object_level = dun_level + 10;
-					place_object(wpos, y, x, TRUE, FALSE, default_obj_theme, 0);
+					place_object(wpos, y, x, TRUE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					object_level = dun_level;
 				}
 				else if (value < 10)
@@ -5218,7 +5227,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					/* Object or trap */
 					if (rand_int(100) < 25)
 					{
-						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
+						place_object(wpos, y, x, FALSE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					}
 					if (rand_int(100) < 75)
 					{
@@ -5245,7 +5254,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					if (rand_int(100) < 50)
 					{
 						object_level = dun_level + 7;
-						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
+						place_object(wpos, y, x, FALSE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 						object_level = dun_level;
 					}
 				}
@@ -5269,7 +5278,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					}
 					else if (rand_int(100) < 50)
 					{
-						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
+						place_object(wpos, y, x, FALSE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					}
 				}
 
@@ -5295,7 +5304,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 
 #define BUBBLENUM 10 /* number of bubbles */
 
-static void build_bubble_vault(worldpos *wpos, int x0, int y0, int xsize, int ysize)
+static void build_bubble_vault(worldpos *wpos, int x0, int y0, int xsize, int ysize, player_type *p_ptr)
 {
 	/* array of center points of bubbles */
 	coord center[BUBBLENUM];
@@ -5418,7 +5427,7 @@ static void build_bubble_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 
 	/* Fill with monsters and treasure, low difficulty */
 	fill_treasure(wpos, x0 - xhsize + 1, x0 - xhsize + xsize - 2,
-	              y0 - yhsize + 1, y0 - yhsize + ysize - 2, randint(5));
+	              y0 - yhsize + 1, y0 - yhsize + ysize - 2, randint(5), p_ptr);
 }
 
 
@@ -5512,7 +5521,7 @@ static void build_room(worldpos *wpos, int x1, int x2, int y1, int y2)
 /*
  * Create a random vault that looks like a collection of overlapping rooms
  */
-static void build_room_vault(worldpos *wpos, int x0, int y0, int xsize, int ysize)
+static void build_room_vault(worldpos *wpos, int x0, int y0, int xsize, int ysize, player_type *p_ptr)
 {
 	int i, x1, x2, y1, y2, xhsize, yhsize;
 
@@ -5563,14 +5572,14 @@ static void build_room_vault(worldpos *wpos, int x0, int y0, int xsize, int ysiz
 
 	/* Fill with monsters and treasure, high difficulty */
 	fill_treasure(wpos, x0 - xhsize + 1, x0 - xhsize + xsize - 1,
-	              y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5) + 5);
+	              y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5) + 5, p_ptr);
 }
 
 
 /*
  * Create a random vault out of a fractal cave
  */
-static void build_cave_vault(worldpos *wpos, int x0, int y0, int xsiz, int ysiz)
+static void build_cave_vault(worldpos *wpos, int x0, int y0, int xsiz, int ysiz, player_type *p_ptr)
 {
 	int grd, roug, cutoff, xhsize, yhsize, xsize, ysize, x, y;
 	bool done, light, room;
@@ -5617,7 +5626,7 @@ static void build_cave_vault(worldpos *wpos, int x0, int y0, int xsiz, int ysiz)
 
 	/* Fill with monsters and treasure, low difficulty */
 	fill_treasure(wpos, x0 - xhsize + 1, x0 - xhsize + xsize - 1,
-	              y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5));
+	              y0 - yhsize + 1, y0 - yhsize + ysize - 1, randint(5), p_ptr);
 }
 
 
@@ -5740,7 +5749,7 @@ static void r_visit(worldpos *wpos, int y1, int x1, int y2, int x2,
 }
 
 
-static void build_maze_vault(worldpos *wpos, int x0, int y0, int xsize, int ysize)
+static void build_maze_vault(worldpos *wpos, int x0, int y0, int xsize, int ysize, player_type *p_ptr)
 {
 	int y, x, dy, dx;
 	int y1, x1, y2, x2;
@@ -5804,7 +5813,7 @@ static void build_maze_vault(worldpos *wpos, int x0, int y0, int xsize, int ysiz
 	r_visit(wpos, y1, x1, y2, x2, rand_int(num_vertices), 0, visited);
 
 	/* Fill with monsters and treasure, low difficulty */
-	fill_treasure(wpos, x1, x2, y1, y2, randint(5));
+	fill_treasure(wpos, x1, x2, y1, y2, randint(5), p_ptr);
 
 	/* Free the array for visited vertices */
 	C_FREE(visited, num_vertices, int);
@@ -5819,7 +5828,7 @@ static void build_maze_vault(worldpos *wpos, int x0, int y0, int xsize, int ysiz
  * The vault has two entrances on opposite sides to guarantee
  * a way to get in even if the vault abuts a side of the dungeon.
  */
-static void build_mini_c_vault(worldpos *wpos, int x0, int y0, int xsize, int ysize)
+static void build_mini_c_vault(worldpos *wpos, int x0, int y0, int xsize, int ysize, player_type *p_ptr)
 {
 	int dy, dx;
 	int y1, x1, y2, x2, y, x, total;
@@ -5901,7 +5910,7 @@ static void build_mini_c_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 	}
 
 	/* Fill with monsters and treasure, highest difficulty */
-	fill_treasure(wpos, x1, x2, y1, y2, 10);
+	fill_treasure(wpos, x1, x2, y1, y2, 10, p_ptr);
 
 	/* Free the array for visited vertices */
 	C_FREE(visited, num_vertices, int);
@@ -6127,7 +6136,7 @@ static void build_recursive_room(worldpos *wpos, int x1, int y1, int x2, int y2,
  *
  * This makes a vault that looks like a castle or city in the dungeon.
  */
-static void build_castle_vault(worldpos *wpos, int x0, int y0, int xsize, int ysize)
+static void build_castle_vault(worldpos *wpos, int x0, int y0, int xsize, int ysize, player_type *p_ptr)
 {
 	int dy, dx;
 	int y1, x1, y2, x2;
@@ -6161,7 +6170,7 @@ static void build_castle_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 	build_recursive_room(wpos, x1, y1, x2, y2, randint(5));
 
 	/* Fill with monsters and treasure, low difficulty */
-	fill_treasure(wpos, x1, x2, y1, y2, randint(3));
+	fill_treasure(wpos, x1, x2, y1, y2, randint(3), p_ptr);
 }
 
 
@@ -6257,7 +6266,7 @@ static int dist2(int x1, int y1, int x2, int y2,
  * This is made by two concentric "crypts" with perpendicular
  * walls creating the cross-hairs.
  */
-static void build_target_vault(worldpos *wpos, int x0, int y0, int xsize, int ysize)
+static void build_target_vault(worldpos *wpos, int x0, int y0, int xsize, int ysize, player_type *p_ptr)
 {
 	int rad, x, y;
 
@@ -6381,14 +6390,14 @@ static void build_target_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 	add_door(wpos, x0, y0 - y);
 
 	/* Fill with stuff - medium difficulty */
-	fill_treasure(wpos, x0 - rad, x0 + rad, y0 - rad, y0 + rad, randint(3) + 3);
+	fill_treasure(wpos, x0 - rad, x0 + rad, y0 - rad, y0 + rad, randint(3) + 3, p_ptr);
 }
 
 
 /*
  * Random vaults
  */
-static void build_type11(worldpos *wpos, int by0, int bx0)
+static void build_type11(worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	int y0, x0, xsize, ysize, vtype;
 
@@ -6418,43 +6427,43 @@ static void build_type11(worldpos *wpos, int by0, int bx0)
 		/* Build an appropriate room */
 		case 1:
 		{
-			build_bubble_vault(wpos, x0, y0, xsize, ysize);
+			build_bubble_vault(wpos, x0, y0, xsize, ysize, p_ptr);
 			break;
 		}
 
 		case 2:
 		{
-			build_room_vault(wpos, x0, y0, xsize, ysize);
+			build_room_vault(wpos, x0, y0, xsize, ysize, p_ptr);
 			break;
 		}
 
 		case 3:
 		{
-			build_cave_vault(wpos, x0, y0, xsize, ysize);
+			build_cave_vault(wpos, x0, y0, xsize, ysize, p_ptr);
 			break;
 		}
 
 		case 4:
 		{
-			build_maze_vault(wpos, x0, y0, xsize, ysize);
+			build_maze_vault(wpos, x0, y0, xsize, ysize, p_ptr);
 			break;
 		}
 
 		case 5:
 		{
-			build_mini_c_vault(wpos, x0, y0, xsize, ysize);
+			build_mini_c_vault(wpos, x0, y0, xsize, ysize, p_ptr);
 			break;
 		}
 
 		case 6:
 		{
-			build_castle_vault(wpos, x0, y0, xsize, ysize);
+			build_castle_vault(wpos, x0, y0, xsize, ysize, p_ptr);
 			break;
 		}
 
 		case 7:
 		{
-			build_target_vault(wpos, x0, y0, xsize, ysize);
+			build_target_vault(wpos, x0, y0, xsize, ysize, p_ptr);
 			break;
 		}
 
@@ -6480,7 +6489,7 @@ static void build_type11(worldpos *wpos, int by0, int bx0)
  *
  * When done fill from the inside to find the walls,
  */
-static void build_type12(worldpos *wpos, int by0, int bx0)
+static void build_type12(worldpos *wpos, int by0, int bx0, player_type *p_ptr)
 {
 	int rad, x, y, x0, y0;
 	int light = FALSE;
@@ -6561,7 +6570,7 @@ static void build_type12(worldpos *wpos, int by0, int bx0)
 		build_small_room(wpos, x0, y0);
 
 		/* Place a treasure in the vault */
-		place_object(wpos, y0, x0, FALSE, FALSE, default_obj_theme, 0);
+		place_object(wpos, y0, x0, FALSE, FALSE, ((p_ptr!=NULL) && (p_ptr->total_winner))?FALSE:TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 
 		/* Let's guard the treasure well */
 		vault_monsters(wpos, y0, x0, rand_int(2) + 3);
@@ -7725,7 +7734,7 @@ static void try_doors(worldpos *wpos, int y, int x)
  * Note that we restrict the number of "crowded" rooms to reduce
  * the chance of overflowing the monster list during level creation.
  */
-static bool room_build(struct worldpos *wpos, int y, int x, int typ)
+static bool room_build(struct worldpos *wpos, int y, int x, int typ, player_type *p_ptr)
 {
 	/* Restrict level */
 	if (getlevel(wpos) < room[typ].level) return (FALSE);
@@ -7765,18 +7774,18 @@ static bool room_build(struct worldpos *wpos, int y, int x, int typ)
 	switch (typ)
 	{
 		/* Build an appropriate room */
-		case 12: build_type12(wpos, y, x); break;
-		case 11: build_type11(wpos, y, x); break;
-		case 10: build_type10(wpos, y, x); break;
-		case  9: build_type9 (wpos, y, x); break;
-		case  8: build_type8 (wpos, y, x); break;
-		case  7: build_type7 (wpos, y, x); break;
-		case  6: build_type6 (wpos, y, x); break;
-		case  5: build_type5 (wpos, y, x); break;
-		case  4: build_type4 (wpos, y, x); break;
-		case  3: build_type3 (wpos, y, x); break;
-		case  2: build_type2 (wpos, y, x); break;
-		case  1: build_type1 (wpos, y, x); break;
+		case 12: build_type12(wpos, y, x, p_ptr); break;
+		case 11: build_type11(wpos, y, x, p_ptr); break;
+		case 10: build_type10(wpos, y, x, p_ptr); break;
+		case  9: build_type9 (wpos, y, x, p_ptr); break;
+		case  8: build_type8 (wpos, y, x, p_ptr); break;
+		case  7: build_type7 (wpos, y, x, p_ptr); break;
+		case  6: build_type6 (wpos, y, x, p_ptr); break;
+		case  5: build_type5 (wpos, y, x, p_ptr); break;
+		case  4: build_type4 (wpos, y, x, p_ptr); break;
+		case  3: build_type3 (wpos, y, x, p_ptr); break;
+		case  2: build_type2 (wpos, y, x, p_ptr); break;
+		case  1: build_type1 (wpos, y, x, p_ptr); break;
 
 		/* Paranoia */
 		default: return (FALSE);
@@ -8150,15 +8159,21 @@ static void fill_level(worldpos *wpos, bool use_floor, byte smooth)
  * Hrm, I know you wish to rebalance it -- but please implement
  * d_info stuffs first.. it's coded as such :)		- Jir -
  */
-static void cave_gen(struct worldpos *wpos)
+static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 {
 	int i, k, y, x, y1, x1, dun_level;
 	bool nether_level = FALSE;
+	int build_special_store = 0; /* 0 = don't build a dungeon store,
+					1 = build deep dungeon store,
+					2 = build low-level dungeon store - C. Blue */
 
 	bool destroyed = FALSE;
 	bool empty_level = FALSE, dark_empty = TRUE;
 	bool cavern = FALSE;
 	bool maze = FALSE, permaze = FALSE, bonus = FALSE;
+
+	monster_type *m_ptr;
+	bool morgoth_inside = FALSE;
 
 	cave_type *cr_ptr, *csbm_ptr;
 	struct c_special *cs_ptr;
@@ -8382,25 +8397,25 @@ static void cave_gen(struct worldpos *wpos)
 			if (!cavern && (k < dun_level))
 			{
 				/* Type 10 -- Fractal cave */
-				if (room_build(wpos, y, x, 10)) continue;
+				if (room_build(wpos, y, x, 10, p_ptr)) continue;
 			}
 			else
 			{
 				/* Attempt a "trivial" room */
 #if 0
 				if ((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) &&
-						room_build(y, x, 9))
+						room_build(y, x, 9, p_ptr)))
 #endif	/* 0 */
-				if (magik(30) && room_build(wpos, y, x, 9))
+				if (magik(30) && room_build(wpos, y, x, 9, p_ptr))
 				{
 					continue;
 				}
-				else if (room_build(wpos, y, x, 1)) continue;
+				else if (room_build(wpos, y, x, 1, p_ptr)) continue;
 			}
 
 #if 0
 			/* Attempt a "trivial" room */
-			if (room_build(wpos, y, x, 1)) continue;
+			if (room_build(wpos, y, x, 1, p_ptr)) continue;
 #endif	/* 0 */
 
 			/* Never mind */
@@ -8417,56 +8432,56 @@ static void cave_gen(struct worldpos *wpos)
 			if (rand_int(DUN_UNUSUAL) < dun_level)
 			{
 				/* Type 8 -- Greater vault (10%) */
-				if ((k < 10) && room_build(wpos, y, x, 8)) continue;
+				if ((k < 10) && room_build(wpos, y, x, 8, p_ptr)) continue;
 
 				/* Type 7 -- Lesser vault (15%) */
-				if ((k < 25) && room_build(wpos, y, x, 7)) continue;
+				if ((k < 25) && room_build(wpos, y, x, 7, p_ptr)) continue;
 
 				/* Type 6 -- Monster pit (15%) */
-				if ((k < 40) && room_build(wpos, y, x, 6)) continue;
+				if ((k < 40) && room_build(wpos, y, x, 6, p_ptr)) continue;
 
 				/* Type 5 -- Monster nest (10%) */
-				if ((k < 50) && room_build(wpos, y, x, 5)) continue;
+				if ((k < 50) && room_build(wpos, y, x, 5, p_ptr)) continue;
 
 				/* Type 11 -- Random vault (10%) */
-				if ((k < 60) && room_build(wpos, y, x, 11)) continue;
+				if ((k < 60) && room_build(wpos, y, x, 11, p_ptr)) continue;
 			}
 
 			/* Type 4 -- Large room (25%) */
-			if ((k < 25) && room_build(wpos, y, x, 4)) continue;
+			if ((k < 25) && room_build(wpos, y, x, 4, p_ptr)) continue;
 
 			/* Type 3 -- Cross room (20%) */
-			if ((k < 45) && room_build(wpos, y, x, 3)) continue;
+			if ((k < 45) && room_build(wpos, y, x, 3, p_ptr)) continue;
 
 			/* Type 2 -- Overlapping (20%) */
-			if ((k < 65) && room_build(wpos, y, x, 2)) continue;
+			if ((k < 65) && room_build(wpos, y, x, 2, p_ptr)) continue;
 
 			/* Type 10 -- Fractal cave (15%) */
-			if ((k < 80) && room_build(wpos, y, x, 10)) continue;
+			if ((k < 80) && room_build(wpos, y, x, 10, p_ptr)) continue;
 
 			/* Type 9 -- Circular (10%) */
 			/* Hack - build standard rectangular rooms if needed */
 			if (k < 90)
 			{
 				if (((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(70)) &&
-						room_build(wpos, y, x, 1)) continue;
-				else if (room_build(wpos, y, x, 9)) continue;
+						room_build(wpos, y, x, 1, p_ptr)) continue;
+				else if (room_build(wpos, y, x, 9, p_ptr)) continue;
 			}
 
 			/* Type 12 -- Crypt (10%) */
-			if ((k < 100) && room_build(wpos, y, x, 12)) continue;
+			if ((k < 100) && room_build(wpos, y, x, 12, p_ptr)) continue;
 		}
 
 		/* Attempt a trivial room */
 		if ((d_ptr->flags1 & DF1_CAVE) || magik(50))
 		{
-			if (room_build(wpos, y, x, 10)) continue;
+			if (room_build(wpos, y, x, 10, p_ptr)) continue;
 		}
 		else
 		{
 			if (((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(30)) &&
-					room_build(wpos, y, x, 9)) continue;
-			else if (room_build(wpos, y, x, 1)) continue;
+					room_build(wpos, y, x, 9, p_ptr)) continue;
+			else if (room_build(wpos, y, x, 1, p_ptr)) continue;
 		}
 	}
 
@@ -8818,38 +8833,80 @@ static void cave_gen(struct worldpos *wpos)
 
 	/* Place some traps in the dungeon */
 	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
-			randint(k * (bonus ? 3 : 1)));
+			randint(k * (bonus ? 3 : 1)), p_ptr);
 
 	/* Put some rubble in corridors */
-	alloc_object(wpos, ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k));
+	alloc_object(wpos, ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k), p_ptr);
 
 	/* Put some objects in rooms */
-	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ROOM, 3) * dun->ratio / 100 + 1);
+	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ROOM, 3) * dun->ratio / 100 + 1, p_ptr);
 
 	/* Put some objects/gold in the dungeon */
-	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3) * dun->ratio / 100 + 1);
-	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3) * dun->ratio / 100 + 1);
+	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3) * dun->ratio / 100 + 1, p_ptr);
+	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3) * dun->ratio / 100 + 1, p_ptr);
 
 #if 0
 	/* Put some altars */	/* No god, no alter */
-	alloc_object(ALLOC_SET_ROOM, ALLOC_TYP_ALTAR, randnor(DUN_AMT_ALTAR, 3) * dun->ratio / 100 + 1);
+	alloc_object(ALLOC_SET_ROOM, ALLOC_TYP_ALTAR, randnor(DUN_AMT_ALTAR, 3) * dun->ratio / 100 + 1, p_ptr);
 #endif
 
 	/* Put some between gates */
-	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_BETWEEN, randnor(DUN_AMT_BETWEEN, 3) * dun->ratio / 100 + 1);
+	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_BETWEEN, randnor(DUN_AMT_BETWEEN, 3) * dun->ratio / 100 + 1, p_ptr);
 
 	/* Put some fountains */
-	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1);
+	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1, p_ptr);
 
 	/* It's done */
 	cave_set_quietly = FALSE;
 
-	/* Create secret black market entrance; never on Morgoth's depth */
-	/* Nether Realm has overriding shop creation routine! -C. Blue */
+
+	/* A little evilness:
+	   If Morgoth was generated on this level, make all vaults NO_TELE.
+	   In addition to this, Morgoth's 'live-spawn' instead of being
+	   generated along with the level should be prevented (place_monster_one in monster2.c). */
+#ifdef MORGOTH_NO_TELE_VAULTS
+	for (y = 1; y < dun->l_ptr->hgt - 1; y++) {
+		for (x = 1; x < dun->l_ptr->wid - 1; x++) {
+			cr_ptr = &zcave[y][x];
+			if (cr_ptr->m_idx) {
+				/* Check if Morgoth was just generated along with this dungeon level */
+			        m_ptr = &m_list[cr_ptr->m_idx];
+				if (!strcmp(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) morgoth_inside = TRUE;
+			}
+			if (morgoth_inside) break;
+		}
+		if (morgoth_inside) break;
+	}
+	if (morgoth_inside) {
+		/* make all vaults NO_TELE */
+		for (y = 1; y < dun->l_ptr->hgt - 1; y++) {
+			for (x = 1; x < dun->l_ptr->wid - 1; x++) {
+				cr_ptr = &zcave[y][x];
+				if (cr_ptr->info & (CAVE_ICKY)) cr_ptr->info |= (CAVE_STCK);
+			}
+		}
+	}
+#endif
+
+	/* Create secret dungeon shop entrances (never on Morgoth's depth) -C. Blue */
+	/* Nether Realm has an overriding shop creation routing. */
 	if (!nether_level) {
-		if ((dungeon_store_timer) || (dun_level < 60) || (dun_level == 100)) return;
-		dungeon_store_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
+		/* check for building deep store */
+		if ((!dungeon_store_timer) && (dun_level >= 60) && (dun_level != 100)) build_special_store = 1;
+		/* if failed, check for building low-level store */
+		if ((!build_special_store) &&
+		    (!dungeon_store2_timer) && (dun_level >= 10) && (dun_level <= 30)) build_special_store = 2;
+		/* if failed, we're done */
+		if (!build_special_store) return;
+		/* reset deep shop timeout */
+		if (build_special_store == 1)
+			dungeon_store_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
+		/* reset low-level shop timeout */
+		if (build_special_store == 2)
+			dungeon_store2_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
+	/* build only one special shop in the Nether Realm */
 	} else if (((dun_level - 166) % 5 != 0) || (dun_level == 196)) return;
+	/* Try to create a dungeon store */
 	if ((rand_int(1000) < cfg.dungeon_shop_chance) || nether_level)
 	{
 		/* Try hard to place one */
@@ -8982,15 +9039,24 @@ static void cave_gen(struct worldpos *wpos)
 						if((cs_ptr=AddCS(csbm_ptr, CS_SHOP))){
 							if (!nether_level) {
 								if (cfg.dungeon_shop_type == 999){
-								switch(rand_int(3)){
-								case 1:cs_ptr->sc.omni = 42;break; /*Rare Jewelry Shop */
-								case 2:cs_ptr->sc.omni = 45;break; /*Rare Footwear Shop */
-								default:cs_ptr->sc.omni = 60;break; /*The Secret Black Market */
-								}} else {
-								cs_ptr->sc.omni = cfg.dungeon_shop_type;
+									if (build_special_store == 1) {
+										switch(rand_int(3)){
+										case 1:cs_ptr->sc.omni = 42;break; /*Rare Jewelry Shop */
+										case 2:cs_ptr->sc.omni = 45;break; /*Rare Footwear Shop */
+										default:cs_ptr->sc.omni = STORE_SECRETBM;break; /*The Secret Black Market */
+										}
+									} else {
+										cs_ptr->sc.omni = STORE_HERBALIST;
+									}
+								} else {
+									if (build_special_store == 1) {
+										cs_ptr->sc.omni = cfg.dungeon_shop_type;
+									} else {
+										cs_ptr->sc.omni = STORE_HERBALIST;
+									}
 								}
 							} else {
-								cs_ptr->sc.omni = 61;
+								cs_ptr->sc.omni = STORE_BTSUPPLY;
 							}
 						}
 			    			/* Declare this to be a room & illuminate */
@@ -9003,7 +9069,12 @@ static void cave_gen(struct worldpos *wpos)
 
 		/* Creation failed because no spot was found! */
 		/* So let's allow it on the next level then.. */
-		if (!nether_level) dungeon_store_timer = 0;
+		if (!nether_level) {
+			if (build_special_store == 1)
+				dungeon_store_timer = 0;
+			else
+				dungeon_store2_timer = 0;
+		}
 	}
 }
 
@@ -9700,8 +9771,10 @@ static void town_gen_hack(struct worldpos *wpos)
 			k = rand_int(n - 64);
 
 			/* Build that store at the proper location */
-			build_store(wpos, rooms[k], y, x);
-
+			/* No Black Market in additional towns - C. Blue */
+			if (rooms[k] != STORE_BLACK) build_store(wpos, rooms[k], y, x);
+/*			else build_store(wpos, STORE_HERBALIST, y, x);
+*/
 			/* One less store */
 			n--;
 
@@ -10167,7 +10240,7 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
  */
  
  
-void generate_cave(struct worldpos *wpos)
+void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 {
 	int i, num;
 	cave_type **zcave;
@@ -10289,7 +10362,7 @@ void generate_cave(struct worldpos *wpos)
 			panel_col = max_panel_cols;*/
 
 			/* Make a dungeon */
-			cave_gen(wpos);
+			cave_gen(wpos, p_ptr);
 		}
 
 		/* Prevent object over-flow */

@@ -214,7 +214,7 @@ Your Home ("8")
 
 === Within The Dungeon ===
 
-Once your character is adequately supplied with food, light, armor, and
+Once your character is adequately supplied with food, light, armour, and
 weapons, he is ready to enter the dungeon.  Move on top of the `>' symbol
 and use the "Down" command (">").
 
@@ -339,7 +339,7 @@ potion will reach out and bite you...
 
 === Cursed Objects ===
 
-Some objects, mainly armor and weapons, have had curses laid upon them.
+Some objects, mainly armour and weapons, have had curses laid upon them.
 These horrible objects will look like any other normal item, but will
 detract from your character's stats or abilities if worn.  They will also
 be impossible to remove until a remove curse is done.  In fact some are

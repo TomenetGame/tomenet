@@ -147,8 +147,9 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			break;
 		case SV_POTION_RUINATION:
 		case SV_POTION_DETONATIONS:
-			dt = GF_ROCKET;/* was GF_SHARD */
-			dam = damroll(25, 25);
+			dt = GF_DISINTEGRATE; /* GF_ROCKET;/* was GF_SHARD */
+			dam = damroll(45, 25);
+			aggravate_monsters_floorpos(wpos, y, x);
 			angry = TRUE;
 			ident = TRUE;
 			break;
@@ -188,7 +189,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 		case SV_POTION_STAR_HEALING:
 		case SV_POTION_LIFE:
 			dt = GF_OLD_HEAL;
-			dam = damroll(40,20);//50x50 was more in average than STAR_HEALING heals
+			dam = damroll(35,20);//50x50 was more in average than STAR_HEALING heals
 			radius = 1;
 			ident = TRUE;
 			break;
@@ -1250,8 +1251,8 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 		   of death, use died_from_list.  To preserve the original
 		   depth, use died_from_depth. */
 
-//		(void)strcpy(p_ptr->died_from, hit_from);
 		(void)strcpy(p_ptr->died_from, "Insanity");
+		(void)strcpy(p_ptr->really_died_from, hit_from);
 		if (!p_ptr->ghost) 
 		{	strcpy(p_ptr->died_from_list, "Insanity");
 			p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
@@ -2252,22 +2253,20 @@ bool apply_disenchant(int Ind, int mode)
 	/* Unused */
 //	mode = mode;
 
-	if(mode < 1 || mode > 8) return (FALSE);
+	if(!mode) mode = randint(8);
+	else if(mode < 1 || mode > 8) return (FALSE);
 
 	/* Pick a random slot */
-	if(!mode)
+	switch (mode)
 	{
-		switch (randint(8))
-		{
-			case 1: t = INVEN_WIELD; break;
-			case 2: t = INVEN_BOW; break;
-			case 3: t = INVEN_BODY; break;
-			case 4: t = INVEN_OUTER; break;
-			case 5: t = INVEN_ARM; break;
-			case 6: t = INVEN_HEAD; break;
-			case 7: t = INVEN_HANDS; break;
-			case 8: t = INVEN_FEET; break;
-		}
+		case 1: t = INVEN_WIELD; break;
+		case 2: t = INVEN_BOW; break;
+		case 3: t = INVEN_BODY; break;
+		case 4: t = INVEN_OUTER; break;
+		case 5: t = INVEN_ARM; break;
+		case 6: t = INVEN_HEAD; break;
+		case 7: t = INVEN_HANDS; break;
+		case 8: t = INVEN_FEET; break;
 	}
 
 	/* Get the item */
@@ -2289,8 +2288,8 @@ bool apply_disenchant(int Ind, int mode)
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
 
-	/* Artifacts have 60% chance to resist */
-	if ((artifact_p(o_ptr) && (rand_int(100) < 70)) || (true_artifact_p(o_ptr) && (rand_int(100) < 90)))
+	/* Artifacts have 70%(randart) or 80%(trueart) chance to resist */
+	if ((artifact_p(o_ptr) && (rand_int(100) < 70)) || (true_artifact_p(o_ptr) && (rand_int(100) < 80)))
 	{
 		/* Message */
 		msg_format(Ind, "Your %s (%c) resist%s disenchantment!",
@@ -2304,15 +2303,18 @@ bool apply_disenchant(int Ind, int mode)
 
 	/* Disenchant tohit */
 	if (o_ptr->to_h > 0) o_ptr->to_h--;
-	if ((o_ptr->to_h > 5) && (rand_int(100) < 20)) o_ptr->to_h--;
+	if ((o_ptr->to_h > 7) && (rand_int(100) < 33)) o_ptr->to_h--;
+	if ((o_ptr->to_h > 15) && (rand_int(100) < 25)) o_ptr->to_h--;
 
 	/* Disenchant todam */
 	if (o_ptr->to_d > 0) o_ptr->to_d--;
-	if ((o_ptr->to_d > 5) && (rand_int(100) < 20)) o_ptr->to_d--;
+	if ((o_ptr->to_d > 7) && (rand_int(100) < 33)) o_ptr->to_d--;
+	if ((o_ptr->to_d > 15) && (rand_int(100) < 25)) o_ptr->to_d--;
 
 	/* Disenchant toac */
 	if (o_ptr->to_a > 0) o_ptr->to_a--;
-	if ((o_ptr->to_a > 5) && (rand_int(100) < 20)) o_ptr->to_a--;
+	if ((o_ptr->to_a > 7) && (rand_int(100) < 33)) o_ptr->to_a--;
+	if ((o_ptr->to_a > 15) && (rand_int(100) < 25)) o_ptr->to_a--;
 
 	/* Message */
 	msg_format(Ind, "\377oYour %s (%c) %s disenchanted!",
@@ -2902,7 +2904,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					}
 
 					/* Place object */
-					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, p_ptr->luck_cur);
+					place_object(wpos, y, x, FALSE, FALSE, p_ptr->total_winner?FALSE:TRUE, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 				}
 			}
 
@@ -3257,6 +3259,9 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Check for artifact */
 	if (artifact_p(o_ptr)) is_art = TRUE;
+	
+	/* Stormbringer is artifact-like - C. Blue */
+	if (o_ptr->name2 == EGO_STORMBRINGER) is_art = TRUE;
 
 	o_sval = o_ptr->sval;
 	/* XXX POTION2 is not handled right! */
@@ -3990,13 +3995,13 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else if (r_ptr->flags3 & RF3_IM_POIS)
 			{
 				note = " resists.";
-				dam = (dam * 3) / 4;
+				dam = (dam * 2) / 4;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
 			}
 			else if (r_ptr->flags9 & RF9_RES_POIS)
 			{
 				note = " resists slightly.";
-				dam = (dam * 4) / 5;
+				dam = (dam * 3) / 4;
 				if (seen) r_ptr->flags9 |= RF9_RES_POIS;
 			}
 #if 0
@@ -4109,13 +4114,13 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (r_ptr->flags3 & RF3_IM_FIRE)
 				{
 					note = " resists.";
-					dam *= 2; dam = (dam * 3) / 4;//(randint(4)+3);
+					dam *= 2; dam = (dam * 2) / 3;//(randint(4)+3);
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 				}
 				else if (r_ptr->flags9 & RF9_RES_FIRE)
 				{
     					note = " is hit.";
-					dam = (dam * 5) / 3;
+					dam = (dam * 6) / 4;
 					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
 				}
 #if 0
@@ -4139,13 +4144,13 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (r_ptr->flags3 & RF3_IM_FIRE)
 				{
 					note = " resists a lot.";
-					dam *= 3; dam /= 4;//(randint(6)+10);
+					dam *= 2; dam /= 3;//(randint(6)+10);
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 				}
 				else if (r_ptr->flags9 & RF9_RES_FIRE)
 				{
     					note = " resists.";
-					dam = (dam * 4) / 5;
+					dam = (dam * 3) / 4;
 					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
 				}
 #if 0
@@ -5355,7 +5360,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			delete_monster_idx(c_ptr->m_idx, TRUE);
 
 			/* Create a new monster (no groups) */
-			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, FALSE);
+			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, FALSE, 0);
 
 			/* XXX XXX XXX Hack -- Assume success */
 			if(!quiet && c_ptr->m_idx==0){
@@ -5880,6 +5885,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //		strcpy(m_name, p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");
 		sprintf(killer,"%s", p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");
 		sprintf(m_name,"%s", p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");
+		strcpy(p_ptr->really_died_from, Players[0 - who]->name);
 
 		/* Do not become hostile if it was a healing or teleport spell */
 		if ((typ != GF_HEAL_PLAYER) && (typ != GF_AWAY_ALL) &&
@@ -6123,6 +6129,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		else
 		{
+			if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+
 			if (p_ptr->hold_life && (rand_int(100) < 75))
 			{
 				msg_print(Ind, "You keep hold of your life force!");
@@ -6195,7 +6204,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_CHAOS:
 		if (p_ptr->resist_chaos)
 		{
-			dam *= 6; dam /= (randint(7) + 8);
+//			dam *= 6; dam /= (randint(7) + 8);
+			dam *= 6; dam /= (randint(6) + 6);
 		}
 		if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
@@ -7013,7 +7023,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
 				msg_print(Ind, "You are unaffected!");
 			}
-			else if (p_ptr->res_tele && (rand_int(100) < 67))
+			else if ((p_ptr->res_tele && (rand_int(100) < 67)) ||
+				(rand_int(100 + 50) < p_ptr->skill_sav))
 			{
 				msg_print(Ind, "You resist the effect!");
 			}

@@ -139,7 +139,7 @@ Note:
     attempt to use that.
     You can specify the destination, like:
         /rec -1500
-        /rec 25,40
+        /rec 25 40
 
 /rfe (message) {alias: /bug /cookie}
     Send a message to the admins(Dungeon Master), even when they're off.

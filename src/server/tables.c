@@ -381,6 +381,51 @@ byte adj_wis_sav[] =
 	19	/* 18/220+ */
 };
 
+/*
+ * Stat Table (WIS) -- Max sanity points
+ */
+byte adj_wis_msane[] =
+{
+	128 + -5	/* 3 */,
+	128 + -4	/* 4 */,
+	128 + -3	/* 5 */,
+	128 + -2	/* 6 */,
+	128 + -2	/* 7 */,
+	128 + -1	/* 8 */,
+	128 + -1	/* 9 */,
+	128 + 0	/* 10 */,
+	128 + 0	/* 11 */,
+	128 + 0	/* 12 */,
+	128 + 0	/* 13 */,
+	128 + 1	/* 14 */,
+	128 + 1	/* 15 */,
+	128 + 1	/* 16 */,
+	128 + 2	/* 17 */,
+	128 + 2	/* 18/00-18/09 */,
+	128 + 2	/* 18/10-18/19 */,
+	128 + 3	/* 18/20-18/29 */,
+	128 + 3	/* 18/30-18/39 */,
+	128 + 4	/* 18/40-18/49 */,
+	128 + 4	/* 18/50-18/59 */,
+	128 + 5	/* 18/60-18/69 */,
+	128 + 5	/* 18/70-18/79 */,
+	128 + 6	/* 18/80-18/89 */,
+	128 + 6	/* 18/90-18/99 */,
+	128 + 7	/* 18/100-18/109 */,
+	128 + 8	/* 18/110-18/119 */,
+	128 + 8	/* 18/120-18/129 */,
+	128 + 9	/* 18/130-18/139 */,
+	128 + 10	/* 18/140-18/149 */,
+	128 + 10	/* 18/150-18/159 */,
+	128 + 11	/* 18/160-18/169 */,
+	128 + 12	/* 18/170-18/179 */,
+	128 + 12	/* 18/180-18/189 */,
+	128 + 13	/* 18/190-18/199 */,
+	128 + 14	/* 18/200-18/209 */,
+	128 + 14	/* 18/210-18/219 */,
+	128 + 15	/* 18/220+ */
+};
+
 
 /*
  * Stat Table (DEX) -- disarming
@@ -1883,7 +1928,7 @@ player_race race_info[MAX_RACES] =
                 "Yeek",
                 {  -5, -5, -5, -5, -5, -5 },
                 0,  0,  0,  0,  0,  10,  0,  0,
-                8,  35,
+                7,  35, /* 8, 35 */
                 14,  6,
                 72,  6, 180, 25,
                 66,  4, 150, 20,
@@ -2129,7 +2174,7 @@ player_class class_info[MAX_CLASS] =
 		{ 0, 0, 0, 0, 0, 0},
 		20, 20, 20, 2,  15, 15, 50, 50,
 		10, 10,  10, 0,  0,  0,  25, 25,
-                6,  0,//4,0
+                6, 0, //3,  0,//5,0,
                 {
                         /* Combat tree */
                         {
@@ -2155,12 +2200,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_AXE,
                                 '+', 0,
-                                '+', 550,
+                                '+', 600,
                         },
                         {
                                 SKILL_HAFTED,
                                 '+', 0,
-                                '+', 600,
+                                '+', 550,
                         },
                         {
                                 SKILL_POLEARM,
@@ -2174,7 +2219,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_SLING,
-                                '+', 0,
+                                '+', 1000,
                                 '+', 450,
                         },
                         {
@@ -2189,7 +2234,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_BOOMERANG,
-                                '+', 0,
+                                '+', 1000,
                                 '+', 600,
                         },
                         {
@@ -2254,7 +2299,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_NATURE,
-                                '+', 0,
+                                '+', 1000,
                                 '+', 600,
                         },
                         {
@@ -2418,7 +2463,7 @@ player_class class_info[MAX_CLASS] =
 		{ 5, -2, -2, 2, 2, -1},
 		25, 18, 18, 1,  14, 2, 70, 55,
 		10, 7,  10, 0,  0,  0,  45, 45,
-                10,  10,//10,0
+                10, 10,//6,  10,//9, 10,
                 {
                         {
                                 SKILL_COMBAT,
@@ -2692,7 +2737,7 @@ player_class class_info[MAX_CLASS] =
                 {-1, -3, 3, -1, 0, 2},
 		25, 30, 32, 2,  16, 8, 48, 35,
 		7,  10, 12, 0,  0,  0, 20, 20,
-		4, 20,//2,20
+		4, 20, //2, 20,//4,20
                 {
                         {
                                 SKILL_COMBAT,
@@ -2820,7 +2865,7 @@ player_class class_info[MAX_CLASS] =
 		{ 2, 1, -2, 3, 1, -1},
 		45, 32, 28, 5, 32, 24, 60, 66,
 		15, 10, 10, 0,  0,  0, 40, 30,
-                5, 25,//6,25
+                5, 25, //3, 25,//5, 25
                 {
                         {
                                 SKILL_COMBAT,
@@ -2988,7 +3033,7 @@ player_class class_info[MAX_CLASS] =
 		{ 1, 0, 0, 1, 1, -4},
 		25, 35, 28, 7, 18, 18, 60, 66,
 	         9, 10, 10, 0,  0,  0, 40, 30,
-		5, 40,//6,25
+		5, 40,//3, 40,//4, 25
                 {
                         {
                                 SKILL_COMBAT,
@@ -3126,7 +3171,7 @@ player_class class_info[MAX_CLASS] =
 		{ 1, 0, 2, 3, 1, -1},
 		30, 32, 28, 2,  24, 20, 56, 82,
 		8,  10, 10, 0,  0,  0,  30, 55,
-		5, 15,//4,30
+		5, 15,//3, 15,//5, 15
                 {
                         {
                                 SKILL_COMBAT,
@@ -3135,8 +3180,28 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_MASTERY,
-                                '+', 1000,
-                                '+', 700,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_SWORD,
+                                '+', 0,
+                                '+', 400,
+                        },
+                        {
+                                SKILL_AXE,
+                                '+', 0,
+                                '+', 400,
+                        },
+                        {
+                                SKILL_HAFTED,
+                                '+', 0,
+                                '+', 400,
+                        },
+                        {
+                                SKILL_POLEARM,
+                                '+', 0,
+                                '+', 400,
                         },
                         {
                                 SKILL_ARCHERY,
@@ -3150,7 +3215,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_BOW,
-                                '+', 2000,
+                                '+', 1000,
                                 '+', 850,
                         },
                         {
@@ -3236,7 +3301,7 @@ player_class class_info[MAX_CLASS] =
  *   HD, Exp*/
 		10, 21, 54, 1,  13, 16, 60, 29,
 		2, 4,  10, 0,  0,  2,  35, 10,
-                8,  30,//7,30
+                8, 30,//5, 30,//7,30
                 {
                         {
                                 SKILL_COMBAT,
@@ -3322,12 +3387,12 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_HDEFENSE,
-                                '+', 0,
+                                '+', 1000,
                                 '+', 700,
                         },
                         {
                                 SKILL_HCURING,
-                                '+', 1000,
+                                '+', 0,
                                 '+', 700,
                         },
                         {
@@ -3400,7 +3465,7 @@ player_class class_info[MAX_CLASS] =
  *   HD, Exp*/
 		34, 32, 30, 5, 30, 30, 50, 60,
 		10, 10, 10, 1, 15,  5, 20, 35,
-                7,  35,//6,35
+                7, 35,//4, 35,//6, 35
                 {
                         {
                                 SKILL_COMBAT,
@@ -3816,7 +3881,7 @@ cptr player_title[MAX_CLASS][11][2] =
 		{"Blessed Knight", "Blessed Knight", },
 	        {"Sacred Knight", "Sacred Knight", },
 	        {"Paladin", "Paladin", },
-                {"Holy Avenger", "Holy Avenger", },
+                {"Sacred Defender", "Sacred Defender", },
         },
 
         /* Ranger */
@@ -3844,35 +3909,35 @@ cptr player_title_special[MAX_CLASS][5][2] =
 {
 	/* Adventurer */
 	{
-		{"Adventurer", "Adventuress", },
+		{"Seasoned Adventurer", "Seasoned Adventuress", },
+		{"Famous Adventurer", "Famous Adventuress", },
 		{"Grand Adventurer", "Grand Adventuress", },
 		{"Legendary Adventurer", "Legendary Adventuress", },
 		{"Mythical Adventurer", "Mythical Adventuress", },
-		{"Mystical Adventurer", "Mystical Adventuress", },
 	},
 
 	/* Warrior */
 	{
-		{"Lord", "Lady", },
 		{"Highlord", "Highlady", },
 		//"Die already!" (Molt), "Nerd" (Virus) :)
 		{"Overlord", "Overlady", }, //lol :) omg
+		{"Destroyer", "Destroyess", },
 		{"Titan", "Titan", },
-		{"Annihilator", "Annihilator", },
+		{"Annihilator", "Annihilatress", },
 	},
 
 	/* Istari */
 	{
-		{"Arch-Mage", "Arch-Mage", },
+		{"Mage Overlord", "Mage Overlady", },
 		{"Dragon Lord", "Dragon Lady", },
 		{"Dragon Highlord", "Dragon Highlady", },//yolady
 		{"Dragon Overlord", "Dragon Overlady", },//I need some improvements here
-		{"Dragon King", "Dragon Queen", },
+		{"Dragon Arch-Mage", "Dragon Arch-Mage", },
 	},
 
 	/* Priest */
 	{
-		{"Patriarch", "Matriarch", },
+		{"Old Patriarch", "Old Matriarch", },
 		{"Sacred Priestlord", "Sacred Priestlady", },
 		{"Holy Priestlord", "Holy Priestlady", },
 		{"Priestoverlord", "Priestoverlady", },
@@ -3881,17 +3946,17 @@ cptr player_title_special[MAX_CLASS][5][2] =
 
 	/* Rogues */
 	{
-		{"Assassin", "Assassin", },
+		{"Grand Assassin", "Grand Assassin", },
 		{"Master Assassin", "Master Assassin", },
 		{"Legendary Assassin", "Legendary Assassin", },
 		{"Mythical Assassin", "Mythical Assassin", },
-		{"Mystical Assassin", "Mystical Assassin", },
+		{"Death fate", "Death fate", },
         },
 
 	/* Mimic */
 	{
-		{"Ultimate Changer", "Ultimate Changer", },
-		{"Replicator", "Replicatress", },//female !?
+		{"Transformer", "Transformer", },
+		{"Replicator", "Replicatress", },
 		{"Master Replicator", "Master Replicatress", },
 		{"Ultimate Replicator", "Ultimate Replicatress", },
 		{"Unlimited", "Unlimited", },
@@ -3899,7 +3964,7 @@ cptr player_title_special[MAX_CLASS][5][2] =
 
 	/* Archer */
 	{
-		{"Grandmaster Archer", "Grandmaster Archer", },
+		{"Elite Archer", "Elite Archer", },
 		{"Ultimate Archer", "Ultimate Archer", },
 		{"Legendary Archer", "Legendary Archer", },
 		{"Mythical Archer", "Mythical Archer", },
@@ -3908,16 +3973,16 @@ cptr player_title_special[MAX_CLASS][5][2] =
 
         /* Paladin */
 	{
-                {"Holy Avenger", "Holy Avenger", },
-		{"Sacred Destroyer", "Sacred Destroyer", },
-		{"Holy Knightlord", "Holy Knightlady", },
+                {"Knight Commander", "Knight Commander", },
+		{"Sacred Avenger", "Sacred Avenger", },
+		{"Holy Avenger", "Holy Avenger", },
 		{"Holy King", "Holy Queen", },
 		{"God-King", "God-Queen", },
         },
 
         /* Ranger */
 	{
-                {"Ranger Chieftain", "Ranger Chieftain", },
+                {"Elite Ranger", "Elite Ranger", },
 		{"Ranger Supervisor", "Ranger Supervisor", },
 		{"Ranger Commander", "Ranger Commander", },
 		{"Champion of Law", "Champion of Law", },

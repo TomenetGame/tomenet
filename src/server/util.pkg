@@ -63,6 +63,7 @@ struct hash_entry
 
 extern struct hash_entry *lookup_player(int id);
 extern int lookup_player_id(cptr name);
+extern int lookup_player_id_messy(cptr name);
 
 /* probably this shouldn't be here? */
 struct server_opts
@@ -129,7 +130,8 @@ struct server_opts
 	bool anti_arts_send;
 
 	bool anti_cheeze_pickup;
-	s16b surface_item_removal; /* minutes before items are cleared */
+	s16b surface_item_removal; /* minutes before items are erased */
+	s16b dungeon_item_removal; /* minutes before items are erased */
 	s16b dungeon_shop_chance; /* chance in percent * 10 of generation */
 	s16b dungeon_shop_type; /* type of generation (999=random) */
 	s16b dungeon_shop_timeout; /* time until it can be generated again */
@@ -138,6 +140,7 @@ struct server_opts
 	char door_bump_open;
 	bool no_ghost;
 	int lifes;
+	int houses_per_player;
 	bool maximize;
 	bool kings_etiquette;
 
@@ -148,8 +151,10 @@ struct server_opts
 	s16b unikill_format;	/* format of unique monster kill message */
 	char * server_notes;	/* comments to be displayed in meta server */
 	bool arts_disabled;	/* May artifacts be created? For maintenance reasons */
+	bool winners_find_randarts; /* Total winners cannot find true arts anymore */
 	s16b arts_level_req;	/* Do artifacts have normal level reqs, or level 0? */
 	bool surface_summoning;	/* May players summon in towns / on the worldmap? Very cheezy! */
+	s16b clone_summoning; /* how many summons are not yet clones, from a summoner? */
 };
 
 extern s32b turn;
@@ -241,6 +246,7 @@ extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
 					/* this one is proximity activated */
 
 extern s32b dungeon_store_timer;	/* Keeps track of its generation */
+extern s32b dungeon_store2_timer;	/* Keeps track of its generation */
 extern bool night_surface;		/* Is it night outside? */
 extern u16b max_s_idx;
 extern u16b max_r_idx;

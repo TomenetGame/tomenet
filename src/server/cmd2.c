@@ -85,7 +85,7 @@ void do_cmd_go_up(int Ind)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Verify stairs if not a ghost, or admin wizard */
-	if (!p_ptr->admin_dm && !p_ptr->admin_wiz &&
+	if (!is_admin(p_ptr) &&
 		c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
 		!p_ptr->prob_travel)
 	{
@@ -119,20 +119,21 @@ void do_cmd_go_up(int Ind)
 			 (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS))
 	{
 		msg_print(Ind,"\377rThe stairways leading upwards are magically sealed in this dungeon.");
-		if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
+		if (!is_admin(p_ptr)) return;
 	}
 #if 1
 	if (tower) {
 		if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
-		    !p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL)){
+		    !p_ptr->ghost && ((wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL) ||
+				      (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_DOWN))) {
 			msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
-			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
+			if (!is_admin(p_ptr)) return;
 		}
 	} else {
 		if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
 		    !p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL)){
 			msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
-			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
+			if (!is_admin(p_ptr)) return;
 		}
 	}
 #endif
@@ -143,7 +144,7 @@ void do_cmd_go_up(int Ind)
 			(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
 		{
 			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
-			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) {
+			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
 			}
@@ -152,7 +153,7 @@ void do_cmd_go_up(int Ind)
 		if ((d_ptr->type == 6) && !p_ptr->total_winner)
 		{
 			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
-			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) {
+			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
 			}
@@ -162,6 +163,9 @@ void do_cmd_go_up(int Ind)
 		msg_print(Ind, "\377You may go no higher without a valid account.");
 		return;
 	}
+
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
 
 	/* Remove the player from the old location */
 	c_ptr->m_idx = 0;
@@ -300,7 +304,7 @@ void do_cmd_go_down(int Ind)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Hack -- Enter a store (and between gates, etc) */
-	if ((!p_ptr->ghost || p_ptr->admin_dm || p_ptr->admin_wiz) &&
+	if ((!p_ptr->ghost || is_admin(p_ptr)) &&
 			(c_ptr->feat == FEAT_SHOP))
 #if 0
 			(c_ptr->feat >= FEAT_SHOP_HEAD) &&
@@ -332,7 +336,7 @@ void do_cmd_go_down(int Ind)
 
 	/* Verify stairs */
 //      if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
-	if (!p_ptr->admin_dm && !p_ptr->admin_wiz &&
+	if (!is_admin(p_ptr) &&
 		c_ptr->feat != FEAT_MORE && c_ptr->feat != FEAT_WAY_MORE &&
 		!p_ptr->prob_travel)
 	{
@@ -370,20 +374,21 @@ void do_cmd_go_down(int Ind)
 			(c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE))
 	{
 		msg_print(Ind,"\377rThe stairways leading downwards are magically sealed in this tower.");
-		if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
+		if (!is_admin(p_ptr)) return;
 	}
 #if 1
 	if (tower) {
 		if((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE) &&
 		    (!p_ptr->ghost) && (wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL)) {
 			msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
-			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
+			if (!is_admin(p_ptr)) return;
 		}
 	} else {
 		if((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE) &&
-		    (!p_ptr->ghost) && (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL)) {
+		    (!p_ptr->ghost) && ((wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL) ||
+				      (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_DOWN))) {
 			msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
-			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
+			if (!is_admin(p_ptr)) return;
 		}
 	}
 #endif
@@ -396,7 +401,7 @@ void do_cmd_go_down(int Ind)
 			(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
 		{
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
-			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) {
+			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
 			}
@@ -405,7 +410,7 @@ void do_cmd_go_down(int Ind)
 		if ((d_ptr->type == 6) && !p_ptr->total_winner)
 		{
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
-			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) {
+			if (!is_admin(p_ptr)) {
 				set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
 				return;
 			}
@@ -415,6 +420,9 @@ void do_cmd_go_down(int Ind)
 		msg_print(Ind, "\377You may go no lower without a valid account.");
 		return;
 	}
+
+	/* S(he) is no longer afk */
+        if (p_ptr->afk) toggle_afk(Ind, "");
 
 	/* Remove the player from the old location */
 	c_ptr->m_idx = 0;
@@ -472,6 +480,9 @@ void do_cmd_search(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
+
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -511,6 +522,9 @@ void do_cmd_toggle_search(int Ind)
 	/* Start searching */
 	else
 	{
+		/* S(he) is no longer afk */
+		if (p_ptr->afk) toggle_afk(Ind, "");
+
 		/* Set the searching flag */
 		p_ptr->searching = TRUE;
 
@@ -590,7 +604,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* Otherwise drop an item */
 				else
 				{
-					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, p_ptr->luck_cur);
+					place_object(wpos, y, x, FALSE, FALSE, p_ptr->total_winner?FALSE:TRUE, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 				}
 
 				/* Reset the object level */
@@ -672,7 +686,7 @@ int pick_house(struct worldpos *wpos, int y, int x)
 /* Door change permissions */
 static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 	player_type *p_ptr=Players[Ind];
-	if (!p_ptr->admin_wiz && !p_ptr->admin_dm)
+	if (!is_admin(p_ptr))
 	{
 		if(dna->creator!=p_ptr->dna) return(FALSE);
 		/* more security needed... */
@@ -689,7 +703,13 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 	player_type *p_ptr=Players[Ind];
 	int newowner=-1;
 	int i;
-	if (!p_ptr->admin_wiz && !p_ptr->admin_dm)
+
+	/* to prevent house amount cheeze (houses_owned)
+	   let's just say house ownership can't be transferred.
+	   Changing the door access should be sufficient. */
+	if (!is_admin(p_ptr)) return(FALSE);
+
+	if (!is_admin(p_ptr))
 	{
 		if(dna->creator!=p_ptr->dna) return(FALSE);
 		if(args[1]>='3' && args[1]<'5') return(FALSE);
@@ -697,7 +717,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 	}
 	switch(args[1]){
 		case '1':
-			newowner=lookup_player_id(&args[2]);
+			newowner=lookup_player_id_messy(&args[2]);
 			if(!newowner) newowner=-1;
 			break;
 		case '2':
@@ -741,8 +761,9 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 
 bool access_door(int Ind, struct dna_type *dna){
 	player_type *p_ptr=Players[Ind];
-	if (p_ptr->admin_wiz || p_ptr->admin_dm)
-		return(TRUE);
+/*	if (is_admin(p_ptr))
+		return(TRUE); - moved to allow more overview for admins when looking at
+				house door colours on the world surface - C. Blue */
 	if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
 		return(FALSE); /* defies logic a bit, but for speed */
 	switch(dna->owner_type){
@@ -775,6 +796,39 @@ bool access_door(int Ind, struct dna_type *dna){
 	return(FALSE);
 }
 
+
+char *get_house_owner(struct c_special *cs_ptr)
+{
+	char string[80];
+	struct dna_type *dna=cs_ptr->sc.ptr;
+	strcpy(string,"nobody.");
+	if(dna->owner){
+//		char *name;
+		cptr name;
+		switch(dna->owner_type){
+			case OT_PLAYER:
+				if((name=lookup_player_name(dna->owner)))
+				strcpy(string,name);
+				break;
+			case OT_PARTY:
+				if(strlen(parties[dna->owner].name))
+				strcpy(string, parties[dna->owner].name);
+				break;
+			case OT_CLASS:
+				strcpy(string,class_info[dna->owner].title);
+				strcat(string,"s");
+				break;
+			case OT_RACE:
+				strcpy(string,race_info[dna->owner].title);
+				strcat(string,"s");
+				break;
+			case OT_GUILD:
+				strcpy(string, guilds[dna->owner].name);
+				break;
+		}
+	}
+	return (string);
+}
 
 /*
  * Open a closed door or closed chest.
@@ -845,6 +899,9 @@ void do_cmd_open(int Ind, int dir)
 		/* Open a closed chest. */
 		else if (o_ptr->tval == TV_CHEST)
 		{
+			/* S(he) is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
+
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -905,6 +962,9 @@ void do_cmd_open(int Ind, int dir)
 		/* Jammed door */
 		else if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x08)
 		{
+			/* S(he) is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
+
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -915,6 +975,9 @@ void do_cmd_open(int Ind, int dir)
 		/* Locked door */
 		else if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x01)
 		{
+			/* S(he) is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
+
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -975,7 +1038,7 @@ void do_cmd_open(int Ind, int dir)
 		{
 			struct c_special *cs_ptr;
 			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
-				if(access_door(Ind, cs_ptr->sc.ptr))
+				if(access_door(Ind, cs_ptr->sc.ptr) || admin_p(Ind))
 				{
 #if USE_MANG_HOUSE_ONLY || TRUE /* let'em open it, so that thevery can take place :) */
 					/* Open the door */
@@ -983,6 +1046,9 @@ void do_cmd_open(int Ind, int dir)
 #else	// USE_MANG_HOUSE
 					msg_print(Ind, "Just walk in.");
 #endif	// USE_MANG_HOUSE
+					/* S(he) is no longer afk */
+					if (p_ptr->afk) toggle_afk(Ind, "");
+
 					/* Take half a turn */
 					p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
 					/* Notice */
@@ -998,40 +1064,14 @@ void do_cmd_open(int Ind, int dir)
 				else
 				{
 					struct dna_type *dna=cs_ptr->sc.ptr;
-					if(dna->owner){
-						char string[80];
-//						char *name;
-						cptr name;
-						strcpy(string,"nobody.");
-						switch(dna->owner_type){
-							case OT_PLAYER:
-								if((name=lookup_player_name(dna->owner)))
-									strcpy(string,name);
-								break;
-							case OT_PARTY:
-								if(strlen(parties[dna->owner].name))
-									strcpy(string, parties[dna->owner].name);
-								break;
-							case OT_CLASS:
-								strcpy(string,class_info[dna->owner].title);
-								strcat(string,"s");
-								break;
-							case OT_RACE:
-								strcpy(string,race_info[dna->owner].title);
-								strcat(string,"s");
-								break;
-							case OT_GUILD:
-								strcpy(string, guilds[dna->owner].name);
-								break;
-						}
-						msg_format(Ind,"\377sThat house is owned by %s.",string);
-					}
-					else
+					if (!strcmp(get_house_owner(cs_ptr), "nobody.")) 
 					{
-						int factor,price;
+						long factor,price;
 						factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 						price = dna->price / 100 * factor;
 						msg_format(Ind,"\377oThat house costs %ld gold.",price);
+					} else {
+						msg_format(Ind,"\377sThat house is owned by %s.",get_house_owner(cs_ptr));
 					}
 				}
 				return;
@@ -1042,11 +1082,23 @@ void do_cmd_open(int Ind, int dir)
 					object_type *o_ptr=&p_ptr->inventory[j];
 					if(o_ptr->tval==TV_KEY && o_ptr->pval==key->id){
 						c_ptr->feat=FEAT_HOME_OPEN;
+						/* S(he) is no longer afk */
+						if (p_ptr->afk) toggle_afk(Ind, "");
 						p_ptr->energy-=level_speed(&p_ptr->wpos)/2;
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe key fits in the lock. %d:%d",key->id, o_ptr->pval);
+						return;
+					} else if (is_admin(p_ptr)) {
+						c_ptr->feat=FEAT_HOME_OPEN;
+						/* S(he) is no longer afk */
+						if (p_ptr->afk) toggle_afk(Ind, "");
+						p_ptr->energy-=level_speed(&p_ptr->wpos)/2;
+						note_spot_depth(wpos, y, x);
+						everyone_lite_spot(wpos, y, x);
+						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+						msg_format(Ind, "\377gThe door crashes open. %d",key->id);
 						return;
 					}
 				}
@@ -1059,6 +1111,9 @@ void do_cmd_open(int Ind, int dir)
 		{
 			/* Set off trap */
 			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
+
+			/* S(he) is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
 
 			/* Take half a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
@@ -1161,6 +1216,9 @@ void do_cmd_close(int Ind, int dir)
 			/* Find this house */
 			i = pick_house(wpos, y, x);
 
+			/* S(he) is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
+
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -1182,6 +1240,9 @@ void do_cmd_close(int Ind, int dir)
 		{
 			/* Set off trap */
 			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
+
+			/* S(he) is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1385,6 +1446,9 @@ void do_cmd_tunnel(int Ind, int dir)
 		/* Okay, try digging */
 		else
 		{
+			/* S(he) is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
+
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -1422,8 +1486,8 @@ void do_cmd_tunnel(int Ind, int dir)
 					if (rand_int(100) < 10 + mining)
 					{
 //						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
-						place_object(wpos, y, x, magik(mining), magik(mining / 10),
-								default_obj_theme, p_ptr->luck_cur);
+						place_object(wpos, y, x, magik(mining), magik(mining / 10), p_ptr->total_winner?FALSE:TRUE, 
+								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 						if (player_can_see_bold(Ind, y, x))
 						{
 							msg_print(Ind, "You have found something!");
@@ -1820,6 +1884,9 @@ void do_cmd_disarm(int Ind, int dir)
 			/* Success (get a lot of experience) */
 			else if (rand_int(100) < j)
 			{
+				/* S(he) is no longer afk */
+				if (p_ptr->afk) toggle_afk(Ind, "");
+
 				msg_print(Ind, "You have disarmed the chest.");
 				gain_exp(Ind, t_ptr->difficulty * 3);
 				o_ptr->pval = (0 - o_ptr->pval);
@@ -1830,6 +1897,9 @@ void do_cmd_disarm(int Ind, int dir)
 			/* Failure -- Keep trying */
 			else if ((i > 5) && (randint(i) > 5))
 			{
+				/* S(he) is no longer afk */
+				if (p_ptr->afk) toggle_afk(Ind, "");
+
 				/* We may keep trying */
 				more = TRUE;
 				done = TRUE;
@@ -1839,6 +1909,9 @@ void do_cmd_disarm(int Ind, int dir)
 			/* Failure -- Set off the trap */
 			else
 			{
+				/* S(he) is no longer afk */
+				if (p_ptr->afk) toggle_afk(Ind, "");
+
 				msg_print(Ind, "You set off a trap!");
 				chest_trap(Ind, y, x, c_ptr->o_idx);
 				done = TRUE;
@@ -1854,6 +1927,9 @@ void do_cmd_disarm(int Ind, int dir)
 /*		else if (c_ptr->feat == FEAT_MON_TRAP) */
 		if (!done && cs_ptr->type == CS_MON_TRAP) /* same thing.. */
 		{
+			/* S(he) is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
+
 			msg_print(Ind, "You disarm the monster trap.");
 			do_cmd_disarm_mon_trap_aux(wpos, y, x);
 			more = FALSE;
@@ -1872,6 +1948,9 @@ void do_cmd_disarm(int Ind, int dir)
 				name = "unknown trap";
 
 //			cptr name = (f_name + f_info[c_ptr->feat].name);
+
+			/* S(he) is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2038,6 +2117,9 @@ void do_cmd_bash(int Ind, int dir)
 				if (c_ptr->feat == FEAT_DEEP_WATER ||
 					c_ptr->feat == FEAT_SHAL_WATER)
 				{
+					/* S(he) is no longer afk */
+					if (p_ptr->afk) toggle_afk(Ind, "");
+
 					/* Take a turn */
 					p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -2053,6 +2135,12 @@ void do_cmd_bash(int Ind, int dir)
 				{
 					char            o_name[160];
 					object_desc(Ind, o_name, o_ptr, FALSE, 3);
+
+					/* S(he) is no longer afk */
+					if (p_ptr->afk) toggle_afk(Ind, "");
+
+					/* Take a turn */
+					p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 					/* Message */
 					/* TODO: handle blindness */
@@ -2084,6 +2172,9 @@ void do_cmd_bash(int Ind, int dir)
 		/* Bash a closed door */
 		else
 		{
+			/* S(he) is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
+
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -2259,6 +2350,9 @@ void do_cmd_spike(int Ind, int dir)
 		/* Is a monster in the way? */
 		else if (c_ptr->m_idx > 0)
 		{
+			/* S(he) is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
+
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -2360,8 +2454,9 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 				(c_ptr->feat == FEAT_HOME_HEAD))
 			{
 				if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
-					if(!cfg.door_bump_open & BUMP_OPEN_HOUSE ||
-						!access_door(Ind, cs_ptr->sc.ptr))
+					if((!cfg.door_bump_open & BUMP_OPEN_HOUSE ||
+					    !access_door(Ind, cs_ptr->sc.ptr)) &&
+					    !admin_p(Ind))
 					{
 						do_cmd_open(Ind, dir);
 						return;
@@ -2807,6 +2902,9 @@ void do_cmd_fire(int Ind, int dir)
 //	thits = boomerang? 1 : p_ptr->num_fire;
 	thits = p_ptr->num_fire;
 
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
+
 	/* Take a (partial) turn */
 	p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
 
@@ -2816,7 +2914,12 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Check if monsters around him/her hinder this */
 //  if (interfere(Ind, cfg.spell_interfere * 3)) return;
-	if (interfere(Ind, 25)) return;
+	/* boomerang is harder to intercept since it can just be swung as weapon :> - C. Blue */
+	if (archery == SKILL_BOOMERANG) {
+		if (interfere(Ind, 25)) return;
+	} else {
+		if (interfere(Ind, 50)) return;
+	}
 
 	if (!boomerang && cursed_p(o_ptr) && magik(50))
 	{
@@ -3414,12 +3517,15 @@ void do_cmd_fire(int Ind, int dir)
 
 
 		/* Chance of breakage (during attacks) */
-		j = (hit_body ? breakage_chance(o_ptr) : 0);
-		j = (j * (100 - get_skill_scale(p_ptr, archery,
-					(archery == SKILL_BOOMERANG ? 95 : 80)))) / 100;
+		/* finer resolution to match reduced break rate of boomerangs - C. Blue */
+		j = (hit_body ? breakage_chance(o_ptr) : 0) * 100;
+		if (archery == SKILL_BOOMERANG)
+			j = (j * (100 - get_skill_scale(p_ptr, archery, 98))) / 100;
+		else
+			j = (j * (100 - get_skill_scale(p_ptr, archery, 80))) / 100;
 
 		/* Break ? */
-		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(100) < j)) && (!magic || boomerang) && !artifact_p(o_ptr))
+		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j)) && (!magic || boomerang) && !artifact_p(o_ptr))
 		{
 			breakage = 100;
 			if (boomerang)
@@ -3724,7 +3830,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 
 	/* Handle the newbies_cannot_drop option */
-	if (p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval)
+	if ((p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr))
 	{
 /*		msg_format(Ind, "Please don't litter the %s.",
 			istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/
@@ -3753,12 +3859,6 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-	/* Handle rugby ball */
-	if(o_ptr->tval==1 && o_ptr->sval==9){
-		msg_print(Ind, "You pass the ball");
-		msg_format_near(Ind, "%s passes the ball", p_ptr->name);
-	}
-
 	/* Hack - Cannot throw away 'no drop' cursed items */
 	if (cursed_p(o_ptr) && (f4 & TR4_CURSE_NO_DROP) && item >= 0)
 	{
@@ -3767,6 +3867,15 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 		/* Nope */
 		return;
+	}
+
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
+
+	/* Handle rugby ball */
+	if(o_ptr->tval==1 && o_ptr->sval==9){
+		msg_print(Ind, "You pass the ball");
+		msg_format_near(Ind, "%s passes the ball", p_ptr->name);
 	}
 
 	/* Create a "local missile object" */
@@ -3944,6 +4053,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 				else{
 					msg_format_near(0-c_ptr->m_idx, "%s misses the ball", Players[0-c_ptr->m_idx]->name);
 					msg_print(0-c_ptr->m_idx, "You miss the ball");
+					o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 					drop_near(o_ptr, -1, wpos, y, x);
 				}
 				/* and stop */
@@ -4182,7 +4292,7 @@ static void destroy_house(int Ind, struct dna_type *dna)
 {
 	player_type *p_ptr=Players[Ind];
 	int i;
-	if(!p_ptr->admin_wiz)
+	if(!is_admin(p_ptr))
 	{
 		msg_print(Ind,"\377rYour attempts to destroy the house fail.");
 		return;
@@ -4191,7 +4301,7 @@ static void destroy_house(int Ind, struct dna_type *dna)
 		if(houses[i].dna==dna){
 			if(houses[i].flags&HF_STOCK){
 				msg_print(Ind,"\377oThat house may not be destroyed");
-				return;
+//				return;
 			}
 			/* quicker than copying back an array. */
 			msg_print(Ind,"\377DThe house crumbles away.");
@@ -4223,7 +4333,7 @@ void house_admin(int Ind, int dir, char *args){
 			struct c_special *cs_ptr;
 			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){
 				dna=cs_ptr->sc.ptr;
-				if(access_door(Ind, dna)){
+				if(access_door(Ind, dna) || admin_p(Ind)){
 					switch(args[0]){
 						case 'O':
 							success=chown_door(Ind, dna, args);
@@ -4254,7 +4364,7 @@ void house_admin(int Ind, int dir, char *args){
  * price.
  
  Hacked to sell houses for half price. -APD-
- 
+ Doesn't use a turn / disable AFK at this time. - C. Blue
  */
 void do_cmd_purchase_house(int Ind, int dir)
 {
@@ -4273,7 +4383,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Ghosts cannot buy houses */
-	if ( (p_ptr->ghost))
+	if ((p_ptr->ghost) && !is_admin(p_ptr))
 	{
 		/* Message */
 		msg_print(Ind, "You cannot buy a house.");
@@ -4319,16 +4429,17 @@ void do_cmd_purchase_house(int Ind, int dir)
 
 		/* Check for already-owned house */
 		if(dna->owner){
-			if(access_door(Ind,dna)){
+			if(access_door(Ind,dna) || admin_p(Ind)){
 				if(p_ptr->dna==dna->creator){
 					/* sell house */
 					p_ptr->au+=price/2;
 					p_ptr->redraw|=PR_GOLD;
 					msg_format(Ind, "You sell your house for %ld gold.", price/2);
+					p_ptr->houses_owned--;
 				}
 				else
 				{
-					if(!p_ptr->admin_wiz)
+					if(!is_admin(p_ptr))
 					{
 						msg_print(Ind,"You cannot sell that house");
 						return;
@@ -4345,11 +4456,19 @@ void do_cmd_purchase_house(int Ind, int dir)
 			return;
 		}
 		if(price>p_ptr->au){
-			msg_print(Ind,"You do not have enough gold");
+			msg_print(Ind,"You do not have enough gold!");
+			return;
+		}
+		if(cfg.houses_per_player && (p_ptr->houses_owned >= (p_ptr->lev / cfg.houses_per_player)) && !is_admin(p_ptr)) {
+			if ((int)(p_ptr->lev / cfg.houses_per_player) == 0)
+			msg_format(Ind, "You need to be at least level %d to buy a house!", cfg.houses_per_player);
+			else
+			msg_format(Ind, "At your level, you cannot own more than %d houses at once!", (int)(p_ptr->lev / cfg.houses_per_player));
 			return;
 		}
 		msg_format(Ind, "You buy the house for %ld gold.", price);
 		p_ptr->au-=price;
+		p_ptr->houses_owned++;
 		dna->creator=p_ptr->dna;
 		dna->owner=p_ptr->id;
 		dna->owner_type=OT_PLAYER;

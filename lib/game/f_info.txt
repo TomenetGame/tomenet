@@ -677,7 +677,7 @@ D:2:a very hard stone block blocking your way
 N:102:nether mist
 G:.:v
 S:v:R:r:v:R:r:D
-E:1d1:40:NETHER
+E:4d4:8:NETHER
 F:ATTR_MULTI
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
 

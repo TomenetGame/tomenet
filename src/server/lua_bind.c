@@ -202,7 +202,7 @@ bool lua_summon_monster(int y, int x, int lev, bool friend, char *fct)
 	summon_lua_okay_fct = fct;
 
 	if (!friend)
-		return summon_specific(y, x, lev, SUMMON_LUA);
+		return summon_specific(y, x, lev, SUMMON_LUA, 1, 0);
 	else
 		return summon_specific_friendly(y, x, lev, SUMMON_LUA, TRUE);
 }
@@ -494,4 +494,28 @@ void remote_update_lua(int Ind, cptr file)
         player_type *p_ptr = Players[Ind];
 
         remote_update(p_ptr->conn, file);
+	return;
+}
+
+void lua_s_print(cptr logstr) {
+	s_printf(logstr);
+	return;
+}
+
+void lua_add_anote(cptr anote) {
+	int i;
+	for (i = 0; i < MAX_ADMINNOTES; i++)
+	        if (!strcmp(admin_note[i], "")) break;
+	if (i < MAX_ADMINNOTES) strcpy(admin_note[i], anote);
+	return;
+}
+
+void lua_count_houses(int Ind) {
+	int i;
+	Players[Ind]->houses_owned = 0;
+	for (i = 0; i < num_houses; i++)
+		if ((houses[i].dna->owner_type==OT_PLAYER) &&
+    		    (houses[i].dna->owner == Players[Ind]->id))
+	    	    Players[Ind]->houses_owned++;
+	return;
 }

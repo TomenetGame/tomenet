@@ -157,6 +157,9 @@ void do_cmd_eat_food(int Ind, int item)
 		}
 	}
 
+	/* Let the player stay afk while eating,
+	   since we assume he's resting ;) - C. Blue */
+/*	if (p_ptr->afk) toggle_afk(Ind, "");*/
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -201,7 +204,8 @@ void do_cmd_eat_food(int Ind, int item)
 			{
 				if (!p_ptr->resist_fear)
 				{
-					if (set_afraid(Ind, p_ptr->afraid + rand_int(10) + 10))
+					if (set_afraid(Ind, p_ptr->afraid + rand_int(10) + 10) ||
+					    set_image(Ind, p_ptr->image + 20))
 					{
 						ident = TRUE;
 					}
@@ -309,6 +313,7 @@ void do_cmd_eat_food(int Ind, int item)
 			case SV_FOOD_CURE_PARANOIA:
 			{
 				if (set_afraid(Ind, 0)) ident = TRUE;
+				if (set_image(Ind, p_ptr->image / 2)) ident = TRUE;
 				break;
 			}
 
@@ -483,6 +488,7 @@ void do_cmd_eat_food(int Ind, int item)
 	else if (o_ptr->tval == TV_FIRESTONE)
 	{
 		bool dragon = FALSE;
+#if 0	/* exclusive feature of Thunderlords. Mimics shouldn't have access to this, really. */
 		if (p_ptr->body_monster)
 		{
 			monster_race *r_ptr = &r_info[p_ptr->body_monster];
@@ -534,11 +540,18 @@ void do_cmd_eat_food(int Ind, int item)
 				}
 			}
 		}
-
+#else
+		if (p_ptr->body_monster)
+		{
+			monster_race *r_ptr = &r_info[p_ptr->body_monster];
+			if (strchr("dD", r_ptr->d_char)) dragon = TRUE;
+		}
+#endif
 		/* Analyse the firestone */
 		if (!ident)
 		{
-			if (p_ptr->prace == RACE_DRIDER || dragon)
+//			if (p_ptr->prace == RACE_DRIDER || dragon)
+			if (p_ptr->prace == RACE_DRIDER)
 			{
 				switch (o_ptr->sval)
 				{
@@ -580,7 +593,9 @@ void do_cmd_eat_food(int Ind, int item)
 					}
 				}
 			}
-			else msg_print(Ind, "Yikes, you cannot eat this, you vomit!");
+//			else msg_print(Ind, "Yikes, you cannot eat this, you vomit!");
+			else if (!dragon) msg_print(Ind, "Yikes, you cannot eat this, you vomit!");
+			else msg_print(Ind, "That tastes weird..");
 		}
 	}
 
@@ -939,7 +954,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_STAR_HEALING:
 				{
-					if (hp_player(Ind, 800)) ident = TRUE;
+					if (hp_player(Ind, 700)) ident = TRUE;
 					if (set_blind(Ind, 0)) ident = TRUE;
 					if (set_confused(Ind, 0)) ident = TRUE;
 					if (set_poisoned(Ind, 0)) ident = TRUE;
@@ -1212,6 +1227,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 					msg_print(Ind, "You have been turned into a fruit bat!");
 					strcpy(p_ptr->died_from,"Potion of Chauve-Souris");
+					strcpy(p_ptr->really_died_from,"Potion of Chauve-Souris");
 					do_mimic_change(Ind, 0, TRUE);
 					p_ptr->fruit_bat = -1;
 					p_ptr->deathblow = 0;
@@ -1295,6 +1311,9 @@ void do_cmd_quaff_potion(int Ind, int item)
 		return;
 	}
 
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
+
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -1361,6 +1380,11 @@ void do_cmd_drink_fountain(int Ind)
 
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	if (p_ptr->ghost) {
+		msg_print(Ind, "You cannot drink.");
+		return;
+	}
 
 	if (c_ptr->feat == FEAT_EMPTY_FOUNTAIN)
 	{
@@ -1438,6 +1462,9 @@ void do_cmd_drink_fountain(int Ind)
 		break;
 	}
 #endif	// 0
+
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
 
 	ident = quaff_potion(Ind, tval, sval, pval);
 	if (ident) cs_ptr->sc.fountain.known = TRUE;
@@ -1585,6 +1612,9 @@ void do_cmd_fill_bottle(int Ind)
 		cs_erase(c_ptr, cs_ptr);
 	}
 
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
+
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 }
@@ -1628,6 +1658,9 @@ void do_cmd_empty_potion(int Ind, int slot)
 
 	/* let the player carry the bottle */
 	inven_carry(Ind, q_ptr);
+
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1948,10 +1981,12 @@ static void do_lottery(int Ind, object_type *o_ptr)
 
 	i -= i * o_ptr->discount / 100;
 
-	/* 30 * 10^7 = 300,000,000 */
+	/* 30 * 4^7 = 30 * 16384 =   491,520 */
+	/* 30 * 5^7 = 30 * 78125 = 2,343,750 */
 	for (j = 0; j < LOTTERY_MAX_PRIZE; j++)
 	{
-		if (!magik(5)) break;
+/* was this really intended to be magik() !? - C. Blue -		if (!magik(5)) break; */
+		if (rand_int(4)) break;
 		if (k) i *= 5;
 		k++;
 	}
@@ -1959,6 +1994,7 @@ static void do_lottery(int Ind, object_type *o_ptr)
 	if (!j)
 	{
 		msg_print(Ind, "\377WYou draw a blank :-P");
+		s_printf("Lottery results: %s drew a blank.\n", p_ptr->name);
 	}
 	else
 	{
@@ -1969,6 +2005,8 @@ static void do_lottery(int Ind, object_type *o_ptr)
 		if ((k % 10) == 1) p = "st";
 		else if ((k % 10) == 2) p = "nd";
 		else if ((k % 10) == 3) p = "rd";
+
+		s_printf("Lottery results: %s won the %d%s prize of %d Au.\n", p_ptr->name, k, p, i);
 
 		if (k < 4 && (p_ptr->au < i / 5))
 		{
@@ -2112,6 +2150,9 @@ void do_cmd_read_scroll(int Ind, int item)
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
+
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -2225,7 +2266,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 				for (k = 0; k < randint(3); k++)
 				{
-					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, 0))
+					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, 0, 1, 0))
 					{
 						ident = TRUE;
 					}
@@ -2254,7 +2295,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 				for (k = 0; k < randint(3); k++)
 				{
-					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_UNDEAD))
+					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_UNDEAD, 1, 0))
 					{
 						ident = TRUE;
 					}
@@ -2528,7 +2569,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 /*				int obj_tmp = object_level;
 				object_level = p_ptr->wpos.wz / 2;
-*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE);
+*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, !p_ptr->total_winner);
 /*				object_level = obj_tmp; //just paranoia, dunno if needed.*/
 				ident = TRUE;
 				break;
@@ -2538,7 +2579,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 /*				int obj_tmp = object_level;
 				object_level = p_ptr->wpos.wz / 2;
-*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE);
+*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, !p_ptr->total_winner);
 /*				object_level = obj_tmp; //just paranoia, dunno if needed.*/
 				ident = TRUE;
 				break;
@@ -2881,6 +2922,8 @@ void do_cmd_use_staff(int Ind, int item)
 		    !get_check("Your pack might overflow.  Continue? ")) return;
 	}*/
 
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2966,7 +3009,7 @@ void do_cmd_use_staff(int Ind, int item)
 
 			for (k = 0; k < randint(4); k++)
 			{
-				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, 0))
+				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, 0, 1, 0))
 				{
 					ident = TRUE;
 				}
@@ -3361,6 +3404,9 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	/*if (!get_aim_dir(&dir)) return;*/
 
 
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
+
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -3536,7 +3582,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, "%s fires an acid bolt for", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_ACID, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 20, GF_ACID, dir, damroll(7 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3545,7 +3591,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, "%s fires a lightning bolt for", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_ELEC, dir, damroll(3 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 20, GF_ELEC, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3554,7 +3600,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, "%s fires a fire bolt for", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_FIRE, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 20, GF_FIRE, dir, damroll(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3563,7 +3609,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, "%s fires a frost bolt for", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_COLD, dir, damroll(3 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 20, GF_COLD, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3572,7 +3618,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a ball of acid.", p_ptr->name);
 			sprintf(p_ptr->attacker, "%s fires a ball of acid for", p_ptr->name);
-			fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 60), 2, p_ptr->attacker);
+			fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 240), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3581,7 +3627,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a ball of electricity.", p_ptr->name);
 			sprintf(p_ptr->attacker, "%s fires a ball of electricity for", p_ptr->name);
-			fire_ball(Ind, GF_ELEC, dir, 32 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
+			fire_ball(Ind, GF_ELEC, dir, 64 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3590,7 +3636,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a fire ball.", p_ptr->name);
 			sprintf(p_ptr->attacker, "%s fires a fire ball for", p_ptr->name);
-			fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
+			fire_ball(Ind, GF_FIRE, dir, 144 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3599,7 +3645,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a frost ball.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a frost ball for", p_ptr->name);
-			fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
+			fire_ball(Ind, GF_COLD, dir, 96 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3614,7 +3660,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
 			sprintf(p_ptr->attacker, "%s shoots dragon fire for", p_ptr->name);
-			fire_ball(Ind, GF_FIRE, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3, p_ptr->attacker);
+			fire_ball(Ind, GF_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3623,7 +3669,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
 			sprintf(p_ptr->attacker, "%s shoots dragon frost for", p_ptr->name);
-			fire_ball(Ind, GF_COLD, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 80), 3, p_ptr->attacker);
+			fire_ball(Ind, GF_COLD, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, 320), 3, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3636,7 +3682,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 					{
 						msg_format_near(Ind, "%s shoots dragon acid!", p_ptr->name);
 						sprintf(p_ptr->attacker, "%s shoots dragon acid for", p_ptr->name);
-						fire_ball(Ind, GF_ACID, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3, p_ptr->attacker);
+						fire_ball(Ind, GF_ACID, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
 						break;
 					}
 
@@ -3644,7 +3690,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 					{
 						msg_format_near(Ind, "%s shoots dragon lightning!", p_ptr->name);
 						sprintf(p_ptr->attacker, "%s shoots dragon lightning for", p_ptr->name);
-						fire_ball(Ind, GF_ELEC, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3, p_ptr->attacker);
+						fire_ball(Ind, GF_ELEC, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
 						break;
 					}
 
@@ -3652,7 +3698,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 					{
 						msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
 						sprintf(p_ptr->attacker, "%s shoots dragon fire for", p_ptr->name);
-						fire_ball(Ind, GF_FIRE, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3, p_ptr->attacker);
+						fire_ball(Ind, GF_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
 						break;
 					}
 
@@ -3660,7 +3706,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 					{
 						msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
 						sprintf(p_ptr->attacker, "%s shoots dragon frost for", p_ptr->name);
-						fire_ball(Ind, GF_COLD, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3, p_ptr->attacker);
+						fire_ball(Ind, GF_COLD, dir, 320 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
 						break;
 					}
 
@@ -3668,7 +3714,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 					{
 						msg_format_near(Ind, "%s shoots dragon poison!", p_ptr->name);
 						sprintf(p_ptr->attacker, "%s shoots dragon poison for", p_ptr->name);
-						fire_ball(Ind, GF_POIS, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3, p_ptr->attacker);
+						fire_ball(Ind, GF_POIS, dir, 240 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 3, p_ptr->attacker);
 						break;
 					}
 			}
@@ -3692,7 +3738,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_print(Ind, "You launch a rocket!");
 			sprintf(p_ptr->attacker, "%s launches a rocket for", p_ptr->name);
-			fire_ball(Ind, GF_ROCKET, dir, 75 + (randint(100) + get_skill_scale(p_ptr, SKILL_DEVICE, 300)), 2, p_ptr->attacker);
+			fire_ball(Ind, GF_ROCKET, dir, 400 + (randint(100) + get_skill_scale(p_ptr, SKILL_DEVICE, 300)), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3887,6 +3933,8 @@ void do_cmd_zap_rod(int Ind, int item)
 	/* Extract object flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) /
@@ -4178,6 +4226,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
+
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) /
 	        ((f4 & TR4_FAST_CAST)?2:1);
@@ -4288,7 +4339,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires an acid bolt for", p_ptr->name);
-			fire_bolt_or_beam(Ind, 10, GF_ACID, dir, damroll(6, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + get_skill_scale(p_ptr, SKILL_DEVICE, 180), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 10, GF_ACID, dir, damroll(6, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 180), p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 12;
 			break;
@@ -4298,7 +4349,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a lightning bolt for", p_ptr->name);
-			fire_bolt_or_beam(Ind, 10, GF_ELEC, dir, damroll(3, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + get_skill_scale(p_ptr, SKILL_DEVICE, 90), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 10, GF_ELEC, dir, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 120), p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 11;
 			break;
@@ -4308,7 +4359,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a fire bolt for", p_ptr->name);
-			fire_bolt_or_beam(Ind, 10, GF_FIRE, dir, damroll(8, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + get_skill_scale(p_ptr, SKILL_DEVICE, 240), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 10, GF_FIRE, dir, damroll(8, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 210), p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 15;
 			break;
@@ -4318,7 +4369,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a frost bolt for", p_ptr->name);
-			fire_bolt_or_beam(Ind, 10, GF_COLD, dir, damroll(5, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + get_skill_scale(p_ptr, SKILL_DEVICE, 150), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 10, GF_COLD, dir, damroll(5, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 180), p_ptr->attacker);
 			ident = TRUE;
 			o_ptr->pval = 13;
 			break;
@@ -4399,7 +4450,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_ILLUMINATION:
 		{
 			msg_format_near(Ind, "%s calls light.", p_ptr->name);
-			if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 100)), 2)) ident = TRUE;
+			if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
 			o_ptr->pval = 30;
 			break;
 		}
@@ -4790,6 +4841,9 @@ void do_cmd_activate(int Ind, int item)
 	}
 #endif	// 0
 
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
+
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -4831,7 +4885,7 @@ void do_cmd_activate(int Ind, int item)
 	}
 
 	/* Check the recharge */
-	if (o_ptr->timeout)
+	if ((o_ptr->timeout) && !((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)))
 	{
 		msg_print(Ind, "It whines, glows and fades...");
 		return;
@@ -6292,7 +6346,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_DAWN:
 			{
 				msg_print(Ind, "You summon the Legion of the Dawn.");
-				(void)summon_specific_friendly(py, px, dlev, SUMMON_DAWN, TRUE);
+				(void)summon_specific_friendly(py, px, dlev, SUMMON_DAWN, TRUE, 0);
 				o_ptr->timeout = 500 + randint(500);
 				break;
 			}
@@ -6372,7 +6426,7 @@ void do_cmd_activate(int Ind, int item)
 			{
 				if (randint(3) == 1)
 				{
-					if (summon_specific(py, px, ((plev * 3) / 2), SUMMON_DRAGONRIDER))
+					if (summon_specific(py, px, ((plev * 3) / 2), SUMMON_DRAGONRIDER, 0, 1))
 					{
 						msg_print(Ind, "A DragonRider comes from the BETWEEN !");
 						msg_print(Ind, "'I will burn you!'");
@@ -6568,6 +6622,12 @@ void do_cmd_activate(int Ind, int item)
 				(void)set_oppose_cold(Ind, randint(30) + 40);
 				(void)set_oppose_pois(Ind, randint(30) + 40);
 			}
+			case ART_SPIRITSHARD:
+			{
+				msg_print(Ind, "Shimmers and flashes travel over the surface of the amulet...");
+				o_ptr->timeout = 300 + randint(100);
+				(void)set_tim_wraith(Ind, 150);
+			}
 		}
 
 		/* Window stuff */
@@ -6719,6 +6779,10 @@ void do_cmd_activate(int Ind, int item)
 							o_ptr->level = 15;
 						}
 
+						/* Make the ring last only over a certain period of time >:) - C. Blue */
+						o_ptr->timeout = 10000 + get_skill_scale(p_ptr, SKILL_DEVICE, 7000) +
+								rand_int(10001 - get_skill_scale(p_ptr, SKILL_DEVICE, 7000));
+
 #if 0
 						/* Reduce player's kill count by the monster level */
 						if (p_ptr->r_killed[p_ptr->body_monster] < (r_info[p_ptr->body_monster].level * 4))
@@ -6740,13 +6804,14 @@ void do_cmd_activate(int Ind, int item)
 #endif
 						/* If player hasn't got high enough kill count anymore now, poly back to player form! */
 						if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
-							do_mimic_change(Ind, 0, FALSE);
+							do_mimic_change(Ind, 0, TRUE);
 
 						object_aware(Ind, o_ptr);
 						object_known(o_ptr);
 					}
 				}
 				else
+				/* activate the ring to change into its form! */
 				{
 					/* Need skill; no need of killing count */
 					if (r_info[p_ptr->body_monster].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))
@@ -6759,10 +6824,21 @@ void do_cmd_activate(int Ind, int item)
 					/* reversed again since you need need to keep wearing the ring
 					   or you will polymorph back */
 #if 0
+					/* If-clause for poly-first-break-then */
 					if (rand_int(100) < (11 + (1000 / ((1010 / (r_info[p_ptr->body_monster].level + 1)) + 10 +
 					    (get_skill(p_ptr, SKILL_MIMIC) * get_skill(p_ptr, SKILL_MIMIC) / 30)))))
-#else
+					
+					/* If-clause for non-timeouted ring & break-first-poly-then */
 					if (rand_int(100) < 40 + (r_info[p_ptr->body_monster].level / 3) - get_skill_scale(p_ptr, SKILL_MIMIC, 10))
+
+					/* If-clause for timeouted ring & break-first-poly-then (low%, ~20..25 (15..20+ ..) */
+					if (rand_int(100) < 20 + (r_info[p_ptr->body_monster].level / 4) - get_skill_scale(p_ptr, SKILL_MIMIC, 20))
+#else
+					/* Take toll ('overhead energy') for activating */
+					if (o_ptr->timeout >= 1000) o_ptr->timeout -= 500; /* 500 are approx. 5 minutes */
+					else if (o_ptr->timeout > 1) o_ptr->timeout /= 2;
+
+					if (FALSE)
 #endif
 					{
 						msg_print(Ind, "There is a bright flash of light.");
@@ -7547,7 +7623,7 @@ static int fletchery_items(int Ind)
 	object_aware(Ind, q_ptr); \
 	object_known(q_ptr); \
 	if (tlev > 50) q_ptr->ident |= ID_MENTAL; \
-	apply_magic(&p_ptr->wpos, q_ptr, tlev, FALSE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE); \
+	apply_magic(&p_ptr->wpos, q_ptr, tlev, FALSE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE, FALSE); \
 	q_ptr->ident &= ~ID_CURSED; \
 	q_ptr->note = quark_add("Handmade"); \
 	q_ptr->discount = 50 + 25 * rand_int(3); \
@@ -7669,6 +7745,9 @@ void do_cmd_fletchery(int Ind)
 			c_ptr = &zcave[y][x];
 			if (c_ptr->feat == FEAT_RUBBLE)
 			{
+				/* S(he) is no longer afk */
+				if (p_ptr->afk) toggle_afk(Ind, "");
+
 				/* Get local object */
 				q_ptr = &forge;
 
@@ -7728,6 +7807,9 @@ void do_cmd_fletchery(int Ind)
 //			q_ptr = &o_list[0 - item];
 		}
 
+		/* S(he) is no longer afk */
+		if (p_ptr->afk) toggle_afk(Ind, "");
+
 		/* Get local object */
 		q_ptr = &forge;
 
@@ -7785,6 +7867,9 @@ void do_cmd_fletchery(int Ind)
 			return;
 //			q_ptr = &o_list[0 - item];
 		}
+
+		/* S(he) is no longer afk */
+		if (p_ptr->afk) toggle_afk(Ind, "");
 
 		/* Get local object */
 		q_ptr = &forge;

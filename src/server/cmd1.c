@@ -1527,7 +1527,8 @@ void carry(int Ind, int pickup, int confirm)
 
 			/* Describe the object */
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
-			o_ptr->marked=0;
+			o_ptr->marked = 0;
+			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
 			/* Message */
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
@@ -1561,7 +1562,8 @@ void carry(int Ind, int pickup, int confirm)
 			msg_print(Ind, "You add the ammo to your quiver.");
 
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-			o_ptr->marked=0;
+			o_ptr->marked = 0;
+			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
 			/* Auto Curse */
 			if (f3 & TR3_AUTO_CURSE)
@@ -1601,7 +1603,8 @@ void carry(int Ind, int pickup, int confirm)
 
 			/* Describe the object */
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
-			o_ptr->marked=0;
+			o_ptr->marked = 0;
+			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
 			/* Message */
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
@@ -1657,8 +1660,10 @@ void carry(int Ind, int pickup, int confirm)
 					o_ptr->owner = p_ptr->id;
 					o_ptr->owner_mode = p_ptr->mode;
 #if CHEEZELOG_LEVEL > 2
-					if (true_artifact_p(o_ptr)) s_printf("%s Artifact %d found by %s(lv %d):\n  %s\n  ",
+					if (true_artifact_p(o_ptr)) s_printf("%s Artifact %d found by %s(lv %d):\n  %s\n",
 									    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, o_name);
+					else if (o_ptr->name1 == ART_RANDART) s_printf("%s Randart found by %s(lv %d):\n  %s\n",
+									    showtime(), p_ptr->name, p_ptr->lev, o_name);
 #endif	// CHEEZELOG_LEVEL
 				}
 
@@ -1669,7 +1674,7 @@ void carry(int Ind, int pickup, int confirm)
 				{
 					cptr name = lookup_player_name(o_ptr->owner);
 					object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
-					s_printf("%s Item transaction from %s to %s(lv %d):\n  %s\n  ",
+					s_printf("%s Item transaction from %s to %s(lv %d):\n  %s\n",
 							showtime(), name ? name : "(Dead player)",
 							p_ptr->name, p_ptr->lev, o_name);
 				}
@@ -1678,7 +1683,8 @@ void carry(int Ind, int pickup, int confirm)
 				can_use(Ind, o_ptr);
 
 				/* Carry the item */
-				o_ptr->marked=0;
+				o_ptr->marked = 0;
+				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 				slot = inven_carry(Ind, o_ptr);
 
 				/* Get the item again */
@@ -1695,7 +1701,8 @@ void carry(int Ind, int pickup, int confirm)
 
 				/* Describe the object */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
-				o_ptr->marked=0;
+				o_ptr->marked = 0;
+				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
 				/* Message */
 				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
@@ -3057,7 +3064,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						msg_format(Ind, "%^s changes!", m_name);
 
 						/* Create a new monster (no groups) */
-						(void)place_monster_aux(wpos, y, x, tmp, FALSE, FALSE, m_ptr->clone);
+						(void)place_monster_aux(wpos, y, x, tmp, FALSE, FALSE, m_ptr->clone, m_ptr->clone_summoning);
 
 						/* "Kill" the "old" monster */
 						delete_monster_idx(c_ptr->m_idx, TRUE);
@@ -3515,7 +3522,7 @@ static bool wraith_access(int Ind){
 		{
 			if(fill_house(&houses[i], FILL_PLAYER, p_ptr)){
 				house=TRUE;
-				if(access_door(Ind, houses[i].dna)){
+				if(access_door(Ind, houses[i].dna) || admin_p(Ind)){
 #if 0	// Jir test
 					if(houses[i].flags & HF_APART){
 						break;
@@ -3970,6 +3977,7 @@ void move_player(int Ind, int dir, int do_pickup)
 					if(tackle<18){
 						msg_format_near(Ind2, "%s is tackled by %s", q_ptr->name, p_ptr->name);
 						msg_format(Ind2, "%s tackles you", p_ptr->name);
+						tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
 						drop_near(&tmp_obj, -1, wpos, y, x);
 					}
 					else{
@@ -4070,8 +4078,8 @@ void move_player(int Ind, int dir, int do_pickup)
 			if (c_ptr->feat == FEAT_HOME)
 			{
 				struct c_special *cs_ptr;
-				if(!(cs_ptr=GetCS(c_ptr, CS_DNADOOR)) ||
-						!access_door(Ind, cs_ptr->sc.ptr))
+				if((!(cs_ptr=GetCS(c_ptr, CS_DNADOOR)) ||
+				    !access_door(Ind, cs_ptr->sc.ptr)) && !admin_p(Ind))
 				{
 					msg_print(Ind, "The door blocks your movement.");
 					disturb(Ind, 0, 0);
@@ -4273,7 +4281,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		else Send_floor(Ind, 0);
 
 		/* Handle "store doors" */
-		if (((!p_ptr->ghost) || p_ptr->admin_dm || p_ptr->admin_wiz) &&
+		if (((!p_ptr->ghost) || is_admin(p_ptr)) &&
 		    (c_ptr->feat == FEAT_SHOP))
 #if 0
 		    (c_ptr->feat >= FEAT_SHOP_HEAD) &&
@@ -4310,7 +4318,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 #ifndef USE_MANG_HOUSE_ONLY
 		else if ((c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
-				&& (!p_ptr->ghost || p_ptr->admin_dm || p_ptr->admin_wiz))
+				&& (!p_ptr->ghost || is_admin(p_ptr)))
 		{
 			disturb(Ind, 0, 0);
 			do_cmd_trad_house(Ind);

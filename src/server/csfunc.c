@@ -123,8 +123,10 @@ int dnahit(c_special *cs_ptr, int y, int x, int Ind){
 	/* we have to know from where we are called! */
 	struct dna_type *dna=cs_ptr->sc.ptr;
 	{
-		if(access_door(Ind, dna))
+		if(access_door(Ind, dna) || admin_p(Ind))
 		{
+			if (admin_p(Ind))
+				msg_format(Ind, "\377gThis house is owned by %s.", get_house_owner(cs_ptr));
 #ifdef USE_MANG_HOUSE
 			msg_print(Ind, "\377GYou walk through the door.");
 #endif	/*USE_MANG_HOUSE */

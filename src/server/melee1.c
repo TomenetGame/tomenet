@@ -27,9 +27,6 @@
  */
 //#define NORMAL_HIT_NO_STUN
 
-/* upper limit of dodging chance.	[90] */
-#define DODGE_MAX_CHANCE	90
-
 /*
  * Critical blow.  All hits that do 95% of total possible damage,
  * and which also do at least 20 damage, or, sometimes, N damage.
@@ -512,6 +509,7 @@ bool make_attack_normal(int Ind, int m_idx)
 	bool touched = FALSE, fear = FALSE, alive = TRUE;
 	bool explode = FALSE, gone = FALSE;
 
+	bool player_vulnerable = FALSE;
 
 	/* Not allowed to attack */
 	if (r_ptr->flags1 & RF1_NEVER_BLOW) return (FALSE);
@@ -904,13 +902,19 @@ bool make_attack_normal(int Ind, int m_idx)
 /* if (!p_ptr->protundead){}		// more efficient way :)	*/
 		/* I believe the previous version was wrong - evileye */
 
+			/* If the player uses neither a weapon nor a shield
+			   he is very defenseless against black breath infection
+			   since he can neither block nor parry. */
+			if (!p_ptr->inventory[INVEN_WIELD].k_idx &&
+			    !p_ptr->inventory[INVEN_ARM].k_idx) player_vulnerable = TRUE;
+
 			if(
-				(r_ptr->flags7 & RF7_NAZGUL && magik(25)) ||
+				(r_ptr->flags7 & RF7_NAZGUL && magik(player_vulnerable?10:25)) ||
 				((r_ptr->flags3 & (RF3_UNDEAD)) && (
 					((m_ptr->level >= 35) &&
 					 (r_ptr->flags1 & (RF1_UNIQUE)) &&
 					 (randint(300 - m_ptr->level) == 1)) ||
-					((m_ptr->level >= 40) && (randint(450 - m_ptr->level) == 1))
+					((m_ptr->level >= 40) && (randint(400 - m_ptr->level - (player_vulnerable?75:0)) == 1))
 				))
 			  )
 
@@ -996,35 +1000,65 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Find an item */
-					for (k = 0; k < 10; k++)
+					for (k = 0; k < 20; k++)
 					{
 						/* Pick an item */
-						i = rand_int(INVEN_PACK);
+						i = rand_int(INVEN_PACK + 2);
+						/* Inventory + the ring slots (timed polymorph rings) */
+						if (i == INVEN_PACK) i = INVEN_LEFT;
+						if (i == INVEN_PACK + 1) i = INVEN_RIGHT;
 
 						/* Obtain the item */
 						o_ptr = &p_ptr->inventory[i];
 
 						/* Drain charged wands/staffs */
-						if (((o_ptr->tval == TV_STAFF) ||
+						if ((((o_ptr->tval == TV_STAFF) ||
 						     (o_ptr->tval == TV_WAND)) &&
-						    (o_ptr->pval))
+						    (o_ptr->pval)) ||
+						     ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH) &&
+						      (o_ptr->timeout > 1)))
 						{
 							/* Message */
-							msg_print(Ind, "Energy drains from your pack!");
+							if (i < INVEN_PACK)
+								msg_print(Ind, "Energy drains from your pack!");
+							else
+								msg_print(Ind, "Energy drains from your equipment!");
 
 							/* Obvious */
 							obvious = TRUE;
 
 							/* Heal */
 							j = rlev;
-							m_ptr->hp += j * o_ptr->pval * o_ptr->number;
+							if (o_ptr->tval == TV_RING)
+								m_ptr->hp += j * (o_ptr->timeout / 2000) * o_ptr->number;
+							else
+								m_ptr->hp += j * o_ptr->pval * o_ptr->number;
 							if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
 
 							/* Redraw (later) if needed */
 							update_health(m_idx);
 
 							/* Uncharge */
-							o_ptr->pval = 0;
+							if (o_ptr->tval == TV_RING) {
+								if (i < INVEN_PACK) {
+									o_ptr->timeout = 1; /* leave 0 to the dungeon.c routine.. */
+								} else {
+									/* don't be too harsh */
+#if 1
+									if (o_ptr->timeout > 8000) o_ptr->timeout = (o_ptr->timeout * 3) / 4;
+									else if (o_ptr->timeout > 2000) o_ptr->timeout -= 2000;
+									else if (o_ptr->timeout > 500) o_ptr->timeout -= 500;
+									else o_ptr->timeout = 1;
+#else
+									if (o_ptr->timeout > 9000) o_ptr->timeout -= 4000;
+									else if (o_ptr->timeout > 3000) o_ptr->timeout -= 2000;
+									else if (o_ptr->timeout > 1000) o_ptr->timeout -= 1000;
+									else o_ptr->timeout = 1;
+#endif
+								}
+							} else {
+								o_ptr->pval = 0;
+							}
 
 							/* Combine / Reorder the pack */
 							p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -1735,6 +1769,13 @@ bool make_attack_normal(int Ind, int m_idx)
 				{
 					obvious = TRUE;
 					msg_print(Ind, "You shiver in madness..");
+					
+					/* Since sanity hits can become too powerful
+					   by the normal melee-boosting formula for
+					   monsters that gained levels, limit it - C. Blue */
+//moving this to monster_exp for now (C. Blue)	if (damage > r_ptr->dd * r_ptr->ds) damage = r_ptr->dd * r_ptr->ds;
+					/* (I left out an additional (totally averaging) '..+r_ptr->dd' to allow
+					   tweaking the limit a bit by choosing appropriate values in r_info.txt */
 
 					take_sanity_hit(Ind, damage, ddesc);
 					break;
@@ -1750,7 +1791,11 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Bare-handed? oh.. */
-					if (!o_ptr->k_idx) break;
+					if (!o_ptr->k_idx) {
+						msg_format(Ind, "\377o%^s cuts deep in your arms and hands", m_name);
+						(void)set_cut(Ind, p_ptr->cut + 100);
+						break;
+					}
 
 					msg_format(Ind, "\377r%^s tries to disarm you.", m_name);
 
@@ -2043,21 +2088,22 @@ bool make_attack_normal(int Ind, int m_idx)
 
 					if (magik(chance))
 					{
-						msg_format(Ind, "%^s disrupts your aura of death..", m_name);
+//						msg_format(Ind, "%^s disrupts your aura of death..", m_name);
 						if (magik(50))
 						{
 							/* Our client cannot handle message wrapping.. */
-//							msg_format(Ind, "%^s disrupts your aura of death which explodes into a wave of plasma.", m_name);
-							msg_print(Ind, "It explodes into a wave of plasma!");
+							msg_format(Ind, "%^s gets hit by a wave of plasma.", m_name);
+//							msg_print(Ind, "It explodes into a wave of plasma!");
 							sprintf(p_ptr->attacker, " eradiates a wave of plasma for", p_ptr->name);
-							fire_ball(Ind, GF_PLASMA, 0, 10 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
+							fire_ball(Ind, GF_PLASMA, 0, 5 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
 						}
 						else
 						{
 //							msg_format(Ind, "%^s disrupts your aura of death which explodes into a wave of ice.", m_name);
-							msg_print(Ind, "It explodes into a wave of ice!");
+//							msg_print(Ind, "It explodes into a wave of ice!");
+							msg_format(Ind, "%^s gets hit by a wave of ice.", m_name);
 							sprintf(p_ptr->attacker, " eradiates a wave of ice for", p_ptr->name);
-							fire_ball(Ind, GF_ICE, 0, 10 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
+							fire_ball(Ind, GF_ICE, 0, 5 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
 						}
 					}
 				}

@@ -731,7 +731,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 		if (q_ptr->invis && !admin &&
 				(!p_ptr->see_inv ||
 				 ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) &&
-				((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) < (q_ptr->lev / 2))))
+				((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) > (q_ptr->lev / 2))))
 			continue;
 
 		/* Output color byte */
@@ -986,6 +986,9 @@ void do_cmd_check_server_settings(int Ind)
 	if ((k=cfg.spell_stack_limit))
 		fprintf(fff, "Duration of assistance spells is limited to %d turns.\n", k);
 
+	if (cfg.clone_summoning != 999)
+		fprintf(fff, "Monsters may summon up to %d times until the summons start to become clones.\n", cfg.clone_summoning);
+
 	k=cfg.use_pk_rules;
 	switch (k)
 	{
@@ -1010,6 +1013,10 @@ void do_cmd_check_server_settings(int Ind)
 		fprintf(fff, "You disappear the moment you die, without becoming a ghost.\n");
 	if (cfg.lifes)
 		fprintf(fff, "Players with ghosts can be resurrected up to %d times until their soul\n will escape and their bodies will be permanently destroyed.\n", cfg.lifes);
+	if (cfg.houses_per_player)
+		fprintf(fff, "Players may own up to level/%d houses at once.\n", cfg.houses_per_player);
+	else
+		fprintf(fff, "Players may own as many houses at once as they like.\n");	    
 
 	fprintf(fff, "The floor will be erased about %d~%d seconds after you left.\n", cfg.anti_scum, cfg.anti_scum + 10);
 	if ((k=cfg.level_unstatic_chance))
@@ -1029,6 +1036,8 @@ void do_cmd_check_server_settings(int Ind)
 		fprintf(fff, "Items cannot be transferred to a character of too low a level.\n");
 	if (cfg.surface_item_removal)
 		fprintf(fff, "Items on the world surface will be removed after %d minutes.\n", cfg.surface_item_removal);
+	if (cfg.dungeon_item_removal)
+		fprintf(fff, "Items on a dungeon/tower floor will be removed after %d minutes.\n", cfg.surface_item_removal);
 
 	fprintf(fff,"\n");
 
@@ -1294,7 +1303,7 @@ void do_cmd_show_houses(int Ind)
 		h_ptr = &houses[i];
 		dna = h_ptr->dna;
 
-		if (!access_door(Ind, h_ptr->dna)) continue;
+		if (!access_door(Ind, h_ptr->dna) && !admin_p(Ind)) continue;
 
 		shown = TRUE;
 		total++;

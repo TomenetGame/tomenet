@@ -1876,9 +1876,10 @@ void recall_player(int Ind, char *message){
 	p_ptr->word_recall=0;
 
         /* Did we enter a no-tele vault? */
-        //wpos=&p_ptr->wpos;
+#if 0 /* moved to process_player_change_wpos */
         if(!(zcave=getcave(&p_ptr->wpos))) return;
         if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) msg_print(Ind, "\377DThe air in here feels very still.");
+#endif
 }
 
 
@@ -1908,7 +1909,7 @@ static void do_recall(int Ind, bool bypass)
 		if((((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)) ||
 		    (d_ptr->flags1 & DF1_NO_RECALL))) {
 			msg_print(Ind, "You feel yourself being pulled toward the surface!");
-			if (!p_ptr->admin_dm && !p_ptr->admin_wiz) {
+			if (!is_admin(p_ptr)) {
 				recall_ok=FALSE;
 				/* Redraw the depth(colour) */
 	    			p_ptr->redraw |= (PR_DEPTH);
@@ -1994,9 +1995,12 @@ static void do_recall(int Ind, bool bypass)
 			if(((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
 			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
 			    (d_ptr->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN)) ||
-			    (d_ptr->flags2 & DF2_IRON)) && !p_ptr->admin_dm && !p_ptr->admin_wiz)
+			    (d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_DOWN))))
 			{
-				p_ptr->recall_pos.wz = 0;
+				if (!is_admin(p_ptr))
+					p_ptr->recall_pos.wz = 0;
+				else
+					msg_print(Ind, "(You feel yourself yanked toward nowhere...)");
 			}
 
 			if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz)
@@ -2026,9 +2030,12 @@ static void do_recall(int Ind, bool bypass)
 			if(((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
 			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
 			    (d_ptr->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN)) ||
-			    (d_ptr->flags2 & DF2_IRON)) && !p_ptr->admin_dm && !p_ptr->admin_wiz)
+			    (d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_DOWN))))
 			{
-				p_ptr->recall_pos.wz = 0;
+				if (!is_admin(p_ptr))
+					p_ptr->recall_pos.wz = 0;
+				else
+					msg_print(Ind, "(You feel yourself yanked toward nowhere...)");
 			}
 
 			if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz + 1)
@@ -2860,6 +2867,53 @@ static bool process_player_end_aux(int Ind)
 		(void)set_cut(Ind, p_ptr->cut - (adjust + recovery) * (recovery + 1));
 	}
 
+
+	/* Check polymorph rings with timeouts */
+	for (i == INVEN_LEFT; i <= INVEN_RIGHT; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH) && (o_ptr->timeout > 0) &&
+		    (p_ptr->body_monster == o_ptr->pval))
+		{
+			/* Decrease life-span */
+			o_ptr->timeout--;
+
+			/* Hack -- notice interesting energy steps */
+			if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
+			{
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+			}
+
+			/* Hack -- notice interesting fuel steps */
+			if ((o_ptr->timeout > 0) && (o_ptr->timeout < 100) && !(o_ptr->timeout % 10))
+			{
+				if (p_ptr->disturb_minor) disturb(Ind, 0, 0);
+				msg_print(Ind, "Your ring flickers and fades, flashes of light run over its surface.");
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+			}
+			else if (o_ptr->timeout == 0)
+			{
+				disturb(Ind, 0, 0);
+				msg_print(Ind, "Your ring disintegrates!");
+
+    			        if ((p_ptr->body_monster == o_ptr->pval) &&
+		                    ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
+	                    	    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
+		                {
+		                        /* If player hasn't got high enough kill count anymore now, poly back to player form! */
+		                        msg_print(Ind, "You polymorph back to your normal form.");
+		                        do_mimic_change(Ind, 0, TRUE);
+		                }
+
+ 				/* Decrease the item, optimize. */
+				inven_item_increase(Ind, i, -1);
+				inven_item_optimize(Ind, i);
+			}
+		}
+	}
+
+
 	/*** Process Light ***/
 
 	/* Check for light being wielded */
@@ -2962,15 +3016,35 @@ static bool process_player_end_aux(int Ind)
 	}
 #endif	// 0
 
+	/* Now implemented here too ;) - C. Blue */
+	/* let's say TY_CURSE lowers stats (occurs often) */
+	if (p_ptr->ty_curse && (rand_int(30) == 0)) {
+		msg_print(Ind, "An ancient foul curse shakes your body!");
+#if 0
+		if (rand_int(2))
+		(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
+		else
+		lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE);
+		/* take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "an ancient foul curse", TRUE, TRUE); */
+#else
+		(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
+#endif
+	}
+	/* and DG_CURSE randomly summons a monster (non-unique) */
+	if (p_ptr->dg_curse && (rand_int(60) == 0)) {
+		msg_print(Ind, "An ancient morgothian curse calls out!");
+		summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev * 2, 100, 0, 0, 0);
+	}
+
 	/* Handle experience draining.  In Oangband, the effect
 	 * is worse, especially for high-level characters.
 	 * As per Tolkien, hobbits are resistant.
-	 */
+	 */ 
 	if ((p_ptr->black_breath || p_ptr->black_breath_tmp) &&
-			rand_int(200) < (p_ptr->prace == RACE_HOBBIT ? 2 : 5))
+			rand_int(150) < (p_ptr->prace == RACE_HOBBIT ? 2 : 5))
 	{
 		(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
-		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L,
+		take_xp_hit(Ind, 1 + p_ptr->lev * 3 + p_ptr->max_exp / 5000L,
 				"Black Breath", TRUE, TRUE);
 #if 0
 		byte chance = (p_ptr->prace == RACE_HOBBIT) ? 2 : 5;
@@ -2996,6 +3070,7 @@ static bool process_player_end_aux(int Ind)
 			{
 				p_ptr->chp=-3;
 				strcpy(p_ptr->died_from, "Black Breath");
+				strcpy(p_ptr->really_died_from, "Black Breath");
 				p_ptr->deathblow = 0;
 				player_death(Ind);
 			}
@@ -3049,7 +3124,8 @@ static bool process_player_end_aux(int Ind)
 
 		/* Recharge activatable objects */
 		/* (well, light-src should be handled here too? -Jir- */
-		if ((o_ptr->timeout > 0) && ((o_ptr->tval != TV_LITE) || o_ptr->name1))
+		if ((o_ptr->timeout > 0) && ((o_ptr->tval != TV_LITE) || o_ptr->name1) &&
+		    !((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)))
 		{
 			/* Recharge */
 			o_ptr->timeout--;
@@ -3251,6 +3327,7 @@ static void process_games(int Ind){
 						if(!in_bounds(oy, ox)) continue;
 						if(!cave_floor_bold(zcave, oy, ox)) continue;
 						tmp_obj=p_ptr->inventory[ball];
+						tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
 						drop_near(&tmp_obj, -1, &p_ptr->wpos, oy, ox);
 						printf("dropping at %d %d (%d)\n", ox, oy, try);
 						inven_item_increase(Ind, ball, -999);
@@ -3656,19 +3733,19 @@ static void scan_objs(){
 	int i, cnt=0, dcnt=0;
 	object_type *o_ptr;
 	cave_type **zcave;
-	if (!cfg.surface_item_removal) return;
+	if (!cfg.surface_item_removal && !cfg.dungeon_item_removal) return;
 	for(i=0; i<o_max; i++){
 		/* We leave non owned objects */
 		o_ptr=&o_list[i];
 		if(o_ptr->k_idx){
 			bool sj=FALSE;
-			if(!o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos))){
+			/* check items on the world's surface */
+			if(!o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos)) && cfg.surface_item_removal) {
 				/* XXX noisy warning, eh? */
 				/* This is unsatisfactory. */
 				if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
-					/* There was an old woman who swallowed a fly... */
-
-					in_bounds_array(255 - o_ptr->iy, o_ptr->ix)){
+				    /* There was an old woman who swallowed a fly... */
+				    in_bounds_array(255 - o_ptr->iy, o_ptr->ix)) {
 					sj=TRUE;
 					o_ptr->iy = 255 - o_ptr->iy;
 				}
@@ -3678,13 +3755,14 @@ static void scan_objs(){
 					if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
 						/* Artifacts and objects that were inscribed and dropped by
 						the dungeon master or by unique monsters on their death
-						stay 6 times as long as cfg.surface_item_removal specifies */
+						stay n times as long as cfg.surface_item_removal specifies */
 /*						if(++o_ptr->marked==((artifact_p(o_ptr) ||
 						    (o_ptr->note && !o_ptr->owner))?
-						    cfg.surface_item_removal*6 : cfg.surface_item_removal))
-*/						if(++o_ptr->marked==((artifact_p(o_ptr) ||
+						    cfg.surface_item_removal * 6 : cfg.surface_item_removal))
+*/						if((++o_ptr->marked==((artifact_p(o_ptr) ||
 						    o_ptr->note)?
-						    cfg.surface_item_removal*6 : cfg.surface_item_removal))
+						    cfg.surface_item_removal * 3 : cfg.surface_item_removal))
+						    && (o_ptr->marked2 != ITEM_REMOVAL_NEVER)) /* and not dropped by dead player or generated on the floor? */
 						{
 							delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
 							dcnt++;
@@ -3701,8 +3779,44 @@ static void scan_objs(){
 #endif	/* CHEEZELOG_LEVEL (1) */
 				cnt++;
 			}
-			if(sj)
-				o_ptr->iy = 255 - o_ptr->iy;
+			/* check items on dungeon/tower floors */
+			else if(o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos)) && cfg.dungeon_item_removal) {
+				if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
+					in_bounds_array(255 - o_ptr->iy, o_ptr->ix)){
+					sj=TRUE;
+					o_ptr->iy = 255 - o_ptr->iy;
+				}
+				if (in_bounds_array(o_ptr->iy, o_ptr->ix)) // monster trap?
+				{
+					/* ick suggests a store, so leave) */
+					if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
+						/* Artifacts and objects that were inscribed and dropped by
+						the dungeon master or by unique monsters on their death
+						stay n times as long as cfg.surface_item_removal specifies */
+/*						if(++o_ptr->marked==((artifact_p(o_ptr) ||
+						    (o_ptr->note && !o_ptr->owner))?
+						    cfg.surface_item_removal*6 : cfg.surface_item_removal))
+*/						if((++o_ptr->marked==((artifact_p(o_ptr) ||
+						    o_ptr->note)?
+						    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal))
+						    && (o_ptr->marked2 != ITEM_REMOVAL_NEVER)) /* and not dropped by dead player or generated on the floor? */
+						{
+							delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
+							dcnt++;
+						}
+					}
+				}
+	/* Once hourly cheeze check. (logs would fill the hd otherwise ;( */
+#if CHEEZELOG_LEVEL > 1
+				else
+#if CHEEZELOG_LEVEL < 4
+					if (!(turn % (cfg.fps * 3600)))
+#endif	/* CHEEZELOG_LEVEL (4) */
+						cheeze(o_ptr);
+#endif	/* CHEEZELOG_LEVEL (1) */
+				cnt++;
+			}
+			if(sj) o_ptr->iy = 255 - o_ptr->iy;
 		}
 	}
 	if(dcnt) s_printf("Scanned %d objects. Removed %d.\n", cnt, dcnt);
@@ -3826,6 +3940,7 @@ static void process_various(void)
 		scan_objs();		/* scan objects and houses */
 
 		if (dungeon_store_timer) dungeon_store_timer--; /* Timeout */
+		if (dungeon_store2_timer) dungeon_store2_timer--; /* Timeout */
 
 		/* Update the player retirement timers */
 		for (i = 1; i <= NumPlayers; i++)
@@ -3883,8 +3998,14 @@ static void process_various(void)
 
 				if (!p_ptr->r_killed[i]) continue;
 
-				/* Hack -- Sauron and Morgoth are exceptions */
+				/* Hack -- Sauron and Morgoth are exceptions
+				   --- QUESTOR is currently NOT used!! - C. Blue */
 				if (r_ptr->flags1 & RF1_QUESTOR) continue;
+				/* ..hardcoding them instead: */
+				if (i == 860 || i == 862 || i == 1067 || i == 1085 || i == 1097) continue;
+
+				/* Special-dropping uniques too! */
+				/* if (r_ptr->flags1 & RF1_DROP_CHOSEN) continue; */
 
 				//				if (r_ptr->max_num > 0) continue;
 				if (rand_int(cfg.unique_respawn_time * (r_ptr->level + 1)) > 9)
@@ -4033,7 +4154,7 @@ static void process_player_change_wpos(int Ind)
 
 	/* Hack -- artifacts leave the queen/king */
 	/* also checks the artifact list */
-	//		if (!p_ptr->admin_dm && !p_ptr->admin_wiz && player_is_king(Ind))
+	//		if (!is_admin(p_ptr) && player_is_king(Ind))
 	{
 		object_type *o_ptr;
 		char		o_name[160];
@@ -4054,7 +4175,8 @@ static void process_player_change_wpos(int Ind)
 				continue;
 
 			if (strstr((a_name + a_info[o_ptr->name1].name),"Grond") ||
-					strstr((a_name + a_info[o_ptr->name1].name),"Morgoth"))
+			    strstr((a_name + a_info[o_ptr->name1].name),"Morgoth") ||
+			    strstr((a_name + a_info[o_ptr->name1].name),"Phasing"))
 				continue;
 
 			/* Describe the object */
@@ -4081,7 +4203,7 @@ static void process_player_change_wpos(int Ind)
 		alloc_dungeon_level(wpos);
 
 		/* Generate a dungeon level there */
-		generate_cave(wpos);
+		generate_cave(wpos, p_ptr);
 	}
 
 	zcave = getcave(wpos);
@@ -4378,8 +4500,6 @@ static void process_player_change_wpos(int Ind)
 	p_ptr->new_level_flag = FALSE;
 
 	 /* Did we enter a no-tele vault? */
-         //wpos=&p_ptr->wpos;
-         if(!(zcave=getcave(&p_ptr->wpos))) return;
          if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) msg_print(Ind, "\377DThe air in here feels very still.");
 
 	/* Hack -- jail her/him */
@@ -4516,7 +4636,7 @@ void dungeon(void)
 			{
 				if(Players[i]->conn==NOT_CONNECTED) continue;
 				/* Ignore admins that are loged in */
-				if(Players[i]->admin_dm || Players[i]->admin_wiz) continue;
+				if(admin_p(i)) continue;
 				/* Ignore characters that are afk and not in a dungeon/tower */
 				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
 				break;
@@ -4772,7 +4892,7 @@ void play_game(bool new_game)
 		alloc_dungeon_level(&twpos);
 
 		/* Actually generate the town */
-		generate_cave(&twpos);
+		generate_cave(&twpos, NULL);
 	}
 
 	/* Finish initializing dungeon monsters */
@@ -4800,6 +4920,9 @@ void play_game(bool new_game)
 	/* Set up the main loop */
 	install_timer_tick(dungeon, cfg.fps);
 
+	/* Execute custom startup script - C. Blue */
+	exec_lua(0, format("server_startup(\"%s\")", showtime()));
+
 	/* Loop forever */
 	sched();
 
@@ -4823,6 +4946,7 @@ void shutdown_server(void)
 	{
 		/* Note the we always save the first player */
 		player_type *p_ptr = Players[1];
+
 
 		/* Indicate cause */
 		strcpy(p_ptr->died_from, "server shutdown");

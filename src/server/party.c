@@ -683,7 +683,7 @@ int guild_add(int adder, cptr name){
 	p_ptr = Players[Ind];
 
 	/* Make sure this isn't an impostor */
-	if (guilds[guild_id].master!=q_ptr->id && !q_ptr->admin_dm && !q_ptr->admin_wiz)
+	if (guilds[guild_id].master!=q_ptr->id && !is_admin(q_ptr))
 	{
 		/* Message */
 		msg_print(adder, "\377yOnly the guildmaster or a dungeon wizard may add new members.");
@@ -881,7 +881,7 @@ int guild_remove(int remover, cptr name){
 	int guild_id = q_ptr->guild, Ind = 0;
 
 	if(!guild_id){
-		if(!q_ptr->admin_dm && !q_ptr->admin_wiz)
+		if(!is_admin(q_ptr))
 		{
 			msg_print(remover, "\377yYou are not in a guild");
 			return FALSE;
@@ -889,7 +889,7 @@ int guild_remove(int remover, cptr name){
 	}
 
 	/* Make sure this is the owner */
-	if (guilds[guild_id].master!=q_ptr->id && !q_ptr->admin_dm && !q_ptr->admin_wiz)
+	if (guilds[guild_id].master!=q_ptr->id && !is_admin(q_ptr))
 	{
 		/* Message */
 		msg_print(remover, "\377yYou must be the owner to delete someone.");
@@ -912,7 +912,7 @@ int guild_remove(int remover, cptr name){
 
 	p_ptr = Players[Ind];
 
-	if(!guild_id && (q_ptr->admin_dm || q_ptr->admin_wiz))
+	if(!guild_id && is_admin(q_ptr))
 	{
 		guild_id = p_ptr->guild;
 	}
@@ -964,7 +964,7 @@ int party_remove(int remover, cptr name)
 	int party_id = q_ptr->party, Ind = 0;
 
 	/* Make sure this is the owner */
-	if (!streq(parties[party_id].owner, q_ptr->name) && !q_ptr->admin_dm && !q_ptr->admin_wiz)
+	if (!streq(parties[party_id].owner, q_ptr->name) && !is_admin(q_ptr))
 	{
 		/* Message */
 		msg_print(remover, "\377yYou must be the owner to delete someone.");
@@ -982,7 +982,7 @@ int party_remove(int remover, cptr name)
 
 	p_ptr = Players[Ind];
 
-	if((!party_id || !streq(parties[party_id].owner, q_ptr->name)) && (q_ptr->admin_dm || q_ptr->admin_wiz))
+	if((!party_id || !streq(parties[party_id].owner, q_ptr->name)) && is_admin(q_ptr))
 	{
 		party_id = p_ptr->party;
 	}
@@ -2085,6 +2085,19 @@ cptr lookup_player_name(int id)
 }
 
 /*
+ * Get the player's character mode (needed for account overview screen only).
+ */
+byte lookup_player_mode(int id)
+{
+	hash_entry *ptr;
+	if((ptr=lookup_player(id)))
+		return ptr->mode;
+
+	/* Not found */
+	return -1L;
+}
+
+/*
  * Lookup a player's ID by name.  Return 0 if not found.
  */
 int lookup_player_id(cptr name)
@@ -2102,14 +2115,62 @@ int lookup_player_id(cptr name)
 		while (ptr)
 		{
 			/* Check this name */
-			if (!strcmp(ptr->name, name)){
+			if (!strcmp(ptr->name, name))
 				return ptr->id;
-			}
 
 			/* Next entry in chain */
 			ptr = ptr->next;
 		}
 	}
+
+	/* Not found */
+	return 0;
+}
+
+/* Messed up version of lookup_player_id for house ownership changes
+   that involve messed up characters (in terms of their ID, for example
+   if they were copied / restored instead of cleanly created..) mea culpa! */
+int lookup_player_id_messy(cptr name)
+{
+	hash_entry *ptr;
+	int i, tmp_id = 0;
+
+	/* Search in each array slot */
+	for (i = 0; i < NUM_HASH_ENTRIES; i++)
+	{
+		/* Acquire pointer to this chain */
+		ptr = hash_table[i];
+
+		/* Check all entries in this chain */
+		while (ptr)
+		{
+			/* Check this name
+			   The ' && (ptr->id > 0)' part is only needed for the hack below this while loop - C. Blue */
+			if (!strcmp(ptr->name, name) && (ptr->id > 0)) {
+				tmp_id = ptr->id;
+				break;
+			}
+
+			/* Next entry in chain */
+			ptr = ptr->next;
+		}
+		if (tmp_id) break;
+	}
+
+	/* In case of messed up IDs (due to restoring erased chars, etc)
+	   perform a double check on all players who are currently on: - C. Blue
+	   (on a clean server *cough* this shouldn't be needed I think) */
+	for (i = 1; i <= NumPlayers; i++)
+		if (!strcmp(Players[i]->name, name)) {
+			if (tmp_id && (tmp_id != Players[i]->id)) /* mess-up detected */
+				s_printf("$ID-WARNING$ Player %s has hash id %d but character id %d.\n", Players[i]->name, tmp_id, Players[i]->id);
+			/* have character-id override the hash id.. sigh */
+			if (Players[i]->id > 0) return (Players[i]->id);
+			/* the > 0 check is paranoia.. */
+			break;
+		}
+
+	if (tmp_id) return (tmp_id);
 
 	/* Not found */
 	return 0;
@@ -2147,7 +2208,8 @@ void clockin(int Ind, int type){
 					if(ptr->laston) ptr->laston=time(&ptr->laston);
 					break;
 				case 1:
-					if(p_ptr->lev>ptr->level)
+/*					if(p_ptr->lev>ptr->level)  -- changed it to != -- C. Blue */
+					if(p_ptr->lev!=ptr->level)
 						ptr->level=p_ptr->lev;
 					break;
 				case 2:
@@ -2308,7 +2370,7 @@ void scan_players(){
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte level, byte party, byte guild, u16b quest, time_t laston)
+void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, byte party, byte guild, u16b quest, time_t laston)
 {
 	int slot;
 	hash_entry *ptr;
@@ -2332,6 +2394,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 	ptr->quest = quest;
 	ptr->race = race;
 	ptr->class = class;
+	ptr->mode = mode;
 
 	/* Add the rest of the chain to this entry */
 	ptr->next = hash_table[slot];

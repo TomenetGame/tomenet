@@ -94,7 +94,7 @@ s32b turn;                      /* Current game turn */
 s32b player_id;                 /* Current player ID */
 u32b account_id;		/* Current account ID */
 
-u16b panic_save;                /* Track some special "conditions" */
+u16b panic_save = 0;            /* Track some special "conditions" */
 
 s16b signal_count = 0;          /* Hack -- Count interupts */
 
@@ -115,6 +115,7 @@ s32b o_top = 0;                 /* Object top size */
 s32b m_top = 0;                 /* Monster top size */
 
 s32b dungeon_store_timer = 0;	/* Timemout. Keeps track of its generation */
+s32b dungeon_store2_timer = 0;	/* Timemout. Keeps track of its generation */
 bool night_surface = FALSE;
 
 /*
@@ -133,7 +134,7 @@ server_opts cfg =
 
 	"",		// bind_name
 	"changeme",		// console_password
-	"Serverchez",		// admin_wizard
+	"DungeonWizard",		// admin_wizard
 	"DungeonMaster",	// dungeon_master
 	"", 	// wserver,
 
@@ -161,7 +162,6 @@ server_opts cfg =
 
 	0, 1,		// use_pk_rules, quit_ban_mode
 	33, 67, 33,	// zang_monsters, pern_monsters, cth_monsters
-
 	0, 67, 100, 0,		// joke_monsters, cblue_monsters, vanilla_monsters, pet_monsters
 	/* bool */
 	TRUE,TRUE,	// report_to_meta, secret_dungeon_master
@@ -170,18 +170,22 @@ server_opts cfg =
 	FALSE,TRUE,FALSE,TRUE,TRUE,
 	FALSE, //anti_arts_send, anti_cheeze_pickup
 	10,		// surface_item_removal (minutes for scan_objs)
+	30,		// dungeon_item_removal (minutes for scan_objs)
 	100, 999, 5,		// dungeon_shop_chance (*10), dungeon_shop_type (999=random), dungeon_shop_timeout
 
 	FALSE,		// mage_hp_bonus
-	7,FALSE,0,	// door_bump_open, no_ghost, lifes (0 = infinite)
+	7,FALSE,0,5,	// door_bump_open, no_ghost, lifes (0 = infinite), maxhouses = 50/_houses_per_player_,
 	TRUE,TRUE,	// maximize, kings_etiquette
 
 	FALSE,FALSE,	// public_rfe, auto_purge
 	FALSE,2,0,	// log_u, replace_hiscore, unikill_format
 	"",		// server notes for meta list
-	FALSE,		// artifact creation disabled for maintenance reasons?
+	FALSE,		// artifact creation disabled for maintenance reasons? (arts_disabled)
+	TRUE,		// total winners may not find true arts anymore? (winners_find_randarts)
 	1,		// arts_level_req - Only SPECIAL_GENE arts from DROP_CHOSEN have 0.
 	FALSE,		// surface_summoning is disabled by default to prevent BAD cheeze.
+	3,	/* clone_summoning - how many times may a monster summon before the summmons become clones
+				    (and summon -if they can do that- more clones themselves).*/
 };
 
 struct ip_ban *banlist=NULL;
@@ -743,5 +747,6 @@ int gametype;
 char priv_note[MAX_NOTES][80], priv_note_sender[MAX_NOTES][80], priv_note_target[MAX_NOTES][80];
 char party_note[MAX_PARTYNOTES][80], party_note_target[MAX_PARTYNOTES][80];
 char guild_note[MAX_GUILDNOTES][80], guild_note_target[MAX_GUILDNOTES][80];
+char admin_note[MAX_ADMINNOTES][80];
 
 int global_luck = 0;

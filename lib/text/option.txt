@@ -163,8 +163,8 @@ Auto-scum for good levels    [auto_scum]
     is based on the dungeon level, so the deeper you go, the better the
     level will be.  A lot of people consider this option to be cheating.
     
-Allow weapons and armor to stack    [stack_allow_items]
-    Allow identical weapons and armor to be combined into a stack.  This
+Allow weapons and armour to stack    [stack_allow_items]
+    Allow identical weapons and armour to be combined into a stack.  This
     also allows unidentified, but identical, ammo to be combined, which
     may result in the auto-identification of some of the ammo, but which
     makes it a lot easier to actually use unidentified ammo.

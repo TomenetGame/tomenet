@@ -242,7 +242,7 @@ void Receive_login(void)
 	int n;
 	char ch;
 	int i=0;
-	char names[8][MAX_CHARS];
+	char names[8][MAX_CHARS], colour_sequence[3];
 	char tmp[MAX_CHARS+3];	/* like we'll need it... */
 
 	static char c_name[MAX_CHARS];
@@ -251,12 +251,12 @@ void Receive_login(void)
 	c_put_str(TERM_L_BLUE, "Character Overview", 1, 30);
 	c_put_str(TERM_L_BLUE, "(You can create up to 7 different characters to play with)", 2, 10);
 	c_put_str(TERM_L_BLUE, "Choose an existing character:", 5, 8);
-	while((n = Packet_scanf(&rbuf, "%c%s%hd%hd%hd", &ch, c_name, &level, &c_race, &c_class)) >0){
+	while((n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class)) >0){
 		if(!strlen(c_name)){
 			break;
 		}
 		strcpy(names[i], c_name);
-		sprintf(tmp, "%c) %s the level %d %s %s", 'a'+i, c_name, level, race_info[c_race].title, class_info[c_class].title);
+		sprintf(tmp, "%c) %s%s the level %d %s %s", 'a'+i, colour_sequence, c_name, level, race_info[c_race].title, class_info[c_class].title);
 		c_put_str(TERM_WHITE, tmp, 7+i, 11);
 		i++;
 		if(i==8) break; /* should be changed to 7 */

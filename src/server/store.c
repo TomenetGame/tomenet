@@ -373,6 +373,7 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr)
 		{
 			if (cost <= 60L) size += mass_roll(3, 5);
 			if (cost <= 240L) size += mass_roll(1, 5);
+			if (st_ptr->st_idx == STORE_BTSUPPLY && o_ptr->sval == SV_POTION_STAR_HEALING) size += mass_roll(3, 5);
 			break;
 		}
 
@@ -610,6 +611,8 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_CLOAK:
 				case TV_TOOL:
 				case TV_PARCHEMENT:
+				/* and now new... :) */
+				case TV_TRAPKIT:
 				break;
 				default:
 				return (FALSE);
@@ -787,7 +790,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 		/* Bordertravel supplies */
-		case 61:
+		case STORE_BTSUPPLY:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -798,6 +801,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_FOOD:
 				case TV_LITE:
 				case TV_FLASK:
+				case TV_TRAPKIT:
 				break;
 				case TV_RING:
 					if ((o_ptr->sval != SV_RING_RES_NETHER) &&
@@ -809,7 +813,23 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			}
 			break;
 		}
-
+		case STORE_HERBALIST:
+		{
+			switch (o_ptr->tval)
+			{
+				case TV_FOOD:
+					if ((o_ptr->sval <= 19) || (o_ptr->sval == 50) || (o_ptr->sval == 40) ||
+					    (o_ptr->sval == 37) || (o_ptr->sval == 38) || (o_ptr->sval == 39))
+						 break;
+				case TV_POTION:
+					if ((o_ptr->sval != SV_POTION_APPLE_JUICE) &&
+					    (o_ptr->sval != SV_POTION_SLIME_MOLD)) return(FALSE);
+					break;
+				default:
+				return (FALSE);
+			}
+			break;
+		}
 	}
 
 	/* XXX XXX XXX Ignore "worthless" items */
@@ -1248,7 +1268,7 @@ static void store_create(store_type *st_ptr)
 		else good = FALSE;
 		if (st_info[st_ptr->st_idx].flags1 & SF1_GREAT) great = TRUE;
 		else great = FALSE;
-		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, good, great);
+		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, good, great, FALSE);
 
 		/* Hack -- Charge lite uniformly */
 		if (o_ptr->tval == TV_LITE)
@@ -1270,6 +1290,9 @@ static void store_create(store_type *st_ptr)
 		/* Mega-Hack -- no chests in stores */
 //		if (o_ptr->tval == TV_CHEST || o_ptr->tval==8) continue;
 		if (o_ptr->tval == TV_CHEST) continue;
+
+		/* Hack - Anti-cheeze =p */
+		if ((o_ptr->tval == TV_POTION) && (o_ptr->sval == SV_POTION_EXPERIENCE)) continue;
 
 		/* Prune the black market */
 		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
@@ -1334,9 +1357,9 @@ static void store_create(store_type *st_ptr)
 		/* Is the item too cheap for this shop? */
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS1) && (object_value(0, o_ptr) < 3000))
 			continue;
-		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS1) && (object_value(0, o_ptr) < 8000))
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS2) && (object_value(0, o_ptr) < 8000))//PRICY_ITEMS1
 			continue;
-		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS2) && (object_value(0, o_ptr) < 15000))
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS3) && (object_value(0, o_ptr) < 15000))//PRICY_ITEMS2
 			continue;
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS4) && (object_value(0, o_ptr) < 20000))
 			continue;
@@ -1401,6 +1424,11 @@ let's depend on SF1*RARE flags here.. */
 				break;
 			}
 
+			/* Only single items of very expensive stuff */
+			if (object_value(0, o_ptr) >= 200000) {
+				force_num = 1;
+			}
+
 			/* No ego-stacks */
 			if (o_ptr->name2) force_num = 1;
 
@@ -1408,8 +1436,7 @@ let's depend on SF1*RARE flags here.. */
 		}
 
 		/* Nether Realm store items are always level 0 (or 99?) */
-		if (st_ptr->st_idx == 61) o_ptr->level = 0;
-
+		if (st_ptr->st_idx == STORE_BTSUPPLY) o_ptr->level = 0;
 		/* Attempt to carry the (known) item */
 		(void)store_carry(st_ptr, o_ptr);
 
@@ -1900,17 +1927,23 @@ void store_stole(int Ind, int item)
 	    ((((j_ptr->weight * amt) / 2) + tcadd) / (5 + get_skill_scale(SKILL_STEALING, 15))) +
 	    (get_skill_scale(SKILL_STEALING, 25))) <= 10)
 #endif	// 0
-	chance = (40 - p_ptr->stat_ind[A_DEX]) +
+	chance = (50 - p_ptr->stat_ind[A_DEX]) +
 	    ((((sell_obj.weight * amt) / 2) + tcadd) /
 	    (5 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
 	    (get_skill_scale(p_ptr, SKILL_STEALING, 25));
-	if (chance < 1) chance = 1;
+
+	/* Invisibility and stealth are not unimportant */
+	chance = (chance * (100 - (p_ptr->tim_invisibility > 0 ? 13 : 0))) / 100;
+	chance = (chance * (115 - ((p_ptr->skill_stl * 3) / 4))) / 100;
 
 	/* shopkeepers in special shops are often especially careful */
 	if (st_info[st_ptr->st_idx].flags1 & SF1_VHARD_STEAL)
 		chance += 30;
 	else if (st_info[st_ptr->st_idx].flags1 & SF1_HARD_STEAL)
 		chance += 15;
+
+	/* avoid div0 */
+	if (chance < 1) chance = 1;
 
 	/* always 1% chance to fail, so that ppl won't macro it */
 	/* 1% pfft. 5% and rising... */
@@ -2592,7 +2625,7 @@ void store_sell(int Ind, int item, int amt)
 void store_confirm(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int item, amt, price, value;
+	long item, amt, price, value, price_redundance;
 
 	object_type *o_ptr, sold_obj;
 	char o_name[160];
@@ -2614,6 +2647,31 @@ void store_confirm(int Ind)
 	item = p_ptr->current_selling;
 	amt = p_ptr->current_sell_amt;
 	price = p_ptr->current_sell_price;
+        /* Server-side exploit checks - C. Blue */
+        if (amt <= 0) {
+                s_printf("$INTRUSION$ (FORCED) Bad amount %d! Sold by %s.\n", amt, p_ptr->name);
+		return;
+	}
+        if (p_ptr->inventory[item].number < amt) {
+                s_printf("$INTRUSION$ Bad amount %d of %d! Sold by %s.\n", amt, p_ptr->inventory[item].number, p_ptr->name);
+                msg_print(Ind, "You don't have that many!");
+		return;
+	}
+	sold_obj = p_ptr->inventory[item];
+	sold_obj.number = amt;
+	(void) sell_haggle(Ind, &sold_obj, &price_redundance);
+	if (price != price_redundance) {
+                s_printf("$INTRUSION$ Tried to sell %ld for %ld! Sold by %s.\n", price_redundance, price, p_ptr->name);
+#if 0
+                msg_print(Ind, "Wrong item!");
+                return;
+#else
+		price = price_redundance;
+		if (!price) return;
+		/* Paranoia - Don't sell '(nothing)s' */
+		if (!p_ptr->inventory[item].k_idx) return;
+#endif
+	}
 
 	/* Trash the saved variables */
 	p_ptr->current_selling = -1;
@@ -2989,8 +3047,16 @@ void do_cmd_store(int Ind)
 	/*st_ptr = &store[p_ptr->store_num];
 	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];*/
 
-	if (p_ptr->tim_blacklist)
+	if (p_ptr->tim_blacklist > 7000)
+		msg_print(Ind, "As you enter, the owner gives you a murderous look.");
+	else if (p_ptr->tim_blacklist > 5000)
+		msg_print(Ind, "As you enter, the owner gazes at you angrily.");
+	else if (p_ptr->tim_blacklist > 3000)
 		msg_print(Ind, "As you enter, the owner eyes you suspiciously.");
+	else if (p_ptr->tim_blacklist > 1000)
+		msg_print(Ind, "As you enter, the owner looks at you disapprovingly.");
+	else if (p_ptr->tim_blacklist)
+		msg_print(Ind, "As you enter, the owner gives you a cool glance.");
 
 	/* Display the store */
 	display_store(Ind);
@@ -3563,7 +3629,7 @@ void home_sell(int Ind, int item, int amt)
 	/* Not gonna happen XXX inscribe */
 	/* Nah, gonna happen */
 	/* TODO: CURSE_NO_DROP */
-	if (cursed_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))
+	if (cursed_p(o_ptr) && !is_admin(p_ptr))
 	{
 		u32b f1, f2, f3, f4, f5, esp;
 		if (item >= INVEN_WIELD)
@@ -4117,7 +4183,7 @@ void do_cmd_trad_house(int Ind)
 		/* Check access like former move_player */
 		if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))) /* orig house failure */
 		{
-			if(!access_door(Ind, cs_ptr->sc.ptr))
+			if(!access_door(Ind, cs_ptr->sc.ptr) && !admin_p(Ind))
 			{
 				msg_print(Ind, "\377oThe door is locked.");
 				return;

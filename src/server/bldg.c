@@ -1226,7 +1226,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 
 	object_type *o_ptr;
 
-	char tmp_str[80]; // , out_val[80];
+	char tmp_str[160]; // , out_val[80];
 
 	bool repaired = FALSE;
 
@@ -1260,7 +1260,8 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 
 		if (o_ptr->tval)
 		{
-			object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
+			object_desc(Ind, tmp_str, o_ptr, FALSE, 1);/* with long inscription, this will
+				crash if tmp_str is only [80], resulting in wrong items getting enchanted - C. Blue */
 
 			/* Extract the flags */
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);

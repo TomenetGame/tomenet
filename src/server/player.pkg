@@ -235,7 +235,7 @@ struct object_type
 	byte dd;
         byte ds;		/* Damage dice/sides */
 
-	s16b timeout;		/* Timeout Counter */
+	long timeout;		/* Timeout Counter */
 
 	byte ident;			/* Special flags  */
 
@@ -280,6 +280,7 @@ struct player_type
 	s16b ghost;		/* Are we a ghost */
 	s16b fruit_bat;		/* Are we a fruit bat */
 	byte lives;         /* number of times we have ressurected */
+	byte houses_owned;	/* number of simultaneously owned houses */
 
 	byte prace;			/* Race index */
 	byte pclass;		/* Class index */
@@ -430,6 +431,7 @@ struct player_type
 	s16b panel_col_old;
 
 	char died_from[80];	/* What off-ed him */
+	char really_died_from[80];	/* What off-ed him */
 	char died_from_list[80]; /* what goes on the high score list */
 	s16b died_from_depth;	/* what depth we died on */
 
@@ -608,6 +610,9 @@ struct player_type
 
 	bool reflect;       /* Reflect 'bolt' attacks */
         bool res_tele;          /* Prevents being teleported from someone else */
+
+	bool ty_curse;		/* bad curses from artifacts */
+	bool dg_curse;
 
 	bool sustain_str;	/* Keep strength */
 	bool sustain_int;	/* Keep intelligence */

@@ -66,11 +66,11 @@ void inven_takeoff(int Ind, int item, int amt)
 	}
 	else if (item == INVEN_WIELD)
 	{
-		act = "Was wielding";
+		act = "You were wielding";
 	}
 	else if (item == INVEN_BOW)
 	{
-		act = "Was shooting with";
+		act = "You were shooting with";
 	}
 	else if (item == INVEN_LITE)
 	{
@@ -88,7 +88,7 @@ void inven_takeoff(int Ind, int item, int amt)
 	}
 	else
 	{
-		act = "Was wearing";
+		act = "You were wearing";
 	}
 
 #if 0 //DSMs don't poly anymore due to cheeziness. They breathe instead.
@@ -153,12 +153,13 @@ void inven_takeoff(int Ind, int item, int amt)
 		{
 			/* If player hasn't got high enough kill count anymore now, poly back to player form! */
 			msg_print(Ind, "You polymorph back to your normal form.");
-			do_mimic_change(Ind, 0, FALSE);
+			do_mimic_change(Ind, 0, TRUE);
 		}
 	}
 
 	/* Check if item gave WRAITH form */
-	if(k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) p_ptr->tim_wraith = 1;
+	if((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith)
+		p_ptr->tim_wraith = 1;
 
 	/* Carry the object, saving the slot it went in */
 	posn = inven_carry(Ind, &tmp_obj);
@@ -595,7 +596,7 @@ void do_cmd_wield(int Ind, int item)
 	/* Mega-hack -- prevent anyone but total winners from wielding the Massive Iron
 	 * Crown of Morgoth or the Mighty Hammer 'Grond'.
 	 */
-	if (!(p_ptr->total_winner || p_ptr->admin_wiz || p_ptr->admin_dm))
+	if (!(p_ptr->total_winner || is_admin(p_ptr)))
 	{
 		/* Attempting to wear the crown if you are not a winner is a very, very bad thing
 		 * to do.
@@ -618,6 +619,9 @@ void do_cmd_wield(int Ind, int item)
 	}
 
 	process_hooks(HOOK_WIELD, "d", Ind);
+
+	/* Let's not end afk for this - C. Blue */
+/*	if (p_ptr->afk) toggle_afk(Ind, ""); */
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -807,7 +811,7 @@ void do_cmd_takeoff(int Ind, int item)
 
 
 	/* Item is cursed */
-	if (cursed_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))
+	if (cursed_p(o_ptr) && !is_admin(p_ptr))
 	{
 		/* Oops */
 		msg_print(Ind, "Hmmm, it seems to be cursed.");
@@ -816,6 +820,8 @@ void do_cmd_takeoff(int Ind, int item)
 		return;
 	}
 
+	/* Let's not end afk for this - C. Blue */
+/*	if (p_ptr->afk) toggle_afk(Ind, ""); */
 
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -836,7 +842,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	u32b f1, f2, f3, f4, f5, esp;
 
 	/* Handle the newbies_cannot_drop option */	
-	if (p_ptr->lev < cfg.newbies_cannot_drop)
+	if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr))
 	{
 		msg_print(Ind, "You are not experienced enough to drop items.");
 		return;
@@ -863,7 +869,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 
 	/* Cannot remove cursed items */
-	if (cursed_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))	/* Hack -- DM can */
+	if (cursed_p(o_ptr) && !is_admin(p_ptr))	/* Hack -- DM can */
 	{
 		if ((item >= INVEN_WIELD) )
 		{
@@ -900,6 +906,8 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	}
 #endif
 
+	/* Let's not end afk for this - C. Blue */
+/* 	if (p_ptr->afk) toggle_afk(Ind, ""); */
 
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -919,7 +927,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	object_type tmp_obj;
 
 	/* Handle the newbies_cannot_drop option */
-	if (p_ptr->lev < cfg.newbies_cannot_drop)
+	if ((p_ptr->lev < cfg.newbies_cannot_drop) && !is_admin(p_ptr))
 	{
 		msg_print(Ind, "You are not experienced enough to drop gold.");
 		return;
@@ -959,6 +967,9 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 
 	/* Subtract from the player's gold */
 	p_ptr->au -= amt;
+
+	/* Let's not end afk for this - C. Blue */
+/* 	if (p_ptr->afk) toggle_afk(Ind, ""); */
 
 	/* Message */
 //	msg_format(Ind, "You drop %ld pieces of gold.", amt);
@@ -1025,12 +1036,15 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 #endif
 
+	/* Let's not end afk for this - C. Blue */
+/* 	if (p_ptr->afk) toggle_afk(Ind, ""); */
+
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-	if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))
+	if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr) && !is_admin(p_ptr))
 	{
 		/* Oops */
 		msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
@@ -1040,7 +1054,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 
 	/* Artifacts cannot be destroyed */
-	if (artifact_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))
+	if (artifact_p(o_ptr) && !is_admin(p_ptr))
 	{
 		cptr feel = "special";
 
@@ -1067,7 +1081,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 
 	/* Keys cannot be destroyed */
-	if (o_ptr->tval == TV_KEY && !(p_ptr->admin_dm || p_ptr->admin_wiz))
+	if (o_ptr->tval == TV_KEY && !is_admin(p_ptr))
 	{
 		/* Message */
 		msg_format(Ind, "You cannot destroy %s.", o_name);
@@ -1077,7 +1091,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 
 	/* Cursed, equipped items cannot be destroyed */
-	if (item >= INVEN_WIELD && cursed_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))
+	if (item >= INVEN_WIELD && cursed_p(o_ptr) && !is_admin(p_ptr))
 	{
 		/* Message */
 		msg_print(Ind, "Hmm, that seems to be cursed.");
@@ -1387,6 +1401,9 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 	}
 #endif	// 0
 
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
+
 	if (item != -1)
 	{
 		int chance;
@@ -1517,6 +1534,9 @@ void do_cmd_steal(int Ind, int dir)
 		do_cmd_steal_from_monster(Ind, dir);
 		return;
 	}
+
+	/* S(he) is no longer afk */
+	if (p_ptr->afk) toggle_afk(Ind, "");
 
 	/* Examine target */
 	q_ptr = Players[0 - c_ptr->m_idx];
@@ -1834,6 +1854,8 @@ static void do_cmd_refill_lamp(int Ind, int item)
 		return;
 	}
 
+	/* Let's not end afk for this. - C. Blue */
+/*	if (p_ptr->afk) toggle_afk(Ind, ""); */
 
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -1931,6 +1953,9 @@ static void do_cmd_refill_torch(int Ind, int item)
 		msg_print(Ind, "Your light seems to resist!");
 		return;
 	}
+
+	/* Let's not end afk for this. - C. Blue */
+/*	if (p_ptr->afk) toggle_afk(Ind, ""); */
 
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;

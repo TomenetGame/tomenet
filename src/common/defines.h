@@ -38,12 +38,12 @@
 /* MAJOR/MINOR/PATCH version should be 0-15.  */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   2
-#define VERSION_PATCH   0
+#define VERSION_PATCH   2
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
-#define SF_VERSION_MINOR   1
-#define SF_VERSION_PATCH   7
+#define SF_VERSION_MINOR   2
+#define SF_VERSION_PATCH   2
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -299,6 +299,7 @@
 #define MAX_NOTES 100
 #define MAX_PARTYNOTES 30
 #define MAX_GUILDNOTES 10
+#define MAX_ADMINNOTES 10
 
 /*
  * Maximum size of the "view" array (see "cave.c")
@@ -359,8 +360,46 @@
  */
 #define MAX_PATH_LENGTH	128
 
-/* Limit value for Anti-magic fields (AM cap) */
+/* Limit value for Anti-magic fields (AM cap)
+   Should range from 75..80%, maybe make skill & DS percentage
+   multiply instead of sum up. - C. Blue */
 #define ANTIMAGIC_CAP 80
+
+/* Limit effectiveness of interception/martial arts,
+   Should range from 75%..80%. - C. Blue */
+#define INTERCEPT_CAP 80
+
+/* upper limit of dodging chance.       [90] */
+#define DODGE_MAX_CHANCE        80
+
+
+/* If Morgoth is generated within a vault at the time the
+   dungeon level is generated, set it to NO_TELE.
+   (overridden by MORGOTH_NO_TELE_VAULTS, see below) - C. Blue */
+//#define MORGOTH_NO_TELE_VAULT
+
+/* If Morgoth is generated on a dungeon level at the time the
+   dungeon level is generated, set all vaults on it to NO_TELE.
+   Also prevent Morgoth from spawning 'live' (meaning later on,
+   after the level had already been generated) which would
+   undermine the NO_TELE vault concept (or require more code :) - C. Blue */
+#define MORGOTH_NO_TELE_VAULTS
+
+/* All player deaths that occur on a level Morgoth is currently on
+   are no-ghost deaths, resulting in total termination of the character!
+   This was added after some complaints arrived that the atmosphere was taken out of
+   the game by mostly everlasting players who made killing him kind of a routine. - C. Blue */
+#define MORGOTH_GHOST_DEATH_LEVEL
+
+/* Both of the above lead to preventing live spawns of Morgoth, other than during
+   generation of the dungeon level. (for technical reasons) */
+#ifdef MORGOTH_NO_TELE_VAULTS
+#define MORGOTH_NO_LIVE_SPAWN
+#endif
+#ifdef MORGOTH_GHOST_DEATH_LEVEL
+#define MORGOTH_NO_LIVE_SPAWN
+#endif
+
 
 /*
  * Party commands
@@ -1344,6 +1383,7 @@ that keeps many algorithms happy.
 #define ART_SOULCURE		232
 #define ART_AMUGROM		233
 #define ART_HELLFIRE		236
+#define ART_SPIRITSHARD		244
 
 
 /*** Ego-Item indices (see "lib/edit/e_info.txt") ***/
@@ -1909,6 +1949,7 @@ that keeps many algorithms happy.
 #define SV_LEATHER_JACK                 12
 #define SV_STONE_AND_HIDE_ARMOR         15  /* 15 */
 #define SV_DRAGONRIDER_SUIT             16
+#define SV_WYVERNHIDE_ARMOR             17
 
 /* The "sval" codes for TV_HARD_ARMOR */
 #define SV_RUSTY_CHAIN_MAIL              1  /* 14- */
@@ -3840,6 +3881,8 @@ that keeps many algorithms happy.
 #define DF2_HELL                0x00000004L /* hellish dungeon - forces hellish mode on all */
 /* DF2_NOMAP => DF1_FORGET */
 /*#define DF2_NOMAP		0x00000008L *//* player never gains level knowledge */
+#define DF2_NO_RECALL_DOWN	0x00000008L /* Player may not recall downwards into this dungeon /
+					       upwards into this tower. Added it especially for Nether Realm - C. Blue */
 
 #define DF2_NO_MAGIC_MAP        0x00000010L /* non magic-mappable */
 
@@ -3861,16 +3904,16 @@ that keeps many algorithms happy.
 #define LF1_NO_NEW_MONSTER      0x00000010L /* XXX ok */
 #define LF1_DESC                0x00000020L /* XXX */
 #define LF1_NO_GENO             0x00000040L
-#define LF1_NOMAP				0x00000080L	/* player never gains level knowledge */
-#define LF1_NO_MAGIC_MAP		0x00000100L	/* player never does magic mapping */
+#define LF1_NOMAP		0x00000080L /* player never gains level knowledge */
+#define LF1_NO_MAGIC_MAP	0x00000100L /* player never does magic mapping */
 #define LF1_NO_DESTROY          0x00000200L
-#define LF1_NO_MAGIC			0x00000400L /* very nasty */
-
-#define LF1_NO_MULTIPLY			0x80000000L /* for scrolls of vermin control */
+#define LF1_NO_MAGIC		0x00000400L /* very nasty */
+#define LF1_NO_GHOST		0x00000800L /* Players who die on this level are erased completely! */
+#define LF1_NO_MULTIPLY		0x80000000L /* for scrolls of vermin control */
 
 #define LF1_FEELING_MASK \
 	(LF1_NO_GENO | LF1_NOMAP | LF1_NO_MAGIC_MAP | \
-	 LF1_NO_DESTROY | LF1_NO_MAGIC)
+	 LF1_NO_DESTROY | LF1_NO_MAGIC | LF1_NO_GHOST)
 
 
 /* vault flags for v_info */
@@ -4923,6 +4966,7 @@ extern int PlayerUID;
 	((p_ptr->pclass == CLASS_WARRIOR) || (p_ptr->pclass == CLASS_PALADIN) || (p_ptr->pclass == CLASS_RANGER) || (p_ptr->pclass == CLASS_MIMIC))
 
 #define is_admin(p_ptr) (p_ptr->admin_wiz || p_ptr->admin_dm)
+#define admin_p(Ind) (Players[Ind]->admin_wiz || Players[Ind]->admin_dm)
 
 #define TOOL_EQUIPPED(p_ptr) (p_ptr->inventory[INVEN_TOOL].k_idx && \
 		p_ptr->inventory[INVEN_TOOL].tval == TV_TOOL ? \
@@ -5212,6 +5256,9 @@ extern int PlayerUID;
 #define STORE_HOME      7
 #define STORE_BOOK      8
 #define STORE_PET       9
+#define STORE_SECRETBM	60
+#define STORE_BTSUPPLY	61
+#define STORE_HERBALIST 62
 
 
 /*
@@ -5336,3 +5383,6 @@ extern int PlayerUID;
 #define EEGAME_CTF		1
 #define EEGAME_RUGBY		2
 
+/* erase items on the floor? */
+#define ITEM_REMOVAL_NORMAL	0	/* this must always be 0 (assumed as default if not set to a different value) */
+#define ITEM_REMOVAL_NEVER	1

@@ -800,11 +800,12 @@ struct object_type
 
 	byte dd, ds;			/* Damage dice/sides */
 
-	s16b timeout;			/* Timeout Counter */
+	long timeout;			/* Timeout Counter */
 
 	byte ident;			/* Special flags  */
 
 	byte marked;			/* Object is marked */
+	byte marked2;			/* additional parameters */
 
 	u16b note;			/* Inscription index */
 
@@ -918,6 +919,7 @@ struct monster_type
 
 #endif
 	u16b clone;			/* clone value */
+	u16b clone_summoning;		/* counter to keep track of summoning */
 
 	s16b mind;                      /* Current action -- golems */
 
@@ -1780,6 +1782,7 @@ struct player_type
 	s16b ghost;		/* Are we a ghost */
 	s16b fruit_bat;		/* Are we a fruit bat */
 	byte lives;         /* number of times we have ressurected */
+	byte houses_owned;	/* number of simultaneously owned houses */
 
 	byte prace;			/* Race index */
 	byte pclass;		/* Class index */
@@ -1982,6 +1985,7 @@ struct player_type
 	s32b mimic_seed;	/* seed for random mimic immunities etc. */
 
 	char died_from[80];	/* What off-ed him */
+	char really_died_from[80];	/* What off-ed him */
 	char died_from_list[80]; /* what goes on the high score list */
 	s16b died_from_depth;	/* what depth we died on */
 
@@ -2327,6 +2331,9 @@ struct player_type
 	bool stormbringer;	/* Attack friends? */
 	int vampiric;		/* Generally vampiric? */
 
+	bool ty_curse;		/* :-o */
+	bool dg_curse;
+
 	u16b quest_id;		/* Quest number */
 	s16b quest_num;		/* Number of kills needed */
 
@@ -2362,6 +2369,9 @@ struct player_type
 
 	/* evileye games */
 	s16b team;			/* what team */
+	
+	/* C. Blue - was the last shutdown a panic save? */
+	bool panic;
 };
 
 /* For Monk martial arts */
@@ -2545,7 +2555,8 @@ struct server_opts
 	bool anti_arts_send;
 
 	bool anti_cheeze_pickup;
-	s16b surface_item_removal; /* minutes before items are cleared */
+	s16b surface_item_removal; /* minutes before items are erased */
+	s16b dungeon_item_removal; /* minutes before items are erased */
 	s16b dungeon_shop_chance;
 	s16b dungeon_shop_type;
 	s16b dungeon_shop_timeout;
@@ -2554,6 +2565,8 @@ struct server_opts
 	char door_bump_open;
 	bool no_ghost;
 	int lifes;		/* number of times a ghost player can be resurrected */
+	int houses_per_player;	/* number of houses a player is allowed to own at once;
+				    it's: max_houses = (player_level / houses_per_player). */
 	bool maximize;
 	bool kings_etiquette;
 
@@ -2564,8 +2577,10 @@ struct server_opts
 	s16b unikill_format;
 	char *server_notes;
 	bool arts_disabled;
+	bool winners_find_randarts;
 	s16b arts_level_req;
 	bool surface_summoning;
+	s16b clone_summoning;
 };
 
 /* Client option struct */

@@ -160,8 +160,4 @@ extern errr string_free(cptr str);
          C_FREE(P,N1,T), (P)=vptr_tmp)
 
 
-
 #endif
-
-
-

@@ -686,7 +686,7 @@ A:0:0:1:2:3:0
 O:38:39:40:41
 G:7:v
 F:ALL_ITEM | RARE | DEEP_LEVEL | NO_DISCOUNT2 |
-F:PRICE4 | PRICE2 | PRICY_ITEMS1 | HARD_STEAL
+F:PRICE4 | PRICE2 | PRICY_ITEMS2 | HARD_STEAL
 W:13
 
 N:49:Common Shop
@@ -826,7 +826,8 @@ I:95:Restore Mana
 T:95:71:60
 T:95:70:35
 T:95:71:61
-T:95:71:38
+#T:95:71:38 - *Healing*
+T:100:71:38
 I:95:& Flask~ of oil
 I:100:& Ration~ of Food
 I:95:Restore Life Levels
@@ -850,3 +851,29 @@ G:1:B
 F:RANDOM | DEEP_LEVEL | NO_DISCOUNT | 
 F:GOOD | GREAT | PRICE4 | PRICE2 | VHARD_STEAL
 W:24
+
+N:62:Herbalist
+T:95:80:4
+T:95:80:10
+T:95:80:11
+T:95:80:12
+T:95:80:13
+T:95:80:14
+T:95:80:15
+T:95:80:16
+T:95:80:17
+T:95:80:18
+T:5:80:19
+T:95:80:50
+T:95:71:1
+T:95:71:2
+T:5:80:37
+I:15:& Pint~ of Fine Wine
+I:20:& Pint~ of Fine Ale
+A:0:0:1:2:3:4
+#O:34:35:36:37
+O:0:5:6:7
+G:5:u
+W:24
+F:RANDOM
+# | PRICE2

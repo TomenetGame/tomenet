@@ -47,8 +47,11 @@ struct dungeon_type *getdungeon(struct worldpos *wpos)
 	struct wilderness_type *wild;
 	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0) return NULL;
-	else
+	else {
+		if ((wpos->wz>0) && !wild->tower) return NULL;
+		if ((wpos->wz<0) && !wild->dungeon) return NULL;
 		return(wpos->wz>0 ? wild->tower:wild->dungeon);
+	}
 }
 
 /* another afterthought - it is often needed without up/down info */
@@ -242,37 +245,22 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	struct wilderness_type *w_ptr;
 	time_t now;
 
-	/* Ultra-hack bugfix for recall-crash w/ char corruption by C. Blue,
-	   thanks to Chris for the idea :) */
-	if ((wpos->wx > 63) || (wpos->wy > 63) || (wpos->wz > 255) ||
-	    (wpos->wx < 0) || (wpos->wy < 0) || (wpos->wz < -255)) {
-		s_printf("Ultra-hack executed. wx %d wy %d wz %d\n", wpos->wx, wpos->wy, wpos->wz);
-		wpos->wx = 32;
-		wpos->wy = 32;
-		wpos->wz = 0;
-	}
-
 	now=time(&now);
 
 	w_ptr=&wild_info[wpos->wy][wpos->wx];
 #if DEBUG_LEVEL > 2
 		s_printf("new_players_on_depth.. %s  now:%d value:%d inc:%s\n", wpos_format(0, wpos), now, value, inc?"TRUE":"FALSE");
 #endif
-	if(wpos->wz==0)
-	{
-		w_ptr->ondepth=(inc?w_ptr->ondepth+value:value);
-		if(w_ptr->ondepth < 0) w_ptr->ondepth=0;
-		if(!w_ptr->ondepth) w_ptr->lastused=0;
-		if(value>0) w_ptr->lastused=now;
-	}
-	else
-	{
+
+	if (wpos->wz) {
 		struct dungeon_type *d_ptr;
 		struct dun_level *l_ptr;
 		if(wpos->wz>0)
 			d_ptr=wild_info[wpos->wy][wpos->wx].tower;
 		else
 			d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
+	
+		
 		l_ptr=&d_ptr->level[ABS(wpos->wz)-1];
 
 		l_ptr->ondepth=(inc?l_ptr->ondepth+value:value);
@@ -282,6 +270,11 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 		if(value>0) l_ptr->lastused=now;
 #endif
 /*		l_ptr->lastused=now; */
+	} else {
+		w_ptr->ondepth=(inc?w_ptr->ondepth+value:value);
+		if(w_ptr->ondepth < 0) w_ptr->ondepth=0;
+		if(!w_ptr->ondepth) w_ptr->lastused=0;
+		if(value>0) w_ptr->lastused=now;
 	}
 }
 
@@ -297,7 +290,7 @@ void check_Morgoth(void)
 	struct worldpos *wpos;
 	char msg[80];
 
-	/* Let Morgoth, The Lord of Darkness gain additional power
+	/* Let Morgoth, Lord of Darkness gain additional power
 	for each player who joins the depth */
 	
 	/* Process the monsters */
@@ -333,8 +326,7 @@ void check_Morgoth(void)
 			if (Players[i]->conn == NOT_CONNECTED)
 		    		continue;
 			/* skip admins */
-			if (Players[i]->admin_wiz || Players[i]->admin_dm)
-				continue;
+			if (admin_p(i)) continue;
 			/* player on this depth? */
 			p_ptr = Players[i];
 			if (inarea(&p_ptr->wpos, wpos)) num_on_depth++;
@@ -355,8 +347,7 @@ void check_Morgoth(void)
 		{
 			p_ptr = Players[i];
 
-			if (p_ptr->admin_wiz || p_ptr->admin_dm)
-				continue;
+			if (is_admin(p_ptr)) continue;
 
 			if (inarea(&p_ptr->wpos, wpos) &&
 			    (p_ptr->total_winner || (p_ptr->r_killed[860] == 0)))
@@ -390,7 +381,7 @@ void check_Morgoth(void)
 				else
 				{
 					/* tell a message to the player */
-					sprintf(msg, "\377sMorgoth, the Lord of Darkness teleports to a different dungeon floor!");
+					sprintf(msg, "\377sMorgoth, Lord of Darkness teleports to a different dungeon floor!");
 					for (i = 1; i <= NumPlayers; i++)
 					{
 						if (Players[i]->conn == NOT_CONNECTED)
@@ -463,6 +454,7 @@ int players_on_depth(struct worldpos *wpos)
 			d_ptr=wild_info[wpos->wy][wpos->wx].tower;
 		else
 			d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
+
 		return(d_ptr->level[ABS(wpos->wz)-1].ondepth);
 	}
 }
@@ -2095,6 +2087,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			    if (d_ptr->flags2 & DF2_IRON) (*ap) = TERM_L_DARK;
 			    if (d_ptr->flags2 & DF2_HELL) (*ap) = TERM_FIRE;
 			    if (d_ptr->flags2 & DF2_NO_DEATH) (*ap) = TERM_GREEN;
+			    if (d_ptr->flags2 & DF2_NO_RECALL_DOWN) (*ap) = TERM_YELLOW;
 		    }
 		}
 #endif

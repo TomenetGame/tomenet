@@ -33,6 +33,7 @@ extern byte adj_mag_stat[];
 extern byte adj_chr_gold[];
 extern byte adj_int_dev[];
 extern byte adj_wis_sav[];
+extern byte adj_wis_msane[];
 extern byte adj_dex_dis[];
 extern byte adj_int_dis[];
 extern byte adj_dex_ta[];
@@ -501,7 +502,7 @@ extern void signals_handle_tstp(void);
 extern void signals_init(void);
 
 /* generate.c */
-extern void generate_cave(int Depth);
+extern void generate_cave(int Depth, player_type *p_ptr);
 
 /* init-txt.c */
 extern errr init_v_info_txt(FILE *fp, char *buf);
@@ -645,9 +646,10 @@ extern void object_absorb(object_type *o_ptr, object_type *j_ptr);
 extern s16b lookup_kind(int tval, int sval);
 extern void invwipe(object_type *o_ptr);
 extern void invcopy(object_type *o_ptr, int k_idx);
-extern void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great);
-extern void place_object(int Depth, int y, int x, bool good, bool great, int luck);
-extern void acquirement(int Depth, int y1, int x1, int num, bool great);
+extern void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool true_art);
+/*extern void place_object(int Depth, int y, int x, bool good, bool great, bool true_art, int luck);*/
+extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool true_art, obj_theme theme, int luck, byte removal_marker);
+extern void acquirement(int Depth, int y1, int x1, int num, bool great, bool true_art);
 extern void place_trap(int Depth, int y, int x);
 extern void place_gold(int Depth, int y, int x);
 extern void process_objects(void);

@@ -29,7 +29,7 @@ attempting to win the game by defeating Morgoth, the Lord of Darkness,
 who resides far below the surface.
 
 The player will begin his adventure on the town level where he may acquire
-supplies, weapons, armor, and magical devices by bartering with various shop
+supplies, weapons, armour, and magical devices by bartering with various shop
 owners.  After preparing for his adventure, the player can descend into
 the Pits of Angband where fantastic adventures await his coming!
  
@@ -64,7 +64,7 @@ by writing a single file of about one hundred lines of C code.
 
 Angband 2.7.8 was intended to be a nice, clean, stable version, so we
 can all give copies to our friends.  Unfortunately, it contained a few
-minor bugs.  The *enchant* armor/weapon scrolls were "swapped".  The
+minor bugs.  The *enchant* armour/weapon scrolls were "swapped".  The
 game starts to look funny if too many objects accumulate on the floor.
 The "Q" command (commit suicide) does not work.  You may not be able
 to load older savefiles.  Some special dungeon levels may take a long

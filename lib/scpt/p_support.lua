@@ -1,5 +1,14 @@
 -- handle the holy support school
 
+function get_zeal_power()
+	local pow
+	pow = get_level(Ind, HZEAL, 50) + 10
+	if pow > 30 then
+		pow = 30
+	end
+	return pow
+end
+
 HSANCTUARY = add_spell
 {
 	["name"] = 	"Sanctuary",
@@ -113,7 +122,7 @@ HSENSE = add_spell
 		"Lets you see nearby creatures, as well as invisible ones.",
 		"At level 15 it also maps the dungeon around you.",
 		"At level 30 it grants you clairvoyance and lets you",
-		"sense the presence creatures for a while.",
+		"sense the presence of creatures for a while.",
 		"***Affected by the Meta spell: Project Spell***",
 	}
 }
@@ -159,21 +168,17 @@ HZEAL = add_spell
 	["spell"] =     function()
 		local d, p
 		d = 14 + randint(5)
-		p = get_level(Ind, HZEAL, 50) + 10
-
+		p = get_zeal_power()
 		set_zeal(Ind, p, d)
 		if player.spell_project > 0 then
 			fire_ball(Ind, GF_ZEAL_PLAYER, 0, p, player.spell_project, "")
 		end
 	end,
 	["info"] =      function()
-			local p
-			p = get_level(Ind, HZEAL, 50) + 10
-			return ""..(p / 10).." EA, +"..(p / 6).." speed"
+			return "dur 14+d5, "..(get_zeal_power() / 10).." EA"
 	end,
 	["desc"] =      {
-		"Increases your hit rate up to +3 at level 50 for 14+d5 turns.",
-		"Also speeds you up a bit.",
+		"Increases your melee attacks per round by up to +3 for 14+d5 turns.",
 		"***Affected by the Meta spell: Project Spell***",
 	}
 }

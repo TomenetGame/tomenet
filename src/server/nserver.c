@@ -166,6 +166,20 @@ void add_banlist(int Ind, int time){
 	banlist=ptr;
 }
 
+void add_banlist_ip(char *ip_addy, int time){
+	struct ip_ban *ptr;
+	if(!time) return;
+
+	ptr=malloc(sizeof(struct ip_ban));
+	if(ptr==(struct ip_ban*)NULL) return; /* unimportant failure */
+
+	ptr->next=banlist;
+	ptr->time=time;
+	strcpy(ptr->ip, ip_addy);
+	s_printf("Banned connections from %s for %d minutes\n", ptr->ip, time);
+	banlist=ptr;
+}
+
 /*
  * Initialize the function dispatch tables for the various client
  * connection states.  Some states use the same table.
@@ -1825,6 +1839,11 @@ static int Handle_login(int ind)
 	check_Morgoth();
 
 	/* check pending notes to this player -C. Blue */
+	for (i = 0; i < MAX_ADMINNOTES; i++) {
+		if (strcmp(admin_note[i], "")) {
+			msg_format(NumPlayers, "\377sGlobal Admin Note: %s", admin_note[i]);
+		}
+	}
 	for (i = 0; i < MAX_NOTES; i++) {
 		if (!strcmp(priv_note_target[i], Players[NumPlayers]->name)) {
 			msg_format(NumPlayers, "\377sNote from %s: %s", priv_note_sender[i], priv_note[i]);
@@ -1836,12 +1855,14 @@ static int Handle_login(int ind)
 	if(p_ptr->party)
 	for (i = 0; i < MAX_PARTYNOTES; i++) {
 		if (!strcmp(party_note_target[i], parties[Players[NumPlayers]->party].name)) {
+			if (strcmp(admin_note[i], ""))
 			msg_format(NumPlayers, "\377sParty Note: %s", party_note[i]);
 		}
 	}
 	if(p_ptr->guild)
 	for (i = 0; i < MAX_GUILDNOTES; i++) {
 		if (!strcmp(guild_note_target[i], guilds[Players[NumPlayers]->guild].name)) {
+			if (strcmp(guild_note[i], ""))
 			msg_format(NumPlayers, "\377sGuild Note: %s", guild_note[i]);
 		}
 	}
@@ -1849,6 +1870,9 @@ static int Handle_login(int ind)
 	/* Admin messages */
 	if (p_ptr->admin_dm && (cfg.runlevel == 2048))
 		msg_print(NumPlayers, "\377y* Empty-server-shutdown command pending *");
+
+	/* Execute custom script if player joins the server */
+	exec_lua(NumPlayers, format("player_has_joined(%d, %d, \"%s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
 
 	/* Handle the cfg_secret_dungeon_master option */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) return 0;
@@ -2466,6 +2490,8 @@ static int Receive_login(int ind){
 	if(strlen(choice)==0){
 		if(connp->pass && (l_acc=GetAccount(connp->nick, connp->pass, FALSE))){
 			int *id_list, i;
+			byte tmpm;
+			char colour_sequence[3];
 			free(connp->pass);
 			connp->pass=NULL;
 			n=player_id_list(&id_list, l_acc->id);
@@ -2473,9 +2499,14 @@ static int Receive_login(int ind){
 			for(i=0; i<n; i++){
 				u16b ptype=lookup_player_type(id_list[i]);
 				/* do not change protocol here */
-				Packet_printf(&connp->c, "%c%s%hd%hd%hd", PKT_LOGIN, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
+				tmpm = lookup_player_mode(id_list[i]);
+				if (tmpm & MODE_IMMORTAL) strcpy(colour_sequence, "\377g");
+				else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
+				else if (tmpm & MODE_HELL) strcpy(colour_sequence, "\377W");
+				else strcpy(colour_sequence, "\377w");
+				Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
 			}
-			Packet_printf(&connp->c, "%c%s%hd%hd%hd", PKT_LOGIN, "", 0, 0, 0);
+			Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, "", "", 0, 0, 0);
 			if(n) C_KILL(id_list, n, int);
 			KILL(l_acc, struct account);
 		}
@@ -2745,7 +2776,7 @@ static int Receive_file(int ind){
 			case PKT_FILE_INIT:
 				/* Admin to do this only !!! */
 				Packet_scanf(&connp->r, "%s", fname);
-				if(!p_ptr->admin_dm && !p_ptr->admin_wiz){
+				if(!is_admin(p_ptr)){
 					msg_print(Ind, "\377rFile transfer refused");
 					x=0; 
 				}
@@ -2765,7 +2796,7 @@ static int Receive_file(int ind){
 			case PKT_FILE_CHECK:
 				/* Admin to do this only !!! */
 				Packet_scanf(&connp->r, "%s", fname);
-				if(!p_ptr->admin_dm && !p_ptr->admin_wiz){
+				if(!is_admin(p_ptr)){
 					msg_print(Ind, "\377rFile check refused");
 					x=0; 
 				}
@@ -7971,8 +8002,7 @@ static int Receive_master(int ind)
 	 */
 
 	/* Is this necessary here? Maybe (evileye) */
-	if (!Players[player]->admin_dm &&
-		!Players[player]->admin_wiz &&
+	if (!admin_p(player) &&
 		!player_is_king(player) && !guild_build(player))
 	{
 		/* Hack -- clear the receive and queue buffers since we won't be

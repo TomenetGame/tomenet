@@ -798,16 +798,17 @@ static void get_money(int Ind)
 	int        i, gold;
 
 	/* Social Class determines starting gold */
-	gold = (p_ptr->sc * 6) + randint(100) + 300;
+/*	gold = (p_ptr->sc * 6) + randint(100) + 300; - the suicide spam to get more gold was annoying.. */
+	gold = randint(20) + 350;
 
 	/* Process the stats */
 	for (i = 0; i < 6; i++)
 	{
 		/* Mega-Hack -- reduce gold for high stats */
-		if (stat_use[i] >= 18+50) gold -= 300;
-		else if (stat_use[i] >= 18+20) gold -= 200;
-		else if (stat_use[i] > 18) gold -= 150;
-		else gold -= (stat_use[i] - 8) * 10;
+		if (stat_use[i] >= 18+50) gold -= 150;
+		else if (stat_use[i] >= 18+20) gold -= 100;
+		else if (stat_use[i] > 18) gold -= 50;
+		else gold -= (stat_use[i] - 8) * 5;
 	}
 
 	/* Minimum 100 gold */
@@ -945,7 +946,7 @@ static byte player_init[MAX_CLASS][3][2] =
 //		{ TV_BOOK, 50 },
 		{ TV_SWORD, SV_SABRE },
 		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR },
-		{ 0, 0},
+		{ TV_SCROLL, SV_SCROLL_MAPPING },
 	},
 
 	{
@@ -960,6 +961,7 @@ static byte player_init[MAX_CLASS][3][2] =
 		{ TV_SWORD, SV_DAGGER },
 		//{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
 		{ TV_BOOK, 50 },
+		{ TV_SOFT_ARMOR, SV_ROBE },
 	},
 
 	{
@@ -982,8 +984,9 @@ static byte player_init[MAX_CLASS][3][2] =
 	{
 		/* Mimic */
 		//{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
-		{ TV_SWORD, SV_LONG_SWORD },
+		{ TV_SWORD, SV_TULWAR },
 		{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
+		{ TV_POTION, SV_POTION_CURE_LIGHT },
 	},
 
 	{
@@ -997,6 +1000,7 @@ static byte player_init[MAX_CLASS][3][2] =
 		/* Paladin */
 		{ TV_HAFTED, SV_LUCERN_HAMMER },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL },
+		{ TV_POTION, SV_POTION_CURE_SERIOUS },
 		//{ TV_BOOK, 50 },
 	},
 
@@ -1077,7 +1081,7 @@ void admin_outfit(int Ind, int realm)
 		if (!k_idx) continue;
 		invcopy(o_ptr, k_idx);
 		o_ptr->number = 1;
-		apply_magic(&p_ptr->wpos, o_ptr, 1, TRUE, FALSE, FALSE);
+		apply_magic(&p_ptr->wpos, o_ptr, 1, TRUE, FALSE, FALSE, FALSE);
 		do_admin_outfit();
 	}
 #if 0
@@ -1118,12 +1122,12 @@ void admin_outfit(int Ind, int realm)
 
 	invcopy(o_ptr, lookup_kind(TV_ARROW, SV_AMMO_MAGIC));
 	o_ptr->note = quark_add("@f1");
-	apply_magic_depth(1, o_ptr, -1, FALSE, FALSE, FALSE);
+	apply_magic_depth(1, o_ptr, -1, FALSE, FALSE, FALSE, FALSE);
 	o_ptr->number = 98;
 	do_admin_outfit();
 #endif
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
-	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
+	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE, FALSE);
 	o_ptr->number = 1;
 	do_admin_outfit();
 }
@@ -1163,7 +1167,7 @@ static void player_outfit(int Ind)
 			p_ptr->prace == RACE_ELF || p_ptr->prace == RACE_HIGH_ELF)
 	{
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD));
-		o_ptr->number = rand_range(2, 4);
+		o_ptr->number = rand_range(2, 3);
 	}
 	else
 	{
@@ -1190,7 +1194,7 @@ static void player_outfit(int Ind)
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
 		o_ptr->name2 = 188;	// Bud ;)
 		o_ptr->number = 9;
-		apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
+		apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE, TRUE);
 		o_ptr->discount = 72;
 		o_ptr->owner = p_ptr->id;
                 o_ptr->owner_mode = p_ptr->mode;
@@ -1225,7 +1229,7 @@ static void player_outfit(int Ind)
 	if (p_ptr->prace == RACE_DRIDER)
 	{
 		invcopy(o_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
-		o_ptr->number = rand_range(3, 7);
+		o_ptr->number = rand_range(3, 5);
 		do_player_outfit();
 	}
 
@@ -1233,7 +1237,7 @@ static void player_outfit(int Ind)
 	if (p_ptr->pclass == CLASS_MIMIC)
 	{
 		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_SELF_KNOWLEDGE));
-		o_ptr->number = rand_range(1, 2);
+		o_ptr->number = rand_range(1, 1);
 		o_ptr->discount = 100;
 		do_player_outfit();
 	}
@@ -1266,12 +1270,46 @@ static void player_setup(int Ind, bool new)
 	player_type *p_ptr = Players[Ind];
 	int y, x, i, d, count = 0;
 	cave_type *c_ptr;
-			dun_level *l_ptr;
+	dun_level *l_ptr;
 
 	bool unstaticed = 0; 
 
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
+
+
+	/* Catch bad player coordinates,
+	   either corrupted ones (insane values)
+	   or invalid ones if dungeon locations were changed meanwhile - C. Blue */
+        /* Ultra-hack bugfix for recall-crash, thanks to Chris for the idea :) */
+	if ((wpos->wx > 63) || (wpos->wy > 63) || (wpos->wz > 255) ||
+	    (wpos->wx < 0) || (wpos->wy < 0) || (wpos->wz < -255)) {
+		s_printf("Ultra-hack executed for %s. wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
+		wpos->wx = 32;
+                wpos->wy = 32;
+		wpos->wz = 0;
+	}
+	/* If dungeon existances changed, restore players who saved
+           within a now-invalid dungeon - C. Blue */
+	if (((wpos->wz > 0) && (wild_info[wpos->wy][wpos->wx].tower == 0)) ||
+	    ((wpos->wz < 0) && (wild_info[wpos->wy][wpos->wx].dungeon == 0))) {
+		s_printf("Ultra-hack #2 executed for %s. wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
+		wpos->wx = 32;
+                wpos->wy = 32;
+		wpos->wz = 0;
+	}
+
+
+	/* If the player encountered a server crash last time he was saved (panic save),
+	   carry him out of that dungeon to make sure he doesn't die to the crash. */
+	if (p_ptr->panic) {
+		if (wpos->wz) {
+			s_printf("Auto-recalled panic-saved player %s.\n", p_ptr->name);
+			wpos->wz = 0;
+		}
+		p_ptr->panic = FALSE;
+	}
+
 
 	/* anti spammer code */
 	p_ptr->msgcnt=0;
@@ -1333,7 +1371,7 @@ static void player_setup(int Ind, bool new)
 		if(p_ptr->wpos.wz){
 			struct dun_level *l_ptr;
 			alloc_dungeon_level(wpos);
-			generate_cave(wpos);
+			generate_cave(wpos, p_ptr);
 
 			l_ptr=getfloor(wpos);
 			if((l_ptr->wid < p_ptr->px) || (l_ptr->hgt < p_ptr->py)){
@@ -1348,7 +1386,7 @@ static void player_setup(int Ind, bool new)
 		}
 		else{
 			alloc_dungeon_level(wpos);
-			generate_cave(wpos);
+			generate_cave(wpos, p_ptr);
 			if(!players_on_depth(wpos))
 				new_players_on_depth(wpos,1,FALSE);
 #ifndef NEW_DUNGEON
@@ -1447,7 +1485,7 @@ static void player_setup(int Ind, bool new)
 	{
 		time_t ttime;
 		/* Add */
-		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, 1, 0, 0, 0, time(&ttime));
+		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 0, 0, 0, time(&ttime));
 	}
 
 	/* Set his "current activities" variables */
@@ -1669,6 +1707,8 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* Did loading succeed? */
 	if (character_loaded)
 	{
+		/* Log for freeze bug */
+		s_printf("Loaded character %s on %d %d %d\n", name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Loading succeeded */         
 		player_setup(Ind, FALSE);
 		clockin(Ind, 0);	/* Timestamp the player */

@@ -37,5 +37,11 @@ pern_dofile(Ind, "evil.lua")
 pern_dofile(Ind, "zz.lua")
 pern_dofile(Ind, "jir.lua")
 
+-- Custom scripts that are run automatically - C. Blue
+-- 1) on server starting up: server_startup(string time)
+-- 2) on player joining: player_has_joined(int num, int id, string name, string time)
+pern_dofile(Ind, "custom.lua")
+
+
 -- Restore a good neat handler
 _ALERT = __old_ALERT

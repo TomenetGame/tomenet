@@ -12,5 +12,8 @@ tell you, so please check it sometimes.
 If you noticed a bug, please send a report to:
     mail@c-blue.de
 
+    Administrator of this server is C. Blue (http://www.c-blue.de/).
+    If you find a bug, report it to mail@c-blue.de
+    If you need your account become validated, write to mail@c-blue.de
 
 Thank you.

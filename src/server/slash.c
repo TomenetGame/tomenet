@@ -215,7 +215,7 @@ void sc_wish(int Ind, void *argp){
 		o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 	}
 
-	apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE);
+	apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, p_ptr->total_winner?FALSE:TRUE);
 	if (tk > 3){
 		o_ptr->discount = atoi(token[4]);
 	}
@@ -1456,7 +1456,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending notes.", MAX_NOTES);
 				return;
 			}
-			if ((notes >= 3) && !p_ptr->admin_dm && !p_ptr->admin_wiz) {
+			if ((notes >= 3) && !is_admin(p_ptr)) {
 				msg_print(Ind, "\377oYou have already reached the maximumm of 3 pending notes per player.");
 				return;
 			}
@@ -1537,6 +1537,13 @@ void do_slash_cmd(int Ind, char *message)
 				cfg.runlevel = 2048;
 				return;
 			}
+#if 0	/* not implemented yet */
+			else if (prefix(message, "/shutsurface")) {
+				msg_print(Ind, "\377y* Shutting down as soon as noone is inside a dungeon/tower *");
+				cfg.runlevel = 2049;
+				return;
+			}
+#endif
 			else if (prefix(message, "/pet")){
 #if 1
 				if (tk && prefix(token[1], "force"))
@@ -1586,6 +1593,24 @@ void do_slash_cmd(int Ind, char *message)
 				}
 
 				msg_print(Ind, "\377oUsage: /ban (Player name) (time) [reason]");
+				return;
+			}
+			else if (prefix(message, "/ipban"))
+			{
+				if (tk)
+				{
+					add_banlist_ip(token[1], (tk>1 ? atoi(token[2]) : 5));
+					if (tk < 3)
+					{
+						msg_format(Ind, "Banning %s for %d minutes...", token[1], atoi(token[2]));
+					} else {
+						msg_format(Ind, "Banning %s for %d minutes (%s)...", token[1], atoi(token[2]), token[3]);
+					}
+					/* Kick him */
+					return;
+				}
+
+				msg_print(Ind, "\377oUsage: /ipban (IP address) (time) [reason]");
 				return;
 			}
 			else if (prefix(message, "/kick"))
@@ -1910,7 +1935,7 @@ void do_slash_cmd(int Ind, char *message)
 					o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 				}
 
-				apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE);
+				apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, TRUE);
 				if (tk > 3){
 					o_ptr->discount = atoi(token[4]);
 				}
@@ -2180,6 +2205,209 @@ void do_slash_cmd(int Ind, char *message)
 				d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
 				msg_print(Ind, "Dungeon flags updated.");
 				return;
+			}
+			else if (prefix(message, "/anotes"))
+			{
+				int i, notes = 0;
+				for (i = 0; i < MAX_ADMINNOTES; i++) {
+					/* search for pending notes of this player */
+					if (strcmp(admin_note[i], "")) {
+						/* found a matching note */
+						notes++;
+					}
+				}
+				if (notes > 0) msg_format(Ind, "\377oAdmins wrote %d currently pending notes:", notes);
+				else msg_format(Ind, "\377oNo admin wrote any pending note.");
+				for (i = 0; i < MAX_ADMINNOTES; i++) {
+					/* search for pending admin notes */
+					if (strcmp(admin_note[i], "")) {
+						/* found a matching note */
+						msg_format(Ind, "\377o(#%d)- %s", i, admin_note[i]);
+					}
+				}
+				return;
+			}
+			else if (prefix(message, "/danote")) /* Delete a global admin note to everyone */
+			{
+				int i, notes = 0;
+				if ((tk < 1) || (strlen(message2) < 8)) /* Explain command usage */
+				{
+					msg_print(Ind, "\377oUse /danote <message index> to delete a message.");
+					msg_print(Ind, "\377oTo clear all pending notes of yours, type: /danote *");
+					return;
+				}
+				if (message2[8] = '*') {
+					for (i = 0; i < MAX_ADMINNOTES; i++)
+						if (strcmp(admin_note[i], "")) {
+							notes++;
+							strcpy(admin_note[i], "");
+						}
+					msg_format(Ind, "\377oDeleted %d notes.", notes);
+				} else {
+					notes = atoi(message2 + 8);
+					if ((notes > 0) && (notes < MAX_ADMINNOTES)) {
+						strcpy(admin_note[notes], "");
+						msg_format(Ind, "\377oDeleted note´%d.", notes);
+					}
+				}
+				return;
+			}
+			else if (prefix(message, "/anote")) /* Send a global admin note to everyone */
+			{
+				int i, j = 0;
+				if (tk < 1)	/* Explain command usage */
+				{
+					msg_print(Ind, "\377oUsage: /anote <text>");
+					msg_print(Ind, "\377oUse /danote <message index> to delete a message.");
+					msg_print(Ind, "\377oTo clear all pending notes of yours, type: /danote *");
+					return;
+				}
+				/* Search for begin of parms ( == text of the note) */
+				for (i = 6; i < strlen(message2); i++)
+					if (message2[i] == ' ')
+						for (j = i; j < strlen(message2); j++)
+							if (message2[j] != ' ')	{
+								/* save start pos in j for latter use */
+								i = strlen(message2);
+								break;
+							}
+
+				/* search for free admin note */
+				for (i = 0; i < MAX_ADMINNOTES; i++) {
+	    				if (!strcmp(admin_note[i], "")) {
+						/* found a free memory spot */
+						break;
+					}
+				}
+				if (i < MAX_ADMINNOTES) {
+					/* Add admin note */
+					strcpy(admin_note[i], &message2[j]);
+					msg_print(Ind, "\377yNote has been stored.");
+				} else {
+					msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending admin notes.", MAX_ADMINNOTES);
+				}
+				return;
+			}
+			else if (prefix(message, "/broadcast-anotes")) /* Display all admin notes to all players NOW! :) */
+			{
+				int i;
+				for (i = 0; i < MAX_ADMINNOTES; i++)
+					if (strcmp(admin_note[i], ""))
+						msg_broadcast(0, format("\377sGlobal Admin Note: %s", admin_note[i]));
+				return;
+			}
+			else if (prefix(message, "/reart")) /* re-roll a random artifact */
+			{
+				object_type *o_ptr;
+				if (tk < 1)
+				{
+					msg_print(Ind, "\377oUsage: /wish (tval) (sval) (pval) [discount] [name] or /wish (o_idx)");
+					return;
+				}
+				if (atoi(token[1]) < 1 || atoi(token[1]) > INVEN_TOTAL) {
+					msg_print(Ind, "\377oInvalid inventory slot.");
+					return;
+				}
+				o_ptr = &p_ptr->inventory[atoi(token[1])];
+				if (o_ptr->name1 != ART_RANDART) {
+					msg_print(Ind, "\377oNot a randart.");
+					return;
+				}
+
+		                /* Piece together a 32-bit random seed */
+		                o_ptr->name3 = rand_int(0xFFFF) << 16;
+		                o_ptr->name3 += rand_int(0xFFFF);
+
+		                /* Check the tval is allowed */
+		                if (randart_make(o_ptr) == NULL)
+		                {
+		                        /* If not, wipe seed. No randart today */
+		                        o_ptr->name1 = 0;
+			                o_ptr->name3 = 0L;
+					msg_print(Ind, "Randart creation failed..");
+			                return;
+			        }
+
+			        o_ptr->timeout=0;
+		    	        apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE);
+
+				msg_format(Ind, "Re-rolled randart in inventory slot %d!", atoi(token[1]));
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+				return;
+			}
+			else if (prefix(message, "/threaten") || prefix(message, "/thr")) { /* Nearly kill someone, as threat >:) */
+				int j;
+				if (!tk) {
+					msg_print(Ind, "Usage: /threaten <player-Index>");
+					return;
+				}
+				/*j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) return;*/
+				j = atoi(token[1]);
+			        take_hit(j, Players[j]->chp - 1, "");
+			        msg_print(j, "\377rYou are hit by a bolt from the blue!");
+			        msg_print(j, "\377rThat was close huh?!");
+				return;
+			}
+			else if (prefix(message, "/slap")) { /* Slap someone around, as threat :-o */
+				int j;
+				if (!tk) {
+					msg_print(Ind, "Usage: /slap <player-Index>");
+					return;
+				}
+				/*j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) return;*/
+				j = atoi(token[1]);
+			        take_hit(j, Players[j]->chp / 4, "");
+			        msg_print(j, "\377rYou are slapped by something invisible!");
+				return;
+			}
+			else if (prefix(message, "/deltown")){
+				deltown(Ind);
+				return;
+			}
+			else if (prefix(message, "/counthouses")) {
+				int i;
+				if (!tk || (atoi(token[1]) < 1) || (atoi(token[1]) > NumPlayers)) {
+					msg_print(Ind, "Usage: /counthouses <player-Index>");
+					return;
+				}
+				Players[atoi(token[1])]->houses_owned = 0;
+        			for (i = 0; i < num_houses; i++) {
+	                    		if ((houses[i].dna->owner_type==OT_PLAYER) &&
+				           (houses[i].dna->owner == Players[atoi(token[1])]->id))
+					       Players[atoi(token[1])]->houses_owned++;
+				}
+				return;
+			}
+			/* fix insane hit dice of a golem manually - gotta solve the bug really */
+			else if (prefix(message, "/mblowdice") || prefix(message, "/mbd")) {
+				cave_type *c_ptr, **zcave = getcave(&p_ptr->wpos);
+				monster_type *m_ptr;
+				int x, y, i;
+				if (tk < 2) {
+					msg_print(Ind, "\377oUsage: /mblowdice <dice> <sides>");
+					return;
+				}
+				y = p_ptr->py + ddy[p_ptr->last_dir];
+				x = p_ptr->px + ddx[p_ptr->last_dir];
+				c_ptr = &zcave[y][x];
+				if (c_ptr->m_idx) {
+					m_ptr = &m_list[c_ptr->m_idx];
+					for (i = 0; i < 4; i++) {
+						m_ptr->blow[i].d_dice = atoi(token[1]);
+						m_ptr->blow[i].d_side = atoi(token[2]);
+					}
+				}
+				return;
+			}
+			/* Umm, well I added this for testing purpose =) - C. Blue */
+			else if (prefix(message, "/crash")) {
+				msg_print(Ind, "\377RCRASHING");
+				s_printf("$CRASHING$\n");
+				s_printf("%d %s", "game over man", 666);
+				return; /* ^^ */
 			}
 		}
 	}

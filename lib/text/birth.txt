@@ -91,8 +91,8 @@ is better), sex (female characters start with more gold), and other stats
 out with a few useful items, which may be kept, or sold to a shop-keeper for
 more gold.
 
-Each character has an armor class, representing how well the character can
-avoid damage.  The armor class is affected by dexterity and the equipment.
+Each character has an armour class, representing how well the character can
+avoid damage.  The armour class is affected by dexterity and the equipment.
 
 Each character has hit points, representing how much damage the character can
 sustain before he dies.  Your hit points are derived from your race, class,

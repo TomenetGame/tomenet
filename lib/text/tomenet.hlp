@@ -1,5 +1,5 @@
 ==============================================================================
-	                Welcome to TomeNET 4.0.0
+	                Welcome to TomeNET 4.2.0
 
 If you are new to TomeNET, read the 'TomeNET-Guide.txt' in your tomenet-bin
 directory. Latest version is available online at www.c-blue.de/rogue.html.
@@ -20,7 +20,7 @@ level 20. >;) Have fun!
 2. check your inventory('i') and equipments('e').
 3. eat('E') some foods first; don't starve
 4. equip items with 'w'. Never dive the dungeon naked!
-5. shop in town; Buy('p') armors in "2", missiles in "3" etc.
+5. shop in town; Buy('p') armours in "2", missiles in "3" etc.
 6. look for ">" with 'M' key -- it's the dungeon:) hit '>' over it
 7. you attack monsters next to u automatically. run with '.' or shift
 8. get killed? press '<' continuously. Go temple("4") and you resurrect

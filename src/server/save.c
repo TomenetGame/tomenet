@@ -215,7 +215,7 @@ static void put_string(char *str)
 
 
 /*
- * Write a savefile for Angband 2.8.0
+ * Write a savefile for Angband 2.8.0  --  Ahem, seems this is unused now - C. Blue (check wr_savefile_new)
  */
 static errr wr_savefile(void)
 {
@@ -685,7 +685,7 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->name1);
 	wr_byte(o_ptr->name2);
 	wr_s32b(o_ptr->name3);
-	wr_s16b(o_ptr->timeout);
+	wr_s32b(o_ptr->timeout);
 
 	wr_s16b(o_ptr->to_h);
 	wr_s16b(o_ptr->to_d);
@@ -1198,6 +1198,8 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->fruit_bat);	
 
 	wr_byte(p_ptr->lives);		/* old "rest" */
+	wr_byte(p_ptr->houses_owned);
+
 	wr_byte(0);			/* unused */
 	wr_s16b(p_ptr->blind);
 	wr_s16b(p_ptr->paralyzed);
@@ -2116,9 +2118,10 @@ bool load_player(int Ind)
 		   (void)sprintf (what,"Cannot parse savefile error %d",err);
 		   }; 
 		   */
-		if (err)what="Cannot parse savefile error";
+		if (err) what = "Cannot parse savefile error";
 		if (err == 35) what = edit ? "Server is closed for login now" :
 			"Incorrect password";
+		if (err == 1) what = "Savegame filename exploit";
 	}
 
 	/* Paranoia */
@@ -2248,6 +2251,7 @@ static void wr_player_names(void)
 			/* 3.4.2 server */
 			wr_byte(ptr->race);
 			wr_byte(ptr->class);
+			wr_byte(ptr->mode);
 			wr_byte(ptr->level);
 			wr_byte(ptr->party);
 			wr_byte(ptr->guild);
@@ -2261,7 +2265,7 @@ static void wr_player_names(void)
 	C_KILL(id_list, num, int);
 }
 
-static bool wr_server_savefile(void)
+static bool wr_server_savefile()
 {
         int        i;
 	u32b              now;
@@ -2307,7 +2311,6 @@ static bool wr_server_savefile(void)
 	/* Operating system */
 	wr_u32b(sf_xtra);
 
-
 	/* Time file last saved */
 	wr_u32b(sf_when);
 
@@ -2316,6 +2319,10 @@ static bool wr_server_savefile(void)
 
 	/* Number of times saved */
 	wr_u16b(sf_saves);
+
+	/* Is this a panic save? - C. Blue */
+        if (panic_save) wr_byte(1); else wr_byte(0);
+
 
 	/* Space */
 	wr_u32b(0L);
@@ -2667,7 +2674,7 @@ bool load_server_info(void)
 /*
  * Save the server state to a "server" savefile.
  */
-bool save_server_info(void)
+bool save_server_info()
 {
 	int result = FALSE;
 	char safe[MAX_PATH_LENGTH];

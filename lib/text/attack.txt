@@ -19,7 +19,7 @@ a creature.  Otherwise you get a single punch which does minimal damage.
 You may wield both a primary weapon for melee combat, and a bow or other
 missile launcher for launching missiles at the same time (along with a
 light, an amulet, two rings, a helmet, boots, gloves, a shield, a cloak, and
-body armor).  Be sure not to try and kill a dragon with a shovel, it makes
+body armour). Be sure not to try and kill a dragon with a shovel, it makes
 you look silly and probably won't work...
  
 Firing a missile while wielding the appropriate launcher is the only way to
@@ -27,9 +27,9 @@ get the "full" power out of the missile.  You may of course throw an arrow
 at a monster without shooting it, but you will find the effects may not be
 what you had hoped.
 
-Hits and misses are determined by ability to hit versus armor class.  A hit
+Hits and misses are determined by ability to hit versus armour class. A hit
 is a strike that does some damage; a miss may in fact reach a target, but
-fails to do any  damage.  Higher armor classes make it harder to do damage,
+fails to do any damage.  Higher armour classes make it harder to do damage,
 and so lead to more misses; they also reduce the damage from a strike that
 actually occurs.
  
@@ -49,7 +49,7 @@ simply have to take notes, which is an unnecessary bother.
 
 If you have killed enough of a particular creature, or suffered enough
 attacks, recalling the monster memory may also provide you with information
-not otherwise available, such as a armor class or hit dice.  These are not
+not otherwise available, such as a armour class or hit dice.  These are not
 explained, but may be useful to give the relative danger of each creature.
 This memory can be passed on to a new character even after you die by means
 of a reduced save file.
@@ -219,42 +219,42 @@ opponent may get free hits on him.  This is a risky attack.  It is also a
 hack.  :-)
 
 
-=== Your Armor Class ===
+=== Your Armour Class ===
 
-Your armor class (or AC) is a number that describes the amount and the
-quality of armor being worn. Armor class will generally run from about 0 to
+Your armour class (or AC) is a number that describes the amount and the
+quality of armour being worn. Armour class will generally run from about 0 to
 150, but could become negative or greater than 150 with rarer armour or by
 magical means.
  
-The larger your armor class, the more protective it is.  A negative armor
-class would actually help get you hit.  Armor protects you in three manners.
+The larger your armour class, the more protective it is.  A negative armour
+class would actually help get you hit.  Armour protects you in three manners.
 One, it makes you harder to be hit for damage.  A hit for no damage is the
-same as a miss.  Two, good armor will absorb some of the damage that your
+same as a miss.  Two, good armour will absorb some of the damage that your
 character would have taken from normal attacks.  Three, acid damage is
-reduced by wearing body armor (but the armor will be damaged instead).  It
-is obvious that a high armor class is a must for surviving the deeper levels
+reduced by wearing body armour (but the armour will be damaged instead).  It
+is obvious that a high armour class is a must for surviving the deeper levels
 of Angband.
 
-Each piece of armour has a base armor value, which, like the damage from
+Each piece of armour has a base armour value, which, like the damage from
 weapons, is assumed known by the player, and a magic bonus, which will not
-be displayed unless the armor has been identified or was bought in a store.
+be displayed unless the armour has been identified or was bought in a store.
 
-Armor class values are always displayed between a set of brackets as "[#]"
-or "[#,+#]".  The first value is the armor class of the item.  The second
+Armour class values are always displayed between a set of brackets as "[#]"
+or "[#,+#]".  The first value is the armour class of the item.  The second
 number is the magical bonus of the item which is only displayed if known,
 and will always have a sign preceding the value.  Note that a few rings,
 amulets, and weapons also have the "[+#]" notation, indicating that they
-provide an armor bonus.  Many pieces of heavy body armor will also have a
-"(-#)" before the "[#,+#]", which indicates that the weight of the armor
+provide an armour bonus.  Many pieces of heavy body armour will also have a
+"(-#)" before the "[#,+#]", which indicates that the weight of the armour
 decreases your chances of hitting monsters.  This can range from nonexistent
-for very light armor to (-8) for the very heaviest armor!
+for very light armour to (-8) for the very heaviest armour!
 
-Some pieces of armor will possess special abilities denoted by the following
+Some pieces of armour will possess special abilities denoted by the following
 names: (these are very out of date!)
 
 of Resist Acid.
      A character using such an object will take only one third normal damage
-     from any acid thrown upon him.  In addition, armor so enchanted will
+     from any acid thrown upon him.  In addition, armour so enchanted will
      resist the acid's effects and not be damaged by it.
  
 of Resist Lightning.
@@ -270,20 +270,20 @@ of Resist Cold.
      from frost and cold.
  
 of Resistance.
-     A character wearing armor with this ability will have resistance to
+     A character wearing armour with this ability will have resistance to
      Acid, Cold, Fire, and Lightning as explained in each part above.
  
 of Elvenkind.
      This is the same as Resistance armour, only generally better enchanted.
-     It will make you more stealthy.  This armor can also possess extra 
+     It will make you more stealthy.  This armour can also possess extra 
      resistances beyond the four basic elemental ones.
  
 Robes of the Magi.
      These robes are designed especially for wizards.  Just like Elvenkind
-     armor, they provide resistance to fire, cold, acid, and electricity and
+     armour, they provide resistance to fire, cold, acid, and electricity and
      cannot be damaged by acid.  They sustain all of your stats and protect
      you from a good deal of all experience draining.  Also like Elvenkind
-     armor, they can have additional special resistances.  These robes are
+     armour, they can have additional special resistances.  These robes are
      so good that their owners are rarely killed, perhaps explaining the
      incredible rarity.
  

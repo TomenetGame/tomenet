@@ -516,7 +516,7 @@ Equipment list (e)
         which may contain only a single object at a time, and each of which
         may only contain objects of the proper "type", and which include
         WIELD (weapon), BOW (missile launcher), LEFT (ring), RIGHT (ring),
-        NECK (amulet), LITE (light source), BODY (armor), OUTER (cloak),
+        NECK (amulet), LITE (light source), BODY (armour), OUTER (cloak),
         ARM (shield), HEAD (helmet), HANDS (gloves), FEET (boots).  You
         must be using an object to receive any of its special powers.
 
@@ -787,7 +787,7 @@ Inscribe an object ({)
         In addition, Angband will occasionally place a "real" inscription on
         an object for you, normally as the result of your character getting
         a "feeling" about the item.  All characters will get "feelings" about
-        weapons and armor after carrying them for a while.  Warriors get the
+        weapons and armour after carrying them for a while.  Warriors get the
         most detailed feelings, and get them quicker than any other class.
         An item labeled as "{empty}" was found to be out of charges, and an
         item labeled as "{tried}" is a "flavored" item which the character
@@ -802,7 +802,7 @@ Uninscribe an object (})
 ---  Magical Object Commands ---
 
 Activate an artifact (A)
-        You have heard rumors of special weapons and armor deep in the
+        You have heard rumors of special weapons and armour deep in the
         Pits, items that can let you breath fire like a dragon or light
         rooms with just a thought.  Should you ever be lucky enough to
         find such an item, this command will let you activate its special

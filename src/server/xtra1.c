@@ -870,7 +870,7 @@ static void calc_sanity(int Ind)
 	int lev = p_ptr->lev > 50 ? 50 : p_ptr->lev;
 
 	/* Hack -- use the con/hp table for sanity/wis */
-	bonus = ((int)(adj_con_mhp[p_ptr->stat_ind[A_WIS]]) - 128);
+	bonus = ((int)(adj_wis_msane[p_ptr->stat_ind[A_WIS]]) - 128);
 
 	/* Hack -- assume 5 sanity points per level. */
 	msane = 5*(lev+1) + (bonus * lev / 2);
@@ -1015,7 +1015,7 @@ static void calc_mana(int Ind)
 
 		/* Normal gloves hurt mage-type spells */
 		if (o_ptr->k_idx &&
-		    !(f2 & TR2_FREE_ACT) &&
+		    !(f2 & TR2_FREE_ACT) && !(f1 & TR1_MANA) &&
 		    !((f1 & TR1_DEX) && (o_ptr->pval > 0)))
 		{
 			/* Encumbered */
@@ -1302,7 +1302,9 @@ static void calc_hitpoints(int Ind)
 	/*	mhp += p_ptr->msp * 2 / 3; */
 	}
 
-	/* Bonus from +LIFE items (should be weapons only) */
+	/* Bonus from +LIFE items (should be weapons only).
+	   Also, cap it at +3 (boomerang + weapon could result in +6) */
+	if (!is_admin(p_ptr) && p_ptr->to_l > 3) p_ptr->to_l = 3;
 	mhp += mhp_playerform * p_ptr->to_l / 10;
 
 	/* New maximum hitpoints */
@@ -1576,6 +1578,13 @@ static void calc_body_bonus(int Ind)
 			if (p_ptr->body_monster == 391) p_ptr->vampiric = 100;
 			break;
 		}
+		
+		case 365: /* Vampiric mist is vampiric */
+			p_ptr->vampiric = 100;
+			break;
+		case 927: /* Vampiric ixitxachitl is vampiric */
+			p_ptr->vampiric = 50;
+			break;
 
 		/* Elves get resist_lite, Dark-Elves get resist_dark */
 		case 122:	case 400:	case 178:	case 182:	case 226:
@@ -1724,6 +1733,7 @@ static void calc_body_bonus(int Ind)
 	}
 
 	/* Affect charisma by appearance */
+	d = 0;
 	if(r_ptr->flags3 & RF3_DRAGON) d = 0;
 	if(r_ptr->flags3 & RF3_DRAGONRIDER) d = 0;
 	if(r_ptr->flags3 & RF3_ANIMAL) d = 0;
@@ -2054,7 +2064,7 @@ int calc_blows(int Ind, object_type *o_ptr)
 		case CLASS_PRIEST: num = 4; wgt = 35; mul = 4; break;//mul3
 //was num = 5; ; 
 							/* Rogue */
-		case CLASS_ROGUE: num = 5; wgt = 30; mul = 3; break;
+		case CLASS_ROGUE: num = 5; wgt = 30; mul = 4; break; /* was mul = 3 - C. Blue - EXPERIMENTAL */
 
 							/* Mimic */
 		case CLASS_MIMIC: num = 4; wgt = 30; mul = 4; break;//mul3
@@ -2105,7 +2115,7 @@ int calc_blows(int Ind, object_type *o_ptr)
 		num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
 	}
 
-	if (p_ptr->zeal) num_blow += (p_ptr->zeal_power / 10);
+	if (p_ptr->zeal) num_blow += ((p_ptr->zeal_power / 10) > 3) ? 3 : (p_ptr->zeal_power / 10);
 
 	return (num_blow);
 }
@@ -2293,6 +2303,10 @@ void calc_bonuses(int Ind)
 	p_ptr->resist_continuum = FALSE;
 	p_ptr->vampiric = 0;
 
+	/* nastiness */
+	p_ptr->ty_curse = FALSE;
+	p_ptr->dg_curse = FALSE;
+
 	/* Start with a single blow per turn */
 	p_ptr->num_blow = 1;
 	p_ptr->extra_blows = 0;
@@ -2365,8 +2379,16 @@ void calc_bonuses(int Ind)
 	/* Choosing a race just for its HP or low exp% shouldn't be what we want -C. Blue- */
 	}
 
+	/* Half-Elf */
+	if (p_ptr->prace == RACE_HALF_ELF) {
+		p_ptr->resist_lite = TRUE;
+	}
+
 	/* Elf */
-	if (p_ptr->prace == RACE_ELF) p_ptr->resist_lite = TRUE;
+	if (p_ptr->prace == RACE_ELF) {
+		p_ptr->see_inv = TRUE;
+		p_ptr->resist_lite = TRUE;
+	}
 
 	/* Hobbit */
 	else if (p_ptr->prace == RACE_HOBBIT)
@@ -2769,6 +2791,10 @@ void calc_bonuses(int Ind)
 
 		/* Boost shots */
 		if (f3 & TR3_XTRA_SHOTS) extra_shots++;
+
+		/* Make the 'useless' curses interesting >:) - C. Blue */
+		if ((f3 & TR3_TY_CURSE) && (o_ptr->ident & ID_CURSED)) p_ptr->ty_curse = TRUE;
+		if ((f4 & TR4_DG_CURSE) && (o_ptr->ident & ID_CURSED)) p_ptr->dg_curse = TRUE;
 
 		/* Various flags */
 		if (f3 & TR3_AGGRAVATE) p_ptr->aggravate = TRUE;
@@ -3615,6 +3641,9 @@ void calc_bonuses(int Ind)
 			p_ptr->num_fire += (get_skill(p_ptr, archery) / 16);
 //				+ get_skill_scale(p_ptr, SKILL_ARCHERY, 1);
 			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 50);
+			/* Boomerang-mastery directly increases damage! - C. Blue */
+			if (archery == SKILL_BOOMERANG)
+				p_ptr->to_d_ranged += get_skill_scale(p_ptr, archery, 20);
 #if 0	// not so meaningful (25,30,50)
 			switch (archery)
 			{
@@ -3730,7 +3759,7 @@ void calc_bonuses(int Ind)
 			p_ptr->dis_to_h += (marts / 3) * 2;
 			p_ptr->dis_to_d += (marts / 3);
 */
-			p_ptr->to_h_melee += (marts / 3) * 2;
+			p_ptr->to_h_melee += marts;
 			p_ptr->to_d_melee += (marts / 4);/* was 3, experimental */
 		}
 	}
@@ -3751,8 +3780,12 @@ void calc_bonuses(int Ind)
 
 		p_ptr->to_h += lev;
 		p_ptr->dis_to_h += lev;
-		p_ptr->to_d += lev;
-		p_ptr->dis_to_d += lev;
+
+/*		if (o_ptr->k_idx) {
+/*			p_ptr->to_d += lev;
+			p_ptr->dis_to_d += lev;*/
+			p_ptr->to_d_melee += lev;
+/*		}*/
 	}
 
 	/* Weaponmastery bonus to damage - not for MA!- C. Blue */
@@ -3862,6 +3895,8 @@ void calc_bonuses(int Ind)
 		for (i = 0; i < 4; i++)
 		{
 			j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
+			j += r_ptr->blow[i].d_dice;
+			j /= 2;
 			if (j) n++;
 
 			/* Hack -- weaponless combat */
@@ -3869,7 +3904,8 @@ void calc_bonuses(int Ind)
 			{
 				j *= 2;
 			}
-*/			d += (j * 2);
+*/
+			d += j; /* adding up average monster damage per round */
 		}
 		/* At least have 1 blow (although this line is not needed anymore) */
 		if (n == 0) n = 1;
@@ -3886,11 +3922,14 @@ void calc_bonuses(int Ind)
 		/* GWoP: 472, GB: 270, Green DR: 96 */
 		/* Quarter the damage and cap against 150 (unreachable though)
 		- even The Destroyer form would reach just 138 ;) */
-		d /= 4;
+		d /= 4; /* average monster damage per blow */
 
 		/* Cap the to-dam if it's too great */
 //too lame:	if (d > 0) d = (15000 / ((10000 / d) + 100)) + 1;
-		if (d > 0) d = (15000 / ((15000 / d) + 65)) + 1;
+//		if (d > 0) d = (15000 / ((15000 / d) + 65)) + 1;
+//perfect if this were FINAL +dam, but it'll be averaged: if (d > 0) d = (2500 / ((1000 / d) + 20)) + 1;
+		if (d > 0) d = (4000 / ((1500 / d) + 20)) + 1;
+//		if (d > 0) d = (12500 / ((12500 / d) + 65)) + 1;
 /*too powerful:	if (d > 0) d = (25000 / ((10000 / d) + 100)) + 1;
 		if (d > 0) d = (20000 / ((10000 / d) + 100)) + 1;*/
 

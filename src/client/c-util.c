@@ -2073,8 +2073,6 @@ void c_msg_print(cptr msg)
 	/* For message separation (chat/non-chat): */
 	char nameA[20];
 	char nameB[20];
-	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
-	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
 	cptr msg_deadA = "You have been killed";
 	cptr msg_deadB = "You die";
 	cptr msg_unique = "was slain by ";
@@ -2094,6 +2092,8 @@ void c_msg_print(cptr msg)
 	cptr msg_bloodbond = "blood bond";
 	cptr msg_retire = "has retired";
 	cptr msg_fruitbat = "turned into a fruit bat";
+	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
+	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
 
 
 	/* Hack -- Reset */

@@ -2946,6 +2946,10 @@ static void set_server_option(char * option, char * value)
 	{
 		cfg.lifes = atoi(value);
 	}
+	else if (!strcmp(option,"HOUSES_PER_PLAYER"))
+	{
+		cfg.houses_per_player = atoi(value);
+	}
 	else if (!strcmp(option,"DOOR_BUMP_OPEN"))
 	{
 		cfg.door_bump_open = atoi(value);
@@ -3017,6 +3021,10 @@ static void set_server_option(char * option, char * value)
 	else if (!strcmp(option,"SURFACE_ITEM_REMOVAL"))
 	{
 		cfg.surface_item_removal = atoi(value);
+	}
+	else if (!strcmp(option,"DUNGEON_ITEM_REMOVAL"))
+	{
+		cfg.dungeon_item_removal = atoi(value);
 	}
 	else if (!strcmp(option,"DUNGEON_SHOP_CHANCE"))
 	{
@@ -3146,6 +3154,10 @@ static void set_server_option(char * option, char * value)
 	{
 		cfg.arts_disabled = str_to_boolean(value);
 	}
+	else if (!strcmp(option,"WINNERS_FIND_RANDARTS"))
+	{
+		cfg.winners_find_randarts = str_to_boolean(value);
+	}
 	else if (!strcmp(option,"ARTS_LEVEL_REQ"))
 	{
 		cfg.arts_level_req = atoi(value);
@@ -3153,6 +3165,10 @@ static void set_server_option(char * option, char * value)
 	else if (!strcmp(option,"SURFACE_SUMMONING"))
 	{
 		cfg.surface_summoning = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"CLONE_SUMMONING"))
+	{
+		cfg.clone_summoning = atoi(value);
 	}
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }

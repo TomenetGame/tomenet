@@ -208,7 +208,7 @@ school_book[14] = {
 
 -- Create the book of Holy Support
 school_book[15] = {
-	HSENSEMON, HSANCTUARY, HSATISFYHUNGER, HDELCURSES, HSENSE,  HZEAL,
+	HGLOBELIGHT, HSENSEMON, HSANCTUARY, HSATISFYHUNGER, HDELCURSES, HSENSE,  HZEAL,
 }
 
 -- Create the book of beginner's cantrip

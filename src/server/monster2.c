@@ -13,7 +13,8 @@
 
 #define SERVER
 
-//#define DEBUG1	/* for monster generation in place_monster_one */
+#define DEBUG1	/* for monster generation in place_monster_one */
+#define DEBUG1_IDX 1097	/* monster index to monitor at DEBUG1 (1033) */
 
 #include "angband.h"
 
@@ -106,7 +107,7 @@ int pick_ego_monster(int r_idx, int Level);
 void monster_check_experience(int m_idx, bool silent)
 {
 	int		i, try;
-	u32b		levels_gained = 0, levels_gained_tmp = 0;
+	u32b		levels_gained = 0, levels_gained_tmp = 0, levels_gained_melee = 0;
         monster_type    *m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
 
@@ -208,20 +209,27 @@ void monster_check_experience(int m_idx, bool silent)
 //	    	m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * levels_gained) / 10;
 //		m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * levels_gained) / 10;
 //		m_ptr->blow[i].d_dice += levels_gained;
-		/* round upwards */
-		if (((m_ptr->blow[i].d_dice * (levels_gained_tmp - 100) / 100) * 100) <
-		    (m_ptr->blow[i].d_dice * (levels_gained_tmp - 100)))
+
+		/* Add a limit for insanity attacks */
+		levels_gained_melee = levels_gained_tmp;
+//disabled this, instead I just weakened Water Demons! - C. Blue -	if (m_ptr->blow[i].effect == RBE_SANITY) levels_gained_melee /= 2;
+
+		/* round dice upwards sometimes */
+		if (((m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100) * 100) <
+		    (m_ptr->blow[i].d_dice * (levels_gained_melee - 100))) {
 			/* Don't round up for very low monsters, or they become very hard for low players at 7 levels ood */
-			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_tmp - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
-		else
-			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_tmp - 100) / 100);
-		/* round upwards sometimes */
-		if (((m_ptr->blow[i].d_side * (levels_gained_tmp - 100) / 100) * 100) <
-		    (m_ptr->blow[i].d_side * (levels_gained_tmp - 100)))
+			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
+		} else {
+			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_melee - 100) / 100);
+		}
+		/* round sides upwards sometimes */
+		if (((m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) * 100) <
+		    (m_ptr->blow[i].d_side * (levels_gained_melee - 100))) {
 			/* Don't round up for very low monsters, or they become very hard for low players at 7 levels ood */
-			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_tmp - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
-		else
-			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_tmp - 100) / 100);
+			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
+		} else {
+			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100);
+		}
 	}
 }
 
@@ -2354,7 +2362,7 @@ static bool allow_unique_level(int r_idx, struct worldpos *wpos)
  * XXX XXX XXX Actually, do something similar for artifacts, to simplify
  * the "preserve" mode, and to make the "what artifacts" flag more useful.
  */
-static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo)
+static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning)
 {
 	int                     i, Ind, j, m_idx;
 	bool			already_on_level = FALSE;
@@ -2391,7 +2399,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Paranoia */
 	if (!r_ptr->name) return (FALSE);
 #ifdef DEBUG1
-if (r_idx == 862) s_printf("Ok 1\n");
+if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
 #endif
 
 	/* hard-coded -C. Blue */
@@ -2400,12 +2408,14 @@ if (r_idx == 862) s_printf("Ok 1\n");
 	/* Hellraiser and Nether Realm minions may only occur in the Nether Realm  */
 	/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
 	if ((r_idx == 1067) && (getlevel(wpos) < (166 + 1))) return (FALSE);
+	/* Dor may not occur on 'easier' (lol) NR levels */
+	if ((r_idx == 1085) && (getlevel(wpos) < (166 + 9))) return (FALSE);
 	if (((r_idx == 1068) || (r_idx == 1080) || (r_idx == 1083) || (r_idx == 1084)) &&
 	    (getlevel(wpos) < 166)) return (FALSE);
 	/* Zu-Aon guards the bottom of the Nether Realm now */
-	if ((r_idx == 1085) && (getlevel(wpos) < (166 + 30))) return (FALSE);
+	if ((r_idx == 1097) && (getlevel(wpos) < (166 + 30))) return (FALSE);
 	/* On Nether Realm bottom no Nether Guards but only Zu-Aon may spawn */
-	if ((r_idx == 1068) && (getlevel(wpos) == (166 + 30))) r_idx = 1085;
+	if ((r_idx == 1068) && (getlevel(wpos) == (166 + 30))) r_idx = 1097;
 	/* Nether Guard isn't a unique but there's only 1 guard per level,
 	   If Zu-Aon appears, the Nether Guard disappears instead */
 	if (r_idx == 1068) {
@@ -2424,27 +2434,63 @@ if (r_idx == 862) s_printf("Ok 1\n");
 	}
 
 	/* Morgoth may not spawn 'live' if the players on his level aren't prepared correctly */
+	/* Morgoth may not spawn 'live' at all (!) if MORGOTH_NO_TELE_VAULTS is defined!
+	   (works in conjunction with cave_gen in generate.c) */
 	if (r_idx == 862) {
+#ifdef MORGOTH_NO_LIVE_SPAWN
+		/* is Morgoth not generated within a dungeon level's
+		   initialization (cave_gen in generate.c) ? */
+		if (!cave_set_quietly) {
+			/* No, it's a live spawn! (!cave_set_quietly) */
+#if DEBUG_LEVEL > 2
+		        s_printf("Morgoth live spawn prevented (MORGOTH_NO_TELE_VAULTS)\n");
+#endif
+			/* Prevent that. */
+			return (FALSE);
+		} else {
+#endif
 		for (i = 1; i <= NumPlayers; i++)
 		{
 			p_ptr = Players[i];
-			if (p_ptr->admin_wiz || p_ptr->admin_dm) continue;
+			if (is_admin(p_ptr)) continue;
 			if (inarea(&p_ptr->wpos, wpos) &&
 			    (p_ptr->total_winner || (p_ptr->r_killed[860] == 0)))
 			{
 			        /* log */
-				if (p_ptr->total_winner) {
-		    		        s_printf("Morgoth live spawn prevented due to winner %s\n", p_ptr->name);
+#if DEBUG_LEVEL > 2
+				if (cave_set_quietly) {
+					if (p_ptr->total_winner) {
+			    		        s_printf("Morgoth generation prevented due to winner %s\n", p_ptr->name);
+					} else {
+					        s_printf("Morgoth generation prevented due to Sauron-misser %s\n", p_ptr->name);
+					}
 				} else {
-				        s_printf("Morgoth live spawn prevented due to Sauron-misser %s\n", p_ptr->name);
+					if (p_ptr->total_winner) {
+			    		        s_printf("Morgoth live spawn prevented due to winner %s\n", p_ptr->name);
+					} else {
+					        s_printf("Morgoth live spawn prevented due to Sauron-misser %s\n", p_ptr->name);
+					}
 				}
+#endif
 				return (FALSE);
 			}
 		}
+#ifdef MORGOTH_NO_LIVE_SPAWN
+		}
+#endif
+	}
+
+	/* Morgoth shouldn't spawn on NO_DESTROY levels,
+	   since his earthquakes are an important weapon! */
+	if ((r_idx == 862) && (getfloor(wpos)->flags1 & LF1_NO_DESTROY)) {
+#if DEBUG_LEVEL > 2
+		s_printf("Morgoth spawn prevented on NO_DESTROY level\n");
+#endif
+		return (FALSE);
 	}
 
 #ifdef DEBUG1
-if (r_idx == 862) s_printf("Ok 2\n");
+if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 2\n");
 #endif
 
 /* BEGIN of ugly hack */
@@ -2465,7 +2511,7 @@ if (r_idx == 862) s_printf("Ok 2\n");
 	}
 /* END of ugly hack */
 #ifdef DEBUG1
-if (r_idx == 862) s_printf("Ok 3\n");
+if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 3\n");
 #endif
 
 	/* Hack -- "unique" monsters must be "unique" */
@@ -2477,7 +2523,7 @@ if (r_idx == 862) s_printf("Ok 3\n");
 		return (FALSE);
 	}
 #ifdef DEBUG1
-if (r_idx == 862) s_printf("Ok 4\n");
+if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 4\n");
 #endif
 
 	/* Depth monsters may NOT be created out of depth */
@@ -2487,7 +2533,7 @@ if (r_idx == 862) s_printf("Ok 4\n");
 		return (FALSE);
 	}
 #ifdef DEBUG1
-if (r_idx == 862) s_printf("Ok 5\n");
+if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 5\n");
 #endif
 
         /* Ego Uniques are NOT to be created */
@@ -2528,7 +2574,7 @@ if (r_idx == 862) s_printf("Ok 5\n");
 		if ((on_level == 0) && (admin_on_level <= admin_who_killed)) return(FALSE);
 	}
 #ifdef DEBUG1
-if (r_idx == 862) s_printf("Ok 6\n");
+if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 6\n");
 #endif
 
         /* Now could we generate an Ego Monster */
@@ -2588,7 +2634,7 @@ if (r_idx == 862) s_printf("Ok 6\n");
 		return FALSE;
 	}
 #ifdef DEBUG1
-if (r_idx == 862) s_printf("Ok 7\n");
+if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 7\n");
 #endif
 
 	/* Make a new monster */
@@ -2597,7 +2643,7 @@ if (r_idx == 862) s_printf("Ok 7\n");
 	/* Mega-Hack -- catch "failure" */
 	if (!c_ptr->m_idx) return (FALSE);
 #ifdef DEBUG1
-if (r_idx == 862) s_printf("Ok 8\n");
+if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 #endif
 	/* Get a new monster record */
 	m_ptr = &m_list[c_ptr->m_idx];
@@ -2693,8 +2739,19 @@ if (r_idx == 862) s_printf("Ok 8\n");
 	m_ptr->cdis = 0;
 
 	/* clone value */
-	m_ptr->clone=clo;
+	m_ptr->clone = clo;
+	/* does this monster summon clones yet? - C. Blue */
+	m_ptr->clone_summoning = clone_summoning;
+	if (cfg.clone_summoning == 999)
+		m_ptr->clone_summoning = 0;
+	else if (m_ptr->clone_summoning > cfg.clone_summoning)
+		m_ptr->clone += 25 * (m_ptr->clone_summoning - cfg.clone_summoning);
 	if (m_ptr->clone > 100) m_ptr->clone = 100;
+	/* Don't let it overflow over time.. (well, not very realistic) */
+	if (m_ptr->clone_summoning - cfg.clone_summoning > 4) m_ptr->clone_summoning = 4 + cfg.clone_summoning;
+
+	/* Hack - Unique monsters are never clones - C. Blue */
+	if (r_ptr->flags1 & RF1_UNIQUE) m_ptr->clone = 0;
 
 	for (Ind = 1; Ind < NumPlayers + 1; Ind++)
 	{
@@ -2755,13 +2812,20 @@ if (r_idx == 862) s_printf("Ok 8\n");
 
 	/* Success */
 	/* Report some very interesting monster creating: */
+	if (r_idx == 860) s_printf("Sauron was created on %d\n", getlevel(wpos));
 	if (r_idx == 862) {
+		dun_level *l_ptr;
 		s_printf("Morgoth was created on %d\n", getlevel(wpos));
 /*		check_Morgoth(); /* was he allowed to spawn!? */
+#ifdef MORGOTH_GHOST_DEATH_LEVEL
+		l_ptr = getfloor(wpos);
+		l_ptr->flags1 |= LF1_NO_GHOST;
+#endif
 	}
 	if (r_idx == 1032) s_printf("Tik'Svrzllat was created on %d\n", getlevel(wpos));
 	if (r_idx == 1067) s_printf("The Hellraiser was created on %d\n", getlevel(wpos));
-	if (r_idx == 1085) s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", getlevel(wpos));
+	if (r_idx == 1085) s_printf("Dor was created on %d\n", getlevel(wpos));
+	if (r_idx == 1097) s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", getlevel(wpos));
 	return (TRUE);
 }
 
@@ -2775,7 +2839,7 @@ if (r_idx == 862) s_printf("Ok 8\n");
 /*
  * Attempt to place a "group" of monsters around the given location
  */
-static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool small, int s_clone)
+static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool small, int s_clone, int clone_summoning)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2845,7 +2909,7 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 			if (!cave_empty_bold(zcave, my, mx)) continue;
 #endif
 			/* Attempt to place another monster */
-			if (place_monster_one(wpos, my, mx, r_idx, pick_ego_monster(r_idx, getlevel(wpos)), 0, slp, s_clone))
+			if (place_monster_one(wpos, my, mx, r_idx, pick_ego_monster(r_idx, getlevel(wpos)), 0, slp, s_clone, clone_summoning))
 			{
 				/* Add it to the "hack" set */
 				hack_y[hack_n] = my;
@@ -2909,7 +2973,7 @@ static bool place_monster_okay(int r_idx)
  * Note the use of the new "monster allocation table" code to restrict
  * the "get_mon_num()" function to "legal" escort types.
  */
-bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo)
+bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo, int clone_summoning)
 {
 	int                     i;
 
@@ -2920,7 +2984,7 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
 	/* Place one monster, or fail */
-	if (!place_monster_one(wpos, y, x, r_idx, pick_ego_monster(r_idx, level), 0, slp, clo)) return (FALSE);
+	if (!place_monster_one(wpos, y, x, r_idx, pick_ego_monster(r_idx, level), 0, slp, clo, clone_summoning)) return (FALSE);
 
 	/* Require the "group" flag */
 	if (!grp) return (TRUE);
@@ -2930,14 +2994,14 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	if (r_ptr->flags1 & RF1_FRIEND)
 	{
 		/* Attempt to place a group */
-		(void)place_monster_group(wpos, y, x, r_idx, slp, TRUE, clo);
+		(void)place_monster_group(wpos, y, x, r_idx, slp, TRUE, clo, clone_summoning);
 	}
 
 	/* Friends for certain monsters */
 	if (r_ptr->flags1 & RF1_FRIENDS)
 	{
 		/* Attempt to place a group */
-		(void)place_monster_group(wpos, y, x, r_idx, slp, FALSE, clo);
+		(void)place_monster_group(wpos, y, x, r_idx, slp, FALSE, clo, clone_summoning);
 	}
 
 
@@ -2983,14 +3047,14 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 			if (!z) break;
 
 			/* Place a single escort */
-			(void)place_monster_one(wpos, ny, nx, z, pick_ego_monster(z, level), 0, slp, clo);
+			(void)place_monster_one(wpos, ny, nx, z, pick_ego_monster(z, level), 0, slp, clo, clone_summoning);
 
 			/* Place a "group" of escorts if needed */
 			if ((r_info[z].flags1 & RF1_FRIENDS) ||
 			    (r_ptr->flags1 & RF1_ESCORTS))
 			{
 				/* Place a group of monsters */
-				(void)place_monster_group(wpos, ny, nx, z, slp, FALSE, clo);
+				(void)place_monster_group(wpos, ny, nx, z, slp, FALSE, clo, clone_summoning);
 			}
 		}
 	}
@@ -3064,7 +3128,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster */
-	if (place_monster_aux(wpos, y, x, r_idx, slp, grp, FALSE)) return (TRUE);
+	if (place_monster_aux(wpos, y, x, r_idx, slp, grp, FALSE, 0)) return (TRUE);
 
 	/* Oops */
 	return (FALSE);
@@ -3531,7 +3595,7 @@ static bool summon_specific_okay(int r_idx)
  *
  * Note that this function may not succeed, though this is very rare.
  */
-bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone, int type)
+bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone, int type, int allow_sidekicks, int clone_summoning)
 {
 	int i, x, y, r_idx;
 	cave_type **zcave;
@@ -3584,7 +3648,9 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	
 	/* Ok, now let them summon what they can */
 	r_idx = get_mon_num((getlevel(wpos) + lev) / 2 + 5, 0);
-
+	
+	/* Don't allow uniques if escorts/friends (sidekicks) weren't allowed */
+	if (!allow_sidekicks && (r_info[r_idx].flags1 & RF1_UNIQUE)) return (FALSE);
 
 	/* Remove restriction */
 	get_mon_num_hook = dungeon_aux;
@@ -3597,7 +3663,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster (awake, allow groups) */
-	if (!place_monster_aux(wpos, y, x, r_idx, FALSE, TRUE, s_clone)) return (FALSE);
+	if (!place_monster_aux(wpos, y, x, r_idx, FALSE, allow_sidekicks?TRUE:FALSE, s_clone, clone_summoning)) return (FALSE);
 
 	/* Success */
 	return (TRUE);
@@ -3642,7 +3708,7 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 		if (i == 20) return (FALSE);
 
 		/* Attempt to place the monster (awake, don't allow groups) */
-		if (!place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, s_clone))
+		if (!place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, s_clone, 0))
 			return (FALSE);
 
 	}
@@ -3724,12 +3790,12 @@ bool multiply_monster(int m_idx)
 		if (!cave_empty_bold(zcave, y, x)) continue;
 #if 0
 		/* Create a new monster (awake, no groups) */
-		result = place_monster_aux(&m_ptr->wpos, y, x, m_ptr->r_idx, FALSE, FALSE, m_ptr->clone + 10);
+		result = place_monster_aux(&m_ptr->wpos, y, x, m_ptr->r_idx, FALSE, FALSE, m_ptr->clone + 10, m_ptr->clone_summoning + 1);
 #else
 		result = place_monster_one(&m_ptr->wpos, y, x, m_ptr->r_idx,
 				(m_ptr->ego && magik(CLONE_EGO_CHANCE)) ? m_ptr->ego :
 				pick_ego_monster(m_ptr->r_idx, getlevel(&m_ptr->wpos)),
-				0, FALSE, m_ptr->clone + 10);
+				0, FALSE, m_ptr->clone + 10, m_ptr->clone_summoning + 1);
 #endif	// 0
 
 		/* Done */

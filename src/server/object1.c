@@ -40,7 +40,7 @@
  * Max sizes of the following arrays
  */
 #define MAX_ROCKS      62       /* Used with rings (min 58) */
-#define MAX_AMULETS    40       /* Used with amulets (min 30) */
+#define MAX_AMULETS    41       /* Used with amulets (min 30) */
 #define MAX_WOODS      36       /* Used with staffs (min 32) */
 #define MAX_METALS     39       /* Used with wands/rods (min 32/30) */
 #define MAX_COLORS     68       /* Used with potions (min 62) */
@@ -112,9 +112,9 @@ static cptr amulet_adj[MAX_AMULETS] =
         "Copper", "Amethyst", "Mithril", "Sapphire", "Dragon Tooth",
         "Carved Oak", "Sea Shell", "Flint Stone", "Ruby", "Scarab",
         "Origami Paper", "Meteoric Iron", "Platinum", "Glass", "Beryl",
-        "Malachite", "Adamantite", "Mother-of-pearl", "Runed",
-	"Sandalwood", "Emerald", "Aquamarine", "Sapphire", "Glimmer-Stone",
-	"Ebony",
+        "Malachite", "Adamantite", "Mother-of-pearl", "Runed", "Sandalwood",
+	"Emerald", "Aquamarine", "Sapphire", "Glimmer-Stone", "Ebony",
+	"Meerschaum",
 };
 
 static byte amulet_col[MAX_AMULETS] =
@@ -125,9 +125,9 @@ static byte amulet_col[MAX_AMULETS] =
 	TERM_L_UMBER, TERM_VIOLET, TERM_L_BLUE, TERM_BLUE, TERM_L_WHITE,
 	TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN, 
 	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_WHITE, TERM_L_GREEN, 
-	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER,
-	TERM_L_WHITE, TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_LITE,
-	TERM_L_DARK,
+	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER, TERM_L_WHITE,
+	TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_LITE, TERM_L_DARK,
+	TERM_L_WHITE,
 };
 
 
@@ -144,7 +144,7 @@ static cptr staff_adj[MAX_WOODS] =
 	"Rosewood", "Spruce", "Sycamore", "Teak", "Walnut",
 	"Mistletoe", "Hawthorn", "Bamboo", "Silver", "Runed",
 	"Golden", "Ashen", "Gnarled", "Ivory", "Willow",
-	"cryptomeria"
+	"Cryptomeria"
 };
 
 static byte staff_col[MAX_WOODS] =
@@ -238,19 +238,15 @@ static cptr potion_mod[MAX_MOD_COLORS] =
 /* 34 */
 static cptr potion_base[MAX_BASE_COLORS] =
 {
-        "Clear", "Light Brown", "Icky Green", "Strangely Phosphorescent",
+        "Clear", "Light Brown", "Icky Green", "Phosphorescent",
 	"Azure", "Blue", "Black", "Brown",
-	"Chartreuse", "Crimson", "Cyan",
-	"Dark Blue", "Dark Green", "Dark Red", "Green",
-	"Grey", "Hazy", "Indigo",
-	"Light Blue", "Light Green", "Magenta",
-	"Orange",
-	"Pink", "Puce", "Purple",
-	"Red", "Tangerine",
-	"Violet", "Vermilion", "White", "Yellow",
-	"Gloopy Green",
-	"Gold",
-	"Ichor", "Ivory White", "Sky Blue",
+	"Chartreuse", "Crimson", "Cyan", "Dark Blue",
+	"Dark Green", "Dark Red", "Green", "Grey", 
+	"Hazy", "Indigo", "Light Blue", "Light Green", 
+	"Magenta", "Orange", "Pink", "Puce",
+	"Purple", "Red", "Tangerine", "Violet", 
+	"Vermilion", "White", "Yellow", "Gloopy Green", 
+	"Gold", "Ichor", "Ivory White", "Sky Blue", 
 	"Beige",
 };
 
@@ -258,17 +254,13 @@ static byte potion_col[MAX_COLORS] =
 {
         TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_MULTI,
 	TERM_L_BLUE, TERM_BLUE, TERM_L_DARK, TERM_UMBER,
-	TERM_L_GREEN, TERM_RED, TERM_L_BLUE,
-	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_GREEN,
-	TERM_SLATE,TERM_L_WHITE, TERM_VIOLET,
-	TERM_L_BLUE, TERM_L_GREEN, TERM_RED,
-	TERM_ORANGE,
-	TERM_L_RED, TERM_VIOLET, TERM_VIOLET,
-	TERM_RED, TERM_ORANGE,
-	TERM_VIOLET, TERM_RED, TERM_WHITE, TERM_YELLOW,
-	TERM_GREEN,
-	TERM_YELLOW,
-	TERM_RED, TERM_WHITE, TERM_L_BLUE,
+	TERM_L_GREEN, TERM_RED, TERM_L_BLUE, TERM_BLUE, 
+	TERM_GREEN, TERM_RED, TERM_GREEN, TERM_SLATE,
+	TERM_L_WHITE, TERM_VIOLET, TERM_L_BLUE, TERM_L_GREEN, 
+	TERM_RED, TERM_ORANGE, TERM_L_RED, TERM_VIOLET, 
+	TERM_VIOLET, TERM_RED, TERM_ORANGE, TERM_VIOLET, 
+	TERM_RED, TERM_WHITE, TERM_YELLOW, TERM_GREEN,
+	TERM_YELLOW, TERM_RED, TERM_WHITE, TERM_L_BLUE,
 	TERM_L_UMBER,
 };
 
@@ -277,38 +269,44 @@ static char potion_adj[MAX_COLORS][24];
 #else
 static cptr potion_adj[MAX_COLORS] =
 {
-        "Clear", "Light Brown", "Icky Green", "Strangely Phosphorescent",
-	"Azure", "Blue", "Blue Speckled", "Black", "Brown", "Brown Speckled",
-	"Bubbling", "Chartreuse", "Cloudy", "Copper Speckled", "Crimson", "Cyan",
-	"Dark Blue", "Dark Green", "Dark Red", "Gold Speckled", "Green",
-	"Green Speckled", "Grey", "Grey Speckled", "Hazy", "Indigo",
-	"Light Blue", "Light Green", "Magenta", "Metallic Blue", "Metallic Red",
-	"Metallic Green", "Metallic Purple", "Misty", "Orange", "Orange Speckled",
-	"Pink", "Pink Speckled", "Puce", "Purple", "Purple Speckled",
-	"Red", "Red Speckled", "Silver Speckled", "Smoky", "Tangerine",
-	"Violet", "Vermilion", "White", "Yellow", "Violet Speckled",
-	"Pungent", "Clotted Red", "Viscous Pink", "Oily Yellow", "Gloopy Green",
+        "Clear", "Light Brown", "Icky Green", "Phosphorescent",
+	"Azure", "Blue", "Blue Speckled", "Black",
+	"Brown", "Brown Speckled", "Bubbling", "Chartreuse", 
+	"Cloudy", "Copper Speckled", "Crimson", "Cyan",
+	"Dark Blue", "Dark Green", "Dark Red", "Gold Speckled",
+	"Green", "Green Speckled", "Grey", "Grey Speckled", 
+	"Hazy", "Indigo", "Light Blue", "Light Green", 
+	"Magenta", "Metallic Blue", "Metallic Red", "Metallic Green", 
+	"Metallic Purple", "Misty", "Orange", "Orange Speckled",
+	"Pink", "Pink Speckled", "Puce", "Purple",
+	"Purple Speckled", "Red", "Red Speckled", "Silver Speckled", 
+	"Smoky", "Tangerine", "Violet", "Vermilion", 
+	"White", "Yellow", "Violet Speckled", "Pungent", 
+	"Clotted Red", "Viscous Pink", "Oily Yellow", "Gloopy Green",
 	"Shimmering", "Coagulated Crimson", "Yellow Speckled", "Gold",
-	"Manly", "Stinking", "Oily Black", "Ichor", "Ivory White", "Sky Blue",
-	"Beige", "Whirling",
+	"Manly", "Stinking", "Oily Black", "Ichor",
+	"Ivory White", "Sky Blue", "Beige", "Whirling",
 };
 
 static byte potion_col[MAX_COLORS] =
 {
         TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_MULTI,
-	TERM_L_BLUE, TERM_BLUE, TERM_BLUE, TERM_L_DARK, TERM_UMBER, TERM_UMBER,
-	TERM_L_WHITE, TERM_L_GREEN, TERM_WHITE, TERM_L_UMBER, TERM_RED, TERM_L_BLUE,
-	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_YELLOW, TERM_GREEN,
-	TERM_GREEN, TERM_SLATE, TERM_SLATE, TERM_L_WHITE, TERM_VIOLET,
-	TERM_L_BLUE, TERM_L_GREEN, TERM_RED, TERM_BLUE, TERM_RED,
-	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_ORANGE, TERM_ORANGE,
-	TERM_L_RED, TERM_L_RED, TERM_VIOLET, TERM_VIOLET, TERM_VIOLET,
-	TERM_RED, TERM_RED, TERM_L_WHITE, TERM_L_DARK, TERM_ORANGE,
-	TERM_VIOLET, TERM_RED, TERM_WHITE, TERM_YELLOW, TERM_VIOLET,
-	TERM_L_RED, TERM_RED, TERM_L_RED, TERM_YELLOW, TERM_GREEN,
+	TERM_L_BLUE, TERM_BLUE, TERM_BLUE, TERM_L_DARK, 
+	TERM_UMBER, TERM_UMBER, TERM_L_WHITE, TERM_L_GREEN, 
+	TERM_WHITE, TERM_L_UMBER, TERM_RED, TERM_L_BLUE,
+	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_YELLOW, 
+	TERM_GREEN, TERM_GREEN, TERM_SLATE, TERM_SLATE, 
+	TERM_L_WHITE, TERM_VIOLET, TERM_L_BLUE, TERM_L_GREEN, 
+	TERM_RED, TERM_BLUE, TERM_RED, TERM_GREEN, 
+	TERM_VIOLET, TERM_L_WHITE, TERM_ORANGE, TERM_ORANGE,
+	TERM_L_RED, TERM_L_RED, TERM_VIOLET, TERM_VIOLET, 
+	TERM_VIOLET, TERM_RED, TERM_RED, TERM_L_WHITE, 
+	TERM_L_DARK, TERM_ORANGE, TERM_VIOLET, TERM_RED, 
+	TERM_WHITE, TERM_YELLOW, TERM_VIOLET, TERM_L_RED, 
+	TERM_RED, TERM_L_RED, TERM_YELLOW, TERM_GREEN,
 	TERM_MULTI, TERM_RED, TERM_YELLOW, TERM_YELLOW,
-	TERM_L_UMBER, TERM_UMBER, TERM_L_DARK, TERM_RED, TERM_WHITE, TERM_L_BLUE,
-	TERM_L_UMBER, TERM_L_WHITE,
+	TERM_L_UMBER, TERM_UMBER, TERM_L_DARK, TERM_RED, 
+	TERM_WHITE, TERM_L_BLUE, TERM_L_UMBER, TERM_L_WHITE,
 };
 #endif	// 0
 
@@ -2293,11 +2291,17 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	{
 		t = object_desc_str(t, mode < 8 ? " of " : "-");
 		t = object_desc_str(t, r_info[o_ptr->pval].name + r_name);
+
+		/* Polymorph rings that run out.. */
+		t = object_desc_str(t, "(");
+		t = object_desc_num(t, o_ptr->timeout);
+		t = object_desc_str(t, mode < 8 ? " turns of energy)" : "t)");
 	}
 
 
 	/* Indicate "charging" artifacts XXX XXX XXX */
-	if (known && o_ptr->timeout && !((o_ptr->tval == TV_LITE) && (f4 & TR4_FUEL_LITE)))
+	if (known && o_ptr->timeout && !((o_ptr->tval == TV_LITE) && (f4 & TR4_FUEL_LITE))
+	    && !((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)))
 	{
 		/* Hack -- Dump " (charging)" if relevant */
 		t = object_desc_str(t, mode < 8 ? " (charging)" : "(#)");
@@ -2978,6 +2982,10 @@ cptr item_activation(object_type *o_ptr)
 		case ART_HELLFIRE:
 		{
 			return "invoke raw chaos every 250+d200 turns";
+		}
+		case ART_SPIRITSHARD:
+		{
+			return "turn into a wraith every 300+d100 turns";
 		}
 	}
 
@@ -3665,6 +3673,9 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	u32b f1, f2, f3, f4, f5, esp;
 	bool first = TRUE;
 
+	/* save timed effects that might be changed on weapon switching - C. Blue */
+	long tim_wraith = p_ptr->tim_wraith;
+
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
@@ -3705,6 +3716,10 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	/* get our weapon back */
 	object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
 	calc_bonuses(Ind);
+
+	/* restore timed effects that might have been changed from the weapon switching - C. Blue */
+	p_ptr->tim_wraith = tim_wraith;
+
 	suppress_message = FALSE;
 }
 	
@@ -3764,10 +3779,22 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 /* TODO: tell something about boomerangs */
 static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 {
-	//player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind];
 	u32b f1, f2, f3, f4, f5, esp;
+	object_type forge, *old_ptr = &forge;
 	bool first = TRUE;
 	// int i;
+
+	/* save timed effects that might be changed on ammo switching - C. Blue */
+	long tim_wraith = p_ptr->tim_wraith;
+
+	/* swap hack */
+	object_copy(old_ptr, &p_ptr->inventory[INVEN_AMMO]);
+	object_copy(&p_ptr->inventory[INVEN_AMMO], o_ptr);
+
+	/* Hack -- hush the messages up */
+	suppress_message = TRUE;
+	calc_bonuses(Ind);
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -3809,6 +3836,15 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 		roff(".");
 	}
 #endif	// 0
+
+	/* get our ammo back */
+	object_copy(&p_ptr->inventory[INVEN_AMMO], old_ptr);
+	calc_bonuses(Ind);
+
+	/* restore timed effects that might have been changed from the weapon switching - C. Blue */
+	p_ptr->tim_wraith = tim_wraith;
+
+	suppress_message = FALSE;
 }
 
 
@@ -4070,6 +4106,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 #endif
 	if (f4 & TR4_COULD2H) fprintf(fff, "It can be wielded two-handed.\n");
 	if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
+
+	/* Morgoth crown hardcoded note to give a warning!- C. Blue */
+	if (o_ptr->name1 == ART_MORGOTH)
+	{
+		fprintf(fff, "It may only be worn by kings and queens!\n");
+	}
 
 	/* Mega Hack^3 -- describe the amulet of life saving */
 	if (o_ptr->tval == TV_AMULET &&
@@ -4644,12 +4686,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	if (f5 & (TR5_DRAIN_HP))
 	{
-		fprintf(fff, "It drains life.\n");
+		fprintf(fff, "It drains your life.\n");
 	}
 
 	if (f3 & (TR3_DRAIN_EXP))
 	{
-		fprintf(fff, "It drains experience.\n");
+		fprintf(fff, "It drains your experience.\n");
 	}
 	if (f3 & (TR3_TELEPORT))
 	{
@@ -4838,6 +4880,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
 
+
+	/* Morgoth crown hardcoded note to give a warning!- C. Blue */
+	if (o_ptr->name1 == ART_MORGOTH)
+	{
+		info[i++] = "It may only be worn by kings and queens!";
+	}
 
 	/* Mega-Hack -- describe activation */
 	if (f3 & TR3_ACTIVATE)
@@ -5429,6 +5477,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
         if (f4 & TR4_MUST2H) info[i++] = "It must be wielded two-handed.";
 #endif
 
+	/* Morgoth crown hardcoded note to give a warning!- C. Blue */
+	if (o_ptr->name1 == ART_MORGOTH)
+	{
+		info[i++] = "It may only be worn by kings and queens!";
+	}
+
 	/* Mega Hack^3 -- describe the amulet of life saving */
 	if (o_ptr->tval == TV_AMULET &&
 		o_ptr->sval == SV_AMULET_LIFE_SAVING)
@@ -5963,12 +6017,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
         if (f5 & (TR5_DRAIN_HP))
 	{
-                info[i++] = "It drains life.";
+                info[i++] = "It drains your life.";
 	}
 
 	if (f3 & (TR3_DRAIN_EXP))
 	{
-		info[i++] = "It drains experience.";
+		info[i++] = "It drains your experience.";
 	}
 	if (f3 & (TR3_TELEPORT))
 	{

@@ -1245,7 +1245,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 		if (grabchance < 1) continue;
 
 //		grabchance = 50 + q_ptr->lev/2 - (q_ptr->blind?30:0);
-		if (grabchance > 90) grabchance = 90;/* Interception cap */
+		if (grabchance > INTERCEPT_CAP) grabchance = INTERCEPT_CAP;/* Interception cap */
 
 		/* Got disrupted ? */
 		if (magik(grabchance))
@@ -1602,7 +1602,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	int rad = 0, srad;
 
 	//u32b f7 = race_inf(&m_list[m_idx])->flags7;
-	int s_clone = 0;
+	int s_clone = 0, clone_summoning = m_ptr->clone_summoning;
 
 
 	/* To avoid TELE_TO from CAVE_ICKY pos on player outside */
@@ -1644,8 +1644,10 @@ bool make_attack_spell(int Ind, int m_idx)
 	f6 = r_ptr->flags6;
 	f7 = r_ptr->flags7;
 
-	if (f7 & RF7_S_LOWEXP) s_clone=85;
-	if (f7 & RF7_S_NOEXP) s_clone=100;
+	/* reduce exp from summons and from summons' summons.. */
+	if (cfg.clone_summoning != 999) clone_summoning++;
+	if (f7 & RF7_S_LOWEXP) s_clone = 75;
+	if (f7 & RF7_S_NOEXP) s_clone = 100;
 
 	/* Only innate spells */
 	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) f5 = f6 = 0;
@@ -1928,7 +1930,8 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons an animal!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANIMAL);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
+				m_ptr->clone_summoning = clone_summoning;
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -2416,7 +2419,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 //			else msg_format(Ind, "%^s casts a fire ball.", m_name);
-			else sprintf(p_ptr->attacker, "%s casts an fire ball of", m_name);
+			else sprintf(p_ptr->attacker, "%s casts a fire ball of", m_name);
 			breath(Ind, m_idx, GF_FIRE,
 					randint(rlev * 7 / 2) + 10, y, x, srad);
 			update_smart_learn(m_idx, DRS_FIRE);
@@ -2430,7 +2433,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 //			else msg_format(Ind, "%^s casts a frost ball.", m_name);
-			else sprintf(p_ptr->attacker, "%s casts an frost ball of", m_name);
+			else sprintf(p_ptr->attacker, "%s casts a frost ball of", m_name);
 			breath(Ind, m_idx, GF_COLD,
 					randint(rlev * 2) + 10, y, x, srad);
 			update_smart_learn(m_idx, DRS_COLD);
@@ -3235,8 +3238,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons some animals!", m_name);
 			for (k = 0; k < 4; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANIMAL);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
 		}
@@ -3287,8 +3291,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically codes some software bugs.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_BUG);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_BUG, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
 		}
@@ -3301,7 +3306,7 @@ bool make_attack_spell(int Ind, int m_idx)
 
 			/* No teleporting within no-tele vaults and such */
 			if(!(zcave=getcave(wpos))) break;
-			if (zcave[oy][ox].info & CAVE_ICKY)
+			if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK))
 			{
 				msg_format(Ind, "%^s fails to command you to return.", m_name);
 				break;
@@ -3309,7 +3314,8 @@ bool make_attack_spell(int Ind, int m_idx)
 
 			disturb(Ind, 1, 0);
 			/* Hack -- duplicated check to avoid silly message */
-			if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) || (p_ptr->res_tele && (rand_int(100) < 67)))
+			if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) ||
+			    (p_ptr->res_tele && (rand_int(100) < 67)) || (rand_int(100 + 50) < p_ptr->skill_sav))
 			{
 				msg_format(Ind, "%^s commands you to return, but you don't care.", m_name);
 				break;
@@ -3367,8 +3373,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically codes some RNGs.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_RNG);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_RNG, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
 		}
@@ -3424,8 +3431,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			//else msg_format(Ind, "%^s magically summons a Thunderlord!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_DRAGONRIDER);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_DRAGONRIDER, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
 		}
@@ -3446,8 +3454,9 @@ bool make_attack_spell(int Ind, int m_idx)
 
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_KIN);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_KIN, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 
 			break;
@@ -3462,7 +3471,8 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons greater demons!", m_name);
 			if (blind && count) msg_print(Ind, "You hear heavy steps nearby.");
-			summon_cyber(Ind, s_clone);
+			summon_cyber(Ind, s_clone, clone_summoning);
+			m_ptr->clone_summoning = clone_summoning;
 			break;
 		}
 
@@ -3475,8 +3485,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons help!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, 0);
+				count += summon_specific(wpos, y, x, rlev, s_clone, 0, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
 		}
@@ -3490,8 +3501,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons monsters!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, 0);
+				count += summon_specific(wpos, y, x, rlev, s_clone, 0, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
 		}
@@ -3505,8 +3517,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons ants.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANT);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANT, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
 		}
@@ -3520,8 +3533,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons spiders.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_SPIDER);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_SPIDER, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
 		}
@@ -3535,8 +3549,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons hounds.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HOUND);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HOUND, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
 		}
@@ -3550,8 +3565,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons hydras.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HYDRA);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HYDRA, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
 		}
@@ -3565,8 +3581,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons an angel!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANGEL);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANGEL, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
 		}
@@ -3580,8 +3597,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons a hellish adversary!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_DEMON);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_DEMON, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
 		}
@@ -3595,8 +3613,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons an undead adversary!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_UNDEAD);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_UNDEAD, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
 		}
@@ -3610,8 +3629,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons a dragon!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_DRAGON);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_DRAGON, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
 		}
@@ -3625,8 +3645,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons greater undead!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
 			{
 				msg_print(Ind, "You hear many creepy things appear nearby.");
@@ -3643,8 +3664,9 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons ancient dragons!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_DRAGON);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_DRAGON, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
 			{
 				msg_print(Ind, "You hear many powerful things appear nearby.");
@@ -3661,12 +3683,14 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons mighty undead opponents!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_WRAITH);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_WRAITH, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
 			{
 				msg_print(Ind, "You hear many creepy things appear nearby.");
@@ -3683,12 +3707,14 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons special opponents!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_UNIQUE);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_UNIQUE, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
 			}
+			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
 			{
 				msg_print(Ind, "You hear many powerful things appear nearby.");
@@ -4549,8 +4575,12 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	}
 #endif
 
+#if 0 /* moved to process_monsters */
+	/* for C_BLUE_AI (to remember if the player stood beside us and
+	   then runs away from us to make us follow him): */
 	if ((ABS(m_ptr->fy - y2) <= 1) && (ABS(m_ptr->fx - x2) <= 1))
 		m_ptr->last_target = p_ptr->id;
+#endif
 
 	/* Extract the "pseudo-direction" */
 	y = m_ptr->fy - y2;
@@ -4623,11 +4653,12 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	/* Anti-cheeze vs Hit&Run-tactics if player has slightly superiour speed:
 	   Monster tries to make player approach so it gets attack turns! -C. Blue */
 	else if ((
-#if 1		/* Demons are reckless, undead/nonliving are rarely intelligent, animals neither */
+#if 1 /* Different behaviour, depending on monster type and level? */
+		/* Demons are reckless, undead/nonliving are rarely intelligent, animals neither */
 		((r_ptr->level >= 30) &&
 		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON))) ||
 		/* Elder animals have great instinct or intelligence */
-		((r_ptr->level >= 60) && 
+		((r_ptr->level >= 50) && 
 		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON))) ||
 #endif
 		(r_ptr->flags2 & RF2_SMART)) && !(r_ptr->flags2 & RF2_STUPID) &&
@@ -4636,12 +4667,14 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		(ABS(m_ptr->fy - y2) <= 2 && ABS(m_ptr->fx - x2) == 2)) &&
 		/* Player must be faster than the monster to cheeze */
 		(p_ptr->pspeed > m_ptr->mspeed) && rand_int(600) &&
+#if 1 /* Watch our/player's HP? */
 		/* As long as we have good HP there's no need to hold back,
 		   [if player is low on HP we should try to attack him anyways,
 		   this is not basing on consequent logic though, since we probably still can't hurt him] */
 		(((m_ptr->hp <= (m_ptr->maxhp * 3) / 5) && (p_ptr->chp > (p_ptr->mhp * 5) / 6)) ||
 		/* If we're very low on HP, only try to attack the player if he's hurt *badly* */
 		((m_ptr->hp < (m_ptr->maxhp * 1) / 4) && (p_ptr->chp >= (p_ptr->mhp * 1) / 5))) &&
+#endif
 		/* No need to keep a distance if the player doesn't pose
 		   a potential threat in close combat: */
 		(p_ptr->s_info[SKILL_MASTERY].value >= 3000 || p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= 10000) &&
@@ -4851,6 +4884,47 @@ static void get_moves(int Ind, int m_idx, int *mm)
 #endif	// MONSTERS_HEMM_IN
 #endif	// STUPID_MONSTERS
 
+#ifdef C_BLUE_AI
+	/* Don't waste turns if the player is hiding in non-passable
+	   (to us) area to charge in a pattern that won't allow us to
+	   get a turn if we keep moving back and forth pointlessly. */
+	if ((
+#if 1 /* Different behaviour, depending on monster type and level? */
+		/* Demons are reckless, undead/nonliving are rarely intelligent, animals neither */
+		((r_ptr->level >= 30) &&
+		!(r_ptr->flags3 & (RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON))) ||
+		/* Elder animals have great instinct or intelligence */
+		((r_ptr->level >= 50)) ||
+#endif
+		(r_ptr->flags2 & RF2_SMART)) && !(r_ptr->flags2 & RF2_STUPID) &&
+		/* Distance must == 2; distance() won't work for diagonals here */
+		((ABS(m_ptr->fy - y2) == 2 && ABS(m_ptr->fx - x2) <= 2) ||
+		(ABS(m_ptr->fy - y2) <= 2 && ABS(m_ptr->fx - x2) == 2)) &&
+		/* Player must be faster than the monster to cheeze */
+		(p_ptr->pspeed > m_ptr->mspeed) && rand_int(600) &&
+#if 1 /* Watch our/player's HP? */
+		/* As long as we have good HP there's no need to hold back,
+		   [if player is low on HP we should try to attack him anyways,
+		   this is not basing on consequent logic though, since we probably still can't hurt him] */
+		(((m_ptr->hp <= (m_ptr->maxhp * 3) / 5) && (p_ptr->chp > (p_ptr->mhp * 5) / 6)) ||
+		/* If we're very low on HP, only try to attack the player if he's hurt *badly* */
+		((m_ptr->hp < (m_ptr->maxhp * 1) / 4) && (p_ptr->chp >= (p_ptr->mhp * 1) / 5))) &&
+#endif
+		/* No need to keep a distance if the player doesn't pose
+		   a potential threat in close combat: */
+		(p_ptr->s_info[SKILL_MASTERY].value >= 3000 || p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= 10000) &&
+		/* If there's los we can just cast a spell -
+		   this assumes the monster can cast damaging spells, might need fixing */
+		!los(&p_ptr->wpos, y2, x2, m_ptr->fy, m_ptr->fx) &&
+		/* Only stay back if the player moved away from us -
+		   this assumes the monster didn't perform a RAND_ turn, might need fixing */
+		(m_ptr->last_target == p_ptr->id))
+	{
+		/* Stay still if we have a perfect position towards the player -
+		   no need to waste our turn then */
+		if ((ABS(m_ptr->fy - y2) == 0) || (ABS(m_ptr->fx - x2) == 0)) return;
+	}
+#endif
 
 	/* Extract the "absolute distances" */
 	ax = ABS(x);
@@ -5313,6 +5387,9 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist)
 	if (r_ptr->flags2 & RF2_INVISIBLE || r_ptr->flags1 & RF1_QUESTOR ||
 			r_ptr->flags3 & RF3_DRAGONRIDER)	/* have ESP */
 		return(FALSE);
+	/* since RF1_QUESTOR is currently not used/completely implemented,
+	   I hard-code Morgoth and Sauron here - C. Blue */
+	if ((m_ptr->r_idx == 860) || (m_ptr->r_idx == 862)) return(FALSE);
 
 	/* Probably they detect things by non-optical means */
 	if (r_ptr->flags3 & RF3_NONLIVING && r_ptr->flags2 & RF2_EMPTY_MIND)
@@ -5965,7 +6042,7 @@ static void process_monster(int Ind, int m_idx)
 		}
 
 		/* Permanent wall */
-		/* Hack: Morgie DIGS!! */
+		/* Hack: Morgy DIGS!! */
 //		else if ( (c_ptr->feat >= FEAT_PERM_EXTRA &&
 		else if (	(	(f_info[c_ptr->feat].flags1 & FF1_PERMANENT) &&
 				    !(	(r_ptr->flags2 & RF2_KILL_WALL) &&
@@ -7289,6 +7366,11 @@ void process_monsters(void)
 			if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
 			process_monster(closest, i);
+
+		        /* for C_BLUE_AI (to remember if the player stood beside us and
+	    		   then runs away from us to make us follow him): */
+	        	if ((ABS(m_ptr->fy - p_ptr->py) <= 1) && (ABS(m_ptr->fx - p_ptr->px) <= 1))
+                		m_ptr->last_target = p_ptr->id;
 
 			suppress_message = FALSE;
 		}

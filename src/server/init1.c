@@ -961,7 +961,8 @@ static cptr d_info_flags2[] =
 	"RANDOM",
 	"IRON",
 	"HELL",
-	"NOMAP",	/* will be annexed to DF1_FORGET */
+	"NO_RECALL_DOWN",
+/*	"NOMAP",	/* will be annexed to DF1_FORGET */
 	"NO_MAGIC_MAP",
 	"XXX1",
 	"XXX1",
@@ -7185,7 +7186,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			{
 				/* Place it */
 				m_allow_special[monster_index] = TRUE;
-				place_monster_aux(y, x, monster_index, meta_sleep, FALSE, MSTATUS_ENEMY);
+				place_monster_aux(y, x, monster_index, meta_sleep, FALSE, MSTATUS_ENEMY, 0);
 				m_allow_special[monster_index] = FALSE;
 			}
 #endif	// 0
@@ -7204,7 +7205,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				 */
 				if (rand_int(100) < 75)
 				{
-					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
+					place_object(wpos, y, x, FALSE, FALSE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 				// else
 				if (rand_int(100) < 25)
@@ -7224,25 +7225,25 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 //					object_level = quest[p_ptr->inside_quest].level + object_index;
 					object_level = getlevel(wpos) + object_index;
 					if (rand_int(100) < 75)
-						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
+						place_object(wpos, y, x, FALSE, FALSE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					else if (rand_int(100) < 80)
-						place_object(wpos, y, x, TRUE, FALSE, default_obj_theme, 0);
+						place_object(wpos, y, x, TRUE, FALSE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					else
-						place_object(wpos, y, x, TRUE, TRUE, default_obj_theme, 0);
+						place_object(wpos, y, x, TRUE, TRUE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 
 					object_level = level;
 				}
 				else if (rand_int(100) < 75)
 				{
-					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme, 0);
+					place_object(wpos, y, x, FALSE, FALSE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 				else if (rand_int(100) < 80)
 				{
-					place_object(wpos, y, x, TRUE, FALSE, default_obj_theme, 0);
+					place_object(wpos, y, x, TRUE, FALSE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 				else
 				{
-					place_object(wpos, y, x, TRUE, TRUE, default_obj_theme, 0);
+					place_object(wpos, y, x, TRUE, TRUE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 			}
 			/* Random trap */
@@ -7262,7 +7263,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				object_prep(o_ptr, object_index);
 
 				/* Apply magic (no messages, no artifacts) */
-				apply_magic(wpos, o_ptr, dun_level, FALSE, TRUE, FALSE);
+				apply_magic(wpos, o_ptr, dun_level, FALSE, TRUE, FALSE, TRUE);
 
 				k_allow_special[object_index] = FALSE;
 

@@ -184,6 +184,43 @@ void addtown(int y, int x, int base, u16b flags, int type)
 	numtowns++;
 }
 
+/* Erase a custom town again. Why wasn't this implemented already!? - C. Blue */
+void deltown(int Ind)
+{
+	int x, y, i;
+	struct worldpos *wpos = &Players[Ind]->wpos, tpos;
+
+#if 1
+	for (x = wpos->wx - wild_info[wpos->wy][wpos->wx].radius;
+	    x <= wpos->wx + wild_info[wpos->wy][wpos->wx].radius; x++)
+	for (y = wpos->wy - wild_info[wpos->wy][wpos->wx].radius;
+	    y <= wpos->wy + wild_info[wpos->wy][wpos->wx].radius; y++)
+	if (in_bounds_wild(y, x) && (towndist(x, y) <= abs(wpos->wx-x)+abs(wpos->wy-y))) {
+		tpos.wx = x; tpos.wy = y; tpos.wz = 0;
+		for(i=0;i<num_houses;i++)
+		if(inarea(&tpos, &houses[i].wpos)) {
+#if 0
+			fill_house(&houses[i], FILL_MAKEHOUSE, NULL);
+	    		houses[i].flags|=HF_DELETED;
+#endif
+		}
+		wilderness_gen(&tpos);
+	}
+#endif
+
+	if(numtowns <= 5) return;
+
+
+	wild_info[wpos->wy][wpos->wx].type=WILD_GRASSLAND;
+	wild_info[wpos->wy][wpos->wx].radius=towndist(y, x);
+	wilderness_gen(wpos);
+
+	/* 'SHRINK' by reverse GROW ;) */
+	GROW(town, numtowns, numtowns-1, struct town_type);
+
+	numtowns--;
+}
+
 void wild_bulldoze()
 {
 	int x,y;
@@ -724,7 +761,7 @@ void wild_add_monster(struct worldpos *wpos)
 	r_idx = get_mon_num(monster_level, 0);
 	
 	/* place the monster */
-	place_monster_aux(wpos, monst_y, monst_x, r_idx, FALSE, TRUE, FALSE);
+	place_monster_aux(wpos, monst_y, monst_x, r_idx, FALSE, TRUE, FALSE, 0);
 	
 	/* hack -- restore the monster selection function */
 	get_mon_num_hook = dungeon_aux;
@@ -944,6 +981,7 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y)
 						break;
 					}
 					/* Hack -- only drop food the first time */
+					food.marked2 = ITEM_REMOVAL_NEVER;
 					if (!(w_ptr->flags & WILD_F_GENERATED)) drop_near(&food, -1, wpos, y, x);
 				}				
 			}
@@ -1101,7 +1139,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 		if (cave_clean_bold(zcave,y,x))
 		{			
 			object_level = w_ptr->radius/2 +1;
-			place_object(wpos,y,x,FALSE,FALSE,default_obj_theme, 0);
+			place_object(wpos,y,x,FALSE,FALSE,FALSE,default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 			num_objects--;
 		}
 		trys++;	
@@ -1126,6 +1164,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			
 			k_idx = lookup_kind(TV_FOOD,food_sval);
 			invcopy(&forge, k_idx);
+			forge.marked2 = ITEM_REMOVAL_NEVER;
 			drop_near(&forge, -1, wpos, y, x);
 			
 			num_food--;
@@ -1150,6 +1189,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			/* base of 500 feet for the bones */
 			k_idx = get_obj_num(10);
 			invcopy(&forge, k_idx);
+			forge.marked2 = ITEM_REMOVAL_NEVER;
 			drop_near(&forge, -1, wpos, y, x);
 			
 			num_bones--;
@@ -1180,7 +1220,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 		
 		/* place the owner */
 		
-		place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE);
+		place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE, 0);
 	}
 	
 	
@@ -1197,7 +1237,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 		{
 			for (x = x1; x <= x2; x++)
 			{
-				place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE);
+				place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE, 0);
 			}
 		}
 	}

@@ -84,7 +84,7 @@ D:A fiery circle of bronze, with mighty spells to ward off evil.
 
 N:5:of Ingwe
 I:40:11:3
-W:65:30:3:100000
+W:65:40:3:100000
 F:INT | WIS | CHR | SUST_INT | SUST_WIS | SUST_CHR | SEARCH | INFRA | HIDE_TYPE | 
 F:SEE_INVIS | FREE_ACT | ACTIVATE | 
 F:RES_ACID | RES_COLD | RES_ELEC | RES_SHARDS | RES_CHAOS
@@ -128,7 +128,7 @@ D:of Dragonrider.
 
 N:8:of Barahir
 I:45:32:2
-W:50:25:2:100000
+W:50:45:2:100000
 F:STR | INT | WIS | DEX | CON | CHR | STEALTH | HIDE_TYPE | 
 F:RES_POIS | RES_DARK | ACTIVATE | SEE_INVIS | SEARCH |
 F:REGEN_MANA  | RES_FEAR | HOLD_LIFE | 
@@ -258,8 +258,8 @@ D:understanding as you stare into its depths.
 
 N:16:'Razorback'
 I:38:6:0
-W:75:9:500:350000
-P:30:2d4:-4:0:30
+W:75:9:400:350000
+P:40:2d4:-4:0:30
 F:FREE_ACT | IM_ELEC | SPECIAL_GENE | IM_ACID | RES_FEAR | 
 F:IM_FIRE | IM_COLD | RES_POIS | RES_LITE | RES_DARK | 
 F:LITE1 | SEE_INVIS | ESP_DRAGON |
@@ -538,7 +538,7 @@ D:cost.
 
 N:36:of Thranduil
 I:32:2:2
-W:20:2:15:50000
+W:20:3:15:50000
 P:2:0d0:0:0:10
 F:INT | WIS | HIDE_TYPE | 
 F:RES_BLIND | ESP_ORC | ESP_EVIL | ESP_TROLL
@@ -607,8 +607,8 @@ P:5:1d3:25:25:10
 F:INT | WIS | SEARCH | HIDE_TYPE | SHOW_MODS |
 F:SEE_INVIS | NO_MAGIC | HEAVY_CURSE | TY_CURSE | 
 F:RES_DISEN | RES_FEAR | FREE_ACT | RES_ACID | RES_FIRE | RES_POIS |
-F:IM_COLD | ACTIVATE | DRAIN_HP | 
-F:TELEPORT
+F:IM_COLD | ACTIVATE | DRAIN_HP | AUTO_CURSE | AGGRAVATE
+#F:NO_TELE | AUTO_CURSE
 D:A headpiece, gaudy and barbaric, that betrayed a warrior when he most 
 D:needed succor.
 
@@ -1067,7 +1067,7 @@ D:who wield it eventually.
 
 N:77:'Zarcuthra'
 I:23:25:4
-W:30:180:250:205000
+W:30:80:250:205000
 P:0:5d6:19:25:0
 F:STR | CHR | INFRA | HIDE_TYPE | VORPAL | DRAIN_MANA | 
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | BRAND_FIRE |
@@ -1763,6 +1763,7 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | LUCK |
 F:SEE_INVIS | ESP_EVIL | ESP_DEMON | NEVER_BLOW | INFRA
 F:PRECOGNITION | IM_FIRE | ULTIMATE
 F:REGEN_MANA
+F:SPECIAL_GENE
 D:A simple, wooden wizard's staff. Unremarkable in all aspects... 
 D:except that it pulses with overwhelming power.
 
@@ -1980,6 +1981,7 @@ F:SLAY_EVIL | SLAY_UNDEAD | SLAY_DEMON | SLAY_TROLL | SLAY_DEMON |
 F:FREE_ACT | RES_FIRE | RES_DARK | LITE1 | SEE_INVIS | SLOW_DIGEST | REGEN | 
 F:ACTIVATE | SHOW_MODS | BLESSED |
 F:PRECOGNITION | NO_MAGIC | ULTIMATE
+F:SPECIAL_GENE
 D:A warm light bathes this translucent blade. The power of the fates are 
 D:at the command of its wielder as the weapon passes Supreme Judgment on 
 D:the inhabitants of Angband.
@@ -2028,6 +2030,7 @@ P:0:5d5:5:6:0
 F:BRAND_COLD | BRAND_FIRE | BRAND_ELEC | BRAND_ACID | BRAND_POIS |
 F:SLAY_DRAGON | SLAY_GIANT | SLAY_TROLL | KILL_UNDEAD | SLAY_ORC |
 F:SLAY_DEMON | SLAY_EVIL
+F:SPECIAL_GENE
 D:Made during the war against Morgoth in Beleriand, this powerful 
 D:bolt is the bane of Morgoth's power, and has especial strength 
 D:against those foes who are already dead.
@@ -2044,6 +2047,7 @@ F:XTRA_MIGHT | XTRA_SHOTS | IM_ELEC | REFLECT | INVIS | STEALTH |
 F:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR |
 F:RES_CHAOS | RES_DISEN | RES_CONF | RES_BLIND | INFRA | ESP_ORC | ESP_TROLL | ESP_EVIL |
 F:PRECOGNITION | NO_MAGIC | ULTIMATE
+F:SPECIAL_GENE
 D:Designed to be used with the Seeker Bolt of the Elves, this Crossbow 
 D:is perfect against the terrible powers of Morgoth.
 
@@ -2209,7 +2213,7 @@ D:With the Helm 'Lebohaum' your head is safe!
 # The Balance Dragon Scale Mail 'Mediator'
 
 N:166:'Mediator'
-I:38:30:0
+I:38:20:0
 W:95:12:500:400000
 P:50:2d4:-8:0:35
 F:FEATHER | FLY | ESP_DRAGON |
@@ -2606,7 +2610,7 @@ F:SLAY_UNDEAD | VAMPIRIC
 N:212:'Schmerzglaube'
 I:23:33:2
 W:50:30:70:120000
-P:5:5d7:10:10:0
+P:0:5d7:10:10:5
 F:BLOWS | CON | HIDE_TYPE |
 F:SLAY_ANIMAL | SLAY_UNDEAD | SLAY_DEMON | 
 #F:ESP_ANIMAL | ESP_UNDEAD | ESP_DEMON | 
@@ -2687,15 +2691,16 @@ D:and at the same time protect him from the wrath of unleashed waves.
 # The Shadow Cloak of the Dungeon Wizard
 
 N:218:of the Dungeon Wizard
-I:35:6:10
+I:35:6:37
 W:127:220:2:0
 P:6:0d0:0:0:200
-F:STR | DEX | CON | INT | WIS | CHR | HIDE_TYPE | SPEED | STEALTH | INVIS | LUCK |
-F:IM_FIRE | IM_COLD | IM_ACID | IM_ELEC | IM_POISON | IM_WATER |
-F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK |
-F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_BLIND | RES_CONF | RES_MANA | RES_TIME |
+F:STR | DEX | CON | INT | WIS | CHR | HIDE_TYPE | SPEED | STEALTH | 
+F:IM_FIRE | IM_COLD | IM_ACID | IM_ELEC | IM_POISON | IM_WATER | 
+F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK | RES_TIME |
+F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_BLIND | RES_CONF | RES_MANA |
 F:FREE_ACT | HOLD_LIFE | FEATHER | FLY | WRAITH | PASS_WATER | 
-F:REGEN_MANA | REGEN | ESP_ALL
+F:REGEN_MANA | REGEN | ESP_ALL | SPECIAL_GENE
+#F:INVIS | LUCK | LIFE
 D:Not to be found by players. (C. Blue)
 
 
@@ -2996,11 +3001,23 @@ D:Where Quietus hits, silence follows.
 N:243:'Icon Of Life'
 I:23:29:3
 W:80:50:310:200000
-P:0:6d9:0:0:30
+P:0:6d7:0:0:30
 F:SHOW_MODS | LIFE | LITE2 | BLESSED | 
 F:RES_DARK | RES_LITE | RES_NETHER | RES_WATER | RES_TIME
 D:A sacred artifact to defend life rather than to threaten it.
 
+
+# The Amulet 'Spirit Shard'
+
+N:244:'Spirit Shard'
+I:40:40:10
+W:70:70:3:150000
+# Maybe activate for invis and special_gene from Tselakus..
+# hm it would be too common and easy if Tselakus drops it.
+F:HIDE_TYPE | INSTA_ART | SEE_INVIS | CURSED | TY_CURSE
+F:ACTIVATE | HOLD_LIFE | FREE_ACT | INFRA | ESP_UNDEAD
+#F:WRAITH
+D:A translucent shard that shimmers in white and silver.
 
 
 

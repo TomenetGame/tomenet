@@ -126,7 +126,7 @@ HPROTEVIL = add_spell
 {
 	["name"] = 	"Protection From Evil",
         ["school"] = 	{SCHOOL_HDEFENSE},
-        ["level"] = 	15,
+        ["level"] = 	12,
         ["mana"] = 	20,
         ["mana_max"] = 	60,
         ["fail"] = 	20,
@@ -185,9 +185,9 @@ HMARTYR = add_spell
 			return "dur 15  timeout 1000"
 			end,
 	["desc"] = 	{
-			"Turns you into an holy martyr, blessed with immortality",
-			"to fulfil his work. When the holy fire ceases, you will",
-			"be left with 1 HP. It will take a while until the heavens",
+			"Turns you into an holy martyr, blessed with immortality to fulfil",
+			"his work. When the holy fire ceases, you will be very close to",
+			"death (up to 30 HP left). It will take a while until the heavens",
 			"are ready to accept another martyrium (1000 turns timeout).",
 	}
 }

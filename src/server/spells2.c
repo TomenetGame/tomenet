@@ -534,7 +534,7 @@ static int remove_curse_aux(int Ind, int all)
 		if (!(all & 0x01) && (f3 & TR3_HEAVY_CURSE)) continue;
 
 		/* Perma-Cursed Items can NEVER be uncursed */
-                if ((f3 & TR3_PERMA_CURSE) && !p_ptr->admin_wiz && !p_ptr->admin_dm) continue;
+                if ((f3 & TR3_PERMA_CURSE) && !is_admin(p_ptr)) continue;
 
 		/* Uncurse it */
 		o_ptr->ident &= ~ID_CURSED;
@@ -3093,6 +3093,8 @@ bool create_artifact_aux(int Ind, int item)
     object_type *o_ptr;
     char o_name[160];
     s32b old_owner;/* anti-cheeze :) */
+    int to_h, to_d, to_a;
+    bool cursed_art = FALSE;
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -3137,8 +3139,11 @@ bool create_artifact_aux(int Ind, int item)
 	o_ptr->name1 = ART_RANDART;
 
 	/* anti speed ring cheeze */
-	if (o_ptr->bpval > o_ptr->pval) o_ptr->pval = o_ptr->bpval;
-	o_ptr->bpval = 0;
+	/* Changed a little bit.. (see randart.c) - C. Blue */
+	if ((o_ptr->tval != TV_RING) || (o_ptr->sval != SV_RING_SPECIAL)) {
+		if (o_ptr->bpval > o_ptr->pval) o_ptr->pval = (o_ptr->bpval > o_ptr->pval) ? o_ptr->bpval : o_ptr->pval;
+		o_ptr->bpval = 0;
+	}
 
 	/* Piece together a 32-bit random seed */
 	o_ptr->name3 = rand_int(0xFFFF) << 16;
@@ -3153,9 +3158,25 @@ bool create_artifact_aux(int Ind, int item)
 
 		return FALSE;
 	}
+	if (cursed_p(o_ptr)) cursed_art = TRUE;
 
+#if 1
 	o_ptr->timeout=0;
-	apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE);
+	to_h = o_ptr->to_h;
+	to_d = o_ptr->to_d;
+	to_a = o_ptr->to_a;
+	apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE);
+	/* Don't reroll to_h, to_d, to_a on jewelry; but keep negative
+	   values if the item was already cursed from artifact_creation. */
+	if (((o_ptr->tval == TV_RING) && (o_ptr->sval != SV_RING_SPECIAL)) || (o_ptr->tval == TV_AMULET)) {
+		if ((o_ptr->to_h > 0) || !cursed_art) o_ptr->to_h = to_h;
+		if ((o_ptr->to_d > 0) || !cursed_art) o_ptr->to_d = to_d;
+		if ((o_ptr->to_a > 0) || !cursed_art) o_ptr->to_a = to_a;
+	}
+	/* Don't let apply_magic remove the curse from randarts */
+	if (cursed_art) o_ptr->ident |= ID_CURSED;
+#endif
+
 #if 0
 	/* If the player's level < artifact level he can't use it :) */
 	while ((o_ptr->level > 20) &&
@@ -3976,9 +3997,154 @@ void aggravate_monsters(int Ind, int who)
 	else if (sleep) msg_print(Ind, "You hear a sudden stirring in the distance!");
 }
 
+/* Need it for detonation pots in potion_smash_effect - C. Blue */
+void aggravate_monsters_floorpos(worldpos *wpos, int x, int y)
+{
+	int i;
+
+	bool sleep = FALSE;
+	bool speed = FALSE;
+
+	/* Aggravate everyone nearby */
+	for (i = 1; i < m_max; i++)
+	{
+		monster_type	*m_ptr = &m_list[i];
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Skip monsters not on this depth */
+		if(!inarea(wpos, &m_ptr->wpos)) continue;
+
+		/* Wake up nearby sleeping monsters */
+		if(distance(y, x, m_ptr->fy, m_ptr->fx)<MAX_SIGHT*2)
+#if 0
+		if (m_ptr->cdis < MAX_SIGHT * 2)
+#endif
+		{
+			/* Wake up */
+			if (m_ptr->csleep)
+			{
+				/* Wake up */
+				m_ptr->csleep = 0;
+				sleep = TRUE;
+			}
+		}
+
+	}
+}
+
 
 /*
- * If Ind <=0, no one takes the damage.	- Jir -
+ * Wake up minions (escorts/friends). May be used by a pack monster or unique.
+ * As soon as a monster is hit by a player or has a LOS to him.
+ */
+void wake_minions(int Ind, int who)
+{
+	player_type *p_ptr = Players[Ind];
+
+	monster_type	*mw_ptr = &m_list[who], *m_ptr;
+	monster_race    *rw_ptr = race_inf(m_ptr), *r_ptr;
+	char		mw_name[80];
+
+	int i;
+
+	bool sleep = FALSE;
+	bool speed = FALSE;
+
+	monster_desc(Ind, mw_name, who, 0x00);
+
+	/* Aggravate everyone nearby */
+	for (i = 1; i < m_max; i++)
+	{
+		m_ptr = &m_list[i];
+		r_ptr = race_inf(m_ptr);
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Skip monsters not on this depth */
+		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+
+		/* Skip aggravating monster (or player) */
+		if (i == who) continue;
+
+		/* wake_minions used by a FRIENDS monster? */
+		if (rw_ptr->flags1 & (RF1_FRIEND | RF1_FRIENDS)) {
+			/* Skip monsters who aren't its friends */
+			if (m_ptr->r_idx != mw_ptr->r_idx) continue;
+		}
+
+		/* wake_minions used by a UNIQUE monster? */
+		if (rw_ptr->flags1 & RF1_UNIQUE) {
+			/* Skip monsters who don't belong to its escort */
+
+			/* Paranoia -- Skip identical monsters */
+			if (m_ptr->r_idx == mw_ptr->r_idx) continue;
+			/* Require similar "race" */
+			if (r_ptr->d_char != rw_ptr->d_char) continue;
+			/* Skip more advanced monsters */
+			if (r_ptr->level > rw_ptr->level) continue;
+			/* Skip unique monsters */
+			if (r_ptr->flags1 & RF1_UNIQUE) continue;
+			/* Skip non-escorting monsters */
+//			if (m_ptr->escorting != who) continue;
+		}
+
+		/* wake_minions used by an escorting monster? */
+#if 0	/* m_ptr->escorting = m_idx not yet implemented */
+		if (mw_ptr->escorting) {
+			/* Wake up his leader, which always is unique */
+			if (m_ptr->r_idx != mw_ptr->escorting) continue;
+			/* Leader wakes the pack */
+			wake_minions(Ind, i);
+		}
+#endif
+
+		/* Wake up nearby sleeping monsters */
+		if (distance(mw_ptr->fy, mw_ptr->fx, m_ptr->fy, m_ptr->fx) > rw_ptr->aaf) continue;
+#if 0
+		if (m_ptr->cdis < MAX_SIGHT * 2)
+#endif
+		{
+			/* Wake up */
+			if (m_ptr->csleep)
+			{
+				/* Wake up */
+				m_ptr->csleep = 0;
+				sleep = TRUE;
+			}
+		}
+#if 0
+		/* Speed up monsters in line of sight */
+		if (player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx))
+		{
+			/* Speed up (instantly) to racial base + 10 */
+                        if (m_ptr->mspeed < m_ptr->speed + 10)
+			{
+				/* Speed up */
+                                m_ptr->mspeed = m_ptr->speed + 10;
+				speed = TRUE;
+			}
+		}
+#endif
+	}
+
+	/* Messages */
+//	if (speed) msg_print(Ind, "You feel a sudden stirring nearby!");
+//	else if (sleep) msg_print(Ind, "You hear a sudden stirring in the distance!");
+	if ((r_ptr->flags2 & RF2_EMPTY_MIND) || (r_ptr->flags3 & RF3_NONLIVING)) ;
+	else if (r_ptr->flags3 & RF3_DRAGON) msg_format(Ind, "%s roars loudly!", mw_name);
+	else if (r_ptr->flags3 & RF3_UNDEAD) msg_format(Ind, "%s moans loudly!", mw_name);
+	else if (r_ptr->flags3 & RF3_ANIMAL) msg_format(Ind, "%s makes an alerting sound!", mw_name);
+	else if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON | RF3_DRAGONRIDER)) ||
+		(strchr("AhHJkpPty", r_ptr->d_char)))
+		msg_format(Ind, "%s shouts a command!", mw_name);
+}
+
+
+/*
+ * If Ind <=0, no one takes the damage.	- Jir -OA
  */
 bool genocide_aux(int Ind, worldpos *wpos, char typ)
 {
@@ -6454,7 +6620,7 @@ void call_chaos(int Ind, int dir)
 	}
 }
 
-void summon_cyber(int Ind, int s_clone)
+void summon_cyber(int Ind, int s_clone, int clone_summoning)
 {
 	player_type *p_ptr = Players[Ind];
 	int i;
@@ -6462,7 +6628,7 @@ void summon_cyber(int Ind, int s_clone)
 
 	for (i = 0; i < max_cyber; i++)
 	{
-		(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, 100, s_clone, SUMMON_HI_DEMON);
+		(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, 100, s_clone, SUMMON_HI_DEMON, 1, clone_summoning);
 	}
 }
 

@@ -1154,7 +1154,7 @@ bool check_guard_inscription( s16b quark, char what ) {
 	    }
 	    if(*ax =='*') {
 		/* why so much hassle? * = all, that's it */
-		return TRUE;
+/*		return TRUE; -- well, !'B'ash if it's on the ground sucks ;) */
 
 		switch( what ) { /* check for paranoid tags */
 		    case 'd': /* no drop */
@@ -1164,7 +1164,7 @@ bool check_guard_inscription( s16b quark, char what ) {
 		    case 'v': /* no thowing */
 		    case '=': /* force pickup */
 		    /* you forgot important ones */
-		    case 'w': /* no wear/wield */
+//		    case 'w': /* no wear/wield */
 		    case 't': /* no take off */
 		      return TRUE;
 		};
@@ -1279,7 +1279,7 @@ void msg_admin(cptr fmt, ...)
 			
 
 		/* Tell Mama */
-		if (p_ptr->admin_dm || p_ptr->admin_wiz)
+		if (is_admin(p_ptr))
 			msg_print(i, buf);
 	 }
 }
@@ -1482,7 +1482,7 @@ void use_ability_blade(int Ind)
 	int chance = p_ptr->dodge_chance - (dun_level * 5 / 6);
 
 	if (chance < 0) chance = 0;
-	if (chance > 90) chance = 90;	// see DODGE_MAX_CHANCE in melee1.c
+	if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;	// see DODGE_MAX_CHANCE in melee1.c
 	if (is_admin(p_ptr))
 	{
 		msg_format(Ind, "You have exactly %d%% chances of dodging a level %d monster.", chance, dun_level);
@@ -1784,7 +1784,7 @@ static void player_talk_aux(int Ind, char *message)
 		if (p_ptr->total_winner) c = 'v';
 		else if (p_ptr->ghost) c = 'r';
 		/* Dungeon Master / Dungeon Wizard have their own colour now :) */
-		if (p_ptr->admin_wiz || p_ptr->admin_dm) c = 'b';
+		if (is_admin(p_ptr)) c = 'b';
 	}
 	switch((i=censor(message))){
 		case 0:
@@ -1868,6 +1868,19 @@ void toggle_afk(int Ind, char *msg)
 	}
 	else
 	{
+	        /* Stop searching */
+	        if (p_ptr->searching)
+		{
+			/* Clear the searching flag */
+			p_ptr->searching = FALSE;
+
+			/* Recalculate bonuses */
+			p_ptr->update |= (PU_BONUS);
+
+		        /* Redraw the state */
+		        p_ptr->redraw |= (PR_STATE);
+		}
+
 		strcpy(p_ptr->afk_msg, msg);
 		if (strlen(p_ptr->afk_msg) == 0)
 			msg_print(Ind, "AFK mode is turned \377rON\377w.");
@@ -1881,6 +1894,9 @@ void toggle_afk(int Ind, char *msg)
 				msg_broadcast(Ind, format("\377o%s seems to be AFK now. (%s)", p_ptr->name, p_ptr->afk_msg));
 		}
 		p_ptr->afk = TRUE;
+
+		/* still too many starvations, so give a warning - C. Blue */
+		if (p_ptr->food < PY_FOOD_ALERT) msg_print(Ind, "\377RWARNING: Going AFK while hungry or weak can result in starvation! Eat first!");
 	}
 	return;
 }
@@ -2026,7 +2042,7 @@ int name_lookup_loose(int Ind, cptr name, bool party)
 			if (q_ptr->conn == NOT_CONNECTED) continue;
 
 			/* let admins chat */
-			if (q_ptr->admin_dm && !(p_ptr->admin_dm || p_ptr->admin_wiz)) continue;
+			if (q_ptr->admin_dm && !is_admin(p_ptr)) continue;
 
 			/* Check name */
 			if (!strncasecmp(q_ptr->name, name, len))
@@ -2162,6 +2178,8 @@ bool show_floor_feeling(int Ind)
 		msg_print(Ind, "\377oYou feel like a stranger...");
 	if (l_ptr->flags1 & LF1_NO_DESTROY)
 		msg_print(Ind, "\377oThe walls here seem very solid.");
+	if (l_ptr->flags1 & LF1_NO_GHOST)
+		msg_print(Ind, "\377oYou feel that your life hangs in the balance!");
 #if 0
 	if (l_ptr->flags1 & DF1_NO_RECALL)
 		msg_print(Ind, "\377oThere is strong magic enclosing this dungeon.");

@@ -2063,6 +2063,9 @@ void exit_game_panic(void)
 		/* Indicate panic save */
 		(void)strcpy(p_ptr->died_from, "(panic save)");
 
+		/* Remember depth in the log files */
+		s_printf("Trying panic saving %s on %d %d %d..\n", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
 		/* Panic save, or get worried */
 		if (!save_player(i))
 		{

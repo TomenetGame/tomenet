@@ -46,6 +46,7 @@ function mktest(name)
     players(p).lev = 50
     players(p).skill_points = 9999
     players(p).score = 1
+    setexp(name, 0)
 end
 
 -- Recall all players from the dungeons for urgent server restarts.
@@ -69,6 +70,21 @@ function setexp(name, modif)
 	players(p).max_exp = 0
     else
         players(p).exp = player_exp[players(p).lev - 1] * players(p).expfact / 100 - modif
+        players(p).max_exp = players(p).exp
+    end
+end
+
+-- Set a character's level, and experience according to it.
+function setlev(name, l)
+    local p
+    p = ind(name)
+    players(p).lev = l
+    players(p).max_plv = l
+    if l == 0 then
+	players(p).exp = 0
+	players(p).max_exp = 0
+    else
+        players(p).exp = player_exp[l - 1] * players(p).expfact / 100
         players(p).max_exp = players(p).exp
     end
 end

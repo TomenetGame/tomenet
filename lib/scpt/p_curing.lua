@@ -9,6 +9,15 @@ function get_healing_power2()
         return pow
 end
 
+function get_exp_loss()
+	local pow
+	pow = 40 * (100 - get_level(Ind, HRESURRECT, 46)) / 100
+	if pow < 33 then
+		pow = 33
+	end
+	return pow
+end
+
 HHEALING = add_spell
 {
 	["name"] = 	"Healing",
@@ -135,14 +144,14 @@ HRESURRECT = add_spell
 	["fail"] =      70,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
-			fire_ball(Ind, GF_RESURRECT_PLAYER, 0, get_level(Ind, HRESURRECT, 50), 1, " resurrects you!")
+			fire_ball(Ind, GF_RESURRECT_PLAYER, 0, get_level(Ind, HRESURRECT, 48), 1, " resurrects you!")
 		        end,
 	["info"] =      function()
-		        return "exp -"..(40 * (100 - get_level(Ind, HRESURRECT, 50)) / 100).."%"
+		        return "exp -"..get_exp_loss().."%"
 	    		end,
         ["desc"] =      {
                         "Resurrects another player's ghost back to life.",
-			"The higher your skill is, the less experience he will lose.",
+			"The higher the skill, the less experience he will lose, down to 33%.",
 		}
 }
 
