@@ -4174,7 +4174,7 @@ if(cfg.unikill_format){
 			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 
-			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE);
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE);
 
 			/* Drop it in the dungeon */
 			drop_near(qq_ptr, -1, wpos, y, x);
@@ -4187,7 +4187,7 @@ if(cfg.unikill_format){
 			qq_ptr->number = 2;
 			qq_ptr->note = local_quark;
 
-			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE);
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE);
 
 			/* Drop it in the dungeon */
 			drop_near(qq_ptr, -1, wpos, y, x);
@@ -4274,7 +4274,7 @@ if(cfg.unikill_format){
 				invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
 				qq_ptr->number = (a_info[a_idx].cur_num == 0)?1:3;
 				qq_ptr->note = local_quark;
-				apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE);
+				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE);
 				/* Drop it in the dungeon */
 				drop_near(qq_ptr, -1, wpos, y, x);
 
@@ -4673,7 +4673,7 @@ void player_death(int Ind)
 		wild=&wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		dungeon=(p_ptr->wpos.wz > 0 ? wild->tower : wild->dungeon);
 #endif	// 0
-		if(!p_ptr->wpos.wz || !(d_ptr->flags2 & DF2_HELL))
+		if(!p_ptr->wpos.wz || !(d_ptr->flags2 & (DF2_HELL | DF2_IRON)))
 			hell=FALSE;
 	}
 
@@ -4718,7 +4718,7 @@ void player_death(int Ind)
 			sprintf(buf, "\377a**\377r%s %s was destroyed by \377m%s\377r.\377a**", titlebuf, p_ptr->name, p_ptr->died_from);
 			else
 			sprintf(buf, "\377a**\377r%s was destroyed by \377m%s\377r.\377a**", p_ptr->name, p_ptr->died_from);
-			s_printf("%s was destroyed by %s for %d damage.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow);
+			s_printf("%s was destroyed by %s for %d damage on %d, %d, %d.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 #if CHATTERBOX_LEVEL > 2
 			if (p_ptr->last_words)
@@ -4741,7 +4741,7 @@ void player_death(int Ind)
 			sprintf(buf, "\377a**\377r%s %s's ghost was destroyed by %s.\377a**", titlebuf, p_ptr->name, p_ptr->died_from);
 			else
 			sprintf(buf, "\377a**\377r%s's ghost was destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
-			s_printf("%s's ghost was destroyed by %s for %d damage.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow);
+			s_printf("%s's ghost was destroyed by %s for %d damage on %d, %d, %d.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 #if CHATTERBOX_LEVEL > 2
 			if (p_ptr->last_words)
@@ -4782,7 +4782,7 @@ void player_death(int Ind)
 				else
 					sprintf(buf, "\377a**\377r%s was vaporized and destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
 			}
-			s_printf("%s was killed and destroyed by %s for %d damage.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow);
+			s_printf("%s was killed and destroyed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 #if CHATTERBOX_LEVEL > 2
 			if (p_ptr->last_words)
@@ -4984,7 +4984,7 @@ void player_death(int Ind)
 		else {
 			sprintf(buf, "\377r%s was vaporized by %s.", p_ptr->name, p_ptr->died_from);
 		}
-		s_printf("%s was killed by %s for %d damage.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow);
+		s_printf("%s was killed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 	}
 	else if (!p_ptr->total_winner)

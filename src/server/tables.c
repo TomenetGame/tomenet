@@ -1585,8 +1585,8 @@ player_race race_info[MAX_RACES] =
                         },
                         {
                                 SKILL_FREEACT,
-                                '+', 0,
-                                '+', 25,
+                                '%', 0,
+                                '%', 0,
                         },
                         {
                                 SKILL_RESCONF,

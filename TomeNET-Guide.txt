@@ -292,15 +292,15 @@ They all start with a slash '/':
 
 /help       get a help about slash-commands.
 /afk        toggle AFK (away from keyboard) mode if you have to take a
-            quick break from playing. Note that your character won't
-            need to consume food while afk. However, if your character is
-            currently on the blacklist of merchants (because you got caught
-            stealing from a shop!) your blacklist timer won't decrease either
-            while you're AFK!
-            Notice that your character is thrown out of the game if..
+            quick break from playing. If your character is currently on the
+            blacklist of merchants (because you got caught stealing from a
+            shop!) your blacklist timer won't decrease while you're AFK!
+            Note that your character won't need to consume food while afk if
+            you are not already 'hungry' or even 'weak' from a lack of food!
+            Your character is thrown out of the game if..
             -you don't have /afk turned on AND
-            -you're beginning to starve due to lack of food AND
-            -your HP are fully healed! A HP-draining item prevents this.
+            -you begin to starve (you get 'weak') due to lack of food AND
+            -your HP are fully healed! HP-draining items are dangerous!
             So always use /afk to be on the safe side.
 /afk <msg>  You can specify a reason that will be displayed to the other
             players, so they know why you are currently AFK or when you will
@@ -1621,10 +1621,11 @@ There are different types of dungeons. The main five are:
  probability travel to change the level. The staircases are the only way.
  Sending items via telekinesis to a player who is currently in a no-recall
  dungeon/tower will only work if both players are on the same dungeon floor.
+ Ghosts of dead players can still float up/down.
  No-recall dungeons/towers are marked by a light red < or > symbol.
 -No-up / Force-down. These dungeons won't allow you to go upwards, same as
  ironman, just without the penalty of permanent ghost-death.
- Ghosts cannot float up- or downwards in ironman dungeons though!
+ Ghosts of dead players can float upwards.
  No-up dungeons/towers are marked by a red < or > symbol.
 -Ironman. Ironman dungeons or towers won't allow you to recall or to use
  staircases that lead upwards! If you die in such a dungeon or tower you won't
@@ -3590,17 +3591,21 @@ Human
     Humans have no experience penalties and tend to go up levels faster than
     most other races. No racial adjustments or intrinsics occur to characters
     choosing human.
+    Humans are very good at 'Training'.
 Half-Elf
     Half-elves tend to be smarter and faster than humans, but not as strong.
     Half-elves are slightly better at searching, disarming, saving throws,
     stealth, bows, and magic, but they are not as good at hand weapons.
-    Half-elves do not receive any intrinsic abilities. 
+    Half-elves do not receive any intrinsic abilities.
+    They get bonus on 'Bows-Mastery' and 'Trainig'.
 Elf
     Elves resist light effects intrinsically. Elves are better magicians then
     humans, but not as good at fighting. They tend to be smarter and faster
     than either humans or half-elves and also have better wisdom. Elves are
     better at searching, disarming, perception, stealth, bows, and magic,
     but they are not as good at hand weapons.
+    Elves get bonus on 'Bows-Mastery', 'Magic', 'Stealth', 'Dodging',
+    'Calmness' and 'Sneakiness'.
 Hobbit
     Hobbits have their dexterity sustained. Further, they get a dexterity bonus
     from not wearing shoes! Hobbits, or Halflings, are very good at bows,
@@ -3609,6 +3614,7 @@ Hobbit
     prefer to be called burglars. They are much weaker than humans, and no good
     at melee fighting. Halflings have fair infravision, so they can detect
     warm-blooded creatures at a distance. Hobbits resist black breath somewhat.
+    They get bonus on 'Sling-Mastery', 'Stealth', 'Sneakiness' and 'Dodging'.
 Gnome
     Gnomes are intrinsically protected to paralysis effects. Gnomes are smaller
     than dwarves but larger than halflings. They, like the hobbits, live in the
@@ -3617,6 +3623,7 @@ Gnome
     perception, and stealth. They have lower strength than humans so they are
     not very good at fighting with hand weapons. Gnomes have fair infra-vision,
     so they can detect warm-blooded creatures at a distance.
+    Gnomes receive bonus on 'Crossbow-Mastery', 'Magic' and 'Digging'.
 Dwarf
     Dwarves can never be blinded and at level 30 they learn to travel across
     even the highest mountain regions.
@@ -3630,6 +3637,7 @@ Dwarf
     voices, arguing with themselves for no good reason, and screaming out
     challenges at nearby foes. In other words, dwarves have a miserable
     stealth.
+    They receive bonus on 'Axe-Mastery' and 'Digging'.
 Half-Orc
     Because of their preference to living underground to on the surface,
     Half-orcs resist darkness intrinsically. They make excellent warriors and
@@ -3638,6 +3646,8 @@ Half-Orc
     are quite ugly, and tend to pay more for goods in town. Half-Orcs do make
     good warriors and rogues, for the simple reason that Half-Orcs tend to
     have great constitutions and lots of hit points.
+    They get bonus on 'Backstabbing', 'Disarming', 'Necromancy' and receive
+    slight penalties on 'Magic' and 'Sorcery'.
 Half-Troll
     Half-trolls have their strength sustained. They are very strong, but also
     very stupid and slow. They make great warriors and iffy priests. They are
@@ -3645,17 +3655,22 @@ Half-Troll
     that a Half-Orc grimaces in their presence. Half-trolls have their
     strength sustained and also happen to be fun to play. They need to eat
     often.
+    Half-Trolls get bonus on 'Hafted-Mastery', 'Health' and 'Swimming'. They
+    receive larger penalties on 'Magic' and 'Sorcery'.
 Dunadan
     Dunadain have their constitution sustained. Dunadain are a race of hardy
     men from the West. This elder race surpasses human abilities in every
     field, especially constitution. However, being men of the world, very
     little is new to them, and levels are very hard for them to gain.
+    A Dunadan gets bonus on 'Combat', 'Magic' and 'Archery'.
 High-Elf
     High-elves resist light intrinsically and can see the invisible. They are
     a race of immortal beings dating from the beginning of time, masters of
     all skills, strong and intelligent, although their wisdom is sometimes
     suspect. They do very well in all   professions. There are few things that
     they have not seen already, and experience is hard for them to gain.
+    High-Elves receive bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Dodging',
+    'Calmness' and 'Sneakiness'.
 Yeek
     Being weak and losing many childhood fights, they have learned the
     ability to float gently to the ground. They have intrinsic feather
@@ -3663,6 +3678,7 @@ Yeek
     Yeeks are the least powerful of all the races. They suffer disadvantages
     in all stats and have attributes similar to humans. However, to
     compensate Yeeks learn, and thus gain levels, extremely quickly.
+    Yeeks don't receive boni or mali on any skills.
 Goblin
     Goblins resist darkness intrinsically. Goblins have a decidedly
     mixed reputation. They are almost always grinning, and more often than
@@ -3670,6 +3686,7 @@ Goblin
     meat. They are as sturdy as Dwarves and are quite agile making them
     good fighters, rogues, and mimics. Being creatures of the night,
     Golbins have natural resistance to darkness.
+    They receive bonus on 'Boomerang-Mastery' and 'Stealing'.
 Ent
     The Ents are a powerful race dating from the beginning of the world,
     eldest of all animals or plants who inhabit Arda. Spirits of the
@@ -3684,6 +3701,8 @@ Ent
     Trees will slightly bend aside to let ents pass through. They accumulate
     experience very slowly. Ents do not eat normal food, but are able to
     consume liquids. Ents resist the force of unleashed water.
+    They get boni on 'Health', 'Calmness' and on the magic schools 'Earth' and
+    'Water' and they receive penalties on 'Fire' school.
 Thunderlord (also known as Dragonrider)
     Thunderlords can eat firestones to temporarily boost their powers.
     They have an intrinsic telepathic vision of all nearby creatures, the
@@ -3693,6 +3712,8 @@ Thunderlord (also known as Dragonrider)
     they learn how to fly. Thunderlords are not very wise, and need a very
     long time to gain experience. They need to eat often. Thunderlords have
     feather falling from birth. See (5.9) for firestone details.
+    They receive bonus on 'Polearm-Mastery', 'Aura of Fear' and the magic
+    schools 'Conveyance' and 'Fire'.
 
 
 Here is a table showing boni/mali of the different races:

@@ -4991,9 +4991,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	/* virgin */
 	o_ptr->owner = 0;
 
-	/* determine level-requirement */
-	determine_level_req(lev, o_ptr);
-
 	/* Hack -- analyze artifacts */
 #if 0
 //	avoid +h/+d,+a randarts with +0,+0,+0 :(
@@ -5018,6 +5015,9 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			return;
 		}
 		
+		/* determine level-requirement */
+		determine_level_req(lev, o_ptr);
+
 		/* Override level requirements? */
 		if ((o_ptr->name1 == ART_RANDART) &&
 	            (cfg.arts_level_req >= 3)) o_ptr->level = 0;
@@ -5168,7 +5168,11 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		//                if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
 		if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
 	}
-#endif	// 0
+#endif	// 1
+
+	/* Hack: determine level-requirement - here AGAIN because ego-item
+	   routine wasnt called before we called det_l_r the first time */
+	determine_level_req(lev, o_ptr);
 
 #if 0	// mangband ego...
 	/* Hack -- analyze ego-items */
@@ -5384,7 +5388,7 @@ void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool g
  */
 void determine_level_req(int level, object_type *o_ptr)
 {
-	int i, j, base = k_info[o_ptr->k_idx].level;
+	int i, j, base = k_info[o_ptr->k_idx].level / 2;
 
 	/* Unowned yet */
 //	o_ptr->owner = 0;
@@ -5417,22 +5421,22 @@ void determine_level_req(int level, object_type *o_ptr)
 			}
 
 			/* level of randarts tends to be outrageous */
-			base = a_ptr->level / 2;
+			base = a_ptr->level / 1;/* was 2*/
 		}
 		/* Normal artifacts */
 		else
 		{
 			a_ptr = &a_info[o_ptr->name1];
 			base = a_ptr->level;
+			base += 30; /*general increase for artifacts! */
 		}
 	}
 
 	/* Hack -- analyze ego-items */
-	else if (o_ptr->name2)
+	if (o_ptr->name2 || o_ptr->name2b)
 	{
-//		ego_item_type *e_ptr = &e_info[o_ptr->name2];
-		base += e_info[o_ptr->name2].rating;
-
+		base += 15; /* general increase for ego items! */
+		if (o_ptr->name2) base += e_info[o_ptr->name2].rating;
 		if (o_ptr->name2b) base += e_info[o_ptr->name2b].rating;
 	}
 

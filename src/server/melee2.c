@@ -4634,8 +4634,10 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		(p_ptr->pspeed > m_ptr->mspeed) && rand_int(600) &&
 		/* As long as we have good HP there's no need to hold back,
 		   [if player is low on HP we should try to attack him anyways,
-		   this is not basing on consequent logic though] */
-		(m_ptr->hp <= (m_ptr->maxhp * 3) / 5) && (p_ptr->chp > p_ptr->mhp / 4) &&
+		   this is not basing on consequent logic though, since we probably still can't hurt him] */
+		(((m_ptr->hp <= (m_ptr->maxhp * 3) / 5) && (p_ptr->chp > (p_ptr->mhp * 5) / 6)) ||
+		/* If we're very low on HP, only try to attack the player if he's hurt *badly* */
+		((m_ptr->hp < (m_ptr->maxhp * 1) / 4) && (p_ptr->chp >= (p_ptr->mhp * 1) / 5))) &&
 		/* No need to keep a distance if the player doesn't pose
 		   a potential threat in close combat: */
 		(p_ptr->s_info[SKILL_MASTERY].value >= 3000 || p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= 10000) &&
