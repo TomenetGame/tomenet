@@ -2169,7 +2169,7 @@ void store_stole(int Ind, int item)
 	int amt = 1;
 	int chance = 0;
 
-	s32b		best;
+	s32b		best, tbest;
 
 	object_type		sell_obj;
 	object_type		*o_ptr;
@@ -2259,12 +2259,21 @@ void store_stole(int Ind, int item)
 	    (get_skill_scale(SKILL_STEALING, 25))) <= 10)
 #endif	// 0
 	chance = (40 - p_ptr->stat_ind[A_DEX]) +
-	    ((sell_obj.weight * amt) / (5 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
+	    ((sell_obj.weight * amt) /
+	    (5 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
 	    (get_skill_scale(p_ptr, SKILL_STEALING, 25));
 	if (chance < 1) chance = 1;
 
+	/* shopkeeper watches expensive items carefully */
+	tbest=best;
+	while(tbest){
+		tbest/=10;
+		chance+=5;
+	}
+
 	/* always 1% chance to fail, so that ppl won't macro it */
-	if (rand_int(chance) <= 10 && !magik(1))
+	/* 1% pfft. 5% and rising... */
+	if (rand_int(chance) <= 10 && !magik(5))
 	{
 		/* Hack -- buying an item makes you aware of it */
 		object_aware(Ind, &sell_obj);
@@ -2365,7 +2374,6 @@ void store_stole(int Ind, int item)
 
 	else
 	{
-		object_kind *k_ptr=&k_info[o_ptr->k_idx];
 		/* Complain */
 		// say_comment_4();
 		msg_print(Ind, "\377yBastard\377L!!!");
@@ -2377,7 +2385,7 @@ void store_stole(int Ind, int item)
 		st_ptr->bad_buy = 0;
 
 		/* Kicked out for a LONG time */
-		p_ptr->tim_blacklist += k_ptr->cost * amt / 10 + 10000;
+		p_ptr->tim_blacklist += object_value(Ind, o_ptr) * amt / 10 + 10000;
 
 		/* Of course :) */
 		store_kick(Ind, FALSE);
