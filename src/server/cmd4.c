@@ -390,8 +390,16 @@ void do_cmd_check_uniques(int Ind, int line)
 	fd_kill(file_name);
 }
 
-static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool molt)
+static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modify)
 {
+	int modify_number = 0;
+	if(modify){
+		/* Uncomment these as you feel it's needed ;) */
+		//if(!strcmp(q_ptr->name,"")) modify_number=1; //wussy Cheezer
+		//if(!strcmp(q_ptr->name,"")) modify_number=2; //silyl Slacker
+		//if(!strcmp(q_ptr->name,"Duncan McLeod")) modify_number=3; //Highlander games Judge ;) Bread and games to them!!
+		//if(!strcmp(q_ptr->name,"Tomenet")) modify_number=4;//Server-specific Dungeon Masters
+	}
 	/* Print a message */
 #if 0
 	fprintf(fff, "  %s the %s%s %s (%s%sLv %d, %s)",
@@ -402,13 +410,14 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool molt)
 			q_ptr->lev, parties[q_ptr->party].name);
 #else	// 0
 	fprintf(fff, "  %s the ", q_ptr->name);
-	if(molt){
-		fprintf(fff, "wussy ");
-	}
-	else{
+
+	switch(modify_number){
+	case 1:	fprintf(fff, "wussy "); break;
+	case 2: fprintf(fff, "silyl "); break;
+	default:
 		switch (q_ptr->mode)	// TODO: give better modifiers
 		{
-			case MODE_NORMAL:
+    			case MODE_NORMAL:
 				break;
 			case MODE_HELL:
 				fprintf(fff, "purgatorial ");
@@ -417,17 +426,37 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool molt)
 //				fprintf(fff, "square ");
 				fprintf(fff, "unworldly ");
 				break;
-			case (MODE_HELL + MODE_NO_GHOST):
+	    		case (MODE_HELL + MODE_NO_GHOST):
 				fprintf(fff, "hellish ");
 				break;
 		}
+		break;
 	}
 
-	fprintf(fff, "%s %s (%s%sLv %d, %s)",
-			race_info[q_ptr->prace].title, (molt ? "Cheezer" : class_info[q_ptr->pclass].title),
-			(q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"",
-			q_ptr->fruit_bat ? "Batty, " : "",
-			q_ptr->lev, parties[q_ptr->party].name);
+	switch(modify_number){
+	case 3: fprintf(fff, "Highlander "); break; //Judge for Highlander games
+	default: fprintf(fff, "%s ", race_info[q_ptr->prace].title); break;
+	}
+	
+	switch(modify_number){
+	case 1: fprintf(fff, "Cheezer "); break;
+	case 2: fprintf(fff, "Slacker "); break;
+	case 3: fprintf(fff, "Swordsman "); break; //Judge for Highlander games
+	default: fprintf(fff, "%s (", class_info[q_ptr->pclass].title); break;
+	}
+	
+	switch(modify_number){
+	case 3: fprintf(fff, "(Judge, "); break; //Judge for Highlander games
+	case 4: fprintf(fff,"(Dungeon Master, "); break; //Server Admin
+	default: fprintf(fff, "(%s",
+		(q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"");
+		break;
+	}
+	
+	fprintf(fff, "%sLv %d, %s)",
+		q_ptr->fruit_bat ? "Batty, " : "",
+		q_ptr->lev,
+		parties[q_ptr->party].name);
 #endif	// 0
 }
 
@@ -439,6 +468,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool molt)
 void do_cmd_check_players(int Ind, int line)
 {
 	int k;
+	bool i;
 
 	FILE *fff;
 
@@ -486,7 +516,8 @@ void do_cmd_check_players(int Ind, int line)
 		fprintf(fff, "%c", attr);
 
 		/* Print a message */
-		do_write_others_attributes(fff, q_ptr, ((Ind!=k) && !stricmp(q_ptr->name, "Moltor")));
+		if(Ind!=k) i=TRUE; else i=FALSE;
+		do_write_others_attributes(fff, q_ptr, i);
 
 		/* PK */
 		if (cfg.use_pk_rules == PK_RULES_DECLARE)
@@ -556,6 +587,7 @@ void do_cmd_check_players(int Ind, int line)
 void do_cmd_check_player_equip(int Ind, int line)
 {
 	int i, k;
+	bool m;
 
 	FILE *fff;
 
@@ -637,7 +669,8 @@ void do_cmd_check_player_equip(int Ind, int line)
 		fprintf(fff, "%c", attr);
 
 		/* Print a message */
-		do_write_others_attributes(fff, q_ptr, !stricmp(q_ptr->name, "Moltor"));
+		if(Ind!=k) m=TRUE; else m=FALSE;
+		do_write_others_attributes(fff, q_ptr, m);
 
 		fprintf(fff, "\n");
 
