@@ -2583,6 +2583,33 @@ void do_unstat(struct worldpos *wpos){
 #endif
 
 /*
+ * 24 hourly scan of houses - should the odd house be owned by
+ * a non player. Hopefully never, but best to save admin work.
+ */
+void scan_houses(){
+	int i;
+	int lval;
+	s_printf("Doing house maintenance\n");
+	for(i=0;i<num_houses;i++){
+		switch(houses[i].dna->owner_type){
+			case OT_PLAYER:
+				if(!lookup_player_name(houses[i].dna->owner)){
+					s_printf("Found old player houses. ID: %d\n", houses[i].dna->owner);
+					kill_houses(houses[i].dna->owner, OT_PLAYER);
+				}
+				break;
+			case OT_PARTY:
+				if(!strlen(parties[houses[i].dna->owner].name)){
+					s_printf("Found old party houses. ID: %d\n", houses[i].dna->owner);
+					kill_houses(houses[i].dna->owner, OT_PARTY);
+				}
+				break;
+		}
+	}
+	s_printf("Finished house maintenance\n");
+}
+
+/*
  * This function handles "global" things such as the stores,
  * day/night in the town, etc.
  */
@@ -2611,8 +2638,12 @@ static void process_various(void)
 		}
 	}
 
+	/* daily maintenance */
 	if (!(turn % (cfg_fps * 86400))){
+		s_printf("24 hours maintenance cycle\n");
 		scan_players();
+		scan_houses();
+		s_printf("Finished maintenance\n");
 	}
 
 	/* Handle certain things once a minute */
@@ -3859,6 +3890,7 @@ void play_game(bool new_game)
 
 	/* scan for inactive players */
 	scan_players();
+	scan_houses();
 
 	/* Set up the main loop */
 	install_timer_tick(dungeon, cfg_fps);

@@ -14,6 +14,8 @@
 
 #include "angband.h"
 
+static int gettown(int Ind);
+
 /*
  * Hack -- Objects sold in the stores -- by tval/sval pair.
  */

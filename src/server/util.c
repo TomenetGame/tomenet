@@ -2621,7 +2621,7 @@ void player_talk_aux(int Ind, cptr message)
 		{
 
 			/* cut tokens off (thx Ascrep(DEG)) */
-			if (token[0]=strtok(message," "))
+			if ((token[0]=strtok(message," ")))
 			{
 //				s_printf("%d : %s", tk, token[0]);
 				for (i=1;i<=9;i++)

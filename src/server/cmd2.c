@@ -961,7 +961,8 @@ void do_cmd_open(int Ind, int dir)
 									strcpy(string,name);
 								break;
 							case OT_PARTY:
-								strcpy(string, parties[dna->owner].name);
+								if(strlen(parties[dna->owner].name))
+									strcpy(string, parties[dna->owner].name);
 								break;
 							case OT_CLASS:
 								strcpy(string,class_info[dna->owner].title);

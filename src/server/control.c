@@ -432,11 +432,11 @@ void NewConsole(int read_fd, int arg)
 		DgramWrite(read_fd, console_buf.buf, console_buf.len);
 
 		/* Log this to the local console */
-		s_printf("Illegal console command from %s.\n", DgramLastname());
+		s_printf("Illegal console command from %s.\n", DgramLastname(read_fd));
 
 		return;
 	}
-	else s_printf("Valid console command from %s.\n", DgramLastname());
+	else s_printf("Valid console command from %s.\n", DgramLastname(read_fd));
 
 	/* Acquire command */
 	Packet_scanf(&console_buf, "%c", &ch);

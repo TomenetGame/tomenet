@@ -447,6 +447,8 @@ extern void move_cursor_relative(int row, int col);
 extern void print_rel(char c, byte a, int y, int x);
 extern void note_spot(int Ind, int y, int x);
 #ifdef NEW_DUNGEON
+extern void new_players_on_depth(struct worldpos *wpos, int value, bool inc);
+extern int players_on_depth(struct worldpos *wpos);
 extern bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2);
 extern void note_spot_depth(struct worldpos *wpos, int y, int x);
 extern void everyone_lite_spot(struct worldpos *wpos, int y, int x);

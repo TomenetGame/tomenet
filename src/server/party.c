@@ -1451,15 +1451,19 @@ void scan_players(){
 	hash_entry *ptr, *pptr=NULL;
 	time_t now;
 	now=time(&now);
+	s_printf("Starting player inactivity check\n");
 	for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
 		ptr=hash_table[slot];
 		while(ptr){
-			if(now - ptr->laston > 7776000){
+			if(ptr->laston && (now - ptr->laston > 7776000)){
 				int i;
 				hash_entry *dptr;
 
+				s_printf("Removing player: %s\n", ptr->name);
+
 				for(i=0; i<MAX_PARTIES; i++){
 					if(streq(parties[i].owner, ptr->name)){
+						s_printf("Disbanding party: %s\n",parties[i].name);
 						del_party(i);
 						break;
 					}
@@ -1486,6 +1490,7 @@ void scan_players(){
 			pptr=ptr;
 		}
 	}
+	s_printf("Finished player inactivity check\n");
 }
 
 /*
