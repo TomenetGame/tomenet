@@ -756,6 +756,7 @@ bool player_can_see_bold(int Ind, int y, int x)
 bool no_lite(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	if(p_ptr->admin_dm) return(FALSE);
 	return (!player_can_see_bold(Ind, p_ptr->py, p_ptr->px));
 }
 
