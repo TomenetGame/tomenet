@@ -147,6 +147,14 @@ void world_chat(unsigned long id, char *text){
 	x=send(WorldSocket, &spk, len, 0);
 }
 
+void world_reboot(){
+	int x, len;
+	if(WorldSocket==-1) return;
+	spk.type=WP_RESTART;
+	len=sizeof(struct wpacket);
+	x=send(WorldSocket, &spk, len, 0);
+}
+
 void world_msg(char *text){
 	int x, len;
 	if(WorldSocket==-1) return;
