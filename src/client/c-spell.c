@@ -760,7 +760,7 @@ u32b get_school_spell(cptr do_what)
 
                                         /* Save the screen */
                                         character_icky = TRUE;
-                                        Term_load();
+                                        /* Term_load(); */ /* evil temp */
                                         Term_save();
 
                                 }
@@ -916,7 +916,7 @@ void browse_school_spell(int book, int pval)
 		}
 
                 /* Restore the screen */
-                Term_load();
+                /* Term_load(); */
 
                 /* Display a list of spells */
                 where = exec_lua(0, format("return print_book(0, %d, %d)", book, pval));
