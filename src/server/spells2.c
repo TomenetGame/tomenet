@@ -2449,6 +2449,9 @@ bool detect_creatures(int Ind)
 		/* Skip disconnected players */
 		if (q_ptr->conn == NOT_CONNECTED) continue;
 
+		/* Never detect the dungeon master! */
+		if (q_ptr->admin_dm) continue;
+
 		/* Skip visible players */
 		if (p_ptr->play_vis[i]) continue;
 
