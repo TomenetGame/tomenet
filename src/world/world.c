@@ -132,6 +132,7 @@ void wproto(struct client *ccl){
 			case WP_QPLAYER:
 				/* STORE players here */
 				if(ccl->authed && (ccl->authed>0 || secure.play)){
+					add_rplayer(wpk);
 					wpk->d.play.server=ccl->authed;
 					relay(wpk, ccl);
 				}
@@ -191,6 +192,7 @@ struct client *remclient(struct client *dcl){
 	ccl=clist;
 	if(dcl->authed>0){
 		struct wpacket spk;
+		rem_players(dcl->authed);
 		spk.type=WP_SQUIT;
 		spk.d.sid=dcl->authed;
 		relay(&spk, dcl);

@@ -18,6 +18,7 @@ void send_rplay(struct client *ccl){
 	while(c_pl){
 		spk.d.play.id=c_pl->id;
 		spk.d.play.server=c_pl->server;
+		spk.d.play.silent=TRUE;
 		strncpy(spk.d.play.name, c_pl->name, 30);
 		send(ccl->fd, &spk, len, 0);
 		c_pl=c_pl->next;
