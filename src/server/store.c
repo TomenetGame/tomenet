@@ -155,169 +155,6 @@ static void say_comment_1(int Ind)
 	msg_print(Ind, comment_1[rand_int(MAX_COMMENT_1)]);
 }
 
-
-#if 0
-/*
- * Continue haggling (player is buying)
- */
-static void say_comment_2(int Ind, s32b value, int annoyed)
-{
-	char	tmp_val[80];
-
-	/* Prepare a string to insert */
-	sprintf(tmp_val, "%ld", (long)value);
-
-	/* Final offer */
-	if (annoyed > 0)
-	{
-		/* Formatted message */
-		msg_format(Ind, comment_2a[rand_int(MAX_COMMENT_2A)], tmp_val);
-	}
-
-	/* Normal offer */
-	else
-	{
-		/* Formatted message */
-		msg_format(Ind, comment_2b[rand_int(MAX_COMMENT_2B)], tmp_val);
-	}
-}
-
-
-/*
- * Continue haggling (player is selling)
- */
-static void say_comment_3(int Ind, s32b value, int annoyed)
-{
-	char	tmp_val[80];
-
-	/* Prepare a string to insert */
-	sprintf(tmp_val, "%ld", (long)value);
-
-	/* Final offer */
-	if (annoyed > 0)
-	{
-		/* Formatted message */
-		msg_format(Ind, comment_3a[rand_int(MAX_COMMENT_3A)], tmp_val);
-	}
-
-	/* Normal offer */
-	else
-	{
-		/* Formatted message */
-		msg_format(Ind, comment_3b[rand_int(MAX_COMMENT_3B)], tmp_val);
-	}
-}
-
-
-/*
- * Kick 'da bum out.					-RAK-
- */
-static void say_comment_4(int Ind)
-{
-	msg_print(Ind, comment_4a[rand_int(MAX_COMMENT_4A)]);
-	msg_print(Ind, comment_4b[rand_int(MAX_COMMENT_4B)]);
-}
-
-
-/*
- * You are insulting me
- */
-static void say_comment_5(int Ind)
-{
-	msg_print(Ind, comment_5[rand_int(MAX_COMMENT_5)]);
-}
-
-
-/*
- * That makes no sense.
- */
-static void say_comment_6(int Ind)
-{
-	msg_print(Ind, comment_6[rand_int(5)]);
-}
-
-
-
-/*
- * Messages for reacting to purchase prices.
- */
-
-#define MAX_COMMENT_7A	4
-
-static cptr comment_7a[MAX_COMMENT_7A] =
-{
-	"Arrgghh!",
-	"You bastard!",
-	"You hear someone sobbing...",
-	"The shopkeeper howls in agony!"
-};
-
-#define MAX_COMMENT_7B	4
-
-static cptr comment_7b[MAX_COMMENT_7B] =
-{
-	"Damn!",
-	"You fiend!",
-	"The shopkeeper curses at you.",
-	"The shopkeeper glares at you."
-};
-
-#define MAX_COMMENT_7C	4
-
-static cptr comment_7c[MAX_COMMENT_7C] =
-{
-	"Cool!",
-	"You've made my day!",
-	"The shopkeeper giggles.",
-	"The shopkeeper laughs loudly."
-};
-
-#define MAX_COMMENT_7D	4
-
-static cptr comment_7d[MAX_COMMENT_7D] =
-{
-	"Yipee!",
-	"I think I'll retire!",
-	"The shopkeeper jumps for joy.",
-	"The shopkeeper smiles gleefully."
-};
-
-
-/*
- * Let a shop-keeper React to a purchase
- *
- * We paid "price", it was worth "value", and we thought it was worth "guess"
- */
-static void purchase_analyze(s32b price, s32b value, s32b guess)
-{
-	/* Item was worthless, but we bought it */
-	if ((value <= 0) && (price > value))
-	{
-		msg_print(comment_7a[rand_int(MAX_COMMENT_7A)]);
-	}
-
-	/* Item was cheaper than we thought, and we paid more than necessary */
-	else if ((value < guess) && (price > value))
-	{
-		msg_print(comment_7b[rand_int(MAX_COMMENT_7B)]);
-	}
-
-	/* Item was a good bargain, and we got away with it */
-	else if ((value > guess) && (value < (4 * guess)) && (price < value))
-	{
-		msg_print(comment_7c[rand_int(MAX_COMMENT_7C)]);
-	}
-
-	/* Item was a great bargain, and we got away with it */
-	else if ((value > guess) && (price < value))
-	{
-		msg_print(comment_7d[rand_int(MAX_COMMENT_7D)]);
-	}
-}
-
-#endif
-
-
 /*
  * We store the current "store number" here so everyone can access it
  */
@@ -338,72 +175,17 @@ static void purchase_analyze(s32b price, s32b value, s32b guess)
  */
 /*static owner_type *ot_ptr = NULL;*/
 
-
-
-
-
-/*
- * Buying and selling adjustments for race combinations.
- * Entry[owner][player] gives the basic "cost inflation".
- */
-#if 0
-static byte rgold_adj[MAX_RACES][MAX_RACES] =
-{
-	/*Hum, HfE, Elf,  Hal, Gno, Dwa, HfO, HfT, Dun, HiE, Yeek, Gob*/
-
-	/* Human */
-	{ 100, 105, 105, 110, 113, 115, 120, 125, 100, 105, 80, 120},
-
-	/* Half-Elf */
-	{ 110, 100, 100, 105, 110, 120, 125, 130, 110, 100, 85, 125},
-
-	/* Elf */
-	{ 110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 90, 125},
-
-	/* Halfling */
-	{ 115, 110, 105,  95, 105, 110, 115, 130, 115, 105, 80, 115},
-
-	/* Gnome */
-	{ 115, 115, 110, 105,  95, 110, 115, 130, 115, 110, 90, 115},
-
-	/* Dwarf */
-	{ 115, 120, 120, 110, 110,  95, 125, 135, 115, 120, 110, 135},
-
-	/* Half-Orc */
-	{ 115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 90, 110},
-
-	/* Half-Troll */
-	{ 110, 115, 115, 110, 110, 130, 110, 110, 110, 115, 95, 110},
-
-	/* Dunedain  */
-	{ 100, 105, 105, 110, 113, 115, 120, 125, 100, 105, 100, 120},
-
-	/* High_Elf */
-	{ 110, 105, 100, 105, 110, 120, 125, 130, 110, 100, 90, 125},
-
-	/* Yeek */
-	{ 90, 95, 95, 100, 103, 105, 110, 115, 90, 95, 65, 110},
-
-	/* Goblin */
-	{ 115, 120, 125, 115, 115, 130, 110, 115, 115, 125, 90, 105},
-};
-#endif	// 0
-
-
 void alloc_stores(int townval)
 {
-//	int i, k;
 	int i;
 
 	/* Allocate the stores */
 	/* XXX of course, it's inefficient;
 	 * we should check which town has what stores
 	 */
-	//	C_MAKE(town[townval].townstore, MAX_STORES, store_type);
 	C_MAKE(town[townval].townstore, max_st_idx, store_type);
 
 	/* Fill in each store */
-//	for (i = 0; i < MAX_STORES; i++)
 	for (i = 0; i < max_st_idx; i++)
 	{       
 		/* Access the store */
@@ -414,49 +196,10 @@ void alloc_stores(int townval)
 		st_ptr->st_idx = i;
 
 		/* Assume full stock */
-//		st_ptr->stock_size = STORE_INVEN_MAX;
 		st_ptr->stock_size = sti_ptr->max_obj;
 
 		/* Allocate the stock */
 		C_MAKE(st_ptr->stock, st_ptr->stock_size, object_type);
-
-#if 0
-		/* No table for the black market or home */
-		if ((i == 6) || (i == 7) || (i == 8) ) continue;
-
-		/* Assume full table */
-		st_ptr->table_size = STORE_CHOICES;
-
-		/* Allocate the stock */
-		C_MAKE(st_ptr->table, st_ptr->table_size, s16b);
-
-                /* Scan the choices */
-		for (k = 0; k < STORE_CHOICES; k++)
-		{
-			int k_idx;
-
-			/* Extract the tval/sval codes */
-			int tv = store_table[i][k][0];
-			int sv = store_table[i][k][1];
-
-			/* Look for it */
-			for (k_idx = 1; k_idx < MAX_K_IDX; k_idx++)
-			{
-				object_kind *k_ptr = &k_info[k_idx];
-
-				/* Found a match */
-				if ((k_ptr->tval == tv) && (k_ptr->sval == sv))
-					break;
-			}
-
-			/* Catch errors */
-			if (k_idx == MAX_K_IDX) continue;
-
-			/* Add that item index to the table */
-
-			st_ptr->table[st_ptr->table_num++] = k_idx;
-		}
-#endif	// 0
 	}
 }
 
@@ -491,12 +234,9 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 	int i;
 
 	i=gettown(Ind);
-//	if(i==-1) return(0);	//DUNGEON STORES
 	if(i==-1) i = 0;
 
 	st_ptr = &town[i].townstore[p_ptr->store_num];
-//	ot_ptr = &owners[p_ptr->store_num][town[i].townstore[p_ptr->store_num].owner];
-	//ot_ptr = &ow_info[town[i].townstore[p_ptr->store_num].owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
 	/* Get the value of one of the items */
@@ -504,10 +244,6 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 
 	/* Worthless items */
 	if (price <= 0) return (0L);
-
-
-	/* Compute the racial factor */
-//	factor = rgold_adj[ot_ptr->owner_race][p_ptr->prace];
 
 	/* Compute the racial factor */
 	if (is_state(Ind, st_ptr, STORE_LIKED))
@@ -540,7 +276,6 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		if (adjust > 100 - STORE_BENEFIT) adjust = 100 - STORE_BENEFIT;
 
 		/* Mega-Hack -- Black market sucks */
-		//if (p_ptr->store_num == 6) price = price / 4;
 		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price /= 4;
 
 		/* You're not a welcomed customer.. */
@@ -678,7 +413,6 @@ static void mass_produce(object_type *o_ptr)
 		{
 			if (cost <= 10L) size += damroll(10, 2);
 			if (cost <= 100L) size += damroll(5, 3);
-			//if (cost <= 500L) 
 			size += damroll(20, 2);
 			break;
 		}
@@ -730,8 +464,6 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	/* Hack -- Identical items cannot be stacked */
 	if (o_ptr == j_ptr) return (0);
 
-//	if (o_ptr->owner != j_ptr->owner) return (0);
-
 	/* Different objects cannot be stacked */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
 
@@ -758,7 +490,6 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	/* Megahack -- light sources are allowed (hoping it's
 	 * not non-fuel activable one..) */
 	if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
-//	if ((o_ptr->timeout || j_ptr->timeout) && o_ptr->tval != TV_LITE) return (0);
 
 	/* Require many identical values */
 	if (o_ptr->ac    !=  j_ptr->ac)   return (0);
@@ -810,22 +541,6 @@ static bool store_check_num(store_type *st_ptr, object_type *o_ptr)
 	/* Free space is always usable */
 	if (st_ptr->stock_num < st_ptr->stock_size) return TRUE;
 
-#if 0
-	/* The "home" acts like the player */
-	if (st_ptr->st_idx == 7)
-	{
-		/* Check all the items */
-		for (i = 0; i < st_ptr->stock_num; i++)
-		{
-			/* Get the existing item */
-			j_ptr = &st_ptr->stock[i];
-
-			/* Can the new object be combined with the old one? */
-			if (object_similar(j_ptr, o_ptr)) return (TRUE);
-		}
-	}
-#endif
-
 	/* Normal stores do special stuff */
 	else
 	{
@@ -855,13 +570,6 @@ static bool store_check_num(store_type *st_ptr, object_type *o_ptr)
 static bool store_will_buy(int Ind, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
-
-	/* Hack -- The Home is simple */
-#if 0
-	if (p_ptr->store_num == 7) return (TRUE);
-
-	if (st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM) return TRUE;
-#endif	// 0
 
 	/* Switch on the store */
 	switch (p_ptr->store_num)
@@ -984,7 +692,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_SCROLL:
 				case TV_POTION:
 				case TV_POTION2:
-				case TV_MSTAFF:	// naturally?
+				case TV_MSTAFF:	/* naturally? */
 				break;
 				default:
 				return (FALSE);
@@ -1003,7 +711,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_MUSIC_BOOK:
 				case TV_DAEMON_BOOK:
 				case TV_DRUID_BOOK:
-#endif	// 0
+#endif	/* 0 */
 					break;
 				default:
 					return (FALSE);
@@ -1085,101 +793,6 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 	return (TRUE);
 }
 
-
-
-/*
- * Add the item "o_ptr" to the inventory of the "Home"
- *
- * In all cases, return the slot (or -1) where the object was placed
- *
- * Note that this is a hacked up version of "inven_carry()".
- *
- * Also note that it may not correctly "adapt" to "knowledge" bacoming
- * known, the player may have to pick stuff up and drop it again.
- */
-#if 0
-static int home_carry(object_type *o_ptr)
-{
-	int                 slot;
-	s32b               value, j_value;
-	int		i;
-	object_type *j_ptr;
-
-
-	/* Check each existing item (try to combine) */
-	for (slot = 0; slot < st_ptr->stock_num; slot++)
-	{
-		/* Get the existing item */
-		j_ptr = &st_ptr->stock[slot];
-
-		/* The home acts just like the player */
-		if (object_similar(j_ptr, o_ptr))
-		{
-			/* Save the new number of items */
-			object_absorb(j_ptr, o_ptr);
-
-			/* All done */
-			return (slot);
-		}
-	}
-
-	/* No space? */
-	if (st_ptr->stock_num >= st_ptr->stock_size) return (-1);
-
-
-	/* Determine the "value" of the item */
-	value = object_value(o_ptr);
-
-	/* Check existing slots to see if we must "slide" */
-	for (slot = 0; slot < st_ptr->stock_num; slot++)
-	{
-		/* Get that item */
-		j_ptr = &st_ptr->stock[slot];
-
-		/* Hack -- readable books always come first */
-		if ((o_ptr->tval == mp_ptr->spell_book) &&
-		    (j_ptr->tval != mp_ptr->spell_book)) break;
-		if ((j_ptr->tval == mp_ptr->spell_book) &&
-		    (o_ptr->tval != mp_ptr->spell_book)) continue;
-
-		/* Objects sort by decreasing type */
-		if (o_ptr->tval > j_ptr->tval) break;
-		if (o_ptr->tval < j_ptr->tval) continue;
-
-		/* Can happen in the home */
-		if (!object_aware_p(o_ptr)) continue;
-		if (!object_aware_p(j_ptr)) break;
-
-		/* Objects sort by increasing sval */
-		if (o_ptr->sval < j_ptr->sval) break;
-		if (o_ptr->sval > j_ptr->sval) continue;
-
-		/* Objects in the home can be unknown */
-		if (!object_known_p(o_ptr)) continue;
-		if (!object_known_p(j_ptr)) break;
-
-		/* Objects sort by decreasing value */
-		j_value = object_value(j_ptr);
-		if (value > j_value) break;
-		if (value < j_value) continue;
-	}
-
-	/* Slide the others up */
-	for (i = st_ptr->stock_num; i > slot; i--)
-	{
-		st_ptr->stock[i] = st_ptr->stock[i-1];
-	}
-
-	/* More stuff now */
-	st_ptr->stock_num++;
-
-	/* Insert the new item */
-	st_ptr->stock[slot] = *o_ptr;
-
-	/* Return the location */
-	return (slot);
-}
-#endif
 
 
 /*
@@ -1431,7 +1044,6 @@ static void store_delete(store_type *st_ptr)
 
 
 /* Analyze store flags and return a level */
-//int return_level()
 static int return_level(store_type *st_ptr)
 {
 	store_info_type *sti_ptr = &st_info[st_ptr->st_idx];
@@ -1996,19 +1608,8 @@ static void display_store(int Ind)
 		/* Send the store actions info */
 		show_building(Ind, st_ptr);
 
-#if 0	// obsolete - DELETEME
-		for (j = 0; j < 6; j++)
-		{
-			store_action_type *ba_ptr =
-				&ba_info[st_info[st_ptr->st_idx].actions[j]];
-
-			Send_store_action(Ind, j, ba_ptr->action, ba_name + ba_ptr->name,
-					ba_ptr->letter, ba_ptr->costs[STORE_LIKED], ba_ptr->flags);
-		}
-#endif	// 0
-
 		/* Hack -- Museum doesn't have owner */
-	    if (st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM) owner_name = "";
+		if (st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM) owner_name = "";
 
 		/* Send the store info */
 //		Send_store_info(Ind, p_ptr->store_num, st_ptr->owner, st_ptr->stock_num);
