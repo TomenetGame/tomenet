@@ -37,7 +37,7 @@
 #define ST_ANCHOR_DIS	12
 
 /* Limitation for teleport radius on the wilderness.	[20] */
-#define WILDERNESS_TELEPORT_RADIUS	20
+#define WILDERNESS_TELEPORT_RADIUS	40
 
 
  /*
@@ -562,12 +562,12 @@ void teleport_player(int Ind, int dis)
 	{
 		if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px)) return;
 		if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+		/* Hack -- on the wilderness one cannot teleport very far */
+		/* Double death isnt nice */
+		if (!wpos->wz && !istown(wpos) && dis > WILDERNESS_TELEPORT_RADIUS)
+			dis = WILDERNESS_TELEPORT_RADIUS;
 	}
 	l_ptr = getfloor(wpos);
-
-	/* Hack -- on the wilderness one cannot teleport very far */
-	if (!wpos->wz && !istown(wpos) && dis > WILDERNESS_TELEPORT_RADIUS)
-		dis = WILDERNESS_TELEPORT_RADIUS;
 
 	/* Verify max distance once here */
 	if (dis > 150) dis = 150;
