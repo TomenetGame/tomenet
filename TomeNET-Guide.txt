@@ -14,7 +14,7 @@ Contents
 --------
 (0) Quickstart (If you don't like to read much :)
     (0.1)   Start & play
-    (0.2)   Command reference
+    (0.2)   Command reference & key sets
     (0.3)   Important inscriptions
     (0.4)   Typical slang/abbreviations
     (0.5)   Rumours, missing features, technical warnings (READ!)
@@ -120,8 +120,8 @@ those, invoke the skill screen with 'G'.
 
 
 
-(0.2) Command reference
------------------------
+(0.2) Command reference & key sets
+----------------------------------
 Can be different depending on OS / configuration.
 
 Keys:
@@ -442,31 +442,37 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 -----------------------------------------------------------
 -Aura of Death and Aura of Shivering aren't implemented at the moment.
 -If you press CTRL+X to save&exit the game, you should do that in a safe town.
-Dungeons might change while you are logged off, and the next time you log on
-you might find yourself stuck inside a wall, where the previous dungeon had a
-wide room.
-Another problem is that if you don't leave in a town, your character will stay
-for another 20 seconds in the game before it finally disappears from the
-dungeon! If monsters were around, you might get killed easily during that 20s.
--The items you find don't depend on your race or class but on monster level and
-depth (and luck ;).
+ Dungeons might change while you are logged off, and the next time you log on
+ you might find yourself stuck inside a wall, where the previous dungeon had a
+ wide room.
+ Another problem is that if you don't leave in a town, your character will
+ stay for another 20 seconds in the game before it finally disappears from the
+ dungeon! If monsters were around, you might get killed easily during that
+ 20 seconds.
+-The items you find don't depend on your race or class but on monster level
+ and depth and luck.
 -Spells/round is always 1, even if the number displayed is higher (raised by
-items that effect your 'Spell power' via SPELL flag).
+ items that effect your 'Spell power' via SPELL flag).
 -Don't drop artefacts inside houses if the server doesn't allow artefacts to
-be dropped inside player houses, or you will simply lose the artifact!
+ be dropped inside player houses, or you will simply lose the artifact!
 -Don't use scrolls of artefact creation on item stacks, it would
-reduce the stack to 1.
-Don't use them on ego items or artefacts, or you will lose the scroll!
-If you use it on items with a discount, the artefact will get it too.
-Watch out: 'Indestructible' and 'Cursed' rings are ego items too, so are
-'Amulets of Telepathic Awareness'!
-In general, it's not always good idea to try to turn a ring or amulet that has
-high bonus numbers into an artefact, like for example a ring of speed (+7) or
-a ring of slaying (+10,+8) because these numbers will get erased and randomly
-re-rolled, (+to-hit,+to-dam) will always become (+0,+0)!
+ reduce the stack to 1.
+ Don't use them on ego items or artefacts, or you will lose the scroll!
+ If you use it on items with a discount, the artefact will get it too.
+ Watch out: 'Indestructible' and 'Cursed' rings are ego items too, so are
+ 'Amulets of Telepathic Awareness'!
+ In general, it's not always good idea to try to turn a ring or amulet that
+ has high bonus numbers into an artefact, like for example a ring of
+ speed (+7) or a ring of slaying (+10,+8) because these numbers will get
+ erased and randomly re-rolled, (+to-hit,+to-dam) will always become (+0,+0)!
 -Monster traps (using the Trapping skill) lack a balanced implementation at
-the moment. (Weak)
+ the moment. (Weak)
 -The massive iron crown of Morgoth must not be worn by non-Kings/Queens!
+-Auto-retaliation with spell books is currently not working.
+-Sometimes if you pick up an item from a pile, the next item below doesn't
+ become visible on the map. You still 'feel' it if you step on the pile
+ though. So if you died and were revived, scan your loot piles on the ground
+ carefully to not miss one of your items on the bottom of a pile.
 
 
 
@@ -480,8 +486,9 @@ J.R.R. Tolkien mainly "The Lord Of The Rings", hence the name "the Troubles of
 Middle Earth" or alternatively "the Tales of Middle Earth". The final goal in
 TomeNET is to destroy the fallen god Melkor who is known by the name of
 Morgoth, Lord Of Darkness. The official website is http://www.tomenet.net/ .
+Latest version and information also available at http://www.c-blue.de/rogue/ .
 The source code is hosted at http://sourceforge.net/projects/pernband,
-module pm.
+module pm. Access it straight via CVS, avoid any snapshot tarballs and stuff.
 
 
 
@@ -1197,7 +1204,8 @@ There are 3 ways to be revived:
 -another living player reads a 'scroll of life' when standing directly next to
  a ghost.
 -another living player speaks a prayer of 'resurrection' when standing
- directly next to a ghost.
+ directly next to a ghost. The higher the resurrection spell level was,
+ the less experience will be lost.
 The ghost will return to the world of living under the cost of a lot of
 experience but at least the player can resume playing. If the ghost dies,
 the character will finally be erased permanently, watch out!
@@ -2149,6 +2157,13 @@ the pots/scrolls show similar pseudo-id tags.
 
 (5.7) Special abilities of items
 --------------------------------
+FEATHER ('It allows you to levitate.')
+        'Feather Falling', also called 'Levitation'.
+        Lets you resist gravitation effects. Lets you float down gently
+        if you accidentally stumble into pits.
+FLY     ('It allows you to fly.')
+        Allows you to cross water areas without drowning. Enables you to fly
+        over trees (running won't work, try walking field by field).
 MANA ('It affects your mana capacity')
         Will increase your total spell points (mana) by +x0%. Example:
         Gloves of the magi (+3) increase your mana by 30%.
@@ -2220,6 +2235,7 @@ FUEL_LITE ('It provides light radius when fueled')
 ------------------------------------
 Some items might look bad (Mushrooms of Unhealth), but keep in mind that you
 can often throw ('v') these items to damage or impair an enemy.
+For more information about items and especially ego items see (7.4).
 
 Weapons & Armour
 --
@@ -2469,7 +2485,8 @@ Note that not every skill is available to every profession (class).
                                 Increases Fear/Stun/Confuse duration of the
                                 target (if attacking causes those).
                                 Slightly increases to-damage bonus.
-    +Weaponmastery              Improves melee to-dam and especially to-hit.
+    +Weaponmastery              Improves your Fighting ability.
+                                Slightly increases melee to-dam and to-hit.
                                 Increases your chance to score critical hits.
         +Sword-mastery          Greatly improves to-dam/to-hit with swords.
                                 At 25 and 50 you will get +1 blow per round.
@@ -2660,7 +2677,7 @@ Depending on your race and class, you will be better or worse at certain
 abilities. You can see your abilities in the character screen (press 'C').
 
 Fighting
-    How well you can fight.
+    How well you can fight, how easily you get disarmed.
 Bows/Throw
     How well you can shoot/throw.
 Saving Throw
