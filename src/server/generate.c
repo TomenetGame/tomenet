@@ -4143,6 +4143,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				/* Put some grass */
 				if (randint(100) < 50)
 					c_ptr->feat = FEAT_GRASS;
+				c_ptr->flags |= CAVE_NOPK;
 			}
 		}
 
