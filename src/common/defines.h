@@ -2653,9 +2653,9 @@ that keeps many algorithms happy.
 #define GF_PSI           79
 
 #define GF_HOLY_FIRE    80
-#define GF_HELL_FIRE    GF_HOLY_ORB
-
 #define GF_DISINTEGRATE 81
+
+#define GF_HELL_FIRE    82 /* was HOLY_ORB */
 
 #define GF_MAKE_GLYPH   85
 #define GF_ROCKET       91
@@ -2689,6 +2689,12 @@ that keeps many algorithms happy.
 #define GF_WAVE         135
 
 #define GF_TELEPORT_PLAYER 136
+
+#define GF_RESTORESTATS_PLAYER 137
+#define GF_RESTORELIFE_PLAYER 138
+#define GF_CURE_PLAYER 139
+#define GF_RESURRECT_PLAYER 140
+#define GF_SANITY_PLAYER 141
 
 #define GF_TELE_TO		150
 #define GF_HAND_DOOM	151

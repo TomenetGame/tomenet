@@ -4895,12 +4895,14 @@ void player_death(int Ind)
     -APD-
     
     hmm, haven't gotten aroudn to doing this yet...
+    
+    exploss tells by how much % the GHOST_XP_LOSS is reduced (C. Blue).
  */
  
-void resurrect_player(int Ind)
+void resurrect_player(int Ind, int exploss)
 {
 	player_type *p_ptr = Players[Ind];
-	int reduce;
+	int reduce, lossfactor;
 
 	/* Hack -- the dungeon master can not resurrect */
 	if (p_ptr->admin_dm) return;	// TRUE;
@@ -4910,15 +4912,21 @@ void resurrect_player(int Ind)
 	
 	disturb(Ind, 1, 0);
 	
+	/* capping exp loss */
+	if (exploss < 0) exploss = 0;
+	if (exploss > 100) exploss = 100;
+	if (exploss > 50) exploss = 50;
+
 	/* Lose some experience */
+	lossfactor = GHOST_XP_LOST * (100 - exploss) / 100;
 	reduce = p_ptr->max_exp;
 	reduce = reduce > 99999 ?
-		reduce / 100 * GHOST_XP_LOST : reduce * GHOST_XP_LOST / 100;
+		reduce / 100 * lossfactor : reduce * lossfactor / 100;
 	p_ptr->max_exp -= reduce;
 
 	reduce = p_ptr->exp;
 	reduce = reduce > 99999 ?
-		reduce / 100 * GHOST_XP_LOST : reduce * GHOST_XP_LOST / 100;
+		reduce / 100 * lossfactor : reduce * lossfactor / 100;
 	p_ptr->exp -= reduce;
 
 #if 0
@@ -7072,7 +7080,7 @@ bool do_scroll_life(int Ind)
 				q_ptr=Players[0 - c_ptr->m_idx];
    				if (q_ptr->ghost)
    				{
-    					resurrect_player(0 - c_ptr->m_idx);
+    					resurrect_player(0 - c_ptr->m_idx, 0);
 
 	/* if player is not in town and resurrected on *TRUE* death level
 	   then this is a GOOD action. Reward the player */

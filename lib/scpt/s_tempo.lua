@@ -6,7 +6,7 @@ MAGELOCK = add_spell
         ["school"] = 	{SCHOOL_TEMPORAL},
         ["level"] = 	1,
         ["mana"] = 	1,
-        ["mana_max"] = 	35,
+        ["mana_max"] = 	60,
         ["fail"] = 	10,
         ["direction"] = function () if get_level(Ind, MAGELOCK, 50) >= 30 then return FALSE else return TRUE end end,
         ["spell"] = 	function(args)
@@ -29,7 +29,7 @@ MAGELOCK = add_spell
                        	return ""
 	end,
         ["desc"] =	{
-        		"Magicaly locks a door",
+        		"Magically locks a door",
                         "At level 30 it creates a glyph of warding"
 --                        ,"At level 40 the glyph can be placed anywhere in the field of vision"
         }

@@ -2219,7 +2219,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				{
 				if (Players[0 - c_ptr->m_idx]->ghost)
 				{
-				resurrect_player(0 - c_ptr->m_idx);
+				resurrect_player(0 - c_ptr->m_idx, 0);
 				break;
 				}
 				}

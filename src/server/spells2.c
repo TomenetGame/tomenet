@@ -884,9 +884,9 @@ void self_knowledge(int Ind)
 	if (p_ptr->antimagic)	// older (percent)
 	{
 //		fprintf(fff, "You are surrounded by an anti-magic shield.\n");
-		if (p_ptr->antimagic >= 95)
+		if (p_ptr->antimagic >= 90) /* AM cap */
 			fprintf(fff, "You are surrounded by a complete anti-magic shield.\n");
-		else if (p_ptr->antimagic >= 85)
+		else if (p_ptr->antimagic >= 80)
 			fprintf(fff, "You are surrounded by a mighty anti-magic shield.\n");
 		else if (p_ptr->antimagic >= 70)
 			fprintf(fff, "You are surrounded by a strong anti-magic shield.\n");
@@ -1517,9 +1517,9 @@ void self_knowledge(int Ind)
 	if (p_ptr->antimagic)	// older (percent)
 	{
 //		info[i++] = "You are surrounded by an anti-magic shield.";
-		if (p_ptr->antimagic >= 95)
+		if (p_ptr->antimagic >= 90) /* AM cap */
 			info[i++] = "You are surrounded by a complete anti-magic shield.";
-		else if (p_ptr->antimagic >= 85)
+		else if (p_ptr->antimagic >= 80)
 			info[i++] = "You are surrounded by a mighty anti-magic shield.";
 		else if (p_ptr->antimagic >= 70)
 			info[i++] = "You are surrounded by a strong anti-magic shield.";
@@ -6350,21 +6350,21 @@ void call_chaos(int Ind, int dir)
 	int plev = p_ptr->lev;
 	bool line_chaos = FALSE;
 
-	int hurt_types[28] =	// 30
+	int hurt_types[29] =	// 30
 	{
 		GF_ELEC,      GF_POIS,    GF_ACID,    GF_COLD,
 		GF_FIRE,      GF_MISSILE, GF_ARROW,   GF_PLASMA,
-//		GF_HOLY_FIRE, GF_WATER,   GF_LITE,    GF_DARK,
-		GF_WATER,   GF_LITE,    GF_DARK,
+//		GF_HOLY_FIRE, 
+		GF_WATER,     GF_LITE,    GF_DARK,
 		GF_FORCE,     GF_INERTIA, GF_MANA,    GF_METEOR,
 		GF_ICE,       GF_CHAOS,   GF_NETHER,  GF_DISENCHANT,
 		GF_SHARDS,    GF_SOUND,   GF_NEXUS,   GF_CONFUSION,
 		GF_TIME,      GF_GRAVITY, GF_ROCKET,  GF_NUKE,
-		GF_DISINTEGRATE
-//		GF_HELL_FIRE, GF_DISINTEGRATE
+		GF_DISINTEGRATE,
+		GF_HELL_FIRE,
 	};
 
-	Chaos_type = hurt_types[randint(28) - 1];
+	Chaos_type = hurt_types[randint(29) - 1];
 	if (randint(4) == 1) line_chaos = TRUE;
 
 	sprintf(p_ptr->attacker, " invokes raw chaos for", p_ptr->name);

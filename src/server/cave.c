@@ -280,6 +280,9 @@ void check_Morgoth(void)
 			/* skip disconnected players */
 			if (Players[i]->conn == NOT_CONNECTED)
 		    		continue;
+			/* skip admins */
+			if (Players[i]->admin_wiz || Players[i]->admin_dm)
+				continue;
 			/* player on this depth? */
 			p_ptr = Players[i];
 			if (inarea(&p_ptr->wpos, wpos)) num_on_depth++;
@@ -299,6 +302,10 @@ void check_Morgoth(void)
 		for (i = 1; i <= NumPlayers; i++)
 		{
 			p_ptr = Players[i];
+
+			if (p_ptr->admin_wiz || p_ptr->admin_dm)
+				continue;
+
 			if (inarea(&p_ptr->wpos, wpos) &&
 			    (p_ptr->total_winner || (p_ptr->r_killed[860] == 0)))
 			{

@@ -11,9 +11,9 @@ GLOBELIGHT = add_spell
         ["spell"] = 	function()
 		local ret, dir
 
-                if get_level(Ind, GLOBELIGHT, 50) > 3 then lite_area(Ind, 10, 4)
+                if get_level(Ind, GLOBELIGHT, 50) > 10 then lite_area(Ind, 10, 4)
                 else lite_room(Ind, player.wpos, player.py, player.px) end
-                if get_level(Ind, GLOBELIGHT, 50) > 15 then
+                if get_level(Ind, GLOBELIGHT, 50) > 25 then
 		        fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, GLOBELIGHT, 100), 5 + get_level(Ind, GLOBELIGHT, 6), " calls a globe of light of")
 		end
 		msg_print(Ind, "You are surrounded by a globe of light")
@@ -26,9 +26,9 @@ GLOBELIGHT = add_spell
                 end
 	end,
         ["desc"] =	{
-        		"Creates a globe of pure light",
-        		"At level 3 it starts damaging monsters",
-        		"At level 15 it starts creating a more powerful kind of light",
+        		"Creates a globe of magical light",
+        		"At level 10 it starts damaging monsters",
+        		"At level 25 it starts creating a more powerful kind of light",
         }
 }
 

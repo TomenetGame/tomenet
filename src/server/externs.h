@@ -1290,7 +1290,7 @@ extern bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr no
 extern void monster_death_mon(int am_idx, int m_idx);
 extern void monster_death(int Ind, int m_idx);
 extern void player_death(int Ind);
-extern void resurrect_player(int Ind);
+extern void resurrect_player(int Ind, int exploss);
 extern void del_quest(int id);
 extern void rem_quest(u16b id);
 extern void kill_quest(int Ind);

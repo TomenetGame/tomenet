@@ -4193,7 +4193,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		{
 			if(p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)/8] & (1<<((p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)%8))){
 				/* Resurrect him */
-				resurrect_player(Ind);
+				resurrect_player(Ind, 0);
 
 				/* Give him some gold to restart */
 				if (p_ptr->lev > 1 && !p_ptr->admin_dm)

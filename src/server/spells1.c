@@ -989,8 +989,8 @@ byte spell_color(int type)
 		case GF_COLD:		return (TERM_WHITE);
 		case GF_POIS:		return (TERM_GREEN);
 		case GF_HOLY_ORB:	return (TERM_L_DARK);
-			case GF_HOLY_FIRE:      return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
-//			case GF_HELL_FIRE:      return (randint(6)==1?TERM_RED:TERM_L_DARK);
+		case GF_HOLY_FIRE:      return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
+		case GF_HELL_FIRE:      return (randint(6)==1?TERM_RED:TERM_L_DARK);
 		case GF_MANA:		return (TERM_L_DARK);
 		case GF_ARROW:		return (TERM_WHITE);
 		case GF_WATER:		return (TERM_SLATE);
@@ -1028,7 +1028,7 @@ byte spell_color(int type)
 //		case GF_HOLY_ORB:	return (TERM_L_DARK);
 		case GF_HOLY_ORB:		 return (randint(6)==1?TERM_RED:TERM_L_DARK);
 		case GF_HOLY_FIRE:      return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
-//		case GF_HELL_FIRE:      return (randint(6)==1?TERM_RED:TERM_L_DARK);
+		case GF_HELL_FIRE:      return (randint(6)==1?TERM_RED:TERM_L_DARK);
 		case GF_MANA:           return (randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
 		case GF_ARROW:          return (TERM_L_UMBER);
 		case GF_WATER:          return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
@@ -2651,15 +2651,43 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	{
 		/* Ignore most effects */
 		case GF_ACID:
+			/* Destroy trees */
+			if (c_ptr->feat == FEAT_TREES)
+			{
+				/* Hack -- special message */
+				if (!quiet && player_can_see_bold(Ind, y, x))
+				{
+					msg_print(Ind, "The tree decays!");
+					/* Notice */
+					note_spot(Ind, y, x);
+					obvious = TRUE;
+				}
+
+				/* Destroy the tree */
+				c_ptr->feat = FEAT_DEAD_TREE;
+
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+			}
+
+			/* Burn grass */
+			if (c_ptr->feat == FEAT_GRASS)
+			{
+				/* Destroy the grass */
+				c_ptr->feat = FEAT_GRASS;
+			}
+
+			break;
+
 		case GF_ELEC:
 		case GF_COLD:
-		case GF_PLASMA:
-		case GF_METEOR:
 		case GF_ICE:
 		case GF_SHARDS:
 		case GF_FORCE:
 		case GF_SOUND:
 		case GF_MANA:
+		case GF_HOLY_ORB:
+		case GF_HOLY_FIRE:
 		{
 			break;
 		}
@@ -2685,13 +2713,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Burn trees and grass */
 		case GF_FIRE:
-		/*
+
 		case GF_METEOR:
 		case GF_PLASMA:
-		*/
-		case GF_HOLY_ORB:
-		case GF_HOLY_FIRE:
-//		case GF_HELL_FIRE:
+
+		case GF_HELL_FIRE:
 		{
 			/* Destroy trees */
 			if (c_ptr->feat == FEAT_TREES)
@@ -3476,7 +3502,6 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Holy Orb -- destroys cursed non-artifacts */
 		case GF_HOLY_ORB:
 		case GF_HOLY_FIRE:
-//		case GF_HELL_FIRE:
 		{
 			if (cursed_p(o_ptr))
 			{
@@ -3485,6 +3510,21 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			break;
 		}
+
+		case GF_HELL_FIRE:
+			if (hates_fire(o_ptr))
+			{
+				do_kill = TRUE;
+				note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
+					: (plural ? " burn up!" : " burns up!");
+				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
+			}
+			else if (!cursed_p(o_ptr) && magik(10))
+			{
+				note_kill = (plural ? " are destroyed!" : " is destroyed!");
+				do_kill = TRUE;
+			}
+			break;
 
 		/* Unlock chests */
 		case GF_KILL_TRAP:
@@ -4062,9 +4102,72 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-			/* Holy Orb -- hurts Evil */
+		case GF_HELL_FIRE:
+		{
+			if (seen) obvious = TRUE;
+			if (r_ptr->flags3 & (RF3_GOOD))
+			{
+				if (r_ptr->flags3 & RF3_IM_FIRE)
+				{
+					note = " resists.";
+					dam *= 2; dam /= 2;//(randint(4)+3);
+					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
+				}
+				else if (r_ptr->flags9 & RF9_RES_FIRE)
+				{
+    					note = " is hit.";
+					dam = (dam * 3) / 2;
+					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
+				}
+#if 0
+				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
+				{
+					note = " is hit hard.";
+					dam *= 2;
+					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+				}
+#endif
+				else
+				{
+					dam *= 2;
+					note = " is hit hard.";
+					//note = " is hit.";
+				}
+				if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
+			}
+			else
+			{
+				if (r_ptr->flags3 & RF3_IM_FIRE)
+				{
+					note = " resists a lot.";
+					dam *= 2; dam /= 4;//(randint(6)+10);
+					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
+				}
+				else if (r_ptr->flags9 & RF9_RES_FIRE)
+				{
+    					note = " resists.";
+					dam = (dam * 3) / 4;
+					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
+				}
+#if 0
+				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
+				{
+					note = " resists slightly.";
+					dam /= 2;
+					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+				}
+#endif
+				else
+				{
+					note = " is hit.";
+					//dam *= 5; dam /= (randint(3)+4);
+				}
+			}
+			break;
+		}
+
+		/* Holy Orb -- hurts Evil */
 		case GF_HOLY_ORB:
-//		case GF_HELL_FIRE:
 		{
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_EVIL)
@@ -4090,13 +4193,13 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (r_ptr->flags3 & RF3_IM_FIRE)
 				{
 					note = " resists.";
-					dam *= 2; dam /= 3;//(randint(4)+3);
+					dam *= 2; dam /= 2;//(randint(4)+3);
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 				}
 				else if (r_ptr->flags9 & RF9_RES_FIRE)
 				{
     					note = " is hit.";
-					dam = (dam * 4) / 5;
+					dam = (dam * 3) / 2;
 					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
 				}
 #if 0
@@ -4120,13 +4223,13 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (r_ptr->flags3 & RF3_IM_FIRE)
 				{
 					note = " resists a lot.";
-					dam *= 2; dam /= 3;//(randint(6)+10);
+					dam *= 2; dam /= 4;//(randint(6)+10);
 					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 				}
 				else if (r_ptr->flags9 & RF9_RES_FIRE)
 				{
     					note = " resists.";
-					dam = (dam * 4) / 5;
+					dam = (dam * 3) / 4;
 					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
 				}
 #if 0
@@ -4139,8 +4242,8 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 				else
 				{
-					note = " resists.";
-					dam *= 5; dam /= (randint(3)+5);
+					note = " resists somewhat.";
+					dam *= 5; dam /= (randint(3)+4);
 				}
 			}
 			break;
@@ -5850,7 +5953,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) &&
 			(typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
                         (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) &&
-                        (typ != GF_TELEPORT_PLAYER))
+                        (typ != GF_TELEPORT_PLAYER) &&
+			(typ != GF_RESTORESTATS_PLAYER) && (typ != GF_RESTORELIFE_PLAYER) &&
+                        (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
+                        (typ != GF_SANITY_PLAYER))
 		{		
 			/* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind))
@@ -5992,10 +6098,25 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		take_hit(Ind, dam, killer);
 		break;
 
+		case GF_HELL_FIRE:
+		if (p_ptr->body_monster && r_ptr->flags3 & RF3_GOOD) dam *= 2;
+		if (p_ptr->immune_fire) dam /= 2;
+		else if (p_ptr->resist_fire) dam = ((dam + 2) * 3) / 4;
+		else if (p_ptr->oppose_fire) dam = ((dam + 2) * 2) / 3;
+		else if (p_ptr->sensible_fire) dam = ((dam + 2) * 5) / 3;
+		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		take_hit(Ind, dam, killer);
+		break;
+
 		/* Holy Orb -- Player only takes partial damage */
 		case GF_HOLY_ORB:
+		if (p_ptr->body_monster && r_ptr->flags3 & RF3_EVIL) dam *= 2;
+		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		take_hit(Ind, dam, killer);
+
 		case GF_HOLY_FIRE:
-//		case GF_HELL_FIRE:
 		if (p_ptr->body_monster && r_ptr->flags3 & RF3_EVIL) dam *= 2;
 		if (p_ptr->immune_fire) dam /= 2;
 		else if (p_ptr->resist_fire) dam = ((dam + 2) * 2) / 3;
@@ -6676,6 +6797,37 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
                 }
 
+		case GF_RESTORESTATS_PLAYER:
+			(void)do_res_stat(Ind, A_STR);
+			(void)do_res_stat(Ind, A_CON);
+			(void)do_res_stat(Ind, A_DEX);
+			(void)do_res_stat(Ind, A_WIS);
+			(void)do_res_stat(Ind, A_INT);
+			(void)do_res_stat(Ind, A_CHR);
+			break;
+		case GF_RESTORELIFE_PLAYER:
+			(void)restore_level(Ind);
+			break;
+		case GF_CURE_PLAYER:
+			(void)set_blind(Ind, 0);
+			(void)set_poisoned(Ind, 0);
+			(void)set_confused(Ind, 0);
+			(void)set_stun(Ind, 0);
+			(void)set_cut(Ind, 0);
+			break;
+		case GF_RESURRECT_PLAYER:
+			resurrect_player(Ind, dam);
+			break;
+		case GF_SANITY_PLAYER:
+		{
+			(void)set_image(Ind, 0);
+			if (dam > 0) {
+				if (p_ptr->csane < p_ptr->msane * dam / 5)
+					p_ptr->csane = p_ptr->msane * dam / 5;
+			}
+			break;
+		}
+
 		case GF_OLD_CONF:
 		
 		if (fuzzy || self) msg_print(Ind, "You hear puzzling noises!");
@@ -7334,7 +7486,10 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			 (typ == GF_TELEPORTLVL_PLAYER) || (typ == GF_RESPOIS_PLAYER) || 
 			 (typ == GF_RESELEC_PLAYER) || (typ == GF_RESACID_PLAYER) || 
 			 (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) || 
-			 (typ == GF_SHERO_PLAYER) || (typ == GF_TELEPORT_PLAYER)))
+			 (typ == GF_SHERO_PLAYER) || (typ == GF_TELEPORT_PLAYER) ||
+			 (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
+			 (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
+			 (typ == GF_SANITY_PLAYER) ))
 		{
 			if (!(c_ptr->m_idx > 0))
 				break;

@@ -193,22 +193,22 @@ school_book[11] = {
 
 -- Create the book of Holy Offense
 school_book[12] = {
-        HGLOBELIGHT, HORBFIRE,
+        HGLOBELIGHT, HORBDRAIN, HEXORCISM, HHOLYWORD, HDRAINLIFE,
 }
 
 -- Create the book of Holy Defense
 school_book[13] = {
-        HGLOBELIGHT,
+	HBLESSING, HRESISTS, HPROTEVIL, HRUNEPROT,
 }
 
 -- Create the book of Holy Curing
 school_book[14] = {
-        HORBFIRE,
+	HHEALING, HCURING, HSANITY, HRESURRECT,
 }
 
 -- Create the book of Holy Support
 school_book[15] = {
-        HORBFIRE, HGLOBELIGHT,
+	HSANCTUARY, HSATISFYHUNGER, HDELCURSES, HSENSE,
 }
 
 -- Create the book of beginner's cantrip

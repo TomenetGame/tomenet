@@ -1148,7 +1148,7 @@ artifact_type *randart_make(object_type *o_ptr)
 	{
 		/* exploding art ammo is very rare */
 		if (magik(10)) {
-			int power[27]={GF_ELEC, GF_POIS, GF_ACID,
+			int power[28]={GF_ELEC, GF_POIS, GF_ACID,
 			GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
 			GF_DARK, GF_SHARDS, GF_SOUND,
 			GF_CONFUSION, GF_FORCE, GF_INERTIA,
@@ -1156,8 +1156,8 @@ artifact_type *randart_make(object_type *o_ptr)
 			GF_NETHER, GF_NEXUS, GF_TIME,
 			GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
 			GF_TURN_ALL, GF_NUKE, GF_STUN,
-			GF_DISINTEGRATE};
-			a_ptr->pval = power[rand_int(27)];
+			GF_DISINTEGRATE, GF_HELL_FIRE};
+			a_ptr->pval = power[rand_int(28)];
 		}
 
 		a_ptr->to_d = 0;
