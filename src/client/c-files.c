@@ -1320,7 +1320,7 @@ errr file_character(cptr name, bool full)
 #else
 	fprintf(fff, "  [Last Messages]\r\n\r\n");
 #endif
-	dump_messages_aux(fff, 50, 0);
+	dump_messages_aux(fff, 50, 0, TRUE);
 #ifndef WINDOWS
 	fprintf(fff, "\n\n");
 #else

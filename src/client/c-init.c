@@ -300,7 +300,7 @@ static void quit_hook(cptr s)
 		FILE_TYPE(FILE_TYPE_TEXT);
 		fp=my_fopen(buf, "w");
 		if(fp!=(FILE*)NULL){
-			dump_messages_aux(fp, i, 1);
+			dump_messages_aux(fp, i, 1, FALSE);
 			fclose(fp);
 		}
 	}

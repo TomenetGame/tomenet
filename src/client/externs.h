@@ -371,7 +371,7 @@ extern void prt_sane(byte attr, cptr buf);
 extern void do_cmd_messages(void);
 extern void do_cmd_messages_chatonly(void);
 extern errr dump_messages(cptr name, int lines, int mode);
-extern void dump_messages_aux(FILE *fff, int lines, int mode);
+extern void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color);
 
 /* client.c */
 

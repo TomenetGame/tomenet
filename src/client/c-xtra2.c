@@ -598,7 +598,7 @@ void do_cmd_messages_chatonly(void)
  */
 /* FIXME: result can be garbled if contains '%' */
 /* chatonly if mode != 0 */
-void dump_messages_aux(FILE *fff, int lines, int mode)
+void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 {
 	int i, j, k, n, nn, q, r, s, t=0;
 
@@ -712,34 +712,36 @@ void dump_messages_aux(FILE *fff, int lines, int mode)
 #endif	
 		if (k) break;
 
-#ifdef WINDOWS
 		q=0;
 		for(t=0; t<strlen(msg); t++){
-			if(msg[t]=='\377'){
-				buf[q++]='{';
+                        if(msg[t]=='\377'){
+                                if (!ignore_color)
+                                        buf[q++]='{';
+                                else
+                                {
+                                        t++;
+                                        if (msg[t] == '\0')
+                                                break;
+                                }
 				continue;
 			}
 			if(msg[t]=='\n'){
-				buf[q++]='\r';
+#ifdef WINDOWS
+                                buf[q++]='\r';
+#endif
 				buf[q++]='\n';
 				continue;
 			}
 			if(msg[t]=='\r'){
 				buf[q++]='\r';
-				buf[q++]='\n';
+#ifdef WINDOWS
+                                buf[q++]='\n';
+#endif
 				continue;
 			}
 			buf[q++]=msg[t];
 		}
 		buf[q]='\0';
-#else
-		strcpy(buf, msg);
-
-		/* XXX Erase '\377' */
-		for(t=0;t<strlen(buf);t++){
-			if(buf[t]=='\377') buf[t]='{';
-		}
-#endif
 
 		/* Dump the messages, bottom to top */
 		//fprintf(fff, buf);
@@ -786,7 +788,7 @@ errr dump_messages(cptr name, int lines, int mode)
 		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, server_name, what);
 
 	/* Do it */
-	dump_messages_aux(fff, lines, mode);
+	dump_messages_aux(fff, lines, mode, FALSE);
 
 	fprintf(fff, "\n\n");
 
