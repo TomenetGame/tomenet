@@ -2119,8 +2119,8 @@ void update_player(int Ind)
 			if (p_ptr->admin_dm) flag = TRUE;
 			if (q_ptr->admin_dm) flag = FALSE;
 			
-			/* Can we see invisibvle players ? */
-			if ((!p_ptr->see_inv || ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) && q_ptr->invis)
+			/* Can we see invisible players ? */
+			if ((!p_ptr->see_inv || ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) && q_ptr->invis && !player_in_party(p_ptr->party, Ind))
 			{
 				if ((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) > (q_ptr->lev / 2)))
 					flag = FALSE;
