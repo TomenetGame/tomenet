@@ -814,7 +814,7 @@ void do_cmd_open(int Ind, int dir)
 								strcat(string,"s");
 								break;
 						}
-						msg_format(Ind,"\377rThat house is owned by %s.",string);
+						msg_format(Ind,"\377sThat house is owned by %s.",string);
 					}
 					else{
 						int factor,price;
