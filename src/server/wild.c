@@ -2022,6 +2022,40 @@ void wild_add_uhouse(house_type *h_ptr){
 	}
 	else{
 		/* polygonal house */
+		/* draw all the outer walls cleanly */
+		cptr coord=h_ptr->coords.poly;
+		int sx=h_ptr->x;
+		int sy=h_ptr->y;
+		int dx,dy;
+		x=h_ptr->x;
+		y=h_ptr->y;
+		while(coord[0] && coord[1]){
+			dx=coord[0];
+			dy=coord[1];
+			if(dx){		/* dx/dy mutually exclusive */
+				if(dx<0){
+					for(x=sx;x>(sx+dx);x--)
+ 						cave[Depth][y][x].feat=FEAT_PERM_EXTRA;
+				}
+				else{
+					for(x=sx;x<(sx+dx);x++)
+ 						cave[Depth][y][x].feat=FEAT_PERM_EXTRA;
+				}
+				sx=x;
+			}
+			else{
+				if(dy<0){
+					for(y=sy;y>(sy+dy);x--)
+ 						cave[Depth][y][x].feat=FEAT_PERM_EXTRA;
+				}
+				else{
+					for(y=sy;y<(sy+dy);x++)
+ 						cave[Depth][y][x].feat=FEAT_PERM_EXTRA;
+				}
+				sy=y;
+			}
+			coord+=2;
+		}
 	}
 	if(h_ptr->flags&HF_MOAT){
 		/* Draw a moat around our house */

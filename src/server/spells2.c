@@ -4004,6 +4004,76 @@ void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
         if (f2 & TR2_RES_DISEN) r_ptr->flags3 |= RF3_RES_DISE;
 }
 
+bool poly_build(int Ind, char *args){
+	static int curr=0;
+	static cptr vert=NULL;
+	static int lx,ly;
+	static int sx,sy;
+	static int moves;
+	player_type *p_ptr=Players[Ind];
+	static struct dna_type *dna;
+
+	if(curr==0){
+		if(!args){
+			p_ptr->master_move_hook=NULL;
+			return FALSE;
+		}
+		curr=Ind;
+		C_MAKE(vert, MAXCOORD, byte);
+		MAKE(dna, struct dna_type);
+		dna->creator=p_ptr->dna;
+		dna->owner=p_ptr->id;
+		dna->owner_type=OT_PLAYER;
+		dna->a_flags=ACF_NONE;
+		dna->min_level=ACF_NONE;
+		dna->price=5;	/* so work out */
+		lx=0;
+		ly=0;
+		sx=p_ptr->px;
+		sy=p_ptr->py;
+		moves=30;
+		cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].feat=FEAT_HOME_OPEN;
+		cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].special=dna;
+		return TRUE;
+	}
+	else if(curr!=Ind){
+		msg_print(Ind,"The builders are on strike!");
+		return FALSE;
+	}
+	printf("Got master move [%d:%d] from %d\n",p_ptr->px,p_ptr->py, Ind);
+	if(lx!=sx){
+	}
+	if(ly!=sy){
+	}
+
+	if(p_ptr->px==sx && p_ptr->py==sy){		/* check for close */
+#if 0
+		houses[num_houses].x=sx;		/* lame positioning code */
+		houses[num_houses].y=sy;
+		houses[num_houses].flags=HF_NONE;	/* polygonal */
+		houses[num_houses].depth=p_ptr->dun_depth;;
+		houses[num_houses].dna=dna;
+		num_houses++;
+#endif
+		p_ptr->master_move_hook=NULL;
+		curr=NULL;
+		dna=NULL;
+		return TRUE;
+	}
+	cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].feat=FEAT_PERM_EXTRA;
+	return TRUE;
+}
+
+void poly_house_creation(int Ind){
+	player_type *p_ptr=Players[Ind];
+	cptr coords;
+	/* set master_move_hook : a bit like a setuid really ;) */
+
+	p_ptr->master_move_hook=poly_build;
+	poly_build(Ind,1);
+	/* ok no sense checking, building bad houses is easy */
+}
+
 void house_creation(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -4011,6 +4081,9 @@ void house_creation(int Ind)
 	if((house_alloc-num_houses)<32){
 		return;		/* i know... */
 	}
+	poly_house_creation(Ind);		/* Testing only! */
+	return;
+
 	if(p_ptr->dun_depth>=0) return;		/* Building in town??? no */
 	w=4+randint(4);
 	h=4+randint(4);
@@ -4202,7 +4275,7 @@ void golem_creation(int Ind)
                         break;
         }
         r_ptr->extra = golem_flags;
-#if 0
+//#if 0
         /* Find items used for "golemification" */
         for (i = 0; i < INVEN_WIELD; i++)
         {
@@ -4223,6 +4296,7 @@ void golem_creation(int Ind)
                                         /* a valid @G has been located */
                                         if (*inscription == 'G')
                                         {                
+						printf("Found item %d\n",i);
                                                 inscription++;
 
                                                 scan_golem_flags(o_ptr, r_ptr);
@@ -4232,7 +4306,7 @@ void golem_creation(int Ind)
                         }
                 }
         }
-#endif
+//#endif
         m_ptr->speed = r_ptr->speed;
         m_ptr->mspeed = m_ptr->speed;
         m_ptr->ac = r_ptr->ac;

@@ -1023,7 +1023,7 @@ static void player_outfit(int Ind)
                         if (!k) continue;
 
                         invcopy(o_ptr, k);
-                        o_ptr->number = 4;
+                        o_ptr->number = 2;
                         apply_magic(100, o_ptr, 100, TRUE, TRUE, TRUE);
                         object_aware(Ind, o_ptr);
                         object_known(o_ptr);

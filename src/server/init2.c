@@ -1749,7 +1749,7 @@ void load_server_cfg(void)
 	cfg = fopen("mangband.cfg", "r");
 
 	/* Failure */
-	if (cfg < 0)
+	if (cfg == (FILE*)NULL)
 	{
 		printf("Error : cannot open file mangband.cfg\n");
 		return;

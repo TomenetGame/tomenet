@@ -2304,7 +2304,11 @@ void move_player(int Ind, int dir, int do_pickup)
 		 * and summoning monster armies easier.
 		 */
 
+#if 0
 		if ((!strcmp(p_ptr->name,cfg_dungeon_master) || player_is_king(Ind)) && p_ptr->master_move_hook)
+#endif
+		/* Check BEFORE setting ;) */
+		if (p_ptr->master_move_hook)
 			p_ptr->master_move_hook(Ind, NULL);
 	}
 }
