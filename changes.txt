@@ -469,3 +469,4 @@ Change list for PernMangband
 
 18/12/2001 (Evileye)
 - More bugfixes on traps which were causing memory corruption
+- Edge of world bug fixed

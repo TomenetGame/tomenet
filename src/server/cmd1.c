@@ -2161,7 +2161,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		
 			/* check to make sure he hasnt hit the edge of the world */
 #ifdef NEW_DUNGEON
-			if(p_ptr->wpos.wx<0 || p_ptr->wpos.wx>MAX_WILD_X || p_ptr->wpos.wy<0 || p_ptr->wpos.wy>MAX_WILD_Y)
+			if(p_ptr->wpos.wx<0 || p_ptr->wpos.wx>=MAX_WILD_X || p_ptr->wpos.wy<0 || p_ptr->wpos.wy>=MAX_WILD_Y)
 #else
 			if (world_index(p_ptr->world_x, p_ptr->world_y) <= -MAX_WILD) 
 #endif
