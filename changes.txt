@@ -134,3 +134,5 @@ Change list for PernMangband
 05/08/2001
 - Finished Archers books
 - 90 day player timeout added.
+
+05/08/2001 - PernMangband 3.2.0
