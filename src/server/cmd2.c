@@ -2225,7 +2225,7 @@ void do_cmd_fire(int Ind, int dir)
 	int                     tdam, tdis, thits, tmul;
 	int                     bonus, chance;
 	int                     cur_dis, visible;
-	int breakage = 0, num_ricochet = 0;
+	int breakage = 0, num_ricochet = 0, ricochet_chance = 0;
 	int item = INVEN_AMMO;
 
 	object_type         throw_obj;
@@ -2353,6 +2353,13 @@ void do_cmd_fire(int Ind, int dir)
 	{
 		num_ricochet = (p_ptr->lev / 10) - 1;
 		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
+	}
+#else	// 0
+	if (get_skill(p_ptr, SKILL_RICOCHET) && !magic && !boomerang)
+	{
+		num_ricochet = get_skill_scale(p_ptr, SKILL_RICOCHET, 6);
+		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
+		ricochet_chance = 45 + get_skill_scale(p_ptr, SKILL_RICOCHET, 50);
 	}
 #endif
 	/* Create a "local missile object" */
@@ -2924,7 +2931,8 @@ void do_cmd_fire(int Ind, int dir)
 		/* If no break and if Archer, the ammo can ricochet */
 //		if((num_ricochet) && (hit_body) && (magik(45 + p_ptr->lev)))
 
-		if((num_ricochet) && (hit_body) && (magik(50 + p_ptr->lev)) && magik(95))
+//		if((num_ricochet) && (hit_body) && (magik(50 + p_ptr->lev)) && magik(95))
+		if((num_ricochet) && (hit_body) && (magik(ricochet_chance)))
 		{
 			byte d;
 

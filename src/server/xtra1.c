@@ -1996,9 +1996,12 @@ static void calc_bonuses(int Ind)
 	{
 		p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
 
-			/* Free action if unencumbered at level 25 */
-			if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 24)
-				p_ptr->free_act = TRUE;
+		/* Free action if unencumbered at level 25 */
+		if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 24)
+			p_ptr->free_act = TRUE;
+
+		/* give a stealth bonus */
+		p_ptr->skill_stl += get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
 	}
 
 	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
@@ -2459,7 +2462,8 @@ static void calc_bonuses(int Ind)
 #if 1 // DGDGDGDGDG - no monks ffor the time being
 	/* Monks get extra ac for armour _not worn_ */
 //	if ((p_ptr->pclass == CLASS_MONK) && !(monk_heavy_armor(Ind)))
-	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !(monk_heavy_armor(Ind)))
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !(monk_heavy_armor(Ind)) &&
+		!(p_ptr->inventory[INVEN_BOW].k_idx))
 	{
 		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
 		if (!(p_ptr->inventory[INVEN_BODY].k_idx))
@@ -2905,7 +2909,8 @@ static void calc_bonuses(int Ind)
 	/* Different calculation for monks with empty hands */
 #if 1 // DGDGDGDG -- no more monks for the time being
 //	if (p_ptr->pclass == CLASS_MONK)
-	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx)
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx &&
+		!(p_ptr->inventory[INVEN_BOW].k_idx))
 	{
 		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
 		p_ptr->num_blow = 0;

@@ -1349,7 +1349,8 @@ void py_attack_player(int Ind, int y, int x, bool old)
 #if 1 // DGDGDG -- monks are no more
 //			if (p_ptr->pclass == CLASS_MONK)
 			if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx
-					&& !p_ptr->inventory[INVEN_ARM].k_idx)
+					&& !p_ptr->inventory[INVEN_ARM].k_idx
+					&& !p_ptr->inventory[INVEN_BOW].k_idx)
 			{
 				int special_effect = 0, stun_effect = 0, times = 0;
 				martial_arts *ma_ptr = &ma_blows[0], *old_ptr = &ma_blows[0];
@@ -1736,7 +1737,8 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 #if 1 // DGHDGDGDG -- monks are no more
 //			if (p_ptr->pclass == CLASS_MONK)
 			if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx
-					&& !p_ptr->inventory[INVEN_ARM].k_idx)
+					&& !p_ptr->inventory[INVEN_ARM].k_idx
+					&& !p_ptr->inventory[INVEN_BOW].k_idx)
 			{
 				int special_effect = 0, stun_effect = 0, times = 0;
 				martial_arts * ma_ptr = &ma_blows[0], * old_ptr = &ma_blows[0];

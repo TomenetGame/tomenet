@@ -1697,6 +1697,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 500,
                         },
                         {
+                                SKILL_RICOCHET,
+                                '+', 0,
+                                '+', 300,
+                        },
+                        {
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
                                 '+', 300,
@@ -2236,6 +2241,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_HUNTING,
                                 '+', 1000,
                                 '+', 900,
+                        },
+                        {
+                                SKILL_RICOCHET,
+                                '+', 1000,
+                                '+', 600,
                         },
                         {
                                 SKILL_SNEAKINESS,
@@ -4731,6 +4741,26 @@ skill_type s_info[MAX_SKILLS] =
         {
                 "Martial Arts",
 				"Ability to combat bare-handed.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Ricochet",
+				"Ability to harm more than one opponents using ricochets.",
 
                 /* Mkey desc/mkey */
                 NULL,
