@@ -302,6 +302,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		}
 		/* change a.m.b.=TRUE to =FALSE at declaration above if u use this if0-part again */
 #endif
+#if 0
 		/* If monster is using range weapons, the player gets the brand(s) even on range attacks */
 		if ((!pr_ptr->flags4 & RF4_ARROW_1) &&
 		    ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT)))
@@ -314,6 +315,13 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		if ((!pr_ptr->body_parts[BODY_WEAPON]) &&
 		    (!((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))))
 			if (o_ptr->k_idx) apply_monster_brands = FALSE;
+#endif
+		/* The player never gets brands on ranged attacks from a form */
+		if ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))
+			apply_monster_brands = FALSE;
+		/* The player doesn't get brands if he uses a weapon but the monster doesn't */
+		if ((o_ptr->k_idx) && (!pr_ptr->body_parts[BODY_WEAPON]))
+			apply_monster_brands = FALSE;
 
 		/* Get monster brands. If monster has several, choose one randomly */
 		for (i = 0; i < 4; i++)
@@ -841,6 +849,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		}
 		/* change a.m.b.=TRUE to =FALSE at declaration above if u use this if0-part again */
 #endif
+#if 0
 		/* If monster is using range weapons, the player gets the brand(s) even on range attacks */
 		if ((!pr_ptr->flags4 & RF4_ARROW_1) &&
 		    ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT)))
@@ -853,6 +862,13 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		if ((!pr_ptr->body_parts[BODY_WEAPON]) &&
 		    (!((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))))
 			if (o_ptr->k_idx) apply_monster_brands = FALSE;
+#endif
+		/* The player never gets brands on ranged attacks from a form */
+		if ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))
+			apply_monster_brands = FALSE;
+		/* The player doesn't get brands if he uses a weapon but the monster doesn't */
+		if ((o_ptr->k_idx) && (!pr_ptr->body_parts[BODY_WEAPON]))
+			apply_monster_brands = FALSE;
 
 		/* Get monster brands. If monster has several, choose one randomly */
 		for (i = 0; i < 4; i++)
