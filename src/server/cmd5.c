@@ -1308,6 +1308,7 @@ void do_mimic_power_aux(int Ind, int dir)
 // RF5_HOLD			0x80000000	/* Paralyze Player */
     case 63:
       fire_bolt(Ind, GF_STASIS, dir, damroll(2, 6) + (rlev / 3));
+      break;
 // RF6_HAND_DOOM		0x00000002	/* Should we...? */ /* YES! */
     case 65:
 	  (void)project_hook(Ind, GF_HAND_DOOM, dir, 1, PROJECT_STOP | PROJECT_KILL);
