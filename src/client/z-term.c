@@ -1663,7 +1663,7 @@ errr Term_putstr(int x, int y, int n, byte a, cptr s)
 	errr res;
 	char *ptr;
 	char tmp[512];
-	byte b;
+	int b;
 
 	/* Move first */
 	if ((res = Term_gotoxy(x, y)) != 0) return (res);
