@@ -14,13 +14,13 @@ MAGELOCK = add_spell
         		if get_level(Ind, MAGELOCK, 50) >= 30 then
 	        		local ret, x, y, c_ptr
 
---                		if get_level(Ind, MAGELOCK, 50) >= 40 then
---        	                	ret, x, y = tgt_pt()
---		                        if ret == FALSE then return end
---                                else
+                		if get_level(Ind, MAGELOCK, 50) >= 40 then
+        	                	ret, x, y = tgt_pt()
+		                        if ret == FALSE then return end
+                                else
                                 	y = player.py
                                         x = player.px
---                                end
+                                end
                         	cave_set_feat(player.wpos, y, x, 3)
                         else
                                 wizard_lock(Ind, args.dir)
@@ -75,12 +75,16 @@ ESSENSESPEED = add_spell
         ["fail"] = 	10,
         ["spell"] = 	function()
         		set_fast(Ind, 10 + randint(10) + get_level(Ind, ESSENSESPEED, 50), 5 + get_level(Ind, ESSENSESPEED, 20))
+                        if player.spell_project > 0 then
+                                fire_ball(Ind, GF_SPEED_PLAYER, 0, 50 + get_level(Ind, ESSENSESPEED, 50), player.spell_project)
+                        end
 	end,
 	["info"] = 	function()
                        	return "dur "..(10 + get_level(Ind, ESSENSESPEED, 50)).."+d10 speed "..(5 + get_level(Ind, ESSENSESPEED, 20))
 	end,
         ["desc"] =	{
         		"Magicaly increases the passing of time around you",
+                        "***Affected by the Meta spell: Project Spell***",
         }
 }
 

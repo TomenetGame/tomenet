@@ -35,11 +35,11 @@ AIRWINGS = add_spell
         ["mana_max"] = 	40,
         ["fail"] = 	70,
         ["spell"] = 	function()
---[[ DGDGDG implenet the functions please, im so lazy :)			if get_level(AIRWINGS, 50) >= 16 then
-                        	if player.tim_fly == 0 then set_tim_fly(randint(10) + 5 + get_level(AIRWINGS, 25)) end
+			if get_level(AIRWINGS, 50) >= 16 then
+                        	set_tim_fly(randint(10) + 5 + get_level(AIRWINGS, 25))
                         else
-                        	if player.tim_ffall == 0 then set_tim_ffall(randint(10) + 5 + get_level(AIRWINGS, 25)) end
-                        end]]
+                        	set_tim_ffall(randint(10) + 5 + get_level(AIRWINGS, 25))
+                        end
 	end,
 	["info"] = 	function()
 			return "dur "..(5 + get_level(Ind, AIRWINGS, 25)).."+d10"
@@ -78,8 +78,8 @@ POISONBLOOD = add_spell
         ["mana_max"] = 	20,
         ["fail"] = 	70,
         ["spell"] = 	function()
-                       	if player.oppose_pois == 0 then set_oppose_pois(Ind, randint(30) + 25 + get_level(Ind, POISONBLOOD, 25)) end
--- DGDGDG lazy again                       	if (player.tim_poison == 0) and (get_level(POISONBLOOD, 50) >= 15) then set_poison(randint(30) + 25 + get_level(POISONBLOOD, 25)) end
+                       	set_oppose_pois(Ind, randint(30) + 25 + get_level(Ind, POISONBLOOD, 25))
+                      	if get_level(Ind, POISONBLOOD, 50) >= 15 then set_poison(Ind, randint(30) + 25 + get_level(Ind, POISONBLOOD, 25)) end
        	end,
 	["info"] = 	function()
 			return "dur "..(25 + get_level(Ind, POISONBLOOD, 25)).."+d30"
@@ -99,7 +99,7 @@ THUNDERSTORM = add_spell
         ["mana_max"] = 	60,
         ["fail"] = 	70,
         ["spell"] = 	function()
--- DGDGDGGD and again                       	if player.tim_thunder == 0 then set_tim_thunder(randint(10) + 10 + get_level(THUNDERSTORM, 25), 5 + get_level(THUNDERSTORM, 10), 10 + get_level(THUNDERSTORM, 25)) end
+			set_tim_thunder(Ind, randint(10) + 10 + get_level(Ind, THUNDERSTORM, 25), 5 + get_level(Ind, THUNDERSTORM, 10), 10 + get_level(Ind, THUNDERSTORM, 25))
        	end,
 	["info"] = 	function()
 			return "dam "..(5 + get_level(Ind, THUNDERSTORM, 10)).."d"..(10 + get_level(Ind, THUNDERSTORM, 25)).." dur "..(10 + get_level(Ind, THUNDERSTORM, 25)).."+d10"

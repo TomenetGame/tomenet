@@ -2339,6 +2339,8 @@ struct player_type
 	bool praying;                   /* Praying to your god. */
 	s16b melkor_sacrifice;          /* How much hp has been sacrified for damage */
 #endif	// 0
+
+        byte spell_project;             /* Do the spells(some) affect nearby party members ? */
 };
 
 /* For Monk martial arts */

@@ -9,13 +9,18 @@ BLINK = add_spell
         ["mana_max"] =  3,
         ["fail"] = 	10,
         ["spell"] = 	function()
-			teleport_player(Ind, 10 + get_level(Ind, BLINK, 8))
+                	local dist = 10 + get_level(Ind, BLINK, 8)
+			teleport_player(Ind, dist)
+                        if player.spell_project > 0 then
+                                fire_ball(Ind, GF_TELEPORT_PLAYER, 0, dist, player.spell_project)
+                        end
 	end,
 	["info"] = 	function()
                 	return "distance "..(10 + get_level(Ind, BLINK, 8))
 	end,
         ["desc"] =	{
         		"Teleports you on a small scale range",
+                        "***Affected by the Meta spell: Project Spell***",
         },
 }
 
@@ -47,14 +52,18 @@ TELEPORT = add_spell
         ["mana_max"] = 	14,
         ["fail"] = 	50,
         ["spell"] = 	function()
-        		player.energy = player.energy - (25 - get_level(Ind, TELEPORT, 50))
-			teleport_player(Ind, 100 + get_level(Ind, TELEPORT, 100))
+                        local dist = 100 + get_level(Ind, TELEPORT, 100)
+			teleport_player(Ind, dist)
+                        if player.spell_project > 0 then
+                                fire_ball(Ind, GF_TELEPORT_PLAYER, 0, dist, player.spell_project)
+                        end
 	end,
 	["info"] = 	function()
         		return ""
 	end,
         ["desc"] =	{
         		"Teleports you around the level. The casting time decreases with level",
+                        "***Affected by the Meta spell: Project Spell***",
         }
 }
 
@@ -95,13 +104,19 @@ RECALL = add_spell
         ["mana_max"] = 	25,
         ["fail"] =      20,
         ["spell"] = 	function(args)
+                        local dur = randint(21 - get_level(Ind, RECALL, 15)) + 15 - get_level(Ind, RECALL, 10)
+
                         if args.book < 0 then return end
-        		set_recall(Ind, randint(21 - get_level(Ind, RECALL, 15)) + 15 - get_level(Ind, RECALL, 10), player.inventory[1 + args.book])
+        		set_recall(Ind, dur, player.inventory[1 + args.book])
+                        if player.spell_project > 0 then
+                                fire_ball(Ind, GF_RECALL_PLAYER, 0, dur, player.spell_project)
+                        end
 	end,
 	["info"] = 	function()
 			return "dur "..(15 - get_level(Ind, RECALL, 10)).."+d"..(21 - get_level(Ind, RECALL, 15))
 	end,
         ["desc"] =	{
         		"Cast on yourself it will recall you to the surface/dungeon.",
+                        "***Affected by the Meta spell: Project Spell***",
         }
 }

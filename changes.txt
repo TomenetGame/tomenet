@@ -22,6 +22,14 @@
 
 # bug.txt should follow the exact same format
 
+05/09/2002
+[m]- Savefile version independant of game version
+[P]- New spell system nearly done
+[P]- New Meta spell: Project Spell, it is a toggle, cast it and
+     quite a few of yoru utility spells will affect a zone around you.
+     (Which spells are affected is writen in their desc). And when you
+     cast a spell, for example healing, all players nearby will be
+     healed
 
 05/09/2002 (Jir)
 [G]- EFF_WAVE and EFF_STORM implemented (still some bugs inside)

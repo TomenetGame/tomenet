@@ -121,6 +121,8 @@ typedef unsigned int u32b;
 #define GF_UNBREATH     134
 #define GF_WAVE         135
 
+#define GF_TELEPORT_PLAYER 136
+
 #define GF_TELE_TO		150
 #define GF_HAND_DOOM	151
 #define GF_STASIS       152

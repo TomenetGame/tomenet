@@ -19,6 +19,32 @@ RECHARGE = add_spell
         }
 }
 
+PROJECT_SPELLS = add_spell
+{
+	["name"] = 	"Project Spells",
+        ["school"] = 	{SCHOOL_META},
+        ["level"] = 	10,
+        ["mana"] = 	10,
+        ["mana_max"] = 	50,
+        ["fail"] = 	10,
+        ["spell"] = 	function()
+                        if player.spell_project == 0 then
+                                player.spell_project = 1 + get_level(Ind, PROJECT_SPELLS, 6, 0)
+                                msg_print(Ind, "Your utility spells will now affect players in a radius of "..(player.spell_project)..".")
+                        else
+                                player.spell_project = 0
+                                msg_print(Ind, "Your utility spells will now only affect yourself.")
+                        end
+	end,
+	["info"] = 	function()
+                	return "base rad "..(1 + get_level(Ind, PROJECT_SPELLS, 6, 0))
+	end,
+        ["desc"] =	{
+        		"Affects some of your spells(mostly utility ones) to make them",
+                        "have an effect on your nearby party members",
+        }
+}
+
 DISPERSEMAGIC = add_spell
 {
 	["name"] = 	"Disperse Magic",

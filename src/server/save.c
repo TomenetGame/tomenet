@@ -246,10 +246,10 @@ static errr wr_savefile(void)
 	data_fd = -1;
 
 	/* Dump the version */
-	fake[0] = (byte)(VERSION_MAJOR);
-	fake[1] = (byte)(VERSION_MINOR);
-	fake[2] = (byte)(VERSION_PATCH);
-	fake[3] = (byte)(VERSION_EXTRA);
+	fake[0] = (byte)(SF_VERSION_MAJOR);
+	fake[1] = (byte)(SF_VERSION_MINOR);
+	fake[2] = (byte)(SF_VERSION_PATCH);
+	fake[3] = (byte)(SF_VERSION_EXTRA);
 
 	/* Dump the data */
 	err = fd_write(data_fd, (char*)&fake, 4);
@@ -1581,11 +1581,11 @@ static bool wr_savefile_new(int Ind)
 
 	/* Dump the file header */
 	xor_byte = 0;
-	wr_byte(VERSION_MAJOR);
+	wr_byte(SF_VERSION_MAJOR);
 	xor_byte = 0;
-	wr_byte(VERSION_MINOR);
+	wr_byte(SF_VERSION_MINOR);
 	xor_byte = 0;
-	wr_byte(VERSION_PATCH);
+	wr_byte(SF_VERSION_PATCH);
 	xor_byte = 0;
 	tmp8u = rand_int(256);
 	wr_byte(tmp8u);
@@ -1710,6 +1710,8 @@ static bool wr_savefile_new(int Ind)
 
 	wr_s16b(p_ptr->quest_id);
 	wr_s16b(p_ptr->quest_num);
+
+        wr_byte(p_ptr->spell_project);
 
 	/* Write the "value check-sum" */
 	wr_u32b(v_stamp);
@@ -2256,11 +2258,11 @@ static bool wr_server_savefile(void)
 
 	/* Dump the file header */
 	xor_byte = 0;
-	wr_byte(VERSION_MAJOR);
+	wr_byte(SF_VERSION_MAJOR);
 	xor_byte = 0;
-	wr_byte(VERSION_MINOR);
+	wr_byte(SF_VERSION_MINOR);
 	xor_byte = 0;
-	wr_byte(VERSION_PATCH);
+	wr_byte(SF_VERSION_PATCH);
 	xor_byte = 0;
 	tmp8u = rand_int(256);
 	wr_byte(tmp8u);

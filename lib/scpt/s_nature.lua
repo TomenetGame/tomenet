@@ -28,13 +28,18 @@ HEALING = add_spell
         ["mana_max"] = 	50,
         ["fail"] = 	20,
         ["spell"] = 	function()
-        		hp_player(Ind, player.mhp * (15 + get_level(Ind, HEALING, 35)) / 100)
+                        local hp = player.mhp * (15 + get_level(Ind, HEALING, 35)) / 100
+        		hp_player(Ind, hp)
+                        if player.spell_project > 0 then
+                                fire_ball(Ind, GF_HEAL_PLAYER, 0, (hp * 3) / 2, player.spell_project)
+                        end
 	end,
 	["info"] = 	function()
 			return "heal "..(15 + get_level(Ind, HEALING, 35)).."% = "..(player.mhp * (15 + get_level(Ind, HEALING, 35)) / 100).."hp"
 	end,
         ["desc"] =	{
         		"Heals a percent of hitpoints",
+                        "***Affected by the Meta spell: Project Spell***",
         }
 }
 
@@ -51,6 +56,10 @@ RECOVERY = add_spell
                         if get_level(Ind, RECOVERY, 50) >= 5 then
                         	set_poisoned(Ind, 0)
                                 set_cut(Ind, 0)
+	                        if player.spell_project > 0 then
+        	                        fire_ball(Ind, GF_CURECUT_PLAYER, 0, 1, player.spell_project)
+        	                        fire_ball(Ind, GF_CUREPOISON_PLAYER, 0, 1, player.spell_project)
+                	        end
                         end
                         if get_level(Ind, RECOVERY, 50) >= 10 then
 				do_res_stat(Ind, A_STR)
@@ -71,7 +80,8 @@ RECOVERY = add_spell
         		"Reduces the length of time that you are poisoned",
                         "At level 5 it cures poison and cuts",
                         "At level 10 it restores drained stats",
-                        "At level 15 it restores lost experience"
+                        "At level 15 it restores lost experience",
+                        "***Affected by the Meta spell: Project Spell***",
         }
 }
 

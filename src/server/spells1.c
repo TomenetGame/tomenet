@@ -5558,7 +5558,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(typ != GF_DETECTTRAP_PLAYER) && (typ != GF_TELEPORTLVL_PLAYER) &&
 			(typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) &&
 			(typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) &&
-			(typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER)) 
+                        (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER) &&
+                        (typ != GF_TELEPORT_PLAYER))
 		{		
 			/* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind))
@@ -6218,6 +6219,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
                         	(void)set_shield(Ind, p_ptr->shield + (dam / 5));
 			break;
                 }
+		case GF_TELEPORT_PLAYER:
+		{
+			if (fuzzy) msg_print(Ind, "You feel translocated!");
+			else msg_format(Ind, "%^s teleports you!", killer);
+
+                        teleport_player(Ind, dam);
+			break;
+                }
 		case GF_RECALL_PLAYER:
 		{
 			if (!p_ptr->word_recall)
@@ -6864,7 +6873,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			 (typ == GF_TELEPORTLVL_PLAYER) || (typ == GF_RESPOIS_PLAYER) || 
 			 (typ == GF_RESELEC_PLAYER) || (typ == GF_RESACID_PLAYER) || 
 			 (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) || 
-			 (typ == GF_SHERO_PLAYER)))
+			 (typ == GF_SHERO_PLAYER) || (typ == GF_TELEPORT_PLAYER)))
 		{
 			if (!(c_ptr->m_idx > 0))
 				break;

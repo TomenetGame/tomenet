@@ -97,13 +97,18 @@ WRAITHFORM = add_spell
         ["mana_max"] = 	40,
         ["fail"] = 	20,
         ["spell"] = 	function()
-                       	set_tim_wraith(Ind, randint(30) + 20 + get_level(Ind, WRAITHFORM, 40))
+                        local dur = randint(30) + 20 + get_level(Ind, WRAITHFORM, 40)
+                       	set_tim_wraith(Ind, dur)
+                        if player.spell_project > 0 then
+                                fire_ball(Ind, GF_WRAITH_PLAYER, 0, dur, player.spell_project)
+                        end
 	end,
 	["info"] = 	function()
 	                return "dur "..(20 + get_level(Ind, WRAITHFORM, 40)).."+d30"
 	end,
         ["desc"] =	{
                         "Turns you into an immaterial being",
+                        "***Affected by the Meta spell: Project Spell***",
         }
 }
 --[[

@@ -37,6 +37,12 @@
 #define VERSION_MINOR   0
 #define VERSION_PATCH   0
 
+/* For savefile purpose only */
+#define SF_VERSION_MAJOR   4
+#define SF_VERSION_MINOR   0
+#define SF_VERSION_PATCH   1
+#define SF_VERSION_EXTRA   0
+
 /*
  * Base version strings of TomeNET (see version_build)
  */
@@ -2665,6 +2671,8 @@ that keeps many algorithms happy.
 
 #define GF_UNBREATH     134
 #define GF_WAVE         135
+
+#define GF_TELEPORT_PLAYER 136
 
 #define GF_TELE_TO		150
 #define GF_HAND_DOOM	151

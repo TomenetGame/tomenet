@@ -2354,7 +2354,7 @@ player_class class_info[MAX_CLASS] =
 	},
 
 	{
-                "Wizard",
+                "Istari",
                 TERM_RED,
 		{-5, 3, 0, 1, -2, 1},
 		30, 36, 30, 2,  16, 20, 34, 20,
@@ -2974,7 +2974,7 @@ player_class class_info[MAX_CLASS] =
                 }
 	},
 
-#if 1
+#if 0 // AhAH no, no way
 	/* Basically it's copy of Adventurer */
 	/* TODO: devise another name - Bard is for music class */
 	{
@@ -3465,7 +3465,7 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"Lord",
 	},
 
-	/* Warlock */
+	/* Istari */
 	{
 		"Novice",
 		"Apprentice",
@@ -3505,7 +3505,8 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"High Thief",
 		"Master Thief",
 		"Assassin",
-	},
+        },
+
 	/* Mimic */
 	{
 		"Copier",
@@ -3532,20 +3533,6 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"Archer",
 		"Archer",
 		"Great Archer",
-	},
-
-	/* Bard */
-	{
-		"Apprentice",
-		"Journeyman",
-		"Dragonlord",
-		"Wizard",
-		"Rogue geek",
-		"Rogue addict",
-		"Schmendrick",
-		"Gunfighter",
-		"Time waster",
-		"Bug chaser",
 	},
 };
 

@@ -1717,7 +1717,16 @@ static errr rd_savefile_new_aux(int Ind)
 	/* read player guild membership */
 	rd_byte(&p_ptr->guild);
 	rd_s16b(&p_ptr->quest_id);
-	rd_s16b(&p_ptr->quest_num);
+        rd_s16b(&p_ptr->quest_num);
+
+        if (!older_than(4, 0, 1))
+        {
+                rd_byte(&p_ptr->spell_project);
+        }
+        else
+        {
+                p_ptr->spell_project = 0;
+        }
 
 #ifdef VERIFY_CHECKSUMS
 

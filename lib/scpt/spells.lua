@@ -147,7 +147,7 @@ school_book[8] = {
 
 -- Create the book of meta spells
 school_book[9] = {
-        RECHARGE, DISPERSEMAGIC,
+        RECHARGE, PROJECT_SPELLS, DISPERSEMAGIC,
 }
 
 -- Create the book of hellflame

@@ -65,12 +65,19 @@ RESISTS = add_spell
                        	if player.oppose_cold == 0 then set_oppose_cold(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50)) end
                        	if player.oppose_elec == 0 then set_oppose_elec(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50)) end
                        	if player.oppose_acid == 0 then set_oppose_acid(Ind, randint(10) + 15 + get_level(Ind, RESISTS, 50)) end
+                        if player.spell_project > 0 then
+                                fire_ball(Ind, GF_RESFIRE_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), player.spell_project)
+                                fire_ball(Ind, GF_RESCOLD_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), player.spell_project)
+                                fire_ball(Ind, GF_RESELEC_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), player.spell_project)
+                                fire_ball(Ind, GF_RESACID_PLAYER, 0, randint(20) + get_level(Ind, RESISTS, 50), player.spell_project)
+                        end
 	end,
 	["info"] = 	function()
 			return "dur "..(15 + get_level(Ind, RESISTS, 50)).."+d10"
 	end,
         ["desc"] =	{
         		"Provide resistances to the four basic elements",
+                        "***Affected by the Meta spell: Project Spell***",
 		}
 }
 

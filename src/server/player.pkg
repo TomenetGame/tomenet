@@ -663,6 +663,7 @@ struct player_type
         u16b csane_frac;              /* Cur sanity frac */
 
 
+        byte spell_project;             /* Do the spells(some) affect nearby party members ? */
 };
 
 extern bool imprison(int Ind, int time, char *reason);

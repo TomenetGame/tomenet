@@ -74,6 +74,9 @@ VISION = add_spell
                         else
                         	map_area(Ind)
                         end
+                        if player.spell_project > 0 then
+                                fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, player.spell_project)
+                        end
 	end,
 	["info"] = 	function()
 			return ""
@@ -81,6 +84,7 @@ VISION = add_spell
         ["desc"] =	{
                         "Detects the layout of the surrounding area",
                         "At level 25 it maps and lights the whole level",
+                        "***Affected by the Meta spell: Project Spell***",
         }
 }
 
@@ -94,8 +98,14 @@ SENSEHIDDEN = add_spell
         ["fail"] = 	10,
         ["spell"] = 	function()
         		detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN, 40, 0))
+                        if player.spell_project > 0 then
+                                fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, player.spell_project)
+                        end
         		if get_level(Ind, SENSEHIDDEN, 50) >= 10 then
                         	set_tim_invis(Ind, 10 + randint(20) + get_level(Ind, SENSEHIDDEN, 40))
+	                        if player.spell_project > 0 then
+        	                        fire_ball(Ind, GF_SEEINVIS_PLAYER, 0, 10 + randint(20) + get_level(Ind, SENSEHIDDEN, 40), player.spell_project)
+                	        end
                         end
 	end,
 	["info"] = 	function()
@@ -107,7 +117,8 @@ SENSEHIDDEN = add_spell
 	end,
         ["desc"] =	{
         		"Detects the traps in a certain radius around you",
-                        "At level 15 it allows you to sense invisible for a while"
+                        "At level 15 it allows you to sense invisible for a while",
+                        "***Affected by the Meta spell: Project Spell***",
         }
 }
 
@@ -121,12 +132,16 @@ REVEALWAYS = add_spell
         ["fail"] = 	10,
         ["spell"] = 	function()
         		detect_sdoor(Ind, 10 + get_level(Ind, REVEALWAYS, 40, 0))
+                        if player.spell_project > 0 then
+                                fire_ball(Ind, GF_DETECTDOOR_PLAYER, 0, 1, player.spell_project)
+                        end
 	end,
 	["info"] = 	function()
                         return "rad "..(10 + get_level(Ind, REVEALWAYS, 40))
 	end,
         ["desc"] =	{
         		"Detects the doors/stairs/ways in a certain radius around you",
+                        "***Affected by the Meta spell: Project Spell***",
         }
 }
 
@@ -140,6 +155,9 @@ SENSEMONSTERS = add_spell
         ["fail"] = 	10,
         ["spell"] = 	function()
                         detect_creatures(Ind)
+                        if player.spell_project > 0 then
+                                fire_ball(Ind, GF_DETECTCREATURE_PLAYER, 0, 1, player.spell_project)
+                        end
         		if get_level(Ind, SENSEMONSTERS, 50) >= 30 then
                         	set_tim_esp(Ind, 10 + randint(10) + get_level(Ind, SENSEMONSTERS, 20))
                         end
@@ -153,6 +171,7 @@ SENSEMONSTERS = add_spell
 	end,
         ["desc"] =	{
         		"Detects all monsters near you",
-                        "At level 30 it allows you to sense monster minds for a while"
+                        "At level 30 it allows you to sense monster minds for a while",
+                        "***Affected by the Meta spell: Project Spell***",
         }
 }
