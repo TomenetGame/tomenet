@@ -1905,9 +1905,6 @@ void calc_bonuses(int Ind)
 		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 11);
 	}
 
-	/* Take off what is no more usable */
-	do_takeoff_impossible(Ind);
-
 	/* Ghost */
 	if (p_ptr->ghost)
 	{
@@ -3300,6 +3297,8 @@ void update_stuff(int Ind)
 	{
 		p_ptr->update &= ~(PU_BONUS);
 		calc_bonuses(Ind);
+		/* Take off what is no more usable */
+		do_takeoff_impossible(Ind);
 	}
 
 	if (p_ptr->update & PU_TORCH)
