@@ -48,7 +48,8 @@
 
 SERV_SRCS = \
   common/z-util.c common/z-virt.c common/z-form.c common/z-rand.c \
-  common/net-unix.c common/sockbuf.c server/variable.c server/control.c \
+  common/net-unix.c common/sockbuf.c common/common.c \
+  server/variable.c server/control.c \
   server/party.c server/tables.c server/util.c server/cave.c \
   server/object1.c server/object2.c server/monster1.c server/monster2.c \
   server/xtra1.c server/xtra2.c server/spells1.c server/spells2.c \
@@ -61,7 +62,8 @@ SERV_SRCS = \
 
 SERV_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
-  common/net-unix.o common/sockbuf.o server/variable.o server/control.o \
+  common/net-unix.o common/sockbuf.o common/common.o \
+  server/variable.o server/control.o \
   server/party.o server/tables.o server/util.o server/cave.o \
   server/object1.o server/object2.o server/monster1.o server/monster2.o \
   server/xtra1.o server/xtra2.o server/spells1.o server/spells2.o \
@@ -75,7 +77,7 @@ SERV_OBJS = \
 
 CLI_SRCS = \
   common/z-util.c common/z-virt.c common/z-form.c common/z-rand.c \
-  common/net-unix.c common/sockbuf.c common/net-ibm.c \
+  common/net-unix.c common/sockbuf.c common/net-ibm.c common/common.c \
   client/z-term.c client/c-util.c client/c-cmd.c client/c-inven.c \
   client/c-files.c client/c-tables.c client/c-store.c client/c-init.c \
   client/variable.c client/main-ibm.c client/main-cap.c client/main-gcu.c \
@@ -84,7 +86,7 @@ CLI_SRCS = \
 
 CLI_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
-  common/net-unix.o common/sockbuf.o common/net-ibm.o \
+  common/net-unix.o common/sockbuf.o common/net-ibm.o common/common.o \
   client/z-term.o client/c-util.o client/c-cmd.o client/c-inven.o \
   client/c-files.o client/c-tables.o client/c-store.o client/c-init.o \
   client/variable.o client/main-ibm.o client/main-cap.o client/main-gcu.o \

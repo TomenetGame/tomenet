@@ -6,6 +6,8 @@
 
 #include "../common/z-virt.h"
 
+#include "../common/angband.h"
+
 
 /*
  * This file provides a generic, efficient, terminal window package,
@@ -1661,6 +1663,7 @@ errr Term_putstr(int x, int y, int n, byte a, cptr s)
 	errr res;
 	char *ptr;
 	char tmp[512];
+	byte b;
 
 	/* Move first */
 	if ((res = Term_gotoxy(x, y)) != 0) return (res);
@@ -1677,8 +1680,8 @@ errr Term_putstr(int x, int y, int n, byte a, cptr s)
 		tmp[ptr-s]='\0';
 		if((res=Term_addstr(ptr-s, a, tmp))!=0) return(res);
 		s=ptr+1;
-		if(*s>='a' && *s<='p'){
-			a=*s-'a';
+		if((b=color_char_to_attr(*s))!=-1){
+			a=b;
 		}
 		else{
 			if(*s=='\377') *s='{';
