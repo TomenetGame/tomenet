@@ -19,9 +19,9 @@ STONESKIN = add_spell
 	end,
 	["info"] = 	function()
         		if get_level(Ind, STONESKIN, 50) >= 25 then
-                                return "dam "..(2 + get_level(Ind, STONESKIN, 5)).."d"..(3 + get_level(Ind, STONESKIN, 5)).." dur "..(10 + get_level(Ind, STONESKIN, 100)).."+d10 AC "..(10 + get_level(Ind, STONESKIN, 50))
+                                return "dam "..(2 + get_level(Ind, STONESKIN, 5)).."d"..(3 + get_level(Ind, STONESKIN, 5)).." dur "..(10 + get_level(Ind, STONESKIN, 100)).."+d10 AC "..(5 + get_level(Ind, STONESKIN, 25))
                         else
-                                return "dur "..(10 + get_level(Ind, STONESKIN, 100)).."+d10 AC "..(10 + get_level(Ind, STONESKIN, 50))
+                                return "dur "..(10 + get_level(Ind, STONESKIN, 100)).."+d10 AC "..(5 + get_level(Ind, STONESKIN, 25))
                         end
 	end,
         ["desc"] =	{

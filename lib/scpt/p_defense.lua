@@ -173,7 +173,7 @@ HMARTYR = add_spell
 			end
 			end,
 	["info"] = 	function()
-			return "power oo  dur 15  timeout 1000"
+			return "dur 15  timeout 1000"
 			end,
 	["desc"] = 	{
 			"Turns you into an holy martyr, blessed with immortality",
