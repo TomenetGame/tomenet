@@ -43,8 +43,8 @@ struct ft_data *getfile(int ind, unsigned short fnum){
 	struct ft_data *trav, *new_ft;
 	if(fnum==0){
 		new_ft=(struct ft_data*)malloc(sizeof(struct ft_data));
-		memset(new_ft, 0, sizeof(struct ft_data));
 		if(new_ft==(struct ft_data*)NULL) return(NULL);
+		memset(new_ft, 0, sizeof(struct ft_data));
 		new_ft->next=fdata;
 		fdata=new_ft;
 		return(new_ft);
