@@ -354,7 +354,11 @@ extern void prt_gold(int gold);
 extern void prt_ac(int ac);
 extern void prt_hp(int max, int cur);
 extern void prt_sp(int max, int cur);
+#ifdef NEW_DUNGEON
+extern void prt_depth(int x, int y, int z, bool town);
+#else
 extern void prt_depth(int depth);
+#endif
 extern void prt_hunger(int food);
 extern void prt_blind(bool blind);
 extern void prt_confused(bool confused);

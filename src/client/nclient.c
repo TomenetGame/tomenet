@@ -1618,17 +1618,30 @@ int Receive_depth(void)
 {
 	int	n;
 	char	ch;
+#ifdef NEW_DUNGEON
+	s16b	x,y,z;
+	bool town;
+#else
 	s16b	depth;
+#endif
 
+#ifdef NEW_DUNGEON
+	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c", &ch, &x, &y, &z, &town)) <= 0)
+#else
 	if ((n = Packet_scanf(&rbuf, "%c%hu", &ch, &depth)) <= 0)
+#endif
 	{
 		return n;
 	}
 
 	if (!screen_icky && !shopping)
-		prt_depth(depth);
+		prt_depth(x, y, z, town);
 	else
+#ifdef NEW_DUNGEON
+		if ((n = Packet_printf(&qbuf, "%c%hu%hu%hu%c", ch, x, y, z, town)) <= 0)
+#else
 		if ((n = Packet_printf(&qbuf, "%c%hu", ch, depth)) <= 0)
+#endif
 		{
 			return n;
 		}

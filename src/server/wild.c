@@ -216,7 +216,6 @@ void addtown(int y, int x, int base, u16b flags){
 	for (n = 0; n < MAX_STORES; n++)
 	{
 		int i;
-		printf("initing shop %d\n",n);
 		/* Initialize */
 		store_init(&town[numtowns].townstore[n]);
 

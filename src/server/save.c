@@ -2714,7 +2714,6 @@ void wr_towns(){
 	int i, j;
 	wr_u16b(numtowns);
 	for(i=0;i<numtowns;i++){
-		printf("writing town %d\n",i);
 		wr_u16b(town[i].x);
 		wr_u16b(town[i].y);
 		wr_u16b(town[i].baselevel);
@@ -2723,7 +2722,6 @@ void wr_towns(){
 
 		/* Dump the stores */
 		for (j = 0; j < town[i].num_stores; j++){
-			printf("writing store %d\n",j);
 			wr_store(&town[i].townstore[j]);
 		}
 	}

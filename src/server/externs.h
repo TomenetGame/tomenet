@@ -774,7 +774,11 @@ extern int Send_equip(int Ind, char pos, byte attr, int wgt, byte tval, cptr nam
 extern int Send_title(int Ind, cptr title);
 /*extern int Send_level(int Ind, int max, int cur);*/
 /*extern void Send_exp(int Ind, s32b max, s32b cur);*/
+#ifdef NEW_DUNGEON
+extern int Send_depth(int Ind, struct worldpos *wpos);
+#else
 extern int Send_depth(int Ind, int depth);
+#endif
 extern int Send_food(int Ind, int food);
 extern int Send_blind(int Ind, bool blind);
 extern int Send_confused(int Ind, bool confused);

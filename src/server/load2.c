@@ -2681,7 +2681,6 @@ void rd_towns(){
 	rd_u16b(&numtowns);
 	C_MAKE(town, numtowns, struct town_type);
 	for(i=0; i<numtowns; i++){
-		printf("Read town %d\n",i);
 		rd_u16b(&town[i].x);
 		rd_u16b(&town[i].y);
 		rd_u16b(&town[i].baselevel);
@@ -2693,7 +2692,6 @@ void rd_towns(){
 		twpos.wy=town[i].y;
 		alloc_stores(i);
 		for(j=0;j<town[i].num_stores;j++){
-			printf("read store %d\n",j);
 			rd_store(&town[i].townstore[j]);
 		}
 	}

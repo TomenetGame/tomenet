@@ -2819,7 +2819,11 @@ int Send_title(int ind, cptr title)
 	return Packet_printf(&connp->c, "%c%s", PKT_TITLE, title);
 }
 
+#ifdef NEW_DUNGEON
+int Send_depth(int ind, struct worldpos *wpos)
+#else
 int Send_depth(int ind, int depth)
+#endif
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -2844,10 +2848,18 @@ int Send_depth(int ind, int depth)
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
+#ifdef NEW_DUNGEON
+		Packet_printf(&connp2->c, "%c%hu%hu%hu%c", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos));
+#else
 		Packet_printf(&connp2->c, "%c%hu", PKT_DEPTH, depth);
+#endif
 	      }
 	  }
+#ifdef NEW_DUNGEON
+	return Packet_printf(&connp->c, "%c%hu%hu%hu%c", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos));
+#else
 	return Packet_printf(&connp->c, "%c%hu", PKT_DEPTH, depth);
+#endif
 }
 
 int Send_food(int ind, int food)

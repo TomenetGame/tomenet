@@ -442,3 +442,4 @@ Change list for PernMangband
 
 16/12/2001 (Evileye)
 - Added multiple store code, so towns have their own stores.
+- Server/client changed to display worldpos (messy still)
