@@ -1868,7 +1868,7 @@ player_magic magic_info[MAX_CLASS] =
 
 			{  9,  7, 45,   8},
 			{  9,  7, 75,   9},
-                        { 30, 21, 45,   9},
+                        { 11,  7, 45,   9},
 			{ 11,  7, 45,   9},
 			{ 11,  7, 75,   6},
 			{ 13,  7, 50,   6},
@@ -3023,19 +3023,19 @@ cptr spell_names[8][64] =
 		/* Incantations and Illusions (sval 2) */
 		"Satisfy Hunger",
 		"Recharge Item I",
-		"Tidal Wave",
+		"Frost Ball",
 		"Polymorph Other",
 		"Identify",
-		"Sleep II",
+		"Magic Mapping",
 		"Fire Bolt",
-		"Slow Monster",
+		"Magic Missile Ball",
 
 		/* Sorcery and Evocations (sval 3) */
-		"Frost Ball",
+		"Fire Ball",
 		"Recharge Item II",
 		"Teleport Other",
 		"Haste Self",
-		"Fire Ball",
+		"Tidal Wave",
 		"Word of Destruction",
 		"Genocide",
 

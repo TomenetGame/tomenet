@@ -4624,10 +4624,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		strcpy(killer, p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");
 
 		/* Do not become hostile if it was a healing or teleport spell */
-		
-		if ((typ != GF_HEAL_PLAYER) && (typ != GF_AWAY_ALL) && (typ != GF_WRAITH_PLAYER)
-		    && (typ != GF_SPEED_PLAYER) && (typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER))
-		{
+		if ((typ != GF_HEAL_PLAYER) && (typ != GF_AWAY_ALL) && (typ != GF_WRAITH_PLAYER) && (typ != GF_SPEED_PLAYER) && (typ != GF_SHIELD_PLAYER) && (typ != GF_RECALL_PLAYER) && (typ != GF_BLESS_PLAYER) && (typ != GF_REMFEAR_PLAYER) && (typ != GF_SATHUNGER_PLAYER) && (typ != GF_RESFIRE_PLAYER) && (typ != GF_RESCOLD_PLAYER) && (typ != GF_CUREPOISON_PLAYER) && (typ != GF_SEEINVIS_PLAYER) && (typ != GF_SEEMAP_PLAYER) && (typ != GF_CURECUT_PLAYER) && (typ != GF_CURESTUN_PLAYER) && (typ != GF_DETECTCREATURE_PLAYER) && (typ != GF_DETECTDOOR_PLAYER) && (typ != GF_DETECTTRAP_PLAYER) && (typ != GF_TELEPORTLVL_PLAYER) && (typ != GF_RESPOIS_PLAYER) && (typ != GF_RESELEC_PLAYER) && (typ != GF_RESACID_PLAYER) && (typ != GF_HPINCREASE_PLAYER) && (typ != GF_HERO_PLAYER) && (typ != GF_SHERO_PLAYER)) 
+		{		
 			/* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind))
 			{
@@ -4649,7 +4647,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Players in the same party can't harm each others */
 				return FALSE;
 			}
-		}
+		}	
 	}
 
 
@@ -5067,24 +5065,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Teleport other -- Teleports */
 		case GF_AWAY_ALL:
+		{
 		if (fuzzy) msg_print(Ind, "You feel you are somewhere else.");
 		else msg_format(Ind, "%^s teleports you away.", killer);
 		teleport_player(Ind, 200);
 		break;
+		}
 
-		case GF_HEAL_PLAYER:
-		{
-		
-		if (fuzzy) msg_print(Ind, "You are hit by something good!");		
-		else msg_format(Ind, "%^s heals you!", killer);
-		
-		hp_player(Ind, dam);
-		set_cut(Ind, Players[Ind]->cut - 10);
-		set_paralyzed(Ind, 0);
-
-
-		break;
-                }
 		case GF_WRAITH_PLAYER:		
 		{
 			if (fuzzy) msg_print(Ind, "You feel less constant!");
@@ -5101,6 +5088,151 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			//set_tim_wraith(Ind, p_ptr->tim_wraith + dam);
 			break;
                 }
+
+                case GF_BLESS_PLAYER:
+                {
+			if (dam < 25)
+			{
+				p_ptr->blessed_power = 10;
+			}
+
+			if ((dam > 25) && (dam < 49))
+			{
+				p_ptr->blessed_power = 20;
+			}
+
+			if (dam > 48)
+			{
+				p_ptr->blessed_power = 30;
+			}	
+                        (void)set_blessed(Ind, dam);
+                        break;
+                }
+	
+                case GF_REMFEAR_PLAYER:
+                {
+                        set_afraid(Ind, 0);
+                        break;
+		}
+
+                case GF_HPINCREASE_PLAYER:
+                {
+			(void)hp_player(Ind, dam);
+                        break;
+		}
+
+                case GF_HERO_PLAYER:
+                {
+			(void)set_hero(Ind, p_ptr->hero + dam);
+                        break;
+		}
+
+                case GF_SHERO_PLAYER:
+                {
+			(void)set_shero(Ind, p_ptr->hero + dam);
+                        break;
+		}
+
+                case GF_SATHUNGER_PLAYER:
+                {
+			msg_format_near(Ind, "\377R%s looks like he is going to explode.", p_ptr->name);
+                        (void)set_food(Ind, PY_FOOD_MAX - 1);
+                        break;
+		}
+
+		case GF_RESFIRE_PLAYER:
+		{
+			(void)set_oppose_fire(Ind, p_ptr->oppose_fire + dam);
+			break;
+		}
+
+		case GF_RESELEC_PLAYER:
+		{
+			(void)set_oppose_elec(Ind, p_ptr->oppose_elec + dam);
+			break;
+		}
+
+		case GF_RESPOIS_PLAYER:
+		{
+			(void)set_oppose_pois(Ind, p_ptr->oppose_pois + dam);
+			break;
+		}
+
+		case GF_RESACID_PLAYER:
+		{
+			(void)set_oppose_acid(Ind, p_ptr->oppose_acid + dam);
+			break;
+		}
+	
+		case GF_RESCOLD_PLAYER:
+		{
+                        (void)set_oppose_cold(Ind, p_ptr->oppose_cold + dam);
+			break;
+		}
+
+		case GF_CUREPOISON_PLAYER:
+		{
+                        (void)set_poisoned(Ind, 0);
+			break;
+		}
+
+		case GF_SEEINVIS_PLAYER:
+		{
+			(void)set_tim_invis(Ind, p_ptr->tim_invis + dam);
+			break;
+		}
+
+		case GF_SEEMAP_PLAYER:
+		{
+                        map_area(Ind);
+			break;
+		}
+			
+		case GF_DETECTCREATURE_PLAYER:
+		{
+ 			(void)detect_creatures(Ind);
+			break;
+		}
+
+		case GF_CURESTUN_PLAYER:
+		{
+                        (void)set_stun(Ind, p_ptr->stun - dam);
+			break;
+		}
+
+		case GF_DETECTDOOR_PLAYER:
+		{
+                        (void)detect_sdoor(Ind);
+			break;
+		}
+
+		case GF_DETECTTRAP_PLAYER:
+		{
+                        (void)detect_trap(Ind);
+			break;
+		}
+
+		case GF_CURECUT_PLAYER:
+		{
+                        (void)set_cut(Ind, p_ptr->cut - dam);
+			break;
+		}
+
+		case GF_TELEPORTLVL_PLAYER:
+		{
+                        teleport_player_level(Ind);
+			break;
+		}
+
+		case GF_HEAL_PLAYER:
+		{
+			msg_format(Ind, "\377gYou have been healed for %ld damage",dam);
+                        msg_format_near(Ind, "\377g%s has been healed for %ld damage!.", p_ptr->name, dam);
+
+			(void)hp_player(Ind, dam);
+			break;
+		}
+
 		case GF_SPEED_PLAYER:		
 		{
 			if (fuzzy) msg_print(Ind, "You feel faster!");
@@ -5650,21 +5782,19 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			/* always hit monsters */
 			if (c_ptr->m_idx > 0) break;
 			
-			/* healing spells hit everybody */			
-			if (typ == GF_HEAL_PLAYER) break;
-			if (typ == GF_WRAITH_PLAYER) break;
-			if (typ == GF_SPEED_PLAYER) break;
-			if (typ == GF_SHIELD_PLAYER) break;
-
-			/* monsters hit */
-			if(who>0) break;
-			
 			/* neutral people hit each other */			
 			if (!Players[0 - who]->party) break;
 			
 			/* people not in the same party hit each other */			
 			if (!player_in_party(Players[0 - who]->party, 0 - c_ptr->m_idx)) break;	
 		}
+
+                if((c_ptr->m_idx != 0) && dist && ((typ == GF_HEAL_PLAYER) || (typ == GF_WRAITH_PLAYER) || (typ == GF_SPEED_PLAYER) || (typ == GF_SHIELD_PLAYER) || (typ == GF_RECALL_PLAYER) || (typ == GF_BLESS_PLAYER) || (typ == GF_REMFEAR_PLAYER) || (typ == GF_SATHUNGER_PLAYER) || (typ == GF_RESFIRE_PLAYER) || (typ == GF_RESCOLD_PLAYER) || (typ == GF_CUREPOISON_PLAYER) || (typ == GF_SEEINVIS_PLAYER) || (typ == GF_SEEMAP_PLAYER) || (typ == GF_CURECUT_PLAYER) || (typ == GF_CURESTUN_PLAYER) || (typ == GF_DETECTCREATURE_PLAYER) || (typ == GF_DETECTDOOR_PLAYER) || (typ == GF_DETECTTRAP_PLAYER) || (typ == GF_TELEPORTLVL_PLAYER) || (typ == GF_RESPOIS_PLAYER) || (typ == GF_RESELEC_PLAYER) || (typ == GF_RESACID_PLAYER) || (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) || (typ == GF_SHERO_PLAYER)))
+		{
+			if (!(c_ptr->m_idx > 0))
+		        break;
+                }
+
 
 		/* Calculate the new location */
 		y9 = y;
@@ -6094,7 +6224,6 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			}
 		}
 	}
-
 
 	/* Check player */
 	if (flg & PROJECT_KILL)

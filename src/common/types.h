@@ -709,7 +709,6 @@ struct object_type
 	byte ident;			/* Special flags  */
 
 	byte marked;			/* Object is marked */
-					/* Object scan counter */
 
 	u16b note;			/* Inscription index */
 
@@ -1686,6 +1685,7 @@ struct player_type
 	s16b furry;			/* Timed -- Furry */
 	s16b shield;		/* Timed -- Shield Spell */
 	s16b blessed;		/* Timed -- Blessed */
+	s16b blessed_power;		/* Timed -- Blessed */
 	s16b tim_invis;		/* Timed -- See Invisible */
 	s16b tim_infra;		/* Timed -- Infra Vision */
 	s16b tim_wraith;	/* Timed -- Wraithform */

@@ -962,6 +962,7 @@ bool set_confused(int Ind, int v)
 	{
 		if (p_ptr->confused)
 		{
+			msg_format_near(Ind, "%s appears less confused now.", p_ptr->name);
 			msg_print(Ind, "You feel less confused now.");
 			notice = TRUE;
 		}
@@ -1166,6 +1167,7 @@ bool set_image(int Ind, int v)
 	{
 		if (!p_ptr->image)
 		{
+			msg_format_near(Ind, "%s has been drugged.", p_ptr->name);
 			msg_print(Ind, "You feel drugged!");
 			notice = TRUE;
 		}
@@ -1176,6 +1178,7 @@ bool set_image(int Ind, int v)
 	{
 		if (p_ptr->image)
 		{
+			msg_format_near(Ind, "%s has recovered from his drug induced stupor.", p_ptr->name);
 			msg_print(Ind, "You can see clearly again.");
 			notice = TRUE;
 		}
@@ -1393,6 +1396,7 @@ bool set_blessed(int Ind, int v)
 	{
 		if (!p_ptr->blessed)
 		{
+			msg_format_near(Ind, "%s has become righteous.", p_ptr->name);
 			msg_print(Ind, "You feel righteous!");
 			notice = TRUE;
 		}
@@ -1403,8 +1407,10 @@ bool set_blessed(int Ind, int v)
 	{
 		if (p_ptr->blessed)
 		{
+			msg_format_near(Ind, "%s has become less righteous.", p_ptr->name);
 			msg_print(Ind, "The prayer has expired.");
 			notice = TRUE;
+			p_ptr->blessed_power = 0;
 		}
 	}
 
@@ -1449,6 +1455,7 @@ bool set_hero(int Ind, int v)
 	{
 		if (!p_ptr->hero)
 		{
+			msg_format_near(Ind, "%s has become a hero.", p_ptr->name);
 			msg_print(Ind, "You feel like a hero!");
 			notice = TRUE;
 		}
@@ -1459,6 +1466,7 @@ bool set_hero(int Ind, int v)
 	{
 		if (p_ptr->hero)
 		{
+			msg_format_near(Ind, "%s has become less of a hero.", p_ptr->name);
 			msg_print(Ind, "The heroism wears off.");
 			notice = TRUE;
 		}
@@ -1508,6 +1516,7 @@ bool set_shero(int Ind, int v)
 	{
 		if (!p_ptr->shero)
 		{
+			msg_format_near(Ind, "%s has become a killing machine.", p_ptr->name);
 			msg_print(Ind, "You feel like a killing machine!");
 			notice = TRUE;
 		}
@@ -1518,6 +1527,7 @@ bool set_shero(int Ind, int v)
 	{
 		if (p_ptr->shero)
 		{
+			msg_format_near(Ind, "%s has returned to being a wimp.", p_ptr->name);
 			msg_print(Ind, "You feel less Berserk.");
 			notice = TRUE;
 		}

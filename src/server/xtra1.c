@@ -2437,10 +2437,10 @@ static void calc_bonuses(int Ind)
 	/* Temporary blessing */
 	if (p_ptr->blessed)
 	{
-		p_ptr->to_a += 5;
-		p_ptr->dis_to_a += 5;
-		p_ptr->to_h += 10;
-		p_ptr->dis_to_h += 10;
+		p_ptr->to_a += p_ptr->blessed_power;
+		p_ptr->dis_to_a += p_ptr->blessed_power;
+		p_ptr->to_h += p_ptr->blessed_power;
+		p_ptr->dis_to_h += p_ptr->blessed_power;
 	}
 
 	/* Temprory invisibility */

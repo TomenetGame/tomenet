@@ -3004,6 +3004,26 @@ that keeps many algorithms happy.
 #define GF_BLIND	111
 #define GF_HOLD		112	/* hold */
 #define GF_DOMINATE	113	/* dominate */
+#define GF_BLESS_PLAYER  114
+#define GF_REMFEAR_PLAYER  115
+#define GF_SATHUNGER_PLAYER  116
+#define GF_RESFIRE_PLAYER  117
+#define GF_RESCOLD_PLAYER  118
+#define GF_CUREPOISON_PLAYER  119
+#define GF_SEEINVIS_PLAYER  120
+#define GF_SEEMAP_PLAYER  121
+#define GF_CURECUT_PLAYER  122
+#define GF_CURESTUN_PLAYER  123
+#define GF_DETECTCREATURE_PLAYER  124
+#define GF_DETECTDOOR_PLAYER  125
+#define GF_DETECTTRAP_PLAYER  126
+#define GF_TELEPORTLVL_PLAYER  127
+#define GF_RESPOIS_PLAYER  128
+#define GF_RESELEC_PLAYER  129
+#define GF_RESACID_PLAYER  130
+#define GF_HPINCREASE_PLAYER  131
+#define GF_HERO_PLAYER  132
+#define GF_SHERO_PLAYER  133
 
 #if 0
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
@@ -3044,7 +3064,7 @@ that keeps many algorithms happy.
 #define GF_TRAP_DEMONSOUL 108
 #define GF_ATTACK       109
 
-#define MAX_GF          110
+#define MAX_GF          133
 
 #endif	// 0
 
