@@ -353,6 +353,7 @@ void client_init(char *argv1, bool skip)
 	/* Check whether we should query the metaserver */
 	if (argv1 == NULL)
 	{
+		server_port=cfg_game_port;
 		/* Query metaserver */
 		if (!get_server_name())
 			quit("No server specified.");
