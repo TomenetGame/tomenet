@@ -19,7 +19,16 @@ int world_comm(int fd, int arg){
 		wpk=buffer+bpos;
 		switch(wpk->type){
 			case WP_CHAT:
+				/* TEMPORARY chat broadcast method */
 				msg_broadcast_format(0, "!%s", wpk->d.chat.ctxt);
+				break;
+			case WP_MESSAGE:
+				/* A raw message - no data */
+				msg_broadcast_format(0, "%s", wpk->d.smsg.stxt);
+				break;
+			case WP_NPLAYER:
+			case WP_QPLAYER:
+				msg_broadcast_format(0, "\377s%s has %s the game.", wpk->d.play.name, (wpk->type==WP_NPLAYER ? "entered" : "left"));
 				break;
 			default:
 		}
@@ -41,6 +50,26 @@ void world_chat(unsigned long id, char *text){
 	len=sizeof(struct wpacket);
 	strncpy(spk.d.chat.ctxt, text, 80);
 	spk.d.chat.id=id;
+	x=send(WorldSocket, &spk, len, 0);
+}
+
+void world_msg(char *text){
+	int x, len;
+	if(WorldSocket==-1) return;
+	spk.type=WP_MESSAGE;
+	len=sizeof(struct wpacket);
+	strncpy(spk.d.smsg.stxt, text, 160);
+	x=send(WorldSocket, &spk, len, 0);
+}
+
+/* we can rely on ID alone when we merge data */
+void world_player(unsigned long id, char *name, unsigned short enter){
+	int x, len;
+	if(WorldSocket==-1) return;
+	spk.type=(enter ? WP_NPLAYER : WP_QPLAYER);
+	len=sizeof(struct wpacket);
+	strncpy(spk.d.play.name, name, 30);
+	spk.d.play.id=id;
 	x=send(WorldSocket, &spk, len, 0);
 }
 

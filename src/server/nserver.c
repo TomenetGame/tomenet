@@ -994,6 +994,8 @@ static void Delete_player(int Ind)
 			}
 		}
 
+		world_player(p_ptr->id, p_ptr->name, FALSE);
+
 		for (i = 1; i < NumPlayers + 1; i++)
 		{
 			if (Players[i]->conn == NOT_CONNECTED)
@@ -1878,6 +1880,8 @@ static int Handle_login(int ind)
 
 	/* Handle the cfg_secret_dungeon_master option */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) return 0;
+
+	world_player(p_ptr->id, p_ptr->name, TRUE);
 
 	/* Tell everyone about our new player */
 	for (i = 1; i < NumPlayers; i++)
@@ -3401,7 +3405,7 @@ int Send_history(int ind, int line, cptr hist)
 	return Packet_printf(&connp->c, "%c%hu%s", PKT_HISTORY, line, hist);
 }
 
-int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, cptr name)
+int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -3426,14 +3430,14 @@ int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte s
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, name);
+		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, pval, name);
 	      }
 	  }
-	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, name);
+	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, pval, name);
 }
 
 //int Send_equip(int ind, char pos, byte attr, int wgt, byte tval, cptr name)
-int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, cptr name)
+int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -3458,12 +3462,10 @@ int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte s
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-//		Packet_printf(&connp2->c, "%c%c%c%hu%c%s", PKT_EQUIP, pos, attr, wgt, tval, name);
-		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, name);
+		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, pval, name);
 	      }
 	  }
-//	return Packet_printf(&connp->c, "%c%c%c%hu%c%s", PKT_EQUIP, pos, attr, wgt, tval, name);
-	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, name);
+	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, pval, name);
 }
 
 int Send_title(int ind, cptr title)

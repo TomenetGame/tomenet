@@ -766,8 +766,8 @@ extern int Send_char_info(int Ind, int race, int class, int sex);
 extern int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body);
 extern int Send_stat(int Ind, int stat, int max, int cur, int s_ind);
 extern int Send_history(int Ind, int line, cptr hist);
-extern int Send_inven(int Ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, cptr name);
-extern int Send_equip(int Ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, cptr name);
+extern int Send_inven(int Ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name);
+extern int Send_equip(int Ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name);
 extern int Send_title(int Ind, cptr title);
 /*extern int Send_level(int Ind, int max, int cur);*/
 /*extern void Send_exp(int Ind, s32b max, s32b cur);*/

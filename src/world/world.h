@@ -5,7 +5,6 @@
 #define WP_CHAT		1	/* chat message */
 #define WP_NPLAYER	2	/* player enters */
 #define WP_QPLAYER	3	/* player leaves */
-#define WP_DEATH	4	/* death */
 #define WP_LOCK		5	/* obtain a lock (timed) */
 #define WP_UNLOCK	6	/* free the lock */
 #define WP_MESSAGE	7	/* all critical server messages */

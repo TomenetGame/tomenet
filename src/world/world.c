@@ -89,10 +89,15 @@ void wproto(struct client *ccl){
 			case WP_AUTH:
 				break;
 			case WP_CHAT:
+				/* only relay all for now */
 				relay(wpk, ccl);
 				break;
 			case WP_NPLAYER:
 			case WP_QPLAYER:
+				relay(wpk, ccl);
+				break;
+			case WP_MESSAGE:
+				relay(wpk, ccl);
 			default:
 				fprintf(stderr, "ignoring undefined packet\n");
 		}

@@ -4058,6 +4058,7 @@ void player_death(int Ind)
 	/* handle the secret_dungeon_master option */
 	/* bug??? evileye - shouldnt it be && */
 	if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
+		world_msg(buf);
 		if(p_ptr->lev>1)
 			msg_broadcast(Ind, buf);
 		else{
