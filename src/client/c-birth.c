@@ -586,9 +586,14 @@ static bool enter_server_name(void)
  * Have the player choose a server from the list given by the
  * metaserver.
  */
+/* TODO:
+ * - wrap the words using strtok
+ * - allow to scroll the screen in case
+ * */
+
 bool get_server_name(void)
 {
-	int i, j, bytes, socket, offsets[20];
+	int i, j, k, bytes, socket, offsets[20], lines = 0;
 	char buf[8192], *ptr, c, out_val[160];
 
 	/* Message */
@@ -648,11 +653,23 @@ bool get_server_name(void)
 		/* Format entry */
 		sprintf(out_val, "%c) %s", I2A(i), ptr);
 
-		/* Strip off offending characters */
-		out_val[strlen(out_val) - 1] = '\0';
+		j = strlen(out_val);
 
-		/* Print this entry */
-		prt(out_val, i + 1, 1);
+		/* Strip off offending characters */
+//		out_val[strlen(out_val) - 1] = '\0';
+		out_val[j - 1] = '\0';
+
+		prt(out_val, ++lines, 1);
+
+		k = 79;
+
+		while (j > k)
+		{
+			/* Print this entry */
+			prt(out_val + k, ++lines, 3);
+
+			k += 77;
+		}
 
 		/* Go to next metaserver entry */
 		ptr += strlen(ptr) + 1;
@@ -661,11 +678,12 @@ bool get_server_name(void)
 		i++;
 
 		/* We can't handle more than 20 entries -- BAD */
-		if (i > 20) break;
+//		if (i > 20) break;
+		if (lines > 20) break;
 	}
 
 	/* Prompt */
-	prt("Choose a server to connect to (Q for manual entry): ", i + 2, 1);
+	prt("Choose a server to connect to (Q for manual entry): ", lines + 2, 1);
 
 	/* Ask until happy */
 	while (1)

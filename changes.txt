@@ -746,6 +746,7 @@ Change list for PernMangband
 - door spiking (ctrl-s or '/')
 - /bug (/rfe), which leaves a message on server. {thx A.Dingle for idea}
 - admin can view log-file and rfe-file via client.
+[C] server-list can display the whole players when crowded
 [B] strange colouring in unique list
 [B] some traps create 'phial' (INSTA_ARTS)
 [B] breeders won't breed
@@ -766,11 +767,18 @@ Change list for PernMangband
 [B] CURSE_x does 100+ dmg on 50ft?
 [B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
 [B] /rec won't work if to wilderness? (admin)
-[B] savedata corruption observed!
 [B] some monsters become 'immune' to spell attacks.
+[B] savedata corruption observed when buying books:
+	#0  0x80526bf in message_str (age=0) at client/c-util.c:1340
+	#1  0x8065919 in fix_message () at client/c-xtra1.c:1067
+	#2  0x80665f8 in window_stuff () at client/c-xtra1.c:1407
+	#3  0x805b065 in Input_loop () at client/c-init.c:229
+	#4  0x805b520 in client_init (argv1=0x0) at client/c-init.c:464
+	#5  0x8068152 in main (argc=1, argv=0xbfbff774) at client/client.c:263
+	#6  0x804a311 in _start ()
 [B] ^^^^^^^^^^^^^^^^^^^^^^^ broken display (on certain vault?)
     ./mangclient: Received unknown packet type (86, 41), dropping
-[B][C] chat-history contains lines containing 'mindcrafter'. 
+[B][C] chat-history contains lines with 'mindcrafter'. 
 [B] log-file viewer leaves messy screen when done.
 
 ==== below this line are changes to be done in the future ====
@@ -782,12 +790,9 @@ Change list for PernMangband
 - tombstone screen
 - wilderness compacting
 - low-sanity alart each 2000 turn or sth(and 'flushback' hallucination?)
-- cave_special should use union? and their save/load via csfunc
 - display "non-scoring mode" in '@' screen
 - store buying-price should reflect *ID* states
-- DEBUG_MSG_LEVEL
 [C] ameliorate option interface(toggle-key/vi-key)
-[C] use 2 lines for each server on server-list
 
 [major ones]
 - new terrains and their effects (f_info.txt) (do this *FIRST*!)
@@ -806,6 +811,10 @@ Change list for PernMangband
 - better vaults
 - fix gfx again {Asclep}
 - interactive spell system (like in C3)
+
+[sober ones]
+- cave_special should use union? and their save/load via csfunc
+- DEBUG_MSG_LEVEL
 - total source-code cleanup {takkaria?}
 - integrate save/load into one function (eg. saveload.c)
 
