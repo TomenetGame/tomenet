@@ -3412,12 +3412,16 @@ void calc_bonuses(int Ind)
 		if (f4 & TR4_COULD2H)
 		{                
 			/* Reduce the real bonuses */
-			if (p_ptr->to_h > 0) p_ptr->to_h = (3 * p_ptr->to_h) / 4;
-			if (p_ptr->to_d > 0) p_ptr->to_d = (3 * p_ptr->to_d) / 4;
+			if (p_ptr->to_h > 0) p_ptr->to_h = (2 * p_ptr->to_h) / 3;
+			if (p_ptr->to_d > 0) p_ptr->to_d = (2 * p_ptr->to_d) / 3;
 
 			/* Reduce the mental bonuses */
-			if (p_ptr->dis_to_h > 0) p_ptr->dis_to_h = (3 * p_ptr->dis_to_h) / 4;
-			if (p_ptr->dis_to_d > 0) p_ptr->dis_to_d = (3 * p_ptr->dis_to_d) / 4;
+			if (p_ptr->dis_to_h > 0) p_ptr->dis_to_h = (2 * p_ptr->dis_to_h) / 3;
+			if (p_ptr->dis_to_d > 0) p_ptr->dis_to_d = (2 * p_ptr->dis_to_d) / 3;
+			
+			/* Reduce the weaponmastery bonuses */
+			if (p_ptr->to_h_melee > 0) p_ptr->to_h_melee = (2 * p_ptr->to_h_melee) / 3;
+			if (p_ptr->to_d_melee > 0) p_ptr->to_d_melee = (2 * p_ptr->to_d_melee) / 3;
 
 			p_ptr->awkward_wield = TRUE;
 		}
