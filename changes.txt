@@ -1065,6 +1065,17 @@ TODO: the newest should appear the first!
 [B] server shutdown caused ever-unfindable arts.
 [B] 2 'if();' potential bugs in new_wr_dungeons() fixed.
 
+16/06/2002
+[P]- Backporting the ToME skill system !
+[P]- Detect traps can NOT fail
+
+
+
+
+
+
+
+
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.

@@ -2714,9 +2714,13 @@ void check_experience(int Ind)
                (p_ptr->exp >= ((s64b)((s64b)player_exp[p_ptr->lev-1] *
                                (s64b)p_ptr->expfact / 100L))))
 	{
-		process_hooks(HOOK_PLAYER_LEVEL, "d", Ind);
+                process_hooks(HOOK_PLAYER_LEVEL, "d", Ind);
+
 		/* Gain a level */
-		p_ptr->lev++;
+                p_ptr->lev++;
+
+                /* gain skill points */
+                p_ptr->skill_points += SKILL_NB_BASE;
 
 		/* Save the highest level */
 		if (p_ptr->lev > p_ptr->max_plv) p_ptr->max_plv = p_ptr->lev;
@@ -2736,14 +2740,19 @@ void check_experience(int Ind)
 		/* Handle stuff */
 		handle_stuff(Ind);
 	}
-	if(i < p_ptr->lev){
+        if (i < p_ptr->lev)
+        {
 		char str[160];
 		/* Message */
-		msg_format(Ind, "Welcome to level %d.", p_ptr->lev);
+                msg_format(Ind, "Welcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
+
 		sprintf(str, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
 		clockin(Ind, 1);	/* Set player level */
 		msg_broadcast(Ind, str);
-	}
+
+                /* Update the skill points info on the client */
+                Send_skill_info(Ind, 0);
+        }
 }
 
 
