@@ -3409,7 +3409,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 				name = "dragon";
 
 				/* Restrict dragon breath type */
-				vault_aux_dragon_mask4 = NULL;
+				vault_aux_dragon_mask4 = 0L;
 
 				/* Done */
 				break;
