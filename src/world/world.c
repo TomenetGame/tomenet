@@ -105,7 +105,7 @@ void wproto(struct client *ccl){
 			   and other data is shared. Some machines may
 			   use a dynamic IP, so this is made *more* necessary */
 
-				ccl->authed=pwcheck(wpk->d.auth.pass);
+				ccl->authed=pwcheck(wpk->d.auth.pass, wpk->d.auth.val);
 				break;
 			case WP_CHAT:
 				/* only relay all for now */
@@ -167,6 +167,12 @@ void addclient(int fd){
 struct client *remclient(struct client *dcl){
 	struct client *ccl;
 	ccl=clist;
+	if(dcl->authed>0){
+		struct wpacket spk;
+		spk.type=WP_SQUIT;
+		spk.d.sid=dcl->authed;
+		relay(&spk, dcl);
+	}
 	if(dcl==clist){
 		clist=ccl->next;
 		close(dcl->fd);

@@ -12,6 +12,7 @@
 #define WP_UNLOCK	6	/* free the lock */
 #define WP_MESSAGE	7	/* all critical server messages */
 #define WP_AUTH		8	/* server authing */
+#define WP_SQUIT	9	/* server quits */
 
 /* now we are going to be the server which authenticates
  * the players. Once they are logged in, they will receive
@@ -65,7 +66,8 @@ struct chat{
 };
 
 struct auth{
-	char pass[30];
+	char pass[21];
+	long val;
 };
 
 struct smsg{
@@ -76,6 +78,7 @@ struct wpacket{
 	unsigned short type;	/* TYPE */
 	unsigned short serverid;
 	union {
+		short sid;
 		struct chat chat;
 		struct smsg smsg;
 		struct player play;
