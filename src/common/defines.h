@@ -659,7 +659,7 @@
 #define COL_STUDY		64	/* "Study" */
 
 #define ROW_DEPTH		23
-#define COL_DEPTH		70	/* "Lev NNN" / "NNNN ft" */
+#define COL_DEPTH		66	/* "Lev NNN" / "NNNN ft" */
 
 
 
