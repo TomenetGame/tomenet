@@ -810,6 +810,13 @@ static void Contact(int fd, int arg)
 	ibuf.len = bytes;
 
 	strcpy(host_addr, DgramLastaddr(fd));
+	if(errno==ENOTCONN){	/* will be "0.0.0.0" probably */
+		s_printf("Lost connection from unknown peer\n");
+		close(fd);
+		remove_input(fd);
+		return;
+	}
+
 	/*if (Check_address(host_addr)) return;*/
 
 	if (Packet_scanf(&ibuf, "%u", &magic) <= 0)

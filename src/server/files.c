@@ -2020,6 +2020,11 @@ static void handle_signal_simple(int sig)
 	(void)signal(sig, handle_signal_simple);
 }
 
+static void handle_signal_bpipe(int sig){
+	(void)signal(sig, SIG_IGN);	/* This should not happen, but for the sake of convention... */
+	s_printf("SIGPIPE received\n");
+	(void)signal(sig, handle_signal_bpipe);
+}
 
 /*
  * Handle signal -- abort, kill, etc
@@ -2124,12 +2129,9 @@ void signals_init(void)
 	(void)signal(SIGTERM, handle_signal_abort);
 #endif
 
-	/*
-	 * This happens naturaly when clients disconnect.
 #ifdef SIGPIPE
-	(void)signal(SIGPIPE, handle_signal_abort);
+	(void)signal(SIGPIPE, handle_signal_bpipe);
 #endif
-*/
 
 #ifdef SIGEMT
 	(void)signal(SIGEMT, handle_signal_abort);
