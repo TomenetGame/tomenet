@@ -1984,7 +1984,7 @@ void bleed_with_neighbors(int Depth)
 	Rand_quick = rand_old;
 }
 
-void fill_house(house_type *h_ptr, int func){
+bool fill_house(house_type *h_ptr, int func){
 	/* polygonal house */
 	/* draw all the outer walls cleanly */
 	cptr coord=h_ptr->coords.poly;
@@ -1997,6 +1997,7 @@ void fill_house(house_type *h_ptr, int func){
 	int x,y;
 	int minx,miny,maxx,maxy;
 	int mw,mh;
+	bool success=TRUE;
 
 	maxx=minx=h_ptr->x;
 	maxy=miny=h_ptr->y;
@@ -2058,6 +2059,12 @@ void fill_house(house_type *h_ptr, int func){
 				case 6:
 					break;
 				case 0:
+					if(func==2){
+						if((pick_house(Depth,miny+(y-1),minx+(x-1))!=-1)){
+							success=FALSE;
+						}
+						break;
+					}
 					if(func==1){
 						delete_object(Depth, miny+(y-1), minx+(x-1));
 						break;
@@ -2067,12 +2074,16 @@ void fill_house(house_type *h_ptr, int func){
 					break;
 				case 1:
 					if(func==1) break;
-					cave[Depth][miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
+					if(func==2)
+						cave[Depth][miny+(y-1)][minx+(x-1)].feat=FEAT_DIRT;
+					else
+						cave[Depth][miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
 					break;
 			}
 		}
 	}
 	C_KILL(matrix,mw*mh,byte);
+	return(success);
 }
 
 void flood(cptr buf, int x, int y, int w, int h){

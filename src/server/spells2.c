@@ -4007,7 +4007,7 @@ void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 bool poly_build(int Ind, char *args){
 	static s32b curr=0;
 	static cptr vert=NULL;
-	static int lx,ly,dx,dy;
+	static int lx,ly,dx,dy,minx,miny,maxx,maxy;
 	static int sx,sy;
 	static int odir;
 	static int moves;
@@ -4035,6 +4035,8 @@ bool poly_build(int Ind, char *args){
 		cvert=0;
 		sx=p_ptr->px;
 		sy=p_ptr->py;
+		minx=maxx=sx;
+		miny=maxy=sy;
 		dx=lx=sx;
 		dy=ly=sy;
 		moves=30;
@@ -4048,6 +4050,10 @@ bool poly_build(int Ind, char *args){
 	}
 	x=p_ptr->px;
 	y=p_ptr->py;
+	minx=MIN(x,minx);
+	maxx=MAX(x,maxx);
+	miny=MIN(y,miny);
+	maxy=MAX(y,maxy);
 	if(x!=dx){
 		if(x>dx) dir=1;
 		else dir=2;
@@ -4077,28 +4083,31 @@ bool poly_build(int Ind, char *args){
 		houses[num_houses].depth=p_ptr->dun_depth;;
 		houses[num_houses].dna=dna;
 		houses[num_houses].coords.poly=vert;
-		//fill_house(&houses[num_houses],2);
-		wild_add_uhouse(&houses[num_houses]);
-		num_houses++;
+		if(fill_house(&houses[num_houses],2)){
+			wild_add_uhouse(&houses[num_houses]);
+			msg_print(Ind,"You have completed your house");
+			num_houses++;
+		}
+		else{
+			msg_print(Ind,"Your house was built unsoundly");
+		}
 		p_ptr->master_move_hook=NULL;
 		curr=0L;
 		dna=NULL;
 		vert=NULL;
-		msg_print(Ind,"You have completed your house");
 		p_ptr->update|=PU_VIEW;
 		return TRUE;
 	}
 	cave[p_ptr->dun_depth][dy][dx].feat=FEAT_PERM_EXTRA;
-	if(cvert==MAXCOORD){
-		msg_print(Ind,"Your house building attempt has failed");
-		cave[p_ptr->dun_depth][sy][sx].special=NULL;
-		KILL(dna, struct dna_type);
-		C_KILL(vert, MAXCOORD, byte);
-		p_ptr->master_move_hook=NULL;
-		cvert=0;
-		curr=0L;
-	}
-	return TRUE;
+	if(cvert!=MAXCOORD)
+		return TRUE;
+	msg_print(Ind,"Your house building attempt has failed");
+	cave[p_ptr->dun_depth][sy][sx].special=NULL;
+	KILL(dna, struct dna_type);
+	C_KILL(vert, MAXCOORD, byte);
+	p_ptr->master_move_hook=NULL;
+	cvert=0;
+	curr=0L;
 }
 
 void house_creation(int Ind){
