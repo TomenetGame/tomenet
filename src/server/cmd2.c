@@ -780,6 +780,7 @@ void do_cmd_open(int Ind, int dir)
 						char string[80];
 						char *name;
 						int i;
+						strcpy(string,"nobody.");
 						switch(dna->owner_type){
 							case OT_PLAYER:
 								if((name=lookup_player_name(dna->owner)))
