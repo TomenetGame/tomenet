@@ -4124,7 +4124,7 @@ bool poly_build(int Ind, char *args){
 	}
 	/* no going off depth, and no spoiling moats */
 	if(depth==p_ptr->dun_depth && !(cave[depth][dy][dx].info&CAVE_ICKY)){
-		cave[p_ptr->dun_depth][dy][dx].feat=FEAT_PERM_EXTRA;
+		cave[p_ptr->dun_depth][dy][dx].feat=FEAT_WALL_EXTRA;
 		if(cvert<MAXCOORD && (--moves)>0) return TRUE;
 	}
 	msg_print(Ind,"Your house building attempt has failed");
