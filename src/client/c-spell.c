@@ -61,6 +61,9 @@ static void print_mimic_spells()
 	prt("", j, col);
 	put_str("a) Polymorph Self", j++, col);
 
+	prt("", j, col);
+	put_str("b) Polymorph Self into..", j++, col);
+
 	/* Dump the spells */
 	for (i = 0; i < 32; i++)
 	{
@@ -352,7 +355,7 @@ void do_pray(int book)
 
 static int get_mimic_spell(int *sn)
 {
-	int		i, num = 1;
+	int		i, num = 2; /* 2 polymorph self spells */
 	bool		flag, redraw;
 	char		choice;
 	char		out_val[160];
@@ -363,6 +366,8 @@ static int get_mimic_spell(int *sn)
 
 	/* Init the Polymorph power */
 	corresp[0] = 0;
+	/* Init the Polymorph into.. <#> power */
+	corresp[1] = 1;
 
 	/* Check for "okay" spells */
 	for (i = 0; i < 32; i++)
@@ -370,7 +375,7 @@ static int get_mimic_spell(int *sn)
 		/* Look for "okay" spells */
 		if (p_ptr->innate_spells[0] & (1L << i)) 
 		{
-		  corresp[num] = i + 1;
+		  corresp[num] = i + 2;
 		  num++;
 		}
 	}
@@ -379,7 +384,7 @@ static int get_mimic_spell(int *sn)
 		/* Look for "okay" spells */
 		if (p_ptr->innate_spells[1] & (1L << i)) 
 		{
-		  corresp[num] = i + 32 + 1;
+		  corresp[num] = i + 32 + 2;
 		  num++;
 		}
 	}
@@ -388,7 +393,7 @@ static int get_mimic_spell(int *sn)
 		/* Look for "okay" spells */
 		if (p_ptr->innate_spells[2] & (1L << i)) 
 		{
-		  corresp[num] = i + 64 + 1;
+		  corresp[num] = i + 64 + 2;
 		  num++;
 		}
 	}
@@ -502,13 +507,28 @@ static int get_mimic_spell(int *sn)
  */
 void do_mimic()
 {
-  int spell;
+  int spell, j;
+  char out_val[6];
 
   /* Ask for the spell */
   if(!get_mimic_spell(&spell)) return;
 
   /* Tell the server */
 //  Send_mimic(spell);
+
+  /* later on maybe this can moved to server side, then no need for '20000 hack'.
+  Btw, 30000, the more logical one, doesnt work, dont ask me why */
+  if(spell == 1){
+    //j = c_get_quantity("Which form (0 for player) ? ", 0);
+    
+    strcpy(out_val,"");
+    get_string("Which form (0 for player) ? ", out_val, 4);
+    j = atoi(out_val);
+
+    if((j < 0) || (j > 2767)) return;
+    spell = 20000 + j;
+  }
+
   Send_activate_skill(MKEY_MIMICRY, 0, spell, 0, 0, 0);
 }
 

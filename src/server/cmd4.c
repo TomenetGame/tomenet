@@ -1080,7 +1080,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 		/* Let's not show uniques here */
 		if (r_ptr->flags1 & RF1_UNIQUE) continue;
 
-		if (admin) fprintf(fff, "(%4d) ", i);
+		/*if (admin)*/ fprintf(fff, "(%4d) ", i); /* mimics need that number for Polymorph Self Into.. */
 
 		if (mimic && mimic >= r_ptr->level)
 		{

@@ -1040,7 +1040,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 			spell = *(inscription + 1) - 96;
 
 			/* shape-changing for retaliation is not so nice idea, eh? */
-			if (spell < 2)
+			if (spell < 3)	/* 2 polymorph powers */
 			{
 				do_cmd_mimic(Ind, 0);
 				return TRUE;
@@ -1050,7 +1050,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 				int power = retaliate_mimic_power(Ind, spell);
 				if (power)
 				{
-					do_cmd_mimic(Ind, power + 1);
+					do_cmd_mimic(Ind, power + 2); /* 2 polymorph powers */
 					return TRUE;
 				}
 			}

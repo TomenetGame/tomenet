@@ -795,7 +795,10 @@ static void do_mimic_power(int Ind, int power)
       break;
 // RF5_DRAIN_MANA		0x00000200	/* Drain Mana */
     case 41:
-      msg_print(Ind, "Haha, you wish ... :)");
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
+//      msg_print(Ind, "Haha, you wish ... :)");
       break;
 // RF5_MIND_BLAST		0x00000400	/* Blast Mind */
     case 42:
@@ -907,7 +910,10 @@ static void do_mimic_power(int Ind, int power)
       break;
 // RF5_BLIND			0x10000000	/* Blind Player */
     case 60:
-      msg_print(Ind, "Haha, you wish ... :)");
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
+//      msg_print(Ind, "Haha, you wish ... :)");
       break;
 // RF5_CONF			0x20000000	/* Confuse Player */
     case 61:
@@ -990,7 +996,10 @@ static void do_mimic_power(int Ind, int power)
       break;
 // RF6_FORGET			0x00004000	/* Cause amnesia */
     case 78:
-      msg_print(Ind, "Haha, you wish ... :)");
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
+//      msg_print(Ind, "Haha, you wish ... :)");
       break;
 
     default:
@@ -1402,6 +1411,8 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 
 void do_cmd_mimic(int Ind, int spell)
 {
+	char out_val[5];
+
 	player_type *p_ptr = Players[Ind];
 	int j, k;
 
@@ -1417,7 +1428,7 @@ void do_cmd_mimic(int Ind, int spell)
 
 	/* No anti-magic shields around ? */
 	/* Innate powers aren't hindered */
-	if ((!spell || spell - 1 >= 32) && check_antimagic(Ind)) {
+	if ((!spell || spell - 2 >= 32) && check_antimagic(Ind)) { /* -2 -> 2 polymorph powers */
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}
@@ -1446,6 +1457,49 @@ void do_cmd_mimic(int Ind, int spell)
 			/* Ok we found */
 			break;
 		}
+		do_mimic_change(Ind, j, FALSE);
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+	}
+	else if (spell > (20000 - 1)){ /* should be spell == 1, then ask via get_string/get_quantity for target form, one day */
+		k = p_ptr->body_monster;
+		//j = get_quantity("Which form (0 for player form)?", 0);
+		j = spell - 20000;
+
+		if ((k > MAX_R_IDX) || (k < 0))
+		{
+			msg_print(Ind, "That form does not exist in the realm!");
+			return;
+		}
+		if (k == j){
+			msg_print(Ind, "You are already using that form!");
+			return;
+		}
+		if (r_info[j].flags1 & RF1_UNIQUE){
+			msg_print(Ind, "That form is unique!");
+			return;
+		}
+		if (p_ptr->r_killed[j] < r_info[j].level){
+			msg_print(Ind, "You have not yet learned that form!");
+			return;
+		};
+		if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)){
+			msg_print(Ind, "You are not powerful enough to change into that form!");
+			return;
+		}
+		if (p_ptr->r_killed[j] < 1 && j){
+			msg_print(Ind, "You have no experience with that form at all!");
+			return;
+		}
+		if (strlen(r_info[j].name + r_name) <= 1){	/* <- ??? */
+			msg_print(Ind, "You cannot use that form!");
+			return;
+		}
+		if (!r_info[j].level && !mon_allowed(&r_info[j])){	/* <- ? */
+			msg_print(Ind, "You cannot use that form!");
+			return;
+		}
+
+		/* Ok we found */
 		do_mimic_change(Ind, j, FALSE);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 	}
