@@ -637,7 +637,7 @@ static void add_ability (artifact_type *a_ptr)
 				{
 					if (a_ptr->tval == TV_BOOMERANG) { /* no +LIFE on boomerangs! */
 						a_ptr->flags3 |= TR3_XTRA_SHOTS;
-					} else {
+					} else if (a_ptr->tval != TV_DIGGING) { /* no +LIFE on diggers! */
 						a_ptr->flags1 |= TR1_LIFE;
 						do_pval (a_ptr);
 						if (a_ptr->pval > 3) a_ptr->pval = 3;
