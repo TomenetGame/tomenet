@@ -881,6 +881,16 @@ that keeps many algorithms happy.
 #define FEAT_MON_TRAP           0x80 /* 128 */
 
 
+/*
+ * Number of effects
+ */
+#define MAX_EFFECTS             256	// 128
+#define MAX_EFFECTS_PLAYER      32
+#define EFF_WAVE                0x00000001      /* A circle whose radius increase */
+#define EFF_LAST                0x00000002      /* The wave lasts */
+#define EFF_STORM               0x00000004      /* The area follows the player */
+
+
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
 
@@ -2132,14 +2142,28 @@ that keeps many algorithms happy.
  *   KILL: Affect each monster in the "blast area" in some way
  *   HIDE: Hack -- disable "visual" feedback from projection
  */
-#define PROJECT_JUMP	0x01
-#define PROJECT_BEAM	0x02
-#define PROJECT_THRU	0x04
-#define PROJECT_STOP	0x08
-#define PROJECT_GRID	0x10
-#define PROJECT_ITEM	0x20
-#define PROJECT_KILL	0x40
-#define PROJECT_HIDE	0x80
+#define PROJECT_JUMP	0x00000001
+#define PROJECT_BEAM	0x00000002
+#define PROJECT_THRU	0x00000004
+#define PROJECT_STOP	0x00000008
+#define PROJECT_GRID	0x00000010
+#define PROJECT_ITEM	0x00000020
+#define PROJECT_KILL	0x00000040
+#define PROJECT_HIDE	0x00000080
+
+/* ToME expansions */
+#if 0	// soon
+#define PROJECT_VIEWABLE   0x00000100   /* Affect monsters in LOS */
+#define PROJECT_METEOR_SHOWER 0x00000200        /* Affect random grids */
+#define PROJECT_BLAST      0x00000400   /* Like Mega_blast, but will only affect viewable grids */
+#define PROJECT_PANEL      0x00000800   /* Affect everything in the panel. */
+#define PROJECT_ALL        0x00001000   /* Affect every single grid. */
+#define PROJECT_WALL       0x00002000
+#define PROJECT_MANA_PATH  0x00004000   /* Follow a mana path. */
+#define PROJECT_ABSORB_MANA 0x00008000   /* The spell increase in power as it absord grid's mana. */
+#endif	// 0
+#define PROJECT_STAY       0x00010000
+
 
 /*
  * Bit flags for the "enchant()" function
@@ -3814,7 +3838,7 @@ that keeps many algorithms happy.
 /* replacement of in_bound. */
 #define in_bounds4(l_ptr,Y,X) \
    (l_ptr ? \
-	(((Y) > 0) && ((X) > 0) && ((Y) < (l_ptr)->hgt) && ((X) < (l_ptr)->wid)) \
+	(((Y) > 0) && ((X) > 0) && ((Y) < (l_ptr)->hgt - 1) && ((X) < (l_ptr)->wid - 1)) \
 	: in_bounds(Y,X))
 
 //   (((Y) > 0) && ((X) > 0) && ((Y) < (l_ptr)->hgt) && ((X) < (l_ptr)->wid)) 
@@ -4130,6 +4154,16 @@ extern int PlayerUID;
 #define GOLEM_GUARD     0x04
 
 /*
+ * Monster AI-state defines	- Jir -
+ */
+#define AI_STATE_EFFECT		0x0001
+#define AI_STATE_TERRAIN	0x0002
+/*
+#define AI_STATE_ANNOY		0x0004
+#define AI_STATE_RUN		0x0008
+*/
+
+/*
  * Utility
  */
 #define BITS(x)  (1 << (x))
@@ -4396,6 +4430,7 @@ extern int PlayerUID;
 #define PROJECTOR_POTION	-1002
 #define PROJECTOR_TERRAIN	-1003
 #define PROJECTOR_MON_TRAP	-1004
+#define PROJECTOR_EFFECT	-1005
 
 
 #define TRUE_ARTS(o_ptr) ((artifact_p(o_ptr)) && (!o_ptr->name3))

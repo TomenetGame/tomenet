@@ -11,8 +11,14 @@
  * this will provide a better account management system
  */
 struct account{
+#if 0
+	/* sorry evileye, I needed it to have this run -jir- */
 	u_int32_t  id;	/* account id */
 	u_int16_t flags;	/* account flags */
+#else
+	unsigned int id;	/* account id */
+	unsigned short flags;	/* account flags */
+#endif	/* 0 */
 	char name[30];	/* login */
 	char pass[20];	/* some crypts are not 13 */
 };

@@ -938,7 +938,7 @@ static byte player_init[MAX_CLASS][3][2] =
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR }
 #else	// 0
 		{ TV_SHADOW_BOOK, 0 },	// this will be changed soon
-		{ TV_SWORD, SV_RAPIER },
+		{ TV_SWORD, SV_MAIN_GAUCHE },
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING }
 #endif	// 0
 	},
@@ -1706,7 +1706,9 @@ bool confirm_admin(int Ind)
 	if(!c_acc) return(FALSE);
 	if(c_acc->flags&ACC_ADMIN) admin=TRUE;
 	/* sucks, but allows an admin wizard. i'll change - evileye */
-	if(!strcmp(p_ptr->name, c_acc->name)) p_ptr->admin_wiz=admin;
+	/* one DM is enough - jir :) */
+//	if(!strcmp(p_ptr->name, c_acc->name)) p_ptr->admin_wiz=admin;
+	if(strcmp(p_ptr->name, c_acc->name)) p_ptr->admin_wiz=admin;
 	else p_ptr->admin_dm=admin;
 	KILL(c_acc, struct account);
 	return(admin);

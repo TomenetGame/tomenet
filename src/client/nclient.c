@@ -1813,7 +1813,12 @@ int Receive_depth(void)
 	}
 
 	if (!screen_icky && !shopping)
+	{
+		p_ptr->wpos.wx = x;
+		p_ptr->wpos.wy = y;
+		p_ptr->wpos.wz = z;
 		prt_depth(x, y, z, town, recall);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hu%hu%hu%c%hu", ch, x, y, z, town, recall)) <= 0)
 		{

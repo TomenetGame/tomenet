@@ -933,7 +933,8 @@ static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
 /*
  * Faster and smarter code, borrowed from (Vanilla) Angband 3.0.0.
  */
-static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6)
+/* Hack -- borrowing 'direct' flag for los check */
+static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bool direct)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -984,8 +985,10 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6)
 
 		/* Hurt badly or afraid, attempt to flee */
 		/* If too far, attempt to change position */
-		if (has_escape && ((m_ptr->hp < m_ptr->maxhp / 4) || m_ptr->monfear
-					|| m_ptr->cdis > MAX_RANGE))
+		if (has_escape && (
+			((m_ptr->hp < m_ptr->maxhp / 4 || m_ptr->monfear) && direct) ||
+			m_ptr->cdis > MAX_RANGE ||
+			m_ptr->ai_state & AI_STATE_EFFECT))
 		{
 			/* Choose escape spell */
 			f4_mask = (RF4_ESCAPE_MASK);
@@ -1725,7 +1728,7 @@ bool make_attack_spell(int Ind, int m_idx)
 
 	/* Choose a spell to cast */
 //	thrown_spell = choose_attack_spell(Ind, m_idx, spell, num);
-	thrown_spell = choose_attack_spell(Ind, m_idx, f4, f5, f6);
+	thrown_spell = choose_attack_spell(Ind, m_idx, f4, f5, f6, direct);
 
 	/* Abort if no spell was chosen */
 	if (!thrown_spell) return (FALSE);
@@ -3533,7 +3536,6 @@ bool make_attack_spell(int Ind, int m_idx)
 	return (TRUE);
 }
 
-
 /*
  * Returns whether a given monster will try to run from the player.
  *
@@ -3725,7 +3727,238 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 #endif
 
 
+/* Is the monster willing to avoid that grid?	- Jir - */
+static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr)
+{
+	effect_type *e_ptr;
+	cptr name;
+	int dam;
+
+#if 1	// moved for efficiency
+	if (!c_ptr->effect) return (TRUE);
+	if (r_ptr->flags2 & RF2_STUPID) return (TRUE);
+#endif	// 0
+
+	e_ptr = &effects[c_ptr->effect];
+
+	/* It's mine :) */
+	if (e_ptr->who == m_idx) return (TRUE);
+
+	dam = e_ptr->dam;
+	name = r_name_get(m_ptr);
+
+	/* XXX Make sure to add whatever might be needed! */
+	switch (e_ptr->type)
+	{
+		case GF_ACID:
+			if (r_ptr->flags3 & RF3_IM_ACID) dam /= 9;
+			break;
+		case GF_ELEC:
+			if (r_ptr->flags3 & RF3_IM_ELEC) dam /= 9;
+			break;
+		case GF_FIRE:
+			if (r_ptr->flags3 & RF3_IM_FIRE) dam /= 9;
+			break;
+		case GF_COLD:
+			if (r_ptr->flags3 & RF3_IM_COLD) dam /= 9;
+			break;
+		case GF_POIS:
+			if (r_ptr->flags3 & RF3_IM_POIS) dam /= 9;
+			break;
+		case GF_WATER:
+			if ((r_ptr->d_char == 'E') && prefix(name, "W")) dam = 0;
+			else if (r_ptr->flags7 && RF7_AQUATIC) dam /= 9;
+			break;
+	}
+
+	return (m_ptr->hp > dam * 30);
+}
+
+/* This should be more generic, of course.	- Jir - */
+static bool monster_is_comfortable(monster_race *r_ptr, cave_type *c_ptr)
+{
+	/* No worry */
+	if ((r_ptr->flags3 & RF3_UNDEAD) ||
+			(r_ptr->flags7 & (RF7_CAN_SWIM | RF7_CAN_FLY) ))
+		return (TRUE);
+
+	/* I'd like to be under the sea ./~ */
+	if (r_ptr->flags7 & RF7_AQUATIC) return (c_ptr->feat == FEAT_WATER);
+	else return (c_ptr->feat != FEAT_WATER);
+}
+
 #if SAFETY_RADIUS > 0
+/*
+ * Those functions can be bandled into one generic find_* function
+ * using hooks maybe.
+ */
+
+/*
+ * Choose a location w/o bad effect near a monster for it to run toward.
+ * - Jir -
+ */
+static bool find_noeffect(int m_idx, int *yp, int *xp)
+{
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
+
+	int fy = m_ptr->fy;
+	int fx = m_ptr->fx;
+
+	int y, x, d = 1, dis, i;
+	int gy = 0, gx = 0, gdis = 0;
+
+	cave_type **zcave;
+	/* paranoia */
+	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
+
+	/* Start with adjacent locations, spread further */
+	for (i = 1; i <= tdi[SAFETY_RADIUS]; i++)
+	{
+		if (i == tdi[d])
+		{
+			d++;
+			if (gdis) break;
+		}
+
+		y = fy + tdy[i];
+		x = fx + tdx[i];
+
+		/* Skip illegal locations */
+		if (!in_bounds(y, x)) continue;
+
+		/* Skip locations in a wall */
+		if (!cave_floor_bold(zcave, y, x) && 
+				!((r_ptr->flags2 & (RF2_PASS_WALL)) ||
+					(r_ptr->flags2 & (RF2_KILL_WALL))))
+			continue;
+
+		/* Check for absence of bad effect */
+		if (!monster_is_safe(m_idx, m_ptr, r_ptr, &zcave[y][x])) continue;
+
+#ifdef MONSTER_FLOW
+		/* Check for "availability" (if monsters can flow) */
+		if (flow_by_sound)
+		{
+			/* Ignore grids very far from the player */
+			if (cave[y][x].when < cave[py][px].when) continue;
+
+			/* Ignore too-distant grids */
+			if (cave[y][x].cost > cave[fy][fx].cost + 2 * d) continue;
+		}
+#endif
+		/* Remember if further than previous */
+		if (d > gdis)
+		{
+			gy = y;
+			gx = x;
+			gdis = d;
+		}
+	}
+
+	/* Check for success */
+	if (gdis > 0)
+	{
+		/* Good location */
+		(*yp) = fy - gy;
+		(*xp) = fx - gx;
+
+		/* Found safe place */
+		return (TRUE);
+	}
+
+
+	/* No safe place */
+	return (FALSE);
+}
+
+/*
+ * Choose a location suitable for that monster.
+ * For now, it's for aquatics to get back to the water.
+ * - Jir -
+ */
+static bool find_terrain(int m_idx, int *yp, int *xp)
+{
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
+
+	int fy = m_ptr->fy;
+	int fx = m_ptr->fx;
+
+	byte feat;	// maybe feat[10] or sth
+	bool negate = FALSE;
+
+	int y, x, d = 1, dis, i;
+	int gy = 0, gx = 0, gdis = 0;
+
+	cave_type **zcave;
+	/* paranoia */
+	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
+
+	/* What do you want? */
+	if (r_ptr->flags7 & RF7_AQUATIC) feat == FEAT_WATER;
+	else
+	{
+		feat = FEAT_WATER;
+		negate = TRUE;
+	}
+//	else return (TRUE);
+
+	/* Start with adjacent locations, spread further */
+	for (i = 1; i <= tdi[SAFETY_RADIUS]; i++)
+	{
+		if (i == tdi[d])
+		{
+			d++;
+			if (gdis) break;
+		}
+
+		y = fy + tdy[i];
+		x = fx + tdx[i];
+
+		/* Skip illegal locations */
+		if (!in_bounds(y, x)) continue;
+
+		/* Skip bad locations */
+		if (!negate && zcave[y][x].feat != feat) continue;
+		if (negate && zcave[y][x].feat == feat) continue;
+
+#ifdef MONSTER_FLOW
+		/* Check for "availability" (if monsters can flow) */
+		if (flow_by_sound)
+		{
+			/* Ignore grids very far from the player */
+			if (cave[y][x].when < cave[py][px].when) continue;
+
+			/* Ignore too-distant grids */
+			if (cave[y][x].cost > cave[fy][fx].cost + 2 * d) continue;
+		}
+#endif
+		/* Remember if further than previous */
+		if (d > gdis)
+		{
+			gy = y;
+			gx = x;
+			gdis = d;
+		}
+	}
+
+	/* Check for success */
+	if (gdis > 0)
+	{
+		/* Good location */
+		(*yp) = fy - gy;
+		(*xp) = fx - gx;
+
+		/* Found safe place */
+		return (TRUE);
+	}
+
+
+	/* No safe place */
+	return (FALSE);
+}
+
 /*
 * Choose a "safe" location near a monster for it to run toward.
 *
@@ -4093,6 +4326,24 @@ static void get_moves(int Ind, int m_idx, int *mm)
 
 	if (r_ptr->flags1 & RF1_NEVER_MOVE) done = TRUE;
 
+#if SAFETY_RADIUS > 0
+	else if (m_ptr->ai_state & AI_STATE_EFFECT)
+	{
+		/* Try to find safe place */
+		if (find_noeffect(m_idx, &y, &x))
+		{
+			done = TRUE;
+		}
+	}
+#endif	// SAFETY_RADIUS
+	if (!done && (m_ptr->ai_state & AI_STATE_TERRAIN))
+	{
+		/* Try to find safe place */
+		if (find_terrain(m_idx, &y, &x))
+		{
+			done = TRUE;
+		}
+	}
 	/* Apply fear if possible and necessary */
 	else if (mon_will_run(Ind, m_idx))
 	{
@@ -5154,6 +5405,33 @@ static void process_monster(int Ind, int m_idx)
 			}
 		}
 						
+
+	/* Set AI state */
+	m_ptr->ai_state = 0;
+	c_ptr = &zcave[oy][ox];
+
+	/* Non-stupid monsters only */
+#if 0
+	if (!(r_ptr->flags2 & RF2_STUPID))
+	{
+		/* Evil player tainted the grid? */
+		if (c_ptr->effect)
+		{
+			if (!monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))
+				m_ptr->ai_state |= AI_STATE_EFFECT;
+		}
+	}
+#else	// 0
+	if (!monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))
+		m_ptr->ai_state |= AI_STATE_EFFECT;
+#endif	// 0
+
+	/* All the monsters */
+	/* You cannot breathe? */
+	if (!monster_is_comfortable(r_ptr, c_ptr))
+		m_ptr->ai_state |= AI_STATE_TERRAIN;
+
+
 	/* Attempt to cast a spell */
 	if (!inv && make_attack_spell(Ind, m_idx)) 
 	{
@@ -5258,6 +5536,12 @@ static void process_monster(int Ind, int m_idx)
 
 		/* Tavern entrance? */
 		if (c_ptr->feat == FEAT_SHOP_TAIL - 1)
+		{
+			/* Nothing */
+		}
+		/* Tainted grid? */
+		else if (!(m_ptr->ai_state & AI_STATE_EFFECT) &&
+				!monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))
 		{
 			/* Nothing */
 		}

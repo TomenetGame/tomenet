@@ -166,6 +166,18 @@ int get_spell(int *sn, cptr prompt, int book, bool known)
 	strnfmt(out_val, 78, "(%^ss %c-%c, *=List, ESC=exit) %^s which %s? ",
 		p, I2A(0), I2A(num - 1), prompt, p);
 
+	if (c_cfg.always_show_lists)
+	{
+		/* Show list */
+		redraw = TRUE;
+
+		/* Save the screen */
+		Term_save();
+
+		/* Display a list of spells */
+		print_spells(o_ptr);
+	}
+
 	/* Get a spell from the user */
 	while (!flag && get_com(out_val, &choice))
 	{

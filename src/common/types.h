@@ -684,6 +684,31 @@ struct cave_type
 
 #endif
 	struct c_special special;	/* Special pointer to various struct */
+
+	/* I don't really love to enlarge cave_type ... but it'd suck if
+	 * trapped floor will be immune to Noxious Cloud */
+	/* Adding 1byte in this struct costs 520Kb memory, in average */
+	/* This should be replaced by 'stackable c_special' code -
+	 * let's wait for evileye to to this :)		- Jir - */
+	byte effect;            /* The lasting effects */
+};
+
+/* ToME parts, arranged */
+/* This struct can be enlarged to handle more generic timed events maybe? */
+/* Lasting spell effects(clouds, ..) */
+typedef struct effect_type effect_type;
+struct effect_type
+{
+	s16b    time;           /* For how long */
+	s16b    dam;            /* How much damage */
+	s16b    type;           /* Of which type */ /* GF_XXX, for now */
+	s16b    cy;             /* Center of the cast*/
+	s16b    cx;             /* Center of the cast*/
+	s16b    rad;            /* Radius -- if needed *//* Not used? */
+	u32b    flags;          /* Flags */
+
+	s32b	who;			/* Who caused this effect (0-id if player) */
+	worldpos wpos;			/* Where in the world */
 };
 
 /*
@@ -882,6 +907,8 @@ struct monster_type
 
 	s16b possessor;		/* Is it under the control of a possessor ? */
 #endif
+
+	u16b ai_state;		/* What special behaviour this monster takes now? */
 };
 
 typedef struct monster_ego monster_ego;
@@ -2325,6 +2352,7 @@ struct client_opts
 	bool autooff_retaliator;
 	bool wide_scroll_margin;
 	bool fail_no_melee;
+	bool always_show_lists;
 };
 
 /*

@@ -1376,7 +1376,7 @@ static void prepare_distance()
 	tdi[PREPARE_RADIUS] = count + 1;
 	
 #if DEBUG_LEVEL > 2
-	s_printf("last count: %d\n", count);
+	s_printf("prepare_distance(): last count = %d\n", count);
 #endif
 }
 

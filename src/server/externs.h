@@ -314,6 +314,10 @@ extern bool (*master_move_hook)(int Ind, char * parms);
 
 extern int artifact_bias;
 extern char summon_kin_type;
+
+extern int project_time;
+extern s32b project_time_effect;
+extern effect_type effects[MAX_EFFECTS];
 /* variable.c ends here */
 
 /*
@@ -834,6 +838,7 @@ extern void setup_timer(void);
 extern void teardown_timer(void);
 
 /* spells1.c */
+extern byte spell_color(int type);
 //extern void apply_morph(int Ind, int power, char * killer);
 extern void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal);
 extern void take_sanity_hit(int Ind, int damage, cptr hit_from);
@@ -926,6 +931,8 @@ extern void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern bool lite_area(int Ind, int dam, int rad);
 extern bool unlite_area(int Ind, int dam, int rad);
 extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad);
+extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time);
+extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam);
 extern bool fire_beam(int Ind, int typ, int dir, int dam);
 extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam);

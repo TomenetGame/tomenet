@@ -707,7 +707,7 @@ void teleport_player(int Ind, int dis)
 	p_ptr->window |= (PW_OVERHEAD);
 
 	/* Handle stuff XXX XXX XXX */
-	handle_stuff(Ind);
+	if (!p_ptr->death) handle_stuff(Ind);
 }
 
 
@@ -979,7 +979,7 @@ static byte mh_attr(int max)
 /*
  * Return a color to use for the bolt/ball spells
  */
-static byte spell_color(int type)
+byte spell_color(int type)
 {
 	/* Hack -- fake monochrome */
 	if (!use_color) return (TERM_WHITE);
@@ -3763,7 +3763,12 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Set the "seen" flag */
 	if (!quiet)
+	{
 		seen = p_ptr->mon_vis[c_ptr->m_idx];
+		/* Cannot 'hear' if too far */
+		if (!seen && distance(p_ptr->py, p_ptr->px, y, x) > MAX_SIGHT)
+			quiet = TRUE;
+	}
 	else seen = FALSE;
 
 	/* Extract radius */
@@ -4036,6 +4041,11 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
 				note = " is immune.";
 				dam = 0;
+			}
+			else if (r_ptr->flags7 && RF7_AQUATIC)
+			{
+				note = " resists a lot.";
+				dam /= 9;
 			}
 			break;
 		}
@@ -5218,12 +5228,13 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
  * we just assume that the effects were obvious, for historical reasons.
  */
 /*
- * Megahack -- who == -999 means 'by trap'.		- Jir -
+ * Megahack -- who < -999 means 'by something strange'.		- Jir -
  * 
- * NOTE: unlike the note above, 'rad' seems not to be used for damage-
+ * NOTE: unlike the note above, 'rad' doesn't seem to be used for damage-
  * reducing purpose, I don't know why.
  */
-static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int rad)
+//static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int rad)
+static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int rad, int flg)
 {
 	player_type *p_ptr;
 	monster_race *r_ptr;
@@ -5276,7 +5287,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Bolt attack from a monster, a player or a trap */
 //	if ((!rad) && get_skill(p_ptr, SKILL_DODGE) && (who > 0))
-	if (get_skill(p_ptr, SKILL_DODGE))
+	/* Hack -- HIDE(direct) spell cannot be dodged */
+	if (get_skill(p_ptr, SKILL_DODGE) && (flg & PROJECT_HIDE))
 	{
 		if ((!rad) && (who > PROJECTOR_POTION))
 		{
@@ -5668,6 +5680,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Water -- stun/confuse */
 		case GF_WATER:
 		if (fuzzy) msg_print(Ind, "You are hit by something!");
+		if (p_ptr->body_monster && r_ptr->flags7 && RF7_AQUATIC)
+		{
+//			dam = (dam + 8) / 9;
+			dam = (dam + 3) / 4;
+		}
 		if (!p_ptr->resist_sound)
 		{
 			(void)set_stun(Ind, p_ptr->stun + randint(40));
@@ -6592,6 +6609,8 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	/* Number of grids in the "blast area" (including the "beam" path) */
 	int grids = 0;
 
+	int effect = 0;
+
 	/* Coordinates of the affected grids */
 //	byte gx[256], gy[256];
 //	byte gx[tdi[PREPARE_RADIUS]], gy[tdi[PREPARE_RADIUS]];
@@ -6626,19 +6645,19 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	}
 
 	/* Hack -- Start at a player */
-	else if (who < 0)
+	else if (who < 0 && who > PROJECTOR_UNUSUAL)
 	{
 		x1 = Players[0 - who]->px;
 		y1 = Players[0 - who]->py;
 	}
 
 	/* Start at a monster */
-	else
+	else if (who > 0)
 	{
 		x1 = m_list[who].fx;
 		y1 = m_list[who].fy;
 	}
-#if 0
+#if 1
 	/* Oops */
 	else
 	{
@@ -7074,6 +7093,16 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		/* Start with "dist" of zero */
 		dist = 0;
 
+		/* Effect ? */
+		if (flg & PROJECT_STAY)
+		{
+			/* I believe it's not right */
+//			effect = new_effect(typ, dam, project_time, py, px, rad, project_time_effect);
+			effect = new_effect(who, typ, dam, project_time, wpos, y2, x2, rad, project_time_effect);
+			project_time = 0;
+			project_time_effect = 0;
+		}
+
 		/* Now hurt the cave grids (and objects) from the inside out */
 		for (i = 0; i < grids; i++)
 		{
@@ -7087,6 +7116,13 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			if(!in_bounds(y,x)) continue;
 			/* Affect the feature */
 			if (project_f(0 - who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+
+			/* Effect ? */
+			if (flg & PROJECT_STAY)
+			{
+				zcave[y][x].effect = effect;
+				everyone_lite_spot(wpos, y, x);
+			}
 		}
 	}
 
@@ -7256,20 +7292,13 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			x = gx[i];
 
 			/* Set the player index */
-#ifdef NEW_DUNGEON
 			/* paranoia */
 			if (!in_bounds2(wpos, y, x)) continue;
 
 			player_idx = 0 - zcave[y][x].m_idx;
 
 			/* Affect the player */
-			if (project_p(player_idx, who, dist, wpos, y, x, dam, typ, rad)) notice = TRUE;
-#else
-			player_idx = 0 - cave[Depth][y][x].m_idx;
-
-			/* Affect the player */
-			if (project_p(player_idx, who, dist, Depth, y, x, dam, typ)) notice = TRUE;
-#endif
+			if (project_p(player_idx, who, dist, wpos, y, x, dam, typ, rad, flg)) notice = TRUE;
 		}
 	}
 

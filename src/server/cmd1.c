@@ -17,6 +17,12 @@
 
 #define MAX_VAMPIRIC_DRAIN 100
 
+/*
+ * Allow wraith-formed player to pass through permawalls on the surface.
+ */
+#define WRAITH_THROUGH_TOWNWALL
+
+
 static bool wraith_access(int Ind);
 
 
@@ -2754,7 +2760,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 	}
 
-#if 0
+#ifdef WRAITH_THROUGH_TOWNWALL
 	/* Wraiths trying to walk into a house */
 	if (p_ptr->tim_wraith){
 		//if(zcave[y][x].info & CAVE_STCK) p_ptr->tim_wraith=0;
@@ -2768,11 +2774,12 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 		}
 	}
-#endif	// 0
 
 	/* Wraiths can't enter vaults so easily :) trying to walk into a permanent wall */
-//	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA && (wpos->wz))
+	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA && (wpos->wz))
+#else
 	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA)
+#endif	// 0
 	{
 		/* Message */
 		msg_print(Ind, "The wall blocks your movement.");

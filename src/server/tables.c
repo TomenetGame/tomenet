@@ -1463,7 +1463,7 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_BOW,
                                 '+', 0,
-                                '+', 100,
+                                '%', 110,
                         },
                         {
                                 SKILL_TRAINING,
@@ -1647,6 +1647,11 @@ player_race race_info[MAX_RACES] =
                 20,
 				{
                         {
+                                SKILL_HAFTED,
+                                '+', 0,
+                                '%', 120,
+                        },
+                        {
                                 SKILL_HEALTH,
                                 '+', 3000,
                                 '%', 140,
@@ -1771,6 +1776,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_BOOMERANG,
                                 '+', 1000,
                                 '+', 400,
+                        },
+                        {
+                                SKILL_STEALING,
+                                '+', 0,
+                                '%', 120,
                         },
                 },
 	},
@@ -2175,8 +2185,8 @@ player_class class_info[MAX_CLASS] =
 
                         {
                                 SKILL_DEVICE,
-                                '+', 300,
-                                '+', 300,
+                                '+', 500,
+                                '+', 400,
                         },
                         {
                                 SKILL_SNEAKINESS,

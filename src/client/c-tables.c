@@ -2834,6 +2834,9 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.fail_no_melee,		FALSE,	5,	9, 72,
 	"fail_no_melee",		"Stay still when item-retaliation fails" },
 
+	{ &c_cfg.always_show_lists,		FALSE,	5,	9, 73,
+	"always_show_lists",	"Always show lists in item/skill selection" },
+
 #if 0
 	{ &c_cfg.speak_unique,                TRUE,   2,      13,
 	"speak_unique",                 "Allow shopkeepers and uniques to speak" },

@@ -3000,6 +3000,13 @@ static void print_tomb(cptr reason)
 		center_string(buf, tmp);
 		put_str(buf, 13, 11);
 
+		if (c_cfg.depth_in_feet)
+			(void)sprintf(tmp, "Died on %dft of [%2d, %2d]", p_ptr->wpos.wz * 50, p_ptr->wpos.wy, p_ptr->wpos.wx);
+		else 
+			(void)sprintf(tmp, "Died on Level %d of [%2d, %2d]", p_ptr->wpos.wz, p_ptr->wpos.wy, p_ptr->wpos.wx);
+		center_string(buf, tmp);
+		put_str(buf, 14, 11);
+
 #if 0
 		(void)sprintf(tmp, "Killed on Level %d", dun_level);
 		center_string(buf, tmp);
@@ -3042,11 +3049,17 @@ void c_close_game(cptr reason)
 	/* Save the screen */
 //	Term_save();
 
+	/* Let the player view the last scene */
+	put_str("...Press any key to proceed", 0, 0);
+
+	while (!inkey());
+
 	/* You are dead */
 	print_tomb(reason);
 
 	put_str("ESC to quit, 'f' to dump the record or any other key to proceed", 23, 0);
 
+	/* TODO: bandle them in one loop instead of 2 */
 	while (1)
 	{
 		/* Get command */
@@ -3066,6 +3079,7 @@ void c_close_game(cptr reason)
 					file_character(tmp, FALSE);
 				}
 			}
+			break;
 		}
 
 		else if (k) break;

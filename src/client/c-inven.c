@@ -216,6 +216,11 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	while ((e1 <= e2) && (!get_item_okay(e1))) e1++;
 	while ((e1 <= e2) && (!get_item_okay(e2))) e2--;
 
+	/* Handle the option */
+	/* XXX remove it when you need to control it from outside of
+	 * this function	- Jir - */
+	command_see = c_cfg.always_show_lists;
+	command_wrk = FALSE;
 
 	if ((i1 > i2) && (e1 > e2))
 	{

@@ -471,7 +471,213 @@ static void regenmana(int Ind, int percent)
 }
 
 
+#define pelpel
+#ifdef pelpel
 
+/* Wipeout the effects	- Jir - */
+void erase_effects(int effect)
+{
+	int i, j, l;
+	effect_type *e_ptr = &effects[effect];
+	worldpos *wpos = &e_ptr->wpos;
+	cave_type **zcave;
+	cave_type *c_ptr;
+
+	e_ptr->time = 0;
+
+	e_ptr->type = 0;
+	e_ptr->dam = 0;
+	e_ptr->time = 0;
+	e_ptr->flags = 0;
+	e_ptr->cx = 0;
+	e_ptr->cy = 0;
+	e_ptr->rad = 0;
+
+	if(!(zcave=getcave(wpos))) return;
+
+	for (l = 0; l < tdi[e_ptr->rad]; l++)
+	{
+		j = e_ptr->cy + tdy[l];
+		i = e_ptr->cx + tdx[l];
+		if (!in_bounds2(wpos, j, i)) continue;
+
+		c_ptr = &zcave[j][i];
+
+		if (c_ptr->effect == effect)
+		{
+			c_ptr->effect = 0;
+			everyone_lite_spot(wpos, j, i);
+		}
+	}
+}
+
+/*
+ * Handle staying spell effects once every 10 game turns
+ */
+/* TODO: excise dead effect */
+/* TODO: allow players/monsters to 'cancel' the effect */
+static void process_effects(void)
+{
+	int i, j, k, l;
+	worldpos *wpos;
+	cave_type **zcave;
+	cave_type *c_ptr;
+	int who = PROJECTOR_EFFECT;
+	player_type *p_ptr;
+
+	/* Every 10 game turns */
+//	if (turn % 10) return;
+
+	/* Not in the small-scale wilderness map */
+//	if (p_ptr->wild_mode) return;
+
+
+	for (k = 0; k < MAX_EFFECTS; k++)
+	{
+		// int e = cave[j][i].effect;
+		effect_type *e_ptr = &effects[k];
+
+		/* Skip empty slots */
+		if (e_ptr->time == 0) continue;
+
+		wpos = &e_ptr->wpos;
+		if(!(zcave=getcave(wpos)))
+		{
+			e_ptr->time = 0;
+			/* TODO - excise it */
+			continue;
+		}
+
+		/* Reduce duration */
+		e_ptr->time--;
+
+		if (e_ptr->who > 0) who = e_ptr->who;
+		else
+		{
+			/* XXX Hack -- is the trapper online? */
+			for (i = 1; i <= NumPlayers; i++)
+			{
+				p_ptr = Players[i];
+
+				/* Check if they are in here */
+				if (e_ptr->who == 0 - p_ptr->id)
+				{
+					who = 0 - i;
+					break;
+				}
+			}
+		}
+
+		/* Storm ends if the cause is gone */
+		if (e_ptr->flags & EFF_STORM && who == PROJECTOR_EFFECT)
+		{
+			erase_effects(k);
+			continue;
+		}
+
+		/* Handle spell effects */
+		for (l = 0; l < tdi[e_ptr->rad]; l++)
+		{
+			j = e_ptr->cy + tdy[l];
+			i = e_ptr->cx + tdx[l];
+			if (!in_bounds2(wpos, j, i)) continue;
+
+			c_ptr = &zcave[j][i];
+
+			if (c_ptr->effect != k) continue;
+
+			if (e_ptr->time)
+			{
+				/* Apply damage */
+				project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type,
+						PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP);
+
+				/* Oh, destroyed? RIP */
+				if (who < 0 && who != PROJECTOR_EFFECT &&
+						Players[0 - who]->conn == NOT_CONNECTED)
+				{
+					who = PROJECTOR_EFFECT;
+				}
+			}
+			else
+			{
+				c_ptr->effect = 0;
+				everyone_lite_spot(wpos, j, i);
+			}
+
+			/* Hack -- notice death */
+			//	if (!alive || death) return;
+			/* Storm ends if the cause is gone */
+			if (e_ptr->flags & EFF_STORM &&
+					(who == PROJECTOR_EFFECT || Players[0 - who]->death))
+			{
+				erase_effects(k);
+				break;
+			}
+
+
+#if 0
+			if (((e_ptr->flags & EFF_WAVE) && !(e_ptr->flags & EFF_LAST)) || ((e_ptr->flags & EFF_STORM) && !(e_ptr->flags & EFF_LAST)))
+			{
+				if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2)
+					c_ptr->effect = 0;
+			}
+#else	// 0
+			if (!(e_ptr->flags & EFF_LAST))
+			{
+				if ((e_ptr->flags & EFF_WAVE))
+				{
+					if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2)
+						c_ptr->effect = 0;
+				}
+				else if ((e_ptr->flags & EFF_STORM))
+				{
+					c_ptr->effect = 0;
+				}
+			}
+#endif	// 0
+
+			/* Creates a "wave" effect*/
+			if (e_ptr->flags & EFF_WAVE)
+			{
+				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) &&
+						(distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad))
+					c_ptr->effect = i;
+			}
+		}
+
+		if (e_ptr->flags & EFF_WAVE) e_ptr->rad++;
+		/* Creates a "storm" effect*/
+		else if (e_ptr->flags & EFF_STORM && who > PROJECTOR_EFFECT)
+		{
+			int x, y;
+			p_ptr = Players[0 - who];
+
+			e_ptr->cy = p_ptr->py;
+			e_ptr->cx = p_ptr->px;
+
+			for (l = 0; l < tdi[e_ptr->rad]; l++)
+			{
+				j = e_ptr->cy + tdy[l];
+				i = e_ptr->cx + tdx[l];
+				if (!in_bounds2(wpos, j, i)) continue;
+
+				c_ptr = &zcave[j][i];
+
+				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) &&
+						(distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad))
+					c_ptr->effect = i;
+			}
+		}
+	}
+
+
+
+	/* Apply sustained effect in the player grid, if any */
+//	apply_effect(py, px);
+}
+
+#endif /* pelpel */
 
 
 
@@ -1665,8 +1871,11 @@ static bool process_player_end_aux(int Ind)
 				if (p_ptr->to_l) i += p_ptr->to_l * 5;
 
 				/* Slow digestion takes less food */
-				/* XXX Hrm this won't help so much.. */
-				if (p_ptr->slow_digest) i -= 10;
+//				if (p_ptr->slow_digest) i -= 10;
+				if (p_ptr->slow_digest) i -= (i > 40) ? i / 4 : 10;
+
+				/* Never negative */
+				if (i < 1) i = 1;
 
 				/* Digest some food */
 				(void)set_food(Ind, p_ptr->food - i);
@@ -3734,6 +3943,9 @@ void dungeon(void)
 		/* Actually process that player */
 		process_player_begin(i);
 	}
+
+	/* Process spell effects */
+	if ((turn % 10) == 3) process_effects();
 
 	/* Process all of the monsters */
 	if (!(turn % MONSTER_TURNS))

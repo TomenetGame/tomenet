@@ -1143,6 +1143,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	feat = c_ptr->feat;
 
 	/* Floors (etc) */
+	/* XXX XXX Erm, it is DIRTY.  should be replaced soon */
 	if (feat <= FEAT_INVIS)
 	{
 		/* Memorized (or visible) floor */
@@ -1414,6 +1415,28 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* (*cp) = f_ptr->f_char; */
 			(*cp) = p_ptr->f_char[FEAT_NONE];
 		}
+	}
+
+	/**** Apply special random effects ****/
+//	if (!avoid_other)
+	if (((*w_ptr & CAVE_MARK) ||
+				((((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) ||
+				  ((c_ptr->info & CAVE_GLOW) && (*w_ptr & CAVE_VIEW))) &&
+				 !p_ptr->blind)) || (p_ptr->admin_dm))
+	{
+		/* Special terrain effect */
+		if (c_ptr->effect)
+		{
+			(*ap) = spell_color(effects[c_ptr->effect].type);
+		}
+
+#if 0
+		/* Multi-hued attr */
+		else if (f_ptr->flags1 & FF1_ATTR_MULTI)
+		{
+			a = f_ptr->shimmer[rand_int(7)];
+		}
+#endif	// 0
 	}
 
 	/* Hack -- rare random hallucination, except on outer dungeon walls */
@@ -4661,4 +4684,45 @@ bool is_quest(int level)
 	/* Nope */
 	return (FALSE);
 #endif
+}
+
+/*
+ * handle spell effects
+ */
+int effect_pop(int who)
+{
+	int i, cnt = 0;
+
+	for (i = 1; i < MAX_EFFECTS; i++)	// effects[0] is not used
+	{
+		if (!effects[i].time) return i;
+		if (effects[i].who == who)
+		{
+			if (++cnt > MAX_EFFECTS_PLAYER) return -1;
+		}
+
+	}
+	return -1;
+}
+
+int new_effect(int who, int type, int dam, int time, worldpos *wpos, int cy, int cx, int rad, s32b flags)
+{
+	int i, who2 = who;
+//	player_type *p_ptr = NULL;
+	if (who < 0 && who != PROJECTOR_EFFECT)
+		who2 = 0 - Players[0 - who]->id;
+
+
+        if ((i = effect_pop(who2)) == -1) return -1;
+
+        effects[i].type = type;
+        effects[i].dam = dam;
+        effects[i].time = time;
+        effects[i].flags = flags;
+        effects[i].cx = cx;
+        effects[i].cy = cy;
+        effects[i].rad = rad;
+        effects[i].who = who2;
+		wpcopy(&effects[i].wpos, wpos);
+        return i;
 }

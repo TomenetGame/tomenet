@@ -110,6 +110,7 @@ void version_build()
 }
 
 
+/* Hrm, maybe we'd better prepare common/skills.c or sth? */
 /* Find the realm, given a book(tval) */
 int find_realm(int book)
 {

@@ -4,21 +4,40 @@
 # m = Misc(internal), P = Player, D = Dungeon, B = Bug, V = version
 # N = Network(client)
 # if you need others tell me
-
+#
 # date is always this format
-02/1/2002
+# 02/1/2002
+#
 # tags are always this form: '[x]- ' this is 5 chars, so if the line must
 # continue on a new line it is alsio 5 spaces that are needed
-[m]- blahalhjaljkalkjlajazkljklqjsd qslkdjqs lkdjqsl
-     qmlfkmzkk qskdjfmqslfk mlqzemfj qmlj mldf
-
+# [m]- blahalhjaljkalkjlajazkljklqjsd qslkdjqs lkdjqsl
+#      qmlfkmzkk qskdjfmqslfk mlqzemfj qmlj mldf
+#
 # date start with a number and can then include anything, they are like comments
-23/07/2002 - T.o.M.E 2.0.0 aka "Point of No Return"
+# 23/07/2002 - T.o.M.E 2.0.0 aka "Point of No Return"
 
 # special tag to specify the current version
 [V]  TomeNET 4.0.0 aka "Packet of No Return"
 
 # bug.txt should follow the exact same format
+
+01/08/2002 (Jir)
+[m]- m_ptr->ai_state handles what a monster is doing.
+[m]- fleeing monster no longer teleports if out of sight.
+[m]- aquatic monster out of water runs for water.
+[m]- monster has learnt to avoid grids tainted by a player.
+[m]- aquatics resist water attack
+[B]- teleport when dying caused crash (in_bounds4)
+
+31/07/2002 (Jir)
+# take refuse to branch while Evileye is doing account stuffs.
+[G]- lasting-effect spell backported.
+     you can test it with Rogue's "Stinking Cloud" spell.
+     TODO: backport the spells themselves. AI to run from this.
+[I]- always_show_lists client option (from EyAngband)
+[P]- DRIDER receives ESP_DRAGON and Flying;  ESP is reduced instead.
+[G]- slow-digestion works better for those who need a lot of food.
+[B]- slow-digestion caused satiation if player is slow ( < -5).
 
 29/07/2002 (Jir)
 # comfortable death set :)
@@ -1618,10 +1637,6 @@ below this line are the unfixed bugs known:
      #3  0x806eeea in redraw_stuff (Ind=2) at server/xtra1.c:3621
      #4  0x80edd3a in process_player_end (Ind=2) at server/dungeon.c:2638
      #5  0x80ef862 in dungeon () at server/dungeon.c:3700
-     #6  0x80d73b9 in sched () at server/sched.c:508
-     #7  0x80efed8 in play_game (new_game=0 '\000') at server/dungeon.c:4062
-     #8  0x810236f in main (argc=2, argv=0xbfbff6c0) at server/main.c:276
-     #9  0x8049d65 in _start ()
 
 [B]- deallocator deallocates the floor that ghost is on!
      shutdown in dungeon, login, other player recalls there and voila..
@@ -1647,11 +1662,6 @@ below this line are the unfixed bugs known:
      #2  0x806fc9e in handle_stuff (Ind=1) at server/xtra1.c:3948
      #3  0x807b0bc in teleport_player (Ind=1, dis=300) at server/spells1.c:710
      #4  0x8074261 in player_death (Ind=1) at server/xtra2.c:4198
-     #5  0x80f01c7 in dungeon () at server/dungeon.c:3672
-     #6  0x80d7d31 in sched () at server/sched.c:508
-     #7  0x80f08a0 in play_game (new_game=0 '\000') at server/dungeon.c:4069
-     #8  0x8102dbb in main (argc=2, argv=0xbfbff6c0) at server/main.c:276
-     #9  0x8049d65 in _start ()
      (gdb) print y
      $2 = 65
      (gdb) print x
@@ -1686,10 +1696,21 @@ below this line are the unfixed bugs known:
      #5  0x80e58c5 in generate_cave (wpos=0x8dd4ab4) at server/generate.c:8628
      #6  0x80eee09 in process_player_change_wpos (Ind=1) at server/dungeon.c:3342
      #7  0x80ef8a7 in dungeon () at server/dungeon.c:3675
-     #8  0x80d7431 in sched () at server/sched.c:508
-     #9  0x80eff50 in play_game (new_game=0 '\000') at server/dungeon.c:4062
-     #10 0x81023e7 in main (argc=2, argv=0xbfbff6c0) at server/main.c:276
-     #11 0x8049d65 in _start ()
+
+[B]- crash the moment one die (maybe fixed - in_bounds4)
+     Laggwyrm was killed by a Great Storm Wyrm.
+     Program received signal SIGSEGV, Segmentation fault.
+     update_view (Ind=1) at server/cave.c:3407
+     3407                    c_ptr->info |= CAVE_XTRA;
+     (gdb) bt
+     #0  update_view (Ind=1) at server/cave.c:3407
+     #1  0x806f61d in update_stuff (Ind=1) at server/xtra1.c:3629
+     #2  0x80702ee in handle_stuff (Ind=1) at server/xtra1.c:3950
+     #3  0x807b75a in teleport_player (Ind=1, dis=300) at server/spells1.c:710
+     #4  0x80748a5 in player_death (Ind=1) at server/xtra2.c:4205
+     #5  0x80f195f in dungeon () at server/dungeon.c:3866
+
+
 
 
 
@@ -1725,7 +1746,7 @@ memo and questions:
 - implement EGO_WOUNDING(ie. monster bleeding)
 - implement GF_* flags for exploding monsters(voir monster_death)
 - flavor variator (eg. 'light' + 'red' => 'light red potion')
-- reimplement /cast.
+- reimplement /cast.  ('/cast Manathrust' would be useful for macro)
 - implement monster mimics in a nicer way
 - better vaults
   - between gates, patterns
@@ -1893,13 +1914,15 @@ memo and questions:
     msg_print(Ind, importance, "Vlad was here!");
   + options ('=') should be revised.
   + auto-retaliator should be able to handle non-item actions.
-  + better character ('C') screen
+  + better character ('C') screen (esp. abilities and resistances)
   + auto-inscriber for item attributes (eg. {StDxNeFASI})
   + resurrect 'repeat' (eg. '099^j' to dig etc.)
   + let players target monsters outside the screen (scrolling)
   - character screen / chardump
     + Identify the items when in tombstone screens.
     + change default file name if already exists.
+    + screenshot!
+  + chat-history/spell window
 - stores:
   + one player shouldn't stay more than 1 minutes in a store?
   + stores should buy {cursed} potions/scrolls/wands etc?

@@ -1600,7 +1600,9 @@ void update_mon(int m_idx, bool dist)
 				if (see && (p_ptr->mode & MODE_HELL) && (m_ptr->cdis > MAX_SIGHT)) see = FALSE;
 //				if (see && !p_ptr->telepathy && (p_ptr->prace == RACE_DRIDER) && (m_ptr->cdis > (p_ptr->lev / 2))) see = FALSE;
 				if (drsee && !see){
-					if(p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/2)) see=TRUE;
+//					if(p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/2)) see=TRUE;
+					/* They receive 'fly' instead */
+					if(p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/3)) see=TRUE;
 				}
 
 				if (see)

@@ -220,7 +220,13 @@ static void prt_sanity(int Ind)
 	ratio = p_ptr->msane ? (p_ptr->csane * 100) / p_ptr->msane : 100;
 
 	/* Vague */
-	if (ratio < 10)
+	if (ratio < 0)
+	{
+		/* This guy should be dead - for tombstone */
+		attr = TERM_RED;
+		strcpy(buf, "Vegetable");
+	}
+	else if (ratio < 10)
 	{
 		attr = TERM_RED;
 		strcpy(buf, "      Mad");
@@ -2136,10 +2142,12 @@ static void calc_bonuses(int Ind)
 		{
 			p_ptr->feather_fall = TRUE;
 
+			if (p_ptr->lev >= 5) p_ptr->telepathy |= ESP_DRAGON;
 			if (p_ptr->lev >= 10) p_ptr->resist_fire = TRUE;
 			if (p_ptr->lev >= 15) p_ptr->resist_cold = TRUE;
 			if (p_ptr->lev >= 20) p_ptr->resist_acid = TRUE;
 			if (p_ptr->lev >= 25) p_ptr->resist_elec = TRUE;
+			if (p_ptr->lev >= 30) p_ptr->fly = TRUE;
 		}
 	}
 

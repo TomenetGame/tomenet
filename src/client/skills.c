@@ -714,7 +714,8 @@ int do_cmd_activate_skill_aux()
 	char which;
 	int max = 0, i, start = 0;
 	int ret;
-	bool mode = FALSE;
+//	bool mode = FALSE;
+	bool mode = c_cfg.always_show_lists;
 	int *p;
 
 	C_MAKE(p, MAX_SKILLS, int);

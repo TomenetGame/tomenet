@@ -537,3 +537,11 @@ s16b count_project_times = 0;
 /* Hack -- 'default' values for obj_theme.	- Jir -
  * Only a makeshift till d_info thingie will be implemented. */
 obj_theme default_obj_theme = {20, 20, 20, 20};
+
+/*
+ * Lasting spell effects
+ */
+int project_time = 0;
+s32b project_time_effect = 0;
+effect_type effects[MAX_EFFECTS];
+

@@ -4912,6 +4912,48 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad)
 	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg));
 }
 
+/*
+ * Cast a cloud spell
+ * Stop if we hit a monster, act as a "ball"
+ * Allow "target" mode to pass over monsters
+ * Affect grids, objects, and monsters
+ */
+bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time)
+{
+	player_type *p_ptr = Players[Ind];
+	int tx, ty;
+
+	int flg = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
+
+	/* Use the given direction */
+	tx = p_ptr->px + 99 * ddx[dir];
+	ty = p_ptr->py + 99 * ddy[dir];
+
+	/* Hack -- Use an actual "target" */
+	if ((dir == 5) && target_okay(Ind))
+	{
+		flg &= ~(PROJECT_STOP);
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
+	}
+	project_time = time;
+
+	/* Analyze the "dir" and the "target".  Hurt items on floor. */
+	return (project(0 - Ind, (rad > 16)?16:rad, &p_ptr->wpos, ty, tx, dam, typ, flg));
+}
+
+/*
+ * Cast a wave spell
+ * Stop if we hit a monster, act as a "ball"
+ * Allow "target" mode to pass over monsters
+ * Affect grids, objects, and monsters
+ */
+bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff)
+{
+	project_time_effect = eff;
+	return (fire_cloud(Ind, typ, dir, dam, rad, time));
+}
+
 
 /*
  * Hack -- apply a "projection()" in a direction (or at the target)

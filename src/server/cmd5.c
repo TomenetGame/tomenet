@@ -4970,7 +4970,8 @@ void do_cmd_shad_aux(int Ind, int dir)
 	{
 		case 1:
 			msg_format_near(Ind, "%s fires a stinking cloud.", p_ptr->name);
-			fire_ball(Ind, GF_POIS, dir, 8 + (plev / 2), 2);
+//			fire_ball(Ind, GF_POIS, dir, 8 + (plev / 2), 2);
+			fire_cloud(Ind, GF_POIS, dir, 8 + (plev / 2), 2, 10 + plev / 2);
 			break;
 		case 16:
 			disarm_trap(Ind, dir);

@@ -41,6 +41,16 @@ static bool item_tester_edible(object_type *o_ptr)
 
 	return FALSE;
 }
+
+/* XXX not fully functional */
+static bool item_tester_oils(object_type *o_ptr)
+{
+	if (o_ptr->tval == TV_LITE) return TRUE;
+	if (o_ptr->tval == TV_FLASK) return TRUE;
+
+	return FALSE;
+}
+
 void cmd_all_in_one(void)
 {
 	int item, dir;
@@ -1083,6 +1093,7 @@ void cmd_zap_rod(void)
 	Send_zap(item);
 }
 
+/* FIXME: filter doesn't work nicely */
 void cmd_refill(void)
 {
 	int item;
@@ -1097,8 +1108,8 @@ void cmd_refill(void)
 
 	else if (inventory[INVEN_LITE].tval == TV_LANTERN)
 	{
-		item_tester_tval = TV_FLASK;
-		p = "Refill with which flask? ";
+		item_tester_hook = item_tester_oils;
+		p = "Refill with which? ";
 	}
 
 	else
@@ -1108,6 +1119,13 @@ void cmd_refill(void)
 	}
 #endif
 
+	if (!inventory[INVEN_LITE].tval)
+	{
+		c_msg_print("You are not wielding a light source.");
+		return;
+	}
+
+	item_tester_hook = item_tester_oils;
 	p = "Refill with which light? ";
 
 	if (!c_get_item(&item, p, FALSE, TRUE, FALSE))

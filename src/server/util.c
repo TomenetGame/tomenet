@@ -1972,7 +1972,7 @@ static void do_slash_cmd(int Ind, char *message)
 					strcmp(quark_str(o_ptr->note), "worthless"))
 					continue;
 
-				if (!nontag && !o_ptr->note &&
+				if (!nontag && !o_ptr->note && !k &&
 					!(cursed_p(o_ptr) &&	/* Handle {cursed} */
 						(object_known_p(Ind, o_ptr) ||
 						 (o_ptr->ident & ID_SENSE))))
@@ -2387,9 +2387,9 @@ static void do_slash_cmd(int Ind, char *message)
 				}
 				c_ptr=&zcave[p_ptr->py][p_ptr->px];
 
-				msg_format(Ind, "(x:%d y:%d) info:%d feat:%d o_idx:%d m_idx:%d",
+				msg_format(Ind, "(x:%d y:%d) info:%d feat:%d o_idx:%d m_idx:%d effect:%d",
 						p_ptr->px, p_ptr->py,
-						c_ptr->info, c_ptr->feat, c_ptr->o_idx, c_ptr->m_idx);
+						c_ptr->info, c_ptr->feat, c_ptr->o_idx, c_ptr->m_idx, c_ptr->effect);
 			}
 
 			return;
