@@ -490,6 +490,10 @@ struct player_type
 	s16b stun;			/* Timed -- Stun */
 
 	s16b protevil;		/* Timed -- Protection */
+	s16b zeal;
+	s16b zeal_power;
+	s16b martyr;
+	s16b martyr_timeout;
 	s16b invuln;		/* Timed -- Invulnerable */
 	s16b hero;			/* Timed -- Heroism */
 	s16b shero;			/* Timed -- Super Heroism */
@@ -514,11 +518,11 @@ struct player_type
         s16b prob_travel;       /* Timed -- Probability travel */
         s16b st_anchor;         /* Timed -- Space/Time Anchor */
         s16b tim_esp;           /* Timed -- ESP */
-  s16b adrenaline;
-  s16b biofeedback;
+	s16b adrenaline;
+	s16b biofeedback;
 
-  s16b auto_tunnel;
-  s16b body_monster;
+	s16b auto_tunnel;
+	s16b body_monster;
 
 	s16b oppose_acid;	/* Timed -- oppose acid */
 	s16b oppose_elec;	/* Timed -- oppose lightning */

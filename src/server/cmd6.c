@@ -7238,7 +7238,9 @@ bool unmagic(int Ind)
 			set_oppose_elec(Ind, 0) |
 			set_oppose_fire(Ind, 0) |
 			set_oppose_cold(Ind, 0) |
-			set_oppose_pois(Ind, 0)
+			set_oppose_pois(Ind, 0) |
+			set_zeal(Ind, 0, 0) |
+			set_martyr(Ind, 0)
 			) ident = TRUE;
 
 #if 0	// now it's handled in set_tim_wraith

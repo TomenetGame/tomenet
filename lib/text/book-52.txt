@@ -9,11 +9,8 @@ tell you, so please check it sometimes.
 
 ----------------------------------------------------------------
 
-Currently, ToME-NET is under heavy development;  if you want to play in a
-stable server, please try 3.5.2 servers instead.
-
 If you noticed a bug, please send a report to:
-    PernMangband@yahoogroups.com
+    mail@c-blue.de
 
 
 Thank you.

@@ -1288,6 +1288,7 @@ static void wr_extra(int Ind)
 	/*wr_u32b(seed_flavor);*/
 	/*wr_u32b(seed_town);*/
 	wr_s32b(p_ptr->mimic_seed);
+	wr_s16b(&p_ptr->martyr_timeout);
 
 	/* Special stuff */
 	wr_u16b(panic_save);

@@ -1989,6 +1989,127 @@ bool set_protevil(int Ind, int v)
 
 
 /*
+ * Set "p_ptr->zeal", notice observable changes
+ */
+bool set_zeal(int Ind, int p, int v)
+{
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
+
+	/* set EA */
+	p_ptr->zeal_power = p;
+
+	/* Open */
+	if (v)
+	{
+		if (!p_ptr->zeal)
+		{
+			msg_print(Ind, "You heed a holy call!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else
+	{
+		if (p_ptr->zeal)
+		{
+			msg_print(Ind, "The holy call fades.");
+			notice = TRUE;
+		}
+	}
+
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
+	/* Use the value */
+	p_ptr->zeal = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+bool set_martyr(int Ind, int v)
+{
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v)
+	{
+		if (!p_ptr->martyr)
+		{
+			msg_print(Ind, "\377vYou feel the heavens grant your their powers.");
+			hp_player_quiet(Ind, 5000); /* fully heal */
+			p_ptr->martyr_timeout = 1000;
+			notice = TRUE;
+		}
+		else
+		{
+			msg_print(Ind, "\377wYou burn in holy fire!");
+			p_ptr->chp = p_ptr->mhp * p_ptr->martyr / 10;
+			/* Update health bars */
+			update_health(0 - Ind);
+			/* Redraw */
+			p_ptr->redraw |= (PR_HP);
+		}
+	}
+
+	/* Shut */
+	else
+	{
+		if (p_ptr->martyr)
+		{
+			p_ptr->chp = 1;
+    		        /* Update health bars */
+	                update_health(0 - Ind);
+	                /* Redraw */
+	                p_ptr->redraw |= (PR_HP);
+
+			msg_print(Ind, "\377vYou collapse as your martyrium ends!");
+			notice = TRUE;
+		}
+	}
+
+	/* apply the maximum value if any */
+	if (cfg.spell_stack_limit && cfg.spell_stack_limit < v)
+		v = cfg.spell_stack_limit;
+
+	/* Use the value */
+	p_ptr->martyr = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+/*
  * Set "p_ptr->invuln", notice observable changes
  */
 bool set_invuln(int Ind, int v)
@@ -4425,15 +4546,57 @@ void player_death(int Ind)
 	{
 		/* Tell players */
 		if (streq(p_ptr->died_from, "Insanity")) {
-			sprintf(buf, "\377a**\377r%s was destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
+			/* Tell him */
+			msg_print(Ind, "\377RYou die.");
+	//		msg_print(Ind, NULL);
+			msg_format("\377a**\377rYou have been destroyed by \377m%s\377r.\377a**", p_ptr->died_from);
+
+			sprintf(buf, "\377a**\377r%s was destroyed by \377m%s\377r.\377a**", p_ptr->name, p_ptr->died_from);
 			s_printf("%s was destroyed by %s for %d damage.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow);
+
+#if CHATTERBOX_LEVEL > 2
+			if (p_ptr->last_words)
+			{
+				char death_message[80];
+    
+        			(void)get_rnd_line("death.txt", 0, death_message);
+				msg_print(Ind, death_message);
+			}
+#endif	// CHATTERBOX_LEVEL
+
 			Send_chardump(Ind);
 		}
 		else if (p_ptr->ghost) {
+			/* Tell him */
+			msg_format("\377a**\377rYour ghost was destroyed by %s.\377a**", p_ptr->died_from);
+
 			sprintf(buf, "\377a**\377r%s's ghost was destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
 			s_printf("%s's ghost was destroyed by %s for %d damage.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow);
+
+#if CHATTERBOX_LEVEL > 2
+			if (p_ptr->last_words)
+			{
+				char death_message[80];
+    
+        			(void)get_rnd_line("death.txt", 0, death_message);
+				msg_print(Ind, death_message);
+			}
+#endif	// CHATTERBOX_LEVEL
 		}
 		else {
+			/* Tell him */
+			msg_print(Ind, "\377RYou die.");
+	//		msg_print(Ind, NULL);
+			if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))) {
+    				msg_format(Ind, "\377a**\377rYou have been killed by %s.\377a**", p_ptr->died_from);
+			}
+			else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
+				msg_format(Ind, "\377a**\377rYou have been annihilated by %s.\377a**", p_ptr->died_from);
+			}
+			else {
+				msg_format(Ind, "\377a**\377rYou have been vaporized by %s.\377a**", p_ptr->died_from);
+			}
+
 			if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)))
 				sprintf(buf, "\377a**\377r%s was killed and destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
 			else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
@@ -4441,6 +4604,17 @@ void player_death(int Ind)
 			else
 				sprintf(buf, "\377a**\377r%s was vaporized and destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
 			s_printf("%s was killed and destroyed by %s for %d damage.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow);
+
+#if CHATTERBOX_LEVEL > 2
+			if (p_ptr->last_words)
+			{
+				char death_message[80];
+    
+        			(void)get_rnd_line("death.txt", 0, death_message);
+				msg_print(Ind, death_message);
+			}
+#endif	// CHATTERBOX_LEVEL
+
 			Send_chardump(Ind);
 		}
 #ifdef TOMENET_WORLDS

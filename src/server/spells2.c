@@ -80,6 +80,9 @@ bool hp_player(int Ind, int num)
 	int old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
 	int new_num; 
 
+	/* player can't be healed while burning in the holy fire of martyrium */
+	if (p_ptr->martyr) return(FALSE);
+
 	/* Hell mode is .. hard */
 	if (p_ptr->mode & MODE_HELL)
 	  {
@@ -155,6 +158,9 @@ bool hp_player_quiet(int Ind, int num)
 	// The "number" that the character is displayed as before healing
 	int old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
 	int new_num; 
+
+	/* player can't be healed while burning in the holy fire of martyrium */
+	if (p_ptr->martyr) return(FALSE);
 
 	if(!num) return(FALSE);
 
@@ -959,6 +965,10 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "You are surrounded with electricity.\n");
 	}
+	if (p_ptr->sh_cold)
+	{
+		fprintf(fff, "You are surrounded with a freezing aura.\n");
+	}
 
 	if (p_ptr->resist_continuum)
 	{
@@ -1589,6 +1599,10 @@ void self_knowledge(int Ind)
 	if (p_ptr->sh_elec)
 	{
 		info[i++] = "You are surrounded with electricity.";
+	}
+	if (p_ptr->sh_cold)
+	{
+		info[i++] = "You are surrounded with a freezing aura.";
 	}
 	if (p_ptr->anti_tele)
 	{
@@ -5205,7 +5219,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	sprintf(pattacker, "%s%s", p_ptr->name, attacker);
-	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, &pattacker));
+	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
 /*
@@ -5458,7 +5472,7 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker)
 	char pattacker[80];
 	int flg = PROJECT_STOP | PROJECT_KILL;
 	sprintf(pattacker,"%s%s", Players[Ind]->name, attacker);
-	return (project_hook(Ind, typ, dir, dam, flg, &pattacker));
+	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
 }
 
 /*
@@ -5471,7 +5485,7 @@ bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
         char pattacker[80];
 	int flg = PROJECT_BEAM | PROJECT_KILL;
         sprintf(pattacker,"%s%s", Players[Ind]->name, attacker);
-	return (project_hook(Ind, typ, dir, dam, flg, &pattacker));
+	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
 }
 
 /*

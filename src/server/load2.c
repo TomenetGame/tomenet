@@ -1173,8 +1173,10 @@ static bool rd_extra(int Ind)
 	/* Hack -- the two "special seeds" */
 	/*rd_u32b(&seed_flavor);
 	  rd_u32b(&seed_town);*/
-        if (!older_than(4, 0, 5))
-                rd_s32b(&p_ptr->mimic_seed);
+        if (!older_than(4, 0, 5)) rd_s32b(&p_ptr->mimic_seed);
+
+	if (!older_than(4, 0, 6)) rd_s16b(&p_ptr->martyr_timeout);
+	else p_ptr->martyr_timeout = 0;
 
 	/* Special stuff */
 	rd_u16b(&panic_save);

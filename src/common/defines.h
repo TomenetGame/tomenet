@@ -40,7 +40,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   0
-#define SF_VERSION_PATCH   5
+#define SF_VERSION_PATCH   6
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -2698,6 +2698,7 @@ that keeps many algorithms happy.
 #define GF_CURE_PLAYER 139
 #define GF_RESURRECT_PLAYER 140
 #define GF_SANITY_PLAYER 141
+#define GF_ZEAL_PLAYER 142
 
 #define GF_TELE_TO		150
 #define GF_HAND_DOOM	151

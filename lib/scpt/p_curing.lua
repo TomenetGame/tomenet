@@ -13,7 +13,7 @@ HHEALING = add_spell
 		local hp = player.mhp * (15 + get_level(Ind, HHEALING, 35)) / 100
 		hp_player(Ind, hp)
 		if player.spell_project > 0 then
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, (hp * 3) / 2, player.spell_project, "")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, (hp * 3) / 2, player.spell_project, " points at your wounds.")
 		end
 	end,
 	["info"] =      function()
@@ -41,7 +41,7 @@ HCURING = add_spell
 		                set_cut(Ind, 0)
 				set_stun(Ind, 0)
 		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_CURE_PLAYER, 0, 1, player.spell_project, "")
+		                        fire_ball(Ind, GF_CURE_PLAYER, 0, 1, player.spell_project, " concentrates on your maladies.")
                     		end
 			end
 	                if get_level(Ind, HCURING, 50) >= 20 then
@@ -90,18 +90,18 @@ HSANITY = add_spell
 					player.csane = (player.msane * 2 / 5)
 				end
 		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 2, player.spell_project, "")
+		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 2, player.spell_project, " waves over your eyes, murmuring some words.")
 	            		end
 	                elseif get_level(Ind, HSANITY, 50) >= 10 then
 				if player.csane < (player.msane / 5) then
 					player.csane = (player.msane / 5)
 				end
 		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 1, player.spell_project, "")
+		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 1, player.spell_project, " waves over your eyes, murmuring some words.")
 	            		end
 			else
 		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 0, player.spell_project, "")
+		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 0, player.spell_project, " waves over your eyes.")
 	            		end
 	                end
 		        end,
@@ -149,7 +149,7 @@ HDELFEAR = add_spell
 	["spell"] =	function()
 			set_afraid(Ind, 0)
 	                if player.spell_project > 0 then
-	                        fire_ball(Ind, GF_REMFEAR_PLAYER, 0, 1, player.spell_project, "")
+	                        fire_ball(Ind, GF_REMFEAR_PLAYER, 0, 1, player.spell_project, " speaks some faithful words and you lose your fear.")
             		end
 			end,
 	["info"] =	function()
@@ -159,4 +159,32 @@ HDELFEAR = add_spell
 			"Removes fear from your heart.",
                 	"***Affected by the Meta spell: Project Spell***",
 			}
+}
+
+HDELBB = add_spell
+{
+	["name"] =      "Soul Curing",
+	["school"] =    {SCHOOL_HCURING},
+	["level"] =     40,
+	["mana"] =      200,
+	["mana_max"] =  200,
+	["fail"] =      60,
+	["stat"] =      A_WIS,
+	["spell"] =     function()
+			msg_print(Ind, "You feel a calming warmth touching your soul.");
+			if (player.black_breath) then
+	            		msg_print(Ind, "The hold of the Black Breath on you is broken!");
+				player.black_breath = FALSE
+			end
+	                if player.spell_project > 0 then
+	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 2, 1, " chants loudly, praising the light!")
+            		end
+		        end,
+	["info"] =      function()
+		        return ""
+	    		end,
+        ["desc"] =      {
+                        "Cures the Black Breath.",
+                	"***Affected by the Meta spell: Project Spell***",
+		}
 }

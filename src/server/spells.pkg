@@ -192,6 +192,7 @@ extern bool res_stat(int Ind, int stat);
 extern bool apply_disenchant(int Ind, int mode);
 extern bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker);
 extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker);
+//extern bool lua_project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker);
 extern int set_all_destroy(object_type *o_ptr);
 extern int set_cold_destroy(object_type *o_ptr);
 extern int set_impact_destroy(object_type *o_ptr);
@@ -248,6 +249,8 @@ extern bool set_blessed(int Ind, int v);
 extern bool set_hero(int Ind, int v);
 extern bool set_shero(int Ind, int v);
 extern bool set_protevil(int Ind, int v);
+extern bool set_zeal(int Ind, int p, int v);
+extern bool set_martyr(int Ind, int v);
 extern bool set_invuln(int Ind, int v);
 extern bool set_tim_invis(int Ind, int v);
 extern bool set_tim_infra(int Ind, int v);
@@ -388,7 +391,7 @@ extern void teleport_player_level(int Ind);
 
 /* This could have some good uses */
 extern s16b project_time;
-extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker);
+/* extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker); */
 
 /* lua_bind.c */
 extern s16b new_school(int i, cptr name, s16b skill);

@@ -17,7 +17,7 @@ HBLESSING = add_spell
 				dur = 9 + randint(get_level(Ind, HBLESSING, 25))
 				set_blessed(Ind, dur)
 				if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, player.spell_project, "")
+		                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, player.spell_project, " recites a blessing.")
 			        end
 			end
                 elseif get_level(Ind, HBLESSING, 50) < 30 then
@@ -26,7 +26,7 @@ HBLESSING = add_spell
 				dur = 17 + randint(get_level(Ind, HBLESSING, 25))
 				set_blessed(Ind, dur)
 				if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, player.spell_project, "")
+		                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, player.spell_project, " chants.")
 			        end
 			end
 		else
@@ -35,7 +35,7 @@ HBLESSING = add_spell
 				dur = 32 + randint(get_level(Ind, HBLESSING, 25))
 				set_blessed(Ind, dur)
 				if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, player.spell_project, "")
+		                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, player.spell_project, " speaks a holy prayer.")
 			        end
 			end
 		end
@@ -72,19 +72,25 @@ HRESISTS = add_spell
 
 		set_oppose_fire(Ind, dur)
 		if player.spell_project > 0 then
-			fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, player.spell_project, "")
+			fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, player.spell_project, " calls to the heavens for protection from the elements.")
 		end
         	if get_level(Ind, HRESISTS, 50) > 9 then
 			set_oppose_cold(Ind, dur)
-			fire_ball(Ind, GF_RESCOLD_PLAYER, 0, dur, player.spell_project, "")
+			if player.spell_project > 0 then
+				fire_ball(Ind, GF_RESCOLD_PLAYER, 0, dur, player.spell_project, "")
+			end
 		end
                 if get_level(Ind, HRESISTS, 50) > 14 then
 			set_oppose_elec(Ind, dur)
-			fire_ball(Ind, GF_RESELEC_PLAYER, 0, dur, player.spell_project, "")
+			if player.spell_project > 0 then
+				fire_ball(Ind, GF_RESELEC_PLAYER, 0, dur, player.spell_project, "")
+			end
 		end
                 if get_level(Ind, HRESISTS, 50) > 14 then
 			set_oppose_acid(Ind, dur)
-			fire_ball(Ind, GF_RESACID_PLAYER, 0, dur, player.spell_project, "")
+			if player.spell_project > 0 then
+				fire_ball(Ind, GF_RESACID_PLAYER, 0, dur, player.spell_project, "")
+			end
 		end
 	end,
 	["info"] = 	function()
@@ -147,5 +153,32 @@ HRUNEPROT = add_spell
 			end,
 	["desc"] = 	{
 			"Creates a rune of protection on the ground.",
+	}
+}
+
+HMARTYR = add_spell
+{
+	["name"] =	"Eternal Martyr",
+	["school"] = 	{SCHOOL_HDEFENSE},
+	["level"] =	40,
+	["mana"]=	50,
+	["mana_max"] =	50,
+	["fail"] = 	40,
+	["stat"] =      A_WIS,
+	["spell"] = 	function()
+			if player.martyr_timeout > 0 then
+				msg_print("The heavens are not ready yet to accept your martyrium.")
+			else
+				set_martyr(Ind, 10)
+			end
+			end,
+	["info"] = 	function()
+			return "power oo  dur 10  timeout 1000"
+			end,
+	["desc"] = 	{
+			"Turns you into an holy martyr, blessed with immortality",
+			"to fulfil his work. When the holy fire ceases, you will",
+			"be left with 1 HP. It will take a while until the heavens",
+			"are ready to accept another martyrium (1000 turns timeout).",
 	}
 }

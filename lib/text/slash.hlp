@@ -1,7 +1,9 @@
 <<Slash-commands reference manual>>
 
 This is help screen for Slash-commands.
-If you want a help for game-play itself, try '?' key in the game instead.
+If you want a help for game-play itself, try '?' key in the game instead
+or read the full manual file 'TomeNET-Guide.txt', latest version is
+available online at http://www.c-blue.de/rogue/
 
 'Slash-commands' are set of expanded commands available via chat-command(':').
 You can beat the game without knowing any of them, but learning a little will
@@ -51,6 +53,9 @@ Note:
         You can macro this like '\e:/cast 1 b DG\n'.
     This command consumes 1 (casting) turn.
     This command was coded by Tanix(Asclep).
+
+/dice (number of dice)
+    Throws some dice, the result is visible to all nearby players.
 
 /dispose [value/'a'] {shorthand: /dis} 
     *** DANGER *** read this instruction carefully before trying it!

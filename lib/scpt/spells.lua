@@ -198,17 +198,17 @@ school_book[12] = {
 
 -- Create the book of Holy Defense
 school_book[13] = {
-	HBLESSING, HRESISTS, HPROTEVIL, HRUNEPROT,
+	HBLESSING, HRESISTS, HPROTEVIL, HRUNEPROT, HMARTYR,
 }
 
 -- Create the book of Holy Curing
 school_book[14] = {
-	HHEALING, HCURING, HSANITY, HRESURRECT, HDELFEAR,
+	HHEALING, HCURING, HSANITY, HRESURRECT, HDELFEAR, HDELBB,
 }
 
 -- Create the book of Holy Support
 school_book[15] = {
-	HSANCTUARY, HSATISFYHUNGER, HDELCURSES, HSENSE,
+	HSANCTUARY, HSATISFYHUNGER, HDELCURSES, HSENSE, HZEAL,
 }
 
 -- Create the book of beginner's cantrip

@@ -2606,6 +2606,23 @@ static bool process_player_end_aux(int Ind)
 		(void)set_protevil(Ind, p_ptr->protevil - 1);
 	}
 
+	/* Holy Zeal - EA bonus */
+	if (p_ptr->zeal)
+	{
+		(void)set_zeal(Ind, p_ptr->zeal_power, p_ptr->zeal - 1);
+	}
+
+	/* Holy Martyr */
+	if (p_ptr->martyr)
+	{
+		(void)set_martyr(Ind, p_ptr->martyr - 1);
+	}
+	if (p_ptr->martyr_timeout)
+	{
+		p_ptr->martyr_timeout--;
+		if (!p_ptr->martyr_timeout) msg_print(Ind, "The heavens are ready to accept your martyrium.");
+	}
+
 	/* Invulnerability */
 	/* Hack -- make -1 permanent invulnerability */
 	if (p_ptr->invuln)

@@ -2794,6 +2794,34 @@ static void do_slash_cmd(int Ind, char *message)
 				}while(--tk);
 				return;
 			}
+			else if (prefix(message, "/ban"))
+			{
+				if (tk)
+				{
+					int j = name_lookup_loose(Ind, token[1], FALSE);
+					if (j)
+					{
+						char kickmsg[80];
+						/* Success maybe :) */
+						add_banlist(j, (tk>1 ? atoi(token[2]) : 5));
+						if (tk < 3)
+						{
+							msg_format(Ind, "Banning %s for %d minutes...", Players[j]->name, atoi(token[2]));
+							sprintf(kickmsg, "banned for %d minutes", atoi(token[2]));
+							Destroy_connection(Players[j]->conn, kickmsg);
+						} else {
+							msg_format(Ind, "Banning %s for %d minutes (%s)...", Players[j]->name, atoi(token[2]), token[3]);
+							sprintf(kickmsg, "Banned for %d minutes (%s)", atoi(token[2]), token[3]);
+							Destroy_connection(Players[j]->conn, kickmsg);
+						}
+						/* Kick him */
+					}
+					return;
+				}
+
+				msg_print(Ind, "\377oUsage: /ban (Player name) (time) [reason]");
+				return;
+			}
 			else if (prefix(message, "/kick"))
 			{
 				if (tk)
@@ -2801,16 +2829,23 @@ static void do_slash_cmd(int Ind, char *message)
 					int j = name_lookup_loose(Ind, token[1], FALSE);
 					if (j)
 					{
+						char kickmsg[80];
 						/* Success maybe :) */
-						msg_format(Ind, "Kicking %s out...", Players[j]->name);
-						add_banlist(j, (tk>1 ? atoi(token[2]) : 5));
+						if (tk < 2)
+						{
+							msg_format(Ind, "Kicking %s out...", Players[j]->name);
+							Destroy_connection(Players[j]->conn, "kicked out");
+						} else {
+							msg_format(Ind, "Kicking %s out (%s)...", Players[j]->name, token[2]);
+							sprintf(kickmsg, "kicked out (%s)", token[2]);
+							Destroy_connection(Players[j]->conn, kickmsg);
+						}
 						/* Kick him */
-						Destroy_connection(Players[j]->conn, "kicked out");
 					}
 					return;
 				}
 
-				msg_print(Ind, "\377oUsage: /kick [Player name]");
+				msg_print(Ind, "\377oUsage: /kick (Player name) [reason]");
 				return;
 			}
 			/* erase items and monsters */

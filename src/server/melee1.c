@@ -1875,6 +1875,26 @@ bool make_attack_normal(int Ind, int m_idx)
 					}
                                 }
 
+				if (p_ptr->sh_cold && alive)
+				{
+					if (!(r_ptr->flags3 & RF3_IM_COLD))
+					{
+						msg_format(Ind, "%^s freezes!", m_name);
+						if (mon_take_hit(Ind, m_idx, damroll(2,6), &fear,
+									" freezes and shatters."))
+						{
+							blinked = FALSE;
+							alive = FALSE;
+						}
+					}
+					else
+					{
+						//						if (m_ptr->ml)
+						if (p_ptr->mon_vis[m_idx])
+							r_ptr->r_flags3 |= RF3_IM_COLD;
+					}
+				}
+
                                 if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_COUNTER) && alive)
 				{
 					msg_format(Ind, "%^s gets bashed by your mystic shield!", m_name);

@@ -681,7 +681,8 @@ extern bool inc_stat(int Ind, int stat);
 extern bool dec_stat(int Ind, int stat, int amount, int permanent);
 extern bool res_stat(int Ind, int stat);
 extern bool apply_disenchant(int Ind, int mode);
-extern bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int flg);
+extern bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int flg, char attacker[80]);
+//extern bool lua_project(int who, int rad, int Depth, int y, int x, int dam, int typ, int flg, char *attacker);
 
 /* spells2.c */
 extern bool hp_player(int Ind, int num);
@@ -837,6 +838,8 @@ extern bool set_blessed(int Ind, int v);
 extern bool set_hero(int Ind, int v);
 extern bool set_shero(int Ind, int v);
 extern bool set_protevil(int Ind, int v);
+extern bool set_zeal(int Ind, int p, int v);
+extern bool set_martyr(int Ind, int v);
 extern bool set_invuln(int Ind, int v);
 extern bool set_tim_invis(int Ind, int v);
 extern bool set_tim_infra(int Ind, int v);

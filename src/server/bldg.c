@@ -232,6 +232,9 @@ static void reset_tim_flags()
 	p_ptr->oppose_pois = 0;     /* Timed -- oppose poison */
 
 	p_ptr->confusing = 0;       /* Touch of Confusion */
+	p_ptr->zeal = 0;	    /* Holy +EA */
+	p_ptr->martyr = 0;	    /* Holy martyr / invulnerability */
+	p_ptr->martyr_timeout = 0;
 }
 
 

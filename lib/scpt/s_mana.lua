@@ -90,10 +90,11 @@ MANASHIELD = add_spell
 	["name"] = 	"Disruption Shield",
         ["school"] = 	SCHOOL_MANA,
 --        ["level"] = 	45,
-        ["level"] = 	40,
+        ["level"] = 	35,
         ["mana"] = 	50,
         ["mana_max"] = 	50,
-        ["fail"] = 	-200,
+--        ["fail"] = 	-200,
+        ["fail"] = 	10,
         ["spell"] = 	function()
 --        		if get_level(Ind, MANASHIELD, 50) >= 5 then
 --	                       	if (player.invuln == 0) then
@@ -101,12 +102,12 @@ MANASHIELD = add_spell
 --				end
 --			else
 --	                       	if (player.tim_manashield == 0) then
-                                	set_tim_manashield(Ind, randint(5) + 20 + get_level(Ind, MANASHIELD, 75))
+                                	set_tim_manashield(Ind, randint(10) + 20 + get_level(Ind, MANASHIELD, 75))
 --                                end
 --			end
         end,
 	["info"] = 	function()
-			return "dur "..(5 + get_level(Ind, MANASHIELD, 45)).."+d5"
+			return "dur "..(20 + get_level(Ind, MANASHIELD, 75)).."+d10"
 	end,
         ["desc"] =	{
         		"Uses mana instead of hp to take damage"

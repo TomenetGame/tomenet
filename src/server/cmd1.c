@@ -3214,6 +3214,29 @@ void touch_zap_player(int Ind, int m_idx)
 			handle_stuff(Ind);
 		}
 	}
+
+
+	if (r_ptr->flags2 & (RF3_AURA_COLD))
+	{
+		if (!(p_ptr->immune_cold))
+		{
+			char aura_dam[80];
+
+			aura_damage = damroll(1 + (m_ptr->level / 26), 1 + (m_ptr->level / 17));
+
+			/* Hack -- Get the "died from" name */
+			monster_desc(Ind, aura_dam, m_idx, 0x88);
+
+			if (p_ptr->oppose_cold) aura_damage = (aura_damage+2) / 3;
+			if (p_ptr->resist_cold) aura_damage = (aura_damage+2) / 3;
+			if (p_ptr->sensible_cold) aura_damage = (aura_damage+2) * 2;
+
+			msg_print(Ind, "You are freezing!");
+			take_hit(Ind, aura_damage, aura_dam);
+			r_ptr->r_flags3 |= RF3_AURA_COLD;
+			handle_stuff(Ind);
+		}
+	}
 }
 
 

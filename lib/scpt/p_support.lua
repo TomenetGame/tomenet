@@ -128,7 +128,7 @@ HSENSEMON = add_spell
 	["fail"] =      15,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
-		set_tim_invis(Ind, 10 + get_level(Ind, HSENSE, 50))
+		set_tim_invis(Ind, 10 + get_level(Ind, HSENSEMON, 50))
 		detect_creatures(Ind)
 		if player.spell_project > 0 then
 			fire_ball(Ind, GF_DETECTCREATURE_PLAYER, 0, 1, player.spell_project, "")
@@ -143,6 +143,48 @@ HSENSEMON = add_spell
 	["desc"] =      {
 		"Lets you see nearby creatures and allows you to see invisible.",
 		"At level 30 it lets you sense the presence creatures for a while.",
+		"***Affected by the Meta spell: Project Spell***",
+	}
+}
+
+HZEAL = add_spell
+{
+	["name"] =      "Zeal",
+	["school"] =    SCHOOL_HSUPPORT,
+	["level"] =     30,
+	["mana"] =      50,
+	["mana_max"] =  150,
+	["fail"] =      15,
+	["stat"] =      A_WIS,
+	["spell"] =     function()
+		if get_level(Ind, HZEAL, 50) < 10 then
+			set_zeal(Ind, 1, 4+randint(10))
+			if player.spell_project > 0 then
+				fire_ball(Ind, GF_ZEAL_PLAYER, 0, 1, player.spell_project, "")
+			end
+		elseif get_level(Ind, HZEAL, 50) < 20 then
+			set_zeal(Ind, 2, 4+randint(10))
+			if player.spell_project > 0 then
+				fire_ball(Ind, GF_ZEAL_PLAYER, 0, 2, player.spell_project, "")
+			end
+		else
+			set_zeal(Ind, 3, 4+randint(10))
+			if player.spell_project > 0 then
+				fire_ball(Ind, GF_ZEAL_PLAYER, 0, 3, player.spell_project, "")
+			end
+		end
+	end,
+	["info"] =      function()
+		if get_level(Ind, HZEAL, 50) < 10 then
+			return "1 EA, dur 4+d10"
+		elseif get_level(Ind, HZEAL, 50) < 20 then
+			return "2 EA, dur 4+d10"
+		else
+			return "3 EA, dur 4+d10"
+		end
+	end,
+	["desc"] =      {
+		"Increases your hit rate up to +3 at level 50 for a short time.",
 		"***Affected by the Meta spell: Project Spell***",
 	}
 }

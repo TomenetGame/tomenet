@@ -2057,6 +2057,10 @@ struct player_type
 	s16b stun;			/* Timed -- Stun */
 
 	s16b protevil;		/* Timed -- Protection */
+	s16b zeal;		/* timed EA bonus */
+	s16b zeal_power;
+	s16b martyr;
+	s16b martyr_timeout;
 	s16b invuln;		/* Timed -- Invulnerable */
 	s16b hero;			/* Timed -- Heroism */
 	s16b shero;			/* Timed -- Super Heroism */
@@ -2309,6 +2313,7 @@ struct player_type
 	bool no_cut;	    /* For mimic forms */
 	bool sh_fire;       /* Fiery 'immolation' effect */
 	bool sh_elec;       /* Electric 'immolation' effect */
+	bool sh_cold;       /* Cold 'immolation' effect */
 	bool wraith_form;   /* wraithform */
 	bool immune_neth;       /* Immunity to nether */
 	bool climb;             /* Can climb mountains */

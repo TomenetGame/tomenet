@@ -347,6 +347,10 @@ void do_cmd_messages_chatonly(void)
 	cptr msg_dice = "dice and get";
 	cptr msg_level = "Welcome to level";
 	cptr msg_level2 = "has attained level";
+/*	cptr msg_inven_destroy1 = "Your ";
+	cptr msg_inven_destroy2 = "One of your ";
+	cptr msg_inven_destroy3 = "Some of your ";
+	cptr msg_inven_destroy4 = "All of your ";*/
 	cptr msg_inven_destroy1 = "was destroyed!";
 	cptr msg_inven_destroyx = "were destroyed!";
 	//cptr msg_telepath = "mind";

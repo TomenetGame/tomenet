@@ -1105,6 +1105,9 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		return;
 	}
 
+	/* Heavenly invulnerability? */
+	if (p_ptr->martyr) return;
+
 	// This is probably unused
 	// int warning = (p_ptr->mhp * hitpoint_warn / 10);
 
@@ -3347,6 +3350,10 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
+	/* get object name */
+	if ((Ind >= 0) && ((0 - Ind) > PROJECTOR_UNUSUAL))
+		object_desc(Ind, o_name, o_ptr, FALSE, 0);
+
 	/* Get the "plural"-ness */
 	if (o_ptr->number > 1) plural = TRUE;
 
@@ -3603,7 +3610,6 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (!quiet && p_ptr->obj_vis[this_o_idx])
 		{
 			obvious = TRUE;
-			object_desc(Ind, o_name, o_ptr, FALSE, 0);
 		}
 
 		/* Artifacts, and other objects, get to resist */
@@ -6703,6 +6709,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
+		case GF_ZEAL_PLAYER:
+		{
+			(void)set_zeal(Ind, dam, 4 + randint(10));
+			break;
+		}
 		case GF_SEEMAP_PLAYER:
 		{
                         map_area(Ind);
@@ -6820,14 +6831,26 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)restore_level(Ind);
 			break;
 		case GF_CURE_PLAYER:
-			(void)set_blind(Ind, 0);
-			(void)set_poisoned(Ind, 0);
-			(void)set_confused(Ind, 0);
-			(void)set_stun(Ind, 0);
-			(void)set_cut(Ind, 0);
+			switch(dam){
+			case 1:
+				(void)set_blind(Ind, 0);
+				(void)set_poisoned(Ind, 0);
+				(void)set_confused(Ind, 0);
+				(void)set_stun(Ind, 0);
+				(void)set_cut(Ind, 0);
+				break;
+			case 2:
+	                        msg_print(Ind, "You feel a calming warmth touching your soul.");
+				if (p_ptr->black_breath)
+			        {
+		                        msg_print(Ind, "The hold of the Black Breath on you is broken!");
+			                p_ptr->black_breath = FALSE;
+				}
+				break;
+			}
 			break;
 		case GF_RESURRECT_PLAYER:
-			resurrect_player(Ind, dam);
+			if (p_ptr->ghost) resurrect_player(Ind, dam);
 			break;
 		case GF_SANITY_PLAYER:
 		{
@@ -7276,6 +7299,12 @@ static char bolt_char(int y, int x, int ny, int nx)
  *
  * Hack -- we assume that every "projection" is "self-illuminating".
  */
+#if 0
+bool lua_project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char attacker[80])
+{
+	return(project(who, rad, wpos, y, x, dam, typ, flg, attacker));
+}
+#endif
 bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker)
 {
 	int			i, j, t;

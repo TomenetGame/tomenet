@@ -918,25 +918,51 @@ static void calc_mana(int Ind)
 	if (levels < 0) levels = 0;
 
 	/* Extract total mana */
-	if ((p_ptr->pclass == CLASS_MAGE) || 
-	    (p_ptr->pclass == CLASS_ROGUE) || 
-	    (p_ptr->pclass == CLASS_RANGER) ||
-	    (p_ptr->pclass == CLASS_ARCHER) ||
-	    (p_ptr->pclass == CLASS_MIMIC) ||
-	    (p_ptr->pclass == CLASS_WARRIOR) ||
-	    (p_ptr->pclass == CLASS_RANGER))
-		/* 75% Int, 25% Wis */
-		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 75 * levels / (5 * 100)) + (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 25 * levels / (5 * 100));
-	
-	if ((p_ptr->pclass == CLASS_PRIEST) || 
-	    (p_ptr->pclass == CLASS_PALADIN))
-		/* 25% Int, 75% Wis */
-		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 25 * levels / (5 * 100)) + (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 75 * levels / (5 * 100));
-	
-	if ((p_ptr->pclass == CLASS_ADVENTURER) ||
-	    (p_ptr->pclass == CLASS_BARD))
+	switch(p_ptr->pclass) {
+	case CLASS_MAGE:
+		/* much Int, few Wis */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels / (300)) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels / (300));
+		break;
+	case CLASS_RANGER:
+		/* much Int, few Wis */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels / (500)) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels / (500));
+		break;
+	case CLASS_PRIEST:
+		/* few Int, much Wis */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels / (400)) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels / (400));
+		break;
+	case CLASS_PALADIN:
+		/* few Int, much Wis */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels / (500)) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels / (500));
+		break;
+	case CLASS_ROGUE:
+	case CLASS_MIMIC:
+		/* much Int, few Wis */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels / (550)) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels / (550));
+		break;
+	case CLASS_ARCHER:
+	case CLASS_WARRIOR:
+		new_mana = 0;
+		break;
+	case CLASS_ADVENTURER:
+	case CLASS_BARD:
+	default:
 	    	/* 50% Int, 50% Wis */
-		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + (adj_mag_mana[p_ptr->stat_ind[A_INT]] * levels / 5) + (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * levels / 5);
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+		(adj_mag_mana[p_ptr->stat_ind[A_INT]] * 50 * levels / (550)) +
+		(adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 50 * levels / (550));
+		break;
+	}
 
 	/* Hack -- usually add one mana */
 	if (new_mana) new_mana++;
@@ -977,10 +1003,13 @@ static void calc_mana(int Ind)
 	if (new_mana <= 0) new_mana = 1;
 
 	/* Sorcery helps mana */
+#if 0 // C. Blue - If sorcery gives HP penalty, that will be nullified by
+// mana bonus because of disruption shield. Instead, base mana for istari is raised.
 	if (get_skill(p_ptr, SKILL_SORCERY))
 	{
-		new_mana += (new_mana * get_skill(p_ptr, SKILL_SORCERY)) / 100;
+		new_mana += (new_mana * get_skill(p_ptr, SKILL_SORCERY)) / 200;
 	}
+#endif
 #if 0 // DGDGDGDG
 	/* Mimic really need that */
 	if (p_ptr->pclass == CLASS_MIMIC)
@@ -1601,6 +1630,7 @@ static void calc_body_bonus(int Ind)
 	if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->skill_dig = 20000;
 	if(r_ptr->flags2 & RF2_AURA_FIRE) p_ptr->sh_fire = TRUE;
 	if(r_ptr->flags2 & RF2_AURA_ELEC) p_ptr->sh_elec = TRUE;
+	if(r_ptr->flags2 & RF3_AURA_COLD) p_ptr->sh_cold = TRUE;
 
 	if(r_ptr->flags5 & RF5_MIND_BLAST) p_ptr->reduce_insanity = 1;
 	if(r_ptr->flags5 & RF5_BRAIN_SMASH) p_ptr->reduce_insanity = 2;
@@ -1941,6 +1971,8 @@ int calc_blows(int Ind, object_type *o_ptr)
 		num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
 	}
 
+	if (p_ptr->zeal) num_blow += p_ptr->zeal_power;
+
 	return (num_blow);
 }
 
@@ -2085,6 +2117,7 @@ void calc_bonuses(int Ind)
 	p_ptr->immune_cold = FALSE;
 	p_ptr->sh_fire = FALSE;
 	p_ptr->sh_elec = FALSE;
+	p_ptr->sh_cold = FALSE;
 	p_ptr->fly = FALSE;
 	p_ptr->can_swim = FALSE;
 	p_ptr->climb = FALSE;
@@ -2686,6 +2719,7 @@ void calc_bonuses(int Ind)
 		if (f5 & (TR5_REFLECT)) p_ptr->reflect = TRUE;
 		if (f3 & (TR3_SH_FIRE)) p_ptr->sh_fire = TRUE;
 		if (f3 & (TR3_SH_ELEC)) p_ptr->sh_elec = TRUE;
+/*not implemented yet:	if (f3 & (TR3_SH_COLD)) p_ptr->sh_cold = TRUE;*/
 		if (f3 & (TR3_NO_MAGIC)) p_ptr->anti_magic = TRUE;
 		if (f3 & (TR3_NO_TELE)) p_ptr->anti_tele = TRUE;
 
