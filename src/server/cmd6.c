@@ -3878,16 +3878,17 @@ void do_cmd_activate(int Ind, int item)
 		o_ptr = &o_list[0 - item];
 	}
 
-	if( check_guard_inscription( o_ptr->note, 'A' )) {
-                msg_print(Ind, "The item's inscription prevents it");
-                return;
-        }; 
-
-        if (!can_use(Ind, o_ptr))
-        {
-                msg_print(Ind, "You are not high level enough.");
+	if( check_guard_inscription( o_ptr->note, 'A' ))
+	{
+		msg_print(Ind, "The item's inscription prevents it");
 		return;
-        }
+	} 
+
+	if (!can_use(Ind, o_ptr))
+	{
+		msg_print(Ind, "You are not high level enough.");
+		return;
+	}
 
 	/* Test the item */
 	if (!item_tester_hook_activate(Ind, o_ptr))
@@ -4040,6 +4041,7 @@ void do_cmd_activate(int Ind, int item)
 		  o_ptr->timeout = 200 + rand_int(100);
 		  return;
 	}
+
         if (o_ptr->tval == TV_GOLEM)
         {
                 int m_idx = 0, k;
@@ -4599,7 +4601,7 @@ void do_cmd_activate(int Ind, int item)
 #endif	// 0
 
 	/* Artifacts */
-	if (o_ptr->name1)
+	if (o_ptr->name1 && (o_ptr->name1 != ART_RANDART))
 	{
 		/* Choose effect */
 		switch (o_ptr->name1)

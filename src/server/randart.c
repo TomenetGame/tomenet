@@ -701,6 +701,8 @@ void add_ability (artifact_type *a_ptr)
 				if (r < 50) a_ptr->flags3 |= TR3_LITE1;
 				else if (r < 80) a_ptr->flags4 |= TR4_LITE2;
 				else a_ptr->flags4 |= TR4_LITE3;
+
+				if (r % 2) a_ptr->flags4 &= ~TR4_FUEL_LITE;
 				break;
 			}
 		}
@@ -1005,6 +1007,8 @@ artifact_type *randart_make(object_type *o_ptr)
 	a_ptr->flags3 = k_ptr->flags3;
 	a_ptr->flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
 			   TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
+	a_ptr->flags4 = k_ptr->flags4;
+	a_ptr->flags5 = k_ptr->flags5;
 
 	/* Ensure weapons have some bonus to hit & dam */
 	if ((a_ptr->tval==TV_DIGGING) ||
@@ -1115,8 +1119,12 @@ artifact_type *randart_make(object_type *o_ptr)
         {
                 if (a_ptr->pval > 7) a_ptr->pval = 7;
         }
-
-
+#if 0
+		/* Hack -- DarkSword randarts should have this */
+		if (o_ptr->tval == TV_SWORD &&
+			o_ptr->sval == SV_DARK_SWORD)
+			a_ptr->flags4 |= TR4_ANTIMAGIC_50;
+#endif
 	/* Restore RNG */
 	Rand_quick = FALSE;
 

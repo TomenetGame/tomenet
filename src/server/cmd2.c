@@ -2512,7 +2512,7 @@ int do_cmd_run(int Ind, int dir)
 
 		/* Make sure we have enough energy to start running */
 #ifdef NEW_DUNGEON
-		if (p_ptr->energy >= (level_speed(&p_ptr->wpos)*6)/5)
+		if (p_ptr->energy >= (level_speed(&p_ptr->wpos)*(cfg.running_speed + 1))/cfg.running_speed)
 #else
 		if (p_ptr->energy >= (level_speed(p_ptr->dun_depth)*6)/5)
 #endif

@@ -1522,14 +1522,15 @@ static void process_player_end(int Ind)
 
 	/* Handle running -- 5 times the speed of walking */
 #ifdef NEW_DUNGEON
-	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos)*6)/5)
+//	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos)*6)/5)
+	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos)*(cfg.running_speed + 1))/cfg.running_speed)
 #else
 	while (p_ptr->running && p_ptr->energy >= (level_speed(p_ptr->dun_depth)*6)/5)
 #endif
 	{
 		run_step(Ind, 0);
 #ifdef NEW_DUNGEON
-		p_ptr->energy -= level_speed(&p_ptr->wpos) / 5;
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / cfg.running_speed;
 #else
 		p_ptr->energy -= level_speed(p_ptr->dun_depth) / 5;
 #endif
@@ -3506,80 +3507,80 @@ void dungeon(void)
 		cave[Depth][y][x].m_idx = 0 - i;
 #endif
 
-                for (m_idx = m_top - 1; m_idx >= 0; m_idx--)
-                {
-                        monster_type *m_ptr = &m_list[m_fast[m_idx]];
+		for (m_idx = m_top - 1; m_idx >= 0; m_idx--)
+		{
+			monster_type *m_ptr = &m_list[m_fast[m_idx]];
 			cave_type **mcave;
 			mcave=getcave(&m_ptr->wpos);
 
-                        if (!m_fast[m_idx]) continue;
+			if (!m_fast[m_idx]) continue;
 
-                        /* Excise "dead" monsters */
-                        if (!m_ptr->r_idx) continue;
+			/* Excise "dead" monsters */
+			if (!m_ptr->r_idx) continue;
 
-                        if (m_ptr->owner != p_ptr->id) continue;
+			if (m_ptr->owner != p_ptr->id) continue;
 
-                        if (m_ptr->mind & GOLEM_GUARD && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
+			if (m_ptr->mind & GOLEM_GUARD && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
 
-                        starty = m_ptr->fy;
-                        startx = m_ptr->fx;
-                        starty = y;
-                        startx = x;
+			starty = m_ptr->fy;
+			startx = m_ptr->fx;
+			starty = y;
+			startx = x;
 
-                        /* Place the golems in an empty space */
-                        for (j = 0; j < 1500; ++j)
-                        {
-                                /* Increasing distance */
-                                d = (j + 149) / 150;
+			/* Place the golems in an empty space */
+			for (j = 0; j < 1500; ++j)
+			{
+				/* Increasing distance */
+				d = (j + 149) / 150;
 
-                                /* Pick a location */
+				/* Pick a location */
 #ifdef NEW_DUNGEON
-                                scatter(wpos, &my, &mx, starty, startx, d, 0);
+				scatter(wpos, &my, &mx, starty, startx, d, 0);
 
-                                /* Must have an "empty" grid */
-                                if (!cave_empty_bold(zcave, my, mx)) continue;
+				/* Must have an "empty" grid */
+				if (!cave_empty_bold(zcave, my, mx)) continue;
 
-                                /* Not allowed to go onto a icky location (house) if Depth <= 0 */
-                                if ((wpos->wz==0) && (zcave[my][mx].info & CAVE_ICKY))
-                                        continue;
+				/* Not allowed to go onto a icky location (house) if Depth <= 0 */
+				if ((wpos->wz==0) && (zcave[my][mx].info & CAVE_ICKY))
+					continue;
 #else
-                                scatter(Depth, &my, &mx, starty, startx, d, 0);
+				scatter(Depth, &my, &mx, starty, startx, d, 0);
 
-                                /* Must have an "empty" grid */
-                                if (!cave_empty_bold(Depth, my, mx)) continue;
+				/* Must have an "empty" grid */
+				if (!cave_empty_bold(Depth, my, mx)) continue;
 
-                                /* Not allowed to go onto a icky location (house) if Depth <= 0 */
-                                if ((Depth <= 0) && (cave[Depth][my][mx].info & CAVE_ICKY))
-                                        continue;
+				/* Not allowed to go onto a icky location (house) if Depth <= 0 */
+				if ((Depth <= 0) && (cave[Depth][my][mx].info & CAVE_ICKY))
+					continue;
 #endif
 
-                                break;
-                        }
+				break;
+			}
 #ifdef NEW_DUNGEON
 			if(mcave){
-                        	mcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
-                        	everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+				mcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
+				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 			}
-                        	wpcopy(&m_ptr->wpos,wpos);
-                        	m_ptr->fx = mx;
-                        	m_ptr->fy = my;
+			wpcopy(&m_ptr->wpos,wpos);
+			m_ptr->fx = mx;
+			m_ptr->fy = my;
 			if(mcave){
-                        	mcave[m_ptr->fy][m_ptr->fx].m_idx = m_fast[m_idx];
-                        	everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+				mcave[m_ptr->fy][m_ptr->fx].m_idx = m_fast[m_idx];
+				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 			}
 #else
-                        cave[m_ptr->dun_depth][m_ptr->fy][m_ptr->fx].m_idx = 0;
-                        everyone_lite_spot(m_ptr->dun_depth, m_ptr->fy, m_ptr->fx);
-                        m_ptr->dun_depth = Depth;
-                        m_ptr->fx = mx;
-                        m_ptr->fy = my;
-                        cave[m_ptr->dun_depth][m_ptr->fy][m_ptr->fx].m_idx = m_fast[m_idx];
-                        everyone_lite_spot(m_ptr->dun_depth, m_ptr->fy, m_ptr->fx);
+			cave[m_ptr->dun_depth][m_ptr->fy][m_ptr->fx].m_idx = 0;
+			everyone_lite_spot(m_ptr->dun_depth, m_ptr->fy, m_ptr->fx);
+			m_ptr->dun_depth = Depth;
+			m_ptr->fx = mx;
+			m_ptr->fy = my;
+			cave[m_ptr->dun_depth][m_ptr->fy][m_ptr->fx].m_idx = m_fast[m_idx];
+			everyone_lite_spot(m_ptr->dun_depth, m_ptr->fy, m_ptr->fx);
 #endif
 
-                        /* Update the monster (new location) */
-                        update_mon(m_fast[m_idx], TRUE);
-                }
+			/* Update the monster (new location) */
+			update_mon(m_fast[m_idx], TRUE);
+		}
 #if 0
 		while (TRUE)
 		{

@@ -1996,6 +1996,7 @@ struct server_opts
 	s32b spell_stack_limit;
 	s16b fps;
 	s16b newbies_cannot_drop;
+	s16b running_speed;
 	bool report_to_meta;
 	bool secret_dungeon_master;
 	bool anti_arts_horde;

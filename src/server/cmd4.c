@@ -431,6 +431,8 @@ void do_cmd_check_artifacts(int Ind, int line)
  * of the slayer (if any) to the list, so the others will know just how
  * powerful any certain player is.  --KLJ--
  */
+/* Pfft, we should rewrite show_file so that we can change
+ * the colour for each letter!	- Jir - */
 void do_cmd_check_uniques(int Ind, int line)
 {
 	player_type *p_ptr = Players[Ind];
@@ -476,13 +478,15 @@ void do_cmd_check_uniques(int Ind, int line)
 
 					if (q_ptr->r_killed[k])
 					{
-						byte attr = 'U';
+//						byte attr = 'U';
 						//							fprintf(fff, "        %s\n", q_ptr->name);
 						if (!ok)
 						{
 							fprintf(fff, ":\n");
+							fprintf(fff, "%c", 'B');
 							ok = TRUE;
 						}
+#if 0
 						/* Print self in green */
 						if (Ind == k) attr = 'G';
 
@@ -494,9 +498,9 @@ void do_cmd_check_uniques(int Ind, int line)
 
 						/* Output color byte */
 						fprintf(fff, "%c", attr);
+#endif
 
-
-						fprintf(fff, "  %16.16s", q_ptr->name);
+						fprintf(fff, "  %-16.16s", q_ptr->name);
 						j++;
 						full = FALSE;
 						if (j == 4)

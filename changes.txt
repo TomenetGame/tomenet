@@ -617,3 +617,9 @@ Change list for PernMangband
 - unique-list is slightly improved.
 - chatline command: /target  (Idea from Norcoth; thx)
 - auto-retaliator can handle a monster inside walls in a better way.
+- RES_TELE flag implemented.
+
+5/1/2001 (Jir)
+- some monsters can follow player's teleport.
+- *.cfg option: RUNNING_SPEED (it's HACK! ;)
+[B] pack of mages couldn't keep distance from a player correctly.

@@ -14,8 +14,12 @@
 
 #include "angband.h"
 
+/* This removes some monster-behavior codes which can
+ * be a bottleneck. */
 //#define STUPID_MONSTERS
 
+/* distance for AI_ANNOY */
+#define		ANNOY_DISTANCE	5
 
 #ifdef DRS_SMART_OPTIONS
 
@@ -3039,7 +3043,7 @@ bool make_attack_spell(int Ind, int m_idx)
  * Note that this function is responsible for about one to five percent
  * of the processor use in normal conditions...
  */
-static int mon_will_run(int Ind, int m_idx)
+int mon_will_run(int Ind, int m_idx)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -3240,16 +3244,20 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	{
 		/* XXX XXX Not very "smart" */
 		y = (-y), x = (-x);
+		done = TRUE;
 	}
 
 
 	/* Tease the player */
 	else if (r_ptr->flags7 & RF7_AI_ANNOY)
 	{
-		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < 4)
+//		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < 4)
+		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < ANNOY_DISTANCE)
 		{
 			y = -y;
 			x = -x;
+			/* so that they never get reversed again */
+			done = TRUE;
 		}
 	}
 #if 0
@@ -3270,7 +3278,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		cave_type **zcave;
 		/* paranoia */
 		if(!(zcave=getcave(&m_ptr->wpos))) return;
-
+#if 0
 		/*
 		 * Animal packs try to get the player out of corridors
 		 * (...unless they can move through walls -- TY)
@@ -3301,7 +3309,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 				done = TRUE;
 			}
 		}
-
+#endif	// 0
 		/* Monster groups try to surround the player */
 		if (!done && (r_ptr->flags1 & RF1_FRIENDS))
 		{

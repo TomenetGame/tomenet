@@ -2047,13 +2047,14 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 #endif
 		}
 	}
-
+#if 0
 	/* Note the monster */
 	else if (r_ptr->flags1 & RF1_UNIQUE)
 	{
 		/* Unique monsters induce message */
 		/*if (cheat_hear) msg_format("Unique (%s).", name);*/
 	}
+#endif	// 0
 
 
 	/* Access the location */
@@ -3688,7 +3689,7 @@ bool mego_ok(int r_idx, int ego)
         if (re_ptr->flags1 && ((re_ptr->flags1 & r_ptr->flags1) != re_ptr->flags1)) return FALSE;
         if (re_ptr->flags2 && ((re_ptr->flags2 & r_ptr->flags2) != re_ptr->flags2)) return FALSE;
         if (re_ptr->flags3 && ((re_ptr->flags3 & r_ptr->flags3) != re_ptr->flags3)) return FALSE;
-#if 0
+#if 1
         if (re_ptr->flags7 && ((re_ptr->flags7 & r_ptr->flags7) != re_ptr->flags7)) return FALSE;
         if (re_ptr->flags8 && ((re_ptr->flags8 & r_ptr->flags8) != re_ptr->flags8)) return FALSE;
         if (re_ptr->flags9 && ((re_ptr->flags9 & r_ptr->flags9) != re_ptr->flags9)) return FALSE;
@@ -3698,7 +3699,7 @@ bool mego_ok(int r_idx, int ego)
         if (re_ptr->hflags1 && (re_ptr->hflags1 & r_ptr->flags1)) return FALSE;
         if (re_ptr->hflags2 && (re_ptr->hflags2 & r_ptr->flags2)) return FALSE;
         if (re_ptr->hflags3 && (re_ptr->hflags3 & r_ptr->flags3)) return FALSE;
-#if 0
+#if 1
         if (re_ptr->hflags7 && (re_ptr->hflags7 & r_ptr->flags7)) return FALSE;
         if (re_ptr->hflags8 && (re_ptr->hflags8 & r_ptr->flags8)) return FALSE;
         if (re_ptr->hflags9 && (re_ptr->hflags9 & r_ptr->flags9)) return FALSE;
@@ -3895,11 +3896,9 @@ static monster_race* race_info_idx(int r_idx, int ego, int randuni)
         nr_ptr->flags4 &= ~(re_ptr->nflags4);
         nr_ptr->flags5 &= ~(re_ptr->nflags5);
         nr_ptr->flags6 &= ~(re_ptr->nflags6);
-		/*
         nr_ptr->flags7 &= ~(re_ptr->nflags7);
         nr_ptr->flags8 &= ~(re_ptr->nflags8);
         nr_ptr->flags9 &= ~(re_ptr->nflags9);
-		*/
 
         /* Add some flags */
         nr_ptr->flags1 |= re_ptr->mflags1;
@@ -3908,11 +3907,9 @@ static monster_race* race_info_idx(int r_idx, int ego, int randuni)
         nr_ptr->flags4 |= re_ptr->mflags4;
         nr_ptr->flags5 |= re_ptr->mflags5;
         nr_ptr->flags6 |= re_ptr->mflags6;
-		/*
         nr_ptr->flags7 |= re_ptr->mflags7;
         nr_ptr->flags8 |= re_ptr->mflags8;
         nr_ptr->flags9 |= re_ptr->mflags9;
-		*/
 
         /* Change the char/attr is needed */
         if (re_ptr->d_char != MEGO_CHAR_ANY)

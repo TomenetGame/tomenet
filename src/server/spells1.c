@@ -243,6 +243,118 @@ void teleport_away(int m_idx, int dis)
 
 
 /*
+ * Teleport monster next to the player
+ */
+void teleport_to_player(int Ind, int m_idx)
+{
+	player_type *p_ptr = Players[Ind];
+	int ny=0, nx=0, oy, ox, d, i, min;
+	int dis = 2;
+
+	bool look = TRUE;
+
+	monster_type *m_ptr = &m_list[m_idx];
+//	int attempts = 500;
+	int attempts = 200;
+
+	struct worldpos *wpos;
+	cave_type **zcave;
+//        if(p_ptr->resist_continuum) {msg_print("The space-time continuum can't be disrupted."); return;}
+
+	/* Paranoia */
+	if (!m_ptr->r_idx) return;
+
+	/* "Skill" test */
+        if (randint(100) > m_ptr->level) return;
+
+	wpos=&m_ptr->wpos;
+	if(!(zcave=getcave(wpos))) return;
+
+	/* Save the old location */
+	oy = m_ptr->fy;
+	ox = m_ptr->fx;
+
+	/* Minimum distance */
+	min = dis / 2;
+
+	/* Look until done */
+	while (look && --attempts)
+	{
+		/* Verify max distance */
+		if (dis > 200) dis = 200;
+
+		/* Try several locations */
+		for (i = 0; i < 500; i++)
+		{
+			/* Pick a (possibly illegal) location */
+			while (1)
+			{
+				ny = rand_spread(p_ptr->py, dis);
+				nx = rand_spread(p_ptr->px, dis);
+				d = distance(p_ptr->py, p_ptr->px, ny, nx);
+				if ((d >= min) && (d <= dis)) break;
+			}
+
+			/* Ignore illegal locations */
+			if (!in_bounds(ny, nx)) continue;
+
+			/* Require "empty" floor space */
+			if (!cave_empty_bold(zcave, ny, nx)) continue;
+
+			/* Hack -- no teleport onto glyph of warding */
+			if (zcave[ny][nx].feat == FEAT_GLYPH) continue;
+#if 0
+			if (cave[ny][nx].feat == FEAT_MINOR_GLYPH) continue;
+
+			/* ...nor onto the Pattern */
+			if ((cave[ny][nx].feat >= FEAT_PATTERN_START) &&
+			    (cave[ny][nx].feat <= FEAT_PATTERN_XTRA2)) continue;
+#endif	// 0
+
+			/* No teleporting into vaults and such */
+			/* if (cave[ny][nx].info & (CAVE_ICKY)) continue; */
+
+			/* This grid looks good */
+			look = FALSE;
+
+			/* Stop looking */
+			break;
+		}
+
+		/* Increase the maximum distance */
+		dis = dis * 2;
+
+		/* Decrease the minimum distance */
+		min = min / 2;
+	}
+
+	if (attempts < 1) return;
+
+	/* Sound */
+//	sound(SOUND_TPOTHER);
+
+	/* Update the new location */
+	zcave[ny][nx].m_idx = m_idx;
+
+	/* Update the old location */
+	zcave[oy][ox].m_idx = 0;
+
+	/* Move the monster */
+	m_ptr->fy = ny;
+	m_ptr->fx = nx;
+
+	/* Update the monster (new location) */
+	update_mon(m_idx, TRUE);
+
+	/* Redraw the old grid */
+	everyone_lite_spot(wpos, oy, ox);
+
+	/* Redraw the new grid */
+	everyone_lite_spot(wpos, ny, nx);
+}
+
+
+/*
  * Teleport the player to a location up to "dis" grids away.
  *
  * If no such spaces are readily available, the distance may increase.
@@ -253,6 +365,7 @@ void teleport_player(int Ind, int dis)
 	player_type *p_ptr = Players[Ind];
 
 	int d, i, min, ox, oy, x = p_ptr->py, y = p_ptr->px;
+	int xx , yy, m_idx;
 #ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
 #else
@@ -354,6 +467,35 @@ void teleport_player(int Ind, int dis)
 
 	/* Redraw the old spot */
 	everyone_lite_spot(wpos, oy, ox);
+
+	/* Don't leave me alone Daisy! */
+	for (d = 1; d <= 9; d++)
+	{
+		if (d == 5) continue;
+
+		xx = ox + ddx[d];
+		yy = oy + ddy[d];
+
+		if (!in_bounds(yy, xx)) continue;
+
+		if (m_idx = zcave[yy][xx].m_idx)
+		{
+			monster_race *r_ptr = race_inf(&m_list[m_idx]);
+
+			if ((r_ptr->flags6 & RF6_TPORT) &&
+				!(r_ptr->flags3 & RF3_RES_TELE))
+				/*
+				 * The latter limitation is to avoid
+				 * totally unkillable suckers...
+				 */
+			{
+				if (!(m_list[m_idx].csleep) &&
+					!mon_will_run(Ind, m_idx))
+					teleport_to_player(Ind, m_idx);
+			}
+		}
+	}
+
 
 	/* Redraw the new spot */
 	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
@@ -3672,8 +3814,28 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			/* Gravity -- breathers resist */
 		case GF_GRAVITY:
 		{
+			bool resist_tele = FALSE;
 			if (seen) obvious = TRUE;
-			do_dist = 10;
+			
+			if (r_ptr->flags3 & (RF3_RES_TELE))
+			{
+				if (r_ptr->flags1 & (RF1_UNIQUE))
+				{
+					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+					note = " is unaffected!";
+					resist_tele = TRUE;
+				}
+				else if (m_ptr->level > randint(100))
+				{
+					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+					note = " resists!";
+					resist_tele = TRUE;
+				}
+			}
+
+			if (!resist_tele) do_dist = 10;
+			else do_dist = 0;
+
 			if (r_ptr->flags4 & RF4_BR_GRAV)
 			{
 				note = " resists.";
@@ -4013,12 +4175,33 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		case GF_AWAY_UNDEAD:
 		{
 			/* Only affect undead */
-                        if (!(r_ptr->flags9 & RF9_IM_TELE))
-			if (r_ptr->flags3 & RF3_UNDEAD)
+			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
+				(r_ptr->flags3 & (RF3_UNDEAD)))
 			{
-				if (seen) obvious = TRUE;
-				if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
-				do_dist = dam;
+				bool resists_tele = FALSE;
+
+				if (r_ptr->flags3 & (RF3_RES_TELE))
+				{
+					if (r_ptr->flags1 & (RF1_UNIQUE))
+					{
+						if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+						note = " is unaffected!";
+						resists_tele = TRUE;
+					}
+					else if (m_ptr->level > randint(100))
+					{
+						if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+						note = " resists!";
+						resists_tele = TRUE;
+					}
+				}
+
+				if (!resists_tele)
+				{
+					if (seen) obvious = TRUE;
+					if (seen) r_ptr->r_flags3 |= (RF3_UNDEAD);
+					do_dist = dam;
+				}
 			}
 
 			/* No "real" damage */
@@ -4031,12 +4214,33 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		case GF_AWAY_EVIL:
 		{
 			/* Only affect undead */
-                        if (!(r_ptr->flags9 & RF9_IM_TELE))
-			if (r_ptr->flags3 & RF3_EVIL)
+			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
+				(r_ptr->flags3 & (RF3_EVIL)))
 			{
-				if (seen) obvious = TRUE;
-				if (seen) r_ptr->r_flags3 |= RF3_EVIL;
-				do_dist = dam;
+				bool resists_tele = FALSE;
+
+				if (r_ptr->flags3 & (RF3_RES_TELE))
+				{
+					if (r_ptr->flags1 & (RF1_UNIQUE))
+					{
+						if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+						note = " is unaffected!";
+						resists_tele = TRUE;
+					}
+					else if (m_ptr->level > randint(100))
+					{
+						if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+						note = " resists!";
+						resists_tele = TRUE;
+					}
+				}
+
+				if (!resists_tele)
+				{
+					if (seen) obvious = TRUE;
+					if (seen) r_ptr->r_flags3 |= (RF3_EVIL);
+					do_dist = dam;
+				}
 			}
 
 			/* No "real" damage */
@@ -4048,15 +4252,34 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			/* Teleport monster (Use "dam" as "power") */
 		case GF_AWAY_ALL:
 		{
-                        if (!(r_ptr->flags9 & RF9_IM_TELE))
-                        if (!(r_ptr->flags9 & RF9_IM_TELE))
-                        {
-                                /* Obvious */
-                                if (seen) obvious = TRUE;
+			bool resists_tele = FALSE;
 
-                                /* Prepare to teleport */
-                                do_dist = dam;
-                        }
+			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
+				(r_ptr->flags3 & (RF3_RES_TELE)))
+			{
+				if (r_ptr->flags1 & (RF1_UNIQUE))
+				{
+					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+					note = " is unaffected!";
+					resists_tele = TRUE;
+				}
+                                else if (m_ptr->level > randint(100))
+				{
+					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+					note = " resists!";
+					resists_tele = TRUE;
+				}
+			}
+
+			if (!resists_tele)
+			{
+				/* Obvious */
+				if (seen) obvious = TRUE;
+
+				/* Prepare to teleport */
+				do_dist = dam;
+			}
+
 			/* No "real" damage */
 			dam = 0;
 			break;

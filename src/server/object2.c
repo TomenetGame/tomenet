@@ -1156,9 +1156,6 @@ static s32b object_value_real(object_type *o_ptr)
 
 	else
 	{
-		/* Hope this won't cause inflation.. */
-		value += flag_cost(o_ptr, o_ptr->pval);
-
 		/* Ego-Item */
 		if (o_ptr->name2)
 		{
@@ -1169,6 +1166,9 @@ static s32b object_value_real(object_type *o_ptr)
 
 			/* Hack -- Reward the ego-item with a bonus */
 			value += e_ptr->cost;
+
+			/* Hope this won't cause inflation.. */
+			value += flag_cost(o_ptr, o_ptr->pval);
 
 
 #if 0	// see you later :)

@@ -2188,6 +2188,10 @@ void set_server_option(char * option, char * value)
 	{
 		cfg.vanilla_monsters = str_to_boolean(value);
 	}
+	else if (!strcmp(option,"RUNNING_SPEED"))
+	{
+		cfg.running_speed = atoi(value);
+	}
 	else printf("Error : unrecognized mangband.cfg option %s\n", option);
 }
 

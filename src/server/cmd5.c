@@ -871,6 +871,8 @@ bool check_antimagic(int Ind)
 
 
 /* ok, it's hacked :) */
+/* of course, you can optimize it further by bandling
+ * monsters and players into one loop..		- Jir - */
 bool check_antimagic(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -909,7 +911,8 @@ bool check_antimagic(int Ind)
 
 		if (antichance > 95) antichance = 95;
 
-		if (player_in_party(p_ptr->party, i))
+		/* Reduction for party */
+		if ((i != Ind) && player_in_party(p_ptr->party, i))
 			antichance >>= 1;
 
 		if (dis > antidis) antichance = 0;
@@ -917,12 +920,13 @@ bool check_antimagic(int Ind)
 		/* Got disrupted ? */
 		if (magik(antichance))
 		{
-			msg_format(Ind, "%s's anti-magic shield disrupts your attemps.", q_ptr->name);
+			if (i == Ind) msg_print(Ind, "Your own anti-magic shield disrupts your attemps.");
+			else msg_format(Ind, "%s's anti-magic shield disrupts your attemps.", q_ptr->name);
 			return TRUE;
 		}
 	}
 
-	/* Scan the maximal blast area of radius "MONSTER_ANTIDIS" */
+	/* Scan the maximal area of radius "MONSTER_ANTIDIS" */
 	for (y = y2 - MONSTER_ANTIDIS; y <= y2 + MONSTER_ANTIDIS; y++)
 	{
 		for (x = x2 - MONSTER_ANTIDIS; x <= x2 + MONSTER_ANTIDIS; x++)
@@ -954,9 +958,16 @@ bool check_antimagic(int Ind)
 			/* Got disrupted ? */
 			if (magik(antichance))
 			{
-				char m_name[80];
-				monster_desc(Ind, m_name, m_idx, 0);
-				msg_format(Ind, "%^s's anti-magic shield disrupts your attemps.", m_name);
+				if (p_ptr->mon_vis[m_idx])
+				{
+					char m_name[80];
+					monster_desc(Ind, m_name, m_idx, 0);
+					msg_format(Ind, "%^s's anti-magic shield disrupts your attemps.", m_name);
+				}
+				else
+				{
+					msg_print(Ind, "An anti-magic shield disrupts your attemps.");
+				}
 				return TRUE;
 			}
 		}

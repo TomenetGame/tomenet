@@ -3151,18 +3151,15 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add)
 			return (0);
 		}
 	}
-#if 1
 	/* Scan flags7 */
 	for (i = 0; i < 32; i++)
 	{
 		if (streq(what, r_info_flags7[i]))
 		{
-#if 0
                         if (add)
                                 re_ptr->mflags7 |= (1L << i);
                         else
                                 re_ptr->nflags7 |= (1L << i);
-#endif
 			return (0);
 		}
 	}
@@ -3172,12 +3169,10 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add)
 	{
 		if (streq(what, r_info_flags8[i]))
 		{
-#if 0
                         if (add)
                                 re_ptr->mflags8 |= (1L << i);
                         else
                                 re_ptr->nflags8 |= (1L << i);
-#endif
 			return (0);
 		}
 	}
@@ -3187,16 +3182,13 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add)
 	{
 		if (streq(what, r_info_flags9[i]))
 		{
-#if 0
                         if (add)
                                 re_ptr->mflags9 |= (1L << i);
                         else
                                 re_ptr->nflags9 |= (1L << i);
-#endif
 			return (0);
 		}
 	}
-#endif	// 0
 
 	/* Oops */
 	s_printf("Unknown monster flag '%s'.", what);
@@ -3316,16 +3308,13 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must)
 			return (0);
 		}
 	}
-#if 1
 	/* Scan flags7 */
 	for (i = 0; i < 32; i++)
 	{
 		if (streq(what, r_info_flags7[i]))
 		{
-#if 0
                         if (must) re_ptr->flags7 |= (1L << i);
                         else re_ptr->hflags7 |= (1L << i);
-#endif
 			return (0);
 		}
 	}
@@ -3335,10 +3324,8 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must)
 	{
 		if (streq(what, r_info_flags8[i]))
 		{
-#if 0
                         if (must) re_ptr->flags8 |= (1L << i);
                         else re_ptr->hflags8 |= (1L << i);
-#endif
 			return (0);
 		}
 	}
@@ -3348,14 +3335,11 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must)
 	{
 		if (streq(what, r_info_flags9[i]))
 		{
-#if 0
                         if (must) re_ptr->flags9 |= (1L << i);
                         else re_ptr->hflags9 |= (1L << i);
-#endif
 			return (0);
 		}
 	}
-#endif	// 0
 
 	/* Oops */
 	s_printf("Unknown monster flag '%s'.", what);

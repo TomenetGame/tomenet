@@ -18420,7 +18420,7 @@ E:1:1:1:2:1:1
 O:0:0:0:0
 B:BEG:*
 F:MALE | DROP_SKELETON | DROP_CORPSE | 
-F:RAND_25 | WILD_TOWN | WILD_ONLY | DROP_1D2 | 
+F:RAND_25 | WILD_TOWN | WILD_ONLY | DROP_60 | 
 F:TAKE_ITEM | OPEN_DOOR | 
 F:MORTAL | JOKEANGBAND | HAS_LITE
 D:You just can't help feeling sorry for him. 
@@ -18444,7 +18444,7 @@ D:This guy tends to look at everything with suspicion.
 
 N:1045:Unmagic mushroom patch
 G:,:B
-I:140:1d1:40:10:0
+I:110:1d1:40:10:0
 W:15:2:50:10
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -18489,6 +18489,7 @@ F:EVIL | MORTAL | BASEANGBAND | HAS_LITE
 F:DISBELIEVE
 D:A scarred warrior who moves with strange confidence. 
 
+# pack version
 N:1048:Unbeliever
 G:p:u
 I:110:7d8:20:20:20
@@ -18520,7 +18521,7 @@ F:INVISIBLE | OPEN_DOOR | BASH_DOOR |
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
 F:NO_CONF | NO_SLEEP
 F:MORTAL | BASEANGBAND | HAS_LITE
-F:DISBELIEVE
+F:DISBELIEVE | RES_TELE
 S:1_IN_4 | 
 S:UNMAGIC
 
@@ -18540,11 +18541,27 @@ F:ONLY_ITEM | DROP_4D2 |
 F:INVISIBLE | OPEN_DOOR | BASH_DOOR | 
 F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP | 
 F:MORTAL | BASEANGBAND | HAS_LITE | REGENERATE
-F:DISBELIEVE
+F:DISBELIEVE | RES_TELE
 S:1_IN_2 | 
 S:UNMAGIC
 D:True master of unbelievers, genuine master of weaponry with his Dark Sword,
 D:no one dare utter a so-called 'mystic' word in front of him.
+
+N:1051:Jan, the Minimite
+G:,:B
+I:140:10d20:40:10:0
+W:10:2:50:10
+E:0:0:0:0:0:0
+O:0:0:0:0
+F:UNIQUE | NEVER_BLOW | FORCE_MAXHP | MALE | DROP_CORPSE
+F:OPEN_DOOR | RES_TELE | CAN_FLY |
+F:NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
+F:NO_DEATH | CAN_SPEAK
+F:DISBELIEVE | AI_ANNOY
+S:1_IN_5
+S:UNMAGIC
+D:Small winged jolly annoying chatterbox, actually he is a descendant
+D:of dispersed minimite race.
 
 # N: serial number : monster name
 # G: symbol : color

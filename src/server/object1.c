@@ -2699,10 +2699,466 @@ cptr item_activation(object_type *o_ptr)
 	      }
 	  }
 	
-	/* For the moment ignore randarts */
-	if (o_ptr->name1 == ART_RANDART) return "a crash ;-)";
-	
+	/* Some artifacts can be activated */
+	switch (o_ptr->name1)
+	{
+		case ART_EOL:
+		{
+			return "mana bolt (9d8) 7+d7 turns";
+		}
+		case ART_SKULLCLEAVER:
+		{
+			return "destruction every 200+d200 turns";
+		}
+		case ART_HARADRIM:
+		{
+			return "berserk strength every 50+d50 turns";
+		}
+		case ART_FUNDIN:
+		{
+			return "dispel evil (x4) every 100+d100 turns";
+		}
+		case ART_NAIN:
+		{
+			return "stone to mud every 7+d5 turns";
+		}
+		case ART_CELEBRIMBOR:
+		{
+			return "temporary ESP (dur 20+d20) every 50+d20 turns";
+		}
+		case ART_UMBAR:
+		{
+			return "magic arrow (10d10) every 20+d20 turns";
+		}
+		case ART_GILGALAD:
+		{
+			return "starlight (75) every 75+d75 turns";
+		}
+		case ART_HIMRING:
+		{
+			return "protect evil (dur level*3 + d25) every 225+d225 turns";
+		}
+		case ART_NUMENOR:
+		{
+			return "analyze monster every 500+d100 turns";
+		}
+		case ART_NARTHANC:
+		{
+			return "fire bolt (9d8) every 8+d8 turns";
+		}
+		case ART_NIMTHANC:
+		{
+			return "frost bolt (6d8) every 7+d7 turns";
+		}
+		case ART_DETHANC:
+		{
+			return "lightning bolt (4d8) every 6+d6 turns";
+		}
+		case ART_RILIA:
+		{
+			return "stinking cloud (12) every 4+d4 turns";
+		}
+		case ART_BELANGIL:
+		{
+			return "frost ball (48) every 5+d5 turns";
+		}
+		case ART_DAL:
+		{
+			return "remove fear and cure poison every 5 turns";
+		}
+		case ART_RINGIL:
+		{
+			return "frost ball (100) every 300 turns";
+		}
+		case ART_ERU:
+		{
+			return "healing(7000), curing every 500 turns";
+		}
+		case ART_DAWN:
+		{
+			return "summon the Legion of the Dawn every 500+d500 turns";
+		}
+		case ART_ANDURIL:
+		{
+			return "fire ball (72) every 400 turns";
+		}
+		case ART_FIRESTAR:
+		{
+			return "large fire ball (72) every 100 turns";
+		}
+		case ART_FEANOR:
+		{
+			return "haste self (20+d20 turns) every 200 turns";
+		}
+		case ART_THEODEN:
+		{
+			return "drain life (120) every 400 turns";
+		}
+		case ART_TURMIL:
+		{
+			return "drain life (90) every 70 turns";
+		}
+		case ART_CASPANION:
+		{
+			return "door and trap destruction every 10 turns";
+		}
+		case ART_AVAVIR:
+		{
+			return "word of recall every 200 turns";
+		}
+		case ART_TARATOL:
+		{
+			return "haste self (20+d20 turns) every 100+d100 turns";
+		}
+		case ART_ERIRIL:
+		{
+			return "identify every 10 turns";
+		}
+		case ART_OLORIN:
+		{
+			return "probing, detection and full id every 1000 turns";
+		}
+		case ART_EONWE:
+		{
+			return "mass genocide every 1000 turns";
+		}
+		case ART_LOTHARANG:
+		{
+			return "cure wounds (4d7) every 3+d3 turns";
+		}
+		case ART_CUBRAGOL:
+		{
+			return "fire branding of bolts every 999 turns";
+		}
+		case ART_ANGUIREL:
+		{
+			return "a getaway every 35 turns";
+		}
+		case ART_AEGLOS:
+		{
+			return "lightning ball (100) every 500 turns";
+		}
+		case ART_OROME:
+		{
+			return "stone to mud every 5 turns";
+		}
+		case ART_SOULKEEPER:
+		{
+			return "heal (1000) every 888 turns";
+		}
+		case ART_BELEGENNON:
+		{
+			return ("heal (777), curing and heroism every 300 turns");
+		}
+		case ART_CELEBORN:
+		{
+			return "genocide every 500 turns";
+		}
+		case ART_LUTHIEN:
+		{
+			return "restore life levels every 450 turns";
+		}
+		case ART_ULMO:
+		{
+			return "teleport away every 150 turns";
+		}
+		case ART_COLLUIN:
+		{
+			return "resistance (20+d20 turns) every 111 turns";
+		}
+		case ART_HOLCOLLETH:
+		{
+			return "Sleep II every 55 turns";
+		}
+		case ART_THINGOL:
+		{
+			return "recharge item I every 70 turns";
+		}
+		case ART_COLANNON:
+		{
+			return "teleport every 45 turns";
+		}
+		case ART_TOTILA:
+		{
+			return "confuse monster every 15 turns";
+		}
+		case ART_CAMMITHRIM:
+		{
+			return "magic missile (2d6) every 2 turns";
+		}
+		case ART_PAURHACH:
+		{
+			return "fire bolt (9d8) every 8+d8 turns";
+		}
+		case ART_PAURNIMMEN:
+		{
+			return "frost bolt (6d8) every 7+d7 turns";
+		}
+		case ART_PAURAEGEN:
+		{
+			return "lightning bolt (4d8) every 6+d6 turns";
+		}
+		case ART_PAURNEN:
+		{
+			return "acid bolt (5d8) every 5+d5 turns";
+		}
+		case ART_FINGOLFIN:
+		{
+			return "a magical arrow (150) every 90+d90 turns";
+		}
+		case ART_HOLHENNETH:
+		{
+			return "detection every 55+d55 turns";
+		}
+		case ART_GONDOR:
+		{
+			return "heal (700) every 250 turns";
+		}
+		case ART_RAZORBACK:
+		{
+			return "star ball (150) every 1000 turns";
+		}
+		case ART_BLADETURNER:
+		{
+			return "invulnerability (4+d8) every 800 turns";
+		}
+		case ART_MEDIATOR:
+		{
+			return "breathe elements (300), berserk rage, bless, and resistance";
+		}
+		case ART_KNOWLEDGE:
+		{
+			return "whispers from beyond 100+d200 turns";
+		}
+		case ART_GALADRIEL:
+		{
+			return "illumination every 10+d10 turns";
+		}
+		case ART_UNDEATH:
+		{
+			return "ruination every 10+d10 turns";
+		}
+		case ART_ELENDIL:
+		{
+			return "magic mapping and light every 50+d50 turns";
+		}
+		case ART_THRAIN:
+		{
+			return "detection every 30+d30 turns";
+		}
+		case ART_INGWE:
+		{
+			return "dispel evil (x5) every 300+d300 turns";
+		}
+		case ART_CARLAMMAS:
+		{
+			return "protection from evil every 225+d225 turns";
+		}
+		case ART_FLAR:
+		{
+			return "dimension door every 100 turns";
+		}
+		case ART_BARAHIR:
+		{
+			return "dispel small life every 55+d55 turns";
+		}
+		case ART_TULKAS:
+		{
+			return "haste self (75+d75 turns) every 150+d150 turns";
+		}
+		case ART_NARYA:
+		{
+			return "large fire ball (120) every 225+d225 turns";
+		}
+		case ART_NENYA:
+		{
+			return "large frost ball (200) every 325+d325 turns";
+		}
+		case ART_VILYA:
+		{
+			return "large lightning ball (250) every 425+d425 turns";
+		}
+#if 0	// implement me!
+		case ART_NARYA:
+		{
+			return "healing (500) every 200+d100 turns";
+		}
+		case ART_NENYA:
+		{
+			return "healing (800) every 100+d200 turns";
+		}
+		case ART_VILYA:
+		{
+			return "greater healing (900) every 200+d200 turns";
+		}
+#endif	// 0
+		case ART_POWER:
+		{
+			return "powerful things";
+		}
+		case ART_STONE_LORE:
+		{
+			return "perilous identify every turn";
+		}
+		case ART_DOR: case ART_GORLIM:
+		{
+			return "rays of fear in every direction";
+		}
+		case ART_GANDALF:
+		{
+			return "restore mana every 666 turns";
+		}
+		case ART_EVENSTAR:
+		{
+			return "restore every 150 turns";
+		}
+		case ART_ELESSAR:
+		{
+			return "heal and cure black breath every 200 turns";
+		}
+		case ART_MARDA:
+		{
+			return "summon a dragonrider every 1000 turns";
+		}
+		case ART_PALANTIR_ITHIL:
+		case ART_PALANTIR:
+		{
+			return "clairvoyance every 100+d100 turns";
+		}
 #if 0
+		case ART_ROBINTON:
+		{
+			return music_info[3].desc;
+		}
+		case ART_PIEMUR:
+		{
+			return music_info[9].desc;
+		}
+		case ART_MENOLLY:
+		{
+			return music_info[10].desc;
+		}
+#endif	// 0
+		case ART_EREBOR:
+		{
+			return "open a secret passage every 75 turns";
+		}
+		case ART_DRUEDAIN:
+		{
+			return "detection every 150 turns";
+		}
+		case ART_ROHAN:
+		{
+			return "heroism, berserker, haste every 250 turns";
+		}
+		case ART_HELM:
+		{
+			return "sound ball (300) every 400 turns";
+		}
+		case ART_BOROMIR:
+		{
+			return "mass human summoning every 1000 turns";
+		}
+		case ART_HURIN:
+		{
+			return "berserker and +10 to speed (50) every 100+d200 turns";
+		}
+		case ART_AXE_GOTHMOG:
+		{
+			return "fire ball (300) every 200+d200 turns";
+		}
+		case ART_MELKOR:
+		{
+			return "darkness ball (150) every 100 turns";
+		}
+		case ART_GROND:
+		{
+			return "alter reality every 100 turns";
+		}
+		case ART_ORCHAST:
+		{
+			return "detect orcs every 10 turns";
+		}
+		case ART_NIGHT:
+		{
+			return "vampiric drain (3*100) every 250 turns";
+		}
+		case ART_NATUREBANE:
+		{
+			return "dispel monsters (300) every 200+d200 turns";
+		}
+	}
+
+	// requires some substitution..
+	/* Some ego items can be activated */
+	switch (o_ptr->name2)
+	{
+		case EGO_CLOAK_LORDLY_RES:
+		{
+			return "resistance every 150+d50 turns";
+		}
+	}
+
+	/* divers */
+	if (is_ego_p(o_ptr, EGO_DRAGON))
+	{
+		return "teleport every 50+d50 turns";
+	}
+	if (is_ego_p(o_ptr, EGO_JUMP))
+	{
+		return "phasing every 10+d10 turns";
+	}
+	if (is_ego_p(o_ptr, EGO_SPINING))
+	{
+		return "spining around every 50+d25 turns";
+	}
+	if (is_ego_p(o_ptr, EGO_NOLDOR))
+	{
+		return "detect treasure every 10+d20 turns";
+	}
+	if (is_ego_p(o_ptr, EGO_SPECTRAL))
+	{
+		return "wraith-form every 50+d50 turns";
+	}
+	if (o_ptr->tval == TV_RING)
+	{
+		switch(o_ptr->sval)
+		{
+			case SV_RING_ELEC:
+				return "ball of lightning and resist lightning";
+			case SV_RING_FLAMES:
+				return "ball of fire and resist fire";
+			case SV_RING_ICE:
+				return "ball of cold and resist cold";
+			case SV_RING_ACID:
+				return "ball of acid and resist acid";
+			case SV_RING_TELEPORTATION:
+				return "teleportation and destruction of the ring";
+			default:
+				return NULL;
+		}
+	}
+
+	if (o_ptr->tval == TV_AMULET)
+	{
+		switch(o_ptr->sval)
+		{
+			/* The amulet of the moon can be activated for sleep */
+			case SV_AMULET_THE_MOON:
+				return "sleep monsters every 100+d100 turns";
+			case SV_AMULET_SERPENT:
+				return "vemon breathing every 40+d60 turns";
+			default:
+				return NULL;
+		}
+	}
+
+	/* For the moment ignore (non-ego) randarts */
+	if (o_ptr->name1 == ART_RANDART) return "a crash ;-)";
+
+	/* Oops */
+	return NULL;
+#if 0	// memo
 	/* Some artifacts can be activated */
 	switch (o_ptr->name1)
 	{
@@ -2920,24 +3376,8 @@ cptr item_activation(object_type *o_ptr)
 		}
 	}
 
-#endif	// 0
-
-	// requires some substitution..
-	/* Some ego items can be activated */
-	switch (o_ptr->name2)
-	{
-		case EGO_CLOAK_LORDLY_RES:
-		{
-			return "resistance every 150+d50 turns";
-		}
-	}
-
-	/* The amulet of the moon can be activated for sleep */
-	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_THE_MOON))
-		return "sleep monsters every 100+d100 turns";
 
 	/* From PernA.. some of them won't work as is described :p */
-#if 0
         if (is_ego_p(o_ptr, EGO_MSTAFF_SPELL))
         {
                 int gf, mod, mana;
@@ -2960,9 +3400,7 @@ cptr item_activation(object_type *o_ptr)
                         mana, mana * 10);
                 return rspell[num];
         }
-#endif	// 0
 
-#if 0	// normal activatable items.. not implemented yet.
         if ((!(o_ptr->name1) &&
 	    !(o_ptr->name2) &&
 	    !(o_ptr->xtra1) &&
@@ -3269,451 +3707,9 @@ cptr item_activation(object_type *o_ptr)
 		}
 	}
 #endif	// 0
-
-	/* Some artifacts can be activated */
-	switch (o_ptr->name1)
-	{
-                case ART_EOL:
-                {
-                        return "mana bolt (9d8) 7+d7 turns";
-                }
-                case ART_SKULLCLEAVER:
-                {
-                        return "destruction every 200+d200 turns";
-                }
-                case ART_HARADRIM:
-                {
-                        return "berserk strength every 50+d50 turns";
-                }
-                case ART_FUNDIN:
-                {
-                        return "dispel evil (x4) every 100+d100 turns";
-                }
-                case ART_NAIN:
-                {
-                        return "stone to mud every 7+d5 turns";
-                }
-                case ART_CELEBRIMBOR:
-                {
-                        return "temporary ESP (dur 20+d20) every 50+d20 turns";
-                }
-                case ART_UMBAR:
-                {
-                        return "magic arrow (10d10) every 20+d20 turns";
-                }
-                case ART_GILGALAD:
-                {
-                        return "starlight (75) every 75+d75 turns";
-                }
-                case ART_HIMRING:
-                {
-                        return "protect evil (dur level*3 + d25) every 225+d225 turns";
-                }
-                case ART_NUMENOR:
-		{
-                        return "analyze monster every 500+d100 turns";
-		}
-		case ART_NARTHANC:
-		{
-			return "fire bolt (9d8) every 8+d8 turns";
-		}
-		case ART_NIMTHANC:
-		{
-			return "frost bolt (6d8) every 7+d7 turns";
-		}
-		case ART_DETHANC:
-		{
-			return "lightning bolt (4d8) every 6+d6 turns";
-		}
-		case ART_RILIA:
-		{
-			return "stinking cloud (12) every 4+d4 turns";
-		}
-		case ART_BELANGIL:
-		{
-			return "frost ball (48) every 5+d5 turns";
-		}
-		case ART_DAL:
-		{
-			return "remove fear and cure poison every 5 turns";
-		}
-		case ART_RINGIL:
-		{
-			return "frost ball (100) every 300 turns";
-		}
-                case ART_ERU:
-		{
-                        return "healing(7000), curing every 500 turns";
-		}
-		case ART_DAWN:
-		{
-			return "summon the Legion of the Dawn every 500+d500 turns";
-		}
-		case ART_ANDURIL:
-		{
-			return "fire ball (72) every 400 turns";
-		}
-		case ART_FIRESTAR:
-		{
-			return "large fire ball (72) every 100 turns";
-		}
-		case ART_FEANOR:
-		{
-			return "haste self (20+d20 turns) every 200 turns";
-		}
-		case ART_THEODEN:
-		{
-			return "drain life (120) every 400 turns";
-		}
-		case ART_TURMIL:
-		{
-			return "drain life (90) every 70 turns";
-		}
-		case ART_CASPANION:
-		{
-			return "door and trap destruction every 10 turns";
-		}
-		case ART_AVAVIR:
-		{
-			return "word of recall every 200 turns";
-		}
-		case ART_TARATOL:
-		{
-			return "haste self (20+d20 turns) every 100+d100 turns";
-		}
-		case ART_ERIRIL:
-		{
-			return "identify every 10 turns";
-		}
-		case ART_OLORIN:
-		{
-			return "probing, detection and full id every 1000 turns";
-		}
-		case ART_EONWE:
-		{
-			return "mass genocide every 1000 turns";
-		}
-		case ART_LOTHARANG:
-		{
-			return "cure wounds (4d7) every 3+d3 turns";
-		}
-		case ART_CUBRAGOL:
-		{
-			return "fire branding of bolts every 999 turns";
-		}
-		case ART_ANGUIREL:
-		{
-			return "a getaway every 35 turns";
-		}
-		case ART_AEGLOS:
-		{
-			return "lightning ball (100) every 500 turns";
-		}
-		case ART_OROME:
-		{
-			return "stone to mud every 5 turns";
-		}
-		case ART_SOULKEEPER:
-		{
-			return "heal (1000) every 888 turns";
-		}
-		case ART_BELEGENNON:
-		{
-			return ("heal (777), curing and heroism every 300 turns");
-		}
-		case ART_CELEBORN:
-		{
-			return "genocide every 500 turns";
-		}
-		case ART_LUTHIEN:
-		{
-			return "restore life levels every 450 turns";
-		}
-		case ART_ULMO:
-		{
-			return "teleport away every 150 turns";
-		}
-		case ART_COLLUIN:
-		{
-			return "resistance (20+d20 turns) every 111 turns";
-		}
-		case ART_HOLCOLLETH:
-		{
-			return "Sleep II every 55 turns";
-		}
-		case ART_THINGOL:
-		{
-			return "recharge item I every 70 turns";
-		}
-		case ART_COLANNON:
-		{
-			return "teleport every 45 turns";
-		}
-		case ART_TOTILA:
-		{
-			return "confuse monster every 15 turns";
-		}
-		case ART_CAMMITHRIM:
-		{
-			return "magic missile (2d6) every 2 turns";
-		}
-		case ART_PAURHACH:
-		{
-			return "fire bolt (9d8) every 8+d8 turns";
-		}
-		case ART_PAURNIMMEN:
-		{
-			return "frost bolt (6d8) every 7+d7 turns";
-		}
-		case ART_PAURAEGEN:
-		{
-			return "lightning bolt (4d8) every 6+d6 turns";
-		}
-		case ART_PAURNEN:
-		{
-			return "acid bolt (5d8) every 5+d5 turns";
-		}
-		case ART_FINGOLFIN:
-		{
-			return "a magical arrow (150) every 90+d90 turns";
-		}
-		case ART_HOLHENNETH:
-		{
-			return "detection every 55+d55 turns";
-		}
-		case ART_GONDOR:
-		{
-			return "heal (700) every 250 turns";
-		}
-		case ART_RAZORBACK:
-		{
-			return "star ball (150) every 1000 turns";
-		}
-		case ART_BLADETURNER:
-		{
-                        return "invulnerability (4+d8) every 800 turns";
-		}
-                case ART_MEDIATOR:
-		{
-			return "breathe elements (300), berserk rage, bless, and resistance";
-		}
-                case ART_KNOWLEDGE:
-                {
-                        return "whispers from beyond 100+d200 turns";
-		}
-		case ART_GALADRIEL:
-		{
-			return "illumination every 10+d10 turns";
-		}
-                case ART_UNDEATH:
-		{
-                        return "ruination every 10+d10 turns";
-		}
-		case ART_ELENDIL:
-		{
-			return "magic mapping and light every 50+d50 turns";
-		}
-		case ART_THRAIN:
-		{
-                        return "detection every 30+d30 turns";
-		}
-		case ART_INGWE:
-		{
-			return "dispel evil (x5) every 300+d300 turns";
-		}
-		case ART_CARLAMMAS:
-		{
-			return "protection from evil every 225+d225 turns";
-		}
-                case ART_FLAR:
-		{
-                        return "dimension door every 100 turns";
-		}
-		case ART_BARAHIR:
-		{
-			return "dispel small life every 55+d55 turns";
-		}
-		case ART_TULKAS:
-		{
-			return "haste self (75+d75 turns) every 150+d150 turns";
-		}
-		case ART_NARYA:
-		{
-			return "large fire ball (120) every 225+d225 turns";
-		}
-		case ART_NENYA:
-		{
-			return "large frost ball (200) every 325+d325 turns";
-		}
-		case ART_VILYA:
-		{
-			return "large lightning ball (250) every 425+d425 turns";
-		}
-#if 0	// implement me!
-		case ART_NARYA:
-		{
-                        return "healing (500) every 200+d100 turns";
-		}
-		case ART_NENYA:
-		{
-                        return "healing (800) every 100+d200 turns";
-		}
-		case ART_VILYA:
-		{
-                        return "greater healing (900) every 200+d200 turns";
-		}
-#endif	// 0
-		case ART_POWER:
-		{
-                        return "powerful things";
-		}
-                case ART_STONE_LORE:
-		{
-			return "perilous identify every turn";
-		}
-		case ART_DOR: case ART_GORLIM:
-		{
-			return "rays of fear in every direction";
-		}
-                case ART_GANDALF:
-                {
-                        return "restore mana every 666 turns";
-                }
-                case ART_EVENSTAR:
-                {
-                        return "restore every 150 turns";
-                }
-                case ART_ELESSAR:
-                {
-                        return "heal and cure black breath every 200 turns";
-                }
-                case ART_MARDA:
-                {
-                        return "summon a dragonrider every 1000 turns";
-                }
-                case ART_PALANTIR_ITHIL:
-                case ART_PALANTIR:
-                {
-                        return "clairvoyance every 100+d100 turns";
-                }
-#if 0
-                case ART_ROBINTON:
-                {
-                        return music_info[3].desc;
-                }
-                case ART_PIEMUR:
-                {
-                        return music_info[9].desc;
-                }
-                case ART_MENOLLY:
-                {
-                        return music_info[10].desc;
-                }
-#endif	// 0
-                case ART_EREBOR:
-		{
-			return "open a secret passage every 75 turns";
-		}
-                case ART_DRUEDAIN:
-		{
-                        return "detection every 150 turns";
-		}
-                case ART_ROHAN:
-		{
-                        return "heroism, berserker, haste every 250 turns";
-		}
-                case ART_HELM:
-		{
-                        return "sound ball (300) every 400 turns";
-		}
-                case ART_BOROMIR:
-		{
-                        return "mass human summoning every 1000 turns";
-		}
-                case ART_HURIN:
-                {
-                        return "berserker and +10 to speed (50) every 100+d200 turns";
-                }
-                case ART_AXE_GOTHMOG:
-		{
-                        return "fire ball (300) every 200+d200 turns";
-		}
-                case ART_MELKOR:
-		{
-                        return "darkness ball (150) every 100 turns";
-		}
-                case ART_GROND:
-		{
-                        return "alter reality every 100 turns";
-		}
-                case ART_ORCHAST:
-		{
-			return "detect orcs every 10 turns";
-		}
-		case ART_NIGHT:
-		{
-			return "vampiric drain (3*100) every 250 turns";
-		}
-		case ART_NATUREBANE:
-		{
-                        return "dispel monsters (300) every 200+d200 turns";
-		}
-	}
-
-	/* divers */
-        if (is_ego_p(o_ptr, EGO_DRAGON))
-	{
-		return "teleport every 50+d50 turns";
-	}
-        if (is_ego_p(o_ptr, EGO_JUMP))
-	{
-                return "phasing every 10+d10 turns";
-	}
-        if (is_ego_p(o_ptr, EGO_SPINING))
-	{
-                return "spining around every 50+d25 turns";
-	}
-        if (is_ego_p(o_ptr, EGO_NOLDOR))
-	{
-                return "detect treasure every 10+d20 turns";
-	}
-        if (is_ego_p(o_ptr, EGO_SPECTRAL))
-        {
-                return "wraith-form every 50+d50 turns";
-        }
-	if (o_ptr->tval == TV_RING)
-	{
-		switch(o_ptr->sval)
-		{
-                        case SV_RING_ELEC:
-                                return "ball of lightning and resist lightning";
-			case SV_RING_FLAMES:
-				return "ball of fire and resist fire";
-			case SV_RING_ICE:
-				return "ball of cold and resist cold";
-			case SV_RING_ACID:
-				return "ball of acid and resist acid";
-                        case SV_RING_TELEPORTATION:
-                                return "teleportation and destruction of the ring";
-			default:
-				return NULL;
-		}
-	}
-
-        if (o_ptr->tval == TV_AMULET)
-	{
-		switch(o_ptr->sval)
-		{
-                        case SV_AMULET_SERPENT:
-                                return "vemon breathing every 40+d60 turns";
-			default:
-				return NULL;
-		}
-	}
-
-	/* Oops */
-	return NULL;
 }
+
+	
 
 
 /*
