@@ -5643,9 +5643,19 @@ static void process_monster(int Ind, int m_idx)
 		}
 
 		/* Some monsters can fly */
-		else if ((f_info[c_ptr->feat].flags1 & FF1_CAN_LEVITATE) && (r_ptr->flags7 & (RF7_CAN_FLY)))
+		else if (((f_info[c_ptr->feat].flags1 & FF1_CAN_LEVITATE) && (r_ptr->flags7 & (RF7_CAN_FLY))) ||
+			((f_info[c_ptr->feat].flags1 & FF1_CAN_FLY) && (r_ptr->flags7 & (RF7_CAN_FLY))))
 		{
-			/* Pass through walls/doors/rubble */
+			/* Pass through walls/doors/rubble/_trees_ */
+			do_move = TRUE;
+		}
+
+		/* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */
+		//else if ((c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE ||
+		else if ((c_ptr->feat==FEAT_DEAD_TREE || c_ptr->feat==FEAT_TREES ||
+			c_ptr->feat==FEAT_SMALL_TREES) && (r_ptr->flags8 & RF8_WILD_WOOD))
+		{
+			/* Pass through trees if monster lives in the woods >:) */
 			do_move = TRUE;
 		}
 

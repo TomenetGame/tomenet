@@ -28,6 +28,8 @@
      and for player-mastery-skill-based to-hit/to-dam boni. Penalty does
      not apply to the weapon's boni!)
 [P]- Hopefully fixed mimic-sorc-adventurer's HP bug.
+[D]- Features like TREE and SMALL_TREE now allow CAN_FLY and WILD_WOOD
+     monsters to cross.
 
 11/02/2003
 [O]- Changed silly 'Amulet of ESP' to something more cooler and less ooc.
