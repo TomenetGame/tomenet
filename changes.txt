@@ -346,3 +346,6 @@ Change list for PernMangband
 - 12 more vaults borrowed from ZAngband (thx, the creators!)
 - 3 original vaults. Also, 2 'Between Vaults' are now normal vaults.
 - DM can now specify vault 128-255 by number.
+
+30/11/2001 (Jir)
+- lv-req can handle {0} stuffs from stores.

@@ -3292,7 +3292,7 @@ bool can_use(int Ind, object_type *o_ptr)
         /* Owner always can use */
         if (p_ptr->id == o_ptr->owner) return (TRUE);
 
-		if (o_ptr->level < 1) return (FALSE);
+		if (o_ptr->level < 1 && o_ptr->owner) return (FALSE);
 
         if (p_ptr->lev >= o_ptr->level)
 			{
