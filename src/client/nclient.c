@@ -138,7 +138,7 @@ static void Receive_init(void)
 /* DO NOT TOUCH - work in progress */
 int Receive_file(void){
 	char command, ch;
-	char fname[30];	/* possible filename */
+	char fname[MAX_CHARS];	/* possible filename */
 	int x;	/* return value/ack */
 	char outbuf[80];
 	unsigned short fnum;	/* unique SENDER side file number */
@@ -249,7 +249,7 @@ void Receive_login(void)
 	char names[8][MAX_CHARS];
 	char tmp[MAX_CHARS+3];	/* like we'll need it... */
 
-	static char c_name[MAX_CHARS];	/* change later */
+	static char c_name[MAX_CHARS];
 	s16b c_race, c_class, level;
 	Term_clear();
 	c_put_str(TERM_L_BLUE, "Character Overview", 1, 30);
@@ -328,7 +328,7 @@ int Net_setup(void)
 	int i, n, len, done = 0;
 //	long todo = sizeof(setup_t);
 	long todo = 1;
-	char *ptr, str[20];
+	char *ptr, str[MAX_CHARS];
 
 	ptr = (char *) &Setup;
 
@@ -468,7 +468,6 @@ int Net_verify(char *real, char *nick, char *pass)
 		result;
 
 	Sockbuf_clear(&wbuf);
-//	n = Packet_printf(&wbuf, "%c%s%s%s%hd%hd%hd", PKT_VERIFY, real, nick, pass, sex, race, class);
 	n = Packet_printf(&wbuf, "%c%s%s%s", PKT_VERIFY, real, nick, pass);
 
 #if 0	// moved to Net_start
@@ -1376,7 +1375,7 @@ int Receive_sanity(void)
 		}
 #else	// 0
 	int n;
-	char ch, buf[10];
+	char ch, buf[MAX_CHARS];
 	byte attr;
 	if ((n = Packet_scanf(&rbuf, "%c%c%s", &ch, &attr, buf)) <= 0)
 	{
@@ -1508,7 +1507,7 @@ int Receive_inven(void)
 	char	ch;
 	char pos, attr, tval, sval;
 	s16b wgt, amt, pval;
-	char name[80];
+	char name[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
 	{
@@ -1540,7 +1539,7 @@ int Receive_equip(void)
 	char 	ch;
 	char pos, attr, tval, sval;
 	s16b wgt, amt, pval;
-	char name[80];
+	char name[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
 	{
@@ -1610,7 +1609,7 @@ int Receive_char_info(void)
 int Receive_various(void)
 {
 	int	n;
-	char	ch, buf[80];
+	char	ch, buf[MAX_CHARS];
 	s16b	hgt, wgt, age, sc;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%hu%s", &ch, &hgt, &wgt, &age, &sc, buf)) <= 0)
@@ -1701,7 +1700,7 @@ int Receive_skill_init(void)
 	u16b	i;
 	u16b	father, mkey, order;
 #endif
-	char    name[300], desc[300], act[300];
+	char    name[MSG_LEN], desc[MSG_LEN], act[MSG_LEN];
 	u32b	flags1;
 	u16b	tval;
 
@@ -1846,7 +1845,7 @@ int Receive_history(void)
 	int	n;
 	char	ch;
 	s16b	line;
-	char	buf[80];
+	char	buf[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%hu%s", &ch, &line, buf)) <= 0)
 	{
@@ -1895,9 +1894,9 @@ int Receive_message(void)
 {
 	int	n, c;
 	char	ch;
-	char	buf[1024], search[1024], *ptr;
+	char	buf[MSG_LEN], search[1024], *ptr;
 
-	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, buf)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0)
 	{
 		return n;
 	}
@@ -1976,7 +1975,7 @@ int Receive_title(void)
 {
 	int	n;
 	char	ch;
-	char	buf[80];
+	char	buf[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, buf)) <= 0)
 	{
@@ -2003,7 +2002,7 @@ int Receive_depth(void)
 	char	ch;
 	s16b	x,y,z,recall;
 	bool town;
-	char buf[80];
+	char buf[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu%s", &ch, &x, &y, &z, &town, &recall, buf)) <= 0)
 	{
@@ -2260,7 +2259,7 @@ int Receive_spell_info(void)
 	char	ch;
 	int	n;
 	u16b	realm, book, line;
-	char	buf[80];
+	char	buf[MAX_CHARS];
 	s32b    spells[3];
 
 	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%hu%hu%hu%s", &ch, &spells[0], &spells[1], &spells[2], &realm, &book, &line, buf)) <= 0)
@@ -2467,7 +2466,7 @@ int Receive_special_other(void)
 int Receive_store_action(void)
 {
 	int	n, cost, action, bact;
-	char	ch, pos, name[1024], letter, attr;
+	char	ch, pos, name[MAX_CHARS], letter, attr;
 	byte	flag;
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%c", &ch, &pos, &bact, &action, name, &attr, &letter, &cost, &flag)) <= 0)
@@ -2495,7 +2494,7 @@ int Receive_store_action(void)
 int Receive_store(void)
 {
 	int	n, price;
-	char	ch, pos, name[1024], tval, sval;
+	char	ch, pos, name[MAX_CHARS], tval, sval;
 	byte	attr;
 	s16b	wgt, num, pval;
 
@@ -2525,11 +2524,9 @@ int Receive_store(void)
 int Receive_store_info(void)
 {
 	int	n, max_cost;
-	char	ch, owner_name[80] , store_name[80];
-//	s16b	owner_num, num_items;
+	char	ch, owner_name[MAX_CHARS] , store_name[MAX_CHARS];
 	s16b	num_items;
 
-//	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd", &ch, &store_num, &owner_num, &num_items)) <= 0)
 	if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d", &ch, &store_num, store_name, owner_name, &num_items, &max_cost)) <= 0)
 	{
 		return n;
@@ -2591,7 +2588,7 @@ int Receive_sell(void)
 int Receive_target_info(void)
 {
 	int	n;
-	char	ch, x, y, buf[80];
+	char	ch, x, y, buf[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%s", &ch, &x, &y, buf)) <= 0)
 	{
@@ -2629,7 +2626,7 @@ int Receive_special_line(void)
 	int	n;
 	char	ch, attr;
 	s16b	max, line;
-	char	buf[80];
+	char	buf[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%s", &ch, &max, &line, &attr, buf)) <= 0)
 	{
@@ -2665,7 +2662,7 @@ int Receive_floor(void)
 int Receive_pickup_check(void)
 {
 	int	n;
-	char	ch, buf[180];
+	char	ch, buf[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, buf)) <= 0)
 	{
@@ -2686,7 +2683,7 @@ int Receive_pickup_check(void)
 int Receive_party(void)
 {
 	int n;
-	char ch, pname[90], pmembers[20], powner[50];
+	char ch, pname[90], pmembers[MAX_CHARS], powner[MAX_CHARS];
 
 	if ((n = Packet_scanf(&rbuf, "%c%s%s%s", &ch, pname, pmembers, powner)) <= 0)
 	{
