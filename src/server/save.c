@@ -1932,6 +1932,7 @@ bool load_player(int Ind)
 #endif
 
 	cptr	what = "generic";
+	bool	edit = (cfg.runlevel == 1024) ? TRUE : FALSE;
 
 
 	/* Paranoia */
@@ -1942,13 +1943,21 @@ bool load_player(int Ind)
 
 
 	/* Allow empty savefile name */
-	if (!p_ptr->savefile[0]) return (TRUE);
+	if (!p_ptr->savefile[0])
+	{
+		if (edit)
+		{
+			what = "Server is closed for login now";
+			err = 1;
+		}
+		else return (TRUE);
+	}
 
 
 	/* XXX XXX XXX Fix this */
 
 	/* Verify the existance of the savefile */
-	if (!file_exist(p_ptr->savefile))
+	if (!err && !file_exist(p_ptr->savefile))
 	{
 		/* Give a message */
 		s_printf("Savefile does not exist for player %s.\n", p_ptr->name);
@@ -1964,7 +1973,12 @@ bool load_player(int Ind)
 		}
 
 		/* Allow this */
-		return (TRUE);
+		if (edit)
+		{
+			what = "Server is closed for login now";
+			err = 1;
+		}
+		else return (TRUE);
 	}
 
 
@@ -2063,7 +2077,8 @@ bool load_player(int Ind)
 		   }; 
 		   */
 		if (err)what="Cannot parse savefile error";
-		if (err == 35) what = "Incorrect password";
+		if (err == 35) what = edit ? "Server is closed for login now" :
+			"Incorrect password";
 	}
 
 	/* Paranoia */

@@ -2602,237 +2602,237 @@ option_type option_info[OPT_MAX] =
 {
 	/*** User-Interface ***/
 
-	{ &rogue_like_commands,	FALSE,	1,	0, 0,
+	{ &c_cfg.rogue_like_commands,	FALSE,	1,	0, 0,
 	"rogue_like_commands",	"Rogue-like commands" },
 
-	{ &quick_messages,	 	FALSE,	1,	0, 1,
+	{ &c_cfg.quick_messages,	 	FALSE,	1,	0, 1,
 	"quick_messages",		"Activate quick messages" },
 
-	{ &other_query_flag,	FALSE,	1,	0, 2,	// XXX
+	{ &c_cfg.other_query_flag,	FALSE,	1,	0, 2,	// XXX
 	"other_query_flag",		"(broken) Prompt for various information" },
 
-	{ &carry_query_flag,	FALSE,	1,	0, 3,	// XXX
+	{ &c_cfg.carry_query_flag,	FALSE,	1,	0, 3,	// XXX
 	"carry_query_flag",		"(broken) Prompt before picking things up" },
 
-	{ &use_old_target,		FALSE,	1,	0, 4,
+	{ &c_cfg.use_old_target,		FALSE,	1,	0, 4,
 	"use_old_target",		"Use old target by default" },
 
-	{ &always_pickup,		TRUE,	1,	0, 5,
+	{ &c_cfg.always_pickup,		TRUE,	1,	0, 5,
 	"always_pickup",		"Pick things up by default" },
 
-	{ &always_repeat,		TRUE,	1,	0, 6,	// XXX
+	{ &c_cfg.always_repeat,		TRUE,	1,	0, 6,	// XXX
 	"always_repeat",		"(broken) Repeat obvious commands" },
 
-	{ &depth_in_feet,		TRUE,	1,	0, 7,
+	{ &c_cfg.depth_in_feet,		TRUE,	1,	0, 7,
 	"depth_in_feet",		"Show dungeon level in feet" },
 
-	{ &stack_force_notes,	FALSE,	1,	0, 8,
+	{ &c_cfg.stack_force_notes,	FALSE,	1,	0, 8,
 	"stack_force_notes",	"Merge inscriptions when stacking" },
 
-	{ &stack_force_costs,	FALSE,	1,	0, 9,
+	{ &c_cfg.stack_force_costs,	FALSE,	1,	0, 9,
 	"stack_force_costs",	"Merge discounts when stacking" },
 
-	{ &show_labels,			TRUE,	1,	0, 10,	// XXX
+	{ &c_cfg.show_labels,			TRUE,	1,	0, 10,	// XXX
 	"show_labels",			"(broken) Show labels in object listings" },
 
-	{ &show_weights,		FALSE,	1,	0, 11,
+	{ &c_cfg.show_weights,		FALSE,	1,	0, 11,
 	"show_weights",			"Show weights in object listings" },
 
-	{ &show_choices,		FALSE,	1,	0, 12,	// XXX
+	{ &c_cfg.show_choices,		FALSE,	1,	0, 12,	// XXX
 	"show_choices",			"(obsolete) Show choices in certain sub-windows" },
 
-	{ &show_details,		FALSE,	1,	0, 13,	// XXX
+	{ &c_cfg.show_details,		FALSE,	1,	0, 13,	// XXX
 	"show_details",			"(obsolete) Show details in certain sub-windows" },
 
-	{ &ring_bell,			TRUE,	1,	0, 14,
+	{ &c_cfg.ring_bell,			TRUE,	1,	0, 14,
 	"ring_bell",			"Audible bell (on errors, etc)" },
 
-	{ &use_color,			TRUE,	1,	0, 15,
+	{ &c_cfg.use_color,			TRUE,	1,	0, 15,
 	"use_color",			"Use color if possible (slow)" },
 
 
 	/*** Disturbance ***/
 
-	{ &find_ignore_stairs,	TRUE,	2,	0, 16,
+	{ &c_cfg.find_ignore_stairs,	TRUE,	2,	0, 16,
 	"find_ignore_stairs",	"Run past stairs" },
 
-	{ &find_ignore_doors,	TRUE,	2,	0, 17,
+	{ &c_cfg.find_ignore_doors,	TRUE,	2,	0, 17,
 	"find_ignore_doors",	"Run through open doors" },
 
-	{ &find_cut,			TRUE,	2,	0, 18,
+	{ &c_cfg.find_cut,			TRUE,	2,	0, 18,
 	"find_cut",				"Run past known corners" },
 
-	{ &find_examine,		TRUE,	2,	0, 19,
+	{ &c_cfg.find_examine,		TRUE,	2,	0, 19,
 	"find_examine",			"Run into potential corners" },
 
-	{ &disturb_move,		TRUE,	2,	0, 20,
+	{ &c_cfg.disturb_move,		TRUE,	2,	0, 20,
 	"disturb_move",			"Disturb whenever any monster moves" },
 
-	{ &disturb_near,		TRUE,	2,	0, 21,
+	{ &c_cfg.disturb_near,		TRUE,	2,	0, 21,
 	"disturb_near",			"Disturb whenever viewable monster moves" },
 
-	{ &disturb_panel,		TRUE,	2,	0, 22,
+	{ &c_cfg.disturb_panel,		TRUE,	2,	0, 22,
 	"disturb_panel",		"Disturb whenever map panel changes" },
 
-	{ &disturb_state,		TRUE,	2,	0, 23,
+	{ &c_cfg.disturb_state,		TRUE,	2,	0, 23,
 	"disturb_state",		"Disturb whenever player state changes" },
 
-	{ &disturb_minor,		TRUE,	2,	0, 24,
+	{ &c_cfg.disturb_minor,		TRUE,	2,	0, 24,
 	"disturb_minor",		"Disturb whenever boring things happen" },
 
-	{ &disturb_other,		TRUE,	2,	0, 25,
+	{ &c_cfg.disturb_other,		TRUE,	2,	0, 25,
 	"disturb_other",		"Disturb whenever various things happen" },
 
-	{ &alert_hitpoint,		FALSE,	2,	0, 26,	// XXX
+	{ &c_cfg.alert_hitpoint,		FALSE,	2,	0, 26,	// XXX
 	"alert_hitpoint",		"(broken) Alert user to critical hitpoints" },
 
-	{ &alert_failure,		FALSE,	2,	0, 27,	// XXX
+	{ &c_cfg.alert_failure,		FALSE,	2,	0, 27,	// XXX
 	"alert_failure",		"(broken) Alert user to various failures" },
 
 
 	/*** Game-Play ***/
 
-	{ &auto_haggle,			FALSE,	3,	1, 0,	// XXX
+	{ &c_cfg.auto_haggle,			FALSE,	3,	1, 0,	// XXX
 	"auto_haggle",			"(obsolete) Auto-haggle in stores" },
 
-	{ &auto_scum,			FALSE,	3,	1, 1,	// XXX
+	{ &c_cfg.auto_scum,			FALSE,	3,	1, 1,	// XXX
 	"auto_scum",			"(obsolete) Auto-scum for good levels" },
 
-	{ &stack_allow_items,	TRUE,	3,	1, 2,
+	{ &c_cfg.stack_allow_items,	TRUE,	3,	1, 2,
 	"stack_allow_items",	"Allow weapons and armor to stack" },
 
-	{ &stack_allow_wands,	TRUE,	3,	1, 3,
+	{ &c_cfg.stack_allow_wands,	TRUE,	3,	1, 3,
 	"stack_allow_wands",	"Allow wands/staffs/rods to stack" },
 
-	{ &expand_look,			FALSE,	3,	1, 4,	// XXX
+	{ &c_cfg.expand_look,			FALSE,	3,	1, 4,	// XXX
 	"expand_look",			"(broken) Expand the power of the look command" },
 
-	{ &expand_list,			FALSE,	3,	1, 5,	// XXX
+	{ &c_cfg.expand_list,			FALSE,	3,	1, 5,	// XXX
 	"expand_list",			"(broken) Expand the power of the list commands" },
 
-	{ &view_perma_grids,	TRUE,	3,	1, 6,
+	{ &c_cfg.view_perma_grids,	TRUE,	3,	1, 6,
 	"view_perma_grids",		"Map remembers all perma-lit grids" },
 
-	{ &view_torch_grids,	FALSE,	3,	1, 7,
+	{ &c_cfg.view_torch_grids,	FALSE,	3,	1, 7,
 	"view_torch_grids",		"Map remembers all torch-lit grids" },
 
-	{ &dungeon_align,		TRUE,	3,	1, 8,	// XXX
+	{ &c_cfg.dungeon_align,		TRUE,	3,	1, 8,	// XXX
 	"dungeon_align",		"(obsolete) Generate dungeons with aligned rooms" },
 
-	{ &dungeon_stair,		TRUE,	3,	1, 9,	// XXX
+	{ &c_cfg.dungeon_stair,		TRUE,	3,	1, 9,	// XXX
 	"dungeon_stair",		"(obsolete) Generate dungeons with connected stairs" },
 
-	{ &flow_by_sound,		FALSE,	3,	1, 10,	// XXX
+	{ &c_cfg.flow_by_sound,		FALSE,	3,	1, 10,	// XXX
 	"flow_by_sound",		"(obsolete) Monsters chase current location (v.slow)" },
 
-	{ &flow_by_smell,		FALSE,	3,	1, 11,	// XXX
+	{ &c_cfg.flow_by_smell,		FALSE,	3,	1, 11,	// XXX
 	"flow_by_smell",		"(obsolete) Monsters chase recent locations (v.slow)" },
 
-	{ &track_follow,		FALSE,	3,	1, 12,	// XXX
+	{ &c_cfg.track_follow,		FALSE,	3,	1, 12,	// XXX
 	"track_follow",			"(obsolete) Monsters follow the player (broken)" },
 
-	{ &track_target,		FALSE,	3,	1, 13,	// XXX
+	{ &c_cfg.track_target,		FALSE,	3,	1, 13,	// XXX
 	"track_target",			"(obsolete) Monsters target the player (broken)" },
 
-	{ &smart_learn,			FALSE,	3,	1, 14,	// XXX
+	{ &c_cfg.smart_learn,			FALSE,	3,	1, 14,	// XXX
 	"smart_learn",			"(obsolete) Monsters learn from their mistakes" },
 
-	{ &smart_cheat,			FALSE,	3,	1, 15,	// XXX
+	{ &c_cfg.smart_cheat,			FALSE,	3,	1, 15,	// XXX
 	"smart_cheat",			"(obsolete) Monsters exploit players weaknesses" },
 
 
 	/*** Efficiency ***/
 
-	{ &view_reduce_lite,	FALSE,	4,	1, 16,	// (44)
+	{ &c_cfg.view_reduce_lite,	FALSE,	4,	1, 16,	// (44)
 	"view_reduce_lite",		"Reduce lite-radius when running" },
 
-	{ &view_reduce_view,	FALSE,	4,	1, 17,
+	{ &c_cfg.view_reduce_view,	FALSE,	4,	1, 17,
 	"view_reduce_view",		"Reduce view-radius in town" },
 
-	{ &avoid_abort,			FALSE,	4,	1, 18,	// XXX
+	{ &c_cfg.avoid_abort,			FALSE,	4,	1, 18,	// XXX
 	"avoid_abort",			"(obsolete) Avoid checking for user abort" },
 
-	{ &avoid_other,			FALSE,	4,	1, 19,	// XXX
+	{ &c_cfg.avoid_other,			FALSE,	4,	1, 19,	// XXX
 	"avoid_other",			"(obsolete) Avoid processing special colors" },
 
-	{ &flush_failure,		TRUE,	4,	1, 20,	// XXX (resurrect me?)
+	{ &c_cfg.flush_failure,		TRUE,	4,	1, 20,	// XXX (resurrect me?)
 	"flush_failure",		"(obsolete) Flush input on various failures" },
 
-	{ &flush_disturb,		FALSE,	4,	1, 21,	// XXX
+	{ &c_cfg.flush_disturb,		FALSE,	4,	1, 21,	// XXX
 	"flush_disturb",		"(obsolete) Flush input whenever disturbed" },
 
-	{ &flush_command,		FALSE,	4,	1, 22,	// XXX
+	{ &c_cfg.flush_command,		FALSE,	4,	1, 22,	// XXX
 	"flush_command",		"(obsolete) Flush input before every command" },
 
-	{ &fresh_before,		TRUE,	4,	1, 23,	// XXX
+	{ &c_cfg.fresh_before,		TRUE,	4,	1, 23,	// XXX
 	"fresh_before",			"(obsolete) Flush output before every command" },
 
-	{ &fresh_after,			FALSE,	4,	1, 24,	// XXX
+	{ &c_cfg.fresh_after,			FALSE,	4,	1, 24,	// XXX
 	"fresh_after",			"(obsolete) Flush output after every command" },
 
-	{ &fresh_message,		FALSE,	4,	1, 25,	// XXX
+	{ &c_cfg.fresh_message,		FALSE,	4,	1, 25,	// XXX
 	"fresh_message",		"(obsolete) Flush output after every message" },
 
-	{ &compress_savefile,	TRUE,	4,	1, 26,	// XXX
+	{ &c_cfg.compress_savefile,	TRUE,	4,	1, 26,	// XXX
 	"compress_savefile",	"(obsolete) Compress messages in savefiles" },
 
-	{ &hilite_player,		FALSE,	4,	1, 27,	// XXX (resurrect me)
+	{ &c_cfg.hilite_player,		FALSE,	4,	1, 27,	// XXX (resurrect me)
 	"hilite_player",		"(broken) Hilite the player with the cursor" },
 
-	{ &view_yellow_lite,	FALSE,	4,	1, 28,
+	{ &c_cfg.view_yellow_lite,	FALSE,	4,	1, 28,
 	"view_yellow_lite",		"Use special colors for torch-lit grids" },
 
-	{ &view_bright_lite,	FALSE,	4,	1, 29,
+	{ &c_cfg.view_bright_lite,	FALSE,	4,	1, 29,
 	"view_bright_lite",		"Use special colors for 'viewable' grids" },
 
-	{ &view_granite_lite,	FALSE,	4,	1, 30,
+	{ &c_cfg.view_granite_lite,	FALSE,	4,	1, 30,
 	"view_granite_lite",	"Use special colors for wall grids (slow)" },
 
-	{ &view_special_lite,	FALSE,	4,	1, 31,	// (59)
+	{ &c_cfg.view_special_lite,	FALSE,	4,	1, 31,	// (59)
 	"view_special_lite",	"Use special colors for floor grids (slow)" },
 
 
 	/*** TomeNET additions ***/
 
-	{ &easy_open,			TRUE,	5,	9, 60,
+	{ &c_cfg.easy_open,			TRUE,	5,	9, 60,
 	"easy_open",			"Automatically open doors" },
 
-	{ &easy_disarm,			FALSE,	5,	9, 61,
+	{ &c_cfg.easy_disarm,			FALSE,	5,	9, 61,
 	"easy_disarm",			"Automatically disarm traps" },
 
-	{ &easy_tunnel,			FALSE,	5,	9, 62,
+	{ &c_cfg.easy_tunnel,			FALSE,	5,	9, 62,
 	"easy_tunnel",			"Automatically tunnel walls" },
 
-	{ &auto_destroy,		FALSE,	5,	9, 63,
+	{ &c_cfg.auto_destroy,		FALSE,	5,	9, 63,
 	"auto_destroy",			"(broken) No query to destroy known junks" },
 //	"auto_destroy",			"(broken) No query to destroy known worthless items" },
 
-	{ &auto_inscribe,		FALSE,	5,	9, 64,
+	{ &c_cfg.auto_inscribe,		FALSE,	5,	9, 64,
 	"auto_inscribe",		"Automatically inscribe books and so on" },
 
-	{ &taciturn_messages,	FALSE,	5,	9, 65,
+	{ &c_cfg.taciturn_messages,	FALSE,	5,	9, 65,
 	"taciturn_messages",	"Suppress server messages as far as possible" },
 
-	{ &last_words,			TRUE,	5,	9, 66,
+	{ &c_cfg.last_words,			TRUE,	5,	9, 66,
 	"last_words",			"Get last words when the character dies" },
 
-	{ &limit_chat,			FALSE,	5,	9, 67,
+	{ &c_cfg.limit_chat,			FALSE,	5,	9, 67,
 	"limit_chat",			"Chat only with players on the same floor" },
 
-	{ &thin_down_flush,		TRUE,	5,	9, 68,
+	{ &c_cfg.thin_down_flush,		TRUE,	5,	9, 68,
 	"thin_down_flush",		"Thin down screen flush signals to avoid freezing" },
 
-	{ &auto_target,			FALSE,	5,	9, 69,
+	{ &c_cfg.auto_target,			FALSE,	5,	9, 69,
 	"auto_target",			"Automatically set target to the nearest enemy" },
 
-	{ &autooff_retaliator,	FALSE,	5,	9, 70,
+	{ &c_cfg.autooff_retaliator,	FALSE,	5,	9, 70,
 	"autooff_retaliator",	"stop the retaliator when protected by GoI etc" },
 
-	{ &wide_scroll_margin,	FALSE,	5,	9, 71,
+	{ &c_cfg.wide_scroll_margin,	FALSE,	5,	9, 71,
 	"wide_scroll_margin",	"Scroll the screen more frequently" },
 
 #if 0
-	{ &speak_unique,                TRUE,   2,      13,
+	{ &c_cfg.speak_unique,                TRUE,   2,      13,
 	"speak_unique",                 "Allow shopkeepers and uniques to speak" },
 #endif	// 0
 

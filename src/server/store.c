@@ -15,9 +15,13 @@
 
 #include "angband.h"
 
-/* Minimal benefit a store should obtain via transaction.
- * in percent. */
+/* Minimal benefit a store should obtain via transaction,
+ * in percent.	[10] */
 #define STORE_BENEFIT	10
+
+/* Extra check for ego item generation in store, in percent.	[50] */
+#define STORE_EGO_CHANCE	50
+
 static int gettown(int Ind);
 
 /*
@@ -1648,9 +1652,13 @@ static void store_create(store_type *st_ptr)
 			/* No "worthless" items */
 			if (object_value(0, o_ptr) <= 0) continue;
 
+			/* ego rarity control for normal stores */
+			if ((o_ptr->name2 || o_ptr->name2b) && !magik(STORE_EGO_CHANCE))
+				continue;
+
 			/* Hack -- General store shouldn't sell too much aman cloaks etc */
 			if (st_ptr->num == 0 && object_value(0, o_ptr) > 1000 &&
-					magik(66)) continue;
+					magik(33)) continue;
 		}
 
 

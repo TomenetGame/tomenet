@@ -244,7 +244,7 @@ void prt_depth(int x, int y, int z, bool town, int recall)
 
 	if(town)
 		sprintf(depths, "Town");
-	else if (depth_in_feet)
+	else if (c_cfg.depth_in_feet)
 		sprintf(depths, "%dft", z*50);
 	else
 		sprintf(depths, "Lev %d", z);
@@ -589,7 +589,7 @@ static void display_inven(void)
 		Term_erase(3+n, i, 255);
 
 		/* Display the weight if needed */
-		if (show_weights && o_ptr->weight)
+		if (c_cfg.show_weights && o_ptr->weight)
 		{
 			wgt = o_ptr->weight;
 			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
@@ -654,7 +654,7 @@ static void display_equip(void)
 		Term_erase(3+n, i - INVEN_WIELD, 255);
 
 		/* Display the weight if needed */
-		if (show_weights && o_ptr->weight)
+		if (c_cfg.show_weights && o_ptr->weight)
 		{
 			wgt = o_ptr->weight;
 			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
@@ -771,7 +771,7 @@ void show_inven(void)
 		c_put_str(out_color[j], out_desc[j], j + 1, col + 3);
 
 		/* Display the weight if needed */
-		if (show_weights && o_ptr->weight)
+		if (c_cfg.show_weights && o_ptr->weight)
 		{
 			wgt = o_ptr->weight;
 			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
@@ -781,7 +781,7 @@ void show_inven(void)
 	}
 
 	/* Display the weight if needed */
-	if (show_weights && totalwgt)
+	if (c_cfg.show_weights && totalwgt)
 	{
 		(void)sprintf(tmp_val, "Total: %3d.%1d lb", totalwgt / 10, totalwgt % 10);
 		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
@@ -884,7 +884,7 @@ void show_equip(void)
 		c_put_str(out_color[j], out_desc[j], j + 1, col + 3);
 
 		/* Display the weight if needed */
-		if (show_weights && o_ptr->weight)
+		if (c_cfg.show_weights && o_ptr->weight)
 		{
 			wgt = o_ptr->weight * o_ptr->number;
 			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
@@ -894,7 +894,7 @@ void show_equip(void)
 	}
 
 	/* Display the weight if needed */
-	if (show_weights && totalwgt)
+	if (c_cfg.show_weights && totalwgt)
 	{
 		(void)sprintf(tmp_val, "Total: %3d.%1d lb", totalwgt / 10, totalwgt % 10);
 		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);

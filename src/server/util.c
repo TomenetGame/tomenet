@@ -2800,8 +2800,28 @@ static void do_slash_cmd(int Ind, char *message)
 			if (prefix(message, "/shutdown") ||
 					prefix(message, "/quit"))
 			{
-				set_runlevel(tk ? k : (cfg.runlevel<6 ? 6 : 5));
+				bool kick = (cfg.runlevel == 1024);
+				set_runlevel(tk ? k :
+						((cfg.runlevel < 6 || kick)? 6 : 5));
 				msg_format(Ind, "Runlevel set to %d", cfg.runlevel);
+
+				/* Hack -- character edit mode */
+				if (k == 1024 || kick)
+				{
+					if (k == 1024) msg_print(Ind, "\377rEntering edit mode!");
+					else msg_print(Ind, "\377rLeaving edit mode!");
+
+					for (i = NumPlayers; i > 0; i--)
+					{
+						/* Check connection first */
+						if (Players[i]->conn == NOT_CONNECTED)
+							continue;
+
+						/* Check for death */
+						if (!is_admin(Players[i]))
+							Destroy_connection(Players[i]->conn, "kicked out");
+					}
+				}
 				time(&cfg.closetime);
 				return;
 			}
@@ -3400,7 +3420,7 @@ static void player_talk_aux(int Ind, char *message)
 		if (!admin)
 		{
 			if (check_ignore(i, Ind)) continue;
-			if (!broadcast && (p_ptr->limit_chat || p_ptr->limit_chat) &&
+			if (!broadcast && (p_ptr->limit_chat || q_ptr->limit_chat) &&
 					!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 		}
 

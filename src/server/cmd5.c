@@ -5084,7 +5084,6 @@ void do_cmd_hunt(int Ind, int book, int spell)
 
 	int			i, j, sval;
 	int			chance, beam;
-	//	int			plev = get_skill(p_ptr, SKILL_ARCHERY);
 	int			plev = get_skill(p_ptr, SKILL_HUNTING);
 
 	object_type		*o_ptr;
@@ -5101,7 +5100,6 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	if (check_antimagic(Ind)) antifail = TRUE;
 
 	/* Require spell ability */
-	//	if (!get_skill(p_ptr, SKILL_ARCHERY))
 	if (!get_skill(p_ptr, SKILL_HUNTING))
 	{
 		msg_print(Ind, "You cannot cast hunting spells!");
@@ -5197,13 +5195,6 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	{
 		/* Check interference */
 		if (interfere(Ind, cfg.spell_interfere * 2)) return;
-		/* XXX this should be different skill (like SKILL_HUNT) */
-		/*
-		   if (interfere(Ind, cfg.spell_interfere * 2 *
-		//					(100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
-		(100 - get_skill_scale(p_ptr, SKILL_HUNTING, 50)) / 100))
-		return;
-		*/
 
 		/* Hack -- preserve current 'realm' */
 		p_ptr->current_realm = REALM_HUNT;

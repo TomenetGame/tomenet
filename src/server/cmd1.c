@@ -765,6 +765,20 @@ void carry(int Ind, int pickup, int confirm)
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
 
+		/* Take log for possible cheeze */
+#if CHEEZELOG_LEVEL > 1
+		if (o_ptr->owner)
+		{
+			cptr name = lookup_player_name(o_ptr->owner);
+			if (p_ptr->id != o_ptr->owner)
+				s_printf("%s Money transaction: %dau from %s to %s(lv %d)\n",
+						showtime(), o_ptr->pval, name ? name : "(Dead player)",
+						p_ptr->name, p_ptr->lev);
+		}
+#endif	// CHEEZELOG_LEVEL
+
+
+
 		/* Delete gold */
 //		delete_object(wpos, p_ptr->py, p_ptr->px);
 		delete_object_idx(c_ptr->o_idx);
@@ -833,12 +847,12 @@ void carry(int Ind, int pickup, int confirm)
 			/* Refresh */
 			p_ptr->window |= PW_EQUIP;
 		}
-		/* Try to add to the empty quiver */
+		/* Try to add to the empty quiver (XXX rewrite me - too long!) */
 		else if (force_pickup && !p_ptr->inventory[INVEN_AMMO].k_idx &&
 				wield_slot(Ind, o_ptr) == INVEN_AMMO)
 		{
 			int slot = INVEN_AMMO;
-        u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
+			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
 
 			msg_print(Ind, "You add the ammo to your quiver.");
 

@@ -3755,8 +3755,23 @@ void update_view(int Ind)
 		if (*w_ptr & CAVE_VIEW) continue;
 
 		/* Forget it, dude */
-		/* TODO: make player forget of objects too */
-		if(unmap) *w_ptr &= ~CAVE_MARK;
+		if(unmap)
+		{
+			u16b this_o_idx, next_o_idx = 0;
+
+			*w_ptr &= ~CAVE_MARK;
+
+			/* make player forget of objects too */
+			/* too bad, traps cannot be forgotten this way.. */
+			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+			{
+				/* Acquire next object */
+				next_o_idx = o_list[this_o_idx].next_o_idx;
+
+				/* Forget the object */
+				p_ptr->obj_vis[this_o_idx] = FALSE;
+			}
+		}
 
 		/* Redraw */
 		lite_spot(Ind, y, x);

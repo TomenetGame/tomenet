@@ -152,82 +152,9 @@ extern cptr ANGBAND_DIR_SCPT;
 extern bool use_graphics;
 extern bool use_sound;
 
-extern bool rogue_like_commands;
-extern bool quick_messages;
-extern bool other_query_flag;
-extern bool carry_query_flag;
-extern bool use_old_target;
-extern bool always_pickup;
-extern bool always_repeat;
-extern bool depth_in_feet;
-extern bool stack_force_notes;
-extern bool stack_force_costs;
-extern bool show_labels;
-extern bool show_weights;
-extern bool show_choices;
-extern bool show_details;
-extern bool ring_bell;
-extern bool use_color;
 
-extern bool find_ignore_stairs;
-extern bool find_ignore_doors;
-extern bool find_cut;
-extern bool find_examine;
-extern bool disturb_move;
-extern bool disturb_near;
-extern bool disturb_panel;
-extern bool disturb_state;
-extern bool disturb_minor;
-extern bool disturb_other;
-extern bool alert_hitpoint;
-extern bool alert_failure;
+extern client_opts c_cfg;
 
-extern bool auto_haggle;
-extern bool auto_scum;
-extern bool stack_allow_items;
-extern bool stack_allow_wands;
-extern bool expand_look;
-extern bool expand_list;
-extern bool view_perma_grids;
-extern bool view_torch_grids;
-extern bool dungeon_align;
-extern bool dungeon_stair;
-extern bool flow_by_sound;
-extern bool flow_by_smell;
-extern bool track_follow;
-extern bool track_target;
-extern bool smart_learn;
-extern bool smart_cheat;
-
-extern bool view_reduce_lite;
-extern bool view_reduce_view;
-extern bool avoid_abort;
-extern bool avoid_other;
-extern bool flush_failure;
-extern bool flush_disturb;
-extern bool flush_command;
-extern bool fresh_before;
-extern bool fresh_after;
-extern bool fresh_message;
-extern bool compress_savefile;
-extern bool hilite_player;
-extern bool view_yellow_lite;
-extern bool view_bright_lite;
-extern bool view_granite_lite;
-extern bool view_special_lite;
-//bool dummy_option;	/* for options not used in client */
-extern bool easy_open;
-extern bool easy_disarm;
-extern bool easy_tunnel;
-extern bool auto_destroy;
-extern bool auto_inscribe;
-extern bool taciturn_messages;
-extern bool last_words;
-extern bool limit_chat;
-extern bool thin_down_flush;
-extern bool auto_target;
-extern bool autooff_retaliator;
-extern bool wide_scroll_margin;
 
 extern u32b cfg_game_port;
 
@@ -506,6 +433,9 @@ extern int Send_skill_mod(int i);
 extern bool hack_do_cmd_skill_wait;
 extern void dump_skills(FILE *fff);
 
+/* common/common.c */
+extern cptr longVersion;
+extern cptr shortVersion;
 
 /*
  * Hack -- conditional (or "bizarre") externs
@@ -536,5 +466,3 @@ extern int stricmp(cptr a, cptr b);
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 #endif
 
-extern char	*longVersion;
-extern char	*shortVersion;

@@ -4280,7 +4280,7 @@ void resurrect_player(int Ind)
 	p_ptr->update |= (PU_BONUS);
 
 	/* Window */
-//	p_ptr->window |= (PW_SPELL);
+	p_ptr->window |= (PW_SPELL);
 }
 
 void del_quest(int id){

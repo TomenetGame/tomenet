@@ -122,6 +122,12 @@ Note: {worldpos} is interpreted in the following ways.
         runlevel 4: /* Dungeons are closed */
         runlevel 5: /* Shutdown warning mode, automatic timer */
         runlevel 6: /* Cancelled shutdown */
+        runlevel 1024: /* Hack -- character edit (possessor) mode */
+    If runlevel is set to 1024, every player is kicked out (cept admin) and
+    the server enters into 'possessor' mode in which you can log on as any
+    character with admin password (and normal password/new character
+    generation is disabled temporarily).
+    To leave possessor mode, type /quit again.
 
 /static {worldpos} {shorthand: /sta} 
     Makes the specified level static.

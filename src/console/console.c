@@ -18,6 +18,9 @@ int main(int argc, char **argv)
 	/* Save the program name */
 	argv0 = argv[0];
 
+	/* Acquire the version strings */
+	version_build();
+
 	/* Process the command line arguments */
 	for (i = 1; argv && (i < argc); i++)
 	{
@@ -54,8 +57,9 @@ int main(int argc, char **argv)
 
 			default:
 			/* Dump usage information */
-			puts("Usage  : mangconsole [options] [servername]");
-			puts("Example: mangconsole -Pmypass -c -s my.server.net");
+			puts(longVersion);
+			puts("Usage  : tomenet.console [options] [servername]");
+			puts("Example: tomenet.console -Pmypass -c -s my.server.net");
 			puts("  -c        Always use CUI(GCU) interface");
 			puts("  -p<num>   Change console port number");
 			puts("  -P<pass>  Specify password");

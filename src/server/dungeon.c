@@ -2846,8 +2846,13 @@ void scan_objs(){
 					}
 				}
 	/* Once hourly cheeze check. (logs would fill the hd otherwise ;( */
+#if CHEEZELOG_LEVEL > 1
 				else
-					if (!(turn % (cfg.fps * 3600))) cheeze(o_ptr);
+#if CHEEZELOG_LEVEL < 4
+					if (!(turn % (cfg.fps * 3600)))
+#endif	// CHEEZELOG_LEVEL (4)
+						cheeze(o_ptr);
+#endif	// CHEEZELOG_LEVEL (1)
 				cnt++;
 			}
 		}
@@ -3777,6 +3782,11 @@ void set_runlevel(int val)
 			/* Shutdown warning mode, automatic timer */
 			msg_broadcast(0, "\377yWarning. Server shutdown will take place in five minutes.");
 			break;
+		case 1024:
+			Report_to_meta(META_DIE);
+			meta=FALSE;
+			break;
+			/* Hack -- character edit (possessor) mode */
 		case 6:
 			/* Running */
 		default:
@@ -3874,6 +3884,8 @@ void play_game(bool new_game)
 
 		/* Initialize server state information */
 		server_birth();
+
+		initwild();
 
 		/* Generate the wilderness */
 		genwild();

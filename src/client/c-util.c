@@ -880,7 +880,7 @@ void keymap_init(void)
 		hack_dir = 0;
 
 		/* Attempt to translate */
-		if (rogue_like_commands)
+		if (c_cfg.rogue_like_commands)
 		{
 			k = roguelike_commands(i);
 		}
@@ -907,7 +907,7 @@ void bell(void)
 	Term_fresh();
 
 	/* Make a bell noise (if allowed) */
-	if (ring_bell) Term_xtra(TERM_XTRA_NOISE, 0);
+	if (c_cfg.ring_bell) Term_xtra(TERM_XTRA_NOISE, 0);
 
 	/* Flush the input (later!) */
 	flush();
@@ -920,7 +920,7 @@ void bell(void)
 void c_prt(byte attr, cptr str, int row, int col)
 {
 	/* Hack -- fake monochrome */
-	/* if (!use_color) attr = TERM_WHITE; */
+	/* if (!c_cfg.use_color) attr = TERM_WHITE; */
 
 	/* Clear line, position cursor */
 	Term_erase(col, row, 255);
@@ -1370,7 +1370,7 @@ bool get_check(cptr prompt)
 	while (TRUE)
 	{
 		i = inkey();
-		if (quick_messages) break;
+		if (c_cfg.quick_messages) break;
 		if (i == ESCAPE) break;
 		if (strchr("YyNn", i)) break;
 		bell();
@@ -2472,7 +2472,7 @@ static void do_cmd_options_win(void)
 			cptr s = ang_term_name[j];
 
 			/* Use color */
-			if (use_color && (j == x)) a = TERM_L_BLUE;
+			if (c_cfg.use_color && (j == x)) a = TERM_L_BLUE;
 
 			/* Window name, staggered, centered */
 			Term_putstr(35 + j * 5 - strlen(s) / 2, 2 + j % 2, -1, a, (char*)s);
@@ -2486,7 +2486,7 @@ static void do_cmd_options_win(void)
 			cptr str = window_flag_desc[i];
 
 			/* Use color */
-			if (use_color && (i == y)) a = TERM_L_BLUE;
+			if (c_cfg.use_color && (i == y)) a = TERM_L_BLUE;
 
 			/* Unused option */
 			if (!str) str = "(Unused option)";
@@ -2502,7 +2502,7 @@ static void do_cmd_options_win(void)
 				char c = '.';
 
 				/* Use color */
-				if (use_color && (i == y) && (j == x)) a = TERM_L_BLUE;
+				if (c_cfg.use_color && (i == y) && (j == x)) a = TERM_L_BLUE;
 
 				/* Active flag */
 				if (window_flag[j] & (1L << i)) c = 'X';

@@ -34,7 +34,7 @@ static void display_entry(int pos)
                 maxwid = 75;
 
                 /* Leave room for weights, if necessary -DRS- */
-                if (show_weights) maxwid -= 10;
+                if (c_cfg.show_weights) maxwid -= 10;
 
                 /* Describe the object */
 		strcpy(o_name, store_names[pos]);
@@ -42,7 +42,7 @@ static void display_entry(int pos)
                 c_put_str(o_ptr->sval, o_name, i+6, 3);
 
                 /* Show weights */
-                if (show_weights)
+                if (c_cfg.show_weights)
                 {
                         /* Only show the weight of an individual item */
                         int wgt = o_ptr->weight;
@@ -57,7 +57,7 @@ static void display_entry(int pos)
                 maxwid = 65;
 
                 /* Leave room for weights, if necessary -DRS- */
-                if (show_weights) maxwid -= 7;
+                if (c_cfg.show_weights) maxwid -= 7;
 
                 /* Describe the object (fully) */
 		strcpy(o_name, store_names[pos]);
@@ -65,7 +65,7 @@ static void display_entry(int pos)
                 c_put_str(o_ptr->sval, o_name, i+6, 3);
 
                 /* Show weights */
-                if (show_weights)
+                if (c_cfg.show_weights)
                 {
                         /* Only show the weight of an individual item */
                         int wgt = o_ptr->weight;
@@ -440,7 +440,7 @@ void display_store(void)
                 put_str("Item Description", 5, 3);
 
                 /* If showing weights, show label */
-                if (show_weights)
+                if (c_cfg.show_weights)
                 {
                         put_str("Weight", 5, 70);
                 }
@@ -461,7 +461,7 @@ void display_store(void)
                 put_str("Item Description", 5, 3);
 
                 /* If showing weights, show label */
-                if (show_weights)
+                if (c_cfg.show_weights)
                 {
                         put_str("Weight", 5, 60);
                 }

@@ -32,18 +32,15 @@
  * You have been warned.
  */
 
+/* MAJOR/MINOR/PATCH version should be 0-15.  */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   0
 #define VERSION_PATCH   0
 
 /*
- * Current version number of TomeNET:
+ * Base version strings of TomeNET (see version_build)
  */
-/* MAJOR/MINOR/PATCH version should be 0-15. 
- * TODO: reflect versions automatically to TOMANG_VERSION_SHORT
- */
-#define TOMANG_VERSION_SHORT		"TomeNET 4.0.0"
-#define TOMANG_VERSION_LONG_DATE TOMANG_VERSION_SHORT "  (compiled "
+#define TOMENET_VERSION_SHORT		"TomeNET"
 
 
 /*
@@ -54,7 +51,7 @@
  * 2 - "beta"
  * 3 - "development"
  */
-#define VERSION_EXTRA	1
+#define VERSION_EXTRA	3
 
 
 
@@ -95,7 +92,8 @@
  * This is the number of "frames" to produce per second.  It determines
  * the speed of the game.
  */
-#define FPS 60
+//#define FPS 60
+#define FPS (cfg.fps)
 
 /* maximum respawn time for uniques.... from japanese patch */
 #define COME_BACK_TIME_MAX 600
@@ -855,154 +853,6 @@ that keeps many algorithms happy.
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
-#if 0
-/* Lites */
-#define ART_GALADRIEL		1
-#define ART_ELENDIL			2
-#define ART_THRAIN			3
-
-/* Amulets */
-#define ART_CARLAMMAS		4
-#define ART_INGWE			5
-#define ART_DWARVES			6
-
-/* Rings */
-#define ART_BARAHIR			8
-#define ART_TULKAS			9
-#define ART_NARYA			10
-#define ART_NENYA			11
-#define ART_VILYA			12
-#define ART_POWER			13
-
-/* Dragon Scale */
-#define ART_RAZORBACK		16
-#define ART_BLADETURNER		17
-
-/* Hard Armour */
-#define ART_SOULKEEPER		19
-#define ART_ISILDUR			20
-#define ART_ROHIRRIM		21
-#define ART_BELEGENNON		22
-#define ART_CELEBORN		23
-#define ART_ARVEDUI			24
-#define ART_CASPANION		25
-
-/* Soft Armour */
-#define ART_HITHLOMIR		27
-#define ART_THALKETTOTH		28
-
-/* Shields */
-#define ART_THORIN			30
-#define ART_CELEGORM		31
-#define ART_ANARION			32
-
-/* Helms and Crowns */
-#define ART_MORGOTH			34
-#define ART_BERUTHIEL		35
-#define ART_THRANDUIL		36
-#define ART_THENGEL			37
-#define ART_HAMMERHAND		38
-#define ART_DOR				39
-#define ART_HOLHENNETH		40
-#define ART_GORLIM			41
-#define ART_GONDOR			42
-
-/* Cloaks */
-#define ART_COLLUIN			44
-#define ART_HOLCOLLETH		45
-#define ART_THINGOL			46
-#define ART_THORONGIL		47
-#define ART_COLANNON		48
-#define ART_LUTHIEN			49
-#define ART_TUOR			50
-
-/* Gloves */
-#define ART_CAMBELEG		52
-#define ART_CAMMITHRIM		53
-#define ART_PAURHACH		54
-#define ART_PAURNIMMEN		55
-#define ART_PAURAEGEN		56
-#define ART_PAURNEN			57
-#define ART_CAMLOST			58
-#define ART_FINGOLFIN		59
-
-/* Boots */
-#define ART_FEANOR			60
-#define ART_DAL				61
-#define ART_THROR			62
-
-/* Swords */
-#define ART_MAEDHROS		64
-#define ART_ANGRIST			65
-#define ART_NARTHANC		66
-#define ART_NIMTHANC		67
-#define ART_DETHANC			68
-#define ART_RILIA			69
-#define ART_BELANGIL		70
-#define ART_CALRIS			71
-#define ART_ARUNRUTH		72
-#define ART_GLAMDRING		73
-#define ART_AEGLIN			74
-#define ART_ORCRIST			75
-#define ART_GURTHANG		76
-#define ART_ZARCUTHRA		77
-#define ART_MORMEGIL		78
-#define ART_GONDRICAM		79
-#define ART_CRISDURIAN		80
-#define ART_AGLARANG		81
-#define ART_RINGIL			82
-#define ART_ANDURIL			83
-#define ART_ANGUIREL		84
-#define ART_ELVAGIL			85
-#define ART_FORASGIL		86
-#define ART_CARETH			87
-#define ART_STING			88
-#define ART_HARADEKKET		89
-#define ART_GILETTAR		90
-#define ART_DOOMCALLER		91
-
-/* Polearms */
-#define ART_THEODEN			93
-#define ART_PAIN			94
-#define ART_OSONDIR			95
-#define ART_TIL				96
-#define ART_AEGLOS			97
-#define ART_OROME			98
-#define ART_NIMLOTH			99
-#define ART_EORLINGAS		100
-#define ART_DURIN			101
-#define ART_EONWE			102
-#define ART_BALLI			103
-#define ART_LOTHARANG		104
-#define ART_MUNDWINE		105
-#define ART_BARUKKHELED		106
-#define ART_WRATH			107
-#define ART_ULMO			108
-#define ART_AVAVIR			109
-
-/* Hafted */
-#define ART_GROND			111
-#define ART_TOTILA			112
-#define ART_THUNDERFIST		113
-#define ART_BLOODSPIKE		114
-#define ART_FIRESTAR		115
-#define ART_TARATOL			116
-#define ART_AULE			117
-#define ART_NAR				118
-#define ART_ERIRIL			119
-#define ART_OLORIN			120
-#define ART_DEATHWREAKER	121
-#define ART_TURMIL			122
-
-/* Bows */
-#define ART_BELTHRONDING	124
-#define ART_BARD			125
-#define ART_CUBRAGOL		126
-
-/* Randarts */
-#define ART_RANDART		127
-
-#endif	// 0
 
 /* Randarts */
 #define ART_RANDART		255
@@ -1355,52 +1205,6 @@ that keeps many algorithms happy.
  * Note that as of 2.7.8, the "item flags" apply to all items, though
  * only armor and weapons and a few other items use any of these flags.
  */
-#if 0	// operation :)
-#define TV_SKELETON      1	/* Skeletons ('s') */
-#define TV_BOTTLE        2      /* Empty bottles ('!') */
-#define TV_JUNK          3	/* Sticks, Pottery, etc ('~') */
-#define TV_KEY		 4      /* Keys (';') */
-#define TV_SPIKE         5	/* Spikes ('~') */
-#define TV_GOLEM         6      /* Golem parts */
-#define TV_CHEST         7	/* Chests ('~') */
-#define TV_SHOT			16	/* Ammo for slings */
-#define TV_ARROW        17	/* Ammo for bows */
-#define TV_BOLT         18	/* Ammo for x-bows */
-#define TV_BOW          19	/* Slings/Bows/Xbows */
-#define TV_DIGGING      20	/* Shovels/Picks */
-#define TV_HAFTED       21	/* Priest Weapons */
-#define TV_POLEARM      22	/* Axes and Pikes */
-#define TV_SWORD        23	/* Edged Weapons */
-#define TV_BOOTS        30	/* Boots */
-#define TV_GLOVES       31	/* Gloves */
-#define TV_HELM         32	/* Helms */
-#define TV_CROWN        33	/* Crowns */
-#define TV_SHIELD       34	/* Shields */
-#define TV_CLOAK        35	/* Cloaks */
-#define TV_SOFT_ARMOR   36	/* Soft Armor */
-#define TV_HARD_ARMOR   37	/* Hard Armor */
-#define TV_DRAG_ARMOR	38	/* Dragon Scale Mail */
-#define TV_LITE         39	/* Lites (including Specials) */
-#define TV_AMULET       40	/* Amulets (including Specials) */
-#define TV_RING         45	/* Rings (including Specials) */
-#define TV_STAFF        55
-#define TV_WAND         65
-#define TV_ROD          66
-#define TV_SCROLL       70
-#define TV_POTION       75
-#define TV_FLASK        77
-#define TV_FOOD         80
-#define TV_PSI_BOOK 	89
-#define TV_MAGIC_BOOK   90
-#define TV_PRAYER_BOOK  91
-#define TV_SORCERY_BOOK 92
-#define TV_FIGHT_BOOK 	93
-#define TV_SHADOW_BOOK 	94
-#define TV_HUNT_BOOK 	95
-#define TV_GOLD         100	/* Gold can only be picked up by players */
-
-#define TV_MAX		100
-#endif	// 0
 
 /* ToME ones */
 #define TV_SKELETON      1      /* Skeletons ('s') */
@@ -2278,8 +2082,8 @@ that keeps many algorithms happy.
 #define CAVE_STCK	0x0200	/* sticky, not icky (prison?) */
 
 #if 0	// for future expansion..
-#define CAVE_TRDT	0x0100    /* trap detected */
-#define CAVE_IDNT	0x0200    /* grid identified (fountains) */
+/* To what extent shall we enlarge it?
+ * we'll do 'smells of carrot' thingie? :) */
 #define CAVE_SPEC	0x0400    /* special mark(quests) */
 #define CAVE_FREE	0x0800    /* no random generation on it */
 #endif
@@ -3590,10 +3394,10 @@ that keeps many algorithms happy.
 #define VF1_NO_DESTROY          0x00000020L
 #define VF1_NO_MAGIC			0x00000040L /* very nasty */
 
-#define VF1_NO_PENETR			0x10000000L /* for scrolls of vermin control */
-#define VF1_HIVES				0x20000000L /* for scrolls of vermin control */
-#define VF1_NO_MIRROR			0x40000000L /* for scrolls of vermin control */
-#define VF1_NO_ROTATE			0x80000000L /* for scrolls of vermin control */
+#define VF1_NO_PENETR			0x10000000L /* river/lava never penetrates vault */
+#define VF1_HIVES				0x20000000L /* put same vaults like beehives */
+#define VF1_NO_MIRROR			0x40000000L /* not suitable for mirroring */
+#define VF1_NO_ROTATE			0x80000000L /* not suitable for rotation */
 
 /*
  * Possible flags for the future:
@@ -3609,23 +3413,13 @@ that keeps many algorithms happy.
 /*
  * Hack -- choose "intelligent" spells when desperate
  */
+/* I suspect the usefulness of this mask.. */
 
 #define RF4_INT_MASK \
    (RF4_S_ANIMAL | RF4_UNMAGIC)
-//   0L
 
 #define RF5_INT_MASK \
   (RF5_HOLD | RF5_SLOW | RF5_CONF | RF5_BLIND | RF5_SCARE)
-
-#if 0
-#define RF6_INT_MASK \
-   (RF6_BLINK |  RF6_TPORT | RF6_TELE_LEVEL | RF6_TELE_AWAY | \
-    RF6_HEAL | RF6_HASTE | RF6_TRAPS | \
-    RF6_S_MONSTER | RF6_S_MONSTERS | \
-    RF6_S_ANT | RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | \
-    RF6_S_ANGEL | RF6_S_DRAGON | RF6_S_UNDEAD | RF6_S_DEMON | \
-    RF6_S_HI_DRAGON | RF6_S_HI_UNDEAD | RF6_S_WRAITH | RF6_S_UNIQUE)
-#endif	// 0
 
 #define RF6_INT_MASK \
    (RF6_BLINK |  RF6_TPORT | RF6_TELE_LEVEL | RF6_TELE_AWAY | \
@@ -3878,14 +3672,14 @@ that keeps many algorithms happy.
  * Ego-Items use the "name2" field
  */
 #define ego_item_p(T) \
-        ((T)->name2 ? TRUE : FALSE)
+        ((T)->name2 || (T)->name2b ? TRUE : FALSE)
 
 /*
  * Ego-Items use the "name2" field
  */
 #define is_ego_p(T, e) \
-        ((T)->name2 == (e))
-    //    (((T)->name2 == (e)) || ((T)->name2b == (e)))
+	(((T)->name2 == (e)) || ((T)->name2b == (e)))
+//	((T)->name2 == (e))
 
 
 /*
@@ -4688,6 +4482,8 @@ extern int PlayerUID;
 
 #if 0	// skills to come	- Jir -
 #define SKILL_CLIMB
+#define SKILL_INNATE_POWER	// in mimicry tree
+#define SKILL_EGO_POWER
 #endif	// 0
 
 //#define MAX_SKILLS              70

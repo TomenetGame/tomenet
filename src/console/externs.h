@@ -83,6 +83,9 @@ extern void clear_from(int row);
 extern void prt_num(cptr header, int num, int row, int col, byte color);
 extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);
 
+/* common/common.c */
+extern cptr longVersion;
+extern cptr shortVersion;
 
 
 /*

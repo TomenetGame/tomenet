@@ -43,7 +43,7 @@ RC         = $(BCCDIR)\bin\brc32
 # Name of the *.exe-file
 
 SERV_EXE = tomenet.server.exe
-CONS_EXE = mangconsole.exe
+CONS_EXE = tomenet.console.exe
 CLI_EXE = tomenet.exe
 
 

@@ -1843,7 +1843,7 @@ static void calc_bonuses(int Ind)
         p_ptr->drain_mana = 0;
         p_ptr->drain_life = 0;
 	p_ptr->bless_blade = FALSE;
-	p_ptr->xtra_might = FALSE;
+	p_ptr->xtra_might = 0;
 	p_ptr->impact = FALSE;
 	p_ptr->see_inv = FALSE;
 	p_ptr->free_act = FALSE;
@@ -2316,7 +2316,7 @@ static void calc_bonuses(int Ind)
 //			p_ptr->invis = p_ptr->tim_invis_power;
 		}
 		if (f3 & TR3_BLESSED) p_ptr->bless_blade = TRUE;
-		if (f3 & TR3_XTRA_MIGHT) p_ptr->xtra_might = TRUE;
+		if (f3 & TR3_XTRA_MIGHT) p_ptr->xtra_might++;
 		if (f3 & TR3_SLOW_DIGEST) p_ptr->slow_digest = TRUE;
 		if (f3 & TR3_REGEN) p_ptr->regenerate = TRUE;
 		if (f5 & TR5_REGEN_MANA) p_ptr->regen_mana = TRUE;
@@ -2951,8 +2951,11 @@ static void calc_bonuses(int Ind)
 		if (archery != -1)
 		{
 			p_ptr->to_h_ranged += get_skill_scale(p_ptr, archery, 25);
+			/* Isn't 4 shots/turn too small? */
 			p_ptr->num_fire += (get_skill(p_ptr, archery) / 16);
+//				+ get_skill_scale(p_ptr, SKILL_ARCHERY, 1);
 			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 25);
+#if 0	// not so meaningful (25,30,50)
 			switch (archery)
 			{
 				case SKILL_SLING:
@@ -2968,6 +2971,7 @@ static void calc_bonuses(int Ind)
 					if (!p_ptr->tval_ammo) p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
 					break;
 			}
+#endif	// 0
 		}
 
 		/* Add in the "bonus shots" */

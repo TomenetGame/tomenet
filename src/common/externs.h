@@ -897,5 +897,5 @@ extern int stricmp(cptr a, cptr b);
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 #endif
 
-extern char	*longVersion;
-extern char	*shortVersion;
+extern cptr longVersion;
+extern cptr shortVersion;

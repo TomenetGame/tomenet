@@ -332,7 +332,7 @@ bool Report_to_meta(int flag)
 	bool hidden_dungeon_master = 0;
 
 	/* Abort if the user doesn't want to report */
-	if (!cfg.report_to_meta || cfg.runlevel<4)
+	if (!cfg.report_to_meta || cfg.runlevel<4 || cfg.runlevel > 1023)
 		return FALSE;
 
 	/* If this is the first time called, initialize our hostname */
@@ -620,7 +620,11 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 			 * kicking someone off.  This is a quick hack that should 
 			 * be replaced with proper password checking. 
 			 */
-			if ((!strcasecmp(p_ptr->realname, real_name)) && (!strcasecmp(p_ptr->addr, addr)))	
+			/* XXX another Hack -- don't allow to resume connection if
+			 * in 'character edit' mode		- Jir -
+			 */
+			if ((!strcasecmp(p_ptr->realname, real_name)) &&
+					(!strcasecmp(p_ptr->addr, addr)) && (cfg.runlevel != 1024))
 				Destroy_connection(p_ptr->conn, "resume connection");
 			else return E_IN_USE;
 		    }

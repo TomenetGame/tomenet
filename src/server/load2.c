@@ -1166,8 +1166,17 @@ static bool rd_extra(int Ind)
 
 	rd_string(pass, 80);
 
-	if (strcmp(pass, p_ptr->pass) && strcmp("Guest", p_ptr->name))
-		return TRUE;
+	if (cfg.runlevel == 1024)
+	{
+		/* Hack -- character edit mode */
+		if (strcmp(cfg.console_password, p_ptr->pass)) return TRUE;
+		else strcpy(p_ptr->pass, pass);
+	}
+	else
+	{
+		if (strcmp(pass, p_ptr->pass) && strcmp("Guest", p_ptr->name))
+			return TRUE;
+	}
 
 	rd_string(p_ptr->died_from, 80);
 

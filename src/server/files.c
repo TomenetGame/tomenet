@@ -340,7 +340,7 @@ errr check_load_init(void)
 
 
 
-
+#if 0
 /*
  * Prints the following information on the screen.
  *
@@ -421,6 +421,7 @@ void display_player(int Ind)
 	/* Display "history" info */
 	Send_history(Ind, i, p_ptr->history[i]);
 }
+#endif	// 0
 
 /*
  * Recursive "help file" perusal.  Return FALSE on "ESCAPE".

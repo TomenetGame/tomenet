@@ -172,6 +172,9 @@ int main(int argc, char *argv[])
 	/* Open the file */
 	s_setupr(buf);
 
+	/* Acquire the version strings */
+	version_build();
+
 #ifdef SET_UID
 
 	/* Initialize the "time" checker */
@@ -237,7 +240,8 @@ int main(int argc, char *argv[])
 			usage:
 
 			/* Note -- the Term is NOT initialized */
-			puts("Usage: mangband [options]");
+			puts(longVersion);
+			puts("Usage: tomenet.server [options]");
 			puts("  -r	 Reset the server");
 			puts("  -z       Don't catch signals");
 			puts("  -c<path> Look for pref files in the directory <path>");

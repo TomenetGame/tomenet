@@ -652,7 +652,7 @@
 #define PREPARE_RADIUS	16
 
 /*
- * OPTION: verbosity of server for stdout/mangband.log.
+ * OPTION: verbosity of server for debug msgs in stdout/mangband.log.
  *
  * 0 - no debug msgs
  * 1 - very recent debug msgs
@@ -662,17 +662,29 @@
  */
 #define DEBUG_LEVEL 2
 
+/*
+ * OPTION: verbosity of server for anti-cheeze msgs in stdout/mangband.log.
+ *
+ * 0 - no cheeze msgs
+ * 1 - very limited cheeze msgs
+ * 2 - most of cheeze msgs
+ * 3 - most of cheeze msgs (noisy)
+ * 4 - everything
+ */
+#define CHEEZELOG_LEVEL 2
 
 /*
  * OPTION: verbosity of server for players.
- * (XXX This should be handled by client-side option.)
+ * (XXX This should be handled by client-side option;
+ *  cf. taciturn_messages, last_words, speak_unique)
  *
  * 0 - deadly quiet [The first message you'll receive might be 'You die.']
  * 1 - seldom speaks ['You hit ..!' etc. are surpressed.]
  * 2 - (default)
  * 3 - chatterbox [dying msg, monster speach etc.]
  *
- * NOTE: chatterbox levels 0-1 are not implemented yet.
+ * NOTE: chatterbox levels 0-1 are not implemented yet;
+ *       set this to 3 basically.
  */
 #define CHATTERBOX_LEVEL	3
 

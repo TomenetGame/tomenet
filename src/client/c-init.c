@@ -506,7 +506,7 @@ void client_init(char *argv1, bool skip)
 	Term_clear();
 
 			/* Flush the network output buffer */
-			Net_flush();	// meanless, most likely
+//			Net_flush();	// meanless, most likely
 
 	/* Start the game */
 	if (Net_start(sex, race, class) == -1)

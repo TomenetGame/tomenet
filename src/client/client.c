@@ -281,6 +281,9 @@ int main(int argc, char **argv)
 	/* Set default values */
 	default_set();
 
+	/* Acquire the version strings */
+	version_build();
+
 //	skip = read_mangrc();
 #ifdef USE_EMX
 	skip = read_mangrc("tomenet.rc");

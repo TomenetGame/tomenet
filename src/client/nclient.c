@@ -2023,7 +2023,7 @@ int Receive_flush(void)
 	 * client doesn't support that :-/
 	 */
 //	if (!thin_down_flush || magik(33)) Term_xtra(TERM_XTRA_DELAY, 1);
-	if (thin_down_flush)
+	if (c_cfg.thin_down_flush)
 	{
 		if (++flush_count > 10) return 1;
 	}

@@ -2459,6 +2459,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF5_CURSE (former CAUSE1~4) */
 		case 128+12:
 		{
+			/* No antimagic check -- is 'curse' magic? */
 			/* rebalance might be needed? */
 			int power = rlev / 2 + randint(rlev);
 			disturb(Ind, 1, 0);
@@ -2520,7 +2521,8 @@ bool make_attack_spell(int Ind, int m_idx)
 				}
 				else
 				{
-					take_hit(Ind, damroll(15, 15), ddesc);
+//					take_hit(Ind, damroll(15, 15), ddesc);
+					take_hit(Ind, damroll(power / 4, 15), ddesc);
 					(void)set_cut(Ind, p_ptr->cut + damroll(10, 10));
 				}
 				break;

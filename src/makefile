@@ -329,13 +329,16 @@ TOLUA = server/tolua
 # below.
 #
 
-install: date tomenet mangconsole tomenet.server
-	-mv ../tomenet ../tomenet.old
-	-mv ../tomenet.server ../tomenet.server.old
-	-mv ../mangconsole ../mangconsole.old
-	cp tomenet ..
-	cp mangconsole ..
-	cp tomenet.server ..
+install: date tomenet tomenet.console tomenet.server
+	install -b tomenet ..
+	install -b tomenet.console ..
+	install -b tomenet.server ..
+#	-mv ../tomenet ../tomenet.old
+#	-mv ../tomenet.server ../tomenet.server.old
+#	-mv ../tomenet.console ../tomenet.console.old
+#	cp tomenet ..
+#	cp tomenet.console ..
+#	cp tomenet.server ..
 
 mini_install: install
 
@@ -368,8 +371,8 @@ tomenet: $(CLI_OBJS)
 # Build the "MAngband" remote console
 #
 
-mangconsole: $(CONS_OBJS)
-	$(CC) $(CFLAGS) -o mangconsole $(CONS_OBJS) $(LDFLAGS) $(LIBS)
+tomenet.console: $(CONS_OBJS)
+	$(CC) $(CFLAGS) -o tomenet.console $(CONS_OBJS) $(LDFLAGS) $(LIBS)
 
 
 $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c

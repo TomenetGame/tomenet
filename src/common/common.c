@@ -81,32 +81,34 @@ int color_char_to_attr(char c)
 /*
  * version strings
  */
-char	*longVersion = TOMANG_VERSION_LONG_DATE __DATE__ " " __TIME__ ")";
-char	*shortVersion = TOMANG_VERSION_SHORT;
+cptr longVersion;
+cptr shortVersion;
 
-#if 0	// under working
-char * version_build(int mode)
+void version_build()
 {
 	char temp[100];
-	/* Append the version number */
 
-	sprintf(temp, "%s %d.%d.%d ", mode?TOMANG_VERSION_LONG_DATE:TOMANG_VERSION_SHORT, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	/* Append the version number */
+	sprintf(temp, "%s %d.%d.%d", TOMENET_VERSION_SHORT, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 	/* Append the additional version info */
 	if (VERSION_EXTRA == 1)
-		strcat(temp, "alpha");
+		strcat(temp, "-alpha");
 	else if (VERSION_EXTRA == 2)
-		strcat(temp, "beta");
+		strcat(temp, "-beta");
 	else if (VERSION_EXTRA == 3)
-		strcat(temp, "development");
+		strcat(temp, "-development");
 	else if (VERSION_EXTRA)
-		strcat(temp, format("%d", VERSION_EXTRA));
+		strcat(temp, format(".%d", VERSION_EXTRA));
 
-	if (mode) strcat(temp, format(" (Compiled %s %s)", __DATE__, __TIME__));
+	shortVersion = string_make(temp);
 
-	return (temp);
+	/* Append the date of build */
+	strcat(temp, format(" (Compiled %s %s)", __DATE__, __TIME__));
+
+	longVersion = string_make(temp);
 }
-#endif	// 0
+
 
 /* Find the realm, given a book(tval) */
 int find_realm(int book)

@@ -1,4 +1,4 @@
-
+# $Id$
 # File: Makefile
 
 # This is not a very "nice" Makefile, but it usually works.
@@ -337,12 +337,12 @@ TOLUA = server/tolua
 # below.
 #
 
-install: date tomenet mangconsole tomenet.server
+install: date tomenet tomenet.console tomenet.server
 	-mv ../tomenet ../tomenet.old
 	-mv ../mangband ../mangband.old
-	-mv ../mangconsole ../mangconsole.old
+	-mv ../tomenet.console ../tomenet.console.old
 	cp tomenet ..
-	cp mangconsole ..
+	cp tomenet.console ..
 	cp tomenet.server ..
 
 mini_install: install
@@ -370,8 +370,8 @@ tomenet: $(CLI_OBJS)
 # Build the "MAngband" remote console
 #
 
-mangconsole: $(CONS_OBJS)
-	$(CC) $(CFLAGS) -o mangconsole $(CONS_OBJS) $(LDFLAGS) $(LIBS)
+tomenet.console: $(CONS_OBJS)
+	$(CC) $(CFLAGS) -o tomenet.console $(CONS_OBJS) $(LDFLAGS) $(LIBS)
 
 
 $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c

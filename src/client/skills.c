@@ -251,7 +251,7 @@ void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 
 //	c_prt(TERM_WHITE, "TomeNET Skills Screen", 0, 28);
 //	c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:2,8,j,k  fold:<CR>,c,o  advance:6,l]", 0, 0);
-	if (rogue_like_commands)
+	if (c_cfg.rogue_like_commands)
 	{
 		c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:j,k,g,G,#  fold:<CR>,c,o  advance:l]", 0, 0);
 	}
@@ -705,7 +705,7 @@ int do_cmd_activate_skill_aux()
 		c_msg_print("You dont have any activable skills.");
 		return -1;
 	}
-	if (max == 1 && quick_messages)
+	if (max == 1 && c_cfg.quick_messages)
 	{
 		return p[0];
 	}

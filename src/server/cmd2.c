@@ -2461,14 +2461,8 @@ void do_cmd_fire(int Ind, int dir)
 	p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
 
 	/* Check if monsters around him/her hinder this */
-	/* TODO: this should be affected by 'archery' skill */
-//	if (interfere(Ind, p_ptr->pclass == CLASS_ARCHER ? 12 : 15)) return;
-        if (interfere(Ind, 25)) return;
-		/*
-        if (interfere(Ind, 20 *
-                      (100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
-		  return;
-		*/
+//  if (interfere(Ind, cfg.spell_interfere * 3)) return;
+	if (interfere(Ind, 25)) return;
 
 	if (!boomerang && cursed_p(o_ptr) && magik(50))
 	{
@@ -2605,9 +2599,6 @@ void do_cmd_fire(int Ind, int dir)
 					break;
 				}
 		}
-
-		/* Get extra "power" from "extra might" */
-		if (p_ptr->xtra_might) tmul++;
 	}
 	else
 	{
@@ -2621,12 +2612,13 @@ void do_cmd_fire(int Ind, int dir)
 		/* Assume a base multiplier */
 		tmul = 1;
 
-		/* Get extra "power" from "extra might" (tho this shouldn't happen) */
-		if (p_ptr->xtra_might) tmul++;
-
 		/* Hack -- sorta magic */
 		magic = TRUE;
 	}
+
+	/* Get extra "power" from "extra might" */
+//	if (p_ptr->xtra_might) tmul++;
+	tmul += p_ptr->xtra_might;
 
 	/* Boost the damage */
 	tdam *= tmul;
@@ -2634,6 +2626,8 @@ void do_cmd_fire(int Ind, int dir)
 	/* Base range */
 	tdis = 10 + 5 * tmul;
 
+	/* Play fairly */
+	if (tdis > MAX_RANGE) tdis = MAX_RANGE;
 
 	/* Start at the player */
 	y = p_ptr->py;

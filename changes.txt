@@ -1396,6 +1396,19 @@ To find the latest change quickly, search ==== :)
 [B] demon/undead could pick up KILL_DEMON/KILL_UNDEAD weps.
 [H] general store('1') doesn't sell so much Amans and *Brightness*es
 
+18/07/2002 (Jir)
+- client option variables are bandled in a struct (c_opt)
+- CHEEZELOG_LEVEL (better runtime-option?)
+- take a log when money is transfered between players.
+- mangconsole => tomenet.console
+- version_build()
+- player forgets of seen objects on NOMAP floor.
+- makeshift 'character edit mode' (/quit 1024)
+[B] option '-r' put the server into infinite-loop (genwild)
+[B] xtra_might from Archery-tree skills didn't work correctly.
+[H] RF5_CURSE toned down in low lv and toned up in high lv
+[H] ego rarity control in stores (STORE_EGO_CHANCE)
+[H] arrow range is limited by MAX_RANGE to prevent 'long-corridor cheeze'
 
 
 ** [B] stands for Bugfix.
@@ -1460,7 +1473,6 @@ below this line are the unfixed bugs known:
 [B] p_ptr->furry, lol
 [B] cannot 'run' near the outer permawall (run_test)
 [B] mon_vis, obj_vis etc. are messed while the player is off.
-[B] option '-r' puts the server into infinite-loop (genwild)
 [B] some ivents are not told to the players even when within the sight.
 [B] white '@' sometimes appear on the screen(eg. when targetting).
 [B] Martial-artist has strange +To RHit/+To RDam display.
@@ -1477,6 +1489,8 @@ below this line are the unfixed bugs known:
 [B] monsters sometimes drop '(nothing)' (Dread?)
 [B] strange gray spots in the dark.
 [B] 'Nothng to buy here.' when sunrise/sunset
+[B][C] X11 client doesn't accept keystrokes if screen is less than 80x24
+[B] 'You are shooting with a Boomerang.' is not so cool a msg
 [B] deallocator deallocates the floor that ghost is on!
 1 players on -1950ft of (32,32).
 Key_monk was killed by a Night mare.
@@ -1510,6 +1524,7 @@ deallocating -1950ft of (32,32)
      buggie, but saves the server from getting slowed by breeding..
 [B?] p_ptr->to_d_ranged is always 0.
 [B?] Yeek seems to receive the best store prices.
+[B?] meanless double egos like Elven Robe of Fire Resistance
 
 
 =============================================================================
@@ -1530,6 +1545,7 @@ memo and questions:
 - recall-depth array for each dungeons/towers
 - full colour-support in show_file
 - tombstone screen (maybe CONN_TOMB)
+  + which should be displayed, died or destroyed?
 - display "non-scoring mode" in '@' screen
 - torch/lantern shouldn't be EASY_KNOWN.
 - Nazgul rings should have corresponding names
@@ -1675,7 +1691,7 @@ memo and questions:
   + raise stats when gaining level, lower ones first
     (better wait for ToME skill system?)
   + more equipment slots in general (like Bracer)
-  + NO_GHOST, but not HELLISH mode
+  + being poison-resistant form should slow poison, etc
 - combat:
   + players should be able to interfere monsters' firing/casting?
   + 2-weapon combat
@@ -1704,6 +1720,7 @@ memo and questions:
   + options ('=') should be revised.
   + auto-retaliator should be able to handle non-item actions.
   + better character ('C') screen
+  + auto-inscriber for item attributes (eg. {StDxNeFASI})
 - stores:
   + one player shouldn't stay more than 1 minutes in a store?
   + stores should buy {cursed} potions/scrolls/wands etc?
