@@ -285,6 +285,11 @@ static int Init_setup(void)
 	/* XXX I know this ruins the meaning of Setup... sry	- Jir - */
 	for (i = 0; i < MAX_RACES; i++)
 	{
+		if (!race_info[i].title)
+		{
+			Setup.max_race = i;
+			break;
+		}
 //		strncpy(&Setup.race_title[i], race_info[i].title, 12);
 //		Setup.race_choice[i] = race_info[i].choice;
 		/* 1 for '\0', 4 for race_choice */
@@ -293,6 +298,11 @@ static int Init_setup(void)
 
 	for (i = 0; i < MAX_CLASS; i++)
 	{
+		if (!class_info[i].title)
+		{
+			Setup.max_class = i;
+			break;
+		}
 //		strncpy(&Setup.class_title[i], class_info[i].title, 12);
 		Setup.setup_size += strlen(class_info[i].title) + 1;
 	}
@@ -1206,14 +1216,14 @@ static int Handle_setup(int ind)
 			return -1;
 		}
 
-        for (i = 0; i < MAX_RACES; i++)
+        for (i = 0; i < Setup.max_race; i++)
         {
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
 //			Packet_printf(&connp->c, "%s%ld", Setup.race_title[i], Setup.race_choice[i]);
 			Packet_printf(&connp->c, "%s%ld", race_info[i].title, race_info[i].choice);
         }
 
-        for (i = 0; i < MAX_CLASS; i++)
+        for (i = 0; i < Setup.max_class; i++)
         {
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
 //			Packet_printf(&connp->c, "%s", Setup.class_title[i]);

@@ -1533,7 +1533,24 @@ player_race race_info[MAX_RACES] =
 		3,
                 0xFFFFFFFF,
                 50,
-                { 0 },
+				{
+                        /* Not banned, but hard */
+                        {
+                                SKILL_MAGIC,
+                                '+', 0,
+                                '%', 80,
+                        },
+                        {
+                                SKILL_MAGERY,
+                                '+', 0,
+                                '%', 80,
+                        },
+                        {
+                                SKILL_SORCERY,
+                                '+', 0,
+                                '%', 80,
+                        },
+				},
 	},
 
 	{
@@ -1547,7 +1564,24 @@ player_race race_info[MAX_RACES] =
 		3,
                 0xFFFFFFFF,
                 20,
-                { 0 },
+				{
+                        /* Not banned, but *hard* */
+                        {
+                                SKILL_MAGIC,
+                                '+', 0,
+                                '%', 50,
+                        },
+                        {
+                                SKILL_MAGERY,
+                                '+', 0,
+                                '%', 50,
+                        },
+                        {
+                                SKILL_SORCERY,
+                                '+', 0,
+                                '%', 50,
+                        },
+				},
 	},
 
 	{
@@ -1604,7 +1638,7 @@ player_race race_info[MAX_RACES] =
                 0xFFFFFFFF,
                 70,
                 {
-						/* Never ask me the reason why, I love boomerang :) */
+                        /* Never ask me the reason why, I love boomerang :) */
                         {
                                 SKILL_BOOMERANG,
                                 '+', 1000,
@@ -1639,7 +1673,7 @@ player_race race_info[MAX_RACES] =
                 95,
                 { 0 },
         },
-#if 1 // do not activate until I find a way to have a race in the server and not in the client
+#if 0 // do not activate until I find a way to have a race in the server and not in the client
         {
                 "Exp 626",
                 {  1,  2,  -3,  1,  2,  -3 },
