@@ -537,7 +537,7 @@ extern void update_monsters(bool dist);
 extern bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp);
 extern bool place_monster(int Depth, int y, int x, bool slp, bool grp);
 extern bool alloc_monster(int Depth, int dis, int slp);
-extern bool summon_specific(int Depth, int y1, int x1, int lev, int type);
+//extern bool summon_specific(int Depth, int y1, int x1, int lev, int s_clone, int type);
 extern bool multiply_monster(int m_idx);
 extern void update_smart_learn(int m_idx, int what);
 

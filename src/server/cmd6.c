@@ -2123,7 +2123,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				for (k = 0; k < randint(3); k++)
 				{
-					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0))
+					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, 0))
 					{
 						ident = TRUE;
 					}
@@ -2170,7 +2170,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				for (k = 0; k < randint(3); k++)
 				{
-					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), SUMMON_UNDEAD))
+					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_UNDEAD))
 					{
 						ident = TRUE;
 					}
@@ -2818,7 +2818,7 @@ void do_cmd_use_staff(int Ind, int item)
 		{
 			for (k = 0; k < randint(4); k++)
 			{
-				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0))
+				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, 0))
 				{
 					ident = TRUE;
 				}

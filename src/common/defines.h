@@ -3507,9 +3507,12 @@ that keeps many algorithms happy.
 #define RF7_AI_SPECIAL          0x00002000  /* For quests */
 #define RF7_NEUTRAL             0x00004000  /* Monster is neutral */
 
-#define RF7_ATTR_BREATH			0x20000000  /* Use client breath colouring */
+#define RF7_S_LOWEXP		0x08000000  /* Summons/Clones give little exp */
+#define RF7_S_NOEXP		0x10000000  /* Summons/Clones don't give exp */
+
+#define RF7_ATTR_BREATH		0x20000000  /* Use client breath colouring */
 #define RF7_MULTIPLY            0x40000000  /* Monster reproduces */
-#define RF7_DISBELIEVE			0x80000000	/* Antimagic shield */
+#define RF7_DISBELIEVE		0x80000000	/* Antimagic shield */
 
 
 /*
