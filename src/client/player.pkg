@@ -65,6 +65,19 @@ typedef unsigned int u32b;
 #define SKILL_DIG				44
 #define SKILL_SPELLRAD			45
 
+#define SKILL_CONVEYANCE        48
+#define SKILL_SPELL	   	49
+#define SKILL_MANA              50
+#define SKILL_FIRE              51
+#define SKILL_AIR               52
+#define SKILL_WATER             53
+#define SKILL_NATURE            54
+#define SKILL_EARTH             55
+#define SKILL_DIVINATION        56
+#define SKILL_TEMPORAL          57
+#define SKILL_META              58
+#define SKILL_MIND              59
+
 
 /* Ugly but needed */
 #define MAX_SKILLS              128

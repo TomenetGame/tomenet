@@ -5287,6 +5287,35 @@ bool fire_beam(int Ind, int typ, int dir, int dam)
 }
 
 /*
+ * Cast a cloud spell
+ * Stop if we hit a monster, act as a "ball"
+ * Allow "target" mode to pass over monsters
+ * Affect grids, objects, and monsters
+ */
+bool fire_wall(int Ind, int typ, int dir, int dam, int time)
+{
+	player_type *p_ptr = Players[Ind];
+	int tx, ty;
+
+	int flg = PROJECT_BEAM | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU;
+
+	/* Use the given direction */
+	tx = p_ptr->px + ddx[dir];
+	ty = p_ptr->py + ddy[dir];
+
+	/* Hack -- Use an actual "target" */
+	if ((dir == 5) && target_okay(Ind))
+	{
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
+	}
+	project_time = time;
+
+	/* Analyze the "dir" and the "target", do NOT explode */
+	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg));
+}
+
+/*
  * Cast a bolt spell, or rarely, a beam spell
  */
 bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam)

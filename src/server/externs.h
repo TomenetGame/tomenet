@@ -1052,6 +1052,7 @@ extern void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern bool lite_area(int Ind, int dam, int rad);
 extern bool unlite_area(int Ind, int dam, int rad);
 extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad);
+extern bool fire_wall(int Ind, int typ, int dir, int dam, int time);
 extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time);
 extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam);

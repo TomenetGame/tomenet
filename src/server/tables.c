@@ -2014,42 +2014,72 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SORCERY,
                                 '+', 0,
-                                '+', 400,	// 600.. too useful
+                                '+', 500,
                         },
                         {
-                                SKILL_CASTSPEED,
+                                SKILL_SPELL,
                                 '+', 0,
                                 '+', 500,
                         },
                         {
-                                SKILL_MAGERY,
+                                SKILL_MANA,
                                 '+', 1000,
-                                '+', 400,	// 600.. too useful
+                                '+', 600,
                         },
                         {
-                                SKILL_SHADOW,
+                                SKILL_FIRE,
                                 '+', 0,
-                                '+', 500,	// 600.. too useful
+                                '+', 600,
                         },
                         {
-                                SKILL_SPELLLENGTH,
+                                SKILL_AIR,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_EARTH,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_WATER,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_NATURE,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_DIVINATION,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_CONVEYANCE,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_META,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_MIND,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_TEMPORAL,
+                                '+', 0,
+                                '+', 600,
                         },
                         {
                                 SKILL_MIMIC,
                                 '+', 0,
                                 '+', 300,	/* I'd give 200 */
-                        },
-                        {
-                                SKILL_PRAY,
-                                '+', 0,
-                                '+', 500,	// 600.. too useful
-                        },
-                        {
-                                SKILL_SPELLRAD,
-                                '+', 0,
-                                '+', 500,
                         },
 
                         /* Sneakiness tree */
@@ -2317,21 +2347,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                         },
                         {
-                                SKILL_MAGERY,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_SORCERY,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_CASTSPEED,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
                                 SKILL_DEVICE,
                                 '+', 1000,
                                 '+', 1000,
@@ -2371,6 +2386,73 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_TRAINING,
                                 '+', 3000,
                                 '+', 1000,
+                        },
+
+
+                        {
+                                SKILL_SORCERY,
+                                '+', 0,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_SPELL,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_MANA,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_FIRE,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_AIR,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_EARTH,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_WATER,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_NATURE,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_DIVINATION,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_CONVEYANCE,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_META,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_MIND,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_TEMPORAL,
+                                '+', 0,
+                                '+', 900,
                         },
                 }
 	},

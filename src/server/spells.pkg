@@ -20,8 +20,6 @@ typedef unsigned int u32b;
 
 #define PR_MANA		128
 
-#define SKILL_CONVEYANCE		48
-
 #define DEFAULT_RADIUS			18
 
 #define GF_ELEC         1
@@ -120,6 +118,8 @@ typedef unsigned int u32b;
 #define GF_HERO_PLAYER  132
 #define GF_SHERO_PLAYER  133
 
+#define GF_UNBREATH     134
+
 #define GF_TELE_TO		150
 #define GF_HAND_DOOM	151
 #define GF_STASIS       152
@@ -176,6 +176,40 @@ extern int set_water_destroy(object_type *o_ptr);
 extern int minus_ac(int Ind, int water);
 extern int inven_damage(int Ind, inven_func typ, int perc);
 //extern int inven_damage(int Ind, object_type *typ, int perc);
+extern bool set_oppose_acid(int Ind, int v);
+extern bool set_oppose_elec(int Ind, int v);
+extern bool set_oppose_fire(int Ind, int v);
+extern bool set_oppose_cold(int Ind, int v);
+extern bool set_oppose_pois(int Ind, int v);
+extern bool set_invuln_short(int Ind, int v);
+extern bool set_biofeedback(int Ind, int v);
+extern bool set_adrenaline(int Ind, int v);
+extern bool set_tim_esp(int Ind, int v);
+extern bool set_st_anchor(int Ind, int v);
+extern bool set_prob_travel(int Ind, int v);
+extern bool set_mimic(int Ind, int v, int p);
+extern bool set_tim_traps(int Ind, int v);
+extern bool set_tim_manashield(int Ind, int v);
+extern bool set_invis(int Ind, int v, int p);
+extern bool set_fury(int Ind, int v);
+extern bool set_tim_meditation(int Ind, int v);
+extern bool set_tim_wraith(int Ind, int v);
+extern bool set_blind(int Ind, int v);
+extern bool set_confused(int Ind, int v);
+extern bool set_poisoned(int Ind, int v);
+extern bool set_afraid(int Ind, int v);
+extern bool set_paralyzed(int Ind, int v);
+extern bool set_image(int Ind, int v);
+extern bool set_fast(int Ind, int v);
+extern bool set_slow(int Ind, int v);
+extern bool set_shield(int Ind, int v);
+extern bool set_blessed(int Ind, int v);
+extern bool set_hero(int Ind, int v);
+extern bool set_shero(int Ind, int v);
+extern bool set_protevil(int Ind, int v);
+extern bool set_invuln(int Ind, int v);
+extern bool set_tim_invis(int Ind, int v);
+extern bool set_tim_infra(int Ind, int v);
 
 /* spells2.c */
 extern bool heal_insanity(int Ind, int val);
@@ -239,6 +273,7 @@ extern void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern bool lite_area(int Ind, int dam, int rad);
 extern bool unlite_area(int Ind, int dam, int rad);
 extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad);
+extern bool fire_wall(int Ind, int typ, int dir, int dam, int time);
 extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time);
 extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam);

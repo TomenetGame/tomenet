@@ -1014,7 +1014,7 @@ byte spell_color(int type)
 		case GF_FIRE:           return (TERM_FIRE);
 		case GF_COLD:           return (TERM_COLD);
 		case GF_POIS:           return (TERM_POIS);
-//		case GF_UNBREATH:       return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
+		case GF_UNBREATH:       return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
 //		case GF_HOLY_ORB:	return (TERM_L_DARK);
 		case GF_HOLY_ORB:		 return (randint(6)==1?TERM_RED:TERM_L_DARK);
 		case GF_HOLY_FIRE:      return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
@@ -3902,7 +3902,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-			/* Poison */
+                /* Poison */
 		case GF_POIS:
 		{
 			if (seen) obvious = TRUE;
@@ -3911,6 +3911,20 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note = " resists a lot.";
 				dam /= 9;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
+			}
+			break;
+		}
+
+		/* Thick Poison */
+		case GF_UNBREATH:
+		{
+			if (seen) obvious = TRUE;
+//			if (magik(15)) do_pois = (10 + randint(11) + r) / (r + 1);
+			if ((r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)))
+			{
+				note = " is immune.";
+				dam = 0;
+//				do_pois = 0;
 			}
 			break;
 		}

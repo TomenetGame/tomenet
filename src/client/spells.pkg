@@ -20,8 +20,6 @@ typedef unsigned int u32b;
 
 #define DEFAULT_RADIUS			18
 
-#define SKILL_CONVEYANCE		48
-
 /*
  * The spell function must provide the desc
  */

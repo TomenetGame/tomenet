@@ -266,6 +266,70 @@ D:Spells use the intelligence stat
 A:11:Cast a spell
 I:1000:0
 
+N:49:Spell-power
+D:Ability to Increase the power of known spells
+I:1000:0
+
+N:50:Mana
+D:Ability to learn and use spells from the Mana school
+D:Spells use the intelligence stat
+A:11:Cast a spell
+I:1000:0
+
+N:51:Fire
+D:Ability to learn and use spells from the Fire school
+D:Spells use the intelligence stat
+A:11:Cast a spell
+I:1000:0
+
+N:52:Air
+D:Ability to learn and use spells from the Air school
+D:Spells use the intelligence stat
+A:11:Cast a spell
+I:1000:0
+
+N:53:Water
+D:Ability to learn and use spells from the Water school
+D:Spells use the intelligence stat
+A:11:Cast a spell
+I:1000:0
+
+N:54:Nature
+D:Ability to learn and use spells from the Nature school
+D:Spells use the intelligence stat
+A:11:Cast a spell
+I:1000:0
+
+N:55:Earth
+D:Ability to learn and use spells from the Earth school
+D:Spells use the intelligence stat
+A:11:Cast a spell
+I:1000:0
+
+N:56:Divination
+D:Ability to learn and use spells from the Divination school
+D:Spells use the intelligence stat
+A:11:Cast a spell
+I:1000:0
+
+N:57:Temporal
+D:Ability to learn and use spells from the Temporal school
+D:Spells use the intelligence stat
+A:11:Cast a spell
+I:1000:0
+
+N:58:Meta
+D:Ability to learn and use spells from the Meta school
+D:Spells use the intelligence stat
+A:11:Cast a spell
+I:1000:0
+
+N:59:Mind
+D:Ability to learn and use spells from the Mind school
+D:Spells use the intelligence stat
+A:11:Cast a spell
+I:1000:0
+
 #
 # Skill interactions
 #
@@ -318,19 +382,19 @@ O:Martial Arts:Sorcery%100
 
 # All magic skills affect magic skill
 f:Magic-device:Magic%7
-#f:Spell-power:Magic%20
+f:Spell-power:Magic%20
 f:Sorcery:Magic%20
-#f:Mana:Magic%10
-#f:Fire:Magic%10
-#f:Air:Magic%10
-#f:Water:Magic%10
-#f:Earth:Magic%10
+f:Mana:Magic%10
+f:Fire:Magic%10
+f:Air:Magic%10
+f:Water:Magic%10
+f:Earth:Magic%10
 f:Conveyance:Magic%10
-#f:Divination:Magic%10
-#f:Nature:Magic%10
-#f:Temporal:Magic%10
-#f:Meta:Magic%10
-#f:Mind:Magic%10
+f:Divination:Magic%10
+f:Nature:Magic%10
+f:Temporal:Magic%10
+f:Meta:Magic%10
+f:Mind:Magic%10
 #f:Udun:Magic%10
 #f:Demonology:Magic%10
 #f:Necromancy:Magic%4
@@ -349,19 +413,19 @@ f:Revelation:Magic%5
 
 # Antimagic exclude all magic
 E:Magic-device:Antimagic
-#f:Spell-power:Magic%20
+f:Spell-power:Magic%20
 E:Sorcery:Antimagic
-#f:Mana:Magic%10
-#f:Fire:Magic%10
-#f:Air:Magic%10
-#f:Water:Magic%10
-#f:Earth:Magic%10
+f:Mana:Magic%10
+f:Fire:Magic%10
+f:Air:Magic%10
+f:Water:Magic%10
+f:Earth:Magic%10
 E:Conveyance:Antimagic
-#f:Divination:Magic%10
-#f:Nature:Magic%10
-#f:Temporal:Magic%10
-#f:Meta:Magic%10
-#f:Mind:Magic%10
+f:Divination:Magic%10
+f:Nature:Magic%10
+f:Temporal:Magic%10
+f:Meta:Magic%10
+f:Mind:Magic%10
 #f:Udun:Magic%10
 #f:Demonology:Magic%10
 #f:Necromancy:Magic%4
@@ -429,33 +493,26 @@ T:Combat:Martial Arts
 T:Main:Magic
 T:Magic:Magic-device
 #T:Magic:Spell-learning
-#T:Magic:Spell-power
+T:Magic:Spell-power
 T:Magic:Sorcery
-#T:Magic:Mana
-#T:Magic:Fire
-#T:Magic:Water
-#T:Magic:Air
-#T:Magic:Earth
-#T:Magic:Meta
+T:Magic:Mana
+T:Magic:Fire
+T:Magic:Water
+T:Magic:Air
+T:Magic:Earth
+T:Magic:Meta
 T:Magic:Conveyance
-#T:Magic:Divination
-#T:Magic:Temporal
-#T:Magic:Mind
-#T:Magic:Nature
+T:Magic:Divination
+T:Magic:Temporal
+T:Magic:Mind
+T:Magic:Nature
 #T:Magic:Udun
 #T:Magic:Demonology
 #T:Magic:Necromancy
 #T:Magic:Runecraft
 #T:Magic:Thaumaturgy
 #T:Magic:Alchemy
-T:Magic:Sorcery
-T:Sorcery:Casting-speed
-T:Magic:Magery
-T:Magic:Shadow
-T:Shadow:Spell-duration
 T:Magic:Mimicry
-T:Magic:Prayer
-T:Prayer:Revelation
 
 #T:Main:Spirituality
 #T:Spirituality:Prayer

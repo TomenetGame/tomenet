@@ -2662,6 +2662,8 @@ that keeps many algorithms happy.
 #define GF_HERO_PLAYER  132
 #define GF_SHERO_PLAYER  133
 
+#define GF_UNBREATH     134
+
 #define GF_TELE_TO		150
 #define GF_HAND_DOOM	151
 #define GF_STASIS       152
@@ -4929,6 +4931,17 @@ extern int PlayerUID;
 /* School skills */
 #define SKILL_CONVEYANCE        48
 #define SKILL_SPELL				49
+#define SKILL_MANA              50
+#define SKILL_FIRE              51
+#define SKILL_AIR               52
+#define SKILL_WATER             53
+#define SKILL_NATURE            54
+#define SKILL_EARTH             55
+#define SKILL_DIVINATION        56
+#define SKILL_TEMPORAL          57
+#define SKILL_META              58
+#define SKILL_MIND              59
+
 
 #if 0	/* skills to come	- Jir - */
 #define SKILL_CLIMB
