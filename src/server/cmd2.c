@@ -3099,7 +3099,7 @@ void do_cmd_fire(int Ind, int dir)
 								}
 
 								/* Apply special damage XXX XXX XXX */
-								tdam = tot_dam_aux_player(o_ptr, tdam, q_ptr);
+								tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr);
 								tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
 
 								/* No negative damage */
@@ -3832,7 +3832,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 					}
 
 					/* Apply special damage XXX XXX XXX */
-					tdam = tot_dam_aux_player(o_ptr, tdam, q_ptr);
+					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr);
 					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
 
 					/* No negative damage */
