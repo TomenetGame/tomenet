@@ -687,6 +687,8 @@ Change list for PernMangband
 20/01/2002 (Evileye)
 - Islands in the sea for Olorin
 - removed old house code.
+- fixed bug in check_antimagic()
+- fixed client bug with store size
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.

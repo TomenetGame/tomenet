@@ -28,7 +28,7 @@ static void init_arrays(void)
 	message__tail = MESSAGE_BUF;
 
 	/* Initialize room for the store's stock */
-	C_MAKE(store.stock, 24, object_type);
+	C_MAKE(store.stock, STORE_INVEN_MAX, object_type);
 }
 
 /*
