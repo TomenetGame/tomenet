@@ -2004,6 +2004,10 @@ struct server_opts
 	s16b running_speed;
 	s16b anti_scum;
 	s16b dun_unusual;
+	s16b town_x, town_y;
+	s16b town_base;
+	s16b dun_base;
+	s16b dun_max;
 	bool report_to_meta;
 	bool secret_dungeon_master;
 	bool anti_arts_horde;

@@ -641,8 +641,12 @@ Change list for PernMangband
 [B] some of holy animals didn't do any damage.
 
 12/01/2002 (Evileye)
-- Added a wilderness generator (test)
-- Reenabled and fixed the wild mapping function (still more fixes needed)
+- Added a wilderness generator (test).
+- Reenabled and fixed the wild mapping function (still more fixes needed).
+- Configuration options for initial town/dungeon added.
+- Players' initial wilderness map includes town now.
+- Players have view of suburbs now.
+- Fixed a number of similar town radius omission bugs.
 
 
 
@@ -653,9 +657,7 @@ Change list for PernMangband
 
 ==== below this line are the unfixed bugs known ====
 [B] Self-reproducing black trap
-[B] Wilderness map('M') is not available.
 [B] Panic save often enters into infinite loop.
-[B] Player forgets the memory of suburb areas (not a bug?)
 [B] Recalling in wilderness dungeons/towers always cause infinite loop.
 [B] Restarting server erases all the floor.
 [B] House doors still seem to crash sometimes.

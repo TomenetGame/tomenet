@@ -4529,7 +4529,7 @@ void do_cmd_own(int Ind)
 	}
 	
 #ifdef NEW_DUNGEON
-	if(istown(&p_ptr->wpos))
+	if(istown(&p_ptr->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<3))
 #else
 	if (p_ptr->dun_depth > -13)
 #endif

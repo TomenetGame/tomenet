@@ -4745,8 +4745,8 @@ void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool g
 	worldpos wpos;
 
 	/* CHANGEME */
-	wpos.wx = MAX_WILD_X / 2;
-	wpos.wy = MAX_WILD_Y / 2;
+	wpos.wx = cfg.town_x;
+	wpos.wy = cfg.town_y;
 	wpos.wz = Depth > 0 ? 0 - Depth : Depth;
 	apply_magic(&wpos, o_ptr, lev, okay, good, great);
 }

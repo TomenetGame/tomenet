@@ -243,7 +243,7 @@ void init_wild_info()
 */
 	initwild();
 	genwild();
-	addtown(MAX_WILD_Y/2, MAX_WILD_X/2, 0, 0);	/* base town */
+	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0);	/* base town */
 	init_wild_info_aux(0,0);
 }
 #else
@@ -3052,8 +3052,6 @@ void wilderness_gen(int Depth)
 }
 
 
-#define MAX_WILD_X 64
-#define MAX_WILD_Y 64
 #define MAXISLAND 5	/* maximum island size */
 #define MAXMOUNT 3	/* maximum mountain range size */
 #define MAXWOOD 3	/* maximum forest size */
@@ -3249,8 +3247,8 @@ void addrivers(){
 void genwild(){
 	int j,i;
 	printf("genwild\n");
-	island(32,32,WILD_GRASSLAND, WILD_UNDEFINED,5);
-	wild_info[32][32].type=WILD_TOWN;
+	island(cfg.town_y, cfg.town_x,WILD_GRASSLAND, WILD_UNDEFINED,5);
+	wild_info[cfg.town_y][cfg.town_x].type=WILD_TOWN;
 	makeland();
 	for(j=0;j<MAX_WILD_Y;j++){
 		for(i=0;i<MAX_WILD_X;i++){

@@ -888,7 +888,11 @@ static void player_wipe(int Ind)
 		p_ptr->wild_map[i] = 0;
 
 	/* Hack -- assume the player has an initial knowledge of the area close to town */
+#ifdef NEW_DUNGEON
+	p_ptr->wild_map[(cfg.town_x+cfg.town_y*MAX_WILD_X)/8]|=1<<((cfg.town_x+cfg.town_y*MAX_WILD_X)%8);
+#else
 	for (i = 0; i < 13; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
+#endif
 
 	/* Esp link */
 	p_ptr->esp_link_end = 0;
@@ -1247,8 +1251,8 @@ static void player_setup(int Ind)
 #ifdef NEW_DUNGEON
 	/* Default location if just starting */
 	if(wpos->wz==0 && wpos->wy==0 && wpos->wx==0 && p_ptr->py==0 && p_ptr->px==0){
-		p_ptr->wpos.wx=MAX_WILD_X/2;
-		p_ptr->wpos.wy=MAX_WILD_X/2;
+		p_ptr->wpos.wx=cfg.town_x;
+		p_ptr->wpos.wy=cfg.town_y;
 		p_ptr->py=level_down_y(wpos);
 		p_ptr->px=level_down_x(wpos);
 	}
@@ -1354,8 +1358,7 @@ static void player_setup(int Ind)
 #endif
 	/* Memorize town */
 #ifdef NEW_DUNGEON
-	//if(!wpos->wz && wpos->wy==MAX_WILD_Y/2 && wpos->wx==MAX_WILD_X/2)
-	if(istown(wpos))
+	if (istown(wpos))
 #else
 	if (!Depth)
 #endif

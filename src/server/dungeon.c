@@ -2385,8 +2385,8 @@ static void process_player_end(int Ind)
 						/* lazy -- back to the centre of the world
 						 * this should be changed so that it lands him/her
 						 * back to the last town (s)he visited.	*/
-						p_ptr->recall_pos.wx = MAX_WILD_X/2;
-						p_ptr->recall_pos.wy = MAX_WILD_Y/2;
+						p_ptr->recall_pos.wx = cfg.town_x;
+						p_ptr->recall_pos.wy = cfg.town_y;
 					}
 
 					new_pos.wx = p_ptr->recall_pos.wx;
@@ -3436,7 +3436,7 @@ void dungeon(void)
 		/* Memorize the town and all wilderness levels close to town */
 #ifdef NEW_DUNGEON
 		/* EE, didn't you forget to add suburbs? */
-		if (istown(wpos))
+		if (istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius <=2))
 #else
 		if (Depth <= 0 ? (wild_info[Depth].radius <= 2) : 0)
 #endif
@@ -4153,8 +4153,8 @@ void play_game(bool new_game)
 	{
 #ifdef NEW_DUNGEON
 		struct worldpos twpos;
-		twpos.wx=MAX_WILD_X/2;
-		twpos.wy=MAX_WILD_Y/2;
+		twpos.wx=cfg.town_x;
+		twpos.wy=cfg.town_y;
 		twpos.wz=0;
 		/* Allocate space for it */
 		alloc_dungeon_level(&twpos);

@@ -2200,6 +2200,26 @@ void set_server_option(char * option, char * value)
 	{
 		cfg.dun_unusual = atoi(value);
 	}
+	else if (!strcmp(option, "TOWN_X"))
+	{
+		cfg.town_x = atoi(value);
+	}
+	else if (!strcmp(option, "TOWN_Y"))
+	{
+		cfg.town_y = atoi(value);
+	}
+	else if (!strcmp(option, "TOWN_BASE"))
+	{
+		cfg.town_base = atoi(value);
+	}
+	else if (!strcmp(option, "DUNGEON_MAX"))
+	{
+		cfg.dun_max = atoi(value);
+	}
+	else if (!strcmp(option, "DUNGEON_BASE"))
+	{
+		cfg.dun_base = atoi(value);
+	}
 	else printf("Error : unrecognized mangband.cfg option %s\n", option);
 }
 

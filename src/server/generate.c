@@ -6068,9 +6068,9 @@ void generate_cave(int Depth)
 			panel_col = max_panel_cols;*/
 
 #ifdef NEW_DUNGEON
-			if(wpos->wx==MAX_WILD_X/2 && wpos->wy==MAX_WILD_Y/2 && !wpos->wz){
+			if(wpos->wx==cfg.town_x && wpos->wy==cfg.town_y && !wpos->wz){
 				/* town of angband */
-				adddungeon(wpos, 1, 200, DUNGEON_RANDOM, NULL, NULL, FALSE);
+				adddungeon(wpos, cfg.dun_base, cfg.dun_max, DUNGEON_RANDOM, NULL, NULL, FALSE);
 			}
 #endif
 			/* Make a town */
