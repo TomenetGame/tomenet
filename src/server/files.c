@@ -783,7 +783,7 @@ static void display_player_middle(int Ind)
 		adv_exp = 0;
         else
         {
-                s64b adv = (player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L);
+                s64b adv = ((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
                 adv_exp = (s32b)(adv);
         }
 

@@ -2507,7 +2507,7 @@ void check_experience(int Ind)
 
 	/* Lose levels while possible */
 	while ((p_ptr->lev > 1) &&
-               (p_ptr->exp < ((s64b)(player_exp[p_ptr->lev-2] * p_ptr->expfact / 100L))))
+               (p_ptr->exp < ((s64b)((s64b)player_exp[p_ptr->lev-2] * (s64b)p_ptr->expfact / 100L))))
 	{
 		/* Lose a level */
 		p_ptr->lev--;
@@ -2527,8 +2527,8 @@ void check_experience(int Ind)
 
 	/* Gain levels while possible */
         while ((p_ptr->lev < PY_MAX_LEVEL) &&
-               (p_ptr->exp >= ((s64b)(player_exp[p_ptr->lev-1] *
-                               p_ptr->expfact / 100L))))
+               (p_ptr->exp >= ((s64b)((s64b)player_exp[p_ptr->lev-1] *
+                               (s64b)p_ptr->expfact / 100L))))
 	{
 		/* Gain a level */
 		p_ptr->lev++;
