@@ -2619,7 +2619,6 @@ static bool process_player_end_aux(int Ind)
 	/* Thunderstorm */
 	if (p_ptr->tim_thunder)
 	{
-#if 0 // DGDGDG make it work :)
                 int dam = damroll(p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
 		int i, tries = 600;
 		monster_type *m_ptr = NULL;
@@ -2635,10 +2634,10 @@ static bool process_player_end_aux(int Ind)
 			if (!m_ptr->r_idx) continue;
 
 			/* Cant see ? cant hit */
-			if (!los(py, px, m_ptr->fy, m_ptr->fx)) continue;
+			if (!los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) continue;
 
 			/* Do not hurt friends! */
-			if (is_friend(m_ptr) >= 0) continue;
+			/* if (is_friend(m_ptr) >= 0) continue; */
 			break;
 		}
 
@@ -2646,17 +2645,16 @@ static bool process_player_end_aux(int Ind)
 		{
 			char m_name[80];
 
-			monster_desc(m_name, m_ptr, 0);
+			monster_desc(Ind, m_name, m_ptr, 0);
 			msg_format("Lightning strikes %s.", m_name);
-			project(0, 0, m_ptr->fy, m_ptr->fx, dam / 3, GF_ELEC,
+			project(0, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_ELEC,
 			        PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE);
-			project(0, 0, m_ptr->fy, m_ptr->fx, dam / 3, GF_LITE,
+			project(0, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_LITE,
 			        PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE);
-			project(0, 0, m_ptr->fy, m_ptr->fx, dam / 3, GF_SOUND,
+			project(0, 0, &p_ptr->wpos, m_ptr->fy, m_ptr->fx, dam / 3, GF_SOUND,
 			        PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE);
 		}
 
-#endif
 		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - 1, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
         }
 
