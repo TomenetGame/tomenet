@@ -6449,7 +6449,7 @@ void imprison(int Ind, char *reason){
 			if(!(nzcave=getcave(&houses[i].wpos))){
 				alloc_dungeon_level(&houses[i].wpos);
 				generate_cave(&houses[i].wpos);
-				nzcave=getcave(&houses[i].wpos);
+				/* nzcave=getcave(&houses[i].wpos); */
 			}
 			new_players_on_depth(&p_ptr->wpos, -1, TRUE);
 			zcave[p_ptr->py][p_ptr->px].m_idx=0;
@@ -6460,11 +6460,13 @@ void imprison(int Ind, char *reason){
 			wpcopy(&p_ptr->wpos, &houses[i].wpos);
 			p_ptr->py=houses[i].y;
 			p_ptr->px=houses[i].x;
-			nzcave[p_ptr->py][p_ptr->px].m_idx=(0-Ind);
+
+			/* that messes it up */
+			/* nzcave[p_ptr->py][p_ptr->px].m_idx=(0-Ind); */
 			new_players_on_depth(&p_ptr->wpos, 1, TRUE);
 
 			p_ptr->new_level_flag=TRUE;
-			p_ptr->new_level_method=LEVEL_OUTSIDE_HOUSE;
+			p_ptr->new_level_method=LEVEL_HOUSE;
 
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 			sprintf(string, "\377v%s was jailed for %s", p_ptr->name, reason);
