@@ -4837,6 +4837,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	s32b		new_exp, new_exp_frac;
 	bool old_tacit = suppress_message;
 
+	long tmp_exp;
+
 
 	/* Redraw (later) if needed */
 	update_health(m_idx);
@@ -4856,7 +4858,11 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		char m_name[80];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 //		long tmp_exp = (long)r_ptr->mexp * r_ptr->level;
-		long tmp_exp = (long)r_ptr->mexp * m_ptr->level;
+		/* Had to change it for Halloween -C. Blue */
+		if(m_ptr->level == 0)
+		tmp_exp = (long)r_ptr->mexp;
+		else
+		tmp_exp = (long)r_ptr->mexp * m_ptr->level;
 
 		/* Hack -- remove possible suppress flag */
 		suppress_message = FALSE;
