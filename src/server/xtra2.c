@@ -143,7 +143,11 @@ bool set_biofeedback(int Ind, int v)
 	/* Shut */
 	else
 	{
-		msg_print(Ind, "Your veins return to normal.");
+		if (p_ptr->biofeedback)
+		{
+			msg_print(Ind, "Your veins return to normal.");
+			notice = TRUE;
+		}
 	}
 				
 	while (v > 35 + rand_int(rand_int(p_ptr->lev)))

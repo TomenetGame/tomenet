@@ -395,13 +395,13 @@ static bool player_handle_trap_of_hostility(int Ind)
 	if (id != 0)
 	{
 		ident = TRUE;
-		/* If (s)he's party owner, disband it */
+		/* If (s)he's party owner, everyone leaves it */
 		if (streq(parties[id].owner, p_ptr->name))
 		{
 			//	del_party(party_id);	// check it!!
 			/* Remove the party altogether */
 			/* (probably it's too severe?) */
-			kill_houses(id, OT_PARTY);
+//			kill_houses(id, OT_PARTY);
 
 			/* Set the number of people in this party to zero */
 			parties[id].num = 0;
@@ -410,8 +410,11 @@ static bool player_handle_trap_of_hostility(int Ind)
 			for (i = 1; i <= NumPlayers; i++)
 			{
 				/* Check if they are in here */
-				if (player_in_party(id, i))
+				if (player_in_party(id, i) && i != Ind)
 				{
+					/* Lose a member */
+					parties[id].num--;
+
 					Players[i]->party = 0;
 					//					msg_print(i, "Your party has been disbanded.");
 					Send_party(i);
@@ -419,10 +422,10 @@ static bool player_handle_trap_of_hostility(int Ind)
 			}
 
 			/* Set the creation time to "disbanded time" */
-			parties[id].created = turn;
+//			parties[id].created = turn;
 
 			/* Empty the name */
-			strcpy(parties[id].name, "");
+//			strcpy(parties[id].name, "");
 		}
 		/* otherwise, leave it */
 		else
@@ -2138,13 +2141,15 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       case TRAP_OF_NUKE_BOLT: ident=player_handle_breath_trap(1, GF_NUKE, trap); break;
       case TRAP_OF_HOLY_FIRE: ident=player_handle_breath_trap(1, GF_HOLY_FIRE, trap); break;
       case TRAP_OF_HELL_FIRE: ident=player_handle_breath_trap(1, GF_HELL_FIRE, trap); break;
-      case TRAP_OF_PSI_BOLT: ident=player_handle_breath_trap(1, GF_PSI, trap); break;
+#endif	// 0
+      case TRAP_OF_PSI_BOLT: ident=player_handle_breath_trap(Ind, 1, GF_PSI, trap); break;
+#if 0
       case TRAP_OF_PSI_DRAIN: ident=player_handle_breath_trap(1, GF_PSI_DRAIN, trap); break;
 
       /* Ball Trap */
       case TRAP_OF_NUKE_BALL: ident=player_handle_breath_trap(3, GF_NUKE, TRAP_OF_NUKE_BALL); break;
       case TRAP_OF_PSI_BALL: ident=player_handle_breath_trap(3, GF_PSI, TRAP_OF_NUKE_BALL); break;
-#endif
+#endif	// 0
 
 	/* PernMangband additions */
       /* Trap? of Ale vendor */
@@ -2206,6 +2211,18 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		 {
 			 ident = player_handle_trap_of_hostility(Ind);
 			 ident = FALSE;		// never known
+		 }
+      /* Voluminous cuisine Trap */
+      case TRAP_OF_CUISINE:
+         msg_print(Ind, "You are treated to a marvelous elven cuisine!");
+         (void)set_food(Ind, PY_FOOD_MAX + getlevel(&p_ptr->wpos) + 100 + rand_int(100));
+         ident=TRUE;
+         break;
+      /* Trap of unmagic */
+	  case TRAP_OF_UNMAGIC:
+		 {
+			 ident = unmagic(Ind);
+			 break;
 		 }
       default:
       {

@@ -760,10 +760,10 @@ F:FLOOR | CHEST | DOOR
 #D:Hellfire rises around you!
 #F:FLOOR | CHEST | DOOR | LEVEL3
 
-#N:166:Psi Bolt Trap
-#I:6:80:5:6:15:10d12:g
-#D:Your mind is suddenly blasted!
-#F:FLOOR | CHEST | DOOR | LEVEL3
+N:166:Psi Bolt Trap
+I:6:80:5:6:15:10d12:g
+D:Your mind is suddenly blasted!
+F:FLOOR | CHEST | DOOR | LEVEL3
 
 #N:167:Psi Drain Trap
 #I:6:80:5:6:15:8d10:r
@@ -794,20 +794,31 @@ F:FLOOR | DOOR | CHANGE
 
 # PernMangband traps	- Jir -
 
+# town-generatable
 N:171:Ale Vendor
 I:1:20:5:5:0:0d0:y
 D:You feel like having a shot.
 F:FLOOR | DOOR
 
 N:172:Garbage Trap
-I:3:30:5:5:10:0d0:w
+I:3:30:5:5:15:0d0:w
 D:You feel like a dustbinman!
 F:FLOOR | DOOR | CHEST
 
 N:173:Discordance Trap
-I:6:15:5:5:10:0d0:r
+I:6:15:5:5:10:0d0:W
 D:You're in a very bad mood!
 F:FLOOR | DOOR | CHEST
+
+N:174:Voluminous Cuisine Trap
+I:6:90:20:1:3:0d0:r
+D:Belch!
+F:FLOOR | CHEST | DOOR
+
+N:175:Unmagic Trap
+I:5:90:20:1:20:0d0:r
+D:This device disbelieves your feeble spells!
+F:FLOOR | CHEST | DOOR
 
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color

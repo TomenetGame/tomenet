@@ -3191,6 +3191,8 @@ extern int PlayerUID;
 #define TRAP_OF_ALE			171
 #define TRAP_OF_GARBAGE		172
 #define TRAP_OF_HOSTILITY	173
+#define TRAP_OF_CUISINE		174
+#define TRAP_OF_UNMAGIC		175
 
 #define TR_LIST(c_ptr) (c_ptr->special.ptr)
 

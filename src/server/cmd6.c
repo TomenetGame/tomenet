@@ -363,6 +363,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 		case SV_FOOD_UNMAGIC:
 		{
+#if 0
 			/*
 			set_adrenaline(Ind, 0);
 			set_biofeedback(Ind, 0);
@@ -371,6 +372,11 @@ void do_cmd_eat_food(int Ind, int item)
 			set_prob_travel( Ind, 0);
 			*/
 			if (
+				set_adrenaline(Ind, 0) |
+				set_biofeedback(Ind, 0) |
+				set_tim_esp(Ind, 0) |
+				set_st_anchor(Ind, 0) |
+				set_prob_travel( Ind, 0) |
 				set_bow_brand(Ind, 0, 0, 0) |
 				set_mimic(Ind, 0, 0) |
 				set_tim_manashield(Ind, 0) |
@@ -406,20 +412,23 @@ void do_cmd_eat_food(int Ind, int item)
 #endif
 				/* important! check for illegal spaces */
 #ifdef NEW_DUNGEON
-					if (in_bounds(p_ptr->py, p_ptr->px)) {
+					if (in_bounds(p_ptr->py, p_ptr->px))
 #else
-					if (in_bounds(p_ptr->dun_depth, p_ptr->py, p_ptr->px)) {
+					if (in_bounds(p_ptr->dun_depth, p_ptr->py, p_ptr->px))
 #endif
+					{
 #ifdef NEW_DUNGEON
-						if ((p_ptr->wpos.wz) || (cave_floor_bold(zcave, p_ptr->py, p_ptr->px))) {
+						if ((p_ptr->wpos.wz) || (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)))
 #else
-						if ((p_ptr->wpos.wz) || (cave_floor_bold(p_ptr->dun_depth, p_ptr->py, p_ptr->px))) {
+						if ((p_ptr->wpos.wz) || (cave_floor_bold(p_ptr->dun_depth, p_ptr->py, p_ptr->px)))
 #endif
+						{
 							if (set_tim_wraith(Ind, 0)) ident = TRUE;
 						}
 					}
 				}
-
+#endif	// 0
+			unmagic(Ind);
 			break;
 		}
 	}
@@ -4529,4 +4538,69 @@ void do_cmd_activate_dir(int Ind, int dir)
 
 	/* Success */
 	return;
+}
+
+bool unmagic(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	bool ident;
+	if (
+			set_adrenaline(Ind, 0) |
+			set_biofeedback(Ind, 0) |
+			set_tim_esp(Ind, 0) |
+			set_st_anchor(Ind, 0) |
+			set_prob_travel(Ind, 0) |
+			set_bow_brand(Ind, 0, 0, 0) |
+			set_mimic(Ind, 0, 0) |
+			set_tim_manashield(Ind, 0) |
+			set_tim_traps(Ind, 0) |
+			set_invis(Ind, 0, 0) |
+			set_furry(Ind, 0) |
+			set_tim_meditation(Ind, 0) |
+			//				set_tim_wraith(Ind, 0) |
+			set_fast(Ind, 0) |
+			set_shield(Ind, 0) |
+			set_blessed(Ind, 0) |
+			set_hero(Ind, 0) |
+			set_shero(Ind, 0) |
+			set_protevil(Ind, 0) |
+			set_invuln(Ind, 0) |
+			set_tim_invis(Ind, 0) |
+			set_tim_infra(Ind, 0) |
+			set_oppose_acid(Ind, 0) |
+			set_oppose_elec(Ind, 0) |
+			set_oppose_fire(Ind, 0) |
+			set_oppose_cold(Ind, 0) |
+			set_oppose_pois(Ind, 0)
+			) ident = TRUE;
+
+	/* In town it only runs out if you are not on a wall
+	 * To prevent breaking into houses */
+#ifdef NEW_DUNGEON
+	if (players_on_depth(&p_ptr->wpos)!= 0)
+#else
+	if (players_on_depth[p_ptr->dun_depth] != 0)
+#endif
+	{
+			/* important! check for illegal spaces */
+#ifdef NEW_DUNGEON
+		cave_type **zcave;
+		zcave=getcave(&p_ptr->wpos);
+		if (in_bounds(p_ptr->py, p_ptr->px))
+#else
+		if (in_bounds(p_ptr->dun_depth, p_ptr->py, p_ptr->px))
+#endif
+		{
+#ifdef NEW_DUNGEON
+			if ((p_ptr->wpos.wz) || (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)))
+#else
+			if ((p_ptr->wpos.wz) || (cave_floor_bold(p_ptr->dun_depth, p_ptr->py, p_ptr->px)))
+#endif
+			{
+				if (set_tim_wraith(Ind, 0)) ident = TRUE;
+			}
+		}
+	}
+
+	return (ident);
 }
