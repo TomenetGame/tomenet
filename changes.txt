@@ -1241,6 +1241,15 @@ To find the latest change quickly, search ==== :)
 - house door colouring
 [H] order of death msgs rearranged ("You're full!" no longer is last word)
 
+07/07/2002 (Jir)
+- cave_valid_bold is function now (it was broken).
+- only SPECIAL_GENE arts are protected from destruction spell.
+  (it prevents 'scum and destroy' cheeze)
+- destruction/earthquake erase the traps buried in walls.
+- KILL_DEMON and KILL_UNDEAD implemented (they weren't!)
+- monsters avoid to stand just N/E/S/W to the player
+[H] Potion of Infravision gives +50ft infravision in place of +10ft
+
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.

@@ -3897,6 +3897,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 #if SAFETY_RADIUS == 0
 		/* XXX XXX Not very "smart" */
 		y = (-y), x = (-x);
+
 #else
 		/* Try to find safe place */
 		if (!find_safety(Ind, m_idx, &y, &x))
@@ -3906,6 +3907,10 @@ static void get_moves(int Ind, int m_idx, int *mm)
 			x = (-x);
 		}
 #endif	// SAFETY_RADIUS
+		/* Hack -- run in zigzags */
+		if (!x) x = magik(50) ? y : -y;
+		if (!y) y = magik(50) ? x : -x;
+
 		done = TRUE;
 	}
 
@@ -4071,6 +4076,21 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	/* Extract the "absolute distances" */
 	ax = ABS(x);
 	ay = ABS(y);
+
+	if (!done)
+	{
+		/* Hack -- chase in zigzags */
+		if (ax < 2 && ay > 5)
+		{
+			x = (x > 0 || !x && magik(50)) ? ay : -ay;
+			ax = ay;
+		}
+		if (ay < 2 && ax > 5)
+		{
+			y = (y > 0 || !y && magik(50)) ? ax : -ax;
+			ay = ax;
+		}
+	}
 
 	/* Do something weird */
 	if (y < 0) move_val += 8;

@@ -1481,10 +1481,7 @@ static void process_player_end(int Ind)
 					if(!hit) hit=1;
 
 					/* temporary abs weight calc */
-					/* Hack: Take STR and DEX into consideration (max 51%) */
-					if(p_ptr->wt+p_ptr->total_weight/10 > 170 &&	// 190
-						!magik(adj_str_wgt[p_ptr->stat_ind[A_STR]]) &&
-						!magik(adj_str_wgt[p_ptr->stat_ind[A_DEX]]))
+					if(p_ptr->wt+p_ptr->total_weight/10 > 170)	// 190
 					{
 						int factor=(p_ptr->wt+p_ptr->total_weight/10)-150-swim;	// 170
 						/* too heavy, always drown? */
@@ -1493,6 +1490,11 @@ static void process_player_end(int Ind)
 							if(randint(factor)<20) hit=0;
 						}
 
+						/* Hack: Take STR and DEX into consideration (max 51%) */
+						if (magik(adj_str_wgt[p_ptr->stat_ind[A_STR]]) ||
+								magik(adj_str_wgt[p_ptr->stat_ind[A_DEX]]))
+							hit = 0;
+
 						if (!magik(swim)) hit = 0;
 
 						if (hit)
@@ -1500,7 +1502,7 @@ static void process_player_end(int Ind)
 							msg_print(Ind,"\377rYou're drowning!");
 						}
 
-						/* harm equipments */
+						/* harm equipments (even hit == 0) */
 						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
 								magik(WATER_ITEM_DAMAGE_CHANCE))
 						{

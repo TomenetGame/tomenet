@@ -2665,7 +2665,8 @@ static void calc_bonuses(int Ind)
 	/* Temporary infravision boost */
 	if (p_ptr->tim_infra)
 	{
-		p_ptr->see_infra++;
+//		p_ptr->see_infra++;
+		p_ptr->see_infra += 5;
 	}
 
 	/* Temporary st-anchor */

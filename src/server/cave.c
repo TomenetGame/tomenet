@@ -678,6 +678,47 @@ bool no_lite(int Ind)
 }
 
 
+/*
+ * Determine if a given location may be "destroyed"
+ *
+ * Used by destruction spells, and for placing stairs, etc.
+ */
+/* Borrowed from ToME, with some extra checks */
+bool cave_valid_bold(cave_type **zcave, int y, int x)
+{
+	cave_type *c_ptr = &zcave[y][x];
+
+	s16b this_o_idx, next_o_idx = 0;
+
+	u32b f1, f2, f3, f4, f5, esp, i;
+
+	/* Forbid perma-grids */
+//	if (cave_perma_grid(c_ptr)) return (FALSE);
+	if (cave_perma_bold(zcave, y, x)) return (FALSE);
+
+	/* Check objects */
+	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	{
+		object_type *o_ptr;
+
+		/* Acquire object */
+		o_ptr = &o_list[this_o_idx];
+
+		/* Acquire next object */
+		next_o_idx = o_ptr->next_o_idx;
+
+		/* Forbid artifact grids */
+		if (true_artifact_p(o_ptr))
+		{
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			if (f4 & TR4_SPECIAL_GENE) return (FALSE);
+		}
+	}
+
+	/* Accept */
+	return (TRUE);
+}
+
 
 
 

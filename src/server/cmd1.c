@@ -323,6 +323,24 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 				if (mult < 5) mult = 5;
 			}
 
+			/* Execute Undead */
+			if ((f5 & TR5_KILL_UNDEAD) &&
+			    (r_ptr->flags3 & RF3_UNDEAD))
+			{
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
+
+				if (mult < 5) mult = 5;
+			}
+
+			/* Execute Undead */
+			if ((f5 & TR5_KILL_DEMON) &&
+			    (r_ptr->flags3 & RF3_DEMON))
+			{
+				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
+
+				if (mult < 5) mult = 5;
+			}
+
 
 			/* Brand (Acid) */
 			if (f1 & TR1_BRAND_ACID)

@@ -34,6 +34,7 @@ Note:
     If any arguments are given, take everything off.
 
 /cast (book no. or slot no.) (spell sign) [target player's name] 
+    *** BROKEN ***  not available for now
     Cast the specified spell.
     This is especially useful to cast an assistant spell to another player.
     Exapmle: /cast 1 b DG

@@ -32,9 +32,41 @@ typedef unsigned int u32b;
 #define SKILL_CASTSPEED         13
 #define SKILL_SORCERY           14
 #define SKILL_MAGERY            15
+#define SKILL_MIMIC             16
+#define SKILL_DEVICE            17
+#define SKILL_SHADOW            18
+#define SKILL_PRAY              19
+#define SKILL_SPELLLENGTH       20
+#define SKILL_SNEAKINESS        21
+#define SKILL_DISARM            22
+#define SKILL_STEALTH           23
+#define SKILL_STEALING          24
+#define SKILL_NECROMANCY        25
+#define SKILL_ANTIMAGIC         26
+#define SKILL_AURA_POWER        27
+#define SKILL_AURA_FEAR         28
+#define SKILL_AURA_SHIVER       29
+#define SKILL_AURA_DEATH        30
+#define SKILL_HUNTING			31
+#define SKILL_TECHNIC			32
+#define SKILL_MISC              33
+#define SKILL_AGILITY			34
+#define SKILL_CALMNESS			35
+#define SKILL_SWIM				36
+#define SKILL_MARTIAL_ARTS		37
+#define SKILL_RICOCHET			38
+#define SKILL_BOOMERANG			39
+#define SKILL_TRAINING			40
+#define SKILL_INTERCEPT			41
+#define SKILL_DODGE				42
+#define SKILL_DODGE				42
+#define SKILL_HEALTH			43
+#define SKILL_DIG				44
+#define SKILL_SPELLRAD			45
+
 
 /* Ugly but needed */
-#define MAX_SKILLS              70
+#define MAX_SKILLS              128
 
 /* SKill flags */
 #define SKF1_HIDDEN             0x00000001      /* Starts hidden */
@@ -68,6 +100,8 @@ typedef unsigned int u32b;
 #define INVEN_HEAD      33
 #define INVEN_HANDS     34
 #define INVEN_FEET      35
+#define INVEN_AMMO      36 /* 1 quiver -- TORSO */
+#define INVEN_TOOL      37 /* 1 tool -- ARMS */
 
 /*
  * Total number of inventory slots (hard-coded).
@@ -197,9 +231,8 @@ struct player_type
 	byte male;			/* Sex of character */
 	byte oops;			/* Unused */
 
-        skill_player s_info[MAX_SKILLS]; /* Player skills */
-        s16b skill_points;      /* number of skills assignable */
-//        s16b skill_last_level;  /* last level we gained a skill point */
+	skill_player s_info[MAX_SKILLS]; /* Player skills */
+	s16b skill_points;      /* number of skills assignable */
 	
 	byte hitdie;		/* Hit dice (sides) */
 	s16b expfact;		/* Experience factor */

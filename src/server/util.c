@@ -1727,7 +1727,7 @@ static void server_knowledge(int Ind)
 
 	/* General information */
 	fprintf(fff, "Game speed(FPS): %d (%+d%%)\n", cfg.fps, (cfg.fps-60)*100/60);
-	fprintf(fff, "Player-running speed is boosted (x%d).\n", cfg.running_speed);
+	fprintf(fff, "Players' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
 	fprintf(fff, "While 'resting', HP/SP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
 
 	if (k=cfg.party_xp_boost)
@@ -1747,6 +1747,25 @@ static void server_knowledge(int Ind)
 
 	if (k=cfg.spell_stack_limit)
 		fprintf(fff, "Duration of assistance spells is limited to %d turns.\n", k);
+
+	k=cfg.use_pk_rules;
+	switch (k)
+	{
+		case PK_RULES_DECLARE:
+			fprintf(fff, "You should use /pk first to attack other players.\n", k);
+			break;
+
+		case PK_RULES_NEVER:
+			fprintf(fff, "You are not allowed to attack/rob other players.\n", k);
+			break;
+
+		case PK_RULES_TRAD:
+		default:
+			fprintf(fff, "You can attack/rob other players(but not recommended).\n", k);
+			break;
+	}
+
+	fprintf(fff,"\n");
 
 	/* level preservation */
 	if (cfg.no_ghost)
@@ -1777,11 +1796,11 @@ static void server_knowledge(int Ind)
 
 	if (k !=0)
 	{
-		if (k=cfg.unique_respawn_time)
-			fprintf(fff, "After winning the game, unique monsters will resurrect randomly.(%d)\n", k);
-
 		if (cfg.kings_etiquette)
 			fprintf(fff, "The winner is not allowed to carry/use artifacts(save Grond/Crown).\n");
+
+		if (k=cfg.unique_respawn_time)
+			fprintf(fff, "After winning the game, unique monsters will resurrect randomly.(%d)\n", k);
 	}
 
 	fprintf(fff,"\n");
@@ -1800,6 +1819,8 @@ static void server_knowledge(int Ind)
 			fprintf(fff, "  Lovecraft additions (%d%%)\n", cfg.cth_monsters);
 		if (cfg.joke_monsters)
 			fprintf(fff, "  Joke-monsters (%d%%)\n", cfg.joke_monsters);
+		if (cfg.pet_monsters)
+			fprintf(fff, "  Pet/neutral monsters (%d%%)\n", cfg.pet_monsters);
 	}
 	else
 	{
@@ -1817,7 +1838,8 @@ static void server_knowledge(int Ind)
 
 	/* trivial */
 	if (cfg.public_rfe)
-		fprintf(fff, "You can see RFE files via '&62' command.\n");
+//		fprintf(fff, "You can see RFE files via '&62' command.\n");
+		fprintf(fff, "You can see RFE files via '/less' command.\n");
 
 	if (!cfg.door_bump_open)
 		fprintf(fff, "You should use 'o' command explicitly to open a door.\n");
@@ -1843,7 +1865,7 @@ static void server_knowledge(int Ind)
 		fprintf(fff, "Angband: baselevel(%d) depth(%d)\n", cfg.dun_base, cfg.dun_max);
 
 		if (cfg.auto_purge)
-			fprintf(fff, "Non-used monsters/ojbs/traps are purged every 24H.\n");
+			fprintf(fff, "Non-used monsters/objects are purged every 24H.\n");
 
 		if (cfg.mage_hp_bonus)
 			fprintf(fff, "mage_hp_bonus is applied.\n");
@@ -2171,6 +2193,9 @@ static void do_slash_brief_help(int Ind)
  * D:/lua (LUA script command)
  */
 
+/* Allow to cast quickly when using '/cast'. (code by DEG) */
+// #define FRIENDLY_SPELL_BOOST
+
 static void do_slash_cmd(int Ind, char *message)
 {
 	int i;
@@ -2374,6 +2399,7 @@ static void do_slash_cmd(int Ind, char *message)
 		/* '/cast' code is written by Ascrep(DEG). thx! */
 		else if (prefix(message, "/cast"))
 		{
+			msg_print(Ind, "\377oSorry, /cast is not available for the time being.");
 #if 0 // TODO: make that work without dependance on CLASS_
                         int book, whichplayer, whichspell;
 			bool ami = FALSE;
@@ -3458,11 +3484,6 @@ static void do_slash_cmd(int Ind, char *message)
 	do_slash_brief_help(Ind);
 	return;
 }
-
-/*
- * Allow to cast quickly when using '/cast'. (code by DEG)
- */
-// #define FRIENDLY_SPELL_BOOST
 
 int checkallow(char *buff, int pos){
 	if(!pos) return(0);

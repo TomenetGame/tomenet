@@ -795,7 +795,8 @@ static void get_money(int Ind)
 		p_ptr->max_dlv = 200;
 		p_ptr->max_plv = 99;
 
-		for (i = 1; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = r_info[i].level;
+		/* use res_uni instead; it messes the unique list */
+//		for (i = 1; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = r_info[i].level;
 	}
 	else if (p_ptr->admin_dm)
 	{

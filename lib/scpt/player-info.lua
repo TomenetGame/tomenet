@@ -5,7 +5,7 @@
 -- display some information about a specified player.
 function p_in(i)
 -- +1 offset
-local p = Players[i+1]
+local p = players(i)
         
 -- Ind is global.
 	msg_print(Ind, "location: ("..p.px..","..p.py..") of ["..(p.wpos.wx)..","..(p.wpos.wy).."], "..(p.wpos.wz*50).."ft  AU:"..p.au)
@@ -18,7 +18,7 @@ end
 -- (prolly easier to use gdb..
 function o_in(i, j)
 -- +1 offset
-local o = Players[i+1].inventory[j+1]
+local o = players(i).inventory[j+1]
         
 -- Ind is global.
 	msg_print(Ind, "location: ("..o.ix..","..o.iy..") of ["..(o.wpos.wx)..","..(o.wpos.wy).."], "..(o.wpos.wz*50).."ft")
@@ -31,7 +31,7 @@ end
 -- give knowledge about traps
 function trap_k()
 local i = 0
-local p = Players[Ind+1]
+local p = players(Ind)
 -- for(i=0;i<255;i++)
 	while (i < 256)
 	do
@@ -42,7 +42,7 @@ end
 
 -- namely.
 function adj_xp(i, amt)
-local p = Players[i+1]
+local p = players(i)
 
 	p.max_exp = amt
 	p.exp = amt
@@ -52,7 +52,7 @@ end
 -- also nice to test mimics.
 function res_uni(state)
 local i = 0
-local p = Players[Ind+1]
+local p = players(Ind)
 -- for(i=0;i<255;i++)
 	while (i < 1152)
 	do
@@ -64,7 +64,7 @@ end
 -- make every item 'known'
 function id_all(state)
 local i = 0
-local p = Players[Ind+1]
+local p = players(Ind)
 -- for(i=0;i<255;i++)
 	while (i < 640)
 	do
@@ -81,7 +81,7 @@ end
 	
 -- namely.
 function healup(i)
-local p = Players[i+1]
+local p = players(i)
 local j = 0
 
 	p.exp = p.max_exp
@@ -115,17 +115,17 @@ function init()
 	pern_dofile(Ind, "jir.lua")
 end
 
--- get all the spells
+-- get all the skills
 function learn()
 local i = 0
-local p = Players[Ind+1]
+local p = players(Ind)
 -- 0xffffffff
-	p.spell_learned1 = 4294967295
-	p.spell_learned2 = 4294967295
-	while (i < 64)
+	while (i < MAX_SKILLS)
 	do
 		i = i + 1
-		p.spell_order[i] = i
+--		if p.s_info[i].mod then
+			p.s_info[i].value = 50000
+--		end
 	end
 
 end

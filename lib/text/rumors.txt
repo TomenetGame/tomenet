@@ -7,7 +7,7 @@
 # You should manually write the total # of rumous (lines - 10).
 
 N:*:Default
-664
+666
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -643,7 +643,7 @@ They say that you cannot master martial arts really without learning to dodge.
 They say that you can't teach an old dog new tricks.
 Lifelong study is nice thing, but start training when lv50 isn't so cool idea.
 Ever cursed a {DMorgul {wdagger?
-Ever blessed a {DMorgul {wdagger?
+Ever blessed a {DMorgul {wwhip?
 They say that cheezing is nice and sweet, till a bolt from the blue kills you.
 They say that the lazy warrior jumped over the doors.
 They say that carrying dozens of Mana pots without immunities is mere suicide.
@@ -672,5 +672,7 @@ Ever tried to fix a shattered weapon?
 They say antimagic shell wraps you while antimagic field radiates from you.
 Flirting with incubus drives you mad while sleeping with him drives you sad.
 Flirting with succubus drives you mad while sleeping with her drives you sad.
+They say that some skills demand perfection, some useful from the first step.
+They say that a mortal had better just avoid touching Nazgul rings.
 They say that 
 They say that 

@@ -4166,7 +4166,7 @@ void player_death(int Ind)
 		p_ptr->chp_frac = 0;
 
 		/* Hack -- Give him/her the newbie death guide */
-		if (p_ptr->max_plv < 10)
+		if (p_ptr->max_plv < 20)
 		{
 			object_type	forge;
 			o_ptr = &forge;

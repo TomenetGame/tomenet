@@ -3973,6 +3973,16 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 				/* Wall (or floor) type */
 				t = rand_int(200);
 
+				if (c_ptr->special.type == CS_TRAPS)
+				{
+					/* Destroy the trap */
+					if (t < 100) cs_erase(c_ptr);
+					else c_ptr->special.sc.trap.found = FALSE;
+
+					/* Redraw */
+//					everyone_lite_spot(wpos, y, x);
+				}
+
 				/* Granite */
 				if (t < 20)
 				{

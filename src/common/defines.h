@@ -4367,10 +4367,12 @@ that keeps many algorithms happy.
  * Line 2-3 -- forbid grids containing artifacts
  * Line 4 -- forbit house doors
  */
+#if 0	// moved to cave.c
 #define cave_valid_bold(ZCAVE,Y,X) \
     (!cave_perma_bold(ZCAVE,Y,X) && \
      (!ZCAVE[Y][X].o_idx || \
       !artifact_p(&o_list[ZCAVE[Y][X].o_idx])))
+#endif	// 0
 
 /*
  * Grid based version of "cave_floor_bold()"
