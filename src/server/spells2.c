@@ -4261,8 +4261,10 @@ void golem_creation(int Ind, int max)
                         {
                                 int k;
 
-                                for (k = 0; k < o_ptr->number; k++)
+                                for (k = 0; k < o_ptr->number; k++){
+					if(golem_m_arms==4) break;
                                         golem_arms[golem_m_arms++] = o_ptr->pval;
+				}
 				inven_item_increase(Ind,i,-o_ptr->number);
 				inven_item_optimize(Ind,i);
 				i--;
@@ -4272,8 +4274,10 @@ void golem_creation(int Ind, int max)
                         {
                                 int k;
 
-                                for (k = 0; k < o_ptr->number; k++)
+                                for (k = 0; k < o_ptr->number; k++){
+					if(golem_m_arms==30) break;
                                         golem_legs[golem_m_legs++] = o_ptr->pval;
+				}
 				inven_item_increase(Ind,i,-o_ptr->number);
 				inven_item_optimize(Ind,i);
 				i--;
@@ -4363,6 +4367,7 @@ void golem_creation(int Ind, int max)
                         r_ptr->hside = 150;
                         r_ptr->ac = 210;
                         break;
+		default:
         }
         r_ptr->extra = golem_flags;
 //#if 0
