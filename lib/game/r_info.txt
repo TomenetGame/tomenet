@@ -7063,7 +7063,7 @@ B:BITE:HURT:4d4
 F:FRIENDS | WILD_TOO | WILD_SHORE | DROP_CORPSE | 
 F:RAND_25 | 
 F:DROP_60 | DROP_90 |
-F:CAN_SWIM | BASH_DOOR | ELDRITCH_HORROR | RES_TELE |
+F:CAN_SWIM | BASH_DOOR | ELDRITCH_HORROR | RES_TELE | RES_DARK | NO_CONF | NO_SLEEP
 F:EVIL | DEMON | IM_FIRE | IM_COLD | IM_POIS | RES_WATE | CTHANGBAND
 D:"I thought their predominant color was a greyish-green, 
 D:though they had white bellies. They were mostly shiny and 
@@ -10426,7 +10426,8 @@ F:SMART | OPEN_DOOR | BASH_DOOR |
 F:EVIL | NO_CONF | NO_SLEEP | RES_FIRE | RES_ELEC | RES_COLD | RES_POIS | 
 F:MORTAL | BASEANGBAND | HAS_LITE
 #F:AI_ANNOY
-S:1_IN_4 |
+#S:1_IN_4 | increased it for xtra_shots (mimics)
+S:1_IN_3 |
 S:S_MONSTERS |  
 S:ARROW_1 | ARROW_2 | MISSILE | BO_FIRE | BO_ELEC | BA_COLD | 
 S:HASTE | BLINK | S_ANIMALS
