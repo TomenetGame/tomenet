@@ -2516,6 +2516,16 @@ static void build_type4(int Depth, int yval, int xval)
  * Note the use of Angband 2.7.9 monster race pictures in various places.
  */
 
+/*
+ * Dungeon monster filter - not null
+ */
+bool dungeon_aux(int r_idx){
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* No aquatic life in the dungeon */
+	if (r_ptr->flags7 & RF7_AQUATIC) return(FALSE);
+	return TRUE;
+}
 
 /*
  * Helper function for "monster nest (jelly)"
@@ -2541,6 +2551,9 @@ static bool vault_aux_jelly(int r_idx)
 static bool vault_aux_animal(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
+
+	/* No aquatic life in the dungeon */
+	if (r_ptr->flags7 & RF7_AQUATIC) return(FALSE);
 
 	/* Decline unique monsters */
 	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
@@ -2881,7 +2894,7 @@ static void build_type5(int Depth, int yval, int xval)
 
 
 	/* Remove restriction */
-	get_mon_num_hook = NULL;
+	get_mon_num_hook = dungeon_aux;
 
 	/* Prepare allocation table */
 	get_mon_num_prep();
@@ -3262,7 +3275,7 @@ static void build_type6(int Depth, int yval, int xval)
 
 
 	/* Remove restriction */
-	get_mon_num_hook = NULL;
+	get_mon_num_hook = dungeon_aux;
 
 	/* Prepare allocation table */
 	get_mon_num_prep();

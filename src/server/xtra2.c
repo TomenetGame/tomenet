@@ -6122,7 +6122,7 @@ u16b master_summon_aux_monster_type( char monster_type, char * monster_parms)
 				tmp = get_mon_num(rand_int(100) + 10);
 
 				/* restore monster generator */
-				get_mon_num_hook = NULL;
+				get_mon_num_hook = dungeon_aux;
 				get_mon_num_prep();
 
 				/* return our monster */

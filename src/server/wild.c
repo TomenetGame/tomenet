@@ -105,6 +105,13 @@ int neighbor_index(struct worldpos *wpos, char dir)
 
 int towndist(int wx, int wy){
 	int x,y;
+	int i;
+	int dist, mindist=100;
+	for(i=0;i<numtowns;i++){
+		dist=abs(wx-town[i].x)+abs(wy-town[i].y);
+		mindist=MIN(dist, mindist);
+	}
+#if 0
 	int numtowns=0, dist, sdist=0, meandist, mindist=50;
 	for(y=0;y<MAX_WILD_Y;y++){
 		for(x=0;x<MAX_WILD_X;x++){
@@ -117,6 +124,7 @@ int towndist(int wx, int wy){
 	}
 	meandist=sdist/numtowns; /* Take the mean distance from any town */
 
+#endif
 	return(mindist);
 }
 
@@ -239,7 +247,9 @@ void init_wild_info()
 	initwild();
 	genwild();
 	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0);	/* base town */
+	printf("iwia:s\n");
 	init_wild_info_aux(0,0);
+	printf("iwia:f\n");
 
 	/* inefficient? thats an understatement */
 	for(y=0;y<MAX_WILD_Y;y++){
@@ -385,6 +395,9 @@ static bool wild_monst_aux_grassland(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
+	/* no aquatic life here */
+	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
+
 	/* no reproducing monsters allowed */
 	if (r_ptr->flags4 & RF4_MULTIPLY) return FALSE;
 
@@ -462,6 +475,9 @@ static bool wild_monst_aux_denseforest(int r_idx)
 static bool wild_monst_aux_wasteland(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
+	
+	/* no aquatic life here */
+	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
 
 	/* wastelands are full of tough monsters */
 	if (strchr("ABCDEFHLMOPTUVWXYZdefghopqv", r_ptr->d_char)) return TRUE;
@@ -497,6 +513,8 @@ void wild_add_monster(int Depth)
 	switch (wild_info[Depth].type)
 #endif
 	{
+		case WILD_RIVER:
+		case WILD_OCEAN:
 		case WILD_LAKE: get_mon_num_hook = wild_monst_aux_lake; break;
 		case WILD_GRASSLAND: get_mon_num_hook = wild_monst_aux_grassland; break;
 		case WILD_FOREST: get_mon_num_hook = wild_monst_aux_forest; break;
@@ -504,7 +522,7 @@ void wild_add_monster(int Depth)
 		case WILD_DENSEFOREST: get_mon_num_hook = wild_monst_aux_denseforest; break;
 		case WILD_WASTELAND: get_mon_num_hook = wild_monst_aux_wasteland; break;
 		case WILD_TOWN: get_mon_num_hook = wild_monst_aux_town; break;
-		default: get_mon_num_hook = NULL;	
+		default: get_mon_num_hook = dungeon_aux;	
 	}
 	get_mon_num_prep();
 	
@@ -533,7 +551,7 @@ void wild_add_monster(int Depth)
 #endif
 	
 	/* hack -- restore the monster selection function */
-	get_mon_num_hook = NULL;
+	get_mon_num_hook = dungeon_aux;
 	get_mon_num_prep();
 }
 
@@ -820,6 +838,8 @@ static void wild_add_garden(int Depth, int x, int y)
 static bool wild_monst_aux_invaders(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
+
+	if(r_ptr->flags7 & RF7_AQUATIC) return FALSE;
 		
 	/* invader species */
 	if (strchr("oTpOKbrm", r_ptr->d_char)) return TRUE;
@@ -833,6 +853,9 @@ static bool wild_monst_aux_invaders(int r_idx)
 static bool wild_monst_aux_home_owner(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
+
+	/* not aquatic */
+	if (r_ptr->flags7 & RF7_AQUATIC) return FALSE;
 	
 	/* home owner species */
 	if (strchr("hpP", r_ptr->d_char)) return TRUE;

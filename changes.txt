@@ -664,6 +664,12 @@ Change list for PernMangband
 - Fixed typo in "amulet shatters".
 - Base town no longer has wasteland or deep forest beside it.
 
+17/01/2002 (Evileye)
+- towndist made much faster for calculating radii.
+- recalling in wilderness defaults to last town visited, in the
+  absence of a dungeon.
+- filtered aquatic monsters suitably (i think) now to confine them ;)
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)

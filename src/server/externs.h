@@ -699,19 +699,13 @@ extern void kingly(int Ind);
 extern errr get_rnd_line(cptr file_name, int entry, char *output);
 
 /* generate.c */
-#ifdef NEW_DUNGEON
+extern bool dungeon_aux(int r_idx);
 extern void dealloc_dungeon_level_maybe(struct worldpos *wpos);
 extern void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, char *race, char *exclude, bool tower);
 extern void alloc_dungeon_level(struct worldpos *wpos);
 extern void dealloc_dungeon_level(struct worldpos *wpos);
 extern void generate_cave(struct worldpos *wpos);
 extern void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, cptr data);
-#else
-extern void alloc_dungeon_level(int Depth);
-extern void dealloc_dungeon_level(int Depth);
-extern void generate_cave(int Depth);
-extern void build_vault(int Depth, int yval, int xval, int ymax, int xmax, cptr data);
-#endif
 
 /* wild.c */
 extern int world_index(int world_x, int world_y);

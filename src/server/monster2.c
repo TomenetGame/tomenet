@@ -2324,7 +2324,7 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 
 
 			/* Remove restriction */
-			get_mon_num_hook = NULL;
+			get_mon_num_hook = dungeon_aux;
 
 			/* Prepare allocation table */
 			get_mon_num_prep();
@@ -2908,7 +2908,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int type)
 
 
 	/* Remove restriction */
-	get_mon_num_hook = NULL;
+	get_mon_num_hook = dungeon_aux;
 
 	/* Prepare allocation table */
 	get_mon_num_prep();
