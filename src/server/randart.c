@@ -1402,6 +1402,24 @@ artifact_type *randart_make(object_type *o_ptr)
 		a_ptr->flags3 |= TR3_HIDE_TYPE;
 
         /* Fix some limits */
+        if (a_ptr->flags1 & TR1_MANA)
+        {
+                if (a_ptr->pval > 10) a_ptr->pval = 10;
+        }
+	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT))
+	{
+		a_ptr->pval = (a_ptr->pval * 2) / 3;
+	}
+	if(a_ptr->flags1 & TR1_STEALTH)
+	{
+		if (a_ptr->pval > 6) a_ptr->pval = 6;
+	}
+	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR))
+	{
+		if (a_ptr->pval > 5) a_ptr->pval /= 2;
+		if (a_ptr->pval > 5) a_ptr->pval = 5;
+		if (a_ptr->pval == 0) a_ptr->pval = 1;
+	}
         if (a_ptr->flags1 & TR1_BLOWS)
         {
 		if (a_ptr->tval == TV_GLOVES)
@@ -1414,26 +1432,11 @@ artifact_type *randart_make(object_type *o_ptr)
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
         }
-	
-	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT))
+	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 3))
 	{
-		a_ptr->pval = (a_ptr->pval * 2) / 3;
+		a_ptr->pval = 3;
 	}
 
-        if (a_ptr->flags1 & TR1_MANA)
-        {
-                if (a_ptr->pval > 10) a_ptr->pval = 10;
-        }
-	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR))
-	{
-		if (a_ptr->pval > 5) a_ptr->pval /= 2;
-		if (a_ptr->pval > 5) a_ptr->pval = 5;
-		if (a_ptr->pval == 0) a_ptr->pval = 1;
-	}
-	if(a_ptr->flags1 & TR1_STEALTH)
-	{
-		if (a_ptr->pval > 6) a_ptr->pval = 6;
-	}
 	/* Hack -- DarkSword randarts should have this */
 	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD)
 	{
@@ -1667,13 +1670,6 @@ try_an_other_ego:
 	if (a_ptr->esp & ESP_ALL) a_ptr->esp = ESP_ALL;
 #endif
 
-	/* No insane number of blows */  
-	if (limit_blows && (a_ptr->flags1 & TR1_BLOWS))
-	{
-		if (a_ptr->pval > 2)
-			a_ptr->pval -= randint(a_ptr->pval - 2);
-	}
-		
 #if 0	// supposed to be gone forever (DELETEME)
 	/* get flags */
 	object_flags(a_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -1690,6 +1686,13 @@ try_an_other_ego:
 	if (e_ptr->max_to_d < 0) a_ptr->to_d -= randint(-e_ptr->max_to_d);
 	if (e_ptr->max_to_a > 0) a_ptr->to_a += randint(e_ptr->max_to_a);
 	if (e_ptr->max_to_a < 0) a_ptr->to_a -= randint(-e_ptr->max_to_a);
+
+	/* No insane number of blows */  
+	if (limit_blows && (a_ptr->flags1 & TR1_BLOWS))
+	{
+		if (a_ptr->pval > 2)
+			a_ptr->pval -= randint(a_ptr->pval - 2);
+	}
 
 	/* Obtain granted minimum pval */
 	granted_pval = 0;
@@ -1713,6 +1716,43 @@ try_an_other_ego:
 		goto try_an_other_ego;
 	}
 #endif	// 0
+
+        /* Fix some limits */
+
+        if (a_ptr->flags1 & TR1_MANA)
+        {
+                if (a_ptr->pval > 10) a_ptr->pval = 10;
+        }
+	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT))
+	{
+		a_ptr->pval = (a_ptr->pval * 2) / 3;
+	}
+	if(a_ptr->flags1 & TR1_STEALTH)
+	{
+		if (a_ptr->pval > 6) a_ptr->pval = 6;
+	}
+	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR))
+	{
+		if (a_ptr->pval > 5) a_ptr->pval /= 2;
+		if (a_ptr->pval > 5) a_ptr->pval = 5;
+		if (a_ptr->pval == 0) a_ptr->pval = 1;
+	}
+        if (a_ptr->flags1 & TR1_BLOWS)
+        {
+		if (a_ptr->tval == TV_GLOVES)
+		{
+			if (a_ptr->pval > 2) a_ptr->pval /= 3;
+	                if (a_ptr->pval > 2) a_ptr->pval = 2;
+		} else {
+			if (a_ptr->pval > 3) a_ptr->pval /= 2;
+	                if (a_ptr->pval > 3) a_ptr->pval = 3;
+		}
+		if (a_ptr->pval == 0) a_ptr->pval = 1;
+        }
+	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 3))
+	{
+		a_ptr->pval = 3;
+	}
 
 	/* Restore RNG */
 	Rand_quick = FALSE;
