@@ -1172,8 +1172,10 @@ static void calc_hitpoints(int Ind)
 	{
 	    int rhp = r_info[p_ptr->body_monster].hdice * r_info[p_ptr->body_monster].hside;
 
-	    /* limit HP against ~3200 in total: */
-	    mHPLim = (100000 / ((100000 / rhp) + 15));
+	    /* limit HP against ~2900 in total: */
+	    /* mHPLim = (100000 / ((100000 / rhp) + 15)); */
+	    /* limit HP against ~2500 in total: */
+	    mHPLim = (100000 / ((100000 / rhp) + 20));
 	    finalHP = (mHPLim < mhp ) ? (((mhp * 3) + (mHPLim * 2)) / 5) : ((mHPLim + mhp) / 2);
 	    mhp = finalHP;
 	}
@@ -1362,9 +1364,16 @@ static void calc_body_bonus(int Ind)
 		d += j;
 	}
 	if (n == 0) n = 1;
-	d = (d / 2) / n;	// 8 // 7
+	/*d = (d / 2) / n;	// 8 // 7
 	p_ptr->to_d += d;
-	p_ptr->dis_to_d += d;
+	p_ptr->dis_to_d += d; - similar to HP: */
+	d = d / n;
+	p_ptr->to_d = (d < p_ptr->to_d) ?
+		    (((p_ptr->to_d * 2) + (d * 1)) / 3) :
+		    (((p_ptr->to_d * 1) + (d * 1)) / 2);
+	p_ptr->dis_to_d = (d < p_ptr->dis_to_d) ?
+		    (((p_ptr->dis_to_d * 2) + (d * 1)) / 3) :
+		    (((p_ptr->dis_to_d * 1) + (d * 1)) / 2);
 
 	/* Evaluate monster AC (if skin or armor etc) */
 	body = (r_ptr->body_parts[BODY_HEAD] ? 1 : 0)
@@ -1373,8 +1382,15 @@ static void calc_body_bonus(int Ind)
 		+ (r_ptr->body_parts[BODY_LEGS] ? 1 : 0);
 
 	toac = r_ptr->ac * 7 / (4 + body);
-	p_ptr->ac += toac;
-	p_ptr->dis_ac += toac;
+	/* p_ptr->ac += toac;
+	p_ptr->dis_ac += toac; - similar to HP calculation: */
+	p_ptr->ac = (toac < p_ptr->ac) ?
+		    (((p_ptr->ac * 2) + (toac * 1)) / 3) :
+		    (((p_ptr->ac * 1) + (toac * 1)) / 2);
+	p_ptr->dis_ac = (toac < p_ptr->dis_ac) ?
+		    (((p_ptr->dis_ac * 2) + (toac * 1)) / 3) :
+		    (((p_ptr->dis_ac * 1) + (toac * 1)) / 2);
+
 	if (r_ptr->speed < 110)
 	{
 		/* let slowdown not be that large that players will never try that form */
