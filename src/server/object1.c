@@ -1636,8 +1636,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
         t = object_desc_chr(t, '{');
         if (o_ptr->owner)
         {
-                t = object_desc_str(t, lookup_player_name(o_ptr->owner));
-                t = object_desc_chr(t, ',');
+                cptr name = lookup_player_name(o_ptr->owner);
+
+                if (name != NULL)
+                {
+                        t = object_desc_str(t, name);
+                        t = object_desc_chr(t, ',');
+                }
         }
         t = object_desc_num(t, o_ptr->level);
         t = object_desc_chr(t, '}');

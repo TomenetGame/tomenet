@@ -1462,7 +1462,7 @@ player_race race_info[MAX_RACES] =
 		90, 10, 190, 20,
 		82, 10, 180, 15,
 		4,
-                0xFFFFFFFF,
+                0xFFFFFFFF - BITS(CLASS_UNBELIEVER),
                 125,
 	},
 
@@ -1502,7 +1502,7 @@ player_race race_info[MAX_RACES] =
 		66, 4, 100, 20,
 		5,
                 0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER),
-                80,
+                90,
 	},
 	{
                 "DragonRider",
@@ -1513,7 +1513,7 @@ player_race race_info[MAX_RACES] =
                 180,  6, 255, 25,
                 150,  4, 230, 20,
                 0,
-                0xFFFFFFFF,
+                0xFFFFFFFF - BITS(CLASS_MIMIC),
                 95,
         },
 };

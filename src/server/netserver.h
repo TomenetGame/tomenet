@@ -15,8 +15,8 @@
 #define LISTEN_TIMEOUT		120
 #define SETUP_TIMEOUT           150
 #define LOGIN_TIMEOUT           150
-#define READY_TIMEOUT           300
-#define IDLE_TIMEOUT            150
+#define READY_TIMEOUT           30
+#define IDLE_TIMEOUT            15
 
 #define MAX_RTT			(2 * FPS)
 

@@ -2306,7 +2306,10 @@ void dungeon(void)
 		{
 			if (wild_info[Depth].own)
 			{
-                                msg_format(i, "You enter the land of %s.", lookup_player_name(wild_info[Depth].own));
+                                cptr p = lookup_player_name(wild_info[Depth].own);
+                                if (p == NULL) p = "Someone";
+
+                                msg_format(i, "You enter the land of %s.", p);
 			}
 		}
 

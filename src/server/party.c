@@ -154,26 +154,6 @@ int party_add(int adder, cptr name)
 		return FALSE;
 	}
 
-	/* Make sure this added person is neutral */
-	if ((p_ptr->lev - q_ptr->lev) > 5)
-	{
-		/* Message */
-		msg_print(adder, "That player is too high level for you..");
-
-		/* Abort */
-		return FALSE;
-	}
-
-	/* Make sure this added person is neutral */
-	if ((q_ptr->lev - p_ptr->lev) > 5)
-	{
-		/* Message */
-		msg_print(adder, "That player is too low level for you..");
-
-		/* Abort */
-		return FALSE;
-	}
-
 	/* Tell the party about its new member */
 	party_msg_format(party_id, "%s has been added to party %s.", p_ptr->name, parties[party_id].name);
 
@@ -405,7 +385,14 @@ void party_msg_format(int party_id, cptr fmt, ...)
     
     -APD-
     */
- 
+
+bool players_in_level(int Ind, int Ind2)
+{
+        if ((Players[Ind]->lev - Players[Ind2]->lev) > 7) return FALSE;
+        if ((Players[Ind2]->lev - Players[Ind]->lev) > 7) return FALSE;
+        return TRUE;
+}
+
 void party_gain_exp(int Ind, int party_id, s32b amount)
 {
 	player_type *p_ptr;
@@ -422,7 +409,7 @@ void party_gain_exp(int Ind, int party_id, s32b amount)
 			continue;
 
 		/* Check for his existance in the party */
-		if (player_in_party(party_id, i) && p_ptr->dun_depth == Depth)
+                if (player_in_party(party_id, i) && (p_ptr->dun_depth == Depth) && players_in_level(Ind, i))
 		{
 			/* Increase the "divisor" */
 			average_lev += p_ptr->lev;
@@ -439,7 +426,7 @@ void party_gain_exp(int Ind, int party_id, s32b amount)
 			continue;
 
 		/* Check for existance in the party */
-		if (player_in_party(party_id, i) && p_ptr->dun_depth == Depth)
+                if (player_in_party(party_id, i) && (p_ptr->dun_depth == Depth) && players_in_level(Ind, i))
 		{
 			/* Calculate this guy's experience */
 			

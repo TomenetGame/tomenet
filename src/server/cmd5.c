@@ -301,11 +301,14 @@ static void spell_info(int Ind, char *p, int j)
 			case 4: sprintf(p, " dam 7/shot"); break;
 
 			case 8: sprintf(p, " dam 8/shot"); break;
-			case 11: sprintf(p, " dam 11/shot"); break;
+                        case 9: sprintf(p, " dam 30/shot"); break;
+                        case 11: sprintf(p, " dam 11/shot"); break;
 
-			case 16: sprintf(p, " dam 7/shot"); break;
-			case 17: sprintf(p, " dam 11/shot"); break;
-			case 20: sprintf(p, " dam 25/shot"); break;
+                        case 16: sprintf(p, " dam 35/shot"); break;
+                        case 17: sprintf(p, " dam 40/shot"); break;
+                        case 18: sprintf(p, " dam 45/shot"); break;
+                        case 19: sprintf(p, " dam 25/shot"); break;
+                        case 20: sprintf(p, " dam 30/shot"); break;
 		}
 	}
 
@@ -4611,9 +4614,16 @@ void do_cmd_hunt(int Ind, int book, int spell)
 			    }
 			  break;
 			}
-			case 9: /*  */
+                        case 9: /* Fire ball shots */
 			{
-				break;
+                          if (p_ptr->bow_brand == BOW_BRAND_BALL_FIRE)
+                            set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_FIRE, 1);
+			  else
+			    {
+			      p_ptr->bow_brand = 0;
+                              set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_FIRE, 1);
+			    }
+			  break;
 			}
 			case 10: /* Conf Shots */
 			{
@@ -4649,23 +4659,40 @@ void do_cmd_hunt(int Ind, int book, int spell)
 			  break;
 			}
 
-			case 16: /*  */
+                        case 16: /* cold ball shots */
 			{
-				break;
+                          if (p_ptr->bow_brand == BOW_BRAND_BALL_COLD)
+                            set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_COLD, 1);
+			  else
+			    {
+			      p_ptr->bow_brand = 0;
+                              set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_COLD, 1);
+			    }
+			  break;
 			}
-			case 17: /*  */
+                        case 17: /* elec ball shots */
 			{
-				break;
+                          if (p_ptr->bow_brand == BOW_BRAND_BALL_ELEC)
+                            set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_ELEC, 1);
+			  else
+			    {
+			      p_ptr->bow_brand = 0;
+                              set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_ELEC, 1);
+			    }
+			  break;
 			}
-			case 18: /*  */
+                        case 18: /* Acid ball shots */
 			{
-				break;
+                          if (p_ptr->bow_brand == BOW_BRAND_BALL_ACID)
+                            set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_ACID, 1);
+			  else
+			    {
+			      p_ptr->bow_brand = 0;
+                              set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_ACID, 1);
+			    }
+			  break;
 			}
-			case 19: /*  */
-			{
-				break;
-			}
-			case 20: /* Power Shots */
+                        case 19: /* Power Shots */
 			{
 			  if (p_ptr->bow_brand == BOW_BRAND_MANA)
 			    set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_MANA, 25);
@@ -4676,6 +4703,17 @@ void do_cmd_hunt(int Ind, int book, int spell)
 			    }
 			  break;
 				break;
+			}
+                        case 20: /* Sonic ball shots */
+			{
+                          if (p_ptr->bow_brand == BOW_BRAND_BALL_SOUND)
+                            set_bow_brand(Ind, p_ptr->bow_brand + plev, BOW_BRAND_BALL_SOUND, 1);
+			  else
+			    {
+			      p_ptr->bow_brand = 0;
+                              set_bow_brand(Ind, plev + randint(20), BOW_BRAND_SOUND, 1);
+			    }
+			  break;
 			}
 		}
 

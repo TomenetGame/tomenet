@@ -3484,50 +3484,48 @@ void do_cmd_activate(int Ind, int item)
                         if (m_ptr->owner != p_ptr->id) continue;
 
                         m_idx = i;
-                        break;
-                }
+                        if (!m_idx) continue;
+                        m_ptr = &m_list[m_idx];
 
-                if (!m_idx) return;
-                m_ptr = &m_list[m_idx];
-
-                switch (o_ptr->sval)
-                {
-                        case SV_GOLEM_ATTACK:
-                                if (m_ptr->mind & (1 << (o_ptr->sval - 200)))
-                                {
-                                        msg_print(Ind, "I wont attack your target anymore, master.");
-                                        m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
-                                }
-                                else
-                                {
-                                        msg_print(Ind, "I will attack your target, master.");
-                                        m_ptr->mind |= (1 << (o_ptr->sval - 200));
-                                }
-                                break;
-                        case SV_GOLEM_FOLLOW:
-                                if (m_ptr->mind & (1 << (o_ptr->sval - 200)))
-                                {
-                                        msg_print(Ind, "I wont follow you, master.");
-                                        m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
-                                }
-                                else
-                                {
-                                        msg_print(Ind, "I will follow you, master.");
-                                        m_ptr->mind |= (1 << (o_ptr->sval - 200));
-                                }
-                                break;
-                        case SV_GOLEM_GUARD:
-                                if (m_ptr->mind & (1 << (o_ptr->sval - 200)))
-                                {
-                                        msg_print(Ind, "I wont guard my position anymore, master.");
-                                        m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
-                                }
-                                else
-                                {
-                                        msg_print(Ind, "I will guard my position, master.");
-                                        m_ptr->mind |= (1 << (o_ptr->sval - 200));
-                                }
-                                break;
+                        switch (o_ptr->sval)
+                        {
+                                case SV_GOLEM_ATTACK:
+                                        if (m_ptr->mind & (1 << (o_ptr->sval - 200)))
+                                        {
+                                                msg_print(Ind, "I wont attack your target anymore, master.");
+                                                m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
+                                        }
+                                        else
+                                        {
+                                                msg_print(Ind, "I will attack your target, master.");
+                                                m_ptr->mind |= (1 << (o_ptr->sval - 200));
+                                        }
+                                        break;
+                                case SV_GOLEM_FOLLOW:
+                                        if (m_ptr->mind & (1 << (o_ptr->sval - 200)))
+                                        {
+                                                msg_print(Ind, "I wont follow you, master.");
+                                                m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
+                                        }
+                                        else
+                                        {
+                                                msg_print(Ind, "I will follow you, master.");
+                                                m_ptr->mind |= (1 << (o_ptr->sval - 200));
+                                        }
+                                        break;
+                                case SV_GOLEM_GUARD:
+                                        if (m_ptr->mind & (1 << (o_ptr->sval - 200)))
+                                        {
+                                                msg_print(Ind, "I wont guard my position anymore, master.");
+                                                m_ptr->mind &= ~(1 << (o_ptr->sval - 200));
+                                        }
+                                        else
+                                        {
+                                                msg_print(Ind, "I will guard my position, master.");
+                                                m_ptr->mind |= (1 << (o_ptr->sval - 200));
+                                        }
+                                        break;
+                        }
                 }
                 return;
         }

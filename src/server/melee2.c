@@ -2647,7 +2647,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
         /* Nothing else to do ? */
         if ((p_ptr != NULL) && !tm_idx && (m_ptr->mind & GOLEM_FOLLOW))
         {
-                tm_idx = Ind;
+                tm_idx = -Ind;
         }
 
         if (!tm_idx) return FALSE;

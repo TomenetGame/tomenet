@@ -347,14 +347,18 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 		  switch (t)
 		    {
 		    case BOW_BRAND_ELEC:
+                    case BOW_BRAND_BALL_ELEC:
 		      msg_print(Ind, "Your ammos sparkle with lightnings !");
 		      break;
+                    case BOW_BRAND_BALL_COLD:
 		    case BOW_BRAND_COLD:
 		      msg_print(Ind, "Your ammos freeze !");
 		      break;
+                    case BOW_BRAND_BALL_FIRE:
 		    case BOW_BRAND_FIRE:
 		      msg_print(Ind, "Your ammos burn !");
 		      break;
+                    case BOW_BRAND_BALL_ACID:
 		    case BOW_BRAND_ACID:
 		      msg_print(Ind, "Your ammos look acidic !");
 		      break;
@@ -369,6 +373,9 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 		      break;
 		    case BOW_BRAND_SHARP:
 		      msg_print(Ind, "Your ammos sharpen !");
+		      break;
+                    case BOW_BRAND_BALL_SOUND:
+                      msg_print(Ind, "Your ammos vibrates !");
 		      break;
 		    }
 		  notice = TRUE;

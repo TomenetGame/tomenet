@@ -2528,6 +2528,26 @@ void do_cmd_fire(int Ind, int dir, int item)
 				/* Take damage */
 				take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
 
+                                /* Add a nice ball if needed */
+                                switch (p_ptr->bow_brand)
+                                {
+                                        case BOW_BRAND_BALL_FIRE:
+                                                project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+                                                break;
+                                        case BOW_BRAND_BALL_COLD:
+                                                project(0 - Ind, 2, p_ptr->dun_depth, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+                                                break;
+                                        case BOW_BRAND_BALL_ELEC:
+                                                project(0 - Ind, 2, p_ptr->dun_depth, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+                                                break;
+                                        case BOW_BRAND_BALL_ACID:
+                                                project(0 - Ind, 2, p_ptr->dun_depth, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+                                                break;
+                                        case BOW_BRAND_BALL_SOUND:
+                                                project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+                                                break;
+                                }
+
 				/* Stop looking */
 				if (!p_ptr->bow_brand || (p_ptr->bow_brand != BOW_BRAND_SHARP)) break;
 			}
@@ -2674,6 +2694,26 @@ void do_cmd_fire(int Ind, int dir, int item)
 						msg_format(Ind, "%^s flees in terror!", m_name);
 					}
 				}
+
+                                /* Add a nice ball if needed */
+                                switch (p_ptr->bow_brand)
+                                {
+                                        case BOW_BRAND_BALL_FIRE:
+                                                project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+                                                break;
+                                        case BOW_BRAND_BALL_COLD:
+                                                project(0 - Ind, 2, p_ptr->dun_depth, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+                                                break;
+                                        case BOW_BRAND_BALL_ELEC:
+                                                project(0 - Ind, 2, p_ptr->dun_depth, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+                                                break;
+                                        case BOW_BRAND_BALL_ACID:
+                                                project(0 - Ind, 2, p_ptr->dun_depth, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+                                                break;
+                                        case BOW_BRAND_BALL_SOUND:
+                                                project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+                                                break;
+                                }
 
 				/* Stop looking */
 				if (!p_ptr->bow_brand || (p_ptr->bow_brand != BOW_BRAND_SHARP)) break;

@@ -128,7 +128,9 @@ Change list for PernMangband
 - New houses ready for testing prior to potential server reset
 - Extended dungeon. After level 100(5000') it loops to pseudo level 1
   but with all monsters gaining +100 level
+- No lev restriction on parties, but only opeople in the +/-7 level range will
+  gain xp
 
 05/08/2001
+- Finished Archers books
 - 90 day player timeout added.
-

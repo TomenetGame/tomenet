@@ -2670,6 +2670,7 @@ cptr r_name_get(monster_type *m_ptr)
         if (m_ptr->special)
         {
                 cptr p = (m_ptr->owner)?lookup_player_name(m_ptr->owner):"**INTERNAL BUG**";
+                if (p == NULL) p = "**INTERNAL BUG**";
                 switch (m_ptr->r_idx - 1)
                 {
                         case SV_GOLEM_WOOD:
