@@ -967,6 +967,28 @@ static byte multi_hued_attr(monster_race *r_ptr)
 	/* If monster has one breath, store the second color too. */
 	if (breaths == 1)
 	{
+		switch(r_ptr->flags4 & 0x3fffff00){
+			case RF4_BR_ACID:
+				return(TERM_ACID);
+			case RF4_BR_COLD:
+				return(TERM_COLD);
+			case RF4_BR_FIRE:
+				return(TERM_FIRE);
+			case RF4_BR_ELEC:
+				return(TERM_ELEC);
+			case RF4_BR_POIS:
+				return(TERM_POIS);
+			case RF4_BR_CONF:
+				return(TERM_CONF);
+			case RF4_BR_SOUN:
+				return(TERM_SOUN);
+			case RF4_BR_SHAR:
+				return(TERM_SHAR);
+			case RF4_BR_LITE:
+				return(TERM_LITE);
+			default:
+				printf("fla: %x\n", r_ptr->flags4&0x3fffff00);
+		}
 		allowed_attrs[stored_colors] = second_color;
 		stored_colors++;
 	}

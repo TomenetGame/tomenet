@@ -1843,7 +1843,7 @@ static bool process_player_end_aux(int Ind)
 			if (!(turn%((level_speed((&p_ptr->wpos))/12)*10)))
 			{
 				/* Basic digestion rate based on speed */
-				i = extract_energy[p_ptr->pspeed] * 2;
+				i = extract_energy[p_ptr->pspeed]*1.3;
 
 				/* Adrenaline takes more food */
 				if (p_ptr->adrenaline) i *= 5;
@@ -2603,7 +2603,7 @@ static bool process_player_end_aux(int Ind)
 		{
 			//				if(p_ptr->anti_tele ||
 			if((p_ptr->store_num > 0) || p_ptr->anti_tele ||
-					check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) ||
+					(check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) && !p_ptr->admin_dm && !p_ptr->admin_wiz) ||
 					zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK)
 			{
 				p_ptr->word_recall++;

@@ -4057,6 +4057,15 @@ extern int PlayerUID;
 
 /* Non encoded shimmer attributes */
 #define TERM_MULTI	16	/* all the main colours */
+#define TERM_POIS	17	/* I Love this ;) */
+#define TERM_FIRE	18	/* fireball */
+#define TERM_COLD	19	/* cold */
+#define TERM_ACID	20	/* acid */
+#define TERM_ELEC	21	/* elec */
+#define TERM_CONF	22
+#define TERM_SOUN	23
+#define TERM_SHAR	24
+#define TERM_LITE	25
 
 #define TERM_HALF	63	/* only the brighter colours */
 

@@ -1853,7 +1853,11 @@ static void do_slash_cmd(int Ind, char *message)
 		if (colon)
 		{
 			master_script_exec(Ind, colon);
-			do_cmd_refresh(Ind);
+			/* evileye - a good lua programmer
+			   will set refresh flags themself
+			   its like downloading a huge file
+			   each time i use lua ;( */
+			/* do_cmd_refresh(Ind); */
 		}
 		else
 		{

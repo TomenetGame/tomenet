@@ -182,8 +182,13 @@ void increase_skill(int Ind, int i)
 	p_ptr->redraw |= PR_STUDY;
 
 	/* Update his view, light, bonuses, and torch radius */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE |
-			PU_SPELLS | PU_SKILL_INFO | PU_SKILL_MOD);
+#ifdef ORIG_SKILL_EVIL	/* not to be defined */
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE
+		| PU_SPELLS | PU_SKILL_INFO | PU_SKILL_MOD);
+#else
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE
+		| PU_SPELLS);
+#endif
 	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
 
 	/* Update his inventory, equipment, and spell info */
@@ -459,8 +464,8 @@ void recalc_skills(bool init)
                 }
 
 		/* Update stuffs */
-		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS | PU_POWERS |
-	                      PU_SANITY | PU_BODY);
+		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS |
+			PU_POWERS | PU_SANITY | PU_BODY);
 
 		/* Redraw various info */
 		p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP);

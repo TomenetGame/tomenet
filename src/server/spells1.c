@@ -1025,11 +1025,11 @@ byte spell_color(int type)
 	switch (type)	/* colourful ToME ones :) */
 	{
 		case GF_MISSILE:        return (TERM_SLATE);
-		case GF_ACID:           return (randint(5)<3?TERM_YELLOW:TERM_L_GREEN);
-		case GF_ELEC:           return (randint(7)<6?TERM_WHITE:(randint(4)==1?TERM_BLUE:TERM_L_BLUE));
-		case GF_FIRE:           return (randint(6)<4?TERM_YELLOW:(randint(4)==1?TERM_RED:TERM_L_RED));
-		case GF_COLD:           return (randint(6)<4?TERM_WHITE:TERM_L_WHITE);
-		case GF_POIS:           return (randint(5)<3?TERM_L_GREEN:TERM_GREEN);
+		case GF_ACID:           return (TERM_ACID);
+		case GF_ELEC:           return (TERM_ELEC);
+		case GF_FIRE:           return (TERM_FIRE);
+		case GF_COLD:           return (TERM_COLD);
+		case GF_POIS:           return (TERM_POIS);
 //		case GF_UNBREATH:       return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
 //		case GF_HOLY_ORB:	return (TERM_L_DARK);
 		case GF_HOLY_ORB:		 return (randint(6)==1?TERM_RED:TERM_L_DARK);

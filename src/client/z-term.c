@@ -507,16 +507,40 @@ char get_shimmer_color()
 byte flick_colour(byte attr){
 	switch(attr){
 		case TERM_MULTI:
-			return(random()&15);
+			return(randint(15));
 			break;	/* unnecessary breaks ;) */
-#if 0
 		case TERM_FIRE:
-			return(random()&1?TERM_RED:TERM_L_RED);
+			return(randint(7)>6?TERM_YELLOW:rand_int(3)>1?TERM_RED:TERM_L_RED);
 			break;
-#endif
+		case TERM_POIS:
+			return(randint(5)>3?TERM_GREEN:TERM_L_GREEN);
+			break;
+		case TERM_COLD:
+			return(randint(5)>3?TERM_WHITE:TERM_L_WHITE);
+			break;
+		case TERM_ELEC:
+			return(randint(7)>6?TERM_WHITE:(randint(4)==1?TERM_L_BLUE:TERM_BLUE));
+			break;
 		case TERM_HALF:
 			return(get_shimmer_color());
 			break;
+		case TERM_ACID:
+			return(randint(5)>3?TERM_SLATE:TERM_L_DARK);
+			break;
+		case TERM_CONF:
+			return(randint(5)>3?TERM_UMBER:TERM_L_UMBER);
+			break;
+		case TERM_SOUN:
+			return(randint(5)>3?TERM_L_UMBER:TERM_YELLOW);
+			break;
+		case TERM_SHAR:
+			return(randint(5)>3?TERM_UMBER:TERM_SLATE);
+			break;
+		case TERM_LITE:
+			return(randint(5)>3?TERM_WHITE:TERM_YELLOW);
+			break;
+			
+
 		default:
 			return(attr);
 	}

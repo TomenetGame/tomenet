@@ -2860,7 +2860,7 @@ void do_cmd_options(void)
 	Send_options();
 
 	/* Send a redraw request */
-	Send_redraw();
+	// Send_redraw();
 }
 
 
