@@ -1,5 +1,6 @@
 #!/bin/bash
 # Runserv, by Chris Atenasio
+# Upgraded to store server logs by evileye
 ulimit -c unlimited
 
 while :; do
@@ -11,4 +12,5 @@ while :; do
 		gzip lib/data/tomenet.log
 		mv lib/data/tomenet.log.gz lib/data/`/bin/date +"%Y%m%d%H%M.log.gz"`
 	fi
+	sleep 1
 done
