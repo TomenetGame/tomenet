@@ -2706,7 +2706,7 @@ static int Receive_play(int ind)
 /* DO NOT TOUCH - work in progress */
 static int Receive_file(int ind){
 	char command, ch;
-	char fname[30];	/* possible filename */
+	char fname[MAX_CHARS];	/* possible filename */
 	int x;	/* return value/ack */
 	unsigned short fnum;	/* unique SENDER side file number */
 	unsigned short len;
@@ -6110,7 +6110,7 @@ static int Receive_inscribe(int ind)
 
 	s16b item;
 
-	char inscription[80];
+	char inscription[MAX_CHARS];
 
 	if (connp->id != -1)
 	{
@@ -6852,7 +6852,7 @@ static int Receive_message(int ind)
 {
 	connection_t *connp = &Conn[ind];
 
-	char ch, buf[1024];
+	char ch, buf[MSG_LEN];
 
 	int n, player = -1;
 	if (connp->id != -1) player = GetInd[connp->id];
@@ -6874,7 +6874,7 @@ static int Receive_admin_house(int ind){
 	connection_t *connp = &Conn[ind];
 	char ch, dir;
 	int n,player = -1;
-	char buf[80];
+	char buf[MAX_CHARS];
 	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
@@ -7731,7 +7731,7 @@ static int Receive_party(int ind)
 {
 	connection_t *connp = &Conn[ind];
 	int player = -1, n;
-	char ch, buf[160];
+	char ch, buf[MAX_CHARS];
 	s16b command;
 
 	if (connp->id != -1) player = GetInd[connp->id];
@@ -7798,7 +7798,7 @@ static int Receive_party(int ind)
 static int Receive_guild(int ind){
 	connection_t *connp = &Conn[ind];
 	int player = -1, n;
-	char ch, buf[160];
+	char ch, buf[MAX_CHARS];
 	s16b command;
 
 	if (connp->id != -1) player = GetInd[connp->id];
@@ -7942,7 +7942,7 @@ static int Receive_master(int ind)
 {
 	connection_t *connp = &Conn[ind];
 	int player = -1, n;
-	char ch, buf[160];
+	char ch, buf[MAX_CHARS];
 	s16b command;
 
 	if (connp->id != -1) player = GetInd[connp->id];
