@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. June 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. June 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -14,7 +14,7 @@ Contents
 --------
 (0) Quickstart (If you don't like to read much :)
     (0.1)   Start & play
-    (0.2)   Brief command reference
+    (0.2)   Command reference
     (0.3)   Important inscriptions
     (0.4)   Typical slang/abbreviations
     (0.5)   Rumours, missing features, technical warnings (READ!)
@@ -32,10 +32,12 @@ Contents
     (3.2)   The display (user-interface)
     (3.3)   Start-up equipment & how to use it
     (3.4)   Preparing the first time for fighting enemies
-    (3.5)   Creating macros and inscribing items
-    (3.6)   Creating macros for ranged attacks & magic spells
-    (3.7)   Macros with special keys
-    (3.8)   Level-ups and skill points
+    (3.5)   Creating basic macros & inscribing items
+    (3.6)   Creating macros for ranged attacks & abilities (spells)
+    (3.7)   An example macro set for warriors
+    (3.8)   Macros with special keys
+    (3.9)   Level-ups and skill points
+    (3.10)   Death and Ghosts
 (4) The world
     (4.1)   Running, picking up items, fighting
     (4.2)   Level and owner of items
@@ -62,10 +64,9 @@ Contents
     (6.4)   Races
     (6.5)   Classes/Professions, titles, melee blows/round
     (6.6)   Sanity
-    (6.7)   Ghosts
-    (6.8)   Mimic details, polymorph rings
-    (6.9)   Magic spells and prayers
-    (6.10)  Parties, Iron Teams, Guilds
+    (6.7)   Mimic details, polymorph rings
+    (6.8)   Magic spells and prayers
+    (6.9)   Parties, Iron Teams, Guilds
 (7) Tactics & strategy
     (7.1)   Preparing the inventory for diving into the dungeon
     (7.2)   Preparing the equipment for diving into the dungeon
@@ -75,6 +76,7 @@ Contents
     (8.1)   'The Art Not To Die'
     (8.2)   Character dumps
     (8.3)   Golem creation
+    (8.4)   Troubleshooting
 (9) End of this guide
 
 
@@ -83,7 +85,7 @@ Contents
 ==============
 (0.1) Start & play
 ------------------
--Get the latest client from www.tomenet.net or www.c-blue.de/rogue.html.
+-Get the latest client from www.tomenet.net or www.c-blue.de/rogue.html .
 -Extract it, run tomenet4.exe.
 -Choose a server from the meta list that appears on your screen.
 -Create a character, half-troll warrior is good for beginners.
@@ -118,124 +120,159 @@ those, invoke the skill screen with 'G'.
 
 
 
-(0.2) Brief command reference
------------------------------
+(0.2) Command reference
+-----------------------
 Can be different depending on OS / configuration.
 
 Keys:
+The first key is of the 'original Angband key set', the second key is of the
+'rogue-like' key set. Some people prefer to use that one. You can change it
+in the options menu, which you invoke with '=' key.
 
-i   display your inventory.
-e   display your equipment.
-w   wear/wield an item from your inventory.
-t   take off items.
-L,M navigate on the map (use direction keys if using L).
-q   quaff a potion.
-r   read a scroll.
-E   eat. (Thunderlords, also known as Dragonriders, can eat firestones.)
-F   fill your lamp.
-f   fire.
-v   throw.
-/   generally use an item (combines q,r, etc..).
-C   see a character overview.
-~   display further information of your character.
-    Point (3) here is especially helpful for mimics:
-    The number shown in round brackets before each monster name is the number
-    they have to enter for their 'Polymorph self into..' ability!
-m   cast a magic spell or use an ability.
-a   use (aim) a magic wand.
-z   use (zap) a magic rod.
-u   use a magic staff.
-j   steal from monsters/players.
-U   use undead powers (use this if you died and became a ghost). Using these
-    will drain your experience. If you ran out of experience points, your
-    ghost fades away (= you character will be completely erased).
-h   buy/sell a house or change house parameters.
-s   search adjacent fields, objects or walls for hidden traps or doors.
-S   enter 'search mode'. You will search your adjacent fields once each turn.
-    If you stand next to a room and you want to find its hidden door, turn
-    this on and run along its walls until you find it.
-A   activate an item. Usually an artefact, a dragon scale mail or a ring of
-    polymorphing (shapechanging).
-T,+ tunnel through an obstacle or a wall.
-R   rest. Your hit points and mana will regenerate faster while resting.
-P   party screen. Form/disband/modify a party with other players here.
-    In a party you will share experience points if you are within 7 character
-    levels to each other and on the same dungeon/tower level respectively
-    the same worldmap/wildernis sector.
-    An 'Iron Team' can only be formed with newly created characters. Its
-    members will only get experience for killing monsters if ALL members
-    are online and on the same dungeon level!
-G   skills screen.
-o   open something.
-c   close something.
-B   bash something (a stuck door).
-l   look at a player/monster/object.
-d   drop an item.
-$   drop some gold.
-D   disarm a trap.
-_   drink from a fountain. You must stand on the fountain to do this.
-    Fountains can have good/bad/no effects.
-k   destroy an item.
-{   inscribe an item.
-%   edit your macros.
-=   edit your preferences. (Contains many obsolete effectless entries.)
-    Most important entries here are..
-    User Interface Options:
-        "Rogue-like commands" will change your keyboard layout to
-            the original Rogue key definitions.
-    Disturbance Options:
-        Note that most of these aren't available in multi-player and
-        will be set server-side, so players can't change them.
-    Game-Play Options:
-        "Set 'AFK' mode automatically" will set you afk after some
-            minutes of inactivity.
-        "Flicker messages in recall" will allow you to see animated
-            messages in the 'recall' window (message history).
-    Efficiency Options:
-        Mostly moved to server-side, hence obsolete.
-    TomeNET Options:
-        "Automatically open doors" makes your character try to open a door
-            just by moving towards it.
-        "Automatically disarm traps" makes your character try to disarm a trap
-            just by stepping onto it.
-        "Automatically tunnel walls" makes your character tunnel through a
-            wall just by moving towards it.
-        "Scroll the screen more frequently" helps to avoid death by attacks
-            that came from off-screen. However, this option can be a bit
-            irritating.
-        "Always show lists in item/skill selection" will always show a list
-            of possible choices if you use commands that require you to make
-            a selection from a list of choices.
-:   type a chat message. To whisper privately, enter <player>:<text> then.
-    Example:    Hi!             <- goes to everyone
-                C. Blue:Hi!     <- goes to the character named 'C. Blue'
-    In chat messages you can type a double colon '::' to force output of a
-    normal colon ':' instead of having it interpreted as separator for a
-    private chat message. Most smileys are recognized automatically and don't
-    require you to enter a double colon ( ':)' will work equally to '::)' ).
-    (If you want to send a private message to someone which starts with a
-    smiley, you will have to enter a space between the private-separator
-    colon and the smiley colon, example: 'd00d: :)' sends a private message to
-    d00d, containing  ' :)' while 'd00d::)' will result in a public chat
-    message looking like this 'd00d:)' .)
-@   displays a list of players currently on the server.
-'   lets you peek at the equipment of party members or players within sight.
-<,> go upstairs/downstairs.
-g   pick up an item from the floor. You have to stand on the item to do that.
-    You can also pick up an item by pressing '5' on the number pad while
-    numlock is turned off.
+
+Directions:
+    Original key set        Rogue-like key set      Rogue-like (running)
+        7   8   9               y   k   u               Y   K   U
+        4   5   6               h       l               H       L
+        1   2   3               b   j   n               B   J   N
+
+You can also use the arrow keys for movement.
+Pressing '5' will cause you to spend a turn with doing nothing.
+
+
+i       i       display your inventory.
+e       e       display your equipment.
+I       I       inspects an item, showing its special abilities in case it
+                has some. To examine an item you must either have bought it
+                from a shop or *identified* it. Mages can learn *ID* spell
+                "Greater Identify", some shops offer *ID* service, or you can
+                use a scroll of *identify*. If the item hasn't been
+                *identified* yet, you will only see basic information.
+                If you examine weapons, it always tells you the weapon class
+                (sword/hafted/axe/polearm) as well as if it's 1-, 2- or
+                1,5-handed.
+w       w       wear/wield an item from your inventory (weapons, armour,
+                ammunition, tools, rings, amulets, etc).
+t       T       take off items.
+q       q       quaff a potion.
+r       r       read a scroll.
+E       E       eat. (Thunderlords, also known as Dragonriders, can eat
+                firestones to gain temporary special abilities.)
+F       F       fuel your light source.
+f       t       fire.
+v       v       throw.
+b       (P)     browse (peruse) a book.
+m       m       activate a skill (ie cast a magic spell or use an ability).
+a       z       use (aim) a magic wand.
+z       a       use (zap) a magic rod.
+u       Z       use a magic staff.
+g       g       pick up an item from the floor. You have to stand on the item
+                to do that. You can also pick up an item by pressing '5' on
+                the number pad while numlock is turned off. Gold is always
+                picked up automatically.
+C       C       see a character overview.
+L,M     W,M     navigate on the map (use direction keys if using L).
+s       s       search adjacent fields, objects or walls for hidden traps or
+                doors.
+S       #       enter 'search mode'. You will search your adjacent fields once
+                each turn. If you stand next to a room and you want to find
+                its hidden door, turn this on and run along its walls until
+                you find it.
+A       A       activate an item. Usually an artefact, a dragon scale mail or
+                a ring of polymorphing (shapechanging).
+T,+     CTRL+T  tunnel through an obstacle or a wall.
+R       R       rest. Your hit points and mana will regenerate faster while
+                resting.
+o       o       open something.
+c       c       close something.
+d       d       drop an item.
+$       $       drop some gold.
+D       D       disarm a trap.
+k       CTRL+D  destroy an item.
+G       G       skills screen.
+B       f       bash/force something (ie a stuck door).
+l       x       look at a player/monster/object (use direction keys for
+                targetting).
+j               steal from monsters/players (pvp-stealing is not recommended).
+U       O       use undead powers (use this if you died and became a ghost).
+                Using these will drain your experience. If you ran out of
+                experience points, your ghost fades away (= you character will
+                be completely erased).
+CTRL+S          spike a door (using iron spikes, the door will be jammed).
+
+h               buy/sell a house or change house parameters.
+P               party screen. Form/disband/modify a party with other players
+                here. In a party you will share experience points if you are
+                within 7 character levels to each other and on the same
+                dungeon/tower level respectively the same worldmap/wildernis
+                sector. See (6.9) for details.
+
+/       in general use an item (combines q,r, etc..).
+~       display further information of your character.
+        Point (3) here is especially helpful for mimics:
+        The number shown in round brackets before each monster name is the
+        number they have to enter for their 'Polymorph self into..' ability!
+X       quickly swap between two equippable items. They must be inscribed
+        @1@0 and @2@0.
+{       inscribe an item.
+}       remove inscription from an item.
+_       drink from a fountain. You must stand on the fountain to do this.
+        Fountains can have good/bad/no effects.
+%       edit your macros.
+=       edit your preferences. (Contains many obsolete effectless entries.)
+        Most important entries here are..
+        User Interface Options:
+            "Rogue-like commands" will change your keyboard layout to
+                the original Rogue key definitions.
+        Disturbance Options:
+            Note that most of these aren't available in multi-player and
+            will be set server-side, so players can't change them.
+        Game-Play Options:
+            "Set 'AFK' mode automatically" will set you afk after some
+                minutes of inactivity.
+            "Flicker messages in recall" will allow you to see animated
+                messages in the 'recall' window (message history).
+        Efficiency Options:
+            Mostly moved to server-side, hence obsolete.
+        TomeNET Options:
+            "Automatically open doors" makes your character try to open a door
+                just by moving towards it.
+            "Automatically disarm traps" makes your character try to disarm a
+                trap just by stepping onto it.
+            "Automatically tunnel walls" makes your character tunnel through a
+                wall just by moving towards it.
+            "Scroll the screen more frequently" helps to avoid death by
+                attacks that came from off-screen. However, this option can be
+                a bit irritating.
+            "Always show lists in item/skill selection" will always show a
+                list of possible choices if you use commands that require you
+                to make a selection from a list of choices.
+:       type a chat message. To whisper privately, enter <player>:<text> then.
+        Example:    Hi!             <- goes to everyone
+                    C. Blue:Hi!     <- goes to the character named 'C. Blue'
+        In chat messages you can type a double colon '::' to force output of a
+        normal colon ':' instead of having it interpreted as separator for a
+        private chat message. Most smileys are recognized automatically and
+        don't require you to enter a double colon ( ':)' will work equally to
+        '::)' ). (If you want to send a private message to someone which
+        starts with a smiley, you will have to enter a space between the
+        private-separator colon and the smiley colon, example: 'd00d: :)'
+        sends a private message to d00d, containing  ' :)' while 'd00d::)'
+        will result in a public chat message looking like this 'd00d:)' .)
+@       displays a list of players currently on the server.
+'       lets you peek at the equipment of party members or players within
+        sight.
+<,>     go upstairs/downstairs.
 SHIFT+<direction key>
-    runs into that direction. Numlock must be turned off probably.
-    You can also run by pressing the dot '.' followed by a direction key.
-CTRL+P
-    view previous messages.
-CTRL+O
-    view previous chat messages.
-CTRL+X
-    save your character & quit the game.
-SHIFT+Q
-    suicide your character (permanently deletes it!).
-?   invoke an in-game help screen
+        runs into that direction. Numlock must be turned off probably.
+        You can also run by pressing the dot '.' followed by a direction key.
+CTRL+P  view previous messages.
+CTRL+O  view previous chat messages.
+CTRL+X  save your character & quit the game.
+Q or CTRL+C or CTRL+K
+        lets your character commit suicide (permanently deletes it!).
+?       invoke an in-game help screen
+CTRL+R  redraw the screen (do this if it's messed up for some reason).
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/':
@@ -403,6 +440,7 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 (0.5) Rumours, missing features, technical warnings (READ!)
 -----------------------------------------------------------
+-Aura of Death and Aura of Shivering aren't implemented at the moment.
 -If you press CTRL+X to save&exit the game, you should do that in a safe town.
 Dungeons might change while you are logged off, and the next time you log on
 you might find yourself stuck inside a wall, where the previous dungeon had a
@@ -423,10 +461,9 @@ If you use it on items with a discount, the artefact will get it too.
 Watch out: 'Indestructible' and 'Cursed' rings are ego items too, so are
 'Amulets of Telepathic Awareness'!
 In general, it's not always good idea to try to turn a ring or amulet that has
-high boni numbers into an artefact, like for example a ring of speed (+7) or
+high bonus numbers into an artefact, like for example a ring of speed (+7) or
 a ring of slaying (+10,+8) because these numbers will get erased and randomly
-re-rolled, (+to-hit,+to-dam) will always become +0,+0!
--Priest spells lack a balanced implementation at the moment. (Weak)
+re-rolled, (+to-hit,+to-dam) will always become (+0,+0)!
 -Monster traps (using the Trapping skill) lack a balanced implementation at
 the moment. (Weak)
 -The massive iron crown of Morgoth must not be worn by non-Kings/Queens!
@@ -442,7 +479,7 @@ derived from MAngband (Multiplayer-Angband). TomeNET bases on the stories of
 J.R.R. Tolkien mainly "The Lord Of The Rings", hence the name "the Troubles of
 Middle Earth" or alternatively "the Tales of Middle Earth". The final goal in
 TomeNET is to destroy the fallen god Melkor who is known by the name of
-Morgoth, Lord Of Darkness. The official website is http://www.tomenet.net/.
+Morgoth, Lord Of Darkness. The official website is http://www.tomenet.net/ .
 The source code is hosted at http://sourceforge.net/projects/pernband,
 module pm.
 
@@ -483,7 +520,7 @@ IRC:
     - Channel #mangband on server irc.worldirc.org (port 6667) for mainly
       MAngband/TomeNET discussion.
     - Channel #angband for general rogue-like discussion.
-    (For help on Internet Relay Chat visit www.irchelp.org)
+    (For help on Internet Relay Chat visit www.irchelp.org )
 
 
 
@@ -522,25 +559,15 @@ you join a TomeNET internet server.
 To start the TomeNET client, run "tomenet4.exe".
 Now TomeNET tries to connect to a meta-server which contains a list of all
 available TomeNET internet servers.
-This step is reported to often cause problems under Windows XP. In that case
-you can try..
--To use 'Win98 Compatibility Mode' (Create a link from tomenet4.exe,
- right-click it, choose 'properties', choose 'Compatibility'. This option is
- available natively on Windows XP systems; for Windows 2000 systems first try
- the other two points mentioned below, if they don't help, get the
- compatibility mode update from www.microsoft.com or from
- www.c-blue.de/appupd.exe).
--to move the 'tomenet-bin' directory to your drive's root.
- For example C:\tomenet-bin\.. .
--to edit your "tomenet4.ini" file and specify a host directly by
- specifying "HOST=europe.tomenet.net".
-
 After the meta-server has been queried, the list of available servers will
 appear in the main window. Choose a server that is near to your location to
-avoid high latency. Now you will be prompted to enter your account name and
-password. You can choose these freely, the server will save that information
-and use it to remember which characters belonged to you the next time you log
-on. A player usually has exactly one account that can hold up to 7 characters.
+avoid high latency. 
+This step is reported to often cause problems under Windows XP. If you don't
+see that list, or if other problems occur, see (8.4) for possible solutions.
+Now you will be prompted to enter your account name and password. You can
+choose these freely, the server will save that information and use it to
+remember which characters belonged to you the next time you log on.
+A player usually has exactly one account that can hold up to 7 characters.
 In most cases newly created accounts have to be "validated" by a server
 administrator to enable you to use the whole functionality of TomeNET. For
 example it is common not to allow unvalidated players to drop items or money
@@ -667,17 +694,20 @@ The "Choice" window will give an overview of your character attributes and
 miscellanous abilities. The "Recall" window will show the contents of your
 backpack, also called inventory. All characters except ghosts have a backpack.
 The "Mirror" window will show status or chat messages from the server or from
-fellow players.
+fellow players. If the "Choice"/"Recall"/"Mirror" windows stay empty, see
+(8.4) for possible solutions.
 To the left border in the main window you see a short overview of your most
 important stats, starting with your race, your class and your current title
 (the title will change as you gain experience levels by fighting monsters),
-followed by your 6 character attributes, your current sanity (sound means you
-are completely sane, this might drop however for example if a mindcrafter
-blasts your mind with psionic energy, leaving you mad), then comes your Armor
-Class (AC) which describes you well you are protected by all the armor you
-currently wear. The last four values are most important and will change all
-the time while fighting monsters. They are your theoretical maximum of Hit
-Points (HP) and Spell Points (SP) as well as the current values of those.
+followed by your current character level, your amount of experience and your
+cash ('Au' stands for Aurum, latin for gold), your 6 character attributes,
+your current sanity (sound means you are completely sane, this might drop, for
+example if a mindcrafter blasts your mind with psionic energy, leaving you
+mad), then comes your Armor Class (AC) which describes you well you are
+protected by all the armor you currently wear. The last four values are most
+important and will change all the time while fighting monsters.
+They are your theoretical maximum of Hit Points (HP) and Spell Points (SP) as
+well as the current values of those.
 Spell points are very important for wizards, since they determine which spells
 and how many of them you can cast. The current hit points (Cur HP) tell you if
 you are injured. If they drop below zero you die!
@@ -751,8 +781,8 @@ And if you still have spare money (this one costs a lot) a
 
 
 
-(3.5) Creating macros and inscribing items
-------------------------------------------
+(3.5) Creating basic macros & inscribing items
+----------------------------------------------
 Macros are absolutely obligatory, you _will_ need them, so read this
 carefully and if something isn't explained well, ask a fellow player
 or send me a mail (mail@c-blue.de) :).
@@ -854,8 +884,8 @@ the key 'r' which is used to read a scroll, you can reset the key by
 
 
 
-(3.6) Creating macros for ranged attacks & magic spells
--------------------------------------------------------
+(3.6) Creating macros for ranged attacks & abilities (spells)
+-------------------------------------------------------------
 Those macros basically consist of three parts.
 1. Clearing the keyboard buffer (to avoid your character locking up in
    an attack queue if you hammer the trigger button for a ranged attack).
@@ -994,9 +1024,86 @@ until the 30 shots are finished. The character is 'locked'.
 The ')' in the macro '\e)f*t' clears all previous keypresses and hence
 allows you to hammer the macro without fearing a lock.
 
+A problem with the 'm' key is that it not only brings up your magic spells
+but a menu containing all skills you can use. Those can be arrow fletching
+or dodging for example.
+Now you would have to rewrite your macros each time you gain another ability.
+Example:
+You are an adventurer who can cast magic spells, so if you press 'm' you
+are asked which spell you want to cast.
+Now you train in archery, learning the ability to create ammunition from
+junk items. If you press 'm' now, a menu will appear, asking you if you
+want to create ammunition or cast a magic spell instead. So you of your
+macros need to be rewritten to take account of this question.
+To avoid this, you can directly choose which skill (ie spell-casting) you
+want to use in your macros, by specifying the "ability code"!
+
+Here is a list of all available ability codes:
+8   Create ammunition (for archers)
+17  Cast monster spell (for mimics)
+43  Check your dodge chance
+47  Set a monster trap
+49  Cast a magic spell / recite a holy prayer
+
+Example for a macro that directly specifies the ability code to cast the magic
+spell "a) Manathrust" from book "a) Beginner Cantrips" on the closest monster:
+
+m@49aa*t
+
+What does that mean?
+m   ->  invoke an ability
+@   ->  specify an ability code directly
+49  ->  the code for 'cast a magic spell/recite a holy prayer'
+a   ->  cast from book "a)" (Beginner Cantrips)
+a   ->  cast spell "a)" (Manathrust)
+*t  ->  choose the closest monster as target
+
+(That macro does exactly the same as:
+mbaa*t
+..assumed that entry 'b)' in the ability menu (invoked by 'm') is
+'b) Cast a spell'.)
 
 
-(3.7) Macros with special keys
+
+(3.7)   An example macro set for warriors
+-----------------------------------------
+Here is an example macro set for a (Thunderlord) Warrior:
+
+Key         Purpose of the Macro                    The macro   Inscription
+                                                    itself      on the item(s)
+------------------------------------------------------------------------------
+F1  fire with ranged weapon at closest target       \e)f*t          -none-
+    (you can inscribe your ammunition  !=  to pick it up automatically)
+F2  quaff cure critical wound or healing potion     \e)q1           @q1
+F3  quaff speed potion                              \e)q2           @q2
+F4  quaff restore life levels potion                \e)q3           @q3
+F5  read scroll of phase door                       \e)r1           @r1
+F6  read scroll of teleportation                    \e)r2           @r2
+F7  read scroll of identify                         \e)r3           @r3
+F8  use a staff of teleportation                    \e)u1           @u1
+    (magic device must be high enough or you keep failing)
+F9  quaff a potion of resistance                    \e)q4           @q4
+    (an important thing later in the game)
+F10 zap some rod (dunno yet which one)              \e)z1           @z1
+    (magic device must be high enough or you keep failing)
+F11 eat a firestone (Thunderlords only)             \e)E1           @E1
+F12 use a wand on the closest target                \e)a1*t         @a1
+    (magic device must be high enough or you keep failing)
+
+As you can see this warrior is supposed to be able to use quite some magic
+for support in addition to fighting. Especially helpful are rods of perception
+or of speed. Not all warriors are bright enough to use magic items easily, nor
+are players always willing to spend many points on the 'Magic Device' skill.
+If you dislike the use of magic your warrior would have to rely completely on
+scrolls of teleportation instead. Just make sure you have confusion and
+blindness resistance then! (Those two aren't needed to use a staff.)
+If you play Thunderlord, kill Dragonriders because they tend to drop a large
+amount of firestones. If a difficult combat starts, just eat several of them
+to get a larger amount of extra powers.
+
+
+
+(3.8) Macros with special keys
 ------------------------------
 You can use so-called 'escapes', meaning a combination of '\' and a regular
 key to emulate some special keys in your macros:
@@ -1043,7 +1150,7 @@ Miscellanous escape sequences:
 
 
 
-(3.8) Level-ups and skill points
+(3.9) Level-ups and skill points
 --------------------------------
 By killing monsters your character gains experience. Harder monsters give more
 experience than easy kills. If your character accumulates a certain amount of
@@ -1071,6 +1178,48 @@ Further, there is a slim chance that you gain an extra stat point on stats you
 are very bad at ("stats" = "attributes" = STRength, INTelligence, WISdom,
 DEXterity, CONstitution, CHaRisma). This chance too is increased by the
 'Training' skill.
+For details about skill point distribution and the different skills see (6.2).
+
+
+
+(3.10) Death and Ghosts
+-----------------------
+Normal/everlasting characters will turn into ghosts if they die. When you
+become a ghost, your title will change to 'Ghost' until you get revived.
+You can continue playing as a ghost, getting a slight experience penalty,
+but that's not recommended. Instead, you should go for resurrection!
+
+That will bring you back to life at the cost of experience (40% usually).
+There are 3 ways to be revived:
+-the ghost can visit a temple (green '4' in town). The temple priest will also
+ give him some money.
+-another living player reads a 'scroll of life' when standing directly next to
+ a ghost.
+-another living player speaks a prayer of 'resurrection' when standing
+ directly next to a ghost.
+The ghost will return to the world of living under the cost of a lot of
+experience but at least the player can resume playing. If the ghost dies,
+the character will finally be erased permanently, watch out!
+
+Depending on the server configuration the number of times a ghost can be
+resurrected can be limited (usually to 3 lifes, meaning 2 resurrections).
+Unworldly/hellish characters don't have a ghost and are completely destroyed
+if they die.
+Ghosts slowly lose experience, if they go below 0 they will fade and the
+player will be erased completely.
+
+Ghosts have some special abilities, these are
+-they can see invisible creatures
+-life force can hardly be drained from them
+-they cannot be paralyzed
+-they spot warm-blooded creatues easily
+-they resist darkness effects, blindness, poison, cold, fear and confusion
+-they cannot be cut since they don't bleed
+-they resist insanity attacks.
+
+Ghosts can access undead powers with 'U'.
+Those powers drain your experience. If you use them too often and run out
+of experience you will fade away (your character is erased then).
 
 
 
@@ -1511,6 +1660,12 @@ will be multiplied by 3 if the target doesn't resist that brand.
 Characters using weapons have a limited number of melee attacks per round,
 depending on the character class (profession). A table showing the blow/round
 limits is at section (6.5).
+
+While smaller melee weapons require only 1 hand to use them, some larger
+weapons need 2 hands. Using a shield together with those is not possible.
+Some weapons _can_ be used two-handed. That means you will receive penalties
+to to-hit and to-dam bonus if you use it one-handed. Look at your character
+screen ('C') to compare the to-hit/to-dam boni and see if it's worth it.
 
 
 
@@ -2075,7 +2230,7 @@ Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 smaller if the chance is smaller than 50%.
 Magic Arrows    Those will return into your quiver magically, so you need only
                 one of them really. Same goes for artefact ammunition of any
-                type.
+                type. (Magic Arrows can be destroyed by fire or acid though.)
 
 Potions
 --
@@ -2218,6 +2373,25 @@ race and class still don't have completely identical values here.
 Here are questions that are related to your character attributes.
 The attributes are also called 'stats'.
 
+Stats are displayed as values from 3 (minimum) to 18. It is possible to gain
+even higher stats, those will be displayed as 18/xxx where xxx is roughly the
+value above 18 multiplied by 10 (to allow fractions). Examples:
+18/10 is like 19.
+18/120 is like 30.
+18/47 is like 22. The fraction 0.7 is not factoring into actual gameplay.
+
+If you quaffed the maximum of "stat potions" (potions raising your stats), the
+maxed out attribute will be displayed in light umber.
+An attribute is maxed out at 18/100 +/- racial/class modifiers.
+Examples:
+Human Adventurer has 18/100 + 0 + 0 = 18/100 cap for all stats, see (6.4) for
+race boni and (6.5) for class boni.
+Thunderlord Istari has an intelligence cap of 18/100 + 2 (Thunderlord) + 3
+(Istari) = 18/150.
+
+Stats can be raised over the character's cap by equipment. The total possible
+maximum of an attribute is always 18/220 (40), which is displayed as 18/***.
+
 Strength (STR)      
     -How heavy may your weapon and bow be? You can't fight with a weapon that
      is too heavy for you.
@@ -2243,11 +2417,6 @@ Constitution (CON)
     -How many HP (hit points) do you have? Very essential.
 Charisma (CHR)      
     -Do you get good prices in shops? :)
-
-If you quaffed the maximum of stat potions (those raise your stats!), the
-maxed out attribute will be displayed in light umber.
-It can be further raised by items that you equip. The total maximum of a char
-attribute is always 18/220, which is displayed as 18/***.
 
 
 
@@ -2330,7 +2499,8 @@ Note that not every skill is available to every profession (class).
                                 increases your mana capacity.
                                 Lets you pseudo-id magic items, potions and
                                 scrolls easier if raised over 10.
-    .Magic-device               Ability to use magic devices (wands,etc.)
+    .Magic-device               Ability to use magic devices (wands,rods,etc.)
+                                without failing. Also increases their power.
     .Spell-power                Increases the power of learned spells by
                                 adding a bonus to the spell level.
                                 At 50, it will raise spell levels by 40%.
@@ -2385,6 +2555,7 @@ Note that not every skill is available to every profession (class).
                                 large piece of wood without the store owner
                                 noticing it, although it's not worth much :)
                                 There's always a minimum chance of 5% to fail!
+                                You need to be at least level 10 to steal.
     +Dodging                    Ability to evade attacks. Doesn't work well
                                 if you wear heavier armour.
         .Calmness               Ability to not get hindered by enemies.
@@ -2435,6 +2606,27 @@ Note that not every skill is available to every profession (class).
 
 In my opinion, 'Health' and its sub-skills should be avoided. There are more
 important skills to care about.
+
+Here is what the numbers mean (we will use the Axe-Mastery skill for this
+example:
+
++Combat                         10.500  [0.800]
+    +Weaponmastery               5.250  [0.800]
+        .Axe-Mastery            15.000  [0.500]
+
+As we can see this player has 10.5 skill points in Combat, 5.25 in
+Weaponmastery and 15 in Axe-Mastery. He just reached a new level and hence
+gained 5 skill points. Now he decides to invest them all into Axe-Mastery.
+He presses <DOWN> key until the Axe-Mastery line is selected. Now he presses
+<RIGHT> key 5 times to invest all his 5 spare skill points here.
+Axe-Mastery will be increased by 0.500 points per invested skill point (hence
+the [0.500] on the right), leaving him at 17.5 Axe-Mastery now.
+Since sub-skills always slightly affect their parent skills, Weaponmastery
+and Combat will also be raised slightly. The result might look like this:
+
++Combat                         10.750  [0.800]
+    +Weaponmastery               6.250  [0.800]
+        .Axe-Mastery            17.500  [0.500]
 
 
 
@@ -2499,7 +2691,7 @@ Depending on your race, you might need different amounts of experience to gain
 a new character level. You also might have certain intrinsic abilities.
 To see numerical tables about races and classes, visit http://www.tomenet.net/
 and click 'Doc' in the menu on the left.
-(Descriptions here are partially taken from www.tomenet.net)
+(Descriptions here are partially taken from www.tomenet.net )
 
 Human
     Humans are allrounders with no special weaknesses or strengths.
@@ -2655,7 +2847,7 @@ Depending on your class, your start-up equipment and your skill tree will
 vary. For example a warrior cannot learn magic spells.
 To see numerical tables about races and classes, visit http://www.tomenet.net/
 and click 'Doc' in the menu on the left.
-(Descriptions here are partially taken from www.tomenet.net)
+(Descriptions here are partially taken from www.tomenet.net )
 
 Adventurer
     Adventurers can train nearly all skills, but are not very good in a
@@ -2766,7 +2958,7 @@ Ranger
     At level 20 rangers learn to find paths passing thick woods.
 
 If you raise in levels, you will get new titles. These are displayed between
-your class name and your character level in the main window. If you died and
+your class name and your character level in the main window. If you die and
 become a ghost, the title will change to 'Ghost' until you get revived.
 
 
@@ -2828,24 +3020,7 @@ storm your head, leaving you with mad visions for a while..
 
 
 
-(6.7) Ghosts
-------------
-If you die and turn into a ghost you can access undead powers with 'U'.
-Those powers drain your experience. If you use them too often and run out
-of experience you will fade away (your character is erased then).
-Ghosts have some special abilities, these are
--they can see invisible creatures
--life force can hardly be drained from them
--they cannot be paralyzed
--they spot warm-blooded creatues easily
--they resist darkness effects, blindness, poison, cold, fear and confusion
--they cannot be cut since they don't bleed
--they resist insanity attacks
-Ghosts can even gain experience and hence levels.
-
-
-
-(6.8) Mimic details, polymorph rings
+(6.7) Mimic details, polymorph rings
 ------------------------------------
 To find out the special abilities of a monster form, consult the file
 /lib/game/r_info.txt in your tomenet directory, and look up the monster.
@@ -3083,7 +3258,7 @@ form level              ring level
 
 
 
-(6.9) Magic spells and prayers
+(6.8) Magic spells and prayers
 ------------------------------
 Istari (mages), rangers, rogues, priests, paladins and even adventurers
 can cast magic spells or speak prayers. To do so, they need the according
@@ -3213,7 +3388,7 @@ Meta
 Priest schools:
 ---------------
 Holy Offense
-    Globe of Light  Creates a globe of pure light.
+    Holy Light      Creates a globe of pure light.
                     Lv3: Damages monsters.
                     Lv15: Calls a more powerful kind of light.
     Exorcism        Dispels nearby undead.
@@ -3273,7 +3448,7 @@ Holy Support
 
 
 
-(6.10) Parties, Iron Teams, Guilds
+(6.9) Parties, Iron Teams, Guilds
 ----------------------------------
 Press 'P' to display the party menu.
 Here you can..
@@ -3281,7 +3456,8 @@ Here you can..
 -Form a party
     In a party you will share experience points if you are within 7 character
     levels to each other and on the same dungeon/tower level respectively
-    the same worldmap/wildernis sector.
+    the same worldmap/wildernis sector. A slight experience bonus is applied
+    for killing monsters in a party.
     Set a house owner to 'party' to allow all party members to access that
     house.
     If the owner dies, the whole party is disbanded and all houses of the
@@ -3826,6 +4002,60 @@ Last but not least, the golem is..
 -the golem will never attack other players unless you set them to hostile via
 the party menu ('P'). If they are hostile, the same rules as for monsters
 apply (see the description of the 3 command scrolls above).
+
+
+
+(8.4) Troubleshooting
+---------------------
+PROBLEM:    I don't get to see a server list when I start TomeNET.
+            Instead, I am immediately asked for account and password.
+SOLUTION:   This is a typical problem on Windows XP. There are 3
+            possible fixes:
+            -Use 'Win98 Compatibility Mode' (Create a link from tomenet4.exe,
+             right-click it, choose 'properties', choose 'Compatibility'.
+             This option is available natively on Windows XP systems; for
+             Windows 2000 systems first try the other two points mentioned
+             below, if they don't help, get the compatibility mode update
+             from www.microsoft.com or from www.c-blue.de/appupd.exe ).
+            -Move the 'tomenet-bin' directory to your drive's root. For
+             example C:\tomenet-bin\.. .
+            -to edit your "tomenet4.ini" file and specify a host directly by
+             specifying "HOST=europe.tomenet.net".
+PROBLEM:    I get to a server list, but it doesn't show any servers. It just
+            says 'Press Q to enter a server manually' and that's it.
+SOLUTION:   There are 2 possible solutions.
+            -There is currently no public TomeNET server running. That can
+             happen if a server update is currently being applied or if for
+             some reason the server just crashed. Try again after a minute.
+            -There are some DNS problems. These can happen for various reasons
+             although they aren't very likely. DNS problems can last for a
+             longer period of time though, being very annoying.
+             That the server isn't listed doesn't mean that it's down though.
+             You should try to connect manually (press 'Q') to either:
+             europe.tomenet.net
+             or (if that doesn't work either) directly to its IP address:
+             213.186.35.70
+PROBLEM:    All windows except for the main window stay empty. (occurs on
+            Windows XP machines).
+SOLUTION:   Open tomenet4.ini file with a text editor, look for the window
+            sections, change the fonts to the same settings (8x13) as in the
+            [Main window] section: FontFile=8X13.FON , Font=8X13.FON .
+            Also, you could adjust the width/height of the windows (to 80x24
+            for example).
+PROBLEM:    I cannot browse (some) spell books, I see some LUA error messages
+            if I try or when I connect to the server.
+SOLUTION:   Your LUA script files are outdated. Those files are responsible
+            for any spell-casting and some other things.
+            To update them, you have 2 possibilities:
+            -Automatic update: Join the server, you should see a message in
+             the chat window, saying that (some of) your LUA files are being
+             updated. After all files have been successfully received (a
+             green message will say so for each file) you need to exit and
+             re-enter the server in order for them to take effect.
+            -The first method doesn't work for everyone. Another possibility
+             is to just download a ZIP file containing the latest scripts
+             and extract it to your /tomenet-bin/lib/scpt folder.
+             You can get the latest scripts at www.c-blue.de/rogue.html .
 
 
 
