@@ -628,6 +628,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 		bell();
 		line = back;
 		find = NULL;
+		my_fclose(fff);	/* The evil file that waited open? */
 		return (TRUE);
 	}
 

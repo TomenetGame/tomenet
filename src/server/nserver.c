@@ -1189,6 +1189,7 @@ static int Handle_setup(int ind)
 bool player_allowed(char *name){
 	FILE *sfp;
 	char buffer[80];
+	bool success=TRUE;
 	sfp=fopen("allowlist","r");
 	if(sfp==(FILE*)NULL)
 		return TRUE;
@@ -1196,11 +1197,14 @@ bool player_allowed(char *name){
 		while(fgets(buffer, 80, sfp)){
 			/* allow for \n */
 			if((strlen(name)+1)!=strlen(buffer)) continue;
-			if(!strncmp(buffer,name, strlen(name))) return(TRUE);
+			if(!strncmp(buffer,name, strlen(name))){
+				success=TRUE;
+				break;
+			}
 		}
 		fclose(sfp);
 	}
-	return(FALSE);
+	return(success);
 }
 
 /*
