@@ -145,11 +145,11 @@ int party_check(int Ind){
 	{
 		if (parties[i].num != 0){
 			if(!(id=lookup_player_id(parties[i].owner))){
-				msg_format(Ind, "Lost party %s (%s)\n", parties[i].name, parties[i].owner);
+				msg_format(Ind, "Lost party %s (%s)", parties[i].name, parties[i].owner);
 			}
 			else{
-				if((lookup_player_party(id)!=id)){
-					msg_format(Ind, "Disowned party %s (%s)\n", parties[i].name, parties[i].owner);
+				if((lookup_player_party(id)!=i)){
+					msg_format(Ind, "Disowned party %s (%s)", parties[i].name, parties[i].owner);
 				}
 			}
 		}
