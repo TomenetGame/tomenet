@@ -423,7 +423,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool molt)
 	}
 
 	fprintf(fff, "%s %s (%s%sLv %d, %s)",
-			race_info[q_ptr->prace].title, (molt ? "cheezer" : class_info[q_ptr->pclass].title),
+			race_info[q_ptr->prace].title, (molt ? "Cheezer" : class_info[q_ptr->pclass].title),
 			(q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"",
 			q_ptr->fruit_bat ? "Batty, " : "",
 			q_ptr->lev, parties[q_ptr->party].name);
@@ -485,7 +485,7 @@ void do_cmd_check_players(int Ind, int line)
 		fprintf(fff, "%c", attr);
 
 		/* Print a message */
-		do_write_others_attributes(fff, q_ptr, ((Ind!=k) && !strcmp(p_ptr->name, "Moltor")));
+		do_write_others_attributes(fff, q_ptr, ((Ind!=k) && !stricmp(q_ptr->name, "Moltor")));
 
 		/* PK */
 		if (cfg.use_pk_rules == PK_RULES_DECLARE)
@@ -636,7 +636,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 		fprintf(fff, "%c", attr);
 
 		/* Print a message */
-		do_write_others_attributes(fff, q_ptr, !strcmp(q_ptr->name, "Moltor"));
+		do_write_others_attributes(fff, q_ptr, !stricmp(q_ptr->name, "Moltor"));
 
 		fprintf(fff, "\n");
 
