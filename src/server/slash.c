@@ -1803,7 +1803,7 @@ void do_slash_cmd(int Ind, char *message)
 						for (i = 0; i < MAX_R_IDX - 1 ; i++)
 						{
 							r_ptr = &r_info[i];
-							if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+						if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
 
 							r_ptr->r_tkills = r_ptr->r_pkills = 0;
 						}
@@ -1818,6 +1818,7 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				if (k)
 				{
+					if (!(r_info[k].flags1 & RF1_UNIQUE)) return;
 					if (r_info[k].max_num)
 					{
 						r_info[k].max_num = 0;
@@ -1832,6 +1833,20 @@ void do_slash_cmd(int Ind, char *message)
 				else
 				{
 					msg_print(Ind, "Usage: /uninum <monster_index>");
+				}
+				return;
+			}
+			else if (prefix(message, "/unizero"))
+			{
+				if (k)
+				{
+					if (!(r_info[k].flags1 & RF1_UNIQUE)) return;
+					r_info[k].r_tkills = r_info[k].r_pkills = 0;
+					msg_format(Ind, "Monster %d kill count reset to \377G0\377w.", k);
+				}
+				else
+				{
+					msg_print(Ind, "Usage: /unizero <monster_index>");
 				}
 				return;
 			}
