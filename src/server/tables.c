@@ -2357,7 +2357,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_META,
                                 '+', 0,
-                                '+', 400,
+                                '+', 300,
                         },
                         {
                                 SKILL_MIND,
@@ -2555,7 +2555,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
-                                '+', 700,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_SLING,
+                                '+', 0,
+                                '+', 500,
                         },
                         {
                                 /* let's keep it low for now - offbalancing */
@@ -2681,12 +2686,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 600,
                         },
                         {
                                 SKILL_TRAINING,
                                 '+', 3000,
-                                '+', 1000,
+                                '+', 700,
                         },
 
 
@@ -2814,8 +2819,8 @@ player_class class_info[MAX_CLASS] =
                         },,*/
                         {
                                 SKILL_META,
-                                '+', 0,
-                                '+', 700,
+                                '+', 3000,
+                                '+', 1000,
                         },
                         {
                                 SKILL_HOFFENSE,
@@ -2876,7 +2881,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 0,
-                                '+', 1000,
+                                '+', 500,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -2922,7 +2927,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOW,
                                 '+', 0,
-                                '+', 500,
+                                '+', 450,
                         },
                         {
                                 SKILL_XBOW,
@@ -2932,7 +2937,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
-                                '+', 450,
+                                '+', 550,
+                        },
+                        {
+                                SKILL_SLING,
+                                '+', 0,
+                                '+', 650,
                         },
                         {
                                 SKILL_HUNTING,
@@ -3008,7 +3018,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 900,
                         },
 						/* Health tree */
                         {
@@ -3093,9 +3103,19 @@ player_class class_info[MAX_CLASS] =
                                 '+', 600,
                         },
                         {
+                                SKILL_BOW,
+                                '+', 0,
+                                '+', 300,
+                        },
+                        {
+                                SKILL_XBOW,
+                                '+', 0,
+                                '+', 300,
+                        },
+                        {
                                 SKILL_SLING,
                                 '+', 0,
-                                '+', 500,
+                                '+', 400,
                         },
                         {
                                 SKILL_BOOMERANG,
@@ -3243,7 +3263,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 800,
                         },
                         {
                                 SKILL_ANTIMAGIC,
@@ -3326,7 +3346,12 @@ player_class class_info[MAX_CLASS] =
                                 '+', 600,
                         },
                         {
-                                SKILL_BOOMERANG,
+                                SKILL_BOW,
+                                '+', 0,
+                                '+', 450,
+                        },
+                        {
+                                SKILL_XBOW,
                                 '+', 0,
                                 '+', 500,
                         },
@@ -3359,8 +3384,8 @@ player_class class_info[MAX_CLASS] =
                         },*/
                         {
                                 SKILL_META,
-                                '+', 0,
-                                '+', 700,
+                                '+', 2000,
+                                '+', 900,
                         },
                         {
                                 SKILL_HOFFENSE,
@@ -3401,7 +3426,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 600,
                         },
 
 					/* Health tree */
@@ -3487,12 +3512,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SLING,
                                 '+', 0,
-                                '+', 500,
+                                '+', 550,
                         },
                         {
                                 SKILL_BOW,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_XBOW,
@@ -4445,17 +4470,17 @@ martial_arts ma_blows[MAX_MA] =
 	{ "You hit %s with your knee.",             5, 5, 2, 3, MA_KNEE },
 	{ "You hit %s with your elbow.",            7, 5, 1, 8, 0 },
 	{ "You butt %s.",                           9, 10, 2, 5, 0 },
-	{ "You kick %s.",                           11, 10, 3, 4, MA_SLOW },
+	{ "You kick %s.",                           11, 10, 2, 6, MA_SLOW },
 	{ "You uppercut %s.",                       13, 12, 4, 4, 6 },
 	{ "You double-kick %s.",                    16, 15, 5, 4, 8 },
-	{ "You hit %s with a Cat's Claw.",          20, 20, 5, 5, 0 },
-	{ "You hit %s with a jump kick.",           25, 25, 5, 6, 10 },
-	{ "You hit %s with an Eagle's Claw.",       29, 25, 6, 6, 0 },
-	{ "You hit %s with a circle kick.",         33, 30, 6, 8, 10 },
-	{ "You hit %s with an Iron Fist.",          37, 35, 8, 8, 10 },
-	{ "You hit %s with a flying kick.",         41, 35, 8, 10, 12 },
-	{ "You hit %s with a Dragon Fist.",         45, 35, 10, 10, 16 },
-	{ "You hit %s with a Crushing Blow.",       48, 35, 10, 12, 18 },
+	{ "You hit %s with a Cat's Claw.",          20, 20, 7, 3, 0 },
+	{ "You hit %s with a jump kick.",           25, 25, 3, 10, 10 },
+	{ "You hit %s with an Eagle's Claw.",       29, 25, 7, 5, 0 },
+	{ "You hit %s with a circle kick.",         33, 30, 4, 11, 10 },
+	{ "You hit %s with an Iron Fist.",          37, 35, 7, 7, 10 },
+	{ "You hit %s with a flying kick.",         41, 35, 6, 9, 12 },
+	{ "You hit %s with a Dragon Fist.",         45, 35, 8, 8, 16 },
+	{ "You hit %s with a Crushing Blow.",       48, 35, 9, 9, 18 },
 };
 
 /*

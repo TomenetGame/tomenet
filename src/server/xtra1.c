@@ -1821,7 +1821,7 @@ bool monk_heavy_armor(int Ind)
 #endif	// 0
 
 //	return (monk_arm_wgt > ( 100 + (p_ptr->lev * 4))) ;
-	return (monk_arm_wgt > 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 100));
+	return (monk_arm_wgt > 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 250));
 #endif
 }
 #endif	// 0
@@ -2955,40 +2955,83 @@ void calc_bonuses(int Ind)
 			}
 		}
 
-		/* Monks get extra ac for armour _not worn_ */
+		/* Monks get extra ac for wearing very light or no armour at all */
 		if (!p_ptr->inventory[INVEN_BOW].k_idx &&
 			!p_ptr->inventory[INVEN_WIELD].k_idx)
 		{
 			int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
+			int martsbonus, martsweight, martscapacity;
+			
+			martsbonus = (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
+			martsweight = p_ptr->inventory[INVEN_BODY].weight;
+			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 80);
 			if (!(p_ptr->inventory[INVEN_BODY].k_idx))
 			{
-				p_ptr->to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
-				p_ptr->dis_to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
+				p_ptr->to_a += martsbonus;
+				p_ptr->dis_to_a += martsbonus;
+			} else if (martsweight <= martscapacity){
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
 			}
+
+			martsbonus = ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			martsweight = p_ptr->inventory[INVEN_OUTER].weight;
+			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 40);
 			if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15))
 			{
-				p_ptr->to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-				p_ptr->dis_to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+				p_ptr->to_a += martsbonus;
+				p_ptr->dis_to_a += martsbonus;
+			} else if ((martsweight <= martscapacity) && (marts > 15)) {
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
 			}
+
+			martsbonus = ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			martsweight = p_ptr->inventory[INVEN_ARM].weight;
+			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 30);
 			if (!(p_ptr->inventory[INVEN_ARM].k_idx) && (marts > 10))
 			{
-				p_ptr->to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-				p_ptr->dis_to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+				p_ptr->to_a += martsbonus;
+				p_ptr->dis_to_a += martsbonus;
+			} else if ((martsweight <= martscapacity) && (marts > 10)) {
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
 			}
+
+			martsbonus = (marts - 2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
+			martsweight = p_ptr->inventory[INVEN_HEAD].weight;
+			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
 			if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4))
 			{
-				p_ptr->to_a += (marts - 2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
-				p_ptr->dis_to_a += (marts -2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
+				p_ptr->to_a += martsbonus;
+				p_ptr->dis_to_a += martsbonus;
+			} else if ((martsweight <= martscapacity) && (marts > 4)) {
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
 			}
+
+			martsbonus = (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
+			martsweight = p_ptr->inventory[INVEN_HANDS].weight;
+			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 20);
 			if (!(p_ptr->inventory[INVEN_HANDS].k_idx))
 			{
-				p_ptr->to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
-				p_ptr->dis_to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
+				p_ptr->to_a += martsbonus;
+				p_ptr->dis_to_a += martsbonus;
+			} else if (martsweight <= martscapacity) {
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
 			}
+
+			martsbonus = (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			martsweight = p_ptr->inventory[INVEN_FEET].weight;
+			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 45);
 			if (!(p_ptr->inventory[INVEN_FEET].k_idx))
 			{
-				p_ptr->to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-				p_ptr->dis_to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+				p_ptr->to_a += martsbonus;
+				p_ptr->dis_to_a += martsbonus;
+			} else if (martsweight <= martscapacity) {
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
 			}
 		}
 	}

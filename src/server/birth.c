@@ -1030,11 +1030,11 @@ void admin_outfit(int Ind, int realm)
 
 		if (!k_idx) continue;
 		invcopy(o_ptr, k_idx);
-		o_ptr->number = 3;
+		o_ptr->number = 1;
 		apply_magic(&p_ptr->wpos, o_ptr, 1, TRUE, FALSE, FALSE);
 		do_admin_outfit();
 	}
-
+#if 0
 	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
 	o_ptr->number = 99;
 	o_ptr->note = quark_add("@r8");
@@ -1075,7 +1075,7 @@ void admin_outfit(int Ind, int realm)
 	apply_magic_depth(1, o_ptr, -1, FALSE, FALSE, FALSE);
 	o_ptr->number = 98;
 	do_admin_outfit();
-
+#endif
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
 	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
 	o_ptr->number = 1;

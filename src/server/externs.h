@@ -497,7 +497,7 @@ extern int breakage_chance(object_type *o_ptr);
 
 extern int get_shooter_mult(object_type *o_ptr);
 extern bool get_something_tval(int Ind, int tval, int *ip);
-extern void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x);
+extern void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x, int might);
 
 
 /* cmd3.c */
@@ -1092,6 +1092,7 @@ extern bool project_hack(int Ind, int typ, int dam);
 extern bool banish_evil(int Ind, int dist);
 extern bool dispel_evil(int Ind, int dam);
 extern bool dispel_undead(int Ind, int dam);
+extern bool dispel_demons(int Ind, int dam);
 extern bool dispel_monsters(int Ind, int dam);
 extern bool turn_undead(int Ind);
 extern void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte feat);

@@ -4749,7 +4749,7 @@ bool mon_hit_trap(int m_idx)
 
 					/* KABOOM! */
 					/* Hack -- minus * minus * minus = minus */
-					if (load_o_ptr->pval) do_arrow_explode(who > 0 ? who : 0 - who, load_o_ptr, &wpos, my, mx);
+					if (load_o_ptr->pval) do_arrow_explode(who > 0 ? who : 0 - who, load_o_ptr, &wpos, my, mx, 2);
 
 					if (load_o_ptr->tval != TV_ARROW ||
 						load_o_ptr->sval != SV_AMMO_MAGIC)

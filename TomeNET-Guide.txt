@@ -1,7 +1,7 @@
 .=========================+==--.
 | TomeNET Beginners Guide |
 +=========================+-
-| Latest update: 10. May 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. May 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.0.0 experimental, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -48,11 +48,12 @@ Contents
 (5) Item details
 	(5.1)	Melee weapons, brands
 	(5.2)	Ranged weapons, brands
-	(5.3)	Slaying vs brands
-	(5.4)	Resistances & caps
-	(5.5)	Qualitative classification of items
-	(5.6)	Special abilities of items
-	(5.7)	What does item xxx do exactly?
+	(5.3)	Martial Arts, brands
+	(5.4)	Slaying vs brands
+	(5.5)	Resistances & caps
+	(5.6)	Qualitative classification of items
+	(5.7)	Special abilities of items
+	(5.8)	What does item xxx do exactly?
 (6) Character details
 	(6.1)	Attributes
 	(6.2)	Skills
@@ -62,6 +63,7 @@ Contents
 	(6.6)	Sanity
 	(6.7)	Ghosts
 	(6.8)	Mimic details, polymorph rings
+	(6.9)	Magic spells and prayers
 (7) Tactics & strategy
 	(7.1) 	Preparing the inventory for diving into the dungeon
 	(7.2)	Preparing the equipment for diving into the dungeon
@@ -228,8 +230,8 @@ They all start with a slash '/':
 			currently on the blacklist of merchants (because you got caught
 			stealing from a shop!) your blacklist timer won't decrease either
 			while you're AFK!
-/quest		gives a quest! It needs to be fulfilled before a certain period
-			of time passes. The player who completes it gets a great item
+/que		gives a quest! It needs to be fulfilled before a certain period
+ (/quest)	of time passes. The player who completes it gets a great item
 			as reward. It will appear right below the player on the ground.
 /sip		drink from a fountain. You must stand on the fountain to do this.
 			Fountains can have good/bad/no effects.
@@ -241,14 +243,18 @@ They all start with a slash '/':
 			Empty a potion from your inventory, leaving an empty bottle.
 			Example: /empty c   (if you have 'c) 3 potions of boldness', one
 			will be emptied and 2 remain at 'c) 2 potions of boldness'.))
-/ignore <player name>
-			ignores all chat messages from the specified player. (Toggle)
+/ig <player name>
+ (/ignore)	ignores all chat messages from the specified player. (Toggle)
 /dice		Roll some dice, you must specify a number of dice from 1 to 100.
 			The result is random and can be seen by other players who stand
 			nearby.
 /dis		DESTROYS everything without (non-system) inscription in your
-			inventory.
+ (/dispose)	inventory.
 /rec -550	recalls you to -550ft, using an item inscribed {@R}.
+/rec 32 32	recalls you to Bree (Town at 32,32 world map coordinates),
+ (/recall)	using an item inscribed {RR}.
+/dr			Wields all items in your inventory that are: not cursed,
+ (/dress)	not {worthless}, not {terrible}, known to you.
 
 
 
@@ -481,9 +487,13 @@ To start the TomeNET client, run "tomenet4.exe".
 Now TomeNET tries to connect to a meta-server which contains a list of all
 available TomeNET internet servers.
 This step is reported to often cause problems under Windows XP. In that case
-you can try to edit your "tomenet4.ini" file and specify a host directly by
-specifying "HOST=europe.tomenet.net". Also try to move the 'tomenet-bin' directory
-to your drive's root. For example C:\tomenet-bin\.. .
+you can try..
+-To use 'Win98 Compatibility Mode' (Create a link from tomenet4.exe,
+ right-click it, choose 'properties', choose 'Compatibility'.)
+-to edit your "tomenet4.ini" file and specify a host directly by
+ specifying "HOST=europe.tomenet.net".
+-to move the 'tomenet-bin' directory to your drive's root.
+ For example C:\tomenet-bin\.. .
 After the meta-server has been queried, the list of available servers will
 appear in the main window. Choose a server that is near to your location to
 avoid high latency. Now you will be prompted to enter your account name and
@@ -727,6 +737,9 @@ hungry.
 The next time you log on, you may load your previously saved macro file by
 invoking the macro menu again ('%'), choosing "(1) Load a user pref file" and
 entering the filename.
+
+Loading macros automatically:
+-----------------------------
 If you save your macros to a filename that is the same as your character's
 name and add a '.prf' at the end, it will be automatically loaded as you
 join a game with your character, which is very helpful!
@@ -734,7 +747,30 @@ Example: If your character is named 'Kinkan', dump the macros to Kinkan.prf
 to have them loaded automatically.
 Note: If you're using a Linux version, make sure you don't use capital letters
 in the filename. So just 'kinkan.prf'.
+Another option is to dump the macros to a file that is named like your account
+it will be automatically loaded on all chars of that account.
+You can also save macros to <racename>.prf or to <classname>.prf, like
+warrior.prf to have them being auto-loaded on all characters of that class.
+Priority order (latter one overrides prior one):
+pref.prf (global for all OS and users on the system)
+user.prf (global, for the specific user)
+pref-<operating system>.prf (loaded if under the specific operating system)
+user-<operating system>.prf (loaded if under the specific operating system)
+<race>.prf (for the specific race)
+<class>.prf (for the specific class)
+<account name>.prf (for the account the player logged in with)
+<character name>.prf (for the specific character the player logged in with)
+It is recommended to use only race/class/account/character preference files.
 
+Command macros:
+---------------
+Use 'create command macro' instead of 'create normal macro' in case you don't
+want the macro to appear on hitting the corresponding key in a normal chat
+message (for example useful for '-' key so it won't prevent you from inscribing your
+word-of-recall scrolls).
+
+Identity macros:
+----------------
 If you accidentally bound a macro to a key which wasn't free, for example
 the key 'r' which is used to read a scroll, you can reset the key by
 -pressing % to invoke the macro menu
@@ -1408,7 +1444,64 @@ that brand.
 
 
 
-(5.3) Slaying vs brands
+(5.3) Martial Arts, brands
+--------------------------
+The "auto-retaliator" (see 5.1) also works if you fight bare-handed.
+
+Training Martial Arts will give you..
+-a bonus to-hit and to-dam
+-special combat techniques which your character will use automatically
+-special abilities and resistances (like Free Action, see 6.2)
+-extra speed bonus
+-extra AC bonus for each part of armour that is NOT worn.
+
+A heavy backpack (inventory) will nullify the Free Action. You will see a
+message, telling you that your backpack isn't comfortable.
+
+Using a shield will nullify the special combat styles, reducing your damage.
+
+Using too heavy armour or using any melee or ranged weapon will disable your
+MA and all benefits completely.
+
+Martial Arts special combat techniques have certain dice, similar to normal
+weapons. These dice are also effected by brands and slays same as normal 
+weapons but the multiplier is reduced to 1/2 of the value.
+Example: Ring of Acid will increase your technique damage by 1,5x instead of
+tripling it (1/2 * 3 = 1.5 :).
+You cannot use special techniques while stunned or confused.
+
+Here is a list of Martial Arts special techniques:
+A technique is picked randomly, then used if random(1..MA_Skill)>chance.
+If the chance fails, another technique is picked.
+There are MA_Skill / 7 tries to find a technique, otherwise you will hit
+without a special technique. There is always at least 1 try to pick a
+technique.
+
+Technique		|	Min.level	|	Chance	|	Damage dice	|	Effects
+---------------------------------------------------------------------------
+Punch					 1				 0			1d4				-
+Kick					 2				 0			1d6				-
+Strike					 3				 0			1d7				-
+Knee					 5				 5			2d3			Stunning &
+															   increase chance
+																to stun again
+Elbow					 7				 5			1d8				-
+Butt					 9				10			2d5				-
+Kick					11				10			2d6			Slowing (PvM)
+Uppercut				13				12			4d4			Stunning
+Double-kick				16				15			5d4			Stunning
+Cat's Claw				20				20			7d3				-
+Jump Kick				25				25		    3d10		Stunning
+Eagle's Claw			29				25			7d5				-
+Circle Kick				33				30			4d11		Stunning
+Iron Fist				37				35			7d7			Stunning
+Flying Kick				41				35			6d9			Stunning
+Dragon Fist				45				35			8d8			Stunning
+Crushing Blow			48				35			9d9			Stunning
+
+
+
+(5.4) Slaying vs brands
 -----------------------
 If you use a weapon that slays trolls, that means its dice will be tripled if
 you hit a troll ('T'). If you have an item that gives fire brand, the dice
@@ -1444,7 +1537,7 @@ If several multipliers match the highest one will be used.
 
 
 
-(5.4) Resistances & caps
+(5.5) Resistances & caps
 ------------------------
 Several monsters or traps can cause elemental attacks on you. These attacks
 can deliver very high damage if you do not 'resist' the specific attack type.
@@ -1689,7 +1782,7 @@ Rocket			Rockets combine shard & sound effects with heat influence on
 
 
 
-(5.5) Qualitative classification of items
+(5.6) Qualitative classification of items
 -----------------------------------------
 Items are classified by
 -a basic item type
@@ -1765,7 +1858,7 @@ the pots/scrolls show similar pseudo-id tags.
 
 
 
-(5.6) Special abilities of items
+(5.7) Special abilities of items
 --------------------------------
 AGGRAVATE ('It aggravates nearby creatures')
 		Wakes up all monsters in whose radius of awareness you are, hastes
@@ -1814,6 +1907,8 @@ CHARGING (of Charging) ('It regenerates its mana faster.')
 		fully recharge.
 FAST_CAST (of Quickness) ('It can cast spells faster')
 		Magic device can be used twice as often over a period of time.
+Istari (of the Istari)
+		Combination of CAPACITY, CHARGING, CHEAPNESS and FAST_CAST.
 FUEL_LITE ('It provides light radius when fueled')
 		A light source that needs to be fueled, otherwise it runs out.
 (NO_SEED 
@@ -1822,7 +1917,7 @@ FUEL_LITE ('It provides light radius when fueled')
 
 
 
-(5.7) What does item xxx do exactly?
+(5.8) What does item xxx do exactly?
 ------------------------------------
 Some items might look bad (Mushrooms of Unhealth), but keep in mind that you
 can often throw ('v') these items to damage or impair an enemy.
@@ -1860,7 +1955,8 @@ Detonations		Better not drink it.
 Scrolls
 --
 Life			Resurrects another player's ghost if standing on a directly
-				adjacent field to you when you read it.
+				adjacent field to you when you read it. Does not work inside
+				vaults.
 Word of Recall	Use it to quickly travel from the town to a dungeon or tower,
 				it can also be used to travel between towns or on the worldmap
 				in general. See (0.3) Important Inscriptions.
@@ -2058,13 +2154,18 @@ Note that not every skill is available to every profession (class).
 								The dice of martial arts special techniques
 								(which your character will use automatically
 								depending on your MA skill) are affected by
-								elemental brands, same as normal weapons.
+								elemental brands, but slightly less (2/3 as
+								much) as normal weapons.
 +Magic							Improves your spellcasting abilities and
 								increases your mana capacity.
 								Lets you pseudo-id magic items, potions and
 								scrolls easier if raised over 10.
 	.Magic-device				Ability to use magic devices (wands,etc.)
-	.Spell-power				Increases the power of learned spells.
+	.Spell-power				Increases the power of learned spells by
+								adding a bonus to the spell level.
+								At 50, it will raise spell levels by 40%.
+								(It won't raise the level of spells which you
+								haven't learned yet.)
 	.Sorcery					Ability to use all magic schools!
 								Comes at the cost of your hit points!
 	.Mana						Ability to use spells of the Mana school.
@@ -2121,7 +2222,8 @@ Note that not every skill is available to every profession (class).
 								you try to shoot with a bow.
 		.Interception			Ability to interfere with adjacent enemies.
 								Can prevent them from teleporting, casting,
-								summoning, running away.
+								summoning, running away. Interception chance
+								caps at 90%.
 +Necromancy						Drains life from killed monsters
 								(the skill level in HPs from each kill).
 	.Aura power					Increases the power of your auras.
@@ -2134,7 +2236,7 @@ Note that not every skill is available to every profession (class).
 								attempts from other casters to cast spells or
 								summon monsters. This effect is cumulative
 								with the anti-magic field of a Dark Sword.
-								It's capped at 95% chance of interrupting
+								It's capped at 90% chance of interrupting
 								enemy spells.
 								Note that as soon as you invest a point into
 								this skill you won't be able to use any magic
@@ -2559,12 +2661,32 @@ B: attack method : attack effect : damage
 	EXPxx means the monster drains life on attacking. The player will
 	receive HOLD_LIFE (resist life-draining attacks) from this form.
 
-	Monster effects are only applied if the monster's fighting style is
-	the same as the mimic's. A monster that has a weapon will make effects
-	apply only if the mimic wears a weapon.
-	A monster that fights weaponless will make effects apply only if the
-	mimic doesn't wield a weapon.
-	Ranged attacks aren't influenced by monster attack effects.
+	Monster effects (like poisoning or paralyzing) are also applied to
+	the player's attacks, with a probability that corresponds their
+	rarity over the up to 4 monster attacks per round.
+	(If the monster has 3 blows per round and one of them is poisoning,
+	the other two are paralying, the mimic will have 1/3 chance to do
+	a poison branded attack and 2/3 chance to do a stunning attack.)
+	These effects won't be applied if one of the following conditions
+	is met:
+	a) The player is doing a ranged attack.
+	   (Effects only works with melee attacks!)
+	b) The player uses a weapon but the monster doesn't have an
+	   inventory slot for melee weapons).
+
+	Melee to-damage bonus also depends on the monster form:
+	The monster damage dice for each attack are multiplied and the products
+	are all added up, the result is divided by 4. If the monster can't use
+	melee weapons (no equipment slot for melee weapons), the result will
+	be doubled (after it was divided by 4).
+	The result is now capped against 200, the closer this graph comes towards
+	200	the flatter the curve will become.
+	This value is now compared against the player's melee to-damage bonus.
+	If (monDam > toDam) then newToDam = 1/2 toDam + 1/2 monDam.
+	If (monDam < toDam) then newToDam = 3/4 toDam + 1/4 monDam.
+	So the monster damage has only a small influence if it's lower than
+	the player's to-damage bonus, but it has a high influence if the
+	monster is more powerful than the player.
 
 	The chance for an attack effect to go off is (number of blows with
 	this effect) / (total number of monster blows). That means a Ghoul
@@ -2710,6 +2832,181 @@ form level				ring level
 	 30						28
 	 60						38
 	100	(theoretical)		44
+
+
+
+(6.9) Magic spells and prayers
+------------------------------
+Istari schools:
+---------------
+Earth
+	Stone Skin		Creates a shield of earth, increasing your AC.
+					Lv25: Deals damage to attackers.
+	Dig				Turns walls into mud.
+	Stone Prison	Creates a prison of granite walls around you.
+	Strike			Creates a micro-ball of force, pushing monsters backwards.
+					Lv12: it turns into a small ball.
+	Shake			Creates a local earthquake.
+Air
+	Noxious Cloud	Fires a poison cloud.
+					Lv30: Unbreath cloud, irresistable.
+	Wings of Wind	Grants levitation (feather falling).
+					Lv16: Lets you fly.
+	Invisibility	Turns you invisible.
+	Poison Blood	Gives temporary poison resistance.
+					Lv10: Brands melee weapons with venom.
+	Thunderstorm	Throws thunder bolts at random monsters nearby.
+					(33% lightning, 33% sound, 33% light)
+Water
+	Tidal Wave		Summons a monstrous tidal wave.
+	Ice Storm		Engulfs you in a storm of roaring cold.
+					Lv15: Turns into a storm of shards of ice.
+	Ent's Potion	Fills your stomach.
+					Lv5: Removes fear.
+					Lv12: Makes you heroic.
+	Vapor			Fills the air with toxic moisture (water damage).
+Fire
+	Globe of Light	Creates a globe of magical light.
+					Lv10: Damages monsters.
+					Lv 25: Turns into a more powerful kind of light.
+	Fireflash		Conjures a fire ball.
+					Lv20: Turns into holy fire.
+	Fiery Shield	Creates a shield of flames around you.
+	Firewall		Creates a fire wall to incinerate monsters that cross it.
+Mana
+	Manathrust		Casts a powerful mana bolt.
+	Remove Curses	Removes all curses of carried/worn objects.
+					Lv20: Switches to *remove curses*.
+	Elemental Shield
+					Gives temporary resistance to the elements,
+					fire/cold/lightning/acid.						(project)
+	Disruption Shield
+					Conjures a shield that protects you from taking damage.
+					Instead, the shield will consume your mana to absorb it.
+Conveyance
+	Phase Door		Teleports you on a small scale range.			(project)
+	Disarm			Destroys doors and traps around you.
+	Teleport		Teleports you within the level.					(project)
+	Teleport Away	Teleports a line of monsters away.
+					Lv10: Turns into a ball.
+					Lv20: Teleports away all monsters in sight.
+	Recall			Works like Word Of Recall.						(project)
+	Probability Travel
+					Renders you instable, allowing to pass walls and to
+					float upwards/downwards.
+Divination
+	Identify		Identifies items.
+					Lv17: Identifies all items that you carry/wear.
+					Lv27: Also identifies all items on the floor around you.
+	Greater Identify
+					*Identifies* an item.
+	Vision			Detects the dungeon layout around you.
+					Lv25: Maps and lights the whole level.
+	Sense Hidden	Detects traps.									(project)
+					Lv15: Lets you see invisible for a while.		(project)
+	Reveal Ways		Detects doors/stairs/ways within a radius.		(project)
+	Sense Monsters	Detects all monsters nearby.					(project)
+					Lv30: Gives you temporary ESP.
+Nature
+	Grow Trees		Grows trees quickly around you.
+	Healing			Heals a percentage of your hit points.			(project)
+	Recovery		Reduces poison duration.
+					Lv10: Cures poison and cuts.					(project)
+					Lv20: Restores drained stats.
+					Lv25: Restores lost experience.
+	Regeneration	Increases your hit point regeneration rate.
+Mind
+	Confuse			Confuses a monsters.
+					Lv15: Turns into a ball.
+					Lv35: Affects all monsters in sight.
+	Stun			Stunds a monster.
+					Lv25: Turns into a ball.
+	Telekinesis		Inscribe your book with @PPlayername, cast it, select an
+					item that you wish to teleport to the player's inventory.
+Tempo
+	Magelock		Magically locks a door.
+					Lv30: Creates a Glyph Of Warding on the ground.
+	Slow Monster	Slows down a monster.
+					Lv20: Affects a zone.
+	Essence of Speed
+					Hastes you for a while.							(project)
+	Banishment		Teleports away all monsters within sight.
+					Lv15: Locks monsters in stasis for a while.
+Udun
+	Genocide		Genocides all monsters of a race on the level.
+					Lv15: Genocides all monsters near you.
+	Wraithform		Turns your form immaterial.						(project)
+
+Istari/priest schools:
+----------------------
+Meta
+	Recharge		Recharges a magic staff or wand.
+	Project Spells	Makes several spells and prayers affect other players too.
+	Disperse Magic	Removes magical influences.
+					Lv1: Blindness.
+					Lv5: Confusion/Hallucination.
+					Lv10: Speed/Slowness.
+					Lv15: Stun/Cuts.
+					Lv20: Heroism/Berserk strength/Blessing/Shields/Fear.
+
+Priest schools:
+---------------
+Holy Offense
+	Globe of Light	Creates a globe of pure light.
+					Lv3: Damages monsters.
+					Lv15: Calls a more powerful kind of light.
+	Exorcism		Dispels nearby undead.
+					Lv20: Dispels nearby demons.
+					Lv30: Dispels nearby evil.
+	Release Souls	*Dispels undead*.
+	Orb Of Draining	Summons a holy orb, devouring monsters.
+	Drain Life		Drains life from a non-undead and non-nonliving creature
+					and returns a part of it to your hit points.
+Holy Defense
+	Blessing		Increases AC by 10 temporarily.					(project)
+					Lv15: Increases AC by 20 temporarily.			(project)
+					Lv30: Increases AC by 30 temporarily.			(project)
+	Holy Resistance	Lets you resist heat.							(project)
+					Lv5: Lets you also resist cold.					(project)
+					Lv10: Lets you also resist lightning.			(project)
+					Lv15: Lets you also resist acid.				(project)
+	Protection from evil.
+					Repels evil creatures that try to attack you.
+	Glyph Of Warding
+					Creates a rune on the ground, stopping monsters.
+	Eternal Martyr	Burns you in holy fire, making you invulnerable.
+					When your martyrium ends, you will be left with 1 HP.
+					The gods won't accept another martyrium until 1000 turns
+					have passed.
+Holy Curing
+	Remove Fear		Removes fear.									(project)
+	Healing			Heals a percentage of hit points.				(project)
+	Curing			Reduces poison duration.
+					Lv10: Cure poison/cuts/stun/blindness/confusion.(project)
+					Lv20: Restore stats. 							(project)
+					Lv25: Restore experience. 						(project)
+	Mind Focus		Cure hallucinations.							(project)
+					Lv10: Slightly cure bad insanity.				(project)
+					Lv20: Fairly cure bad insanity.					(project)
+	Resurrection	Resurrect another player's ghost. The resurrected player
+					will lose less experience the higher the spell level is.
+	Soul Curing		Cures Black Breath.								(project)
+Holy Support
+	Sense Monsters	Detect monsters, see invisible for a while.		(project)
+					Lv30: Gives full temporary ESP.
+	Sanctuary		Puts nearby monsters asleep.
+					Lv20: Lets all monsters in line of sight fall asleep.
+	Satisfy Hunger	Satisfies your hunger.							(project)
+	Remove Curses	Removes curses.
+					Lv30: Removes heavy curses.
+	Sense Surroundings
+					Detect monsters, see invisible for a while.		(project)
+					Lv15: Maps the dungeon around you.				(project)
+					Lv30: Gives clairvoyance (full enlightened map).
+						  Gives full temporary ESP.
+	Zeal			Gives +1 extra attack per round for a while.	(project)
+					Lv10: Gives +2 EA.								(project)
+					Lv20: Gives +3 EA.								(project)
 
 
 

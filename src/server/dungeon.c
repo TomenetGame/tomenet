@@ -894,10 +894,10 @@ static void process_world(int Ind)
 							  /* Forget the grid */ 
 							c_ptr->info &= ~CAVE_GLOW;
 							*w_ptr &= ~CAVE_MARK;
+						}
 
 							/* Hack -- Notice spot */
 							note_spot(Ind, y, x);
-						}						
 
 						c_ptr->info |= CAVE_DARKEN;
 
@@ -4023,6 +4023,7 @@ static void process_player_change_wpos(int Ind)
 
 
 	/* Check "maximum depth" to make sure it's still correct */
+	if (wpos->wz != 0)
 	if ((!p_ptr->ghost) && (getlevel(wpos) > p_ptr->max_dlv))
 		p_ptr->max_dlv = getlevel(wpos);
 

@@ -70,9 +70,10 @@ HEXORCISM = add_spell
 		if get_level(Ind, HEXORCISM, 50) < 20 then
 		    dispel_undead(Ind, 10 + get_level(Ind, HEXORCISM, 200))
 		elseif get_level(Ind, HEXORCISM, 50) < 30 then
-		    dispel_evil(Ind, 10 + get_level(Ind, HEXORCISM, 200))
+		    dispel_undead(Ind, 10 + get_level(Ind, HEXORCISM, 200))
+		    dispel_demons(Ind, 10 + get_level(Ind, HEXORCISM, 200))
 		else
-		    dispel_monsters(Ind, 10 + get_level(Ind, HEXORCISM, 200))
+		    dispel_evil(Ind, 10 + get_level(Ind, HEXORCISM, 200))
 		end
 	end,
 	["info"] = 	function()
@@ -80,8 +81,8 @@ HEXORCISM = add_spell
 	end,
         ["desc"] =	{
         		"Dispels nearby undead",
-			"At level 20 it dispels all evil",
-			"At level 30 it dispels all monsters",
+			"At level 20 it dispels all demons",
+			"At level 30 it dispels all evil",
         }
 }
 

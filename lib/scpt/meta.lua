@@ -94,7 +94,7 @@ function meta_display(xml_feed)
                         nb = nb + 1
                 end
         end
-        color_print(line, 0, "\255BSelect a server or press \255RQ\255B to select manualy a server."); line = line + 1
+        color_print(line, 0, "\255BSelect a server or press \255RQ\255B to enter an IP or hostname manually."); line = line + 1
 
         return nb
 end

@@ -147,7 +147,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			break;
 		case SV_POTION_RUINATION:
 		case SV_POTION_DETONATIONS:
-			dt = GF_SHARDS;
+			dt = GF_ROCKET;/* was GF_SHARD */
 			dam = damroll(25, 25);
 			angry = TRUE;
 			ident = TRUE;
@@ -1106,16 +1106,26 @@ void take_hit(int Ind, int damage, cptr hit_from)
 	}
 
 	/* Heavenly invulnerability? */
-	if (p_ptr->martyr) return;
+	if (p_ptr->martyr && !bypass_invuln) return;
 
 	// This is probably unused
 	// int warning = (p_ptr->mhp * hitpoint_warn / 10);
 
 	// The "number" that the character is displayed as before the hit
-	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
+	/* Now displays corresponding to mana amount if disruption shield
+	is acitavted (C. Blue) */
+/*	if (!p_ptr->tim_manashield)
+	{
+*/		old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
+		if (old_num >= 7) old_num = 10;
+/*	}
+	else
+	{
 
-	if (old_num >= 7) old_num = 10;
-
+		old_num = (p_ptr->csp * 95) / (p_ptr->msp*10); 
+		if (old_num >= 7) old_num = 10;
+	}
+*/
 	/* Paranoia */
 	if (p_ptr->death) return;
 
@@ -1179,9 +1189,19 @@ void take_hit(int Ind, int damage, cptr hit_from)
 	p_ptr->redraw |= (PR_HP);
 
 	/* Figure out of if the player's "number" has changed */
-	new_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
-	if (new_num >= 7) new_num = 10;
-
+	/* Now displays corresponding to mana amount if disruption shield
+	is acitavted (C. Blue) */
+/*	if (!p_ptr->tim_manashield)
+	{
+*/		new_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
+		if (new_num >= 7) new_num = 10;
+/*	}
+	else
+	{
+		new_num = (p_ptr->csp * 95) / (p_ptr->msp*10); 
+		if (new_num >= 7) new_num = 10;
+	}
+*/
 	/* If so then refresh everyone's view of this player */
 	if (new_num != old_num)
 		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -5211,6 +5231,31 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
+		case GF_DISP_DEMON:
+		{
+			/* Only affect evil */
+			if (r_ptr->flags3 & RF3_DEMON)
+			{
+				/* Learn about type */
+				if (seen) r_ptr->r_flags3 |= RF3_DEMON;
+
+				/* Obvious */
+				if (seen) obvious = TRUE;
+
+				/* Message */
+				note = " shudders.";
+				note_dies = " dissolves!";
+			}
+
+			/* Ignore other monsters */
+			else
+			{
+				/* No damage */
+				dam = 0;
+			}
+
+			break;
+		}
 
 			/* Dispel monster */
 		case GF_DISP_ALL:

@@ -14,7 +14,18 @@ typedef unsigned int u32b;
 #define TRUE
 #define FALSE
 
-#define MAX_R_IDX	1152	/* Max size for "r_info[]" */
+#define MAX_F_IDX       256     /* Max size for "f_info[]" */
+#define MAX_K_IDX       1024 /* Max size for "k_info[]" */
+#define MAX_A_IDX       256     /* Max size for "a_info[]" */
+#define MAX_E_IDX       256 /* Max size for "e_info[]" */
+#define MAX_R_IDX       1152    /* Max size for "r_info[]" */
+#define MAX_V_IDX       256     /* Max size for "v_info[]" */
+#define MAX_RE_IDX      128     /* Max size for "re_info[]" */
+#define MAX_T_IDX       256 /* Max size for "t_info[]" */
+#define MAX_OW_IDX      96 /* Max size for "ow_info[]" */
+#define MAX_ST_IDX      64 /* Max size for "st_info[]" */
+#define MAX_BA_IDX      64 /* Max size for "ba_info[]" */
+#define MAX_D_IDX       64 /* Max size for "d_info[]" */
 
 #define TERM_DARK                0  /* 'd' */   /* 0,0,0 */
 #define TERM_WHITE               1  /* 'w' */   /* 4,4,4 */

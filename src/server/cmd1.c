@@ -849,7 +849,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	}
 
 	/* Martial Arts styles get less benefit from brands */
-	if (!p_ptr->inventory[INVEN_WIELD].k_idx) return (tdam * mult * 2 / 3);
+	if ((mult >= 2) && !p_ptr->inventory[INVEN_WIELD].k_idx) return ((tdam * mult) / 2);
 
 	/* Return the total damage */
 	return (tdam * mult);

@@ -406,19 +406,19 @@ f:Hunting Lore:Archery%5
 
 # All combat skills improve Combat
 f:Weaponmastery:Combat%50
-f:Sword-mastery:Combat%7
-f:Axe-mastery:Combat%7
-f:Polearm-mastery:Combat%7
-f:Hafted-mastery:Combat%7
+f:Sword-mastery:Combat%15
+f:Axe-mastery:Combat%15
+f:Polearm-mastery:Combat%15
+f:Hafted-mastery:Combat%15
 f:Archery:Combat%50
-f:Sling-mastery:Combat%7
-f:Bow-mastery:Combat%7
-f:Crossbow-mastery:Combat%7
-f:Boomerang-mastery:Combat%7
+f:Sling-mastery:Combat%10
+f:Bow-mastery:Combat%10
+f:Crossbow-mastery:Combat%10
+f:Boomerang-mastery:Combat%10
 f:Hunting Lore:Combat%7
 #f:Ricochet:Combat%7
 f:Fighting Technique:Combat%25
-f:Martial Arts:Combat%50
+f:Martial Arts:Combat%25
 
 # Sorcery and Weaponmastery arent exactly friendly to each other
 O:Sorcery:Weaponmastery%100

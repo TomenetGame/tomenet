@@ -31,11 +31,11 @@ pern_dofile(Ind, "update.lua")
 
 -- Put whatever is needed here
 
+pern_dofile(Ind, "cblue.lua")
 pern_dofile(Ind, "dg.lua")
 pern_dofile(Ind, "evil.lua")
 pern_dofile(Ind, "zz.lua")
 pern_dofile(Ind, "jir.lua")
-pern_dofile(Ind, "cblue.lua")
 
 -- Restore a good neat handler
 _ALERT = __old_ALERT

@@ -76,12 +76,14 @@ bool hp_player(int Ind, int num)
 {
 	player_type *p_ptr = Players[Ind];
 
+	int old_num, new_num; 
+
 	// The "number" that the character is displayed as before healing
-	int old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
-	int new_num; 
+	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
+	if (old_num >= 7) old_num = 10;
 
 	/* player can't be healed while burning in the holy fire of martyrium */
-	if (p_ptr->martyr) return(FALSE);
+	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
 
 	/* Hell mode is .. hard */
 	if (p_ptr->mode & MODE_HELL)
@@ -156,11 +158,13 @@ bool hp_player_quiet(int Ind, int num)
 	player_type *p_ptr = Players[Ind];
 
 	// The "number" that the character is displayed as before healing
-	int old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
-	int new_num; 
+	int old_num, new_num; 
+
+	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
+	if (old_num >= 7) old_num = 10;
 
 	/* player can't be healed while burning in the holy fire of martyrium */
-	if (p_ptr->martyr) return(FALSE);
+	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
 
 	if(!num) return(FALSE);
 
@@ -3831,6 +3835,11 @@ bool dispel_undead(int Ind, int dam)
 bool dispel_evil(int Ind, int dam)
 {
 	return (project_hack(Ind, GF_DISP_EVIL, dam));
+}
+
+bool dispel_demons(int Ind, int dam)
+{
+	return (project_hack(Ind, GF_DISP_DEMON, dam));
 }
 
 /*

@@ -1260,6 +1260,7 @@ static byte player_color(int Ind)
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	int pcolor = p_ptr->pclass;
+	pcolor = p_ptr->cp_ptr->color;
 
 	/* Ghosts are black */
 	if (p_ptr->ghost)
@@ -1271,22 +1272,12 @@ static byte player_color(int Ind)
 	/* Black Breath carriers emit malignant aura sometimes.. */
 	if (p_ptr->black_breath && magik(50)) return TERM_L_DARK;
 
-	if(p_ptr->team){
-		/* may have multiteam */
-		switch(p_ptr->team){
-			case 1:
-				return TERM_RED;
-			case 2:
-				return TERM_L_BLUE;
-		}
-	}
-
 	/* Covered by a mummy wrapping? */
-	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_WRAPPING) return TERM_L_DARK;
+	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_WRAPPING) pcolor = TERM_L_DARK;
 
 	/* Mimicing a monster */
 	/* TODO: handle 'ATTR_MULTI', 'ATTR_CLEAR' */
-	if (p_ptr->body_monster) return (r_ptr->d_attr);
+	if (p_ptr->body_monster) pcolor = (r_ptr->d_attr);
 
 	/* Bats are orange */
 	/* taking this out since bat parties
@@ -1296,12 +1287,22 @@ static byte player_color(int Ind)
 	
 	if (p_ptr->tim_mimic) pcolor = p_ptr->tim_mimic_what;
 
+	if(p_ptr->team){
+		/* may have multiteam */
+		switch(p_ptr->team){
+			case 1:
+				pcolor = TERM_RED;
+			case 2:
+				pcolor = TERM_L_BLUE;
+		}
+	}
+
 	/* Mana Shield and GOI also flicker */
 #if 1
 //	if ((p_ptr->tim_manashield > 10)) return p_ptr->cp_ptr->color + TERM_SHIELDM;
 //	if ((p_ptr->invuln > 5)) return p_ptr->cp_ptr->color + TERM_SHIELDI;
-	if ((p_ptr->tim_manashield > 10)) return TERM_SHIELDM;
-	if ((p_ptr->invuln > 5)) return TERM_SHIELDI;
+	if (p_ptr->tim_manashield > 10) return TERM_SHIELDM;
+	if (p_ptr->invuln > 5) return TERM_SHIELDI;
 #else
 /*	if ((p_ptr->tim_manashield > 10) && (randint(2)==1)){
 		byte a = p_ptr->cp_ptr->color;
@@ -1337,11 +1338,14 @@ static byte player_color(int Ind)
 		return a;
 	}
 #endif
+	/* Holy Martyr */
+	if (p_ptr->martyr) pcolor += TERM_BNW;
+
 	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
-	if (p_ptr->admin_wiz) return p_ptr->cp_ptr->color + TERM_BNW;
+	if (p_ptr->admin_wiz) pcolor += TERM_BNW;
 
 	/* Color is based off of class */
-	return p_ptr->cp_ptr->color;
+	return pcolor;
 }
 
 
@@ -2113,8 +2117,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		{
 			a = player_color(Ind2);
 
-			if((( p2_ptr->chp * 95) /
-						(p2_ptr->mhp*10)) >= 7)
+			if((( p2_ptr->chp * 95) / (p2_ptr->mhp*10)) >= 7)
 			{
 				if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], c_ptr, &a, &c);
 				else if (p2_ptr->fruit_bat) c = 'b';
@@ -2127,7 +2130,17 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					sprintf((unsigned char *)&kludge,"%d", ((p2_ptr->chp * 95) / (p2_ptr->mhp*10)));
 					c = kludge;
 				}
-			}                       
+			}
+			
+			/* admins sees intensity of mana shields */
+			if (p_ptr->admin_dm && p2_ptr->tim_manashield)
+			{
+				if((( p2_ptr->chp * 95) / (p2_ptr->mhp*10)) < 7)
+				{
+					sprintf((unsigned char *)&kludge,"%d", ((p2_ptr->csp * 95) / (p2_ptr->msp*10)));
+					c = kludge;
+				}
+			}
 
 			(*cp) = c;
 
@@ -2316,6 +2329,12 @@ void lite_spot(int Ind, int y, int x)
 			/* Get the "player" char */
 			c = r_ptr->d_char;
 
+		        /* Holy Martyr */
+		        if (p_ptr->martyr) a += TERM_BNW;
+
+		        /* Admin wizards sometimes flicker black & white (TERM_BNW) */
+		        if (p_ptr->admin_wiz) a += TERM_BNW;
+
 			if(p_ptr->invis && !p_ptr->body_monster){
 				/* special invis colour */
 				a=TERM_VIOLET;
@@ -2344,12 +2363,20 @@ void lite_spot(int Ind, int y, int x)
 			
 			/* bugfix on MASSIVE deaths (det/death) */
 			if(p_ptr->chp<0) c='-';
-			else if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) 
-			{
-				sprintf((unsigned char *)&kludge,"%d",(p_ptr->chp * 95) / (p_ptr->mhp*10)); 
-				c = kludge;
+			else if (!p_ptr->tim_manashield) {
+				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) 
+				{
+					sprintf((unsigned char *)&kludge,"%d",(p_ptr->chp * 95) / (p_ptr->mhp*10)); 
+					c = kludge;
+				}
+			} else {
+				if (((p_ptr->csp * 95) / (p_ptr->msp*10)) < 7) 
+				{
+					sprintf((unsigned char *)&kludge,"%d",(p_ptr->csp * 95) / (p_ptr->msp*10)); 
+					c = kludge;
+				}
 			}
-				
+
 			/*if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) c = '4';*/
 						
 			if (p_ptr->fruit_bat) c = 'b';

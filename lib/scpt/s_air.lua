@@ -54,9 +54,9 @@ INVISIBILITY = add_spell
 {
 	["name"] = 	"Invisibility",
         ["school"] = 	{SCHOOL_AIR},
-        ["level"] = 	16,
-        ["mana"] = 	10,
-        ["mana_max"] = 	20,
+        ["level"] = 	30,
+        ["mana"] = 	20,
+        ["mana_max"] = 	50,
         ["fail"] = 	70,
         ["spell"] = 	function()
 --                       	if player.tim_invisibility == 0 then set_invis(Ind, randint(20) + 15 + get_level(Ind, INVISIBILITY, 50), 20 + get_level(Ind, INVISIBILITY, 50)) end
@@ -74,20 +74,20 @@ POISONBLOOD = add_spell
 {
 	["name"] = 	"Poison Blood",
         ["school"] = 	{SCHOOL_AIR},
-        ["level"] = 	12,
+        ["level"] = 	22,
         ["mana"] = 	10,
         ["mana_max"] = 	20,
         ["fail"] = 	70,
         ["spell"] = 	function()
                        	set_oppose_pois(Ind, randint(30) + 25 + get_level(Ind, POISONBLOOD, 25))
-                      	if get_level(Ind, POISONBLOOD, 50) >= 15 then set_brand(Ind, randint(30) + 25 + get_level(Ind, POISONBLOOD, 25), BRAND_POIS, 10) end
+                      	if get_level(Ind, POISONBLOOD, 50) >= 10 then set_brand(Ind, randint(30) + 25 + get_level(Ind, POISONBLOOD, 25), BRAND_POIS, 10) end
        	end,
 	["info"] = 	function()
 			return "dur "..(25 + get_level(Ind, POISONBLOOD, 25)).."+d30"
 	end,
         ["desc"] =	{
                         "Grants poison resistance",
-                        "At level 15 it provides poison branding to wielded weapon"
+                        "At level 10 it provides poison branding to wielded weapon"
         }
 }
 

@@ -5585,7 +5585,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 	/* max luck = 40 */
 	luck = 200 - (8000 / (luck + 40));
 	if (!good && magik(luck / 2)) good = TRUE;
-	else if (!great && magik(luck / 5)) {great = TRUE; good = TRUE;}
+	else if (good && !great && magik(luck / 5)) {great = TRUE; good = TRUE;}
 
 	/* Chance of "special object" */
 	prob = (good ? 10 : 1000);

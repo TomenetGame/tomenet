@@ -885,6 +885,9 @@ bool set_tim_manashield(int Ind, int v)
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA);
 
+	/* update so everyone sees the colour animation */
+	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 
@@ -2065,11 +2068,14 @@ bool set_martyr(int Ind, int v)
 		else
 		{
 			msg_print(Ind, "\377wYou burn in holy fire!");
-			p_ptr->chp = p_ptr->mhp * p_ptr->martyr / 10;
+			p_ptr->chp = (p_ptr->mhp * p_ptr->martyr) / 15;
 			/* Update health bars */
 			update_health(0 - Ind);
 			/* Redraw */
 			p_ptr->redraw |= (PR_HP);
+
+		    	/* update so everyone sees the colour animation */
+			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
 	}
 
@@ -2101,6 +2107,9 @@ bool set_martyr(int Ind, int v)
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+    	/* update so everyone sees the colour animation */
+	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -2159,6 +2168,9 @@ bool set_invuln(int Ind, int v)
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
+
+	/* update so everyone sees the colour animation */
+	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* Handle stuff */
 	handle_stuff(Ind);

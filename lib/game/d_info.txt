@@ -457,11 +457,11 @@ R:100:1
 M:IM_COLD
 
 # The Training Tower
-# levels 1-10
+# levels 1-3
 # Guarded by the White Balrog guarding The Pike 'Til-i-arc'
 N:30:Training Tower
 D:Nwb:A tower for newbies.
-W:1:8:1:0:14:160
+W:1:3:1:0:14:160
 L:1:80:174:20:1:0
 A:56:100:56:0:56:0:57:58
 O:20:20:20:20

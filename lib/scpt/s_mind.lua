@@ -89,7 +89,7 @@ TELEKINESIS = add_spell
 {
 	["name"] = 	"Telekinesis",
         ["school"] = 	{SCHOOL_MIND, SCHOOL_CONVEYANCE},
-        ["level"] = 	25,
+        ["level"] = 	30,
         ["mana"] = 	25,
         ["mana_max"] = 	25,
         ["fail"] =      20,

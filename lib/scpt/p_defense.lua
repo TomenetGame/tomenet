@@ -74,13 +74,13 @@ HRESISTS = add_spell
 		if player.spell_project > 0 then
 			fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, player.spell_project, " calls to the heavens for protection from the elements.")
 		end
-        	if get_level(Ind, HRESISTS, 50) > 9 then
+        	if get_level(Ind, HRESISTS, 50) > 4 then
 			set_oppose_cold(Ind, dur)
 			if player.spell_project > 0 then
 				fire_ball(Ind, GF_RESCOLD_PLAYER, 0, dur, player.spell_project, "")
 			end
 		end
-                if get_level(Ind, HRESISTS, 50) > 14 then
+                if get_level(Ind, HRESISTS, 50) > 9 then
 			set_oppose_elec(Ind, dur)
 			if player.spell_project > 0 then
 				fire_ball(Ind, GF_RESELEC_PLAYER, 0, dur, player.spell_project, "")
@@ -169,11 +169,11 @@ HMARTYR = add_spell
 			if player.martyr_timeout > 0 then
 				msg_print("The heavens are not ready yet to accept your martyrium.")
 			else
-				set_martyr(Ind, 10)
+				set_martyr(Ind, 15)
 			end
 			end,
 	["info"] = 	function()
-			return "power oo  dur 10  timeout 1000"
+			return "power oo  dur 15  timeout 1000"
 			end,
 	["desc"] = 	{
 			"Turns you into an holy martyr, blessed with immortality",

@@ -3424,10 +3424,38 @@ static void player_talk_aux(int Ind, char *message)
 	colon = strchr(message, ':');
 
 	/* Ignore "smileys" or URL */
-	if (colon && strchr(")(-/:", *(colon + 1)))
-	{
-		/* Pretend colon wasn't there */
-		colon = NULL;
+//	if (colon && strchr(")(-/:", *(colon + 1)))
+	/* (C. Blue) changing colon parsing. :: becomes
+	    textual :  - otherwise : stays control char */
+	if (colon) {
+		/* if another colon followed this one then
+		   it was not meant to be a control char */
+		switch(*(colon + 1)){
+		/* accept these chars for smileys */
+		case '(':	case ')':
+		case '[':	case ']':
+		case '{':	case '}':
+		case '<':	case '>':
+		case '\\':
+			colon = NULL;
+			break;
+		case '-':
+			if (!strchr("123456789", *(colon + 2))) colon = NULL;
+			break;
+		case '/':
+		/* only accept / at the end of a chat message */
+			if ('\0' == *(colon + 2)) colon = NULL;
+			break;
+		case ':':
+			/* remove the 1st colon found */
+			i = (int) (colon - message);
+			do message[i] = message[i+1];
+			while(message[i++]!='\0');
+
+			/* Pretend colon wasn't there */
+			colon = NULL;
+			break;
+		}
 	}
 
 	/* no big brother */
@@ -3535,7 +3563,7 @@ static void player_talk_aux(int Ind, char *message)
 		if (!target)
 		{
 			/* Bounce message to player who sent it */
-			msg_format(Ind, "[%s] %s", p_ptr->name, colon);
+			msg_format(Ind, "(no receipient for: %s)", colon);
 
 			/* Give up */
 			return;

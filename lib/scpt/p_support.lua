@@ -6,21 +6,21 @@ HSANCTUARY = add_spell
         ["school"] = 	{SCHOOL_HSUPPORT},
         ["level"] = 	1,
         ["mana"] = 	5,
-        ["mana_max"] = 	15,
+        ["mana_max"] = 	30,
         ["fail"] = 	10,
 	["stat"] =      A_WIS,
         ["spell"] = 	function()
                 if get_level(Ind, HSANCTUARY, 50) < 20 then
-			project(0 - Ind, get_level(Ind, HSANCTUARY, 20), player.wpos, player.py, player.px, get_level(Ind, HSANCTUARY, 50), GF_OLD_SLEEP, 64+16+8, "")
+			project(0 - Ind, get_level(Ind, HSANCTUARY, 10), player.wpos, player.py, player.px, 3 + get_level(Ind, HSANCTUARY, 30), GF_OLD_SLEEP, 64+16+8, "")
 		else
-			project_hack(Ind, GF_OLD_SLEEP, get_level(Ind, HSANCTUARY, 30))
+			project_hack(Ind, GF_OLD_SLEEP, 3 + get_level(Ind, HSANCTUARY, 25))
 		end
 	end,
 	["info"] = 	function()
                 if get_level(Ind, HSANCTUARY, 50) < 20 then
-			return "dur "..(get_level(Ind, HSANCTUARY, 50)).." rad "..get_level(Ind, HSANCTUARY, 20)
+			return "dur "..(3 + get_level(Ind, HSANCTUARY, 30)).." rad "..get_level(Ind, HSANCTUARY, 10)
                 else
-			return "dur "..(get_level(Ind, HSANCTUARY, 30))
+			return "dur "..(3 + get_level(Ind, HSANCTUARY, 25))
                 end
 	end,
         ["desc"] =	{
@@ -33,9 +33,9 @@ HSATISFYHUNGER = add_spell
 {
 	["name"] = 	"Satisfy Hunger",
         ["school"] = 	{SCHOOL_HSUPPORT},
-        ["level"] = 	15,
-        ["mana"] = 	30,
-        ["mana_max"] = 	30,
+        ["level"] = 	10,
+        ["mana"] = 	20,
+        ["mana_max"] = 	20,
         ["fail"] = 	40,
 	["stat"] =      A_WIS,
         ["spell"] = 	function()
@@ -122,9 +122,9 @@ HSENSEMON = add_spell
 {
 	["name"] =      "Sense Monsters",
 	["school"] =    SCHOOL_HSUPPORT,
-	["level"] =     5,
+	["level"] =     1,
 	["mana"] =      3,
-	["mana_max"] =  40,
+	["mana_max"] =  15,
 	["fail"] =      15,
 	["stat"] =      A_WIS,
 	["spell"] =     function()

@@ -193,7 +193,7 @@ school_book[11] = {
 
 -- Create the book of Holy Offense
 school_book[12] = {
-        HGLOBELIGHT, HORBDRAIN, HEXORCISM, HRELSOULS, HDRAINLIFE,
+        HGLOBELIGHT, HORBDRAIN, HDRAINLIFE, HEXORCISM, HRELSOULS, 
 }
 
 -- Create the book of Holy Defense
@@ -203,12 +203,12 @@ school_book[13] = {
 
 -- Create the book of Holy Curing
 school_book[14] = {
-	HHEALING, HCURING, HSANITY, HRESURRECT, HDELFEAR, HDELBB,
+	HDELFEAR, HHEALING, HCURING, HSANITY, HRESURRECT, HDELBB,
 }
 
 -- Create the book of Holy Support
 school_book[15] = {
-	HSANCTUARY, HSATISFYHUNGER, HDELCURSES, HSENSE, HZEAL,
+	HSANCTUARY, HSATISFYHUNGER, HDELCURSES, HSENSE,  HZEAL,
 }
 
 -- Create the book of beginner's cantrip

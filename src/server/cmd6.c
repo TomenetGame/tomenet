@@ -636,6 +636,8 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 	player_type *p_ptr = Players[Ind];
 	int ident = FALSE;
 
+	bypass_invuln = TRUE;
+
 	/* Analyze the potion */
 	if (tval == TV_POTION)
 	{
@@ -1235,6 +1237,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 		}
 	}
 
+	bypass_invuln = FALSE;
 	return (ident);
 }
 

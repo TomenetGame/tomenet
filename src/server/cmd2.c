@@ -2526,10 +2526,10 @@ static void do_arrow_brand_effect(int Ind, int y, int x)
 
 /* Exploding arrow */
 //static void do_arrow_explode(int Ind, object_type *o_ptr, int y, int x)
-void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x)
+void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x, int might)
 {
 //	player_type *p_ptr = Players[Ind];
-	int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2;
+	int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2 * ((might/3)+1);
 	int flag = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
 
 	switch(o_ptr->sval)
@@ -3097,7 +3097,7 @@ void do_cmd_fire(int Ind, int dir)
 									do_arrow_brand_effect(Ind, y, x);
 
 								if (!magic && o_ptr->pval) 
-									do_arrow_explode(Ind, o_ptr, wpos, y, x);
+									do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 								/* Stop looking */
 								if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_SHARP) || boomerang) break;
@@ -3267,7 +3267,7 @@ void do_cmd_fire(int Ind, int dir)
 						do_arrow_brand_effect(Ind, y, x);
 
 					if (!magic && o_ptr->pval) 
-						do_arrow_explode(Ind, o_ptr, wpos, y, x);
+						do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 					/* Stop looking */
 					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_SHARP) || boomerang) break;
@@ -3278,7 +3278,7 @@ void do_cmd_fire(int Ind, int dir)
 		/* Extra (exploding) hack: */
 		/* Stopped by walls/doors ?*/
 		if (!cave_floor_bold(zcave, ny, nx)) {
-			if (!magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x);
+			if (!magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 		}
 
 

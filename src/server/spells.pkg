@@ -127,6 +127,9 @@ typedef unsigned int u32b;
 #define GF_CURE_PLAYER 139
 #define GF_RESURRECT_PLAYER 140
 #define GF_SANITY_PLAYER 141
+#define GF_ZEAL_PLAYER          142
+
+#define GF_DISP_DEMON   143     /* Zangband/C. Blue changes */
 
 #define GF_TELE_TO		150
 #define GF_HAND_DOOM	151
@@ -313,6 +316,7 @@ extern bool project_hack@project_los(int Ind, int typ, int dam);
 extern bool banish_evil(int Ind, int dist);
 extern bool dispel_evil(int Ind, int dam);
 extern bool dispel_undead(int Ind, int dam);
+extern bool dispel_demons(int Ind, int dam);
 extern bool dispel_monsters(int Ind, int dam);
 extern bool turn_undead(int Ind);
 extern void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte feat);

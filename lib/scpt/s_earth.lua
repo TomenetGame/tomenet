@@ -82,7 +82,7 @@ STRIKE = add_spell
 {
 	["name"] = 	"Strike",
         ["school"] = 	{SCHOOL_EARTH},
-        ["level"] = 	30,
+        ["level"] = 	25,
         ["mana"] = 	30,
         ["mana_max"] = 	50,
         ["fail"] = 	30,

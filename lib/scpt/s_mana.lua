@@ -32,14 +32,14 @@ DELCURSES = add_spell
 {
 	["name"] = 	"Remove Curses",
         ["school"] = 	SCHOOL_MANA,
-        ["level"] = 	10,
+        ["level"] = 	20,
         ["mana"] = 	20,
         ["mana_max"] = 	40,
         ["fail"] = 	10,
         ["spell"] = 	function()
         		local done
 
-        		if get_level(Ind, DELCURSES, 50) >= 30 then done = remove_all_curse(Ind)
+        		if get_level(Ind, DELCURSES, 50) >= 20 then done = remove_all_curse(Ind)
                         else done = remove_curse(Ind) end
                         if done == TRUE then msg_print(Ind, "The curse is broken!") end
 	end,
@@ -48,7 +48,7 @@ DELCURSES = add_spell
 	end,
         ["desc"] =	{
         		"Remove curses of worn objects",
-        		"At level 30 switches to *remove curses*"
+        		"At level 20 switches to *remove curses*"
 		}
 }
 

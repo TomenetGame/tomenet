@@ -726,6 +726,7 @@ extern bool probing(int Ind);
 extern bool banish_evil(int Ind, int dist);
 extern bool dispel_evil(int Ind, int dam);
 extern bool dispel_undead(int Ind, int dam);
+extern bool dispel_demons(int Ind, int dam);
 extern bool dispel_monsters(int Ind, int dam);
 extern bool turn_undead(int Ind);
 extern void destroy_area(int Depth, int y1, int x1, int r, bool full);

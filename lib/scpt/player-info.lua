@@ -111,6 +111,7 @@ end
 
 -- reload lua files.
 function init()
+	pern_dofile(Ind, "cblue.lua")
 	pern_dofile(Ind, "dg.lua")
 	pern_dofile(Ind, "evil.lua")
 	pern_dofile(Ind, "zz.lua")
