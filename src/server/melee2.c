@@ -5450,8 +5450,8 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist)
 			r_ptr->flags3 & RF3_DRAGONRIDER)	/* have ESP */
 		return(FALSE);
 	/* since RF1_QUESTOR is currently not used/completely implemented,
-	   I hard-code Morgoth and Sauron here - C. Blue */
-	if ((m_ptr->r_idx == 860) || (m_ptr->r_idx == 862)) return(FALSE);
+	   I hard-code Morgoth and Sauron and Zu-Aon here - C. Blue */
+	if ((m_ptr->r_idx == 860) || (m_ptr->r_idx == 862) || (m_ptr->r_idx == 1097)) return(FALSE);
 
 	/* Probably they detect things by non-optical means */
 	if (r_ptr->flags3 & RF3_NONLIVING && r_ptr->flags2 & RF2_EMPTY_MIND)
