@@ -352,8 +352,8 @@ void do_cmd_eat_food(int Ind, int item)
 		{
 			if (magik(20))
 			{
-				msg_print(Ind, "*HIC*");
-				msg_format_near(Ind, "%s hiccups!", p_ptr->name);
+				msg_format(Ind, "\377%c*HIC*", random_colour());
+				msg_format_near(Ind, "\377%c%s hiccups!", random_colour(), p_ptr->name);
 			}
 			else msg_print(Ind, "That tastes good.");
 
@@ -3700,73 +3700,87 @@ void do_cmd_activate(int Ind, int item)
 	msg_print(Ind, "You activate it...");
 
 	/* Hack -- Dragon Scale Mail can be activated as well */
+	/* Yikes, hard-coded r_idx.. */
 	if (o_ptr->tval == TV_DRAG_ARMOR)
 	{
 		  switch (o_ptr->sval)
 		    {
 		    case SV_DRAGON_BLACK:
 		      {
-			do_mimic_change(Ind, 429);
+//			do_mimic_change(Ind, 429);
+			do_mimic_change(Ind, race_index("Ancient black dragon"));
 		      break;
 		      }
 		    case SV_DRAGON_BLUE:
 		      {
-		      do_mimic_change(Ind, 411);
+//		      do_mimic_change(Ind, 411);
+		      do_mimic_change(Ind, race_index("Ancient blue dragon"));
 		      break;
 		      }
 		    case SV_DRAGON_WHITE:
 		      {
-			do_mimic_change(Ind, 424);
+//			do_mimic_change(Ind, 424);
+			do_mimic_change(Ind, race_index("Ancient white dragon"));
 			break;
 		      }
 		    case SV_DRAGON_RED:
 		      {
-			do_mimic_change(Ind, 444);
+//			do_mimic_change(Ind, 444);
+			do_mimic_change(Ind, race_index("Ancient red dragon"));
 			break;
 		      }
 		    case SV_DRAGON_GREEN:
 		      {
-			do_mimic_change(Ind, 425);
+//			do_mimic_change(Ind, 425);
+			do_mimic_change(Ind, race_index("Ancient green dragon"));
 			break;
 		      }
 		    case SV_DRAGON_MULTIHUED:
 		      {
-			do_mimic_change(Ind, 462);
+//			do_mimic_change(Ind, 462);
+			do_mimic_change(Ind, race_index("Ancient multi-hued dragon"));
 			break;
 		      }
 		    case SV_DRAGON_SHINING:
 		      {
-			do_mimic_change(Ind, 463);
+//			do_mimic_change(Ind, 463);
+			do_mimic_change(Ind, race_index("Ethereal dragon"));
 			break;
 		      }
 		    case SV_DRAGON_LAW:
 		      {
-			do_mimic_change(Ind, 520);
+//			do_mimic_change(Ind, 520);
+			do_mimic_change(Ind, race_index("Great Wyrm of Law"));
 			break;
 		      }
 		    case SV_DRAGON_BRONZE:
 		      {
-			do_mimic_change(Ind, 412);
+//			do_mimic_change(Ind, 412);
+			do_mimic_change(Ind, race_index("Ancient bronze dragon"));
 			break;
 		    }
 		    case SV_DRAGON_GOLD:
 		      {
-			do_mimic_change(Ind, 445);
+//			do_mimic_change(Ind, 445);
+			do_mimic_change(Ind, race_index("Ancient gold dragon"));
 			break;
 		      }
 		    case SV_DRAGON_CHAOS:
 		      {
-			do_mimic_change(Ind, 519);
+//			do_mimic_change(Ind, 519);
+			do_mimic_change(Ind, race_index("Great Wyrm of Chaos"));
 			break;
 		      }
 		    case SV_DRAGON_BALANCE:
 		      {
-			do_mimic_change(Ind, 521);
+//			do_mimic_change(Ind, 521);
+			do_mimic_change(Ind, race_index("Great Wyrm of Balance"));
 			break;
 		      }
 		    case SV_DRAGON_POWER:
 		      {
-			do_mimic_change(Ind, 549);
+//			do_mimic_change(Ind, 549);
+			do_mimic_change(Ind, race_index("Great Wyrm of Power"));
 			break;
 		      }
 		    }
@@ -5989,7 +6003,8 @@ void fortune(int Ind)
 	char Rumor[80];
 
 	msg_print(Ind, NULL);
-	switch(randint(20))
+//	switch(randint(20))
+	switch(randint(80))
 	{
 		case 1:
 			get_rnd_line("chainswd.txt",0 , Rumor);
@@ -6009,3 +6024,13 @@ void fortune(int Ind)
 	msg_format(Ind, "%s", Rumor);
 	msg_print(Ind, NULL);
 }
+
+char random_colour()
+{
+//	char tmp[] = "wWrRbBgGdDuUoyvs";
+	char tmp[] = "dwsorgbuDWvyRGBU";
+
+	return(tmp[randint(15)]);	// never 'd'
+}
+
+

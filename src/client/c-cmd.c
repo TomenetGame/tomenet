@@ -161,11 +161,13 @@ void cmd_all_in_one(void)
         }
 
 		case TV_BOW:
+//		case TV_BOOMERANG:	// soon
 		case TV_DIGGING:
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_AXE:
+		case TV_MSTAFF:
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_HELM:

@@ -697,7 +697,7 @@ void self_knowledge(int Ind)
 //		info[i++] = "You are able to sense magic.";
 		info[i++] = "You can sense magic.";
 	}
-#if 0
+#if 1
 	if (p_ptr->reflect)
 	{
 		info[i++] = "You reflect arrows and bolts.";
@@ -809,7 +809,11 @@ void self_knowledge(int Ind)
 	{
 		info[i++] = "You are resistant to nexus attacks.";
 	}
-	if (p_ptr->resist_neth)
+	if (p_ptr->immune_neth)
+	{
+		info[i++] = "You are immune to nether forces.";
+	}
+	else if (p_ptr->resist_neth)
 	{
 		info[i++] = "You are resistant to nether forces.";
 	}

@@ -1859,6 +1859,7 @@ static void calc_bonuses(int Ind)
 	if (p_ptr->ghost) p_ptr->free_act = TRUE;
 	if (p_ptr->ghost) p_ptr->see_infra += 2;
 	if (p_ptr->ghost) p_ptr->resist_pois = TRUE;
+	if (p_ptr->ghost) p_ptr->invis += 20;
 
 	/* Start with a single blow per turn */
 	p_ptr->num_blow = 1;
@@ -2095,8 +2096,6 @@ static void calc_bonuses(int Ind)
 		if (f2 & TR2_RES_BLIND) p_ptr->resist_blind = TRUE;
 		if (f2 & TR2_RES_NETHER) p_ptr->resist_neth = TRUE;
 //		if (f2 & TR2_ANTI_MAGIC) p_ptr->anti_magic = TRUE;
-		if (f3 & TR3_NO_MAGIC) p_ptr->anti_magic = TRUE;
-		if (f3 & (TR3_NO_TELE)) p_ptr->anti_tele = TRUE;
 
 		/* Sustain flags */
 		if (f2 & TR2_SUST_STR) p_ptr->sustain_str = TRUE;
@@ -2105,6 +2104,20 @@ static void calc_bonuses(int Ind)
 		if (f2 & TR2_SUST_DEX) p_ptr->sustain_dex = TRUE;
 		if (f2 & TR2_SUST_CON) p_ptr->sustain_con = TRUE;
 		if (f2 & TR2_SUST_CHR) p_ptr->sustain_chr = TRUE;
+
+		/* PernA flags */
+//                if (f3 & (TR3_WRAITH)) p_ptr->wraith_form = TRUE;
+                if (f4 & (TR4_FLY)) p_ptr->fly = TRUE;
+                if (f4 & (TR4_CLIMB)) p_ptr->climb = TRUE;
+                if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
+		if (f5 & (TR5_REFLECT)) p_ptr->reflect = TRUE;
+		if (f3 & (TR3_SH_FIRE)) p_ptr->sh_fire = TRUE;
+		if (f3 & (TR3_SH_ELEC)) p_ptr->sh_elec = TRUE;
+		if (f3 & (TR3_NO_MAGIC)) p_ptr->anti_magic = TRUE;
+		if (f3 & (TR3_NO_TELE)) p_ptr->anti_tele = TRUE;
+
+
+
 
 		/* Modify the base armor class */
 		p_ptr->ac += o_ptr->ac;

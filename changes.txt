@@ -551,3 +551,6 @@ Change list for PernMangband
 - Black-Breath works slower/is contagious now.
 - Fixed a bug that caused breeders not to breed.
 - Randarts/egos can have specific-esp.
+- Some fun features for pints of ale :)
+- DSM activation fixed.
+- Added some flags on player_type.

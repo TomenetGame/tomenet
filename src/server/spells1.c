@@ -4605,7 +4605,11 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		/* Nether -- drain experience */
 		case GF_NETHER:
 		if (fuzzy) msg_print(Ind, "You are hit by something strange!");
-		if (p_ptr->resist_neth)
+		if (p_ptr->immune_neth)
+		{
+			dam = 0;
+		}
+		else if (p_ptr->resist_neth)
 		{
 			dam *= 6; dam /= (randint(6) + 6);
 		}

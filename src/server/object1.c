@@ -4011,10 +4011,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
 		info[i++] = "It allows you to see invisible monsters.";
 	}
+#if 0	// obsolete(DELETEME)
 	if (f3 & TR3_TELEPATHY)
 	{
 		info[i++] = "It gives telepathic powers.";
 	}
+#endif	// 0
 	if (f3 & TR3_SLOW_DIGEST)
 	{
 		info[i++] = "It slows your metabolism.";
@@ -5070,11 +5072,14 @@ s16b wield_slot(int Ind, object_type *o_ptr)
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
+		case TV_AXE:
+		case TV_MSTAFF:
 		{
 			return (INVEN_WIELD);
 		}
 
 		case TV_BOW:
+//		case TV_BOOMERANG:
 		{
 			return (INVEN_BOW);
 		}

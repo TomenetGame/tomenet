@@ -3160,6 +3160,7 @@ void update_smart_learn(int m_idx, int what)
 
 		case DRS_NETH:
 		if (p_ptr->resist_neth) m_ptr->smart |= SM_RES_NETH;
+		if (p_ptr->immune_neth) m_ptr->smart |= SM_RES_NETH;
 		break;
 
 		case DRS_LITE:

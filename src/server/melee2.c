@@ -123,6 +123,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 
 		/* Know special resistances */
 		if (p_ptr->resist_neth) smart |= SM_RES_NETH;
+			if (p_ptr->immune_neth) smart |= SM_RES_NETH;
 		if (p_ptr->resist_lite) smart |= SM_RES_LITE;
 		if (p_ptr->resist_dark) smart |= SM_RES_DARK;
 		if (p_ptr->resist_fear) smart |= SM_RES_FEAR;

@@ -648,7 +648,7 @@ static cptr k_info_flags3[] =
 	"FEATHER",
         "LITE1",	// "LITE",
 	"SEE_INVIS",
-	"TELEPATHY",	// "NORM_ART", (5)	// contradictory! should be removed.
+	"NORM_ART",		// "TELEPATHY"
 	"SLOW_DIGEST",
 	"REGEN",
 	"XTRA_MIGHT",
@@ -795,7 +795,7 @@ cptr k_info_flags5[] =
 	"INVIS",	//"XXX8X28",
 	"SENS_FIRE",	//"XXX8X25",
 	"REFLECT",	//"XXX8X29",
-	"NORM_ART",	//"XXX8X22",
+	"XXX8X22",	// "NORM_ART"
 };
 
 /*

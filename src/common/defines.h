@@ -3199,7 +3199,8 @@ that keeps many algorithms happy.
 //#define TR3_LITE			0x00002000L	/* Permanent Light */
 #define TR3_LITE1			0x00002000L	/* Permanent Light */
 #define TR3_SEE_INVIS		0x00004000L	/* See Invisible */
-#define TR3_TELEPATHY		0x00008000L	/* Telepathy */
+//#define TR3_TELEPATHY		0x00008000L	/* Telepathy */
+#define TR3_NO_NORM_ART		0x00008000L	/* */
 #define TR3_SLOW_DIGEST		0x00010000L	/* Item slows down digestion */
 #define TR3_REGEN			0x00020000L	/* Item induces regeneration */
 #define TR3_XTRA_MIGHT		0x00040000L	/* Bows get extra multiplier */
@@ -3283,7 +3284,7 @@ that keeps many algorithms happy.
 #define TR5_INVIS               0x10000000L
 #define TR5_SENS_FIRE           0x20000000L
 #define TR5_REFLECT             0x40000000L
-#define TR5_NO_NORM_ART         0x80000000L
+//#define TR5_NO_NORM_ART         0x80000000L
 
 /* ESP defines */
 #define ESP_ORC                 0x00000001L

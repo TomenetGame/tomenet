@@ -928,8 +928,11 @@ static errr rd_store(store_type *st_ptr)
 		/* Read the item */
 		rd_item(&forge);
 
+		/* Hack -- verify item */
+		if (!forge.k_idx) s_printf("Warning! Non-existing item detected(erased).");
+
 		/* Acquire valid items */
-		if (st_ptr->stock_num < STORE_INVEN_MAX)
+		else if (st_ptr->stock_num < STORE_INVEN_MAX)
 		{
 			/* Acquire the item */
 			st_ptr->stock[st_ptr->stock_num++] = forge;
@@ -1644,7 +1647,11 @@ static errr rd_inventory(int Ind)
 
 		/* Hack -- verify item */
 //		if (!forge.k_idx) return (53);
-		if (!forge.k_idx) s_printf("Warning! Non-existing item detected(erased).");
+		if (!forge.k_idx)
+		{
+			s_printf("Warning! Non-existing item detected(erased).");
+			continue;
+		}
 
 		/* Mega-Hack -- Handle artifacts that aren't yet "created" */
 		if (artifact_p(&forge))

@@ -570,6 +570,17 @@ struct c_special{
 	void *ptr;		/* lazy */
 };
 
+#if 0 /* Jir - work still in progress (thx Yakina for advice) */
+struct c_special{
+	unsigned char type;
+	union
+	{
+		void *ptr;		/* lazy */
+		s32b omni;		/* so that we don't need other arrays */
+	} sc;
+};
+#endif
+
 struct sfunc{		/* structure containing calls for specials */
 	void (*load)(void);		/* load function */
 	void (*save)(void);		/* save function */
@@ -1904,6 +1915,8 @@ struct player_type
         bool sh_elec;       /* Electric 'immolation' effect */
         bool wraith_form;   /* wraithform */
         bool immune_neth;       /* Immunity to nether */
+        bool climb;             /* Can climb mountains */
+        bool fly;               /* Can fly over some features */
 
 //        byte anti_magic_spell;    /* Anti-magic(newer one..) */
         byte antimagic;    		/* Anti-magic(in percent) */

@@ -622,6 +622,10 @@ static void process_world(int Ind)
 	if (!(turn % 3000) && (p_ptr->black_breath))
 	{
 		msg_print(Ind, "\377WThe Black Breath saps your soul!");
+
+		/* alert to the neighbors also */
+		msg_format_near(Ind, "\377WA dark aura seems to surround %s!", p_ptr->name);
+
 		disturb(Ind, 0, 0);
 	}
 #if 0	// no BB-causing items for now?
@@ -2130,28 +2134,37 @@ static void process_player_end(int Ind)
 			}
 		}
 
-        /* Handle experience draining.  In Oangband, the effect is worse,
-         * especially for high-level characters.  As per Tolkien, hobbits
-         * are resistant.
+        /* Handle experience draining.  In Oangband, the effect
+		 * is worse, especially for high-level characters.
+		 * As per Tolkien, hobbits are resistant.
          */
         if (p_ptr->black_breath)
-        {
-                byte chance = (p_ptr->prace == RACE_HOBBIT) ? 2 : 5;
-                int plev = p_ptr->lev;
+		{
+			byte chance = (p_ptr->prace == RACE_HOBBIT) ? 2 : 5;
+			int plev = p_ptr->lev;
 
-//                if (PRACE_FLAG(PR1_RESIST_BLACK_BREATH)) chance = 2;
+			//                if (PRACE_FLAG(PR1_RESIST_BLACK_BREATH)) chance = 2;
 
-//                if ((rand_int(100) < chance) && (p_ptr->exp > 0))
-                /* Toned down a little, considering it's realtime. */
-                if ((rand_int(200) < chance) && (p_ptr->exp > 0))
-                {
-                        p_ptr->exp -= 1 + plev / 5;
-                        p_ptr->max_exp -= 1 + plev / 5;
-//                        (void)do_dec_stat(Ind, randint(6)+1, STAT_DEC_NORMAL);
-                        (void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
-                        check_experience(Ind);
-                }
-        }
+			//                if ((rand_int(100) < chance) && (p_ptr->exp > 0))
+			/* Toned down a little, considering it's realtime. */
+			if ((rand_int(200) < chance))
+			{
+				int reduce = 1 + plev / 5 + p_ptr->max_exp / 10000L;
+				p_ptr->exp -= reduce;
+				p_ptr->max_exp -= reduce;
+				//                        (void)do_dec_stat(Ind, randint(6)+1, STAT_DEC_NORMAL);
+				(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
+				check_experience(Ind);
+
+				/* Now you can die from this :) */
+				if (p_ptr->exp < 1 && !p_ptr->ghost)
+				{
+					p_ptr->chp=-3;
+					strcpy(p_ptr->died_from, "Black Breath");
+					player_death(Ind);
+				}
+			}
+		}
 
 		/* Drain Mana */
 		if (p_ptr->drain_mana && p_ptr->csp)
