@@ -2502,7 +2502,9 @@ struct server_opts
 	char pet_monsters;
 	bool report_to_meta;
 	bool secret_dungeon_master;
-	bool anti_arts_horde;
+	bool anti_arts_hoard;
+	bool anti_arts_house;
+	bool anti_arts_shop;
 	bool mage_hp_bonus;	/* DELETEME (replace it, that is) */
 	char door_bump_open;
 	bool no_ghost;
