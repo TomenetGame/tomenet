@@ -16,3 +16,7 @@ function res(i)
 	players(i).max_exp=players(i).max_exp/2;
 	players(i).ghost=0;
 end
+
+function recall(i, dep)
+	players(i).word_recall=3;
+end
