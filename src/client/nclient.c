@@ -2466,7 +2466,9 @@ int Receive_special_other(void)
 
 int Receive_store_action(void)
 {
-	int	n, cost, action, bact;
+	int	n;
+	s16b cost;
+	u16b action, bact;
 	char	ch, pos, name[1024], letter, attr;
 	byte	flag;
 
@@ -3427,7 +3429,7 @@ int Send_locate(int dir)
 	return 1;
 }
 
-int Send_store_command(int action, int item, int item2, int amt, int gold)
+int Send_store_command(u16b action, s16b item, s16b item2, s16b amt, int gold)
 {
 	int 	n;
 
@@ -3439,7 +3441,7 @@ int Send_store_command(int action, int item, int item2, int amt, int gold)
 	return 1;
 }
 
-int Send_store_examine(int item)
+int Send_store_examine(s16b item)
 {
 	int 	n;
 
@@ -3451,7 +3453,7 @@ int Send_store_examine(int item)
 	return 1;
 }
 
-int Send_store_purchase(int item, int amt)
+int Send_store_purchase(s16b item, s16b amt)
 {
 	int 	n;
 
@@ -3463,7 +3465,7 @@ int Send_store_purchase(int item, int amt)
 	return 1;
 }
 
-int Send_store_sell(int item, int amt)
+int Send_store_sell(s16b item, s16b amt)
 {
 	int	n;
 
