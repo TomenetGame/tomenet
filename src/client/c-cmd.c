@@ -23,8 +23,7 @@ static bool item_tester_magicable(object_type *o_ptr)
 
 	if ((p_ptr->pclass == CLASS_ARCHER) && (o_ptr->tval == TV_HUNT_BOOK)) return TRUE;
 
-	/* Mega Hack, hope it works */
-	if (p_ptr->pclass == CLASS_TELEPATH) return TRUE;
+	if ((p_ptr->pclass == CLASS_TELEPATH) && (o_ptr->tval ==TV_PSI_BOOK)) return TRUE;
 
 	return FALSE;
 }
@@ -1562,8 +1561,7 @@ static bool item_tester_browsable(object_type *o_ptr)
 		return TRUE;
 	}
 
-	/* Mega hack, hope it works */
-	if (p_ptr->pclass == CLASS_TELEPATH)
+	if ((p_ptr->pclass == CLASS_TELEPATH) && (o_ptr->tval == TV_PSI_BOOK))
 	{
 		return TRUE;
 	}
