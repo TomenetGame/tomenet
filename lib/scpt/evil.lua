@@ -111,3 +111,16 @@ end
 function recall(i, dep)
 	players(i).word_recall=3;
 end
+
+function player_send(name, x, y, z, msg)
+	i=ind(name);
+	players(i).recall_pos.wx=x;
+	players(i).recall_pos.wy=y;
+	players(i).recall_pos.wz=z;
+	players(i).new_level_method=4;
+	recall_player(i, msg);
+end
+
+function highlander(name, x, y)
+	player_send(name, x, y, 0, "You feel drawn to the battleground!");
+end
