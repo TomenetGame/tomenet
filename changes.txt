@@ -1232,6 +1232,9 @@ To find the latest change quickly, search ==== :)
 - GoI/Manashield ends when the player attacks/fires/casts etc.
 [H][C] spell_info array is enlarged to allow future expansion.
 [B] +To RDam was displayed wrong when using =dam
+[B] pet/golem left m_idx when changing the wpos.
+[B] pet attacked its master.
+[B] couldn't establish a connection due to too large packet size.
 
 
 ** [B] stands for Bugfix.
@@ -1258,6 +1261,7 @@ things to do before 4.0.0
 =============================================================================
 concisely: what's hot now?
 
+- new spells!
 - multiple-dungeons stuff
   + we should preserve level_up_y etc. for manually-added dungeons/towers.
 - quest system
@@ -1292,29 +1296,6 @@ below this line are the unfixed bugs known:
 [B][C] inventory window sometimes loses a) b) etc.
 [B] 'write error' sometimes (old bug)
 [B] 'No more Scroll of *Identify*'
-[B] cannot connect!
-Read 96 bytes
-Read 582 bytes
-Read 0 bytes
-check for font-x11.prf
-/usr/home/key/devel/pm/tomenet: Quitting!
-/usr/home/key/devel/pm/tomenet: No play packet reply received.
-
-03 Jul 00:36:33: Welcome Olorin=dg@darkgod.middle.earth (193.251.38.201/32990)
-/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (12)
-/usr/home/key/devel/pm/tomenet.server: Play packet is not large enough yet (1393)
-/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
-/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
-/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
-/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (4)
-03 Jul 00:36:41: Goodbye Olorin=dg@darkgod.middle.earth ("client quit")
-
-02 Jul 04:53:32: Welcome Olorin=dg@darkgod.middle.earth (193.251.38.201/33017)
-/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
-/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
-/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
-/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (4)
-02 Jul 04:53:43: Goodbye Olorin=dg@darkgod.middle.earth ("client quit")
 
 
 *below are bugs repoorted but not confirmed*

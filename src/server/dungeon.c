@@ -3433,6 +3433,7 @@ void dungeon(void)
 					everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 				}
 				wpcopy(&m_ptr->wpos,wpos);
+				mcave=getcave(&m_ptr->wpos);
 				m_ptr->fx = mx;
 				m_ptr->fy = my;
 				if(mcave)

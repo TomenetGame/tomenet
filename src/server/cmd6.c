@@ -3983,6 +3983,15 @@ void do_cmd_activate(int Ind, int item)
 		return;
 	}
 
+#if 0
+	/* Test the item */
+	if (item < INVEN_WIELD)
+	{
+		msg_print(Ind, "You should equip it to activate.");
+		return;
+	}
+#endif	// 0
+
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 

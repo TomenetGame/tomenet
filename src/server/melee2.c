@@ -5149,14 +5149,20 @@ static void process_monster(int Ind, int m_idx)
 		/* The player is in the way.  Attack him. */
 		if (do_move && (c_ptr->m_idx < 0))
 		{
-			/* Do the attack */
-			(void)make_attack_normal(0 - c_ptr->m_idx, m_idx);
+			player_type *q_ptr = Players[0 - c_ptr->m_idx];
+
+			/* Don't attack your master! */
+			if (q_ptr && m_ptr->owner != q_ptr->id)
+			{
+				/* Do the attack */
+				(void)make_attack_normal(0 - c_ptr->m_idx, m_idx);
+
+				/* Took a turn */
+				do_turn = TRUE;
+			}
 
 			/* Do not move */
 			do_move = FALSE;
-
-			/* Took a turn */
-			do_turn = TRUE;
 		}
 
 

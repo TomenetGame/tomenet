@@ -2331,9 +2331,11 @@ static int Receive_play(int ind)
 	{
 	  //		errno = 0;
 #if DEBUG_LEVEL > 1
-//		if (ch != PKT_KEEPALIVE)
+#if DEBUG_LEVEL > 2
+		if (ch != PKT_KEEPALIVE)
+#endif	// DEBUG_LEVEL(2)
 			plog(format("Packet is not of play type (%d)", ch));
-#endif	// DEBUG_LEVEL
+#endif	// DEBUG_LEVEL(1)
 	  //Destroy_connection(ind, "not play");
 	  //return -1;
 	  return 0;
@@ -2356,7 +2358,7 @@ static int Receive_play(int ind)
 //		if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
 		if (RECEIVE_PLAY_SIZE > connp->r.len - (connp->r.ptr - connp->r.buf))
 		{
-#if DEBUG_LEVEL > 1
+#if DEBUG_LEVEL > 2
 			plog(format("Play packet is not large enough yet (%d)",
 						connp->r.len - (connp->r.ptr - connp->r.buf)));
 #endif	// DEBUG_LEVEL
@@ -2364,7 +2366,7 @@ static int Receive_play(int ind)
 			return 1;
 		}
 
-#if DEBUG_LEVEL > 1
+#if DEBUG_LEVEL > 2
 			plog(format("Play packet is now large enough (%d)",
 						connp->r.len - (connp->r.ptr - connp->r.buf)));
 #endif	// DEBUG_LEVEL

@@ -684,34 +684,34 @@ Part VII. -- Command list
  f  Fire an item                         F  Fuel your lantern/torch
  g  Stay still (flip pickup)             G  Gain skills
  h  buy or sell a House                  H  (unused)
- i  Inventory list                       I  (unused)
+ i  Inventory list                       I  Observe an item
  j  Steal from other player              J  (unused)
  k  Destroy an item                      K  (unused)
  l  Look around                          L  Locate player on map
- m  Cast a spell/use a skill             M  Full dungeon/wilderness map
- n  (unused)                             N  Activate class power
+ m  Cast a spell/use a skill             M  full dungeon/wilderness Map
+ n  (unused)                             N  (unused)
  o  Open a door or chest                 O  (unused)
- p  Pray a prayer                        P  Party commands
+ p  (unused)                             P  Party commands
  q  Quaff a potion                       Q  Quit (commit suicide)
  r  Read a scroll                        R  Rest for a period
  s  Search for traps/doors               S  Toggle search mode
- t  Take off equipment                   T  Dig a tunnel
+ t  Take off equipment                   T  dig a Tunnel
  u  Use a staff                          U  Use ghost powers
  v  Throw an item                        V  (unused)
  w  Wear/wield equipment                 W  (unused)
  x  (unused)                             X  (unused)
  y  (unused)                             Y  (unused)
  z  Zap a rod                            Z  (unused)
- !  Interact with system                ^A  (unused)
+ !  interact with system                ^A  (unused)
  @  view players                        ^B  (unused)
  #  view score list                     ^C  (special - break)
- $  Drop gold                           ^D  (unused)
- %  Interact with macros                ^E  Toggle choice window
+ $  drop gold                           ^D  (unused)
+ %  interact with macros                ^E  Toggle choice window
  ^  (special - control key)             ^F  Repeat level feeling
  &  Dungeon Master Commands             ^G  (unused)
- *  Target monster or location          ^H  (unused)
- (  Target other player?                ^I  (special - tab)
- )  (Dump screen dump) not used         ^J  (special - linefeed)
+ *  target monster or location          ^H  (unused)
+ (  target other player                 ^I  (special - tab)
+ )  clear key buffer                    ^J  (special - linefeed)
  {  Inscribe an object                  ^K  (unused)
  }  Uninscribe an object                ^L  (unused)
  [  (unused)                            ^M  (special - return)
@@ -750,56 +750,55 @@ Part VII. -- Command list
  f  Bash a door (force)                  F  Fuel your lantern/torch
  g  Stay still (flip pickup)             G  Gain skills
  h  (walk - west)                        H  (run - west)
- i  Inventory list                       I  (Observe an item) not used
+ i  Inventory list                       I  Observe an item
  j  (walk - south)                       J  (run - south)
  k  (walk - north)                       K  (run - north)
  l  (walk - east)                        L  (run - east)
  m  Cast a spell / use a skill           M  Full dungeon/wilderness map
  n  (walk - south east)                  N  (run - south east)
  o  Open a door or chest                 O  Party commands
- p  Pray a prayer                        P  Browse a book
+ p  (unused)                             P  Browse a book (Peruse)
  q  Quaff a potion                       Q  Quit (commit suicide)
  r  Read a scroll                        R  Rest for a period
  s  Search for traps/doors               S  Steal from other player
- t  Fire an item                         T  Take off equipment
+ t  fire an item                         T  Take off equipment
  u  (walk - north east)                  U  (run - north east)
  v  Throw an item                        V  (Version info) not used
- w  Wear/wield equipment                 W  Locate player on map (Where)
+ w  Wear/wield equipment                 W  locate player on map (Where)
  x  Look around                          X  (unused)
  y  (walk - north west)                  Y  (run - north west)
- z  Aim a wand (Zap)                     Z  Use a staff (Zap)
+ z  aim a wand (Zap)                     Z  use a staff (Zap)
  !  (unused)                            ^A  (unused)
  @  Player list                         ^B  (tunnel - south west)
- #  Toggle search mode                  ^C  Quit (same as 'Q')
+ #  Toggle search mode                  ^C  quit (same as 'Q')
  $  drop money                          ^D  Destroy item
- %  Interact with macros                ^E  (unused)
+ %  interact with macros                ^E  (unused)
  ^  (special - control key)             ^F  (unused)
  &  Dungeon Master Commands             ^G  (unused)
  *  Target monster or location          ^H  (tunnel - west)
- (  Target player?                      ^I  (special - tab)
- )  (not used)                          ^J  (tunnel - south)
- {  Inscribe an object                  ^K  (tunnel - north)
- }  Uninscribe an object                ^L  (tunnel - east)
+ (  target other player                 ^I  (special - tab)
+ )  clear key buffer                    ^J  (tunnel - south)
+ {  inscribe an object                  ^K  (tunnel - north)
+ }  uninscribe an object                ^L  (tunnel - east)
  [  (unused)                            ^M  (tunnel - south)
  ]  (unused)                            ^N  (tunnel - south east)
- -  (unused)                            ^O  Show previous chats(3.2.1+)
- _  (unused)                            ^P  Show previous messages
- +  Dig tunnel                          ^Q  (unused)
- =  Set options                         ^R  Redraw the screen
- ;  Walk (with pickup)                  ^S  Spike a door
- :  Chat with other players             ^T  (unused)
+ -  (unused)                            ^O  show previous chats Only
+ _  (unused)                            ^P  show Previous messages
+ +  dig tunnel                          ^Q  (unused)
+ =  set options                         ^R  Redraw the screen
+ ;  walk (with pickup)                  ^S  Spike a door
+ :  chat with other players             ^T  (unused)
  '  (unused)                            ^U  (tunnel - north east)
- "  Enter a user pref command           ^V  (unused)
- ,  Run                                 ^W  (unused)
- <  Go up staircase                     ^X  Save and quit
- .  Stay still (with pickup)            ^Y  (tunnel - north west)
- >  Go down staircase                   ^Z  (unused)
- \  (special - bypass keymap)            |  Check uniques
- `  (special - escape)                   ~  Check artifacts
+ "  enter a user pref command           ^V  (unused)
+ ,  run                                 ^W  (unused)
+ <  go up staircase                     ^X  save and quit
+ .  stay still (with pickup)            ^Y  (tunnel - north west)
+ >  go down staircase                   ^Z  (unused)
+ \  (special - bypass keymap)            |  check uniques
+ `  (special - escape)                   ~  check artifacts
  /  (unused)                             ?  Help
 
  \h buy or sell a house
  \U use undead powers
  \# view score list
- \N activate class powers
 

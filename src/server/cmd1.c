@@ -1331,7 +1331,8 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	/* Extract monster name (or "it") */
 	monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
-	if (m_ptr->owner == p_ptr->id)
+	if (m_ptr->owner == p_ptr->id && !p_ptr->confused &&
+			p_ptr->mon_vis[c_ptr->m_idx])
 	{
 		int ox = m_ptr->fx, oy = m_ptr->fy, nx = p_ptr->px, ny = p_ptr->py;
 

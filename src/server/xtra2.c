@@ -867,14 +867,10 @@ bool set_tim_wraith(int Ind, int v)
 			cave_type **zcave;
 			zcave=getcave(&p_ptr->wpos);
 
-			/* leave one turn */
-			v = 1;
-
 			if (zcave && in_bounds(p_ptr->py, p_ptr->px) &&
 					((p_ptr->wpos.wz) ||
 					 (cave_floor_bold(zcave, p_ptr->py, p_ptr->px))))
 			{
-				v = 0;
 				msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
 				msg_print(Ind, "You lose your wraith powers.");
 				notice = TRUE;
@@ -882,6 +878,7 @@ bool set_tim_wraith(int Ind, int v)
 				/* That will hopefully prevent game hinging when loading */
 				if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)) p_ptr->wraith_in_wall = FALSE;
 			}
+			else v = 1;
 		}
 	}
 

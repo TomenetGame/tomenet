@@ -2970,9 +2970,17 @@ static void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/pet")){
-#if 0
-				summon_pet(Ind);
-				msg_print(Ind, "You summon a pet");
+#if 1
+				if (tk && prefix(token[1], "force"))
+				{
+					summon_pet(Ind);
+					msg_print(Ind, "You summon a pet");
+				}
+				else
+				{
+					msg_print(Ind, "Pet code is under working; summoning is bad for your server's health.");
+					msg_print(Ind, "If you still want to summon one, type \377o/pet force\377w.");
+				}
 #endif
 				return;
 			}
