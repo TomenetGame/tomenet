@@ -6451,7 +6451,19 @@ void do_cmd_activate(int Ind, int item)
 						o_ptr->level = 15 + (1000 / ((2000 / r_info[p_ptr->body_monster].level) + 10));
 
 						/* Reduce player's kill count by the monster level */
-						p_ptr->r_killed[p_ptr->body_monster] -= r_info[p_ptr->body_monster].level;
+						if (p_ptr->r_killed[p_ptr->body_monster] < (r_info[p_ptr->body_monster].level * 4))
+						{
+							p_ptr->r_killed[p_ptr->body_monster] -= r_info[p_ptr->body_monster].level;
+							if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
+								msg_print(Ind, "Major parts of your knowledge are absorbed by the ring.");
+							else
+								msg_print(Ind, "Some of your knowledge is absorbed by the ring.");
+						}
+						else
+						{
+							msg_print(Ind, "A lot of your knowledge is absorbed by the ring.");
+							p_ptr->r_killed[p_ptr->body_monster] /= 2;
+						}
 
 						/* If player hasn't got high enough kill count anymore now, poly back to player form! */
 						if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
