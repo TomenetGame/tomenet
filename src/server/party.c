@@ -26,7 +26,7 @@ static u32b new_accid(void);
    They will not be subject to their own 90
    days timeout, but will be removed upon
    the removal of the last character. */
-struct account *GetAccount(char *name, char *pass){
+struct account *GetAccount(cptr name, char *pass){
 	FILE *fp;
 	struct account *c_acc;
 

@@ -4121,7 +4121,7 @@ void player_death(int Ind)
 		delete_player_name(p_ptr->name);
 
 		/* Put him on the high score list */
-		if(!p_ptr->admin_dm && !p_ptr->admin_wiz)
+		if(!p_ptr->admin_dm && !p_ptr->admin_wiz && !p_ptr->noscore)
 			add_high_score(Ind);
 
 		/* Get rid of him */

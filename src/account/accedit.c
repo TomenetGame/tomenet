@@ -119,6 +119,11 @@ void editor(){
 					change=1;
 					c_acc.flags^=ACC_MULTI;
 					break;
+				case 's':
+				case 'S':
+					change=1;
+					c_acc.flags^=ACC_NOSCORE;
+					break;
 				default:
 					ch=' ';
 					beep();

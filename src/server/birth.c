@@ -1539,6 +1539,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	c_acc=GetAccount(accname, NULL);
 	if(c_acc){
 		p_ptr->account=c_acc->id;
+		p_ptr->noscore=(c_acc->flags & ACC_NOSCORE);
 		KILL(c_acc, struct account);
 	}
 
@@ -1588,6 +1589,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	c_acc=GetAccount(accname, NULL);
 	if(c_acc){
 		p_ptr->account=c_acc->id;
+		p_ptr->noscore=(c_acc->flags & ACC_NOSCORE);
 		KILL(c_acc, struct account);
 	}
 
