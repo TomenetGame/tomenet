@@ -1778,6 +1778,8 @@ static void do_cmd_refill_torch(int Ind, int item)
 	/* Restrict the choices */
 	item_tester_hook = item_tester_refill_torch;
 
+	if(item>INVEN_TOTAL) return;
+
 	/* Get the item (in the pack) */
 	if (item >= 0)
 	{

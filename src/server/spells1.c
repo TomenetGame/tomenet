@@ -655,7 +655,7 @@ void teleport_player(int Ind, int dis)
 
 		if (!in_bounds4(l_ptr, yy, xx)) continue;
 
-		if ((m_idx = zcave[yy][xx].m_idx))
+		if ((m_idx = zcave[yy][xx].m_idx)>0)
 		{
 			monster_race *r_ptr = race_inf(&m_list[m_idx]);
 
