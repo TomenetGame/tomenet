@@ -1615,6 +1615,10 @@ artifact_type *randart_make(object_type *o_ptr)
 		/* Usually +10 MANA is max */
                 else if (a_ptr->pval > 10) a_ptr->pval = 10;
         }
+
+	/* If an item gives +MANA, remove NO_MAGIC property */
+	if (a_ptr->flags1 & TR1_MANA) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+
 	/* No more than +4 IV on helms and crowns */
 	if ((a_ptr->tval == TV_HELM || a_ptr->tval == TV_CROWN) &&
 	    (a_ptr->flags1 & TR1_INFRA) && (a_ptr->pval > 4)) a_ptr->pval = 4;

@@ -3481,8 +3481,9 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 //			apply_disenchant(Ind, INVEN_WIELD + weap);
 //			apply_disenchant(Ind, weap);
 
-			/* 1/1000 chance of getting destroyed */
-			if (!rand_int(1000))
+			/* 1/1000 chance of getting destroyed.
+			   Exploit-fix here for permacursed items. (Grond only) */
+			if (!rand_int(1000) && !(f3 & TR3_PERMA_CURSE))
 			{
 				if (true_artifact_p(o_ptr))
 				{

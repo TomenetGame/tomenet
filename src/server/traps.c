@@ -312,6 +312,9 @@ static bool do_player_trap_garbage(int Ind, int times)
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 		if (f3 & TR3_INSTA_ART) continue;
 
+		o_ptr->owner = p_ptr->id;
+                o_ptr->owner_mode = p_ptr->mode;
+
 		ident = TRUE;
 		if (inven_carry(Ind, o_ptr) < 0)
 			drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -2573,6 +2576,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->owner = p_ptr->id;
+			o_ptr->owner_mode = p_ptr->mode;
 			o_ptr->level = 0;
 			(void)inven_carry(Ind, o_ptr);
 
@@ -2592,6 +2596,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->owner = p_ptr->id;
+			o_ptr->owner_mode = p_ptr->mode;
 			o_ptr->level = 0;
 			o_ptr->note = quark_add("!*");
 			(void)inven_carry(Ind, o_ptr);
@@ -2834,6 +2839,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				q_ptr->number = bottles;
 				q_ptr->level = glev / 2 + 1;
 				q_ptr->note = quark_add("Thank you");
+				q_ptr->owner = p_ptr->id;
+				q_ptr->owner_mode = p_ptr->mode;
 				(void)inven_carry(Ind, q_ptr);
 
 				/* This trap is polite */

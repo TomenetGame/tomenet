@@ -8278,11 +8278,22 @@ static int Receive_raw_key(int ind)
 		{
 			switch (key)
 			{
-				/* Test :) */
+				/* Drink from a fountain (test passed:) */
 				case '_':
 					do_cmd_drink_fountain(player);
 					break;
-
+				/* Open/close mind to receive items via telekinesis */
+				case 'p':
+					/* But we can also use this for telekinesis! - C. Blue
+					   (mostly to avoid PK exploits */
+					if (p_ptr->esp_link_flags & LINKF_TELEKIN) {
+						msg_print(player, "\377RYou stop concentrating on telekinesis.");
+						p_ptr->esp_link_flags &= ~LINKF_TELEKIN;
+					} else {
+						msg_print(player, "\377RYou concentrate on telekinesis!");
+						p_ptr->esp_link_flags |= LINKF_TELEKIN;
+					}
+					break;
 				default:
 					msg_format(player, "'%c' key is currently not used.  Hit '?' for help.", key);
 					break;

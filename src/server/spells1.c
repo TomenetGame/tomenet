@@ -2410,10 +2410,12 @@ bool apply_disenchant(int Ind, int mode)
 
 
 	/* Artifacts have 70%(randart) or 80%(trueart) chance to resist */
-	if ((artifact_p(o_ptr) && (rand_int(100) < 70)) || (true_artifact_p(o_ptr) && (rand_int(100) < 80)))
+	if ((artifact_p(o_ptr) && (rand_int(100) < 70)) ||
+	    (true_artifact_p(o_ptr) && (rand_int(100) < 80)) ||
+	    (artifact_p(o_ptr) && (o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD)))
 	{
 		/* Message */
-		msg_format(Ind, "Your %s (%c) resist%s disenchantment!",
+		msg_format(Ind, "Your %s (%c) resist%s!",
 		           o_name, index_to_label(t),
 		           ((o_ptr->number != 1) ? "" : "s"));
 

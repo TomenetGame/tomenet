@@ -4696,6 +4696,9 @@ extern int PlayerUID;
 #define LINKF_OBJ       0x0008 /* Share obj things */
 #define LINKF_MISC      0x0010 /* Share misc things */
 #define LINKF_OPEN      0x0020 /* Mind Open */
+/* Ready to receive items via telekinesis - 
+   to prevent exploiting this for PK! - C. Blue: */
+#define LINKF_TELEKIN	0x0040
 
 /* Monster gaining levels */
 #define MONSTER_LEVEL_MAX       500

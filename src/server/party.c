@@ -345,6 +345,7 @@ int guild_create(int Ind, cptr name){
 			o_ptr->pval=index;
 			o_ptr->level=1;
 			o_ptr->owner=p_ptr->id;
+			o_ptr->owner_mode=p_ptr->mode;
 			object_known(o_ptr);
 			object_aware(Ind, o_ptr);
 			(void)inven_carry(Ind, o_ptr);
@@ -389,6 +390,7 @@ int guild_create(int Ind, cptr name){
 	o_ptr->pval=index;
 	o_ptr->level=1;
 	o_ptr->owner=p_ptr->id;
+	o_ptr->owner_mode=p_ptr->mode;
 	object_known(o_ptr);
 	object_aware(Ind, o_ptr);
 	(void)inven_carry(Ind, o_ptr);
@@ -399,6 +401,7 @@ int guild_create(int Ind, cptr name){
 	o_ptr->number=6;
 	o_ptr->level=p_ptr->lev;
 	o_ptr->owner=p_ptr->id;
+	o_ptr->owner_mode=p_ptr->mode;
 	o_ptr->discount=50;
 	object_known(o_ptr);
 	object_aware(Ind, o_ptr);

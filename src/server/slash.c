@@ -1111,13 +1111,13 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			
-			get_mon_num_hook=dungeon_aux;
-			get_mon_num_prep();
-			i=2+randint(5);
-
 			/* plev 1..50 -> mlev 1..100 (!) */
 			if (lev <= 50) lev += (lev * lev) / 83;
 			else lev = 80 + rand_int(20);
+
+			get_mon_num_hook=dungeon_aux;
+			get_mon_num_prep();
+			i=2+randint(5);
 
 			do{
 				r=get_mon_num(lev, 0);

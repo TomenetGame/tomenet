@@ -7555,6 +7555,11 @@ void telekinesis_aux(int Ind, int item)
 				return;
 			}
 		}
+		
+		if (!is_admin(p_ptr) && !(p2_ptr->esp_link_flags & LINKF_TELEKIN)) {
+			msg_print(Ind, "That player isn't concentrating on telekinesis at the moment.");
+			return;
+		}
 
 		/* Actually teleport the object to the player inventory */
 		inven_carry(Ind2, q_ptr);
