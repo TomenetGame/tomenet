@@ -346,7 +346,7 @@ CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
 TOLUA = server/tolua
 
-all: tomenet tomenet.console tomenet.server accedit
+all: tomenet tomenet.console tomenet.server accedit evilmeta
 
 # sorry. install on every make is a real pain ;)
 
@@ -354,6 +354,7 @@ install: all
 	install -b tomenet ..
 	install -b tomenet.console ..
 	install -b tomenet.server ..
+	install -b evilmeta ..
 	touch ../tomenet.acc
 
 
@@ -369,7 +370,7 @@ update_use:
 	touch console/c-init.c
 
 accedit: account/accedit.o
-	$(CC) $(CFLAGS) -o accedit account/accedit.o -lcurses
+	$(CC) $(CFLAGS) -o accedit account/accedit.o -lcurses -lcrypt
 
 #
 # Build the "MAngband" server
@@ -377,6 +378,12 @@ accedit: account/accedit.o
 
 tomenet.server: $(SERV_OBJS) $(TOLUA)
 	$(CC) $(CFLAGS) -o tomenet.server $(SERV_OBJS) $(LDFLAGS) $(LIBS)
+
+#
+# Evileye meta client
+#
+evilmeta: server/evilmeta.o
+	$(CC) $(CFLAGS) -o evilmeta server/evilmeta.c
 
 
 #
