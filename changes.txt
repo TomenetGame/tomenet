@@ -79,4 +79,4 @@ Change list for PernMangband
 25/07/2001 (darkgod)
 - Furry, Dig, Spin warrior technics
 - Fixed DSM being dopepd without unpolying
-- Fixed morphing and not lmossing eq wit eq is inscribed !t
+- Fixed morphing and not lossing eq wit eq is inscribed !

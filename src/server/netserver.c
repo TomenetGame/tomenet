@@ -6884,9 +6884,11 @@ static int Receive_King(int ind)
 	{
 		switch(type)
 		{
+#if 0 /* DGDGDGDG -- Cause fucking up of levels */
 			case KING_OWN:
 				do_cmd_own(player);
 				break;
+#endif
 		}
 		return 2;
 	}
