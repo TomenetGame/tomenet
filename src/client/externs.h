@@ -128,6 +128,7 @@ extern bool inkey_base;
 extern bool inkey_scan;
 extern bool inkey_flag;
 extern bool inkey_msg_flag;
+extern bool inkey_interact_macros;
 
 extern s16b macro__num;
 extern cptr *macro__pat;
