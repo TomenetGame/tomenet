@@ -2030,6 +2030,18 @@ static void do_recall(int Ind, bool bypass)
 	}
 }
 
+/* Does player have ball? */
+int has_ball(player_type *p_ptr){
+	int i;
+	for(i=0; i<INVEN_WIELD; i++){
+		if(p_ptr->inventory[i].tval==1 && p_ptr->inventory[i].sval==9){
+			break;
+		}
+	}
+	if(i==INVEN_WIELD) i=-1;
+	return(i);
+}
+
 /*
  * Handle misc. 'timed' things on the player.
  * returns FALSE if player no longer exists.
@@ -3110,6 +3122,65 @@ static bool process_player_end_aux(int Ind)
 	return (TRUE);
 }
 
+/* process any team games */
+static void process_games(int Ind){
+	player_type *p_ptr=Players[Ind];
+	cave_type **zcave;
+	cave_type *c_ptr;
+	char sstr[80];
+	int score=0;
+	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+	c_ptr=&zcave[p_ptr->py][p_ptr->px];
+
+	if(c_ptr->feat==FEAT_AGOAL || c_ptr->feat==FEAT_BGOAL){
+		int ball;
+		switch(gametype){
+			/* rugby type game */
+			case EEGAME_RUGBY:
+				if((ball=has_ball(p_ptr))==-1) break;
+
+				if(p_ptr->team==1 && c_ptr->feat==FEAT_BGOAL){
+					teamscore[0]++;
+					msg_format_near(Ind, "\377r%s scored a goal!!!", p_ptr->name);
+					msg_format(Ind, "\377rYou scored a goal!!!");
+					score=1;
+				}
+				if(p_ptr->team==2 && c_ptr->feat==FEAT_AGOAL){
+					teamscore[1]++;
+					msg_format_near(Ind, "\377g%s scored a goal!!!", p_ptr->name);
+					msg_format(Ind, "\377gYou scored a goal!!!");
+					score=1;
+				}
+				if(score){
+					object_type tmp_obj;
+					s16b ox, oy;
+					int try;
+					p_ptr->energy=0;
+					sprintf(sstr, "Score: \377rReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]); 
+					msg_broadcast(0, sstr);
+
+					for(try=0; try<1000; try++){
+						ox=p_ptr->px+5-rand_int(10);
+						oy=p_ptr->py+5-rand_int(10);
+						if(!in_bounds(oy, ox)) continue;
+						if(!cave_floor_bold(zcave, oy, ox)) continue;
+						tmp_obj=p_ptr->inventory[ball];
+						drop_near(&tmp_obj, -1, &p_ptr->wpos, oy, ox);
+						printf("dropping at %d %d (%d)\n", ox, oy, try);
+						inven_item_increase(Ind, ball, -999);
+						inven_item_optimize(Ind, ball);
+						break;
+					}
+					/* Move the player from the goal area */
+					teleport_player(Ind, 20);
+				}
+				break;
+			/* capture the flag */
+			case EEGAME_CTF:
+			default:
+		}
+	}
+}
 
 /*
  * Player processing that occurs at the end of a turn
@@ -3169,6 +3240,7 @@ static void process_player_end(int Ind)
 	/* XXX XXX XXX Pack Overflow */
 	pack_overflow(Ind);
 
+	process_games(Ind);
 
 	/* Process things such as regeneration. */
 	/* This used to be processed every 10 turns, but I am changing it to be
