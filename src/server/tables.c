@@ -1802,6 +1802,12 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,
                         },
+						/* Misc tree */
+                        {
+                                SKILL_AGILITY,
+                                '+', 0,
+                                '+', 100,	// *HARD* to learn
+                        },
 
                 }
 	},
@@ -1868,6 +1874,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_ANTIMAGIC,
                                 '+', 0,
                                 '+', 600,
+                        },
+                        {
+                                SKILL_AGILITY,
+                                '+', 1000,
+                                '+', 200,
                         },
                 }
 	},
@@ -2039,6 +2050,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                         },
                         {
+                                SKILL_STEALTH,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
                                 SKILL_DISARM,
                                 '+', 1000,
                                 '+', 1000,
@@ -2052,6 +2068,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_BACKSTAB,
                                 '+', 1000,
                                 '+', 1000,
+                        },
+                        {
+                                SKILL_AGILITY,
+                                '+', 1000,
+                                '+', 350,
                         },
                 }
         },
@@ -4551,6 +4572,46 @@ skill_type s_info[MAX_SKILLS] =
                 /* Flags */
                 0,
         },
+        {
+                "Miscellaneous",
+				"Not a real skill, it is only used to regroup some skills.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Agility",
+				"General ability to move on quickly.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
 };
 
 /*
@@ -4595,4 +4656,7 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_NECROMANCY, SKILL_AURA_SHIVER },
         { SKILL_NECROMANCY, SKILL_AURA_DEATH },
         { SKILL_NECROMANCY, SKILL_ANTIMAGIC },
+
+        { -1, SKILL_MISC },
+        { SKILL_MISC, SKILL_AGILITY },
 };

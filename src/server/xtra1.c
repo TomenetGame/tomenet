@@ -1989,14 +1989,18 @@ static void calc_bonuses(int Ind)
 			p_ptr->pspeed += p_ptr->lev / 6;
 			break;
 	}
-#endif
-        /* Compute antimagic */
-        if (get_skill(p_ptr, SKILL_ANTIMAGIC))
-        {
-                p_ptr->anti_magic = TRUE;
-                p_ptr->antimagic = get_skill(p_ptr, SKILL_ANTIMAGIC);
-                p_ptr->antimagic_dis = 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 11);
-        }
+#else	// 0
+
+			p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
+#endif	// 0
+
+	/* Compute antimagic */
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
+	{
+		p_ptr->anti_magic = TRUE;
+		p_ptr->antimagic = get_skill(p_ptr, SKILL_ANTIMAGIC);
+		p_ptr->antimagic_dis = 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 11);
+	}
 
 	/* Take off what is no more usable */
 	do_takeoff_impossible(Ind);
