@@ -1861,19 +1861,21 @@ bool create_artifact_aux(int Ind, int item)
 }
 
 bool curse_spell(int Ind){	// could be void
-	player->type *p_ptr=Players[Ind];
+	player_type *p_ptr=Players[Ind];
 	get_item(Ind);
 	p_ptr->current_curse=1;	/* This is awful. I intend to change it */
 	return(TRUE);
 }
 
 bool curse_spell_aux(int Ind, int item){
+	player_type *p_ptr=Players[Ind];
+	object_type *o_ptr=&p_ptr->inventory[item];
 	char		o_name[80];
 
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
 
-	if(artifact_p(item)) return(FALSE);
+	if(artifact_p(o_ptr)) return(FALSE);
 	if(item_tester_hook_weapon(item)){
 		o_ptr->to_h=0-randint(10);
 		o_ptr->to_d=0-randint(10);

@@ -1220,7 +1220,7 @@ void py_attack_player(int Ind, int y, int x)
 			/* Damage */
 			take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
 
-			if(!cptr->m_idx) break;
+			if(!c_ptr->m_idx) break;
 
 			/* Check for death */
 			if (q_ptr->death) break;
