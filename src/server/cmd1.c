@@ -2789,7 +2789,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			resurrect_player(Ind);
 
 			/* Give him some gold to restart */
-			if (p_ptr->lev > 1)
+			if (p_ptr->lev > 1 && !p_ptr->admin_dm)
 			{
 				int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100:100;
 				msg_format(Ind, "The temple priest gives you %ld gold pieces for your revival!", i);

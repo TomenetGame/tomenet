@@ -3628,7 +3628,7 @@ void player_death(int Ind)
 	/* Hack -- amulet of life saving */
 	if (p_ptr->alive && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING)
 	{
-		msg_print(Ind, "\377o Your amulet shatters into the pieces!");
+		msg_print(Ind, "\377oYour amulet shatters into the pieces!");
 
 		inven_item_increase(Ind, INVEN_NECK, -99);
 		inven_item_describe(Ind, INVEN_NECK);
