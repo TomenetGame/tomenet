@@ -181,16 +181,16 @@ CC = gcc
 # including "USE_GETCH" and "USE_CURS_SET".  Note that "config.h" will
 # attempt to "guess" at many of these flags based on your system.
 #
-CFLAGS = -Wall -g -pipe -D"USE_X11" -D"USE_GCU"
-LIBS = -L/usr/X11R6/lib -lX11 -lcurses
+#CFLAGS = -Wall -g -pipe -D"USE_X11" -D"USE_GCU"
+#LIBS = -L/usr/X11R6/lib -lX11 -lcurses
 
 
 ##
 ## Variation -- FreeBSD 4.3R
 ##
 #PREFIX = /usr/local
-#CFLAGS = -g -pipe -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"${PREFIX}/lib/pmangband\""
-#LIBS = -L${X11BASE}/lib -lX11 -lcurses
+CFLAGS = -g -pipe -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\""
+LIBS = -L${X11BASE}/lib -lX11 -lcurses
 
 
 ##

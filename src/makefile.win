@@ -74,7 +74,7 @@ SERV_OBJS = \
 
 CLI_SRCS = \
   common/z-util.c common/z-virt.c common/z-form.c common/z-rand.c \
-  common/net-win.c common/sockbuf.c \
+  common/net-win.c common/sockbuf.c common/common.c \
   client/z-term.c client/c-util.c client/c-cmd.c client/c-inven.c \
   client/c-files.c client/c-tables.c client/c-store.c client/c-init.c \
   client/variable.c client/readdib.c \
@@ -83,7 +83,7 @@ CLI_SRCS = \
 
 CLI_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
-  common/net-win.o common/sockbuf.o \
+  common/net-win.o common/sockbuf.o common/common.o \
   client/z-term.o client/c-util.o client/c-cmd.o client/c-inven.o \
   client/c-files.o client/c-tables.o client/c-store.o client/c-init.o \
   client/variable.o client/readdib.o \
