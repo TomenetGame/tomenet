@@ -223,6 +223,9 @@ static char inkey_aux(void)
 		{
 			int result;
 
+			/* Flush output - maintain flickering/multi-hued characters */
+			do_flicker();
+
 			/* Look for a keypress */
 			(void)(Term_inkey(&ch, FALSE, TRUE));
 
@@ -507,6 +510,9 @@ char inkey(void)
 	/* Get a (non-zero) keypress */
 	for (ch = 0; !ch; )
 	{
+		/* Flush output - maintain flickering/multi-hued characters */
+		do_flicker();
+
 		/* Nothing ready, not waiting, and not doing "inkey_base" */
 		if (!inkey_base && inkey_scan && (0 != Term_inkey(&ch, FALSE, FALSE))) break;
 
