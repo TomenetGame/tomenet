@@ -4554,7 +4554,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
                 info[i++] = "It makes you invisible.";
 	}
-        if (f5 & (TR5_LIFE))
+        if (f1 & (TR1_LIFE))
 	{
                 info[i++] = "It affects your hit points.";
 	}

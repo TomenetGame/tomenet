@@ -1781,7 +1781,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 
 				/* Select a chaotic effect (50% chance) */
-				if ((f1 & TR5_CHAOTIC) && (randint(2)==1))
+				if ((f5 & TR5_CHAOTIC) && (randint(2)==1))
 				{
 					if (randint(5) < 3)
 					{
@@ -1868,7 +1868,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			/* Damage, check for fear and death */
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) break;
 
-			touch_zap_player(Ind, m_ptr);	// IMPLEMENT!
+			touch_zap_player(Ind, c_ptr->m_idx);
 
 			/* Are we draining it?  A little note: If the monster is
 			   dead, the drain does not work... */
@@ -1972,7 +1972,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 						m_ptr = &m_list[c_ptr->m_idx];
 
 						/* Oops, we need a different name... */
-						monster_desc(Ind, m_name, m_ptr, 0);
+						monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 						/* Hack -- Get new race */
 						r_ptr = race_inf(m_ptr);
@@ -2122,8 +2122,11 @@ void py_attack(int Ind, int y, int x, bool old)
 }
 
 /* PernAngband addition */
-void touch_zap_player(int Ind, monster_type *m_ptr)
+// void touch_zap_player(int Ind, monster_type *m_ptr)
+void touch_zap_player(int Ind, int m_idx)
 {
+	monster_type	*m_ptr = &m_list[m_idx];
+
 	player_type *p_ptr = Players[Ind];
 	int aura_damage = 0;
 	monster_race *r_ptr = race_inf(m_ptr);
@@ -2137,7 +2140,7 @@ void touch_zap_player(int Ind, monster_type *m_ptr)
 			aura_damage = damroll(1 + (m_ptr->level / 26), 1 + (m_ptr->level / 17));
 
 			/* Hack -- Get the "died from" name */
-			monster_desc(Ind, aura_dam, m_ptr, 0x88);
+			monster_desc(Ind, aura_dam, m_idx, 0x88);
 
 			msg_print(Ind, "You are suddenly very hot!");
 
@@ -2161,7 +2164,7 @@ void touch_zap_player(int Ind, monster_type *m_ptr)
 			aura_damage = damroll(1 + (m_ptr->level / 26), 1 + (m_ptr->level / 17));
 
 			/* Hack -- Get the "died from" name */
-			monster_desc(Ind, aura_dam, m_ptr, 0x88);
+			monster_desc(Ind, aura_dam, m_idx, 0x88);
 
 			if (p_ptr->oppose_elec) aura_damage = (aura_damage+2) / 3;
 			if (p_ptr->resist_elec) aura_damage = (aura_damage+2) / 3;

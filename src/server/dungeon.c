@@ -2064,23 +2064,24 @@ static void process_player_end(int Ind)
 		/* Burn some fuel in the current lite */
 		if (o_ptr->tval == TV_LITE)
 		{
-        u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
+			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
 			/* Hack -- Use some fuel (sometimes) */
 #if 0
 			if (!artifact_p(o_ptr) && !(o_ptr->sval == SV_LITE_DWARVEN)
-				&& !(o_ptr->sval == SV_LITE_FEANOR) && (o_ptr->pval > 0) && (!o_ptr->name3))
+					&& !(o_ptr->sval == SV_LITE_FEANOR) && (o_ptr->pval > 0) && (!o_ptr->name3))
 #endif	// 0
-                /* Extract the item flags */
-                object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-                /* Hack -- Use some fuel */
-                if ((f4 & TR4_FUEL_LITE) && (o_ptr->pval > 0))
+			/* Extract the item flags */
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+			/* Hack -- Use some fuel */
+			if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0))
 			{
 				/* Decrease life-span */
-				o_ptr->pval--;
+				o_ptr->timeout--;
 
 				/* Hack -- notice interesting fuel steps */
-				if ((o_ptr->pval < 100) || (!(o_ptr->pval % 100)))
+				if ((o_ptr->timeout < 100) || (!(o_ptr->timeout % 100)))
 				{
 					/* Window stuff */
 					p_ptr->window |= (PW_INVEN | PW_EQUIP);
@@ -2090,11 +2091,11 @@ static void process_player_end(int Ind)
 				if (p_ptr->blind)
 				{
 					/* Hack -- save some light for later */
-					if (o_ptr->pval == 0) o_ptr->pval++;
+					if (o_ptr->timeout == 0) o_ptr->timeout++;
 				}
 
 				/* The light is now out */
-				else if (o_ptr->pval == 0)
+				else if (o_ptr->timeout == 0)
 				{
 					disturb(Ind, 0, 0);
 					msg_print(Ind, "Your light has gone out!");
@@ -2104,13 +2105,13 @@ static void process_player_end(int Ind)
 					{
 						/* Decrease the item, optimize. */
 						inven_item_increase(Ind, INVEN_LITE, -1);
-//						inven_item_describe(Ind, INVEN_LITE);
+						//						inven_item_describe(Ind, INVEN_LITE);
 						inven_item_optimize(Ind, INVEN_LITE);
 					}
 				}
 
 				/* The light is getting dim */
-				else if ((o_ptr->pval < 100) && (!(o_ptr->pval % 10)))
+				else if ((o_ptr->timeout < 100) && (!(o_ptr->timeout % 10)))
 				{
 					if (p_ptr->disturb_minor) disturb(Ind, 0, 0);
 					msg_print(Ind, "Your light is growing faint.");
@@ -2194,7 +2195,8 @@ static void process_player_end(int Ind)
 			if (!o_ptr->k_idx) continue;
 
 			/* Recharge activatable objects */
-			if (o_ptr->timeout > 0)
+			/* (well, light-src should be handled here too? -Jir- */
+			if ((o_ptr->timeout > 0) && (o_ptr->tval != TV_LITE))
 			{
 				/* Recharge */
 				o_ptr->timeout--;
@@ -2205,6 +2207,7 @@ static void process_player_end(int Ind)
 		}
 
 		/* Recharge rods */
+		/* this should be moved to 'timeout'? */
 		for (i = 0; i < INVEN_PACK; i++)
 		{
 			o_ptr = &p_ptr->inventory[i];

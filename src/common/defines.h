@@ -4588,3 +4588,6 @@ extern int PlayerUID;
 #define TR_LIST(c_ptr) (c_ptr->special.ptr)
 
 #define TRUE_ARTS(o_ptr) ((artifact_p(o_ptr)) && (!o_ptr->name3))
+#define PRICE_BOOST(value, base) \
+			(value > base ? value << ((value - base)/4) : value )	
+

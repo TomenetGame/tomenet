@@ -2610,13 +2610,12 @@ static bool summon_specific_okay(int r_idx)
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		}
-#if 0	// :p
                 case SUMMON_DRAGONRIDER:
 		{
                         okay = (r_ptr->flags3 & RF3_DRAGONRIDER)?TRUE:FALSE;
 			break;
 		}
-#endif
+
 		case SUMMON_BLUE_HORROR:
 		{
 			okay = ((strstr((r_name + r_ptr->name),"lue horror")) &&

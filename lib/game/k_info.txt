@@ -29,6 +29,11 @@
 #
 # When loading a savedata, the server will determine k_idx from
 # tval and sval given.
+#
+# If you want to change this file while running the server,
+# It is advised to append new entries to the very end of this
+# file, and if you wanna delete ones, just change the rarity/
+# depth too high to be actually generated.
 
 # Many new flags are not implemented yet;
 # implementations welcone :)	- Jir -

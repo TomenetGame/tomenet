@@ -1375,7 +1375,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 	j_ptr = &(p_ptr->inventory[INVEN_LITE]);
 
 	/* Refuel */
-	j_ptr->timeout += o_ptr->timeout;
+	j_ptr->timeout += (o_ptr->tval == TV_FLASK)?o_ptr->pval:o_ptr->timeout;
 
 	/* Message */
 	msg_print(Ind, "You fuel your lamp.");

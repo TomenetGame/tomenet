@@ -2739,6 +2739,12 @@ static int breakage_chance(object_type *o_ptr)
 		{
 			return (25);
 		}
+
+		/* seldom break */
+		case TV_BOOMERANG:
+		{
+			return (5);
+		}
 	}
 
 	/* Rarely break */

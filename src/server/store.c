@@ -843,6 +843,9 @@ static void mass_produce(object_type *o_ptr)
 		case TV_HAFTED:
 		case TV_DIGGING:
 		case TV_BOW:
+		case TV_BOOMERANG:
+		case TV_MSTAFF:
+		case TV_AXE:
 		{
 			if (o_ptr->name2) break;
 			if (cost <= 10L) size += mass_roll(3, 5);
@@ -933,7 +936,10 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	if (o_ptr->xtra1 || j_ptr->xtra1) return (0);
 
 	/* Hack -- Never stack recharging items */
-	if (o_ptr->timeout || j_ptr->timeout) return (0);
+	/* Megahack -- light sources are allowed (hoping it's
+	 * not non-fuel activable one..) */
+	if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
+//	if ((o_ptr->timeout || j_ptr->timeout) && o_ptr->tval != TV_LITE) return (0);
 
 	/* Require many identical values */
 	if (o_ptr->ac    !=  j_ptr->ac)   return (0);
@@ -1085,6 +1091,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_POLEARM:
 				case TV_SWORD:
 				case TV_AXE:
+				case TV_MSTAFF:
 				case TV_BOOMERANG:
 				break;
 				default:
@@ -1102,6 +1109,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_PRAYER_BOOK:
 				case TV_SCROLL:
 				case TV_POTION:
+				case TV_POTION2:
 				case TV_HAFTED:
 				break;
 				default:
@@ -1118,6 +1126,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			{
 				case TV_SCROLL:
 				case TV_POTION:
+				case TV_POTION2:
 				break;
 				default:
 				return (FALSE);
@@ -1140,6 +1149,8 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_ROD:
 				case TV_SCROLL:
 				case TV_POTION:
+				case TV_POTION2:
+				case TV_MSTAFF:	// naturally?
 				break;
 				default:
 				return (FALSE);

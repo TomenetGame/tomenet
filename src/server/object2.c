@@ -947,6 +947,9 @@ static s32b object_value_real(object_type *o_ptr)
 		case TV_ARROW:
 		case TV_BOLT:
 		case TV_BOW:
+		case TV_BOOMERANG:
+		case TV_AXE:
+		case TV_MSTAFF:
 		case TV_DIGGING:
 		case TV_HAFTED:
 		case TV_POLEARM:
@@ -964,45 +967,50 @@ static s32b object_value_real(object_type *o_ptr)
 		case TV_AMULET:
 		case TV_RING:
 		{
+			int boost;
+
 			/* Hack -- Negative "pval" is always bad */
 			if (o_ptr->pval < 0) return (0L);
 
 			/* No pval */
 			if (!o_ptr->pval) break;
 
+			boost = 1 << o_ptr->pval;
+
 			/* Give credit for stat bonuses */
-			if (f1 & TR1_STR) value += (o_ptr->pval * 200L);
-			if (f1 & TR1_INT) value += (o_ptr->pval * 200L);
-			if (f1 & TR1_WIS) value += (o_ptr->pval * 200L);
-			if (f1 & TR1_DEX) value += (o_ptr->pval * 200L);
-			if (f1 & TR1_CON) value += (o_ptr->pval * 200L);
-			if (f1 & TR1_CHR) value += (o_ptr->pval * 200L);
+//			if (f1 & TR1_STR) value += (o_ptr->pval * 200L);
+			if (f1 & TR1_STR) value += (boost * 200L);
+			if (f1 & TR1_INT) value += (boost * 200L);
+			if (f1 & TR1_WIS) value += (boost * 200L);
+			if (f1 & TR1_DEX) value += (boost * 200L);
+			if (f1 & TR1_CON) value += (boost * 200L);
+			if (f1 & TR1_CHR) value += (boost * 200L);
 
 			/* Give credit for stealth and searching */
-			if (f1 & TR1_STEALTH) value += (o_ptr->pval * 100L);
-			if (f1 & TR1_SEARCH) value += (o_ptr->pval * 100L);
+			if (f1 & TR1_STEALTH) value += (boost * 100L);
+			if (f1 & TR1_SEARCH) value += (boost * 100L);
 
 			/* Give credit for infra-vision and tunneling */
-			if (f1 & TR1_INFRA) value += (o_ptr->pval * 50L);
-			if (f1 & TR1_TUNNEL) value += (o_ptr->pval * 50L);
+			if (f1 & TR1_INFRA) value += (boost * 50L);
+			if (f1 & TR1_TUNNEL) value += (boost * 50L);
 
 			/* Give credit for extra attacks */
-			if (f1 & TR1_BLOWS) value += (o_ptr->pval * 2000L);
+			if (f1 & TR1_BLOWS) value += (boost * 2000L);
 
 			/* Hack -- amulets of speed and rings of speed are
-			 * cheaper than other tiems of speed.
+			 * cheaper than other items of speed.
 			 */
 			if (o_ptr->tval == TV_AMULET)
 			{
 				/* Give credit for speed bonus */
-				if (f1 & TR1_SPEED) value += (o_ptr->pval * 25000L);
+				if (f1 & TR1_SPEED) value += (boost * 25000L);
 			}
 			else if (o_ptr->tval == TV_RING)
 			{
 				/* Give credit for speed bonus */
-				if (f1 & TR1_SPEED) value += (o_ptr->pval * 50000L);
+				if (f1 & TR1_SPEED) value += (boost * 50000L);
 			}
-			else if (f1 & TR1_SPEED) value += (o_ptr->pval * 100000L);
+			else if (f1 & TR1_SPEED) value += (boost * 100000L);
 			break;
 		}
 	}
@@ -1037,7 +1045,8 @@ static s32b object_value_real(object_type *o_ptr)
 			  }
 
 			/* Give credit for bonuses */
-			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+//			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+			value += ((PRICE_BOOST(o_ptr->to_h + o_ptr->to_d, 15) + PRICE_BOOST(o_ptr->to_a, 12)) * 100L);
 
 			/* Done */
 			break;
@@ -1058,7 +1067,8 @@ static s32b object_value_real(object_type *o_ptr)
 			if (o_ptr->to_a < 0) return (0L);
 
 			/* Give credit for bonuses */
-			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+//			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+			value += ((PRICE_BOOST(o_ptr->to_h, 9) + PRICE_BOOST(o_ptr->to_d, 9) + PRICE_BOOST(o_ptr->to_a, 9)) * 100L);
 
 			/* Done */
 			break;
@@ -1066,6 +1076,9 @@ static s32b object_value_real(object_type *o_ptr)
 
 		/* Bows/Weapons */
 		case TV_BOW:
+		case TV_BOOMERANG:
+		case TV_AXE:
+		case TV_MSTAFF:
 		case TV_DIGGING:
 		case TV_HAFTED:
 		case TV_SWORD:
@@ -1075,12 +1088,13 @@ static s32b object_value_real(object_type *o_ptr)
 			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
 
 			/* Factor in the bonuses */
-			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+//			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
+			value += ((PRICE_BOOST(o_ptr->to_h, 9) + PRICE_BOOST(o_ptr->to_d, 9) + PRICE_BOOST(o_ptr->to_a, 9)) * 100L);
 
 			/* Hack -- Factor in extra damage dice */
 			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
 			{
-				value += (o_ptr->dd - k_ptr->dd) * o_ptr->ds * 100L;
+				value += PRICE_BOOST((o_ptr->dd - k_ptr->dd), 1) * o_ptr->ds * 100L;
 			}
 
 			/* Done */
@@ -1096,7 +1110,8 @@ static s32b object_value_real(object_type *o_ptr)
 			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
 
 			/* Factor in the bonuses */
-			value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
+//			value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
+			value += ((PRICE_BOOST(o_ptr->to_h, 9) + PRICE_BOOST(o_ptr->to_d, 9)) * 5L);
 
 			/* Hack -- Factor in extra damage dice */
 			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
@@ -1232,6 +1247,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		/* Food and Potions and Scrolls */
 		case TV_FOOD:
 		case TV_POTION:
+		case TV_POTION2:
 		case TV_SCROLL:
 		{
 			/* Assume okay */
@@ -1263,10 +1279,13 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 
 		/* Weapons and Armor */
 		case TV_BOW:
+		case TV_BOOMERANG:
 		case TV_DIGGING:
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
+		case TV_AXE:
+		case TV_MSTAFF:
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_HELM:
@@ -1321,7 +1340,14 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 //			if (o_ptr->xtra1 || j_ptr->xtra1) return (FALSE);
 
 			/* Hack -- Never stack recharging items */
-			if (o_ptr->timeout || j_ptr->timeout) return (FALSE);
+			if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
+#if 0
+			if (o_ptr->timeout || j_ptr->timeout)
+			{
+				if ((o_ptr->timeout != j_ptr->timeout) ||
+					(o_ptr->tval != TV_LITE)) return (FALSE);
+			}
+#endif	// 0
 
 			/* Require identical "values" */
 			if (o_ptr->ac != j_ptr->ac) return (FALSE);
@@ -2062,77 +2088,84 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 	}
 
 
-        /* Some special cases */
-        switch (o_ptr->tval)
-        {
+	/* Some special cases */
+	switch (o_ptr->tval)
+	{
 #if 0
 		case TV_TRAPKIT:
 		{
 			/* Good */
 			if (power > 0) o_ptr->to_a += randint(5);
-			
+
 			/* Very good */
 			if (power > 1) o_ptr->to_a += randint(5);
-			
+
 			/* Bad */
 			if (power < 0) o_ptr->to_a -= randint(5);
 
 			/* Very bad */
-                        if (power < -1) o_ptr->to_a -= randint(5);
-									
+			if (power < -1) o_ptr->to_a -= randint(5);
+
 			break;
 		}
-                case TV_MSTAFF:
-                {
-                        if (is_ego_p(o_ptr, EGO_MSTAFF_SPELL))
-                        {
-                                int gf[2], i;
+		case TV_MSTAFF:
+		{
+			if (is_ego_p(o_ptr, EGO_MSTAFF_SPELL))
+			{
+				int gf[2], i;
 
-                                for (i = 0; i < 2; i++)
-                                {
-                                        int k = 0;
+				for (i = 0; i < 2; i++)
+				{
+					int k = 0;
 
-                                        gf[i] = 0;
-                                        while (!k)
-                                        {                                                
-                                                k = lookup_kind(TV_RUNE1, (gf[i] = rand_int(MAX_GF)));
-                                        }
-                                }
+					gf[i] = 0;
+					while (!k)
+					{                                                
+						k = lookup_kind(TV_RUNE1, (gf[i] = rand_int(MAX_GF)));
+					}
+				}
 
-                                o_ptr->pval = gf[0] + (gf[1] << 16);
-                                o_ptr->pval3 = rand_int(RUNE_MOD_MAX) + (rand_int(RUNE_MOD_MAX) << 16);
-                                o_ptr->pval2 = randint(70) + (randint(70) << 8);
-                        }
-                        break;
-                }
+				o_ptr->pval = gf[0] + (gf[1] << 16);
+				o_ptr->pval3 = rand_int(RUNE_MOD_MAX) + (rand_int(RUNE_MOD_MAX) << 16);
+				o_ptr->pval2 = randint(70) + (randint(70) << 8);
+			}
+			break;
+		}
 #endif	// 0
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:
 		{
-                        if ((power == 1) && !o_ptr->name2 && o_ptr->sval != SV_AMMO_MAGIC)
-		        {
-                           if (randint(100) < 30)
-			   {
-			        /* Exploding missile */
-			        int power[25]={GF_ELEC, GF_POIS, GF_ACID,
-				     GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
-				     GF_DARK, GF_SHARDS, GF_SOUND,
-				     GF_CONFUSION, GF_FORCE, GF_INERTIA,
-				     GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
-			             GF_NETHER, GF_NEXUS, GF_TIME,
-				     GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
-				     GF_TURN_ALL, GF_STUN};
-//				     GF_TURN_ALL, GF_NUKE, GF_STUN,
-//				     GF_DISINTEGRATE};
-			        
-//                                o_ptr->pval2 = power[rand_int(25)];
-                                o_ptr->pval = power[rand_int(25)];
-			   }
+			if (o_ptr->sval == SV_AMMO_MAGIC)
+			{
+				o_ptr->to_h = o_ptr->to_d = 0;
+				break;
 			}
-			break;
+
+//			if ((power == 1) && !o_ptr->name2 && o_ptr->sval != SV_AMMO_MAGIC)
+			else if ((power == 1) && !o_ptr->name2)
+			{
+				if (randint(100) < 30)
+				{
+					/* Exploding missile */
+					int power[25]={GF_ELEC, GF_POIS, GF_ACID,
+						GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
+						GF_DARK, GF_SHARDS, GF_SOUND,
+						GF_CONFUSION, GF_FORCE, GF_INERTIA,
+						GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
+						GF_NETHER, GF_NEXUS, GF_TIME,
+						GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
+						GF_TURN_ALL, GF_STUN};
+						//				     GF_TURN_ALL, GF_NUKE, GF_STUN,
+						//				     GF_DISINTEGRATE};
+
+						//                                o_ptr->pval2 = power[rand_int(25)];
+					o_ptr->pval = power[rand_int(25)];
+			}
 		}
+		break;
 	}
+}
 #if 0	// heheh
 	/* Analyze type */
 	switch (o_ptr->tval)
