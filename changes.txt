@@ -32,6 +32,7 @@
      Adjusted critical strikes.
 [M]- Some dragons and all nazguls couldn't fly.
      Animals can cross woods (trees).
+[O]- Adjusted some rarities in k_info.txt.
 
 12/02/2003
 [O]- Admins can destroy/unequip anything
