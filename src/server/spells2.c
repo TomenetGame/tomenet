@@ -4007,11 +4007,15 @@ void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 bool poly_build(int Ind, char *args){
 	static int curr=0;
 	static cptr vert=NULL;
-	static int lx,ly;
+	static int lx,ly,dx,dy;
 	static int sx,sy;
+	static int odir;
 	static int moves;
-	player_type *p_ptr=Players[Ind];
+	static int cvert;
 	static struct dna_type *dna;
+	player_type *p_ptr=Players[Ind];
+	int x,y;
+	int dir=0;
 
 	if(curr==0){
 		if(!args){
@@ -4027,39 +4031,68 @@ bool poly_build(int Ind, char *args){
 		dna->a_flags=ACF_NONE;
 		dna->min_level=ACF_NONE;
 		dna->price=5;	/* so work out */
-		lx=0;
-		ly=0;
+		odir=0;
+		cvert=0;
 		sx=p_ptr->px;
 		sy=p_ptr->py;
+		dx=lx=sx;
+		dy=ly=sy;
 		moves=30;
-		cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].feat=FEAT_HOME_OPEN;
-		cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].special=dna;
+		cave[p_ptr->dun_depth][sy][sx].feat=FEAT_HOME_OPEN;
+		cave[p_ptr->dun_depth][sy][sx].special=dna;
 		return TRUE;
 	}
 	else if(curr!=Ind){
-		msg_print(Ind,"The builders are on strike!");
+		msg_print(Ind,"The builders are on strike!"); /* add multi build soon */
 		return FALSE;
 	}
-	if(lx!=sx){
+	x=p_ptr->px;
+	y=p_ptr->py;
+	if(x!=dx){
+		if(x>dx) dir=1;
+		else dir=2;
 	}
-	if(ly!=sy){
+	if(y!=dy){
+		if(y>dy) dir|=4;
+		else dir|=8;
 	}
+	if(odir!=dir){
+		if(odir){		/* first move not new vertex */
+			vert[cvert++]=dx-lx;
+			vert[cvert++]=dy-ly;
+		}
+		lx=dx;
+		ly=dy;
+		odir=dir;		/* change direction, add vertex */
+	}
+	dx=x;
+	dy=y;
 
 	if(p_ptr->px==sx && p_ptr->py==sy){		/* check for close */
-#if 0
-		houses[num_houses].x=sx;		/* lame positioning code */
+		vert[cvert++]=dx-lx;			/* last vertex */
+		vert[cvert++]=dy-ly;
+		houses[num_houses].x=sx;
 		houses[num_houses].y=sy;
 		houses[num_houses].flags=HF_NONE;	/* polygonal */
 		houses[num_houses].depth=p_ptr->dun_depth;;
 		houses[num_houses].dna=dna;
+		houses[num_houses].coords.poly=vert;
 		num_houses++;
-#endif
 		p_ptr->master_move_hook=NULL;
 		curr=NULL;
 		dna=NULL;
+		vert=NULL;
+		msg_print(Ind,"You have completed your house");
 		return TRUE;
 	}
-	cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].feat=FEAT_PERM_EXTRA;
+	cave[p_ptr->dun_depth][dy][dx].feat=FEAT_PERM_EXTRA;
+	if(cvert==MAXCOORD){
+		msg_print(Ind,"Your house building attempt has failed");
+		cave[p_ptr->dun_depth][sy][sx].special=NULL;
+		KILL(dna, struct dna_type);
+		C_KILL(vert, MAXCOORD, byte);
+		p_ptr->master_move_hook=NULL;
+	}
 	return TRUE;
 }
 

@@ -2016,9 +2016,6 @@ void wild_add_uhouse(house_type *h_ptr){
 				}
 			}
 		}
-		c_ptr=&cave[Depth][h_ptr->y+h_ptr->dy][h_ptr->x+h_ptr->dx];
-		c_ptr->feat=FEAT_HOME_HEAD;
-		c_ptr->special=h_ptr->dna;
 	}
 	else{
 		/* polygonal house */
@@ -2029,28 +2026,36 @@ void wild_add_uhouse(house_type *h_ptr){
 		int dx,dy;
 		x=h_ptr->x;
 		y=h_ptr->y;
-		while(coord[0] && coord[1]){
+		while(coord[0] || coord[1]){
 			dx=coord[0];
 			dy=coord[1];
 			if(dx){		/* dx/dy mutually exclusive */
 				if(dx<0){
-					for(x=sx;x>(sx+dx);x--)
- 						cave[Depth][y][x].feat=FEAT_PERM_EXTRA;
+					for(x=sx;x>(sx+dx);x--){
+ 						c_ptr=&cave[Depth][y][x];
+						c_ptr->feat=FEAT_PERM_EXTRA;
+					}
 				}
 				else{
-					for(x=sx;x<(sx+dx);x++)
- 						cave[Depth][y][x].feat=FEAT_PERM_EXTRA;
+					for(x=sx;x<(sx+dx);x++){
+ 						c_ptr=&cave[Depth][y][x];
+						c_ptr->feat=FEAT_PERM_EXTRA;
+					}
 				}
 				sx=x;
 			}
 			else{
 				if(dy<0){
-					for(y=sy;y>(sy+dy);x--)
- 						cave[Depth][y][x].feat=FEAT_PERM_EXTRA;
+					for(y=sy;y>(sy+dy);y--){
+ 						c_ptr=&cave[Depth][y][x];
+						c_ptr->feat=FEAT_PERM_EXTRA;
+					}
 				}
 				else{
-					for(y=sy;y<(sy+dy);x++)
- 						cave[Depth][y][x].feat=FEAT_PERM_EXTRA;
+					for(y=sy;y<(sy+dy);y++){
+ 						c_ptr=&cave[Depth][y][x];
+						c_ptr->feat=FEAT_PERM_EXTRA;
+					}
 				}
 				sy=y;
 			}
@@ -2060,6 +2065,9 @@ void wild_add_uhouse(house_type *h_ptr){
 	if(h_ptr->flags&HF_MOAT){
 		/* Draw a moat around our house */
 	}
+	c_ptr=&cave[Depth][h_ptr->y+h_ptr->dy][h_ptr->x+h_ptr->dx];
+	c_ptr->feat=FEAT_HOME_HEAD;
+	c_ptr->special=h_ptr->dna;
 }
 
 void wild_add_uhouses(int Depth){

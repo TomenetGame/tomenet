@@ -766,7 +766,6 @@ static void rd_monster(monster_type *m_ptr)
         else m_ptr->mind = GOLEM_NONE;
         if (m_ptr->special)
         {
-		printf("reading special monster\n");
                 MAKE(m_ptr->r_ptr, monster_race);
                 rd_monster_race(m_ptr->r_ptr);
         }

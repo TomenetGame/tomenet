@@ -1095,12 +1095,12 @@ static void wr_house(house_type *house)
 		wr_byte(house->coords.rect.height);
 	}
 	else{
-		int i=0;
-		while(house->coords.poly[i] || house->coords.poly[i+1]){
+		int i=-2;
+		do{
+			i+=2;
 			wr_byte(house->coords.poly[i]);
 			wr_byte(house->coords.poly[i+1]);
-			i+=2;
-		}
+		}while(house->coords.poly[i] || house->coords.poly[i+1]);
 	}
 #else
 	wr_byte(house->x_1); // APD added for clearing out the house.
