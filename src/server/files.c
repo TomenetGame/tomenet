@@ -2105,6 +2105,60 @@ void exit_game_panic(void)
 }
 
 
+/* Save all characters and server info with 'panic save' flag set,
+   to prevent non-autorecalled players after a flush error restart - C. Blue */
+void save_game_panic(void)
+{
+	int i = 1;
+
+	/* If nothing important has happened, just quit */
+	if (!server_generated || server_saved) return;
+
+	while (NumPlayers > (i - 1))
+	{
+		player_type *p_ptr = Players[i];
+
+		/* Don't dereference bad pointers */
+		if (!p_ptr)
+		{
+			/* Skip to next player */
+			i++;
+
+			continue;
+		}
+
+		/* Hack -- turn off some things */
+		disturb(i, 1, 0);
+
+		/* Mega-Hack -- Delay death */
+//		if (p_ptr->chp < 0) p_ptr->death = FALSE;
+
+		/* Hardcode panic save */
+		panic_save = 1;
+
+		/* Forbid suspend */
+//		signals_ignore_tstp();
+
+		/* Indicate panic save */
+//		(void)strcpy(p_ptr->died_from, "(panic save)");
+
+		/* Remember depth in the log files */
+		s_printf("Trying panic saving %s on %d %d %d..\n", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
+		/* Panic save */
+		save_player(i);
+	    	i++;
+	}
+
+//	wipeout_needless_objects();
+
+	save_server_info();
+
+	/* No more panicking */
+	panic_save = 0;
+}
+
+
 
 #ifdef HANDLE_SIGNALS
 

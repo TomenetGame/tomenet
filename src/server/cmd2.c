@@ -227,10 +227,18 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 	player_type *p_ptr = Players[Ind];
 	byte bx, by;
 	struct c_special *cs_ptr;
+	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 	if (!(cs_ptr=GetCS(c_ptr, CS_BETWEEN))) return (FALSE);
 
 	by = cs_ptr->sc.between.fy;
 	bx = cs_ptr->sc.between.fx;
+	
+	/* (HACK) sanity check to cover cut-off vaults with missing void gate end-points! - C. Blue */
+	if (bx < 1 || by < 1 || bx >= l_ptr->wid - 1 || by >= l_ptr->hgt - 1) {
+		msg_print(Ind, "The gate seems broken.");
+		return(TRUE);
+	}
 
 	msg_print(Ind, "You fall into the void.");
 	msg_print(Ind, "Brrrr! It's deadly cold.");
@@ -604,7 +612,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* Otherwise drop an item */
 				else
 				{
-					place_object(wpos, y, x, FALSE, FALSE, p_ptr->total_winner?FALSE:TRUE, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
+					place_object(wpos, y, x, FALSE, FALSE, FALSE, p_ptr->total_winner?FALSE:TRUE, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 				}
 
 				/* Reset the object level */
@@ -683,7 +691,9 @@ int pick_house(struct worldpos *wpos, int y, int x)
 	return -1;
 }
 
-/* Door change permissions */
+/* Door change permissions
+ * args example: ynn1 -> Party, Class, Race, MinLevel
+ */
 static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 	player_type *p_ptr=Players[Ind];
 	if (!is_admin(p_ptr))
@@ -692,9 +702,16 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 		/* more security needed... */
 	}
 
+#if 0
 	if((dna->a_flags=args[1])){
 		dna->min_level=atoi(&args[2]);
 	}
+#else
+	if((dna->a_flags=args[1])){
+		dna->min_level=atoi(&args[2]);
+	}
+#endif
+
 	return(TRUE);
 }
 
@@ -731,6 +748,13 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 					msg_print(Ind, "At his current level, that player cannot own more houses!");
 				return (FALSE);
 			}
+			
+			if ((Players[i]->mode & MODE_IMMORTAL) != (p_ptr->mode & MODE_IMMORTAL)) {
+				if (p_ptr->mode & MODE_IMMORTAL) msg_print(Ind, "You cannot transfer houses to non-everlasting players!");
+				else msg_print(Ind, "You cannot transfer houses to everlasting players!");
+				return(FALSE);
+			}
+			
 			/* Finally change the owner */
 			newowner=lookup_player_id_messy(&args[2]);
 			if(!newowner) newowner=-1;
@@ -1513,7 +1537,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					if (rand_int(100) < 10 + mining)
 					{
 //						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
-						place_object(wpos, y, x, magik(mining), magik(mining / 10), p_ptr->total_winner?FALSE:TRUE, 
+						place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, p_ptr->total_winner?FALSE:TRUE, 
 								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 						if (player_can_see_bold(Ind, y, x))
 						{
@@ -1746,7 +1770,7 @@ void do_cmd_tunnel(int Ind, int dir)
 	if ((p_ptr->inventory[INVEN_TOOL].k_idx) &&
 	    (p_ptr->impact || k_info[o_ptr->k_idx].flags5 & TR5_IMPACT) &&
 	    (randint(200) < power) && magik(50)) {
-		//if (!check_guard_inscription(o_ptr->note, 'E' ))
+		if (!check_guard_inscription(o_ptr->note, 'E' ))
 		earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
 	}
 
@@ -3244,7 +3268,7 @@ void do_cmd_fire(int Ind, int dir)
 								{
 									/* Base damage from thrown object plus launcher bonus */
 									tdam = damroll(o_ptr->dd, o_ptr->ds);
-									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg);
+									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg, FALSE);
 									if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
 									tdam += o_ptr->to_d;
 									tdam += j_ptr->to_d + p_ptr->to_d_ranged;
@@ -3253,7 +3277,7 @@ void do_cmd_fire(int Ind, int dir)
 								{
 									 /* Base damage from thrown object */
 								        tdam = damroll(o_ptr->dd, o_ptr->ds);
-									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg);
+									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg, FALSE);
 									tdam += o_ptr->to_d;
 									tdam += p_ptr->to_d_ranged;
 								}
@@ -3392,7 +3416,7 @@ void do_cmd_fire(int Ind, int dir)
 					{
 						/* Base damage from thrown object plus launcher bonus */
 						tdam = damroll(o_ptr->dd, o_ptr->ds);
-						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg);
+						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
 						if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
 						tdam += o_ptr->to_d;
 						tdam += j_ptr->to_d + p_ptr->to_d_ranged;
@@ -3401,7 +3425,7 @@ void do_cmd_fire(int Ind, int dir)
 					{
 						 /* Base damage from thrown object */
 					        tdam = damroll(o_ptr->dd, o_ptr->ds);
-						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg);
+						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
 						tdam += o_ptr->to_d;
 						tdam += p_ptr->to_d_ranged;
 					}
@@ -3855,16 +3879,6 @@ void do_cmd_throw(int Ind, int dir, int item)
 	}
 #endif	// 0
 
-
-	/* Handle the newbies_cannot_drop option */
-	if ((p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr))
-	{
-/*		msg_format(Ind, "Please don't litter the %s.",
-			istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/
-		msg_format(Ind, "You need to be at least level %d to throw items.", cfg.newbies_cannot_drop);
-		return;
-	}
-
 	/* Access the item (if in the pack) */
 	if (item >= 0)
 	{
@@ -3879,6 +3893,16 @@ void do_cmd_throw(int Ind, int dir, int item)
 		msg_print(Ind, "\377rYou cannot throw that.");
 		return;
 	}
+
+	/* Handle the newbies_cannot_drop option */
+	if ((p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr))// && (object_value(0, o_ptr) > 0))
+	{
+/*		msg_format(Ind, "Please don't litter the %s.",
+			istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/
+		msg_format(Ind, "You need to be at least level %d to throw items.", cfg.newbies_cannot_drop);
+		return;
+	}
+
 	if( check_guard_inscription( o_ptr->note, 'v' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
@@ -4113,7 +4137,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 					/* Hack -- Base damage from thrown object */
 					tdam = damroll(o_ptr->dd, o_ptr->ds);
-					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg);
+					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg, TRUE);
 					tdam += o_ptr->to_d;
 					/* Apply special damage XXX XXX XXX */
 					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
@@ -4217,7 +4241,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 				/* Hack -- Base damage from thrown object */
 				tdam = damroll(o_ptr->dd, o_ptr->ds);
-				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg);
+				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, TRUE);
 				tdam += o_ptr->to_d;
 				/* Apply special damage XXX XXX XXX */
 				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);

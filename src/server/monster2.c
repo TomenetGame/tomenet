@@ -2493,6 +2493,9 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
 if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 2\n");
 #endif
 
+	/* Hack -- "unique" monsters may not appear on the world surface */
+	if ((r_ptr->flags1 & RF1_UNIQUE) && (wpos->wz == 0)) return(FALSE);
+
 /* BEGIN of ugly hack */
 	/* Check if the monster is already on the level -
 	   I put this in after someone told me about 3 Glaurungs on the same
@@ -2510,6 +2513,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 2\n");
 		if (inarea(wpos, &m_ptr->wpos)) already_on_level = TRUE;
 	}
 /* END of ugly hack */
+
 #ifdef DEBUG1
 if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 3\n");
 #endif

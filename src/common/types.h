@@ -2383,10 +2383,19 @@ struct player_type
 	
 	/* C. Blue - was the last shutdown a panic save? */
 	bool panic;
-
+	
 	/* Anti-cheeze */
 	s16b supported_by;		/* level of the highest supporter */
 	s16b support_timer;		/* safe maximum possible duration of the support spells */
+
+	/* any automatic savegame update to perform? (toggle) */
+	byte updated;
+	
+	/* C. Blue - Fun stuff :) Make player vomit if he turns around ***a lot*** (can't happen in 'normal' gameplay) */
+	s16b corner_turn;
+	
+	/* automatic (scripted) transport sequences */
+	byte auto_transport;
 };
 
 /* For Monk martial arts */
@@ -2597,6 +2606,8 @@ struct server_opts
 	bool surface_summoning;
 	s16b clone_summoning;
 	s16b henc_strictness;
+	s16b bonus_calc_type;		/* The way hit points are calculated (0 = traditional, 1 = modern) */
+	s16b charmode_trading_restrictions; /* how restricted is trading between everlating and non-everlasting players */
 };
 
 /* Client option struct */

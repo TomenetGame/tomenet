@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. Apr 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 23. Apr 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -448,13 +448,14 @@ Excellents  Items that pseudo-identified as 'excellent'.
 FA          Free Action (immunity to paralysis).
 FF          Feather falling (Levitation).
 Gorth       Room in the dungeon, divided into 4 chambers. Similar to a pit.
-GV          Greater Vault.
+            (See 4.6)
+GV          Greater Vault. (See 4.6)
 Iron Team   A special type of party which can only be formed with newly
             created characters. Its members only gain experience if all
             members are online and on the same dungeon level.
 Loot        Items that have been dropped by dead monsters or players and
             are waiting to be picked up by someone. :)
-LV          Lesser Vault.
+LV          Lesser Vault. (See 4.6)
 Morgy       Morgoth, the Lord of Darkness. Final boss enemy in TomeNET.
             See (1.5) for details.
 Party       A group of players who fight together and share experience.
@@ -619,7 +620,7 @@ If you get killed on a level where Morgoth, The Lord Of Darkness walks, your
 ghost will be destroyed too, even if you are everlasting! Beware!
 
 A very dangerous thing about Nazgul is that weapons get quickly destroyed if
-they touch these corrupted beings.
+they come in contact with these corrupted beings.
 If you are a spell-caster who doesn't use his weapon to fight but just to
 profit from its magical abilities then it's strongly recommended to inscribe
 the weapon @Ox to avoid auto-retaliation, see (0.3) about inscriptions and
@@ -629,6 +630,12 @@ since these resist Nazgul greatly!
 Dark Swords and ego weapons also have a certain chance to resist destruction,
 ego Dark Swords are the best non-artifact weapons against Nazgul.
 (It doesn't matter if the artifact is a random or a static one.)
+
+If you come in contact with a Nazgul or a very powerful undead creature there
+is a chance that you will be infected by the Black Breath. This dark aura is
+able to infect other players if you come too close to them. It will drain your
+stats and permanently drain your experience. Slowly, but steadily. There are
+several possibilities to cure Black Breath, for example Sprigs of Athelas.
 
 
 
@@ -1882,7 +1889,7 @@ position 32,32 on the world map (same position on all servers!).
 The world map however, ranging from 0,0 (bottom left corner) to 63,63
 (top right corner), bears several other towns that you can find and
 explore. These towns often contain different shops (some are said to offer
-*Identify* service or even a cure to black breath) and harder dungeons.
+*Identify* service or even a cure to Black Breath) and harder dungeons.
 However, they might also be a very dangerous place to stay, compared to Bree.
 In general you can say the harder the local dungeon entrance of a town the
 more dangerous monsters can spawn within the town! Bree is the only town that
@@ -1989,7 +1996,8 @@ The 1..9 are standard shops, namely..
         Casino.         Minas Anor has a casino.
         ID service      Will identify all items you currently carry for a fee.
         *ID* Service    Will *identify* an item for a fee.
-        Herbal Healing  Will cure black breath for a high fee.
+        Herbal Healing  Will cure black breath for a high fee. (See 1.5 for
+                        more information about Black Breath.)
         Enchant Services
                         These will enchant weapons, arrows, or all armour
                         parts you currently have equipped.
@@ -2012,12 +2020,13 @@ file r_info in lib\game inside your TomeNET directory to find out which
 monster occurs where. However there are some exceptions, where you can find
 monsters out-of-depth, meaning that you will encounter way more powerful
 enemies. That can be very dangerous but also very rewarding. Out-of-depth
-monsters usually occur inside of so-called "pits" and "vaults". Pits are very
-large and unusual rooms with special structure. Vaults are extremely large
-structures of rooms and passages, surrounded by permanent walls that cannot be
-damaged. A vault can be a real adventure of its own! If your character isn't
-very powerful compared to the dungeon level, you better stay out of vaults
-if their structure doesn't allow easy monster killing.
+monsters usually occur inside of so-called "pits" and "vaults". Pits are large
+rooms, surrounded by a rectangle-shaped passage, sometimes with special
+structure inside. Vaults are extremely large structures of rooms and passages,
+very often surrounded by permanent walls that cannot be damaged.
+A vault can be a real adventure of its own! If your character isn't very
+powerful compared to the dungeon level, you better stay out of vaults if their
+structure doesn't allow easy monster killing.
 
 
 
@@ -2142,9 +2151,10 @@ The feelings are as follows:
                                         will to destroy.
                                         Players who die on this level will be
                                         completely extinguished and not even
-                                        their ghost will survive! Everlasting
-                                        and normal players will die the same
-                                        way as unworldly and ones!
+                                        their ghost will survive! Everlasting,
+                                        normal and hard-mode players will die
+                                        the same way as unworldly and hellish
+                                        ones!
 
 Vaults:
 Vaults can also bear a very dangerous feature that is displayed as dark grey
@@ -2512,8 +2522,13 @@ Wearing armour which is too bulky gives you this message:
 "The weight of your armour encumbers your movement."
 That means your mana will be (severely) reduced. To counter this effect,
 train your 'Combat' skill.
+In general, you can wear 20.0 lbs of armoury plus your combat skill (in lbs).
+So 50 points in 'Combat' would allow you to wear 20.0 + 50.0 = 70.0 lbs of
+armour parts without being encumbered.
+
 Very heavy armour and/or heavy items in your inventory may also slow you down
 (reduce your moving speed) if your STRength isn't very great.
+
 Armour weight also affects Martial Arts, see (5.3) for more information if
 you are a Martial Artist.
 
@@ -3099,6 +3114,8 @@ Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 Also, non- or uncursed items that induce random teleportation
                 can be inscribed .. to have the teleportation stop (compare
                 (0.3 Important Inscriptions).
+                (It gives you the message:
+                'You feel as if someone is watching over you.'.)
 *Remove Curse*  Breaks heavy curses. Note that curses (including heavy ones)
                 on weapons or armours can also be broken by enchanting one of
                 their boni some points above +0.
@@ -3213,7 +3230,7 @@ Mattock/Pick/Shovel Diggers, improving your digging capabilities.
 Mummy Wrapping      Reduces your charisma slightly, and prevents other players
                     from seeing your equipment except for your melee and/or
                     ranged weapon. Also makes you look dark like being
-                    infected by black breath.
+                    infected by Black Breath.
 Tarpaulin           Prevents your inventory from taking water damage on
                     crossing water fields.
 Picklock            Improves your disarm ability.
@@ -3222,7 +3239,8 @@ Device of theft prevention
                     Prevents thieves from stealing from you.
 Climbing set        Allows you to travel over mountain fields.
 Fortune Cookie      Gives you a line of wisdom.
-Sprig of Athelas    Eat this one to cure Black Breath,
+Sprig of Athelas    Eat this one to cure Black Breath (see 1.5 for more
+                    information about Black Breath),
                     also cures poison/stun/cuts.
 Mushrooms of paranoia/cure paranoia
                     Cause/remove fear, cause/reduce hallucinations.
@@ -3252,6 +3270,7 @@ Amulet of Anti-Teleportation    If worn it will suppress all attemps to
                                 and then immediately kick in as soon as the
                                 amulet is taken off. This allows some
                                 interesting tactics..
+Guild key               See (6.9).
 
 Mushrooms with bad effects are also often poisonous.
 
@@ -3398,7 +3417,7 @@ SHATTER         hits & causes an
                 Very dangerous.
 
 Getting hit by higher undead creatures may also infect you with the
-Black Breath!
+Black Breath! (See 1.5 for more information about Black Breath.)
 
 
 
@@ -4848,7 +4867,8 @@ Holy Curing
                     life scroll.
                     Resurrection prayer exp loss goes down from 40% and caps
                     at 33%.
-    Soul Curing     Cures Black Breath.                             (project)
+    Soul Curing     Cures Black Breath (See 1.5 for more information about
+                    Black Breath).                                  (project)
 Holy Support
     Holy Light      Creates a globe of pure light.
                     Lv3: Damages monsters.
@@ -5058,7 +5078,8 @@ Higher characters (up to 35)
   This one cures "Black Breath", which infects you if you fight a ring wraith!
   You can leave the sprig in your house since Black Breath saps your soul very
   slowly, so there should be enough time to finish business in the dungeon and
-  recall to town afterwards to eat a sprig.
+  recall to town afterwards to eat a sprig. (See 1.5 for more information
+  about Black Breath.)
 
 Very high characters (36 and above)
 ---
@@ -5980,9 +6001,9 @@ SOLUTION:   The meta-server might be down or a DNS problem might be occuring
             tomenet4.exe 62.210.141.11
 
 PROBLEM 11: The main window doesn't display the floor dots in certain
-            dungeons, like the Training Tower and Angband.
-SOLUTION:   None so far :/ Seems to happen on non-MS Windows machines
-            sometimes.
+            dungeons, like the Training Tower and Angband. Further, fields
+            are sometimes not redrawn correctly, resulting in fake 'trails'.
+SOLUTION:   None so far :/ Seems to happen on Windows XP machines sometimes.
 
 PROBLEM 12: Every time I connect to the server it will automatically download
             LUA script files. However, they will have a size of 0 Bytes.

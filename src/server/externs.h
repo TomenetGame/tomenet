@@ -223,6 +223,9 @@ extern server_opts cfg;
 extern s32b dungeon_store_timer;
 extern s32b dungeon_store2_timer;
 extern bool night_surface;
+extern s16b MaxSimultaneousPlayers;
+extern char serverStartupTime[40];
+extern char *sST;
 
 extern bool use_color;
 extern bool hilite_player;
@@ -458,8 +461,8 @@ extern bool test_hit_fire(int chance, int ac, int vis);
 extern bool test_hit_norm(int chance, int ac, int vis);
 extern s16b critical_shot(int Ind, int weight, int plus, int dam);
 extern s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crits);
-extern s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, char *brand_msg);
-extern s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *p_ptr, char *brand_msg);
+extern s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, char *brand_msg, bool thrown);
+extern s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *p_ptr, char *brand_msg, bool thrown);
 extern void search(int Ind);
 extern void carry(int Ind, int pickup, int confirm);
 extern void py_attack(int Ind, int y, int x, bool old);
@@ -611,6 +614,9 @@ extern void store_turnover(void);
 extern void cheeze(object_type *o_ptr);
 extern void cheeze_trad_house(void);
 
+extern void house_contents_chmod(object_type *o_ptr);
+extern void tradhouse_contents_chmod(void);
+
 
 /* files.c */
 extern int highscore_send(char *buffer, int max);
@@ -634,6 +640,7 @@ extern void display_scores(int from, int to);
 extern void add_high_score(int Ind);
 extern void close_game(void);
 extern void exit_game_panic(void);
+extern void save_game_panic(void);
 extern void signals_ignore_tstp(void);
 extern void signals_handle_tstp(void);
 extern void signals_init(void);
@@ -886,11 +893,11 @@ extern bool get_item(int Ind, int *cp, cptr pmt, bool equip, bool inven, bool fl
 extern void delete_object_idx(int i, bool unfound_art);
 extern void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art);
 extern void wipe_o_list(struct worldpos *wpos);
-extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool true_art);
-extern void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool true_art);
+extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, bool true_art);
+extern void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, bool true_art);
 extern void determine_level_req(int level, object_type *o_ptr);
-extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool true_art, obj_theme theme, int luck, byte removal_marker);
-extern void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool true_art);
+extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, bool true_art, obj_theme theme, int luck, byte removal_marker);
+extern void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, bool true_art);
 extern void place_gold(struct worldpos *wpos, int y, int x);
 extern s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void pick_trap(struct worldpos *wpos, int y, int x);
@@ -938,7 +945,7 @@ extern int party_add(int adder, cptr name);
 extern int party_remove(int remover, cptr name);
 extern void party_leave(int Ind);
 extern void party_msg_format(int party_id, cptr fmt, ...);
-extern void party_gain_exp(int Ind, int party_id, s32b amount, s32b base_amount);
+extern void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount);
 extern int guild_create(int Ind, cptr name);
 extern int guild_add(int adder, cptr name);
 extern int guild_remove(int remover, cptr name);
@@ -1222,6 +1229,7 @@ extern void window_stuff(int Ind);
 extern void handle_stuff(int Ind);
 extern void fix_spell(int Ind, bool full);
 
+extern void calc_hitpoints(int Ind);
 extern void calc_bonuses(int Ind);
 extern int get_archery_skill(player_type *p_ptr);
 extern int get_weaponmastery_skill(player_type *p_ptr);
@@ -1283,7 +1291,7 @@ extern void set_recall_depth(player_type * p_ptr, object_type * o_ptr);
 extern bool set_recall_timer(int Ind, int v);
 extern bool set_recall(int Ind, int v, object_type * o_ptr);
 extern void check_experience(int Ind);
-extern void gain_exp(int Ind, s32b amount);
+extern void gain_exp(int Ind, s64b amount);
 extern void lose_exp(int Ind, s32b amount);
 extern bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note);
 extern void monster_death_mon(int am_idx, int m_idx);
@@ -1429,6 +1437,7 @@ school_type *grab_school_type(s16b num);
 void lua_s_print(cptr logstr);
 void lua_add_anote(cptr anote);
 void lua_count_houses(int Ind);
+void lua_recalc_char(int Ind);
 
 /* only called once, in util.c, referring to new file slash.c */
 extern void do_slash_cmd(int Ind, char *message);

@@ -3307,7 +3307,7 @@ void check_experience(int Ind)
 /*
  * Gain experience
  */
-void gain_exp(int Ind, s32b amount)
+void gain_exp(int Ind, s64b amount)
 {
 	player_type *p_ptr = Players[Ind], *p_ptr2=NULL;
 	int Ind2 = 0;
@@ -3556,7 +3556,7 @@ void monster_death(int Ind, int m_idx)
 		qq_ptr->name3 = rand_int(0xFFFF) << 16;
 		qq_ptr->name3 += rand_int(0xFFFF);
 
-		apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE);
+		apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
 
 		qq_ptr->ident |= ID_CURSED;
 
@@ -3764,7 +3764,7 @@ void monster_death(int Ind, int m_idx)
 			/* Place Object */
 			else
 			{
-				place_object(wpos, y, x, good, great, p_ptr->total_winner?FALSE:TRUE, r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
+				place_object(wpos, y, x, good, great, FALSE, p_ptr->total_winner?FALSE:TRUE, r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
 //				if (player_can_see_bold(Ind, ny, nx)) dump_item++;
 			}
 
@@ -4010,7 +4010,7 @@ if(cfg.unikill_format){
 			prize.name1 = ART_GROND;
 
 			/* Mega-Hack -- Actually create "Grond" */
-			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, TRUE);
+			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
 
 			prize.number = num;
 			prize.level = 45;
@@ -4026,7 +4026,7 @@ if(cfg.unikill_format){
 			prize.name1 = ART_MORGOTH;
 
 			/* Mega-Hack -- Actually create "Morgoth" */
-			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, TRUE);
+			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
 
 			prize.number = num;
 			prize.level = 45;
@@ -4064,7 +4064,7 @@ if(cfg.unikill_format){
 			q_ptr->name1 = ART_GROND;
 
 			/* Mega-Hack -- Actually create "Grond" */
-			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE, TRUE);
+			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
 
 			/* Drop it in the dungeon */
 			drop_near(q_ptr, -1, y, x);
@@ -4079,7 +4079,7 @@ if(cfg.unikill_format){
 			q_ptr->name1 = ART_MORGOTH;
 
 			/* Mega-Hack -- Actually create "Morgoth" */
-			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE, TRUE);
+			apply_magic(q_ptr, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
 
 			/* Drop it in the dungeon */
 			drop_near(q_ptr, -1, y, x);
@@ -4099,7 +4099,7 @@ if(cfg.unikill_format){
 			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 
-			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, FALSE);
 
 			qq_ptr->bpval = 5;
 			/* Drop it in the dungeon */
@@ -4117,7 +4117,7 @@ if(cfg.unikill_format){
 			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 
-			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
 
 			/* Drop it in the dungeon */
 			drop_near(qq_ptr, -1, wpos, y, x);
@@ -4130,7 +4130,7 @@ if(cfg.unikill_format){
 			qq_ptr->number = randint(2);
 			qq_ptr->note = local_quark;
 
-			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
 
 			/* Drop it in the dungeon */
 			drop_near(qq_ptr, -1, wpos, y, x);
@@ -4155,7 +4155,7 @@ if(cfg.unikill_format){
 			/* Check the tval is allowed */
 //			if (randart_make(qq_ptr) != NULL)
 
-			apply_magic(wpos, qq_ptr, -1, FALSE, TRUE, FALSE, FALSE);
+			apply_magic(wpos, qq_ptr, -1, FALSE, TRUE, FALSE, FALSE, FALSE);
 
 			/* Save the inscription */
 			/* (pfft, not so smart..) */
@@ -4217,7 +4217,7 @@ if(cfg.unikill_format){
 				invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
 				qq_ptr->number = 1; /*(a_info[a_idx].cur_num == 0)?1:2;*/
 				qq_ptr->note = local_quark;
-				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE);
+				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
 				/* Drop it in the dungeon */
 				drop_near(qq_ptr, -1, wpos, y, x);
 
@@ -4227,7 +4227,7 @@ if(cfg.unikill_format){
 				invcopy(qq_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
 				qq_ptr->number = (a_info[a_idx].cur_num == 0)?1:2;
 				qq_ptr->note = local_quark;
-				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE);
+				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
 				/* Drop it in the dungeon */
 				drop_near(qq_ptr, -1, wpos, y, x);
 
@@ -4282,7 +4282,7 @@ if(cfg.unikill_format){
 					a_info[a_idx].cur_num = 1;
 
 					/* Complete generation, especially level requirements check */
-					apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, TRUE);
+					apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, TRUE);
 
 					/* Little sanity hack for level requirements
 					   of the Ring of Phasing - would be 92 otherwise */
@@ -4346,7 +4346,7 @@ if(cfg.unikill_format){
 			qq_ptr->name1 = a_idx;
 
 			/* Mega-Hack -- Actually create the amulet of Grom */
-			apply_magic(wpos, qq_ptr, -2, TRUE, TRUE, TRUE, TRUE);
+			apply_magic(wpos, qq_ptr, -2, TRUE, TRUE, TRUE, FALSE, TRUE);
 
 			a_info[a_idx].cur_num = 1;
 			/* Drop the artifact from heaven */
@@ -4534,7 +4534,7 @@ void player_death(int Ind)
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char buf[1024];
-	int i;
+	int i, inventory_loss = 0, equipment_loss = 0;
 	//wilderness_type *wild;
 	bool hell=TRUE, secure = FALSE;
 	cptr titlebuf;
@@ -4803,6 +4803,8 @@ void player_death(int Ind)
 		{
 			/* Put the player's gold in the overflow slot */
 			invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
+			/* Change the mode of the gold accordingly */
+			p_ptr->inventory[INVEN_PACK].owner_mode = p_ptr->mode;
 	
 			/* Drop no more than 32000 gold */
 //			if (p_ptr->au > 32000) p_ptr->au = 32000;
@@ -4858,10 +4860,16 @@ void player_death(int Ind)
 				}
 				
 #ifdef DEATH_PACK_ITEM_LOST
-				if ((i <= INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST)) item_lost = TRUE;
+				if ((i < INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST) && (inventory_loss < 4)) {
+					inventory_loss++;
+					item_lost = TRUE;
+				}
 #endif
 #ifdef DEATH_EQ_ITEM_LOST
-				if ((i > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST)) item_lost = TRUE;
+				if ((i > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST) && (equipment_loss < 1)) {
+					equipment_loss++;
+					item_lost = TRUE;
+				}
 #endif
 
 				if (!is_admin(p_ptr) && !p_ptr->inval && (p_ptr->max_plv >= cfg.newbies_cannot_drop) &&
@@ -4880,6 +4888,9 @@ void player_death(int Ind)
 							//* omg BUG! :) begone.. p_ptr->inventory[i].marked=3; /* LONG timeout */
 							/* try this instead: */
 							o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+
+							if (o_ptr->tval == TV_GOLD) o_ptr->owner_mode = p_ptr->mode;/* REDUNDANT */
+
 							/* Drop this one */
 				    			away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
 								<= 0 ? TRUE : FALSE;
@@ -5024,6 +5035,8 @@ void player_death(int Ind)
 	{
 		/* Put the player's gold in the overflow slot */
 		invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
+		/* Change the mode of the gold accordingly */
+		p_ptr->inventory[INVEN_PACK].owner_mode = p_ptr->mode;
 
 		/* Drop no more than 32000 gold */
 //		if (p_ptr->au > 32000) p_ptr->au = 32000;
@@ -5082,11 +5095,17 @@ void player_death(int Ind)
 			}
 
 #ifdef DEATH_PACK_ITEM_LOST
-			if ((i <= INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST)) item_lost = TRUE;
+			if ((i < INVEN_PACK) && magik(DEATH_PACK_ITEM_LOST) && (inventory_loss < 4)) {
+				inventory_loss++;
+				item_lost = TRUE;
+			}
 #endif
 
 #ifdef DEATH_EQ_ITEM_LOST
-			if ((i > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST)) item_lost = TRUE;
+			if ((i > INVEN_PACK) && magik(DEATH_EQ_ITEM_LOST) && (equipment_loss < 1)) {
+				item_lost = TRUE;
+				equipment_loss++;
+			}
 #endif
 
 			if (!is_admin(p_ptr) && !p_ptr->inval && (p_ptr->max_plv >= cfg.newbies_cannot_drop) &&
@@ -5108,6 +5127,8 @@ void player_death(int Ind)
 						/* here we go: */
 						o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 #endif
+						if (o_ptr->tval == TV_GOLD) o_ptr->owner_mode = p_ptr->mode;/* REDUNDANT */
+
 						/* Drop this one */
 						away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
 							<= 0 ? TRUE : FALSE;
@@ -5196,10 +5217,11 @@ void player_death(int Ind)
 
 	if (p_ptr->fruit_bat == -1) 
 	{
-		p_ptr->mhp = (p_ptr->player_hp[p_ptr->lev-1] / 4) + (((adj_con_mhp[p_ptr->stat_ind[A_CON]]) - 128) * p_ptr->lev);
+/*		p_ptr->mhp = (p_ptr->player_hp[p_ptr->lev-1] / 4) + (((adj_con_mhp[p_ptr->stat_ind[A_CON]]) - 128) * p_ptr->lev);
 		p_ptr->chp = p_ptr->mhp;
-		p_ptr->chp_frac = 0;
+		p_ptr->chp_frac = 0; -- simply calc_hitpoints instead.. */
 		p_ptr->fruit_bat = 2;
+		calc_hitpoints(Ind);
 	}
 	else
 	{
@@ -5454,6 +5476,7 @@ void rem_quest(u16b id){
 
 void kill_quest(int Ind){
 	int i;
+	bool great = FALSE, verygreat = FALSE;
 	u16b id, pos=9999;
 	player_type *p_ptr=Players[Ind], *q_ptr;
 	char temp[160];
@@ -5500,7 +5523,10 @@ void kill_quest(int Ind){
 		strcpy(temp, r_name + r_info[quests[pos].type].name);
 		strcat(temp, " quest");
 		unique_quark = quark_add(temp);
-		acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, magik(50 + p_ptr->lev * 2) ? TRUE : FALSE, !p_ptr->total_winner);
+		great = magik(50 + p_ptr->lev * 2);
+//		if (great && p_ptr->lev >= 30) verygreat = magik((p_ptr->lev - 25) * 4);
+		if (great && p_ptr->lev >= 25) verygreat = magik(r_info[quests[pos].type].level - 5);
+		acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, great, verygreat, !p_ptr->total_winner);
 		unique_quark = 0;
 	}
 	for(i=1; i<=NumPlayers; i++){
@@ -5609,10 +5635,9 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
 
-	s32b		new_exp, new_exp_frac;
+	s64b		new_exp, new_exp_frac;
+	s64b 		tmp_exp, req_lvl;
 	bool old_tacit = suppress_message;
-
-	long tmp_exp, req_lvl;
 
         int dun_level2 = getlevel(&p_ptr->wpos);
         dungeon_type *dt_ptr2 = getdungeon(&p_ptr->wpos);
@@ -5645,9 +5670,9 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 //		long tmp_exp = (long)r_ptr->mexp * r_ptr->level;
 		/* Had to change it for Halloween -C. Blue */
 		if(m_ptr->level == 0)
-		tmp_exp = (long)r_ptr->mexp;
+		tmp_exp = r_ptr->mexp;
 		else
-		tmp_exp = (long)r_ptr->mexp * m_ptr->level;
+		tmp_exp = r_ptr->mexp * m_ptr->level;
 
 		/* Hack -- remove possible suppress flag */
 		suppress_message = FALSE;
@@ -5661,7 +5686,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			if (l_ptr->flags1 & LF1_NO_MAGIC_MAP) factor += 5;
 			if (l_ptr->flags1 & LF1_NO_DESTROY)   factor += 5;
 			if (l_ptr->flags1 & LF1_NO_GENO)      factor += 5;
-			tmp_exp = tmp_exp * factor / 100;
+			tmp_exp = (tmp_exp * factor) / 100;
 		}
 
 		/* Extract monster name */
@@ -5718,7 +5743,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			}
 
 			/* Monsters in the Nether Realm give extra-high exp,
-			   +2% per floor! Starting at 120% at -50ft (C. Blue) */
+			   +2% per floor! (C. Blue) */
 			if (dt_ptr2->type == 6)
 			{
 				tmp_exp = ((((-p_ptr->wpos.wz) * 2) + 100) * tmp_exp) / 100;
@@ -5987,7 +6012,7 @@ void monster_death_mon(int am_idx, int m_idx)
 			/* Place Object */
 			else
 			{
-				place_object(wpos, ny, nx, good, great, FALSE, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
+				place_object(wpos, ny, nx, good, great, FALSE, FALSE, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
 			}
 
 			/* Reset the object level */
@@ -6023,7 +6048,7 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note)
 
         monster_race    *r_ptr = race_inf(m_ptr);
 
-	s32b		new_exp;
+	s64b		new_exp;
 
 
 	/* Redraw (later) if needed */
@@ -7414,10 +7439,19 @@ void telekinesis_aux(int Ind, int item)
 	    return;
 	}
 
-	if ((p_ptr->mode & MODE_IMMORTAL) && !(p2_ptr->mode & MODE_IMMORTAL))
-	{
-	    msg_print(Ind, "You can only contact everlasting beings!");
-	    return;
+	if (cfg.charmode_trading_restrictions > 0) {
+		if ((p_ptr->mode & MODE_IMMORTAL) && !(p2_ptr->mode & MODE_IMMORTAL))
+		{
+		    msg_print(Ind, "You can only contact everlasting beings!");
+		    return;
+		}
+	}
+	if (cfg.charmode_trading_restrictions > 1) {
+		if (!(p_ptr->mode & MODE_IMMORTAL) && (p2_ptr->mode & MODE_IMMORTAL))
+		{
+		    msg_print(Ind, "You can only contact non-everlasting beings!");
+		    return;
+		}
 	}
 
 	if(cfg.anti_arts_send && artifact_p(q_ptr))
@@ -8103,7 +8137,7 @@ bool master_acquire(int Ind, char * parms)
 	player_type * p_ptr = Players[Ind];
 	
 	if (!is_admin(p_ptr)) return FALSE;
-	acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, !p_ptr->total_winner);
+	acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, TRUE, !p_ptr->total_winner);
 	return TRUE;
 }
 
@@ -8319,7 +8353,7 @@ bool master_player(int Ind, char *parms){
 			if(Ind2)
 			{
 				player_type *p_ptr2 = Players[Ind2];
-				acquirement(&p_ptr2->wpos, p_ptr2->py, p_ptr2->px, 1, TRUE, !p_ptr2->total_winner);
+				acquirement(&p_ptr2->wpos, p_ptr2->py, p_ptr2->px, 1, TRUE, TRUE, !p_ptr2->total_winner);
 				msg_format(Ind, "%s is granted an item.", p_ptr2->name);
 				msg_format(Ind2, "You feel a divine favor!");
 				return(FALSE);

@@ -980,7 +980,8 @@ static byte player_init[MAX_CLASS][3][2] =
 		/* Rogue */
 		{ TV_SWORD, SV_MAIN_GAUCHE },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
-		{ 0, 0},
+		{ 255, 255 },
+//		{ TV_GLOVES, SV_SET_OF_LEATHER_GLOVES},
 	},
 
 	{
@@ -1083,7 +1084,7 @@ void admin_outfit(int Ind, int realm)
 		if (!k_idx) continue;
 		invcopy(o_ptr, k_idx);
 		o_ptr->number = 1;
-		apply_magic(&p_ptr->wpos, o_ptr, 1, TRUE, FALSE, FALSE, FALSE);
+		apply_magic(&p_ptr->wpos, o_ptr, 1, TRUE, FALSE, FALSE, FALSE, FALSE);
 		do_admin_outfit();
 	}
 #if 0
@@ -1124,12 +1125,12 @@ void admin_outfit(int Ind, int realm)
 
 	invcopy(o_ptr, lookup_kind(TV_ARROW, SV_AMMO_MAGIC));
 	o_ptr->note = quark_add("@f1");
-	apply_magic_depth(1, o_ptr, -1, FALSE, FALSE, FALSE, FALSE);
+	apply_magic_depth(1, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
 	o_ptr->number = 98;
 	do_admin_outfit();
 #endif
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
-	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE, FALSE);
+	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
 	o_ptr->number = 1;
 	do_admin_outfit();
 }
@@ -1196,7 +1197,7 @@ static void player_outfit(int Ind)
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
 		o_ptr->name2 = 188;	// Bud ;)
 		o_ptr->number = 9;
-		apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE, TRUE);
+		apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
 		o_ptr->discount = 72;
 		o_ptr->owner = p_ptr->id;
                 o_ptr->owner_mode = p_ptr->mode;
@@ -1214,16 +1215,20 @@ static void player_outfit(int Ind)
 	{
 		tv = player_init[p_ptr->pclass][i][0];
 		sv = player_init[p_ptr->pclass][i][1];
-		k_idx = lookup_kind(tv, sv);
-		if (k_idx < 2)	/* '1' is 'something' */
-		{
-			j = rand_int(BARD_INIT_NUM);
-			k_idx = lookup_kind(bard_init[j][0], bard_init[j][1]);
-		}
-		if (k_idx > 1)
-		{
-			invcopy(o_ptr, k_idx);
-			do_player_outfit();
+		if (tv == 255 && sv == 255) {
+			/* nothing */
+		} else {
+			k_idx = lookup_kind(tv, sv);
+			if (k_idx < 2)	/* '1' is 'something' */
+			{
+				j = rand_int(BARD_INIT_NUM);
+				k_idx = lookup_kind(bard_init[j][0], bard_init[j][1]);
+			}
+			if (k_idx > 1)
+			{
+				invcopy(o_ptr, k_idx);
+				do_player_outfit();
+			}
 		}
 	}
 
@@ -1234,10 +1239,11 @@ static void player_outfit(int Ind)
 		do_player_outfit();
 	}
 	if (p_ptr->pclass == CLASS_ROGUE) {
-		if (randint(2))
-		invcopy(o_ptr, lookup_kind(TV_TRAPKIT, SV_TRAPKIT_SLING));
-		else
-		invcopy(o_ptr, lookup_kind(TV_TRAPKIT, SV_TRAPKIT_POTION));
+		if (rand_int(2) == 1) {
+			invcopy(o_ptr, lookup_kind(TV_TRAPKIT, SV_TRAPKIT_SLING));
+		} else {
+			invcopy(o_ptr, lookup_kind(TV_TRAPKIT, SV_TRAPKIT_POTION));
+		}
 		o_ptr->number = 1;
 		do_player_outfit();
 	}
@@ -1289,7 +1295,7 @@ static void player_setup(int Ind, bool new)
 	cave_type *c_ptr;
 	dun_level *l_ptr;
 
-	bool unstaticed = 0; 
+	bool unstaticed = FALSE;
 
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
@@ -1323,6 +1329,11 @@ static void player_setup(int Ind, bool new)
 		if (wpos->wz) {
 			s_printf("Auto-recalled panic-saved player %s.\n", p_ptr->name);
 			wpos->wz = 0;
+			/* Don't accidentally recall into nirvana.. */
+			p_ptr->word_recall = 0;
+	    		/* Avoid landing in permanent rock or trees or mountains etc.
+		           after an auto-recall, caused by a previous panic save. */
+   			p_ptr->auto_transport = AT_BLINK;
 		}
 		p_ptr->panic = FALSE;
 	}
@@ -1805,6 +1816,10 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* Roll for base hitpoints */
 	get_extra(Ind);
+
+	/* HACK - avoid misleading 'updated' messages and routines - C. Blue
+	   (Needs to be adjusted to the currently used value, usually in custom.lua) */
+	p_ptr->updated = 2;
 
 	/* Roll for age/height/weight */
 	get_ahw(Ind);

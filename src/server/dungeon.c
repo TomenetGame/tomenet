@@ -1734,6 +1734,12 @@ static void process_player_begin(int Ind)
 	*/
 
 
+	/* Perform pending automatic transportation */
+	switch (p_ptr->auto_transport) {
+	case AT_BLINK: teleport_player(Ind, 10); p_ptr->auto_transport = 0; break;
+	}
+
+
 	/* Give the player some energy */
 	p_ptr->energy += extract_energy[p_ptr->pspeed];
 
@@ -2876,7 +2882,7 @@ static bool process_player_end_aux(int Ind)
 
 
 	/* Check polymorph rings with timeouts */
-	for (i == INVEN_LEFT; i <= INVEN_RIGHT; i++) {
+	for (i = INVEN_LEFT; i <= INVEN_RIGHT; i++) {
 		o_ptr = &p_ptr->inventory[i];
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH) && (o_ptr->timeout > 0) &&
 		    (p_ptr->body_monster == o_ptr->pval))
@@ -2982,7 +2988,7 @@ static bool process_player_end_aux(int Ind)
 					/* Calculate torch radius */
 					p_ptr->update |= (PU_TORCH|PU_BONUS);
 				}
-
+#if 0	/* torch of presentiment goes poof to unlight trap, taken out for now - C. Blue */
 				/* Torch disappears */
 				if (o_ptr->sval == SV_LITE_TORCH && !o_ptr->timeout)
 				{
@@ -2991,6 +2997,7 @@ static bool process_player_end_aux(int Ind)
 					//						inven_item_describe(Ind, INVEN_LITE);
 					inven_item_optimize(Ind, INVEN_LITE);
 				}
+#endif
 			}
 
 			/* The light is getting dim */
@@ -3004,6 +3011,30 @@ static bool process_player_end_aux(int Ind)
 
 	/* Calculate torch radius */
 	//		p_ptr->update |= (PU_TORCH|PU_BONUS);
+
+	/* Silyl fun stuff >:) - C. Blue */
+	if (p_ptr->corner_turn) {
+		p_ptr->corner_turn -= (p_ptr->corner_turn > 2 ? 2 : p_ptr->corner_turn);
+		if (p_ptr->corner_turn > 25) {
+			p_ptr->corner_turn = 0;
+			disturb(Ind, 0, 0);
+			msg_print(Ind, "\377oYour head feels dizzy!");
+			msg_format_near(Ind, "%s looks dizzy!", p_ptr->name);
+			set_confused(Ind, 10 + rand_int(5));
+			if (magik(50)) {
+				msg_print(Ind, "\377oYou vomit!");
+				msg_format_near(Ind, "%s vomits!", p_ptr->name);
+				take_hit(Ind, 1, "circulation collapse");
+				if (p_ptr->chp < p_ptr->mhp) /* *invincibility* fix */
+					if (p_ptr->food > PY_FOOD_FAINT - 1)
+					        (void)set_food(Ind, PY_FOOD_FAINT - 1);
+				(void)set_poisoned(Ind, 0);
+				if (!p_ptr->free_act && !p_ptr->slow_digest)
+				        (void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(10) + 10);
+			}
+		}
+	}
+
 
 	/*** Process Inventory ***/
 
@@ -3582,6 +3613,7 @@ static void purge_old()
 			{
 				struct wilderness_type *w_ptr;
 				struct dungeon_type *d_ptr;
+
 				twpos.wx=x;
 				w_ptr=&wild_info[twpos.wy][twpos.wx];
 
@@ -3716,6 +3748,72 @@ void cheeze_trad_house()
 #endif // CHEEZELOG_LEVEL > 3
 }
 #endif	// USE_MANG_HOUSE_ONLY
+
+
+/* Change item mode of all items inside a house to the according house owner mode */
+void house_contents_chmod(object_type *o_ptr){
+#if CHEEZELOG_LEVEL > 3
+	int j;
+	/* check for inside a house */
+	for(j=0;j<num_houses;j++){
+		if(inarea(&houses[j].wpos, &o_ptr->wpos)){
+			if(fill_house(&houses[j], FILL_OBJECT, o_ptr)){
+				if(houses[j].dna->owner_type==OT_PLAYER){
+					o_ptr->owner_mode = lookup_player_mode(houses[j].dna->owner));
+				}
+				else if(houses[j].dna->owner_type==OT_PARTY){
+					int owner;
+					if((owner=lookup_player_id(parties[houses[j].dna->owner].owner))){
+						o_ptr->owner_mode = lookup_player_mode(owner));
+					}
+				}
+				break;
+			}
+		}
+	}
+#endif // CHEEZELOG_LEVEL > 3
+}
+
+
+/* Traditional (Vanilla) houses version */
+#ifndef USE_MANG_HOUSE_ONLY
+void tradhouse_contents_chmod()
+{
+#if CHEEZELOG_LEVEL > 3
+	int i, j;
+	house_type *h_ptr;
+	object_type *o_ptr;
+
+	/* check for inside a house */
+	for(j=0;j<num_houses;j++)
+	{
+		h_ptr = &houses[j];
+		if(h_ptr->dna->owner_type==OT_PLAYER)
+		{
+			for (i = 0; i < h_ptr->stock_num; i++)
+			{
+				o_ptr = &h_ptr->stock[i];
+				o_ptr->owner_mode = lookup_player_mode(houses[j].dna->owner));
+			}
+		}
+		else if(h_ptr->dna->owner_type==OT_PARTY)
+		{
+			int owner;
+			if((owner=lookup_player_id(parties[h_ptr->dna->owner].owner)))
+			{
+				for (i = 0; i < h_ptr->stock_num; i++)
+				{
+					o_ptr = &h_ptr->stock[i];
+					o_ptr->owner_mode = lookup_player_mode(owner));
+				}
+			}
+		}
+	}
+#endif // CHEEZELOG_LEVEL > 3
+}
+#endif	// USE_MANG_HOUSE_ONLY
+
+
 
 /*
  * The purpose of this function is to scan through all the
@@ -4528,7 +4626,7 @@ static void process_player_change_wpos(int Ind)
 
 void dungeon(void)
 {
-	int i;
+	int i, j;
 	/* Return if no one is playing */
 	/* if (!NumPlayers) return; */
 
@@ -4603,6 +4701,11 @@ void dungeon(void)
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
+		/* Play server-side animations (consisting of cycling/random colour choices,
+		   instead of animated colours which are circled client-side) */
+		if (!(turn % 10)) /* && Players[i]->body_monster */
+			everyone_lite_spot(&Players[i]->wpos, Players[i]->py, Players[i]->px);
+
 		/* Actually process that player */
 		process_player_begin(i);
 	}
@@ -4645,7 +4748,9 @@ void dungeon(void)
 				/* Ignore admins that are loged in */
 				if(admin_p(i)) continue;
 				/* Ignore characters that are afk and not in a dungeon/tower */
-				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+//				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+				/* Ignore characters that are not in a dungeon/tower */
+				if(Players[i]->wpos.wz == 0) continue;
 				break;
 			}
 			if(!i) shutdown_server();

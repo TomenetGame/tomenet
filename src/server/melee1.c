@@ -1798,10 +1798,14 @@ bool make_attack_normal(int Ind, int m_idx)
 					}
 
 					msg_format(Ind, "\377r%^s tries to disarm you.", m_name);
-
-					if (artifact_p(o_ptr) && magik(50)) break;
-
+					
+					if (artifact_p(o_ptr))	if (magik(50)) break;
+					
 					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+					
+					/* can never take off permanently cursed stuff */
+					if (f3 & TR3_PERMA_CURSE) continue;
+
 					if (!p_ptr->heavy_wield && !shield && (
 								magik(50) ||
 								((f4 & TR4_MUST2H) && magik(90)) ||

@@ -15,7 +15,7 @@
 
 #include "angband.h"
 
-#define MAX_VAMPIRIC_DRAIN 50	/* was 100 */
+#define MAX_VAMPIRIC_DRAIN 35	/* was 50 */
 #define NON_WEAPON_VAMPIRIC_CHANCE 67 /* chance to drain if VAMPIRIC is given be a non-weapon item */
 
 /*
@@ -242,7 +242,7 @@ s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit
  * Slay Evil (x2), and Kill dragon (x5).
  */
 /* accepts Ind <=0 */
-s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, char *brand_msg)
+s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, char *brand_msg, bool thrown)
 {
 //	player_type *p_ptr = Players[Ind];
 
@@ -260,7 +260,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 	object_type *e_ptr;
 	u32b ef1, ef2, ef3, ef4, ef5, eesp;
-	int brands_total, brand_msgs_added;
+	int brands_total = 0, brand_msgs_added = 0;
 	/* char brand_msg[80];*/
 
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
@@ -422,41 +422,51 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		}
 	}
 
-	/* Temporary weapon branding */
-	if(p_ptr->brand && p_ptr->inventory[INVEN_WIELD].k_idx){
-		if (!((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))){
-			if(p_ptr->brand){
-				switch (p_ptr->brand_t)
-				{
-					case BRAND_ELEC:
-						f1 |= TR1_BRAND_ELEC;
-						break;
-					case BRAND_COLD:
-						f1 |= TR1_BRAND_COLD;
-						break;
-					case BRAND_FIRE:
-						f1 |= TR1_BRAND_FIRE;
-						break;
-					case BRAND_ACID:
-						f1 |= TR1_BRAND_ACID;
-						break;
-					case BRAND_POIS:
-						f1 |= TR1_BRAND_POIS;
-						break;
-				}
+	/* Extra melee branding */
+	if (!((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))) {
+		/* Apply brands from (powerful) auras! */
+		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
+		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
+		/* Temporary weapon branding */
+		if (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->brand) {
+			switch (p_ptr->brand_t)
+			{
+				case BRAND_ELEC:
+					f1 |= TR1_BRAND_ELEC;
+					break;
+				case BRAND_COLD:
+					f1 |= TR1_BRAND_COLD;
+					break;
+				case BRAND_FIRE:
+					f1 |= TR1_BRAND_FIRE;
+					break;
+				case BRAND_ACID:
+					f1 |= TR1_BRAND_ACID;
+					break;
+				case BRAND_POIS:
+					f1 |= TR1_BRAND_POIS;
+					break;
 			}
 		}
 	}
 
 #if 1 /* for debugging only, so far: */
 	/* Display message for all applied brands each */
-	brands_total = 0;
-	brand_msgs_added = 0;
 	if (f1 & TR1_BRAND_ACID) brands_total++;
 	if (f1 & TR1_BRAND_ELEC) brands_total++;
 	if (f1 & TR1_BRAND_FIRE) brands_total++;
 	if (f1 & TR1_BRAND_COLD) brands_total++;
 	if (f1 & TR1_BRAND_POIS) brands_total++;
+
+	/* Avoid contradictionary brands,
+	   let one of them randomly 'flicker up' on striking, suppressing the other */
+	if ((f1 & TR1_BRAND_FIRE) && (f1 & TR1_BRAND_COLD)) {
+		if (magik(50)) f1 &= ~TR1_BRAND_FIRE;
+		else f1 &= ~TR1_BRAND_COLD;
+		/* Hack - Make it still say 'blabla is hit by THE ELEMENTS' */
+		if (brands_total != 5) brands_total--;
+	}
+
 	strcpy(brand_msg,m_name);
 	strcat(brand_msg," is ");//"%^s is ");
 	switch (brands_total)
@@ -855,6 +865,10 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		}
 	}
 
+	/* If the object was thrown, reduce brand effect by 75%
+	   to avoid insane damage. */
+	if (thrown) return ((tdam * (((mult - 1) * 10) / 4 + 10)) / 10);
+
 	/* Ranged weapons get less benefit from brands */
 	if ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))
 		return ((tdam * (((mult - 1) * 20) / 5 + 10)) / 10);
@@ -873,7 +887,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
  * Note that "flasks of oil" do NOT do fire damage, although they
  * certainly could be made to do so.  XXX XXX
  */
-s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, char *brand_msg)
+s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, char *brand_msg, bool thrown)
 {
 	int mult = 1;
 
@@ -1010,6 +1024,16 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	if (f1 & TR1_BRAND_FIRE) brands_total++;
 	if (f1 & TR1_BRAND_COLD) brands_total++;
 	if (f1 & TR1_BRAND_POIS) brands_total++;
+
+        /* Avoid contradictionary brands,
+           let one of them randomly 'flicker up' on striking, suppressing the other */
+	if ((f1 & TR1_BRAND_FIRE) && (f1 & TR1_BRAND_COLD)) {
+                if (magik(50)) f1 &= ~TR1_BRAND_FIRE;
+                else f1 &= ~TR1_BRAND_COLD;
+                /* Hack - Make it still say 'blabla is hit by THE ELEMENTS' */
+                if (brands_total != 5) brands_total--;
+	}
+
 	strcpy(brand_msg,q_ptr->name);
 	strcat(brand_msg," is ");//"%^s is ");
 	switch (brands_total)
@@ -1241,6 +1265,17 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		}
 	}
 
+	/* If the object was thrown, reduce brand effect by 75%
+	   to avoid insane damage. */
+	if (thrown) return ((tdam * (((mult - 1) * 10) / 4 + 10)) / 10);
+
+	/* Ranged weapons get less benefit from brands */
+	if ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))
+		return ((tdam * (((mult - 1) * 20) / 5 + 10)) / 10);
+
+	/* Martial Arts styles get less benefit from brands */
+	if (!o_ptr->k_idx)
+		return ((tdam * (((mult - 1) * 10) / 3 + 10)) / 10);
 
 	/* Return the total damage */
 	return (tdam * mult);
@@ -1432,6 +1467,21 @@ void carry(int Ind, int pickup, int confirm)
 		/* Disturb */
 		disturb(Ind, 0, 0);
 
+		if ((cfg.charmode_trading_restrictions > 0) &&
+		    (o_ptr->owner) &&
+		    (o_ptr->owner_mode & MODE_IMMORTAL) && !(p_ptr->mode & MODE_IMMORTAL) &&
+		    !is_admin(p_ptr)) {
+			msg_print(Ind, "You cannot take money of everlasting players.");
+			return;
+		}
+		if ((cfg.charmode_trading_restrictions > 1) &&
+		    (o_ptr->owner) &&
+		    !(o_ptr->owner_mode & MODE_IMMORTAL) && (p_ptr->mode & MODE_IMMORTAL) &&
+		    !is_admin(p_ptr)) {
+			msg_print(Ind, "You cannot take money of non-everlasting players.");
+			return;
+		}
+
 		/* Message */
 		msg_format(Ind, "You have found %ld gold pieces worth of %s.",
 			   (long)o_ptr->pval, o_name);
@@ -1450,10 +1500,17 @@ void carry(int Ind, int pickup, int confirm)
 		if (o_ptr->owner)
 		{
 			cptr name = lookup_player_name(o_ptr->owner);
-			if (p_ptr->id != o_ptr->owner)
-				s_printf("%s Money transaction: %dau from %s to %s(lv %d)\n",
-						showtime(), o_ptr->pval, name ? name : "(Dead player)",
-						p_ptr->name, p_ptr->lev);
+			int lev = lookup_player_level(o_ptr->owner);
+			if (p_ptr->id != o_ptr->owner) {
+				if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name))
+					s_printf("%s -CHEEZY- Money transaction: %dau from %s(%d) to %s(%d)\n",
+							showtime(), o_ptr->pval, name ? name : "(Dead player)", lev,
+							p_ptr->name, p_ptr->lev);
+				else
+					s_printf("%s Money transaction: %dau from %s(%d) to %s(%d)\n",
+							showtime(), o_ptr->pval, name ? name : "(Dead player)", lev,
+							p_ptr->name, p_ptr->lev);
+			}
 		}
 #endif	// CHEEZELOG_LEVEL
 
@@ -1488,6 +1545,21 @@ void carry(int Ind, int pickup, int confirm)
 			return;
 		}
 
+		if ((cfg.charmode_trading_restrictions > 0) &&
+		    (o_ptr->owner) &&
+		    (o_ptr->owner_mode & MODE_IMMORTAL) && !(p_ptr->mode & MODE_IMMORTAL) &&
+		    !is_admin(p_ptr)) {
+			msg_print(Ind, "You cannot take items of everlasting players.");
+			return;
+		}
+		if ((cfg.charmode_trading_restrictions > 1) &&
+		    (o_ptr->owner) &&
+		    !(o_ptr->owner_mode & MODE_IMMORTAL) && (p_ptr->mode & MODE_IMMORTAL) &&
+		    !is_admin(p_ptr)) {
+			msg_print(Ind, "You cannot take items of non-everlasting players.");
+			return;
+		}
+
 		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))
 		{
 			if (cfg.anti_cheeze_pickup)
@@ -1495,8 +1567,8 @@ void carry(int Ind, int pickup, int confirm)
 				msg_print(Ind, "You aren't powerful enough yet to pick up that item!");
 				return;
 			}
-//			if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
-			if (artifact_p(o_ptr) && cfg.anti_arts_pickup)
+			if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
+//			if (artifact_p(o_ptr) && cfg.anti_arts_pickup)
 			{
 				msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
 				return;
@@ -1675,9 +1747,17 @@ void carry(int Ind, int pickup, int confirm)
 				else if (p_ptr->id != o_ptr->owner)
 				{
 					cptr name = lookup_player_name(o_ptr->owner);
+					int lev = lookup_player_level(o_ptr->owner);
 					object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
-					s_printf("%s Item transaction from %s to %s(lv %d):\n  %s\n",
-							showtime(), name ? name : "(Dead player)",
+					/* If level diff. is too large, target player is too low,
+					   and items aren't loot of a dead player, this might be cheeze! */
+					if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name))
+					s_printf("%s -CHEEZY- Item transaction from %s(%d) to %s(%d):\n  %s\n",
+							showtime(), name ? name : "(Dead player)", lev,
+							p_ptr->name, p_ptr->lev, o_name);
+					else
+					s_printf("%s Item transaction from %s(%d) to %s(%d):\n  %s\n",
+							showtime(), name ? name : "(Dead player)", lev,
 							p_ptr->name, p_ptr->lev, o_name);
 				}
 #endif	// CHEEZELOG_LEVEL
@@ -2006,7 +2086,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 					msg_format(Ind, ma_ptr->desc, q_ptr->name);
 				}
 
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg);
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
 				k = critical_norm(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
 
 				/* Apply the player damage bonuses */
@@ -2037,7 +2117,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				if ((p_ptr->impact || (k_info[o_ptr->k_idx].flags5 & TR5_IMPACT)) &&
 				    500 / (10 + (k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(35)) do_quake = TRUE;
 				    /* I made the new formula above, to get a better chance curve over all the different weapon types. -C. Blue- */
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg);
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
 				k += o_ptr->to_d;
 
 				/* Apply the player damage bonuses */
@@ -2047,7 +2127,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			/* handle bare fists/bat/ghost */
 			else
 			{
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg);
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
 
 				/* Apply the player damage bonuses */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -2356,7 +2436,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	/* Mega-Hack -- apply earthquake brand */
 	if (do_quake)
 	{
-		if (o_ptr->k_idx)// && !check_guard_inscription(o_ptr->note, 'E' ))
+		if (o_ptr->k_idx && !check_guard_inscription(o_ptr->note, 'E' ))
 		{
 			/* Giga-Hack -- equalize the chance (though not likely..) */
 			if (old || randint(p_ptr->num_blow) < 3)
@@ -2647,7 +2727,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					msg_format(Ind, ma_ptr->desc, m_name);
 				}
 
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg);
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
 				k = critical_norm(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp))
@@ -2718,7 +2798,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 //				    130 - ((k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(130)) do_quake = TRUE;
 //				    (150 / (10 + k - o_ptr->dd) < 11 - (2 / o_ptr->dd))) do_quake = TRUE;
 //				    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg);
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
 
 				if (backstab)
 				{
@@ -2817,7 +2897,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			/* handle bare fists/bat/ghost */
 			else
 			{
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg);
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
 
 				/* Apply the player damage bonuses */
 				/* (should this also cancelled by nazgul?(for now not)) */
@@ -3000,10 +3080,17 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 						if (drain_msg)
 						{
-							if (martial || !o_ptr->k_idx) 
+							if (martial || !o_ptr->k_idx) {
+								if (is_admin(p_ptr)) /* for debugging purpose */
+								msg_format(Ind, "Your hits drain \377o%d\377w life from %s!", drain_heal, m_name);
+								else
 								msg_format(Ind, "Your hits drain life from %s!", m_name);
-							else
+							} else {
+								if (is_admin(p_ptr))
+								msg_format(Ind, "Your weapon drains \377o%d\377w life from %s!", drain_heal, m_name);
+								else
 								msg_format(Ind, "Your weapon drains life from %s!", m_name);
+							}
 							drain_msg = FALSE;
 						}
 
@@ -3178,7 +3265,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	/* Mega-Hack -- apply earthquake brand */
 	if (do_quake)
 	{
-		if (o_ptr->k_idx)// && !check_guard_inscription(o_ptr->note, 'E' ))
+		if (o_ptr->k_idx && !check_guard_inscription(o_ptr->note, 'E' ))
 		{
 			/* Giga-Hack -- equalize the chance (though not likely..) */
 			if (old || randint(p_ptr->num_blow) < 3)
@@ -4641,6 +4728,11 @@ static void run_init(int Ind, int dir)
 	int             i, shortleft, shortright;
 
 
+	/* Manual direction changes reset the corner counter
+	   (for safety reasons only, might be serious running
+	   in the dungeon in a dangerous situation) */
+	p_ptr->corner_turn = 0;
+
 	/* Save the direction */
 	p_ptr->find_current = dir;
 
@@ -5180,6 +5272,7 @@ static bool run_test(int Ind)
 void run_step(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
+	int prev_dir;
 
 	/* Check for just changed level */
 	if (p_ptr->new_level_flag) return;
@@ -5200,11 +5293,16 @@ void run_step(int Ind, int dir)
 	/* Keep running */
 	else
 	{
+		prev_dir = p_ptr->find_prevdir;
+
 		/* Update run */
 		if (run_test(Ind))
 		{
 			/* Disturb */
 			disturb(Ind, 0, 0);
+
+			/* A break in running calms down */
+			p_ptr->corner_turn = 0;
 
 			/* Done */
 			return;
@@ -5213,6 +5311,9 @@ void run_step(int Ind, int dir)
 
 	/* Decrease the run counter */
 	if (--(p_ptr->running) <= 0) return;
+
+	/* C. Blue fun stuff =p */
+	if (prev_dir != p_ptr->find_current) p_ptr->corner_turn++;
 
 	/* Move the player, using the "pickup" flag */
 	move_player(Ind, p_ptr->find_current, p_ptr->always_pickup);

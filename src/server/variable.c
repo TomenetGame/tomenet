@@ -118,6 +118,12 @@ s32b dungeon_store_timer = 0;	/* Timemout. Keeps track of its generation */
 s32b dungeon_store2_timer = 0;	/* Timemout. Keeps track of its generation */
 bool night_surface = FALSE;
 
+s16b MaxSimultaneousPlayers = 0;	/* Tracks very high amounts of simultaneously logged-in players,
+					   writes to log file then: 'SimultaneousPlayers ...' - C. Blue */
+
+char serverStartupTime[40];	/* String containing the clock time when the server was started */
+char *sST = serverStartupTime;
+
 /*
  * Server options, set in tomenet.cfg
  */
@@ -187,6 +193,8 @@ server_opts cfg =
 	3,		/* clone_summoning - how many times may a monster summon before the summmons become clones
 				    (and summon -if they can do that- more clones themselves).*/
 	3,		/* henc_strictness - how easily monsters adjust their exp to their highest player encounter */
+	1,		/* bonus_calc_type - how HP are calculated (0 = old, 1 = new way) */
+	2,		/* charmode_trading_restrictions - how restricted is trading? 0 = allow all, 1 = no ever->nonever, 2 = no exchange */
 };
 
 struct ip_ban *banlist=NULL;

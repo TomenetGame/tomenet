@@ -3169,7 +3169,7 @@ bool create_artifact_aux(int Ind, int item)
 	to_h = o_ptr->to_h;
 	to_d = o_ptr->to_d;
 	to_a = o_ptr->to_a;
-	apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE);
+	apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
 	/* Don't reroll to_h, to_d, to_a on jewelry; but keep negative
 	   values if the item was already cursed from artifact_creation. */
 	if (((o_ptr->tval == TV_RING) && (o_ptr->sval != SV_RING_SPECIAL)) || (o_ptr->tval == TV_AMULET)) {

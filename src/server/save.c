@@ -1282,7 +1282,11 @@ static void wr_extra(int Ind)
 	for (i = 0; i < tmp16u; i++) wr_s16b(p_ptr->r_killed[i]);
 
 	/* Future use */
-	for (i = 0; i < 44; i++) wr_byte(0);
+	for (i = 0; i < 43; i++) wr_byte(0);
+
+        /* Toggle for possible automatic save-game updates
+           (done via script login-hook, eg custom.lua) - C. Blue */
+	wr_byte(p_ptr->updated);
 
 	/* Ignore some flags */
 	wr_u32b(0L);	/* oops */

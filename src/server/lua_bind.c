@@ -519,3 +519,48 @@ void lua_count_houses(int Ind) {
 	    	    Players[Ind]->houses_owned++;
 	return;
 }
+
+void lua_recalc_char(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int             i, j, min_value, max_value;
+        int tries = 300;
+
+	/* Experience factor */
+/* This one is too harsh for TLs and too easy on yeeks
+	p_ptr->expfact = p_ptr->rp_ptr->r_exp * (100 + p_ptr->cp_ptr->c_exp) / 100;
+Commented out this totally, since ppl won't get skill points for these 'fake level ups'! :/
+      p_ptr->expfact = p_ptr->rp_ptr->r_exp + p_ptr->cp_ptr->c_exp; */
+
+	/* Hitdice */
+	p_ptr->hitdie = p_ptr->rp_ptr->r_mhp + p_ptr->cp_ptr->c_mhp;
+
+	/* Minimum hitpoints at highest level */
+        min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 3) / 8;
+	min_value += PY_MAX_LEVEL;
+
+	/* Maximum hitpoints at highest level */
+	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 5) / 8;
+	max_value += PY_MAX_LEVEL;
+
+	/* Pre-calculate level 1 hitdice */
+	p_ptr->player_hp[0] = p_ptr->hitdie;
+
+	/* Roll out the hitpoints */
+	while (--tries)
+	{
+		/* Roll the hitpoint values */
+		for (i = 1; i < PY_MAX_LEVEL; i++)
+		{
+		        j = randint(p_ptr->hitdie);
+		        p_ptr->player_hp[i] = p_ptr->player_hp[i-1] + j;
+		}
+		/* XXX Could also require acceptable "mid-level" hitpoints */
+		
+		/* Require "valid" hitpoints at highest level */
+		if (p_ptr->player_hp[PY_MAX_LEVEL-1] < min_value) continue;
+		if (p_ptr->player_hp[PY_MAX_LEVEL-1] > max_value) continue;
+		
+		/* Acceptable */
+		break;
+	}
+}

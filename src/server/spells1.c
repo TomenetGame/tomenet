@@ -102,6 +102,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 		case SV_POTION_BOLDNESS:
 			radius = 3;
 			dt = GF_REMFEAR;
+//			ident = TRUE;
 			dam = 1; /* dummy */
 			break;
 		case SV_POTION_SALT_WATER:
@@ -318,6 +319,9 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 		default:
 			/* Do nothing */  ;
 	}
+
+	/* doh! project halves the dam ?! */
+	dam *= 2;
 
 	(void) project(who, radius, wpos, y, x, dam, dt,
 			   (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF), "");
@@ -1582,6 +1586,7 @@ static bool hates_fire(object_type *o_ptr)
 		case TV_STAFF:
 		case TV_SCROLL:
 		case TV_PARCHEMENT:
+		case TV_BOOK:
 		{
 			return (TRUE);
 		}
@@ -2356,6 +2361,7 @@ bool apply_disenchant(int Ind, int mode)
 	int			t = mode;
 
 	object_type		*o_ptr;
+	object_kind 		*k_ptr;
 
 	char		o_name[160];
 
@@ -2381,6 +2387,7 @@ bool apply_disenchant(int Ind, int mode)
 
 	/* Get the item */
 	o_ptr = &p_ptr->inventory[t];
+	k_ptr = &k_info[o_ptr->k_idx];
 
 	/* No item, nothing happens */
 	if (!o_ptr->k_idx) return (FALSE);
@@ -2412,20 +2419,23 @@ bool apply_disenchant(int Ind, int mode)
 
 
 	/* Disenchant tohit */
-	if (o_ptr->to_h > 0) o_ptr->to_h--;
-	if ((o_ptr->to_h > 7) && (rand_int(100) < 33)) o_ptr->to_h--;
-	if ((o_ptr->to_h > 15) && (rand_int(100) < 25)) o_ptr->to_h--;
-
+	if (o_ptr->to_h > k_ptr->to_h) {
+		if (o_ptr->to_h > 0) o_ptr->to_h--;
+		if ((o_ptr->to_h > 7) && (rand_int(100) < 33)) o_ptr->to_h--;
+		if ((o_ptr->to_h > 15) && (rand_int(100) < 25)) o_ptr->to_h--;
+	}
 	/* Disenchant todam */
-	if (o_ptr->to_d > 0) o_ptr->to_d--;
-	if ((o_ptr->to_d > 7) && (rand_int(100) < 33)) o_ptr->to_d--;
-	if ((o_ptr->to_d > 15) && (rand_int(100) < 25)) o_ptr->to_d--;
-
+	if (o_ptr->to_d > k_ptr->to_d) {
+		if (o_ptr->to_d > 0) o_ptr->to_d--;
+		if ((o_ptr->to_d > 7) && (rand_int(100) < 33)) o_ptr->to_d--;
+		if ((o_ptr->to_d > 15) && (rand_int(100) < 25)) o_ptr->to_d--;
+	}
 	/* Disenchant toac */
-	if (o_ptr->to_a > 0) o_ptr->to_a--;
-	if ((o_ptr->to_a > 7) && (rand_int(100) < 33)) o_ptr->to_a--;
-	if ((o_ptr->to_a > 15) && (rand_int(100) < 25)) o_ptr->to_a--;
-
+	if (o_ptr->to_a > k_ptr->to_a) {
+		if (o_ptr->to_a > 0) o_ptr->to_a--;
+		if ((o_ptr->to_a > 7) && (rand_int(100) < 33)) o_ptr->to_a--;
+		if ((o_ptr->to_a > 15) && (rand_int(100) < 25)) o_ptr->to_a--;
+	}
 	/* Message */
 	msg_format(Ind, "\377oYour %s (%c) %s disenchanted!",
 	           o_name, index_to_label(t),
@@ -3014,7 +3024,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					}
 
 					/* Place object */
-					place_object(wpos, y, x, FALSE, FALSE, p_ptr->total_winner?FALSE:TRUE, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
+					place_object(wpos, y, x, FALSE, FALSE, FALSE, p_ptr->total_winner?FALSE:TRUE, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 				}
 			}
 
@@ -3321,6 +3331,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	cave_type **zcave;
 	cave_type *c_ptr;
 	object_type *o_ptr;
+	object_kind *k_ptr;
+
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	c_ptr=&zcave[y][x];
 //	o_ptr = &o_list[c_ptr->o_idx];
@@ -3349,11 +3361,13 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	bool	ignore = FALSE;
 	bool	plural = FALSE;
 	bool	do_kill = FALSE;
+	bool	do_smash_effect = FALSE;
 
 	cptr	note_kill = NULL;
 
 	/* Acquire object */
 	o_ptr = &o_list[this_o_idx];
+	k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Acquire next object */
 	next_o_idx = o_ptr->next_o_idx;
@@ -3420,6 +3434,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Fire -- Flammable objects */
 		case GF_FIRE:
 		{
+			do_smash_effect = TRUE;
 			if (hates_fire(o_ptr))
 			{
 				do_kill = TRUE;
@@ -3457,6 +3472,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Fire + Elec */
 		case GF_PLASMA:
 		{
+			do_smash_effect = TRUE;
 			if (hates_fire(o_ptr))
 			{
 				do_kill = TRUE;
@@ -3476,6 +3492,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Fire + Cold */
 		case GF_METEOR:
 		{
+			do_smash_effect = TRUE;
 			if (hates_fire(o_ptr))
 			{
 				do_kill = TRUE;
@@ -3509,6 +3526,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Mana -- destroys everything */
 		case GF_MANA:
 		{
+			do_smash_effect = TRUE;
 			do_kill = TRUE;
 			note_kill = (plural ? " are destroyed!" : " is destroyed!");
 			break;
@@ -3516,15 +3534,38 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_DISINTEGRATE:
 		{
+			do_smash_effect = TRUE;
 			do_kill = TRUE;
 			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
 					    : (plural ? " is pulverized!" : " is pulverized!");
 //			note_kill = (plural ? " evaporate!" : " evaporates!");
 			break;
 		}
+		
+		case GF_DISENCHANT:
+		{
+			if (f2 & TR2_RES_DISEN) break;
+			if (artifact_p(o_ptr) && magik(100)) break;
+			if (o_ptr->timeout) o_ptr->timeout /= 2;
+			switch (o_ptr->tval) {
+			case TV_ROD: break;
+			case TV_WAND:
+			case TV_STAFF:
+				o_ptr->pval = 0;
+				break;
+			default:
+				if (o_ptr->pval) o_ptr->pval--;
+				break;
+			}
+			if (o_ptr->to_h > k_ptr->to_h) o_ptr->to_h--;
+			if (o_ptr->to_d > k_ptr->to_d) o_ptr->to_d--;
+			if (o_ptr->to_a > k_ptr->to_a) o_ptr->to_a--;
+			break;
+		}
 
 		case GF_ROCKET:
 		{
+			do_smash_effect = TRUE;
 			do_kill = TRUE;
 			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
 					    : (plural ? " is pulverized!" : " is pulverized!");
@@ -3536,6 +3577,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_HOLY_ORB:
 		case GF_HOLY_FIRE:
 		{
+			do_smash_effect = TRUE;
 			if (cursed_p(o_ptr))
 			{
 				do_kill = TRUE;
@@ -3545,6 +3587,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		case GF_HELL_FIRE:
+			do_smash_effect = TRUE;
 			if (hates_fire(o_ptr))
 			{
 				do_kill = TRUE;
@@ -3597,6 +3640,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (check_st_anchor(wpos, y, x)) break;
 //			if (seen) obvious = TRUE;
 
+			do_smash_effect = TRUE;
 			note_kill = (plural ? " disappear!" : " disappears!");
 
 			for (j=0;j<10;j++)
@@ -3625,6 +3669,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 	/* Attempt to destroy the object */
+//	if (is_potion && do_smash_effect) potion_smash_effect(who, wpos, y, x, o_sval);
+
 //	if(do_kill && (wpos->wz))
 	if(do_kill)
 	{
@@ -6294,8 +6340,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Hopefully never. */
 				/* Actually this can happen if player's not on the trap
 				 * (eg. door traps) */
-				sprintf(killer, "A mysterious accident");
-				sprintf(m_name, "Something");
+				sprintf(killer, "a mysterious accident");
+				sprintf(m_name, "something");
 			}
 		}
 	}
@@ -6303,22 +6349,22 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	else if (who == PROJECTOR_POTION)
 	{
 		/* TODO: add potion name */
-		sprintf(killer, "An evaporating potion");
-		sprintf(m_name, "An evaporating potion");
+		sprintf(killer, "an evaporating potion");
+		sprintf(m_name, "an evaporating potion");
 	}
 	/* hack -- by shattering potion */
 	else if (who <= PROJECTOR_UNUSUAL)
 	{
 		/* TODO: add potion name */
-		sprintf(killer, "Something weird");
-		sprintf(m_name, "Something");
+		sprintf(killer, "something weird");
+		sprintf(m_name, "something");
 	}
 #if 0
 	else if (who == PROJECTOR_TERRAIN)
 	{
 		/* TODO: implement me! */
-		sprintf(killer, "A terrain effect");
-		sprintf(m_name, "A terrain effect");
+		sprintf(killer, "a terrain effect");
+		sprintf(m_name, "a terrain effect");
 	}
 #endif	// 0
 	else if (self)
@@ -6351,7 +6397,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
                         (typ != GF_TELEPORT_PLAYER) && (typ != GF_ZEAL_PLAYER) &&
 			(typ != GF_RESTORESTATS_PLAYER) && (typ != GF_RESTORELIFE_PLAYER) &&
                         (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
-                        (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER))
+                        (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
+			(typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) &&
+			(typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
 		{		
 			/* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind))
@@ -6363,14 +6411,23 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 			}
 			
+			/* Hostile players hit each other */
+			if (check_hostile(Ind, 0 - who))
+			{
+				/* XXX Reduce damage to 1/3 */
+				dam = (dam + 2) / 3;
+			}
+
 			/* people not in the same party hit each other */
-			if (!player_in_party(Players[0 - who]->party, Ind))
+			else if (!player_in_party(Players[0 - who]->party, Ind))
 			{			
+#if 0			/* NO - C. Blue */
 				/* XXX Reduce damage by 1/3 */
 				dam = (dam + 2) / 3;
 				if((cfg.use_pk_rules == PK_RULES_DECLARE &&
 							!(p_ptr->pkill & PKILL_KILLER)) &&
 						!magik(NEUTRAL_FIRE_CHANCE))
+#endif			/* Just return without harming: */
 					return(FALSE);
 			}
 			else
@@ -8187,19 +8244,24 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 				/* always hit monsters */
 				if (c_ptr->m_idx > 0) break;
 			
-				/* neutral people hit each other */			
+				/* Hostile players hit each other */
+		                if (check_hostile(0 - who, 0 - c_ptr->m_idx)) break;
+
+#if 0				/* neutral people hit each other ..NOT! - C. Blue FF$$$ */
 				if (!Players[0 - who]->party) break;
 			
-			/* people not in the same party hit each other */			
+				/* people not in the same party hit each other ..NOT! - C. Blue */
 				if (!player_in_party(Players[0 - who]->party, 0 - c_ptr->m_idx))
 #if FRIEND_FIRE_CHANCE
 					if (!magik(FRIEND_FIRE_CHANCE))
 #endif
 						break;	
+#endif
 			}
 //			else break;	// Huh? always break? XXX XXX
 		}
 
+		/* Spells which never affect monsters: */
 		if((c_ptr->m_idx != 0) && dist &&
 			((typ == GF_HEAL_PLAYER) || (typ == GF_WRAITH_PLAYER) ||
 			 (typ == GF_SPEED_PLAYER) || (typ == GF_SHIELD_PLAYER) || 
@@ -8217,7 +8279,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			 (typ == GF_ZEAL_PLAYER) ||
 			 (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
 			 (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
-			 (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ))
+			 (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER)) )
 		{
 			if (!(c_ptr->m_idx > 0))
 				break;

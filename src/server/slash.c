@@ -215,7 +215,7 @@ void sc_wish(int Ind, void *argp){
 		o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 	}
 
-	apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, p_ptr->total_winner?FALSE:TRUE);
+	apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, TRUE, p_ptr->total_winner?FALSE:TRUE);
 	if (tk > 3){
 		o_ptr->discount = atoi(token[4]);
 	}
@@ -701,6 +701,9 @@ void do_slash_cmd(int Ind, char *message)
 			int j;
 			bool gauche = FALSE;
 
+			/* Paralyzed? */
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+
 			disturb(Ind, 1, 0);
 
 			for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
@@ -864,6 +867,16 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				int item=-1;
 				object_type *o_ptr;
+
+				/* Paralyzed or just not enough energy left to perform a move? */
+#if 0 /* this also prevents recalling while resting, too harsh maybe */
+				if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+#else
+				if (p_ptr->paralyzed) return;
+#endif
+
+				/* Turn off resting mode */
+				disturb(Ind, 0, 0);
 
 				for(i = 0; i < INVEN_PACK; i++)
 				{
@@ -1065,6 +1078,11 @@ void do_slash_cmd(int Ind, char *message)
 			get_mon_num_hook=dungeon_aux;
 			get_mon_num_prep();
 			i=2+randint(5);
+
+			/* plev 1..50 -> mlev 1..100 (!) */
+			if (lev <= 50) lev += (lev * lev) / 83;
+			else lev = 80 + rand_int(20);
+
 			do{
 				r=get_mon_num(lev, 0);
 				k++;
@@ -1169,11 +1187,17 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/sip"))
 		{
+			/* Paralyzed? */
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+
 			do_cmd_drink_fountain(Ind);
 			return;
 		}
 		else if (prefix(message, "/fill"))
 		{
+			/* Paralyzed? */
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+
 			do_cmd_fill_bottle(Ind);
 			return;
 		}
@@ -1935,7 +1959,7 @@ void do_slash_cmd(int Ind, char *message)
 					o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 				}
 
-				apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, TRUE);
+				apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, TRUE, TRUE);
 				if (tk > 3){
 					o_ptr->discount = atoi(token[4]);
 				}
@@ -2329,7 +2353,7 @@ void do_slash_cmd(int Ind, char *message)
 			        }
 
 			        o_ptr->timeout=0;
-		    	        apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE);
+		    	        apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
 
 				msg_format(Ind, "Re-rolled randart in inventory slot %d!", atoi(token[1]));
 				/* Window stuff */
@@ -2490,7 +2514,50 @@ void do_slash_cmd(int Ind, char *message)
 					else if ((dna->owner_type == OT_GUILD) && (!strcmp(guilds[dna->owner].name, message2 + 12)))
 						cg++;
 				}
-				msg_format(Ind, "%s has houses: Player %d, Party %d, Guild %d.", token[1], cp, cy, cg);
+				msg_format(Ind, "%s has houses: Player %d, Party %d, Guild %d.", message2 + 12, cp, cy, cg);
+				return;
+			}
+			/* Reroll a player's birth hitdice to test major changes - C. Blue */
+			else if (prefix(message, "/rollchar")) {
+				int p;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /rollchar <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, token[1], FALSE);
+				if (!p) return;
+				lua_recalc_char(p);
+				msg_format(Ind, "Rerolled HP and recalculated exp ratio for %s.", token[1]);
+				return;
+			}
+			/* Turn all non-everlasting items inside a house to everlasting items if the owner is everlasting */
+			else if (prefix(message, "/everhouse")) {
+				/* house_contents_chmod .. (scan_obj style) */
+			}
+			/* Blink a player */
+			else if (prefix(message, "/blink")) {
+				int p;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /blink <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, token[1], FALSE);
+				if (!p) return;
+				teleport_player(Ind, 10);
+				msg_print(Ind, "Phased that player.");
+				return;
+			}
+			/* Blink a player */
+			else if (prefix(message, "/tport")) {
+				int p;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /tport <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, token[1], FALSE);
+				if (!p) return;
+				teleport_player(Ind, 100);
+				msg_print(Ind, "Teleported that player.");
 				return;
 			}
 		}

@@ -1139,7 +1139,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 		if (cave_clean_bold(zcave,y,x))
 		{			
 			object_level = w_ptr->radius/2 +1;
-			place_object(wpos,y,x,FALSE,FALSE,FALSE,default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+			place_object(wpos, y, x, FALSE, FALSE, FALSE, FALSE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 			num_objects--;
 		}
 		trys++;	

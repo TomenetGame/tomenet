@@ -1309,103 +1309,6 @@ static byte multi_hued_attr(monster_race *r_ptr)
 }
 
 
-/*
- * Return the correct "color" of another player
- */
-static byte player_color(int Ind)
-{
-	player_type *p_ptr = Players[Ind];
-	monster_race *r_ptr = &r_info[p_ptr->body_monster];
-	int pcolor = p_ptr->pclass;
-	pcolor = p_ptr->cp_ptr->color;
-
-	/* Ghosts are black */
-	if (p_ptr->ghost)
-	{
-		if (p_ptr->admin_wiz) return TERM_L_DARK + TERM_BNW;
-		return TERM_L_DARK;
-	}
-
-	/* Black Breath carriers emit malignant aura sometimes.. */
-	if (p_ptr->black_breath && magik(50)) return TERM_L_DARK;
-
-	/* Covered by a mummy wrapping? */
-	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_WRAPPING) pcolor = TERM_L_DARK;
-
-	/* Mimicing a monster */
-	/* TODO: handle 'ATTR_MULTI', 'ATTR_CLEAR' */
-	if (p_ptr->body_monster) pcolor = (r_ptr->d_attr);
-
-	/* Bats are orange */
-	/* taking this out since bat parties
-	become hard to oversee. Mimicked bats stay orange,
-	that should be fine. (C. Blue)
-	if (p_ptr->fruit_bat) return TERM_ORANGE; */
-	
-	if (p_ptr->tim_mimic) pcolor = p_ptr->tim_mimic_what;
-
-	if(p_ptr->team){
-		/* may have multiteam */
-		switch(p_ptr->team){
-			case 1:
-				pcolor = TERM_RED;
-			case 2:
-				pcolor = TERM_L_BLUE;
-		}
-	}
-
-	/* Mana Shield and GOI also flicker */
-#if 1
-//	if ((p_ptr->tim_manashield > 10)) return p_ptr->cp_ptr->color + TERM_SHIELDM;
-//	if ((p_ptr->invuln > 5)) return p_ptr->cp_ptr->color + TERM_SHIELDI;
-	if (p_ptr->tim_manashield > 10) return TERM_SHIELDM;
-	if (p_ptr->invuln > 5) return TERM_SHIELDI;
-#else
-/*	if ((p_ptr->tim_manashield > 10) && (randint(2)==1)){
-		byte a = p_ptr->cp_ptr->color;
-*/	if (p_ptr->tim_manashield > 10)
-/*		if (a!=TERM_VIOLET)
-		a=(randint(2) < 2) ? TERM_VIOLET : TERM_ORANGE;
-		else
-		a=(randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
-		return a;*/
-		byte a = p_ptr->cp_ptr->color;
-		switch(randint(3)){
-		case 1:a=TERM_VIOLET;break;
-		case 2:a=TERM_L_RED;break;
-		case 3:a=TERM_ORANGE;break;
-		}
-		return a;
-	}
-//	else if ((p_ptr->invuln > 5) && (randint(4)!=1)){
-	else if (p_ptr->invuln > 5){
-		byte a = p_ptr->cp_ptr->color;
-		switch(randint(5)) {
-		case 1: a=TERM_L_RED;break;
-		case 2: a=TERM_L_GREEN;break;
-		case 3: a=TERM_L_BLUE;break;
-		case 4: a=TERM_YELLOW;break;
-		case 5: a=TERM_VIOLET;break;
-/*              case 1: return (TERM_L_RED);
-		case 2: return (TERM_VIOLET);
-		case 3: return (TERM_RED);
-		case 4: return (TERM_L_DARK);
-		case 5: return (TERM_WHITE);
-*/		}
-		return a;
-	}
-#endif
-	/* Holy Martyr */
-	if (p_ptr->martyr) pcolor += TERM_BNW;
-
-	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
-	if (p_ptr->admin_wiz) pcolor += TERM_BNW;
-
-	/* Color is based off of class */
-	return pcolor;
-}
-
-
 static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr, byte *ap, char *cp)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1549,6 +1452,107 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 		image_monster(ap, cp);
 	}
 }
+
+/*
+ * Return the correct "color" of another player
+ */
+static byte player_color(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	monster_race *r_ptr = &r_info[p_ptr->body_monster];
+	byte pcolor = p_ptr->pclass;
+	char dummy;
+	cave_type **zcave = getcave(&p_ptr->wpos);
+	cave_type *c_ptr = c_ptr = &zcave[p_ptr->py][p_ptr->px];
+	pcolor = p_ptr->cp_ptr->color;
+
+	/* Ghosts are black */
+	if (p_ptr->ghost)
+	{
+		if (p_ptr->admin_wiz) return TERM_L_DARK + TERM_BNW;
+		return TERM_L_DARK;
+	}
+
+	/* Black Breath carriers emit malignant aura sometimes.. */
+	if (p_ptr->black_breath && magik(50)) return TERM_L_DARK;
+
+	/* Covered by a mummy wrapping? */
+	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_WRAPPING) pcolor = TERM_L_DARK;
+
+	/* Mimicing a monster */
+	/* TODO: handle 'ATTR_MULTI', 'ATTR_CLEAR' */
+//	if (p_ptr->body_monster) pcolor = (r_ptr->d_attr);
+	if (p_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p_ptr->body_monster], c_ptr, &pcolor, &dummy);
+
+	/* Bats are orange */
+	/* taking this out since bat parties
+	become hard to oversee. Mimicked bats stay orange,
+	that should be fine. (C. Blue)
+	if (p_ptr->fruit_bat) return TERM_ORANGE; */
+	
+	if (p_ptr->tim_mimic) pcolor = p_ptr->tim_mimic_what;
+
+	if(p_ptr->team){
+		/* may have multiteam */
+		switch(p_ptr->team){
+			case 1:
+				pcolor = TERM_RED;
+			case 2:
+				pcolor = TERM_L_BLUE;
+		}
+	}
+
+	/* Mana Shield and GOI also flicker */
+#if 1
+//	if ((p_ptr->tim_manashield > 10)) return p_ptr->cp_ptr->color + TERM_SHIELDM;
+//	if ((p_ptr->invuln > 5)) return p_ptr->cp_ptr->color + TERM_SHIELDI;
+	if (p_ptr->tim_manashield > 10) return TERM_SHIELDM;
+	if (p_ptr->invuln > 5) return TERM_SHIELDI;
+#else
+/*	if ((p_ptr->tim_manashield > 10) && (randint(2)==1)){
+		byte a = p_ptr->cp_ptr->color;
+*/	if (p_ptr->tim_manashield > 10)
+/*		if (a!=TERM_VIOLET)
+		a=(randint(2) < 2) ? TERM_VIOLET : TERM_ORANGE;
+		else
+		a=(randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
+		return a;*/
+		byte a = p_ptr->cp_ptr->color;
+		switch(randint(3)){
+		case 1:a=TERM_VIOLET;break;
+		case 2:a=TERM_L_RED;break;
+		case 3:a=TERM_ORANGE;break;
+		}
+		return a;
+	}
+//	else if ((p_ptr->invuln > 5) && (randint(4)!=1)){
+	else if (p_ptr->invuln > 5){
+		byte a = p_ptr->cp_ptr->color;
+		switch(randint(5)) {
+		case 1: a=TERM_L_RED;break;
+		case 2: a=TERM_L_GREEN;break;
+		case 3: a=TERM_L_BLUE;break;
+		case 4: a=TERM_YELLOW;break;
+		case 5: a=TERM_VIOLET;break;
+/*              case 1: return (TERM_L_RED);
+		case 2: return (TERM_VIOLET);
+		case 3: return (TERM_RED);
+		case 4: return (TERM_L_DARK);
+		case 5: return (TERM_WHITE);
+*/		}
+		return a;
+	}
+#endif
+	/* Holy Martyr */
+	if (p_ptr->martyr) pcolor += TERM_BNW;
+
+	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
+	if (p_ptr->admin_wiz) pcolor += TERM_BNW;
+
+	/* Color is based off of class */
+	return pcolor;
+}
+
 
 /*
  * Extract the attr/char to display at the given (legal) map location
@@ -2203,13 +2207,16 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		/* Is that player visible? */
 		if (p_ptr->play_vis[Ind2])
 		{
+			/* part 'A' now here (experimental, see below) */
 			a = player_color(Ind2);
+			if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], c_ptr, &a, &c);
+			else if (p2_ptr->fruit_bat) c = 'b';
+			else c = '@';
+			/* part 'A' end */
 
 			if((( p2_ptr->chp * 95) / (p2_ptr->mhp*10)) >= 7)
 			{
-				if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], c_ptr, &a, &c);
-				else if (p2_ptr->fruit_bat) c = 'b';
-				else c = '@';
+				/* part 'A' used to be here */
 			}
 			else
 			{
@@ -2234,10 +2241,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			}
 
 			(*cp) = c;
-
 			(*ap) = a;
-
-			// if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], ap, cp)
 
 			if (p_ptr->image)
 			{
@@ -2769,7 +2773,7 @@ void display_map(int Ind, int *cy, int *cx)
 
 			/* Extract the priority of that attr/char */
 			tp = priority(ta, tc);
-
+/* duplicate code, maybe create function  player_char(Ind) .. */
 			/* Hack - Player(@) should always be displayed */
 			if (i == p_ptr->px && j == p_ptr->py)
 			{
@@ -2789,7 +2793,7 @@ void display_map(int Ind, int *cy, int *cx)
 					}
 				}                       
 			}
-
+/* duplicate code end */
 			/* Save "best" */
 			if (mp[y][x] < tp)
 			{
@@ -6036,6 +6040,9 @@ void recent_track(int r_idx)
 void disturb(int Ind, int stop_search, int unused_flag)
 {
 	player_type *p_ptr = Players[Ind];
+
+	/* Calm down from silly running */
+	p_ptr->corner_turn = 0;
 
 	/* Unused */
 	unused_flag = unused_flag;

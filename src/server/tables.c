@@ -1540,6 +1540,7 @@ player_race race_info[MAX_RACES] =
                 "Hobbit",
                 { -2,  2,  1,  3,  0,  1 },
                 15, 18, 18, 4, 12,  15, -10, 20,
+//                7,  110,
                 7,  110,
                 21, 12,
                 36,  3, 60,  3,
@@ -2174,7 +2175,8 @@ player_class class_info[MAX_CLASS] =
 		{ 0, 0, 0, 0, 0, 0},
 		20, 20, 20, 2,  15, 15, 50, 50,
 		10, 10,  10, 0,  0,  0,  25, 25,
-                6, 10, //3,  0,//5,0,
+		6, 10, //3,  0,//5,0,
+//		8, 10,
                 {
                         /* Combat tree */
                         {
@@ -2275,42 +2277,42 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MANA,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 600, //500
                         },
                         {
                                 SKILL_FIRE,
                                 '+', 0,
-                                '+', 600,
+                                '+', 700, //600..
                         },
                         {
                                 SKILL_AIR,
                                 '+', 0,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_EARTH,
                                 '+', 0,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_WATER,
                                 '+', 0,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_NATURE,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_DIVINATION,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600, //500
                         },
                         {
                                 SKILL_UDUN,
                                 '+', 0,
-                                '+', 450,
+                                '+', 500, //450
                         },
                         {
                                 SKILL_META,
@@ -2320,32 +2322,32 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MIND,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600, //500
                         },
                         {
                                 SKILL_TEMPORAL,
                                 '+', 0,
-                                '+', 400,
+                                '+', 500, //400
                         },
                         {
                                 SKILL_HOFFENSE,
                                 '+', 0,
-				'+', 500,
+				'+', 600, //500
 			},
 			{
                                 SKILL_HDEFENSE,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_HCURING,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_HSUPPORT,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_MIMIC,
@@ -2463,7 +2465,8 @@ player_class class_info[MAX_CLASS] =
 		{ 5, -2, -2, 2, 2, -1},
 		25, 18, 18, 1,  14, 2, 70, 55,
 		10, 7,  10, 0,  0,  0,  45, 45,
-                10, 0,//6,  10,//9, 10,
+		10, 0,//6,  10,//9, 10,
+//		11, 0,
                 {
                         {
                                 SKILL_COMBAT,
@@ -2599,6 +2602,7 @@ player_class class_info[MAX_CLASS] =
 		30, 36, 30, 2,  16, 20, 34, 20,
 		7,  13, 9,  0,  0,  0,  15, 15,
 		0, 35,//0,30
+//		3, 35,
                 {
                         {
                                 SKILL_COMBAT,
@@ -2671,62 +2675,62 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MANA,
                                 '+', 1000,	/* Allow to cast Manathrust */
-                                '+', 1600,
+                                '+', 1900,
                         },
                         {
                                 SKILL_FIRE,
                                 '+', 0,
-                                '+', 1400,
+                                '+', 1600,
                         },
                         {
                                 SKILL_AIR,
                                 '+', 0,
-                                '+', 1400,
+                                '+', 1600,
                         },
                         {
                                 SKILL_EARTH,
                                 '+', 0,
-                                '+', 1400,
+                                '+', 1600,
                         },
                         {
                                 SKILL_WATER,
                                 '+', 0,
-                                '+', 1400,
+                                '+', 1600,
                         },
                         {
                                 SKILL_NATURE,
                                 '+', 0,
-                                '+', 1400,
+                                '+', 1600,
                         },
                         {
                                 SKILL_DIVINATION,
                                 '+', 0,
-                                '+', 1400,
+                                '+', 1600,
                         },
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
-                                '+', 1400,
+                                '+', 1600,
                         },
                         {
                                 SKILL_META,
                                 '+', 0,
-                                '+', 1400,
+                                '+', 1600,
                         },
                         {
                                 SKILL_MIND,
                                 '+', 0,
-                                '+', 1400,
+                                '+', 1600,
                         },
                         {
                                 SKILL_TEMPORAL,
                                 '+', 0,
-                                '+', 1400,
+                                '+', 1600,
                         },
                         {
                                 SKILL_UDUN,
                                 '+', 0,
-                                '+', 1400,
+                                '+', 1600,
                         },
                 }
 	},
@@ -2738,6 +2742,7 @@ player_class class_info[MAX_CLASS] =
 		25, 30, 32, 2,  16, 8, 48, 35,
 		7,  10, 12, 0,  0,  0, 20, 20,
 		4, 20, //2, 20,//4,20
+//		7, 20,
                 {
                         {
                                 SKILL_COMBAT,
@@ -2865,7 +2870,8 @@ player_class class_info[MAX_CLASS] =
 		{ 2, 1, -2, 3, 1, -1},
 		45, 32, 28, 5, 32, 24, 60, 66,
 		15, 10, 10, 0,  0,  0, 40, 30,
-                5, 25, //3, 25,//5, 25
+		5, 25, //3, 25,//5, 25
+//		8, 25,
                 {
                         {
                                 SKILL_COMBAT,
@@ -2931,22 +2937,22 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
-                                '+', 700,
+                                '+', 750,
                         },
                         {
                                 SKILL_DIVINATION,
                                 '+', 0,
-                                '+', 700,
+                                '+', 750,
                         },
                         {
                                 SKILL_TEMPORAL,
                                 '+', 0,
-                                '+', 700,
+                                '+', 750,
                         },
                         {
                                 SKILL_AIR,
                                 '+', 0,
-                                '+', 700,
+                                '+', 750,
                         },
                         {
                                 SKILL_DEVICE,
@@ -3034,6 +3040,7 @@ player_class class_info[MAX_CLASS] =
 		25, 35, 28, 7, 18, 18, 60, 66,
 	         9, 10, 10, 0,  0,  0, 40, 30,
 		5, 40,//3, 40,//4, 25
+//		8, 40,
                 {
                         {
                                 SKILL_COMBAT,
@@ -3172,6 +3179,7 @@ player_class class_info[MAX_CLASS] =
 		30, 32, 28, 2,  24, 20, 56, 82,
 		8,  10, 10, 0,  0,  0,  30, 55,
 		5, 15,//3, 15,//5, 15
+//		8, 15,
                 {
                         {
                                 SKILL_COMBAT,
@@ -3301,7 +3309,8 @@ player_class class_info[MAX_CLASS] =
  *   HD, Exp*/
 		10, 21, 54, 1,  13, 16, 60, 29,
 		2, 4,  10, 0,  0,  2,  35, 10,
-                8, 30,//5, 30,//7,30
+		8, 30,//5, 30,//7,30
+//		10, 30,
                 {
                         {
                                 SKILL_COMBAT,
@@ -3465,7 +3474,8 @@ player_class class_info[MAX_CLASS] =
  *   HD, Exp*/
 		34, 32, 30, 5, 30, 30, 50, 60,
 		10, 10, 10, 1, 15,  5, 20, 35,
-                7, 35,//4, 35,//6, 35
+		7, 35,//4, 35,//6, 35
+//		9, 35,
                 {
                         {
                                 SKILL_COMBAT,
@@ -3547,62 +3557,62 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MANA,
                                 '+', 1000,	/* Allow to cast Manathrust */
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_FIRE,
                                 '+', 0,
-                                '+', 700,
+                                '+', 900,
                         },
                         {
                                 SKILL_AIR,
                                 '+', 0,
-                                '+', 700,
+                                '+', 900,
                         },
                         {
                                 SKILL_EARTH,
                                 '+', 0,
-                                '+', 700,
+                                '+', 900,
                         },
                         {
                                 SKILL_WATER,
                                 '+', 0,
-                                '+', 700,
+                                '+', 900,
                         },
                         {
                                 SKILL_NATURE,
                                 '+', 0,
-                                '+', 700,
+                                '+', 900,
                         },
                         {
                                 SKILL_DIVINATION,
                                 '+', 0,
-                                '+', 600,
+                                '+', 800,
                         },
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
-                                '+', 700,
+                                '+', 900,
                         },
                         {
                                 SKILL_META,
                                 '+', 0,
-                                '+', 600,
+                                '+', 800,
                         },
                         {
                                 SKILL_MIND,
                                 '+', 0,
-                                '+', 650,
+                                '+', 800,
                         },
                         {
                                 SKILL_TEMPORAL,
                                 '+', 0,
-                                '+', 550,
+                                '+', 700,
                         },
                         {
                                 SKILL_UDUN,
                                 '+', 0,
-                                '+', 450,
+                                '+', 600,
                         },
 
                         {
@@ -4007,26 +4017,27 @@ cptr player_title_special[MAX_CLASS][5][2] =
 
 /*
  * Mimic 'spells' -- they should be integrated to the realm spells
+ * (slevel, smana, sfail, sexp)
  */
 magic_type innate_powers[96] = 
 {
 /* 0, mana, fail, 0 */
 // RF4_SHRIEK			0x00000001	/* Shriek for help */
-  {0, 1, 0, 0},
+  {0, 2, 0, 0},
 // RF4_UNMAGIC			0x00000002	/* (?) */
   {0, 0, 0, 0},
 // (S_ANIMAL) RF4_XXX3			0x00000004	/* (?) */
   {0, 0, 0, 0},
 // RF4_ROCKET			0x00000008	/* (?) */
-  {0, 0, 0, 0},
+  {0, 60, 70, 0},
 // RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
   {0, 2, 10, 0},
 // RF4_ARROW_2			0x00000020	/* Fire an arrow (heavy) */
   {0, 2, 12, 0},
 // XXX (RF4_ARROW_3)			0x00000040	/* Fire missiles (light) */
-  {0, 0, 0, 0},
+  {0, 2, 15, 0},
 // XXX (RF4_ARROW_4)			0x00000080	/* Fire missiles (heavy) */
-  {0, 0, 0, 0},
+  {0, 2, 18, 0},
 // RF4_BR_ACID			0x00000100	/* Breathe Acid */
   {0, 15, 20, 0},
 // RF4_BR_ELEC			0x00000200	/* Breathe Elec */
@@ -4074,7 +4085,7 @@ magic_type innate_powers[96] =
 // 0x40000000
   {0, 0, 0, 0},
 // RF4_BOULDER
-  {0, 2, 10, 0},
+  {0, 2, 15, 0},
 
 /*
  * New monster race bit flags
@@ -4106,7 +4117,7 @@ magic_type innate_powers[96] =
 // RF5_CAUSE_1			0x00001000	/* Cause Light Wound */
   {0, 5, 20, 0},
 // RF5_CAUSE_2			0x00002000	/* Cause Serious Wound */
-  {0, 0, 0, 0},
+  {0, 10, 25, 0},
 // RF5_BA_NUKE			0x00004000	/* Toxic Ball */
   {0, 45, 50, 0},
 // RF5_BA_CHAO			0x00008000	/* Chaos Ball */
@@ -4132,7 +4143,7 @@ magic_type innate_powers[96] =
 // RF5_BO_ICEE			0x02000000	/* Ice Bolt */
   {0, 12, 53, 0},
 // RF5_MISSILE			0x04000000	/* Magic Missile */
-  {0, 1, 5, 0},
+  {0, 2, 5, 0},
 // RF5_SCARE			0x08000000	/* Frighten Player */
   {0, 3, 8, 0},
 // RF5_BLIND			0x10000000	/* Blind Player */
@@ -4156,7 +4167,7 @@ magic_type innate_powers[96] =
 // RF6_XXX2			0x00000008	/* Heal a lot (?) */
   {0, 0, 0, 0},
 // RF6_BLINK			0x00000010	/* Teleport Short */
-  {0, 1, 0, 0},
+  {0, 5, 5, 0},
 // RF6_TPORT			0x00000020	/* Teleport Long */
   {0, 15, 30, 0},
 // RF6_XXX3			0x00000040	/* Move to Player (?) */
@@ -4176,7 +4187,7 @@ magic_type innate_powers[96] =
 // RF6_TRAPS			0x00002000	/* Create Traps */
   {0, 15, 25, 0},
 // RF6_FORGET			0x00004000	/* Cause amnesia */
-  {0, 0, 0, 0},
+  {0, 25, 5, 0},
 
 };
 

@@ -714,7 +714,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 	o_ptr = &forge;
 	invcopy(o_ptr, k_idx);
 	o_ptr->number = num;
-	apply_magic(&p_ptr->wpos, o_ptr, getlevel(&p_ptr->wpos), FALSE, FALSE, FALSE, FALSE);
+	apply_magic(&p_ptr->wpos, o_ptr, getlevel(&p_ptr->wpos), FALSE, FALSE, FALSE, FALSE, FALSE);
 
 	/* No more perfection / EA / and other nice daggers from this one -C. Blue */
 	/* If weapon has good boni, remove all ego abilities */
@@ -761,7 +761,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		redraw_stuff(Ind);
 		if (pdam > 0)
 		{
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
 			{
 				(void)set_poisoned(Ind, p_ptr->poisoned + pdam);
 			}
@@ -942,7 +942,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Poison Needle Trap */
 		case TRAP_OF_POISON_NEEDLE:
 		{
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
 			{
 				msg_print(Ind, "You prick yourself on a poisoned needle.");
 				(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(15) + 10);
@@ -1597,7 +1597,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			struct c_special *cs_ptr;
 			/* Get a nice thing */
 			msg_print(Ind, "You notice something falling off the trap.");
-			acquirement(wpos, y, x, 1, TRUE, !p_ptr->total_winner);
+			acquirement(wpos, y, x, 1, TRUE, TRUE, !p_ptr->total_winner);
 			//			 acquirement(wpos, y, x, 1, TRUE, FALSE);	// last is 'known' flag
 
 			cs_ptr=GetCS(c_ptr, CS_TRAPS);
@@ -2317,7 +2317,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 					msg_print(Ind, "You are pierced by the spikes!");
 					(void)set_cut(Ind, p_ptr->cut + randint(glev * 2) + 30);
 
-					if (glev > 49 && !p_ptr->resist_pois && !p_ptr->oppose_pois)
+					if (glev > 49 && !p_ptr->resist_pois && !p_ptr->oppose_pois && !p_ptr->immune_poison)
 					{
 						msg_print(Ind, "The spikes were poisoned!");
 						(void)set_poisoned(Ind, p_ptr->poisoned + randint(glev * 2) + 50);
@@ -4115,10 +4115,10 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 			delete_monster(&wpos, y, x, TRUE);
 			return(TRUE);
 		case SV_SCROLL_ACQUIREMENT:
-                        acquirement(&wpos, y, x, 1, TRUE, !Players[who]->total_winner);
+                        acquirement(&wpos, y, x, 1, TRUE, TRUE, !Players[who]->total_winner);
 			return (FALSE);
 		case SV_SCROLL_STAR_ACQUIREMENT:
-                        acquirement(&wpos, y, x, randint(2) + 1, TRUE, !Players[who]->total_winner);
+                        acquirement(&wpos, y, x, randint(2) + 1, TRUE, TRUE, !Players[who]->total_winner);
 			return (FALSE);
 		case SV_SCROLL_REMOVE_CURSE:
 			typ = GF_DISP_EVIL;
@@ -4872,7 +4872,7 @@ bool mon_hit_trap(int m_idx)
 
 						/* Apply slays, brand, critical hits */
 						// dam = tot_dam_aux(who, load_o_ptr, dam, m_ptr, &special, brand_msg);
-						dam = tot_dam_aux(who, load_o_ptr, dam, m_ptr, brand_msg);
+						dam = tot_dam_aux(who, load_o_ptr, dam, m_ptr, brand_msg, FALSE);
 						dam = critical_shot(who, load_o_ptr->weight + trapping * 10, load_o_ptr->to_h, dam);
 
 						/* No negative damage */

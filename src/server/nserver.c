@@ -584,6 +584,8 @@ int Setup_net_server(void)
 
 	s_printf("%s\n", longVersion);
 	s_printf("Server is running version %04x\n", MY_VERSION);
+	strcpy(serverStartupTime, showtime());
+	s_printf("Current time is %s\n", serverStartupTime);
 	time(&cfg.runtime);
 
 	return 0;
@@ -1804,6 +1806,11 @@ static int Handle_login(int ind)
 	GetInd[Id] = NumPlayers + 1;
 
 	NumPlayers++;
+	if (NumPlayers > MaxSimultaneousPlayers)
+	{
+		MaxSimultaneousPlayers = NumPlayers;
+		if (MaxSimultaneousPlayers > 15) s_printf("SimultaneousPlayers (above 15): %d\n", MaxSimultaneousPlayers);
+	}
 	connp->id = Id++;
 	
 	//Conn_set_state(connp, CONN_READY, CONN_PLAYING);
@@ -1841,7 +1848,7 @@ static int Handle_login(int ind)
 	/* check pending notes to this player -C. Blue */
 	for (i = 0; i < MAX_ADMINNOTES; i++) {
 		if (strcmp(admin_note[i], "")) {
-			msg_format(NumPlayers, "\377sGlobal Admin Note: %s", admin_note[i]);
+			msg_format(NumPlayers, "\377sServer Note: %s", admin_note[i]);
 		}
 	}
 	for (i = 0; i < MAX_NOTES; i++) {
@@ -1929,7 +1936,7 @@ static int Handle_login(int ind)
 	        else
 			msg_format(NumPlayers, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
 	}
-	
+
 	/* Tell the meta server about the new player */
 	Report_to_meta(META_UPDATE);
 
@@ -2219,6 +2226,10 @@ int Net_input(void)
 			}
 			sprintf(msg, "timeout %02x", connp->state);
 			Destroy_connection(i, msg);
+
+			/* Very VERY bad hack :/ - C. Blue */
+	                save_game_panic();
+
 			continue;
 		}
 
@@ -2884,6 +2895,10 @@ int Send_reliable(int ind)
 	{
 		plog(format("Cannot flush reliable data (%d)", num_written));
 		Destroy_connection(ind, "flush error");
+
+		/* Very bad hack :/ - C. Blue */
+		save_game_panic();
+
 		return -1;
 	}
 	Sockbuf_clear(&connp->c);

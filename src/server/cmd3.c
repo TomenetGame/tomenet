@@ -161,6 +161,19 @@ void inven_takeoff(int Ind, int item, int amt)
 	if((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith)
 		p_ptr->tim_wraith = 1;
 
+	/* Artifacts */
+	if (o_ptr->name1)
+	{
+		artifact_type *a_ptr;
+		/* Obtain the artifact info */
+		if (o_ptr->name1 == ART_RANDART)
+    			a_ptr = randart_make(o_ptr);
+		else
+		        a_ptr = &a_info[o_ptr->name1];
+
+		if (a_ptr->flags3 & TR3_WRAITH) p_ptr->tim_wraith = 1;
+	}
+
 	/* Carry the object, saving the slot it went in */
 	posn = inven_carry(Ind, &tmp_obj);
 
@@ -376,15 +389,28 @@ bool item_tester_hook_wear(int Ind, int slot)
 			case INVEN_LITE:
 				/* Always allow to carry light source? :/ */
 				/* return (TRUE); break; */
+				if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+				if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
+				if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
+				if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+				break;
 			case INVEN_BODY:
 			case INVEN_OUTER:
 			case INVEN_AMMO:
 				if (r_ptr->body_parts[BODY_TORSO]) return (TRUE);
 				break;
 			case INVEN_ARM:
-			case INVEN_HANDS:
-			case INVEN_TOOL:
 				if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+				break;
+			case INVEN_TOOL:
+				/* make a difference :) - C. Blue */
+				if (r_ptr->body_parts[BODY_ARMS] ||
+//				    r_ptr->body_parts[BODY_FINGER] ||
+				    r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+				break;
+			case INVEN_HANDS:
+				if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+//				if (r_ptr->body_parts[BODY_FINGER]) return (TRUE); too silyl (and powerful)
 				break;
 			case INVEN_FEET:
 				if (r_ptr->body_parts[BODY_LEGS]) return (TRUE);
@@ -1307,6 +1333,14 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 	int monst_list[23];
 
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
+
+        /* Ghosts cannot steal */
+        if (p_ptr->ghost)
+        {
+                msg_print(Ind, "You cannot steal things!");
+                return;
+        }
+
 
 	/* Only works on adjacent monsters */
 	if (!get_rep_dir(&dir)) return;

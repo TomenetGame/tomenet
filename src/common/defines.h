@@ -1861,6 +1861,7 @@ that keeps many algorithms happy.
 #define SV_FAUCHARD                      6  /* 1d10 */
 #define SV_BROAD_SPEAR                   7	/* 1d9 */
 #define SV_PIKE                          8	/* 2d5 */
+#define SV_KHOPESH                       9  	/* 2d4 */
 #define SV_GLAIVE                       13	/* 2d6 */
 #define SV_HALBERD                      15	/* 3d4 */
 #define SV_GUISARME                     16  /* 2d5 */
@@ -1881,7 +1882,6 @@ that keeps many algorithms happy.
 #define SV_SHORT_SWORD                  10  /* 1d7 */
 #define SV_SABRE                        11  /* 1d7 */
 #define SV_CUTLASS                      12  /* 1d7 */
-#define SV_KHOPESH                      14  /* 2d4 */
 #define SV_TULWAR                       15  /* 2d4 */
 #define SV_BROAD_SWORD                  16  /* 2d5 */
 #define SV_LONG_SWORD                   17  /* 2d5 */
@@ -5405,3 +5405,9 @@ extern int PlayerUID;
 /* erase items on the floor? */
 #define ITEM_REMOVAL_NORMAL	0	/* this must always be 0 (assumed as default if not set to a different value) */
 #define ITEM_REMOVAL_NEVER	1
+
+
+/* C. Blue - Automatic transport sequences for characters
+   (kind of scripted transport for special situations) */
+#define AT_BLINK	1	/* teleport short range; used after panic-save auto-recalling */
+

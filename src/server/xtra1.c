@@ -692,6 +692,12 @@ static void health_redraw(int Ind)
 		/* Default to almost dead */
 		byte attr = TERM_RED;
 
+		/* Crash once occurred here, m_ptr->hp -296, m_ptr->maxhp 0 - C. Blue */
+		if (m_ptr->maxhp == 0) {
+			Send_monster_health(Ind, 0, 0);
+			return;
+		} else
+
 		/* Extract the "percent" of health */
 		pct = 100L * m_ptr->hp / m_ptr->maxhp;
 
@@ -1219,7 +1225,7 @@ static void calc_mana(int Ind)
  * 30.
  */
 
-static void calc_hitpoints(int Ind)
+void calc_hitpoints(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *p_ptr2;
 
@@ -1227,7 +1233,7 @@ static void calc_hitpoints(int Ind)
 //	u32b f1, f2, f3, f4, f5, esp;
 
 	int bonus, Ind2 = 0;
-	long mhp, mhp_playerform;
+	long mhp, mhp_playerform, weakling_boost;
 	u32b mHPLim, finalHP;
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
@@ -1244,8 +1250,66 @@ static void calc_hitpoints(int Ind)
 	bonus = ((int)(adj_con_mhp[p_ptr->stat_ind[A_CON]]) - 128);
 
 	/* Calculate hitpoints */
-	if (p_ptr->fruit_bat) mhp = (p_ptr->player_hp[p_ptr->lev-1] / 4) + (bonus * p_ptr->lev);
-	else mhp = p_ptr->player_hp[p_ptr->lev-1] + (bonus * p_ptr->lev / 2);
+	if (!cfg.bonus_calc_type) {
+		/* The traditional way.. */
+		if (p_ptr->fruit_bat) mhp = (p_ptr->player_hp[p_ptr->lev-1] / 4) + (bonus * p_ptr->lev);
+		else mhp = p_ptr->player_hp[p_ptr->lev-1] + (bonus * p_ptr->lev / 2);
+	} else {
+		/* And here I made the formula slightly more complex to fit better :> - C. Blue -
+		   Explanation why I made If-clauses for Istari (Mage) and Yeeks:
+		   - Istari are extremely low on HP compared to other classes,
+		   but in order to reduce the insta-kill chance when trying to win
+		   they get an out-of-line HP boost here when they come closer to
+		   level 50, which starts to diminish again after they won and
+		   further raise in levels!
+		   - Yeeks do get the same boost as all the others, but since yeeks
+		   hitdice ratio is extraordinarily bad it would nearly become
+		   cancelled out by the added boost, so the boost is slightly reduced
+		   for them (except for the ultra-weak Yeek Istari) to fit their
+		   low exp% better. 
+		   This can logically be done well by making IF-exceptions since the
+		   help-kinging-boost is added and not multiplied by a character's
+		   exp-ratio, and the race-hitpoint dice have no influence on it.
+		   - The penalty is finely tuned to make Yeek Priests still a deal
+		   tougher than Istari, even without sorcery, while keeping in account
+		   the relation to all stronger classes as well. - C. Blue */
+		if (p_ptr->fruit_bat)
+			mhp = ((p_ptr->player_hp[p_ptr->lev-1] * 4) * (20 + bonus)) / (45 * 3);
+		else
+			mhp = (p_ptr->player_hp[p_ptr->lev-1] * 2 * (20 + bonus)) / 45;
+
+/* I think it might be better to dimish the boost for yeeks after level 50 slowly towards level 100 
+   while granting the full boost at the critical level 50 instead of just a minor boost. Reason is:
+   They don't have Morgoth's crown yet so they are unlikely to reach *** CON, but after winning
+   they will be way stronger! On the other hand yeeks are already so weak that ultra-high Yeek
+   Istari could still be instakilled (max. sorcery skill) if the boost is diminished,
+   so only Yeek Mimics whose HP greatly reduces the low hitdice effect should be affected,
+   as well as Adventurer-Mimics.. since it cannot be skill-based (might change anytime) nor
+   class-based, we just punish all Yeeks, that's why they're for after all >;) */
+#if 0 /* Reduced boost? */
+		if (p_ptr->pclass == CLASS_MAGE || p_ptr->prace != RACE_YEEK)
+			weakling_boost = ((p_ptr->lev < 50) ?
+					(((p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2500) * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20 :
+					(50 * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20); /* Don't grow further above level 50 */
+		else
+			weakling_boost = ((p_ptr->lev < 50) ?
+					((((p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2500) * (6 - p_ptr->cp_ptr->c_mhp * 2)) / 3) :
+					((50 * (6 - p_ptr->cp_ptr->c_mhp * 2)) / 3)); /* Don't grow further above level 50 */
+#endif
+#if 1 /* Slowly diminishing boost? */
+		weakling_boost = ((p_ptr->lev < 50) ?
+				(((p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2500) * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20 : /* <- full bonus */
+/*					(p_ptr->pclass == CLASS_MAGE || p_ptr->prace != RACE_YEEK) ?*/
+/*					(p_ptr->pclass != CLASS_MIMIC || p_ptr->prace != RACE_YEEK) ?*/
+					((p_ptr->prace != RACE_YEEK) ?
+					(50 * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20 : /* <- full bonus */
+					((100 - p_ptr->lev) * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20)); /* <- full bonus, slowly diminishing */
+					/* Note that the diminishing ends at level 100 ;) So it's not that bad */
+#endif
+
+		/* Help very weak characters close to level 50 to avoid instakill on trying to win */
+		mhp += weakling_boost;
+	}
 
 #if 0 // DGDGDGDG why ?
 	/* Option : give mages a bonus hitpoint / lvl */
@@ -1305,7 +1369,10 @@ static void calc_hitpoints(int Ind)
 	/* Bonus from +LIFE items (should be weapons only).
 	   Also, cap it at +3 (boomerang + weapon could result in +6) */
 	if (!is_admin(p_ptr) && p_ptr->to_l > 3) p_ptr->to_l = 3;
-	mhp += mhp_playerform * p_ptr->to_l / 10;
+	if (mhp > mhp_playerform)
+		mhp += mhp_playerform * p_ptr->to_l / 10;
+	else
+		mhp += mhp * p_ptr->to_l / 10;
 
 	/* New maximum hitpoints */
 	if (mhp != p_ptr->mhp)
@@ -1321,6 +1388,9 @@ static void calc_hitpoints(int Ind)
 
 		/* Save the new max-hitpoints */
 		p_ptr->mhp = mhp;
+		
+		/* Little fix (chp = mhp+1 sometimes) */
+		if (p_ptr->chp > p_ptr->mhp) p_ptr->chp = p_ptr->mhp;
 
 		/* Display hitpoints (later) */
 		p_ptr->redraw |= (PR_HP);
@@ -2044,9 +2114,15 @@ int get_archery_skill(player_type *p_ptr)
 int calc_blows(int Ind, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
-	int str_index, dex_index;
+	int str_index, dex_index, eff_weight = o_ptr->weight;
 
 	int num = 0, wgt = 0, mul = 0, div = 0, num_blow = 0;
+
+	/* Weapons which are wielded 2-handed are easier to swing
+	   than with one hand - experimental - C. Blue */
+	if ((!p_ptr->inventory[INVEN_ARM].k_idx) &&
+	    (k_info[o_ptr->k_idx].flags4 & (TR4_COULD2H | TR4_MUST2H)))
+		eff_weight = (eff_weight * 2) / 3;
 
 	/* Analyze the class */
 	switch (p_ptr->pclass)
@@ -2083,7 +2159,7 @@ int calc_blows(int Ind, object_type *o_ptr)
 	}
 
 	/* Enforce a minimum "weight" (tenth pounds) */
-	div = ((o_ptr->weight < wgt) ? wgt : o_ptr->weight);
+	div = ((eff_weight < wgt) ? wgt : eff_weight);
 
 	/* Access the strength vs weight */
 	str_index = (adj_str_blow[p_ptr->stat_ind[A_STR]] * mul / div);

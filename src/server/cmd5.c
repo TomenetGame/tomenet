@@ -1053,6 +1053,9 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
 			(void)dec_stat(Ind, A_CON, 15 + randint(10), perm);
 		}
 	}
+
+	/* Display the spellpoints */
+        p_ptr->redraw |= (PR_MANA);
 }
 
 /*
@@ -1546,6 +1549,9 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			if (p_ptr->r_killed[j] < 1 && j) continue;
 			if (strlen(r_info[j].name + r_name) <= 1) continue;
 			if (!r_info[j].level && !mon_allowed(&r_info[j])) continue;
+			
+			/* Don't accidentally poly into a form that suppresses polymorphing */
+			if (r_info[j].flags7 & RF7_DISBELIEVE) continue;
 
 			/* Ok we found */
 			break;

@@ -1282,7 +1282,7 @@ artifact_type *randart_make(object_type *o_ptr)
 {
 	/*u32b activates;*/
 	s32b power;
-	int tries;
+	int tries, quality_boost = 0;
 	s32b ap;
 	bool curse_me = FALSE;
 	bool aggravate_me = FALSE;
@@ -1335,6 +1335,9 @@ artifact_type *randart_make(object_type *o_ptr)
 	  {
 	    return (NULL);
 	  }
+
+	if (k_ptr->flags4 & TR4_COULD2H) quality_boost += 15;
+	if (k_ptr->flags4 & TR4_MUST2H) quality_boost += 30;
 	
 	/* Wipe the artifact_type structure */
 	WIPE(&randart, artifact_type);
@@ -1345,7 +1348,8 @@ artifact_type *randart_make(object_type *o_ptr)
 	 */
 	if (rand_int(10))
 	{
-		power = rand_int(80) + RANDART_QUALITY;
+		/* maybe move quality_boost to become added to randart_quality.. */
+		power = rand_int(80 + quality_boost) + RANDART_QUALITY;
 	}
 	/* 10% are cursed */
 	else
@@ -1356,9 +1360,9 @@ artifact_type *randart_make(object_type *o_ptr)
 	if (power < 0) curse_me = TRUE;
 	
 	/* Really powerful items should aggravate. */
-	if (power > 100)
+	if (power > 100 + quality_boost)
 	{
-		if (rand_int (100) < (power - 100) * 3)
+		if (rand_int (100) < (power - 100 - quality_boost) * 3)
 		{
 			aggravate_me = TRUE;
 		}
@@ -1597,7 +1601,7 @@ artifact_type *randart_make(object_type *o_ptr)
 	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT) &&
 	    (a_ptr->pval > 7)) a_ptr->pval = (a_ptr->pval * 2) / 3;
 	/* No more than +6 stealth */
-	if ((a_ptr->flags1 & TR1_STEALTH) && (a_ptr->pval > 6)) a_ptr->pval = 6;
+	if ((a_ptr->flags1 & TR1_STEALTH) && (a_ptr->pval > 5)) a_ptr->pval = 5;/* was 6, but I think that's too much Stealth in one item?.. */
 	/* No more than +5 luck */
 	if ((a_ptr->flags5 & TR5_LUCK) && (a_ptr->pval > 5)) a_ptr->pval = 5;
 	/* No more than +3 disarming ability (randart picklocks aren't allowed anyways) */

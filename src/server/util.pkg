@@ -156,6 +156,8 @@ struct server_opts
 	bool surface_summoning;	/* May players summon in towns / on the worldmap? Very cheezy! */
 	s16b clone_summoning;	/* how many summons are not yet clones, from a summoner? */
 	s16b henc_strictness;	/* how easily monster adjust their exp to their highest player encounter */
+	s16b bonus_calc_type;	/* how HP are calculated */
+	s16b charmode_trading_restrictions; /* how trading between everlasting and non-everlasting players is restricted */
 };
 
 extern s32b turn;
@@ -270,3 +272,5 @@ extern u16b max_t_idx;
 
 extern int global_luck;
 extern void lua_intrusion(int Ind, char *problem_diz);
+/* extern char serverStartupTime[40]; */
+extern char *sST;

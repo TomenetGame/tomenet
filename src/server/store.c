@@ -477,8 +477,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
 
 	/* Different modes cannot be stacked */
-	if (((o_ptr->owner_mode & MODE_IMMORTAL) && !(j_ptr->owner_mode & MODE_IMMORTAL)) ||
-	    (!(o_ptr->owner_mode & MODE_IMMORTAL) && (j_ptr->owner_mode & MODE_IMMORTAL)))
+	if ((o_ptr->owner_mode & MODE_IMMORTAL) != (j_ptr->owner_mode & MODE_IMMORTAL))
 		return (0);
 
 	/* Different charges (etc) cannot be stacked */
@@ -1269,7 +1268,7 @@ static void store_create(store_type *st_ptr)
 		else good = FALSE;
 		if (st_info[st_ptr->st_idx].flags1 & SF1_GREAT) great = TRUE;
 		else great = FALSE;
-		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, good, great, FALSE);
+		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, good, great, FALSE, FALSE);
 
 		/* Hack -- Charge lite uniformly */
 		if (o_ptr->tval == TV_LITE)
@@ -1552,11 +1551,18 @@ static void display_entry(int Ind, int pos)
 		o_name[maxwid] = '\0';
 
 		attr = tval_to_attr[o_ptr->tval];
-		/* grey out if wrong mode / level */
-		if ( ( ((!o_ptr->level) || (o_ptr->level > p_ptr->lev)) &&
-			(o_ptr->owner) && (o_ptr->owner != p_ptr->id) ) ||
-		     ((o_ptr->owner_mode == MODE_IMMORTAL) && (p_ptr->mode != MODE_IMMORTAL)) )
+
+		/* grey out if level requirements don't meet */
+		if (((!o_ptr->level) || (o_ptr->level > p_ptr->lev)) &&
+		    (o_ptr->owner) && (o_ptr->owner != p_ptr->id))
 			attr = TERM_L_DARK;
+
+		/* grey out if mode doesn't meet */
+		if ((o_ptr->owner) && (o_ptr->owner_mode == MODE_IMMORTAL) && (p_ptr->mode != MODE_IMMORTAL))
+			attr = TERM_L_DARK; /* covers charmode_trading_restrictions 0 and 1 */
+		if ((cfg.charmode_trading_restrictions == 2) &&
+		    ((o_ptr->owner) && (o_ptr->owner_mode & MODE_IMMORTAL) != (p_ptr->mode & MODE_IMMORTAL)))
+			attr = TERM_L_DARK; /* added check for charmode_trading_restrictions level 2 */
 
 		/* Only show the weight of an individual item */
 		wgt = o_ptr->weight;
@@ -1579,11 +1585,18 @@ static void display_entry(int Ind, int pos)
 		o_name[maxwid] = '\0';
 
 		attr = tval_to_attr[o_ptr->tval];
-		/* grey out if wrong mode / level */
-		if ( ( ((!o_ptr->level) || (o_ptr->level > p_ptr->lev)) &&
-			(o_ptr->owner) && (o_ptr->owner != p_ptr->id) ) ||
-		     ((o_ptr->owner_mode == MODE_IMMORTAL) && (p_ptr->mode != MODE_IMMORTAL)) )
+
+		/* grey out if level requirements don't meet */
+		if (((!o_ptr->level) || (o_ptr->level > p_ptr->lev)) &&
+		    (o_ptr->owner) && (o_ptr->owner != p_ptr->id))
 			attr = TERM_L_DARK;
+
+		/* grey out if mode doesn't meet */
+		if ((o_ptr->owner) && (o_ptr->owner_mode == MODE_IMMORTAL) && (p_ptr->mode != MODE_IMMORTAL))
+			attr = TERM_L_DARK; /* covers charmode_trading_restrictions 0 and 1 */
+		if ((cfg.charmode_trading_restrictions == 2) &&
+		    ((o_ptr->owner) && (o_ptr->owner_mode & MODE_IMMORTAL) != (p_ptr->mode & MODE_IMMORTAL)))
+			attr = TERM_L_DARK; /* added check for charmode_trading_restrictions level 2 */
 
 		/* Only show the weight of an individual item */
 		wgt = o_ptr->weight;
@@ -1823,9 +1836,29 @@ void store_stole(int Ind, int item)
 
 	char		o_name[160];
 
+	/* Store in which town? Or in the dungeon? */
+	i=gettown(Ind);
+	st_ptr = &town[i].townstore[st];
+//	if(i==-1) return;       //DUNGEON STORES
+        if(i==-1) i=0;
+
+	/* Get the actual item */
+	o_ptr = &st_ptr->stock[item];
+
 	if (p_ptr->store_num == 7)
 	{
 		msg_print(Ind, "You don't steal from your home!");
+		return;
+	}
+
+	if ((cfg.charmode_trading_restrictions > 0) && (o_ptr->owner) && !is_admin(p_ptr) &&
+	    (!(p_ptr->mode & MODE_IMMORTAL) && (o_ptr->owner_mode & MODE_IMMORTAL))) {
+		msg_print(Ind, "You cannot take items of everlasting players!");
+		return;
+	}
+	if ((cfg.charmode_trading_restrictions > 1) && (o_ptr->owner) && !is_admin(p_ptr) &&
+	    ((p_ptr->mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL))) {
+		msg_print(Ind, "You cannot take items of non-everlasting players!");
 		return;
 	}
 
@@ -1846,16 +1879,11 @@ void store_stole(int Ind, int item)
 		return;
 	}
 
-	i=gettown(Ind);
-//	if(i==-1) return;       //DUNGEON STORES
-        if(i==-1) i=0;
-
 	if (p_ptr->store_num==-1){
 		msg_print(Ind,"You left the shop!");
 		return;
 	}
 
-	st_ptr = &town[i].townstore[st];
 //	ot_ptr = &owners[st][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
@@ -1864,9 +1892,6 @@ void store_stole(int Ind, int item)
 		//if (!is_admin(p_ptr)) return;
 		return;
 	}
-
-	/* Get the actual item */
-	o_ptr = &st_ptr->stock[item];
 
 	/* Assume the player wants just one of them */
 	/*amt = 1;*/
@@ -2162,6 +2187,17 @@ void store_purchase(int Ind, int item, int amt)
 
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
+
+	if ((cfg.charmode_trading_restrictions > 0) && (o_ptr->owner) && !is_admin(p_ptr) &&
+	    (!(p_ptr->mode & MODE_IMMORTAL) && (o_ptr->owner_mode & MODE_IMMORTAL))) {
+		msg_print(Ind, "You cannot take items of non-everlasting players!");
+		return;
+	}
+	if ((cfg.charmode_trading_restrictions > 1) && (o_ptr->owner) && !is_admin(p_ptr) &&
+	    ((p_ptr->mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL))) {
+		msg_print(Ind, "You cannot take items of non-everlasting players!");
+		return;
+	}
 
 	/* Check if the player is powerful enough for that item */
         if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))
@@ -3795,6 +3831,17 @@ void home_purchase(int Ind, int item, int amt)
 
 	/* Get the actual item */
 	o_ptr = &h_ptr->stock[item];
+
+	if ((cfg.charmode_trading_restrictions > 0) && (o_ptr->owner) && !is_admin(p_ptr) &&
+	    (!(p_ptr->mode & MODE_IMMORTAL) && (o_ptr->owner_mode & MODE_IMMORTAL))) {
+		msg_print(Ind, "You cannot take items of everlasting players!");
+		return;
+	}
+	if ((cfg.charmode_trading_restrictions > 1) && (o_ptr->owner) && !is_admin(p_ptr) &&
+	    ((p_ptr->mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL))) {
+		msg_print(Ind, "You cannot take items of non-everlasting players!");
+		return;
+	}
 
 	/* Check if the player is powerful enough for that item */
         if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))

@@ -338,6 +338,9 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&o_ptr->tval);
 	rd_byte(&o_ptr->sval);
 
+/* HACKHACKHACK - C. Blue - Moved Khopesh to polearms */
+if (o_ptr->tval == 23 && o_ptr->sval == 14) {o_ptr->tval = 22; o_ptr->sval = 9;}
+
 	/* Base pval */
 	rd_s32b(&o_ptr->bpval);
 	rd_s32b(&o_ptr->pval);
@@ -1127,7 +1130,11 @@ static bool rd_extra(int Ind)
 
 
 	/* Future use */
-	for (i = 0; i < 44; i++) rd_byte(&tmp8u);
+	for (i = 0; i < 43; i++) rd_byte(&tmp8u);
+	
+	/* Toggle for possible automatic save-game updates
+	   (done via script login-hook, eg custom.lua) - C. Blue */
+	rd_byte(&p_ptr->updated);
 
 	/* Skip the flags */
 	strip_bytes(12);

@@ -5026,10 +5026,16 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
  * Added "true_art" to disallow true artifacts in case a king/queen kills a
  * monster, they cannot carry true artifacts anyways (but they would usually
  * find heaps of them..) - C. Blue
+ *
+ * "verygreat" makes sure that ego items aren't just resist fire etc.
+ * Has no influence on artifacts. - C. Blue
  */
-void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool true_art)
+void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, bool true_art)
 {
+	object_type *o_ptr_bak;
+
 	int i, rolls, f1, f2, power;
+
 
 	/* if true arts aren't forbidden, allow them to get a chance of being generated
 	   (goes in hand with the same check in apply_magic) - C. Blue */
@@ -5173,6 +5179,12 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	}
 
 
+	/* In case we get an ego item, check "verygreat" flag and retry a few times if needed */
+	object_copy(o_ptr_bak, o_ptr);
+	for (i = 0; i < 4; i++) {
+	object_copy(o_ptr, o_ptr_bak);
+
+
 	/* Apply magic */
 	switch (o_ptr->tval)
 	{
@@ -5252,6 +5264,15 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			break;
 		}
 	}
+
+
+	/* "verygreat" check: */
+	/* 2000 to exclude res, light, reg, etc */
+	/* 5000+objval to exclude brands/slays */
+	if (!verygreat || object_value_real(0, o_ptr) >= 7000) break;
+	}
+
+
 
 #if 1	// tweaked pernA ego.. 
 	/* Hack -- analyze ego-items */
@@ -5486,7 +5507,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
  * This 'utter hack' function is to allow item-generation w/o specifing
  * worldpos.
  */
-void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool true_art)
+void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, bool true_art)
 {
 	worldpos wpos;
 
@@ -5494,7 +5515,7 @@ void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool g
 	wpos.wx = cfg.town_x;
 	wpos.wy = cfg.town_y;
 	wpos.wz = Depth > 0 ? 0 - Depth : Depth;
-	apply_magic(&wpos, o_ptr, lev, okay, good, great, true_art);
+	apply_magic(&wpos, o_ptr, lev, okay, good, great, verygreat, true_art);
 }
 
 
@@ -5643,6 +5664,10 @@ void determine_level_req(int level, object_type *o_ptr)
 		case EGO_RISTARI:
 			base += 10;
 			break;
+
+		case EGO_SPEED:
+			base += o_ptr->bpval * 2;
+			break;
 		
 		default:
 			base += 15;
@@ -5662,6 +5687,12 @@ void determine_level_req(int level, object_type *o_ptr)
 	if (o_ptr->name1 == ART_RANDART) {
 		if (o_ptr->level > 51) o_ptr->level = 51 + ((o_ptr->level - 51) / 3);
 	}
+
+	/* Slightly reduce high levels */
+	if (o_ptr->level > 55) o_ptr->level--;
+	if (o_ptr->level > 50) o_ptr->level--;
+	if (o_ptr->level > 45) o_ptr->level--;
+	if (o_ptr->level > 40) o_ptr->level--;
 }
 
 
@@ -5948,9 +5979,9 @@ s16b unique_quark = 0;
  * This routine requires a clean floor grid destination.
  */
 //void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
-void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool true_art, obj_theme theme, int luck, byte removal_marker)
+void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, bool true_art, obj_theme theme, int luck, byte removal_marker)
 {
-	int prob, base, tmp_luck;
+	int prob, base, tmp_luck, i;
 
 	object_type		forge;
 
@@ -5985,10 +6016,10 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	}
 
 	/* Chance of "special object" */
-	prob = (good ? 10 : 1000);
+	prob = (good || great ? 10 : 1000);
 
 	/* Base level for the object */
-	base = (good ? (object_level + 10) : object_level);
+	base = (good || great ? (object_level + 10) : object_level);
 
 
 	/* Hack -- clear out the forgery */
@@ -6026,7 +6057,14 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 
 
 		/* Pick a random object */
-		k_idx = get_obj_num(base);
+		/* Magic arrows from DROP_GREAT monsters are annoying.. - C. Blue */
+		if (great)
+			for (i = 0; i < 2; i++) {
+				k_idx = get_obj_num(base);
+				if (k_info[k_idx].tval != TV_ARROW || k_info[k_idx].sval != SV_AMMO_MAGIC) break;
+			}
+		else
+			k_idx = get_obj_num(base);
 
 		/* Good objects */
 #if 0	// commented out for efficiency
@@ -6048,7 +6086,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	}
 
 	/* Apply magic (allow artifacts) */
-	apply_magic(wpos, &forge, object_level, TRUE, good, great, true_art);
+	apply_magic(wpos, &forge, object_level, TRUE, good, great, verygreat, true_art);
 
 	/* Hack -- generate multiple spikes/missiles */
 	if (!forge.name1)
@@ -6118,7 +6156,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 /*
  * Scatter some "great" objects near the player
  */
-void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool true_art)
+void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, bool true_art)
 {
 	int        y, x, i, d;
 	cave_type **zcave;
@@ -6139,7 +6177,7 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 			/* Must have a clean grid */
 			if (!cave_clean_bold(zcave, y, x)) continue;
 			/* Place a good (or great) object */
-			place_object(wpos, y, x, TRUE, great, true_art, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
+			place_object(wpos, y, x, TRUE, great, verygreat, true_art, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
 			/* Notice */
 			note_spot_depth(wpos, y, x);
 

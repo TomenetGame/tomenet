@@ -1918,7 +1918,10 @@ static bool do_cancellation(int Ind, int flags)
 		if (o_ptr->timeout)
 		{
 			ident = TRUE;
-			o_ptr->timeout = 0;
+			if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)
+				o_ptr->timeout = 1;
+			else
+				o_ptr->timeout = 0;
 		}
 		if (o_ptr->pval > 0)
 		{
@@ -2569,7 +2572,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 /*				int obj_tmp = object_level;
 				object_level = p_ptr->wpos.wz / 2;
-*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, !p_ptr->total_winner);
+*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, TRUE, !p_ptr->total_winner);
 /*				object_level = obj_tmp; //just paranoia, dunno if needed.*/
 				ident = TRUE;
 				break;
@@ -2579,7 +2582,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 /*				int obj_tmp = object_level;
 				object_level = p_ptr->wpos.wz / 2;
-*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, !p_ptr->total_winner);
+*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, TRUE, !p_ptr->total_winner);
 /*				object_level = obj_tmp; //just paranoia, dunno if needed.*/
 				ident = TRUE;
 				break;
@@ -7626,7 +7629,7 @@ static int fletchery_items(int Ind)
 	object_aware(Ind, q_ptr); \
 	object_known(q_ptr); \
 	if (tlev > 50) q_ptr->ident |= ID_MENTAL; \
-	apply_magic(&p_ptr->wpos, q_ptr, tlev, FALSE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE, FALSE); \
+	apply_magic(&p_ptr->wpos, q_ptr, tlev, FALSE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE, FALSE, FALSE); \
 	q_ptr->ident &= ~ID_CURSED; \
 	q_ptr->note = quark_add("Handmade"); \
 	q_ptr->discount = 50 + 25 * rand_int(3); \
