@@ -1,0 +1,40 @@
+#$Id$
+
+# Town Name: Shores of Valinor
+# Created for ToMENet by C. Blue (mail@c-blue.de
+#
+
+%:t_pref.txt
+
+F:m:101:3
+
+###################### Buildings ########################
+
+
+# Town Layout
+#64D:mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+D:mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
+D:mmmmmmmmmm.......mmmmmmmmmmmmmm
+D:mmmmmmm.............mmmmmmmmmmm
+D:mmmmmm...............mmmmmmmmmm
+D:mmmmmmm.......<.....mmmmmmmmmmm
+D:mmmmmmmm          mmmmmmmmmmmmm
+D:mmmm                  mmmmmmmmm
+D:mmm                         mmm
+D:m                             m
+D:mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+# Default starting position
+# ?:[EQU $LEAVING_QUES  0]
+P:14:15
