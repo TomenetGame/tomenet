@@ -304,20 +304,6 @@ static errr wr_savefile(void)
 
 #if 0
 
-	/* Dump the "messages" */
-
-	/* Dump the number of "messages" */
-	tmp16u = message_num();
-	if (compress_savefile && (tmp16u > 40)) tmp16u = 40;
-	wr_u16b(tmp16u);
-
-	/* Dump the messages (oldest first!) */
-	for (i = tmp16u - 1; i >= 0; i--)
-	{
-		wr_string(message_str(i));
-	}
-
-
 	/* Dump the monster lore */
 	tmp16u = MAX_R_IDX;
 	wr_u16b(tmp16u);
@@ -1536,18 +1522,6 @@ static bool wr_savefile_new(int Ind)
 
 
 #if 0
-	/* Dump the number of "messages" */
-	tmp16u = message_num();
-	if (compress_savefile && (tmp16u > 40)) tmp16u = 40;
-	wr_u16b(tmp16u);
-
-	/* Dump the messages (oldest first!) */
-	for (i = tmp16u - 1; i >= 0; i--)
-	{
-		wr_string(message_str(i));
-	}
-
-
 	/* Dump the monster lore */
 	tmp16u = MAX_R_IDX;
 	wr_u16b(tmp16u);

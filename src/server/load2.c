@@ -1429,32 +1429,6 @@ static errr rd_hostilities(int Ind)
 #if 0
 
 /*
- * Read the saved messages
- */
-static void rd_messages(void)
-{
-	int i;
-	char buf[128];
-
-	s16b num;
-
-	/* Hack -- old method used circular queue */
-	rd_s16b(&num);
-
-	/* Read the messages */
-	for (i = 0; i < num; i++)
-	{
-		/* Read the message */
-		rd_string(buf, 128);
-
-		/* Save the message */
-		message_add(buf);
-	}
-}
-
-
-
-/*
  * New "cave grid" flags -- saved in savefile
  */
 #define OLD_GRID_W_01	0x0001	/* Wall type (bit 1) */

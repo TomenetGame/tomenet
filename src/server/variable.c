@@ -209,33 +209,6 @@ s16b temp_n;
 byte temp_y[TEMP_MAX];
 byte temp_x[TEMP_MAX];
 
-
-/*
- * Number of active macros.
- */
-s16b macro__num;
-
-/*
- * Array of macro patterns [MACRO_MAX]
- */
-cptr *macro__pat;
-
-/*
- * Array of macro actions [MACRO_MAX]
- */
-cptr *macro__act;
-
-/*
- * Array of macro types [MACRO_MAX]
- */
-bool *macro__cmd;
-
-/*
- * Current macro action [1024]
- */
-char *macro__buf;
-
-
 /*
  * The number of quarks
  */
@@ -245,37 +218,6 @@ s16b quark__num;
  * The pointers to the quarks [QUARK_MAX]
  */
 cptr *quark__str;
-
-
-/*
- * The next "free" index to use
- */
-u16b message__next;
-
-/*
- * The index of the oldest message (none yet)
- */
-u16b message__last;
-
-/*
- * The next "free" offset
- */
-u16b message__head;
-
-/*
- * The offset to the oldest used char (none yet)
- */
-u16b message__tail;
-
-/*
- * The array of offsets, by index [MESSAGE_MAX]
- */
-u16b *message__ptr;
-
-/*
- * The array of chars, by offset [MESSAGE_BUF]
- */
-char *message__buf;
 
 /*
  * The array of indexes of "live" objects

@@ -1381,24 +1381,8 @@ static errr init_other(void)
 
 	/*** Prepare the various "bizarre" arrays ***/
 
-	/* Macro variables */
-	C_MAKE(macro__pat, MACRO_MAX, cptr);
-	C_MAKE(macro__act, MACRO_MAX, cptr);
-	C_MAKE(macro__cmd, MACRO_MAX, bool);
-
-	/* Macro action buffer */
-	C_MAKE(macro__buf, 1024, char);
-
 	/* Quark variables */
 	C_MAKE(quark__str, QUARK_MAX, cptr);
-
-	/* Message variables */
-	C_MAKE(message__ptr, MESSAGE_MAX, u16b);
-	C_MAKE(message__buf, MESSAGE_BUF, char);
-
-	/* Hack -- No messages yet */
-	message__tail = MESSAGE_BUF;
-
 
 	/*** Prepare the Player inventory ***/
 

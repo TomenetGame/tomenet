@@ -219,14 +219,6 @@ int main(int argc, char *argv[])
 			catch_signals = FALSE;
 			break;
 
-#if 0
-			case 'u':
-			case 'U':
-			if (!argv[0][2]) goto usage;
-			strcpy(player_name, &argv[0][2]);
-			break;
-#endif
-
 			case 'm':
 			case 'M':
 			MANGBAND_CFG = &argv[0][2];
@@ -249,12 +241,6 @@ int main(int argc, char *argv[])
 			quit(NULL);
 		}
 	}
-
-#if 0
-
-	/* Process the player name */
-	process_player_name(TRUE);
-#endif
 
 	/* Tell "quit()" to call "Term_nuke()" */
 	quit_aux = quit_hook;
