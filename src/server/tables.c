@@ -3589,13 +3589,13 @@ magic_type innate_powers[96] =
 // RF4_BR_PLAS			0x02000000	/* Breathe Plasma */
   {0, 30, 30, 0},
 // RF4_BR_WALL			0x04000000	/* Breathe Force */
-  {0, 30, 60, 0},
+  {0, 40, 60, 0},
 // RF4_BR_MANA			0x08000000	/* Breathe Mana */
-  {0, 60, 70, 0},
+  {0, 50, 70, 0},
 // RF4_BR_DISI			0x10000000
   {0, 60, 70, 0},
 // RF4_BR_NUKE			0x20000000
-  {0, 50, 50, 0},
+  {0, 45, 50, 0},
 // 0x40000000
   {0, 0, 0, 0},
 // RF4_BOULDER
@@ -3625,65 +3625,65 @@ magic_type innate_powers[96] =
 // RF5_DRAIN_MANA		0x00000200	/* Drain Mana */
   {0, 0, 0, 0},
 // RF5_MIND_BLAST		0x00000400	/* Blast Mind */
-  {0, 12, 13, 0},
+  {0, 25, 13, 0},
 // RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
-  {0, 15, 15, 0},
+  {0, 35, 15, 0},
 // RF5_CAUSE_1			0x00001000	/* Cause Light Wound */
   {0, 5, 20, 0},
 // RF5_CAUSE_2			0x00002000	/* Cause Serious Wound */
   {0, 0, 0, 0},
 // RF5_BA_NUKE			0x00004000	/* Toxic Ball */
-  {0, 50, 50, 0},
+  {0, 45, 50, 0},
 // RF5_BA_CHAO			0x00008000	/* Chaos Ball */
   {0, 50, 50, 0},
 // RF5_BO_ACID			0x00010000	/* Acid Bolt */
-  {0, 7, 13, 0},
+  {0, 5, 13, 0},
 // RF5_BO_ELEC			0x00020000	/* Elec Bolt (unused) */
-  {0, 8, 13, 0},
+  {0, 5, 13, 0},
 // RF5_BO_FIRE			0x00040000	/* Fire Bolt */
-  {0, 7, 13, 0},
+  {0, 5, 13, 0},
 // RF5_BO_COLD			0x00080000	/* Cold Bolt */
-  {0, 8, 13, 0},
+  {0, 5, 13, 0},
 // RF5_BO_POIS			0x00100000	/* Poison Bolt (unused) */
-  {0, 12, 23, 0},
+  {0, 8, 23, 0},
 // RF5_BO_NETH			0x00200000	/* Nether Bolt */
-  {0, 20, 43, 0},
+  {0, 12, 43, 0},
 // RF5_BO_WATE			0x00400000	/* Water Bolt */
-  {0, 26, 43, 0},
+  {0, 15, 43, 0},
 // RF5_BO_MANA			0x00800000	/* Mana Bolt */
-  {0, 34, 63, 0},
+  {0, 20, 63, 0},
 // RF5_BO_PLAS			0x01000000	/* Plasma Bolt */
-  {0, 40, 53, 0},
+  {0, 12, 53, 0},
 // RF5_BO_ICEE			0x02000000	/* Ice Bolt */
-  {0, 40, 53, 0},
+  {0, 12, 53, 0},
 // RF5_MISSILE			0x04000000	/* Magic Missile */
   {0, 1, 5, 0},
 // RF5_SCARE			0x08000000	/* Frighten Player */
-  {0, 4, 8, 0},
+  {0, 3, 8, 0},
 // RF5_BLIND			0x10000000	/* Blind Player */
-  {0, 0, 0, 0},
+  {0, 5, 0, 0},
 // RF5_CONF			0x20000000	/* Confuse Player */
-  {0, 4, 8, 0},
+  {0, 6, 8, 0},
 // RF5_SLOW			0x40000000	/* Slow Player */
-  {0, 6, 10, 0},
+  {0, 7, 10, 0},
 // RF5_HOLD			0x80000000	/* Paralyze Player */
-  {0, 20, 30, 0},
+  {0, 15, 30, 0},
 
 /*
  * New monster race bit flags
  */
 // RF6_HASTE			0x00000001	/* Speed self */
-  {0, 50, 60, 0},
+  {0, 40, 50, 0},
 // RF6_HAND_DOOM		0x00000002	/* Speed a lot (?) */
-  {0, 250, 80, 0},
+  {0, 100, 80, 0},
 // RF6_HEAL			0x00000004	/* Heal self */
-  {0, 80, 50, 0},
+  {0, 40, 50, 0},
 // RF6_XXX2			0x00000008	/* Heal a lot (?) */
   {0, 0, 0, 0},
 // RF6_BLINK			0x00000010	/* Teleport Short */
   {0, 1, 0, 0},
 // RF6_TPORT			0x00000020	/* Teleport Long */
-  {0, 12, 30, 0},
+  {0, 15, 30, 0},
 // RF6_XXX3			0x00000040	/* Move to Player (?) */
   {0, 0, 0, 0},
 // RF6_XXX4			0x00000080	/* Move to Monster (?) */
