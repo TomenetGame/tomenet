@@ -3055,6 +3055,7 @@ W:40:50:140:130000
 P:0:3d7:40:15:0
 F:SHOW_MODS | STR | DEX | CHR | RES_FEAR | IM_COLD | RES_DISEN
 F:SLAY_EVIL | KILL_UNDEAD | SLAY_DEMON
+D:This spear never misses when it comes to giving the final blow.
 
 
 # Thunder Axe 'Hope Dawn'
@@ -3065,7 +3066,9 @@ W:75:60:390:230000
 P:0:7d10:20:25:0
 F:SHOW_MODS | STR | CON | RES_FEAR | FREE_ACT | IM_ELEC | IM_FIRE
 F:RES_LITE | RES_DARK | SEE_INVIS | SLAY_EVIL | SLAY_GIANT |
-F:SLAY_DEMON | SLAY_DRAGON | SLAY_UNDEAD
+F:SLAY_DEMON | SLAY_DRAGON | SLAY_UNDEAD | AGGRAVATE
+D:An axe of amok, cracking skulls and splitting torsos, causing
+D:mad terror and showing no mercy to anything in its way.
 
 
 # Broad Spear 'Impaler'
@@ -3075,6 +3078,7 @@ I:22:7:0
 W:10:20:100:25000
 P:0:1d10:25:10:0
 F:SHOW_MODS | RES_FEAR | ESP_UNIQUE | RES_COLD | BRAND_COLD
+D:Driving right through the chest, piercing strongest armour.
 
 
 # Sickle of Slicing
@@ -3085,6 +3089,18 @@ W:20:30:50:35000
 P:0:5d3:20:15:0
 F:SHOW_MODS | WOUNDING | INFRA | REGEN | SLAY_ANIMAL |
 F:BRAND_ACID | RES_ACID | DRAIN_MANA
+D:A small sickle gleaming with unmatched sharpness.
+
+
+# The Hard Leather Cap 'Tarnkappe'
+
+N:251:'Tarnkappe'
+I:32:2:4
+W:30:5:15:75000
+P:2:0d0:0:0:10
+F:STEALTH | HIDE_TYPE | 
+F:INVIS | RES_BLIND | RES_DARK | FREE_ACT
+D:A unappearent leather cap with surprising abilities.
 
 
 
