@@ -380,7 +380,7 @@ static void prt_speed(int Ind)
 	int i = p_ptr->pspeed;
 
 	/* Hack -- Visually "undo" the Search Mode Slowdown */
-	if (p_ptr->searching) i += 10;
+	if (p_ptr->searching) i+=(p_ptr->mode==MODE_HELL ? 5 : 10);
 
 	Send_speed(Ind, i - 110);
 }
