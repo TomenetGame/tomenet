@@ -387,9 +387,9 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	        /* Extract the item flags */
                 object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &eesp);
 
-		/* Weapon/Bow brands don't have general effect on all attacks */
+		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
 		/* All other items have general effect! */
-		if (!((i == INVEN_WIELD) || (i == INVEN_BOW))) f1 |= ef1;
+		if ((i != INVEN_WIELD) && (i != INVEN_BOW) && (i != INVEN_AMMO) && (i != INVEN_TOOL)) f1 |= ef1;
 	}
 
 #if 1 /* for debugging only, so far: */
@@ -946,9 +946,9 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	        /* Extract the item flags */
                 object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &eesp);
 
-		/* Weapon/Bow brands don't have general effect on all attacks */
+		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
 		/* All other items have general effect! */
-		if (!((i == INVEN_WIELD) || (i == INVEN_BOW))) f1 |= ef1;
+		if ((i != INVEN_WIELD) && (i != INVEN_BOW) && (i != INVEN_AMMO) && (i != INVEN_TOOL)) f1 |= ef1;
 	}
 
 #if 1 /* for debugging only, so far: */
