@@ -195,7 +195,8 @@ void init_wild_info()
 	/* inefficient? thats an understatement */
 	for(y=0;y<MAX_WILD_Y;y++){
 		for(x=0;x<MAX_WILD_X;x++){
-			if(wild_info[y][x].radius<=2 && (wild_info[y][x].type==WILD_WASTELAND || wild_info[y][x].type==WILD_DENSEFOREST)){
+			struct wilderness_type *w_ptr=&wild_info[y][x];
+			if(w_ptr->radius<=2 && (w_ptr->type==WILD_WASTELAND || w_ptr->type==WILD_DENSEFOREST || w_ptr->type==WILD_OCEAN || w_ptr->type==WILD_RIVER || w_ptr->type==WILD_VOLCANO || w_ptr->type==WILD_MOUNTAIN)){
 				wild_info[y][x].type=WILD_GRASSLAND;
 			}
 		}
