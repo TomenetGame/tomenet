@@ -1466,20 +1466,23 @@ F5  read scroll of phase door                       \e)r1           @r1
 F6  read scroll of teleportation                    \e)r2           @r2
 F7  read scroll of identify                         \e)r3           @r3
 F8  use a staff of teleportation                    \e)u1           @u1
-F9  quaff a potion of resistance                    \e)q4           @q4
-    (an important thing later in the game)
+F9  A combo macro: Cast the spells 'Sense Monsters' \e)m@11\r1em@11\r1f
+    and 'Sense Hidden' from book Beginner Cantrips.                 @m1
+    Since this macro casts two spells, it uses up
+    two of your character's turns to complete.
+    (Inscribe book of beginner cantrips  @m1)
 F10 zap some rod                                    \e)z1           @z1
 F11 Cast Globe Of Light spell (Beginner Cantrips)   \e)m@11\r1b     @m1
-    (Inscribe book of beginner cantrips: @m1)
+    (Inscribe book of beginner cantrips  @m1)
 F12 use a wand on the closest target                \e)a1*t         @a1
 +   Cast noxious cloud spell on closest target      \e)m@11\r2a*t   @m2
     (Book of noxious cloud must be inscribed: @m2
     You might also use any other book that provides
     a ranged attack spell, like fire flash.)
 -   Cast phase door from 'Beginner Cantrips'        \e)m@11\r1d     @m1
-    (Inscribe book of beginner cantrips: @m1)
+    (Inscribe book of beginner cantrips  @m1)
 0   Cast manathrust on closest target               \e)m@11\r1a*t   @m1
-    (Inscribe book of beginner cantrips: @m1)
+    (Inscribe book of beginner cantrips  @m1)
 
 This low level istari might be armed with a sling to support his yet weak
 magic, so the F1 macro makes sense. Assuming that he uses the numpad keys for
