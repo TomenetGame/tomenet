@@ -4019,7 +4019,44 @@ void resurrect_player(int Ind)
 	p_ptr->window |= (PW_SPELL);
 }
 
+void kill_quest(int Ind){
+	int i;
+	s16b id;
+	player_type *p_ptr=Players[Ind], *q_ptr;
+	char temp[160];
 
+	sprintf(temp,"\377y%s has won the %s quest!", p_ptr->name, r_name+r_info[p_ptr->quest_type].name);
+	msg_broadcast(Ind, temp);
+	msg_format(Ind, "\377yYou have won the %s quest!", r_name+r_info[p_ptr->quest_type].name);
+	id=p_ptr->quest_id;
+	for(i=1; i<=NumPlayers; i++){
+		q_ptr=Players[i];
+		if(q_ptr && q_ptr->quest_id==id){
+			q_ptr->quest_id=0;
+			q_ptr->quest_num=0;
+			q_ptr->quest_type=0;
+		}
+	}
+}
+
+int questid=1;
+
+void add_quest(s16b type, s16b num, int midlevel){
+	int i;
+	player_type *q_ptr;
+	for(i=1; i<NumPlayers; i++){
+		q_ptr=Players[i];
+		if(q_ptr && !q_ptr->quest_id){
+			if(ABS(q_ptr->lev-midlevel)>5) continue;
+			q_ptr->quest_id=questid++;
+			q_ptr->quest_type=type;
+			q_ptr->quest_num=num;
+			msg_print(i, "\377oYou have been added to a quest!");
+			msg_format(i, "\377oFind and kill %d %s before any other player!", num, r_name+r_info[type].name);
+		}
+	}
+	if(questid==0) questid=1;
+}
 
 /*
  * Decreases monsters hit points, handling monster death.
@@ -4151,7 +4188,17 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		}
 
 		/* Generate treasure */
-		if(!m_ptr->clone) monster_death(Ind, m_idx);
+		if(!m_ptr->clone){
+			monster_death(Ind, m_idx);
+			if(p_ptr->quest_id && m_ptr->r_idx==p_ptr->quest_type){
+				p_ptr->quest_num--;
+				if(p_ptr->quest_num==0){
+					kill_quest(Ind);
+				}
+				else
+					msg_format(Ind, "%d more to go!", p_ptr->quest_num);
+			}
+		}
 
 		/* When the player kills a Unique, it stays dead */
 		/* No more, this is handled byt p_ptr->r_killed -- DG */
@@ -6416,6 +6463,7 @@ bool master_player(int Ind, char *parms){
 			break;
 		case 'r':
 			/* Delete a player from the database/savefile */
+			break;
 	}
 	return(FALSE);
 }

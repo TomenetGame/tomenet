@@ -2556,6 +2556,15 @@ static void do_slash_cmd(int Ind, cptr message)
 				msg_print(Ind, "\377oUsage: /kick [Player name]");
 				return;
 			}
+			else if (prefix(message, "/quest")){
+				if(tk==3){
+					add_quest(atoi(token[1]), atoi(token[2]), atoi(token[3]));
+					msg_print(Ind, "\377yQuest added successfully!");
+					return;
+				}
+				msg_print(Ind, "\377oUsage: /quest type num level");
+				return;
+			}
 			/* erase items and monsters */
 			else if (prefix(message, "/clear-level") ||
 					prefix(message, "/clv"))

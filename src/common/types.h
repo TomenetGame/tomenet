@@ -1913,6 +1913,10 @@ struct player_type
 		bool admin_wiz;		/* Is this char Wizard? */
 		bool admin_dm;		/* or Dungeon Master? */
 
+	s16b quest_id;		/* Quest number */
+	s16b quest_type;	/* Monster type */
+	s16b quest_num;		/* Number of kills needed */
+
         s16b xtra_crit;         /* % of increased crits */
 
         s16b to_l;                      /* Bonus to life */
