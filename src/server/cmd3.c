@@ -187,6 +187,7 @@ void inven_drop(int Ind, int item, int amt)
 	object_type		 tmp_obj;
 
 	cptr		act;
+	int		j;
 
 	char		o_name[160];
 
@@ -256,7 +257,53 @@ void inven_drop(int Ind, int item, int amt)
 	}
 
 	/* Polymorph back */
-	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) do_mimic_change(Ind, 0, TRUE);
+	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR))
+	{
+		/* Well, so we gotta check if the player, in case he is a
+		mimic, is using a form that can _only_ come from the armor */
+		//if (p_ptr->pclass == CLASS_MIMIC) //Adventurers can also have mimic skill
+		//{
+			switch (o_ptr->sval)
+			{
+			case SV_DRAGON_BLACK:
+			j = race_index("Ancient black dragon"); break;
+			case SV_DRAGON_BLUE:
+			j = race_index("Ancient blue dragon"); break;
+			case SV_DRAGON_WHITE:
+			j = race_index("Ancient white dragon"); break;
+			case SV_DRAGON_RED:
+			j = race_index("Ancient red dragon"); break;
+			case SV_DRAGON_GREEN:
+			j = race_index("Ancient green dragon"); break;
+			case SV_DRAGON_MULTIHUED:
+			j = race_index("Ancient multi-hued dragon"); break;
+			case SV_DRAGON_PSEUDO:
+			j = race_index("Pseudo dragon"); break;
+			case SV_DRAGON_SHINING:
+			j = race_index("Ethereal dragon"); break;
+			case SV_DRAGON_LAW:
+			j = race_index("Great Wyrm of Law"); break;
+			case SV_DRAGON_BRONZE:
+			j = race_index("Ancient bronze dragon"); break;
+			case SV_DRAGON_GOLD:
+			j = race_index("Ancient gold dragon"); break;
+			case SV_DRAGON_CHAOS:
+			j = race_index("Great Wyrm of Chaos"); break;
+			case SV_DRAGON_BALANCE:
+			j = race_index("Great Wyrm of Balance"); break;
+			case SV_DRAGON_POWER:
+			j = race_index("Great Wyrm of Power"); break;
+			}
+			if((p_ptr->body_monster == j) &&
+			    ((p_ptr->r_killed[j] < r_info[j].level) || 
+			    (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))))
+				do_mimic_change(Ind, 0, TRUE);
+		/*}
+		else
+		{
+			do_mimic_change(Ind, 0, TRUE);
+		}*/
+	}
 
 	/* Message */
 	object_desc(Ind, o_name, &tmp_obj, TRUE, 3);
