@@ -808,7 +808,7 @@ D:You feel like having a shot.
 F:FLOOR | DOOR | EASY_ID
 
 N:172:Garbage Trap
-I:3:30:5:5:15:0d0:y:10
+I:3:30:5:5:15:0d0:y:80
 D:You feel like a dustbinman!
 F:FLOOR | DOOR | CHEST
 
@@ -858,7 +858,7 @@ D:You exchanged your equipments with nifty presents.
 F:FLOOR | DOOR | CHEST
 
 N:182:Garbage Trap
-I:7:30:5:5:30:0d0:W:10
+I:7:30:5:5:30:0d0:W:80
 D:You feel like a dustbinman!
 F:FLOOR | DOOR | CHEST
 

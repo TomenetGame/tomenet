@@ -1142,6 +1142,119 @@ void monster_desc(int Ind, char *desc, int m_idx, int mode)
 	}
 }
 
+/* Similar to monster_desc, but it handles the players instead. - Jir - */
+void player_desc(int Ind, char *desc, int Ind2, int mode)
+{
+	player_type *p_ptr, *q_ptr = Players[Ind2];
+
+	cptr            res;
+
+	cptr            name = q_ptr->name;
+
+	bool            seen, pron;
+
+	/* Check for bad player number */
+	if (Ind > 0)
+	{
+		p_ptr = Players[Ind];
+	
+		/* Can we "see" it (exists + forced, or visible + not unforced) */
+		seen = (q_ptr && ((mode & 0x80) || (!(mode & 0x40) && p_ptr->play_vis[Ind2])));
+
+		if (!(mode & 0x0100) && p_ptr->image)
+			name = r_name_garbled_get();
+	}
+	else
+	{
+		seen = (q_ptr && ((mode & 0x80) || (!(mode & 0x40))));
+	}
+
+	/* Sexed Pronouns (seen and allowed, or unseen and allowed) */
+	pron = (q_ptr && ((seen && (mode & 0x20)) || (!seen && (mode & 0x10))));
+
+
+	/* First, try using pronouns, or describing hidden monsters */
+	if (!seen || pron)
+	{
+		/* an encoding of the monster "sex" */
+		int kind = 0x00;
+
+		/* Extract the gender (if applicable) */
+		if (q_ptr->male) kind = 0x10;
+		else kind = 0x20;
+
+		/* Ignore the gender (if desired) */
+		if (!q_ptr || !pron) kind = 0x00;
+
+
+		/* Assume simple result */
+		res = "it";
+
+		/* Brute force: split on the possibilities */
+		switch (kind + (mode & 0x07))
+		{
+			/* Neuter, or unknown */
+			case 0x00: res = "it"; break;
+			case 0x01: res = "it"; break;
+			case 0x02: res = "its"; break;
+			case 0x03: res = "itself"; break;
+			case 0x04: res = "something"; break;
+			case 0x05: res = "something"; break;
+			case 0x06: res = "something's"; break;
+			case 0x07: res = "itself"; break;
+
+			/* Male (assume human if vague) */
+			case 0x10: res = "he"; break;
+			case 0x11: res = "him"; break;
+			case 0x12: res = "his"; break;
+			case 0x13: res = "himself"; break;
+			case 0x14: res = "someone"; break;
+			case 0x15: res = "someone"; break;
+			case 0x16: res = "someone's"; break;
+			case 0x17: res = "himself"; break;
+
+			/* Female (assume human if vague) */
+			case 0x20: res = "she"; break;
+			case 0x21: res = "her"; break;
+			case 0x22: res = "her"; break;
+			case 0x23: res = "herself"; break;
+			case 0x24: res = "someone"; break;
+			case 0x25: res = "someone"; break;
+			case 0x26: res = "someone's"; break;
+			case 0x27: res = "herself"; break;
+		}
+
+		/* Copy the result */
+		(void)strcpy(desc, res);
+	}
+
+
+	/* Handle visible monsters, "reflexive" request */
+	else if ((mode & 0x02) && (mode & 0x01))
+	{
+		/* The monster is visible, so use its gender */
+		if (!q_ptr->male) strcpy(desc, "herself");
+		else strcpy(desc, "himself");
+//		else strcpy(desc, "itself");
+	}
+
+
+	/* Handle all other visible monster requests */
+	else
+	{
+		/* Start with the name (thus nominative and objective) */
+		(void)strcpy(desc, name);
+
+		/* Handle the Possessive as a special afterthought */
+		if (mode & 0x02)
+		{
+			/* XXX Check for trailing "s" */
+
+			/* Simply append "apostrophe" and "s" */
+			(void)strcat(desc, "'s");
+		}
+	}
+}
 
 
 

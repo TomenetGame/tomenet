@@ -2693,16 +2693,23 @@ static void calc_bonuses(int Ind)
 
 	/* Searching slows the player down */
 	/* -APD- adding "stealth mode" for rogues... will probably need to tweek this */
+	/* XXX this can be out of place; maybe better done
+	 * after skill bonuses are added?	- Jir - */
 	if (p_ptr->searching) 
 	{
 		int stealth = get_skill(p_ptr, SKILL_STEALTH);
+		int sneakiness = get_skill(p_ptr, SKILL_SNEAKINESS);
 		p_ptr->pspeed -= 10;
 
 		if (stealth >= 10)
 		{
 //			p_ptr->skill_stl *= 3;
-			p_ptr->skill_stl *=
-				(stealth >= 40) ? 4 : ((stealth > 25) ? 3 : 2);
+			p_ptr->skill_stl = p_ptr->skill_stl * stealth / 10;
+		}
+		if (sneakiness >= 10)
+		{
+			p_ptr->skill_srh = p_ptr->skill_srh * sneakiness / 10;
+//			p_ptr->skill_fos= p_ptr->skill_fos * p_ptr->rp_ptr->r_srh + p_ptr->cp_ptr->c_srh;
 		}
 	}
 

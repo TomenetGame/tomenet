@@ -1424,7 +1424,6 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			if (star) value += flag_cost(o_ptr, o_ptr->pval);
 
 
-#if 1	// see you later :)
 			if (o_ptr->name2b)
 			{
 				ego_item_type *e_ptr = &e_info[o_ptr->name2b];
@@ -1435,7 +1434,6 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 				/* Hack -- Reward the ego-item with a bonus */
 				value += e_ptr->cost;
 			}
-#endif	// 0
 		}
 	}
 
@@ -1471,6 +1469,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 		case TV_LITE:
 		case TV_AMULET:
 		case TV_RING:
+		case TV_TRAPKIT:
 		{
 			/* they should be of bpval.. hopefully. */
 			int pval = o_ptr->bpval;
@@ -1630,6 +1629,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 		case TV_SWORD:
 		case TV_POLEARM:
 		case TV_MSTAFF:
+		case TV_TRAPKIT:
 		{
 			/* Hack -- negative hit/damage bonuses */
 			if (o_ptr->to_h + o_ptr->to_d < 0)
@@ -1901,6 +1901,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		case TV_AMULET:
 		case TV_LITE:
 		case TV_TOOL:
+		case TV_BOOK:	/* Books can be 'fireproof' */
 		{
 			/* Require full knowledge of both items */
 			if (!Ind || !object_known_p(Ind, o_ptr) ||
@@ -5513,10 +5514,13 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 		switch (forge.tval)
 		{
 			case TV_SPIKE:
+				forge.number = damroll(6, 7);
+				break;
 			case TV_SHOT:
 			case TV_ARROW:
 			case TV_BOLT:
-				forge.number = damroll(6, 7);
+				forge.number = damroll(6,
+						(forge.sval == SV_AMMO_MAGIC) ? 2 : 7);
 		}
 
 	/* Hack -- inscribe items that a unique drops */
@@ -6442,11 +6446,23 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags)
 		return;
 	}
 
+#if 0	/* disabled till new spell system is done */
 	if (!is_book(o_ptr) && o_ptr->tval != TV_BOOK) return;
 
 	/* XXX though it's ok with 'm' for everything.. */
 	c[2] = o_ptr->sval +1 +48;
 	o_ptr->note = quark_add(c);
+#endif	// 0
+
+	/* auto-pickup inscription for ammo */
+	if ((o_ptr->tval == TV_ARROW ||
+		o_ptr->tval == TV_BOLT ||
+		o_ptr->tval == TV_SHOT) &&
+		object_known_p(Ind, o_ptr))
+	{
+		o_ptr->note = quark_add("!=");
+		return;
+	}
 }
 
 

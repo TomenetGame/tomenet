@@ -23,8 +23,6 @@
 
 # proba is the chance(out of 100) of the item being generated
 
-# XXX XXX This file should be rewritten; many tval/sval are wrong! - Jir -
-
 
 # Version stamp (required)
 
@@ -77,7 +75,8 @@ I:80:& Small Metal Shield~
 A:0:0:1:2:3:4
 O:8:9:10:11
 G:2:s
-W:24
+#W:24
+W:36
 
 N:2:Weaponsmith
 I:100:& Dagger~
@@ -113,7 +112,8 @@ I:100:& Whip~
 A:23:0:1:2:3:4
 O:12:13:14:15
 G:3:w
-W:24
+#W:24
+W:36
 
 N:3:Temple
 I:100:& Nunchaku~
@@ -159,10 +159,15 @@ I:100:Remove Curse
 I:100:Remove Curse
 I:2:*Remove Curse*
 #I:100:*Remove Curse*
+I:100:Neutralize Poison
+#Scroll of Life
+T:100:70:56
+T:100:70:56
 A:0:0:1:2:3:4
 O:26:27:28:29
 G:4:g
-W:24
+#W:24
+W:36
 
 N:4:Alchemy shop
 I:100:Enchant Weapon To-Hit
@@ -175,7 +180,8 @@ I:100:Identify
 I:100:Light
 I:100:Phase Door
 I:100:Phase Door
-T:100:70:9
+I:100:Phase Door
+#T:100:70:9
 I:100:Monster Confusion
 I:100:Magic Mapping
 I:100:Treasure Detection
@@ -189,8 +195,9 @@ I:100:Word of Recall
 I:100:Word of Recall
 I:100:Word of Recall
 I:100:Word of Recall
-T:100:70:9
-T:100:70:9
+#(Scroll of Teleportation)
+T:2:70:9
+#T:100:70:9
 #I:100:Restore Strength
 T:100:71:42
 I:100:Restore Intelligence
@@ -219,10 +226,16 @@ I:100:Recharging
 I:100:Satisfy Hunger
 I:100:Satisfy Hunger
 I:100:Satisfy Hunger
+#Scroll of Door/Stair Location
+T:100:70:29
+T:100:70:29
+I:100:Resist Heat
+I:100:Resist Cold
 A:0:0:1:2:3:4
 O:30:31:32:33
 G:5:b
-W:24
+#W:24
+W:36
 
 N:5:Magic shop
 I:100:Protection
@@ -256,10 +269,11 @@ I:100:Object Location
 T:100:55:14
 #I:100:Detect Evil
 T:100:55:15
-I:100:55:4
-I:100:55:4
-I:100:55:4
-I:100:55:4
+#Staff of Teleportation
+T:100:55:4
+T:100:55:4
+T:100:55:4
+T:100:55:4
 I:100:Perception
 I:100:Perception
 I:100:Perception
@@ -276,14 +290,16 @@ T:100:111:50
 A:0:0:1:2:3:4
 O:34:35:36:37
 G:6:r
-W:24
+#W:24
+W:36
 
 N:6:Black Market
 A:30:0:1:2:3:4
 O:38:39:40:41
 G:7:D
 F:ALL_ITEM | MEDIUM_LEVEL
-W:24
+#W:24
+W:36
 
 N:7:Home
 A:0:0:54:55:3:0

@@ -1492,7 +1492,7 @@ option_type option_info[OPT_MAX] =
 //	"auto_afk",				"Allow automatic AFKing" },
 	"auto_afk",				"Set 'AFK mode' automatically" },
 
-	{ &c_cfg.newb_suicide,			FALSE,	3,	1, 1,	// XXX
+	{ &c_cfg.newb_suicide,			FALSE,	3,	1, 1,	// former auto_scum
 	"newb_suicide",			"Display newbie suicides" },
 
 	{ &c_cfg.stack_allow_items,	TRUE,	3,	1, 2,

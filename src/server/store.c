@@ -390,7 +390,8 @@ static byte rgold_adj[MAX_RACES][MAX_RACES] =
 
 void alloc_stores(int townval)
 {
-	int i, k;
+//	int i, k;
+	int i;
 
 	/* Allocate the stores */
 	/* XXX of course, it's inefficient;
@@ -665,6 +666,13 @@ static void mass_produce(object_type *o_ptr)
 		{
 			if (cost <= 60L) size += mass_roll(3, 5);
 			if (cost <= 240L) size += mass_roll(1, 5);
+			break;
+		}
+
+		case TV_BOOK:
+		{
+			if (cost <= 50L) size += mass_roll(2, 3);
+			if (cost <= 500L) size += mass_roll(1, 3);
 			break;
 		}
 
@@ -1700,7 +1708,7 @@ static void store_create(store_type *st_ptr)
 				continue;
 #endif	// 0
 
-			/* Does it passes the rarity check ? */
+			/* Does it pass the rarity check ? */
 			if (!magik(chance)) continue;
 
 			/* Hack -- fake level for apply_magic() */
@@ -2116,6 +2124,29 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s32b *price)
 }
 
 
+
+/*
+ * Will the owner retire?
+ */
+static bool retire_owner_p(store_type *st_ptr)
+{
+	store_info_type *sti_ptr = &st_info[st_ptr->st_idx];
+
+	if ((sti_ptr->owners[0] == sti_ptr->owners[1]) &&
+	    (sti_ptr->owners[0] == sti_ptr->owners[2]) &&
+	    (sti_ptr->owners[0] == sti_ptr->owners[3]))
+	{
+		/* there is no other owner */
+		return FALSE;
+	}
+
+	if (rand_int(STORE_SHUFFLE) != 0)
+	{
+		return FALSE;
+	}
+
+	return TRUE;
+}
 
 
 
@@ -2712,10 +2743,7 @@ void store_examine(int Ind, int item)
 	store_type *st_ptr;
 	owner_type *ot_ptr;
 
-	int			i, choice;
-	int			item_new;
-
-	s32b		price, best;
+	int			i;
 
 	object_type		sell_obj;
 	object_type		*o_ptr;
@@ -2901,8 +2929,11 @@ void do_cmd_store(int Ind)
 	{
 		/* Maintain the store */
 		for (i = 0; i < maintain_num; i++)
+		{
 //			store_maint(p_ptr->town_num, which);
 			store_maint(st_ptr);
+			if (retire_owner_p(st_ptr)) store_shuffle(st_ptr);
+		}
 
 		/* Save the visit */
 //		town_info[p_ptr->town_num].store[which].last_visit = turn;
@@ -2995,7 +3026,8 @@ void store_shuffle(store_type *st_ptr)
  */
 void store_maint(store_type *st_ptr)
 {
-	int         i, j;
+//	int         i, j;
+	int j;
 
 	owner_type *ot_ptr;
 
@@ -3381,9 +3413,7 @@ void home_sell(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int			choice, h_idx, item_pos;
-
-	s32b		price;
+	int			h_idx, item_pos;
 
 	object_type		sold_obj;
 	object_type		*o_ptr;
@@ -3549,11 +3579,9 @@ void home_purchase(int Ind, int item, int amt)
 	player_type *p_ptr = Players[Ind];
 
 
-	int			i, choice;
+	int			i;
 	int			item_new;
 	int h_idx;
-
-	s32b		price, best;
 
 	object_type		sell_obj;
 	object_type		*o_ptr;
@@ -3667,12 +3695,9 @@ void home_examine(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int st = p_ptr->store_num;
+//	int st = p_ptr->store_num;
 
-	int			i, choice, h_idx;
-	int			item_new;
-
-	s32b		price, best;
+	int	h_idx;
 
 	object_type		sell_obj;
 	object_type		*o_ptr;
@@ -3750,12 +3775,11 @@ static void display_house_entry(int Ind, int pos)
 	player_type *p_ptr = Players[Ind];
 
 	object_type		*o_ptr;
-	s32b		x;
 
 	char		o_name[160];
 	byte		attr;
 	int		wgt;
-	int		i, h_idx;
+	int		h_idx;
 
 	int maxwid = 75;
 
@@ -3808,7 +3832,7 @@ static void display_house_inventory(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int k;
-	int i, h_idx;
+	int h_idx;
 	
 	house_type *h_ptr;
 
@@ -3840,7 +3864,7 @@ static void display_trad_house(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	house_type *h_ptr;
-	int i, h_idx;
+	int h_idx;
 
 	/* This should never happen */
 	if (p_ptr->store_num != 7) return;
@@ -3865,8 +3889,6 @@ static void display_trad_house(int Ind)
 void do_cmd_trad_house(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int			which;
-	int i;
 
 	cave_type		*c_ptr;
 	struct c_special *cs_ptr;

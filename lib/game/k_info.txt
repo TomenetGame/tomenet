@@ -3746,7 +3746,7 @@ N:528:& Trifurcate Spear~
 G:/:o
 I:22:26:0
 W:35:0:140:400
-A:35:3
+A:35/3
 P:0:2d9:0:0:0
 F:SHOW_MODS
 
@@ -5678,9 +5678,9 @@ G:?:d
 #I:70:49:0
 I:70:57:0
 W:40:0:5:25000
-#A:40/20
+A:40/20
 # XXX broken
-A:127/255
+#A:127/255
 
 ##### Items 445 to 479 reserved (old "terrain" objects) #####
 

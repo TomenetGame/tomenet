@@ -1153,7 +1153,8 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 				&& !q_ptr->inventory[INVEN_WIELD].k_idx)
 			grabchance += get_skill_scale(q_ptr, SKILL_MARTIAL_ARTS, 50);
 
-		grabchance *= mod / 100;
+//		grabchance *= mod / 100;
+		grabchance = grabchance * mod / 100;
 
 		if (q_ptr->blind) grabchance -= 30;
 

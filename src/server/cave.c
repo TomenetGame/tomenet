@@ -724,7 +724,7 @@ bool cave_valid_bold(cave_type **zcave, int y, int x)
 
 	s16b this_o_idx, next_o_idx = 0;
 
-	u32b f1, f2, f3, f4, f5, esp, i;
+	u32b f1, f2, f3, f4, f5, esp;
 
 	/* Forbid perma-grids */
 /*	if (cave_perma_grid(c_ptr)) return (FALSE); */
@@ -1076,7 +1076,7 @@ static byte player_color(int Ind)
 /* NOTE only ONE of each type !!! */
 struct c_special *GetCS(cave_type *c_ptr, unsigned char type){
 	struct c_special *trav;
-	int i=0;
+//	int i=0;
 
 	if(!c_ptr->special) return(NULL);
 	trav=c_ptr->special;
@@ -1106,7 +1106,7 @@ struct c_special *AddCS(cave_type *c_ptr, byte type){
 /* like AddCS, but override already-existing one */
 c_special *ReplaceCS(cave_type *c_ptr, byte type)
 {
-	struct c_special *cs_ptr, *cs2_ptr;
+	struct c_special *cs_ptr;
 	if (!(cs_ptr=GetCS(c_ptr, type)))
 	{
 		MAKE(cs_ptr, struct c_special);
@@ -1334,14 +1334,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				}
 			}
 			/* Quick Hack -- shop */
-			else if((cs_ptr=GetCS(c_ptr, CS_SHOP)))
+			if((cs_ptr=GetCS(c_ptr, CS_SHOP)))
 			{
-				/* TODO: Store should have d_attr/d_char */
-				char st_char[10] = "123456789";
-				char st_attr[10] = { TERM_UMBER, TERM_SLATE, TERM_WHITE,
-					TERM_GREEN, TERM_BLUE, TERM_RED, TERM_L_DARK,
-					TERM_YELLOW, TERM_L_BLUE};
-
 #if 0
 				a = st_attr[cs_ptr->sc.omni];
 				(*cp) = st_char[cs_ptr->sc.omni];

@@ -66,6 +66,7 @@ I:1000:0
 
 N:8:Sling-mastery
 D:Ability to use slings
+D:Bullets can recochet and harm more than one foes
 I:1000:0
 
 N:9:Bow-mastery
@@ -89,17 +90,20 @@ N:13:Casting-speed
 D:Ability to cast sorcery spells faster than one turn
 I:1000:0
 
+# This will be like that of ToME2
 N:14:Sorcery
 D:Ability to cast sorcery spells, beware it reduces hp
-A:1:Cast sorcery spell
-I:1000:92
-F:MKEY_SPELL | MKEY_TVAL
+#A:1:Cast sorcery spell
+#I:1000:92
+#F:MKEY_SPELL | MKEY_TVAL
+I:1000:0
 
 N:15:Magery
 D:Ability to cast magery spells
 A:2:Cast magery spell
 I:1000:90
 F:MKEY_SPELL | MKEY_TVAL
+F:HIDDEN
 
 N:16:Mimicry
 D:Ability to polymorph into slain monsters
@@ -129,7 +133,9 @@ D:Increases the duration of your shadow spells
 I:1000:0
 
 N:21:Sneakiness
-D:General ability at your sneakiness skills, and improves perception
+#D:General ability at your sneakiness skills, and improves perception
+D:General ability at your sneakiness skills
+D:It allows to act carefully and somewhat quickly
 I:1000:0
 
 N:22:Disarming
@@ -192,6 +198,7 @@ F:HIDDEN
 N:34:Agility
 D:General ability to move on quickly
 I:1000:0
+F:HIDDEN
 
 N:35:Calmness
 D:Ability to stay calm and act freely when surrounded by enemies
@@ -205,9 +212,11 @@ N:37:Martial Arts
 D:Ability to combat bare-handed
 I:1000:0
 
+# DELETEME
 N:38:Ricochet
 D:Ability to harm more than one opponents using ricochets
 I:1000:0
+F:HIDDEN
 
 N:39:Boomerang-mastery
 D:Ability to use (and not to destroy) boomerangs
@@ -235,9 +244,11 @@ N:44:Digging
 D:Ability to dig a tunnel with suitable tools
 I:1000:0
 
+# DELETEME
 N:45:Revelation
 D:Affects how broad a revelation your prayer will bring
 I:1000:0
+F:HIDDEN
 
 N:46:Trapping
 D:Ability to set monster traps
@@ -274,8 +285,8 @@ f:Bow-mastery:Archery%25
 f:Crossbow-mastery:Archery%25
 f:Boomerang-mastery:Archery%25
 f:Hunting Lore:Archery%5
-f:Ricochet:Archery%15
-f:Sling-mastery:Ricochet%25
+#f:Ricochet:Archery%15
+#f:Sling-mastery:Ricochet%25
 
 # All combat skills improve Combat
 f:Weaponmastery:Combat%50
@@ -289,7 +300,7 @@ f:Bow-mastery:Combat%7
 f:Crossbow-mastery:Combat%7
 f:Boomerang-mastery:Combat%7
 f:Hunting Lore:Combat%7
-f:Ricochet:Combat%7
+#f:Ricochet:Combat%7
 f:Fighting Technic:Combat%25
 f:Martial Arts:Combat%50
 
@@ -409,7 +420,7 @@ T:Archery:Bow-mastery
 T:Archery:Crossbow-mastery
 T:Archery:Boomerang-mastery
 T:Archery:Hunting Lore
-T:Archery:Ricochet
+#T:Archery:Ricochet
 T:Combat:Fighting Technic
 T:Combat:Martial Arts
 #T:Combat:Bearform-combat

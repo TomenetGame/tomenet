@@ -2343,6 +2343,7 @@ static errr init_other(void)
 	/* Some extra strings */
 	(void)quark_add("uncursed");
 	(void)quark_add("on sale");
+	(void)quark_add("Handmade");
 
 	/* Turn on color */
 	use_color = TRUE;
@@ -2892,7 +2893,7 @@ void init_some_arrays(void)
 	if (init_f_info()) quit("Cannot initialize features");
 
 	/* Initialize skill info */
-	s_printf("[Initializing skills... (skills)]\n");
+	s_printf("[Initializing arrays... (skills)]\n");
 	if (init_s_info()) quit("Cannot initialize skills");
 
 	/* Initialize object info */

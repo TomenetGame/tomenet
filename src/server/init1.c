@@ -1218,9 +1218,9 @@ static errr grab_one_race_allow_flag(s32b *choice, cptr what)
  */
 static errr grab_one_player_realm_flag(s32b *realms, cptr what)
 {
+#if 0	// basically, always fail
 	int i;
 
-#if 0	// basically, always fail
 	/* Check flags1 */
 	for (i = 1; i < MAX_REALM; i++)
 	{
@@ -5637,7 +5637,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 	/* Hack -- acquire total number */
 	max_st_idx = ++error_idx;
 
-#if DEBUG_LEVEL > 1
+#if DEBUG_LEVEL > 2
 	/* Debug -- print total no. */
 	s_printf("st_info total: %d\n", max_st_idx);
 #endif	// DEBUG_LEVEL
@@ -6603,9 +6603,9 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 					if((cs_ptr=AddCS(c_ptr, CS_SHOP)))
 					{
 						/* MEGAHACK till st_info is implemented */
-						int y1, x1;
+						// int y1, x1;
 						int store = letter[idx].special;
-//						if (store > 8) store = 8;
+						// if (store > 8) store = 8;
 
 						cs_ptr->sc.omni = store;
 

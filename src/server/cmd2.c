@@ -430,7 +430,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 
-	int             i, d, ny, nx;
+//	int             i, d, ny, nx;
 	int             number, small;
 
 	if(!(zcave=getcave(wpos))) return;
@@ -1263,7 +1263,9 @@ void do_cmd_tunnel(int Ind, int dir)
 		}
 
 		/* No tunnelling through doors */
-		else if (c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_HOME_HEAD)
+//		else if (c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_HOME_HEAD)
+		else if ((f_info[c_ptr->feat].flags1 & FF1_DOOR) &&
+				c_ptr->feat != FEAT_SECRET)
 		{
 			/* Message */
 //                      msg_print(Ind, "You cannot tunnel through doors.");
@@ -1515,7 +1517,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			}
 
 			/* Default to secret doors */
-			else /* if (c_ptr->feat == FEAT_SECRET) */
+			else if (c_ptr->feat == FEAT_SECRET)
 			{
 				/* Message, keep digging */
 				msg_print(Ind, "You tunnel into the granite wall.");
@@ -1527,6 +1529,24 @@ void do_cmd_tunnel(int Ind, int dir)
 				/* Hack -- Search */
 				search(Ind);
 			}
+			/* Doors */
+			else
+			{
+				/* Tunnel */
+				if ((power > 30 + rand_int(1200)) && twall(Ind, y, x))
+				{
+					msg_print(Ind, "You have finished the tunnel.");
+				}
+
+				/* Keep trying */
+				else
+				{
+					/* We may continue tunelling */
+					msg_print(Ind, f_text + f_ptr->tunnel);
+					more = TRUE;
+				}
+			}
+
 		}
 
 		/* Notice "blockage" changes */
@@ -2493,6 +2513,55 @@ void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x)
 	project(0 - Ind, rad, wpos, y, x, dam, o_ptr->pval, flag);
 }
 
+/*
+ * Return multiplier of an object
+ */
+int get_shooter_mult(object_type *o_ptr)
+{
+	/* Assume a base multiplier */
+	int tmul = 1;
+
+	/* Analyze the launcher */
+	switch (o_ptr->sval)
+	{
+		case SV_SLING:
+		{
+			/* Sling and ammo */
+			tmul = 2;
+			break;
+		}
+
+		case SV_SHORT_BOW:
+		{
+			/* Short Bow and Arrow */
+			tmul = 2;
+			break;
+		}
+
+		case SV_LONG_BOW:
+		{
+			/* Long Bow and Arrow */		
+			tmul = 3;
+			break;
+		}
+
+		/* Light Crossbow and Bolt */
+		case SV_LIGHT_XBOW:
+		{
+			tmul = 3;
+			break;
+		}
+
+		/* Heavy Crossbow and Bolt */
+		case SV_HEAVY_XBOW:
+		{
+			tmul = 4;
+			break;
+		}
+	}
+	return tmul;
+}
+
 
 /*
  * Fire an object from the pack or floor.
@@ -2673,19 +2742,20 @@ void do_cmd_fire(int Ind, int dir)
 			(!cursed_p(o_ptr) || true_artifact_p(o_ptr)))?TRUE:FALSE;
 
 	/* Ricochets ? */
-        //        if (cp_ptr->magic_key == MKEY_FORGING)
 #if 0 // DG - no
-	if (p_ptr->pclass == CLASS_ARCHER && !magic && !boomerang)
-	{
-		num_ricochet = (p_ptr->lev / 10) - 1;
-		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
-	}
-#else	// 0
 	if (get_skill(p_ptr, SKILL_RICOCHET) && !magic && !boomerang)
 	{
 		num_ricochet = get_skill_scale(p_ptr, SKILL_RICOCHET, 6);
 		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
 		ricochet_chance = 45 + get_skill_scale(p_ptr, SKILL_RICOCHET, 50);
+	}
+#else	// 0
+	/* Sling mastery yields bullet ricochets */
+	if (archery == SKILL_SLING && !magic && !boomerang)
+	{
+		num_ricochet = get_skill_scale(p_ptr, SKILL_SLING, 6);
+		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
+		ricochet_chance = 45 + get_skill_scale(p_ptr, SKILL_SLING, 50);
 	}
 #endif
 	/* Create a "local missile object" */
@@ -2754,47 +2824,7 @@ void do_cmd_fire(int Ind, int dir)
 		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h + j_ptr->to_h);
 		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
-		/* Assume a base multiplier */
-		tmul = 1;
-
-		/* Analyze the launcher */
-		switch (j_ptr->sval)
-		{
-			/* Sling and ammo */
-			case SV_SLING:
-				{
-					tmul = 2;
-					break;
-				}
-
-				/* Short Bow and Arrow */
-			case SV_SHORT_BOW:
-				{
-					tmul = 2;
-					break;
-				}
-
-				/* Long Bow and Arrow */
-			case SV_LONG_BOW:
-				{
-					tmul = 3;
-					break;
-				}
-
-				/* Light Crossbow and Bolt */
-			case SV_LIGHT_XBOW:
-				{
-					tmul = 3;
-					break;
-				}
-
-				/* Heavy Crossbow and Bolt */
-			case SV_HEAVY_XBOW:
-				{
-					tmul = 4;
-					break;
-				}
-		}
+        tmul = get_shooter_mult(j_ptr);
 	}
 	else
 	{
@@ -2972,7 +3002,8 @@ void do_cmd_fire(int Ind, int dir)
 
 							if (get_skill(q_ptr, SKILL_DODGE))
 							{
-								int chance = (q_ptr->dodge_chance - p_ptr->lev - archery) / 3;
+//								int chance = (q_ptr->dodge_chance - p_ptr->lev - archery) / 3;
+								int chance = (q_ptr->dodge_chance - p_ptr->lev - get_skill(p_ptr, archery)) / 3;
 
 								if ((chance > 0) && magik(chance))
 								{
@@ -3348,7 +3379,7 @@ void do_cmd_fire(int Ind, int dir)
 }
 
 /*
- * Check if neighboring monster(s) interferes player's action.  - Jir -
+ * Check if neighboring monster(s) interferes with player's action.  - Jir -
  */
 bool interfere(int Ind, int chance)
 {
@@ -3397,8 +3428,10 @@ bool interfere(int Ind, int chance)
 			}
 			else
 			{
-				/* even not visible... :( */
-				strcpy(m_name, Players[-i]->name);
+				/* FIXME: even not visible... :( */
+//				strcpy(m_name, Players[-i]->name);
+				/* fixed :) */
+				player_desc(Ind, m_name, -i, 0);
 			}
 			msg_format(Ind, "\377o%^s interferes with your attempt!", m_name);
 			return TRUE;

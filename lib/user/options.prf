@@ -34,8 +34,8 @@ X:disturb_other
 X:alert_hitpoint
 X:alert_failure
 
-Y:auto_afk
-X:auto_scum
+X:auto_afk
+X:newb_suicide
 Y:stack_allow_items
 Y:stack_allow_wands
 X:expand_look

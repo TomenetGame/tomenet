@@ -577,14 +577,16 @@ void add_ability (artifact_type *a_ptr)
 					a_ptr->to_h += 3 + rand_int (10);
 				}
 				else if (r < 92) a_ptr->to_a += 3 + rand_int (3);
-				else if (r < 98)
-					a_ptr->weight = (a_ptr->weight * 9) / 10;
+//				else if (r < 98)
+				else a_ptr->weight = (a_ptr->weight * 9) / 10;
+#if 0
 				else
 					if (a_ptr->tval != TV_DIGGING && a_ptr->tval != TV_BOOMERANG)
 					{
 						a_ptr->flags1 |= TR1_TUNNEL;
 						do_pval (a_ptr);
 					}
+#endif	// 0
 
 				break;
 			}
@@ -1216,7 +1218,7 @@ artifact_type *ego_make(object_type *o_ptr)
 	ego_item_type *e_ptr;
 	int j;
 	bool limit_blows = FALSE;
-	u32b f1, f2, f3, f4, f5, esp;
+//	u32b f1, f2, f3, f4, f5, esp;
 	s16b e_idx;
 
 	/* Hack -- initialize bias */

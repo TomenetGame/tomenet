@@ -21,8 +21,28 @@
 
 # bug.txt should follow the exact same format
 
-# Oh, thank you, Evileye :)
-# - Jir -
+
+25/08/2002 (Jir)
+[G]- st_info.txt touched (Hope C.B will be happy with it :).
+[G]- store shuffle
+[G]- spiked door is tunnerable.
+[B]- do_cmd_tunnel handled FEAT_WALL_HOUSE as door.
+[P]- Ricochet/Agility/Revelation skills are removed.
+[P]- Sling-mastery yields bullet ricochets
+[P]- Sneakiness yields great searching if in searching mode
+[I]- player_desc()
+[O]- randart weapons no longer have TR1_TUNNEL
+[O]- magic arrows are generated in smaller bundle (6d7 => 6d2)
+[m]- muffled some compiler warnings
+[B]- Fireproof books merged with non-proof ones (object_similar)
+[B]- Dodge didn't work for bolts/arrows (project_p)
+[B]- Interception skill was badly broken.
+[B]- trapped floor didn't 'shimmer'
+[B]- could 'backstab' more than once / with martial arts (py_attack_mon)
+[B]- trapkits were priced wrong
+[B]- flying over trees damaged the player
+[B]- 'Trifurcate Spear' had wrong depth/rarity info
+[B]- HP/SP/SN displays weren't updated when restoring stats
 
 25/08/2002 (evileye)
 - server for php/perl added
@@ -49,9 +69,9 @@
 # do not delete
 
 22/08/2002 (evileye)
-- deletion of old spell stuff
-- work on new spell stuff
-- fixed the get_school_spell problem (skills.c)
+[m]- deletion of old spell stuff
+[m]- work on new spell stuff
+[B]- fixed the get_school_spell problem (skills.c)
 
 20/08/2002 (Jir)
 [O]- some 'Rogue' tributes
@@ -1933,7 +1953,11 @@ below this line are the unfixed bugs known:
 **below are bugs repoorted but not confirmed**
 [B]- House doors are still said to crash sometimes. (door even vanishes??)
 [B]- Mindcrafter does unmagic? (wrong report, I'm afraid)
-[B]- No magic arrows? (at least, my server offers plenty)
+[B]- No magic arrows? (at least, my server offers plenty) (maybe wrong report)
+[B]- perma walls / normal walls are not distinguishable anymore
+     (were they distinguishable before??)
+[B]- filthy street-urchins dropped a "nothing" which spawns random items
+     (not seen recently, but need to check)
 
 
 **below are bugs not shown recently(fixed??)**
@@ -2035,15 +2059,18 @@ below this line are the unfixed bugs known:
 
 
 **below are phenomena not confirmed as bug**
-[B]- breeders breed less if many players are on.
+[B]- breeders breed less if many players are on. (process_monster)
      buggie, but saves the server from getting slowed by breeding..
 [B]- p_ptr->to_d_ranged is always 0. (same with ToME)
-[B]- Yeek seems to receive the best store prices.
 [B]- meanless double egos like Elven Robe of Fire Resistance
 [B]- ^S(Spike doors) is bad key for GCU
 [B]- ^O(Chat history) is bad key for XIM
 [B]- If character savedate exists but it's not on the player-name database,
      that data can be 'stolen' by anyone else who specifies the name.
+[B]- fountain symbol ("_") stays constant while player is hallucinating
+     (b/c they're "cave" and not object - but might as well be 'fixed')
+[B]- one can raise father skill beyond limit by increasing the children
+     (eg. Weaponmastery=>Combat)
 
 
 
@@ -2181,6 +2208,8 @@ memo and questions:
   + monsters should follow the player when climbling up/down staircase.
   + aquatic uniques
   + vault treasures should be held by guardians
+  + strong bosses should drop better than DROP_GOOD
+    (DROP_GOOD can still drop excellent/arts, so better leave as it is now)
 - traps:
   + missile traps should have AC check(check_hit)?
   * Trap ideas
@@ -2199,7 +2228,8 @@ memo and questions:
   + more tools
   + generic mimic rings (like 'D', 'Z') / ego rings
   + wooden/leather armours should be immune to water damage.
-  + sell magic ammo in normal store (I vote against it - Jir)
+  + sell magic ammo in normal store (maybe archery shop?)
+  + store should buy mimic rings for better prices than 90au?
 - anticheeze:
   + (nothing so far)
 - players:
@@ -2209,6 +2239,8 @@ memo and questions:
   + lowbies (<lv10?) should be immune to Black Breath?
   + more equipment slots in general (like Bracer)
   + being poison-resistant form should slow poison, etc
+  + ghost resurrection gets severer
+    (eg. exp penalty gets worse like 80%,75%,70%,..)
 - combat:
   + players should be able to interfere monsters' firing/casting?
   + 2-weapon combat

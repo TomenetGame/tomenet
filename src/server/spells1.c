@@ -1083,7 +1083,7 @@ void take_hit(int Ind, int damage, cptr hit_from)
 	player_type *p_ptr = Players[Ind];
 
 	// This is probably unused
-	int warning = (p_ptr->mhp * hitpoint_warn / 10);
+	// int warning = (p_ptr->mhp * hitpoint_warn / 10);
 
 	// The "number" that the character is displayed as before the hit
 	int old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
@@ -1240,9 +1240,10 @@ void take_hit(int Ind, int damage, cptr hit_from)
 void take_sanity_hit(int Ind, int damage, cptr hit_from)
 {
 	player_type *p_ptr = Players[Ind];
-        int old_csane = p_ptr->csane;
-
-        int warning = (p_ptr->msane * hitpoint_warn / 10);
+#if 0
+	int old_csane = p_ptr->csane;
+    int warning = (p_ptr->msane * hitpoint_warn / 10);
+#endif	// 0
 
 
 	/* Paranoia */
@@ -2238,7 +2239,8 @@ bool res_stat(int Ind, int stat)
 		p_ptr->stat_cur[stat] = p_ptr->stat_max[stat];
 
 		/* Recalculate bonuses */
-		p_ptr->update |= (PU_BONUS);
+//		p_ptr->update |= (PU_BONUS);
+		p_ptr->update |= (PU_BONUS | PU_MANA | PU_HP | PU_SANITY);
 
 		/* Success */
 		return (TRUE);
@@ -5286,7 +5288,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Bolt attack from a monster, a player or a trap */
 //	if ((!rad) && get_skill(p_ptr, SKILL_DODGE) && (who > 0))
 	/* Hack -- HIDE(direct) spell cannot be dodged */
-	if (get_skill(p_ptr, SKILL_DODGE) && (flg & PROJECT_HIDE))
+	if (get_skill(p_ptr, SKILL_DODGE) && !(flg & PROJECT_HIDE))
 	{
 		if ((!rad) && (who > PROJECTOR_POTION))
 		{

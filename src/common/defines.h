@@ -445,8 +445,13 @@
 #define STORE_CHOICES	56 /*34*/	/* Number of items to choose stock from */
 #define STORE_OBJ_LEVEL	5		/* Magic Level for normal stores */
 #define STORE_TURNOVER	9		/* Normal shop turnover, per day */
+#if 0
 #define STORE_MIN_KEEP	12		/* Min slots to "always" keep full */
 #define STORE_MAX_KEEP	36		/* Max slots to "always" keep full */
+#else	// 0
+#define STORE_MIN_KEEP	6		/* Min slots to "always" keep full */
+#define STORE_MAX_KEEP	24		/* Max slots to "always" keep full */
+#endif	// 0
 #define STORE_SHUFFLE	20		/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNOUT	60		/* Max turns a player may stay in a store if crowded */
 #define STORE_TURNS	(cfg.store_turns)	/* Number of turns between turnovers */

@@ -1123,6 +1123,7 @@ static void hit_trap(int Ind)
  * NOTE: New attacking features from PernAngband are not
  * implemented yet for pvp!! (FIXME)		- Jir -
  */
+/* TODO: p_ptr->name should be replaced by strings made by player_desc */
 void py_attack_player(int Ind, int y, int x, bool old)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1147,7 +1148,8 @@ void py_attack_player(int Ind, int y, int x, bool old)
 	disturb(0 - c_ptr->m_idx, 0, 0);
 
 	/* Extract name */
-	strcpy(p_name, q_ptr->name);
+//	strcpy(p_name, q_ptr->name);
+	monster_desc(Ind, p_name, 0 - c_ptr->m_idx, 0);
 
 	/* Track player health */
 	if (p_ptr->play_vis[0 - c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);
@@ -1469,7 +1471,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	bool            do_quake = FALSE;
 
 	bool            backstab = FALSE, stab_fleeing = FALSE;
-	bool nolite, nolite2;
+	bool nolite, nolite2, martial = FALSE;
 
 
 	bool            vorpal_cut = FALSE;
@@ -1572,21 +1574,28 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 		return;
 	}
 
-	if (get_skill(p_ptr, SKILL_BACKSTAB))
+	/* Access the weapon */
+	o_ptr = &(p_ptr->inventory[INVEN_WIELD]);
+
+
+	/* Cannot 'stab' with martial-arts */
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx
+			&& !p_ptr->inventory[INVEN_ARM].k_idx
+			&& !p_ptr->inventory[INVEN_BOW].k_idx)
+	{
+		martial = TRUE;
+	}
+	else if (get_skill(p_ptr, SKILL_BACKSTAB))
 	{
 		if(m_ptr->csleep /*&& m_ptr->ml*/)
 			backstab = TRUE;
 		else if (m_ptr->monfear /*&& m_ptr->ml)*/)
 			stab_fleeing = TRUE;
 	}
-		
-	
+
+
 	/* Disturb the monster */
 	m_ptr->csleep = 0;
-
-
-	/* Access the weapon */
-	o_ptr = &(p_ptr->inventory[INVEN_WIELD]);
 
 
 	/* Attack once for each legal blow */
@@ -1619,8 +1628,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			else if (stab_fleeing)
 				msg_format(Ind, "You %s the fleeing %s!",
 						nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr));
-			else
-				msg_format(Ind, "You hit %s.", m_name);
+			else if (!martial) msg_format(Ind, "You hit %s.", m_name);
 
 			/* Hack -- bare hands do one damage */
 			k = 1;
@@ -1633,9 +1641,12 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				k = p_ptr->lev * ((p_ptr->lev / 10) + 1);
 #if 1 // DGHDGDGDG -- monks are no more
 //			if (p_ptr->pclass == CLASS_MONK)
+#if 0
 			if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx
 					&& !p_ptr->inventory[INVEN_ARM].k_idx
 					&& !p_ptr->inventory[INVEN_BOW].k_idx)
+#endif	// 0
+			if (martial)
 			{
 				int special_effect = 0, stun_effect = 0, times = 0;
 				martial_arts * ma_ptr = &ma_blows[0], * old_ptr = &ma_blows[0];
@@ -1748,11 +1759,13 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				{
 					k += (k * (nolite ? 3 : 1) *
 						get_skill_scale(p_ptr, SKILL_BACKSTAB, 300)) / 100;
+					backstab = FALSE;
 				}
 				else if (stab_fleeing)
 				{
 					k += (k * (nolite2 ? 2 : 1) *
 						get_skill_scale(p_ptr, SKILL_BACKSTAB, 210)) / 100;
+					stab_fleeing = FALSE;
 				}
 
 				/* Select a chaotic effect (50% chance) */
