@@ -5310,7 +5310,7 @@ static int Receive_fire(int ind)
 	{
 		/* Change firing direction */
 		while (dir == 5)
-			dir = randint(9) + 1;
+			dir = randint(9);
 	}
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)/p_ptr->num_fire)
