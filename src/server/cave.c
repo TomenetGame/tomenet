@@ -206,7 +206,8 @@ bool can_go_down(struct worldpos *wpos)
 	}
 
 	if(wpos->wz>0) {
-		if (d_ptr->flags2 & DF2_IRON) return(FALSE);
+		if ((d_ptr->flags1 & (DF1_NO_UP | DF1_FORCE_DOWN)) ||
+		    (d_ptr->flags2 & DF2_IRON)) return(FALSE);
 		return(TRUE);
 	}
 
@@ -2089,7 +2090,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			    type = d_ptr->type;
 			    (*ap) = TERM_WHITE;
 			    if (d_ptr->flags1 & DF1_NO_RECALL) (*ap) = TERM_L_RED;
-			    if (d_ptr->flags1 & (DF1_NO_UP | DF1_FORCE_DOWN)) (*ap) = TERM_RED;
+			    if (d_ptr->flags1 & DF1_NO_UP) (*ap) = TERM_RED;
+			    if (d_ptr->flags1 & DF1_FORCE_DOWN) (*ap) = TERM_ORANGE;
 			    if (d_ptr->flags2 & DF2_IRON) (*ap) = TERM_L_DARK;
 			    if (d_ptr->flags2 & DF2_HELL) (*ap) = TERM_FIRE;
 			    if (d_ptr->flags2 & DF2_NO_DEATH) (*ap) = TERM_GREEN;

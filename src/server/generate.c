@@ -538,14 +538,40 @@ static void place_fountain(struct worldpos *wpos, int y, int x)
 			cs_ptr->sc.fountain.type = SV_POTION_WATER;
 		else cs_ptr->sc.fountain.type = svals[rand_int(maxsval)];
 
-		cs_ptr->sc.fountain.rest = damroll(1, 4);/* was 3d4, resulting in
-		someone sip 12 times from a +stats fountain! -> no thx :) */
-	
-		/* some hacks: */
+		cs_ptr->sc.fountain.rest = damroll(1, 5);
+		/* Some hacks: */
+		if (cs_ptr->sc.fountain.type < SV_POTION_LAST)
+		switch (cs_ptr->sc.fountain.type) {
+		case SV_POTION_NEW_LIFE:
+			cs_ptr->sc.fountain.rest = 1;
+			break;
+		case SV_POTION_INC_STR:	case SV_POTION_INC_INT:
+		case SV_POTION_INC_WIS:	case SV_POTION_INC_DEX:
+		case SV_POTION_INC_CON:	case SV_POTION_INC_CHR:
+		case SV_POTION_AUGMENTATION:
+		case SV_POTION_STAR_ENLIGHTENMENT:
+		case SV_POTION_EXPERIENCE:
+		case SV_POTION_INVULNERABILITY:
+		case SV_POTION_STAR_RESTORE_MANA:
+		case SV_POTION_LEARNING:
+			cs_ptr->sc.fountain.rest = damroll(1, 2);
+			break;
+		case SV_POTION_STAR_HEALING:
+		case SV_POTION_LIFE:
+		case SV_POTION_SELF_KNOWLEDGE:
+			cs_ptr->sc.fountain.rest = damroll(1, 3);
+			break;
+		}
+		else
+		switch (cs_ptr->sc.fountain.type - SV_POTION_LAST) {
 		/* make it hard to polymorph back at a bat fountain by sipping again */
-		if (cs_ptr->sc.fountain.type == SV_POTION2_CHAUVE_SOURIS)
-			cs_ptr->sc.fountain.rest = rand_int(7) / 3;
-	
+		case SV_POTION2_CHAUVE_SOURIS:
+		case SV_POTION2_CURE_SANITY:
+		case SV_POTION2_LEARNING:
+			cs_ptr->sc.fountain.rest = damroll(1, 2);
+			break;
+		}
+
 		cs_ptr->sc.fountain.known = FALSE;
 #if 0
 		cs_ptr->type = CS_TRAPS;

@@ -1191,7 +1191,7 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 		else
 			total += 250;
 	}
-	if (f3 & TR3_AGGRAVATE) total -= 10000;
+	if (f3 & TR3_AGGRAVATE) total -= 10000; /* penalty 1 of 2 */
 	if (f3 & TR3_BLESSED) total += 750;
 	if (f3 & TR3_CURSED) total -= 5000;
 	if (f3 & TR3_HEAVY_CURSE) total -= 12500;
@@ -1759,13 +1759,21 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			}
 
 			/* Special attack (exploding arrow) */
-			if (o_ptr->pval != 0) value *= 8;
+			if (o_ptr->pval != 0) {
+				if (o_ptr->name1 != ART_RANDART) value *= 8;
+				else value *= 2;
+			}
 
 			/* Done */
 			break;
 		}
 	}
 
+	/* hack against those 500k randarts */
+	if (o_ptr->name1 == ART_RANDART) {
+		value >>= 1; /* general randart value nerf */
+		if (f3 & TR3_AGGRAVATE) value >>= 1; /* aggravate penalty 2 of 2 */
+	}
 
 	/* Return the value */
 	return (value);
@@ -5433,6 +5441,9 @@ void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool g
 void determine_level_req(int level, object_type *o_ptr)
 {
 	int i, j, base = k_info[o_ptr->k_idx].level / 2;
+
+	/* Exception */
+	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) return;
 
 	/* Unowned yet */
 //	o_ptr->owner = 0;

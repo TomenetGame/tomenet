@@ -2012,6 +2012,9 @@ bool inc_stat(int Ind, int stat)
 			/* Paranoia */
 			if (gain < 1) gain = 1;
 
+			/* 4 points at once is too much */
+			if (gain > 17) gain = 17;
+
 			/* Apply the bonus */
 			value += randint(gain) + gain / 2;
 

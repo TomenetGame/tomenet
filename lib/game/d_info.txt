@@ -154,7 +154,7 @@ R:80:3
 M:AQUATIC | CAN_SWIM | CAN_FLY
 
 # Used for astral mode
-N:8:Halls of Mandos
+N:8:The Halls of Mandos
 D:HMa:*A BUG*
 W:1:98:1:0:14:160
 L:1:100:1:0:1:0
@@ -188,7 +188,7 @@ M:ORC | R_CHAR_w | R_CHAR_m | R_CHAR_j
 # The Heart of the Earth
 # levels 25-36
 # guarded by Golgarach, the Living Rock, with the Anchor of Space-Time
-N:10:Heart of the Earth
+N:10:The Heart of the Earth
 D:HoE:a passage leading into the very heart of the world.
 W:25:37:10:0:14:160
 L:1:100:1:0:1:0
@@ -204,7 +204,7 @@ R:30:0
 # The Paths of the Dead
 # levels 40-70
 # Feagwath is there, guarding Doomcaller
-N:16:Paths of the Dead
+N:16:The Paths of the Dead
 D:PoD:the entrance to the Paths of the Dead.
 W:40:70:20:0:24:100
 L:88:85:84:15:1:0
@@ -222,7 +222,7 @@ M:UNDEAD | NONLIVING
 # The Illusory Castle
 # levels 35-52
 # Guarded by The Glass Golem guarding The Helm of Knowledge
-N:17:Illusory Castle
+N:17:The Illusory Castle
 D:Ill:an entrance to the Illusory Castle.
 W:35:52:10:0:24:100
 L:1:98:188:2:1:0
@@ -242,7 +242,7 @@ S:BR_CONF | BR_CHAO | BA_CHAO | CONF | FORGET | TRAPS
 # The Maze
 # Levels 25-37
 # Guarded by The Minotaur of the Labyrinth with the Steel Helm of Hammerhand
-N:18:Maze
+N:18:The Maze
 D:Maz:a small tunnel leading to a maze of twisty little passages, all alike.
 W:25:38:15:0:20:160
 L:1:100:1:0:1:0
@@ -257,7 +257,7 @@ M:R_CHAR_p
 # The Orc Cave
 # levels 10-22
 # There is Azog with the Wand of Thrain at the bottom
-N:19:Orc Cave
+N:19:The Orc Cave
 D:Orc:a dark tunnel leading to an Orc Cave.
 W:10:23:3:0:35:200
 L:88:100:1:0:1:0
@@ -281,7 +281,7 @@ W:50:61:35:0:20:140
 L:88:100:1:0:1:0
 A:97:90:87:10:56:0:57:97
 O:40:40:40:40
-F:BIG | LAVA_RIVER | CAVERN | NO_RECALL | NO_STREAMERS
+F:BIG | LAVA_RIVER | CAVERN | FORCE_DOWN | NO_STREAMERS
 F:CAVE | DOUBLE | FINAL_GUARDIAN_715 | 
 F:FILL_METHOD_2
 #R:10:0
@@ -464,7 +464,7 @@ M:IM_COLD
 
 # The Training Tower
 # levels 1-2
-N:30:Training Tower
+N:30:The Training Tower
 D:Nwb:A tower for newbies.
 W:1:2:1:0:14:160
 L:1:80:174:20:1:0

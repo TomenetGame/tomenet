@@ -3337,7 +3337,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 			}
 
 			/* Dark Swords resist somewhat */
-			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(20) : magik(100))
+			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(15) : magik(100))
 			{
 				msg_print(Ind, "\377rYour weapon *DISINTEGRATES*!");
 				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
@@ -3384,7 +3384,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 
 			/* Dark Swords resist the magic, other weapons
 			   have a high chance of getting destroyed */
-			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(4) : magik(20))
+			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(3) : magik(20))
 			{
 				msg_print(Ind, "\377rYour weapon is destroyed !");
 				inven_item_increase(Ind, INVEN_WIELD + weap, -1);

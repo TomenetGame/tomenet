@@ -1454,7 +1454,9 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 
 	p_ptr->body_monster = r_idx;
 	p_ptr->body_changed = TRUE;
-	
+
+	p_ptr->tim_wraith = 0; /* in xtra2.c it would prevent regular wraithform on istari */
+
 	msg_format(Ind, "You polymorph into a %s !", r_info[r_idx].name + r_name);
 	msg_format_near(Ind, "%s polymorphs into a % !", p_ptr->name, r_info[r_idx].name + r_name);
 

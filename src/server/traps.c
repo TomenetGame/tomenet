@@ -718,7 +718,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 
 	/* No more perfection / EA / and other nice daggers from this one -C. Blue */
 	/* If weapon has good boni, remove all ego abilities */
-	if ((o_ptr->pval < 0) || (o_ptr->to_a < 0) || (o_ptr->to_h > 0) || (o_ptr->to_d > 0))
+	if ((o_ptr->pval > 0) || (o_ptr->to_a > 0) || (o_ptr->to_h > 0) || (o_ptr->to_d > 0))
 	{
 		o_ptr->name1 = o_ptr->name2 = o_ptr->name2b = o_ptr->name3 = 0;
 	}

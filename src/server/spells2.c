@@ -4584,6 +4584,8 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				Ind = 0 - c_ptr->m_idx;
 				p_ptr = Players[Ind];
 
+				sn = 0;
+
 				/* Check around the player */
 				for (i = 0; i < 8; i++)
 				{
@@ -4622,7 +4624,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 					}
 					default:
 					{
-						msg_print(Ind, "The cave quakes!  You are pummeled with debris!");
+						msg_print(Ind, "The cave quakes! You are pummeled with debris!");
 						break;
 					}
 				}
@@ -4631,8 +4633,8 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				if (!sn)
 				{
 					/* Message and damage */
-					msg_print(Ind, "You are severely crushed!");
 					damage = 300;
+					msg_format(Ind, "You are severely crushed for \377o%d\377w damage!", damage);
 				}
 
 				/* Destroy the grid, and push the player to safety */
@@ -4643,21 +4645,21 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 					{
 						case 1:
 						{
-							msg_print(Ind, "You nimbly dodge the blast!");
 							damage = 0;
+							msg_print(Ind, "You nimbly dodge the blast and take no damage!");
 							break;
 						}
 						case 2:
 						{
-							msg_print(Ind, "You are bashed by rubble!");
 							damage = damroll(10, 4);
+							msg_format(Ind, "You are bashed by rubble for \377o%d\377w damage!", damage);
 							(void)set_stun(Ind, p_ptr->stun + randint(50));
 							break;
 						}
 						case 3:
 						{
-							msg_print(Ind, "You are crushed between the floor and ceiling!");
-							damage = damroll(10, 4);
+							damage = damroll(30, 4);
+							msg_format(Ind, "You are crushed between the floor and ceiling for \377o%d\377w damage!", damage);
 							(void)set_stun(Ind, p_ptr->stun + randint(50));
 							break;
 						}

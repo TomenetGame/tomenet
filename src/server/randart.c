@@ -467,53 +467,53 @@ static void add_ability (artifact_type *a_ptr)
 					a_ptr->flags1 |= TR1_BRAND_ELEC;
 					if (rand_int (4) > 0) a_ptr->flags2 |= TR2_RES_ELEC;
 				}
-				else if (r < 15)
+				else if (r < 14)
 				{
 					a_ptr->flags1 |= TR1_BRAND_FIRE;
 					if (rand_int (4) > 0) a_ptr->flags2 |= TR2_RES_FIRE;
 				}
-				else if (r < 20)
+				else if (r < 18)
 				{
 					a_ptr->flags1 |= TR1_BRAND_COLD;
 					if (rand_int (4) > 0) a_ptr->flags2 |= TR2_RES_COLD;
 				}
-				else if (r < 28)
+				else if (r < 25)
 				{
 					a_ptr->dd += 1 + rand_int (2) + rand_int (2);
 					if (a_ptr->dd > 9) a_ptr->dd = 9;
 				}
-				else if (r < 31)
+				else if (r < 27)
 				{ 
 					a_ptr->flags1 |= TR1_KILL_DRAGON;
 					a_ptr->esp |= (ESP_DRAGON);
 				}
-				else if (r < 33)
+				else if (r < 29)
 				{ 
 					a_ptr->flags1 |= TR1_KILL_DEMON;
 					a_ptr->esp |= (ESP_DEMON);
 				}
-				else if (r < 35)
+				else if (r < 31)
 				{ 
 					a_ptr->flags1 |= TR1_KILL_UNDEAD;
 					a_ptr->esp |= (ESP_UNDEAD);
 				}
-				else if (r < 39)
+				else if (r < 35)
 				{
 					a_ptr->flags1 |= TR1_SLAY_DRAGON;
 					if (magik(80)) a_ptr->esp |= (ESP_DRAGON);
 				}
-				else if (r < 41)
+				else if (r < 39)
 				{
 					a_ptr->flags1 |= TR1_SLAY_EVIL;
 					if (magik(80)) a_ptr->esp |= (ESP_EVIL);
 				}
 
-				else if (r < 46)
+				else if (r < 43)
 				{
 					a_ptr->flags1 |= TR1_SLAY_ANIMAL;
 					if (magik(80)) a_ptr->esp |= (ESP_EVIL);
 				}
-				else if (r < 50)
+				else if (r < 47)
 				{
 					a_ptr->flags1 |= TR1_SLAY_UNDEAD;
 					if (magik(80)) a_ptr->esp |= (ESP_UNDEAD);
@@ -523,7 +523,7 @@ static void add_ability (artifact_type *a_ptr)
 						if (magik(80)) a_ptr->esp |= (ESP_DEMON);
 					}
 				}
-				else if (r < 54)
+				else if (r < 51)
 				{
 					a_ptr->flags1 |= TR1_SLAY_DEMON;
 					if (magik(80)) a_ptr->esp |= (ESP_DEMON);
@@ -533,7 +533,7 @@ static void add_ability (artifact_type *a_ptr)
 						if (magik(80)) a_ptr->esp |= (ESP_UNDEAD);
 					}
 				}
-				else if (r < 59)
+				else if (r < 55)
 				{
 					a_ptr->flags1 |= TR1_SLAY_ORC;
 					if (magik(80)) a_ptr->esp |= (ESP_ORC);
@@ -548,7 +548,7 @@ static void add_ability (artifact_type *a_ptr)
 						if (magik(80)) a_ptr->esp |= (ESP_GIANT);
 					}
 				}
-				else if (r < 63)
+				else if (r < 59)
 				{
 					a_ptr->flags1 |= TR1_SLAY_TROLL;
 					if (magik(80)) a_ptr->esp |= (ESP_TROLL);
@@ -563,7 +563,7 @@ static void add_ability (artifact_type *a_ptr)
 						if (magik(80)) a_ptr->esp |= (ESP_GIANT);
 					}
 				}
-				else if (r < 67)
+				else if (r < 63)
 				{
 					a_ptr->flags1 |= TR1_SLAY_GIANT;
 					if (magik(80)) a_ptr->esp |= (ESP_GIANT);
@@ -578,8 +578,8 @@ static void add_ability (artifact_type *a_ptr)
 						if (magik(80)) a_ptr->esp |= (ESP_TROLL);
 					}
 				}
-				else if (r < 72) a_ptr->flags3 |= TR3_SEE_INVIS;
-				else if (r < 76)
+				else if (r < 68) a_ptr->flags3 |= TR3_SEE_INVIS;
+				else if (r < 72)
 				{
 					if (a_ptr->tval == TV_BOOMERANG) {
 						a_ptr->flags3 |= TR3_XTRA_SHOTS;
@@ -591,28 +591,33 @@ static void add_ability (artifact_type *a_ptr)
 						if (a_ptr->pval > 3) a_ptr->pval = 3;
 					}
 				}
-				else if (r < 89)
+				else if (r < 85)
 				{
-					a_ptr->to_d += 3 + rand_int (10);
-					a_ptr->to_h += 3 + rand_int (10);
+					a_ptr->to_d += 2 + rand_int (10);
+					a_ptr->to_h += 2 + rand_int (10);
 				}
-				else if (r < 92) a_ptr->to_a += 3 + rand_int (3);
-				else if (r < 95)
+				else if (r < 88) a_ptr->to_a += 3 + rand_int (3);
+				else if (r < 91)
 				{
 					a_ptr->flags5 |= TR5_CRIT;
 					if (a_ptr->pval < 0) break;
 					if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int (8);
 					else if (rand_int (2) == 0) a_ptr->pval++;
 				}
-				else a_ptr->weight = (a_ptr->weight * 9) / 10;
-#if 0
-				else
-					if (a_ptr->tval != TV_DIGGING && a_ptr->tval != TV_BOOMERANG)
-					{
-						a_ptr->flags1 |= TR1_TUNNEL;
-						do_pval (a_ptr);
+				else if (r < 95)
+				{
+					switch(a_ptr->tval) {
+					case TV_DIGGING:
+						a_ptr->pval++;
+						break;
+					case TV_MSTAFF:
+						a_ptr->pval++;
+						break;
+					default: /* normal weapons */
+						a_ptr->flags1 |= TR1_VAMPIRIC;
 					}
-#endif	// 0
+				}
+				else a_ptr->weight = (a_ptr->weight * 9) / 10;
 
 				break;
 			}
@@ -1279,8 +1284,8 @@ artifact_type *randart_make(object_type *o_ptr)
 	    (a_ptr->tval==TV_AXE) ||
 	    (a_ptr->tval==TV_BOW))
 	{
-		a_ptr->to_d += 1 + rand_int(5);
-		a_ptr->to_h += 1 + rand_int(5);
+		a_ptr->to_d += 1 + rand_int(20);
+		a_ptr->to_h += 1 + rand_int(20);
 	}
 
 	/* Ammo doesn't get large bonus */
@@ -1349,6 +1354,7 @@ artifact_type *randart_make(object_type *o_ptr)
 		if (magik(50)) add_ability (a_ptr);
 		if (magik(25)) add_ability (a_ptr);
 		if (magik(10)) add_ability (a_ptr);
+		ap = artifact_power (a_ptr) + RANDART_QUALITY + 15; /* in general ~5k+0+15k value */
 	}
 	else
 	{
@@ -1390,7 +1396,7 @@ artifact_type *randart_make(object_type *o_ptr)
 		}
 	}
 	a_ptr->cost = (ap + 10 - RANDART_QUALITY) * (s32b)1500;
-        a_ptr->level = ap;
+        a_ptr->level = (curse_me ? (ap < -20 ? -ap : (ap > 20 ? ap : 15 + ABS(ap))) : ap);
 
 	if (a_ptr->cost < 0) a_ptr->cost = 0;
 
@@ -1462,6 +1468,14 @@ artifact_type *randart_make(object_type *o_ptr)
 	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 3))
 	{
 		a_ptr->pval = 3;
+	}
+
+	if (a_ptr->tval == TV_GLOVES) {
+		if (a_ptr->to_h > 6) a_ptr->to_h = 6;
+		if (a_ptr->to_d > 6) a_ptr->to_d = 6;
+	} else {
+		if (a_ptr->to_h > 30) a_ptr->to_h = 30;
+		if (a_ptr->to_d > 30) a_ptr->to_d = 30;
 	}
 
 	/* Hack -- DarkSword randarts should have this */

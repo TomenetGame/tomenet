@@ -1905,14 +1905,17 @@ static void do_recall(int Ind, bool bypass)
 		d_ptr=getdungeon(&p_ptr->wpos);
 
 		/* Messages */
-		if(((d_ptr->flags2 & DF2_IRON && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)) ||
-		    (d_ptr->flags1 & DF1_NO_RECALL)) && !p_ptr->admin_dm && !p_ptr->admin_wiz) {
+		if((((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)) ||
+		    (d_ptr->flags1 & DF1_NO_RECALL))) {
 			msg_print(Ind, "You feel yourself being pulled toward the surface!");
-			recall_ok=FALSE;
-			/* Redraw the depth(colour) */
-	    		p_ptr->redraw |= (PR_DEPTH);
+			if (!p_ptr->admin_dm && !p_ptr->admin_wiz) {
+				recall_ok=FALSE;
+				/* Redraw the depth(colour) */
+	    			p_ptr->redraw |= (PR_DEPTH);
+			}
 		}
-		else{
+		if (recall_ok) {
+	                msg_format(Ind, "\377uYou are transported out of %s..", d_name + d_info[d_ptr->type].name);
 			if(p_ptr->wpos.wz > 0)
 			{
 				message="You feel yourself yanked downwards!";
@@ -2010,6 +2013,7 @@ static void do_recall(int Ind, bool bypass)
 			else
 			{
 				message="You feel yourself yanked downwards!";
+		                msg_format(Ind, "\377uYou are transported into %s..", d_name + d_info[d_ptr->type].name);
 				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
 			}
 		}
@@ -2040,6 +2044,7 @@ static void do_recall(int Ind, bool bypass)
 			else
 			{
 				message="You feel yourself yanked upwards!";
+		                msg_format(Ind, "\377uYou are transported into %s..", d_name + d_info[d_ptr->type].name);
 				msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
 			}
 		}

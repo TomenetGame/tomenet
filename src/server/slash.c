@@ -2129,7 +2129,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/debug-s")){
 				/* C. Blue's mad debug code to fix
-				   stairs in Mount Doom.. */
+				   stairs [for entering Mount Doom].. */
 				int scx,scy;
 				worldpos *tpos = &p_ptr->wpos;
 				cave_type **zcave = getcave(tpos);
@@ -2150,7 +2150,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/debug-d")){
 				/* C. Blue's mad debug code to change
-				   dungeon flags of Nether Realm */
+				   dungeon flags [of Nether Realm] */
 				int type;
 				struct dungeon_type *d_ptr;
 				bool tower = FALSE;

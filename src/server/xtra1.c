@@ -2267,11 +2267,11 @@ void calc_bonuses(int Ind)
 	p_ptr->reflect = FALSE;
 	p_ptr->no_cut = FALSE;
 	p_ptr->reduce_insanity = 0;
-//		p_ptr->to_s = 0;
-		p_ptr->to_m = 0;
-		p_ptr->to_l = 0;
-		p_ptr->black_breath_tmp = FALSE;
-		p_ptr->stormbringer = FALSE;
+//	p_ptr->to_s = 0;
+	p_ptr->to_m = 0;
+	p_ptr->to_l = 0;
+	p_ptr->black_breath_tmp = FALSE;
+	p_ptr->stormbringer = FALSE;
 
 	/* Invisibility */
 	p_ptr->invis = 0;

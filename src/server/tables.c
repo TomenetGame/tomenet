@@ -2835,7 +2835,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWORD,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_CRITS,

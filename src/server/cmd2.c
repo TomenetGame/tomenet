@@ -114,8 +114,10 @@ void do_cmd_go_up(int Ind)
 		return;
 	}
 /*	if(wpos->wz<0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){*/
-	if(wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){
-		msg_print(Ind,"\377rThis is an ironman dungeon, you may not ascend.");
+	if(wpos->wz<0 && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
+			 wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)))
+	{
+		msg_print(Ind,"\377rThe stairways leading upwards are magically sealed in this dungeon.");
 		if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
 	}
 #if 1
@@ -176,15 +178,20 @@ void do_cmd_go_up(int Ind)
 	if (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)
 	{
 		process_hooks(HOOK_STAIR, "d", Ind);
-		if (c_ptr->feat == FEAT_WAY_LESS)
+		if (c_ptr->feat == FEAT_WAY_LESS) {
 			msg_print(Ind, "You enter the previous area.");
-		else
-			msg_print(Ind, "You enter a maze of up staircases.");
+		} else {
+			if (!wpos->wz) msg_format(Ind, "\377uYou enter %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+			else if (wpos->wz == -1) msg_format(Ind, "\377uYou leave %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+			else msg_print(Ind, "You enter a maze of up staircases.");
+		}
 		p_ptr->new_level_method = LEVEL_UP;
 	}
 	else
 	{
-		msg_print(Ind, "You float upwards.");
+		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+		else if (wpos->wz == -1) msg_format(Ind, "\377uYou float out of %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+		else msg_print(Ind, "You float upwards.");
 		p_ptr->new_level_method = LEVEL_GHOST;
 	}
 
@@ -357,8 +364,10 @@ void do_cmd_go_down(int Ind)
 	}
 
 /*	if(wpos->wz>0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){*/
-	if(wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){
-		msg_print(Ind,"\377rThis is an ironman tower, you may not descend.");
+	if(wpos->wz>0 && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
+			 wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)))
+	{
+		msg_print(Ind,"\377rThe stairways leading downwards are magically sealed in this tower.");
 		if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
 	}
 #if 1
@@ -419,15 +428,20 @@ void do_cmd_go_down(int Ind)
 	if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)
 	{
 		process_hooks(HOOK_STAIR, "d", Ind);
-		if (c_ptr->feat == FEAT_WAY_MORE)
+		if (c_ptr->feat == FEAT_WAY_MORE) {
 			msg_print(Ind, "You enter the next area.");
-		else
-			msg_print(Ind, "You enter a maze of down staircases.");
+		} else {
+			if (!wpos->wz) msg_format(Ind, "\377uYou enter %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+			else if (wpos->wz == 1) msg_format(Ind, "\377uYou leave %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+			else msg_print(Ind, "You enter a maze of down staircases.");
+		}
 		p_ptr->new_level_method = LEVEL_DOWN;
 	}
 	else
 	{
-		msg_print(Ind, "You float downwards.");
+		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+		else if (wpos->wz == 1) msg_format(Ind, "\377uYou float out of %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+		else msg_print(Ind, "You float downwards.");
 		p_ptr->new_level_method = LEVEL_GHOST;
 	}
 

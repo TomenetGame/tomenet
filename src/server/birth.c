@@ -492,13 +492,18 @@ static bool get_stats(int Ind, int stat_order[6])
 			bonus = p_ptr->rp_ptr->r_adj[i] + p_ptr->cp_ptr->c_adj[i];
 
 			/* Fix limits - all cases here cover malicious client-side cheating attempts :) */
+			/* Stat may only be reduced by up to 2 points */
 			if (stat_order[i] < 8) stat_order[i] = 8;
+			/* Stat may not be raised by more than 7 points */
 			if (stat_order[i] > 17) stat_order[i] = 17;
-			if (stat_order[i] + bonus < 3) stat_order[i] = 3 - bonus;
+			/* Only one of the stats is allowed to be maximized */
 			if (stat_order[i] == 17) {
 				if (!maxed_stats) maxed_stats++;
 				else stat_order[i] = 16;
 			}
+			/* Stat may only be decreased as long as it's > 3 (including the r/c bonus) */
+			if (stat_order[i] + bonus < 3 && stat_order[i] < 10)
+				stat_order[i] = (3 + bonus > 10) ? 10 : 3 + bonus;
 
 			/* Count skill points needed to reach these stats */
 			if (stat_order[i] <= 12) free_points -= (stat_order[i] - 10);

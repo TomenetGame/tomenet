@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. Dec 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. Dec 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -25,7 +25,7 @@ Contents
     (0.4)   Typical slang/abbreviations
     (0.5)   Rumours, missing features, technical warnings (READ!)
 (1) Introduction
-    (1.1)   What is TomeNET?
+    (1.1)   What is TomeNET? (Where can I get the latest sources?)
     (1.2)   What is a rogue-like game?
     (1.3)   Where do I find more information about rogue-like games?
     (1.4)   Goal and progress of TomeNET players
@@ -46,6 +46,7 @@ Contents
     (3.8)   Macros with special keys
     (3.9)   Experience, level-ups and skill points
     (3.10)  Death, ghosts and looting
+    (3.11)  Malicious effects players can suffer
 (4) The world
     (4.1)   Running, picking up items, fighting
     (4.2)   Level and owner of items
@@ -310,11 +311,15 @@ They all start with a slash '/':
             (It's easier to press '_' instead of using the /sip command.)
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
             fountain. You must stand on the fountain to do this.
-(The following function is currently disabled for balancing reasons:
+/shout <text>
+            Shout <text> loudly, will wake up and aggravate nearby monsters.
+
+(The /empty function is currently disabled for balancing reasons:
 /empty <inventory slot>
             Empty a potion from your inventory, leaving an empty bottle.
             Example: /empty c   (if you have 'c) 3 potions of boldness', one
             will be emptied and 2 remain at 'c) 2 potions of boldness'.))
+
 /ig <player name>
  (/ignore)  ignores all chat messages from the specified player. (Toggle)
 /dice       Roll some dice, you must specify a number of dice from 1 to 100.
@@ -514,8 +519,8 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 (1) Introduction
 ================
-(1.1) What is TomeNET?
-----------------------
+(1.1) What is TomeNET? (Where can I get the latest sources?)
+------------------------------------------------------------
 It's an extremely advanced online multiplayer rogue-like role-playing game,
 derived from MAngband (Multiplayer-Angband). TomeNET bases on the stories of
 J.R.R. Tolkien mainly "The Lord Of The Rings", hence the name "the Troubles of
@@ -523,8 +528,11 @@ Middle Earth" or alternatively "the Tales of Middle Earth". The final goal in
 TomeNET is to destroy the fallen god Melkor who is known by the name of
 Morgoth, Lord Of Darkness. The official website is http://www.tomenet.net/ .
 Latest version and information also available at http://www.c-blue.de/rogue/ .
+
 The source code is hosted at http://sourceforge.net/projects/pernband,
 module pm. Access it straight via CVS, avoid any snapshot tarballs and stuff.
+The cvs command-line to download the latest sources and files for TomeNET is:
+cvs -d:pserver:anonymous@cvs.pernband.sourceforge.net:/cvsroot/pernband co pm
 
 
 
@@ -1475,6 +1483,50 @@ drop their items on death, their loot will vanish forever.
 
 
 
+(3.11)  Malicious effects players can suffer
+--------------------------------------------
+The player can suffer from various effects caused by monsters, traps or
+himself. Against several of these effects the 'Savint Throw' ability helps
+to decide whether it will be resisted or not (especially true for effects
+that are cast by monsters on the player).
+The various effects are:
+
+For 'Fear', 'Blindness', 'Confusion' and 'Paralysis' - please see (5.6).
+
+Hunger  -Gorged         Your speed gets reduced by 10.
+        -Full           While being /afk in 'Full' state or in normal state
+                        (normal = no food state is displayed, the 'Full'
+                        disappeared), your digestion will be stopped, allowing
+                        you to remain afk as long as you wish.
+        -Hungry
+        -Weak (yellow)
+        -Weak (orange)
+        -Weak (red)     You lose hit points and get paralyzed even with FA.
+                        If you hit a bowel cramps trap, you instantly enter
+                        this nutrition state. 'Slow Digestion' will help to
+                        not get insta-paralyzed!
+
+Slowdown        Monsters can cast spells or breathe (inertia) to slow down
+                the player. This effect is temporary. 'Free Action' helps
+                a bit to reduce the effect from inertia breath.
+
+Stun    -Stun           Reduces your martial arts damage (no styles).
+                        Also reduces to-hit and to-dam.
+        -Heavy stun     Reduces your martial arts damage (no styles).
+                        Also reduces to-hit and to-dam greatly.
+        -Knocked out    You cannot perform any action while knocked out,
+                        it leaves your character completely helpless.
+                        Beware! High AC helps to prevent it, see (5.11).
+
+Cut                     Cuts will make you lose HP continuously.
+(Graze, Light cut, Bad cut, Nasty cut, Severe cut, Deep gash, Mortal wound)
+
+Poison  -Poisoned       The player will continuously lose Hit Points.
+                        Resisting poison will prevent the player from getting
+                        poisoned (compare (5.6)).
+
+
+
 (4) The world
 =============
 (4.1) Running, picking up items, fighting
@@ -1622,16 +1674,19 @@ There are different types of dungeons. The main five are:
 -Normal dungeons. The main dungeons below the five cities Bree, Minas Anor,
  Gondolin, Lothlorien and Khazad-dum are such regular dungeons.
  Normal dungeons/towers are marked by a light grey < or > symbol.
--No-recall. These dungeons don't allow you to use Word-of-Recall nor
+-NO_RECALL. These dungeons don't allow you to use Word-of-Recall nor
  probability travel to change the level. The staircases are the only way.
  Sending items via telekinesis to a player who is currently in a no-recall
  dungeon/tower will only work if both players are on the same dungeon floor.
  Ghosts of dead players can still float up/down.
  No-recall dungeons/towers are marked by a light red < or > symbol.
--No-up / Force-down. These dungeons won't allow you to go upwards, same as
- ironman, just without the penalty of permanent ghost-death.
- Ghosts of dead players can float upwards.
+-NO_UP. These dungeons won't allow you to go upwards, similar to ironman,
+ just without the penalty of permanent ghost-death. You are allowed to use
+ Word-Of-Recall as well! Ghosts of dead players can float upwards.
  No-up dungeons/towers are marked by a red < or > symbol.
+-FORCE_DOWN. Same as NO_UP, but you can only recall at the bottom of the
+ dungeon, similar to ironman.
+ Force-down dungeons/towers are marked by an orange < or > symbol.
 -Ironman. Ironman dungeons or towers won't allow you to recall or to use
  staircases that lead upwards! If you die in such a dungeon or tower you won't
  turn into a ghost either but get destroyed completely.
@@ -1643,7 +1698,7 @@ There are different types of dungeons. The main five are:
 -Hellish. Players suffer no-ghost deaths inside hellish dungeons.
  Even if they're everlasting.
  Hellish dungeons/towers are marked by a fire-like flickering < or > symbol.
--No-death. The Training Tower in Bree has this flag. Players who die inside a
+-NO_DEATH. The Training Tower in Bree has this flag. Players who die inside a
  no-death dungeon won't turn into a ghost if they 'die' but just be teleported
  back to town! They still lose experience though.
  No-death dungeons/towers are marked by a green < or > symbol.
@@ -1653,7 +1708,7 @@ staircase colour. So a hellish ironman dungeon has hellish-looking staircases.
 Jail:
 Note that jails (if the server has one) don't allow any type of teleportation,
 nor will you turn into a ghost if you get killed there, instead you will get
-destroyed completely. Same as with 'iron man dungeons'.
+destroyed completely. Same as with 'ironman dungeons'.
 A jail usually has an ironman tower inside.
 
 Sometimes you might find ruins of old staircases that don't lead to any
@@ -1778,16 +1833,16 @@ ranged attacks. Always a nasty surprise..
 
 Here is a list of towns and their corresponding local dungeons:
 
-Town        |Depth/Level|   Local dungeons  |   Depth/Level     |Required
-            |of the town|                   |   of the local    |player level
-            |itself     |                   |   dungeon         |for entering
-------------+-----------+-------------------+-------------------+------------
-Bree        |   0 ft/  0| Training Tower    | +50..+400/ 1..10  |    1
-            |           | Barrow-Downs      |  50..1750/ 1..35  |    1
-Gondolin    |1000 ft/ 20| Mordor            |1700..3300/34..66  |   15
-Minas Anor  |2000 ft/ 40| Paths of the Dead |2000..3500/40..70  |   20
-Lothlorien  |3000 ft/ 60| Angband           |3350..6350/67..127 |   30
-Khazad-dum  |4000 ft/ 80| Angband           |3350..6350/67..127 |   30
+Town        |Depth/Level|   Local dungeons    | Depth/Level      |Required
+            |of the town|                     | of the local     |player level
+            |itself     |                     | dungeon          |for entering
+------------+-----------+---------------------+------------------+------------
+Bree        |   0 ft/  0|The Training Tower   | +50..+400/ 1..10 |    1
+            |           |Barrow-Downs         |  50..1750/ 1..35 |    1
+Gondolin    |1000 ft/ 20|Mordor               |1700..3300/34..66 |   15
+Minas Anor  |2000 ft/ 40|The Paths of the Dead|2000..3500/40..70 |   20
+Lothlorien  |3000 ft/ 60|Angband              |3350..6350/67..127|   30
+Khazad-dum  |4000 ft/ 80|Angband              |3350..6350/67..127|   30
 
 To enter a dungeon your character must have the displayed minimum level.
 Otherwise you'll get a message like this "Suddenly you're grasped by an
@@ -1804,20 +1859,20 @@ Dungeon                         |   Depth/Level         | Min. required player
                                 |                       |   level to enter
 --------------------------------+-----------------------+---------------------
 Death Fate                      |   50..  50/  1..1     |        1
-Halls of Mandos                 |   50..4900/  1..98    |        1
-Orc Cave                        |  500..1100/ 10..23    |        3
+The Halls of Mandos             |   50..4900/  1..98    |        1
+The Orc Cave                    |  500..1100/ 10..23    |        3
 Mirkwood                        |  550..1650/ 11..34    |        5
 The Old Forest                  |  650..1250/ 13..26    |        5
 The Helcaraxe                   | 1000..2000/ 20..41    |       10
 The Sandworm lair               | 1100..1500/ 22..30    |       12
-Heart of the Earth              | 1250..1850/ 25..37    |       10
-Maze                            | 1250..1900/ 25..38    |       15
+The Heart of the Earth          | 1250..1850/ 25..37    |       10
+The Maze                        | 1250..1900/ 25..38    |       15
 Cirith Ungol                    | 1250..2050/ 25..51    |       10
 The Land Of Rhun                | 1300..2050/ 26..41    |       13
 Moria                           | 1500..2550/ 30..50    |       15
 The Small Water Cave            | 1600..1750/ 32..35    |       15
 Submerged Ruins                 | 1750..2550/ 35..51    |       15
-Illusory Castle                 | 1750..2650/ 35..52    |       10
+The Illusory Castle             | 1750..2650/ 35..52    |       10
 The Sacred Land Of Mountains    | 2000..2250/ 40..45    |       20
 Erebor                          | 2500..3150/ 50..61    |       35
 Dol Guldur                      | 2850..3550/ 57..71    |       28
@@ -1928,17 +1983,22 @@ The feelings are as follows:
 "You feel an imminent danger!" ->   This dungeon level is *way* higher than
                                     your character level.
 "You feel a suppressive air..." ->  You cannot use magic on this level!
+                                    (NO_MAGIC, +10% experience bonus!)
 "You have a feeling of peace..." -> You cannot use genocide on this level!
-"You lose all sense of direction..." -> This means you won't be able to
-                                        auto-map this dungeon, meaning that
-                                        you won't remember the dungeon layout
-                                        but you're only able to see your
-                                        nearby surroundings within your
-                                        character's radius of sight.
+                                    (NO_GENO, +5% experience bonus!)
+"You lose all sense of direction..." -> You won't be able to auto-map this
+                                        dungeon, meaning that you won't
+                                        remember the dungeon layout.
+                                        You're can only see your nearby
+                                        surroundings within your character's
+                                        line of sight.
+                                        (NOMAP, +15% experience bonus!)
 "You feel like a stranger..." ->    You cannot use magic mapping nor
                                     clairvoyance here!
+                                    (NO_MAGIC_MAP, +5% experience bonus!)
 "The walls here seem very solid." ->    You cannot destroy the dungeon
                                         structure on this level.
+                                        (NO_DESTROY, +5% experience bonus!)
 Vaults:
 Vaults can also bear a very dangerous feature that is displayed as dark grey
 feeling as soon as you are about to enter the vault:
@@ -2242,19 +2302,19 @@ Melee Weapon|       1               2               3                   6
 Ranged Weap.|       1               1.4             1.8                 3
 Martial Arts|       1               1.33            1.67                2.67
 
-Slaying     | Dice multiplier
-------------|----------------
-Slay Animal |       2
-Slay Giant  |       3
-Slay Undead |       3
-Slay Troll  |       3
-Slay Orc    |       3
-Slay Dragon |       3
-Slay Demon  |       3
-Slay Evil   |       2
-Kill Undead |       5
-Kill Dragon |       5
-Kill Demon  |       5
+Slaying     | Dice multiplier | Description
+------------|-----------------------------------------------------------------
+Slay Animal |       2         | It is esp. deadly against natural creatures.
+Slay Giant  |       3         | It is especially deadly against giants.
+Slay Undead |       3         | It strikes at undead with holy wrath.
+Slay Troll  |       3         | It is especially deadly against trolls.
+Slay Orc    |       3         | It is especially deadly against orcs.
+Slay Dragon |       3         | It is especially deadly against dragons.
+Slay Demon  |       3         | It strikes at undead with holy wrath.
+Slay Evil   |       2         | It fights against evil with holy fury.
+Kill Undead |       5         | It is a great bane of undead.
+Kill Dragon |       5         | It is a great bane of dragons.
+Kill Demon  |       5         | It is a great bane of demons.
 
 Giants, Undead, Trolls, Orcs, Dragons, Demons are all 'Evil'.
 
@@ -2708,7 +2768,7 @@ BLESSED ('It has been blessed by the gods')
 VAMPIRIC ('The weapon drains life from your victim')
         Drains life from your victim, which you gain as hit points.
         For details see '(5.15) Vampirism'.
-VORPAL ('Sharp' weapons)
+VORPAL ('Sharp' weapons, 'It is very sharp and makes your foes bleed.')
         Has a chance that weapon dice result is multiplied on hitting,
         you'll see 'Your weapon cuts deep into your enemy'.
 CHAOTIC ('Your weapon produces chaotic effects')
@@ -3137,10 +3197,19 @@ Black Breath!
 
 (5.13) Earthquakes
 ------------------
-Earthquakes deals 300 damage if you cannot evade the falling rocks and
-shifting ground. Depending on the number of unchanged adjacent fields to the
-player there is a chance to evade and take much less damage. Earthquakes can
-also stun you.
+Earthquakes will cause ceilings to collapse and the ground to shift and crack,
+burying items, players and monsters and inflicting a lot of damage.
+All fields in a certain radius around the epicentre have a certain chance to
+be filled with rocks, to be cleared from previous obstacles (walls) and turn
+into empty floor fields, or to remain untouched and unchanged.
+
+Players don't take damage from their 'own' earthquakes, caused by their
+equipment or items (weapons of earthquakes, scrolls of *destruction*).
+
+Earthquakes can deal up to 300 damage if you cannot evade the falling rocks
+and shifting ground: Depending on the number of unchanged (by the earthquake)
+empty fields that are adjacent to your character, there is a chance to 'evade'
+and take much less damage or even none at all. Earthquakes can also stun you.
 
 
 
@@ -3161,7 +3230,8 @@ CURSED          can be broken by a regular 'remove curse'.
 HEAVY_CURSE     requires a strong '*remove curse*' to be broken.
                 Item cannot be taken off until the curse is broken.
 PERMA_CURSE     This curse can never be broken.
-                Item can never be taken off again!
+                Item can never be taken off again! Mimics polymorphing into a
+                form that cannot wear the specific item won't succeed either.
 CURSE_NO_DROP   these items cannot be dropped from inventory as long as the
                 curse isn't broken. CURSE_NO_DROP occurs together with
                 CURSED or HEAVY_CURSE or PERMA_CURSE.
@@ -3195,24 +3265,24 @@ Mimics who use a vampire form will also get a vampiric 'brand' on their melee
 attacks (see (6.7)).
 
 Vampiric life draining heals you with a part of the damage you afflicted on
-your target! The more damage you deal and the more attacks per round you have,
-the more life you will leech back. There's a maximum amount of HP which you
-can leech from a victim per round (usually around 50..100).
+your target each hit! The more damage you deal and the more attacks per round
+you have, the more life you will leech back. There's a maximum amount of HP
+which you can leech from a victim per round (usually around 50..100).
 
 The best case is to have vampiric flag on a weapon, that will drain at maximum
 efficiency. If you use vampiric equipment like gloves, they will be a bit less
-efficient than an actual vampiric weapon, meaning that you won't leech _every_
-time you hit (although _if_ you do, then the leeched amount is the same).
-If you use ranged weapons, it doesn't matter which part is vampiric, the bow
-or the ammunition. It won't increase your over all life leeching if both are
-vampiric.
+efficient than an actual vampiric weapon, meaning that you won't leech on
+_every_ hit (the amount of leeched life per hit is not penalized though).
+For ranged weapons it doesn't matter which part is vampiric, the bow or the
+ammunition. It won't increase your over all life leeching if both are
+vampiric either.
 
 In general, vampiric flags don't stack from multiple items! Just the item that
 fits the situation better (weapons) overrides the weaker ones (non-weapons).
-Note that vampirism from mimicked forms works only works on melee combat and
-has 50% to go off (except for vampire bat which has 100%) due to a half of
-vampires' attacks being normal hits and the other half being biting which
-drains hit points.
+Note that vampirism from mimicked forms only works on melee combat and has a
+50% chance to go off (except for vampire bat which has 100%) due to a half of
+vampires' attacks being normal hits and the other half being biting (which
+does the actual leeching!).
 
 
 
@@ -3286,14 +3356,16 @@ taken back.
 Here is a list of the available skills and brief explanations to each one:
 Note that not every skill is available to every profession (class).
 
-+Combat                         Ability to pseudo-ID items: You can sense if
-                                items are terrible, worthless, cursed,
-                                average, good, excellent or special. At the
-                                beginning you will only feel 'cursed' or
-                                'good'.
++Combat                         Lets you wear heavier armour without spell
+                                point penalties.
+                                Ability to pseudo-ID items: You can sense
+                                if items are terrible, worthless, cursed,
+                                average, good, excellent or special.
+                                At the beginning you will only feel 'cursed'
+                                or 'good'.
                                 Raise combat skill over 10 to get
-                                more distinctive feelings. Lets you wear
-                                heavier armour without spell point penalties.
+                                more distinctive feelings about melee weapons
+                                and armour.
                                 A powerful combattant (combat>30) senses the
                                 use of ranged weapons and ammunition much
                                 better, even if (s)he's not comfortable with
@@ -3481,7 +3553,7 @@ Note that not every skill is available to every profession (class).
                                 applied after all other penalties have been
                                 factored in, at the very end of calculation).
 +Necromancy                     Drains life from killed monsters
-                                (the skill level in HPs from each kill).
+                                (higher monster level and skill -> more HP).
     .Aura power                 Increases the power of your auras.
     .Aura of Fear               Monsters that hit you are stroke by fear.
     .Shivering Aura             Monsters that hit you are stunned.
@@ -5176,6 +5248,11 @@ has high bonus numbers into an artifact, like for example a ring of speed
 On jewelry (+to-hit,+to-dam) and [+AC] will stay the same (for example a ring
 of slaying (+10,+15) will keep the (+10,+15)).
 (Any dice (xdy) as well as base AC [x,+0] on jewelry will always become 0.)
+
+HOW IT WORKS ON NON-JEWELRY:
+All boni, to-hit/to-dam/to-ac and the pval/bpval (those (+x) bonus) are
+randomly rerolled. So it won't matter what stats the item has, only its
+base type is important.
 
 
 

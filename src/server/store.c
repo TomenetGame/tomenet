@@ -482,7 +482,13 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	if (o_ptr->to_a  !=  j_ptr->to_a) return (0);
 
 	/* Require identical "artifact" names */
+	/* Bad idea, randart ammo is stacked easily. (Rand)arts just
+	   shouldn't stack at all - C. Blue */
+#if 0
 	if (o_ptr->name1 != j_ptr->name1) return (0);
+#else
+	if (o_ptr->name1 || j_ptr->name1) return (0);
+#endif
 
 	/* Require identical "ego-item" names */
 	if (o_ptr->name2 != j_ptr->name2) return (0);
