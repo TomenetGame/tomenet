@@ -1967,7 +1967,7 @@ void calc_bonuses(int Ind)
 	object_type		*o_ptr;
 	object_kind		*k_ptr;
 
-	int n, d, toac = 0, body = 0;
+	long int n, d, toac = 0, body = 0;
 	bool wepless = FALSE;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
@@ -3542,7 +3542,17 @@ void calc_bonuses(int Ind)
 		/*d = (d / 2) / n;	// 8 // 7
 		p_ptr->to_d += d;
 		p_ptr->dis_to_d += d; - similar to HP: */
-		d = d / n;
+
+		/* Divide by player blow number instead of
+		monster blow number :
+		d /= n;*/
+		//d /= ((p_ptr->num_blows > 0) ? p_ptr->num_blows : 1);
+		/* GWoP: 472, GB: 270, Green DR: 96 */
+		/* Quarter the damage and cap against 150 (unreachable though)
+		- even The Destroyer form would reach just 138 ;) */
+		d /= 4;
+		d = (15000 / ((10000 / d) + 100)) + 1;
+
 		if (d < (p_ptr->to_d + p_ptr->to_d_melee)) {
 			p_ptr->to_d = ((p_ptr->to_d * 3) + (d * 1)) / 4;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 3) / 4;
