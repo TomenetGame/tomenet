@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. July 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. July 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -106,9 +106,11 @@ Contents
 ==============
 (0.1) Start & play
 ------------------
--Get the latest client from www.tomenet.net or www.c-blue.de/rogue.html .
--Extract it, run tomenet4.exe.
--Choose a server from the meta list that appears on your screen.
+-Get the latest client from www.tomenet.net or www.c-blue.de/rogue.html
+ (called 'tomenet-???-client.zip') and extract it (to C:\Tomenet for example).
+-Either run 'tomenet4-europe.bat' to directly connect to europe server
+ (recommended), or run tomenet4.exe and choose a server (Enter 62.210.141.11
+ to connect to europe server).
 -Create a character, Half-Troll warrior is good for beginners.
  In case you choose Half-Troll warrior, read this:
   Good stats order for it is STR,CON,DEX,WIS,INT,CHR.
@@ -134,28 +136,34 @@ Contents
  the number pad 7,8,9, 4,6, 1,2,3. Running often requires that
  numlock is turned off (press the 'num' key so the green light is off).
  If SHIFT+<direction> doesn't work on your system, you can press the dot '.'
- followed by a direction key.
+ followed by a direction key. (If you use rogue-like keys, see section (0.2)!)
 -You can wear/wield your armour/weapons by pressing 'w' and choosing them
- from your inventory which is displayed in the window labeled Recall'.
+ from your inventory which is displayed in the window labeled 'Recall'.
 -You can pick up items if you stand on them and press 'g'.
 -You can enter stairs down/upwards by standing on them and pressing the
-corresponding key '<' or '>'.
+ corresponding key '<' or '>'.
 -Nearby the town there's often a 'newbie tower' which is a good place
-to start because if you die there nothing will happen except a slight
-loss of experience. Ask people where the '<' (tower entrance) is found.
+ to start because if you die there nothing will happen except a slight
+ loss of experience. Ask people where the '<' (tower entrance) is found.
 -If you die outside of the newbie tower you will usually turn into a ghost.
-This ghost cant wear any items, so it's a good idea to care about being
-revived. To get revived, either visit the temple in town (it's a green '4')
-or ask another player to read a Scroll Of Life while standing next to you.
-While you're a ghost you can freely float up/down by pressing '<' and '>'.
+ This ghost cant wear any items, so it's a good idea to care about being
+ revived. To get revived, either visit the temple in town (it's a green '4')
+ or ask another player to read a Scroll Of Life while standing next to you.
+ While you're a ghost you can freely float up/down by pressing '<' and '>'.
 -Press '?' to get an in-game help about keys and commands.
 -If you have any journals like 'Guide to Middle Earth' or 'The Gazette' in
-your inventory (Recall window) you should read those by pressing 'r' to read.
+ your inventory (Recall window) you should read those by pressing 'r' to read.
 -If your character gains a new level it also gains skill points. To distribute
-those, invoke the skill screen with 'G'.
+ those, invoke the skill screen with 'G'.
 -If you don't like your character and want to delete it, you may commit
-suicide by pressing SHIFT+q or CTRL+c and double-confirming the following
-questions with 'y' and '@'.
+ suicide by pressing SHIFT+q or CTRL+c and double-confirming the following
+ questions with 'y' and '@'.
+-To drop items, privately chat with other players, or advance beyond a certain
+ level you will need to ask an admin to 'validate' your account. To do so,
+ send an email to the admin mentioning your account name, or ask an admin when
+ he is online (Admin's names are displayed in dark blue in the chat).
+ The e-mail address is usually mentioned in the server's intro screen or just
+ ask fellow players for it.
 
 
 
@@ -240,6 +248,13 @@ U       O       use undead powers (use this if you died and became a ghost).
                 experience points, your ghost fades away (= you character will
                 be completely erased).
 CTRL+S          spike a door (using iron spikes, the door will be jammed).
+
+p       p       Concentrate on opening your mind for telekinesis.
+                You need to open your mind in order to receive items from
+                other players by telekinesis. If you are not concentrating,
+                they will receive an according message, telling them that
+                using telekinesis on you is currently not possible.
+                Hit 'p' again to stop concentrating and close your mind.
 
 h               buy/sell a house or change house parameters. See (4.10).
 P               party screen. Form/disband/modify a party with other players
@@ -750,6 +765,13 @@ names may only consist of letters, numbers, spaces, and all other characters
 with an ASCII code between 32 (SPACE) and 122 ('z').
 The realname and hostname must not be empty. The nickname (character name)
 needs to start with a letter ('A'..'Z' or 'a'..'z').
+
+To drop items, privately chat with other players, or advance beyond a certain
+level you will need to ask an admin to 'validate' your account. To do so,
+send an email to the admin mentioning your account name, or ask an admin when
+he is online (Admin's names are displayed in dark blue in the chat).
+The e-mail address is usually mentioned in the server's intro screen or just
+ask fellow players for it.
 
 
 
@@ -2903,9 +2925,12 @@ Physical attacks in pvp are not influenced by susceptibilities.
 Items are classified by
 -a basic item type
 -a simple magical enchantment (to hit-chance, to damage, to armour class)
--an excellent magical enchantment (some examples: resistances on armours,
- elemental brands on weapons, enhanced brightness on light sources)
--an ego power (for example a weapon 'of Gondolin' or a cloak 'of aman')
+-an ego power (some items even have two ego powers at once),
+ (some examples: resistances on armours, elemental brands on weapons,
+ enhanced brightness on light sources. The item carries the names of its
+ ego powers. For example an 'acidic long sword of gondolin' has been
+ blessed with two ego powers: 'acidic' and 'gondolin'. For more information
+ about ego powers see (7.4) Spoiler Files).
 -sometimes you may find an artifact which can have quite a bunch of
  different powers combined!
 
@@ -3593,6 +3618,8 @@ HEAVY_CURSE     requires a strong '*remove curse*' to be broken.
 PERMA_CURSE     This curse can never be broken.
                 Item can never be taken off again! Mimics polymorphing into a
                 form that cannot wear the specific item won't succeed either.
+                There is absolutely no way to get rid of this item. If you
+                find a way then you found a bug =).
 CURSE_NO_DROP   these items cannot be dropped from inventory as long as the
                 curse isn't broken. CURSE_NO_DROP occurs together with
                 CURSED or HEAVY_CURSE or PERMA_CURSE.
@@ -4794,7 +4821,7 @@ Gnomes      Free action
 (Dwarves    Blindness resistance, climbing at level 30.)
 High-elves  Resist light, see invisible
 Yeeks       Feather falling (levitation)
-(Ents       Slow digestion, speed - 2, sensible to fire, see invisible at
+(Ents       Slow digestion, speed - 2, sensitive to fire, see invisible at
             level 4, can swim, pass trees)
 All ghosts  See invisible, Infra-vision +3
 All orcs    Resist darkness
@@ -4956,6 +4983,11 @@ Mind
                     Lv25: Turns into a ball.
     Telekinesis     Inscribe your book with @PPlayername, cast it, select an
                     item that you wish to teleport to the player's inventory.
+                    The target player needs to concentrate by opening her/his
+                    mind, see (0.2). It's dangerous to have the mind opened,
+                    since everyone can send items to you, so better close it
+                    again as soon as the desired telekinesis transaction is
+                    done.
 Temporal
     Magelock        Magically locks a door.
                     Lv30: Creates a Glyph Of Warding on the ground that stops
