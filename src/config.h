@@ -227,7 +227,7 @@
 /*
  * Worlds server connection
  */
-/* #define TOMENET_WORLDS */
+#define TOMENET_WORLDS
 
 #if 0	/* Sorry Jir, but this IS used sometimes. */
 #define BIND_NAME "TomeNET.net"
@@ -740,7 +740,7 @@
 
 /* spells1.c, cmd2.c */
 /* Chance of bolt/ball harming party-member by accident. [10] */
-#define FRIEND_FIRE_CHANCE	10
+#define FRIEND_FIRE_CHANCE	0
 /* Chance of bolt/ball harming neutral-player by accident. [50] */
 #define NEUTRAL_FIRE_CHANCE	30
 
