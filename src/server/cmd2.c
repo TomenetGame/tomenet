@@ -2495,7 +2495,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 				q_ptr = Players[0 - c_ptr->m_idx];
 
 				/* AD hack -- "pass over" players in same party */
-				if ((!player_in_party(p_ptr->party, 0 - c_ptr->m_idx)) || (p_ptr->party == 0))
+				if ((p_ptr->pkill & PKILL_KILLER) && ((!player_in_party(p_ptr->party, 0 - c_ptr->m_idx)) || (p_ptr->party == 0)))
 				{ 
 
 					/* Check the visibility */
@@ -2504,14 +2504,11 @@ void do_cmd_fire(int Ind, int dir, int item)
 					/* Note the collision */
 					hit_body = TRUE;
 
-					if(!(p_ptr->pkill & PKILL_KILLER) || zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
+					if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
 						if(visible && (!player_in_party(Players[0 - c_ptr->m_idx]->party, Ind))){
 							p_ptr->target_who=0;
-							if(!(p_ptr->pkill & PKILL_KILLER)){
-								do_player_drop_items(Ind, 40, FALSE);
-							}
+							do_player_drop_items(Ind, 40, FALSE);
 							imprison(Ind, 100, "attempted murder");
-							p_ptr->pkill|=PKILL_KILLABLE;
 						}
 					}
 
