@@ -2705,6 +2705,14 @@ static void do_slash_cmd(int Ind, char *message)
 			msg_format_near(Ind, "\377U%s throws %d dice and gets a %d", p_ptr->name, k, rn);
 			return;
 		}
+		else if (prefix(message, "/martyr") || prefix(message, "/mar"))
+		{
+			if (Players[Ind]->martyr_timeout)
+				msg_print(Ind, "The heavens are not yet ready to accept your martyrium.");
+			else
+				msg_print(Ind, "The heavens are ready to accept your martyrium.");
+			return;
+		}
 
 
 		/*
