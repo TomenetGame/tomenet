@@ -1274,8 +1274,13 @@ void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...)
 
 static bool players_in_level(int Ind, int Ind2)
 {
-        if ((Players[Ind]->lev - Players[Ind2]->lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
-        if ((Players[Ind2]->lev - Players[Ind]->lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
+	if (Players[Ind2]->total_winner) {
+	        if ((Players[Ind]->lev - Players[Ind2]->lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
+	        if ((Players[Ind2]->lev - Players[Ind]->lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
+	} else {
+	        if ((Players[Ind]->lev - Players[Ind2]->lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
+	        if ((Players[Ind2]->lev - Players[Ind]->lev) > MAX_PARTY_LEVEL_DIFF) return FALSE;
+	}
         return TRUE;
 }
 
@@ -2332,6 +2337,7 @@ void scan_players(){
 				{
 					o_ptr = &o_list[i];
 			                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
+#if 0
 			                {
 			                        {
 			                                /* Make it available again */
@@ -2339,6 +2345,9 @@ void scan_players(){
 				                	a_info[o_ptr->name1].known = FALSE;
 			                        }
 			                }
+#else
+						delete_object_idx(i, TRUE);
+#endif
     				}
 
     				/* remove pending notes to this player -C. Blue */
@@ -2683,3 +2692,30 @@ bool pilot_set(int Ind, cptr name)
 }
 #endif	// 0
 
+void strip_true_arts_from_hashed_players(){
+        int slot, i, j = 0;
+        hash_entry *ptr;
+        object_type *o_ptr;
+			
+        s_printf("Starting player true artifact stripping\n");
+        for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
+                j++;
+		//              if (j > 5) break;/*only check for 5 players right now */
+
+	        ptr=hash_table[slot];
+	        if (!ptr) continue;
+	        s_printf("Stripping player: %s\n", ptr->name);
+	        /* Wipe Artifacts (s)he had  -C. Blue */
+	        for (i = 0; i < o_max; i++)
+	        {
+	                o_ptr = &o_list[i];
+	                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id) && !(
+                            (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
+                            (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
+                            (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
+                            ))
+	                        delete_object_idx(i, TRUE);
+	        }
+	}
+        s_printf("Finished true artifact stripping for %d players.\n", j);
+}

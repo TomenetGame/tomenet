@@ -899,9 +899,11 @@ static void calc_sanity(int Ind)
 		                if (!p_ptr->ghost) {
 			                strcpy(p_ptr->died_from_list, "Insanity");
 			                p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
+					/* Hack to remember total winning */
+		                        if (p_ptr->total_winner) strcat(p_ptr->died_from_list, "\001");
 				}
 	            		/* No longer a winner */
-			        p_ptr->total_winner = FALSE;
+//			        p_ptr->total_winner = FALSE;
 				/* Note death */
 				p_ptr->death = TRUE;
 		                p_ptr->deathblow = 0;
@@ -1240,6 +1242,7 @@ void calc_hitpoints(int Ind)
 	int bonus, Ind2 = 0;
 	long mhp, mhp_playerform, weakling_boost;
 	u32b mHPLim, finalHP;
+	int bonus_cap;
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
 	{
@@ -1260,6 +1263,12 @@ void calc_hitpoints(int Ind)
 		if (p_ptr->fruit_bat) mhp = (p_ptr->player_hp[p_ptr->lev-1] / 4) + (bonus * p_ptr->lev);
 		else mhp = p_ptr->player_hp[p_ptr->lev-1] + (bonus * p_ptr->lev / 2);
 	} else {
+#if 1
+		/* Don't exaggerate with HP on low levels (especially Ents) (bonus range is -5..+25) */
+		bonus_cap = ((p_ptr->lev + 5) * (p_ptr->lev + 5)) / 100;
+		if (bonus > bonus_cap) bonus = bonus_cap;
+#endif
+
 		/* And here I made the formula slightly more complex to fit better :> - C. Blue -
 		   Explanation why I made If-clauses for Istari (Mage) and Yeeks:
 		   - Istari are extremely low on HP compared to other classes,
@@ -2795,7 +2804,8 @@ void calc_bonuses(int Ind)
 			}
 
     	        	/* Affect life capacity */
-        	        if (f1 & (TR1_LIFE)) p_ptr->to_l += o_ptr->bpval;
+        	        if (f1 & (TR1_LIFE))
+				if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner || (p_ptr->lev >= o_ptr->level)) p_ptr->to_l += o_ptr->bpval;
 		}
 
 		if (k_ptr->flags5 & TR5_PVAL_MASK)
@@ -2812,6 +2822,7 @@ void calc_bonuses(int Ind)
 		   pval should contain life bonus, bpval stealth. */
 /*		if (o_ptr->name2 == EGO_VAMPIRIC || o_ptr->name2b == EGO_VAMPIRIC)*/
 		if (f1 & (TR1_LIFE))
+			if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner || (p_ptr->lev >= o_ptr->level))
 		{
 /*			if ((o_ptr->pval < 0 && o_ptr->bpval > 0) ||
 			    (o_ptr->pval > 0 && o_ptr->bpval < 0)) {*/
@@ -2888,7 +2899,8 @@ void calc_bonuses(int Ind)
 		}
 
                 /* Affect life capacity */
-                if (f1 & (TR1_LIFE)) p_ptr->to_l += pval;
+                if (f1 & (TR1_LIFE))
+			if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner || (p_ptr->lev >= o_ptr->level)) p_ptr->to_l += o_ptr->pval;
 
 		/* Affect stealth */
 		if (f1 & TR1_STEALTH) p_ptr->skill_stl += pval;
@@ -4084,7 +4096,7 @@ void calc_bonuses(int Ind)
 		/* Divide by player blow number instead of
 		monster blow number :
 		//d /= n;*/
-		//d /= ((p_ptr->num_blows > 0) ? p_ptr->num_blows : 1);
+		//d /= ((p_ptr->num_blow > 0) ? p_ptr->num_blow : 1);
 
 		/* GWoP: 472, GB: 270, Green DR: 96 */
 		/* Quarter the damage and cap against 150 (unreachable though)
@@ -4199,6 +4211,40 @@ void calc_bonuses(int Ind)
 #endif	// 0
 
 
+
+	/* Knowledge in magic schools can give permanent extra boni */
+	/* - SKILL_EARTH gives resistance in earthquake() */
+	if (get_skill(p_ptr, SKILL_EARTH) >= 30) p_ptr->resist_shard = TRUE;
+	if (get_skill(p_ptr, SKILL_AIR) >= 30) p_ptr->feather_fall = TRUE;
+	if (get_skill(p_ptr, SKILL_AIR) >= 40) p_ptr->resist_pois = TRUE;
+	if (get_skill(p_ptr, SKILL_AIR) >= 50) p_ptr->fly = TRUE;
+	if (get_skill(p_ptr, SKILL_WATER) >= 30) p_ptr->resist_water = TRUE;
+	if (get_skill(p_ptr, SKILL_WATER) >= 40) p_ptr->can_swim = TRUE;
+	if (get_skill(p_ptr, SKILL_WATER) >= 50) p_ptr->immune_water = TRUE;
+	if (get_skill(p_ptr, SKILL_FIRE) >= 30) p_ptr->resist_fire = TRUE;
+	if (get_skill(p_ptr, SKILL_FIRE) >= 50) p_ptr->immune_fire = TRUE;
+	if (get_skill(p_ptr, SKILL_MANA) >= 40) p_ptr->resist_mana = TRUE;
+	if (get_skill(p_ptr, SKILL_CONVEYANCE) >= 30) p_ptr->res_tele = TRUE;
+	if (get_skill(p_ptr, SKILL_DIVINATION) >= 50) p_ptr->auto_id = TRUE;
+	if (get_skill(p_ptr, SKILL_NATURE) >= 30) p_ptr->regenerate = TRUE;
+	if (get_skill(p_ptr, SKILL_NATURE) >= 30) p_ptr->pass_trees = TRUE;
+	if (get_skill(p_ptr, SKILL_NATURE) >= 40) p_ptr->can_swim = TRUE;
+	/* - SKILL_MIND also helps to reduce hallucination time in set_image() */
+	if (get_skill(p_ptr, SKILL_MIND) >= 40) p_ptr->reduce_insanity = 1;
+	if (get_skill(p_ptr, SKILL_MIND) >= 50) p_ptr->reduce_insanity = 2;
+	if (get_skill(p_ptr, SKILL_TEMPORAL) >= 50) p_ptr->resist_time = TRUE;
+	if (get_skill(p_ptr, SKILL_UDUN) >= 30) p_ptr->res_tele = TRUE;
+	if (get_skill(p_ptr, SKILL_UDUN) >= 40) p_ptr->hold_life = TRUE;
+	if (get_skill(p_ptr, SKILL_META) >= 20) p_ptr->skill_sav += get_skill(p_ptr, SKILL_META) - 20;
+	/* - SKILL_HOFFENSE gives slay mods in brand/slay function tot_dam_aux() */
+	/* - SKILL_HDEFENSE gives auto protection-from-evil */
+//	if (get_skill(p_ptr, SKILL_HDEFENSE) >= 40) { p_ptr->resist_lite = TRUE; p_ptr->resist_dark = TRUE; }
+	/* - SKILL_HCURING gives extra high regeneration in regen function, and reduces various effects */
+//	if (get_skill(p_ptr, SKILL_HCURING) >= 50) p_ptr->reduce_insanity = 1;
+	/* - SKILL_HSUPPORT renders DG/TY_CURSE effectless and prevents hunger */
+
+
+
 	/* Limit Skill -- stealth from 0 to 30 */
 	if (p_ptr->skill_stl > 30) p_ptr->skill_stl = 30;
 	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
@@ -4210,6 +4256,7 @@ void calc_bonuses(int Ind)
 
 	/* Limit Skill -- saving throw upto 95 */
 	if (p_ptr->skill_sav > 95) p_ptr->skill_sav = 95;
+
 
 
 	/* Take note when "heavy bow" changes */
@@ -4298,6 +4345,8 @@ void calc_bonuses(int Ind)
 		p_ptr->old_awkward_wield = p_ptr->awkward_wield;
 	}
 
+
+
 	/* resistance to fire cancel sensibility to fire */
 	if(p_ptr->resist_fire || p_ptr->oppose_fire || p_ptr->immune_fire)
 		p_ptr->sensible_fire=FALSE;
@@ -4311,8 +4360,13 @@ void calc_bonuses(int Ind)
 	if(p_ptr->resist_acid || p_ptr->oppose_acid || p_ptr->immune_acid)
 		p_ptr->sensible_acid=FALSE;
 
+
+
 	/* Limit speed penalty from total_weight */
 	if (p_ptr->pspeed < 10) p_ptr->pspeed = 10;
+	
+	/* Limit blows per round (just paranoia^^) */
+	if (p_ptr->num_blow < 0) p_ptr->num_blow = 0;
 
 	/* XXX - Always resend skills */
 	p_ptr->redraw |= (PR_SKILLS);

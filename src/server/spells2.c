@@ -89,7 +89,7 @@ bool hp_player(int Ind, int num)
 	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
 
 	/* Hell mode is .. hard */
-	if (p_ptr->mode & MODE_HELL)
+	if ((p_ptr->mode & MODE_HELL) && (num > 3))
 	  {
             num = num * 3 / 4;
 	  }
@@ -169,6 +169,12 @@ bool hp_player_quiet(int Ind, int num)
 	/* player can't be healed while burning in the holy fire of martyrium */
 	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
 
+	/* Hell mode is .. hard */
+	if ((p_ptr->mode & MODE_HELL) && (num > 3))
+	  {
+            num = num * 3 / 4;
+	  }
+
 	if(!num) return(FALSE);
 
 	if (p_ptr->chp < p_ptr->mhp)
@@ -221,6 +227,9 @@ void warding_glyph(int Ind)
 	/* Require clean space */
 	if (!cave_clean_bold(zcave, p_ptr->py, p_ptr->px)) return;
 
+        /* no terraforming in Bree.. */
+        if (p_ptr->wpos.wx == 32 && p_ptr->wpos.wy == 32 && p_ptr->wpos.wz == 0) return;
+
 	/* Access the player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
@@ -267,6 +276,16 @@ static cptr desc_stat_neg[] =
 	"clumsy",
 	"sickly",
 	"ugly"
+};
+
+static cptr desc_stat_neg2[] =
+{
+	"strong",
+	"bright",
+	"wise",
+	"agile",
+	"hale",
+	"beautiful"
 };
 
 #if 0
@@ -324,6 +343,72 @@ bool do_dec_stat(int Ind, int stat, int mode)
 
 	/* Nothing obvious */
 	return (FALSE);
+}
+
+
+/*
+ * Lose a "point" by a TIME attack (or Black Breath)
+ */
+bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reduction_mode, bool msg)
+{
+	player_type *p_ptr = Players[Ind];
+
+	bool sust = FALSE;
+	
+	/* Access the "sustain" */
+	switch (stat)
+	{
+		case A_STR: if (p_ptr->sustain_str) sust = TRUE; break;
+		case A_INT: if (p_ptr->sustain_int) sust = TRUE; break;
+		case A_WIS: if (p_ptr->sustain_wis) sust = TRUE; break;
+		case A_DEX: if (p_ptr->sustain_dex) sust = TRUE; break;
+		case A_CON: if (p_ptr->sustain_con) sust = TRUE; break;
+		case A_CHR: if (p_ptr->sustain_chr) sust = TRUE; break;
+	}
+	
+	if (p_ptr->stat_cur[stat] <= 3) return(FALSE);
+
+	/* Sustain */
+	if (sust && magik(sust_chance))
+	{
+		/* Message */
+		msg_format(Ind, "You don't feel as %s as you used to be, but the feeling passes",
+		           desc_stat_neg2[stat]);
+
+		/* Notice effect */
+		return (TRUE);
+	}
+
+	/* Message */
+	if (msg) msg_format(Ind, "You're not as %s as you used to be.", desc_stat_neg2[stat]);
+
+	/* Attempt to reduce the stat */
+	switch (reduction_mode) {
+	case 0: 
+		if (dec_stat(Ind, stat, 10, mode))
+		{
+			/* Notice effect */
+			return (TRUE);
+		}
+		break;
+	case 1:
+		p_ptr->stat_cur[stat] = (p_ptr->stat_cur[stat] * 3) / 4;
+		break;
+	case 2:
+		p_ptr->stat_cur[stat] = (p_ptr->stat_cur[stat] * 6) / 7;
+		break;
+	case 3:
+		p_ptr->stat_cur[stat] = (p_ptr->stat_cur[stat] * 7) / 8;
+		break;
+	}
+	if (p_ptr->stat_cur[stat] < 3) p_ptr->stat_cur[stat] = 3;
+
+	if (mode == STAT_DEC_PERMANENT) p_ptr->stat_max[stat] = p_ptr->stat_cur[stat];
+
+	p_ptr->update |= (PU_BONUS | PU_MANA | PU_HP | PU_SANITY);
+
+	/* Nothing obvious */
+	return (TRUE);
 }
 
 
@@ -2952,6 +3037,9 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 	/* Unenchantable items always fail */
 	if (f5 & TR5_NO_ENCHANT) return (FALSE);
 	
+	/* Dark Swords are unenchantable too */
+	if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) return (FALSE);
+	
 	/* Artifacts cannot be enchanted. */
 	if (artifact_p(o_ptr)) return (FALSE);
 	
@@ -3096,14 +3184,14 @@ bool create_artifact(int Ind)
 
 bool create_artifact_aux(int Ind, int item)
 {
-    player_type *p_ptr = Players[Ind];
-    object_type *o_ptr;
-    artifact_type *a_ptr;
-    int tries = 0;
-    char o_name[160];
-    s32b old_owner;/* anti-cheeze :) */
-    int to_h, to_d, to_a;
-    bool cursed_art = FALSE;
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	artifact_type *a_ptr;
+	int tries = 0;
+	char o_name[160];
+	s32b old_owner;/* anti-cheeze :) */
+	int to_h, to_d, to_a;
+	bool cursed_art = FALSE;
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -3222,6 +3310,12 @@ bool create_artifact_aux(int Ind, int item)
 
 	/* Art creation finished */
 	p_ptr->current_artifact = FALSE;
+
+	/* Log it (security) */
+	/* Description */
+	object_desc(Ind, o_name, o_ptr, FALSE, 3);
+	s_printf("%s: ART_CREATION by player %s: %s\n", showtime(), p_ptr->name, o_name);
+
 	return TRUE;
 }
 
@@ -4822,6 +4916,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				{
 					/* Message and damage */
 					damage = 300;
+					if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 4;
 					msg_format(Ind, "You are severely crushed for \377o%d\377w damage!", damage);
 				}
 
@@ -4840,6 +4935,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 						case 2:
 						{
 							damage = damroll(10, 4);
+							if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 4;
 							msg_format(Ind, "You are bashed by rubble for \377o%d\377w damage!", damage);
 							(void)set_stun(Ind, p_ptr->stun + randint(50));
 							break;
@@ -4847,6 +4943,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 						case 3:
 						{
 							damage = damroll(30, 4);
+							if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 4;
 							msg_format(Ind, "You are crushed between the floor and ceiling for \377o%d\377w damage!", damage);
 							(void)set_stun(Ind, p_ptr->stun + randint(50));
 							break;

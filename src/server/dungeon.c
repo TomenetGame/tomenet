@@ -1218,6 +1218,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 					!p_ptr->inventory[INVEN_AMMO].number)
 					break;
 
+				retaliating_cmd = TRUE;
 				do_cmd_fire(Ind, 5);
 				return TRUE;
 			}
@@ -1226,6 +1227,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 		case TV_BOOMERANG:
 			if (item == INVEN_BOW)
 			{
+				retaliating_cmd = TRUE;
 				do_cmd_fire(Ind, 5);
 				return TRUE;
 			}
@@ -1866,6 +1868,11 @@ void recall_player(int Ind, char *message){
 	forget_lite(Ind);
 	forget_view(Ind);
 
+	/* Log it */
+	s_printf("Recalled: %s from %d,%d,%d to %d,%d,%d.\n", p_ptr->name,
+	    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+	    p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, p_ptr->recall_pos.wz);
+
 	wpcopy(&p_ptr->wpos, &p_ptr->recall_pos);
 
 	/* One more person here */
@@ -2465,6 +2472,9 @@ static bool process_player_end_aux(int Ind)
 		regen_amount = regen_amount * 3 / 2;
 	}
 
+	/* Holy curing gives improved regeneration ability */
+	if (get_skill(p_ptr, SKILL_HCURING) >= 30) regen_amount = (regen_amount * (get_skill(p_ptr, SKILL_HCURING) - 10)) / 20;
+
 	/* Increase regen by tim regen */
 	if (p_ptr->tim_regen) regen_amount += p_ptr->tim_regen_pow;
 
@@ -3062,7 +3072,7 @@ static bool process_player_end_aux(int Ind)
 
 	/* Now implemented here too ;) - C. Blue */
 	/* let's say TY_CURSE lowers stats (occurs often) */
-	if (p_ptr->ty_curse && (rand_int(30) == 0)) {
+	if (p_ptr->ty_curse && (rand_int(30) == 0) && (get_skill(p_ptr, SKILL_HSUPPORT) < 50)) {
 		msg_print(Ind, "An ancient foul curse shakes your body!");
 #if 0
 		if (rand_int(2))
@@ -3075,7 +3085,7 @@ static bool process_player_end_aux(int Ind)
 #endif
 	}
 	/* and DG_CURSE randomly summons a monster (non-unique) */
-	if (p_ptr->dg_curse && (rand_int(60) == 0)) {
+	if (p_ptr->dg_curse && (rand_int(60) == 0) && (get_skill(p_ptr, SKILL_HSUPPORT) < 50)) {
 		msg_print(Ind, "An ancient morgothian curse calls out!");
 		summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev * 2, 100, 0, 0, 0);
 	}
@@ -3085,9 +3095,9 @@ static bool process_player_end_aux(int Ind)
 	 * As per Tolkien, hobbits are resistant.
 	 */ 
 	if ((p_ptr->black_breath || p_ptr->black_breath_tmp) &&
-			rand_int(150) < (p_ptr->prace == RACE_HOBBIT ? 2 : 5))
+			rand_int((get_skill(p_ptr, SKILL_HCURING) >= 50) ? 250 : 150) < (p_ptr->prace == RACE_HOBBIT ? 2 : 5))
 	{
-		(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
+		(void)do_dec_stat_time(Ind, rand_int(6), STAT_DEC_NORMAL, 25, 0, TRUE);
 		take_xp_hit(Ind, 1 + p_ptr->lev * 3 + p_ptr->max_exp / 5000L,
 				"Black Breath", TRUE, TRUE);
 #if 0
@@ -3875,11 +3885,11 @@ static void scan_objs(){
 						the dungeon master or by unique monsters on their death
 						stay n times as long as cfg.surface_item_removal specifies */
 #if 1
-						if(++o_ptr->marked==((artifact_p(o_ptr) ||
+						if(++o_ptr->marked>=((artifact_p(o_ptr) ||
 						    (o_ptr->note && !o_ptr->owner))?
 						    cfg.surface_item_removal * 3 : cfg.surface_item_removal))
 #else
-						if(++o_ptr->marked==((artifact_p(o_ptr) ||
+						if(++o_ptr->marked>=((artifact_p(o_ptr) ||
 						    o_ptr->note)?
 						    cfg.surface_item_removal * 3 : cfg.surface_item_removal))
 #endif
@@ -3914,11 +3924,11 @@ static void scan_objs(){
 						the dungeon master or by unique monsters on their death
 						stay n times as long as cfg.surface_item_removal specifies */
 #if 1
-						if(++o_ptr->marked==((artifact_p(o_ptr) ||
+						if(++o_ptr->marked>=((artifact_p(o_ptr) ||
 						    (o_ptr->note && !o_ptr->owner))?
 						    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal))
 #else
-						if(++o_ptr->marked==((artifact_p(o_ptr) ||
+						if(++o_ptr->marked>=((artifact_p(o_ptr) ||
 						    o_ptr->note)?
 						    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal))
 #endif
@@ -4773,9 +4783,12 @@ void dungeon(void)
 			if(!i) set_runlevel(0);
 		}
 
+		if(cfg.runlevel == 2049) {
+			shutdown_server();
+		}
 		if(cfg.runlevel == 2048)
 		{
-			for(i=NumPlayers; i>0 ;i--)
+			for(i = NumPlayers; i > 0 ;i--)
 			{
 				if(Players[i]->conn==NOT_CONNECTED) continue;
 				/* Ignore admins that are loged in */
@@ -4786,7 +4799,10 @@ void dungeon(void)
 				if(Players[i]->wpos.wz == 0) continue;
 				break;
 			}
-			if(!i) shutdown_server();
+			if(!i) {
+				msg_broadcast(-1, "\377o<<<Server is being updated and will be back in a minute.>>>");
+				cfg.runlevel = 2049;
+			}
 		}
 
 		/* Hack -- Compact the object list occasionally */
@@ -4899,6 +4915,10 @@ void set_runlevel(int val)
 			/* Hack -- character edit (possessor) mode */
 		case 2048:
 			/* Shutdown as soon as server is empty (admins don't count) */
+			break;
+		case 2049:
+			/* Usually not called here - just a temporary hack value (see dungeon.c) */
+			shutdown_server();
 			break;
 		case 6:
 			/* Running */

@@ -32,7 +32,8 @@
  * You have been warned.
  */
 
-/* Enable/disable Halloween Event Mode- by C. Blue :) */
+/* Enable/disable Halloween Event Mode- by C. Blue :) -
+   also see r_info.txt for 'Pumpkin' and follow instructions there. */
 /* #define HALLOWEEN */
 
 /* MAJOR/MINOR/PATCH version should be 0-15.  */
@@ -363,6 +364,10 @@
 /* Maximum level difference for party members,
    and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
 #define MAX_PARTY_LEVEL_DIFF 7
+
+/* Maximum level difference for winner-party members,
+   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
+#define MAX_KING_PARTY_LEVEL_DIFF 10
 
 /* Limit value for Anti-magic fields (AM cap)
    Should range from 75..80%, maybe make skill & DS percentage

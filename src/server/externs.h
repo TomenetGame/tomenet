@@ -457,6 +457,7 @@ extern int new_effect(int who, int type, int dam, int time, worldpos *wpos, int 
 
 
 /* cmd1.c */
+extern bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y);
 extern bool test_hit_fire(int chance, int ac, int vis);
 extern bool test_hit_norm(int chance, int ac, int vis);
 extern s16b critical_shot(int Ind, int weight, int plus, int dam);
@@ -506,6 +507,8 @@ extern int breakage_chance(object_type *o_ptr);
 extern int get_shooter_mult(object_type *o_ptr);
 extern bool get_something_tval(int Ind, int tval, int *ip);
 extern void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x, int might);
+
+extern bool retaliating_cmd;
 
 
 /* cmd3.c */
@@ -930,6 +933,7 @@ extern bool kind_is_legal(int k_idx);
 extern void init_match_theme(obj_theme theme);
 
 extern void kill_objs(int id);
+extern int place_object_restrictor;
 
 /* party.c */
 extern void account_check(int Ind);
@@ -980,6 +984,7 @@ extern void party_check(int Ind);
 extern void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...);
 extern u16b lookup_player_type(int id);
 extern bool check_account(char *accname, char *c_name);
+extern void strip_true_arts_from_hashed_players(void);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);
@@ -1018,6 +1023,7 @@ extern void teleport_player(int Ind, int dis);
 extern void teleport_player_to(int Ind, int ny, int nx);
 extern void teleport_player_level(int Ind);
 extern bool bypass_invuln;
+extern bool bypass_inscrption;
 extern void take_hit(int Ind, int damage, cptr kb_str);
 extern int acid_dam(int Ind, int dam, cptr kb_str);
 extern int elec_dam(int Ind, int dam, cptr kb_str);
@@ -1050,6 +1056,7 @@ extern bool hp_player(int Ind, int num);
 extern bool hp_player_quiet(int Ind, int num);
 extern void warding_glyph(int Ind);
 extern bool do_dec_stat(int Ind, int stat, int mode);
+extern bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reduction_mode, bool msg);
 extern bool do_res_stat(int Ind, int stat);
 extern bool do_inc_stat(int Ind, int stat);
 extern void identify_pack(int Ind);
@@ -1445,6 +1452,13 @@ void lua_count_houses(int Ind);
 void lua_recalc_char(int Ind);
 void lua_examine_item(int Ind, cptr name, int item);
 void lua_determine_level_req(int Ind, int item);
+void lua_strip_true_arts_from_absent_players(void);
+void lua_strip_true_arts_from_present_player(int Ind, int mode);
+void lua_strip_true_arts_from_floors(void);
+void lua_check_player_for_true_arts(int Ind);
+int lua_get_mon_lev(int r_idx);
+char *lua_get_mon_name(int r_idx);
+extern bool first_player_joined;
 
 /* only called once, in util.c, referring to new file slash.c */
 extern void do_slash_cmd(int Ind, char *message);

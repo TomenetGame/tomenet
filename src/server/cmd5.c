@@ -1485,8 +1485,8 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 	if (p_ptr->tim_wraith) p_ptr->tim_wraith = 1; /* in xtra2.c it would prevent regular wraithform on istari */
 
 	if (r_idx) {
-		msg_format(Ind, "You polymorph into a %s !", r_info[r_idx].name + r_name);
-		msg_format_near(Ind, "%s polymorphs into a %s !", p_ptr->name, r_info[r_idx].name + r_name);
+		msg_format(Ind, "You polymorph into a %s!", r_info[r_idx].name + r_name);
+		msg_format_near(Ind, "%s polymorphs into a %s!", p_ptr->name, r_info[r_idx].name + r_name);
 	} else {
 		msg_format(Ind, "You polymorph back to normal form.");
 		msg_format_near(Ind, "%s polymorphs back to normal form.", p_ptr->name);
@@ -1546,7 +1546,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 				return;
 			}
 
-			if (j >= MAX_R_IDX - 1) j = 0;
+			if (j > MAX_R_IDX) j = 0;
 
 			if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) continue;
 			if (r_info[j].flags1 & RF1_UNIQUE) continue;
@@ -1573,7 +1573,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 		//j = get_quantity("Which form (0 for player form)?", 0);
 		j = spell - 20000;
 
-		if ((k > MAX_R_IDX) || (k < 0))
+		if ((j > MAX_R_IDX) || (j < 0))
 		{
 			msg_print(Ind, "That form does not exist in the realm!");
 			return;

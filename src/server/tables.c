@@ -3985,7 +3985,7 @@ cptr player_title_special[MAX_CLASS][5][2] =
 		{"Old Patriarch", "Old Matriarch", },
 		{"Sacred Priestlord", "Sacred Priestlady", },
 		{"Holy Priestlord", "Holy Priestlady", },
-		{"Priestoverlord", "Priestoverlady", },
+		{"Priestoverlord", "Priestoverlady", },//Solar something maybe
 		{"Demi", "Demi", },
 	},
 

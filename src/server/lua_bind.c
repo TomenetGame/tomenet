@@ -579,3 +579,103 @@ void lua_determine_level_req(int Ind, int item) {
 	determine_level_req(-9999, &Players[Ind]->inventory[item]);
 	return;
 }
+
+void lua_strip_true_arts_from_present_player(int Ind, int mode) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	int             i;
+	int		total_number = 0;
+
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if (true_artifact_p(o_ptr) && !(
+		    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
+		    (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
+		    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
+		    )) total_number++;
+	}
+
+	/* Tell the player what's going on.. */
+	if (total_number == 1) msg_print(Ind, "\377yYour true artifact vanishes into the air!");
+	else if (total_number == 2) msg_print(Ind, "\377yBoth of your true artifacts vanish into the air!");
+	else if (total_number) msg_print(Ind, "\377yYour true artifacts all vanish into the air!");
+
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if (true_artifact_p(o_ptr) && !(
+		    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
+		    (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
+		    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
+		    ))
+	        {
+	                //char  o_name[160];
+	                //object_desc(Ind, o_name, o_ptr, TRUE, 0);
+	                //msg_format(Ind, "%s fades into the air!", o_name);
+			if (mode == 0) {
+				a_info[o_ptr->name1].cur_num = 0;
+				a_info[o_ptr->name1].known = FALSE;
+			}
+
+		        /* Decrease the item, optimize. */
+		        inven_item_increase(Ind, i, -o_ptr->number);
+		        inven_item_describe(Ind, i);
+		        inven_item_optimize(Ind, i);
+		}
+	}
+	if (total_number) s_printf("True-art strip: %s loses %d artifact(s).\n", p_ptr->name, total_number);
+}
+
+void lua_check_player_for_true_arts(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	int i, total_number = 0;
+
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if (true_artifact_p(o_ptr) && !(
+		    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
+		    (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
+		    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
+		    )) total_number++;
+	}
+/*	if (total_number) s_printf("True-art scan: %s carries %d.\n", p_ptr->name, total_number);*/
+}
+
+void lua_strip_true_arts_from_absent_players(void) {
+	strip_true_arts_from_hashed_players();
+}
+
+/* Remove all true artifacts lying on the floor anywhere in the world */
+void lua_strip_true_arts_from_floors(void) {
+	int i, cnt=0, dcnt=0;
+	object_type *o_ptr;
+	cave_type **zcave;
+
+	for(i=0; i<o_max; i++){
+		o_ptr=&o_list[i];
+		if(o_ptr->k_idx){
+			cnt++;
+			/* check items on the world's floors */
+			if((zcave=getcave(&o_ptr->wpos)) &&
+			    true_artifact_p(o_ptr) && !(
+			    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
+			    (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
+			    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
+			    ))
+			{
+				delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
+                                dcnt++;
+			}
+		}
+	}
+	s_printf("Scanned %d objects. Removed %d.\n", cnt, dcnt);
+}
+
+/* Return a monster level */
+int lua_get_mon_lev(int r_idx) {
+	return(r_info[r_idx].level);
+}
+/* Return a monster name */
+char *lua_get_mon_name(int r_idx) {
+	return(r_name + r_info[r_idx].name);
+}

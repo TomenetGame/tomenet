@@ -18,13 +18,13 @@
 
 
 
+bool bypass_inscrption = FALSE;
 /*
  * Move an item from equipment list to pack
  * Note that only one item at a time can be wielded per slot.
  * Note that taking off an item when "full" will cause that item
  * to fall to the ground.
  */
-bool bypass_inscrption = FALSE;
 void inven_takeoff(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
@@ -171,8 +171,10 @@ void inven_takeoff(int Ind, int item, int amt)
 		else
 		        a_ptr = &a_info[o_ptr->name1];
 
-		if (a_ptr->flags3 & TR3_WRAITH) p_ptr->tim_wraith = 1;
+		if ((a_ptr->flags3 & TR3_WRAITH) && p_ptr->tim_wraith) p_ptr->tim_wraith = 1;
 	}
+
+
 
 	/* Carry the object, saving the slot it went in */
 	posn = inven_carry(Ind, &tmp_obj);
@@ -240,10 +242,11 @@ void inven_drop(int Ind, int item, int amt)
 
 	/* check for !d  or !* in inscriptions */
 
-	if( check_guard_inscription( o_ptr->note, 'd' )) {
+	if(!bypass_inscrption && check_guard_inscription( o_ptr->note, 'd' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	}
+	bypass_inscrption = FALSE;
 
 	/* Make a "fake" object */
 	tmp_obj = *o_ptr;
@@ -288,6 +291,9 @@ void inven_drop(int Ind, int item, int amt)
 	{
 		act = "Dropped";
 	}
+
+	/* Message */
+	object_desc(Ind, o_name, &tmp_obj, TRUE, 3);
 
 #if 0 //DSMs don't poly anymore due to cheeziness. They breathe instead.
 	/* Polymorph back */
@@ -340,8 +346,50 @@ void inven_drop(int Ind, int item, int amt)
 		}*/
 	}
 #endif
-	/* Message */
-	object_desc(Ind, o_name, &tmp_obj, TRUE, 3);
+	/* Polymorph back */
+	/* XXX this can cause strange things for players with mimicry skill.. */
+	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
+	{
+		if ((p_ptr->body_monster == o_ptr->pval) && 
+		    ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
+		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
+		{
+			/* If player hasn't got high enough kill count anymore now, poly back to player form! */
+#if 1
+			msg_print(Ind, "You polymorph back to your normal form.");
+			do_mimic_change(Ind, 0, TRUE);
+#endif
+			s_printf("DROP_EXPLOIT (poly): %s dropped %s\n", p_ptr->name, o_name);
+		}
+	}
+
+	/* Check if item gave WRAITH form */
+	if((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith) {
+		s_printf("DROP_EXPLOIT (wraith): %s dropped %s\n", p_ptr->name, o_name);
+#if 1
+		p_ptr->tim_wraith = 1;
+#endif
+	}
+
+	/* Artifacts */
+	if (o_ptr->name1)
+	{
+		artifact_type *a_ptr;
+		/* Obtain the artifact info */
+		if (o_ptr->name1 == ART_RANDART)
+    			a_ptr = randart_make(o_ptr);
+		else
+		        a_ptr = &a_info[o_ptr->name1];
+
+		if ((a_ptr->flags3 & TR3_WRAITH) && p_ptr->tim_wraith) {
+#if 1
+			p_ptr->tim_wraith = 1;
+#endif
+			s_printf("DROP_EXPLOIT (wraith, art): %s dropped %s\n", p_ptr->name, o_name);
+		}
+	}
+
+
 
 	/* Message */
 	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(item));
@@ -885,7 +933,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
 	{
-		msg_print(Ind, "You are not experienced enough to drop items.");
+		msg_print(Ind, "You are not experienced enough to drop items. (Sell/destroy it instead.)");
 		return;
 	}
 
@@ -1576,6 +1624,18 @@ void do_cmd_steal(int Ind, int dir)
 
 	/* Examine target */
 	q_ptr = Players[0 - c_ptr->m_idx];
+
+	/* No transactions from different mode */
+	if ((p_ptr->mode & MODE_IMMORTAL) != (q_ptr->mode & MODE_IMMORTAL)) {
+		if ((p_ptr->mode & MODE_IMMORTAL) && (cfg.charmode_trading_restrictions > 1)) {
+			msg_print(Ind, "You can only steal from everlasting players.");
+			return;
+		}
+		else if (!(p_ptr->mode & MODE_IMMORTAL) && (cfg.charmode_trading_restrictions > 0)) {
+			msg_print(Ind, "You cannot steal from everlasting players.");
+			return;
+		}
+	}
 
 	/* May not steal from hostile players */
 	/* I doubt if it's reasonable..dunno	- Jir - */

@@ -569,7 +569,10 @@ static void get_extra(int Ind)
 		/* Roll the hitpoint values */
 		for (i = 1; i < PY_MAX_LEVEL; i++)
 		{
-			j = randint(p_ptr->hitdie);
+			/* Maybe this is too random, let's give some
+			   smaller random range - C. Blue
+			j = randint(p_ptr->hitdie);*/
+			j = 2 + randint(p_ptr->hitdie - 4);
 			p_ptr->player_hp[i] = p_ptr->player_hp[i-1] + j;
 		}
 
@@ -1819,7 +1822,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* HACK - avoid misleading 'updated' messages and routines - C. Blue
 	   (Needs to be adjusted to the currently used value, usually in custom.lua) */
-	p_ptr->updated = 2;
+	p_ptr->updated = 0;
 
 	/* Roll for age/height/weight */
 	get_ahw(Ind);

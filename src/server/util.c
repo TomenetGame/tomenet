@@ -1201,10 +1201,112 @@ bool suppress_message = FALSE;
 
 void msg_print(int Ind, cptr msg)
 {
+	int line_len = 72 + 1; /* maximum length of a text line to be displayed
+			      (72, or client produces garbage sometimes;
+			      for example Itangast getting slain by a legendary adventurer of name length 12) */
+	char msg_buf[line_len + 2 + 80]; /* buffer for 1 line. + 2 bytes for colour code (+80 bytes for colour codeeeezz) */
+	char msg_minibuf[3]; /* temp buffer for adding characters */
+	int text_len, msg_scan = 0, space_scan, tab_spacer = 0;
+	char colour_code = 0;
+	bool first_character;
+
 	/* Pfft, sorry to bother you.... --JIR-- */
 	if (suppress_message) return;
 
-	/* Ahh, the beautiful simplicity of it.... --KLJ-- */
+
+	/* String longer than 1 line? -> Split it up! --C. Blue-- */
+#if 1 // enable line breaks?
+
+	while (msg != NULL && msg[msg_scan] != '\0') {
+		/* Start a new line */
+		strcpy(msg_buf, "");
+		text_len = 0;
+		first_character = TRUE;
+
+		/* Tabbing the line? */
+		msg_minibuf[0] = ' ';
+		msg_minibuf[1] = '\0';
+		while (tab_spacer--) {
+			text_len++;
+			strcat(msg_buf, msg_minibuf);
+		}
+
+		/* Prefixing colour code? */
+		if (colour_code) {
+			msg_minibuf[0] = '\377';
+			msg_minibuf[1] = colour_code;
+			msg_minibuf[2] = '\0';
+			strcat(msg_buf, msg_minibuf);
+			colour_code = 0;
+		}
+
+		/* Process the string... */
+		while (text_len < line_len) {
+			switch (msg[msg_scan]) {
+			case '\0': /* String ends! */
+				text_len = line_len;
+				continue;
+			case '\377': /* Colour code! Text length does not increase. */
+				msg_minibuf[0] = msg[msg_scan];
+				msg_scan++;
+				/* Is it a complete colour code, or just a half-way fake? */
+				if (msg[msg_scan] != '\0') {
+					msg_minibuf[1] = msg[msg_scan];
+					colour_code = msg[msg_scan];
+					msg_scan++;
+					msg_minibuf[2] = '\0';
+					strcat(msg_buf, msg_minibuf);
+				}
+				break;
+			default: /* Text length increases by another character.. */
+				/* Depending on message type, remember to tab the following
+				   lines accordingly to make it look better ^^
+				   depending on the first character of this line. */
+				if (first_character) {
+					switch (msg[msg_scan]) {
+					case '*': tab_spacer = 2; break; /* Kill message */
+					case '[': tab_spacer = 1; break; /* Chat message */
+					default: tab_spacer = 1;
+					}
+				}
+				/* Process text.. */
+				first_character = FALSE;
+				msg_minibuf[0] = msg[msg_scan];
+				msg_minibuf[1] = '\0';
+				strcat(msg_buf, msg_minibuf);
+				msg_scan++;
+				text_len++;
+				/* Avoid cutting words in two */
+				if ((text_len == line_len) && (msg[msg_scan] != '\0') &&
+				    ((msg[msg_scan - 1] >= 'A' && msg[msg_scan - 1] <= 'Z') ||
+				    (msg[msg_scan - 1] >= '0' && msg[msg_scan - 1] <= '9') ||
+				    (msg[msg_scan - 1] >= 'a' && msg[msg_scan - 1] <= 'z')) &&
+				    ((msg[msg_scan] >= 'A' && msg[msg_scan] <= 'Z') ||
+				    (msg[msg_scan] >= '0' && msg[msg_scan] <= '9') ||
+				    (msg[msg_scan] >= 'a' && msg[msg_scan] <= 'z'))) {
+					space_scan = msg_scan;
+					do {
+						space_scan--;
+					} while (((msg[space_scan - 1] >= 'A' && msg[space_scan - 1] <= 'Z') ||
+						(msg[space_scan - 1] >= '0' && msg[space_scan - 1] <= '9') ||
+						(msg[space_scan - 1] >= 'a' && msg[space_scan - 1] <= 'z')) &&
+						space_scan > 0);
+					if (msg[space_scan] == '\377') space_scan--;
+					if (space_scan) {
+						msg_buf[strlen(msg_buf) - msg_scan + space_scan] = '\0';
+						msg_scan = space_scan;
+					}
+				}
+			}
+		}
+		Send_message(Ind, msg_buf);
+	}
+	if (msg == NULL) Send_message(Ind, msg);
+	return;
+
+#endif // enable line breaks?
+
+
 	Send_message(Ind, msg);
 }
 
@@ -1688,10 +1790,12 @@ static void player_talk_aux(int Ind, char *message)
 	/* Form a search string if we found a colon */
 	if (colon)
 	{
+#if 1 /* No private chat for invalid accounts ? */
 		if(p_ptr->inval){
 			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
 			return;
 		}
+#endif
 		/* Copy everything up to the colon to the search string */
 		strncpy(search, message, colon - message);
 
@@ -1815,6 +1919,7 @@ static void player_talk_aux(int Ind, char *message)
 		if (!admin)
 		{
 			if (check_ignore(i, Ind)) continue;
+			if (q_ptr->ignoring_chat) continue;
 			if (!broadcast && (p_ptr->limit_chat || q_ptr->limit_chat) &&
 					!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 		}
@@ -1829,6 +1934,7 @@ static void player_talk_aux(int Ind, char *message)
 		if (!admin)
 		{
 			if (check_ignore(i, Ind)) continue;
+			if (q_ptr->ignoring_chat) continue;
 			if (!broadcast && (p_ptr->limit_chat || q_ptr->limit_chat) &&
 					!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 		}
@@ -1852,6 +1958,9 @@ static void player_talk_aux(int Ind, char *message)
 void toggle_afk(int Ind, char *msg)
 {
 	player_type *p_ptr = Players[Ind];
+	char afk[160];
+	int i;
+	strcpy(afk, "");
 
 	if (p_ptr->afk)
 	{
@@ -1862,9 +1971,9 @@ void toggle_afk(int Ind, char *msg)
 		if (!p_ptr->admin_dm)
 		{
 			if (strlen(p_ptr->afk_msg) == 0)
-				msg_broadcast(Ind, format("\377o%s has returned from AFK.", p_ptr->name));
+				sprintf(afk, "\377o%s has returned from AFK.", p_ptr->name);
 			else
-				msg_broadcast(Ind, format("\377o%s has returned from AFK. (%s)", p_ptr->name, p_ptr->afk_msg));
+				sprintf(afk, "\377o%s has returned from AFK. (%s)", p_ptr->name, p_ptr->afk_msg);
 		}
 		p_ptr->afk = FALSE;
 	}
@@ -1891,15 +2000,32 @@ void toggle_afk(int Ind, char *msg)
 		if (!p_ptr->admin_dm)
 		{
 			if (strlen(p_ptr->afk_msg) == 0)
-				msg_broadcast(Ind, format("\377o%s seems to be AFK now.", p_ptr->name));
+				sprintf(afk, "\377o%s seems to be AFK now.", p_ptr->name);
 			else
-				msg_broadcast(Ind, format("\377o%s seems to be AFK now. (%s)", p_ptr->name, p_ptr->afk_msg));
+				sprintf(afk, "\377o%s seems to be AFK now. (%s)", p_ptr->name, p_ptr->afk_msg);
 		}
 		p_ptr->afk = TRUE;
 
 		/* still too many starvations, so give a warning - C. Blue */
 		if (p_ptr->food < PY_FOOD_ALERT) msg_print(Ind, "\377RWARNING: Going AFK while hungry or weak can result in starvation! Eat first!");
 	}
+
+	/* Replaced msg_broadcast by this, to allow /ignore and /ic */
+	/* Tell every player */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		/* Skip disconnected players */
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (check_ignore(i, Ind)) continue;
+		if (Players[i]->ignoring_chat && !(p_ptr->party && player_in_party(p_ptr->party, i))) continue;
+
+		/* Skip himself */
+		if (i == Ind) continue;
+
+		/* Tell this one */
+		msg_print(i, afk);
+	}
+
 	return;
 }
 

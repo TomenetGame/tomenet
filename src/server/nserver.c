@@ -733,7 +733,7 @@ static bool player_allowed(char *name){
 	return(success);
 }
 
-static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr)
+static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr, bool check_for_resume)
 {
 	player_type *p_ptr = NULL;
 	char *ptr;
@@ -750,6 +750,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 		else break;
 	}
 
+	if (check_for_resume)
 	for (i = 1; i < NumPlayers + 1; i++)
 	{
 		if(Players[i]->conn != NOT_CONNECTED ) {
@@ -1003,7 +1004,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	   a second account login - it may be a subsequent resume.
 	   We can check duplicate account use on player entry
 	   (PKT_LOGIN) */
-	if ((status = Check_names(nick, real, host, addr)) != SUCCESS)
+	if ((status = Check_names(nick, real, host, addr, TRUE)) != SUCCESS)
 	{
 		/*s_printf("Check_names failed with result %d.\n", status);*/
 		return status;
@@ -1731,6 +1732,7 @@ static int Handle_login(int ind)
 	p_ptr = Players[NumPlayers + 1];
 	strcpy(p_ptr->realname, connp->real);
 	strcpy(p_ptr->hostname, connp->host);
+	strcpy(p_ptr->accountname, connp->nick);
 	strcpy(p_ptr->addr, connp->addr);
 	p_ptr->version = connp->version;
 
@@ -1884,6 +1886,11 @@ static int Handle_login(int ind)
 		msg_print(NumPlayers, "\377y* Empty-server-shutdown command pending *");
 
 	/* Execute custom script if player joins the server */
+	if (first_player_joined) {
+		first_player_joined = FALSE;
+		exec_lua(NumPlayers, format("first_player_has_joined(%d, %d, \"%s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
+	}
+	if (NumPlayers == 1) exec_lua(NumPlayers, format("player_has_joined_empty_server(%d, %d, \"%s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
 	exec_lua(NumPlayers, format("player_has_joined(%d, %d, \"%s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
 
 	/* Handle the cfg_secret_dungeon_master option */
@@ -2508,6 +2515,11 @@ static int Receive_login(int ind){
 		return -1;
 	}
 	if(strlen(choice)==0){
+		if (Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE) != SUCCESS)
+		{
+			Destroy_connection(ind, "The server didn't like your nickname, realname or hostname");
+			return(-1);
+		}
 		if(connp->pass && (l_acc=GetAccount(connp->nick, connp->pass, FALSE))){
 			int *id_list, i;
 			byte tmpm;
@@ -2537,7 +2549,7 @@ static int Receive_login(int ind){
 		Sockbuf_flush(&connp->w);
 		return(0);
 	}
-	else{
+	else {
 		/* at this point, we are authorised as the owner
 		   of the account. any valid name will be
 		   allowed. */
@@ -2545,7 +2557,8 @@ static int Receive_login(int ind){
 		   on reason - evileye */
 		if(check_account(connp->nick, choice)){
 			/* Validate names/resume in proper place */
-			if(Check_names(choice, connp->real, connp->host, connp->addr)){
+			if(Check_names(choice, connp->real, connp->host, connp->addr, TRUE)){
+/* connp->real is _always_ 'PLAYER' - connp->nick is the account name, choice the c_name */
 				/* fail login here */
 				Destroy_connection(ind, "Security violation");
 				return(-1);
@@ -3946,7 +3959,7 @@ int Send_message(int ind, cptr msg)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
-	char buf[80];
+	char buf[80 +80]; // for +80 see below, at 'Clip end of msg'..
 
 	if (msg == NULL)
 		return 1;
@@ -3960,8 +3973,13 @@ int Send_message(int ind, cptr msg)
 	}
 
 	/* Clip end of msg if too long */
-	strncpy(buf, msg, 78);
-	buf[78] = '\0';
+// Taking this out for now, since it's ONLY called from msg_print in util.c,
+// which already performs checks - C. Blue
+// (otherwise, lines with colour codes might be crippled here :| )
+//	strncpy(buf, msg, 78);
+//	buf[78] = '\0';
+	strncpy(buf, msg, 158);
+	buf[158] = '\0';
 
 	if ((!hack_message) && p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
 	  {
@@ -5445,7 +5463,7 @@ static int Receive_activate_skill(int ind)
 	{
 		p_ptr->current_char = (old == player)?TRUE:FALSE;
 
-		if (p_ptr->ghost)
+		if (p_ptr->ghost && !is_admin(p_ptr))
 		{
 			msg_print(player, "\377oYou need your body to use a skill.");
 			return 2;

@@ -405,6 +405,19 @@ void do_slash_cmd(int Ind, char *message)
 			add_ignore(Ind, token[1]);
 			return;
 		}
+		if (prefix(message, "/ignchat") ||
+				prefix(message, "/ic"))
+		{
+			if (p_ptr->ignoring_chat) {
+				p_ptr->ignoring_chat = FALSE;
+				msg_print(Ind, "\377yYou're no longer ignoring normal chat messages.");
+			} else {
+				p_ptr->ignoring_chat = TRUE;
+				msg_print(Ind, "\377yYou're now ignoring normal chat messages.");
+				msg_print(Ind, "\377yYou will only receive private and party messages.");
+			}
+			return;
+		}
 		else if (prefix(message, "/afk"))
 		{
 			if (strlen(message2 + 4) > 0)
@@ -1597,10 +1610,10 @@ void do_slash_cmd(int Ind, char *message)
 				cfg.runlevel = 2048;
 				return;
 			}
-#if 0	/* not implemented yet */
+#if 0	/* not implemented yet - /shutempty is currently working this way */
 			else if (prefix(message, "/shutsurface")) {
 				msg_print(Ind, "\377y* Shutting down as soon as noone is inside a dungeon/tower *");
-				cfg.runlevel = 2049;
+				cfg.runlevel = 2050;
 				return;
 			}
 #endif
@@ -2309,7 +2322,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "\377oTo clear all pending notes of yours, type: /danote *");
 					return;
 				}
-				if (message2[8] = '*') {
+				if (message2[8] == '*') {
 					for (i = 0; i < MAX_ADMINNOTES; i++)
 						if (strcmp(admin_note[i], "")) {
 							notes++;
@@ -2595,7 +2608,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				p = name_lookup_loose(Ind, token[1], FALSE);
 				if (!p) return;
-				teleport_player(Ind, 10);
+				teleport_player(p, 10);
 				msg_print(Ind, "Phased that player.");
 				return;
 			}
@@ -2608,8 +2621,28 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				p = name_lookup_loose(Ind, token[1], FALSE);
 				if (!p) return;
-				teleport_player(Ind, 100);
+				teleport_player(p, 100);
 				msg_print(Ind, "Teleported that player.");
+				return;
+			}
+			/* STRIP ALL TRUE ARTIFACTS FROM ALL PLAYERS (!) */
+			else if (prefix(message, "/strathash")) {
+				msg_print(Ind, "Stripping all players.");
+				lua_strip_true_arts_from_absent_players();
+				return;
+			}
+			/* STRIP ALL TRUE ARTIFACTS FROM ALL FLOORS */
+			else if (prefix(message, "/stratmap")) {
+				msg_print(Ind, "Stripping all floors.");
+				lua_strip_true_arts_from_floors();
+				return;
+			}
+			/* STRIP ALL TRUE ARTIFACTS FROM A PLAYER */
+			else if (prefix(message, "/strat")) {
+				int p = name_lookup_loose(Ind, token[1], FALSE);
+				if (!p) return;
+				lua_strip_true_arts_from_present_player(Ind, 0);
+				msg_format(Ind, "Stripped arts from player %s.", Players[Ind]->name);
 				return;
 			}
 		}

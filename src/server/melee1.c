@@ -504,7 +504,7 @@ bool make_attack_normal(int Ind, int m_idx)
 
 	char            ddesc[80];
 
-	bool            blinked;
+	bool            blinked, prot = FALSE;
 
 	bool touched = FALSE, fear = FALSE, alive = TRUE;
 	bool explode = FALSE, gone = FALSE;
@@ -641,10 +641,32 @@ bool make_attack_normal(int Ind, int m_idx)
 
 
 			/* Hack -- Apply "protection from evil" */
-			if ((p_ptr->protevil > 0) &&
-			    (r_ptr->flags3 & RF3_EVIL) &&
-			    (p_ptr->lev >= rlev) &&
-			    ((rand_int(100) + p_ptr->lev) > 50))
+#if 0
+			if (((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
+				(p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) ||
+			    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD) &&
+				(p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
+			    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON) &&
+				(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
+			    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL) &&
+				(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)))
+#else
+			prot = FALSE;
+			if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD)) {
+				if ((p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev))
+					prot = TRUE;
+			} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON)) {
+				if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
+					prot = TRUE;
+			} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL)) {
+				if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
+					prot = TRUE;
+			} else if ((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
+				(p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) {
+					prot = TRUE;
+			}
+			if (prot)
+#endif
 			{
 				/* Remember the Evil-ness */
 				if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_EVIL;
@@ -1807,7 +1829,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 					
 					/* can never take off permanently cursed stuff */
-					if (f3 & TR3_PERMA_CURSE) continue;
+					if (f3 & TR3_PERMA_CURSE) break;
 
 					if (!p_ptr->heavy_wield && !shield && (
 								magik(50) ||
@@ -1821,11 +1843,20 @@ bool make_attack_normal(int Ind, int m_idx)
 					{
 						msg_print(Ind, "\377rYou lose the grip of your weapon!");
 //						msg_format(Ind, "\377r%^s disarms you!", m_name);
-
+						bypass_inscrption = TRUE;
 						if (cfg.anti_arts_hoard && true_artifact_p(o_ptr)
-								&& magik(98))
+								&& magik(98)) {
 							inven_takeoff(Ind, INVEN_WIELD, 1);
-						else inven_drop(Ind, INVEN_WIELD, 1);
+						} else {
+							inven_drop(Ind, INVEN_WIELD, 1);
+#if 0
+							/* Drop it (carefully) near the player */
+							drop_near_severe(Ind, &p_ptr->inventory[INVEN_WIELD], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+							/* Decrease the item, optimize. */
+							inven_item_increase(Ind, INVEN_WIELD, -p_ptr->inventory[INVEN_WIELD].number);
+							inven_item_optimize(Ind, INVEN_WIELD);
+#endif
+						}
 
 						obvious = TRUE;
 					}

@@ -760,7 +760,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		}
 
 		msg_print(Ind, "You are hit!");
-		take_hit(Ind, damroll(dd, ds), name);
+		take_hit(Ind, damroll(dd, ds), format("a %s", name));
 		redraw_stuff(Ind);
 		if (pdam > 0)
 		{
@@ -819,7 +819,7 @@ static void trap_hit(int Ind, s16b trap)
 
    dam = damroll(t_ptr->dd, t_ptr->ds);
 
-   take_hit(Ind, dam, t_name + t_ptr->name);
+   take_hit(Ind, dam, format("a %s", t_name + t_ptr->name));
 }
 
 /*
@@ -1224,8 +1224,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				//			 int dam = damroll(2, 8);
 				//			 take_hit(Ind, dam, name);
-				take_hit(Ind, damroll(2, 8), "trap door");
-				take_sanity_hit(Ind, damroll(1, 2), "trap door");
+				take_hit(Ind, damroll(2, 8), "a trap door");
+				take_sanity_hit(Ind, damroll(1, 2), "a trap door");
 			}
 			do_player_trap_change_depth(Ind, -1);
 			break;
@@ -2282,8 +2282,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				inven_damage(Ind, set_cold_destroy, 15 * k);
 				inven_damage(Ind, set_all_destroy, 3 * k);
 
-				take_hit(Ind, l, "chasm");
-				take_sanity_hit(Ind, 1 << k, "chasm");
+				take_hit(Ind, l, "a chasm");
+				take_sanity_hit(Ind, 1 << k, "a chasm");
 			}
 
 			do_player_trap_change_depth(Ind, -k);
@@ -2311,8 +2311,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				inven_damage(Ind, set_impact_destroy, l);
 
 				//			 take_hit(Ind, dam, name);
-				take_hit(Ind, l, "pit");
-				take_sanity_hit(Ind, 1 , "pit");
+				take_hit(Ind, l, "a pit");
+				take_sanity_hit(Ind, 1 , "a pit");
 
 				/* Maybe better make them other types of traps? */
 				if (glev > 29)
@@ -2916,6 +2916,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				q_ptr = Players[k];
 				if (q_ptr->conn == NOT_CONNECTED) continue;
 				if (k == Ind) continue;
+				/* No transfer between everlasting and non-everlasting */
+				if ((p_ptr->mode & MODE_IMMORTAL) != (q_ptr->mode & MODE_IMMORTAL)) {
+					if ((p_ptr->mode & MODE_IMMORTAL) && (cfg.charmode_trading_restrictions > 0)) continue;
+					if (!(p_ptr->mode & MODE_IMMORTAL) && (cfg.charmode_trading_restrictions > 1)) continue;
+				}
 
 //				if (!inarea(wpos, &q_ptr->wpos)) continue;
 

@@ -15,7 +15,7 @@
 
 #include "angband.h"
 
-#define MAX_VAMPIRIC_DRAIN 25	/* was 50 */
+#define MAX_VAMPIRIC_DRAIN 50	/* was 25 - note: this counts per turn, not per blow */
 #define NON_WEAPON_VAMPIRIC_CHANCE 67 /* chance to drain if VAMPIRIC is given be a non-weapon item */
 
 /*
@@ -28,6 +28,25 @@
 
 
 
+
+/* Anti-(nothing)-hack, following Tony Zeigler's (Ravyn) suggestion */
+bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y)
+{
+	char o_name[80];
+
+	if ((o_ptr->wpos.wx != wpos->wx) || (o_ptr->wpos.wy != wpos->wy) || (o_ptr->wpos.wz != wpos->wz) ||
+	    (o_ptr->ix && (o_ptr->ix != x)) || (o_ptr->iy && (o_ptr->iy != y))) {
+		/* Item is not at the same (or similar) location as the player? Then he can't pick it up.. */
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		if (p_ptr != NULL) {
+/*		s_printf("NOTHINGHACK: item %s at %d,%d,%d (%d,%d) meets not target of %s at %d,%d,%d (%d,%d)\n",
+		    o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,
+		    p_ptr->name, wpos->wx, wpos->wy, wpos->wz, x, y);*/
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
 
 /*
  * Determine if the player "hits" a monster (normal combat).
@@ -612,8 +631,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			}
 
 			/* Slay Evil */
-			if ((f1 & TR1_SLAY_EVIL) &&
-			    (r_ptr->flags3 & RF3_EVIL))
+			if (((f1 & TR1_SLAY_EVIL) &&
+			    (r_ptr->flags3 & RF3_EVIL)) || (get_skill(p_ptr, SKILL_HOFFENSE) >= 50))
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/
 
@@ -621,8 +640,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			}
 
 			/* Slay Undead */
-			if ((f1 & TR1_SLAY_UNDEAD) &&
-			    (r_ptr->flags3 & RF3_UNDEAD))
+			if (((f1 & TR1_SLAY_UNDEAD) &&
+			    (r_ptr->flags3 & RF3_UNDEAD)) || (get_skill(p_ptr, SKILL_HOFFENSE) >= 30))
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
 
@@ -630,8 +649,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			}
 
 			/* Slay Demon */
-			if ((f1 & TR1_SLAY_DEMON) &&
-			    (r_ptr->flags3 & RF3_DEMON))
+			if (((f1 & TR1_SLAY_DEMON) &&
+			    (r_ptr->flags3 & RF3_DEMON)) || (get_skill(p_ptr, SKILL_HOFFENSE) >= 40))
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
 
@@ -1451,6 +1470,8 @@ void carry(int Ind, int pickup, int confirm)
 	/* Get the object */
 	o_ptr = &o_list[c_ptr->o_idx];
 
+	if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py)) return;
+
 	/* Auto id ? */
 	if (p_ptr->auto_id)
 	{
@@ -1460,6 +1481,18 @@ void carry(int Ind, int pickup, int confirm)
 
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+/* TEMPORARY ANTI-CHEEZE HACKS */
+if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->level < 30) {
+	s_printf("HACK-SPEEDREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
+	determine_level_req(70, o_ptr);
+	s_printf("%d.\n", o_ptr->level);
+}
+if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval <= SV_POTION_INC_CHR && o_ptr->level < 28) {
+	s_printf("HACK-STATPOT: %s(%d) potion: %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
+	determine_level_req(20, o_ptr);
+	s_printf("%d.\n", o_ptr->level);
+}
 
 	/* Pick up gold */
 	if (o_ptr->tval == TV_GOLD)
@@ -1762,10 +1795,10 @@ void carry(int Ind, int pickup, int confirm)
 					o_ptr->owner = p_ptr->id;
 					o_ptr->owner_mode = p_ptr->mode;
 #if CHEEZELOG_LEVEL > 2
-					if (true_artifact_p(o_ptr)) s_printf("%s Artifact %d found by %s(lv %d):\n  %s\n",
-									    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, o_name);
-					else if (o_ptr->name1 == ART_RANDART) s_printf("%s Randart found by %s(lv %d):\n  %s\n",
-									    showtime(), p_ptr->name, p_ptr->lev, o_name);
+					if (true_artifact_p(o_ptr)) s_printf("%s Artifact %d found by %s(lv %d) at %d,%d,%d:\n  %s\n",
+									    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, o_name);
+					else if (o_ptr->name1 == ART_RANDART) s_printf("%s Randart found by %s(lv %d) at %d,%d,%d:\n  %s\n",
+									    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, o_name);
 #endif	// CHEEZELOG_LEVEL
 				}
 
@@ -2175,7 +2208,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				/* Messages */
 				msg_format(Ind, "You hit %s for \377y%d \377wdamage.", p_name, k);
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
-				if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+//less spam for now - C. Blue	if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 				if(q_ptr->chp<5){
 					msg_format(Ind, "You have beaten %s", q_ptr->name);
@@ -2190,7 +2223,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				/* Messages */
 				msg_format(Ind, "You hit %s for \377y%d \377wdamage.", p_name, k);
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
-				if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+//less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 				if(cfg.use_pk_rules==PK_RULES_NEVER && q_ptr->chp<5){
 					msg_format(Ind, "You have beaten %s", q_ptr->name);
@@ -2598,6 +2631,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	if (!old)
 	{
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_blow;
+		/* -C. Blue- We're only executing ONE blow and will break out then,
+		   so adjust the maximum drain accordingly: */
+		k = drain_left / p_ptr->num_blow;
+		/* ..and make up for rounding errors :) */
+		drain_left = k + (magik(((drain_left - (k * p_ptr->num_blow)) * 100) / p_ptr->num_blow) ? 1 : 0);
 	}
 
 	/* Handle player fear */
@@ -2611,7 +2649,6 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		/* Done */
 		return;
 	}
-
 	/* Access the weapon */
 	o_ptr = &(p_ptr->inventory[INVEN_WIELD]);
 
@@ -2973,7 +3010,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				msg_format(Ind, "You hit %s for \377e%d \377wdamage.", m_name, k);
 				else msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
 			}
-			if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+//less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 			/* Damage, check for fear and death */
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) break;
@@ -3122,7 +3159,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 							drain_msg = FALSE;
 						}
 
-						hp_player(Ind, drain_heal);
+						hp_player_quiet(Ind, drain_heal);
 						/* We get to keep some of it! */
 					}
 				}

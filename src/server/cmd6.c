@@ -1226,8 +1226,8 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					/* FRUIT BAT!!!!!! */
 
 					msg_print(Ind, "You have been turned into a fruit bat!");
-					strcpy(p_ptr->died_from,"Potion of Chauve-Souris");
-					strcpy(p_ptr->really_died_from,"Potion of Chauve-Souris");
+					strcpy(p_ptr->died_from,"a potion of Chauve-Souris");
+					strcpy(p_ptr->really_died_from,"a potion of Chauve-Souris");
 					do_mimic_change(Ind, 0, TRUE);
 					p_ptr->fruit_bat = -1;
 					p_ptr->deathblow = 0;
@@ -3773,7 +3773,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_print(Ind, "You launch a rocket!");
 			sprintf(p_ptr->attacker, "%s launches a rocket for", p_ptr->name);
-			fire_ball(Ind, GF_ROCKET, dir, 400 + (randint(100) + get_skill_scale(p_ptr, SKILL_DEVICE, 300)), 2, p_ptr->attacker);
+			fire_ball(Ind, GF_ROCKET, dir, 700 + (randint(100) + get_skill_scale(p_ptr, SKILL_DEVICE, 700)), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -4093,16 +4093,16 @@ void do_cmd_zap_rod(int Ind, int item)
 			if (set_cut(Ind, 0)) ident = TRUE;
                         if (p_ptr->food >= PY_FOOD_MAX)
                         if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
-			o_ptr->pval = 999;
+			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
 			break;
 		}
 
 		case SV_ROD_HEALING:
 		{
-			if (hp_player(Ind, 500)) ident = TRUE;
+			if (hp_player(Ind, 700)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0)) ident = TRUE;
-			o_ptr->pval = 999;
+			o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			break;
 		}
 
@@ -4115,7 +4115,7 @@ void do_cmd_zap_rod(int Ind, int item)
 			if (do_res_stat(Ind, A_DEX)) ident = TRUE;
 			if (do_res_stat(Ind, A_CON)) ident = TRUE;
 			if (do_res_stat(Ind, A_CHR)) ident = TRUE;
-			o_ptr->pval = 999;
+			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
 			break;
 		}
 
@@ -4523,16 +4523,16 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			if (set_cut(Ind, 0)) ident = TRUE;
 			if (p_ptr->food >= PY_FOOD_MAX)
 			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
-			o_ptr->pval = 999;
+			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
 			break;
 		}
 
 		case SV_ROD_HEALING:
 		{
-			if (hp_player(Ind, 500)) ident = TRUE;
+			if (hp_player(Ind, 700)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0)) ident = TRUE;
-			o_ptr->pval = 999;
+			o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			break;
 		}
 
@@ -4545,7 +4545,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			if (do_res_stat(Ind, A_DEX)) ident = TRUE;
 			if (do_res_stat(Ind, A_CON)) ident = TRUE;
 			if (do_res_stat(Ind, A_CHR)) ident = TRUE;
-			o_ptr->pval = 999;
+			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
 			break;
 		}
 
@@ -4902,6 +4902,12 @@ void do_cmd_activate(int Ind, int item)
 
         /* Is it simple to use ? */
         if (f4 & TR4_EASY_USE)
+        {
+                chance *= 10;
+        }
+
+        /* Rings of Polymorphing are easy to use too */
+        if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)
         {
                 chance *= 10;
         }
@@ -7679,7 +7685,7 @@ static int fletchery_items(int Ind)
 void do_cmd_fletchery(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int ext=0, tlev = 0;
+	int ext=0, tlev = 0, raw_materials;
 	//char ch;
 
 	object_type	forge;
@@ -7848,6 +7854,9 @@ void do_cmd_fletchery(int Ind)
 		/* S(he) is no longer afk */
 		if (p_ptr->afk) toggle_afk(Ind, "");
 
+		/* Remember amount of raw materials used for this */
+		raw_materials = q_ptr->number;
+
 		/* Get local object */
 		q_ptr = &forge;
 
@@ -7855,6 +7864,7 @@ void do_cmd_fletchery(int Ind)
 		invcopy(q_ptr, lookup_kind(TV_ARROW, m_bonus(1, tlev) + 1));
 //		q_ptr->number = (byte)rand_range(15,25);
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
+		q_ptr->number *= raw_materials;
 		do_fletchery_aux();
 
 		if (item >= 0)
@@ -7909,6 +7919,9 @@ void do_cmd_fletchery(int Ind)
 		/* S(he) is no longer afk */
 		if (p_ptr->afk) toggle_afk(Ind, "");
 
+		/* Remember amount of raw materials used for this */
+		raw_materials = q_ptr->number;
+
 		/* Get local object */
 		q_ptr = &forge;
 
@@ -7916,6 +7929,7 @@ void do_cmd_fletchery(int Ind)
 		invcopy(q_ptr, lookup_kind(TV_BOLT, m_bonus(1, tlev) + 1));
 //		q_ptr->number = (byte)rand_range(15,25);
 		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
+		q_ptr->number *= raw_materials;
 		do_fletchery_aux();
 
 		if (item >= 0)

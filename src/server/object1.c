@@ -1272,7 +1272,7 @@ static char *object_desc_int(char *t, sint v)
  */
 void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 {
-        player_type     *p_ptr = Players[Ind];
+        player_type     *p_ptr;
 	cptr		basenm, modstr;
 	int		power, indexx;
 
@@ -1292,6 +1292,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	char		c1 = '{', c2 = '}';
 
 	char		tmp_val[160];
+	
+	bool 		short_item_names = FALSE;
 
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -1305,6 +1307,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	/* Assume aware and known if not a valid player */
 	if (Ind)
 	{
+		p_ptr = Players[Ind];
+		short_item_names = p_ptr->short_item_names;
+
 		/* See if the object is "aware" */
 		if (object_aware_p(Ind, o_ptr)) aware = TRUE;
 
@@ -1412,7 +1417,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = amulet_adj[indexx];
 			if (aware && !artifact_p(o_ptr)) append_name = TRUE;
-			if (p_ptr->short_item_names)
+			if (short_item_names)
 			basenm = aware ? "& Amulet~" : "& # Amulet~";
 			else
 			basenm = "& # Amulet~";
@@ -1434,7 +1439,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = ring_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (p_ptr->short_item_names)
+			if (short_item_names)
 			basenm = aware ? "& Ring~" : "& # Ring~";
 			else
 			basenm = "& # Ring~";
@@ -1451,7 +1456,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = staff_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (p_ptr->short_item_names)
+			if (short_item_names)
 			basenm = aware ? "& Staff~" : "& # Staff~";
 			else
 			basenm = "& # Staff~";
@@ -1463,7 +1468,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = wand_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (p_ptr->short_item_names)
+			if (short_item_names)
 			basenm = aware ? "& Wand~" : "& # Wand~";
 			else
 			basenm = "& # Wand~";
@@ -1475,7 +1480,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = rod_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (p_ptr->short_item_names)
+			if (short_item_names)
 			basenm = aware ? "& Rod~" : "& # Rod~";
 			else
 			basenm = "& # Rod~";
@@ -1495,7 +1500,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = scroll_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (p_ptr->short_item_names)
+			if (short_item_names)
 			basenm = aware ? "& Scroll~" : "& Scroll~ titled \"#\"";
 			else
 			basenm = aware ? "& Scroll~ \"#\"" : "& Scroll~ titled \"#\"";
@@ -1509,7 +1514,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = potion_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (p_ptr->short_item_names)
+			if (short_item_names)
 			basenm = aware ? "& Potion~" : "& # Potion~";
 			else
 			basenm = "& # Potion~";
@@ -1524,7 +1529,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = food_adj[indexx];
 			if (aware) append_name = TRUE;
-			if (p_ptr->short_item_names)
+			if (short_item_names)
 			basenm = aware ? "& Mushroom~" : "& # Mushroom~";
 			else
 			basenm = "& # Mushroom~";
@@ -1859,7 +1864,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 		if (name != NULL)
 		{
-			if (!strcmp(name, p_ptr->name))
+			if (Ind && !strcmp(name, p_ptr->name))
 			{
 				t = object_desc_chr(t, '+');
 			}
@@ -1940,10 +1945,14 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		{
 			/* Describe the traps */
 			t = object_desc_str(t, " (");
-			if (p_ptr->trap_ident[o_ptr->pval])
-				t = object_desc_str(t, t_name + t_info[o_ptr->pval].name);
-			else
-				t = object_desc_str(t, "trapped");
+			if (Ind) {
+				if (p_ptr->trap_ident[o_ptr->pval])
+					t = object_desc_str(t, t_name + t_info[o_ptr->pval].name);
+				else
+					t = object_desc_str(t, "trapped");
+			} else {
+					t = object_desc_str(t, t_name + t_info[o_ptr->pval].name);
+			}
 			t = object_desc_str(t, ")");
 #if 0
 			/* Describe the traps */
@@ -2379,12 +2388,19 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* Hack -- How much so far */
 		n = (t - buf);
 
+#if 0 //this is too short! - C. Blue
 		/* Paranoia -- do not be stupid */
 		if (n > 75) n = 75;
 
 		/* Hack -- shrink the inscription */
 		tmp_val[75 - n] = '\0';
+#else
+		/* Paranoia -- do not be stupid */
+		if (n > 90) n = 90;
 
+		/* Hack -- shrink the inscription */
+		tmp_val[90 - n] = '\0';
+#endif
 		/* Append the inscription */
 		if (mode < 8) t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, c1);
@@ -4777,8 +4793,13 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		fprintf(fff, "It regenerates its mana faster.\n");
 	}
 
+	if ((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD))
+	{
+		fprintf(fff, "It cannot be enchanted nor disenchanted by any means.\n");
+	}
+
 #if 1
-	if (f5 & (TR5_NO_ENCHANT))
+	else if (f5 & (TR5_NO_ENCHANT))
 	{
 		fprintf(fff, "It cannot be enchanted by any means.\n");
 	}

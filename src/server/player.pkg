@@ -302,6 +302,7 @@ struct player_type
 	u16b exp_frac;		/* Cur exp frac (times 2^16) */
 
 	s16b lev;			/* Level */
+	s16b max_lev;		/* Level according to max_exp */
 
 	s16b mhp;			/* Max hit pts */
 	s16b chp;			/* Cur hit pts */

@@ -764,3 +764,6 @@ int global_luck = 0;
    'watch' as AFK reason! */
 bool watch_nr = 0;
 bool watch_morgoth = 0;
+
+/* for lua_bind.c */
+bool first_player_joined = TRUE;

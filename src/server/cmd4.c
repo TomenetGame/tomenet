@@ -16,7 +16,6 @@
 #include "angband.h"
 
 
-
 /*
  * Check the status of "artifacts"
  *
@@ -400,7 +399,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 {
 	int modify_number = 0;
 	cptr p = "";
-	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE;
+	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE, text_ignoring_chat = FALSE;
 
 	/* Prepare title already */
         if (q_ptr->lev < 60)
@@ -511,7 +510,17 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 //				fprintf(fff, "   (AFK: %s", q_ptr->afk_msg);
 		}
 	}
-	if (text_pk || text_silent || text_afk) fprintf(fff, ")");
+	/* Ignoring normal chat (sees only private & party messages) */
+	if(q_ptr->ignoring_chat)
+	{
+		text_ignoring_chat = TRUE;
+		if (text_pk || text_silent || text_afk) {
+			fprintf(fff, ", Private mode");
+		} else {
+			fprintf(fff, "   (Private mode");
+		}
+	}
+	if (text_pk || text_silent || text_afk || text_ignoring_chat) fprintf(fff, ")");
 
 	/* Line break here, it's getting too long with all that mods -C. Blue */
 	fprintf(fff, "\n\377U     ");
@@ -616,7 +625,11 @@ void do_cmd_check_players(int Ind, int line)
 
 		if (is_admin(p_ptr)) fprintf(fff, "  (%d)", k);
 
+#if 0 /* show local system username? */
 		fprintf(fff, "     %s@%s", q_ptr->realname, q_ptr->hostname);
+#else /* show account name instead? */
+		fprintf(fff, "     %s@%s", q_ptr->accountname, q_ptr->hostname);
+#endif
 
 		/* Print extra info if these people are in the same party */
 		/* Hack -- always show extra info to dungeon master */

@@ -1131,6 +1131,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	/* add the objects */
 	
 	trys = 0;
+	place_object_restrictor = 1;
 	while ((num_objects) && (trys < 300))
 	{
 		x = rand_range(x1,x2);
@@ -1144,6 +1145,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 		}
 		trys++;	
 	}
+	place_object_restrictor = 0;
 	
 	/* add the food */
 	

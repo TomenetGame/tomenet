@@ -1588,7 +1588,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 				}
 
 //				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 300L);//was 500, then 400
-				if (f5 & (TR5_CRIT)) value += pval * pval * 10000L;/* was 20k, but speed is only 10k */
+				if (f5 & (TR5_CRIT)) value += pval * pval * 5000L;/* was 20k, but speed is only 10k */
 				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 10L);
 
 				/* Give credit for stealth and searching */
@@ -2595,7 +2595,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, bool true_a
 			/* Check if we can break the loop (artifact is allowed) */
 			a_ptr = randart_make(o_ptr);
 			/* hack - we use 'true_art' as '!p_ptr->total_winner' here */
-			if (true_art || !(a_ptr->flags1 & TR1_LIFE)) break;
+			if (!true_art || !(a_ptr->flags1 & TR1_LIFE)) break;
 		}
 		
 		return (TRUE);
@@ -3027,8 +3027,10 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 			break;
 		}
 #endif	// 0
+
 		case TV_MSTAFF:
 #if 0 //oops, ADDS to normal pval bonus -> +18 staff occured. 'granted_pval' will do the job instead.
+
 			switch(o_ptr->name2) {
 			case 2: if (o_ptr->pval < 4) o_ptr->pval = 4;
 				break;
@@ -5365,6 +5367,16 @@ if (verygreat) s_printf("verygreat apply_magic:\n");
 		o_ptr->to_h += a_ptr->to_h;
 		o_ptr->to_d += a_ptr->to_d;
 
+		/* Reduce enchantment boni for ego Dark Swords - C. Blue
+		   (since they're no more (dis)enchantable, make work easier for unbelievers..) */
+		if ((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD)) {
+			/* Don't reduce negative boni, of *Defender*s for example */
+			if ((o_ptr->to_h > 0) && (o_ptr-> to_d > 0)) {
+				o_ptr->to_h /= 2;
+				o_ptr->to_d /= 2;
+			}
+		}
+
 		/* Hack -- acquire "cursed" flag */
 		//                if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
 		if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
@@ -5712,6 +5724,14 @@ void determine_level_req(int level, object_type *o_ptr)
 		}
 	}
 
+	if (o_ptr->tval == TV_LITE) {
+	        switch (o_ptr->sval) {
+	        case SV_LITE_DWARVEN: base += 35; break;
+	        case SV_LITE_FEANORIAN: base += 55; break;
+	        default: if (o_ptr->name2) base += 20;
+		}
+        }
+
 	/* Hack -- analyze ego-items */
 	if (o_ptr->name2 || o_ptr->name2b)
 	{
@@ -5785,7 +5805,7 @@ void determine_level_req(int level, object_type *o_ptr)
 		j = base;
 	} else {
 		i = level - base;
-		j = (i * (i > 0 ? 3 : 3) / 12  + base) * rand_range(95,105) / 100;/* was 1:2 / 4 */
+		j = (i * (i > 0 ? 2 : 2) / 12  + base) * rand_range(95,105) / 100;/* was 1:2 / 4 */
 	}
 
 	/* Level must be between 1 and 100 inclusively */
@@ -5793,6 +5813,10 @@ void determine_level_req(int level, object_type *o_ptr)
 
 	/* Anti-cheeze hack =p */
 	if ((o_ptr->tval == TV_POTION) && (o_ptr->sval == SV_POTION_EXPERIENCE)) o_ptr->level = 0;
+
+	/* Anti-cheeze hack */
+	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->level < 30 + o_ptr->bpval)
+		o_ptr->level = 30 + o_ptr->bpval - 2 + rand_int(5);
 
 	/* tone down deep randarts a bit to allow winner-trading */
 	if (o_ptr->name1 == ART_RANDART) {
@@ -6085,6 +6109,9 @@ static bool kind_is_good(int k_idx)
 /* Hack -- inscribe items that a unique drops */
 s16b unique_quark = 0;
 
+/* Restrict the type of placed objects */
+int place_object_restrictor = 0;
+
 /*
  * Attempt to place an object (normal or good/great) at the given location.
  *
@@ -6098,6 +6125,7 @@ s16b unique_quark = 0;
 void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, bool true_art, obj_theme theme, int luck, byte removal_marker)
 {
 	int prob, base, tmp_luck, i;
+	int tries = 0, k_idx;
 
 	object_type		forge;
 
@@ -6144,55 +6172,78 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	/* Generate a special object, or a normal object */
 	if ((rand_int(prob) != 0) || !make_artifact_special(wpos, &forge, true_art))
 	{
-		int k_idx;
+	
+		/* Check global variable, if some base types are forbidden */
+		do {
+			tries++;
+			k_idx = 0;
 
-		/* Good objects */
-		if (good)
-		{
-			/* Activate restriction */
-			get_obj_num_hook = kind_is_good;
+			/* Good objects */
+			if (good)
+			{
+				/* Activate restriction */
+				get_obj_num_hook = kind_is_good;
 
-			/* Prepare allocation table */
-			get_obj_num_prep();
-		}
-		/* Normal objects */
-		else
-		{
-			/* Select items based on "theme" */
-			init_match_theme(theme);
-
-			/* Activate normal restriction */
-			get_obj_num_hook = kind_is_legal;
-
-			/* Prepare allocation table */
-			get_obj_num_prep();
-
-			/* The table is synchronised */
-//			alloc_kind_table_valid = TRUE;
-		}
-
-
-		/* Pick a random object */
-		/* Magic arrows from DROP_GREAT monsters are annoying.. - C. Blue */
-		if (great)
-			for (i = 0; i < 2; i++) {
-				k_idx = get_obj_num(base);
-				if (k_info[k_idx].tval != TV_ARROW || k_info[k_idx].sval != SV_AMMO_MAGIC) break;
+				/* Prepare allocation table */
+				get_obj_num_prep();
 			}
-		else
-			k_idx = get_obj_num(base);
+			/* Normal objects */
+			else
+			{
+				/* Select items based on "theme" */
+				init_match_theme(theme);
 
-		/* Good objects */
+				/* Activate normal restriction */
+				get_obj_num_hook = kind_is_legal;
+
+				/* Prepare allocation table */
+				get_obj_num_prep();
+
+				/* The table is synchronised */
+	//			alloc_kind_table_valid = TRUE;
+			}
+
+
+			/* Pick a random object */
+			/* Magic arrows from DROP_GREAT monsters are annoying.. - C. Blue */
+			if (great)
+				for (i = 0; i < 2; i++) {
+					k_idx = get_obj_num(base);
+					if (k_info[k_idx].tval != TV_ARROW || k_info[k_idx].sval != SV_AMMO_MAGIC) break;
+				}
+			else
+				k_idx = get_obj_num(base);
+
+			/* Good objects */
 #if 0	// commented out for efficiency
-		if (good)
-		{
-			/* Clear restriction */
-			get_obj_num_hook = NULL;
 
-			/* Prepare allocation table */
-			get_obj_num_prep();
-		}
+			if (good)
+			{
+				/* Clear restriction */
+				get_obj_num_hook = NULL;
+
+				/* Prepare allocation table */
+				get_obj_num_prep();
+			}
 #endif	// 0
+
+			/* values for place_object_restrictor: */
+			/* 0 = no restrictions */
+			if (!place_object_restrictor) break;
+			/* 1 = no expensive DSMs */
+			if ((place_object_restrictor == 1) &&
+			    ((k_info[k_idx].tval != TV_DRAG_ARMOR) ||
+			    (k_info[k_idx].sval == SV_DRAGON_BLUE) ||
+			    (k_info[k_idx].sval == SV_DRAGON_WHITE) ||
+			    (k_info[k_idx].sval == SV_DRAGON_BLACK) ||
+			    (k_info[k_idx].sval == SV_DRAGON_RED) ||
+			    (k_info[k_idx].sval == SV_DRAGON_GREEN) ||
+			    (k_info[k_idx].sval == SV_DRAGON_BRONZE) ||
+			    (k_info[k_idx].sval == SV_DRAGON_GOLD) ||
+			    (k_info[k_idx].sval == SV_DRAGON_PSEUDO)))
+				break;
+
+		} while(tries < 10);
 
 		/* Handle failure */
 		if (!k_idx) return;
@@ -6295,6 +6346,7 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 			/* Must have a clean grid */
 			if (!cave_clean_bold(zcave, y, x)) continue;
 			/* Place a good (or great) object */
+			place_object_restrictor = 0;
 			place_object(wpos, y, x, TRUE, great, verygreat, true_art, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
 			/* Notice */
 			note_spot_depth(wpos, y, x);
@@ -6730,6 +6782,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 			/* reset scan_objs timer */
 			o_ptr->marked = 0;
+			//o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 			
 			/* Keep game pieces from disappearing */
 			if ((o_ptr->tval == 1) && (o_ptr->sval >= 9))

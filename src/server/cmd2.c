@@ -15,7 +15,7 @@
 
 #include "angband.h"
 
-#define MAX_VAMPIRIC_DRAIN_RANGED 25
+#define MAX_VAMPIRIC_DRAIN_RANGED 10	/* was 25 - note: this counts per shot, not per turn */
 #define NON_WEAPON_VAMPIRIC_CHANCE_RANGED 33 /* chance to drain if VAMPIRIC is given be a non-weapon/non-ammo item */
 
 /* chance of walking in a random direction when confused and trying to climb,
@@ -616,6 +616,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* Otherwise drop an item */
 				else
 				{
+					place_object_restrictor = 0;
 					place_object(wpos, y, x, FALSE, FALSE, FALSE, p_ptr->total_winner?FALSE:TRUE, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 				}
 
@@ -1537,9 +1538,10 @@ void do_cmd_tunnel(int Ind, int dir)
 					/* Message */
 					msg_print(Ind, "You have removed the rubble.");
 
-					/* Hack -- place an object */
-					if (rand_int(100) < 10 + mining)
+					/* Hack -- place an object - Not in town (Khazad becomes l00t source) */
+					if ((rand_int(100) < 10 + mining) && !istown(wpos))
 					{
+						place_object_restrictor = 0;
 //						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
 						place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, p_ptr->total_winner?FALSE:TRUE, 
 								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
@@ -2168,6 +2170,8 @@ void do_cmd_bash(int Ind, int dir)
 			if ((item = c_ptr->o_idx))
 			{
 				object_type *o_ptr = &o_list[c_ptr->o_idx];
+
+				if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, x, y)) return;
 
 				if (c_ptr->feat == FEAT_DEEP_WATER ||
 					c_ptr->feat == FEAT_SHAL_WATER)
@@ -2824,6 +2828,9 @@ int get_shooter_mult(object_type *o_ptr)
 }
 
 
+/* Turn off afk mode? Or is this just auto-retaliation. */
+bool retaliating_cmd = FALSE;
+
 /*
  * Fire an object from the pack or floor.
  *
@@ -2958,7 +2965,8 @@ void do_cmd_fire(int Ind, int dir)
 	thits = p_ptr->num_fire;
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	if (p_ptr->afk && !retaliating_cmd) toggle_afk(Ind, "");
+	retaliating_cmd = FALSE;
 
 	/* Take a (partial) turn */
 	p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
@@ -3329,7 +3337,7 @@ void do_cmd_fire(int Ind, int dir)
 										add_hostility(0 - c_ptr->m_idx, p_ptr->name);
 									}
 								}
-								if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+//less spam for now - C. Blue					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 								if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BRAND_CONF)) && !q_ptr->resist_conf && !boomerang)
 								{
@@ -3434,7 +3442,7 @@ void do_cmd_fire(int Ind, int dir)
 						tdam += p_ptr->to_d_ranged;
 					}
 
-					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+//less spam for now - C. Blue		if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 					/* Boost the damage */
 					tdam *= tmul;
@@ -3530,7 +3538,7 @@ void do_cmd_fire(int Ind, int dir)
 									        drain_msg = FALSE;
 									}
 
-									hp_player(Ind, drain_heal);
+									hp_player_quiet(Ind, drain_heal);
 									/* We get to keep some of it! */
 								}
 							}
@@ -3735,6 +3743,7 @@ bool interfere(int Ind, int chance)
 {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr;
+	monster_type *m_ptr;
 	int d, i, tx, ty, x = p_ptr->px, y = p_ptr->py;
 	int calmness = get_skill_scale(p_ptr, SKILL_CALMNESS, 80);
 	cave_type **zcave;
@@ -3755,9 +3764,13 @@ bool interfere(int Ind, int chance)
 		if (!(i = zcave[ty][tx].m_idx)) continue;
 		if (i > 0)
 		{
-			r_ptr = race_inf(&m_list[i]);
+			m_ptr = &m_list[i];
+			r_ptr = race_inf(m_ptr);
 //			if (r_info[m_list[i].r_idx].flags1 & RF1_NEVER_MOVE)
 			if (r_ptr->flags1 & RF1_NEVER_MOVE)
+				continue;
+			/* Sleeping etc.. monsters don't interfere o_O - C. Blue */
+			if (m_ptr->csleep || m_ptr->monfear || m_ptr->stunned || m_ptr->confused)
 				continue;
 		}
 		else
@@ -4145,7 +4158,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 					tdam += o_ptr->to_d;
 					/* Apply special damage XXX XXX XXX */
 					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
-					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+//less spam for now - C. Blue		if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 					/* No negative damage */
 					if (tdam < 0) tdam = 0;
@@ -4174,7 +4187,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 						/* Track player's health */
 						health_track(Ind, c_ptr->m_idx);
 					}
-					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+//less spam for now - C. Blue		if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 					/* Take damage */
 					take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
@@ -4249,7 +4262,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 				tdam += o_ptr->to_d;
 				/* Apply special damage XXX XXX XXX */
 				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
-				if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
+//less spam for now - C. Blue	if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;

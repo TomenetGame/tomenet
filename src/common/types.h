@@ -1770,8 +1770,9 @@ struct player_type
 {
 	int conn;			/* Connection number */
 	char name[MAX_CHARS];		/* Nickname */
-	char basename[MAX_CHARS];
-	char realname[MAX_CHARS];	/* Userid */
+	char basename[MAX_CHARS];	/* == Charactername (Nickname)? */
+	char realname[MAX_CHARS];	/* Userid (local machine's user name, default is 'PLAYER') */
+	char accountname[MAX_CHARS];
 	char hostname[MAX_CHARS];	/* His hostname */
 	char addr[MAX_CHARS];		/* His IP address */
 	unsigned int version;		/* His version */
@@ -1833,6 +1834,7 @@ struct player_type
 	u16b exp_frac;		/* Cur exp frac (times 2^16) */
 
 	s16b lev;			/* Level */
+	s16b max_lev;			/* Usual level after 'restoring life levels' */
 
 	s16b mhp;			/* Max hit pts */
 	s16b chp;			/* Cur hit pts */
@@ -2403,6 +2405,9 @@ struct player_type
 	
 	/* Player being paged by others? (Beep counter) */
 	byte paging;
+	
+	/* Ignoring normal chat? (Will only see private & party messages then) */
+	bool ignoring_chat;
 };
 
 /* For Monk martial arts */

@@ -974,6 +974,14 @@ static bool rd_extra(int Ind)
 	rd_s32b(&p_ptr->au);
 
 	rd_s32b(&p_ptr->max_exp);
+        /* Build maximum level (the one displayed if life levels were restored right now) */
+	p_ptr->max_lev = 1;
+	while ((p_ptr->max_lev < PY_MAX_LEVEL) &&
+	    (p_ptr->max_exp >= ((s64b)(((s64b)player_exp[p_ptr->max_lev-1] * (s64b)p_ptr->expfact) / 100L))))
+	{
+		/* Gain a level */
+		p_ptr->max_lev++;
+	}
 	rd_s32b(&p_ptr->exp);
 	rd_u16b(&p_ptr->exp_frac);
 
@@ -1092,6 +1100,8 @@ static bool rd_extra(int Ind)
 	rd_byte(&p_ptr->stunning);
 
 	rd_s16b(&p_ptr->body_monster);
+	/* Fix limits */
+	if (p_ptr->body_monster > MAX_R_IDX || p_ptr->body_monster < 0) p_ptr->body_monster = 0;
 	rd_s16b(&p_ptr->auto_tunnel);
 
 	rd_s16b(&p_ptr->tim_meditation);

@@ -306,7 +306,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 		if (admin_p(i)) continue;
 		/* player on this depth? */
 		p_ptr = Players[i];
-		if (inarea(&p_ptr->wpos, wpos) && (henc_level < p_ptr->lev)) henc_level = p_ptr->lev;
+		if (inarea(&p_ptr->wpos, wpos) && (henc_level < p_ptr->max_lev)) henc_level = p_ptr->max_lev;
 	}
 
 	/* Process the monsters, check against the highest player around */
@@ -466,6 +466,11 @@ void check_Morgoth(void)
 			}
 			m_ptr->speed = (140 - 6) + (6 * num_on_depth);
 			
+			/* Anti-cheeze: Fully heal!
+			   Otherwise 2 players could bring him down and the 3rd one
+			   just joins for the last 'few' HP.. */
+			m_ptr->hp = m_ptr->maxhp;
+
 			/* log */
 			s_printf("Morgoth grows stronger\n");
 			/* Tell everyone related to Morgy's depth */
@@ -5749,7 +5754,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	/* GF_STONE_WALL is projected by Stone Prison and sets FEAT_WALL_EXTRA
 	   without calling this function */
 	/* No runes of protection / glyphs of warding on non-empty grids!!- C. Blue */
-	if ((feat == FEAT_GLYPH) &&
+	if ((feat == FEAT_GLYPH) && ((wpos->wx == 32 && wpos->wy == 32 && wpos->wz == 0) ||
 	    (!((c_ptr->feat == FEAT_NONE) || 
 	    (c_ptr->feat == FEAT_FLOOR) || 
 	    (c_ptr->feat == FEAT_DIRT) || 
@@ -5758,9 +5763,8 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	    (c_ptr->feat == FEAT_SAND) || 
 	    (c_ptr->feat == FEAT_ASH) || 
 	    (c_ptr->feat == FEAT_MUD) || 
-	    (c_ptr->feat == FEAT_FLOWER))))
+	    (c_ptr->feat == FEAT_FLOWER)))))
 	    /* And no 'terraforming' in Bree either (counting glyph spell to those) */
-//	    || (wpos->wx == 32 && wpos->wy == 32 && wpos->wz == 0))
 	    
 	    return;
 

@@ -305,6 +305,119 @@ void increase_skill(int Ind, int i)
 	case SKILL_MAGIC:
 		if (old_value < 11 && new_value >= 11) msg_print(Ind, "\377GYou got better at recognizing the power of unknown magical items.");
 		break;
+	case SKILL_EARTH:
+		if (old_value < 30 && new_value >= 30) {
+			msg_print(Ind, "\377GYou feel able to prevent shards of rock from striking you.");
+		} if (old_value < 45 && new_value >= 45) {
+			msg_print(Ind, "\377GYou feel able to prevent large masses of rock from striking you.");
+		}
+		break;
+	case SKILL_AIR:
+                if (old_value < 30 && new_value >= 30) {
+                        msg_print(Ind, "\377GYou feel light as a feather.");
+                } if (old_value < 40 && new_value >= 40) {
+                        msg_print(Ind, "\377GYou feel able to breathe within poisoned air.");
+                } if (old_value < 50 && new_value >= 50) {
+                        msg_print(Ind, "\377GYou feel flying is easy.");
+                }
+                break;
+	case SKILL_WATER:
+                if (old_value < 30 && new_value >= 30) {
+                        msg_print(Ind, "\377GYou feel able to prevent water streams from striking you.");
+                } if (old_value < 40 && new_value >= 40) {
+                        msg_print(Ind, "\377GYou feel able to move through water easily.");
+                } if (old_value < 50 && new_value >= 50) {
+                        msg_print(Ind, "\377GYou feel able to prevent tidal waves from striking you.");
+                }
+                break;
+	case SKILL_FIRE:
+                if (old_value < 30 && new_value >= 30) {
+                        msg_print(Ind, "\377GYou feel able to resist fire easily.");
+                } if (old_value < 50 && new_value >= 50) {
+                        msg_print(Ind, "\377GYou feel that fire cannot harm you anymore.");
+                }
+                break;
+	case SKILL_MANA:
+                if (old_value < 40 && new_value >= 40) {
+                        msg_print(Ind, "\377GYou feel able to defend from mana attacks easily.");
+                }
+                break;
+	case SKILL_CONVEYANCE:
+                if (old_value < 30 && new_value >= 30) {
+                        msg_print(Ind, "\377GYou laugh about feeble teleportation attacks.");
+                }
+                break;
+	case SKILL_DIVINATION:
+                if (old_value < 50 && new_value >= 50) {
+                        msg_print(Ind, "\377GYou find identifying items ridiculously easy.");
+                }
+                break;
+	case SKILL_NATURE:
+                if (old_value < 30 && new_value >= 30) {
+                        msg_print(Ind, "\377GYour magic allows you to pass trees and forests easily.");
+                } if (old_value < 40 && new_value >= 40) {
+                        msg_print(Ind, "\377GYour magic allows you to pass water easily.");
+                }
+		/* + continuous effect */
+                break;
+	case SKILL_MIND:
+                if (old_value < 30 && new_value >= 30) {
+                        msg_print(Ind, "\377GYou feels strong against confusion and hallucinations.");
+                } if (old_value < 40 && new_value >= 40) {
+                        msg_print(Ind, "\377GYou feels strong against insanity attacks.");
+                } if (old_value < 50 && new_value >= 50) {
+                        msg_print(Ind, "\377GYou feels very strong against insanity attacks.");
+                }
+                break;
+	case SKILL_TEMPORAL:
+                if (old_value < 50 && new_value >= 50) {
+                        msg_print(Ind, "\377GYou don't fear time attacks as much anymore.");
+                }
+                break;
+	case SKILL_UDUN:
+                if (old_value < 30 && new_value >= 30) {
+                        msg_print(Ind, "\377GYou laugh about feeble teleportation attacks.");
+                } if (old_value < 40 && new_value >= 40) {
+                        msg_print(Ind, "\377GYou have strong control over your life force.");
+                }
+                break;
+	case SKILL_META: /* + continuous effect */
+                break;
+	case SKILL_HOFFENSE:
+                if (old_value < 30 && new_value >= 30) {
+                        msg_print(Ind, "\377GYou fight against undead with holy wrath.");
+                } if (old_value < 40 && new_value >= 40) {
+                        msg_print(Ind, "\377GYou fight against demons with holy wrath.");
+                } if (old_value < 50 && new_value >= 50) {
+                        msg_print(Ind, "\377GYou fight against evil with holy fury.");
+                }
+                break;
+	case SKILL_HDEFENSE:
+                if (old_value < 30 && new_value >= 30) {
+                        msg_print(Ind, "\377GYou stand fast against undead.");
+                } if (old_value < 40 && new_value >= 40) {
+                        msg_print(Ind, "\377GYou stand fast against demons.");
+                } if (old_value < 50 && new_value >= 50) {
+                        msg_print(Ind, "\377GYou stand fast against evil.");
+                }
+                break;
+	case SKILL_HCURING:
+                if (old_value < 30 && new_value >= 30) {
+                        msg_print(Ind, "\377GYou feel strong against blindness and poison.");
+                } if (old_value < 40 && new_value >= 40) {
+                        msg_print(Ind, "\377GYou feel strong against stun and cuts.");
+                } if (old_value < 50 && new_value >= 50) {
+                        msg_print(Ind, "\377GYou feel strong against hallucination and black breath.");
+                }
+		/* + continuous effect */
+                break;
+	case SKILL_HSUPPORT:
+                if (old_value < 40 && new_value >= 40) {
+                        msg_print(Ind, "\377GYou don't feel hunger for worldly food anymore.");
+                } if (old_value < 50 && new_value >= 50) {
+                        msg_print(Ind, "\377GYou feel superior to ancient curses.");
+                }
+                break;
 #if 1
 	case SKILL_SWORD: case SKILL_AXE: case SKILL_HAFTED: case SKILL_POLEARM:
 		if ((old_value < 25 && new_value >= 25) || (old_value < 50 && new_value >= 50)) {

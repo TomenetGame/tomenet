@@ -1436,6 +1436,8 @@ let's depend on SF1*RARE flags here.. */
 
 		/* Nether Realm store items are always level 0 (or 99?) */
 		if (st_ptr->st_idx == STORE_BTSUPPLY) o_ptr->level = 0;
+
+#if 0 // the lamps are already handled in determine_level_req now
 		/* Mining equipment store shouldn't have powerful low level items */
 		if (st_ptr->st_idx == STORE_MINING && o_ptr->tval == TV_LITE)
 			switch (o_ptr->sval) {
@@ -1443,6 +1445,7 @@ let's depend on SF1*RARE flags here.. */
 			case SV_LITE_FEANORIAN: o_ptr->level += 20; break;
 			default: if (o_ptr->name2) o_ptr->level += 10;
 			}
+#endif
 
 		/* Attempt to carry the (known) item */
 		(void)store_carry(st_ptr, o_ptr);
@@ -1831,17 +1834,13 @@ void store_stole(int Ind, int item)
 	store_type *st_ptr;
 	owner_type *ot_ptr;
 
-	int			i;
-	int			item_new;
-	int amt = 1;
-	int chance = 0;
+	int i, item_new, amt = 1;
+	long chance = 0;
 
-	u32b		best, tbest, tcadd, tccompare;
+	u32b best, tbest, tcadd, tccompare;
 
-	object_type		sell_obj;
-	object_type		*o_ptr;
-
-	char		o_name[160];
+	object_type sell_obj, *o_ptr;
+	char o_name[160];
 
 	/* Get town or dungeon the store is located within */
 	i=gettown(Ind);
@@ -1882,6 +1881,8 @@ void store_stole(int Ind, int item)
 	   can cheeze by attempting repeatedly */
 	if(p_ptr->tim_blacklist){
 		msg_print(Ind, "Bastard Thief! Get out of my shop!!!");
+		msg_print_near(Ind, "You hear loud shouting..");
+		msg_format_near(Ind, "an angry shopkeeper kicks %s out of the shop!", p_ptr->name);
 		if(p_ptr->tim_blacklist < 10000000)	/* 10 million turns is LONG ENOUGH */
 			p_ptr->tim_blacklist += 1000;	/* add a little */
 		store_kick(Ind, FALSE);
@@ -1937,13 +1938,17 @@ void store_stole(int Ind, int item)
 		return;
 	}
 
+	/* Describe the transaction */
+	object_desc(0, o_name, &sell_obj, TRUE, 3);
+
 	/* Determine the "best" price (per item) */
 	/* NOTE: it's used to determine the penalty when stealing failed */
 	best = price_item(Ind, &sell_obj, ot_ptr->min_inflate, FALSE);
 
 	/* shopkeeper watches expensive items carefully */
 	tcadd = 100;
-	tbest = object_value(Ind, o_ptr);
+	tbest = object_value(Ind, o_ptr);/* Note- object_value_real would not take
+					    into account the discount of the item */
 
 	if (tbest > 10000000) tbest = 10000000;
 	tccompare = 10;
@@ -1957,9 +1962,9 @@ void store_stole(int Ind, int item)
 	tcadd = 57000 / ((10000 / tcadd) + 50);
 
 	/* Player tries to steal it */
-	chance = (50 - p_ptr->stat_ind[A_DEX]) +
+	chance = ((50) - p_ptr->stat_ind[A_DEX]) +
 	    ((((sell_obj.weight * amt) / 2) + tcadd) /
-	    (5 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
+	    (2 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
 	    (get_skill_scale(p_ptr, SKILL_STEALING, 25));
 
 	/* Very simple items (value <= stealingskill * 10)
@@ -1968,11 +1973,11 @@ void store_stole(int Ind, int item)
 	   get blacklisted all the time for snatching some basic stuff - C. Blue */
 	if (get_skill_scale(p_ptr, SKILL_STEALING, 50) >= 1) {
 		if (tbest <= get_skill_scale(p_ptr, SKILL_STEALING, 500))
-			chance = (chance * tbest) / get_skill_scale(p_ptr, SKILL_STEALING, 500);
+			chance = ((chance * (long)(tbest)) / get_skill_scale(p_ptr, SKILL_STEALING, 500));
 	}
 
 	/* Invisibility and stealth are not unimportant */
-	chance = (chance * (100 - (p_ptr->tim_invisibility > 0 ? 13 : 0))) / 100;
+	chance = (chance * (100 - (p_ptr->tim_invisibility > 0 ? 10 : 0))) / 100;
 	chance = (chance * (115 - ((p_ptr->skill_stl * 3) / 4))) / 100;
 
 	/* shopkeepers in special shops are often especially careful */
@@ -1988,6 +1993,7 @@ void store_stole(int Ind, int item)
 	/* 1% pfft. 5% and rising... */
 	if (rand_int(chance) <= 10 && !magik(5))
 	{
+s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
 		/* Hack -- buying an item makes you aware of it */
 		object_aware(Ind, &sell_obj);
 
@@ -1998,11 +2004,10 @@ void store_stole(int Ind, int item)
 		sell_obj.discount = 100;
 		sell_obj.note = quark_add("stolen");
 
-		/* Describe the transaction */
-		object_desc(Ind, o_name, &sell_obj, TRUE, 3);
-
 		/* Message */
 		msg_format(Ind, "You stole %s.", o_name);
+if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
+        s_printf("ARTSCROLL stolen by %s.\n", p_ptr->name);
 
 		/* Let the player carry it (as if he picked it up) */
 		item_new = inven_carry(Ind, &sell_obj);
@@ -2091,10 +2096,13 @@ void store_stole(int Ind, int item)
 
 	else
 	{
+s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
 		/* Complain */
 		// say_comment_4();
-		msg_print(Ind, "\377yBastard\377L!!!");
+		msg_print(Ind, "\377y'Bastard\377L!!!'\377w - The angry shopkeeper throws you out!");
 		msg_print(Ind, "\377rNow you're on the black list of merchants..");
+		msg_print_near(Ind, "You hear loud shouting..");
+		msg_format_near(Ind, "an angry shopkeeper kicks %s out of the store!", p_ptr->name);
 
 		/* Reset insults */
 		st_ptr->insult_cur = 0;
@@ -2366,6 +2374,8 @@ void store_purchase(int Ind, int item, int amt)
 
 				/* Message */
 				msg_format(Ind, "You bought %s for %ld gold.", o_name, (long)price);
+if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
+	s_printf("ARTSCROLL bought by %s for %ld gold.\n", p_ptr->name, (long)price);
 
 				/* Let the player carry it (as if he picked it up) */
 				item_new = inven_carry(Ind, &sell_obj);

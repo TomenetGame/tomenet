@@ -1217,6 +1217,8 @@ bool set_blind(int Ind, int v)
 	/* the admin wizard can not be blinded */
 	if (p_ptr->admin_wiz) return 1;
 
+	if (get_skill(p_ptr, SKILL_HCURING) >= 30) v /= 2;
+
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
@@ -1289,6 +1291,8 @@ bool set_confused(int Ind, int v)
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
+	if (get_skill(p_ptr, SKILL_MIND) >= 30) v /= 2;
+
 	/* Open */
 	if (v)
 	{
@@ -1342,6 +1346,8 @@ bool set_poisoned(int Ind, int v)
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	if (get_skill(p_ptr, SKILL_HCURING) >= 30) v /= 2;
 
 	/* Open */
 	if (v)
@@ -1504,6 +1510,9 @@ bool set_image(int Ind, int v)
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	if (get_skill(p_ptr, SKILL_MIND) >= 30) v /= 2;
+	if (get_skill(p_ptr, SKILL_HCURING) >= 50) v /= 2;
 
 	/* Open */
 	if (v)
@@ -2523,6 +2532,8 @@ bool set_stun(int Ind, int v)
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
+	if (get_skill(p_ptr, SKILL_HCURING) >= 40) v /= 2;
+
 	/* Knocked out */
 	if (p_ptr->stun > 100)
 	{
@@ -2656,6 +2667,8 @@ bool set_cut(int Ind, int v)
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	if (get_skill(p_ptr, SKILL_HCURING) >= 40) v /= 2;
 
 	/* p_ptr->no_cut? for mimic forms that cannot bleed */
 	if (p_ptr->no_cut) v = 0;
@@ -2876,9 +2889,9 @@ bool set_food(int Ind, int v)
 	bool notice = FALSE;
 
 	/* True Ghosts don't starve */
-	if (p_ptr->ghost)
+	if ((p_ptr->ghost) || (get_skill(p_ptr, SKILL_HSUPPORT) >= 40))
 	{
-	    p_ptr->food = PY_FOOD_MAX - 1;
+	    p_ptr->food = PY_FOOD_FULL - 1;
 	    return (FALSE);
 	}
 
@@ -3108,6 +3121,7 @@ void check_experience(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	bool newlv = FALSE;
+	int old_lev;
 	long int i;
 #ifdef LEVEL_GAINING_LIMIT
 	int limit;
@@ -3118,7 +3132,7 @@ void check_experience(int Ind)
 		p_ptr->max_plv = p_ptr->lev;
 
 	/* Note current level */
-//	i = p_ptr->lev;
+	old_lev = p_ptr->lev;
 
 	/* Hack -- lower limit */
 	if (p_ptr->exp < 0) p_ptr->exp = 0;
@@ -3148,8 +3162,6 @@ void check_experience(int Ind)
 	/* Redraw experience */
 	p_ptr->redraw |= (PR_EXP);
 
-	/* Handle stuff */
-	handle_stuff(Ind);
 
 	/* Lose levels while possible */
 	while ((p_ptr->lev > 1) &&
@@ -3160,21 +3172,17 @@ void check_experience(int Ind)
 
 		clockin(Ind, 1);        /* Set player level */
 
-		/* Update some stuff */
-		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SANITY);
-
-		/* Redraw some stuff */
-		p_ptr->redraw |= (PR_LEV | PR_TITLE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_PLAYER);
-
-		/* Window stuff - Items might be come (un)usable depending on level! */
-	        p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		/* Handle stuff */
-		handle_stuff(Ind);
 	}
+
+
+	/* Remember maximum level (the one displayed if life levels were restored right now) */
+	while ((p_ptr->max_lev > 1) &&
+               (p_ptr->max_exp < ((s64b)((s64b)player_exp[p_ptr->max_lev-2] * (s64b)p_ptr->expfact / 100L))))
+	{
+		/* Lose a level */
+		p_ptr->max_lev--;
+	}
+
 
 	/* Gain levels while possible */
 	while ((p_ptr->lev < PY_MAX_LEVEL) &&
@@ -3182,7 +3190,8 @@ void check_experience(int Ind)
 	{
 		if(p_ptr->inval && p_ptr->lev >= 25){
 			msg_print(Ind, "\377rYou cannot gain level further. Ask an admin to validate your account.");
-			return;
+			break;
+//			return;
 		}
 
 		process_hooks(HOOK_PLAYER_LEVEL, "d", Ind);
@@ -3244,6 +3253,19 @@ void check_experience(int Ind)
 		/* Sound */
 		sound(Ind, SOUND_LEVEL);
 
+	}
+
+
+	/* Remember maximum level (the one displayed if life levels were restored right now) */
+	while ((p_ptr->max_lev < PY_MAX_LEVEL) &&
+			(p_ptr->max_exp >= ((s64b)(((s64b)player_exp[p_ptr->max_lev-1] * (s64b)p_ptr->expfact) / 100L))))
+	{
+		/* Gain a level */
+		p_ptr->max_lev++;
+	}
+
+	/* Redraw level-depending stuff.. */
+	if (old_lev != p_ptr->lev) {
 		/* Update some stuff */
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SANITY);
 
@@ -3255,12 +3277,11 @@ void check_experience(int Ind)
 
 		/* Window stuff - Items might be come (un)usable depending on level! */
 	        p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		/* Handle stuff */
-		handle_stuff(Ind);
 	}
 
-//	if (i < p_ptr->lev)
+	/* Handle stuff */
+	handle_stuff(Ind);
+
 	if (newlv)
 	{
 		char str[160];
@@ -3271,31 +3292,31 @@ void check_experience(int Ind)
 		/* those that depend on a race */
 		switch (p_ptr->prace) {
 		case RACE_DWARF:
-			if (p_ptr->lev == 30) msg_print(Ind, "\377GYou learn to climb mountains easily!");
+			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\377GYou learn to climb mountains easily!");
 			break;
 		case RACE_ENT:
-			if (p_ptr->lev == 4) msg_print(Ind, "\377GYou learn to see the invisible!");
-			if (p_ptr->lev == 10) msg_print(Ind, "\377GYou learn to telepathically sense animals!");
-			if (p_ptr->lev == 15) msg_print(Ind, "\377GYou learn to telepathically sense orcs!");
-			if (p_ptr->lev == 20) msg_print(Ind, "\377GYou learn to telepathically sense trolls!");
-			if (p_ptr->lev == 25) msg_print(Ind, "\377GYou learn to telepathically sense giants!");
-			if (p_ptr->lev == 30) msg_print(Ind, "\377GYou learn to telepathically sense dragons!");
-			if (p_ptr->lev == 40) msg_print(Ind, "\377GYou learn to telepathically sense demons!");
-			if (p_ptr->lev == 50) msg_print(Ind, "\377GYou learn to telepathically sense evil!");
+			if (old_lev < 4 && p_ptr->lev >= 4) msg_print(Ind, "\377GYou learn to see the invisible!");
+			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\377GYou learn to telepathically sense animals!");
+			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\377GYou learn to telepathically sense orcs!");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377GYou learn to telepathically sense trolls!");
+			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\377GYou learn to telepathically sense giants!");
+			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\377GYou learn to telepathically sense dragons!");
+			if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\377GYou learn to telepathically sense demons!");
+			if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\377GYou learn to telepathically sense evil!");
 			break;
 		case RACE_DRIDER:
-			if (p_ptr->lev == 5) msg_print(Ind, "\377GYou learn to telepathically sense dragons!");
-			if (p_ptr->lev == 10) msg_print(Ind, "\377GYou become more resistant to fire!");
-			if (p_ptr->lev == 15) msg_print(Ind, "\377GYou become more resistant to cold!");
-			if (p_ptr->lev == 20) msg_print(Ind, "\377GYou become more resistant to acid!");
-			if (p_ptr->lev == 25) msg_print(Ind, "\377GYou become more resistant to lightning!");
-			if (p_ptr->lev == 30) msg_print(Ind, "\377GYou learn how to fly!");
+			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\377GYou learn to telepathically sense dragons!");
+			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\377GYou become more resistant to fire!");
+			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\377GYou become more resistant to cold!");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377GYou become more resistant to acid!");
+			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\377GYou become more resistant to lightning!");
+			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\377GYou learn how to fly!");
 			break;
 		}
 		/* those that depend on a class */
 		switch (p_ptr->pclass) {
 		case CLASS_RANGER:
-			if (p_ptr->lev == 20) msg_print(Ind, "\377GYou learn how to move through dense forests easily.");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377GYou learn how to move through dense forests easily.");
 			break;
 		}
 
@@ -3540,6 +3561,14 @@ void monster_death(int Ind, int m_idx)
 	int a_idx, chance, I_kind;
 	artifact_type *a_ptr;
 
+	bool henc_cheezed = FALSE;
+
+        if (cfg.henc_strictness && !p_ptr->total_winner) {
+                if (m_ptr->highest_encounter - p_ptr->lev > MAX_PARTY_LEVEL_DIFF + 1) henc_cheezed = TRUE;
+                if (p_ptr->supported_by - p_ptr->lev > MAX_PARTY_LEVEL_DIFF + 1) henc_cheezed = TRUE;
+        }
+
+
 	/* get monster name for damage deal description */
 	monster_desc(Ind, m_name, m_idx, 0x00);
 	
@@ -3554,7 +3583,7 @@ void monster_death(int Ind, int m_idx)
 	/* PernAngband additions */
 
 	/* Mega^2-hack -- destroying the Stormbringer gives it us! */
-	if (strstr((r_name + r_ptr->name),"Stormbringer"))
+	if (strstr((r_name + r_ptr->name),"Stormbringer") && !henc_cheezed)
 	{
 		/* Get local object */
 		qq_ptr = &forge;
@@ -3627,7 +3656,7 @@ void monster_death(int Ind, int m_idx)
 
         /* Raal's Tomes of Destruction drop a Raal's Tome of Destruction */
 //        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (rand_int(100) < 20))
-        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (magik(2)))
+        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (magik(2)) && !henc_cheezed)
 	{
 		/* Get local object */
 		qq_ptr = &forge;
@@ -3722,6 +3751,10 @@ void monster_death(int Ind, int m_idx)
 
 	/* clones don't drop treasure or complete quests */
 	if (m_ptr->clone) return;
+	/* neither do cheezed kills -- make exception for Morgoth, so hi-lvl fallen kings can re-king */
+	if (henc_cheezed &&
+		!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness") &&
+		!streq(r_name_get(m_ptr), "Great Pumpkin")) return; /* allow a mixed hunting group */
 
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
@@ -3766,6 +3799,9 @@ void monster_death(int Ind, int m_idx)
 
 			/* Average dungeon and monster levels */
 			object_level = (getlevel(wpos) + r_ptr->level) / 2;
+			
+			/* No easy item hunting in towns.. */
+			if (wpos->wz == 0) object_level = r_ptr->level / 2;
 
 			/* Place Gold */
 			if (do_gold && (!do_item || (rand_int(100) < 50)))
@@ -3777,6 +3813,7 @@ void monster_death(int Ind, int m_idx)
 			/* Place Object */
 			else
 			{
+				place_object_restrictor = 0;
 				place_object(wpos, y, x, good, great, FALSE, p_ptr->total_winner?FALSE:TRUE, r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
 //				if (player_can_see_bold(Ind, ny, nx)) dump_item++;
 			}
@@ -4662,6 +4699,11 @@ void player_death(int Ind)
 		return;
 	}
 
+
+	/* No longer a winner */
+	p_ptr->total_winner = FALSE;
+
+
 	if((!(p_ptr->mode & MODE_NO_GHOST)) && !cfg.no_ghost){
 #if 0
 		struct dungeon_type *dungeon;
@@ -4685,6 +4727,8 @@ void player_death(int Ind)
 			{
 				strcpy(Players[Ind2]->died_from_list, p_ptr->died_from);
 				Players[Ind2]->died_from_depth = getlevel(&Players[Ind2]->wpos);
+				/* Hack to remember total winning */
+	                        if (Players[Ind2]->total_winner) strcat(Players[Ind2]->died_from_list, "\001");
 			}
 			bypass_invuln = TRUE;
 			take_hit(Ind2, Players[Ind2]->chp+1, p_ptr->died_from);
@@ -5742,7 +5786,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 	/* Change monster's highest player encounter - mode 1+ : a player targetted this monster */
 	if (m_ptr->wpos.wx != 32 || m_ptr->wpos.wy != 32 || m_ptr->wpos.wz != 0) { /* not in Bree, because of Halloween :) */
-		if (m_ptr->highest_encounter < p_ptr->lev) m_ptr->highest_encounter = p_ptr->lev;
+		if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
 	}
 
         /* Some mosnters are immune to death */
@@ -6111,6 +6155,9 @@ void monster_death_mon(int am_idx, int m_idx)
 			/* Average dungeon and monster levels */
 			object_level = (getlevel(wpos) + r_ptr->level) / 2;
 
+			/* No easy item hunting in towns.. */
+			if (wpos->wz == 0) object_level = r_ptr->level / 2;
+
 			/* Place Gold */
 			if (do_gold && (!do_item || (rand_int(100) < 50)))
 			{
@@ -6120,6 +6167,7 @@ void monster_death_mon(int am_idx, int m_idx)
 			/* Place Object */
 			else
 			{
+				place_object_restrictor = 0;
 				place_object(wpos, ny, nx, good, great, FALSE, FALSE, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
 			}
 
@@ -7599,6 +7647,19 @@ void telekinesis_aux(int Ind, int item)
 			return;
 		}
 
+
+/* TEMPORARY ANTI-CHEEZE HACKS */
+if (q_ptr->tval == TV_RING && q_ptr->sval == SV_RING_SPEED && q_ptr->level < 30) {
+        s_printf("HACK-SPEEDREQ (Tele): %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, q_ptr->bpval, q_ptr->level);
+        determine_level_req(70, q_ptr);
+        s_printf("%d.\n", q_ptr->level);
+}
+if (q_ptr->tval == TV_POTION && q_ptr->sval >= SV_POTION_INC_STR && q_ptr->sval <= SV_POTION_INC_CHR && q_ptr->level < 28) {
+        s_printf("HACK-STATPOT (Tele): %s(%d) potion: %d -> ", p_ptr->name, p_ptr->lev, q_ptr->level);
+        determine_level_req(20, q_ptr);
+        s_printf("%d.\n", q_ptr->level);
+}
+
 		/* Actually teleport the object to the player inventory */
 		inven_carry(Ind2, q_ptr);
 
@@ -8171,7 +8232,7 @@ static bool master_summon_specific_aux(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* no uniques */
-	if (r_ptr->flags1 &RF1_UNIQUE) return FALSE;
+	if (r_ptr->flags1 & RF1_UNIQUE) return FALSE;
 
 	/* if we look like what we are looking for */
 	if (r_ptr->d_char == master_specific_race_char) return TRUE;

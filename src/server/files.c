@@ -1278,6 +1278,12 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
 
+	/* Hack - distinguish between wilderness and dungeon */
+	bool wilderness;
+
+	/* Hack - display if the player was a former winner */
+	char extra_info[40];
+	
 	/* Paranoia -- it may not have opened */
 	if (highscore_fd < 0) return;
 	
@@ -1347,6 +1353,10 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 			if (highscore_read(&the_score)) break;
 		}
 
+
+		strcpy(extra_info, ".");
+		wilderness = FALSE;
+
 		/* Extract the race/class */
 		pr = atoi(the_score.p_r);
 		pc = atoi(the_score.p_c);
@@ -1354,6 +1364,12 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		/* Extract the level info */
 		clev = atoi(the_score.cur_lev);
 		mlev = atoi(the_score.max_lev);
+#if 0
+		if (the_score.cur_dun[strlen(the_score.cur_dun) - 1] == '\001') {
+			wilderness = TRUE;
+			the_score.cur_dun[strlen(the_score.cur_dun) - 1] = '\0';
+		}
+#endif
 		cdun = atoi(the_score.cur_dun);
 		mdun = atoi(the_score.max_dun);
 
@@ -1382,6 +1398,14 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 			strcpy(modecol, "");
                         break;
 		}
+		
+		/* Hack ;) Remember if the player was a former winner */
+		if (the_score.how[strlen(the_score.how) - 1] == '\001')
+		{
+			strcpy(extra_info, ". (Formerly defeated Morgoth)");
+			the_score.how[strlen(the_score.how) - 1] = '\0';
+		}
+
 		/* Dump some info */
 		sprintf(out_val, "%2s%3d.%10s %s%s the %s%s %s, Level %d",
 			attrc, place, the_score.pts, modecol, the_score.who, modestr, 
@@ -1397,26 +1421,26 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		/* Another line of info */
 		if (strcmp(the_score.how, "winner"))
 			sprintf(out_val, "               Killed by %s\n"
-					 "               on %s %d",
-					 the_score.how, "Dungeon Level", cdun);
+					 "               on %s %d%s%s",
+					 the_score.how, wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
 		else
 			sprintf(out_val, "               \377vRetired after a legendary career\n"
-					 "               (on %s %d)", "Dungeon Level", cdun);
+					 "               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
 
 		/* Hack -- some people die in the town */
 		if (!cdun)
 		{
 			if (strcmp(the_score.how, "winner"))
 				sprintf(out_val, "               Killed by %s\n"
-						 "               in the Town",
-						 the_score.how);
+						 "               in town%s",
+						 the_score.how, mdun > cdun ? format(" (max %d)", mdun) : "");
 			else
 				sprintf(out_val, "               \377vRetired after a legendary career\n"
-						 "               (in the Town)");
+						 "               in town%s", mdun > cdun ? format(" (max %d)", mdun) : "");
 		}
 
 		/* Append a "maximum level" */
-		if (mdun > cdun) strcat(out_val, format(" (Max %d)", mdun));
+//		if (mdun > cdun) strcat(out_val, format(" (max %d)", mdun));
 
 		/* Dump the info */
 		fprintf(fff, "%s\n", out_val);

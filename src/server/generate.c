@@ -8204,6 +8204,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 	if(!flags2 & DF2_RANDOM) return;
 
+
+	/* Set restrictions on placed objects */
+	place_object_restrictor = 1;
+
+
 	/* Hack -- Don't tell players about it (for efficiency) */
 	cave_set_quietly = TRUE;
 
@@ -8906,6 +8911,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		}
 	}
 #endif
+
+
+	/* Lift restrictions on placed objects again */
+	place_object_restrictor = 0;
+
 
 	/* Check for half void jump gates, resulting from partial vaults
 	   which contain void gates and were cut at the level border - C. Blue */
