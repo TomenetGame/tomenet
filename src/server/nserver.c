@@ -1933,7 +1933,15 @@ void Handle_input(int fd, int arg)
 	if (connp->state & (CONN_PLAYING | CONN_READY))
 		receive_tbl = &playing_receive[0];
 	else if (connp->state & (CONN_LOGIN/* | CONN_SETUP */))
+#if 0
 		receive_tbl = &login_receive[0];
+#else
+	{
+		receive_tbl = &login_receive[0];
+		Receive_play(ind);
+		return;
+	}
+#endif	// 0
 	else if (connp->state & (CONN_DRAIN/* | CONN_SETUP */))
 		receive_tbl = &drain_receive[0];
 	else if (connp->state == CONN_LISTENING)
@@ -2355,6 +2363,12 @@ static int Receive_play(int ind)
 			connp->r.ptr = connp->r.buf;
 			return 1;
 		}
+
+#if DEBUG_LEVEL > 1
+			plog(format("Play packet is now large enough (%d)",
+						connp->r.len - (connp->r.ptr - connp->r.buf)));
+#endif	// DEBUG_LEVEL
+
 #if 1	// moved from Handle_listening
 		/* Read the stat order */
 		for (i = 0; i < 6; i++)
@@ -4889,6 +4903,26 @@ static int Receive_activate_skill(int ind)
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
 		p_ptr->current_char = (old == player)?TRUE:FALSE;
+
+		/* Break goi/manashield */
+		if (mkey != MKEY_DODGE)	// it's not real 'activation'
+		{
+			if (p_ptr->invuln)
+			{
+				set_invuln(player, 0);
+			}
+			if (p_ptr->tim_manashield)
+			{
+				set_tim_manashield(player, 0);
+			}
+#if 0
+			if (p_ptr->tim_wraith)
+			{
+				set_tim_wraith(player, 0);
+			}
+#endif	// 0
+		}
+
 		switch (mkey)
 		{
 			case MKEY_SORCERY:

@@ -2174,6 +2174,7 @@ struct server_opts
 	char resting_rate;
 	char party_xp_boost;
 	char use_pk_rules;
+	char quit_ban_mode;
 	char zang_monsters;
 	char pern_monsters;
 	char cth_monsters;

@@ -3043,9 +3043,6 @@ bool ident_spell_aux(int Ind, int item)
 
 	p_ptr->current_identify = 0;
 
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-
 	/* Something happened */
 	return (TRUE);
 }

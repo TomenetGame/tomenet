@@ -2076,6 +2076,23 @@ void do_cmd_use_staff(int Ind, int item)
 	/* Hack -- let staffs of identify get aborted */
 	bool use_charge = TRUE;
 
+	/* Break goi/manashield */
+	if (p_ptr->invuln)
+	{
+		set_invuln(Ind, 0);
+	}
+	if (p_ptr->tim_manashield)
+	{
+		set_tim_manashield(Ind, 0);
+	}
+#if 0
+	if (p_ptr->tim_wraith)
+	{
+		set_tim_wraith(Ind, 0);
+	}
+#endif	// 0
+
+
 #if 1
 	if (p_ptr->anti_magic)
 	{
@@ -2532,6 +2549,23 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	int			lev, ident, chance, sval;
 
 	object_type		*o_ptr;
+
+	/* Break goi/manashield */
+	if (p_ptr->invuln)
+	{
+		set_invuln(Ind, 0);
+	}
+	if (p_ptr->tim_manashield)
+	{
+		set_tim_manashield(Ind, 0);
+	}
+#if 0
+	if (p_ptr->tim_wraith)
+	{
+		set_tim_wraith(Ind, 0);
+	}
+#endif	// 0
+
 
 #if 1	// anti_magic is not antimagic :)
 	if (p_ptr->anti_magic)
@@ -3004,6 +3038,24 @@ void do_cmd_zap_rod(int Ind, int item)
 
 	/* Hack -- let perception get aborted */
 	bool use_charge = TRUE;
+
+	/* Break goi/manashield */
+	if (p_ptr->invuln)
+	{
+		set_invuln(Ind, 0);
+	}
+	if (p_ptr->tim_manashield)
+	{
+		set_tim_manashield(Ind, 0);
+	}
+#if 0
+	if (p_ptr->tim_wraith)
+	{
+		set_tim_wraith(Ind, 0);
+	}
+#endif	// 0
+
+
 #if 1
 	if (p_ptr->anti_magic)
 	{
@@ -3881,6 +3933,23 @@ void do_cmd_activate(int Ind, int item)
 	int         i, k, lev, chance;
 
 	object_type *o_ptr;
+
+	/* Break goi/manashield */
+	if (p_ptr->invuln)
+	{
+		set_invuln(Ind, 0);
+	}
+	if (p_ptr->tim_manashield)
+	{
+		set_tim_manashield(Ind, 0);
+	}
+#if 0
+	if (p_ptr->tim_wraith)
+	{
+		set_tim_wraith(Ind, 0);
+	}
+#endif	// 0
+
 
 
 	/* Get the item (in the pack) */
@@ -6214,7 +6283,7 @@ bool unmagic(int Ind)
 			set_invis(Ind, 0, 0) |
 			set_furry(Ind, 0) |
 			set_tim_meditation(Ind, 0) |
-			//				set_tim_wraith(Ind, 0) |
+			set_tim_wraith(Ind, 0) |
 			set_fast(Ind, 0) |
 			set_shield(Ind, 0) |
 			set_blessed(Ind, 0) |
@@ -6231,6 +6300,7 @@ bool unmagic(int Ind)
 			set_oppose_pois(Ind, 0)
 			) ident = TRUE;
 
+#if 0	// now it's handled in set_tim_wraith
 	/* In town it only runs out if you are not on a wall
 	 * To prevent breaking into houses */
 	if (players_on_depth(&p_ptr->wpos)!= 0)
@@ -6246,6 +6316,7 @@ bool unmagic(int Ind)
 			}
 		}
 	}
+#endif	// 0
 
 	if (p_ptr->word_recall) ident |= set_recall_timer(Ind, 0);
 

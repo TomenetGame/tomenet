@@ -1296,7 +1296,8 @@ void display_player(int hist)
         prt_num("+To MHit    ", p_ptr->dis_to_h + p_ptr->to_h_melee, 9, 1, TERM_L_BLUE);
         prt_num("+To MDamage ", p_ptr->dis_to_d + p_ptr->to_d_melee, 10, 1, TERM_L_BLUE);
         prt_num("+To RHit    ", p_ptr->dis_to_h + p_ptr->to_h_ranged, 11, 1, TERM_L_BLUE);
-        prt_num("+To RDamage ", p_ptr->dis_to_d + p_ptr->to_d_ranged, 12, 1, TERM_L_BLUE);
+//        prt_num("+To RDamage ", p_ptr->dis_to_d + p_ptr->to_d_ranged, 12, 1, TERM_L_BLUE);
+        prt_num("+To RDamage ", p_ptr->to_d_ranged, 12, 1, TERM_L_BLUE);
 
         /* Dump the armor class bonus */
         prt_num("+ To AC     ", p_ptr->dis_to_a, 13, 1, TERM_L_BLUE);

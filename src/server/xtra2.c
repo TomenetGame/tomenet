@@ -861,12 +861,27 @@ bool set_tim_wraith(int Ind, int v)
 	{
 		if (p_ptr->tim_wraith)
 		{
-			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
-			msg_print(Ind, "You lose your wraith powers.");
-			notice = TRUE;
-			
-			/* That will hopefully prevent game hinging when loading */
-			if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)) p_ptr->wraith_in_wall = FALSE;
+			/* In town it only runs out if you are not on a wall
+			 * To prevent breaking into houses */
+			/* important! check for illegal spaces */
+			cave_type **zcave;
+			zcave=getcave(&p_ptr->wpos);
+
+			/* leave one turn */
+			v = 1;
+
+			if (zcave && in_bounds(p_ptr->py, p_ptr->px) &&
+					((p_ptr->wpos.wz) ||
+					 (cave_floor_bold(zcave, p_ptr->py, p_ptr->px))))
+			{
+				v = 0;
+				msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
+				msg_print(Ind, "You lose your wraith powers.");
+				notice = TRUE;
+
+				/* That will hopefully prevent game hinging when loading */
+				if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)) p_ptr->wraith_in_wall = FALSE;
+			}
 		}
 	}
 
@@ -3749,6 +3764,33 @@ static void kill_objs(int id){
 	}
 }
 
+
+#define QUIT_BAN_NONE	0
+#define QUIT_BAN_ROLLER	1
+#define QUIT_BAN_ALL	2
+
+/* This function prevents DoS attack using suicide */
+static void check_roller(Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	time_t now = time(&now);
+
+	if (!cfg.quit_ban_mode) return;
+
+	if (cfg.quit_ban_mode == QUIT_BAN_ROLLER)
+	{
+		/* (s)he should have played somewhat */
+		if (p_ptr->max_exp) return;
+
+		/* staying for more than 60 seconds? */
+		if (now - lookup_player_laston(p_ptr->id) > 60) return;
+	}
+
+	/* ban her/him for 1 min */
+	add_banlist(Ind, 1);
+}
+
+
 /*
  * Handle the death of a player and drop their stuff.
  */
@@ -3948,7 +3990,7 @@ void player_death(int Ind)
 	if (p_ptr->total_winner)
 	{
 #ifdef NEW_DUNGEON
-/* fixme */
+/* FIXME */
 /*
 		msg_broadcast(Ind, format("%d(%d) and %d(%d) are no more owned.", p_ptr->own1, p_ptr->own2, p_ptr->own1 * 50, p_ptr->own2 * 50));
 		wild_info[p_ptr->own1].own = wild_info[p_ptr->own2].own = 0;
@@ -4059,6 +4101,8 @@ void player_death(int Ind)
 
 		/* One less player here */
 		new_players_on_depth(&p_ptr->wpos,-1,TRUE);
+
+		check_roller(Ind);
 
 		/* Remove him from the player name database */
 		delete_player_name(p_ptr->name);

@@ -1948,7 +1948,8 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 
 	/* Hack -- blend "inscriptions" */
 //	if (j_ptr->note) o_ptr->note = j_ptr->note;
-	if (o_ptr->note) j_ptr->note = o_ptr->note;
+//	if (o_ptr->note) j_ptr->note = o_ptr->note;
+	if (!o_ptr->note && j_ptr->note) o_ptr->note = j_ptr->note;
 
 	/* Hack -- could average discounts XXX XXX XXX */
 	/* Hack -- save largest discount XXX XXX XXX */
@@ -3635,6 +3636,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 							i = rand_int(MAX_R_IDX - 1);
 							r_ptr = &r_info[i];
 
+							if (!r_ptr->name) continue;
 							if (r_ptr->flags1 & RF1_UNIQUE) continue;
 							if (r_ptr->level >= level + (power * 5)) continue;
 

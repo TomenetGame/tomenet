@@ -1855,6 +1855,10 @@ void set_server_option(char * option, char * value)
 	{
 		cfg.use_pk_rules = atoi(value);
 	}
+	else if (!strcmp(option, "QUIT_BAN_MODE"))
+	{
+		cfg.quit_ban_mode = atoi(value);
+	}
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }
 

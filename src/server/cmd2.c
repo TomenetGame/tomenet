@@ -2281,6 +2281,23 @@ void do_cmd_fire(int Ind, int dir)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
+	/* Break goi/manashield */
+	if (p_ptr->invuln)
+	{
+		set_invuln(Ind, 0);
+	}
+	if (p_ptr->tim_manashield)
+	{
+		set_tim_manashield(Ind, 0);
+	}
+#if 0
+	if (p_ptr->tim_wraith)
+	{
+		set_tim_wraith(Ind, 0);
+	}
+#endif	// 0
+
+
 #if 0
 	/* Require proper missile */
 	item_tester_tval = p_ptr->tval_ammo;
@@ -3220,6 +3237,23 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+
+	/* Break goi/manashield */
+	if (p_ptr->invuln)
+	{
+		set_invuln(Ind, 0);
+	}
+	if (p_ptr->tim_manashield)
+	{
+		set_tim_manashield(Ind, 0);
+	}
+#if 0
+	if (p_ptr->tim_wraith)
+	{
+		set_tim_wraith(Ind, 0);
+	}
+#endif	// 0
+
 
 	/* Handle the newbies_cannot_drop option */
 	if (p_ptr->lev < cfg.newbies_cannot_drop)

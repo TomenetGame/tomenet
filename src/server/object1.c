@@ -3868,6 +3868,8 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		if (f4 & TR4_LITE2) radius += 2;
 		if (f4 & TR4_LITE3) radius += 3;
 
+		if (radius > 5) radius = 5;
+
 		if (f4 & TR4_FUEL_LITE)
 		{
 			fprintf(fff, "It provides light (radius %d) when fueled.\n", radius);

@@ -1605,9 +1605,9 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 		p_ptr->s_info[i].dev = FALSE;
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
-                s32b value = 0, mod = 0;
+		s32b value = 0, mod = 0;
 
-                compute_skills(p_ptr, &value, &mod, i);
+		compute_skills(p_ptr, &value, &mod, i);
 
 		init_skill(p_ptr, value, mod, i);
 
@@ -1624,7 +1624,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 					break;
 			}
 		}
-        }
+	}
 
 	/* Success */
 	return TRUE;

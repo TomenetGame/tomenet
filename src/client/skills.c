@@ -795,6 +795,7 @@ void do_activate_skill(int x_idx, int item)
 //				cmd_mimic();
 				break;
 			default:
+				c_msg_print("Very sorry, you need more recent client.");
 				break;
 		}
 		return;

@@ -12,6 +12,7 @@ void cmd_player_equip(void)
     peruse_file();
 }
 
+#if 0
 static bool item_tester_magicable(object_type *o_ptr)
 {
 	if (get_skill(SKILL_MAGERY) && (o_ptr->tval == TV_MAGIC_BOOK)) return TRUE;
@@ -31,6 +32,7 @@ static bool item_tester_magicable(object_type *o_ptr)
 
 	return FALSE;
 }
+#endif	// 0
 
 void cmd_all_in_one(void)
 {
@@ -183,7 +185,9 @@ void cmd_all_in_one(void)
 				}
 			}
 			if (!done)
-				c_msg_print("You couldn't find a way to use it.");
+				/* XXX there should be more generic 'use' command */
+				Send_activate(item);
+//				c_msg_print("You couldn't find a way to use it.");
 
 			break;
 		}

@@ -1898,6 +1898,22 @@ void py_attack(int Ind, int y, int x, bool old)
 
 	if (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW) return;
 
+	/* Break goi/manashield */
+	if (p_ptr->invuln)
+	{
+		set_invuln(Ind, 0);
+	}
+	if (p_ptr->tim_manashield)
+	{
+		set_tim_manashield(Ind, 0);
+	}
+#if 0
+	if (p_ptr->tim_wraith)
+	{
+		set_tim_wraith(Ind, 0);
+	}
+#endif	// 0
+
 	/* Check for monster */
 	if (c_ptr->m_idx > 0)
 		py_attack_mon(Ind, y, x, old);

@@ -27,7 +27,8 @@ int store_prices[STORE_INVEN_MAX];			/* The prices of the items in the store */
 char store_names[STORE_INVEN_MAX][80];		/* The names of the stuff in the store */
 s16b store_num;				/* The current store number */
 
-char spell_info[MAX_REALM][9][9][80];		/* Spell information */
+/* XXX Mergin for future expansion -- this should be handled in Net_setup */
+char spell_info[MAX_REALM + 9][9][9][80];		/* Spell information */
 
 char party_info[160];			/* Information about your party */
 

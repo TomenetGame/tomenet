@@ -1818,6 +1818,7 @@ static void process_player_end(int Ind)
 		/* Hack -- Wraithform */
 		if (p_ptr->tim_wraith)
 		{
+#if 0
 			/* In town it only runs out if you are not on a wall
 			   To prevent breaking into houses */
 			if (players_on_depth(&p_ptr->wpos) != 0) {
@@ -1831,6 +1832,9 @@ static void process_player_end(int Ind)
 					}
 				}
 			}
+#else	// 0
+			(void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus);
+#endif	// 0
 		}
 
 		/* Hack -- Hallucinating */

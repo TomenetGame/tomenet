@@ -1222,9 +1222,16 @@ To find the latest change quickly, search ==== :)
 [H] Hand of Doom bypasses GoI/ManaShield.
 
 01/07/2002 (Jir)
+- protection code against DoS
 [B] arrows did no damage, pfft
 [B] townies could enter the tavern.
+[B] 'Ring of Polymorphing of'.
 
+02/07/2002 (Jir)
+- protection code against DoS/roller (QUIT_BAN_MODE)
+- GoI/Manashield ends when the player attacks/fires/casts etc.
+[H][C] spell_info array is enlarged to allow future expansion.
+[B] +To RDam was displayed wrong when using =dam
 
 
 ** [B] stands for Bugfix.
@@ -1262,33 +1269,29 @@ concisely: what's hot now?
 - LUA hook
 - csfunc
 - alignment (let's wait for EE :)
-- item stacking
 
 =============================================================================
 below this line are the unfixed bugs known:
 
 [B] House doors are still said to crash sometimes. (door even vanishes??)
 [B] wpos display hides wound states(eg.'Deep Gash')
-[B] ever-charging arts (eg.star)
 [B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
     sometimes, monsters attack the player from nowhere.. prolly same root?
 	* this only happens when rebooting the server and caves lost.
 [B][C] chat-history contains lines with 'mindcrafter'.
     (do_cmd_messages_chatonly)
 [B] p_ptr->furry, lol
-[B] 'Ring of Polymorphing of'.
 [B] cannot 'run' near the outer permawall (run_test)
 [B] mon_vis, obj_vis etc. are messed while the player is off.
 [B] option '-r' puts the server into infinite-loop (genwild)
 [B] GCU client cannot handle the cursor very well.
 [B] some ivents are not told to the players even when within the sight.
 [B] white '@' sometimes appear on the screen(eg. when targetting).
-[B] Yeek seems to receive the best store prices.
 [B] Martial-artist has strange +To RHit/+To RDam display.
-[B] +To RDam is wrong when using =dam
-[B] los chech sometimes goes wrong (southeast)
+[B] los check sometimes goes wrong (southeast)
 [B][C] inventory window sometimes loses a) b) etc.
 [B] 'write error' sometimes (old bug)
+[B] 'No more Scroll of *Identify*'
 [B] cannot connect!
 Read 96 bytes
 Read 582 bytes
@@ -1296,6 +1299,15 @@ Read 0 bytes
 check for font-x11.prf
 /usr/home/key/devel/pm/tomenet: Quitting!
 /usr/home/key/devel/pm/tomenet: No play packet reply received.
+
+03 Jul 00:36:33: Welcome Olorin=dg@darkgod.middle.earth (193.251.38.201/32990)
+/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (12)
+/usr/home/key/devel/pm/tomenet.server: Play packet is not large enough yet (1393)
+/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
+/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
+/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
+/usr/home/key/devel/pm/tomenet.server: Packet is not of play type (4)
+03 Jul 00:36:41: Goodbye Olorin=dg@darkgod.middle.earth ("client quit")
 
 02 Jul 04:53:32: Welcome Olorin=dg@darkgod.middle.earth (193.251.38.201/33017)
 /usr/home/key/devel/pm/tomenet.server: Packet is not of play type (0)
@@ -1309,20 +1321,16 @@ check for font-x11.prf
 [B] Macro sticks sometimes
 [B] CURSE_x does 100+ dmg on 50ft? (not confirmed)
 *below are bugs not shown recently(fixed??)*
+[B] ever-charging arts (eg.star)
 [B] cave can be erased prematurely after loading.
 [B] /rec won't work if to wilderness? (admin)
-[B] admin monk doesn't have inventory slot a)
-    (gdb) print Players[1].inventory[0]
-	$3 = {owner = 38, level = 1, k_idx = 1, iy = 0 '\000', ix = 0 '\000', wpos
-	= {wx = 0, wy = 0, wz = 0}, tval = 0 '\000', sval = 0 '\000', bpval = 0,
-	pval = 0, discount = 72 'H', number = 30 '\036', weight = 0, name1 = 0
-	'\000', name2 = 0 '\000', name3 = 0, xtra1 = 0 '\000', xtra2 = 0 '\000',
-	to_h = 0, to_d = 0, to_a = 0, ac = 0, dd = 0 '\000', ds = 0 '\000', timeout
-	= 0, ident = 136 '\210', marked = 0 '\000', note = 12}
+
 
 *below are phenomena not confirmed as bug*
 [B?] breeders breed less if many players are on.
      buggie, but saves the server from getting slowed by breeding..
+[B?] p_ptr->to_d_ranged is always 0.
+[B?] Yeek seems to receive the best store prices.
 
 =============================================================================
 memo and questions:
@@ -1413,6 +1421,7 @@ memo and questions:
 - put CVS keyword($ID$) to every file.
 - remove the hack in client which swaps sval/xtra1 ;(
 - obsolete c-tables.c
+- send flags for each spell, so that we can obsolete do_cmd_cast_aux etc.
 
 [speeding the server up]
 # tomenet.server never seems to take more than 10% of CPU time. why? (sched.c?)

@@ -137,7 +137,7 @@ server_opts cfg =
 
 	/* char */
 	3, 2,		// resting_rate, party_xp_boost
-	0,			// use_pk_rules
+	0, 1,		// use_pk_rules, quit_ban_mode
 
 	10, 100, 100,	// zang_monsters, pern_monsters, cth_monsters
 	1, 100, 0,		// joke_monsters, vanilla_monsters, pet_monsters

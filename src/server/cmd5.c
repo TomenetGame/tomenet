@@ -172,6 +172,7 @@ static void spell_info(int Ind, char *p, int realm, int j)
 	if (realm == REALM_MAGERY)
 	{
 		int plev = get_skill(p_ptr, SKILL_MAGERY);
+		int	rad = DEFAULT_RADIUS - 5 + get_skill_scale(p_ptr, SKILL_MAGERY, 10);
 
 		/* Analyze the spell */
 		switch (j)
@@ -209,7 +210,8 @@ static void spell_info(int Ind, char *p, int realm, int j)
 			case 55: strcpy(p, " dur 30+d20"); break;
 			case 56: strcpy(p, " dur 25+d25"); break;
 			case 57: sprintf(p, " dur %d+d25", 30+plev); break;
-			case 58: strcpy(p, " dur 8+d8"); break;
+//			case 58: strcpy(p, " dur 8+d8"); break;
+			case 58: sprintf(p, " dur %d+d16", rad); break;
 		}
 	}
 
@@ -255,6 +257,7 @@ static void spell_info(int Ind, char *p, int realm, int j)
 	if (realm == REALM_SORCERY)
 	{
 		int plev = get_skill(p_ptr, SKILL_SORCERY);
+		int	rad = DEFAULT_RADIUS - 5 + get_skill_scale(p_ptr, SKILL_SORCERY, 10);
 
 		/* Analyze the spell */
 		switch (j)
@@ -277,7 +280,8 @@ static void spell_info(int Ind, char *p, int realm, int j)
                         case 30: sprintf(p, " dam %d", 130 + (plev * 5 / 2)); break;
                         case 36: sprintf(p, " dur %d+d20", 20); break;
                         case 38: sprintf(p, " dam 8*%dd%d", 15 + (plev / 10), 8); break;
-                        case 39: sprintf(p, " dur 8+d10"); break;
+//                        case 39: sprintf(p, " dur 8+d10"); break;
+                        case 39: sprintf(p, " dur %d+d16", rad); break;
                         case 44: sprintf(p, " dam %d", 100 + (3 * plev)); break;
                         case 46: sprintf(p, " dam %d", 600 + (2 * plev)); break;
                         case 56: sprintf(p, " dam %d", 250 + (2 * plev)); break;
@@ -836,7 +840,6 @@ void do_cmd_cast(int Ind, int book, int spell)
 	int			i, j, sval;
 	int			chance, beam;
 	int			plev = get_skill(p_ptr, SKILL_MAGERY);
-//	int			rad = DEFAULT_RADIUS_SPELL(p_ptr);
 	int	rad = DEFAULT_RADIUS - 5 + get_skill_scale(p_ptr, SKILL_MAGERY, 10);
 
 	object_type		*o_ptr;
@@ -1490,7 +1493,11 @@ void do_cmd_cast(int Ind, int book, int spell)
 
 			case 58:
 			{
-				(void)set_invuln(Ind, p_ptr->invuln + randint(8) + 8);
+//				(void)set_invuln(Ind, p_ptr->invuln + randint(8) + 8);
+				/* Since casting spell cancels GoI, it's impossible to
+				 * cast more than once to gain spell length. */
+				/* Hack -- borrow 'rad' */
+				(void)set_invuln(Ind, p_ptr->invuln + randint(16) + rad);
 				break;
 			}
 		}
@@ -1957,7 +1964,6 @@ void do_cmd_sorc(int Ind, int book, int spell)
 	int			i, j, sval;
 	int			chance, beam;
 	int			plev = get_skill(p_ptr, SKILL_SORCERY);
-//	int			rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
 	int	rad = DEFAULT_RADIUS - 5 + get_skill_scale(p_ptr, SKILL_SORCERY, 10);
 
 	object_type		*o_ptr;
@@ -2325,8 +2331,12 @@ void do_cmd_sorc(int Ind, int book, int spell)
                         break;
                 }
                 case 39: /* Disruption Shield */
-			(void)set_tim_manashield(Ind, p_ptr->tim_manashield + randint(10) + 8);
-                        break;
+//			(void)set_tim_manashield(Ind, p_ptr->tim_manashield + randint(10) + 8);
+					/* Since casting spell cancels manashield, it's impossible
+					 * to cast more than once to gain spell length. */
+					/* Hack -- borrow 'rad' */
+					(void)set_tim_manashield(Ind, p_ptr->tim_manashield + randint(16) + rad);
+					break;
 
                 case 40: /* Earthquake */
                         earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 5);
@@ -2814,7 +2824,6 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 	int item, sval, j, chance, i;
 	int plev = get_skill(p_ptr, SKILL_PRAY);
-//	int	rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
 	int	rad = DEFAULT_RADIUS - 5 + get_skill_scale(p_ptr, SKILL_SPELLRAD, 30);
 
 	object_type	*o_ptr;
