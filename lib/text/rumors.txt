@@ -1,5 +1,5 @@
 N:*:Default
-204
+327
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -204,3 +204,126 @@ Drain you of your sanity: in front do the thing that does not have to be.
 The opinion you had were salt expresses.
 They say that you there is a Nether spell to control the three Elven Rings.
 They say that the dark mists of morgoth can both bestow and remove the curse.
+Save the game in dungeon and you'll be buried there.
+They say that in this world The Lady rules us all.
+They say that a sorceror never waits for a feeling to come.
+They say that a genuine artifact hates to remain unused.
+They say that you should find a way to use mimic rings.
+They say that you should find a way to make use of cursed rings.
+They say that you should find a way to use Unmagic Mushrooms.
+They say that seven crystal balls grant you a wish!
+They say that removing a rubble often is a bad idea.
+They say that removing a rubble sometimes gives you a treasure.
+They say that some players are more invisible than others.
+They say that an archer should try 'killing from afar'.
+They say that they say that what they say can be utterly wrong.
+They say that DarkSword hates magic.
+They say that DarkSword is just a cursed sword.
+(AD) Need a help? Just visit http://www.ctt.ne.jp/~sap/mang/
+(AD) Wanna have a talk? Just visit #mangband on irc.worldirc.org
+(AD) Recent news? Just subscribe PernMangband-subscribe@yahoogroups.com
+(AD) Press '?' sometimes, even if you don't need a help.
+They say that behind Morgoth lies another world of extreme danger.
+They say that wizards are subtle and quick to anger, even the kindest.
+They say that a macro can save your life hundreds of times.
+They say that only truly-free person can go beneath 1000'
+They say that a hellish is suitable to visit the Hell.
+Have you ever found a staircase-up in the wilderness?
+Have you ever been in the mushroom farm?
+They say that the Mafia would buy some kinda mushrooms for a price.
+Morgul weapons are utterly useless - but there's one notable exception...
+They say that a stone is just a stone.
+They say that a phial is just a mundane glass with decorations.
+They say that a star is a badge for sheriffs.
+Have you ever seen a broken stick of *slay* lag?
+They say that you should be good to the poor farmer.
+Never forget to lock the door when you leave your house!
+They say that The Lady hates to have her *real* name called.
+They say that some cookies were imported from overseas.
+They say that DarkSword can be great if enchanted neatly.
+They say that a pair of leather boots 'Ringil' won't always grant speed.
+They say that some supreme spells won't concern worldly matters.
+You can do away with notorious The Lady by doing the following:
+They say that a clever thief never does her job with her pack full.
+They say that a Demigod should leave his worldly treasures.
+They say that Morgoth never forget to inscribe his hammer with {!E}.
+Ever tried a batman archer?
+Ever tried a batman monk?
+Ever tried a female Ent?
+They say that you should enter jelly-pit naked.
+Just call the police if you find a hideout of evil above 1000'
+They say that better ask veterans better than pray to a goddess.
+They say that there's a world called 'potland'.
+They say that cloning technology is prohibited by the U.S. government.
+They say that a warrior starts his adventure by selling his Broad Sword.
+They say that a true rogue should learn to turn off the light.
+They say that you should learn to type '/' in the chat-line.
+They say that you should die at the centre of a large room.
+They say that you should fight behind a rubble.
+They say that when you die your ghost will haunt there.
+They say that temple priest loves to save your soul.
+They say that you should learn to haggle.
+Get killed? Just ask a sorceror for a rescue!
+Get killed? Just ask a warlock for a rescue!
+Get killed? Never tell it to a rogue!
+They say that you should learn to throw Molotov cocktail.
+They say that chattering deep in dungeon is a bad habit for dungeoneers.
+They say that some mad players are attempting to create a golem...
+They say that 50' is safer place than the town.
+Never dive the dungeon naked, unless you're a monk.
+They say that with 2 words 'pfft' and 'w00t' you can describe the universe.
+They say that you should carry flasks of oil even when your lamp is full.
+Never harm the future Einstein on the village!
+They say that you'll have headache after a trip with magic mushrooms.
+They say that everyone can be a F.L.Wright in PernMangband.
+Ever seen a member of The Guild?
+Ask a priest to enchant your stuffs.
+Ask a rogue to curse your stuffs.
+Ask a sorceror to wraith you.
+Ask a telepath to dominate you.
+Ask an unbeliever to get rid of that Q.
+Ask a priest to sweep the pit.
+Ask a warlock to go downstairs first.
+Ask a disenchanter mold to disenchant your HA DarkSword.
+Nowadays even a warrior should learn to read.
+Nowadays even a warrior should learn to type.
+Nowadays even a warrior should learn shorthands.
+=sp+15@7, 1.8M!
+PoAS@7, 2M
+=dam+19@7, 15k
+Mirky@2, 20k
+Ever found a Westie broken dagger?
+Ever found a Everburning Torch?
+Ever activated a DSM?
+Ever activated the Celeborn in the town?
+Ever met Morgie twice?
+Ever tried to rob a store?
+Ever been in yeek town?
+Ever heard about Mirkwood Legends?
+[The Lady] Thou art doomed, poor little mangband player..
+[Olorin] mh
+[Moltor] pfft
+[Evileye] hehe
+[Jir] :)
+[Server Admin] Server Shutdown (right now)
+You are hit by a bolt from the blue!
+They say that there once was a poor batman who found both Ringil and Feanor.
+They say that there once was a man who fought 2 Morgothes at the same time.
+They say that reading Anne McCaffrey won't help you at all.
+They say that often a sorc came in through the bathroom window.
+They say that Choppiness is a warm gun.
+They say that a disenchanted DarkSword is not so good for non-unbelievers.
+Watch out!! The Erlkonig Thavakrache is just behind you!!!
+They say that zombie uniques are nothing to worth while slaying.
+They say that you should read a scroll of acquirement in town.
+They say that a vault is a place to die, and not a place to resurrect.
+They say that you shouldn't give someone of the same sex an engagement ring.
+They say that archers should learn more about their opponents.
+They say that a death in Mangband is very akin to that of real life.
+They say that you should let someone else to go down first.
+They say that act as a fool and you'll be treated as a fool.
+They say that be harsh to others and you'll be treated in a similar way.
+Beware! Cave spiders are MUCH more powerful here!
+Never slam the door!
+(AD) please deposit your spare artifacts to PARC(Pern Arts Recycle Centre)!
+YOU'VE JUST WON THE FORTUNE-COOKIE LOTTERY! REPORT IT TO THE ML NOW!
