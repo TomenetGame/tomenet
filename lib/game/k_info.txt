@@ -6738,8 +6738,8 @@ F:FOUNTAIN
 N:163:Suspicion
 G:":d
 I:40:34:-1
-W:20:0:3:5000
-A:20/6
+W:20:0:3:3000
+A:20/5
 F:INT | WIS | ANTIMAGIC_10
 
 # !!

@@ -4123,7 +4123,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	player_type *p_ptr = Players[Ind];
 	cptr		*info = p_ptr->info;
 
-	int                     i = 0, j, k;
+	int                     i = 0, j, k, am;
 
         u32b f1, f2, f3, f4, f5, esp;
 
@@ -4323,6 +4323,13 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
         if (f4 & TR4_MUST2H) info[i++] = "It must be wielded two-handed.";
 #endif
 
+	/* Mega Hack^3 -- describe the amulet of life saving */
+	if (o_ptr->tval == TV_AMULET &&
+		o_ptr->sval == SV_AMULET_LIFE_SAVING)
+	{
+		info[i++] = "It will save your life from perilous scene once.";
+	}
+
 	/* Mega-Hack -- describe activation */
 	if (f3 & TR3_ACTIVATE)
 	{
@@ -4387,11 +4394,30 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
         {
                 info[i++] = "It prevents the space-time continuum from being disrupted.";
         }
-
+#if 0
         if ((f4 & (TR4_ANTIMAGIC_50)) || (f4 & (TR4_ANTIMAGIC_30)) || (f4 & (TR4_ANTIMAGIC_20)) || (f4 & (TR4_ANTIMAGIC_10)))
         {
                 info[i++] = "It generates an antimagic field.";
         }
+#endif	// 0
+
+		am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
+			+ ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
+			+ ((f4 & (TR4_ANTIMAGIC_20)) ? 20 : 0)
+			+ ((f4 & (TR4_ANTIMAGIC_10)) ? 10 : 0)
+			- o_ptr->to_h - o_ptr->to_d - o_ptr->pval - o_ptr->to_a;
+
+		if (am >= 100)
+			info[i++] = "It generates a perfect antimagic field.";
+		else if (am >= 80)
+			info[i++] = "It generates a mighty antimagic field.";
+		else if (am >= 60)
+			info[i++] = "It generates a strong antimagic field.";
+		else if (am >= 40)
+			info[i++] = "It generates an antimagic field.";
+		else if (am >= 20)
+			info[i++] = "It generates a mellow antimagic field.";
+		else if (am) info[i++] = "It generates a feeble antimagic field.";
 
 	/* And then describe it fully */
 

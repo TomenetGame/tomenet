@@ -2181,35 +2181,6 @@ static void calc_bonuses(int Ind)
 		if (f3 & (TR3_NO_MAGIC)) p_ptr->anti_magic = TRUE;
 		if (f3 & (TR3_NO_TELE)) p_ptr->anti_tele = TRUE;
 
-
-
-
-		/* Modify the base armor class */
-		p_ptr->ac += o_ptr->ac;
-
-		/* The base armor class is always known */
-		p_ptr->dis_ac += o_ptr->ac;
-
-		/* Apply the bonuses to armor class */
-		p_ptr->to_a += o_ptr->to_a;
-
-		/* Apply the mental bonuses to armor class, if known */
-		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_a += o_ptr->to_a;
-
-		/* Hack -- do not apply "weapon" bonuses */
-		if (i == INVEN_WIELD) continue;
-
-		/* Hack -- do not apply "bow" bonuses */
-		if (i == INVEN_BOW) continue;
-
-		/* Apply the bonuses to hit/damage */
-		p_ptr->to_h += o_ptr->to_h;
-		p_ptr->to_d += o_ptr->to_d;
-
-		/* Apply the mental bonuses tp hit/damage, if known */
-		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_h += o_ptr->to_h;
-		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_d += o_ptr->to_d;
-
 		/* Additional flags from PernAngband */
 //		if (f4 & (TR4_PRECOGNITION)) p_ptr->precognition = TRUE;
 
@@ -2252,6 +2223,35 @@ static void calc_bonuses(int Ind)
 		if (f4 & (TR4_BLACK_BREATH)) p_ptr->black_breath = TRUE;
 
 //		if (f5 & (TR5_IMMOVABLE)) p_ptr->immovable = TRUE;
+
+
+
+		/* Modify the base armor class */
+		p_ptr->ac += o_ptr->ac;
+
+		/* The base armor class is always known */
+		p_ptr->dis_ac += o_ptr->ac;
+
+		/* Apply the bonuses to armor class */
+		p_ptr->to_a += o_ptr->to_a;
+
+		/* Apply the mental bonuses to armor class, if known */
+		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_a += o_ptr->to_a;
+
+		/* Hack -- do not apply "weapon" bonuses */
+		if (i == INVEN_WIELD) continue;
+
+		/* Hack -- do not apply "bow" bonuses */
+		if (i == INVEN_BOW) continue;
+
+		/* Apply the bonuses to hit/damage */
+		p_ptr->to_h += o_ptr->to_h;
+		p_ptr->to_d += o_ptr->to_d;
+
+		/* Apply the mental bonuses tp hit/damage, if known */
+		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_h += o_ptr->to_h;
+		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_d += o_ptr->to_d;
+
 	}
 
 

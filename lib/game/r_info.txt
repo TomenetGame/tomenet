@@ -18454,7 +18454,7 @@ F:FORCE_SLEEP | NEVER_MOVE |
 F:STUPID | RES_TELE | CAN_SWIM |
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
 F:FRIENDS | DISBELIEVE
-S:1_IN_8
+S:1_IN_5
 S:UNMAGIC
 D:Yum!  It looks quite tasty. It seems to glow with an unusual light. 
 

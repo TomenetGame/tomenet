@@ -1196,6 +1196,12 @@ bool curse_armor(int Ind)
 		/* Oops */
 		msg_format(Ind, "A terrible black aura blasts your %s!", o_name);
 
+		if (true_artifact_p(o_ptr))
+		{
+			a_info[o_ptr->name1].cur_num = 0;
+			a_info[o_ptr->name1].known = FALSE;
+		}
+
 		/* Blast the armor */
 		o_ptr->name1 = 0;
 		o_ptr->name2 = EGO_BLASTED;
@@ -1262,6 +1268,12 @@ bool curse_weapon(int Ind)
 	{
 		/* Oops */
 		msg_format(Ind, "A terrible black aura blasts your %s!", o_name);
+
+		if (true_artifact_p(o_ptr))
+		{
+			a_info[o_ptr->name1].cur_num = 0;
+			a_info[o_ptr->name1].known = FALSE;
+		}
 
 		/* Shatter the weapon */
 		o_ptr->name1 = 0;
@@ -1332,6 +1344,12 @@ bool curse_an_item(int Ind, int slot)
 	{
 		/* Oops */
 		msg_format(Ind, "A terrible black aura blasts your %s!", o_name);
+
+		if (true_artifact_p(o_ptr))
+		{
+			a_info[o_ptr->name1].cur_num = 0;
+			a_info[o_ptr->name1].known = FALSE;
+		}
 
 		/* Blast the armor */
 		o_ptr->name1 = 0;

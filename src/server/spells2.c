@@ -533,6 +533,7 @@ void self_knowledge(int Ind)
 	object_type	*o_ptr;
 
 	cptr	*info = p_ptr->info;
+	bool	life = FALSE;
 
 	/* Let the player scroll through the info */
 	p_ptr->special_file_type = TRUE;
@@ -556,6 +557,17 @@ void self_knowledge(int Ind)
 		f3 |= t3;
 		f4 |= t4;
 		f5 |= t5;
+
+		/* Mega Hack^3 -- check the amulet of life saving */
+		if (o_ptr->tval == TV_AMULET &&
+			o_ptr->sval == SV_AMULET_LIFE_SAVING)
+			life = TRUE;
+	}
+
+	/* Mega Hack^3 -- describe the amulet of life saving */
+	if (life)
+	{
+		info[i++] = "Your life will be saved from perilous scene once.";
 	}
 
 #if 0
@@ -725,7 +737,17 @@ void self_knowledge(int Ind)
 	}
 	if (p_ptr->antimagic)	// older (percent)
 	{
-		info[i++] = "You are surrounded by an anti-magic shield.";
+//		info[i++] = "You are surrounded by an anti-magic shield.";
+		if (p_ptr->antimagic >= 100)
+			info[i++] = "You are surrounded by a complete anti-magic shield.";
+		else if (p_ptr->antimagic >= 80)
+			info[i++] = "You are surrounded by a mighty anti-magic shield.";
+		else if (p_ptr->antimagic >= 60)
+			info[i++] = "You are surrounded by a strong anti-magic shield.";
+		else if (p_ptr->antimagic >= 40)
+			info[i++] = "You are surrounded by an anti-magic shield.";
+		else info[i++] = "You are surrounded by a feeble anti-magic shield.";
+
 	}
 #if 1
         if (p_ptr->anti_magic)	// newer (saving-throw boost)
