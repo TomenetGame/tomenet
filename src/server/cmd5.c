@@ -1486,7 +1486,7 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 
 	if (r_idx) {
 		msg_format(Ind, "You polymorph into a %s !", r_info[r_idx].name + r_name);
-		msg_format_near(Ind, "%s polymorphs into a % !", p_ptr->name, r_info[r_idx].name + r_name);
+		msg_format_near(Ind, "%s polymorphs into a %s !", p_ptr->name, r_info[r_idx].name + r_name);
 	} else {
 		msg_format(Ind, "You polymorph back to normal form.");
 		msg_format_near(Ind, "%s polymorphs back to normal form.", p_ptr->name);
