@@ -1483,7 +1483,7 @@ void carry(int Ind, int pickup, int confirm)
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 /* TEMPORARY ANTI-CHEEZE HACKS */
-if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->level < 30) {
+if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && (o_ptr->level < 30) && (o_ptr->bpval > 0)) {
 	s_printf("HACK-SPEEDREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
 	determine_level_req(70, o_ptr);
 	s_printf("%d.\n", o_ptr->level);

@@ -5815,8 +5815,8 @@ void determine_level_req(int level, object_type *o_ptr)
 	if ((o_ptr->tval == TV_POTION) && (o_ptr->sval == SV_POTION_EXPERIENCE)) o_ptr->level = 0;
 
 	/* Anti-cheeze hack */
-	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && o_ptr->level < 30 + o_ptr->bpval)
-		o_ptr->level = 30 + o_ptr->bpval - 2 + rand_int(5);
+	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && (o_ptr->level < 30 + o_ptr->bpval - 1) && (o_ptr->bpval > 0))
+		o_ptr->level = 30 + o_ptr->bpval - 1 + rand_int(3);
 
 	/* tone down deep randarts a bit to allow winner-trading */
 	if (o_ptr->name1 == ART_RANDART) {

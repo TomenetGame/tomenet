@@ -7651,7 +7651,7 @@ void telekinesis_aux(int Ind, int item)
 
 
 /* TEMPORARY ANTI-CHEEZE HACKS */
-if (q_ptr->tval == TV_RING && q_ptr->sval == SV_RING_SPEED && q_ptr->level < 30) {
+if (q_ptr->tval == TV_RING && q_ptr->sval == SV_RING_SPEED && q_ptr->level < 30 && (q_ptr->bpval > 0)) {
         s_printf("HACK-SPEEDREQ (Tele): %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, q_ptr->bpval, q_ptr->level);
         determine_level_req(70, q_ptr);
         s_printf("%d.\n", q_ptr->level);
