@@ -708,6 +708,9 @@ Change list for PernMangband
 - Shop bugfix.
 - Mimic code moved, and fix applied to prevent bad townie forms.
 
+09/02/2002 (Evileye)
+- Unstaticer/anti scum changes.
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)

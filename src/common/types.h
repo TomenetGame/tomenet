@@ -1064,6 +1064,7 @@ struct quest
 typedef struct dun_level dun_level;
 struct dun_level{
 	int ondepth;
+	time_t lastused;
 	byte up_x,up_y;
 	byte dn_x,dn_y;
 	byte rn_x,rn_y;
@@ -1110,6 +1111,7 @@ struct wilderness_type
 	struct dungeon_type *tower;
 	struct dungeon_type *dungeon;
 	u16b ondepth;
+	time_t lastused;
 	cave_type **cave;
 	byte up_x, up_y;
 	byte dn_x, dn_y;

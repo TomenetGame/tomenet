@@ -2396,8 +2396,6 @@ void move_player(int Ind, int dir, int do_pickup)
 			
 			/* A player has left this depth */
 			new_players_on_depth(wpos,-1,TRUE);
-			if (players_on_depth(wpos)<0)
-				new_players_on_depth(wpos,0,FALSE);
 
 			p_ptr->wpos.wx = nwpos.wx;
 			p_ptr->wpos.wy = nwpos.wy;

@@ -2251,9 +2251,6 @@ static void process_player_end(int Ind)
 				/* One less person here */
 				new_players_on_depth(&p_ptr->wpos,-1,TRUE);
 				
-				/* paranoia, required for adding old wilderness saves to new servers */
-				if (players_on_depth(&p_ptr->wpos) < 0) new_players_on_depth(&p_ptr->wpos,0,FALSE);
-
 				/* Remove the player */
 				zcave[p_ptr->py][p_ptr->px].m_idx = 0;
 				/* Show everyone that he's left */
@@ -2296,7 +2293,27 @@ static void process_player_end(int Ind)
 	if (p_ptr->window) window_stuff(Ind);
 }
 
-void do_unstat(struct worldpos *wpos)
+static bool stale_level(struct worldpos *wpos){
+	time_t now;
+	now=time(&now);
+	if(wpos->wz){
+		struct dungeon_type *d_ptr;
+		struct dun_level *l_ptr;
+		d_ptr=getdungeon(wpos);
+		if(!d_ptr) return(FALSE);
+		l_ptr=&d_ptr->level[ABS(wpos->wz)-1];
+		if(now-l_ptr->lastused > 300){
+			return(TRUE);
+		}
+	}
+	else{
+		if(now-wild_info[wpos->wy][wpos->wx].lastused > 300)
+			return(TRUE);
+	}
+	return(FALSE);
+}
+
+static void do_unstat(struct worldpos *wpos)
 {
 	int num_on_depth = 0;
 	int j;
@@ -2308,7 +2325,7 @@ void do_unstat(struct worldpos *wpos)
 		if (inarea(&p_ptr->wpos, wpos)) num_on_depth++;
 	}
 	// If this level is static and no one is actually on it
-	if (!num_on_depth)
+	if (!num_on_depth && stale_level(wpos))
 	{
 		/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
 		if (( getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level))
@@ -2358,6 +2375,72 @@ void scan_houses()
 	s_printf("Finished house maintenance\n");
 }
 
+/* If the level unstaticer is not disabled, try to.
+ * Now it's done every 60*fps, so better raise the
+ * rate as such.	- Jir -
+ */
+/*
+ * Deallocate all non static levels. (evileye)
+ */
+static void purge_old(){
+	int x, y, i;
+
+//	if (cfg.level_unstatic_chance > 0)
+	{
+		struct worldpos twpos;
+		twpos.wz=0;
+		for(y=0;y<MAX_WILD_Y;y++)
+		{
+			twpos.wy=y;
+			for(x=0;x<MAX_WILD_X;x++)
+			{
+				struct wilderness_type *w_ptr;
+				struct dungeon_type *d_ptr;
+				twpos.wx=x;
+				w_ptr=&wild_info[twpos.wy][twpos.wx];
+
+				if (cfg.level_unstatic_chance > 0 &&
+					players_on_depth(&twpos))
+					do_unstat(&twpos);
+
+				if(!players_on_depth(&twpos) && !istown(&twpos) && getcave(&twpos))
+					dealloc_dungeon_level_maybe(&twpos);
+
+				if(w_ptr->flags & WILD_F_UP)
+				{
+					d_ptr=w_ptr->tower;
+					for(i=1;i<=d_ptr->maxdepth;i++)
+					{
+						twpos.wz=i;
+						if (cfg.level_unstatic_chance > 0 &&
+							players_on_depth(&twpos))
+						do_unstat(&twpos);
+						
+						if(!players_on_depth(&twpos) && getcave(&twpos))
+							dealloc_dungeon_level_maybe(&twpos);
+					}
+				}
+				if(w_ptr->flags & WILD_F_DOWN)
+				{
+					d_ptr=w_ptr->dungeon;
+					for(i=1;i<=d_ptr->maxdepth;i++)
+					{
+						twpos.wz=-i;
+						if (cfg.level_unstatic_chance > 0 &&
+							players_on_depth(&twpos))
+							do_unstat(&twpos);
+
+						if(!players_on_depth(&twpos) && getcave(&twpos))
+							dealloc_dungeon_level_maybe(&twpos);
+					}
+				}
+				twpos.wz=0;
+			}
+		}
+	}
+}
+
+
 /*
  * This function handles "global" things such as the stores,
  * day/night in the town, etc.
@@ -2368,7 +2451,7 @@ void scan_houses()
 */
 static void process_various(void)
 {
-	int i, j, y, x, num_on_depth;
+	int i, j;
 	cave_type *c_ptr;
 	player_type *p_ptr;
 
@@ -2394,6 +2477,10 @@ static void process_various(void)
 		scan_players();
 		scan_houses();
 		s_printf("Finished maintenance\n");
+	}
+
+	if (!(turn % (cfg.fps * 10))){
+		purge_old();
 	}
 
 	/* Handle certain things once a minute */
@@ -2506,100 +2593,6 @@ static void process_various(void)
 			}	    			
 		}
 #endif
-
-
-		/* If the level unstaticer is not disabled, try to.
-		 * Now it's done every 60*fps, so better raise the
-		 * rate as such.	- Jir -
-		 */
-		
-//		if (cfg.level_unstatic_chance > 0)
-		{
-#ifdef NEW_DUNGEON
-			struct worldpos twpos;
-			twpos.wz=0;
-			for(y=0;y<MAX_WILD_Y;y++)
-			{
-				twpos.wy=y;
-				for(x=0;x<MAX_WILD_X;x++)
-				{
-					struct wilderness_type *w_ptr;
-					struct dungeon_type *d_ptr;
-					twpos.wx=x;
-					w_ptr=&wild_info[twpos.wy][twpos.wx];
-
-					if (cfg.level_unstatic_chance > 0 &&
-						players_on_depth(&twpos))
-						do_unstat(&twpos);
-
-					if(!players_on_depth(&twpos) && !istown(&twpos) && getcave(&twpos))
-						dealloc_dungeon_level_maybe(&twpos);
-
-					if(w_ptr->flags & WILD_F_UP)
-					{
-						d_ptr=w_ptr->tower;
-						for(i=1;i<=d_ptr->maxdepth;i++)
-						{
-							twpos.wz=i;
-							if (cfg.level_unstatic_chance > 0 &&
-								players_on_depth(&twpos))
-								do_unstat(&twpos);
-							
-							if(!players_on_depth(&twpos) && getcave(&twpos))
-								dealloc_dungeon_level_maybe(&twpos);
-						}
-					}
-					if(w_ptr->flags & WILD_F_DOWN)
-					{
-						d_ptr=w_ptr->dungeon;
-						for(i=1;i<=d_ptr->maxdepth;i++)
-						{
-							twpos.wz=-i;
-							if (cfg.level_unstatic_chance > 0 &&
-								players_on_depth(&twpos))
-								do_unstat(&twpos);
-
-							if(!players_on_depth(&twpos) && getcave(&twpos))
-								dealloc_dungeon_level_maybe(&twpos);
-						}
-					}
-					twpos.wz=0;
-				}
-			}
-#else
-			// For each dungeon level
-			for (i = 1; i < MAX_DEPTH; i++)
-			{
-				// If this depth is static
-				if (players_on_depth[i])
-				{
-					num_on_depth = 0;
-					// Count the number of players actually in game on this depth
-					for (j = 1; j < NumPlayers + 1; j++)
-					{
-						p_ptr = Players[j];
-						if (p_ptr->dun_depth == i) num_on_depth++;
-					}
-					// If this level is static and no one is actually on it
-					if (!num_on_depth)
-					{
-						/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
-						if (( i < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level))
-						{
-							players_on_depth[i] = 0;
-						}
-						// random chance of the level unstaticing
-						// the chance is one in (base_chance * depth)/250 feet.
-						if (!rand_int(((cfg.level_unstatic_chance * (i+5))/5)-1))
-						{
-							// unstatic the level
-							players_on_depth[i] = 0;
-						}
-					}
-				}
-			}
-#endif
-		}
 	}
 
 #if 0

@@ -634,8 +634,6 @@ void teleport_player_level(int Ind)
 
 	/* One less player here */
 	new_players_on_depth(wpos,-1,TRUE);
-	/* Paranoia, required for merging old saves with new wilderness */
-	if (players_on_depth(wpos)< 0) new_players_on_depth(wpos,0,FALSE);
 
 	/* Remove the player */
 	zcave[p_ptr->py][p_ptr->px].m_idx = 0;

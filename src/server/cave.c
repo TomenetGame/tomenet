@@ -194,19 +194,33 @@ int wild_idx(worldpos *wpos)
 void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 {
 	struct wilderness_type *w_ptr;
+	time_t now;
+
+	now=time(&now);
+
 	w_ptr=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz==0)
 	{
 		w_ptr->ondepth=(inc?w_ptr->ondepth+value:value);
+		if(w_ptr->ondepth < 0) w_ptr->ondepth=0;
+		if(!w_ptr->ondepth) w_ptr->lastused=0;
+		if(value>0)
+			w_ptr->lastused=now;
 	}
 	else
 	{
 		struct dungeon_type *d_ptr;
+		struct dun_level *l_ptr;
 		if(wpos->wz>0)
 			d_ptr=wild_info[wpos->wy][wpos->wx].tower;
 		else
 			d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
-		d_ptr->level[ABS(wpos->wz)-1].ondepth=(inc?d_ptr->level[ABS(wpos->wz)-1].ondepth+value:value);
+		l_ptr=&d_ptr->level[ABS(wpos->wz)-1];
+
+		l_ptr->ondepth=(inc?l_ptr->ondepth+value:value);
+		if(l_ptr->ondepth < 0) l_ptr->ondepth=0;
+		if(!l_ptr->ondepth) l_ptr->lastused=0;
+		if(value>0) l_ptr->lastused=now;
 	}
 }
 
