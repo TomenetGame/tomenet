@@ -89,6 +89,8 @@ pern_dofile(Ind, "s_earth.lua")
 pern_dofile(Ind, "s_convey.lua")
 pern_dofile(Ind, "s_divin.lua")
 pern_dofile(Ind, "s_tempo.lua")
+pern_dofile(Ind, "s_meta.lua")
+pern_dofile(Ind, "s_nature.lua")
 
 -- Create the crystal of mana
 school_book[0] = {
@@ -120,58 +122,9 @@ school_book[5] = {
         DISARM, BLINK, TELEPORT, TELEAWAY, RECALL,
 }
 
--- Create the book of Knowledge
-school_book[7] = {
-        SENSEMONSTERS, SENSEHIDDEN, REVEALWAYS, IDENTIFY, VISION, STARIDENTIFY,
-}
-
--- Create the book of the Time
-school_book[8] = {
-        MAGELOCK, SLOWMONSTER, ESSENSESPEED, BANISHMENT,
-}
-
--- Create the book of beginner's cantrip
-school_book[50] = {
-        MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK, SENSEMONSTERS, SENSEHIDDEN,
-}
-
-
-
-
---[[
--- Create the crystal of mana
-school_book[0] = {
-	MANATHRUST, DELCURSES, RESISTS, MANASHIELD,
-}
-
--- The book of the eternal flame
-school_book[1] = {
-	GLOBELIGHT, FIREGOLEM, FIREFLASH, FIREWALL, FIERYAURA,
-}
-
--- The book of the blowing winds
-school_book[2] = {
-        NOXIOUSCLOUD, POISONBLOOD, INVISIBILITY, AIRWINGS, THUNDERSTORM,
-}
-
--- The book of the impenetrable earth
-school_book[3] = {
-        STONESKIN, DIG, STONEPRISON, SHAKE, STRIKE,
-}
-
--- The book of the unstopable wave
-school_book[4] = {
-        ENTPOTION, TIDALWAVE, ICESTORM,
-}
-
--- Create the book of translocation
-school_book[5] = {
-        DISARM, BLINK, TELEPORT, TELEAWAY, RECALL,
-}
-
 -- Create the book of the tree
 school_book[6] = {
-        GROWTREE, HEALING, RECOVERY, REGENERATION, SUMMONANNIMAL,
+        GROWTREE, HEALING, RECOVERY, REGENERATION,
 }
 
 -- Create the book of Knowledge
@@ -186,8 +139,17 @@ school_book[8] = {
 
 -- Create the book of meta spells
 school_book[9] = {
-        RECHARGE, DISPERSEMAGIC, SPELLBINDER,
+        RECHARGE, DISPERSEMAGIC,
 }
+
+-- Create the book of beginner's cantrip
+school_book[50] = {
+        MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK, SENSEMONSTERS, SENSEHIDDEN,
+}
+
+
+
+--[[
 
 -- Create the book of the mind
 school_book[10] = {

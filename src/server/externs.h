@@ -1011,6 +1011,7 @@ extern void teleport_to_player(int Ind, int m_idx);
 
 
 /* spells2.c */
+extern void grow_trees(int Ind, int rad);
 extern bool heal_insanity(int Ind, int val);
 extern void summon_cyber(int Ind);
 extern void golem_creation(int Ind, int max);

@@ -38,6 +38,31 @@
 #define RESIST_GENO 250
 
 /*
+ * Grow trees
+ */
+void grow_trees(int Ind, int rad)
+{
+	player_type *p_ptr = Players[Ind];
+	int a, i, j;
+
+	for (a = 0; a < rad * rad + 11; a++)
+        {
+                cave_type **zcave = getcave(&p_ptr->wpos);
+
+		i = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
+		j = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
+
+		if (!in_bounds2(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i)) continue;
+		if (distance(p_ptr->py, p_ptr->px, p_ptr->py + j, p_ptr->px + i) > rad) continue;
+
+		if (cave_clean_bold(zcave, p_ptr->py + j, p_ptr->px + i))
+		{
+			cave_set_feat(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, FEAT_TREES);
+		}
+	}
+}
+
+/*
  * 'Trap detection' is way too powerful traps and 'searching' ability
  * are almost meanless; if this flag is defined, the spell can only
  * detect some of the traps depending on the player level.
