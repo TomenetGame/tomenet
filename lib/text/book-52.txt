@@ -5,7 +5,8 @@
 
 
 This gazette (Parchment) contains the latest news the administrator should
-tell you, so please check it sometimes.
+tell you, so please check it sometimes. This is not a TomeNET manual.
+You can find the manual at http://www.c-blue.de/rogue/TomeNET-Guide.txt.
 
 ----------------------------------------------------------------
 

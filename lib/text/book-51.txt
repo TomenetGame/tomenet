@@ -3,7 +3,7 @@
                    \------------------------------------/
 
 Alas, I regret you should read this parchment, which basically means that you
-are dead;
+are dead; (Also read (3.10) in the TomeNET Guide for more information.)
 
 But don't be too pessimistic.  As you have already noticed, the game doesn't
 come to end by simply dying - you now are a ghost.
@@ -14,18 +14,18 @@ parchment).. the stuffs you had with you while alive is left on the site of
 your death.
 
 You can freely pass through walls, floors and ceilings; so hide inside a wall.
-Press 'U' (or '\U') to use ghostly powers.
+Press 'U' (or '\U') to use ghostly powers (currently not available).
 
 
 Well, there's roughly 3 ways a ghost might wish to take:
 
 1. Leave your treasures, just go back to the town and visit the temple (store
-   '4').  The temple priest will resurrect you to the body.
-   If you are less than level 10, it is the best way parhaps.
-   To go back to the surface, just activate this parchment.
+   '4').  The temple priest will resurrect you to the body and give you some
+   money. If you are less than level 10, it is the best way parhaps.
 
 2. If you cannot give up your items, try calling for help.  Living players can
-   resurrect you by reading 'Scroll of Life' adjacant to you.
+   resurrect you by reading 'Scroll of Life' adjacant to you or cast the
+   priest spell 'Resurrection'.
    Behold, you're "fading" while waiting for a help to come!
 
 3. Simply type 'Qy@' and start over with a brand-new character.
@@ -33,8 +33,8 @@ Well, there's roughly 3 ways a ghost might wish to take:
    Kyrie Eleison.
 
 
-When you're resurrected, you'll lose 40% of your experience points (no matter
-how you've resurrected).
+When you're resurrected, you'll lose 40% of your experience points (or slightly
+less if a fellow player resurrected you by the priest spell 'Resurrection').
 
 
 Better luck next time...
