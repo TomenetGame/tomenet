@@ -3026,6 +3026,11 @@ static void do_slash_cmd(int Ind, char *message)
 				load_server_cfg();
 				return;
 			}
+			/* Admin wishing :)
+			 * TODO: better parser like
+			 * /wish 21 8 a117 d40
+			 * for Aule {40% off}
+			 */
 			else if (prefix(message, "/wish"))
 			{
 				object_type	forge;

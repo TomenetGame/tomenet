@@ -159,11 +159,13 @@ Note: {worldpos} is interpreted in the following ways.
     Creates specified items and put them in your inventory.
     /wish (item-id)    *** NOT RECOMMENDED! ***
     /wish (tval) (sval) 
-    /wish (tval) (sval) (name1) 
+    /wish (tval) (sval) (discount) 
+    /wish (tval) (sval) (discount) (name1) 
     name1 is ID of an artifact. If name1 is less than zero, ego item will be
     generated instead. If 0, it'll be randarts.
+    (You cannot omit (discount) when wishing for arts/ego.)
     eg. '/wish 242' or '/wish 75 37' for 99 potions of healing.
-        '/wish 23 30 -187' for 'Stormbringer'.
+        '/wish 23 30 0 -187' for 'Stormbringer'.
 
 
 [LUA scripts]
