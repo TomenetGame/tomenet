@@ -79,7 +79,7 @@ DISPERSEMAGIC = add_spell
 	                        set_hero(Ind, 0)
 	                        set_shero(Ind, 0)
                                 set_blessed(Ind, 0)
-                                set_shield(Ind, 0)
+                                set_shield(Ind, 0, 0, 0, 0, 0)
                                 set_afraid(Ind, 0)
                         end
 	end,

@@ -83,7 +83,7 @@ void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int lev,
 
 		if (s_info[i].father != father) continue;
 		if (p_ptr->s_info[i].hidden) continue;
-                if ((!p_ptr->s_info[i].value) && (!p_ptr->s_info[i].mod)) continue;
+//                if ((!p_ptr->s_info[i].value) && (!p_ptr->s_info[i].mod)) continue;
 
 		table[*idx][0] = i;
 		table[*idx][1] = lev;
