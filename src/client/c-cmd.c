@@ -1466,7 +1466,8 @@ void cmd_party(void)
 				Send_guild(GUILD_DELETE, buf);
 		}
 		else if (i == 'a'){
-			Send_guild(GUILD_REMOVE_ME, "");
+			if (get_check("Leave the guild ? "))
+				Send_guild(GUILD_REMOVE_ME, "");
 		}
 
 		/* Oops */
