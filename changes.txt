@@ -581,3 +581,6 @@ Change list for PernMangband
 - Insanity/Eldritch-horror(partially) implemented.
 - Original monsters/mego/items/egos/artifacts.
 - Drain life/mana
+
+2/1/2001 (Jir)
+- some fixes on win32-client (thx Yakina!)

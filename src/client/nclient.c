@@ -1545,7 +1545,7 @@ int Receive_message(void)
 
 	sprintf(search, "%s] ", nick);
 
-	if (strstr(buf, search) != 0)
+	if (strstr(buf, search) != 0 && *talk_pend)
 	{
 		ptr = strstr(talk_pend, strchr(buf, ']') + 2);
 		ptr = strtok(ptr, "\t");

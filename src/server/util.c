@@ -3306,7 +3306,13 @@ void player_talk_aux(int Ind, cptr message)
 							msg_format(Ind, "Artifact %d is now \377runfindable\377w.", k);
 						}
 					}
-					else 
+					else if (tk > 0 && strchr(token[1],'*'))
+					{
+						for (i = 0; i < MAX_A_IDX ; i++)
+							a_info[i].cur_num = 0;
+							msg_format(Ind, "All the artifacts are \377rfindable\377w!", k);
+					}
+					else
 					{
 						msg_print(Ind, "Usage: /artifact No.");
 					}
@@ -3396,8 +3402,20 @@ void player_talk_aux(int Ind, cptr message)
 //					if (token[3])
 					if (tk > 2)
 					{
+						int nom = atoi(token[3]);
 						o_ptr->number = 1;
-						o_ptr->name1 = atoi(token[3]);
+
+						if (nom > 0) o_ptr->name1 = nom;
+						else
+						{
+							/* It's ego or randarts */
+							if (nom) o_ptr->name2 = 0 - nom;
+							else o_ptr->name1 = ART_RANDART;
+
+							/* Piece together a 32-bit random seed */
+							o_ptr->name3 = rand_int(0xFFFF) << 16;
+							o_ptr->name3 += rand_int(0xFFFF);
+						}
 					}
 					else
 					{
