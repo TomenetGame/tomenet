@@ -269,7 +269,7 @@ static int Init_setup(void)
 	Setup.frames_per_second = cfg.fps;
 	Setup.max_race = MAX_RACES;
 	Setup.max_class = MAX_CLASS;
-	Setup.motd_len = 23 * 80;
+	Setup.motd_len = 23 * 120; /*80;*/	/* colour codes extra */
 	Setup.setup_size = sizeof(setup_t);
 
 	path_build(buf, 1024, ANGBAND_DIR_TEXT, "news.txt");
@@ -282,7 +282,8 @@ static int Init_setup(void)
 		/* Dump the file into the buffer */
 		while (0 == my_fgets(fp, buf, 1024, TRUE) && n < 23)
 		{
-			strncpy(&Setup.motd[n * 80], buf, 80);
+			/* strncpy(&Setup.motd[n * 80], buf, 80); */
+			strncpy(&Setup.motd[n * 120], buf, 120);
 			n++;
 		}
 

@@ -971,7 +971,8 @@ void show_motd(void)
 	for (i = 0; i < 23; i++)
 	{
 		/* Show each line */
-		Term_putstr(0, i, -1, TERM_WHITE, &Setup.motd[i * 80]);
+		/* Term_putstr(0, i, -1, TERM_WHITE, &Setup.motd[i * 80]); */
+		Term_putstr(0, i, -1, TERM_WHITE, &Setup.motd[i * 120]);
 	}
 
 	/* Show it */

@@ -1063,7 +1063,8 @@ struct setup_t
 	byte max_class;
 	int motd_len;
 	int setup_size;
-	char motd[80 * 23];
+	/* char motd[80 * 23]; */
+	char motd[120 * 23];
 };
 
 /*
