@@ -1,0 +1,111 @@
+/* File: z_pack.pkg */
+
+/*
+ * Purpose: Lua interface defitions for z-*.c
+ * To be processed by tolua to generate C source code.
+ */
+
+$#include "angband.h"
+$#include "z-rand.h"
+
+typedef char* cptr;
+typedef int errr;
+typedef unsigned char bool;
+typedef unsigned char byte;
+typedef signed short s16b;
+typedef unsigned short u16b;
+typedef signed int s32b;
+typedef unsigned int u32b;
+
+//#define TERM_XTRA_EVENT 1       /* Process some pending events */
+//#define TERM_XTRA_FLUSH 2       /* Flush all pending events */
+//#define TERM_XTRA_CLEAR 3       /* Clear the entire window */
+//#define TERM_XTRA_SHAPE 4       /* Set cursor shape (optional) */
+//#define TERM_XTRA_FROSH 5       /* Flush one row (optional) */
+//#define TERM_XTRA_FRESH 6       /* Flush all rows (optional) */
+//#define TERM_XTRA_NOISE 7       /* Make a noise (optional) */
+//#define TERM_XTRA_SOUND 8       /* Make a sound (optional) */
+//#define TERM_XTRA_BORED 9       /* Handle stuff when bored (optional) */
+//#define TERM_XTRA_REACT 10      /* React to global changes (optional) */
+//#define TERM_XTRA_ALIVE 11      /* Change the "hard" level (optional) */
+//#define TERM_XTRA_LEVEL 12      /* Change the "soft" level (optional) */
+//#define TERM_XTRA_DELAY 13      /* Delay some milliseconds (optional) */
+
+//extern errr Term_xtra(int n, int v);
+//extern errr Term_set_cursor(int v);
+//extern errr Term_gotoxy(int x, int y);
+//extern errr Term_putch(int x, int y, byte a, char c);
+//extern errr Term_putstr(int x, int y, int n, byte a, cptr s);
+//extern errr Term_clear(void);
+//extern errr Term_redraw(void);
+//extern errr Term_redraw_section(int x1, int y1, int x2, int y2);
+
+
+/*
+ * random numbers
+ */
+//$static s32b lua_rand_int(s32b m) {return rand_int(m);}
+
+//static s32b lua_rand_int @ rand_int(s32b m);
+
+/*
+ * Generates a random long integer X where A<=X<=B
+ * The integer X falls along a uniform distribution.
+ * Note: rand_range(0,N-1) == rand_int(N)
+ */
+//$static s32b lua_rand_range(s32b A, s32b B) {return ((A) + (rand_int(1+(B)-(A))));}
+
+//static s32b lua_rand_range @ rand_range(s32b A, s32b B);
+
+/*
+ * Generate a random long integer X where A-D<=X<=A+D
+ * The integer X falls along a uniform distribution.
+ * Note: rand_spread(A,D) == rand_range(A-D,A+D)
+ */
+$static s32b lua_rand_int(s32b m) {return rand_int(m);}
+
+static s32b lua_rand_int @ rand_int(s32b m);
+
+/*
+ * Generates a random long integer X where A<=X<=B
+ * The integer X falls along a uniform distribution.
+ * Note: rand_range(0,N-1) == rand_int(N)
+ */
+$static s32b lua_rand_range(s32b A, s32b B) {return ((A) + (rand_int(1+(B)-(A))));}
+
+static s32b lua_rand_range @ rand_range(s32b A, s32b B);
+
+/*
+ * Generate a random long integer X where A-D<=X<=A+D
+ * The integer X falls along a uniform distribution.
+ * Note: rand_spread(A,D) == rand_range(A-D,A+D)
+ */
+$static s32b lua_rand_spread(s32b A, s32b D) {return ((A) + (rand_int(1+(D)+(D))) - (D));}
+
+static s32b lua_rand_spread @ rand_spread(s32b A, s32b D);
+
+
+/*
+ * Generate a random long integer X where 1<=X<=M
+ * Also, "correctly" handle the case of M<=1
+ */
+$static s32b lua_randint(s32b m) {return rand_int(m) + 1;}
+
+static s32b lua_randint @ randint(s32b m);
+
+
+/*
+ * Evaluate to TRUE "P" percent of the time
+ */
+$static bool lua_magik(s32b P) {return (rand_int(100) < (P));}
+
+static bool lua_magik @ magik(s32b P);
+
+
+/**** Available Variables ****/
+extern bool Rand_quick;
+extern u32b Rand_value;
+	       
+/**** Available Functions ****/
+extern s16b damroll(int num, int sides);
+extern s16b maxroll(int num, int sides);
