@@ -77,7 +77,7 @@ POISONBLOOD = add_spell
         ["fail"] = 	70,
         ["spell"] = 	function()
                        	set_oppose_pois(Ind, randint(30) + 25 + get_level(Ind, POISONBLOOD, 25))
-                      	if get_level(Ind, POISONBLOOD, 50) >= 15 then set_poison(Ind, randint(30) + 25 + get_level(Ind, POISONBLOOD, 25)) end
+                      	if get_level(Ind, POISONBLOOD, 50) >= 15 then set_brand(Ind, randint(30) + 25 + get_level(Ind, POISONBLOOD, 25), BRAND_POIS, 10) end
        	end,
 	["info"] = 	function()
 			return "dur "..(25 + get_level(Ind, POISONBLOOD, 25)).."+d30"

@@ -37,7 +37,7 @@ static bool enter_server_name(void)
 /*
  * Choose the character's name
  */
-void enter_password(void)
+static void enter_password(void)
 {
 	char tmp[40];
 
