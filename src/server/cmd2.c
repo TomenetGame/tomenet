@@ -2795,7 +2795,20 @@ void do_cmd_fire(int Ind, int dir)
 	/* Reduce and describe inventory */
 	if (!boomerang)
 	{
-		if (!magic)
+		/* C. Blue - Artefact ammo never runs out (similar to magic arrows:) */
+		if (true_artifact_p(o_ptr))
+		{
+			if (item >= 0)
+			{
+				inven_item_describe(Ind, item);
+				inven_item_optimize(Ind, item);
+			}
+			else
+			{
+				floor_item_optimize(0 - item);
+			}
+		}
+		else if (!magic)
 		{
 			if (item >= 0)
 			{
@@ -2814,7 +2827,9 @@ void do_cmd_fire(int Ind, int dir)
 		else
 			/* Magic Ammo are NOT allowed to be enchanted */
 		{
-			o_ptr->to_h = o_ptr->to_d = o_ptr->name2 = o_ptr->pval = 0;
+			/* C. Blue - Except magic artefact ammo: */
+			if (!true_artifact_p(o_ptr))
+				o_ptr->to_h = o_ptr->to_d = o_ptr->name2 = o_ptr->pval = 0;
 			if (item >= 0)
 			{
 				inven_item_describe(Ind, item);
@@ -3403,7 +3418,8 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 	/* Drop (or break) near that location */
-	if (!magic) drop_near(o_ptr, breakage, wpos, y, x);
+	/* by C. Blue - Now art ammo never drops, since it doesn't run out */
+	if ((!magic) && (!true_artifact_p(o_ptr))) drop_near(o_ptr, breakage, wpos, y, x);
 
 	suppress_message = FALSE;
 }

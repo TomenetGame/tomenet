@@ -2499,7 +2499,7 @@ D:name of 'Elessar' by the people of Gondor because of this.
 N:207:'Evenstar'
 I:40:20:3
 W:50:50:3:35000
-F:HOLD_LIFE | SUST_CON | SUST_WIS | SUST_INT | LITE1 | LIFE | CON | 
+F:HOLD_LIFE | SUST_CON | SUST_WIS | SUST_INT | LITE1 | CON | 
 F:RES_DARK | RES_COLD | RES_NETHER | REGEN | INSTA_ART | 
 F:ACTIVATE
 F:REGEN_MANA

@@ -98,6 +98,7 @@ pern_dofile(Ind, "s_divin.lua")
 pern_dofile(Ind, "s_tempo.lua")
 pern_dofile(Ind, "s_meta.lua")
 pern_dofile(Ind, "s_nature.lua")
+pern_dofile(Ind, "s_mind.lua")
 pern_dofile(Ind, "s_udun.lua")
 
 -- Create the crystal of mana
@@ -150,6 +151,11 @@ school_book[9] = {
         RECHARGE, PROJECT_SPELLS, DISPERSEMAGIC,
 }
 
+-- Create the book of the mind
+school_book[10] = {
+        CONFUSE, STUN,
+}
+
 -- Create the book of hellflame
 school_book[11] = {
         GENOCIDE, WRAITHFORM,
@@ -159,14 +165,3 @@ school_book[11] = {
 school_book[50] = {
         MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK, SENSEMONSTERS, SENSEHIDDEN,
 }
-
-
-
---[[
-
--- Create the book of the mind
-school_book[10] = {
-        CHARM, CONFUSE, ARMOROFFEAR, STUN,
-}
-}
-]]

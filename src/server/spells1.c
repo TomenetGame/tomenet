@@ -2316,7 +2316,7 @@ bool apply_disenchant(int Ind, int mode)
 
 
 	/* Artifacts have 60% chance to resist */
-	if (artifact_p(o_ptr) && (rand_int(100) < 60))
+	if ((artifact_p(o_ptr) && (rand_int(100) < 60)) || (true_artifact_p(o_ptr) && (rand_int(100) < 90)))
 	{
 		/* Message */
 		msg_format(Ind, "Your %s (%c) resist%s disenchantment!",

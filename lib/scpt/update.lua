@@ -14,6 +14,7 @@ __update_table =
 	"scpt/s_tempo.lua",
 	"scpt/s_meta.lua",
 	"scpt/s_nature.lua",
+	"scpt/s_mind.lua",
 	"scpt/s_udun.lua",
 }
 

@@ -2793,6 +2793,9 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 	/* Unenchantable items always fail */
 	if (f5 & TR5_NO_ENCHANT) return (FALSE);
 	
+	/* Artefacts cannot be enchanted. */
+	if (true_artifact_p(o_ptr)) return (FALSE);
+	
 	/* Large piles resist enchantment */
 	prob = o_ptr->number * 100;
 
@@ -3113,6 +3116,9 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	if (enchant(Ind, o_ptr, num_hit, ENCH_TOHIT)) okay = TRUE;
 	if (enchant(Ind, o_ptr, num_dam, ENCH_TODAM)) okay = TRUE;
 	if (enchant(Ind, o_ptr, num_ac, ENCH_TOAC)) okay = TRUE;
+	
+	/* Artefacts cannot be enchanted. */
+	if (true_artifact_p(o_ptr)) msg_format(Ind,"Your %s %s unaffected.",o_name,((o_ptr->number != 1)?"are":"is"));
 
 	/* Failure */
 	if (!okay)

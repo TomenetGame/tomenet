@@ -23,6 +23,7 @@
 # bug.txt should follow the exact same format
 
 05/09/2002
+[O]- Artifact ammo returns just like magci arrows, thanks to Cblue
 [m]- Savefile version independant of game version
 [P]- New spell system nearly done
 [P]- New Meta spell: Project Spell, it is a toggle, cast it and
