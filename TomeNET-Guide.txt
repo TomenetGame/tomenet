@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. August 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. September 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2b, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -263,6 +263,8 @@ P               party screen. Form/disband/modify a party with other players
                 within 7 character levels to each other and on the same
                 dungeon/tower level respectively the same worldmap/wilderness
                 sector. See (6.9) for details.
+                For winners (queens/kings/empresses/emperors) the range is 10
+                levels instead of 7.
 
 /       in general use an item (combines q,r, etc..).
 ~       display further information of your character.
@@ -365,6 +367,11 @@ They all start with a slash '/':
 /ig <player name>
  (/ignore)  ignores all chat messages from the specified player. (Toggle)
             Also silences all paging attempts from that player.
+/ic         ignore all normal chat messages which are neither private messages
+ (/ignchat) nor party messages. ('Private mode' will be displayed after the
+            player's name in the player overview screen which can be invoked
+            by pressing '@', indicating that this player currently cannot read
+            normal chat messages.)
 /dice       Roll some dice, you must specify a number of dice from 1 to 100.
             The result is random and can be seen by other players who stand
             nearby.
@@ -400,8 +407,7 @@ All items:
     Example: You inscribe a 'Scroll of Artifact Creation' this way:  !k!d
     Now you cannot destroy or drop the scroll anymore (keys to destroy and
     to drop an item are 'k' respectively 'd').
-    You can uninscribe an item simply by pressing '{', then pressing the ENTER
-    key (causes an 'empty' inscription, equal to no inscription at all).
+    You can inscribe an item by pressing '{' and uninscribe it with '}'.
 
 The !* inscription:
     '*' is a 'wild card' which means it stands for multiple choices at once.
@@ -1135,7 +1141,7 @@ If two items have the same inscription, for example Potions of Cure Critical
 Wounds @q1 and Potions of Healing @q1, the item which is above the others in
 your inventory is chosen. So in this example you'd first use up all CCW
 potions, then use the healing potions because CCW are located above healing
-potions in your inventory.
+potions in your inventory. You can uninscribe items with the '}' key.
 
 Loading macros automatically:
 -----------------------------
@@ -1152,7 +1158,7 @@ the filename and character-, class- or race-name are exactly the same
 Another option is to dump the macros to a file that is named like your account
 it will be automatically loaded on all chars of that account.
 You can also save macros to <racename>.prf or to <classname>.prf, like
-warrior.prf to have them being auto-loaded on all characters of that class.
+Warrior.prf to have them being auto-loaded on all characters of that class.
 Priority order (latter one overrides prior one):
 
 pref.prf (global for all OS and users on the system)
@@ -3353,7 +3359,7 @@ Blessing/Holy Chant/Holy Prayer
 Rumour          Entertains the audience.
 Life            Resurrects another player's ghost if standing on a directly
                 adjacent field to you when you read it. Does not work inside
-                vaults.
+                vaults, and only over solid ground.
                 Also restores your experience points if they were drained.
 Aggravate Monsters
                 Wakes up all monsters in whose radius of awareness you are.
@@ -3587,7 +3593,7 @@ Gloves      x               x
 Cloaks      x               x
 Soft Armour x               x
 Hard Armour x
-DSM Armour  x
+DSM Armour
 
 Scrolls     x               x                       x
 Parchments  x               x
@@ -4019,6 +4025,9 @@ Note that not every skill is available to every profession (class).
                                 skeletons and rubble on the floor (press 'm').
                                 (You can't pick up rubble; if you want to make
                                 ammunition from it, just stand next to it!)
+                                In order to create ammo, you need to wield the
+                                appropriate ranged weapon before you try:
+                                Bow/crossbow for bones, slings for rubble.
                                 Lets you pseudo-id ranged weapons and
                                 ammunition easier if raised to at least 11.
                                 At 20 the quality of your handmade ammunition
@@ -4152,6 +4161,7 @@ Note that not every skill is available to every profession (class).
                                 rare footwear/jewellry/secret black market).
                                 It's a good idea to wear as many +DEX items
                                 as possible while trying to steal from a shop.
+                                Stealth and invisibility might also help.
     +Dodging                    Ability to evade attacks. Doesn't work well
                                 if you wear heavier armour.
         .Calmness               Ability to not get hindered by enemies.
@@ -5250,6 +5260,8 @@ Here you can..
     levels to each other and on the same dungeon/tower level respectively
     the same worldmap/wilderness sector. A slight experience bonus is applied
     for killing monsters in a party.
+    The range is 10 levels instead of 7 for winners (queens/kings/empresses/
+    emperors).
     Kings/Queens and normal players don't share experience in a party.
     'Anti-magic fields' of fellow party members have greatly reduced effect
     on spell-users in the same party, to allow the party to still be a vital
@@ -5790,6 +5802,7 @@ Teamplay:
  support you with helpful spells, items and knowledge.
  A player in a party gets a share of experience points from the kills of other
  party members if they are within 7 levels to the player.
+ For winners (queens/kings/empresses/emperors) the range is 10 levels.
 
 -Good combinations are the classical meat shields / damage dealers /
  supporters. Keep your teammates in mind and don't teleport out if it meant
@@ -6139,7 +6152,9 @@ Light sources
 
 (*): This mod (+LIFE) is only available if a winner (Queen/King/Empress/
      Emperor) created the artifact or killed the monster which dropped the
-     artifact.
+     artifact. The mod will only have effect on..
+     a) winners (Queens/Kings/Empresses/Emperors)
+     b) players whose current level is at least as high as the item level.
 
 
 General mods:
@@ -6332,6 +6347,7 @@ SOLUTION:   Read the error message displayed in a message box on quitting.
             "That nickname is already in use."
                     Choose a different character name.
             "The server didn't like your nickname, realname or hostname"
+            (or just "Net input error")
                     Player characters are identified by 3 names:
                     -Nickname (character's name)
                     -Realname (account name)
