@@ -2581,10 +2581,10 @@ errr init_x11(void)
 	}
 
 	/* Check environment for "screen" font */
-	fnt_name = getenv("ANGBAND_X11_FONT_SCREEN");
+	fnt_name = getenv("TOMENET_X11_FONT_SCREEN");
 
 	/* Check environment for "base" font */
-	if (!fnt_name) fnt_name = getenv("ANGBAND_X11_FONT");
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
 
 	/* No environment variables, use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_SCREEN;
@@ -2623,10 +2623,10 @@ errr init_x11(void)
 #ifdef GRAPHIC_MIRROR
 
 	/* Check environment for "mirror" font */
-	fnt_name = getenv("ANGBAND_X11_FONT_MIRROR");
+	fnt_name = getenv("TOMENET_X11_FONT_MIRROR");
 
 	/* Check environment for "base" font */
-	if (!fnt_name) fnt_name = getenv("ANGBAND_X11_FONT");
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
 
 	/* No environment variables, use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_MIRROR;
@@ -2641,10 +2641,10 @@ errr init_x11(void)
 #ifdef GRAPHIC_RECALL
 
 	/* Check environment for "recall" font */
-	fnt_name = getenv("ANGBAND_X11_FONT_RECALL");
+	fnt_name = getenv("TOMENET_X11_FONT_RECALL");
 
 	/* Check environment for "base" font */
-	if (!fnt_name) fnt_name = getenv("ANGBAND_X11_FONT");
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
 
 	/* No environment variables, use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_RECALL;
@@ -2659,10 +2659,10 @@ errr init_x11(void)
 #ifdef GRAPHIC_CHOICE
 
 	/* Check environment for "choice" font */
-	fnt_name = getenv("ANGBAND_X11_FONT_CHOICE");
+	fnt_name = getenv("TOMENET_X11_FONT_CHOICE");
 
 	/* Check environment for "base" font */
-	if (!fnt_name) fnt_name = getenv("ANGBAND_X11_FONT");
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
 
 	/* No environment variables, use the default */
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_CHOICE;

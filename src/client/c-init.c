@@ -80,7 +80,7 @@ static void init_stuff(void)
 		cptr tail;
 
 		/* Get the environment variable */
-		tail = getenv("ANGBAND_PATH");
+		tail = getenv("TOMENET_PATH");
 
 		/* Use the angband_path, or a default */
 		strcpy(path, tail ? tail : DEFAULT_PATH);

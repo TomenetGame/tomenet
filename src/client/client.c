@@ -274,9 +274,9 @@ static void default_set(void)
 	}
 #endif
 #ifdef SET_UID
-	temp=getenv("ANGBAND_PLAYER");
+	temp=getenv("TOMENET_PLAYER");
 	if(temp) strcpy(nick, temp); 
-	temp=getenv("ANGBAND_USER");
+	temp=getenv("TOMENET_USER");
 	if(temp) strcpy(real_name, temp); 
 #endif
 }

@@ -42,10 +42,10 @@
 #define GFXB 32
 
 /* Filename of tile image */
-#define MGFX "PMAngband:xtra/gfx/tiles.raw"
+#define MGFX "Tomenet:xtra/gfx/tiles.raw"
 
 /* Filename of tombstone image */
-#define MTOM "PMAngband:xtra/gfx/tomb.raw"
+#define MTOM "Tomenet:xtra/gfx/tomb.raw"
 
 /* KickStart 3.0+ present */
 static int v39 = FALSE;
@@ -231,7 +231,7 @@ static void Term_init_amy(term *t)
 
         td->wptr=OpenWindowTags(&newwindow,
                 WA_Top,( td==&screen ? 12 : 230 ),
-                WA_Title, ( td==&screen ? "Pern Mangband 3.1.3" : td->name ),
+                WA_Title, ( td==&screen ? "Tomenet V4.0.0" : td->name ),
                 TAG_DONE);
 
         td->fw=GfxBase->DefaultFont->tf_XSize;
@@ -857,7 +857,7 @@ int init_amy(void)
              SA_DisplayID, scr_m,
 //           SA_Font, scrattr,
              SA_Type, CUSTOMSCREEN,
-             SA_Title, "PernMAngband Screen",
+             SA_Title, "TomeNET Screen",
              SA_ShowTitle, FALSE,
              SA_Quiet, FALSE,
              SA_Behind, FALSE,
