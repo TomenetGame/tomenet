@@ -1188,6 +1188,10 @@ To find the latest change quickly, search ==== :)
 - '/' can handle mkey-items well now.
 - PKT_RAW_KEY transmits non-defined key to the server directly.
 - '!='(force pickup) inscription only works for the owner.
+[H] allowed teleportation under NO_TELE when died.
+[H] thresholds for screen scrolling changed. (they should be client-option)
+[B] Green/Blue etc. Dragonriders were all red.
+[B] Shattering potions of Healing didn't heal the players.
 
 
 ** [B] stands for Bugfix.
@@ -1248,6 +1252,7 @@ below this line are the unfixed bugs known:
 [B] Yeek seems to receive the best store prices.
 [B] Martial-artist has strange +To RHit/+To RDam display.
 [B] +To RDam is wrong when using =dam
+[B] when logging in, the player can be slightly displaced.
 
 *below are bugs repoorted but not confirmed*
 [B] Macro sticks sometimes
@@ -1451,6 +1456,7 @@ memo and questions:
   + 'hand to(give)' command
   + client option for verbosity;
     msg_print(Ind, importance, "Vlad was here!");
+  + options ('=') should be revised.
 - misc:
   + some measures to 'cheezy' admins (at least some warnings)
   + some places that renders special services(eg. curing, id, *ID*, enchant etc)

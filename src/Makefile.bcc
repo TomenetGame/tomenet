@@ -1,6 +1,7 @@
 ###################################################################
+#  $Id$
 #
-#  makefile.bcc - PernMangband makefile for Borland C++ 5.5 (Win32)
+#  makefile.bcc - ToME-NET makefile for Borland C++ 5.5 (Win32)
 #
 #  This makefile, along with necessary code, was written by
 #  Yakina (yakina@dsb.to).
@@ -13,9 +14,8 @@
 #     to the directory you installed bcc++
 #  4. type 'make -f makefile.bcc' to compile client
 #     ( or 'make -f makefile.bcc server' if you want a server.)
-#  5. copy the binary (mangclient.exe) to the directory of
-#     pernMangband 3.2.1.6
-#     ( available from http://www.pernmangband.net/ )
+#  5. copy the binary (mangclient.exe) to the directory of ToME-NET
+#     (available from http://www.pernmangband.net/ )
 #  6. enjoy!
 #
 ###################################################################

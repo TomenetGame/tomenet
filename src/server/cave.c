@@ -821,6 +821,7 @@ static byte breath_to_attr[32][2] =
 static byte multi_hued_attr(monster_race *r_ptr)
 {
 	byte allowed_attrs[15];
+	byte a;
 
 	int i, j;
 
@@ -828,7 +829,6 @@ static byte multi_hued_attr(monster_race *r_ptr)
 	int breaths = 0;
 	int first_color = 0;
 	int second_color = 0;
-
 
 	/* Monsters with no ranged attacks can be any color */
 	if (!r_ptr->freq_inate) return (get_shimmer_color());
@@ -889,6 +889,19 @@ static byte multi_hued_attr(monster_race *r_ptr)
 		allowed_attrs[stored_colors] = second_color;
 		stored_colors++;
 	}
+
+	/*
+	 * Hack -- Always has the base colour
+	 * (otherwise, Dragonriders are all red)
+	 */
+#if 0
+	if (!m_ptr->special && p_ptr->use_r_gfx) a = p_ptr->r_attr[m_ptr->r_idx];
+	else a = r_ptr->d_attr;
+#endif	// 0
+	a = r_ptr->d_attr;
+
+	allowed_attrs[stored_colors] = a;
+	stored_colors++;
 
 	/* Pick a color at random */
 	return (allowed_attrs[rand_int(stored_colors)]);

@@ -7,7 +7,7 @@
 # You should manually write the total # of rumous (lines - 10).
 
 N:*:Default
-635
+640
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -643,5 +643,12 @@ They say that you cannot master martial arts really without learning to dodge.
 They say that you can't teach an old dog new tricks.
 Lifelong study is nice thing, but start training when lv50 isn't so cool idea.
 Ever cursed a {DMorgul {wdagger?
+Ever blessed a {DMorgul {wdagger?
+They say that cheezing is nice and sweet, till a bolt from the blue kills you.
+They say that the lazy warrior jumped over the doors.
+They say that carrying dozens of Mana pots without immunities is mere suicide.
+They say that carrying dozens of Heal pots without immunities is not so bad.
+They say that it's comedie when a troll decides to be a wizard.
+They say that 
 They say that 
 They say that 

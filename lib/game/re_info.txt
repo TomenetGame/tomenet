@@ -546,6 +546,24 @@ M:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | NO_FEAR
 M:HAS_LITE
 T:MF_ALL
 
+N:41:Serious
+G:*:*
+I:+0:+0d+0:+0:+0:+0
+W:+0:50:+0:+0:B
+F:JOKEANGBAND
+
+N:42:Solemn
+G:*:*
+I:+0:+0d+0:+0:+0:+0
+W:+0:60:+0:+0:B
+F:JOKEANGBAND
+
+N:43:Tolkien-based
+G:*:*
+I:+0:+0d+0:+0:+0:+0
+W:+0:120:+0:+0:B
+H:BASEANGBAND
+
 
 # N:x:ego name
 # G:x:y                 x is the char, y the attribute, * means the normal one

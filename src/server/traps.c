@@ -2510,8 +2510,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			{
 				l = damroll(1, 8);
 
-				/* Inventory damage (Hack - use 'cold' type) */
-				inven_damage(Ind, set_cold_destroy, l);
+				/* Inventory damage */
+				inven_damage(Ind, set_impact_destroy, l);
 
 				//			 take_hit(Ind, dam, name);
 				take_hit(Ind, l, "pit");

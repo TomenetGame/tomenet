@@ -3546,7 +3546,9 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 //			if (potion_smash_effect(0, wpos, y, x, o_ptr->sval))
 			if (k_info[o_ptr->k_idx].tval == TV_POTION)
+				/* This should harm the player too, but for now no way :/ */
 				if (potion_smash_effect(0 - Ind, wpos, y, x, o_ptr->sval))
+//				if (potion_smash_effect(PROJECTOR_POTION, wpos, y, x, o_ptr->sval))
 				{
 #if 0
 					if (cave[y][x].m_idx)

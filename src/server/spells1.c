@@ -553,8 +553,13 @@ void teleport_player(int Ind, int dis)
 	/* Space/Time Anchor */
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-	if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px)) return;
-	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+
+	/* Hack -- Teleportation when died is always allowed */
+	if (!p_ptr->death)
+	{
+		if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px)) return;
+		if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+	}
 	l_ptr = getfloor(wpos);
 
 	/* Verify max distance once here */
@@ -1462,6 +1467,27 @@ static bool hates_cold(object_type *o_ptr)
 
 
 /*
+ * Does a given object (usually) hate impact?
+ */
+static bool hates_impact(object_type *o_ptr)
+{
+	switch (o_ptr->tval)
+	{
+		case TV_POTION:
+		case TV_POTION2:
+		case TV_FLASK:
+		case TV_BOTTLE:
+		case TV_EGG:
+		{
+			return (TRUE);
+		}
+	}
+
+	return (FALSE);
+}
+
+
+/*
  * Does a given object (usually) hate water?
  */
 static bool hates_water(object_type *o_ptr)
@@ -1544,6 +1570,20 @@ int set_cold_destroy(object_type *o_ptr)
 	if (!hates_cold(o_ptr)) return (FALSE);
 			  /* Extract the flags */
 			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	if (f3 & TR3_IGNORE_COLD) return (FALSE);
+	return (TRUE);
+}
+
+/*
+ * Crash things
+ */
+int set_impact_destroy(object_type *o_ptr)
+{
+	    u32b f1, f2, f3, f4, f5, esp;
+	if (!hates_impact(o_ptr)) return (FALSE);
+			  /* Extract the flags */
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	/* Hack -- borrow flag */
 	if (f3 & TR3_IGNORE_COLD) return (FALSE);
 	return (TRUE);
 }
@@ -1648,8 +1688,10 @@ int inven_damage(int Ind, inven_func typ, int perc)
 				/* Potions smash open */
 				if (k_info[o_ptr->k_idx].tval == TV_POTION &&
 					typ != set_water_destroy)	/* MEGAHACK */
+//					&& typ != set_cold_destroy)
 				{
-					(void)potion_smash_effect(0, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
+//					(void)potion_smash_effect(0, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
+					(void)potion_smash_effect(PROJECTOR_POTION, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
 				}
 
 				/* Destroy "amt" items */
@@ -3487,6 +3529,8 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Assume a default death */
 	cptr note_dies = " dies.";
+
+	int plev = 25;
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
 	cave_type *c_ptr;
@@ -3497,8 +3541,13 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* hack -- by trap */
 	quiet = ((Ind <= 0 || who < PROJECTOR_UNUSUAL) ? TRUE : (Ind == c_ptr->m_idx?TRUE:FALSE));
 
-	if(quiet) return(FALSE);
-	p_ptr = Players[Ind];
+//	if(quiet) return(FALSE);
+	if (Ind <= 0 || Ind == c_ptr->m_idx) return(FALSE);
+	if (!quiet)
+	{
+		p_ptr = Players[Ind];
+		plev = p_ptr->lev;
+	}
 #else
 	cave_type *c_ptr = &cave[Depth][y][x];
 	bool quiet = ((Ind <= 0) ? TRUE : (Ind == c_ptr->m_idx?TRUE:FALSE));
@@ -3922,7 +3971,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note = " resists.";
 				dam *= 3; dam /= (randint(6)+6);
 			}
-			else
+			else if (!quiet)
 			  {
 			    int sec = m_ptr->hp, t;
 
@@ -3931,7 +3980,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			    
 			    msg_print(Ind, "You gain some precious seconds of time.");
 			    if (sec > dam) sec = dam;
-			    if (sec > (t = damroll(2, p_ptr->lev))) sec = t;
+			    if (sec > (t = damroll(2, plev))) sec = t;
 
 			    p_ptr->energy += t * level_speed(&p_ptr->wpos) / 100;
 			  }
@@ -4606,7 +4655,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if (r_ptr->flags1 & RF1_UNIQUE)
 			{
-                                if (rand_int(m_ptr->level + 10) > rand_int(p_ptr->lev))
+				if (rand_int(m_ptr->level + 10) > rand_int(plev))
 				{
 					note = " resists.";
 					dam >>= 3;
@@ -4777,7 +4826,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 	/* If another monster did the damage, hurt the monster by hand */
-	if (who > 0)
+	if (who > 0 || who < PROJECTOR_UNUSUAL)
 	{
 		/* Redraw (later) if needed */
 		update_health(c_ptr->m_idx);
@@ -5123,7 +5172,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	else if (who == PROJECTOR_POTION)
 	{
 		/* TODO: add potion name */
-		sprintf(killer, "An evaporated potion");
+		sprintf(killer, "An evaporating potion");
 	}
 #if 0
 	else if (who == PROJECTOR_TERRAIN)
@@ -5174,6 +5223,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
 				/* Players in the same party can't harm each others */
 #if FRIEND_FIRE_CHANCE
+				dam = (dam + 2) / 3;
 				if (!magik(FRIEND_FIRE_CHANCE))
 #endif
 				return FALSE;
@@ -5948,14 +5998,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		/* Default */
-		default:
-
-		/* No damage */
-		dam = 0;
-
-		break;
-
 		/* RF5_BLIND */
 		case GF_BLIND:
 		{
@@ -5973,6 +6015,32 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			break;
 		}
+
+		/* For shattering potions, but maybe work for wands too? */
+		case GF_OLD_HEAL:
+		{
+			if (fuzzy) msg_print(Ind, "You are hit by something invigorating!");
+			(void)hp_player(Ind, dam);
+			dam = 0;
+			break;
+		}
+
+		case GF_OLD_SPEED:
+		{
+			if (fuzzy) msg_print(Ind, "You are hit by something!");
+			(void)set_fast(Ind, p_ptr->fast + randint(5));
+			dam = 0;
+			break;
+		}
+
+
+		/* Default */
+		default:
+
+		/* No damage */
+		dam = 0;
+
+		break;
 
 	}
 

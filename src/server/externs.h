@@ -828,6 +828,7 @@ extern bool project_hook(int Ind, int typ, int dir, int dam, int flg);
 extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg);
 extern int set_all_destroy(object_type *o_ptr);
 extern int set_cold_destroy(object_type *o_ptr);
+extern int set_impact_destroy(object_type *o_ptr);
 extern int set_water_destroy(object_type *o_ptr);
 extern int minus_ac(int Ind);
 extern int inven_damage(int Ind, inven_func typ, int perc);

@@ -44,6 +44,13 @@
 /* Prolly no longer needed, since a player cannot gain exp from books now */
 //#define LEVEL_GAINING_LIMIT
 
+/*
+ * Thresholds for scrolling.	[2,4]
+ * They really should be client-side options.	- Jir -
+ */
+#define	SCROLL_MERGIN_ROW	4
+#define	SCROLL_MERGIN_COL	8
+
 
 /*
  * Set "p_ptr->adrenaline", notice observable changes
@@ -4854,7 +4861,7 @@ void verify_panel(int Ind)
 	int pcol = p_ptr->panel_col;
 
 	/* Scroll screen when 2 grids from top/bottom edge */
-	if ((y < p_ptr->panel_row_min + 2) || (y > p_ptr->panel_row_max - 2))
+	if ((y < p_ptr->panel_row_min + SCROLL_MERGIN_ROW) || (y > p_ptr->panel_row_max - SCROLL_MERGIN_ROW))
 	{
 		prow = ((y - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
 		if (prow > p_ptr->max_panel_rows) prow = p_ptr->max_panel_rows;
@@ -4862,7 +4869,7 @@ void verify_panel(int Ind)
 	}
 
 	/* Scroll screen when 4 grids from left/right edge */
-	if ((x < p_ptr->panel_col_min + 4) || (x > p_ptr->panel_col_max - 4))
+	if ((x < p_ptr->panel_col_min + SCROLL_MERGIN_COL) || (x > p_ptr->panel_col_max - SCROLL_MERGIN_COL))
 	{
 		pcol = ((x - SCREEN_WID / 4) / (SCREEN_WID / 2));
 		if (pcol > p_ptr->max_panel_cols) pcol = p_ptr->max_panel_cols;
