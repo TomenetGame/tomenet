@@ -3545,7 +3545,7 @@ void calc_bonuses(int Ind)
 
 		/* Divide by player blow number instead of
 		monster blow number :
-		d /= n;*/
+		//d /= n;*/
 		//d /= ((p_ptr->num_blows > 0) ? p_ptr->num_blows : 1);
 		/* GWoP: 472, GB: 270, Green DR: 96 */
 		/* Quarter the damage and cap against 150 (unreachable though)
