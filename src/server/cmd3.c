@@ -774,11 +774,11 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 		return;
 	}
 
-	/* Keys cannot be destoryed */
+	/* Keys cannot be destroyed */
 	if (o_ptr->tval == TV_KEY)
 	{
 		/* Message */
-		msg_format(Ind, "You cannot destory %s.", o_name);
+		msg_format(Ind, "You cannot destroy %s.", o_name);
 
 		/* Done */
 		return;

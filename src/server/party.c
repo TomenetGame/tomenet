@@ -66,6 +66,8 @@ bool player_in_party(int party_id, int Ind)
 int guild_create(int Ind, cptr name){
 	player_type *p_ptr=Players[Ind];
 	int index = 0, i;
+	object_type forge, *o_ptr=&forge;
+	char temp[160];
 
 	if(p_ptr->lev<40){
 		msg_print(Ind, "You are not high enough level to start a guild.");
@@ -106,10 +108,21 @@ int guild_create(int Ind, cptr name){
 		return FALSE;
 	}
 	/* broadcast the news */
-	msg_format(0, "A new guild '%s' has been created.", name);
+	sprintf(temp, "A new guild '%s' has been created.", name);
+	msg_broadcast(0, temp);
 
 	p_ptr->au-=4000000;
 	p_ptr->redraw|=PR_GOLD;
+
+	/* make the guild key */
+	invcopy(o_ptr, lookup_kind(TV_KEY, 2));
+	o_ptr->number=1;
+	o_ptr->pval=index;
+	o_ptr->level=1;
+	o_ptr->owner=p_ptr->id;
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	(void)inven_carry(Ind, o_ptr);
 
 	/* Set party name */
 	strcpy(guilds[index].name, name);
@@ -205,6 +218,11 @@ int guild_add(int adder, cptr name){
 	player_type *q_ptr = Players[adder];
 	int guild_id = q_ptr->guild, Ind = 0;
 
+	if(!guild_id){
+		msg_print(adder, "You are not in a guild");
+		return(FALSE);
+	}
+
 	Ind = name_lookup_loose(adder, name, FALSE);
 
 	if (Ind <= 0)
@@ -216,7 +234,7 @@ int guild_add(int adder, cptr name){
 	p_ptr = Players[Ind];
 
 	/* Make sure this isn't an impostor */
-	if (guilds[guild_id].master==q_ptr->id)
+	if (guilds[guild_id].master!=q_ptr->id)
 	{
 		/* Message */
 		msg_print(adder, "Only the guildmaster may add new members.");
@@ -342,11 +360,14 @@ int party_add(int adder, cptr name)
  */
 static void del_guild(int id){
 	int i;
+	char temp[160];
+
 	/* Clear the guild hall */
 	kill_houses(id, OT_GUILD);
 
 	/* Tell everyone */
-	msg_broadcast(0, "\377gThe guild \377r'\377y%s\377r'\377g no longer exists.");
+	sprintf(temp, "\377gThe guild \377r'\377y%s\377r'\377g no longer exists.");
+	msg_broadcast(0, temp);
 	/* Clear the basic info */
 	guilds[id].num=0;	/* it should be zero anyway */
 	strcpy(guilds[id].name,"");
@@ -392,8 +413,13 @@ int guild_remove(int remover, cptr name){
 	player_type *q_ptr = Players[remover];
 	int guild_id = q_ptr->guild, Ind = 0;
 
+	if(!guild_id){
+		msg_print(remover, "You are not in a guild");
+		return FALSE;
+	}
+
 	/* Make sure this is the owner */
-	if (guilds[guild_id].master==q_ptr->id)
+	if (guilds[guild_id].master!=q_ptr->id)
 	{
 		/* Message */
 		msg_print(remover, "You must be the owner to delete someone.");
@@ -409,10 +435,15 @@ int guild_remove(int remover, cptr name){
 		return FALSE;
 	}
 
+	if(Ind==remover){	/* remove oneself from guild - leave */
+		guild_leave(remover);
+		return TRUE;
+	}
+
 	p_ptr = Players[Ind];
 
 	/* Make sure they were in the guild to begin with */
-	if (guild_id==p_ptr->guild)
+	if (guild_id!=p_ptr->guild)
 	{
 		/* Message */
 		msg_print(remover, "You can only delete guild members.");
@@ -547,13 +578,6 @@ void guild_leave(int Ind){
 		return;
 	}
 
-	/* If he's the guildmaster, set master to zero */
-	if (p_ptr->id==guilds[guild_id].master)
-	{
-		guilds[guild_id].master=0;
-		return;
-	}
-
 	/* Lose a member */
 	guilds[guild_id].num--;
 
@@ -563,6 +587,13 @@ void guild_leave(int Ind){
 	/* Inform people */
 	msg_print(Ind, "You have been removed from your guild.");
 	guild_msg_format(guild_id, "%s has left the guild.", p_ptr->name);
+	
+	/* If he's the guildmaster, set master to zero */
+	if (p_ptr->id==guilds[guild_id].master)
+	{
+		guild_msg_format(guild_id, "The guild is currently leaderless");
+		guilds[guild_id].master=0;
+	}
 
 #if 0
 	/* Resend info */

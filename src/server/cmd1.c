@@ -768,6 +768,16 @@ void carry(int Ind, int pickup, int confirm)
 				/* Message */
 				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 
+				/* guild key? */
+				if(o_ptr->tval==TV_KEY && o_ptr->sval==2){
+					if(o_ptr->pval==p_ptr->guild){
+						if(guilds[p_ptr->guild].master!=p_ptr->id){
+							guild_msg_format(p_ptr->guild, "%s is the new guildmaster!", p_ptr->name);
+							guilds[p_ptr->guild].master=p_ptr->id;
+						}
+					}
+				}
+
 				/* Delete original */
 				delete_object(wpos, p_ptr->py, p_ptr->px);
 

@@ -6317,129 +6317,134 @@ G:;:s
 I:51:1:0
 W:0:0:1:10000
 
+N:840:& guild key~
+G:;:G
+I:51:2:0
+W:0:0:1:10000
+
 ##### Extra food #####
-N:840:& Potato~
+N:841:& Potato~
 G:,:u
 I:80:20:1500
 W:0:0:2:1
 
-N:841:& Head~ of Cabbage
+N:842:& Head~ of Cabbage
 G:,:G
 I:80:21:1500
 W:0:0:3:1
 
-N:842:& Carrot~
+N:843:& Carrot~
 G:,:o
 I:80:22:500
 W:0:0:1:2
 
-N:843:& Beet~
+N:844:& Beet~
 G:,:r
 I:80:23:750
 W:0:0:1:2
 
-N:844:& Squash
+N:845:& Squash
 G:,:y
 I:80:24:2000
 W:0:0:3:1
 
-N:845:& Ear~ of Corn
+N:846:& Ear~ of Corn
 G:`:y
 I:80:25:1500
 W:0:0:2:2
 
-N:846:of Telekinesis
+N:847:of Telekinesis
 G:?:y
 I:89:2:0
 W:10:0:30:25
 A:10/3
 P:0:1d1:0:0:0
 
-N:847:of Claisentiance
+N:848:of Claisentiance
 G:?:y
 I:89:3:0
 W:10:0:30:25
 A:10/3
 P:0:1d1:0:0:0
 
-N:848:of Empathy
+N:849:of Empathy
 G:?:y
 I:89:4:0
 W:10:0:30:25
 A:10/3
 P:0:1d1:0:0:0
 
-N:849:& Massive~ Piece of Wood
+N:850:& Massive~ Piece of Wood
 G:*:y
 I:52:0:0
 W:10:0:2500:500
 A:10/40
 P:0:1d1:0:0:0
 
-N:850:& Massive~ Piece of Copper
+N:851:& Massive~ Piece of Copper
 G:*:y
 I:52:1:0
 W:30:0:3000:500
 A:30/50
 P:0:1d1:0:0:0
 
-N:851:& Massive~ Piece of Iron
+N:852:& Massive~ Piece of Iron
 G:*:y
 I:52:2:0
 W:50:0:3500:500
 A:50/60
 P:0:1d1:0:0:0
 
-N:852:& Massive~ Piece of Aluminium
+N:853:& Massive~ Piece of Aluminium
 G:*:y
 I:52:3:0
 W:70:0:3500:500
 A:70/70
 P:0:1d1:0:0:0
 
-N:853:& Massive~ Piece of Silver
+N:854:& Massive~ Piece of Silver
 G:*:y
 I:52:4:0
 W:80:0:4000:500
 A:80/80
 P:0:1d1:0:0:0
 
-N:854:& Massive~ Piece of Gold
+N:855:& Massive~ Piece of Gold
 G:*:y
 I:52:5:0
 W:90:0:4500:500
 A:90/90
 P:0:1d1:0:0:0
 
-N:855:& Massive~ Piece of Mithril
+N:856:& Massive~ Piece of Mithril
 G:*:y
 I:52:6:0
 W:110:0:3500:500
 A:110/110
 P:0:1d1:0:0:0
 
-N:856:& Massive~ Piece of Adamantite
+N:857:& Massive~ Piece of Adamantite
 G:*:y
 I:52:7:0
 W:120:0:6000:500
 A:120/200
 P:0:1d1:0:0:0
 
-N:857:& Golem Arm~
+N:858:& Golem Arm~
 G:*:v
 I:52:8:0
 W:10:0:400:500
 A:10/30
 P:0:1d1:0:0:0
 
-N:858:& Golem Leg~
+N:859:& Golem Leg~
 G:*:v
 I:52:9:0
 W:10:0:400:500
 A:10/30
 P:0:1d1:0:0:0
 
-N:859:& Golem Scroll~ of Attack
+N:860:& Golem Scroll~ of Attack
 G:*:s
 I:52:200:0
 W:10:0:10:500
@@ -6448,7 +6453,7 @@ P:0:1d1:0:0:0
 F:ACTIVATE
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:860:& Golem Scroll~ of Following
+N:861:& Golem Scroll~ of Following
 G:*:s
 I:52:201:0
 W:10:0:10:500
@@ -6457,7 +6462,7 @@ P:0:1d1:0:0:0
 F:ACTIVATE
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:861:& Golem Scroll~ of Guard
+N:862:& Golem Scroll~ of Guard
 G:*:s
 I:52:202:0
 W:15:0:10:500
@@ -6466,7 +6471,7 @@ P:0:1d1:0:0:0
 F:ACTIVATE
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:862:Golem Creation
+N:863:Golem Creation
 G:?:d
 #I:70:23:0
 I:70:55:0
@@ -6475,35 +6480,35 @@ A:10/20
 
 ##### Sorcery Books #####
 
-N:863:[Apprentice Handbook]
+N:864:[Apprentice Handbook]
 G:?:R
 I:92:0:0
 W:5:0:30:25
 A:5/1
 P:0:1d1:0:0:0
 
-N:864:[Mystical Words]
+N:865:[Mystical Words]
 G:?:R
 I:92:1:0
 W:10:0:30:100
 A:10/1
 P:0:1d1:0:0:0
 
-N:865:[Arcane Chants]
+N:866:[Arcane Chants]
 G:?:R
 I:92:2:0
 W:20:0:30:400
 A:20/1
 P:0:1d1:0:0:0
 
-N:866:[Locus of Force]
+N:867:[Locus of Force]
 G:?:R
 I:92:3:0
 W:30:0:30:800
 A:30/1
 P:0:1d1:0:0:0
 
-N:867:[Powerfull Sigils]
+N:868:[Powerfull Sigils]
 G:?:o
 I:92:4:0
 W:40:0:30:10000
@@ -6511,7 +6516,7 @@ A:40/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:868:[Disruptive Forces]
+N:869:[Disruptive Forces]
 G:?:o
 I:92:5:0
 W:50:0:30:15000
@@ -6519,7 +6524,7 @@ A:50/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:869:[Forces of the Mind]
+N:870:[Forces of the Mind]
 G:?:o
 I:92:6:0
 W:60:0:30:40000
@@ -6527,7 +6532,7 @@ A:60/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:870:[Power of Ancient Sorcerors]
+N:871:[Power of Ancient Sorcerors]
 G:?:o
 I:92:7:0
 W:80:0:30:300000
@@ -6537,42 +6542,42 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 ##### Fighting Books #####
 
-N:871:[Bashing for Beginners]
+N:872:[Bashing for Beginners]
 G:?:U
 I:93:0:0
 W:5:0:30:200
 A:5/1
 P:0:1d1:0:0:0
 
-N:872:[Fury and Killing]
+N:873:[Fury and Killing]
 G:?:U
 I:93:1:0
 W:50:0:30:50000
 A:50/1
 P:0:1d1:0:0:0
 
-N:873:[Robbers Handbook]
+N:874:[Robbers Handbook]
 G:?:D
 I:94:0:0
 W:5:0:30:25
 A:5/1
 P:0:1d1:0:0:0
 
-N:874:[Shadows and Illusions]
+N:875:[Shadows and Illusions]
 G:?:D
 I:94:1:0
 W:10:0:30:100
 A:10/1
 P:0:1d1:0:0:0
 
-N:875:[Killing Made Easy]
+N:876:[Killing Made Easy]
 G:?:D
 I:94:2:0
 W:20:0:30:400
 A:20/1
 P:0:1d1:0:0:0
 
-N:876:[Bilbo's Tome of Burglary]
+N:877:[Bilbo's Tome of Burglary]
 G:?:D
 I:94:3:0
 W:50:0:30:15000
@@ -6580,7 +6585,7 @@ A:50/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:877:[Shadows Escapes]
+N:878:[Shadows Escapes]
 G:?:D
 I:94:4:0
 W:60:0:30:40000
@@ -6588,7 +6593,7 @@ A:60/1
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:878:[Great Shadows]
+N:879:[Great Shadows]
 G:?:D
 I:94:5:0
 W:70:0:30:300000
@@ -6596,14 +6601,14 @@ A:70/4
 P:0:1d1:0:0:0
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
-N:879:of Psychometabolism
+N:880:of Psychometabolism
 G:?:y
 I:89:5:0
 W:10:0:30:25
 A:10/3
 P:0:1d1:0:0:0
 
-N:880:House creation
+N:881:House creation
 G:?:d
 #I:70:49:0
 I:70:57:0
@@ -6618,7 +6623,7 @@ A:40/20
 # Scheduled to be ego items.
 # Currently, those items will be generated w/o random bonuses.
 
-N:881:& Orcish Shield~
+N:882:& Orcish Shield~
 G:):D
 I:34:7:0
 W:40:0:100:25000
@@ -6627,7 +6632,7 @@ P:5:1d3:0:0:5
 F:STR | CON
 F:IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC
 
-N:882:& Kolla~
+N:883:& Kolla~
 G:(:G
 #I:35:3:0
 I:35:7:0
@@ -6636,7 +6641,7 @@ A:65/4
 P:3:0d0:0:0:4
 F:STR | CON | DEX | SUST_STR | SUST_CON | SUST_DEX
 
-N:883:& Pair~ of Witan Boots
+N:884:& Pair~ of Witan Boots
 G:]:b
 I:30:8:0
 W:60:0:80:4000
@@ -6644,7 +6649,7 @@ A:60/1
 P:8:1d1:0:0:5
 F:STEALTH | IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC
 
-N:884:Terken
+N:885:Terken
 G:":d
 #I:40:13:0
 I:40:30:0
@@ -6655,7 +6660,7 @@ F:SEE_INVIS | FREE_ACT | SEARCH |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 # Once again, this is out of place, the format of this file needs to be revised.
-N:885:& Set~ of Elven Gloves
+N:886:& Set~ of Elven Gloves
 G:]:g
 I:31:4:0
 W:1:0:40:4000
@@ -6663,7 +6668,7 @@ A:20/16
 P:1:0d0:0:0:0
 F:REGEN
 
-N:886:Speed
+N:887:Speed
 G:":d
 #I:40:14:0
 I:40:31:0
@@ -6675,7 +6680,7 @@ F:SPEED | HIDE_TYPE
 ## Only for Highlander tornaments ##
 
 #N:887:Immortality
-N:887:Pure Cheeze
+N:888:Pure Cheeze
 G:":d
 #I:40:15:1
 I:40:32:1
@@ -6683,7 +6688,7 @@ W:127:0:3:1
 A:127/255
 F:WIS | STR | INT | DEX | CON | CHR | LIFE | INFRA | SPEED | HIDE_TYPE
 
-N:888:the Moon
+N:889:the Moon
 G:":d
 #I:40:9:5
 I:40:33:5
@@ -6694,14 +6699,14 @@ F:SEE_INVIS | INFRA | ACTIVATE |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 # Smeagol drops this in place of =inv. (idea of Mihi)
-N:889:Stealth
+N:890:Stealth
 G:=:d
 I:45:61:0
 W:8:0:2:250
 A:8/10
 F:STEALTH
 
-N:890:Reflection
+N:891:Reflection
 G:":d
 I:40:9:0
 W:60:0:3:30000
@@ -6714,7 +6719,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 # Those pots should *never* be sold in BM..
 
-N:891:Cure Light Insanity
+N:892:Cure Light Insanity
 G:!:d
 I:72:14:0
 #W:5:5:4:15
@@ -6724,7 +6729,7 @@ A:5/4
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
-N:892:Cure Serious Insanity
+N:893:Cure Serious Insanity
 G:!:d
 I:72:15:0
 #W:10:5:4:40
@@ -6734,7 +6739,7 @@ A:10/6
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
-N:893:Cure Critical Insanity
+N:894:Cure Critical Insanity
 G:!:d
 I:72:16:0
 #W:15:5:4:100
@@ -6744,7 +6749,7 @@ A:15/8
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
-N:894:Cure Insanity
+N:895:Cure Insanity
 G:!:d
 I:72:17:0
 #W:25:5:4:30
@@ -6754,7 +6759,7 @@ A:25/12
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
-N:895:Suspicion
+N:896:Suspicion
 G:":d
 I:40:34:-1
 W:20:0:3:5000
@@ -6762,7 +6767,7 @@ A:20/5
 F:INT | WIS | ANTIMAGIC_20
 
 # !!
-N:896:Life Saving
+N:897:Life Saving
 G:":d
 I:40:35:0
 W:40:0:3:400000
@@ -6773,7 +6778,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:AUTO_CURSE | CURSED 
 
 # change the price, and prize changes automatically.
-N:897:Lottery
+N:898:Lottery
 G:?:d
 I:70:59:0
 W:1:0:5:30
