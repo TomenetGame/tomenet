@@ -723,15 +723,21 @@ int do_cmd_activate_skill_aux()
 		else if (which == '@')
                 {
                         char buf[80];
+                        int nb;
 
                         strcpy(buf, "Cast sorcery spell");
                         if (!get_string("Skill action? ", buf, 79))
                                 return FALSE;
 
+                        /* Can we convert to a number? */
+                        nb = atoi(buf) - 1;
+
                         /* Find the skill it is related to */
                         for (i = 1; i < MAX_SKILLS; i++)
                         {
                                 if (s_info[i].action_desc && (!strcmp(buf, s_info[i].action_desc) && get_skill(i)))
+                                        break;
+                                if (i == nb)
                                         break;
                         }
                         if ((i < MAX_SKILLS))

@@ -1709,7 +1709,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
-                                '+', 300,
+                                '+', 600,
                         },
 
                         /* Magic tree */
@@ -1822,7 +1822,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,
                         },
-						/* Health tree */
+                        /* Health tree */
                         {
                                 SKILL_HEALTH,
                                 '+', 1000,
