@@ -1725,7 +1725,7 @@ void set_server_option(char * option, char * value)
 	}
 	else if (!strcmp(option,"DOOR_BUMP_OPEN"))
 	{
-		cfg.door_bump_open = str_to_boolean(value);
+		cfg.door_bump_open = atoi(value);
 	}
 	else if (!strcmp(option,"BASE_UNIQUE_RESPAWN_TIME"))
 	{

@@ -384,6 +384,10 @@
 #define PKILL_KILLABLE	2	/* Can be killed */
 #define PKILL_KILLER	4	/* Can kill */
 
+#define BUMP_OPEN_DOOR	0x01
+#define BUMP_OPEN_HOUSE	0x02
+#define BUMP_OPEN_TRAP	0x04
+
 /*
  * The types of special file perusal.
  */

@@ -2000,24 +2000,39 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 				dir = rand_int(9) + 1;
 		}
 
-		/* Handle the cfg_door_bump_open option */
+		/* Handle the cfg.door_bump_open option */
 		if (cfg.door_bump_open)
 		{
 			/* Get requested grid */
 			c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
 
-			if ((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+			/* This should be cfg.trap_bump_disarm? */
+			if (cfg.door_bump_open & BUMP_OPEN_TRAP &&
+					c_ptr->special.type == CS_TRAPS &&
+				c_ptr->special.sc.trap.found &&
+				!c_ptr->o_idx &&
+				!UNAWARENESS(p_ptr) &&
+				!no_lite(Ind) )
+			{
+				do_cmd_disarm(Ind, dir);
+				return;
+			}
+
+			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
+				(c_ptr->feat >= FEAT_DOOR_HEAD) && 
 				(c_ptr->feat <= FEAT_DOOR_TAIL))
 			{
 				do_cmd_open(Ind, dir);
 				return;
 			}
 			else
-			if ((c_ptr->feat >= FEAT_HOME_HEAD) &&
+			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
+				(c_ptr->feat >= FEAT_HOME_HEAD) &&
 				(c_ptr->feat <= FEAT_HOME_TAIL)) 
 			{
 				if(c_ptr->special.type==DNA_DOOR){ /* orig house failure */
-					if(!access_door(Ind, c_ptr->special.sc.ptr))
+					if(!cfg.door_bump_open & BUMP_OPEN_HOUSE ||
+						!access_door(Ind, c_ptr->special.sc.ptr))
 					{
 						do_cmd_open(Ind, dir);
 						return;

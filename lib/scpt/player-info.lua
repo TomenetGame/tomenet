@@ -130,3 +130,14 @@ local p = players(Ind)
 
 end
 
+-- set specified skill
+function skill(skill, val)
+local p = players(Ind)
+	p.s_info[skill + 1].value = val
+end
+
+-- set antimagic skill (you'll need it :)
+function antimagic(val)
+local p = players(Ind)
+	p.s_info[SKILL_ANTIMAGIC + 1].value = val
+end

@@ -1248,6 +1248,8 @@ To find the latest change quickly, search ==== :)
 - destruction/earthquake erase the traps buried in walls.
 - KILL_DEMON and KILL_UNDEAD implemented (they weren't!)
 - monsters avoid to stand just N/E/S/W to the player
+- player can try to disarm already-found traps by stepping onto it.
+- DOOR_BUMP_OPEN is more detailed now. (better client option, of course)
 [H] Potion of Infravision gives +50ft infravision in place of +10ft
 
 

@@ -2476,7 +2476,8 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
 		bool myhome = FALSE;
 		csfunc[c_ptr->special.type].activate(c_ptr->special.sc.ptr, Ind);
-		if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
+		if (cfg.door_bump_open & BUMP_OPEN_HOUSE &&
+			c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
 		{
 			if(c_ptr->special.type==DNA_DOOR) /* orig house failure */
 			{

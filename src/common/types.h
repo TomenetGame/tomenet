@@ -2185,7 +2185,7 @@ struct server_opts
 	bool secret_dungeon_master;
 	bool anti_arts_horde;
 	bool mage_hp_bonus;
-	bool door_bump_open;
+	char door_bump_open;
 	bool no_ghost;
 	bool maximize;
 	bool kings_etiquette;

@@ -1737,6 +1737,13 @@ static void server_knowledge(int Ind)
 	if (!cfg.maximize)
 		fprintf(fff, "This server is *NOT* maximized!\n");
 
+	if (cfg.door_bump_open & BUMP_OPEN_DOOR)
+		fprintf(fff, "You'll try to open a door by bumping onto it.\n");
+	if (cfg.door_bump_open & BUMP_OPEN_HOUSE)
+		fprintf(fff, "You can 'walk through' your house door.\n");
+	if (cfg.door_bump_open & BUMP_OPEN_TRAP)
+		fprintf(fff, "You'll try to disarm a visible trap by stepping onto it.\n");
+
 	fprintf(fff,"\n");
 
 	if (k=cfg.newbies_cannot_drop)
@@ -2165,6 +2172,47 @@ void use_ability_blade(int Ind)
 }
 
 
+static void do_cmd_refresh(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	int k;
+
+	/* Hack -- fix the inventory count */
+	p_ptr->inven_cnt = 0;
+	for (k = 0; k < INVEN_PACK; k++)
+	{
+		o_ptr = &p_ptr->inventory[k];
+
+		/* Skip empty items */
+		if (!o_ptr->k_idx) continue;
+
+		p_ptr->inven_cnt++;
+	}
+
+	/* Clear the target */
+	p_ptr->target_who = 0;
+
+	/* Update his view, light, bonuses, and torch radius */
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH |
+			PU_DISTANCE | PU_SPELLS | PU_SKILL_INFO | PU_SKILL_MOD);
+
+	/* Recalculate mana */
+	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
+
+	/* Redraw */
+	p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_HISTORY | PR_VARIOUS;
+	p_ptr->redraw |= (PR_HP | PR_GOLD | PR_BASIC | PR_PLUSSES);
+
+	/* Notice */
+	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_SPELL);
+
+	return;
+}
+
 static void do_slash_brief_help(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -2222,6 +2270,7 @@ static void do_slash_cmd(int Ind, char *message)
 		if (colon)
 		{
 			master_script_exec(Ind, colon);
+			do_cmd_refresh(Ind);
 		}
 		else
 		{
@@ -2703,40 +2752,7 @@ static void do_slash_cmd(int Ind, char *message)
 		else if ((prefix(message, "/refresh")) ||
 				prefix(message, "/ref"))
 		{
-			object_type *o_ptr;
-
-			/* Hack -- fix the inventory count */
-			p_ptr->inven_cnt = 0;
-			for (k = 0; k < INVEN_PACK; k++)
-			{
-				o_ptr = &p_ptr->inventory[k];
-
-				/* Skip empty items */
-				if (!o_ptr->k_idx) continue;
-
-				p_ptr->inven_cnt++;
-			}
-
-			/* Clear the target */
-			p_ptr->target_who = 0;
-
-			/* Update his view, light, bonuses, and torch radius */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH |
-					PU_DISTANCE | PU_SPELLS | PU_SKILL_INFO | PU_SKILL_MOD);
-
-			/* Recalculate mana */
-			p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
-
-			/* Redraw */
-			p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_HISTORY | PR_VARIOUS;
-			p_ptr->redraw |= (PR_HP | PR_GOLD | PR_BASIC | PR_PLUSSES);
-
-			/* Notice */
-			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_SPELL);
-
+			do_cmd_refresh(Ind);
 			return;
 		}
 		else if ((prefix(message, "/target")) ||

@@ -145,7 +145,7 @@ server_opts cfg =
 	/* bool */
 	TRUE,TRUE,	// report_to_meta, secret_dungeon_master
 	TRUE,FALSE, // anti_arts_horde, mage_hp_bonus
-	TRUE,FALSE,	// door_bump_open, no_ghost
+	7,FALSE,	// door_bump_open, no_ghost
 	TRUE,TRUE,	// maximize, kings_etiquette
 	FALSE,FALSE,	// public_rfe, auto_purge
 };
