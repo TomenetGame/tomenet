@@ -1982,7 +1982,7 @@ static bool do_cancellation(int Ind, int flags)
 static void do_lottery(int Ind, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
-	int i = k_info[o_ptr->k_idx].cost, j, k = 0, gold;
+	int i = k_info[o_ptr->k_idx].cost, j, k = 0, i_drop = i, gold;
 
 	i -= i * o_ptr->discount / 100;
 
@@ -2013,7 +2013,7 @@ static void do_lottery(int Ind, object_type *o_ptr)
 
 		s_printf("Lottery results: %s won the %d%s prize of %d Au.\n", p_ptr->name, k, p, i);
 
-		if (k < 4 && (p_ptr->au < i / 5))
+		if (k < 4 && (p_ptr->au < i / 3))
 		{
 			msg_broadcast_format(Ind, "\377B%s seems to hit the big time!", p_ptr->name);
 			set_confused(Ind, p_ptr->confused + rand_int(10) + 10);
@@ -2023,16 +2023,26 @@ static void do_lottery(int Ind, object_type *o_ptr)
 		else msg_format(Ind, "\377BYou won the %d%s prize.", k, p);
 
 		gold = i;
+		
+		/* Invert it again for following calcs (#else branch below) */
+		k = LOTTERY_MAX_PRIZE + 1 - k;
+		i_drop *= 2;
+		for (j = 0; j < k; j++) {
+			i_drop *= 3;
+		}
 
 		while (gold > 0)
 		{
 			object_type forge, *j_ptr = &forge;
 			int drop;
 
+#if 0 /*Too many piles*/
 			drop = (i > 1000) ?
 					randint(i / 10 / (LOTTERY_MAX_PRIZE * LOTTERY_MAX_PRIZE
 							+ 1 - k * k)) * 10 : i;
-
+#else
+			drop = i_drop;
+#endif
 			if (drop > gold) drop = gold;
 
 			/* Wipe the object */
