@@ -18,6 +18,9 @@
 #define CLIENT
 #include "angband.h"
 #include "netclient.h"
+#ifdef AMIGA
+#include <devices/timer.h>
+#endif
 #ifndef DUMB_WIN
 #include <unistd.h>
 #endif
@@ -3082,12 +3085,20 @@ void update_ticks()
 	struct timeval cur_time;
 	int newticks;
 
+#ifdef AMIGA
+	GetSysTime(&cur_time);
+#else
 	gettimeofday(&cur_time, NULL);
+#endif
 
 	// Set the new ticks to the old ticks rounded down to the number of seconds.
 	newticks = ticks-(ticks%10);
 	// Find the new least significant digit of the ticks
+#ifdef AMIGA
+	newticks += cur_time.tv_micro / 100000;
+#else
 	newticks += cur_time.tv_usec / 100000;
+#endif
 
 	// Assume that it has not been more than one second since this function was last called
 	if (newticks < ticks) newticks += 10;

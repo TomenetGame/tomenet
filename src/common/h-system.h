@@ -62,6 +62,10 @@
 # endif
 #endif
 
+#ifdef AMIGA
+# include <pwd.h>
+#endif
+
 #if !defined(MACINTOSH) && !defined(AMIGA) && \
     !defined(ACORN) && !defined(VM)
 # if defined(__TURBOC__) || defined(__WATCOMC__)
@@ -70,7 +74,6 @@
 #  include <memory.h>
 # endif
 #endif
-
 
 #if !defined(NeXT) && !defined(__MWERKS__) && !defined(ACORN)
 # include <fcntl.h>

@@ -66,6 +66,11 @@ static void read_mangrc(void)
 	}
 #endif
 
+#ifdef AMIGA
+        if((GetVar("mang_name",real_name,80,0L))!=-1){
+          strcpy(nick,real_name);
+	}
+#endif
 
 	/* Attempt to open file */
 	if ((config = fopen(config_name, "r")))
@@ -166,6 +171,16 @@ int main(int argc, char **argv)
 		extern errr init_emx(void);
 		if (0 == init_emx()) done = TRUE;
 		if (done) ANGBAND_SYS = "emx";
+	}
+#endif
+
+#ifdef USE_AMY
+	/* Attempt to use the "main-amy.c" support */
+	if (!done)
+	{
+		extern errr init_amy(void);
+		if (0 == init_amy()) done = TRUE;
+		if (done) ANGBAND_SYS = "amy";
 	}
 #endif
 
