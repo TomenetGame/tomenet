@@ -70,7 +70,7 @@ STUN = add_spell
         ["stat"] =      A_WIS,
         ["direction"] = TRUE,
         ["spell"] = 	function(args)
-                        if get_level(Ind, STUN, 50) >= 20 then
+                        if get_level(Ind, STUN, 50) >= 25 then
                                 fire_ball(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 150), 3)
                         else
                                 fire_bolt(Ind, GF_STUN, args.dir, 10 + get_level(Ind, STUN, 150))
@@ -81,7 +81,7 @@ STUN = add_spell
 	end,
         ["desc"] =	{
                         "Tries to manipulate the mind of a monster to stun it",
-                        "At level 20 it turns into a ball",
+                        "At level 25 it turns into a ball",
         }
 }
 

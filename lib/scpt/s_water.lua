@@ -31,7 +31,7 @@ ICESTORM = add_spell
         ["spell"] = 	function()
         		local type
         
-        		if get_level(Ind, ICESTORM, 50) >= 10 then type = GF_ICE
+        		if get_level(Ind, ICESTORM, 50) >= 15 then type = GF_ICE
                         else type = GF_COLD end
 		        fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200), 1 + get_level(Ind, ICESTORM, 3, 0), 20 + get_level(Ind, ICESTORM, 70), EFF_STORM)
 	end,
@@ -40,7 +40,7 @@ ICESTORM = add_spell
 	end,
         ["desc"] =	{
         		"Engulfs you in a storm of roaring cold that strikes your foes",
-                        "At level 10 it turns into shards of ice"
+                        "At level 15 it turns into shards of ice"
         }
 }
 
@@ -70,6 +70,12 @@ ENTPOTION = add_spell
         	                        fire_ball(Ind, GF_HERO_PLAYER, 0, randint(25) + 25 + get_level(Ind, ENTPOTION, 40), player.spell_project)
                 	        end
                         end
+        		if get_level(Ind, ENTPOTION, 50) >= 28 then
+                        	set_shero(Ind, player.hero + randint(15) + 15 + get_level(Ind, ENTPOTION, 40))
+	                        if player.spell_project > 0 then
+        	                        fire_ball(Ind, GF_SHERO_PLAYER, 0, randint(15) + 15 + get_level(Ind, ENTPOTION, 40), player.spell_project)
+                	        end
+                        end
 	end,
 	["info"] = 	function()
         		if get_level(Ind, ENTPOTION, 50) >= 12 then
@@ -82,6 +88,7 @@ ENTPOTION = add_spell
                         "Fills up your stomach",
                         "At level 5 it boldens your heart",
                         "At level 12 it make you heroic",
+			"At level 28 it gives you berserk strength",
                         "***Affected by the Meta spell: Project Spell***",
         }
 }

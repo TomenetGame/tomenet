@@ -10,10 +10,10 @@ GROWTREE = add_spell
         ["fail"] = 	20,
         ["stat"] =      A_WIS,
         ["spell"] = 	function()
-        		grow_trees(Ind, 2 + get_level(Ind, GROWTREE, 7))
+        		grow_trees(Ind, 1 + get_level(Ind, GROWTREE, 5))
 	end,
 	["info"] = 	function()
-			return "rad "..(2 + get_level(Ind, GROWTREE, 7))
+			return "rad "..(1 + get_level(Ind, GROWTREE, 5))
 	end,
         ["desc"] =	{
         		"Makes trees grow extremely quickly around you",
@@ -56,7 +56,7 @@ RECOVERY = add_spell
         ["stat"] =      A_WIS,
         ["spell"] = 	function()
         		set_poisoned(Ind, player.poisoned / 2)
-                        if get_level(Ind, RECOVERY, 50) >= 5 then
+                        if get_level(Ind, RECOVERY, 50) >= 10 then
                         	set_poisoned(Ind, 0)
                                 set_cut(Ind, 0)
 	                        if player.spell_project > 0 then
@@ -64,7 +64,7 @@ RECOVERY = add_spell
         	                        fire_ball(Ind, GF_CUREPOISON_PLAYER, 0, 1, player.spell_project)
                 	        end
                         end
-                        if get_level(Ind, RECOVERY, 50) >= 10 then
+                        if get_level(Ind, RECOVERY, 50) >= 20 then
 				do_res_stat(Ind, A_STR)
 				do_res_stat(Ind, A_CON)
 				do_res_stat(Ind, A_DEX)
@@ -72,7 +72,7 @@ RECOVERY = add_spell
 				do_res_stat(Ind, A_INT)
 				do_res_stat(Ind, A_CHR)
                         end
-                        if get_level(Ind, RECOVERY, 50) >= 15 then
+                        if get_level(Ind, RECOVERY, 50) >= 25 then
                         	restore_level(Ind)
                         end
 	end,
@@ -81,9 +81,9 @@ RECOVERY = add_spell
 	end,
         ["desc"] =	{
         		"Reduces the length of time that you are poisoned",
-                        "At level 5 it cures poison and cuts",
-                        "At level 10 it restores drained stats",
-                        "At level 15 it restores lost experience",
+                        "At level 10 it cures poison and cuts",
+                        "At level 20 it restores drained stats",
+                        "At level 25 it restores lost experience",
                         "***Affected by the Meta spell: Project Spell***",
         }
 }

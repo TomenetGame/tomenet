@@ -12,17 +12,19 @@ NOXIOUSCLOUD = add_spell
         ["spell"] = 	function(args)
 			local type
 
-                        if get_level(Ind, NOXIOUSCLOUD, 50) >= 30 then type = GF_UNBREATH
-                        else type = GF_POIS end
-		        fire_cloud(Ind, type, args.dir, ((1 + get_level(Ind, NOXIOUSCLOUD, 150)/2) + (get_level(Ind,MANATHRUST,50) * 2)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40))
+--                      if get_level(Ind, NOXIOUSCLOUD, 50) >= 30 then type = GF_UNBREATH
+--                      else type = GF_POIS end
+			type = GF_POIS
+--		        fire_cloud(Ind, type, args.dir, ((1 + get_level(Ind, NOXIOUSCLOUD, 150)/2) + (get_level(Ind,MANATHRUST,50) * 2)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40))
+		        fire_cloud(Ind, type, args.dir, (1 + get_level(Ind, NOXIOUSCLOUD, 150)/2), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40))
 	end,
 	["info"] = 	function()
-			return "dam "..((1 + (get_level(Ind, NOXIOUSCLOUD, 150))/2) + (get_level(Ind,MANATHRUST,50) * 2)).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD, 40))
+			return "dam "..(1 + (get_level(Ind, NOXIOUSCLOUD, 150))/2).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD, 40))
 	end,
         ["desc"] =	{
         		"Creates a cloud of poison",
                         "The cloud will persist for some turns, damaging all monsters passing by",
-                        "At level 30 it turns into a thick gas preventing living beings from breathing"
+--                      "At level 30 it turns into a thick gas preventing living beings from breathing"
         }
 }
 
@@ -83,7 +85,7 @@ POISONBLOOD = add_spell
 			return "dur "..(25 + get_level(Ind, POISONBLOOD, 25)).."+d30"
 	end,
         ["desc"] =	{
-                        "Grants resist poison",
+                        "Grants poison resistance",
                         "At level 15 it provides poison branding to wielded weapon"
         }
 }

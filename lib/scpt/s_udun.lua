@@ -69,7 +69,7 @@ GENOCIDE = add_spell
                         local type
 
                         type = 0
-                        if get_level(Ind, GENOCIDE) >= 10 then type = 1 end
+                        if get_level(Ind, GENOCIDE) >= 15 then type = 1 end
                         if type == 0 then
                                 genocide(Ind)
                         else
@@ -85,7 +85,7 @@ GENOCIDE = add_spell
 	end,
         ["desc"] =	{
                         "Genocides all monsters of a race on the level",
-                        "At level 10 it can genocide all monsters near you"
+                        "At level 15 it can genocide all monsters near you"
         }
 }
 
@@ -93,7 +93,7 @@ WRAITHFORM = add_spell
 {
 	["name"] = 	"Wraithform",
         ["school"] = 	{SCHOOL_UDUN},
-        ["level"] = 	30,
+        ["level"] = 	35,
         ["mana"] = 	20,
         ["mana_max"] = 	40,
         ["fail"] = 	20,

@@ -10,10 +10,10 @@ RECHARGE = add_spell
         ["fail"] = 	10,
         ["stat"] =      A_WIS,
         ["spell"] = 	function()
-        		recharge(Ind, 60 + get_level(Ind, RECHARGE, 140))
+        		recharge(Ind, 10 + get_level(Ind, RECHARGE, 140))
 	end,
 	["info"] = 	function()
-                	return "power "..(60 + get_level(Ind, RECHARGE, 140))
+                	return "power "..(10 + get_level(Ind, RECHARGE, 140))
 	end,
         ["desc"] =	{
         		"Taps on the ambient mana to recharge an object's power (charges or mana)",

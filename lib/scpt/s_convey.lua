@@ -33,10 +33,10 @@ DISARM = add_spell
         ["mana_max"] = 	4,
         ["fail"] = 	10,
         ["spell"] = 	function()
-			destroy_doors_touch(Ind, 1 + get_level(Ind, DISARM, 6, 0))
+			destroy_doors_touch(Ind, 1 + get_level(Ind, DISARM, 4, 0))
 	end,
 	["info"] = 	function()
-                	return "rad "..(1 + get_level(Ind, DISARM, 6, 0))
+                	return "rad "..(1 + get_level(Ind, DISARM, 4, 0))
 	end,
         ["desc"] =	{
         		"Destroys doors and traps",
@@ -75,7 +75,7 @@ TELEAWAY = add_spell
         ["mana"] = 	15,
         ["mana_max"] = 	40,
         ["fail"] = 	70,
-        ["direction"] = function () if get_level(Ind, TELEAWAY) >= 20 then return FALSE else return TRUE end end,
+        ["direction"] = function () if get_level(Ind, TELEAWAY) >= 10 then return FALSE else return TRUE end end,
         ["spell"] = 	function(args)
         		if get_level(Ind, TELEAWAY, 50) >= 20 then
                                 project_los(Ind, GF_AWAY_ALL, 100)
@@ -130,7 +130,7 @@ PROBABILITY_TRAVEL = add_spell
         ["mana_max"] = 	50,
         ["fail"] = 	50,
         ["spell"] = 	function()
-                        set_proba_travel(Ind, randint(20) + get_level(Ind, PROBABILITY_TRAVEL, 60))
+                        set_proba_travel(Ind, randint(10) + get_level(Ind, PROBABILITY_TRAVEL, 60))
 	end,
 	["info"] = 	function()
         		return "dur "..get_level(Ind, PROBABILITY_TRAVEL, 60).."+d20"
