@@ -209,7 +209,7 @@ X11BASE = /usr/X11R6
 ##
 #PREFIX = /usr/local
 CFLAGS = -g -pipe -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O3
-LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt 
+LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt
 
 
 ##

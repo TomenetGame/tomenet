@@ -1702,6 +1702,7 @@ static bool wr_savefile_new(int Ind)
 	}
 
 
+#if 0
 	/* Write spell data */
 	wr_u16b(MAX_REALM);
         for (j = 0; j < MAX_REALM; j++)
@@ -1719,6 +1720,7 @@ static bool wr_savefile_new(int Ind)
                         wr_byte(p_ptr->spell_order[j][i]);
                 }
         }
+#endif
 
 
 	/* Write the inventory */

@@ -857,6 +857,7 @@ static void player_wipe(int Ind)
 	p_ptr->food = PY_FOOD_FULL - 1;
 
 
+#if 0
         /* Wipe the spells */
         for (j = 0; j < MAX_REALM; j++)
         {
@@ -865,6 +866,7 @@ static void player_wipe(int Ind)
                 p_ptr->spell_forgotten1[j] = p_ptr->spell_forgotten2[j] = 0L;
                 for (i = 0; i < 64; i++) p_ptr->spell_order[j][i] = 99;
         }
+#endif
 
 	/* Assume no winning game */
 	p_ptr->total_winner = FALSE;

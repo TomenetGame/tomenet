@@ -749,10 +749,12 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "You are looking around very carefully.\n");
 	}
+#if 0
 	if (p_ptr->new_spells)
 	{
 		fprintf(fff, "You can learn some more spells.\n");
 	}
+#endif
 	if (p_ptr->word_recall)
 	{
 		fprintf(fff, "You will soon be recalled.\n");

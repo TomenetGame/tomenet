@@ -1685,6 +1685,7 @@ static errr rd_savefile_new_aux(int Ind)
 	p_ptr->cp_ptr = &class_info[p_ptr->pclass];
 
 
+#if 0
         /* Read the spell infos array */
 	rd_u16b(&tmp16u);
 
@@ -1729,6 +1730,7 @@ static errr rd_savefile_new_aux(int Ind)
 	   }
 
 */	
+#endif
 
 	/* Read the inventory */
 	if (rd_inventory(Ind))

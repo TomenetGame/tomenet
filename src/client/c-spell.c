@@ -809,7 +809,8 @@ u32b get_school_spell(cptr do_what)
 
         tmp = spell;
 //        repeat_push(tmp);
-	return spell;
+	printf("spell: %d\n",spell);
+	return(spell);
 }
 
 void browse_school_spell(int book, int pval)

@@ -2110,6 +2110,7 @@ struct player_type
 	byte stunning;		/* Heavy hands */
 	byte searching;		/* Currently searching */
 
+#if 0
 	s16b new_spells;	/* Number of spells available */
 
 	s16b old_spells;
@@ -2121,6 +2122,7 @@ struct player_type
 	u32b spell_forgotten1[MAX_REALM];	/* bit mask of spells learned but forgotten */
 	u32b spell_forgotten2[MAX_REALM];	/* bit mask of spells learned but forgotten */
 	byte spell_order[MAX_REALM][64];	/* order spells learned/remembered/fogotten */
+#endif
 
 	bool old_cumber_armor;
 	bool old_cumber_glove;

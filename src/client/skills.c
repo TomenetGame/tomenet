@@ -13,6 +13,8 @@
 
 #include "angband.h"
 
+extern u32b get_school_spell(cptr do_what);
+
 /*
  * Given the name of a skill, returns skill index or -1 if no
  * such skill is found
@@ -961,9 +963,8 @@ void do_trap(int item_kit)
  */
 void do_activate_skill(int x_idx, int item)
 {
-	int dir, spell;
-
-	dir = spell = 0;
+	int dir=0;
+	u32b spell=0L;
 
 	if (s_info[x_idx].flags1 & SKF1_MKEY_HARDCODE)
 	{
@@ -1008,6 +1009,7 @@ void do_activate_skill(int x_idx, int item)
 	{
 		/* Ask for a spell, allow cancel */
 		if ((spell = get_school_spell("cast") == -1)) return;
+		printf("school spell %d\n", spell);
 
                 /* Ask for a direction? */
                 dir = -1;
