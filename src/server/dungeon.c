@@ -1897,7 +1897,6 @@ static void process_player_end(int Ind)
 						//						inven_item_describe(Ind, INVEN_LITE);
 						inven_item_optimize(Ind, INVEN_LITE);
 					}
-					p_ptr->update|=(PU_LITE);
 				}
 
 				/* The light is getting dim */
@@ -1910,7 +1909,7 @@ static void process_player_end(int Ind)
 		}
 
 		/* Calculate torch radius */
-		p_ptr->update |= (PU_TORCH);
+		p_ptr->update |= (PU_TORCH|PU_BONUS);
 
 		/*** Process Inventory ***/
 

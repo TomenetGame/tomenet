@@ -2693,53 +2693,30 @@ void player_talk_aux(int Ind, cptr message)
 
 	/* Look for leading ':', but ignore "smileys" */
 	/* -APD- I don't like this new fangled talking system, reverting to the old way */
-	/*if (!strncasecmp(message, "All:", 4) ||
-	      (message[0] == ':' && !strchr(")(-", message[1])))
-	  { */
-//              me = prefix(message, "/me ");
-		if (strlen(message) > 1) mycolor = (prefix(message, "}") && (color_char_to_attr(*(message + 1)) != -1))?2:0;
+	if (strlen(message) > 1) mycolor = (prefix(message, "}") && (color_char_to_attr(*(message + 1)) != -1))?2:0;
 
-		if (!Ind) c = 'y';
-		else if (mycolor) c = *(message + 1);
-		else
-		{
-			if (p_ptr->mode == MODE_HELL) c = 'D';
-			if (p_ptr->total_winner) c = 'v';
-			else if (p_ptr->ghost) c = 'r';
-		}
-
-		/* Send to everyone */
-		for (i = 1; i <= NumPlayers; i++)
-		{
-			if (check_ignore(i, Ind)) continue;
-
-			/* Send message */
-			if (!me)
-			{
-				msg_format(i, "\377%c[%s] \377B%s", c, sender, message + mycolor);
-				/* msg_format(i, "\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
-			} 
-			else msg_format(i, "%s %s", sender, message + 4);
-		}
-	/*}
-	 else
+	if (!Ind) c = 'y';
+	else if (mycolor) c = *(message + 1);
+	else
 	{
-		 Send to everyone at this depth 
-		for (i = 1; i <= NumPlayers; i++)
-		{
-			if (check_ignore(i, Ind)) continue;
-
-			q_ptr = Players[i];
-
-			 Check depth 
-			if (p_ptr->dun_depth == q_ptr->dun_depth)
-			{
-				 Send message 
-				msg_format(i, "\377U[%s] %s", sender, message);
-			}
-		}
+		if (p_ptr->mode == MODE_HELL) c = 'D';
+		if (p_ptr->total_winner) c = 'v';
+		else if (p_ptr->ghost) c = 'r';
 	}
-	*/
+
+	/* Send to everyone */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		if (check_ignore(i, Ind)) continue;
+
+		/* Send message */
+		if (!me)
+		{
+			msg_format(i, "\377%c[%s] \377B%s", c, sender, message + mycolor);
+			/* msg_format(i, "\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
+		} 
+		else msg_format(i, "%s %s", sender, message + 4);
+	}
 }
 
 /*
