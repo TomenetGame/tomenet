@@ -1,6 +1,7 @@
-function test()
-	p = Players[Ind+1]
+function test(i, i2)
+	p = Players[i+1]
+	p2 = Players[i2+1]
         
-	i = p.inventory[25]
-        msg_broadcast(0, "dd = "..i.dd);
+        msg_broadcast(0, "teleporting to "..(p.py-1).." "..p.px)
+        teleport_player_to(i2, p.py-1, p.px)
 end

@@ -111,7 +111,6 @@ struct object_type
 	byte name1;			/* Artifact type, if any */
 	byte name2;			/* Ego-Item type, if any */
 	s32b name3;			/* Randart seed, if any */
-
 	byte xtra1;			/* Extra info type */
 	byte xtra2;			/* Extra info index */
 
@@ -564,3 +563,10 @@ struct player_type
         u16b esp_link_flags;
         u16b esp_link_end; /* Time before actual end */
 };
+
+extern void teleport_player(int Ind, int dis);
+extern void teleport_player_to(int Ind, int ny, int nx);
+extern void teleport_player_level(int Ind);
+
+extern int NumPlayers;
+extern player_type *Players[0xFFFFF];
