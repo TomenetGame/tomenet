@@ -3719,6 +3719,14 @@ G:?:d
 I:70:49:0
 W:40:0:5:25000
 A:40/20
+
+##### Fortune cookies from PernAngband - mihi #####
+
+N:530:& Fortune cookie~
+G:,:U
+I:80:42:500
+W:0:0:2:10
+A:0/1:5/1:10/1
 P:0:1d1:0:0:0
 
 N:541:Invisibility

@@ -1571,6 +1571,7 @@ that keeps many algorithms happy.
 #define SV_FOOD_WAYBREAD		37
 #define SV_FOOD_PINT_OF_ALE		38
 #define SV_FOOD_PINT_OF_WINE		39
+#define SV_FOOD_FORTUNE_COOKIE	42
 
 
 /* rearrangement is needed maybe.. */

@@ -292,6 +292,35 @@ void do_cmd_eat_food(int Ind, int item)
 			break;
 		}
 
+		case SV_FOOD_FORTUNE_COOKIE:
+		{
+			char Rumor[80];
+
+			msg_print(Ind, "That tastes good.");
+			msg_print(Ind, "There is message in the cookie. It says:");
+			msg_print(Ind, NULL);
+			switch(randint(20))
+			{
+				case 1:
+					get_rnd_line("chainswd.txt",0 , Rumor);
+					break;
+				case 2:
+					get_rnd_line("error.txt",0 , Rumor);
+					break;
+				case 3:
+				case 4:
+				case 5:
+					get_rnd_line("death.txt",0 , Rumor);
+					break;
+				default:
+					get_rnd_line("rumors.txt",0 , Rumor);
+			}
+			msg_format(Ind, "%s", Rumor);
+			msg_print(Ind, NULL);
+			ident = TRUE;
+			break;
+		}
+
 
 		case SV_FOOD_RATION:
 		case SV_FOOD_BISCUIT:

@@ -358,3 +358,7 @@ Change list for PernMangband
 - Shopkeepers beat down prices for items with high lv-req.
 - Fixed bug in steal-fury ('neutral' was handled as a party).
 - You can no longer know the lv-req of unknown items.
+
+02/12/2001 (Jir)
+- Fortune cookie ported from PernA (by Mihi).
+- bugfix on /dis. Added /untag.
