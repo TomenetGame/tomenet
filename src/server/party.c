@@ -990,6 +990,8 @@ void party_gain_exp(int Ind, int party_id, s32b amount)
 
 		if (p_ptr->conn == NOT_CONNECTED)
 			continue;
+		if (p_ptr->ghost)	/* no exp, but take share */
+			continue;
 
 		/* Check for existance in the party */
                 if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i))

@@ -2856,7 +2856,7 @@ void gain_exp(int Ind, s32b amount)
 
 	/* You cant gain xp on your land */
 	if (player_is_king(Ind)) return;
-        if (p_ptr->ghost) return;
+        if (p_ptr->ghost) amount/=1.5;	/* allow own kills to be gained */
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
 	{
@@ -4574,7 +4574,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		}
 
 		/* Split experience if in a party */
-		if (p_ptr->party == 0)
+		if (p_ptr->party == 0 || p_ptr->ghost)
 		{
 			/* Give some experience */
 			new_exp = tmp_exp / p_ptr->lev;

@@ -2357,7 +2357,7 @@ static int Receive_login(int ind){
 		return -1;
 	}
 	if(strlen(choice)==0){
-		if((l_acc=GetAccount(connp->nick, connp->pass))){
+		if(connp->pass && (l_acc=GetAccount(connp->nick, connp->pass))){
 			int *id_list, i;
 			free(connp->pass);
 			connp->pass=NULL;
