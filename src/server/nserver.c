@@ -571,10 +571,12 @@ void setup_contact_socket(void)
 #ifdef TOMENET_WORLDS
 	/* evileye testing only */
 	/* really, server should DIE if this happens */
+	block_timer();
 	if((WorldSocket=CreateClientSocket("theforest.demon.co.uk", 18360))==-1){
 		s_printf("Unable to connect to world server\n");
 		return;
 	}
+	allow_timer();
 	install_input(world_comm, WorldSocket, 0);
 #endif
 }
