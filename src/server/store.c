@@ -42,7 +42,7 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 		{ TV_LITE, SV_LITE_TORCH },
 		{ TV_LITE, SV_LITE_TORCH },
 		{ TV_LITE, SV_LITE_TORCH },
-		{ TV_LITE, SV_LITE_TORCH },
+		{ TV_LITE, SV_LITE_LANTERN },
 		{ TV_LITE, SV_LITE_LANTERN },
 
 		{ TV_FLASK, 0 },
@@ -1647,6 +1647,10 @@ static void store_create(store_type *st_ptr)
 		{
 			/* No "worthless" items */
 			if (object_value(0, o_ptr) <= 0) continue;
+
+			/* Hack -- General store shouldn't sell too much aman cloaks etc */
+			if (st_ptr->num == 0 && object_value(0, o_ptr) > 1000 &&
+					magik(66)) continue;
 		}
 
 
@@ -2620,6 +2624,9 @@ void do_cmd_store(int Ind)
 	/* Save the store number */
 	p_ptr->store_num = which;
 
+	/* Set the timer */
+	p_ptr->tim_store = STORE_TURNOUT;
+
 	/* Save the store and owner pointers */
 	/*st_ptr = &store[p_ptr->store_num];
 	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];*/
@@ -2722,7 +2729,12 @@ void store_maint(store_type *st_ptr)
 		j=gettown(i);
 		if(j!=-1){
 			if(st_ptr==&town[j].townstore[Players[i]->store_num])
-				return;
+			{
+				/* Somewhat hackie -- don't turn her/him out at once */
+				if (magik(40) && Players[i]->tim_store < STORE_TURNOUT / 2)
+					store_kick(i);
+				else return;
+			}
 		}
 	}
 
@@ -2832,3 +2844,51 @@ void store_init(store_type *st_ptr)
 }
 
 		
+void store_kick(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	msg_print(Ind, "The shopkeeper asks you to leave the store once.");
+	//				store_leave(Ind);
+	p_ptr->store_num = -1;
+	Send_store_kick(Ind);
+	teleport_player(Ind, 10);
+}
+
+#if 0
+void store_kick(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+//	msg_print(Ind, "The shopkeeper turns you out!");
+	store_leave(Ind);
+	Send_store_kick(Ind);
+
+}
+
+void store_leave(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* Update stuff */
+	p_ptr->update |= (PU_VIEW | PU_LITE);
+	p_ptr->update |= (PU_MONSTERS);
+
+	/* Redraw stuff */
+	p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA);
+
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD);
+
+	/* Update store info */
+	p_ptr->store_num = -1;
+
+	/* hack -- update night/day in wilderness levels */
+	if ((!p_ptr->wpos.wz) && (IS_DAY)) wild_apply_day(&p_ptr->wpos); 
+	if ((!p_ptr->wpos.wz) && (IS_NIGHT)) wild_apply_night(&p_ptr->wpos);
+
+}
+
+#endif	// 0

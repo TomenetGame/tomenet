@@ -18819,7 +18819,7 @@ F:JOKEANGBAND
 S:1_IN_8 | 
 S:TPORT | TELE_TO | DARKNESS
 D:The omnipotent God of the Gods, resides in the Parnassus
-D:and rules the world - but 'it' was also known for its vigor
+D:and rules the world - but 'it' is also known for its vigor
 D:and lasciviousness.
 
 N:1064:Dark mist
@@ -18847,6 +18847,30 @@ F:FORCE_SLEEP | CAN_FLY | RAND_25 | RAND_50 |
 F:EMPTY_MIND | ATTR_MULTI |
 F:NO_FEAR | NO_CONF | NO_SLEEP | NONLIVING | BASEANGBAND | HAS_LITE | NO_CUT
 D:A crackling ball of energy, zooming about seemingly at random.
+
+# Hrm, Tiamat wasn't in ToME?
+N:1066:Tiamat, Celestial Dragon of Evil
+G:D:v
+I:130:100d115:20:125:70
+W:70:4:0:45000
+B:CLAW:HURT:6d14
+B:CLAW:HURT:8d14
+B:CLAW:HURT:8d14
+B:BITE:HURT:10d16
+F:ATTR_MULTI |
+F:UNIQUE | FEMALE |
+F:FORCE_SLEEP | FORCE_MAXHP |
+F:ESCORT |
+F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT |
+F:OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY |
+F:EVIL | DRAGON | BASEANGBAND
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP
+S:1_IN_2 |
+S:BLIND | CONF | SCARE |
+S:BR_ACID | BR_FIRE | BR_COLD | BR_ELEC | BR_POIS |
+S:S_HI_DRAGON
+D:Usually found guarding the first plane of Hell, Tiamat is a formidable
+D:opponent, her five heads breathing death to all who stand against her.
 
 
 # N: serial number : monster name

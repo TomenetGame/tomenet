@@ -1483,7 +1483,9 @@ static void process_player_end(int Ind)
 	if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ)) return;
 
 	/* Check for auto-retaliate */
-	if ((p_ptr->energy >= level_speed(&p_ptr->wpos)) && !p_ptr->confused)
+	if ((p_ptr->energy >= level_speed(&p_ptr->wpos)) && !p_ptr->confused &&
+			(!p_ptr->autooff_retaliator ||
+			 !(p_ptr->invuln || p_ptr->tim_manashield)))
 	{
 		/* Check for nearby monsters and try to kill them */
 		/* If auto_retaliate returns nonzero than we attacked
@@ -1878,16 +1880,20 @@ static void process_player_end(int Ind)
 				zcave[jy][jx].info |= CAVE_STCK;
 			}
 		}
+#if 0	// moved to process_player_change_wpos
 		if(!p_ptr->wpos.wz && p_ptr->tim_susp){
 			imprison(Ind, 0, "old crimes");
 			return;
 		}
+#endif	// 0
 
 		/* Hack -- Tunnel */
+#if 0	// not used
 		if (p_ptr->auto_tunnel)
 		{
 			p_ptr->auto_tunnel--;
 		}
+#endif	// 0
 
 		/* Hack -- Meditation */
 		if (p_ptr->tim_meditation)
@@ -2368,6 +2374,38 @@ static void process_player_end(int Ind)
 			}
 		}
 
+		/* Don't do AFK in a store */
+		if (p_ptr->tim_store)
+		{
+			if (p_ptr->store_num < 0) p_ptr->tim_store = 0;
+			else
+			{
+				/* Count down towards turnout */
+				p_ptr->tim_store--;
+
+				/* Check if that town is 'crowded' */
+				if (p_ptr->tim_store <= 0)
+				{
+					player_type *q_ptr;
+					bool bye = FALSE;
+
+					for (j = 1; j < NumPlayers + 1; j++)
+					{
+						q_ptr = Players[j];
+						if (Ind == j) continue;
+						if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue; 
+						if (q_ptr->afk) continue;
+
+						bye = TRUE;
+						break;
+					}
+
+					if (bye) store_kick(Ind);
+					else p_ptr->tim_store = STORE_TURNOUT;
+				}
+			}
+		}
+
 		/* Delayed Word-of-Recall */
 		if (p_ptr->word_recall)
 		{
@@ -2377,6 +2415,7 @@ static void process_player_end(int Ind)
 		       /* MEGA HACK: no recall if icky, or in a shop */
 			if( ! p_ptr->word_recall ) 
 			{
+//				if(p_ptr->anti_tele ||
 				if((p_ptr->store_num > 0) || p_ptr->anti_tele ||
 					check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) ||
 					zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK)
@@ -3187,7 +3226,12 @@ static void process_player_change_wpos(int Ind)
 		p_ptr->max_dlv = getlevel(wpos);
 
 	/* Make sure the server doesn't think the player is in a store */
-	p_ptr->store_num = -1;
+//	p_ptr->store_num = -1;
+	if (p_ptr->store_num > -1)
+	{
+		p_ptr->store_num = -1;
+		Send_store_kick(Ind);
+	}
 
 	/* Hack -- artifacts leave the queen/king */
 	/* also checks the artifact list */
@@ -3528,6 +3572,11 @@ static void process_player_change_wpos(int Ind)
 
 	/* Clear the flag */
 	p_ptr->new_level_flag = FALSE;
+
+	/* Hack -- jail her/him */
+	if(!p_ptr->wpos.wz && p_ptr->tim_susp){
+		imprison(Ind, 0, "old crimes");
+	}
 }
 
 

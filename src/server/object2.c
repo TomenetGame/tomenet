@@ -1986,7 +1986,9 @@ s16b lookup_kind(int tval, int sval)
 	}
 
 	/* Oops */
+#if DEBUG_LEVEL > 2
 	s_printf("No object (%d,%d)", tval, sval);
+#endif	// DEBUG_LEVEL
 
 	/* Oops */
 	return (0);
@@ -2398,7 +2400,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good)
 			continue;
 		}
 #endif	// 0
-		if (rand_int(e_ptr->mrarity) > e_ptr->rarity)
+		if (rand_int(e_ptr->mrarity) > e_ptr->rarity) continue;
 
 		/* Hack -- mark the item as an ego */
 		o_ptr->name2 = i;
@@ -6802,6 +6804,7 @@ void reorder_pack(int Ind)
 /*
  * Hack -- process the objects
  */
+/* TODO: terrain effects (lava burns scrolls etc) */
 void process_objects(void)
 {
 	int i, k;

@@ -1972,7 +1972,11 @@ static void do_slash_cmd(int Ind, char *message)
 					strcmp(quark_str(o_ptr->note), "worthless"))
 					continue;
 
-				if (!nontag && !o_ptr->note) continue;
+				if (!nontag && !o_ptr->note &&
+					!(cursed_p(o_ptr) &&	/* Handle {cursed} */
+						(object_known_p(Ind, o_ptr) ||
+						 (o_ptr->ident & ID_SENSE))))
+					continue;
 
 				/* Player might wish to identify it first */
 				if (k_info[o_ptr->k_idx].has_flavor &&

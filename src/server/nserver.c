@@ -796,7 +796,7 @@ static void Contact(int fd, int arg)
 	status = Enter_player(real_name, nick_name, host_addr, host_name,
 				version, port, &login_port, fd);
 
-#if DEBUG_LEVEL > 0
+#if DEBUG_LEVEL > 1
 	if (status && status != E_NEED_INFO)
 		s_printf("%s: Connection refused(%d).. %s=%s@%s (%s/%d)\n", showtime(),
 				status, nick_name, real_name, host_name, host_addr, port);
@@ -1671,6 +1671,8 @@ static void sync_options(int Ind, bool *options)
 
 	p_ptr->depth_in_feet = options[7];
 	p_ptr->auto_target = options[69];
+	p_ptr->autooff_retaliator = options[70];
+	p_ptr->wide_scroll_margin = options[71];
 	// bool speak_unique;
 
 }
@@ -3952,6 +3954,39 @@ int Send_store_sell(int ind, int price)
 	  }
 
 	return Packet_printf(&connp->c, "%c%d", PKT_SELL, price);
+}
+
+int Send_store_kick(int ind)
+{
+	connection_t *connp = &Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for store_kick (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+
+	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
+	  {
+	    int Ind2 = find_player(p_ptr->esp_link);
+	    player_type *p_ptr2;
+	    connection_t *connp2;
+
+	    if (!Ind2)
+	      end_mind(ind, TRUE);
+	    else
+	      {
+		p_ptr2 = Players[Ind2];
+		connp2 = &Conn[p_ptr2->conn];
+
+		Packet_printf(&connp2->c, "%c", PKT_STORE_LEAVE);
+	      }
+	  }
+
+	return Packet_printf(&connp->c, "%c", PKT_STORE_LEAVE);
 }
 
 int Send_target_info(int ind, int x, int y, cptr str)

@@ -914,7 +914,7 @@ void do_cmd_open(int Ind, int dir)
 					{
 						int factor,price;
 						factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
-						price = dna->price * factor / 100;
+						price = dna->price / 100 * factor;
 						msg_format(Ind,"\377oThat house costs %ld gold.",price);
 					}
 				}

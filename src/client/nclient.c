@@ -123,6 +123,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_SANITY]		= Receive_sanity;
 	receive_tbl[PKT_SKILL_INIT]	= Receive_skill_init;
 	receive_tbl[PKT_SKILL_MOD] 	= Receive_skill_info;
+	receive_tbl[PKT_STORE_LEAVE] 	= Receive_store_kick;
 }
 
 // I haven't really figured out this function yet.  It looks to me like
@@ -2202,6 +2203,25 @@ int Receive_store_info(void)
 	/* Only enter "display_store" if we're not already shopping */
 	if (!shopping)
 		display_store();
+
+	return 1;
+}
+
+int Receive_store_kick(void)
+{
+	int	n;
+	char	ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
+	{
+		return n;
+	}
+
+	shopping = FALSE;
+	leave_store = TRUE;
+
+	/* Hack */
+	command_cmd = ESCAPE;
 
 	return 1;
 }

@@ -1808,8 +1808,8 @@ struct player_type
 	/* 'make clean; make' consumes time :) */
 	bool depth_in_feet;
 	bool auto_target;
-	bool dummy_option_3;
-	bool dummy_option_4;
+	bool autooff_retaliator;
+	bool wide_scroll_margin;
 	bool dummy_option_5;
 	bool dummy_option_6;
 	bool dummy_option_7;
@@ -1907,7 +1907,8 @@ struct player_type
 	u16b tim_jail;		/* Timed -- Jailed */
 	u16b tim_susp;		/* Suspended sentence (dungeon) */
 	u16b tim_pkill;		/* pkill changeover timer */
-	u16b pkill;		/* pkill flags */
+	u16b pkill;			/* pkill flags */
+	u16b tim_store;		/* timed -- how long (s)he can stay in a store */
 	bool wraith_in_wall;
 	s16b tim_meditation;	/* Timed -- Meditation */
 	s16b tim_invisibility;		/* Timed -- Invisibility */

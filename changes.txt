@@ -730,11 +730,11 @@ To find the latest change quickly, search ==== :)
   - cleanup makefile.bcc
   - fix broken menu
   - new menu item 'Save Preference'.
-	Fonts and Windows' positon are saved to .ini
+    Fonts and Windows' positon are saved to .ini
   - Windows font (logical font) support (experimental).
     Define 'USE_LOGFONT' in makefile.bcc or appropriate place.
   - `Slow server' bug fix. (Windows server can be compiled well,
-	but not work at least the HEAD)
+    but not work at least the HEAD)
   - some minor fix
 
 26/02/2002 (Unknown {note by Jir})
@@ -1304,9 +1304,9 @@ To find the latest change quickly, search ==== :)
 - some mimic innate spells implemeted and updated.
 - more mimic flags implemented (like DISBELIEVE, OPEN_DOOR, KILL_WALL)
 - client options: taciturn_messages(see below), last_words, limit_chat
-	/* Hack -- suppress messages */
-	if (p_ptr->taciturn_messages) suppress_message = TRUE;
-	suppress_message = FALSE;
+    /* Hack -- suppress messages */
+    if (p_ptr->taciturn_messages) suppress_message = TRUE;
+    suppress_message = FALSE;
 - /broadcast - send msg ignoring limit_chat
 - mangconsole options: -P<pass>, -s (shutdown at once)
 - mangconsole and client option: -c (force to use GCU)
@@ -1370,7 +1370,7 @@ To find the latest change quickly, search ==== :)
 # beware -- savedata could be destroyed due to the apartments
 - apartments to supply more residence (town_gen_hack - but it's ugly)
 [B] wilderness lighting was wrong if logged off/entered a store in day and
-	on/leave in night (player_birth / Receive_store_leave)
+    on/leave in night (player_birth / Receive_store_leave)
 [B] books become unbrowsable when logged on in the dark. (fix_spell)
     (not really fixed - this allows to browse even when in the dark)
 [B] town still could be generated in the midst of the ocean (wild_bulldoze)
@@ -1387,6 +1387,14 @@ To find the latest change quickly, search ==== :)
 [P] water effect to the terrain (project_f)
 [B] players could shoot the DM
 
+17/07/2002 (Jir)
+- Tiamat resurrected (not in ToME)
+- 'power'('Z:') ego items are removed temporally.
+- player is forced to leave a store when turnover or town is crowded.
+- client options: autooff_retaliator, wide_scroll_margin
+[B] ball traps couldn't affect floors.
+[B] demon/undead could pick up KILL_DEMON/KILL_UNDEAD weps.
+[H] general store('1') doesn't sell so much Amans and *Brightness*es
 
 
 
@@ -1440,13 +1448,12 @@ Porting targets
     (but maybe ##### tag is bad methinks - cannot draw ascii-art dungeon!)
 [P] powers.c for misc activations
 [P] display_player (character dump)
-[P] update_view (for fast algorithm)
+[P] update_view (for faster algorithm)
 
 
 =============================================================================
 below this line are the unfixed bugs known:
 
-[B] House doors are still said to crash sometimes. (door even vanishes??)
 [B] wpos display hides wound states(eg.'Deep Gash')
 [B][C] chat-history contains lines with 'mindcrafter'.
     (do_cmd_messages_chatonly)
@@ -1458,7 +1465,7 @@ below this line are the unfixed bugs known:
 [B] white '@' sometimes appear on the screen(eg. when targetting).
 [B] Martial-artist has strange +To RHit/+To RDam display.
 [B][C] inventory window sometimes loses a) b) etc.
-[B] 'write error' sometimes (old bug)
+[B] 'write error' - admin char gets disconnected after generation once.
 [B] 'No more Scroll of *Identify*'
 [B] Macro sticks sometimes (this should be fixed by spell restructuring)
 [B] Window refreshing fails sometimes, requiring ^R.
@@ -1468,8 +1475,8 @@ below this line are the unfixed bugs known:
 [B] cannot specify some monster names in master summoning (&35)
 [B][C] GCU client doesn't show the motd when using 'fullauto'
 [B] monsters sometimes drop '(nothing)' (Dread?)
-[B] admin char gets disconnected after generation once.
 [B] strange gray spots in the dark.
+[B] 'Nothng to buy here.' when sunrise/sunset
 [B] deallocator deallocates the floor that ghost is on!
 1 players on -1950ft of (32,32).
 Key_monk was killed by a Night mare.
@@ -1486,12 +1493,13 @@ deallocating -1950ft of (32,32)
 
 
 *below are bugs repoorted but not confirmed*
-(nothing so far)
+[B] House doors are still said to crash sometimes. (door even vanishes??)
+
 
 *below are bugs not shown recently(fixed??)*
 [B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
     sometimes, monsters attack the player from nowhere.. prolly same root?
-	* this only happens when rebooting the server and caves lost.
+    * this only happens when rebooting the server and caves lost.
 [B] ever-charging arts (eg.star)
 [B] cave can be erased prematurely after loading.
 [B] /rec won't work if to wilderness? (admin)
@@ -1502,6 +1510,7 @@ deallocating -1950ft of (32,32)
      buggie, but saves the server from getting slowed by breeding..
 [B?] p_ptr->to_d_ranged is always 0.
 [B?] Yeek seems to receive the best store prices.
+
 
 =============================================================================
 memo and questions:
@@ -1546,15 +1555,17 @@ memo and questions:
 - fully-implemented multiple towns (t_*.txt)
 - more kinds of stores / flexible store configuration (st_info.txt)
   - a set of commands should be sent to client when entering a store, so that
-	different stores can have different commands.
-  + archery shop
-  + bookstore
-  + job centre (for lowbies died)
-  + guild house
-  + healer
-  + auction house
-  + bank (possibly loan shark :)
-  + arena (pvp arena would be of great fun!)
+    different stores can have different commands.
+  - add a way to 'kick player out of the store'
+  - new stores:
+    + archery shop
+    + bookstore
+    + job centre (for lowbies died)
+    + guild house
+    + healer
+    + auction house
+    + bank (possibly loan shark :)
+    + arena (pvp arena would be of great fun!)
   
 (4.3)
 - quests
@@ -1585,6 +1596,7 @@ memo and questions:
 - send flags for each spell, so that we can obsolete do_cmd_cast_aux etc.
 - integrate p_ptr->fruit_bat into p_ptr->body_monster
 - p_ptr->total_weight/inven_cnt should be recalculated sometimes.
+- exploding arrows should be ego?
 
 [speeding the server up]
 # ok, it's 3 times faster now. maybe we don't squeeze it further for now.
@@ -1597,7 +1609,7 @@ memo and questions:
 - give up 'random-seeds' thingie and put flags to every item
 - turn mmove2 functions into arrays
 - bottlenecks: process_monsters, update_view(MAX_SIGHT), lite_spot, map_info,
-	AI codes
+    AI codes
 - force view_reduce_lite
 
 [balance matters]
@@ -1671,7 +1683,7 @@ memo and questions:
   + more RBM and RMEs (like seducing, switching place)
 - magic:
   + sth should be done with all those 'attacking' magic devices no1 uses,
-	such as fire bolt wand/rod..
+    such as fire bolt wand/rod..
   + enlarge 'destroy traps' spell radius (but traps may 'resist' it)
   + implement project_m
   + check_st_anchor() should take distance into account?
@@ -1693,7 +1705,6 @@ memo and questions:
   + auto-retaliator should be able to handle non-item actions.
   + better character ('C') screen
 - stores:
-  + allow to eXamine items in the store inventory.
   + one player shouldn't stay more than 1 minutes in a store?
   + stores should buy {cursed} potions/scrolls/wands etc?
 - misc:
@@ -1711,10 +1722,10 @@ memo and questions:
 - make charisma/wisdom/dexterity more important
 - resistances handled by percent
 - time-limited features(like in Larn) / time bomb
-	struct timed_event{
-		worldpos wpos;
-		int time;
-		char ly, lx, event_kind, magnitude;};
+    struct timed_event{
+        worldpos wpos;
+        int time;
+        char ly, lx, event_kind, magnitude;};
 - vanilla-Angband style houses
 - horizontal-connected caves (eg.[32,32,-40]=>[32,31,-40])
 - (re)new classes/races
@@ -1802,12 +1813,12 @@ access_door (Ind=1, dna=0x0) at server/cmd2.c:609
 
 Program received signal SIGSEGV, Segmentation fault.
 0x80879d3 in project_i (Ind=1, who=-1, r=0, wpos=0x8d3ca2c, y=121, x=179, 
-		dam=500, typ=13) at server/spells1.c:2606
+        dam=500, typ=13) at server/spells1.c:2606
 2606            o_ptr = &o_list[c_ptr->o_idx];
 #0  0x80879d3 in project_i (Ind=1, who=-1, r=0, wpos=0x8d3ca2c, y=121, x=179, 
-		dam=500, typ=13) at server/spells1.c:2606
+        dam=500, typ=13) at server/spells1.c:2606
 #1  0x808d8b1 in project (who=-1, rad=16, wpos=0x8d3ca2c, y=121, x=179, 
-		dam=500, typ=13, flg=120) at server/spells1.c:5850
+        dam=500, typ=13, flg=120) at server/spells1.c:5850
 #2  0x8095348 in fire_ball (Ind=1, typ=13, dir=6, dam=500, rad=16)
 at server/spells2.c:4082
 #3  0x80c3441 in do_cmd_pray_aux (Ind=1, dir=6) at server/cmd5.c:3365

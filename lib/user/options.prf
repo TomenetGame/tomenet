@@ -78,3 +78,5 @@ Y:last_words
 X:limit_chat
 Y:thin_down_flush
 X:auto_target
+X:autooff_retaliator
+X:wide_scroll_margin

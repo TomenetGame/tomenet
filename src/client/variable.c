@@ -216,6 +216,8 @@ bool last_words;
 bool limit_chat;
 bool thin_down_flush;
 bool auto_target;
+bool autooff_retaliator;
+bool wide_scroll_margin;
 
 
 u32b cfg_game_port = 18348; 

@@ -5,7 +5,8 @@
 
 #include "angband.h"
 
-static bool leave_store;
+//static bool leave_store;
+bool leave_store;
 static int store_top;
 
 static void display_entry(int pos)

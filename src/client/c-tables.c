@@ -2825,6 +2825,12 @@ option_type option_info[OPT_MAX] =
 	{ &auto_target,			FALSE,	5,	9, 69,
 	"auto_target",			"Automatically set target to the nearest enemy" },
 
+	{ &autooff_retaliator,	FALSE,	5,	9, 70,
+	"autooff_retaliator",	"stop the retaliator when protected by GoI etc" },
+
+	{ &wide_scroll_margin,	FALSE,	5,	9, 71,
+	"wide_scroll_margin",	"Scroll the screen more frequently" },
+
 #if 0
 	{ &speak_unique,                TRUE,   2,      13,
 	"speak_unique",                 "Allow shopkeepers and uniques to speak" },

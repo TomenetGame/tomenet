@@ -1332,6 +1332,7 @@ static bool hates_acid(object_type *o_ptr)
 		case TV_ARROW:
 		case TV_BOLT:
 		case TV_BOW:
+		case TV_BOOMERANG:
 		case TV_SWORD:
 		case TV_HAFTED:
 		case TV_POLEARM:
@@ -1413,6 +1414,7 @@ static bool hates_fire(object_type *o_ptr)
 		case TV_GLOVES:
 		case TV_CLOAK:
 		case TV_SOFT_ARMOR:
+		case TV_BOOMERANG:
 		{
 			return (TRUE);
 		}
@@ -2500,7 +2502,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 {
 	bool	obvious = FALSE;
 
-	bool quiet = ((Ind <= 0) ? TRUE : FALSE);
+//	bool quiet = ((Ind <= 0) ? TRUE : FALSE);
+	bool quiet = ((Ind <= 0 || who < PROJECTOR_UNUSUAL) ? TRUE : FALSE);
 	int		div;
 
 	player_type *p_ptr = (quiet ? NULL : Players[Ind]);

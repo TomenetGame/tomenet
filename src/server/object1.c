@@ -4457,6 +4457,13 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		fprintf(fff, "It regenerates its mana faster.\n");
 	}
 
+#if 0
+	if (f5 & (TR5_NO_ENCHANT))
+	{
+		fprintf(fff, "It cannot be enchanted by any means.\n");
+	}
+#endif	// 0
+
 	if ((f3 & (TR3_IGNORE_ACID)) && (f3 & (TR3_IGNORE_FIRE)) && (f3 & (TR3_IGNORE_COLD)) && (f3 & (TR3_IGNORE_ELEC)))
 	{
 		fprintf(fff, "It cannot be harmed by acid, cold, lightning or fire.\n");

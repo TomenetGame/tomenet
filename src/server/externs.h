@@ -677,6 +677,7 @@ extern int Send_mini_map(int Ind, int y);
 extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval);
 extern int Send_store_info(int Ind, int num, int owner, int items);
 extern int Send_store_sell(int Ind, int price);
+extern int Send_store_kick(int Ind);
 extern int Send_target_info(int ind, int x, int y, cptr buf);
 extern int Send_sound(int ind, int sound);
 extern int Send_special_line(int ind, int max, int line, byte attr, cptr buf);
@@ -951,6 +952,7 @@ extern void do_cmd_store(int Ind);
 extern void store_shuffle(store_type *st_ptr);
 extern void store_maint(store_type *st_ptr);
 extern void store_init(store_type *st_ptr);
+extern void store_kick(int Ind);
 
 /* util.c */
 extern bool suppress_message;

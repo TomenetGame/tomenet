@@ -4802,6 +4802,7 @@ I:15:3:0
 W:15:0:60:400
 A:15/1
 P:0:1d8:0:0:0
+F:IGNORE_FIRE
 
 N:651:& metal Boomerang~
 G:{:y
@@ -4809,6 +4810,7 @@ I:15:4:0
 W:20:0:60:300
 A:20/1
 P:0:2d4:0:0:0
+F:IGNORE_FIRE
 
 # The Space-Time Anchor -- see artifact list
 N:652:& Anchor~
@@ -5861,7 +5863,7 @@ G:?:o
 #I:8:20:0
 I:8:50:0
 W:0:0:5:1
-A:0/1
+A:0/10
 
 ##### Daemon Books #####
 #N:788:[Dark Incantations]

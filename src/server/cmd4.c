@@ -45,6 +45,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 
 	player_type *q_ptr = Players[Ind];
 	bool admin = is_admin(q_ptr);
+	bool shown = FALSE;
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -156,7 +157,8 @@ void do_cmd_check_artifacts(int Ind, int line)
 			if (!true_artifact_p(o_ptr)) continue;
 
 			/* Ignore known items */
-			if (object_known_p(Ind, o_ptr) && !admin) continue;
+//			if (object_known_p(Ind, o_ptr) && !admin) continue;
+			if (object_known_p(Ind, o_ptr)) continue;
 
 			/* Note the artifact */
 			okay[o_ptr->name1] = FALSE;
@@ -200,6 +202,13 @@ void do_cmd_check_artifacts(int Ind, int line)
 		if (admin) fprintf(fff, "(%3d)", k);
 		fprintf(fff, "     The %s%s\n", base_name, admin && !a_ptr->known ?
 				" (unknown)" : "");
+
+		shown = TRUE;
+	}
+
+	if (!shown)
+	{
+		fprintf(fff, "No artifacts are witnessed so far.\n");
 	}
 
 	/* Close the file */

@@ -1512,17 +1512,17 @@ W:0:1:10:1500
 R:100
 F:RES_FEAR
 
-N:138:of Illumination
-X:A:0:5
-T:39:0:99
-W:0:3:10:1000
-Z:illuminate
-R:10
-F:LITE1
-R:5
-F:LITE2
-R:2
-F:LITE3
+#N:138:of Illumination
+#X:A:0:5
+#T:39:0:99
+#W:0:3:10:1000
+#Z:illuminate
+#R:10
+#F:LITE1
+#R:5
+#F:LITE2
+#R:2
+#F:LITE3
 
 N:139:of Brightness
 X:A:0:5
@@ -1576,12 +1576,12 @@ C:0:0:0:0
 R:100
 F:RES_BLIND | SEE_INVIS
 
-N:144:of the Ethereal Eye
-X:A:0:7
-T:39:0:99
-W:0:3:40:4000
-C:0:0:0:0
-Z:magic map
+#N:144:of the Ethereal Eye
+#X:A:0:7
+#T:39:0:99
+#W:0:3:40:4000
+#C:0:0:0:0
+#Z:magic map
 
 N:145:of Fading
 X:A:0:0

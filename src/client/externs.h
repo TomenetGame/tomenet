@@ -226,6 +226,8 @@ extern bool last_words;
 extern bool limit_chat;
 extern bool thin_down_flush;
 extern bool auto_target;
+extern bool autooff_retaliator;
+extern bool wide_scroll_margin;
 
 extern u32b cfg_game_port;
 
@@ -375,6 +377,7 @@ extern void do_ghost(void);
 extern void do_mimic();
 
 /* c-store.c */
+extern bool leave_store;
 extern void display_inventory(void);
 extern void display_store(void);
 

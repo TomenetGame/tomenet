@@ -440,6 +440,7 @@
 #define STORE_SHUFFLE	20		/* 1/Chance (per day) of an owner changing */
 // #define STORE_TURNS	200		/* Number of turns between turnovers */
 // moved to tomenet.cfg
+#define STORE_TURNOUT	60		/* Max turns a player may stay in a store if crowded */
 
 #if 0
 #define STORE_SHUFFLE	25		/* 1/Chance (per day) of an owner changing */

@@ -1077,7 +1077,8 @@ static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap)
 	dam = damroll(my_dd, my_ds);
 
 	ident = project(PROJECTOR_TRAP, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, type,
-			PROJECT_KILL | PROJECT_JUMP);
+			PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM);
+//			PROJECT_KILL | PROJECT_JUMP);
 	return (ident);
 }
 
@@ -1635,6 +1636,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_WALLS:
 		{
 			//         ident = player_handle_trap_of_walls();
+			/* let's do a quick job ;) */
+			ident=player_handle_breath_trap(Ind, 1 + glev / 40, GF_STONE_WALL, TRAP_OF_WALLS);
 			break;
 		}
 		/* Trap of Calling Out */
