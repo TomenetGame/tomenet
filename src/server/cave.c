@@ -1089,16 +1089,6 @@ struct c_special *GetCS(cave_type *c_ptr, unsigned char type){
 	return(NULL);				/* returns ** to the structs. always dealloc */
 }
 
-#if 0
-struct c_special *AddCS(cave_type *c_ptr){
-	struct c_special *cs_ptr;
-	MAKE(cs_ptr, struct c_special);
-	if(!cs_ptr) return(NULL);
-	cs_ptr->next=c_ptr->special;
-	c_ptr->special=cs_ptr;
-	return(cs_ptr);
-}
-#else	// 0
 /* check for duplication, and also set the type	- Jir - */
 struct c_special *AddCS(cave_type *c_ptr, byte type){
 	struct c_special *cs_ptr;
@@ -1112,7 +1102,6 @@ struct c_special *AddCS(cave_type *c_ptr, byte type){
 	cs_ptr->type = type;
 	return(cs_ptr);
 }
-#endif	// 0
 
 /* like AddCS, but override already-existing one */
 c_special *ReplaceCS(cave_type *c_ptr, byte type)
@@ -1554,6 +1543,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			/* The attr */
 			(*ap) = a;
+			for(cs_ptr=c_ptr->special; cs_ptr; cs_ptr=cs_ptr->next){
+				/* testing only - need c/a PRIORITIES!!! */
+				csfunc[cs_ptr->type].see(cs_ptr, cp, ap, Ind);
+			}
 		}
 
 		/* Unknown */

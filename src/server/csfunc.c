@@ -53,10 +53,12 @@ void defload(c_special *cs_ptr){
 }
 void defsave(c_special *cs_ptr){
 }
-void defsee(c_special *cs_ptr, int Ind){
+void defsee(c_special *cs_ptr, char *c, byte *a, int Ind){
+	/* really do nothing */
 }
 int defhit(c_special *cs_ptr, int y, int x, int Ind){
-	return(1);
+	/* return implied permission */
+	return(TRUE);
 }
 
 void dnaload(c_special *cs_ptr){
@@ -81,6 +83,9 @@ int dnahit(c_special *cs_ptr, int y, int x, int Ind){
 		}
 	}
 	return(FALSE);
+}
+
+void dnasee(c_special *cs_ptr, char *c, byte *a, int Ind){
 }
 
 void keyload(c_special *cs_ptr){
@@ -122,6 +127,28 @@ int keyhit(c_special *cs_ptr, int y, int x, int Ind){
 	return(FALSE);
 }
 
+/* EXPERIMENTAL SEE CODE - I AM NOT INSISTING THAT WE SEE
+   KEY DOORS ANY DIFFERENTLY - DO NOT DELETE !!! */
+void keysee(c_special *cs_ptr, char *c, byte *a, int Ind){
+	struct player_type *p_ptr;
+	int j;
+	struct key_type *key=cs_ptr->sc.ptr;
+
+	p_ptr=Players[Ind];
+
+	if(*c==FEAT_HOME_OPEN) return;	/* dont bother */
+	if(p_ptr==(struct player_type*)NULL) return;
+	for(j=0; j<INVEN_PACK; j++){
+		object_type *o_ptr=&p_ptr->inventory[j];
+		if(o_ptr->tval==TV_KEY && o_ptr->pval==key->id){
+			/* colours are only test colours! */
+			*c='*';
+			*a=TERM_L_DARK;
+		}
+	}
+	return(FALSE);
+}
+
 /*
  * Traps
  */
@@ -136,7 +163,7 @@ void tsave(c_special *cs_ptr)
 	wr_byte(cs_ptr->sc.trap.t_idx);
 	wr_byte(cs_ptr->sc.trap.found);
 }
-void tsee(c_special *cs_ptr, int Ind){
+void tsee(c_special *cs_ptr, char *c, byte *a, int Ind){
 	printf("tsee %d\n", Ind);
 }
 
@@ -280,7 +307,7 @@ void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr)
 struct sfunc csfunc[]={
 	{ defload, defsave, defsee, defhit },	/* CS_NONE */
 	{ dnaload, dnasave, defsee, dnahit },	/* CS_DNADOOR */
-	{ keyload, keysave, defsee, keyhit },	/* CS_KEYDOOR */
+	{ keyload, keysave, keysee, keyhit },	/* CS_KEYDOOR */
 	{ tload, tsave, tsee, thit },			/* CS_TRAPS */
 	{ insc_load, insc_save, defsee, insc_hit },	/* CS_INSCRIP */
 	{ fountload, fountsave, fountsee, defhit },	/* CS_FOUNTAIN */
