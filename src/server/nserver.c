@@ -707,8 +707,19 @@ void setup_contact_socket(void)
 	install_input(SGWHit, SGWSocket, 0);
 #endif
 #ifdef TOMENET_WORLDS
+	world_connect(-1);
+#endif
+}
+
+#ifdef TOMENET_WORLDS
+void world_connect(int Ind){
 	/* evileye testing only */
 	/* really, server should DIE if this happens */
+	if(WorldSocket!=-1){
+		if(Ind!=-1) msg_print(Ind, "\377oAlready connected to the world server");
+		return;
+	}
+
 	block_timer();
 	if((WorldSocket=CreateClientSocket(cfg.wserver, 18360))==-1){
 #ifdef WIN32
@@ -716,12 +727,14 @@ void setup_contact_socket(void)
 #else
 		s_printf("Unable to connect to world server %d %d\n", errno, sl_errno);
 #endif
+		if(Ind!=-1) msg_print(Ind, "\377rFailed to connect to the world server");
                 return;
 	}
 	allow_timer();
 	install_input(world_comm, WorldSocket, 0);
-#endif
+	if(Ind!=-1) msg_print(Ind, "\377gSuccessfully connected to the world server");
 }
+#endif
 
 static int Reply(char *host_addr, int fd)
 {

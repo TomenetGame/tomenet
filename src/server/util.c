@@ -2692,6 +2692,13 @@ static void do_slash_cmd(int Ind, char *message)
 					break;
 			}
 
+#ifdef TOMENET_WORLDS
+			if (prefix(message, "/world")){
+				world_connect(Ind);
+				return;
+			}
+#endif
+
 			if (prefix(message, "/shutdown") ||
 					prefix(message, "/quit"))
 			{
