@@ -274,7 +274,7 @@ bool pern_dofile(int Ind, char *file)
 	/* Build the filename */
         path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, file);
 
-        sprintf(ind, "Ind = %d", Ind);
+        sprintf(ind, "Ind = %d", 1);
         lua_dostring(L, ind);
         lua_settop(L, oldtop);
 
@@ -290,7 +290,7 @@ int exec_lua(int Ind, char *file)
         int res;
         char ind[80];
 
-        sprintf(ind, "Ind = %d", Ind);
+        sprintf(ind, "Ind = %d", 1);
         lua_dostring(L, ind);
         lua_settop(L, oldtop);
 
@@ -312,7 +312,7 @@ cptr string_exec_lua(int Ind, char *file)
 	cptr res;
         char ind[80];
 
-        sprintf(ind, "Ind = %d", Ind);
+        sprintf(ind, "Ind = %d", 1);
         lua_dostring(L, ind);
         lua_settop(L, oldtop);
 

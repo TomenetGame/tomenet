@@ -109,7 +109,6 @@ end
 
 -- Change this fct if I want to switch to learnable spells
 function get_level_school(i, s, max, min)
---[[ DGDGDGDGDG
 	local lvl, sch, index, num, bonus
 	local player = players(i)
 
@@ -157,8 +156,6 @@ function get_level_school(i, s, max, min)
         end
 
         return lvl
-]]
-return 1
 end
 
 -- The real get_level, works for schooled magic and for innate powers
@@ -178,8 +175,8 @@ function is_ok_spell(i, s)
 end
 
 -- Get the amount of mana(or power) needed
-function get_mana(s)
-        return spell(s).mana + get_level(s, spell(s).mana_max - spell(s).mana, 0)
+function get_mana(i, s)
+        return spell(s).mana + get_level(i, s, spell(s).mana_max - spell(s).mana, 0)
 end
 
 -- Return the amount of power(mana, piety, whatever) for the spell
@@ -227,18 +224,17 @@ function print_book(i, book, spl)
         -- Parse all spells
 	for index, s in school_book[book] do
         	local color = TERM_L_DARK
---                local lvl = get_level(i, s, 50, -50)
-local lvl = 1
+                local lvl = get_level(i, s, 50, -50)
         	local xx, sch_str
---[[
+
                 if is_ok_spell(i, s) then
-                	if get_mana(s) > get_power(i, s) then color = TERM_ORANGE
+                	if get_mana(i, s) > get_power(i, s) then color = TERM_ORANGE
                         else color = TERM_L_GREEN end
                 end
-]]
+
                 xx = nil
                 sch_str = ""
---[[
+
 		for index, sch in __spell_school[s] do
                 	if xx then
 		                sch_str = sch_str.."/"..school(sch).name
@@ -247,8 +243,8 @@ local lvl = 1
 		                sch_str = sch_str..school(sch).name
 	                end
                 end
-]]
-                c_prt(color, format("%c) %-20s%-16s   %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
+
+                c_prt(color, format("%c) %-20s%-16s   %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(i, s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
 		y = y + 1
                 size = size + 1
         end
@@ -334,7 +330,7 @@ function spell_chance(i, s)
 	s_ptr = spell(s)
 
 	-- Extract the base spell failure rate
-        chance = lua_spell_chance(i, s_ptr.fail, get_level(s, 50), s_ptr.skill_level, get_mana(s), get_power(i, s), get_spell_stat(s))
+        chance = lua_spell_chance(i, s_ptr.fail, get_level(i, s, 50), s_ptr.skill_level, get_mana(i, s), get_power(i, s), get_spell_stat(s))
 
 	-- Return the chance
 	return chance
@@ -391,7 +387,7 @@ function cast_school_spell(i, s, s_ptr, no_cost)
 		end
 
 		-- Enough mana
-		if (get_mana(s) > get_power(s)) then
+		if (get_mana(i, s) > get_power(s)) then
 --                        if (get_check("You do not have enough "..get_power_name(s)..", do you want to try anyway?") == FALSE) then return end
 				return
 	        end
@@ -423,7 +419,7 @@ function cast_school_spell(i, s, s_ptr, no_cost)
 
 	if use == TRUE then
 	        -- Reduce mana
-		adjust_power(s, -get_mana(s))
+		adjust_power(s, -get_mana(i, s))
 
 	        -- Take a turn
         	if is_magestaff() == TRUE then energy_use = 80

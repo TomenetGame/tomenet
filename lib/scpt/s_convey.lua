@@ -10,10 +10,10 @@ BLINK = add_spell
         ["mana_max"] =  3,
         ["fail"] = 	10,
         ["spell"] = 	function()
-			teleport_player(10 + get_level(BLINK, 8))
+			teleport_player(10 + get_level(Ind, BLINK, 8))
 	end,
 	["info"] = 	function()
-                	return "distance "..(10 + get_level(BLINK, 8))
+                	return "distance "..(10 + get_level(Ind, BLINK, 8))
 	end,
         ["desc"] =	{
         		"Teleports you on a small scale range",
