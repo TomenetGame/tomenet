@@ -4530,16 +4530,26 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	else if (who == -999)
 	{
 		cave_type **zcave;
-		trap_type *t_ptr;
+		cave_type *c_ptr;
+		trap_type *t_ptr=(trap_type*)NULL;
+
 		if((zcave=getcave(wpos))){
-			if(p_ptr->px!=x || p_ptr->py!=y){
-				/* Assume chest trap (hacky) */
-				object_type *o_ptr=&o_list[zcave[y][x].o_idx];
+			c_ptr=&zcave[p_ptr->py][p_ptr->px];
+			if(c_ptr->special.type==CS_TRAPS)
+				t_ptr=c_ptr->special.ptr;
+
+			if(t_ptr && t_ptr->t_idx==typ){
+				t_ptr = zcave[p_ptr->py][p_ptr->px].special.ptr;
+				sprintf(killer, t_name + t_info[t_ptr->t_idx].name);
+			}
+			else if(c_ptr->o_idx){
+				/* Chest (object) trap */
+				object_type *o_ptr=&o_list[c_ptr->o_idx];
 				sprintf(killer, t_name + t_info[o_ptr->pval].name);
 			}
 			else{
-				t_ptr = zcave[p_ptr->py][p_ptr->px].special.ptr;
-				sprintf(killer, t_name + t_info[t_ptr->t_idx].name);
+				/* Hopefully never. */
+				sprintf(killer, "A mysterious accident");
 			}
 		}
 	}
