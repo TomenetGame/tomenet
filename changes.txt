@@ -194,3 +194,10 @@ Change list for PernMangband
 29/09/2001
 - Target friendly bug fixed - player in own party was used ;)
 - Colour messaging added - should work with all message types.
+
+01/10/2001
+- Golem following/guard bug fixed. Golem will now follow down/up
+  stairs regardless of guard.
+- Other bugs identified (unfixed) Target friendly with golem causes
+  chaos. The golem attacks nearest player, kills then homes in on the ghost.
+  Also, swapping places with the golem causes problems. (Urgent fix)

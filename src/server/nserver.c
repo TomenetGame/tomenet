@@ -1737,7 +1737,6 @@ void process_pending_commands(int ind)
 	while ((connp->r.ptr < connp->r.buf + connp->r.len))
 	{
 		type = (connp->r.ptr[0] & 0xFF);
-		printf("Type: %d\n",type);
 		result = (*receive_tbl[type])(ind);
 		if (connp->state == CONN_PLAYING)
 		{
