@@ -458,3 +458,7 @@ Change list for PernMangband
 - Fixed a bug where creating a tower caused crash.
 - Fixed a bug where selling an item to a store caused crash.
 - Detected traps will interrupt running.
+
+17/12/2001 (Evileye)
+- Fixed the same bugs as Jir :( Vault monsters, objects.
+- Also, the tower bug, which was in save.c

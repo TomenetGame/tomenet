@@ -158,7 +158,6 @@ static void choose_race(void)
 
 	char		out_val[160];
 
-	k = 0;
 	l = 2;
 	m = 21;
 
@@ -218,7 +217,6 @@ static void choose_class(void)
 
 
 	/* Prepare to list */
-	k = 0;
 	l = 2;
 	m = 21;
 
@@ -379,13 +377,9 @@ static void choose_bat(void)
  */
 static void choose_class_mage(void)
 {
-	player_class *cp_ptr;
-	int          j, k, l, m;
+	int          j;
 
 	char         c;
-
-	char	 out_val[160];
-
 
 	/* Get a class */
 	while (1)

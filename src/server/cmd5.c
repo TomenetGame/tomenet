@@ -4955,7 +4955,6 @@ void do_cmd_shad_aux(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 
 	int plev = p_ptr->lev;
-	int beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
 
 	magic_type *s_ptr = &p_ptr->mp_ptr->info[p_ptr->current_spell];
 
@@ -5083,8 +5082,7 @@ static void do_mimic_power(int Ind, int power)
 {
   player_type *p_ptr = Players[Ind];
   monster_race *r_ptr = &r_info[p_ptr->body_monster];
-  int rlev = r_ptr->level,
-      plev = p_ptr->lev;
+  int rlev = r_ptr->level;
   int j, chance;
   magic_type *s_ptr = &innate_powers[power];
 
@@ -5567,7 +5565,6 @@ void do_mimic_power_aux(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	int rad;
-	int plev = p_ptr->lev;
 	int rlev = r_ptr->level;
 	magic_type *s_ptr = &innate_powers[p_ptr->current_spell];
 
@@ -5882,7 +5879,6 @@ void do_mimic_change(int Ind, int r_idx)
 void do_cmd_mimic(int Ind, int r_idx, int spell)
 {
 	player_type *p_ptr = Players[Ind];
-	int i;
 	
 	/* No anti-magic shields around ? */
 	if (check_antimagic(Ind))
@@ -6511,7 +6507,6 @@ void do_cmd_psi_aux(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 
 	int plev = p_ptr->lev;
-	int beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
 	int Ind2;  /* Ind2 = Dominant(caster), Ind = Dominated */
 	player_type *p_ptr2; /* p_ptr = Dominant(caster), p_ptr2 = Dominated */
 	magic_type *s_ptr;

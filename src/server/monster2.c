@@ -1602,8 +1602,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 	/* Hack -- no creation on glyph of warding */
 	if (zcave[y][x].feat == FEAT_GLYPH) return (FALSE);
 
-	if(istown(wpos) && zcave[y][x].info & CAVE_ICKY) return(FALSE);
-	if(wild_info[wpos->wy][wpos->wx].radius < 3 && zcave[y][x].info & CAVE_ICKY && !wpos->wz) return(FALSE);
+	if(!wpos->wz && wild_info[wpos->wy][wpos->wx].radius < 3 && zcave[y][x].info & CAVE_ICKY) return(FALSE);
 
 #if 0
 	/* should be sorted - look above */
@@ -2054,6 +2053,7 @@ bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp, b
 #else
 	if (!place_monster_one(Depth, y, x, r_idx, pick_ego_monster(r_idx, Depth), 0, slp, clo)) return (FALSE);
 #endif
+
 
 	/* Require the "group" flag */
 	if (!grp) return (TRUE);

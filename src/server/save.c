@@ -767,8 +767,8 @@ static void wr_monster_race(monster_race *r_ptr)
 {
 	int i;
 
-	wr_s16b(r_ptr->name);
-	wr_s16b(r_ptr->text);
+	wr_u16b(r_ptr->name);
+	wr_u16b(r_ptr->text);
 	wr_byte(r_ptr->hdice);
 	wr_byte(r_ptr->hside);
 	wr_s16b(r_ptr->ac);
@@ -779,12 +779,12 @@ static void wr_monster_race(monster_race *r_ptr)
 	wr_s16b(r_ptr->extra);
 	wr_byte(r_ptr->freq_inate);
 	wr_byte(r_ptr->freq_spell);
-	wr_s32b(r_ptr->flags1);
-	wr_s32b(r_ptr->flags2);
-	wr_s32b(r_ptr->flags3);
-	wr_s32b(r_ptr->flags4);
-	wr_s32b(r_ptr->flags5);
-	wr_s32b(r_ptr->flags6);
+	wr_u32b(r_ptr->flags1);
+	wr_u32b(r_ptr->flags2);
+	wr_u32b(r_ptr->flags3);
+	wr_u32b(r_ptr->flags4);
+	wr_u32b(r_ptr->flags5);
+	wr_u32b(r_ptr->flags6);
 	wr_s16b(r_ptr->level);
 	wr_byte(r_ptr->rarity);
 	wr_byte(r_ptr->d_attr);

@@ -3852,6 +3852,7 @@ void place_object(int Depth, int y, int x, bool good, bool great)
 
 #ifdef NEW_DUNGEON
 		c_ptr=&zcave[y][x];
+		c_ptr->o_idx = o_idx;
 #else
 		c_ptr = &cave[Depth][y][x];
 		c_ptr->o_idx = o_idx;
@@ -3859,13 +3860,11 @@ void place_object(int Depth, int y, int x, bool good, bool great)
 
 		/* Notice "okay" out-of-depth objects (unless already noticed) */
 #ifdef NEW_DUNGEON
-		/* this needs some work, what with dungeons having base
-		   levels etc. */
 		if (!cursed_p(o_ptr) && !broken_p(o_ptr) &&
-		    (rating == old) && (k_info[o_ptr->k_idx].level > wpos->wz))
+		    (rating == old) && (k_info[o_ptr->k_idx].level > getlevel(wpos)))
 		{
 			/* Rating increase */
-			rating += (k_info[o_ptr->k_idx].level - wpos->wz);
+			rating += (k_info[o_ptr->k_idx].level - getlevel(wpos));
 #else
 		if (!cursed_p(o_ptr) && !broken_p(o_ptr) &&
 		    (rating == old) && (k_info[o_ptr->k_idx].level > Depth))

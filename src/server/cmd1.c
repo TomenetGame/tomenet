@@ -3562,7 +3562,6 @@ static bool run_test(int Ind)
 void run_step(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-	cave_type *c_ptr;
 
 	/* Check for just changed level */
 	if (p_ptr->new_level_flag) return;
@@ -3570,45 +3569,6 @@ void run_step(int Ind, int dir)
 	/* Start running */
 	if (dir)
 	{
-		/* Running into walls and doors is now checked in do_cmd_run.*/
-		#if 0
-		/* Hack -- do not start silly run */
-		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px))
-		{
-			/* If we are trying to run into a door and bump_open is enabled,
-			 * try to open the door
-			 */
-			if (cfg_door_bump_open)
-			{
-				/* Get requested grid */
-#ifdef NEW_DUNGEON
-				c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
-#else
-				c_ptr = &cave[p_ptr->dun_depth][p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
-#endif
-
-				/* If a door, open it */
-				if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
-				      (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-				    ((c_ptr->feat >= FEAT_HOME_HEAD) &&
-				      (c_ptr->feat <= FEAT_HOME_TAIL))) 
-					{
-						do_cmd_open(Ind, dir);
-						return;
-					}
-			}
-
-			/* Message */
-			msg_print(Ind, "You cannot run in that direction.");
-
-			/* Disturb */
-			disturb(Ind, 0, 0);
-
-			/* Done */
-			return;
-		}
-		#endif
-
 		/* Calculate torch radius */
 		p_ptr->update |= (PU_TORCH);
 

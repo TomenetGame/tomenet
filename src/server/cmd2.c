@@ -663,7 +663,6 @@ bool access_door(int Ind, struct dna_type *dna){
 		return(FALSE); /* defies logic a bit, but for speed */
 #endif
 	switch(dna->owner_type){
-	int i;
 		case OT_PLAYER:
 			/* new doors in new server different */
 #ifdef NEWHOUSES
@@ -971,7 +970,6 @@ void do_cmd_open(int Ind, int dir)
 					if(dna->owner){
 						char string[80];
 						char *name;
-						int i;
 						strcpy(string,"nobody.");
 						switch(dna->owner_type){
 							case OT_PLAYER:
@@ -2441,7 +2439,6 @@ int do_cmd_run(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr;
-	int i;
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
@@ -3569,7 +3566,6 @@ void do_cmd_throw(int Ind, int dir, int item)
 	}
 
 	if(o_ptr->tval==0){
-		char temp[160];
 		msg_print(Ind, "\377rYou cannot throw that");
 		return;
 	}

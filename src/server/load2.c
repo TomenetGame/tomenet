@@ -714,8 +714,8 @@ static void rd_monster_race(monster_race *r_ptr)
 {
 	int i;
 
-	rd_s16b(&r_ptr->name);
-	rd_s16b(&r_ptr->text);
+	rd_u16b(&r_ptr->name);
+	rd_u16b(&r_ptr->text);
 	rd_byte(&r_ptr->hdice);
 	rd_byte(&r_ptr->hside);
 	rd_s16b(&r_ptr->ac);
@@ -726,12 +726,12 @@ static void rd_monster_race(monster_race *r_ptr)
 	rd_s16b(&r_ptr->extra);
 	rd_byte(&r_ptr->freq_inate);
 	rd_byte(&r_ptr->freq_spell);
-	rd_s32b(&r_ptr->flags1);
-	rd_s32b(&r_ptr->flags2);
-	rd_s32b(&r_ptr->flags3);
-	rd_s32b(&r_ptr->flags4);
-	rd_s32b(&r_ptr->flags5);
-	rd_s32b(&r_ptr->flags6);
+	rd_u32b(&r_ptr->flags1);
+	rd_u32b(&r_ptr->flags2);
+	rd_u32b(&r_ptr->flags3);
+	rd_u32b(&r_ptr->flags4);
+	rd_u32b(&r_ptr->flags5);
+	rd_u32b(&r_ptr->flags6);
 	rd_s16b(&r_ptr->level);
 	rd_byte(&r_ptr->rarity);
 	rd_byte(&r_ptr->d_attr);
@@ -1278,7 +1278,6 @@ static bool rd_extra(int Ind)
 	int i;
 
 	byte tmp8u;
-	s16b tmps16b;
 
 	rd_string(p_ptr->name, 32);
 
@@ -1966,7 +1965,7 @@ static errr rd_savefile_new_aux(int Ind)
 
 	int i;
 
-	u16b tmp16u, y, x, ymax, xmax;
+	u16b tmp16u;
 	u32b tmp32u;
 
 

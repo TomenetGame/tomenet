@@ -238,7 +238,7 @@ void text_to_ascii(char *buf, cptr str)
  * Replace "~user/" by the home directory of the user named "user"
  * Replace "~/" by the home directory of the current user
  */
-errr path_parse(char *buf, int max, cptr file)
+errr path_parse(char *buf, cptr file)
 {
 #ifndef WIN32
 #ifndef AMIGA
@@ -316,7 +316,7 @@ FILE *my_fopen(cptr file, cptr mode)
         char                buf[1024];
 
         /* Hack -- Try to parse the path */
-        if (path_parse(buf, 1024, file)) return (NULL);
+        if (path_parse(buf, file)) return (NULL);
 
         /* Attempt to fopen the file anyway */
         return (fopen(buf, mode));

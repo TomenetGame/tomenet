@@ -1083,11 +1083,6 @@ int cmd_target(void)
 
 int cmd_target_friendly(void)
 {
-	bool done = FALSE;
-	bool position = FALSE;
-	int d;
-	char ch;
-
 	/* Tell the server to init targetting */
 	Send_target_friendly(0);
 	return TRUE;
@@ -1541,8 +1536,6 @@ void cmd_pray(void)
 
 void cmd_mimic(void)
 {
-	int item;
-
 	if (class != CLASS_MIMIC)
 	{
 		c_msg_print("You are too solid.");
