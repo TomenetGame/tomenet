@@ -2736,8 +2736,12 @@ static void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/val")){
-				while(tk--)
-					validate(token[tk-1]);
+				if(!tk) return;
+				do{
+					msg_format(Ind, "\377GValidating %s", token[tk]);
+					validate(token[tk]);
+				}while(--tk)
+				return;
 			}
 			else if (prefix(message, "/kick"))
 			{
