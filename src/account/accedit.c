@@ -87,7 +87,9 @@ int ListAccounts(int fpos){
 	int ifpos=0;	/* internal file (LIST TOP) position */
 	int i, x;
 	short reload=1;
+	short redraw=0;
 	struct account c_acc;
+	unsigned short change=0;
 
 	touchwin(listwin);
 	mvwaddstr(listwin, 0, 5, "Name");
@@ -112,6 +114,19 @@ int ListAccounts(int fpos){
 				c_acc.flags & ACC_MULTI ? 'X' : '.', c_acc.id, c_acc.flags & ACC_DELD ? "DELETED" : "");
 			}
 			reload=0;
+			redraw=1;
+		}
+		if(!change){
+			fseek(fp, fpos*sizeof(struct account), SEEK_SET);
+			x=fread(&c_acc, sizeof(struct account), 1, fp);
+		}
+		if(redraw){
+			mvwprintw(listwin, (fpos-ifpos)+1, 5, "%-22s%-8c%-8c%-8c%-8c%.10d%10s", c_acc.name,
+			c_acc.flags & ACC_TRIAL ? '.' : 'X',
+			c_acc.flags & ACC_ADMIN ? 'X' : '.',
+			c_acc.flags & ACC_NOSCORE ? '.' : 'X',
+			c_acc.flags & ACC_MULTI ? 'X' : '.', c_acc.id, c_acc.flags & ACC_DELD ? "DELETED" : "");
+			redraw=0;
 		}
 		mvwaddch(listwin, (fpos-ifpos)+1, 3, '>');
 		wrefresh(listwin);
@@ -126,9 +141,19 @@ int ListAccounts(int fpos){
 			case 'f':
 			case 'F':
 				mvwaddch(listwin, (fpos-ifpos)+1, 3, ' ');
+				if(change)
+					if(ask("This record was changed. Save?")){
+						if(recwrite(&c_acc, fpos*sizeof(struct account)))
+							change=0;
+						else{
+							if(!ask("Could not write record. Continue anyway?"))
+								break;
+						}
+					}
 				tfpos=findacc();
 				if(tfpos>=0){
 					fpos=tfpos;
+					change=0;
 					if(fpos>ifpos+(LINES-11))
 						ifpos=fpos-(LINES-11);
 					else if(fpos<ifpos)
@@ -138,31 +163,57 @@ int ListAccounts(int fpos){
 				break;
 			case 'n':
 			case 'N':
+				if(change)
+					if(ask("This record was changed. Save?")){
+						if(recwrite(&c_acc, fpos*sizeof(struct account)))
+							change=0;
+						else{
+							if(!ask("Could not write record. Continue anyway?"))
+								break;
+						}
+					}
 				mvwaddch(listwin, (fpos-ifpos)+1, 3, ' ');
-				if((fpos-ifpos) < (i-1))
+				if((fpos-ifpos) < (i-1)){
 					fpos++;
+					change=0;
+				}
 				else{
-					if(i < (LINES-11)) break;
-					fseek(fp, (fpos+1)*sizeof(struct account), SEEK_SET);
+					if(i < (LINES-11)){
+						status("There are no more records");
+						break;
+					}
 					x=fread(&c_acc, sizeof(struct account), 1, fp);
 					if(x==0)
 						status("There are no more records");
 					else{
 						ifpos++;
 						fpos++;
+						change=0;
 						reload=1;
 					}
 				}
 				break;
 			case 'p':
 			case 'P':
+				if(change)
+					if(ask("This record was changed. Save?")){
+						if(recwrite(&c_acc, fpos*sizeof(struct account)))
+							change=0;
+						else{
+							if(!ask("Could not write record. Continue anyway?"))
+								break;
+						}
+					}
 				mvwaddch(listwin, (fpos-ifpos)+1, 3, ' ');
-				if(fpos>ifpos)
+				if(fpos>ifpos){
 					fpos--;
+					change=0;
+				}
 				else{
 					if(ifpos>0){
 						ifpos--;
 						fpos--;
+						change=0;
 						reload=1;
 					}
 					else
@@ -175,6 +226,30 @@ int ListAccounts(int fpos){
 					quit=1;
 					fpos=-1;
 				}
+				break;
+			case 'v':
+			case 'V':
+				change=1;
+				redraw=1;
+				c_acc.flags^=ACC_TRIAL;
+				break;
+			case 'a':
+			case 'A':
+				change=1;
+				redraw=1;
+				c_acc.flags^=ACC_ADMIN;
+				break;
+			case 'm':
+			case 'M':
+				change=1;
+				redraw=1;
+				c_acc.flags^=ACC_MULTI;
+				break;
+			case 's':
+			case 'S':
+				change=1;
+				redraw=1;
+				c_acc.flags^=ACC_NOSCORE;
 				break;
 			default:
 				beep();
@@ -238,14 +313,25 @@ void editor(){
 
 					fseek(fp, fpos*sizeof(struct account), SEEK_SET);
 					x=fread(&c_acc, sizeof(struct account),1, fp);
+					change=0;
 					touchwin(mainwin);
 					continue;
 					break;
 				case 'f':
 				case 'F':
+					if(change)
+						if(ask("This record was changed. Save?")){
+							if(recwrite(&c_acc, fpos*sizeof(struct account)))
+								change=0;
+							else{
+								if(!ask("Could not write record. Continue anyway?"))
+									break;
+							}
+						}
 					tfpos=findacc();
 					if(tfpos>=0){
 						fpos=tfpos;
+						change=0;
 						fseek(fp, fpos*sizeof(struct account), SEEK_SET);
 						x=fread(&c_acc, sizeof(struct account),1, fp);
 					}
@@ -335,6 +421,8 @@ int findacc(){
 
 	statinput("Find which name: ", &sname, 30);
 	fseek(fp, 0L, SEEK_SET);
+	/* its always upper, and admins can be lazy */
+	sname[0]=toupper(sname[0]);
 	while((x=fread(&c_acc, sizeof(struct account),1, fp))){
 		if(!strncmp(c_acc.name, sname, 30)){
 			return(i);
