@@ -65,3 +65,4 @@ Change list for PernMangband
 - tot_dam_aux_player was getting resistances the wrong way round (and redefining
   arg p_ptr).
 - uncommented 744/745 of server/xtra1.c
+- made king code multi-king friendly (made movement hook for each player)

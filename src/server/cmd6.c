@@ -1252,7 +1252,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 		case SV_SCROLL_TELEPORT_LEVEL:
 		{
-			(void)teleport_player_level(Ind);
+			teleport_player_level(Ind);
 			ident = TRUE;
 			break;
 		}

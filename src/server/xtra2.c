@@ -4933,8 +4933,8 @@ bool master_build(int Ind, char * parms)
 		/* Hack -- toggle auto-build on/off */
 		switch (parms[1])
 		{
-			case 'T': master_move_hook = master_build; break;
-			case 'F': master_move_hook = NULL; break;
+			case 'T': p_ptr->master_move_hook = master_build; break;
+			case 'F': p_ptr->master_move_hook = NULL; break;
 			default : break;
 		}
 	}
@@ -5177,14 +5177,14 @@ bool master_summon(int Ind, char * parms)
 			summon_type = 'x';
 			summon_parms = 1;
 			
-			master_move_hook = master_summon;
+			p_ptr->master_move_hook = master_summon;
 			break;
 		}
 
 		/* summon mode off */
 		case 'F':
 		{
-			master_move_hook = NULL;
+			p_ptr->master_move_hook = NULL;
 			break;
 		}
 	}

@@ -1267,6 +1267,9 @@ static void player_setup(int Ind)
 	/* Update his inventory, equipment, and spell info */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
 
+
+	p_ptr->master_move_hook=NULL; /* just in case its not */
+
 	/* This guy is alive now */
 	p_ptr->alive = TRUE;
 }

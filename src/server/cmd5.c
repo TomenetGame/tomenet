@@ -1211,7 +1211,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 
 			case 35:
 			{
-				(void)teleport_player_level(Ind);
+				teleport_player_level(Ind);
 				break;
 			}
 
@@ -3086,7 +3086,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 55:
 			{
-				(void)teleport_player_level(Ind);
+				teleport_player_level(Ind);
 				break;
 			}
 

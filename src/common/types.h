@@ -1423,6 +1423,8 @@ struct player_type
   byte esp_link_type;
   u16b esp_link_flags;
   u16b esp_link_end; /* Time before actual end */
+	bool (*master_move_hook)(int Ind, char * args);
+
 };
 
 /* For Monk martial arts */
