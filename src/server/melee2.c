@@ -1165,7 +1165,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 		if (grabchance < 1) continue;
 
 //		grabchance = 50 + q_ptr->lev/2 - (q_ptr->blind?30:0);
-		if (grabchance > 95) grabchance = 95;
+		if (grabchance > 90) grabchance = 90;/* Interception cap */
 
 		/* Got disrupted ? */
 		if (magik(grabchance))
