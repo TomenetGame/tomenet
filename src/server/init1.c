@@ -1064,7 +1064,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 }
 
 
-
+#if 1
 /*
  * Initialize the "f_info" array, by parsing an ascii "template" file
  */
@@ -1269,7 +1269,375 @@ errr init_f_info_txt(FILE *fp, char *buf)
 	/* Success */
 	return (0);
 }
+#else // 0
 
+/*
+ * Grab one flag in an feature_type from a textual string
+ */
+static errr grab_one_feature_flag(feature_type *f_ptr, cptr what)
+{
+	int i;
+
+	/* Check flags1 */
+	for (i = 0; i < 32; i++)
+	{
+                if (streq(what, f_info_flags1[i]))
+		{
+                        f_ptr->flags1 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Oops */
+	s_printf("Unknown object flag '%s'.", what);
+
+	/* Error */
+	return (1);
+}
+
+
+/*
+ * Initialize the "f_info" array, by parsing an ascii "template" file
+ */
+errr init_f_info_txt(FILE *fp, char *buf)
+{
+	int i;
+
+	char *s, *t;
+
+	/* Not ready yet */
+	bool okay = FALSE;
+	u32b default_desc = 0, default_tunnel = 0, default_block = 0;
+
+	/* Current entry */
+	feature_type *f_ptr = NULL;
+
+
+	/* Just before the first record */
+	error_idx = -1;
+
+	/* Just before the first line */
+	error_line = -1;
+
+
+	/* Prepare the "fake" stuff */
+	f_head->name_size = 0;
+	f_head->text_size = 0;
+
+	/* Add some fake descs */
+	default_desc = ++f_head->text_size;
+	strcpy(f_text + f_head->text_size, "a wall blocking your way");
+	f_head->text_size += strlen("a wall blocking your way");
+
+	default_tunnel = ++f_head->text_size;
+	strcpy(f_text + f_head->text_size, "You cannot tunnel through that.");
+	f_head->text_size += strlen("You cannot tunnel through that.");
+
+	default_block = ++f_head->text_size;
+	strcpy(f_text + f_head->text_size, "a wall blocking your way");
+	f_head->text_size += strlen("a wall blocking your way");
+
+	/* Parse */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* Advance the line number */
+		error_line++;
+
+		/* Skip comments and blank lines */
+		if (!buf[0] || (buf[0] == '#')) continue;
+
+		/* Verify correct "colon" format */
+		if (buf[1] != ':') return (1);
+
+
+		/* Hack -- Process 'V' for "Version" */
+		if (buf[0] == 'V')
+		{
+			int v1, v2, v3;
+
+			/* Scan for the values */
+			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+					(v1 != f_head->v_major) ||
+					(v2 != f_head->v_minor) ||
+					(v3 != f_head->v_patch))
+			{
+				/* It only annoying -- DG */
+				//				return (2);
+				//				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
+			}
+
+			/* Okay to proceed */
+			okay = TRUE;
+
+			/* Continue */
+			continue;
+		}
+
+		/* No version yet */
+		if (!okay) return (2);
+
+
+		/* Process 'N' for "New/Number/Name" */
+		if (buf[0] == 'N')
+		{
+			/* Find the colon before the name */
+			s = strchr(buf+2, ':');
+
+			/* Verify that colon */
+			if (!s) return (1);
+
+			/* Nuke the colon, advance to the name */
+			*s++ = '\0';
+
+			/* Paranoia -- require a name */
+			if (!*s) return (1);
+
+			/* Get the index */
+			i = atoi(buf+2);
+
+			/* Verify information */
+			if (i <= error_idx) return (4);
+
+			/* Verify information */
+			if (i >= f_head->info_num) return (2);
+
+			/* Save the index */
+			error_idx = i;
+
+			/* Point at the "info" */
+			f_ptr = &f_info[i];
+
+			/* Hack -- Verify space */
+			if (f_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+
+			/* Advance and Save the name index */
+			if (!f_ptr->name) f_ptr->name = ++f_head->name_size;
+
+			/* Append chars to the name */
+			strcpy(f_name + f_head->name_size, s);
+
+			/* Advance the index */
+			f_head->name_size += strlen(s);
+
+			/* Default "mimic" */
+			f_ptr->mimic = i;
+			f_ptr->text = default_desc;
+			f_ptr->block = default_desc;
+			f_ptr->tunnel = default_tunnel;
+			f_ptr->block = default_block;
+
+			/* Next... */
+			continue;
+		}
+
+		/* There better be a current f_ptr */
+		if (!f_ptr) return (3);
+
+
+		/* Process 'D' for "Descriptions" */
+		if (buf[0] == 'D')
+		{
+			/* Acquire the text */
+			s = buf+4;
+
+			/* Hack -- Verify space */
+			if (f_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+
+			switch (buf[2])
+			{
+				case '0':
+					/* Advance and Save the text index */
+					f_ptr->text = ++f_head->text_size;
+					break;
+				case '1':
+					/* Advance and Save the text index */
+					f_ptr->tunnel = ++f_head->text_size;
+					break;
+				case '2':
+					/* Advance and Save the text index */
+					f_ptr->block = ++f_head->text_size;
+					break;
+				default:
+					return (6);
+					break;
+			}
+
+			/* Append chars to the name */
+			strcpy(f_text + f_head->text_size, s);
+
+			/* Advance the index */
+			f_head->text_size += strlen(s);
+
+			/* Next... */
+			continue;
+		}
+
+
+		/* Process 'M' for "Mimic" (one line only) */
+		if (buf[0] == 'M')
+		{
+			int mimic;
+
+			/* Scan for the values */
+			if (1 != sscanf(buf+2, "%d",
+						&mimic)) return (1);
+
+						/* Save the values */
+						f_ptr->mimic = mimic;
+
+						/* Next... */
+						continue;
+		}
+
+		/* Process 'S' for "Shimmer" (one line only) */
+		if (buf[0] == 'S')
+		{
+			char s0, s1, s2, s3, s4, s5, s6;
+
+			/* Scan for the values */
+			if (7 != sscanf(buf+2, "%c:%c:%c:%c:%c:%c:%c",
+						&s0, &s1, &s2, &s3, &s4, &s5, &s6)) return (1);
+
+						/* Save the values */
+						f_ptr->shimmer[0] = color_char_to_attr(s0);
+						f_ptr->shimmer[1] = color_char_to_attr(s1);
+						f_ptr->shimmer[2] = color_char_to_attr(s2);
+						f_ptr->shimmer[3] = color_char_to_attr(s3);
+						f_ptr->shimmer[4] = color_char_to_attr(s4);
+						f_ptr->shimmer[5] = color_char_to_attr(s5);
+						f_ptr->shimmer[6] = color_char_to_attr(s6);
+
+						/* Next... */
+						continue;
+		}
+
+
+		/* Process 'G' for "Graphics" (one line only) */
+		if (buf[0] == 'G')
+		{
+			int tmp;
+
+			/* Paranoia */
+			if (!buf[2]) return (1);
+			if (!buf[3]) return (1);
+			if (!buf[4]) return (1);
+
+			/* Extract the color */
+			tmp = color_char_to_attr(buf[4]);
+
+			/* Paranoia */
+			if (tmp < 0) return (1);
+
+			/* Save the values */
+			f_ptr->d_attr = tmp;
+			f_ptr->d_char = buf[2];
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'E' for "Effects" (up to four lines) -SC- */
+		if (buf[0] == 'E')
+		{
+			int side, dice, freq, type;
+			cptr tmp;
+
+			/* Find the next empty blow slot (if any) */
+			for (i = 0; i < 4; i++) if ((!f_ptr->d_side[i]) &&
+					(!f_ptr->d_dice[i])) break;
+
+			/* Oops, no more slots */
+			if (i == 4) return (1);
+
+			/* Scan for the values */
+			if (4 != sscanf(buf+2, "%dd%d:%d:%d",
+						&dice, &side, &freq, &type))
+			{
+				int j;
+
+				if (3 != sscanf(buf+2, "%dd%d:%d",
+							&dice, &side, &freq)) return (1);
+
+							tmp = buf+2;
+							for (j = 0; j < 2; j++)
+							{
+								tmp = strchr(tmp, ':');
+								if (tmp == NULL) return(1);
+								tmp++;
+							}
+
+							j = 0;
+
+							while (d_info_dtypes[j].name != NULL)
+								if (strcmp(d_info_dtypes[j].name, tmp) == 0)
+								{
+									f_ptr->d_type[i] = d_info_dtypes[j].feat;
+									break;
+								}
+								else j++;
+
+								if (d_info_dtypes[j].name == NULL) return(1);
+			}
+			else
+				f_ptr->d_type[i] = type;
+
+			freq *= 10;
+			/* Save the values */
+			f_ptr->d_side[i] = side;
+			f_ptr->d_dice[i] = dice;
+			f_ptr->d_frequency[i] = freq;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Hack -- Process 'F' for flags */
+		if (buf[0] == 'F')
+		{
+			/* Parse every entry textually */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+				/* Parse this entry */
+				if (0 != grab_one_feature_flag(f_ptr, s)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+
+
+		/* Oops */
+		return (6);
+	}
+
+
+	/* Complete the "name" and "text" sizes */
+	++f_head->name_size;
+	++f_head->text_size;
+
+
+	/* No version yet */
+	if (!okay) return (2);
+
+
+	/* Success */
+	return (0);
+}
+#endif	// 0
 
 
 /*

@@ -256,7 +256,8 @@ void compact_objects(int size)
 		/* real objects in unreal location are not skipped. */
 		/* hack -- items on wilderness are preserved, since
 		 * they can be house contents. */
-		if (o_ptr->k_idx && !o_ptr->wpos.wz && getcave(&o_ptr->wpos)) continue;
+//		if (o_ptr->k_idx && !o_ptr->wpos.wz && getcave(&o_ptr->wpos)) continue;
+		if (o_ptr->k_idx && (!o_ptr->wpos.wz || getcave(&o_ptr->wpos))) continue;
 
 		/* One less object */
 		o_max--;

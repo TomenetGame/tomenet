@@ -5386,8 +5386,10 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				c_ptr = &cave[0][y1][x1];
 #endif
 
+				/* Declare this to be a room */
+				c_ptr->info |= CAVE_ROOM | CAVE_GLOW;
 				/* Illuminate the store */
-				c_ptr->info |= CAVE_GLOW;
+//				c_ptr->info |= CAVE_GLOW;
 			}
 		}
 	}
