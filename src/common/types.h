@@ -1019,6 +1019,9 @@ struct player_type
 	unsigned int version;		/* His version */
 
 	s32b id;		/* Unique ID to each player */
+#ifdef NEWHOUSES
+	u32b dna;		/* DNA - psuedo unique to each player life */
+#endif
 
 	hostile_type *hostile;	/* List of players we wish to attack */
 

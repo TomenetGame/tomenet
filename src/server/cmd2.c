@@ -504,6 +504,12 @@ bool access_door(int Ind, struct dna_type *dna){
 #ifdef NEWHOUSES
 			if(p_ptr->id==dna->owner && p_ptr->dna==dna->creator)
 				return(TRUE);
+			if((dna->a_flags & ACF_PARTY) && (player_in_party(dna->owner, Ind)))
+				return(TRUE);
+			if((dna->a_flags & ACF_CLASS) && (p_ptr->pclass==dna->creator&0xff))
+				return(TRUE);
+			if((dna->a_flags & ACF_RACE) && (p_ptr->prace==(dna->creator>>8)&0xff))
+				return(TRUE);
 #else
 			if(p_ptr->id==dna->owner) return(TRUE);
 #endif

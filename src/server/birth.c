@@ -1358,6 +1358,10 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	  {
 	    p_ptr->mode = MODE_NORMAL;
 	  }
+#ifdef NEWHOUSES
+	p_ptr->dna = ((class & 0xff) | ((race & 0xff) << 8) );
+	p_ptr->dna |= (randint(65535) << 16);
+#endif
 	p_ptr->male = sex;
 	p_ptr->pclass = class;
 	p_ptr->prace = race;

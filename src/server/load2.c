@@ -1173,6 +1173,10 @@ static bool rd_extra(int Ind)
 
 	rd_s32b(&p_ptr->id);
 
+#ifdef NEWHOUSES
+	rd_u32b(&p_ptr->dna);
+#endif
+
 	/* If he was created in the pre-ID days, give him one */
 	if (!p_ptr->id)
 		p_ptr->id = player_id++;
