@@ -684,6 +684,9 @@ Change list for PernMangband
 - Wilderness map fixed.
 - project() bug fixed where spell is bounced
 
+20/01/2002 (Evileye)
+- Islands in the sea for Olorin
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)

@@ -1319,24 +1319,15 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 int wild_clone_closed_loop_total(struct worldpos *wpos)
 {
 	int total_depth;
-#ifdef NEW_DUNGEON
 	struct worldpos start, curr, total, neigh;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	int iter=0;	/* hack ;( locks otherwise */
-#else
-	int start_depth, total_depth, neigh_idx;
-	wilderness_type *w_ptr = &wild_info[cur_depth];
-#endif
 		
 	total_depth = 0;
 	
 	/* save our initial position */
-#ifdef NEW_DUNGEON
 	wpcopy(&start,wpos);
 	wpcopy(&curr,wpos);	/* dont damage the one we were given */
-#else
-	start_depth = cur_depth;
-#endif
 	
 	/* until we arrive back at our initial position */
 	do
@@ -1347,7 +1338,6 @@ int wild_clone_closed_loop_total(struct worldpos *wpos)
 		   directions (see below function).  This rand sets things up. */
 		   rand_int(100); 
 	
-#ifdef NEW_DUNGEON
 		wpcopy(&neigh, &curr);
 		do{
 			switch(rand_int(4)){
@@ -1371,20 +1361,6 @@ int wild_clone_closed_loop_total(struct worldpos *wpos)
 		total_depth += (curr.wx+curr.wy*MAX_WILD_X);
 		iter++;
 	} while (!inarea(&curr, &start) && iter<50);
-#else
-		/* get a valid neighbor location */
-		do
-		{
-			neigh_idx = neighbor_index(cur_depth, rand_int(4));
- 		} while ((neigh_idx >= 0) || (neigh_idx <= -MAX_WILD));
- 		/* move to this new location */
- 		cur_depth = neigh_idx;
-
- 		/* increase our loop total depth */
-		total_depth += cur_depth;
-	} while (cur_depth != start_depth);
-#endif
-	
 	return total_depth;	
 }
 
@@ -2603,14 +2579,14 @@ void wilderness_gen(struct worldpos *wpos)
 #define MAXWOOD 3	/* maximum forest size */
 #define MAXWASTE 3	/* maximum wasteland size */
 #define MAXLAKE 3	/* maximum lake size */
-#define SEADENSITY 64	/* land/sea ratio */
+#define SEADENSITY 96	/* land/sea ratio */
 #define ROCKY 256	/* mountains */
 #define WOODY 256	/* trees */
 #define WASTE 512	/* wasteland */
 #define RIVERS 512	/* rivers */
 #define LAKES 512	/* lakes */
 
-void initwild(){
+static void initwild(){
 	int i,j;
 	for(i=0;i<MAX_WILD_X;i++){
 		for(j=0;j<MAX_WILD_Y;j++){
@@ -2619,7 +2595,7 @@ void initwild(){
 	}
 }
 
-void island(int y, int x, unsigned char type, unsigned char fill, int size){
+static void island(int y, int x, unsigned char type, unsigned char fill, int size){
 	int ranval;
 	if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_Y) return;
 	if(wild_info[y][x].type!=fill) return;
@@ -2643,7 +2619,7 @@ void island(int y, int x, unsigned char type, unsigned char fill, int size){
 	wild_info[y][x].type=type;
 }
 
-void makeland(){
+static void makeland(){
 	int p,i;
 	int x,y;
 	int density=MAXISLAND;
@@ -2657,23 +2633,23 @@ void makeland(){
 	}
 }
 
-unsigned short makecoast(unsigned char type, int y, int x){
+static unsigned short makecoast(unsigned char edge, unsigned char new, unsigned char type, unsigned char fill, int y, int x){
 	unsigned short r=0;
 	if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_X) return(0);
-	if(wild_info[y][x].type!=WILD_UNDEFINED){
+	if(wild_info[y][x].type!=fill){
 		return((wild_info[y][x].type==type));
 	}
-	wild_info[y][x].type=WILD_OCEAN;
-	if(makecoast(type,y,x-1)) r=1;
-	if(makecoast(type,y,x+1)) r=1;
-	if(makecoast(type,y-1,x)) r=1;
-	if(makecoast(type,y+1,x)) r=1;
+	wild_info[y][x].type=new;
+	if(makecoast(edge,new,type,fill,y,x-1)) r=1;
+	if(makecoast(edge,new,type,fill,y,x+1)) r=1;
+	if(makecoast(edge,new,type,fill,y-1,x)) r=1;
+	if(makecoast(edge,new,type,fill,y+1,x)) r=1;
 	if(r)
-		wild_info[y][x].type=type==WILD_GRASSLAND?WILD_COAST:WILD_SHORE;
+		wild_info[y][x].type=edge;
 	return(0);
 }
 
-void addhills(){
+static void addhills(){
 	int i,p;
 	int x,y;
 	p=(MAX_WILD_Y*MAX_WILD_X)/ROCKY;
@@ -2686,7 +2662,7 @@ void addhills(){
 	}
 }
 
-void addlakes(){
+static void addlakes(){
 	int i,p;
 	int x,y;
 	p=(MAX_WILD_Y*MAX_WILD_X)/LAKES;
@@ -2699,7 +2675,7 @@ void addlakes(){
 	}
 }
 
-void addwaste(){
+static void addwaste(){
 	int i,p;
 	int x,y;
 	p=(MAX_WILD_Y*MAX_WILD_X)/WASTE;
@@ -2712,21 +2688,20 @@ void addwaste(){
 	}
 }
 
-void addislands(){
+static void addislands(){
 	int i,p;
 	int x,y;
-	p=(MAX_WILD_Y*MAX_WILD_X)/WASTE;
-	p=20;
+	p=(MAX_WILD_Y*MAX_WILD_X)/512;
 	for(i=0;i<p;i++){
 		do{
 			x=rand_int(MAX_WILD_X-1);
 			y=rand_int(MAX_WILD_Y-1);
-		}while(wild_info[y][x].type!=WILD_OCEAN);
-		island(y,x, WILD_WASTELAND, WILD_OCEAN, rand_int((1<<2)-1)); 
+		}while(wild_info[y][x].type!=WILD_OCEANBED1);
+		island(y,x, WILD_GRASSLAND, WILD_OCEANBED1, rand_int((1<<4)-1));
 	}
 }
 
-void addforest(){
+static void addforest(){
 	int i,p;
 	int x,y;
 	int size;
@@ -2743,10 +2718,10 @@ void addforest(){
 	}
 }
 
-int mvx[]={0,1,1,1,0,-1,-1,-1};
-int mvy[]={1,1,0,-1,-1,-1,0,1};
+static int mvx[]={0,1,1,1,0,-1,-1,-1};
+static int mvy[]={1,1,0,-1,-1,-1,0,1};
 
-void river(int y, int x){
+static void river(int y, int x){
 	int mx, my;
 	int dir,cdir,t;
 
@@ -2789,7 +2764,7 @@ void river(int y, int x){
 	}
 }
 
-void addrivers(){
+static void addrivers(){
 	int i,p;
 	int x,y;
 	p=(MAX_WILD_Y*MAX_WILD_X)/RIVERS;
@@ -2817,8 +2792,36 @@ void genwild(){
 	for(j=0;j<MAX_WILD_Y;j++){
 		for(i=0;i<MAX_WILD_X;i++){
 			if(wild_info[j][i].type==WILD_UNDEFINED){
-				makecoast(WILD_GRASSLAND,j,i);
-				makecoast(WILD_SHORE,j,i);
+				makecoast(WILD_SHORE1,WILD_OCEANBED1,WILD_GRASSLAND,WILD_UNDEFINED,j,i);
+			}
+		}
+	}
+	for(j=0;j<MAX_WILD_Y;j++){
+		for(i=0;i<MAX_WILD_X;i++){
+			if(wild_info[j][i].type==WILD_OCEANBED1){
+				makecoast(WILD_SHORE2,WILD_OCEANBED2,WILD_SHORE1,WILD_OCEANBED1,j,i);
+			}
+		}
+	}
+	for(j=0;j<MAX_WILD_Y;j++){
+		for(i=0;i<MAX_WILD_X;i++){
+			if(wild_info[j][i].type==WILD_OCEANBED2){
+				makecoast(WILD_SHORE1,WILD_OCEANBED1,WILD_SHORE2,WILD_OCEANBED2,j,i);
+			}
+		}
+	}
+	addislands();
+	for(j=0;j<MAX_WILD_Y;j++){
+		for(i=0;i<MAX_WILD_X;i++){
+			if(wild_info[j][i].type==WILD_SHORE1 || wild_info[j][i].type==WILD_SHORE2){
+				wild_info[j][i].type=WILD_OCEANBED1;
+			}
+		}
+	}
+	for(j=0;j<MAX_WILD_Y;j++){
+		for(i=0;i<MAX_WILD_X;i++){
+			if(wild_info[j][i].type==WILD_OCEANBED1){
+				makecoast(WILD_COAST,WILD_OCEAN,WILD_GRASSLAND,WILD_OCEANBED1,j,i);
 			}
 		}
 	}
@@ -2827,7 +2830,6 @@ void genwild(){
 	addforest();
 	addlakes();
 	addwaste();
-	addislands();
 	/* Restore random generator */
 	Rand_quick=rand_old;
 	Rand_value=old_seed;

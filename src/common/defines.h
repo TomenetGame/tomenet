@@ -3829,7 +3829,9 @@ that keeps many algorithms happy.
 #define		WILD_GRASSLAND		1
 #define		WILD_FOREST		2
 #define		WILD_VOLCANO		3
-#define		WILD_SHORE		4 /* temporary */
+#define		WILD_SHORE1		4 /* temporary */
+#define		WILD_SHORE2		5 /* temporary */
+#define		WILD_OCEANBED1		6 /* temporary */
 #define		WILD_WASTELAND		7
 #define		WILD_UNDEFINED		8
 #define		WILD_CLONE		9 /* we should copy the terrain type of a neighbor */
@@ -3839,6 +3841,7 @@ that keeps many algorithms happy.
 #define		WILD_COAST		13
 #define		WILD_MOUNTAIN		14
 #define		WILD_DENSEFOREST	15
+#define		WILD_OCEANBED2		16 /* temporary */
 #define		WILD_SWAMP		20
 
 /* different buildings */
