@@ -2570,6 +2570,16 @@ void calc_bonuses(int Ind)
 		p_ptr->dis_to_a += 100;
 	}
 
+	/* Temporary "Levitation" */
+	if (p_ptr->tim_ffall)
+	{
+		p_ptr->feather_fall = TRUE;
+	}
+	if (p_ptr->tim_fly)
+	{
+		p_ptr->fly = TRUE;
+	}
+
 	/* Temp ESP */
 	if (p_ptr->tim_esp)
 	{
@@ -2595,8 +2605,8 @@ void calc_bonuses(int Ind)
 	/* Temprory shield */
 	if (p_ptr->shield)
 	{
-		p_ptr->to_a += 50;
-		p_ptr->dis_to_a += 50;
+		p_ptr->to_a += p_ptr->shield_power;
+		p_ptr->dis_to_a += p_ptr->shield_power;
 	}
 
 	/* Temporary "Hero" */
@@ -2630,7 +2640,7 @@ void calc_bonuses(int Ind)
 	/* Temporary "fast" */
 	if (p_ptr->fast)
 	{
-		p_ptr->pspeed += 10;
+		p_ptr->pspeed += p_ptr->fast_mod;
 	}
 
 	/* Temporary "slow" */

@@ -5157,13 +5157,13 @@ F:FULL_NAME | EASY_KNOW
 #P:0:1d1:0:0:0
 #F:FULL_NAME | EASY_KNOW
 #
-#N:763:& Unholy Tome~ of the Hellflame
-#G:?:v
-#I:111:11:0
-#W:50:0:30:25000
-#A:50/4
-#P:0:1d1:0:0:0
-#F:FULL_NAME | EASY_KNOW | ATTR_MULTI
+N:763:& Unholy Tome~ of the Hellflame
+G:?:v
+I:111:11:0
+W:50:0:30:25000
+A:50/4
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW | ATTR_MULTI
 #
 #N:764:& Corrupted Tome~ of Melkor
 #G:?:D

@@ -108,7 +108,7 @@ school_book[0] = {
 
 -- The book of the eternal flame
 school_book[1] = {
-	GLOBELIGHT, FIREFLASH, FIREWALL,
+	GLOBELIGHT, FIREFLASH, FIERYAURA, FIREWALL,
 }
 
 -- The book of the blowing winds

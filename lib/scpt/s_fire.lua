@@ -58,7 +58,7 @@ FIREFLASH = add_spell
                         "At level 20 it turns into a ball of holy fire"
         }
 }
---[[
+
 FIERYAURA = add_spell
 {
 	["name"] = 	"Fiery Shield",
@@ -69,22 +69,22 @@ FIERYAURA = add_spell
         ["fail"] = 	50,
         ["spell"] = 	function()
 		local type
-        	if (get_level(FIERYAURA, 50) > 7) then
+        	if (get_level(Ind, FIERYAURA, 50) > 7) then
 	        	type = SHIELD_GREAT_FIRE
         	else
         		type = SHIELD_FIRE
 	        end
-                set_shield(randint(20) + 10 + get_level(FIERYAURA, 70), 10, type, 5 + get_level(FIERYAURA, 10), 5 + get_level(FIERYAURA, 7))
+                set_shield(Ind, randint(20) + 10 + get_level(Ind, FIERYAURA, 70), 10, type, 5 + get_level(Ind, FIERYAURA, 10), 5 + get_level(Ind, FIERYAURA, 7))
 	end,
 	["info"] = 	function()
-		return "dam "..(5 + get_level(FIERYAURA, 15)).."d"..(5 + get_level(FIERYAURA, 7)).." dur "..(10 + get_level(FIERYAURA, 70)).."+d20"
+		return "dam "..(5 + get_level(Ind, FIERYAURA, 15)).."d"..(5 + get_level(Ind, FIERYAURA, 7)).." dur "..(10 + get_level(Ind, FIERYAURA, 70)).."+d20"
 	end,
         ["desc"] =	{
         		"Creates a shield of fierce flames around you",
                         "At level 8 it turns into a greater kind of flame that can not be resisted"
         }
 }
-]]
+
 FIREWALL = add_spell
 {
 	["name"] = 	"Firewall",
@@ -111,68 +111,3 @@ FIREWALL = add_spell
                         "At level 6 it turns into a ball of holy fire"
         }
 }
---[[
-FIREGOLEM = add_spell
-{
-	["name"] = 	"Fire Golem",
-        ["school"] = 	{SCHOOL_FIRE, SCHOOL_MIND},
-        ["level"] = 	7,
-        ["mana"] = 	16,
-        ["mana_max"] = 	70,
-        ["fail"] = 	10,
-        ["spell"] = 	function()
-			local m_idx, y, x, ret, item
-
-                        -- Can we reconnect ?
-                        if do_control_reconnect() == TRUE then
-                                msg_print("Control re-established.")
-                                return
-                        end
-
-                        ret, item = get_item("Which lite source do you want to use to create the golem?",
-                        		     "You have no lite source for the golem",
-                                             bor(USE_INVEN, USE_EQUIP),
-					     function (obj)
-					     	if (obj.tval == TV_LITE) and ((obj.sval == SV_LITE_TORCH) or (obj.sval == SV_LITE_LANTERN)) then
-        						return TRUE
-        						end
-        						return FALSE
-					     end
-                        )
-		        if ret == FALSE then return end
-			inven_item_increase(item, -1)
-			inven_item_describe(item)
-			inven_item_optimize(item)
-
-                        -- Summon it
-	                m_allow_special[1043 + 1] = TRUE
-			y, x = find_position(py, px)
-        		m_idx = place_monster_one(y, x, 1043, 0, FALSE, MSTATUS_FRIEND)
-                        m_allow_special[1043 + 1] = FALSE
-
-                        -- level it
-                	if m_idx ~= 0 then
-                        	monster_set_level(m_idx, 7 + get_level(FIREGOLEM, 70))
-                                player.control = m_idx
-                                monster(m_idx).mflag = bor(monster(m_idx).mflag, MFLAG_CONTROL)
-                        end
-	end,
-	["info"] = 	function()
-			return "golem level "..(7 + get_level(FIREGOLEM, 70))
-	end,
-        ["desc"] =	{
-        		"Creates a fiery golem and controls it",
-                        "During the control the available keylist is:",
-                        "Movement keys: movement of the golem(depending on its speed",
-                        "               it can move more than one square)",
-                        ", : pickup all items on the floor",
-                        "d : drop all carried items",
-                        "i : list all carried items",
-                        "m : end the possesion/use golem powers",
-                        "Most of the other keys are disabled, you cannot interact with your",
-                        "real body while controling the golem",
-                        "But to cast the spell you will need a lantern or a wooden torch to",
-                        "Create the golem from"
-        }
-}
-]]

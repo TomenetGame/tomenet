@@ -1197,6 +1197,7 @@ static void wr_extra(int Ind)
 	wr_s16b(0);	/* old "protection" */
 	wr_s16b(p_ptr->energy);
 	wr_s16b(p_ptr->fast);
+	wr_s16b(p_ptr->fast_mod);
 	wr_s16b(p_ptr->slow);
 	wr_s16b(p_ptr->afraid);
 	wr_s16b(p_ptr->cut);
@@ -1207,7 +1208,18 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->invuln);
 	wr_s16b(p_ptr->hero);
 	wr_s16b(p_ptr->shero);
-	wr_s16b(p_ptr->shield);
+        wr_s16b(p_ptr->shield);
+        wr_s16b(p_ptr->shield_power);
+        wr_s16b(p_ptr->shield_opt);
+        wr_s16b(p_ptr->shield_power_opt);
+        wr_s16b(p_ptr->shield_power_opt2);
+        wr_s16b(p_ptr->tim_thunder);
+        wr_s16b(p_ptr->tim_thunder_p1);
+        wr_s16b(p_ptr->tim_thunder_p2);
+        wr_s16b(p_ptr->tim_fly);
+        wr_s16b(p_ptr->tim_ffall);
+        wr_s16b(p_ptr->tim_regen);
+        wr_s16b(p_ptr->tim_regen_pow);
 	wr_s16b(p_ptr->blessed);
 	wr_s16b(p_ptr->tim_invis);
 	wr_s16b(p_ptr->word_recall);

@@ -2154,6 +2154,9 @@ static bool process_player_end_aux(int Ind)
 				/* Regeneration takes more food */
 				if (p_ptr->regenerate) i += 30;
 
+                                /* Regeneration takes more food */
+                                if (p_ptr->tim_regen) i += p_ptr->tim_regen_pow / 10;
+
 				/* DragonRider and Half-Troll take more food */
 				if (p_ptr->prace == RACE_DRIDER
 						|| p_ptr->prace == RACE_HALF_TROLL) i += 15;
@@ -2265,6 +2268,9 @@ static bool process_player_end_aux(int Ind)
 	{
 		regen_amount = regen_amount * 3 / 2;
 	}
+
+	/* Increase regen by tim regen */
+	if (p_ptr->tim_regen) regen_amount += p_ptr->tim_regen_pow;
 
 	/* Poisoned or cut yields no healing */
 	if (p_ptr->poisoned) regen_amount = 0;
@@ -2468,7 +2474,7 @@ static bool process_player_end_aux(int Ind)
 	/* Fast */
 	if (p_ptr->fast)
 	{
-		(void)set_fast(Ind, p_ptr->fast - minus);
+		(void)set_fast(Ind, p_ptr->fast - minus, p_ptr->fast_mod);
 	}
 
 	/* Slow */
@@ -2518,8 +2524,68 @@ static bool process_player_end_aux(int Ind)
 	/* Shield */
 	if (p_ptr->shield)
 	{
-		(void)set_shield(Ind, p_ptr->shield - minus);
+		(void)set_shield(Ind, p_ptr->shield - 1, p_ptr->shield_power, p_ptr->shield_opt, p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
 	}
+
+	/* Timed Levitation */
+	if (p_ptr->tim_ffall)
+	{
+		(void)set_tim_ffall(Ind, p_ptr->tim_ffall - 1);
+	}
+	if (p_ptr->tim_fly)
+	{
+		(void)set_tim_fly(Ind, p_ptr->tim_fly - 1);
+	}
+
+	/* Timed regen */
+	if (p_ptr->tim_regen)
+	{
+		(void)set_tim_regen(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow);
+	}
+
+	/* Thunderstorm */
+	if (p_ptr->tim_thunder)
+	{
+#if 0 // DGDGDG make it work :)
+                int dam = damroll(p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
+		int i, tries = 600;
+		monster_type *m_ptr = NULL;
+
+		while (tries)
+		{
+			/* Access the monster */
+			m_ptr = &m_list[i = rand_range(1, m_max - 1)];
+
+			tries--;
+
+			/* Ignore "dead" monsters */
+			if (!m_ptr->r_idx) continue;
+
+			/* Cant see ? cant hit */
+			if (!los(py, px, m_ptr->fy, m_ptr->fx)) continue;
+
+			/* Do not hurt friends! */
+			if (is_friend(m_ptr) >= 0) continue;
+			break;
+		}
+
+		if (tries)
+		{
+			char m_name[80];
+
+			monster_desc(m_name, m_ptr, 0);
+			msg_format("Lightning strikes %s.", m_name);
+			project(0, 0, m_ptr->fy, m_ptr->fx, dam / 3, GF_ELEC,
+			        PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE);
+			project(0, 0, m_ptr->fy, m_ptr->fx, dam / 3, GF_LITE,
+			        PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE);
+			project(0, 0, m_ptr->fy, m_ptr->fx, dam / 3, GF_SOUND,
+			        PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE);
+		}
+
+#endif
+		(void)set_tim_thunder(Ind, p_ptr->tim_thunder - 1, p_ptr->tim_thunder_p1, p_ptr->tim_thunder_p2);
+        }
 
 	/* Oppose Acid */
 	if (p_ptr->oppose_acid)

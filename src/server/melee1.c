@@ -1873,19 +1873,57 @@ bool make_attack_normal(int Ind, int m_idx)
 						if (p_ptr->mon_vis[m_idx])
 							r_ptr->r_flags3 |= RF3_IM_ELEC;
 					}
-				}
-#if 0
-				if ((p_ptr->shield_opt & SHIELD_COUNTER) && alive)
+                                }
+
+                                if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_COUNTER) && alive)
 				{
-					msg_format("%^s gets bashed by your mystic shield!", m_name);
-					if (mon_take_hit(m_idx, damroll(10,8), &fear,
-								" is bashed by your mystic shield."))
+					msg_format(Ind, "%^s gets bashed by your mystic shield!", m_name);
+					if (mon_take_hit(Ind, m_idx, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), &fear,
+					                 " is bashed by your mystic shield."))
 					{
 						blinked = FALSE;
 						alive = FALSE;
 					}
 				}
-#endif	// 0
+				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FIRE) && alive)
+				{
+					if (!(r_ptr->flags3 & RF3_IM_FIRE))
+					{
+						msg_format(Ind, "%^s gets burned by your fiery shield!", m_name);
+						if (mon_take_hit(Ind, m_idx, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), &fear,
+						                 " is burned by your fiery shield."))
+						{
+							blinked = FALSE;
+							alive = FALSE;
+						}
+					}
+				}
+				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_GREAT_FIRE) && alive)
+				{
+					msg_format(Ind, "%^s gets burned by your fiery shield!", m_name);
+					if (mon_take_hit(Ind, m_idx, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), &fear,
+					                 " is burned by your fiery shield."))
+					{
+						blinked = FALSE;
+						alive = FALSE;
+					}
+				}
+				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FEAR) && alive)
+                                {
+                                        int tmp;
+
+                                        if ((!(r_ptr->flags1 & RF1_UNIQUE)) && (damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2) - m_ptr->level > 0))
+                                        {
+                                                msg_format(Ind, "%^s gets scared away!", m_name);
+
+                                                /* Increase fear */
+                                                tmp = m_ptr->monfear + p_ptr->shield_power_opt;
+                                                fear = TRUE;
+
+                                                /* Set fear */
+                                                m_ptr->monfear = (tmp < 200) ? tmp : 200;
+                                        }
+				}
 
 				/*
 				 * Apply the necromantic auras

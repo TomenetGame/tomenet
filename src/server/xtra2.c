@@ -28,7 +28,7 @@
  * This is to balance death penalty after item stacking was implemented.
  * To disable, comment it out.
  */
-#define DEATH_ITEM_LOST	10
+#define DEATH_ITEM_LOST	0
 
 /*
  * Modifier of semi-promised artifact drops, in percent.
@@ -51,6 +51,208 @@
 #define	SCROLL_MARGIN_ROW	(p_ptr->wide_scroll_margin ? 5 : 2)
 #define	SCROLL_MARGIN_COL	(p_ptr->wide_scroll_margin ? 16 : 4)
 
+/*
+ * Set "p_ptr->tim_thunder", notice observable changes
+ */
+bool set_tim_thunder(int Ind, int v, int p1, int p2)
+{
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v)
+	{
+		if (!p_ptr->tim_thunder)
+		{
+			msg_print(Ind, "The air around you charges with lightning!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else
+	{
+		if (p_ptr->tim_thunder)
+		{
+			msg_print(Ind, "The air around you discharges.");
+			notice = TRUE;
+			p1 = p2 = 0;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_thunder = v;
+	p_ptr->tim_thunder_p1 = p1;
+	p_ptr->tim_thunder_p2 = p2;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Update the monsters */
+	p_ptr->update |= (PU_MONSTERS);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+/*
+ * Set "p_ptr->tim_regen", notice observable changes
+ */
+bool set_tim_regen(int Ind, int v, int p)
+{
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v)
+	{
+		if (!p_ptr->tim_regen)
+		{
+			msg_print(Ind, "Your body regeneration abilities greatly increase!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else
+	{
+		if (p_ptr->tim_regen)
+		{
+			p = 0;
+			msg_print(Ind, "Your body regeneration abilities becomes normal again.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_regen = v;
+	p_ptr->tim_regen_pow = p;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+/*
+ * Set "p_ptr->tim_ffall"
+ */
+bool set_tim_ffall(int Ind, int v)
+{
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v)
+	{
+		if (!p_ptr->tim_ffall)
+		{
+			msg_print(Ind, "You feel very light.");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else
+	{
+		if (p_ptr->tim_ffall)
+		{
+			msg_print(Ind, "You are suddenly heavier.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_ffall = v;
+
+	/* Nothing to notice */
+	if (!notice)
+		return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state)
+		disturb(Ind, 0, 0);
+
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Result */
+	return (TRUE);
+}
+
+/*
+ * Set "p_ptr->tim_fly"
+ */
+bool set_tim_fly(int Ind, int v)
+{
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v)
+	{
+		if (!p_ptr->tim_fly)
+		{
+			msg_print(Ind, "You feel able to reach the clouds.");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else
+	{
+		if (p_ptr->tim_fly)
+		{
+			msg_print(Ind, "You are suddenly a lot heavier.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_fly = v;
+
+	/* Nothing to notice */
+	if (!notice)
+		return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state)
+		disturb(Ind, 0, 0);
+
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Result */
+	return (TRUE);
+}
 
 /*
  * Set "p_ptr->adrenaline", notice observable changes
@@ -1267,7 +1469,7 @@ bool set_image(int Ind, int v)
 /*
  * Set "p_ptr->fast", notice observable changes
  */
-bool set_fast(int Ind, int v)
+bool set_fast(int Ind, int v, int p)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -1304,6 +1506,7 @@ bool set_fast(int Ind, int v)
 
 	/* Use the value */
 	p_ptr->fast = v;
+	p_ptr->fast_mod = p;
 
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
@@ -1379,7 +1582,7 @@ bool set_slow(int Ind, int v)
 /*
  * Set "p_ptr->shield", notice observable changes
  */
-bool set_shield(int Ind, int v)
+bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -1414,6 +1617,10 @@ bool set_shield(int Ind, int v)
 
 	/* Use the value */
 	p_ptr->shield = v;
+	p_ptr->shield_power = p;
+	p_ptr->shield_opt = o;
+	p_ptr->shield_power_opt = d1;
+	p_ptr->shield_power_opt2 = d2;
 
 	/* Nothing to notice */
 	if (!notice) return (FALSE);

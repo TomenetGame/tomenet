@@ -1051,7 +1051,9 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->food);
 	strip_bytes(4);	/* Old "food_digested" / "protection" */
 	rd_s16b(&p_ptr->energy);
-	rd_s16b(&p_ptr->fast);
+        rd_s16b(&p_ptr->fast);
+        if (!older_than(4, 0, 3))
+                rd_s16b(&p_ptr->fast_mod);
 	rd_s16b(&p_ptr->slow);
 	rd_s16b(&p_ptr->afraid);
 	rd_s16b(&p_ptr->cut);
@@ -1063,6 +1065,20 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->hero);
 	rd_s16b(&p_ptr->shero);
 	rd_s16b(&p_ptr->shield);
+        if (!older_than(4, 0, 4))
+        {
+                rd_s16b(&p_ptr->shield_power);
+                rd_s16b(&p_ptr->shield_opt);
+                rd_s16b(&p_ptr->shield_power_opt);
+                rd_s16b(&p_ptr->shield_power_opt2);
+                rd_s16b(&p_ptr->tim_thunder);
+                rd_s16b(&p_ptr->tim_thunder_p1);
+                rd_s16b(&p_ptr->tim_thunder_p2);
+                rd_s16b(&p_ptr->tim_fly);
+                rd_s16b(&p_ptr->tim_ffall);
+                rd_s16b(&p_ptr->tim_regen);
+                rd_s16b(&p_ptr->tim_regen_pow);
+        }
 	rd_s16b(&p_ptr->blessed);
 	rd_s16b(&p_ptr->tim_invis);
 	rd_s16b(&p_ptr->word_recall);

@@ -6262,11 +6262,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		
 			if (!p_ptr->fast)
 			{
-                                (void)set_fast(Ind, dam);
+                                (void)set_fast(Ind, dam, 10);
 			}
 			else
 			{
-                                (void)set_fast(Ind, p_ptr->fast + (dam / 5));
+                                (void)set_fast(Ind, p_ptr->fast + (dam / 5), 10);
 			}
 			break;
                 }
@@ -6276,9 +6276,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%^s shields you!", killer);
 		
                 	if (!p_ptr->shield)
-                        	(void)set_shield(Ind, dam);
+                        	(void)set_shield(Ind, dam, 50, SHIELD_NONE, 0, 0);
                  	else
-                        	(void)set_shield(Ind, p_ptr->shield + (dam / 5));
+                        	(void)set_shield(Ind, p_ptr->shield + (dam / 5), 50, SHIELD_NONE, 0, 0);
 			break;
                 }
 		case GF_TELEPORT_PLAYER:
@@ -6481,7 +6481,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_OLD_SPEED:
 		{
 			if (fuzzy) msg_print(Ind, "You are hit by something!");
-			(void)set_fast(Ind, p_ptr->fast + randint(5));
+			(void)set_fast(Ind, p_ptr->fast + randint(5), 10);
 			dam = 0;
 			break;
 		}

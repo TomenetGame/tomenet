@@ -206,9 +206,23 @@ extern bool set_poisoned(int Ind, int v);
 extern bool set_afraid(int Ind, int v);
 extern bool set_paralyzed(int Ind, int v);
 extern bool set_image(int Ind, int v);
-extern bool set_fast(int Ind, int v);
+extern bool set_fast(int Ind, int v, int p);
 extern bool set_slow(int Ind, int v);
-extern bool set_shield(int Ind, int v);
+
+/*
+ * Shield effect options
+ */
+#define SHIELD_NONE             0x0000
+#define SHIELD_COUNTER          0x0001
+#define SHIELD_FIRE             0x0002
+#define SHIELD_GREAT_FIRE       0x0004
+#define SHIELD_FEAR             0x0008
+
+extern bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2);
+extern bool set_tim_thunder(int Ind, int v, int p1, int p2);
+extern bool set_tim_regen(int Ind, int v, int p);
+extern bool set_tim_ffall(int Ind, int v);
+extern bool set_tim_fly(int Ind, int v);
 extern bool set_blessed(int Ind, int v);
 extern bool set_hero(int Ind, int v);
 extern bool set_shero(int Ind, int v);

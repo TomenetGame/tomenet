@@ -87,7 +87,7 @@ void do_tank(int Ind, int power)
 			set_fury(Ind, power + randint(power));
 			break;
 		case 7:
-			set_fast(Ind, power + randint(power));
+			set_fast(Ind, power + randint(power), 10);
 			break;
 		case 8:
 			set_shero(Ind, power + randint(power));
@@ -441,7 +441,7 @@ void do_cmd_eat_food(int Ind, int item)
 					if (magik(o_ptr->name2? 5 : 10))
 						set_slow(Ind, p_ptr->slow + 10 + randint(10));
 					else if (magik(o_ptr->name2? 20 : 5))
-						set_fast(Ind, p_ptr->fast + 10 + randint(10));
+						set_fast(Ind, p_ptr->fast + 10 + randint(10), 10);
 					/* Methyl! */
 					if (magik(o_ptr->name2? 0 : 3))
 						set_blind(Ind, p_ptr->blind + 10 + randint(10));
@@ -851,11 +851,11 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					if (!p_ptr->fast)
 					{
-						if (set_fast(Ind, randint(25) + 15)) ident = TRUE;
+						if (set_fast(Ind, randint(25) + 15, 10)) ident = TRUE;
 					}
 					else
 					{
-						(void)set_fast(Ind, p_ptr->fast + 5);
+						(void)set_fast(Ind, p_ptr->fast + 5, 10);
 					}
 					break;
 				}
@@ -2969,11 +2969,11 @@ void do_cmd_use_staff(int Ind, int item)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(Ind, randint(30) + 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) ident = TRUE;
+				if (set_fast(Ind, randint(30) + 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 10)) ident = TRUE;
 			}
 			else
 			{
-				(void)set_fast(Ind, p_ptr->fast + 5);
+				(void)set_fast(Ind, p_ptr->fast + 5, 10);
 			}
 			break;
 		}
@@ -3866,11 +3866,11 @@ void do_cmd_zap_rod(int Ind, int item)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(Ind, randint(30) + 15)) ident = TRUE;
+				if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE;
 			}
 			else
 			{
-				(void)set_fast(Ind, p_ptr->fast + 5);
+				(void)set_fast(Ind, p_ptr->fast + 5, 10);
 			}
 			o_ptr->pval = 99;
 			break;
@@ -4281,11 +4281,11 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(Ind, randint(30) + 15)) ident = TRUE;
+				if (set_fast(Ind, randint(30) + 15, 10)) ident = TRUE;
 			}
 			else
 			{
-				(void)set_fast(Ind, p_ptr->fast + 5);
+				(void)set_fast(Ind, p_ptr->fast + 5, 10);
 			}
 			o_ptr->pval = 99;
 			break;
@@ -4900,11 +4900,11 @@ void do_cmd_activate(int Ind, int item)
 			{
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(Ind, randint(20) + 20);
+					(void)set_fast(Ind, randint(20) + 20, 20);
 				}
 				else
 				{
-					(void)set_fast(Ind, p_ptr->fast + 5);
+					(void)set_fast(Ind, p_ptr->fast + 5, 20);
 				}
 				o_ptr->timeout = 200;
 				break;
@@ -4945,11 +4945,11 @@ void do_cmd_activate(int Ind, int item)
 			{
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(Ind, randint(20) + 20);
+					(void)set_fast(Ind, randint(20) + 20, 10);
 				}
 				else
 				{
-					(void)set_fast(Ind, p_ptr->fast + 5);
+					(void)set_fast(Ind, p_ptr->fast + 5, 10);
 				}
 				o_ptr->timeout = rand_int(100) + 100;
 				break;
@@ -5241,11 +5241,11 @@ void do_cmd_activate(int Ind, int item)
 				msg_print(Ind, "The ring glows brightly...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(Ind, randint(75) + 75);
+					(void)set_fast(Ind, randint(75) + 75, 15);
 				}
 				else
 				{
-					(void)set_fast(Ind, p_ptr->fast + 5);
+					(void)set_fast(Ind, p_ptr->fast + 5, 15);
 				}
 				o_ptr->timeout = rand_int(150) + 150;
 				break;
@@ -5375,11 +5375,11 @@ void do_cmd_activate(int Ind, int item)
 			{
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(Ind, randint(20) + 20);
+					(void)set_fast(Ind, randint(20) + 20, 20);
 				}
 				else
 				{
-					(void)set_fast(Ind, p_ptr->fast + 5);
+					(void)set_fast(Ind, p_ptr->fast + 5, 20);
 				}
 				o_ptr->timeout = 200;
 				break;
@@ -5420,11 +5420,11 @@ void do_cmd_activate(int Ind, int item)
 			{
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(Ind, randint(20) + 20);
+					(void)set_fast(Ind, randint(20) + 20, 15);
 				}
 				else
 				{
-					(void)set_fast(Ind, p_ptr->fast + 5);
+					(void)set_fast(Ind, p_ptr->fast + 5, 15);
 				}
 				o_ptr->timeout = rand_int(100) + 100;
 				break;
@@ -5716,11 +5716,11 @@ void do_cmd_activate(int Ind, int item)
 				msg_print(Ind, "The ring glows brightly...");
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(Ind, randint(75) + 75);
+					(void)set_fast(Ind, randint(75) + 75, 15);
 				}
 				else
 				{
-					(void)set_fast(Ind, p_ptr->fast + 5);
+					(void)set_fast(Ind, p_ptr->fast + 5, 15);
 				}
 				o_ptr->timeout = rand_int(150) + 150;
 				break;
@@ -6229,7 +6229,7 @@ void do_cmd_activate(int Ind, int item)
 				set_shero(Ind, p_ptr->shero + damroll(5,10) + 30);
 				set_afraid(0);
 				set_hero(Ind, p_ptr->hero + damroll(5,10) + 30);
-				set_fast(Ind, p_ptr->fast + damroll(5,10) + 30);
+				set_fast(Ind, p_ptr->fast + damroll(5,10) + 30, 20);
 				hp_player(30);
 				o_ptr->timeout = 250;
 				break;
@@ -6255,11 +6255,11 @@ void do_cmd_activate(int Ind, int item)
 			{
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(Ind, randint(50) + 50);
+					(void)set_fast(Ind, randint(50) + 50, 10);
 				}
 				else
 				{
-					(void)set_fast(Ind, p_ptr->fast + 5);
+					(void)set_fast(Ind, p_ptr->fast + 5, 10);
 				}
 				hp_player(Ind, 30);
 				set_afraid(Ind, 0);
@@ -6906,8 +6906,8 @@ bool unmagic(int Ind)
 			set_fury(Ind, 0) |
 			set_tim_meditation(Ind, 0) |
 			set_tim_wraith(Ind, 0) |
-			set_fast(Ind, 0) |
-			set_shield(Ind, 0) |
+			set_fast(Ind, 0, 0) |
+			set_shield(Ind, 0, 50, SHIELD_NONE, 0, 0) |
 			set_blessed(Ind, 0) |
 			set_hero(Ind, 0) |
 			set_shero(Ind, 0) |

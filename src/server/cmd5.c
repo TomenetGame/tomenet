@@ -930,7 +930,7 @@ static void do_mimic_power(int Ind, int power)
 
 // RF6_HASTE			0x00000001	/* Speed self */
     case 64:
-      if(!p_ptr->fast) set_fast(Ind, 10 + (rlev / 2));
+      if(!p_ptr->fast) set_fast(Ind, 10 + (rlev / 2), 10);
       break;
 // RF6_HAND_DOOM		0x00000002	/* Should we...? */ /* YES! */
     case 65:

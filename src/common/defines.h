@@ -40,7 +40,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   0
-#define SF_VERSION_PATCH   2
+#define SF_VERSION_PATCH   4
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -4740,6 +4740,16 @@ extern int PlayerUID;
 #define TRAP_OF_HIDE_TRAPS	207
 #define TRAP_OF_RESPAWN		208
 #define TRAP_OF_JACK		209
+
+
+/*
+ * Shield effect options
+ */
+#define SHIELD_NONE             0x0000
+#define SHIELD_COUNTER          0x0001
+#define SHIELD_FIRE             0x0002
+#define SHIELD_GREAT_FIRE       0x0004
+#define SHIELD_FEAR             0x0008
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000

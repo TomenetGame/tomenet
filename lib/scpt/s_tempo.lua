@@ -1,6 +1,5 @@
 -- Handles thhe temporal school
 
-
 MAGELOCK = add_spell
 {
 	["name"] = 	"Magelock",

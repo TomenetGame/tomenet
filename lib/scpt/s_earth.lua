@@ -11,11 +11,11 @@ STONESKIN = add_spell
         ["spell"] = 	function()
         		local type
         		if get_level(Ind, STONESKIN, 50) >= 25 then
--- DGDGDG                        	type = SHIELD_COUNTER
+                        	type = SHIELD_COUNTER
                         else
                         	type = 0
                         end
--- DGDGDG -- need a ToME-like set_shield               	set_shield(randint(10) + 10 + get_level(STONESKIN, 100), 10 + get_level(STONESKIN, 50), type, 2 + get_level(STONESKIN, 5), 3 + get_level(STONESKIN, 5))
+               		set_shield(Ind, randint(10) + 10 + get_level(Ind, STONESKIN, 100), 10 + get_level(Ind, STONESKIN, 50), type, 2 + get_level(Ind, STONESKIN, 5), 3 + get_level(Ind, STONESKIN, 5))
 	end,
 	["info"] = 	function()
         		if get_level(Ind, STONESKIN, 50) >= 25 then
@@ -117,15 +117,14 @@ SHAKE = add_spell
         ["mana_max"] = 	30,
         ["fail"] = 	30,
         ["spell"] = 	function()
---[[ DGDGDG -- smoene please export wpos stuff to lua			local ret, x, y
-                        if get_level(SHAKE, 50) >= 10 then
+                        if get_level(Ind, SHAKE, 50) >= 10 then
 	                       	ret, x, y = tgt_pt()
                                 if ret == FALSE then return end
                         else
                         	x = px
                                 y = py
                         end
-			earthquake(player.wpos, y, x, 4 + get_level(SHAKE, 10));]]
+			earthquake(player.wpos, y, x, 4 + get_level(SHAKE, 10));
 	end,
 	["info"] = 	function()
 			return "rad "..(4 + get_level(Ind, SHAKE, 10))

@@ -2053,6 +2053,7 @@ struct player_type
 	int store_num;		/* What store this guy is in */
 
 	s16b fast;			/* Timed -- Fast */
+	s16b fast_mod;   		/* Timed -- Fast */
 	s16b slow;			/* Timed -- Slow */
 	s16b blind;			/* Timed -- Blindness */
 	s16b paralyzed;		/* Timed -- Paralysis */
@@ -2068,7 +2069,18 @@ struct player_type
 	s16b hero;			/* Timed -- Heroism */
 	s16b shero;			/* Timed -- Super Heroism */
 	s16b fury;			/* Timed -- Furry */
+	s16b tim_thunder;   	/* Timed thunderstorm */
+	s16b tim_thunder_p1;	/* Timed thunderstorm */
+        s16b tim_thunder_p2;	/* Timed thunderstorm */
+	s16b tim_ffall;     	/* Timed Levitation */
+	s16b tim_fly;       	/* Timed Levitation */
 	s16b shield;		/* Timed -- Shield Spell */
+	s16b shield_power;      /* Timed -- Shield Spell Power */
+	s16b shield_opt;        /* Timed -- Shield Spell options */
+	s16b shield_power_opt;  /* Timed -- Shield Spell Power */
+	s16b shield_power_opt2; /* Timed -- Shield Spell Power */
+	s16b tim_regen;     /* Timed extra regen */
+	s16b tim_regen_pow; /* Timed extra regen power */
 	s16b blessed;		/* Timed -- Blessed */
 	s16b blessed_power;		/* Timed -- Blessed */
 	s16b tim_invis;		/* Timed -- See Invisible */
