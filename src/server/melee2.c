@@ -1150,17 +1150,17 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed)
 			continue;
 
-		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 150) - rlev;
+		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 100) - (rlev / 3);
 
 		/* Apply Martial-arts bonus */
 		if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(q_ptr)
 				&& !q_ptr->inventory[INVEN_WIELD].k_idx)
-			grabchance += get_skill_scale(q_ptr, SKILL_MARTIAL_ARTS, 50);
+			grabchance += get_skill_scale(q_ptr, SKILL_MARTIAL_ARTS, 25);
 
 //		grabchance *= mod / 100;
 		grabchance = grabchance * mod / 100;
 
-		if (q_ptr->blind) grabchance -= 30;
+		if (q_ptr->blind) grabchance /= 3;
 
 		if (grabchance < 1) continue;
 
@@ -1247,12 +1247,12 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 
 //			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
 #if 0
-			if (i == Ind) msg_format(Ind, "\377oYour anti-magic shield disrupts %s's attempts.", m_name);
-			else msg_format(Ind, "%s's anti-magic shield disrupts %s's attempts.", q_ptr->name, m_name);
+			if (i == Ind) msg_format(Ind, "\377oYour anti-magic field disrupts %s's attempts.", m_name);
+			else msg_format(Ind, "%s's anti-magic field disrupts %s's attempts.", q_ptr->name, m_name);
 #else	// 0
 			if (q_ptr->mon_vis[m_idx])
-				msg_format(i, "\377oYour anti-magic shield disrupts %s's attempts.", m_name);
-			msg_format_near(i, "%s's anti-magic shield disrupts %s's attempts.", q_ptr->name, m_name);
+				msg_format(i, "\377oYour anti-magic field disrupts %s's attempts.", m_name);
+			msg_format_near(i, "%s's anti-magic field disrupts %s's attempts.", q_ptr->name, m_name);
 #endif	// 0
 
 			return TRUE;
@@ -1298,11 +1298,11 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 				{
 					char m_name[80];
 					monster_desc(Ind, m_name, m_idx, 0);
-					msg_format(Ind, "%^s's anti-magic shield disrupts your attempts.", m_name);
+					msg_format(Ind, "%^s's anti-magic field disrupts your attempts.", m_name);
 				}
 				else
 				{
-					msg_print(Ind, "An anti-magic shield disrupts your attempts.");
+					msg_print(Ind, "An anti-magic field disrupts your attempts.");
 				}
 				return TRUE;
 			}
@@ -1521,9 +1521,18 @@ bool make_attack_spell(int Ind, int m_idx)
 	bool stupid, summon=FALSE;
 	int rad = 0, srad;
 
-
 	//u32b f7 = race_inf(&m_list[m_idx])->flags7;
 	int s_clone = 0;
+
+
+	/* To avoid TELE_TO from CAVE_ICKY pos on player outside */
+	cave_type **zcave;
+	/* Save the old location */
+	int oy = m_ptr->fy;
+	int ox = m_ptr->fx;
+	/* Space/Time Anchor */
+//	bool st_anchor = check_st_anchor(&m_ptr->wpos, oy, ox);
+	wpos=&m_ptr->wpos;
 
 
 //	int antichance = 0, antidis = 0;
@@ -1774,7 +1783,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			return (TRUE);
 		}
 
-		if (monst_check_grab(m_idx, 50, "cast")) return (TRUE);
+		if (monst_check_grab(m_idx, 75, "cast")) return (TRUE);
 	}
 #endif	// STUPID_MONSTER_SPELLS
 
@@ -1791,7 +1800,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF4_SHRIEK */
 		case RF4_OFFSET+0:
 		{
-			if (monst_check_antimagic(Ind, m_idx)) break;
+			//if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			msg_format(Ind, "%^s makes a high pitched shriek.", m_name);
 			aggravate_monsters(Ind, m_idx);
@@ -2620,6 +2629,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF5_OFFSET+13:
 		{
 			if (!direct) break;
+			if (monst_check_antimagic(Ind, m_idx) && !(rand_int(4))) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
@@ -2638,6 +2648,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF5_OFFSET+14:
 		{
 			if (!direct) break;
+			if (monst_check_antimagic(Ind, m_idx) && !(rand_int(4))) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
 			else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
@@ -2656,6 +2667,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF5_OFFSET+15:
 		{
 			if (!direct) break;
+			if (monst_check_antimagic(Ind, m_idx) && !(rand_int(4))) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
 			else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
@@ -3131,7 +3143,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			//			if (monst_check_grab(Ind, m_idx)) break;
 			/* it's low b/c check for spellcast is already done */
-			if (monst_check_grab(m_idx, 40, "teleport")) break;
+			if (monst_check_grab(m_idx, 50, "teleport")) break;
 			if (teleport_away(m_idx, 10) && visible)
 			{
 				//disturb(Ind, 1, 0);
@@ -3145,7 +3157,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			//			if (monst_check_grab(Ind, m_idx)) break;
-			if (monst_check_grab(m_idx, 40, "teleport")) break;
+			if (monst_check_grab(m_idx, 50, "teleport")) break;
 			if (teleport_away(m_idx, MAX_SIGHT * 2 + 5) && visible)
 			{
 				//disturb(Ind, 1, 0);
@@ -3181,6 +3193,15 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF6_OFFSET+8:
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
+
+			/* No teleporting within no-tele vaults and such */
+			if(!(zcave=getcave(wpos))) break;
+			if (zcave[oy][ox].info & CAVE_ICKY)
+			{
+				msg_format(Ind, "%^s fails to command you to return.", m_name);
+				break;
+			}
+
 			disturb(Ind, 1, 0);
 			/* Hack -- duplicated check to avoid silly message */
 			if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) || (p_ptr->res_tele && (rand_int(100) < 67)))
@@ -5724,7 +5745,7 @@ static void process_monster(int Ind, int m_idx)
 		else if (((f_info[c_ptr->feat].flags1 & FF1_PERMANENT) &&
 				!((r_ptr->flags2 & RF2_KILL_WALL) &&
 					(r_ptr->flags2 & RF2_PASS_WALL) &&
-					(c_ptr->feat != FEAT_PERM_SOLID) && !rand_int(9000)))
+					(c_ptr->feat != FEAT_PERM_SOLID) && !rand_int(500)))
 				|| (c_ptr->feat == FEAT_PERM_CLEAR) ||
 				((c_ptr->feat == FEAT_HOME) || c_ptr->feat == FEAT_WALL_HOUSE))
 		{
@@ -6076,7 +6097,7 @@ static void process_monster(int Ind, int m_idx)
 		}
 
 		/* Hack -- player hinders its movement */
-		if (do_move && monst_check_grab(m_idx, 70, "run"))
+		if (do_move && monst_check_grab(m_idx, 85, "run"))
 		{
 			/* Take a turn */
 			do_turn = TRUE;
@@ -6922,8 +6943,9 @@ void process_monsters(void)
 			if (!inarea(&p_ptr->wpos, &m_ptr->wpos))
 				continue; 
 
-			/* Hack -- Skip him if he's shopping */ 
-			if (p_ptr->store_num != -1) 
+			/* Hack -- Skip him if he's shopping -
+			   in a town, so dungeon stores aren't cheezy */
+			if ((p_ptr->store_num != -1) && (p_ptr->wpos.wz == 0))
 				continue; 
 
 			/* Hack -- make the dungeon master invisible to monsters */ 

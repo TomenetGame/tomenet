@@ -303,7 +303,19 @@ T:100:70:9
 I:100:Restore Mana
 I:100:Blood Bond
 #potion of resistance
-T:10:71:60
+T:5:71:60
+#scroll of *enchant weapon*
+T:10:70:21
+#scroll of *enchant armour*
+T:10:70:20
+#scroll of holy prayer
+T:5:70:35
+#potion of curing
+T:5:71:61
+#scroll of vermin control
+T:10:70:61
+#pot of *healing*
+#pot of *restore mana*
 A:30:0:1:2:3:4
 O:38:39:40:41
 G:7:D
@@ -578,7 +590,7 @@ F:RANDOM | MEDIUM_LEVEL
 W:12
 
 N:42:Rare Jewelry Shop
-T:100:40:256
+T:60:40:256
 T:100:45:256
 A:0:0:1:2:3:0
 O:34:35:36:37
@@ -587,7 +599,7 @@ G:6:v
 #F:VERY_RARE
 F:RANDOM | DEEP_LEVEL | SHALLOW_LEVEL | FORCE_LEVEL | NO_DISCOUNT2 | 
 F:GOOD | GREAT | PRICE4 | PRICY_ITEMS3 | VHARD_STEAL
-W:9
+W:13
 
 N:43:Jewelry Shop
 T:100:40:256
@@ -617,7 +629,7 @@ F:RANDOM | DEEP_LEVEL | MEDIUM_LEVEL
 #F:VERY_RARE | FORCE_LEVEL
 F:GOOD | GREAT | EGO | RARE_EGO | NO_DISCOUNT2 | 
 F:PRICE4 | PRICY_ITEMS2 | VHARD_STEAL
-W:9
+W:13
 
 N:46:Library
 T:100:110:256

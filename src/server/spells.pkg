@@ -122,15 +122,16 @@ typedef unsigned int u32b;
 
 #define GF_TELEPORT_PLAYER 136
 
-#define GF_RESTORESTATS_PLAYER 137
+#define GF_RESTORESTATS_PLAYER 137	/* C. Blue changes */
 #define GF_RESTORELIFE_PLAYER 138
 #define GF_CURE_PLAYER 139
 #define GF_RESURRECT_PLAYER 140
 #define GF_SANITY_PLAYER 141
 #define GF_ZEAL_PLAYER          142
+#define GF_DISP_DEMON   143
+#define GF_SOULCURE_PLAYER	144
 
-#define GF_DISP_DEMON   143     /* Zangband/C. Blue changes */
-
+/* Zangband changes */
 #define GF_TELE_TO		150
 #define GF_HAND_DOOM	151
 #define GF_STASIS       152

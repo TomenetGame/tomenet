@@ -2954,6 +2954,10 @@ cptr item_activation(object_type *o_ptr)
 		{
 			return "temporary resistance boost every 250+d200 turns";
 		}
+		case ART_HELLFIRE:
+		{
+			return "invoke raw chaos every 250+d200 turns";
+		}
 	}
 
 	// requires some substitution..
@@ -2975,9 +2979,13 @@ cptr item_activation(object_type *o_ptr)
 	{
 		return "phasing every 10+d10 turns";
 	}
-	if (is_ego_p(o_ptr, EGO_SPINING))
+	if (is_ego_p(o_ptr, EGO_SPINNING))
 	{
-		return "spining around every 50+d25 turns";
+		return "spinning around every 50+d25 turns";
+	}
+	if (is_ego_p(o_ptr, EGO_FURY))
+	{
+		return "groy a fury every 100+d50 turns";
 	}
 	if (is_ego_p(o_ptr, EGO_NOLDOR))
 	{
@@ -3022,7 +3030,7 @@ cptr item_activation(object_type *o_ptr)
 			case SV_AMULET_SERPENT:
 				return "venom breathing every 40+d60 turns";
 			case SV_AMULET_RAGE:
-				return "entering berserk rage every 150+d100 turns";
+				return "grow a fury every 150+d100 turns";
 			default:
 				return NULL;
 		}
@@ -3818,6 +3826,8 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	FILE *fff;
 	char    buf[1024], o_name[150];
+	
+	char	*ca_ptr = "";
 
 #if 0
 	char file_name[MAX_PATH_LENGTH];
@@ -3850,16 +3860,24 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	fprintf(fff, "%s\n", o_name);
 	if (strlen(o_name) > 77) fprintf(fff, "%s\n", o_name + 77);
 
+	if (artifact_p(o_ptr))
+	{
+		if (true_artifact_p(o_ptr)) ca_ptr = "n artifact";
+		else ca_ptr = " random artifact";
+	}
+
         switch(o_ptr->tval){
         case TV_HAFTED:
-                fprintf(fff, "It's a hafted weapon.\n"); break;
+                fprintf(fff, "It's a%s hafted weapon.\n", ca_ptr); break;
         case TV_POLEARM:
-                fprintf(fff, "It's a polearm.\n"); break;
+                fprintf(fff, "It's a%s polearm.\n", ca_ptr); break;
         case TV_SWORD:
-                fprintf(fff, "It's a sword-type weapon.\n"); break;
+                fprintf(fff, "It's a%s sword-type weapon.\n", ca_ptr); break;
         case TV_AXE:
-                fprintf(fff, "It's an axe-type weapon.\n"); break;
+                fprintf(fff, "It's a%s axe-type weapon.\n", ca_ptr); break;
         default:
+		if (artifact_p(o_ptr))
+			fprintf(fff, "It's a%s.\n", ca_ptr);
                 break;
         }
 
@@ -4755,6 +4773,11 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 			fprintf(fff, "It cannot be harmed by cold.\n");
 		}
 	}
+	/* Stormbringer hardcoded note to give a warning!- C. Blue */
+	if (o_ptr->name2 == EGO_STORMBRINGER)
+	{
+		fprintf(fff, "It's possessed by mad wrath!\n");
+	}
 
 	/* Damage display for weapons */
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
@@ -4975,7 +4998,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	if (f2 & TR2_ANTI_MAGIC)
 	{
-		info[i++] = "It creates an anti-magic shield.";
+		info[i++] = "It creates an anti-magic field.";
 	}
 	if (f2 & TR2_SUST_STR)
 	{
@@ -5187,6 +5210,11 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	if (f3 & TR3_IGNORE_COLD)
 	{
 		info[i++] = "It cannot be harmed by cold.";
+	}
+	/* Stormbringer hardcoded note to give a warning!- C. Blue */
+	if (o_ptr->name2 == EGO_STORMBRINGER)
+	{
+		info[i++] = "It's possessed by mad wrath!";
 	}
 
 	info[i]=NULL;
@@ -6063,6 +6091,11 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
                         info[i++] = "It cannot be harmed by cold.";
                 }
         }
+	/* Stormbringer hardcoded note to give a warning!- C. Blue */
+	if (o_ptr->name2 == EGO_STORMBRINGER)
+	{
+		info[i++] = "It's possessed by mad wrath!";
+	}
 
 	if(p_ptr->admin_dm){
 		msg_format(Ind, "tval: %d sval: %d pval: %d bpval: %d\n", o_ptr->tval, o_ptr->sval, o_ptr->pval, o_ptr->bpval);

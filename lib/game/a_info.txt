@@ -527,7 +527,7 @@ I:33:10:-4
 W:40:12:20:0
 P:0:1d1:0:0:20
 F:STR | DEX | CON | HIDE_TYPE | RES_BLIND | RES_DARK | 
-F:FREE_ACT | SEE_INVIS | ESP_ANIMAL | ESP_EVIL | ESP_NONLIVING | ESP_ALL | 
+F:FREE_ACT | SEE_INVIS | ESP_ALL | RES_DISEN | 
 F:CURSED | AUTO_CURSE
 D:The midnight-hued steel circlet of the sorceress-queen Beruthiel, which 
 D:grants extraordinary powers of sight and awareness at a terrible physical 
@@ -605,11 +605,10 @@ I:32:5:-4
 W:20:5:75:0
 P:5:1d3:25:25:10
 F:INT | WIS | SEARCH | HIDE_TYPE | SHOW_MODS |
-F:SEE_INVIS | NO_MAGIC | HEAVY_CURSE | TY_CURSE |
+F:SEE_INVIS | NO_MAGIC | HEAVY_CURSE | TY_CURSE | 
 F:RES_DISEN | RES_FEAR | FREE_ACT | RES_ACID | RES_FIRE | RES_POIS |
 F:IM_COLD | ACTIVATE | DRAIN_HP | 
 F:TELEPORT
-F:REGEN_MANA
 D:A headpiece, gaudy and barbaric, that betrayed a warrior when he most 
 D:needed succor.
 
@@ -763,7 +762,7 @@ D:A hero's handgear that lends great prowess in battle.
 N:53:'Cammithrim'
 I:31:1:3
 W:10:3:5:30000
-P:1:0d0:0:0:10
+P:1:1d1:0:0:10
 F:DEX | CHR | FREE_ACT | RES_LITE | SUST_CON | LITE1 | ACTIVATE |
 F:SPECIAL_GENE | REGEN
 D:These gloves glow so brightly as to light the way for their owner and cast 
@@ -1126,7 +1125,7 @@ N:81:'Aglarang'
 I:23:20:5
 W:35:25:50:220000
 P:0:8d4:0:0:0
-F:DEX | TUNNEL | SPEED | HIDE_TYPE | 
+F:DEX | CRIT | SPEED | HIDE_TYPE | 
 F:SUST_DEX | SHOW_MODS
 D:An utterly perfect, cleanly chiseled sword, with a edge that effortlessly 
 D:slices rock and bone, and spells to render the wearer lithe and nimble.  It 
@@ -1262,7 +1261,7 @@ D:Brethil.
 N:91:'Doomcaller'
 I:23:30:0
 W:70:25:180:250000
-P:0:6d5:18:28:-50
+P:0:6d5:18:28:-30
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | BRAND_COLD | SLAY_TROLL | 
 F:SLAY_ORC | FREE_ACT | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
 F:RES_CHAOS | SEE_INVIS | ESP_EVIL | AGGRAVATE | SHOW_MODS | 
@@ -1324,7 +1323,7 @@ D:clear-eyed in barrows fell, wielding a halberd glowing ruby red.
 
 N:96:'Til-i-arc'
 I:22:8:3
-W:20:15:160:72000
+W:20:15:160:82000
 P:0:2d9:10:15:10
 F:INT | HIDE_TYPE | 
 F:BRAND_COLD | BRAND_FIRE | SLAY_DEMON | SLAY_TROLL | SLAY_GIANT | ESP_GIANT |
@@ -1338,8 +1337,8 @@ D:demons, who war forever, trapped by magely spells.
 
 N:97:'Aeglos'
 I:22:2:4
-W:15:45:50:180000
-P:0:3d5:15:25:5
+W:15:45:50:156000
+P:0:3d5:15:20:5
 F:DEX | WIS | HIDE_TYPE |
 F:BRAND_COLD | BRAND_ELEC | LITE1 | 
 F:SLAY_TROLL | SLAY_ORC | SLAY_GIANT | KILL_UNDEAD | 
@@ -1542,9 +1541,10 @@ P:0:9d9:25:25:10
 F:KILL_DRAGON | KILL_DEMON | KILL_UNDEAD |
 F:SLAY_EVIL | SLAY_ANIMAL | SLAY_TROLL | SLAY_ORC |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD |
-F:NO_MAGIC | IMPACT | TUNNEL | LEVELS | LIFE | AGGRAVATE |
-F:CURSED | HEAVY_CURSE | PERMA_CURSE
+F:IMPACT | TUNNEL | LEVELS | LIFE | AGGRAVATE |
+F:CURSED | HEAVY_CURSE | PERMA_CURSE | 
 F:ACTIVATE | SPECIAL_GENE | SHOW_MODS | INSTA_ART |
+F:NO_MAGIC
 D:The mighty Hammer of the Underworld, blackened by doomspells of shattering, 
 D:whose wielder holds the lives of all Morgoth's servants in his hand.
 
@@ -1670,11 +1670,11 @@ D:mountains.
 N:121:'Deathwreaker'
 I:21:20:6
 W:80:38:400:444444
-P:0:8d8:18:18:0
+P:0:8d8:25:25:0
 F:STR | TUNNEL | HIDE_TYPE | NO_TELE | DRAIN_MANA | SLAY_TROLL | 
 F:SLAY_DRAGON | SLAY_ANIMAL | SLAY_EVIL | KILL_UNDEAD | BRAND_FIRE | 
 F:IM_FIRE | RES_DARK | RES_CHAOS | RES_DISEN | AGGRAVATE |
-F:SHOW_MODS | BRAND_POIS | VAMPIRIC
+F:SHOW_MODS | BRAND_POIS | VAMPIRIC | IM_POISON
 D:A weapon so massive it seems beyond the strength of mortals, yet you feel 
 D:the might of giants within you as you heft it.  As you grip the handle  
 D:of ebony and steel, coronas of fire blaze and mighty spells to preserve 
@@ -1704,7 +1704,7 @@ W:35:15:120:100000
 P:0:3d6:15:16:0
 F:INT | DEX | INFRA | HIDE_TYPE | DRAIN_HP | 
 F:HEAVY_CURSE | CURSED | AGGRAVATE | 
-F:BRAND_FIRE | SLAY_ANIMAL | SLAY_DEMON | IM_FIRE | IM_ELEC | ESP_SPIDER | 
+F:BRAND_FIRE | SLAY_ANIMAL | SLAY_DEMON | IM_FIRE | ESP_SPIDER | 
 F:VORPAL | RES_LITE | LITE1 | REGEN | ESP_DEMON | WOUNDING |
 F:SHOW_MODS
 F:REGEN_MANA
@@ -1843,6 +1843,7 @@ P:0:2d6:8:3:0
 F:BRAND_ACID | BRAND_ELEC | BRAND_FIRE | BRAND_COLD | BRAND_POIS
 D:A bolt imbued with the powers of the elements.  
 
+
 # The Harp of Master Robinton
 
 N:137:of Master Robinton
@@ -1854,6 +1855,7 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | ESP_DRAGONRIDER | ESP_UNIQUE |
 D:This harp that once belonged to Master Robinton makes those who use 
 D:it seem more beautiful.  It is also said that those who have 
 D:used it found themselves walking faster, as if to an unheard beat.  
+
 
 # The Drum of Piemur
 
@@ -1880,6 +1882,7 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | ESP_DRAGONRIDER
 D:A pretty flute that makes those who play it beautiful, wise and 
 D:fast. 
 
+
 # The Dwarven Pick of Erebor
 
 N:140:of Erebor
@@ -1890,6 +1893,7 @@ F:STR | TUNNEL | SUST_STR | HIDE_TYPE | LITE1 | ACTIVATE | CLIMB |
 F:SLAY_ORC | SLAY_TROLL | SLAY_DEMON | BRAND_ACID | 
 F:RES_CHAOS | RES_LITE | RES_DARK
 D:A pick that provides a magical light to see by while tunneling.  
+
 
 # The Drum of the Druedain
 
@@ -1902,6 +1906,7 @@ D:The fabled Drum of the Druedain that will protect those who play it
 D:from darkness and poison attacks.  It also aids in the seeing of 
 D:warm blooded creatures.  
 
+
 # The Horn of Rohan
 
 N:142:of Rohan
@@ -1913,6 +1918,7 @@ D:A horn carved from the bones of the Dragon of Ered-Mithrin, this
 D:heirloom of the House of Eorl bestows to its user the gifts of 
 D:courage and command.
 
+
 # The Horn of Helm
 
 N:143:of Helm
@@ -1923,6 +1929,7 @@ F:ACTIVATE | STR | CON | IM_COLD | RES_NETHER | RES_FEAR
 D:Heedless of cold, fearless of darkness -- besiegers fled at the wind 
 D:of the solitary coming of King Helm Hammerhand, proclaimed by a single 
 D:horn-blast in the dead of winter.
+
 
 # The Horn of Boromir
 
@@ -2052,6 +2059,7 @@ F:TUNNEL | STR | STEALTH | INFRA | ESP_ANIMAL
 D:This powerful piece of armour was made using the remains of 
 D:the Sandworm Queen.
 
+
 # The Lochaber Axe 'Dragonbane'
 
 N:154:'Dragonbane'
@@ -2063,6 +2071,7 @@ F:RES_POIS | SHOW_MODS | RES_SHARDS | FREE_ACT
 D:Forged by the Dwarves to defend their home of Khazad-dum from dragons, 
 D:this axe has been lost to time... until now.
 
+
 # The Light War Axe 'Limbslicer'
 
 N:155:'Limbslicer'
@@ -2073,6 +2082,7 @@ F:DEX | VORPAL | HIDE_TYPE | SHOW_MODS | WOUNDING | FEATHER
 D:The Petty-dwarves of Bathak forged this blade, and it shares their thirst 
 D:for blood.
 
+
 # The Broad Axe 'Orchast'
 
 N:156:'Orchast'
@@ -2082,6 +2092,7 @@ P:0:2d7:20:16:0
 F:STR | DEX | SEARCH | SLAY_ORC | ACTIVATE | HIDE_TYPE | SHOW_MODS | BRAND_FIRE
 D:Forged by the dwarves of Khazad-dum in a time of desperation, 
 D:this axe turned many a battle against the invading orcs.
+
 
 # The Hatchet of the Night
 
@@ -2094,6 +2105,7 @@ F:SHOW_MODS | SEE_INVIS | ACTIVATE | DRAIN_EXP
 D:Found on an unmarked grave after a violent storm, this hatchet 
 D:has a sinister aura of darkness and decay.
 
+
 # The Slaughter Axe 'Naturebane'
 
 N:158:'Naturebane'
@@ -2104,6 +2116,7 @@ F:STR | SLAY_ANIMAL | SUST_STR | RES_SHARDS | RES_NEXUS | FEATHER |
 F:HIDE_TYPE | SHOW_MODS | ACTIVATE | DRAIN_HP
 D:Used by the orcs in their battle at Dragor Bragollach against the elves, this 
 D:axe has a bloodthirst for nature. 
+
 
 # The Light War Axe of Ice
 
@@ -2145,6 +2158,7 @@ D:A trap that can almost never be detected. Its missiles may be mere pebbles,
 D:but fired at an incredibly high velocity to penetrate even the toughest 
 D:hide or armour.
 
+
 # The Device Trap 'Hanisbroner's Surprise'
 
 N:162:'Hanisbroner's Surprise'
@@ -2154,6 +2168,7 @@ P:0:0d0:0:0:25
 F:STEALTH | XTRA_SHOTS | TELEPORT_TO | HIDE_TYPE | AUTOMATIC_99
 D:A magical trap, armed with a wand. Unaccountably, its victims keep 
 D:on coming back for more...
+
 
 # The Bolt Trap 'Merlion Karc's Demonbane'
 
@@ -2244,12 +2259,12 @@ F:SUST_WIS | SUST_DEX | SUST_CHR
 # The Metal Cap of Celebrimbor
 
 N:170:of Celebrimbor
-I:32:3:3
+I:32:3:4
 W:55:12:20:245000
 P:3:1d1:0:0:18
 F:INT | DEX | CHR | SEARCH | 
 #SPELL | 
-F:IM_FIRE | IM_ACID | RES_DISEN | RES_SHARDS | 
+F:RES_FIRE | IM_ACID | RES_DISEN | RES_SHARDS | 
 F:ACTIVATE
 F:REGEN_MANA
 #since SPELL doesn't work atm:
@@ -2350,12 +2365,13 @@ D:will go charging into battle heedless of danger, with the
 D:strength and endurance of a madman.  Nor will he fear poison, for 
 D:the Southron barbarians handle poisoned darts naturally.
 
+
 # The Lead-Filled Mace 'Skullcleaver'
 
 N:177:'Skullcleaver'
 I:21:15:5
 W:30:15:500:70000
-P:0:5d5:11:23:20
+P:0:5d7:11:23:20
 F:STR | TUNNEL | INFRA | HIDE_TYPE | 
 F:CURSED | AGGRAVATE | NO_MAGIC | 
 F:RES_NEXUS | RES_BLIND | RES_SOUND | 
@@ -2458,6 +2474,7 @@ D:its surface, giving you visions of a reality considerably less solid than this
 D:one. You feel your senses reel, and must make a conscious effort not to throw 
 D:this ring as far from you as possible.
 
+
 # The Blue Stone 'Toris Mejistos'
 
 N:204:'Toris Mejistos'
@@ -2476,6 +2493,7 @@ F:MANA
 D:A blue stone, with an incredible number of incredibly small runes of power 
 D:on it. It carries many secrets.
 
+
 # The Ring of Durin - last of the Seven Rings of the Dwarf-lords
 
 N:205:of Durin
@@ -2492,6 +2510,7 @@ D:war on the Elves, but was given as a gift from Celebrimbor to King Durin
 D:III of Moria in token of friendship:  nevertheless, Sauron in disguise 
 D:had a hand in its making, and so it is cursed, and draws evil towards it.
 
+
 # The Elfstone 'Elessar'
 
 N:206:'Elessar'
@@ -2504,6 +2523,7 @@ F:ACTIVATE
 D:This green gem glows with inner light.  Aragorn son of Arathorn wore 
 D:it at the Battle of the Pelennor Fields, and he was himself given the 
 D:name of 'Elessar' by the people of Gondor because of this.
+
 
 # The Jewel 'Evenstar'
 
@@ -2534,6 +2554,7 @@ D:communication between distant lands.  This Palantir, however, was
 D:taken by Sauron long ago, and mastered to his evil uses, to the 
 D:destruction of all others who would gaze into it.
 
+
 # PernMangband artifacts
 
 # The Magic Arrow 'Giver of Sleep'
@@ -2562,6 +2583,7 @@ F:SLAY_UNDEAD | VAMPIRIC
 #F:FEATHER | SLOW_DIGEST | HOLD_LIFE |
 #F:ANTIMAGIC_10 | DRAIN_MANA | NO_MAGIC
 
+
 # The (Amulet of) Suspicion Methodique
 
 #N:211:Methodique
@@ -2576,6 +2598,7 @@ F:SLAY_UNDEAD | VAMPIRIC
 #F:ANTIMAGIC_30 | DRAIN_MANA
 #D:The ultimate point an phylosopher had arrived, this amulet
 #D:reveals the light of true belief.
+
 
 # The Dark Sword 'Schmerzglaube'
 N:212:'Schmerzglaube'
@@ -2592,6 +2615,7 @@ F:SUST_STR | SUST_DEX | SUST_CON |
 F:ANTIMAGIC_50 | ANTIMAGIC_20 | DRAIN_MANA
 # | NO_MAGIC
 
+
 # The Long Bow 'Doublezee'
 
 N:213:'Doublezee'
@@ -2603,6 +2627,7 @@ F:XTRA_SHOTS | SHOW_MODS
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_SOUND
 F:ESP_ANIMAL | SLAY_ANIMAL
 
+
 # The Picklock of Bilbo Baggins
 
 N:214:of Bilbo Baggins
@@ -2611,6 +2636,7 @@ W:25:40:2:30000
 P:0:1d1:0:0:0
 F:DEX | SUST_DEX | SEE_INVIS | STEALTH | DISARM | SEARCH
 F:ACTIVATE
+
 
 # The Sling of Halflings
 
@@ -2621,6 +2647,7 @@ P:0:0d0:20:25:0
 F:DEX | SUST_DEX | STEALTH | HIDE_TYPE
 F:REGEN | XTRA_MIGHT | XTRA_SHOTS
 F:ESP_ANIMAL | SEE_INVIS |
+
 
 # The Pint of Ale of the Khazad
 
@@ -2641,6 +2668,7 @@ D:were bestowed upon Moltor, the drunkest of the Dwarves. They were
 D:bound to his very soul, so they remained with him despite his frequent deaths
 D:and rebirths. For some time Moltor enjoyed his ale, and all was well.
 
+
 # The Sea-blue Silk Cape 'Ocean Soul'
 
 N:217:'Ocean Soul'
@@ -2653,6 +2681,7 @@ D:Woven by the Noldor to honour the Valar Ulmo, mild ruler of the endless sea.
 D:This cloak allows its wearer to travel over the sea without need for a ship
 D:and at the same time protect him from the wrath of unleashed waves.
 
+
 # The Shadow Cloak of the Dungeon Wizard
 
 N:218:of the Dungeon Wizard
@@ -2664,8 +2693,9 @@ F:IM_FIRE | IM_COLD | IM_ACID | IM_ELEC | IM_POISON | IM_WATER |
 F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK |
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_BLIND | RES_CONF | RES_MANA | RES_TIME |
 F:FREE_ACT | HOLD_LIFE | FEATHER | FLY | WRAITH | PASS_WATER | 
-F:REGEN_MANA | REGEN
+F:REGEN_MANA | REGEN | ESP_ALL
 D:Not to be found by players. (C. Blue)
+
 
 # The Battle Axe of Dain Ironfoot
 
@@ -2680,12 +2710,13 @@ D:The axe that beheaded Azog, Orc king of Moria. He stood over the fallen
 D:body of Brand, King of Dale, during the War of the Rings. Valiant till the 
 D:very end. Baruk Khazad! 
 
+
 # The Mithril Helm of the Durin // Steel helm for now, we don't have M.Helm atm.
 
 N:220:of the Durin
 I:32:6:3
 W:40:70:60:100000
-P:9:0d0:0:0:20
+P:9:0d0:0:0:23
 F:STR | CON | HIDE_TYPE | RES_FEAR | SUST_STR | SUST_CON | 
 F:IM_FIRE | RES_CONF | SEARCH | SEE_INVIS | LITE1 
 D:A helm wrought with the image of what Durin saw when he first gazed 
@@ -2753,7 +2784,7 @@ P:0:6d8:0:13:0
 F:CHR | HIDE_TYPE | RES_FEAR | SLAY_ANIMAL | SLAY_DRAGON | KILL_DEMON |
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS |
 F:RES_DARK | RES_NETHER | RES_CHAOS | DRAIN_MANA | CURSED | HEAVY_CURSE |
-F:CHAOTIC
+F:CHAOTIC | IM_COLD
 D:Belonging to one of the riders of doom, surprising is the separation
 D:from its wielder. Maybe the lance itself is hunting for a new rider
 D:to enslave him.
@@ -2772,9 +2803,9 @@ F:MANA
 D:Noone knows who once forgot those rags, but they surely endured ages.
 
 
-# The Ribbed Plate Armour of black ore
+# The Ribbed Plate Armour of Black Ore
 
-N:227:of black ore
+N:227:of Black Ore
 I:37:18:0
 W:65:40:400:100000
 P:60:0d0:0:0:0
@@ -2836,8 +2867,8 @@ D:could possibly bear.
 N:232:'Soul Cure'
 I:31:1:4
 W:40:30:5:50000
-P:1:0d0:0:0:19
-F:WIS | HIDE_TYPE | KILL_UNDEAD | SHOW_MODS | REGEN | ACTIVATE
+P:1:1d1:0:0:19
+F:WIS | HIDE_TYPE | KILL_UNDEAD | REGEN | ACTIVATE
 D:Sacred gloves of an arch priest whose name is not remembered.
 
 
@@ -2845,7 +2876,7 @@ D:Sacred gloves of an arch priest whose name is not remembered.
 
 N:233:of Grom, the Wyrm Hunter
 I:40:38:0
-W:60:30:3:125000
+W:40:40:3:125000
 F:HIDE_TYPE | INSTA_ART | ACTIVATE | SPECIAL_GENE |
 F:RES_FIRE | RES_COLD | RES_ACID | RES_ELEC | RES_POIS | 
 F:ESP_DRAGON | SLAY_DRAGON
@@ -2861,6 +2892,114 @@ W:40:30:40:100000
 P:5:1d1:5:5:20
 F:BLOWS | HIDE_TYPE | STR | FREE_ACT | RES_FEAR | SHOW_MODS
 D:Gauntlets that convert the wielder's anger to strength in combat.
+
+
+# The Bluesteel Blade 'Artery Cutter'
+
+N:235:'Artery Cutter'
+I:23:31:10
+W:60:50:45:200000
+P:0:3d5:14:8:0
+F:CRIT
+F:SHOW_MODS | VORPAL | RES_ELEC | SEE_INVIS
+
+
+# The Mage Staff of Hellfire
+
+N:236:of Hellfire
+I:6:1:12
+W:80:70:12:200000
+P:0:1d5:0:0:0
+F:MANA | IM_FIRE | RES_DISEN | AUTO_ID | REGEN_MANA | 
+F:RES_ELEC | SEE_INVIS | ESP_EVIL | ACTIVATE
+D:The staff which bound the hellraiser's power.
+
+
+# The Mage Staff 'Cobalt Focus'
+
+N:237:'Cobalt Focus'
+I:6:1:10
+W:60:60:12:100000
+P:0:1d5:0:0:0
+F:MANA | IM_COLD | REGEN_MANA | RES_ELEC | RES_MANA | 
+F:SEE_INVIS | RES_FEAR
+D:The staff which bound the hellraiser's power.
+
+
+# The Pair of Soft Leather Boots 'Skywalker'
+
+N:238:'Skywalker'
+I:30:2:4
+W:40:40:10:75000
+P:2:1d1:0:0:16
+F:HIDE_TYPE | FREE_ACT | SPEED | RES_LITE | RES_COLD | RES_ELEC
+F:FEATHER | FLY
+D:Walking high above ground in mid-air, the wearer of these silvery
+D:feather spangled boots resists the influence of gravity.
+
+
+# The Lance 'Sunspire'
+
+N:239:'Sunspire'
+I:22:20:4
+W:60:70:300:120000
+P:0:5d8:20:30:0
+F:STR | WIS | HIDE_TYPE | RES_FEAR | FREE_ACT | SEE_INVIS | SHOW_MODS |
+F:SLAY_EVIL | KILL_UNDEAD | KILL_DEMON | SLAY_TROLL | SLAY_ORC | 
+F:LITE3 | IM_FIRE | BLESSED
+D:This radiating and perfectly shaped weapon was brought down to earth on the
+D:southern hemisphere by a mighty guardian of the skies.
+
+
+# The Lance 'Stormspire'
+
+N:240:'Stormspire'
+I:22:20:1
+W:60:70:300:80000
+P:0:5d8:20:30:0
+F:BLOWS | CON | LIFE | HIDE_TYPE | RES_FEAR | FREE_ACT | SHOW_MODS |
+F:SLAY_EVIL | KILL_UNDEAD | KILL_DEMON | SLAY_ANIMAL | SLAY_TROLL | SLAY_ORC |
+F:BRAND_ELEC | SH_ELEC | IM_ELEC | BLESSED
+D:This furious and perfectly shaped weapon was brought down to earth on the
+D:northern hemisphere by a mighty guardian of the skies.
+
+
+# The Scourge 'Bloodscourge'
+
+N:241:'Bloodscourge'
+I:21:21:3
+W:35:35:70:111000
+P:0:8d2:25:15:0
+F:STR | CON | INFRA | HIDE_TYPE | VAMPIRIC | BLOWS | 
+F:HEAVY_CURSE | CURSED | AUTO_CURSE | AGGRAVATE | 
+F:BRAND_FIRE | ESP_GOOD | ESP_EVIL | 
+F:LITE1 | REGEN | SHOW_MODS
+D:A bloodthirsting scourge with bowls burning in dark fire,
+D:screaming for more living flesh.
+
+
+# The Great Hammer 'Quietus'
+
+N:242:'Quietus'
+I:21:19:10
+W:50:50:400:150000
+P:0:8d6:25:25:20
+F:SHOW_MODS | STR | TUNNEL | HOLD_LIFE | FREE_ACT |
+F:SLAY_EVIL | SLAY_UNDEAD | SLAY_DEMON
+D:Where Quietus hits, silence follows.
+
+
+# The Zweihaender 'Icon Of Life'
+
+N:243:'Icon Of Life'
+I:23:29:3
+W:80:50:310:200000
+P:0:6d9:0:0:30
+F:SHOW_MODS | LIFE | LITE2 | BLESSED | 
+F:RES_DARK | RES_LITE | RES_NETHER | RES_WATER | RES_TIME
+D:A sacred artifact to defend life rather than to threaten it.
+
+
 
 
 #N:(No.):(name)

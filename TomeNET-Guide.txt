@@ -1,8 +1,10 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 31. July 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 8. Septembre 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
+| for latest information about TomeNET see http://www.c-blue.de/rogue.html
+| or join discussion in the forum on http://www.tomenet.net/
 +---
 | Welcome to this guide!
 | Please send in suggestions, criticism or comments to mail@c-blue.de.
@@ -48,6 +50,7 @@ Contents
     (4.7)   Traps
     (4.8)   Level & vault feelings, Jail, Ironman
     (4.9)   Navigating on maps
+    (4.10)  Houses
 (5) Item details
     (5.1)   Melee weapons, brands
     (5.2)   Ranged weapons, brands
@@ -59,6 +62,7 @@ Contents
     (5.8)   Special abilities of items
     (5.9)   What does item xxx do exactly?
     (5.10)  Destruction of items by elemental attacks
+    (5.11)  Armour Class vs monster attacks
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills
@@ -202,7 +206,7 @@ U       O       use undead powers (use this if you died and became a ghost).
                 be completely erased).
 CTRL+S          spike a door (using iron spikes, the door will be jammed).
 
-h               buy/sell a house or change house parameters.
+h               buy/sell a house or change house parameters. See (4.10).
 P               party screen. Form/disband/modify a party with other players
                 here. In a party you will share experience points if you are
                 within 7 character levels to each other and on the same
@@ -249,18 +253,10 @@ _       drink from a fountain. You must stand on the fountain to do this.
             "Always show lists in item/skill selection" will always show a
                 list of possible choices if you use commands that require you
                 to make a selection from a list of choices.
-:       type a chat message. To whisper privately, enter <player>:<text> then.
-        Example:    Hi!             <- goes to everyone
-                    C. Blue:Hi!     <- goes to the character named 'C. Blue'
-        In chat messages you can type a double colon '::' to force output of a
-        normal colon ':' instead of having it interpreted as separator for a
-        private chat message. Most smileys are recognized automatically and
-        don't require you to enter a double colon ( ':)' will work equally to
-        '::)' ). (If you want to send a private message to someone which
-        starts with a smiley, you will have to enter a space between the
-        private-separator colon and the smiley colon, example: 'd00d: :)'
-        sends a private message to d00d, containing  ' :)' while 'd00d::)'
-        will result in a public chat message looking like this 'd00d:)' .)
+:       type a chat message. To whisper privately, enter <player>:<text>
+        You can also enter a slash command here.
+        For details about chat, see (2.3).
+        For details about slash commands, see further below in this paragraph.
 @       displays a list of players currently on the server.
 '       lets you peek at the equipment of party members or players within
         sight.
@@ -352,6 +348,9 @@ Items that induce random teleportation, like a 'ring of teleportation' or
     The two dots can appear anywhere in the inscription, as long as they are
     not separated from each other. Example:
     A Long Sword Of The Thunderlords (2d5) (+10,+15) {NxFAReg..}
+
+Items that 'can cause Earthquakes':
+    !E          will make the item cause earthquakes randomly on striking.
 
 Word-Of-Recall scrolls:
     @R500       will teleport you to depth 500ft (tower).
@@ -618,6 +617,47 @@ someone while he is fighting monsters he most likely won't notice your
 message. Politely try again after some time.
 You can scroll back the messages using CTRL+P, or look at chat-only messages
 using CTRL+O.
+
+You can also enter slash commands in the chat line. For details about slash
+commands see (0.2).
+
+To type a private message to someone, enter <name>:<text>
+Example:    Hi!             <- goes to everyone
+            C. Blue:Hi!     <- goes privately to the character named 'C. Blue'
+In chat messages you can type a double colon '::' to force output of a normal
+colon ':' instead of having it interpreted as separator for a private chat
+message. Most smileys are recognized automatically and don't require you to
+enter a double colon ( ':)' will work equally to '::)' ). (If you want to send
+a private message to someone which starts with a smiley, you will have to
+enter a space between the private-separator colon and the smiley colon,
+example: 'd00d: :)' sends a private message to d00d, containing  ' :)'
+while 'd00d::)' will result in a public chat message looking like this
+'d00d:)' .)
+
+You can use colours in messages. To change the message colour, put a {
+followed by a colour code somewhere into your message line.
+Example:
+        {pHi!               <- results in a 'poison-coloured' Hi!
+        I see some {vh {Bto the east
+                            <- results in "I see some h in the east"
+                               where the 'h' is violet. The rest of the
+                               message is light blue (standard colour).
+If you cannot see coloured messages in your secondary Tomenet windows other
+than the big main window, check your client option settings by typing  =3
+and looking for 'Flicker messages in recall' (recall_flicker). Set it to
+'yes'.
+If you want to type the character '{' in a chat message, rather than using
+it for a colour code, type it twice '{{'. It will become '{'.
+
+Here is a list of colour codes (try not to annoy your fellow players :)
+    d   black           b   blue            B   light blue
+    D   dark            g   green           G   light green
+    s   slate           r   red             R   light red (pink)
+    W   white           u   umber           U   light umber
+    w   bright white    y   yellow          o   orange          v   violet
+
+    a   acidic          c   cold            e   electric        f   fire
+    p   poison          L   light flicker   h   half-multi      m   multi
 
 
 
@@ -1662,6 +1702,21 @@ dungeon on level -450ft (9th dungeon level).
 
 
 
+(4.10) Houses
+-------------
+Press 'h' to buy or sell a house, or to change house parameters (for example
+giving all your party members access to it). You need to stand directly next
+to the house door to do this.
+The house doors can have different colours to you: 
+-a green house door indicates that you have access to it,
+-a brown house door indicates that the house is currently unowned
+ (so you may buy it)
+-a grey door indicates that this house is owned by someone and you don't have
+ access to it.
+If you forgot which houses you own, type ~6 to see a list of your houses.
+
+
+
 (5) Item details
 ================
 (5.1) Melee weapons, brands
@@ -1789,7 +1844,8 @@ message, telling you that your backpack isn't comfortable.
 Using a shield will nullify the special combat styles, reducing your damage.
 
 Using too heavy armour or using any melee or ranged weapon will disable your
-MA and all benefits completely.
+MA and all benefits completely. The armour weight limit is 10.0 lb + Martial
+Arts skill level * 0.5 lb. So for MA 50 it is 10.0 + 25.0 = 35.0 lb.
 
 Martial Arts special combat techniques have certain dice, similar to normal
 weapons. These dice are also effected by brands and slays same as normal 
@@ -2038,9 +2094,9 @@ Hold Life       This will provide some protection against experience drain.
 Further, there are several high resistances. Those are
 Water           Water resistance is rare. Water attacks can stun and confuse
                 you if you don't resist them and usually do a lot of damage.
-                Resistance will cut damage to 2/3.
+                Resistance will cut damage to 1/3.
                 If you're a mimicking an aquatic monster the damage will be
-                further cut down to 3/4.
+                further cut down to 1/4.
                 If you don't wear a 'tarpaulin' items in your inventory might
                 be destroyed by the water (if they don't resist water).
                 Water bolts do (10d10)+level damage.
@@ -2665,6 +2721,26 @@ Books/Tomes                                         x
 
 
 
+(5.11) Armour Class vs monster attacks
+--------------------------------------
+Armour class helps you twice:
+-It makes monsters miss you more often.
+ The more AC the better, it's weighed against the level of the attacking
+ monster. If the monster is (heavily) stunned it gets penalties here.
+-It reduces the damage if a monster manages to hit you.
+ This effect caps at 150 AC!
+
+Monsters can score critical hits which can (depending on the attack type)
+result in a cutting or stunning effect against the player.
+A monster scores a critical hit if it inflicts a damage which is very close to
+its theoretical maximum. Weaker monsters (that don't inflict high amounts of
+damage) aren't able to score critical hits at all.
+The power of the resulting cut/stun depends on the damage too.
+So a high armour class helps a lot, to avoid critical monster hits and to
+reduce their power.
+
+
+
 (6) Tables
 ==========
 (6.1) Attributes
@@ -2738,7 +2814,7 @@ Note that not every skill is available to every profession (class).
                                 beginning you will only feel 'cursed' or
                                 'good'. Raise combat skill over 10 to get
                                 more distinctive feelings. Lets you wear
-                                heavier armour without penalties.
+                                heavier armour without spell point penalties.
                                 A powerful warrior (combat>30) senses the use
                                 of ranged weapons and ammunition much better,
                                 even if (s)he's not comfortable with archery.
@@ -2754,6 +2830,14 @@ Note that not every skill is available to every profession (class).
         +Sword-mastery          Greatly improves to-dam/to-hit with swords.
                                 At 25 and 50 you will get +1 blow per round.
             .Critical-strike    Ability to score 2x/3x/4x damage hits.
+                                Critical strike skill works with light
+                                weapons. Weight cap is 10.0 lb, above this
+                                the chance to hit your target critically won't
+                                be worse than with a 10.0 lb weapon.
+                                Although your chance of hitting critical spots
+                                is better with lighter weapons, the damage of
+                                your critical strike -IF you manage to execute
+                                one- is higher if your weapon is heavier.
         .Axe-mastery            See Sword-mastery
         .Hafted-mastery         See Sword-mastery
         .Polearm-mastery        See Sword-mastery
@@ -2863,6 +2947,24 @@ Note that not every skill is available to every profession (class).
                                 noticing it, although it's not worth much :)
                                 There's always a minimum chance of 5% to fail!
                                 You need to be at least level 10 to steal.
+                                The chance to successfully steal an item is
+                                usually never smaller than 5%, even if your
+                                stealing skill is 0 and your dexterity low.
+                                If a shop offers an item more expensive than
+                                it actually is (black market) that has no
+                                effect on stealing. The 'normal' item value
+                                is used to calculate the chances.
+                                It's more difficult to steal from special
+                                stores (expensive black market and especially
+                                rare footwear/jewellry/secret black market).
+                                The calculation for successful stealing is
+                                very complicated. Some random examples:
+                                Speed pot, dex 18/70, skill 20 -> 70% chance.
+                                Heal pot, dex 18/50, skill 25 -> 65% chance.
+                                Massive Piece of Wood, dex 18/140, skill 40
+                                -> 15% (it's *heavy*, 250.0 lb).
+                                It's a good idea to wear as many +DEX items
+                                as possible while trying to steal from a shop.
     +Dodging                    Ability to evade attacks. Doesn't work well
                                 if you wear heavier armour.
         .Calmness               Ability to not get hindered by enemies.
@@ -3321,7 +3423,7 @@ Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
             STR INT WIS DEX CON CHR     HPdice  Exp%    Blows/Round
             Di  MD  ST  St  Pe  Sr  Fi  BT
 ------------------------------------------------------------------------------
-Adventurer  +0  +0  +0  +0  +0  +0      +6      *100%       4
+Adventurer  +0  +0  +0  +0  +0  +0      +5      *100%       4
             20  20  20  2   15  15  50  50
 Warrior     +5  -2  -2  +2  +2  -1      +10     *100%       6
             25  18  18  1   2   14  70  55
@@ -3329,13 +3431,13 @@ Istari      -5  +3  +0  +1  -2  +1      +0      *130%       1
             30  36  30  2   20  16  34  20
 Priest      -1  -3  +3  -1  +0  +2      +3      *120%       4
             25  30  32  2   8   16  48  35
-Rogue       +2  +1  -2  +3  +1  -1      +7      *125%       5
+Rogue       +2  +1  -2  +3  +1  -1      +5      *125%       5
             45  32  28  5   32  24  60  66
 Mimic       +1  +0  +0  +1  +1  -4      +5      *125%       4
             25  35  28  7   18  18  60  66
 Archer      +1  +0  +2  +3  +1  -1      +4      *130%       3
             30  32  28  2   20  24  56  82
-Paladin     +3  -3  +1  +0  +2  +2      +9      *130%       5
+Paladin     +3  -3  +1  +0  +2  +2      +8      *130%       5
             10  21  54  1   16  13  60  29
 Ranger      +2  +2  -1  +1  +2  +0      +6      *135%       5
             34  32  30  5   30  30  50  60
@@ -3387,8 +3489,8 @@ I: speed : hit points : vision : armor class : alertness
     ((x*y) + mimic_HP) / 2. This value is capped against ~2700, so gain
     might decrease in higher regions. (1/2 monster HP, 1/2 player HP.)
     If the mimic's HP in player form (0) are greater than x*y, the
-    resulting HP will be ((x*y * 2) + (mimic_HP * 3)) / 5.
-    (2/5 monster HP, 3/5 player HP.)
+    resulting HP will be ((x*y * 2) + (mimic_HP * 5)) / 7.
+    (2/7 monster HP, 5/7 player HP.)
   armour class:
     Mimicking a monster is already a very difficult task. By changing
     shape, the usual armour class of the monster will magically influence

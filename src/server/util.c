@@ -1788,11 +1788,11 @@ static void do_slash_cmd(int Ind, char *message)
 	int i = 0;
 	int k = 0, tk = 0;
 	player_type *p_ptr = Players[Ind];
- 	char *colon;
-	char *token[9];
+ 	char *colon, *token[9], message2[80];
 	worldpos wp;
 	bool admin = is_admin(p_ptr);
 
+	strcpy(message2, message);
 	wpcopy(&wp, &p_ptr->wpos);
 
 	/* Look for a player's name followed by a colon */
@@ -2548,14 +2548,22 @@ static void do_slash_cmd(int Ind, char *message)
 					}
 				}
 			}
+			
+			/* don't start too early -C. Blue */
+			if (Players[j]->lev < 5) {
+				msg_print(Ind, "\377oYou need to be level 5 or higher to receive a quest!");
+				return;
+			}
+			
 			get_mon_num_hook=dungeon_aux;
 			get_mon_num_prep();
-			i=2+randint(7);
+			i=2+randint(5);
 			do{
 				r=get_mon_num(lev, 0);
 				k++;
 				if(k>100) lev--;
 			} while(((lev-5) > r_info[r].level) || r_info[r].flags1 & RF1_UNIQUE);
+			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 11 + randint(7);
 			add_quest(Ind, j, r, i, flags);
 			return;
 		}
@@ -2713,6 +2721,255 @@ static void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "The heavens are ready to accept your martyrium.");
 			return;
 		}
+		else if (prefix(message, "/notep"))
+		{
+			int p = -1, i, found_note, j = 0;
+			bool found_a_note = FALSE;
+			for (i = 0; i < MAX_PARTIES; i++) {
+				if(!strcmp(parties[i].owner, p_ptr->name)) p = i;
+			}
+			if (p < 0) {
+				msg_print(Ind, "\377oYou aren't a party owner.");
+				return;
+			}
+			if (tk == 0)	/* Erase party note */
+			{
+				for (i = 0; i < MAX_PARTYNOTES; i++) {
+					/* search for pending party note */
+					if (!strcmp(party_note_target[i], parties[p_ptr->party].name)) {
+						/* found a matching note */
+						/* delete the note */
+						strcpy(party_note_target[i], "");
+						strcpy(party_note[i], "");
+						break;
+					}
+				}
+				msg_print(Ind, "\377oParty note has been erased.");
+				return;
+			}
+			if (tk > 0)	/* Set new party note */
+			{
+				/* Search for begin of parms ( == text of the note) */
+				for (i = 6; i < strlen(message2); i++)
+					if (message2[i] == ' ')
+						for (j = i; j < strlen(message2); j++)
+							if (message2[j] != ' ')	{
+								/* save start pos in j for latter use */
+								i = strlen(message2);
+								break;
+							}
+
+				/* search for pending party note to change it */
+				for (i = 0; i < MAX_PARTYNOTES; i++) {
+					if (!strcmp(party_note_target[i], parties[p_ptr->party].name)) {
+						/* found a matching note */
+						if (!found_a_note) found_note = i;
+						found_a_note = TRUE;
+					}
+				}
+				if (found_a_note) {
+					/* change existing party note to new text */
+					strcpy(party_note[found_note], &message2[j]);
+					msg_print(Ind, "\377yNote has been stored.");
+					return;
+				}
+				
+				/* seach for free spot to create a new party note */
+				for (i = 0; i < MAX_PARTYNOTES; i++) {
+	    				if (!strcmp(party_note[i], "")) {
+						/* found a free memory spot */
+						if (!found_a_note) found_note = i;
+						found_a_note = TRUE;
+						break;
+					}
+				}
+				if (!found_a_note) {
+					msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending party notes.", MAX_PARTYNOTES);
+					return;
+				}
+				strcpy(party_note_target[found_note], parties[p_ptr->party].name);
+				strcpy(party_note[found_note], &message2[j]);
+				msg_print(Ind, "\377yNote has been stored.");
+				return;
+			}
+		}
+		else if (prefix(message, "/noteg"))
+		{
+			int p = -1, i, found_note, j = 0;
+			bool found_a_note = FALSE;
+			for (i = 0; i < MAX_GUILDS; i++) {
+				if(guilds[i].master == p_ptr->id) p = i;
+			}
+			if (p < 0) {
+				msg_print(Ind, "\377oYou aren't a guild master.");
+				return;
+			}
+			if (tk == 0)	/* Erase guild note */
+			{
+				for (i = 0; i < MAX_GUILDNOTES; i++) {
+					/* search for pending guild note */
+					if (!strcmp(guild_note_target[i], guilds[p_ptr->guild].name)) {
+						/* found a matching note */
+						/* delete the note */
+						strcpy(guild_note_target[i], "");
+						strcpy(guild_note[i], "");
+						break;
+					}
+				}
+				msg_print(Ind, "\377oGuild note has been erased.");
+				return;
+			}
+			if (tk > 0)	/* Set new Guild note */
+			{
+				/* Search for begin of parms ( == text of the note) */
+				for (i = 6; i < strlen(message2); i++)
+					if (message2[i] == ' ')
+						for (j = i; j < strlen(message2); j++)
+							if (message2[j] != ' ')	{
+								/* save start pos in j for latter use */
+								i = strlen(message2);
+								break;
+							}
+
+				/* search for pending guild note to change it */
+				for (i = 0; i < MAX_GUILDNOTES; i++) {
+					if (!strcmp(guild_note_target[i], guilds[p_ptr->guild].name)) {
+						/* found a matching note */
+						if (!found_a_note) found_note = i;
+						found_a_note = TRUE;
+					}
+				}
+				if (found_a_note) {
+					/* change existing guild note to new text */
+					strcpy(guild_note[found_note], &message2[j]);
+					msg_format(Ind, "\377yNote has been stored.");
+					return;
+				}
+				
+				/* seach for free spot to create a new guild note */
+				for (i = 0; i < MAX_GUILDNOTES; i++) {
+	    				if (!strcmp(guild_note[i], "")) {
+						/* found a free memory spot */
+						if (!found_a_note) found_note = i;
+						found_a_note = TRUE;
+						break;
+					}
+				}
+				if (!found_a_note) {
+					msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending guild notes.", MAX_GUILDNOTES);
+					return;
+				}
+				strcpy(guild_note_target[found_note], guilds[p_ptr->guild].name);
+				strcpy(guild_note[found_note], &message2[j]);
+				msg_format(Ind, "\377yNote has been stored.");
+				return;
+			}
+		}
+		else if (prefix(message, "/notes"))
+		{
+			int i, notes = 0;
+			for (i = 0; i < MAX_NOTES; i++) {
+				/* search for pending notes of this player */
+				if (!strcmp(priv_note_sender[i], p_ptr->name)) {
+					/* found a matching note */
+					notes++;
+				}
+			}
+			if (notes > 0) msg_format(Ind, "\377oYou wrote %d currently pending notes:", notes);
+			else msg_format(Ind, "\377oYou didn't write any pending notes.");
+			for (i = 0; i < MAX_NOTES; i++) {
+				/* search for pending notes of this player */
+				if (!strcmp(priv_note_sender[i], p_ptr->name)) {
+					/* found a matching note */
+					msg_format(Ind, "\377oTo %s: %s", priv_note_target[i], priv_note[i]);
+				}
+			}
+			return;
+		}
+		else if (prefix(message, "/note"))
+		{
+			int i, notes = 0, found_note, j = 0;
+			bool found_a_note = FALSE, colon = FALSE;
+			char tname[80];
+			if (tk < 1)	/* Explain command usage */
+			{
+				msg_print(Ind, "\377oUsage: /note <player>[:<text>]  --  Example: /note El Hazard:Hiho!");
+				msg_print(Ind, "\377oNot specifiying any text will remove pending notes to that player.");
+				msg_print(Ind, "\377oTo clear all pending notes of yours, type: /note *");
+				return;
+			}
+			/* Does a colon appear? */
+			for (i = 0; i < strlen(message2); i++)
+				if (message2[i] == ':') colon = TRUE;
+			/* Depending on colon existance, extract the target name */
+			for (i = 5; i < strlen(message2); i++)
+				if (message2[i] == ' ') {
+					for (j = i; j < strlen(message2); j++)
+						/* find where target name starts, save pos in j */
+						if (message2[j] != ' ')	{
+							for (i = j; i < strlen(message2); i++) {
+								/* find ':' which terminates target name, save pos in i */
+								if (message2[i] == ':') {
+									/* extract target name up to the ':' */
+									strcpy(tname, message2 + j);
+									tname[i - j] = '\0';
+									/* save i in j for latter use */
+									j = i;
+									break;
+								}
+							}
+							if (i == strlen(message2)) {
+								/* extract name till end of line (it's the only parm) */
+								strcpy(tname, message2 + j);
+							}
+							break;
+						}
+					break;
+				}
+			/* No colon found -> only a name parm give */
+			if (!colon)	/* Delete all pending notes to a specified player */
+			{
+				for (i = 0; i < MAX_NOTES; i++) {
+					/* search for pending notes of this player to the specified player */
+					if (!strcmp(priv_note_sender[i], p_ptr->name) &&
+					    (!strcmp(priv_note_target[i], tname) || !strcmp(tname, "*"))) {
+						/* found a matching note */
+						found_a_note = TRUE;
+						/* delete the note */
+						notes++;
+						strcpy(priv_note_sender[i], "");
+						strcpy(priv_note_target[i], "");
+						strcpy(priv_note[i], "");
+					}
+				}
+				msg_format(Ind, "\377oDeleted %d notes.", notes);
+				return;
+			}
+			/* Colon found, store a note to someone */
+			/* Store a new note from this player to the specified player */
+			/* Look for free space to store the new note */
+			for (i = 0; i < MAX_NOTES; i++) {
+				if (!strcmp(priv_note[i], "")) {
+					/* found a free memory spot */
+					if (!found_a_note) found_note = i;
+					found_a_note = TRUE;
+				}
+				if (!strcmp(priv_note_sender[i], p_ptr->name)) notes++;
+			}
+			if (!found_a_note) {
+				msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending notes.", MAX_NOTES);
+				return;
+			}
+			if ((notes >= 3) && !p_ptr->admin_dm && !p_ptr->admin_wiz) {
+				msg_print(Ind, "\377oYou have already reached the maximumm of 3 pending notes per player.");
+				return;
+			}
+			strcpy(priv_note_sender[found_note], p_ptr->name);
+			strcpy(priv_note_target[found_note], tname);
+			strcpy(priv_note[found_note], message2 + j + 1);
+			msg_format(Ind, "\377yNote %s to %s has been stored.", priv_note[found_note], priv_note_target[found_note]);
+			return;
+		}
 
 
 		/*
@@ -2777,6 +3034,11 @@ static void do_slash_cmd(int Ind, char *message)
 					}
 				}
 				time(&cfg.closetime);
+				return;
+			}
+			else if (prefix(message, "/shutempty")) {
+				msg_print(Ind, "\377y* Shutting down as soon as server is empty *");
+				cfg.runlevel = 2048;
 				return;
 			}
 			else if (prefix(message, "/pet")){
@@ -3476,7 +3738,7 @@ static void player_talk_aux(int Ind, char *message)
 		shutdown_server();
 		return;
 	}
-
+	
 	if(message[0]=='/'){
 		if(!strncmp(message, "/me", 3)) me=TRUE;
 		else if(!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;

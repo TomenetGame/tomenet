@@ -399,6 +399,16 @@ void do_cmd_check_uniques(int Ind, int line)
 static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modify)
 {
 	int modify_number = 0;
+	cptr p = "";
+	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE;
+
+	/* Prepare title already */
+        if (q_ptr->lev < 60)
+                p = player_title[q_ptr->pclass][((q_ptr->lev/5) < 10)? (q_ptr->lev/5) : 10][1 - q_ptr->male];
+        else
+                p = player_title_special[q_ptr->pclass][(q_ptr->lev < 99)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male];
+
+	/* Check for special character */
 	if(modify){
 		/* Uncomment these as you feel it's needed ;) */
 		//if(!strcmp(q_ptr->name,"")) modify_number=1; //wussy Cheezer
@@ -413,7 +423,8 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	fprintf(fff, "  %s the %s%s %s (%s%sLv %d, %s)",
 			q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"",
 			race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
-			(q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"",
+			(q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):
+						((q_ptr->male)?"Male, ":"Female, "),
 			q_ptr->fruit_bat ? "Fruit bat, " : "",
 			q_ptr->lev, parties[q_ptr->party].name);
 #else	// 0
@@ -451,27 +462,68 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	switch(modify_number){
 	case 1: fprintf(fff, "Cheezer "); break;
 	case 2: fprintf(fff, "Slacker "); break;
-	case 3: fprintf(fff, "Swordsman "); break; //Judge for Highlander games
-	default: fprintf(fff, "%s ", class_info[q_ptr->pclass].title); break;
+	case 3: if (q_ptr->male) fprintf(fff, "Swordsman ");
+		else fprintf(fff, "Swordswoman ");
+		break; //Judge for Highlander games
+	default:
+		fprintf(fff, "%s", class_info[q_ptr->pclass].title); break;
 	}
-	
+
+	/* PK */
+	if (cfg.use_pk_rules == PK_RULES_DECLARE)
+	{
+		text_pk = TRUE;
+		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
+			fprintf(fff, "   (PK");
+		else if(!(q_ptr->pkill & PKILL_KILLABLE))
+			fprintf(fff, "   (SAFE");
+		else if(!(q_ptr->tim_pkill))
+			fprintf(fff, q_ptr->lev < 5 ? "   (Newbie" : "   (Killable");
+		else
+			text_pk = FALSE;
+	}
+	if(q_ptr->limit_chat)
+	{
+		text_silent = TRUE;
+		if (text_pk)
+			fprintf(fff, ", Silent");
+		else
+			fprintf(fff, "   (Silent");
+	}
+	/* AFK */
+	if(q_ptr->afk)
+	{
+		text_afk = TRUE;
+		if (text_pk || text_silent)
+			fprintf(fff, ", AFK");
+		else
+			fprintf(fff, "   (AFK");
+	}
+	if (text_pk || text_silent || text_afk) fprintf(fff, ")");
+
+	/* Line break here, it's getting too long with all that mods -C. Blue */
+	fprintf(fff, "\n\377U     ");
+
 	switch(modify_number){
-	case 3: fprintf(fff, "(Judge, "); break; //Judge for Highlander games
-	case 4: fprintf(fff,"(Dungeon Master, "); break; //Server Admin
-	default: fprintf(fff, "(%s",
-		(q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"");
+	case 3: fprintf(fff, "\377rJudge\377U "); break; //Judge for Highlander games
+	case 4: if (q_ptr->male) fprintf(fff,"\377rDungeon Master\377U ");
+		else fprintf(fff,"\377rDungeon Mistress\377U ");
+		break; //Server Admin
+	default: fprintf(fff, "%s",
+		(q_ptr->total_winner)?((q_ptr->male)?"\377vKing\377U ":"\377vQueen\377U "):
+		((q_ptr->male)?"Male ":"Female "));
 		break;
 	}
 	
 	if (q_ptr->party)
-	fprintf(fff, "%sLv %d, %s%s",
-		q_ptr->fruit_bat ? "Batty, " : "",
+	fprintf(fff, "%sLevel %d, Party: '%s%s\377U'",
+		q_ptr->fruit_bat ? "Batty " : "",
 		q_ptr->lev,
 		(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
 		parties[q_ptr->party].name);
 	else
-	fprintf(fff, "%sLv %d",
-		q_ptr->fruit_bat ? "Batty, " : "",
+	fprintf(fff, "%sLevel %d",
+		q_ptr->fruit_bat ? "Batty " : "",
 		q_ptr->lev);
 #endif	// 0
 }
@@ -536,37 +588,15 @@ void do_cmd_check_players(int Ind, int line)
 		do_write_others_attributes(fff, q_ptr, i);
 		/* Colour might have changed due to Iron Team party name,
 		   so print the closing ')' in the original colour again: */
-		fprintf(fff, "\377%c)", attr);
+		/* not needed anymore since we have linebreak now
+		fprintf(fff, "\377%c)", attr);*/
 
-		/* PK */
-		if (cfg.use_pk_rules == PK_RULES_DECLARE)
-		{
-			if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
-			{
-				fprintf(fff, " PK");
-			}
-			else if(!(q_ptr->pkill & PKILL_KILLABLE)){
-				fprintf(fff, " SAFE");
-			}
-			else if(!(q_ptr->tim_pkill)){
-				fprintf(fff, q_ptr->lev < 5 ? " Newbie" : " Killable");
-			}
-		}
-		if(q_ptr->limit_chat)
-		{
-			fprintf(fff, " Silent");
-		}
-		/* AFK */
-		if(q_ptr->afk)
-		{
-			fprintf(fff, " AFK");
-		}
-				
+
 		/* Newline */
 		/* -AD- will this work? - Sure -C. Blue- */
 		fprintf(fff, "\n\377U");
 
-		if (is_admin(p_ptr)) fprintf(fff, "   (%d)", k);
+		if (is_admin(p_ptr)) fprintf(fff, "  (%d)", k);
 
 		fprintf(fff, "     %s@%s", q_ptr->realname, q_ptr->hostname);
 
@@ -576,7 +606,7 @@ void do_cmd_check_players(int Ind, int line)
 		{
 			/* maybe too kind? */
 //			fprintf(fff, "   {[%d,%d] of %dft(%d,%d)}", q_ptr->panel_row, q_ptr->panel_col, q_ptr->wpos.wz*50, q_ptr->wpos.wx, q_ptr->wpos.wy);
-			fprintf(fff, "   {[%d,%d] in %s}", q_ptr->panel_row, q_ptr->panel_col, wpos_format(Ind, &q_ptr->wpos));
+			fprintf(fff, "  {[%d,%d] %s}", q_ptr->panel_row, q_ptr->panel_col, wpos_format(Ind, &q_ptr->wpos));
 
 		}
 		if((p_ptr->guild == q_ptr->guild && q_ptr->guild) || Ind == k || admin){
@@ -584,7 +614,7 @@ void do_cmd_check_players(int Ind, int line)
 				fprintf(fff, " [%s]", guilds[q_ptr->guild].name);
 			fprintf(fff, " \377%c", (q_ptr->quest_id?'Q':' '));
 		}
-		fprintf(fff, "\n");
+		fprintf(fff, "\n\n");
 
 	}
 #ifdef TOMENET_WORLDS
@@ -692,7 +722,8 @@ void do_cmd_check_player_equip(int Ind, int line)
 		do_write_others_attributes(fff, q_ptr, m);
 		/* Colour might have changed due to Iron Team party name,
 		   so print the closing ')' in the original colour again: */
-		fprintf(fff, "\377%c)", attr);
+		/* not needed anymore since we have a linebreak now
+		fprintf(fff, "\377%c)", attr);*/
 
 		fprintf(fff, "\n");
 
@@ -909,6 +940,13 @@ void do_cmd_check_server_settings(int Ind)
 
 	if ((k=cfg.party_xp_boost))
 		fprintf(fff, "Party members get boosted exp(factor %d).\n", k);
+
+	if (cfg.replace_hiscore == 0)
+		fprintf(fff, "High-score entries are added to the high-score table.\n");
+	if (cfg.replace_hiscore == 1)
+		fprintf(fff, "Newer high-score entries replace old entries.\n");
+	if (cfg.replace_hiscore == 2)
+		fprintf(fff, "Only higher & newer high-score entries replace old entries.\n(Otherwise the new entry is ignored).\n");
 
 	/* Several restrictions */
 	if (!cfg.maximize)

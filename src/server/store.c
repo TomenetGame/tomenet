@@ -550,17 +550,17 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)){
 			if(o_ptr->pval==0)
 			{
-				o_ptr->level = 1; //= 0
+//				o_ptr->level = 1; //= 0
 				price = 1000; //= 100
 			}
 			else
 			{
-				if (r_info[o_ptr->pval].level > 0) {
+/*				if (r_info[o_ptr->pval].level > 0) {
 					o_ptr->level = 15 + (1000 / ((2000 / r_info[o_ptr->pval].level) + 10));
 				} else {
 					o_ptr->level = 15;
 				}
-				price = 1000;
+*/				price = 1000;
 			}
 		}
 	}
@@ -1008,20 +1008,43 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 					return (FALSE);
 			}
 			break;
-			/* Pet Shop */
-			case 9:
-			{
-				/* Analyze the type */
-				switch (o_ptr->tval)
-				{
-					case TV_EGG:
-						break;
-					default:
-						return (FALSE);
-				}
-				break;
-			}
 		}
+		/* Pet Shop */
+		case 9:
+		{
+			/* Analyze the type */
+			switch (o_ptr->tval)
+			{
+				case TV_EGG:
+					break;
+				default:
+					return (FALSE);
+			}
+			break;
+		}
+		/* Rare Footwear Shop */
+		case 45:
+			/* Analyze the type */
+			switch (o_ptr->tval)
+			{
+				case TV_BOOTS:
+				break;
+				default:
+				return (FALSE);
+			}
+			break;
+		/* Rare Jewellry Shop */
+		case 42:
+			/* Analyze the type */
+			switch (o_ptr->tval)
+			{
+				case TV_AMULET:
+				case TV_RING:
+				break;
+				default:
+				return (FALSE);
+			}
+			break;
 	}
 
 	/* XXX XXX XXX Ignore "worthless" items */
@@ -1816,6 +1839,11 @@ static void display_entry(int Ind, int pos)
 		o_name[maxwid] = '\0';
 
 		attr = tval_to_attr[o_ptr->tval];
+		/* grey out if wrong mode / level */
+		if ( ( ((!o_ptr->level) || (o_ptr->level > p_ptr->lev)) &&
+			(o_ptr->owner) && (o_ptr->owner != p_ptr->id) ) ||
+		     ((o_ptr->owner_mode == MODE_IMMORTAL) && (p_ptr->mode != MODE_IMMORTAL)) )
+			attr = TERM_L_DARK;
 
 		/* Only show the weight of an individual item */
 		wgt = o_ptr->weight;
@@ -1838,6 +1866,11 @@ static void display_entry(int Ind, int pos)
 		o_name[maxwid] = '\0';
 
 		attr = tval_to_attr[o_ptr->tval];
+		/* grey out if wrong mode / level */
+		if ( ( ((!o_ptr->level) || (o_ptr->level > p_ptr->lev)) &&
+			(o_ptr->owner) && (o_ptr->owner != p_ptr->id) ) ||
+		     ((o_ptr->owner_mode == MODE_IMMORTAL) && (p_ptr->mode != MODE_IMMORTAL)) )
+			attr = TERM_L_DARK;
 
 		/* Only show the weight of an individual item */
 		wgt = o_ptr->weight;
@@ -2432,7 +2465,7 @@ void store_purchase(int Ind, int item, int amt)
                 }
                 if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
                 {
-                        msg_print(Ind, "You aren't powerful enough yet to pick up that artefact!");
+                        msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
                         return;
                 }
 	}
@@ -4025,7 +4058,7 @@ void home_purchase(int Ind, int item, int amt)
                 }
                 if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
                 {
-                        msg_print(Ind, "You aren't powerful enough yet to pick up that artefact!");
+                        msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
                         return;
                 }
 	}

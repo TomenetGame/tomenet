@@ -1475,7 +1475,7 @@ void carry(int Ind, int pickup, int confirm)
 			}
 			if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
 			{
-				msg_print(Ind, "You aren't powerful enough yet to pick up that artefact!");
+				msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
 				return;
 			}
 		}
@@ -1649,6 +1649,10 @@ void carry(int Ind, int pickup, int confirm)
 				{
 					o_ptr->owner = p_ptr->id;
 					o_ptr->owner_mode = p_ptr->mode;
+#if CHEEZELOG_LEVEL > 2
+					if (true_artifact_p(o_ptr)) s_printf("%s Artifact %d found by %s(lv %d):\n  %s\n  ",
+									    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, o_name);
+#endif	// CHEEZELOG_LEVEL
 				}
 
 #if CHEEZELOG_LEVEL > 2
@@ -1716,7 +1720,7 @@ void carry(int Ind, int pickup, int confirm)
 	if (c_ptr->feat == FEAT_DEEP_WATER &&
 	    TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
 //			magik(WATER_ITEM_DAMAGE_CHANCE))
-	    magik(3))
+	    magik(3) && !p_ptr->fly)
 	{
 		inven_damage(Ind, set_water_destroy, 1);
 		if (magik(20)) minus_ac(Ind, 1);
@@ -1992,14 +1996,14 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				/* Apply the player damage bonuses */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
-				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < q_ptr->chp))
+				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < q_ptr->chp))
 				{
 					msg_format(Ind, "%^s moans in agony!", q_ptr->name);
 					stun_effect = 7 + randint(13);
 					resist_stun /= 3;
 				}
 
-				if (stun_effect && ((k + p_ptr->to_d) < q_ptr->chp))
+				if (stun_effect && ((k + p_ptr->to_d + p_ptr->to_d_melee) < q_ptr->chp))
 				{
 					if (marts > randint((q_ptr->lev * 2) + resist_stun + 10))
 					{
@@ -2623,14 +2627,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg);
 				k = critical_norm(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
 
-				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d) < m_ptr->hp))
+				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp))
 				{
 					msg_format(Ind, "%^s moans in agony!", m_name);
 					stun_effect = 7 + randint(13);
 					resist_stun /= 3;
 				}
 
-				else if ((special_effect == MA_SLOW) && ((k + p_ptr->to_d) < m_ptr->hp))
+				else if ((special_effect == MA_SLOW) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp))
 				{
 					if (!(r_ptr->flags1 & RF1_UNIQUE) &&
 					    (randint(marts * 2) > r_ptr->level) &&
@@ -2641,7 +2645,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					}
 				}
 
-				if (stun_effect && ((k + p_ptr->to_d) < m_ptr->hp))
+				if (stun_effect && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp))
 				{
 					/* Stun the monster */
 					if (r_ptr->flags3 & RF3_NO_STUN)
@@ -3148,11 +3152,11 @@ void py_attack(int Ind, int y, int x, bool old)
 			|| !p_ptr->num_blow) return;
 
 	/* Break goi/manashield */
+#if 0
 	if (p_ptr->invuln)
 	{
 		set_invuln(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);

@@ -320,7 +320,9 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_CURE_SERIOUS:
 			{
-				if (hp_player(Ind, damroll(4, 8))) ident = TRUE;
+				(void)set_poisoned(Ind, 0);
+				(void)set_image(Ind, 0);	// ok?
+				if (hp_player(Ind, damroll(5, 8))) ident = TRUE;
 				break;
 			}
 
@@ -403,7 +405,7 @@ void do_cmd_eat_food(int Ind, int item)
 				msg_print(Ind, "That tastes very good.");
 				(void)set_poisoned(Ind, 0);
 				(void)set_image(Ind, 0);	// ok?
-				(void)hp_player(Ind, damroll(4, 8));
+				(void)hp_player(Ind, damroll(5, 8));
 				set_food(Ind, PY_FOOD_MAX - 1);
 				ident = TRUE;
 				break;
@@ -842,6 +844,8 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 			case SV_POTION_BOLDNESS:
 				{
 					if (set_afraid(Ind, 0)) ident = TRUE;
+					/* Stay bold for some turns */
+			                p_ptr->res_fear_temp = 5;
 					break;
 				}
 
@@ -902,7 +906,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_CURE_SERIOUS:
 				{
-					if (hp_player(Ind, damroll(4, 8))) ident = TRUE;
+					if (hp_player(Ind, damroll(5, 8))) ident = TRUE;
 					if (set_blind(Ind, 0)) ident = TRUE;
 					if (set_confused(Ind, 0)) ident = TRUE;
 					if (set_cut(Ind, (p_ptr->cut / 2) - 50)) ident = TRUE;
@@ -911,7 +915,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_CURE_CRITICAL:
 				{
-					if (hp_player(Ind, damroll(6, 8))) ident = TRUE;
+					if (hp_player(Ind, damroll(8, 8))) ident = TRUE;
 					if (set_blind(Ind, 0)) ident = TRUE;
 					if (set_confused(Ind, 0)) ident = TRUE;
 					//			if (set_poisoned(Ind, 0)) ident = TRUE;	/* use specialized pots */
@@ -2019,7 +2023,7 @@ void do_cmd_read_scroll(int Ind, int item)
 	player_type *p_ptr = Players[Ind];
 	//cave_type * c_ptr;
 
-	int	k, ident, lev, d_no, d_tries, x, y;	// , x,y;
+	int	k, ident, lev, d_no, d_tries, x, y, antichance;
 	bool	used_up, keep = FALSE;
 
 	object_type	*o_ptr;
@@ -2041,8 +2045,16 @@ void do_cmd_read_scroll(int Ind, int item)
 		msg_print(Ind, "You are too confused!");
 		return;
 	}
-
-
+#if 0
+	/* unbelievers need some more disadvantage, but this might be too much */
+	antichance = p_ptr->antimagic / 4;
+	if (antichance > 90) antichance = 90;/* AM cap */
+	/* Got disrupted ? */
+	if (magik(antichance)) {
+    		msg_print(Ind, "Your anti-magic field disrupts the scroll.");
+	        return;
+	}
+#endif
 	/* Restrict choices to scrolls */
 	item_tester_tval = TV_SCROLL;
 
@@ -2336,7 +2348,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			case SV_SCROLL_STAR_ENCHANT_ARMOR:
 			{
 				msg_print(Ind, "This is a scroll of *enchant* armour.");
-				(void)enchant_spell(Ind, 0, 0, randint(3) + 2, 0);
+				(void)enchant_spell(Ind, 0, 0, randint(3) + 3, 0);
 				used_up = FALSE;
 				ident = TRUE;
 				break;
@@ -2345,7 +2357,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			case SV_SCROLL_STAR_ENCHANT_WEAPON:
 			{
 				msg_print(Ind, "This is a scroll of *enchant* weapon.");
-				(void)enchant_spell(Ind, randint(3), randint(3), 0, 0);
+				(void)enchant_spell(Ind, 1 + randint(2), 1 + randint(2), 0, 0);
 				used_up = FALSE;
 				ident = TRUE;
 				break;
@@ -2783,11 +2795,11 @@ void do_cmd_use_staff(int Ind, int item)
 	bool use_charge = TRUE;
 
 	/* Break goi/manashield */
+#if 0
 	if (p_ptr->invuln)
 	{
 		set_invuln(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);
@@ -3256,11 +3268,11 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	object_type		*o_ptr;
 
 	/* Break goi/manashield */
+#if 0
 	if (p_ptr->invuln)
 	{
 		set_invuln(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);
@@ -3664,7 +3676,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_print(Ind, "You launch a rocket!");
 			sprintf(p_ptr->attacker, " launches a rocket for", p_ptr->name);
-			fire_ball(Ind, GF_ROCKET, dir, 75 + (randint(50) + get_skill_scale(p_ptr, SKILL_DEVICE, 100)), 2, p_ptr->attacker);
+			fire_ball(Ind, GF_ROCKET, dir, 75 + (randint(100) + get_skill_scale(p_ptr, SKILL_DEVICE, 300)), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3776,11 +3788,11 @@ void do_cmd_zap_rod(int Ind, int item)
 	bool use_charge = TRUE;
 
 	/* Break goi/manashield */
+#if 0
 	if (p_ptr->invuln)
 	{
 		set_invuln(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);
@@ -3795,7 +3807,7 @@ void do_cmd_zap_rod(int Ind, int item)
 #if 1
 	if (p_ptr->anti_magic)
 	{
-//		msg_print(Ind, "An anti-magic shield disrupts your attempts.");	
+//		msg_print(Ind, "An anti-magic field disrupts your attempts.");	
 		msg_print(Ind, "An anti-magic shell disrupts your attempts.");	
 		return;
 	}
@@ -4683,11 +4695,11 @@ void do_cmd_activate(int Ind, int item)
 	object_type *o_ptr;
 
 	/* Break goi/manashield */
+#if 0
 	if (p_ptr->invuln)
 	{
 		set_invuln(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);
@@ -4699,6 +4711,16 @@ void do_cmd_activate(int Ind, int item)
 #endif	// 0
 
 
+	if (p_ptr->anti_magic)
+	{
+		msg_print(Ind, "An anti-magic shell disrupts your attempts.");	
+		return;
+	}
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
+	{
+		msg_print(Ind, "You don't believe in magic.");	
+		return;
+	}
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -4818,6 +4840,7 @@ void do_cmd_activate(int Ind, int item)
 		return;
 	}
 #endif
+
 	/* Hack -- Dragon Scale Mail can be activated as well */
 	/* Yikes, hard-coded r_idx.. */
 	if (o_ptr->tval == TV_DRAG_ARMOR && item==INVEN_BODY)
@@ -4825,96 +4848,97 @@ void do_cmd_activate(int Ind, int item)
 		/* Breath activation */
                 p_ptr->current_activation = item;
                 get_aim_dir(Ind);
-
+#if 0
 		switch (o_ptr->sval)
 		{
 			case SV_DRAGON_BLACK:
 			{
 				//			do_mimic_change(Ind, 429);
-//				do_mimic_change(Ind, race_index("Ancient black dragon"), TRUE);
+				do_mimic_change(Ind, race_index("Ancient black dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_BLUE:
 			{
 				//		      do_mimic_change(Ind, 411);
-//				do_mimic_change(Ind, race_index("Ancient blue dragon"), TRUE);
+				do_mimic_change(Ind, race_index("Ancient blue dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_WHITE:
 			{
 				//			do_mimic_change(Ind, 424);
-//				do_mimic_change(Ind, race_index("Ancient white dragon"), TRUE);
+				do_mimic_change(Ind, race_index("Ancient white dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_RED:
 			{
 				//			do_mimic_change(Ind, 444);
-//				do_mimic_change(Ind, race_index("Ancient red dragon"), TRUE);
+				do_mimic_change(Ind, race_index("Ancient red dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_GREEN:
 			{
 				//			do_mimic_change(Ind, 425);
-//				do_mimic_change(Ind, race_index("Ancient green dragon"), TRUE);
+				do_mimic_change(Ind, race_index("Ancient green dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_MULTIHUED:
 			{
 				//			do_mimic_change(Ind, 462);
-//				do_mimic_change(Ind, race_index("Ancient multi-hued dragon"), TRUE);
+				do_mimic_change(Ind, race_index("Ancient multi-hued dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_PSEUDO:
 			{
 				//			do_mimic_change(Ind, 462);
 				//do_mimic_change(Ind, race_index("Pseudo dragon"), TRUE);
-//				do_mimic_change(Ind, race_index("Ethereal drake"), TRUE);
+				do_mimic_change(Ind, race_index("Ethereal drake"), TRUE);
 				break;
 			}
 			case SV_DRAGON_SHINING:
 			{
 				//			do_mimic_change(Ind, 463);
-//				do_mimic_change(Ind, race_index("Ethereal dragon"), TRUE);
+				do_mimic_change(Ind, race_index("Ethereal dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_LAW:
 			{
 				//			do_mimic_change(Ind, 520);
-//				do_mimic_change(Ind, race_index("Great Wyrm of Law"), TRUE);
+				do_mimic_change(Ind, race_index("Great Wyrm of Law"), TRUE);
 				break;
 			}
 			case SV_DRAGON_BRONZE:
 			{
 				//			do_mimic_change(Ind, 412);
-//				do_mimic_change(Ind, race_index("Ancient bronze dragon"), TRUE);
+				do_mimic_change(Ind, race_index("Ancient bronze dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_GOLD:
 			{
 				//			do_mimic_change(Ind, 445);
-//				do_mimic_change(Ind, race_index("Ancient gold dragon"), TRUE);
+				do_mimic_change(Ind, race_index("Ancient gold dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_CHAOS:
 			{
 				//			do_mimic_change(Ind, 519);
-//				do_mimic_change(Ind, race_index("Great Wyrm of Chaos"), TRUE);
+				do_mimic_change(Ind, race_index("Great Wyrm of Chaos"), TRUE);
 				break;
 			}
 			case SV_DRAGON_BALANCE:
 			{
 				//			do_mimic_change(Ind, 521);
-//				do_mimic_change(Ind, race_index("Great Wyrm of Balance"), TRUE);
+				do_mimic_change(Ind, race_index("Great Wyrm of Balance"), TRUE);
 				break;
 			}
 			case SV_DRAGON_POWER:
 			{
 				//			do_mimic_change(Ind, 549);
-//				do_mimic_change(Ind, race_index("Great Wyrm of Power"), TRUE);
+				do_mimic_change(Ind, race_index("Great Wyrm of Power"), TRUE);
 				break;
 			}
 		}
 		o_ptr->timeout = 200 + rand_int(100);
+#endif
 		return;
 	}
 
@@ -5041,6 +5065,8 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "\377GYou feel energy flow through your feet...");
 				(void)set_afraid(Ind, 0);
+				/* Stay bold for some turns */
+		                p_ptr->res_fear_temp = 5;
 				(void)set_poisoned(Ind, 0);
 				o_ptr->timeout = 5;
 				break;
@@ -5354,6 +5380,8 @@ void do_cmd_activate(int Ind, int item)
 				msg_print(Ind, "Your armour glows in many colours...");
 				(void)hp_player(Ind, 30);
 				(void)set_afraid(Ind, 0);
+				/* Stay bold for some turns */
+		                p_ptr->res_fear_temp = 20;
 				(void)set_shero(Ind, p_ptr->shero + randint(50) + 50);
 				(void)set_blessed(Ind, p_ptr->blessed + randint(50) + 50);
 				(void)set_oppose_acid(Ind, p_ptr->oppose_acid + randint(50) + 50);
@@ -5517,6 +5545,8 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "\377GYou feel energy flow through your feet...");
 				(void)set_afraid(Ind, 0);
+				/* Stay bold for some turns */
+		                p_ptr->res_fear_temp = 5;
 				(void)set_poisoned(Ind, 0);
 				o_ptr->timeout = 5;
 				break;
@@ -5830,6 +5860,8 @@ void do_cmd_activate(int Ind, int item)
 				msg_print(Ind, "Your armour glows in many colours...");
 				(void)hp_player(Ind, 30);
 				(void)set_afraid(Ind, 0);
+				/* Stay bold for some turns */
+		                p_ptr->res_fear_temp = 20;
 				(void)set_shero(Ind, p_ptr->shero + randint(50) + 50);
 				(void)set_blessed(Ind, p_ptr->blessed + randint(50) + 50);
 				(void)set_oppose_acid(Ind, p_ptr->oppose_acid + randint(50) + 50);
@@ -6542,10 +6574,22 @@ void do_cmd_activate(int Ind, int item)
 		/* Done */
 		return;
 	}
-	else if (is_ego_p(o_ptr, EGO_SPINING))
+	else if (is_ego_p(o_ptr, EGO_SPINNING))
 	{
 		do_spin(Ind);
 		o_ptr->timeout = 50 + randint(25);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+		/* Done */
+		return;
+	}
+	else if (is_ego_p(o_ptr, EGO_FURY))
+	{
+		set_fury(Ind, p_ptr->fury + rand_int(5) + 15);
+		hp_player(Ind, 40);
+		o_ptr->timeout = 100 + randint(50);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
@@ -6777,8 +6821,8 @@ void do_cmd_activate(int Ind, int item)
 		msg_print(Ind, "Your amulet sparkles bright red...");
 
                 set_afraid(Ind, 0);
-                set_shero(Ind, p_ptr->shero + randint(25) + 25);
-                hp_player(Ind, 30);
+                set_fury(Ind, p_ptr->fury + randint(15) + 20);
+                hp_player(Ind, 40);
 
 		o_ptr->timeout = rand_int(150) + 100;
 		return;
@@ -6798,6 +6842,17 @@ void do_cmd_activate_dir(int Ind, int dir)
 	int item;
 
 	item = p_ptr->current_activation;
+
+	if (p_ptr->anti_magic)
+	{
+		msg_print(Ind, "An anti-magic shell disrupts your attempts.");	
+		return;
+	}
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
+	{
+		msg_print(Ind, "You don't believe in magic.");	
+		return;
+	}
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -6827,9 +6882,6 @@ void do_cmd_activate_dir(int Ind, int dir)
 
 	if (o_ptr->tval == TV_DRAG_ARMOR && item==INVEN_BODY && !o_ptr->name1)
 	{
-		if (!get_aim_dir(Ind)) return;
-		o_ptr->timeout = 200 + rand_int(100);
-
 		switch(o_ptr->sval){
 		case SV_DRAGON_BLACK:
 			msg_print(Ind, "You breathe acid.");
@@ -6976,6 +7028,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 				break;
 			}
 		}
+		o_ptr->timeout = 200 + rand_int(100);
 	}
 
 	/* Artifacts activate by name */
@@ -7250,17 +7303,15 @@ void do_cmd_activate_dir(int Ind, int dir)
                                 o_ptr->timeout = rand_int(20) + 20;
                                 break;
                         }
+			case ART_HELLFIRE:
+			{
+				sprintf(p_ptr->attacker, " invokes raw chaos for", p_ptr->name);
+				call_chaos(Ind, dir);
+				o_ptr->timeout = rand_int(200) + 250;
+				break;
+			}
 
 		}
-
-		/* Clear activation */
-		p_ptr->current_activation = -1;
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		/* Done */
-		return;
 	}
 
         /* Hack -- Amulet of the Serpents can be activated as well */
@@ -7316,14 +7367,6 @@ void do_cmd_activate_dir(int Ind, int dir)
 				break;
 			}
 		}
-
-#if 0
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-
-		/* Success */
-		return;
-#endif
         }
 
 	/* Clear current activation */
@@ -7368,8 +7411,8 @@ bool unmagic(int Ind)
 			set_oppose_fire(Ind, 0) |
 			set_oppose_cold(Ind, 0) |
 			set_oppose_pois(Ind, 0) |
-			set_zeal(Ind, 0, 0) |
-			set_martyr(Ind, 0)
+			set_zeal(Ind, 0, 0)
+//			set_martyr(Ind, 0)
 			) ident = TRUE;
 
 #if 0	// now it's handled in set_tim_wraith

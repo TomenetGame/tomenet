@@ -167,7 +167,7 @@ HMARTYR = add_spell
 	["stat"] =      A_WIS,
 	["spell"] = 	function()
 			if player.martyr_timeout > 0 then
-				msg_print("The heavens are not ready yet to accept your martyrium.")
+				msg_print(Ind, "The heavens are not ready yet to accept your martyrium.")
 			else
 				set_martyr(Ind, 15)
 			end

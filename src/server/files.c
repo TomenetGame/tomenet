@@ -19,6 +19,9 @@
 #include <signal.h>
 #endif
 
+/* The first x highscore entries that are displayed to players: */
+#define SCORES_SHOWN 28
+
 /*
  * You may or may not want to use the following "#undef".
  */
@@ -418,19 +421,31 @@ static void display_player_middle(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int show_tohit = p_ptr->dis_to_h;
-	int show_todam = p_ptr->dis_to_d;
-
 	s32b adv_exp;
 
+	int show_tohit_m = p_ptr->dis_to_h + p_ptr->to_h_melee;
+	int show_todam_m = p_ptr->dis_to_d + p_ptr->to_d_melee;
+/*	int show_tohit_m = p_ptr->to_h_melee;
+	int show_todam_m = p_ptr->to_d_melee;
+*/
+	int show_tohit_r = p_ptr->dis_to_h + p_ptr->to_h_ranged;
+	int show_todam_r = p_ptr->to_d_ranged;
+
 	object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
+	object_type *o_ptr2 = &p_ptr->inventory[INVEN_BOW];
+	object_type *o_ptr3 = &p_ptr->inventory[INVEN_AMMO];
 
 	/* Hack -- add in weapon info if known */
-	if (object_known_p(Ind, o_ptr)) show_tohit += o_ptr->to_h;
-	if (object_known_p(Ind, o_ptr)) show_todam += o_ptr->to_d;
+	if (object_known_p(Ind, o_ptr)) show_tohit_m += o_ptr->to_h;
+	if (object_known_p(Ind, o_ptr)) show_todam_m += o_ptr->to_d;
+	if (object_known_p(Ind, o_ptr2)) show_tohit_r += o_ptr2->to_h;
+	if (object_known_p(Ind, o_ptr2)) show_todam_r += o_ptr2->to_d;
+	if (object_known_p(Ind, o_ptr3)) show_tohit_r += o_ptr3->to_h;
+	if (object_known_p(Ind, o_ptr3)) show_todam_r += o_ptr3->to_d;
 
 	/* Dump the bonuses to hit/dam */
-	Send_plusses(Ind, show_tohit, show_todam, p_ptr->to_h_ranged, p_ptr->to_d_ranged, p_ptr->to_h_melee, p_ptr->to_d_melee);
+//	Send_plusses(Ind, show_tohit_m, show_todam_m, show_tohit_r, show_todam_r, p_ptr->to_h_melee, p_ptr->to_d_melee);
+	Send_plusses(Ind, 0, 0, show_tohit_r, show_todam_r, show_tohit_m, show_todam_m);
 
 	/* Dump the armor class bonus */
 	Send_ac(Ind, p_ptr->dis_ac, p_ptr->dis_to_a);
@@ -957,7 +972,8 @@ void do_cmd_save_game(int Ind)
  * (usually admin chars) */
 long total_points(int Ind)
 {
-	u32b points, tmp1, tmp2, tmp3, tmp3a;
+	u32b points, tmp_base, tmp1, tmp2, tmp3, tmp3a, bonusm, bonusd;
+	u32b lev_factoring;
 	player_type *p_ptr = Players[Ind];
 	
 	/* kill maggot for 100% bonus on total score? -> no
@@ -970,13 +986,28 @@ long total_points(int Ind)
 	//exp counts mainly, level factors in
 //	return (p_ptr->max_exp * (p_ptr->max_plv + 30) / 30);
 
+	/* Bonus */
+	bonusm = 100; bonusd = 100;
+	if (p_ptr->mode & MODE_NO_GHOST)
+	{
+		bonusm += 25;
+	}
+	if (p_ptr->mode & MODE_HELL)
+	{
+		bonusm += 25;
+	}
+	
+	/* Bonus might cause overflow at lvl 94+ - so maybe compensate */
+	tmp_base = (p_ptr->max_exp * 3) / 3; //leaving this, changing lev_factoring instead..
+	lev_factoring = 58; //was 33 -> overflow at 94+
+
 	/* split the number against overflow bug */
-	tmp1 = p_ptr->lev + 33;
-	tmp2 = 33;
-	tmp3a = p_ptr->max_exp % 10000000;
-	tmp3 = (p_ptr->max_exp - tmp3a) / 10000000;
-	points = (tmp3a * tmp1) / tmp2;
-	points += ((10000000 * tmp1) / tmp2) * tmp3;
+	tmp1 = p_ptr->lev + lev_factoring;
+	tmp2 = lev_factoring;
+	tmp3a = tmp_base % 10000000;
+	tmp3 = (tmp_base - tmp3a) / 10000000;
+	points = (((tmp3a * bonusm) / bonusd) * tmp1) / tmp2;
+	points += ((((10000000 * bonusm) / bonusd) * tmp1) / tmp2) * tmp3;
 	return points;
 
 	//level counts mainly, exp factors in at higher levels
@@ -1089,10 +1120,9 @@ static int highscore_write(high_score *score)
  * Just determine where a new score *would* be placed
  * Return the location (0 is best) or -1 on failure
  */
-static int highscore_where(high_score *score)
+static int highscore_where(high_score *score, bool *move_up, bool *move_down)
 {
-	int                     i;
-
+	int                     i, slot_pts = -1, slot_name = -1, slot_ret = -1;
 	high_score              the_score;
 
 	/* Paranoia -- it may not have opened */
@@ -1101,12 +1131,54 @@ static int highscore_where(high_score *score)
 	/* Go to the start of the highscore file */
 	if (highscore_seek(0)) return (-1);
 
-	/* Read until we get to a higher score */
+	/* Read until we get to a higher score
+	   or appropriate rules are met -C. Blue */
 	for (i = 0; i < MAX_HISCORES; i++)
 	{
-		if (highscore_read(&the_score)) return (i);
-		if (strcmp(the_score.pts, score->pts) < 0) return (i);
+		if (highscore_read(&the_score))
+		{
+			if (slot_pts == -1) slot_pts = i;
+			break;
+		}
+		if ((strcmp(the_score.pts, score->pts) < 0) && (slot_pts == -1))
+			slot_pts = i;
+		if ((!strcmp(the_score.who, score->who)) && (slot_name == -1))
+			slot_name = i;
 	}
+
+	/* Insert score right before any higher score */
+	(*move_up) = FALSE; (*move_down) = FALSE;
+	if (slot_pts != -1) slot_ret = slot_pts;
+
+	/* If this char is already on high-score list,
+	   and replace_hiscore is set to 1 then replace it! */
+	if ((cfg.replace_hiscore == 1) && (slot_name != -1)) {
+		/* Replace old score of this character */
+		if (slot_pts != -1) {
+			if (slot_name > slot_pts) (*move_up) = TRUE;
+			if (slot_name < slot_pts) (*move_down) = TRUE;
+		} else {
+			if (slot_name < MAX_HISCORES - 1) (*move_down) = TRUE;
+		}
+	}
+	/* If this char is already on high-score list,
+	   and the new score is better than the old one
+	   and replace_hiscore is set to 2 then replace it! */
+	else if ((cfg.replace_hiscore == 2) && (slot_name != -1)) {
+		if ((slot_pts > slot_name) || (slot_pts == -1)) {
+			/* ignore the new score */
+			slot_ret = -2; /* hack */
+		} else {
+			/* If we just have to replace a score with a
+			   better one at the _same_ position, we still
+			   set move_up = TRUE since this will prevent
+			   the previous entry from sliding down and have
+			   it been overwritten instead */
+			(*move_up) = TRUE;
+		}
+	}
+
+	if (slot_ret != -1) return (slot_ret);
 
 	/* The "last" entry is always usable */
 	return (MAX_HISCORES - 1);
@@ -1120,7 +1192,7 @@ static int highscore_where(high_score *score)
 static int highscore_add(high_score *score)
 {
 	int                     i, slot;
-	bool            done = FALSE;
+	bool            done = FALSE, move_up, move_down;
 
 	high_score              the_score, tmpscore;
 
@@ -1129,7 +1201,7 @@ static int highscore_add(high_score *score)
 	if (highscore_fd < 0) return (-1);
 
 	/* Determine where the score should go */
-	slot = highscore_where(score);
+	slot = highscore_where(score, &move_up, &move_down);
 
 	/* Hack -- Not on the list */
 	if (slot < 0) return (-1);
@@ -1137,6 +1209,7 @@ static int highscore_add(high_score *score)
 	/* Hack -- prepare to dump the new score */
 	the_score = (*score);
 
+	if (!move_down) {
 	/* Slide all the scores down one */
 	for (i = slot; !done && (i < MAX_HISCORES); i++)
 	{
@@ -1148,8 +1221,36 @@ static int highscore_add(high_score *score)
 		if (highscore_seek(i)) return (-1);
 		if (highscore_write(&the_score)) return (-1);
 
+		if (move_up && !strcmp(score->who, tmpscore.who))
+		{
+			/* If older score is to be removed, we can stop here */
+			return(slot);
+		}
+		
 		/* Hack -- Save the old score, for the next pass */
 		the_score = tmpscore;
+	}
+	} else {
+	/* Move upwards through the score board */
+	for (i = slot; !done && (i >= 0); i--)
+	{
+		/* Read the old guy, note errors */
+		if (highscore_seek(i)) return (-1);
+		if (highscore_read(&tmpscore)) done = TRUE;
+
+		/* Back up and dump the score we were holding */
+		if (highscore_seek(i)) return (-1);
+		if (highscore_write(&the_score)) return (-1);
+
+		if (!strcmp(score->who, tmpscore.who))
+		{
+			/* If older score is to be removed, we can stop here */
+			return(slot);
+		}
+		
+		/* Hack -- Save the old score, for the next pass */
+		the_score = tmpscore;
+	}
 	}
 
 	/* Return location used */
@@ -1168,6 +1269,7 @@ static int highscore_add(high_score *score)
 static void display_scores_aux(int Ind, int line, int note, high_score *score)
 {
 	int             i, j, from, to, attr, place;
+	char attrc[3];
 
 	high_score      the_score;
 
@@ -1188,7 +1290,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 
 	/* Assume we will show the first 20 */
 	from = 0;
-	to = 20;
+	to = SCORES_SHOWN;
 	if (to > MAX_HISCORES) to = MAX_HISCORES;
 
 
@@ -1227,6 +1329,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		/* Mega-Hack -- insert a "fake" record */
 		if ((note == j) && score)
 		{
+			sprintf(attrc, "\377G");
 			the_score = (*score);
 			attr = TERM_L_GREEN;
 			score = NULL;
@@ -1238,6 +1341,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		/* Read a normal record */
 		else
 		{
+			sprintf(attrc, "\377w");
 			/* Read the proper record */
 			if (highscore_seek(j)) break;
 			if (highscore_read(&the_score)) break;
@@ -1279,8 +1383,8 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
                         break;
 		}
 		/* Dump some info */
-		sprintf(out_val, "%3d.%10s %s%s the %s%s %s, Level %d",
-			place, the_score.pts, modecol, the_score.who, modestr, 
+		sprintf(out_val, "%2s%3d.%10s %s%s the %s%s %s, Level %d",
+			attrc, place, the_score.pts, modecol, the_score.who, modestr, 
 			race_info[pr].title, class_info[pc].title,
 			clev);
 
@@ -1296,14 +1400,19 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 					 "               on %s %d",
 					 the_score.how, "Dungeon Level", cdun);
 		else
-			sprintf(out_val, "               \377vRetired after a legendary career");
+			sprintf(out_val, "               \377vRetired after a legendary career\n"
+					 "               (on %s %d)", "Dungeon Level", cdun);
 
 		/* Hack -- some people die in the town */
-		if ((!cdun) && (strcmp(the_score.how, "winner")))
+		if (!cdun)
 		{
-			sprintf(out_val, "               Killed by %s\n"
-					 "               in the Town",
-					 the_score.how);
+			if (strcmp(the_score.how, "winner"))
+				sprintf(out_val, "               Killed by %s\n"
+						 "               in the Town",
+						 the_score.how);
+			else
+				sprintf(out_val, "               \377vRetired after a legendary career\n"
+						 "               (in the Town)");
 		}
 
 		/* Append a "maximum level" */
@@ -1462,7 +1571,7 @@ static errr predict_score(int Ind, int line)
 {
 	player_type *p_ptr = Players[Ind];
 	int          j;
-
+	bool	move_up, move_down;
 	high_score   the_score;
 
 
@@ -1511,11 +1620,10 @@ static errr predict_score(int Ind, int line)
 	the_score.mode[0] = p_ptr->mode;
 
 	/* See where the entry would be placed */
-	j = highscore_where(&the_score);
-
+	j = highscore_where(&the_score, &move_up, &move_down);
 
 	/* Hack -- Display the top fifteen scores */
-	if (j < 19)  /* 10 */
+	if (j < (SCORES_SHOWN - 1))  /* 10 */
 	{
 		display_scores_aux(Ind, line, j, &the_score);
 	}
@@ -1523,7 +1631,7 @@ static errr predict_score(int Ind, int line)
 	/* Display some "useful" scores */
 	else
 	{
-		display_scores_aux(Ind, line, 19, &the_score);  /* -1, NULL */
+		display_scores_aux(Ind, line, SCORES_SHOWN - 1, &the_score);  /* -1, NULL */
 	}
 
 

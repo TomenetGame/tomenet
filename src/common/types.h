@@ -2063,6 +2063,7 @@ struct player_type
 	s16b zeal_power;
 	s16b martyr;
 	s16b martyr_timeout;
+	s16b res_fear_temp;
 	s16b invuln;		/* Timed -- Invulnerable */
 	s16b hero;			/* Timed -- Heroism */
 	s16b shero;			/* Timed -- Super Heroism */
@@ -2233,19 +2234,21 @@ struct player_type
 
 	s16b dis_to_h;		/* Known bonus to hit */
 	s16b dis_to_d;		/* Known bonus to dam */
+	s16b dis_to_h_ranged;	/* Known bonus to hit */
+	s16b dis_to_d_ranged;	/* Known bonus to dam */
 	s16b dis_to_a;		/* Known bonus to ac */
 
 	s16b dis_ac;		/* Known base ac */
 
-	s16b to_h_ranged;			/* Bonus to hit */
-	s16b to_d_ranged;			/* Bonus to dam */
-	s16b to_h_melee;			/* Bonus to hit */
-	s16b to_d_melee;			/* Bonus to dam */
-	s16b to_h;			/* Bonus to hit */
-	s16b to_d;			/* Bonus to dam */
-	s16b to_a;			/* Bonus to ac */
+	s16b to_h_ranged;	/* Bonus to hit */
+	s16b to_d_ranged;	/* Bonus to dam */
+	s16b to_h_melee;	/* Bonus to hit */
+	s16b to_d_melee;	/* Bonus to dam */
+	s16b to_h;		/* Bonus to hit */
+	s16b to_d;		/* Bonus to dam */
+	s16b to_a;		/* Bonus to ac */
 
-	s16b ac;			/* Base ac */
+	s16b ac;		/* Base ac */
 
 	s16b see_infra;		/* Infravision range */
 
@@ -2569,6 +2572,8 @@ struct server_opts
 	bool public_rfe;
 	bool auto_purge;
 	bool log_u;
+	s16b replace_hiscore;
+	s16b unikill_format;
 	char * server_notes;
 };
 

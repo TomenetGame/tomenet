@@ -1188,7 +1188,7 @@ static void player_outfit(int Ind)
 	if (p_ptr->pclass == CLASS_MIMIC)
 	{
 		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_SELF_KNOWLEDGE));
-		o_ptr->number = rand_range(2, 3);
+		o_ptr->number = rand_range(1, 2);
 		o_ptr->discount = 100;
 		do_player_outfit();
 	}
@@ -1574,6 +1574,9 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	int i;
 	struct account *c_acc;
 
+	/* To find out which characters crash the server */
+	s_printf("Trying to log in with character %s\n", name);
+
 	/* Do some consistency checks */
 	if (race < 0 || race >= MAX_RACES) race = 0;
 	if (class < 0 || class >= MAX_CLASS) class = 0;
@@ -1749,6 +1752,9 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* Give the player some resurrections */
 	p_ptr->lives = cfg.lifes+1;
+
+	/* To find out which characters crash the server */
+	s_printf("Logged in with character %s\n", name);
 
 	/* Success */
 	return TRUE;

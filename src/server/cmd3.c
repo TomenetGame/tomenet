@@ -2366,11 +2366,17 @@ void do_cmd_look(int Ind, int dir)
 		/* Format string */
 		if (q_ptr->body_monster)
 		{
-			sprintf(out_val, "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)? (q_ptr->lev)/5 : 10]);
+			if (q_ptr->lev < 60)
+			sprintf(out_val, "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)? (q_ptr->lev)/5 : 10][1 - q_ptr->male]);
+			else
+			sprintf(out_val, "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title_special[q_ptr->pclass][(q_ptr->lev < 99)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
 		}
 		else
 		{
-			sprintf(out_val, "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10]);
+			if (q_ptr->lev < 60)
+			sprintf(out_val, "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
+			else
+			sprintf(out_val, "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title_special[q_ptr->pclass][(q_ptr->lev < 99)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
 			//, class_info[q_ptr->pclass].title
 		}
 	}

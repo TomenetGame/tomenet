@@ -457,8 +457,8 @@ void identify_pack(int Ind)
 static int enchant_table[16] =
 {
 	0, 10,  50, 100, 200,
-	300, 400, 500, 700, 950,
-	990, 992, 995, 997, 999,
+	300, 400, 500, 700, 875,
+	960, 980, 990, 996, 999,
 	1000
 };
 
@@ -893,18 +893,18 @@ void self_knowledge(int Ind)
 	}
 	if (p_ptr->antimagic)	// older (percent)
 	{
-//		fprintf(fff, "You are surrounded by an anti-magic shield.\n");
+//		fprintf(fff, "You are surrounded by an anti-magic field.\n");
 		if (p_ptr->antimagic >= 90) /* AM cap */
-			fprintf(fff, "You are surrounded by a complete anti-magic shield.\n");
+			fprintf(fff, "You are surrounded by a complete anti-magic field.\n");
 		else if (p_ptr->antimagic >= 80)
-			fprintf(fff, "You are surrounded by a mighty anti-magic shield.\n");
+			fprintf(fff, "You are surrounded by a mighty anti-magic field.\n");
 		else if (p_ptr->antimagic >= 70)
-			fprintf(fff, "You are surrounded by a strong anti-magic shield.\n");
+			fprintf(fff, "You are surrounded by a strong anti-magic field.\n");
 		else if (p_ptr->antimagic >= 50)
-			fprintf(fff, "You are surrounded by an anti-magic shield.\n");
+			fprintf(fff, "You are surrounded by an anti-magic field.\n");
 		else if (p_ptr->antimagic >= 30)
-			fprintf(fff, "You are surrounded by a weaker anti-magic shield.\n");
-		else fprintf(fff, "You are surrounded by a feeble anti-magic shield.\n");
+			fprintf(fff, "You are surrounded by a weaker anti-magic field.\n");
+		else fprintf(fff, "You are surrounded by a feeble anti-magic field.\n");
 
 	}
 #if 1
@@ -1538,18 +1538,18 @@ void self_knowledge(int Ind)
 	}
 	if (p_ptr->antimagic)	// older (percent)
 	{
-//		info[i++] = "You are surrounded by an anti-magic shield.";
+//		info[i++] = "You are surrounded by an anti-magic field.";
 		if (p_ptr->antimagic >= 90) /* AM cap */
-			info[i++] = "You are surrounded by a complete anti-magic shield.";
+			info[i++] = "You are surrounded by a complete anti-magic field.";
 		else if (p_ptr->antimagic >= 80)
-			info[i++] = "You are surrounded by a mighty anti-magic shield.";
+			info[i++] = "You are surrounded by a mighty anti-magic field.";
 		else if (p_ptr->antimagic >= 70)
-			info[i++] = "You are surrounded by a strong anti-magic shield.";
+			info[i++] = "You are surrounded by a strong anti-magic field.";
 		else if (p_ptr->antimagic >= 50)
-			info[i++] = "You are surrounded by an anti-magic shield.";
+			info[i++] = "You are surrounded by an anti-magic field.";
 		else if (p_ptr->antimagic >= 30)
-			info[i++] = "You are surrounded by a weaker anti-magic shield.";
-		else info[i++] = "You are surrounded by a feeble anti-magic shield.";
+			info[i++] = "You are surrounded by a weaker anti-magic field.";
+		else info[i++] = "You are surrounded by a feeble anti-magic field.";
 
 	}
 #if 1
@@ -2933,6 +2933,8 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 
 	u32b f1, f2, f3, f4, f5, esp;
 
+	bool did_tohit = FALSE, did_todam = FALSE, did_toac = FALSE;
+
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
@@ -2959,17 +2961,22 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 		/* Hack -- Roll for pile resistance */
 		if (rand_int(prob) >= 100) continue;
 
-		/* Enchant to hit */
-		if (eflag & ENCH_TOHIT)
+		/* Enchant to hit, but not that easily multiple times over 9 */
+		if ((eflag & ENCH_TOHIT) && (magik(30) || !(did_tohit && o_ptr->to_h > 9)))
 		{
 			if (o_ptr->to_h < 0) chance = 0;
-			else if (o_ptr->to_h > 15) chance = 1000;
-			else chance = enchant_table[o_ptr->to_h];
+			else if (o_ptr->to_h > 14) chance = 1000;
+			else {
+				chance = enchant_table[o_ptr->to_h];
+				/* *Enchant Weapon* scrolls are better! */
+				if (n > 1) chance = ((chance * 1) / 3);
+			}
 
 			if ((randint(1000) > chance) && (!a || (rand_int(100) < 50)))
 			{
 				o_ptr->to_h++;
 				res = TRUE;
+				did_tohit = TRUE;
 
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
@@ -2985,17 +2992,22 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 			}
 		}
 
-		/* Enchant to damage */
-		if (eflag & ENCH_TODAM)
+		/* Enchant to damage, but not that easily multiple times over 9 */
+		if ((eflag & ENCH_TODAM) && (magik(30) || !(did_todam && o_ptr->to_d > 9)))
 		{
 			if (o_ptr->to_d < 0) chance = 0;
-			else if (o_ptr->to_d > 15) chance = 1000;
-			else chance = enchant_table[o_ptr->to_d];
+			else if (o_ptr->to_d > 14) chance = 1000;
+			else {
+				chance = enchant_table[o_ptr->to_d];
+				/* *Enchant Weapon* scrolls are better! */
+				if (n > 1) chance = ((chance * 1) / 3);
+			}
 
 			if ((randint(1000) > chance) && (!a || (rand_int(100) < 50)))
 			{
 				o_ptr->to_d++;
 				res = TRUE;
+				did_todam = TRUE;
 
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
@@ -3011,17 +3023,22 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 			}
 		}
 
-		/* Enchant to armor class */
-		if (eflag & ENCH_TOAC)
+		/* Enchant to armor class, but not that easily multiple times over 9 */
+		if ((eflag & ENCH_TOAC) && (magik(30) || !(did_toac && o_ptr->to_a > 9)))
 		{
 			if (o_ptr->to_a < 0) chance = 0;
-			else if (o_ptr->to_a > 15) chance = 1000;
-			else chance = enchant_table[o_ptr->to_a];
+			else if (o_ptr->to_a > 14) chance = 1000;
+			else {
+				chance = enchant_table[o_ptr->to_a];
+				/* *Enchant Armour* scrolls are better! */
+				if (n > 1) chance = ((chance * 1) / 3);
+			}
 
 			if ((randint(1000) > chance) && (!a || (rand_int(100) < 50)))
 			{
 				o_ptr->to_a++;
 				res = TRUE;
+				did_toac = TRUE;
 
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
@@ -3136,7 +3153,7 @@ bool create_artifact_aux(int Ind, int item)
 	o_ptr->timeout=0;
 	apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE);
 #if 0
-	/* If the player's level < artefact level he can't use it :) */
+	/* If the player's level < artifact level he can't use it :) */
 	while ((o_ptr->level > 20) &&
 	    ((s64b)(player_exp[o_ptr->level]) >
 	    ((s64b)(p_ptr->max_exp) * 100L / (s64b)(p_ptr->expfact))))

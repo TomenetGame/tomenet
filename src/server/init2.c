@@ -1201,7 +1201,8 @@ static errr init_d_info(void)
 	/* Process existing "raw" file */
 	if (fd >= 0)
 	{
-#ifdef CHECK_MODIFICATION_TIME
+//#ifdef CHECK_MODIFICATION_TIME
+#if 1
 
 		err = check_modification_date(fd, "d_info.txt");
 
@@ -3121,6 +3122,14 @@ static void set_server_option(char * option, char * value)
 	else if (!strcmp(option,"LOG_U"))
 	{
 		cfg.log_u = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"REPLACE_HISCORE"))
+	{
+		cfg.replace_hiscore = atoi(value);
+	}
+	else if (!strcmp(option,"UNIKILL_FORMAT"))
+	{
+		cfg.unikill_format = atoi(value);
 	}
 	else if (!strcmp(option,"SERVER_NOTES"))
 	{

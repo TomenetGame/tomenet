@@ -1097,7 +1097,7 @@ F:INT | HIDE_TYPE
 N:136:Speed
 G:=:d
 I:45:31:0
-W:75:0:2:100000
+W:75:0:2:50000
 A:75/3
 F:SPEED | HIDE_TYPE
 
@@ -1533,13 +1533,13 @@ A:5/1:10/1:15/1
 N:198:Acquirement
 G:?:d
 I:70:46:0
-W:20:0:5:100000
+W:20:0:5:50000
 A:20/8
 
 N:199:*Acquirement*
 G:?:d
 I:70:47:0
-W:60:0:5:200000
+W:60:0:5:100000
 A:60/16
 
 N:200:Mass Genocide
@@ -1619,8 +1619,10 @@ A:40/1
 N:212:*Enchant Weapon*
 G:?:d
 I:70:21:0
-W:50:0:5:500
-A:50/1
+#W:50:0:5:1250
+#A:50/2
+W:20:0:5:1250
+A:20/3:50/2
 
 N:213:Curse Weapon
 G:?:d
@@ -1631,8 +1633,10 @@ A:50/1
 N:214:*Enchant Armour*
 G:?:d
 I:70:20:0
-W:50:0:5:500
-A:50/1:50/1
+#W:50:0:5:1250
+#A:50/2:50/2
+W:20:0:5:1250
+A:20/3:50/2
 
 N:215:Curse Armour
 G:?:d
@@ -1958,8 +1962,10 @@ F:FOUNTAIN
 N:256:Enlightenment
 G:!:d
 I:71:56:0
-W:25:0:4:800
-A:25/1:50/1:100/1
+#W:25:0:4:800
+W:10:0:4:2000
+#A:25/1:50/1:100/1
+A:10/2
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
@@ -3322,14 +3328,14 @@ F:RES_BLIND | EASY_KNOW
 N:435:Lordly Protection
 G:=:d
 I:45:48:0
-W:100:0:2:100000
+W:100:0:2:75000
 A:100/5
 F:RES_DISEN | RES_POIS | HOLD_LIFE | FREE_ACT
 
 N:436:Extra Attacks
 G:=:d
 I:45:49:0
-W:50:0:2:100000
+W:50:0:2:50000
 A:50/3
 F:BLOWS
 
@@ -4190,7 +4196,7 @@ W:5:0:12:300
 #A:5/1:20/1:50/1:80/1
 A:5/3:45/2
 P:0:1d4:0:0:0
-F:SHOW_MODS | COULD2H
+F:SHOW_MODS | COULD2H | REGEN_MANA
 
 # An extra ring, out of place
 
@@ -4268,8 +4274,8 @@ F:FOUNTAIN
 N:586:Invisibility
 G:=:d
 I:45:53:4
-#W:50:0:2:10000
-W:50:0:2:200000
+#W:50:0:2:10000,200000
+W:50:0:2:50000
 A:50/80
 F:INVIS | HIDE_TYPE
 
@@ -5294,7 +5300,7 @@ F:INSTA_ART
 # Additional swords
 N:777:& Shadow Blade~
 G:|:D
-I:23:32:3
+I:23:32:2
 W:50:900:45:2000
 A:48/4:60/2:80/1
 P:0:4d4:-2:2:0
@@ -5515,7 +5521,7 @@ A:0/1:5/1:10/1
 N:809:Critical Hits
 G:=:d
 I:45:58:0
-W:50:0:2:100000
+W:50:0:2:75000
 A:50/3
 F:CRIT
 # temporally.
@@ -5589,7 +5595,7 @@ N:812:Life
 G:?:d
 #I:70:48:0
 I:70:56:0
-W:20:0:5:500
+W:20:0:5:1000
 A:20/1
 
 N:813:Lightning Bolts
@@ -5941,13 +5947,16 @@ F:STR | CON | SUST_STR | SUST_CON | FREE_ACT | HIDE_TYPE |
 F:RES_FEAR | RES_CHAOS | ACTIVATE | DRAIN_MANA
 #AGGRAVATE | 
 #F:INHIBIT_MAGIC | INHIBIT_PRAYER | INHIBIT_PSI
+#33% chance for special ability (hardcoded)
 
 # !!
 N:897:Life Saving
 G:":d
 I:40:35:0
-W:40:0:3:200000
-A:40/60
+#W:40:0:3:200000
+#A:40/60
+W:127:0:3:200000
+A:127/100
 #F:BLACK_BREATH | DRAIN_EXP | DRAIN_MANA | DRAIN_HP
 F:DRAIN_EXP | DRAIN_HP
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
@@ -6152,7 +6161,7 @@ N:921:*Restore Mana*
 G:!:d
 I:71:64:0
 W:50:0:4:1500
-A:50/6:70/4:90/2
+A:50/4:70/3:90/2
 P:0:1d1:0:0:0
 F:FOUNTAIN
 

@@ -75,7 +75,7 @@ ESSENSESPEED = add_spell
         ["spell"] = 	function()
         		set_fast(Ind, 10 + randint(10) + get_level(Ind, ESSENSESPEED, 50), 5 + get_level(Ind, ESSENSESPEED, 20))
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_SPEED_PLAYER, 0, 50 + get_level(Ind, ESSENSESPEED, 50), player.spell_project, "")
+                                fire_ball(Ind, GF_SPEED_PLAYER, 0, 5 + get_level(Ind, ESSENSESPEED, 20), player.spell_project, "")
                         end
 	end,
 	["info"] = 	function()

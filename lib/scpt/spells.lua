@@ -83,7 +83,7 @@ SCHOOL_DIVINATION = add_school
 SCHOOL_UDUN = add_school
 {
 	["name"] = "Udun",
-        ["skill"] = SKILL_DIVINATION,
+        ["skill"] = SKILL_UDUN,
         ["sorcery"] = TRUE,
 }
 

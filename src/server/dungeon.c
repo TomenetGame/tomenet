@@ -73,11 +73,40 @@ static cptr value_check_aux1(object_type *o_ptr)
 	/* Broken items */
 	if (broken_p(o_ptr)) return "broken";
 
-	/* Good "armor" bonus */
-	if (o_ptr->to_a > k_ptr->to_a) return "good";
-
-	/* Good "weapon" bonus */
-	if (o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) return "good";
+	/* Valid "tval" codes */
+	switch (o_ptr->tval)
+	{
+		case TV_DIGGING:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_DRAG_ARMOR:
+		case TV_AXE:
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		case TV_BOW:
+		case TV_BOOMERANG:
+			/* Good "armor" bonus */
+			if (o_ptr->to_a > k_ptr->to_a) return "good";
+			/* Good "weapon" bonus */
+			if (o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) return "good";
+			break;
+		default:
+			/* Good "armor" bonus */
+			if (o_ptr->to_a > 0) return "good";
+			/* Good "weapon" bonus */
+			if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
+			break;
+	}
 
 	/* Default to "average" */
 	return "average";
@@ -167,11 +196,39 @@ static cptr value_check_aux2(object_type *o_ptr)
 	/* Ego-Items -- except cursed/broken ones */
 	if (ego_item_p(o_ptr)) return "good";
 
-	/* Good armor bonus */
-	if (o_ptr->to_a > k_ptr->to_a) return "good";
-
-	/* Good weapon bonuses */
-	if (o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) return "good";
+	switch (o_ptr->tval)
+	{
+		case TV_DIGGING:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_DRAG_ARMOR:
+		case TV_AXE:
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		case TV_BOW:
+		case TV_BOOMERANG:
+			/* Good "armor" bonus */
+			if (o_ptr->to_a > k_ptr->to_a) return "good";
+			/* Good "weapon" bonus */
+			if (o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) return "good";
+			break;
+		default:
+			/* Good "armor" bonus */
+			if (o_ptr->to_a > 0) return "good";
+			/* Good "weapon" bonus */
+			if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
+			break;
+	}
 
 	/* No feeling */
 	return (NULL);
@@ -1920,7 +1977,7 @@ static void do_recall(int Ind, bool bypass)
 	}
 
 	/* into dungeon/tower */
-	else if(cfg.runlevel>4)
+	else if((cfg.runlevel>4) && (cfg.runlevel < 2048))
 	{
 		wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		/* Messages */
@@ -2128,7 +2185,7 @@ static bool process_player_end_aux(int Ind)
 
 						/* harm equipments (even hit == 0) */
 						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
-								magik(WATER_ITEM_DAMAGE_CHANCE))
+								magik(WATER_ITEM_DAMAGE_CHANCE) && !p_ptr->fly)
 						{
 							inven_damage(Ind, set_water_destroy, 1);
 							if (magik(20)) minus_ac(Ind, 1);
@@ -2615,6 +2672,9 @@ static bool process_player_end_aux(int Ind)
 	{
 		(void)set_zeal(Ind, p_ptr->zeal_power, p_ptr->zeal - 1);
 	}
+
+	/* Heart is still boldened */	
+	if (p_ptr->res_fear_temp) p_ptr->res_fear_temp--;
 
 	/* Holy Martyr */
 	if (p_ptr->martyr)
@@ -3604,12 +3664,16 @@ static void scan_objs(){
 				{
 					/* ick suggests a store, so leave) */
 					if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
-						/* Artefacts and objects that were inscribed and dropped by
+						/* Artifacts and objects that were inscribed and dropped by
 						the dungeon master or by unique monsters on their death
 						stay 6 times as long as cfg.surface_item_removal specifies */
-						if(++o_ptr->marked==((artifact_p(o_ptr) ||
+/*						if(++o_ptr->marked==((artifact_p(o_ptr) ||
 						    (o_ptr->note && !o_ptr->owner))?
-						    cfg.surface_item_removal*6 : cfg.surface_item_removal)){
+						    cfg.surface_item_removal*6 : cfg.surface_item_removal))
+*/						if(++o_ptr->marked==((artifact_p(o_ptr) ||
+						    o_ptr->note)?
+						    cfg.surface_item_removal*6 : cfg.surface_item_removal))
+						{
 							delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
 							dcnt++;
 						}
@@ -4386,6 +4450,11 @@ static void process_player_change_wpos(int Ind)
 	/* Clear the flag */
 	p_ptr->new_level_flag = FALSE;
 
+	 /* Did we enter a no-tele vault? */
+         //wpos=&p_ptr->wpos;
+         if(!(zcave=getcave(&p_ptr->wpos))) return;
+         if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) msg_print(Ind, "\377DThe air in here feels very still.");
+
 	/* Hack -- jail her/him */
 	if(!p_ptr->wpos.wz && p_ptr->tim_susp){
 		imprison(Ind, 0, "old crimes");
@@ -4512,6 +4581,17 @@ void dungeon(void)
 				if(Players[i]->wpos.wz!=0) break;
 			}
 			if(!i) set_runlevel(0);
+		}
+
+		if(cfg.runlevel == 2048)
+		{
+			for(i=NumPlayers; i>0 ;i--)
+			{
+				if(Players[i]->conn==NOT_CONNECTED) continue;
+				if(Players[i]->admin_dm || Players[i]->admin_wiz) continue;
+				break;
+			}
+			if(!i) shutdown_server();
 		}
 
 		/* Hack -- Compact the object list occasionally */

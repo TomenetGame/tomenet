@@ -357,7 +357,7 @@ bool Report_to_meta(int flag)
 
 
         /* Abort if the user doesn't want to report */
-	if (!cfg.report_to_meta || cfg.runlevel<4 || cfg.runlevel > 1023)
+	if (!cfg.report_to_meta || cfg.runlevel<4 || ((cfg.runlevel > 1023) && (cfg.runlevel < 2048)))
 		return FALSE;
 
 	/* If this is the first time called, initialize our hostname */
@@ -1095,6 +1095,8 @@ static void Delete_player(int Ind)
 				title = (p_ptr->male)?"King ":"Queen ";
 			}
 		}
+		if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
+		if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
 
 #ifdef TOMENET_WORLDS
 		world_player(p_ptr->id, p_ptr->name, FALSE, FALSE);
@@ -2017,6 +2019,32 @@ static int Handle_login(int ind)
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth();
 
+	/* check pending notes to this player -C. Blue */
+	for (i = 0; i < MAX_NOTES; i++) {
+		if (!strcmp(priv_note_target[i], Players[NumPlayers]->name)) {
+			msg_format(NumPlayers, "\377sNote from %s: %s", priv_note_sender[i], priv_note[i]);
+			strcpy(priv_note_sender[i], "");
+			strcpy(priv_note_target[i], "");
+			strcpy(priv_note[i], "");
+		}
+	}
+	if(p_ptr->party)
+	for (i = 0; i < MAX_PARTYNOTES; i++) {
+		if (!strcmp(party_note_target[i], parties[Players[NumPlayers]->party].name)) {
+			msg_format(NumPlayers, "\377sParty Note: %s", party_note[i]);
+		}
+	}
+	if(p_ptr->guild)
+	for (i = 0; i < MAX_GUILDNOTES; i++) {
+		if (!strcmp(guild_note_target[i], guilds[Players[NumPlayers]->guild].name)) {
+			msg_format(NumPlayers, "\377sGuild Note: %s", guild_note[i]);
+		}
+	}
+
+	/* Admin messages */
+	if (p_ptr->admin_dm && (cfg.runlevel == 2048))
+		msg_print(NumPlayers, "\377y* Empty-server-shutdown command pending *");
+
 	/* Handle the cfg_secret_dungeon_master option */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) return 0;
 
@@ -2042,6 +2070,8 @@ static int Handle_login(int ind)
 			title = (p_ptr->male)?"King ":"Queen ";
 		      }
 		  }
+		if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
+		if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
 		msg_format(i, "\377U%s%s has entered the game.", title, p_ptr->name);
 	}
 
@@ -5551,11 +5581,11 @@ static int Receive_activate_skill(int ind)
 		/* Break goi/manashield */
 		if (mkey != MKEY_DODGE)	// it's not real 'activation'
 		{
+#if 0
 			if (p_ptr->invuln)
 			{
 				set_invuln(player, 0);
 			}
-#if 0
 			if (p_ptr->tim_manashield)
 			{
 				set_tim_manashield(player, 0);
@@ -5736,12 +5766,14 @@ static int Receive_mind(int ind)
 		  {
 		    if (p_ptr->esp_link_flags & LINKF_OPEN)
 		      {
-			msg_print(player, "\377RYou close your mind.");
+		      /* telepaths aren't in the game at the moment..
+			msg_print(player, "\377RYou close your mind."); */
 			p_ptr->esp_link_flags &= ~LINKF_OPEN;
 		      }
 		    else
 		      {
-			msg_print(player, "\377RYou open your mind.");
+		      /* telepaths aren't in the game at the moment..
+			msg_print(player, "\377RYou open your mind."); */
 			p_ptr->esp_link_flags |= LINKF_OPEN;
 		      }
 		  }

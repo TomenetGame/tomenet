@@ -138,7 +138,10 @@ static void prt_title(int Ind)
 	/* Normal */
 	else
 	{
-		p = player_title[p_ptr->pclass][((p_ptr->lev/5) < 10)? (p_ptr->lev/5) : 10];
+		if (p_ptr->lev < 60)
+		p = player_title[p_ptr->pclass][((p_ptr->lev/5) < 10)? (p_ptr->lev/5) : 10][1 - p_ptr->male];
+		else
+		p = player_title_special[p_ptr->pclass][(p_ptr->lev < 99)? (p_ptr->lev - 60)/10 : 4][1 - p_ptr->male];
 	}
 
 	/* Ghost */
@@ -519,15 +522,29 @@ static void prt_various(int Ind)
 static void prt_plusses(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int show_tohit = p_ptr->dis_to_h;
-	int show_todam = p_ptr->dis_to_d;
+
+	int show_tohit_m = p_ptr->dis_to_h + p_ptr->to_h_melee;
+	int show_todam_m = p_ptr->dis_to_d + p_ptr->to_d_melee;
+/*	int show_tohit_m = p_ptr->to_h_melee;
+	int show_todam_m = p_ptr->to_d_melee;
+*/
+	int show_tohit_r = p_ptr->dis_to_h + p_ptr->to_h_ranged;
+	int show_todam_r = p_ptr->to_d_ranged;
 
 	object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
+	object_type *o_ptr2 = &p_ptr->inventory[INVEN_BOW];
+	object_type *o_ptr3 = &p_ptr->inventory[INVEN_AMMO];
 
-	if (object_known_p(Ind, o_ptr)) show_tohit += o_ptr->to_h;
-	if (object_known_p(Ind, o_ptr)) show_todam += o_ptr->to_d;
+	/* Hack -- add in weapon info if known */
+        if (object_known_p(Ind, o_ptr)) show_tohit_m += o_ptr->to_h;
+	if (object_known_p(Ind, o_ptr)) show_todam_m += o_ptr->to_d;
+	if (object_known_p(Ind, o_ptr2)) show_tohit_r += o_ptr2->to_h;
+	if (object_known_p(Ind, o_ptr2)) show_todam_r += o_ptr2->to_d;
+	if (object_known_p(Ind, o_ptr3)) show_tohit_r += o_ptr3->to_h;
+	if (object_known_p(Ind, o_ptr3)) show_todam_r += o_ptr3->to_d;
 
-	Send_plusses(Ind, show_tohit, show_todam, p_ptr->to_h_ranged, p_ptr->to_d_ranged, p_ptr->to_h_melee, p_ptr->to_d_melee);
+//	Send_plusses(Ind, show_tohit_m, show_todam_m, show_tohit_r, show_todam_r, p_ptr->to_h_melee, p_ptr->to_d_melee);
+	Send_plusses(Ind, 0, 0, show_tohit_r, show_todam_r, show_tohit_m, show_todam_m);
 }
 
 static void prt_skills(int Ind)
@@ -1192,7 +1209,7 @@ static void calc_hitpoints(int Ind)
 //	u32b f1, f2, f3, f4, f5, esp;
 
 	int bonus, Ind2 = 0;
-	long mhp;
+	long mhp, mhp_playerform;
 	u32b mHPLim, finalHP;
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
@@ -1225,15 +1242,23 @@ static void calc_hitpoints(int Ind)
 		mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 33)) / 100;
 	}
 
+	/* Now we calculated the base player form mhp. Save it for use with
+	   +LIFE bonus. This will prevent mimics from total uber HP,
+	   and giving them an excellent chance to compensate a form that
+	   provides bad HP. - C. Blue */
+	mhp_playerform = mhp;
+
 	if (p_ptr->body_monster)
 	{
 	    long rhp = ((long)(r_info[p_ptr->body_monster].hdice)) * ((long)(r_info[p_ptr->body_monster].hside));
 
-	    /* limit HP against ~2900 in total: */
-	    /* mHPLim = (100000 / ((100000 / rhp) + 15)); */
-	    /* limit HP against ~2500 in total: */
-	    mHPLim = (100000 / ((100000 / rhp) + 20));
-	    finalHP = (mHPLim < mhp ) ? (((mhp * 3) + (mHPLim * 2)) / 5) : ((mHPLim + mhp) / 2);
+	    /* pre-cap monster HP against ~3500 (5000) */
+	    mHPLim = (100000 / ((100000 / rhp) + 18));
+	    /* average with player HP */
+	    finalHP = (mHPLim < mhp ) ? (((mhp * 5) + (mHPLim * 2)) / 7) : ((mHPLim + mhp) / 2);
+	    /* cap final HP against ~2300 */
+//	    finalHP = (100000 / ((100000 / finalHP) + 20));
+	    /* done */
 	    mhp = finalHP;
 	}
 
@@ -1243,7 +1268,7 @@ static void calc_hitpoints(int Ind)
 	/* Factor in the hero / superhero settings */
 	if (p_ptr->hero) mhp += 10;
 	if (p_ptr->shero) mhp += 30;
-	
+
 	if (p_ptr->fury) mhp += 40;
 	
 	/* Meditation increase mana at the cost of hp */
@@ -1259,7 +1284,8 @@ static void calc_hitpoints(int Ind)
 	/*	mhp += p_ptr->msp * 2 / 3; */
 	}
 
-	mhp += mhp * p_ptr->to_l / 10;
+	/* Bonus from +LIFE items (should be weapons only) */
+	mhp += mhp_playerform * p_ptr->to_l / 10;
 
 	/* New maximum hitpoints */
 	if (mhp != p_ptr->mhp)
@@ -1399,7 +1425,8 @@ static void calc_body_bonus(int Ind)
 	if (!r_ptr->body_parts[BODY_WEAPON])
 	{
 		wepless = TRUE;
-		p_ptr->num_blow = 0;
+//		p_ptr->num_blow = 0;
+		p_ptr->num_blow = 1;
 	}
 
 	d = 0; n = 0;
@@ -1418,12 +1445,20 @@ static void calc_body_bonus(int Ind)
 		/* Hack -- weaponless combat */
 		if (wepless && j)
 		{
-			p_ptr->num_blow++;
-			j *= 2;
+//MA overrides this anyways:
+//			p_ptr->num_blow++;
+//			j *= 2;
 		}
 
-		d += j;
+		d += (j * 2);
 	}
+	d /= 4;
+	
+	/* Apply STR bonus/malus, derived from form damage */
+	if (d == 0) d = 1;
+	/* 0..147 (greater titan) -> 0..5 -> -1..+4 */
+	p_ptr->stat_add[A_STR] += (((15000 / ((15000 / d) + 50)) / 29) - 1);
+
 #if 0
 	if (n == 0) n = 1;
 	/*d = (d / 2) / n;	// 8 // 7
@@ -1594,6 +1629,13 @@ static void calc_body_bonus(int Ind)
 		}
 	}
 	
+	/* If monster has a lite source, but doesn't prove a torso (needed
+	   to use a lite source, yellow light) or can breathe light (light
+	   hound), add to the player's light radius! */
+	if ((r_ptr->flags9 & RF9_HAS_LITE) &&
+	     ((!r_ptr->body_parts[BODY_TORSO]) || (r_ptr->flags4 & RF4_BR_LITE)))
+		p_ptr->cur_lite += 1;
+	
 	if ((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL))
 		p_ptr->pass_trees = TRUE;
 
@@ -1639,7 +1681,28 @@ static void calc_body_bonus(int Ind)
 		p_ptr->resist_fear = TRUE;
 		p_ptr->reduce_insanity = 2;
 	}
-	
+
+	/* Affect charisma by appearance */
+	if(r_ptr->flags3 & RF3_DRAGON) d = 0;
+	if(r_ptr->flags3 & RF3_DRAGONRIDER) d = 0;
+	if(r_ptr->flags3 & RF3_ANIMAL) d = 0;
+
+	if(r_ptr->flags3 & RF3_EVIL) d = -1;
+
+	if(r_ptr->flags3 & RF3_ORC) d = -1;
+	if(r_ptr->flags3 & RF3_DEMON) d = -1;
+	if(r_ptr->flags3 & RF3_NONLIVING) d = -1;
+
+	if(r_ptr->flags3 & RF3_TROLL) d = -2;
+	if(r_ptr->flags3 & RF3_GIANT) d = -2;
+	if(r_ptr->flags3 & RF3_UNDEAD) d = -2;
+	if(r_ptr->flags7 & RF7_SPIDER) d = -2;
+
+	if(r_ptr->flags3 & RF3_GOOD) d += 2;
+
+	p_ptr->stat_add[A_CHR] += d;
+
+
 	//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
 	if(r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 2;
 	if(r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 2;
@@ -1790,7 +1853,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	}
 	/* if((r_ptr->flags4 & RF4_BR_WATE) || <- does not exist */
 	if (r_ptr->flags7 & RF7_AQUATIC) p_ptr->resist_water = TRUE;
-	if((r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_UNDEAD)) p_ptr->resist_neth = TRUE;
+	if (r_ptr->flags4 & RF4_BR_NETH) p_ptr->resist_neth = TRUE;
 	/* res_neth_somewhat: (r_ptr->flags3 & RF3_EVIL) */
 	if(r_ptr->flags4 & RF4_BR_NEXU) p_ptr->resist_nexus = TRUE;
 	if(r_ptr->flags4 & RF4_BR_DISE) p_ptr->resist_disen = TRUE;
@@ -1946,25 +2009,25 @@ int calc_blows(int Ind, object_type *o_ptr)
 		case CLASS_MAGE: num = 1; wgt = 40; mul = 2; break;
 //was num = 3; ; 
 							/* Priest */
-		case CLASS_PRIEST: num = 4; wgt = 35; mul = 3; break;
+		case CLASS_PRIEST: num = 4; wgt = 35; mul = 4; break;//mul3
 //was num = 5; ; 
 							/* Rogue */
 		case CLASS_ROGUE: num = 5; wgt = 30; mul = 3; break;
 
 							/* Mimic */
-		case CLASS_MIMIC: num = 4; wgt = 30; mul = 3; break;
+		case CLASS_MIMIC: num = 4; wgt = 30; mul = 4; break;//mul3
 
 							/* Archer */
 		case CLASS_ARCHER: num = 3; wgt = 30; mul = 3; break;
 
 							/* Paladin */
-		case CLASS_PALADIN: num = 5; wgt = 35; mul = 4; break;
+		case CLASS_PALADIN: num = 5; wgt = 35; mul = 5; break;//mul4
 
 							/* Ranger */
-		case CLASS_RANGER: num = 5; wgt = 35; mul = 4; break;
+		case CLASS_RANGER: num = 5; wgt = 35; mul = 5; break;//mul4
 
 
-		case CLASS_BARD: num = 4; wgt = 35; mul = 6; break;
+		case CLASS_BARD: num = 4; wgt = 35; mul = 4; break;
 	}
 
 	/* Enforce a minimum "weight" (tenth pounds) */
@@ -2000,7 +2063,7 @@ int calc_blows(int Ind, object_type *o_ptr)
 		num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
 	}
 
-	if (p_ptr->zeal) num_blow += p_ptr->zeal_power;
+	if (p_ptr->zeal) num_blow += (p_ptr->zeal_power / 10);
 
 	return (num_blow);
 }
@@ -2117,7 +2180,7 @@ void calc_bonuses(int Ind)
 	p_ptr->hold_life = FALSE;
 	p_ptr->telepathy = 0;
 	p_ptr->lite = FALSE;
-		p_ptr->cur_lite = 0;
+	p_ptr->cur_lite = 0;
 	p_ptr->sustain_str = FALSE;
 	p_ptr->sustain_int = FALSE;
 	p_ptr->sustain_wis = FALSE;
@@ -2387,6 +2450,8 @@ void calc_bonuses(int Ind)
 		p_ptr->resist_conf = TRUE;
 		p_ptr->no_cut = TRUE;
 		p_ptr->reduce_insanity = 1;
+		/*p_ptr->fly = TRUE; redundant*/
+		/*p_ptr->tim_wraith = 30000; redundant*/
 //		p_ptr->invis += 5; */ /* No. */
 	}
 
@@ -3202,6 +3267,9 @@ void calc_bonuses(int Ind)
 		p_ptr->dis_to_h += 12;
 	}
 
+	/* Heart is boldened */
+	if (p_ptr->res_fear_temp) p_ptr->resist_fear = TRUE;
+
 	/* Temporary "Berserk" */
 	if (p_ptr->shero)
 	{
@@ -3209,20 +3277,20 @@ void calc_bonuses(int Ind)
 		p_ptr->dis_to_h += 5;//24
                 p_ptr->to_d += 10;
                 p_ptr->dis_to_d += 10;
-		p_ptr->to_a -= 30;//10
-		p_ptr->dis_to_a -= 30;//10
+		p_ptr->to_a -= 10;//10
+		p_ptr->dis_to_a -= 10;//10
 	}
 
 	/* Temporary "Fury" */
 	if (p_ptr->fury)
 	{
-		p_ptr->to_h += 10;
-		p_ptr->dis_to_h += 10;
-                p_ptr->to_d += 10;
-                p_ptr->dis_to_d += 10;
+		p_ptr->to_h -= 10;
+		p_ptr->dis_to_h -= 10;
+                p_ptr->to_d += 20;
+                p_ptr->dis_to_d += 20;
 		p_ptr->pspeed += 10;
-                p_ptr->to_a -= 50;
-                p_ptr->dis_to_a -= 50;
+                p_ptr->to_a -= 30;
+                p_ptr->dis_to_a -= 30;
 	}
 
 	/* Temporary "fast" */
@@ -3230,6 +3298,9 @@ void calc_bonuses(int Ind)
 	{
 		p_ptr->pspeed += p_ptr->fast_mod;
 	}
+	
+	/* Extra speed bonus from Zeal prayer */
+//	if (p_ptr->zeal) p_ptr->pspeed += (p_ptr->zeal_power / 6);
 
 	/* Temporary "slow" */
 	if (p_ptr->slow)
@@ -3564,11 +3635,14 @@ void calc_bonuses(int Ind)
 
 		if (!monk_heavy_armor(p_ptr))
 		{
-			p_ptr->to_h += (marts / 3) * 2;
+/*			p_ptr->to_h += (marts / 3) * 2;
 			p_ptr->to_d += (marts / 3);
 
 			p_ptr->dis_to_h += (marts / 3) * 2;
 			p_ptr->dis_to_d += (marts / 3);
+*/
+			p_ptr->to_h_melee += (marts / 3) * 2;
+			p_ptr->to_d_melee += (marts / 3);
 		}
 	}
 #endif
@@ -3581,8 +3655,23 @@ void calc_bonuses(int Ind)
 	{
 		int lev = get_skill_scale(p_ptr, SKILL_COMBAT, 10);
 
+		p_ptr->to_h += lev;
+		p_ptr->dis_to_h += lev;
 		p_ptr->to_d += lev;
 		p_ptr->dis_to_d += lev;
+	}
+
+	/* Combat bonus to damage */
+	if (get_skill(p_ptr, SKILL_MASTERY))
+	{
+		int lev = get_skill(p_ptr, SKILL_MASTERY);
+
+/*		p_ptr->to_h += lev / 5;
+		p_ptr->dis_to_h += lev / 5;
+		p_ptr->to_d += lev / 5;
+		p_ptr->dis_to_d += lev / 5;
+*/		p_ptr->to_h_melee += lev / 3;
+		p_ptr->to_d_melee += lev / 5;
 	}
 
 	if (get_skill(p_ptr, SKILL_DODGE))
@@ -3675,13 +3764,15 @@ void calc_bonuses(int Ind)
 			if (j) n++;
 
 			/* Hack -- weaponless combat */
-			if (wepless && j)
+/*			if (wepless && j)
 			{
 				j *= 2;
 			}
-			d += j;
+*/			d += (j * 2);
 		}
+		/* At least have 1 blow (although this line is not needed anymore) */
 		if (n == 0) n = 1;
+
 		/*d = (d / 2) / n;	// 8 // 7
 		p_ptr->to_d += d;
 		p_ptr->dis_to_d += d; - similar to HP: */
@@ -3690,28 +3781,31 @@ void calc_bonuses(int Ind)
 		monster blow number :
 		//d /= n;*/
 		//d /= ((p_ptr->num_blows > 0) ? p_ptr->num_blows : 1);
+
 		/* GWoP: 472, GB: 270, Green DR: 96 */
 		/* Quarter the damage and cap against 150 (unreachable though)
 		- even The Destroyer form would reach just 138 ;) */
 		d /= 4;
+
 		/* Cap the to-dam if it's too great */
-		if (d > 0) d = (15000 / ((10000 / d) + 100)) + 1;
-/*too powerful:
-		if (d > 0) d = (25000 / ((10000 / d) + 100)) + 1;
+//too lame:	if (d > 0) d = (15000 / ((10000 / d) + 100)) + 1;
+		if (d > 0) d = (15000 / ((15000 / d) + 65)) + 1;
+/*too powerful:	if (d > 0) d = (25000 / ((10000 / d) + 100)) + 1;
 		if (d > 0) d = (20000 / ((10000 / d) + 100)) + 1;*/
 
+		/* Calculate new averaged to-dam bonus */
 		if (d < (p_ptr->to_d + p_ptr->to_d_melee)) {
-			p_ptr->to_d = ((p_ptr->to_d * 3) + (d * 1)) / 4;
-			p_ptr->to_d_melee = (p_ptr->to_d_melee * 3) / 4;
-			p_ptr->dis_to_d = ((p_ptr->dis_to_d * 3) + (d * 1)) / 4;
+			p_ptr->to_d = ((p_ptr->to_d * 5) + (d * 2)) / 7;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 5) / 7;
+			p_ptr->dis_to_d = ((p_ptr->dis_to_d * 5) + (d * 2)) / 7;
 		} else {
 			p_ptr->to_d = ((p_ptr->to_d * 1) + (d * 1)) / 2;
 			p_ptr->to_d_melee = (p_ptr->to_d_melee * 1) / 2;
 			p_ptr->dis_to_d = ((p_ptr->dis_to_d * 1) + (d * 1)) / 2;
 		}
-		/*	p_ptr->dis_to_d = (d < p_ptr->dis_to_d) ?
+	/*	p_ptr->dis_to_d = (d < p_ptr->dis_to_d) ?
 		(((p_ptr->dis_to_d * 2) + (d * 1)) / 3) :
-		(((p_ptr->dis_to_d * 1) + (d * 1)) / 2);*/
+		(((p_ptr->dis_to_d * 1) + (d * 1)) / 2);	*/
 	}
 
 	/* Redraw plusses to hit/damage if necessary */

@@ -286,6 +286,11 @@
 #define LITE_MAX 529 /* 529 = ((10+1 safety) radius + 1 centre) 128 */
 #define LITE_CAP 10 /* just a limiter */
 
+/* Maximum number of notes that the server will store */
+#define MAX_NOTES 100
+#define MAX_PARTYNOTES 30
+#define MAX_GUILDNOTES 10
+
 /*
  * Maximum size of the "view" array (see "cave.c")
  * Note that the "view radius" will NEVER exceed 20, and even if the "view"
@@ -1327,6 +1332,8 @@ that keeps many algorithms happy.
 /* C. Blue (arts > 216) */
 #define ART_SOULCURE		232
 #define ART_AMUGROM		233
+#define ART_HELLFIRE		236
+
 
 /*** Ego-Item indices (see "lib/edit/e_info.txt") ***/
 
@@ -1400,7 +1407,7 @@ that keeps many algorithms happy.
 #define EGO_WEST		69
 #define EGO_ATTACKS		70
 #define EGO_SLAYING_WEAPON      71
-#define EGO_SPINING             72
+#define EGO_SPINNING            72
 #define EGO_BRAND_ACID          73
 #define EGO_BRAND_ELEC          74
 #define EGO_BRAND_FIRE          75
@@ -1451,8 +1458,10 @@ that keeps many algorithms happy.
 #define EGO_SHATTERED           126
 #define EGO_BLASTED             127
 #define EGO_INST_DRAGONKIND     130
-#define EGO_PLENTY				150
+#define EGO_PLENTY		150
 #define EGO_LITE_MAGI           163
+
+#define EGO_FURY		176
 
 /* megahack */
 #define EGO_CLOAK_LORDLY_RES	180 
@@ -2702,20 +2711,21 @@ that keeps many algorithms happy.
 #define GF_HERO_PLAYER  	132
 #define GF_SHERO_PLAYER  	133
 
-#define GF_UNBREATH     134
-#define GF_WAVE         135
+#define GF_UNBREATH     	134
+#define GF_WAVE         	135
 
 #define GF_TELEPORT_PLAYER 	136
 
-#define GF_RESTORESTATS_PLAYER 	137
+#define GF_RESTORESTATS_PLAYER 	137	/* C. Blue changes */
 #define GF_RESTORELIFE_PLAYER 	138
 #define GF_CURE_PLAYER 		139
 #define GF_RESURRECT_PLAYER 	140
 #define GF_SANITY_PLAYER 	141
 #define GF_ZEAL_PLAYER 		142
+#define GF_DISP_DEMON   	143
+#define GF_SOULCURE_PLAYER	144
 
-#define GF_DISP_DEMON   143     /* Zangband/C. Blue changes */
-
+/* Zangband changes */
 #define GF_TELE_TO	150
 #define GF_HAND_DOOM	151
 #define GF_STASIS       152
@@ -3581,6 +3591,7 @@ that keeps many algorithms happy.
 #define RF8_JOKEANGBAND         0x00008000
 #define RF8_ANGBAND             0x00010000
 #define RF8_BLUEBAND		0x00020000	/* C. Blue's bestiary */
+#define RF8_CLIMB		0x20000000	/* NOT YET IMPLEMENTED: Can walk over mountain fields */
 #define RF8_WILD_SWAMP		0x40000000	/* ToDo: Implement Swamp */
 #define RF8_WILD_TOO            0x80000000
 

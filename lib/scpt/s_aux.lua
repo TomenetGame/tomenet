@@ -377,7 +377,8 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 
 	-- No magic
 	if check_antimagic(Ind) == TRUE then
-		msg_print(i, "Your anti-magic field disrupts any magic attempts.")
+--Next line is already in the server sources.
+--		msg_print(i, "Your anti-magic field disrupts any magic attempts.")
 		return
         end
 

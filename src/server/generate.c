@@ -3969,8 +3969,10 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 {
 	int bwy[8], bwx[8], i;
 	int dx, dy, x, y, cx, cy, lev = getlevel(wpos);
-
 	cptr t;
+
+	bool morgoth_inside = FALSE;
+	monster_type *m_ptr;
 
 	cave_type *c_ptr;
 	cave_type **zcave;
@@ -4022,7 +4024,6 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 	{
 		bwy[i] = bwx[i] = 9999;
 	}
-
 	/* Place dungeon features and objects */
 	for (t = data, dy = 0; dy < ymax; dy++)
 	{
@@ -4206,9 +4207,45 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 					break;
 				}
 			}
+
+			if (c_ptr->m_idx) {
+				/* Check if Morgoth was just placed inside */
+			        /* Acquire monster pointer */
+			        m_ptr = &m_list[c_ptr->m_idx];
+				/* check.. */
+				if (!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) morgoth_inside = TRUE;
+			}
 		}
 	}
 
+#if 1
+	if (morgoth_inside)
+	{
+		/* Check if Morgoth occurs in this vault. If so, make it NO_TELEPORT! -C. Blue */
+		for (t = data, dy = 0; dy < ymax; dy++)
+		{
+			for (dx = 0; dx < xmax; dx++, t++)
+			{
+				x = cx + (rotate?dy:dx) * (mirrorlr?-1:1);
+				y = cy + (rotate?dx:dy) * (mirrorud?-1:1);
+
+				/* FIXME - find a better solution */
+				/* Is this any better? */
+	    			if(!in_bounds4(l_ptr,y,x))
+    					continue;
+
+				/* Hack -- skip "non-grids" */
+				if (*t == ' ') continue;
+
+				/* Access the grid */
+				c_ptr = &zcave[y][x];
+
+				/* Make it NO_TELEPORT */
+				c_ptr->info |= CAVE_STCK;
+			}
+		}
+	}
+#endif
 
 	/* Reproduce itself */
 	/* TODO: make a better routine! */
@@ -5454,6 +5491,9 @@ static void convert_extra(worldpos *wpos, int y1, int x1, int y2, int x2)
 	{
 		for (y = y1; y <= y2; y++)
 		{
+			/* CRASHES occured here, so maybe in_bound helps */
+			if (!in_bounds(y, x)) continue;
+
 			if (zcave[y][x].feat == feat_wall_outer)
 			{
 				place_filler(wpos, y, x);
@@ -8291,7 +8331,7 @@ static void cave_gen(struct worldpos *wpos)
 	if (d_ptr && d_ptr->flags2 & DF2_NO_MAGIC_MAP) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 
 	/* Hack -- NOMAP often comes with NO_MAGIC_MAP */
-	if ((dun->l_ptr->flags1 & LF1_NOMAP) && magik(70))
+	if ((dun->l_ptr->flags1 & LF1_NOMAP) && magik(55))
 		dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 
 	/* Possible cavern */
@@ -10080,7 +10120,9 @@ void alloc_dungeon_level(struct worldpos *wpos)
 	struct dungeon_type *d_ptr;
 	cave_type **zcave;
 	/* Allocate the array of rows */
-	C_MAKE(zcave, MAX_HGT, cave_type *);
+	C_MAKE(zcave, MAX_HGT, cave_type*);
+//	C_MAKE(zcave, MAX_HGT, cave_type *);
+//	C_MAKE(zcave, MAX_HGT * MAX_WID, cave_type);
 
 	/* Allocate each row */
 	for (i = 0; i < MAX_HGT; i++)
@@ -10287,6 +10329,9 @@ void generate_cave(struct worldpos *wpos)
 {
 	int i, num;
 	cave_type **zcave;
+	struct worldpos twpos;
+
+        wpcopy(&twpos, wpos);
 	zcave=getcave(wpos);
 
 	server_dungeon = FALSE;
@@ -10295,21 +10340,25 @@ void generate_cave(struct worldpos *wpos)
 	for (num = 0; TRUE; num++)
 	{
 		bool okay = TRUE;
-
 		cptr why = NULL;
 
+		/* Added 'restore from backup' here, maybe it helps vs crash */
+	        wpcopy(wpos, &twpos);
+		zcave=getcave(wpos);
 
 		/* Hack -- Reset heaps */
 		/*o_max = 1;
 		m_max = 1;*/
-
+#if 1 //cave should have already been wiped from 'alloc_dungon_level'
 		/* Start with a blank cave */
 		for (i = 0; i < MAX_HGT; i++)
 		{
+			/* CRASHES occured here :( */
+
 			/* Wipe a whole row at a time */
 			C_WIPE(zcave[i], MAX_WID, cave_type);
 		}
-
+#endif
 
 		/* Mega-Hack -- no player yet */
 		/*px = py = 0;*/

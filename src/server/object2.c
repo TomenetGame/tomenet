@@ -1198,9 +1198,9 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f3 & TR3_INSTA_ART) total += 0;
 	if (!(f4 & TR4_FUEL_LITE))
 	{
-        if (f3 & TR3_LITE1) total += 750;
-        if (f4 & TR4_LITE2) total += 1250;
-        if (f4 & TR4_LITE3) total += 2750;
+	        if (f3 & TR3_LITE1) total += 750;
+	        if (f4 & TR4_LITE2) total += 1250;
+	        if (f4 & TR4_LITE3) total += 2750;
 		if (f3 & TR3_IGNORE_FIRE) total += 100;
 	}
 	if (f3 & TR3_SEE_INVIS) total += 2000;
@@ -1252,16 +1252,17 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f4 & TR4_CLONE) total -= 10000;
 	//        if (f4 & TR4_LEVELS) total += o_ptr->elevel * 2000;
 
+#if 0
+	/* this am formula causes bad overflows and is now unneeded -> #iffed- C. Blue */
 	am = ((f4 & (TR4_ANTIMAGIC_50)) ? 5 : 0)
 		+ ((f4 & (TR4_ANTIMAGIC_30)) ? 3 : 0)
 		+ ((f4 & (TR4_ANTIMAGIC_20)) ? 2 : 0)
 		+ ((f4 & (TR4_ANTIMAGIC_10)) ? 1 : 0)
 		+ ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? -5 : 0);
-	if (am > 0) total += PRICE_BOOST(am, 1, 1)* 2000L;
+	if (am > 0) total += (PRICE_BOOST(am, 1, 1)* 2000L);
 
 	/* Also, give some extra for activatable powers... */
 
-#if 0
 	if ((o_ptr->art_name) && (o_ptr->art_flags3 & (TR3_ACTIVATE)))
 	{
 		int type = o_ptr->xtra2;
@@ -1446,7 +1447,6 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			/* Hope this won't cause inflation.. */
 			if (star) value += flag_cost(o_ptr, o_ptr->pval);
 
-
 			if (o_ptr->name2b)
 			{
 				ego_item_type *e_ptr = &e_info[o_ptr->name2b];
@@ -1459,11 +1459,60 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			}
 		}
 	}
-
 	/* Hack */
 	if ((f4 & TR4_CURSE_NO_DROP) || (f3 & TR3_AUTO_CURSE))
 	{
 		return 0;
+	}
+
+	/* Bad items don't sell. Good items with some bad modifiers DO sell ((*defenders)). -C. Blue */
+	switch (o_ptr->tval)
+	{
+	case TV_DIGGING:
+	case TV_HAFTED:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_HELM:
+	case TV_CROWN:
+	case TV_SHIELD:
+	case TV_CLOAK:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+	case TV_AXE:
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+	case TV_BOW:
+	case TV_BOOMERANG:
+	default:
+/*		if ((((o_ptr->to_h - k_ptr->to_h) < 0) ||
+		    ((o_ptr->to_d - k_ptr->to_d) < 0) ||
+		    ((o_ptr->to_a - k_ptr->to_a) < 0) ||
+		    (o_ptr->pval < 0) || (o_ptr->bpval < 0)) &&
+		    !(((o_ptr->to_h - k_ptr->to_h) > 0) ||
+		    ((o_ptr->to_d - k_ptr->to_d) > 0) ||
+		    ((o_ptr->to_a - k_ptr->to_a) > 0) ||
+		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return (0L);
+*//*		if ((((o_ptr->to_h) < 0) ||
+		    ((o_ptr->to_d) < 0) ||
+		    ((o_ptr->to_a) < 0) ||
+		    (o_ptr->pval < 0) || (o_ptr->bpval < 0)) &&
+		    !(((o_ptr->to_h) > 0) ||
+		    ((o_ptr->to_d) > 0) ||
+		    ((o_ptr->to_a) > 0) ||
+		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return (0L);
+*/		if ((((o_ptr->to_h) < 0 && (o_ptr->to_h - k_ptr->to_h) < 0) ||
+		    ((o_ptr->to_d) < 0 && (o_ptr->to_d - k_ptr->to_d) < 0) ||
+		    ((o_ptr->to_a) < 0 && (o_ptr->to_a - k_ptr->to_a) < 0) ||
+		    (o_ptr->pval < 0) || (o_ptr->bpval < 0)) &&
+		    !(((o_ptr->to_h) > 0) ||
+		    ((o_ptr->to_d) > 0) ||
+		    ((o_ptr->to_a) > 0) ||
+		    (o_ptr->pval > 0) || (o_ptr->bpval > 0))) return (0L);
+	        break;
 	}
 
 	/* Analyze pval bonus */
@@ -1525,7 +1574,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 
 				if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 200L;
 
-				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 500L);
+				if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 400L);//was 500
 //				if (f5 & (TR5_LUCK)) value += (PRICE_BOOST(pval, 0, 1)* 500L);
 
 				/* Give credit for stealth and searching */
@@ -1560,7 +1609,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 					if (f1 & TR1_SPEED) value += pval * pval * 10000L;
 				}
 				//			else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
-				else if (f1 & TR1_SPEED) value += pval * pval * 20000L;
+				else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
 
 				pval = o_ptr->pval;
 
@@ -1614,11 +1663,12 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 		case TV_RING:
 		case TV_AMULET:
 		{
+#if 0
 			/* Hack -- negative bonuses are bad */
 			if (o_ptr->to_a < 0) return (0L);
 			if (o_ptr->to_h < 0) return (0L);
 			if (o_ptr->to_d < 0) return (0L);
-
+#endif
 			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
 			{
 				value += r_info[o_ptr->pval].level * r_info[o_ptr->pval].mexp;
@@ -1627,9 +1677,9 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			/* Give credit for bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += ((PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 12, 4) + 
-				PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 7, 3) + 
-				PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 11, 4)) * 100L);
+			value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) + 
+				PRICE_BOOST(o_ptr->to_d, 7, 3) + 
+				PRICE_BOOST(o_ptr->to_a, 11, 4)) * 100L);
 
 			/* Done */
 			break;
@@ -1646,9 +1696,10 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		{
+#if 0
 			/* Hack -- negative armor bonus */
 			if (o_ptr->to_a < 0) return (0L);
-
+#endif
 			/* Give credit for bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
@@ -1671,6 +1722,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 		case TV_MSTAFF:
 		case TV_TRAPKIT:
 		{
+#if 0
 			/* Hack -- negative hit/damage bonuses */
 			if (o_ptr->to_h + o_ptr->to_d < 0)
 			{
@@ -1679,7 +1731,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 				if (o_ptr->name2 == EGO_STAR_DF) break;
 				else return (0L);
 			}
-
+#endif
 			/* Factor in the bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
@@ -1703,7 +1755,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 		case TV_BOLT:
 		{
 			/* Hack -- negative hit/damage bonuses */
-			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
+//			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
 
 			/* Factor in the bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
@@ -1718,7 +1770,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			}
 
 			/* Special attack (exploding arrow) */
-			if (o_ptr->pval != 0) value *= 14;
+			if (o_ptr->pval != 0) value *= 8;
 
 			/* Done */
 			break;
@@ -1776,7 +1828,6 @@ s32b object_value(int Ind, object_type *o_ptr)
 
 	/* Apply discount (if any) */
 	if (o_ptr->discount) value -= (value * o_ptr->discount / 100L);
-
 
 	/* Return the final value */
 	return (value);
@@ -2762,8 +2813,9 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
         }
 
 	/* Good */
-	if (power > 0)
+	if ((power > 0) && (o_ptr->tval != TV_MSTAFF))
 	{
+		
 		/* Enchant */
 		o_ptr->to_h += tohit1;
 		o_ptr->to_d += todam1;
@@ -2841,6 +2893,16 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 			break;
 		}
 #endif	// 0
+		case TV_MSTAFF:
+#if 0 //oops, ADDS to normal pval bonus -> +18 staff occured. 'granted_pval' will do the job instead.
+			switch(o_ptr->name2) {
+			case 2: if (o_ptr->pval < 4) o_ptr->pval = 4;
+				break;
+			case 3: if (o_ptr->pval < 7) o_ptr->pval = 7;
+				break;
+			}
+#endif
+			break;
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:
@@ -3858,11 +3920,12 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						o_ptr->pval = i;
 						/* Let's have the following level req code commented out
 						to give found poly rings random levels to allow surprises :)
+						Nah my idea was too cheezy, Blue DR at 21 -C. Blue */
 						if (r_info[i].level > 0) {
 							o_ptr->level = 15 + (1000 / ((2000 / r_info[i].level) + 10));
 						} else {
 							o_ptr->level = 15;
-						}*/
+						}
 					}
 					else o_ptr->level=1;
 					break;
@@ -4069,8 +4132,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_RING_SLAYING:
 				{
 					/* Bonus to damage and to hit */
-					o_ptr->to_d = randint(7) + m_bonus(10, level);
-					o_ptr->to_h = randint(7) + m_bonus(10, level);
+					o_ptr->to_d = 3 + randint(6) + m_bonus(10, level);
+					o_ptr->to_h = 3 + randint(6) + m_bonus(10, level);
 
 					/* Cursed */
 					if (power < 0)
@@ -4246,8 +4309,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_AMULET_RAGE:
 				{
 					o_ptr->bpval = 1 + m_bonus(2, level);
-					//o_ptr->to_a = -1 - m_bonus(15, level);
-					o_ptr->to_h = -1 - m_bonus(10, level);//15
+					o_ptr->to_a = -1 - m_bonus(13, level);
+					o_ptr->to_h = -1 - m_bonus(10, level);
 					o_ptr->to_d = 1 + m_bonus(15, level);
 					
 					if (rand_int(100) < 33) {
@@ -4513,8 +4576,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_RING_SLAYING:
 				{
 					/* Bonus to damage and to hit */
-					o_ptr->to_d = randint(5) + m_bonus(10, level);
-					o_ptr->to_h = randint(5) + m_bonus(10, level);
+					o_ptr->to_d = 3 + randint(5) + m_bonus(10, level);
+					o_ptr->to_h = 3 + randint(5) + m_bonus(10, level);
 
 					/* Cursed */
 					if (power < 0)

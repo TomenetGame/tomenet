@@ -120,6 +120,13 @@ void do_cmd_go_up(int Ind)
 			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
 			return;
 		}
+		/* Nether Realm only for Kings/Queens*/
+		if ((d_ptr->type == 6) && !p_ptr->total_winner)
+		{
+			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
+			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+			return;
+		}
 	}
 	if(p_ptr->inval && p_ptr->wpos.wz>=10){
 		msg_print(Ind, "\377You may go no higher without a valid account.");
@@ -168,11 +175,6 @@ void do_cmd_go_up(int Ind)
 	create_down_stair = TRUE;
 
 	check_Morgoth();
-
-	/* Did we enter a no-tele vault? */
-	//wpos=&p_ptr->wpos;
-	if(!(zcave=getcave(wpos))) return;
-	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) msg_print(Ind, "\377DThe air in here feels very still.");
 }
 
 /*
@@ -339,6 +341,13 @@ void do_cmd_go_down(int Ind)
 			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
 			return;
 		}
+		/* Nether Realm only for Kings/Queens*/
+		if ((d_ptr->type == 6) && !p_ptr->total_winner)
+		{
+			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
+			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
+			return;
+		}
 	}
 	if(p_ptr->inval && p_ptr->wpos.wz<=-10){
 		msg_print(Ind, "\377You may go no lower without a valid account.");
@@ -385,11 +394,6 @@ void do_cmd_go_down(int Ind)
 	create_up_stair = TRUE;
 
 	check_Morgoth();
-
-	/* Did we enter a no-tele vault? */
-	//wpos=&p_ptr->wpos;
-	if(!(zcave=getcave(wpos))) return;
-	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) msg_print(Ind, "\377DThe air in here feels very still.");
 }
 
 
@@ -2656,11 +2660,11 @@ void do_cmd_fire(int Ind, int dir)
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Break goi/manashield */
+#if 0
 	if (p_ptr->invuln)
 	{
 		set_invuln(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);
@@ -3572,11 +3576,11 @@ void do_cmd_throw(int Ind, int dir, int item)
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Break goi/manashield */
+#if 0
 	if (p_ptr->invuln)
 	{
 		set_invuln(Ind, 0);
 	}
-#if 0
 	if (p_ptr->tim_manashield)
 	{
 		set_tim_manashield(Ind, 0);

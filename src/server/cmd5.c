@@ -156,8 +156,8 @@ bool check_antimagic(int Ind)
 		/* Got disrupted ? */
 		if (magik(antichance))
 		{
-			if (i == Ind) msg_print(Ind, "Your own anti-magic shield disrupts your attempts.");
-			else msg_format(Ind, "%s's anti-magic shield disrupts your attempts.", q_ptr->name);
+			if (i == Ind) msg_print(Ind, "Your own anti-magic field disrupts your attempts.");
+			else msg_format(Ind, "%s's anti-magic field disrupts your attempts.", q_ptr->name);
 			return TRUE;
 		}
 	}
@@ -198,11 +198,11 @@ bool check_antimagic(int Ind)
 			{
 				char m_name[80];
 				monster_desc(Ind, m_name, m_idx, 0);
-				msg_format(Ind, "%^s's anti-magic shield disrupts your attempts.", m_name);
+				msg_format(Ind, "%^s's anti-magic field disrupts your attempts.", m_name);
 			}
 			else
 			{
-				msg_print(Ind, "An anti-magic shield disrupts your attempts.");
+				msg_print(Ind, "An anti-magic field disrupts your attempts.");
 			}
 			return TRUE;
 		}
@@ -243,11 +243,11 @@ bool check_antimagic(int Ind)
 				{
 					char m_name[80];
 					monster_desc(Ind, m_name, m_idx, 0);
-					msg_format(Ind, "%^s's anti-magic shield disrupts your attempts.", m_name);
+					msg_format(Ind, "%^s's anti-magic field disrupts your attempts.", m_name);
 				}
 				else
 				{
-					msg_print(Ind, "An anti-magic shield disrupts your attempts.");
+					msg_print(Ind, "An anti-magic field disrupts your attempts.");
 				}
 				return TRUE;
 			}
@@ -1492,7 +1492,7 @@ void do_cmd_mimic(int Ind, int spell)
 		return;
 	}
 
-	/* No anti-magic shields around ? */
+	/* No anti-magic fields around ? */
 	/* Innate powers aren't hindered */
 	if ((!spell || spell - 2 >= 32) && check_antimagic(Ind)) { /* -2 -> 2 polymorph powers */
 		p_ptr->energy -= level_speed(&p_ptr->wpos);

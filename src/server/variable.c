@@ -177,7 +177,7 @@ server_opts cfg =
 	TRUE,TRUE,	// maximize, kings_etiquette
 
 	FALSE,FALSE,	// public_rfe, auto_purge
-	FALSE,		// log_u	
+	FALSE,2,0,	// log_u, replace_hiscore, unikill_format
 	""		// server notes for meta list
 };
 
@@ -730,7 +730,13 @@ u16b max_t_idx;
  */
 u16b max_wf_idx;
 
-
 /* EVILEYE GAMES */
 int teamscore[2];
 int gametype;
+
+/* Private notes for fellow players
+ * see '/note' command in util.c. -C. Blue
+ */
+char priv_note[MAX_NOTES][80], priv_note_sender[MAX_NOTES][80], priv_note_target[MAX_NOTES][80];
+char party_note[MAX_PARTYNOTES][80], party_note_target[MAX_PARTYNOTES][80];
+char guild_note[MAX_GUILDNOTES][80], guild_note_target[MAX_GUILDNOTES][80];

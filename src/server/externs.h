@@ -110,7 +110,8 @@ extern u32b spell_flags[MAX_REALM - 1][9][2];
 extern cptr spell_names[MAX_REALM][64];
 
 extern byte chest_traps[64];
-extern cptr player_title[MAX_CLASS][11];
+extern cptr player_title[MAX_CLASS][11][2];
+extern cptr player_title_special[MAX_CLASS][5][2];
 extern magic_type innate_powers[96];
 extern martial_arts ma_blows[MAX_MA];
 //extern skill_type s_info[MAX_SKILLS];
@@ -367,6 +368,10 @@ extern u16b max_ba_idx;
 extern u16b max_ow_idx;
 extern u16b max_wf_idx;
 extern s16b max_set_idx;
+
+extern char priv_note_sender[MAX_NOTES][80], priv_note_target[MAX_NOTES][80], priv_note[MAX_NOTES][80];
+extern char party_note[MAX_PARTYNOTES][80], party_note_target[MAX_PARTYNOTES][80];
+extern char guild_note[MAX_GUILDNOTES][80], guild_note_target[MAX_GUILDNOTES][80];
 
 /*
  * The spell list of schools

@@ -1414,6 +1414,11 @@ artifact_type *randart_make(object_type *o_ptr)
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
         }
+	
+	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT))
+	{
+		a_ptr->pval = (a_ptr->pval * 2) / 3;
+	}
 
         if (a_ptr->flags1 & TR1_MANA)
         {
@@ -1424,6 +1429,10 @@ artifact_type *randart_make(object_type *o_ptr)
 		if (a_ptr->pval > 5) a_ptr->pval /= 2;
 		if (a_ptr->pval > 5) a_ptr->pval = 5;
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
+	}
+	if(a_ptr->flags1 & TR1_STEALTH)
+	{
+		if (a_ptr->pval > 6) a_ptr->pval = 6;
 	}
 	/* Hack -- DarkSword randarts should have this */
 	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD)
@@ -1686,8 +1695,8 @@ try_an_other_ego:
 	granted_pval = 0;
 	if ((o_ptr->tval == TV_MSTAFF) && (o_ptr->sval == SV_MSTAFF))
 	{
-		if (o_ptr->name2b == 2) granted_pval = 3;
-		if (o_ptr->name2b == 3) granted_pval = 5;
+		if ((o_ptr->name2b == 2)||(o_ptr->name2 == 2)) granted_pval = 4;
+		if ((o_ptr->name2b == 3)||(o_ptr->name2 == 3)) granted_pval = 7;
 	}
 
 	/* Hack -- obtain pval */

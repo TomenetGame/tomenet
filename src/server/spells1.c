@@ -1026,7 +1026,7 @@ byte spell_color(int type)
 		case GF_POIS:           return (TERM_POIS);
 		case GF_UNBREATH:       return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
 //		case GF_HOLY_ORB:	return (TERM_L_DARK);
-		case GF_HOLY_ORB:		 return (randint(6)==1?TERM_RED:TERM_L_DARK);
+		case GF_HOLY_ORB:	return (randint(6)==1?TERM_ORANGE:TERM_L_DARK);
 		case GF_HOLY_FIRE:      return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
 		case GF_HELL_FIRE:      return (randint(6)==1?TERM_RED:TERM_L_DARK);
 		case GF_MANA:           return (randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
@@ -1489,6 +1489,7 @@ static bool hates_acid(object_type *o_ptr)
 		case TV_SWORD:
 		case TV_HAFTED:
 		case TV_POLEARM:
+		case TV_AXE:
 		case TV_HELM:
 		case TV_CROWN:
 		case TV_SHIELD:
@@ -1563,6 +1564,7 @@ static bool hates_fire(object_type *o_ptr)
 		case TV_BOW:
 		case TV_HAFTED:
 		case TV_POLEARM:
+		case TV_AXE:
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CLOAK:
@@ -6034,7 +6036,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
                         (typ != GF_TELEPORT_PLAYER) &&
 			(typ != GF_RESTORESTATS_PLAYER) && (typ != GF_RESTORELIFE_PLAYER) &&
                         (typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
-                        (typ != GF_SANITY_PLAYER))
+                        (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER))
 		{		
 			/* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind))
@@ -6177,7 +6179,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 		case GF_HELL_FIRE:
-		if (p_ptr->body_monster && r_ptr->flags3 & RF3_GOOD) dam *= 2;
+		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam *= 2;
 		if (p_ptr->immune_fire) dam /= 2;
 		else if (p_ptr->resist_fire) dam = ((dam + 2) * 3) / 4;
 		else if (p_ptr->oppose_fire) dam = ((dam + 2) * 2) / 3;
@@ -6189,18 +6191,24 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Holy Orb -- Player only takes partial damage */
 		case GF_HOLY_ORB:
-		if (p_ptr->body_monster && r_ptr->flags3 & RF3_EVIL) dam *= 2;
+		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_EVIL)) dam *= 2;
+		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam /= 4;
+		if (p_ptr->pclass == CLASS_PRIEST) dam = 0;
+		if (p_ptr->pclass == CLASS_PALADIN) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer);
 		break;
 
 		case GF_HOLY_FIRE:
-		if (p_ptr->body_monster && r_ptr->flags3 & RF3_EVIL) dam *= 2;
+		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_EVIL)) dam *= 2;
+		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam /= 4;
 		if (p_ptr->immune_fire) dam /= 2;
 		else if (p_ptr->resist_fire) dam = ((dam + 2) * 2) / 3;
 		else if (p_ptr->oppose_fire) dam = ((dam + 2) * 2) / 3;
 		else if (p_ptr->sensible_fire) dam = ((dam + 2) * 4) / 3;
+		if (p_ptr->pclass == CLASS_PRIEST) dam = 0;
+		if (p_ptr->pclass == CLASS_PALADIN) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer);
@@ -6272,9 +6280,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Water -- stun/confuse */
 		case GF_WATER:
-		if (p_ptr->body_monster && r_ptr->flags7 && RF7_AQUATIC)
+		if (p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))
 		{
-//			dam = (dam + 8) / 9;
 			dam = (dam + 3) / 4;
 		}
 		if (p_ptr->immune_water)
@@ -6471,7 +6478,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Lite -- blinding */
 		case GF_LITE:
-		if (p_ptr->body_monster && r_ptr->flags3 & RF3_HURT_LITE)
+		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_HURT_LITE))
 		{
 			dam *= 2;
 		}
@@ -6701,6 +6708,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
                 case GF_REMFEAR_PLAYER:
                 {
                         set_afraid(Ind, 0);
+			/* Stay bold for some turns */
+	                p_ptr->res_fear_temp = dam;
                         break;
 		}
 
@@ -6773,7 +6782,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_ZEAL_PLAYER:
 		{
-			(void)set_zeal(Ind, dam, 4 + randint(10));
+			(void)set_zeal(Ind, dam, 14 + randint(5));
 			break;
 		}
 		case GF_SEEMAP_PLAYER:
@@ -6829,16 +6838,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_SPEED_PLAYER:		
 		{
+			if (dam > 10) dam = 10; /* cap speed bonus for others */
 			if (fuzzy) msg_print(Ind, "You feel faster!");
 			else msg_format(Ind, "%^s speeds you up!", killer);
 		
 			if (!p_ptr->fast)
 			{
-                                (void)set_fast(Ind, dam, 10);
+                                (void)set_fast(Ind, 10 + (dam * 5), dam);
 			}
 			else
 			{
-                                (void)set_fast(Ind, p_ptr->fast + (dam / 5), 10);
+                                (void)set_fast(Ind, p_ptr->fast + 10 + dam, dam);
 			}
 			break;
                 }
@@ -6915,14 +6925,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->ghost) resurrect_player(Ind, dam);
 			break;
 		case GF_SANITY_PLAYER:
-		{
 			(void)set_image(Ind, 0);
 			if (dam > 0) {
 				if (p_ptr->csane < p_ptr->msane * dam / 5)
 					p_ptr->csane = p_ptr->msane * dam / 5;
 			}
 			break;
-		}
+		case GF_SOULCURE_PLAYER:
+			msg_print(Ind, "The hold of the Black Breath on you is broken!");
+			p_ptr->black_breath = FALSE;
+			break;
 
 		case GF_OLD_CONF:
 		
@@ -7176,6 +7188,284 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				take_hit(Ind, dummy, Players[0-who]->name);
 				bypass_invuln = FALSE;
 				curse_equipment(Ind, 100, 20);
+			}
+			break;
+		}
+
+		case GF_AWAY_UNDEAD:
+		{
+			if (p_ptr->ghost ||
+			    ((p_ptr->body_monster) && (r_ptr->flags3 & RF3_UNDEAD))) {
+
+			/* Only affect undead */
+			if (p_ptr->res_tele)
+			{
+				msg_print(Ind, "You are unaffected!");
+			}
+//			else if (p_ptr->lev+50 < randint(150))
+			else if (rand_int(100) < p_ptr->skill_sav)
+			{
+				teleport_player(Ind, dam);
+			}
+			else
+			{
+				msg_print(Ind, "You resist the effect!");
+			}
+			
+			}
+
+			/* No "real" damage */
+			dam = 0;
+			break;
+		}
+
+		/* Teleport evil (Use "dam" as "power") */
+		case GF_AWAY_EVIL:
+		{
+			if ((p_ptr->body_monster) && (r_ptr->flags3 & RF3_EVIL)) {
+
+			/* Only affect evil */
+			if (p_ptr->res_tele)
+			{
+				msg_print(Ind, "You are unaffected!");
+			}
+//			else if (p_ptr->lev+50 < randint(150))
+			else if (rand_int(100) < p_ptr->skill_sav)
+			{
+				teleport_player(Ind, dam);
+			}
+			else
+			{
+				msg_print(Ind, "You resist the effect!");
+			}
+			
+			}
+
+			/* No "real" damage */
+			dam = 0;
+			break;
+		}
+#if 0	//already defined above for affecting ALL players!
+		/* Teleport monster (Use "dam" as "power") */
+		case GF_AWAY_ALL:
+		{
+			if (p_ptr->body_monster){
+
+			bool resists_tele = FALSE;
+			dun_level *l_ptr = getfloor(wpos);
+
+			if (p_ptr->res_tele)
+			{
+				msg_print(Ind, "You are unaffected!");
+			}
+//			else if (p_ptr->lev+50 < randint(150))
+			else if (rand_int(100) < p_ptr->skill_sav)
+			{
+				teleport_player(Ind, dam);
+			}
+			else
+			{
+				msg_print(Ind, "You resist the effect!");
+			}
+
+			}
+			/* No "real" damage */
+			dam = 0;
+			break;
+		}
+#endif
+
+			/* Turn undead (Use "dam" as "power") */
+		case GF_TURN_UNDEAD:
+		{
+			if (p_ptr->body_monster){
+
+			/* Only affect undead */
+			if (p_ptr->ghost || (r_ptr->flags3 & RF3_UNDEAD))
+			{
+				if (p_ptr->resist_fear && !p_ptr->ghost)
+				{
+					msg_print(Ind, "You are unaffected!");
+				}
+				/* Attempt a saving throw */
+				//else if (p_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)
+				else if (rand_int(100) < p_ptr->skill_sav)
+				{
+					msg_print(Ind, "You resist the effect!");
+				} else {
+					(void)set_afraid(Ind, p_ptr->afraid + damroll(3, (dam / 2)) + 1);
+				}
+			}
+
+			}
+			/* No "real" damage */
+			dam = 0;
+			break;
+		}
+
+
+			/* Turn evil (Use "dam" as "power") */
+		case GF_TURN_EVIL:
+		{
+			if (p_ptr->body_monster){
+
+			/* Only affect evil */
+			if (r_ptr->flags3 & RF3_EVIL)
+			{
+				if (p_ptr->resist_fear)
+				{
+					msg_print(Ind, "You are unaffected!");
+				}
+				else if (rand_int(100) < p_ptr->skill_sav)
+//				else if (p_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)
+				{
+					msg_print(Ind, "You resist the effect!");
+				} else {
+					(void)set_afraid(Ind, p_ptr->afraid + damroll(3, (dam / 2)) + 1);
+				}
+			}
+
+			}
+			/* No "real" damage */
+			dam = 0;
+			break;
+		}
+
+#if 0	//already defined above for affecting ALL players!
+		/* Turn monster (Use "dam" as "power") */
+		case GF_TURN_ALL:
+		{
+			if (p_ptr->body_monster){
+
+			/* Attempt a saving throw */
+			if ((p_ptr->resist_fear) ||
+			{
+				/* No obvious effect */
+				msg_print(Ind, "You are unaffected!");
+			}
+			else if (rand_int(100) < p_ptr->skill_sav)
+//			else if (p_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
+			{
+				msg_print(Ind, "You resist the effect!");
+			}
+			else
+			{
+				(void)set_afraid(Ind, p_ptr->afraid + damroll(3, (dam / 2)) + 1);
+			}
+			}
+			/* No "real" damage */
+			dam = 0;
+			break;
+		}
+#endif
+
+			/* Dispel undead */
+		case GF_DISP_UNDEAD:
+		{
+			if (p_ptr->body_monster){
+			/* Only affect undead */
+
+			if (p_ptr->ghost || (r_ptr->flags3 & RF3_UNDEAD))
+			{
+				if (rand_int(100) < p_ptr->skill_sav)
+				{
+				    msg_print(Ind, "You shudder, but you resist the effect!");
+				}
+				else
+				{
+				/* Message */
+				msg_print(Ind, "You shudder!");
+				dam /= 3; /* full dam is too harsh */
+				take_hit(Ind, dam, killer);
+				}
+			}
+
+			/* Ignore other monsters */
+			else
+			{
+				/* No damage */
+				dam = 0;
+			}
+			}
+			break;
+		}
+
+
+			/* Dispel evil */
+		case GF_DISP_EVIL:
+		{
+			if (p_ptr->body_monster){
+			/* Only affect evil */
+			if (r_ptr->flags3 & RF3_EVIL)
+			{
+				if (rand_int(100) < p_ptr->skill_sav)
+				{
+				    msg_print(Ind, "You shudder, but you resist the effect!");
+				}
+				else
+				{
+				/* Message */
+				msg_print(Ind, "You shudder!");
+				dam /= 3; /* full dam is too harsh */
+				take_hit(Ind, dam, killer);
+				}
+			}
+
+			/* Ignore other monsters */
+			else
+			{
+				/* No damage */
+				dam = 0;
+			}
+			}
+			break;
+		}
+
+		case GF_DISP_DEMON:
+		{
+			if (p_ptr->body_monster){
+			/* Only affect evil */
+			if (r_ptr->flags3 & RF3_DEMON)
+			{
+				if (rand_int(100) < p_ptr->skill_sav)
+				{
+				    msg_print(Ind, "You shudder, but you resist the effect!");
+				}
+				else
+				{
+				/* Message */
+				msg_print(Ind, "You shudder!");
+				dam /= 3; /* full dam is too harsh */
+				take_hit(Ind, dam, killer);
+				}
+			}
+
+			/* Ignore other monsters */
+			else
+			{
+				/* No damage */
+				dam = 0;
+			}
+			}
+			break;
+		}
+
+			/* Dispel monster */
+		case GF_DISP_ALL:
+		{
+			if (p_ptr->body_monster)
+			{
+				if (rand_int(100) < p_ptr->skill_sav)
+				{
+				    msg_print(Ind, "You shudder, but you resist the effect!");
+				}
+				else
+				{
+					/* Message */
+					msg_print(Ind, "You shudder!");
+					dam /= 4; /* full dam is too harsh */
+					take_hit(Ind, dam, killer);
+				}
 			}
 			break;
 		}
@@ -7591,7 +7881,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			 (typ == GF_SHERO_PLAYER) || (typ == GF_TELEPORT_PLAYER) ||
 			 (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
 			 (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
-			 (typ == GF_SANITY_PLAYER) ))
+			 (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ))
 		{
 			if (!(c_ptr->m_idx > 0))
 				break;

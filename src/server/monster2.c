@@ -168,6 +168,14 @@ void monster_check_experience(int m_idx, bool silent)
 		}
 	}
 
+	/* flatten the curve for very high monster levels (+27 nether realm) */
+	/* +1000: (40 -> 28, 35 -> ,) 30 -> 23, 25 -> , 20 -> 16, 15 -> , 10 -> 9, 5 -> 4 */
+	/* +1500: (40 -> 25, 35 -> 23,) 30 -> 20, 25 -> 18, 20 -> 15, 15 -> 12, 10 -> 8, 5 -> 4 */
+	/* +2000: (40 -> 22, 35 -> ,) 30 -> 18, 25 -> , 20 -> 14, 15 -> , 10 -> 7, 5 -> 4 */
+	/* +3000: (40 -> 18, 35 -> ,) 30 -> 15, 25 -> , 20 -> 12, 15 -> , 10 -> 7, 5 -> 4 */
+	/* L+40 -> x25, L+35 -> x20, L+30 -> x16, L+25 -> x12, L+20 -> x9, L+15 -> x6, L+10 -> x4, L+5 -> x2 */
+	if (levels_gained != 0) levels_gained = 100000 / ((100000 / levels_gained) + 1000);
+
 	for (i = 0; i < 4; i++) {
 	    m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * levels_gained) / 10;
 	    m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * levels_gained) / 10;
@@ -2324,7 +2332,8 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	if (!r_ptr->name) return (FALSE);
 
 	/* Hack -- "unique" monsters must be "unique" */
-	if ((r_ptr->flags1 & RF1_UNIQUE) && ((!allow_unique_level(r_idx, wpos)) || (r_ptr->cur_num >= r_ptr->max_num)))
+	if ((r_ptr->flags1 & RF1_UNIQUE) &&
+	    ((!allow_unique_level(r_idx, wpos)) || (r_ptr->cur_num >= r_ptr->max_num)))
 	{
 		/* Cannot create */
 		return (FALSE);
@@ -2337,9 +2346,17 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		return (FALSE);
 	}
 
-	/* hard-coded - hack */
-	/* Wight-King of the Barrow-downs might not occur anywhere else -C. Blue */
+	/* hard-coded -C. Blue */
+	/* Wight-King of the Barrow-downs might not occur anywhere else */
 	if ((r_idx == 971) && ((wpos->wx != 32) || (wpos->wy != 32))) return (FALSE);
+	/* Hellraiser and Nether Realm minions may only occur in the Nether Realm  */
+	/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
+	if ((r_idx == 1067) &&
+	    (getlevel(wpos) < (166 + 1))) return (FALSE);
+	if (((r_idx == 1068) || (r_idx == 1080)) &&
+	    (getlevel(wpos) < 166)) return (FALSE);
+	/* Nether Guard isn't a unique but there's only 1 guard per level */
+	if ((r_idx == 1068) && (r_ptr->cur_num > 0)) return;
 
         /* Ego Uniques are NOT to be created */
         if ((r_ptr->flags1 & RF1_UNIQUE) && (ego || randuni)) return 0;
@@ -4280,7 +4297,7 @@ void monster_drop_carried_objects(monster_type *m_ptr)
 
 		/* Copy the object */
 		object_copy(q_ptr, o_ptr);
-		q_ptr->next_o_idx=0;
+		q_ptr->next_o_idx = 0;
 
 		/* Delete the object */
 		delete_object_idx(this_o_idx, FALSE);

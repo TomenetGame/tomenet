@@ -806,9 +806,18 @@ int party_add(int adder, cptr name)
  */
 static void del_guild(int id){
 	char temp[160];
+	int i;
 
 	/* Clear the guild hall */
 	kill_houses(id, OT_GUILD);
+
+	/* delete pending guild notes */
+	for (i = 0; i < MAX_GUILDNOTES; i++) {
+		if (!strcmp(guild_note_target[i], guilds[id].name)) {
+			strcpy(guild_note_target[i], "");
+			strcpy(guild_note[i], "");
+		}
+	}
 
 	/* Tell everyone */
 	sprintf(temp, "\377gThe guild \377r'\377y%s\377r'\377g no longer exists.", guilds[id].name);
@@ -827,6 +836,14 @@ static void del_party(int id){
 	int i;
 	/* Remove the party altogether */
 	kill_houses(id, OT_PARTY);
+
+	/* delete pending party notes */
+	for (i = 0; i < MAX_PARTYNOTES; i++) {
+		if (!strcmp(party_note_target[i], parties[id].name)) {
+			strcpy(party_note_target[i], "");
+			strcpy(party_note[i], "");
+		}
+	}
 
 	/* Set the number of people in this party to zero */
 	parties[id].members = 0;
@@ -2204,6 +2221,8 @@ void scan_players(){
 	int slot;
 	hash_entry *ptr, *pptr=NULL;
 	time_t now;
+	object_type *o_ptr;
+
 	now=time(&now);
 	s_printf("Starting player inactivity check\n");
 	for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
@@ -2211,7 +2230,7 @@ void scan_players(){
 		ptr=hash_table[slot];
 		while(ptr){
 			if(ptr->laston && (now - ptr->laston > 7776000)){
-				int i;
+				int i,j;
 				hash_entry *dptr;
 
 				s_printf("Removing player: %s\n", ptr->name);
@@ -2220,11 +2239,41 @@ void scan_players(){
 					if(streq(parties[i].owner, ptr->name)){
 						s_printf("Disbanding party: %s\n",parties[i].name);
 						del_party(i);
+	        				/* remove pending notes to his party -C. Blue */
+					        for (j = 0; j < MAX_PARTYNOTES; j++) {
+					                if (!strcmp(party_note_target[j], parties[i].name)) {
+			                		        strcpy(party_note_target[j], "");
+					                        strcpy(party_note[j], "");
+					                }
+					        }
 						break;
 					}
 				}
 				kill_houses(ptr->id, OT_PLAYER);
 				rem_quest(ptr->quest);
+
+				/* Wipe Artifacts (s)he had  -C. Blue */
+				for (i = 0; i < o_max; i++)
+				{
+					o_ptr = &o_list[i];
+			                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
+			                {
+			                        {
+			                                /* Make it available again */
+			                                a_info[o_ptr->name1].cur_num = 0;
+				                	a_info[o_ptr->name1].known = FALSE;
+			                        }
+			                }
+    				}
+
+    				/* remove pending notes to this player -C. Blue */
+			        for (i = 0; i < MAX_NOTES; i++) {
+			                if (!strcmp(priv_note_target[i], ptr->name)) {
+			                        strcpy(priv_note_sender[i], "");
+			                        strcpy(priv_note_target[i], "");
+			                        strcpy(priv_note[i], "");
+			                }
+			        }
 
 				sf_delete(ptr->name);	/* a sad day ;( */
 				if(!pptr)

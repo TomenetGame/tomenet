@@ -1390,6 +1390,7 @@ static void wr_dungeon(struct worldpos *wpos)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 #if DEBUG_LEVEL > 1
+//#if 1 > 0
 	s_printf("%d players on %s.\n", players_on_depth(wpos), wpos_format(0, wpos));
 #endif
 

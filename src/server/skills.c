@@ -1015,6 +1015,7 @@ void do_cmd_activate_skill()
 		return;
 	}
 
+#if 0
 	/* Break goi/manashield */
 	if (p_ptr->invuln)
 	{
@@ -1024,7 +1025,7 @@ void do_cmd_activate_skill()
 	{
 		set_disrupt_shield(0);
 	}
-
+#endif
 	switch (s_info[x_idx].action_mkey)
 	{
 		case MKEY_ANTIMAGIC:

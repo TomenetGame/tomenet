@@ -1433,6 +1433,7 @@ static errr rd_dungeon(void)
 	rd_s16b(&tmp16b);
 	new_players_on_depth(&wpos,tmp16b,FALSE);
 #if DEBUG_LEVEL > 1
+//#if 1 > 0
 	s_printf("%d players on %s.\n", players_on_depth(&wpos), wpos_format(0, &wpos));
 #endif
 
@@ -2251,7 +2252,9 @@ void load_guildhalls(struct worldpos *wpos){
 	for(i=0; i<num_houses; i++){
 		if((houses[i].dna->owner_type==OT_GUILD) && (inarea(wpos, &houses[i].wpos))){
 			if(!houses[i].dna->owner) continue;
+#if DEBUG_LEVEL > 2
 			s_printf("load guildhall %d\n", i);
+#endif
 			sprintf(fname, "guild%.4d.data", i);
 			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
 			gfp=fopen(buf, "r");
@@ -2273,7 +2276,9 @@ void save_guildhalls(struct worldpos *wpos){
 	for(i=0; i<num_houses; i++){
 		if((houses[i].dna->owner_type==OT_GUILD) && (inarea(wpos, &houses[i].wpos))){
 			if(!houses[i].dna->owner) continue;
+#if DEBUG_LEVEL > 2
 			s_printf("save guildhall %d\n", i);
+#endif
 			sprintf(fname, "guild%.4d.data", i);
 			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
 			gfp=fopen(buf, "r+");

@@ -144,6 +144,8 @@ struct server_opts
 	bool public_rfe;
 	bool auto_purge;
 	bool log_u;
+	s16b replace_hiscore;	/* new entries replace old entries? rules? */
+	s16b unikill_format;	/* format of unique monster kill message */
 	char * server_notes;	/* comments to be displayed in meta server */
 };
 

@@ -2115,8 +2115,9 @@ player_race race_info[MAX_RACES] =
         },
         {
                 "Thunderlord",	// "DragonRider",
-                //                {  6,  3,  -10,  0,  5,  5 },
-                {  6,  2,  1,  1,  3,  8 },
+//                {  6,  3,  -10,  0,  5,  5 },
+		  {  6,  2,  1,  1,  3,  8 },
+//		  {  6,  2,  -2,  1,  3,  5 },
                 6,  0,  10,  -16,  30,  10,  15,  5,
                 12,  350,
                 14,  6,
@@ -2217,8 +2218,8 @@ player_class class_info[MAX_CLASS] =
                 TERM_VIOLET,
 		{ 0, 0, 0, 0, 0, 0},
 		20, 20, 20, 2,  15, 15, 50, 50,
-		10, 7,  10, 0,  0,  0,  25, 25,
-                6,  0,//4,0
+		10, 10,  10, 0,  0,  0,  25, 25,
+                5,  0,//4,0
                 {
                         /* Combat tree */
                         {
@@ -2307,12 +2308,14 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SORCERY,
                                 '+', 0,
-                                '+', 250,
+                                '+', 300,	/* 250 was 'safer' */
                         },
                         {
                                 SKILL_SPELL,
                                 '+', 0,
-                                '+', 500,
+                                '+', 350,	/* reduced from 500, after
+						sorcery & mimicry got raised,
+						to avoid adv becoming best sorc */
                         },
                         {
                                 SKILL_MANA,
@@ -2392,7 +2395,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MIMIC,
                                 '+', 0,
-                                '+', 300,	/* I'd give 200 */
+                                '+', 400,	/* 300 was 'safer' */
                         },
 
                         /* Sneakiness tree */
@@ -2419,7 +2422,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_STEALING,
@@ -2580,6 +2583,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 900,
                         },
                         {
+                                SKILL_STEALTH,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
                                 SKILL_DISARM,
                                 '+', 1000,
                                 '+', 900,
@@ -2593,7 +2601,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_ANTIMAGIC,
                                 '+', 0,
-                                '+', 700,
+                                '+', 500,//700
                         },
 						/* Health tree */
                         {
@@ -2665,7 +2673,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 0,
-                                '+', 700,
+                                '+', 600,
                         },
                         {
                                 SKILL_DODGE,
@@ -2855,12 +2863,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 1000,
-                                '+', 900,
+                                '+', 770,
                         },
                         {
                                 SKILL_STEALTH,
                                 '+', 0,
-                                '+', 700,
+                                '+', 500,
                         },
                         {
                                 SKILL_DODGE,
@@ -2902,7 +2910,7 @@ player_class class_info[MAX_CLASS] =
 		{ 2, 1, -2, 3, 1, -1},
 		45, 32, 28, 5, 32, 24, 60, 66,
 		15, 10, 10, 0,  0,  0, 40, 30,
-                7, 25,//6,25
+                5, 25,//6,25
                 {
                         {
                                 SKILL_COMBAT,
@@ -3059,7 +3067,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_INTERCEPT,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 900,
                         },
                 }
         },
@@ -3151,6 +3159,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_SNEAKINESS,
                                 '+', 0,
                                 '+', 800,
+                        },
+                        {
+                                SKILL_STEALTH,
+                                '+', 1000,
+                                '+', 500,
                         },
                         {
                                 SKILL_DISARM,
@@ -3273,7 +3286,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_ANTIMAGIC,
                                 '+', 0,
-                                '+', 300,
+                                '+', 350,//300
                         },
 						/* Health tree */
                         {
@@ -3313,7 +3326,7 @@ player_class class_info[MAX_CLASS] =
  *   HD, Exp*/
 		10, 21, 54, 1,  13, 16, 60, 29,
 		2, 4,  10, 0,  0,  2,  35, 10,
-                9,  30,//7,30
+                8,  30,//7,30
                 {
                         {
                                 SKILL_COMBAT,
@@ -3375,7 +3388,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SPELL,
                                 '+', 0,
-                                '+', 450,
+                                '+', 350,
                         },
 /*                        {
                                 SKILL_DIVINATION,
@@ -3421,12 +3434,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 1000,
-                                '+', 850,
+                                '+', 650,
                         },
                         {
                                 SKILL_DISARM,
                                 '+', 1000,
-                                '+', 850,
+                                '+', 600,
                         },
                         {
                                 SKILL_DODGE,
@@ -3549,12 +3562,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SORCERY,
                                 '+', 0,
-                                '+', 250,
+                                '+', 300,	/* 250 was 'safer' */
                         },
                         {
                                 SKILL_SPELL,
                                 '+', 0,
-                                '+', 500,
+                                '+', 450,
                         },
                         {
                                 SKILL_MANA,
@@ -3640,7 +3653,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 SKILL_TRAPPING,
@@ -3924,7 +3937,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_ANTIMAGIC,
                                 '+', 0,
-                                '+', 500,
+                                '+', 200,//500
                         },
                         /* Health tree */
                         {
@@ -4143,141 +4156,231 @@ byte chest_traps[64] =
  * The player gets a new title every five levels, so each class
  * needs only ten titles total.
  */
-cptr player_title[MAX_CLASS][11] =
+cptr player_title[MAX_CLASS][11][2] =
 {
 	/* Adventurer */
 	{
-		"Rambler",
-		"Walker",
-		"Tripper",
-		"Tourist",
-		"Strider",
-		"Voyager",
-		"Traveller",
-		"Spelunker",
-		"Explorer",
-		"Navigator",
-		"Adventurer",
+		{"Rambler", "Rambler", },
+		{"Walker", "Walker", },
+		{"Tripper", "Tripper", },
+		{"Tourist", "Tourist", },
+		{"Strider", "Strider", },
+		{"Voyager", "Voyager", },
+		{"Traveller", "Traveller", },
+		{"Spelunker", "Spelunker", },
+		{"Explorer", "Explorer", },
+		{"Navigator", "Navigatress", },
+		{"Adventurer", "Adventuress", },
 	},
 
 	/* Warrior */
 	{
-		"Rookie",
-		"Mercenary",
-		"Soldier",
-		"Captain",
-		"Veteran",
-		"Champion",
-		"General",
-		"Hero",
-		"Baron",
-		"Duke",
-		"Lord",
+		{"Rookie", "Rookie", },
+		{"Mercenary", "Mercenary", },
+		{"Soldier", "Soldier", },
+		{"Captain", "Captain", },
+		{"Veteran", "Veteran", },
+		{"Champion", "Champion", },
+		{"General", "General", },
+		{"Hero", "Hero", },
+		{"Baron", "Baroness", },
+		{"Duke", "Duchess", },
+		{"Lord", "Lady", },
 	},
 
 	/* Istari */
 	{
-		"Novice",
-		"Apprentice",
-		"Trickster",
-		"Illusionist",
-		"Spellbinder",
-		"Evoker",
-		"Conjurer",
-		"Sorcerer",
-		"Warlock",
-		"Mage Lord",
-		"Arch-Mage",
+		{"Novice", "Novice", },
+		{"Apprentice", "Apprentice", },
+		{"Trickster", "Trickster", },
+		{"Illusionist", "Illusionist", },
+		{"Spellbinder", "Spellbinder", },
+		{"Evoker", "Evokeress", },
+		{"Conjurer", "Conjuress", },
+		{"Sorcerer", "Sorceress", },
+		{"Warlock", "Warlock", },
+		{"Mage Lord", "Mage Lady", },
+		{"Arch-Mage", "Arch-Mage", },
 	},
 
 	/* Priest */
 	{
-		"Believer",
-		"Acolyte",
-		"Adept",
-		"Curate",
-		"Canon",
-		"Priest",
-		"Bishop",
-		"Arch-Bishop",
-		"High Priest",
-		"Priest Lord",
-		"Patriarch",
+		{"Believer", "Believer", },
+		{"Acolyte", "Acolyte", },
+		{"Adept", "Adept", },
+		{"Curate", "Curate", },
+		{"Canon", "Canon", },
+		{"Priest", "Priestess", },
+		{"Bishop", "Bishop", },
+		{"Arch-Bishop", "Arch-Bishop", },
+		{"High Priest", "High Priestess", },
+		{"Priest Lord", "Priest Lady", },
+		{"Patriarch", "Matriarch", },
 	},
 
 	/* Rogues */
 	{
-		"Vagabond",
-		"Cutpurse",
-		"Robber",
-		"Burglar",
-		"Filcher",
-		"Sharper",
-		"Thief",
-		"Master Thief",
-		"Infiltrator",
-		"Grand Master Thief",
-		"Assassin",
+		{"Vagabond", "Vagabond", },
+		{"Cutpurse", "Cutpurse", },
+		{"Robber", "Robber", },
+		{"Burglar", "Burglar", },
+		{"Filcher", "Filcher", },
+		{"Sharper", "Sharper", },
+		{"Thief", "Thief", },
+		{"Master Thief", "Master Thief", },
+		{"Infiltrator", "Infiltratess", },
+		{"Grandmaster Thief", "Grandmaster Thief", },
+		{"Assassin", "Assassin", },
         },
 
 	/* Mimic */
 	{
-		"Pretender",
-		"Modifier",
-		"Copier",
-		"Multiple (1st)",
-		"Multiple (2nd)",
-		"Shapeshifter",
-		"Metamorph",
-		"Changer",
-		"Master Changer",
-		"Grand Master Changer",
-		"Ultimate Changer",
+		{"Pretender", "Pretender", },
+		{"Modifier", "Modifier", },
+		{"Copier", "Copier", },
+		{"Multiple (1st)", "Multiple (1st)", },
+		{"Multiple (2nd)", "Multiple (2nd)", },
+		{"Shapeshifter", "Shapeshifter", },
+		{"Metamorph", "Metamorph", },
+		{"Changer", "Changer", },
+		{"Master Changer", "Master Changer", },
+		{"Grandmaster Changer", "Grandmaster Changer", },
+		{"Ultimate Changer", "Ultimate Changer", },
 	},
 
 	/* Archer */
 	{
-		"Rock Thrower",
-		"Slinger",
-		"Great Slinger",
-		"Bowsen",
-		"Bowmen",
-		"Great Bowmen",
-		"High Archer",
-		"Great Archer",
-		"Veteran Archer",
-		"Master Archer",
-		"Grand Master Archer",
+		{"Rock Thrower", "Rock Thrower", },
+		{"Slinger", "Slinger", },
+		{"Great Slinger", "Great Slinger", },
+		{"Bowsen", "Bowsen", },
+		{"Bowman", "Bowwoman", },
+		{"Great Bowman", "Great Bowwoman", },
+		{"High Archer", "High Archer", },
+		{"Grand Archer", "Grand Archer", },
+		{"Veteran Archer", "Veteran Archer", },
+		{"Master Archer", "Master Archer", },
+		{"Grandmaster Archer", "Grandmaster Archer", },
 	},
 
         /* Paladin */
 	{
-		"Squire",
-		"Acolyte",
-		"Faithful",
-		"Zealot",
-		"Defender",
-		"Crusader",
-		"Knight",
-		"Blessed Knight",
-	        "Sacred Knight",
-	        "Paladin",
-                "Holy Avenger",
+		{"Squire", "Squiress", },
+		{"Acolyte", "Acolyte", },
+		{"Faithful", "Faithful", },
+		{"Zealot", "Zealot", },
+		{"Defender", "Defender", },
+		{"Crusader", "Crusader", },
+		{"Knight", "Knight", },
+		{"Blessed Knight", "Blessed Knight", },
+	        {"Sacred Knight", "Sacred Knight", },
+	        {"Paladin", "Paladin", },
+                {"Holy Avenger", "Holy Avenger", },
         },
 
         /* Ranger */
 	{
-		"Rookie",
-		"Path Finder",
-		"Deputy",
-		"Guard",
-		"Scout",
-		"Sentry",
-		"Overseer",
-		"Guard Captain",
-	        "Ranger",
-	        "High Ranger",
-                "Ranger Chieftain",
+		{"Rookie", "Rookie", },
+		{"Path Finder", "Path Finder", },
+		{"Deputy", "Deputy", },
+		{"Guard", "Guard", },
+		{"Scout","Scout", },
+		{"Sentry", "Sentry", },
+		{"Overseer", "Overseer", },
+		{"Guard Captain", "Guard Captain", },
+	        {"Ranger", "Ranger", },
+	        {"High Ranger", "High Ranger", },
+                {"Ranger Chieftain", "Ranger Chieftain", },
+        },
+};
+
+/*
+ * Special Class titles for the player who is way > 50. (C. Blue)
+ * 60 (usually no change I'd say =)), 70, 80, 90, 99
+ * It was time to add female titles too!
+ */
+cptr player_title_special[MAX_CLASS][5][2] =
+{
+	/* Adventurer */
+	{
+		{"Adventurer", "Adventuress", },
+		{"Grand Adventurer", "Grand Adventuress", },
+		{"Legendary Adventurer", "Legendary Adventuress", },
+		{"Mythical Adventurer", "Mythical Adventuress", },
+		{"Mystical Adventurer", "Mystical Adventuress", },
+	},
+
+	/* Warrior */
+	{
+		{"Lord", "Lady", },
+		{"Highlord", "Highlady", },
+		//"Die already!" (Molt), "Nerd" (Virus) :)
+		{"Overlord", "Overlady", }, //lol :) omg
+		{"Titan", "Titan", },
+		{"Annihilator", "Annihilator", },
+	},
+
+	/* Istari */
+	{
+		{"Arch-Mage", "Arch-Mage", },
+		{"Dragon Lord", "Dragon Lady", },
+		{"Dragon Highlord", "Dragon Highlady", },//yolady
+		{"Dragon Overlord", "Dragon Overlady", },//I need some improvements here
+		{"Dragon King", "Dragon Queen", },
+	},
+
+	/* Priest */
+	{
+		{"Patriarch", "Matriarch", },
+		{"Sacred Priestlord", "Sacred Priestlady", },
+		{"Holy Priestlord", "Holy Priestlady", },
+		{"Priestoverlord", "Priestoverlady", },
+		{"Demi", "Demi", },
+	},
+
+	/* Rogues */
+	{
+		{"Assassin", "Assassin", },
+		{"Master Assassin", "Master Assassin", },
+		{"Legendary Assassin", "Legendary Assassin", },
+		{"Mythical Assassin", "Mythical Assassin", },
+		{"Mystical Assassin", "Mystical Assassin", },
+        },
+
+	/* Mimic */
+	{
+		{"Ultimate Changer", "Ultimate Changer", },
+		{"Replicator", "Replicatress", },//female !?
+		{"Master Replicator", "Master Replicatress", },
+		{"Ultimate Replicator", "Ultimate Replicatress", },
+		{"Unlimited", "Unlimited", },
+	},
+
+	/* Archer */
+	{
+		{"Grandmaster Archer", "Grandmaster Archer", },
+		{"Ultimate Archer", "Ultimate Archer", },
+		{"Legendary Archer", "Legendary Archer", },
+		{"Mythical Archer", "Mythical Archer", },
+		{"Golden Eye", "Golden Eye", },
+	},
+
+        /* Paladin */
+	{
+                {"Holy Avenger", "Holy Avenger", },
+		{"Sacred Destroyer", "Sacred Destroyer", },
+		{"Holy Knightlord", "Holy Knightlady", },
+		{"Holy King", "Holy Queen", },
+		{"God-King", "God-Queen", },
+        },
+
+        /* Ranger */
+	{
+                {"Ranger Chieftain", "Ranger Chieftain", },
+		{"Ranger Supervisor", "Ranger Supervisor", },
+		{"Ranger Commander", "Ranger Commander", },
+		{"Champion of Law", "Champion of Law", },
+		{"Lord of Law", "Lady of Law", },
         },
 };
 

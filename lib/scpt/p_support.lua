@@ -13,7 +13,7 @@ HSANCTUARY = add_spell
                 if get_level(Ind, HSANCTUARY, 50) < 20 then
 			project(0 - Ind, get_level(Ind, HSANCTUARY, 10), player.wpos, player.py, player.px, 3 + get_level(Ind, HSANCTUARY, 30), GF_OLD_SLEEP, 64+16+8, "")
 		else
-			project_hack(Ind, GF_OLD_SLEEP, 3 + get_level(Ind, HSANCTUARY, 25))
+			project_los(Ind, GF_OLD_SLEEP, 3 + get_level(Ind, HSANCTUARY, 25))
 		end
 	end,
 	["info"] = 	function()
@@ -152,39 +152,28 @@ HZEAL = add_spell
 	["name"] =      "Zeal",
 	["school"] =    SCHOOL_HSUPPORT,
 	["level"] =     31,
-	["mana"] =      50,
-	["mana_max"] =  150,
-	["fail"] =      15,
+	["mana"] =      30,
+	["mana_max"] =  100,
+	["fail"] =      5,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
-		if get_level(Ind, HZEAL, 50) < 10 then
-			set_zeal(Ind, 1, 4+randint(10))
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_ZEAL_PLAYER, 0, 1, player.spell_project, "")
-			end
-		elseif get_level(Ind, HZEAL, 50) < 20 then
-			set_zeal(Ind, 2, 4+randint(10))
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_ZEAL_PLAYER, 0, 2, player.spell_project, "")
-			end
-		else
-			set_zeal(Ind, 3, 4+randint(10))
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_ZEAL_PLAYER, 0, 3, player.spell_project, "")
-			end
+		local d, p
+		d = 14 + randint(5)
+		p = get_level(Ind, HZEAL, 50) + 10
+
+		set_zeal(Ind, p, d)
+		if player.spell_project > 0 then
+			fire_ball(Ind, GF_ZEAL_PLAYER, 0, p, player.spell_project, "")
 		end
 	end,
 	["info"] =      function()
-		if get_level(Ind, HZEAL, 50) < 10 then
-			return "1 EA, dur 4+d10"
-		elseif get_level(Ind, HZEAL, 50) < 20 then
-			return "2 EA, dur 4+d10"
-		else
-			return "3 EA, dur 4+d10"
-		end
+			local p
+			p = get_level(Ind, HZEAL, 50) + 10
+			return ""..(p / 10).." EA, +"..(p / 6).." speed"
 	end,
 	["desc"] =      {
-		"Increases your hit rate up to +3 at level 50 for a short time.",
+		"Increases your hit rate up to +3 at level 50 for 14+d5 turns.",
+		"Also speeds you up a bit.",
 		"***Affected by the Meta spell: Project Spell***",
 	}
 }

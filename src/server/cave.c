@@ -242,7 +242,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
  */
 void check_Morgoth(void)
 {
-	int k, i, x, y, num_on_depth = 0;
+	int k, i, x, y, num_on_depth = 0, m_idx;
 	player_type *p_ptr;
 	monster_type *m_ptr;
 	struct worldpos *wpos;
@@ -255,9 +255,9 @@ void check_Morgoth(void)
 	for (k = m_top - 1; k >= 0; k--)
 	{
 		/* Access the index */
-		i = m_fast[k];
+		m_idx = m_fast[k];
 		/* Access the monster */
-		m_ptr = &m_list[i];
+		m_ptr = &m_list[m_idx];
 		/* Excise "dead" monsters */
 		if (!m_ptr->r_idx)
 		{
@@ -375,6 +375,8 @@ void check_Morgoth(void)
 			/* log */
 			s_printf("Morgoth grows stronger\n");
 			/* Tell everyone related to Morgy's depth */
+			msg_print_near_monster(m_idx, "\377sMorgoth, the Lord of Darkness becomes stronger!");
+#if 0
 			for (i = 1; i <= NumPlayers; i++)
 			{
 				if (Players[i]->conn == NOT_CONNECTED)
@@ -383,6 +385,7 @@ void check_Morgoth(void)
 				if (inarea(&Players[i]->wpos, wpos))
 					msg_print(i, "\377sMorgoth, the Lord of Darkness becomes stronger!");
 			}
+#endif
 			return;
 		}
 		/* Less players here than Morgy has power for? */
@@ -400,6 +403,8 @@ void check_Morgoth(void)
 			/* log */
 			s_printf("Morgoth weakens\n");
 			/* Tell everyone related to Morgy's depth */
+			msg_print_near_monster(m_idx, "\377sMorgoth, the Lord of Darkness becomes stronger!");
+#if 0
 			for (i = 1; i <= NumPlayers; i++)
 			{
 				if (Players[i]->conn == NOT_CONNECTED)
@@ -408,6 +413,7 @@ void check_Morgoth(void)
 				if (inarea(&Players[i]->wpos, wpos))
 					msg_print(i, "\377sMorgoth, the Lord of Darkness becomes weaker.");
 			}
+#endif
 			return;
 		}
 	}
