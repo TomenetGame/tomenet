@@ -1988,7 +1988,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 				if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
-				if(q_ptr->chp<5){
+				if(cfg.use_pk_rules==PK_RULES_NEVER && q_ptr->chp<5){
 					msg_format(Ind, "You have beaten %s", q_ptr->name);
 					msg_format(0-c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
 					teleport_player(0 - c_ptr->m_idx, 400);
