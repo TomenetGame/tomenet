@@ -996,7 +996,20 @@ struct high_score
 	char how[32];           /* Method of death (string) */
 };
 
-
+int highscore_send(char *buffer){
+	int i=0, len=0;
+	FILE *hsp;
+	char buf[1024];
+	struct high_score score;
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
+	hsp=fopen(buf, "r");
+	if(hsp==(FILE*)NULL) return(0);
+	while(fread(&score, sizeof(struct high_score), 1, hsp)){
+		len+=sprintf(&buffer[len], "score=%s\nwho=%s\nhow=%s\nsrace=%s\nslevel=%s\n", score.pts, score.who, score.how, race_info[atoi(score.p_r)].title, score.cur_lev);
+	}
+	fclose(hsp);
+	return(len);
+}
 
 /*
  * The "highscore" file descriptor, if available.

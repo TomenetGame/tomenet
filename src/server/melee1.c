@@ -134,7 +134,7 @@ static cptr desc_moan[] =
 #define MAX_WHISPERS	7
 static cptr desc_whisper[] =
 {
-	"whispers something to your ear.",
+	"whispers something in your ear.",
 	"asks if you have time to spare.",
 	"gives you a charming wink.",
 	"murmurs you sweetly.",

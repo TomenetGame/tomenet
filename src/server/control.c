@@ -28,7 +28,10 @@ void SGWHit(int read_fd, int arg){
 			size+=sprintf(&sdb[size],"num=%d\n", NumPlayers);
 			for(i=1; i<=NumPlayers; i++){
 				size+=sprintf(&sdb[size], "player=%s\n", Players[i]->name);
+				size+=sprintf(&sdb[size], "level=%d\n", Players[i]->lev);
+				size+=sprintf(&sdb[size], "race=%s\n", race_info[Players[i]->prace].title);
 			}
+			size+=highscore_send(&sdb[size]);
 			DgramWrite(newsock, sdb, size);
 			free(sdb);
 		}

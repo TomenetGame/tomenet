@@ -1232,7 +1232,7 @@ bool set_image(int Ind, int v)
 	{
 		if (p_ptr->image)
 		{
-			msg_format_near(Ind, "%s has recovered from his drug induced stupor.", p_ptr->name);
+			msg_format_near(Ind, "%s has recovered from %s drug induced stupor.", p_ptr->name, p_ptr->male ? "his" : "her");
 			msg_print(Ind, "You can see clearly again.");
 			notice = TRUE;
 		}
