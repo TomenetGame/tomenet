@@ -646,6 +646,8 @@ bool do_player_trap_call_out(int Ind)
 	cave_type **zcave;
 	zcave=getcave(&p_ptr->wpos);
 
+	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return;
+
    for (i = 1; i < m_max; i++)
    {
        m_ptr = &m_list[i];
@@ -715,6 +717,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
 //		c_ptr=&zcave[y][x];
 	}
 	else return(FALSE);
+	if (check_st_anchor(&p_ptr->wpos, y, x)) return;
 
 	if (i_ptr == NULL) return(FALSE);
 
@@ -1235,6 +1238,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Teleport Trap */
 		case TRAP_OF_TELEPORT:
 		{
+			if (p_ptr->anti_tele || check_st_anchor(wpos, y, x)) break;
 			msg_print(Ind, "The world whirls around you.");
 			teleport_player(Ind, RATIO*67);
 			ident=TRUE;
