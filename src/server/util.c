@@ -1833,7 +1833,7 @@ static void do_slash_cmd(int Ind, char *message)
 		return;
 	}
 	else if (prefix(message, "/shout") ||
-			prefix(message, "/sh"))
+			(prefix(message, "/sh") && !prefix(message, "/shutdown")))
 	{
 		aggravate_monsters(Ind, 1);
 		if (colon)
