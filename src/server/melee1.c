@@ -1457,7 +1457,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				/* Apply the cut */
 				if (k) (void)set_cut(Ind, p_ptr->cut + k);
 			}
-
+#if 0 // HERESY !
 			/* Handle stun */
 			if (do_stun)
 			{
@@ -1482,7 +1482,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				/* Apply the stun */
 				if (k) (void)set_stun(Ind, p_ptr->stun + k);
 			}
-
+#endif
 			if (explode)
 			{
 //				sound(SOUND_EXPLODE);

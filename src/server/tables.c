@@ -1430,7 +1430,8 @@ player_race race_info[MAX_RACES] =
 		0,
                 0xFFFFFFFF,
                 100,
-	},
+                { 0 },
+        },
 
 	{
 		"Half-Elf",
@@ -1443,6 +1444,7 @@ player_race race_info[MAX_RACES] =
 		2,
                 0xFFFFFFFF,
                 110,
+                { 0 },
 	},
 
 	{
@@ -1456,6 +1458,7 @@ player_race race_info[MAX_RACES] =
 		3,
                 0xFFFFFFFF,
                 120,
+                { 0 },
 	},
 
 	{
@@ -1469,6 +1472,13 @@ player_race race_info[MAX_RACES] =
 		4,
                 0xFFFFFFFF,
                 90,
+                {
+                        {
+                                SKILL_SLING,
+                                '+', 1000,
+                                '+', 300,
+                        },
+                },
 	},
 
 	{
@@ -1482,6 +1492,7 @@ player_race race_info[MAX_RACES] =
 		4,
                 0xFFFFFFFF,
                 120,
+                { 0 },
 	},
 
 	{
@@ -1495,6 +1506,13 @@ player_race race_info[MAX_RACES] =
 		5,
                 0xFFFFFFFF,
                 95,
+                {
+                        {
+                                SKILL_DIG,
+                                '+', 1000,
+                                '+', 500,
+                        },
+                },
 	},
 
 	{
@@ -1508,6 +1526,7 @@ player_race race_info[MAX_RACES] =
 		3,
                 0xFFFFFFFF,
                 50,
+                { 0 },
 	},
 
 	{
@@ -1521,6 +1540,7 @@ player_race race_info[MAX_RACES] =
 		3,
                 0xFFFFFFFF,
                 20,
+                { 0 },
 	},
 
 	{
@@ -1534,6 +1554,7 @@ player_race race_info[MAX_RACES] =
 		0,
                 0xFFFFFFFF,
                 105,
+                { 0 },
         },
 
 	{
@@ -1547,6 +1568,7 @@ player_race race_info[MAX_RACES] =
 		4,
                 0xFFFFFFFF,
                 125,
+                { 0 },
 	},
 
 	{
@@ -1560,6 +1582,7 @@ player_race race_info[MAX_RACES] =
 		0,
                 0xFFFFFFFF,
                 50,
+                { 0 },
 	},
 
 	{
@@ -1573,6 +1596,7 @@ player_race race_info[MAX_RACES] =
 		3,
                 0xFFFFFFFF,
                 70,
+                { 0 },
 	},
 
 	{
@@ -1586,6 +1610,7 @@ player_race race_info[MAX_RACES] =
 		5,
                 0xFFFFFFFF,
                 90,
+                { 0 },
 	},
 	{
                 "DragonRider",
@@ -1598,7 +1623,23 @@ player_race race_info[MAX_RACES] =
                 0,
                 0xFFFFFFFF,
                 95,
+                { 0 },
         },
+#if 0 // do not activate until I find a way to have a race in the server and not in the client
+        {
+                "Exp 626",
+                {  1,  2,  -3,  1,  2,  -3 },
+		4,  20, 20,  3,  3, 14, 10, 25,
+                11,  150,
+		14,  6,
+                180,  6, 255, 25,
+                150,  4, 230, 20,
+                0,
+                0xFFFFFFFF,
+                105,
+                { 0 },
+        },
+#endif
 };
 /*
  * Player Race Information:
@@ -1912,14 +1953,9 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
                         {
-                                SKILL_BOOMERANG,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
-                                '+', 600,
+                                '+', 900,
                         },
 
                         {
@@ -2194,11 +2230,6 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_ARCHERY,
                                 '+', 0,
                                 '+', 800,
-                        },
-                        {
-                                SKILL_XBOW,
-                                '+', 0,
-                                '+', 700,
                         },
                         {
                                 SKILL_MAGIC,

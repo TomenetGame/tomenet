@@ -1326,6 +1326,18 @@ struct player_race
         s32b choice;            /* Legal class choices */
 
         s16b mana;              /* % mana */
+
+
+        struct
+        {
+                s16b skill;
+
+                char vmod;
+                s32b value;
+
+                char mmod;
+                s16b mod;
+        } skills[MAX_SKILLS];
 };
 
 
