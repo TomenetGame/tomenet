@@ -1005,7 +1005,6 @@ static void wild_add_dwelling(int Depth, int x, int y)
 			
 			/* hack -- setup next possibile house addition */
 #ifdef NEWHOUSES
-			printf("Making wild house %d\n",num_houses);
 			MAKE(houses[num_houses].dna, struct dna_type);
 			houses[num_houses].dna->price = price;
 			houses[num_houses].x = h_x1+1;
@@ -1162,7 +1161,6 @@ static void wild_add_dwelling(int Depth, int x, int y)
 		if ((tmp=pick_house(Depth, door_y, door_x)) == -1)
 		{
 #ifdef NEWHOUSES
-			printf("Finishing wild house %d\n",num_houses);
 			c_ptr->special=houses[num_houses].dna;
 			houses[num_houses].dx = door_x;
 			houses[num_houses].dy = door_y;
@@ -1178,7 +1176,6 @@ static void wild_add_dwelling(int Depth, int x, int y)
 #ifdef NEWHOUSES
 		else{
 			/* malloc madness otherwise */
-			printf("Deleting invalid wild house %d\n",num_houses);
 			KILL(houses[num_houses].dna, struct dna_type);
 			c_ptr->special=houses[tmp].dna;
 		}
