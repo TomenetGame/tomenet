@@ -3638,16 +3638,19 @@ static void scan_objs(){
 	object_type *o_ptr;
 	cave_type **zcave;
 	if (!cfg.surface_item_removal) return;
-//	for(i=0;i<MAX_O_IDX;i++){
-	for(i=0;i<o_max;i++){	// minimal job :)
+	for(i=0; i<o_max; i++){
 		/* We leave non owned objects */
 		o_ptr=&o_list[i];
-		if(o_ptr->k_idx){ // && o_ptr->owner && !o_ptr->name1){
+		if(o_ptr->k_idx){
+			bool sj=FALSE;
 			if(!o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos))){
 				/* XXX noisy warning, eh? */
+				/* This is unsatisfactory. */
 				if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
-					in_bounds_array(255 - o_ptr->iy, o_ptr->ix))
-				{
+					/* There was an old woman who swallowed a fly... */
+
+					in_bounds_array(255 - o_ptr->iy, o_ptr->ix)){
+					sj=TRUE;
 					o_ptr->iy = 255 - o_ptr->iy;
 				}
 				if (in_bounds_array(o_ptr->iy, o_ptr->ix)) // monster trap?
@@ -3674,11 +3677,13 @@ static void scan_objs(){
 				else
 #if CHEEZELOG_LEVEL < 4
 					if (!(turn % (cfg.fps * 3600)))
-#endif	// CHEEZELOG_LEVEL (4)
+#endif	/* CHEEZELOG_LEVEL (4) */
 						cheeze(o_ptr);
-#endif	// CHEEZELOG_LEVEL (1)
+#endif	/* CHEEZELOG_LEVEL (1) */
 				cnt++;
 			}
+			if(sj)
+				o_ptr->iy = 255 - o_ptr->iy;
 		}
 	}
 	if(dcnt) s_printf("Scanned %d objects. Removed %d.\n", cnt, dcnt);
@@ -3687,10 +3692,10 @@ static void scan_objs(){
 #if CHEEZELOG_LEVEL > 1
 #if CHEEZELOG_LEVEL < 4
 	if (!(turn % (cfg.fps * 3600)))
-#endif	// CHEEZELOG_LEVEL (4)
+#endif	/* CHEEZELOG_LEVEL (4) */
 		cheeze_trad_house();
-#endif	// CHEEZELOG_LEVEL (1)
-#endif	// USE_MANG_HOUSE_ONLY
+#endif	/* CHEEZELOG_LEVEL (1) */
+#endif	/* USE_MANG_HOUSE_ONLY */
 
 }
 
@@ -4081,7 +4086,6 @@ static void process_player_change_wpos(int Ind)
 	/* Memorize the town and all wilderness levels close to town */
 	if (istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius <=2))
 	{
-//		bool dawn = ((turn % (10L * TOWN_DAWN)) < (10L * TOWN_DAWN / 2)); 
 		bool dawn = IS_DAY; 
 
 		p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
@@ -4647,15 +4651,6 @@ void play_game(bool new_game)
 		quit("broken server savefile(s)");
 	}
 
-	/* UltraHack -- clear each wilderness levels inhabited flag, so
-	   monsters will respawn.
-	   hack -- clear the wild_f_in_memory flag, so house objects are added
-	   once and only once.
-	
-	   I believe this is no longer neccecary.
-	for (i = 1; i < MAX_WILD; i++) wild_info[-i].flags &= ~(WILD_F_IN_MEMORY);
-	*/
-
 	/* Nothing loaded */
 	if (!server_state_loaded)
 	{
@@ -4707,11 +4702,6 @@ void play_game(bool new_game)
 
 		/* Initialize server state information */
 		server_birth();
-
-		//initwild();
-
-		/*** Init the wild_info array... for more information see wilderness.c ***/
-		//init_wild_info(TRUE);
 
 		/* Generate the wilderness */
 		genwild();
@@ -4772,9 +4762,6 @@ void play_game(bool new_game)
 	/* Finish initializing dungeon objects */
 	setup_objects();
 
-	/* Finish initializing dungeon objects */
-//	setup_traps();
-
 	/* Server initialization is now "complete" */
 	server_generated = TRUE;
 
@@ -4810,8 +4797,6 @@ void play_game(bool new_game)
 
 void shutdown_server(void)
 {
-	//int i;
-
 	s_printf("Shutting down.\n");
 
 	/* Kick every player out and save his game */
@@ -4855,8 +4840,6 @@ void pack_overflow(int Ind)
 		char	o_name[160];
 
 		/* Choose an item to spill */
-//		i = INVEN_PACK;
-
 		for(i = INVEN_PACK - 1; i >= 0; i--)
 		{
 			o_ptr = &p_ptr->inventory[i];
