@@ -1306,8 +1306,17 @@ static void player_setup(int Ind, bool new)
 	/* Rebuild the level if necessary */
 	if(!(zcave=getcave(wpos))){
 		if(p_ptr->wpos.wz){
+			struct dun_level *l_ptr;
 			alloc_dungeon_level(wpos);
 			generate_cave(wpos);
+
+			l_ptr=getfloor(wpos);
+			if((l_ptr->wid < p_ptr->px) || (l_ptr->hgt < p_ptr->py)){
+				p_ptr->px=l_ptr->wid/2;
+				p_ptr->py=l_ptr->hgt/2;
+				teleport_player(Ind, 1);
+			}
+
 			if(p_ptr->lev<=5){
 				teleport_player(Ind, 5);
 			}
