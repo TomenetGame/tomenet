@@ -3,7 +3,7 @@
  * Packet types
  */
 
-/* Packet types 0-11 are "administrative" */
+/* Packet types 0-12 are "administrative" */
 #define PKT_UNDEFINED		0
 #define PKT_VERIFY		1
 #define PKT_REPLY		2
@@ -17,7 +17,10 @@
 
 #define PKT_START		10
 #define PKT_END			11
-#define PKT_KEEPALIVE		12
+#define PKT_LOGIN		12
+#define PKT_KEEPALIVE		13
+
+/* reserved 14 to 19 for non play purposes - evileye */
 
 
 /* Packet types 20-59 are info that is sent to the client */

@@ -70,9 +70,10 @@
 
 
 /*
- * The maximum number of player ID's
+ * The maximum number of player ID's / accounts
  */
-#define MAX_ID 4096
+#define MAX_ID 65536
+#define MAX_ACCOUNTS	8192
 
 
 /*
