@@ -836,6 +836,10 @@ Change list for PernMangband
 - Major bug fixed in /clv fixed.
 - Water is less common in some places
 
+18/03/2002 (evileye)
+- Dungeon master can now pick up items (no chown)
+- Bug fix in the look command where dungeon master could be seen.
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)

@@ -1483,7 +1483,8 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	/* Player grids */
 	if (c_ptr->m_idx < 0)
 	{
-		if (player_has_los_bold(Ind, y, x) || p_ptr->telepathy)
+		player_type *q_ptr=Players[0-c_ptr->m_idx];
+		if (!q_ptr->admin_dm && (player_has_los_bold(Ind, y, x) || p_ptr->telepathy))
 			return (TRUE);
 	}
 
@@ -1690,7 +1691,7 @@ void do_cmd_look(int Ind, int dir)
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
-	if (c_ptr->m_idx < 0)
+	if (c_ptr->m_idx < 0 && !Players[0-c_ptr->m_idx]->admin_dm)
 	{
 		q_ptr = Players[0 - c_ptr->m_idx];
 

@@ -666,7 +666,7 @@ void carry(int Ind, int pickup, int confirm)
 	if (!(c_ptr->o_idx)) return;
 
 	/* Ghosts cannot pick things up */
-	if ((p_ptr->ghost)) return;
+	if ((p_ptr->ghost && !p_ptr->admin_dm)) return;
 
 	/* Get the object */
 	o_ptr = &o_list[c_ptr->o_idx];
