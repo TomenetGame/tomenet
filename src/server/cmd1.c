@@ -395,7 +395,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
 		/* All other items have general effect! */
-		if ((i != INVEN_WIELD) && (i != INVEN_AMMO) && (i != INVEN_TOOL)) f1 |= ef1;
+		if ((i != INVEN_WIELD) && (i != INVEN_BOW) && (i != INVEN_AMMO) && (i != INVEN_TOOL)) f1 |= ef1;
 
 		/* Add bow branding on correct ammo types */
 		if(i==INVEN_BOW && e_ptr->tval==TV_BOW){
@@ -512,7 +512,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		}
 		if (f1 & TR1_BRAND_COLD)
 		{
-			if (!(brand_msg == ""))
+			if (brand_msgs_added > 0)
 			{
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
@@ -522,7 +522,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		}
 		if (f1 & TR1_BRAND_ELEC)
 		{
-			if (!(brand_msg == ""))
+			if (brand_msgs_added > 0)
 			{
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
@@ -532,7 +532,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		}
 		if (f1 & TR1_BRAND_FIRE)
 		{
-			if (!(brand_msg == ""))
+			if (brand_msgs_added > 0)
 			{
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
@@ -542,7 +542,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		}
 		if (f1 & TR1_BRAND_POIS)
 		{
-			if (!(brand_msg == ""))
+			if (brand_msgs_added > 0)
 			{
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
@@ -553,7 +553,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		break;
 		/* short and simple for all brands */
 		case 5:
-		if (f1 & TR1_BRAND_ACID) strcat(brand_msg,"hit by the elements");
+		strcat(brand_msg,"hit by the elements");
 		break;
 	}
 	strcat(brand_msg,"!");
@@ -1875,10 +1875,13 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			k = 1;
 
 			/* Ghosts do damages relative to level */
+			/*
 			if (p_ptr->ghost)
 				k = p_ptr->lev;
 			if (p_ptr->fruit_bat)
-				k = p_ptr->lev * ((p_ptr->lev / 10) + 1);
+				k = p_ptr->lev;
+			*/
+				//k = p_ptr->lev * (p_ptr->lev + 50) / 50;
 #if 1 // DGDGDG -- monks are no more
 //			if (p_ptr->pclass == CLASS_MONK)
 			if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx
@@ -2484,11 +2487,13 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			k = 1;
 
 			/* Ghosts get damage relative to level */
+			/*
 			if (p_ptr->ghost)
 				k = p_ptr->lev;
-				
 			if (p_ptr->fruit_bat)
-				k = p_ptr->lev * ((p_ptr->lev / 10) + 1);
+				k = p_ptr->lev;
+			*/
+				//k = p_ptr->lev * ((p_ptr->lev / 10) + 1);
 #if 1 // DGHDGDGDG -- monks are no more
 //			if (p_ptr->pclass == CLASS_MONK)
 #if 0
