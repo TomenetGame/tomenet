@@ -34,6 +34,7 @@ static u32b new_accid(void);
 struct account *GetAccount(cptr name, char *pass){
 	FILE *fp;
 	struct account *c_acc;
+	long delpos=0;
 
 	MAKE(c_acc, struct account);
 	if(c_acc==(struct account*)NULL) return(NULL);
@@ -41,9 +42,13 @@ struct account *GetAccount(cptr name, char *pass){
 	if(fp==(FILE*)NULL) return(NULL);	/* failed */
 	while(!feof(fp)){
 		fread(c_acc, sizeof(struct account), 1, fp);
+		if(c_acc->flags & ACC_DELD){
+			if(!delpos)
+				delpos=ftell(fp)-sizeof(struct account);
+			continue;
+		}
 		if(!strcmp(c_acc->name, name)){
 			int val;
-			if(c_acc->flags & ACC_DELD) continue;
 			if(pass==NULL)		/* direct name lookup */
 				val=0;
 			else
@@ -61,6 +66,8 @@ struct account *GetAccount(cptr name, char *pass){
 	/* No account found. Create trial account */ 
 	c_acc->id=new_accid();
 	if(c_acc->id!=0L){
+		if(delpos)
+			fseek(fp, delpos, SEEK_SET);
 		c_acc->flags=(ACC_TRIAL|ACC_NOSCORE);
 		strcpy(c_acc->name, name);
 		strcpy(c_acc->pass, t_crypt(pass, name));
