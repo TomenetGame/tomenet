@@ -4175,6 +4175,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_EVIL)
 			{
+				note = " is hit hard.";
 				dam *= 2;
 				if (seen) r_ptr->r_flags3 |= RF3_EVIL;
 			}
