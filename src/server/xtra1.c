@@ -1587,9 +1587,10 @@ static void calc_body_bonus(int Ind)
 	/* p_ptr->ac += toac;
 	p_ptr->dis_ac += toac; - similar to HP calculation: */
 	if (toac < (p_ptr->ac + p_ptr->to_a)) {
-		p_ptr->ac = (p_ptr->ac * 3) / 4;
-		p_ptr->to_a = ((p_ptr->to_a * 3) + (toac * 1)) / 4;
-		p_ptr->dis_ac = ((p_ptr->dis_ac * 3) + (toac * 1)) / 4;
+		/* Vary between 3/4 + 1/4 (low monsters) to 2/3 + 1/3 (high monsters): */
+		p_ptr->ac = (p_ptr->ac * (100 - r_ptr->level + 200)) / (100 - r_ptr->level + 300);
+		p_ptr->to_a = ((p_ptr->to_a * (100 - r_ptr->level + 200)) + (toac * 100)) / (100 - r_ptr->level + 300);
+		p_ptr->dis_ac = ((p_ptr->dis_ac * (100 - r_ptr->level + 200)) + (toac * 100)) / (100 - r_ptr->level + 300);
 	} else {
 		p_ptr->ac = (p_ptr->ac * 1) / 2;
 		p_ptr->to_a = ((p_ptr->to_a * 1) + (toac * 1)) / 2;
@@ -3109,6 +3110,9 @@ void calc_bonuses(int Ind)
 
 	}
 
+	/* Hard/Hellish mode also gives mana penalty */
+	if (p_ptr->mode & MODE_HELL) p_ptr->to_m = (p_ptr->to_m * 2) / 3;
+
 	if (p_ptr->antimagic > ANTIMAGIC_CAP) p_ptr->antimagic = ANTIMAGIC_CAP; /* AM cap */
 	if (p_ptr->luck_cur < -10) p_ptr->luck_cur = -10; /* luck caps at -10 */
 	if (p_ptr->luck_cur > 40) p_ptr->luck_cur = 40; /* luck caps at 40 */
@@ -3682,10 +3686,18 @@ void calc_bonuses(int Ind)
 		/* p_ptr->ac += toac;
 		p_ptr->dis_ac += toac; - similar to HP calculation: */
 		if (toac < (p_ptr->ac + p_ptr->to_a)) {
+#if 0
+			/* Vary between 3/4 + 1/4 (low monsters) to 2/3 + 1/3 (high monsters): */
+			p_ptr->ac = (p_ptr->ac * (100 - r_ptr->level + 200)) / (100 - r_ptr->level + 300);
+			p_ptr->to_a = ((p_ptr->to_a * (100 - r_ptr->level + 200)) + (toac * 100)) / (100 - r_ptr->level + 300);
+			p_ptr->dis_ac = (p_ptr->dis_ac * (100 - r_ptr->level + 200)) / (100 - r_ptr->level + 300);
+			p_ptr->dis_to_a = ((p_ptr->dis_to_a * (100 - r_ptr->level + 200)) + (toac * 100)) / (100 - r_ptr->level + 300);
+#else
 			p_ptr->ac = (p_ptr->ac * 3) / 4;
-			p_ptr->to_a = ((p_ptr->to_a * 3) + (toac * 1)) / 4;
+			p_ptr->to_a = ((p_ptr->to_a * 3) + toac) / 4;
 			p_ptr->dis_ac = (p_ptr->dis_ac * 3) / 4;
-			p_ptr->dis_to_a = ((p_ptr->dis_to_a * 3) + (toac * 1)) / 4;
+			p_ptr->dis_to_a = ((p_ptr->dis_to_a * 3) + toac) / 4;
+#endif
 		} else {
 			p_ptr->ac = (p_ptr->ac * 1) / 2;
 			p_ptr->to_a = ((p_ptr->to_a * 1) + (toac * 1)) / 2;
@@ -3699,8 +3711,8 @@ void calc_bonuses(int Ind)
 
 	if (p_ptr->mode & MODE_HELL)
 	{
-		if (p_ptr->dis_to_a > 0) p_ptr->dis_to_a /= 2;
-		if (p_ptr->to_a > 0) p_ptr->to_a /= 2;
+		if (p_ptr->dis_to_a > 0) p_ptr->dis_to_a = (p_ptr->dis_to_a * 2) / 3;
+		if (p_ptr->to_a > 0) p_ptr->to_a = (p_ptr->to_a * 2) / 3;
 	}
 
 
