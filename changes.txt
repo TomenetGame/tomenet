@@ -808,6 +808,7 @@ Change list for PernMangband
 - climbling up/down can fail when confused. (STAIR_FAIL_IF_CONFUSED)
 - version strings(code is from Vim6.1a).
 - client is very un*x/vi-user friendly now.
+- forgotten monster flag RF1_FRIEND is implemented (smaller pack, that is).
 [B] 'Stone to Mud' dug 2 blocks.
 
 07/03/2002 (Evileye)
@@ -874,6 +875,7 @@ Change list for PernMangband
 (3.4)
 - new terrains and their effects (f_info.txt) (do this *FIRST*!)
   - hills, deserts, lavas, waters, underwaters, tundra, elemental planes
+  - loophole(like wall, but missiles/breathes pass)
   - passage requirements/(eq)damages/themes/generators/AI
   - terrain effects (like in some 'strategy' games
 - variety of dungeon/floor types (d_info.txt)
@@ -934,6 +936,7 @@ Change list for PernMangband
 - implement project_m
 - monster speech
 - monsters should follow the player when climbling up/down staircase.
+- 'water bolt' should wash players away.
   
 [major ones]
 - NPC/pet/golem/slave
@@ -967,6 +970,7 @@ Change list for PernMangband
 - really intelligent auto-retaliator/borg
 - monster spell points.
 - documentations
+- grec-mythology monsters (GRECANGBAND)
 [sober (intrinsic) ones]
 - savedata editor
 - vault/map editor
@@ -976,6 +980,7 @@ Change list for PernMangband
 - warriors.prf, priest.prf etc. should be bandled with client distribution?
 - /version, which displays compile-time options, date etc.
 - most of configurable-things should be in mangband.cfg(and not config.h)?
+- meta-server should transmit 'port No.' information.
 [lunatic ones]
 - 3-D gfx and full-audio support
 - full-mouse operation

@@ -1609,7 +1609,7 @@ static void server_knowledge(int Ind)
 	if (k !=0)
 	{
 		if (k=cfg.unique_respawn_time)
-			msg_print(Ind, format("After winning the game, unique moster will resurrect randomly.(%d)", k));
+			msg_print(Ind, format("After winning the game, unique monsters will resurrect randomly.(%d)", k));
 
 		if (cfg.kings_etiquette)
 			msg_print(Ind, "The winner is not allowed to carry/use artifacts(save Grond/Crown).");
@@ -1639,7 +1639,7 @@ static void server_knowledge(int Ind)
 	/* Administrative */
 	if (is_admin(p_ptr))
 	{
-		msg_print(Ind, "==== Administrative or hidden settings ====");
+		msg_print(Ind, "\377o==== Administrative or hidden settings ====");
 		msg_print(Ind, format("dun_usual: %d (default = 200)", cfg.dun_unusual));
 		msg_print(Ind, format("Stores change their inventory every %d seconds(store_turns=%d).", cfg.store_turns * 10 / cfg.fps, cfg.store_turns));
 

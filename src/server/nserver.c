@@ -429,6 +429,7 @@ int Setup_net_server(void)
 	Report_to_meta(META_START);
 
 	s_printf("Server is running version %04x\n", MY_VERSION);
+	s_printf("%s\n", longVersion);
 
 	return 0;
 }

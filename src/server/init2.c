@@ -1369,7 +1369,7 @@ static void prepare_distance()
 		}
 		tdi[d] = count;
 	}
-#if DEBUG_LEVEL > 0
+#if DEBUG_LEVEL > 2
 	s_printf("last count: %d\n", count);
 #endif
 }

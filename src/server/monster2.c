@@ -2150,7 +2150,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 /*
  * Attempt to place a "group" of monsters around the given location
  */
-static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, bool slp)
+static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool small)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2186,6 +2186,9 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 
 	/* Modify the group size */
 	total += extra;
+
+	/* fewer friends.. */
+	if (small) total >>= 2;
 
 	/* Minimum size */
 	if (total < 1) total = 1;
@@ -2296,11 +2299,18 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	if (!grp) return (TRUE);
 
 
+	/* Friend for certain monsters */
+	if (r_ptr->flags1 & RF1_FRIEND)
+	{
+		/* Attempt to place a group */
+		(void)place_monster_group(wpos, y, x, r_idx, slp, TRUE);
+	}
+
 	/* Friends for certain monsters */
 	if (r_ptr->flags1 & RF1_FRIENDS)
 	{
 		/* Attempt to place a group */
-		(void)place_monster_group(wpos, y, x, r_idx, slp);
+		(void)place_monster_group(wpos, y, x, r_idx, slp, FALSE);
 	}
 
 
@@ -2349,7 +2359,7 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 			    (r_ptr->flags1 & RF1_ESCORTS))
 			{
 				/* Place a group of monsters */
-				(void)place_monster_group(wpos, ny, nx, z, slp);
+				(void)place_monster_group(wpos, ny, nx, z, slp, FALSE);
 			}
 		}
 	}
