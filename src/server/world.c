@@ -51,15 +51,15 @@ int world_comm(int fd, int arg){
 	return(0);
 }
 
-/* data will come with merge */
+/* proper data will come with merge */
 void world_remote_players(FILE *fff){
 	struct rplist *c_pl;
 	c_pl=rpmlist;
 	if(c_pl){
-		fprintf(fff, "y  Remote players\n\n");
+		fprintf(fff, "y  Remote players\nr\n");
 	}
 	while(c_pl){
-		fprintf(fff, "s  %s\n", c_pl->name);
+		fprintf(fff, "s   %s\n", c_pl->name);
 		c_pl=c_pl->next;
 	}
 }

@@ -2846,6 +2846,7 @@ void check_experience(int Ind)
 
 		sprintf(str, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
 		clockin(Ind, 1);	/* Set player level */
+		world_msg(str);
 		msg_broadcast(Ind, str);
 
 		/* Update the skill points info on the client */
@@ -3980,11 +3981,12 @@ void player_death(int Ind)
 				p_ptr->name, p_ptr->died_from);
 		else sprintf(buf, "\377r%s was killed and destroyed by %s.",
 				p_ptr->name, p_ptr->died_from);
-		world_msg(buf);
 		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
 
-		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master))
+		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)){
+			world_msg(buf);
 			msg_broadcast(Ind, buf);
+		}
 
 		/* wipe artifacts (s)he had */
 		for (i = 0; i < INVEN_TOTAL; i++)
@@ -7271,7 +7273,8 @@ bool master_player(int Ind, char *parms){
 			break;
 		case 'B':
 			/* This could be fun - be wise dungeon master */
-			msg_broadcast(Ind,&parms[1]);
+			world_msg(&parms[1]);
+			msg_broadcast(0, &parms[1]);
 			break;
 		case 'r':
 			/* Delete a player from the database/savefile */

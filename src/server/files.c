@@ -674,6 +674,8 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 		/* Hack -- stop searching */
 		find = NULL;
 
+		if(buf[0]=='\n') continue;
+
 		/* Extract color */
 		if (color) attr = color_char_to_attr(buf[0]);
 
