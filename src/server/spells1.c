@@ -5611,7 +5611,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_DETECTTRAP_PLAYER:
 		{
-                        (void)detect_trap(Ind);
+                        (void)detect_trap(Ind, DEFAULT_RADIUS);
 			break;
 		}
 

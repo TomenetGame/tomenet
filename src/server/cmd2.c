@@ -47,6 +47,7 @@ void do_cmd_go_up(int Ind)
 			dir = rand_int(9) + 1;
 
 		do_cmd_walk(Ind, dir, FALSE);
+		return;
 	}
 #endif // STAIR_FAIL_IF_CONFUSED
 
@@ -169,6 +170,7 @@ void do_cmd_go_down(int Ind)
 			dir = rand_int(9) + 1;
 
 		do_cmd_walk(Ind, dir, FALSE);
+		return;
 	}
 #endif // STAIR_FAIL_IF_CONFUSED
 
@@ -1008,6 +1010,16 @@ void do_cmd_close(int Ind, int dir)
 
 			/* Attack */
 			py_attack(Ind, y, x, TRUE);
+		}
+
+		/* Object in the way */
+		else if (c_ptr->o_idx > 0)
+		{
+			/* Take a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+			/* Message */
+			msg_print(Ind, "There is an object blocking the doorway!");
 		}
 
 		/* House door, close it */

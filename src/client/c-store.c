@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Client-side store stuff.
  */
@@ -75,7 +76,7 @@ static void display_entry(int pos)
 
 		/* Actually draw the price (not fixed) */
 		(void)sprintf(out_val, "%9ld  ", (long)x);
-		put_str(out_val, i+6, 68);
+		c_put_str(p_ptr->au < x ? TERM_L_DARK : TERM_WHITE, out_val, i+6, 68);
         }
 }
 
@@ -422,43 +423,40 @@ void display_store(void)
 	/* Start at the top */
 	store_top = 0;
 	
-        /* Interact with player */
-        while (!leave_store)
-        {
-		/* Keep the screen icky */
-		screen_icky = TRUE;
+	/* Interact with player */
+	while (!leave_store)
+	{
+		/* Hack -- Clear line 1 */
+		prt("", 1, 0);
 
-                /* Hack -- Clear line 1 */
-                prt("", 1, 0);
+		/* Clear */
+		clear_from(21);
 
-                /* Clear */
-                clear_from(21);
+		/* Basic commands */
+		prt(" ESC) Exit from Building.", 22, 0);
 
-                /* Basic commands */
-                prt(" ESC) Exit from Building.", 22, 0);
+		/* Browse if necessary */
+		if (store.stock_num > 12)
+		{
+			prt(" SPACE) Next page of stock", 23, 0);
+		}
 
-                /* Browse if necessary */
-                if (store.stock_num > 12)
-                {
-                        prt(" SPACE) Next page of stock", 23, 0);
-                }
+		/* Home commands */
+		if (store_num == 7)
+		{
+			prt(" g) Get an item.", 22, 40);
+			prt(" d) Drop an item.", 23, 40);
+		}
 
-                /* Home commands */
-                if (store_num == 7)
-                {
-                        prt(" g) Get an item.", 22, 40);
-                        prt(" d) Drop an item.", 23, 40);
-                }
+		/* Shop commands XXX XXX XXX */
+		else
+		{
+			prt(" p) Purchase an item.", 22, 40);
+			prt(" s) Sell an item.", 23, 40);
+		}
 
-                /* Shop commands XXX XXX XXX */
-                else
-                {
-                        prt(" p) Purchase an item.", 22, 40);
-                        prt(" s) Sell an item.", 23, 40);
-                }
-
-                /* Prompt */
-                prt("You may: ", 21, 0);
+		/* Prompt */
+		prt("You may: ", 21, 0);
 
 		/* Get a command */
 		while (!command_cmd)
@@ -485,8 +483,8 @@ void display_store(void)
 				if (Net_input() == -1)
 					return;
 
-	                /* Get a command */
-	                request_command(TRUE);
+			/* Get a command */
+			request_command(TRUE);
 
 			/* Flush */
 			flush_now();
@@ -498,8 +496,8 @@ void display_store(void)
 			}
 		}
 
-                /* Process the command */
-                store_process_command();
+		/* Process the command */
+		store_process_command();
 
 		/* Clear the old command */
 		command_cmd = 0;

@@ -1781,11 +1781,13 @@ bool lose_all_info(int Ind)
  * 1. allow to display gold carried by monsters
  * 2. make this a ranged spell
  */
-bool detect_treasure(int Ind)
+bool detect_treasure(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
 	struct worldpos *wpos=&p_ptr->wpos;
+	dun_level		*l_ptr;
+	int		py = p_ptr->py, px = p_ptr->px;
 
 	int		y, x;
 	bool	detect = FALSE;
@@ -1796,12 +1798,21 @@ bool detect_treasure(int Ind)
 	object_type	*o_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
+	l_ptr = getfloor(wpos);
 
 	/* Scan the current panel */
-	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
+//	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
+	for (y = py - rad; y <= py + rad; y++)
 	{
-		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
+//		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
+		for (x = px - rad; x <= px + rad; x++)
 		{
+			/* Reject locations outside of dungeon */
+			if (!in_bounds4(l_ptr, y, x)) continue;
+
+			/* Reject those out of radius */
+			if (distance(py, px, y, x) > rad) continue;
+
 			c_ptr = &zcave[y][x];
 			w_ptr = &p_ptr->cave_flag[y][x];
 
@@ -1875,11 +1886,13 @@ bool detect_treasure(int Ind)
  *
  * It can probably be argued that this function is now too powerful.
  */
-bool detect_magic(int Ind)
+bool detect_magic(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
 	struct worldpos *wpos=&p_ptr->wpos;
+	dun_level		*l_ptr;
+//	int		py = p_ptr->py, px = p_ptr->px;
 
 	int		i, j, tv;
 	bool	detect = FALSE;
@@ -1889,12 +1902,21 @@ bool detect_magic(int Ind)
 
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
+	l_ptr = getfloor(wpos);
 
 	/* Scan the current panel */
-	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
+//	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
+	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
 	{
-		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
+//		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
+		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++)
 		{
+			/* Reject locations outside of dungeon */
+			if (!in_bounds4(l_ptr, i, j)) continue;
+
+			/* Reject those out of radius */
+			if (distance(p_ptr->py, p_ptr->px, i, j) > rad) continue;
+
 			/* Access the grid and object */
 			c_ptr = &zcave[i][j];
 			o_ptr = &o_list[c_ptr->o_idx];
@@ -2193,16 +2215,16 @@ bool detect_creatures(int Ind)
 /*
  * Detect everything
  */
-bool detection(int Ind)
+bool detection(int Ind, int rad)
 {
 	bool	detect = FALSE;
 
 	/* Detect the easy things */
-	if (detect_treasure(Ind)) detect = TRUE;
-	if (detect_object(Ind)) detect = TRUE;
-	if (detect_trap(Ind)) detect = TRUE;
-	if (detect_sdoor(Ind)) detect = TRUE;
-	if (detect_creatures(Ind)) detect = TRUE;
+	if (detect_treasure(Ind, rad)) detect = TRUE;
+	if (detect_object(Ind, rad)) detect = TRUE;
+	if (detect_trap(Ind, rad)) detect = TRUE;
+	if (detect_sdoor(Ind, rad)) detect = TRUE;
+	if (detect_creatures(Ind)) detect = TRUE;	/* not radius-ed for now */
 
 	/* Result */
 	return (detect);
@@ -2212,11 +2234,13 @@ bool detection(int Ind)
 /*
  * Detect all objects on the current panel		-RAK-
  */
-bool detect_object(int Ind)
+bool detect_object(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
 	struct worldpos *wpos=&p_ptr->wpos;
+	dun_level		*l_ptr;
+	int		py = p_ptr->py, px = p_ptr->px;
 
 	int		i, j;
 	bool	detect = FALSE;
@@ -2226,12 +2250,21 @@ bool detect_object(int Ind)
 	object_type	*o_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
+	l_ptr = getfloor(wpos);
 
 	/* Scan the current panel */
-	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
+//	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
+	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
 	{
-		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
+//		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
+		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++)
 		{
+			/* Reject locations outside of dungeon */
+			if (!in_bounds4(l_ptr, i, j)) continue;
+
+			/* Reject those out of radius */
+			if (distance(p_ptr->py, p_ptr->px, i, j) > rad) continue;
+
 			c_ptr = &zcave[i][j];
 
 			o_ptr = &o_list[c_ptr->o_idx];
@@ -2264,11 +2297,14 @@ bool detect_object(int Ind)
 /*
  * Locates and displays traps on current panel
  */
-bool detect_trap(int Ind)
+//bool detect_trap(int Ind)
+bool detect_trap(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
 	struct worldpos *wpos=&p_ptr->wpos;
+	dun_level		*l_ptr;
+//	int		py = p_ptr->py, px = p_ptr->px;
 
 	int		i, j, chance, t_idx;
 
@@ -2280,13 +2316,22 @@ bool detect_trap(int Ind)
 
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
+	l_ptr = getfloor(wpos);
 	chance = (p_ptr->pclass == CLASS_ROGUE ? 75 : 50) + p_ptr->lev / 4;
 
 	/* Scan the current panel */
-	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
+//	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
+	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
 	{
-		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
+//		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
+		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++)
 		{
+			/* Reject locations outside of dungeon */
+			if (!in_bounds4(l_ptr, i, j)) continue;
+
+			/* Reject those out of radius */
+			if (distance(p_ptr->py, p_ptr->px, i, j) > rad) continue;
+
 			/* Access the grid */
 			c_ptr = &zcave[i][j];
 			w_ptr = &p_ptr->cave_flag[i][j];
@@ -2344,11 +2389,13 @@ bool detect_trap(int Ind)
 /*
  * Locates and displays all stairs and secret doors on current panel -RAK-
  */
-bool detect_sdoor(int Ind)
+bool detect_sdoor(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
 	struct worldpos *wpos=&p_ptr->wpos;
+	dun_level		*l_ptr;
+	int		py = p_ptr->py, px = p_ptr->px;
 
 	int		i, j;
 	bool	detect = FALSE;
@@ -2357,12 +2404,21 @@ bool detect_sdoor(int Ind)
 	byte *w_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
+	l_ptr = getfloor(wpos);
 
 	/* Scan the panel */
-	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
+//	for (i = p_ptr->panel_row_min; i <= p_ptr->panel_row_max; i++)
+	for (i = p_ptr->py - rad; i <= p_ptr->py + rad; i++)
 	{
-		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
+//		for (j = p_ptr->panel_col_min; j <= p_ptr->panel_col_max; j++)
+		for (j = p_ptr->px - rad; j <= p_ptr->px + rad; j++)
 		{
+			/* Reject locations outside of dungeon */
+			if (!in_bounds4(l_ptr, i, j)) continue;
+
+			/* Reject those out of radius */
+			if (distance(p_ptr->py, p_ptr->px, i, j) > rad) continue;
+
 			/* Access the grid and object */
 			c_ptr = &zcave[i][j];
 			w_ptr = &p_ptr->cave_flag[i][j];

@@ -1089,6 +1089,8 @@ To find the latest change quickly, search ==== :)
 - death mold trap
 [B] a lv1 sorc could cast 30 magic missles each turn
 
+20/06/2002 (Jir)
+[P] detection magics are radius-based now. (affected by skill and level)
 
 
 
@@ -1187,7 +1189,6 @@ memo and questions:
 * Trap ideas
   - no return trap should steal books also?
   - telekinesis trap
-  - death molds trap
   - house-door-opening trap
 [C] allow to send not-defined key for easy extension
 [C] '-s' option to specify rc-file name.

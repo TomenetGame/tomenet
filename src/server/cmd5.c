@@ -989,6 +989,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 	int			i, j, sval;
 	int			chance, beam;
 	int			plev = p_ptr->lev;
+	int			rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
 
 	object_type		*o_ptr;
 
@@ -1149,7 +1150,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 
 			case 4:
 			{
-				(void)detect_treasure(Ind);
+				(void)detect_treasure(Ind, rad);
 				break;
 			}
 
@@ -1169,14 +1170,14 @@ void do_cmd_cast(int Ind, int book, int spell)
 			
 			case 6:
 			{
-				(void)detect_object(Ind);
+				(void)detect_object(Ind, rad);
 				break;
 			}
 
 			case 7:
 			{
-				(void)detect_sdoor(Ind);
-				(void)detect_trap(Ind);
+				(void)detect_sdoor(Ind, rad);
+				(void)detect_trap(Ind, rad);
 				break;
 			}
 
@@ -1488,7 +1489,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 
 			case 45:
 			{
-				(void)detect_magic(Ind);
+				(void)detect_magic(Ind, rad);
 				break;
 			}
 
@@ -2110,6 +2111,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
 	int			i, j, sval;
 	int			chance, beam;
 	int			plev = p_ptr->lev;
+	int			rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
 
 	object_type		*o_ptr;
 
@@ -2252,20 +2254,20 @@ void do_cmd_sorc(int Ind, int book, int spell)
 			(void)detect_creatures(Ind);
 		       break;
            case 3: /* Detect Traps */
-			(void)detect_trap(Ind);
+			(void)detect_trap(Ind, rad);
 		       break;
            case 4: /* Light Area */
                         (void)lite_area(Ind, damroll(2, (plev / 2)), (plev / 10) + 1);
                        break;
            case 5: /* Detect Doors/Stairs */
-                        (void)detect_sdoor(Ind);
+                        (void)detect_sdoor(Ind, rad);
 		       break;
            case 6: /* Confuse Monster */
 			p_ptr->current_spell = j;
 			get_aim_dir(Ind);
 			return;
                 case 7: /* Detect Objects */
-                        (void)detect_object(Ind);
+                        (void)detect_object(Ind, rad);
                         break;
 
                 case 8: /* Noxious Cloud */
@@ -2966,6 +2968,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 	int item, sval, j, chance, i;
 	int plev = p_ptr->lev;
+	int	rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
 
 	object_type	*o_ptr;
 
@@ -3150,13 +3153,13 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 5:
 			{
-				(void)detect_trap(Ind);
+				(void)detect_trap(Ind, rad);
 				break;
 			}
 
 			case 6:
 			{
-				(void)detect_sdoor(Ind);
+				(void)detect_sdoor(Ind, rad);
 				break;
 			}
 
@@ -3427,7 +3430,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 32:
 			{
-				(void)detection(Ind);
+				(void)detection(Ind, rad);
 				break;
 			}
 
@@ -4640,6 +4643,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 	int			i, j, sval;
 	int			chance, beam;
 	int			plev = p_ptr->lev;
+	int			rad = 15 + p_ptr->lev / 3; /* rogue is good at this */
 
 	object_type		*o_ptr;
 
@@ -4785,18 +4789,18 @@ void do_cmd_shad(int Ind, int book, int spell)
 			}
 			case 4: /* O detect */
 			{
-				detect_object(Ind);
+				detect_object(Ind, rad);
 				break;
 			}
 			case 5: /* T/D detect */
 			{
-				detect_trap(Ind);
-				detect_sdoor(Ind);
+				detect_trap(Ind, rad);
+				detect_sdoor(Ind, rad);
 				break;
 			}
 			case 6: /* Treasure detect */
 			{
-				detect_treasure(Ind);
+				detect_treasure(Ind, rad);
 				break;
 			}
 			case 7: /* T/D dest */
@@ -6421,6 +6425,7 @@ void do_cmd_psi(int Ind, int book, int spell)
 	int			i, j, sval;
 	int			chance, beam;
 	int			plev = p_ptr->lev;
+	int			rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
 	int Ind2;  /* Ind2 = Dominant(caster), Ind = Dominated */
 	player_type *p_ptr2; /* p_ptr = Dominant(caster), p_ptr2 = Dominated */
 
@@ -6819,10 +6824,10 @@ void do_cmd_psi(int Ind, int book, int spell)
 	      }
 	    case 25: /* Reveal Secrets */
 	      {
-		(void)detect_treasure(Ind);
-		(void)detect_object(Ind);
-		(void)detect_sdoor(Ind);
-		(void)detect_trap(Ind);
+		(void)detect_treasure(Ind, rad);
+		(void)detect_object(Ind, rad);
+		(void)detect_sdoor(Ind, rad);
+		(void)detect_trap(Ind, rad);
 		break;
 	      }
 	    case 26: /* Read Object */

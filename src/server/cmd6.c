@@ -1018,10 +1018,10 @@ void do_cmd_quaff_potion(int Ind, int item)
 			wiz_lite(Ind);
 			(void)do_inc_stat(Ind, A_INT);
 			(void)do_inc_stat(Ind, A_WIS);
-			(void)detect_treasure(Ind);
-			(void)detect_object(Ind);
-			(void)detect_sdoor(Ind);
-			(void)detect_trap(Ind);
+			(void)detect_treasure(Ind, DEFAULT_RADIUS * 2);
+			(void)detect_object(Ind, DEFAULT_RADIUS * 2);
+			(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
+			(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
 			identify_pack(Ind);
 			self_knowledge(Ind);
 			ident = TRUE;
@@ -1771,25 +1771,25 @@ void do_cmd_read_scroll(int Ind, int item)
 
 		case SV_SCROLL_DETECT_GOLD:
 		{
-			if (detect_treasure(Ind)) ident = TRUE;
+			if (detect_treasure(Ind, DEFAULT_RADIUS)) ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_DETECT_ITEM:
 		{
-			if (detect_object(Ind)) ident = TRUE;
+			if (detect_object(Ind, DEFAULT_RADIUS)) ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_DETECT_TRAP:
 		{
-			if (detect_trap(Ind)) ident = TRUE;
+			if (detect_trap(Ind, DEFAULT_RADIUS)) ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_DETECT_DOOR:
 		{
-			if (detect_sdoor(Ind)) ident = TRUE;
+			if (detect_sdoor(Ind, DEFAULT_RADIUS)) ident = TRUE;
 			break;
 		}
 
@@ -2061,7 +2061,7 @@ void do_cmd_use_staff(int Ind, int item)
         u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
 
-	int			ident, chance, k, lev;
+	int	ident, chance, lev, k, rad = DEFAULT_RADIUS_DEV(p_ptr);
 
 	object_type		*o_ptr;
 
@@ -2275,25 +2275,25 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_DETECT_GOLD:
 		{
-			if (detect_treasure(Ind)) ident = TRUE;
+			if (detect_treasure(Ind, rad)) ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_DETECT_ITEM:
 		{
-			if (detect_object(Ind)) ident = TRUE;
+			if (detect_object(Ind, rad)) ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_DETECT_TRAP:
 		{
-			if (detect_trap(Ind)) ident = TRUE;
+			if (detect_trap(Ind, rad)) ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_DETECT_DOOR:
 		{
-			if (detect_sdoor(Ind)) ident = TRUE;
+			if (detect_sdoor(Ind, rad)) ident = TRUE;
 			break;
 		}
 
@@ -2990,7 +2990,7 @@ void do_cmd_zap_rod(int Ind, int item)
         u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
 
-	int                 ident, chance, lev;
+	int                 ident, chance, lev, rad = DEFAULT_RADIUS_DEV(p_ptr);
 
 	object_type		*o_ptr;
 
@@ -3119,14 +3119,14 @@ void do_cmd_zap_rod(int Ind, int item)
 	{
 		case SV_ROD_DETECT_TRAP:
 		{
-			if (detect_trap(Ind)) ident = TRUE;
+			if (detect_trap(Ind, rad)) ident = TRUE;
 			o_ptr->pval = 50;
 			break;
 		}
 
 		case SV_ROD_DETECT_DOOR:
 		{
-			if (detect_sdoor(Ind)) ident = TRUE;
+			if (detect_sdoor(Ind, rad)) ident = TRUE;
 			o_ptr->pval = 70;
 			break;
 		}
@@ -3175,7 +3175,7 @@ void do_cmd_zap_rod(int Ind, int item)
 
 		case SV_ROD_DETECTION:
 		{
-			detection(Ind);
+			detection(Ind, rad);
 			ident = TRUE;
 			o_ptr->pval = 99;
 			break;
@@ -3309,7 +3309,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
         u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
 
-	int                 item, ident, chance, lev;
+	int	item, ident, chance, lev, rad = DEFAULT_RADIUS_DEV(p_ptr);
 
 	object_type		*o_ptr;
 
@@ -3544,14 +3544,14 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		/* these but we didn't know what it was. */
 		case SV_ROD_DETECT_TRAP:
 		{
-			if (detect_trap(Ind)) ident = TRUE;
+			if (detect_trap(Ind, rad)) ident = TRUE;
 			o_ptr->pval = 50;
 			break;
 		}
 
 		case SV_ROD_DETECT_DOOR:
 		{
-			if (detect_sdoor(Ind)) ident = TRUE;
+			if (detect_sdoor(Ind, rad)) ident = TRUE;
 			o_ptr->pval = 70;
 			break;
 		}
@@ -3600,7 +3600,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 		case SV_ROD_DETECTION:
 		{
-			detection(Ind);
+			detection(Ind, rad);
 			ident = TRUE;
 			o_ptr->pval = 99;
 			break;
@@ -4481,7 +4481,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_HOLHENNETH:
 			{
 				msg_print(Ind, "An image forms in your mind...");
-				detection(Ind);
+				detection(Ind, DEFAULT_RADIUS * 2);
 				o_ptr->timeout = rand_int(55) + 55;
 				break;
 			}
@@ -4540,8 +4540,8 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "The stone glows a deep green...");
 				wiz_lite(Ind);
-				(void)detect_sdoor(Ind);
-				(void)detect_trap(Ind);
+				(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
+				(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
 				o_ptr->timeout = rand_int(100) + 100;
 				break;
 			}
@@ -4966,7 +4966,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_HOLHENNETH:
 			{
 				msg_print(Ind, "An image forms in your mind...");
-				detection(Ind);
+				detection(Ind, DEFAULT_RADIUS * 2);
 				o_ptr->timeout = rand_int(55) + 55;
 				break;
 			}
@@ -5025,8 +5025,8 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "The stone glows a deep green...");
 				wiz_lite(Ind);
-				(void)detect_sdoor(Ind);
-				(void)detect_trap(Ind);
+				(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
+				(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
 				o_ptr->timeout = rand_int(100) + 100;
 				break;
 			}
@@ -5515,8 +5515,8 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "The stone glows a deep green...");
 				wiz_lite_extra(Ind);
-				(void)detect_trap(Ind);
-				(void)detect_sdoor(Ind);
+				(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
+				(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
 				//				(void)detect_stair(Ind);
 				o_ptr->timeout = rand_int(100) + 100;
 				break;
@@ -5705,7 +5705,7 @@ void do_cmd_activate(int Ind, int item)
 	}
 	else if (is_ego_p(o_ptr, EGO_NOLDOR))
 	{
-		detect_treasure(Ind);
+		detect_treasure(Ind, DEFAULT_RADIUS);
 		o_ptr->timeout = 10 + randint(20);
 
 		/* Window stuff */
