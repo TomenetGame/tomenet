@@ -946,7 +946,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 	u32b f5_mask = 0L;
 	u32b f6_mask = 0L;
 
-	int py = p_ptr->py, px = p_ptr->px;
+	//int py = p_ptr->py, px = p_ptr->px;
 
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
@@ -1196,8 +1196,8 @@ bool monst_check_antimagic(int Ind, int m_idx)
 	worldpos *wpos = &m_ptr->wpos;
 
 	cave_type **zcave;
-	int i, x, y, x2 = m_ptr->fx, y2 = m_ptr->fy;
-	int dis, antichance;	// , antidis;
+	int i, x2 = m_ptr->fx, y2 = m_ptr->fy;
+	int antichance;	// , dis, antidis;
 
 	if (!(zcave=getcave(wpos))) return(FALSE);
 
@@ -1485,7 +1485,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
 
-	object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
+	//object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
 	char		m_name[80];
 	char		m_poss[80];
@@ -3807,7 +3807,7 @@ static bool find_noeffect(int m_idx, int *yp, int *xp)
 	int fy = m_ptr->fy;
 	int fx = m_ptr->fx;
 
-	int y, x, d = 1, dis, i;
+	int y, x, d = 1, i;
 	int gy = 0, gx = 0, gdis = 0;
 
 	/* Hack -- please don't run to northwest always */
@@ -3891,10 +3891,10 @@ static bool find_terrain(int m_idx, int *yp, int *xp)
 	int fy = m_ptr->fy;
 	int fx = m_ptr->fx;
 
-	byte feat;	// maybe feat[10] or sth
+	byte feat = FEAT_DEEP_WATER;	// maybe feat[10] or sth
 	bool negate = FALSE;
 
-	int y, x, d = 1, dis, i;
+	int y, x, d = 1, i;
 	int gy = 0, gx = 0, gdis = 0;
 
 	cave_type **zcave;
@@ -3902,7 +3902,7 @@ static bool find_terrain(int m_idx, int *yp, int *xp)
 	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
 
 	/* What do you want? */
-	if (r_ptr->flags7 & RF7_AQUATIC) feat == FEAT_DEEP_WATER;
+	if (r_ptr->flags7 & RF7_AQUATIC) feat = FEAT_DEEP_WATER;
 	else
 	{
 		feat = FEAT_DEEP_WATER;
@@ -4281,15 +4281,21 @@ static bool monster_can_pickup(monster_race *r_ptr, object_type *o_ptr)
 
 static int digging_difficulty(byte feat)
 {
+#if 0
+	if (!(f_info[feat].flags1 & FF1_TUNNELABLE) ||
+			(f_info[feat].flags1 & FF1_PERMANENT)) return (3000);
+#endif	// 0
+
+	if ((feat == FEAT_SANDWALL_H) || (feat == FEAT_SANDWALL_K)) return (25);
+	if (feat == FEAT_RUBBLE) return (30);
+	if (feat == FEAT_TREES) return (50);
+	if (feat == FEAT_DEAD_TREE) return (30);	/* hehe it's evil */
 	if (feat >= FEAT_WALL_EXTRA) return (200);
-	else if (feat >= FEAT_MAGMA)
+	if (feat >= FEAT_MAGMA)
 	{
 		if ((feat - FEAT_MAGMA) & 0x01) return (100);
 		else return (50);
 	}
-	else if (feat == FEAT_RUBBLE) return (30);
-	else if (feat == FEAT_TREES) return (50);
-	else if (feat == FEAT_DEAD_TREE) return (30);	/* hehe it's evil */
 
 	/* huh? ...it's not our role */
 	return (3000);
@@ -5628,18 +5634,14 @@ static void process_monster(int Ind, int m_idx)
 
 		/* Monster destroys walls (and doors) */
 #ifdef MONSTER_DIG_FACTOR
-/* EVILEYE - correct me if i interpreted this wrongly. *//*
+/* EVILEYE - correct me if i interpreted this wrongly. */
+/* You're right, mine was wrong - Jir - */
 		else if (r_ptr->flags2 & RF2_KILL_WALL ||
-				(!(r_ptr->flags1 & RF1_NEVER_MOVE ||
-				   r_ptr->flags2 & RF2_EMPTY_MIND ||
-				   r_ptr->flags2 & RF2_STUPID)) &&
-				(!rand_int(digging_difficulty(c_ptr->feat) * MONSTER_DIG_FACTOR)
-				 && magik(5 + r_ptr->level))) 
-*/
-
-		else if (r_ptr->flags2 & RF2_KILL_WALL ||
-			(!(r_ptr->flags2 & RF1_NEVER_MOVE || r_ptr->flags2 & RF2_EMPTY_MIND || r_ptr->flags2 & RF2_STUPID) &&
-			(!rand_int(digging_difficulty(c_ptr->feat) * MONSTER_DIG_FACTOR) && magik(5+r_ptr->level))))
+			(!(r_ptr->flags2 & RF1_NEVER_MOVE ||
+			   r_ptr->flags2 & RF2_EMPTY_MIND ||
+			   r_ptr->flags2 & RF2_STUPID) &&
+			(!rand_int(digging_difficulty(c_ptr->feat) * MONSTER_DIG_FACTOR)
+			 && magik(5+r_ptr->level))))
 #else
 		else if (r_ptr->flags2 & RF2_KILL_WALL)
 #endif
@@ -5895,6 +5897,21 @@ static void process_monster(int Ind, int m_idx)
 				do_turn = TRUE;
 		}
 
+		/*
+		 * Check if monster can cross terrain
+		 * This is checked after the normal attacks
+		 * to allow monsters to attack an enemy,
+		 * even if it can't enter the terrain.
+		 */
+		if (do_move && !monster_can_cross_terrain(c_ptr->feat, r_ptr)
+//				&& monster_can_cross_terrain(zcave[oy][ox].feat, r_ptr)
+				)
+		{
+			/* Assume no move allowed */
+			do_move = FALSE;
+		}
+
+#if 0
 		/* restrict aquatic life to the pond */
 		if(do_move && (r_ptr->flags7 & RF7_AQUATIC)){
 			if((c_ptr->feat != FEAT_DEEP_WATER) &&
@@ -5909,6 +5926,7 @@ static void process_monster(int Ind, int m_idx)
 				(zcave[oy][ox].feat != FEAT_DEEP_WATER))
 				do_move = FALSE;
 		}
+#endif	// 0
 
 		/* A monster is in the way */
 		if (do_move && c_ptr->m_idx > 0)

@@ -3647,8 +3647,16 @@ bool show_floor_feeling(int Ind)
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos = &p_ptr->wpos;
 	dun_level *l_ptr = getfloor(wpos);
+	bool felt = FALSE;
 
-	if (!l_ptr) return(FALSE);
+	/* XXX devise a better formula */
+	if (p_ptr->lev * ((p_ptr->lev >= 40) ? 3 : 2) + 5 < getlevel(wpos))
+	{
+		msg_print(Ind, "\377oYou feel an imminent danger!");
+		felt = TRUE;
+	}
+
+	if (!l_ptr) return(felt);
 
 	/* Hack^2 -- display the 'feeling' */
 	if (l_ptr->flags1 & LF1_NO_TELEPORT)
@@ -3664,7 +3672,7 @@ bool show_floor_feeling(int Ind)
 	if (l_ptr->flags1 & LF1_NO_DESTROY)
 		msg_print(Ind, "\377oThe walls here seem very solid.");
 
-	return(l_ptr->flags1 & LF1_FEELING_MASK ? TRUE : FALSE);
+	return(l_ptr->flags1 & LF1_FEELING_MASK ? TRUE : felt);
 }
 
 /*

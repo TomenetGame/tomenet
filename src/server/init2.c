@@ -1138,6 +1138,241 @@ static errr init_re_info(void)
 
 
 /*
+ * Initialize the "d_info" array
+ *
+ * Note that we let each entry have a unique "name" and "short name" string,
+ * even if the string happens to be empty (everyone has a unique '\0').
+ */
+static errr init_d_info(void)
+{
+	int fd;
+
+	int mode = 0644;
+
+	errr err = 0;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+
+	/*** Make the header ***/
+
+	/* Allocate the "header" */
+	MAKE(d_head, header);
+
+	/* Save the "version" */
+	d_head->v_major = VERSION_MAJOR;
+	d_head->v_minor = VERSION_MINOR;
+	d_head->v_patch = VERSION_PATCH;
+	d_head->v_extra = 0;
+
+	/* Save the "record" information */
+	d_head->info_num = MAX_D_IDX;
+	d_head->info_len = sizeof(dungeon_info_type);
+
+	/* Save the size of "d_head" and "d_info" */
+	d_head->head_size = sizeof(header);
+	d_head->info_size = d_head->info_num * d_head->info_len;
+
+
+#ifdef ALLOW_TEMPLATES
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "d_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Process existing "raw" file */
+	if (fd >= 0)
+	{
+#ifdef CHECK_MODIFICATION_TIME
+
+		err = check_modification_date(fd, "d_info.txt");
+
+#endif /* CHECK_MODIFICATION_TIME */
+
+		/* Attempt to parse the "raw" file */
+		if (!err)
+			err = init_d_info_raw(fd);
+
+		/* Close it */
+		(void)fd_close(fd);
+
+		/* Success */
+		if (!err) return (0);
+
+		/* Information */
+		msg_print("Ignoring obsolete/defective 'd_info.raw' file.");
+		msg_print(NULL);
+	}
+#endif	// USE_RAW_FILES
+
+
+	/*** Make the fake arrays ***/
+
+	/* Assume the size of "d_name" and "d_text" */
+#if 0
+	fake_name_size = FAKE_NAME_SIZE;
+	fake_text_size = FAKE_TEXT_SIZE;
+#else	// 0
+	fake_name_size = 20 * 1024L;
+	fake_text_size = 60 * 1024L;
+#endif	// 0
+
+	/* Allocate the "d_info" array */
+	C_MAKE(d_info, d_head->info_num, dungeon_info_type);
+
+	/* Hack -- make "fake" arrays */
+	C_MAKE(d_name, fake_name_size, char);
+	C_MAKE(d_text, fake_text_size, char);
+
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "d_info.txt");
+
+	/* Grab permission */
+	//safe_setuid_grab();
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Drop permission */
+	//safe_setuid_drop();
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 'd_info.txt' file.");
+
+	/* Parse the file */
+	err = init_d_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		s_printf("Error %d at line %d df 'd_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
+		//msg_print(NULL);
+
+		/* Quit */
+		quit("Error in 'd_info.txt' file.");
+	}
+
+
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+	/*** Dump the binary image file ***/
+
+	/* File type is "DATA" */
+	FILE_TYPE(FILE_TYPE_DATA);
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "d_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Kill the old file */
+	(void)fd_kill(buf);
+
+	/* Attempt to create the raw file */
+	fd = fd_make(buf, mode);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Dump to the file */
+	if (fd >= 0)
+	{
+		/* Dump it */
+		fd_write(fd, (char*)(d_head), d_head->head_size);
+
+		/* Dump the "r_info" array */
+		fd_write(fd, (char*)(d_info), d_head->info_size);
+
+		/* Dump the "r_name" array */
+		fd_write(fd, (char*)(d_name), d_head->name_size);
+
+		/* Dump the "r_text" array */
+		fd_write(fd, (char*)(d_text), d_head->text_size);
+
+		/* Close */
+		(void)fd_close(fd);
+	}
+
+
+	/*** Kill the fake arrays ***/
+
+	/* Free the "d_info" array */
+	C_KILL(d_info, d_head->info_num, dungeon_info_type);
+
+	/* Hack -- Free the "fake" arrays */
+	C_KILL(d_name, fake_name_size, char);
+	C_KILL(d_text, fake_text_size, char);
+
+	/* Forget the array sizes */
+	fake_name_size = 0;
+	fake_text_size = 0;
+
+#endif	// USE_RAW_FILES
+#endif	/* ALLOW_TEMPLATES */
+
+
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "d_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Process existing "raw" file */
+	if (fd < 0) quit("Cannot load 'd_info.raw' file.");
+
+	/* Attempt to parse the "raw" file */
+	err = init_d_info_raw(fd);
+
+	/* Close it */
+	(void)fd_close(fd);
+
+	/* Error */
+	if (err) quit("Cannot parse 'd_info.raw' file.");
+#endif	// USE_RAW_FILES
+
+	/* Success */
+	return (0);
+}
+
+
+/*
  * Initialize the "t_info" array
  *
  * Note that we let each entry have a unique "name" and "text" string,
@@ -2567,6 +2802,52 @@ static errr init_alloc(void)
 	return (0);
 }
 
+#if 0
+/* 
+ * Mark guardians and their artifacts with SPECIAL_GENE flag
+ */
+static void init_guardians(void)
+{
+	int i;
+
+	/* Scan dungeons */
+	for (i = 0; i < max_d_idx; i++)
+	{
+		dungeon_info_type *d_ptr = &d_info[i];
+
+		/* Mark the guadian monster */
+		if (d_ptr->final_guardian)
+		{
+			monster_race *r_ptr = &r_info[d_ptr->final_guardian];
+
+			r_ptr->flags9 |= RF9_SPECIAL_GENE;
+
+			/* Mark the final artifact */
+			if (d_ptr->final_artifact)
+			{
+				artifact_type *a_ptr = &a_info[d_ptr->final_artifact];
+
+				a_ptr->flags4 |= TR4_SPECIAL_GENE;
+			}
+
+			/* Mark the final object */
+			if (d_ptr->final_object)
+			{
+				object_kind *k_ptr = &k_info[d_ptr->final_object];
+
+				k_ptr->flags4 |= TR4_SPECIAL_GENE;
+			}
+
+			/* Give randart if there are no final artifacts */
+			if (!(d_ptr->final_artifact) && !(d_ptr->final_object))
+			{
+				r_ptr->flags7 |= RF7_DROP_RANDART;
+			}
+		}
+	}
+}
+#endif	// 0
+
 bool str_to_boolean(char * str)
 {
 	/* false by default */
@@ -2917,6 +3198,11 @@ void init_some_arrays(void)
 	s_printf("[Initializing arrays... (ego-monsters)]\n");
 	if (init_re_info()) quit("Cannot initialize ego monsters");
 #endif	// RANDUNIS
+
+	/* Initialize dungeon type info */
+	s_printf("[Initializing arrays... (dungeon types)]\n");
+	if (init_d_info()) quit("Cannot initialize dungeon types");
+	//init_guardians();
 
 	/* Initialize feature info */
 	s_printf("[Initializing arrays... (vaults)]\n");

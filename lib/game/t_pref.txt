@@ -17,7 +17,7 @@ F:|:7:3:0:0:0:0:0:2
 F:>:7:3:0:0:0:0:0:3
 
 # XXX
-# Angband Dungeon entrance
+# Angband Tower entrance
 F:<:6:3:0:0:0:0:0:5
 
 # Mountain chain

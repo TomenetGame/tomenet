@@ -67,7 +67,7 @@ typedef struct {
 } connection_t;
 
 static void Contact(int fd, int arg);
-static void Console(int fd, int arg);
+//static void Console(int fd, int arg);
 static int Enter_player(char *real, char *name, char *addr, char *host,
 				unsigned version, int port, int *login_port, int fd);
 

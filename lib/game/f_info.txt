@@ -901,3 +901,9 @@ G:::w
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE
 F:CAN_FLY | SUPPORT_LIGHT | PERMANENT
 D:1:Looks like this pile of rubble is quite hard.
+
+# Rocky ground - rougher terrain.
+N:207:rocky ground
+G:.:s
+F:FLOOR | SUPPORT_LIGHT | CAN_RUN
+F:DONT_NOTICE_RUNNING

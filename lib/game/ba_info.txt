@@ -67,19 +67,19 @@ I:42:0:l:0
 
 N:9:In-Between
 C:0:0:0
-I:12:0:b:0
+I:12:0:b:4
 
 N:10:Play craps
 C:0:0:0
-I:14:0:c:0
+I:14:0:c:4
 
 N:11:Spin the wheel
 C:0:0:0
-I:15:0:s:0
+I:15:0:s:4
 
 N:12:Play dice slots
 C:0:0:0
-I:16:0:d:0
+I:16:0:d:4
 
 N:13:Game rules
 C:0:0:0
@@ -124,7 +124,7 @@ I:55:0:m:0
 # This should have new flag (2 weps)
 N:23:Compare weapons
 C:220:200:180
-I:21:0:c:80
+I:21:0:c:128
 
 N:24:Enchant weapon
 C:750:700:150
@@ -226,7 +226,7 @@ I:26:0:i:0
 #for Star-Dome
 N:47:Recharge item
 C:1200:1000:150
-I:25:0:r:80
+I:25:0:r:2
 
 #for Valarin Temple
 N:48:Restoration
@@ -269,7 +269,7 @@ I:44:0:g:1
 #maybe not for v4
 N:56:Request an item
 C:0:0:0
-I:51:2:r:80
+I:51:2:r:128
 
 N:57:Ask for loan
 C:0:0:0

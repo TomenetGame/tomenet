@@ -415,12 +415,18 @@ static void display_fruit(int row, int col, int fruit)
 	}
 }
 
+#endif	// 0
 
 /*
  * gamble_comm
  */
-static bool gamble_comm(int cmd)
+/*
+ * Well it does work, but I want gambles playable 'between players'..
+ * - Jir -
+ */
+static bool gamble_comm(int Ind, int cmd, int gold)
 {
+	player_type *p_ptr = Players[Ind];
 	int roll1, roll2, roll3, choice, odds, win;
 
 	s32b wager;
@@ -433,19 +439,25 @@ static bool gamble_comm(int cmd)
 
 	char out_val[160], tmp_str[80], again;
 
-	cptr p;
+	//cptr p;
 
 
-	screen_save();
+	//screen_save();
 
 	if (cmd == BACT_GAMBLE_RULES)
 	{
 		/* Peruse the gambling help file */
-		(void)show_file("gambling.txt", NULL, 0, 0);
+		//(void)show_file(Ind, "gambling.txt", NULL, 0, 0);
+
+		/* Get the filename */
+		char    path[MAX_PATH_LENGTH];
+
+		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "gambling.txt");
+		do_cmd_check_other_prepare(Ind, path);
 	}
 	else
 	{
-		clear_bldg(5, 23);
+		//clear_bldg(5, 23);
 
 		/* Set maximum bet */
 		if (p_ptr->lev < 10)
@@ -454,6 +466,7 @@ static bool gamble_comm(int cmd)
 			maxbet = (p_ptr->lev * 1000);
 
 		/* Get the wager */
+#if 0
 		strcpy(out_val, "");
 		strnfmt(tmp_str, 80, "Your wager (1-%ld) ? ", maxbet);
 		get_string(tmp_str, out_val,32);
@@ -462,35 +475,40 @@ static bool gamble_comm(int cmd)
 		for (p = out_val; *p == ' '; p++);
 
 		wager = atol(p);
+#endif	// 0
+
+		wager = gold;
 
 		if (wager > p_ptr->au)
 		{
-			msg_print("Hey! You don't have the gold - get out of here!");
-			msg_print(NULL);
-			screen_load();
+			msg_print(Ind, "Hey! You don't have the gold - get out of here!");
+			store_kick(Ind, FALSE);
+			//screen_load();
 			return(FALSE);
 		}
 		else if (wager > maxbet)
 		{
-			msg_format("I'll take $%ld of that. Keep the rest.", maxbet);
+			msg_format(Ind, "I'll take $%ld of that. Keep the rest.", maxbet);
 			wager = maxbet;
 		}
 		else if (wager < 1)
 		{
-			msg_print("Ok, we'll start with $1.");
+			msg_print(Ind, "Ok, we'll start with $1.");
 
 			wager = 1;
 		}
-		msg_print(NULL);
+		//msg_print(Ind, NULL);
 		win = FALSE;
 		odds = 0;
 		oldgold = p_ptr->au;
 
+#if 0
 		strnfmt(tmp_str, 80, "Gold before game: %9ld", oldgold);
 		prt(tmp_str,20,2);
 
 		strnfmt(tmp_str, 80, "Current Wager:    %9ld", wager);
 		prt(tmp_str,21,2);
+#endif	// 0
 
 		do
 		{
@@ -498,17 +516,16 @@ static bool gamble_comm(int cmd)
 			{
 				case BACT_IN_BETWEEN: /* Game of In-Between */
 				{
-					c_put_str(TERM_GREEN, "In Between",5,2);
+					//c_put_str(TERM_GREEN, "In Between",5,2);
+					msg_print(Ind, "\377GIn Between");
 					odds = 3;
 					win = FALSE;
 					roll1 = randint(10);
 					roll2 = randint(10);
 					choice = randint(10);
-					strnfmt(tmp_str, 80, "Black die: %d       Black Die: %d",
+					msg_format(Ind, "Black die: %d       Black Die: %d",
 					        roll1, roll2);
-					prt(tmp_str,8,3);
-					strnfmt(tmp_str, 80, "Red die: %d", choice);
-					prt(tmp_str,11,14);
+					msg_format(Ind, "Red die: %d", choice);
 					if (((choice > roll1) && (choice < roll2)) ||
 					    ((choice < roll1) && (choice > roll2)))
 						win = TRUE;
@@ -517,16 +534,15 @@ static bool gamble_comm(int cmd)
 				}
 				case BACT_CRAPS:  /* Game of Craps */
 				{
-					c_put_str(TERM_GREEN, "Craps",5,2);
+					msg_print(Ind, "\377GCraps");
 					win = 3;
 					odds = 1;
 					roll1 = randint(6);
 					roll2 = randint(6);
 					roll3 = roll1 +  roll2;
 					choice = roll3;
-					strnfmt(tmp_str, 80, "First roll: %d %d    Total: %d", roll1, 
+					msg_format(Ind, "First roll: %d %d    Total: %d", roll1, 
 					        roll2, roll3);
-					prt(tmp_str,7,5);
 					if ((roll3 == 7) || (roll3 == 11))
 						win = TRUE;
 					else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12))
@@ -535,15 +551,15 @@ static bool gamble_comm(int cmd)
 					{
 						do
 						{
-							msg_print("Hit any key to roll again");
-							msg_print(NULL);
+							//msg_print(Ind, "Hit any key to roll again");
+							//msg_print(Ind, NULL);
+							msg_print(Ind, "Rerolling..");
 							roll1 = randint(6);
 							roll2 = randint(6);
 							roll3 = roll1 +  roll2;
 
-							strnfmt(tmp_str, 80, "Roll result: %d %d   Total:     %d",
+							msg_format(Ind, "Roll result: %d %d   Total:     %d",
 							        roll1, roll2, roll3);
-							prt(tmp_str,8,5);
 							if (roll3 == choice)
 								win = TRUE;
 							else if (roll3 == 7)
@@ -554,6 +570,7 @@ static bool gamble_comm(int cmd)
 					break;
 				}
 
+#if 0
 				case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
 				{
 					win = FALSE;
@@ -567,15 +584,15 @@ static bool gamble_comm(int cmd)
 					choice = atol(p);
 					if (choice < 0)
 					{
-						msg_print("I'll put you down for 0.");
+						msg_print(Ind, "I'll put you down for 0.");
 						choice = 0;
 					}
 					else if (choice > 9)
 					{
-						msg_print("Ok, I'll put you down for 9.");
+						msg_print(Ind, "Ok, I'll put you down for 9.");
 						choice = 9;
 					}
-					msg_print(NULL);
+					msg_print(Ind, NULL);
 					roll1 = randint(10) - 1;
 					strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d",
 					        roll1);
@@ -622,21 +639,22 @@ static bool gamble_comm(int cmd)
 
 					break;
 				}
+#endif	// 0
 			}
 
 			if (win)
 			{
-				prt("YOU WON",16,37);
+				msg_print(Ind, "YOU WON");
 				p_ptr->au = p_ptr->au + (odds * wager);
-				strnfmt(tmp_str, 80, "Payoff: %d", odds);
-				prt(tmp_str, 17, 37);
+				msg_format(Ind, "Payoff: %d", odds);
 			}
 			else
 			{
-				prt("You Lost", 16, 37);
+				msg_print(Ind, "You lost");
 				p_ptr->au = p_ptr->au - wager;
-				prt("", 17, 37);
 			}
+			Send_gold(Ind, p_ptr->au, p_ptr->balance);
+#if 0
 			strnfmt(tmp_str, 80, "Current Gold:     %9ld", p_ptr->au);
 			prt(tmp_str, 22, 2);
 			prt("Again(Y/N)?", 18, 37);
@@ -644,29 +662,32 @@ static bool gamble_comm(int cmd)
 			again = inkey();
 			if (wager > p_ptr->au)
 			{
-				msg_print("Hey! You don't have the gold - get out of here!");
-				msg_print(NULL);
+				msg_print(Ind, "Hey! You don't have the gold - get out of here!");
+				msg_print(Ind, NULL);
 				screen_load();
 				return(FALSE);
 /*				strnfmt(tmp_str, 80, "Current Wager:    %9ld",wager);
 				prt(tmp_str, 17, 2); */
 			}
-		} while ((again == 'y') || (again == 'Y'));
+#endif	// 0
+//		} while ((again == 'y') || (again == 'Y'));
+		} while (FALSE);
 
+#if 0
 		prt("", 18, 37);
 		if (p_ptr->au >= oldgold) 
-			msg_print("You came out a winner! We'll win next time, I'm sure.");
+			msg_print(Ind, "You came out a winner! We'll win next time, I'm sure.");
 		else
-			msg_print("You lost gold! Haha, better head home.");
-		msg_print(NULL);
+			msg_print(Ind, "You lost gold! Haha, better head home.");
+		msg_print(Ind, NULL);
+#endif	// 0
 	}
 
-	screen_load();
+	//screen_load();
 
 	return(TRUE);
 }
 
-#endif	// 0
 
 /*
  * inn commands
@@ -1202,6 +1223,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 
 	bool repaired = FALSE;
 
+	u32b f1, f2, f3, f4, f5, esp;
 
 #if 0
 	if (set_reward && p_ptr->rewards[ireward])
@@ -1233,7 +1255,11 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 		{
 			object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
 
-			if ((o_ptr->name1 && (o_ptr->ident & 0x08))) /* ID_KNOWN */
+			/* Extract the flags */
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+			if ((o_ptr->name1 && (o_ptr->ident & 0x08)) || /* ID_KNOWN */
+					f5 & TR5_NO_ENCHANT)
 				msg_format(Ind, "%-40s: beyond our skills!", tmp_str);
 			else if (o_ptr->name1) 
 				msg_format(Ind, "%-40s: in fine condition", tmp_str);
@@ -1755,6 +1781,20 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 		}
 	}
 #endif	// 0
+	/* Similar penalty for those on black-list */
+	if (p_ptr->tim_blacklist)
+	{
+		if ((bact != BACT_SELL) && (bact != BACT_VIEW_BOUNTIES) &&
+		    (bact != BACT_SELL_CORPSES) &&
+		    (bact != BACT_VIEW_QUEST_MON) &&
+		    (bact != BACT_SELL_QUEST_MON) &&
+		    (bact != BACT_EXAMINE) && (bact != BACT_STEAL) &&
+		    (bact != BACT_PAY_BACK_LOAN) && (bact != BACT_BUY))
+		{
+			msg_print(Ind, "The owner refuses it.");
+			return FALSE;
+		}
+	}
 
 	/* check gold */
 	if (bcost > p_ptr->au)
@@ -1846,16 +1886,16 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			break;
 		}
 
+#endif	// 0
 		case BACT_IN_BETWEEN:
 		case BACT_CRAPS:
-		case BACT_SPIN_WHEEL:
-		case BACT_DICE_SLOTS:
+		//case BACT_SPIN_WHEEL:
+		//case BACT_DICE_SLOTS:
 		case BACT_GAMBLE_RULES:
 		{
-			gamble_comm(bact);
+			gamble_comm(Ind, bact, gold);
 			break;
 		}
-#endif	// 0
 
 		case BACT_REST:
 		case BACT_RUMORS:
@@ -2085,14 +2125,34 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			}
 			break;
 		}
+#endif	// 0
 
 		case BACT_MIMIC_NORMAL:
 		{
-			set_mimic(0,0);
-			paid = TRUE;
+			if (set_mimic(Ind, 0, 0)) paid = TRUE;	/* It's Shadow mimicry */
+			if (p_ptr->body_monster)
+			{
+				p_ptr->body_monster = 0;
+				p_ptr->body_changed = TRUE;
+				msg_print(Ind, "You polymorph back to the normal form!");
+				paid = TRUE;
+
+				note_spot(Ind, p_ptr->py, p_ptr->px);
+				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+				/* Recalculate mana */
+				p_ptr->update |= (PU_MANA | PU_HP | PU_BONUS | PU_VIEW);
+
+				/* Tell the client */
+				p_ptr->redraw |= PR_VARIOUS;
+
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+			}
 			break;
 		}
 
+#if 0
 		case BACT_VIEW_BOUNTIES:
 		{
 			show_bounties();
@@ -2160,14 +2220,15 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			store_examine(Ind, item);
 			break;
 		}
+#endif	// 0
 
-		/* XXX we should invent a 'decent' punishment for failures first */
 		case BACT_STEAL:
 		{
-			store_stole();
+			store_stole(Ind, item);
 			break;
 		}
 
+#if 0
 		/* XXX we'd simply better not to backport it */
 		case BACT_REQUEST_ITEM:
 		{

@@ -22,6 +22,26 @@
 
 # bug.txt should follow the exact same format
 
+28/08/2002 (Jir)
+[D]- most of DF1_* flags in generate.c are implemented.
+[D]- 'newbie tower' in Bree (with DF2_NO_DEATH)
+[D]- d_info.txt (parser only)
+[M]- better monster filtering in dungeon (ToME backport)
+[G]- player can try to steal from stores.
+[G]- more store actions (mimic/casino).  gambling.txt.
+[I]- detailed weapon/ammo damage report backported.
+[I]- town name is shown on the bottom of screen.
+[O]- Ent can 'eat' pint of ale/wine
+[P]- warning upon entering 'too-dangerous' area
+[P]- some more p_ptr->inval limitations (house, gaining lv{25})
+[m]- removed some compiler warnings from nserver.c
+[m]- created space around Gondolin, so that player won't be buried in the wall
+[m]- using player_can_enter for wall-dmg checks
+[B]- ranger's guild could enchant magic arrows.
+[B]- RF8_WILD_TOO flag kludge was broken (ToME bug? - init_r_info_txt)
+     It (should have) caused extra towns w/o any monsters.
+[B]- Sandwalls were handled as Granite when digging.
+
 26/08/2002 (Jir)
 [G]- ba_info.txt and bldg.c backported.
 [G]- merchants' guild. (some stores are not fully functional yet)
@@ -1975,6 +1995,9 @@ below this line are the unfixed bugs known:
      (not seen recently, but need to check)
 [B]- Ancient Blue Dragon appears regularly on 550 ft (didn't see a vault)
      (Hrm I've never met one -Jir)
+[B]- -read WoR scroll -> "Full" appeared as if I had eaten something.
+     (maybe already full, but wasn't shown. ^R)
+[B]- DSM morphing fails due to low Mimicry (most likely - check it)
 
 
 **below are bugs not shown recently(fixed??)**
@@ -2108,6 +2131,7 @@ memo and questions:
 + monster interferes too much (raise 'Calmness' skill)
   1-(1-0.08)^8 = 0.486
 + magic arrows are always (+0,+0)  (they're as such)
++ To-Dam bonus doesn't seem to apply to Ranged attack (it's really so, as V)
 
 ==== TODO: below this line are changes to be done in the future ====
 [minor ones]
@@ -2123,6 +2147,10 @@ memo and questions:
 - flavor variator (eg. 'light' + 'red' => 'light red potion')
 - reimplement /cast.  ('/cast Manathrust' would be useful for macro)
 - implement monster mimics in a nicer way
++ towns
+  - hint players of town locations (like 'Lorien is south-east to Bree')
+  - display town name
+  - Scroll of wilderness mapping?
 [C] chat-line cursor editing
 
 [major ones]
@@ -2131,7 +2159,7 @@ memo and questions:
   - hills, deserts, lavas, waters, underwaters, tundra, elemental planes
   - loophole(like wall, but missiles/breathes pass)
   - passage requirements/(eq)damages/themes/generators/AI
-  - terrain effects (like in some 'strategy' games)
+  - terrain effects (eg. +AC; like in some 'strategy' games)
 - variety of dungeon/floor types (d_info.txt)
   - several flags
 - fully-implemented multiple towns (t_*.txt)
@@ -2160,6 +2188,7 @@ memo and questions:
 [sober ones]
 - total source-code cleanup {takkaria?}
   - do :s/\/\/\(.*\)$/\/\*\1 \*\//
+  - rewrite externs.h
 - integrate save/load into one function (eg. saveload.c)
 - *_info.txt encryption
 - better remove 'take note'(monster knowledge) stuffs?
@@ -2199,6 +2228,8 @@ memo and questions:
 - Mage Staves should only be available for Sorc?
 - NO_MAGIC can be off-balancing (wizard and spellcasting monster will suck)
 - mimic could be too weak on the deepest levels
+- SANITY_BLAST should do insanity dmg according to the caster's level?
+  (too severe in shallow depth, almost no harm in deeper depth)
 
 ==== below this line are RFEs collected so far (good or bad) ====
 [minor ones]
@@ -2314,6 +2345,7 @@ memo and questions:
   + spiked/locked door should be *tougher* (cf. Vanilla)
   + IRC server connection
   + pattern vaults
+  + moonlit night (not easy under current code)
   
 [major ones]
 - monsters' interactions

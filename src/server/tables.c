@@ -3602,6 +3602,7 @@ town_extra town_profile[6]=
 {
 	/* Vanilla */
 	{
+		"Town",
 		FEAT_GRASS,
 		FEAT_GRASS,
 		90,
@@ -3609,10 +3610,13 @@ town_extra town_profile[6]=
 		1,
 		127,
 		FALSE,
+		0L,
+		0L,
 	},
 
 	/* Bree */
 	{
+		"Bree",
 		FEAT_TREES,
 		FEAT_GRASS,
 		98,
@@ -3620,10 +3624,13 @@ town_extra town_profile[6]=
 		1,
 		60,
 		FALSE,
+		0L,
+		0L,
 	},
 
 	/* Gondolin */
 	{
+		"Gondolin",
 		FEAT_GRASS,
 		FEAT_DIRT,
 		70,
@@ -3631,10 +3638,13 @@ town_extra town_profile[6]=
 		20,
 		80,
 		FALSE,
+		0L,
+		0L,
 	},
 
 	/* Minas Anor */
 	{
+		"Minas Anor",
 		FEAT_MOUNTAIN,
 		FEAT_SAND,
 		90,
@@ -3642,21 +3652,27 @@ town_extra town_profile[6]=
 		40,
 		80,
 		TRUE,
+		0L,
+		0L,
 	},
 
 	/* Lothlorien */
 	{
+		"Lothlorien",
 		FEAT_DEEP_WATER,
 		FEAT_SHAL_WATER,
 		80,
 		WILD_RIVER,
 		60,
 		80,
-		FALSE
+		FALSE,
+		0L,
+		0L,
 	},
 
 	/* Khazad-dum */
 	{
+		"Khazad-dum",
 		FEAT_MOUNTAIN,
 		FEAT_ASH,
 		70,
@@ -3664,6 +3680,8 @@ town_extra town_profile[6]=
 		80,
 		120,
 		TRUE,
+		0L,
+		0L,
 	}
 };
 

@@ -562,7 +562,7 @@ void setup_contact_socket(void)
 
 static int Reply(char *host_addr, int fd)
 {
-	int i, result;
+	int result;
 
 	// No silly redundancy with TCP
 	if ((result = DgramWrite(fd, ibuf.buf, ibuf.len)) == -1)
@@ -601,7 +601,7 @@ bool player_allowed(char *name){
 
 static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr)
 {
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 	char *ptr;
 	int i;
 
@@ -732,7 +732,7 @@ static void Console(int fd, int arg)
 		
 static void Contact(int fd, int arg)
 {
-	int bytes, login_port, newsock, i;
+	int bytes, login_port, newsock;
 	u16b version = 0;
 	unsigned magic;
 	unsigned short port;
@@ -848,7 +848,7 @@ static void Contact(int fd, int arg)
 static int Enter_player(char *real, char *nick, char *addr, char *host,
 				unsigned version, int port, int *login_port, int fd)
 {
-	int status;
+	//int status;
 
 	*login_port = 0;
 
@@ -1343,7 +1343,8 @@ static int Handle_listening(int ind)
 {
 	connection_t *connp = &Conn[ind];
 	unsigned char type;
-	int i, n, oldlen, result;
+	//int i, n, oldlen, result;
+	int  n, oldlen;
 //	s16b sex, race, class;
 	char nick[MAX_NAME_LEN], real[MAX_NAME_LEN], pass[MAX_NAME_LEN];
 
@@ -1715,7 +1716,7 @@ static void sync_options(int Ind, bool *options)
 static int Handle_login(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 	int i;
 	bool options[OPT_MAX];
 
@@ -1899,8 +1900,8 @@ static int Handle_login(int ind)
 void process_pending_commands(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;	
-	int player, type, result, (**receive_tbl)(int ind) = playing_receive, old_energy = 0;
+	player_type *p_ptr = NULL;	
+	int player = -1, type, result, (**receive_tbl)(int ind) = playing_receive, old_energy = 0;
 	int num_players_start = NumPlayers; // Hack to see if we have quit in this function
 
 	// Hack -- take any pending commands from the command que connp->q
@@ -2013,10 +2014,11 @@ void process_pending_commands(int ind)
  */
 void Handle_input(int fd, int arg)
 {
-	int ind = arg, player, old_numplayers = NumPlayers;
+	int ind = arg, player = -1, old_numplayers = NumPlayers;
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
-	int type, result, (**receive_tbl)(int ind);
+	player_type *p_ptr = NULL;
+	//int type, result, (**receive_tbl)(int ind);
+	int (**receive_tbl)(int ind);
 
 	if (connp->state & (CONN_PLAYING | CONN_READY))
 		receive_tbl = &playing_receive[0];
@@ -2226,7 +2228,7 @@ int Net_output(void)
 {
 	int	i;
 	connection_t *connp;
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	for (i = 1; i <= NumPlayers; i++)
 	{
@@ -2344,8 +2346,8 @@ int Send_leave(int ind, int id)
 // client informing it about the quit event.
 void do_quit(int ind, bool tellclient)
 {
-	int player;
-	player_type *p_ptr;
+	int player = -1;
+	player_type *p_ptr = NULL;
 	connection_t * connp = &Conn[ind];
 
 	if (connp->id != -1) 
@@ -2376,7 +2378,7 @@ void do_quit(int ind, bool tellclient)
 
 static int Receive_quit(int ind)
 {
-	int player, n;
+	int player = -1, n;
 	connection_t *connp = &Conn[ind];
 	char ch;
 
@@ -2398,7 +2400,7 @@ static int Receive_quit(int ind)
 
 static int Receive_login(int ind){
 	connection_t *connp=&Conn[ind];
-	unsigned char ch;
+	//unsigned char ch;
 	int n;
 	char choice[MAX_CHARS];
 	struct account *l_acc;
@@ -2676,7 +2678,7 @@ static int Receive_file(int ind){
 	unsigned long csum;
 	int n;
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 	int Ind;
 
 	Ind=GetInd[connp->id];
@@ -3461,6 +3463,23 @@ int Send_depth(int ind, struct worldpos *wpos)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
+	bool ville = istown(wpos);
+	cptr desc = "";
+	
+	/* XXX this kinda thing should be done *before* calling Send_*
+	 * in general, of course..	- Jir - */
+	if (ville)
+	{
+		int i;
+		for (i = 0; i < numtowns; i++)
+		{
+			if (town[i].x == wpos->wx && town[i].y == wpos->wy)
+			{
+				desc = town_profile[town[i].type].name;
+				break;
+			}
+		}
+	}
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -3482,10 +3501,10 @@ int Send_depth(int ind, struct worldpos *wpos)
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos), p_ptr2->word_recall);
+		Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos), p_ptr2->word_recall, desc);
 	      }
 	  }
-	return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos), p_ptr->word_recall);
+	return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos), p_ptr->word_recall, desc);
 }
 
 int Send_food(int ind, int food)
@@ -3937,7 +3956,7 @@ int Send_item_request(int ind)
 int Send_flush(int ind)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	//player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -3975,7 +3994,7 @@ int Send_flush(int ind)
  */
 int Send_line_info(int ind, int y)
 {
-	player_type *p_ptr = Players[ind], *p_ptr2;
+	player_type *p_ptr = Players[ind], *p_ptr2 = NULL;
 	connection_t *connp = &Conn[p_ptr->conn];
 	int x, x1, n;
 	char c;
@@ -4063,8 +4082,8 @@ int Send_mini_map(int ind, int y)
 	char c;
 	byte a;
 	int Ind2 = 0;
-	player_type *p_ptr2;
-	connection_t *connp2;
+	player_type *p_ptr2 = NULL;
+	connection_t *connp2 = NULL;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4570,7 +4589,7 @@ int Send_monster_health(int ind, int num, byte attr)
 int Send_chardump(int ind)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	//player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4618,7 +4637,7 @@ static int Receive_keepalive(int ind)
 	int n, Ind;
 	connection_t *connp = &Conn[ind];
 	char ch;
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
 	{
@@ -4643,11 +4662,11 @@ static int Receive_keepalive(int ind)
 static int Receive_walk(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch, dir;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -4725,11 +4744,11 @@ static int Receive_walk(int ind)
 static int Receive_run(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
-	int i, n, player;
+	int i, n, player = -1;
 	char dir;
 
 	if (connp->id != -1)
@@ -4824,7 +4843,7 @@ static int Receive_tunnel(int ind)
 
 	char ch, dir;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -4882,12 +4901,12 @@ static int Receive_tunnel(int ind)
 static int Receive_aim_wand(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch, dir;
 	s16b item;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -4932,11 +4951,11 @@ static int Receive_aim_wand(int ind)
 static int Receive_drop(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
-	int n, player; 
+	int n, player = -1; 
 	s16b item, amt;
 
 	if (connp->id != -1)
@@ -4982,12 +5001,12 @@ static int Receive_drop(int ind)
 static int Receive_fire(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch, dir = 5;
 
-	int n, player;
-	s16b item;
+	int n, player = -1;
+	//s16b item;
 
 	if (connp->id != -1)
 	{
@@ -5043,13 +5062,13 @@ static int Receive_fire(int ind)
 static int Receive_observe(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
 	s16b item;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5077,7 +5096,7 @@ static int Receive_stand(int ind)
 
 	char ch;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5117,13 +5136,13 @@ static int Receive_stand(int ind)
 static int Receive_destroy(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
 	s16b item, amt;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5168,11 +5187,11 @@ static int Receive_destroy(int ind)
 static int Receive_look(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch, dir;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5213,11 +5232,11 @@ static int Receive_look(int ind)
 static int Receive_activate_skill(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch, mkey, dir;
 
-	int n, player, old;
+	int n, player = -1, old = -1;
 
 	s16b book, spell;
 
@@ -5320,7 +5339,7 @@ static int Receive_open(int ind)
 
 	char ch, dir;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5375,11 +5394,11 @@ static int Receive_open(int ind)
 static int Receive_mind(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr, *p_ptr2;
+	player_type *p_ptr = NULL, *p_ptr2 = NULL;
 
 	char ch;
 
-	int n, player, Ind2;
+	int n, player = -1, Ind2;
 
 	if (connp->id != -1)
 	{
@@ -5469,11 +5488,11 @@ static int Receive_mind(int ind)
 static int Receive_ghost(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
-	int n, player;
+	int n, player = -1;
 
 	s16b ability;
 
@@ -5507,12 +5526,12 @@ static int Receive_ghost(int ind)
 static int Receive_quaff(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 	s16b item;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5557,12 +5576,12 @@ static int Receive_quaff(int ind)
 static int Receive_read(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 	s16b item;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5611,7 +5630,7 @@ static int Receive_search(int ind)
 
 	char ch;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5666,13 +5685,13 @@ static int Receive_search(int ind)
 static int Receive_take_off(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
 	s16b item;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5717,12 +5736,12 @@ static int Receive_take_off(int ind)
 static int Receive_use(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 	s16b item;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5767,11 +5786,11 @@ static int Receive_use(int ind)
 static int Receive_throw(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch, dir;
 
-	int n, player;
+	int n, player = -1;
 	s16b item;
 
 	if (connp->id != -1)
@@ -5817,13 +5836,13 @@ static int Receive_throw(int ind)
 static int Receive_wield(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
 	s16b item;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5868,12 +5887,12 @@ static int Receive_wield(int ind)
 static int Receive_zap(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 	s16b item;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5918,12 +5937,12 @@ static int Receive_zap(int ind)
 static int Receive_target(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
 	s16b dir;
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -5960,12 +5979,12 @@ static int Receive_target(int ind)
 static int Receive_target_friendly(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
 	s16b dir;
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -6003,11 +6022,11 @@ static int Receive_target_friendly(int ind)
 static int Receive_inscribe(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
-	int n, player;
+	int n, player = -1;
 
 	s16b item;
 
@@ -6051,11 +6070,11 @@ static int Receive_uninscribe(int ind)
 
 	char ch;
 
-	int n, player;
+	int n, player = -1;
 
 	s16b item;
 
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
@@ -6092,13 +6111,13 @@ static int Receive_uninscribe(int ind)
 static int Receive_activate(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
 	s16b item;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -6147,7 +6166,7 @@ static int Receive_bash(int ind)
 
 	char ch, dir;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -6205,7 +6224,7 @@ static int Receive_disarm(int ind)
 
 	char ch, dir;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -6259,12 +6278,12 @@ static int Receive_disarm(int ind)
 static int Receive_eat(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
 	s16b item;
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -6310,12 +6329,12 @@ static int Receive_eat(int ind)
 static int Receive_fill(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 	s16b item;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -6360,11 +6379,11 @@ static int Receive_fill(int ind)
 static int Receive_locate(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch, dir;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -6404,9 +6423,9 @@ static int Receive_map(int ind)
 
 	char ch;
 
-	int n, player;
+	int n, player = -1;
 
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
@@ -6446,9 +6465,9 @@ static int Receive_search_mode(int ind)
 
 	char ch;
 
-	int n, player;
+	int n, player = -1;
 
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
@@ -6485,11 +6504,11 @@ static int Receive_search_mode(int ind)
 static int Receive_close(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch, dir;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -6534,13 +6553,13 @@ static int Receive_close(int ind)
 static int Receive_skill_mod(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
 	s32b i;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -6564,11 +6583,11 @@ static int Receive_skill_mod(int ind)
 static int Receive_go_up(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -6613,11 +6632,11 @@ static int Receive_go_up(int ind)
 static int Receive_go_down(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -6666,9 +6685,9 @@ static int Receive_direction(int ind)
 
 	char ch, dir;
 
-	int n, player;
+	int n, player = -1;
 
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
@@ -6711,9 +6730,9 @@ static int Receive_item(int ind)
 
 	s16b item;
 
-	int n, player;
+	int n, player = -1;
 
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
@@ -6755,7 +6774,7 @@ static int Receive_message(int ind)
 
 	char ch, buf[1024];
 
-	int n, player;
+	int n, player = -1;
 	if (connp->id != -1) player = GetInd[connp->id];
 	else player = 0;
 
@@ -6774,9 +6793,9 @@ static int Receive_message(int ind)
 static int Receive_admin_house(int ind){
 	connection_t *connp = &Conn[ind];
 	char ch, dir;
-	int n,player;
+	int n,player = -1;
 	char buf[80];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
@@ -6811,10 +6830,10 @@ static int Receive_admin_house(int ind){
 static int Receive_purchase(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
-	int n, player;
+	int n, player = -1;
 	s16b item, amt;
 
 	if (connp->id != -1)
@@ -6857,9 +6876,9 @@ static int Receive_sell(int ind)
 	connection_t *connp = &Conn[ind];
 
 	char ch;
-	int n, player;
+	int n, player = -1;
 	s16b item, amt;
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
@@ -6897,10 +6916,10 @@ static int Receive_sell(int ind)
 static int Receive_store_leave(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -6970,8 +6989,8 @@ static int Receive_store_confirm(int ind)
 {
 	connection_t *connp = &Conn[ind];
 	char ch;
-	int n, player;
-	player_type *p_ptr;
+	int n, player = -1;
+	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
@@ -7013,11 +7032,11 @@ static int Receive_store_confirm(int ind)
 static int Receive_store_examine(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
-	int n, player;
-	s16b item, amt;
+	int n, player = -1;
+	s16b item;
 
 	if (connp->id != -1)
 	{
@@ -7055,7 +7074,7 @@ static int Receive_store_examine(int ind)
 static int Receive_store_command(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch;
 	int n, player = 0, gold;
@@ -7098,9 +7117,9 @@ static int Receive_store_command(int ind)
 static int Receive_drop_gold(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 	char ch;
-	int n, player;
+	int n, player = -1;
 	s32b amt;
 
 	if (connp->id != -1)
@@ -7146,11 +7165,11 @@ static int Receive_drop_gold(int ind)
 static int Receive_steal(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch, dir;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -7196,12 +7215,12 @@ static int Receive_steal(int ind)
 static int Receive_King(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	byte type;
 	char ch;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -7253,8 +7272,8 @@ static int Receive_King(int ind)
 static int Receive_redraw(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
-	int player, n;
+	player_type *p_ptr = NULL;
+	int player = -1, n;
 	char ch, mode;
 
 	if (connp->id != -1)
@@ -7324,8 +7343,8 @@ static int Receive_redraw(int ind)
 static int Receive_rest(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
-	int player, n;
+	player_type *p_ptr = NULL;
+	int player = -1, n;
 	char ch;
 
 	if (connp->id != -1)
@@ -7437,8 +7456,8 @@ void Handle_clear_buffer(int Ind)
 static int Receive_clear_buffer(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
-	int player, n;
+	player_type *p_ptr = NULL;
+	int player = -1, n;
 	char ch;
 
 	if (connp->id != -1)
@@ -7492,7 +7511,7 @@ static int Receive_clear_buffer(int ind)
 static int Receive_special_line(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	int player, n;
+	int player = -1, n;
 	char ch, type;
 	s16b line;
 
@@ -7581,8 +7600,8 @@ static int Receive_special_line(int ind)
 static int Receive_options(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
-	int player, i, n;
+	player_type *p_ptr = NULL;
+	int player = -1, i, n;
 	char ch;
 
 	if (connp->id != -1)
@@ -7627,7 +7646,7 @@ static int Receive_options(int ind)
 static int Receive_suicide(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	int player, n;
+	int player = -1, n;
 	char ch;
 
 	if (connp->id != -1)
@@ -7650,7 +7669,7 @@ static int Receive_suicide(int ind)
 static int Receive_party(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	int player, n;
+	int player = -1, n;
 	char ch, buf[160];
 	s16b command;
 
@@ -7711,7 +7730,7 @@ static int Receive_party(int ind)
 
 static int Receive_guild(int ind){
 	connection_t *connp = &Conn[ind];
-	int player, n;
+	int player = -1, n;
 	char ch, buf[160];
 	s16b command;
 
@@ -7855,7 +7874,7 @@ bool player_is_king(int Ind)
 static int Receive_master(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	int player, n;
+	int player = -1, n;
 	char ch, buf[160];
 	s16b command;
 
@@ -7959,10 +7978,10 @@ static int Receive_master(int ind)
 
 static int Receive_autophase(int ind)
 {
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 	connection_t *connp = &Conn[ind];
 	object_type *o_ptr;
-	int player, n;
+	int player = -1, n;
 
 	if (connp->id != -1) player = GetInd[connp->id];
 		else player = 0;
@@ -8006,11 +8025,11 @@ void end_mind(int Ind, bool update){
 static int Receive_spike(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch, dir;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -8058,11 +8077,11 @@ static int Receive_spike(int ind)
 static int Receive_raw_key(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 
 	char ch, key;
 
-	int n, player;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
@@ -8097,7 +8116,7 @@ static int Receive_raw_key(int ind)
 			switch (key)
 			{
 				default:
-					msg_format(player, "'%c' key does not work in stores.", key);
+					msg_format(player, "'%c' key does not work in this building.", key);
 					break;
 			}
 		}

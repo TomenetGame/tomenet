@@ -1838,8 +1838,11 @@ static bool process_player_end_aux(int Ind)
 		{
 			/* Player can walk through trees */
 			//if ((PRACE_FLAG(PR1_PASS_TREE) || (get_skill(SKILL_DRUID) > 15)) && (cave[py][px].feat == FEAT_TREES))
+#if 0
 			if ((p_ptr->prace == RACE_ENT || p_ptr->fly) &&
 					(c_ptr->feat == FEAT_TREES))
+#endif	// 0
+			if (player_can_enter(Ind, c_ptr->feat))
 			{
 				/* Do nothing */
 			}
@@ -2647,6 +2650,12 @@ static bool process_player_end_aux(int Ind)
 		}
 	}
 
+	if (p_ptr->tim_blacklist)
+	{
+		/* Count down towards turnout */
+		p_ptr->tim_blacklist--;
+	}
+
 	/* Delayed Word-of-Recall */
 	if (p_ptr->word_recall)
 	{
@@ -2716,7 +2725,9 @@ static bool process_player_end_aux(int Ind)
 			/* why wz again? (jir) */
 			else if (!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN) ))
 			{
-				if ((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] & (1 << (wild_idx(&p_ptr->recall_pos))%8))) ||
+				if (((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] &
+								(1 << (wild_idx(&p_ptr->recall_pos))%8))) &&
+						!is_admin(p_ptr) ) ||
 						inarea(&p_ptr->wpos, &p_ptr->recall_pos))
 				{
 					/* lazy -- back to the centre of the world

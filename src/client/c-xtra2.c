@@ -339,7 +339,7 @@ void do_cmd_messages_chatonly(void)
 	cptr msg_killed = "was killed by";
 	cptr msg_destroyed = "ghost was destroyed by";
 	cptr msg_suicide = "committed suicide.";
-	cptr msg_telepath = "mind";
+	//cptr msg_telepath = "mind";
 
 
 	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
@@ -614,7 +614,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode)
 	cptr msg_killed = "was killed by";
 	cptr msg_destroyed = "ghost was destroyed by";
 	cptr msg_suicide = "committed suicide.";
-	cptr msg_telepath = "mind";
+	//cptr msg_telepath = "mind";
 
 
 	char buf[160];

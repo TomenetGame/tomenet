@@ -2729,7 +2729,9 @@ void check_experience(int Ind)
 
 	bool newlv = FALSE;
 
+#ifdef LEVEL_GAINING_LIMIT
 	int limit;
+#endif	// LEVEL_GAINING_LIMIT
 
 	/* paranoia -- fix the max level first */
 	if (p_ptr->lev > p_ptr->max_plv)
@@ -2794,6 +2796,11 @@ void check_experience(int Ind)
 			(p_ptr->exp >= ((s64b)((s64b)player_exp[p_ptr->lev-1] *
 								   (s64b)p_ptr->expfact / 100L))))
 	{
+		if(p_ptr->inval && p_ptr->lev >= 25){
+			msg_print(Ind, "\377rYou cannot gain level further. Ask an admin to validate your account.");
+			return;
+		}
+
 		process_hooks(HOOK_PLAYER_LEVEL, "d", Ind);
 
 		/* Gain a level */
@@ -3856,10 +3863,11 @@ void player_death(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
+	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	char buf[1024];
 	int i;
-	wilderness_type *wild;
-	bool hell=TRUE;
+	//wilderness_type *wild;
+	bool hell=TRUE, secure = FALSE;
 
 	/* very very rare case, but this can happen(eg. starvation) */
 	if (p_ptr->store_num > -1)
@@ -3868,16 +3876,21 @@ void player_death(int Ind)
 		Send_store_kick(Ind);
 	}
 
-	/* Hack -- amulet of life saving */
-	if (p_ptr->alive && p_ptr->inventory[INVEN_NECK].k_idx &&
-			p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING &&
-			p_ptr->fruit_bat != -1)
-	{
-		msg_print(Ind, "\377oYour amulet shatters into pieces!");
+	if (d_ptr && (d_ptr->flags2 & DF2_NO_DEATH)) secure = TRUE;
 
-		inven_item_increase(Ind, INVEN_NECK, -99);
-//		inven_item_describe(Ind, INVEN_NECK);
-		inven_item_optimize(Ind, INVEN_NECK);
+	/* Hack -- amulet of life saving */
+	if (p_ptr->alive && p_ptr->fruit_bat != -1 && (secure ||
+			(p_ptr->inventory[INVEN_NECK].k_idx &&
+			p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING)))
+	{
+		if (!secure)
+		{
+			msg_print(Ind, "\377oYour amulet shatters into pieces!");
+
+			inven_item_increase(Ind, INVEN_NECK, -99);
+			//inven_item_describe(Ind, INVEN_NECK);
+			inven_item_optimize(Ind, INVEN_NECK);
+		}
 
 		/* Cure him from various maladies */
 //		p_ptr->black_breath = FALSE;
@@ -3904,16 +3917,39 @@ void player_death(int Ind)
 		/* Went mad? */
 		if (p_ptr->csane < 0) p_ptr->csane = p_ptr->msane / 10;
 
+		if (secure)
+		{
+			msg_print(Ind, "\377oYou die.. but your life was secured here!");
+
+			/* Send her back to the surface */
+			p_ptr->word_recall = 1;
+
+			/* Apply small penalty for death */
+			p_ptr->au = p_ptr->au * 4 / 5;
+			p_ptr->max_exp = p_ptr->max_exp * 4 / 5;
+			p_ptr->exp = p_ptr->max_exp;
+
+			check_experience(Ind);
+
+			/* Redraw */
+			p_ptr->redraw |= (PR_BASIC);
+
+			/* Update */
+			p_ptr->update |= (PU_BONUS);
+		}
+
 		/* Wow! You may return!! */
 		return;
 	}
 
 
 	if((!(p_ptr->mode & MODE_NO_GHOST)) && !cfg.no_ghost){
+#if 0
 		struct dungeon_type *dungeon;
 		wild=&wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		dungeon=(p_ptr->wpos.wz > 0 ? wild->tower : wild->dungeon);
-		if(!p_ptr->wpos.wz || !(dungeon->flags2 & DF2_HELL))
+#endif	// 0
+		if(!p_ptr->wpos.wz || !(d_ptr->flags2 & DF2_HELL))
 			hell=FALSE;
 	}
 

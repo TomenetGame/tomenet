@@ -1219,9 +1219,9 @@ static void calc_torch(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	
+#if 0
 	object_type *o_ptr = &p_ptr->inventory[INVEN_LITE];
 
-#if 0
 	/* Base light radius */
 	p_ptr->cur_lite = p_ptr->lite;
 
@@ -1493,31 +1493,31 @@ int get_weaponmastery_skill(player_type *p_ptr)
 /* Are all the ranged weapons wielded of the right type ? */
 int get_archery_skill(player_type *p_ptr)
 {
-	int i, skill = 0;
+	int skill = 0;
 	object_type *o_ptr;
 
-        o_ptr = &p_ptr->inventory[INVEN_BOW];
+	o_ptr = &p_ptr->inventory[INVEN_BOW];
 
-		if (!o_ptr->k_idx) return -1;
+	if (!o_ptr->k_idx) return -1;
 
-		/* Hack -- Boomerang skill */
-		if (o_ptr->tval == TV_BOOMERANG) return SKILL_BOOMERANG;
+	/* Hack -- Boomerang skill */
+	if (o_ptr->tval == TV_BOOMERANG) return SKILL_BOOMERANG;
 
-        switch (o_ptr->sval / 10)
-        {
-        case 0:
-                if ((!skill) || (skill == SKILL_SLING)) skill = SKILL_SLING;
-                else skill = -1;
-                break;
-        case 1:
-                if ((!skill) || (skill == SKILL_BOW)) skill = SKILL_BOW;
-                else skill = -1;
-                break;
-        case 2:
-                if ((!skill) || (skill == SKILL_XBOW)) skill = SKILL_XBOW;
-                else skill = -1;
-                break;
-        }
+	switch (o_ptr->sval / 10)
+	{
+		case 0:
+			if ((!skill) || (skill == SKILL_SLING)) skill = SKILL_SLING;
+			else skill = -1;
+			break;
+		case 1:
+			if ((!skill) || (skill == SKILL_BOW)) skill = SKILL_BOW;
+			else skill = -1;
+			break;
+		case 2:
+			if ((!skill) || (skill == SKILL_XBOW)) skill = SKILL_XBOW;
+			else skill = -1;
+			break;
+	}
 
 	/* Everything is ok */
 	return skill;
@@ -1613,7 +1613,7 @@ int calc_blows(int Ind, object_type *o_ptr)
  *
  * This function induces various "status" messages.
  */
-static void calc_bonuses(int Ind)
+void calc_bonuses(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 

@@ -1296,6 +1296,7 @@ static void wr_extra(int Ind)
 	wr_u16b(p_ptr->csane_frac);
 
 	wr_s32b(p_ptr->balance);
+	wr_s32b(p_ptr->tim_blacklist);
 
 }
 

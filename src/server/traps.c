@@ -167,6 +167,8 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 	s16b i;
 	bool message = FALSE, ident = FALSE;
 
+	if(p_ptr->inval) return (FALSE);
+
 	for (i=0;i<INVEN_PACK;i++)
 	{
 		object_type tmp_obj = p_ptr->inventory[i];
@@ -224,6 +226,8 @@ bool do_player_scatter_items(int Ind, int chance, int rad)
 	bool message = FALSE;
 	cave_type **zcave;
 	zcave=getcave(&p_ptr->wpos);
+
+	if(p_ptr->inval) return (FALSE);
 
 	for (i=0;i<INVEN_PACK;i++)
 	{

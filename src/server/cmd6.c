@@ -149,8 +149,14 @@ void do_cmd_eat_food(int Ind, int item)
 
 	if (p_ptr->prace == RACE_ENT && !p_ptr->body_monster)
 	{
-		msg_print(Ind, "You cannot eat food.");
-		return;
+		/* Let them drink :) */
+		if (o_ptr->tval != TV_FOOD ||
+				(o_ptr->sval != SV_FOOD_PINT_OF_ALE &&
+				 o_ptr->sval != SV_FOOD_PINT_OF_WINE))
+		{
+			msg_print(Ind, "You cannot eat food.");
+			return;
+		}
 	}
 
 

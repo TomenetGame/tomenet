@@ -1397,24 +1397,6 @@ void do_cmd_tunnel(int Ind, int dir)
 				}
 			}
 
-			/* Granite */
-			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
-			{
-				/* Tunnel */
-				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x))        /* 1600 */
-				{
-					msg_print(Ind, "You have finished the tunnel.");
-				}
-
-				/* Keep trying */
-				else
-				{
-					/* We may continue tunelling */
-					msg_print(Ind, "You tunnel into the granite wall.");
-					more = TRUE;
-				}
-			}
-
 			/* Quartz / Magma */
 //			else if (c_ptr->feat >= FEAT_MAGMA)
 			/* Quartz / Magma / Sandwall */
@@ -1529,6 +1511,24 @@ void do_cmd_tunnel(int Ind, int dir)
 				/* Hack -- Search */
 				search(Ind);
 			}
+			/* Granite */
+			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
+			{
+				/* Tunnel */
+				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x))        /* 1600 */
+				{
+					msg_print(Ind, "You have finished the tunnel.");
+				}
+
+				/* Keep trying */
+				else
+				{
+					/* We may continue tunelling */
+					msg_print(Ind, "You tunnel into the granite wall.");
+					more = TRUE;
+				}
+			}
+
 			/* Doors */
 			else
 			{
@@ -2437,10 +2437,15 @@ int breakage_chance(object_type *o_ptr)
 		/* Often break */
 		case TV_LITE:
 		case TV_SCROLL:
-		case TV_ARROW:
 		case TV_SKELETON:
 		{
 			return (50);
+		}
+
+		case TV_ARROW:
+		{
+			if (o_ptr->sval == SV_AMMO_MAGIC && !cursed_p(o_ptr)) return (0);
+			else return (50);
 		}
 
 		/* Sometimes break */
@@ -4051,6 +4056,12 @@ void do_cmd_purchase_house(int Ind, int dir)
 
 		return;
 	}       
+
+	if(p_ptr->inval){
+		msg_print(Ind, "You may not buy/sell a house. Ask an admin to validate your account.");
+		return;
+	}
+
 
 	if(dir>9) dir=0;	/* temp hack */
 

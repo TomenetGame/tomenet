@@ -178,6 +178,10 @@ extern s32b t_max;
 extern s32b t_top;
 extern header *re_head; 
 extern monster_ego *re_info;
+extern header *d_head;
+extern dungeon_info_type *d_info;
+extern char *d_name;
+extern char *d_text;
 extern char *re_name;
 extern header *s_head;
 extern skill_type *s_info;
@@ -311,6 +315,7 @@ extern bool (*item_tester_hook)(object_type *o_ptr);
 extern bool (*ang_sort_comp)(int Ind, vptr u, vptr v, int a, int b);
 extern void (*ang_sort_swap)(int Ind, vptr u, vptr v, int a, int b);
 extern bool (*get_mon_num_hook)(int r_idx);
+extern bool (*get_mon_num2_hook)(int r_idx);
 extern bool (*get_obj_num_hook)(int k_idx);
 extern bool (*master_move_hook)(int Ind, char * parms);
 
@@ -687,6 +692,8 @@ extern void monster_gain_exp(int m_idx, u32b exp, bool silent);
 #ifdef MONSTER_INVENTORY
 extern void monster_drop_carried_objects(monster_type *m_ptr);
 #endif	// MONSTER_INVENTORY
+extern bool monster_can_cross_terrain(byte feat, monster_race *r_ptr);
+extern void set_mon_num2_hook(worldpos *wpos, int y, int x);
 
 /* netserver.c */
 /*extern void Contact(int fd, void *arg);*/

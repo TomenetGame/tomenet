@@ -408,6 +408,14 @@ char *re_name;
 #endif
 
 /*
+ * The dungeon types arrays
+ */
+header *d_head;
+dungeon_info_type *d_info;
+char *d_name;
+char *d_text;
+
+/*
  * Player skills arrays
  */
 header *s_head;
@@ -535,6 +543,7 @@ void (*ang_sort_swap)(int Ind, vptr u, vptr v, int a, int b);
  * Hack -- function hook to restrict "get_mon_num_prep()" function
  */
 bool (*get_mon_num_hook)(int r_idx);
+bool (*get_mon_num2_hook)(int r_idx);
 
 
 

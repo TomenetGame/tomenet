@@ -1566,17 +1566,21 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				  ((c_ptr->info & CAVE_GLOW) && (*w_ptr & CAVE_VIEW))) &&
 				 !p_ptr->blind)) || (p_ptr->admin_dm))
 	{
+		f_ptr = &f_info[feat];
+
 		/* Special terrain effect */
 		if (c_ptr->effect)
 		{
 			(*ap) = spell_color(effects[c_ptr->effect].type);
 		}
 
-#if 0
+#if 1
 		/* Multi-hued attr */
+		/* TODO: this should be done in client-side too, so that
+		 * they shimmer when player isn't moving */
 		else if (f_ptr->flags1 & FF1_ATTR_MULTI)
 		{
-			a = f_ptr->shimmer[rand_int(7)];
+			(*ap) = f_ptr->shimmer[rand_int(7)];
 		}
 #endif	/* 0 */
 	}

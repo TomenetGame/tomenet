@@ -768,7 +768,7 @@ void do_cmd_check_server_settings(int Ind)
 	fprintf(fff,"\n");
 
 	if ((k=cfg.newbies_cannot_drop))
-		fprintf(fff, "Players under exp.level %d are not allowed to drop items/golds.\n", k);
+		fprintf(fff, "Players under exp.level %d are not allowed to drop items/gold.\n", k);
 
 	if ((k=cfg.spell_interfere))
 		fprintf(fff, "Monsters adjacent to you have %d%% chance of interfering your spellcasting.\n", k);
@@ -904,13 +904,15 @@ void do_cmd_check_server_settings(int Ind)
 		fprintf(fff, "Stores change their inventory every %d seconds(store_turns=%d).\n", cfg.store_turns * 10 / cfg.fps, cfg.store_turns);
 
 		fprintf(fff, "starting town: location [%d, %d], baselevel(%d)\n", cfg.town_x, cfg.town_y, cfg.town_base);
-		fprintf(fff, "Angband: baselevel(%d) depth(%d)\n", cfg.dun_base, cfg.dun_max);
+		fprintf(fff, "Bree dungeon: baselevel(%d) depth(%d)\n", cfg.dun_base, cfg.dun_max);
 
 		if (cfg.auto_purge)
 			fprintf(fff, "Non-used monsters/objects are purged every 24H.\n");
 
+#if 0
 		if (cfg.mage_hp_bonus)
 			fprintf(fff, "mage_hp_bonus is applied.\n");
+#endif	// 0
 		if (cfg.report_to_meta)
 			fprintf(fff, "Reporting to the meta-server.\n");
 		if (cfg.secret_dungeon_master)

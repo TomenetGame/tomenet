@@ -536,8 +536,11 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		if (adjust > 100 - STORE_BENEFIT) adjust = 100 - STORE_BENEFIT;
 
 		/* Mega-Hack -- Black market sucks */
-		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price = price / 4;
-//		if (p_ptr->store_num == 6) price = price / 4;
+		//if (p_ptr->store_num == 6) price = price / 4;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price /= 4;
+
+		/* You're not a welcomed customer.. */
+		if (p_ptr->tim_blacklist) price = price / 4;
 
 		/* To prevent cheezing */
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)){
@@ -556,8 +559,12 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		if (adjust < 100 + STORE_BENEFIT) adjust = 100 + STORE_BENEFIT;
 
 		/* Mega-Hack -- Black market sucks */
-//		if (p_ptr->store_num == 6) price = price * 4;
-		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price = price * 4;
+		//if (p_ptr->store_num == 6) price = price * 4;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price *= 4;
+
+		/* You're not a welcomed customer.. */
+		if (p_ptr->tim_blacklist) price = price * 4;
+
 	}
 
 	/* Compute the final price (with rounding) */
@@ -1137,7 +1144,7 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr)
 	o_ptr->ident |= ID_MENTAL;
 
 	/* Erase the inscription */
-	o_ptr->note = 0;
+	if (!(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM)) o_ptr->note = 0;
 
 	/* Check each existing item (try to combine) */
 	for (slot = 0; slot < st_ptr->stock_num; slot++)
@@ -1951,6 +1958,7 @@ static void display_inventory(int Ind)
 		/* Display that line */
 		display_entry(Ind, k);
 	}
+	//if (k < 1) Send_store(Ind, 0, 0, 0, 0, 0, "", 0, 0);
 }
 
 
@@ -2121,8 +2129,248 @@ static bool retire_owner_p(store_type *st_ptr)
 
 
 /*
+ * Stole an item from a store                   -DG-
+ */
+/* TODO: specify 'amt' */
+void store_stole(int Ind, int item)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int st = p_ptr->store_num;
+
+	store_type *st_ptr;
+	owner_type *ot_ptr;
+
+	int			i, choice;
+	int			item_new;
+	int amt = 1;
+	int chance = 0;
+
+	s32b		price, best;
+
+	object_type		sell_obj;
+	object_type		*o_ptr;
+
+	char		o_name[160];
+	bool legal = FALSE;
+
+	if (p_ptr->store_num == 7)
+	{
+		msg_print(Ind, "You don't steal from your home!");
+		return;
+	}
+
+	/* Level restriction (mainly anticheeze) */
+	if (p_ptr->lev < 10)
+	{
+		msg_print(Ind, "You dare not to!");
+		return;
+	}
+
+	i=gettown(Ind);
+	if(i==-1) return;
+
+	if (p_ptr->store_num==-1){
+		msg_print(Ind,"You left the shop!");
+		return;
+	}
+
+	st_ptr = &town[i].townstore[st];
+//	ot_ptr = &owners[st][st_ptr->owner];
+	ot_ptr = &ow_info[st_ptr->owner];
+
+	for (i = 0; i < 6; i++)
+	{
+		if (ba_info[st_info[p_ptr->store_num].actions[i]].action == BACT_BUY)
+		{
+			legal = TRUE;
+			break;
+		}
+	}
+	if (!legal)
+	{
+		//if (!is_admin(p_ptr)) return;
+		return;
+	}
+
+	/* Get the actual item */
+	o_ptr = &st_ptr->stock[item];
+
+	/* Assume the player wants just one of them */
+	/*amt = 1;*/
+
+	/* Hack -- get a "sample" object */
+	sell_obj = *o_ptr;
+	sell_obj.number = amt;
+
+	/*
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
+	 * charges need to be allocated between the two stacks.  If all the items 
+	 * are being dropped, it makes for a neater message to leave the original 
+	 * stack's pval alone. -LM-
+	 */
+	if (o_ptr->tval == TV_WAND)
+	{
+		if (o_ptr->tval == TV_WAND)
+		{
+			sell_obj.pval = divide_charged_item(o_ptr, amt);
+		}
+	}
+
+	/* Hack -- require room in pack */
+	if (!inven_carry_okay(Ind, &sell_obj))
+	{
+		msg_print(Ind, "You cannot carry that many different items.");
+		return;
+	}
+
+	/* Determine the "best" price (per item) */
+	/* NOTE: it's used to determine the penalty when stealing failed */
+	best = price_item(Ind, &sell_obj, ot_ptr->min_inflate, FALSE);
+
+	/* Player tries to stole it */
+#if 0	// Tome formula .. seemingly, high Stealing => more failure!
+	if (rand_int((40 - p_ptr->stat_ind[A_DEX]) +
+	    ((j_ptr->weight * amt) / (5 + get_skill_scale(SKILL_STEALING, 15))) +
+	    (get_skill_scale(SKILL_STEALING, 25))) <= 10)
+#endif	// 0
+	chance = (40 - p_ptr->stat_ind[A_DEX]) +
+	    ((sell_obj.weight * amt) / (5 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
+	    (get_skill_scale(p_ptr, SKILL_STEALING, 25));
+	if (chance < 1) chance = 1;
+	if (p_ptr->tim_blacklist) chance += 200;
+
+	/* always 1% chance to fail, so that ppl won't macro it */
+	if (rand_int(chance) <= 10 && !magik(1))
+	{
+		/* Hack -- buying an item makes you aware of it */
+		object_aware(Ind, &sell_obj);
+
+		/* Hack -- clear the "fixed" flag from the item */
+		sell_obj.ident &= ~ID_FIXED;
+
+		/* Describe the transaction */
+		object_desc(Ind, o_name, &sell_obj, TRUE, 3);
+
+		/* Message */
+		msg_format(Ind, "You stole %s.", o_name);
+
+		/* Let the player carry it (as if he picked it up) */
+		item_new = inven_carry(Ind, &sell_obj);
+
+		/* Describe the final result */
+		object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
+
+		/* Message */
+		msg_format(Ind, "You have %s (%c).",
+				o_name, index_to_label(item_new));
+
+		/* Handle stuff */
+		handle_stuff(Ind);
+
+		/* Note how many slots the store used to have */
+		i = st_ptr->stock_num;
+
+		/* Remove the bought items from the store */
+		store_item_increase(st_ptr, item, -amt);
+		store_item_optimize(st_ptr, item);
+
+		/* Resend the basic store info */
+		display_store(Ind);
+
+		/* Store is empty */
+		if (st_ptr->stock_num == 0)
+		{
+#if 0	/* disabled -- some stores with few stocks get silly */
+			/* XXX kick him out once, since client update doesn't
+			 * seem to work right */
+			store_kick(Ind, FALSE);
+			suppress_message = FALSE;
+
+			/* Shuffle */
+			if (rand_int(STORE_SHUFFLE) == 0)
+			{
+				/* Message */
+				msg_print(Ind, "The shopkeeper retires.");
+
+				/* Shuffle the store */
+				store_shuffle(st_ptr);
+			}
+
+			/* Maintain */
+			else
+			{
+				/* Message */
+				msg_print(Ind, "The shopkeeper brings out some new stock.");
+			}
+
+			/* New inventory */
+			for (i = 0; i < 10; i++)
+			{
+				/* Maintain the store */
+				store_maint(st_ptr);
+			}
+
+			/* Redraw everything */
+			//display_inventory(Ind);
+
+			return;
+#endif	// 0
+
+			/* This should do a nice restock */
+			//st_ptr->last_visit = 0;
+			st_ptr->last_visit = -10L * STORE_TURNS;
+		}
+
+		/* The item is gone */
+		//else
+		if (st_ptr->stock_num != i)
+		{
+			/* Redraw everything */
+			display_inventory(Ind);
+		}
+
+		/* Item is still here */
+		else
+		{
+			/* Redraw the item */
+			display_entry(Ind, item);
+		}
+		//suppress_message = FALSE;
+
+	}
+
+	else
+	{
+		/* Complain */
+		// say_comment_4();
+		msg_print(Ind, "Basterd!!!");
+		msg_print(Ind, "\377rNow you're on the black list of merchants..");
+
+		/* Reset insults */
+		st_ptr->insult_cur = 0;
+		st_ptr->good_buy = 0;
+		st_ptr->bad_buy = 0;
+
+		/* Kicked out for a LONG time */
+		//st_ptr->store_open = turn + 500000 + randint(500000);
+
+		p_ptr->tim_blacklist += best * amt / 10 + 10000;
+
+		/* Of course :) */
+		store_kick(Ind, FALSE);
+	}
+
+	/* Not kicked out */
+	return;
+}
+
+
+/*
  * Buy an item from a store				-RAK-
  */
+/* XXX seemingly, amt is not checked correctly;
+ * hacked client can buy more than # of stocks */
 void store_purchase(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
@@ -2312,6 +2560,13 @@ void store_purchase(int Ind, int item, int amt)
 
 				/* Spend the money */
 				p_ptr->au -= price;
+
+				/* Buying things lessen the distrust somewhat */
+				if (p_ptr->tim_blacklist && (price > 100))
+				{
+					p_ptr->tim_blacklist -= price / 100;
+					if (p_ptr->tim_blacklist < 1) p_ptr->tim_blacklist = 1;
+				}
 
 				/* Update the display */
 				store_prt_gold(Ind);
@@ -2565,14 +2820,16 @@ void store_sell(int Ind, int item, int amt)
 //	if (p_ptr->store_num == 57)
 	if (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM)
 	{
+#if 0
 		/* Describe the transaction */
-//		msg_format(Ind, "Selling %s (%c).", o_name, index_to_label(item));
+		msg_format(Ind, "Selling %s (%c).", o_name, index_to_label(item));
 
 		/* Haggle for it */
 		choice = sell_haggle(Ind, &sold_obj, &price);
 
 		/* Tell the client about the price */
-//		Send_store_sell(Ind, price);
+		Send_store_sell(Ind, price);
+#endif	// 0
 
 		/* Save the info for the confirmation */
 		p_ptr->current_selling = item;
@@ -2645,15 +2902,18 @@ void store_confirm(int Ind)
 	object_type *o_ptr, sold_obj;
 	char o_name[160];
 	int item_pos;
+	bool museum;
 
 	/* Abort if we shouldn't be getting called */
 	if (p_ptr->current_selling == -1)
 		return;
 
 	if (p_ptr->store_num==-1){
-		msg_print(Ind,"You left the shop!");
+		msg_print(Ind,"You left the building!");
 		return;
 	}
+
+	museum = (st_info[p_ptr->store_num].flags1 & SF1_MUSEUM) ? TRUE : FALSE;
 
 	/* Restore the variables */
 	item = p_ptr->current_selling;
@@ -2668,7 +2928,7 @@ void store_confirm(int Ind)
 	/* Sold... */
 
 	/* Say "okay" */
-	say_comment_1(Ind);
+	if (!museum) say_comment_1(Ind);
 
 	/* Be happy */
 	/*decrease_insults();*/
@@ -2719,7 +2979,7 @@ void store_confirm(int Ind)
 	object_desc(Ind, o_name, &sold_obj, TRUE, 3);
 
 	/* Describe the result (in message buffer) */
-	msg_format(Ind, "You sold %s for %ld gold.", o_name, (long)price);
+	if (!museum) msg_format(Ind, "You sold %s for %ld gold.", o_name, (long)price);
 
 	/* Analyze the prices (and comment verbally) */
 	/*purchase_analyze(price, value, dummy);*/
@@ -2733,8 +2993,7 @@ void store_confirm(int Ind)
 	handle_stuff(Ind);
 
 	/* Artifact won't be sold in a store */
-	if (cfg.anti_arts_horde && true_artifact_p(&sold_obj) &&
-			!(st_info[p_ptr->store_num].flags1 & SF1_MUSEUM))
+	if (cfg.anti_arts_horde && true_artifact_p(&sold_obj) && !museum)
 	{
 		a_info[sold_obj.name1].cur_num = 0;
 		a_info[sold_obj.name1].known = FALSE;
@@ -2984,6 +3243,9 @@ void do_cmd_store(int Ind)
 	/* Save the store and owner pointers */
 	/*st_ptr = &store[p_ptr->store_num];
 	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];*/
+
+	if (p_ptr->tim_blacklist)
+		msg_print(Ind, "As you enter, the owner eyes you suspiciously.");
 
 	/* Display the store */
 	display_store(Ind);
@@ -4005,6 +4267,11 @@ void do_cmd_trad_house(int Ind)
 
 	h_ptr = &houses[h_idx];
 	if (!(h_ptr->flags & HF_TRAD)) return;
+
+	if(p_ptr->inval){
+		msg_print(Ind, "You may not use a house. Ask an admin to validate your account.");
+		return;
+	}
 
 
 	/* Save the store number */

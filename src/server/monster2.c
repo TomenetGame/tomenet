@@ -93,7 +93,10 @@ static cptr funny_comments[MAX_COMMENT] =
 	"Far out!"
 };
 
+
 static monster_race* race_info_idx(int r_idx, int ego, int randuni);
+int pick_ego_monster(int r_idx, int Level);
+
 
 /* Monster gain a few levels ? */
 void monster_check_experience(int m_idx, bool silent)
@@ -2220,6 +2223,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Access the location */
 	c_ptr = &zcave[y][x];
 
+#if 0
 	/* XXX makeshift; to be replaced with more generic function */
 //	if((r_ptr->flags7 & RF7_AQUATIC) && c_ptr->feat!=FEAT_WATER) return FALSE;
 	if(c_ptr->feat == FEAT_DEEP_WATER)
@@ -2229,6 +2233,16 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 			return FALSE;
 	}
 	else if(r_ptr->flags7 & RF7_AQUATIC) return FALSE;
+#endif	// 0
+
+	/* This usually shouldn't happen */
+	if (!monster_can_cross_terrain(c_ptr->feat, r_ptr))
+	{
+#if DEBUG_LEVEL > 1
+		s_printf("WARNING: Refused monster: cannot cross terrain\n");
+#endif	// DEBUG_LEVEL
+		return FALSE;
+	}
 
 
 	/* Make a new monster */
@@ -2399,7 +2413,7 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	int old, n, i;
+	int n, i;
 	int total = 0, extra = 0;
 
 	int hack_n = 0;
@@ -2627,7 +2641,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 
 	d_ptr=getdungeon(wpos);
 	/* Specific filter - should be made more useful */
-	/* */
+	/* Ok, I'll see to that later	- Jir - */
 	 
 	if(d_ptr && (d_ptr->r_char[0] || d_ptr->nr_char[0])){
 		int i,j=0;
@@ -2652,9 +2666,16 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 			}
 		}
 	}
-	else{
+	else
+	{
+		/* Set monster restriction */
+		set_mon_num2_hook(wpos, y, x);
+
 		/* Pick a monster */
 		r_idx = get_mon_num(monster_level);
+
+		/* Reset restriction */
+		get_mon_num2_hook = NULL;
 	}
 
 	/* Handle failure */
@@ -4032,3 +4053,118 @@ void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr)
 }
 
 #endif	// MONSTER_INVENTORY
+
+
+/* Already in wild.c */
+#define monster_dungeon(r_idx) dungeon_aux(r_idx)
+
+
+bool monster_deep_water(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	if (!monster_dungeon(r_idx)) return FALSE;
+
+	if (r_ptr->flags7 & RF7_AQUATIC)
+		return TRUE;
+	else
+		return FALSE;
+}
+
+
+bool monster_shallow_water(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	if (!monster_dungeon(r_idx)) return FALSE;
+
+	if (r_ptr->flags2 & RF2_AURA_FIRE)
+		return FALSE;
+	else
+		return TRUE;
+}
+
+
+bool monster_lava(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	if (!monster_dungeon(r_idx)) return FALSE;
+
+	if (((r_ptr->flags3 & RF3_IM_FIRE) ||
+	     (r_ptr->flags7 & RF7_CAN_FLY)) &&
+	    !(r_ptr->flags3 & RF3_AURA_COLD))
+		return TRUE;
+	else
+		return FALSE;
+}
+
+
+/*
+ * Check if monster can cross terrain
+ */
+bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
+{
+	/* Deep water */
+	if (feat == FEAT_DEEP_WATER)
+	{
+		if ((r_ptr->flags7 & RF7_AQUATIC) ||
+		    (r_ptr->flags7 & RF7_CAN_FLY) ||
+		    (r_ptr->flags7 & RF7_CAN_SWIM))
+			return TRUE;
+		else
+			return FALSE;
+	}
+	/* Shallow water */
+	else if (feat == FEAT_SHAL_WATER)
+	{
+		if (r_ptr->flags2 & RF2_AURA_FIRE)
+			return FALSE;
+		else
+			return TRUE;
+	}
+	/* Aquatic monster */
+	else if ((r_ptr->flags7 & RF7_AQUATIC) &&
+		    !(r_ptr->flags7 & RF7_CAN_FLY))
+	{
+		return FALSE;
+	}
+	/* Lava */
+	else if ((feat == FEAT_SHAL_LAVA) ||
+	    (feat == FEAT_DEEP_LAVA))
+	{
+		if ((r_ptr->flags3 & RF3_IM_FIRE) ||
+		    (r_ptr->flags7 & RF7_CAN_FLY))
+			return TRUE;
+		else
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
+
+void set_mon_num2_hook(worldpos *wpos, int y, int x)
+{
+	cave_type **zcave;
+	if (!in_bounds(y, x)) return;
+	if(!(zcave=getcave(wpos))) return;
+
+	/* Set the monster list */
+	switch (zcave[y][x].feat)
+	{
+	case FEAT_SHAL_WATER:
+		get_mon_num2_hook = monster_shallow_water;
+		break;
+	case FEAT_DEEP_WATER:
+		get_mon_num2_hook = monster_deep_water;
+		break;
+	case FEAT_DEEP_LAVA:
+	case FEAT_SHAL_LAVA:
+		get_mon_num2_hook = monster_lava;
+		break;
+	default:
+		get_mon_num2_hook = NULL;
+		break;
+	}
+}

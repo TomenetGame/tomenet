@@ -119,7 +119,7 @@ struct worldpos
 
 #if 0
 /*
- * Following are rough sketches for versions to come.	- Jir -
+ * Following are rough sketches for versions(maybe v5) to come.	- Jir -
  */
 /* TODO: tweak it in a way so that one wilderness field can contain
  * more than one dungeons/towers/rooms (eg.quest, arena..)
@@ -128,15 +128,46 @@ struct worldpos
  * 'cave', 'tower' and 'dungeon', and then functions like getcave will
  * look up for a proper 'dungeon'.
  *
- * wpos={32,32,-20,2} => wild_info[32][32].dungeons[2].[20]
- * (dungeons[] contains the info whether it's tower/dungeon or whatever
+ * wpos={32,32,-20,2} => wild_info[32][32].dungeons[2].level[19]
+ *
+ * dungeons[] contains the info whether it's tower/dungeon or whatever,
+ * and maybe dungeons[0] always is the surface.
+ *
+ * To tell which dungeon is which, we should use 'id' maybe.
  */
 struct worldpos
 {
 	s16b wx;	/* west to east */
 	s16b wy;	/* south to north */
 	s16b wz;	/* deep to sky */
-	s16b ww;	/* 4th dimention! */
+	s16b ww;	/* 4th dimention! actually it's index to the dungeons */
+};
+
+struct wilderness_type
+{
+	u16b radius; /* the distance from the town */
+	u16b type;   /* what kind of terrain we are in */
+
+	u32b flags; /* various */
+	struct dungeon_type *dungeons;
+	s32b own;	/* King owning the wild */
+};
+
+typedef struct dungeon_type dungeon_type;
+struct dungeon_type
+{
+	u16b id;		/* dungeon id */
+	u16b baselevel;		/* base level (1 - 50ft etc). */
+
+	/* maybe contains info about if tower/dungeon/building etc */
+	u32b flags1;		/* dungeon flags */
+	u32b flags2;		/* DF2 flags */
+
+	byte maxdepth;		/* max height/depth */
+	char r_char[10];	/* races allowed */
+	char nr_char[10];	/* races prevented */
+	struct dun_level *level;	/* array of dungeon levels */
+	byte ud_y, ud_x		/* location of entrance */
 };
 
 
@@ -156,7 +187,7 @@ struct recall_depth
 	u16b id;	/* dungeon id (see dungeon_type) */
 	s16b depth;	/* max recall-depth */
 }
-#endif
+#endif	// 0
 
 
 /*
@@ -2284,6 +2315,7 @@ struct player_type
 	s16b dodge_chance;		/* Chance of dodging blows/missiles */
 
 	s32b balance;		/* Deposit/debt */
+	s32b tim_blacklist;		/* Player is on the 'Black List' */
 #if 0
 	s16b mtp;                       /* Max tank pts */
 	s16b ctp;                       /* Cur tank pts */
@@ -2311,6 +2343,84 @@ struct martial_arts
     int     effect;     /* Special effects */
 };
 
+/* Define monster generation rules */
+typedef struct rule_type rule_type;
+struct rule_type
+{
+	byte mode;                      /* Mode of combinaison of the monster flags */
+	byte percent;                   /* Percent of monsters affected by the rule */
+
+	u32b mflags1;                   /* The monster flags that are allowed */
+	u32b mflags2;
+	u32b mflags3;
+	u32b mflags4;
+	u32b mflags5;
+	u32b mflags6;
+	u32b mflags7;
+	u32b mflags8;
+	u32b mflags9;
+
+	char r_char[5];                 /* Monster race allowed */
+};
+
+/* A structure for the != dungeon types */
+typedef struct dungeon_info_type dungeon_info_type;
+struct dungeon_info_type
+{
+	u32b name;                      /* Name */
+	u32b text;                      /* Description */
+	char short_name[3];             /* Short name */
+
+	s16b floor1;                    /* Floor tile 1 */
+	byte floor_percent1[2];         /* Chance of type 1 */
+	s16b floor2;                    /* Floor tile 2 */
+	byte floor_percent2[2];         /* Chance of type 2 */
+	s16b floor3;                    /* Floor tile 3 */
+	byte floor_percent3[2];         /* Chance of type 3 */
+	s16b outer_wall;                /* Outer wall tile */
+	s16b inner_wall;                /* Inner wall tile */
+	s16b fill_type1;                /* Cave tile 1 */
+	byte fill_percent1[2];          /* Chance of type 1 */
+	s16b fill_type2;                /* Cave tile 2 */
+	byte fill_percent2[2];          /* Chance of type 2 */
+	s16b fill_type3;                /* Cave tile 3 */
+	byte fill_percent3[2];          /* Chance of type 3 */
+	byte fill_method;				/* Smoothing parameter for the above */
+
+	s16b mindepth;                  /* Minimal depth */
+	s16b maxdepth;                  /* Maximal depth */
+
+	bool principal;                 /* If it's a part of the main dungeon */
+	byte next;                      /* The next part of the main dungeon */
+	byte min_plev;                  /* Minimal plev needed to enter -- it's an anti-cheating mesure */
+
+	int min_m_alloc_level;          /* Minimal number of monsters per level */
+	int max_m_alloc_chance;         /* There is a 1/max_m_alloc_chance chance per round of creating a new monster */
+
+	u32b flags1;                    /* Flags 1 */
+	u32b flags2;                    /* Flags 1 */
+
+	byte rule_percents[100];        /* Flat rule percents */
+	rule_type rules[5];             /* Monster generation rules */
+
+	int final_object;               /* The object you'll find at the bottom */
+	int final_artifact;             /* The artifact you'll find at the bottom */
+	int final_guardian;             /* The artifact's guardian. If an artifact is specified, then it's NEEDED */
+
+	int ix, iy, ox, oy;             /* Wilderness coordinates of the entrance/output of the dungeon */
+
+	obj_theme objs;                 /* The drops type */
+
+	int d_dice[4];                  /* Number of dices */
+	int d_side[4];                  /* Number of sides */
+	int d_frequency[4];             /* Frequency of damage (1 is the minimum) */
+	int d_type[4];                  /* Type of damage */
+
+	s16b t_idx[TOWN_DUNGEON];       /* The towns */
+	s16b t_level[TOWN_DUNGEON];     /* The towns levels */
+	s16b t_num;                     /* Number of towns */
+};
+
 /*
  * Hack -- basic town data
  * (In great need of death!)
@@ -2318,13 +2428,16 @@ struct martial_arts
 typedef struct town_extra town_extra;
 struct town_extra
 {
+	cptr name;
 	byte feat1;
 	byte feat2;
-	byte ratio;
-	byte wild_req;
+	byte ratio;		/* percent of feat1 */
+	byte wild_req;	/* On what kind of wilderness this town should be built */
 	u16b dun_base;
 	u16b dun_max;
-	bool tower;
+	bool tower;		/* TODO: change it, so that a town can have both tower and dungeon */
+	u32b flags1;
+	u32b flags2;
 };
 
 
@@ -2376,7 +2489,7 @@ struct server_opts
 	bool report_to_meta;
 	bool secret_dungeon_master;
 	bool anti_arts_horde;
-	bool mage_hp_bonus;
+	bool mage_hp_bonus;	/* DELETEME (replace it, that is) */
 	char door_bump_open;
 	bool no_ghost;
 	bool maximize;
@@ -2487,6 +2600,7 @@ struct c_player_extra
 	char body_name[80];	/* Form of Player */
 	char sanity[10];	/* Sanity strings */
 	byte sanity_attr;	/* Colour to display sanity */
+	char location_name[20];	/* Name of location (eg. 'Bree') */
 };
 
 typedef struct c_store_extra c_store_extra;
@@ -2497,7 +2611,7 @@ struct c_store_extra
 	s32b max_cost;			/* Purse limit */
 //	s16b store_num;			/* XXX makeshift - will be removed soon */
 
-	/* TODO: list of command */
+	/* list of command */
 //	store_action_type actions[6];
 //	byte num_actions;
 	u16b actions[6];                /* Actions(refers to ba_info) */

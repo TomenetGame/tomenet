@@ -612,6 +612,9 @@ void search(int Ind)
 	struct c_special *cs_ptr;
 	if(!(zcave=getcave(wpos))) return;
 
+	/* Admin doesn't */
+	if (p_ptr->admin_dm) return;
+
 	/* Start with base search ability */
 	chance = p_ptr->skill_srh;
 

@@ -207,6 +207,8 @@ void wild_spawn_towns()
 		y = rand_int(MAX_WILD_Y);
 		x = rand_int(MAX_WILD_X);
 
+		/* check wilderness type so that Bree is in forest and
+		 * Minas Anor in mountain etc */
 		if (wild_info[y][x].type != town_profile[i].wild_req)
 		{
 			i--;
@@ -221,17 +223,14 @@ void wild_spawn_towns()
 				retry = TRUE;
 				break;
 			}
-			/* TODO: check wilderness type so that Bree is in forest and
-			 * Minas Anor in mountain etc */
 		}
 		if (retry)
 		{
 			i--;
 			continue;
 		}
-		addtown(y, x, i * 20 - 20 , 0, i);	/* base town */
-
-		/* TODO: create bed towns */
+		//addtown(y, x, i * 20 - 20 , 0, i);	/* base town */
+		addtown(y, x, town_profile[i].dun_base, 0, i);	/* base town */
 	}
 }
 

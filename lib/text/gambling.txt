@@ -1,0 +1,55 @@
+           /---------------------------------------------+
+           |          Tome-NET Gambling Rules            |
+           +---------------------------------------------/
+
+Welcome to the TomeNET Casino!
+
+Currently, two games 'In Between' and 'Craps' are available for playing.
+('Spin the Wheel' and 'Dice Slots' are under construction.)
+Some games playable among players are planned for the future (I hope).
+
+
+For all the games, you can bet up to 1000*level AU per game, except for
+players below level 10 who can bet up to 100*level AU.
+
+
+==============================================================================
+1. 'In Between'
+
+Three 10-faced dice are used for this game. Two black, one red.
+
+First, the dealer rolls the two black dice.
+Then you roll the red die - you win if the roll is 'in between' the two black
+dice and you'll receive the payoff at odds of 3 to 1.
+
+eg.
+if two black dice are 4 and 7, and you rolled 6, you win.
+if two black dice are 2 and 9, and you rolled 1, you lose.
+if two black dice are 2 and 9, and you rolled 2, you lose.
+
+
+==============================================================================
+2. 'Craps'
+
+Two 6-faced (cube) dice are used for this game.
+
+You cast the two dice; if the sum of rolls is 7 or 11, you win at once.
+if the sum is 2, 3 or 12, you lose at once(craps!).
+
+If the sum isn't one of the numbers above, you cast them once more.
+If the sum matches to the first sum, you win.
+If the sum is 7, you lose.
+In all the other cases, you reroll till you roll the first sum or 7.
+
+If you win, you'll be paid at odds of 1 to 1.
+
+eg.
+[2, 3](5) {first roll}
+[3, 3](6) {reroll - still not settled}
+[4, 1](5) {you win}
+
+[5, 6](11) {you lose with the first roll}
+
+
+
+Enjoy!

@@ -293,7 +293,7 @@ void prt_sane(byte attr, cptr buf)
 /*
  * Prints depth into the dungeon
  */
-void prt_depth(int x, int y, int z, bool town, int recall)
+void prt_depth(int x, int y, int z, bool town, int recall, cptr name)
 {
 	char depths[32];
 
@@ -301,7 +301,8 @@ void prt_depth(int x, int y, int z, bool town, int recall)
 	c_put_str(TERM_L_GREEN, depths, ROW_XYPOS, COL_XYPOS);
 
 	if(town)
-		sprintf(depths, "Town");
+		//sprintf(depths, "Town");
+		sprintf(depths, name);
 	else if (c_cfg.depth_in_feet)
 		sprintf(depths, "%dft", z*50);
 	else

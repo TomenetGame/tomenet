@@ -1173,6 +1173,7 @@ static bool rd_extra(int Ind)
 	rd_u16b(&p_ptr->csane_frac);
 
 	rd_s32b(&p_ptr->balance);
+	rd_s32b(&p_ptr->tim_blacklist);
 
 	/* Success */
 	return FALSE;

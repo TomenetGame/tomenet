@@ -1953,8 +1953,9 @@ int Receive_depth(void)
 	char	ch;
 	s16b	x,y,z,recall;
 	bool town;
+	char buf[80];
 
-	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu", &ch, &x, &y, &z, &town, &recall)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu%s", &ch, &x, &y, &z, &town, &recall, buf)) <= 0)
 	{
 		return n;
 	}
@@ -1964,10 +1965,11 @@ int Receive_depth(void)
 		p_ptr->wpos.wx = x;
 		p_ptr->wpos.wy = y;
 		p_ptr->wpos.wz = z;
-		prt_depth(x, y, z, town, recall);
+		strncpy(c_p_ptr->location_name, buf, 20);
+		prt_depth(x, y, z, town, recall, buf);
 	}
 	else
-		if ((n = Packet_printf(&qbuf, "%c%hu%hu%hu%c%hu", ch, x, y, z, town, recall)) <= 0)
+		if ((n = Packet_printf(&qbuf, "%c%hu%hu%hu%c%hu%s", ch, x, y, z, town, recall, buf)) <= 0)
 		{
 			return n;
 		}
@@ -2489,8 +2491,9 @@ int Receive_store_info(void)
 //	store_owner = owners[store_num][owner_num];
 
 	/* Only enter "display_store" if we're not already shopping */
-	if (!shopping)
-		display_store();
+	if (!shopping) display_store();
+	else display_inventory(); /* Display the inventory */
+
 
 	return 1;
 }

@@ -2416,7 +2416,7 @@ cptr item_activation(object_type *o_ptr)
 	    u32b f1, f2, f3, f4, f5, esp;
 
         /* Needed hacks */
-        static char rspell[2][80];
+        //static char rspell[2][80];
 
 			  /* Extract the flags */
 			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -3505,7 +3505,205 @@ cptr item_activation(object_type *o_ptr)
 #endif	// 0
 }
 
+/*
+ * Display the damage done with a multiplier
+ */
+//void output_dam(object_type *o_ptr, int mult, int mult2, cptr against, cptr against2, bool *first)
+void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cptr against, cptr against2)
+{
+	player_type *p_ptr = Players[Ind];
+	int dam;
+
+	dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5 * mult;
+	dam += (o_ptr->to_d + p_ptr->to_d + p_ptr->to_d_melee) * 10;
+	dam *= p_ptr->num_blow;
+	if (dam > 0)
+	{
+		if (dam % 10)
+			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+		else
+			fprintf(fff, "    %d", dam / 10);
+	}
+	else
+		fprintf(fff, "    0");
+	fprintf(fff, " against %s", against);
+
+	if (mult2)
+	{
+		fprintf(fff, "\n");
+		dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5 * mult2;
+		dam += (o_ptr->to_d + p_ptr->to_d + p_ptr->to_d_melee) * 10;
+		dam *= p_ptr->num_blow;
+		if (dam > 0)
+		{
+			if (dam % 10)
+				fprintf(fff, "%d.%d", dam / 10, dam % 10);
+			else
+				fprintf(fff, "%d", dam / 10);
+		}
+		else
+			fprintf(fff, "0");
+		fprintf(fff, " against %s", against2);
+	}
+	fprintf(fff, "\n");
+}
+
+
+/* XXX this ignores the chance of extra dmg via 'critical hit' */
+void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
+{
+	player_type *p_ptr = Players[Ind];
+	object_type forge, *old_ptr = &forge;
+	u32b f1, f2, f3, f4, f5, esp;
+	bool first = TRUE;
+
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	/* Ok now the hackish stuff, we replace the current weapon with this one */
+	/* XXX this hack can be even worse under TomeNET, dunno :p */
+	object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
+	object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
+
+	/* Hack -- hush the messages up */
+	suppress_message = TRUE;
+	calc_bonuses(Ind);
+
+	fprintf(fff, "\n");
+
+	fprintf(fff, "Using it you would have %d blow%s and do an average damage per turn of:\n", p_ptr->num_blow, (p_ptr->num_blow) ? "s" : "");
+
+	if (f1 & TR1_SLAY_ANIMAL) output_dam(Ind, fff, o_ptr, 2, 0, "animals", NULL);
+	if (f1 & TR1_SLAY_EVIL) output_dam(Ind, fff, o_ptr, 2, 0, "evil creatures", NULL);
+	if (f1 & TR1_SLAY_ORC) output_dam(Ind, fff, o_ptr, 3, 0, "orcs", NULL);
+	if (f1 & TR1_SLAY_TROLL) output_dam(Ind, fff, o_ptr, 3, 0, "trolls", NULL);
+	if (f1 & TR1_SLAY_GIANT) output_dam(Ind, fff, o_ptr, 3, 0, "giants", NULL);
+	if (f1 & TR1_KILL_DRAGON) output_dam(Ind, fff, o_ptr, 5, 0, "dragons", NULL);
+	else if (f1 & TR1_SLAY_DRAGON) output_dam(Ind, fff, o_ptr, 3, 0, "dragons", NULL);
+	if (f5 & TR5_KILL_UNDEAD) output_dam(Ind, fff, o_ptr, 5, 0, "undeads", NULL);
+	else if (f1 & TR1_SLAY_UNDEAD) output_dam(Ind, fff, o_ptr, 3, 0, "undeads", NULL);
+	if (f5 & TR5_KILL_DEMON) output_dam(Ind, fff, o_ptr, 5, 0, "demons", NULL);
+	else if (f1 & TR1_SLAY_DEMON) output_dam(Ind, fff, o_ptr, 3, 0, "demons", NULL);
+
+	if (f1 & TR1_BRAND_FIRE) output_dam(Ind, fff, o_ptr, 3, 6, "non fire resistant creatures", "fire susceptible creatures");
+	if (f1 & TR1_BRAND_COLD) output_dam(Ind, fff, o_ptr, 3, 6, "non cold resistant creatures", "cold susceptible creatures");
+	if (f1 & TR1_BRAND_ELEC) output_dam(Ind, fff, o_ptr, 3, 6, "non lightning resistant creatures", "lightning susceptible creatures");
+	if (f1 & TR1_BRAND_ACID) output_dam(Ind, fff, o_ptr, 3, 6, "non acid resistant creatures", "acid susceptible creatures");
+	if (f1 & TR1_BRAND_POIS) output_dam(Ind, fff, o_ptr, 3, 6, "non poison resistant creatures", "poison susceptible creatures");
+
+	output_dam(Ind, fff, o_ptr, 1, 0, (first) ? "all monsters" : "other monsters", NULL);
+
+	fprintf(fff, "\n");
+
+	/* get our weapon back */
+	object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
+	calc_bonuses(Ind);
+	suppress_message = FALSE;
+}
 	
+/*
+ * Display the ammo damage done with a multiplier
+ */
+//void output_ammo_dam(object_type *o_ptr, int mult, int mult2, cptr against, cptr against2, bool *first)
+void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cptr against, cptr against2)
+{
+	player_type *p_ptr = Players[Ind];
+	int dam;
+	object_type *b_ptr = &p_ptr->inventory[INVEN_BOW];
+	int tmul = get_shooter_mult(o_ptr);
+	tmul += p_ptr->xtra_might;
+
+	dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5;
+	dam += (o_ptr->to_d + b_ptr->to_d) * 10;
+	dam *= tmul;
+	dam += (p_ptr->to_d_ranged) * 10;
+	dam *= mult;
+	if (dam > 0)
+	{
+		if (dam % 10)
+			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+		else
+			fprintf(fff, "    %d", dam / 10);
+	}
+	else
+		fprintf(fff, "    0");
+	fprintf(fff, " against %s", against);
+
+	if (mult2)
+	{
+		fprintf(fff, "\n");
+		dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5;
+		dam += (o_ptr->to_d + b_ptr->to_d) * 10;
+		dam *= tmul;
+		dam += (p_ptr->to_d_ranged) * 10;
+		dam *= mult2;
+		if (dam > 0)
+		{
+			if (dam % 10)
+				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+			else
+				fprintf(fff, "    %d", dam / 10);
+		}
+		else
+			fprintf(fff, "    0");
+		fprintf(fff, " against %s", against2);
+	}
+	fprintf(fff, "\n");
+}
+
+/*
+ * Outputs the damage we do/would do with the current bow and this ammo
+ */
+/* TODO: tell something about boomerangs */
+void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
+{
+	//player_type *p_ptr = Players[Ind];
+	u32b f1, f2, f3, f4, f5, esp;
+	bool first = TRUE;
+	// int i;
+
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	fprintf(fff, "\nUsing it with your current shooter you would do an avarage damage per shot of:\n");
+	if (f1 & TR1_SLAY_ANIMAL) output_ammo_dam(Ind, fff, o_ptr, 2, 0, "animals", NULL);
+	if (f1 & TR1_SLAY_EVIL) output_ammo_dam(Ind, fff, o_ptr, 2, 0, "evil creatures", NULL);
+	if (f1 & TR1_SLAY_ORC) output_ammo_dam(Ind, fff, o_ptr, 3, 0, "orcs", NULL);
+	if (f1 & TR1_SLAY_TROLL) output_ammo_dam(Ind, fff, o_ptr, 3, 0, "trolls", NULL);
+	if (f1 & TR1_SLAY_GIANT) output_ammo_dam(Ind, fff, o_ptr, 3, 0, "giants", NULL);
+	if (f1 & TR1_KILL_DRAGON) output_ammo_dam(Ind, fff, o_ptr, 5, 0, "dragons", NULL);
+	else if (f1 & TR1_SLAY_DRAGON) output_ammo_dam(Ind, fff, o_ptr, 3, 0, "dragons", NULL);
+	if (f5 & TR5_KILL_UNDEAD) output_ammo_dam(Ind, fff, o_ptr, 5, 0, "undeads", NULL);
+	else if (f1 & TR1_SLAY_UNDEAD) output_ammo_dam(Ind, fff, o_ptr, 3, 0, "undeads", NULL);
+	if (f5 & TR5_KILL_DEMON) output_ammo_dam(Ind, fff, o_ptr, 5, 0, "demons", NULL);
+	else if (f1 & TR1_SLAY_DEMON) output_ammo_dam(Ind, fff, o_ptr, 3, 0, "demons", NULL);
+
+	if (f1 & TR1_BRAND_FIRE) output_ammo_dam(Ind, fff, o_ptr, 3, 6, "non fire resistant creatures", "fire susceptible creatures");
+	if (f1 & TR1_BRAND_COLD) output_ammo_dam(Ind, fff, o_ptr, 3, 6, "non cold resistant creatures", "cold susceptible creatures");
+	if (f1 & TR1_BRAND_ELEC) output_ammo_dam(Ind, fff, o_ptr, 3, 6, "non lightning resistant creatures", "lightning susceptible creatures");
+	if (f1 & TR1_BRAND_ACID) output_ammo_dam(Ind, fff, o_ptr, 3, 6, "non acid resistant creatures", "acid susceptible creatures");
+	if (f1 & TR1_BRAND_POIS) output_ammo_dam(Ind, fff, o_ptr, 3, 6, "non poison resistant creatures", "poison susceptible creatures");
+
+	output_ammo_dam(Ind, fff, o_ptr, 1, 0, (first) ? "all monsters" : "other monsters", NULL);
+	fprintf(fff, "\n");
+
+#if 0
+	if (o_ptr->pval2)
+	{
+		roff("The explosion will be ");
+		i = 0;
+		while (gf_names[i].gf != -1)
+		{
+			if (gf_names[i].gf == o_ptr->pval2)
+				break;
+			i++;
+		}
+		c_roff(TERM_L_GREEN, (gf_names[i].gf != -1) ? gf_names[i].name : "something weird");
+		roff(".");
+	}
+#endif	// 0
+}
+
 
 /*
  * Describe a "fully identified" item
@@ -3516,7 +3714,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	player_type *p_ptr = Players[Ind];
 //	cptr		*info = p_ptr->info;
 
-	int                     i = 0, j, k, am;
+	int j, am;
 
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -3737,12 +3935,14 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	if (f4 & TR4_COULD2H) fprintf(fff, "It can be wielded two-handed.\n");
 	if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
 
+#if 0	// obsolete - DELETEME
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 	{
 		int blows = calc_blows(Ind, o_ptr);
 		fprintf(fff, "With it, you can usually attack %d time%s/turn.\n",
 				blows, blows > 1 ? "s" : "");
 	}
+#endif	// 0
 
 	/* Mega Hack^3 -- describe the amulet of life saving */
 	if (o_ptr->tval == TV_AMULET &&
@@ -4409,6 +4609,19 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 			fprintf(fff, "It cannot be harmed by cold.\n");
 		}
 	}
+
+	/* Damage display for weapons */
+	if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
+		display_weapon_damage(Ind, o_ptr, fff);
+
+	/* Breakage/Damage display for ammo */
+	if (wield_slot(Ind, o_ptr) == INVEN_AMMO)
+	{
+		fprintf(fff, "It has %d%% chances to break upon hit.\n"
+				, breakage_chance(o_ptr));
+		display_ammo_damage(Ind, o_ptr, fff);
+	}
+
 
 	//	info[i]=NULL;
 	/* Close the file */

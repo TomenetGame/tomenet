@@ -229,6 +229,7 @@
 #define MAX_OW_IDX	96 /* Max size for "ow_info[]" */
 #define MAX_ST_IDX	64 /* Max size for "st_info[]" */
 #define MAX_BA_IDX	64 /* Max size for "ba_info[]" */
+#define MAX_D_IDX	64 /* Max size for "d_info[]" */
 
 
 
@@ -3492,6 +3493,11 @@ that keeps many algorithms happy.
 #define RF8_WILD_SWAMP			0x40000000	/* ToDo: Implement Swamp */
 #define RF8_WILD_TOO            0x80000000
 
+#define RF8_WILD_TOO_MASK \
+	( RF8_WILD_TOWN | RF8_XXX8X02 | RF8_WILD_SHORE | \
+	  RF8_WILD_OCEAN | RF8_WILD_WASTE | RF8_WILD_WOOD | RF8_WILD_VOLCANO | \
+	  RF8_XXX8X08 | RF8_WILD_MOUNTAIN | RF8_WILD_GRASS | RF8_WILD_SWAMP)
+
 
 /*
  * Monster race flags
@@ -3637,50 +3643,38 @@ that keeps many algorithms happy.
 #define DF1_NO_RECALL           0x40000000L	/* No recall allowed */
 #define DF1_NO_STREAMERS        0x80000000L	/* No streamers */
 
+/* dungeon flags for dungeon_type 
+ * they should be renamed to DFx_*
+ */
+/* XXX One problem - master-command from client can only handle flags
+ * from 0x01 to 0x80!  FIXME
+ */
 #if 0
 #define DF2_ADJUST_LEVEL_1_2    0x00000001L	/* Minimum monster level will be half the dungeon level */
 #define DF2_NO_SHAFT            0x00000002L	/* No shafts */
 #define DF2_ADJUST_LEVEL_PLAYER 0x00000004L	/* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
+#else	// 0
+
+/* Maybe better DF2_PRELOADED? */
+#define DF2_RANDOM              0x00000001L /* random dungeon - not preloaded */
+/* DF2_IRON => DF1_NO_RECALL + DF1_FORCE_DOWN */
+#define DF2_IRON                0x00000002L /* one way dungeon - return portal at max level */
+#define DF2_HELL                0x00000004L /* hellish dungeon - forces hellish mode on all */
+/* DF2_NOMAP => DF1_FORGET */
+//#define DF2_NOMAP               0x00000008L /* player never gains level knowledge */
+
+#define DF2_NO_MAGIC_MAP        0x00000010L /* non magic-mappable */
+
+#define DF2_NO_DEATH            0x00000100L /* death penalty is reduced */
+
+#define DF2_ADJUST_LEVEL_1_2    0x10000000L /* Minimum monster level will be half the dungeon level */
+#define DF2_NO_SHAFT            0x20000000L /* No shafts */
+#define DF2_ADJUST_LEVEL_PLAYER 0x40000000L /* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
+
+#define DF2_DELETED             0x80000000L /* Deleted, but not yet removed */
 #endif	// 0
 
 
-#if 0
-/* Level flags */
-#define LF1_NO_TELEPORT         0x00000001L
-#define LF1_ASK_LEAVE           0x00000002L
-#define LF1_NO_STAIR            0x00000004L
-#define LF1_SPECIAL             0x00000008L
-#define LF1_NO_NEW_MONSTER      0x00000010L
-#define LF1_DESC                0x00000020L
-#define LF1_NO_GENO             0x00000040L
-
-#endif	/* 0 */
-
-#if 0
-/* dungeon flags for dungeon_type 
- * they should be renamed to DFx_*
- */
-#define DUNGEON_RANDOM		0x00000001L /* random dungeon - not preloaded */
-#define DUNGEON_IRON		0x00000002L	/* one way dungeon - return portal at max level */
-#define DUNGEON_HELL		0x00000004L	/* hellish dungeon - forces hellish mode on all */
-#define DUNGEON_NOMAP		0x00000008L	/* player never gains level knowledge */
-#define DUNGEON_NO_MAGIC_MAP	0x00000010L
-#define DUNGEON_DELETED		0x80000000L /* Deleted, but not yet removed */
-#endif	// 0
-#define DF2_RANDOM		0x00000001L /* random dungeon - not preloaded */
-#define DF2_IRON		0x00000002L	/* one way dungeon - return portal at max level */
-#define DF2_HELL		0x00000004L	/* hellish dungeon - forces hellish mode on all */
-#define DF2_NOMAP		0x00000008L	/* player never gains level knowledge */
-#define DF2_NO_MAGIC_MAP	0x00000010L
-#define DF2_DELETED		0x80000000L /* Deleted, but not yet removed */
-#if 0
-#define DF2_RANDOM			0x04000000L /* random dungeon - not preloaded */
-#define DF2_IRON			0x08000000L	/* one way dungeon - return portal at max level */
-#define DF2_HELL			0x10000000L	/* hellish dungeon - forces hellish mode on all */
-#define DF2_NOMAP			0x20000000L	/* player never gains level knowledge */
-#define DF2_NO_MAGIC_MAP	0x40000000L
-#define DF2_DELETED			0x80000000L /* Deleted, but not yet removed */
-#endif	// 0
 
 /* level flags for dun_level */
 #define LF1_NO_TELEPORT         0x00000001L
@@ -4755,9 +4749,13 @@ extern int PlayerUID;
 #define inarea(apos, bpos) \
 	((apos)->wx==(bpos)->wx && (apos)->wy==(bpos)->wy && (apos)->wz==(bpos)->wz)
 
+/* alias */
+#define wpcmp(apos, bpos) (inarea(apos, bpos))
+
 #define wild_idx(wpos) \
 	((wpos)->wx + (wpos)->wy * MAX_WILD_X)
 
+/* NOTE: not all the towns should be on the surface, should they? */
 #define istown(wpos) \
 	(!(wpos)->wz && wild_info[(wpos)->wy][(wpos)->wx].type==WILD_TOWN)
 
@@ -4777,7 +4775,7 @@ extern int PlayerUID;
 	(apos.wx==bpos.wx && apos.wy==bpos.wy && apos.wz==bpos.wz)
 */
 
-/* To ease backporting :) */
+/* Alias - to ease backporting :) */
 #define object_prep(o_ptr, k_idx)	invcopy(o_ptr, k_idx)
 
 /* Hooks, scripts */
@@ -5048,4 +5046,42 @@ extern int PlayerUID;
 #define TOWN_MINAS_ANOR	3
 #define TOWN_LORIEN		4
 #define TOWN_KHAZAD		5	/* this town seems to be under construction in ToME */
+
+/* Town defines */
+/* defines for random towns in the dungeon. (will be implemented in v5?)
+ * For now, it's here just to deceive the parser. */
+#define TOWN_RANDOM     20              /* First random town */
+#define TOWN_DUNGEON    4               /* Maximun number of towns per dungeon */
+#define TOWN_CHANCE     50              /* Chance of 1 town */
+
+/*
+ * Defines of the different dungeon types
+ */
+#define DUNGEON_WILDERNESS      0
+#define DUNGEON_MIRKWOOD        1
+#define DUNGEON_MORDOR          2
+#define DUNGEON_ANGBAND         3
+#define DUNGEON_GALGALS         4
+#define DUNGEON_VOLCANO         5
+#define DUNGEON_HELL            6
+#define DUNGEON_NUMENOR         7
+#define DUNGEON_MANDOS          8
+#define DUNGEON_MAZE            18
+#define DUNGEON_DEATH           28
+#define DUNGEON_DOL_GULDUR      23
+
+/* Max depth of each dungeon(max_depth - min_depth) */
+#define MAX_DUNGEON_DEPTH       128
+
+#define DUNGEON_MODE_NONE       0
+#define DUNGEON_MODE_AND        1
+#define DUNGEON_MODE_NAND       2
+#define DUNGEON_MODE_OR         3
+#define DUNGEON_MODE_NOR        4
+
+/* Object generation */
+#define OBJ_GENE_TREASURE       20
+#define OBJ_GENE_COMBAT         20
+#define OBJ_GENE_MAGIC          20
+#define OBJ_GENE_TOOL           20
 

@@ -1868,10 +1868,18 @@ void cmd_master_aux_level(void)
 			buf[1]=c_get_quantity("Base level: ", 127);
 			buf[2]=c_get_quantity("Max depth (1-127): ",127);
 			buf[3]=(get_check("Is it a tower? ") ? 't':'d');
-			/* FIXME flags are u32b while buf[] is char! */
+			/*
+			 * FIXME: flags are u32b while buf[] is char!
+			 * This *REALLY* should be rewritten	- Jir -
+			 */
 			if(get_check("Random dungeon?")) buf[5] |= DF2_RANDOM;
 			if(get_check("Hellish?")) buf[5] |= DF2_HELL;
-			if(get_check("Not mappable?")) buf[5] |= DF2_NOMAP;
+			//if(get_check("Not mappable?")) buf[5] |= DF2_NOMAP;
+			if(get_check("Not mappable?"))
+			{
+				buf[4] |= DF1_FORGET;
+				buf[5] |= DF2_NO_MAGIC_MAP;
+			}
 			if(get_check("Ironman?")) buf[5] |= DF2_IRON;
 			Send_master(MASTER_LEVEL, buf);
 		}

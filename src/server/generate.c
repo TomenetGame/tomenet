@@ -132,6 +132,7 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 #define DUN_STR_MC	90	/* 1/chance of treasure per magma */
 #define DUN_STR_QUA	2	/* Number of quartz streamers */
 #define DUN_STR_QC	40	/* 1/chance of treasure per quartz */
+#define DUN_STR_SC  10	/* 1/chance of treasure per sandwall */
 
 /*
  * Dungeon treausre allocation values
@@ -269,7 +270,10 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 #define EMPTY_LEVEL    15	/* 1/chance of being 'empty' (15)*/
 #define DARK_EMPTY      5	/* 1/chance of arena level NOT being lit (2)*/
 #define SMALL_LEVEL     3	/* 1/chance of smaller size (3)*/
+#define DUN_WAT_RNG     2	/* Width of rivers */
+#define DUN_WAT_CHG    50	/* 1 in 50 chance of junction in river */
 
+#define DUN_SANDWALL   10   /* percentage for Sandwall being generated [10] */
 /*
  * Simple structure to hold a map location
  */
@@ -468,10 +472,17 @@ static int next_to_walls(struct worldpos *wpos, int y, int x)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
+#if 0
 	if (zcave[y+1][x].feat >= FEAT_WALL_EXTRA) k++;
 	if (zcave[y-1][x].feat >= FEAT_WALL_EXTRA) k++;
 	if (zcave[y][x+1].feat >= FEAT_WALL_EXTRA) k++;
 	if (zcave[y][x-1].feat >= FEAT_WALL_EXTRA) k++;
+#else	// 0
+	if (f_info[zcave[y+1][x].feat].flags1 & FF1_WALL) k++;
+	if (f_info[zcave[y-1][x].feat].flags1 & FF1_WALL) k++;
+	if (f_info[zcave[y][x+1].feat].flags1 & FF1_WALL) k++;
+	if (f_info[zcave[y][x-1].feat].flags1 & FF1_WALL) k++;
+#endif	// 0
 	return (k);
 }
 
@@ -1085,11 +1096,14 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			c_ptr->feat = feat;
 
 			/* Hack -- Add some (known) treasure */
-			if (chance && rand_int(chance) == 0) c_ptr->feat += 0x04;
+			//if (chance && rand_int(chance) == 0) c_ptr->feat += 0x04;
+			/* XXX seemingly it was ToME bug */
+			if (chance && rand_int(chance) == 0)
+				c_ptr->feat += (feat == FEAT_SANDWALL ? 0x02 : 0x04);
 		}
 
 		/* Hack^2 - place watery monsters */
-		if (feat == FEAT_DEEP_WATER && magik(2)) vault_monsters(wpos, y, x, 1);
+		// if (feat == FEAT_DEEP_WATER && magik(2)) vault_monsters(wpos, y, x, 1);
 
 		/* Advance the streamer */
 		y += ddy[dir];
@@ -1187,7 +1201,7 @@ static void lake_level(struct worldpos *wpos)
 						c_ptr->feat = FEAT_MUD;
 					}
 
-					if (t < 2) vault_monsters(wpos, y, x, 2);
+					// if (t < 2) vault_monsters(wpos, y, x, 2);
 
 					/* No longer part of a room or vault */
 					c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
@@ -1679,6 +1693,181 @@ void build_rectangle(worldpos *wpos, int y1, int x1, int y2, int x2, int feat, i
 		cave_set_feat(wpos, y, x2, feat);
 		zcave[y][x2].info |= (info);
 	}
+}
+
+
+/*
+ * Place water through the dungeon using recursive fractal algorithm
+ *
+ * Why do those good at math and/or algorithms tend *not* to 
+ * place any spaces around binary operators? I've been always
+ * wondering. This seems almost a unversal phenomenon...
+ * Tried to make those conform to the rule, but there may still
+ * some left untouched...
+ */
+static void recursive_river(worldpos *wpos, int x1,int y1, int x2, int y2,
+	int feat1, int feat2,int width)
+{
+	int dx, dy, length, l, x, y;
+	int changex, changey;
+	int ty, tx;
+
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+
+
+	length = distance(x1, y1, x2, y2);
+
+	if (length > 4)
+	{
+		/*
+		 * Divide path in half and call routine twice.
+		 * There is a small chance of splitting the river
+		 */
+		dx = (x2 - x1) / 2;
+		dy = (y2 - y1) / 2;
+
+		if (dy != 0)
+		{
+			/* perturbation perpendicular to path */
+			changex = randint(abs(dy)) * 2 - abs(dy);
+		}
+		else
+		{
+			changex = 0;
+		}
+
+		if (dx != 0)
+		{
+			/* perturbation perpendicular to path */
+			changey = randint(abs(dx)) * 2 - abs(dx);
+		}
+		else
+		{
+			changey = 0;
+		}
+
+
+
+		/* construct river out of two smaller ones */
+		recursive_river(wpos, x1, y1, x1 + dx + changex, y1 + dy + changey,
+		                feat1, feat2, width);
+		recursive_river(wpos, x1 + dx + changex, y1 + dy + changey, x2, y2,
+		                feat1, feat2, width);
+
+		/* Split the river some of the time -junctions look cool */
+		if ((width > 0) && (rand_int(DUN_WAT_CHG) == 0))
+		{
+			recursive_river(wpos, x1 + dx + changex, y1 + dy + changey,
+			                x1 + 8 * (dx + changex), y1 + 8 * (dy + changey),
+			                feat1, feat2, width - 1);
+		}
+	}
+
+	/* Actually build the river */
+	else
+	{
+		for (l = 0; l < length; l++)
+		{
+			x = x1 + l * (x2 - x1) / length;
+			y = y1 + l * (y2 - y1) / length;
+
+			for (ty = y - width - 1; ty <= y + width + 1; ty++)
+			{
+				for (tx = x - width - 1; tx <= x + width + 1; tx++)
+				{
+					if (!in_bounds(ty, tx)) continue;
+
+					if (zcave[ty][tx].feat == feat1) continue;
+					if (zcave[ty][tx].feat == feat2) continue;
+
+					if (distance(ty, tx, y, x) > rand_spread(width, 1)) continue;
+
+					/* Do not convert permanent features */
+					if (cave_perma_bold(zcave, ty, tx)) continue;
+
+					/*
+					 * Clear previous contents, add feature
+					 * The border mainly gets feat2, while the center
+					 * gets feat1
+					 */
+					if (distance(ty, tx, y, x) > width)
+					{
+						cave_set_feat(wpos, ty, tx, feat2);
+					}
+					else
+					{
+						cave_set_feat(wpos, ty, tx, feat1);
+					}
+
+					/* Lava terrain glows */
+					if ((feat1 == FEAT_DEEP_LAVA) ||
+					    (feat1 == FEAT_SHAL_LAVA))
+					{
+						zcave[ty][tx].info |= CAVE_GLOW;
+					}
+
+					/* Hack -- don't teleport here */
+					zcave[ty][tx].info |= CAVE_ICKY;
+				}
+			}
+		}
+	}
+}
+
+
+/*
+ * Places water through dungeon.
+ */
+static void add_river(worldpos *wpos, int feat1, int feat2)
+{
+	int y2, x2;
+	int y1 = 0, x1 = 0, wid;
+
+	int cur_hgt = dun->l_ptr->hgt;
+	int cur_wid = dun->l_ptr->wid;
+
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+
+	/* Hack -- Choose starting point */
+	y2 = randint(cur_hgt / 2 - 2) + cur_hgt / 2;
+	x2 = randint(cur_wid / 2 - 2) + cur_wid / 2;
+
+	/* Hack -- Choose ending point somewhere on boundary */
+	switch(randint(4))
+	{
+		case 1:
+		{
+			/* top boundary */
+			x1 = randint(cur_wid - 2) + 1;
+			y1 = 1;
+			break;
+		}
+		case 2:
+		{
+			/* left boundary */
+			x1 = 1;
+			y1 = randint(cur_hgt - 2) + 1;
+			break;
+		}
+		case 3:
+		{
+			/* right boundary */
+			x1 = cur_wid - 1;
+			y1 = randint(cur_hgt - 2) + 1;
+			break;
+		}
+		case 4:
+		{
+			/* bottom boundary */
+			x1 = randint(cur_wid - 2) + 1;
+			y1 = cur_hgt - 1;
+			break;
+		}
+	}
+	wid = randint(DUN_WAT_RNG);
+	recursive_river(wpos, x1, y1, x2, y2, feat1, feat2, wid);
 }
 
 
@@ -6685,6 +6874,8 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 	bool		door_flag = FALSE;
 	cave_type		*c_ptr;
 
+	dungeon_type	*d_ptr = getdungeon(wpos);
+
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -6978,7 +7169,10 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 		c_ptr->feat = FEAT_FLOOR;
 
 		/* Occasional doorway */
-		if (rand_int(100) < DUN_TUN_PEN)
+		/* Some dungeons don't have doors at all */
+		//if (d_info[dungeon_type].flags1 & (DF1_NO_DOORS)) return;
+		if (!(d_ptr->flags1 & (DF1_NO_DOORS)) &&
+			rand_int(100) < DUN_TUN_PEN)
 		{
 			/* Place a random door */
 			place_random_door(wpos, y, x);
@@ -7197,6 +7391,7 @@ static void try_doors(worldpos *wpos, int y, int x)
 	int i, k, n;
 	int yy, xx;
 
+	dungeon_type	*d_ptr = getdungeon(wpos);
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -7205,6 +7400,7 @@ static void try_doors(worldpos *wpos, int y, int x)
 
 	/* Some dungeons don't have doors at all */
 //	if (d_info[dungeon_type].flags1 & (DF1_NO_DOORS)) return;
+	if (d_ptr->flags1 & (DF1_NO_DOORS)) return;
 
 	/* Reset tally */
 	n = 0;
@@ -7444,20 +7640,32 @@ static void cave_gen(struct worldpos *wpos)
 
 	dun->l_ptr = getfloor(wpos);
 
-	if (!rand_int(SMALL_LEVEL))
+	/* Very small (1 x 1 panel) level */
+	if (!(d_ptr->flags1 & DF1_BIG) &&
+			(d_ptr->flags1 & DF1_SMALLEST))
+	{
+		dun->l_ptr->hgt = SCREEN_HGT;
+		dun->l_ptr->wid = SCREEN_WID;
+	}
+	/* Small level */
+	else if (!(d_ptr->flags1 & DF1_BIG) &&
+			( (d_ptr->flags1 & DF1_SMALL) ||
+			 (!rand_int(SMALL_LEVEL))))
 	{
 		dun->l_ptr->wid = MAX_WID - rand_int(MAX_WID / SCREEN_WID * 2) * (SCREEN_WID / 2);
 		dun->l_ptr->hgt = MAX_HGT - rand_int(MAX_HGT / SCREEN_HGT * 2 - 1) * (SCREEN_HGT / 2);
-
-		dun->ratio = 100 * dun->l_ptr->wid * dun->l_ptr->hgt / MAX_HGT / MAX_WID;
 	}
+	/* Normal level */
 	else
 	{
 		dun->l_ptr->wid = MAX_WID;
 		dun->l_ptr->hgt = MAX_HGT;
 
-		dun->ratio = 100;
+		//dun->ratio = 100;
 	}
+
+	/* So as not to generate too 'crowded' levels */
+	dun->ratio = 100 * dun->l_ptr->wid * dun->l_ptr->hgt / MAX_HGT / MAX_WID;
 
 	dun->l_ptr->flags1 = 0;
 	if (magik(NO_TELEPORT_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_TELEPORT;
@@ -7468,7 +7676,8 @@ static void cave_gen(struct worldpos *wpos)
 	if (magik(NO_DESTROY_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_DESTROY;
 
 	/* TODO: copy dungeon_type flags to dun_level */
-	if (d_ptr && d_ptr->flags2 & DF2_NOMAP) dun->l_ptr->flags1 |= LF1_NOMAP;
+	//if (d_ptr && d_ptr->flags2 & DF2_NOMAP) dun->l_ptr->flags1 |= LF1_NOMAP;
+	if (d_ptr && d_ptr->flags1 & DF1_FORGET) dun->l_ptr->flags1 |= LF1_NOMAP;
 	if (d_ptr && d_ptr->flags2 & DF2_NO_MAGIC_MAP) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 
 	/* Hack -- NOMAP often comes with NO_MAGIC_MAP */
@@ -7508,11 +7717,13 @@ static void cave_gen(struct worldpos *wpos)
 
 //	maze = (rand_int(DUN_MAZE_FACTOR) < glev - 10 && !watery) ? TRUE : FALSE;
 	maze = (!cavern && rand_int(DUN_MAZE_FACTOR) < glev - 10) ? TRUE : FALSE;
+	if (d_ptr->flags1 & DF1_MAZE) maze = TRUE;
 
 	if (maze) permaze = magik(DUN_MAZE_PERMAWALL);
 
 //	if ((d_ptr->flags1 & (DF1_EMPTY)) ||
-	if (!maze && !cavern && !rand_int(EMPTY_LEVEL))
+	if (!maze && !cavern &&
+		((d_ptr->flags1 & (DF1_EMPTY)) || !rand_int(EMPTY_LEVEL)))
 	{
 		empty_level = TRUE;
 		if ((randint(DARK_EMPTY)!=1 || (randint(100) > glev)))
@@ -7668,7 +7879,8 @@ static void cave_gen(struct worldpos *wpos)
 			if (k < 90)
 			{
 //				if ((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) && room_build(y, x, 1)) continue;
-				if (magik(70) && room_build(wpos, y, x, 1)) continue;
+				if (((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(70)) &&
+						room_build(wpos, y, x, 1)) continue;
 				else if (room_build(wpos, y, x, 9)) continue;
 			}
 
@@ -7677,15 +7889,15 @@ static void cave_gen(struct worldpos *wpos)
 		}
 
 		/* Attempt a trivial room */
-//		if (d_ptr->flags1 & DF1_CAVE)
-		if (magik(50))
+		if ((d_ptr->flags1 & DF1_CAVE) || magik(50))
 		{
 			if (room_build(wpos, y, x, 10)) continue;
 		}
 		else
 		{
 //			if ((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) && room_build(y, x, 9)) continue;
-			if (magik(30) && room_build(wpos, y, x, 9)) continue;
+			if (((d_ptr->flags1 & DF1_CIRCULAR_ROOMS) || magik(30)) &&
+					room_build(wpos, y, x, 9)) continue;
 			else if (room_build(wpos, y, x, 1)) continue;
 		}
 	}
@@ -7795,13 +8007,62 @@ static void cave_gen(struct worldpos *wpos)
 			build_streamer(wpos, FEAT_QUARTZ, DUN_STR_QC, FALSE);
 		}
 
+		/* Add some sand streamers */
+		if (((d_ptr->flags1 & DF1_SAND_VEIN) && !rand_int(4)) ||
+				magik(DUN_SANDWALL))
+		{
+			//if((cheat_room)||(p_ptr->precognition)) msg_print("Sand vein.");
+			build_streamer(wpos, FEAT_SANDWALL, DUN_STR_SC, FALSE);
+		}
+
+		/* Hack -- Add some rivers if requested */
+		if ((d_ptr->flags1 & DF1_WATER_RIVER) && !rand_int(4))
+		{
+			//if(cheat_room || p_ptr->precognition) msg_print("River of water.");
+			add_river(wpos, FEAT_DEEP_WATER, FEAT_SHAL_WATER);
+		}
+		if ((d_ptr->flags1 & DF1_LAVA_RIVER) && !rand_int(4))
+		{
+			//if((cheat_room)||(p_ptr->precognition)) msg_print("River of lava.");
+			add_river(wpos, FEAT_DEEP_LAVA, FEAT_SHAL_LAVA);
+		}
+
+		if ((d_ptr->flags1 & DF1_WATER_RIVERS) || (dun->watery))
+		{
+			int max = 3 + rand_int(2);
+
+			for(i = 0; i < max; i++)
+			{
+				if(rand_int(3) == 0)
+				{
+					add_river(wpos, FEAT_DEEP_WATER, FEAT_SHAL_WATER);
+				}
+			}
+		}
+
+		if (d_ptr->flags1 & DF1_LAVA_RIVERS)
+		{
+			int max = 2 + rand_int(2);
+
+			for(i = 0; i < max; i++)
+			{
+				if(rand_int(3) == 0)
+				{
+					add_river(wpos, FEAT_DEEP_LAVA, FEAT_SHAL_LAVA);
+				}
+			}
+		}
+
+#if 0
 		/* Hack -- Add some water streamers */
 		if (dun->watery)
 		{
+#if 0
 			get_mon_num_hook = vault_aux_aquatic;
 
 			/* Prepare allocation table */
 			get_mon_num_prep();
+#endif	// 0
 
 			for (i = 0; i < DUN_STR_WAT; i++)
 			{
@@ -7810,12 +8071,15 @@ static void cave_gen(struct worldpos *wpos)
 
 			lake_level(wpos);
 
+#if 0
 			/* Remove restriction */
 			get_mon_num_hook = dungeon_aux;
 
 			/* Prepare allocation table */
 			get_mon_num_prep();
+#endif	// 0
 		}
+#endif	// 0
 
 
 		/* Destroy the level if necessary */
@@ -7830,6 +8094,14 @@ static void cave_gen(struct worldpos *wpos)
 
 		/* Place 1 or 2 up stairs near some walls */
 		alloc_stairs(wpos, FEAT_LESS, rand_range(1, 2), 3);
+
+#if 0	// we need a way to create the way back
+		/* Place 1 or 2 (typo of '0 or 1'?) down shafts near some walls */
+		if (!(d_ptr->flags2 & DF2_NO_SHAFT)) alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_SHAFT_DOWN, rand_range(0, 1), 3);
+
+		/* Place 0 or 1 up shafts near some walls */
+		if (!(d_ptr->flags2 & DF2_NO_SHAFT)) alloc_stairs((d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_SHAFT_UP, rand_range(0, 1), 3);
+#endif	// 0
 
 		/* Hack -- add *more* stairs for lowbie's sake */
 		if (glev <= COMFORT_PASSAGE_DEPTH)
@@ -9130,9 +9402,14 @@ void generate_cave(struct worldpos *wpos)
 			/*panel_row = max_panel_rows;
 			panel_col = max_panel_cols;*/
 
+			/* Hack -- add Bree dungeons manually (this will be changed) */
 			if(wpos->wx==cfg.town_x && wpos->wy==cfg.town_y && !wpos->wz){
-				/* town of angband */
+				/* Bree dungeon */
 				adddungeon(wpos, cfg.dun_base, cfg.dun_max, 0, DF2_RANDOM, NULL, NULL, FALSE);
+
+				/* Newbie-training tower */
+				adddungeon(wpos, 1, 10, DF1_SAND_VEIN,
+						DF2_RANDOM | DF2_NO_DEATH, NULL, NULL, TRUE);
 			}
 			else if (!wpos->wz)
 			{
