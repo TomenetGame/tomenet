@@ -1362,6 +1362,7 @@ struct store_action_type
 	char letter;                    /* Action letter */
 	s16b action;                    /* Action code */
 	s16b action_restr;              /* Action restriction */
+	byte flags;		/* Client flags */
 };
 
 

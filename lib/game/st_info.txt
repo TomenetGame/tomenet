@@ -157,8 +157,8 @@ I:100:Restore Life Levels
 I:100:Restore Life Levels
 I:100:Remove Curse
 I:100:Remove Curse
-I:100:*Remove Curse*
-I:100:*Remove Curse*
+I:2:*Remove Curse*
+#I:100:*Remove Curse*
 A:0:0:1:2:3:4
 O:26:27:28:29
 G:4:g
@@ -181,6 +181,7 @@ I:100:Magic Mapping
 I:100:Treasure Detection
 I:100:Object Detection
 I:100:Trap Detection
+I:100:Trap Detection
 I:100:Detect Invisible
 I:100:Recharging
 I:100:Satisfy Hunger
@@ -200,8 +201,9 @@ T:100:71:46
 I:100:Restore Charisma
 I:100:Identify
 I:100:Identify
-I:100:*Identify*
-I:100:*Identify*
+# Maybe needing discussion
+#I:100:*Identify*
+I:2:*Identify*
 I:100:Light
 #I:100:Restore Strength
 T:100:71:42

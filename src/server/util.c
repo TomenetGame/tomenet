@@ -3767,7 +3767,7 @@ int test_item_name(cptr name)
        int i;
 
        /* Scan the items */
-       for (i = 1; i < MAX_K_IDX; i++)
+       for (i = 1; i < max_k_idx; i++)
        {
 		object_kind *k_ptr = &k_info[i];
 		cptr obj_name = k_name + k_ptr->name;

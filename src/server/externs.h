@@ -1035,7 +1035,7 @@ extern void do_cmd_store(int Ind);
 extern void store_shuffle(store_type *st_ptr);
 extern void store_maint(store_type *st_ptr);
 extern void store_init(store_type *st_ptr);
-extern void store_kick(int Ind);
+extern void store_kick(int Ind, bool say);
 
 /* util.c */
 extern bool suppress_message;

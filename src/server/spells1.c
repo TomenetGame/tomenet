@@ -1088,7 +1088,12 @@ byte spell_color(int type)
  * the game when he dies, since the "You die." message is shown before
  * setting the player to "dead".
  */
+/* Poison/Cut timed damages, curse damages etc can bypass the shield.
+ * It's hack; in the future, this function should be called with flags
+ * that tells 'what kind of damage'.
+ */
 bool bypass_invuln = FALSE;
+
 void take_hit(int Ind, int damage, cptr hit_from)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1105,6 +1110,9 @@ void take_hit(int Ind, int damage, cptr hit_from)
 	/* Paranoia */
 	if (p_ptr->death) return;
 
+	/* Hack -- player is secured inside a store/house */
+	/* XXX make sure it doesn't "leak"! */
+	if (p_ptr->store_num > -1) return;
 
 	/* Disturb */
 	disturb(Ind, 1, 0);

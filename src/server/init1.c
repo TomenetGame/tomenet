@@ -2450,7 +2450,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 	s_printf("k_info total: %d\n", idx);
 #endif	// DEBUG_LEVEL
 
-	max_k_idx = idx;
+	max_k_idx = ++idx;
 
 	/* Success */
 	return (0);
@@ -5792,15 +5792,17 @@ errr init_ba_info_txt(FILE *fp, char *buf)
 		{
 			int act, act_res;
 			char letter;
+			byte flags;
 
 			/* Scan for the values */
-			if (3 != sscanf(buf+2, "%d:%d:%c",
-				&act, &act_res, &letter)) return (1);
+			if (4 != sscanf(buf+2, "%d:%d:%c:%d",
+				&act, &act_res, &letter, &flags)) return (1);
 
 			/* Save the values */
 			ba_ptr->action = act;
 			ba_ptr->action_restr = act_res;
 			ba_ptr->letter = letter;
+			ba_ptr->flags = flags;
 
 			/* Next... */
 			continue;
@@ -5975,7 +5977,7 @@ errr init_ow_info_txt(FILE *fp, char *buf)
 
 			/* Save the values */
 //			ow_ptr->max_cost = cost;
-			ow_ptr->max_cost = cost * 10 + 50000;	/* XXX XXX XXX makeshift!! */
+			ow_ptr->max_cost = cost * STORE_PURSE_BOOST;
 			ow_ptr->max_inflate = max_inf;
 			ow_ptr->min_inflate = min_inf;
 			ow_ptr->haggle_per = haggle;

@@ -520,7 +520,7 @@ static void place_fountain(struct worldpos *wpos, int y, int x)
 	}
 
 	/* List of usable svals */
-	for (k = 1; k < MAX_K_IDX; k++)
+	for (k = 1; k < max_k_idx; k++)
 	{
 		object_kind *k_ptr = &k_info[k];
 

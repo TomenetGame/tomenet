@@ -2688,7 +2688,7 @@ static bool process_player_end_aux(int Ind)
 					break;
 				}
 
-				if (bye) store_kick(Ind);
+				if (bye) store_kick(Ind, TRUE);
 				else p_ptr->tim_store = STORE_TURNOUT;
 			}
 		}

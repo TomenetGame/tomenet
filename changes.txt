@@ -21,41 +21,48 @@
 
 # bug.txt should follow the exact same format
 
-# Ok. My patience is at an end.
-# DARKGOD, EVILEYE, WRITE THE CHANGELOGS!!!!!!!  CVS log does NO HELP!!!!
+# Oh, thank you, Evileye :)
 # - Jir -
 
+20/08/2002 (Jir)
+[O]- some 'Rogue' tributes
+[m]- more changes for store code.
+[m]- max_k_idx
+[G]- stores allow players to stay as long as no one else is waiting.
+[P]- player won't receive any damages when in a store/house.
+
 20/08/2002 (evileye)
-- changed file transfers so that they use lists.
-- non valid accounts have more restrictions added.
+[m]- changed file transfers so that they use lists.
+[P]- non valid accounts have more restrictions added.
 
 19/08/2002 (evileye)
-- delete tempfiles when used (/tmp won't fill up)
-- windows mkstemp allows for this by filling string.
-- fixed problem with new savefile creation (again?)
-- made file transfer point to lib.
-- weak security (starting '/', presence of '..')
-- corrected the buffer that file transfer uses for acks/errs
-  so it does not sit waiting for action.
-- Added client file sending (TEMP..) move it if you want....
-  I realise that a LIST of files would be better, rather than
-  having to mess with the srcs.
+[m]- delete tempfiles when used (/tmp won't fill up)
+     windows mkstemp allows for this by filling string.
+[B]- fixed problem with new savefile creation (again?)
+[m]- made file transfer point to lib.
+[B]- weak security (starting '/', presence of '..')
+[m]- corrected the buffer that file transfer uses for acks/errs
+     so it does not sit waiting for action.
+[m]- Added client file sending (TEMP..) move it if you want....
+     I realise that a LIST of files would be better, rather than
+     having to mess with the srcs.
 
 18/08/2002 (evileye)
-- File transfer changes. I have changed script upload in client to
-  use the file transfer system which I wrote. Server replies with
-  suitable messages regarding success/permission. My intent is to 
-  change the system so that it will upload/download into a
-  predefined set of directories (and check for illegal characters in
-  filenames which pose a security threat).
-  Currently it will send/receive from/in the current working directory.
-  I require more information regarding WHERE we need file transfer
-  access before I can complete.
+[m]- File transfer changes. I have changed script upload in client to
+     use the file transfer system which I wrote. Server replies with
+     suitable messages regarding success/permission. My intent is to 
+     change the system so that it will upload/download into a
+     predefined set of directories (and check for illegal characters in
+     filenames which pose a security threat).
+     Currently it will send/receive from/in the current working directory.
+     I require more information regarding WHERE we need file transfer
+     access before I can complete.
 
 18/08/2002 (Jir)
 [G]- ow_info.txt and st_info.txt backported.
      (st_info.txt will come; other fixes needed)
 [m]- testing max_*_idx (to replace MAX_*_IDX)
+[m]- load2.c cleanup.
 
 17/08/2002 (Jir)
 # remove savedata (character is ok) and make clean pls
@@ -1830,7 +1837,12 @@ below this line are the unfixed bugs known:
 [B]- unique/mego partial shimmering seems to be broken (they always shimmer)
 [B]- starting items don't get autotag even with auto_inscribe (Handle_login)
 [B]- '/' searching doesn't work very well due to msg compressing (x12)
-[B]- if the server dies of SIGPIPE, duplicated char can be generated.
+[B]- stores in different town can have the same owner (wow! 2 Bilbo!)
+[B]- when dying, client emits 'broken pipe' error.
+     (not crucial, and it's same with mang070.)
+     Program received signal SIGPIPE, Broken pipe.
+     0x281f7134 in sendto () from /usr/lib/libc.so.4
+[B]- if the *server* dies of SIGPIPE, duplicated char can be generated.
         Choose a character
            a) Breadric the level 1 Half-Elf Adventurer
            b) Olaudon the level 4 DragonRider Warrior
@@ -1843,19 +1855,6 @@ below this line are the unfixed bugs known:
 
 
 **Crushing bugs**
-
-[B]- apartment doors can displace? (disabled)
-     Program received signal SIGSEGV, Segmentation fault.
-     access_door (Ind=2, dna=0x0) at server/cmd2.c:666
-     666             if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
-     (gdb) bt
-     #0  access_door (Ind=2, dna=0x0) at server/cmd2.c:666
-     #1  0x80560a4 in map_info (Ind=2, y=46, x=120, ap=0xbfbfefda "\005+<霓衰\006\b\002", 
-        cp=0xbfbfefdb "+<霓衰\006\b\002") at server/cave.c:1330
-     #2  0x8056c4d in prt_map (Ind=2) at server/cave.c:1898
-     #3  0x806eeea in redraw_stuff (Ind=2) at server/xtra1.c:3621
-     #4  0x80edd3a in process_player_end (Ind=2) at server/dungeon.c:2638
-     #5  0x80ef862 in dungeon () at server/dungeon.c:3700
 
 [B]- deallocator deallocates the floor that ghost is on!
      shutdown in dungeon, login, other player recalls there and voila..
@@ -1933,6 +1932,39 @@ below this line are the unfixed bugs known:
      #4  0x80748a5 in player_death (Ind=1) at server/xtra2.c:4205
      #5  0x80f195f in dungeon () at server/dungeon.c:3866
 
+[B]- apartment doors can displace? (seemingly Evileye fixed it :)
+     Program received signal SIGSEGV, Segmentation fault.
+     access_door (Ind=2, dna=0x0) at server/cmd2.c:666
+     666             if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
+     (gdb) bt
+     #0  access_door (Ind=2, dna=0x0) at server/cmd2.c:666
+     #1  0x80560a4 in map_info (Ind=2, y=46, x=120, ap=0xbfbfefda "\005+<霓衰\006\b\002", 
+        cp=0xbfbfefdb "+<霓衰\006\b\002") at server/cave.c:1330
+     #2  0x8056c4d in prt_map (Ind=2) at server/cave.c:1898
+     #3  0x806eeea in redraw_stuff (Ind=2) at server/xtra1.c:3621
+     #4  0x80edd3a in process_player_end (Ind=2) at server/dungeon.c:2638
+     #5  0x80ef862 in dungeon () at server/dungeon.c:3700
+
+[B]- file transfer code crashes, trying to send file to disconnected client
+     (maybe already fixed?)
+     20 Aug 15:58:51: Goodbye Afared(Key)=key@pm.dip.jp ("client quit")
+     send end
+     
+     Program received signal SIGSEGV, Segmentation fault.
+     Packet_printf (sbuf=0x88b1024, fmt=0x8171e65 "%c%c%hd") at common/sockbuf.c:473
+     473                     *buf++ = cval;
+     (gdb) bt
+     #0  Packet_printf (sbuf=0x88b1024, fmt=0x8171e65 "%c%c%hd") at common/sockbuf.c:473
+     #1  0x810c1cb in Send_file_end (ind=0, id=123) at server/nserver.c:2733
+     #2  0x8117e8b in do_xfers () at common/files.c:149
+     #3  0x80f568e in process_various () at server/dungeon.c:3288
+     #4  0x80f6b8b in dungeon () at server/dungeon.c:4133
+     #5  0x80dc671 in sched () at server/sched.c:508
+     #6  0x80f6f84 in play_game (new_game=0 '\000') at server/dungeon.c:4408
+     #7  0x810c67b in main (argc=3, argv=0xbfbff6b0) at server/main.c:276
+     #8  0x8049df9 in _start ()
+
+
 
 
 **below are bugs not fixed but avoided**
@@ -1981,6 +2013,8 @@ below this line are the unfixed bugs known:
 [B]- meanless double egos like Elven Robe of Fire Resistance
 [B]- ^S(Spike doors) is bad key for GCU
 [B]- ^O(Chat history) is bad key for XIM
+[B]- If character savedate exists but it's not on the player-name database,
+     that data can be 'stolen' by anyone else who specifies the name.
 
 
 
@@ -2021,17 +2055,14 @@ memo and questions:
   - hills, deserts, lavas, waters, underwaters, tundra, elemental planes
   - loophole(like wall, but missiles/breathes pass)
   - passage requirements/(eq)damages/themes/generators/AI
-  - terrain effects (like in some 'strategy' games
+  - terrain effects (like in some 'strategy' games)
 - variety of dungeon/floor types (d_info.txt)
   - several flags
 - fully-implemented multiple towns (t_*.txt)
 - more kinds of stores / flexible store configuration (st_info.txt)
   - a set of commands should be sent to client when entering a store, so that
     different stores can have different commands.
-  - add a way to 'kick player out of the store'
   - new stores:
-    + archery shop
-    + bookstore
     + job centre (for lowbies died)
     + guild house
     + healer
@@ -2052,6 +2083,7 @@ memo and questions:
 - guild, or new party system (multi-player Omega :)
 - total rebalancing for all of them
 - interactive spell system (like in C3)
+- extend worldpos, so that one surface can have more than one dungeons/towers
 
 [sober ones]
 - total source-code cleanup {takkaria?}
@@ -2067,6 +2099,8 @@ memo and questions:
 - send flags for each spell, so that we can obsolete do_cmd_cast_aux etc.
 - integrate p_ptr->fruit_bat into p_ptr->body_monster
 - exploding arrows should be ego?
+- switch MAX_*_IDX(define) to max_*_idx(variable) as far as possible.
+- /ver should tell 'last commit time' instead of 'last compile'.
 
 [speeding the server up]
 # ok, it's 3 times faster now. maybe we don't squeeze it further for now.
@@ -2209,7 +2243,7 @@ memo and questions:
         int time;
         char ly, lx, event_kind, magnitude;};
 - horizontal-connected caves (eg.[32,32,-40]=>[32,31,-40])
-- (re)new classes/races
+- (re)new classes/races (XXX revise this list!)
   + Paladin/Ranger
   + Mimic (actually it's popular now, so no need perhaps :)
   + Telepath (as a keystone of party)
@@ -2218,7 +2252,6 @@ memo and questions:
   * race/class extra powers (via '\n' command maybe?)
   * client changes below should be done first, so that we can add/change
     race/class w/o client update!
-- spell extensions, esp. after lv50 (remove the 64-spells limit first!)
 - randunis
 - port internationalization codes
 - newbie and veteran mode

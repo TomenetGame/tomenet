@@ -374,6 +374,16 @@ void do_cmd_eat_food(int Ind, int item)
 			}
 
 			case SV_FOOD_RATION:
+			{
+				/* 'Rogue' tribute :) */
+				if (magik(10))
+				{
+					msg_print(Ind, "Yuk, that food tasted awful.");
+					gain_exp(Ind, 1);
+					break;
+				}
+				/* Fall through */
+			}
 			case SV_FOOD_BISCUIT:
 			case SV_FOOD_JERKY:
 			case SV_FOOD_SLIME_MOLD:

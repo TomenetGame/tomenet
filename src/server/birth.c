@@ -1462,7 +1462,7 @@ static void player_setup(int Ind, bool new)
 	/* Show him to everybody */
 	everyone_lite_spot(wpos, y, x);
 	/* Hack -- Give him "awareness" of certain objects */
-	for (i = 1; i < MAX_K_IDX; i++)
+	for (i = 1; i < max_k_idx; i++)
 	{
 		object_kind *k_ptr = &k_info[i];
 

@@ -1263,6 +1263,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			/* Analyze the type */
 			switch (o_ptr->tval)
 			{
+				case TV_BOOK:
 				case TV_MAGIC_BOOK:
 				case TV_SORCERY_BOOK:
 				case TV_AMULET:
@@ -2314,9 +2315,14 @@ static void display_store(int Ind)
 	/* Normal stores */
 	else
 	{
+		cptr owner_name = (ow_name + ot_ptr->name);
+
+		/* Hack -- Museum doesn't have owner */
+	    if (st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM) owner_name = "";
+
 		/* Send the store info */
 //		Send_store_info(Ind, p_ptr->store_num, st_ptr->owner, st_ptr->stock_num);
-		Send_store_info(Ind, p_ptr->store_num, store_name, ow_name + ot_ptr->name, st_ptr->stock_num, ot_ptr->max_cost);
+		Send_store_info(Ind, p_ptr->store_num, store_name, owner_name, st_ptr->stock_num, ot_ptr->max_cost);
 	}
 
 }
@@ -2610,6 +2616,12 @@ void store_purchase(int Ind, int item, int amt)
 				/* Store is empty */
 				if (st_ptr->stock_num == 0)
 				{
+#if 0	/* disabled -- some stores with few stocks get silly */
+					/* XXX kick him out once, since client update doesn't
+					 * seem to work right */
+					store_kick(Ind, FALSE);
+					suppress_message = FALSE;
+
 					/* Shuffle */
 					if (rand_int(STORE_SHUFFLE) == 0)
 					{
@@ -2635,7 +2647,10 @@ void store_purchase(int Ind, int item, int amt)
 					}
 
 					/* Redraw everything */
-					display_inventory(Ind);
+					//display_inventory(Ind);
+
+					return;
+#endif	// 0
 				}
 
 				/* The item is gone */
@@ -3281,12 +3296,15 @@ void store_maint(store_type *st_ptr)
 			{
 				/* Somewhat hackie -- don't turn her/him out at once */
 				if (magik(40) && Players[i]->tim_store < STORE_TURNOUT / 2)
-					store_kick(i);
+					store_kick(i, TRUE);
 				else return;
 			}
 		}
 	}
 #endif	// 0
+
+	/* Ignore Museum */
+	if (st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM) return;
 
 	/* Activate the owner */
 //	ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
@@ -3405,10 +3423,10 @@ void store_init(store_type *st_ptr)
 }
 
 		
-void store_kick(int Ind)
+void store_kick(int Ind, bool say)
 {
 	player_type *p_ptr = Players[Ind];
-	msg_print(Ind, "The shopkeeper asks you to leave the store once.");
+	if (say) msg_print(Ind, "The shopkeeper asks you to leave the store once.");
 	//				store_leave(Ind);
 	p_ptr->store_num = -1;
 	Send_store_kick(Ind);

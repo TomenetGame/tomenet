@@ -1754,6 +1754,7 @@ static int Handle_login(int ind)
 		    !connp->Client_setup.u_char[i])
 			continue;
 
+		/* XXX not max_k_idx, since client doesn't know the value */
 		for (j = 0; j < MAX_K_IDX; j++)
 		{
 			if (k_info[j].tval == i)

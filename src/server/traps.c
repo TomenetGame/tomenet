@@ -147,7 +147,7 @@ bool do_trap_of_silliness(int Ind, int power)
 
 	for (i = 0; i < power; i++)
 	{
-		j = rand_int(MAX_K_IDX);
+		j = rand_int(max_k_idx);
 		if (p_ptr->obj_aware[j]) aware = TRUE;
 		p_ptr->obj_aware[j] = 0;
 
@@ -295,7 +295,7 @@ bool do_player_trap_garbage(int Ind, int times)
 
 	for(k = 0; k < times; k++)
 	{
-		l = rand_int(MAX_K_IDX);
+		l = rand_int(max_k_idx);
 
 		/* hack -- !ruin, !death cannot be generated */
 		if (!k_info[l].tval || k_info[l].cost || k_info[l].level > lv || k_info[l].level > 30) continue;

@@ -2287,7 +2287,8 @@ void do_cmd_look(int Ind, int dir)
 		if (is_a_vowel(name[0])) p1 = "An ";
 
 		/* Hack -- add trap description */
-		if ((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+		if ((cs_ptr=GetCS(c_ptr, CS_TRAPS)))
+		{
 			int t_idx = cs_ptr->sc.trap.t_idx;
 			if (cs_ptr->sc.trap.found)
 			{
@@ -2304,8 +2305,14 @@ void do_cmd_look(int Ind, int dir)
 //		if ((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL))
 		if (feat == FEAT_SHOP)
 		{
-			p1 = "The entrance to the ";
+			p1 = "The entrance to ";
+
 			/* TODO: store name! */
+			if ((cs_ptr=GetCS(c_ptr, CS_SHOP)))
+			{
+				name = st_name + st_info[cs_ptr->sc.omni].name;
+			}
+
 		}
 
 		if ((feat==FEAT_FOUNTAIN) && (cs_ptr=GetCS(c_ptr, CS_FOUNTAIN)) &&
