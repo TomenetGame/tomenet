@@ -315,6 +315,14 @@ extern bool (*master_move_hook)(int Ind, char * parms);
 extern int artifact_bias;
 extern char summon_kin_type;
 
+/*
+ * The spell list of schools
+ */
+extern s16b max_spells;
+extern spell_type *school_spells;
+extern s16b max_schools;
+extern school_type *schools;
+
 extern int project_time;
 extern s32b project_time_effect;
 extern effect_type effects[MAX_EFFECTS];

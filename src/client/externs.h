@@ -167,6 +167,15 @@ extern s16b flush_count;
 extern char reason[MAX_CHARS];	/* Receive_quit */
 
 /*
+ * The spell list of schools
+ */
+extern s16b max_spells;
+extern spell_type *school_spells;
+extern s16b max_schools;
+extern school_type *schools;
+
+
+/*
  * Not-so-Automatically generated "function declarations"
  */
 
@@ -291,6 +300,7 @@ extern s16b message_num(void);
 extern cptr message_str(s16b age);
 extern void c_message_add(cptr msg);
 extern void c_msg_print(cptr msg);
+extern void c_msg_format(cptr fmt, ...);
 extern s32b c_get_quantity(cptr prompt, int max);
 extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern bool askfor_aux(char *buf, int len, char private);
@@ -352,7 +362,7 @@ extern void prt_sane(byte attr, cptr buf);
 /* c-xtra2.c */
 extern void do_cmd_messages(void);
 extern void do_cmd_messages_chatonly(void);
-extern void dump_messages(FILE *fff, int lines);
+extern errr dump_messages(cptr name, int lines, int mode);
 
 /* client.c */
 
@@ -424,7 +434,7 @@ extern int Send_store_purchase(int item, int amt);
 extern int Send_store_sell(int item, int amt);
 extern int Send_store_leave(void);
 extern int Send_store_confirm(void);
-extern int Send_redraw(void);
+extern int Send_redraw(char mode);
 extern int Send_special_line(int type, int line);
 extern int Send_party(s16b command, cptr buf);
 extern int Send_guild(s16b command, cptr buf);
@@ -445,6 +455,16 @@ extern bool hack_do_cmd_skill_wait;
 extern void do_activate_skill(int x_idx, int item);
 extern void do_cmd_activate_skill(void);
 extern void dump_skills(FILE *fff);
+
+/* c-script.c */
+extern void init_lua();
+extern bool pern_dofile(char *file);
+extern bool exec_lua(char *file);
+extern void master_script_begin(char *name, char mode);
+extern void master_script_end();
+extern void master_script_line(char *buf);
+extern void master_script_exec(char *name);
+extern void cat_script(char *name);
 
 /* common/common.c */
 extern cptr longVersion;

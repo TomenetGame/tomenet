@@ -865,10 +865,10 @@ static byte breath_to_attr[32][2] =
 	{  TERM_ORANGE,  TERM_RED },		/* RF4_BRTH_PLAS */
 	{  TERM_UMBER,  TERM_L_UMBER },		/* RF4_BRTH_FORCE */
 	{  TERM_L_BLUE,  TERM_WHITE },		/* RF4_BRTH_MANA */
-	{  0,  0 },     /*  */
+	{  TERM_WHITE,  TERM_L_RED },		/* RF4_BRTH_DISINT */
 	{  TERM_GREEN,  TERM_L_GREEN },		/* RF4_BRTH_NUKE */
 	{  0,  0 },     /*  */
-	{  TERM_WHITE,  TERM_L_RED },		/* RF4_BRTH_DISINT */
+	{  0,  0 },     /*  */
 };
 /*
  * Multi-hued monsters shimmer acording to their breaths.

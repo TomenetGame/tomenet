@@ -155,3 +155,12 @@ skill_type s_info[MAX_SKILLS];
 s16b flush_count = 0;
 
 // char reason[MAX_CHARS];	/* Receive_quit */
+
+/*
+ * The spell list of schools
+ */
+s16b max_spells;
+spell_type *school_spells;
+s16b max_schools;
+school_type *schools;
+

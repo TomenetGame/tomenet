@@ -904,7 +904,8 @@ static byte player_init[MAX_CLASS][3][2] =
 {
 	{
 		/* Adventurer */
-		{ TV_RING, SV_RING_SEE_INVIS },
+//		{ TV_RING, SV_RING_SEE_INVIS },
+		{ TV_BOOK, 50 },
 		{ TV_SWORD, SV_SABRE },
 		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR }
 	},

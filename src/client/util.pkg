@@ -31,81 +31,6 @@ typedef unsigned int u32b;
 #define TERM_L_BLUE             14  /* 'B' */   /* 0,4,4 */
 #define TERM_L_UMBER            15  /* 'U' */   /* 3,2,1 */
 
-struct hash_entry
-{
-	int id;				/* The character ID */
-	u32b account;			/* account id */
-	cptr name;			/* Player name */
-
-	/* new in 3.4.2 */
-	byte level;			/* Player maximum level */
-	byte party;			/* Player party */
-	/* 3.5.0 */
-	byte guild;			/* Player guild */
-	s16b quest;			/* Player quest */
-
-	time_t laston;			/* Last on time */
-	struct hash_entry *next;	/* Next entry in the chain */
-};
-
-extern struct hash_entry *lookup_player(int id);
-extern int lookup_player_id(cptr name);
-
-/* probably this shouldn't be here? */
-struct server_opts
-{
-	s16b runlevel;		/* Glorified shutdown mode */
-	time_t closetime;	/* Server closedown time */
-	char * meta_address;
-	char * bind_name;
-	/* char * console_password; */
-	char * admin_wizard;
-	char * dungeon_master;
-	s32b preserve_death_level;
-	s32b unique_respawn_time;
-	s32b unique_max_respawn_time;
-	s32b level_unstatic_chance;
-	s32b min_unstatic_level;
-	s32b retire_timer;
-	s32b game_port;
-	s32b console_port;
-	s32b spell_interfere;
-	s32b spell_stack_limit;
-	s16b fps;
-	s16b newbies_cannot_drop;
-	s16b running_speed;
-	s16b anti_scum;
-	s16b dun_unusual;
-	s16b town_x;
-	s16b town_y;
-	s16b town_base;
-	s16b dun_base;
-	s16b dun_max;
-	s16b store_turns;
-	char resting_rate;
-	char party_xp_boost;
-	char use_pk_rules;
-	char quit_ban_mode;
-	char zang_monsters;
-	char pern_monsters;
-	char cth_monsters;
-	char joke_monsters;
-	char vanilla_monsters;
-	char pet_monsters;
-	bool report_to_meta;
-	bool secret_dungeon_master;
-	bool anti_arts_horde;
-	bool mage_hp_bonus;
-	char door_bump_open;
-	bool no_ghost;
-	bool maximize;
-	bool kings_etiquette;
-	bool public_rfe;
-	bool auto_purge;
-};
-
-extern s32b turn;
-extern server_opts cfg;
 
 $extern s32b intMod(s32b a, s32b b);
 $extern s32b intAnd(s32b a, s32b b);
@@ -123,16 +48,16 @@ extern s32b intShiftl @ bshl(s32b a, s32b b);
 extern s32b intShiftr @ bshr(s32b a, s32b b);
 extern s32b intBitNot @ bnot(s32b b);
 
-extern bool pern_dofile(int Ind, char *file);
-extern bool exec_lua(int Ind, char *file);
-extern void cat_script(int Ind, char *name);
+extern bool pern_dofile(char *file);
+extern bool exec_lua(char *file);
+extern void cat_script(char *name);
 
-extern void msg_print(int Ind, cptr msg);
-extern void msg_broadcast(int Ind, cptr msg);
-extern void msg_print_near(int Ind, cptr msg);
-extern void msg_admin(cptr msg);
+extern void prt(cptr str, int row, int col);
+extern void c_prt(byte attr, cptr str, int row, int col);
 
+/* No client-side hooks for the time being. */
 /* maintain hooks with LUA, not with server code */
+/*
 extern void wipe_hooks(void);
 extern void dump_hooks(void);
 extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
@@ -181,5 +106,5 @@ extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
 #define HOOK_LOAD_GAME          41
 #define HOOK_LEVEL_REGEN        42
 #define HOOK_LEVEL_END_GEN      43
-#define HOOK_NPCTEST		44	/* undecided on npc hooks atm */
-					/* this one is proximity activated */
+#define HOOK_NPCTEST		44
+*/

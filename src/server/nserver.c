@@ -7287,7 +7287,7 @@ static int Receive_redraw(int ind)
 	connection_t *connp = &Conn[ind];
 	player_type *p_ptr;
 	int player, n;
-	char ch;
+	char ch, mode;
 
 	if (connp->id != -1)
 	{
@@ -7295,24 +7295,24 @@ static int Receive_redraw(int ind)
 		p_ptr = Players[player];
 
 		if (p_ptr->esp_link_type && p_ptr->esp_link)
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			if (Players[Ind2]->esp_link_flags & LINKF_VIEW)
-			  {
-			    player = Ind2;
-			    p_ptr = Players[Ind2];
-			  }
-		      }
-		  }
+		{
+			int Ind2 = find_player(p_ptr->esp_link);
+
+			if (!Ind2)
+				end_mind(ind, TRUE);
+			else
+			{
+				if (Players[Ind2]->esp_link_flags & LINKF_VIEW)
+				{
+					player = Ind2;
+					p_ptr = Players[Ind2];
+				}
+			}
+		}
 	}
 	else player = 0;
 
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
+	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &mode)) <= 0)
 	{
 		if (n == -1)
 			Destroy_connection(ind, "read error");
@@ -7325,6 +7325,30 @@ static int Receive_redraw(int ind)
 		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 	       	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 	       	p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP | PU_SANITY);
+
+		/* Do 'Heavy' redraw if requested.
+		 * TODO: One might wish to add more detailed modes
+		 */
+		if (mode)
+		{
+			/* Tell the server to redraw the player's display */
+			p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS;
+			p_ptr->redraw |= PR_PLUSSES;
+			p_ptr->redraw |= PR_STUDY;
+
+			/* Update his view, light, bonuses, and torch radius */
+#ifdef ORIG_SKILL_EVIL	/* not to be defined */
+			p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE
+					| PU_SPELLS | PU_SKILL_INFO | PU_SKILL_MOD);
+#else
+			p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE
+					| PU_SPELLS);
+#endif
+			p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
+
+			/* Update his inventory, equipment, and spell info */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
+		}
 	}
 
 	return 1;

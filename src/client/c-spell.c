@@ -542,3 +542,401 @@ void do_ghost(void)
 	/* Tell the server */
 	Send_ghost(j);
 }
+
+
+/*
+ * Schooled magic
+ */
+/* Backported from ToME -- beware, this can explode!	- Jir - */
+
+#if 0
+/*
+ * Find a spell in any books/objects
+ */
+static int hack_force_spell = -1;
+bool get_item_hook_find_spell(int *item)
+{
+	int i, spell;
+	char buf[80];
+	char buf2[100];
+
+	strcpy(buf, "Manathrust");
+	if (!get_string("Spell name? ", buf, 79))
+		return FALSE;
+	sprintf(buf2, "return find_spell(\"%s\")", buf);
+	spell = exec_lua(buf2);
+	if (spell == -1) return FALSE;
+	for (i = 0; i < INVEN_TOTAL; i++)
+	{
+		object_type *o_ptr = &inventory[i];
+
+		/* Must we wield it ? */
+		if ((wield_slot(o_ptr) != -1) && (i < INVEN_WIELD)) continue;
+
+		/* Is it a non-book? */
+		if ((o_ptr->tval != TV_BOOK))
+		{
+			u32b f1, f2, f3, f4, f5, esp;
+
+			/* Extract object flags */
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+			if ((f5 & TR5_SPELL_CONTAIN) && (o_ptr->pval2 == spell))
+			{
+				*item = i;
+				hack_force_spell = spell;
+				return TRUE;
+			}
+		}
+		/* A random book ? */
+		else if ((o_ptr->sval == 255) && (o_ptr->pval == spell))
+		{
+			*item = i;
+			hack_force_spell = spell;
+			return TRUE;
+		}
+		/* A normal book */
+		else if (o_ptr->sval != 255)
+		{
+			sprintf(buf2, "return spell_in_book(%d, %d)", o_ptr->sval, spell);
+			if (exec_lua(buf2))
+			{
+				*item = i;
+				hack_force_spell = spell;
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
+
+/*
+ * Get a spell from a book
+ */
+u32b get_school_spell(cptr do_what)
+{
+	int i, item;
+	u32b spell = -1;
+	int num = 0, where = 1;
+	int ask;
+	bool flag, redraw;
+	char choice;
+	char out_val[160];
+	char buf2[40];
+        object_type *o_ptr;
+        int tmp;
+        int sval, pval;
+
+        hack_force_spell = -1;
+        get_item_extra_hook = get_item_hook_find_spell;
+        item_tester_hook = hook_school_spellable;
+	sprintf(buf2, "You have no book to %s from", do_what);
+        if (!get_item(&item, format("%^s from which book?", do_what), buf2, USE_INVEN | USE_EQUIP | USE_EXTRA )) return -1;
+
+	/* Get the item (in the pack) */
+	if (item >= 0)
+	{
+		o_ptr = &inventory[item];
+	}
+
+	/* Get the item (on the floor) */
+	else
+	{
+		o_ptr = &o_list[0 - item];
+	}
+
+        /* If it can be wielded, it must */
+        if ((wield_slot(o_ptr) != -1) && (item < INVEN_WIELD))
+        {
+                msg_format("You cannot %s from that object, it must be wielded first.", do_what);
+                return -1;
+        }
+
+        if (repeat_pull(&tmp))
+        {
+                return tmp;
+        }
+
+	/* Nothing chosen yet */
+	flag = FALSE;
+
+	/* No redraw yet */
+	redraw = FALSE;
+
+	/* Show choices */
+	if (show_choices)
+	{
+		/* Update */
+		p_ptr->window |= (PW_SPELL);
+
+		/* Window stuff */
+		window_stuff();
+	}
+
+	/* No spell to cast by default */
+	spell = -1;
+
+        /* Is it a random book, or something else ? */
+        if (o_ptr->tval == TV_BOOK)
+        {
+                sval = o_ptr->sval;
+                pval = o_ptr->pval;
+        }
+        else
+        {
+                sval = 255;
+                pval = o_ptr->pval2;
+        }
+
+        if (hack_force_spell == -1)
+        {
+                num = exec_lua(format("return book_spells_num(%d)", sval));
+
+                /* Build a prompt (accept all spells) */
+                strnfmt(out_val, 78, "(Spells %c-%c, Descs %c-%c, *=List, ESC=exit) %^s which spell? ",
+                        I2A(0), I2A(num - 1), I2A(0) - 'a' + 'A', I2A(num - 1) - 'a' + 'A',  do_what);
+
+                /* Get a spell from the user */
+                while (!flag && get_com(out_val, &choice))
+                {
+                        /* Request redraw */
+                        if (((choice == ' ') || (choice == '*') || (choice == '?')))
+                        {
+                                /* Show the list */
+                                if (!redraw)
+                                {
+                                        /* Show list */
+                                        redraw = TRUE;
+
+                                        /* Save the screen */
+                                        character_icky = TRUE;
+                                        Term_save();
+
+                                        /* Display a list of spells */
+                                        where = exec_lua(format("return print_book(%d, %d)", sval, pval));
+                                }
+
+                                /* Hide the list */
+                                else
+                                {
+                                        /* Hide list */
+                                        redraw = FALSE;
+                                        where = 1;
+
+                                        /* Restore the screen */
+                                        Term_load();
+                                        character_icky = FALSE;
+                                }
+
+                                /* Redo asking */
+                                continue;
+                        }
+
+
+                        /* Note verify */
+                        ask = (isupper(choice));
+
+                        /* Lowercase */
+                        if (ask) choice = tolower(choice);
+
+                        /* Extract request */
+                        i = (islower(choice) ? A2I(choice) : -1);
+
+                        /* Totally Illegal */
+                        if ((i < 0) || (i >= num))
+                        {
+                                bell();
+                                continue;
+                        }
+
+                        /* Verify it */
+                        if (ask)
+                        {
+                                /* Show the list */
+                                if (!redraw)
+                                {
+                                        /* Show list */
+                                        redraw = TRUE;
+
+                                        /* Save the screen */
+                                        character_icky = TRUE;
+                                        Term_load();
+                                        Term_save();
+
+                                }
+                                /* Rstore the screen */
+                                else
+                                {
+                                        /* Restore the screen */
+                                        Term_load();
+                                }
+
+                                /* Display a list of spells */
+                                where = exec_lua(format("return print_book(%d, %d)", sval, pval));
+                                exec_lua(format("print_spell_desc(spell_x(%d, %d, %d), %d)", sval, pval, i, where));
+                        }
+                        else
+                        {
+                                /* Save the spell index */
+                                spell = exec_lua(format("return spell_x(%d, %d, %d)", sval, pval, i));
+
+                                /* Require "okay" spells */
+                                if (!exec_lua(format("return is_ok_spell(%d)", spell)))
+                                {
+                                        bell();
+                                        msg_format("You may not %s that spell.", do_what);
+                                        spell = -1;
+                                        continue;
+                                }
+
+                                /* Stop the loop */
+                                flag = TRUE;
+                        }
+                }
+        }
+        else
+        {
+                /* Require "okay" spells */
+                if (exec_lua(format("return is_ok_spell(%d)", hack_force_spell)))
+                {
+                        flag = TRUE;
+                        spell = hack_force_spell;
+                }
+                else
+                {
+                        bell();
+                        msg_format("You may not %s that spell.", do_what);
+                        spell = -1;
+                }
+        }
+
+
+	/* Restore the screen */
+	if (redraw)
+	{
+		Term_load();
+		character_icky = FALSE;
+	}
+
+
+	/* Show choices */
+	if (show_choices)
+	{
+		/* Update */
+		p_ptr->window |= (PW_SPELL);
+
+		/* Window stuff */
+		window_stuff();
+	}
+
+
+	/* Abort if needed */
+	if (!flag) return -1;
+
+        tmp = spell;
+        repeat_push(tmp);
+	return spell;
+}
+
+void cast_school_spell()
+{
+	int spell;
+
+	/* No magic */
+	if (p_ptr->antimagic)
+	{
+		msg_print("Your anti-magic field disrupts any magic attempts.");
+		return;
+	}
+
+	spell = get_school_spell("cast");
+
+	/* Actualy cast the choice */
+	if (spell != -1)
+	{
+		exec_lua(format("cast_school_spell(%d, spell(%d))", spell, spell));
+	}
+}
+#endif	// 0
+
+void browse_school_spell(int book, int pval)
+{
+	int i;
+	int num = 0, where = 1;
+	int ask;
+	char choice;
+	char out_val[160];
+
+#if 0
+	/* Show choices */
+	if (show_choices)
+	{
+		/* Update */
+		p_ptr->window |= (PW_SPELL);
+
+		/* Window stuff */
+		window_stuff();
+	}
+#endif	// 0
+
+	num = exec_lua(format("return book_spells_num(%d)", book));
+
+	/* Build a prompt (accept all spells) */
+	strnfmt(out_val, 78, "(Spells %c-%c, ESC=exit) cast which spell? ",
+	        I2A(0), I2A(num - 1));
+
+	/* Save the screen */
+//	character_icky = TRUE;
+	Term_save();
+
+	/* Display a list of spells */
+	where = exec_lua(format("return print_book(%d, %d)", book, pval));
+
+	/* Get a spell from the user */
+	while (get_com(out_val, &choice))
+	{
+		/* Display a list of spells */
+		where = exec_lua(format("return print_book(%d, %d)", book, pval));
+
+		/* Note verify */
+		ask = (isupper(choice));
+
+		/* Lowercase */
+		if (ask) choice = tolower(choice);
+
+		/* Extract request */
+		i = (islower(choice) ? A2I(choice) : -1);
+
+		/* Totally Illegal */
+		if ((i < 0) || (i >= num))
+		{
+			bell();
+			continue;
+		}
+
+                /* Restore the screen */
+                Term_load();
+
+                /* Display a list of spells */
+                where = exec_lua(format("return print_book(%d, %d)", book, pval));
+                exec_lua(format("print_spell_desc(spell_x(%d, %d, %d), %d)", book, pval, i, where));
+	}
+
+
+	/* Restore the screen */
+	Term_load();
+//	character_icky = FALSE;
+
+#if 0
+	/* Show choices */
+	if (show_choices)
+	{
+		/* Update */
+		p_ptr->window |= (PW_SPELL);
+
+		/* Window stuff */
+		window_stuff();
+	}
+#endif	// 0
+}
+

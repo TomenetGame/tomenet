@@ -1,0 +1,151 @@
+/* $Id$ */
+/* File: spells.pkg */
+
+/*
+ * Purpose: Lua interface defitions for spells.
+ * To be processed by tolua to generate C source code.
+ */
+
+$#include "angband.h"
+$#include "lua.h"
+
+typedef char* cptr;
+typedef int errr;
+typedef unsigned char bool;
+typedef unsigned char byte;
+typedef signed short s16b;
+typedef unsigned short u16b;
+typedef signed int s32b;
+typedef unsigned int u32b;
+
+#define DEFAULT_RADIUS			18
+
+#define GF_ELEC         1
+#define GF_POIS         2
+#define GF_ACID         3
+#define GF_COLD         4
+#define GF_FIRE         5
+#define GF_MISSILE      10
+#define GF_ARROW        11
+#define GF_PLASMA       12
+#define GF_HOLY_ORB     13
+#define GF_WATER        14
+#define GF_LITE         15
+#define GF_DARK         16
+#define GF_LITE_WEAK	17
+#define GF_DARK_WEAK	18
+#define GF_SHARDS       20
+#define GF_SOUND        21
+#define GF_CONFUSION    22
+#define GF_FORCE        23
+#define GF_INERTIA      24
+#define GF_MANA         26
+#define GF_METEOR       27
+#define GF_ICE          28
+#define GF_CHAOS        30
+#define GF_NETHER       31
+#define GF_DISENCHANT   32
+#define GF_NEXUS        33
+#define GF_TIME         34
+#define GF_GRAVITY      35
+#define GF_KILL_WALL	40
+#define GF_KILL_DOOR	41
+#define GF_KILL_TRAP	42
+#define GF_MAKE_WALL	45
+#define GF_MAKE_DOOR	46
+#define GF_MAKE_TRAP	47
+#define GF_OLD_CLONE	51
+#define GF_OLD_POLY	52
+#define GF_OLD_HEAL	53
+#define GF_OLD_SPEED	54
+#define GF_OLD_SLOW	55
+#define GF_OLD_CONF	56
+#define GF_OLD_SLEEP	57
+#define GF_OLD_DRAIN	58
+#define GF_AWAY_UNDEAD	61
+#define GF_AWAY_EVIL	62
+#define GF_AWAY_ALL	63
+#define GF_TURN_UNDEAD	64
+#define GF_TURN_EVIL	65
+#define GF_TURN_ALL	66
+#define GF_DISP_UNDEAD	67
+#define GF_DISP_EVIL	68
+#define GF_DISP_ALL	69
+
+#define	GF_HEAL_PLAYER	70
+#define	GF_STONE_WALL 	71
+#define	GF_EARTHQUAKE 	72
+#define	GF_WRAITH_PLAYER 73
+#define	GF_SPEED_PLAYER  74
+#define	GF_SHIELD_PLAYER 75
+#define GF_RECALL_PLAYER 76
+#define GF_STUN          77
+#define GF_IDENTIFY      78
+#define GF_PSI           79
+
+#define GF_HOLY_FIRE    80
+#define GF_HELL_FIRE    GF_HOLY_ORB
+
+#define GF_DISINTEGRATE 81
+
+#define GF_MAKE_GLYPH   85
+#define GF_ROCKET       91
+
+#define GF_NUKE         110
+#define GF_BLIND	111
+#define GF_HOLD		112	/* hold */
+#define GF_DOMINATE	113	/* dominate */
+#define GF_BLESS_PLAYER  114
+#define GF_REMFEAR_PLAYER  115
+#define GF_SATHUNGER_PLAYER  116
+#define GF_RESFIRE_PLAYER  117
+#define GF_RESCOLD_PLAYER  118
+#define GF_CUREPOISON_PLAYER  119
+#define GF_SEEINVIS_PLAYER  120
+#define GF_SEEMAP_PLAYER  121
+#define GF_CURECUT_PLAYER  122
+#define GF_CURESTUN_PLAYER  123
+#define GF_DETECTCREATURE_PLAYER  124
+#define GF_DETECTDOOR_PLAYER  125
+#define GF_DETECTTRAP_PLAYER  126
+#define GF_TELEPORTLVL_PLAYER  127
+#define GF_RESPOIS_PLAYER  128
+#define GF_RESELEC_PLAYER  129
+#define GF_RESACID_PLAYER  130
+#define GF_HPINCREASE_PLAYER  131
+#define GF_HERO_PLAYER  132
+#define GF_SHERO_PLAYER  133
+
+#define GF_TELE_TO		150
+#define GF_HAND_DOOM	151
+#define GF_STASIS       152
+
+/* special 'projector' types, used in project(). */
+#define PROJECTOR_UNUSUAL	-1000
+#define PROJECTOR_TRAP		-1001
+#define PROJECTOR_POTION	-1002
+#define PROJECTOR_TERRAIN	-1003
+#define PROJECTOR_MON_TRAP	-1004
+#define PROJECTOR_EFFECT	-1005
+
+#define PROJECT_JUMP	0x00000001
+#define PROJECT_BEAM	0x00000002
+#define PROJECT_THRU	0x00000004
+#define PROJECT_STOP	0x00000008
+#define PROJECT_GRID	0x00000010
+#define PROJECT_ITEM	0x00000020
+#define PROJECT_KILL	0x00000040
+#define PROJECT_HIDE	0x00000080
+
+#define EFF_WAVE                0x00000001      /* A circle whose radius increase */
+#define EFF_LAST                0x00000002      /* The wave lasts */
+#define EFF_STORM               0x00000004      /* The area follows the player */
+
+
+extern void teleport_player(int Ind, int dis);
+extern void teleport_player_to(int Ind, int ny, int nx);
+extern void teleport_player_level(int Ind);
+
+/* This could have some good uses */
+extern s16b project_time;
+extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg);

@@ -18,6 +18,8 @@
  *
  * Attempt to only hilite the matching portions of the string.
  */
+/* TODO: those functions should be bandled in one or two generic function(s).
+ */
 void do_cmd_messages(void)
 {
 	int i, j, k, n, nn, q, r, s, t=0;
@@ -138,7 +140,8 @@ void do_cmd_messages(void)
 					i, i+j-1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 23, 0);
+//		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 23, 0);
+		prt("[Press 'p' for older, 'n' for newer, 'f' for filedump, ..., or ESCAPE]", 23, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -286,6 +289,21 @@ void do_cmd_messages(void)
 			i = 0;
 		}
 
+		/* Dump */
+		if ((k == 'f') || (k == 'F'))
+		{
+			char tmp[80];
+			strnfmt(tmp, 160, "%s-msg.txt", cname);
+			if (get_string("Filename: ", tmp, 80))
+			{
+				if (tmp[0] && (tmp[0] != ' '))
+				{
+					dump_messages(tmp, MESSAGE_MAX, 0);
+					continue;
+				}
+			}
+		}
+
 		/* Hack -- Error of some kind */
 		if (i == j) bell();
 	}
@@ -398,7 +416,8 @@ void do_cmd_messages_chatonly(void)
 					i, i+j-1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 23, 0);
+//		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 23, 0);
+		prt("[Press 'p' for older, 'n' for newer, 'f' for filedump, ..., or ESCAPE]", 23, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -546,6 +565,21 @@ void do_cmd_messages_chatonly(void)
 			i = 0;
 		}
 
+		/* Dump */
+		if ((k == 'f') || (k == 'F'))
+		{
+			char tmp[80];
+			strnfmt(tmp, 160, "%s-chat.txt", cname);
+			if (get_string("Filename: ", tmp, 80))
+			{
+				if (tmp[0] && (tmp[0] != ' '))
+				{
+					dump_messages(tmp, MESSAGE_MAX, 1);
+					continue;
+				}
+			}
+		}
+
 		/* Hack -- Error of some kind */
 		if (i == j) bell();
 	}
@@ -563,7 +597,8 @@ void do_cmd_messages_chatonly(void)
  * XXX The beginning of dump can be corrupted. FIXME
  */
 /* FIXME: result can be garbled if contains '%' */
-void dump_messages(FILE *fff, int lines)
+/* chatonly if mode != 0 */
+void dump_messages_aux(FILE *fff, int lines, int mode)
 {
 	int i, j, k, n, nn, q, r, s, t=0;
 
@@ -572,6 +607,15 @@ void dump_messages(FILE *fff, int lines)
 
 	cptr nomsg_target = "Target Selected.";
 	cptr nomsg_map = "Map sector ";
+
+	cptr msg_deadA = "You have been killed";
+	cptr msg_deadB = "You die";
+	cptr msg_unique = "was slain by";
+	cptr msg_killed = "was killed by";
+	cptr msg_destroyed = "ghost was destroyed by";
+	cptr msg_suicide = "committed suicide.";
+	cptr msg_telepath = "mind";
+
 
 	char buf[160];
 
@@ -590,12 +634,33 @@ void dump_messages(FILE *fff, int lines)
 	{
 		msg = message_str(i);
 
-		if (strstr(msg, nomsg_target) ||
-				strstr(msg, nomsg_map))
-			continue;	
+		if (!mode)
+		{
+			if (strstr(msg, nomsg_target) ||
+					strstr(msg, nomsg_map))
+				continue;	
 
-		message_recall[nn] = msg;	
-		nn++;
+			message_recall[nn] = msg;	
+			nn++;
+		}
+		else
+		{
+			if (
+				//(strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) ||
+				//(strstr(msg, msg_telepath) != NULL) ||
+				(msg[0] == '[') || (msg[2] == '[') ||
+				(strstr(msg, msg_killed) != NULL) ||
+				(strstr(msg, msg_destroyed) != NULL) ||
+				(strstr(msg, msg_unique) != NULL) ||
+				(strstr(msg, msg_suicide) != NULL) ||
+				(strstr(msg, msg_deadA) != NULL) ||
+				(strstr(msg, msg_deadB) != NULL)
+				)
+			{
+				message_recall[nn] = msg;	
+				nn++;
+			}
+		}
 	}
 
 
@@ -662,3 +727,52 @@ void dump_messages(FILE *fff, int lines)
 	fprintf(fff, "\n\n");
 }
 
+errr dump_messages(cptr name, int lines, int mode)
+{
+	int			fd = -1;
+	FILE		*fff = NULL;
+	char		buf[1024];
+
+	cptr what = mode ? "Chat" : "Message";
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, name);
+
+	/* File type is "TEXT" */
+	FILE_TYPE(FILE_TYPE_TEXT);
+
+	/* Open the non-existing file */
+	if (fd < 0) fff = my_fopen(buf, "w");
+
+
+	/* Invalid file */
+	if (!fff)
+	{
+		/* Message */
+		c_msg_print(format("%s dump failed!", what));
+		c_msg_print(NULL);
+
+		/* Error */
+		return (-1);
+	}
+
+	/* Begin dump */
+	fprintf(fff, "  [TomeNET %d.%d.%d @ %s %s Dump]\n\n",
+		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, server_name, what);
+
+	/* Do it */
+	dump_messages_aux(fff, lines, mode);
+
+	fprintf(fff, "\n\n");
+
+	/* Close it */
+	my_fclose(fff);
+
+
+	/* Message */
+	c_msg_print(format("%s dump successful.", what));
+	c_msg_print(NULL);
+
+	/* Success */
+	return (0);
+}

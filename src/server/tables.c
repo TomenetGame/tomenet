@@ -1985,6 +1985,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 600,
                         },
                         {
+                                SKILL_CONVEYANCE,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
                                 SKILL_DEVICE,
                                 '+', 1000,
                                 '+', 600,
@@ -5700,6 +5705,29 @@ skill_type s_info[MAX_SKILLS] =
 				/* Tval */
 				0,
         },
+        {
+                "Conveyance",
+                "Ability to learn and use spells from the Conveyance school\nSpells use the intelligence stat",
+
+                /* Mkey desc/mkey */
+                "Cast a spell",
+                MKEY_SCHOOL,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+				(SKF1_MKEY_SCHOOL | SKF1_MKEY_TVAL),
+
+				/* Tval */
+				TV_BOOK,
+        },
 };
 
 /*
@@ -5728,6 +5756,7 @@ int skill_tree_init[MAX_SKILLS][2] =
 
         { -1, SKILL_MAGIC },
         { SKILL_MAGIC, SKILL_DEVICE },
+        { SKILL_MAGIC, SKILL_CONVEYANCE },
         { SKILL_MAGIC, SKILL_SORCERY },
         { SKILL_SORCERY, SKILL_CASTSPEED },
         { SKILL_MAGIC, SKILL_MAGERY },

@@ -856,7 +856,7 @@ void fix_spell(int Ind, bool full)
 #endif	// 0
 
 	/* Scan for appropriate books */
-/* #if 0 */
+#if 0	// pfft, visit the magic shop and eXamine books; pls fix more nicely
 	/* sending all spells ?*/
 	/* This is *still* far from adequate 
 	   we should only send individual spells that
@@ -871,7 +871,6 @@ void fix_spell(int Ind, bool full)
 				do_cmd_browse(Ind, &p_ptr->inventory[i]);
 			}
 		}
-/* #else */
 	}
 	else{
 		for (i = TV_PSI_BOOK; i < TV_HUNT_BOOK + 1; i++)
@@ -885,12 +884,11 @@ void fix_spell(int Ind, bool full)
 			}
 		}
 	}
-#if 0
+#else
 	for (i = 0; i < MAX_REALM; i++)
 		for (j = 0; j < 9; j++)
 			fix_spell_aux(Ind, i, j);
-#endif	// 0
-/* #endif */
+#endif
 }
 
 
@@ -1926,7 +1924,7 @@ int calc_blows(int Ind, object_type *o_ptr)
 	if (num_blow > num) num_blow = num;
 
 	/* Add in the "bonus blows" */
-	num_blow += p_ptr->extra_blows;
+//	num_blow += p_ptr->extra_blows;
 
 	/* Require at least one blow */
 	if (num_blow < 1) num_blow = 1;
@@ -3220,6 +3218,7 @@ static void calc_bonuses(int Ind)
 	if (o_ptr->k_idx && !p_ptr->heavy_wield)
 	{
 		p_ptr->num_blow = calc_blows(Ind, o_ptr);
+		p_ptr->num_blow += p_ptr->extra_blows;
 		/* Boost blows with masteries */
 		if (get_weaponmastery_skill(p_ptr) != -1)
 		{

@@ -1381,6 +1381,14 @@ static void prepare_distance()
 }
 
 
+void init_schools(s16b new_size)
+{
+	/* allocate the extra memory */
+	C_MAKE(schools, new_size, school_type);
+	max_schools = new_size;
+}
+
+
 /*
  * Initialize some other arrays
  */

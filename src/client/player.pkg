@@ -623,8 +623,5 @@ struct player_type
 
 };
 
-extern bool imprison(int Ind, int time, char *reason);
-
-extern int NumPlayers;
-extern player_type *Players[0xFFFFF] @ Players_real;
-extern int get_playerind(char *name);
+/* extern player_type *Players[0xFFFFF] @ Players_real; */
+extern player_type player;

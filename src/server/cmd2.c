@@ -2380,7 +2380,7 @@ static void do_arrow_brand_effect(int Ind, int y, int x)
 //static void do_arrow_explode(int Ind, object_type *o_ptr, int y, int x)
 void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x)
 {
-	player_type *p_ptr = Players[Ind];
+//	player_type *p_ptr = Players[Ind];
 	int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2;
 	int flag = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
 
@@ -2391,7 +2391,7 @@ void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x)
 		case SV_AMMO_HEAVY: rad = 4; dam *= 2; break;
 	}
 
-	project(0 - Ind, rad, &p_ptr->wpos, y, x, dam, o_ptr->pval, flag);
+	project(0 - Ind, rad, wpos, y, x, dam, o_ptr->pval, flag);
 }
 
 

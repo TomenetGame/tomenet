@@ -1119,7 +1119,7 @@ errr file_character(cptr name, bool full)
 	cptr		paren = ")";
 	int			fd = -1;
 	FILE		*fff = NULL;
-	store_type  *st_ptr;
+//	store_type  *st_ptr;
 	char		o_name[80];
 	char		buf[1024];
 	bool            spell_first = FALSE;
@@ -1279,7 +1279,7 @@ errr file_character(cptr name, bool full)
 
 	/* Dump the last messages */
 	fprintf(fff, "  [Last Messages]\n\n");
-	dump_messages(fff, 50);
+	dump_messages_aux(fff, 50, 0);
 	fprintf(fff, "\n\n");
 
 	/* Close it */

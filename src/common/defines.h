@@ -1208,6 +1208,10 @@ that keeps many algorithms happy.
 
 #define EGO_DIGGING		101
 #define EGO_SPECTRAL            102
+#if 0
+#define EGO_MORGUL			103
+#define EGO_NOTHINGNESS		104
+#endif	/* 0 */
 #define EGO_ACCURACY		105
 #define EGO_EXTRA_MIGHT		107
 #define EGO_EXTRA_SHOTS		108
@@ -1303,23 +1307,13 @@ that keeps many algorithms happy.
 #define TV_RUNE1        104      /* Base runes */
 #define TV_RUNE2        105      /* Modifier runes */
 
+#define TV_BOOK         111
 #if 0   /* (reserved) we'll use TomeNET books :) */
-#define TV_VALARIN_BOOK 111
-#define TV_MAGERY_BOOK  112
-#define TV_SHADOW_BOOK  113
-#define TV_CHAOS_BOOK   114
-#define TV_NETHER_BOOK  115
-#define TV_CRUSADE_BOOK 116
-#define TV_SIGALDRY_BOOK 117
-#define TV_SYMBIOTIC_BOOK 118
-#define TV_MUSIC_BOOK   119
-#define TV_MAGIC_BOOK   120
-#define TV_PRAYER_BOOK  121
-#define TV_ILLUSION_BOOK 122
-#define TV_TRIBAL_BOOK  123
-#define TV_DRUID_BOOK   124
-#define TV_DAEMON_BOOK  125
-#define TV_SPIRIT_BOOK  126
+#define TV_SYMBIOTIC_BOOK 112
+#define TV_MUSIC_BOOK   113
+#define TV_DRUID_BOOK   114
+#define TV_DAEMON_BOOK  115
+
 #endif  /* 0 */
 
 /* pernM ones (resurrected) */
@@ -1334,6 +1328,7 @@ that keeps many algorithms happy.
 #define TV_SHADOW_BOOK 	94
 #define TV_HUNT_BOOK 	95
 
+/* Exactly, it's "is_realm_book" */
 #define is_book(o_ptr) \
 	(89 <= o_ptr->tval && o_ptr->tval <= 95)
 
@@ -3277,6 +3272,7 @@ that keeps many algorithms happy.
 #define RF7_AI_SPECIAL          0x00002000  /* For quests */
 #define RF7_NEUTRAL             0x00004000  /* Monster is neutral */
 
+#define RF7_ATTR_BREATH			0x20000000  /* Use client breath colouring */
 #define RF7_MULTIPLY            0x40000000  /* Monster reproduces */
 #define RF7_DISBELIEVE			0x80000000	/* Antimagic shield */
 
@@ -4590,6 +4586,7 @@ extern int PlayerUID;
 #define MKEY_DODGE              8
 #define MKEY_FLETCHERY			9
 #define MKEY_TRAP               10
+#define MKEY_SCHOOL             11
 
 /*
  * Skills
@@ -4648,6 +4645,9 @@ extern int PlayerUID;
 #define SKILL_TRAPPING          46
 #define SKILL_AXE				47	/* hrm, bad order */
 
+/* School skills */
+#define SKILL_CONVEYANCE        48
+
 #if 0	/* skills to come	- Jir - */
 #define SKILL_CLIMB
 #define SKILL_INNATE_POWER	/* in mimicry tree */
@@ -4660,8 +4660,9 @@ extern int PlayerUID;
 /* SKill flags */
 #define SKF1_HIDDEN             0x00000001      /* Starts hidden */
 
+#define SKF1_MKEY_SCHOOL		0x04000000	/* mkey is school type */
 #define SKF1_MKEY_HARDCODE		0x08000000	/* mkey uses hard-coded routine */
-#define SKF1_MKEY_SPELL			0x10000000	/* mkey is spell type */
+#define SKF1_MKEY_SPELL			0x10000000	/* mkey is realm spell type */
 #define SKF1_MKEY_TVAL			0x20000000	/* mkey uses specific tval(not used) */
 #define SKF1_MKEY_ITEM			0x40000000	/* mkey requires an item */
 #define SKF1_MKEY_DIRECTION		0x80000000	/* mkey requires direction */

@@ -4135,6 +4135,9 @@ bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 			dam = 100; /* hack */
 			rad = 3;
 			break;
+		case SV_WAND_TELEPORT_TO:
+			typ = GF_TELE_TO;
+			break;
 		default:
 			return (FALSE);
 	}
@@ -4679,7 +4682,8 @@ bool mon_hit_trap(int m_idx)
 					}
 
 					/* KABOOM! */
-					do_arrow_explode(who, load_o_ptr, &wpos, my, mx);
+					/* Hack -- minus * minus * minus = minus */
+					if (load_o_ptr->pval) do_arrow_explode(who > 0 ? who : 0 - who, load_o_ptr, &wpos, my, mx);
 
 					if (load_o_ptr->tval != TV_ARROW ||
 						load_o_ptr->sval != SV_AMMO_MAGIC)
@@ -4700,7 +4704,7 @@ bool mon_hit_trap(int m_idx)
 						}
 
 						/* Drop (or break) near that location */
-						drop_near(j_ptr, breakage_chance(j_ptr), &wpos, my, mx);				
+						if (!load_o_ptr->pval) drop_near(j_ptr, breakage_chance(j_ptr), &wpos, my, mx);				
 					}
 
 				}

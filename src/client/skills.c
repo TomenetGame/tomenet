@@ -371,6 +371,7 @@ void do_cmd_skill()
 	int table[MAX_SKILLS][2];
 	int i;
 	int wid,hgt;
+	bool changed = FALSE;
 
 #ifndef EVIL_TEST /* evil test */
 	/* Screen is icky */
@@ -540,6 +541,9 @@ void do_cmd_skill()
 
 				/* Now we wait the answer */
 				hack_do_cmd_skill_wait = TRUE;
+
+				/* Refresh when everything is done */
+				changed = TRUE;
 			}
 
 			/* Decrease the current skill */
@@ -563,6 +567,9 @@ void do_cmd_skill()
 
 	/* Load the screen */
 	Term_load();
+
+	/* XXX test -- redraw when done */
+	if (changed) Send_redraw(1);
 
 #ifndef EVIL_TEST /* evil test */
 	/* Screen is not icky */

@@ -971,7 +971,7 @@ int Flush_queue(void)
 	/* If a redraw has been requested, send the request */
 	if (request_redraw)
 	{
-		Send_redraw();
+		Send_redraw(0);
 		request_redraw = FALSE;
 	}
 
@@ -3263,11 +3263,11 @@ int Send_store_confirm(void)
 	return 1;
 }
 
-int Send_redraw(void)
+int Send_redraw(char mode)
 {
 	int	n;
 
-	if ((n = Packet_printf(&wbuf, "%c", PKT_REDRAW)) <= 0)
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_REDRAW, mode)) <= 0)
 	{
 		return n;
 	}

@@ -2204,8 +2204,19 @@ struct player_type
 	s16b to_l;                      /* Bonus to life */
 	s16b to_m;                      /* Bonus to mana */
 	//        s16b to_s;                      /* Bonus to spell(num_spell) */
-	s16b dodge_chance;                      /* Bonus to mana */
+	s16b dodge_chance;		/* Chance of dodging blows/missiles */
 
+#if 0
+	s16b mtp;                       /* Max tank pts */
+	s16b ctp;                       /* Cur tank pts */
+	s16b tp_aux1;                   /* aux1 tank pts */
+	s16b tp_aux2;                   /* aux2 tank pts */
+
+	s32b grace;                     /* Your God's appreciation factor. */
+	byte pgod;                      /* Your God. */
+	bool praying;                   /* Praying to your god. */
+	s16b melkor_sacrifice;          /* How much hp has been sacrified for damage */
+#endif	// 0
 };
 
 /* For Monk martial arts */
@@ -2396,4 +2407,25 @@ union hook_return
 	s32b num;
 	char *str;
 	object_type *o_ptr;
+};
+
+/*
+ * The spell function must provide the desc
+ */
+typedef struct spell_type spell_type;
+struct spell_type
+{
+        cptr name;                      /* Name */
+        byte skill_level;               /* Required level (to learn) */
+	byte mana;			/* Required mana at lvl 1 */
+	byte mana_max;			/* Required mana at max lvl */
+	byte fail;			/* Minimum chance of failure */
+        s16b level;                     /* Spell level(0 = not learnt) */
+};
+
+typedef struct school_type school_type;
+struct school_type
+{
+        cptr name;                      /* Name */
+        s16b skill;                     /* Skill used for that school */
 };

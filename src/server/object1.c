@@ -1615,6 +1615,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			return;
 		}
 
+		case TV_BOOK:
+		{                        
+//			basenm = k_name + k_ptr->name;
+			if (o_ptr->sval == 255) modstr = school_spells[o_ptr->pval].name;
+			break;
+		}
+
 			/* Used in the "inventory" routine */
 		default:
 		{

@@ -114,8 +114,9 @@ CONS_OBJS = \
 
 LUASRCS = \
   server/script.c server/lua_bind.c \
-  server/w_util.c server/w_play.c
+  server/w_util.c server/w_play.c server/w_spells.c
 
+# TODO: lua directory should be under common/ and not server/
 TOLUASRCS = \
   server/lua/lapi.c server/lua/lcode.c server/lua/ldebug.c server/lua/ldo.c server/lua/lfunc.c server/lua/lgc.c \
   server/lua/llex.c server/lua/lmem.c server/lua/lobject.c server/lua/lparser.c server/lua/lstate.c server/lua/lstring.c \
@@ -126,7 +127,7 @@ TOLUASRCS = \
 
 LUAOBJS = \
   server/script.o server/lua_bind.o \
-  server/w_util.o server/w_play.o
+  server/w_util.o server/w_play.o server/w_spells.o
 
 TOLUAOBJS = \
   server/lua/lapi.o server/lua/lcode.o server/lua/ldebug.o server/lua/ldo.o server/lua/lfunc.o server/lua/lgc.o \
@@ -135,6 +136,17 @@ TOLUAOBJS = \
   server/lua/lauxlib.o server/lua/lbaselib.o server/lua/ldblib.o server/lua/liolib.o server/lua/lstrlib.o \
   server/lua/tolua_lb.o server/lua/tolua_rg.o server/lua/tolua_tt.o server/lua/tolua_tm.o server/lua/tolua_gp.o \
   server/lua/tolua_eh.o server/lua/tolua_bd.o
+
+CLI_LUASRCS = \
+  client/c-script.c \
+  client/w_play.c client/w_util.c
+
+#  server/lua_bind.c \
+#  server/w_util.c server/w_play.c
+
+CLI_LUAOBJS = \
+  client/c-script.o \
+  client/w_play.o client/w_util.o
 
 ##
 ## Following are some "system" definitions
@@ -315,9 +327,13 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lcurses -lcrypt
 
 # Lua
 SRCS += $(LUASRCS)
+SRCS += $(CLI_LUASRCS)
 SERV_OBJS += $(LUAOBJS)
 SERV_SRCS += $(TOLUASRCS)
 SERV_OBJS += $(TOLUAOBJS)
+CLI_OBJS += $(CLI_LUAOBJS)
+CLI_SRCS += $(TOLUASRCS)
+CLI_OBJS += $(TOLUAOBJS)
 CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
 TOLUA = server/tolua
@@ -402,6 +418,14 @@ server/w_util.c: server/util.pkg $(TOLUA)
 server/w_play.c: server/player.pkg $(TOLUA)
 	cd server; ./tolua -n player -o w_play.c player.pkg; cd ..
 
+server/w_spells.c: server/spells.pkg $(TOLUA)
+	cd server; ./tolua -n spells -o w_spells.c spells.pkg; cd ..
+
+client/w_play.c: client/player.pkg $(TOLUA)
+	cd client; ../server/tolua -n player -o w_play.c player.pkg; cd ..
+
+client/w_util.c: client/util.pkg $(TOLUA)
+	cd client; ../server/tolua -n util -o w_util.c util.pkg; cd ..
 
 
 #

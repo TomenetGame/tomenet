@@ -2792,7 +2792,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 		{
 			if (o_ptr->sval == SV_AMMO_MAGIC)
 			{
-				o_ptr->to_h = o_ptr->to_d = o_ptr->pval = o_ptr->name2 = 0;
+				o_ptr->to_h = o_ptr->to_d = o_ptr->pval = o_ptr->name2 = o_ptr->name3 = 0;
 				break;
 			}
 

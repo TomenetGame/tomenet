@@ -1782,6 +1782,28 @@ void c_msg_print(cptr msg)
 	p += n + 1;
 }
 
+/*
+ * Display a formatted message, using "vstrnfmt()" and "c_msg_print()".
+ */
+void c_msg_format(cptr fmt, ...)
+{
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+	
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Display */
+	c_msg_print(buf);
+}
+
 
 /*
  * Request a "quantity" from the user

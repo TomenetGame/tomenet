@@ -176,6 +176,8 @@ void increase_skill(int Ind, int i)
 	/* Update the client */
 	Send_skill_info(Ind, i);
 
+	/* XXX updating is delayed till player leaves the skill screen */
+#if 0
 	/* Tell the server to redraw the player's display */
 	p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS;
 	p_ptr->redraw |= PR_PLUSSES;
@@ -193,6 +195,9 @@ void increase_skill(int Ind, int i)
 
 	/* Update his inventory, equipment, and spell info */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
+#endif	// 0
+
+	p_ptr->update |= (PU_SKILL_INFO | PU_SKILL_MOD);
 }
 
 

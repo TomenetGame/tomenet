@@ -21,6 +21,13 @@
 
 # bug.txt should follow the exact same format
 
+09/08/2002 (Jir)
+[m]- basements for schooled spells (not working at all :p)
+[m]- client-side LUA scripting.
+[I]- Message/chat dump.
+[B]- Magic ammos didn't stack well.
+[B]- BR_DISI didn't have any colours (breath_to_attr)
+
 07/08/2002 (Jir)
 [O]- Amulet of Life Saving helps from sanity death.
 [O]- (Hack) Morgul is 4 times rarer now.

@@ -539,6 +539,14 @@ s16b count_project_times = 0;
 obj_theme default_obj_theme = {20, 20, 20, 20};
 
 /*
+ * The spell list of schools
+ */
+s16b max_spells;
+spell_type *school_spells;
+s16b max_schools;
+school_type *schools;
+
+/*
  * Lasting spell effects
  */
 int project_time = 0;

@@ -1,4 +1,5 @@
-/* File: script.c */
+/* $Id$ */
+/* File: c-script.c */
 
 /* Purpose: scripting in lua */
 
@@ -9,6 +10,7 @@
  * not for profit purposes provided that this copyright and statement are
  * included in all such copies.
  */
+/* TODO: rename pern_* to tomenet_* :) */
 
 #include "angband.h"
 
@@ -19,7 +21,6 @@
 
 int  tolua_util_open (lua_State *L);
 int  tolua_player_open (lua_State *L);
-int  tolua_spells_open (lua_State *L);
 
 /*
  * Lua state
@@ -29,29 +30,31 @@ lua_State* L = NULL;
 /* PernAngband Lua error message handler */
 static int pern_errormessage(lua_State *L)
 {
-        char buf[200];
-        cptr str = luaL_check_string(L, 1);
-        int i = 0, j = 0;
+	char buf[200];
+	cptr str = luaL_check_string(L, 1);
+	int i = 0, j = 0;
 
-        while (str[i])
-        {
-                if (str[i] != '\n')
-                {
-                        buf[j++] = str[i];
-                }
-                else
-                {
-                        buf[j] = '\0';
-//                        msg_broadcast(0, format("\377vLUA: %s", buf));
-                        msg_admin("\377vLUA: %s", buf);
-                        j = 0;
-                }
-                i++;
-        }
-        buf[j] = '\0';
-//        msg_broadcast(0, format("\377vLUA: %s", buf));
-        msg_admin("\377vLUA: %s", buf);
-        return (0);
+	while (str[i])
+	{
+		if (str[i] != '\n')
+		{
+			buf[j++] = str[i];
+		}
+		else
+		{
+			buf[j] = '\0';
+			//msg_broadcast(0, format("\377vLUA: %s", buf));
+			//msg_admin("\377vLUA: %s", buf);
+			c_msg_format("\377vLUA: %s", buf);
+			j = 0;
+		}
+		i++;
+	}
+	buf[j] = '\0';
+	//msg_broadcast(0, format("\377vLUA: %s", buf));
+	//msg_admin("\377vLUA: %s", buf);
+	c_msg_format("\377vLUA: %s", buf);
+	return (0);
 }
 
 static struct luaL_reg pern_iolib[] =
@@ -220,25 +223,23 @@ void init_lua()
 	/* Register the bitlib */
 	luaL_openl(L, bitlib);
 
-	/* Register the PernAngband main APIs */
+	/* Register the TomeNET main APIs */
 	tolua_util_open(L);
 	tolua_player_open(L);
-	tolua_spells_open(L);
 
 	/* Load the first lua file */
-	pern_dofile(0, "init.lua");
+	pern_dofile("c-init.lua");
 
 	/* Finish up schools */
-	max = exec_lua(0, "return __schools_num");
+	max = exec_lua("return __schools_num");
 	init_schools(max);
 	for (i = 0; i < max; i++)
 	{
-		exec_lua(0, format("finish_school(%d)", i));
+		exec_lua(format("finish_school(%d)", i));
 	}
-
 }
 
-bool pern_dofile(int Ind, char *file)
+bool pern_dofile(char *file)
 {
 	char buf[MAX_PATH_LENGTH];
         int oldtop = lua_gettop(L);
@@ -246,17 +247,17 @@ bool pern_dofile(int Ind, char *file)
 	/* Build the filename */
         path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, file);
 
-        lua_dostring(L, format("Ind = %d", Ind));
+//        lua_dostring(L, format("Ind = %d", Ind));
         lua_dofile(L, buf);
         lua_settop(L, oldtop);
 
         return (FALSE);
 }
 
-bool exec_lua(int Ind, char *file)
+bool exec_lua(char *file)
 {
         int oldtop = lua_gettop(L);
-        lua_dostring(L, format("Ind = %d", Ind));
+//        lua_dostring(L, format("Ind = %d", Ind));
         lua_dostring(L, file);
         lua_settop(L, oldtop);
         return (FALSE);
@@ -296,12 +297,12 @@ void master_script_line(char *buf)
         fprintf(lua_file, "%s\n", buf);
 }
 
-void master_script_exec(int Ind, char *buf)
+void master_script_exec(char *buf)
 {
-        exec_lua(Ind, buf);
+        exec_lua(buf);
 }
 
-void cat_script(int Ind, char *name)
+void cat_script(char *name)
 {
         char buf[1025];
         FILE *fff;
@@ -314,6 +315,6 @@ void cat_script(int Ind, char *name)
         /* Process the file */
         while (0 == my_fgets(fff, buf, 1024))
         {
-                msg_print(Ind, buf);
+                c_msg_print(buf);
         }
 }

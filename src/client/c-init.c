@@ -32,6 +32,13 @@ static void init_arrays(void)
 	C_MAKE(store.stock, STORE_INVEN_MAX, object_type);
 }
 
+void init_schools(s16b new_size)
+{
+	/* allocate the extra memory */
+	C_MAKE(schools, new_size, school_type);
+	max_schools = new_size;
+}
+
 /*
  * Initialize and verify the file paths, and the score file.
  *
@@ -311,6 +318,9 @@ void client_init(char *argv1, bool skip)
 	/* Initialize various arrays */
 	init_arrays();
 
+	/* Initialize lua scripting */
+	init_lua();
+	
 	GetLocalHostName(host_name, 80);
 
 	/* Set the "quit hook" */

@@ -1318,20 +1318,20 @@ void cmd_character(void)
 		{
 			/* Toggle */
 			hist = !hist;
-                }
+		}
 
-                /* Dump */
-                if ((ch == 'f') || (ch == 'F'))
-                {
-                        strnfmt(tmp, 160, "%s.txt", cname);
-                        if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, 80))
+		/* Dump */
+		if ((ch == 'f') || (ch == 'F'))
+		{
+			strnfmt(tmp, 160, "%s.txt", cname);
+			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, 80))
 			{
 				if (tmp[0] && (tmp[0] != ' '))
 				{
 					file_character(tmp, FALSE);
 				}
 			}
-                }
+		}
 
 		/* Check for quit */
 		if (ch == 'q' || ch == 'Q' || ch == ESCAPE)
@@ -1421,7 +1421,9 @@ void cmd_check_misc(void)
 	Term_putstr(5, 15, -1, TERM_WHITE, "(d) Server settings");
 	Term_putstr(5, 16, -1, TERM_WHITE, "(e) Opinions (if available)");
 	Term_putstr(5, 17, -1, TERM_WHITE, "(f) News (login message)");
-	Term_putstr(5, 18, -1, TERM_WHITE, "(?) Help");
+	Term_putstr(5, 18, -1, TERM_WHITE, "(g) Message history");
+	Term_putstr(5, 19, -1, TERM_WHITE, "(h) Chat history");
+	Term_putstr(5, 20, -1, TERM_WHITE, "(?) Help");
 
 	while(i!=ESCAPE){
 		i=inkey();
@@ -1475,6 +1477,12 @@ void cmd_check_misc(void)
 				break;
 			case 'f':
 				show_motd();
+				break;
+			case 'g':
+				do_cmd_messages();
+				break;
+			case 'h':
+				do_cmd_messages_chatonly();
 				break;
 			case '?':
 				cmd_help();
@@ -1678,7 +1686,7 @@ void cmd_throw(void)
 
 static bool item_tester_browsable(object_type *o_ptr)
 {
-	return (is_book(o_ptr));
+	return (is_book(o_ptr) || o_ptr->tval == TV_BOOK);
 #if 0	// mdr
 	if ((o_ptr->tval == TV_MAGIC_BOOK)) return TRUE;
 	if ((o_ptr->tval == TV_SORCERY_BOOK)) return TRUE;
@@ -1712,9 +1720,17 @@ void cmd_browse(void)
 		return;
 	}
 
+	o_ptr = &inventory[item];
+
+	if (o_ptr->tval == TV_BOOK)
+	{
+		browse_school_spell(o_ptr->sval, o_ptr->pval);
+		return;
+	}
+
 	/* Show it */
 //	show_browse(item);
-	show_browse(&inventory[item]);
+	show_browse(o_ptr);
 }
 
 #if 0	// obsolete
@@ -1851,7 +1867,7 @@ void cmd_load_pref(void)
 
 void cmd_redraw(void)
 {
-	Send_redraw();
+	Send_redraw(0);
 	keymap_init();
 }
 
