@@ -109,7 +109,7 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 	if(num==-1) return(0);
 	local_file_check(fdata[num].fname, &lsum);
 	if(!fdata[num].state&FS_CHECK){
-		return;
+		return(0);
 	}
 	if(lsum!=sum){
 		fd=open(fdata[num].fname, O_RDONLY);
@@ -147,6 +147,7 @@ void do_xfers(){
 		}
 		else{
 			Send_file_end(fdata[i].ind, fdata[i].id);
+			fdata[i].state&=~(FS_READY);
 		}
 	}
 }
@@ -176,6 +177,7 @@ int local_file_init(int ind, unsigned short fnum, char *fname){
 	fdata[num].fd=mkstemp(tname);
 	fdata[num].state=FS_READY;
 	if(fdata[num].fd!=-1){
+		unlink(tname);		/* don't fill up /tmp */
 		fdata[num].id=fnum;
 		fdata[num].ind=ind;	/* not really needed for client */
 		strncpy(fdata[num].fname, fname, 30);
