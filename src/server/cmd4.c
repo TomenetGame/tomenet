@@ -429,23 +429,23 @@ void do_cmd_check_players(int Ind, int line)
  */
 void do_cmd_check_player_equip(int Ind, int line)
 {
-       int i, k;
+	int i, k;
 
-       FILE *fff;
+	FILE *fff;
 
-       char file_name[1024];
+	char file_name[1024];
 
-       player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind];
 
-		bool admin = p_ptr->admin_wiz || p_ptr->admin_dm;
+	bool admin = p_ptr->admin_wiz || p_ptr->admin_dm;
 
-       /* Temporary file */
-       if (path_temp(file_name, 1024)) return;
+	/* Temporary file */
+	if (path_temp(file_name, 1024)) return;
 
-       /* Open a new file */
-       fff = my_fopen(file_name, "w");
+	/* Open a new file */
+	fff = my_fopen(file_name, "w");
 
-		/* Scan the player races */
+	/* Scan the player races */
 		for (k = 1; k < NumPlayers + 1; k++)
 		{
 			player_type *q_ptr = Players[k];
@@ -525,12 +525,6 @@ void do_cmd_check_player_equip(int Ind, int line)
 					parties[q_ptr->party].name);
 				}
 
-				/*
-			fprintf(fff, "%s the %s %s (Level %d, %s)\n",
-				q_ptr->name, race_info[q_ptr->prace].title,
-				class_info[q_ptr->pclass].title, q_ptr->lev,
-				parties[q_ptr->party].name);
-				*/
 				fprintf(fff, "\n");
 	      
 				/* Print equipments */
