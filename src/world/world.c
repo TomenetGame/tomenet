@@ -153,6 +153,7 @@ void wproto(struct client *ccl){
 				/* MUST be authed for private messages */
 				if(ccl->authed>0){
 					struct client *dcl;
+					wpk->serverid=ccl->authed;
 					for(dcl=clist; dcl; dcl=dcl->next){
 						if(dcl->authed==wpk->d.pmsg.sid){
 							send(dcl->fd, wpk, sizeof(struct wpacket), 0); 
