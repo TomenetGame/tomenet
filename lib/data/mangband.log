@@ -1,0 +1,37 @@
+           **********************************************************
+           ** PernMAngband 3.1.3  **  The Troubles of Middle Earth **
+           **********************************************************
+
+               "One Ring to rule them all, One Ring to find them
+            One Ring to bring them all and in the darkness bind them
+                  In the land of Mordor where the shadows lie"
+                                "Lord of The Rings", J.R.R.Tolkien
+
+           Based on Moria:    Copyright (c) 1985 Robert Alan Koeneke
+               and Umoria:    Copyright (c) 1989 James E. Wilson
+          Angband 2.0 - 2.4: Alex Cutler, Andy Astrand, Sean Marsh,
+          Angband 2.5 - 2.6: Charles Swiger (cs4w+@andrew.cmu.edu)
+          Angband 2.7 - 2.8: Ben Harrison (benh@phial.com)
+          Curses/X11 Module: Ben Harrison, Torbj|rn Lindgren
+         MAngband 0.1 - 0.5: Keldon Jones (keldon@umr.edu)
+         MAngband 0.6 - 0.7: Alex Dingle (adingle@crud.net)  
+     PernMAngband 2.9 - x.x: DarkGod (darkgod@ifrance.com)
+
+       ****WARNING**** !!!!!!!! You NEED the new client to play go to:
+                   http://pernmangband.pernangband.org
+
+ Send all comments, bug reports, patches, etc, to "darkgod@pernangband.org".
+[Initializing arrays... (features)]
+[Initializing arrays... (objects)]
+[Initializing arrays... (artifacts)]
+[Initializing arrays... (ego-items)]
+[Initializing arrays... (monsters)]
+[Initializing arrays... (vaults)]
+[Initializing arrays... (other)]
+[Initializing arrays... (alloc)]
+[Initializing arrays... done]
+Please wait...
+Object flavors initialized...
+Server is running version 3140
+30 Jul 00:05:06: Welcome DarkGod=root@theforest.demon.co.uk (0.0.0.0/0)
+30 Jul 00:05:24: Goodbye DarkGod=root@theforest.demon.co.uk ("undefined packet")
