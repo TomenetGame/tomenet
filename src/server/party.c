@@ -128,6 +128,16 @@ int guild_create(int Ind, cptr name){
 	object_aware(Ind, o_ptr);
 	(void)inven_carry(Ind, o_ptr);
 
+	/* Give the guildmaster some scrolls for a hall */
+	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_HOUSE));
+	o_ptr->number=6;
+	o_ptr->level=p_ptr->lev;
+	o_ptr->owner=p_ptr->id;
+	o_ptr->discount=50;
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	(void)inven_carry(Ind, o_ptr);
+
 	/* Set party name */
 	strcpy(guilds[index].name, name);
 
