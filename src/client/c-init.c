@@ -56,7 +56,7 @@ static void init_stuff(void)
 #if defined(AMIGA) || defined(VM)
 
         /* Hack -- prepare "path" */
-        strcpy(path, "Angband:");
+        strcpy(path, "PMAngband:");
 
 #else /* AMIGA / VM */
 
@@ -367,9 +367,9 @@ void client_init(char *argv1)
 
 	/* Connect to server */
 #ifdef UNIX_SOCKETS
-	if ((DgramConnect(Socket, server_name, 18346)) == -1)
+	if ((DgramConnect(Socket, server_name, 18348)) == -1)
 #else
-	// UDP stuffif ((DgramConnect(Socket, server_name, 18346)) == -1)
+	// UDP stuffif ((DgramConnect(Socket, server_name, 18348)) == -1)
 #endif
 	//{
 	//	quit("That server either isn't up, or you mistyped the host name.\n");
