@@ -1527,8 +1527,9 @@ struct party_type
 {
 	char name[80];		/* Name of the party */
 	char owner[20];		/* Owner's name */
-	s32b num;		/* Number of people in the party */
+	s32b members;		/* Number of people in the party */
 	s32b created;		/* Creation (or disband-tion) time */
+	byte mode;		/* 'Iron Team' or normal party? (C. Blue) */
 };
 
 /*
@@ -1557,7 +1558,7 @@ struct party_type
 struct guild_type{
 	char name[80];
 	s32b master;		/* Guildmaster unique player ID */
-	s32b num;		/* Number of guild members */
+	s32b members;		/* Number of guild members */
 	u32b flags;		/* Guild rules flags */
 	s16b minlev;		/* minimum level to join */
 };

@@ -676,15 +676,20 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 
 		if(buf[0]=='\n') continue;
 
+#if 0	// This will now be done by \377? codes! - C. Blue
 		/* Extract color */
 		if (color) attr = color_char_to_attr(buf[0]);
+#endif
 
 		/* Hack -- show matches */
 		if (shower[0] && strstr(buf, shower)) attr = TERM_YELLOW;
 
 		/* Dump the line */
+#if 0	// see above
 		Send_special_line(Ind, size, i, attr, &buf[color]);
-
+#else
+		Send_special_line(Ind, size, i, attr, buf);
+#endif
 		/* Count the printed lines */
 		i++;
 	}

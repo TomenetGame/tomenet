@@ -184,7 +184,7 @@
  * Possible error codes returned
  */
 #define SUCCESS		0x00
-#define E_VERSION	0x01
+#define E_VERSION_OLD	0x01
 #define E_GAME_FULL	0x02
 #define E_NEED_INFO	0x03
 #define E_TWO_PLAYERS	0x04
@@ -193,6 +193,7 @@
 #define E_INVAL		0x0A
 #define E_INVITE	0x0B
 #define E_BANNED	0x0C
+#define E_VERSION_UNKNOWN	0x0D
 
 
 /*

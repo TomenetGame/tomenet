@@ -987,11 +987,10 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 #endif
 
 	//if (version < ((4 << 12) | (0 << 8) | (0 << 4) | 0))
-	if (version != 1)
-		/* See src/client/c-init.c for why I changed this for now
-		search the file for MY_VERSION to find it quickly :) */
-
-		return E_VERSION;
+	/* See src/client/c-init.c for why I changed this for now
+	search the file for MY_VERSION to find it quickly :) */
+	if (version < 2) return E_VERSION_OLD;
+	if (version > 2) return E_VERSION_UNKNOWN;
 	version = ((4 << 12) | (0 << 8) | (0 << 4) | 0);
 
 	if(!player_allowed(nick))
@@ -4614,7 +4613,7 @@ int Send_sound(int ind, int sound)
 int Send_special_line(int ind, int max, int line, byte attr, cptr buf)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
-	char temp[80];
+	char temp[80], xattr = 'w', temp2[100];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4624,9 +4623,42 @@ int Send_special_line(int ind, int max, int line, byte attr, cptr buf)
 		return 0;
 	}
 
+	switch(attr)
+	{
+	    case TERM_DARK:	xattr = 'd';break;
+	    case TERM_RED:	xattr = 'r';break;
+	    case TERM_L_DARK:	xattr = 'D';break;
+	    case TERM_L_RED:	xattr = 'R';break;
+	    case TERM_WHITE:	xattr = 'w';break;
+	    case TERM_GREEN:	xattr = 'g';break;
+	    case TERM_L_WHITE:	xattr = 'W';break;
+	    case TERM_L_GREEN:	xattr = 'G';break;
+	    case TERM_SLATE:	xattr = 's';break;
+	    case TERM_BLUE:	xattr = 'b';break;
+	    case TERM_VIOLET:	xattr = 'v';break;
+	    case TERM_L_BLUE:	xattr = 'B';break;
+	    case TERM_ORANGE:	xattr = 'o';break;
+	    case TERM_UMBER:	xattr = 'u';break;
+	    case TERM_YELLOW:	xattr = 'y';break;
+	    case TERM_L_UMBER:	xattr = 'U';break;
+	    case TERM_MULTI:	xattr = 'm';break;
+	    case TERM_POIS:	xattr = 'p';break;
+	    case TERM_FIRE:	xattr = 'f';break;
+	    case TERM_COLD:	xattr = 'c';break;
+	    case TERM_ACID:	xattr = 'a';break;
+	    case TERM_ELEC:	xattr = 'e';break;
+	    case TERM_LITE:	xattr = 'L';break;
+	    case TERM_HALF:	xattr = 'h';break;
+	}
+
 	strncpy(temp, buf, 79);
 	temp[79] = '\0';
-	return Packet_printf(&connp->c, "%c%hd%hd%c%s", PKT_SPECIAL_LINE, max, line, attr, temp);
+
+	strcpy(temp2, "\377");
+	temp2[1] = xattr; temp2[2] = '\0';
+	strcat(temp2, temp);
+
+	return Packet_printf(&connp->c, "%c%hd%hd%c%s", PKT_SPECIAL_LINE, max, line, attr, temp2);
 }
 
 int Send_floor(int ind, char tval)
@@ -4668,7 +4700,7 @@ int Send_party(int ind)
 {
 	player_type *p_ptr = Players[ind];
 	connection_t *connp = &Conn[p_ptr->conn];
-	char buf[160];
+	char bufn[90], bufm[20], bufo[50], buf[10];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4678,19 +4710,25 @@ int Send_party(int ind)
 		return 0;
 	}
 
-	sprintf(buf, "Party: %s", parties[p_ptr->party].name);
+	if (parties[p_ptr->party].mode == PA_IRONTEAM)
+		sprintf(bufn, "Party (Iron Team): %s", parties[p_ptr->party].name);
+	else
+		sprintf(bufn, "Party  : %s", parties[p_ptr->party].name);
 
-	/* MEGA hack */
-	
-	buf[60] = 0;
+	bufm[0] = '\0';
+	bufo[0] = '\0';
 
 	if (p_ptr->party > 0)
 	{
-		strcat(buf, "     Owner: ");
-		strcat(buf, parties[p_ptr->party].owner);
+		strcpy(bufm, "Members: ");
+		sprintf(buf, "%d", parties[p_ptr->party].members);
+		strcat(bufm, buf);
+
+		strcpy(bufo, "Owner  : ");
+		strcat(bufo, parties[p_ptr->party].owner);
 	}
 
-	return Packet_printf(&connp->c, "%c%s", PKT_PARTY, buf);
+	return Packet_printf(&connp->c, "%c%s%s%s", PKT_PARTY, bufn, bufm, bufo);
 }
 
 int Send_special_other(int ind)
@@ -7891,6 +7929,12 @@ static int Receive_party(int ind)
 			case PARTY_CREATE:
 			{
 				party_create(player, buf);
+				break;
+			}
+
+			case PARTY_CREATE_IRONTEAM:
+			{
+				party_create_ironteam(player, buf);
 				break;
 			}
 

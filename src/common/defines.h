@@ -34,13 +34,13 @@
 
 /* MAJOR/MINOR/PATCH version should be 0-15.  */
 #define VERSION_MAJOR   4
-#define VERSION_MINOR   0
-#define VERSION_PATCH   0
+#define VERSION_MINOR   1
+#define VERSION_PATCH   7
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
-#define SF_VERSION_MINOR   0
-#define SF_VERSION_PATCH   6
+#define SF_VERSION_MINOR   1
+#define SF_VERSION_PATCH   7
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -354,6 +354,13 @@
 #define PARTY_REMOVE_ME	4
 #define PARTY_HOSTILE	5
 #define PARTY_PEACE	6
+#define PARTY_CREATE_IRONTEAM	7
+
+/*
+ * Party modes
+ */
+#define PA_NORMAL	0
+#define PA_IRONTEAM	1
 
 /*
  * Guild commands

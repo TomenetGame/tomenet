@@ -273,6 +273,8 @@ void do_cmd_check_uniques(int Ind, int line)
 	}
 #endif	// 0
 
+	fprintf(fff, "\377U======== Unique Monster List ========\n");
+
 	/* Scan the monster races */
 	for (k = 1; k < MAX_R_IDX-1; k++)
 	{
@@ -310,7 +312,7 @@ void do_cmd_check_uniques(int Ind, int line)
 			r_ptr = &r_info[k];
 
 			/* Output color byte */
-			fprintf(fff, "%c", 'w');
+			fprintf(fff, "\377w");
 
 			/* Hack -- Show the ID for admin */
 			if (admin) fprintf(fff, "(%4d) ", k);
@@ -325,35 +327,31 @@ void do_cmd_check_uniques(int Ind, int line)
 
 				if (q_ptr->r_killed[k])
 				{
-					//						byte attr = 'U';
-					//						fprintf(fff, "        %s\n", q_ptr->name);
-					if (!ok)
-					{
-						fprintf(fff, ":\n");
-						fprintf(fff, "%c", 'B');
-						ok = TRUE;
-					}
-#if 0
+					byte attr = 'B';
+
 					/* Print self in green */
-					if (Ind == k) attr = 'G';
+					if (Ind == i) attr = 'G';
 
 					/* Print party members in blue */
-					else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
+//					else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
 
 					/* Print hostile players in red */
-					else if (check_hostile(Ind, i)) attr = 'r';
+//					else if (check_hostile(Ind, i)) attr = 'r';
 
-					/* Output color byte */
-					fprintf(fff, "%c", attr);
-#endif
+					if (!ok)
+					{
 
+						fprintf(fff, ":\n");
+						ok = TRUE;
+					}
+
+					fprintf(fff, "\377%c", attr);
 					fprintf(fff, "  %-16.16s", q_ptr->name);
 					j++;
 					full = FALSE;
 					if (j == 4)
 					{
 						fprintf(fff, "\n");
-						fprintf(fff, "%c", 'B');
 						j = 0;
 						full = TRUE;
 					}
@@ -375,7 +373,7 @@ void do_cmd_check_uniques(int Ind, int line)
 	}
 	else
 	{
-		fprintf(fff, "%c", 'w');
+		fprintf(fff, "\377w");
 		fprintf(fff, "No uniques are witnessed so far.\n");
 	}
 
@@ -384,7 +382,7 @@ void do_cmd_check_uniques(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Known Uniques", line, 1);
+	show_file(Ind, file_name, "Known Uniques", line, 0);
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -455,10 +453,16 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 		break;
 	}
 	
-	fprintf(fff, "%sLv %d, %s)",
+	if (q_ptr->party)
+	fprintf(fff, "%sLv %d, %s%s",
 		q_ptr->fruit_bat ? "Batty, " : "",
 		q_ptr->lev,
+		(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
 		parties[q_ptr->party].name);
+	else
+	fprintf(fff, "%sLv %d",
+		q_ptr->fruit_bat ? "Batty, " : "",
+		q_ptr->lev);
 #endif	// 0
 }
 
@@ -515,11 +519,14 @@ void do_cmd_check_players(int Ind, int line)
 		else if (check_hostile(Ind, k)) attr = 'r';
 
 		/* Output color byte */
-		fprintf(fff, "%c", attr);
+		fprintf(fff, "\377%c", attr);
 
 		/* Print a message */
 		if(Ind!=k) i=TRUE; else i=FALSE;
 		do_write_others_attributes(fff, q_ptr, i);
+		/* Colour might have changed due to Iron Team party name,
+		   so print the closing ')' in the original colour again: */
+		fprintf(fff, "\377%c)", attr);
 
 		/* PK */
 		if (cfg.use_pk_rules == PK_RULES_DECLARE)
@@ -546,8 +553,8 @@ void do_cmd_check_players(int Ind, int line)
 		}
 				
 		/* Newline */
-		/* -AD- will this work? */
-		fprintf(fff, "\n");
+		/* -AD- will this work? - Sure -C. Blue- */
+		fprintf(fff, "\n\377U");
 
 		if (is_admin(p_ptr)) fprintf(fff, "   (%d)", k);
 
@@ -565,7 +572,7 @@ void do_cmd_check_players(int Ind, int line)
 		if((p_ptr->guild == q_ptr->guild && q_ptr->guild) || Ind == k || admin){
 			if(q_ptr->guild)
 				fprintf(fff, " [%s]", guilds[q_ptr->guild].name);
-			fprintf(fff, " %c", (q_ptr->quest_id?'Q':' '));
+			fprintf(fff, " \377%c", (q_ptr->quest_id?'Q':' '));
 		}
 		fprintf(fff, "\n");
 
@@ -578,7 +585,7 @@ void do_cmd_check_players(int Ind, int line)
 	my_fclose(fff);
 
 	/* Display the file contents */
-	show_file(Ind, file_name, "Player list", line, 1);
+	show_file(Ind, file_name, "Player list", line, 0);
 
 	/* Remove the file */
 	fd_kill(file_name);
@@ -668,7 +675,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 			continue;
 
 		/* Output color byte */
-		fprintf(fff, "%c", attr);
+		fprintf(fff, "\377%c", attr);
 
 		/* Print a message */
 		if(Ind!=k) m=TRUE; else m=FALSE;
@@ -687,15 +694,15 @@ void do_cmd_check_player_equip(int Ind, int line)
 			char o_name[160];
 			if (o_ptr->tval) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
-				fprintf(fff, "%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);
+				fprintf(fff, "\377%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);
 			}
 		}
 
 		/* Covered by a mummy wrapping? */
-		if (hidden) fprintf(fff, "%c (Covered by a grubby wrapping)\n", 'D');
+		if (hidden) fprintf(fff, "\377%c (Covered by a grubby wrapping)\n", 'D');
 
 		/* Add blank line */
-		fprintf(fff, "%c\n", 'w');
+		fprintf(fff, "\377%c\n", 'w');
 
 	}
 
@@ -703,7 +710,7 @@ void do_cmd_check_player_equip(int Ind, int line)
        my_fclose(fff);
 
        /* Display the file contents */
-       show_file(Ind, file_name, "Someone's equipments", line, 1);
+       show_file(Ind, file_name, "Someone's equipments", line, 0);
 
        /* Remove the file */
        fd_kill(file_name);
@@ -1111,7 +1118,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 
 
 	/* Output color byte */
-//	fprintf(fff, "%c", 'G');
+	fprintf(fff, "\377G");
 
 	if (letter && *letter) fprintf(fff, "======== Killed List for Monster Group '%c' ========\n", *letter);
 	else
@@ -1148,9 +1155,9 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 			else
 			{
 				if (p_ptr->body_monster == i)
-					fprintf(fff, "%-30s : %d  ** Your current form **\n",
+					fprintf(fff, "\377G%-30s : %d  ** Your current form **\n",
 							r_name + r_ptr->name, num);
-				else fprintf(fff, "%-30s : %d (learnt)\n",
+				else fprintf(fff, "\377U%-30s : %d (learnt)\n",
 						r_name + r_ptr->name, num);
 			}
 		}

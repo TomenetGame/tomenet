@@ -973,7 +973,7 @@ static void wr_guilds(){
 	for (i = 0; i < tmp16u; i++){
 		wr_string(guilds[i].name);
 		wr_s32b(guilds[i].master);
-		wr_s32b(guilds[i].num);
+		wr_s32b(guilds[i].members);
 		wr_u32b(guilds[i].flags);
 		wr_s16b(guilds[i].minlev);
 	}
@@ -988,8 +988,11 @@ static void wr_party(party_type *party_ptr)
 	wr_string(party_ptr->owner);
 
 	/* Save the number of people and creation time */
-	wr_s32b(party_ptr->num);
+	wr_s32b(party_ptr->members);
 	wr_s32b(party_ptr->created);
+	
+	/* Save the modus and members */
+	wr_byte(party_ptr->mode);
 }
 
 static void wr_wild(wilderness_type *w_ptr)
@@ -1288,7 +1291,7 @@ static void wr_extra(int Ind)
 	/*wr_u32b(seed_flavor);*/
 	/*wr_u32b(seed_town);*/
 	wr_s32b(p_ptr->mimic_seed);
-	wr_s16b(&p_ptr->martyr_timeout);
+	wr_s16b(p_ptr->martyr_timeout);
 
 	/* Special stuff */
 	wr_u16b(panic_save);

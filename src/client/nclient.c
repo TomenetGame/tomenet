@@ -2686,22 +2686,29 @@ int Receive_pickup_check(void)
 int Receive_party(void)
 {
 	int n;
-	char ch, buf[160];
+	char ch, pname[90], pmembers[20], powner[50];
 
-	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, buf)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%s%s%s", &ch, pname, pmembers, powner)) <= 0)
 	{
 		return n;
 	}
-
+	
 	/* Copy info */
-	strcpy(party_info, buf);
+	strcpy(party_info_name, pname);
+	strcpy(party_info_members, pmembers);
+	strcpy(party_info_owner, powner);
 
 	/* Re-show party info */
 	if (party_mode)
 	{
-		Term_erase(0, 16, 255);
-		Term_putstr(0, 16, -1, TERM_WHITE, party_info);
-		Term_putstr(0, 15, -1, TERM_WHITE, "Command: ");
+		Term_erase(0, 18, 70);
+		Term_erase(0, 20, 90);
+		Term_erase(0, 21, 20);
+		Term_erase(0, 22, 50);
+		Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
+		Term_putstr(0, 20, -1, TERM_WHITE, pname);
+		Term_putstr(0, 21, -1, TERM_WHITE, pmembers);
+		Term_putstr(0, 22, -1, TERM_WHITE, powner);
 	}
 
 	return 1;

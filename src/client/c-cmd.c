@@ -1474,26 +1474,29 @@ void cmd_party(void)
 		buf[0] = '\0';
 
 		/* Describe */
-		Term_putstr(0, 2, -1, TERM_WHITE, "Party commands");
+		Term_putstr(0, 1, -1, TERM_L_WHITE, "======= Party commands =======");
 
 		/* Selections */
 		/* See also: Receive_party() */
 		Term_putstr(5, 4, -1, TERM_WHITE, "(1) Create a party");
-		Term_putstr(5, 5, -1, TERM_WHITE, "(2) Add a player to party");
-		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Delete a player from party");
-		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Leave your current party");
-		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Specify player to attack");
-		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Make peace");
-		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Create a new guild");
-		Term_putstr(5, 11, -1, TERM_WHITE, "(8) Add player to guild");
-		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Remove player from guild");
-		Term_putstr(5, 13, -1, TERM_WHITE, "(a) Leave guild");
+		Term_putstr(5, 5, -1, TERM_WHITE, "(2) Create an 'Iron Team' party");
+		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Add a player to party");
+		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Delete a player from party");
+		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Leave your current party");
+		Term_putstr(5, 10, -1, TERM_RED, "(6) Specify player to attack");
+		Term_putstr(5, 11, -1, TERM_GREEN, "(7) Make peace");
+		Term_putstr(5, 13, -1, TERM_WHITE, "(a) Create a new guild");
+		Term_putstr(5, 14, -1, TERM_WHITE, "(b) Add player to guild");
+		Term_putstr(5, 15, -1, TERM_WHITE, "(c) Remove player from guild");
+		Term_putstr(5, 16, -1, TERM_WHITE, "(d) Leave guild");
 
 		/* Show current party status */
-		Term_putstr(0, 16, -1, TERM_WHITE, party_info);
+		Term_putstr(0, 20, -1, TERM_WHITE, party_info_name);
+		Term_putstr(0, 21, -1, TERM_WHITE, party_info_members);
+		Term_putstr(0, 22, -1, TERM_WHITE, party_info_owner);
 
 		/* Prompt */
-		Term_putstr(0, 15, -1, TERM_WHITE, "Command: ");
+		Term_putstr(0, 18, -1, TERM_WHITE, "Command: ");
 
 		/* Get a key */
 		i = inkey();
@@ -1509,8 +1512,16 @@ void cmd_party(void)
 				Send_party(PARTY_CREATE, buf);
 		}
 
-		/* Add player */
+		/* Create 'Iron Team' party */
 		else if (i == '2')
+		{
+			/* Get party name */
+			if (get_string("Party name: ", buf, 79))
+				Send_party(PARTY_CREATE_IRONTEAM, buf);
+		}
+
+		/* Add player */
+		else if (i == '3')
 		{
 			/* Get player name */
 			if (get_string("Add player: ", buf, 79))
@@ -1518,7 +1529,7 @@ void cmd_party(void)
 		}
 
 		/* Delete player */
-		else if (i == '3')
+		else if (i == '4')
 		{
 			/* Get player name */
 			if (get_string("Delete player: ", buf, 79))
@@ -1526,14 +1537,14 @@ void cmd_party(void)
 		}
 
 		/* Leave party */
-		else if (i == '4')
+		else if (i == '5')
 		{
 			/* Send the command */
 			Send_party(PARTY_REMOVE_ME, "");
 		}
 
 		/* Attack player/party */
-		else if (i == '5')
+		else if (i == '6')
 		{
 			/* Get player name */
 			if (get_string("Player/party to attack: ", buf, 79))
@@ -1541,28 +1552,28 @@ void cmd_party(void)
 		}
 
 		/* Make peace with player/party */
-		else if (i == '6')
+		else if (i == '7')
 		{
 			/* Get player/party name */
 			if (get_string("Make peace with: ", buf, 79))
 				Send_party(PARTY_PEACE, buf);
 		}
-		else if (i == '7'){
+		else if (i == 'a'){
 			/* Get new guild name */
 			if (get_string("Guild name: ", buf, 79))
 				Send_guild(GUILD_CREATE, buf);
 		}
-		else if (i == '8'){
+		else if (i == 'b'){
 			/* Get player name */
 			if (get_string("Player name: ", buf, 79))
 				Send_guild(GUILD_ADD, buf);
 		}
-		else if (i == '9'){
+		else if (i == 'c'){
 			/* Get player name */
 			if (get_string("Player name: ", buf, 79))
 				Send_guild(GUILD_DELETE, buf);
 		}
-		else if (i == 'a'){
+		else if (i == 'd'){
 			if (get_check("Leave the guild ? "))
 				Send_guild(GUILD_REMOVE_ME, "");
 		}

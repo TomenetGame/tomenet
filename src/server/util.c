@@ -3799,7 +3799,7 @@ int name_lookup_loose(int Ind, cptr name, bool party)
 			for (i = 1; i < MAX_PARTIES; i++)
 			{
 				/* Skip if empty */
-				if (!parties[i].num) continue;
+				if (!parties[i].members) continue;
 
 				/* Check name */
 				if (!strncasecmp(parties[i].name, name, len))

@@ -105,6 +105,28 @@ static bool older_than(byte x, byte y, byte z)
 }
 
 /*
+ * This function determines if the version of the server savefile
+ * currently being read is older than version "x.y.z".
+ */
+static bool s_older_than(byte x, byte y, byte z)
+{
+	/* Much older, or much more recent */
+	if (ssf_major < x) return (TRUE);
+	if (ssf_major > x) return (FALSE);
+
+	/* Distinctly older, or distinctly more recent */
+	if (ssf_minor < y) return (TRUE);
+	if (ssf_minor > y) return (FALSE);
+
+	/* Barely older, or barely more recent */
+	if (ssf_patch < z) return (TRUE);
+	if (ssf_patch > z) return (FALSE);
+
+	/* Identical versions */
+	return (FALSE);
+}
+
+/*
  * Hack -- determine if an item is "wearable" (or a missile)
  */
 bool wearable_p(object_type *o_ptr)
@@ -730,7 +752,7 @@ static void rd_guilds(){
 	for(i=0; i<tmp16u; i++){
 		rd_string(guilds[i].name, 80);
 		rd_s32b(&guilds[i].master);
-		rd_s32b(&guilds[i].num);
+		rd_s32b(&guilds[i].members);
 		rd_u32b(&guilds[i].flags);
 		rd_s16b(&guilds[i].minlev);
 	}
@@ -754,8 +776,14 @@ static void rd_party(int n)
 	rd_string(party_ptr->owner, 20);
 
 	/* Number of people and creation time */
-	rd_s32b(&party_ptr->num);
+	rd_s32b(&party_ptr->members);
 	rd_s32b(&party_ptr->created);
+	
+	/* Party type and members */
+	if (!s_older_than(4,0,7))
+		rd_byte(&party_ptr->mode);
+	else
+		party_ptr->mode = 0;
 
 	/* Hack -- repair dead parties 
 	   I THINK this line was causing some problems....
@@ -765,7 +793,7 @@ static void rd_party(int n)
 	{
 		/*
 		   Set to no people in party
-		   party_ptr->num = 0;
+		   party_ptr->members = 0;
 		   */
 	}
 }
@@ -1340,7 +1368,7 @@ static errr rd_hostilities(int Ind)
 		if (id > 0 && !lookup_player_name(id)) continue;
 
 		/* Check for stale party */
-		if (id < 0 && !parties[0 - id].num) continue;
+		if (id < 0 && !parties[0 - id].members) continue;
 
 		/* Create node */
 		MAKE(h_ptr, hostile_type);
@@ -1906,9 +1934,20 @@ errr rd_server_savefile()
 	/* Paranoia */
 	if (!fff) return (-1);
 
+#if 0
 	/* Strip the version bytes */
 	strip_bytes(4);
-
+#else
+	/* Read the version */
+	xor_byte = 0;
+	rd_byte(&ssf_major);
+	xor_byte = 0;
+	rd_byte(&ssf_minor);
+	xor_byte = 0;
+	rd_byte(&ssf_patch);
+	xor_byte = 0;
+	rd_byte(&ssf_extra);
+#endif
 	/* Hack -- decrypt */
 	xor_byte = sf_extra;
 

@@ -56,6 +56,16 @@ u32b sf_when;                   /* Time when savefile created */
 u16b sf_lives;                  /* Number of past "lives" with this file */
 u16b sf_saves;                  /* Number of "saves" during this life */
 
+
+/*
+ * Hack -- Server Savefile version
+ */
+byte ssf_major;                  /* Savefile's "version_major" */
+byte ssf_minor;                  /* Savefile's "version_minor" */
+byte ssf_patch;                  /* Savefile's "version_patch" */
+byte ssf_extra;                  /* Savefile's "version_extra" */
+
+
 /*
  * Hack -- Run-time arguments
  */

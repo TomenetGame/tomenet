@@ -5327,7 +5327,7 @@ void kill_quest(int Ind){
 			guild_msg_format(temphash->guild ,temp);
 			if(!p_ptr->guild){
 				guild_msg_format(temphash->guild, "%s is now a guild member!", p_ptr->name);
-				guilds[temphash->guild].num++;
+				guilds[temphash->guild].members++;
 				msg_format(Ind, "You've been added to '%s'.", guilds[temphash->guild].name);
 				p_ptr->guild=temphash->guild;
 				clockin(Ind, 3);	/* set in db */
@@ -5488,7 +5488,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		if (l_ptr)
 		{
 			int factor = 100;
-			if (l_ptr->flags1 & LF1_NOMAP)        factor += 20;
+			if (l_ptr->flags1 & LF1_NOMAP)        factor += 15;
 			if (l_ptr->flags1 & LF1_NO_MAGIC)     factor += 10;
 			if (l_ptr->flags1 & LF1_NO_MAGIC_MAP) factor += 5;
 			if (l_ptr->flags1 & LF1_NO_DESTROY)   factor += 5;

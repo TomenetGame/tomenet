@@ -1440,7 +1440,7 @@ static void player_setup(int Ind, bool new)
 	panel_bounds(Ind);
 
 	/* Make sure his party still exists */
-	if (p_ptr->party && parties[p_ptr->party].num == 0)
+	if (p_ptr->party && parties[p_ptr->party].members == 0)
 	{
 		/* Reset to neutral */
 		p_ptr->party = 0;

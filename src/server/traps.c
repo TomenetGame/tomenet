@@ -52,7 +52,7 @@ static bool player_handle_trap_of_hostility(int Ind)
 //			kill_houses(id, OT_PARTY);
 
 			/* Set the number of people in this party to zero */
-			parties[id].num = 0;
+			parties[id].members = 0;
 
 			/* Remove everyone else */
 			for (i = 1; i <= NumPlayers; i++)
@@ -61,7 +61,7 @@ static bool player_handle_trap_of_hostility(int Ind)
 				if (player_in_party(id, i) && i != Ind)
 				{
 					/* Lose a member */
-					parties[id].num--;
+					parties[id].members--;
 
 					Players[i]->party = 0;
 					//					msg_print(i, "Your party has been disbanded.");
@@ -79,7 +79,7 @@ static bool player_handle_trap_of_hostility(int Ind)
 		else
 		{
 			/* Lose a member */
-			parties[id].num--;
+			parties[id].members--;
 
 			/* Set his party number back to "neutral" */
 			p_ptr->party = 0;
