@@ -103,6 +103,14 @@ void wproto(struct client *ccl){
 	struct wpacket *wpk=(struct wpacket*)ccl->buf;
 	while(ccl->blen>=sizeof(struct wpacket)){
 		switch(wpk->type){
+			case WP_LACCOUNT:
+				/* ignore unauthed servers
+				   only legitimate servers should
+				   ever send this */
+				if(ccl->authed>0){
+					l_account(wpk, ccl);
+				}
+				break;
 			case WP_RESTART:
 				/* mass restart */
 				if(ccl->authed>0){
@@ -176,6 +184,14 @@ void relay(struct wpacket *wpk, struct client *talker){
 				bpipe=0;
 			}
 		}
+	}
+}
+
+void reply(struct wpacket *wpk, struct client *ccl){
+	send(ccl->fd, wpk, sizeof(struct wpacket), 0);
+	if(bpipe){
+		fprintf(stderr, "SIGPIPE from reply (fd: %d)\n", ccl->fd);
+		bpipe=0;
 	}
 }
 

@@ -17,7 +17,6 @@
 #define WP_SQUIT	9	/* server quits */
 #define WP_RESTART	10	/* servers quit now */
 #define WP_LACCOUNT	11	/* login account */
-#define WP_NEWID	12	/* new player id (blocks) */
 
 /* now we are going to be the server which authenticates
  * the players. Once they are logged in, they will receive
@@ -91,6 +90,24 @@ struct auth{
 	unsigned long val;
 };
 
+#define PL_INIT	1	/* init from client with password */
+#define PL_OK	2	/* from server */
+#define PL_FAIL	3	/* auth fail */
+#define PL_USED	4	/* char name is owned */
+#define PL_DUP	5	/* logged in already */
+#define PL_QUERY 6	/* query from client */
+
+/* identical to struct account */
+/* only AUTHED servers can do this */
+struct pl_auth{
+	u_int32_t id;	/* account id */
+	u_int16_t flags;	/* account flags */
+	u_int16_t stat;	/* status (for return) */
+	char name[30];	/* login */
+	char pass[20];	/* some crypts are not 13 */
+	char pname[80];	/* player character name */
+};
+
 #define LT_ARTIFACT	1
 #define LT_MONSTER	2	/* not sure how i'm gonna do this yet */
 
@@ -98,15 +115,6 @@ struct lock{
 	unsigned short ltype;	/* Lock type */
 	unsigned long ttl;	/* time to live for non final lock */
 	unsigned long obj;	/* lock object by number (monster, item etc.) */
-};
-
-/* Block of unused Player IDs for the server to hand out 
- * these should be requested BEFORE they are needed in order
- * to avoid delays
- */
-struct idblock{
-	int numids;
-	unsigned long startid;
 };
 
 struct smsg{
@@ -123,6 +131,6 @@ struct wpacket{
 		struct player play;
 		struct auth auth;
 		struct lock lock;
-		struct idblock ids;
+		struct pl_auth login;
 	} d;
 };

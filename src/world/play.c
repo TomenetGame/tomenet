@@ -12,8 +12,6 @@ struct rplist *rpmlist=NULL;
 void send_rplay(struct client *ccl){
 	struct rplist *c_pl;
 	struct wpacket spk;
-	int len;
-	len=sizeof(struct wpacket);
 	spk.type=WP_NPLAYER;
 	spk.serverid=0;
 
@@ -23,7 +21,7 @@ void send_rplay(struct client *ccl){
 		spk.d.play.server=c_pl->server;
 		spk.d.play.silent=1;
 		strncpy(spk.d.play.name, c_pl->name, 30);
-		send(ccl->fd, &spk, len, 0);
+		reply(&spk, ccl);
 		/* Temporary stderr output */
 		if(bpipe){
 			fprintf(stderr, "SIGPIPE from send_rplay (fd: %d)\n", ccl->fd);
