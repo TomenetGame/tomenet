@@ -5130,7 +5130,7 @@ bool poly_build(int Ind, char *args)
 		MAKE(curr, struct builder);
 		curr->next=builders;	/* insert is fastest */
 		curr->player=p_ptr->id;	/* set him up */
-		C_MAKE(curr->vert, MAXCOORD, char *);
+		C_MAKE(curr->vert, MAXCOORD, char);
 		MAKE(curr->dna, struct dna_type);
 		curr->dna->creator=p_ptr->dna;
 		curr->dna->owner=p_ptr->id;
@@ -5160,7 +5160,7 @@ bool poly_build(int Ind, char *args)
 #endif
 			msg_print(Ind, "Your foundations were laid insecurely");
 			KILL(curr->dna, struct dna_type);
-			C_KILL(curr->vert, MAXCOORD, char *);
+			C_KILL(curr->vert, MAXCOORD, char);
 			p_ptr->master_move_hook=NULL;
 			KILL(curr, struct builder);	/* Sack the builders! */
 			return FALSE;
@@ -5219,7 +5219,7 @@ bool poly_build(int Ind, char *args)
 			houses[num_houses].coords.rect.height=curr->maxy+1-curr->miny;
 			houses[num_houses].dx=curr->sx-curr->minx;
 			houses[num_houses].dy=curr->sy-curr->miny;
-			C_KILL(curr->vert, MAXCOORD, char *);
+			C_KILL(curr->vert, MAXCOORD, char);
 		}
 		else{
 			houses[num_houses].flags=HF_NONE;	/* polygonal */
@@ -5245,7 +5245,7 @@ bool poly_build(int Ind, char *args)
 		}
 		else{
 			msg_print(Ind,"Your house was built unsoundly");
-			if(curr->vert) C_KILL(curr->vert, MAXCOORD, char *);
+			if(curr->vert) C_KILL(curr->vert, MAXCOORD, char);
 			KILL(curr->dna, struct dna_type);
 		}
 		curr->player=0;		/* send the builders home */
@@ -5272,7 +5272,7 @@ bool poly_build(int Ind, char *args)
 	cave[p_ptr->dun_depth][curr->sy][curr->sx].special.sc.ptr=NULL;
 #endif
 	KILL(curr->dna, struct dna_type);
-	C_KILL(curr->vert, MAXCOORD, char *);
+	C_KILL(curr->vert, MAXCOORD, char);
 	curr->player=0;		/* send the builders home */
 	p_ptr->master_move_hook=NULL;
 	return FALSE;

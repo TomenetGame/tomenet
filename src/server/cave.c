@@ -29,11 +29,14 @@ cave_type **getcave(struct worldpos *wpos)
 	}
 	else
 	{
-		if(wpos->wz>0)
-			return(wild->tower->level[wpos->wz-1].cave);
-		else
+		if(wpos->wz>0){
+			if(wild->tower)
+				return(wild->tower->level[wpos->wz-1].cave);
+		}
+		else if(wild->dungeon)
 			return(wild->dungeon->level[ABS(wpos->wz)-1].cave);
 	}
+	return((cave_type **)NULL);
 }
 
 /* an afterthought - it is often needed without up/down info */
