@@ -770,7 +770,7 @@ int party_add(int adder, cptr name)
 	}
 
 	/* Only newly created characters can create an iron team */
-        if (p_ptr->max_exp > 0)
+        if ((parties[party_id].mode & PA_IRONTEAM) && (p_ptr->max_exp > 0))
         {
 	        msg_print(Ind, "\377yOnly newly created characters without experience can join an iron team.");
 		return FALSE;

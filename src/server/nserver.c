@@ -4699,15 +4699,20 @@ int Send_pickup_check(int ind, cptr buf)
 
 int Send_party(int ind)
 {
-	player_type *p_ptr = Players[ind];
+    int i;
+    for (i = 1; i <= NumPlayers; i++)
+    {
+	player_type *p_ptr = Players[i];
 	connection_t *connp = &Conn[p_ptr->conn];
 	char bufn[90], bufm[20], bufo[50], buf[10];
+
+	if (Players[i]->party != Players[ind]->party) continue;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
 		errno = 0;
 		plog(format("Connection nor ready for party info (%d.%d.%d)",
-			ind, connp->state, connp->id));
+			i, connp->state, connp->id));
 		return 0;
 	}
 
@@ -4729,7 +4734,9 @@ int Send_party(int ind)
 		strcat(bufo, parties[p_ptr->party].owner);
 	}
 
-	return Packet_printf(&connp->c, "%c%s%s%s", PKT_PARTY, bufn, bufm, bufo);
+	Packet_printf(&connp->c, "%c%s%s%s", PKT_PARTY, bufn, bufm, bufo);
+    }
+    return(1);
 }
 
 int Send_special_other(int ind)
