@@ -1093,7 +1093,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 	{
 		int pr, pc, clev, mlev, cdun, mdun;
 
-		cptr user, gold, when, aged;
+		cptr gold, when, aged;
 
 
 		/* Hack -- indicate death in yellow */
@@ -1168,8 +1168,8 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 
 		/* And still another line of info */
 		sprintf(out_val,
-			"               (User %s, Date %s, Gold %s, Turn %s).",
-			user, when, gold, aged);
+			"               (Date %s, Gold %s, Turn %s).",
+			when, gold, aged);
 		fprintf(fff, "%s\n", out_val);
 
 		/* Print newline if this isn't the last one */
