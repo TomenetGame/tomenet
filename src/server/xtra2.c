@@ -4391,6 +4391,28 @@ void resurrect_player(int Ind)
 	p_ptr->update |= (PU_BONUS);
 }
 
+void check_quests(){
+	int i, j;
+	struct player_type *q_ptr;
+	for(i=0; i<20; i++){
+		if(quests[i].active && quests[i].id){
+			if(turn-quests[i].turn>MAX_QUEST_TURNS){
+				for(j=1; j<=NumPlayers; i++){
+					q_ptr=Players[j];
+					if(q_ptr && q_ptr->quest_id==quests[i].id){
+						msg_print(j, "\377rYou have failed your quest");
+						q_ptr->quest_id=0;
+						q_ptr->quest_num=0;
+					}
+				}
+				quests[i].active=0;
+				quests[i].id=0;
+				quests[i].type=0;
+			}
+		}
+	}
+}
+
 void del_quest(int id){
 	int i;
 	for(i=0; i<20; i++){
@@ -4504,6 +4526,7 @@ bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags){
 			quests[i].id=questid;
 			quests[i].type=type;
 			quests[i].flags=flags;
+			quests[i].turn=turn;
 			added=TRUE;
 			break;
 		}

@@ -1209,6 +1209,7 @@ struct quest_type{
 	s16b type;		/* Monster race or object type */
 	u16b flags;		/* Quest flags */
 	s32b creator;		/* Player ID or 0L (DM, guildmaster only) */
+	s32b turn;		/* quest started */
 };
 
 /* Adding this structure so we can have different creatures generated

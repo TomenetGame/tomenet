@@ -709,6 +709,7 @@ static void rd_quests(){
 		rd_s16b(&quests[i].type);
 		rd_u16b(&quests[i].flags);
 		rd_s32b(&quests[i].creator);
+		rd_s32b(&quests[i].turn);
 	}
 }
 

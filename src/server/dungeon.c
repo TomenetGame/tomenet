@@ -3363,6 +3363,8 @@ static void process_various(void)
 		purge_old();
 	}
 
+	check_quests();
+
 	/* Handle certain things once a minute */
 	if (!(turn % (cfg.fps * 60)))
 	{
