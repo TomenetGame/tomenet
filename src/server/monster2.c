@@ -160,7 +160,7 @@ void delete_monster(int Depth, int y, int x)
 		int i;
 		for(i=0;i<m_max;i++){
 			monster_type *m_ptr=&m_list[i];
-			if(o_ptr->r_idx && Depth==m_ptr->dun_depth){
+			if(m_ptr->r_idx && Depth==m_ptr->dun_depth){
 				if(y==m_ptr->fy && x==m_ptr->fx)
 					delete_monster_idx(i);
 			}

@@ -4010,7 +4010,7 @@ void house_creation(int Ind)
 	if((house_alloc-num_houses)<32){
 		return;		/* i know... */
 	}
-	if(p_ptr->depth>=0) return;		/* Building in town??? no */
+	if(p_ptr->dun_depth>=0) return;		/* Building in town??? no */
 	w=4+randint(4);
 	h=4+randint(4);
 	if(!(p_ptr->px+w<196 && p_ptr->py+h<64))	/* bounds */
