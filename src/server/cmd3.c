@@ -399,7 +399,7 @@ void do_cmd_wield(int Ind, int item)
 	}
 
 	/* Prevent wielding into a cursed slot */
-	if (cursed_p(&(p_ptr->inventory[slot])))
+	if (cursed_p(&(p_ptr->inventory[slot])) && !p_ptr->admin_dm)
 	{
 		/* Describe it */
 		object_desc(Ind, o_name, &(p_ptr->inventory[slot]), FALSE, 0);
@@ -679,7 +679,7 @@ void do_cmd_takeoff(int Ind, int item)
 
 
 	/* Item is cursed */
-	if (cursed_p(o_ptr))
+	if (cursed_p(o_ptr) && !p_ptr->admin_dm)
 	{
 		/* Oops */
 		msg_print(Ind, "Hmmm, it seems to be cursed.");
@@ -735,7 +735,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 
 	/* Cannot remove cursed items */
-	if (cursed_p(o_ptr))
+	if (cursed_p(o_ptr) && !p_ptr->admin_dm)
 	{
 		if ((item >= INVEN_WIELD) )
 		{
@@ -893,7 +893,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-	if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr))
+	if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr) && !p_ptr->admin_dm)
 	{
 		/* Oops */
 		msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
@@ -930,7 +930,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 
 	/* Keys cannot be destroyed */
-	if (o_ptr->tval == TV_KEY)
+	if (o_ptr->tval == TV_KEY && !p_ptr->admin_dm)
 	{
 		/* Message */
 		msg_format(Ind, "You cannot destroy %s.", o_name);
