@@ -1230,7 +1230,7 @@ owner_type owners[MAX_STORES][MAX_OWNERS] =
  * the (compiled out) small random energy boost code.  It may
  * also tend to cause more "clumping" at high speeds.
  */
-byte extract_energy[200] =
+byte extract_energy[256] =
 {
 	/* Slow */     1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
 	/* Slow */     1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
@@ -1252,6 +1252,12 @@ byte extract_energy[200] =
         /* F+60 */    65, 65, 66, 66, 67, 67, 68, 68, 69, 69,
         /* F+70 */    70, 70, 71, 71, 72, 72, 73, 73, 74, 74,
         /* Fast */    75, 75, 76, 76, 77, 77, 78, 78, 79, 79,
+        /* Fast */    80, 80, 80, 80, 80, 80, 80, 80, 80, 80,
+        /* Fast */    80, 80, 80, 80, 80, 80, 80, 80, 80, 80,
+        /* Fast */    80, 80, 80, 80, 80, 80, 80, 80, 80, 80,
+        /* Fast */    80, 80, 80, 80, 80, 80, 80, 80, 80, 80,
+        /* Fast */    80, 80, 80, 80, 80, 80, 80, 80, 80, 80,
+        /* Fast */    80, 80, 80, 80, 80, 80
 };
 
 

@@ -465,3 +465,4 @@ Change list for PernMangband
 
 18/12/2001 (Jir)
 - Bugfixes on traps.
+- Bugfix: Immobile monsters beneath 5000'

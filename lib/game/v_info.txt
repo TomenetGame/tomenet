@@ -2726,13 +2726,13 @@ D:%XXXX^^^^^^^^^XXX^^^^^^^^^XXX^^^#XXX8.X.&.X.&.X..*X+^.^.^.^.^.^..XX*^.^.^.^.^.
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-N:118:Miniature Cell
-X:7:5:5:5
-D:%%%%%
-D:%#8#%
-D:%888%
-D:%#8#%
-D:%%%%%
+#N:118:Miniature Cell
+#X:7:5:5:5
+#D:%%%%%
+#D:%#8#%
+#D:%888%
+#D:%#8#%
+#D:%%%%%
 
 N:119:Castle Death
 X:8:35:20:60
@@ -3549,7 +3549,7 @@ D:%X^.,...XXX,^9^#X.&.XX*&*,*&*,*&XX.&.,...,.^X%
 D:%X^.&.XXX8@^,^9^XX.&.XX*&*,*@*,*8XX.&.,...,^X%
 D:%X^.XXXXXXXXXXXXXXX.&.XXXXXXXXXXXXXX.&.,...^X%
 D:%X^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^X%
-D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXX#XXXXXXXXXXXXXXX%
+D:%XXXXXXXXXXXXXXXXXXXXX#XXXXXX#XXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

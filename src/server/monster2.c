@@ -41,6 +41,10 @@ void monster_check_experience(int m_idx, bool silent)
 			int speed = randint(3);
 			m_ptr->speed += speed;
 			m_ptr->mspeed += speed;
+
+			/* fix -- never back to 0 */
+			if (m_ptr->speed < speed) m_ptr->speed = 255;
+			if (m_ptr->mspeed < speed) m_ptr->mspeed = 255;
 		}
 
 		/* Gain ac */
@@ -1788,7 +1792,15 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 	{
 		/* Allow some small variation per monster */
 		i = extract_energy[m_ptr->speed] / 10;
-		if (i) m_ptr->mspeed += rand_spread(0, i);
+		if (i)
+		{
+			j = rand_spread(0, i);
+			m_ptr->mspeed += j;
+
+			if (m_ptr->mspeed < j) m_ptr->mspeed = 255;
+		}
+
+//		if (i) m_ptr->mspeed += rand_spread(0, i);
 	}
 
 
@@ -3508,7 +3520,14 @@ monster_race* race_info_idx(int r_idx, int ego, int randuni)
         MODIFY(nr_ptr->sleep, re_ptr->sleep, 0);
 
         MODIFY(nr_ptr->aaf, re_ptr->aaf, 1);
+
+		/* Hack - avoid to be back to 0 (consider using s16b) */
+		i = nr_ptr->speed;
+        MODIFY(i, re_ptr->speed, 50);
         MODIFY(nr_ptr->speed, re_ptr->speed, 50);
+
+		if (nr_ptr->speed < i) nr_ptr->speed = 255;
+
         MODIFY(nr_ptr->mexp, re_ptr->mexp, 0);
 
 //        MODIFY(nr_ptr->weight, re_ptr->weight, 10);

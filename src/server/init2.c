@@ -1300,7 +1300,8 @@ static errr init_v_info(void)
 
 	/* Fake the size of "v_name" and "v_text" */
 	fake_name_size = 20 * 1024L;
-	fake_text_size = 120 * 1024L;
+	fake_text_size = 170 * 1024L;
+//	fake_text_size = 120 * 1024L;
 
 	/* Allocate the "k_info" array */
 	C_MAKE(v_info, v_head->info_num, vault_type);

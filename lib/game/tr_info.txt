@@ -295,10 +295,10 @@ I:4:100:50:4:4:0d0:r
 D:Your stomach isn't empty, but suddenly you think of food.
 F:FLOOR | CHEST | DOOR
 
-N:52:Trap of Wasting Wands
-I:6:100:40:4:5:0d0:y
-D:Your wands seem different...
-F:FLOOR | CHEST | DOOR
+#N:52:Trap of Wasting Wands
+#I:6:100:40:4:5:0d0:y
+#D:Your wands seem different...
+#F:FLOOR | CHEST | DOOR
 
 N:53:Trap of Filling
 I:10:100:0:10:25:0d0:o

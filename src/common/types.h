@@ -655,7 +655,7 @@ struct monster_type
         s16b level;                     /* Level of the monster */
 
         monster_blow blow[4];           /* Up to four blows per round */
-        byte speed;                     /* Monster "speed" */
+        byte speed;                     /* Monster "speed" - better s16b? */
         s16b ac;                        /* Armour Class */
 
         s32b hp;                        /* Current Hit points */

@@ -20,7 +20,7 @@
 
 
 /*
- * Acquires and returns the index of a "free" monster.
+ * Acquires and returns the index of a "free" trap.
  *
  * This routine should almost never fail, but it *can* happen.
  *
@@ -58,7 +58,7 @@ s16b t_pop(void)
 		/* Advance (and wrap) the "next" pointer */
 		if (++t_nxt >= MAX_TR_IDX) t_nxt = 1;
 
-		/* Skip monsters in use */
+		/* Skip traps in use */
 		if (t_list[i].t_idx) continue;
 
 		/* Verify space XXX XXX */
@@ -77,7 +77,7 @@ s16b t_pop(void)
 		/* Update "m_fast" */
 		t_fast[t_top++] = i;
 
-		/* Use this monster */
+		/* Use this trap */
 		return (i);
 	}
 
@@ -133,7 +133,7 @@ void delete_trap_idx(trap_type *t_ptr)
 
 	/* Trap is gone */
 	/* Make sure the level is allocated, it won't be if we are
-	 * clearing an abandoned wilderness level of monsters
+	 * clearing an abandoned wilderness level of traps
 	 */
 #ifdef NEW_DUNGEON
 	if((zcave=getcave(wpos))){
@@ -158,7 +158,7 @@ void delete_trap_idx(trap_type *t_ptr)
 	/* Visual update */
 	everyone_lite_spot(Depth, y, x);
 #endif
-	/* Wipe the Monster */
+	/* Wipe the */
 //	FREE(tt_ptr, trap_kind);
 	WIPE(t_ptr, trap_type);
 }
