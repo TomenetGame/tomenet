@@ -1459,16 +1459,20 @@ artifact_type *randart_make(object_type *o_ptr)
 
 		a_ptr->to_d = 0;
 		a_ptr->to_h = 0;
-		if (magik(30)) {
+		if (magik(50)) {
 			a_ptr->to_d += randint(3);
-			a_ptr->to_h += randint(5);
+			if (magik(50)) {
+				a_ptr->to_d += randint(3);
+			}
 		}
-		if (magik(20)) {
-			a_ptr->to_d += randint(3);
-			a_ptr->to_h += randint(5);
+		if (magik(50)) {
+			a_ptr->to_h += randint(6);
+			if (magik(50)) {
+				a_ptr->to_h += randint(6);
+			}
 		}
-		if (magik(10)) a_ptr->ds += 1;
-		else if (magik(10)) a_ptr->dd += 1;
+		if (magik(20)) a_ptr->ds += 1;
+		else if (magik(20)) a_ptr->dd += 1;
 	}
 	
 	/* Ensure armour has some bonus to ac */

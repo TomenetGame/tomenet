@@ -758,7 +758,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 			object_type *o_ptr = &q_ptr->inventory[i];
 			char o_name[160];
 			if (o_ptr->tval) {
-				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				object_desc(Ind, o_name, o_ptr, TRUE, 3 + (i < INVEN_WIELD ? 0 : 0x10));
 				fprintf(fff, "\377%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);
 			}
 		}

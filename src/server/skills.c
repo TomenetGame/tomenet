@@ -942,7 +942,7 @@ static void print_skill_batch(int *p, int start, int max, bool mode)
                 if ((p[i] == SKILL_LEARN) && (!must_learn_spells()))
                         continue;
                 else if (p[i] > 0)
-			sprintf(buff, "  %c-%3d) %-30s", I2A(j), p[i] + 1, s_text + s_info[p[i]].action_desc);
+			sprintf(buff, "  %c-%3d) %-30s", I2A(j), s_info[p[i]].action_mkey, s_text + s_info[p[i]].action_desc);
 		else
 			sprintf(buff, "  %c-%3d) %-30s", I2A(j), 1, "Change melee style");
 

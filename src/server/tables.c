@@ -2768,7 +2768,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
-                                '+', 500,
+                                '+', 450,
                         },
                         {
                                 SKILL_MAGIC,
@@ -2860,6 +2860,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_CALMNESS,
                                 '+', 0,
                                 '+', 900,
+                        },
+                        {
+                                SKILL_INTERCEPT,
+                                '+', 1000,
+                                '+', 400,
                         },
                 }
 	},

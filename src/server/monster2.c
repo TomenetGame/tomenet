@@ -257,7 +257,52 @@ void monster_check_experience(int m_idx, bool silent)
 		} else {
 			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_melee - 100) / 100);
 		}
+		
 	}
+
+	/* Insanity caps */
+	for (i = 0; i < 4; i++) {
+        	if ((m_ptr->blow[i].effect == RBE_SANITY) && m_ptr->blow[i].d_dice && m_ptr->blow[i].d_side) {
+			while (((m_ptr->blow[i].d_dice + 1) * m_ptr->blow[i].d_side) / 2 > 55) {
+				if (m_ptr->blow[i].d_dice >= m_ptr->blow[i].d_side)
+					m_ptr->blow[i].d_dice--;
+				else
+					m_ptr->blow[i].d_side--;
+			}
+		}
+	}
+
+	/* Sanity caps */
+	while (TRUE) {
+		tmp = 0; try = 0;
+		for (i = 0; i < 4; i++) {
+			/* Look for attacks */
+			if ((!m_ptr->blow[i].d_dice) || (!m_ptr->blow[i].d_side)) continue;
+			/* Add up to total damage counter (average) */
+			tmp += ((m_ptr->blow[i].d_dice + 1) * m_ptr->blow[i].d_side) / 2;
+			/* Skip non-powerful attacks */
+			if (((m_ptr->blow[i].d_dice + 1) * m_ptr->blow[i].d_side) / 2 <= 125) continue;
+			/* Count number of powerful attacks */
+			try++;
+		}
+		if (tmp <= 700) break;
+		/* Randomly pick one of the attacks to lower */
+		try = randint(try);
+		tmp = 0;
+		for (i = 0; i < 4; i++) {
+			if ((!m_ptr->blow[i].d_dice) || (!m_ptr->blow[i].d_side)) continue;
+			if (((m_ptr->blow[i].d_dice + 1) * m_ptr->blow[i].d_side) / 2 <= 125) continue;
+			tmp++;
+			if (tmp == try) {
+                                /* Don't reduce by too great steps */
+                                if (m_ptr->blow[i].d_dice <= 10) m_ptr->blow[i].d_side--;
+                                else if (m_ptr->blow[i].d_side <= 10) m_ptr->blow[i].d_dice--;
+				/* Otherwise reduce randomly */
+				else if (rand_int(2)) m_ptr->blow[i].d_side--;
+				else m_ptr->blow[i].d_dice--;
+                        }
+		}
+	} 
 }
 
 /* Monster gain some xp */

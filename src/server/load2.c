@@ -339,7 +339,7 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&o_ptr->sval);
 
 /* HACKHACKHACK - C. Blue - Moved Khopesh to polearms */
-if (o_ptr->tval == 23 && o_ptr->sval == 14) {o_ptr->tval = 22; o_ptr->sval = 9;}
+//if (o_ptr->tval == 23 && o_ptr->sval == 14) {o_ptr->tval = 22; o_ptr->sval = 9;}
 
 	/* Base pval */
 	rd_s32b(&o_ptr->bpval);

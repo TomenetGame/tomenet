@@ -45,6 +45,9 @@ void grow_trees(int Ind, int rad)
 	player_type *p_ptr = Players[Ind];
 	int a, i, j;
 
+	/* No terraforming in Bree to avoid shut-in newbies. */
+	if (p_ptr->wpos.wx == 32 && p_ptr->wpos.wy == 32 && p_ptr->wpos.wz == 0) return;
+
 	for (a = 0; a < rad * rad + 11; a++)
         {
                 cave_type **zcave = getcave(&p_ptr->wpos);

@@ -1843,11 +1843,13 @@ void store_stole(int Ind, int item)
 
 	char		o_name[160];
 
-	/* Store in which town? Or in the dungeon? */
+	/* Get town or dungeon the store is located within */
 	i=gettown(Ind);
-	st_ptr = &town[i].townstore[st];
 //	if(i==-1) return;       //DUNGEON STORES
         if(i==-1) i=0;
+
+	/* Store in which town? Or in the dungeon? */
+	st_ptr = &town[i].townstore[st];
 
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
@@ -1954,16 +1956,20 @@ void store_stole(int Ind, int item)
 	if (tcadd < 1) tcadd = 1;
 	tcadd = 57000 / ((10000 / tcadd) + 50);
 
-	/* Player tries to stole it */
-#if 0	// Tome formula .. seemingly, high Stealing => more failure!
-	if (rand_int((40 - p_ptr->stat_ind[A_DEX]) +
-	    ((((j_ptr->weight * amt) / 2) + tcadd) / (5 + get_skill_scale(SKILL_STEALING, 15))) +
-	    (get_skill_scale(SKILL_STEALING, 25))) <= 10)
-#endif	// 0
+	/* Player tries to steal it */
 	chance = (50 - p_ptr->stat_ind[A_DEX]) +
 	    ((((sell_obj.weight * amt) / 2) + tcadd) /
 	    (5 + get_skill_scale(p_ptr, SKILL_STEALING, 15))) -
 	    (get_skill_scale(p_ptr, SKILL_STEALING, 25));
+
+	/* Very simple items (value <= stealingskill * 10)
+	   [that occur in stacks? -> no for now, too nasty]
+	   get less attention from the shopkeeper, so you don't
+	   get blacklisted all the time for snatching some basic stuff - C. Blue */
+	if (get_skill_scale(p_ptr, SKILL_STEALING, 50) >= 1) {
+		if (tbest <= get_skill_scale(p_ptr, SKILL_STEALING, 500))
+			chance = (chance * tbest) / get_skill_scale(p_ptr, SKILL_STEALING, 500);
+	}
 
 	/* Invisibility and stealth are not unimportant */
 	chance = (chance * (100 - (p_ptr->tim_invisibility > 0 ? 13 : 0))) / 100;
@@ -2096,7 +2102,21 @@ void store_stole(int Ind, int item)
 		st_ptr->bad_buy = 0;
 
 		/* Kicked out for a LONG time */
-		p_ptr->tim_blacklist += tcadd * amt * 8 + 1000;
+		i = tcadd * amt * 8 + 1000;
+		/* Reduce blacklist time for very cheap stuff (value <= skill * 10): */
+		if (get_skill_scale(p_ptr, SKILL_STEALING, 50) >= 1) {
+			if (tbest <= get_skill_scale(p_ptr, SKILL_STEALING, 500)) {
+				/* Limits for ultra-cheap items: */
+				if (get_skill_scale(p_ptr, SKILL_STEALING, 500) / tbest <= 5)
+					i = (i * tbest) / get_skill_scale(p_ptr, SKILL_STEALING, 500);
+				else
+					i /= 5;
+			}
+		}
+		/* Paranoia, currently not needed */
+		if (i < 100) i = 100;
+
+		p_ptr->tim_blacklist += i;
 
 		/* Of course :) */
 		store_kick(Ind, FALSE);

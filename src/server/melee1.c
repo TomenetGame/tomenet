@@ -999,6 +999,9 @@ bool make_attack_normal(int Ind, int m_idx)
 					/* Take some damage */
 					take_hit(Ind, damage, ddesc);
 
+					/* Saving throw by Magic Device skill (9%..99%) */
+					if (magik(117 - (2160 / (20 + get_skill_scale(p_ptr, SKILL_DEVICE, 100))))) break;
+
 					/* Find an item */
 					for (k = 0; k < 20; k++)
 					{

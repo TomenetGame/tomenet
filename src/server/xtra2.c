@@ -3165,6 +3165,9 @@ void check_experience(int Ind)
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
 
+		/* Window stuff - Items might be come (un)usable depending on level! */
+	        p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
 		/* Handle stuff */
 		handle_stuff(Ind);
 	}
@@ -3245,6 +3248,9 @@ void check_experience(int Ind)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
+
+		/* Window stuff - Items might be come (un)usable depending on level! */
+	        p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
 		/* Handle stuff */
 		handle_stuff(Ind);
@@ -3950,9 +3956,15 @@ if(cfg.unikill_format){
 							p_ptr2->redraw |= (PR_TITLE);
 
 							/* Congratulations */
-							msg_print(i, "\377G*** CONGRATULATIONS ***");
-							msg_print(i, "\377GYou have won the game!");
-							msg_print(i, "\377GYou may retire (commit suicide) when you are ready.");
+							msg_print(Ind2, "\377G*** CONGRATULATIONS ***");
+							if (p_ptr2->mode & (MODE_HELL | MODE_NO_GHOST)) {
+								msg_format(Ind2, "\377GYou have won the game and are henceforth titled '%s'!", (p_ptr2->male)?"Emperor":"Empress");
+								msg_broadcast_format(Ind2, "\377v%s is henceforth known as %s %s", p_ptr2->name, (p_ptr2->male)?"Emperor":"Empress", p_ptr2->name);
+							} else {
+								msg_format(Ind2, "\377GYou have won the game and are henceforth titled '%s!'", (p_ptr2->male)?"King":"Queen");
+								msg_broadcast_format(Ind2, "\377v%s is henceforth known as %s %s", p_ptr2->name, (p_ptr2->male)?"King":"Queen", p_ptr2->name);
+							}
+							msg_print(Ind2, "\377G(You may retire (by committing suicide) when you are ready.)");
 
 							num++;
 
@@ -3960,7 +3972,7 @@ if(cfg.unikill_format){
 							if (cfg.retire_timer >= 0)
 							{
 								p_ptr2->retire_timer = cfg.retire_timer;
-								msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg.retire_timer);
+								msg_format(Ind2, "Otherwise you will retire after %s minutes of tenure.", cfg.retire_timer);
 							}
 
 							/* Turn him into pseudo-noghost mode */
@@ -3968,7 +3980,7 @@ if(cfg.unikill_format){
 					    		    !(p_ptr2->mode & MODE_IMMORTAL) &&
 							    !(p_ptr2->mode & MODE_NO_GHOST))
 							{
-	        						msg_print(i, "\377yTake care! As a winner, you have no more resurrections left!");
+	        						msg_print(Ind2, "\377yTake care! As a winner, you have no more resurrections left!");
 								p_ptr2->lives = 1+1;
 							}
 						}
@@ -3982,8 +3994,14 @@ if(cfg.unikill_format){
 
 					/* Congratulations */
 					msg_print(i, "\377G*** CONGRATULATIONS ***");
-					msg_print(i, "\377GYou have won the game!");
-					msg_print(i, "\377GYou may retire (commit suicide) when you are ready.");
+					if (q_ptr->mode & (MODE_HELL | MODE_NO_GHOST)) {
+						msg_format(i, "\377GYou have won the game and are henceforth titled '%s'!", (q_ptr->male)?"Emperor":"Empress");
+						msg_broadcast_format(i, "\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"Emperor":"Empress", q_ptr->name);
+					} else {
+						msg_format(i, "\377GYou have won the game and are henceforth titled '%s!'", (q_ptr->male)?"King":"Queen");
+						msg_broadcast_format(i, "\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"King":"Queen", q_ptr->name);
+					}
+					msg_print(i, "\377G(You may retire (by committing suicide) when you are ready.)");
 
 					num++;
 
@@ -4420,7 +4438,7 @@ if(cfg.unikill_format){
 /* FIXME: this function is known to be bypassable by nominally
  * 'party-owning'.
  */
-static void kill_house_contents(house_type *h_ptr){
+void kill_house_contents(house_type *h_ptr){
 	struct worldpos *wpos=&h_ptr->wpos;
 	object_type *o_ptr;
 	int i;

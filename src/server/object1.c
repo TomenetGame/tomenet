@@ -1263,9 +1263,9 @@ static char *object_desc_int(char *t, sint v)
  *   1 -- The Cloak of Death [1,+3]
  *   2 -- The Cloak of Death [1,+3] (+2 to Stealth)
  *   3 -- The Cloak of Death [1,+3] (+2 to Stealth) {nifty}
- */   
-/*   
+ *
  *  +8 -- Cloak Death [1,+3](+2stl){nifty}
+ *  +16 - Replace full owner name by a symbol to shorten the string - C. Blue
  *
  * If the strings created with mode 0-3 are too long, this function is called
  * again with 8 added to 'mode' and attempt to 'abbreviate' the strings. -Jir-
@@ -1865,7 +1865,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			}
 			else
 			{
-				t = object_desc_str(t, name);
+				if (mode & 0x10) t = object_desc_chr(t, '*');
+				else t = object_desc_str(t, name);
 			}
 		}
 		else

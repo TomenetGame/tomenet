@@ -2313,7 +2313,8 @@ bool dec_stat(int Ind, int stat, int amount, int mode)
 		}
 
 		/* Recalculate bonuses */
-		p_ptr->update |= (PU_BONUS);
+//WIS drain -> Sanity changes;	p_ptr->update |= (PU_BONUS); */
+		p_ptr->update |= (PU_BONUS | PU_MANA | PU_HP | PU_SANITY);
 	}
 
 	/* Done */
@@ -2755,6 +2756,10 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			/* Require a "naked" floor grid */
 			if (!cave_naked_bold(zcave, y, x)) break;
+			
+			/* No terraforming in Bree. Newbies might spawn inside stone
+			   prisons without phase door etc. */
+			if (wpos->wx == 32 && wpos->wy == 32 && wpos->wz == 0) break;
 
                		/* Beware of the houses in town */
                		if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY)) break;

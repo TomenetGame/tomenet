@@ -2279,7 +2279,10 @@ static bool process_player_end_aux(int Ind)
 			else if (!p_ptr->tim_wraith &&
 					!p_ptr->master_move_hook)	/* Hack -- builder is safe */
 			{
-				int amt = 1 + ((p_ptr->lev)/5) + p_ptr->mhp / 100;
+//				int amt = 1 + ((p_ptr->lev)/5) + p_ptr->mhp / 100;
+				/* Currently it only serves to reduce 'stuck' players' HP,
+				   so we might lower it a bit - C. Blue */
+				int amt = 1 + ((p_ptr->lev)/10) + p_ptr->mhp / 100;
 
 				//			cave_no_regen = TRUE;
 				if (amt > p_ptr->chp - 1) amt = p_ptr->chp - 1;

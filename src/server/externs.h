@@ -1340,6 +1340,7 @@ extern bool master_acquire(int Ind, char * parms);
 extern bool master_player(int Ind, char * parms);
 
 extern void kill_houses(int id, int type);
+extern void kill_house_contents(house_type *h_ptr);
 
 /*extern bool get_rep_dir(int *dp);*/
 

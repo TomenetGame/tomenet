@@ -4426,7 +4426,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 
-	int y, x;
+	int y, x, i;
 	int factor;
 //	int64_t price; /* I'm hoping this will be 64 bits.  I dont know if it will be portable. */
 //	s64b price;
@@ -4505,6 +4505,11 @@ void do_cmd_purchase_house(int Ind, int dir)
 				dna->creator=0L;
 				dna->owner=0L;
 				dna->a_flags=ACF_NONE;
+				
+				/* Erase house contents */
+				for (i = 0; i < num_houses; i++)
+					if (houses[i].dx == x && houses[i].dy == y)
+						kill_house_contents(&houses[i]);
 				return;
 			}
 			msg_print(Ind,"That house does not belong to you!");

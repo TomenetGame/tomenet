@@ -258,7 +258,7 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 #define DUN_CAVERN2    20	/* 1/chance extra check for cavern level */
 #define EMPTY_LEVEL    15	/* 1/chance of being 'empty' (15)*/
 #define DARK_EMPTY      5	/* 1/chance of arena level NOT being lit (2)*/
-#define SMALL_LEVEL     3	/* 1/chance of smaller size (3)*/
+#define SMALL_LEVEL     4	/* 1/chance of smaller size (3)*/
 #define DUN_WAT_RNG     2	/* Width of rivers */
 #define DUN_WAT_CHG    50	/* 1 in 50 chance of junction in river */
 

@@ -1768,6 +1768,16 @@ static void calc_body_bonus(int Ind)
 		case 432:	case 520:	case 521:	case 623:	case 989:
 			p_ptr->vampiric = 50;
 			break;
+		
+		/* Angels resist light, blindness and poison (usually immunity) */
+		case 417:	case 456:	case 511:	case 605:	
+		case 661:	case 1071:	case 1072:	case 1073:
+			p_ptr->resist_lite = TRUE;
+		/* Fallen Angel */
+		case 652:
+			p_ptr->resist_blind = TRUE;
+			p_ptr->resist_pois = TRUE;
+			break;
 	}
 	
 	/* If monster has a lite source, but doesn't prove a torso (needed
