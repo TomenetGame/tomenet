@@ -1626,7 +1626,10 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 
 			/* Give credit for bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-			value += ((PRICE_BOOST(o_ptr->to_h, 12, 4) + PRICE_BOOST(o_ptr->to_d, 7, 3) + PRICE_BOOST(o_ptr->to_a, 11, 4)) * 100L);
+			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
+			value += ((PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 12, 4) + 
+				PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 7, 3) + 
+				PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 11, 4)) * 100L);
 
 			/* Done */
 			break;
@@ -1648,7 +1651,10 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 
 			/* Give credit for bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-			value += ((PRICE_BOOST(o_ptr->to_h, 9, 4) + PRICE_BOOST(o_ptr->to_d, 9, 4) + PRICE_BOOST(o_ptr->to_a, 9, 4)) * 100L);
+			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
+			value += ((PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4) +
+				PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4) + 
+				PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 9, 4)) * 100L);
 
 			/* Done */
 			break;
@@ -1676,7 +1682,10 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 
 			/* Factor in the bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-			value += ((PRICE_BOOST(o_ptr->to_h, 9, 4) + PRICE_BOOST(o_ptr->to_d, 9, 4) + PRICE_BOOST(o_ptr->to_a, 9, 4)) * 100L);
+			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
+			value += ((PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4) + 
+				PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4) + 
+				PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 9, 4)) * 100L);
 
 			/* Hack -- Factor in extra damage dice */
 			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
@@ -1698,7 +1707,9 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 
 			/* Factor in the bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
-			value += ((PRICE_BOOST(o_ptr->to_h, 9, 4) + PRICE_BOOST(o_ptr->to_d, 9, 4)) * 5L);
+			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
+			value += ((PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4) + 
+				PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4)) * 5L);
 
 			/* Hack -- Factor in extra damage dice */
 			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
