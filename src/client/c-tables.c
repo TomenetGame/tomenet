@@ -148,6 +148,7 @@ byte adj_mag_mana[] =
 	16	/* 18/220+ */
 };
 
+#endif	// 0
 
 /*
  * Stat Table (INT/WIS) -- Minimum failure rate (percentage)
@@ -240,6 +241,7 @@ byte adj_mag_stat[] =
 	20	/* 18/220+ */
 };
 
+#if 0
 
 /*
  * Stat Table (CHR) -- payment percentages

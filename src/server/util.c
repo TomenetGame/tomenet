@@ -1607,7 +1607,7 @@ void msg_print_near_site(int y, int x, worldpos *wpos, cptr msg)
 		/* Make sure this player is at this depth */
 		if (!inarea(&p_ptr->wpos, wpos)) continue;
 
-		/* Can he see this player? */
+		/* Can (s)he see the site? */
 		if (p_ptr->cave_flag[y][x] & CAVE_VIEW)
 		{
 			/* Send the message */
@@ -1646,6 +1646,7 @@ void msg_format_near_site(int y, int x, worldpos *wpos, cptr fmt, ...)
  */
 /*
  * TODO: allow format
+ * TODO: distinguish 'witnessing' and 'hearing'
  */
 void msg_print_near_monster(int m_idx, cptr msg)
 {

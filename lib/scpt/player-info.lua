@@ -147,3 +147,4 @@ function antimagic(val)
 local p = players(Ind)
 	p.s_info[SKILL_ANTIMAGIC + 1].value = val
 end
+

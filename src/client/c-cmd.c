@@ -2773,6 +2773,64 @@ void cmd_master_aux_player()
 	}
 }
 
+/*
+ * Upload/execute scripts
+ */
+/* TODO: up-to-date check and download facility */
+void cmd_script_upload()
+{
+	char buf[1025], name[81];
+	FILE *fff;
+
+	name[0]='\0';
+
+	if (!get_string("Script name: ", name + 1, 79)) return;
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_SCPT, name + 1);
+	fff = my_fopen(buf, "r");
+	if (fff == NULL) return;
+
+	name[0] = MASTER_SCRIPTB_W;
+	Send_master(MASTER_SCRIPTB, name);
+
+	/* Process the file */
+	while (0 == my_fgets(fff, buf, 1024))
+	{
+		Send_master(MASTER_SCRIPTL, buf);
+	}
+
+	buf[0] = '\0';
+	Send_master(MASTER_SCRIPTE, buf);
+
+	my_fclose(fff);
+	c_msg_print("Sent.");
+}
+
+/*
+ * Upload/execute scripts
+ */
+void cmd_script_exec()
+{
+	char buf[81];
+
+	buf[0]='\0';
+	if (!get_string("Script> ", buf, 80)) return;
+
+	Send_master(MASTER_SCRIPTS, buf);
+}
+
+void cmd_script_exec_local()
+{
+	char buf[81];
+
+	buf[0]='\0';
+	if (!get_string("Script> ", buf, 80)) return;
+
+	exec_lua(0, buf);
+}
+
+
 /* Dirty implementation.. FIXME		- Jir - */
 void cmd_master_aux_system()
 {
@@ -2783,6 +2841,9 @@ void cmd_master_aux_system()
 		Term_putstr(0, 2, -1, TERM_BLUE, "System commands");
 		Term_putstr(5, 4, -1, TERM_WHITE, "(1) View mangband.log");
 		Term_putstr(5, 5, -1, TERM_WHITE, "(2) View mangband.rfe");
+		Term_putstr(5, 7, -1, TERM_WHITE, "(e) Execute script command");
+		Term_putstr(5, 8, -1, TERM_WHITE, "(u) Upload script file");
+		Term_putstr(5, 9, -1, TERM_WHITE, "(c) Execute local script command");
 	
 		Term_putstr(0, 12, -1, TERM_WHITE, "Command: ");
 
@@ -2805,7 +2866,17 @@ void cmd_master_aux_system()
 				peruse_file();
 
 				break;
+			case 'e':
+				cmd_script_exec();
+				break;
+			case 'u':
+				cmd_script_upload();
+				break;
+			case 'c':
+				cmd_script_exec_local();
+				break;
 			case ESCAPE:
+			case KTRL('X'):
 				break;
 			default:
 				bell();
@@ -2814,51 +2885,6 @@ void cmd_master_aux_system()
 		/* Flush messages */
 		c_msg_print(NULL);
 	}
-}
-/*
- * Upload/execute scripts
- */
-void cmd_script_upload()
-{
-        char buf[1025], name[81];
-        FILE *fff;
-	
-	name[0]='\0';
-
-        if (!get_string("Script name: ", name + 1, 79)) return;
-
-        /* Build the filename */
-        path_build(buf, 1024, ANGBAND_DIR_SCPT, name + 1);
-        fff = my_fopen(buf, "r");
-        if (fff == NULL) return;
-
-        name[0] = MASTER_SCRIPTB_W;
-        Send_master(MASTER_SCRIPTB, name);
-
-        /* Process the file */
-        while (0 == my_fgets(fff, buf, 1024))
-        {
-                Send_master(MASTER_SCRIPTL, buf);
-        }
-
-        buf[0] = '\0';
-        Send_master(MASTER_SCRIPTE, buf);
-
-        my_fclose(fff);
-        c_msg_print("Sent.");
-}
-
-/*
- * Upload/execute scripts
- */
-void cmd_script_exec()
-{
-        char buf[81];
-
-	buf[0]='\0';
-        if (!get_string("Script> ", buf, 80)) return;
-
-       	Send_master(MASTER_SCRIPTS, buf);
 }
 
 /* Dungeon Master commands */
@@ -2891,11 +2917,9 @@ void cmd_master(void)
 		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Generation Commands");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Player Commands");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(6) System Commands");
-		Term_putstr(5, 10, -1, TERM_WHITE, "(e) Execute script command");
-		Term_putstr(5, 11, -1, TERM_WHITE, "(u) Upload script file");
 
 		/* Prompt */
-		Term_putstr(0, 13, -1, TERM_WHITE, "Command: ");
+		Term_putstr(0, 14, -1, TERM_WHITE, "Command: ");
 
 		/* Get a key */
 		i = inkey();
@@ -2918,12 +2942,6 @@ void cmd_master(void)
 				break;
 			case '6':
 				cmd_master_aux_system();
-				break;
-			case 'e':
-				cmd_script_exec();
-				break;
-			case 'u':
-				cmd_script_upload();
 				break;
 			case ESCAPE:
 			case KTRL('X'):

@@ -138,15 +138,15 @@ TOLUAOBJS = \
   server/lua/tolua_eh.o server/lua/tolua_bd.o
 
 CLI_LUASRCS = \
-  client/c-script.c \
-  client/w_play.c client/w_util.c
+  client/c-script.c server/lua_bind.c \
+  client/w_play.c client/w_util.c client/w_spells.c
 
 #  server/lua_bind.c \
 #  server/w_util.c server/w_play.c
 
 CLI_LUAOBJS = \
-  client/c-script.o \
-  client/w_play.o client/w_util.o
+  client/c-script.o server/lua_bind.o \
+  client/w_play.o client/w_util.o client/w_spells.o
 
 ##
 ## Following are some "system" definitions
@@ -426,6 +426,9 @@ client/w_play.c: client/player.pkg $(TOLUA)
 
 client/w_util.c: client/util.pkg $(TOLUA)
 	cd client; ../server/tolua -n util -o w_util.c util.pkg; cd ..
+
+client/w_spells.c: client/spells.pkg $(TOLUA)
+	cd client; ../server/tolua -n spells -o w_spells.c spells.pkg; cd ..
 
 
 #

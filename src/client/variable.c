@@ -40,8 +40,13 @@ s16b last_line_info;			/* Last line of info we've received */
 s16b max_line;				/* Maximum amount of "special" info */
 s16b cur_line;				/* Current displayed line of "special" info */
 
+#if 0
 player_type player;			/* The client-side copy of some of the player information */
 player_type *p_ptr = &player;
+#else /* MEGAHACK -- pretend it's array */
+player_type Players[2];			/* The client-side copy of some of the player information */
+player_type *p_ptr = &Players[1];
+#endif	// 0
 
 c_player_extra c_player;
 c_player_extra *c_p_ptr = &c_player;

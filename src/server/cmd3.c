@@ -1520,6 +1520,7 @@ void do_cmd_steal(int Ind, int dir)
 
 			/* Easier to notice heavier objects */
 			notice += forge.weight;
+//			/ (get_skill_scale(SKILL_STEALING, 19) + 1);
 
 			/* Always small chance to be noticed */
 			if (notice < 5) notice = 5;

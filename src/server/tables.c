@@ -1612,9 +1612,9 @@ player_race race_info[MAX_RACES] =
                                 '+', 200,
                         },
                         {
-                                SKILL_STEALING,
+                                SKILL_DISARM,
                                 '+', 0,
-                                '%', 110,
+                                '%', 120,
                         },
                         {
                                 SKILL_NECROMANCY,
@@ -2107,7 +2107,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 800,
                         },
                         {
                                 SKILL_AGILITY,
@@ -2234,7 +2234,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 900,
                         },
                         {
                                 SKILL_AGILITY,
@@ -2331,7 +2331,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 0,
-                                '+', 400,
+                                '+', 500,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -2414,7 +2414,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_SWIM,
@@ -2536,7 +2536,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_AGILITY,
@@ -2633,7 +2633,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_TRAINING,
@@ -2685,7 +2685,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOW,
                                 '+', 2000,
-                                '+', 1000,
+                                '+', 900,
                         },
                         {
                                 SKILL_XBOW,
@@ -2700,7 +2700,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HUNTING,
                                 '+', 1000,
-                                '+', 900,
+                                '+', 800,
                         },
                         {
                                 SKILL_RICOCHET,
@@ -2746,7 +2746,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_HEALTH,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_SWIM,
@@ -2770,6 +2770,266 @@ player_class class_info[MAX_CLASS] =
                         },
                 }
 	},
+
+#if 1
+	/* Basically it's copy of Adventurer */
+	{
+                "Bard",
+                TERM_ORANGE,
+		{ 0, 0, 0, 0, 0, 0},
+		20, 20, 20, 2,  15, 15, 50, 50,
+		10, 7,  10, 0,  0,  0,  25, 25,
+                4,  0,
+                {
+                        /* Combat tree */
+                        {
+                                SKILL_COMBAT,
+                                '+', 2000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_TECHNIC,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_SWORD,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_CRITS,
+                                '+', 0,
+                                '+', 450,
+                        },
+                        {
+                                SKILL_AXE,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_HAFTED,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_POLEARM,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_ARCHERY,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_HUNTING,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_SLING,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_BOW,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_XBOW,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_BOOMERANG,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_RICOCHET,
+                                '+', 0,
+                                '+', 300,
+                        },
+                        {
+                                /* let's keep it low for now - offbalancing */
+                                SKILL_MARTIAL_ARTS,
+                                '+', 0,
+                                '+', 400,
+                        },
+
+                        /* Magic tree */
+                        {
+                                SKILL_MAGIC,
+                                '+', 2000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_CONVEYANCE,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_SORCERY,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_CASTSPEED,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_MAGERY,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_SHADOW,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_SPELLLENGTH,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_MIMIC,
+                                '+', 0,
+                                '+', 300,	/* I'd give 200 */
+                        },
+                        {
+                                SKILL_PRAY,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_SPELLRAD,
+                                '+', 0,
+                                '+', 500,
+                        },
+
+                        /* Sneakiness tree */
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_DISARM,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_TRAPPING,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_BACKSTAB,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_STEALTH,
+                                '+', 1000,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_STEALING,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_DODGE,
+                                '+', 0,
+                                '+', 500,
+                        },
+
+                        /* Necromancy tree */
+                        {
+                                SKILL_NECROMANCY,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_AURA_POWER,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_AURA_FEAR,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_AURA_SHIVER,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_AURA_DEATH,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_ANTIMAGIC,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        /* Health tree */
+                        {
+                                SKILL_HEALTH,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_AGILITY,
+                                '+', 0,
+                                '+', 300,	// *HARD* to learn
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 1000,
+                                '+', 1400,
+                        },
+                        {
+                                SKILL_TRAINING,
+                                '+', 3000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_DIG,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+						/* Misc tree */
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_INTERCEPT,
+                                '+', 0,
+                                '+', 500,
+                        },
+
+                }
+	},
+#endif	// 1
 };
 /*
  * Player Classes.
@@ -4375,8 +4635,7 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"Great Archer",
 	},
 
-#if 0
-	/* Exp 626 */
+	/* Bard */
 	{
 		"Apprentice",
 		"Journeyman",
@@ -4389,7 +4648,6 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
 		"Time waster",
 		"Bug chaser",
 	},
-#endif	// 0
 };
 
 /*

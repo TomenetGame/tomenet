@@ -56,6 +56,8 @@ function finish_spell(must_i)
         assert(s.spell, "No spell function!")
         assert(s.info, "No spell info!")
         assert(s.desc, "No spell desc!")
+		if not s.direction then s.direction = FALSE end
+		if not s.item then s.item = FALSE end
 
         i = new_spell(must_i, s.name)
         assert(i == must_i, "ACK ! i != must_i ! please contact the maintainer")
@@ -91,13 +93,18 @@ function find_spell(name)
 end
 
 -- Find if the school is under the influence of a god, returns nil or the level
-function get_god_level(sch)
+--
+-- pgod? 100% sure it won't work
+--[[
+function get_god_level(i, sch)
+	local player = players(i)
         if __schools[sch].gods[player.pgod] then
                 return (s_info[__schools[sch].gods[player.pgod].skill + 1].value * __schools[sch].gods[player.pgod].mul) / __schools[sch].gods[player.pgod].div
         else
                 return nil
         end
 end
+]]
 
 -- Change this fct if I want to switch to learnable spells
 function get_level_school(i, s, max, min)
@@ -131,11 +138,13 @@ function get_level_school(i, s, max, min)
                         s = s_info[SKILL_SORCERY + 1].value
                 end
 
+--[[
                 -- Are we under a god effect ?
                 if __schools[sch].gods then
                         p = get_god_level(sch)
                         if not p then p = 0 end
                 end
+]]
                 
                 -- Find the higher
                 ok = r
@@ -155,9 +164,9 @@ function get_level_school(i, s, max, min)
         -- The loss of information should be negligible since 1 skill = 1000 internaly
         lvl = (lvl / num) / 10
 	if not min then
-	        lvl = lua_get_level(s, lvl, max, 1)
+	        lvl = lua_get_level(i, s, lvl, max, 1)
 	else
-	        lvl = lua_get_level(s, lvl, max, min)
+	        lvl = lua_get_level(i, s, lvl, max, min)
         end
 
         return lvl
@@ -185,7 +194,8 @@ function get_mana(s)
 end
 
 -- Return the amount of power(mana, piety, whatever) for the spell
-function get_power(s)
+function get_power(i, s)
+	local player = players(i)
         if check_affect(s, "piety", FALSE) then
                 return player.grace
         else
@@ -203,17 +213,17 @@ function get_power_name(s)
 end
 
 -- Changes the amount of power(mana, piety, whatever) for the spell
-function adjust_power(s, x)
+function adjust_power(i, s, x)
         if check_affect(s, "piety", FALSE) then
-                inc_piety(GOD_ALL, x)
+                inc_piety(i, GOD_ALL, x)
         else
-		increase_mana(x)
+		increase_mana(i, x)
         end
 end
 
 -- Print the book and the spells
 -- XXX client only
-function print_book(book, spl)
+function print_book(i, book, spl)
 	local x, y, index, sch, size, s
 
 	x = 0
@@ -228,11 +238,11 @@ function print_book(book, spl)
         -- Parse all spells
 	for index, s in school_book[book] do
         	local color = TERM_L_DARK
-                local lvl = get_level(s, 50, -50)
+                local lvl = get_level(i, s, 50, -50)
         	local xx, sch_str
 
-                if is_ok_spell(s) then
-                	if get_mana(s) > get_power(s) then color = TERM_ORANGE
+                if is_ok_spell(i, s) then
+                	if get_mana(s) > get_power(i, s) then color = TERM_ORANGE
                         else color = TERM_L_GREEN end
                 end
                 
@@ -246,7 +256,7 @@ function print_book(book, spl)
 		                sch_str = sch_str..school(sch).name
 	                end
                 end
-                c_prt(color, format("%c) %-20s%-16s   %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(s), spell_chance(s), "%", __spell_info[s]()), y, x)
+                c_prt(color, format("%c) %-20s%-16s   %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
 		y = y + 1
                 size = size + 1
         end
@@ -324,13 +334,13 @@ function spell_in_book(book, spell)
 end
 
 -- Returns spell chance of failure for spell
-function spell_chance(s)
+function spell_chance(i, s)
         local chance, s_ptr
 
 	s_ptr = spell(s)
 
 	-- Extract the base spell failure rate
-        chance = lua_spell_chance(s_ptr.fail, get_level(s, 50), s_ptr.skill_level, get_mana(s), get_power(s), get_spell_stat(s))
+        chance = lua_spell_chance(i, s_ptr.fail, get_level(s, 50), s_ptr.skill_level, get_mana(s), get_power(i, s), get_spell_stat(s))
 
 	-- Return the chance
 	return chance
@@ -359,49 +369,56 @@ function get_spell_stat(s)
 end
 
 -- XXX server only
-function cast_school_spell(s, s_ptr, no_cost)
+-- one question.. why this should be LUA anyway?
+function cast_school_spell(i, s, s_ptr, no_cost)
+	local player = players(i)
 	local use = FALSE
 
 	-- No magic
 	if (player.antimagic > 0) then
-		msg_print("Your anti-magic field disrupts any magic attempts.")
+		msg_print(i, "Your anti-magic field disrupts any magic attempts.")
 		return
         end
+
+	-- TODO: check the ownership
 
 	-- if it costs something then some condition must be met
 	if not no_cost then
 	 	-- Require lite
 		if (check_affect(s, "blind")) and ((player.blind > 0) or (no_lite() == TRUE)) then
-			msg_print("You cannot see!")
+			msg_print(i, "You cannot see!")
 			return
 		end
 
 		-- Not when confused
                 if (check_affect(s, "confusion")) and (player.confused > 0) then
-			msg_print("You are too confused!")
+			msg_print(i, "You are too confused!")
 			return
 		end
 
 		-- Enough mana
 		if (get_mana(s) > get_power(s)) then
-                        if (get_check("You do not have enough "..get_power_name(s)..", do you want to try anyway?") == FALSE) then return end
+--                        if (get_check("You do not have enough "..get_power_name(s)..", do you want to try anyway?") == FALSE) then return end
+				return
 	        end
         
 		-- Invoke the spell effect
-	        if (magik(spell_chance(s)) == FALSE) then
+	        if (magik(spell_chance(i, s)) == FALSE) then
 			if (__spell_spell[s]() == nil) then
 	        		use  = TRUE
 			end
 		else
                         local index, sch
 
+--[[
 			-- added because this is *extremely* important --pelpel
 			if (flush_failure) then flush() end
+]]
 
-                        msg_print("You failed to get the spell off!")
+                        msg_print(i, "You failed to get the spell off!")
 			for index, sch in __spell_school[s] do
 	                        if __schools[sch].fail then
-        	                        __schools[sch].fail(spell_chance(s))
+        	                        __schools[sch].fail(spell_chance(i, s))
                 	        end
 	                end
 			use  = TRUE

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: script.c */
 
 /* Purpose: scripting in lua */

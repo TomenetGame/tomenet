@@ -173,7 +173,7 @@
 /*
  * Maximum number of player "class" types (see "table.c", etc)
  */
-#define MAX_CLASS       7
+#define MAX_CLASS       8
 
 /*
  * Maximum NPC robots to allow.
@@ -693,6 +693,7 @@
 #define CLASS_ROGUE		4
 #define CLASS_MIMIC		5
 #define CLASS_ARCHER		6
+#define CLASS_BARD			7
 
 /*
  * Define the realms
@@ -4647,6 +4648,7 @@ extern int PlayerUID;
 
 /* School skills */
 #define SKILL_CONVEYANCE        48
+#define SKILL_SPELL				49
 
 #if 0	/* skills to come	- Jir - */
 #define SKILL_CLIMB

@@ -1882,6 +1882,7 @@ int calc_blows(int Ind, object_type *o_ptr)
 	{
 		/* Adevnturer */
 		case CLASS_ADVENTURER: num = 5; wgt = 35; mul = 6; break;
+		case CLASS_BARD: num = 5; wgt = 35; mul = 6; break;
 
 							   /* Warrior */
 		case CLASS_WARRIOR: num = 6; wgt = 30; mul = 5; break;

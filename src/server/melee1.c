@@ -1862,10 +1862,10 @@ bool make_attack_normal(int Ind, int m_idx)
 				{
 					int chance = get_skill_scale(p_ptr, SKILL_AURA_FEAR, 30) + 1;
 
-					if (magik(chance))
+					if (!(r_ptr->flags3 & RF3_NO_FEAR) && magik(chance))
 					{
 						msg_format(Ind, "%^s appears afraid.", m_name);
-						m_ptr->monfear = get_skill_scale(p_ptr, SKILL_AURA_POWER, 10);
+						m_ptr->monfear = get_skill_scale(p_ptr, SKILL_AURA_POWER, 10) + 2;
 					}
 				}
 
@@ -1876,8 +1876,16 @@ bool make_attack_normal(int Ind, int m_idx)
 
 					if (magik(chance) && (r_ptr->level < get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 99)))
 					{
+#if 0
 						msg_format(Ind, "%^s appears frozen.", m_name);
 						m_ptr->stunned = get_skill_scale(p_ptr, SKILL_AURA_POWER, 20);
+#endif	// 0
+						m_ptr->stunned += get_skill_scale(p_ptr, SKILL_AURA_POWER, 30) + 10;
+						if (m_ptr->stunned >= 100)
+							msg_format(Ind, "%^s appears frozen.", m_name);
+						else if (m_ptr->stunned >= 50)
+							msg_format(Ind, "%^s appears heavily shivering.", m_name);
+						else msg_format(Ind, "%^s appears shivering.", m_name);
 					}
 				}
 

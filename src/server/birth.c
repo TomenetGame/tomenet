@@ -951,12 +951,20 @@ static byte player_init[MAX_CLASS][3][2] =
 		{ TV_HARD_ARMOR, SV_CHAIN_MAIL }
 	},
 
-        {
+	{
 		/* Archer */
 		{ TV_HUNT_BOOK, 0 },
 		{ TV_ARROW, SV_AMMO_MAGIC },
 		{ TV_BOW, SV_LONG_BOW }
 	},
+
+	{
+		/* Bard */
+		{ TV_RING, SV_RING_SEE_INVIS },
+		{ TV_SWORD, SV_SABRE },
+		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR }
+	},
+
 };
 
 
@@ -1499,6 +1507,51 @@ static void player_setup(int Ind, bool new)
 }
 
 
+/* Hack -- give the bard random skills	- Jir - */
+void do_bard_skill(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int i;
+
+	for (i = 1; i < MAX_SKILLS; i++)
+	{
+		if (i == SKILL_COMBAT || i == SKILL_MASTERY ||
+				i == SKILL_ARCHERY || i == SKILL_MAGIC ||
+				i == SKILL_SNEAKINESS || i == SKILL_HEALTH ||
+				i == SKILL_AURA_POWER) continue;
+
+		if (magik(67))
+		{
+			p_ptr->s_info[i].value = 0;
+			p_ptr->s_info[i].mod = 0;
+		}
+		else
+		{
+			p_ptr->s_info[i].value *= 2;
+			p_ptr->s_info[i].mod *= 1.5;	/* oops floatpoint */
+		}
+	}
+
+	/* Father zero, child zero */
+	for (i = 1; i < MAX_SKILLS; i++)
+	{
+		s32b value = 0, mod = 0;
+
+		/* Develop only revelant branches */
+		if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod)
+		{
+			int z = s_info[i].father;
+
+			if (z == -1 || z == SKILL_NECROMANCY || z == SKILL_MISC) continue;
+
+			if (!p_ptr->s_info[z].value && !p_ptr->s_info[z].mod)
+			{
+				p_ptr->s_info[z].dev = FALSE;
+				p_ptr->s_info[i].value = p_ptr->s_info[i].mod = 0;
+			}
+		}
+	}
+}
 
 /*
  * Create a character.  Then wait for a moment.
@@ -1691,6 +1744,14 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 					break;
 			}
 		}
+	}
+
+	/* Bards receive really random skills
+	 * XXX weird tree can be generated (eg. Revelation w/o Prayer)
+	 */
+	if (p_ptr->pclass == CLASS_BARD)
+	{
+		do_bard_skill(Ind);
 	}
 
 	/* Success */

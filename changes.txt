@@ -21,6 +21,14 @@
 
 # bug.txt should follow the exact same format
 
+10/08/2002 (Jir)
+[m]- more on client-side LUA stuff (but it is becoming to be out of my hands)
+[P]- 'Bard' class (random skills).
+[G]- Fletchery never produces cursed ammos (minus mods are still possible)
+[G]- Aura of shiver reinforced (since stunning doesn't always mean paralysis)
+[G]- Aura of Fear no longer scares RF3_NO_FEAR monsters. (is it right, DG?)
+[G]- Auras have *small* effect even when SKILL_AURA_POWER is 0.
+
 09/08/2002 (Jir)
 [m]- basements for schooled spells (not working at all :p)
 [m]- client-side LUA scripting.
@@ -1689,7 +1697,8 @@ below this line are the unfixed bugs known:
 [B]- wpos display hides wound states(eg.'Deep Gash')
 [B]- mon_vis, obj_vis etc. are messed while the player is off.
 [B]- some ivents are not told to the players even when within the sight.
-[B]- white '@' sometimes appear on the screen(eg. when targetting).
+     (see msg_print_near_monster etc.. we need to enhance them)
+[B]- white '@' sometimes appear on the screen(eg. when targetting/redrawing).
 [B]- Martial-artist has strange +To RHit/+To RDam display.
 [B]- [C] inventory window sometimes loses a) b) etc.
 [B]- 'write error' - admin char gets disconnected after generation once.
@@ -1710,10 +1719,12 @@ below this line are the unfixed bugs known:
 [B]- 'look' command is almost unusable since the msg gets wiped at once
 [B]- store '3' sells tons of Aman daggers when reset.
 [B]- Warrior gets ugly char-dump; Device skill under Combat (dump_skills)
+ - Combat                                         14.000 [0.600]
+     - Weaponmastery                              01.000 [0.600]
+     - Archery                                    16.600 [0.600]
+     . Magic-device                               02.000 [0.900]
+
 [B]- gray dot left after disarming monster-trap
-[B]- T/X corridor intersections never have doors.
-     try_door/try_doors proved out to do nothing!
-     
 
 [B]- apartment doors can displace? (disabled)
      Program received signal SIGSEGV, Segmentation fault.
@@ -1773,37 +1784,6 @@ below this line are the unfixed bugs known:
 [B]- ever-charging arts (eg.star)
 [B]- cave can be erased prematurely after loading.
 [B]- /rec won't work if to wilderness? (admin)
-[B]- vault generator. (in_bounds check prevents it, but it should be fixed
-     in a better way)
-     Program received signal SIGSEGV, Segmentation fault.
-     0x805a34e in cave_set_feat (wpos=0x8dd4ab4, y=66, x=1, feat=122) at server/cave.c:4261
-     4261            c_ptr->feat = feat;
-     (gdb) bt
-     #0  0x805a34e in cave_set_feat (wpos=0x8dd4ab4, y=66, x=1, feat=122)
-         at server/cave.c:4261
-     #1  0x80dfb35 in build_room_vault (wpos=0x8dd4ab4, x0=22, y0=55, xsize=43, ysize=21)
-         at server/generate.c:4977
-     #2  0x80e1428 in build_type11 (wpos=0x8dd4ab4, by0=4, bx0=1) at server/generate.c:5889
-     #3  0x80e2cc2 in room_build (wpos=0x8dd4ab4, y=4, x=1, typ=11)
-         at server/generate.c:7024
-     #4  0x80e36a2 in cave_gen (wpos=0x8dd4ab4) at server/generate.c:7307
-     #5  0x80e58c5 in generate_cave (wpos=0x8dd4ab4) at server/generate.c:8628
-     #6  0x80eee09 in process_player_change_wpos (Ind=1) at server/dungeon.c:3342
-     #7  0x80ef8a7 in dungeon () at server/dungeon.c:3675
-[B]- client quits badly (Destroy_connection)
-     /usr/home/key/devel/pm/src/tomenet: Can't read on socket
-     /usr/home/key/devel/pm/src/tomenet: Net input error
-     Program received signal SIGPIPE, Broken pipe.
-     0x281c0134 in sendto () from /usr/lib/libc.so.4
-     (gdb) bt
-     #0  0x281c0134 in sendto () from /usr/lib/libc.so.4
-     #1  0x281e72db in send () from /usr/lib/libc.so.4
-     #2  0x804bf7a in DgramWrite (fd=8, wbuf=0xbfbff4d7 "\0048\225\005\b\003", size=1) at common/net-unix.c:2112
-     #3  0x805ef02 in Net_cleanup () at client/nclient.c:513
-     #4  0x805ab95 in client_init (argv1=0x0, skip=0 '\000') at client/c-init.c:527
-     #5  0x80662b7 in main (argc=2, argv=0xbfbff6cc) at client/client.c:498
-     #6  0x804a11d in _start ()
-
 
 [B]- crash the moment one die (maybe fixed - in_bounds4)
      Laggwyrm was killed by a Great Storm Wyrm.
@@ -1823,6 +1803,39 @@ below this line are the unfixed bugs known:
 *below are bugs not fixed but avoided*
 [B]- [C] chat-history contains lines with 'mindcrafter'.
      (do_cmd_messages_chatonly)
+[B]- client quits badly (Destroy_connection)
+     (avoided by removing Evileye's anti-DoS code.. FIXME)
+     /usr/home/key/devel/pm/src/tomenet: Can't read on socket
+     /usr/home/key/devel/pm/src/tomenet: Net input error
+     Program received signal SIGPIPE, Broken pipe.
+     0x281c0134 in sendto () from /usr/lib/libc.so.4
+     (gdb) bt
+     #0  0x281c0134 in sendto () from /usr/lib/libc.so.4
+     #1  0x281e72db in send () from /usr/lib/libc.so.4
+     #2  0x804bf7a in DgramWrite (fd=8, wbuf=0xbfbff4d7 "\0048\225\005\b\003", size=1) at common/net-unix.c:2112
+     #3  0x805ef02 in Net_cleanup () at client/nclient.c:513
+     #4  0x805ab95 in client_init (argv1=0x0, skip=0 '\000') at client/c-init.c:527
+     #5  0x80662b7 in main (argc=2, argv=0xbfbff6cc) at client/client.c:498
+     #6  0x804a11d in _start ()
+
+[B]- vault generator. (in_bounds check prevents it, but it should be fixed
+     in a better way)
+     Program received signal SIGSEGV, Segmentation fault.
+     0x805a34e in cave_set_feat (wpos=0x8dd4ab4, y=66, x=1, feat=122) at server/cave.c:4261
+     4261            c_ptr->feat = feat;
+     (gdb) bt
+     #0  0x805a34e in cave_set_feat (wpos=0x8dd4ab4, y=66, x=1, feat=122)
+         at server/cave.c:4261
+     #1  0x80dfb35 in build_room_vault (wpos=0x8dd4ab4, x0=22, y0=55, xsize=43, ysize=21)
+         at server/generate.c:4977
+     #2  0x80e1428 in build_type11 (wpos=0x8dd4ab4, by0=4, bx0=1) at server/generate.c:5889
+     #3  0x80e2cc2 in room_build (wpos=0x8dd4ab4, y=4, x=1, typ=11)
+         at server/generate.c:7024
+     #4  0x80e36a2 in cave_gen (wpos=0x8dd4ab4) at server/generate.c:7307
+     #5  0x80e58c5 in generate_cave (wpos=0x8dd4ab4) at server/generate.c:8628
+     #6  0x80eee09 in process_player_change_wpos (Ind=1) at server/dungeon.c:3342
+     #7  0x80ef8a7 in dungeon () at server/dungeon.c:3675
+
 
 
 *below are phenomena not confirmed as bug*
@@ -1831,6 +1844,8 @@ below this line are the unfixed bugs known:
 [B]- p_ptr->to_d_ranged is always 0.
 [B]- Yeek seems to receive the best store prices.
 [B]- meanless double egos like Elven Robe of Fire Resistance
+[B]- ^S(Spike doors) is bad key for GCU
+[B]- ^O(Chat history) is bad key for XIM
 
 
 

@@ -10,7 +10,10 @@
  * not for profit purposes provided that this copyright and statement are
  * included in all such copies.
  */
-/* TODO: rename pern_* to tomenet_* :) */
+/* TODO: rename pern_* to tomenet_* :)
+ * TODO: make msg_print/msg_admin dummy function and integrate this file
+ * with server/script.c
+ */
 
 #include "angband.h"
 
@@ -226,38 +229,43 @@ void init_lua()
 	/* Register the TomeNET main APIs */
 	tolua_util_open(L);
 	tolua_player_open(L);
+	tolua_spells_open(L);
 
 	/* Load the first lua file */
-	pern_dofile("c-init.lua");
+	pern_dofile(0, "c-init.lua");
+
+	/* XXX delete it as soon as it works */
+	exec_lua(0, "testtest()");
 
 	/* Finish up schools */
-	max = exec_lua("return __schools_num");
+	max = exec_lua(0, "return __schools_num");
 	init_schools(max);
 	for (i = 0; i < max; i++)
 	{
-		exec_lua(format("finish_school(%d)", i));
+		exec_lua(0, format("finish_school(%d)", i));
 	}
 }
 
-bool pern_dofile(char *file)
+bool pern_dofile(int Ind, char *file)
 {
 	char buf[MAX_PATH_LENGTH];
+	int error;
         int oldtop = lua_gettop(L);
 
 	/* Build the filename */
         path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, file);
 
-//        lua_dostring(L, format("Ind = %d", Ind));
-        lua_dofile(L, buf);
+        lua_dostring(L, format("Ind = %d", Ind));
+        error = lua_dofile(L, buf);
         lua_settop(L, oldtop);
 
-        return (FALSE);
+        return (error?TRUE:FALSE);
 }
 
-bool exec_lua(char *file)
+bool exec_lua(int Ind, char *file)
 {
         int oldtop = lua_gettop(L);
-//        lua_dostring(L, format("Ind = %d", Ind));
+        lua_dostring(L, format("Ind = %d", Ind));
         lua_dostring(L, file);
         lua_settop(L, oldtop);
         return (FALSE);
@@ -297,9 +305,9 @@ void master_script_line(char *buf)
         fprintf(lua_file, "%s\n", buf);
 }
 
-void master_script_exec(char *buf)
+void master_script_exec(int Ind, char *buf)
 {
-        exec_lua(buf);
+        exec_lua(Ind, buf);
 }
 
 void cat_script(char *name)

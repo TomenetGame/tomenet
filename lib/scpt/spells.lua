@@ -8,16 +8,6 @@ SCHOOL_CONVEYANCE = add_school
 	["name"] = "Conveyance", 
         ["skill"] = SKILL_CONVEYANCE,
         ["sorcery"] = TRUE,
-        ["gods"] =
-        {
-                -- Manwe Sulimo provides the Conveyance school at 1/2 the prayer skill
-                [GOD_MANWE] =
-                {
-                        ["skill"] = SKILL_PRAY,
-                        ["mul"] = 1,
-                        ["div"] = 2,
-                },
-        },
 }
 
 SCHOOL_MANA = add_school
@@ -25,20 +15,10 @@ SCHOOL_MANA = add_school
 	["name"] = "Mana", 
         ["skill"] = SKILL_MANA,
         ["sorcery"] = TRUE,
-        ["gods"] =
-        {
-                -- Eru Iluvatar provides the Mana school at half the prayer skill
-                [GOD_ERU] =
-                {
-                        ["skill"] = SKILL_PRAY,
-                        ["mul"] = 1,
-                        ["div"] = 2,
-                },
-        },
 }
 
 -- Put some spells
-tome_dofile("s_convey.lua")
+pern_dofile(Ind, "s_convey.lua")
 
 -- Create the book of beginner's cantrip
 -- Great book, eh? ;)

@@ -48,8 +48,8 @@ extern s32b intShiftl @ bshl(s32b a, s32b b);
 extern s32b intShiftr @ bshr(s32b a, s32b b);
 extern s32b intBitNot @ bnot(s32b b);
 
-extern bool pern_dofile(char *file);
-extern bool exec_lua(char *file);
+extern bool pern_dofile(int Ind, char *file);
+extern bool exec_lua(int Ind, char *file);
 extern void cat_script(char *name);
 
 extern void prt(cptr str, int row, int col);
