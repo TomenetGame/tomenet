@@ -1274,8 +1274,14 @@ void party_gain_exp(int Ind, int party_id, s32b amount)
 		{
 			p_ptr = Players[i];
 			if (p_ptr->conn == NOT_CONNECTED) continue;
+
+			/* player on the same dungeon level? */
+			if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+			/* count party members on the same dlvl */
 			if (player_in_party(party_id, i)) membershere++;
 		}
+		/* only gain exp if all members are here */
 		if (membershere != parties[party_id].members) return;
 	}
 
