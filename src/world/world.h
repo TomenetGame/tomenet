@@ -2,6 +2,8 @@
  *
  */
 
+#define MAX_LTTL	20	/* Max TTL for temporary locks */
+
 #define MAX_SERVERS	30	/* Max servers we will deal */
 
 #define WP_CHAT		1	/* chat message */
@@ -30,7 +32,7 @@ struct serverinfo{
 struct secure{
 	short secure;	/* kick off ALL unauthed clients */
 	short chat;	/* Permit chat if unauthed (and not secure) */
-	short play;	/* Players online tracing */
+	short play;	/* Players online messages (no tracing on unauthed) */
 	short msgs;	/* Permit server messages */
 };
 
@@ -61,14 +63,24 @@ struct death{
 };
 
 struct chat{
-	unsigned long id;
+	unsigned long id;	/* From ID */
 	char ctxt[120];
 };
 
+/* server world authentication */
 struct auth{
 	char pass[21];
 	long val;
 };
+
+#define LT_ARTIFACT	1
+#define LT_MONSTER	2	/* not sure how i'm gonna do this yet */
+
+struct lock{
+	unsigned short ltype;	/* Lock type */
+	unsigned long ttl;	/* time to live for non final lock */
+	unsigned obj;		/* lock object by number (monster, item etc.) */
+}
 
 struct smsg{
 	char stxt[160];		/* may need more info than this sometime */
@@ -83,6 +95,6 @@ struct wpacket{
 		struct smsg smsg;
 		struct player play;
 		struct auth auth;
-		int lockval;
+		struct lock lock;
 	} d;
 };
