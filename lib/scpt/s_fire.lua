@@ -12,7 +12,7 @@ GLOBELIGHT = add_spell
 		local ret, dir
 
                 if get_level(Ind, GLOBELIGHT, 50) > 3 then lite_area(Ind, 10, 4)
-                else lite_room(Ind, py, px) end
+                else lite_room(Ind, player.py, player.px) end
                 if get_level(Ind, GLOBELIGHT, 50) > 15 then
 		        fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, GLOBELIGHT, 100), 5 + get_level(Ind, GLOBELIGHT, 6))
 		end
