@@ -682,6 +682,9 @@ void do_cmd_check_player_equip(int Ind, int line)
 		/* Print a message */
 		if(Ind!=k) m=TRUE; else m=FALSE;
 		do_write_others_attributes(fff, q_ptr, m);
+		/* Colour might have changed due to Iron Team party name,
+		   so print the closing ')' in the original colour again: */
+		fprintf(fff, "\377%c)", attr);
 
 		fprintf(fff, "\n");
 
