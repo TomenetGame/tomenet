@@ -31,6 +31,10 @@ Latest changes for version 3.3.6b (digest):
 - Temple priest gives you some $ when resurrecting, so don't suicide :)
 
 [Brief instruction for new commands]
+- 'I' : examine an item (item should be *ID*ed first).
+- "'" : check other players' equipments under certain conditions.
+- Control-S : Spike doors (client update needed).
+- '/' : do many things (eg. a,A,e,E,F,i,m,n,p,q,r,t,w,z,Z)
 - Chat-line commands; enter '/' in chat-line for help.
   + '/dis' DESTROYS everything w/o (non-system) inscription in your inventory.
   + Please send us your ideas/bug-reports via '/rfe' command.
@@ -43,9 +47,6 @@ Latest changes for version 3.3.6b (digest):
 - Inscribe {@O} on missiles, and you'll fire them for auto-retaliation.
 - {@Oc} on a book makes you use the 'c' spell for auto-retaliation.
 - {@Ox} on any items and auto-retaliator will be disabled.
-- You can check players' equipments with "'" key under certain conditions.
-- You can spike doors with Control-S (client update needed).
-- '/' key can do many things (a,A,e,E,F,i,m,p,q,r,t,w,z,Z)
 
 [Please see the ChangeLog on the official site for details.]
 

@@ -758,6 +758,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
         {
                 return 0;
         }
+
 #if 0
 	if (f1 & TR1_STR) total += (1000 * plusses);
 	if (f1 & TR1_INT) total += (1000 * plusses);
@@ -960,6 +961,12 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 		else if (type == ACT_RECALL) total += 7500;
 	}
 #endif	// 0
+
+	/* Hack -- ammos shouldn't be that expensive */
+	if (o_ptr->tval == TV_ARROW ||
+		o_ptr->tval == TV_SHOT ||
+		o_ptr->tval == TV_BOLT)
+		total >>= 3;
 
 	return total;
 }

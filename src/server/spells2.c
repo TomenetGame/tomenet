@@ -1666,6 +1666,9 @@ bool detect_trap(int Ind)
 			c_ptr = &zcave[i][j];
 			w_ptr = &p_ptr->cave_flag[i][j];
 
+			/* Hack - traps on undetected doors cannot be found */
+			if (c_ptr->feat == FEAT_DOOR_TAIL + 1) continue;
+
 			/* Detect invisible traps */
 			//			if (c_ptr->feat == FEAT_INVIS)
 			if (c_ptr->special.type == CS_TRAPS)

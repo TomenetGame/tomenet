@@ -584,26 +584,8 @@ void search(int Ind)
 				/* Access the object */
 				o_ptr = &o_list[c_ptr->o_idx];
 
-				/* Invisible trap */
-//				if (c_ptr->feat == FEAT_INVIS)
-				if (c_ptr->special.type == CS_TRAPS)
-				{
-					t_ptr = c_ptr->special.ptr;
-					if (!t_ptr->found)
-					{
-						/* Pick a trap */
-						pick_trap(wpos, y, x);
-
-						/* Message */
-						msg_print(Ind, "You have found a trap.");
-
-						/* Disturb */
-						disturb(Ind, 0, 0);
-					}
-				}
-
 				/* Secret door */
-				else if (c_ptr->feat == FEAT_SECRET)
+				if (c_ptr->feat == FEAT_SECRET)
 				{
 					/* Message */
 					msg_print(Ind, "You have found a secret door.");
@@ -618,6 +600,24 @@ void search(int Ind)
 					everyone_lite_spot(wpos, y, x);
 					/* Disturb */
 					disturb(Ind, 0, 0);
+				}
+
+				/* Invisible trap */
+//				if (c_ptr->feat == FEAT_INVIS)
+				else if (c_ptr->special.type == CS_TRAPS)
+				{
+					t_ptr = c_ptr->special.ptr;
+					if (!t_ptr->found)
+					{
+						/* Pick a trap */
+						pick_trap(wpos, y, x);
+
+						/* Message */
+						msg_print(Ind, "You have found a trap.");
+
+						/* Disturb */
+						disturb(Ind, 0, 0);
+					}
 				}
 
 				/* Search chests */

@@ -73,7 +73,8 @@ A:5/1
 N:4:Hallucination
 G:,:d
 I:80:4:500
-W:10:0:1:0
+#W:10:0:1:0
+W:10:0:1:200
 A:10/1
 
 N:5:Cure Poison
@@ -2614,7 +2615,7 @@ G:~:U
 I:39:1:0:7500
 W:3:0:50:35
 #A:3/1
-A:3/3
+A:3/4
 P:0:1d1:0:0:0
 F:EASY_KNOW | IGNORE_FIRE | LITE2 | FUEL_LITE
 
