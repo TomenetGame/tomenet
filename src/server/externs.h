@@ -193,6 +193,7 @@ extern s32b cfg_retire_timer;
 extern bool cfg_maximize;
 extern s32b cfg_game_port;
 extern s32b cfg_console_port;
+extern int cfg_spell_interfere;
 
 
 extern bool rogue_like_commands;

@@ -386,3 +386,5 @@ Change list for PernMangband
 08/12/2001 (Jir)
 - More megos and bugfixes.
 - wizard/DM should use console password from now on.
+- SPELL_INTERFERE option in *.cfg.
+- Failing to cast a spell takes a turn now.

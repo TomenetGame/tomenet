@@ -192,6 +192,7 @@ s32b cfg_retire_timer = -1;
 bool cfg_maximize = 1;
 s32b cfg_game_port = 18348;
 s32b cfg_console_port = 18349;
+int cfg_spell_interfere = 0;
 
 
 
