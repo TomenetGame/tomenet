@@ -14,6 +14,7 @@
 
 #include "angband.h"
 
+// #define STUPID_MONSTERS
 
 
 #ifdef DRS_SMART_OPTIONS
@@ -375,6 +376,358 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad)
 #endif
 }
 
+/*
+ * Functions for Cleverer monster spells, borrowed from PernA.
+ * Most of them are hard-coded, so change them manually :)
+ * 			- Jir -
+ */
+
+
+/*
+ * Determine if there is a space near the player in which
+ * a summoned creature can appear
+ */
+static bool summon_possible(worldpos *wpos, int y1, int x1)
+{
+	int y, x;
+	cave_type **zcave;
+
+	if(!(zcave=getcave(wpos))) return;
+	
+	
+	/* Start at the player's location, and check 2 grids in each dir */
+	for (y= y1-2; y<= y1+2; y++)
+	{
+		for (x = x1-2; x<=x1+2; x++)
+		{
+			/* Ignore illegal locations */
+			if (!in_bounds(y,x)) continue;
+			
+			/* Only check a circular area */
+			if (distance(y1,x1,y,x)>2) continue;
+			
+			/* Hack: no summon on glyph of warding */
+			if (zcave[y][x].feat == FEAT_GLYPH) continue;
+#if 0
+			if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
+
+                        /* Nor on the between */
+                        if (cave[y][x].feat == FEAT_BETWEEN) return (FALSE);
+
+                        /* ...nor on the Pattern */
+			if ((cave[y][x].feat >= FEAT_PATTERN_START)
+				&& (cave[y][x].feat <= FEAT_PATTERN_XTRA2)) continue;
+#endif	// 0
+			
+			/* Require empty floor grid in line of sight */
+			if (cave_empty_bold(zcave,y,x) && los(wpos, y1,x1,y,x)) return (TRUE);
+		}
+	}
+	
+	return FALSE;
+}
+
+/*
+ * Determine if a bolt spell will hit the player.
+ *
+ * This is exactly like "projectable", but it will return FALSE if a monster
+ * is in the way.
+ */
+static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2)
+{
+	int dist, y, x;
+	cave_type **zcave;
+
+	if(!(zcave=getcave(wpos))) return;
+	
+	/* Start at the initial location */
+	y = y1, x = x1;
+	
+	/* See "project()" and "projectable()" */
+	for (dist = 0; dist <= MAX_RANGE; dist++)
+	{
+		/* Never pass through walls */
+		if (dist && !cave_floor_bold(zcave, y, x)) break;
+		
+		/* Never pass through monsters */
+		if (dist && zcave[y][x].m_idx > 0)
+		{
+			break;
+//			if (is_friend(&m_list[zcave[y][x].m_idx]) < 0) break;
+		}
+		
+		/* Check for arrival at "final target" */
+		if ((x == x2) && (y == y2)) return (TRUE);
+		
+		/* Calculate the new location */
+		mmove2(&y, &x, y1, x1, y2, x2);
+	}
+	
+	/* Assume obstruction */
+	return (FALSE);
+}
+
+
+/*
+ * Return TRUE if a spell is good for hurting the player (directly).
+ */
+static bool spell_attack(byte spell)
+{
+	/* All RF4 spells hurt (except for shriek) */
+	if (spell < 128 && spell > 96) return (TRUE);
+	
+	/* Various "ball" spells */
+	if (spell >= 128 && spell <= 128 + 8) return (TRUE);
+	
+	/* Unmagic is not */
+	if (spell == 128 + 15) return (FALSE);
+
+	/* "Cause wounds" and "bolt" spells */
+	if (spell >= 128 + 12 && spell <= 128 + 27) return (TRUE);
+	
+	/* Hand of Doom */
+	if (spell == 160 + 1) return (TRUE);
+	
+	/* Doesn't hurt */
+	return (FALSE);
+}
+
+
+/*
+ * Return TRUE if a spell is good for escaping.
+ */
+static bool spell_escape(byte spell)
+{
+	/* Blink or Teleport */
+	if (spell == 160 + 4 || spell == 160 + 5) return (TRUE);
+	
+	/* Teleport the player away */
+	if (spell == 160 + 9 || spell == 160 + 10) return (TRUE);
+	
+	/* Isn't good for escaping */
+	return (FALSE);
+}
+
+/*
+ * Return TRUE if a spell is good for annoying the player.
+ */
+static bool spell_annoy(byte spell)
+{
+	/* Shriek */
+	if (spell == 96 + 0) return (TRUE);
+	
+	/* Brain smash, et al (added curses) */
+//	if (spell >= 128 + 9 && spell <= 128 + 14) return (TRUE);
+	/* and unmagic */
+	if (spell >= 128 + 9 && spell <= 128 + 15) return (TRUE);
+	
+	/* Scare, confuse, blind, slow, paralyze */
+	if (spell >= 128 + 27 && spell <= 128 + 31) return (TRUE);
+	
+	/* Teleport to */
+	if (spell == 160 + 8) return (TRUE);
+	
+#if 0
+	/* Hand of Doom */
+	if (spell == 160 + 1) return (TRUE);
+#endif
+	
+	/* Darkness, make traps, cause amnesia */
+	if (spell >= 160 + 12 && spell <= 160 + 14) return (TRUE);
+	
+	/* Doesn't annoy */
+	return (FALSE);
+}
+
+/*
+ * Return TRUE if a spell summons help.
+ */
+static bool spell_summon(byte spell)
+{
+	/* All summon spells */
+//        if (spell >= 160 + 13) return (TRUE);
+        if (spell >= 160 + 15) return (TRUE);
+        if (spell = 160 + 3) return (TRUE);
+        if (spell = 160 + 7) return (TRUE);
+        if (spell = 160 + 11) return (TRUE);
+		/* summon animal */
+//        if (spell = 96 + 2) return (TRUE);
+	
+	/* Doesn't summon */
+	return (FALSE);
+}
+
+
+/*
+ * Return TRUE if a spell is good in a tactical situation.
+ */
+static bool spell_tactic(byte spell)
+{
+	/* Blink */
+	if (spell == 160 + 4) return (TRUE);
+	
+	/* Not good */
+	return (FALSE);
+}
+
+
+/*
+ * Return TRUE if a spell hastes.
+ */
+static bool spell_haste(byte spell)
+{
+	/* Haste self */
+	if (spell == 160 + 0) return (TRUE);
+	
+	/* Not a haste spell */
+	return (FALSE);
+}
+
+
+/*
+ * Return TRUE if a spell is good for healing.
+ */
+static bool spell_heal(byte spell)
+{
+	/* Heal */
+	if (spell == 160 + 2) return (TRUE);
+	
+	/* No healing */
+	return (FALSE);
+}
+
+
+/*
+ * Have a monster choose a spell from a list of "useful" spells.
+ *
+ * Note that this list does NOT include spells that will just hit
+ * other monsters, and the list is restricted when the monster is
+ * "desperate".  Should that be the job of this function instead?
+ *
+ * Stupid monsters will just pick a spell randomly.  Smart monsters
+ * will choose more "intelligently".
+ *
+ * Use the helper functions above to put spells into categories.
+ *
+ * This function may well be an efficiency bottleneck.
+ */
+static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
+{
+	player_type *p_ptr = Players[Ind];
+	monster_type *m_ptr = &m_list[m_idx];
+        monster_race *r_ptr = race_inf(m_ptr);
+	
+	byte escape[96], escape_num = 0;
+	byte attack[96], attack_num = 0;
+	byte summon[96], summon_num = 0;
+	byte tactic[96], tactic_num = 0;
+	byte annoy[96], annoy_num = 0;
+	byte haste[96], haste_num = 0;
+	byte heal[96], heal_num = 0;
+	
+	int i;
+	
+	/* Stupid monsters choose randomly */
+	if (r_ptr->flags2 & (RF2_STUPID))
+	{
+		/* Pick at random */
+		return (spells[rand_int(num)]);
+	}
+	
+	/* Categorize spells */
+	for (i = 0; i < num; i++)
+	{
+		/* Escape spell? */
+		if (spell_escape(spells[i])) escape[escape_num++] = spells[i];
+		
+		/* Attack spell? */
+		if (spell_attack(spells[i])) attack[attack_num++] = spells[i];
+		
+		/* Summon spell? */
+		if (spell_summon(spells[i])) summon[summon_num++] = spells[i];
+		
+		/* Tactical spell? */
+		if (spell_tactic(spells[i])) tactic[tactic_num++] = spells[i];
+		
+		/* Annoyance spell? */
+		if (spell_annoy(spells[i])) annoy[annoy_num++] = spells[i];
+		
+		/* Haste spell? */
+		if (spell_haste(spells[i])) haste[haste_num++] = spells[i];
+		
+		/* Heal spell? */
+		if (spell_heal(spells[i])) heal[heal_num++] = spells[i];
+	}
+	
+	/*** Try to pick an appropriate spell type ***/
+	
+	/* Hurt badly or afraid, attempt to flee */
+	if ((m_ptr->hp < m_ptr->maxhp / 3) || m_ptr->monfear)
+	{
+		/* Choose escape spell if possible */
+		if (escape_num) return (escape[rand_int(escape_num)]);
+	}
+	
+	/* Still hurt badly, couldn't flee, attempt to heal */
+	if (m_ptr->hp < m_ptr->maxhp / 3)
+	{
+		/* Choose heal spell if possible */
+		if (heal_num) return (heal[rand_int(heal_num)]);
+	}
+	
+	/* Player is close and we have attack spells, blink away */
+	if ((distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) < 4) && attack_num && (rand_int(100) < 75))
+	{
+		/* Choose tactical spell */
+		if (tactic_num) return (tactic[rand_int(tactic_num)]);
+	}
+	
+	/* We're hurt (not badly), try to heal */
+	if ((m_ptr->hp < m_ptr->maxhp * 3 / 4) && (rand_int(100) < 75))
+	{
+		/* Choose heal spell if possible */
+		if (heal_num) return (heal[rand_int(heal_num)]);
+	}
+	
+	/* Summon if possible (sometimes) */
+	if (summon_num && (rand_int(100) < 50))
+	{
+		/* Choose summon spell */
+		return (summon[rand_int(summon_num)]);
+	}
+	
+	/* Attack spell (most of the time) */
+	if (attack_num && (rand_int(100) < 85))
+	{
+		/* Choose attack spell */
+		return (attack[rand_int(attack_num)]);
+	}
+	
+	/* Try another tactical spell (sometimes) */
+	if (tactic_num && (rand_int(100) < 50))
+	{
+		/* Choose tactic spell */
+		return (tactic[rand_int(tactic_num)]);
+	}
+	
+	/* Haste self if we aren't already somewhat hasted (rarely) */
+        if (haste_num && (rand_int(100) < (20 + m_ptr->speed - m_ptr->mspeed)))
+	{
+		/* Choose haste spell */
+		return (haste[rand_int(haste_num)]);
+	}
+	
+	/* Annoy player (most of the time) */
+	if (annoy_num && (rand_int(100) < 85))
+	{
+		/* Choose annoyance spell */
+		return (annoy[rand_int(annoy_num)]);
+	}
+	
+	/* Choose no spell */
+	return (0);
+}
+
 
 
 /*
@@ -438,7 +791,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	int Depth = p_ptr->dun_depth;
 #endif
 
-	int			k, chance, thrown_spell, rlev;
+	int			k, chance, thrown_spell, rlev, failrate;
 
 	byte		spell[96], num = 0;
 
@@ -584,6 +937,35 @@ bool make_attack_spell(int Ind, int m_idx)
 
 #endif
 
+#ifndef	STUPID_MONSTERS
+	/* Check for a clean bolt shot */
+	if ((f4&(RF4_BOLT_MASK) || f5 & (RF5_BOLT_MASK) ||
+				f6&(RF6_BOLT_MASK)) &&
+			!(r_ptr->flags2 & (RF2_STUPID)) &&
+			!clean_shot(wpos, m_ptr->fy, m_ptr->fx, y, x))
+	{
+		/* Remove spells that will only hurt friends */
+		f4 &= ~(RF4_BOLT_MASK);
+		f5 &= ~(RF5_BOLT_MASK);
+		f6 &= ~(RF6_BOLT_MASK);
+	}
+
+	/* Check for a possible summon */
+	if ((f4 & (RF4_SUMMON_MASK) || f5 & (RF5_SUMMON_MASK) ||
+				f6 & (RF6_SUMMON_MASK)) &&
+			!(r_ptr->flags2 & (RF2_STUPID)) &&
+			!(summon_possible(wpos, y, x)))
+	{
+		/* Remove summoning spells */
+		f4 &= ~(RF4_SUMMON_MASK);
+		f5 &= ~(RF5_SUMMON_MASK);
+		f6 &= ~(RF6_SUMMON_MASK);
+	}
+
+	/* No spells left */
+	if (!f4 && !f5 && !f6) return (FALSE);
+#endif	// STUPID_MONSTERS	
+
 
 	/* Extract the "inate" spells */
 	for (k = 0; k < 32; k++)
@@ -621,8 +1003,31 @@ bool make_attack_spell(int Ind, int m_idx)
 	monster_desc(Ind, ddesc, m_idx, 0x88);
 
 
+#ifdef STUPID_MONSTERS
 	/* Choose a spell to cast */
 	thrown_spell = spell[rand_int(num)];
+#else
+	thrown_spell = choose_attack_spell(Ind, m_idx, spell, num);
+
+	/* Abort if no spell was chosen */
+	if (!thrown_spell) return (FALSE);
+
+	/* Calculate spell failure rate */
+	failrate = 25 - (rlev + 3) / 4;
+
+	/* Hack -- Stupid monsters will never fail (for jellies and such) */
+	if (r_ptr->flags2 & (RF2_STUPID)) failrate = 0;
+
+	/* Check for spell failure (inate attacks never fail) */
+	if ((thrown_spell >= 128) && (rand_int(100) < failrate))
+	{
+		/* Message */
+		msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
+
+		return (TRUE);
+	}
+#endif	// STUPID_MONSTERS
+
 
 
 	/* Cast the spell. */

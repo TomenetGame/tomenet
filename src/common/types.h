@@ -1998,4 +1998,9 @@ struct server_opts
 	bool no_ghost;
 	bool maximize;
 	bool kings_etiquette;
+	bool zang_monsters;
+	bool pern_monsters;
+	bool cth_monsters;
+	bool joke_monsters;
+	bool vanilla_monsters;
 };

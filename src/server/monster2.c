@@ -735,6 +735,33 @@ s16b get_mon_num(int level)
 			continue;
 		}
 
+		/* Depth Monsters never appear out of their depth */
+		/* level = base_depth + depth, be careful(esp.wilderness) */
+		/* Seemingly it's only for Moldoux */
+		if ((r_ptr->flags9 & (RF9_ONLY_DEPTH)) && (r_ptr->level != level))
+		{
+			continue;
+		}
+
+		/* Zangbandish monsters allowed ? or not ? */
+		if(!cfg.zang_monsters && (r_ptr->flags8 & RF8_ZANGBAND)) continue;
+
+		/* Pernian monsters allowed ? or not ? */
+		if(!cfg.pern_monsters && (r_ptr->flags8 & RF8_PERNANGBAND)) continue;
+
+		/* Lovercraftian monsters allowed ? or not ? */
+		if(!cfg.cth_monsters && (r_ptr->flags8 & RF8_CTHANGBAND)) continue;
+
+		/* Joke monsters allowed ? or not ? */
+		if(!cfg.joke_monsters && (r_ptr->flags8 & RF8_JOKEANGBAND)) continue;
+
+		/* Base monsters allowed ? or not ? */
+		if(!cfg.vanilla_monsters && (r_ptr->flags8 & RF8_ANGBAND)) continue;
+
+		/* Some dungeon types restrict the possible monsters */
+//		if(!summon_hack && !restrict_monster_to_dungeon(r_idx) && dun_level) continue;
+
+
 		/* Accept */
 		table[i].prob3 = table[i].prob2;
 

@@ -64,4 +64,31 @@ function id_all2()
 	trap_k()
 end
 	
+-- namely.
+function healup(i)
+local p = Players[i+1]
+local j = 0
+
+	p.exp = p.max_exp
+	p.chp = p.mhp
+	p.csp = p.msp
+	p.csane = p.msane
+	p.black_breath = 0
+	p.slow = 0
+	p.blind = 0
+	p.paralyzed = 0
+	p.confused = 0
+	p.afraid = 0
+	p.image = 0
+	p.poisoned = 0
+	p.cut = 0
+	p.stun = 0
+	p.food = 10000
+
+	while (j < 6)
+	do
+		j = j + 1
+		p.stat_cur[j] = p.stat_max[j]
+	end
+end
 

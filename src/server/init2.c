@@ -2168,6 +2168,26 @@ void set_server_option(char * option, char * value)
 	{
 		cfg.kings_etiquette = str_to_boolean(value);
 	}
+	else if (!strcmp(option,"ZANG_MONSTERS"))
+	{
+		cfg.zang_monsters = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"PERN_MONSTERS"))
+	{
+		cfg.pern_monsters = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"CTH_MONSTERS"))
+	{
+		cfg.cth_monsters = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"JOKE_MONSTERS"))
+	{
+		cfg.joke_monsters = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"VANILLA_MONSTERS"))
+	{
+		cfg.vanilla_monsters = str_to_boolean(value);
+	}
 	else printf("Error : unrecognized mangband.cfg option %s\n", option);
 }
 

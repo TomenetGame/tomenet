@@ -850,6 +850,222 @@ static s32b object_value_base(int Ind, object_type *o_ptr)
 	return (0L);
 }
 
+/* Return the value of the flags the object has... */
+s32b flag_cost(object_type * o_ptr, int plusses)
+{
+	s32b total = 0;
+        u32b f1, f2, f3, f4, f5, esp;
+
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+        if (f5 & TR5_TEMPORARY)
+        {
+                return 0;
+        }
+        if (f4 & TR4_CURSE_NO_DROP)
+        {
+                return 0;
+        }
+	if (f1 & TR1_STR) total += (1000 * plusses);
+	if (f1 & TR1_INT) total += (1000 * plusses);
+	if (f1 & TR1_WIS) total += (1000 * plusses);
+	if (f1 & TR1_DEX) total += (1000 * plusses);
+	if (f1 & TR1_CON) total += (1000 * plusses);
+	if (f1 & TR1_CHR) total += (250 * plusses);
+	if (f5 & TR5_CHAOTIC) total += 10000;
+	if (f1 & TR1_VAMPIRIC) total += 13000;
+	if (f1 & TR1_STEALTH) total += (250 * plusses);
+	if (f1 & TR1_SEARCH) total += (100 * plusses);
+	if (f1 & TR1_INFRA) total += (150 * plusses);
+	if (f1 & TR1_TUNNEL) total += (175 * plusses);
+	if ((f1 & TR1_SPEED) && (plusses > 0))
+		total += (10000 + (2500 * plusses));
+	if ((f1 & TR1_BLOWS) && (plusses > 0))
+		total += (10000 + (2500 * plusses));
+        if (f1 & TR1_MANA) total += (1000 * plusses);
+        if (f1 & TR1_SPELL) total += (2000 * plusses);
+	if (f1 & TR1_SLAY_ANIMAL) total += 3500;
+	if (f1 & TR1_SLAY_EVIL) total += 4500;
+	if (f1 & TR1_SLAY_UNDEAD) total += 3500;
+	if (f1 & TR1_SLAY_DEMON) total += 3500;
+	if (f1 & TR1_SLAY_ORC) total += 3000;
+	if (f1 & TR1_SLAY_TROLL) total += 3500;
+	if (f1 & TR1_SLAY_GIANT) total += 3500;
+	if (f1 & TR1_SLAY_DRAGON) total += 3500;
+        if (f5 & TR5_KILL_DEMON) total += 5500;
+        if (f5 & TR5_KILL_UNDEAD) total += 5500;
+	if (f1 & TR1_KILL_DRAGON) total += 5500;
+	if (f1 & TR1_VORPAL) total += 5000;
+	if (f1 & TR1_IMPACT) total += 5000;
+	if (f1 & TR1_BRAND_POIS) total += 7500;
+	if (f1 & TR1_BRAND_ACID) total += 7500;
+	if (f1 & TR1_BRAND_ELEC) total += 7500;
+	if (f1 & TR1_BRAND_FIRE) total += 5000;
+	if (f1 & TR1_BRAND_COLD) total += 5000;
+	if (f2 & TR2_SUST_STR) total += 850;
+	if (f2 & TR2_SUST_INT) total += 850;
+	if (f2 & TR2_SUST_WIS) total += 850;
+	if (f2 & TR2_SUST_DEX) total += 850;
+	if (f2 & TR2_SUST_CON) total += 850;
+	if (f2 & TR2_SUST_CHR) total += 250;
+        if (f5 & TR5_INVIS) total += 30000;
+        if (f5 & TR5_LIFE) total += (5000 * plusses);
+	if (f2 & TR2_IM_ACID) total += 10000;
+	if (f2 & TR2_IM_ELEC) total += 10000;
+	if (f2 & TR2_IM_FIRE) total += 10000;
+	if (f2 & TR2_IM_COLD) total += 10000;
+        if (f5 & TR5_SENS_FIRE) total -= 100;
+	if (f5 & TR5_REFLECT) total += 10000;
+	if (f2 & TR2_FREE_ACT) total += 4500;
+	if (f2 & TR2_HOLD_LIFE) total += 8500;
+	if (f2 & TR2_RES_ACID) total += 1250;
+	if (f2 & TR2_RES_ELEC) total += 1250;
+	if (f2 & TR2_RES_FIRE) total += 1250;
+	if (f2 & TR2_RES_COLD) total += 1250;
+	if (f2 & TR2_RES_POIS) total += 2500;
+	if (f2 & TR2_RES_FEAR) total += 2500;
+	if (f2 & TR2_RES_LITE) total += 1750;
+	if (f2 & TR2_RES_DARK) total += 1750;
+	if (f2 & TR2_RES_BLIND) total += 2000;
+	if (f2 & TR2_RES_CONF) total += 2000;
+	if (f2 & TR2_RES_SOUND) total += 2000;
+	if (f2 & TR2_RES_SHARDS) total += 2000;
+	if (f2 & TR2_RES_NETHER) total += 2000;
+	if (f2 & TR2_RES_NEXUS) total += 2000;
+	if (f2 & TR2_RES_CHAOS) total += 2000;
+	if (f2 & TR2_RES_DISEN) total += 10000;
+	if (f3 & TR3_SH_FIRE) total += 5000;
+	if (f3 & TR3_SH_ELEC) total += 5000;
+        if (f3 & TR3_DECAY) total += 0;
+	if (f3 & TR3_NO_TELE) total += 2500;
+	if (f3 & TR3_NO_MAGIC) total += 2500;
+	if (f3 & TR3_WRAITH) total += 250000;
+	if (f3 & TR3_TY_CURSE) total -= 15000;
+	if (f3 & TR3_EASY_KNOW) total += 0;
+	if (f3 & TR3_HIDE_TYPE) total += 0;
+	if (f3 & TR3_SHOW_MODS) total += 0;
+	if (f3 & TR3_INSTA_ART) total += 0;
+        if (f3 & TR3_LITE1) total += 750;
+        if (f4 & TR4_LITE2) total += 1250;
+        if (f4 & TR4_LITE3) total += 2750;
+	if (f3 & TR3_SEE_INVIS) total += 2000;
+        if (esp) total += (12500 * count_bits(esp));
+	if (f3 & TR3_SLOW_DIGEST) total += 750;
+	if (f3 & TR3_REGEN) total += 2500;
+	if (f3 & TR3_XTRA_MIGHT) total += 2250;
+	if (f3 & TR3_XTRA_SHOTS) total += 10000;
+	if (f3 & TR3_IGNORE_ACID) total += 100;
+	if (f3 & TR3_IGNORE_ELEC) total += 100;
+	if (f3 & TR3_IGNORE_FIRE) total += 100;
+	if (f3 & TR3_IGNORE_COLD) total += 100;
+	if (f3 & TR3_ACTIVATE) total += 100;
+	if (f3 & TR3_DRAIN_EXP) total -= 12500;
+	if (f3 & TR3_TELEPORT)
+	{
+		if (o_ptr->ident & ID_CURSED)
+			total -= 7500;
+		else
+			total += 250;
+	}
+	if (f3 & TR3_AGGRAVATE) total -= 10000;
+	if (f3 & TR3_BLESSED) total += 750;
+	if (f3 & TR3_CURSED) total -= 5000;
+	if (f3 & TR3_HEAVY_CURSE) total -= 12500;
+	if (f3 & TR3_PERMA_CURSE) total -= 15000;
+	if (f3 & TR3_FEATHER) total += 1250;
+        if (f4 & TR4_FLY) total += 10000;
+        if (f4 & TR4_NEVER_BLOW) total -= 15000;
+        if (f4 & TR4_PRECOGNITION) total += 250000;
+        if (f4 & TR4_BLACK_BREATH) total -= 12500;
+        if (f4 & TR4_DG_CURSE) total -= 25000;
+        if (f4 & TR4_CLONE) total -= 10000;
+//        if (f4 & TR4_LEVELS) total += o_ptr->elevel * 2000;
+
+	/* Also, give some extra for activatable powers... */
+
+#if 0
+	if ((o_ptr->art_name) && (o_ptr->art_flags3 & (TR3_ACTIVATE)))
+	{
+		int type = o_ptr->xtra2;
+
+		if (type == ACT_SUNLIGHT) total += 250;
+		else if (type == ACT_BO_MISS_1) total += 250;
+		else if (type == ACT_BA_POIS_1) total += 300;
+		else if (type == ACT_BO_ELEC_1) total += 250;
+		else if (type == ACT_BO_ACID_1) total += 250;
+		else if (type == ACT_BO_COLD_1) total += 250;
+		else if (type == ACT_BO_FIRE_1) total += 250;
+		else if (type == ACT_BA_COLD_1) total += 750;
+		else if (type == ACT_BA_FIRE_1) total += 1000;
+		else if (type == ACT_DRAIN_1) total += 500;
+		else if (type == ACT_BA_COLD_2) total += 1250;
+		else if (type == ACT_BA_ELEC_2) total += 1500;
+		else if (type == ACT_DRAIN_2) total += 750;
+		else if (type == ACT_VAMPIRE_1) total = 1000;
+		else if (type == ACT_BO_MISS_2) total += 1000;
+		else if (type == ACT_BA_FIRE_2) total += 1750;
+		else if (type == ACT_BA_COLD_3) total += 2500;
+		else if (type == ACT_BA_ELEC_3) total += 2500;
+		else if (type == ACT_WHIRLWIND) total += 7500;
+		else if (type == ACT_VAMPIRE_2) total += 2500;
+		else if (type == ACT_CALL_CHAOS) total += 5000;
+		else if (type == ACT_ROCKET) total += 5000;
+		else if (type == ACT_DISP_EVIL) total += 4000;
+		else if (type == ACT_DISP_GOOD) total += 3500;
+		else if (type == ACT_BA_MISS_3) total += 5000;
+		else if (type == ACT_CONFUSE) total += 500;
+		else if (type == ACT_SLEEP) total += 750;
+		else if (type == ACT_QUAKE) total += 600;
+		else if (type == ACT_TERROR) total += 2500;
+		else if (type == ACT_TELE_AWAY) total += 2000;
+		else if (type == ACT_GENOCIDE) total += 10000;
+		else if (type == ACT_MASS_GENO) total += 10000;
+		else if (type == ACT_CHARM_ANIMAL) total += 7500;
+		else if (type == ACT_CHARM_UNDEAD) total += 10000;
+		else if (type == ACT_CHARM_OTHER) total += 10000;
+		else if (type == ACT_CHARM_ANIMALS) total += 12500;
+		else if (type == ACT_CHARM_OTHERS) total += 17500;
+		else if (type == ACT_SUMMON_ANIMAL) total += 10000;
+		else if (type == ACT_SUMMON_PHANTOM) total += 12000;
+		else if (type == ACT_SUMMON_ELEMENTAL) total += 15000;
+		else if (type == ACT_SUMMON_DEMON) total += 20000;
+		else if (type == ACT_SUMMON_UNDEAD) total += 20000;
+		else if (type == ACT_CURE_LW) total += 500;
+		else if (type == ACT_CURE_MW) total += 750;
+		else if (type == ACT_REST_LIFE) total += 7500;
+		else if (type == ACT_REST_ALL) total += 15000;
+		else if (type == ACT_CURE_700) total += 10000;
+		else if (type == ACT_CURE_1000) total += 15000;
+		else if (type == ACT_ESP) total += 1500;
+		else if (type == ACT_BERSERK) total += 800;
+		else if (type == ACT_PROT_EVIL) total += 5000;
+		else if (type == ACT_RESIST_ALL) total += 5000;
+		else if (type == ACT_SPEED) total += 15000;
+		else if (type == ACT_XTRA_SPEED) total += 25000;
+		else if (type == ACT_WRAITH) total += 25000;
+		else if (type == ACT_INVULN) total += 25000;
+		else if (type == ACT_LIGHT) total += 150;
+		else if (type == ACT_MAP_LIGHT) total += 500;
+		else if (type == ACT_DETECT_ALL) total += 1000;
+		else if (type == ACT_DETECT_XTRA) total += 12500;
+		else if (type == ACT_ID_FULL) total += 10000;
+		else if (type == ACT_ID_PLAIN) total += 1250;
+		else if (type == ACT_RUNE_EXPLO) total += 4000;
+		else if (type == ACT_RUNE_PROT) total += 10000;
+		else if (type == ACT_SATIATE) total += 2000;
+		else if (type == ACT_DEST_DOOR) total += 100;
+		else if (type == ACT_STONE_MUD) total += 1000;
+		else if (type == ACT_RECHARGE) total += 1000;
+		else if (type == ACT_ALCHEMY) total += 10000;
+		else if (type == ACT_DIM_DOOR) total += 10000;
+		else if (type == ACT_TELEPORT) total += 2000;
+		else if (type == ACT_RECALL) total += 7500;
+	}
+#endif	// 0
+
+	return total;
+}
+
 
 /*
  * Return the "real" price of a "known" item, not including discounts
@@ -922,28 +1138,33 @@ static s32b object_value_real(object_type *o_ptr)
 	}
 
 	/* Ego-Item */
-	else if (o_ptr->name2)
+	else
 	{
-		ego_item_type *e_ptr = &e_info[o_ptr->name2];
+		/* Hope this won't cause inflation.. */
+		value += flag_cost (o_ptr, o_ptr->pval);
+		if (o_ptr->name2)
+		{
+			ego_item_type *e_ptr = &e_info[o_ptr->name2];
 
-		/* Hack -- "worthless" ego-items */
-		if (!e_ptr->cost) return (0L);
+			/* Hack -- "worthless" ego-items */
+			if (!e_ptr->cost) return (0L);
 
-		/* Hack -- Reward the ego-item with a bonus */
-		value += e_ptr->cost;
+			/* Hack -- Reward the ego-item with a bonus */
+			value += e_ptr->cost;
 
 #if 0	// see you later :)
-                if (o_ptr->name2b)
-                {
-                        ego_item_type *e_ptr = &e_info[o_ptr->name2b];
+			if (o_ptr->name2b)
+			{
+				ego_item_type *e_ptr = &e_info[o_ptr->name2b];
 
-                        /* Hack -- "worthless" ego-items */
-                        if (!e_ptr->cost) return (0L);
+				/* Hack -- "worthless" ego-items */
+				if (!e_ptr->cost) return (0L);
 
-                        /* Hack -- Reward the ego-item with a bonus */
-                        value += e_ptr->cost;
-                }
+				/* Hack -- Reward the ego-item with a bonus */
+				value += e_ptr->cost;
+			}
 #endif	// 0
+		}
 	}
 
 
@@ -978,7 +1199,7 @@ static s32b object_value_real(object_type *o_ptr)
 //			int boost = 1 << pval;
 
 			/* Hack -- Negative "pval" is always bad */
-			if (pval < 0) return (0L);
+//			if (pval < 0) return (0L);
 
 			/* No pval */
 			if (!pval) break;
@@ -993,7 +1214,7 @@ static s32b object_value_real(object_type *o_ptr)
 			if (f1 & TR1_CON) count++;
 			if (f1 & TR1_CHR) count++;
 
-			if (count) value += count * PRICE_BOOST(count + pval, 1, 1)* 200L;
+			if (count) value += count * PRICE_BOOST(count + pval, 2, 1)* 200L;
 
                         if (f5 & (TR5_CRIT)) value += (PRICE_BOOST(pval, 0, 1)* 500L);
 

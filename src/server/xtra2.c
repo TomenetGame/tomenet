@@ -5439,7 +5439,8 @@ bool target_set_friendly(int Ind, int dir, ...)
 		/* Reset "target" array */
 		p_ptr->target_n = 0;
 
-		if (!((castplayer > 0) && (castplayer < 20)))
+//		if (!((castplayer > 0) && (castplayer < 20)))
+		if (!((0 < castplayer) && (castplayer <= NumPlayers)))
 		{
 		/* Collect "target-able" players */
 		for (i = 1; i <= NumPlayers; i++)

@@ -263,6 +263,7 @@ static cptr r_info_flags3[] =
 /*
  * Monster race flags
  */
+/* spells 96-127 (inate) */
 static cptr r_info_flags4[] =
 {
 	"SHRIEK",
@@ -302,6 +303,7 @@ static cptr r_info_flags4[] =
 /*
  * Monster race flags
  */
+/* spells 128-159 (normal) */
 static cptr r_info_flags5[] =
 {
 	"BA_ACID",
@@ -341,6 +343,7 @@ static cptr r_info_flags5[] =
 /*
  * Monster race flags
  */
+/* spells 160-191 (bizarre) */
 static cptr r_info_flags6[] =
 {
 	"HASTE",

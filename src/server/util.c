@@ -2465,7 +2465,7 @@ void msg_admin(cptr fmt, ...)
 		p_ptr = Players[i];
 
 		/* Skip disconnected players */
-		if (p_ptr == NOT_CONNECTED) 
+		if (p_ptr->conn == NOT_CONNECTED) 
 			continue;
 			
 
@@ -2730,20 +2730,27 @@ void player_talk_aux(int Ind, cptr message)
 					prefix(message, "/dis"))
 			{
 				object_type		*o_ptr;
+                u32b f1, f2, f3, f4, f5, esp;
 				for(i = 0; i < INVEN_PACK; i++)
 				{
 					o_ptr = &(p_ptr->inventory[i]);
 					if (!o_ptr->tval) break;
 
+					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
 					/* skip inscribed items */
 					/* skip non-matching tags */
 					if (o_ptr->note && 
 						strcmp(quark_str(o_ptr->note), "cursed") &&
+						strcmp(quark_str(o_ptr->note), "uncursed") &&
 						strcmp(quark_str(o_ptr->note), "broken") &&
 						strcmp(quark_str(o_ptr->note), "average") &&
 						strcmp(quark_str(o_ptr->note), "good") &&
 						strcmp(quark_str(o_ptr->note), "excellent"))
 							continue;
+
+					if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr))
+						continue;
 
 					do_cmd_destroy(Ind, i, o_ptr->number);
 					i--;
@@ -3916,3 +3923,16 @@ char *wpos_format(worldpos *wpos)
 {
 	return (format("%dft of (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
 }
+
+
+byte count_bits(u32b array)
+{
+	byte k = 0, i;        
+
+	if(array)
+		for(i = 0; i < 32; i++)
+			if(array & (1 << i)) k++;
+
+	return k;
+}
+

@@ -93,6 +93,7 @@ D:of evil could stand.
 
 
 # The Necklace 'Nauglamir'
+# (former The Necklace of the Dwarves)
 
 N:6:'Nauglamir'
 I:40:12:3
@@ -2507,6 +2508,7 @@ P:0:4d4:0:0:0
 F:SLAY_UNDEAD
 
 # The Set of Cesti of Eternal Peace
+# (This cesti should be able to apease monsters by activation.)
 
 N:210:of Eternal Peace
 I:31:5:0
@@ -2514,13 +2516,28 @@ W:40:25:40:100000
 P:5:1d1:-50:-50:30
 F:CURSED | HEAVY_CURSE | AUTO_CURSE | CURSE_NO_DROP |
 F:SEE_INVIS | REGEN | FREE_ACT
-F:LIFE | LITE3 | LITE1
+F:LIFE | LITE3
 F:IM_FIRE | IM_COLD | IM_ELEC | IM_ACID | ESP_ALL
 F:RES_BLIND | RES_POIS | RES_DISEN | RES_NETHER | RES_CHAOS
 F:SUST_STR | SUST_DEX | SUST_CON | 
 F:SUST_INT | SUST_WIS | SUST_CHR | 
 F:FEATHER | SLOW_DIGEST | HOLD_LIFE |
 F:ANTIMAGIC_50 | DRAIN_MANA
+
+# The Amulet of Suspicion Methodique
+
+N:211:Methodique
+I:40:34:0
+W:50:30:40:100000
+P:0:1d1:0:0:0
+F:SEE_INVIS | FREE_ACT
+F:LITE1
+F:RES_BLIND | RES_FEAR | RES_CHAOS | RES_DISEN
+F:SUST_INT | SUST_WIS
+F:FEATHER | SLOW_DIGEST | HOLD_LIFE |
+F:ANTIMAGIC_20 | DRAIN_MANA
+D:The ultimate point an phylosopher had arrived, this amulet
+D:reveals the light of true belief.
 
 #N:(No.):(name)
 #G:(appearence):(colour)

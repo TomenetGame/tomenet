@@ -585,3 +585,8 @@ Change list for PernMangband
 2/1/2001 (Yakina [note by Jir])
 - some fixes on win32-client.
 - bugfixes, and extern.h cleanup.
+
+2/1/2001 (Jir)
+- 'cleverer' monster spells. (set STUPID_MONSTERS if it's too slow)
+- monster category filter (eg. to eliminate Joke-monsters).
+- better store-price calculator (rebalancement needed).
