@@ -190,11 +190,13 @@ int Receive_file(void){
 		}
 		Packet_printf(&wbuf, "%c%c%hd", PKT_FILE, x?PKT_FILE_ACK:PKT_FILE_ERR, fnum);
 	}
+	return(0);
 }
 
 int Receive_file_data(int ind, unsigned short len, char *buffer){
 	memcpy(buffer, rbuf.ptr, len);
 	Sockbuf_advance(&rbuf, len + rbuf.ptr - rbuf.buf);
+	return(0);
 }
 
 int Send_file_check(int ind, unsigned short id, char *fname){
@@ -672,7 +674,6 @@ int Net_fd(void)
 }
 
 unsigned char Net_login(){
-	char *c_name;
 	unsigned char tc;
 	Sockbuf_clear(&wbuf);
 	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, "");
@@ -871,8 +872,7 @@ static int Net_packet(void)
 	int		type,
 			prev_type = 0,
 			result,
-			replyto,
-			status;
+			replyto;
 
 	/* Hack -- copy cbuf to rbuf since this is where this function
 	 * expects the data to be.

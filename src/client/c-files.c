@@ -960,7 +960,6 @@ errr process_pref_file(cptr name)
 void show_motd(void)
 {
 	int i;
-	char ch;
 
 	/* Save the old screen */
 	Term_save();
@@ -1113,16 +1112,14 @@ void peruse_file(void)
  */
 errr file_character(cptr name, bool full)
 {
-	int			i, j, x, y;
+	int			i, x, y;
 	byte		a;
 	char		c;
 	cptr		paren = ")";
 	int			fd = -1;
 	FILE		*fff = NULL;
 //	store_type  *st_ptr;
-	char		o_name[80];
 	char		buf[1024];
-	bool            spell_first = FALSE;
 
 
 	/* Build the filename */

@@ -462,20 +462,6 @@ void process_command()
 			do_cmd_activate_skill();
 			break;
 
-#if 0	// obsolete - DELETEME
-		case 'p':
-			cmd_pray();
-			break;
-
-		case 'n':
-			cmd_fight();
-			break;
-
-		case 'N':
-			cmd_mimic();
-			break;
-#endif	// 0
-
 		case 'U':
 			cmd_ghost();
 			break;
@@ -1443,7 +1429,7 @@ void cmd_check_misc(void)
 				Send_special_line(SPECIAL_FILE_MONSTER, choice);
 				break;
 			case '4':
-				!get_com("What type of objects? (ESC for all):", &choice);
+				get_com("What type of objects? (ESC for all):", &choice);
 				if (choice <= ESCAPE) choice = 0;
 				Send_special_line(SPECIAL_FILE_OBJECT, choice);
 				break;
@@ -1652,7 +1638,7 @@ void cmd_party(void)
 
 void cmd_fire(void)
 {
-	int item, dir;
+	int dir;
 
 #if 0
 	if (!c_get_item(&item, "Fire which ammo? ", FALSE, TRUE, FALSE))
@@ -1733,113 +1719,6 @@ void cmd_browse(void)
 //	show_browse(item);
 	show_browse(o_ptr);
 }
-
-#if 0	// obsolete
-void cmd_study(void)
-{
-	int item;
-
-	item_tester_hook = item_tester_browsable;
-
-	if (!c_get_item(&item, "Gain from which book? ", FALSE, TRUE, FALSE))
-	{
-		if (item == -2) c_msg_print("You have no books that you can read.");
-		return;
-	}
-
-	/* Pick a spell and do it */
-	do_study(item);
-}
-
-void cmd_cast(void)
-{
-	int item;
-
-	item_tester_hook = item_tester_magicable;
-
-	if (!c_get_item(&item, "Cast from what book? ", FALSE, TRUE, FALSE))
-	{
-		if (item == -2) c_msg_print("You have no books that you can cast from.");
-		return;
-	}
-
-	/* Pick a spell and do it */
-	do_cast(item);
-}
-
-/* Replacement of cmd_cast. */
-void cmd_cast_skill(void)
-{
-	int item;
-
-//	item_tester_hook = item_tester_magicable;
-
-	if (!c_get_item(&item, "Cast from what book? ", FALSE, TRUE, FALSE))
-	{
-		if (item == -2) c_msg_print("You have no books that you can cast from.");
-		return;
-	}
-
-	/* Pick a spell and do it */
-	do_cast(item);
-}
-
-void cmd_pray(void)
-{
-	int item;
-
-	if (!get_skill(SKILL_PRAY))
-	{
-		c_msg_print("Pray hard enough and your prayers may be answered.");
-		return;
-	}
-
-	item_tester_tval = TV_PRAYER_BOOK;
-
-	if (!c_get_item(&item, "Pray from what book? ", FALSE, TRUE, FALSE))
-	{
-		if (item == -2) c_msg_print("You have no books that you can pray from.");
-		return;
-	}
-
-	/* Pick a spell and do it */
-	do_pray(item);
-}
-
-void cmd_mimic(void)
-{
-	if (!get_skill(SKILL_MIMIC))
-	{
-		c_msg_print("You are too solid.");
-		return;
-	}
-
-	/* Pick a spell and do it */
-	do_mimic();
-}
-
-void cmd_fight(void)
-{
-	int item;
-
-	if (!get_skill(SKILL_TECHNIC))
-	{
-		c_msg_print("You are not strong enough.");
-		return;
-	}
-
-	item_tester_tval = TV_FIGHT_BOOK;
-
-	if (!c_get_item(&item, "Fight from what book? ", FALSE, TRUE, FALSE))
-	{
-		if (item == -2) c_msg_print("You have no books that you can fight from.");
-		return;
-	}
-
-	/* Pick a spell and do it */
-	do_fight(item);
-}
-#endif	// 0
 
 void cmd_ghost(void)
 {
@@ -2780,8 +2659,10 @@ void cmd_master_aux_player()
 /* TODO: up-to-date check and download facility */
 void cmd_script_upload()
 {
-	char buf[1025], name[81];
-	FILE *fff;
+#if 0
+	char buf[1025]
+#endif
+	char name[81];
 
 	name[0]='\0';
 

@@ -445,10 +445,6 @@ extern void do_cmd_check_uniques(int Ind);
 /* cmd5.c */
 extern void do_cmd_browse(int Ind, int book);
 extern void do_cmd_study(int Ind, int book, int spell);
-extern void do_cmd_cast(int Ind, int book, int spell);
-extern void do_cmd_cast_aux(int Ind, int dir);
-extern void do_cmd_pray(int Ind, int book, int spell);
-extern void do_cmd_pray_aux(int Ind, int dir);
 
 /* cmd6.c */
 extern void do_cmd_eat_food(int Ind, int item);

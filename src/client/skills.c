@@ -13,7 +13,7 @@
 
 #include "angband.h"
 
-extern u32b get_school_spell(cptr do_what);
+extern s32b get_school_spell(cptr do_what);
 
 /*
  * Given the name of a skill, returns skill index or -1 if no
@@ -964,7 +964,7 @@ void do_trap(int item_kit)
 void do_activate_skill(int x_idx, int item)
 {
 	int dir=0;
-	u32b spell=0L;
+	s32b spell=0L;
 
 	if (s_info[x_idx].flags1 & SKF1_MKEY_HARDCODE)
 	{
@@ -1008,7 +1008,7 @@ void do_activate_skill(int x_idx, int item)
 	else if (s_info[x_idx].action_mkey == MKEY_SCHOOL)
 	{
 		/* Ask for a spell, allow cancel */
-		if ((spell = get_school_spell("cast") == -1)) return;
+		if ((spell = get_school_spell("cast")) == -1) return;
 		printf("school spell %d\n", spell);
 
                 /* Ask for a direction? */

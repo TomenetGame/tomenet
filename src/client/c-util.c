@@ -2925,12 +2925,9 @@ static void print_tomb(cptr reason)
 	/* Print the text-tombstone */
 	if (!done)
 	{
-		cptr	p;
-
 		char	tmp[160];
 
 		char	buf[1024];
-		char    dummy[80];
 
 		FILE        *fp;
 

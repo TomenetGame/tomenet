@@ -313,7 +313,7 @@ void client_init(char *argv1, bool skip)
 	sockbuf_t ibuf;
 	unsigned magic = 12345;
 	unsigned char reply_to, status;
-	int login_port, i;
+	int login_port;
 	int bytes, retries;
 	char host_name[80];
 	u16b version = MY_VERSION;
@@ -413,8 +413,6 @@ void client_init(char *argv1, bool skip)
 	/* Listen for reply */
 	for (retries = 0; retries < 10; retries++)
         {
-                char buf[200];
-
 		/* Set timeout */
 		SetTimeout(1, 0);
 

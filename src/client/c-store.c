@@ -172,7 +172,7 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 /* XXX Bad design.. store code really should be rewritten.	- Jir - */
 static void store_examine(void)
 {
-	int                     i, amt;
+	int                     i;
 	int                     item;
 
 	object_type             *o_ptr;
