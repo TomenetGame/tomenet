@@ -1696,15 +1696,6 @@ try_an_other_ego:
 	if (a_ptr->esp & ESP_ALL) a_ptr->esp = ESP_ALL;
 #endif
 
-#if 0	// supposed to be gone forever (DELETEME)
-	/* get flags */
-	object_flags(a_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-	/* Hack -- acquire "cursed" flag */
-	/* this should be done elsewhere */
-	if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
-#endif	// 0
-
 	/* Hack -- obtain bonuses */
 	if (e_ptr->max_to_h > 0) a_ptr->to_h += randint(e_ptr->max_to_h);
 	if (e_ptr->max_to_h < 0) a_ptr->to_h -= randint(-e_ptr->max_to_h);
