@@ -4370,7 +4370,9 @@ void player_death(int Ind)
 		}
 	}
 	
-	if ((p_ptr->lives > 0+1) && cfg.lifes) p_ptr->lives--;
+	/* Take care of ghost suiciding before final resurrection (p_ptr->alive check, C. Blue) */
+	if (p_ptr->alive && ((p_ptr->lives > 0+1) && cfg.lifes)) p_ptr->lives--;
+
 	/* Get rid of him if he's a ghost */
 	if (((p_ptr->ghost || (hell && p_ptr->alive)) && p_ptr->fruit_bat!=-1) ||
 	    (streq(p_ptr->died_from, "Insanity")) || (!(p_ptr->lives-1) && cfg.lifes))
