@@ -4612,11 +4612,12 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	/* Anti-cheeze vs Hit&Run-tactics if player has slightly superiour speed:
 	   Monster tries to make player approach so it gets attack turns! -C. Blue */
 	else if ((
-#if 1
+#if 1		/* Demons are reckless, undead/nonliving are rarely intelligent, animals neither */
 		((r_ptr->level >= 30) &&
-		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL))) ||
+		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON))) ||
+		/* Elder animals have great instinct or intelligence */
 		((r_ptr->level >= 60) && 
-		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD))) ||
+		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON))) ||
 #endif
 		(r_ptr->flags2 & RF2_SMART)) && !(r_ptr->flags2 & RF2_STUPID) &&
 		(distance(m_ptr->fy, m_ptr->fx, y2, x2) == 2) &&
