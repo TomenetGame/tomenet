@@ -149,7 +149,7 @@ CLI_LUASRCS = \
 #  server/w_util.c server/w_play.c
 
 CLI_LUAOBJS = \
-  client/c-script.o server/lua_bind.o \
+  client/c-script.o client/lua_bind.o \
   client/w_play.o client/w_util.o client/w_spells.o
 
 ##
