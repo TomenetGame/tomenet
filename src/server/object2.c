@@ -1386,7 +1386,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		case TV_SCROLL:
 		{
 			/* Hack for ego foods :) */
-			if (o_ptr->name3 != j_ptr->name3) return (0);
+			if (o_ptr->name2 != j_ptr->name2) return (0);
 
 			/* Assume okay */
 			break;
@@ -1410,6 +1410,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 
 			/* Require identical charges */
 			if (o_ptr->pval != j_ptr->pval) return (0);
+			
+			if (o_ptr->name2 != j_ptr->name2) return (0);
 
 			/* Probably okay */
 			break;

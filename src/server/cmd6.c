@@ -3139,7 +3139,7 @@ void do_cmd_zap_rod(int Ind, int item)
 			return;
 		}
 	}
-
+	if(f4 & TR4_CHARGING) o_ptr->pval/=3;
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
