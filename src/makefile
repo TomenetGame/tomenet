@@ -322,23 +322,15 @@ CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
 TOLUA = server/tolua
 
-#
-# Hack -- "install" as the base target
-#
-# If you want to build a server, remove the two hashes from the lines
-# below.
-#
+all: date tomenet tomenet.console tomenet.server
 
-install: date tomenet tomenet.console tomenet.server
+# sorry. install on every make is a real pain ;)
+
+install: all
 	install -b tomenet ..
 	install -b tomenet.console ..
 	install -b tomenet.server ..
-#	-mv ../tomenet ../tomenet.old
-#	-mv ../tomenet.server ../tomenet.server.old
-#	-mv ../tomenet.console ../tomenet.console.old
-#	cp tomenet ..
-#	cp tomenet.console ..
-#	cp tomenet.server ..
+
 
 mini_install: install
 
