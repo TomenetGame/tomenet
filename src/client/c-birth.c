@@ -97,6 +97,7 @@ void enter_password(void)
 static void choose_sex(void)
 {
 	char        c;
+	bool hazard = FALSE;
 
 	put_str("m) Male", 20, 2);
 	put_str("f) Female", 20, 17);
@@ -105,8 +106,8 @@ static void choose_sex(void)
 
 	while (1)
 	{
-		put_str("Choose a sex (? for Help, Q to Quit): ", 19, 2);
-		c = inkey();
+		put_str("Choose a sex (? for Help, * for random, Q to Quit): ", 19, 2);
+		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 		if (c == 'm')
 		{
@@ -117,7 +118,7 @@ static void choose_sex(void)
 		if (c == 'M')
 		{
 			sex = 3;
-			c_put_str(TERM_L_BLUE, "Male", 4, 15);
+			c_put_str(TERM_L_BLUE, "Hell Male", 4, 15);
 			break;
 		}
 		else if (c == 'f')
@@ -129,12 +130,31 @@ static void choose_sex(void)
 		else if (c == 'F')
 		{
 			sex = 2;
-			c_put_str(TERM_L_BLUE, "Female", 4, 15);
+			c_put_str(TERM_L_BLUE, "Hell Female", 4, 15);
 			break;
 		}
 		else if (c == '?')
 		{
 			/*do_cmd_help("help.hlp");*/
+		}
+		else if (c == '*')
+		{
+			switch (rand_int(4))
+			{
+				case 0:
+					c = 'f';
+					break;
+				case 1:
+					c = 'm';
+					break;
+				case 2:
+					c = 'F';
+					break;
+				case 3:
+					c = 'M';
+					break;
+			}
+			hazard = TRUE;
 		}
 		else
 		{
@@ -177,10 +197,13 @@ static void choose_race(void)
 
 	while (1)
 	{
-		put_str("Choose a race (? for Help, Q to Quit): ", 20, 2);
+		put_str("Choose a race (? for Help, * for random, Q to Quit): ", 20, 2);
 		c = inkey();
 		if (c == 'Q') quit(NULL);
-		j = (islower(c) ? A2I(c) : -1);
+
+		if (c == '*') j = rand_int(MAX_RACES);
+		else j = (islower(c) ? A2I(c) : -1);
+
 		if ((j < MAX_RACES) && (j >= 0))
 		{
 			race = j;
@@ -244,10 +267,13 @@ static void choose_class(void)
 	/* Get a class */
 	while (1)
 	{
-		put_str("Choose a class (? for Help, Q to Quit): ", 20, 2);
+		put_str("Choose a class (? for Help, * for random, Q to Quit): ", 20, 2);
 		c = inkey();
 		if (c == 'Q') quit(NULL);
-		j = (islower(c) ? A2I(c) : -1);
+
+		if (c == '*') j = rand_int(MAX_CLASS);
+		else j = (islower(c) ? A2I(c) : -1);
+
 		if ((j < MAX_CLASS) && (j >= 0))
 		{
                         if (!(rp_ptr->choice & BITS(j))) continue;
@@ -279,6 +305,7 @@ void choose_stat_order(void)
 	int i, j, k, avail[6];
 	char c;
 	char out_val[160], stats[6][4];
+	bool hazard = FALSE;
 
 	/* All stats are initially available */
 	for (i = 0; i < 6; i++)
@@ -308,10 +335,20 @@ void choose_stat_order(void)
 		/* Get a stat */
 		while (1)
 		{
-			put_str("Choose your stat order (? for Help, Q to Quit): ", 20, 2);
-			c = inkey();
-			if (c == 'Q') quit(NULL);
-			j = (islower(c) ? A2I(c) : -1);
+			put_str("Choose your stat order (? for Help, * for random, Q to Quit): ", 20, 2);
+			if (hazard)
+			{
+				j = rand_int(6);
+			}
+			else
+			{
+				c = inkey();
+				if (c == 'Q') quit(NULL);
+				if (c == '*') hazard = TRUE;
+
+				j = (islower(c) ? A2I(c) : -1);
+			}
+
 			if ((j < 6) && (j >= 0) && (avail[j]))
 			{
 				stat_order[i] = j;
@@ -354,7 +391,7 @@ static void choose_bat(void)
 			c_put_str(TERM_L_BLUE, "Fruit Bat", 15, 15);
 			break;
 		}
-		else if (c == 'n')
+		else if (c == 'n' || c == '*')
 		{
 			c_put_str(TERM_L_BLUE, "Normal Form", 15, 15);
 			break;
@@ -451,6 +488,30 @@ void get_char_name(void)
  */
 void get_char_info(void)
 {
+	/* Hack -- use RNG for character generation	- Jir -*/
+	/* Init the RNG */
+	// Is it a good idea ? DGDGDGD --  maybe FIXME
+	//	if (Rand_quick)
+	{
+		u32b seed;
+
+		/* Basic seed */
+		seed = (time(NULL));
+
+#ifdef SET_UID
+
+		/* Mutate the seed on Unix machines */
+		seed = ((seed >> 3) * (getpid() << 1));
+
+#endif
+
+		/* Use the complex RNG */
+		Rand_quick = FALSE;
+
+		/* Seed the "complex" RNG */
+		Rand_state_init(seed);
+	}
+
 	/* Title everything */
 	put_str("Sex         :", 4, 1);
 	put_str("Race        :", 5, 1);

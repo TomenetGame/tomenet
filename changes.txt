@@ -523,6 +523,9 @@ Change list for PernMangband
 - Other bugfixes.
 
 27/12/2001 (Jir)
+** [C] stands for Client changes.
 - Sector info on '@'.
 - Some small scripts.
 - Chatline commands: /bed, /dress
+- pval/bpval bug is fixed(but still needing ameliorations).
+[C] Random attribute-picker.

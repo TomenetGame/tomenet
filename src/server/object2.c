@@ -69,13 +69,13 @@ void delete_object_idx(int o_idx)
 	}
 
 	/* Object is gone */
-#ifdef NEW_DUNGEON
-	if((zcave=getcave(wpos))){
+	if((zcave=getcave(wpos)))
+	{
 		c_ptr=&zcave[y][x];
-#else
+#if 0
 	if(cave[Depth]){
 		c_ptr=&cave[Depth][y][x];
-#endif
+#endif	// 0
 		c_ptr->o_idx = 0;
 	}
 
@@ -106,21 +106,20 @@ void delete_object(int Depth, int y, int x)
 {
 	cave_type *c_ptr;
 
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	/* Refuse "illegal" locations */
 	if (!in_bounds(y, x)) return;
 
 	if((zcave=getcave(wpos))){
 		c_ptr=&zcave[y][x];
-#else
+#if 0
 	/* Refuse "illegal" locations */
 	if (!in_bounds(Depth, y, x)) return;
 
 	if(cave[Depth]){	/* This is fast indexing method first */
 		/* Find where it was */
 		c_ptr = &cave[Depth][y][x];
-#endif
+#endif	// 0
 
 		/* Delete the object */
 		if (c_ptr->o_idx) delete_object_idx(c_ptr->o_idx);
@@ -130,10 +129,11 @@ void delete_object(int Depth, int y, int x)
 		for(i=0;i<o_max;i++){
 			object_type *o_ptr = &o_list[i];
 #ifdef NEW_DUNGEON
-			if(o_ptr->k_idx && inarea(wpos, &o_ptr->wpos)){
+			if(o_ptr->k_idx && inarea(wpos, &o_ptr->wpos))
 #else
-			if(o_ptr->k_idx && Depth==o_ptr->dun_depth){
+			if(o_ptr->k_idx && Depth==o_ptr->dun_depth)
 #endif
+			{
 				if(y==o_ptr->iy && x==o_ptr->ix){
 					delete_object_idx(i);
 				}
@@ -219,21 +219,17 @@ void compact_objects(int size)
 			if (artifact_p(o_ptr) && (cnt < 1000)) chance = 100;
 
 			/* Hack -- only compact items in houses in emergencies */
-#ifdef NEW_DUNGEON
-			if (!o_ptr->wpos.wz){
+			if (!o_ptr->wpos.wz)
+			{
 				cave_type **zcave;
 				zcave=getcave(&o_ptr->wpos);
 				if(zcave[y][x].info&CAVE_ICKY)
-#else
-			if (!o_ptr->dun_depth && (cave[0][y][x].info & CAVE_ICKY))
-#endif
-			{
-				/* Grant immunity except in emergencies */
-				if (cnt < 1000) chance = 100;
+//			if (!o_ptr->dun_depth && (cave[0][y][x].info & CAVE_ICKY))
+				{
+					/* Grant immunity except in emergencies */
+					if (cnt < 1000) chance = 100;
+				}
 			}
-#ifdef NEW_DUNGEON
-			}
-#endif
 
 			/* Apply the saving throw */
 			if (rand_int(100) < chance) continue;
@@ -2462,7 +2458,8 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 		/* Cursed (if "bad") */
 		if (o_ptr->to_a < 0) o_ptr->ident |= ID_CURSED;
 	}
-#if 0	// once..
+
+#if 1	// once..
 	/* Analyze type */
 	switch (o_ptr->tval)
 	{
@@ -2470,6 +2467,15 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 		{
 			if (o_ptr->sval == SV_ELVEN_CLOAK)
                                 o_ptr->pval = randint(4);       /* No cursed elven cloaks...? */
+#if 1
+			/* Set the Kolla cloak's base bonuses*/
+			if(o_ptr->sval == SV_KOLLA)
+			{
+				o_ptr->bpval = randint(2);
+				rating += 20;
+			}
+#endif	// 0
+
                         break;
                 }
 		case TV_DRAG_ARMOR:
@@ -2478,7 +2484,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 			rating += 30;
 
 			/* Mention the item */
-                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
+//                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
 
 			break;
 		}
@@ -2490,15 +2496,41 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 				rating += 5;
 
 				/* Mention the item */
-                                if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
-				dragon_resist(o_ptr);
+//                                if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
+
+				/* pfft */
+//				dragon_resist(o_ptr);
+				break;
 			}
-			break;
+
+#if 1
+			/* Set the orcish shield's STR and CON bonus
+			*/
+			if(o_ptr->sval == SV_ORCISH_SHIELD)
+			{
+				o_ptr->bpval = randint(2);
+
+				/* Cursed orcish shield */
+				if (power < 0) o_ptr->bpval = -o_ptr->bpval;
+				break;
+			}
+#endif
 		}
+#if 1
+		case TV_BOOTS:
+		{
+			/* Set the Witan Boots stealth penalty */
+                        if(o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS)
+                        {
+                                o_ptr->bpval = -2;
+                        }
+
+		}
+#endif	// 0
 	}
 #endif	// 0
 
-#if 0	// former ones..heheh
+#if 0	// former ones..
 	/* Analyze type */
 	switch (o_ptr->tval)
 	{
@@ -3042,6 +3074,462 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 			/* Analyze */
 			switch (o_ptr->sval)
 			{
+				case SV_RING_POLYMORPH:
+				{
+					if (power < 1) power = 1;
+
+					/* Be sure to be a player */
+					o_ptr->pval = 0;
+					if (magik(45))
+					{
+						int i;
+						monster_race *r_ptr;
+
+						while (TRUE)
+						{
+							i = rand_int(MAX_R_IDX - 1);
+							r_ptr = &r_info[i];
+
+							if (r_ptr->flags1 & RF1_UNIQUE) continue;
+							if (r_ptr->level >= level + (power * 5)) continue;
+
+							break;
+						}
+						o_ptr->pval = i;
+					}
+					break;
+				}
+
+				/* Strength, Constitution, Dexterity, Intelligence */
+				case SV_RING_ATTACKS:
+				{
+					/* Stat bonus */
+					o_ptr->pval = m_bonus(3, level);
+					if (o_ptr->pval < 1) o_ptr->pval = 1;
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse pval */
+						o_ptr->pval = 0 - (o_ptr->pval);
+					}
+
+					break;
+				}
+
+                                /* Critical hits */
+                                case SV_RING_CRIT:
+				{
+					/* Stat bonus */
+                                        o_ptr->pval = m_bonus(10, level);
+					if (o_ptr->pval < 1) o_ptr->pval = 1;
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse pval */
+						o_ptr->pval = 0 - (o_ptr->pval);
+					}
+
+					break;
+				}
+
+
+				case SV_RING_STR:
+				case SV_RING_CON:
+				case SV_RING_DEX:
+				case SV_RING_INT:
+				{
+					/* Stat bonus */
+					o_ptr->pval = 1 + m_bonus(5, level);
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse pval */
+						o_ptr->pval = 0 - (o_ptr->pval);
+					}
+
+					break;
+				}
+
+				/* Ring of Speed! */
+				case SV_RING_SPEED:
+				{
+					/* Base speed (1 to 10) */
+					o_ptr->pval = randint(5) + m_bonus(5, level);
+
+					/* Super-charge the ring */
+					while (rand_int(100) < 50) o_ptr->pval++;
+
+					/* Cursed Ring */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse pval */
+						o_ptr->pval = 0 - (o_ptr->pval);
+
+						break;
+					}
+
+					/* Rating boost */
+					rating += 25;
+
+					/* Mention the item */
+//                                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
+
+					break;
+				}
+
+				case SV_RING_LORDLY:
+				{
+#if 0	// lordly pfft ring..
+					do
+					{
+						random_resistance(o_ptr, FALSE, ((randint(20))+18));
+					}
+					while(randint(4)==1);
+#endif
+
+					/* Bonus to armor class */
+					o_ptr->to_a = 10 + randint(5) + m_bonus(10, level);
+					rating += 5;
+				}
+				break;
+
+				/* Searching */
+				case SV_RING_SEARCHING:
+				{
+					/* Bonus to searching */
+					o_ptr->pval = 1 + m_bonus(5, level);
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse pval */
+						o_ptr->pval = 0 - (o_ptr->pval);
+					}
+
+					break;
+				}
+
+				/* Flames, Acid, Ice */
+				case SV_RING_FLAMES:
+				case SV_RING_ACID:
+				case SV_RING_ICE:
+				{
+					/* Bonus to armor class */
+					o_ptr->to_a = 5 + randint(5) + m_bonus(10, level);
+					break;
+				}
+
+				/* Weakness, Stupidity */
+				case SV_RING_WEAKNESS:
+				case SV_RING_STUPIDITY:
+				{
+					/* Cursed */
+					o_ptr->ident |= (ID_CURSED);
+
+					/* Penalize */
+					o_ptr->pval = 0 - (1 + m_bonus(5, level));
+
+					break;
+				}
+
+				/* WOE, Stupidity */
+				case SV_RING_WOE:
+				{
+					/* Cursed */
+					o_ptr->ident |= (ID_CURSED);
+
+					/* Penalize */
+					o_ptr->to_a = 0 - (5 + m_bonus(10, level));
+					o_ptr->pval = 0 - (1 + m_bonus(5, level));
+
+					break;
+				}
+
+				/* Ring of damage */
+				case SV_RING_DAMAGE:
+				{
+					/* Bonus to damage */
+					o_ptr->to_d = 5 + randint(8) + m_bonus(10, level);
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse bonus */
+						o_ptr->to_d = 0 - (o_ptr->to_d);
+					}
+
+					break;
+				}
+
+				/* Ring of Accuracy */
+				case SV_RING_ACCURACY:
+				{
+					/* Bonus to hit */
+					o_ptr->to_h = 5 + randint(8) + m_bonus(10, level);
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse tohit */
+						o_ptr->to_h = 0 - (o_ptr->to_h);
+					}
+
+					break;
+				}
+
+				/* Ring of Protection */
+				case SV_RING_PROTECTION:
+				{
+					/* Bonus to armor class */
+					o_ptr->to_a = 5 + randint(8) + m_bonus(10, level);
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse toac */
+						o_ptr->to_a = 0 - (o_ptr->to_a);
+					}
+
+					break;
+				}
+
+				/* Ring of Slaying */
+				case SV_RING_SLAYING:
+				{
+					/* Bonus to damage and to hit */
+					o_ptr->to_d = randint(7) + m_bonus(10, level);
+					o_ptr->to_h = randint(7) + m_bonus(10, level);
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse bonuses */
+						o_ptr->to_h = 0 - (o_ptr->to_h);
+						o_ptr->to_d = 0 - (o_ptr->to_d);
+					}
+
+					break;
+				}
+			}
+
+			break;
+		}
+
+		case TV_AMULET:
+		{
+			/* Analyze */
+			switch (o_ptr->sval)
+			{
+				/* Old good Mangband ones */
+				/* Amulet of Terken -- never cursed */
+				case SV_AMULET_TERKEN:
+				{
+					o_ptr->pval = randint(5) + m_bonus(5, level);
+					//o_ptr->to_h = randint(5);
+					//o_ptr->to_d = randint(5);
+
+					/* Boost the rating */
+					rating += 15;
+
+					/* Sorry.. */
+//					o_ptr->xtra1 = EGO_XTRA_ABILITY;
+//					o_ptr->xtra2 = randint(256);
+
+					/* Mention the item */
+					/*if (cheat_peek) object_mention(o_ptr);*/
+
+					break;
+				}
+
+				/* Amulet of the Moon -- never cursed */
+				case SV_AMULET_THE_MOON:
+				{
+					o_ptr->pval = randint(5) + m_bonus(5, level);
+					o_ptr->to_h = randint(5);
+					o_ptr->to_d = randint(5);
+
+					/* Boost the rating */
+					rating += 15;
+
+					// o_ptr->xtra1 = EGO_XTRA_ABILITY;
+					//o_ptr->xtra2 = randint(256);
+
+					/* Mention the item */
+					/*if (cheat_peek) object_mention(o_ptr);*/
+
+					break;
+				}
+
+                                /* Amulet of Trickery */
+                                case SV_AMULET_TRICKERY:
+                                case SV_AMULET_DEVOTION:
+				{
+                                        o_ptr->pval = 1 + m_bonus(3, level);
+
+					/* Mention the item */
+//                                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
+					break;
+				}
+
+                                case SV_AMULET_WEAPONMASTERY:
+				{
+                                        o_ptr->pval = 1 + m_bonus(2, level);
+                                        o_ptr->to_a = 1 + m_bonus(4, level);
+                                        o_ptr->to_h = 1 + m_bonus(5, level);
+                                        o_ptr->to_d = 1 + m_bonus(5, level);
+
+					/* Mention the item */
+//                                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
+					break;
+				}
+
+				/* Amulet of wisdom/charisma */
+                                case SV_AMULET_BRILLANCE:
+				case SV_AMULET_CHARISMA:
+                                case SV_AMULET_WISDOM:
+                                case SV_AMULET_INFRA:
+				{
+					o_ptr->pval = 1 + m_bonus(5, level);
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse bonuses */
+						o_ptr->pval = 0 - (o_ptr->pval);
+					}
+
+					break;
+				}
+
+                                /* Amulet of the Serpents */
+                                case SV_AMULET_SERPENT:
+				{
+                                        o_ptr->pval = 1 + m_bonus(5, level);
+                                        o_ptr->to_a = 1 + m_bonus(6, level);
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse bonuses */
+						o_ptr->pval = 0 - (o_ptr->pval);
+					}
+
+					break;
+				}
+
+				case SV_AMULET_NO_MAGIC: case SV_AMULET_NO_TELE:
+				{
+					if (power < 0)
+					{
+						o_ptr->ident |= (ID_CURSED);
+					}
+					break;
+				}
+
+				case SV_AMULET_RESISTANCE:
+				{
+#if 0
+					if (randint(3)==1) random_resistance(o_ptr, FALSE, ((randint(34))+4));
+					if (randint(5)==1) o_ptr->art_flags2 |= TR2_RES_POIS;
+#endif	// 0
+				}
+				break;
+
+				/* Amulet of searching */
+				case SV_AMULET_SEARCHING:
+				{
+					o_ptr->pval = randint(5) + m_bonus(5, level);
+
+					/* Cursed */
+					if (power < 0)
+					{
+						/* Cursed */
+						o_ptr->ident |= (ID_CURSED);
+
+						/* Reverse bonuses */
+						o_ptr->pval = 0 - (o_ptr->pval);
+					}
+
+					break;
+				}
+
+				/* Amulet of the Magi -- never cursed */
+				case SV_AMULET_THE_MAGI:
+				{
+                                        o_ptr->pval = 1 + m_bonus(3, level);
+
+//					if (randint(3)==1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
+
+					/* Boost the rating */
+					rating += 25;
+
+					/* Mention the item */
+//                                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
+
+					break;
+				}
+
+				/* Amulet of Doom -- always cursed */
+				case SV_AMULET_DOOM:
+				{
+					/* Cursed */
+					o_ptr->ident |= (ID_CURSED);
+
+					/* Penalize */
+					o_ptr->pval = 0 - (randint(5) + m_bonus(5, level));
+					o_ptr->to_a = 0 - (randint(5) + m_bonus(5, level));
+
+					break;
+				}
+			}
+
+			break;
+		}
+	}
+#if 0
+	switch (o_ptr->tval)
+	{
+		case TV_RING:
+		{
+			/* Analyze */
+			switch (o_ptr->sval)
+			{
 			case SV_RING_POLYMORPH:
 			  {
 			    if (power < 1) power = 1;
@@ -3356,7 +3844,7 @@ tries = 100;
 					break;
 				}
 
-#if 0	// those items should be handled in other ways(INSTA_EGO?)	- Jir -
+#if 1	// those items should be handled in other ways(INSTA_EGO?)	- Jir -
          			/* Amulet of Terken -- never cursed */
                                 case SV_AMULET_TERKEN:
 				{
@@ -3434,6 +3922,7 @@ tries = 100;
 			break;
 		}
 	}
+#endif	// 0
 }
 
 
@@ -3471,13 +3960,15 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 			{
 				if (o_ptr->sval == SV_LITE_TORCH)
 				{
-					if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
+//					if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
+					o_ptr->pval = randint(FUEL_TORCH);
 				}
 
 				/* Hack -- Lanterns -- random fuel */
 				if (o_ptr->sval == SV_LITE_LANTERN)
 				{
-					if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
+					o_ptr->pval = randint(FUEL_LAMP);
+//					if (o_ptr->pval) o_ptr->pval = randint(o_ptr->pval);
 				}
 			}
 
@@ -3530,6 +4021,17 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
                         }
                         break;
                 }
+
+
+		/* Hack -- consider using 'timeout' inplace */
+		case TV_ROD:
+
+		/* Hack -- charge rods */
+		o_ptr->pval = 0;
+
+		break;
+
+
 	}
 }
 
@@ -3765,8 +4267,8 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 			a_ptr =	ego_make(o_ptr);
 
 		/* Extract the other fields */
-//		o_ptr->pval += a_ptr->pval;
-		o_ptr->pval = a_ptr->pval;
+		o_ptr->pval += a_ptr->pval;
+//		o_ptr->pval = a_ptr->pval;
 		o_ptr->ac += a_ptr->ac;
 		o_ptr->dd += a_ptr->dd;
 		o_ptr->ds += a_ptr->ds;
@@ -3775,7 +4277,7 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 		o_ptr->to_d += a_ptr->to_d;
 
 	/* Hack -- acquire "cursed" flag */
-	//                if (f3 & TR3_CURSED) o_ptr->ident |= (IDENT_CURSED);	// this should be done here!
+	//                if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
 		if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
 
 			rating += e_info[o_ptr->name2].rating;
@@ -5597,7 +6099,7 @@ void object_prep(object_type *o_ptr, int k_idx)
 
 	/* Hack -- cursed items are always "cursed" */
 	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (ID_CURSED);
-//	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
+//	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (ID_CURSED);
 #if 0
         /* Hack give a basic exp/exp level to an object that needs it */
         if(k_ptr->flags4 & TR4_LEVELS)

@@ -2678,7 +2678,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 	      case SV_DRAGON_SHINING:
 		{
-		  return "polymorph into an Etheral Dragon every 200+d100 turns";
+		  return "polymorph into an Ethereal Dragon every 200+d100 turns";
 		}
 	      case SV_DRAGON_POWER:
 		{
