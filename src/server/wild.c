@@ -3099,14 +3099,14 @@ void island(int y, int x, unsigned char type, unsigned char fill, int size){
 	int ranval;
 	if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_Y) return;
 	if(wild_info[y][x].type!=fill) return;
-	ranval=random()&15;
+	ranval=rand_int(15);
 	if(size){
 		if(ranval&1) island(y,x-1,type,fill,size-1);
 		if(ranval&2) island(y,x+1,type,fill,size-1);
 		if(ranval&4) island(y-1,x,type,fill,size-1);
 		if(ranval&8) island(y+1,x,type,fill,size-1);
 	}
-	if((random()&17)==0){
+	if((rand_int(7)==0)){
 		switch(type){
 			case WILD_MOUNTAIN:
 				type=WILD_VOLCANO;
@@ -3126,10 +3126,10 @@ void makeland(){
 	p=(MAX_WILD_Y*MAX_WILD_X)/SEADENSITY;
 	for(i=0;i<p;i++){
 		do{
-			x=random()&(MAX_WILD_X-1);
-			y=random()&(MAX_WILD_Y-1);
+			x=rand_int(MAX_WILD_X-1);
+			y=rand_int(MAX_WILD_Y-1);
 		}while(wild_info[y][x].type!=WILD_UNDEFINED);
-		island(y,x,WILD_GRASSLAND, WILD_UNDEFINED, random()&((1<<density)-1));
+		island(y,x,WILD_GRASSLAND, WILD_UNDEFINED, rand_int(1<<density));
 	}
 }
 
@@ -3155,10 +3155,10 @@ void addhills(){
 	p=(MAX_WILD_Y*MAX_WILD_X)/ROCKY;
 	for(i=0;i<p;i++){
 		do{
-			x=random()&(MAX_WILD_X-1);
-			y=random()&(MAX_WILD_Y-1);
+			x=rand_int(MAX_WILD_X-1);
+			y=rand_int(MAX_WILD_Y-1);
 		}while(wild_info[y][x].type!=WILD_GRASSLAND);
-		island(y,x, WILD_MOUNTAIN, WILD_GRASSLAND, random()&((1<<MAXMOUNT)-1)); 
+		island(y,x, WILD_MOUNTAIN, WILD_GRASSLAND, rand_int((1<<MAXMOUNT)-1)); 
 	}
 }
 
@@ -3168,10 +3168,10 @@ void addlakes(){
 	p=(MAX_WILD_Y*MAX_WILD_X)/LAKES;
 	for(i=0;i<p;i++){
 		do{
-			x=random()&(MAX_WILD_X-1);
-			y=random()&(MAX_WILD_Y-1);
+			x=rand_int(MAX_WILD_X-1);
+			y=rand_int(MAX_WILD_Y-1);
 		}while(wild_info[y][x].type!=WILD_GRASSLAND);
-		island(y,x, WILD_LAKE, WILD_GRASSLAND, random()&((1<<MAXLAKE)-1)); 
+		island(y,x, WILD_LAKE, WILD_GRASSLAND, rand_int((1<<MAXLAKE)-1)); 
 	}
 }
 
@@ -3181,10 +3181,10 @@ void addwaste(){
 	p=(MAX_WILD_Y*MAX_WILD_X)/WASTE;
 	for(i=0;i<p;i++){
 		do{
-			x=random()&(MAX_WILD_X-1);
-			y=random()&(MAX_WILD_Y-1);
+			x=rand_int(MAX_WILD_X-1);
+			y=rand_int(MAX_WILD_Y-1);
 		}while(wild_info[y][x].type!=WILD_GRASSLAND);
-		island(y,x, WILD_WASTELAND, WILD_GRASSLAND, random()&((1<<MAXWASTE)-1)); 
+		island(y,x, WILD_WASTELAND, WILD_GRASSLAND, rand_int((1<<MAXWASTE)-1)); 
 	}
 }
 
@@ -3195,10 +3195,10 @@ void addforest(){
 	p=(MAX_WILD_Y*MAX_WILD_X)/WOODY;
 	for(i=0;i<p;i++){
 		do{
-			x=random()&(MAX_WILD_X-1);
-			y=random()&(MAX_WILD_Y-1);
+			x=rand_int(MAX_WILD_X-1);
+			y=rand_int(MAX_WILD_Y-1);
 		}while(wild_info[y][x].type!=WILD_GRASSLAND);
-		size=random()&((1<<MAXWOOD)-1); 
+		size=rand_int((1<<MAXWOOD)-1); 
 		island(y,x, WILD_FOREST, WILD_GRASSLAND, size);
 		if(size>3)
 			island(y,x, WILD_DENSEFOREST, WILD_FOREST, size-3);
@@ -3212,12 +3212,12 @@ void river(int y, int x){
 	int mx, my;
 	int dir,cdir,t;
 
-	dir=random()&7;
+	dir=rand_int(7);
 	while(wild_info[y][x].type!=WILD_OCEAN){
 		cdir=dir;
 		if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_X) break;	
 		wild_info[y][x].type=WILD_RIVER;
-		t=random()&31;
+		t=rand_int(31);
 		switch(t){
 			case 0: cdir+=4;
 				break;
@@ -3257,8 +3257,8 @@ void addrivers(){
 	p=(MAX_WILD_Y*MAX_WILD_X)/RIVERS;
 	for(i=0;i<p;i++){
 		do{
-			x=random()&(MAX_WILD_X-1);
-			y=random()&(MAX_WILD_Y-1);
+			x=rand_int(MAX_WILD_X-1);
+			y=rand_int(MAX_WILD_Y-1);
 		}while(wild_info[y][x].type!=WILD_MOUNTAIN);
 		river(y,x);
 	}
@@ -3267,6 +3267,10 @@ void addrivers(){
 
 void genwild(){
 	int j,i;
+	bool oldrand;
+	oldrand=Rand_quick;
+	Rand_quick=TRUE;
+	Rand_value=seed_town;
 	printf("genwild\n");
 	island(cfg.town_y, cfg.town_x,WILD_GRASSLAND, WILD_UNDEFINED,5);
 	wild_info[cfg.town_y][cfg.town_x].type=WILD_TOWN;
@@ -3282,4 +3286,5 @@ void genwild(){
 	addforest();
 	addlakes();
 	addwaste();
+	Rand_quick=oldrand;
 }

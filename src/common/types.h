@@ -1513,33 +1513,20 @@ struct player_type
 
 	s16b max_plv;		/* Max Player Level */
 	s16b max_dlv;		/* Max level explored - extension needed! */
-#ifdef NEW_DUNGEON
 	worldpos recall_pos;	/* what position to recall to */
 	u16b town_x, town_y;
-#else
-	s16b recall_depth;	/* which depth to recall to */
-#endif
 
 	s16b stat_max[6];	/* Current "maximal" stat values */
 	s16b stat_cur[6];	/* Current "natural" stat values */
 
 	char history[4][60];	/* The player's "history" */
 
-#ifndef NEW_DUNGEON
-	s16b world_x;	/* The wilderness x coordinate */
-	s16b world_y;	/* The wilderness y coordinate */
-#endif
-
 	unsigned char wild_map[MAX_WILD_8]; /* the wilderness we have explored */
 
 	s16b py;		/* Player location in dungeon */
 	s16b px;
 
-#ifdef NEW_DUNGEON
 	struct worldpos wpos;
-#else
-	s32b dun_depth;		/* Player depth -- wilderness level offset */
-#endif
 
 	s16b cur_hgt;		/* Height and width of their dungeon level */
 	s16b cur_wid;

@@ -239,33 +239,14 @@ static void prt_sane(void) {
 /*
  * Prints depth into the dungeon
  */
-#ifdef NEW_DUNGEON
 void prt_depth(int x, int y, int z, bool town)
-#else
-void prt_depth(int depth)
-#endif
 {
 	char depths[32];
 
-#ifdef NEW_DUNGEON
 	if(town)
 		sprintf(depths, "(%d,%d) Town", x, y);
 	else
 		sprintf(depths, "(%d,%d) %dft", x, y, z*50);
-#else
-	if (!depth)
-	{
-		(void)strcpy(depths, "Town");
-	}
-	else if (depth_in_feet)
-	{
-		(void)sprintf(depths, "%d ft", depth * 50);
-	}
-	else
-	{
-		(void)sprintf(depths, "Lev %d", depth);
-	}
-#endif
 
 	/* Right-Adjust the "depth" and clear old values */
 	prt(format("%7s", depths), 23, COL_DEPTH);
