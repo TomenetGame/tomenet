@@ -659,21 +659,19 @@ Change list for PernMangband
 - recall-depth array for each dungeons/towers
 - full colour-support in show_file
 [big ones]
+- new wilderness generator {Evileye}
+- new terrains and their effects (f_info.txt) {Jir}
 - add more dungeon flags
-- new wilderness generator
-- f_info.txt reform
 - variety of dungeon types (d_info.txt)
-- new terrains and their effects (f_info.txt)
-- better wilderness generator
-- better cave-generator (generate.c)
+- better cave-generator (generate.c) {Asclep?}
 - fully-implemented multiple towns (t_*.txt/st_info.txt)
 - quests (needing LUA-hooks)
 - guild, or new party system
 - backbone scenario (like token system)
-- new classes/races(/subclasses)
-- interractive spell system (like in C3)
 - total rebalancing for all of them
 - client updates necessary
 - item stacks/monster inventory
 - better vaults
-- fix gfx again
+- fix gfx again {Asclep}
+- new classes/races(/subclasses)
+- interractive spell system (like in C3)
