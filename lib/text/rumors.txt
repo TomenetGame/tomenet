@@ -205,7 +205,7 @@ The opinion you had were salt expresses.
 They say that you there is a Nether spell to control the three Elven Rings.
 They say that the dark mists of morgoth can both bestow and remove the curse.
 Save the game in dungeon and you'll be buried there.
-They say that in this world The Lady rules us all.
+They say that in this world {RThe Lady {wrules us all.
 They say that a sorceror never waits for a feeling to come.
 They say that a genuine artifact hates to remain unused.
 They say that you should find a way to use mimic rings.
@@ -238,12 +238,12 @@ They say that a star is a badge for sheriffs.
 Ever seen a broken stick of *slay* lag?
 They say that you should be good to the poor farmer.
 Never forget to lock the door when you leave your house!
-They say that The Lady hates to have her *real* name called.
+They say that {RThe Lady {whates to have her *real* name called.
 They say that some cookies were imported from overseas.
 They say that DarkSword can be great if enchanted neatly.
 They say that a pair of leather boots 'Ringil' won't always grant speed.
 They say that some supreme spells won't concern worldly matters.
-You can do away with notorious The Lady by doing the following:
+You can do away with notorious {RThe Lady {wby doing the following:
 They say that a clever thief never does her job with her pack full.
 They say that a Demigod should leave his worldly treasures.
 They say that Morgoth never forget to inscribe his hammer with {{!E}.
@@ -302,7 +302,7 @@ Ever tried to rob a store?
 Ever been in yeek town?
 Ever heard about Mirkwood Legends?
 Ever seen a God or Goddess player?
-[The Lady] {BThou art doomed, poor little mangband player..
+{R[The Lady] {BThou art doomed, poor little mangband player..
 {B[Olorin] mh
 {D[Moltor] {Bpfft
 {B[Evileye] hehe
@@ -355,7 +355,7 @@ They say that archers never care for damage rings.
 Try inscribing #'Ringil' on your Long Sword.
 Try inscribing #of Feanor on your Hard Leather Boots.
 Ever tried to eat a ring?
-Ever asked The Lady for a date?
+Ever asked {RThe Lady {wfor a date?
 You feel the Windows (Xp) on your hard disk is as broken as all the others...
 They say that playing angband on Windoze is a bad joke.
 Darn, that rogue casted the spell of Summon Lag!
