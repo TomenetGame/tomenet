@@ -891,9 +891,9 @@ errr init_gcu(void)
 	/* Do we have color, and enough color, available? */
 	can_use_color = ((start_color() != ERR) && has_colors() &&
 	                 (COLORS >= 8) && (COLOR_PAIRS >= 8));	             
-	  can_use_color = TRUE;
-	  COLORS=16;
-	  COLOR_PAIRS=16;
+
+	COLORS=16;
+	COLOR_PAIRS=16;
 #ifdef REDEFINE_COLORS
 	/* Can we change colors? */
 	can_fix_color = (can_use_color && can_change_color() &&
@@ -960,7 +960,6 @@ errr init_gcu(void)
 		colortable[13] = (COLOR_PAIR(5) | A_BRIGHT);	/* Light Green */
 		colortable[14] = (COLOR_PAIR(6) | A_BRIGHT);	/* Light Blue */
 		colortable[15] = (COLOR_PAIR(7) | A_NORMAL);	/* Light Umber XXX */
-		/* } */
 	}
 
 	/* Attempt to use colors */
