@@ -58,7 +58,7 @@ SERV_SRCS = \
   server/cmd6.c server/store.c server/birth.c server/load2.c server/randart.c \
   server/sched.c server/generate.c server/wild.c server/dungeon.c \
   server/init1.c server/init2.c server/nserver.c server/printout.c \
-  server/main.c server/traps.c
+  server/main.c server/traps.c server/csfunc.c
 
 SERV_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -72,7 +72,7 @@ SERV_OBJS = \
   server/cmd6.o server/store.o server/birth.o server/load2.o server/randart.o \
   server/sched.o server/generate.o server/wild.o server/dungeon.o \
   server/init1.o server/init2.o server/nserver.o server/printout.o \
-  server/main.o server/traps.o
+  server/main.o server/traps.o server/csfunc.o
 
 
 CLI_SRCS = \
