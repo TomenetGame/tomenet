@@ -6412,6 +6412,9 @@ bool master_player(int Ind, char *parms){
 		case 'B':
 			/* This could be fun - be wise dungeon master */
 			msg_broadcast(Ind,&parms[1]);
+			break;
+		case 'r':
+			/* Delete a player from the database/savefile */
 	}
 	return(FALSE);
 }
