@@ -1115,13 +1115,25 @@ void do_cmd_observe(int Ind, int item)
 	/* Require full knowledge */
 	if (!(o_ptr->ident & ID_MENTAL))
 	{
+		switch(o_ptr->tval){
+		case TV_HAFTED:
+			msg_print(Ind, "It's a hafted weapon."); break;
+		case TV_POLEARM:
+			msg_print(Ind, "It's a polearm."); break;
+		case TV_SWORD:
+			msg_print(Ind, "It's a sword-type weapon."); break;
+		case TV_AXE:
+			msg_print(Ind, "It's an axe-type weapon."); break;
+		default:
+			if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "You have no special knowledge about that item.");
+			break;
+		}
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
 			int blows = calc_blows(Ind, o_ptr);
 			msg_format(Ind, "With it, you can usually attack %d time%s/turn.",
 					blows, blows > 1 ? "s" : "");
 		}
-		else msg_print(Ind, "You have no special knowledge about that item.");
 		return;
 	}
 

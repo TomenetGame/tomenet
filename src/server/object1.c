@@ -3593,6 +3593,19 @@ void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 	fprintf(fff, "\n");
 
+        switch(o_ptr->tval){
+        case TV_HAFTED:
+                fprintf(fff, "It's a hafted weapon.\n"); break;
+        case TV_POLEARM:
+                fprintf(fff, "It's a polearm.\n"); break;
+        case TV_SWORD:
+                fprintf(fff, "It's a sword-type weapon.\n"); break;
+        case TV_AXE:
+                fprintf(fff, "It's an axe-type weapon.\n"); break;
+        default:
+                break;
+        }
+
 	fprintf(fff, "Using it you would have %d blow%s and do an average damage per turn of:\n", p_ptr->num_blow, (p_ptr->num_blow) ? "s" : "");
 
 	if (f1 & TR1_SLAY_ANIMAL) output_dam(Ind, fff, o_ptr, 2, 0, "animals", NULL);

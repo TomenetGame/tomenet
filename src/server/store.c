@@ -3108,7 +3108,20 @@ void store_examine(int Ind, int item)
 	/* Require full knowledge */
 	if (!(o_ptr->ident & (ID_MENTAL)))
 	{
-		/* This can only happen in the home */
+                switch(o_ptr->tval){
+	        case TV_HAFTED:
+    		        msg_print(Ind, "It's a hafted weapon."); break;
+                case TV_POLEARM:
+	        	msg_print(Ind, "It's a polearm."); break;
+    	        case TV_SWORD:
+        	        msg_print(Ind, "It's a sword-type weapon."); break;
+                case TV_AXE:
+	                msg_print(Ind, "It's an axe-type weapon."); break;
+        	default:
+	                if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "You have no special knowledge about that item.");
+        	        break;
+	        }
+ 		/* This can only happen in the home */
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
 			int blows = calc_blows(Ind, o_ptr);
@@ -4112,6 +4125,19 @@ void home_examine(int Ind, int item)
 	/* Require full knowledge */
 	if (!(o_ptr->ident & (ID_MENTAL)))
 	{
+                switch(o_ptr->tval){
+	        case TV_HAFTED:
+    		        msg_print(Ind, "It's a hafted weapon."); break;
+                case TV_POLEARM:
+	        	msg_print(Ind, "It's a polearm."); break;
+    	        case TV_SWORD:
+        	        msg_print(Ind, "It's a sword-type weapon."); break;
+                case TV_AXE:
+	                msg_print(Ind, "It's an axe-type weapon."); break;
+        	default:
+	                if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "You have no special knowledge about that item.");
+        	        break;
+	        }
 		/* This can only happen in the home */
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
