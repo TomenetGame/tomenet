@@ -2753,9 +2753,11 @@ void player_talk_aux(int Ind, cptr message)
 		party_msg_format(0 - target, "[%s:%s] %s",
 		                 parties[0 - target].name, sender, colon);
 
+#if 0
 		/* Also send back to sender */
 		msg_format(Ind, "[%s:%s] %s",
 		           parties[0 - target].name, sender, colon);
+#endif
 
 		/* Done */
 		return;
