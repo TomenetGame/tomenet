@@ -31,10 +31,11 @@ cave_type **getcave(struct worldpos *wpos)
 	else
 	{
 		if(wpos->wz>0){
-			if(wild->tower)
+			if(wild->tower && wpos->wz<=wild->tower->maxdepth){
 				return(wild->tower->level[wpos->wz-1].cave);
+			}
 		}
-		else if(wild->dungeon)
+		else if(wild->dungeon && wpos->wz>=-wild->dungeon->maxdepth)
 			return(wild->dungeon->level[ABS(wpos->wz)-1].cave);
 	}
 	return((cave_type **)NULL);
