@@ -254,11 +254,13 @@ static void Init_receive(void)
 
 static int Init_setup(void)
 {
-	int n = 0;
+	int n = 0, i;
 	char buf[1024];
 	FILE *fp;
 
 	Setup.frames_per_second = cfg.fps;
+	Setup.max_race = MAX_RACES;
+	Setup.max_class = MAX_CLASS;
 	Setup.motd_len = 23 * 80;
 	Setup.setup_size = sizeof(setup_t);
 
@@ -279,6 +281,17 @@ static int Init_setup(void)
 		my_fclose(fp);
 	}
 	
+	/* MEGAHACK -- copy race/class names */
+	for (i = 0; i < MAX_RACES; i++)
+	{
+		strncpy(&Setup.race_title[i], race_info[i].title, 12);
+	}
+
+	for (i = 0; i < MAX_CLASS; i++)
+	{
+		strncpy(&Setup.class_title[i], class_info[i].title, 12);
+	}
+
 	return 0;
 }
 	
@@ -773,7 +786,8 @@ static void Contact(int fd, int arg)
 
 	/* s_printf("Sending login port %d, status %d.\n", login_port, status); */
 
-        Packet_printf(&ibuf, "%c%c%d%c", reply_to, status, login_port, MAX_CLASS);
+        Packet_printf(&ibuf, "%c%c%d%c", reply_to, status, login_port);
+//        Packet_printf(&ibuf, "%c%c%d%c", reply_to, status, login_port, MAX_CLASS);
 
 /* -- DGDGDGDG it would be NEAT to have classes sent to the cleint at conenciton, sadly Im too clumpsy at network code ..
         for (i = 0; i < MAX_CLASS; i++)
@@ -800,7 +814,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 		return status;
 	}
 
-	if (version < ((3 << 12) | (2 << 8) | (0 << 4) | 0))
+	if (version < ((4 << 12) | (0 << 8) | (0 << 4) | 0))
 		return E_VERSION;
 
 	if(!player_allowed(nick))
@@ -1168,7 +1182,7 @@ static int Handle_setup(int ind)
 {
 	connection_t *connp = &Conn[ind];
 	char *buf;
-	int n, len;
+	int n, len, i;
 	
 	if (connp->state != CONN_SETUP)
 	{
@@ -1178,14 +1192,26 @@ static int Handle_setup(int ind)
 
 	if (connp->setup == 0)
 	{
-		n = Packet_printf(&connp->c, "%ld%hd",
-			Setup.motd_len, Setup.frames_per_second);
+		n = Packet_printf(&connp->c, "%ld%hd%c%c",
+			Setup.motd_len, Setup.frames_per_second, Setup.max_race, Setup.max_class);
 
 		if (n <= 0)
 		{
 			Destroy_connection(ind, "Setup 0 write error");
 			return -1;
 		}
+
+        for (i = 0; i < MAX_RACES; i++)
+        {
+//			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
+			Packet_printf(&connp->c, "%s", Setup.race_title[i]);
+        }
+
+        for (i = 0; i < MAX_CLASS; i++)
+        {
+//			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
+			Packet_printf(&connp->c, "%s", Setup.class_title[i]);
+        }
 
 		connp->setup = (char *) &Setup.motd[0] - (char *) &Setup;
 	}

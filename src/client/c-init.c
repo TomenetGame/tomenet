@@ -276,7 +276,7 @@ void client_init(char *argv1, bool skip)
 	char host_name[80];
 	u16b version = MY_VERSION;
         s32b temp;
-        char max_class;
+//        char max_class;
 
 	/* Setup the file paths */
 	init_stuff();
@@ -384,7 +384,8 @@ void client_init(char *argv1, bool skip)
 		}
 
 		/* Extra info from packet */
-		Packet_scanf(&ibuf, "%c%c%d%c", &reply_to, &status, &temp, &max_class);
+//		Packet_scanf(&ibuf, "%c%c%d%c", &reply_to, &status, &temp, &max_class);
+		Packet_scanf(&ibuf, "%c%c%d%c", &reply_to, &status, &temp);
 
                 /* Hack -- set the login port correctly */
 		login_port = (int) temp;

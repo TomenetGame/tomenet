@@ -960,6 +960,11 @@ typedef struct setup_t setup_t;
 struct setup_t
 {
 	s16b frames_per_second;
+	byte max_race;
+	byte max_class;
+	char race_title[MAX_RACES][12];	// "Unbeliever" (10)
+	char class_title[MAX_RACES][12];	// "DragonRider"(11)
+//	byte max_subclass;	// etc
 	int motd_len;
 	int setup_size;
 	char motd[80 * 23];

@@ -150,13 +150,57 @@ int Net_setup(void)
 		{
 			if (done == 0)
 			{
-				n = Packet_scanf(&cbuf, "%ld%hd",
-					&Setup.motd_len, &Setup.frames_per_second);
+				n = Packet_scanf(&cbuf, "%ld%hd%c%c",
+					&Setup.motd_len, &Setup.frames_per_second, &Setup.max_race, &Setup.max_class);
 				if (n <= 0)
 				{
 					errno = 0;
 					quit("Can't read setup info from reliable data buffer");
 				}
+				/* test -Jir- */
+				{
+					int i;
+					for (i = 0; i < Setup.max_race; i++)
+					{
+
+						Packet_scanf(&cbuf, "%s", &Setup.race_title[i]);
+						printf("r %d: %s\n", i, Setup.race_title[i]);
+					}
+
+					for (i = 0; i < Setup.max_class; i++)
+					{
+						//			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
+						Packet_scanf(&cbuf, "%s", &Setup.class_title[i]);
+						printf("c %d: %s\n", i, Setup.class_title[i]);
+					}
+				}
+
+#if 0 // -- DGDGDGDG it would be NEAT to have classes sent to the cleint at conenciton, sadly Im too clumpsy at network code ..
+        i = 0;
+        while (i < max_class)
+        {
+                int ii;
+
+		/* Set timeout */
+		SetTimeout(1, 0);
+
+		/* Wait for info */
+		if (!SocketReadable(Socket)) continue;
+
+		/* Read reply */
+		if(DgramRead(Socket, ibuf.buf, ibuf.size) <= 0)
+		{
+			/*printf("DgramReceiveAny failed (errno = %d)\n", errno);*/
+			continue;
+		}
+
+                Packet_scanf(&ibuf, "%c%s", &ii, buf);
+                printf("c %d: %s\n", ii, buf);
+
+                i++;
+        }
+#endif
+
 				ptr = (char *) &Setup;
 				done = (char *) &Setup.motd[0] - ptr;
 				todo = Setup.motd_len;
