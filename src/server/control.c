@@ -29,17 +29,10 @@ static void console_status()
 		if (p_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Add an entry */
-#ifdef NEW_DUNGEON
-		Packet_printf(&console_buf, "%s%s%s%d%d",
+		Packet_printf(&console_buf, "%s%s%s%d%d%d%d",
 			p_ptr->name, race_info[p_ptr->prace].title,
 			class_info[p_ptr->pclass].title, p_ptr->lev,
 			p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-#else
-		Packet_printf(&console_buf, "%s%s%s%d%d",
-			p_ptr->name, race_info[p_ptr->prace].title,
-			class_info[p_ptr->pclass].title, p_ptr->lev,
-			p_ptr->dun_depth);
-#endif
 	}
 }
 

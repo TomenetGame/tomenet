@@ -167,12 +167,8 @@ void monster_gain_exp(int m_idx, u32b exp, bool silent)
 void delete_monster_idx(int i)
 {
 	int x, y, Ind;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos;
 	cave_type **zcave;
-#else
-	int Depth;
-#endif
 	monster_type *m_ptr = &m_list[i];
 
         monster_race *r_ptr = race_inf(m_ptr);
@@ -180,11 +176,7 @@ void delete_monster_idx(int i)
 	/* Get location */
 	y = m_ptr->fy;
 	x = m_ptr->fx;
-#ifdef NEW_DUNGEON
 	wpos=&m_ptr->wpos;
-#else
-	Depth = m_ptr->dun_depth;
-#endif
 
 	/* Hack -- Reduce the racial counter */
 	r_ptr->cur_num--;
@@ -214,18 +206,12 @@ void delete_monster_idx(int i)
 	/* Make sure the level is allocated, it won't be if we are
 	 * clearing an abandoned wilderness level of monsters
 	 */
-#ifdef NEW_DUNGEON
 	if((zcave=getcave(wpos))){
 		zcave[y][x].m_idx=0;
 	}
-	everyone_lite_spot(wpos, y, x);
-#else
-	if (cave[Depth])
-		cave[Depth][y][x].m_idx = 0;
-
 	/* Visual update */
-	everyone_lite_spot(Depth, y, x);
-#endif
+	everyone_lite_spot(wpos, y, x);
+
 	/* Wipe the Monster */
 	FREE(m_ptr->r_ptr, monster_race);
 	WIPE(m_ptr, monster_type);
@@ -235,27 +221,16 @@ void delete_monster_idx(int i)
 /*
  * Delete the monster, if any, at a given location
  */
-#ifdef NEW_DUNGEON
 void delete_monster(struct worldpos *wpos, int y, int x)
-#else
-void delete_monster(int Depth, int y, int x)
-#endif
 {
 	cave_type *c_ptr;
 
 	/* Paranoia */
-#ifdef NEW_DUNGEON        
 	cave_type **zcave;
 	if (!in_bounds(y, x)) return;
 	if((zcave=getcave(wpos))){
-		c_ptr=&zcave[y][x];
-#else
-	if (!in_bounds(Depth, y, x)) return;
-
-	if (cave[Depth]){
 		/* Check the grid */
-		c_ptr = &cave[Depth][y][x];
-#endif
+		c_ptr=&zcave[y][x];
 		/* Delete the monster (if any) */
 		if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx);
 	}
@@ -263,11 +238,7 @@ void delete_monster(int Depth, int y, int x)
 		int i;
 		for(i=0;i<m_max;i++){
 			monster_type *m_ptr=&m_list[i];
-#ifdef NEW_DUNGEON
 			if(m_ptr->r_idx && inarea(wpos, &m_ptr->wpos))
-#else
-			if(m_ptr->r_idx && Depth==m_ptr->dun_depth)
-#endif
 			{
 				if(y==m_ptr->fy && x==m_ptr->fx)
 					delete_monster_idx(i);
@@ -337,12 +308,8 @@ void compact_monsters(int size)
 			if (r_ptr->flags1 & RF1_UNIQUE) chance = 99;
 
 			/* Monsters in town don't have much of a chance */
-#ifdef NEW_DUNGEON
 			if (istown(&m_ptr->wpos))
 				chance = 70;
-#else
-			if (!m_ptr->dun_depth) chance = 70;
-#endif
 
 			/* All monsters get a saving throw */
 			if (rand_int(100) < chance) continue;
@@ -374,22 +341,13 @@ void compact_monsters(int size)
 		{
 			int ny = m_list[m_max].fy;
 			int nx = m_list[m_max].fx;
-#ifdef NEW_DUNGEON
 			wpos = &m_list[m_max].wpos;
-#else
-			int Depth = m_list[m_max].dun_depth;
-#endif
 
 			/* Update the cave */
 			/* Hack -- make sure the level is allocated, as in the wilderness
 			   it sometimes will not be */
-#ifdef NEW_DUNGEON
 			if((zcave=getcave(wpos)))
 				zcave[ny][nx].m_idx = i;
-#else
-			if (cave[Depth])                        
-				cave[Depth][ny][nx].m_idx = i;
-#endif
 
 			/* Structure copy */
 			m_list[i] = m_list[m_max];
@@ -438,11 +396,7 @@ void compact_monsters(int size)
  *
  * Note that this only deletes monsters that on the specified depth
  */
-#ifdef NEW_DUNGEON
 void wipe_m_list(struct worldpos *wpos)
-#else
-void wipe_m_list(int Depth)
-#endif
 {
 	int i;
 
@@ -490,11 +444,7 @@ void wipe_m_list(int Depth)
 	{
 		monster_type *m_ptr = &m_list[i];
 
-#ifdef NEW_DUNGEON
 		if (inarea(&m_ptr->wpos,wpos))
-#else
-		if (m_ptr->dun_depth == Depth)
-#endif
 			delete_monster_idx(i);
 	}
 
@@ -1377,12 +1327,8 @@ void update_mon(int m_idx, bool dist)
 	int fy = m_ptr->fy;
 	int fx = m_ptr->fx;
 
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&m_ptr->wpos;
 	cave_type **zcave;
-#else
-	int Depth = m_ptr->dun_depth;
-#endif
 
 	int Ind = m_ptr->closest_player;
 
@@ -1414,11 +1360,7 @@ void update_mon(int m_idx, bool dist)
 			continue;
 
 		/* If he's not on this depth, skip him */
-#ifdef NEW_DUNGEON
 		if(!inarea(wpos, &p_ptr->wpos))
-#else
-		if (p_ptr->dun_depth != Depth)
-#endif
 		{
 			p_ptr->mon_vis[m_idx] = FALSE;
 			p_ptr->mon_los[m_idx] = FALSE;
@@ -1429,11 +1371,7 @@ void update_mon(int m_idx, bool dist)
 		 * we are "detatched" monsters.
 		 */
 
-#ifdef NEW_DUNGEON
 		if(!(zcave=getcave(wpos))) continue;
-#else
-		if (!cave[Depth]) continue;
-#endif
 
 		/* Calculate distance */
 		if (dist)
@@ -1464,11 +1402,7 @@ void update_mon(int m_idx, bool dist)
 		/* Process "nearby" monsters on the current "panel" */
 		if (panel_contains(fy, fx))
 		{
-#ifdef NEW_DUNGEON
 			cave_type *c_ptr = &zcave[fy][fx];
-#else
-			cave_type *c_ptr = &cave[Depth][fy][fx];
-#endif
 			byte *w_ptr = &p_ptr->cave_flag[fy][fx];
 
 			/* Normal line of sight, and player is not blind */
@@ -1692,9 +1626,7 @@ void update_player(int Ind)
 	player_type *p_ptr, *q_ptr = Players[Ind];
 
 	int i;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
-#endif
 
 	/* Current player location */
 	int py = q_ptr->py;
@@ -1725,11 +1657,7 @@ void update_player(int Ind)
 		if (p_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Skip players not on this depth */
-#ifdef NEW_DUNGEON
 		if(!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
-#else
-		if (p_ptr->dun_depth != q_ptr->dun_depth) continue;
-#endif
 
 		/* Player can always see himself */
 		if (Ind == i) continue;
@@ -1740,11 +1668,7 @@ void update_player(int Ind)
 		/* Process players on current panel */
 		if (panel_contains(py, px) && zcave)
 		{
-#ifdef NEW_DUNGEON
 			cave_type *c_ptr = &zcave[py][px];
-#else
-			cave_type *c_ptr = &cave[p_ptr->dun_depth][py][px];
-#endif
 			byte *w_ptr = &p_ptr->cave_flag[py][px];
 
 			/* Normal line of sight, and player is not blind */
@@ -1909,11 +1833,7 @@ void update_players(void)
 
 
 /* Scan all players on the level and see if at least one can find the unique */
-#ifdef NEW_DUNGEON
 bool allow_unique_level(int r_idx, struct worldpos *wpos)
-#else
-bool allow_unique_level(int r_idx, int Depth)
-#endif
 {
 	int i;
 	
@@ -1949,11 +1869,7 @@ bool allow_unique_level(int r_idx, int Depth)
  * XXX XXX XXX Actually, do something similar for artifacts, to simplify
  * the "preserve" mode, and to make the "what artifacts" flag more useful.
  */
-#ifdef NEW_DUNGEON
 static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, bool clo)
-#else
-static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int randuni, bool slp, bool clo)
-#endif
 {
 	int                     i, Ind, j;
 
@@ -2009,11 +1925,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 
 
 	/* Hack -- "unique" monsters must be "unique" */
-#ifdef NEW_DUNGEON
 	if ((r_ptr->flags1 & RF1_UNIQUE) && ((!allow_unique_level(r_idx, wpos)) || (r_ptr->cur_num >= r_ptr->max_num)))
-#else
-	if ((r_ptr->flags1 & RF1_UNIQUE) && ((!allow_unique_level(r_idx, Depth)) || (r_ptr->cur_num >= r_ptr->max_num)))
-#endif
 	{
 		/* Cannot create */
 		return (FALSE);
@@ -2021,11 +1933,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 
 
 	/* Depth monsters may NOT be created out of depth */
-#ifdef NEW_DUNGEON
 	if ((r_ptr->flags1 & RF1_FORCE_DEPTH) && (getlevel(wpos) < r_ptr->level))
-#else
-	if ((r_ptr->flags1 & RF1_FORCE_DEPTH) && (Depth < r_ptr->level))
-#endif
 	{
 		/* Cannot create */
 		return (FALSE);
@@ -2040,11 +1948,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 
 
 	/* Powerful monster */
-#ifdef NEW_DUNGEON
 	if (r_ptr->level > getlevel(wpos))
-#else
-	if (r_ptr->level > Depth)
-#endif
 	{
 		/* Unique monsters */
 		if (r_ptr->flags1 & RF1_UNIQUE)
@@ -2053,11 +1957,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 			/*if (cheat_hear) msg_format("Deep Unique (%s).", name);*/
 
 			/* Boost rating by twice delta-depth */
-#ifdef NEW_DUNGEON
 			rating += (r_ptr->level - getlevel(wpos)) * 2;
-#else
-			rating += (r_ptr->level - Depth) * 2;
-#endif
 		}
 
 		/* Normal monsters */
@@ -2067,11 +1967,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 			/*if (cheat_hear) msg_format("Deep Monster (%s).", name);*/
 
 			/* Boost rating by delta-depth */
-#ifdef NEW_DUNGEON
 			rating += (r_ptr->level - getlevel(wpos));
-#else
-			rating += (r_ptr->level - Depth);
-#endif
 		}
 	}
 #if 0
@@ -2085,11 +1981,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 
 
 	/* Access the location */
-#ifdef NEW_DUNGEON
 	c_ptr = &zcave[y][x];
-#else
-	c_ptr = &cave[Depth][y][x];
-#endif
 
 	/* Make a new monster */
 	c_ptr->m_idx = m_pop();
@@ -2109,11 +2001,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 	/* Place the monster at the location */
 	m_ptr->fy = y;
 	m_ptr->fx = x;
-#ifdef NEW_DUNGEON
 	wpcopy(&m_ptr->wpos, wpos);
-#else
-	m_ptr->dun_depth = Depth;
-#endif
 
 	m_ptr->special = FALSE;
 
@@ -2206,11 +2094,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 	}
 
 	/* Should we gain levels ? */
-#ifdef NEW_DUNGEON
 	if (getlevel(wpos) >100)
-#else
-	if (Depth > 100)
-#endif
 	{
 		int l = m_ptr->level + 100;
 
@@ -2249,11 +2133,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 /*
  * Attempt to place a "group" of monsters around the given location
  */
-#ifdef NEW_DUNGEON
 static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, bool slp)
-#else
-static bool place_monster_group(int Depth, int y, int x, int r_idx, bool slp)
-#endif
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -2264,37 +2144,23 @@ static bool place_monster_group(int Depth, int y, int x, int r_idx, bool slp)
 
 	byte hack_y[GROUP_MAX];
 	byte hack_x[GROUP_MAX];
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
-#endif
 
 	/* Pick a group size */
 	total = randint(13);
 
 	/* Hard monsters, small groups */
-#ifdef NEW_DUNGEON
 	if (r_ptr->level > getlevel(wpos))
 	{
 		extra = r_ptr->level - getlevel(wpos);
-#else
-	if (r_ptr->level > Depth)
-	{
-		extra = r_ptr->level - Depth;
-#endif
 		extra = 0 - randint(extra);
 	}
 
 	/* Easy monsters, large groups */
-#ifdef NEW_DUNGEON
 	else if (r_ptr->level < getlevel(wpos))
 	{
 		extra = getlevel(wpos) - r_ptr->level;
-#else
-	else if (r_ptr->level < Depth)
-	{
-		extra = Depth - r_ptr->level;
-#endif
 		extra = randint(extra);
 	}
 
@@ -2332,20 +2198,11 @@ static bool place_monster_group(int Depth, int y, int x, int r_idx, bool slp)
 			int mx = hx + ddx_ddd[i];
 			int my = hy + ddy_ddd[i];
 
-
-#ifdef NEW_DUNGEON
 			/* Walls and Monsters block flow */
 			if (!cave_empty_bold(zcave, my, mx)) continue;
 
 			/* Attempt to place another monster */
 			if (place_monster_one(wpos, my, mx, r_idx, pick_ego_monster(r_idx, getlevel(wpos)), 0, slp, FALSE))
-#else
-			/* Walls and Monsters block flow */
-			if (!cave_empty_bold(Depth, my, mx)) continue;
-
-			/* Attempt to place another monster */
-			if (place_monster_one(Depth, my, mx, r_idx, pick_ego_monster(r_idx, Depth), 0, slp, FALSE))
-#endif
 			{
 				/* Add it to the "hack" set */
 				hack_y[hack_n] = my;
@@ -2413,29 +2270,18 @@ static bool place_monster_okay(int r_idx)
  * Note the use of the new "monster allocation table" code to restrict
  * the "get_mon_num()" function to "legal" escort types.
  */
-#ifdef NEW_DUNGEON
 bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, bool clo)
-#else
-bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp, bool clo)
-#endif
 {
 	int                     i;
 
 	monster_race    *r_ptr = &r_info[r_idx];
 
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	int level=getlevel(wpos);
 	if(!(zcave=getcave(wpos))) return(FALSE);
-#endif
 
 	/* Place one monster, or fail */
-#ifdef NEW_DUNGEON
 	if (!place_monster_one(wpos, y, x, r_idx, pick_ego_monster(r_idx, level), 0, slp, clo)) return (FALSE);
-#else
-	if (!place_monster_one(Depth, y, x, r_idx, pick_ego_monster(r_idx, Depth), 0, slp, clo)) return (FALSE);
-#endif
-
 
 	/* Require the "group" flag */
 	if (!grp) return (TRUE);
@@ -2445,11 +2291,7 @@ bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp, b
 	if (r_ptr->flags1 & RF1_FRIENDS)
 	{
 		/* Attempt to place a group */
-#ifdef NEW_DUNGEON
 		(void)place_monster_group(wpos, y, x, r_idx, slp);
-#else
-		(void)place_monster_group(Depth, y, x, r_idx, slp);
-#endif
 	}
 
 
@@ -2462,15 +2304,9 @@ bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp, b
 			int nx, ny, z, d = 3;
 
 			/* Pick a location */
-#ifdef NEW_DUNGEON
 			scatter(wpos, &ny, &nx, y, x, d, 0);
 			/* Require empty grids */
 			if (!cave_empty_bold(zcave, ny, nx)) continue;
-#else
-			scatter(Depth, &ny, &nx, y, x, d, 0);
-			/* Require empty grids */
-			if (!cave_empty_bold(Depth, ny, nx)) continue;
-#endif
 
 			/* Set the escort index */
 			place_monster_idx = r_idx;
@@ -2498,22 +2334,14 @@ bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp, b
 			if (!z) break;
 
 			/* Place a single escort */
-#ifdef NEW_DUNGEON
 			(void)place_monster_one(wpos, ny, nx, z, pick_ego_monster(z, getlevel(wpos)), 0, slp, FALSE);
-#else
-			(void)place_monster_one(Depth, ny, nx, z, pick_ego_monster(z, Depth), 0, slp, FALSE);
-#endif
 
 			/* Place a "group" of escorts if needed */
 			if ((r_info[z].flags1 & RF1_FRIENDS) ||
 			    (r_ptr->flags1 & RF1_ESCORTS))
 			{
 				/* Place a group of monsters */
-#ifdef NEW_DUNGEON
 				(void)place_monster_group(wpos, ny, nx, z, slp);
-#else
-				(void)place_monster_group(Depth, ny, nx, z, slp);
-#endif
 			}
 		}
 	}
@@ -2529,11 +2357,7 @@ bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool grp, b
  *
  * Attempt to find a monster appropriate to the "monster_level"
  */
-#ifdef NEW_DUNGEON
 bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
-#else
-bool place_monster(int Depth, int y, int x, bool slp, bool grp)
-#endif
 {
 	int r_idx;
 	struct dungeon_type *d_ptr;
@@ -2573,11 +2397,7 @@ bool place_monster(int Depth, int y, int x, bool slp, bool grp)
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster */
-#ifdef NEW_DUNGEON
 	if (place_monster_aux(wpos, y, x, r_idx, slp, grp, FALSE)) return (TRUE);
-#else
-	if (place_monster_aux(Depth, y, x, r_idx, slp, grp, FALSE)) return (TRUE);
-#endif
 
 	/* Oops */
 	return (FALSE);
@@ -2646,22 +2466,14 @@ bool place_monster(int Depth, int y, int x, bool slp, bool grp)
  *
  * Use "monster_level" for the monster level
  */
-#ifdef NEW_DUNGEON
 bool alloc_monster(struct worldpos *wpos, int dis, int slp)
-#else
-bool alloc_monster(int Depth, int dis, int slp)
-#endif
 {
 	int                     y, x, i, d, min_dis = 999;
 	int                     tries = 0;
 	player_type *p_ptr;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
-#else
-	/* paranoia, make sure the level is allocated */
-	if (!cave[Depth]) return (FALSE);
-#endif
+
 	/* Find a legal, distant, unoccupied, space */
 	while (tries < 50)
 	{
@@ -2669,20 +2481,11 @@ bool alloc_monster(int Depth, int dis, int slp)
 		tries++;
 
 		/* Pick a location */
-#ifdef NEW_DUNGEON
 		y = rand_int(getlevel(wpos) ? MAX_HGT : MAX_HGT);
 		x = rand_int(getlevel(wpos) ? MAX_WID : MAX_WID);
 		
 		/* Require "naked" floor grid */
 		if (!cave_naked_bold(zcave, y, x)) continue;
-#else
-		y = rand_int(Depth ? MAX_HGT : MAX_HGT);
-		x = rand_int(Depth ? MAX_WID : MAX_WID);
-		
-		/* Require "naked" floor grid */
-		if (!cave_naked_bold(Depth, y, x)) continue;
-#endif
-
 
 		/* Accept far away grids */
 		for (i = 1; i < NumPlayers + 1; i++)
@@ -2694,11 +2497,7 @@ bool alloc_monster(int Depth, int dis, int slp)
 				continue;
 
 			/* Skip him if he's not on this depth */
-#ifdef NEW_DUNGEON
 			if(!inarea(wpos, &p_ptr->wpos))
-#else
-			if (p_ptr->dun_depth != Depth)
-#endif
 				continue;
 
 			if ((d = distance(y, x, p_ptr->py, p_ptr->px)) < min_dis)
@@ -2716,11 +2515,7 @@ bool alloc_monster(int Depth, int dis, int slp)
 	/*printf("Trying to place a monster at %d, %d.\n", y, x);*/
 
 	/* Attempt to place the monster, allow groups */
-#ifdef NEW_DUNGEON
 	if (place_monster(wpos, y, x, slp, TRUE)) return (TRUE);
-#else
-	if (place_monster(Depth, y, x, slp, TRUE)) return (TRUE);
-#endif
 
 	/* Nope */
 	return (FALSE);
@@ -3061,18 +2856,11 @@ static bool summon_specific_okay(int r_idx)
  *
  * Note that this function may not succeed, though this is very rare.
  */
-#ifdef NEW_DUNGEON
 bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int type)
-#else
-bool summon_specific(int Depth, int y1, int x1, int lev, int type)
-#endif
 {
 	int i, x, y, r_idx;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
-#endif
-
 
 	/* Look for a location */
 	for (i = 0; i < 20; ++i)
@@ -3081,7 +2869,6 @@ bool summon_specific(int Depth, int y1, int x1, int lev, int type)
 		int d = (i / 15) + 1;
 
 		/* Pick a location */
-#ifdef NEW_DUNGEON
 		scatter(wpos, &y, &x, y1, x1, d, 0);
 
 		/* Require "empty" floor grid */
@@ -3089,15 +2876,6 @@ bool summon_specific(int Depth, int y1, int x1, int lev, int type)
 
 		/* Hack -- no summon on glyph of warding */
 		if (zcave[y][x].feat == FEAT_GLYPH) continue;
-#else
-		scatter(Depth, &y, &x, y1, x1, d, 0);
-
-		/* Require "empty" floor grid */
-		if (!cave_empty_bold(Depth, y, x)) continue;
-
-		/* Hack -- no summon on glyph of warding */
-		if (cave[Depth][y][x].feat == FEAT_GLYPH) continue;
-#endif
 
 		/* Okay */
 		break;
@@ -3121,7 +2899,6 @@ bool summon_specific(int Depth, int y1, int x1, int lev, int type)
 	/* Pick a monster, using the level calculation */
 	/* Exception for Morgoth (so that he won't summon townies)
 	 * This fix presumes Morgie and Morgie only has level 100 */
-//      r_idx = get_mon_num((Depth + lev) / 2 + 5);
 #ifdef NEW_DUNGEON
 //	r_idx = (lev != 100)?get_mon_num((getlevel(wpos) + lev) / 2 + 5) : 100;
 	r_idx = get_mon_num((lev != 100)?(getlevel(wpos) + lev) / 2 + 5 : 100);
@@ -3141,11 +2918,7 @@ bool summon_specific(int Depth, int y1, int x1, int lev, int type)
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster (awake, allow groups) */
-#ifdef NEW_DUNGEON
 	if (!place_monster_aux(wpos, y, x, r_idx, FALSE, TRUE, FALSE)) return (FALSE);
-#else
-	if (!place_monster_aux(Depth, y, x, r_idx, FALSE, TRUE, FALSE)) return (FALSE);
-#endif
 
 	/* Success */
 	return (TRUE);
@@ -3153,17 +2926,11 @@ bool summon_specific(int Depth, int y1, int x1, int lev, int type)
 
 /* summon a specific race near this location */
 /* summon until we can't find a location or we have summoned size */
-#ifdef NEW_DUNGEON
 bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, unsigned char size)
-#else
-bool summon_specific_race(int Depth, int y1, int x1, int r_idx, unsigned char size)
-#endif
 {
 	int c, i, x, y;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
-#endif
 
 	/* Handle failure */
 	if (!r_idx) return (FALSE);
@@ -3179,7 +2946,6 @@ bool summon_specific_race(int Depth, int y1, int x1, int r_idx, unsigned char si
 			/* Pick a distance */
 			int d = (i / 15) + 1;
 
-#ifdef NEW_DUNGEON
 			/* Pick a location */
 			scatter(wpos, &y, &x, y1, x1, d, 0);
 
@@ -3188,16 +2954,6 @@ bool summon_specific_race(int Depth, int y1, int x1, int r_idx, unsigned char si
 
 			/* Hack -- no summon on glyph of warding */
 			if (zcave[y][x].feat == FEAT_GLYPH) continue;
-#else
-			/* Pick a location */
-			scatter(Depth, &y, &x, y1, x1, d, 0);
-
-			/* Require "empty" floor grid */
-			if (!cave_empty_bold(Depth, y, x)) continue;
-
-			/* Hack -- no summon on glyph of warding */
-			if (cave[Depth][y][x].feat == FEAT_GLYPH) continue;
-#endif
 
 			/* Okay */
 			break;
@@ -3207,11 +2963,7 @@ bool summon_specific_race(int Depth, int y1, int x1, int r_idx, unsigned char si
 		if (i == 20) return (FALSE);
 
 		/* Attempt to place the monster (awake, don't allow groups) */
-#ifdef NEW_DUNGEON
 		if (!place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE))
-#else
-		if (!place_monster_aux(Depth, y, x, r_idx, FALSE, FALSE, FALSE))
-#endif
 			return (FALSE);
 
 	}
@@ -3222,22 +2974,13 @@ bool summon_specific_race(int Depth, int y1, int x1, int r_idx, unsigned char si
 
 
 /* summon a specific race at a random location */
-#ifdef NEW_DUNGEON
 bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, unsigned char size)
-#else
-bool summon_specific_race_somewhere(int Depth, int r_idx, unsigned char size)
-#endif
 {
 	int                     y, x;
 	int                     tries = 0;
 
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
-#else
-	/* paranoia, make sure the level is allocated */
-	if (!cave[Depth]) return (FALSE);
-#endif
 
 	/* Find a legal, distant, unoccupied, space */
 	while (tries < 50)
@@ -3246,19 +2989,11 @@ bool summon_specific_race_somewhere(int Depth, int r_idx, unsigned char size)
 		tries++;
 
 		/* Pick a location */
-#ifdef NEW_DUNGEON
 		y = rand_int(getlevel(wpos) ? MAX_HGT : MAX_HGT);
 		x = rand_int(getlevel(wpos) ? MAX_WID : MAX_WID);
 
 		/* Require "naked" floor grid */
 		if (!cave_naked_bold(zcave, y, x)) continue;
-#else
-		y = rand_int(Depth ? MAX_HGT : MAX_HGT);
-		x = rand_int(Depth ? MAX_WID : MAX_WID);
-
-		/* Require "naked" floor grid */
-		if (!cave_naked_bold(Depth, y, x)) continue;
-#endif
 
 
 		/* Abort */
@@ -3270,11 +3005,7 @@ bool summon_specific_race_somewhere(int Depth, int r_idx, unsigned char size)
 	}
 
 	/* Attempt to place the monster */
-#ifdef NEW_DUNGEON
 	if (summon_specific_race(wpos, y, x, r_idx, size)) return TRUE;
-#else
-	if (summon_specific_race(Depth, y, x, r_idx, size)) return TRUE;
-#endif
 	return (FALSE);
 }
 
@@ -3295,11 +3026,9 @@ bool multiply_monster(int m_idx)
 	int                     i, y, x;
 
 	bool result = FALSE;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&m_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
-#endif
 
 	/* NO UNIQUES */
 	if (r_ptr->flags1 & RF1_UNIQUE) return FALSE;
@@ -3310,21 +3039,11 @@ bool multiply_monster(int m_idx)
 		int d = 1;
 
 		/* Pick a location */
-#ifdef NEW_DUNGEON
 		scatter(&m_ptr->wpos, &y, &x, m_ptr->fy, m_ptr->fx, d, 0);
 		/* Require an "empty" floor grid */
 		if (!cave_empty_bold(zcave, y, x)) continue;
 		/* Create a new monster (awake, no groups) */
 		result = place_monster_aux(&m_ptr->wpos, y, x, m_ptr->r_idx, FALSE, FALSE, TRUE);
-#else
-		scatter(m_ptr->dun_depth, &y, &x, m_ptr->fy, m_ptr->fx, d, 0);
-		/* Require an "empty" floor grid */
-		if (!cave_empty_bold(m_ptr->dun_depth, y, x)) continue;
-		/* Create a new monster (awake, no groups) */
-		result = place_monster_aux(m_ptr->dun_depth, y, x, m_ptr->r_idx, FALSE, FALSE, TRUE);
-#endif
-
-
 
 		/* Done */
 		break;
@@ -3575,9 +3294,7 @@ void setup_monsters(void)
 {
 	int i;
 	monster_type *r_ptr;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
-#endif
 	
 	for (i = 0; i < m_max; i++)
 	{
@@ -3585,13 +3302,8 @@ void setup_monsters(void)
 		/* setup the cave m_idx if the level has been 
 		 * allocated.
 		 */
-#ifdef NEW_DUNGEON
 		if((zcave=getcave(&r_ptr->wpos)))
 			zcave[r_ptr->fy][r_ptr->fx].m_idx = i;
-#else
-		if (cave[r_ptr->dun_depth]) 
-			cave[r_ptr->dun_depth][r_ptr->fy][r_ptr->fx].m_idx = i;
-#endif
 	}
 }
 

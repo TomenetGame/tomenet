@@ -314,8 +314,9 @@ bool process_command(void)
 
 static void show_status(void)
 {
-	int i, j, n, lev, depth;
+	int i, j, n, lev;
 	char buf[1024], name[1024], race[80], class[80];
+	struct worldpos wpos;
 
 	/* Clear screen */
 	Term_clear();
@@ -361,11 +362,10 @@ static void show_status(void)
 		}
 
 		/* Extract info */
-		Packet_scanf(&ibuf, "%s%s%s%d%d", name, race, class, &lev, &depth);
+		Packet_scanf(&ibuf, "%s%s%s%d%d%d%d", name, race, class, &lev, &wpos.wx, &wpos.wy, &wpos.wz);
 
 		/* Format the string */
-		sprintf(buf, "%s the %s %s (Level %d) at %d feet", name, race, class,
-				lev, depth);
+		sprintf(buf, "%s the %s %s (Level %d) at %d feet of (%d,%d)", name, race, class, lev, wpos.wz*50, wpos.wx, wpos.wy);
 
 		/* Print it */
 		prt(buf, j, 1);

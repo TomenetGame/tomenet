@@ -1060,11 +1060,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Radius 8 earthquake centered at the monster */
-#ifdef NEW_DUNGEON
 					if (damage > 23) earthquake(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, 8);
-#else
-					if (damage > 23) earthquake(p_ptr->dun_depth, m_ptr->fy, m_ptr->fx, 8);
-#endif
 
 					break;
 				}

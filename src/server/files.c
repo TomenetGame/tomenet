@@ -1555,11 +1555,7 @@ void do_cmd_suicide(int Ind)
 	if (!p_ptr->ghost) 
 	{
 		strcpy(p_ptr->died_from_list, "self-inflicted wounds");
-#ifdef NEW_DUNGEON
 		p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
-#else
-		p_ptr->died_from_depth = p_ptr->dun_depth;
-#endif
 	}
 
 	/* Hack -- clear ghost */
@@ -2297,11 +2293,7 @@ static errr predict_score(int Ind, int line)
 
 	/* Save the level and such */
 	sprintf(the_score.cur_lev, "%3d", p_ptr->lev);
-#ifdef NEW_DUNGEON
 	sprintf(the_score.cur_dun, "%3ld", getlevel(&p_ptr->wpos));
-#else
-	sprintf(the_score.cur_dun, "%3ld", p_ptr->dun_depth);
-#endif
 	sprintf(the_score.max_lev, "%3d", p_ptr->max_plv);
 	sprintf(the_score.max_dun, "%3d", p_ptr->max_dlv);
 
@@ -2673,11 +2665,9 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 void exit_game_panic(void)
 {
 	int i = 1;
-#ifdef NEW_DUNGEON
 	int j,k;
 	struct worldpos wpos;
 	struct wilderness_type *wild;
-#endif
 
 	/* If nothing important has happened, just quit */
 	if (!server_generated || server_saved) quit("panic");

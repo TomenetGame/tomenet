@@ -621,14 +621,9 @@ void do_cmd_check_players(int Ind, int line)
 		/* Hack -- always show extra info to dungeon master */
 		if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || p_ptr->admin_dm || p_ptr->admin_wiz)
 		{
-#ifdef NEW_DUNGEON
-//			fprintf(fff, "   [(%d,%d), %dft]", q_ptr->wpos.wx, q_ptr->wpos.wy, q_ptr->wpos.wz*50);
 			/* maybe too kind? */
 			fprintf(fff, "   {[%d,%d] of %dft(%d,%d)}", q_ptr->panel_row, q_ptr->panel_col, q_ptr->wpos.wz*50, q_ptr->wpos.wx, q_ptr->wpos.wy);
 
-#else
-			fprintf(fff, " - at %ld ft", q_ptr->dun_depth * 50);
-#endif
 		}
 		fprintf(fff, "\n");
 
@@ -704,11 +699,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 				if ((attr != 'B') && (attr != 'w') && !admin)
 				{
 			/* Make sure this player is at this depth */
-#ifdef NEW_DUNGEON                      
 			if(!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
-#else
-			if (p_ptr->dun_depth != q_ptr->dun_depth) continue;
-#endif
 
 			/* Can he see this player? */
 			if (!(p_ptr->cave_flag[q_ptr->py][q_ptr->px] & CAVE_VIEW)) continue;

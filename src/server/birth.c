@@ -772,12 +772,8 @@ static void get_money(int Ind)
 	p_ptr->au = gold;
 
 	/* Since it's not a king/queen */
-#ifdef NEW_DUNGEON
 	p_ptr->own1.wx=p_ptr->own1.wy=p_ptr->own1.wz=0;
 	wpcopy(&p_ptr->own2, &p_ptr->own1);
-#else
-	p_ptr->own1 = p_ptr->own2 = 0;
-#endif
 		
 	if (p_ptr->admin_wiz)
 	{
@@ -880,19 +876,11 @@ static void player_wipe(int Ind)
 	p_ptr->noscore = 0;
 	
 	/* clear the wilderness map */
-#ifdef NEW_DUNGEON
 	for (i = 0; i < MAX_WILD_8; i++)
-#else
-	for (i = 0; i < MAX_WILD/8; i++)
-#endif
 		p_ptr->wild_map[i] = 0;
 
 	/* Hack -- assume the player has an initial knowledge of the area close to town */
-#ifdef NEW_DUNGEON
 	p_ptr->wild_map[(cfg.town_x+cfg.town_y*MAX_WILD_X)/8]|=1<<((cfg.town_x+cfg.town_y*MAX_WILD_X)%8);
-#else
-	for (i = 0; i < 13; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
-#endif
 
 	/* Esp link */
 	p_ptr->esp_link_end = 0;
@@ -1067,11 +1055,7 @@ static void player_outfit(int Ind)
 	 {
 
 		/* Hack -- assume the player has an initial knowledge of the area close to town */
-#ifdef NEW_DUNGEON
 		for (i = 0; i < MAX_WILD_X*MAX_WILD_Y; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
-#else
-		for (i = 0; i < MAX_WILD; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
-#endif
 #if 0
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_HOUSE));
 		o_ptr->number = 99;
@@ -1236,19 +1220,14 @@ static void player_setup(int Ind)
 
 	bool dawn = ((turn % (10L * TOWN_DAWN)) < (10L * TOWN_DAWN / 2)), unstaticed = 0; 
 
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
-#else
-	int Depth=p_ptr->dun_depth;
-#endif
 
 	/* anti spammer code */
 	p_ptr->msgcnt=0;
 	p_ptr->msg=0;
 	p_ptr->spam=0;
 
-#ifdef NEW_DUNGEON
 	/* Default location if just starting */
 	if(wpos->wz==0 && wpos->wy==0 && wpos->wx==0 && p_ptr->py==0 && p_ptr->px==0){
 		p_ptr->wpos.wx=cfg.town_x;
@@ -1256,7 +1235,6 @@ static void player_setup(int Ind)
 		p_ptr->py=level_down_y(wpos);
 		p_ptr->px=level_down_x(wpos);
 	}
-#endif
 	/* Count players on this depth */
 	for (i = 1; i <= NumPlayers; i++)
 	{
@@ -1268,22 +1246,14 @@ static void player_setup(int Ind)
 			continue;
 
 		/* Count */
-#ifdef NEW_DUNGEON
 		if (inarea(wpos, &Players[i]->wpos))
-#else
-		if (Players[i]->dun_depth == Depth)
-#endif        
 			count++;
 	}
 
 	/* Make sure he's supposed to be here -- if not, then the level has
 	 * been unstaticed and so he should forget his memory of the old level.
 	 */
-#ifdef NEW_DUNGEON
 	if (count >= players_on_depth(wpos))
-#else
-	if (count >= players_on_depth[Depth])
-#endif
 	{
 		/* Clear the "marked" and "lit" flags for each cave grid */
 		for (y = 0; y < MAX_HGT; y++)
@@ -1294,11 +1264,7 @@ static void player_setup(int Ind)
 			}
 		}
 		/* He is now on the level, so add him to the player_on_depth list */
-#ifdef NEW_DUNGEON
 		new_players_on_depth(wpos, 1, TRUE);
-#else
-		players_on_depth[Depth]++;
-#endif
 
 		/* Set the unstaticed variable to true so we know to do a non-LOS requiring
 		 * scatter when we place the player.  See below.
@@ -1307,7 +1273,6 @@ static void player_setup(int Ind)
 	}
 
 	/* Rebuild the level if neccecary */
-#ifdef NEW_DUNGEON
 	if(!(zcave=getcave(wpos))){
 		if(p_ptr->wpos.wz){
 			alloc_dungeon_level(wpos);
@@ -1318,50 +1283,16 @@ static void player_setup(int Ind)
 			generate_cave(wpos);
 			if(!players_on_depth(wpos))
 				new_players_on_depth(wpos,1,FALSE);
+#ifndef NEW_DUNGEON
+			/* paranoia, update the players wilderness map. */
+			p_ptr->wild_map[(-p_ptr->dun_depth)/8] |= (1<<((-p_ptr->dun_depth)%8));
+#endif
 		}
 		zcave=getcave(wpos);
 	}
-#else
-	if (!cave[Depth]) 
-	{               
-		/* If a level is unstaticed and a player is on it, he will now
-		 * stay in the dungeon and appear on the new level somewhere.
-		 */
-		if (p_ptr->dun_depth >= 0)
-		{
-			/* Build a new level and put him on it */
-			alloc_dungeon_level(Depth);
-			generate_cave(Depth);
-		}
-		else
-		/* rebuild the wilderness level */
-		{
-			alloc_dungeon_level(Depth);
-			generate_cave(Depth);
-			/* hack -- this is important */
-			if (!players_on_depth[Depth]) players_on_depth[Depth] = 1;
 			
-			/* paranoia, update the players wilderness map. */
-			p_ptr->wild_map[(-p_ptr->dun_depth)/8] |= (1<<((-p_ptr->dun_depth)%8));
-		}
-	}
-#endif
-
-#ifndef NEW_DUNGEON
-	/* Default location if just starting */
-	if (!Depth && !p_ptr->py && !p_ptr->px)
-	{
-		/* Put them in the Tavern */
-		p_ptr->py = level_down_y[0];
-		p_ptr->px = level_down_x[0];
-	}
-#endif
 	/* Memorize town */
-#ifdef NEW_DUNGEON
 	if (istown(wpos))
-#else
-	if (!Depth)
-#endif
 	{
 		/* Memorize the town if it's daytime */
 		for (y = 0; y < MAX_HGT; y++)
@@ -1371,11 +1302,7 @@ static void player_setup(int Ind)
 				byte *w_ptr = &p_ptr->cave_flag[y][x];
 
 				/* Acquire pointer */
-#ifdef NEW_DUNGEON
 				c_ptr = &zcave[y][x];
-#else
-				c_ptr = &cave[0][y][x];
-#endif
 
 				/* If day or interesting, memorize */
 				if (dawn || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
@@ -1424,17 +1351,10 @@ static void player_setup(int Ind)
 	p_ptr->px = x;
 
 	/* Update the location's player index */
-#ifdef NEW_DUNGEON
 	zcave[y][x].m_idx = 0 - Ind;
 
 	/* Show him to everybody */
 	everyone_lite_spot(wpos, y, x);
-#else
-	cave[Depth][y][x].m_idx = 0 - Ind;
-
-	/* Show him to everybody */
-	everyone_lite_spot(Depth, y, x);
-#endif
 	/* Hack -- Give him "awareness" of certain objects */
 	for (i = 1; i < MAX_K_IDX; i++)
 	{
