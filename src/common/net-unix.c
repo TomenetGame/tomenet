@@ -645,11 +645,10 @@ int	fd;
 #endif /* __STDC__ */
 {
     int		retval;
-    int		socklen;
+    int		socklen=sizeof(struct sockaddr_in);
 
     cmw_priv_assert_netaccess();
     retval = accept(fd, &sl_dgram_lastaddr, &socklen);
-    printf("works here: %s\n", inet_ntoa(sl_dgram_lastaddr.sin_addr));
     //retval = accept(fd, NULL, 0);
     cmw_priv_deassert_netaccess();
 
