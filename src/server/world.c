@@ -32,7 +32,7 @@ bool world_check_ignore(int Ind, unsigned long id, short server){
 	struct remote_ignore *curr;
 	curr=Players[Ind]->w_ignore;
 	while(curr){
-		if(curr->serverid==server && curr->playerid==id)
+		if(curr->serverid==server && curr->id==id)
 			return(TRUE);
 		curr=curr->next;
 	}
@@ -72,7 +72,7 @@ void world_comm(int fd, int arg){
 				for(i=1; i<NumPlayers; i++){
 					if(Players[i]->conn!=NOT_CONNECTED){
 						/* lame method just now */
-						if(world_check_ignore(wpk->d.chat.id, wpk->serverid))
+						if(world_check_ignore(i, wpk->d.chat.id, wpk->serverid))
 								continue;
 						msg_print(i, wpk->d.chat.ctxt);
 					}
