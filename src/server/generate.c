@@ -3679,8 +3679,9 @@ static void cave_gen(struct worldpos *wpos)
 	if (is_quest(wpos)) destroyed = FALSE;
 
 	/* Hack -- Watery caves */
-	dun->watery = (glev % WATERY_CYCLE) >= (WATERY_CYCLE - WATERY_RANGE)
-		|| magik(DUN_RIVER_CHANCE);
+	dun->watery = glev > 5 &&
+		(((glev % WATERY_CYCLE) >= (WATERY_CYCLE - WATERY_RANGE))?
+		magik(DUN_RIVER_CHANCE*2) : magik(DUN_RIVER_CHANCE));
 
 	/* Actual maximum number of rooms on this level */
 	dun->row_rooms = MAX_HGT / BLOCK_HGT;

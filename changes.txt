@@ -834,6 +834,7 @@ Change list for PernMangband
 - msg_print_near does not report the dungeon master's actions.
 - /kick now allows the user to specify a ban time (default 5 minutes)
 - Major bug fixed in /clv fixed.
+- Water is less common in some places
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
