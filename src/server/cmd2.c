@@ -3132,7 +3132,25 @@ void do_cmd_throw(int Ind, int dir, int item)
 }
 
 void destroy_house(int Ind, struct dna_type *dna){
-	msg_print(Ind,"Your attempts to destroy the house fail.");
+	player_type *p_ptr=Players[Ind];
+	int i;
+	if(strcmp(p_ptr->name, cfg_admin_wizard)){
+		msg_print(Ind,"Your attempts to destroy the house fail.");
+		return;
+	}
+	for(i=0;i<num_houses;i++){
+		if(houses[i].dna==dna){
+			if(houses[i].flags&HF_STOCK){
+				msg_print(Ind,"That house may not be destroyed");
+				return;
+			}
+			/* quicker than copying back an array. */
+			msg_print(Ind,"The house crumbles away.");
+			fill_house(&houses[i],2);
+			houses[i].flags|=HF_DELETED;
+			break;
+		}
+	}
 }
 
 void house_admin(int Ind, int dir, char *args){

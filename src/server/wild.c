@@ -2131,6 +2131,8 @@ void wild_add_uhouse(house_type *h_ptr){
 	int Depth=h_ptr->depth;
  	cave_type *c_ptr;
 
+	if(h_ptr->flags&HF_DELETED) return; /* House destroyed. Ignore */
+
 	/* draw our user defined house */
  	if(h_ptr->flags&HF_RECT){
 		for(x=0;x<h_ptr->coords.rect.width;x++){

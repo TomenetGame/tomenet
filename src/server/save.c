@@ -2308,12 +2308,18 @@ static bool wr_server_savefile(void)
 	/* Dump the objects */
 	for (i = 0; i < tmp16u; i++) wr_item(&o_list[i]);
 
+	tmp32u=0L;
+	for(i=0;i<num_houses;i++){
+		if(!(houses[i].flags&HF_DELETED)) tmp32u++;
+	}
+
 	/* Note the number of houses */
-	wr_u32b(num_houses);
+	wr_u32b(tmp32u);
 
 	/* Dump the houses */
 	for (i = 0; i < num_houses; i++){
-		wr_house(&houses[i]); 
+		if(!(houses[i].flags&HF_DELETED))
+			wr_house(&houses[i]); 
 	}
 
 	/* Note the size of the wilderness 
