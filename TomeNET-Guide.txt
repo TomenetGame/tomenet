@@ -325,6 +325,8 @@ They all start with a slash '/':
 /afk <msg>  You can specify a reason that will be displayed to the other
             players, so they know why you are currently AFK or when you will
             be back.
+/page <player-name>     Sends beeps to that player to help you getting his
+                        attention. (Can only be used if target player is afk).
 /que        gives a quest! It needs to be fulfilled before a certain period
  (/quest)   of time passes. The player who completes it gets a great item
             as reward. It will appear right below the player on the ground.
@@ -336,7 +338,7 @@ They all start with a slash '/':
 /shout <text>
             Shout <text> loudly, will wake up and aggravate nearby monsters.
 
-(The /empty function is currently disabled for balancing reasons:
+(The /empty function is currently disabled:)
 /empty <inventory slot>
             Empty a potion from your inventory, leaving an empty bottle.
             Example: /empty c   (if you have 'c) 3 potions of boldness', one
@@ -344,6 +346,7 @@ They all start with a slash '/':
 
 /ig <player name>
  (/ignore)  ignores all chat messages from the specified player. (Toggle)
+            Also silences all paging attempts from that player.
 /dice       Roll some dice, you must specify a number of dice from 1 to 100.
             The result is random and can be seen by other players who stand
             nearby.
@@ -356,9 +359,12 @@ They all start with a slash '/':
  (/dress)   not {worthless}, not {terrible}, known to you.
 /mar        Tells a prayer-user if he may use the prayer 'Holy Martyr'.
  (/martyr)
-/note <player>:<text>
-            Leave a note to another player.
-/note <player>
+/note <account name>:<text>
+            Leave a note to another player. Note: You have to specify his
+            ACCOUNT NAME, not a character name. That way, no matter which of
+            his characters he chooses to logon, he always gets the note.
+            Important: Account names are case-sensitive.
+/note <account name>
             Delete all pending notes that were addressed to that player.
 /notes      Display all pending notes that you wrote to other players.
 /notep <text>
