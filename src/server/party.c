@@ -42,7 +42,7 @@ struct account *GetAccount(cptr name, char *pass){
 			if(pass==NULL)		/* direct name lookup */
 				val=0;
 			else
-				val=strcmp(c_acc->pass, pass);
+				val=strcmp(c_acc->pass, t_crypt(pass, name));
 			memset((char *)c_acc->pass, 0, 20);
 			if(val){
 				fclose(fp);
@@ -58,7 +58,7 @@ struct account *GetAccount(cptr name, char *pass){
 	if(c_acc->id!=0L){
 		c_acc->flags=(ACC_TRIAL|ACC_NOSCORE);
 		strcpy(c_acc->name, name);
-		strcpy(c_acc->pass, pass);
+		strcpy(c_acc->pass, t_crypt(pass, name));
 		fwrite(c_acc, sizeof(struct account), 1, fp);
 	}
 	memset((char *)c_acc->pass, 0, 20);
@@ -66,6 +66,20 @@ struct account *GetAccount(cptr name, char *pass){
 	if(c_acc->id) return(c_acc);
 	KILL(c_acc, struct account);
 	return(NULL);
+}
+
+/* our password encryptor */
+char *t_crypt(char *inbuf, char *salt){
+#ifdef HAVE_CRYPT
+	static char out[64];
+	char setting[9];
+	setting[0]='_';
+	strncpy(&setting[1], salt, 8);
+	strcpy(out, crypt(inbuf, salt));
+	return(out);
+#else
+	return(inbuf);
+#endif
 }
 
 bool check_account(char *accname, char *c_name){
