@@ -142,7 +142,7 @@ CFLAGS = -Wall -O2 -DUSE_WIN -DWIN32 -DUSE_GRAPHICS -DDUMB_WIN
 LIBS = -luser32 -lwsock32 -lgdi32 -lcomdlg32
 
 SCFLAGS = -Wall -O2 -DUSE_WIN -DDUMB_WIN
-SLIBS = -luser32 -lwsock32
+SLIBS = -luser32 -lwsock32 -Lc:/code/cygnus/h-i586~1/i586-c1~/lib
 
 
 
@@ -163,7 +163,7 @@ install: mangclient mangband
 #
 
 mangclient: $(CLI_OBJS)
-	$(CC) $(CFLAGS) -o mangclient $(CLI_OBJS) $(LDFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) -o ../mangclient $(CLI_OBJS) $(LDFLAGS) $(LIBS)
 
 
 #
@@ -171,8 +171,12 @@ mangclient: $(CLI_OBJS)
 #
 
 mangband: $(SERV_OBJS)
-	$(CC) $(SCFLAGS) -o ../mangband server/*.o common/*.o $(LDFLAGS) $(SLIBS)	
-#        $(CC) $(CFLAGS) -o mangband $(SERV_OBJS) $(LDFLAGS) $(LIBS)
+#	$(CC) $(SCFLAGS) -o ../mangband server/*.o common/*.o $(SLIBS)
+	ar cq libserv.a server/*.o
+	ranlib libserv.a
+	ar cq libcomm.a common/*.o
+	ranlib libcomm.a
+	$(CC) $(SCFLAGS) -o ../mangband libserv.a libcomm.a $(LDFLAGS) $(SLIBS)
 
 
 #
@@ -193,8 +197,7 @@ mangband: $(SERV_OBJS)
 #
 
 clean:
-	cd client; rm -f *.o
-	cd common; rm -f *.o
+	del server\*.o
 
 
 

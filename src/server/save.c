@@ -1791,6 +1791,19 @@ bool save_player(int Ind)
 }
 
 
+static bool file_exist(char *buf)
+{
+        int fd;
+
+        fd = fd_open(buf, O_RDONLY);
+        if (fd >= 0)
+        {
+                fd_close(fd);
+                return (TRUE);
+        }
+        else return (FALSE);
+}
+
 
 /*
  * Attempt to Load a "savefile"
@@ -1843,12 +1856,10 @@ bool load_player(int Ind)
 	if (!p_ptr->savefile[0]) return (TRUE);
 
 
-#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(VM)
-
 	/* XXX XXX XXX Fix this */
 
 	/* Verify the existance of the savefile */
-	if (access(p_ptr->savefile, 0) < 0)
+        if (!file_exist(p_ptr->savefile))
 	{
 		/* Give a message */
 		s_printf("Savefile does not exist for player %s.\n", p_ptr->name);
@@ -1856,8 +1867,6 @@ bool load_player(int Ind)
 		/* Allow this */
 		return (TRUE);
 	}
-
-#endif
 
 
 #ifdef VERIFY_SAVEFILE
@@ -2310,10 +2319,8 @@ bool load_server_info(void)
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "server");
 
-#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(VM)
-
 	/* XXX XXX XXX Fix this */
-	if (access(buf, 0) < 0)
+        if (!file_exist(buf))
 	{
 		/* Give message */
 		s_printf("Server savefile does not exist\n");
@@ -2321,8 +2328,6 @@ bool load_server_info(void)
 		/* Allow this */
 		return (TRUE);
 	}
-
-#endif
 
         /* Okay */
         if (!err)

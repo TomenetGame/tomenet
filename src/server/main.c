@@ -20,10 +20,6 @@
  * all the others use this file for their "main()" function.
  */
 
-
-#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(ACORN)
-
-
 #ifdef SET_UID
 
 /*
@@ -184,6 +180,12 @@ int main(int argc, char *argv[])
 	bool new_game = FALSE;
 	char buf[1024];
 	int catch_signals = TRUE;
+#ifdef DUMB_WIN
+	WSADATA wsadata;
+
+	/* Initialize WinSock */
+	WSAStartup(MAKEWORD(1, 1), &wsadata);
+#endif
 
 
 	/* Save the "program name" */
@@ -539,7 +541,23 @@ int main(int argc, char *argv[])
 	return (0);
 }
 
+#ifdef DUMB_WIN
+int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
+                       LPSTR lpCmdLine, int nCmdShow)
+{
+	MSG      msg;
+
+//        main(0, NULL);
+
+	/* Process messages forever */
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+        main(0, NULL);
+
+	return (0);
+}
 #endif
-
-
-
