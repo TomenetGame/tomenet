@@ -137,6 +137,7 @@ static void spell_info(int Ind, char *p, int j)
 		/* Analyze the spell */
 		switch (j)
 		{
+			
 			case 0: sprintf(p, " dam %dd%d", 3+((plev-1)/5), 4 + (plev / 10)); break;
 			case 2: strcpy(p, " range 10"); break;
 			case 5: strcpy(p, " heal 2d8"); break;
@@ -145,11 +146,15 @@ static void spell_info(int Ind, char *p, int j)
 			case 14: sprintf(p, " range %d", plev * 10); break;
 			case 15: strcpy(p, " dam 6d8"); break;
 			case 16: sprintf(p, " dam %dd8", (5+((plev-5)/4))); break;
-			case 20: sprintf(p, " dam %d", (60 + (plev * 2))); break;
+			case 20: sprintf(p, " dam %d", (40 + (plev * 2))); break;
 			case 24: sprintf(p, " dam %dd8", (8+((plev-5)/4))); break;
-			case 26: sprintf(p, " dam %d", 40 + plev); break;
+			case 25: sprintf(p, " dam %d", 40 + plev); break;
+
+
+			case 26: sprintf(p, " dam %d", 75 + (plev * 3 / 2)); break;
 			case 29: sprintf(p, " dur %d+d20", plev); break;
-			case 30: sprintf(p, " dam %d", 75 + (plev * 3 / 2)); break;
+			case 30: sprintf(p, " dam %d", (90 + (plev * 2))); break;
+			
 			case 38: sprintf(p, " dam %d", 50 + plev/2); break;
 			case 39: sprintf(p, " dam %d", 50 + plev); break;
 			case 40: sprintf(p, " dam %d", 80 + plev); break;
@@ -1059,8 +1064,11 @@ void do_cmd_cast(int Ind, int book, int spell)
 	}
 
 	/* Set the spell number */
-	j = spells[spell];
+        if (spell < 64) j = spells[spell];
 
+        /* cast mage spells on others */
+        else j = spells[spell-64];
+	
 	if (!spell_okay(Ind, j, 1))
 	{
 		msg_print(Ind, "You cannot cast that spell.");
@@ -1099,6 +1107,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 		beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
 
 		/* Spells.  */
+		if (spell >= 64) j += 64;	
 		switch (j)
 		{
 			case 0:
@@ -1112,6 +1121,13 @@ void do_cmd_cast(int Ind, int book, int spell)
 			{
 				(void)detect_creatures(Ind);
 				break;
+			}
+
+			case 1+64:
+			{
+				p_ptr->current_spell = 1;
+				get_aim_dir(Ind);
+				return;
 			}
 
 			case 2:
@@ -1140,6 +1156,13 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 
+			case 5+64:
+			{
+				p_ptr->current_spell = 5;
+				get_aim_dir(Ind);
+				return;
+			}
+			
 			case 6:
 			{
 				(void)detect_object(Ind);
@@ -1151,6 +1174,13 @@ void do_cmd_cast(int Ind, int book, int spell)
 				(void)detect_sdoor(Ind);
 				(void)detect_trap(Ind);
 				break;
+			}
+
+			case 7+64:
+			{
+				p_ptr->current_spell = 7;
+				get_aim_dir(Ind);
+				return;
 			}
 
 			case 8:
@@ -1193,6 +1223,13 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 
+			case 13+64:
+			{
+				p_ptr->current_spell = 13;
+				get_aim_dir(Ind);
+				return;
+			}
+
 			case 14:
 			{
 				msg_format_near(Ind, "%s teleports away!", p_ptr->name);
@@ -1227,6 +1264,13 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 
+			case 18+64:
+			{
+				p_ptr->current_spell = 18;
+				get_aim_dir(Ind);
+				return;
+			}
+
 			case 19:
 			{
 				(void)recharge(Ind, 5);
@@ -1241,10 +1285,10 @@ void do_cmd_cast(int Ind, int book, int spell)
 			}
 
 			case 21:
-			{
+			{ 
 				p_ptr->current_spell = 21;
 				get_aim_dir(Ind);
-				return;
+			        return;
 			}
 
 			case 22:
@@ -1255,8 +1299,15 @@ void do_cmd_cast(int Ind, int book, int spell)
 
 			case 23:
 			{
-				(void)sleep_monsters(Ind);
+				map_area(Ind);
 				break;
+			}
+
+			case 23+64:
+			{
+				p_ptr->current_spell = 23;
+				get_aim_dir(Ind);
+				return;
 			}
 
 			case 24:
@@ -1307,6 +1358,13 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 
+			case 29+64:
+			{
+				p_ptr->current_spell = 29;
+				get_aim_dir(Ind);
+				return;
+			}
+
 			case 30:
 			{
 				p_ptr->current_spell = 30;
@@ -1327,6 +1385,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 
+			/* Mordenkainens Escapes */
 			case 33:
 			{
 				(void)door_creation(Ind);
@@ -1345,6 +1404,13 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 
+			case 35+64:
+			{
+				p_ptr->current_spell = 35;
+				get_aim_dir(Ind);
+				return;
+			}
+
 			case 36:
 			{
 				msg_format_near(Ind, "%s casts a spell, and the ground shakes!", p_ptr->name);
@@ -1354,17 +1420,17 @@ void do_cmd_cast(int Ind, int book, int spell)
 
 			case 37:
 			{
-				if (!p_ptr->word_recall)
-				{
-					set_recall_depth(p_ptr, o_ptr);
-					p_ptr->word_recall = rand_int(20) + 15;
-					msg_print(Ind, "\377oThe air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print(Ind, "\377oA tension leaves the air around you...");
-				}
+					if (!p_ptr->word_recall)
+					{
+						set_recall_depth(p_ptr, o_ptr);
+						p_ptr->word_recall = rand_int(20) + 15;
+						msg_print(Ind, "\377oThe air about you becomes charged...");
+					}
+					else
+					{
+						p_ptr->word_recall = 0;
+						msg_print(Ind, "\377oA tension leaves the air around you...");
+					}
 				break;
 			}
 
@@ -1446,10 +1512,24 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 
+			case 49+64:
+			{
+				p_ptr->current_spell = 49;
+				get_aim_dir(Ind);
+				return;
+			}
+
 			case 50:
 			{
 				(void)set_oppose_cold(Ind, p_ptr->oppose_cold + randint(20) + 20);
 				break;
+			}
+
+			case 50+64:
+			{
+				p_ptr->current_spell = 50;
+				get_aim_dir(Ind);
+				return;
 			}
 
 			case 51:
@@ -1458,10 +1538,24 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 
+			case 51+64:
+			{
+				p_ptr->current_spell = 51;
+				get_aim_dir(Ind);
+				return;
+			}
+
 			case 52:
 			{
 				(void)set_oppose_pois(Ind, p_ptr->oppose_pois + randint(20) + 20);
 				break;
+			}
+
+			case 52+64:
+			{
+				p_ptr->current_spell = 52;
+				get_aim_dir(Ind);
+				return;
 			}
 
 			case 53:
@@ -1474,12 +1568,26 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 
+			case 53+64:
+			{
+				p_ptr->current_spell = 53;
+				get_aim_dir(Ind);
+				return;
+			}
+
 			case 54:
 			{
 				(void)hp_player(Ind, 10);
 				(void)set_hero(Ind, p_ptr->hero + randint(25) + 25);
 				(void)set_afraid(Ind, 0);
 				break;
+			}
+
+			case 54+64:
+			{
+				p_ptr->current_spell = 54;
+				get_aim_dir(Ind);
+				return;
 			}
 
 			case 55:
@@ -1489,6 +1597,13 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 
+			case 55+64:
+			{
+				p_ptr->current_spell = 55;
+				get_aim_dir(Ind);
+				return;
+			}
+
 			case 56:
 			{
 				msg_format_near(Ind, "%s enters a battle rage!", p_ptr->name);
@@ -1496,6 +1611,13 @@ void do_cmd_cast(int Ind, int book, int spell)
 				(void)set_shero(Ind, p_ptr->shero + randint(25) + 25);
 				(void)set_afraid(Ind, 0);
 				break;
+			}
+
+			case 56+64:
+			{
+				p_ptr->current_spell = 56;
+				get_aim_dir(Ind);
+				return;
 			}
 
 			case 57:
@@ -1511,13 +1633,19 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 
+			case 57+64:
+			{
+				p_ptr->current_spell = 57;
+				get_aim_dir(Ind);
+				return;
+			}
+
 			case 58:
 			{
 				(void)set_invuln(Ind, p_ptr->invuln + randint(8) + 8);
 				break;
 			}
 		}
-
 		/* A spell was cast */
 		if (!((j < 32) ?
 		      (p_ptr->spell_worked1 & (1L << j)) :
@@ -1617,16 +1745,34 @@ void do_cmd_cast_aux(int Ind, int dir)
 		case 0:
 		{
 			msg_format_near(Ind, "%s fires a magic missile.", p_ptr->name);
-			fire_bolt_or_beam(Ind, beam-10, GF_MISSILE, dir,
-						damroll(3 + ((plev - 1) / 5), 4 + (plev / 10)));
+			fire_bolt_or_beam(Ind, beam-10, GF_MISSILE, dir, damroll(3 + ((plev - 1) / 5), 4 + (plev / 10)));
+			break;
+		}
+		
+		case 1:
+		{
+			project_hook(Ind, GF_DETECTCREATURE_PLAYER, dir, 0, PROJECT_KILL);
+			break;
+		}
+
+		case 5:
+		{
+			project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(2,8), PROJECT_KILL);
+			project_hook(Ind, GF_CURECUT_PLAYER, dir, 15, PROJECT_KILL);
+			break;
+		}
+
+		case 7:
+		{
+			project_hook(Ind, GF_DETECTDOOR_PLAYER, dir, 0, PROJECT_KILL);
+			project_hook(Ind, GF_DETECTTRAP_PLAYER, dir, 0, PROJECT_KILL);
 			break;
 		}
 
 		case 8:
 		{
 			msg_format_near(Ind, "%s casts a stinking cloud.", p_ptr->name);
-			fire_ball(Ind, GF_POIS, dir,
-				10 + (plev / 2), 2);
+			fire_ball(Ind, GF_POIS, dir, 10 + (plev / 2), 2);
 			break;
 		}
 
@@ -1639,14 +1785,19 @@ void do_cmd_cast_aux(int Ind, int dir)
 		case 10:
 		{
 			msg_format_near(Ind, "%s casts a lightning bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, beam-10, GF_ELEC, dir,
-				damroll(3+((plev-5)/4), 8));
+			fire_bolt_or_beam(Ind, beam-10, GF_ELEC, dir, damroll(3+((plev-5)/4), 8));
 			break;
 		}
 
 		case 12:
 		{
 			sleep_monster(Ind, dir);
+			break;
+		}
+
+		case 13:
+		{
+			project_hook(Ind, GF_CUREPOISON_PLAYER, dir, 0, PROJECT_KILL);
 			break;
 		}
 
@@ -1660,8 +1811,7 @@ void do_cmd_cast_aux(int Ind, int dir)
 		case 16:
 		{
 			msg_format_near(Ind, "%s casts a frost bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, beam-10, GF_COLD, dir,
-				damroll(5+((plev-5)/4), 8));
+			fire_bolt_or_beam(Ind, beam-10, GF_COLD, dir, damroll(5+((plev-5)/4), 8));
 			break;
 		}
 
@@ -1671,11 +1821,17 @@ void do_cmd_cast_aux(int Ind, int dir)
 			break;
 		}
 
+		case 18:
+		{
+			project_hook(Ind, GF_SATHUNGER_PLAYER, dir, 0, PROJECT_KILL);
+			break;
+		}	
+
 		/* Tidal Wave */
 		case 20:
 		{
-			msg_format_near(Ind, "%s invoke a tidal wave.", p_ptr->name);
-			fire_ball(Ind, GF_WATER, dir, 60 + (plev * 2), 2 + (plev / 30));
+			msg_format_near(Ind, "%s casts a frost ball.", p_ptr->name);
+			fire_ball(Ind, GF_COLD, dir, 40 + (plev), 2 + (plev / 30));
 			break;
 		}
 
@@ -1685,24 +1841,29 @@ void do_cmd_cast_aux(int Ind, int dir)
 			break;
 		}
 
+		case 23:
+		{
+			project_hook(Ind, GF_SEEMAP_PLAYER, dir, 0, PROJECT_KILL);
+			break;
+		}
+
 		case 24:
 		{
 			msg_format_near(Ind, "%s casts a fire bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, beam, GF_FIRE, dir,
-				damroll(8+((plev-5)/4), 8));
+			fire_bolt_or_beam(Ind, beam, GF_FIRE, dir, damroll(8+((plev-5)/4), 8));
 			break;
 		}
 
 		case 25:
 		{
-			(void)slow_monster(Ind, dir);
+			fire_ball(Ind, GF_MISSILE, dir, 40 + (plev), 2 + (plev / 30));
 			break;
 		}
 
 		case 26:
 		{
-			msg_format_near(Ind, "%s casts a frost ball.", p_ptr->name);
-			fire_ball(Ind, GF_COLD, dir, 40 + (plev), 4);
+			msg_format_near(Ind, "%s casts a fire ball.", p_ptr->name);
+			fire_ball(Ind, GF_FIRE, dir, 75 + (plev * 3 / 2), 3 + (plev / 30));
 			break;
 		}
 
@@ -1712,12 +1873,32 @@ void do_cmd_cast_aux(int Ind, int dir)
 			break;
 		}
 
-		case 30:
+		case 29:
 		{
-			msg_format_near(Ind, "%s casts a fire ball.", p_ptr->name);
-			fire_ball(Ind, GF_FIRE, dir, 75 + (plev * 3 / 2), 2);
+			if (!p_ptr->fast)
+			{
+				project_hook(Ind, GF_SPEED_PLAYER, dir, randint(20) + plev, PROJECT_KILL);
+			}
+			else
+			{
+				project_hook(Ind, GF_SPEED_PLAYER, dir, p_ptr->fast + randint (5), PROJECT_KILL);
+			}
+
 			break;
 		}
+		
+		case 30:
+		{
+			msg_format_near(Ind, "%s invoke a tidal wave.", p_ptr->name);
+			fire_ball(Ind, GF_WATER, dir, 90 + (plev * 2), 3 + (plev / 30));
+			break;
+		}
+
+		case 35:
+		{
+			project_hook(Ind, GF_TELEPORTLVL_PLAYER, dir, 0, PROJECT_KILL);
+			break;
+		}	
 
 		case 38:
 		{
@@ -1761,6 +1942,76 @@ void do_cmd_cast_aux(int Ind, int dir)
 			break;
 		}
 
+		case 49:
+		{
+			project_hook(Ind, GF_RESFIRE_PLAYER, dir, randint(20) + 20, PROJECT_KILL);
+			break;
+		}
+
+		case 50:
+		{
+			project_hook(Ind, GF_RESCOLD_PLAYER, dir, randint(20) + 20, PROJECT_KILL);
+			break;
+		}
+
+		case 51:
+		{
+			project_hook(Ind, GF_RESACID_PLAYER, dir, randint(20) + 20, PROJECT_KILL);
+			break;
+		}	
+
+		case 52:
+		{
+			project_hook(Ind, GF_RESPOIS_PLAYER, dir, randint(20) + 20, PROJECT_KILL);
+			break;
+		}	
+
+		case 53:
+		{
+			project_hook(Ind, GF_RESFIRE_PLAYER, dir, randint(20) + 20, PROJECT_KILL);
+			project_hook(Ind, GF_RESCOLD_PLAYER, dir, randint(20) + 20, PROJECT_KILL);
+			project_hook(Ind, GF_RESACID_PLAYER, dir, randint(20) + 20, PROJECT_KILL);
+			project_hook(Ind, GF_RESELEC_PLAYER, dir, randint(20) + 20, PROJECT_KILL);
+			project_hook(Ind, GF_RESPOIS_PLAYER, dir, randint(20) + 20, PROJECT_KILL);
+			break;
+		}	
+
+		case 54:
+		{
+			project_hook(Ind, GF_HERO_PLAYER, dir, randint(25) + 25, PROJECT_KILL);
+			project_hook(Ind, GF_HPINCREASE_PLAYER, dir, 10, PROJECT_KILL);
+			project_hook(Ind, GF_REMFEAR_PLAYER, dir, 0, PROJECT_KILL);
+			break;
+		}	
+
+		case 55:
+		{
+			project_hook(Ind, GF_SHIELD_PLAYER, dir,  randint(20) + 30, PROJECT_KILL);
+			break;	
+		}	
+
+		case 56:
+		{
+			project_hook(Ind, GF_HPINCREASE_PLAYER, dir, 30, PROJECT_KILL);
+			project_hook(Ind, GF_REMFEAR_PLAYER, dir, 0, PROJECT_KILL);
+			project_hook(Ind, GF_SHERO_PLAYER, dir,  randint(25) + 25, PROJECT_KILL);
+			break;	
+		}
+
+		case 57:
+		{
+			if (!p_ptr->fast)
+			{	
+				project_hook(Ind, GF_SPEED_PLAYER, dir,  randint(30) + 30 + plev, PROJECT_KILL);
+			}
+			else
+			{
+				project_hook(Ind, GF_SPEED_PLAYER, dir,  p_ptr->fast + randint(10), PROJECT_KILL);
+			}	
+			break;	
+		}	
+
+
 		default:  /* For some reason we got called for a spell that */
 		{         /* doesn't require a direction */
 			msg_print(Ind, "SERVER ERROR: do_cmd_cast_aux() called for non-directional spell!");
@@ -1768,7 +2019,7 @@ void do_cmd_cast_aux(int Ind, int dir)
 			return;
 		}
 	}	
-
+		
 	if (!((p_ptr->current_spell < 32) ?
 		(p_ptr->spell_worked1 & (1L << p_ptr->current_spell)) :
 		(p_ptr->spell_worked2 & (1L << (p_ptr->current_spell - 32)))))
@@ -2853,14 +3104,28 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 2:
 			{
-				(void)set_blessed(Ind, p_ptr->blessed + randint(12) + 12);
+				p_ptr->blessed_power = 10;
+				(void)set_blessed(Ind, randint(12) + 12);
 				break;
+			}
+                	case 2+64:
+			{
+                        	p_ptr->current_spell = 2;
+                        	get_aim_dir(Ind);
+                        	return;
 			}
 
 			case 3:
 			{
 				(void)set_afraid(Ind, 0);
 				break;
+			}
+	
+			case 3+64:
+			{
+                        	p_ptr->current_spell = 3;
+                        	get_aim_dir(Ind);
+                        	return;
 			}
 
 			case 4:
@@ -2920,42 +3185,72 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 11:
 			{
-				(void)set_blessed(Ind, p_ptr->blessed + randint(24) + 24);
+				(void)sleep_monsters_touch(Ind);
 				break;
 			}
 
 			case 12:
 			{
-				(void)sleep_monsters_touch(Ind);
-				break;
-			}
-
-			case 13:
-			{
 				(void)set_food(Ind, PY_FOOD_MAX - 1);
 				break;
 			}
 
-			case 14:
+			case 12+64:
+			{
+                        	p_ptr->current_spell = 12;
+                        	get_aim_dir(Ind);
+                        	return;
+			}
+
+			case 13:
 			{
 				remove_curse(Ind);
 				break;
 			}
 
-			case 15:
+			case 14:
 			{
 				(void)set_oppose_fire(Ind, p_ptr->oppose_fire + randint(10) + 10);
 				(void)set_oppose_cold(Ind, p_ptr->oppose_cold + randint(10) + 10);
 				break;
 			}
 
-			case 16:
+			case 14+64:
+			{
+                        	p_ptr->current_spell = 14;
+                        	get_aim_dir(Ind);
+                        	return;
+			}
+
+			case 15:
 			{
 				(void)set_poisoned(Ind, 0);
 				break;
 			}
 
+			case 15+64:
+			{
+                        	p_ptr->current_spell = 15;
+                        	get_aim_dir(Ind);
+                        	return;
+			}
+
+			case 16:
+			{
+				p_ptr->current_spell = 16;
+				get_aim_dir(Ind);
+				return;
+			}
+
 			case 17:
+			{
+				(void)hp_player(Ind, damroll(6, 10));
+				(void)set_cut(Ind, 0);
+				break;
+			}
+
+			/* cure critical wounds projectile */
+			case 17+64:
 			{
 				p_ptr->current_spell = 17;
 				get_aim_dir(Ind);
@@ -2964,12 +3259,10 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 18:
 			{
-				(void)hp_player(Ind, damroll(6, 10));
-				(void)set_cut(Ind, 0);
+				(void)set_tim_invis(Ind, p_ptr->tim_invis + randint(24) + 24);
 				break;
 			}
 
-			/* cure critical wounds projectile */
 			case 18+64:
 			{
 				p_ptr->current_spell = 18;
@@ -2979,27 +3272,42 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 19:
 			{
-				(void)set_tim_invis(Ind, p_ptr->tim_invis + randint(24) + 24);
-				break;
-			}
-
-			case 20:
-			{
 				(void)set_protevil(Ind, p_ptr->protevil + randint(25) + 3 * p_ptr->lev);
 				break;
 			}
 
-			case 21:
+			case 20:
 			{
 				msg_format_near(Ind, "%s murmurs, and the ground shakes!", p_ptr->name);
 				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
 				break;
 			}
 
+			case 21:
+			{
+				p_ptr->blessed_power = 20;
+				(void)set_blessed(Ind, randint(24) + 24);
+				break;
+			}
+
+                	case 21+64:
+			{
+                        	p_ptr->current_spell = 21;
+                        	get_aim_dir(Ind);
+                        	return;
+			}
+
 			case 22:
 			{
 				map_area(Ind);
 				break;
+			}
+
+			case 22+64:
+			{
+				p_ptr->current_spell = 22;
+				get_aim_dir(Ind);
+				return;
 			}
 
 			case 23:
@@ -3010,6 +3318,13 @@ void do_cmd_pray(int Ind, int book, int spell)
 				break;
 			}
 
+			case 23+64:
+			{
+				p_ptr->current_spell = 23;
+				get_aim_dir(Ind);
+				return;
+			}
+
 			case 24:
 			{
 				(void)turn_undead(Ind);
@@ -3018,22 +3333,37 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 25:
 			{
-				(void)set_blessed(Ind, p_ptr->blessed + randint(48) + 48);
+				(void)dispel_undead(Ind, plev * 3);
 				break;
 			}
 
 			case 26:
 			{
-				(void)dispel_undead(Ind, plev * 3);
-				break;
-			}
-
-			case 27:
-			{
 				(void)hp_player(Ind, 300);
 				(void)set_stun(Ind, 0);
 				(void)set_cut(Ind, 0);
 				break;
+			}
+
+			case 26+64:
+			{
+				p_ptr->current_spell = 26;
+				get_aim_dir(Ind);
+				return;
+			}
+
+			case 27:
+			{
+				p_ptr->blessed_power = 30;
+				(void)set_blessed(Ind, randint(48) + 48);
+				break;
+			}
+
+			case 27+64:
+			{
+				p_ptr->current_spell = 27;
+				get_aim_dir(Ind);
+				return;
 			}
 
 			case 28:
@@ -3060,10 +3390,26 @@ void do_cmd_pray(int Ind, int book, int spell)
 				break;
 			}
 
+			case 30+64:
+			{
+				p_ptr->current_spell = 30;
+				get_aim_dir(Ind);
+				return;
+			}
+
+			/* Godly Insights */
+
 			case 31:
 			{
 				(void)detect_creatures(Ind);
 				break;
+			}
+
+			case 31+64:
+			{
+				p_ptr->current_spell = 31;
+				get_aim_dir(Ind);
+				return;
 			}
 
 			case 32:
@@ -3090,11 +3436,20 @@ void do_cmd_pray(int Ind, int book, int spell)
 				break;
 			}
 
+			/* purifications and healing */
+
 			case 36:
 			{
 				(void)hp_player(Ind, damroll(4, 10));
 				(void)set_cut(Ind, 0);
 				break;
+			}
+
+			case 36+64:
+			{
+				p_ptr->current_spell = 36;
+				get_aim_dir(Ind);
+				return;
 			}
 
 			case 37:
@@ -3103,6 +3458,13 @@ void do_cmd_pray(int Ind, int book, int spell)
 				(void)set_stun(Ind, 0);
 				(void)set_cut(Ind, 0);
 				break;
+			}
+
+			case 37+64:
+			{
+				p_ptr->current_spell = 37;
+				get_aim_dir(Ind);
+				return;
 			}
 
 			case 38:
@@ -3247,18 +3609,17 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 56:
 			{
-				if (p_ptr->word_recall == 0)
-				{
-					set_recall_depth(p_ptr, o_ptr);
-					p_ptr->word_recall = rand_int(20) + 15;
-					msg_print(Ind, "\377oThe air about you becomes charged...");
-				}
-				else
-				{
-					p_ptr->word_recall = 0;
-					msg_print(Ind, "\377oA tension leaves the air around you...");
-				}
-				break;
+					if (!p_ptr->word_recall)
+					{
+						set_recall_depth(p_ptr, o_ptr);
+						p_ptr->word_recall = rand_int(20) + 15;
+						msg_print(Ind, "\377oThe air about you becomes charged...");
+					}
+					else
+					{
+						p_ptr->word_recall = 0;
+						msg_print(Ind, "\377oA tension leaves the air around you...");
+					}
 			}
 
 			case 57:
@@ -3366,13 +3727,26 @@ void do_cmd_pray_aux(int Ind, int dir)
 	/* We assume that the spell can be cast, and so forth */
 	switch(p_ptr->current_spell)
 	{
-		
 		case 1:
 		{
-			(void)cure_light_wounds_proj(Ind, dir);
+			project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(2,10), PROJECT_KILL);
+			project_hook(Ind, GF_CURECUT_PLAYER, dir, 10, PROJECT_KILL);
 			break;
 		}
-	
+		
+		case 2:
+		{	
+			project_hook(Ind, GF_BLESS_PLAYER, dir, 12 + randint(12), PROJECT_KILL);
+			break;
+
+		}
+		
+		case 3:
+		{
+			project_hook(Ind, GF_REMFEAR_PLAYER, dir, 0, PROJECT_KILL);
+			break;
+		}
+
 		case 8:
 		{
 			(void)fear_monster(Ind, dir, plev);
@@ -3381,11 +3755,31 @@ void do_cmd_pray_aux(int Ind, int dir)
 
 		case 10:
 		{
-			(void)cure_serious_wounds_proj(Ind, dir);
+			project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(4,10), PROJECT_KILL);
+			project_hook(Ind, GF_CURECUT_PLAYER, dir, 20, PROJECT_KILL);
 			break;
 		}
 
-		case 17:
+		case 12:
+		{
+			project_hook(Ind, GF_SATHUNGER_PLAYER, dir, 0, PROJECT_KILL);
+                        break;
+		}
+
+		case 14:
+		{
+		        project_hook(Ind, GF_RESCOLD_PLAYER, dir, randint(10) + 10, PROJECT_KILL);
+		        project_hook(Ind, GF_RESFIRE_PLAYER, dir, randint(10) + 10, PROJECT_KILL);
+			break;
+		}
+		
+		case 15:
+		{
+			project_hook(Ind, GF_CUREPOISON_PLAYER, dir, 0, PROJECT_KILL);
+			break;
+		}
+
+		case 16:
 		{
 			msg_format_near(Ind, "%s fires a holy orb!", p_ptr->name);
 			fire_ball(Ind, GF_HOLY_ORB, dir,
@@ -3395,15 +3789,90 @@ void do_cmd_pray_aux(int Ind, int dir)
 			break;
 		}
 
-		case 18: 
+		case 17: 
 		{
-			(void)cure_critical_wounds_proj(Ind, dir);
+			project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(6,10), PROJECT_KILL);
+			project_hook(Ind, GF_CURECUT_PLAYER, dir, 0, PROJECT_KILL);
 			break;	
+		}
+		
+		case 18:
+		{
+			project_hook(Ind, GF_SEEINVIS_PLAYER, dir, randint(24) + 24 , PROJECT_KILL);
+			break;
+		}
+
+		case 21:
+		{
+			project_hook(Ind, GF_BLESS_PLAYER, dir, 24 + randint(24), PROJECT_KILL);
+                        break;
+		}
+
+		case 22:
+		{
+			project_hook(Ind, GF_SEEMAP_PLAYER, dir, 0 , PROJECT_KILL);
+			break;
+		}
+
+		case 23:
+		{
+			project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(8,10) , PROJECT_KILL);
+			project_hook(Ind, GF_CURESTUN_PLAYER, dir, 0, PROJECT_KILL);
+			project_hook(Ind, GF_CURECUT_PLAYER, dir, 0, PROJECT_KILL);
+			break;
+		}
+
+		case 26:
+		{
+			project_hook(Ind, GF_HEAL_PLAYER, dir, 300 , PROJECT_KILL);
+			project_hook(Ind, GF_CURESTUN_PLAYER, dir, 0, PROJECT_KILL);
+			project_hook(Ind, GF_CURECUT_PLAYER, dir, 0, PROJECT_KILL);
+			break;
+		}
+
+		case 27:
+		{
+			project_hook(Ind, GF_BLESS_PLAYER, dir, randint(48) + 48 , PROJECT_KILL);
+			break;
+		}
+		
+
+		case 30:
+		{
+			project_hook(Ind, GF_HEAL_PLAYER, dir, 1000 , PROJECT_KILL);
+			project_hook(Ind, GF_CURESTUN_PLAYER, dir, 0, PROJECT_KILL);
+			project_hook(Ind, GF_CURECUT_PLAYER, dir, 0, PROJECT_KILL);
+			project_hook(Ind, GF_REMFEAR_PLAYER, dir, 0, PROJECT_KILL);
+			project_hook(Ind, GF_CUREPOISON_PLAYER, dir, 0, PROJECT_KILL);
+			break;
+		}
+
+		case 31:
+		{
+			project_hook(Ind, GF_DETECTCREATURE_PLAYER, dir, 0, PROJECT_KILL);
+			break;
+		}
+
+		case 36:
+		{
+			project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(4,10), PROJECT_KILL);
+			project_hook(Ind, GF_CURECUT_PLAYER, dir, 0, PROJECT_KILL);
+			break;
+		}
+
+		case 37:
+		{
+			project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(8,10) , PROJECT_KILL);
+			project_hook(Ind, GF_CURESTUN_PLAYER, dir, 0, PROJECT_KILL);
+			project_hook(Ind, GF_CURECUT_PLAYER, dir, 0, PROJECT_KILL);
+			break;
 		}
 
 		case 38:
 		{
-			heal_other_proj(Ind,dir);
+			project_hook(Ind, GF_HEAL_PLAYER, dir, 2000 , PROJECT_KILL);
+			project_hook(Ind, GF_CURESTUN_PLAYER, dir, 0, PROJECT_KILL);
+			project_hook(Ind, GF_CURECUT_PLAYER, dir, 0, PROJECT_KILL);
 			break;
 		}
 
