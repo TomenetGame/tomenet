@@ -2032,6 +2032,8 @@ memo and questions:
 + Sirene(1100') at 750' (see get_mon_num() and NASTY_MON)
   roughly, 1/40 chance for +250', 1/2500 chance for +500' (same with Vanilla)
   (also +100' for lake/pit/nest)
++ monster interferes too much (raise 'Calmness' skill)
+  1-(1-0.08)^8 = 0.486
 
 ==== TODO: below this line are changes to be done in the future ====
 [minor ones]
