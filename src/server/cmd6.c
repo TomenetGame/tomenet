@@ -1957,7 +1957,7 @@ void do_cmd_read_scroll(int Ind, int item)
 	player_type *p_ptr = Players[Ind];
 	//cave_type * c_ptr;
 
-	int		k, ident, lev;	// , x,y;
+	int	k, ident, lev, d_no, d_tries, x, y;	// , x,y;
 	bool	used_up, keep = FALSE;
 
 	object_type	*o_ptr;
@@ -2547,6 +2547,49 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_WILDERNESS_MAP:
 			{
+				/* Reveal a random dungeon location (C. Blue): */
+				dungeon_type *d_ptr;
+				if (rand_int(100) < 50) {
+				    x = 0;
+				    for (d_tries = 0; d_tries < MAX_D_IDX; d_tries++)
+				    {
+					if (d_info[d_tries].name) x++;
+				    }
+				    d_no = rand_int(x);
+				    y = 0;
+				    for (d_tries = 0; d_tries < MAX_D_IDX; d_tries++)
+				    {
+					if (d_info[d_tries].name) y++;
+					if (y == d_no) {
+					    d_no = d_tries;
+					    d_tries = MAX_D_IDX;
+					}
+				    }
+				    
+				    d_tries = 0;
+				    for (y = 0; y < MAX_WILD_Y; y++)
+				    for (x = 0; x < MAX_WILD_X; x++) {
+					if (d_tries == 0) {
+					    if ((d_ptr = wild_info[y][x].tower))
+					    {
+				    		if (d_ptr->type == d_no)
+						{
+					    	    d_tries = 1;
+						    msg_format(Ind, "\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
+						}
+				    	    }
+					    if ((d_ptr = wild_info[y][x].dungeon))
+					    {
+				    		if (d_ptr->type == d_no)
+						{
+						    d_tries = 1;
+						    msg_format(Ind, "\377sThe scroll carries an inscription: %s at %d , %d", d_info[d_no].name + d_name, x, y);
+						}
+				    	    }
+					}
+				    }
+				}
+
 				if (p_ptr->wpos.wz)
 				{
 					msg_print(Ind, "You have a strange feeling of loss.");
