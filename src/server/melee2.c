@@ -25,7 +25,9 @@
  
 /* Chance of an out-of-sight monster to cast a spell, in percent.
  * reducing this also speeds the server up. */
-#define		INDIRECT_FREQ	50
+/* Disabled for main server game. Quylthulgs summoning
+   and all sorts from behind walls ! ;( */
+#define		INDIRECT_FREQ	0
  
 /* How frequent they change colours? */
 #define 	MULTI_HUED_UPDATE	5
