@@ -1205,7 +1205,7 @@ void py_attack_player(int Ind, int y, int x)
 					{
 						msg_format(Ind, "\377o%^s is stunned.", q_ptr->name);
 
-						set_stun(Ind, stun_effect);
+						set_stun(0 - c_ptr->m_idx, q_ptr->stun + stun_effect);
 					}
 				}
 			}
