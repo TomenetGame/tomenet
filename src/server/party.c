@@ -1444,12 +1444,59 @@ static void sf_delete(char *name){
 }
 
 /*
+ *  Called once every 24 hours. Deletes unused IDs.
+ */
+void scan_players(){
+	int slot;
+	hash_entry *ptr, *pptr=NULL;
+	time_t now;
+	now=time(&now);
+	for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
+		ptr=hash_table[slot];
+		while(ptr){
+			if(now - ptr->laston > 7776000){
+				int i;
+				hash_entry *dptr;
+
+				for(i=0; i<MAX_PARTIES; i++){
+					if(streq(parties[i].owner, ptr->name)){
+						del_party(i);
+						break;
+					}
+				}
+				kill_houses(ptr->id, OT_PLAYER);
+				sf_delete(ptr->name);	/* a sad day ;( */
+				if(!pptr)
+					hash_table[slot]=ptr->next;
+				else
+					pptr->next=ptr->next;
+				/* Free the memory in the player name */
+				free((char *)(ptr->name));
+
+				dptr=ptr;	/* safe storage */
+				ptr=ptr->next;	/* advance */
+
+				/* Free the memory for this struct */
+				KILL(dptr, hash_entry);
+
+				continue;
+			}
+			pptr=ptr;
+			ptr=ptr->next;
+			pptr=ptr;
+		}
+	}
+}
+
+/*
  * Add a name to the hash table.
  */
 void add_player_name(cptr name, int id, time_t laston)
 {
 	int slot;
 	hash_entry *ptr;
+
+#if 0 /* handled in scan_players() now */
 	time_t now;
 	
 	now=time(&now);
@@ -1467,6 +1514,7 @@ void add_player_name(cptr name, int id, time_t laston)
 			return;
 		}
 	}
+#endif
 
 	/* Set the entry's id */
 

@@ -2611,6 +2611,10 @@ static void process_various(void)
 		}
 	}
 
+	if (!(turn % (cfg_fps * 86400))){
+		scan_players();
+	}
+
 	/* Handle certain things once a minute */
 	if (!(turn % (cfg_fps * 60)))
 	{
@@ -3619,7 +3623,6 @@ static void load_all_pref_files(void)
 
 }
 
-
 /*
  * Actually play a game
  *
@@ -3848,6 +3851,9 @@ void play_game(bool new_game)
 	/* Set up the network server */
 	if (Setup_net_server() == -1)
 		quit("Couldn't set up net server");
+
+	/* scan for inactive players */
+	scan_players();
 
 	/* Set up the main loop */
 	install_timer_tick(dungeon, cfg_fps);
