@@ -981,6 +981,12 @@ void do_cmd_cast(int Ind, int book, int spell)
 	/* Process spell */
 	else
 	{
+		/* Take a turn */
+		p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+
+		/* Check interference */
+//		if (interfere(Ind, 3)) return;
+
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
 
@@ -1430,7 +1436,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 	}
 
 	/* Take a turn */
-	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	/* Sufficient mana */
 	if (s_ptr->smana <= p_ptr->csp)
@@ -1676,7 +1682,7 @@ void do_cmd_cast_aux(int Ind, int dir)
 		p_ptr->window |= PW_SPELL;
 	}
 
-	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	if (s_ptr->smana <= p_ptr->csp)
 	{
@@ -1850,6 +1856,12 @@ void do_cmd_sorc(int Ind, int book, int spell)
 	/* Process spell */
 	else
 	{
+		/* Take a turn */
+		p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+
+		/* Check interference */
+//		if (interfere(Ind, 3)) return;
+
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
 		
@@ -2265,7 +2277,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
 	}
 
 	/* Take a turn */
-	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	/* Sufficient mana */
 	if (s_ptr->smana <= p_ptr->csp)
@@ -2469,7 +2481,7 @@ void do_cmd_sorc_aux(int Ind, int dir)
 		p_ptr->window |= PW_SPELL;
 	}
 
-	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	if (s_ptr->smana <= p_ptr->csp)
 	{
@@ -2691,6 +2703,12 @@ void do_cmd_pray(int Ind, int book, int spell)
 	/* Success */
 	else
 	{
+		/* Take a turn */
+		p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+
+		/* Check interference */
+//		if (interfere(Ind, p_ptr->pclass == CLASS_PRIEST ? 2 : 3)) return;
+
 		if (spell >= 64) j += 64;
 		switch (j)
 		{
@@ -3166,7 +3184,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 	}
 
 	/* Take a turn */
-	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	/* Sufficient mana */
 	if (s_ptr->smana <= p_ptr->csp)
@@ -3316,7 +3334,7 @@ void do_cmd_pray_aux(int Ind, int dir)
 		p_ptr->window |= PW_SPELL;
 	}
 
-	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	if (s_ptr->smana <= p_ptr->csp)
 	{
@@ -4113,6 +4131,12 @@ void do_cmd_shad(int Ind, int book, int spell)
 	/* Process spell */
 	else
 	{
+		/* Take a turn */
+		p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+
+		/* Check interference */
+//		if (interfere(Ind, 2)) return;
+
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = plev / 2;
 
@@ -4403,7 +4427,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 	}
 
 	/* Take a turn */
-	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	/* Sufficient mana */
 	if (s_ptr->smana <= p_ptr->csp)
@@ -4565,6 +4589,12 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	/* Process spell */
 	else
 	{
+		/* Take a turn */
+		p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+
+		/* Check interference */
+//		if (interfere(Ind, 5)) return;
+
 		/* Hack -- chance of "beam" instead of "bolt" */
 		beam = plev / 2;
 
@@ -4755,7 +4785,7 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	}
 
 	/* Take a turn */
-	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	/* Sufficient mana */
 	if (s_ptr->smana <= p_ptr->csp)
@@ -4886,7 +4916,7 @@ void do_cmd_shad_aux(int Ind, int dir)
 		p_ptr->window |= PW_SPELL;
 	}
 
-	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	if (s_ptr->smana <= p_ptr->csp)
 	{
@@ -5878,6 +5908,12 @@ void do_cmd_psi(int Ind, int book, int spell)
 	/* Process spell */
 	else
 	{
+		/* Take a turn */
+		p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr2->num_spell;
+
+		/* Check interference */
+//		if (interfere(Ind2, Ind == Ind2 ? 10 : 2)) return;
+
 	  /* Hack -- chance of "beam" instead of "bolt" */
 	  beam = plev / 2;
 
@@ -6283,7 +6319,7 @@ void do_cmd_psi(int Ind, int book, int spell)
 	}
 	
 	/* Take a turn */
-	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr2->num_spell;
+//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr2->num_spell;
 
 	/* Sufficient mana */
 	if (s_ptr->smana <= p_ptr2->csp)
@@ -6444,7 +6480,7 @@ void do_cmd_psi_aux(int Ind, int dir)
 		p_ptr->window |= PW_SPELL;
 	}
 
-	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr2->num_spell;
+//	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr2->num_spell;
 
 	if (s_ptr->smana <= p_ptr2->csp)
 	{
