@@ -8047,6 +8047,8 @@ static void init_feat_info(worldpos *wpos)
  * 3       More smoothed -- tend to look like caverns / small scale map
  * 4--     Max smoothing -- tend to look like landscape/island/
  *         continent etc.
+ * Added by C. Blue for Nether Realm:
+ * 9       Like 2, just greatly reduced chance to place walls.
  *
  * I put it here, because there's another filler generator in
  * wild.c, but it works better there, in fact...
@@ -8085,6 +8087,7 @@ static void fill_level(worldpos *wpos, bool use_floor, byte smooth)
 	else if (smooth == 1) step = 1;
 	else if (smooth == 2) step = 2;
 	else if (smooth == 3) step = 4;
+	else if (smooth == 9) step = 2;
 	else step = 8;
 
 	/*
@@ -8124,10 +8127,10 @@ static void fill_level(worldpos *wpos, bool use_floor, byte smooth)
 	 * vertically
 	 */
 	//for (y = 1; y < cur_hgt- 1; y += step)
-	for (y = 0; y < cur_hgt; y += step)
+	for (y = 0; y < cur_hgt; y += ((step==9)?2:step))
 	{
 		//for (x = 1; x < cur_wid - 1; x += step)
-		for (x = 0; x < cur_wid; x += step)
+		for (x = 0; x < cur_wid; x += ((step==9)?2:step))
 		{
 			/*
 			 * Place randomly selected terrain feature using the prebuilt
@@ -8138,7 +8141,9 @@ static void fill_level(worldpos *wpos, bool use_floor, byte smooth)
 			 * modifications to the other part of the dungeon generator.
 			 */
 			if (use_floor) place_floor(wpos, y, x);
-			else place_filler(wpos, y, x);
+			else if (smooth != 9) place_filler(wpos, y, x);
+			else if (magik(15)) place_filler(wpos, y, x);
+			else place_floor(wpos, y, x);
 		}
 	}
 

@@ -144,7 +144,7 @@ DISEBOLT = add_spell
 	["school"] =    {SCHOOL_UDUN},
 	["level"] =     40,
 	["mana"] =      30,
-	["mana_max"] =  50,
+	["mana_max"] =  140,
         ["fail"] =      -40,
 	["direction"] = TRUE,
 	["spell"] =     function(args)
@@ -160,4 +160,26 @@ DISEBOLT = add_spell
 		"Conjures a powerful disenchantment bolt",
 		"The damage is nearly irresistible and will increase with level"
 	}
+}
+
+HELLFIRE = add_spell
+{
+        ["name"] =      "Hellfire",
+        ["school"] =    {SCHOOL_UDUN},
+        ["level"] =     20,
+        ["mana"] =      15,
+        ["mana_max"] =  40,
+        ["fail"] =      30,
+        ["direction"] = TRUE,
+	["spell"] =     function(args)
+			local type
+	                type = GF_HELL_FIRE
+	                fire_ball(Ind, type, args.dir, 20 + get_level(Ind, HELLFIRE, 500), 2 + get_level(Ind, HELLFIRE, 4), " casts a ball of hellfire for")
+	        end,
+        ["info"] =      function()
+	                return "dam "..(20 + get_level(Ind, HELLFIRE, 500)).." rad "..(2 + get_level(Ind, HELLFIRE, 4))
+	        end,
+        ["desc"] =      {
+	                "Conjures a ball of hellfire to burn your foes to ashes",
+		        }
 }

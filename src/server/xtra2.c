@@ -3102,6 +3102,17 @@ bool set_food(int Ind, int v)
 			/* Fainting / Starving */
 			case 0:
 			msg_print(Ind, "You are getting faint from hunger!");
+			/* Hack -- if the player is at full hit points, 
+			 * destroy his conneciton (this will hopefully prevent
+			 * people from starving while afk)
+			 */
+			if (p_ptr->chp >= p_ptr->mhp) /* changed it due to CHP = MHP-1 bug.. -C. Blue */
+			{
+				/* Use the value */
+				p_ptr->food = v;
+				Destroy_connection(p_ptr->conn, "Starving to death!");
+				return TRUE;
+			}
 			break;
 
 			/* Weak */
@@ -5678,6 +5689,12 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		{
 			/* Give some experience */
 			new_exp = tmp_exp / p_ptr->lev;
+
+			/* Never get too much exp off a monster
+			   due to high level difference,
+			   make exception for low exp boosts like "holy jackal" */
+			if ((new_exp > r_ptr->mexp * 4) && (new_exp > 200)) new_exp = r_ptr->mexp * 4;
+
 			new_exp_frac = ((tmp_exp % p_ptr->lev)
 					* 0x10000L / p_ptr->lev) + p_ptr->exp_frac;
 
@@ -5702,7 +5719,11 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			/* Give experience to that party */
 			/* Seemingly it's severe to cloning, but maybe it's ok :) */
 //			if (!player_is_king(Ind) && !m_ptr->clone) party_gain_exp(Ind, p_ptr->party, tmp_exp);
-			if (!player_is_king(Ind)) party_gain_exp(Ind, p_ptr->party, (tmp_exp*(100-m_ptr->clone))/100);
+			/* Since players won't share exp if leveldiff > 7
+			   I see ne problem with kings sharing exp.
+			   Otherwise Nether Realm parties are punished.. */
+//			if (!player_is_king(Ind)) party_gain_exp(Ind, p_ptr->party, (tmp_exp*(100-m_ptr->clone))/100);
+			party_gain_exp(Ind, p_ptr->party, (tmp_exp*(100-m_ptr->clone))/100, r_ptr->mexp);
 		}
 
 		/*
@@ -7336,12 +7357,21 @@ void telekinesis_aux(int Ind, int item)
 	}
 	else
 	{
-		dungeon_type *d_ptr;
-
-		d_ptr=getdungeon(&p2_ptr->wpos);
-		if(d_ptr && d_ptr->flags2 & DF2_IRON){
-			msg_print(Ind, "You are unable to contact that player");
-			return;
+		/* If they're not within the same dungeon level,
+		   they cannot reach each other if
+		   one is in an IRON or NO_RECALL dungeon/tower */
+		if (!inarea(&p_ptr->wpos, &p2_ptr->wpos)) {
+			dungeon_type *d_ptr;
+			d_ptr=getdungeon(&p_ptr->wpos);
+			if(d_ptr && ((d_ptr->flags2 & DF2_IRON) || (d_ptr->flags1 & DF1_NO_RECALL))){
+				msg_print(Ind, "You are unable to contact that player");
+				return;
+			}
+			d_ptr=getdungeon(&p2_ptr->wpos);
+			if(d_ptr && ((d_ptr->flags2 & DF2_IRON) || (d_ptr->flags1 & DF1_NO_RECALL))){
+				msg_print(Ind, "You are unable to contact that player");
+				return;
+			}
 		}
 
 		/* Actually teleport the object to the player inventory */
@@ -7586,9 +7616,8 @@ static void unstatic_level(struct worldpos *wpos){
 	for (i = 1; i <= NumPlayers; i++)
 	{
 		if (Players[i]->conn == NOT_CONNECTED) continue;
-		if (Players[i]->st_anchor || Players[i]->anti_tele){
+		if (Players[i]->st_anchor){
 			Players[i]->st_anchor=0;
-			Players[i]->anti_tele=0;
 			msg_print(GetInd[Players[i]->id],"Your space/time anchor breaks\n");
 		}
 	}

@@ -40,8 +40,12 @@ void do_cmd_go_up(int Ind)
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type *c_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
+	bool tower=TRUE;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+
+        /* Are we entering/inside a dungeon or a tower? */
+        if (wpos->wz<0) tower=FALSE;
 
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
@@ -110,6 +114,21 @@ void do_cmd_go_up(int Ind)
 		msg_print(Ind,"\377rThis is an ironman dungeon, you may not ascend.");
 		if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
 	}
+#if 1
+	if (tower) {
+		if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
+		    !p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL)){
+			msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
+			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
+		}
+	} else {
+		if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
+		    !p_ptr->ghost && (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL)){
+			msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
+			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
+		}
+	}
+#endif
 	if(wpos->wz==0){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].tower;
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
@@ -226,8 +245,12 @@ void do_cmd_go_down(int Ind)
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type *c_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
+	bool tower = FALSE;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+
+	/* Are we entering/inside a dungeon or a tower? */
+	if (wpos->wz>0) tower=TRUE;
 
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
@@ -265,7 +288,7 @@ void do_cmd_go_down(int Ind)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Hack -- Enter a store (and between gates, etc) */
-	if ((!p_ptr->ghost) &&
+	if ((!p_ptr->ghost || p_ptr->admin_dm || p_ptr->admin_wiz) &&
 			(c_ptr->feat == FEAT_SHOP))
 #if 0
 			(c_ptr->feat >= FEAT_SHOP_HEAD) &&
@@ -333,6 +356,21 @@ void do_cmd_go_down(int Ind)
 		msg_print(Ind,"\377rThis is an ironman tower, you may not descend.");
 		if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
 	}
+#if 1
+	if (tower) {
+		if((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE) &&
+		    (!p_ptr->ghost) && (wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL)) {
+			msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
+			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
+		}
+	} else {
+		if((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE) &&
+		    (!p_ptr->ghost) && (wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL)) {
+			msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
+			if (!(p_ptr->admin_dm || p_ptr->admin_wiz)) return;
+		}
+	}
+#endif
 	if(wpos->wz==0){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){

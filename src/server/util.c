@@ -3674,6 +3674,65 @@ static void do_slash_cmd(int Ind, char *message)
 				else msg_print(Ind, "artifact generation is currently allowed");
 				return;
 			}
+			else if (prefix(message, "/debug-t")){
+				/* C. Blue's mad debug code to swap Minas Anor
+				   and Khazad-Dum on the worldmap :) */
+				struct town_type tmptown;
+				tmptown.x = town[2].x;
+				tmptown.y = town[2].y;
+				town[2].x = town[4].x;
+				town[2].y = town[4].y;
+				town[4].x = tmptown.x;
+				town[4].y = tmptown.y;
+				
+#if 0
+				//MAKE(&tmptown, struct town_type);
+				COPY(&tmptown, &town[3], struct town_type);
+				COPY(&town[3], &town[2], struct town_type);
+				COPY(&town[2], &tmptown, struct town_type);
+				msg_print(Ind, "debug-t executed");
+#endif
+				return;
+			}
+			else if (prefix(message, "/debug-s")){
+				/* C. Blue's mad debug code to fix
+				   stairs in Mount Doom.. */
+				int scx,scy;
+				worldpos *tpos = &p_ptr->wpos;
+				cave_type **zcave = getcave(tpos);
+				if(!(zcave=getcave(tpos))) return;
+				for(scx = 0; scx < 133; scx++) {
+					for(scy = 0;scy < 66; scy++) {
+						if(zcave[scy][scx].feat==FEAT_MORE) {
+							zcave[scy][scx].feat=FEAT_FLOOR;
+							zcave[p_ptr->py][p_ptr->px].feat=FEAT_MORE;
+							new_level_up_y(tpos, p_ptr->py);
+							new_level_up_x(tpos, p_ptr->px);
+							return;
+						}
+					}
+				}
+				msg_print(Ind, "No staircase downwards found.");
+				return;
+			}
+			else if (prefix(message, "/debug-d")){
+				/* C. Blue's mad debug code to change
+				   dungeon flags of Nether Realm */
+				int type;
+				struct dungeon_type *d_ptr;
+				bool tower = FALSE;
+				worldpos *tpos = &p_ptr->wpos;
+				wilderness_type *wild=&wild_info[tpos->wy][tpos->wx];
+
+				if (d_ptr = wild->tower) tower = TRUE;
+				else d_ptr = wild->dungeon;
+				type = d_ptr->type;
+
+				d_ptr->flags1 = d_info[type].flags1;
+				d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
+				msg_print(Ind, "Dungeon flags updated.");
+				return;
+			}
 		}
 	}
 
@@ -3938,14 +3997,15 @@ static void player_talk_aux(int Ind, char *message)
 	if (strlen(message) > 1) mycolor = (prefix(message, "}") && (color_char_to_attr(*(message + 1)) != -1))?2:0;
 
 	if (!Ind) c = 'y';
-/*	Disabled this for now to avoid confusion.
-	else if (mycolor) c = *(message + 1);*/
+	/* Disabled this for now to avoid confusion. */
+	else if (mycolor) c = *(message + 1);
 	else
 	{
 		if (p_ptr->mode & MODE_HELL) c = 'W';
 		if (p_ptr->mode & MODE_NO_GHOST) c = 'D';
 		if (p_ptr->total_winner) c = 'v';
 		else if (p_ptr->ghost) c = 'r';
+		/* Dungeon Master / Dungeon Wizard have their own colour now :) */
 		if (p_ptr->admin_wiz || p_ptr->admin_dm) c = 'b';
 	}
 	switch((i=censor(message))){
@@ -4324,7 +4384,10 @@ bool show_floor_feeling(int Ind)
 		msg_print(Ind, "\377oYou feel like a stranger...");
 	if (l_ptr->flags1 & LF1_NO_DESTROY)
 		msg_print(Ind, "\377oThe walls here seem very solid.");
-
+#if 0
+	if (l_ptr->flags1 & DF1_NO_RECALL)
+		msg_print(Ind, "\377oThere is strong magic enclosing this dungeon.");
+#endif
 	return(l_ptr->flags1 & LF1_FEELING_MASK ? TRUE : felt);
 }
 

@@ -1569,9 +1569,9 @@ int Receive_char_info(void)
 	static bool pref_files_loaded = FALSE;
 
 	/* Clear any old info */
-	race = class = sex = 0;
+	race = class = sex = mode = 0;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd", &ch, &race, &class, &sex)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &race, &class, &sex, &mode)) <= 0)
 	{
 		return n;
 	}
@@ -1581,6 +1581,7 @@ int Receive_char_info(void)
         p_ptr->pclass = class;
         p_ptr->cp_ptr = &class_info[class];
 	p_ptr->male = sex;
+	p_ptr->mode = mode;
 
 	/* Mega-hack -- Read pref files if we haven't already */
 	if (!pref_files_loaded)
@@ -1663,7 +1664,7 @@ int Receive_experience(void)
 {
 	int	n;
 	char	ch;
-	int	max, cur, adv;
+	s32b	max, cur, adv;
 	s16b	lev;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hu%d%d%d", &ch, &lev, &max, &cur, &adv)) <= 0)

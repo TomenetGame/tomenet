@@ -117,7 +117,7 @@ void prt_title(cptr title)
 /*
  * Prints level and experience
  */
-void prt_level(int level, int max, int cur, int adv)
+void prt_level(int level, s32b max, s32b cur, s32b adv)
 {
 	char tmp[32];
 
@@ -1251,12 +1251,23 @@ void display_player(int hist)
         put_str("Race        :", 4, 1);
         put_str("Class       :", 5, 1);
         put_str("Body        :", 6, 1);
+	put_str("Mode        :", 7, 1);
 
         c_put_str(TERM_L_BLUE, cname, 2, 15);
         c_put_str(TERM_L_BLUE, (p_ptr->male ? "Male" : "Female"), 3, 15);
         c_put_str(TERM_L_BLUE, race_info[race].title, 4, 15);
         c_put_str(TERM_L_BLUE, class_info[class].title, 5, 15);
         c_put_str(TERM_L_BLUE, c_p_ptr->body_name, 6, 15);
+        if (p_ptr->mode == MODE_NORMAL)
+	    	c_put_str(TERM_L_BLUE, "Normal (3 lives)", 7, 15);
+	if (p_ptr->mode & MODE_IMMORTAL)
+	    	c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", 7, 15);
+	else if (p_ptr->mode & (MODE_NO_GHOST | MODE_HELL))
+	    	c_put_str(TERM_L_BLUE, "Hellish (one life, extra hard)", 7, 15);
+	else if (p_ptr->mode & MODE_NO_GHOST)
+	    	c_put_str(TERM_L_BLUE, "Unworldly (one life)", 7, 15);
+        else if (p_ptr->mode & MODE_HELL)
+        	c_put_str(TERM_L_BLUE, "Hard (3 lives, extra hard)", 7, 15);
 
         /* Age, Height, Weight, Social */
         prt_num("Age          ", (int)p_ptr->age, 2, 32, TERM_L_BLUE);

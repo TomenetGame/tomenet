@@ -65,13 +65,13 @@ ENTPOTION = add_spell
                 	        end
                         end
         		if get_level(Ind, ENTPOTION, 50) >= 12 then
-                        	set_hero(Ind, player.hero + randint(25) + 25 + get_level(Ind, ENTPOTION, 40))
+                        	set_hero(Ind, randint(25) + 25 + get_level(Ind, ENTPOTION, 40))
 	                        if player.spell_project > 0 then
         	                        fire_ball(Ind, GF_HERO_PLAYER, 0, randint(25) + 25 + get_level(Ind, ENTPOTION, 40), player.spell_project, "")
                 	        end
                         end
 --        		if get_level(Ind, ENTPOTION, 50) >= 28 then
---                        	set_shero(Ind, player.hero + randint(15) + 15 + get_level(Ind, ENTPOTION, 40))
+--                        	set_shero(Ind, randint(15) + 15 + get_level(Ind, ENTPOTION, 40))
 --	                        if player.spell_project > 0 then
 --        	                        fire_ball(Ind, GF_SHERO_PLAYER, 0, randint(15) + 15 + get_level(Ind, ENTPOTION, 40), player.spell_project, "")
 --                	        end

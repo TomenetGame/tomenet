@@ -431,15 +431,15 @@ void do_cmd_eat_food(int Ind, int item)
 					if (magik(o_ptr->name2? 10 : 20))
 						set_paralyzed(Ind, p_ptr->paralyzed + 10 + randint(10));
 					if (magik(o_ptr->name2? 50 : 10))
-						set_hero(Ind, p_ptr->hero + 10 + randint(10));
+						set_hero(Ind, 10 + randint(10)); /* removed stacking */
 					if (magik(o_ptr->name2? 20 : 5))
-						set_shero(Ind, p_ptr->shero + 5 + randint(10));
+						set_shero(Ind, 5 + randint(10)); /* removed stacking */
 					if (magik(o_ptr->name2? 5 : 10))
 						set_afraid(Ind, p_ptr->afraid + 15 + randint(10));
 					if (magik(o_ptr->name2? 5 : 10))
 						set_slow(Ind, p_ptr->slow + 10 + randint(10));
 					else if (magik(o_ptr->name2? 20 : 5))
-						set_fast(Ind, p_ptr->fast + 10 + randint(10), 10);
+						set_fast(Ind, 10 + randint(10), 10); /* removed stacking */
 					/* Methyl! */
 					if (magik(o_ptr->name2? 0 : 3))
 						set_blind(Ind, p_ptr->blind + 10 + randint(10));
@@ -804,7 +804,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_INFRAVISION:
 				{
-					if (set_tim_infra(Ind, p_ptr->tim_infra + 100 + randint(100)))
+					if (set_tim_infra(Ind, 100 + randint(100))) /* removed stacking */
 					{
 						ident = TRUE;
 					}
@@ -813,7 +813,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_DETECT_INVIS:
 				{
-					if (set_tim_invis(Ind, p_ptr->tim_invis + 12 + randint(12)))
+					if (set_tim_invis(Ind, 12 + randint(12))) /* removed stacking */
 					{
 						ident = TRUE;
 					}
@@ -857,6 +857,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					}
 					else
 					{
+						/* not removed stacking due to interesting effect */
 						(void)set_fast(Ind, p_ptr->fast + 5, 10);
 					}
 					break;
@@ -864,7 +865,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_RESIST_HEAT:
 				{
-					if (set_oppose_fire(Ind, p_ptr->oppose_fire + randint(10) + 10))
+					if (set_oppose_fire(Ind, randint(10) + 10)) /* removed stacking */
 					{
 						ident = TRUE;
 					}
@@ -873,7 +874,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_RESIST_COLD:
 				{
-					if (set_oppose_cold(Ind, p_ptr->oppose_cold + randint(10) + 10))
+					if (set_oppose_cold(Ind, randint(10) + 10)) /* removed stacking */
 					{
 						ident = TRUE;
 					}
@@ -884,7 +885,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					if (hp_player(Ind, 10)) ident = TRUE;
 					if (set_afraid(Ind, 0)) ident = TRUE;
-					if (set_hero(Ind, p_ptr->hero + randint(25) + 25)) ident = TRUE;
+					if (set_hero(Ind, randint(25) + 25)) ident = TRUE; /* removed stacking */
 					break;
 				}
 
@@ -892,7 +893,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					if (hp_player(Ind, 30)) ident = TRUE;
 					if (set_afraid(Ind, 0)) ident = TRUE;
-					if (set_shero(Ind, p_ptr->shero + randint(25) + 25)) ident = TRUE;
+					if (set_shero(Ind, randint(25) + 25)) ident = TRUE; /* removed stacking */
 					break;
 				}
 
@@ -1159,18 +1160,18 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_INVULNERABILITY:
 				{
-					ident = set_invuln(Ind, p_ptr->invuln + randint(7) + 7);
+					ident = set_invuln(Ind, randint(7) + 7); /* removed stacking */
 					break;
 				}
 
 			case SV_POTION_RESISTANCE:
 				{
 					ident = 
-						set_oppose_acid(Ind, p_ptr->oppose_acid + randint(20) + 20) |
-						set_oppose_elec(Ind, p_ptr->oppose_elec + randint(20) + 20) |
-						set_oppose_fire(Ind, p_ptr->oppose_fire + randint(20) + 20) |
-						set_oppose_cold(Ind, p_ptr->oppose_cold + randint(20) + 20) |
-						set_oppose_pois(Ind, p_ptr->oppose_pois + randint(20) + 20);
+						set_oppose_acid(Ind, randint(20) + 20) |
+						set_oppose_elec(Ind, randint(20) + 20) |
+						set_oppose_fire(Ind, randint(20) + 20) |
+						set_oppose_cold(Ind, randint(20) + 20) |
+						set_oppose_pois(Ind, randint(20) + 20); /* removed stacking */
 					break;
 				}
 
@@ -2427,7 +2428,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				if (p_ptr->blessed_power == 0)
 				{
 				        p_ptr->blessed_power = 10;
-					if (set_blessed(Ind, p_ptr->blessed + randint(12) + 6)) ident = TRUE;
+					if (set_blessed(Ind, randint(12) + 6)) ident = TRUE; /* removed stacking */
 				}
 				break;
 			}
@@ -2437,7 +2438,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				if (p_ptr->blessed_power == 0)
 				{
 					p_ptr->blessed_power = 20;
-					if (set_blessed(Ind, p_ptr->blessed + randint(24) + 12)) ident = TRUE;
+					if (set_blessed(Ind, randint(24) + 12)) ident = TRUE; /* removed stacking */
 				}
 				break;
 			}
@@ -2447,7 +2448,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				if (p_ptr->blessed_power == 0)
 				{
 					p_ptr->blessed_power = 30;
-					if (set_blessed(Ind, p_ptr->blessed + randint(48) + 24)) ident = TRUE;
+					if (set_blessed(Ind, randint(48) + 24)) ident = TRUE; /* removed stacking */
 				}
 				break;
 			}
@@ -2466,7 +2467,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			case SV_SCROLL_PROTECTION_FROM_EVIL:
 			{
 				k = 3 * p_ptr->lev;
-				if (set_protevil(Ind, p_ptr->protevil + randint(25) + k)) ident = TRUE;
+				if (set_protevil(Ind, randint(25) + k)) ident = TRUE; /* removed stacking */
 				break;
 			}
 
@@ -3112,6 +3113,7 @@ void do_cmd_use_staff(int Ind, int item)
 			else
 			{
 				(void)set_fast(Ind, p_ptr->fast + 5, 10);
+				 /* not removed stacking due to interesting effect */
 			}
 			break;
 		}
@@ -3139,7 +3141,7 @@ void do_cmd_use_staff(int Ind, int item)
 		{
 			if (dispel_evil(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
 			k = get_skill_scale(p_ptr, SKILL_DEVICE, 150);
-			if (set_protevil(Ind, p_ptr->protevil + randint(25) + k)) ident = TRUE;
+			if (set_protevil(Ind, randint(25) + k)) ident = TRUE; /* removed stacking */
 			if (set_poisoned(Ind, 0)) ident = TRUE;
 			if (set_afraid(Ind, 0)) ident = TRUE;
 			if (hp_player(Ind, 50)) ident = TRUE;
@@ -4030,6 +4032,7 @@ void do_cmd_zap_rod(int Ind, int item)
 			else
 			{
 				(void)set_fast(Ind, p_ptr->fast + 5, 10);
+				 /* not removed stacking due to interesting effect */
 			}
 			o_ptr->pval = 99;
 			break;
@@ -4456,6 +4459,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			else
 			{
 				(void)set_fast(Ind, p_ptr->fast + 5, 10);
+				 /* not removed stacking due to interesting effect */
 			}
 			o_ptr->pval = 99;
 			break;
@@ -5106,6 +5110,7 @@ void do_cmd_activate(int Ind, int item)
 				else
 				{
 					(void)set_fast(Ind, p_ptr->fast + 5, 20);
+					 /* not removed stacking due to interesting effect */
 				}
 				o_ptr->timeout = 200;
 				break;
@@ -5151,6 +5156,7 @@ void do_cmd_activate(int Ind, int item)
 				else
 				{
 					(void)set_fast(Ind, p_ptr->fast + 5, 10);
+					 /* not removed stacking due to interesting effect */
 				}
 				o_ptr->timeout = rand_int(100) + 100;
 				break;
@@ -5262,11 +5268,11 @@ void do_cmd_activate(int Ind, int item)
 			case ART_COLLUIN:
 			{
 				msg_print(Ind, "Your cloak glows many colours...");
-				(void)set_oppose_acid(Ind, p_ptr->oppose_acid + randint(20) + 20);
-				(void)set_oppose_elec(Ind, p_ptr->oppose_elec + randint(20) + 20);
-				(void)set_oppose_fire(Ind, p_ptr->oppose_fire + randint(20) + 20);
-				(void)set_oppose_cold(Ind, p_ptr->oppose_cold + randint(20) + 20);
-				(void)set_oppose_pois(Ind, p_ptr->oppose_pois + randint(20) + 20);
+				(void)set_oppose_acid(Ind, randint(20) + 20); /* removed stacking */
+				(void)set_oppose_elec(Ind, randint(20) + 20);
+				(void)set_oppose_fire(Ind, randint(20) + 20);
+				(void)set_oppose_cold(Ind, randint(20) + 20);
+				(void)set_oppose_pois(Ind, randint(20) + 20);
 				o_ptr->timeout = 111;
 				break;
 			}
@@ -5383,13 +5389,13 @@ void do_cmd_activate(int Ind, int item)
 				(void)set_afraid(Ind, 0);
 				/* Stay bold for some turns */
 		                p_ptr->res_fear_temp = 20;
-				(void)set_shero(Ind, p_ptr->shero + randint(50) + 50);
-				(void)set_blessed(Ind, p_ptr->blessed + randint(50) + 50);
-				(void)set_oppose_acid(Ind, p_ptr->oppose_acid + randint(50) + 50);
-				(void)set_oppose_elec(Ind, p_ptr->oppose_elec + randint(50) + 50);
-				(void)set_oppose_fire(Ind, p_ptr->oppose_fire + randint(50) + 50);
-				(void)set_oppose_cold(Ind, p_ptr->oppose_cold + randint(50) + 50);
-				(void)set_oppose_pois(Ind, p_ptr->oppose_pois + randint(50) + 50);
+				(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
+				(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
+				(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
+				(void)set_oppose_elec(Ind, randint(50) + 50);
+				(void)set_oppose_fire(Ind, randint(50) + 50);
+				(void)set_oppose_cold(Ind, randint(50) + 50);
+				(void)set_oppose_pois(Ind, randint(50) + 50);
 				o_ptr->timeout = 400;
 				break;
 			}
@@ -5434,7 +5440,7 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "The amulet lets out a shrill wail...");
 				k = 3 * p_ptr->lev;
-				(void)set_protevil(Ind, p_ptr->protevil + randint(25) + k);
+				(void)set_protevil(Ind, randint(25) + k); /* removed stacking */
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
@@ -5450,6 +5456,7 @@ void do_cmd_activate(int Ind, int item)
 				else
 				{
 					(void)set_fast(Ind, p_ptr->fast + 5, 15);
+					 /* not removed stacking due to interesting effect */
 				}
 				o_ptr->timeout = rand_int(150) + 150;
 				break;
@@ -5581,11 +5588,12 @@ void do_cmd_activate(int Ind, int item)
 			{
 				if (!p_ptr->fast)
 				{
-					(void)set_fast(Ind, randint(20) + 20, 20);
+					(void)set_fast(Ind, randint(20) + 20, 15); /* was +20! */
 				}
 				else
 				{
-					(void)set_fast(Ind, p_ptr->fast + 5, 20);
+					(void)set_fast(Ind, p_ptr->fast + 5, 15);
+					 /* not removed stacking due to interesting effect */
 				}
 				o_ptr->timeout = 200;
 				break;
@@ -5631,6 +5639,7 @@ void do_cmd_activate(int Ind, int item)
 				else
 				{
 					(void)set_fast(Ind, p_ptr->fast + 5, 15);
+					 /* not removed stacking due to interesting effect */
 				}
 				o_ptr->timeout = rand_int(100) + 100;
 				break;
@@ -5742,11 +5751,11 @@ void do_cmd_activate(int Ind, int item)
 			case ART_COLLUIN:
 			{
 				msg_print(Ind, "Your cloak glows many colours...");
-				(void)set_oppose_acid(Ind, p_ptr->oppose_acid + randint(20) + 20);
-				(void)set_oppose_elec(Ind, p_ptr->oppose_elec + randint(20) + 20);
-				(void)set_oppose_fire(Ind, p_ptr->oppose_fire + randint(20) + 20);
-				(void)set_oppose_cold(Ind, p_ptr->oppose_cold + randint(20) + 20);
-				(void)set_oppose_pois(Ind, p_ptr->oppose_pois + randint(20) + 20);
+				(void)set_oppose_acid(Ind, randint(20) + 20); /* removed stacking */
+				(void)set_oppose_elec(Ind, randint(20) + 20);
+				(void)set_oppose_fire(Ind, randint(20) + 20);
+				(void)set_oppose_cold(Ind, randint(20) + 20);
+				(void)set_oppose_pois(Ind, randint(20) + 20);
 				o_ptr->timeout = 111;
 				break;
 			}
@@ -5863,13 +5872,13 @@ void do_cmd_activate(int Ind, int item)
 				(void)set_afraid(Ind, 0);
 				/* Stay bold for some turns */
 		                p_ptr->res_fear_temp = 20;
-				(void)set_shero(Ind, p_ptr->shero + randint(50) + 50);
-				(void)set_blessed(Ind, p_ptr->blessed + randint(50) + 50);
-				(void)set_oppose_acid(Ind, p_ptr->oppose_acid + randint(50) + 50);
-				(void)set_oppose_elec(Ind, p_ptr->oppose_elec + randint(50) + 50);
-				(void)set_oppose_fire(Ind, p_ptr->oppose_fire + randint(50) + 50);
-				(void)set_oppose_cold(Ind, p_ptr->oppose_cold + randint(50) + 50);
-				(void)set_oppose_pois(Ind, p_ptr->oppose_pois + randint(50) + 50);
+				(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
+				(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
+				(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
+				(void)set_oppose_elec(Ind, randint(50) + 50);
+				(void)set_oppose_fire(Ind, randint(50) + 50);
+				(void)set_oppose_cold(Ind, randint(50) + 50);
+				(void)set_oppose_pois(Ind, randint(50) + 50);
 				o_ptr->timeout = 400;
 				break;
 			}
@@ -5914,7 +5923,7 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "The amulet lets out a shrill wail...");
 				k = 3 * p_ptr->lev;
-				(void)set_protevil(Ind, p_ptr->protevil + randint(25) + k);
+				(void)set_protevil(Ind, randint(25) + k); /* removed stacking */
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
@@ -5930,6 +5939,7 @@ void do_cmd_activate(int Ind, int item)
 				else
 				{
 					(void)set_fast(Ind, p_ptr->fast + 5, 15);
+					 /* not removed stacking due to interesting effect */
 				}
 				o_ptr->timeout = rand_int(150) + 150;
 				break;
@@ -5980,7 +5990,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_CELEBRIMBOR:
 			{
 				set_tim_esp(Ind, p_ptr->tim_esp + randint(20) + 20);
-
+				 /* not removed stacking */
 				o_ptr->timeout = rand_int(50) + 20;
 				break;
 			}
@@ -5995,7 +6005,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_HARADRIM:
 			{
 				set_afraid(Ind, 0);
-				set_shero(Ind, p_ptr->shero + randint(25) + 25);
+				set_shero(Ind, randint(25) + 25); /* removed stacking */
 				hp_player(Ind, 30);
 				o_ptr->timeout = rand_int(50) + 50;
 				break;
@@ -6106,7 +6116,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_HIMRING:
 			{
 				k = 3 * p_ptr->lev;
-				(void)set_protevil(Ind, p_ptr->protevil + randint(25) + k);
+				(void)set_protevil(Ind, randint(25) + k); /* removed stacking */
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
@@ -6425,10 +6435,10 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "Your horn glows deep red.");
 				set_afraid(0);
-				set_shero(Ind, p_ptr->shero + damroll(5,10) + 30);
+				set_shero(Ind, damroll(5,10) + 30); /* removed stacking */
 				set_afraid(0);
-				set_hero(Ind, p_ptr->hero + damroll(5,10) + 30);
-				set_fast(Ind, p_ptr->fast + damroll(5,10) + 30, 20);
+				set_hero(Ind, damroll(5,10) + 30); /* removed stacking */
+				set_fast(Ind, damroll(5,10) + 30, 20); /* removed stacking */
 				hp_player(30);
 				o_ptr->timeout = 250;
 				break;
@@ -6460,10 +6470,11 @@ void do_cmd_activate(int Ind, int item)
 				else
 				{
 					(void)set_fast(Ind, p_ptr->fast + 5, 10);
+					 /* not removed stacking due to interesting effect */
 				}
 				hp_player(Ind, 30);
 				set_afraid(Ind, 0);
-				set_shero(Ind, p_ptr->shero + randint(50) + 50);
+				set_shero(Ind, randint(50) + 50); /* removed stacking */
 				o_ptr->timeout = rand_int(200) + 100;
 				break;
 			}
@@ -6527,7 +6538,7 @@ void do_cmd_activate(int Ind, int item)
 				{
 					msg_print(Ind, "Your gloves glow golden...");
 					p_ptr->blessed_power = 30;
-	        			set_blessed(Ind, p_ptr->blessed + randint(48) + 24);
+	        			set_blessed(Ind, randint(48) + 24); /* removed stacking */
 					o_ptr->timeout = 150 + randint(200);
 				} else {
 					msg_print(Ind, "Your gloves shimmer..");
@@ -6538,11 +6549,11 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "The amulet sparkles in scintillating colours...");
 				o_ptr->timeout = 250 + randint(200);
-				(void)set_oppose_acid(Ind, p_ptr->oppose_acid + randint(30) + 40);
-				(void)set_oppose_elec(Ind, p_ptr->oppose_elec + randint(30) + 40);
-				(void)set_oppose_fire(Ind, p_ptr->oppose_fire + randint(30) + 40);
-				(void)set_oppose_cold(Ind, p_ptr->oppose_cold + randint(30) + 40);
-				(void)set_oppose_pois(Ind, p_ptr->oppose_pois + randint(30) + 40);
+				(void)set_oppose_acid(Ind, randint(30) + 40); /* removed stacking */
+				(void)set_oppose_elec(Ind, randint(30) + 40);
+				(void)set_oppose_fire(Ind, randint(30) + 40);
+				(void)set_oppose_cold(Ind, randint(30) + 40);
+				(void)set_oppose_pois(Ind, randint(30) + 40);
 			}
 		}
 
@@ -6588,7 +6599,7 @@ void do_cmd_activate(int Ind, int item)
 	}
 	else if (is_ego_p(o_ptr, EGO_FURY))
 	{
-		set_fury(Ind, p_ptr->fury + rand_int(5) + 15);
+		set_fury(Ind, rand_int(5) + 15); /* removed stacking */
 		hp_player(Ind, 40);
 		o_ptr->timeout = 100 + randint(50);
 
@@ -6617,7 +6628,8 @@ void do_cmd_activate(int Ind, int item)
 			set_tim_wraith(Ind, 20 + randint(20));
 		else
 			//                       set_shadow(Ind, p_ptr->tim_wraith + randint(20));
-			set_tim_wraith(Ind, p_ptr->tim_wraith + randint(20));
+			//set_tim_wraith(Ind, p_ptr->tim_wraith + randint(20));
+			set_tim_wraith(Ind, randint(20)); /* removed stacking */
 		o_ptr->timeout = 50 + randint(50);
 
 		/* Window stuff */
@@ -6793,11 +6805,11 @@ void do_cmd_activate(int Ind, int item)
 				{
 					msg_print(Ind, "Your cloak flashes many colors...");
 
-					(void)set_oppose_acid(Ind, p_ptr->oppose_acid + randint(40) + 40);
-					(void)set_oppose_elec(Ind, p_ptr->oppose_elec + randint(40) + 40);
-					(void)set_oppose_fire(Ind, p_ptr->oppose_fire + randint(40) + 40);
-					(void)set_oppose_cold(Ind, p_ptr->oppose_cold + randint(40) + 40);
-					(void)set_oppose_pois(Ind, p_ptr->oppose_pois + randint(40) + 40);
+					(void)set_oppose_acid(Ind, randint(40) + 40); /* removed stacking */
+					(void)set_oppose_elec(Ind, randint(40) + 40);
+					(void)set_oppose_fire(Ind, randint(40) + 40);
+					(void)set_oppose_cold(Ind, randint(40) + 40);
+					(void)set_oppose_pois(Ind, randint(40) + 40);
 
 					o_ptr->timeout = rand_int(50) + 150;
 					break;
@@ -6822,7 +6834,7 @@ void do_cmd_activate(int Ind, int item)
 		msg_print(Ind, "Your amulet sparkles bright red...");
 
                 set_afraid(Ind, 0);
-                set_fury(Ind, p_ptr->fury + randint(15) + 20);
+                set_fury(Ind, randint(15) + 20); /* removed stacking */
                 hp_player(Ind, 40);
 
 		o_ptr->timeout = rand_int(150) + 100;
@@ -7244,14 +7256,14 @@ void do_cmd_activate_dir(int Ind, int dir)
 				fire_ball(Ind, GF_MISSILE, dir, 300, 4, p_ptr->attacker);
 				msg_print(Ind, "Your armour glows in many colours...");
 				(void)set_afraid(Ind, 0);
-				(void)set_shero(Ind, p_ptr->shero + randint(50) + 50);
+				(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
 				(void)hp_player(Ind, 30);
-				(void)set_blessed(Ind, p_ptr->blessed + randint(50) + 50);
-				(void)set_oppose_acid(Ind, p_ptr->oppose_acid + randint(50) + 50);
-				(void)set_oppose_elec(Ind, p_ptr->oppose_elec + randint(50) + 50);
-				(void)set_oppose_fire(Ind, p_ptr->oppose_fire + randint(50) + 50);
-				(void)set_oppose_cold(Ind, p_ptr->oppose_cold + randint(50) + 50);
-				(void)set_oppose_pois(Ind, p_ptr->oppose_pois + randint(50) + 50);
+				(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
+				(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
+				(void)set_oppose_elec(Ind, randint(50) + 50);
+				(void)set_oppose_fire(Ind, randint(50) + 50);
+				(void)set_oppose_cold(Ind, randint(50) + 50);
+				(void)set_oppose_pois(Ind, randint(50) + 50);
 				o_ptr->timeout = 400;
 				break;
 			}
@@ -7333,7 +7345,7 @@ void do_cmd_activate_dir(int Ind, int dir)
                                 /* Get a direction for breathing (or abort) */
 				sprintf(p_ptr->attacker, " casts a lightning ball for", p_ptr->name);
                                 fire_ball(Ind, GF_ELEC, dir, 50, 2, p_ptr->attacker);
-                                (void)set_oppose_elec(Ind, p_ptr->oppose_elec + randint(20) + 20);
+                                (void)set_oppose_elec(Ind, randint(20) + 20); /* removed stacking */
 				o_ptr->timeout = rand_int(50) + 50;
 				break;
 			}
@@ -7343,7 +7355,7 @@ void do_cmd_activate_dir(int Ind, int dir)
                                 /* Get a direction for breathing (or abort) */
 				sprintf(p_ptr->attacker, " casts an acid ball for", p_ptr->name);
 				fire_ball(Ind, GF_ACID, dir, 50, 2, p_ptr->attacker);
-				(void)set_oppose_acid(Ind, p_ptr->oppose_acid + randint(20) + 20);
+				(void)set_oppose_acid(Ind, randint(20) + 20); /* removed stacking */
 				o_ptr->timeout = rand_int(50) + 50;
 				break;
 			}
@@ -7353,7 +7365,7 @@ void do_cmd_activate_dir(int Ind, int dir)
                                 /* Get a direction for breathing (or abort) */
 				sprintf(p_ptr->attacker, " casts a cold ball for", p_ptr->name);
 				fire_ball(Ind, GF_COLD, dir, 50, 2, p_ptr->attacker);
-				(void)set_oppose_cold(Ind, p_ptr->oppose_cold + randint(20) + 20);
+				(void)set_oppose_cold(Ind, randint(20) + 20); /* removed stacking */
 				o_ptr->timeout = rand_int(50) + 50;
 				break;
 			}
@@ -7363,7 +7375,7 @@ void do_cmd_activate_dir(int Ind, int dir)
                                 /* Get a direction for breathing (or abort) */
 				sprintf(p_ptr->attacker, " casts a fire ball for", p_ptr->name);
 				fire_ball(Ind, GF_FIRE, dir, 50, 2, p_ptr->attacker);
-				(void)set_oppose_fire(Ind, p_ptr->oppose_fire + randint(20) + 20);
+				(void)set_oppose_fire(Ind, randint(20) + 20); /* removed stacking */
 				o_ptr->timeout = rand_int(50) + 50;
 				break;
 			}

@@ -158,6 +158,7 @@ extern s16b command_dir;
 extern s16b race;
 extern s16b class;
 extern s16b sex;
+extern s16b mode;
 
 extern s16b class_extra;
 
@@ -369,7 +370,7 @@ extern void display_store_action(void);
 /* c-xtra1.c */
 extern void prt_stat(int stat, int max, int cur, int cur_base);
 extern void prt_title(cptr title);
-extern void prt_level(int level, int max, int cur, int adv);
+extern void prt_level(int level, s32b max, s32b cur, s32b adv);
 extern void prt_gold(int gold);
 extern void prt_ac(int ac);
 extern void prt_hp(int max, int cur);

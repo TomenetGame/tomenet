@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. Nov 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 23. Nov 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -45,12 +45,12 @@ Contents
 (4) The world
     (4.1)   Running, picking up items, fighting
     (4.2)   Level and owner of items
-    (4.3)   Dungeons and towers
+    (4.3)   Dungeon and tower types, Ironman, Jail
     (4.4)   Terrain
     (4.5)   Towns and shops
     (4.6)   Pits and vaults
     (4.7)   Traps
-    (4.8)   Level & vault feelings, Jail, Ironman
+    (4.8)   Level & vault feelings
     (4.9)   Navigating on maps
     (4.10)  Houses
 (5) Item details
@@ -1530,26 +1530,29 @@ the owner.
 
 
 
-(4.3) Dungeons and towers
--------------------------
+(4.3) Dungeon and tower types, Ironman, Jail
+--------------------------------------------
 Look for the staircase ">", step on it and press the '>' key to enter the
 dungeon. There is often a so-called newbie tower, which is represented by a
 "<", meaning it goes upwards instead of downwards. Enter it by pressing the
-'<' key. The newbie tower often allows you to die without suffering
-consequences, or is in general easier. An experience penalty might be applied
-for killing monsters in the tower (usually 50%). You might ask other players
-in game (use ':' to chat) where/if there is a newbie tower (also called
-'Training Tower'), or you might search for it yourself.
+'<' key. The newbie tower allows you to die without suffering consequences,
+and is easier in general. An experience penalty might be applied for killing
+monsters in the tower (usually 50%). You might ask other players in game
+(use ':' to chat) where/if there is a newbie tower (also called 'Training
+Tower'), or you might search for it yourself.
+
 While inside a town, you get a good overview including the staircases upwards
 and downwards by invoking the map by pressing SHIFT+'M' (capital M !).
 If you leave a town and explore the wildernis, M will bring up a map showing
 you towns and areas that you have explored so far.
+
 After you entered the dungeon, make sure again that you have equipped a light
 source! Note the bright dots around you, these are lightened fields within the
 radius of your light source. To look at your current dungeon/tower level or
 city, press 'L' and use direction keys to navigate on the map.
 Also know that there are interesting dungeons found in the wildernis that are
 not connected to a town at all!
+
 When you enter the dungeon from within the starting town Bree, you will note
 in the main window instead of "Bree" your actual depth is displayed, telling
 you on which dungeon level you are. Each dungeon level is 50 feet deeper.
@@ -1562,29 +1565,102 @@ in case you want to try diving quickly. On 750 ft you can encounter hounds
 experience. They are a famous target for diver.
 For a list of the dungeons see '(4.5) Towns'.
 
+Dungeon types
+-------------
+There are different types of dungeons. The main five are:
+-Normal dungeons. The main dungeons below the five cities Bree, Minas Anor,
+ Gondolin, Lothlorien and Khazad-dum are such regular dungeons.
+ Normal dungeons/towers are marked by a light grey < or > symbol.
+-No-death. The Training Tower in Bree has this flag. Players who die inside a
+ no-death dungeon won't turn into a ghost if they 'die' but just be teleported
+ back to town! They still lose experience though.
+ No-death dungeons/towers are marked by a green < or > symbol.
+-Ironman. Ironman dungeons or towers won't allow you to recall or to use
+ staircases that lead upwards! If you die in such a dungeon or tower you won't
+ turn into a ghost either but get destroyed completely.
+ Sending items via telekinesis to a player who is currently in an ironman
+ dungeon/tower will only work if both players are on the same dungeon floor.
+ To leave an ironman dungeon/tower you'll have to get to it's bottom
+ respectively top.
+ Ironman dungeons/towers are marked by a dark grey < or > symbol.
+-No-up / Force-down. These dungeons won't allow you to go upwards, same as
+ ironman, just without the penalty of permanent ghost-death.
+ No-up dungeons/towers are marked by a red < or > symbol.
+-No-recall. These dungeons don't allow you to use Word-of-Recall nor
+ probability travel to change the level. The staircases are the only way.
+ Sending items via telekinesis to a player who is currently in a no-recall
+ dungeon/tower will only work if both players are on the same dungeon floor.
+ No-recall dungeons/towers are marked by a light red < or > symbol.
+-Hellish. Hellish dungeons will treat all players inside as if they were
+ hellish characters. Including permanent ghost-death, same as ironman.
+ Hellish dungeons/towers are marked by a fire-like flickering < or > symbol.
+
+Jail:
+Note that jails (if the server has one) don't allow any type of teleportation,
+nor will you turn into a ghost if you get killed there, instead you will get
+destroyed completely. Same as with 'iron man dungeons'.
+A jail usually has an ironman tower inside.
+
+Sometimes you might find ruins of old staircases that don't lead to any
+dungeon or tower. Those have no further functionality and are coloured grey.
+
 
 
 (4.4) Terrain
 -------------
-Town fence-
-Grey '#' surround Bree. These cannot be damaged or destroyed.
 
+Terrain features in the main window:
+------------------------------------
 Town buildings-
 Consisting of red '#' (roof) and white '#' (wall), these cannot be damaged or
 destroyed.
 
+Floor-
+Dots '.' rensemble empty floor. Green dots are grass, brown ones dirt, grey
+ones stone or ash.
+Red dots are lava, violet dots nether mist. These can be dangerous to cross!
+
+Trees-
+Thick trees are rensembled by green or grey (dead) '#'. To pass them you need
+to either fly over them or to be an Ent, shepherd of trees to whom they will
+slightly bow aside to make room. Trees can also be burned up.
+
+Staircases-
+'<' and '>' are staircases leading upwards or downwards into towers or
+dungeons. (Press the according key to walk the staircase.)
+
+Doors-
+Light brown '+' are closed doors, ' are open or broken doors.
+(Use 'o' to open, 'c' to close and 'B'/'F' to bash/force doors.)
+
+Void Jumpgates-
+Violet '+' are void jumpgates that teleport you elsewhere.
+Press '>' key to use them.
+
+Stores-
+Store entrances are represented by coloured numbers '0'..'9'.
+See (4.5) for details about stores.
+
+Rubble-
+':' is rubble. Characters with high enough archery skill can stand next to
+rubble and use their 'create ammo' ability to create ammunition from it.
+
+Pits-
+Dark '#' are pits that can only be crossed if you have levitation or flying
+ability. Bree is protected by pits around the outer tree wall. These pits
+cannot be disarmed or destroyed.
+
 Walls-
 White '#' are permanent walls which cannot be damaged or destroyed.
-'#' of different grey tones are granite walls, magma intrusions, quartz veins
-and can be tunneled into and take damage from earthquakes.
+'#' and '%' of different grey tones are granite walls, magma intrusions,
+quartz veins and can be tunneled into and take damage from earthquakes.
+Yellow '#' are sand walls, white '#' are ice walls.
 
 Water-
-On the world map there's lots of water (blue '%' fields). It can be dangerous
-to cross it if you're not good at swimming or if you cannot fly :) Further,
-nasty creatures are said to live in the seas. Ents cannot drown in water since
-they completely consist of wood.
-Rivers and lakes are displayed as light blue '~' fields on the world map.
-In the main window, all water fields are displayed as blue and light blue '~'.
+On the world surface but also in some dungeons there's lots of water (blue '~'
+fields). It can be dangerous to cross it if you're not good at swimming or if
+you cannot fly :) Further, nasty creatures are said to live in the seas. Ents
+cannot drown in water since they completely consist of wood.
 
 Mountain chains-
 Brown '^' fields are massive and very high mountains. To travel these you need
@@ -1592,24 +1668,31 @@ a climbing set or another item that gives you climbing abilities. Dwarves can
 intrinsically travel through mountains. In dungeons '^' rensemble solid
 structures of massive rock that reach nearly up to the top of the huge dungeon
 levels, climbing these is as hard as climbing mountains above ground.
-On the world map mountains are displayed as grey '^', lava mountains are red.
-
-Trees-
-Thick trees are rensembled by green or grey '*'. To pass them you need to
-either fly over them or to be an Ent, shepherd of trees to whom they will
-slightly bow aside to make room. Trees can also be burned up.
+White '^' are extremely high mountain chains.
 
 Lava-
 Red dots '.' are lava, which will do heat damage to your character in
 regular intervals. This might also destroy items in your inventory in case
 you're not immune to fire.
 
-Floor, dirt, grass-
-are displayed as light grey, brown and green dots '.'. On the world map,
-they are displayed as either green '.' or yellow ','.
+Fountains-
+'_' are fountains. To drink from them use /sip command or press the '_' key.
 
-Towns-
-are displayed as yellow 'T' on the world map.
+
+Terrain features on the world map:
+----------------------------------
+Lakes-          are displayed as blue '~' fields on the world map.
+Grassland-      green '.'
+Forest-         green '*'
+Swamps-         violet '%'
+Dense forests-  dark grey '*'
+Wasteland-      umber (bronze) '.'
+Towns-          yellow 'T'
+Mountains-      dark grey '^'
+Volcanos-       red '^' - careful, you may get stuck in this terrain!
+Rivers-         light blue '~'
+Coast areas-    yellow ','
+Oceans-         blue '%' fields.
 
 
 
@@ -1810,19 +1893,6 @@ feeling as soon as you are about to enter the vault:
                                         Further, Wraith Form won't work!
 As soon as you leave such a no-teleport-vault you'll receive this feeling:
 "Fresh air greets you as you leave the vault."
-
-Jail:
-Note that jails (if the server has one) don't allow any type of teleportation
-either, nor will you turn into a ghost if you get killed there, instead
-you will get destroyed completely. Same as with 'iron man dungeons'.
-A jail usually has an ironman tower inside.
-
-Ironman:
-Ironman dungeons or towers won't allow you to recall or to use staircases that
-lead upwards! If you die in such a dungeon or tower you won't turn into a
-ghost either but get destroyed completely. Sending items via telekinesis to a
-player who is currently in an ironman dungeon won't work either. To leave an
-ironman dungeon/tower you'll have to get to it's bottom respectively top.
 
 
 
@@ -2617,6 +2687,17 @@ FUEL_LITE ('It provides light radius when fueled')
 CURSED, HEAVY_CURSE, PERMA_CURSE, AUTO_CURSE,
 CURSE_NO_DROP, TY_CURSE, DG_CURSE
         See (5.14) Curses.
+INSTA_ART
+        This item always is an artifact; it has no base-class that can spawn
+        non-art items. Example: Long Sword base class can spawn regular long
+        swords, but also 'Elvagil'. A Phial however will instantly be
+        'artified' and turn into Phial of Galadriel or Undeath. There are no
+        base-type non-art phials in the game.
+SPECIAL_GENE
+        These artifacts are 'special artifacts' that cannot be dropped by
+        regular monsters but require a certain key monster to be killed.
+        For example the Suit of Mardra can only drop from Mardra (there is no
+        guarantee that she will always drop it though).
 
 
 
@@ -4094,8 +4175,9 @@ Fire
     Globe of Light  Creates a globe of magical light.
                     Lv10: Damages monsters.
                     Lv 25: Turns into a more powerful kind of light.
-    Fireflash       Conjures a fire ball.
-                    Lv20: Turns into holy fire.
+    Fireflash              Conjures a fire ball.
+                    Lv20: Turns into holy fire which is especially deadly to
+                          EVIL opponents.
     Fiery Shield    Creates a shield of flames around you.
     Firewall        Creates a fire wall to incinerate monsters that cross it.
 Mana
@@ -4151,7 +4233,7 @@ Mind
 Tempo
     Magelock        Magically locks a door.
                     Lv30: Creates a Glyph Of Warding on the ground that stops
-                        monsters from crossing the field or summoning on it.
+                          monsters from crossing the field or summoning on it.
     Slow Monster    Slows down a monster.
                     Lv20: Affects a zone.
     Essence of Speed
@@ -4168,6 +4250,8 @@ Udun
     Wraithform      Turns your form immaterial.                     (project)
     Disenchantment Bolt
                     Conjures a powerful and nearly irresistible bolt.
+    Hellfire        Conjures a ball of hellfire which is especially deadly to
+                    GOOD opponents.
 
 Istari/priest schools:
 ----------------------

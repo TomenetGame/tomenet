@@ -92,6 +92,12 @@ HRESISTS = add_spell
 				fire_ball(Ind, GF_RESACID_PLAYER, 0, dur, player.spell_project, "")
 			end
 		end
+                if get_level(Ind, HRESISTS, 50) > 24 then
+			set_oppose_pois(Ind, dur)
+			if player.spell_project > 0 then
+				fire_ball(Ind, GF_RESPOIS_PLAYER, 0, dur, player.spell_project, "")
+			end
+		end
 	end,
 	["info"] = 	function()
         	if get_level(Ind, HRESISTS, 50) < 5 then
@@ -100,8 +106,10 @@ HRESISTS = add_spell
 			return "Res heat/cold, dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
 		elseif get_level(Ind, HRESISTS, 50) < 15 then
 			return "Res heat/cold/elec, dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
-		else
+		elseif get_level(Ind, HRESISTS, 50) < 25 then
 			return "Base resistance, dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
+		else
+			return "Base+poison res., dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
                 end
 	end,
         ["desc"] =	{
@@ -109,6 +117,7 @@ HRESISTS = add_spell
         		"At level 5 you also resist cold.",
         		"At level 10 you resist lightning too.",
         		"At level 15 it gives acid resistance as well.",
+        		"At level 25 lets you resist poison too.",
 			"***Affected by the Meta spell: Project Spell***",
         }
 }

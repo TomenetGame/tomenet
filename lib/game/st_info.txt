@@ -314,8 +314,10 @@ T:5:70:35
 T:5:71:61
 #scroll of vermin control
 T:10:70:61
-#pot of *healing*
-#pot of *restore mana*
+#pot of *healing* - added especially for Nether Realm visits
+T:5:71:38
+#pot of *restore mana* - shouldn't be buyable. too exquisite!
+#T:::
 A:30:0:1:2:3:4
 O:38:39:40:41
 G:7:D
@@ -814,3 +816,36 @@ G:7:U
 F:ALL_ITEM | VERY_RARE | DEEP_LEVEL | NO_DISCOUNT | 
 F:PRICE16 | PRICY_ITEMS4 | VHARD_STEAL
 W:13
+
+N:61:Bordertravel supplies
+T:95:71:29
+T:95:71:37
+T:95:70:9
+I:95:Restore Mana
+T:95:71:60
+T:95:70:35
+T:95:71:61
+T:95:71:38
+I:95:& Flask~ of oil
+I:100:& Ration~ of Food
+I:95:Restore Life Levels
+T:75:45:40
+T:75:45:18
+I:100:& Wooden Torch~
+I:95:& Brass Lantern~
+I:100:& Hard Biscuit~
+I:90:& Strip~ of Venison
+I:70:& Pint~ of Fine Wine
+I:80:& Pint~ of Fine Ale
+#I:70:& Iron Shot~
+#I:70:& Bolt~
+#I:70:& Arrow~
+T:30:39:2
+T:30:39:2
+T:30:39:3
+A:0:0:1:2:3:4
+O:34:35:36:37
+G:1:B
+F:RANDOM | DEEP_LEVEL | NO_DISCOUNT | 
+F:GOOD | GREAT | PRICE4 | PRICE2 | VHARD_STEAL
+W:24

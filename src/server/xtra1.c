@@ -735,7 +735,7 @@ static void prt_frame_basic(int Ind)
 	int i;
 
 	/* Race and Class */
-	Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->male);
+	Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->male, p_ptr->mode);
 
 	/* Title */
 	prt_title(Ind);
@@ -2480,7 +2480,7 @@ void calc_bonuses(int Ind)
 		p_ptr->see_infra += 3;
 		p_ptr->resist_dark = TRUE;
 		p_ptr->resist_blind = TRUE;
-		p_ptr->resist_pois = TRUE; /* instead of immune_poison */
+		p_ptr->immune_poison = TRUE;
 		p_ptr->resist_cold = TRUE;
 		p_ptr->resist_fear = TRUE;
 		p_ptr->resist_conf = TRUE;
@@ -3533,7 +3533,7 @@ void calc_bonuses(int Ind)
 	p_ptr->heavy_shoot = FALSE;
 
 	/* It is hard to carholdry a heavy bow */
-	if (hold < o_ptr->weight / 10)
+	if (o_ptr->k_idx && hold < o_ptr->weight / 10)
 	{
 		/* Hard to wield a heavy bow */
 		p_ptr->to_h += 2 * (hold - o_ptr->weight / 10);
@@ -3542,7 +3542,6 @@ void calc_bonuses(int Ind)
 		/* Heavy Bow */
 		p_ptr->heavy_shoot = TRUE;
 	}
-
 
 	/* Compute "extra shots" if needed */
 	if (o_ptr->k_idx && !p_ptr->heavy_shoot)
@@ -3642,7 +3641,7 @@ void calc_bonuses(int Ind)
 	p_ptr->heavy_wield = FALSE;
 
 	/* It is hard to hold a heavy weapon */
-	if (hold < o_ptr->weight / 10)
+	if (o_ptr->k_idx && hold < o_ptr->weight / 10)
 	{
 		/* Hard to wield a heavy weapon */
 		p_ptr->to_h += 2 * (hold - o_ptr->weight / 10);
@@ -4287,7 +4286,7 @@ void redraw_stuff(int Ind)
 	if (p_ptr->redraw & PR_MISC)
 	{
 		p_ptr->redraw &= ~(PR_MISC);
-		Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->male);
+		Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->male, p_ptr->mode);
 	}
 
 	if (p_ptr->redraw & PR_TITLE)

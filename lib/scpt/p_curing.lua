@@ -86,18 +86,18 @@ HSANITY = add_spell
 	["spell"] =     function()
 			set_image(Ind, 0)
 	                if get_level(Ind, HSANITY, 50) >= 20 then
-				if player.csane < (player.msane * 2 / 5) then
-					player.csane = (player.msane * 2 / 5)
+				if player.csane < (player.msane * 6 / 12) then
+					player.csane = (player.msane * 6 / 12)
 				end
 		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 2, player.spell_project, " waves over your eyes, murmuring some words.")
+		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 6, player.spell_project, " waves over your eyes, murmuring some words.")
 	            		end
 	                elseif get_level(Ind, HSANITY, 50) >= 10 then
-				if player.csane < (player.msane / 5) then
-					player.csane = (player.msane / 5)
+				if player.csane < (player.msane * 3 / 12) then
+					player.csane = (player.msane * 3 / 12)
 				end
 		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 1, player.spell_project, " waves over your eyes, murmuring some words.")
+		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 3, player.spell_project, " waves over your eyes, murmuring some words.")
 	            		end
 			else
 		                if player.spell_project > 0 then

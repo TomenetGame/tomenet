@@ -1276,12 +1276,12 @@ static bool players_in_level(int Ind, int Ind2)
         return TRUE;
 }
 
-void party_gain_exp(int Ind, int party_id, s32b amount)
+void party_gain_exp(int Ind, int party_id, s32b amount, s32b base_amount)
 {
 	player_type *p_ptr;
 	int i;
 	struct worldpos *wpos=&Players[Ind]->wpos;
-	s32b new_exp, new_exp_frac, average_lev = 0, num_members = 0;
+	s32b new_exp, new_exp_frac, average_lev = 0, num_members = 0, new_amount;
 	s32b modified_level;
 
 	/* Iron Teams only get exp if the whole team is on the same floor! */
@@ -1360,10 +1360,16 @@ void party_gain_exp(int Ind, int party_id, s32b amount)
 			                * 0x10000L ) / (average_lev * num_members * p_ptr->lev)) + p_ptr->exp_frac;
 			*/
 
+			/* Never get too much exp off a monster
+            		   due to high level difference,
+			   make exception for low exp boosts like "holy jackal" */
+			new_amount = amount;
+                        if ((new_amount > base_amount * 4 * p_ptr->lev) && (new_amount > 200 * p_ptr->lev)) new_amount = base_amount * 4 * p_ptr->lev;
+
 			/* Some bonus is applied to encourage partying	- Jir - */
-			new_exp = (amount * modified_level * (PARTY_XP_BOOST + 1)) /
+			new_exp = (new_amount * modified_level * (PARTY_XP_BOOST + 1)) /
 				(average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST));
-			new_exp_frac = (  (((amount * modified_level * (PARTY_XP_BOOST + 1)) %
+			new_exp_frac = (  (((new_amount * modified_level * (PARTY_XP_BOOST + 1)) %
 				(average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) * 0x10000L) /
 			        (average_lev * p_ptr->lev * (num_members + PARTY_XP_BOOST))) + p_ptr->exp_frac;
 

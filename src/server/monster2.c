@@ -211,13 +211,15 @@ void monster_check_experience(int m_idx, bool silent)
 		/* round upwards */
 		if (((m_ptr->blow[i].d_dice * (levels_gained_tmp - 100) / 100) * 100) <
 		    (m_ptr->blow[i].d_dice * (levels_gained_tmp - 100)))
-			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_tmp - 100) / 100) + 1;
+			/* Don't round up for very low monsters, or they become very hard for low players at 7 levels ood */
+			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_tmp - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
 		else
 			m_ptr->blow[i].d_dice += (m_ptr->blow[i].d_dice * (levels_gained_tmp - 100) / 100);
 		/* round upwards sometimes */
 		if (((m_ptr->blow[i].d_side * (levels_gained_tmp - 100) / 100) * 100) <
 		    (m_ptr->blow[i].d_side * (levels_gained_tmp - 100)))
-			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_tmp - 100) / 100) + 1;
+			/* Don't round up for very low monsters, or they become very hard for low players at 7 levels ood */
+			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_tmp - 100) / 100) + (r_ptr->level > 20 ? 1 : 0);
 		else
 			m_ptr->blow[i].d_side += (m_ptr->blow[i].d_side * (levels_gained_tmp - 100) / 100);
 	}

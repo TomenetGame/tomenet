@@ -1071,7 +1071,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 			msg_print(Ind, "A wretched smelling gas cloud upsets your stomach.");
 			take_hit(Ind, 1, "bowel cramps");
-			(void)set_food(Ind, PY_FOOD_STARVE - 1);
+			if (p_ptr->chp < p_ptr->mhp) /* *invincibility* fix */
+				(void)set_food(Ind, PY_FOOD_STARVE - 1);
 			(void)set_poisoned(Ind, 0);
 			if (!p_ptr->free_act && !p_ptr->slow_digest)
 			{

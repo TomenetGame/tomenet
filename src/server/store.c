@@ -1046,6 +1046,30 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
+		/* Bordertravel supplies */
+		case 61:
+		{
+			/* Analyze the type */
+			switch (o_ptr->tval)
+			{
+				case TV_POTION:
+				case TV_POTION2:
+				case TV_SCROLL:
+				case TV_FOOD:
+				case TV_LITE:
+				case TV_FLASK:
+				break;
+				case TV_RING:
+					if ((o_ptr->sval != SV_RING_RES_NETHER) &&
+					    (o_ptr->sval != SV_RING_FLAMES) &&
+					    (o_ptr->sval != SV_RING_RESIST_FIRE)) return(FALSE);
+				break;
+				default:
+				return (FALSE);
+			}
+			break;
+		}
+
 	}
 
 	/* XXX XXX XXX Ignore "worthless" items */

@@ -102,23 +102,29 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
 	{
 		player_type *p_ptr = Players[Ind];
 
-		i = (weight + ((p_ptr->to_h + plus) * 4) +
-				get_skill_scale(p_ptr, SKILL_ARCHERY, 100));
+		i = (weight + ((p_ptr->to_h + plus) * 5) +
+				get_skill_scale(p_ptr, SKILL_ARCHERY, 150));
 		i += 50 * p_ptr->xtra_crit;
 	}
 	else i = weight;
 
 	/* Critical hit */
-	if (randint(5000) <= i)
+	if (randint(3500) <= i)
 	{
-		k = weight + randint(500);
+		k = weight + randint(700);
+		
+		if (Ind > 0)
+		{
+			player_type *p_ptr = Players[Ind];
+			k += get_skill_scale(p_ptr, SKILL_ARCHERY, 100) + randint(600 - (12000 / (p_ptr->xtra_crit + 20)));
+		}
 
-		if (k < 300)
+		if (k < 350)
 		{
 			msg_print(Ind, "It was a good hit!");
 			dam = (4 * dam) / 3 + 5;
 		}
-		else if (k < 600)
+		else if (k < 650)
 		{
 			msg_print(Ind, "It was a great hit!");
 			dam = (5 * dam) / 3 + 10;
@@ -126,17 +132,17 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
 		else if (k < 900)
 		{
 			msg_print(Ind, "It was a superb hit!");
-			dam = 2 * dam + 10;
+			dam = (6 * dam) / 3 + 10;
 		}
-		else if (k < 1200)
+		else if (k < 1100)
 		{
 			msg_print(Ind, "It was a *GREAT* hit!");
-			dam = (5 * dam) / 2 + 10;
+			dam = (7 * dam) / 3 + 10;
 		}
 		else
 		{
 			msg_print(Ind, "It was a *SUPERB* hit!");
-			dam = 3 * dam + 15;
+			dam = (8 * dam) / 3 + 15;
 		}
 	}
 
@@ -187,36 +193,36 @@ s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit
 	{
 		/* _If_ a critical hit is scored then it will deal
 		more damage if the weapon is heavier */
-		k = weight + randint(700);
+		k = weight + randint(700) + 500 - (10000 / (p_ptr->xtra_crit + 20));
                 if (allow_skill_crit)
                 {
-                        k += get_skill_scale(p_ptr, SKILL_CRITS, 700);
+                        k += randint(get_skill_scale(p_ptr, SKILL_CRITS, 900));
                 }
 
 		if (k < 400)
 		{
 			msg_print(Ind, "It was a good hit!");
-			dam = ((3 * dam) / 2) + 5;
+			dam = ((4 * dam) / 3) + 5;
 		}
 		else if (k < 700)
 		{
 			msg_print(Ind, "It was a great hit!");
-			dam = 2 * dam + 10;
+			dam = ((5 * dam) / 3) + 10;
 		}
 		else if (k < 900)
 		{
 			msg_print(Ind, "It was a superb hit!");
-			dam = ((5 * dam) / 2) + 15;
+			dam = ((6 * dam) / 3) + 15;
 		}
 		else if (k < 1300)
 		{
 			msg_print(Ind, "It was a *GREAT* hit!");
-			dam = 3 * dam + 20;
+			dam = ((7 * dam) / 3) + 20;
 		}
 		else
 		{
 			msg_print(Ind, "It was a *SUPERB* hit!");
-			dam = ((7 * dam) / 2) + 25;
+			dam = ((8 * dam) / 3) + 25;
 		}
 	}
 
@@ -4272,7 +4278,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 #ifndef USE_MANG_HOUSE_ONLY
 		else if ((c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
-				&& !p_ptr->ghost)
+				&& (!p_ptr->ghost || p_ptr->admin_dm || p_ptr->admin_wiz))
 		{
 			disturb(Ind, 0, 0);
 			do_cmd_trad_house(Ind);
@@ -4329,8 +4335,8 @@ void black_breath_infection(int Ind, int Ind2)
 	player_type *p_ptr = Players[Ind];
 	player_type *q_ptr = Players[Ind2];
 
-	if (p_ptr->black_breath && magik(20)) set_black_breath(Ind2);
-	if (q_ptr->black_breath && magik(20)) set_black_breath(Ind);
+	if (p_ptr->black_breath && magik(25)) set_black_breath(Ind2);
+	if (q_ptr->black_breath && magik(25)) set_black_breath(Ind);
 }
 
 /*

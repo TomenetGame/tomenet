@@ -4211,6 +4211,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					//dam *= 5; dam /= (randint(3)+4);
 				}
 			}
+			if (r_ptr->flags3 & (RF3_EVIL)) dam = (dam * 2) / 3;
 			break;
 		}
 
@@ -6181,6 +6182,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_HELL_FIRE:
 		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam *= 2;
+		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_EVIL)) dam = (dam * 3) / 4;
 		if (p_ptr->immune_fire) dam /= 2;
 		else if (p_ptr->resist_fire) dam = ((dam + 2) * 3) / 4;
 		else if (p_ptr->oppose_fire) dam = ((dam + 2) * 2) / 3;
@@ -6529,10 +6531,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			case 1: case 2: case 3: case 4: case 5:
 			if (p_ptr->resist_time)
 			{
-/* let's disable it for now to improve time resistance:
-				msg_print(Ind, "You feel life has clocked back.");
-				lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE / 4);
-*/
+				/* let's disable it for now to improve time resistance: */
+				if (magik(25)) {
+					msg_print(Ind, "You feel life has clocked back.");
+					lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE / 4);
+				} else {
+					msg_print(Ind, "You feel as if life has clocked back, but the feeling passes.");
+				}
 			}
 			else
 			{
@@ -6673,7 +6678,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			if (fuzzy) msg_print(Ind, "You feel less constant!");
 			else msg_format(Ind, "%^s turns you into a wraith!", killer);
-		
+#if 0 /* removed stacking */
 			if (!p_ptr->tim_wraith)
 			{
 				set_tim_wraith(Ind, dam);
@@ -6682,6 +6687,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
 				(void)set_tim_wraith(Ind, p_ptr->tim_wraith + randint(dam) / 2 + 1);
 			}
+#else
+				set_tim_wraith(Ind, dam);
+#endif
 			//set_tim_wraith(Ind, p_ptr->tim_wraith + dam);
 			break;
                 }
@@ -6722,13 +6730,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
                 case GF_HERO_PLAYER:
                 {
-			(void)set_hero(Ind, p_ptr->hero + dam);
+			(void)set_hero(Ind, dam); /* removed stacking */
                         break;
 		}
 
                 case GF_SHERO_PLAYER:
                 {
-			(void)set_shero(Ind, p_ptr->hero + dam);
+			(void)set_shero(Ind, dam); /* removed stacking */
                         break;
 		}
 
@@ -6744,31 +6752,31 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_RESFIRE_PLAYER:
 		{
-			(void)set_oppose_fire(Ind, p_ptr->oppose_fire + dam);
+			(void)set_oppose_fire(Ind, dam); /* removed stacking */
 			break;
 		}
 
 		case GF_RESELEC_PLAYER:
 		{
-			(void)set_oppose_elec(Ind, p_ptr->oppose_elec + dam);
+			(void)set_oppose_elec(Ind, dam); /* removed stacking */
 			break;
 		}
 
 		case GF_RESPOIS_PLAYER:
 		{
-			(void)set_oppose_pois(Ind, p_ptr->oppose_pois + dam);
+			(void)set_oppose_pois(Ind, dam); /* removed stacking */
 			break;
 		}
 
 		case GF_RESACID_PLAYER:
 		{
-			(void)set_oppose_acid(Ind, p_ptr->oppose_acid + dam);
+			(void)set_oppose_acid(Ind, dam); /* removed stacking */
 			break;
 		}
 	
 		case GF_RESCOLD_PLAYER:
 		{
-                        (void)set_oppose_cold(Ind, p_ptr->oppose_cold + dam);
+                        (void)set_oppose_cold(Ind, dam); /* removed stacking */
 			break;
 		}
 
@@ -6780,7 +6788,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_SEEINVIS_PLAYER:
 		{
-			(void)set_tim_invis(Ind, p_ptr->tim_invis + dam);
+			(void)set_tim_invis(Ind, dam); /* removed stacking */
 			break;
 		}
 
@@ -6845,7 +6853,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (dam > 10) dam = 10; /* cap speed bonus for others */
 			if (fuzzy) msg_print(Ind, "You feel faster!");
 			else msg_format(Ind, "%^s speeds you up!", killer);
-		
+#if 0 /* removed stacking */
 			if (!p_ptr->fast)
 			{
                                 (void)set_fast(Ind, 10 + (dam * 5), dam);
@@ -6854,17 +6862,24 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
                                 (void)set_fast(Ind, p_ptr->fast + 10 + dam, dam);
 			}
+#else
+                        (void)set_fast(Ind, 10 + (dam * 5), dam);
+#endif
 			break;
                 }
 		case GF_SHIELD_PLAYER:
 		{
 			if (fuzzy) msg_print(Ind, "You feel protected!");
 			else msg_format(Ind, "%^s shields you!", killer);
-		
+
+#if 0 /* removed stacking */
                 	if (!p_ptr->shield)
                         	(void)set_shield(Ind, dam, 50, SHIELD_NONE, 0, 0);
                  	else
                         	(void)set_shield(Ind, p_ptr->shield + (dam / 5), 50, SHIELD_NONE, 0, 0);
+#else
+                    	(void)set_shield(Ind, dam, 50, SHIELD_NONE, 0, 0);
+#endif
 			break;
                 }
 		case GF_TELEPORT_PLAYER:
@@ -6931,8 +6946,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_SANITY_PLAYER:
 			(void)set_image(Ind, 0);
 			if (dam > 0) {
-				if (p_ptr->csane < p_ptr->msane * dam / 5)
-					p_ptr->csane = p_ptr->msane * dam / 5;
+				if (p_ptr->csane < p_ptr->msane * dam / 12)
+					p_ptr->csane = p_ptr->msane * dam / 12;
 			}
 			break;
 		case GF_SOULCURE_PLAYER:
@@ -7133,7 +7148,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_OLD_SPEED:
 		{
 			if (fuzzy) msg_print(Ind, "You are hit by something!");
-			(void)set_fast(Ind, p_ptr->fast + randint(5), 10);
+			(void)set_fast(Ind, p_ptr->fast + randint(5), 10); /* not removed stacking */
 			dam = 0;
 			break;
 		}

@@ -414,9 +414,11 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 		//if(!strcmp(q_ptr->name,"")) modify_number=1; //wussy Cheezer
 		//if(!strcmp(q_ptr->name,"")) modify_number=2; //silyl Slacker
 		//if(!strcmp(q_ptr->name,"Duncan McLeod")) modify_number=3; //Highlander games Judge ;) Bread and games to them!!
-		if(!strcmp(q_ptr->name,"Tomenet")) modify_number=4;//Server-specific Dungeon Masters
-		if(!strcmp(q_ptr->name,"C. Blue")) modify_number=4;//Server-specific Dungeon Masters
-		if(!strcmp(q_ptr->name,"C.Blue")) modify_number=4;//Server-specific Dungeon Masters
+		//if(!strcmp(q_ptr->name,"Tomenet")) modify_number=4;//Server-specific Dungeon Masters
+		//if(!strcmp(q_ptr->name,"C. Blue")) modify_number=4;//Server-specific Dungeon Masters
+		//if(!strcmp(q_ptr->name,"C.Blue")) modify_number=4;//Server-specific Dungeon Masters
+		if(q_ptr->admin_dm) modify_number=4;
+		if(q_ptr->admin_wiz) modify_number=5;
 	}
 	/* Print a message */
 #if 0
@@ -513,8 +515,11 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 
 	switch(modify_number){
 	case 3: fprintf(fff, "\377rJudge\377U "); break; //Judge for Highlander games
-	case 4: if (q_ptr->male) fprintf(fff,"\377rDungeon Master\377U ");
-		else fprintf(fff,"\377rDungeon Mistress\377U ");
+	case 4: if (q_ptr->male) fprintf(fff,"\377bDungeon Master\377U ");
+		else fprintf(fff,"\377bDungeon Mistress\377U ");
+		break; //Server Admin
+	case 5: if (q_ptr->male) fprintf(fff,"\377bDungeon Wizard\377U ");
+		else fprintf(fff,"\377bDungeon Wizard\377U ");
 		break; //Server Admin
 	default: fprintf(fff, "%s",
 		(q_ptr->total_winner)?((q_ptr->male)?"\377vKing\377U ":"\377vQueen\377U "):
@@ -591,7 +596,8 @@ void do_cmd_check_players(int Ind, int line)
 		fprintf(fff, "\377%c", attr);
 
 		/* Print a message */
-		if(Ind!=k) i=TRUE; else i=FALSE;
+//		if(Ind!=k) i=TRUE; else i=FALSE;
+		i=TRUE;
 		do_write_others_attributes(fff, q_ptr, i);
 		/* Colour might have changed due to Iron Team party name,
 		   so print the closing ')' in the original colour again: */
@@ -726,7 +732,8 @@ void do_cmd_check_player_equip(int Ind, int line)
 		fprintf(fff, "\377%c", attr);
 
 		/* Print a message */
-		if(Ind!=k) m=TRUE; else m=FALSE;
+//		if(Ind!=k) m=TRUE; else m=FALSE;
+		m=TRUE;
 		do_write_others_attributes(fff, q_ptr, m);
 		/* Colour might have changed due to Iron Team party name,
 		   so print the closing ')' in the original colour again: */

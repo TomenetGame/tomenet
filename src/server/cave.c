@@ -1776,10 +1776,17 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			if ((p_ptr->wpos.wz == 0) && (night_surface) && !(c_ptr->info & CAVE_GLOW))
 			switch (a)
 	    		{
+			case TERM_DARK: a = TERM_DARK; break;
 			case TERM_WHITE: a = TERM_SLATE; break;
 			case TERM_SLATE: a = TERM_L_DARK; break;
 			case TERM_ORANGE: a = TERM_UMBER; break;
+			case TERM_RED: a = TERM_RED; break;
+			case TERM_GREEN: a = TERM_GREEN; break;
+			case TERM_BLUE: a = TERM_BLUE; break;
+			case TERM_UMBER: a = TERM_UMBER; break;
+			case TERM_L_DARK: a = TERM_L_DARK; break;
 			case TERM_L_WHITE: a = TERM_SLATE; break;
+			case TERM_VIOLET: a = TERM_VIOLET; break;
 			case TERM_YELLOW: a = TERM_L_UMBER; break;
 			case TERM_L_RED: a = TERM_RED; break;
 			case TERM_L_GREEN: a = TERM_GREEN; break;
@@ -2047,6 +2054,37 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			
 			(*ap) = a;
 		}
+#if 1
+		/* Give staircases different colours depending on dungeon flags -C. Blue :) */
+		if ((c_ptr->feat == FEAT_MORE) || (c_ptr->feat == FEAT_WAY_MORE) ||
+		    (c_ptr->feat == FEAT_WAY_LESS) || (c_ptr->feat == FEAT_LESS)) {
+		    int type;
+		    struct dungeon_type *d_ptr;
+		    bool tower = FALSE;
+		    worldpos *tpos = &p_ptr->wpos;
+		    wilderness_type *wild=&wild_info[tpos->wy][tpos->wx];
+
+		    if (!tpos->wz) {
+			if ((c_ptr->feat == FEAT_MORE) || (c_ptr->feat == FEAT_WAY_MORE)) d_ptr = wild->dungeon;
+			else d_ptr = wild->tower;
+		    } else if (tpos->wz < 0) d_ptr = wild->dungeon;
+		    else d_ptr = wild->tower;
+
+		    /* Check for empty staircase without any connected dungeon/tower! */
+		    if (!d_ptr) {
+			    (*ap) = TERM_SLATE;
+		    } else {
+			    type = d_ptr->type;
+			    (*ap) = TERM_WHITE;
+			    if (d_ptr->flags1 & DF1_NO_RECALL) (*ap) = TERM_L_RED;
+			    if (d_ptr->flags1 & (DF1_NO_UP | DF1_FORCE_DOWN)) (*ap) = TERM_RED;
+			    if (d_ptr->flags2 & DF2_IRON) (*ap) = TERM_L_DARK;
+			    if (d_ptr->flags2 & DF2_HELL) (*ap) = TERM_FIRE;
+			    if (d_ptr->flags2 & DF2_NO_DEATH) (*ap) = TERM_GREEN;
+		    }
+		}
+#endif
+
 #endif	/* 0 */
 	}
 
@@ -2409,7 +2447,8 @@ void lite_spot(int Ind, int y, int x)
 
 		/* Only draw if different than buffered */
 		if (p_ptr->scr_info[dispy][dispx].c != c ||
-		    p_ptr->scr_info[dispy][dispx].a != a)
+		    p_ptr->scr_info[dispy][dispx].a != a ||
+		    (x == p_ptr->px && y==p_ptr->py))
 		{
 			/* Modify internal buffer */
 			p_ptr->scr_info[dispy][dispx].c = c;
