@@ -526,7 +526,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 	return (ident);
 }
 
-bool do_player_scatter_items(int Ind, int chance)
+bool do_player_scatter_items(int Ind, int chance, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 	s16b i,j;
@@ -541,8 +541,8 @@ bool do_player_scatter_items(int Ind, int chance)
 		for (j=0;j<10;j++)
 		{
 			object_type tmp_obj;
-			s16b cx = p_ptr->px+15-rand_int(30);
-			s16b cy = p_ptr->py+15-rand_int(30);
+			s16b cx = p_ptr->px+rad-rand_int(rad * 2);
+			s16b cy = p_ptr->py+rad-rand_int(rad * 2);
 			if (!in_bounds(cy,cx)) continue;
 			if (!cave_floor_bold(zcave, cy,cx)) continue;
 			tmp_obj = p_ptr->inventory[i];
@@ -1807,7 +1807,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
       /* Trap of Scatter Items */
       case TRAP_OF_SCATTER_ITEMS:
-				ident = do_player_scatter_items(Ind, 70);
+				ident = do_player_scatter_items(Ind, 70, 15);
          break;
       /* Trap of Decay */
       case TRAP_OF_DECAY:
@@ -2336,7 +2336,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				msg_print(Ind, "\377oThe air about you becomes charged...");
 				ident = TRUE;
 			}
-			ident &= do_player_scatter_items(Ind, 50);
+			ident &= do_player_scatter_items(Ind, 50, 15);
          }
          break;
       case TRAP_OF_PRESENT_EXCHANGE:

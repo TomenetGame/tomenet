@@ -1534,6 +1534,13 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		/* Increase to dam */
 		a_ptr->to_d++;
 	}
+
+	if (fego & ETR4_TD_M2)
+	{
+		/* Increase to dam */
+		a_ptr->to_d += m_bonus(2, dlev);
+	}
+
 #endif
 
 	if (fego & ETR4_R_ESP)
@@ -1541,10 +1548,9 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		add_random_esp(a_ptr, 1);
 	}
 
-	if (fego & ETR4_TD_M2)
+	if (fego & ETR4_NO_SEED)
 	{
-		/* Increase to dam */
-		a_ptr->to_d += m_bonus(2, dlev);
+		/* Nothing */
 	}
 
 	if (fego & ETR4_TD_M3)

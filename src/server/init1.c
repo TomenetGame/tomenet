@@ -862,7 +862,7 @@ static cptr ego_flags[] =
         "TH_M3",
         "TH_M5",
         "R_ESP",	// "TD_M1",
-        "TD_M2",
+        "NO_SEED",	// "TD_M2",
         "TD_M3",
         "TD_M5",
         "R_P_ABILITY",

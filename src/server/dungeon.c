@@ -1765,7 +1765,9 @@ static void process_player_end(int Ind)
 			if (players_on_depth(&p_ptr->wpos) != 0) {
 				/* important! check for illegal spaces */
 				if (in_bounds(p_ptr->py, p_ptr->px)) {
-					if ((p_ptr->wpos.wz) || (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)))
+					if ((p_ptr->wpos.wz) ||
+							(cave_floor_bold(zcave, p_ptr->py, p_ptr->px)) ||
+							p_ptr->tim_wraith > minus)
 					{
 						(void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus);
 					}

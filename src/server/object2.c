@@ -2384,8 +2384,12 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good)
 		o_ptr->name2 = i;
 
 		/* Piece together a 32-bit random seed */
-		o_ptr->name3 = rand_int(0xFFFF) << 16;
-		o_ptr->name3 += rand_int(0xFFFF);
+		if (e_ptr->fego[0] & ETR4_NO_SEED) o_ptr->name3 = 0;
+		else
+		{
+			o_ptr->name3 = rand_int(0xFFFF) << 16;
+			o_ptr->name3 += rand_int(0xFFFF);
+		}
 
 		/* Success */
 		ret = TRUE;

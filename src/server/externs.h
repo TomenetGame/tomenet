@@ -1124,6 +1124,7 @@ extern void setup_traps(void);
 #endif	// 0
 extern bool do_player_drop_items(int Ind, int chance, bool trap);
 extern bool do_player_trap_call_out(int Ind);
+extern bool do_player_scatter_items(int Ind, int chance, int rad);
 //extern static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x);
 //extern static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, s16b dd, s16b ds, s16b pdam, cptr name);
 //extern static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap);

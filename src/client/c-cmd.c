@@ -109,7 +109,6 @@ void cmd_all_in_one(void)
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
-		case TV_BOOMERANG:
 		{
 #if 0
 			if (!get_dir(&dir))
@@ -180,7 +179,7 @@ void cmd_all_in_one(void)
 		}
 
 		case TV_BOW:
-//		case TV_BOOMERANG:	// soon
+		case TV_BOOMERANG:
 		case TV_DIGGING:
 		case TV_HAFTED:
 		case TV_POLEARM:

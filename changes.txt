@@ -1101,6 +1101,8 @@ To find the latest change quickly, search ==== :)
 21/06/2002 (Jir)
 - item-enchanting spells can add to 'discount' (after Zz's proposal)
 - Receive_spell selects the function to call by the book (and not class).
+- Nexus/Gravity breath teleports items away.
+- Indestructible rings/Fireproof scrolls can stack.
 [B] admin char caused 'write error'.
 [H] 'p' key to scroll back when perusing a file.
 

@@ -2205,7 +2205,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 
 	int max1, cur1, max2, cur2, ii, jj;
 
-	switch (randint(7))
+	switch (randint(8))
 	{
 		case 4: case 5:
 		{
@@ -2260,6 +2260,23 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 			p_ptr->stat_cur[jj] = cur1;
 
 			p_ptr->update |= (PU_BONUS);
+
+			break;
+		}
+
+		case 8:
+		{
+			if (check_st_anchor(&p_ptr->wpos)) break;
+
+			if (rand_int(100) < p_ptr->skill_sav)
+			{
+				msg_print(Ind, "You resist the effects!");
+				break;
+			}
+
+			msg_print(Ind, "Your backpack starts to scramble...");
+
+			do_player_scatter_items(Ind, 5, 50);
 
 			break;
 		}
@@ -3198,6 +3215,40 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			break;
 		}
+
+		/* Nexus, Gravity -- teleports the object away */
+		case GF_NEXUS:
+		case GF_GRAVITY:
+		{
+			int j, dist = (typ == GF_NEXUS ? 80 : 15);
+			object_type tmp_obj = *o_ptr;
+			if (check_st_anchor(wpos)) break;
+//			if (seen) obvious = TRUE;
+
+			note_kill = (plural ? " disappear!" : " disappears!");
+
+			for (j=0;j<10;j++)
+			{
+				s16b cx = x+dist-rand_int(dist * 2);
+				s16b cy = y+dist-rand_int(dist * 2);
+				if (!in_bounds(cy, cx)) continue;
+				if (!cave_floor_bold(zcave, cy, cx) ||
+					cave_perma_bold(zcave, cy, cx)) continue;
+
+//				(void)floor_carry(cy, cx, &tmp_obj);
+				drop_near(&tmp_obj, 0, wpos, cy, cx);
+
+				/* XXX not working? */
+				if (!quiet && note_kill)
+					msg_format_near_site(y, x, wpos, "The %s%s", o_name, note_kill);
+
+				delete_object_idx(this_o_idx);
+
+				break;
+			}
+			break;
+		}
+
 	}
 
 
