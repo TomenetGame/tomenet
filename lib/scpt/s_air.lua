@@ -35,8 +35,8 @@ AIRWINGS = add_spell
         ["mana_max"] = 	40,
         ["fail"] = 	70,
         ["spell"] = 	function()
-			if get_level(Ind, AIRWINGS, 50) >= 16 then set_tim_fly(Ind, randint(10) + 5 + get_level(AIRWINGS, 25))
-                        else set_tim_ffall(Ind, randint(10) + 5 + get_level(AIRWINGS, 25))
+			if get_level(Ind, AIRWINGS, 50) >= 16 then set_tim_fly(Ind, randint(10) + 5 + get_level(Ind, AIRWINGS, 25))
+                        else set_tim_ffall(Ind, randint(10) + 5 + get_level(Ind, AIRWINGS, 25))
                         end
 	end,
 	["info"] = 	function()
