@@ -1408,11 +1408,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 30,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
@@ -1453,11 +1455,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
@@ -1518,11 +1522,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
@@ -1574,11 +1580,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
@@ -1624,6 +1632,7 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
@@ -1632,8 +1641,9 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
-                                '+', 0,
+                                '+', 25,
                         },
+#endif
                         {
                                 SKILL_RESCONF,
                                 '+', 0,
@@ -1669,11 +1679,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
@@ -1730,11 +1742,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
@@ -1791,11 +1805,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
@@ -1842,11 +1858,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
@@ -1907,11 +1925,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
@@ -1943,11 +1963,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
@@ -1990,11 +2012,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
@@ -2052,11 +2076,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
@@ -2109,11 +2135,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 25,
                         },
+#if 0 /* learns flying anyways */
                         {
                                 SKILL_FLY,
                                 '+', 0,
                                 '+', 25,
                         },
+#endif
                         {
                                 SKILL_FREEACT,
                                 '+', 0,
