@@ -2515,6 +2515,8 @@ static void process_various(void)
 	{
 		monster_race *r_ptr;
 
+		check_banlist();	/* unban some players */
+
 		/* Update the player retirement timers */
 		for (i = 1; i <= NumPlayers; i++)
 		{

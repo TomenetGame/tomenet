@@ -31,14 +31,14 @@
  * You have been warned.
  */
 
-/*
- * Current version number of TomeNET:
- */
-#define TOMANG_VERSION_LONG_DATE "TomeNET[aka PernMAngband] 3.4.0beta (compiled "
- 
 #define VERSION_MAJOR	3
 #define VERSION_MINOR   4
 #define VERSION_PATCH   1
+
+/*
+ * Current version number of TomeNET:
+ */
+#define TOMANG_VERSION_LONG_DATE "TomeNET 3.4.1 beta (compiled "
 
 /*
  * This value specifies the suffix to the version info sent to the metaserver.

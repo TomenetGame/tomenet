@@ -136,11 +136,11 @@ server_opts cfg =
 	FALSE,TRUE	// joke_monsters, vanilla_monsters
 };
 
+struct ip_ban *banlist=NULL;
 
 /*
  * Software options (set via the '=' command).  See "tables.c"
  */
-
 
 /* Option Set 1 -- User Interface */
 

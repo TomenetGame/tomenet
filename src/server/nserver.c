@@ -131,6 +131,17 @@ char *showtime(void)
 	return buf;
 }
 
+void add_banlist(int Ind, int time){
+	struct ip_ban *ptr;
+	ptr=malloc(sizeof(struct ip_ban));
+	if(ptr==(struct ip_ban*)NULL) return; /* unimportant failure */
+
+	ptr->next=banlist;
+	ptr->time=time;
+	strcpy(ptr->ip, Conn[Players[Ind]->conn].addr);
+	s_printf("Banned connections from %s for %d minutes\n", ptr->ip, time);
+	banlist=ptr;
+}
 
 /*
  * Initialize the function dispatch tables for the various client
@@ -1233,6 +1244,13 @@ static int Handle_listening(int ind)
 		Destroy_connection(ind, "verify broken");
 		return -1;
 	}
+	if(in_banlist(connp->addr)){
+		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
+		Send_reliable(ind);
+		Destroy_connection(ind, "You are temporarily banned.");
+		return(-1);
+	}
+
 
 	/* After the client sends the basic player information, it sends us a
 	 * large block of "verification" data.  Because this block may have

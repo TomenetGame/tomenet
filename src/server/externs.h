@@ -214,6 +214,7 @@ extern bool dungeon_stair;
 extern bool smart_learn;
 extern bool smart_cheat;
 extern s16b hitpoint_warn;
+extern struct ip_ban *banlist;
 extern player_type **Players;
 extern party_type parties[MAX_PARTIES];
 extern struct guild_type guilds[MAX_GUILDS];

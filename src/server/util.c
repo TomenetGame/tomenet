@@ -109,6 +109,37 @@ static int usleep(huge microSeconds)
 extern struct passwd *getpwuid();
 extern struct passwd *getpwnam();
 
+bool in_banlist(char *addr){
+	struct ip_ban *ptr;
+	for(ptr=banlist; ptr!=(struct ip_ban*)NULL; ptr=ptr->next){
+		if(!strcmp(addr, ptr->ip)) return(TRUE);
+	}
+	return(FALSE);
+}
+
+void check_banlist(){
+	struct ip_ban *ptr, *new, *old=(struct ip_ban*)NULL;
+	ptr=banlist;
+	while(ptr!=(struct ip_ban*)NULL){
+		if(ptr->time){
+			if(!(--ptr->time)){
+				s_printf("Unbanning connections from %s\n", ptr->ip);
+				if(!old){
+					banlist=ptr->next;
+					new=banlist;
+				}
+				else{
+					old->next=ptr->next;
+					new=old->next;
+				}
+				free(ptr);
+				ptr=new;
+				continue;
+			}
+		}
+		ptr=ptr->next;
+	}
+}
 
 /*
  * Find a default user name from the system.
@@ -1571,13 +1602,13 @@ static void server_knowledge(int Ind)
 	if (!cfg.maximize)
 		msg_print(Ind, "This server is *NOT* maximized!");
 
-	if (k=cfg.newbies_cannot_drop)
+	if ((k=cfg.newbies_cannot_drop))
 		msg_print(Ind, format("Players under exp.level %d are not allowed to drop items/golds.", k));
 
-	if (k=cfg.spell_interfere)
+	if ((k=cfg.spell_interfere))
 		msg_print(Ind, format("Monsters adjacant to you have %d%% chance of interfering your spellcasting.", k));
 
-	if (k=cfg.spell_stack_limit)
+	if ((k=cfg.spell_stack_limit))
 		msg_print(Ind, format("Duration of assistance spells is limited to %d turns.", k));
 
 	/* level preservation */
@@ -1585,7 +1616,7 @@ static void server_knowledge(int Ind)
 		msg_print(Ind, "You disappear the moment you die, without becoming a ghost.");
 
 	msg_print(Ind, format("The floor will be erased about %d seconds after you left.", cfg.anti_scum));
-	if (k=cfg.level_unstatic_chance)
+	if ((k=cfg.level_unstatic_chance))
 		msg_print(Ind, format("When saving in dungeon, the floor is kept for %dx(level) minutes.", k));
 
 	if ((k=cfg.min_unstatic_level) > 0) 
@@ -1608,7 +1639,7 @@ static void server_knowledge(int Ind)
 
 	if (k !=0)
 	{
-		if (k=cfg.unique_respawn_time)
+		if ((k=cfg.unique_respawn_time))
 			msg_print(Ind, format("After winning the game, unique monsters will resurrect randomly.(%d)", k));
 
 		if (cfg.kings_etiquette)
@@ -2513,6 +2544,7 @@ static void do_slash_cmd(int Ind, cptr message)
 					{
 						/* Success maybe :) */
 						msg_format(Ind, "Kicking %s out...", Players[j]->name);
+						add_banlist(j, 5);
 
 						/* Kick him */
 						Destroy_connection(Players[j]->conn, "kicked out");

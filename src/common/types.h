@@ -1393,6 +1393,14 @@ struct hostile_type
 	hostile_type *next;	/* Next in list */
 };
 
+/* The Troll Pit */
+/* Temporary banning of certain addresses */
+struct ip_ban{
+	struct ip_ban *next;	/* next ip in the list */
+	char ip[20];	/* so it shouldn't be really */
+	int time;	/* Time in minutes, or zero is permanent */
+};
+
 /*
  * Most of the "player" information goes here.
  *
