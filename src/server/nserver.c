@@ -115,6 +115,8 @@ static int		num_logins, num_logouts;
 static long		Id;
 int			NumPlayers;
 
+
+pid_t		metapid;
 int		MetaSocket = -1;
 
 #ifdef NEW_SERVER_CONSOLE
@@ -343,7 +345,7 @@ void init_players(){
  * This function is called on startup, on death, and when the number of players
  * in the game changes.
  */
-char buf_meta[80240];
+char buf_meta[16384];	/* 16k is quite enough */
 bool Report_to_meta(int flag)
 {
  	static char local_name[1024];
@@ -391,6 +393,8 @@ bool Report_to_meta(int flag)
 			resolved_ip = ((struct in_addr*)(hp->h_addr))->s_addr;
 	}
 
+	memset(buf_meta, '\0', 16384);
+
 	strcpy(buf_meta, "<server url='");
         strcat(buf_meta, local_name);
         strcat(buf_meta, "' port='");
@@ -406,6 +410,7 @@ bool Report_to_meta(int flag)
                 strcat(buf_meta, ">");
                 if (flag & META_START)
                 {
+			signal(SIGUSR1, SIG_IGN);
                 }
 
                 else if (flag & META_UPDATE)
@@ -417,7 +422,7 @@ bool Report_to_meta(int flag)
 
                         for (i = 1; i <= NumPlayers; i++)
                         {
-                                if (Players[i]->admin_dm && cfg.secret_dungeon_master) hidden_dungeon_master = TRUE;
+                                if (Players[i]->admin_dm && cfg.secret_dungeon_master) hidden_dungeon_master++;
                         }
 
                         /* if someone other than a dungeon master is playing */
@@ -455,12 +460,17 @@ bool Report_to_meta(int flag)
         s_printf("Sending meta info...\n");
 
 	/* If we haven't setup the meta connection yet, abort */
+#ifdef EVIL_METACLIENT
+	sock = open("metadata", O_WRONLY|O_CREAT|O_TRUNC, 0700);
+#else
         block_timer();
         sock = socket(AF_INET, SOCK_STREAM, 0);
+#endif
 	if (sock == -1)
 		return FALSE;
 
 	{
+#ifndef EVIL_METACLIENT
 		struct sockaddr_in	iaddr;
 
 		memset(&iaddr, 0, sizeof (iaddr));
@@ -473,6 +483,7 @@ bool Report_to_meta(int flag)
 			close(sock);
 			return FALSE;
 		}
+#endif
 
 		if (write(sock, buf_meta, strlen(buf_meta)) == -1)
 		{
@@ -483,7 +494,11 @@ bool Report_to_meta(int flag)
 		s_printf("Info sent to the meta\n");
                 close(sock);
 	}
+#ifdef EVIL_METACLIENT
+	kill(metapid, (flag & META_DIE ? SIGTERM : SIGUSR1));
+#else
         allow_timer();
+#endif
 	return TRUE;
 }
 
@@ -515,6 +530,27 @@ int Setup_net_server(void)
 
 	/* Tell the metaserver that we're starting up */
 	Report_to_meta(META_START);
+#ifdef EVIL_METACLIENT
+	metapid=fork();
+	if(metapid==-1){
+		/* didnt work.. we should die */
+		fprintf(stderr, "bah\n");
+		exit(-5);
+	}
+	if(metapid==0){
+		char buf[80];
+		char *cmd="/usr/local/src/pm/evilmeta";
+		char *args[]={cmd, NULL};
+
+		getwd(buf);
+		printf("in %s\n", buf);
+		/* We are the meta client */
+		execve(args[0], args, NULL);
+		/* GONE */
+		printf("shit! [%d]\n", errno);
+		exit(-20);
+	}
+#endif
 
 	s_printf("%s\n", longVersion);
 	s_printf("Server is running version %04x\n", MY_VERSION);
@@ -2436,9 +2472,11 @@ int Net_output(void)
 		//Sockbuf_clear(&connp->w);
 	}
 
+#ifndef EVIL_METACLIENT
 	/* Every fifteen seconds, update the info sent to the metaserver */
 	if (!(turn % (15 * cfg.fps)))
 		Report_to_meta(META_UPDATE);
+#endif
 
 	return 1;
 }
