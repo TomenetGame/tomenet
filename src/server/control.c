@@ -293,7 +293,6 @@ static void console_change_unique(int unique, cptr killer)
 	{
 		/* Dead */
 		r_ptr->max_num = 0;
-//		r_ptr->killer = kill_idx;
 	}
 	else
 	{
@@ -308,7 +307,6 @@ static void console_change_unique(int unique, cptr killer)
     			msg_broadcast(0,buf);    				    				
 		}
 		r_ptr->max_num = 1;
-//		r_ptr->killer = 0;
 	}
 
 	/* Succeeded */
@@ -372,29 +370,6 @@ static void console_shutdown(void)
 	shutdown_server();
 }
 
-#if 0
-static bool console_bad_name(cptr name)
-{
-	char localname[1024];
-
-	/* Acquire local host name */
-	GetLocalHostName(localname, 1024);
-
-	/* Check local host name */
-	/* XXX XXX we desperately need some authentication here... */
-	if ((strcasecmp(name, localname) && strcasecmp(name, "localhost") &&
-			strcmp(name, "127.0.0.1")))
-	{
-		s_printf("Illegal console command from %s.\n", name);
-
-		return TRUE;
-	}
-	
-	/* Assume OK */
-	return FALSE;
-}
-#endif
-
 /*
  * This is the response function when incoming data is received on the
  * control pipe.
@@ -412,10 +387,11 @@ void NewConsole(int read_fd, int arg)
 	 */
 	if (read_fd == ConsoleSocket)
 	{
-		// Hack -- make sure that two people haven't tried to use mangconsole
-		// at the same time.  Since I am currently too lazy to support this,
-		// we will remove the input of the first person when the second person
-		// connects.
+		/* Hack -- make sure that two people haven't tried to use mangconsole
+		 * at the same time.  Since I am currently too lazy to support this,
+		 * we will remove the input of the first person when the second person
+		 * connects.
+		 */
 		if (newsock) remove_input(newsock);
 		if ((newsock = SocketAccept(read_fd)) == -1)
 		{
@@ -440,7 +416,6 @@ void NewConsole(int read_fd, int arg)
 		/* If this happens our TCP connection has probably been severed.
 		 * Remove the input.
 		 */
-		//s_printf("Error reading from console socket\n");
 		remove_input(newsock);
 		newsock = 0;
 
@@ -450,14 +425,9 @@ void NewConsole(int read_fd, int arg)
 	/* Set length */
 	console_buf.len = bytes;
 
-	/* Acquire sender's address */
-//	strcpy(host_name, DgramLastname()); 
-
 	/* Get the password */
 	Packet_scanf(&console_buf, "%s",passwd); 
 
-	/* Check for illegal accesses */
-	//if (console_bad_name(host_name))
 	if (strcmp(passwd, cfg.console_password))
 	{
 		/* Clear buffer */
