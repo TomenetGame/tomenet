@@ -2338,8 +2338,8 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						object_type *o_ptr=(object_type*)data;
 						if(o_ptr->ix==minx+(x-1) && o_ptr->iy==miny+(y-1)){
 							success=TRUE;
-							break;
 						}
+						break;
 					}
 					if(func==FILL_CLEAR){
 						delete_object(wpos, miny+(y-1), minx+(x-1));
