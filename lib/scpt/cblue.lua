@@ -73,3 +73,21 @@ function maxskills(name)
 	players(p).s_info[i].value = 50000
     end
 end
+
+-- Set all uniques/monsters to '100 times killed' for a player.
+function allunis(name)
+    local p, i
+    p = ind(name)
+    for i = 1, MAX_R_IDX do
+	players(p).r_killed[i] = 100
+    end
+end
+
+-- Set all uniques/monsters to '0 times killed' for a player.
+function nounis(name)
+    local p, i
+    p = ind(name)
+    for i = 1, MAX_R_IDX do
+	players(p).r_killed[i] = 0
+    end
+end
