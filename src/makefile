@@ -55,8 +55,8 @@ SERV_SRCS = \
   server/melee1.c server/melee2.c server/save.c server/files.c \
   server/cmd1.c server/cmd2.c server/cmd3.c server/cmd4.c server/cmd5.c \
   server/cmd6.c server/store.c server/birth.c server/load2.c server/randart.c \
-  server/sched.c server/generate.c server/wilderness.c server/dungeon.c \
-  server/init1.c server/init2.c server/netserver.c server/printout.c \
+  server/sched.c server/generate.c server/wild.c server/dungeon.c \
+  server/init1.c server/init2.c server/nserver.c server/printout.c \
   server/main.c
 
 SERV_OBJS = \
@@ -68,8 +68,8 @@ SERV_OBJS = \
   server/melee1.o server/melee2.o server/save.o server/files.o \
   server/cmd1.o server/cmd2.o server/cmd3.o server/cmd4.o server/cmd5.o \
   server/cmd6.o server/store.o server/birth.o server/load2.o server/randart.o \
-  server/sched.o server/generate.o server/wilderness.o server/dungeon.o \
-  server/init1.o server/init2.o server/netserver.o server/printout.o \
+  server/sched.o server/generate.o server/wild.o server/dungeon.o \
+  server/init1.o server/init2.o server/nserver.o server/printout.o \
   server/main.o 
 
 
