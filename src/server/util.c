@@ -2754,7 +2754,7 @@ void player_talk_aux(int Ind, cptr message)
 		                 parties[0 - target].name, sender, colon);
 
 		/* Also send back to sender if not in that party */
-		if(!player_in_party(Ind, 0-target)){
+		if(!player_in_party(0-target, Ind)){
 			msg_format(Ind, "[%s:%s] %s",
 		           parties[0 - target].name, sender, colon);
 		}
