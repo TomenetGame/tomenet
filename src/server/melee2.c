@@ -4631,11 +4631,13 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		((ABS(m_ptr->fy - y2) == 2 && ABS(m_ptr->fx - x2) <= 2) ||
 		(ABS(m_ptr->fy - y2) <= 2 && ABS(m_ptr->fx - x2) == 2)) &&
 		/* Player must be faster than the monster to cheeze */
-		(p_ptr->pspeed > m_ptr->mspeed) && rand_int(50) &&
+		(p_ptr->pspeed > m_ptr->mspeed) && rand_int(600) &&
 		/* As long as we have good HP there's no need to hold back,
 		   [if player is low on HP we should try to attack him anyways,
 		   this is not basing on consequent logic though] */
 		(m_ptr->hp <= (m_ptr->maxhp * 3) / 5) && (p_ptr->chp > p_ptr->mhp / 4) &&
+		/* No need to keep a distance if the player doesn't pose
+		   a potential threat in close combat: */
 		(p_ptr->s_info[SKILL_MASTERY].value >= 3000 || p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= 10000) &&
 		/* If there's los we can just cast a spell -
 		   this assumes the monster can cast damaging spells, might need fixing */
@@ -4661,9 +4663,13 @@ static void get_moves(int Ind, int m_idx, int *mm)
 			if (more_monsters_nearby < 2) {
 				bool clockwise = TRUE; /* circle the player clockwise */
 				bool tested_so_far = FALSE;
-				/* Often stay still and don't move at all */
-				if (!rand_int(3)) return;
-				/* Move randomly without getting closer */
+				/* Often stay still and don't move at all to save your
+				   turn for attacking in case the player appraoches. */
+				if (rand_int(100)) return;
+				/* Move randomly without getting closer -
+				   this will cancel the actual point of C_BLUE_AI!
+				   Moving randomly is merely eye-candy, that's why
+				   rand_int() was tested, to restrict it greatly. */
 				if (rand_int(2)) clockwise = FALSE; /* circle the player anti-clockwise */
 				for (yt = m_ptr->fy - 1; yt <= m_ptr->fy + 1; yt ++)
 				for (xt = m_ptr->fx - 1; xt <= m_ptr->fx + 1; xt ++) {
@@ -4685,7 +4691,8 @@ static void get_moves(int Ind, int m_idx, int *mm)
 						tested_so_far = TRUE;
 					}
 				}
-				/* If monster didn't move randomly, just stay still */
+				/* If monster didn't want to move randomly,
+				   just stay still (shouldn't happen though) */
 				if (!c_blue_ai_done) return;
 			}
 		}
