@@ -4044,6 +4044,16 @@ bool poly_build(int Ind, char *args){
 		dy=ly=sy;
 		moves=25;	/* always new */
 		depth=p_ptr->dun_depth;
+		if(cave[p_ptr->dun_depth][sy][sx].feat==FEAT_PERM_EXTRA){
+			msg_print(Ind, "Your foundations were laid insecurely");
+			cave[p_ptr->dun_depth][sy][sx].special=NULL;
+			KILL(dna, struct dna_type);
+			C_KILL(vert, MAXCOORD, byte);
+			p_ptr->master_move_hook=NULL;
+			cvert=0;
+			curr=0L;
+			return FALSE;
+		}
 		cave[p_ptr->dun_depth][sy][sx].feat=FEAT_HOME_OPEN;
 		cave[p_ptr->dun_depth][sy][sx].special=dna;
 		return TRUE;
@@ -4098,6 +4108,7 @@ bool poly_build(int Ind, char *args){
 			houses[num_houses].coords.rect.height=maxy+1-miny;
 			houses[num_houses].dx=sx-minx;
 			houses[num_houses].dy=sy-miny;
+			C_KILL(vert, MAXCOORD, byte);
 		}
 		else{
 			houses[num_houses].flags=HF_NONE;	/* polygonal */
