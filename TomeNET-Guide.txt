@@ -2482,6 +2482,7 @@ Recharging      Recharges a magical rod/wand/staff.
 Rune of Protection  Creates a warding glyph on the floor that stops monsters
                     from crossing the field or summoning on it.
 Protection from evil    Repels evil creatures that try to attack you.
+                        See the prayer 'Protection from evil' in (6.8)!
 *Destruction*   Causes a local earthquake, nearly completely wiping the area
                 of monsters and objects. Can save you!
 Genocide        Removes all monsters of a certain kind from the current level.
@@ -3717,6 +3718,8 @@ Holy Defense
                     Lv15: Lets you also resist acid.                (project)
     Protection from evil.
                     Repels evil creatures that try to attack you.
+                    Works very well, as long as the creature isn't of a higher
+                    level than you.
     Glyph Of Warding
                     Creates a rune on the ground, stopping monsters.
     Eternal Martyr  Burns you in holy fire, making you invulnerable.
