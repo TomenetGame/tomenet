@@ -1,7 +1,7 @@
 .=========================+==--.
 | TomeNET Beginners Guide |
 +=========================+-
-| Latest update: 1. June 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 6. June 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.0.0, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -95,6 +95,8 @@ if you have any problems with getting started.
 -To run, press SHIFT+<direction key> where direction keys are on
 the number pad 7,8,9, 4,6, 1,2,3. Running often requires that
 numlock is turned off (press the 'num' key so the green light is off).
+If SHIFT+<direction> doesn't work on your system, you can press the dot '.'
+followed by a direction key.
 -You can wear/wield your armour/weapons by pressing 'w' and choosing them
 from your inventory which is displayed in the window labeled Recall'.
 -You can pick up items if you stand on them and press 'g'.
@@ -401,6 +403,13 @@ Wormy		Wormtongue, Agent of Saruman. He drops great items.
 
 (0.5) Rumours, missing features, technical warnings (READ!)
 -----------------------------------------------------------
+-If you press CTRL+X to save&exit the game, you should do that in a safe town.
+Dungeons might change while you are logged off, and the next time you log on
+you might find yourself stuck inside a wall, where the previous dungeon had a
+wide room.
+Another problem is that if you don't leave in a town, your character will stay
+for another 20 seconds in the game before it finally disappears from the
+dungeon! If monsters were around, you might get killed easily during that 20s.
 -The items you find don't depend on your race or class but on monster level and
 depth (and luck ;).
 -Spells/round is always 1, even if the number displayed is higher (raised by
@@ -516,11 +525,16 @@ available TomeNET internet servers.
 This step is reported to often cause problems under Windows XP. In that case
 you can try..
 -To use 'Win98 Compatibility Mode' (Create a link from tomenet4.exe,
- right-click it, choose 'properties', choose 'Compatibility'.)
--to edit your "tomenet4.ini" file and specify a host directly by
- specifying "HOST=europe.tomenet.net".
+ right-click it, choose 'properties', choose 'Compatibility'. This option is
+ available natively on Windows XP systems; for Windows 2000 systems first try
+ the other two points mentioned below, if they don't help, get the
+ compatibility mode update from www.microsoft.com or from
+ www.c-blue.de/appupd.exe).
 -to move the 'tomenet-bin' directory to your drive's root.
  For example C:\tomenet-bin\.. .
+-to edit your "tomenet4.ini" file and specify a host directly by
+ specifying "HOST=europe.tomenet.net".
+
 After the meta-server has been queried, the list of available servers will
 appear in the main window. Choose a server that is near to your location to
 avoid high latency. Now you will be prompted to enter your account name and
@@ -1050,6 +1064,13 @@ cannot be raised.
 On the skill chart you can press 'Up'/'Down' keys to select a skill and
 'Right' key to invest one of your spare skill points into it. Choices cannot
 be undone, so be careful here.
+At each level-up you gain 5 skill points, so you will have gained at least 250
+skill points at level 50. There is a slim chance that you get 6. This chance
+can be raised by spending points into the 'Training' skill (see (6.2)).
+Further, there is a slim chance that you gain an extra stat point on stats you
+are very bad at ("stats" = "attributes" = STRength, INTelligence, WISdom,
+DEXterity, CONstitution, CHaRisma). This chance too is increased by the
+'Training' skill.
 
 
 
@@ -1528,9 +1549,9 @@ on an adjacent field, so it's pretty useless :)
 
 The dice of ammunition are also effected by brands and slays same as normal 
 weapons but the additional damage is reduced to 2/5.
-Example: Ring of Acid will usually add 2x your base damage.
-For MA it will add 2*2/5x of your base damage, so multiply your base damage
-by 1.8 instead of by 3 to get your total damage output.
+Example: Ring of Acid will usually add 2x your melee base damage.
+For ranged weapons it will add 2*2/5x of your base damage, so multiply your
+base damage by 1.8 instead of by 3 to get your total damage output.
 
 
 
