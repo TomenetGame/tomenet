@@ -382,3 +382,7 @@ Change list for PernMangband
 - Trap Detection won't reveal all the traps.
 - Bugfixes for ego monsters.
 - Total of 22+2 ego-monster types.
+
+08/12/2001 (Jir)
+- More megos and bugfixes.
+- wizard/DM should use console password from now on.
