@@ -698,6 +698,10 @@ Change list for PernMangband
 23/01/2002 (Evileye)
 - Miscellaneous bugfixes, typos and cleanups.
 
+29/01/2002 (Evileye)
+- Fixed exploitable bug in server code. Client could crash server
+  if interrupted before play started.
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)

@@ -2104,7 +2104,6 @@ void do_quit(int ind, bool tellclient)
 		player = GetInd[connp->id];
 		p_ptr=Players[player];
 	}
-
 	if (!tellclient)
 	{
 		/* Close the socket */
@@ -2118,7 +2117,7 @@ void do_quit(int ind, bool tellclient)
 	}
 
 	/* If we are close to the center of town, exit quickly. */
-	if(istown(&p_ptr->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<3))
+	if(connp->id==-1 || istown(&p_ptr->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<3))
 	{
 		Destroy_connection(ind, "client quit");
 	}
