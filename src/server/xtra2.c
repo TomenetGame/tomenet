@@ -49,6 +49,10 @@
    max exp penalty of 472,5 %. Must be integer within 0..50. */
 #define WEAK_SKILLBONUS 25
 
+/* Do player-kill messages of "Morgoth, Lord of Darkness" get some
+   special flavour? - C. Blue */
+#define MORGOTH_FUNKY_KILL_MSGS
+
 /*
  * Modifier of semi-promised artifact drops, in percent.
  * It can happen that the quickest player will gather most of those
@@ -4756,6 +4760,24 @@ void player_death(int Ind)
 			/* Tell him */
 			msg_print(Ind, "\377RYou die.");
 	//		msg_print(Ind, NULL);
+#ifdef MORGOTH_FUNKY_KILL_MSGS /* Might add some atmosphere? (lol) - C. Blue */
+			if (!strcmp(p_ptr->died_from, "Morgoth, Lord of Darkness")) {
+				char funky_msg[20];
+				switch (randint(5)) {
+				case 1:strcpy(funky_msg,"wasted");break;
+				case 2:strcpy(funky_msg,"crushed");break;
+				case 3:strcpy(funky_msg,"shredded");break;
+				case 4:strcpy(funky_msg,"torn up");break;
+				case 5:strcpy(funky_msg,"crushed");break; /* again :) */
+				}
+				msg_format(Ind, "\377a**\377rYou have been %s by %s.\377a**", funky_msg, p_ptr->died_from);
+				if (cfg.unikill_format) {
+					sprintf(buf, "\377a**\377r%s %s was %s by %s.\377a**", titlebuf, p_ptr->name, funky_msg, p_ptr->died_from);
+				} else {
+					sprintf(buf, "\377a**\377r%s was %s and destroyed by %s.\377a**", p_ptr->name, funky_msg, p_ptr->died_from);
+				}
+			} else {
+#endif
 			if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))) {
     				msg_format(Ind, "\377a**\377rYou have been killed by %s.\377a**", p_ptr->died_from);
 			}
@@ -4781,6 +4803,9 @@ void player_death(int Ind)
 				else
 					sprintf(buf, "\377a**\377r%s was vaporized and destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
 			}
+#ifdef MORGOTH_FUNKY_KILL_MSGS
+			}
+#endif
 			s_printf("(%d) %s was killed and destroyed by %s for %d damage at %d, %d, %d.\n", p_ptr->lev, p_ptr->name, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "Insanity"))
 				s_printf("(%s was really killed and destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
@@ -5333,7 +5358,7 @@ void player_death(int Ind)
 			o_ptr->owner_mode = p_ptr->mode;
 			o_ptr->level = 0;
 			o_ptr->note = quark_add(format("#of %s", p_ptr->name));
-			o_ptr->marked2 = ITEM_REMOVAL_NEVER; /* =p */
+			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;/* NEVER would be nicer, but leads to littered towns - C. Blue */
 			(void)drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
 
