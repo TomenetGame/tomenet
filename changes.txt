@@ -22,6 +22,9 @@
 
 # bug.txt should follow the exact same format
 
+09/11/2002
+[O]- Only darkswords can give antimagic
+
 28/09/2002
 [P]- Probability travel spell in Conveyance school
 

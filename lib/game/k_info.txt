@@ -5859,12 +5859,12 @@ A:25/12:50/5:60/2
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
-N:896:Suspicion
-G:":d
-I:40:34:-1
-W:20:0:3:5000
-A:20/5
-F:INT | WIS | ANTIMAGIC_20
+#N:896:Suspicion
+#G:":d
+#I:40:34:-1
+#W:20:0:3:5000
+#A:20/5
+#F:INT | WIS | ANTIMAGIC_20
 
 # !!
 N:897:Life Saving

@@ -2555,18 +2555,18 @@ F:SLAY_UNDEAD | VAMPIRIC
 
 # The (Amulet of) Suspicion Methodique
 
-N:211:Methodique
-I:40:34:0
-W:50:30:40:100000
-P:0:1d1:0:0:0
-F:SEE_INVIS | FREE_ACT
-F:LITE1
-F:RES_BLIND | RES_FEAR | RES_CHAOS | RES_DISEN
-F:SUST_INT | SUST_WIS
-F:FEATHER | SLOW_DIGEST | HOLD_LIFE |
-F:ANTIMAGIC_30 | DRAIN_MANA
-D:The ultimate point an phylosopher had arrived, this amulet
-D:reveals the light of true belief.
+#N:211:Methodique
+#I:40:34:0
+#W:50:30:40:100000
+#P:0:1d1:0:0:0
+#F:SEE_INVIS | FREE_ACT
+#F:LITE1
+#F:RES_BLIND | RES_FEAR | RES_CHAOS | RES_DISEN
+#F:SUST_INT | SUST_WIS
+#F:FEATHER | SLOW_DIGEST | HOLD_LIFE |
+#F:ANTIMAGIC_30 | DRAIN_MANA
+#D:The ultimate point an phylosopher had arrived, this amulet
+#D:reveals the light of true belief.
 
 # The Dark Sword 'Schmerzglaube'
 N:212:'Schmerzglaube'
@@ -2580,7 +2580,7 @@ F:ESP_UNIQUE
 F:SLOW_DIGEST | SHOW_MODS | SEE_INVIS | RES_DISEN | 
 F:FREE_ACT | RES_NETHER | HOLD_LIFE | 
 F:SUST_STR | SUST_DEX | SUST_CON | 
-F:ANTIMAGIC_20 | ANTIMAGIC_50 | DRAIN_MANA
+F:ANTIMAGIC_50 | DRAIN_MANA
 # | NO_MAGIC
 
 # The Long Bow 'Doublezee'
@@ -2592,7 +2592,7 @@ P:0:0d0:25:15:0
 F:CHR | SEARCH | HIDE_TYPE | 
 F:XTRA_SHOTS | SHOW_MODS
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_SOUND
-F:ESP_ANIMAL | ANTIMAGIC_20
+F:ESP_ANIMAL
 
 # The Picklock of Bilbo Baggins
 
