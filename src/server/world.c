@@ -88,6 +88,7 @@ void world_comm(int fd, int arg){
 			free(c_pl);
 			c_pl=n_pl;
 		}
+		rpmlist=NULL;
 		WorldSocket=-1;
 	}
 }
