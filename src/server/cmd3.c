@@ -1176,7 +1176,7 @@ void do_cmd_steal(int Ind, int dir)
 			forge = *o_ptr;
 
 			/* True artifact is HARD to steal */
-			if ((artifact_p(o_ptr)) && (!o_ptr->name3)
+			if (cfg_anti_arts_horde && (artifact_p(o_ptr)) && (!o_ptr->name3)
 				&& ((q_ptr->exp > p_ptr->exp)
 					|| (rand_int(500) > success )))
 			{

@@ -5343,7 +5343,7 @@ void telekinesis_aux(int Ind, int item)
 	p2_ptr = Players[Ind2];
 
 	/* You cannot send artifact */
-	if((artifact_p(q_ptr)) && (!q_ptr->name3))
+	if(cfg_anti_arts_horde && (artifact_p(q_ptr)) && (!q_ptr->name3))
 	{
 		msg_print(Ind, "You have an acute feeling of loss!");
 		a_info[q_ptr->name1].cur_num = 0;
