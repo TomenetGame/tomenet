@@ -126,6 +126,8 @@ static bool wearable_p(object_type *o_ptr)
 		case TV_LITE:
 		case TV_AMULET:
 		case TV_RING:
+		case TV_AXE:
+		case TV_MSTAFF:
 			{
 				return (TRUE);
 			}
@@ -585,8 +587,8 @@ static void rd_item(object_type *o_ptr)
 	}
 
 
-			  /* Extract the flags */
-			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Paranoia */
 	if (o_ptr->name2)
