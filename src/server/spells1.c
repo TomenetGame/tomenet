@@ -3596,7 +3596,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 	/* Get the monster name (BEFORE polymorphing) */
-	monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+	if (!quiet) monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 
 
@@ -4728,7 +4728,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, FALSE);
 
 			/* XXX XXX XXX Hack -- Assume success */
-			if(c_ptr->m_idx==0){
+			if(!quiet && c_ptr->m_idx==0){
 				msg_format(Ind, "%^s disappears!", m_name);
 				return(FALSE);
 			}
