@@ -16,7 +16,7 @@
  - Monster AI significantly improved; use your head, too!
  - Save the game in town as far as possible, so as not to be buried alive.
  - Please don't abuse the system, so as not to have your character removed.
- - Client ver. 4.0.0 (or 3.5.5) is needed. (will be available from URL below)
+ - Client ver. 4.0.0 is needed. (will be available from URL below)
  - To learn about new features/changes, please see the help screen('?').
 
         Official TomeNET site - http://T-o-M-E.net/pernmangband/
