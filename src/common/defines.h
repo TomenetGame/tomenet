@@ -1577,7 +1577,7 @@ that keeps many algorithms happy.
 #define SV_AMULET_SPEED			31
 #define SV_AMULET_LIFE                  32	/* 'Immortality' */
 #define SV_AMULET_THE_MOON              33
-#define SV_AMULET_SUSPICION		34
+#define SV_AMULET_RAGE			34
 #define SV_AMULET_LIFE_SAVING		35
 
 /*
