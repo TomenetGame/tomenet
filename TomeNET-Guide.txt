@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. July 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. July 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -2847,9 +2847,15 @@ Note that not every skill is available to every profession (class).
         .Interception           Ability to interfere with adjacent enemies.
                                 Can prevent them from teleporting, casting,
                                 summoning, running away. The chance to
-                                intercept an enemy is 3 x your interception
-                                plus your martial arts skill minus the enemy's
-                                level.
+                                intercept an enemy is (2 * interception) +
+                                (martial_arts_skill / 2) - (enemy_level / 3).
+                                Example: Chance to intercept summoning of the
+                                Balrog of Moria with maxed interception is
+                                (2*50) + 0 - (50/3) = 84% base. Now since it's
+                                spellcasting it's reduced to 75%: 84%*75%=63%.
+                                For Morgoth it's (2*50)+0-(100/3) = 67% base.
+                                To intercept his spells it's 75% of 67% = 50%!
+                                (A maxed out martial artist would have 69%.)
                                 Interception chance is recuded to 33% while
                                 you are blind.
                                 Interception chances also depend on what the
@@ -2857,9 +2863,11 @@ Note that not every skill is available to every profession (class).
                                 harder to intercept, those reduce the chance
                                 further, to..
                                 100%    for shooting
-                                 70%    for running (fleeing / stepping back)
-                                 50%    for casting a spell
-                                 40%    for teleporting / phasing (blinking)
+                                 85%    for running (fleeing / stepping back)
+                                 75%    for casting a spell / summoning
+                                 50%    for teleporting / phasing (blinking)
+                                Note: While ball/bolt attacks are spells,
+                                      breathing is NOT.
                                 Interception chance caps at 90% (cap is
                                 applied after all other penalties have been
                                 factored in, at the very end of calculation).
@@ -2884,6 +2892,8 @@ Note that not every skill is available to every profession (class).
                                 your fellow party members (casters).
                                 Each point in Antimagic adds 1% to your total
                                 AM chance, so the max gain is +50% from skill.
+                                Note: While ball/bolt attacks are spells,
+                                      breathing is NOT.
 +Health                         Increases your hit point regeneration rate.
                                 If you spend 10 points into Health, your
                                 sanity will be displayed as a bar.
