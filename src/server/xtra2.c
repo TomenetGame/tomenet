@@ -4032,21 +4032,21 @@ void del_quest(int id){
 
 void kill_quest(int Ind){
 	int i;
-	s16b id;
+	s16b id, pos;
 	player_type *p_ptr=Players[Ind], *q_ptr;
 	char temp[160];
 
 	id=p_ptr->quest_id;
 	for(i=0;i<20;i++){
 		if(quests[i].id==id){
-			id=i;
+			pos=i;
 			break;
 		}
 	}
 
-	sprintf(temp,"\377y%s has won the %s quest!", p_ptr->name, r_name+r_info[quests[id].type].name);
+	sprintf(temp,"\377y%s has won the %s quest!", p_ptr->name, r_name+r_info[quests[pos].type].name);
 	msg_broadcast(Ind, temp);
-	msg_format(Ind, "\377yYou have won the %s quest!", r_name+r_info[quests[id].type].name);
+	msg_format(Ind, "\377yYou have won the %s quest!", r_name+r_info[quests[pos].type].name);
 	for(i=1; i<=NumPlayers; i++){
 		q_ptr=Players[i];
 		if(q_ptr && q_ptr->quest_id==id){
@@ -4230,7 +4230,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 			int i;
 			monster_death(Ind, m_idx);
 			for(i=0;i<20;i++){
-				if(quests[i].id==p_ptr->quest_id){
+				if(p_ptr->quest_id && quests[i].id==p_ptr->quest_id){
 					if(m_ptr->r_idx==quests[i].type){
 						p_ptr->quest_num--;
 						if(p_ptr->quest_num==0){
