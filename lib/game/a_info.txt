@@ -272,15 +272,15 @@ D:untamed Lightning as you put it on.
 # The Power Dragon Scale Mail 'Bladeturner'
 
 N:17:'Bladeturner'
-I:38:30:0
+I:38:30:2
 W:100:16:600:1000000
-P:50:2d4:-8:0:35
+P:50:2d4:-8:0:30
 F:HOLD_LIFE | REGEN | ESP_DRAGON | 
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_POIS | FEATHER | FLY |
-F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK | ULTIMATE | 
+F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK | 
+#ULTIMATE | 
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_BLIND | RES_CONF |
-F:ACTIVATE
-F:REGEN_MANA
+F:ACTIVATE | LIFE
 D:A suit of adamant, set with scales of every color, surrounded in a nimbus  
 D:of perfectly untramelled yet inextricably intermingled and utterly mastered 
 D:powers elemental and ethereal.
@@ -2216,10 +2216,10 @@ D:With the Helm 'Lebohaum' your head is safe!
 # The Balance Dragon Scale Mail 'Mediator'
 
 N:166:'Mediator'
-I:38:20:0
+I:38:20:1
 W:95:12:500:400000
-P:50:2d4:-8:0:35
-F:FEATHER | FLY | ESP_DRAGON |
+P:40:2d4:-8:0:30
+F:FEATHER | FLY | ESP_DRAGON | LIFE | 
 F:RES_NEXUS | RES_CHAOS | REGEN | 
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_CONF |
 F:ACTIVATE
@@ -3083,7 +3083,7 @@ D:Driving right through the chest, piercing strongest armour.
 
 # Sickle of Slicing
 
-N:250:'of Slicing'
+N:250:of Slicing
 I:22:3:5
 W:20:30:50:35000
 P:0:5d3:20:15:0

@@ -1093,13 +1093,16 @@ R:20
 F:RES_POIS
 
 N:97:Vampiric
+#Decided to remove LIFE till item system is rewritten (major mess-up) - C. Blue
 T:125:0:255
 T:23:0:255
 X:B:24:25
 W:0:2:107:10000
-C:0:0:0:-2
+#C:0:0:0:-2
+C:0:0:0:0
 R:100
-F:LIFE | VAMPIRIC | HOLD_LIFE
+#F:LIFE | VAMPIRIC | HOLD_LIFE
+F:VAMPIRIC | HOLD_LIFE
 
 N:98:(*Defender*)
 T:21:0:255
