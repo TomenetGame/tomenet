@@ -906,7 +906,7 @@ static void Delete_player(int Ind)
 		if (p_ptr->inventory)
 			C_KILL(p_ptr->inventory, INVEN_TOTAL, object_type);
 
-		KILL(p_ptr, player_type);
+		KILL(Players[NumPlayers], player_type);
 	}
 
 	NumPlayers--;
