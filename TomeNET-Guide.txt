@@ -1,12 +1,16 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. Dec 2003; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.1.7, http://www.tomenet.net/
+| Latest update: 5. Dec 2003; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.1.8, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
 +---
 | Welcome to this guide!
+| To shield myself: I give no guarantee that this guide
+| a) contains really every detail/issue about TomeNET and
+| b) is all the time 100% accurate on every occasion.
+| Don't blame me if something differs or is missing; it shouldn't though.
 | Please send in suggestions, criticism or comments to mail@c-blue.de.
 \
 
@@ -2180,17 +2184,17 @@ Knee                     5               5          2d3         Stunning &
                                                                 to stun again
 Elbow                    7               5          1d8             -
 Butt                     9              10          2d5             -
-Kick                    11              10          2d6         Slowing (PvM)
-Uppercut                13              12          4d4         Stunning
-Double-kick             16              15          5d4         Stunning
-Cat's Claw              20              20          7d3             -
-Jump Kick               25              25          3d10        Stunning
-Eagle's Claw            29              25          7d5             -
-Circle Kick             33              30          4d11        Stunning
-Iron Fist               37              35          7d7         Stunning
-Flying Kick             41              35          6d9         Stunning
-Dragon Fist             45              35          8d8         Stunning
-Crushing Blow           48              35          9d9         Stunning
+Kick                    11              10          2d5         Slowing (PvM)
+Uppercut                13              12          4d3         Stunning
+Double-kick             16              15          4d4             -
+Cat's Claw              20              20          6d3             -
+Jump Kick               25              25          3d9         Stunning
+Eagle's Claw            29              25          7d4             -
+Circle Kick             33              30          4d9             -
+Iron Fist               37              35          6d6         Stunning
+Flying Kick             41              35          5d8             -
+Dragon Fist             45              35          6d8         Stunning
+Crushing Blow           48              35          8d7         Stunning
 
 Depending on your MA skill, you have a fixed number of barehanded attacks
 per round, independent of your character class, your strength or your
@@ -2791,7 +2795,7 @@ Cure Serious Wounds
 Cure Critical Wounds
                 Cures blindness, cuts, confusion, stun; heals 8d8 HP.
 Healing         Cures blindness, cuts, confusion, stun, poison; heals 300 HP.
-*Healing*       Cures blindness, cuts, confusion, stun, poison; heals 1000 HP.
+*Healing*       Cures blindness, cuts, confusion, stun, poison; heals 800 HP.
 Restore Mana    Restores 500 MP.
 *Restore Mana*  Full mana restoration.
 Curing          Heals some HP, removes blindness/confusion/stun, cures
@@ -4102,6 +4106,12 @@ S: spell list
 Especially interesting spells of mimics are 'Blink' (Phase Door) and
 'Teleport'. These usually cost very little mana and can be very helpful,
 so you might want to create macros for them.
+
+WARNING:
+You can try to cast a monster spell even if you don't have sufficient spell
+points for it! This may or may not work, and there's a possibility that you
+will faint and become paralyzed for a few turns (Free Action won't help) as
+well as your health being damaged (constitution will be decreased).
 
 Further, certain races and classes get abilities:
 Bats        Feather falling (levitation)
