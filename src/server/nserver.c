@@ -3288,25 +3288,6 @@ int Send_skill_init(int ind, u16b i)
 		return 0;
 	}
 
-#if 0
-	/* Why sending thrice..? */
-#if 0
-	if (type == PKT_SKILL_INIT_NAME)
-		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].name, s_info[i].flags1, s_info[i].tval);
-	else if (type == PKT_SKILL_INIT_DESC)
-		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].desc, s_info[i].flags1, s_info[i].tval);
-	else if (type == PKT_SKILL_INIT_MKEY)
-		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_info[i].action_desc, s_info[i].flags1, s_info[i].tval);
-#else	// 0
-	if (type == PKT_SKILL_INIT_NAME)
-		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_name + s_info[i].name, s_info[i].flags1, s_info[i].tval);
-	else if (type == PKT_SKILL_INIT_DESC)
-		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_text + s_info[i].desc, s_info[i].flags1, s_info[i].tval);
-	else if (type == PKT_SKILL_INIT_MKEY)
-		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_text + s_info[i].action_desc, s_info[i].flags1, s_info[i].tval);
-#endif	// 0
-#endif /* evileye - 0 */
-
 	tmp=s_info[i].action_desc ? s_text + s_info[i].action_desc : "";
 
 	/* Note: %hd is 2 bytes - use this for x16b.
@@ -3317,6 +3298,20 @@ int Send_skill_init(int ind, u16b i)
 		s_info[i].flags1, s_info[i].tval, s_name+s_info[i].name,
 		s_text+s_info[i].desc, tmp ? tmp : "" ) );
 
+}
+
+int Send_skill_points(int ind){
+	connection_t *connp = &Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for skill mod (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+        return Packet_printf(&connp->c, "%c%ld", PKT_SKILL_PTS, p_ptr->skill_points);
 }
 
 int Send_skill_info(int ind, int i)
@@ -3331,7 +3326,7 @@ int Send_skill_info(int ind, int i)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-        return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%ld", PKT_SKILL_MOD, p_ptr->skill_points, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden);
+        return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden);
 }
 
 int Send_gold(int ind, s32b au, s32b balance)

@@ -985,6 +985,7 @@ static bool rd_extra(int Ind)
 			rd_u16b(&p_ptr->s_info[i].mod);
 			rd_byte(&p_ptr->s_info[i].dev);
 			rd_byte(&p_ptr->s_info[i].hidden);
+			p_ptr->s_info[i].touched=TRUE;
 		}
 		rd_s16b(&p_ptr->skill_points);
 //		rd_s16b(&p_ptr->skill_last_level);

@@ -42,9 +42,10 @@ void init_skill(player_type *p_ptr, u32b value, s16b mod, int i)
         p_ptr->s_info[i].value = value;
         p_ptr->s_info[i].mod = mod;
         if (s_info[i].flags1 & SKF1_HIDDEN)
-                p_ptr->s_info[i].hidden = TRUE;
+		p_ptr->s_info[i].hidden = TRUE;
         else
-                p_ptr->s_info[i].hidden = FALSE;
+		p_ptr->s_info[i].hidden = FALSE;
+	p_ptr->s_info[i].touched=TRUE;
 }
 
 /*

@@ -1763,6 +1763,8 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	{
 		s32b value = 0, mod = 0;
 
+		/* Make sure all are touched */
+		p_ptr->s_info[i].touched = TRUE;
 		compute_skills(p_ptr, &value, &mod, i);
 
 		init_skill(p_ptr, value, mod, i);

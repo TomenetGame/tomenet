@@ -128,6 +128,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_SANITY]		= Receive_sanity;
 	receive_tbl[PKT_SKILL_INIT]	= Receive_skill_init;
 	receive_tbl[PKT_SKILL_MOD] 	= Receive_skill_info;
+	receive_tbl[PKT_SKILL_PTS]	= Receive_skill_points;
 	receive_tbl[PKT_STORE_LEAVE] 	= Receive_store_kick;
 	receive_tbl[PKT_CHARDUMP] 	= Receive_chardump;
 	receive_tbl[PKT_BACT]		= Receive_store_action;
@@ -1739,19 +1740,36 @@ int Receive_skill_init(void)
 	return 1;
 }
 
-int Receive_skill_info(void)
+int Receive_skill_points(void)
 {
 	int	n;
         char	ch;
-        s32b    val;
-	int	i, mod, dev, hidden, pt;
+	int	pt;
 
-	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%ld%ld", &ch, &pt, &i, &val, &mod, &dev, &hidden)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%ld", &ch, &pt)) <= 0)
 	{
 		return n;
 	}
 
         p_ptr->skill_points = pt;
+
+        /* Tell the skill screen we got the info we needed */
+        hack_do_cmd_skill_wait = FALSE;
+	return 1;
+}
+
+int Receive_skill_info(void)
+{
+	int	n;
+        char	ch;
+        s32b    val;
+	int	i, mod, dev, hidden;
+
+	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%ld", &ch, &i, &val, &mod, &dev, &hidden)) <= 0)
+	{
+		return n;
+	}
+
         p_ptr->s_info[i].value = val;
         p_ptr->s_info[i].mod = mod;
         p_ptr->s_info[i].dev = dev;

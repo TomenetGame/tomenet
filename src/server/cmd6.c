@@ -1203,6 +1203,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 				/* gain skill points */
 				p_ptr->skill_points += 1;
+				p_ptr->update |= PU_SKILL_MOD;
 				p_ptr->redraw |= PR_STUDY;
 
 				msg_print(Ind, "You have one more skill point.");

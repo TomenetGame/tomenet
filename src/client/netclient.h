@@ -36,6 +36,7 @@ int Receive_mimic(void);
 int Receive_plusses(void);
 int Receive_experience(void);
 int Receive_skill_init(void);
+int Receive_skill_points(void);
 int Receive_skill_info(void);
 int Receive_gold(void);
 int Receive_sp(void);

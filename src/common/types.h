@@ -1708,6 +1708,7 @@ struct skill_player
 	u16b mod;                               /* Modifier(1 skill point = modifier skill) */
 	bool dev;                               /* Is the branch developped ? */
         bool hidden;                            /* Innactive */
+	bool touched;				/* need refresh? */
 
 };
 

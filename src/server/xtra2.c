@@ -3031,6 +3031,7 @@ void check_experience(int Ind)
 			/* gain skill points */
 			p_ptr->skill_points += SKILL_NB_BASE;
                         p_ptr->redraw |= PR_STUDY;
+			p_ptr->update |= PU_SKILL_MOD;
 
 			newlv = TRUE;
 

@@ -160,6 +160,9 @@
 #define PKT_BACT		158
 #define PKT_STORE_CMD	159
 
+/* its a cleanup, not a hack */
+#define PKT_SKILL_PTS   	160
+
 
 /* HACK -- used for SKILL_INIT */
 #define PKT_SKILL_INIT_NAME     0

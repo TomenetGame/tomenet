@@ -1512,7 +1512,7 @@ void calc_body_bonus(int Ind)
 		/*p_ptr->resist_conf = TRUE;*/
 		p_ptr->resist_dark = TRUE;
 		p_ptr->resist_blind = TRUE;
-		/* p_ptr->resist_pois = TRUE; /* instead of immune */
+		/* p_ptr->resist_pois = TRUE; */ /* instead of immune */
 		/* p_ptr->resist_cold = TRUE; */
 		p_ptr->no_cut = TRUE;
 		p_ptr->reduce_insanity = 1;
@@ -3638,14 +3638,7 @@ void update_stuff(int Ind)
                 {
                         if (s_info[i].name)
                         {
-#if 0
-                                Send_skill_init(Ind, PKT_SKILL_INIT_NAME, i);
-                                Send_skill_init(Ind, PKT_SKILL_INIT_DESC, i);
-                                if (s_info[i].action_desc != NULL)
-                                        Send_skill_init(Ind, PKT_SKILL_INIT_MKEY, i);
-#else
 				Send_skill_init(Ind, i);
-#endif
                         }
                 }
 	}
@@ -3657,11 +3650,13 @@ void update_stuff(int Ind)
 		p_ptr->update &= ~(PU_SKILL_MOD);
                 for (i = 1; i < MAX_SKILLS; i++)
                 {
-                        if (s_info[i].name)
+                        if (s_info[i].name && p_ptr->s_info[i].touched)
                         {
                                 Send_skill_info(Ind, i);
+				p_ptr->s_info[i].touched=FALSE;
                         }
                 }
+		Send_skill_points(Ind);
 	}
 
 	if (p_ptr->update & PU_BONUS)
