@@ -302,7 +302,7 @@ Change list for PernMangband
 - New command '/', which can handle miscellaneous types of items.
 - You can scroll chat-history with ctrl-o.
 - "'" command is supported(see above).
-- Graphics bug in win-client is fixed (by Tanix)
+- Graphics bug in win-client is fixed (by Asclep)
  
 19/11/2001 (Jir)
 - Some xp bonus to encourage partying (C.Blue's idea)
@@ -311,7 +311,7 @@ Change list for PernMangband
 
 20/11/2001 (Jir)
 - You get stunned, confused and also drop some items when theft fails.
-- I have put a bug where OOD monsters are summoned; now fixed (thx Tanix)
+- I have put a bug where OOD monsters are summoned; now fixed (thx Asclep)
 
 22/11/2001 (Jir)
 - You can use {@O} inscription to control auto-retaliator.
@@ -322,7 +322,7 @@ Change list for PernMangband
 - New admin commands: /lua, /recall
 - Multiple-melee attacks are efficiently handled now.
 
-23/11/2001 (Tanix [Jir wrote this log])
+23/11/2001 (Asclep [Jir wrote this log])
 - Recall/stair GoI message is removed.
 
 24/11/2001
@@ -333,7 +333,7 @@ Change list for PernMangband
 - Kings/Queens will be alarmed of retire_timer.
 - Players under lv-5 cannot throw items (anti-cheeze).
 
-25/11/2001 (Tanix [log by Jir])
+25/11/2001 (Asclep [log by Jir])
 - Shallow dungeon levels won't be static (configurable).
 - NO_GHOST / PRESERVE_DEATH_LEVEL options
 
@@ -362,7 +362,7 @@ Change list for PernMangband
 02/12/2001 (Jir)
 - Fortune cookie ported from PernA (by Mihi).
 - Bugfix on /dis. Added /untag.
-- Newbie(lv5-) no longer drops items when stealing fails.(thx Tanix)
+- Newbie(lv5-) no longer drops items when stealing fails.(thx Asclep)
 - 138 new cookies added.
 
 03/12/2001 (Jir)
@@ -393,9 +393,9 @@ Change list for PernMangband
 
 09/12/2001 (Jir)
 - Bugfixes. Megos.
-- rewritten chat-line commands' code using that of Tanix(thx).
+- rewritten chat-line commands' code using that of Asclep(thx).
 
-09/12/2001 (written by Tanix/modified by Jir)
+09/12/2001 (written by Asclep/modified by Jir)
 - chat-line command /cast.
 
 10/12/2001 (evileye)
@@ -642,30 +642,43 @@ Change list for PernMangband
 
 
 
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)
 
----- below this line are the unfixed bugs known ----
+==== below this line are the unfixed bugs known ====
 [B] Self-reproducing black trap
 [B] Wilderness map('M') is not available.
 [B] Panic save often enters into infinite loop.
 [B] Player forgets the memory of suburb areas (not a bug?)
-[B] Recalling in wilderness dungeons/caves always cause infinite loop.
+[B] Recalling in wilderness dungeons/towers always cause infinite loop.
 [B] Restarting server erases all the floor.
+[B] House doors still seem to crash sometimes.
+[B] Level teleporting in the wilderness crashes.
+[B] Saving on wilderness causes crash when coming back (due to unstaticing?)
 [B] 
----- below this line are changes to be done in the future ----
-[small ones]
+
+==== below this line are changes to be done in the future ====
+[minor ones]
 - recall-depth array for each dungeons/towers
 - full colour-support in show_file
-[big ones]
+- quiver/tool slot (not a monster! ;)
+- sort unique-list according to the level
+- tombstone screen
+- wilderness compacting
+- move slash-commands to another function
+- auto-teleport for lowbies in wall(in case they saved in dungeon).
+- low-sanity alart each 2000 turn or sth(and hallucination? :)
+- cave_special should use union? and their save/load via csfunc
+
+[major ones]
 - new wilderness generator {Evileye}
-- new terrains and their effects (f_info.txt) {Jir}
-- add more dungeon flags
+- new terrains and their effects (f_info.txt)
 - variety of dungeon types (d_info.txt)
 - better cave-generator (generate.c) {Asclep?}
 - fully-implemented multiple towns (t_*.txt/st_info.txt)
-- quests (needing LUA-hooks)
+- quests (needing LUA-hooks) {hopefully DarkGod}
 - guild, or new party system
 - backbone scenario (like token system)
 - total rebalancing for all of them
@@ -673,5 +686,23 @@ Change list for PernMangband
 - item stacks/monster inventory
 - better vaults
 - fix gfx again {Asclep}
-- new classes/races(/subclasses)
 - interractive spell system (like in C3)
+- total source-code cleanup {takkaria?}
+- new classes/races
+
+==== below this line are RFEs collected so far (good or bad) ====
+- more equipment slots in general (like Bracer)
+- door spiking (with '/' key)
+- pet/golem {Evileye/DG?}
+- player shouldn't gain more than 1 xp.level once?
+- enhanced help system (imo we cannot beat web browsers anyway..)
+- subclass system
+- karma/luck system (karma is like luck, but never gets positive value)
+- make charisma/wisdom/dexterity more important
+- some measures to 'cheezy' admins (at least some warnings)
+- player ghost should 'fade' slowly, so that a player won't try to preserve
+  the floor for days.
+- 3-D gfx and full-audio support
+- full-mouse operation
+- player shouldn't gain more than 1 levels at once (esp.from books)
+
