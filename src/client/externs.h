@@ -298,6 +298,7 @@ extern void cmd_master_aux_level(void);
 extern void cmd_master_aux_build(void);
 extern void cmd_master_aux_summon(void);
 extern void cmd_spike(void);
+extern void cmd_raw_key(int key);
 
 /* c-files.c */
 extern void text_to_ascii(char *buf, cptr str);

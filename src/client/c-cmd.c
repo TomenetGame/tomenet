@@ -122,6 +122,42 @@ void cmd_all_in_one(void)
 			break;
 		}
 
+		/* NOTE: 'item' isn't actually sent */
+		case TV_SPIKE:
+		{
+			if (!get_dir(&dir))
+				return;
+
+			Send_spike(dir);
+			break;
+		}
+
+		case TV_BOW:
+		case TV_BOOMERANG:
+		case TV_DIGGING:
+		case TV_HAFTED:
+		case TV_POLEARM:
+		case TV_SWORD:
+		case TV_AXE:
+		case TV_MSTAFF:
+		case TV_BOOTS:
+		case TV_GLOVES:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_SHIELD:
+		case TV_CLOAK:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_DRAG_ARMOR:
+		case TV_AMULET:
+		case TV_RING:
+		case TV_TOOL:
+		case TV_INSTRUMENT:
+		{
+			Send_wield(item);
+			break;
+		}
+
 		case TV_PSI_BOOK:
 		case TV_MAGIC_BOOK:
 		case TV_SORCERY_BOOK:
@@ -129,6 +165,7 @@ void cmd_all_in_one(void)
 		case TV_HUNT_BOOK:
 		case TV_FIGHT_BOOK:
 		case TV_PRAYER_BOOK:
+		default:
 		{
 			int i;
 			bool done = FALSE;
@@ -193,56 +230,13 @@ void cmd_all_in_one(void)
                         }
 #endif	// 0
 
-		/* NOTE: 'item' isn't actually sent */
-		case TV_SPIKE:
-		{
-			if (!get_dir(&dir))
-				return;
-
-			Send_spike(dir);
-			break;
-		}
-
-		case TV_BOW:
-		case TV_BOOMERANG:
-		case TV_DIGGING:
-		case TV_HAFTED:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_AXE:
-		case TV_MSTAFF:
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_HELM:
-		case TV_CROWN:
-		case TV_SHIELD:
-		case TV_CLOAK:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-		case TV_AMULET:
-		case TV_RING:
-		case TV_TOOL:
-		case TV_INSTRUMENT:
-		{
-			Send_wield(item);
-			break;
-		}
-
-		default:
+#if 0
 		{
 			prt("Sorry I cannot handle that.", 0, 0);
 			break;
 		}
+#endif	// 0
 	}
-
-		/* prototype
-		case :
-		{
-			
-			break;
-		}
-		*/
 }
 
 /* Handle all commands */
@@ -2808,7 +2802,10 @@ void cmd_spike()
 	Send_spike(dir);
 }
 
-/* formality :) */
+/*
+ * formality :)
+ * Nice if we can use LUA hooks here..
+ */
 void cmd_raw_key(int key)
 {
 	/* Send it */
