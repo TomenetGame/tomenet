@@ -761,10 +761,10 @@ static void wr_monster_race(monster_race *r_ptr)
         wr_s32b(r_ptr->flags6);
         wr_s16b(r_ptr->level);
         wr_byte(r_ptr->rarity);
+        wr_byte(r_ptr->d_attr);
         wr_byte(r_ptr->d_char);
         wr_byte(r_ptr->x_attr);
-        wr_byte(r_ptr->d_char);
-        wr_byte(r_ptr->x_attr);
+        wr_byte(r_ptr->x_char);
         for (i = 0; i < 4; i++)
         {
                 wr_byte(r_ptr->blow[i].method);
