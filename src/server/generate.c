@@ -7896,7 +7896,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 #endif	// 0
 
 				/* hack -- only create houses that aren't already loaded from disk */
-				if ((tmp=pick_house(wpos, y, x)) == -1)
+				if ((tmp=pick_house(wpos, dy, dx)) == -1)
 				{
 					c_ptr = &zcave[dy][dx];
 
