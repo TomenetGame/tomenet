@@ -1918,7 +1918,6 @@ void wild_display_map(int Ind)
 			/* if off the map, set to unknown type */
 #endif
 			else type = -1;
-			printf("type:%d\n",type);
 			
 			/* if the player hasnt been here, dont show him the terrain */
 			/* Hack -- serverchez has knowledge of the full world */

@@ -3004,17 +3004,14 @@ void dungeon(void)
 
 			/* Pick a location */
 #ifdef NEW_DUNGEON
-			//printf("scatter %d, %d\n",x,y);
 			scatter(wpos, &y, &x, starty, startx, d, 1);
 			/* Must have an "empty" grid */
 			if (!cave_empty_bold(zcave, y, x)){
-				//printf("not empty\n");
 				continue;
 			}
 
 			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
 			if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY)){
-				//printf("icky and groundlevel\n");
 				continue;
 			}
 #else
@@ -3026,13 +3023,11 @@ void dungeon(void)
 			if ((Depth <= 0) && (cave[Depth][y][x].info & CAVE_ICKY))
 				continue;
 #endif
-			//printf("scattered %d, %d\n",x,y);
 
 			break;
 		}
 
 #if 0
-		printf("finding area (%d,%d)\n",startx,starty);
 		/* Place the player in an empty space */
 		for (j = 0; j < 1500; ++j)
 		{
@@ -3041,7 +3036,6 @@ void dungeon(void)
 
 			/* Pick a location */
 #ifdef NEW_DUNGEON
-			printf("scatter %d, %d\n",x,y);
 			scatter(wpos, &y, &x, starty, startx, d, 1);
 
 			/* Must have an "empty" grid */
@@ -3059,7 +3053,6 @@ void dungeon(void)
 			if ((Depth <= 0) && (cave[Depth][y][x].info & CAVE_ICKY))
 				continue;
 #endif
-			printf("scattered %d, %d\n",x,y);
 
 			break;
 		}

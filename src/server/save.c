@@ -2375,7 +2375,6 @@ static bool wr_server_savefile(void)
 	compact_monsters(0);
 	/* Note the number of monsters */
 	tmp32u = m_max;
-	printf("monsters: %ld\n",tmp32u);
 	wr_u32b(tmp32u);
 	/* Dump the monsters */
 	for (i = 0; i < tmp32u; i++) wr_monster(&m_list[i]);
@@ -2384,7 +2383,6 @@ static bool wr_server_savefile(void)
 	compact_objects(0);
 	/* Note the number of objects */
 	tmp16u = o_max;
-	printf("objects: %d\n",tmp16u);
 	wr_u16b(tmp16u);
 	/* Dump the objects */
 	for (i = 0; i < tmp16u; i++) wr_item(&o_list[i]);
@@ -2395,7 +2393,6 @@ static bool wr_server_savefile(void)
 	}
 
 	/* Note the number of houses */
-	printf("houses: %ld\n",num_houses);
 	wr_u32b(tmp32u);
 
 	/* Dump the houses */
@@ -2445,7 +2442,6 @@ static void new_wr_wild(){
 			w_ptr=&wild_info[y][x];
 			wr_wild(w_ptr);
 			if(w_ptr->flags & WILD_F_DOWN){
-				printf("writing dungeon data for (%d,%d)\n",x,y);
 				wr_byte(w_ptr->up_x);
 				wr_byte(w_ptr->up_y);
 				wr_u16b(w_ptr->dungeon->baselevel);
@@ -2453,7 +2449,6 @@ static void new_wr_wild(){
 				wr_byte(w_ptr->dungeon->maxdepth);
 			}
 			if(w_ptr->flags & WILD_F_UP){
-				printf("writing tower data for (%d,%d)\n",x,y);
 				wr_byte(w_ptr->dn_x);
 				wr_byte(w_ptr->dn_y);
 				wr_u16b(w_ptr->tower->baselevel);
