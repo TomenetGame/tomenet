@@ -117,6 +117,14 @@ Change list for PernMangband
 - Player Golems! One can find pieces of golem and make a powerfull ally
 - Level requirement for objects, exepct for the char that found it
 - Level requirments on objects
+- One can inscribe an object #of the Fool to get the object to display:
+  "The Dager of the Fool"
+- Races get different mana
+- race restrict class
+- Mana penality for armor increased
+- Increased speed effect at high levels
 
 04/08/2001
 - New houses ready for testing prior to potential server reset
+- Extended dungeon. After level 100(5000') it loops to pseudo level 1
+  but with all monsters gaining +100 level

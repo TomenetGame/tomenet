@@ -1078,8 +1078,9 @@ static void player_outfit(int Ind)
                 o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
-                invcopy(o_ptr, lookup_kind(TV_RING, SV_RING_SEE_INVIS));
-		o_ptr->number = 99;
+                invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_PROBING));
+                o_ptr->number = 1;
+                o_ptr->pval = 30000;
 		o_ptr->discount = 0;
 		object_known(o_ptr);
                 o_ptr->owner = p_ptr->id;

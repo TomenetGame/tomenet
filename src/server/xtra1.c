@@ -1102,7 +1102,8 @@ static void calc_mana(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *p_ptr2;
 
-	int		new_mana, levels, cur_wgt, max_wgt;
+        int             levels, cur_wgt, max_wgt;
+        s32b    new_mana;
 
 	object_type	*o_ptr;
 
@@ -1172,6 +1173,9 @@ static void calc_mana(int Ind)
 		}
 	}
 
+        if (p_ptr->pclass != CLASS_WARRIOR) new_mana = new_mana * p_ptr->rp_ptr->mana / 100;
+        if (new_mana <= 0) new_mana = 1;
+
 	/* Sorcerer really need that */
 	if (p_ptr->pclass == CLASS_SORCERER)
 	{
@@ -1227,7 +1231,7 @@ static void calc_mana(int Ind)
 		p_ptr->cumber_armor = TRUE;
 
 		/* Reduce mana */
-		new_mana -= ((cur_wgt - max_wgt) / 10);
+                new_mana -= ((cur_wgt - max_wgt) * 2 / 3);
 	}
 
 	if (Ind2)

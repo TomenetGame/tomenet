@@ -1345,7 +1345,8 @@ player_race race_info[MAX_RACES] =
 		72,  6, 180, 25,
 		66,  4, 150, 20,
 		0,
-		0x3F
+                0xFFFFFFFF,
+                100,
 	},
 
 	{
@@ -1357,7 +1358,8 @@ player_race race_info[MAX_RACES] =
 		66,  6, 130, 15,
 		62,  6, 100, 10,
 		2,
-		0x3F
+                0xFFFFFFFF - BITS(CLASS_MIMIC) - BITS(CLASS_PALADIN),
+                110,
 	},
 
 	{
@@ -1369,7 +1371,8 @@ player_race race_info[MAX_RACES] =
 		60,  4, 100,  6,
 		54,  4, 80,  6,
 		3,
-		0x1F
+                0xFFFFFFFF - BITS(CLASS_MIMIC) - BITS(CLASS_PALADIN) - BITS(CLASS_UNBELIEVER),
+                120,
 	},
 
 	{
@@ -1381,7 +1384,8 @@ player_race race_info[MAX_RACES] =
 		36,  3, 60,  3,
 		33,  3, 50,  3,
 		4,
-		0x0B
+                0xFFFFFFFF - BITS(CLASS_PALADIN) - BITS(CLASS_MONK) - BITS(CLASS_TELEPATH),
+                90,
 	},
 
 	{
@@ -1393,7 +1397,8 @@ player_race race_info[MAX_RACES] =
 		42,  3, 90,  6,
 		39,  3, 75,  3,
 		4,
-		0x0F
+                0xFFFFFFFF - BITS(CLASS_UNBELIEVER),
+                120,
 	},
 
 	{
@@ -1405,7 +1410,8 @@ player_race race_info[MAX_RACES] =
 		48,  3, 150, 10,
 		46,  3, 120, 10,
 		5,
-		0x05
+                0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER) - BITS(CLASS_TELEPATH),
+                95,
 	},
 
 	{
@@ -1417,7 +1423,8 @@ player_race race_info[MAX_RACES] =
 		66,  1, 150,  5,
 		62,  1, 120,  5,
 		3,
-		0x0D
+                0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER) - BITS(CLASS_TELEPATH),
+                50,
 	},
 
 	{
@@ -1429,7 +1436,8 @@ player_race race_info[MAX_RACES] =
 		96, 10, 250, 50,
 		84,  8, 225, 40,
 		3,
-		0x05
+                0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER) - BITS(CLASS_TELEPATH),
+                20,
 	},
 
 	{
@@ -1441,8 +1449,9 @@ player_race race_info[MAX_RACES] =
 		82, 5, 190, 20,
 		78,  6, 180, 15,
 		0,
-		0x3F
-	},
+                0xFFFFFFFF,
+                105,
+        },
 
 	{
 		"High-Elf",
@@ -1453,7 +1462,8 @@ player_race race_info[MAX_RACES] =
 		90, 10, 190, 20,
 		82, 10, 180, 15,
 		4,
-		0x1F
+                0xFFFFFFFF,
+                125,
 	},
 
 	{
@@ -1465,42 +1475,46 @@ player_race race_info[MAX_RACES] =
 		72,  6, 180, 25,
 		66,  4, 150, 20,
 		0,
-		0x3F
+                0xFFFFFFFF,
+                50,
 	},
 
 	{
 		"Goblin",
-		{  -5, -5, -5, -5, -5, -5 },
-		0,  0,  0,  0,  0,  10,  0,  0,
-		8,  30,
-		14,  6,
-		72,  6, 180, 25,
-		66,  4, 150, 20,
-		0,
-		0x3F
+		{  0, -1, -5,  4,  2, -5 },
+		2, -3, -3,  0,  2, 8, 12, -5,
+		11,  115,
+		11,  4,
+		66,  1, 150,  5,
+		62,  1, 120,  5,
+		3,
+                0xFFFFFFFF - BITS(CLASS_SORCERER) - BITS(CLASS_TELEPATH),
+                70,
 	},
 
 	{
                 "Ent",
-		{ 6, -4, +2, -4,  5, -5 },
+		{ 8, -4, +2, -4,  8, -5 },
                 5, 0, 20, -6, 5, 4, 15, 5,
-                13, 300,
+                14, 300,
                 255, 70,
 		72, 6, 100, 25,
 		66, 4, 100, 20,
 		5,
-		0x3F,
+                0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER),
+                80,
 	},
 	{
                 "DragonRider",
                 {  6,  3,  -10,  0,  5,  5 },
                 6,  0,  10,  -16,  30,  10,  15,  5,
-                13,  450,
+                12,  450,
 		14,  6,
                 180,  6, 255, 25,
                 150,  4, 230, 20,
                 0,
-		0x3F
+                0xFFFFFFFF,
+                95,
         },
 };
 /*

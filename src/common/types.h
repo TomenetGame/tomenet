@@ -884,7 +884,9 @@ struct player_race
 
 	byte infra;			/* Infra-vision	range */
 
-	byte choice;		/* Legal class choices */
+        s32b choice;            /* Legal class choices */
+
+        s16b mana;              /* % mana */
 };
 
 

@@ -3097,7 +3097,9 @@ void player_death(int Ind)
 		{	strcpy(Players[Ind2]->died_from_list, p_ptr->died_from);
 			Players[Ind2]->died_from_depth = Players[Ind2]->dun_depth;
 		}
-		player_death(Ind2);
+                bypass_invuln = TRUE;
+                take_hit(Ind2, 32000, p_ptr->died_from);
+                bypass_invuln = FALSE;
 	      }
 	  }
 

@@ -2306,18 +2306,7 @@ void dungeon(void)
 		{
 			if (wild_info[Depth].own)
 			{
-				int a = find_player(wild_info[Depth].own);
-			
-				if (a)
-				{
-					player_type *q_ptr = Players[a];
-
-					msg_format(i, "You enter the land of %s %s.", (q_ptr->male)?"King":"Queen", q_ptr->name);
-				}
-				else
-				{
-					msg_format(i, "You enter the land of a ruler.");
-				}
+                                msg_format(i, "You enter the land of %s.", lookup_player_name(wild_info[Depth].own));
 			}
 		}
 

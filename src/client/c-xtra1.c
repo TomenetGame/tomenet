@@ -89,17 +89,17 @@ void prt_level(int level, int max, int cur, int adv)
 	Term_putstr(0, ROW_LEVEL, -1, TERM_WHITE, "LEVEL ");
 	Term_putstr(COL_LEVEL + 6, ROW_LEVEL, -1, TERM_L_GREEN, tmp);
 
-	sprintf(tmp, "%8ld", (long)cur);
+        sprintf(tmp, "%9ld", (long)cur);
 
 	if (cur >= max)
 	{
-		Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "EXP ");
-		Term_putstr(COL_EXP + 4, ROW_EXP, -1, TERM_L_GREEN, tmp);
+                Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
+                Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_L_GREEN, tmp);
 	}
 	else
 	{
-		Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Exp ");
-		Term_putstr(COL_EXP + 4, ROW_EXP, -1, TERM_YELLOW, tmp);
+                Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
+                Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_YELLOW, tmp);
 	}
 }
 

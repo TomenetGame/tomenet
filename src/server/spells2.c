@@ -2775,15 +2775,23 @@ bool probing(int Ind)
 		if (p_ptr->mon_vis[i])
 		{
 			char m_name[80];
+                        char buf[80];
+                        int j;
 
 			/* Start the message */
 			if (!probe) msg_print(Ind, "Probing...");
 
 			/* Get "the monster" or "something" */
 			monster_desc(Ind, m_name, i, 0x04);
+                        sprintf(buf, "blows");
+
+                        for (j = 0; j < 4; j++)
+                        {
+                                if (m_ptr->blow[j].d_dice) strcat(buf, format(" %dd%d", m_ptr->blow[j].d_dice, m_ptr->blow[j].d_side));
+                        }
 
 			/* Describe the monster */
-			msg_format(Ind, "%^s has %d hit points.", m_name, m_ptr->hp);
+                        msg_format(Ind, "%^s (%d) has %d hp, %d ac, %d speed, %s.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->speed, buf);
 
 			/* Learn all of the non-spell, non-treasure flags */
 			lore_do_probe(i);

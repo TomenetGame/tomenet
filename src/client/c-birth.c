@@ -209,6 +209,7 @@ static void choose_race(void)
 static void choose_class(void)
 {
 	player_class *cp_ptr;
+        player_race *rp_ptr = &race_info[race];
 	int          j, k, l, m;
 
 	char         c;
@@ -225,6 +226,13 @@ static void choose_class(void)
 	for (j = 0; j < MAX_CLASS; j++)
 	{
 		cp_ptr = &class_info[j];
+
+                if (!(rp_ptr->choice & BITS(j)))
+                {
+                        l += 15;
+                        continue;
+                }
+
 		sprintf(out_val, "%c) %s", I2A(j), cp_ptr->title);
 		put_str(out_val, m, l);
 		l += 15;
@@ -244,6 +252,8 @@ static void choose_class(void)
 		j = (islower(c) ? A2I(c) : -1);
 		if ((j < MAX_CLASS) && (j >= 0))
 		{
+                        if (!(rp_ptr->choice & BITS(j))) continue;
+
 			class = j;
 			cp_ptr = &class_info[j];
 			c_put_str(TERM_L_BLUE, cp_ptr->title, 6, 15);

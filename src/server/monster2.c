@@ -29,7 +29,7 @@ void monster_check_experience(int m_idx, bool silent)
                 m_ptr->level++;
 
                 /* Gain hp */
-                if (magik(80))
+                if (magik(90))
                 {
                         m_ptr->maxhp += r_ptr->hside;
                         m_ptr->hp += r_ptr->hside;
@@ -50,7 +50,7 @@ void monster_check_experience(int m_idx, bool silent)
                 }
 
                 /* Gain melee power */
-                if (magik(30))
+                if (magik(50))
                 {
                         int i = rand_int(4), try = 20;
 
@@ -512,6 +512,12 @@ s16b get_mon_num(int level)
 	monster_race	*r_ptr;
 
 	alloc_entry		*table = alloc_race_table;
+
+        /* Warp level around */
+        if (level > 100)
+        {
+                level = level - 100;
+        }
 
 	if (level > 0)
 	{
@@ -1658,6 +1664,15 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, bool slp, bool
 		Players[Ind]->mon_vis[c_ptr->m_idx] = FALSE;
 	}
 
+        /* Should we gain levels ? */
+        if (Depth > 100)
+        {
+                int l = m_ptr->level + 100;
+
+                m_ptr->exp = MONSTER_EXP(l);
+                monster_check_experience(c_ptr->m_idx, TRUE);
+        }
+
 	strcpy(buf, (r_name + r_ptr->name));
 
 	/* Update the monster */
@@ -1921,8 +1936,6 @@ bool place_monster(int Depth, int y, int x, bool slp, bool grp)
 
 	/* Handle failure */
 	if (!r_idx) return (FALSE);
-
-	/*printf("Trying to place a monster (%d) at %d, %d.\n", r_idx, y, x);*/
 
 	/* Attempt to place the monster */
 	if (place_monster_aux(Depth, y, x, r_idx, slp, grp, FALSE)) return (TRUE);
@@ -2656,31 +2669,32 @@ cptr r_name_get(monster_type *m_ptr)
 
         if (m_ptr->special)
         {
+                cptr p = (m_ptr->owner)?lookup_player_name(m_ptr->owner):"**INTERNAL BUG**";
                 switch (m_ptr->r_idx - 1)
                 {
                         case SV_GOLEM_WOOD:
-                                sprintf(buf, "Wood Golem");
+                                sprintf(buf, "%s's Wood Golem", p);
                                 break;
                         case SV_GOLEM_COPPER:
-                                sprintf(buf, "Copper Golem");
+                                sprintf(buf, "%s's Copper Golem", p);
                                 break;
                         case SV_GOLEM_IRON:
-                                sprintf(buf, "Iron Golem");
+                                sprintf(buf, "%s's Iron Golem", p);
                                 break;
                         case SV_GOLEM_ALUM:
-                                sprintf(buf, "Aluminium Golem");
+                                sprintf(buf, "%s's Aluminium Golem", p);
                                 break;
                         case SV_GOLEM_SILVER:
-                                sprintf(buf, "Silver Golem");
+                                sprintf(buf, "%s's Silver Golem", p);
                                 break;
                         case SV_GOLEM_GOLD:
-                                sprintf(buf, "Gold Golem");
+                                sprintf(buf, "%s's Gold Golem", p);
                                 break;
                         case SV_GOLEM_MITHRIL:
-                                sprintf(buf, "Mithril Golem");
+                                sprintf(buf, "%s's Mithril Golem", p);
                                 break;
                         case SV_GOLEM_ADAM:
-                                sprintf(buf, "Adamantite Golem");
+                                sprintf(buf, "%s's Adamantite Golem", p);
                                 break;
                 }
                 return (buf);

@@ -834,6 +834,7 @@ extern void teleport_away(int m_idx, int dis);
 extern void teleport_player(int Ind, int dis);
 extern void teleport_player_to(int Ind, int ny, int nx);
 extern void teleport_player_level(int Ind);
+extern bool bypass_invuln;
 extern void take_hit(int Ind, int damage, cptr kb_str);
 extern void acid_dam(int Ind, int dam, cptr kb_str);
 extern void elec_dam(int Ind, int dam, cptr kb_str);

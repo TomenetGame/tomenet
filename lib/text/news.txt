@@ -1,5 +1,5 @@
            **********************************************************
-           ** PernMAngband 3.1.3  **  The Troubles of Middle Earth **
+           ** PernMAngband 3.3.0  **  The Troubles of Middle Earth **
            **********************************************************
 
                "One Ring to rule them all, One Ring to find them
@@ -17,7 +17,6 @@
          MAngband 0.6 - 0.7: Alex Dingle (adingle@crud.net) 	
      PernMAngband 2.9 - x.x: DarkGod (darkgod@ifrance.com)
 
-       ****WARNING**** !!!!!!!! You NEED the new client to play go to:
                    http://pernmangband.pernangband.org
 
  Send all comments, bug reports, patches, etc, to "darkgod@pernangband.org".

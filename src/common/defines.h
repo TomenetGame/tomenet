@@ -213,7 +213,8 @@
  * involving object and monster creation.  It must be at least 100.
  * Setting it below 128 may prevent the creation of some objects.
  */
-#define MAX_DEPTH	128
+#define MAX_DEPTH       201
+#define MAX_DEPTH_OBJ   128
 
 /* The number of wilderness levels we have allocated.
 */
@@ -444,7 +445,7 @@
 /*
  * Player constants
  */
-#define PY_MAX_EXP	99999999L	/* Maximum exp */
+#define PY_MAX_EXP      999999999L       /* Maximum exp */
 #define PY_MAX_GOLD	999999999L	/* Maximum gold */
 #define PY_MAX_LEVEL    100             /* Maximum level */
 
@@ -2832,3 +2833,8 @@ extern int PlayerUID;
 #define GOLEM_ATTACK    0x01
 #define GOLEM_FOLLOW    0x02
 #define GOLEM_GUARD     0x04
+
+/*
+ * Utility
+ */
+#define BITS(x)  (1 << (x))

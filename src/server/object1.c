@@ -1587,8 +1587,23 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	/* Hack -- Append "Artifact" or "Special" names */
 	if (known)
 	{
+                /* -TM- Hack -- Add false-artifact names */
+                /* Dagger inscribed {@w0#of Smell} will be named
+                 * Dagger of Smell {@w0} */
+                if (o_ptr->note)
+                {
+                        cptr str = strchr(quark_str(o_ptr->note), '#');
+
+                        /* Add the false name */
+                        if (str)
+                        {
+                                t = object_desc_chr(t, ' ');
+                                t = object_desc_str(t, &str[1]);
+                        }
+                }
+
 		/* Grab any randart name */
-		if (o_ptr->name1 == ART_RANDART)
+                else if (o_ptr->name1 == ART_RANDART)
 		{
 			/* Create the name */
 			randart_name(o_ptr, tmp_val);
@@ -1619,6 +1634,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
         /* Print level and owning */
         t = object_desc_chr(t, ' ');
         t = object_desc_chr(t, '{');
+        if (o_ptr->owner)
+        {
+                t = object_desc_str(t, lookup_player_name(o_ptr->owner));
+                t = object_desc_chr(t, ',');
+        }
         t = object_desc_num(t, o_ptr->level);
         t = object_desc_chr(t, '}');
 
@@ -1966,9 +1986,15 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	tmp_val[0] = '\0';
 
 	/* Use the standard inscription if available */
-	if (o_ptr->note)
+        if (o_ptr->note)
 	{
+                char *u = tmp_val;
+
 		strcpy(tmp_val, quark_str(o_ptr->note));
+
+		for (; *u && (*u != '#'); u++);
+	
+		*u = '\0';
 	}
 
 	/* Note "cursed" if the item is known to be cursed */

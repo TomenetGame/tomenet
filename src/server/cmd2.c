@@ -122,7 +122,7 @@ void do_cmd_go_down(int Ind)
 		}
 	
 		/* Verify maximum depth */
-		if (p_ptr->dun_depth >= 127)
+                if (p_ptr->dun_depth >= MAX_DEPTH - 1)
 		{
 			msg_print(Ind, "You are at the bottom of the dungeon.");
 			return;

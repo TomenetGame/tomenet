@@ -1245,13 +1245,13 @@ byte extract_energy[200] =
 	/* S-10 */     5,  5,  5,  5,  6,  6,  7,  7,  8,  9,
 	/* Norm */    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
 	/* F+10 */    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-	/* F+20 */    30, 31, 32, 33, 34, 35, 36, 36, 37, 37,
-	/* F+30 */    38, 38, 39, 39, 40, 40, 40, 41, 41, 41,
-	/* F+40 */    42, 42, 42, 43, 43, 43, 44, 44, 44, 44,
-	/* F+50 */    45, 45, 45, 45, 45, 46, 46, 46, 46, 46,
-	/* F+60 */    47, 47, 47, 47, 47, 48, 48, 48, 48, 48,
-	/* F+70 */    49, 49, 49, 49, 49, 49, 49, 49, 49, 49,
-	/* Fast */    49, 49, 49, 49, 49, 49, 49, 49, 49, 49,
+        /* F+20 */    30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+        /* F+30 */    40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+        /* F+40 */    50, 51, 52, 53, 54, 54, 55, 55, 56, 57,
+        /* F+50 */    58, 58, 59, 60, 61, 62, 63, 63, 64, 64,
+        /* F+60 */    65, 65, 66, 66, 67, 67, 68, 68, 69, 69,
+        /* F+70 */    70, 70, 71, 71, 72, 72, 73, 73, 74, 74,
+        /* Fast */    75, 75, 76, 76, 77, 77, 78, 78, 79, 79,
 };
 
 
@@ -1338,65 +1338,65 @@ s32b player_exp[PY_MAX_LEVEL] =
 	4500000L,
         5000000L,
 
-        5500000L,
         6000000L,
-        6600000L,
-        7200000L,
+        7000000L,
         8000000L,
-
         9000000L,
-       10100000L,
-       11600000L,
-       12500000L,
-       13200000L,
+       10000000L,
 
-       14500000L,
+       12000000L,
+       14000000L,
        16000000L,
        18000000L,
-       19000000L,
        20000000L,
 
-       21000000L,
-       22000000L,
-       23000000L,
-       25000000L,
-       27000000L,
+       24000000L,
+       28000000L,
+       32000000L,
+       36000000L,
+       40000000L,
 
-       29000000L,
-       31000000L,
-       33000000L,
-       34000000L,
-       35000000L,
-
-       37000000L,
-       39000000L,
-       41000000L,
-       43000000L,
-       45000000L,
-
-       47000000L,
-       49000000L,
-       51000000L,
-       53000000L,
-       55000000L,
-
+       46000000L,
+       52000000L,
+       58000000L,
+       54000000L,
        60000000L,
-       64000000L,
+
        68000000L,
-       72000000L,
        76000000L,
-
-       80000000L,
        84000000L,
-       88000000L,
-       90000000L,
-       93000000L,
+       92000000L,
+      100000000L,
 
-       95000000L,
-       96000000L,
-       97000000L,
-       98000000L,
-       99999999L
+      110000000L,
+      120000000L,
+      130000000L,
+      140000000L,
+      150000000L,
+
+      162000000L,
+      174000000L,
+      186000000L,
+      198000000L,
+      200000000L,
+
+      214000000L,
+      228000000L,
+      236000000L,
+      250000000L,
+      264000000L,
+
+      278000000L,
+      286000000L,
+      300000000L,
+      314000000L,
+      328000000L,
+
+      340000000L,
+      360000000L,
+      380000000L,
+      400000000L,
+      420000000L
 };
 
 
@@ -1411,6 +1411,7 @@ s32b player_exp[PY_MAX_LEVEL] =
  *    Female (Hgt, Wgt)
  *    infra,
  *    class-choices
+ *    mana %
  */
 player_race race_info[MAX_RACES] =
 {
@@ -1423,7 +1424,8 @@ player_race race_info[MAX_RACES] =
 		72,  6, 180, 25,
 		66,  4, 150, 20,
 		0,
-		0x3F
+                0xFFFFFFFF,
+                100,
 	},
 
 	{
@@ -1435,7 +1437,8 @@ player_race race_info[MAX_RACES] =
 		66,  6, 130, 15,
 		62,  6, 100, 10,
 		2,
-		0x3F
+                0xFFFFFFFF - BITS(CLASS_MIMIC) - BITS(CLASS_PALADIN),
+                110,
 	},
 
 	{
@@ -1447,7 +1450,8 @@ player_race race_info[MAX_RACES] =
 		60,  4, 100,  6,
 		54,  4, 80,  6,
 		3,
-		0x1F
+                0xFFFFFFFF - BITS(CLASS_MIMIC) - BITS(CLASS_PALADIN) - BITS(CLASS_UNBELIEVER),
+                120,
 	},
 
 	{
@@ -1459,7 +1463,8 @@ player_race race_info[MAX_RACES] =
 		36,  3, 60,  3,
 		33,  3, 50,  3,
 		4,
-		0x0B
+                0xFFFFFFFF - BITS(CLASS_PALADIN) - BITS(CLASS_MONK) - BITS(CLASS_TELEPATH),
+                90,
 	},
 
 	{
@@ -1471,7 +1476,8 @@ player_race race_info[MAX_RACES] =
 		42,  3, 90,  6,
 		39,  3, 75,  3,
 		4,
-		0x0F
+                0xFFFFFFFF - BITS(CLASS_UNBELIEVER),
+                120,
 	},
 
 	{
@@ -1483,7 +1489,8 @@ player_race race_info[MAX_RACES] =
 		48,  3, 150, 10,
 		46,  3, 120, 10,
 		5,
-		0x05
+                0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER) - BITS(CLASS_TELEPATH),
+                95,
 	},
 
 	{
@@ -1495,7 +1502,8 @@ player_race race_info[MAX_RACES] =
 		66,  1, 150,  5,
 		62,  1, 120,  5,
 		3,
-		0x0D
+                0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER) - BITS(CLASS_TELEPATH),
+                50,
 	},
 
 	{
@@ -1507,7 +1515,8 @@ player_race race_info[MAX_RACES] =
 		96, 10, 250, 50,
 		84,  8, 225, 40,
 		3,
-		0x05
+                0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER) - BITS(CLASS_TELEPATH),
+                20,
 	},
 
 	{
@@ -1519,8 +1528,9 @@ player_race race_info[MAX_RACES] =
 		82, 5, 190, 20,
 		78,  6, 180, 15,
 		0,
-		0x3F
-	},
+                0xFFFFFFFF,
+                105,
+        },
 
 	{
 		"High-Elf",
@@ -1531,7 +1541,8 @@ player_race race_info[MAX_RACES] =
 		90, 10, 190, 20,
 		82, 10, 180, 15,
 		4,
-		0x1F
+                0xFFFFFFFF,
+                125,
 	},
 
 	{
@@ -1543,7 +1554,8 @@ player_race race_info[MAX_RACES] =
 		72,  6, 180, 25,
 		66,  4, 150, 20,
 		0,
-		0x3F
+                0xFFFFFFFF,
+                50,
 	},
 
 	{
@@ -1555,7 +1567,8 @@ player_race race_info[MAX_RACES] =
 		66,  1, 150,  5,
 		62,  1, 120,  5,
 		3,
-		0x0D
+                0xFFFFFFFF - BITS(CLASS_SORCERER) - BITS(CLASS_TELEPATH),
+                70,
 	},
 
 	{
@@ -1567,7 +1580,8 @@ player_race race_info[MAX_RACES] =
 		72, 6, 100, 25,
 		66, 4, 100, 20,
 		5,
-		0x3F,
+                0xFFFFFFFF - BITS(CLASS_MAGE) - BITS(CLASS_SORCERER),
+                80,
 	},
 	{
                 "DragonRider",
@@ -1578,7 +1592,8 @@ player_race race_info[MAX_RACES] =
                 180,  6, 255, 25,
                 150,  4, 230, 20,
                 0,
-		0x3F
+                0xFFFFFFFF,
+                95,
         },
 };
 /*
@@ -1827,7 +1842,7 @@ player_magic magic_info[MAX_CLASS] =
 		0,
 
 		1,
-		300,
+                180,
 
 		{
 			{  1,  1, 22,   4},
@@ -1916,7 +1931,7 @@ player_magic magic_info[MAX_CLASS] =
 		1,
 
 		1,
-		350,
+                250,
 
 		{
 			{  1,  1, 10,   4},
@@ -2096,7 +2111,7 @@ player_magic magic_info[MAX_CLASS] =
 		0,
 
 		3,
-		400,
+                350,
 
 		{
 			{  3,  1, 30,   1},
@@ -2271,7 +2286,7 @@ player_magic magic_info[MAX_CLASS] =
 		2,
 
 		1,
-		300,
+                100,
 
 		{
 	                /* Apprentice Handbook */
@@ -2526,7 +2541,7 @@ player_magic magic_info[MAX_CLASS] =
 		5,
 		
 		3,
-	        400,
+                300,
 
 		{
 			{ 3,   1,  10,   6},
@@ -2687,7 +2702,7 @@ player_magic magic_info[MAX_CLASS] =
 		6,
 
 		1,
-		400,
+                100,
 
 		{
 		  /* Telepathy */
@@ -4289,4 +4304,3 @@ martial_arts ma_blows[MAX_MA] =
 	{ "You hit %s with a Dragon Fist.",         45, 35, 10, 10, 16 },
 	{ "You hit %s with a Crushing Blow.",       48, 35, 10, 12, 18 },
 };
-

@@ -575,6 +575,7 @@ static byte spell_color(int type)
  * the game when he dies, since the "You die." message is shown before
  * setting the player to "dead".
  */
+bool bypass_invuln = FALSE;
 void take_hit(int Ind, int damage, cptr hit_from)
 {
 	player_type *p_ptr = Players[Ind];
@@ -596,7 +597,7 @@ void take_hit(int Ind, int damage, cptr hit_from)
 	disturb(Ind, 1, 0);
 
 	/* Mega-Hack -- Apply "invulnerability" */
-	if (p_ptr->invuln)
+        if (p_ptr->invuln && (!bypass_invuln))
 	{
 		/* 1 in 2 chance to fully deflect the damage */
 		if (magik(40))
@@ -609,7 +610,7 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		damage = damage / 2;
   	}
 
-	if (p_ptr->tim_manashield)
+        if (p_ptr->tim_manashield && (!bypass_invuln))
 	  {
 	     if (p_ptr->csp > 0)
 	       {

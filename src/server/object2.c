@@ -455,7 +455,7 @@ s16b get_obj_num(int level)
 		if (rand_int(GREAT_OBJ) == 0)
 		{
 			/* What a bizarre calculation */
-			level = 1 + (level * MAX_DEPTH / randint(MAX_DEPTH));
+                        level = 1 + (level * MAX_DEPTH_OBJ / randint(MAX_DEPTH_OBJ));
 		}
 	}
 
@@ -1335,17 +1335,17 @@ static s16b m_bonus(int max, int level)
 
 
 	/* Paranoia -- enforce maximal "level" */
-	if (level > MAX_DEPTH - 1) level = MAX_DEPTH - 1;
+        if (level > MAX_DEPTH_OBJ - 1) level = MAX_DEPTH_OBJ - 1;
 
 
 	/* The "bonus" moves towards the max */
-	bonus = ((max * level) / MAX_DEPTH);
+        bonus = ((max * level) / MAX_DEPTH_OBJ);
 
 	/* Hack -- determine fraction of error */
-	extra = ((max * level) % MAX_DEPTH);
+        extra = ((max * level) % MAX_DEPTH_OBJ);
 
 	/* Hack -- simulate floating point computations */
-	if (rand_int(MAX_DEPTH) < extra) bonus++;
+        if (rand_int(MAX_DEPTH_OBJ) < extra) bonus++;
 
 
 	/* The "stand" is equal to one quarter of the max */
@@ -1855,7 +1855,7 @@ while ((--tries) && (rand_int(10L * o_ptr->dd * o_ptr->ds) == 0)) o_ptr->dd++;
 			else if (power < -1)
 			{
 				/* Roll for ego-item */
-				if (rand_int(MAX_DEPTH) < level)
+                                if (rand_int(MAX_DEPTH_OBJ) < level)
 				{
 					o_ptr->name2 = EGO_MORGUL;
 				}
@@ -1967,7 +1967,7 @@ tries = 100;
 			else if (power < -1)
 			{
 				/* Roll for ego-item */
-				if (rand_int(MAX_DEPTH) < level)
+                                if (rand_int(MAX_DEPTH_OBJ) < level)
 				{
 					o_ptr->name2 = EGO_BACKBITING;
 				}
@@ -3053,7 +3053,7 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 
 
 	/* Maximum "level" for various things */
-	if (lev > MAX_DEPTH - 1) lev = MAX_DEPTH - 1;
+        if (lev > MAX_DEPTH_OBJ - 1) lev = MAX_DEPTH_OBJ - 1;
 
 
 	/* Base chance of being "good" */
@@ -3219,7 +3219,7 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 
         /* Unowned yet */
         o_ptr->owner = 0;
-        o_ptr->level = (lev > 100)?100:lev;
+        o_ptr->level = ((lev * 2 / 3) > 100)?100:(lev * 2 / 3);
 
 	/* Hack -- analyze ego-items */
 	if (o_ptr->name2)
@@ -3941,7 +3941,7 @@ void pick_trap(int Depth, int y, int x)
 		if ((feat == FEAT_TRAP_HEAD + 0x00) && is_quest(Depth)) continue;
 
 		/* Hack -- no trap doors on the deepest level */
-		if ((feat == FEAT_TRAP_HEAD + 0x00) && (Depth >= MAX_DEPTH-1)) continue;
+                if ((feat == FEAT_TRAP_HEAD + 0x00) && (Depth >= MAX_DEPTH_OBJ-1)) continue;
 
 		/* Done */
 		break;
