@@ -4013,15 +4013,9 @@ that keeps many algorithms happy.
 /*
  * Determines if a map location is on or inside the outer walls
  */
-#ifdef NEW_DUNGEON
 #define in_bounds2(WPOS,Y,X) \
    ((istown(WPOS) ? (((Y) >= 0) && ((X) >= 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID)) \
            : (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID))))
-#else
-#define in_bounds2(DEPTH,Y,X) \
-   ((DEPTH ? (((Y) >= 0) && ((X) >= 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID)) \
-      : (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID))))
-#endif
 
 /*
  * replacement of in_bound2 -

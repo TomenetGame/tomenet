@@ -2545,11 +2545,7 @@ void stair_creation(int Ind)
 	{
 		c_ptr->feat = FEAT_MORE;
 	}
-#ifdef NEW_DUNGEON
 	else if(can_go_up(wpos) && !can_go_down(wpos))
-#else
-	else if (is_quest(Depth) || (Depth >= MAX_DEPTH-1))
-#endif
 	{
 		c_ptr->feat = FEAT_LESS;
 	}
@@ -3615,8 +3611,8 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ)
 
 	dun_level		*l_ptr = getfloor(wpos);
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return FALSE;
-	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return;
+	if(!(zcave=getcave(wpos))) return(FALSE);
+	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
 	bypass_invuln = TRUE;
 
@@ -3719,8 +3715,8 @@ bool genocide(int Ind)
 	worldpos *wpos=&p_ptr->wpos;
 	dun_level		*l_ptr = getfloor(wpos);
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return FALSE;
-	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return;	// double check..
+	if(!(zcave=getcave(wpos))) return(FALSE);
+	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);	// double check..
 
 	/* Search all monsters and find the closest */
 	for (i = 1; i < m_max; i++)
@@ -3772,8 +3768,8 @@ bool mass_genocide(int Ind)
 	worldpos *wpos=&p_ptr->wpos;
 	dun_level		*l_ptr = getfloor(wpos);
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return FALSE;
-	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return;
+	if(!(zcave=getcave(wpos))) return(FALSE);
+	if(l_ptr && l_ptr->flags1 & LF1_NO_GENO) return(FALSE);
 
 	bypass_invuln = TRUE;
 
@@ -5443,17 +5439,11 @@ bool poly_build(int Ind, char *args)
 		curr->dx=curr->lx=curr->sx;
 		curr->dy=curr->ly=curr->sy;
 		curr->moves=25;	/* always new */
-#ifdef NEW_DUNGEON
 		wpcopy(&curr->wpos, &p_ptr->wpos);
 //		if(zcave[curr->sy][curr->sx].feat==FEAT_PERM_EXTRA){
 		if(zcave[curr->sy][curr->sx].feat==FEAT_WALL_HOUSE){
 #if 0	/* not necessary? - evileye */
 			zcave[curr->sy][curr->sx].special.sc.ptr=NULL;
-#endif
-#else
-		curr->depth=p_ptr->dun_depth;
-		if(cave[p_ptr->dun_depth][curr->sy][curr->sx].feat==FEAT_PERM_EXTRA){
-			cave[p_ptr->dun_depth][curr->sy][curr->sx].special.sc.ptr=NULL;
 #endif
 			msg_print(Ind, "Your foundations were laid insecurely");
 			KILL(curr->dna, struct dna_type);
@@ -5556,7 +5546,6 @@ bool poly_build(int Ind, char *args)
 		return TRUE;
 	}
 	/* no going off depth, and no spoiling moats */
-#ifdef NEW_DUNGEON
 	if(inarea(&curr->wpos, &p_ptr->wpos) && !(zcave[curr->dy][curr->dx].info&CAVE_ICKY && zcave[curr->dy][curr->dx].feat==FEAT_DEEP_WATER)){
 		zcave[curr->dy][curr->dx].feat=FEAT_WALL_EXTRA;
 //		zcave[curr->dy][curr->dx].feat=FEAT_WALL_HOUSE;
@@ -5565,15 +5554,6 @@ bool poly_build(int Ind, char *args)
 	}
 	msg_print(Ind,"Your house building attempt has failed");
 	cs_erase(&zcave[curr->sy][curr->sx], curr->cs);
-#else
-	if(curr->depth==p_ptr->dun_depth && !(cave[curr->depth][curr->dy][curr->dx].info&CAVE_ICKY && cave[curr->depth][curr->dy][curr->dx].feat==FEAT_WATER)){
-		cave[p_ptr->dun_depth][curr->dy][curr->dx].feat=FEAT_WALL_EXTRA;
-		if(curr->cvert<MAXCOORD && (--curr->moves)>0) return TRUE;
-		p_ptr->update|=PU_VIEW;
-	}
-	msg_print(Ind,"Your house building attempt has failed");
-	cave[p_ptr->dun_depth][curr->sy][curr->sx].special.sc.ptr=NULL;
-#endif
 	KILL(curr->dna, struct dna_type);
 	C_KILL(curr->vert, MAXCOORD, char);
 	curr->player=0;		/* send the builders home */

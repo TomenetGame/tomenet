@@ -1569,7 +1569,6 @@ int determine_wilderness_type(struct worldpos *wpos)
 		/* get a legal neighbor index */
 		/* illegal locations -- the town and off the edge */
 		
-#ifdef NEW_DUNGEON
 		while((istown(&neighbor) || (neighbor.wx<0 || neighbor.wy<0 || neighbor.wx>=MAX_WILD_X || neighbor.wy>=MAX_WILD_Y))){
 			switch(rand_int(4)){
 				case 0:
@@ -1586,16 +1585,6 @@ int determine_wilderness_type(struct worldpos *wpos)
 			}
 		}
 		w_ptr->type=determine_wilderness_type(&neighbor);
-#else
-		while ((neighbor_idx >= 0) || (neighbor_idx <= -MAX_WILD))
-		{
-			/* pick a random direction */
-			neighbor_idx = neighbor_index(Depth, rand_int(4));
-		}
-		/* recursively figure out our terrain type */	   	
-		w_ptr->type = determine_wilderness_type(neighbor_idx);
-#endif
-		
 		
 #ifndef	DEVEL_TOWN_COMPATIBILITY
 		if (w_ptr->radius <= 2)
@@ -2756,12 +2745,7 @@ void wilderness_gen(struct worldpos *wpos)
 
 		/* Make some day-time residents */
 		if (!(w_ptr->flags & WILD_F_INHABITED))
-#ifdef NEW_DUNGEON
 			for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
-#else
-			for (i = 0; i < wild_info[Depth].type; i++) wild_add_monster(Depth);
-#endif
-		
 	}
 
 	/* Night Time */

@@ -6,9 +6,14 @@
  * not need to worry about this.
  */
 
-#include <stdio.h>
+/* #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
+#include <fcntl.h> */
+
+#include "angband.h"
+
+extern errr path_build(char *buf, int max, cptr path, cptr file);
+int local_file_check(char *fname, unsigned long *sum);
 
 extern const char *ANGBAND_DIR;
 
@@ -34,7 +39,7 @@ struct ft_data{
 
 struct ft_data *fdata=NULL;	/* our pointer to the transfer data */
 
-struct ft_data *getfile(int ind, unsigned short fnum){
+static struct ft_data *getfile(int ind, unsigned short fnum){
 	struct ft_data *trav, *new_ft;
 	if(fnum==0){
 		new_ft=(struct ft_data*)malloc(sizeof(struct ft_data));

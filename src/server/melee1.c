@@ -305,6 +305,7 @@ static bool do_eat_item(int Ind, int m_idx)
 		/* Done */
 		return (TRUE);
 	}
+	return(FALSE);
 }
 
 /* Have fun */

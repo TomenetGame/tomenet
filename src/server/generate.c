@@ -2396,7 +2396,6 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 			}
 
 			/* Close off the left/right edges */
-#ifdef NEW_DUNGEON
 			c_ptr = &zcave[yval][xval-5];
 			c_ptr->feat = FEAT_WALL_INNER;
 			c_ptr = &zcave[yval][xval+5];
@@ -2413,24 +2412,6 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 			/* Objects */
 			if (rand_int(3) == 0) place_object(wpos, yval, xval - 2, FALSE, FALSE, default_obj_theme);
 			if (rand_int(3) == 0) place_object(wpos, yval, xval + 2, FALSE, FALSE, default_obj_theme);
-#else
-			c_ptr = &cave[Depth][yval][xval-5];
-			c_ptr->feat = FEAT_WALL_INNER;
-			c_ptr = &cave[Depth][yval][xval+5];
-			c_ptr->feat = FEAT_WALL_INNER;
-
-			/* Secret doors (random top/bottom) */
-			place_secret_door(Depth, yval - 3 + (randint(2) * 2), xval - 3);
-			place_secret_door(Depth, yval - 3 + (randint(2) * 2), xval + 3);
-
-			/* Monsters */
-			vault_monsters(Depth, yval, xval - 2, randint(2));
-			vault_monsters(Depth, yval, xval + 2, randint(2));
-
-			/* Objects */
-			if (rand_int(3) == 0) place_object(Depth, yval, xval - 2, FALSE, FALSE, default_obj_theme);
-			if (rand_int(3) == 0) place_object(Depth, yval, xval + 2, FALSE, FALSE, default_obj_theme);
-#endif
 		}
 
 		break;
@@ -3512,7 +3493,6 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 	/* Middle columns */
 	for (y = yval - 1; y <= yval + 1; y++)
 	{
-#ifdef NEW_DUNGEON
 		place_monster_aux(wpos, y, xval - 9, what[0], FALSE, FALSE, FALSE);
 		place_monster_aux(wpos, y, xval + 9, what[0], FALSE, FALSE, FALSE);
 
@@ -3551,46 +3531,6 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 
 	/* Center monster */
 	place_monster_aux(wpos, yval, xval, what[7], FALSE, FALSE, FALSE);
-#else
-		place_monster_aux(Depth, y, xval - 9, what[0], FALSE, FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 9, what[0], FALSE, FALSE, FALSE);
-
-		place_monster_aux(Depth, y, xval - 8, what[1], FALSE, FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 8, what[1], FALSE, FALSE, FALSE);
-
-		place_monster_aux(Depth, y, xval - 7, what[1], FALSE, FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 7, what[1], FALSE, FALSE, FALSE);
-
-		place_monster_aux(Depth, y, xval - 6, what[2], FALSE, FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 6, what[2], FALSE, FALSE, FALSE);
-
-		place_monster_aux(Depth, y, xval - 5, what[2], FALSE, FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 5, what[2], FALSE, FALSE, FALSE);
-
-		place_monster_aux(Depth, y, xval - 4, what[3], FALSE, FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 4, what[3], FALSE, FALSE, FALSE);
-
-		place_monster_aux(Depth, y, xval - 3, what[3], FALSE, FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 3, what[3], FALSE, FALSE, FALSE);
-
-		place_monster_aux(Depth, y, xval - 2, what[4], FALSE, FALSE, FALSE);
-		place_monster_aux(Depth, y, xval + 2, what[4], FALSE, FALSE, FALSE);
-	}
-
-	/* Above/Below the center monster */
-	for (x = xval - 1; x <= xval + 1; x++)
-	{
-		place_monster_aux(Depth, yval + 1, x, what[5], FALSE, FALSE, FALSE);
-		place_monster_aux(Depth, yval - 1, x, what[5], FALSE, FALSE, FALSE);
-	}
-
-	/* Next to the center monster */
-	place_monster_aux(Depth, yval, xval + 1, what[6], FALSE, FALSE, FALSE);
-	place_monster_aux(Depth, yval, xval - 1, what[6], FALSE, FALSE, FALSE);
-
-	/* Center monster */
-	place_monster_aux(Depth, yval, xval, what[7], FALSE, FALSE, FALSE);
-#endif
 }
 
 
@@ -8152,7 +8092,6 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		c_ptr = &zcave[y][x];
 
 		/* Clear previous contents, add down stairs */
-#ifdef NEW_DUNGEON
 		if(n == 11){
 			c_ptr->feat = FEAT_MORE;
 			new_level_up_y(wpos, y);
@@ -8165,14 +8104,6 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			new_level_down_y(wpos, y);
 			new_level_down_x(wpos, x);
 		}
-#else
-		c_ptr->feat = FEAT_MORE;
-
-		/* Hack -- the players start on the stairs while coming up */
-		level_up_y[0] = level_rand_y[0] = y;
-		level_up_x[0] = level_rand_x[0] = x;
-#endif
-
 		return;
 	}
 
@@ -8253,11 +8184,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			houses[num_houses].flags=HF_RECT|HF_STOCK;
 			houses[num_houses].coords.rect.width=x2-x1+1;
 			houses[num_houses].coords.rect.height=y2-y1+1;
-#ifdef NEW_DUNGEON
 			wpcopy(&houses[num_houses].wpos, wpos);
-#else
-			houses[num_houses].depth = 0;
-#endif
 		}
 		/* Hack -- apartment house */
 		else
@@ -8313,11 +8240,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				/* was -0 */
 				houses[num_houses].coords.rect.width=(x2-x1) / 2 + 1;
 				houses[num_houses].coords.rect.height=(y2-y1) / 2 + 1;
-#ifdef NEW_DUNGEON
 				wpcopy(&houses[num_houses].wpos, wpos);
-#else
-				houses[num_houses].depth = 0;
-#endif
 
 				/* MEGAHACK -- add doors here and return */
 
@@ -8628,7 +8551,6 @@ static void town_gen_hack(struct worldpos *wpos)
 #endif
 
 	/* Prepare an Array of "remaining stores", and count them */
-#ifdef NEW_DUNGEON
 	for (n = 0; n < MAX_STORES-1; n++) rooms[n] = n;
 	for (n = MAX_STORES-1; n < 16; n++) rooms[n] = 10;
 	for (n = 16; n < 68; n++) rooms[n] = 13;
@@ -8637,13 +8559,6 @@ static void town_gen_hack(struct worldpos *wpos)
 		rooms[70] = 11;
 	if(wild_info[wpos->wy][wpos->wx].flags & WILD_F_UP)
 		rooms[71] = 15;
-#else
-	for (n = 0; n < MAX_STORES-1; n++) rooms[n] = n;
-	for (n = MAX_STORES-1; n < 16; n++) rooms[n] = 10;
-	for (n = 16; n < 68; n++) rooms[n] = 13;
-	for (n = 68; n < 71; n++) rooms[n] = 12;
-	rooms[n++] = 11;
-#endif
 
 	/* Place stores */
 	for (y = 2; y < 4; y++)

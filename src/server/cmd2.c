@@ -1969,7 +1969,7 @@ void do_cmd_bash(int Ind, int dir)
 		{
 			int item;
 			/* Hack -- 'kick' an item ala NetHack */
-			if (item = c_ptr->o_idx)
+			if ((item = c_ptr->o_idx))
 			{
 				object_type *o_ptr = &o_list[c_ptr->o_idx];
 
@@ -3396,8 +3396,8 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 	/* Hack -- yet another anti-cheeze(yaac) */
-	if (!magic &&
-		(p_ptr->lev < cfg.newbies_cannot_drop || true_artifact_p(o_ptr)) || p_ptr->inval)
+	if ((!magic &&
+		(p_ptr->lev < cfg.newbies_cannot_drop || true_artifact_p(o_ptr))) || p_ptr->inval)
 	{
 		o_ptr->level = 0;
 	}

@@ -306,7 +306,6 @@ extern void c_message_add(cptr msg);
 extern void c_msg_print(cptr msg);
 extern void c_msg_format(cptr fmt, ...);
 extern s32b c_get_quantity(cptr prompt, int max);
-extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern bool askfor_aux(char *buf, int len, char private);
 extern void clear_from(int row);
 extern void prt_num(cptr header, int num, int row, int col, byte color);
@@ -317,7 +316,9 @@ extern void do_cmd_options(void);
 
 /* c-spell.c */
 //extern void show_browse(int book);
+extern int get_spell(int *sn, cptr prompt, int book, bool known);
 extern void show_browse(object_type *o_ptr);
+extern void browse_school_spell(int book, int pval);
 extern void do_study(int book);
 extern void do_cast(int book);
 extern void do_pray(int book);
@@ -338,11 +339,7 @@ extern void prt_gold(int gold);
 extern void prt_ac(int ac);
 extern void prt_hp(int max, int cur);
 extern void prt_sp(int max, int cur);
-#ifdef NEW_DUNGEON
 extern void prt_depth(int x, int y, int z, bool town, int recall);
-#else
-extern void prt_depth(int depth);
-#endif
 extern void prt_hunger(int food);
 extern void prt_blind(bool blind);
 extern void prt_confused(bool confused);
@@ -367,15 +364,18 @@ extern void prt_sane(byte attr, cptr buf);
 extern void do_cmd_messages(void);
 extern void do_cmd_messages_chatonly(void);
 extern errr dump_messages(cptr name, int lines, int mode);
+extern void dump_messages_aux(FILE *fff, int lines, int mode);
 
 /* client.c */
 
 /* netclient.c */
-extern void do_mail(void);
 extern int ticks;
-extern void update_ticks();
-extern void do_keepalive();
+extern void do_flicker(void);
+extern void do_mail(void);
+extern void update_ticks(void);
+extern void do_keepalive(void);
 extern int Net_setup(void);
+extern unsigned char Net_login(void);
 //extern int Net_verify(char *real, char *nick, char *pass, int sex, int race, int class);
 extern int Net_verify(char *real, char *nick, char *pass);
 extern int Net_init(char *server, int port);
@@ -387,6 +387,7 @@ extern int Net_start(int sex, int race, int class);
 extern int Net_input(void);
 extern int Flush_queue(void);
 
+extern int Send_raw_key(int key);
 extern int Send_mind();
 extern int Send_mimic(int spell);
 extern int Send_search(void);
@@ -455,6 +456,7 @@ extern int Send_store_examine(int item);
 
 
 /* skills.c */
+extern s16b get_skill(int skill);
 extern bool hack_do_cmd_skill_wait;
 extern void do_activate_skill(int x_idx, int item);
 extern void do_cmd_activate_skill(void);
@@ -472,8 +474,20 @@ extern void master_script_exec(int Ind, char *name);
 extern void cat_script(char *name);
 
 /* common/common.c */
+extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern cptr longVersion;
 extern cptr shortVersion;
+
+/* common/files.c */
+int local_file_init(int ind, unsigned short fnum, char *fname);
+int local_file_write(int ind, unsigned short fnum, unsigned long len);
+int local_file_close(int ind, unsigned short fnum);
+int local_file_check(char *fname, unsigned long *sum);
+int local_file_ack(int ind, unsigned short fnum);
+int local_file_err(int ind, unsigned short fnum);
+void do_xfers();
+int check_return(int ind, unsigned short fnum, unsigned long sum);
+int remote_update(int ind, char *fname);
 
 /*
  * Hack -- conditional (or "bizarre") externs

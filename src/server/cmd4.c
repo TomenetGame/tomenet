@@ -74,72 +74,6 @@ void do_cmd_check_artifacts(int Ind, int line)
 		okay[k] = TRUE;
 	}
 
-#ifdef NEW_DUNGEON
-#if 0
-	/* Check the dungeon */
-	for (Depth = 0; Depth < MAX_DEPTH; Depth++)
-	{
-		/* Skip uncreated levels */
-		if (!cave[Depth]) continue;
-
-		/* Scan this level */
-		for (y = 0; y < MAX_HGT; y++)
-		{
-			for (x = 0; x < MAX_WID; x++)
-			{
-				cave_type *c_ptr = &cave[Depth][y][x];
-
-				/* Process objects */
-				if (c_ptr->o_idx)
-				{
-					object_type *o_ptr = &o_list[c_ptr->o_idx];
-
-					/* Ignore non-artifacts */
-					if (!artifact_p(o_ptr)) continue;
-
-					/* Ignore known items */
-					if (object_known_p(Ind, o_ptr)) continue;
-
-					/* Note the artifact */
-					okay[o_ptr->name1] = FALSE;
-				}
-			}
-		}
-	}
-#endif /* evil -temp */
-#else
-	/* Check the dungeon */
-	for (Depth = 0; Depth < MAX_DEPTH; Depth++)
-	{
-		/* Skip uncreated levels */
-		if (!cave[Depth]) continue;
-
-		/* Scan this level */
-		for (y = 0; y < MAX_HGT; y++)
-		{
-			for (x = 0; x < MAX_WID; x++)
-			{
-				cave_type *c_ptr = &cave[Depth][y][x];
-
-				/* Process objects */
-				if (c_ptr->o_idx)
-				{
-					object_type *o_ptr = &o_list[c_ptr->o_idx];
-
-					/* Ignore non-artifacts */
-					if (!artifact_p(o_ptr)) continue;
-
-					/* Ignore known items */
-					if (object_known_p(Ind, o_ptr)) continue;
-
-					/* Note the artifact */
-					okay[o_ptr->name1] = FALSE;
-				}
-			}
-		}
-	}
-#endif
-
 	/* Check the inventories */
 	for (i = 1; i <= NumPlayers; i++)
 	{
@@ -824,7 +758,7 @@ void do_cmd_check_server_settings(int Ind)
 	fprintf(fff, "Players' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
 	fprintf(fff, "While 'resting', HP/SP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
 
-	if (k=cfg.party_xp_boost)
+	if ((k=cfg.party_xp_boost))
 		fprintf(fff, "Party members get boosted exp(factor %d).\n", k);
 
 	/* Several restrictions */
@@ -833,13 +767,13 @@ void do_cmd_check_server_settings(int Ind)
 
 	fprintf(fff,"\n");
 
-	if (k=cfg.newbies_cannot_drop)
+	if ((k=cfg.newbies_cannot_drop))
 		fprintf(fff, "Players under exp.level %d are not allowed to drop items/golds.\n", k);
 
-	if (k=cfg.spell_interfere)
+	if ((k=cfg.spell_interfere))
 		fprintf(fff, "Monsters adjacent to you have %d%% chance of interfering your spellcasting.\n", k);
 
-	if (k=cfg.spell_stack_limit)
+	if ((k=cfg.spell_stack_limit))
 		fprintf(fff, "Duration of assistance spells is limited to %d turns.\n", k);
 
 	k=cfg.use_pk_rules;
@@ -866,7 +800,7 @@ void do_cmd_check_server_settings(int Ind)
 		fprintf(fff, "You disappear the moment you die, without becoming a ghost.\n");
 
 	fprintf(fff, "The floor will be erased about %d~%d seconds after you left.\n", cfg.anti_scum, cfg.anti_scum + 10);
-	if (k=cfg.level_unstatic_chance)
+	if ((k=cfg.level_unstatic_chance))
 		fprintf(fff, "When saving in dungeon, the floor is kept for %dx(level) minutes.\n", k);
 
 	if ((k=cfg.min_unstatic_level) > 0) 
@@ -893,7 +827,7 @@ void do_cmd_check_server_settings(int Ind)
 		if (cfg.kings_etiquette)
 			fprintf(fff, "The winner is not allowed to carry/use artifacts(save Grond/Crown).\n");
 
-		if (k=cfg.unique_respawn_time)
+		if ((k=cfg.unique_respawn_time))
 			fprintf(fff, "After winning the game, unique monsters will resurrect randomly.(%d)\n", k);
 	}
 

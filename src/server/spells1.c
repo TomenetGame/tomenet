@@ -635,7 +635,6 @@ void teleport_player(int Ind, int dis)
 	p_ptr->py = y;
 	p_ptr->px = x;
 
-#ifdef NEW_DUNGEON
 	/* The player isn't on his old spot anymore */
 	zcave[oy][ox].m_idx = 0;
 
@@ -680,19 +679,6 @@ void teleport_player(int Ind, int dis)
 
 	/* Redraw the new spot */
 	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-#else
-	/* The player isn't on his old spot anymore */
-	cave[Depth][oy][ox].m_idx = 0;
-
-	/* The player is on his new spot */
-	cave[Depth][y][x].m_idx = 0 - Ind;
-
-	/* Redraw the old spot */
-	everyone_lite_spot(Depth, oy, ox);
-
-	/* Redraw the new spot */
-	everyone_lite_spot(Depth, p_ptr->py, p_ptr->px);
-#endif
 
 	/* Check for new panel (redraw map) */
 	verify_panel(Ind);
@@ -854,40 +840,37 @@ void teleport_player_level(int Ind)
 	{
 		w_ptr = &wild_info[wpos->wy][wpos->wx];
 		/* get a valid neighbor */
+		wpcopy(&new_depth, wpos);
 		do
 		{	
-			wpcopy(&new_depth, wpos);
 			switch (rand_int(4))
 			{
 				case DIR_NORTH:
-					new_depth.wy++;
+					if(new_depth.wy<MAX_WILD_Y)
+						new_depth.wy++;
 					msg = "A gust of wind blows you north.";
 					break;
 				case DIR_EAST:
-					new_depth.wx++;
+					if(new_depth.wx<MAX_WILD_X)
+						new_depth.wx++;
 					msg = "A gust of wind blows you east.";
 					break;
 				case DIR_SOUTH:
-					new_depth.wy--;
+					if(new_depth.wy>0)
+						new_depth.wy--;
 					msg = "A gust of wind blows you south.";
 					break;
 				case DIR_WEST:
-					new_depth.wx--;
+					if(new_depth.wx>0)
+						new_depth.wx--;
 					msg = "A gust of wind blows you west.";
 					break;		
 			}
 		}
-#ifdef NEW_DUNGEON
-		while(0); /* what are the chances of wraparound? lazy*/
-#else
-		while ((new_depth <= -MAX_WILD) || (new_depth > 0));	
-#endif
+		while(inarea(wpos, &new_depth));
+
 		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 		/* update the players new wilderness location */
-#ifndef NEW_DUNGEON
-		p_ptr->world_x = new_world_x;
-		p_ptr->world_y = new_world_y;
-#endif
 		
 		/* update the players wilderness map */
 //		p_ptr->wild_map[(wild_idx(new_depth))/8] |= (1<<((wild_idx(new_depth))%8));
@@ -3003,13 +2986,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Make doors */
 		case GF_MAKE_DOOR:
 		{
-#ifdef NEW_DUNGEON
 			/* Require a "naked" floor grid */
 			if (!cave_naked_bold(zcave, y, x)) break;
-#else
-			/* Require a "naked" floor grid */
-			if (!cave_naked_bold(Depth, y, x)) break;
-#endif
 
 			/* Create a closed door */
 			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
@@ -3019,13 +2997,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Notice */
 				note_spot(Ind, y, x);
 
-#ifdef NEW_DUNGEON
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
-#else
-				/* Redraw */
-				everyone_lite_spot(Depth, y, x);
-#endif
 
 				/* Observe */
 				if (*w_ptr & CAVE_MARK) obvious = TRUE;
@@ -3725,7 +3698,6 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	cptr note_dies = " dies.";
 
 	int plev = 25;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	cave_type *c_ptr;
 	bool quiet;
@@ -3742,13 +3714,6 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		p_ptr = Players[Ind];
 		plev = p_ptr->lev;
 	}
-#else
-	cave_type *c_ptr = &cave[Depth][y][x];
-	bool quiet = ((Ind <= 0) ? TRUE : (Ind == c_ptr->m_idx?TRUE:FALSE));
-	player_type * p_ptr = ( quiet ? NULL : Players[Ind]);
-	/* This can happen! */
-	if(p_ptr == NULL) return(FALSE);
-#endif
 
 	/* Nobody here */
 	if (c_ptr->m_idx <= 0) return (FALSE);
@@ -7006,7 +6971,6 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 					/* Enforce a "circular" explosion */
 					if (distance(y2, x2, y, x) != dist) continue;
 
-#ifdef NEW_DUNGEON
 #if 0
 					if (typ == GF_DISINTEGRATE)
 					{
@@ -7022,10 +6986,6 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 					/* else */ /* HERE!!!!*/
 					/* Ball explosions are stopped by walls */
 					if (!los(wpos, y2, x2, y, x)) continue;
-#else
-					/* Ball explosions are stopped by walls */
-					if (!los(Depth, y2, x2, y, x)) continue;
-#endif
 
 					/* Save this grid */
 					gy[grids] = y;
@@ -7231,7 +7191,6 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			y = gy[i];
 			x = gx[i];
 
-#ifdef NEW_DUNGEON
 			/* paranoia */
 			if (!in_bounds2(wpos, y, x)) continue;
 
@@ -7288,15 +7247,6 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			}
 
 			if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
-
-#else
-			/* Walls protect monsters */
-			if (!cave_floor_bold(Depth, y, x)) continue;
-
-			/* Affect the monster */
-			if (project_m(0-who, who, dist, Depth, y, x, dam, typ)) notice = TRUE;
-#endif
-
 		}
 
 		/* Mega-Hack */

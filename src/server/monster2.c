@@ -2036,7 +2036,6 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 
 	char buf[80];
 
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return (FALSE);
 	/* Verify location */
@@ -2046,31 +2045,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Hack -- no creation on glyph of warding */
 	if (zcave[y][x].feat == FEAT_GLYPH) return (FALSE);
 
-	if(!wpos->wz && wild_info[wpos->wy][wpos->wx].radius < 10 && zcave[y][x].info & CAVE_ICKY) return(FALSE);
-
-#if 0
-	/* should be sorted - look above */
-
-	/* Hack -- no creation in town inside house */
-	if (!Depth && (cave[Depth][y][x].info & CAVE_ICKY)) return (FALSE);
-	/* Hack -- or close to town in wilderness areas */
-	if ((Depth<0 && Depth >-16) && (cave[Depth][y][x].info & CAVE_ICKY)) return (FALSE);
-#endif
-#else
-	/* Verify location */
-	if (!in_bounds(Depth, y, x)) return (FALSE);
-	/* Require empty space */
-	if (!cave_empty_bold(Depth, y, x)) return (FALSE);
-	/* Hack -- no creation on glyph of warding */
-	if (cave[Depth][y][x].feat == FEAT_GLYPH) return (FALSE);
-
-	/* Hack -- no creation in town inside house */
-	if (!Depth && (cave[Depth][y][x].info & CAVE_ICKY)) return (FALSE);
-	/* Hack -- or close to town in wilderness areas */
-	if ((Depth<0 && Depth >-16) && (cave[Depth][y][x].info & CAVE_ICKY)) return (FALSE);
-#endif
-
-
+	if(((!wpos->wz && wild_info[wpos->wy][wpos->wx].radius < 10) || istown(wpos)) && zcave[y][x].info & CAVE_ICKY) return(FALSE);
 
 	/* Paranoia */
 	if (!r_idx) return (FALSE);
@@ -3083,14 +3058,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int type)
 	/* Pick a monster, using the level calculation */
 	/* XXX: Exception for Morgoth (so that he won't summon townies)
 	 * This fix presumes Morgie and Morgie only has level 100 */
-#if 0
-#ifdef NEW_DUNGEON
-//	r_idx = (lev != 100)?get_mon_num((getlevel(wpos) + lev) / 2 + 5) : 100;
-	r_idx = get_mon_num((lev != 100)?(getlevel(wpos) + lev) / 2 + 5 : 100);
-#else
-	r_idx = (lev != 100)?get_mon_num((Depth + lev) / 2 + 5) : 100;
-#endif
-#endif	// 0
+	
 	/* Ok, now let them summon what they can */
 	r_idx = get_mon_num((getlevel(wpos) + lev) / 2 + 5);
 

@@ -2962,7 +2962,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			disturb(Ind, 1, 0);
 
 			/* Message */
-			if (visible)
+			if (visible){
 				if (blind)
 				{
 					msg_format(Ind, "%^s mumbles.", m_name);
@@ -2972,6 +2972,7 @@ bool make_attack_spell(int Ind, int m_idx)
 					msg_format(Ind, "%^s concentrates on %s wounds.",
 							m_name, m_poss);
 				}
+			}
 
 			/* Heal some */
 			m_ptr->hp += (rlev * 6);

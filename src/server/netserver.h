@@ -97,12 +97,9 @@ static int Receive_fire(int ind);
 static int Receive_stand(int ind);
 static int Receive_destroy(int ind);
 static int Receive_look(int ind);
-static int Receive_spell(int ind);
-static int Receive_fight(int ind);
 
 static int Receive_skill_mod(int ind);
 static int Receive_open(int ind);
-static int Receive_pray(int ind);
 static int Receive_ghost(int ind);
 static int Receive_quaff(int ind);
 static int Receive_read(int ind);
@@ -128,14 +125,12 @@ static int Receive_map(int ind);
 static int Receive_search_mode(int ind);
 
 static int Receive_close(int ind);
-static int Receive_gain(int ind);
 static int Receive_direction(int ind);
 static int Receive_go_up(int ind);
 static int Receive_go_down(int ind);
 static int Receive_message(int ind);
 static int Receive_item(int ind);
 static int Receive_purchase(int ind);
-//static int Receive_mimic(int ind);
 static int Receive_mind(int ind);
 
 static int Receive_sell(int ind);

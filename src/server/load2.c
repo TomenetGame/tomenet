@@ -2178,7 +2178,7 @@ load_guildhalls(struct worldpos *wpos){
 	}
 }
 
-save_guildhalls(struct worldpos *wpos){
+void save_guildhalls(struct worldpos *wpos){
 	int i;
 	FILE *gfp;
 	struct guildsave data;

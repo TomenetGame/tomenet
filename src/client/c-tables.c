@@ -1425,6 +1425,7 @@ cptr window_flag_desc[32] =
  */
 /*
  * XXX XXX hard-coded in sync_options!
+ */
 /*
    bool *o_var;
 

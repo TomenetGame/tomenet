@@ -200,7 +200,7 @@ static bool vprocess_hooks_return(int h_idx, char *ret, char *fmt, va_list *ap)
 	return FALSE;
 }
 
-bool process_hooks_ret(int h_idx, char *ret, char *fmt, ...)
+static bool process_hooks_ret(int h_idx, char *ret, char *fmt, ...)
 {
 	va_list ap;
 	bool r;

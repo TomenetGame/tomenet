@@ -3120,7 +3120,7 @@ void do_cmd_store(int Ind)
 	/* Extract the store code */
 //	which = (c_ptr->feat - FEAT_SHOP_HEAD);
 
-	if(cs_ptr=GetCS(c_ptr, CS_SHOP))
+	if((cs_ptr=GetCS(c_ptr, CS_SHOP)))
 	{
 		which = cs_ptr->sc.omni;
 	}

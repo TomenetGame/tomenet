@@ -32,6 +32,8 @@
 #include <sys/stat.h>
 #endif
 
+extern void flicker(void);
+
 int			ticks = 0; // Keeps track of time in 100ms "ticks"
 static bool		request_redraw;
 

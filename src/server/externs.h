@@ -16,9 +16,21 @@
 /* #include "netserver.h" */
 
 /* common */
+extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern int color_char_to_attr(char c);
 
 extern struct sfunc csfunc[];
+
+/* common/files.c */
+int local_file_init(int ind, unsigned short fnum, char *fname);
+int local_file_write(int ind, unsigned short fnum, unsigned long len);
+int local_file_close(int ind, unsigned short fnum);
+int local_file_check(char *fname, unsigned long *sum);
+int local_file_ack(int ind, unsigned short fnum);
+int local_file_err(int ind, unsigned short fnum);
+void do_xfers();
+int check_return(int ind, unsigned short fnum, unsigned long sum);
+int remote_update(int ind, char *fname);
 
 /* csfunc.c */
 extern void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr);
@@ -378,6 +390,7 @@ extern void server_birth(void);
 extern void admin_outfit(int Ind, int realm);
 
 /* cave.c */
+extern bool cave_valid_bold(cave_type **zcave, int y, int x);
 extern struct c_special *GetCS(cave_type *c_ptr, unsigned char type);
 //extern struct c_special *AddCS(cave_type *c_ptr);
 extern struct c_special *AddCS(cave_type *c_ptr, byte type);
@@ -643,6 +656,7 @@ extern bool load_server_cfg(void);
 /*extern errr rd_savefile_old(void);*/
 
 /* load2.c */
+extern void save_guildhalls(struct worldpos *wpos);
 extern errr rd_savefile_new(int Ind);
 extern errr rd_server_savefile(void);
 
@@ -1045,7 +1059,6 @@ extern void msg_admin(cptr fmt, ...);
 extern int name_lookup_loose(int Ind, cptr name, bool party);
 extern errr path_parse(char *buf, int max, cptr file);
 extern errr path_temp(char *buf, int max);
-extern errr path_build(char *buf, int max, cptr path, cptr file);
 extern FILE *my_fopen(cptr file, cptr mode);
 extern errr my_fgets(FILE *fff, char *buf, huge n);
 extern int get_playerind(char *name);
@@ -1276,3 +1289,6 @@ extern s16b get_skill(player_type *p_ptr, int skill);
 extern s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale);
 extern void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i);
 //extern bool init_s_info();
+
+/* hooks.c */
+bool process_hooks(int h_idx, char *fmt, ...);

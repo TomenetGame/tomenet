@@ -1862,54 +1862,6 @@ s32b c_get_quantity(cptr prompt, int max)
 	return (amt);
 }
 
-
-/*
- * Create a new path by appending a file (or directory) to a path
- *
- * This requires no special processing on simple machines, except
- * for verifying the size of the filename, but note the ability to
- * bypass the given "path" with certain special file-names.
- *
- * Note that the "file" may actually be a "sub-path", including
- * a path and a file.
- *
- * Note that this function yields a path which must be "parsed"
- * using the "parse" function above.
- */
-errr path_build(char *buf, int max, cptr path, cptr file)
-{
-        /* Special file */
-        if (file[0] == '~')
-        {
-                /* Use the file itself */
-                strnfmt(buf, max, "%s", file);
-        }
-
-        /* Absolute file, on "normal" systems */
-        else if (prefix(file, PATH_SEP) && !streq(PATH_SEP, ""))
-        {
-                /* Use the file itself */
-                strnfmt(buf, max, "%s", file);
-        }
-
-        /* No path given */
-        else if (!path[0])
-        {
-                /* Use the file itself */
-                strnfmt(buf, max, "%s", file);
-        }
-
-        /* Path and File */
-        else
-        {
-                /* Build the new path */
-                strnfmt(buf, max, "%s%s%s", path, PATH_SEP, file);
-        }
-
-        /* Success */
-        return (0);
-}
-
 void clear_from(int row)
 {
 	int y;

@@ -2330,8 +2330,7 @@ void cmd_master_aux_summon(void)
 		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Depth");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Specific");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Mass Genocide");
-		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Level *Genocide*");
-		Term_putstr(5, 11, -1, TERM_WHITE, "(8) Summoning mode off");
+		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Summoning mode off");
 
 
 
@@ -2423,16 +2422,6 @@ void cmd_master_aux_summon(void)
 			}
 
 			case '7':
-				/* Mass mass genocide. Clear a level */
-				/* Only does town & dungeon ATM */
-				buf[0] = 'Q';
-				buf[1] = c_get_quantity("What depth?", 127);
-				buf[2] = '\0';
-				Send_master(MASTER_SUMMON, buf);
-				redo_hack = 1;
-				break;
-
-			case '8':
 			{
 				/* disable summoning mode */
 				buf[0] = 'F';

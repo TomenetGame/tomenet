@@ -188,13 +188,8 @@ static void Init_receive(void)
 	playing_receive[PKT_STAND]		= Receive_stand;
 	playing_receive[PKT_DESTROY]		= Receive_destroy;
 	playing_receive[PKT_LOOK]		= Receive_look;
-#if 0
-	playing_receive[PKT_SPELL]		= Receive_spell;
-	playing_receive[PKT_FIGHT]		= Receive_fight;
-#endif	// 0
 
 	playing_receive[PKT_OPEN]		= Receive_open;
-//	playing_receive[PKT_PRAY]		= Receive_pray;
 	playing_receive[PKT_QUAFF]		= Receive_quaff;
 	playing_receive[PKT_READ]		= Receive_read;
 	playing_receive[PKT_SEARCH]		= Receive_search;
@@ -204,7 +199,6 @@ static void Init_receive(void)
 	playing_receive[PKT_WIELD]		= Receive_wield;
 	playing_receive[PKT_OBSERVE]		= Receive_observe;
 	playing_receive[PKT_ZAP]		= Receive_zap;
-//	playing_receive[PKT_MIMIC]		= Receive_mimic;
 	playing_receive[PKT_MIND]		= Receive_mind;
 
 	playing_receive[PKT_TARGET]		= Receive_target;
@@ -5155,70 +5149,6 @@ static int Receive_look(int ind)
 	return 1;
 }
 
-#if 0
-static int Receive_spell(int ind)
-{
-	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
-
-	char ch;
-
-	int n, player, old;
-
-	s16b book, spell;
-
-	if (connp->id != -1)
-	{
-		player = GetInd[connp->id];
-		p_ptr = Players[player];
-		old = player;
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
-	}
-
-	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &book, &spell)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
-		return n;
-	}
-
-	/* Not by class, but by item */
-	if (connp->id != -1 && Players[old]->energy >= level_speed(&Players[old]->wpos) && (Players[old]->inventory[book].tval == TV_PSI_BOOK))
-	{
-		do_cmd_psi(player, book, spell);
-	}
-	else if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-	{
-		int tval = p_ptr->inventory[book].tval;
-		p_ptr->current_char = (old == player)?TRUE:FALSE;
-		switch(tval){
-		}
-		return 2;
-	}
-	else if (player)
-	{
-		p_ptr->current_spell = -1;
-		p_ptr->current_mind = -1;
-		Packet_printf(&connp->q, "%c%hd%hd", ch, book, spell);
-		return 0;
-	}
-
-	return 1;
-}
-#endif	// 0
-
 /*
  * Possibly, most of Receive_* functions can be bandled into one function
  * like this; that'll make the client *MUCH* more generic.		- Jir -
@@ -5406,85 +5336,6 @@ static int Receive_open(int ind)
 
 	return 1;
 }
-
-#if 0
-static int Receive_pray(int ind)
-{
-	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
-
-	char ch;
-
-	int n, player;
-
-	s16b book, prayer;
-
-	if (connp->id != -1)
-	{
-		player = GetInd[connp->id];
-		p_ptr = Players[player];
-	}
-
-	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &book, &prayer)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
-		return n;
-	}
-
-	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-	{
-		do_cmd_pray(player, book, prayer);
-		return 2;
-	}
-	else if (player)
-	{
-		p_ptr->current_spell = -1;
-		Packet_printf(&connp->q, "%c%hd%hd", ch, book, prayer);
-		return 0;
-	}
-
-	return 1;
-}
-
-static int Receive_mimic(int ind)
-{
-	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
-
-	char ch;
-
-	int n, player;
-	s16b spell;
-
-	if (connp->id != -1)
-	{
-		player = GetInd[connp->id];
-		p_ptr = Players[player];
-	}
-
-	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &spell)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
-		return n;
-	}
-
-	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-	{
-		do_cmd_mimic(player, spell);
-		return 2;
-	}
-	else if (player){
-		p_ptr->current_spell = -1;
-		Packet_printf(&connp->q, "%c%hd", ch, spell);
-		return 0;
-	}
-
-	return 1;
-}
-#endif	// 0
-
 
 static int Receive_mind(int ind)
 {

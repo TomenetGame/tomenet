@@ -5705,68 +5705,17 @@ void place_gold(struct worldpos *wpos, int y, int x)
 	/* Do not create "illegal" Treasure Types */
 	if (i > SV_GOLD_MAX) i = SV_GOLD_MAX;
 
+	invcopy(&forge, lookup_kind(TV_GOLD, i));
 
-		invcopy(&forge, lookup_kind(TV_GOLD, i));
+	/* Hack -- Base coin cost */
+//	base = k_info[OBJ_GOLD_LIST+i].cost;
+	base = k_info[lookup_kind(TV_GOLD, i)].cost;
 
-		/* Hack -- Base coin cost */
-//		base = k_info[OBJ_GOLD_LIST+i].cost;
-		base = k_info[lookup_kind(TV_GOLD, i)].cost;
+	/* Determine how much the treasure is "worth" */
+	forge.pval = (base + (8L * randint(base)) + randint(8));
 
-		/* Determine how much the treasure is "worth" */
-		forge.pval = (base + (8L * randint(base)) + randint(8));
-
-		/* Drop it */
-		drop_near(&forge, -1, wpos, y, x);
-
-
-#if 0
-	/* Make an object */
-	o_idx = o_pop();
-
-	/* Success */
-	if (o_idx)
-	{
-		o_ptr = &o_list[o_idx];
-
-//		invcopy(o_ptr, OBJ_GOLD_LIST + i);
-		invcopy(o_ptr, lookup_kind(TV_GOLD, i));
-
-#if 0
-		o_ptr->iy = y;
-		o_ptr->ix = x;
-
-		wpcopy(&o_ptr->wpos, wpos);
-		zcave=getcave(wpos);
-		/* check zcave? NEW_DUNGEON */
-		c_ptr=&zcave[y][x];
-
-		/* Build a stack */
-		o_ptr->next_o_idx = c_ptr->o_idx;
-
-		/* Place the object */
-		c_ptr->o_idx = o_idx;
-#endif	// 0
-
-		/* Hack -- Base coin cost */
-//		base = k_info[OBJ_GOLD_LIST+i].cost;
-		base = k_info[lookup_kind(TV_GOLD, i)].cost;
-
-		/* Determine how much the treasure is "worth" */
-		o_ptr->pval = (base + (8L * randint(base)) + randint(8));
-
-		/* No one can see it */
-		for (j = 1; j <= NumPlayers; j++)
-		{
-			if (Players[j]->conn == NOT_CONNECTED) continue;
-
-			/* This player can't see it */
-			Players[j]->obj_vis[o_idx] = FALSE;
-		}
-
-		/* Drop it */
-		drop_near(o_ptr, -1, wpos, y, x);
-	}
-#endif	// 0
+	/* Drop it */
+	drop_near(&forge, -1, wpos, y, x);
 }
 
 

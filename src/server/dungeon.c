@@ -4392,19 +4392,6 @@ void shutdown_server(void)
 		Destroy_connection(p_ptr->conn, "Server shutdown (save succeeded)");
 	}
 
-	/* Now wipe every object, to preserve artifacts on the ground */
-#ifdef NEW_DUNGEON
-#if 0	// though AUTO_PURGE does this job anyway..
-	wipeout_needless_objects();
-#endif	// 0
-#else
-	for (i = 1; i < MAX_DEPTH; i++)
-	{
-		/* Wipe this depth */
-		wipe_o_list(i);
-	}
-#endif
-
 	/* Stop the timer */
 	teardown_timer();
 

@@ -7074,17 +7074,6 @@ bool master_summon(int Ind, char * parms)
 			p_ptr->master_move_hook = NULL;
 			break;
 		}
-
-		/* Wipe monsters from level (DM only) */
-		case 'Q':
-		{
-#ifdef NEW_DUNGEON
-#else
-			if (p_ptr->admin_dm || p_ptr->admin_wiz)
-				wipe_m_list((int)summon_parms);
-#endif
-			break;
-		}
 	}
 
 	return TRUE;
