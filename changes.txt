@@ -715,6 +715,7 @@ Change list for PernMangband
 - Server/sched bug fix. Sockets closed when connection does not pass
   the Contact() stage. The select mask was being set to the new mask!
 - Added automatic nice shutdown. No more angry players.
+- Mimic rings have no restriction on use now.
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
