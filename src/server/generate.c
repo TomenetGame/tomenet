@@ -4940,6 +4940,7 @@ void generate_cave(struct worldpos *wpos)
 		/* Build a real level */
 		else
 		{
+			process_hooks(HOOK_GEN_LEVEL, "d", wpos);
 			/* Big dungeon */
 			/*cur_hgt = MAX_HGT;
 			cur_wid = MAX_WID;*/

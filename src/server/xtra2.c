@@ -4064,6 +4064,7 @@ void rem_quest(u16b id){
 		quests[i].active--;
 		s_printf("Remaining active: %d\n", quests[i].active);
 		if(!quests[i].active){
+			process_hooks(HOOK_QUEST_FAIL, "d", id);
 			s_printf("delete call\n");
 			del_quest(id);
 		}
@@ -4084,6 +4085,8 @@ void kill_quest(int Ind){
 		}
 	}
 	if(pos==-1) return;
+	
+	process_hooks(HOOK_QUEST_FINISH, "d", Ind);
 
 	sprintf(temp,"\377y%s has won the %s quest!", p_ptr->name, r_name+r_info[quests[pos].type].name);
 	if(quests[i].flags&QUEST_RACE)
@@ -4133,6 +4136,8 @@ bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags){
 	if(!p_ptr) return(FALSE);
 
 	midlevel=p_ptr->lev;
+
+	process_hooks(HOOK_GEN_QUEST, "d", Ind);
 
 	for(i=0; i<20; i++){
 		if(!quests[i].active){

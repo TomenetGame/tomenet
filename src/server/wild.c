@@ -2472,6 +2472,8 @@ void wilderness_gen(struct worldpos *wpos)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
+	process_hooks(HOOK_WILD_GEN, "d", wpos);
+
 	/* Perma-walls -- North/South*/
 	for (x = 0; x < MAX_WID; x++)
 	{

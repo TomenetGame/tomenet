@@ -4564,7 +4564,7 @@ void house_creation(int Ind, bool floor, bool jail){
 
 void summon_pet(int Ind, int max){
 	player_type *p_ptr = Players[Ind];
-        monster_race *r_ptr;
+	monster_race *r_ptr;
         monster_type *m_ptr;
         cave_type *c_ptr;
 	cave_type **zcave;
@@ -4597,11 +4597,16 @@ void summon_pet(int Ind, int max){
 
         /* Grab and allocate */
         m_ptr = &m_list[c_ptr->m_idx];
+#if 0
         MAKE(m_ptr->r_ptr, monster_race);
         m_ptr->special = TRUE;
+#endif
+	r_ptr=&r_info[1];
+	m_ptr->special = FALSE;
         m_ptr->fx = x;
-        m_ptr->fx = y;
+        m_ptr->fy = y;
 
+#if 0
         r_ptr = m_ptr->r_ptr;
 
         r_ptr->flags1 = 0;
@@ -4633,6 +4638,7 @@ void summon_pet(int Ind, int max){
 	r_ptr->hdice = 10;
 	r_ptr->hside = 20;
 	r_ptr->ac = 90;
+#endif
         
 	m_ptr->speed = r_ptr->speed;
         m_ptr->mspeed = m_ptr->speed;
@@ -4669,6 +4675,7 @@ void summon_pet(int Ind, int max){
 
 	/* Update the monster */
 	update_mon(c_ptr->m_idx, TRUE);
+	everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 }
 
 /* Create a mindless servant ! */
