@@ -61,7 +61,9 @@ static char sourceid[] =
 /* may need to find a replacement for netdb.h */
 /* #include <netdb.h> */
 #include <signal.h>
+#ifndef CYGWIN
 #define SIGALRM	293		/* not listed in win's signal.h -GP */
+#endif
 #include <setjmp.h>
 #include <errno.h>
 
@@ -92,7 +94,9 @@ static			jmp_buf env;
 
 /* Global socklib errno variable */
 int			sl_errno = 0;
+#ifndef CYGWIN
 int			errno = 0;
+#endif
 
 /* Global timeout variable. May be modified by users */
 int			sl_timeout_s = DEFAULT_S_TIMEOUT_VALUE;

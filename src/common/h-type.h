@@ -124,13 +124,18 @@ typedef unsigned int u32b;
 typedef signed long s32b;
 typedef unsigned long u32b;
 #endif
-
+#ifdef CYGWIN
+#undef WINDOWS
+#endif
 #ifndef WINDOWS
 typedef int64_t s64b;
 typedef u_int64_t u64b;
 #else
 typedef __int64 s64b;
 typedef unsigned __int64 u64b;
+#endif
+#ifdef CYGWIN
+#define WINDOWS
 #endif
 
 
