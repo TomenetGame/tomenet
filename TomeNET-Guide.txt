@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. August 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. August 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2b, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -6032,6 +6032,7 @@ Bows, crossbows, slings
         +dam bonus
 Weapons
         Blessed (usable for priests without penalty)
+        Hit point bonus (+LIFE)   (*)
 Weapons, (diggers,) boomerangs
         Acid/elec/fire/cold brands
         Increased damage dice
@@ -6089,6 +6090,7 @@ Gloves
         Critical hit bonus
         One of the elemental brands (acid/elec/fire/cold/poison) or SLAY mods
         Vampiric life leeech
+        Hit point bonus (+LIFE)   (*)
         Extra +AC bonus
         +hit and +dam bonus
 Caps, helms and crowns
@@ -6104,6 +6106,7 @@ Caps, helms and crowns
         Faster mana regeneration
         Resist confusion
         Resist fear
+        Hit point bonus (+LIFE)   (*)
 Shields
         All basic resistances (acid/elec/fire/cold)
         Reflection
@@ -6121,10 +6124,23 @@ Body Armour (except for Dragon Scale Mails)
         Hold life
         Constitution bonus (has a chance to include constitution sustenance)
         All basic resistances (acid/elec/fire/cold)
+        Hit point bonus (+LIFE)   (*)
         Reduced weight
+        Extra +AC bonus
+Dragon Scale Mails
+        Hold life
+        Strength bonus (has a chance to include strength sustenance)
+        Constitution bonus (has a chance to include constitution sustenance)
+        Hit point bonus (+LIFE)   (*)
+        Extra +AC bonus
 Light sources
         Increased light radius
         Everburning (no fuel needed; applies only if item usually needs fuel)
+
+(*): This mod (+LIFE) is only available if a winner (Queen/King/Empress/
+     Emperor) created the artifact or killed the monster which dropped the
+     artifact.
+
 
 General mods:
 -------------
