@@ -2131,12 +2131,18 @@ Genocide		Removes all monsters of a certain kind from the current level.
 				closest to you when firing off the spell. For each monster you
 				will suffer 4+(monsterlevel/8) points of damage, which cannot
 				be absorbed by any magic shield or other protective effects!
+				Depending on the server configuration, the caster's remaining
+				hit points might be halved (extra penalty) after the spell
+				finished (this penalty is enabled by default).
 Mass Genocide	Removes all monsters that are close to you.
 				Drains your HP.
 				All monsters within a radius (equal to your	sight range)
 				around you are annihilated. For each monster you will suffer
 				3+(monsterlevel/8) points of damage, which cannot be absorbed
 				by any magic shield or other protective effects!
+				Depending on the server configuration, the caster's remaining
+				hit points might be halved (extra penalty) after the spell
+				finished (this penalty is enabled by default).
 Acquirement		Gives you a great item.
 *Acquirement*	Gives you two or three great items.
 Fire/Ice/Chaos	Fires a ball of the according type around you. Make sure you
