@@ -5733,6 +5733,14 @@ void telekinesis_aux(int Ind, int item)
 	}
 	else
 	{
+		dungeon_type *d_ptr;
+
+		d_ptr=getdungeon(p2_ptr);
+		if(d_ptr && d_ptr->flags & DUNGEON_IRON){
+			msg_print(Ind, "You are unable to contact that player");
+			return;
+		}
+
 		/* Actually teleport the object to the player inventory */
 		inven_carry(Ind2, q_ptr);
 

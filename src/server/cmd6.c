@@ -5723,8 +5723,13 @@ void do_cmd_activate(int Ind, int item)
 				/* If never used before, then set to the player form, otherwise set the player form*/
 				if (!o_ptr->pval)
 				{
-					msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
-					o_ptr->pval = p_ptr->body_monster;
+					if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
+						msg_print(Ind, "Nothing happens");
+					else{
+						msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
+						o_ptr->pval = p_ptr->body_monster;
+						p_ptr->r_killed[p_ptr->body_monster]=0;
+					}
 				}
 				else
 				{
