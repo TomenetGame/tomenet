@@ -24,6 +24,9 @@
 # Oh, thank you, Evileye :)
 # - Jir -
 
+25/08/2002 (evileye)
+- server for php/perl added
+
 24/08/2002 (evileye)
 - fixed house creation, bug in guildhall saving fixed.
 - new cs activate method. (please be careful ;( )
