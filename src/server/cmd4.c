@@ -244,7 +244,7 @@ void do_cmd_check_uniques(int Ind, int line)
 		if (r_ptr->flags1 & RF1_UNIQUE)
 		{
 			/* Only display known uniques */
-			if (r_ptr->r_sights)
+			if (r_ptr->r_sights && mon_allowed(r_ptr))
 			{
 				int i, j = 0;
 				byte ok = FALSE;
