@@ -1140,11 +1140,12 @@ void admin_outfit(int Ind, int realm)
 //	if (p_ptr->mp_ptr->spell_book)
 	if (0 <= realm && realm < MAX_REALM)
 	{
+#if 0
 		char c[] = "@m ";
 		/* soon this will be obsolete tho */
 		c[1] = ((realm == REALM_PRAYER)? 'p':'m');
 		if (realm == REALM_FIGHTING) c[1] = 'n';
-
+#endif	// 0
 		for (i = 0; i < 9; i++)
 		{
 			//			int k = lookup_kind(p_ptr->mp_ptr->spell_book, i);
@@ -1157,8 +1158,10 @@ void admin_outfit(int Ind, int realm)
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 			o_ptr->number = (f3 & TR3_IGNORE_FIRE) ? 1 : 30;
 
+#if 0
 			c[2] = i +1 +48;
 			o_ptr->note = quark_add(c);
+#endif	// 0
 
 			o_ptr->discount = 72;
 			object_known(o_ptr);

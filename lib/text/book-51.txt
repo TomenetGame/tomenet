@@ -1,0 +1,38 @@
+                   /------------------------------------\
+                   |        The Book of the Deads       |
+                   \------------------------------------/
+
+Alas, I regret you should read this parchment, which basically means that you
+are dead;
+
+But don't be too pessimistic.  As you have already noticed, the game doesn't
+come to end by simply dying - you now are a ghost.
+If your ghost is destroyed, the game will come to the real end.
+
+As a ghost, you cannot carry or use substantial objects (except this
+parchment).. everything you had with you while alive is left on the site of
+your death.
+
+You can freely pass through walls, floors and ceilings; so hide inside a wall.
+Press 'U' (or '\U') to use ghostly powers.
+
+
+Well, there's roughly 3 ways a ghost might wish to take:
+
+1. Leave your treasures, just go back to the town and visit the temple (store
+   '4').  The temple priest will resurrect you to the body.
+   If you are less than level 10, it is the best way parhaps.
+
+2. If you cannot give up your items, try calling for help.  Living players can
+   resurrect you by reading 'Scroll of Life' adjacant to you.
+   Behold, you're "fading" while waiting for a help to come!
+
+3. Simply type 'Qy@' and start over with a brand-new character.
+   Kyrie Eleison.
+
+
+When you're resurrected, you'll lose 40% of your experience points (no matter
+how you've resurrected).
+
+
+Better luck next time...

@@ -1109,6 +1109,7 @@ To find the latest change quickly, search ==== :)
 22/06/2002 (Jir)
 - spell interference is affected by corresponding skills.
 - some parchments.
+- auto-inscriber reimplemented.
 [B] some spells are shown as 'unknown' even when castable
 [B] Ghost powers were broken
 [B] get_spell was messed due to sval/xtra1 hack :(

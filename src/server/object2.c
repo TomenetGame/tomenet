@@ -6464,6 +6464,15 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		c[2] = o_ptr->sval +1 +48;
 		o_ptr->note = quark_add(c);
 	}
+#else	// 0
+	if (is_book(o_ptr) && (!o_ptr->note) && (can_use(Ind, o_ptr)))
+	{
+		char c[] = "@m ";
+		c[1] = ((o_ptr->tval == TV_PRAYER_BOOK) ? 'p':'m');
+		if (o_ptr->tval == TV_FIGHT_BOOK) c[1] = 'n';
+		c[2] = o_ptr->sval +1 +48;
+		o_ptr->note = quark_add(c);
+	}
 #endif	// 0
 
 	if (!o_ptr->note && p_ptr->obj_aware[o_ptr->k_idx])
