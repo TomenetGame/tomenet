@@ -784,7 +784,7 @@ D:hands.
 # The Set of Gauntlets 'Paurnimmen'
 
 N:55:'Paurnimmen'
-I:31:2:4
+I:31:2:3
 W:9:5:25:33000
 P:2:1d1:0:0:15
 F:RES_COLD | ACTIVATE |
@@ -1539,11 +1539,12 @@ N:111:'Grond'
 I:21:50:3
 W:100:1:1000:500000
 P:0:9d9:25:25:10
-F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | IMPACT | KILL_UNDEAD | NO_MAGIC |
-F:KILL_DEMON | SLAY_TROLL | SLAY_ORC | RES_ACID | RES_ELEC | RES_FIRE | 
-F:RES_COLD | SEE_INVIS | ESP_ALL | AGGRAVATE | SHOW_MODS | INSTA_ART |
-F:SLAY_ANIMAL | SLAY_TROLL | SLAY_EVIL | 
-F:LEVELS | LIFE | ACTIVATE | SPECIAL_GENE
+F:KILL_DRAGON | KILL_DEMON | KILL_UNDEAD |
+F:SLAY_EVIL | SLAY_ANIMAL | SLAY_TROLL | SLAY_ORC |
+F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD |
+F:NO_MAGIC | IMPACT | TUNNEL | LEVELS | LIFE | AGGRAVATE |
+F:CURSED | HEAVY_CURSE | PERMA_CURSE
+F:ACTIVATE | SPECIAL_GENE | SHOW_MODS | INSTA_ART |
 D:The mighty Hammer of the Underworld, blackened by doomspells of shattering, 
 D:whose wielder holds the lives of all Morgoth's servants in his hand.
 
@@ -2850,6 +2851,16 @@ F:RES_FIRE | RES_COLD | RES_ACID | RES_ELEC | RES_POIS |
 F:ESP_DRAGON | SLAY_DRAGON
 D:The amulet of Grom, the Wyrm Hunter. It's not known what happened
 D:to him.
+
+
+# The Set of Cesti 'Wrath-Verge'
+
+N:234:'Wrath Verge'
+I:31:5:2
+W:40:30:40:100000
+P:5:1d1:5:5:20
+F:BLOWS | HIDE_TYPE | STR | FREE_ACT | RES_FEAR | SHOW_MODS
+D:Gauntlets that convert the wielder's anger to strength in combat.
 
 
 #N:(No.):(name)

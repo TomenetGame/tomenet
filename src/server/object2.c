@@ -3239,7 +3239,20 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
                 }
 		case TV_DRAG_ARMOR:
 		{
-
+#if 0 // object_kind doesn't have flags* yet
+			/* give multihued dsm random immunities */
+			if (o_ptr->sval == SV_DRAGON_MULTIHUED)
+			{
+				int i;
+				for (i = 1; i <= 2; i++)
+				switch(rand_int(4)){
+				case 0:o_ptr->flags2 |= TR2_IM_FIRE;break;
+				case 1:o_ptr->flags2 |= TR2_IM_COLD;break;
+				case 2:o_ptr->flags2 |= TR2_IM_ACID;break;
+				case 3:o_ptr->flags2 |= TR2_IM_ELEC;break;
+				}
+			}
+#endif
 			break;
 		}
 		case TV_SHIELD:

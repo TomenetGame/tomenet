@@ -744,7 +744,8 @@ static void add_ability (artifact_type *a_ptr)
 				else if (r < 57)
 				{
 					a_ptr->flags1 |= TR1_BLOWS;
-					a_ptr->pval = randint(3);
+					if (rand_int(3)) a_ptr->pval = 1;
+                                        else a_ptr->pval = 2;
 				}
 				else if (r < 62)
 				{
@@ -1403,8 +1404,14 @@ artifact_type *randart_make(object_type *o_ptr)
         /* Fix some limits */
         if (a_ptr->flags1 & TR1_BLOWS)
         {
-		if (a_ptr->pval > 3) a_ptr->pval /= 3;
-                if (a_ptr->pval > 3) a_ptr->pval = 3;
+		if (a_ptr->tval == TV_GLOVES)
+		{
+			if (a_ptr->pval > 2) a_ptr->pval /= 3;
+	                if (a_ptr->pval > 2) a_ptr->pval = 2;
+		} else {
+			if (a_ptr->pval > 3) a_ptr->pval /= 2;
+	                if (a_ptr->pval > 3) a_ptr->pval = 3;
+		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
         }
 
