@@ -4112,6 +4112,16 @@ PROBLEM:    When I start TomeNET I don't see anything except a small hollow
             hence invisible text.
 SOLUTION:   A rare problem that is not caused by TomeNET really. Restart your
             MS Windows system and the text should be visible again.
+PROBLEM:    TomeNET seems to freeze up while playing.
+SOLUTION:   This can happen if your latency is relatively high and many
+            messages are transported between the server and your client.
+            In fact it's just your display that freezes up. In that state
+            you can for example type a chat message and other players
+            will read it.
+            Quit the game and join again to continue playing.
+            Or just start another instance of the game and log in, that will
+            override the old connection, making your client quit with
+            "resume connection" message.
 PROBLEM:    I am disconnected during gameplay.
 SOLUTION:   This can have several reasons. On disconnection a message box will
             appear, telling you about the problem. The following messages
