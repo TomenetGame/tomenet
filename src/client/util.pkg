@@ -179,3 +179,15 @@ extern int Send_skill_mod(int i);
 extern int Send_store_examine(int item);
 extern int Send_store_command(int action, int item, int item2, int amt, int gold);
 extern int Send_activate_skill(int mkey, int book, int spell, int dir, int item, int aux);
+
+extern errr Term_fresh(void);
+extern errr Term_set_cursor(int v);
+extern errr Term_gotoxy(int x, int y);
+extern errr Term_draw(int x, int y, byte a, char c);
+extern errr Term_addch(byte a, char c);
+extern errr Term_addstr(int n, byte a, cptr s);
+extern errr Term_putch(int x, int y, byte a, char c);
+extern errr Term_putstr(int x, int y, int n, byte a, char *s);
+extern errr Term_erase(int x, int y, int n);
+extern errr Term_clear(void);
+extern errr Term_redraw(void);

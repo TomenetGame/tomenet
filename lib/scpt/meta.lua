@@ -1,5 +1,9 @@
 _ALERT=print
 
+function color_print(y, x, str)
+        Term_putstr(x, y, strlen(str), TERM_WHITE, str)
+end
+
 MAX_LEN = 70
 function get_game_version(x)
         local game, version = "unknown", "unknown"
@@ -46,42 +50,51 @@ function meta_display(xml_feed)
         local x = xml:collect(xml_feed)
         local i, nb, e, k, line
         local sorted = {}
+        local meta_name = "Unknown metaserver"
+        local nb_servers = 0
 
         for i = 1, getn(x) do
                 if type(x[i]) == 'table' then
-                        local game, version = get_game_version(x[i])
-                        if not sorted[game.." "..version] then
-	                        sorted[game.." "..version] = {}
+                        if x[i].label == "server" then
+	                        local game, version = get_game_version(x[i])
+        	                if not sorted[game.." "..version] then
+	        	                sorted[game.." "..version] = {}
+                        	end
+	                        local extra
+        	                if get_players_count(x[i]) == 1 then
+	        	        	extra = "\255b"..get_players_count(x[i]).." player"
+                        	else
+	                		extra = "\255b"..get_players_count(x[i]).." players"
+	                        end
+        	                tinsert(sorted[game.." "..version], {
+                	        	name = x[i].args.url,
+                        		port = x[i].args.port,
+                                	extra = extra,
+	                                players = get_players(x[i]),
+        	                })
+                                nb_servers = nb_servers + 1
+                        elseif x[i].label == "meta" then
+                                meta_name = x[i][1]
                         end
-                        local extra
-                        if get_players_count(x[i]) == 1 then
-	                	extra = get_players_count(x[i]).." player"
-                        else
-	                	extra = get_players_count(x[i]).." players"
-                        end
-                        tinsert(sorted[game.." "..version], {
-                        	name = x[i].args.url,
-                        	port = x[i].args.port,
-                                extra = extra,
-                                players = get_players(x[i]),
-                        })
                 end
         end
 
         line = 0
         nb = 0
+        color_print(line, 0, "\255y"..meta_name.." \255Wwith "..nb_servers.." connected servers"); line = line + 1; line = line + 1
         for k, e in sorted do
-                prt(k.." :", line, 0); line = line + 1
+                color_print(line, 0, "\255o"..k.." :"); line = line + 1
                 for i = 1, getn(e) do
-        	        prt(strchar(nb + strbyte('a'))..") "..e[i].name, line, 2)
-        	        prt(e[i].extra, line, 50); line = line + 1
-        	        prt(e[i].players, line, 4); line = line + 1
+        	        color_print(line, 2, "\255G"..strchar(nb + strbyte('a'))..") \255w"..e[i].name)
+        	        color_print(line, 50, e[i].extra); line = line + 1
+        	        color_print(line, 4, e[i].players); line = line + 1
 
                         -- Store the info for retrieval
                         meta_list[nb] = { e[i].name, e[i].port }
                         nb = nb + 1
                 end
         end
+        color_print(line, 0, "\255BSelect a server or press \255RQ\255B to select manualy a server."); line = line + 1
 
         return nb
 end
