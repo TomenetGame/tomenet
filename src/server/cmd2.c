@@ -3585,16 +3585,12 @@ void do_cmd_throw(int Ind, int dir, int item)
 #endif	// 0
 
 
-	/* Handle rugby ball */
-	if(o_ptr->tval==1 && o_ptr->sval==9){
-		msg_print(Ind, "You pass the ball");
-		msg_format_near(Ind, "%s passes the ball", p_ptr->name);
-	}
 	/* Handle the newbies_cannot_drop option */
 	if (p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval)
 	{
-		msg_format(Ind, "Please don't litter the %s.",
-			istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));
+/*		msg_format(Ind, "Please don't litter the %s.",
+			istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/
+		msg_format(Ind, "You need to be at least level %d to throw items.", cfg.newbies_cannot_drop);
 		return;
 	}
 
@@ -3618,6 +3614,12 @@ void do_cmd_throw(int Ind, int dir, int item)
 	};
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	/* Handle rugby ball */
+	if(o_ptr->tval==1 && o_ptr->sval==9){
+		msg_print(Ind, "You pass the ball");
+		msg_format_near(Ind, "%s passes the ball", p_ptr->name);
+	}
 
 	/* Hack - Cannot throw away 'no drop' cursed items */
 	if (cursed_p(o_ptr) && (f4 & TR4_CURSE_NO_DROP) && item >= 0)
