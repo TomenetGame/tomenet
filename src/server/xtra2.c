@@ -4839,8 +4839,7 @@ bool target_able(int Ind, int m_idx)
 		q_ptr = Players[0 - m_idx];
 
 		/* Paranoia check -- require a valid player */
-		if ((0 - m_idx) >= MAX_PLAYERS) return (FALSE);
-		if (!q_ptr || q_ptr->conn==NOT_CONNECTED){
+		if ((0 - m_idx > NumPlayers || !q_ptr || q_ptr->conn==NOT_CONNECTED){
 			p_ptr->target_who=0;
 			return (FALSE);
 		}
