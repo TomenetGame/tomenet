@@ -1,7 +1,7 @@
 -- The mana school
 
 function get_manathrust_dam()
-	return 3 + get_level(Ind, MANATHRUST, 50), 1 + get_level(Ind, MANATHRUST, 15)
+	return 3 + get_level(Ind, MANATHRUST, 50), 1 + get_level(Ind, MANATHRUST, 20)
 end
 
 MANATHRUST = add_spell

@@ -12,9 +12,9 @@ NOXIOUSCLOUD = add_spell
         ["spell"] = 	function(args)
 			local type
 
---                      if get_level(Ind, NOXIOUSCLOUD, 50) >= 30 then type = GF_UNBREATH
---                      else type = GF_POIS end
-			type = GF_POIS
+                        if get_level(Ind, NOXIOUSCLOUD, 50) >= 30 then type = GF_UNBREATH
+                        else type = GF_POIS end
+--			type = GF_POIS
 --		        fire_cloud(Ind, type, args.dir, ((1 + get_level(Ind, NOXIOUSCLOUD, 150)/2) + (get_level(Ind,MANATHRUST,50) * 2)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40))
 		        fire_cloud(Ind, type, args.dir, (1 + get_level(Ind, NOXIOUSCLOUD, 150)/2), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40))
 	end,
@@ -24,7 +24,7 @@ NOXIOUSCLOUD = add_spell
         ["desc"] =	{
         		"Creates a cloud of poison",
                         "The cloud will persist for some turns, damaging all monsters passing by",
---                      "At level 30 it turns into a thick gas preventing living beings from breathing"
+                        "At level 30 it turns into a thick gas preventing living beings from breathing"
         }
 }
 

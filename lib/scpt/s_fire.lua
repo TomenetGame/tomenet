@@ -43,19 +43,19 @@ FIREFLASH = add_spell
         ["direction"] = TRUE,
         ["spell"] = 	function(args)
                 local type
---        	if (get_level(Ind, FIREFLASH, 50) >= 20) then
---	        	type = GF_HOLY_FIRE
---        	else
+        	if (get_level(Ind, FIREFLASH, 50) >= 20) then
+	        	type = GF_HOLY_FIRE
+        	else
         		type = GF_FIRE
---	        end
+	        end
 	        fire_ball(Ind, type, args.dir, 20 + get_level(Ind, FIREFLASH, 500), 2 + get_level(Ind, FIREFLASH, 5))
 	end,
 	["info"] = 	function()
 		return "dam "..(20 + get_level(Ind, FIREFLASH, 500)).." rad "..(2 + get_level(Ind, FIREFLASH, 5))
 	end,
         ["desc"] =	{
-        		"Conjures a ball of fire to burn your foes to ashes"
---                      ,"At level 20 it turns into a ball of holy fire"
+        		"Conjures a ball of fire to burn your foes to ashes",
+                        "At level 20 it turns into a ball of holy fire"
         }
 }
 

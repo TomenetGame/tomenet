@@ -4011,6 +4011,26 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				dam = 0;
 //				do_pois = 0;
 			}
+			else if (r_ptr->flags3 & RF3_IM_POIS)
+			{
+				note = " resists a lot.";
+				dam /= 4;
+				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
+			}
+			else if (r_ptr->flags9 & RF9_RES_POIS)
+			{
+				note = " resists slightly.";
+				dam /= 2;
+				if (seen) r_ptr->flags9 |= RF9_RES_POIS;
+			}
+#if 0
+			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
+			{
+				note = " is hit hard.";
+				dam *= 2;
+				if (seen) r_ptr->flags9 |= RF9_SUSCEP_POIS;
+			}
+#endif
 			break;
 		}
 
@@ -4039,14 +4059,60 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			else if (r_ptr->flags3 & (RF3_EVIL))
 			{
-				dam *= 2;
-				note = " is hit hard.";
+				if (r_ptr->flags3 & RF3_IM_FIRE)
+				{
+					note = " resists.";
+					dam *= 3; dam /= (randint(4)+3);
+					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
+				}
+				else if (r_ptr->flags9 & RF9_RES_FIRE)
+				{
+    					note = " is hit.";
+					dam = (dam * 3) / 2;
+					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
+				}
+#if 0
+				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
+				{
+					note = " is hit hard.";
+					dam *= 2;
+					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+				}
+#endif
+				else
+				{
+					dam *= 2;
+					note = " is hit hard.";
+				}
 				if (seen) r_ptr->r_flags3 |= (RF3_EVIL);
 			}
 			else
 			{
-				note = " resists.";
-				dam *= 3; dam /= (randint(6)+6);
+				if (r_ptr->flags3 & RF3_IM_FIRE)
+				{
+					note = " resists a lot.";
+					dam *= 3; dam /= (randint(6)+10);
+					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
+				}
+				else if (r_ptr->flags9 & RF9_RES_FIRE)
+				{
+    					note = " resists.";
+					dam = (dam * 3) / 9;
+					if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
+				}
+#if 0
+				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
+				{
+					note = " resists slightly.";
+					dam /= 2;
+					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+				}
+#endif
+				else
+				{
+					note = " resists.";
+					dam *= 3; dam /= (randint(6)+6);
+				}
 			}
 			break;
 		}
@@ -5841,7 +5907,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //		case GF_HELL_FIRE:
 		if (fuzzy) msg_print(Ind, "You are hit by something!");
 		if (p_ptr->body_monster && r_ptr->flags3 & RF3_EVIL) dam *= 2;
-		else dam /= 2;
+		if (p_ptr->immune_fire) dam /= 2;
+		else if (p_ptr->resist_fire) dam = ((dam + 2) * 2) / 3;
+		else if (p_ptr->oppose_fire) dam = ((dam + 2) * 2) / 3;
+		else if (p_ptr->sensible_fire) dam = ((dam + 2) * 4) / 3;
 		take_hit(Ind, dam, killer);
 		break;
 
