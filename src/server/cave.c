@@ -91,6 +91,7 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 	/* Slope, or 1/Slope, of LOS */
 	int m;
 
+	if(!cave[Depth]) return FALSE;
 
 	/* Extract the offset */
 	dy = y2 - y1;
