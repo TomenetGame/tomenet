@@ -179,6 +179,13 @@
 #define HOUSE_KEY	0
 #define HOUSE_PASS	1
 
+#define FILL_BUILD	0
+#define FILL_CLEAR	1
+#define FILL_MAKEHOUSE	2
+#define FILL_PLAYER	3
+#define FILL_OBJECT	4
+#define FILL_GUILD	5
+
 /*
  * Number of entries in the player name hash table.
  * This must be a power of 2!

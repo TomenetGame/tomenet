@@ -1354,6 +1354,14 @@ struct guild_type{
 	s16b minlev;		/* minimum level to join */
 };
 
+/* Save data work information for guild halls */
+
+struct guildsave{
+	FILE *fp;	/* the passed file pointer */
+	bool mode;	/* load=0 save=1 */
+};
+
+
 /*
  * Information about a "house"
  */
