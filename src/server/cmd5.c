@@ -3751,7 +3751,7 @@ void do_cmd_pray_aux(int Ind, int dir)
 			msg_print(Ind, "Gilthoniel A Elbereth!");
 			msg_format_near(Ind, "%s shouts 'Gilthoniel A Elbereth!'.", p_ptr->name);
 			fire_ball(Ind, GF_HOLY_ORB, dir,
-			          (plev * 5), (plev / 7) + 2);
+			          (plev * 5), MIN((plev / 7) + 2, 15));
 			(void)hp_player(Ind, 500);
 			break;
 		}
