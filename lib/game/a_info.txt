@@ -493,7 +493,7 @@ D:himself powerless to wither or diminish.
 N:33:of Hurin
 I:24:10:1
 W:20:15:180:90000
-P:0:2d6:12:20:0
+P:0:4d6:12:20:0
 F:STR | CON | HIDE_TYPE | BRAND_ACID | RES_ACID | LITE1 | DRAIN_MANA | 
 F:SLAY_ORC | KILL_DEMON | SLAY_TROLL | ACTIVATE | SHOW_MODS | BLOWS
 D:Wielded by Hurin Thalion in the Fifth Battle of Beleriand, this 
@@ -1054,7 +1054,7 @@ D:know its power all too well.
 N:76:'Gurthang'
 I:23:25:2
 W:20:30:200:125000
-P:0:3d6:13:20:0
+P:0:4d6:13:20:0
 F:STR | HIDE_TYPE | VORPAL | ESP_DRAGON | DRAIN_HP | 
 F:IM_FIRE | RES_POIS | BRAND_FIRE | BRAND_POIS | 
 F:KILL_DRAGON | SLAY_TROLL | FREE_ACT | SLOW_DIGEST | REGEN | SHOW_MODS
@@ -1068,7 +1068,7 @@ D:who wield it eventually.
 N:77:'Zarcuthra'
 I:23:25:4
 W:30:180:250:205000
-P:0:4d6:19:25:0
+P:0:5d6:19:25:0
 F:STR | CHR | INFRA | HIDE_TYPE | VORPAL | DRAIN_MANA | 
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | BRAND_FIRE |
 F:SLAY_UNDEAD | SLAY_DEMON | SLAY_TROLL | SLAY_GIANT | SLAY_ORC | 
@@ -1111,7 +1111,7 @@ D:men of Umbar who met it in combat.
 N:80:'Crisdurian'
 I:23:28:1
 W:40:15:260:201000
-P:0:6d5:18:29:0
+P:0:8d5:18:29:0
 F:SLAY_DRAGON | SLAY_EVIL | SLAY_UNDEAD | SLAY_TROLL | SLAY_GIANT | BLOWS | 
 F:SLAY_ORC | SEE_INVIS | SHOW_MODS | VORPAL | BRAND_POIS | WOUNDING
 D:A giant's weapon, with a long blade tall and straight thrusting out from a 
@@ -1286,7 +1286,7 @@ D:went snicker-snack!"
 N:93:of Theoden
 I:24:10:5
 W:20:15:180:70000
-P:0:2d6:10:20:0
+P:0:4d6:10:20:0
 F:WIS | CON | HIDE_TYPE | 
 F:SLAY_DRAGON | ESP_EVIL | ESP_UNDEAD | SLOW_DIGEST | ACTIVATE | SHOW_MODS
 D:The narrow axe head of this weapon, finely balanced by a crow's beak, 
@@ -1383,7 +1383,7 @@ D:fear into the hearts of foes lie on this perfectly balanced spear.
 N:100:of Eorlingas
 I:22:20:4
 W:20:23:360:65000
-P:0:3d8:3:21:0
+P:0:5d8:3:21:0
 F:STR | DEX | SPEED | HIDE_TYPE | RES_FEAR | SLAY_ANIMAL | 
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS
 D:"Forth Eorlingas!". To the field of Cormallen came Eorl the Young
@@ -1396,7 +1396,7 @@ D:and dire wolves.
 N:101:of Durin
 I:24:25:5
 W:30:90:230:150000
-P:0:6d4:10:20:15
+P:0:7d5:10:20:15
 F:STR | CON | TUNNEL | HIDE_TYPE | ESP_EVIL | RES_FEAR | 
 F:SLAY_DRAGON | KILL_DEMON | SLAY_TROLL | SLAY_ORC | FREE_ACT | 
 F:IM_ACID | IM_FIRE | RES_LITE | RES_DARK | RES_CHAOS | SHOW_MODS | 
@@ -1411,7 +1411,7 @@ D:Khazad-dum to protect the wearer and slay all evils found underground.
 N:102:of Eonwe
 I:24:25:3
 W:30:120:230:200000
-P:0:5d4:15:18:8
+P:0:6d5:15:18:8
 F:STR | INT | WIS | DEX | CON | CHR | HIDE_TYPE | 
 F:SLAY_EVIL | BRAND_COLD | KILL_DEMON | KILL_UNDEAD | ESP_NONLIVING |
 F:SLAY_ORC | FREE_ACT | IM_COLD | SEE_INVIS | ACTIVATE | 
@@ -1565,7 +1565,7 @@ D:becomes a fiery comet as you bring it down.
 N:113:'Thunderfist'
 I:21:18:4
 W:35:38:300:160000
-P:0:4d6:5:18:0
+P:0:6d6:5:18:0
 F:STR | CON | HIDE_TYPE | RES_FEAR | 
 F:SLAY_ANIMAL | BRAND_FIRE | BRAND_ELEC | SLAY_TROLL | SLAY_ORC | 
 F:IM_ELEC | IM_FIRE | RES_DARK | SHOW_MODS
@@ -1668,7 +1668,7 @@ D:mountains.
 N:121:'Deathwreaker'
 I:21:20:6
 W:80:38:400:444444
-P:0:7d8:18:18:0
+P:0:8d8:18:18:0
 F:STR | TUNNEL | HIDE_TYPE | NO_TELE | DRAIN_MANA | SLAY_TROLL | 
 F:SLAY_DRAGON | SLAY_ANIMAL | SLAY_EVIL | KILL_UNDEAD | BRAND_FIRE | 
 F:IM_FIRE | RES_DARK | RES_CHAOS | RES_DISEN | AGGRAVATE |
@@ -2580,7 +2580,7 @@ F:ESP_UNIQUE
 F:SLOW_DIGEST | SHOW_MODS | SEE_INVIS | RES_DISEN | 
 F:FREE_ACT | RES_NETHER | HOLD_LIFE | 
 F:SUST_STR | SUST_DEX | SUST_CON | 
-F:ANTIMAGIC_50 | DRAIN_MANA
+F:ANTIMAGIC_50 | ANTIMAGIC_20 | DRAIN_MANA
 # | NO_MAGIC
 
 # The Long Bow 'Doublezee'

@@ -305,7 +305,7 @@ G:|:W
 I:23:25:0
 W:30:0:200:775
 A:30/1:40/1
-P:0:3d6:0:0:0
+P:0:4d6:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:38:& Main Gauche~
@@ -329,7 +329,7 @@ G:|:r
 I:23:28:0
 W:40:0:260:850
 A:40/1
-P:0:4d5:0:0:0
+P:0:5d5:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:41:& Katana~
@@ -417,9 +417,9 @@ F:SHOW_MODS | COULD2H
 N:51:& Two-Handed Flail~
 G:\:y
 I:21:18:0
-W:45:0:280:590
+W:45:0:280:740
 A:45/1
-P:0:3d6:0:0:0
+P:0:4d6:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:52:& Morning Star~
@@ -467,7 +467,7 @@ G:\:v
 I:21:20:0
 W:80:0:400:4300
 A:80/5
-P:0:5d8:0:0:0
+P:0:6d8:0:0:0
 F:SLAY_UNDEAD | SHOW_MODS | MUST2H
 
 N:58:& Lucerne Hammer~
@@ -483,9 +483,9 @@ F:SHOW_MODS | COULD2H
 N:59:& Beaked Axe~
 G:/:s
 I:24:10:0
-W:15:0:180:408
+W:15:0:190:808
 A:15/1
-P:0:2d6:0:0:0
+P:0:4d6:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:60:& Glaive~
@@ -539,17 +539,17 @@ F:SHOW_MODS | COULD2H
 N:66:& Lance~
 G:/:s
 I:22:20:0
-W:10:0:300:230
+W:10:0:300:930
 A:10/1
-P:0:2d8:0:0:0
+P:0:4d8:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:67:& Great Axe~
 G:/:s
 I:24:25:0
-W:40:0:230:500
+W:40:0:230:600
 A:40/1
-P:0:4d4:0:0:0
+P:0:5d5:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:68:& Battle Axe~
@@ -589,7 +589,7 @@ G:/:r
 I:22:30:0
 W:60:0:250:3500
 A:60/3
-P:0:8d4:0:0:0
+P:0:10d4:0:0:0
 F:SHOW_MODS | MUST2H | WOUNDING
 
 
@@ -2947,10 +2947,10 @@ P:0:1d2:0:0:0
 N:399:& Great Hammer~
 G:\:D
 I:21:19:0
-W:45:0:300:350
+W:45:0:300:750
 A:45/3
-P:0:4d6:0:0:0
-F:SHOW_MODS
+P:0:5d6:0:0:0
+F:SHOW_MODS | MUST2H
 
 ##### Dragon Scale Mail #####
 
@@ -3561,7 +3561,7 @@ N:498:& Mighty Hammer~
 G:\:D
 I:21:50:0
 W:15:0:200:1000
-P:0:3d9:0:0:0
+P:0:5d9:0:0:0
 F:SHOW_MODS | INSTA_ART | MUST2H
 
 N:499:& Massive Iron Crown~
@@ -3735,9 +3735,9 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 N:524:& Zweihander~
 G:|:w
 I:23:29:0
-W:40:0:280:580
+W:40:0:280:680
 A:40/3
-P:0:4d6:0:0:0
+P:0:5d6:0:0:0
 F:SHOW_MODS | MUST2H
 
 # Dwarven lantern
@@ -3841,7 +3841,7 @@ F:IGNORE_WATER
 N:537:& Sickle~
 G:/:s
 I:22:3:0
-W:10:0:70:110
+W:10:0:50:110
 A:10/3
 P:0:2d3:0:0:0
 F:SHOW_MODS
@@ -3873,9 +3873,9 @@ F:SHOW_MODS
 N:545:& Flamberge~
 G:|:W
 I:23:26:0
-W:40:0:230:600
+W:40:0:230:900
 A:40/2
-P:0:3d7:0:0:0
+P:0:4d7:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:546:& Claymore~
@@ -3897,9 +3897,9 @@ F:SHOW_MODS
 N:548:& Great Scimitar~
 G:|:W
 I:23:22:0
-W:40:0:240:500
+W:40:0:240:800
 A:40/3
-P:0:4d5:0:0:0
+P:0:5d5:0:0:0
 F:SHOW_MODS | MUST2H
 
 ### Trapping Kits 
@@ -3937,9 +3937,9 @@ F:SHOW_MODS | COULD2H
 N:553:& Heavy Lance~
 G:/:s
 I:22:29:0
-W:43:0:400:700
-A:43/2
-P:0:4d8:0:0:0
+W:53:0:400:2000
+A:53/2
+P:0:6d8:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:554:& Basillard~
@@ -5246,7 +5246,7 @@ G:|:b
 I:23:31:0
 W:60:1800:50:6000
 A:60/20
-P:0:1d6:4:0:0
+P:0:2d5:4:0:0
 F:SHOW_MODS | VORPAL | IGNORE_WATER
 
 # Amulet
@@ -6055,6 +6055,17 @@ F:INSTA_ART
 #F:SHOW_MODS
 
 #N:918:Pseudo Dragon Scale Mail: defined above below the other DSMs.
+
+#The 'original' Mighty Hammer is insta-art for Grond.
+#This clone can be used for 'normal' mighty hammers. Removing INSTA_ART from
+#Grond instead might lead to problems in the winner-check code. -C. Blue
+N:919:& Mighty Hammer~
+G:\:D
+I:21:50:0
+W:60:0:320:3000
+A:60/3
+P:0:5d9:0:0:0
+F:SHOW_MODS | MUST2H
 
 
 #N:(No.):(name)
