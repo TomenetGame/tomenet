@@ -5139,7 +5139,17 @@ bool master_level(int Ind, char * parms)
 			for (i = 1; i <= NumPlayers; i++)
 			{
 				if (p_ptr->conn == NOT_CONNECTED) continue;
-				if (Players[i]->dun_depth == depth) do_cmd_go_up(i);
+				if (p_ptr->st_anchor){
+					p_ptr->st_anchor=0;
+					msg_print(GetInd[p_ptr->id],"Your space/time anchor breaks\n");
+				}
+			}
+			for (i = 1; i <= NumPlayers; i++){
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				if (Players[i]->dun_depth == depth){
+					if(depth>0) do_cmd_go_up(i);
+					else teleport_player_level(i);
+				}
 			}
 			/* set the number of players on the level equal to the numer of 
 			 * currently connected players on the level.
