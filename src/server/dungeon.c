@@ -2481,14 +2481,14 @@ void scan_objs(){
 	int i,cnt=0, dcnt=0;
 	object_type *o_ptr;
 	cave_type **zcave;
-	for(i=0;i<MAX_K_IDX;i++){
+	for(i=0;i<MAX_O_IDX;i++){
 		/* We leave non owned objects */
 		o_ptr=&o_list[i];
 		if(o_ptr->owner){
 			if(!o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos))){
 				/* ick suggests a store, so leave) */
 				if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
-					if(++o_ptr->marked==2){
+					if(++o_ptr->marked>=2){
 						delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx);
 						dcnt++;
 					}
@@ -2497,7 +2497,7 @@ void scan_objs(){
 			}
 		}
 	}
-	s_printf("Scanned %d objects. Removed %d.\n");
+	if(dcnt) s_printf("Scanned %d objects. Removed %d.\n", cnt, dcnt);
 }
 
 
