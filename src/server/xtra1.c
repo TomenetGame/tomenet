@@ -1618,6 +1618,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if(r_ptr->flags3 & RF3_NO_FEAR) p_ptr->resist_fear = TRUE;
 	if(r_ptr->flags3 & RF3_NO_SLEEP) p_ptr->free_act = TRUE;
 	if(r_ptr->flags3 & RF3_NO_CONF) p_ptr->resist_conf = TRUE;
+	if(r_ptr->flags3 & RF3_NO_STUN) p_ptr->resist_sound = TRUE;
 	if(r_ptr->flags8 & RF8_NO_CUT) p_ptr->no_cut = TRUE;
 	if(r_ptr->flags7 & RF7_CAN_FLY) p_ptr->fly = TRUE;
 	if(r_ptr->flags7 & RF7_CAN_SWIM) p_ptr->can_swim = TRUE;

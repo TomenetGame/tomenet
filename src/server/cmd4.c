@@ -171,6 +171,7 @@ void do_cmd_check_uniques(int Ind, int line)
 {
 	//player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr;
+
 	int k, l, total = 0;
 
 	FILE *fff;

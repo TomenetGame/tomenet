@@ -1435,6 +1435,7 @@ void do_cmd_mimic(int Ind, int spell)
 	if (spell == 0){
 		j = p_ptr->body_monster;
 		k = 0;
+
 		while (TRUE){
 			j++;
 			k++;

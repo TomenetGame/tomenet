@@ -996,6 +996,7 @@ static void process_world(int Ind)
 static int retaliate_mimic_power(int Ind, int power)
 {
 	player_type *p_ptr = Players[Ind];
+
 	int		i, k, num = 1;
 
 	/* Check for "okay" spells */
