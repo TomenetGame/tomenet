@@ -1503,7 +1503,8 @@ static void process_player_end(int Ind)
 		/*** Check the Food, and Regenerate ***/
 
 		/* Ghosts don't need food */
-		if (!p_ptr->ghost)
+		/* Allow AFK-hivernation */
+		if (!p_ptr->ghost || !p_ptr->afk)
 		{
 			/* Digest normally */
 			if (p_ptr->food < PY_FOOD_MAX)

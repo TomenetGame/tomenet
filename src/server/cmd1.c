@@ -1895,6 +1895,9 @@ void move_player(int Ind, int dir, int do_pickup)
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
 
+	/* (S)He's no longer AFK, lol */
+	if (p_ptr->afk) toggle_afk(Ind);
+
 	/* Can we move ? */
 	if (r_ptr->flags1 & RF1_NEVER_MOVE) return;
 

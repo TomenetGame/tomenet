@@ -364,3 +364,6 @@ Change list for PernMangband
 - Bugfix on /dis. Added /untag.
 - Newbie(lv5-) no longer drops items when stealing fails.(thx Tanix)
 - 138 new cookies added.
+
+03/12/2001 (Jir)
+- hibernation/annoucement/auto-off for AFK-mode.

@@ -2571,16 +2571,7 @@ void player_talk_aux(int Ind, cptr message)
 		}
 		else if (prefix(message, "/afk"))
 		{
-			if (p_ptr->afk)
-			{
-				msg_print(Ind, "AFK mode is turned \377GOFF\377w.");
-				p_ptr->afk = FALSE;
-			}
-			else
-			{
-				msg_print(Ind, "AFK mode is turned \377rON\377w.");
-				p_ptr->afk = TRUE;
-			}
+			toggle_afk(Ind);
 			return;
 		}
 		else if (prefix(message, "/me "))
@@ -3084,6 +3075,27 @@ void player_talk_aux(int Ind, cptr message)
 	*/
 }
 
+/*
+ * toggle AFK mode on/off.	- Jir -
+ */
+void toggle_afk(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	if (p_ptr->afk)
+	{
+		msg_print(Ind, "AFK mode is turned \377GOFF\377w.");
+		msg_broadcast(Ind, format("\377o%s has returned from AFK.", p_ptr->name));
+		p_ptr->afk = FALSE;
+	}
+	else
+	{
+		msg_print(Ind, "AFK mode is turned \377rON\377w.");
+		msg_broadcast(Ind, format("\377o%s seems to be AFK now.", p_ptr->name));
+		p_ptr->afk = TRUE;
+	}
+	return;
+}
 
 /*
  * A player has sent a message to the rest of the world.
