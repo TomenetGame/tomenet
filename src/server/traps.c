@@ -249,11 +249,8 @@ void compact_traps(int size)
 		{
 			int ny = t_list[t_max].iy;
 			int nx = t_list[t_max].ix;
-#ifdef NEW_DUNGEON
-			wpos = &m_list[m_max].wpos;
-#else
-			int Depth = t_list[t_max].dun_depth;
-#endif
+
+			wpos = &t_list[t_max].wpos;
 
 			/* Structure copy */
 			t_list[i] = t_list[t_max];
