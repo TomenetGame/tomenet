@@ -832,6 +832,7 @@ extern int Send_store_sell(int Ind, int price);
 extern int Send_store_kick(int Ind);
 extern int Send_target_info(int ind, int x, int y, cptr buf);
 extern int Send_sound(int ind, int sound);
+extern int Send_beep(int ind);
 extern int Send_special_line(int ind, int max, int line, byte attr, cptr buf);
 extern int Send_floor(int ind, char tval);
 extern int Send_pickup_check(int ind, cptr buf);
@@ -1438,6 +1439,8 @@ void lua_s_print(cptr logstr);
 void lua_add_anote(cptr anote);
 void lua_count_houses(int Ind);
 void lua_recalc_char(int Ind);
+void lua_examine_item(int Ind, cptr name, int item);
+void lua_determine_level_req(int Ind, int item);
 
 /* only called once, in util.c, referring to new file slash.c */
 extern void do_slash_cmd(int Ind, char *message);

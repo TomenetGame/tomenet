@@ -36,8 +36,10 @@
  */
 
 artifact_type	randart;
+artifact_type	randart2;
 
 artifact_type	*a_ptr;
+artifact_type	*a_ptr2;
 object_kind 	*k_ptr;
 
 
@@ -2035,6 +2037,8 @@ static void add_random_esp(artifact_type *a_ptr, int all)
 // void add_random_ego_flag(object_type *o_ptr, int fego, bool *limit_blows)
 void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b dlev, object_type *o_ptr)
 {
+	k_ptr = &k_info[o_ptr->k_idx];
+
 	if (fego & ETR4_SUSTAIN)
 	{
 		/* Make a random sustain */
@@ -2119,48 +2123,6 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		dragon_resist(a_ptr);
 	}
 
-	if (fego & ETR4_SLAY_WEAP)
-	{
-		/* Make a Weapon of Slaying */
-
-		if (randint(3) == 1) /* double damage */
-		{
-#if 0 /* isn't the following line buggy and meant to be..*/
-			a_ptr->dd *= 2;
-#else /* this instead?: */
-			a_ptr->dd = o_ptr->dd * 2;
-#endif
-			while ((a_ptr->dd + o_ptr->dd) * (a_ptr->ds + o_ptr->ds) > ((a_ptr->flags4 & TR4_MUST2H)?75:50))
-				a_ptr->dd -= 1; /* No overpowered slaying weapons */
-			/* fix lower limit */
-			if (a_ptr->dd < 0) a_ptr->dd = 0;
-		} else {
-			do
-			{
-				a_ptr->dd++;
-			}
-			while ((randint(a_ptr->dd) == 1) &&
-				((a_ptr->dd + o_ptr->dd) * (a_ptr->ds + o_ptr->ds) < ((a_ptr->flags4 & TR4_MUST2H)?65:43)));
-				/* No overpowered slaying weapons */
-			do
-			{
-				a_ptr->ds++;
-			}
-			while ((randint(a_ptr->ds) == 1) &&
-				((a_ptr->dd + o_ptr->dd) * (a_ptr->ds + o_ptr->ds) < (a_ptr->flags4 & TR4_MUST2H)?65:45));
-				/* No overpowered slaying weapons */
-		}
-		if (randint(5) == 1)
-		{
-			a_ptr->flags1 |= TR1_BRAND_POIS;
-		}
-/*		if (a_ptr->tval == TV_SWORD && (randint(4) == 1))*/
-		if ((a_ptr->tval != TV_HAFTED) && (randint(4) == 1))
-		{
-			a_ptr->flags5 |= TR5_VORPAL;
-		}
-	}
-
 	if (fego & ETR4_DAM_DIE)
 	{
 		/* Increase damage dice */
@@ -2171,6 +2133,60 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 	{
 		/* Increase damage dice size */
 		a_ptr->ds++; 
+	}
+
+	if (fego & ETR4_SLAY_WEAP)
+	{
+		/* Make a Weapon of Slaying */
+
+		if (randint(3) == 1) /* double damage */
+		{
+#if 0 /* isn't the following line buggy and meant to be..*/
+			a_ptr->dd *= 2;
+#else /* this instead?: */
+			a_ptr->dd = k_ptr->dd;
+#endif
+			while (((a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?75:40))
+				&& (a_ptr->dd > 0))
+				a_ptr->dd -= 1; /* No overpowered slaying weapons */
+			/* fix lower limit */
+			if (a_ptr->dd < 0) a_ptr->dd = 0;
+		} else if (randint(2) == 1) {
+			while ((randint(a_ptr->dd + 1) == 1) &&
+				((a_ptr->dd + k_ptr->dd + 1) * (a_ptr->ds + k_ptr->ds) <= ((k_ptr->flags4 & TR4_MUST2H)?75:40)))
+				/* No overpowered slaying weapons */
+			{
+				a_ptr->dd++;
+			}
+			while ((randint(a_ptr->ds + 1) == 1) &&
+				((a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) <= ((k_ptr->flags4 & TR4_MUST2H)?75:40)))
+				/* No overpowered slaying weapons */
+			{
+				a_ptr->ds++;
+			}
+		} else {
+			while ((randint(a_ptr->ds + 1) == 1) &&
+				((a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) <= ((k_ptr->flags4 & TR4_MUST2H)?75:40)))
+				/* No overpowered slaying weapons */
+			{
+				a_ptr->ds++;
+			}
+			while ((randint(a_ptr->dd + 1) == 1) &&
+				((a_ptr->dd + k_ptr->dd + 1) * (a_ptr->ds + k_ptr->ds) <= ((k_ptr->flags4 & TR4_MUST2H)?75:40)))
+				/* No overpowered slaying weapons */
+			{
+				a_ptr->dd++;
+			}
+		}
+		if (randint(5) == 1)
+		{
+			a_ptr->flags1 |= TR1_BRAND_POIS;
+		}
+/*		if (a_ptr->tval == TV_SWORD && (randint(4) == 1))*/
+		if ((a_ptr->tval != TV_HAFTED) && (randint(4) == 1))
+		{
+			a_ptr->flags5 |= TR5_VORPAL;
+		}
 	}
 
 	if (fego & ETR4_LIMIT_BLOWS)

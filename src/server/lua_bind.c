@@ -564,3 +564,18 @@ Commented out this totally, since ppl won't get skill points for these 'fake lev
 		break;
 	}
 }
+
+void lua_examine_item(int Ind, cptr name, int item) {
+	int i = name_lookup_loose(Ind, name, FALSE);
+	if (!i) return;
+	identify_fully_aux(Ind, &Players[i]->inventory[item]);
+	return;
+}
+
+void lua_determine_level_req(int Ind, int item) {
+	/* -9999 is a fixed hack value, see object2.c, determine_level_req.
+	   It means: assume that finding-depth is same as object-base-level,
+	   for smooth and easy calculation. */
+	determine_level_req(-9999, &Players[Ind]->inventory[item]);
+	return;
+}

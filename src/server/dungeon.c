@@ -4706,6 +4706,12 @@ void dungeon(void)
 		if (!(turn % 10)) /* && Players[i]->body_monster */
 			everyone_lite_spot(&Players[i]->wpos, Players[i]->py, Players[i]->px);
 
+		/* Perform beeping players who are currently being paged by others */
+		if (Players[i]->paging && !(turn % 15)) {
+			Send_beep(i);
+			Players[i]->paging--;
+		}
+
 		/* Actually process that player */
 		process_player_begin(i);
 	}

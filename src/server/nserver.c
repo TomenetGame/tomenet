@@ -1852,7 +1852,8 @@ static int Handle_login(int ind)
 		}
 	}
 	for (i = 0; i < MAX_NOTES; i++) {
-		if (!strcmp(priv_note_target[i], Players[NumPlayers]->name)) {
+//		if (!strcmp(priv_note_target[i], Players[NumPlayers]->name)) { /* <- sent to a character name */
+		if (!strcmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name, woot */
 			msg_format(NumPlayers, "\377sNote from %s: %s", priv_note_sender[i], priv_note[i]);
 			strcpy(priv_note_sender[i], "");
 			strcpy(priv_note_target[i], "");
@@ -1995,9 +1996,13 @@ void process_pending_commands(int ind)
 	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) && 
 	while ((connp->r.ptr < connp->r.buf + connp->r.len))
 	{
+		char *foo=connp->r.ptr;
 		type = (connp->r.ptr[0] & 0xFF);
 		if(type != PKT_KEEPALIVE) connp->inactive=0;
 		result = (*receive_tbl[type])(ind);
+		if(connp->r.ptr==foo){ /* thx for the warning, evileye */
+			break;
+		}
 		if (connp->state == CONN_PLAYING)
 		{
 			connp->start = turn;
@@ -4488,6 +4493,21 @@ int Send_sound(int ind, int sound)
 	}
 
 	return Packet_printf(&connp->c, "%c%c", PKT_SOUND, sound);
+}
+
+int Send_beep(int ind)
+{
+	connection_t *connp = &Conn[Players[ind]->conn];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for beep (page) (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+
+	return Packet_printf(&connp->c, "%c", PKT_BEEP);
 }
 
 int Send_special_line(int ind, int max, int line, byte attr, cptr buf)

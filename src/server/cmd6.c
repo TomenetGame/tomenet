@@ -1232,11 +1232,13 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					p_ptr->fruit_bat = -1;
 					p_ptr->deathblow = 0;
 					player_death(Ind);
+					ident = TRUE;
 				}
 				else if(p_ptr->fruit_bat==2) {
 					msg_print(Ind, "You have been restored!");
 					p_ptr->fruit_bat = 0;
 					p_ptr->update |= (PU_BONUS | PU_HP);
+					ident = TRUE;
 				}
 				else
 					msg_print(Ind, "You feel certain you are a fruit bat!");
@@ -2572,7 +2574,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 /*				int obj_tmp = object_level;
 				object_level = p_ptr->wpos.wz / 2;
-*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, TRUE, !p_ptr->total_winner);
+*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, (p_ptr->wpos.wz != 0), !p_ptr->total_winner);
 /*				object_level = obj_tmp; //just paranoia, dunno if needed.*/
 				ident = TRUE;
 				break;
@@ -2582,7 +2584,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 /*				int obj_tmp = object_level;
 				object_level = p_ptr->wpos.wz / 2;
-*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, TRUE, !p_ptr->total_winner);
+*/				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, (p_ptr->wpos.wz != 0), !p_ptr->total_winner);
 /*				object_level = obj_tmp; //just paranoia, dunno if needed.*/
 				ident = TRUE;
 				break;

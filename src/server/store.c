@@ -594,7 +594,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 	switch (p_ptr->store_num)
 	{
 		/* General Store */
-		case 0:
+		case STORE_GENERAL:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -620,7 +620,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 		}
 
 		/* Armoury */
-		case 1:
+		case STORE_ARMOURY:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -642,7 +642,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 		}
 
 		/* Weapon Shop */
-		case 2:
+		case STORE_WEAPON:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -666,7 +666,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 		}
 
 		/* Temple */
-		case 3:
+		case STORE_TEMPLE:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -683,7 +683,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 		}
 
 		/* Alchemist */
-		case 4:
+		case STORE_ALCHEMIST:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -699,7 +699,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 		}
 
 		/* Magic Shop */
-		case 5:
+		case STORE_MAGIC:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -721,7 +721,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			break;
 		}
 		/* Bookstore Shop */
-		case 8:
+		case STORE_BOOK:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -740,7 +740,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			break;
 		}
 		/* Pet Shop */
-		case 9:
+		case STORE_PET:
 		{
 			/* Analyze the type */
 			switch (o_ptr->tval)
@@ -753,7 +753,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			break;
 		}
 		/* Rare Footwear Shop */
-		case 45:
+		case STORE_SHOESX:
 			/* Analyze the type */
 			switch (o_ptr->tval)
 			{
@@ -764,7 +764,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			}
 			break;
 		/* Rare Jewellry Shop */
-		case 42:
+		case STORE_JEWELX:
 			/* Analyze the type */
 			switch (o_ptr->tval)
 			{
@@ -776,15 +776,14 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			}
 			break;
 		/* Mining Supply Store */
-		case 59:
+		case STORE_MINING:
 			switch (o_ptr->tval)
 			{
 				case TV_DIGGING:
 				case TV_LITE:
-				case TV_FLASK:
-				case TV_WAND: if (o_ptr->sval != SV_WAND_STONE_TO_MUD) return(FALSE);
-				case TV_POTION: if (o_ptr->sval != SV_POTION_DETONATIONS) return(FALSE);
-				break;
+				case TV_FLASK: break;
+				case TV_WAND: if (o_ptr->sval != SV_WAND_STONE_TO_MUD) return(FALSE); else break;
+				case TV_POTION: if (o_ptr->sval != SV_POTION_DETONATIONS) return(FALSE); else break;
 				default:
 				return (FALSE);
 			}
@@ -1437,6 +1436,14 @@ let's depend on SF1*RARE flags here.. */
 
 		/* Nether Realm store items are always level 0 (or 99?) */
 		if (st_ptr->st_idx == STORE_BTSUPPLY) o_ptr->level = 0;
+		/* Mining equipment store shouldn't have powerful low level items */
+		if (st_ptr->st_idx == STORE_MINING && o_ptr->tval == TV_LITE)
+			switch (o_ptr->sval) {
+			case SV_LITE_DWARVEN: o_ptr->level += 15; break;
+			case SV_LITE_FEANORIAN: o_ptr->level += 20; break;
+			default: if (o_ptr->name2) o_ptr->level += 10;
+			}
+
 		/* Attempt to carry the (known) item */
 		(void)store_carry(st_ptr, o_ptr);
 

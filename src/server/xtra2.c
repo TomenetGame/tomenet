@@ -4533,7 +4533,7 @@ void player_death(int Ind)
 	object_type *o_ptr;
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-	char buf[1024];
+	char buf[1024], o_name[160];
 	int i, inventory_loss = 0, equipment_loss = 0;
 	//wilderness_type *wild;
 	bool hell=TRUE, secure = FALSE;
@@ -4894,10 +4894,14 @@ void player_death(int Ind)
 							/* Drop this one */
 				    			away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
 								<= 0 ? TRUE : FALSE;
-						} else if (true_artifact_p(o_ptr)) {
-							/* set the artifact as unfound */
-							a_info[o_ptr->name1].cur_num = 0;
-							a_info[o_ptr->name1].known = FALSE;
+						} else {
+							object_desc(Ind, o_name, o_ptr, TRUE, 3);
+							s_printf("item_lost: %s (slot %d)\n", o_name, i);
+							if (true_artifact_p(o_ptr)) {
+								/* set the artifact as unfound */
+								a_info[o_ptr->name1].cur_num = 0;
+								a_info[o_ptr->name1].known = FALSE;
+							}
 						}
 					}
 
@@ -5132,10 +5136,14 @@ void player_death(int Ind)
 						/* Drop this one */
 						away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
 							<= 0 ? TRUE : FALSE;
-					} else if (true_artifact_p(o_ptr)) {
-						/* set the artifact as unfound */
-						a_info[o_ptr->name1].cur_num = 0;
-						a_info[o_ptr->name1].known = FALSE;
+					} else {
+						object_desc(Ind, o_name, o_ptr, TRUE, 3);
+						s_printf("item_lost: %s (slot %d)\n", o_name, i);
+						if (true_artifact_p(o_ptr)) {
+							/* set the artifact as unfound */
+							a_info[o_ptr->name1].cur_num = 0;
+							a_info[o_ptr->name1].known = FALSE;
+						}
 					}
 				}
 
@@ -5513,6 +5521,8 @@ void kill_quest(int Ind){
 		}
 	}
 	else{
+		int avg = ((r_info[quests[pos].type].level * 2) + (p_ptr->lev * 4)) / 2;
+		avg = avg > 100 ? 100 : avg;
 		msg_format(Ind, "\377yYou have won the %s quest!", r_name+r_info[quests[pos].type].name);
 		s_printf("%s won the %s quest\n", p_ptr->name, r_name+r_info[quests[pos].type].name);
 		/*
@@ -5525,7 +5535,14 @@ void kill_quest(int Ind){
 		unique_quark = quark_add(temp);
 		great = magik(50 + p_ptr->lev * 2);
 //		if (great && p_ptr->lev >= 30) verygreat = magik((p_ptr->lev - 25) * 4);
-		if (great && p_ptr->lev >= 25) verygreat = magik(r_info[quests[pos].type].level - 5);
+//		if (great && p_ptr->lev >= 25) verygreat = magik(r_info[quests[pos].type].level - 5);
+//		if (great && p_ptr->lev >= 25) verygreat = magik(r_info[quests[pos].type].level - (5 - (p_ptr->lev / 5)));
+//		if (great) verygreat = magik(r_info[quests[pos].type].level + (p_ptr->lev / 2) - 15);
+//		if (great) verygreat = magik(((r_info[quests[pos].type].level * 2) + (p_ptr->lev * 4)) / 5);
+//		avg /= 2; avg = 540 / (58 - avg) + 20; /* same as exp calculation ;) */
+//		avg /= 2; avg = 540 / (58 - avg) + 20; /* same as exp calculation ;) */
+		avg /= 2; avg = 540 / (57 - avg) + 5; /* same as exp calculation ;) phew, Heureka.. */
+		if (great) verygreat = magik(avg);
 		acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, great, verygreat, !p_ptr->total_winner);
 		unique_quark = 0;
 	}

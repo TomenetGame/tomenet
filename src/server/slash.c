@@ -308,12 +308,19 @@ void do_slash_cmd(int Ind, char *message)
 	int i = 0;
 	int k = 0, tk = 0;
 	player_type *p_ptr = Players[Ind];
- 	char *colon, *token[9], message2[80];
+ 	char *colon, *token[9], message2[80], message3[80];
 	worldpos wp;
 	bool admin = is_admin(p_ptr);
 
 	strcpy(message2, message);
 	wpcopy(&wp, &p_ptr->wpos);
+
+	/* message3 contains all tokens but not the command: */
+	for (i = 0; i < strlen(message); i++)
+		if (message[i] == ' ') {
+			strcpy(message3, message + i + 1);
+			break;
+		}
 
 	/* Look for a player's name followed by a colon */
 	colon = strchr(message, ' ');
@@ -404,6 +411,35 @@ void do_slash_cmd(int Ind, char *message)
 			    toggle_afk(Ind, message2 + 5);
 			else
 			    toggle_afk(Ind, "");
+			return;
+		}
+
+		else if (prefix(message, "/page"))
+		{
+			int p;
+			if(!tk) {
+				msg_print(Ind, "\377oUsage: /page <playername>");
+				msg_print(Ind, "\377oAllows you to send a 'beep' sound to someone who is currently afk.");
+				return;
+			}
+			p = name_lookup_loose(Ind, message3, FALSE);
+			if (!p || (Players[Ind]->admin_dm && cfg.secret_dungeon_master && !is_admin(Players[Ind]))) {
+				msg_format(Ind, "\377yPlayer %s not online.", message3);
+				return;
+			}
+			if (!Players[p]->afk) {
+				msg_format(Ind, "\377yPlayer %s is not afk.", message3);
+				return;
+			}
+#if 0 /* no need to tell him, same as for chat messages.. */
+			if (check_ignore(p, Ind)) {
+				msg_format(Ind, "\377yThat player is currently ignoring you.");
+				return;
+			}
+#endif
+			if (!check_ignore(p, Ind)) Players[p]->paging = 3; /* Play 3 beeps quickly */
+			msg_format(Ind, "\377yPaged %s.", message3);
+			msg_format(p, "\377y%s is paging you.", Players[Ind]->name);
 			return;
 		}
 
@@ -1413,11 +1449,11 @@ void do_slash_cmd(int Ind, char *message)
 		{
 			int i, notes = 0, found_note=MAX_NOTES, j = 0;
 			bool colon = FALSE;
-			char tname[80];
+			char tname[80]; /* target's account name */
 			if (tk < 1)	/* Explain command usage */
 			{
-				msg_print(Ind, "\377oUsage: /note <player>[:<text>]  --  Example: /note El Hazard:Hiho!");
-				msg_print(Ind, "\377oNot specifiying any text will remove pending notes to that player.");
+				msg_print(Ind, "\377oUsage: /note <player-account>[:<text>]  --  Example: /note El Hazard:Hiho!");
+				msg_print(Ind, "\377oNot specifiying any text will remove pending notes to that account.");
 				msg_print(Ind, "\377oTo clear all pending notes of yours, type: /note *");
 				return;
 			}
@@ -1487,7 +1523,7 @@ void do_slash_cmd(int Ind, char *message)
 			strcpy(priv_note_sender[found_note], p_ptr->name);
 			strcpy(priv_note_target[found_note], tname);
 			strcpy(priv_note[found_note], message2 + j + 1);
-			msg_format(Ind, "\377yNote %s to %s has been stored.", priv_note[found_note], priv_note_target[found_note]);
+			msg_format(Ind, "\377yNote for account '%s' has been stored.", priv_note_target[found_note]);
 			return;
 		}
 
@@ -1585,11 +1621,13 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/val")){
 				if(!tk) return;
-				do{
+				msg_format(Ind, "\377GValidating %s", message3);
+				validate(message3);
+/*				do{
 					msg_format(Ind, "\377GValidating %s", token[tk]);
 					validate(token[tk]);
 				}while(--tk);
-				return;
+*/				return;
 			}
 			else if (prefix(message, "/ban"))
 			{
@@ -1923,6 +1961,7 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				object_type	forge;
 				object_type	*o_ptr = &forge;
+				WIPE(o_ptr, object_type);
 
 				if (tk < 1 || !k)
 				{
@@ -1959,7 +1998,7 @@ void do_slash_cmd(int Ind, char *message)
 					o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 				}
 
-				apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
+				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, TRUE);
 				if (tk > 3){
 					o_ptr->discount = atoi(token[4]);
 				}

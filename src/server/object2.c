@@ -1376,6 +1376,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 
 			if (value && !star) value = (object_value_base(Ind, o_ptr) << 3) + 10000;
 			if (value > a_ptr->cost) value = a_ptr->cost;
+			if (star) value += flag_cost(o_ptr, o_ptr->pval);
 		}
 		else
 		{	
@@ -1527,7 +1528,16 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 		case TV_TRAPKIT:
 		{
 			/* they should be of bpval.. hopefully. */
-			int pval = o_ptr->bpval;
+			int pval = o_ptr->bpval, kpval = k_ptr->pval;
+			/* If the bpval has been set to the k_info pval,
+			   don't increase the item's value for this
+			   granted pval, since it's already included in
+			   the k_info price! */
+			if (pval >= kpval) {
+				pval -= kpval;
+				kpval = 0;
+			}
+
 //			int boost = 1 << pval;
 
 			/* Hack -- Negative "pval" is always bad */
@@ -1543,6 +1553,14 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 				{
 					pval = o_ptr->pval;
 					continue;
+				}
+				/* If the k_info pval became the object's
+				   pval instead of bpval (shouldn't happen)
+				   then take care of it and again don't
+				   increase the value for this granted pval: */
+				else if (pval >= kpval) {
+					pval -= kpval;
+					kpval = 0;
 				}
 
 				/* Give credit for stat bonuses */
@@ -5216,6 +5234,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	/* In case we get an ego item, check "verygreat" flag and retry a few times if needed */
 if (verygreat) s_printf("verygreat apply_magic:\n");
 	object_copy(o_ptr_bak, o_ptr);
+	depth_value = (depth < 60 ? depth * 150 : 9000) + randint(depth) * 100;
 	for (i = 0; i < (((o_ptr->tval != TV_SHOT) && (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT)) ? 2 + depth / 7 : 4 + depth / 5); i++) {
 	object_copy(o_ptr, o_ptr_bak);
 
@@ -5534,7 +5553,6 @@ if (verygreat) s_printf("verygreat apply_magic:\n");
 	/* 5000+objval to exclude brands/slays */
 //NO:	if (!verygreat || object_value_real(0, o_ptr) >= 7000) break; <- arrows (+36,+42) -> lol. - C. Blue
 	if (!verygreat) break;
-	depth_value = (depth < 60 ? depth * 150 : 9000) + randint(depth) * 100;
 	if (o_ptr->name2) ego_value1 = e_info[o_ptr->name2].cost; else ego_value1 = 0;
 	if (o_ptr->name2b) ego_value2 = e_info[o_ptr->name2b].cost; else ego_value2 = 0;
 	if ((o_ptr->tval != TV_SHOT) && (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT)) {
@@ -5727,8 +5745,17 @@ void determine_level_req(int level, object_type *o_ptr)
 
 	/* '17/72' == 0.2361... < 1/4 :) */
 	base >>= 1;
-	i = level - base;
-	j = (i * (i > 0 ? 3 : 3) / 12  + base) * rand_range(95,105) / 100;/* was 1:2 / 4 */
+
+	/* Hack: level -9999 means: use unmodified base value and don't use randomizer: */
+	if (level == -9999) {
+		i = 0;
+		j = base;
+	} else {
+		i = level - base;
+		j = (i * (i > 0 ? 3 : 3) / 12  + base) * rand_range(95,105) / 100;/* was 1:2 / 4 */
+	}
+
+	/* Level must be between 1 and 100 inclusively */
 	o_ptr->level = (j < 100) ? ((j > 1) ? j : 1) : 100;
 
 	/* Anti-cheeze hack =p */

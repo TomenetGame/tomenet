@@ -6441,7 +6441,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 		/* If it's a support spell (friendly), remember the caster's level for highest_encounter anti-cheeze
 		   to prevent him from getting exp until the supporting effects surely have run out: */
-		} else {
+		} else if (typ != GF_OLD_POLY) {
 			if (p_ptr->supported_by < Players[0 - who]->lev)
 				p_ptr->supported_by = Players[0 - who]->lev;
 			p_ptr->support_timer = cfg.spell_stack_limit ? cfg.spell_stack_limit : 200;
@@ -8246,6 +8246,9 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			
 				/* Hostile players hit each other */
 		                if (check_hostile(0 - who, 0 - c_ptr->m_idx)) break;
+
+				/* Always affect players (regardless of hostility/party state): */
+				if (typ == GF_OLD_POLY) break;
 
 #if 0				/* neutral people hit each other ..NOT! - C. Blue FF$$$ */
 				if (!Players[0 - who]->party) break;

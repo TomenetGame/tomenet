@@ -9046,9 +9046,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 								if (cfg.dungeon_shop_type == 999){
 									if (build_special_store == 1) {
 										switch(rand_int(3)){
-										case 1:cs_ptr->sc.omni = 42;break; /*Rare Jewelry Shop */
-										case 2:cs_ptr->sc.omni = 45;break; /*Rare Footwear Shop */
-										default:cs_ptr->sc.omni = STORE_SECRETBM;break; /*The Secret Black Market */
+										case 1:cs_ptr->sc.omni = STORE_JEWELX;break; /*Rare Jewelry Shop */
+										case 2:cs_ptr->sc.omni = STORE_SHOESX;break; /*Rare Footwear Shop */
+										default:cs_ptr->sc.omni = STORE_BLACKS;break; /*The Secret Black Market */
 										}
 									} else {
 										cs_ptr->sc.omni = STORE_HERBALIST;

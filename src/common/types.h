@@ -773,10 +773,10 @@ struct object_type
 	byte sval;			/* Item sub-type (from kind) */
 
 	s32b bpval;			/* Base item extra-parameter */
-	s32b pval;			/* Extra enchantment item extra-parameter */
-#if 0
-	s16b pval2;			/* Item extra-parameter for some special items*/
-	s32b pval3;			/* Item extra-parameter for some special items*/
+	s32b pval;			/* Extra enchantment item extra-parameter (name1 or name2) */
+#if 1
+	s16b pval2;			/* Item extra-parameter for some special items (name2b) */
+	s32b pval3;			/* Item extra-parameter for some special items (unused) */
 #endif
 
 	byte discount;		/* Discount (if any) */
@@ -2396,6 +2396,9 @@ struct player_type
 	
 	/* automatic (scripted) transport sequences */
 	byte auto_transport;
+	
+	/* Player being paged by others? (Beep counter) */
+	byte paging;
 };
 
 /* For Monk martial arts */

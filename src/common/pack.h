@@ -162,6 +162,9 @@
 /* its a cleanup, not a hack */
 #define PKT_SKILL_PTS   	160
 
+/* Page someone who is afk */
+#define PKT_BEEP		161
+
 
 /* HACK -- used for SKILL_INIT */
 #define PKT_SKILL_INIT_NAME     0

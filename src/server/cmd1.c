@@ -2893,6 +2893,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
 				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100)));
+
+				/* Penalty for could-2H when having a shield */
+/* isn't that already in xtra1.c included, by reducing to_d_... and to_h_... boni?! */
+//				if ((f4 & TR4_COULD2H) && p_ptr->inventory[INVEN_ARM].k_idx) k /= 2;
 			}
 			/* handle bare fists/bat/ghost */
 			else
@@ -2914,10 +2918,6 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				else
 					drain_result = 0;
 			}
-
-			/* Penalty for could-2H when having a shield */
-			if ((f4 & TR4_COULD2H) &&
-					p_ptr->inventory[INVEN_ARM].k_idx) k /= 2;
 
 			/* No negative damage */
 			if (k < 0) k = 0;

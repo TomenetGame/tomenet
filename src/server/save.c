@@ -677,6 +677,8 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->sval);
 	wr_s32b(o_ptr->bpval);
 	wr_s32b(o_ptr->pval);
+	wr_s32b(o_ptr->pval2);
+	wr_s32b(o_ptr->pval3);
 
 	wr_byte(o_ptr->discount);
 	wr_byte(o_ptr->number);

@@ -344,6 +344,10 @@ if (o_ptr->tval == 23 && o_ptr->sval == 14) {o_ptr->tval = 22; o_ptr->sval = 9;}
 	/* Base pval */
 	rd_s32b(&o_ptr->bpval);
 	rd_s32b(&o_ptr->pval);
+        if (!older_than(4, 2, 3)) {
+		rd_s32b(&o_ptr->pval2);
+		rd_s32b(&o_ptr->pval3);
+	}
 
 	rd_byte(&o_ptr->discount);
 	rd_byte(&o_ptr->number);

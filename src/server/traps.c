@@ -4115,10 +4115,10 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 			delete_monster(&wpos, y, x, TRUE);
 			return(TRUE);
 		case SV_SCROLL_ACQUIREMENT:
-                        acquirement(&wpos, y, x, 1, TRUE, TRUE, !Players[who]->total_winner);
+                        acquirement(&wpos, y, x, 1, TRUE, (wpos.wz != 0), !Players[who]->total_winner);
 			return (FALSE);
 		case SV_SCROLL_STAR_ACQUIREMENT:
-                        acquirement(&wpos, y, x, randint(2) + 1, TRUE, TRUE, !Players[who]->total_winner);
+                        acquirement(&wpos, y, x, randint(2) + 1, TRUE, (wpos.wz != 0), !Players[who]->total_winner);
 			return (FALSE);
 		case SV_SCROLL_REMOVE_CURSE:
 			typ = GF_DISP_EVIL;
