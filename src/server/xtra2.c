@@ -4644,7 +4644,7 @@ bool target_set(int Ind, int dir)
 
 			/* Skip monsters not on this depth */
 #ifdef NEW_DUNGEON
-			if (inarea(&m_ptr->wpos, wpos)) continue;
+			if (!inarea(&m_ptr->wpos, wpos)) continue;
 #else
 			if (m_ptr->dun_depth != Depth) continue;
 #endif

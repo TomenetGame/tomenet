@@ -3489,7 +3489,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 	{
 		msg_format(Ind, "Please don't litter the %s.",
 #ifdef NEW_DUNGEON
-			istown(wpos) ? "town":(wpos->wz==0? "dungeon":"Nature"));
+			istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));
 #else
 			Depth != 0 ? (Depth > 0 ? "dungeon" : "Nature") : "town");
 #endif
