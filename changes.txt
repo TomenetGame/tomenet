@@ -77,9 +77,10 @@ Change list for PernMangband
 - Cleaned up various code and added protos for some funcs
 
 25/07/2001 (darkgod)
-- Furry, Dig, Spin warrior technics
+- Fury, Dig, Spin warrior technics
 - Fixed DSM being dopepd without unpolying
 - Fixed morphing and not lossing eq wit eq is inscribed !
+- /me works in chat
 
 26/07/2001 (evileye)
 - Fixed password prompt in client
@@ -89,4 +90,3 @@ Change list for PernMangband
 
 27/07/2001 (evileye)
 - Fixed double experience bug on priests and sorcerors.
-
