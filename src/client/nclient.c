@@ -154,6 +154,12 @@ int Receive_file(void){
 					sprintf(outbuf, "\377oReceiving updated file %s [%d]", fname, fnum);
 					c_msg_print(outbuf);
 				}
+				else{
+					if(errno==EACCES){
+						sprintf(outbuf, "\377rNo access to update files");
+						c_msg_print(outbuf);
+					}
+				}
 				break;
 			case PKT_FILE_DATA:
 				Packet_scanf(&rbuf, "%hd", &len);
@@ -164,6 +170,12 @@ int Receive_file(void){
 				if(x){
 					sprintf(outbuf, "\377gReceived file %d", fnum);
 					c_msg_print(outbuf);
+				}
+				else{
+					if(errno==EACCES){
+						sprintf(outbuf, "\377rNo access to lib directory!", errno);
+						c_msg_print(outbuf);
+					}
 				}
 				break;
 			case PKT_FILE_CHECK:
