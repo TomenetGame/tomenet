@@ -33,7 +33,23 @@ void world_comm(int fd, int arg){
 	int x, i;
 	struct wpacket *wpk;
 	x=recv(fd, buffer+bpos, 1024-bpos, 0);
-	if(x>=sizeof(struct wpacket)){
+	if(x==0){
+		struct rplist *c_pl, *n_pl;
+		/* This happens... we are screwed (fortunately SIGPIPE isnt handled) */
+		s_printf("pfft. world server closed\n");
+		remove_input(WorldSocket);
+		close(WorldSocket);	/* ;) this'll fix it... */
+		/* Clear all the world players quietly */
+		c_pl=rpmlist;
+		while(c_pl){
+			n_pl=c_pl->next;
+			free(c_pl);
+			c_pl=n_pl;
+		}
+		rpmlist=NULL;
+		WorldSocket=-1;
+	}
+	while(x>=sizeof(struct wpacket)){
 		wpk=(struct wpacket*)(buffer+bpos);
 		switch(wpk->type){
 			case WP_CHAT:
@@ -75,22 +91,13 @@ void world_comm(int fd, int arg){
 			default:
 				s_printf("unknown packet from world: %d\n", wpk->type);
 		}
+		/* update buffer position and remaining data size */
+		bpos+=sizeof(struct wpacket);
+		x-=sizeof(struct wpacket);
 	}
-	if(x==0){
-		struct rplist *c_pl, *n_pl;
-		/* This happens... we are screwed (fortunately SIGPIPE isnt handled) */
-		s_printf("pfft. world server closed\n");
-		remove_input(WorldSocket);
-		close(WorldSocket);	/* ;) this'll fix it... */
-		/* Clear all the world players quietly */
-		c_pl=rpmlist;
-		while(c_pl){
-			n_pl=c_pl->next;
-			free(c_pl);
-			c_pl=n_pl;
-		}
-		rpmlist=NULL;
-		WorldSocket=-1;
+	if(x==0) bpos=0;
+	else{
+		/* see how it goes.. really we should probably copy back */
 	}
 }
 
