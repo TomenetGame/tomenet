@@ -3,7 +3,7 @@
 # copy this file to your home directory, and edit as you need it.
 #
 # You can bypass the settings of this file by specifying '-i' option.
-# $ mangclient -i
+# $ tomenet -i
 
 # your name as a player
 nick Nowhereman
