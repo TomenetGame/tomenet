@@ -3143,8 +3143,8 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		34, 32, 30, 5, 30, 30, 60, 55,
-		10, 10, 10, 1, 15,  5, 30, 45,
+		34, 32, 30, 5, 30, 30, 50, 60,
+		10, 10, 10, 1, 15,  5, 20, 35,
                 6,  35,
                 {
                         {
