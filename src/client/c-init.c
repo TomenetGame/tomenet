@@ -126,22 +126,24 @@ void initialize_all_pref_files(void)
 
 
         /* Access the "race" pref file */
-        sprintf(buf, "%s.prf", race_title[race]);
-	buf[0] = tolower(buf[0]);
+//		sprintf(buf, "%s.prf", race_title[race]);
+		sprintf(buf, "%s.prf", race_info[race].title);
+		buf[0] = tolower(buf[0]);
 
         /* Process that file */
         process_pref_file(buf);
 
         /* Access the "class" pref file */
-        sprintf(buf, "%s.prf", class_title[class]);
-	buf[0] = tolower(buf[0]);
+//        sprintf(buf, "%s.prf", class_title[class]);
+		sprintf(buf, "%s.prf", race_info[class].title);
+		buf[0] = tolower(buf[0]);
 
         /* Process that file */
         process_pref_file(buf);
 
         /* Access the "character" pref file */
         sprintf(buf, "%s.prf", nick);
-	buf[0] = tolower(buf[0]);
+		buf[0] = tolower(buf[0]);
 
         /* Process that file */
         process_pref_file(buf);

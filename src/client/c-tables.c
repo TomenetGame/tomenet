@@ -1322,7 +1322,6 @@ s32b player_exp[PY_MAX_LEVEL] =
 	5000000L
 };
 
-#endif
 
 /*
  * Player Race Information:
@@ -1937,6 +1936,7 @@ player_class class_info[MAX_CLASS] =
 	},
 };
 
+#endif
 
 
 

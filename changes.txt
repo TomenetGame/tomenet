@@ -1151,8 +1151,9 @@ To find the latest change quickly, search ==== :)
 [C]- Chardump ability in the char screen
 
 25/06/2002 (Jir)
-- SKILL_SPELLRAD('Revelation')
-- netcode modification in progress.
+- SKILL_SPELLRAD('Revelation') (oh, sry DG, it's last one :)
+- race/class additions/deletions can be done without client update.
+[B] classname.prf file wasn't read correctly.
 
 
 
@@ -1160,6 +1161,20 @@ To find the latest change quickly, search ==== :)
 ** [C] stands for Client changes.
 ** [H] stands for Hack and rebalancement :)
 ** [P] stands for Porting from ToME.
+
+=============================================================================
+things to do before 4.0.0
+
+- make NO_TELE radius-based
+- implement guest-account
+- rebalance skill-points
+- adjust depth for ball-type trap
+- fix gfx
+- source-code cleanup
+- export configurable things to tomenet.cfg
+
+(multi-dungeon, multi-town, terrains, pets etc. are put off after 4.0.0 ...)
+
 
 =============================================================================
 concisely: what's hot now?
@@ -1232,8 +1247,7 @@ memo and questions:
   any resistances/abilities).
 
 ==== below this line are changes to be done in the future ====
-# pfft, it's now called 3.5.2 w/o any of them implemented??
-# k, let's slide the schedule off ..
+# probably after 4.0.0 :-/
 [minor ones]
 (3.5)
 - implement NO_MAP fully please!
@@ -1305,6 +1319,7 @@ memo and questions:
 - slash-commands should have info file (like sl_info.txt)
 - put CVS keyword($ID$) to every file.
 - remove the hack in client which swaps sval/xtra1 ;(
+- obsolete c-tables.c
 
 [speeding the server up]
 # tomenet.server never seems to take more than 10% of CPU time. why? (sched.c?)

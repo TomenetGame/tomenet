@@ -282,15 +282,19 @@ static int Init_setup(void)
 	}
 	
 	/* MEGAHACK -- copy race/class names */
+	/* XXX I know this ruins the meaning of Setup... sry	- Jir - */
 	for (i = 0; i < MAX_RACES; i++)
 	{
-		strncpy(&Setup.race_title[i], race_info[i].title, 12);
-		Setup.race_choice[i] = race_info[i].choice;
+//		strncpy(&Setup.race_title[i], race_info[i].title, 12);
+//		Setup.race_choice[i] = race_info[i].choice;
+		/* 1 for '\0', 4 for race_choice */
+		Setup.setup_size += strlen(race_info[i].title) + 1 + 4;
 	}
 
 	for (i = 0; i < MAX_CLASS; i++)
 	{
-		strncpy(&Setup.class_title[i], class_info[i].title, 12);
+//		strncpy(&Setup.class_title[i], class_info[i].title, 12);
+		Setup.setup_size += strlen(class_info[i].title) + 1;
 	}
 
 	return 0;
@@ -1193,8 +1197,8 @@ static int Handle_setup(int ind)
 
 	if (connp->setup == 0)
 	{
-		n = Packet_printf(&connp->c, "%ld%hd%c%c",
-			Setup.motd_len, Setup.frames_per_second, Setup.max_race, Setup.max_class);
+		n = Packet_printf(&connp->c, "%ld%hd%c%c%ld",
+			Setup.motd_len, Setup.frames_per_second, Setup.max_race, Setup.max_class, Setup.setup_size);
 
 		if (n <= 0)
 		{
@@ -1205,13 +1209,15 @@ static int Handle_setup(int ind)
         for (i = 0; i < MAX_RACES; i++)
         {
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
-			Packet_printf(&connp->c, "%s%ld", Setup.race_title[i], Setup.race_choice[i]);
+//			Packet_printf(&connp->c, "%s%ld", Setup.race_title[i], Setup.race_choice[i]);
+			Packet_printf(&connp->c, "%s%ld", race_info[i].title, race_info[i].choice);
         }
 
         for (i = 0; i < MAX_CLASS; i++)
         {
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
-			Packet_printf(&connp->c, "%s", Setup.class_title[i]);
+//			Packet_printf(&connp->c, "%s", Setup.class_title[i]);
+			Packet_printf(&connp->c, "%s", class_info[i].title);
         }
 
 		connp->setup = (char *) &Setup.motd[0] - (char *) &Setup;

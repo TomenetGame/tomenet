@@ -102,6 +102,7 @@ bool topline_icky;
 short screen_icky;
 bool party_mode;
 
+#if 0	// This should be gone for good		- Jir -
 cptr race_title[] = {
 	"Human", "Half-elf", "Elf", "Hobbit",
 	"Gnome", "Dwarf", "Half-Orc", "Half-Troll",
@@ -114,6 +115,10 @@ cptr class_title[] = {
 	"Ranger", "Paladin", "Sorceror", "Mimic",
 	"Unbeliever", "Archer", "Monk", "Telepath",
 	};
+#endif	// 0
+
+player_race *race_info;
+player_class *class_info;
 
 cptr ANGBAND_DIR;
 cptr ANGBAND_DIR_SCPT;

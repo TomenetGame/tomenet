@@ -129,11 +129,16 @@ static void Receive_init(void)
 // the whole thing could be replaced by one or two reads.  Why they decided
 // to do this using UDP, I'll never know.  -APD
 
+/*
+ * I haven't really figured out this function yet too;  however I'm perfectly
+ * sure I ruined what it used to do.  Please blame DG instead	- Jir -
+ */
 int Net_setup(void)
 {
-	int n, len, done = 0;
-	long todo = sizeof(setup_t);
-	char *ptr;
+	int i, n, len, done = 0;
+//	long todo = sizeof(setup_t);
+	long todo = 1;
+	char *ptr, str[20];
 
 	ptr = (char *) &Setup;
 
@@ -143,15 +148,17 @@ int Net_setup(void)
 			Sockbuf_advance(&cbuf, cbuf.ptr - cbuf.buf);
 
 		len = cbuf.len;
+#if 0
 		if (len > todo)
 			len = todo;
+#endif	// 0
 
 		if (len > 0)
 		{
 			if (done == 0)
 			{
-				n = Packet_scanf(&cbuf, "%ld%hd%c%c",
-					&Setup.motd_len, &Setup.frames_per_second, &Setup.max_race, &Setup.max_class);
+				n = Packet_scanf(&cbuf, "%ld%hd%c%c%ld",
+					&Setup.motd_len, &Setup.frames_per_second, &Setup.max_race, &Setup.max_class, &Setup.setup_size);
 				if (n <= 0)
 				{
 					errno = 0;
@@ -160,11 +167,17 @@ int Net_setup(void)
 				/* test -Jir- */
 				/* TODO: allocate the arrays after loading;
 				 * currently, we cannot handle race/class addition/deletion */
+
+				C_MAKE(race_info, Setup.max_race, player_race);
+				C_MAKE(class_info, Setup.max_class, player_class);
+
 				{
-					int i;
 					for (i = 0; i < Setup.max_race; i++)
 					{
-
+						Packet_scanf(&cbuf, "%s%ld", &str,
+								&race_info[i].choice);
+						race_info[i].title = string_make(str);
+#if 0
 						Packet_scanf(&cbuf, "%s%ld", &Setup.race_title[i],
 								&Setup.race_choice[i]);
 #if 0
@@ -173,19 +186,26 @@ int Net_setup(void)
 #endif	// 0
 						race_info[i].title = &Setup.race_title[i];
 						race_info[i].choice = Setup.race_choice[i];
+#endif	// 0
 					}
 
 					for (i = 0; i < Setup.max_class; i++)
 					{
+//						Packet_scanf(&cbuf, "%s", &class_info[i].title);
+						Packet_scanf(&cbuf, "%s", &str);
+						class_info[i].title = string_make(str);
+#if 0
 						//			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
 						Packet_scanf(&cbuf, "%s", &Setup.class_title[i]);
 //						printf("c %d: %s\n", i, Setup.class_title[i]);
 						class_info[i].title = &Setup.class_title[i];
+#endif	// 0
 					}
 				}
 
 				ptr = (char *) &Setup;
 				done = (char *) &Setup.motd[0] - ptr;
+//				done = Setup.setup_size - Setup.motd_len;
 				todo = Setup.motd_len;
 			}
 			else
@@ -196,6 +216,7 @@ int Net_setup(void)
 				todo -= len;
 			}
 		}
+
 		if (todo > 0)
 		{
 			if (rbuf.ptr != rbuf.buf)

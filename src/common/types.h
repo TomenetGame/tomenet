@@ -978,10 +978,12 @@ struct setup_t
 	s16b frames_per_second;
 	byte max_race;
 	byte max_class;
+#if 0
 	char race_title[MAX_RACES][12];	// "Unbeliever" (10)
 	s32b race_choice[MAX_RACES];	// player_race.choice
 	char class_title[MAX_CLASS][12];	// "DragonRider"(11)
 //	byte max_subclass;	// etc
+#endif	// 0
 	int motd_len;
 	int setup_size;
 	char motd[80 * 23];
