@@ -2417,7 +2417,7 @@ void cmd_master_aux_summon(void)
 			{
 				buf[2] = 'd';
 				buf[3] = c_get_quantity("Summon from which depth? ", 127);
-				if (!buf[3]) redo_hack = 1;
+				/* if (!buf[3]) redo_hack = 1; - Allow depth 0 hereby. */
 				buf[4] = 0; /* terminate the string */
 				break;
 			}
