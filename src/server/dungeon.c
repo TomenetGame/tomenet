@@ -797,6 +797,135 @@ static void process_command(void)
 #endif
 
 /*
+ * Handle items for auto-retaliation  - Jir -
+ * use_old_target is *strongly* recommended to actually make use of it.
+ */
+static bool retaliate_item(int Ind, int item, cptr inscription)
+{
+	player_type *p_ptr = Players[Ind];
+	int spell = 0;
+
+	if (item < 0) return FALSE;
+
+	/* 'Do nothing' inscription */
+	if (*inscription == 'x') return TRUE;
+
+	/* Fighter classes can use various items for this */
+	if ((p_ptr->pclass == CLASS_WARRIOR) ||
+		(p_ptr->pclass == CLASS_UNBELIEVER) ||
+		(p_ptr->pclass == CLASS_MONK))
+	{
+#if 0
+		/* item with {@O-} is used only when in danger */
+		if (*inscription == '-' && p_ptr->chp > p_ptr->mhp / 2) return FALSE;
+#endif
+
+		switch (p_ptr->inventory[item].tval)
+		{
+			/* non-directional ones */
+			case TV_SCROLL:
+			{
+				do_cmd_read_scroll(Ind, item);
+				return TRUE;
+			}
+
+			case TV_POTION:
+			{
+				do_cmd_quaff_potion(Ind, item);
+				return TRUE;
+			}
+
+			case TV_STAFF:
+			{
+				do_cmd_use_staff(Ind, item);
+				return TRUE;
+			}
+
+			/* ambiguous one */
+			/* basically using rod for retaliation is not so good idea :) */
+			case TV_ROD:
+			{
+				p_ptr->current_rod = item;
+				do_cmd_zap_rod(Ind, item);
+				return TRUE;
+			}
+
+			case TV_WAND:
+			{
+				do_cmd_aim_wand(Ind, item, 5);
+				return TRUE;
+			}
+		}
+	}
+
+	/* Spell to cast */
+	if (inscription != NULL)
+	{
+		spell = *inscription - 96 - 1;
+		if (spell < 0 || spell > 9) spell = 0;
+	}
+
+	switch (p_ptr->inventory[item].tval)
+	{
+		/* directional ones */
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		{
+			do_cmd_fire(Ind, 5, item);
+			return TRUE;
+		}
+
+		case TV_PSI_BOOK:
+		{
+			do_cmd_psi(Ind, item, spell);
+			return TRUE;
+		}
+
+		case TV_MAGIC_BOOK:
+		{
+			do_cmd_cast(Ind, item, spell);
+			return TRUE;
+		}
+
+		case TV_PRAYER_BOOK:
+		{
+			do_cmd_pray(Ind, item, spell);
+			return TRUE;
+		}
+
+		case TV_SORCERY_BOOK:
+		{
+			do_cmd_sorc(Ind, item, spell);
+			return TRUE;
+		}
+
+		/* not likely :); */
+		case TV_FIGHT_BOOK:
+		{
+			do_cmd_fight(Ind, item, spell);
+			return TRUE;
+		}
+
+		case TV_SHADOW_BOOK:
+		{
+			do_cmd_shad(Ind, item, spell);
+			return TRUE;
+		}
+
+		case TV_HUNT_BOOK:
+		{
+			do_cmd_hunt(Ind, item, spell);
+			return TRUE;
+		}
+	}
+
+	/* If all fails, then melee */
+	return FALSE;
+}
+
+
+/*
  * Check for nearby players or monsters and attempt to do something useful.
  *
  * This function should only be called if the player is "lagging" and helpless
@@ -828,7 +957,7 @@ static int auto_retaliate(int Ind)
 	int d, i, tx, ty, target, prev_target, item = -1;
 //	char friends = 0;
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
-	monster_race *r_ptr, *r_ptr2;
+	monster_race *r_ptr = NULL, *r_ptr2;
 	unsigned char * inscription;
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
@@ -868,9 +997,17 @@ static int auto_retaliate(int Ind)
                 if (p_ptr->id == m_ptr->owner) continue;
 
 			/* Figure out if this is the best target so far */
-			if (m_target_ptr)
+			if (!m_target_ptr)
 			{
-				r_ptr2 = &r_ptr;
+				prev_m_target_ptr = m_target_ptr;
+				m_target_ptr = m_ptr;
+				r_ptr = race_inf(m_ptr);
+				prev_target = target;
+				target = i;
+			}
+			else
+			{
+				r_ptr2 = r_ptr;
 				r_ptr = race_inf(m_ptr);
 
 				/* If it is a Q, then make it our new target. */
@@ -927,13 +1064,6 @@ static int auto_retaliate(int Ind)
 						}
 					}
 				}
-			}
-			else
-			{
-				prev_m_target_ptr = m_target_ptr;
-				m_target_ptr = m_ptr;
-				prev_target = target;
-				target = i;
 			}
 		}
 		else
@@ -1278,134 +1408,6 @@ static int auto_retaliate(int Ind)
 
 	/* Nothing was attacked. */
 	return 0;
-}
-
-/*
- * Handle items for auto-retaliation  - Jir -
- * use_old_target is *strongly* recommended to actually make use of it.
- */
-static bool retaliate_item(int Ind, int item, cptr inscription)
-{
-	player_type *p_ptr = Players[Ind];
-	int spell = 0;
-
-	if (item < 0) return FALSE;
-
-	/* 'Do nothing' inscription */
-	if (*inscription == 'x') return TRUE;
-
-	/* Fighter classes can use various items for this */
-	if ((p_ptr->pclass == CLASS_WARRIOR) ||
-		(p_ptr->pclass == CLASS_UNBELIEVER) ||
-		(p_ptr->pclass == CLASS_MONK))
-	{
-#if 0
-		/* item with {@O-} is used only when in danger */
-		if (*inscription == '-' && p_ptr->chp > p_ptr->mhp / 2) return FALSE;
-#endif
-
-		switch (p_ptr->inventory[item].tval)
-		{
-			/* non-directional ones */
-			case TV_SCROLL:
-			{
-				do_cmd_read_scroll(Ind, item);
-				return TRUE;
-			}
-
-			case TV_POTION:
-			{
-				do_cmd_quaff_potion(Ind, item);
-				return TRUE;
-			}
-
-			case TV_STAFF:
-			{
-				do_cmd_use_staff(Ind, item);
-				return TRUE;
-			}
-
-			/* ambiguous one */
-			/* basically using rod for retaliation is not so good idea :) */
-			case TV_ROD:
-			{
-				p_ptr->current_rod = item;
-				do_cmd_zap_rod(Ind, item);
-				return TRUE;
-			}
-
-			case TV_WAND:
-			{
-				do_cmd_aim_wand(Ind, item, 5);
-				return TRUE;
-			}
-		}
-	}
-
-	/* Spell to cast */
-	if (inscription != NULL)
-	{
-		spell = *inscription - 96 - 1;
-		if (spell < 0 || spell > 9) spell = 0;
-	}
-
-	switch (p_ptr->inventory[item].tval)
-	{
-		/* directional ones */
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		{
-			do_cmd_fire(Ind, 5, item);
-			return TRUE;
-		}
-
-		case TV_PSI_BOOK:
-		{
-			do_cmd_psi(Ind, item, spell);
-			return TRUE;
-		}
-
-		case TV_MAGIC_BOOK:
-		{
-			do_cmd_cast(Ind, item, spell);
-			return TRUE;
-		}
-
-		case TV_PRAYER_BOOK:
-		{
-			do_cmd_pray(Ind, item, spell);
-			return TRUE;
-		}
-
-		case TV_SORCERY_BOOK:
-		{
-			do_cmd_sorc(Ind, item, spell);
-			return TRUE;
-		}
-
-		/* not likely :); */
-		case TV_FIGHT_BOOK:
-		{
-			do_cmd_fight(Ind, item, spell);
-			return TRUE;
-		}
-
-		case TV_SHADOW_BOOK:
-		{
-			do_cmd_shad(Ind, item, spell);
-			return TRUE;
-		}
-
-		case TV_HUNT_BOOK:
-		{
-			do_cmd_hunt(Ind, item, spell);
-			return TRUE;
-		}
-	}
-
-	/* If all fails, then melee */
-	return FALSE;
 }
 
 /*
@@ -3238,6 +3240,41 @@ void dungeon(void)
 
 		/* Make sure the server doesn't think the player is in a store */
 		p_ptr->store_num = -1;
+
+		/* Hack -- artifacts leave the queen/king */
+//		if (!p_ptr->admin_dm && !p_ptr->admin_wiz && player_is_king(Ind))
+		if (cfg.kings_etiquette && p_ptr->total_winner &&
+			!p_ptr->admin_dm && !p_ptr->admin_wiz)
+		{
+			int j;
+			object_type *o_ptr;
+			char		o_name[160];
+
+			for (j = 0; j < INVEN_TOTAL; j++)
+			{
+				o_ptr = &p_ptr->inventory[j];
+				if (!o_ptr->k_idx || !true_artifact_p(o_ptr)) continue;
+
+				if (strstr((a_name + a_info[o_ptr->name1].name),"Grond") ||
+					strstr((a_name + a_info[o_ptr->name1].name),"Morgoth"))
+					continue;
+
+				/* Describe the object */
+				object_desc(i, o_name, o_ptr, TRUE, 0);
+
+				/* Message */
+				msg_format(i, "\377y%s bids farewell to you...", o_name);
+				a_info[o_ptr->name1].cur_num = 0;
+				a_info[o_ptr->name1].known = FALSE;
+
+				/* Eliminate the item  */
+				inven_item_increase(i, j, -99);
+				inven_item_describe(i, j);
+				inven_item_optimize(i, j);
+
+				j--;
+			}
+		}
 
 		/* Somebody has entered an ungenerated level */
 #ifdef NEW_DUNGEON

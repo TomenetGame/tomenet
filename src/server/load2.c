@@ -519,6 +519,7 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&o_ptr->sval);
 
 	/* Base pval */
+#if 0	// please don't delete it for now - Jir
 	if (!older_than(0,7,0))
 		rd_s32b(&o_ptr->bpval);
 	else o_ptr->bpval = 0;
@@ -529,6 +530,10 @@ static void rd_item(object_type *o_ptr)
 		rd_s16b(&o_ptr->pval);
 	}
 	else	rd_s32b(&o_ptr->pval);
+#else
+	rd_s32b(&o_ptr->bpval);
+	rd_s32b(&o_ptr->pval);
+#endif	// 0
 
 	rd_byte(&o_ptr->discount);
 	rd_byte(&o_ptr->number);
@@ -709,7 +714,7 @@ static void rd_trap(trap_type *t_ptr)
 #else
 	rd_s32b(&t_ptr->dun_depth);
 #endif
-	rd_s16b(&t_ptr->t_idx);
+	rd_byte(&t_ptr->t_idx);
 	rd_byte(&t_ptr->iy);
 	rd_byte(&t_ptr->ix);
 	rd_byte(&t_ptr->found);
@@ -804,7 +809,8 @@ static void rd_monster(monster_type *m_ptr)
 	rd_s32b(&m_ptr->maxhp);
 	rd_s16b(&m_ptr->csleep);
 	rd_byte(&m_ptr->mspeed);
-	rd_byte(&m_ptr->energy);
+//	rd_byte(&m_ptr->energy);
+	rd_s16b(&m_ptr->energy);
 	rd_byte(&m_ptr->stunned);
 	rd_byte(&m_ptr->confused);
 	rd_byte(&m_ptr->monfear);
@@ -1330,7 +1336,7 @@ static bool rd_extra(int Ind)
 	}
 
 	/* Special Race/Class info */
-	rd_byte(&p_ptr->hitdie);
+#if 0
 	if (!older_than(3, 0, 9))
 	{
 		rd_s16b(&p_ptr->expfact);
@@ -1339,6 +1345,9 @@ static bool rd_extra(int Ind)
 	{
 		rd_byte(&p_ptr->expfact);
 	}
+#endif
+	rd_byte(&p_ptr->hitdie);
+	rd_s16b(&p_ptr->expfact);
 
 	/* Age/Height/Weight */
 	rd_s16b(&p_ptr->age);
@@ -1535,10 +1544,11 @@ static bool rd_extra(int Ind)
 		/* Incompatible save files */
 		if (tmp16u > MAX_R_IDX)
 		{
-			note(format("Too many (%u) monster races!", tmp16u));
+//			note(format("Too many (%u) monster races!", tmp16u));
+			s_printf("Too many (%u) monster races!", tmp16u);
 			return (22);
 		}
-
+#if 0
 		if (older_than(3, 0, 5))
 		{
 			for (i = 0; i < tmp16u; i++) rd_byte(&p_ptr->r_killed[i]);
@@ -1547,12 +1557,16 @@ static bool rd_extra(int Ind)
 		{
 			for (i = 0; i < tmp16u; i++) rd_s16b(&p_ptr->r_killed[i]);
 		}
+#endif
+			for (i = 0; i < tmp16u; i++) rd_s16b(&p_ptr->r_killed[i]);
 	}
+#if 0
 	else
 	{
 		int i;
 		for (i = 0; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = FALSE;
 	}
+#endif	// 0
 
 	/* Future use */
 	for (i = 0; i < 44; i++) rd_byte(&tmp8u);
@@ -1570,12 +1584,12 @@ static bool rd_extra(int Ind)
 	rd_u16b(&panic_save);
 	rd_u16b(&p_ptr->total_winner);
 #ifdef NEW_DUNGEON
-	rd_byte(&p_ptr->own1.wx);
-	rd_byte(&p_ptr->own1.wy);
-	rd_byte(&p_ptr->own1.wz);
-	rd_byte(&p_ptr->own2.wx);
-	rd_byte(&p_ptr->own2.wy);
-	rd_byte(&p_ptr->own2.wz);
+	rd_s16b(&p_ptr->own1.wx);
+	rd_s16b(&p_ptr->own1.wy);
+	rd_s16b(&p_ptr->own1.wz);
+	rd_s16b(&p_ptr->own2.wx);
+	rd_s16b(&p_ptr->own2.wy);
+	rd_s16b(&p_ptr->own2.wz);
 #else
 	if (!older_than(3,0,4))
 	{
@@ -1603,7 +1617,7 @@ static bool rd_extra(int Ind)
 	}
 	else
 	{
-		p_ptr->csane = 999999;
+		p_ptr->csane = 32767;
 		calc_sanity(Ind);
 //		p_ptr->csane = p_ptr->msane;
 		p_ptr->csane_frac = 0;
@@ -2765,7 +2779,7 @@ void new_rd_wild(){
 				rd_byte(&wptr->up_y);
 				rd_u16b(&d_ptr->id);
 				rd_u16b(&d_ptr->baselevel);
-				rd_u16b(&d_ptr->flags);
+				rd_u32b(&d_ptr->flags);
 				rd_byte(&d_ptr->maxdepth);
 				for(i=0;i<10;i++){
 					rd_byte(&d_ptr->r_char[i]);
@@ -2780,7 +2794,7 @@ void new_rd_wild(){
 				rd_byte(&wptr->dn_y);
 				rd_u16b(&d_ptr->id);
 				rd_u16b(&d_ptr->baselevel);
-				rd_u16b(&d_ptr->flags);
+				rd_u32b(&d_ptr->flags);
 				rd_byte(&d_ptr->maxdepth);
 				for(i=0;i<10;i++){
 					rd_byte(&d_ptr->r_char[i]);

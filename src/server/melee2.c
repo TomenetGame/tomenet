@@ -14,7 +14,7 @@
 
 #include "angband.h"
 
-#define STUPID_MONSTERS
+//#define STUPID_MONSTERS
 
 
 #ifdef DRS_SMART_OPTIONS

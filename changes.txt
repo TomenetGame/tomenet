@@ -599,3 +599,7 @@ Change list for PernMangband
 - Store can merge items in a reasonable way.
 - LIFE/MANA item flags implemented.
 - Fixed a bug that allowed multiple artifacts(like Galadriel).
+- chatline command: /ex(tra), /ref(resh)
+- slain a lot of warnings.
+- "Kings' etiquette" is coded in. (optional)
+

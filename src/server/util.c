@@ -2650,6 +2650,7 @@ void player_talk_aux(int Ind, cptr message)
 	{
 		int k = 0, tk = 0;
 		char *token[9];
+//		cptr token[9];
 		worldpos wp;
 
 		wpcopy(&wp, &p_ptr->wpos);
@@ -2746,7 +2747,8 @@ void player_talk_aux(int Ind, cptr message)
 						strcmp(quark_str(o_ptr->note), "broken") &&
 						strcmp(quark_str(o_ptr->note), "average") &&
 						strcmp(quark_str(o_ptr->note), "good") &&
-						strcmp(quark_str(o_ptr->note), "excellent"))
+//						strcmp(quark_str(o_ptr->note), "excellent"))
+						strcmp(quark_str(o_ptr->note), "worthless"))
 							continue;
 
 					if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr))
@@ -2788,7 +2790,8 @@ void player_talk_aux(int Ind, cptr message)
 			else if (prefix(message, "/untag"))
 			{
 				object_type		*o_ptr;
-				cptr	*ax = token[1] ? token[1] : "!k";
+//				cptr	*ax = token[1] ? token[1] : "!k";
+				cptr	ax = token[1] ? token[1] : "!k";
 
 				for(i = 0; i < INVEN_PACK; i++)
 				{
@@ -3112,7 +3115,8 @@ void player_talk_aux(int Ind, cptr message)
 				return;
 			}
 			/* Display extra information */
-			else if ((prefix(message, "/extra")) ||
+			else if (prefix(message, "/extra") ||
+					prefix(message, "/examine") ||
 					prefix(message, "/ex"))
 			{
 				/* Insanity warning (better message needed!) */
@@ -3140,6 +3144,31 @@ void player_talk_aux(int Ind, cptr message)
 				return;
 			}
 
+			else if ((prefix(message, "/refresh")) ||
+					prefix(message, "/ref"))
+			{
+				/* Recalculate bonuses */
+				p_ptr->update |= (PU_BONUS);
+
+				/* Recalculate torch */
+				p_ptr->update |= (PU_TORCH);
+
+				/* Recalculate mana */
+				p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
+
+				/* Redraw */
+				p_ptr->redraw |= (PR_HP | PR_GOLD | PR_BASIC | PR_PLUSSES);
+
+				/* Notice */
+				p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_SPELL);
+
+				/* Anything more? :) */
+
+				return;
+			}
 
 			/*
 			 * Admin commands
@@ -3457,14 +3486,14 @@ void player_talk_aux(int Ind, cptr message)
 				}
 				else
 				{
-					msg_print(Ind, "Commands: afk bed cast dis dress ignore me tag untag;");
+					msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag untag;");
 					msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta trap unst wish");
 					return;
 				}
 			}
 			else
 			{
-				msg_print(Ind, "Commands: afk bed cast dis dress ignore me tag untag;");
+				msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag untag;");
 				msg_print(Ind, "  /quaff is also available for old client users :)");
 				msg_print(Ind, "  /dis \377rdestroys \377wevery uninscribed items in your inventory!");
 				return;

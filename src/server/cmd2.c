@@ -977,7 +977,8 @@ void do_cmd_open(int Ind, int dir)
 					struct dna_type *dna=c_ptr->special.ptr;
 					if(dna->owner){
 						char string[80];
-						char *name;
+//						char *name;
+						cptr name;
 						strcpy(string,"nobody.");
 						switch(dna->owner_type){
 							case OT_PLAYER:
@@ -4218,7 +4219,7 @@ void house_admin(int Ind, int dir, char *args){
 	struct dna_type *dna;
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return(FALSE);
+	if(!(zcave=getcave(wpos))) return;	//(FALSE);
 #endif
 
 	if(dir && args){

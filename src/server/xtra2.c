@@ -4080,7 +4080,7 @@ void resurrect_player(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	/* Hack -- the dungeon master can not ressurect */
-	if (p_ptr->admin_dm) return TRUE;
+	if (p_ptr->admin_dm) return;	// TRUE;
 
 	/* Reset ghost flag */
 	p_ptr->ghost = 0;
@@ -5029,7 +5029,7 @@ bool target_okay(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	/* Accept stationary targets */
-	if (p_ptr->target_who > MAX_M_IDX) return (TRUE);
+//	if (p_ptr->target_who > MAX_M_IDX) return (TRUE);
 
 	/* Check moving monsters */
 	if (p_ptr->target_who > 0)

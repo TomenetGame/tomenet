@@ -655,7 +655,7 @@ extern int find_player_name(char *name);
 extern void play_game(bool new_game);
 extern void shutdown_server(void);
 extern void dungeon(void);
-extern bool retaliate_item(int Ind, int item, cptr inscription);
+//extern bool retaliate_item(int Ind, int item, cptr inscription);
 extern void pack_overflow(int Ind);
 
 /* files.c */
@@ -1129,6 +1129,7 @@ extern void store_maint(store_type *st_ptr);
 extern void store_init(store_type *st_ptr);
 
 /* util.c */
+extern int name_lookup_loose(int Ind, cptr name, bool party);
 extern errr path_parse(char *buf, int max, cptr file);
 extern errr path_temp(char *buf, int max);
 extern errr path_build(char *buf, int max, cptr path, cptr file);

@@ -3278,7 +3278,8 @@ void destroy_area(int Depth, int y1, int x1, int r, bool full)
 			/* Lose light and knowledge */
 			c_ptr->info &= ~(CAVE_GLOW);
 #ifdef NEW_DUNGEON
-			everyone_forget_spot(zcave, y, x);
+//			everyone_forget_spot(zcave, y, x);
+			everyone_forget_spot(wpos, y, x);
 #else
 			everyone_forget_spot(Depth, y, x);
 #endif

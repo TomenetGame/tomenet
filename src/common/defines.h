@@ -2350,7 +2350,8 @@ that keeps many algorithms happy.
 #define SV_RING_FLYING                  54
 #define SV_RING_WRAITH                  55
 #define SV_RING_ELEC                    56
-#define SV_RING_CRIT                    57
+// 57 - DURIN (arts)
+#define SV_RING_CRIT                    58
 
 /* The "sval" codes for TV_STAFF */
 #define SV_STAFF_DARKNESS                0
@@ -2788,7 +2789,7 @@ that keeps many algorithms happy.
 #define PU_BONUS	0x00000001L	/* Calculate bonuses */
 #define PU_TORCH	0x00000002L	/* Calculate torch radius */
 /* xxx (many) */
-#define PU_SANITY       0x00000008L     /* Calculate csan and msan */
+#define PU_SANITY       0x00000008L     /* Calculate csane and msane */
 #define PU_HP		0x00000010L	/* Calculate chp and mhp */
 #define PU_MANA		0x00000020L	/* Calculate csp and msp */
 #define PU_SPELLS	0x00000040L	/* Calculate spells */

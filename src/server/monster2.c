@@ -3137,6 +3137,9 @@ bool summon_specific_race(int Depth, int y1, int x1, int r_idx, unsigned char si
 	if(!(zcave=getcave(wpos))) return(FALSE);
 #endif
 
+	/* Handle failure */
+	if (!r_idx) return (FALSE);
+
 	/* for each monster we are summoning */
 
 	for (c = 0; c < size; c++)
@@ -3174,9 +3177,6 @@ bool summon_specific_race(int Depth, int y1, int x1, int r_idx, unsigned char si
 
 		/* Failure */
 		if (i == 20) return (FALSE);
-
-		/* Handle failure */
-		if (!r_idx) return (FALSE);
 
 		/* Attempt to place the monster (awake, don't allow groups) */
 #ifdef NEW_DUNGEON

@@ -4715,7 +4715,7 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		cave_type **zcave;
 		trap_type *t_ptr;
 		if((zcave=getcave(wpos))){
-			t_ptr = &zcave[p_ptr->py][p_ptr->px].special.ptr;
+			t_ptr = zcave[p_ptr->py][p_ptr->px].special.ptr;
 			sprintf(killer, t_name + t_info[t_ptr->t_idx].name);
 		}
 	}

@@ -758,7 +758,7 @@ static void wr_trap(trap_type *t_ptr)
 #else
 	wr_s32b(t_ptr->dun_depth);
 #endif
-	wr_s16b(t_ptr->t_idx);
+	wr_byte(t_ptr->t_idx);
 	wr_byte(t_ptr->iy);
 	wr_byte(t_ptr->ix);
 	wr_byte(t_ptr->found);
@@ -838,7 +838,8 @@ static void wr_monster(monster_type *m_ptr)
 	wr_s32b(m_ptr->maxhp);
 	wr_s16b(m_ptr->csleep);
 	wr_byte(m_ptr->mspeed);
-	wr_byte(m_ptr->energy);
+//	wr_byte(m_ptr->energy);
+	wr_s16b(m_ptr->energy);
 	wr_byte(m_ptr->stunned);
 	wr_byte(m_ptr->confused);
 	wr_byte(m_ptr->monfear);
@@ -1353,12 +1354,12 @@ static void wr_extra(int Ind)
 	wr_u16b(panic_save);
 	wr_u16b(p_ptr->total_winner);
 #ifdef NEW_DUNGEON
-	wr_byte(p_ptr->own1.wx);
-	wr_byte(p_ptr->own1.wy);
-	wr_byte(p_ptr->own1.wz);
-	wr_byte(p_ptr->own2.wx);
-	wr_byte(p_ptr->own2.wy);
-	wr_byte(p_ptr->own2.wz);
+	wr_s16b(p_ptr->own1.wx);
+	wr_s16b(p_ptr->own1.wy);
+	wr_s16b(p_ptr->own1.wz);
+	wr_s16b(p_ptr->own2.wx);
+	wr_s16b(p_ptr->own2.wy);
+	wr_s16b(p_ptr->own2.wz);
 #else
 	wr_s16b(p_ptr->own1);
 	wr_s16b(p_ptr->own2);
@@ -2512,7 +2513,7 @@ static void new_wr_wild(){
 				wr_byte(w_ptr->up_y);
 				wr_u16b(w_ptr->dungeon->id);
 				wr_u16b(w_ptr->dungeon->baselevel);
-				wr_u16b(w_ptr->dungeon->flags);
+				wr_u32b(w_ptr->dungeon->flags);
 				wr_byte(w_ptr->dungeon->maxdepth);
 				for(i=0;i<10;i++){
 					wr_byte(w_ptr->dungeon->r_char[i]);
@@ -2524,7 +2525,7 @@ static void new_wr_wild(){
 				wr_byte(w_ptr->dn_y);
 				wr_u16b(w_ptr->tower->id);
 				wr_u16b(w_ptr->tower->baselevel);
-				wr_u16b(w_ptr->tower->flags);
+				wr_u32b(w_ptr->tower->flags);
 				wr_byte(w_ptr->tower->maxdepth);
 				for(i=0;i<10;i++){
 					wr_byte(w_ptr->tower->r_char[i]);

@@ -1460,9 +1460,10 @@ void do_cmd_read_scroll(int Ind, int item)
 	{
 		case SV_SCROLL_HOUSE:
 		{
-			unsigned char *ins=quark_str(o_ptr->note);
+//			unsigned char *ins=quark_str(o_ptr->note);
+			cptr ins=quark_str(o_ptr->note);
 			bool floor=TRUE;
-                        msg_print(Ind, "This is a house creation scroll.");
+			msg_print(Ind, "This is a house creation scroll.");
 			ident = TRUE;
 			if(ins){
 				while((*ins!='\0')){
@@ -1476,33 +1477,37 @@ void do_cmd_read_scroll(int Ind, int item)
 					ins++;
 				}
 			}
-                        house_creation(Ind, floor);
+			house_creation(Ind, floor);
 			break;
 		}
-                case SV_SCROLL_GOLEM:
-	        {	    
-                        msg_print(Ind, "This is a golem creation scroll.");
+
+		case SV_SCROLL_GOLEM:
+		{	    
+			msg_print(Ind, "This is a golem creation scroll.");
 			ident = TRUE;
-                        golem_creation(Ind, 1);
+			golem_creation(Ind, 1);
 			break;
-            	}
-	        case SV_SCROLL_BLOOD_BOND:
-	        {
-	    
-	    		msg_print(Ind, "This is a blood bond scroll.");
+		}
+
+		case SV_SCROLL_BLOOD_BOND:
+		{
+
+			msg_print(Ind, "This is a blood bond scroll.");
 			ident = TRUE;
 			blood_bond(Ind, o_ptr);
 			break;
-            	}
-	        case SV_SCROLL_ARTIFACT_CREATION:
-	        {
-	    
-	    		msg_print(Ind, "This is an artifact creation scroll.");
+		}
+
+		case SV_SCROLL_ARTIFACT_CREATION:
+		{
+
+			msg_print(Ind, "This is an artifact creation scroll.");
 			ident = TRUE;
 			(void)create_artifact(Ind);
 			used_up = FALSE;
 			break;
-            	}
+		}
+
 		case SV_SCROLL_DARKNESS:
 		{
 			if (unlite_area(Ind, 10, 3)) ident = TRUE;
