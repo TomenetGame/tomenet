@@ -129,6 +129,7 @@ void wproto(struct client *ccl){
 				if(ccl->authed && (ccl->authed>0 || secure.msgs)){
 					relay(wpk, ccl);
 				}
+				break;
 			default:
 				fprintf(stderr, "ignoring undefined packet %d\n", wpk->type);
 		}
