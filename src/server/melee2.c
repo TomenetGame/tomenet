@@ -3476,7 +3476,7 @@ static void process_monster(int Ind, int m_idx)
 		/* A monster is in the way */
 		if (do_move && c_ptr->m_idx > 0)
 		{
-                        monster_race *z_ptr = R_INFO(y_ptr);
+                        monster_race *z_ptr = race_inf(y_ptr);
 
 			/* Assume no movement */
 			do_move = FALSE;

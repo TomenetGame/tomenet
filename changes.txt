@@ -380,5 +380,5 @@ Change list for PernMangband
 
 07/12/2001 (Jir)
 - Trap Detection won't reveal all the traps.
-- Bugfixes for Ego monsters.
-- 8 new ego-monster types added.
+- Bugfixes for ego monsters.
+- Total of 22+2 ego-monster types.

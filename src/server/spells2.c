@@ -2930,7 +2930,7 @@ void destroy_area(int Depth, int y1, int x1, int r, bool full)
 			/* Delete the monster (if any) */
                         if (c_ptr->m_idx > 0)
                         {
-                                monster_race *r_ptr = R_INFO(&m_list[c_ptr->m_idx]);
+                                monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
                                 if (!(r_ptr->flags3 & RF3_IM_TELE)) delete_monster(Depth, y, x);
                                 else continue;
                         }
@@ -3424,7 +3424,7 @@ void wipe_spell(int Depth, int cy, int cx, int r)
 			/* Delete monsters */
                         if (c_ptr->m_idx > 0)
                         {
-                                monster_race *r_ptr = R_INFO(&m_list[c_ptr->m_idx]);
+                                monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
                                 if (!(r_ptr->flags3 & RF3_IM_TELE)) delete_monster(Depth, y, x);
                                 else continue;
                         }

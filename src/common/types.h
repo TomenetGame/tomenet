@@ -681,8 +681,8 @@ struct monster_ego
 	byte d_attr;			/* Default monster attribute */
 	char d_char;			/* Default monster character */
 
-        char r_char[5];                 /* Monster race allowed */
-        char nr_char[5];                /* Monster race not allowed */
+        char r_char[10];                 /* Monster race allowed */
+        char nr_char[10];                /* Monster race not allowed */
 };
 
 

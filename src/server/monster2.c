@@ -2804,7 +2804,7 @@ bool mego_ok(int r_idx, int ego)
         /* Need good race -- IF races are specified */
         if (re_ptr->r_char[0])
         {
-                for (i = 0; i < 5; i++)
+                for (i = 0; i < 10; i++)
                 {
                         if (r_ptr->d_char == re_ptr->r_char[i]) ok = TRUE;
                 }
@@ -2812,7 +2812,7 @@ bool mego_ok(int r_idx, int ego)
         }
         if (re_ptr->nr_char[0])
         {
-                for (i = 0; i < 5; i++)
+                for (i = 0; i < 10; i++)
                 {
                         if (r_ptr->d_char == re_ptr->nr_char[i]) return (FALSE);
                 }
@@ -2860,14 +2860,14 @@ int pick_ego_monster(int r_idx, int Level)
 				if ((re_ptr->mflags1 & RF1_FORCE_DEPTH) && (lvl > 1))
 				{
 					/* Cannot create */
-					return (FALSE);
+					continue;
 				}
 
                 /* Each ego types have a rarity */
                 if (rand_int(re_ptr->rarity)) continue;
 
 				/* (Remove me) */
-				s_printf("ego %d generated.\n", ego);
+				s_printf("ego %d(%s)(%s) is generated.\n", ego, re_name + re_ptr->name, r_name + r_info[r_idx].name);
 
                 /* We finanly got one ? GREAT */
                 return ego;

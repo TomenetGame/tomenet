@@ -1290,7 +1290,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 	monster_type	*m_ptr = &m_list[m_idx];
 
         monster_race    *r_ptr = race_inf(m_ptr);
-        monster_race    *tr_ptr = R_INFO(tm_ptr);
+        monster_race    *tr_ptr = race_inf(tm_ptr);
 
 	int			ap_cnt;
 

@@ -1758,7 +1758,7 @@ void do_cmd_look(int Ind, int dir)
 	}
 	else if (c_ptr->m_idx > 0)
 	{
-                monster_race *r_ptr = R_INFO(&m_list[c_ptr->m_idx]);
+                monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
 
 		/* Track health */
 		if (p_ptr->mon_vis[c_ptr->m_idx]) health_track(Ind, c_ptr->m_idx);

@@ -1028,6 +1028,7 @@ F:OPEN_DOOR | BASH_DOOR |
 F:EVIL | IM_POIS
 D:It a man-sized figure with the all too recognizable face of a kobold.
 
+# To be replaced with ego
 N:83:Skeleton kobold
 G:s:w
 I:110:5d8:20:26:40
@@ -1428,6 +1429,7 @@ F:IM_ACID | IM_POIS |
 F:NO_CONF | NO_SLEEP | NO_FEAR
 D:It is a strange growth on the dungeon floor.
 
+# To be replaced with ego
 N:117:Skeleton orc
 G:s:w
 I:110:10d9:20:36:40
@@ -2040,6 +2042,7 @@ F:EVIL | IM_POIS |
 F:NO_CONF | NO_SLEEP | NO_FEAR
 D:A whirlwind of sentient air.
 
+# To be replaced with ego(?)
 N:164:Skeleton human
 G:s:w
 I:110:10d9:20:30:30
@@ -4206,6 +4209,7 @@ S:HASTE | SLOW | CONF | SCARE | DARKNESS
 D:It is a dragon-like form wrapped in shadow.  Glowing red eyes shine out in
 D:the dark.
 
+# To be replaced with ego
 N:320:Skeleton troll
 G:s:w
 I:110:23d10:20:55:20
@@ -4464,6 +4468,7 @@ S:1_IN_8 |
 S:HOLD | SCARE | CAUSE_2 | DARKNESS
 D:It is a ghostly nightmare of a entity.
 
+# To be replaced with ego(?)
 N:338:Giant skeleton troll
 G:s:w
 I:110:52d10:20:50:20

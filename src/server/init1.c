@@ -2800,8 +2800,8 @@ errr init_re_info_txt(FILE *fp, char *buf)
                         blow_num = 0;
                         r_char_number = 0;
                         nr_char_number = 0;
-                        for (j = 0; j < 5; j++) re_ptr->r_char[j] = 0;
-                        for (j = 0; j < 5; j++) re_ptr->nr_char[j] = 0;
+                        for (j = 0; j < 10; j++) re_ptr->r_char[j] = 0;
+                        for (j = 0; j < 10; j++) re_ptr->nr_char[j] = 0;
                         for (j = 0; j < 4; j++)
                         {
                                 re_ptr->blow[j].method = 0;
@@ -2989,8 +2989,8 @@ errr init_re_info_txt(FILE *fp, char *buf)
                                 /* XXX XXX XXX Hack -- Read monster symbols */
                                 if (1 == sscanf(s, "R_CHAR_%c", &r_char))
                                 {
-                                        /* Limited to 5 races */
-                                        if(r_char_number >= 5) continue;
+                                        /* Limited to 5+5 races */
+                                        if(r_char_number >= 10) continue;
 
 					/* Extract a "frequency" */
                                         re_ptr->r_char[r_char_number++] = r_char;
@@ -3035,7 +3035,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
                                 if (1 == sscanf(s, "R_CHAR_%c", &r_char))
                                 {
                                         /* Limited to 5 races */
-                                        if(nr_char_number >= 5) continue;
+                                        if(nr_char_number >= 10) continue;
 
 					/* Extract a "frequency" */
                                         re_ptr->nr_char[nr_char_number++] = r_char;
