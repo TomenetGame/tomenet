@@ -455,7 +455,7 @@ static void process_world(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		x, y, i, j, new_depth, new_world_x, new_world_y;
+	int		x, y, i, j;
 
 	int		regen_amount, NumPlayers_old=NumPlayers;
 
@@ -475,13 +475,23 @@ static void process_world(int Ind)
 	/*** Handle the "town" (stores and sunshine) ***/
 
 	/* While in town or wilderness */
+#ifdef NEW_DUNGEON
+	if (p_ptr->wpos.wz==0)
+#else
 	if (p_ptr->dun_depth <= 0)
+#endif
 	{
 		/* Hack -- Daybreak/Nighfall in town */
 		if (!(turn % ((10L * TOWN_DAWN) / 2)))
 		{
-			int Depth = p_ptr->dun_depth;
 			bool dawn;
+#ifdef NEW_DUNGEON
+			struct worldpos *wpos=&p_ptr->wpos;
+			cave_type **zcave;
+			if(!(zcave=getcave(wpos))) return;
+#else
+			int Depth = p_ptr->dun_depth;
+#endif
 
 			/* Check for dawn */
 			dawn = (!(turn % (10L * TOWN_DAWN)));
@@ -498,14 +508,22 @@ static void process_world(int Ind)
 					for (x = 0; x < MAX_WID; x++)
 					{
 						/* Get the cave grid */
+#ifdef NEW_DUNGEON
+						c_ptr = &zcave[y][x];
+#else
 						c_ptr = &cave[Depth][y][x];
+#endif
 						w_ptr = &p_ptr->cave_flag[y][x];
 
 						/* Assume lit */
 						c_ptr->info |= CAVE_GLOW;
 
 						/* Hack -- Memorize lit grids if allowed */
+#ifdef NEW_DUNGEON
+						if ((istown(wpos)) && (p_ptr->view_perma_grids)) *w_ptr |= CAVE_MARK;
+#else
 						if ((!Depth) && (p_ptr->view_perma_grids)) *w_ptr |= CAVE_MARK;
+#endif
 
 						/* Hack -- Notice spot */
 						note_spot(Ind, y, x);						
@@ -525,7 +543,11 @@ static void process_world(int Ind)
 					for (x = 0; x < MAX_WID; x++)
 					{
 						/*  Get the cave grid */
+#ifdef NEW_DUNGEON
+						c_ptr = &zcave[y][x];
+#else
 						c_ptr = &cave[Depth][y][x];
+#endif
 						w_ptr = &p_ptr->cave_flag[y][x];
 
 						/*  Darken "boring" features */
@@ -570,19 +592,29 @@ static void process_world(int Ind)
 	 */
 
 	/* Check for creature generation */
+#ifdef NEW_DUNGEON
+	if ((rand_int(MAX_M_ALLOC_CHANCE) == 0) && ((!istown(&p_ptr->wpos)) || (rand_int(10)<5)))
+#else
 	if ((rand_int(MAX_M_ALLOC_CHANCE) == 0) && ((p_ptr->dun_depth !=0) || (rand_int(10)<5)))
+#endif
 	{
 		/* Set the monster generation depth */
+#ifdef NEW_DUNGEON
+		monster_level = getlevel(&p_ptr->wpos);
+		if (p_ptr->wpos.wz)
+			(void)alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
+		else wild_add_monster(&p_ptr->wpos);
+	}
+#else
 		if (p_ptr->dun_depth >= 0)		
 			monster_level = p_ptr->dun_depth;
-		
 		else monster_level = 2 + (wild_info[p_ptr->dun_depth].radius / 2);
-
-		/* Make a new monster */
 		if (p_ptr->dun_depth >= 0)
 			(void)alloc_monster(p_ptr->dun_depth, MAX_SIGHT + 5, FALSE);
+		/* Make a new monster */
 		else wild_add_monster(p_ptr->dun_depth);
 	}
+#endif
 }
 
 
@@ -754,6 +786,10 @@ static int auto_retaliate(int Ind)
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
 	monster_race *r_ptr, *r_ptr2;
 	unsigned char * inscription;
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+#endif
 
 	if (p_ptr->new_level_flag) return 0;
 
@@ -764,9 +800,17 @@ static int auto_retaliate(int Ind)
 		tx = p_ptr->px + ddx[d];
 		ty = p_ptr->py + ddy[d];
 
+#ifdef NEW_DUNGEON
+		if (!in_bounds(ty, tx)) continue;
+#else
 		if (!in_bounds(p_ptr->dun_depth, ty, tx)) continue;
+#endif
 
+#ifdef NEW_DUNGEON
+		if (!(i = zcave[ty][tx].m_idx)) continue;
+#else
 		if (!(i = cave[p_ptr->dun_depth][ty][tx].m_idx)) continue;
+#endif
 		if (i > 0)
 		{
 			m_ptr = &m_list[i];
@@ -931,7 +975,11 @@ static int auto_retaliate(int Ind)
 		if (!m_ptr->r_idx) continue;
 
 		/* Skip monsters that aren't at this depth */
+#ifdef NEW_DUNGEON
+		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+#else
 		if (p_ptr->dun_depth != m_ptr->dun_depth) continue;
+#endif
 
 		/* Make sure that the player can see this monster */
 		if (!p_ptr->mon_vis[i]) continue;
@@ -1019,7 +1067,11 @@ static int auto_retaliate(int Ind)
 		if (q_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Skip players not at this depth */
+#ifdef NEW_DUNGEON
+		if(!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
+#else
 		if (p_ptr->dun_depth != q_ptr->dun_depth) continue;
+#endif
 
 		/* Skip ourselves */
 		if (Ind == i) continue;
@@ -1335,8 +1387,13 @@ static void process_player_begin(int Ind)
 	/* Storing up extra energy lets us perform actions while we are running */
 	//if (p_ptr->energy > (level_speed(p_ptr->dun_depth)*6)/5)
 	//	p_ptr->energy = (level_speed(p_ptr->dun_depth)*6)/5;
+#ifdef NEW_DUNGEON
+	if (p_ptr->energy > (level_speed(&p_ptr->wpos)*2) - 1)
+		p_ptr->energy = (level_speed(&p_ptr->wpos)*2) - 1;
+#else
 	if (p_ptr->energy > (level_speed(p_ptr->dun_depth)*2) - 1)
 		p_ptr->energy = (level_speed(p_ptr->dun_depth)*2) - 1;
+#endif
 
 	/* Check "resting" status */
 	if (p_ptr->resting)
@@ -1378,6 +1435,10 @@ static void process_player_end(int Ind)
 	cave_type		*c_ptr;
 	byte			*w_ptr;
 	object_type		*o_ptr;
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+#endif
 
 	if (Players[Ind]->conn == NOT_CONNECTED)
 		return;
@@ -1389,7 +1450,11 @@ static void process_player_end(int Ind)
 	if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ)) return;
 
 	/* Check for auto-retaliate */
+#ifdef NEW_DUNGEON
+	if ((p_ptr->energy >= level_speed(&p_ptr->wpos)) && !p_ptr->confused)
+#else
 	if ((p_ptr->energy >= level_speed(p_ptr->dun_depth)) && !p_ptr->confused)
+#endif
 	{
 		/* Check for nearby monsters and try to kill them */
 		/* If auto_retaliate returns nonzero than we attacked
@@ -1403,10 +1468,18 @@ static void process_player_end(int Ind)
 	}
 
 	/* Handle running -- 5 times the speed of walking */
+#ifdef NEW_DUNGEON
+	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos)*6)/5)
+#else
 	while (p_ptr->running && p_ptr->energy >= (level_speed(p_ptr->dun_depth)*6)/5)
+#endif
 	{
 		run_step(Ind, 0);
+#ifdef NEW_DUNGEON
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 5;
+#else
 		p_ptr->energy -= level_speed(p_ptr->dun_depth) / 5;
+#endif
 	}
 
 
@@ -1455,7 +1528,11 @@ static void process_player_end(int Ind)
 		msg_format(Ind, "You drop %s.", o_name);
 
 		/* Drop it (carefully) near the player */
+#ifdef NEW_DUNGEON
+		drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+#else
 		drop_near_severe(Ind, o_ptr, 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
+#endif
 
 		/* Decrease the item, optimize. */
 		inven_item_increase(Ind, i, -amt);
@@ -1470,7 +1547,11 @@ static void process_player_end(int Ind)
 	 * and poison faster with respect to real time < 1750 feet and slower >
 	 * 1750 feet.
 	 */
+#ifdef NEW_DUNGEON
+	if (!(turn%(level_speed(&p_ptr->wpos)/12)))
+#else
 	if (!(turn%(level_speed(p_ptr->dun_depth)/12)))
+#endif
 	{
 		/*** Damage over Time ***/
 
@@ -1516,7 +1597,11 @@ static void process_player_end(int Ind)
 			if (p_ptr->food < PY_FOOD_MAX)
 			{
 				/* Every 50/6 level turns */
+#ifdef NEW_DUNGEON
+			        if (!(turn%((level_speed((&p_ptr->wpos))*10)/12)))
+#else
 			        if (!(turn%((level_speed((p_ptr->dun_depth))*10)/12)))
+#endif
 				{
 					/* Basic digestion rate based on speed */
 					i = extract_energy[p_ptr->pspeed] * 2;
@@ -1713,10 +1798,22 @@ static void process_player_end(int Ind)
 		{
 			/* In town it only runs out if you are not on a wall
 			   To prevent breaking into houses */
+#ifdef NEW_DUNGEON
+			if (players_on_depth(&p_ptr->wpos) != 0) {
+#else
 			if (players_on_depth[p_ptr->dun_depth] != 0) {
+#endif
 				/* important! check for illegal spaces */
+#ifdef NEW_DUNGEON
+				if (in_bounds(p_ptr->py, p_ptr->px)) {
+#else
 				if (in_bounds(p_ptr->dun_depth, p_ptr->py, p_ptr->px)) {
+#endif
+#ifdef NEW_DUNGEON
+					if ((p_ptr->wpos.wz) || (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)))
+#else
 					if ((p_ptr->dun_depth > 0) || (cave_floor_bold(p_ptr->dun_depth, p_ptr->py, p_ptr->px)))
+#endif
 					{
 						(void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus);
 					}
@@ -2074,11 +2171,16 @@ static void process_player_end(int Ind)
 		       /* MEGA HACK: no recall if icky, or in a shop */
 			if( ! p_ptr->word_recall ) 
 			{
+#ifdef NEW_DUNGEON
+				if(character_icky || (p_ptr->store_num > 0) || check_st_anchor(&p_ptr->wpos)) {
+#else
 				if(character_icky || (p_ptr->store_num > 0) || check_st_anchor(p_ptr->dun_depth)) {
+#endif
 				    p_ptr->word_recall++;
 				}
 			}
 
+#if 0 /* sorry - evileye */
 			/* Activate the recall */
       			if (!p_ptr->word_recall)
 			{
@@ -2086,27 +2188,43 @@ static void process_player_end(int Ind)
 				disturb(Ind, 0, 0);
 
 				/* Determine the level */
+#ifdef NEW_DUNGEON
+				if(p_ptr->wpos.wz)
+#else
 				if (p_ptr->dun_depth > 0)
+#endif
 				{
 					/* Messages */
 					msg_print(Ind, "You feel yourself yanked upwards!");
 					msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
 					
 					/* New location */
+#ifdef NEW_DUNGEON
+					p_ptr->wpos.wz=0;
+#else
 					new_depth = 0;
 					new_world_x = p_ptr->world_x;
 					new_world_y = p_ptr->world_y;
+#endif
 					
 					p_ptr->new_level_method = LEVEL_RAND;
 				}
+#ifdef NEW_DUNGEON
+				else if ((p_ptr->wpos.wz) || (p_ptr->recall_depth < 0))
+#else
 				else if ((p_ptr->dun_depth < 0) || (p_ptr->recall_depth < 0))
+#endif
 				{
 					/* Messages */
 					msg_print(Ind, "You feel yourself yanked sideways!");
 					msg_format_near(Ind, "%s is yanked sideways!", p_ptr->name);
 					
 					/* New location */
+#ifdef NEW_DUNGEON
+					if (p_ptr->wpos.wz==0 && !istown(&p_ptr->wpos))
+#else
 					if (p_ptr->dun_depth < 0) 
+#endif
 					{
 						new_depth = 0;
 						new_world_x = 0;
@@ -2115,8 +2233,12 @@ static void process_player_end(int Ind)
 					else 
 					{ 
 						new_depth = p_ptr->recall_depth;
+#ifdef NEW_DUNGEON
+						fail;
+#else
 						new_world_x = wild_info[new_depth].world_x;
 						new_world_y = wild_info[new_depth].world_y;
+#endif
 					}
 					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;												
 				}
@@ -2125,40 +2247,70 @@ static void process_player_end(int Ind)
 					/* Messages */
 					msg_print(Ind, "You feel yourself yanked downwards!");
 					msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
+#ifdef NEW_DUNGEON
+					p_ptr->wpos.wz=p_ptr->recall_depth;
+#else
 					new_depth = p_ptr->recall_depth;
 					new_world_x = p_ptr->world_x;
 					new_world_y = p_ptr->world_y;
+#endif
 					p_ptr->new_level_method = LEVEL_RAND;
 				}
 				
 				/* One less person here */
+#ifdef NEW_DUNGEON
+				new_players_on_depth(&p_ptr->wpos,-1,TRUE);
+#else
 				players_on_depth[p_ptr->dun_depth]--;
+#endif
 				
 				/* paranoia, required for adding old wilderness saves to new servers */
+#ifdef NEW_DUNGEON
+				if (players_on_depth(&p_ptr->wpos) < 0) new_players_on_depth(&p_ptr->wpos,0,FALSE);
+#else
 				if (players_on_depth[p_ptr->dun_depth] < 0) players_on_depth[p_ptr->dun_depth] = 0;
+#endif
 
 				/* Remove the player */
+#ifdef NEW_DUNGEON
+				zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+				/* Show everyone that he's left */
+				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+#else
 				cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].m_idx = 0;
-					
 				/* Show everyone that he's left */
 				everyone_lite_spot(p_ptr->dun_depth, p_ptr->py, p_ptr->px);
+#endif
+					
 
 				/* Forget his lite and view */
 				forget_lite(Ind);
 				forget_view(Ind);
 
+#ifdef NEW_DUNGEON
+				wpcopy(&p_ptr->wpos, &new_depth);
+#else
 				p_ptr->dun_depth = new_depth;
 				p_ptr->world_x = new_world_x;
 				p_ptr->world_y = new_world_y;
+#endif
 
 				/* One more person here */
+#ifdef NEW_DUNGEON
+				new_players_on_depth(&p_ptr->wpos,1,TRUE);
+#else
 				players_on_depth[p_ptr->dun_depth]++;
+#endif
+
+				/* He'll be safe for 2 turn */
+				set_invuln_short(Ind, 2);
 
 				p_ptr->new_level_flag = TRUE;
 
 				/* He'll be safe for 2 turns */
 				set_invuln_short(Ind, 2);
 			}
+#endif /* if 0 recall out (sorry - evileye */
 		}
 	}
 
@@ -2178,8 +2330,35 @@ static void process_player_end(int Ind)
 	if (p_ptr->window) window_stuff(Ind);
 }
 
-
-
+#ifdef NEW_DUNGEON
+void do_unstat(struct worldpos *wpos){
+	int num_on_depth = 0;
+	int j;
+	player_type *p_ptr;
+	// Count the number of players actually in game on this depth
+	for (j = 1; j < NumPlayers + 1; j++)
+	{
+		p_ptr = Players[j];
+		if (inarea(&p_ptr->wpos, wpos)) num_on_depth++;
+	}
+	// If this level is static and no one is actually on it
+	if (!num_on_depth)
+	{
+		/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
+		if (( getlevel(wpos) < cfg_min_unstatic_level) && (0 < cfg_min_unstatic_level))
+		{
+			new_players_on_depth(wpos,0,FALSE);
+		}
+		// random chance of the level unstaticing
+		// the chance is one in (base_chance * depth)/250 feet.
+		if (!rand_int(((cfg_level_unstatic_chance * (getlevel(wpos)+5))/5)-1))
+		{
+			// unstatic the level
+			new_players_on_depth(wpos,0,FALSE);
+		}
+	}
+}
+#endif
 
 /*
  * This function handles "global" things such as the stores,
@@ -2326,6 +2505,41 @@ static void process_various(void)
 	// If the level unstaticer is not disabled
 	if (cfg_level_unstatic_chance > 0)
 	{
+#ifdef NEW_DUNGEON
+		struct worldpos twpos;
+		twpos.wz=0;
+		for(y=0;y<MAX_WILD_Y;y++){
+			twpos.wy=y;
+			for(x=0;x<MAX_WILD_X;x++){
+				struct wilderness_type *w_ptr;
+				struct dungeon_type *d_ptr;
+				twpos.wx=x;
+				w_ptr=&wild_info[twpos.wy][twpos.wx];
+				if(players_on_depth(&twpos)){
+					do_unstat(&twpos);
+				}
+				if(w_ptr->flags & WILD_F_UP){
+					d_ptr=w_ptr->tower;
+					for(i=1;i<=d_ptr->maxdepth;i++){
+						twpos.wz=i;
+						if(players_on_depth(&twpos)){
+							do_unstat(&twpos);
+						}
+					}
+				}
+				if(w_ptr->flags & WILD_F_DOWN){
+					d_ptr=w_ptr->dungeon;
+					for(i=1;i<=d_ptr->maxdepth;i++){
+						twpos.wz=-i;
+						if(players_on_depth(&twpos)){
+							do_unstat(&twpos);
+						}
+					}
+				}
+				twpos.wz=0;
+			}
+		}
+#else
 		// For each dungeon level
 		for (i = 1; i < MAX_DEPTH; i++)
 		{
@@ -2357,9 +2571,10 @@ static void process_various(void)
 				}
 			}
 		}
+#endif
 	}
 
-
+#if 0
 	/* Grow trees very occasionally */
 	if (!(turn % (10L * GROW_TREE)))
 	{
@@ -2373,7 +2588,11 @@ static void process_various(void)
 			x = rand_range(1, MAX_WID - 1);
 
 			/* Acquire pointer */
+#ifdef NEW_DUNGEON
+			c_ptr = &zcave[0][y][x];
+#else
 			c_ptr = &cave[0][y][x];
+#endif
 
 			/* Only allow "dirt" */
 			if (c_ptr->feat != FEAT_DIRT) continue;
@@ -2392,6 +2611,7 @@ static void process_various(void)
 			break;
 		}
 	}
+#endif /* if 0 */
 
 	/* Update the stores */
 	if (!(turn % (10L * STORE_TURNS)))
@@ -2413,6 +2633,7 @@ static void process_various(void)
 		}
 	}
 
+#if 0
 	/* Hack -- Daybreak/Nightfall outside the dungeon */
 	if (!(turn % ((10L * TOWN_DAWN) / 2)))
 	{
@@ -2428,11 +2649,24 @@ static void process_various(void)
 			 * massive worm infestations, and uniques getting
 			 * lost out there.
 			 */
+#ifdef NEW_DUNGEON
+			struct worldpos twpos;
+			twpos.wz=0;
+			for(y=0;y<MAX_WILD_Y;y++){
+				twpos.wy=y;
+				for(x=0;x<MAX_WILD_X;x++){
+					twpos.wx=x;
+					if(!players_on_depth(&twpos)) wipe_m_list(&twpos);
+					wild_info[twpos.wy][twpos.wx].flags&=~(WILD_F_INHABITED);
+				}
+			}
+#else
 			for (i = 1; i < MAX_WILD; i++) 
 				/* if no one is here the monsters 'migrate'.*/
 				if (!players_on_depth[-i]) wipe_m_list(-i);
 			/* another day, more stuff to kill... */
 			for (i = 1; i < MAX_WILD; i++) wild_info[-i].flags &= ~(WILD_F_INHABITED);
+#endif
 		
 			/* Hack -- Scan the town */
 			for (y = 0; y < MAX_HGT; y++)
@@ -2440,13 +2674,21 @@ static void process_various(void)
 				for (x = 0; x < MAX_WID; x++)
 				{
 					 /* Get the cave grid */
+#ifdef NEW_DUNGEON
+					c_ptr = &zcave[0][y][x];
+#else
 					c_ptr = &cave[0][y][x];
+#endif
 
 					 /* Assume lit */
 					c_ptr->info |= CAVE_GLOW;
 
 					 /* Hack -- Notice spot */
+#ifdef NEW_DUNGEON
+					note_spot_depth(townpos, y, x);
+#else
 					note_spot_depth(0, y, x);
+#endif
 				}
 			} 
 		}	
@@ -2458,7 +2700,11 @@ static void process_various(void)
 				for (x = 0; x < MAX_WID; x++)
 				{
 					 /* Get the cave grid */
+#ifdef NEW_DUNGEON
+					c_ptr = &zcave[0][y][x];
+#else
 					c_ptr = &cave[0][y][x];
+#endif
 
 					 /* Darken "boring" features */
 					if (c_ptr->feat <= FEAT_INVIS && !(c_ptr->info & CAVE_ROOM))
@@ -2483,6 +2729,7 @@ static void process_various(void)
 #endif
 		}
 	}
+#endif /* if 0 */
 }
 			
 int find_player(s32b id)
@@ -2570,7 +2817,13 @@ void dungeon(void)
 	for (i = 1; i < NumPlayers + 1; i++)
 	{
 		player_type *p_ptr = Players[i];
+#ifdef NEW_DUNGEON
+		struct worldpos *wpos=&p_ptr->wpos;
+		cave_type **zcave;
+		struct worldpos twpos;
+#else
 		int Depth = p_ptr->dun_depth;
+#endif
                 int j, x, y, startx, starty, m_idx, my, mx;
 
 		if (p_ptr->conn == NOT_CONNECTED)
@@ -2580,21 +2833,39 @@ void dungeon(void)
 			continue;
 
 		/* Check "maximum depth" to make sure it's still correct */
+#ifdef NEW_DUNGEON
+                if ((!p_ptr->ghost) && (getlevel(wpos) > p_ptr->max_dlv))
+			p_ptr->max_dlv = getlevel(wpos);
+#else
                 if ((!p_ptr->ghost) && (Depth > p_ptr->max_dlv))
 			p_ptr->max_dlv = Depth;
+#endif
 
 		/* Make sure the server doesn't think the player is in a store */
 		p_ptr->store_num = -1;
 
 		/* Somebody has entered an ungenerated level */
+#ifdef NEW_DUNGEON
+		if (players_on_depth(wpos) && !getcave(wpos))
+#else
 		if (players_on_depth[Depth] && !cave[Depth])
+#endif
 		{
+#ifdef NEW_DUNGEON
+			/* Allocate space for it */
+			alloc_dungeon_level(wpos);
+
+			/* Generate a dungeon level there */
+			generate_cave(wpos);
+#else
 			/* Allocate space for it */
 			alloc_dungeon_level(Depth);
 
 			/* Generate a dungeon level there */
 			generate_cave(Depth);
+#endif
 		}
+		zcave=getcave(wpos);
 
 		/* Clear the "marked" and "lit" flags for each cave grid */
 		for (y = 0; y < MAX_HGT; y++)
@@ -2608,11 +2879,20 @@ void dungeon(void)
 		}
 
 		/* hack -- update night/day in wilderness levels */
+#ifdef NEW_DUNGEON
+		if ((!wpos->wz) && (IS_DAY)) wild_apply_day(wpos); 
+		if ((!wpos->wz) && (IS_NIGHT)) wild_apply_night(wpos);
+#else
 		if ((Depth < 0) && (IS_DAY)) wild_apply_day(Depth); 
 		if ((Depth < 0) && (IS_NIGHT)) wild_apply_night(Depth);
+#endif
 
 		/* Memorize the town and all wilderness levels close to town */
+#ifdef NEW_DUNGEON
+		if (istown(wpos))
+#else
 		if (Depth <= 0 ? (wild_info[Depth].radius <= 2) : 0)
+#endif
 		{
 			bool dawn = ((turn % (10L * TOWN_DAWN)) < (10L * TOWN_DAWN / 2)); 
 
@@ -2628,7 +2908,11 @@ void dungeon(void)
 				for (x = 0; x < MAX_WID; x++)
 				{
 					w_ptr = &p_ptr->cave_flag[y][x];
+#ifdef NEW_DUNGEON
+					c_ptr = &zcave[y][x];
+#else
 					c_ptr = &cave[Depth][y][x];
+#endif
 
 					/* Memorize if daytime or "interesting" */
 					if (dawn || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
@@ -2649,18 +2933,33 @@ void dungeon(void)
 		switch (p_ptr->new_level_method)
 		{
 			/* Climbed down */
+#ifdef NEW_DUNGEON
+			case LEVEL_DOWN:  starty = level_down_y(wpos);
+					  startx = level_down_x(wpos);
+#else
 			case LEVEL_DOWN:  starty = level_down_y[Depth];
 					  startx = level_down_x[Depth];
+#endif
 					  break;
 
 			/* Climbed up */
+#ifdef NEW_DUNGEON
+			case LEVEL_UP:    starty = level_up_y(wpos);
+					  startx = level_up_x(wpos);
+#else
 			case LEVEL_UP:    starty = level_up_y[Depth];
 					  startx = level_up_x[Depth];
+#endif
 					  break;
 			
 			/* Teleported level */
+#ifdef NEW_DUNGEON
+			case LEVEL_RAND:  starty = level_rand_y(wpos);
+					  startx = level_rand_x(wpos);
+#else
 			case LEVEL_RAND:  starty = level_rand_y[Depth];
 					  startx = level_rand_x[Depth];
+#endif
 					  break;
 			
 			/* Used ghostly travel */
@@ -2686,11 +2985,17 @@ void dungeon(void)
 					starty = rand_int(MAX_HGT-3)+1;
 					startx = rand_int(MAX_WID-3)+1;
 				}
+#ifdef NEW_DUNGEON
+				while (  (zcave[starty][startx].info & CAVE_ICKY)
+				      || (!cave_floor_bold(zcave, starty, startx)) );
+#else
 				while (  (cave[Depth][starty][startx].info & CAVE_ICKY)
 				      || (!cave_floor_bold(Depth, starty, startx)) );
+#endif
 				break;
 		}
 
+		//printf("finding area (%d,%d)\n",startx,starty);
 		/* Place the player in an empty space */
 		for (j = 0; j < 1500; ++j)
 		{
@@ -2698,6 +3003,53 @@ void dungeon(void)
 			d = (j + 149) / 150;
 
 			/* Pick a location */
+#ifdef NEW_DUNGEON
+			//printf("scatter %d, %d\n",x,y);
+			scatter(wpos, &y, &x, starty, startx, d, 1);
+			/* Must have an "empty" grid */
+			if (!cave_empty_bold(zcave, y, x)){
+				//printf("not empty\n");
+				continue;
+			}
+
+			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
+			if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY)){
+				//printf("icky and groundlevel\n");
+				continue;
+			}
+#else
+			scatter(Depth, &y, &x, starty, startx, d, 1);
+			/* Must have an "empty" grid */
+			if (!cave_empty_bold(Depth, y, x)) continue;
+
+			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
+			if ((Depth <= 0) && (cave[Depth][y][x].info & CAVE_ICKY))
+				continue;
+#endif
+			//printf("scattered %d, %d\n",x,y);
+
+			break;
+		}
+
+#if 0
+		printf("finding area (%d,%d)\n",startx,starty);
+		/* Place the player in an empty space */
+		for (j = 0; j < 1500; ++j)
+		{
+			/* Increasing distance */
+			d = (j + 149) / 150;
+
+			/* Pick a location */
+#ifdef NEW_DUNGEON
+			printf("scatter %d, %d\n",x,y);
+			scatter(wpos, &y, &x, starty, startx, d, 1);
+
+			/* Must have an "empty" grid */
+			if (!cave_empty_bold(zcave, y, x)) continue;
+
+			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
+			if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY))
+#else
 			scatter(Depth, &y, &x, starty, startx, d, 1);
 
 			/* Must have an "empty" grid */
@@ -2706,37 +3058,27 @@ void dungeon(void)
 			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
 			if ((Depth <= 0) && (cave[Depth][y][x].info & CAVE_ICKY))
 				continue;
+#endif
+			printf("scattered %d, %d\n",x,y);
 
 			break;
 		}
-
-		/* Place the player in an empty space */
-		for (j = 0; j < 1500; ++j)
-		{
-			/* Increasing distance */
-			d = (j + 149) / 150;
-
-			/* Pick a location */
-			scatter(Depth, &y, &x, starty, startx, d, 1);
-
-			/* Must have an "empty" grid */
-			if (!cave_empty_bold(Depth, y, x)) continue;
-
-			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
-			if ((Depth <= 0) && (cave[Depth][y][x].info & CAVE_ICKY))
-				continue;
-
-			break;
-		}
+#endif /*0*/
 		p_ptr->py = y;
 		p_ptr->px = x;
 
 		/* Update the player location */
+#ifdef NEW_DUNGEON
+		zcave[y][x].m_idx = 0 - i;
+#else
 		cave[Depth][y][x].m_idx = 0 - i;
+#endif
 
                 for (m_idx = m_top - 1; m_idx >= 0; m_idx--)
                 {
                         monster_type *m_ptr = &m_list[m_fast[m_idx]];
+			cave_type **mcave;
+			mcave=getcave(&m_ptr->wpos);
 
                         if (!m_fast[m_idx]) continue;
 
@@ -2759,6 +3101,16 @@ void dungeon(void)
                                 d = (j + 149) / 150;
 
                                 /* Pick a location */
+#ifdef NEW_DUNGEON
+                                scatter(wpos, &my, &mx, starty, startx, d, 0);
+
+                                /* Must have an "empty" grid */
+                                if (!cave_empty_bold(zcave, my, mx)) continue;
+
+                                /* Not allowed to go onto a icky location (house) if Depth <= 0 */
+                                if ((wpos->wz==0) && (zcave[my][mx].info & CAVE_ICKY))
+                                        continue;
+#else
                                 scatter(Depth, &my, &mx, starty, startx, d, 0);
 
                                 /* Must have an "empty" grid */
@@ -2767,9 +3119,23 @@ void dungeon(void)
                                 /* Not allowed to go onto a icky location (house) if Depth <= 0 */
                                 if ((Depth <= 0) && (cave[Depth][my][mx].info & CAVE_ICKY))
                                         continue;
+#endif
 
                                 break;
                         }
+#ifdef NEW_DUNGEON
+			if(mcave){
+                        	mcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
+                        	everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+			}
+                        	wpcopy(&m_ptr->wpos,wpos);
+                        	m_ptr->fx = mx;
+                        	m_ptr->fy = my;
+			if(mcave){
+                        	mcave[m_ptr->fy][m_ptr->fx].m_idx = m_fast[m_idx];
+                        	everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+			}
+#else
                         cave[m_ptr->dun_depth][m_ptr->fy][m_ptr->fx].m_idx = 0;
                         everyone_lite_spot(m_ptr->dun_depth, m_ptr->fy, m_ptr->fx);
                         m_ptr->dun_depth = Depth;
@@ -2777,6 +3143,7 @@ void dungeon(void)
                         m_ptr->fy = my;
                         cave[m_ptr->dun_depth][m_ptr->fy][m_ptr->fx].m_idx = m_fast[m_idx];
                         everyone_lite_spot(m_ptr->dun_depth, m_ptr->fy, m_ptr->fx);
+#endif
 
                         /* Update the monster (new location) */
                         update_mon(m_fast[m_idx], TRUE);
@@ -2787,11 +3154,19 @@ void dungeon(void)
 			y = rand_range(1, ((Depth) ? (MAX_HGT - 2) : (SCREEN_HGT - 2)));
 			x = rand_range(1, ((Depth) ? (MAX_WID - 2) : (SCREEN_WID - 2)));
 
+#ifdef NEW_DUNGEON
+			/* Must be a "naked" floor grid */
+			if (!cave_naked_bold(zcave, y, x)) continue;
+
+			/* Refuse to start on anti-teleport grids */
+			if (zcave[y][x].info & CAVE_ICKY) continue;
+#else
 			/* Must be a "naked" floor grid */
 			if (!cave_naked_bold(Depth, y, x)) continue;
 
 			/* Refuse to start on anti-teleport grids */
 			if (cave[Depth][y][x].info & CAVE_ICKY) continue;
+#endif
 
 			break;
 		}
@@ -2817,11 +3192,19 @@ void dungeon(void)
 		update_monsters(TRUE);
 		
 		/* Tell him that he should beware */
+#ifdef NEW_DUNGEON
+		if (wpos->wz==0)
+		{
+			if (wild_info[wpos->wy][wpos->wx].own)
+			{
+                                cptr p = lookup_player_name(wild_info[wpos->wy][wpos->wx].own);
+#else
 		if (Depth < 0)
 		{
 			if (wild_info[Depth].own)
 			{
                                 cptr p = lookup_player_name(wild_info[Depth].own);
+#endif
                                 if (p == NULL) p = "Someone";
 
                                 msg_format(i, "You enter the land of %s.", p);
@@ -2833,6 +3216,37 @@ void dungeon(void)
 
 		/* Check to see which if the level needs generation or destruction */
 		/* Note that "town" is excluded */
+#ifdef NEW_DUNGEON
+		twpos.wz=0;
+		for(y=0;y<MAX_WILD_Y;y++){
+			twpos.wy=y;
+			for(x=0;x<MAX_WILD_X;x++){
+				wilderness_type *w_ptr;
+				struct dungeon_type *d_ptr;
+				twpos.wx=x;
+				w_ptr=&wild_info[twpos.wy][twpos.wx];
+				if(!players_on_depth(&twpos) && !istown(&twpos) && getcave(&twpos))
+					dealloc_dungeon_level(&twpos);
+				if(w_ptr->flags & WILD_F_UP){
+					d_ptr=w_ptr->tower;
+					for(j=1;j<=d_ptr->maxdepth;j++){
+						twpos.wz=j;
+						if(!players_on_depth(&twpos) && getcave(&twpos))
+							dealloc_dungeon_level(&twpos);
+					}
+				}
+				if(w_ptr->flags & WILD_F_DOWN){
+					d_ptr=w_ptr->dungeon;
+					for(j=1;j<=d_ptr->maxdepth;j++){
+						twpos.wz=-j;
+						if(!players_on_depth(&twpos) && getcave(&twpos))
+							dealloc_dungeon_level(&twpos);
+					}
+				}
+				twpos.wz=0;
+			}
+		}
+#else
 		for (j = -MAX_WILD+1; j < MAX_DEPTH; j++)
 		{
 			/* Everybody has left a level that is still generated */
@@ -2846,6 +3260,7 @@ void dungeon(void)
 			}
 
 		}
+#endif
 	}
 
 	/* Handle any network stuff */
@@ -3173,11 +3588,23 @@ void play_game(bool new_game)
 	/* Make a town if necessary */
 	if (!server_dungeon)
 	{
+#ifdef NEW_DUNGEON
+		struct worldpos twpos;
+		twpos.wx=MAX_WILD_X/2;
+		twpos.wy=MAX_WILD_Y/2;
+		twpos.wz=0;
+		/* Allocate space for it */
+		alloc_dungeon_level(&twpos);
+
+		/* Actually generate the town */
+		generate_cave(&twpos);
+#else
 		/* Allocate space for it */
 		alloc_dungeon_level(0);
 
 		/* Actually generate the town */
 		generate_cave(0);
+#endif
 	}
 
 	/* Finish initializing dungeon monsters */
@@ -3246,12 +3673,15 @@ void shutdown_server(void)
 		Destroy_connection(p_ptr->conn, "Server shutdown (save succeeded)");
 	}
 
+#ifdef NEW_DUNGEON
+#else
 	/* Now wipe every object, to preserve artifacts on the ground */
 	for (i = 1; i < MAX_DEPTH; i++)
 	{
 		/* Wipe this depth */
 		wipe_o_list(i);
 	}
+#endif
 
 	/* Save the server state */
 	if (!save_server_info()) quit("Server state save failed!");
@@ -3308,7 +3738,11 @@ void pack_overflow(int Ind)
 		msg_format(Ind, "You drop %s.", o_name);
 
 		/* Drop it (carefully) near the player */
+#ifdef NEW_DUNGEON
+		drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+#else
 		drop_near_severe(Ind, o_ptr, 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
+#endif
 
 		/* Decrease the item, optimize. */
 		inven_item_increase(Ind, i, -amt);

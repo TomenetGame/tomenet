@@ -184,7 +184,11 @@ static void inven_drop(int Ind, int item, int amt)
 	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(item));
 
 	/* Drop it (carefully) near the player */
+#ifdef NEW_DUNGEON
+	drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+#else
 	drop_near_severe(Ind, &tmp_obj, 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
+#endif
 
 	/* Decrease the item, optimize. */
 	inven_item_increase(Ind, item, -amt);
@@ -486,7 +490,11 @@ void do_cmd_wield(int Ind, int item)
 	}
 
 	/* Take a turn */
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 
 	/* Get a copy of the object to wield */
 	tmp_obj = *o_ptr;
@@ -636,7 +644,11 @@ void do_cmd_takeoff(int Ind, int item)
 
 
 	/* Take a partial turn */
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth) / 2;
+#endif
 
 	/* Take off the item */
 	inven_takeoff(Ind, item, 255);
@@ -701,7 +713,11 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 
 	/* Take a partial turn */
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth) / 2;
+#endif
 
 	/* Drop (some of) the item */
 	inven_drop(Ind, item, quantity);
@@ -741,7 +757,11 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	tmp_obj.pval = amt;
 
 	/* Drop it */
+#ifdef NEW_DUNGEON
+	drop_near(&tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+#else
 	drop_near(&tmp_obj, 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
+#endif
 
 	/* Subtract from the player's gold */
 	p_ptr->au -= amt;
@@ -756,7 +776,11 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	p_ptr->window |= (PW_PLAYER);
 
 	/* Take a turn */
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 }
 
 
@@ -814,7 +838,11 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 #endif
 
 	/* Take a turn */
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 
 	/* Artifacts cannot be destroyed */
 	if (artifact_p(o_ptr))
@@ -1025,6 +1053,10 @@ void do_cmd_steal(int Ind, int dir)
 
 	int success, notice;
 	bool caught = FALSE;
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+#endif
 
 	/* Ghosts cannot steal */
 	if ((p_ptr->ghost))
@@ -1034,7 +1066,11 @@ void do_cmd_steal(int Ind, int dir)
 	}	                                                        
 
 	/* Examine target grid */
+#ifdef NEW_DUNGEON
+	c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
+#else
 	c_ptr = &cave[p_ptr->dun_depth][p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
+#endif
 
 	/* May only steal from players */
 	if (c_ptr->m_idx >= 0)
@@ -1244,7 +1280,6 @@ void do_cmd_steal(int Ind, int dir)
 				/* An artifact 'resists' */
 				if (artifact_p(o_ptr) && !o_ptr->name3 && rand_int(100) > 2)
 					continue;
-
 				inven_drop(Ind, j, randint(o_ptr->number * 2));
 			}
 		}
@@ -1255,7 +1290,11 @@ void do_cmd_steal(int Ind, int dir)
 	}
 
 	/* Take a turn */
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 }
 
 
@@ -1318,7 +1357,11 @@ static void do_cmd_refill_lamp(int Ind, int item)
 
 
 	/* Take a partial turn */
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth) / 2;
+#endif
 
 	/* Access the lantern */
 	j_ptr = &(p_ptr->inventory[INVEN_LITE]);
@@ -1406,7 +1449,11 @@ static void do_cmd_refill_torch(int Ind, int item)
 
 
 	/* Take a partial turn */
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth) / 2;
+#endif
 
 	/* Access the primary torch */
 	j_ptr = &(p_ptr->inventory[INVEN_LITE]);
@@ -1536,14 +1583,24 @@ void do_cmd_target_friendly(int Ind, int dir)
 static bool do_cmd_look_accept(int Ind, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos=&p_ptr->wpos;
+	cave_type **zcave;
+#else
 	int Depth = p_ptr->dun_depth;
+#endif
 
 	cave_type *c_ptr;
 	byte *w_ptr;
 
+#ifdef NEW_DUNGEON
+	if(!(zcave=getcave(wpos))) return(FALSE);
 
+	c_ptr = &zcave[y][x];
+#else
 	/* Examine the grid */
 	c_ptr = &cave[Depth][y][x];
+#endif
 	w_ptr = &p_ptr->cave_flag[y][x];
 
 	/* Player grids */
@@ -1619,8 +1676,12 @@ void do_cmd_look(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 	player_type *q_ptr;
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos=&p_ptr->wpos;
+	cave_type **zcave;
+#else
 	int Depth = p_ptr->dun_depth;
-
+#endif
 	int		y, x, i;
 
 	cave_type *c_ptr;
@@ -1629,6 +1690,9 @@ void do_cmd_look(int Ind, int dir)
 
 	char o_name[160];
 	char out_val[160];
+#ifdef NEW_DUNGEON
+	if(!(zcave=getcave(wpos))) return;
+#endif
 
 	/* Blind */
 	if (p_ptr->blind)
@@ -1690,7 +1754,11 @@ void do_cmd_look(int Ind, int dir)
 		/* Collect monster and player indices */
 		for (i = 0; i < p_ptr->target_n; i++)
 		{
+#ifdef NEW_DUNGEON
+			c_ptr = &zcave[p_ptr->target_y[i]][p_ptr->target_x[i]];
+#else
 			c_ptr = &cave[Depth][p_ptr->target_y[i]][p_ptr->target_x[i]];
+#endif
 
 			if (c_ptr->m_idx != 0)
 				p_ptr->target_idx[i] = c_ptr->m_idx;
@@ -1717,7 +1785,11 @@ void do_cmd_look(int Ind, int dir)
 
 				/* Check for player leaving */
 				if (((0 - p_ptr->target_idx[i]) > NumPlayers) ||
+#ifdef NEW_DUNGEON
+				     (!inarea(&q_ptr->wpos, &p_ptr->wpos)))
+#else
 				     (q_ptr->dun_depth != p_ptr->dun_depth))
+#endif
 				{
 					p_ptr->target_y[i] = 0;
 					p_ptr->target_x[i] = 0;
@@ -1742,9 +1814,14 @@ void do_cmd_look(int Ind, int dir)
 	x = p_ptr->target_x[p_ptr->look_index];
 
 	/* Paranoia */
+#ifdef NEW_DUNGEON
+	/* thats extreme paranoia */
+	if(!(zcave=getcave(wpos))) return;
+	c_ptr = &zcave[y][x];
+#else
 	if (!cave[Depth]) return;
-
 	c_ptr = &cave[Depth][y][x];
+#endif
 
 	if (c_ptr->m_idx < 0)
 	{

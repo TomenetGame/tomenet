@@ -628,6 +628,7 @@
 
 
 #define NEWHOUSES
+#define NEW_DUNGEON
 
 #define USE_LUA
 

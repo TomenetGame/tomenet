@@ -438,6 +438,7 @@ struct vault_type
  */
 
 #if 1 /* Evileye - work in progress */
+
 /* Cave special types */
 #define DNA_DOOR 1
 #define KEY_DOOR 2
@@ -470,7 +471,17 @@ struct cave_type
 	struct c_special special;	/* Special pointer to various struct */
 };
 
+/* worldpos - replaces depth/dun_depth ulong with x,y,z
+ * coordinates of world positioning.
+ * it may seem cumbersome, but better than having
+ * extra variables in each struct. (its standard).
+ */
 
+struct worldpos{
+	s16b wx;	/* west to east */
+	s16b wy;	/* south to north */
+	s16b wz;	/* deep to sky */
+};
 
 /*
  * Structure for an object. (32 bytes)
@@ -498,7 +509,11 @@ struct object_type
 	byte iy;			/* Y-position on map, or zero */
 	byte ix;			/* X-position on map, or zero */
 
+#ifdef NEW_DUNGEON
+	struct worldpos wpos;
+#else
 	s32b dun_depth;			/* Depth into the dungeon */
+#endif
 
 	byte tval;			/* Item type (from kind) */
 	byte sval;			/* Item sub-type (from kind) */
@@ -558,7 +573,11 @@ struct monster_type
 	byte fy;			/* Y location on map */
 	byte fx;			/* X location on map */
 
+#ifdef NEW_DUNGEON
+	struct worldpos wpos;
+#else
 	s16b dun_depth;			/* Level of the dungeon */
+#endif
 
         s32b exp;                       /* Experience of the monster */
         s16b level;                     /* Level of the monster */
@@ -818,16 +837,59 @@ struct quest
    -APD-
 */
 
+#if 1 /* Evileye - work in progress */
+
+#define DUNGEON_RANDOM 1
+
+struct dun_level{
+	int ondepth;
+	byte up_x,up_y;
+	byte dn_x,dn_y;
+	byte rn_x,rn_y;
+	cave_type **cave;
+};
+
+struct dungeon_type{
+	u16b baselevel;		/* base level (1 - 50ft etc). */
+	u16b flags;		/* dungeon flags */
+	byte maxdepth;		/* max height/depth */
+	struct dun_level *level;	/* array of dungeon levels */
+};
+
+struct town_type{
+	u16b x,y;		/* town wilderness location */
+	u16b baselevel;		/* Normally 0 for the basic town */
+	u16b flags;		/* town flags */
+};
+
+#define WILD_F_UP	8	/* these are to show dungeons etc. */
+#define WILD_F_DOWN	16
+
+#endif
+
 typedef struct wilderness_type wilderness_type;
 
 struct wilderness_type
 {
+#ifndef NEW_DUNGEON
 	int world_x; /* the world coordinates */
 	int world_y;
+#endif
 	int radius; /* the distance from the town */
 	int type;   /* what kind of terrain we are in */
-	u16b flags; /* various */
 
+#ifndef NEW_DUNGEON
+	u16b flags; /* various */
+#else
+	u32b flags; /* various */
+	struct dungeon_type *tower;
+	struct dungeon_type *dungeon;
+	int ondepth;
+	cave_type **cave;
+	byte up_x, up_y;
+	byte dn_x, dn_y;
+	byte rn_x, rn_y;
+#endif
 	s32b own;	/* King owning the wild */
 };
 
@@ -1062,7 +1124,11 @@ struct house_type{
 	byte dx,dy;		/* door coords */
 	struct dna_type *dna;	/* house dna door information */
 	u16b flags;		/* house flags - HF_xxxx */
+#ifdef NEW_DUNGEON
+	struct worldpos wpos;
+#else
 	s32b depth;		/* wilderness house depth */
+#endif
 	union{
 		struct{ byte width, height; }rect;
 		cptr poly;	/* coordinate array for non rect houses */
@@ -1227,14 +1293,21 @@ struct player_type
 
 	char history[4][60];	/* The player's "history" */
 
+#ifndef NEW_DUNGEON
 	s16b world_x;	/* The wilderness x coordinate */
 	s16b world_y;	/* The wilderness y coordinate */
+#endif
 
 	unsigned char wild_map[MAX_WILD_8]; /* the wilderness we have explored */
 
 	s16b py;		/* Player location in dungeon */
 	s16b px;
+
+#ifdef NEW_DUNGEON
+	struct worldpos wpos;
+#else
 	s32b dun_depth;		/* Player depth -- wilderness level offset */
+#endif
 
 	s16b cur_hgt;		/* Height and width of their dungeon level */
 	s16b cur_wid;
@@ -1340,7 +1413,7 @@ struct player_type
 	s16b died_from_depth;	/* what depth we died on */
 
 	u16b total_winner;	/* Is this guy the winner */
-	s16b own1, own2;	/* IF we are a king what do we own ? */
+	struct worldpos own1, own2;	/* IF we are a king what do we own ? */
 	u16b retire_timer;	/* The number of minutes this guy can play until
 				   he will be forcibly retired.
 				 */

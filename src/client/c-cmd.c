@@ -1742,9 +1742,13 @@ void cmd_master_aux_level(void)
 		/* Selections */
 		Term_putstr(5, 4, -1, TERM_WHITE, "(1) Static your current level");
 		Term_putstr(5, 5, -1, TERM_WHITE, "(2) Unstatic your current level");
+		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Add dungeon");
+		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Town generation");
+
+
 
 		/* Prompt */
-		Term_putstr(0, 8, -1, TERM_WHITE, "Command: ");
+		Term_putstr(0, 9, -1, TERM_WHITE, "Command: ");
 
 		/* Get a key */
 		i = inkey();
@@ -1762,6 +1766,16 @@ void cmd_master_aux_level(void)
 		else if (i == '2')
 		{
 			Send_master(MASTER_LEVEL, "u");
+		}
+		else if (i == '3'){	/* create dungeon stair here */
+			buf[0]='D';
+			buf[1]=c_get_quantity("Base level: ", 127);
+			buf[2]=c_get_quantity("Max depth (1-127): ",127);
+			buf[3]=(get_check("Is it a tower? ") ? 't':'d');
+			Send_master(MASTER_LEVEL, buf);
+		}
+		else if (i == '4'){
+			c_get_quantity("Base level: ", 127);
 		}
 
 		/* Oops */

@@ -481,7 +481,12 @@ bool players_in_level(int Ind, int Ind2)
 void party_gain_exp(int Ind, int party_id, s32b amount)
 {
 	player_type *p_ptr;
-	int i, Depth = Players[Ind]->dun_depth;
+	int i;
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos=&Players[Ind]->wpos;
+#else
+	int Depth = Players[Ind]->dun_depth;
+#endif
 	s32b new_exp, new_exp_frac, average_lev = 0, num_members = 0;
 	s32b modified_level;
 
@@ -494,7 +499,11 @@ void party_gain_exp(int Ind, int party_id, s32b amount)
 			continue;
 
 		/* Check for his existance in the party */
+#ifdef NEW_DUNGEON
+                if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i))
+#else
                 if (player_in_party(party_id, i) && (p_ptr->dun_depth == Depth) && players_in_level(Ind, i))
+#endif
 		{
 			/* Increase the "divisor" */
 			average_lev += p_ptr->lev;
@@ -511,7 +520,11 @@ void party_gain_exp(int Ind, int party_id, s32b amount)
 			continue;
 
 		/* Check for existance in the party */
+#ifdef NEW_DUNGEON
+                if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i))
+#else
                 if (player_in_party(party_id, i) && (p_ptr->dun_depth == Depth) && players_in_level(Ind, i))
+#endif
 		{
 			/* Calculate this guy's experience */
 			

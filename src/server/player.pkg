@@ -94,7 +94,7 @@ struct object_type
 	byte iy;			/* Y-position on map, or zero */
 	byte ix;			/* X-position on map, or zero */
 
-	s32b dun_depth;			/* Depth into the dungeon */
+	struct worldpos wpos;
 
 	byte tval;			/* Item type (from kind) */
 	byte sval;			/* Item sub-type (from kind) */
@@ -211,14 +211,11 @@ struct player_type
 	s16b stat_max[6];	/* Current "maximal" stat values */
 	s16b stat_cur[6];	/* Current "natural" stat values */
 
-	s16b world_x;	/* The wilderness x coordinate */
-	s16b world_y;	/* The wilderness y coordinate */
-
 	unsigned char wild_map[MAX_WILD_8]; /* the wilderness we have explored */
 
 	s16b py;		/* Player location in dungeon */
 	s16b px;
-	s32b dun_depth;		/* Player depth -- wilderness level offset */
+	struct worldpos wpos;
 
 	s16b cur_hgt;		/* Height and width of their dungeon level */
 	s16b cur_wid;
@@ -311,8 +308,8 @@ struct player_type
 	s16b died_from_depth;	/* what depth we died on */
 
 	u16b total_winner;	/* Is this guy the winner */
-	s16b own1;
-        s16b own2;	/* IF we are a king what do we own ? */
+	struct worldpos own1;
+	struct worldpos own2;
 	u16b retire_timer;	/* The number of minutes this guy can play until
 				   he will be forcibly retired.
 				 */

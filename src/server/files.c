@@ -541,7 +541,7 @@ errr check_time(void)
 #ifdef CHECK_TIME
 
 	time_t              c;
-	struct tm		*tp;
+	struct tm               *tp;
 
 	/* No restrictions */
 	if (!check_time_flag) return (0);
@@ -571,7 +571,7 @@ errr check_time_init(void)
 
 	FILE        *fp;
 
-	char	buf[1024];
+	char    buf[1024];
 
 
 	/* Build the filename */
@@ -692,10 +692,10 @@ errr check_load_init(void)
 
 	FILE        *fp;
 
-	char	buf[1024];
+	char    buf[1024];
 
-	char	temphost[MAXHOSTNAMELEN+1];
-	char	thishost[MAXHOSTNAMELEN+1];
+	char    temphost[MAXHOSTNAMELEN+1];
+	char    thishost[MAXHOSTNAMELEN+1];
 
 
 	/* Build the filename */
@@ -781,11 +781,11 @@ static void display_player_middle(int Ind)
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 		adv_exp = 0;
-        else
-        {
-                s64b adv = ((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
-                adv_exp = (s32b)(adv);
-        }
+	else
+	{
+		s64b adv = ((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
+		adv_exp = (s32b)(adv);
+	}
 
 	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp);
 
@@ -845,26 +845,26 @@ void display_player(int Ind)
 #if 0
 errr file_character(cptr name, bool full)
 {
-	int			i, x, y;
+	int                     i, x, y;
 
-	byte		a;
-	char		c;
+	byte            a;
+	char            c;
 
 #if 0
-	cptr		other = "(";
+	cptr            other = "(";
 #endif
 
-	cptr		paren = ")";
+	cptr            paren = ")";
 
-	int			fd = -1;
+	int                     fd = -1;
 
-	FILE		*fff = NULL;
+	FILE            *fff = NULL;
 
-	store_type		*st_ptr = &store[7];
+	store_type              *st_ptr = &store[7];
 
-	char		o_name[160];
+	char            o_name[160];
 
-	char		buf[1024];
+	char            buf[1024];
 
 
 	/* Drop priv's */
@@ -915,7 +915,7 @@ errr file_character(cptr name, bool full)
 
 	/* Begin dump */
 	fprintf(fff, "  [Angband %d.%d.%d Character Dump]\n\n",
-	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 
 	/* Save screen */
@@ -982,7 +982,7 @@ errr file_character(cptr name, bool full)
 		{
 			object_desc(o_name, &inventory[i], TRUE, 3);
 			fprintf(fff, "%c%s %s\n",
-			        index_to_label(i), paren, o_name);
+				index_to_label(i), paren, o_name);
 		}
 		fprintf(fff, "\n\n");
 	}
@@ -993,7 +993,7 @@ errr file_character(cptr name, bool full)
 	{
 		object_desc(o_name, &inventory[i], TRUE, 3);
 		fprintf(fff, "%c%s %s\n",
-		        index_to_label(i), paren, o_name);
+			index_to_label(i), paren, o_name);
 	}
 	fprintf(fff, "\n\n");
 
@@ -1040,43 +1040,43 @@ errr file_character(cptr name, bool full)
  */
 static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 {
-	int		i, k;
+	int             i, k;
 
 	/* Number of "real" lines passed by */
-	int		next = 0;
+	int             next = 0;
 
 	/* Number of "real" lines in the file */
-	int		size = 0;
+	int             size = 0;
 
 	/* Backup value for "line" */
-	int		back = 0;
+	int             back = 0;
 
 	/* This screen has sub-screens */
-	bool	menu = FALSE;
+	bool    menu = FALSE;
 
 	/* Current help file */
-	FILE	*fff = NULL;
+	FILE    *fff = NULL;
 
 	/* Find this string (if any) */
-	cptr	find = NULL;
+	cptr    find = NULL;
 
 	/* Hold a string to find */
-	char	finder[128];
+	char    finder[128];
 
 	/* Hold a string to show */
-	char	shower[128];
+	char    shower[128];
 
 	/* Describe this thing */
-	char	caption[128];
+	char    caption[128];
 
 	/* Path buffer */
-	char	path[1024];
+	char    path[1024];
 
 	/* General buffer */
-	char	buf[1024];
+	char    buf[1024];
 
 	/* Sub-menu information */
-	char	hook[10][32];
+	char    hook[10][32];
 
 
 	/* Wipe finder */
@@ -1254,8 +1254,8 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 #if 0
 		/* Show a general "title" */
 		prt(format("[Angband %d.%d.%d, %s, Line %d/%d]",
-		           VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,
-		           caption, line, size), 0, 0);
+			   VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH,
+			   caption, line, size), 0, 0);
 
 
 		/* Prompt -- menu screen */
@@ -1555,7 +1555,11 @@ void do_cmd_suicide(int Ind)
 	if (!p_ptr->ghost) 
 	{
 		strcpy(p_ptr->died_from_list, "self-inflicted wounds");
+#ifdef NEW_DUNGEON
+		p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
+#else
 		p_ptr->died_from_depth = p_ptr->dun_depth;
+#endif
 	}
 
 	/* Hack -- clear ghost */
@@ -1622,7 +1626,7 @@ void do_cmd_save_game(int Ind)
 
 
 /*
- * Hack -- Calculates the total number of points earned		-JWT-
+ * Hack -- Calculates the total number of points earned         -JWT-
  */
 long total_points(int Ind)
 {
@@ -1646,11 +1650,11 @@ long total_points(int Ind)
 static void show_info(int Ind)
 {
 #if 0
-	int			i, j, k;
+	int                     i, j, k;
 
-	object_type		*o_ptr;
+	object_type             *o_ptr;
 
-	store_type		*st_ptr = &store[7];
+	store_type              *st_ptr = &store[7];
 
 
 	/* Hack -- Know everything in the inven/equip */
@@ -1804,30 +1808,30 @@ typedef struct high_score high_score;
 
 struct high_score
 {
-	char what[8];		/* Version info (string) */
+	char what[8];           /* Version info (string) */
 
-	char pts[10];		/* Total Score (number) */
+	char pts[10];           /* Total Score (number) */
 
-	char gold[10];		/* Total Gold (number) */
+	char gold[10];          /* Total Gold (number) */
 
-	char turns[10];		/* Turns Taken (number) */
+	char turns[10];         /* Turns Taken (number) */
 
-	char day[10];		/* Time stamp (string) */
+	char day[10];           /* Time stamp (string) */
 
-	char who[16];		/* Player Name (string) */
+	char who[16];           /* Player Name (string) */
 
-	char uid[8];		/* Player UID (number) */
+	char uid[8];            /* Player UID (number) */
 
-	char sex[2];		/* Player Sex (string) */
-	char p_r[3];		/* Player Race (number) */
-	char p_c[3];		/* Player Class (number) */
+	char sex[2];            /* Player Sex (string) */
+	char p_r[3];            /* Player Race (number) */
+	char p_c[3];            /* Player Class (number) */
 
-	char cur_lev[4];		/* Current Player Level (number) */
-	char cur_dun[4];		/* Current Dungeon Level (number) */
-	char max_lev[4];		/* Max Player Level (number) */
-	char max_dun[4];		/* Max Dungeon Level (number) */
+	char cur_lev[4];                /* Current Player Level (number) */
+	char cur_dun[4];                /* Current Dungeon Level (number) */
+	char max_lev[4];                /* Max Player Level (number) */
+	char max_dun[4];                /* Max Dungeon Level (number) */
 
-	char how[32];		/* Method of death (string) */
+	char how[32];           /* Method of death (string) */
 };
 
 
@@ -1876,9 +1880,9 @@ static int highscore_write(high_score *score)
  */
 static int highscore_where(high_score *score)
 {
-	int			i;
+	int                     i;
 
-	high_score		the_score;
+	high_score              the_score;
 
 	/* Paranoia -- it may not have opened */
 	if (highscore_fd < 0) return (-1);
@@ -1904,10 +1908,10 @@ static int highscore_where(high_score *score)
  */
 static int highscore_add(high_score *score)
 {
-	int			i, slot;
-	bool		done = FALSE;
+	int                     i, slot;
+	bool            done = FALSE;
 
-	high_score		the_score, tmpscore;
+	high_score              the_score, tmpscore;
 
 
 	/* Paranoia -- it may not have opened */
@@ -1952,11 +1956,11 @@ static int highscore_add(high_score *score)
  */
 static void display_scores_aux(int Ind, int line, int note, high_score *score)
 {
-	int		i, j, from, to, attr, place;
+	int             i, j, from, to, attr, place;
 
-	high_score	the_score;
+	high_score      the_score;
 
-	char	out_val[256];
+	char    out_val[256];
 
 	FILE *fff;
 	char file_name[1024];
@@ -2173,7 +2177,7 @@ static errr top_twenty(int Ind)
 
 	/* Save the version */
 	sprintf(the_score.what, "%u.%u.%u",
-	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 	/* Calculate and save the points */
 	sprintf(the_score.pts, "%9lu", (long)total_points(Ind));
@@ -2267,7 +2271,7 @@ static errr predict_score(int Ind, int line)
 
 	/* Save the version */
 	sprintf(the_score.what, "%u.%u.%u",
-	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 
 	/* Calculate and save the points */
 	sprintf(the_score.pts, "%9lu", (long)total_points(Ind));
@@ -2292,7 +2296,11 @@ static errr predict_score(int Ind, int line)
 
 	/* Save the level and such */
 	sprintf(the_score.cur_lev, "%3d", p_ptr->lev);
+#ifdef NEW_DUNGEON
+	sprintf(the_score.cur_dun, "%3ld", getlevel(&p_ptr->wpos));
+#else
 	sprintf(the_score.cur_dun, "%3ld", p_ptr->dun_depth);
+#endif
 	sprintf(the_score.max_lev, "%3d", p_ptr->max_plv);
 	sprintf(the_score.max_dun, "%3d", p_ptr->max_dlv);
 
@@ -2313,7 +2321,7 @@ static errr predict_score(int Ind, int line)
 	/* Display some "useful" scores */
 	else
 	{
-		display_scores_aux(Ind, line, 19, &the_score);	/* -1, NULL */
+		display_scores_aux(Ind, line, 19, &the_score);  /* -1, NULL */
 	}
 
 
@@ -2325,14 +2333,20 @@ static errr predict_score(int Ind, int line)
 
 
 /*
- * Change a player into a King!			-RAK-
+ * Change a player into a King!                 -RAK-
  */
 void kingly(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
 	/* Hack -- retire in town */
+#ifdef NEW_DUNGEON
+	p_ptr->wpos.wx=0;
+	p_ptr->wpos.wy=0;
+	p_ptr->wpos.wz=0;
+#else
 	p_ptr->dun_depth = 0;
+#endif
 
 	/* Fake death */
 	//(void)strcpy(p_ptr->died_from_list, "Ripe Old Age");
@@ -2653,6 +2667,10 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 void exit_game_panic(void)
 {
 	int i = 1;
+#ifdef NEW_DUNGEON
+	int j,k;
+	struct worldpos wpos;
+#endif
 
 	/* If nothing important has happened, just quit */
 	if (!server_generated || server_saved) quit("panic");
@@ -2711,13 +2729,28 @@ void exit_game_panic(void)
 	 * these levels should have been cleared by now. However, paranoia
 	 * can't hurt all that much... -APD
 	 */
+#ifdef NEW_DUNGEON
+/* totally inefficient replacement - sorry. */
+/* it also doesnt respect non existent world positions */
+/* rewrite */
+	for(i=0;i<MAX_WILD_X;i++){
+		wpos.wx=i;
+		for(j=0;j<MAX_WILD_Y;j++){
+			wpos.wy=j;
+			for(k=0;k<255;k++){
+				wpos.wz=k;
+				if(!players_on_depth(wpos)) wipe_o_list(&wpos);
+			}
+		}
+	}
+#else
 	for (i = 1; i < MAX_DEPTH; i++)
 	{
 
 		/* Paranoia -- wipe this depth's objects if no players are on it*/
 		if (!players_on_depth[i]) wipe_o_list(i);
 	}
-
+#endif
 	if (!save_server_info()) quit("server panic info save failed!");
 
 
@@ -2815,7 +2848,7 @@ static void handle_signal_simple(int sig)
 		Report_to_meta(META_DIE);
 
 		/* Save everything and quit the game */
-//		exit_game_panic();
+//              exit_game_panic();
 		shutdown_server();
 	}
 
@@ -2982,7 +3015,7 @@ void signals_init(void)
 }
 
 
-#else	/* HANDLE_SIGNALS */
+#else   /* HANDLE_SIGNALS */
 
 
 /*
@@ -3007,6 +3040,6 @@ void signals_init(void)
 }
 
 
-#endif	/* HANDLE_SIGNALS */
+#endif  /* HANDLE_SIGNALS */
 
 

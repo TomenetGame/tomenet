@@ -122,26 +122,26 @@ bool make_attack_normal(int Ind, int m_idx)
 {
 	player_type *p_ptr = Players[Ind];
 
-	monster_type	*m_ptr = &m_list[m_idx];
+	monster_type    *m_ptr = &m_list[m_idx];
 
         monster_race    *r_ptr = race_inf(m_ptr);
 
-	int			ap_cnt;
+	int                     ap_cnt;
 
-	int			i, j, k, tmp, ac, rlev;
-	int			do_cut, do_stun;
+	int                     i, j, k, tmp, ac, rlev;
+	int                     do_cut, do_stun;
 
-	s32b		gold;
+	s32b            gold;
 
-	object_type		*o_ptr;
+	object_type             *o_ptr;
 
-	char		o_name[160];
+	char            o_name[160];
 
-	char		m_name[80];
+	char            m_name[80];
 
-	char		ddesc[80];
+	char            ddesc[80];
 
-	bool		blinked;
+	bool            blinked;
 
 
 	/* Not allowed to attack */
@@ -176,10 +176,10 @@ bool make_attack_normal(int Ind, int m_idx)
 		cptr act = NULL;
 
 		/* Extract the attack infomation */
-                int effect = m_ptr->blow[ap_cnt].effect;
-                int method = m_ptr->blow[ap_cnt].method;
-                int d_dice = m_ptr->blow[ap_cnt].d_dice;
-                int d_side = m_ptr->blow[ap_cnt].d_side;
+		int effect = m_ptr->blow[ap_cnt].effect;
+		int method = m_ptr->blow[ap_cnt].method;
+		int d_dice = m_ptr->blow[ap_cnt].d_dice;
+		int d_side = m_ptr->blow[ap_cnt].d_side;
 
 
 		/* Hack -- no more attacks */
@@ -197,34 +197,34 @@ bool make_attack_normal(int Ind, int m_idx)
 		/* Extract the attack "power" */
 		switch (effect)
 		{
-			case RBE_HURT:	power = 60; break;
-			case RBE_POISON:	power =  5; break;
-			case RBE_UN_BONUS:	power = 20; break;
-			case RBE_UN_POWER:	power = 15; break;
-			case RBE_EAT_GOLD:	power =  5; break;
-			case RBE_EAT_ITEM:	power =  5; break;
-			case RBE_EAT_FOOD:	power =  5; break;
-			case RBE_EAT_LITE:	power =  5; break;
-			case RBE_ACID:	power =  0; break;
-			case RBE_ELEC:	power = 10; break;
-			case RBE_FIRE:	power = 10; break;
-			case RBE_COLD:	power = 10; break;
-			case RBE_BLIND:	power =  2; break;
-			case RBE_CONFUSE:	power = 10; break;
-			case RBE_TERRIFY:	power = 10; break;
-			case RBE_PARALYZE:	power =  2; break;
-			case RBE_LOSE_STR:	power =  0; break;
-			case RBE_LOSE_DEX:	power =  0; break;
-			case RBE_LOSE_CON:	power =  0; break;
-			case RBE_LOSE_INT:	power =  0; break;
-			case RBE_LOSE_WIS:	power =  0; break;
-			case RBE_LOSE_CHR:	power =  0; break;
-			case RBE_LOSE_ALL:	power =  2; break;
-			case RBE_SHATTER:	power = 60; break;
-			case RBE_EXP_10:	power =  5; break;
-			case RBE_EXP_20:	power =  5; break;
-			case RBE_EXP_40:	power =  5; break;
-			case RBE_EXP_80:	power =  5; break;
+			case RBE_HURT:  power = 60; break;
+			case RBE_POISON:        power =  5; break;
+			case RBE_UN_BONUS:      power = 20; break;
+			case RBE_UN_POWER:      power = 15; break;
+			case RBE_EAT_GOLD:      power =  5; break;
+			case RBE_EAT_ITEM:      power =  5; break;
+			case RBE_EAT_FOOD:      power =  5; break;
+			case RBE_EAT_LITE:      power =  5; break;
+			case RBE_ACID:  power =  0; break;
+			case RBE_ELEC:  power = 10; break;
+			case RBE_FIRE:  power = 10; break;
+			case RBE_COLD:  power = 10; break;
+			case RBE_BLIND: power =  2; break;
+			case RBE_CONFUSE:       power = 10; break;
+			case RBE_TERRIFY:       power = 10; break;
+			case RBE_PARALYZE:      power =  2; break;
+			case RBE_LOSE_STR:      power =  0; break;
+			case RBE_LOSE_DEX:      power =  0; break;
+			case RBE_LOSE_CON:      power =  0; break;
+			case RBE_LOSE_INT:      power =  0; break;
+			case RBE_LOSE_WIS:      power =  0; break;
+			case RBE_LOSE_CHR:      power =  0; break;
+			case RBE_LOSE_ALL:      power =  2; break;
+			case RBE_SHATTER:       power = 60; break;
+			case RBE_EXP_10:        power =  5; break;
+			case RBE_EXP_20:        power =  5; break;
+			case RBE_EXP_40:        power =  5; break;
+			case RBE_EXP_80:        power =  5; break;
 		}
 
 
@@ -547,7 +547,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					/* Saving throw (unless paralyzed) based on dex and level */
 					if (!p_ptr->paralyzed &&
 					    (rand_int(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-					                      p_ptr->lev)))
+							      p_ptr->lev)))
 					{
 						/* Saving throw message */
 						msg_print(Ind, "You quickly protect your money pouch!");
@@ -600,7 +600,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					/* Saving throw (unless paralyzed) based on dex and level */
 					if (!p_ptr->paralyzed &&
 					    (rand_int(100) < (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-					                      p_ptr->lev)))
+							      p_ptr->lev)))
 					{
 						/* Saving throw message */
 						msg_print(Ind, "You grab hold of your backpack!");
@@ -638,8 +638,8 @@ bool make_attack_normal(int Ind, int m_idx)
 
 						/* Message */
 						msg_format(Ind, "%sour %s (%c) was stolen!",
-						           ((o_ptr->number > 1) ? "One of y" : "Y"),
-						           o_name, index_to_label(i));
+							   ((o_ptr->number > 1) ? "One of y" : "Y"),
+							   o_name, index_to_label(i));
 
 						/* Steal the items */
 						inven_item_increase(Ind, i, -1);
@@ -683,8 +683,8 @@ bool make_attack_normal(int Ind, int m_idx)
 
 						/* Message */
 						msg_format(Ind, "%sour %s (%c) was eaten!",
-						           ((o_ptr->number > 1) ? "One of y" : "Y"),
-						           o_name, index_to_label(i));
+							   ((o_ptr->number > 1) ? "One of y" : "Y"),
+							   o_name, index_to_label(i));
 
 						/* Steal the items */
 						inven_item_increase(Ind, i, -1);
@@ -991,7 +991,11 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Radius 8 earthquake centered at the monster */
+#ifdef NEW_DUNGEON
+					if (damage > 23) earthquake(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, 8);
+#else
 					if (damage > 23) earthquake(p_ptr->dun_depth, m_ptr->fy, m_ptr->fx, 8);
+#endif
 
 					break;
 				}
@@ -1254,7 +1258,7 @@ bool make_attack_normal(int Ind, int m_idx)
  */
 static int mon_check_hit(int m_idx, int power, int level)
 {
-        monster_type *m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = &m_list[m_idx];
 
 	int i, k, ac;
 
@@ -1268,7 +1272,7 @@ static int mon_check_hit(int m_idx, int power, int level)
 	i = (power + (level * 3));
 
 	/* Total armor */
-        ac = m_ptr->ac;
+	ac = m_ptr->ac;
 
 	/* Power and Level compete against Armor */
 	if ((i > 0) && (randint(i) > ((ac * 3) / 4))) return (TRUE);
@@ -1283,38 +1287,38 @@ static int mon_check_hit(int m_idx, int power, int level)
  */
 bool monster_attack_normal(int tm_idx, int m_idx)
 {
-        /* Targer */
-        monster_type    *tm_ptr = &m_list[tm_idx];
+	/* Targer */
+	monster_type    *tm_ptr = &m_list[tm_idx];
 
-        /* Attacker */
-	monster_type	*m_ptr = &m_list[m_idx];
+	/* Attacker */
+	monster_type    *m_ptr = &m_list[m_idx];
 
         monster_race    *r_ptr = race_inf(m_ptr);
         monster_race    *tr_ptr = race_inf(tm_ptr);
 
-	int			ap_cnt;
+	int                     ap_cnt;
 
-	int			i, j, k, tmp, ac, rlev;
-	int			do_cut, do_stun;
+	int                     i, j, k, tmp, ac, rlev;
+	int                     do_cut, do_stun;
 
-	s32b		gold;
+	s32b            gold;
 
-        bool dead = FALSE;
+	bool dead = FALSE;
 
-	object_type		*o_ptr;
+	object_type             *o_ptr;
 
-	char		o_name[160];
+	char            o_name[160];
 
-	char		m_name[80];
+	char            m_name[80];
 
-	bool		blinked;
+	bool            blinked;
 
 
 	/* Not allowed to attack */
 	if (r_ptr->flags1 & RF1_NEVER_BLOW) return (FALSE);
 
 	/* Total armor */
-        ac = tm_ptr->ac;
+	ac = tm_ptr->ac;
 
 	/* Extract the effective monster level */
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
@@ -1334,25 +1338,25 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 		cptr act = NULL;
 
 		/* Extract the attack infomation */
-                int effect = m_ptr->blow[ap_cnt].effect;
-                int method = m_ptr->blow[ap_cnt].method;
-                int d_dice = m_ptr->blow[ap_cnt].d_dice;
-                int d_side = m_ptr->blow[ap_cnt].d_side;
+		int effect = m_ptr->blow[ap_cnt].effect;
+		int method = m_ptr->blow[ap_cnt].method;
+		int d_dice = m_ptr->blow[ap_cnt].d_dice;
+		int d_side = m_ptr->blow[ap_cnt].d_side;
 
 		/* Hack -- no more attacks */
 		if (!method) break;
 
-                /* Stop if monster is dead or gone */
-                if (dead) break;
+		/* Stop if monster is dead or gone */
+		if (dead) break;
 
 		/* Extract the attack "power" */
 		switch (effect)
 		{
-			case RBE_HURT:	power = 60; break;
+			case RBE_HURT:  power = 60; break;
 		}
 
 		/* Monster hits player */
-                if (!effect || mon_check_hit(tm_idx, power, rlev))
+		if (!effect || mon_check_hit(tm_idx, power, rlev))
 		{
 			/* Assume no cut or stun */
 			do_cut = do_stun = 0;
@@ -1390,7 +1394,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 
 				case RBE_HURT:
 				{
-                                        bool fear;
+					bool fear;
 
 					/* Obvious */
 					obvious = TRUE;
@@ -1398,7 +1402,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 					/* Hack -- Player armor reduces total damage */
 					damage -= (damage * ((ac < 150) ? ac : 150) / 250);
 					/* Take damage */
-                                        dead = mon_take_hit_mon(m_idx, tm_idx, damage, &fear, NULL);
+					dead = mon_take_hit_mon(m_idx, tm_idx, damage, &fear, NULL);
 
 					break;
 				}

@@ -66,7 +66,11 @@ s16b poly_r_idx(int r_idx)
 	return (r_idx);
 }
 
+#ifdef NEW_DUNGEON
+bool check_st_anchor(struct worldpos *wpos)
+#else
 bool check_st_anchor(int depth)
+#endif
 {
 	int i;
 
@@ -78,7 +82,11 @@ bool check_st_anchor(int depth)
 		if (q_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Skip players not on this depth */
+#ifdef NEW_DUNGEON
+		if (!inarea(&q_ptr->wpos, wpos)) continue;
+#else
 		if (q_ptr->dun_depth != depth) continue;
+#endif
 
 		if (!q_ptr->st_anchor) continue;
 
@@ -99,19 +107,29 @@ bool check_st_anchor(int depth)
  */
 void teleport_away(int m_idx, int dis)
 {
-	int			ny, nx, oy, ox, Depth, d, i, min;
+	int			ny, nx, oy, ox, d, i, min;
 
 	bool		look = TRUE;
 
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos;
+	cave_type **zcave;
+#else
+	int Depth;
+#endif
 
 
 	/* Paranoia */
 	if (!m_ptr->r_idx) return;
 
 	/* Space/Time Anchor */
+#ifdef NEW_DUNGEON
+	if (check_st_anchor(&m_ptr->wpos)) return;
+#else
 	if (check_st_anchor(m_ptr->dun_depth)) return;
+#endif
 
         if (r_ptr->flags3 & RF3_IM_TELE) return;
 
@@ -119,7 +137,12 @@ void teleport_away(int m_idx, int dis)
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
 
+#ifdef NEW_DUNGEON
+	wpos=&m_ptr->wpos;
+	if(!(zcave=getcave(wpos))) return;
+#else
 	Depth = m_ptr->dun_depth;
+#endif
 
 	/* Minimum distance */
 	min = dis / 2;
@@ -143,16 +166,30 @@ void teleport_away(int m_idx, int dis)
 			}
 
 			/* Ignore illegal locations */
+#ifdef NEW_DUNGEON
+			if (!in_bounds(ny, nx)) continue;
+#else
 			if (!in_bounds(Depth, ny, nx)) continue;
+#endif
 
 			/* Require "empty" floor space */
+#ifdef NEW_DUNGEON
+			if (!cave_empty_bold(zcave, ny, nx)) continue;
+#else
 			if (!cave_empty_bold(Depth, ny, nx)) continue;
+#endif
 
+#ifdef NEW_DUNGEON
+			/* Hack -- no teleport onto glyph of warding */
+			if (zcave[ny][nx].feat == FEAT_GLYPH) continue;
+			/* No teleporting into vaults and such */
+			if (zcave[ny][nx].info & CAVE_ICKY) continue;
+#else
 			/* Hack -- no teleport onto glyph of warding */
 			if (cave[Depth][ny][nx].feat == FEAT_GLYPH) continue;
-
 			/* No teleporting into vaults and such */
 			if (cave[Depth][ny][nx].info & CAVE_ICKY) continue;
+#endif
 
 			/* This grid looks good */
 			look = FALSE;
@@ -169,10 +206,17 @@ void teleport_away(int m_idx, int dis)
 	}
 
 	/* Update the new location */
+#ifdef NEW_DUNGEON
+	zcave[ny][nx].m_idx = m_idx;
+
+	/* Update the old location */
+	zcave[oy][ox].m_idx = 0;
+#else
 	cave[Depth][ny][nx].m_idx = m_idx;
 
 	/* Update the old location */
 	cave[Depth][oy][ox].m_idx = 0;
+#endif
 
 	/* Move the monster */
 	m_ptr->fy = ny;
@@ -181,11 +225,19 @@ void teleport_away(int m_idx, int dis)
 	/* Update the monster (new location) */
 	update_mon(m_idx, TRUE);
 
+#ifdef NEW_DUNGEON
+	/* Redraw the old grid */
+	everyone_lite_spot(wpos, oy, ox);
+
+	/* Redraw the new grid */
+	everyone_lite_spot(wpos, ny, nx);
+#else
 	/* Redraw the old grid */
 	everyone_lite_spot(Depth, oy, ox);
 
 	/* Redraw the new grid */
 	everyone_lite_spot(Depth, ny, nx);
+#endif
 }
 
 
@@ -200,12 +252,22 @@ void teleport_player(int Ind, int dis)
 	player_type *p_ptr = Players[Ind];
 
 	int d, i, min, ox, oy, x = p_ptr->py, y = p_ptr->px;
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos=&p_ptr->wpos;
+#else
 	int Depth = p_ptr->dun_depth;
+#endif
 
 	bool look = TRUE;
 
 	/* Space/Time Anchor */
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+	if (check_st_anchor(wpos)) return;
+#else
 	if (check_st_anchor(p_ptr->dun_depth)) return;
+#endif
 
 	/* Verify max distance once here */
 	if (dis > 200) dis = 200;
@@ -234,8 +296,22 @@ void teleport_player(int Ind, int dis)
 			}
 
 			/* Ignore illegal locations */
+#ifdef NEW_DUNGEON
+			if (!in_bounds(y, x)) continue;
+#else
 			if (!in_bounds(Depth, y, x)) continue;
+#endif
 
+#ifdef NEW_DUNGEON
+			/* Require floor space if not ghost */
+			if (!p_ptr->ghost && !cave_naked_bold(zcave, y, x)) continue;
+
+			/* Require empty space if a ghost */
+			if (p_ptr->ghost && zcave[y][x].m_idx) continue;
+
+			/* No teleporting into vaults and such */
+			if (zcave[y][x].info & CAVE_ICKY) continue;
+#else
 			/* Require floor space if not ghost */
 			if (!p_ptr->ghost && !cave_naked_bold(Depth, y, x)) continue;
 
@@ -244,6 +320,7 @@ void teleport_player(int Ind, int dis)
 
 			/* No teleporting into vaults and such */
 			if (cave[Depth][y][x].info & CAVE_ICKY) continue;
+#endif
 
 			/* This grid looks good */
 			look = FALSE;
@@ -267,6 +344,19 @@ void teleport_player(int Ind, int dis)
 	p_ptr->py = y;
 	p_ptr->px = x;
 
+#ifdef NEW_DUNGEON
+	/* The player isn't on his old spot anymore */
+	zcave[oy][ox].m_idx = 0;
+
+	/* The player is on his new spot */
+	zcave[y][x].m_idx = 0 - Ind;
+
+	/* Redraw the old spot */
+	everyone_lite_spot(wpos, oy, ox);
+
+	/* Redraw the new spot */
+	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+#else
 	/* The player isn't on his old spot anymore */
 	cave[Depth][oy][ox].m_idx = 0;
 
@@ -278,6 +368,7 @@ void teleport_player(int Ind, int dis)
 
 	/* Redraw the new spot */
 	everyone_lite_spot(Depth, p_ptr->py, p_ptr->px);
+#endif
 
 	/* Check for new panel (redraw map) */
 	verify_panel(Ind);
@@ -308,8 +399,16 @@ void teleport_player_to(int Ind, int ny, int nx)
 	player_type *p_ptr = Players[Ind];
 
 	int y, x, oy, ox, dis = 1, ctr = 0;
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos=&p_ptr->wpos;
+#else
 	int Depth = p_ptr->dun_depth;
+#endif
 	int tries = 200;
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+#endif
 
 	if (ny < 1) ny = 1;
 	if (nx < 1) nx = 1;
@@ -319,7 +418,11 @@ void teleport_player_to(int Ind, int ny, int nx)
 
 
 	/* Space/Time Anchor */
+#ifdef NEW_DUNGEON
+	if (check_st_anchor(wpos)) return;
+#else
 	if (check_st_anchor(p_ptr->dun_depth)) return;
+#endif
 
 	/* Find a usable location */
 	while (tries--)
@@ -329,14 +432,25 @@ void teleport_player_to(int Ind, int ny, int nx)
 		{
 			y = rand_spread(ny, dis);
 			x = rand_spread(nx, dis);
+#ifdef NEW_DUNGEON
+			if (in_bounds(y, x)) break;
+#else
 			if (in_bounds(Depth, y, x)) break;
+#endif
 		}
 
 		/* Cant telep in houses */
+#ifdef NEW_DUNGEON
+		if (((wpos->wz==0) && !(zcave[y][x].info & CAVE_ICKY)) || (wpos->wz))
+		  {
+		    if (cave_naked_bold(zcave, y, x)) break;
+		  }
+#else
 		if (((Depth <= 0) && !(cave[Depth][y][x].info & CAVE_ICKY)) || (Depth > 0))
 		  {
 		    if (cave_naked_bold(Depth, y, x)) break;
 		  }
+#endif
 
 		/* Occasionally advance the distance */
 		if (++ctr > (4 * dis * dis + 4 * dis + 1))
@@ -354,6 +468,19 @@ void teleport_player_to(int Ind, int ny, int nx)
 	p_ptr->py = y;
 	p_ptr->px = x;
 
+#ifdef NEW_DUNGEON
+	/* The player isn't here anymore */
+	zcave[oy][ox].m_idx = 0;
+
+	/* The player is now here */
+	zcave[y][x].m_idx = 0 - Ind;
+
+	/* Redraw the old spot */
+	everyone_lite_spot(wpos, oy, ox);
+
+	/* Redraw the new spot */
+	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+#else
 	/* The player isn't here anymore */
 	cave[Depth][oy][ox].m_idx = 0;
 
@@ -365,6 +492,7 @@ void teleport_player_to(int Ind, int ny, int nx)
 
 	/* Redraw the new spot */
 	everyone_lite_spot(Depth, p_ptr->py, p_ptr->px);
+#endif
 
 	/* Check for new panel (redraw map) */
 	verify_panel(Ind);
@@ -398,96 +526,187 @@ void teleport_player_level(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	wilderness_type *w_ptr;
-	int Depth = p_ptr->dun_depth, new_depth, new_world_x = 0, new_world_y = 0;
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos new_depth;
+#else
+	int  Depth=p_ptr->wpos, new_depth;
+	int new_world_x = 0, new_world_y = 0;
+#endif
 	char *msg;
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+#endif
 
 
 	/* Space/Time Anchor */
+#ifdef NEW_DUNGEON
+	if (check_st_anchor(&p_ptr->wpos)) return;
+#else
 	if (check_st_anchor(p_ptr->dun_depth)) return;
+#endif
 
+	wpcopy(&new_depth, wpos);
 	/* sometimes go down */
+#ifdef NEW_DUNGEON
+	if(!can_go_up(wpos) || ((rand_int(100)<50) && can_go_down(wpos)))
+#else
 	if ((!Depth) || ((rand_int(100) < 50) && (Depth > MAX_DEPTH-1)))
+#endif
 	{
+#ifdef NEW_DUNGEON
+		new_depth.wz--;
+#else
 		new_depth = Depth+1;
+#endif
 		msg = "You sink through the floor.";
 		p_ptr->new_level_method = LEVEL_RAND;
 	}	
 	/* else go up */
-	else 
+	else if(can_go_up(wpos))
 	{
+#ifdef NEW_DUNGEON
+		new_depth.wz++;
+#else
 		new_depth = Depth-1;
+#endif
 		msg = "You rise up through the ceiling.";
 		p_ptr->new_level_method = LEVEL_RAND;
 	}
 	
 	/* If in the wilderness, teleport to a random neighboring level */
+#ifdef NEW_DUNGEON
+	if(wpos->wz==0 && new_depth.wz==0)
+#else
 	if (Depth < 0)
+#endif
 	{
+#ifdef NEW_DUNGEON
+		w_ptr = &wild_info[wpos->wy][wpos->wx];
+#else
 		w_ptr = &wild_info[Depth];
+#endif
 		/* get a valid neighbor */
 		do
 		{	
+			wpcopy(&new_depth, wpos);
 			switch (rand_int(4))
 			{
 				case DIR_NORTH:
+#ifdef NEW_DUNGEON
+					new_depth.wy++;
+#else
 					new_depth = world_index(w_ptr->world_x,w_ptr->world_y+1);
+#endif
 					msg = "A gust of wind blows you north.";
+#ifndef NEW_DUNGEON
 					new_world_x = w_ptr->world_x;
 					new_world_y = w_ptr->world_y+1;
+#endif
 					break;
 				case DIR_EAST:
+#ifdef NEW_DUNGEON
+					new_depth.wx++;
+#else
 					new_depth = world_index(w_ptr->world_x+1,w_ptr->world_y);
+#endif
 					msg = "A gust of wind blows you east.";
+#ifndef NEW_DUNGEON
 					new_world_x = w_ptr->world_x+1;
 					new_world_y = w_ptr->world_y;
+#endif
 					break;
 				case DIR_SOUTH:
+#ifdef NEW_DUNGEON
+					new_depth.wy--;
+#else
 					new_depth = world_index(w_ptr->world_x,w_ptr->world_y-1);
+#endif
 					msg = "A gust of wind blows you south.";
+#ifndef NEW_DUNGEON
 					new_world_x = w_ptr->world_x;
 					new_world_y = w_ptr->world_y-1;
+#endif
 					break;
 				case DIR_WEST:
+#ifdef NEW_DUNGEON
+					new_depth.wx--;
+#else
 					new_depth = world_index(w_ptr->world_x-1,w_ptr->world_y);
+#endif
 					msg = "A gust of wind blows you west.";
+#ifndef NEW_DUNGEON
 					new_world_x = w_ptr->world_x-1;
 					new_world_y = w_ptr->world_y;
+#endif
 					break;		
 			}
 		}
+#ifdef NEW_DUNGEON
+		while(0); /* what are the chances of wraparound? lazy*/
+#else
 		while ((new_depth <= -MAX_WILD) || (new_depth > 0));	
+#endif
 		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 		/* update the players new wilderness location */
+#ifndef NEW_DUNGEON
 		p_ptr->world_x = new_world_x;
 		p_ptr->world_y = new_world_y;
+#endif
 		
+#ifdef NEW_DUNGEON
+#else
 		/* update the players wilderness map */
 		p_ptr->wild_map[(new_depth)/8] |= (1<<((new_depth)%8));
+#endif
 	}	
 	
 	/* Tell the player */
 	msg_print(Ind, msg);
 
 	/* One less player here */
+#ifdef NEW_DUNGEON
+	new_players_on_depth(wpos,-1,TRUE);
+	/* Paranoia, required for merging old saves with new wilderness */
+	if (players_on_depth(wpos)< 0) new_players_on_depth(wpos,0,FALSE);
+#else
 	players_on_depth[Depth]--;
-	
 	/* Paranoia, required for merging old saves with new wilderness */
 	if (players_on_depth[Depth] < 0) players_on_depth[Depth] = 0;
+#endif
+	
 
+#ifdef NEW_DUNGEON
+	/* Remove the player */
+	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+
+	/* Show that he's left */
+	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+#else
 	/* Remove the player */
 	cave[Depth][p_ptr->py][p_ptr->px].m_idx = 0;
 
 	/* Show that he's left */
 	everyone_lite_spot(Depth, p_ptr->py, p_ptr->px);
+#endif
 
 	/* Forget his lite and viewing area */
 	forget_lite(Ind);
 	forget_view(Ind);
 
+#ifdef NEW_DUNGEON
+	wpcopy(wpos,new_depth);
+#else
 	Depth = p_ptr->dun_depth = new_depth;
+#endif
 
 	/* One more player here */
+#ifdef NEW_DUNGEON
+	new_players_on_depth(wpos,1,TRUE);
+#else
 	players_on_depth[Depth]++;
+#endif
 
 	p_ptr->new_level_flag = TRUE;
 }
@@ -652,7 +871,11 @@ void take_hit(int Ind, int damage, cptr hit_from)
 
 	/* If so then refresh everyone's view of this player */
 	if (new_num != old_num)
+#ifdef NEW_DUNGEON
+		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+#else
 		everyone_lite_spot(p_ptr->dun_depth, p_ptr->py, p_ptr->px);
+#endif
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
@@ -701,7 +924,11 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		(void)strcpy(p_ptr->died_from, hit_from);
 		if (!p_ptr->ghost) 
 		{	strcpy(p_ptr->died_from_list, hit_from);
+#ifdef NEW_DUNGEON
+			wpcopy(&p_ptr->died_from_depth, &p_ptr->wpos);
+#else
 			p_ptr->died_from_depth = p_ptr->dun_depth;
+#endif
 		}
 
 		/* No longer a winner */
@@ -1689,10 +1916,12 @@ static int project_m_y;
  *
  * XXX XXX XXX Perhaps we should affect doors?
  */
+#ifdef NEW_DUNGEON
+static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ)
+#else
 static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam, int typ)
+#endif
 {
-	cave_type	*c_ptr = &cave[Depth][y][x];
-
 	bool	obvious = FALSE;
 
 	bool quiet = ((Ind <= 0) ? TRUE : FALSE);
@@ -1701,6 +1930,15 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 	player_type *p_ptr = (quiet ? NULL : Players[Ind]);
 
 	byte *w_ptr = (quiet ? NULL : &p_ptr->cave_flag[y][x]);
+#ifdef NEW_DUNGEON
+	cave_type *c_ptr;
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return(FALSE);
+	c_ptr=&zcave[y][x];
+#else
+	cave_type	*c_ptr = &cave[Depth][y][x];
+#endif
+
 
 	/* Extract radius */
 	div = r + 1;
@@ -1735,10 +1973,19 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		case GF_STONE_WALL:
 		{
 			/* Require a "naked" floor grid */
+#ifdef NEW_DUNGEON
+			if (!cave_naked_bold(zcave, y, x)) break;
+#else
 			if (!cave_naked_bold(Depth, y, x)) break;
+#endif
 
                		/* Beware of the houses in town */
+#ifdef NEW_DUNGEON
+               		if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY)) break;
+#else
                		if ((Depth <= 0) && (cave[Depth][y][x].info & CAVE_ICKY)) break;
+#endif
+
 
                         /* Place a wall */
 			c_ptr->feat = FEAT_WALL_EXTRA;
@@ -1746,8 +1993,13 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			/* Notice */
 			note_spot(Ind, y, x);
 
+#ifdef NEW_DUNGEON
+			/* Redraw */
+			everyone_lite_spot(wpos, y, x);
+#else
 			/* Redraw */
 			everyone_lite_spot(Depth, y, x);
+#endif
 			break;
 		}
 
@@ -1799,8 +2051,13 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 					/* Notice */
 					note_spot(Ind, y, x);
 
+#ifdef NEW_DUNGEON
+					/* Redraw */
+					everyone_lite_spot(wpos, y, x);
+#else
 					/* Redraw */
 					everyone_lite_spot(Depth, y, x);
+#endif
 				}
 			}
 
@@ -1823,8 +2080,13 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 					/* Notice */
 					note_spot(Ind, y, x);
 
+#ifdef NEW_DUNGEON
+					/* Redraw */
+					everyone_lite_spot(wpos, y, x);
+#else
 					/* Redraw */
 					everyone_lite_spot(Depth, y, x);
+#endif
 				}
 			}
 
@@ -1848,8 +2110,13 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 					/* Notice */
 					note_spot(Ind, y, x);
 
+#ifdef NEW_DUNGEON
+					/* Redraw */
+					everyone_lite_spot(wpos, y, x);
+#else
 					/* Redraw */
 					everyone_lite_spot(Depth, y, x);
+#endif
 				}
 			}
 
@@ -1872,16 +2139,26 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 				/* Destroy the feature */
 				c_ptr->feat = FEAT_FLOOR;
 
+#ifdef NEW_DUNGEON
+				/* Forget the wall */
+				everyone_forget_spot(wpos, y, x);
+#else
 				/* Forget the wall */
 				everyone_forget_spot(Depth, y, x);
+#endif
 
 				if (!quiet)
 				{
 					/* Notice */
 					note_spot(Ind, y, x);
 
+#ifdef NEW_DUNGEON
+					/* Redraw */
+					everyone_lite_spot(wpos, y, x);
+#else
 					/* Redraw */
 					everyone_lite_spot(Depth, y, x);
+#endif
 				}
 			}
 
@@ -1901,16 +2178,26 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 				/* Destroy the feature */
 				c_ptr->feat = FEAT_FLOOR;
 
+#ifdef NEW_DUNGEON
+				/* Forget the wall */
+				everyone_forget_spot(wpos, y, x);
+#else
 				/* Forget the wall */
 				everyone_forget_spot(Depth, y, x);
+#endif
 
 				if (!quiet)
 				{
 					/* Notice */
 					note_spot(Ind, y, x);
 
+#ifdef NEW_DUNGEON
+					/* Redraw */
+					everyone_lite_spot(wpos, y, x);
+#else
 					/* Redraw */
 					everyone_lite_spot(Depth, y, x);
+#endif
 				}
 			}
 
@@ -1928,16 +2215,26 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 				/* Destroy the feature */
 				c_ptr->feat = FEAT_FLOOR;
 
+#ifdef NEW_DUNGEON
+				/* Forget the wall */
+				everyone_forget_spot(wpos, y, x);
+#else
 				/* Forget the wall */
 				everyone_forget_spot(Depth, y, x);
+#endif
 
 				if (!quiet)
 				{
 					/* Notice */
 					note_spot(Ind, y, x);
 
+#ifdef NEW_DUNGEON
+					/* Redraw */
+					everyone_lite_spot(wpos, y, x);
+#else
 					/* Redraw */
 					everyone_lite_spot(Depth, y, x);
+#endif
 
 					/* Update some things */
 					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
@@ -1950,8 +2247,13 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		/* Destroy walls (and doors) */
 		case GF_KILL_WALL:
 		{
+#ifdef NEW_DUNGEON
+			/* Non-walls (etc) */
+			if (cave_floor_bold(zcave, y, x)) break;
+#else
 			/* Non-walls (etc) */
 			if (cave_floor_bold(Depth, y, x)) break;
+#endif
 
 			/* Permanent walls */
 			if ( (c_ptr->feat >= FEAT_PERM_EXTRA) || (c_ptr->feat == FEAT_PERM_CLEAR) ) break;
@@ -1984,8 +2286,13 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 				/* Destroy the wall */
 				c_ptr->feat = FEAT_DIRT;
 
+#ifdef NEW_DUNGEON
+				/* Place some gold */
+				place_gold(wpos, y, x);
+#else
 				/* Place some gold */
 				place_gold(Depth, y, x);
+#endif
 			}
 
 			/* Quartz / Magma */
@@ -2025,8 +2332,13 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 						obvious = TRUE;
 					}
 
+#ifdef NEW_DUNGEON
+					/* Place gold */
+					place_object(wpos, y, x, FALSE, FALSE);
+#else
 					/* Place gold */
 					place_object(Depth, y, x, FALSE, FALSE);
+#endif
 				}
 			}
 
@@ -2055,16 +2367,26 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 				c_ptr->feat = FEAT_DIRT;
 			}
 
+#ifdef NEW_DUNGEON
+			/* Forget the wall */
+			everyone_forget_spot(wpos, y, x);
+#else
 			/* Forget the wall */
 			everyone_forget_spot(Depth, y, x);
+#endif
 	
 			if (!quiet)
 			{
 				/* Notice */
 				note_spot(Ind, y, x);
 
+#ifdef NEW_DUNGEON
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+#else
 				/* Redraw */
 				everyone_lite_spot(Depth, y, x);
+#endif
 
 				/* Update some things */
 				p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
@@ -2076,8 +2398,13 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		/* Make doors */
 		case GF_MAKE_DOOR:
 		{
+#ifdef NEW_DUNGEON
+			/* Require a "naked" floor grid */
+			if (!cave_naked_bold(zcave, y, x)) break;
+#else
 			/* Require a "naked" floor grid */
 			if (!cave_naked_bold(Depth, y, x)) break;
+#endif
 
 			/* Create a closed door */
 			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
@@ -2087,8 +2414,13 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 				/* Notice */
 				note_spot(Ind, y, x);
 
+#ifdef NEW_DUNGEON
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+#else
 				/* Redraw */
 				everyone_lite_spot(Depth, y, x);
+#endif
 
 				/* Observe */
 				if (*w_ptr & CAVE_MARK) obvious = TRUE;
@@ -2103,19 +2435,34 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		/* Make traps */
 		case GF_MAKE_TRAP:
 		{
+#ifdef NEW_DUNGEON
+			/* Require a "naked" floor grid */
+			if (!cave_naked_bold(zcave, y, x)) break;
+#else
 			/* Require a "naked" floor grid */
 			if (!cave_naked_bold(Depth, y, x)) break;
+#endif
 
+#ifdef NEW_DUNGEON
+			/* Place a trap */
+			place_trap(wpos, y, x);
+#else
 			/* Place a trap */
 			place_trap(Depth, y, x);
+#endif
 
 			if (!quiet)
 			{
 				/* Notice */
 				note_spot(Ind, y, x);
 
+#ifdef NEW_DUNGEON
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+#else
 				/* Redraw */
 				everyone_lite_spot(Depth, y, x);
+#endif
 			}
 
 			break;
@@ -2130,11 +2477,18 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 			if (!quiet)
 			{
+
+#ifdef NEW_DUNGEON
+				/* Notice */
+				note_spot_depth(wpos, y, x);
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+#else
 				/* Notice */
 				note_spot_depth(Depth, y, x);
-
 				/* Redraw */
 				everyone_lite_spot(Depth, y, x);
+#endif
 
 				/* Observe */
 				if (player_can_see_bold(Ind, y, x)) obvious = TRUE;
@@ -2160,8 +2514,13 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			/* Hack -- Forget "boring" grids */
 			if (c_ptr->feat <= FEAT_INVIS)
 			{
-				/* Forget */
+#ifdef NEW_DUNGEON
+				/* Forget the wall */
+				everyone_forget_spot(wpos, y, x);
+#else
+				/* Forget the wall */
 				everyone_forget_spot(Depth, y, x);
+#endif
 
 				if (!quiet)
 				{
@@ -2172,8 +2531,13 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 			if (!quiet)
 			{
+#ifdef NEW_DUNGEON
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+#else
 				/* Redraw */
 				everyone_lite_spot(Depth, y, x);
+#endif
 			}
 
 			/* Mega-Hack -- Update the monster in the affected grid */
@@ -2207,13 +2571,13 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
  *
  * We return "TRUE" if the effect of the projection is "obvious".
  */
+#ifdef NEW_DUNGEON
+static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ)
+#else
 static bool project_i(int Ind, int who, int r, int Depth, int y, int x, int dam, int typ)
+#endif
 {
 	player_type *p_ptr;
-
-	cave_type	*c_ptr = &cave[Depth][y][x];
-
-	object_type	*o_ptr = &o_list[c_ptr->o_idx];
 
 	bool	obvious = FALSE;
 
@@ -2231,6 +2595,18 @@ static bool project_i(int Ind, int who, int r, int Depth, int y, int x, int dam,
 	char	o_name[160];
 
 	int		div;
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	cave_type *c_ptr;
+	object_type *o_ptr;
+	if(!(zcave=getcave(wpos))) return(FALSE);
+	c_ptr=&zcave[y][x];
+	o_ptr = &o_list[c_ptr->o_idx];
+#else
+	cave_type	*c_ptr = &cave[Depth][y][x];
+	object_type	*o_ptr = &o_list[c_ptr->o_idx];
+#endif
+
 
 
 	/* Nothing here */
@@ -2423,7 +2799,11 @@ static bool project_i(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 
 	/* Attempt to destroy the object */
+#ifdef NEW_DUNGEON
+	if(do_kill && (wpos->wz))
+#else
 	if (do_kill && (Depth > 0))
+#endif
 	{
 		/* Effect "observed" */
 		if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
@@ -2453,12 +2833,21 @@ static bool project_i(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			}
 
 			/* Delete the object */
+#ifdef NEW_DUNGEON
+			delete_object(wpos, y, x);
+#else
 			delete_object(Depth, y, x);
+#endif
 
 			if (!quiet)
 			{
+#ifdef NEW_DUNGEON
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+#else
 				/* Redraw */
 				everyone_lite_spot(Depth, y, x);
+#endif
 			}
 		}
 	}
@@ -2549,11 +2938,13 @@ static bool psi_backlash(int Ind, int m_idx, int dam)
  *
  * We attempt to return "TRUE" if the player saw anything "useful" happen.
  */
+#ifdef NEW_DUNGEON
+static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ)
+#else
 static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam, int typ)
+#endif
 {
 	int i, div;
-
-	cave_type *c_ptr = &cave[Depth][y][x];
 
 	monster_type *m_ptr;
 
@@ -2567,13 +2958,9 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 	/* Were the "effects" obvious (if seen)? */
 	bool obvious = FALSE;
 
-	bool quiet = ((Ind <= 0) ? TRUE : (Ind == c_ptr->m_idx?TRUE:FALSE));
-
 	/* do not notice things the player did to themselves by ball spell */
 	/* fix me XXX XXX XXX */
 	
-	player_type * p_ptr = ( quiet ? NULL : Players[Ind]);
-
 	/* Polymorph setting (true or false) */
 	int do_poly = 0;
 
@@ -2602,10 +2989,24 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 	/* Assume a default death */
 	cptr note_dies = " dies.";
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	cave_type *c_ptr;
+	bool quiet;
+	player_type *p_ptr;
+	if(!(zcave=getcave(wpos))) return(FALSE);
+	c_ptr=&zcave[y][x];
+	quiet = ((Ind <= 0) ? TRUE : (Ind == c_ptr->m_idx?TRUE:FALSE));
 
+	if(quiet) return(FALSE);
+	p_ptr = Players[Ind];
+#else
+	cave_type *c_ptr = &cave[Depth][y][x];
+	bool quiet = ((Ind <= 0) ? TRUE : (Ind == c_ptr->m_idx?TRUE:FALSE));
+	player_type * p_ptr = ( quiet ? NULL : Players[Ind]);
 	/* This can happen! */
 	if(p_ptr == NULL) return(FALSE);
-
+#endif
 
 	/* Nobody here */
 	if (c_ptr->m_idx <= 0) return (FALSE);
@@ -2737,7 +3138,11 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		case GF_EARTHQUAKE:
 		{
 			if (seen) obvious = TRUE;
+#ifdef NEW_DUNGEON
+			earthquake(wpos, y, x, dam);
+#else
 			earthquake(Depth, y, x, dam);
+#endif
 			dam = 0;
 			break;
 		}
@@ -3018,7 +3423,11 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			    if (sec > dam) sec = dam;
 			    if (sec > (t = damroll(2, p_ptr->lev))) sec = t;
 
+#ifdef NEW_DUNGEON
+			    p_ptr->energy += t * level_speed(&p_ptr->wpos) / 100;
+#else
 			    p_ptr->energy += t * level_speed(p_ptr->dun_depth) / 100;
+#endif
 			  }
 			break;
 		}
@@ -3630,8 +4039,13 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			/* "Kill" the "old" monster */
 			delete_monster_idx(c_ptr->m_idx);
 
+#ifdef NEW_DUNGEON
+			/* Create a new monster (no groups) */
+			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, FALSE);
+#else
 			/* Create a new monster (no groups) */
 			(void)place_monster_aux(Depth, y, x, i, FALSE, FALSE, FALSE);
+#endif
 
 			/* XXX XXX XXX Hack -- Assume success */
 
@@ -3659,8 +4073,13 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		y = m_ptr->fy;
 		x = m_ptr->fx;
 
+#ifdef NEW_DUNGEON
+		/* Hack -- get new grid */
+		c_ptr = &zcave[y][x];
+#else
 		/* Hack -- get new grid */
 		c_ptr = &cave[Depth][y][x];
+#endif
 	}
 
 	/* Sound and Impact breathers never stun */
@@ -3806,8 +4225,13 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 	if (!quiet)
 	{
+#ifdef NEW_DUNGEON
+		/* Hack -- Redraw the monster grid anyway */
+		everyone_lite_spot(wpos, y, x);
+#else
 		/* Hack -- Redraw the monster grid anyway */
 		everyone_lite_spot(Depth, y, x);
+#endif
 	}
 
 
@@ -3835,7 +4259,11 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
  * We return "TRUE" if any "obvious" effects were observed.  XXX XXX Actually,
  * we just assume that the effects were obvious, for historical reasons.
  */
+#ifdef NEW_DUNGEON
+static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ)
+#else
 static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam, int typ)
+#endif
 {
 	player_type *p_ptr;
 
@@ -3875,7 +4303,11 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 	blind = (p_ptr->blind ? TRUE : FALSE);
 
 	/* Player is not here */
+#ifdef NEW_DUNGEON
+	if ((x != p_ptr->px) || (y != p_ptr->py) || (!inarea(wpos,&p_ptr->wpos))) return (FALSE);
+#else
 	if ((x != p_ptr->px) || (y != p_ptr->py) || (Depth != p_ptr->dun_depth)) return (FALSE);
+#endif
 
 	/* Player cannot hurt himself */
 	if (0 - who == Ind) return (FALSE);
@@ -4677,7 +5109,11 @@ static char bolt_char(int y, int x, int ny, int nx)
  *
  * Hack -- we assume that every "projection" is "self-illuminating".
  */
+#ifdef NEW_DUNGEON
+bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg)
+#else
 bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int flg)
+#endif
 {
 	int			i, j, t;
 	int                 y1, x1, y2, x2;
@@ -4712,6 +5148,10 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 	/* Encoded "radius" info (see above) */
 	byte gm[16];
 
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos)))  return(FALSE);
+#endif
 
 	/* Location of player */
 	/*y0 = py;
@@ -4778,8 +5218,13 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 			grids++;
 		}
 
+#ifdef NEW_DUNGEON
+		/* Check the grid */
+		c_ptr = &zcave[y][x];
+#else
 		/* Check the grid */
 		c_ptr = &cave[Depth][y][x];
+#endif
 
 		/* XXX XXX Hack -- Display "beam" grids */
 		if (!(flg & PROJECT_HIDE) &&
@@ -4795,7 +5240,11 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 				if (p_ptr->conn == NOT_CONNECTED)
 					continue;
 
+#ifdef NEW_DUNGEON
+				if(!inarea(&p_ptr->wpos, wpos))
+#else
 				if (p_ptr->dun_depth != Depth)
+#endif
 					continue;
 
 				if (p_ptr->blind)
@@ -4819,8 +5268,13 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 			}
 		}
 
+#ifdef NEW_DUNGEON
+		/* Never pass through walls */
+		if (dist && !cave_floor_bold(zcave, y, x)) break;
+#else
 		/* Never pass through walls */
 		if (dist && !cave_floor_bold(Depth, y, x)) break;
+#endif
 
 		/* Check for arrival at "final target" (if desired) */
 		if (!(flg & PROJECT_THRU) && (x == x2) && (y == y2)) break;
@@ -4852,8 +5306,13 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 		x9 = x;
 		mmove2(&y9, &x9, y1, x1, y2, x2);
 
+#ifdef NEW_DUNGEON
+		/* Hack -- Balls explode BEFORE reaching walls or doors */
+		if (!cave_floor_bold(zcave, y9, x9) && (rad > 0)) break;
+#else
 		/* Hack -- Balls explode BEFORE reaching walls or doors */
 		if (!cave_floor_bold(Depth, y9, x9) && (rad > 0)) break;
+#endif
 
 		/* Keep track of the distance traveled */
 		dist++;
@@ -4874,7 +5333,11 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 				if (p_ptr->conn == NOT_CONNECTED)
 					continue;
 
+#ifdef NEW_DUNGEON
+				if (!inarea(&p_ptr->wpos, wpos))
+#else
 				if (p_ptr->dun_depth != Depth)
+#endif
 					continue;
 
 				if (p_ptr->blind)
@@ -4902,8 +5365,13 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 			}
 		}
 
+#ifdef NEW_DUNGEON
+		/* Clean up */
+		everyone_lite_spot(wpos, y9, x9);
+#else
 		/* Clean up */
 		everyone_lite_spot(Depth, y9, x9);
+#endif
 
 		/* Save the new location */
 		y = y9;
@@ -4936,13 +5404,22 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 				for (x = x2 - dist; x <= x2 + dist; x++)
 				{
 					/* Ignore "illegal" locations */
+#ifdef NEW_DUNGEON
+					if (!in_bounds2(wpos, y, x)) continue;
+#else
 					if (!in_bounds2(Depth, y, x)) continue;
+#endif
 
 					/* Enforce a "circular" explosion */
 					if (distance(y2, x2, y, x) != dist) continue;
 
+#ifdef NEW_DUNGEON
+					/* Ball explosions are stopped by walls */
+					if (!los(wpos, y2, x2, y, x)) continue;
+#else
 					/* Ball explosions are stopped by walls */
 					if (!los(Depth, y2, x2, y, x)) continue;
+#endif
 
 					/* Save this grid */
 					gy[grids] = y;
@@ -4987,7 +5464,11 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 					if (p_ptr->conn == NOT_CONNECTED)
 						continue;
 
+#ifdef NEW_DUNGEON
+					if (!inarea(&p_ptr->wpos, wpos))
+#else
 					if (p_ptr->dun_depth != Depth)
+#endif
 						continue;
 
 					if (p_ptr->blind)
@@ -5040,8 +5521,13 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 				y = gy[i];
 				x = gx[i];
 
+#ifdef NEW_DUNGEON
+				/* Erase if needed */
+				everyone_lite_spot(wpos, y, x);
+#else
 				/* Erase if needed */
 				everyone_lite_spot(Depth, y, x);
+#endif
 			}
 
 			/* Flush the explosion */
@@ -5070,8 +5556,13 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 			y = gy[i];
 			x = gx[i];
 
+#ifdef NEW_DUNGEON
+			/* Affect the feature */
+			if (project_f(0 - who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+#else
 			/* Affect the feature */
 			if (project_f(0 - who, who, dist, Depth, y, x, dam, typ)) notice = TRUE;
+#endif
 		}
 	}
 
@@ -5092,8 +5583,13 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 			y = gy[i];
 			x = gx[i];
 
+#ifdef NEW_DUNGEON
+			/* Affect the object */
+			if (project_i(0 - who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+#else
 			/* Affect the object */
 			if (project_i(0 - who, who, dist, Depth, y, x, dam, typ)) notice = TRUE;
+#endif
 		}
 	}
 
@@ -5119,11 +5615,19 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 			y = gy[i];
 			x = gx[i];
 
+#ifdef NEW_DUNGEON
+			/* Walls protect monsters */
+			if (!cave_floor_bold(zcave, y, x)) continue;
+
+			/* Affect the monster */
+			if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+#else
 			/* Walls protect monsters */
 			if (!cave_floor_bold(Depth, y, x)) continue;
 
 			/* Affect the monster */
 			if (project_m(0-who, who, dist, Depth, y, x, dam, typ)) notice = TRUE;
+#endif
 		}
 
 		/* Mega-Hack */
@@ -5137,7 +5641,11 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 			if (who < 0)
 			{
 				player_type *p_ptr = Players[0 - who];
+#ifdef NEW_DUNGEON
+				int m_idx = zcave[y][x].m_idx;
+#else
 				int m_idx = cave[Depth][y][x].m_idx;
+#endif
 
 				/* Hack - auto-track monster */
 				if (m_idx > 0)
@@ -5173,10 +5681,17 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 			x = gx[i];
 
 			/* Set the player index */
+#ifdef NEW_DUNGEON
+			player_idx = 0 - zcave[y][x].m_idx;
+
+			/* Affect the player */
+			if (project_p(player_idx, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+#else
 			player_idx = 0 - cave[Depth][y][x].m_idx;
 
 			/* Affect the player */
 			if (project_p(player_idx, who, dist, Depth, y, x, dam, typ)) notice = TRUE;
+#endif
 		}
 	}
 

@@ -6,7 +6,199 @@
 
 #include "angband.h"
 
+#ifdef NEW_DUNGEON
 
+/*
+ * Scans for cave_type array pointer.
+ * Returns cave array relative to the dimensions
+ * specified in the arguments. Returns NULL for
+ * a failure.
+ */
+cave_type **getcave(struct worldpos *wpos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0){
+		return(wild->cave);
+	}
+	else{
+		if(wpos->wz>0)
+			return(wild->tower->level[wpos->wz-1].cave);
+		else
+			return(wild->dungeon->level[ABS(wpos->wz)-1].cave);
+	}
+}
+
+void new_level_up_x(struct worldpos *wpos, int pos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) wild->up_x=pos; 
+	else if(wpos->wz>0)
+		wild->tower->level[wpos->wz-1].up_x=pos;
+	else
+		wild->dungeon->level[ABS(wpos->wz)-1].up_x=pos;
+}
+void new_level_up_y(struct worldpos *wpos, int pos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) wild->up_y=pos; 
+	else if(wpos->wz>0)
+		wild->tower->level[wpos->wz-1].up_y=pos;
+	else
+		wild->dungeon->level[ABS(wpos->wz)-1].up_y=pos;
+}
+void new_level_down_x(struct worldpos *wpos, int pos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) wild->dn_x=pos; 
+	else if(wpos->wz>0)
+		wild->tower->level[wpos->wz-1].dn_x=pos;
+	else
+		wild->dungeon->level[ABS(wpos->wz)-1].dn_x=pos;
+}
+void new_level_down_y(struct worldpos *wpos, int pos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) wild->dn_y=pos; 
+	else if(wpos->wz>0)
+		wild->tower->level[wpos->wz-1].dn_y=pos;
+	else
+		wild->dungeon->level[ABS(wpos->wz)-1].dn_y=pos;
+}
+void new_level_rand_x(struct worldpos *wpos, int pos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) wild->rn_x=pos; 
+	else if(wpos->wz>0)
+		wild->tower->level[wpos->wz-1].rn_x=pos;
+	else
+		wild->dungeon->level[ABS(wpos->wz)-1].rn_x=pos;
+}
+void new_level_rand_y(struct worldpos *wpos, int pos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) wild->rn_y=pos; 
+	else if(wpos->wz>0)
+		wild->tower->level[wpos->wz-1].rn_y=pos;
+	else
+		wild->dungeon->level[ABS(wpos->wz)-1].rn_y=pos;
+}
+
+byte level_up_x(struct worldpos *wpos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) return(wild->up_x); 
+	return(wpos->wz>0?wild->tower->level[wpos->wz-1].up_x:wild->dungeon->level[ABS(wpos->wz)-1].up_x);
+}
+byte level_up_y(struct worldpos *wpos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) return(wild->up_y); 
+	return(wpos->wz>0?wild->tower->level[wpos->wz-1].up_y:wild->dungeon->level[ABS(wpos->wz)-1].up_y);
+}
+byte level_down_x(struct worldpos *wpos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) return(wild->dn_x); 
+	return(wpos->wz>0?wild->tower->level[wpos->wz-1].dn_x:wild->dungeon->level[ABS(wpos->wz)-1].dn_x);
+}
+byte level_down_y(struct worldpos *wpos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) return(wild->dn_y); 
+	return(wpos->wz>0?wild->tower->level[wpos->wz-1].dn_y:wild->dungeon->level[ABS(wpos->wz)-1].dn_y);
+}
+byte level_rand_x(struct worldpos *wpos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) return(wild->rn_x); 
+	return(wpos->wz>0?wild->tower->level[wpos->wz-1].rn_x:wild->dungeon->level[ABS(wpos->wz)-1].rn_x);
+}
+byte level_rand_y(struct worldpos *wpos){
+	struct wilderness_type *wild;
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0) return(wild->rn_y); 
+	return(wpos->wz>0?wild->tower->level[wpos->wz-1].rn_y:wild->dungeon->level[ABS(wpos->wz)-1].rn_y);
+}
+
+bool can_go_up(struct worldpos *wpos){
+	struct wilderness_type *wild;
+	if(wpos->wz<0) return(TRUE);
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz>0) return(wpos->wz < wild->tower->maxdepth);
+	return((wild->flags&WILD_F_UP)?TRUE:FALSE);
+}
+bool can_go_down(struct worldpos *wpos){
+	struct wilderness_type *wild;
+	if(wpos->wz>0) return(TRUE);
+	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz<0) return(ABS(wpos->wz) < wild->dungeon->maxdepth);
+	return((wild->flags&WILD_F_DOWN)?TRUE:FALSE);
+}
+
+bool istown(struct worldpos *wpos){
+	if(!wpos->wz && wild_info[wpos->wy][wpos->wx].type==WILD_TOWN) return(TRUE);
+	return(FALSE);
+}
+
+void wpcopy(struct worldpos *dest, struct worldpos *src){
+	dest->wx=src->wx;
+	dest->wy=src->wy;
+	dest->wz=src->wz;
+}
+
+void new_players_on_depth(struct worldpos *wpos, int value, bool inc){
+	struct wilderness_type *w_ptr;
+	w_ptr=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz==0){
+		w_ptr->ondepth=(inc?w_ptr->ondepth+value:value);
+	}
+	else{
+		struct dungeon_type *d_ptr;
+		if(wpos->wz>0)
+			d_ptr=wild_info[wpos->wy][wpos->wx].tower;
+		else
+			d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
+		d_ptr->level[ABS(wpos->wz)-1].ondepth=(inc?d_ptr->level[ABS(wpos->wz)-1].ondepth+value:value);
+	}
+}
+
+int players_on_depth(struct worldpos *wpos){
+	if(wpos->wz==0)
+		return(wild_info[wpos->wy][wpos->wx].ondepth);
+	else{
+		struct dungeon_type *d_ptr;
+		if(wpos->wz>0)
+			d_ptr=wild_info[wpos->wy][wpos->wx].tower;
+		else
+			d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
+		return(d_ptr->level[ABS(wpos->wz)-1].ondepth);
+	}
+}
+
+bool inarea(struct worldpos *apos, struct worldpos *bpos){
+	if(apos->wx==bpos->wx && apos->wy==bpos->wy && apos->wz==bpos->wz)
+		return TRUE;
+	return FALSE;
+}
+
+int getlevel(struct worldpos *wpos){
+	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
+
+	if(wpos->wz==0){
+		/* ground level */
+		return(w_ptr->radius);
+	}
+	else{
+		struct dungeon_type *d_ptr;
+		int base;
+		if(wpos->wz>0)
+			d_ptr=w_ptr->tower;
+		else
+			d_ptr=w_ptr->dungeon;
+		base=d_ptr->baselevel+ABS(wpos->wz)-1;
+	}
+}
+#endif
 
 /*
  * Approximate Distance between two points.
@@ -68,7 +260,11 @@ int distance(int y1, int x1, int y2, int x2)
  *
  * Use the "update_view()" function to determine player line-of-sight.
  */
+#ifdef NEW_DUNGEON
+bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
+#else
 bool los(int Depth, int y1, int x1, int y2, int x2)
+#endif
 {
 	/* Delta */
 	int dx, dy;
@@ -91,7 +287,12 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 	/* Slope, or 1/Slope, of LOS */
 	int m;
 
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return FALSE;
+#else
 	if(!cave[Depth]) return FALSE;
+#endif
 
 	/* Extract the offset */
 	dy = y2 - y1;
@@ -118,7 +319,11 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 		{
 			for (ty = y1 + 1; ty < y2; ty++)
 			{
+#ifdef NEW_DUNGEON
+				if (!cave_floor_bold(zcave, ty, x1)) return (FALSE);
+#else
 				if (!cave_floor_bold(Depth, ty, x1)) return (FALSE);
+#endif
 			}
 		}
 
@@ -127,7 +332,11 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 		{
 			for (ty = y1 - 1; ty > y2; ty--)
 			{
+#ifdef NEW_DUNGEON
+				if (!cave_floor_bold(zcave, ty, x1)) return (FALSE);
+#else
 				if (!cave_floor_bold(Depth, ty, x1)) return (FALSE);
+#endif
 			}
 		}
 
@@ -143,7 +352,11 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 		{
 			for (tx = x1 + 1; tx < x2; tx++)
 			{
+#ifdef NEW_DUNGEON
+				if (!cave_floor_bold(zcave, y1, tx)) return (FALSE);
+#else
 				if (!cave_floor_bold(Depth, y1, tx)) return (FALSE);
+#endif
 			}
 		}
 
@@ -152,7 +365,11 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 		{
 			for (tx = x1 - 1; tx > x2; tx--)
 			{
+#ifdef NEW_DUNGEON
+				if (!cave_floor_bold(zcave, y1, tx)) return (FALSE);
+#else
 				if (!cave_floor_bold(Depth, y1, tx)) return (FALSE);
+#endif
 			}
 		}
 
@@ -171,7 +388,11 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 	{
 		if (ay == 2)
 		{
+#ifdef NEW_DUNGEON
+			if (cave_floor_bold(zcave, y1 + sy, x1)) return (TRUE);
+#else
 			if (cave_floor_bold(Depth, y1 + sy, x1)) return (TRUE);
+#endif
 		}
 	}
 
@@ -180,7 +401,11 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 	{
 		if (ax == 2)
 		{
+#ifdef NEW_DUNGEON
+			if (cave_floor_bold(zcave, y1, x1 + sx)) return (TRUE);
+#else
 			if (cave_floor_bold(Depth, y1, x1 + sx)) return (TRUE);
+#endif
 		}
 	}
 
@@ -216,7 +441,11 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 		/* the LOS exactly meets the corner of a tile. */
 		while (x2 - tx)
 		{
+#ifdef NEW_DUNGEON
+			if (!cave_floor_bold(zcave, ty, tx)) return (FALSE);
+#else
 			if (!cave_floor_bold(Depth, ty, tx)) return (FALSE);
+#endif
 
 			qy += m;
 
@@ -227,7 +456,11 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 			else if (qy > f2)
 			{
 				ty += sy;
+#ifdef NEW_DUNGEON
+				if (!cave_floor_bold(zcave, ty, tx)) return (FALSE);
+#else
 				if (!cave_floor_bold(Depth, ty, tx)) return (FALSE);
+#endif
 				qy -= f1;
 				tx += sx;
 			}
@@ -263,7 +496,11 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 		/* the LOS exactly meets the corner of a tile. */
 		while (y2 - ty)
 		{
+#ifdef NEW_DUNGEON
+			if (!cave_floor_bold(zcave, ty, tx)) return (FALSE);
+#else
 			if (!cave_floor_bold(Depth, ty, tx)) return (FALSE);
+#endif
 
 			qx += m;
 
@@ -274,7 +511,11 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 			else if (qx > f2)
 			{
 				tx += sx;
+#ifdef NEW_DUNGEON
+				if (!cave_floor_bold(zcave, ty, tx)) return (FALSE);
+#else
 				if (!cave_floor_bold(Depth, ty, tx)) return (FALSE);
+#endif
 				qx -= f1;
 				ty += sy;
 			}
@@ -331,20 +572,31 @@ bool los(int Depth, int y1, int x1, int y2, int x2)
 bool player_can_see_bold(int Ind, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
-	int Depth = p_ptr->dun_depth;
 	int xx, yy;
 
 	cave_type *c_ptr;
 	byte *w_ptr;
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	struct worldpos *wpos;
+	wpos=&p_ptr->wpos;
+#else
+	int Depth = p_ptr->dun_depth;
+#endif
 
 	/* Blind players see nothing */
 	if (p_ptr->blind) return (FALSE);
 
 	/* temp bug fix - evileye */
+#ifdef NEW_DUNGEON
+	if(!(zcave=getcave(wpos))) return FALSE;
+	c_ptr=&zcave[y][x];
+#else
 	if(!cave[Depth]) return(FALSE);
 
 	/* Access the cave grid */
 	c_ptr = &cave[Depth][y][x];
+#endif
 	w_ptr = &p_ptr->cave_flag[y][x];
 
 	/* Note that "torch-lite" yields "illumination" */
@@ -358,14 +610,22 @@ bool player_can_see_bold(int Ind, int y, int x)
 	if (!(c_ptr->info & CAVE_GLOW)) return (FALSE);
 
 	/* Floors are simple */
+#ifdef NEW_DUNGEON
+	if (cave_floor_bold(zcave, y, x)) return (TRUE);
+#else
 	if (cave_floor_bold(Depth, y, x)) return (TRUE);
+#endif
 
 	/* Hack -- move towards player */
 	yy = (y < p_ptr->py) ? (y + 1) : (y > p_ptr->py) ? (y - 1) : y;
 	xx = (x < p_ptr->px) ? (x + 1) : (x > p_ptr->px) ? (x - 1) : x;
 
 	/* Check for "local" illumination */
+#ifdef NEW_DUNGEON
+	if (zcave[yy][xx].info & CAVE_GLOW)
+#else
 	if (cave[Depth][yy][xx].info & CAVE_GLOW)
+#endif
 	{
 		/* Assume the wall is really illuminated */
 		return (TRUE);
@@ -494,8 +754,8 @@ static byte player_color(int Ind)
 			return TERM_ORANGE;
 		case CLASS_UNBELIEVER:
 			return TERM_L_DARK;
-	        case CLASS_ARCHER:
-                       	return TERM_L_GREEN;
+		case CLASS_ARCHER:
+			return TERM_L_GREEN;
 		case CLASS_MONK:
 			return TERM_SLATE;
 		case CLASS_TELEPATH:
@@ -631,7 +891,6 @@ static byte player_color(int Ind)
 void map_info(int Ind, int y, int x, byte *ap, char *cp)
 {
 	player_type *p_ptr = Players[Ind];
-	int Depth = p_ptr->dun_depth;
 	int kludge; /* You don't want to know what this is for.... -APD */
 
 	cave_type *c_ptr;
@@ -644,10 +903,21 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	byte a;
 	char c;
 
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+#else
+	int Depth = p_ptr->dun_depth;
 	if(!cave[Depth]) return;
+#endif
+
 
 	/* Get the cave */
+#ifdef NEW_DUNGEON
+	c_ptr = &zcave[y][x];
+#else
 	c_ptr = &cave[Depth][y][x];
+#endif
 	w_ptr = &p_ptr->cave_flag[y][x];
 
 
@@ -661,7 +931,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		/* Hack -- space are visible to the dungeon master */
 		if (((*w_ptr & CAVE_MARK) ||
 		    ((((c_ptr->info & CAVE_LITE) &&
-		        (*w_ptr & CAVE_VIEW)) ||
+			(*w_ptr & CAVE_VIEW)) ||
 		      ((c_ptr->info & CAVE_GLOW) &&
 		       (*w_ptr & CAVE_VIEW))) &&
 		     !p_ptr->blind)) || (!strcmp(p_ptr->name,cfg_dungeon_master)))
@@ -804,7 +1074,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 						xx = (x < p_ptr->px) ? (x + 1) : (x > p_ptr->px) ? (x - 1) : x;
 
 						/* Check for "local" illumination */
+#ifdef NEW_DUNGEON
+						if (!(zcave[yy][xx].info & CAVE_GLOW))
+#else
 						if (!(cave[Depth][yy][xx].info & CAVE_GLOW))
+#endif
 						{
 							/* Use "gray" */
 							a = TERM_SLATE;
@@ -869,7 +1143,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		monster_type *m_ptr = &m_list[c_ptr->m_idx];
 
 		/* Visible monster */
-                if (p_ptr->mon_vis[c_ptr->m_idx])
+		if (p_ptr->mon_vis[c_ptr->m_idx])
 		{
                         monster_race *r_ptr = race_inf(m_ptr);
 
@@ -986,7 +1260,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			{
 				sprintf((unsigned char *)&kludge,"%d", ((Players[0 - c_ptr->m_idx]->chp * 95) / (Players[0 - c_ptr->m_idx]->mhp*10)));
 				c = kludge;
-			}			
+			}                       
 
 			a = player_color(0 - c_ptr->m_idx);
 
@@ -1032,9 +1306,17 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 void note_spot(int Ind, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
+	byte *w_ptr = &p_ptr->cave_flag[y][x];
+
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	cave_type *c_ptr;
+	zcave=getcave(&p_ptr->wpos);
+	c_ptr = &zcave[y][x];
+#else
 	int Depth = p_ptr->dun_depth;
 	cave_type *c_ptr = &cave[Depth][y][x];
-	byte *w_ptr = &p_ptr->cave_flag[y][x];
+#endif
 
 
 	/* Hack -- memorize objects */
@@ -1085,7 +1367,11 @@ void note_spot(int Ind, int y, int x)
 }
 
 
+#ifdef NEW_DUNGEON
+void note_spot_depth(struct worldpos *wpos, int y, int x)
+#else
 void note_spot_depth(int Depth, int y, int x)
+#endif
 {
 	int i;
 
@@ -1094,14 +1380,22 @@ void note_spot_depth(int Depth, int y, int x)
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 
+#ifdef NEW_DUNGEON
+		if (inarea(wpos, &Players[i]->wpos))
+#else
 		if (Players[i]->dun_depth == Depth)
+#endif
 		{
 			note_spot(i, y, x);
 		}
 	}
 }
 
+#ifdef NEW_DUNGEON
+void everyone_lite_spot(struct worldpos *wpos, int y, int x)
+#else
 void everyone_lite_spot(int Depth, int y, int x)
+#endif
 {
 	int i;
 
@@ -1113,7 +1407,11 @@ void everyone_lite_spot(int Depth, int y, int x)
 			continue;
 
 		/* If he's not here, skip him */
+#ifdef NEW_DUNGEON
+		if (!inarea(wpos, &Players[i]->wpos))
+#else
 		if (Players[i]->dun_depth != Depth)
+#endif
 			continue;
 
 		/* Actually lite that spot for that player */
@@ -1124,7 +1422,11 @@ void everyone_lite_spot(int Depth, int y, int x)
 /*
  * Wipe the "CAVE_MARK" bit in everyone's array
  */
+#ifdef NEW_DUNGEON
+void everyone_forget_spot(struct worldpos *wpos, int y, int x)
+#else
 void everyone_forget_spot(int Depth, int y, int x)
+#endif
 {
 	int i;
 
@@ -1136,7 +1438,11 @@ void everyone_forget_spot(int Depth, int y, int x)
 			continue;
 
 		/* If he's not here, skip him */
+#ifdef NEW_DUNGEON
+		if (!inarea(wpos, &Players[i]->wpos))
+#else
 		if (Players[i]->dun_depth != Depth)
+#endif
 			continue;
 
 		/* Forget the spot */
@@ -1289,7 +1595,7 @@ void prt_map(int Ind)
 /*
  * Display highest priority object in the RATIO by RATIO area
  */
-#define	RATIO 3
+#define RATIO 3
 
 /*
  * Display the entire map
@@ -1561,6 +1867,10 @@ void wild_display_map(int Ind)
 
 	bool old_view_special_lite;
 	bool old_view_granite_lite;
+#ifdef NEW_DUNGEON
+	struct worldpos twpos;
+	twpos.wz=0;
+#endif
 
 
 	/* Save lighting effects */
@@ -1593,6 +1903,12 @@ void wild_display_map(int Ind)
 		for (x = 0; x < MAP_WID+2; x++)
 		{
 			/* Location */
+#ifdef NEW_DUNGEON
+			twpos.wy = p_ptr->wpos.wy + (MAP_HGT+2)/2 + y;
+			twpos.wx = p_ptr->wpos.wx + (MAP_HGT+2)/2 + x;
+			if(twpos.wy >= 0 && twpos.wy < MAX_WILD_Y && twpos.wx >=0 && twpos.wy < MAX_WILD_X)
+				type = determine_wilderness_type(&twpos);
+#else
 			world_y = p_ptr->world_y + (MAP_HGT+2)/2 - y;
 			world_x = p_ptr->world_x - (MAP_WID+2)/2 + x;
 			wild_idx = world_index(world_x, world_y);
@@ -1600,14 +1916,23 @@ void wild_display_map(int Ind)
 			/* figure out what char to display */
 			if (wild_idx > -MAX_WILD) type = determine_wilderness_type(wild_idx);
 			/* if off the map, set to unknown type */
+#endif
 			else type = -1;
+			printf("type:%d\n",type);
 			
 			/* if the player hasnt been here, dont show him the terrain */
 			/* Hack -- serverchez has knowledge of the full world */
 			if (strcmp(p_ptr->name,cfg_admin_wizard))
+#ifdef NEW_DUNGEON
+			wild_idx=twpos.wx+twpos.wy*MAX_WILD_Y;
+			if (!(p_ptr->wild_map[wild_idx / 8] & (1 << (wild_idx % 8)))) type = -1;
+#else
 			if (!(p_ptr->wild_map[-wild_idx / 8] & (1 << (-wild_idx % 8)))) type = -1;
+#endif
 			/* hack --  the town is always known */
+#ifndef NEW_DUNGEON
 			if (!wild_idx) type = WILD_TOWN;
+#endif
 			
 			switch (type)
 			{
@@ -1716,7 +2041,14 @@ void do_cmd_view_map(int Ind)
 	/* Display the map */
 	
 	/* if not in town or the dungeon, do normal map */
+#ifdef NEW_DUNGEON
+	/* is player in a town or dungeon? */
+	/* only off floor ATM */
+	if (Players[Ind]->wpos.wz!=0 || (istown(&Players[Ind]->wpos)))
+		display_map(Ind, &cy, &cx);
+#else
 	if (Players[Ind]->dun_depth >= 0) display_map(Ind, &cy, &cx);
+#endif
 	/* do wilderness map */
 	else wild_display_map(Ind);
 }
@@ -1949,9 +2281,16 @@ void do_cmd_view_map(int Ind)
 void forget_lite(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int Depth = p_ptr->dun_depth;
-
 	int i, x, y;
+
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	struct worldpos *wpos=&p_ptr->wpos;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+#else
+	int Depth = p_ptr->dun_depth;
+#endif
+
 
 	/* None to forget */
 	if (!(p_ptr->lite_n)) return;
@@ -1966,7 +2305,11 @@ void forget_lite(int Ind)
 
 		/* Forget "LITE" flag */
 		p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
+#ifdef NEW_DUNGEON
+		zcave[y][x].info &= ~CAVE_LITE;
+#else
 		cave[Depth][y][x].info &= ~CAVE_LITE;
+#endif
 
 		for (j = 1; j <= NumPlayers; j++)
 		{
@@ -1975,7 +2318,11 @@ void forget_lite(int Ind)
 				continue;
 
 			/* Make sure player is on the level */
+#ifdef NEW_DUNGEON
+			if(!inarea(wpos, &Players[j]->wpos))
+#else
 			if (Players[j]->dun_depth != Depth)
+#endif
 				continue;
 
 			/* Ignore the player that we're updating */
@@ -1984,11 +2331,19 @@ void forget_lite(int Ind)
 
 			/* If someone else also lites this spot relite it */
 			if (Players[j]->cave_flag[y][x] & CAVE_LITE)
+#ifdef NEW_DUNGEON
+				zcave[y][x].info |= CAVE_LITE;
+#else
 				cave[Depth][y][x].info |= CAVE_LITE;
+#endif
 		}
 
 		/* Redraw */
+#ifdef NEW_DUNGEON
+		everyone_lite_spot(wpos, y, x);
+#else
 		everyone_lite_spot(Depth, y, x);
+#endif
 	}
 
 	/* None left */
@@ -2008,12 +2363,21 @@ void forget_lite(int Ind)
  * should only be called from functions that have it defined at the
  * top.  --KLJ--
  */
+#ifdef NEW_DUNGEON
+#define cave_lite_hack(Y,X) \
+    zcave[Y][X].info |= CAVE_LITE; \
+    p_ptr->cave_flag[Y][X] |= CAVE_LITE; \
+    p_ptr->lite_y[p_ptr->lite_n] = (Y); \
+    p_ptr->lite_x[p_ptr->lite_n] = (X); \
+    p_ptr->lite_n++
+#else
 #define cave_lite_hack(Y,X) \
     cave[Depth][Y][X].info |= CAVE_LITE; \
     p_ptr->cave_flag[Y][X] |= CAVE_LITE; \
     p_ptr->lite_y[p_ptr->lite_n] = (Y); \
     p_ptr->lite_x[p_ptr->lite_n] = (X); \
     p_ptr->lite_n++
+#endif
 
 
 
@@ -2047,8 +2411,15 @@ void forget_lite(int Ind)
 void update_lite(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int Depth = p_ptr->dun_depth;
 	int i, x, y, min_x, max_x, min_y, max_y;
+
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos=&p_ptr->wpos;
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+#else
+	int Depth = p_ptr->dun_depth;
+#endif
 
 
 	/*** Special case ***/
@@ -2079,7 +2450,11 @@ void update_lite(int Ind)
 
 		/* Mark the grid as not "lite" */
 		p_ptr->cave_flag[y][x] &= ~CAVE_LITE;
+#ifdef NEW_DUNGEON
+		zcave[y][x].info &= ~CAVE_LITE;
+#else
 		cave[Depth][y][x].info &= ~CAVE_LITE;
+#endif
 
 		for (j = 1; j <= NumPlayers; j++)
 		{
@@ -2088,7 +2463,11 @@ void update_lite(int Ind)
 				continue;
 
 			/* Make sure player is on the level */
+#ifdef NEW_DUNGEON
+			if (!inarea(wpos, &Players[j]->wpos))
+#else
 			if (Players[j]->dun_depth != Depth)
+#endif
 				continue;
 
 			/* Ignore the player that we're updating */
@@ -2097,11 +2476,18 @@ void update_lite(int Ind)
 
 			/* If someone else also lites this spot relite it */
 			if (Players[j]->cave_flag[y][x] & CAVE_LITE)
+#ifdef NEW_DUNGEON
+				zcave[y][x].info |= CAVE_LITE;
+		}
+		/* Mark the grid as "seen" */
+		zcave[y][x].info |= CAVE_TEMP;
+#else
 				cave[Depth][y][x].info |= CAVE_LITE;
 		}
-
 		/* Mark the grid as "seen" */
 		cave[Depth][y][x].info |= CAVE_TEMP;
+#endif
+
 
 		/* Add it to the "seen" set */
 		p_ptr->temp_y[p_ptr->temp_n] = y;
@@ -2138,7 +2524,11 @@ void update_lite(int Ind)
 	if (p_ptr->cur_lite >= 2)
 	{
 		/* South of the player */
+#ifdef NEW_DUNGEON
+		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px))
+#else
 		if (cave_floor_bold(Depth, p_ptr->py+1, p_ptr->px))
+#endif
 		{
 			cave_lite_hack(p_ptr->py+2, p_ptr->px);
 			cave_lite_hack(p_ptr->py+2, p_ptr->px+1);
@@ -2146,7 +2536,11 @@ void update_lite(int Ind)
 		}
 
 		/* North of the player */
+#ifdef NEW_DUNGEON
+		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px))
+#else
 		if (cave_floor_bold(Depth, p_ptr->py-1, p_ptr->px))
+#endif
 		{
 			cave_lite_hack(p_ptr->py-2, p_ptr->px);
 			cave_lite_hack(p_ptr->py-2, p_ptr->px+1);
@@ -2154,7 +2548,11 @@ void update_lite(int Ind)
 		}
 
 		/* East of the player */
+#ifdef NEW_DUNGEON
+		if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px+1))
+#else
 		if (cave_floor_bold(Depth, p_ptr->py, p_ptr->px+1))
+#endif
 		{
 			cave_lite_hack(p_ptr->py, p_ptr->px+2);
 			cave_lite_hack(p_ptr->py+1, p_ptr->px+2);
@@ -2162,7 +2560,11 @@ void update_lite(int Ind)
 		}
 
 		/* West of the player */
+#ifdef NEW_DUNGEON
+		if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px-1))
+#else
 		if (cave_floor_bold(Depth, p_ptr->py, p_ptr->px-1))
+#endif
 		{
 			cave_lite_hack(p_ptr->py, p_ptr->px-2);
 			cave_lite_hack(p_ptr->py+1, p_ptr->px-2);
@@ -2182,25 +2584,41 @@ void update_lite(int Ind)
 		if (p > 5) p = 5;
 
 		/* South-East of the player */
+#ifdef NEW_DUNGEON
+		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px+1))
+#else
 		if (cave_floor_bold(Depth, p_ptr->py+1, p_ptr->px+1))
+#endif
 		{
 			cave_lite_hack(p_ptr->py+2, p_ptr->px+2);
 		}
 
 		/* South-West of the player */
+#ifdef NEW_DUNGEON
+		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px-1))
+#else
 		if (cave_floor_bold(Depth, p_ptr->py+1, p_ptr->px-1))
+#endif
 		{
 			cave_lite_hack(p_ptr->py+2, p_ptr->px-2);
 		}
 
 		/* North-East of the player */
+#ifdef NEW_DUNGEON
+		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px+1))
+#else
 		if (cave_floor_bold(Depth, p_ptr->py-1, p_ptr->px+1))
+#endif
 		{
 			cave_lite_hack(p_ptr->py-2, p_ptr->px+2);
 		}
 
 		/* North-West of the player */
+#ifdef NEW_DUNGEON
+		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px-1))
+#else
 		if (cave_floor_bold(Depth, p_ptr->py-1, p_ptr->px-1))
+#endif
 		{
 			cave_lite_hack(p_ptr->py-2, p_ptr->px-2);
 		}
@@ -2258,13 +2676,22 @@ void update_lite(int Ind)
 		x = p_ptr->lite_x[i];
 
 		/* Update fresh grids */
-		if (cave[Depth][y][x].info & CAVE_TEMP) continue;
+#ifdef NEW_DUNGEON
+		if (zcave[y][x].info & CAVE_TEMP) continue;
 
+		/* Note */
+		note_spot_depth(wpos, y, x);
+
+		/* Redraw */
+		everyone_lite_spot(wpos, y, x);
+#else
+		if (cave[Depth][y][x].info & CAVE_TEMP) continue;
 		/* Note */
 		note_spot_depth(Depth, y, x);
 
 		/* Redraw */
 		everyone_lite_spot(Depth, y, x);
+#endif
 	}
 
 	/* Clear them all */
@@ -2274,13 +2701,21 @@ void update_lite(int Ind)
 		x = p_ptr->temp_x[i];
 
 		/* No longer in the array */
+#ifdef NEW_DUNGEON
+		zcave[y][x].info &= ~CAVE_TEMP;
+#else
 		cave[Depth][y][x].info &= ~CAVE_TEMP;
+#endif
 
 		/* Update stale grids */
 		if (p_ptr->cave_flag[y][x] & CAVE_LITE) continue;
 
 		/* Redraw */
+#ifdef NEW_DUNGEON
+		everyone_lite_spot(wpos, y, x);
+#else
 		everyone_lite_spot(Depth, y, x);
+#endif
 	}
 
 	/* None left */
@@ -2366,7 +2801,7 @@ void forget_view(int Ind)
 static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x2)
 {
 	player_type *p_ptr = Players[Ind];
-	int Depth = p_ptr->dun_depth;
+
 	bool f1, f2, v1, v2, z1, z2, wall;
 
 	cave_type *c_ptr;
@@ -2378,9 +2813,22 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 	byte *g1_w_ptr;
 	byte *g2_w_ptr;
 
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos=&p_ptr->wpos;
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return FALSE;
+#else
+	int Depth = p_ptr->dun_depth;
+#endif
+
 	/* Access the grids */
+#ifdef NEW_DUNGEON
+	g1_c_ptr = &zcave[y1][x1];
+	g2_c_ptr = &zcave[y2][x2];
+#else
 	g1_c_ptr = &cave[Depth][y1][x1];
 	g2_c_ptr = &cave[Depth][y2][x2];
+#endif
 
 	g1_w_ptr = &p_ptr->cave_flag[y1][x1];
 	g2_w_ptr = &p_ptr->cave_flag[y2][x2];
@@ -2403,7 +2851,11 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 
 
 	/* Access the grid */
+#ifdef NEW_DUNGEON
+	c_ptr = &zcave[y][x];
+#else
 	c_ptr = &cave[Depth][y][x];
+#endif
 	w_ptr = &p_ptr->cave_flag[y][x];
 
 
@@ -2455,7 +2907,11 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 
 
 	/* Hack -- check line of sight */
+#ifdef NEW_DUNGEON
+	if (los(wpos, p_ptr->py, p_ptr->px, y, x))
+#else
 	if (los(Depth, p_ptr->py, p_ptr->px, y, x))
+#endif
 	{
 		cave_view_hack(w_ptr, y, x);
 
@@ -2574,7 +3030,6 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 void update_view(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int Depth = p_ptr->dun_depth;
 
 	int n, m, d, k, y, x, z;
 
@@ -2588,11 +3043,24 @@ void update_view(int Ind)
 	cave_type *c_ptr;
 	byte *w_ptr;
 
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	struct worldpos *wpos;
+	wpos=&p_ptr->wpos;
+	if(!(zcave=getcave(wpos))) return;
+#else
+	int Depth = p_ptr->dun_depth;
+#endif
+
 
 	/*** Initialize ***/
 
 	/* Optimize */
+#ifdef NEW_DUNGEON
+	if (p_ptr->view_reduce_view && !wpos->wz) /* town */
+#else
 	if (p_ptr->view_reduce_view && !Depth)
+#endif
 	{
 		/* Full radius (10) */
 		full = MAX_SIGHT / 2;
@@ -2621,7 +3089,11 @@ void update_view(int Ind)
 		x = p_ptr->view_x[n];
 
 		/* Access the grid */
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[y][x];
+#else
 		c_ptr = &cave[Depth][y][x];
+#endif
 		w_ptr = &p_ptr->cave_flag[y][x];
 
 		/* Mark the grid as not in "view" */
@@ -2647,7 +3119,11 @@ void update_view(int Ind)
 	x = p_ptr->px;
 
 	/* Access the grid */
+#ifdef NEW_DUNGEON
+	c_ptr = &zcave[y][x];
+#else
 	c_ptr = &cave[Depth][y][x];
+#endif
 	w_ptr = &p_ptr->cave_flag[y][x];
 
 	/* Assume the player grid is easily viewable */
@@ -2666,18 +3142,26 @@ void update_view(int Ind)
 	for (d = 1; d <= z; d++)
 	{
 		/*if (y + d > 65) break;*/
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[y+d][x+d];
+#else
 		c_ptr = &cave[Depth][y+d][x+d];
+#endif
 		w_ptr = &p_ptr->cave_flag[y+d][x+d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y+d, x+d);
-		if (!cave_floor_grid(c_ptr)) break;		
+		if (!cave_floor_grid(c_ptr)) break;             
 	}
 
 	/* Scan south-west */
 	for (d = 1; d <= z; d++)
 	{
 		/*if (y + d > 65) break;*/
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[y+d][x-d];
+#else
 		c_ptr = &cave[Depth][y+d][x-d];
+#endif
 		w_ptr = &p_ptr->cave_flag[y+d][x-d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y+d, x-d);
@@ -2688,7 +3172,11 @@ void update_view(int Ind)
 	for (d = 1; d <= z; d++)
 	{
 		/*if (d > y) break;*/
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[y-d][x+d];
+#else
 		c_ptr = &cave[Depth][y-d][x+d];
+#endif
 		w_ptr = &p_ptr->cave_flag[y-d][x+d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y-d, x+d);
@@ -2699,7 +3187,11 @@ void update_view(int Ind)
 	for (d = 1; d <= z; d++)
 	{
 		/*if (d > y) break;*/
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[y-d][x-d];
+#else
 		c_ptr = &cave[Depth][y-d][x-d];
+#endif
 		w_ptr = &p_ptr->cave_flag[y-d][x-d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y-d, x-d);
@@ -2713,7 +3205,11 @@ void update_view(int Ind)
 	for (d = 1; d <= full; d++)
 	{
 		/*if (y + d > 65) break;*/
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[y+d][x];
+#else
 		c_ptr = &cave[Depth][y+d][x];
+#endif
 		w_ptr = &p_ptr->cave_flag[y+d][x];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y+d, x);
@@ -2727,7 +3223,11 @@ void update_view(int Ind)
 	for (d = 1; d <= full; d++)
 	{
 		/*if (d > y) break;*/
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[y-d][x];
+#else
 		c_ptr = &cave[Depth][y-d][x];
+#endif
 		w_ptr = &p_ptr->cave_flag[y-d][x];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y-d, x);
@@ -2740,7 +3240,11 @@ void update_view(int Ind)
 	/* Scan east */
 	for (d = 1; d <= full; d++)
 	{
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[y][x+d];
+#else
 		c_ptr = &cave[Depth][y][x+d];
+#endif
 		w_ptr = &p_ptr->cave_flag[y][x+d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y, x+d);
@@ -2753,7 +3257,11 @@ void update_view(int Ind)
 	/* Scan west */
 	for (d = 1; d <= full; d++)
 	{
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[y][x-d];
+#else
 		c_ptr = &cave[Depth][y][x-d];
+#endif
 		w_ptr = &p_ptr->cave_flag[y][x-d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y, x-d);
@@ -2796,20 +3304,20 @@ void update_view(int Ind)
 			{
 				/* Scan */
 				for (k = n, d = 1; d <= m; d++)
-				{				
+				{                               
 					/*if (ypn + d > 65) break; */
 				
 					/* Check grid "d" in strip "n", notice "blockage" */
 					if (update_view_aux(Ind, ypn+d, xpn, ypn+d-1, xpn-1, ypn+d-1, xpn))
 					{
 						if (n + d >= se) break;
-					}								
+					}                                                               
 					
 					/* Track most distant "non-blockage" */
 					else
 					{
 						k = n + d;
-					}										
+					}                                                                               
 					
 				}
 
@@ -2869,7 +3377,7 @@ void update_view(int Ind)
 					else
 					{
 						k = n + d;
-					}										
+					}                                                                               
 				}
 
 				/* Limit the next strip */
@@ -2894,7 +3402,7 @@ void update_view(int Ind)
 					else
 					{
 						k = n + d;
-					}										
+					}                                                                               
 				}
 
 				/* Limit the next strip */
@@ -3029,7 +3537,11 @@ void update_view(int Ind)
 		x = p_ptr->view_x[n];
 
 		/* Access the grid */
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[y][x];
+#else
 		c_ptr = &cave[Depth][y][x];
+#endif
 
 		/* Clear the "CAVE_XTRA" flag */
 		c_ptr->info &= ~CAVE_XTRA;
@@ -3051,7 +3563,11 @@ void update_view(int Ind)
 		x = p_ptr->temp_x[n];
 
 		/* Access the grid */
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[y][x];
+#else
 		c_ptr = &cave[Depth][y][x];
+#endif
 		w_ptr = &p_ptr->cave_flag[y][x];
 
 		/* No longer in the array */
@@ -3263,12 +3779,19 @@ void update_flow(void)
 void map_area(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	int             i, x, y, y1, y2, x1, x2;
+
+	cave_type       *c_ptr;
+	byte            *w_ptr;
+
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos;
+	cave_type **zcave;
+	wpos=&p_ptr->wpos;
+	if(!(zcave=getcave(wpos))) return;
+#else
 	int Depth = p_ptr->dun_depth;
-	int		i, x, y, y1, y2, x1, x2;
-
-	cave_type	*c_ptr;
-	byte		*w_ptr;
-
+#endif
 
 	/* Pick an area to map */
 	y1 = p_ptr->panel_row_min - randint(10);
@@ -3287,7 +3810,11 @@ void map_area(int Ind)
 	{
 		for (x = x1; x <= x2; x++)
 		{
+#ifdef NEW_DUNGEON
+			c_ptr = &zcave[y][x];
+#else
 			c_ptr = &cave[Depth][y][x];
+#endif
 			w_ptr = &p_ptr->cave_flag[y][x];
 
 			/* All non-walls are "checked" */
@@ -3303,7 +3830,11 @@ void map_area(int Ind)
 				/* Memorize known walls */
 				for (i = 0; i < 8; i++)
 				{
+#ifdef NEW_DUNGEON
+					c_ptr = &zcave[y+ddy_ddd[i]][x+ddx_ddd[i]];
+#else
 					c_ptr = &cave[Depth][y+ddy_ddd[i]][x+ddx_ddd[i]];
+#endif
 					w_ptr = &p_ptr->cave_flag[y+ddy_ddd[i]][x+ddx_ddd[i]];
 
 					/* Memorize walls (etc) */
@@ -3345,11 +3876,18 @@ void map_area(int Ind)
 void wiz_lite(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int Depth = p_ptr->dun_depth;
-	int		y, x, i;
+	int             y, x, i;
 
-	cave_type	*c_ptr;
-	byte		*w_ptr;
+	cave_type       *c_ptr;
+	byte            *w_ptr;
+
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos;
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+#else
+	int Depth = p_ptr->dun_depth;
+#endif
 
 	/* Scan all normal grids */
 	for (y = 1; y < p_ptr->cur_hgt-1; y++)
@@ -3358,7 +3896,11 @@ void wiz_lite(int Ind)
 		for (x = 1; x < p_ptr->cur_wid-1; x++)
 		{
 			/* Access the grid */
+#ifdef NEW_DUNGEON
+			c_ptr = &zcave[y][x];
+#else
 			c_ptr = &cave[Depth][y][x];
+#endif
 			w_ptr = &p_ptr->cave_flag[y][x];
 
 			/* Memorize all objects */
@@ -3378,7 +3920,11 @@ void wiz_lite(int Ind)
 					int xx = x + ddx_ddd[i];
 
 					/* Get the grid */
+#ifdef NEW_DUNGEON
+					c_ptr = &zcave[yy][xx];
+#else
 					c_ptr = &cave[Depth][yy][xx];
+#endif
 					w_ptr = &p_ptr->cave_flag[yy][xx];
 
 					/* Perma-lite the grid */
@@ -3420,21 +3966,35 @@ void wiz_lite(int Ind)
 void wiz_dark(int Ind)
 {
 	player_type *p_ptr, *q_ptr = Players[Ind];
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos;
+	cave_type **zcave;
+	cave_type *c_ptr;
+#else
 	int Depth;
+#endif
 	int y, x, i;
 	object_type *o_ptr;
 
+	wpos=&q_ptr->wpos;
+	if(!(zcave=getcave(wpos))) return;
 
 	/* Check for every other player */
+
 	for (i = 1; i <= NumPlayers; i++)
 	{
 		p_ptr = Players[i];
 		
+#ifndef NEW_DUNGEON
 		Depth = p_ptr->dun_depth;
-		
+#endif
 		
 		/* Only works for players on the level */
+#ifdef NEW_DUNGEON
+		if (!inarea(wpos, &p_ptr->wpos)) continue;
+#else
 		if (q_ptr->dun_depth != Depth) continue;
+#endif
 		
 		o_ptr = &p_ptr->inventory[INVEN_LITE];
 		
@@ -3455,8 +4015,12 @@ void wiz_dark(int Ind)
 		{
 			for (x = 0; x < p_ptr->cur_wid; x++)
 			{
-				cave_type *c_ptr = &cave[Depth][y][x];
 				byte *w_ptr = &p_ptr->cave_flag[y][x];
+#ifdef NEW_DUNGEON
+				c_ptr = &zcave[y][x];
+#else
+				cave_type *c_ptr = &cave[Depth][y][x];
+#endif
 
 				/* Process the grid */
 				*w_ptr &= ~CAVE_MARK;
@@ -3599,9 +4163,17 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
  *
  * This is slightly (but significantly) different from "los(y1,x1,y2,x2)".
  */
+#ifdef NEW_DUNGEON
+bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2)
+#else
 bool projectable(int Depth, int y1, int x1, int y2, int x2)
+#endif
 {
 	int dist, y, x;
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return FALSE;
+#endif
 
 	/* Start at the initial location */
 	y = y1, x = x1;
@@ -3610,7 +4182,11 @@ bool projectable(int Depth, int y1, int x1, int y2, int x2)
 	for (dist = 0; dist <= MAX_RANGE; dist++)
 	{
 		/* Never pass through walls */
+#ifdef NEW_DUNGEON
+		if (dist && !cave_floor_bold(zcave, y, x)) break;
+#else
 		if (dist && !cave_floor_bold(Depth, y, x)) break;
+#endif
 
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return (TRUE);
@@ -3623,9 +4199,18 @@ bool projectable(int Depth, int y1, int x1, int y2, int x2)
 	/* Assume obstruction */
 	return (FALSE);
 }
+
+#ifdef NEW_DUNGEON
+bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2)
+#else
 bool projectable_wall(int Depth, int y1, int x1, int y2, int x2)
+#endif
 {
 	int dist, y, x;
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return(FALSE);
+#endif
 
 	/* Start at the initial location */
 	y = y1, x = x1;
@@ -3637,7 +4222,11 @@ bool projectable_wall(int Depth, int y1, int x1, int y2, int x2)
 		if ((x == x2) && (y == y2)) return (TRUE);
 
 		/* Never go through walls */
+#ifdef NEW_DUNGEON
+		if (dist && !cave_floor_bold(zcave, y, x)) break;
+#else
 		if (dist && !cave_floor_bold(Depth, y, x)) break;
+#endif
 
 		/* Calculate the new location */
 		mmove2(&y, &x, y1, x1, y2, x2);
@@ -3662,7 +4251,11 @@ bool projectable_wall(int Depth, int y1, int x1, int y2, int x2)
  *
  * But now the "m" parameter specifies whether "los" is necessary.
  */
+#ifdef NEW_DUNGEON
+void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m)
+#else
 void scatter(int Depth, int *yp, int *xp, int y, int x, int d, int m)
+#endif
 {
 	int nx, ny;
 
@@ -3674,14 +4267,22 @@ void scatter(int Depth, int *yp, int *xp, int y, int x, int d, int m)
 		nx = rand_spread(x, d);
 
 		/* Ignore illegal locations and outer walls */
+#ifdef NEW_DUNGEON
+		if (!in_bounds(ny, nx)) continue;
+#else
 		if (!in_bounds(Depth, ny, nx)) continue;
+#endif
 		
 
 		/* Ignore "excessively distant" locations */
 		if ((d > 1) && (distance(y, x, ny, nx) > d)) continue;
 
 		/* Require "line of sight" */
+#ifdef NEW_DUNGEON
+		if (m || los(wpos, y, x, ny, nx)) break;
+#else
 		if (m || los(Depth, y, x, ny, nx)) break;
+#endif
 	}
 
 	/* Save the location */

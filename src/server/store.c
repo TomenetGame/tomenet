@@ -1252,7 +1252,7 @@ static void store_create(int st)
 		invcopy(o_ptr, i);
 
 		/* Apply some "low-level" magic (no artifacts) */
-		apply_magic(0, o_ptr, level, FALSE, FALSE, FALSE);
+		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, FALSE, FALSE);
 
 		/* Hack -- Charge lite's */
 		if (o_ptr->tval == TV_LITE)
@@ -2143,7 +2143,13 @@ void do_cmd_store(int Ind)
 	cave_type		*c_ptr;
 
 	/* Access the player grid */
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+#else
 	c_ptr = &cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px];
+#endif
 
 	/* Verify a store */
 	if (!((c_ptr->feat >= FEAT_SHOP_HEAD) &&

@@ -52,7 +52,7 @@ void do_cmd_message_one(void)
 
 
 /*
- * Show previous messages to the user	-BEN-
+ * Show previous messages to the user   -BEN-
  *
  * The screen format uses line 0 and 23 for headers and prompts,
  * skips line 1 and 22, and uses line 2 thru 21 for old messages.
@@ -281,6 +281,8 @@ void do_cmd_check_artifacts(int Ind, int line)
 		okay[k] = TRUE;
 	}
 
+#ifdef NEW_DUNGEON
+#if 0
 	/* Check the dungeon */
 	for (Depth = 0; Depth < MAX_DEPTH; Depth++)
 	{
@@ -311,6 +313,39 @@ void do_cmd_check_artifacts(int Ind, int line)
 			}
 		}
 	}
+#endif /* evil -temp */
+#else
+	/* Check the dungeon */
+	for (Depth = 0; Depth < MAX_DEPTH; Depth++)
+	{
+		/* Skip uncreated levels */
+		if (!cave[Depth]) continue;
+
+		/* Scan this level */
+		for (y = 0; y < MAX_HGT; y++)
+		{
+			for (x = 0; x < MAX_WID; x++)
+			{
+				cave_type *c_ptr = &cave[Depth][y][x];
+
+				/* Process objects */
+				if (c_ptr->o_idx)
+				{
+					object_type *o_ptr = &o_list[c_ptr->o_idx];
+
+					/* Ignore non-artifacts */
+					if (!artifact_p(o_ptr)) continue;
+
+					/* Ignore known items */
+					if (object_known_p(Ind, o_ptr)) continue;
+
+					/* Note the artifact */
+					okay[o_ptr->name1] = FALSE;
+				}
+			}
+		}
+	}
+#endif
 
 	/* Check the inventories */
 	for (i = 1; i <= NumPlayers; i++)
@@ -439,7 +474,7 @@ void do_cmd_check_uniques(int Ind, int line)
 				}
 
 				/* Terminate line */
-				/*				fprintf(fff, "\n");*/
+				/*                              fprintf(fff, "\n");*/
 			}
 		}
 	}
@@ -519,7 +554,7 @@ void do_cmd_check_players(int Ind, int line)
 				q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[q_ptr->prace].title, 
 				class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
 				parties[q_ptr->party].name);
-    	}
+	}
 
 		/* AFK */
 		if(q_ptr->afk)
@@ -531,7 +566,11 @@ void do_cmd_check_players(int Ind, int line)
 		/* Hack -- always show extra info to dungeon master */
 		if ((p_ptr->party == q_ptr->party && p_ptr->party) || (!strcmp(p_ptr->name,cfg_dungeon_master)))
 		{
+#ifdef NEW_DUNGEON
+			fprintf(fff, " at (%d,%d) %dft", q_ptr->wpos.wx, q_ptr->wpos.wy, q_ptr->wpos.wz*50);
+#else
 			fprintf(fff, " at %ld ft", q_ptr->dun_depth * 50);
+#endif
 		}
 
 		/* Newline */
@@ -578,47 +617,51 @@ void do_cmd_check_player_equip(int Ind, int line)
 		/* Scan the player races */
 		for (k = 1; k < NumPlayers + 1; k++)
 		{
-		        player_type *q_ptr = Players[k];
-		        byte attr = 'w';
+			player_type *q_ptr = Players[k];
+			byte attr = 'w';
 
-		        /* Only print connected players */
-		        if (q_ptr->conn == NOT_CONNECTED)
-		                continue;
+			/* Only print connected players */
+			if (q_ptr->conn == NOT_CONNECTED)
+				continue;
 
-		        /* don't display the dungeon master if the secret_dungeon_master
-		         * option is set
-		         */
-		        if ((!strcmp(q_ptr->name,cfg_dungeon_master)) &&
-		           (cfg_secret_dungeon_master)) continue;
+			/* don't display the dungeon master if the secret_dungeon_master
+			 * option is set
+			 */
+			if ((!strcmp(q_ptr->name,cfg_dungeon_master)) &&
+			   (cfg_secret_dungeon_master)) continue;
 
-		        /*** Determine color ***/
+			/*** Determine color ***/
 
 				attr = 'G';
 
-		        /* Skip myself */
-		        if (Ind == k) continue;
+			/* Skip myself */
+			if (Ind == k) continue;
 
-		        /* Print party members in blue */
-		        else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
+			/* Print party members in blue */
+			else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
 
-		        /* Print hostile players in red */
-		        else if (check_hostile(Ind, k)) attr = 'r';
+			/* Print hostile players in red */
+			else if (check_hostile(Ind, k)) attr = 'r';
 
 				/* Print newbies/lowbies in white */
 				else if (q_ptr->lev < 10) attr = 'w';
 
-		        /* Party member & hostile players only */
-		        /* else continue; */
+			/* Party member & hostile players only */
+			/* else continue; */
 
 				/* Only party member or those on the same dungeon level */
-//				if ((attr != 'B') && (p_ptr->dun_depth != q_ptr->dun_depth)) continue;
+//                              if ((attr != 'B') && (p_ptr->dun_depth != q_ptr->dun_depth)) continue;
 				if ((attr != 'B') && (attr != 'w') && !admin)
 				{
-                	/* Make sure this player is at this depth */
-                	if (p_ptr->dun_depth != q_ptr->dun_depth) continue;
+			/* Make sure this player is at this depth */
+#ifdef NEW_DUNGEON                      
+			if(!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
+#else
+			if (p_ptr->dun_depth != q_ptr->dun_depth) continue;
+#endif
 
-                	/* Can he see this player? */
-                	if (!(p_ptr->cave_flag[q_ptr->py][q_ptr->px] & CAVE_VIEW)) continue;
+			/* Can he see this player? */
+			if (!(p_ptr->cave_flag[q_ptr->py][q_ptr->px] & CAVE_VIEW)) continue;
 				}
 
 				/* Skip invisible players */
@@ -636,10 +679,10 @@ void do_cmd_check_player_equip(int Ind, int line)
 					 ((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) < (q_ptr->lev / 2))))
 					 continue;
 
-		        /* Output color byte */
-		        fprintf(fff, "%c", attr);
+			/* Output color byte */
+			fprintf(fff, "%c", attr);
 
-		        /* Print a message */
+			/* Print a message */
 				if(q_ptr->fruit_bat)
 				{
 					fprintf(fff, "  %s the %s%s %s (%sFruit bat, Lv %d, %s)",
@@ -656,13 +699,13 @@ void do_cmd_check_player_equip(int Ind, int line)
 				}
 
 				/*
-		        fprintf(fff, "%s the %s %s (Level %d, %s)\n",
-		                q_ptr->name, race_info[q_ptr->prace].title,
-		                class_info[q_ptr->pclass].title, q_ptr->lev,
-		                parties[q_ptr->party].name);
+			fprintf(fff, "%s the %s %s (Level %d, %s)\n",
+				q_ptr->name, race_info[q_ptr->prace].title,
+				class_info[q_ptr->pclass].title, q_ptr->lev,
+				parties[q_ptr->party].name);
 				*/
 				fprintf(fff, "\n");
-              
+	      
 				/* Print equipments */
 				for (i=admin?0:INVEN_WIELD; i<INVEN_TOTAL; i++)
 				{
@@ -674,8 +717,8 @@ void do_cmd_check_player_equip(int Ind, int line)
 					}
 				}
 
-		        /* Add blank line */
-		        fprintf(fff, "%c\n", 'w');
+			/* Add blank line */
+			fprintf(fff, "%c\n", 'w');
 
 		}
 

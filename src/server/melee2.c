@@ -339,7 +339,11 @@ static void bolt(int Ind, int m_idx, int typ, int dam_hp)
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
 	/* Target the player with a bolt attack */
+#ifdef NEW_DUNGEON
+	(void)project(m_idx, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg);
+#else
 	(void)project(m_idx, 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px, dam_hp, typ, flg);
+#endif
 }
 
 
@@ -363,7 +367,11 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp)
 	rad = (r_ptr->flags2 & RF2_POWERFUL) ? 3 : 2;
 
 	/* Target the player with a ball attack */
+#ifdef NEW_DUNGEON
+	(void)project(m_idx, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg);
+#else
 	(void)project(m_idx, rad, p_ptr->dun_depth, p_ptr->py, p_ptr->px, dam_hp, typ, flg);
+#endif
 }
 
 
@@ -423,7 +431,11 @@ bool make_attack_spell(int Ind, int m_idx)
 {
 	player_type *p_ptr = Players[Ind];
 
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos=&p_ptr->wpos;
+#else
 	int Depth = p_ptr->dun_depth;
+#endif
 
 	int			k, chance, thrown_spell, rlev;
 
@@ -520,7 +532,11 @@ bool make_attack_spell(int Ind, int m_idx)
 		if (m_ptr->cdis > MAX_RANGE) return (FALSE);
 
 		/* Check path */
+#ifdef NEW_DUNGEON
+		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)) return (FALSE);
+#else
 		if (!projectable_wall(p_ptr->dun_depth, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)) return (FALSE);
+#endif
 	}
 
 
@@ -1903,7 +1919,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons help!", m_name);
 			for (k = 0; k < 1; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, 0);
+#else
 				count += summon_specific(Depth, y, x, rlev, 0);
+#endif
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -1922,7 +1942,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons monsters!", m_name);
 			for (k = 0; k < 8; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, 0);
+#else
 				count += summon_specific(Depth, y, x, rlev, 0);
+#endif
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -1941,7 +1965,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons ants.", m_name);
 			for (k = 0; k < 6; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_ANT);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_ANT);
+#endif
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -1960,7 +1988,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons spiders.", m_name);
 			for (k = 0; k < 6; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_SPIDER);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_SPIDER);
+#endif
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -1979,7 +2011,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons hounds.", m_name);
 			for (k = 0; k < 6; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_HOUND);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_HOUND);
+#endif
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -1998,7 +2034,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons hydras.", m_name);
 			for (k = 0; k < 6; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_HYDRA);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_HYDRA);
+#endif
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -2017,7 +2057,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons an angel!", m_name);
 			for (k = 0; k < 1; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_ANGEL);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_ANGEL);
+#endif
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -2036,7 +2080,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons a hellish adversary!", m_name);
 			for (k = 0; k < 1; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_DEMON);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_DEMON);
+#endif
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -2055,7 +2103,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons an undead adversary!", m_name);
 			for (k = 0; k < 1; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_UNDEAD);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_UNDEAD);
+#endif
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -2074,7 +2126,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons a dragon!", m_name);
 			for (k = 0; k < 1; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_DRAGON);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_DRAGON);
+#endif
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -2093,7 +2149,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons greater undead!", m_name);
 			for (k = 0; k < 8; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_HI_UNDEAD);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_HI_UNDEAD);
+#endif
 			}
 			if (blind && count)
 			{
@@ -2115,7 +2175,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons ancient dragons!", m_name);
 			for (k = 0; k < 8; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_HI_DRAGON);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_HI_DRAGON);
+#endif
 			}
 			if (blind && count)
 			{
@@ -2137,11 +2201,19 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons mighty undead opponents!", m_name);
 			for (k = 0; k < 8; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_WRAITH);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_WRAITH);
+#endif
 			}
 			for (k = 0; k < 8; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_HI_UNDEAD);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_HI_UNDEAD);
+#endif
 			}
 			if (blind && count)
 			{
@@ -2163,11 +2235,19 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons special opponents!", m_name);
 			for (k = 0; k < 8; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_UNIQUE);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_UNIQUE);
+#endif
 			}
 			for (k = 0; k < 8; k++)
 			{
+#ifdef NEW_DUNGEON
+				count += summon_specific(wpos, y, x, rlev, SUMMON_HI_UNDEAD);
+#else
 				count += summon_specific(Depth, y, x, rlev, SUMMON_HI_UNDEAD);
+#endif
 			}
 			if (blind && count)
 			{
@@ -2628,8 +2708,12 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
                 for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++)
                 {
                         cave_type *c_ptr;
-
+#ifdef NEW_DUNGEON
+			cave_type **zcave;
+                        if (!in_bounds(sy, sx)) continue;
+#else
                         if (!in_bounds(m_ptr->dun_depth, sy, sx)) continue;
+#endif
 
 			/* ignore ourself */
 			if(sx==m_ptr->fx && sy==m_ptr->fy) continue;
@@ -2637,9 +2721,14 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
 			/* no point if there are no players on depth */
 			/* and it would crash anyway ;) */
 
+#ifdef NEW_DUNGEON
+			if(!(zcave=getcave(&m_ptr->wpos))) return FALSE;
+                        c_ptr = &zcave[sy][sx];
+#else
 			if(!cave[m_ptr->dun_depth]) return FALSE;
-
                         c_ptr = &cave[m_ptr->dun_depth][sy][sx];
+#endif
+
 			if(!c_ptr->m_idx) continue;
 
                         if (c_ptr->m_idx > 0)
@@ -2668,7 +2757,11 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
 
         if (!tm_idx) return FALSE;
 
+#ifdef NEW_DUNGEON
+	if(!(inarea(&m_ptr->wpos, (tm_idx>0)? &m_list[tm_idx].wpos:&Players[-tm_idx]->wpos))) return FALSE;
+#else
 	if(((tm_idx>0) ? m_list[tm_idx].dun_depth:Players[-tm_idx]->dun_depth)!=m_ptr->dun_depth) return FALSE; 
+#endif
 
         y2 = (tm_idx > 0)?m_list[tm_idx].fy:Players[-tm_idx]->py;
         x2 = (tm_idx > 0)?m_list[tm_idx].fx:Players[-tm_idx]->px;
@@ -2885,7 +2978,12 @@ static void process_monster(int Ind, int m_idx)
 {
 	player_type *p_ptr = Players[Ind];
 
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos=&p_ptr->wpos;
+	cave_type **zcave;
+#else
 	int Depth = p_ptr->dun_depth;
+#endif
 
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
@@ -2915,7 +3013,11 @@ static void process_monster(int Ind, int m_idx)
 /* Hack -- don't process monsters on wilderness levels that have not
 	   been regenerated yet.
 	*/
+#ifdef NEW_DUNGEON
+	if(!(zcave=getcave(wpos))) return;
+#else
 	if (cave[Depth] == NULL) return;
+#endif
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep)
@@ -2980,7 +3082,11 @@ static void process_monster(int Ind, int m_idx)
 		/* Still sleeping */
 		if (m_ptr->csleep) 
 		{
+#ifdef NEW_DUNGEON
+			m_ptr->energy -= level_speed(&m_ptr->wpos);
+#else
 			m_ptr->energy -= level_speed(m_ptr->dun_depth);
+#endif
 			return;
 		}
 	}
@@ -3027,7 +3133,11 @@ static void process_monster(int Ind, int m_idx)
 		/* Still stunned */
 		if (m_ptr->stunned) 
 		{
+#ifdef NEW_DUNGEON
+			m_ptr->energy -= level_speed(&m_ptr->wpos);
+#else
 			m_ptr->energy -= level_speed(m_ptr->dun_depth);
+#endif
 			return;
 		}
 	}
@@ -3109,8 +3219,13 @@ static void process_monster(int Ind, int m_idx)
 
 	/* attempt to "mutiply" if able and allowed */
 
+#ifdef NEW_DUNGEON
+	/* need to expand our range a bit here */
+	if(istown(wpos))
+#else
 	/* Hack -- No reproduction close to town center */
 	if (Depth <= 0 ? (wild_info[Depth].radius > 2) : 1)
+#endif
 		if ((r_ptr->flags2 & RF2_MULTIPLY) && (num_repro < MAX_REPRO))
 		{
 			int k, y, x;
@@ -3120,7 +3235,11 @@ static void process_monster(int Ind, int m_idx)
 			{
 				for (x = ox - 1; x <= ox + 1; x++)
 				{
+#ifdef NEW_DUNGEON
+					if (zcave[y][x].m_idx > 0) k++;
+#else
 					if (cave[Depth][y][x].m_idx > 0) k++;
+#endif
 				}
 			}
 
@@ -3134,7 +3253,11 @@ static void process_monster(int Ind, int m_idx)
 					if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags2 |= RF2_MULTIPLY;
 
 					/* Multiplying takes energy */
+#ifdef NEW_DUNGEON
+					m_ptr->energy -= level_speed(&m_ptr->wpos);
+#else
 					m_ptr->energy -= level_speed(m_ptr->dun_depth);
+#endif
 
 					return;
 				}
@@ -3144,7 +3267,11 @@ static void process_monster(int Ind, int m_idx)
 	/* Attempt to cast a spell */
 	if (make_attack_spell(Ind, m_idx)) 
 	{
+#ifdef NEW_DUNGEON
+		m_ptr->energy -= level_speed(&m_ptr->wpos);
+#else
 		m_ptr->energy -= level_speed(m_ptr->dun_depth);
+#endif
 		return;
 	}
 
@@ -3234,7 +3361,11 @@ static void process_monster(int Ind, int m_idx)
 		nx = ox + ddx[d];			
 		
 		/* Access that cave grid */
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[ny][nx];
+#else
 		c_ptr = &cave[Depth][ny][nx];
+#endif
 
 		/* Access that cave grid's contents */
 		o_ptr = &o_list[c_ptr->o_idx];
@@ -3250,7 +3381,11 @@ static void process_monster(int Ind, int m_idx)
 		}
 
 		/* Floor is open? */
+#ifdef NEW_DUNGEON
+		else if (cave_floor_bold(zcave, ny, nx))
+#else
 		else if (cave_floor_bold(Depth, ny, nx))
+#endif
 		{
 			/* Go ahead and move */
 			do_move = TRUE;
@@ -3291,6 +3426,16 @@ static void process_monster(int Ind, int m_idx)
 			/* Create floor */
 			c_ptr->feat = FEAT_FLOOR;
 
+#ifdef NEW_DUNGEON
+			/* Forget the "field mark", if any */
+			everyone_forget_spot(wpos, ny, nx);
+
+			/* Notice */
+			note_spot_depth(wpos, ny, nx);
+
+			/* Redraw */
+			everyone_lite_spot(wpos, ny, nx);
+#else
 			/* Forget the "field mark", if any */
 			everyone_forget_spot(Depth, ny, nx);
 
@@ -3299,6 +3444,7 @@ static void process_monster(int Ind, int m_idx)
 
 			/* Redraw */
 			everyone_lite_spot(Depth, ny, nx);
+#endif
 
 			/* Note changes to viewable region */
 			if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
@@ -3401,11 +3547,19 @@ static void process_monster(int Ind, int m_idx)
 					c_ptr->feat = FEAT_OPEN;
 				}
 
+#ifdef NEW_DUNGEON
+				/* Notice */
+				note_spot_depth(wpos, ny, nx);
+
+				/* Redraw */
+				everyone_lite_spot(wpos, ny, nx);
+#else
 				/* Notice */
 				note_spot_depth(Depth, ny, nx);
 
 				/* Redraw */
 				everyone_lite_spot(Depth, ny, nx);
+#endif
 
 				/* Handle viewable doors */
 				if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
@@ -3494,16 +3648,26 @@ static void process_monster(int Ind, int m_idx)
 				/* XXX XXX XXX Message */
 
 				/* Kill the monster */
+#ifdef NEW_DUNGEON
+				delete_monster(wpos, ny, nx);
+#else
 				delete_monster(Depth, ny, nx);
+#endif
 
 				/* Hack -- get the empty monster */
 				y_ptr = &m_list[c_ptr->m_idx];
 			}
 
 			/* Push past weaker monsters (unless leaving a wall) */
+#ifdef NEW_DUNGEON
+			if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
+			    (r_ptr->mexp > z_ptr->mexp) &&
+			    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)))
+#else
 			if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
 			    (r_ptr->mexp > z_ptr->mexp) &&
 			    (cave_floor_bold(Depth, m_ptr->fy, m_ptr->fx)))
+#endif
 			{
 				/* Allow movement */
 				do_move = TRUE;
@@ -3523,7 +3687,11 @@ static void process_monster(int Ind, int m_idx)
 			do_turn = TRUE;
 
 			/* Hack -- Update the old location */
+#ifdef NEW_DUNGEON
+			zcave[oy][ox].m_idx = c_ptr->m_idx;
+#else
 			cave[Depth][oy][ox].m_idx = c_ptr->m_idx;
+#endif
 
 			/* Mega-Hack -- move the old monster, if any */
 			if (c_ptr->m_idx > 0)
@@ -3546,11 +3714,19 @@ static void process_monster(int Ind, int m_idx)
 			/* Update the monster */
 			update_mon(m_idx, TRUE);
 
+#ifdef NEW_DUNGEON
+			/* Redraw the old grid */
+			everyone_lite_spot(wpos, oy, ox);
+
+			/* Redraw the new grid */
+			everyone_lite_spot(wpos, ny, nx);
+#else
 			/* Redraw the old grid */
 			everyone_lite_spot(Depth, oy, ox);
 
 			/* Redraw the new grid */
 			everyone_lite_spot(Depth, ny, nx);
+#endif
 
 			/* Possible disturb */
 			if (p_ptr->mon_vis[m_idx] &&
@@ -3635,7 +3811,11 @@ static void process_monster(int Ind, int m_idx)
 					}
 
 					/* Delete the object */
+#ifdef NEW_DUNGEON
+					delete_object(wpos, ny, nx);
+#else
 					delete_object(Depth, ny, nx);
+#endif
 				}
 
 				/* Destroy the item */
@@ -3652,7 +3832,11 @@ static void process_monster(int Ind, int m_idx)
 					}
 
 					/* Delete the object */
+#ifdef NEW_DUNGEON
+					delete_object(wpos, ny, nx);
+#else
 					delete_object(Depth, ny, nx);
+#endif
 				}
 			}
 		}
@@ -3660,7 +3844,11 @@ static void process_monster(int Ind, int m_idx)
 		/* Stop when done */
 		if (do_turn) 
 		{
+#ifdef NEW_DUNGEON
+			m_ptr->energy -= level_speed(&m_ptr->wpos);
+#else
 			m_ptr->energy -= level_speed(m_ptr->dun_depth);
+#endif
 			break;
 		}
 	}
@@ -3730,7 +3918,11 @@ static void process_monster_golem(int Ind, int m_idx)
 
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos=&m_ptr->wpos;
+#else
         int             Depth = m_ptr->dun_depth;
+#endif
 
 	int			i, d, oy, ox, ny, nx;
 
@@ -3757,7 +3949,12 @@ static void process_monster_golem(int Ind, int m_idx)
         /* Hack -- don't process monsters on wilderness levels that have not
 	   been regenerated yet.
 	*/
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+#else
 	if (cave[Depth] == NULL) return;
+#endif
 
         if (Ind > 0) p_ptr = Players[Ind];
         else p_ptr = NULL;
@@ -3791,7 +3988,11 @@ static void process_monster_golem(int Ind, int m_idx)
 		/* Still stunned */
 		if (m_ptr->stunned) 
 		{
+#ifdef NEW_DUNGEON
+			m_ptr->energy -= level_speed(&m_ptr->wpos);
+#else
 			m_ptr->energy -= level_speed(m_ptr->dun_depth);
+#endif
 			return;
 		}
 	}
@@ -3826,7 +4027,11 @@ static void process_monster_golem(int Ind, int m_idx)
 	/* Attempt to cast a spell */
 	if (make_attack_spell(Ind, m_idx)) 
 	{
+#ifdef NEW_DUNGEON
+		m_ptr->energy -= level_speed(&m_ptr->wpos);
+#else
 		m_ptr->energy -= level_speed(m_ptr->dun_depth);
+#endif
 		return;
 	}
 #endif
@@ -3880,7 +4085,11 @@ static void process_monster_golem(int Ind, int m_idx)
 		nx = ox + ddx[d];			
 		
 		/* Access that cave grid */
+#ifdef NEW_DUNGEON
+		c_ptr = &zcave[ny][nx];
+#else
 		c_ptr = &cave[Depth][ny][nx];
+#endif
 
 		/* Access that cave grid's contents */
 		o_ptr = &o_list[c_ptr->o_idx];
@@ -3896,7 +4105,11 @@ static void process_monster_golem(int Ind, int m_idx)
 		}
 
 		/* Floor is open? */
+#ifdef NEW_DUNGEON
+		else if (cave_floor_bold(zcave, ny, nx))
+#else
 		else if (cave_floor_bold(Depth, ny, nx))
+#endif
 		{
 			/* Go ahead and move */
 			do_move = TRUE;
@@ -3937,6 +4150,16 @@ static void process_monster_golem(int Ind, int m_idx)
 			/* Create floor */
 			c_ptr->feat = FEAT_FLOOR;
 
+#ifdef NEW_DUNGEON
+			/* Forget the "field mark", if any */
+			everyone_forget_spot(wpos, ny, nx);
+
+			/* Notice */
+			note_spot_depth(wpos, ny, nx);
+
+			/* Redraw */
+			everyone_lite_spot(wpos, ny, nx);
+#else
 			/* Forget the "field mark", if any */
 			everyone_forget_spot(Depth, ny, nx);
 
@@ -3945,6 +4168,7 @@ static void process_monster_golem(int Ind, int m_idx)
 
 			/* Redraw */
 			everyone_lite_spot(Depth, ny, nx);
+#endif
 
 			/* Note changes to viewable region */
 			if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
@@ -4041,11 +4265,19 @@ static void process_monster_golem(int Ind, int m_idx)
 					c_ptr->feat = FEAT_OPEN;
 				}
 
+#ifdef NEW_DUNGEON
+				/* Notice */
+				note_spot_depth(wpos, ny, nx);
+
+				/* Redraw */
+				everyone_lite_spot(wpos, ny, nx);
+#else
 				/* Notice */
 				note_spot_depth(Depth, ny, nx);
 
 				/* Redraw */
 				everyone_lite_spot(Depth, ny, nx);
+#endif
 			}
 		}
 
@@ -4083,7 +4315,11 @@ static void process_monster_golem(int Ind, int m_idx)
 			do_turn = TRUE;
 
 			/* Hack -- Update the old location */
+#ifdef NEW_DUNGEON
+			zcave[oy][ox].m_idx = c_ptr->m_idx;
+#else
 			cave[Depth][oy][ox].m_idx = c_ptr->m_idx;
+#endif
 
 			/* Mega-Hack -- move the old monster, if any */
 			if (c_ptr->m_idx > 0)
@@ -4106,17 +4342,29 @@ static void process_monster_golem(int Ind, int m_idx)
 			/* Update the monster */
 			update_mon(m_idx, TRUE);
 
+#ifdef NEW_DUNGEON
+			/* Redraw the old grid */
+			everyone_lite_spot(wpos, oy, ox);
+
+			/* Redraw the new grid */
+			everyone_lite_spot(wpos, ny, nx);
+#else
 			/* Redraw the old grid */
 			everyone_lite_spot(Depth, oy, ox);
 
 			/* Redraw the new grid */
 			everyone_lite_spot(Depth, ny, nx);
+#endif
 		}
 
 		/* Stop when done */
 		if (do_turn) 
 		{
+#ifdef NEW_DUNGEON
+			m_ptr->energy -= level_speed(&m_ptr->wpos);
+#else
 			m_ptr->energy -= level_speed(m_ptr->dun_depth);
+#endif
 			break;
 		}
 	}
@@ -4277,11 +4525,20 @@ void process_monsters(void)
 		m_ptr->energy += e;
 
 		/* Make sure we don't store up too much energy */
+#ifdef NEW_DUNGEON
+		if (m_ptr->energy > level_speed(&m_ptr->wpos))
+			m_ptr->energy = level_speed(&m_ptr->wpos);
+#else
 		if (m_ptr->energy > level_speed(m_ptr->dun_depth))
 			m_ptr->energy = level_speed(m_ptr->dun_depth);
+#endif
 
 		/* Not enough energy to move */
+#ifdef NEW_DUNGEON
+		if (m_ptr->energy < level_speed(&m_ptr->wpos)) continue;
+#else
 		if (m_ptr->energy < level_speed(m_ptr->dun_depth)) continue;
+#endif
 
 		/* Find the closest player */
                 for (pl = 1; pl < NumPlayers + 1; pl++) 
@@ -4294,7 +4551,11 @@ void process_monsters(void)
                                 continue; 
 
                         /* Make sure he's on the same dungeon level */ 
+#ifdef NEW_DUNGEON
+                        if (!inarea(&p_ptr->wpos, &m_ptr->wpos))
+#else
                         if (p_ptr->dun_depth != m_ptr->dun_depth) 
+#endif
                                 continue; 
 
                         /* Hack -- Skip him if he's shopping */ 
@@ -4311,7 +4572,11 @@ void process_monsters(void)
                         j = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx); 
 
                         /* Glaur. Check if monster has LOS to the player */ 
+#ifdef NEW_DUNGEON
+                        new_los=los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy,m_ptr->fx);
+#else
                         new_los=los(p_ptr->dun_depth, p_ptr->py, p_ptr->px, m_ptr->fy,m_ptr->fx);
+#endif
 
 		/*	if (p_ptr->ghost)
 			if (!new_los)
@@ -4429,7 +4694,11 @@ void process_monsters(void)
 			if (!(r_ptr->flags1 & RF1_ATTR_MULTI)) continue;
 
 			/* Shimmer Multi-Hued Monsters */
+#ifdef NEW_DUNGEON
+			everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+#else
 			everyone_lite_spot(m_ptr->dun_depth, m_ptr->fy, m_ptr->fx);
+#endif
 		}
 	}
 }

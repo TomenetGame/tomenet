@@ -495,12 +495,18 @@ static void rd_item(object_type *o_ptr)
 	/* Location */
 	rd_byte(&o_ptr->iy);
 	rd_byte(&o_ptr->ix);
-
+	
+#ifdef NEW_DUNGEON
+	rd_s16b(&o_ptr->wpos.wx);
+	rd_s16b(&o_ptr->wpos.wy);
+	rd_s16b(&o_ptr->wpos.wz);
+#else
 	if (older_than(0,5,5))
 	{
 		rd_byte((char *)&o_ptr->dun_depth);
 	}
 	else rd_s32b((s32b *)&o_ptr->dun_depth);
+#endif
 
 	/* Type/Subtype */
 	rd_byte(&o_ptr->tval);
@@ -742,7 +748,13 @@ static void rd_monster(monster_type *m_ptr)
 	/* Read the other information */
 	rd_byte(&m_ptr->fy);
 	rd_byte(&m_ptr->fx);
+#ifdef NEW_DUNGEON
+	rd_s16b(&m_ptr->wpos.wx);
+	rd_s16b(&m_ptr->wpos.wy);
+	rd_s16b(&m_ptr->wpos.wz);
+#else
 	rd_u16b(&m_ptr->dun_depth);
+#endif
 	rd_s16b(&m_ptr->ac);
 	rd_byte(&m_ptr->speed);
 	rd_s32b(&m_ptr->exp);
@@ -944,6 +956,9 @@ static void rd_party(int n)
 static void rd_house(int n)
 {
 	house_type *house_ptr = &houses[n];
+#ifdef NEW_DUNGEON
+	cave_type **zcave;
+#endif
 
 #ifdef NEWHOUSES
 	rd_byte(&house_ptr->x); 
@@ -958,12 +973,26 @@ static void rd_house(int n)
 	rd_u16b(&house_ptr->dna->min_level);
 	rd_u32b(&house_ptr->dna->price);
 	rd_u16b(&house_ptr->flags);
+#ifdef NEW_DUNGEON
+	rd_s16b(&house_ptr->wpos.wx);
+	rd_s16b(&house_ptr->wpos.wy);
+	rd_s16b(&house_ptr->wpos.wz);
+#else
 	rd_u32b(&house_ptr->depth);
+#endif
+#ifdef NEW_DUNGEON
+	if((zcave=getcave(&house_ptr->wpos)) && !(house_ptr->flags&HF_STOCK)){
+		/* add dna to static levels */
+		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.type=DNA_DOOR;
+		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.ptr=house_ptr->dna;
+	}
+#else
 	if(cave[house_ptr->depth] && !(house_ptr->flags&HF_STOCK)){
 		/* add dna to static levels */
 		cave[house_ptr->depth][house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.type=DNA_DOOR;
 		cave[house_ptr->depth][house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.ptr=house_ptr->dna;
 	}
+#endif
 	if(house_ptr->flags&HF_RECT){
 		rd_byte(&house_ptr->coords.rect.width);
 		rd_byte(&house_ptr->coords.rect.height);
@@ -1001,10 +1030,16 @@ static void rd_house(int n)
 #endif
 }
 
+#ifdef NEW_DUNGEON
+static void rd_wild(wilderness_type *w_ptr)
+#else
 static void rd_wild(int n)
+#endif
 {
 	u32b tmp32u;
+#ifndef NEW_DUNGEON
 	wilderness_type *w_ptr = &wild_info[-n];
+#endif
 
 	/* future use */
 	rd_u32b(&tmp32u);
@@ -1315,15 +1350,23 @@ static bool rd_extra(int Ind)
 
 	rd_s16b(&p_ptr->py);
 	rd_s16b(&p_ptr->px);
+#ifdef NEW_DUNGEON
+	rd_s16b(&p_ptr->wpos.wx);
+	rd_s16b(&p_ptr->wpos.wy);
+	rd_s16b(&p_ptr->wpos.wz);
+#else
 	if (older_than(0,5,5))
 		rd_byte((char *)&p_ptr->dun_depth);
 	else rd_s32b((s32b *) &p_ptr->dun_depth);
+#endif
 
 	/* read the world coordinates if new enough */
 	if (!older_than(0,5,5))
 	{
+#ifndef NEW_DUNGEON
 		rd_s16b(&p_ptr->world_x);
 		rd_s16b(&p_ptr->world_y);
+#endif
 	}
 
 	if (older_than(0,5,5))
@@ -1474,11 +1517,20 @@ static bool rd_extra(int Ind)
 	/* Special stuff */
 	rd_u16b(&panic_save);
 	rd_u16b(&p_ptr->total_winner);
+#ifdef NEW_DUNGEON
+	rd_byte(&p_ptr->own1.wx);
+	rd_byte(&p_ptr->own1.wy);
+	rd_byte(&p_ptr->own1.wz);
+	rd_byte(&p_ptr->own2.wx);
+	rd_byte(&p_ptr->own2.wy);
+	rd_byte(&p_ptr->own2.wz);
+#else
 	if (!older_than(3,0,4))
 	{
 		rd_s16b(&p_ptr->own1);
 		rd_s16b(&p_ptr->own2);
 	}
+#endif
 	if (!older_than(0,7,0))
 		rd_u16b(&p_ptr->retire_timer);
 	rd_u16b(&p_ptr->noscore);
@@ -1709,6 +1761,12 @@ static void rd_messages(void)
 static errr rd_dungeon(void)
 {
 	s32b depth;
+#ifdef NEW_DUNGEON
+	struct worldpos wpos;
+	s16b tmp16b;
+	byte tmp;
+	cave_type **zcave;
+#endif
 	u16b max_y, max_x;
 
 	int i, y, x;
@@ -1720,13 +1778,46 @@ static errr rd_dungeon(void)
 	/*** Depth info ***/
 
 	/* Level info */
+#ifdef NEW_DUNGEON
+	rd_s16b(&wpos.wx);
+	rd_s16b(&wpos.wy);
+	rd_s16b(&wpos.wz);
+	if(wpos.wx==0x7fff && wpos.wy==0x7fff && wpos.wz==0x7fff)
+		return(1);
+	printf("Reading dungeon (%d,%d,%d)\n",wpos.wx,wpos.wy,wpos.wz);
+#else
 	rd_s32b(&depth);
+#endif
 	rd_u16b(&max_y);
 	rd_u16b(&max_x);
 
+#ifdef NEW_DUNGEON
+	/* Alloc before doing NPOD() */
+	alloc_dungeon_level(&wpos);
+	zcave=getcave(&wpos);
+
+	/* players on this depth */
+	rd_s16b(&tmp16b);
+	new_players_on_depth(&wpos,tmp16b,FALSE);
+#else
 	/* players on this depth */
 	rd_s16b(&players_on_depth[depth]);
+#endif
 
+#ifdef NEW_DUNGEON
+	rd_byte(&tmp);
+	new_level_up_y(&wpos, tmp);
+	rd_byte(&tmp);
+	new_level_up_x(&wpos, tmp);
+	rd_byte(&tmp);
+	new_level_down_y(&wpos, tmp);
+	rd_byte(&tmp);
+	new_level_down_x(&wpos, tmp);
+	rd_byte(&tmp);
+	new_level_rand_y(&wpos, tmp);
+	rd_byte(&tmp);
+	new_level_rand_x(&wpos, tmp);
+#else
 	/* Hack -- only read in staircase information for non-wilderness
 	 * levels
 	 */
@@ -1740,9 +1831,12 @@ static errr rd_dungeon(void)
 		rd_byte(&level_rand_y[depth]);
 		rd_byte(&level_rand_x[depth]);
 	}
+#endif
 
 	/* allocate the memory for the dungoen */
+#ifndef NEW_DUNGEON
 	alloc_dungeon_level(depth);
+#endif
 
 
 	/*** Run length decoding ***/
@@ -1759,7 +1853,11 @@ static errr rd_dungeon(void)
 		for (i = 0; i < runlength; i++)
 		{
 			/* Access the cave */
+#ifdef NEW_DUNGEON
+			c_ptr = &zcave[y][x];
+#else
 			c_ptr = &cave[depth][y][x];
+#endif
 
 			/* set the feature */
 			c_ptr->feat = feature;
@@ -2107,7 +2205,11 @@ static errr rd_savefile_new_aux(int Ind)
 		rd_u32b(&tmp32u);
 
 		/* if too many map entries */
+#ifdef NEW_DUNGEON
+		if (tmp32u > MAX_WILD_X*MAX_WILD_Y)
+#else
 		if (tmp32u > MAX_WILD)
+#endif
 		{
 			return 23;
 		}
@@ -2314,7 +2416,6 @@ errr rd_server_savefile()
 		note(format("Too many (%u) artifacts!", tmp16u));
 		return (24);
 	}
-
 	/* Read the artifact flags */
 	for (i = 0; i < tmp16u; i++)
 	{
@@ -2363,12 +2464,20 @@ errr rd_server_savefile()
 	if (!older_than(0,5,7))
 	{
 		/* read the number of levels to be loaded */
+#ifdef NEW_DUNGEON
+		rd_towns();
+		new_rd_wild();
+		new_rd_dungeons();
+#else
 		rd_u32b(&tmp32u);
 		/* load the levels */
 		for (i = 0; i < tmp32u; i++) rd_dungeon();
+		}
+#endif
 
 		/* get the number of monsters to be loaded */
 		rd_u32b(&tmp32u);
+		printf("monsters: %ld\n",tmp32u);
 		if (tmp32u > MAX_M_IDX)
 		{
 			note(format("Too many (%u) monsters!", tmp16u));
@@ -2385,6 +2494,7 @@ errr rd_server_savefile()
 	if (!older_than(0,4,0))
 	{
 		rd_u16b(&tmp16u);
+		printf("objects: %d\n",tmp16u);  
 
 		/* Incompatible save files */
 		if (tmp16u > MAX_O_IDX)
@@ -2407,6 +2517,7 @@ errr rd_server_savefile()
 	if (!older_than(0,4,0))
 	{
 		rd_u32b(&num_houses);
+		printf("houses: %ld\n",num_houses);
 
 		while(house_alloc<num_houses){
 			GROW(houses, house_alloc, house_alloc+512, house_type);
@@ -2426,11 +2537,16 @@ errr rd_server_savefile()
 			rd_house(i);
 		}
 		/* insert houses into wild space if needed */
+#if 0 /* for now */
 		for (i=-MAX_WILD;i<0;i++){
 			if(cave[i]){
 				int j;
 				for(j=0;j<num_houses;j++){
+#ifdef NEW_DUNGEON
+					if(inarea(wpos, &houses[j].wpos)){
+#else
 					if(houses[j].depth==i){
+#endif
 						int x,y;
 						/* add the house dna */	
 						x=houses[j].dx;
@@ -2441,11 +2557,13 @@ errr rd_server_savefile()
 				}
 			}
 		}
+#endif /*if 0 evileye */
 	}
 
 	/* Read wilderness info if new enough */
 	if (!older_than(0,5,5))
 	{
+#ifndef NEW_DUNGEON
 		/* read how many wilderness levels */
 		rd_u32b(&tmp32u);
 
@@ -2459,6 +2577,7 @@ errr rd_server_savefile()
 		{
 			rd_wild(i);
 		}	
+#endif
 	}
 
 	/* Read the player name database if new enough */
@@ -2510,3 +2629,62 @@ errr rd_server_savefile()
 	return (err);
 }
 
+#ifdef NEW_DUNGEON
+void new_rd_wild(){
+	int x,y;
+	wilderness_type *wptr;
+	struct dungeon_type *d_ptr;
+	u32b tmp;
+	rd_u32b(&tmp);	/* MAX_WILD_Y */
+	rd_u32b(&tmp);	/* MAX_WILD_X */
+	for(y=0;y<MAX_WILD_Y;y++){
+		for(x=0;x<MAX_WILD_X;x++){
+			wptr=&wild_info[y][x];
+			rd_wild(wptr);
+			if(y==32 && x==32){
+				printf("flags: %x\n",wptr->flags);
+			}
+			if(wptr->flags & WILD_F_DOWN){
+				printf("allocing dungeon for (%d,%d)\n",x,y);
+				MAKE(d_ptr, struct dungeon_type);
+				rd_byte(&wptr->up_x);
+				rd_byte(&wptr->up_y);
+				rd_u16b(&d_ptr->baselevel);
+				rd_u16b(&d_ptr->flags);
+				rd_byte(&d_ptr->maxdepth);
+				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
+				wptr->dungeon=d_ptr;
+			}
+			if(wptr->flags & WILD_F_UP){
+				printf("allocing tower for (%d,%d)\n",x,y);
+				MAKE(d_ptr, struct dungeon_type);
+				rd_byte(&wptr->dn_x);
+				rd_byte(&wptr->dn_y);
+				rd_u16b(&d_ptr->baselevel);
+				rd_u16b(&d_ptr->flags);
+				rd_byte(&d_ptr->maxdepth);
+				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
+				wptr->tower=d_ptr;
+			}
+		}
+	}
+}
+
+void new_rd_dungeons(){
+	while(!rd_dungeon());
+}
+
+void rd_towns(){
+	int i;
+	rd_u16b(&numtowns);
+	C_KILL(town, numtowns, struct town_type); /* first is alloced */
+	C_MAKE(town, numtowns, struct town_type);
+	for(i=0; i<numtowns; i++){
+		rd_u16b(&town[i].x);
+		rd_u16b(&town[i].y);
+		rd_u16b(&town[i].baselevel);
+		rd_u16b(&town[i].flags);
+		wild_info[town[i].y][town[i].x].type=WILD_TOWN;
+	}
+}
+#endif

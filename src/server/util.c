@@ -71,9 +71,9 @@ static int usleep(huge microSeconds)
 	int                 nfds = 0;
 
 #ifdef FD_SET
-	fd_set		*no_fds = NULL;
+	fd_set          *no_fds = NULL;
 #else
-	int			*no_fds = NULL;
+	int                     *no_fds = NULL;
 #endif
 
 
@@ -192,9 +192,9 @@ void user_name(char *buf, int id)
  */
 errr path_parse(char *buf, int max, cptr file)
 {
-	cptr		u, s;
-	struct passwd	*pw;
-	char		user[128];
+	cptr            u, s;
+	struct passwd   *pw;
+	char            user[128];
 
 
 	/* Assume no result */
@@ -1294,8 +1294,8 @@ void keymap_init(void)
 /*
  * Legal bit-flags for macro__use[X]
  */
-#define MACRO_USE_CMD	0x01	/* X triggers a command macro */
-#define MACRO_USE_STD	0x02	/* X triggers a standard macro */
+#define MACRO_USE_CMD   0x01    /* X triggers a command macro */
+#define MACRO_USE_STD   0x02    /* X triggers a standard macro */
 
 /*
  * Fast check for trigger of any macros
@@ -1523,13 +1523,13 @@ void sound(int Ind, int val)
 #if 0
 static char inkey_aux(void)
 {
-	int		k = 0, n, p = 0, w = 0;
+	int             k = 0, n, p = 0, w = 0;
 
-	char	ch;
+	char    ch;
 
-	cptr	pat, act;
+	cptr    pat, act;
 
-	char	buf[1024];
+	char    buf[1024];
 
 
 	/* Wait for keypress */
@@ -2055,13 +2055,13 @@ bool check_guard_inscription( s16b quark, char what ) {
     if( ax == NULL ) { return FALSE; };
     while( (ax=strchr(ax,'!')) != NULL ) {
 	while( ax++ != NULL ) {
-            if (*ax==0)  {
+	    if (*ax==0)  {
 		 return FALSE; /* end of quark, stop */
 	    }
-            if (*ax==' ') {
-		 break;	/* end of segment, stop */
+	    if (*ax==' ') {
+		 break; /* end of segment, stop */
 	    }
-            if (*ax==what) {
+	    if (*ax==what) {
 		return TRUE; /* exact match, stop */
 	    }
 	    if(*ax =='*') {
@@ -2074,8 +2074,8 @@ bool check_guard_inscription( s16b quark, char what ) {
 			case '=': /* force pickup */
 		      return TRUE;
 		};
-            };  
-        };  
+	    };  
+	};  
     };  
     return FALSE;
 };  
@@ -2091,10 +2091,6 @@ char *find_inscription(s16b quark, char *what)
 	
 	return (strstr(ax, what));
 }  
-
-
-
-
 
 /*
  * Second try for the "message" handling routines.
@@ -2416,10 +2412,10 @@ void msg_broadcast(int Ind, cptr msg)
 			
 		/* Skip the specified player */
 		if (i == Ind)
-			continue;	
+			continue;       
 			
 		/* Tell this one */
-	 	msg_print(i, msg);
+		msg_print(i, msg);
 	 }
 }
 
@@ -2458,10 +2454,16 @@ void msg_format(int Ind, cptr fmt, ...)
 void msg_print_near(int Ind, cptr msg)
 {
 	player_type *p_ptr = Players[Ind];
-	int Depth, y, x, i;
+	int y, x, i;
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos;
+	wpos=&p_ptr->wpos;
+#else
+	int Depth;
 
 	/* Extract player's location */
 	Depth = p_ptr->dun_depth;
+#endif
 	y = p_ptr->py;
 	x = p_ptr->px;
 
@@ -2478,7 +2480,11 @@ void msg_print_near(int Ind, cptr msg)
 		if (Ind == i) continue;
 
 		/* Make sure this player is at this depth */
+#ifdef NEW_DUNGEON
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+#else
 		if (p_ptr->dun_depth != Depth) continue;
+#endif
 
 		/* Can he see this player? */
 		if (p_ptr->cave_flag[y][x] & CAVE_VIEW)
@@ -2512,11 +2518,13 @@ void msg_format_near(int Ind, cptr fmt, ...)
 	msg_print_near(Ind, buf);
 }
 
+
 /*
  * Allow to cast quickly when using '/cast'. (code by DEG)
  */
 // #define FRIENDLY_SPELL_BOOST
 
+#if 0
 /*
  * A message prefixed by a player name is sent only to that player.
  * Otherwise, it is sent to everyone.
@@ -2561,16 +2569,90 @@ void player_talk_aux(int Ind, cptr message)
 		/* Look for a player's name followed by a colon */
 		colon = strchr(message, ' ');
 
+<<<<<<< util.c
+		/* Form a search string if we found a colon */
+		if (colon)
+		{
+			k = atoi(colon);
+
+			/* Copy everything up to the colon to the search string */
+			strncpy(search, message, colon - message);
+
+			/* Add a trailing NULL */
+			search[colon - message] = '\0';
+
+			/* Move colon pointer forward to next word */
+			while (*colon && (isspace(*colon))) colon++;
+		}
+
+		/* User commands */
+		if (prefix(message, "/ignore") ||
+			prefix(message, "/ig"))
+		{
+			add_ignore(Ind, colon);
+			return;
+		}
+		else if (prefix(message, "/afk"))
+		{
+			toggle_afk(Ind);
+			return;
+		}
+		else if (prefix(message, "/me"))
+=======
 		/* hack -- non-token ones first */
 		if ((prefix(message, "/script") ||
 					prefix(message, "/scr") ||
 					prefix(message, "/lua")) && admin)
+>>>>>>> 1.24
 		{
+<<<<<<< util.c
+			me = TRUE;
+		}
+		/* Semi-auto item destroyer */
+		else if ((prefix(message, "/dispose")) ||
+				prefix(message, "/dis"))
+		{
+			object_type             *o_ptr;
+			for(i = 0; i < INVEN_PACK; i++)
+			{
+				o_ptr = &(p_ptr->inventory[i]);
+				if (!o_ptr->tval) break;
+
+				/* skip inscribed items */
+				if (o_ptr->note) continue;
+				
+				do_cmd_destroy(Ind, i, o_ptr->number);
+				i--;
+
+				/* Hack - Don't take a turn here */
+#ifdef NEW_DUNGEON
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
+				p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
+=======
 			if (colon)
 			{
 				master_script_exec(Ind, colon);
+>>>>>>> 1.24
 			}
+<<<<<<< util.c
+			/* Take total of one turn */
+#ifdef NEW_DUNGEON
+			p_ptr->energy += level_speed(&p_ptr->wpos);
+#else
+			p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+			return;
+		}
+		/* add inscription to everything */
+		else if (prefix(message, "/tag"))
+		{
+			object_type             *o_ptr;
+			for(i = 0; i < INVEN_PACK; i++)
+=======
 			else
+>>>>>>> 1.24
 			{
 				msg_print(Ind, "\377oUsage: /lua (LUA script command)");
 			}
@@ -2624,21 +2706,71 @@ void player_talk_aux(int Ind, cptr message)
 			}
 			else if (prefix(message, "/afk"))
 			{
+<<<<<<< util.c
+				int j = name_lookup_loose(Ind, colon, FALSE);
+				if (j)
+				{
+					/* Success maybe :) */
+					msg_format(Ind, "Kicking %s out...", Players[j]->name);
+
+					/* Kick him */
+					Destroy_connection(Players[j]->conn, "kicked out");
+			
+					return;
+			}
+				/* Failed */
+=======
 				toggle_afk(Ind);
+>>>>>>> 1.24
 				return;
 			}
+<<<<<<< util.c
+			/* erase items and monsters */
+			else if (prefix(message, "/clear-level") ||
+					prefix(message, "/clv"))
+			{
+#ifdef NEW_DUNGEON
+				struct worldpos *wpos;
+				if (!colon){
+					wpos=&p_ptr->wpos;
+					wipe_o_list_safely(wpos);
+					wipe_m_list(wpos);
+					msg_format(Ind, "\377rItems and monsters at [%d,%d] %dft are cleared.", wpos->wx, wpos->wy, wpos->wz*50);
+				}
+#else
+				/* depth in feet */
+				k = k / 50;
+				if (!colon) k = p_ptr->dun_depth;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+=======
 			/* Semi-auto item destroyer */
 			else if ((prefix(message, "/dispose")) || prefix(message, "/dis"))
 			{
 				object_type		*o_ptr;
 				for(i = 0; i < INVEN_PACK; i++)
+>>>>>>> 1.24
 				{
+<<<<<<< util.c
+					msg_print(Ind, "\377oIllegal depth.  Usage: /clv [depth in feet]");
+					return;
+				}
+
+				/* Wipe even if town/wilderness */
+				wipe_o_list_safely(k);
+				wipe_m_list(k);
+=======
 					o_ptr = &(p_ptr->inventory[i]);
 					if (!o_ptr->tval) break;
 
 					/* skip inscribed items */
 					if (o_ptr->note) continue;
+>>>>>>> 1.24
 
+<<<<<<< util.c
+				msg_format(Ind, "\377rItems and monsters on %dft are cleared.", k * 50);
+#endif
+=======
 					do_cmd_destroy(Ind, i, o_ptr->number);
 					i--;
 
@@ -2647,14 +2779,39 @@ void player_talk_aux(int Ind, cptr message)
 				}
 				/* Take total of one turn */
 				p_ptr->energy -= level_speed(p_ptr->dun_depth);
+>>>>>>> 1.24
 				return;
 			}
 			/* add inscription to everything */
 			else if (prefix(message, "/tag"))
 			{
+<<<<<<< util.c
+#ifdef NEW_DUNGEON
+				if(!colon){
+					struct worldpos *wpos;
+					wpos=&p_ptr->wpos;
+					wipe_m_list(wpos);
+					msg_format(Ind, "\377rMonsters on [%d,%d] %dft are cleared.", wpos->wx, wpos->wy, wpos->wz*50);
+				}
+#else
+				/* depth in feet */
+				k = k / 50;
+				if (!colon) k = p_ptr->dun_depth;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+=======
 				object_type		*o_ptr;
 				for(i = 0; i < INVEN_PACK; i++)
+>>>>>>> 1.24
 				{
+<<<<<<< util.c
+					msg_print(Ind, "\377oIllegal depth.  Usage: /geno [depth in feet]");
+					return;
+				}
+
+				/* Wipe even if town/wilderness */
+				wipe_m_list(k);
+=======
 					o_ptr = &(p_ptr->inventory[i]);
 					if (!o_ptr->tval) break;
 
@@ -2665,7 +2822,13 @@ void player_talk_aux(int Ind, cptr message)
 				}
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+>>>>>>> 1.24
 
+<<<<<<< util.c
+				msg_format(Ind, "\377rMonsters on %dft are cleared.", k * 50);
+#endif                                
+=======
+>>>>>>> 1.24
 				return;
 			}
 			/* remove specific inscription */
@@ -2699,16 +2862,41 @@ void player_talk_aux(int Ind, cptr message)
 			/* '/cast' code is written by Ascrep(DEG). thx! */
 			else if (prefix(message, "/cast"))
 			{
+<<<<<<< util.c
+				/* depth in feet */
+#ifdef NEW_DUNGEON
+#else
+				k = k / 50;
+				if (!colon) k = p_ptr->dun_depth;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+=======
 				int book, whichplayer, whichspell;
 				bool ami = FALSE;
 #if 0
 				token[0]=strtok(message," ");
 				if (token[0]==NULL)
+>>>>>>> 1.24
 				{
 					msg_print(Ind, "\377oUsage: /cast (Book) (Spell) [Playername]");
 					return;
 				}
 
+<<<<<<< util.c
+				master_level_specific(Ind, k, "u");
+//                              msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
+#endif                                
+				return;
+			}
+			else if (prefix(message, "/static-level") ||
+					prefix(message, "/sta"))
+			{
+				/* depth in feet */
+#ifdef NEW_DUNGEON                                
+#else
+				k = k / 50;
+				if (!colon) k = p_ptr->dun_depth;
+=======
 				for (i=1;i<50;i++)
 				{
 					token[i]=strtok(NULL," ");
@@ -2716,6 +2904,7 @@ void player_talk_aux(int Ind, cptr message)
 						break;
 				}
 #endif
+>>>>>>> 1.24
 
 				/* at least 2 arguments required */
 				if (tk < 2)
@@ -2723,6 +2912,19 @@ void player_talk_aux(int Ind, cptr message)
 					msg_print(Ind, "\377oUsage: /cast (Book) (Spell) [Player name]");
 					return;
 				}
+<<<<<<< util.c
+				master_level_specific(Ind, k, "s");
+//                              msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
+#endif                                
+				return;
+			}
+			else if (prefix(message, "/artifact") ||
+					prefix(message, "/art"))
+			{
+				if (k)
+				{
+					if (a_info[k].cur_num)
+=======
 
 				if(*token[1]>='1' && *token[1]<='9')
 				{	
@@ -2804,6 +3006,7 @@ void player_talk_aux(int Ind, cptr message)
 					}
 					/* Ignore "unreasonable" players */
 					else if (!target_able(Ind, 0 - whichplayer))
+>>>>>>> 1.24
 					{
 						msg_print(Ind,"\377oThat player is out of your sight.");
 						return;
@@ -2824,6 +3027,11 @@ void player_talk_aux(int Ind, cptr message)
 				{
 					target_set(Ind, 5);
 				}
+<<<<<<< util.c
+
+//                              msg_print(Ind, "Reloading server option(mangband.cfg).");
+				msg_format(Ind, "Reloading server option(%s).", MANGBAND_CFG);
+=======
 
 				switch (p_ptr->pclass)
 				{
@@ -2879,6 +3087,7 @@ void player_talk_aux(int Ind, cptr message)
 							break;
 						}
 				}
+>>>>>>> 1.24
 
 				//			msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer); 
 				return;
@@ -2891,6 +3100,12 @@ void player_talk_aux(int Ind, cptr message)
 			 */
 			else if (admin)
 			{
+<<<<<<< util.c
+				/* depth in feet */
+#ifdef NEW_DUNGEON                                
+#else
+				k = (colon)? k / 50 : 0;
+=======
 				if (prefix(message, "/shutdown"))
 				{
 					shutdown_server();
@@ -2910,7 +3125,11 @@ void player_talk_aux(int Ind, cptr message)
 						}
 						return;
 					}
+>>>>>>> 1.24
 
+<<<<<<< util.c
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+=======
 					msg_print(Ind, "\377oUsage: /kick [Player name]");
 					return;
 				}
@@ -2937,7 +3156,11 @@ void player_talk_aux(int Ind, cptr message)
 				}
 				else if (prefix(message, "/geno-level") ||
 						prefix(message, "/geno"))
+>>>>>>> 1.24
 				{
+<<<<<<< util.c
+					msg_print(Ind, "\377oIlligal depth.  Usage: /recall [depth in feet]");
+=======
 					/* depth in feet */
 					k = k / 50;
 					if (!tk) k = p_ptr->dun_depth;
@@ -2953,7 +3176,25 @@ void player_talk_aux(int Ind, cptr message)
 
 					msg_format(Ind, "\377rMonsters on %dft are cleared.", k * 50);
 					return;
+>>>>>>> 1.24
 				}
+<<<<<<< util.c
+				else
+				{
+					p_ptr->recall_depth = k;
+					p_ptr->word_recall = 1;
+
+					msg_print(Ind, "\377oOmnipresent you are...");
+				}
+#endif
+				return;
+			}
+			else if (prefix(message, "/script") ||
+					prefix(message, "/scr") ||
+					prefix(message, "/lua"))
+			{
+				if (colon)
+=======
 				else if (prefix(message, "/identify") ||
 						prefix(message, "/id"))
 				{
@@ -2969,6 +3210,7 @@ void player_talk_aux(int Ind, cptr message)
 				}
 				else if (prefix(message, "/unstatic-level") ||
 						prefix(message, "/unst"))
+>>>>>>> 1.24
 				{
 					/* depth in feet */
 					k = k / 50;
@@ -3044,6 +3286,12 @@ void player_talk_aux(int Ind, cptr message)
 					/* depth in feet */
 					k = tk ? k / 50 : 0;
 
+<<<<<<< util.c
+					/* Look for a TVAL followed by a space */
+					if ((arg2 = strchr(colon, ' ')));
+					{
+						int l = atoi(arg2);
+=======
 					if (-MAX_WILD >= k || k >= MAX_DEPTH)
 					{
 						msg_print(Ind, "\377oIlligal depth.  Usage: /recall [depth in feet]");
@@ -3052,6 +3300,7 @@ void player_talk_aux(int Ind, cptr message)
 					{
 						p_ptr->recall_depth = k;
 						p_ptr->word_recall = 1;
+>>>>>>> 1.24
 
 						msg_print(Ind, "\377oOmnipresent you are...");
 					}
@@ -3071,8 +3320,27 @@ void player_talk_aux(int Ind, cptr message)
 						return;
 					}
 
+<<<<<<< util.c
+							if ((colon = strchr(arg2, ' ')))
+							{
+								o_ptr->number = 1;
+								o_ptr->name1 = atoi(colon);
+							}
+							else
+							{
+								o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
+							}
+							
+							apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
+							o_ptr->discount = 99;
+							object_known(o_ptr);
+							o_ptr->owner = p_ptr->id;
+							o_ptr->level = 1;
+							(void)inven_carry(Ind, o_ptr);
+=======
 					/* Move colon pointer forward to next word */
 //					while (*arg2 && (isspace(*arg2))) arg2++;
+>>>>>>> 1.24
 
 					invcopy(o_ptr, tk > 1 ? lookup_kind(k, atoi(token[2])) : k);
 
@@ -3275,12 +3543,12 @@ void player_talk_aux(int Ind, cptr message)
 	{
 		/* Send message to target party */
 		party_msg_format_ignoring(Ind, 0 - target, "\377G[%s:%s] %s",
-		                 parties[0 - target].name, sender, colon);
+				 parties[0 - target].name, sender, colon);
 
 		/* Also send back to sender if not in that party */
 		if(!player_in_party(0-target, Ind)){
 			msg_format(Ind, "\377G[%s:%s] %s",
-		           parties[0 - target].name, sender, colon);
+			   parties[0 - target].name, sender, colon);
 		}
 
 		/* Done */
@@ -3292,7 +3560,7 @@ void player_talk_aux(int Ind, cptr message)
 	/*if (!strncasecmp(message, "All:", 4) ||
 	      (message[0] == ':' && !strchr(")(-", message[1])))
 	  { */
-//		me = prefix(message, "/me ");
+//              me = prefix(message, "/me ");
 		if (strlen(message) > 1) mycolor = (prefix(message, "}") && (color_char_to_attr(*(message + 1)) != -1))?2:0;
 
 		if (!Ind) c = 'y';
@@ -3359,6 +3627,7 @@ void toggle_afk(int Ind)
 	}
 	return;
 }
+#endif /* if 0 you do it jir - evileye ;) */
 
 /*
  * A player has sent a message to the rest of the world.

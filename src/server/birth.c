@@ -49,12 +49,12 @@ typedef struct hist_type hist_type;
  */
 struct hist_type
 {
-	cptr info;			    /* Textual History */
+	cptr info;                          /* Textual History */
 
-	byte roll;			    /* Frequency of this entry */
-	byte chart;			    /* Chart index */
-	byte next;			    /* Next chart index */
-	byte bonus;			    /* Social Class Bonus + 50 */
+	byte roll;                          /* Frequency of this entry */
+	byte chart;                         /* Chart index */
+	byte next;                          /* Next chart index */
+	byte bonus;                         /* Social Class Bonus + 50 */
 };
 
 
@@ -75,178 +75,178 @@ struct hist_type
  */
 static hist_type bg[] =
 {
-	{"You are the illegitimate and unacknowledged child ",	 10, 1, 2, 25},
-	{"You are the illegitimate but acknowledged child ",	 20, 1, 2, 35},
-	{"You are one of several children ",			 95, 1, 2, 45},
-	{"You are the first child ",				100, 1, 2, 50},
+	{"You are the illegitimate and unacknowledged child ",   10, 1, 2, 25},
+	{"You are the illegitimate but acknowledged child ",     20, 1, 2, 35},
+	{"You are one of several children ",                     95, 1, 2, 45},
+	{"You are the first child ",                            100, 1, 2, 50},
 
-	{"of a Serf.  ",						 40, 2, 3, 65},
-	{"of a Yeoman.  ",						 65, 2, 3, 80},
-	{"of a Townsman.  ",					 80, 2, 3, 90},
-	{"of a Guildsman.  ",					 90, 2, 3, 105},
-	{"of a Landed Knight.  ",					 96, 2, 3, 120},
-	{"of a Titled Noble.  ",					 99, 2, 3, 130},
-	{"of a Royal Blood Line.  ",				100, 2, 3, 140},
+	{"of a Serf.  ",                                                 40, 2, 3, 65},
+	{"of a Yeoman.  ",                                               65, 2, 3, 80},
+	{"of a Townsman.  ",                                     80, 2, 3, 90},
+	{"of a Guildsman.  ",                                    90, 2, 3, 105},
+	{"of a Landed Knight.  ",                                        96, 2, 3, 120},
+	{"of a Titled Noble.  ",                                         99, 2, 3, 130},
+	{"of a Royal Blood Line.  ",                            100, 2, 3, 140},
 
-	{"You are the black sheep of the family.  ",		 20, 3, 50, 20},
-	{"You are a credit to the family.  ",			 80, 3, 50, 55},
-	{"You are a well liked child.  ",				100, 3, 50, 60},
+	{"You are the black sheep of the family.  ",             20, 3, 50, 20},
+	{"You are a credit to the family.  ",                    80, 3, 50, 55},
+	{"You are a well liked child.  ",                               100, 3, 50, 60},
 
-	{"Your mother was of the Teleri.  ",			 40, 4, 1, 50},
-	{"Your father was of the Teleri.  ",			 75, 4, 1, 55},
-	{"Your mother was of the Noldor.  ",		 	 90, 4, 1, 55},
-	{"Your father was of the Noldor.  ",		 	 95, 4, 1, 60},
-	{"Your mother was of the Vanyar.  ",			 98, 4, 1, 65},
-	{"Your father was of the Vanyar.  ",			100, 4, 1, 70},
+	{"Your mother was of the Teleri.  ",                     40, 4, 1, 50},
+	{"Your father was of the Teleri.  ",                     75, 4, 1, 55},
+	{"Your mother was of the Noldor.  ",                     90, 4, 1, 55},
+	{"Your father was of the Noldor.  ",                     95, 4, 1, 60},
+	{"Your mother was of the Vanyar.  ",                     98, 4, 1, 65},
+	{"Your father was of the Vanyar.  ",                    100, 4, 1, 70},
 
-	{"You are one of several children ",			 60, 7, 8, 50},
-	{"You are the only child ",					100, 7, 8, 55},
+	{"You are one of several children ",                     60, 7, 8, 50},
+	{"You are the only child ",                                     100, 7, 8, 55},
 
-	{"of a Teleri ",						 75, 8, 9, 50},
-	{"of a Noldor ",						 95, 8, 9, 55},
-	{"of a Vanyar ",						100, 8, 9, 60},
+	{"of a Teleri ",                                                 75, 8, 9, 50},
+	{"of a Noldor ",                                                 95, 8, 9, 55},
+	{"of a Vanyar ",                                                100, 8, 9, 60},
 
-	{"Ranger.  ",						 40, 9, 54, 80},
-	{"Archer.  ",						 70, 9, 54, 90},
-	{"Warrior.  ",						 87, 9, 54, 110},
-	{"Mage.  ",							 95, 9, 54, 125},
-	{"Prince.  ",						 99, 9, 54, 140},
-	{"King.  ",							100, 9, 54, 145},
+	{"Ranger.  ",                                            40, 9, 54, 80},
+	{"Archer.  ",                                            70, 9, 54, 90},
+	{"Warrior.  ",                                           87, 9, 54, 110},
+	{"Mage.  ",                                                      95, 9, 54, 125},
+	{"Prince.  ",                                            99, 9, 54, 140},
+	{"King.  ",                                                     100, 9, 54, 145},
 
-	{"You are one of several children of a Hobbit ",		 85, 10, 11, 45},
-	{"You are the only child of a Hobbit ",		        100, 10, 11, 55},
+	{"You are one of several children of a Hobbit ",                 85, 10, 11, 45},
+	{"You are the only child of a Hobbit ",                 100, 10, 11, 55},
 
-	{"Bum.  ",							 20, 11, 3, 55},
-	{"Tavern Owner.  ",						 30, 11, 3, 80},
-	{"Miller.  ",						 40, 11, 3, 90},
-	{"Home Owner.  ",						 50, 11, 3, 100},
-	{"Burglar.  ",						 80, 11, 3, 110},
-	{"Warrior.  ",						 95, 11, 3, 115},
-	{"Mage.  ",							 99, 11, 3, 125},
-	{"Clan Elder.  ",						100, 11, 3, 140},
+	{"Bum.  ",                                                       20, 11, 3, 55},
+	{"Tavern Owner.  ",                                              30, 11, 3, 80},
+	{"Miller.  ",                                            40, 11, 3, 90},
+	{"Home Owner.  ",                                                50, 11, 3, 100},
+	{"Burglar.  ",                                           80, 11, 3, 110},
+	{"Warrior.  ",                                           95, 11, 3, 115},
+	{"Mage.  ",                                                      99, 11, 3, 125},
+	{"Clan Elder.  ",                                               100, 11, 3, 140},
 
-	{"You are one of several children of a Gnome ",		 85, 13, 14, 45},
-	{"You are the only child of a Gnome ",			100, 13, 14, 55},
+	{"You are one of several children of a Gnome ",          85, 13, 14, 45},
+	{"You are the only child of a Gnome ",                  100, 13, 14, 55},
 
-	{"Beggar.  ",						 20, 14, 3, 55},
-	{"Braggart.  ",						 50, 14, 3, 70},
-	{"Prankster.  ",						 75, 14, 3, 85},
-	{"Warrior.  ",						 95, 14, 3, 100},
-	{"Mage.  ",							100, 14, 3, 125},
+	{"Beggar.  ",                                            20, 14, 3, 55},
+	{"Braggart.  ",                                          50, 14, 3, 70},
+	{"Prankster.  ",                                                 75, 14, 3, 85},
+	{"Warrior.  ",                                           95, 14, 3, 100},
+	{"Mage.  ",                                                     100, 14, 3, 125},
 
-	{"You are one of two children of a Dwarven ",		 25, 16, 17, 40},
-	{"You are the only child of a Dwarven ",			100, 16, 17, 50},
+	{"You are one of two children of a Dwarven ",            25, 16, 17, 40},
+	{"You are the only child of a Dwarven ",                        100, 16, 17, 50},
 
-	{"Thief.  ",						 10, 17, 18, 60},
-	{"Prison Guard.  ",						 25, 17, 18, 75},
-	{"Miner.  ",						 75, 17, 18, 90},
-	{"Warrior.  ",						 90, 17, 18, 110},
-	{"Priest.  ",						 99, 17, 18, 130},
-	{"King.  ",							100, 17, 18, 150},
+	{"Thief.  ",                                             10, 17, 18, 60},
+	{"Prison Guard.  ",                                              25, 17, 18, 75},
+	{"Miner.  ",                                             75, 17, 18, 90},
+	{"Warrior.  ",                                           90, 17, 18, 110},
+	{"Priest.  ",                                            99, 17, 18, 130},
+	{"King.  ",                                                     100, 17, 18, 150},
 
-	{"You are the black sheep of the family.  ",		 15, 18, 57, 10},
-	{"You are a credit to the family.  ",			 85, 18, 57, 50},
-	{"You are a well liked child.  ",				100, 18, 57, 55},
+	{"You are the black sheep of the family.  ",             15, 18, 57, 10},
+	{"You are a credit to the family.  ",                    85, 18, 57, 50},
+	{"You are a well liked child.  ",                               100, 18, 57, 55},
 
-	{"Your mother was an Orc, but it is unacknowledged.  ",	 25, 19, 20, 25},
-	{"Your father was an Orc, but it is unacknowledged.  ",	100, 19, 20, 25},
+	{"Your mother was an Orc, but it is unacknowledged.  ",  25, 19, 20, 25},
+	{"Your father was an Orc, but it is unacknowledged.  ", 100, 19, 20, 25},
 
-	{"You are the adopted child ",				100, 20, 2, 50},
+	{"You are the adopted child ",                          100, 20, 2, 50},
 
-	{"Your mother was a Cave-Troll ",				 30, 22, 23, 20},
-	{"Your father was a Cave-Troll ",				 60, 22, 23, 25},
-	{"Your mother was a Hill-Troll ",				 75, 22, 23, 30},
-	{"Your father was a Hill-Troll ",				 90, 22, 23, 35},
-	{"Your mother was a Water-Troll ",				 95, 22, 23, 40},
-	{"Your father was a Water-Troll ",				100, 22, 23, 45},
+	{"Your mother was a Cave-Troll ",                                30, 22, 23, 20},
+	{"Your father was a Cave-Troll ",                                60, 22, 23, 25},
+	{"Your mother was a Hill-Troll ",                                75, 22, 23, 30},
+	{"Your father was a Hill-Troll ",                                90, 22, 23, 35},
+	{"Your mother was a Water-Troll ",                               95, 22, 23, 40},
+	{"Your father was a Water-Troll ",                              100, 22, 23, 45},
 
-	{"Cook.  ",							  5, 23, 62, 60},
-	{"Warrior.  ",						 95, 23, 62, 55},
-	{"Shaman.  ",						 99, 23, 62, 65},
-	{"Clan Chief.  ",						100, 23, 62, 80},
+	{"Cook.  ",                                                       5, 23, 62, 60},
+	{"Warrior.  ",                                           95, 23, 62, 55},
+	{"Shaman.  ",                                            99, 23, 62, 65},
+	{"Clan Chief.  ",                                               100, 23, 62, 80},
 
-	{"You have dark brown eyes, ",				 20, 50, 51, 50},
-	{"You have brown eyes, ",					 60, 50, 51, 50},
-	{"You have hazel eyes, ",					 70, 50, 51, 50},
-	{"You have green eyes, ",					 80, 50, 51, 50},
-	{"You have blue eyes, ",					 90, 50, 51, 50},
-	{"You have blue-gray eyes, ",				100, 50, 51, 50},
+	{"You have dark brown eyes, ",                           20, 50, 51, 50},
+	{"You have brown eyes, ",                                        60, 50, 51, 50},
+	{"You have hazel eyes, ",                                        70, 50, 51, 50},
+	{"You have green eyes, ",                                        80, 50, 51, 50},
+	{"You have blue eyes, ",                                         90, 50, 51, 50},
+	{"You have blue-gray eyes, ",                           100, 50, 51, 50},
 
-	{"straight ",						 70, 51, 52, 50},
-	{"wavy ",							 90, 51, 52, 50},
-	{"curly ",							100, 51, 52, 50},
+	{"straight ",                                            70, 51, 52, 50},
+	{"wavy ",                                                        90, 51, 52, 50},
+	{"curly ",                                                      100, 51, 52, 50},
 
-	{"black hair, ",						 30, 52, 53, 50},
-	{"brown hair, ",						 70, 52, 53, 50},
-	{"auburn hair, ",						 80, 52, 53, 50},
-	{"red hair, ",						 90, 52, 53, 50},
-	{"blond hair, ",						100, 52, 53, 50},
+	{"black hair, ",                                                 30, 52, 53, 50},
+	{"brown hair, ",                                                 70, 52, 53, 50},
+	{"auburn hair, ",                                                80, 52, 53, 50},
+	{"red hair, ",                                           90, 52, 53, 50},
+	{"blond hair, ",                                                100, 52, 53, 50},
 
-	{"and a very dark complexion.",				 10, 53, 0, 50},
-	{"and a dark complexion.",					 30, 53, 0, 50},
-	{"and an average complexion.",				 80, 53, 0, 50},
-	{"and a fair complexion.",					 90, 53, 0, 50},
-	{"and a very fair complexion.",				100, 53, 0, 50},
+	{"and a very dark complexion.",                          10, 53, 0, 50},
+	{"and a dark complexion.",                                       30, 53, 0, 50},
+	{"and an average complexion.",                           80, 53, 0, 50},
+	{"and a fair complexion.",                                       90, 53, 0, 50},
+	{"and a very fair complexion.",                         100, 53, 0, 50},
 
-	{"You have light grey eyes, ",				 85, 54, 55, 50},
-	{"You have light blue eyes, ",				 95, 54, 55, 50},
-	{"You have light green eyes, ",				100, 54, 55, 50},
+	{"You have light grey eyes, ",                           85, 54, 55, 50},
+	{"You have light blue eyes, ",                           95, 54, 55, 50},
+	{"You have light green eyes, ",                         100, 54, 55, 50},
 
-	{"straight ",						 75, 55, 56, 50},
-	{"wavy ",							100, 55, 56, 50},
+	{"straight ",                                            75, 55, 56, 50},
+	{"wavy ",                                                       100, 55, 56, 50},
 
-	{"black hair, and a fair complexion.",			 75, 56, 0, 50},
-	{"brown hair, and a fair complexion.",			 85, 56, 0, 50},
-	{"blond hair, and a fair complexion.",			 95, 56, 0, 50},
-	{"silver hair, and a fair complexion.",			100, 56, 0, 50},
+	{"black hair, and a fair complexion.",                   75, 56, 0, 50},
+	{"brown hair, and a fair complexion.",                   85, 56, 0, 50},
+	{"blond hair, and a fair complexion.",                   95, 56, 0, 50},
+	{"silver hair, and a fair complexion.",                 100, 56, 0, 50},
 
-	{"You have dark brown eyes, ",				 99, 57, 58, 50},
-	{"You have glowing red eyes, ",				100, 57, 58, 60},
+	{"You have dark brown eyes, ",                           99, 57, 58, 50},
+	{"You have glowing red eyes, ",                         100, 57, 58, 60},
 
-	{"straight ",						 90, 58, 59, 50},
-	{"wavy ",							100, 58, 59, 50},
+	{"straight ",                                            90, 58, 59, 50},
+	{"wavy ",                                                       100, 58, 59, 50},
 
-	{"black hair, ",						 75, 59, 60, 50},
-	{"brown hair, ",						100, 59, 60, 50},
+	{"black hair, ",                                                 75, 59, 60, 50},
+	{"brown hair, ",                                                100, 59, 60, 50},
 
-	{"a one foot beard, ",					 25, 60, 61, 50},
-	{"a two foot beard, ",					 60, 60, 61, 51},
-	{"a three foot beard, ",					 90, 60, 61, 53},
-	{"a four foot beard, ",					100, 60, 61, 55},
+	{"a one foot beard, ",                                   25, 60, 61, 50},
+	{"a two foot beard, ",                                   60, 60, 61, 51},
+	{"a three foot beard, ",                                         90, 60, 61, 53},
+	{"a four foot beard, ",                                 100, 60, 61, 55},
 
-	{"and a dark complexion.",					100, 61, 0, 50},
+	{"and a dark complexion.",                                      100, 61, 0, 50},
 
-	{"You have slime green eyes, ",				 60, 62, 63, 50},
-	{"You have puke yellow eyes, ",				 85, 62, 63, 50},
-	{"You have blue-bloodshot eyes, ",				 99, 62, 63, 50},
-	{"You have glowing red eyes, ",				100, 62, 63, 55},
+	{"You have slime green eyes, ",                          60, 62, 63, 50},
+	{"You have puke yellow eyes, ",                          85, 62, 63, 50},
+	{"You have blue-bloodshot eyes, ",                               99, 62, 63, 50},
+	{"You have glowing red eyes, ",                         100, 62, 63, 55},
 
-	{"dirty ",							 33, 63, 64, 50},
-	{"mangy ",							 66, 63, 64, 50},
-	{"oily ",							100, 63, 64, 50},
+	{"dirty ",                                                       33, 63, 64, 50},
+	{"mangy ",                                                       66, 63, 64, 50},
+	{"oily ",                                                       100, 63, 64, 50},
 
-	{"sea-weed green hair, ",					 33, 64, 65, 50},
-	{"bright red hair, ",					 66, 64, 65, 50},
-	{"dark purple hair, ",					100, 64, 65, 50},
+	{"sea-weed green hair, ",                                        33, 64, 65, 50},
+	{"bright red hair, ",                                    66, 64, 65, 50},
+	{"dark purple hair, ",                                  100, 64, 65, 50},
 
-	{"and green ",						 25, 65, 66, 50},
-	{"and blue ",						 50, 65, 66, 50},
-	{"and white ",						 75, 65, 66, 50},
-	{"and black ",						100, 65, 66, 50},
+	{"and green ",                                           25, 65, 66, 50},
+	{"and blue ",                                            50, 65, 66, 50},
+	{"and white ",                                           75, 65, 66, 50},
+	{"and black ",                                          100, 65, 66, 50},
 
-	{"ulcerous skin.",						 33, 66, 0, 50},
-	{"scabby skin.",						 66, 66, 0, 50},
-	{"leprous skin.",						100, 66, 0, 50},
+	{"ulcerous skin.",                                               33, 66, 0, 50},
+	{"scabby skin.",                                                 66, 66, 0, 50},
+	{"leprous skin.",                                               100, 66, 0, 50},
 
 
-        {"You are one of several children of a DragonRider. ", 85, 89, 91, 50  },
-        {"You are the only child of a DragonRider. ", 100, 89, 91, 60 },
+	{"You are one of several children of a DragonRider. ", 85, 89, 91, 50  },
+	{"You are the only child of a DragonRider. ", 100, 89, 91, 60 },
 
-        {"You have a Green Dragon.", 30, 91, 0, 40 },
-        {"You have a Blue Dragon.", 55, 91, 0, 60 },
-        {"You have a Brown Dragon.", 80, 91, 0, 80 },
-        {"You have a Bronze Dragon.", 90, 91, 0, 100 },
-        {"You have a Gold Dragon.", 100, 91, 0, 120},
+	{"You have a Green Dragon.", 30, 91, 0, 40 },
+	{"You have a Blue Dragon.", 55, 91, 0, 60 },
+	{"You have a Brown Dragon.", 80, 91, 0, 80 },
+	{"You have a Bronze Dragon.", 90, 91, 0, 100 },
+	{"You have a Gold Dragon.", 100, 91, 0, 120},
 
 	{"You are of an unknown generation of the Ents.",        30, 94, 95, 30},
 	{"You are of the third generation of the Ents.",         40, 94, 95, 50},
@@ -262,7 +262,7 @@ static hist_type bg[] =
 /*
  * Current stats
  */
-static s16b		stat_use[6];
+static s16b             stat_use[6];
 
 
 
@@ -273,7 +273,7 @@ static s16b		stat_use[6];
  * auto_roll is boolean and states maximum changes should be used rather
  * than random ones to allow specification of higher values to wait for
  *
- * The "p_ptr->maximize" code is important	-BEN-
+ * The "p_ptr->maximize" code is important      -BEN-
  */
 static int adjust_stat(int Ind, int value, s16b amount, int auto_roll)
 {
@@ -345,12 +345,12 @@ static int adjust_stat(int Ind, int value, s16b amount, int auto_roll)
 static void get_stats(int Ind, int stat_order[6])
 {
 	player_type *p_ptr = Players[Ind];
-	int		i, j, tries = 1000;
+	int             i, j, tries = 1000;
 
-	int		bonus;
+	int             bonus;
 
-	int		dice[18];
-	int		stats[6];
+	int             dice[18];
+	int             stats[6];
 
 	/* Clear "stats" array */
 	for (i = 0; i < 6; i++)
@@ -467,7 +467,7 @@ static void get_stats(int Ind, int stat_order[6])
 static void get_extra(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int		i, j, min_value, max_value;
+	int             i, j, min_value, max_value;
 	int tries = 300;
 
 	/* Level one (never zero!) */
@@ -522,11 +522,11 @@ static void get_extra(int Ind)
 static void get_history(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int		i, n, chart, roll, social_class;
+	int             i, n, chart, roll, social_class;
 	int tries = 500;
-	char	*s, *t;
+	char    *s, *t;
 
-	char	buf[240];
+	char    buf[240];
 
 
 
@@ -754,14 +754,19 @@ static void get_money(int Ind)
 	p_ptr->au = gold;
 
 	/* Since it's not a king/queen */
+#ifdef NEW_DUNGEON
+	p_ptr->own1.wx=p_ptr->own1.wy=p_ptr->own1.wz=0;
+	wpcopy(&p_ptr->own2, &p_ptr->own1);
+#else
 	p_ptr->own1 = p_ptr->own2 = 0;
+#endif
 		
 	if (!strcmp(p_ptr->name,cfg_admin_wizard))
 	{
 		/* the admin wizard can basically do what he wants */
 		p_ptr->au = 50000000;
-                p_ptr->lev = 100;
-                p_ptr->exp = 999999999;
+		p_ptr->lev = 100;
+		p_ptr->exp = 999999999;
 		p_ptr->noscore = 1;
 		/* permanent invulnerability */
 #if 0
@@ -777,8 +782,8 @@ static void get_money(int Ind)
 	if (!strcmp(p_ptr->name,cfg_dungeon_master))
 	{
 		p_ptr->au = 50000000;
-                p_ptr->lev = 100;
-                p_ptr->exp = 999999999;
+		p_ptr->lev = 100;
+		p_ptr->exp = 999999999;
 		p_ptr->invuln = -1;
 		p_ptr->ghost = 1;
 		p_ptr->noscore = 1;
@@ -857,10 +862,12 @@ static void player_wipe(int Ind)
 	p_ptr->noscore = 0;
 	
 	/* clear the wilderness map */
-	for (i = 0; i < MAX_WILD/8; i++) p_ptr->wild_map[i] = 0;
-
-	/* clear the wilderness map */
-	for (i = 0; i < MAX_WILD/8; i++) p_ptr->wild_map[i] = 0;
+#ifdef NEW_DUNGEON
+	for (i = 0; i < MAX_WILD_8; i++)
+#else
+	for (i = 0; i < MAX_WILD/8; i++)
+#endif
+		p_ptr->wild_map[i] = 0;
 
 	/* Hack -- assume the player has an initial knowledge of the area close to town */
 	for (i = 0; i < 13; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
@@ -974,13 +981,13 @@ static byte player_init[MAX_CLASS][3][2] =
 static void player_outfit(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int		i, tv, sv;
+	int             i, tv, sv;
 
-	object_type	forge;
-	artifact_type	* a_ptr; /* APD XXX FOR WARRIOR */
-	int		k_idx;	/* APD XXX FOR WARRIOR */
+	object_type     forge;
+	artifact_type   * a_ptr; /* APD XXX FOR WARRIOR */
+	int             k_idx;  /* APD XXX FOR WARRIOR */
 
-	object_type	*o_ptr = &forge;
+	object_type     *o_ptr = &forge;
 
 
 	/* Hack -- Give the player some food */
@@ -988,8 +995,8 @@ static void player_outfit(int Ind)
 	o_ptr->number = rand_range(3, 7);
 	object_aware(Ind, o_ptr);
 	object_known(o_ptr);
-        o_ptr->owner = p_ptr->id;
-        o_ptr->level = 0;
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 0;
 	(void)inven_carry(Ind, o_ptr);
 
 	/* Hack -- Give the player some torches */
@@ -997,8 +1004,8 @@ static void player_outfit(int Ind)
 	o_ptr->number = rand_range(3, 7);
 	o_ptr->pval = rand_range(3, 7) * 500;
 	object_known(o_ptr);
-        o_ptr->owner = p_ptr->id;
-        o_ptr->level = 0;
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 0;
 	(void)inven_carry(Ind, o_ptr);
 
 	/*
@@ -1006,7 +1013,7 @@ static void player_outfit(int Ind)
 	 */
 	 if (!strcmp(p_ptr->name, "Olofruit") || !strcmp(p_ptr->name, "Olobat") || !strcmp(p_ptr->name, "Norcofruit") || !strcmp(p_ptr->name, "Norcobat") || !strcmp(p_ptr->name, "Durbat"))
 	 {
-	 	p_ptr->fruit_bat = 1;
+		p_ptr->fruit_bat = 1;
 	 }
 	
 #if 1
@@ -1016,22 +1023,26 @@ static void player_outfit(int Ind)
 	 if (!strcmp(p_ptr->name,cfg_admin_wizard) || !strcmp(p_ptr->name, cfg_dungeon_master))
 	 {
 
-                /* Hack -- assume the player has an initial knowledge of the area close to town */
-                for (i = 0; i < MAX_WILD; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
+		/* Hack -- assume the player has an initial knowledge of the area close to town */
+#ifdef NEW_DUNGEON
+		for (i = 0; i < MAX_WILD_X*MAX_WILD_Y; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
+#else
+		for (i = 0; i < MAX_WILD; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
+#endif
 
-                invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_HOUSE));
+		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_HOUSE));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
 		object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
+		o_ptr->owner = p_ptr->id;
+		o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
+		o_ptr->owner = p_ptr->id;
+		o_ptr->level = 1;
 		object_known(o_ptr);
 		(void)inven_carry(Ind, o_ptr);
 #if 1
@@ -1039,32 +1050,32 @@ static void player_outfit(int Ind)
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
 		object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
+		o_ptr->owner = p_ptr->id;
+		o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 #endif
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
 		object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
+		o_ptr->owner = p_ptr->id;
+		o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 #if 0
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
 		object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
+		o_ptr->owner = p_ptr->id;
+		o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 #endif
 		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_AUGMENTATION));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
 		object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
+		o_ptr->owner = p_ptr->id;
+		o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
 		invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_LIFE));
@@ -1072,11 +1083,12 @@ static void player_outfit(int Ind)
 		o_ptr->discount = 0;
 		o_ptr->pval = 10;
 		object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
+		o_ptr->owner = p_ptr->id;
+		o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
 		invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_PROBING));
+
                 o_ptr->number = 1;
                 o_ptr->pval = 30000;
 		o_ptr->discount = 0;
@@ -1098,12 +1110,12 @@ static void player_outfit(int Ind)
 		o_ptr->number = 9;
 		o_ptr->discount = 100;
 		object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
+		o_ptr->owner = p_ptr->id;
+		o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
 		/* Ifrit bug report */
-        invcopy(o_ptr, lookup_kind(TV_SWORD, SV_BROAD_SWORD));
+	invcopy(o_ptr, lookup_kind(TV_SWORD, SV_BROAD_SWORD));
 		o_ptr->name1 = ART_GLAMDRING;
 		apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
         o_ptr->number = 1;
@@ -1114,25 +1126,25 @@ static void player_outfit(int Ind)
         (void)inven_carry(Ind, o_ptr);
 #endif
 
-        invcopy(o_ptr, lookup_kind(TV_GLOVES, SV_SET_OF_CESTI));
+	invcopy(o_ptr, lookup_kind(TV_GLOVES, SV_SET_OF_CESTI));
 		o_ptr->name1 = ART_FINGOLFIN;
 		apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
-        o_ptr->number = 1;
-        o_ptr->discount = 0;
-        object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
-        (void)inven_carry(Ind, o_ptr);
+	o_ptr->number = 1;
+	o_ptr->discount = 0;
+	object_known(o_ptr);
+		o_ptr->owner = p_ptr->id;
+		o_ptr->level = 1;
+	(void)inven_carry(Ind, o_ptr);
 
-        invcopy(o_ptr, lookup_kind(TV_HAFTED, SV_GROND));
+	invcopy(o_ptr, lookup_kind(TV_HAFTED, SV_GROND));
 		o_ptr->name1 = ART_GROND;
 		apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
-        o_ptr->number = 1;
-        o_ptr->discount = 0;
-        object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
-        (void)inven_carry(Ind, o_ptr);
+	o_ptr->number = 1;
+	o_ptr->discount = 0;
+	object_known(o_ptr);
+		o_ptr->owner = p_ptr->id;
+		o_ptr->level = 1;
+	(void)inven_carry(Ind, o_ptr);
 
 		/* gimme books :) */
 		for (i = p_ptr->pclass == CLASS_WARRIOR?0:1; i < 9; i++)
@@ -1158,8 +1170,8 @@ static void player_outfit(int Ind)
 		invcopy(o_ptr, lookup_kind(tv, sv));
 		object_aware(Ind, o_ptr);
 		object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 0;
+		o_ptr->owner = p_ptr->id;
+		o_ptr->level = 0;
 		(void)inven_carry(Ind, o_ptr);
 	}
 	
@@ -1168,11 +1180,27 @@ static void player_outfit(int Ind)
 static void player_setup(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int y, x, i, d, count = 0, Depth = p_ptr->dun_depth;
+	int y, x, i, d, count = 0;
 	cave_type *c_ptr;
 
 	bool dawn = ((turn % (10L * TOWN_DAWN)) < (10L * TOWN_DAWN / 2)), unstaticed = 0; 
 
+#ifdef NEW_DUNGEON
+	struct worldpos *wpos=&p_ptr->wpos;
+	cave_type **zcave;
+#else
+	int Depth=p_ptr->dun_depth;
+#endif
+
+#ifdef NEW_DUNGEON
+	/* Default location if just starting */
+	if(wpos->wz==0 && wpos->wy==0 && wpos->wx==0 && p_ptr->py==0 && p_ptr->px==0){
+		p_ptr->wpos.wx=MAX_WILD_X/2;
+		p_ptr->wpos.wy=MAX_WILD_X/2;
+		p_ptr->py=level_down_y(wpos);
+		p_ptr->px=level_down_x(wpos);
+	}
+#endif
 	/* Count players on this depth */
 	for (i = 1; i <= NumPlayers; i++)
 	{
@@ -1184,14 +1212,22 @@ static void player_setup(int Ind)
 			continue;
 
 		/* Count */
+#ifdef NEW_DUNGEON
+		if (inarea(wpos, &Players[i]->wpos))
+#else
 		if (Players[i]->dun_depth == Depth)
+#endif        
 			count++;
 	}
 
 	/* Make sure he's supposed to be here -- if not, then the level has
 	 * been unstaticed and so he should forget his memory of the old level.
 	 */
+#ifdef NEW_DUNGEON
+	if (count >= players_on_depth(wpos))
+#else
 	if (count >= players_on_depth[Depth])
+#endif
 	{
 		/* Clear the "marked" and "lit" flags for each cave grid */
 		for (y = 0; y < MAX_HGT; y++)
@@ -1202,7 +1238,11 @@ static void player_setup(int Ind)
 			}
 		}
 		/* He is now on the level, so add him to the player_on_depth list */
+#ifdef NEW_DUNGEON
+		new_players_on_depth(wpos, 1, TRUE);
+#else
 		players_on_depth[Depth]++;
+#endif
 
 		/* Set the unstaticed variable to true so we know to do a non-LOS requiring
 		 * scatter when we place the player.  See below.
@@ -1211,8 +1251,23 @@ static void player_setup(int Ind)
 	}
 
 	/* Rebuild the level if neccecary */
+#ifdef NEW_DUNGEON
+	if(!(zcave=getcave(wpos))){
+		if(p_ptr->wpos.wz){
+			alloc_dungeon_level(wpos);
+			generate_cave(wpos);
+		}
+		else{
+			alloc_dungeon_level(wpos);
+			generate_cave(wpos);
+			if(!players_on_depth(wpos))
+				new_players_on_depth(wpos,1,FALSE);
+		}
+		zcave=getcave(wpos);
+	}
+#else
 	if (!cave[Depth]) 
-	{		
+	{               
 		/* If a level is unstaticed and a player is on it, he will now
 		 * stay in the dungeon and appear on the new level somewhere.
 		 */
@@ -1234,7 +1289,9 @@ static void player_setup(int Ind)
 			p_ptr->wild_map[(-p_ptr->dun_depth)/8] |= (1<<((-p_ptr->dun_depth)%8));
 		}
 	}
+#endif
 
+#ifndef NEW_DUNGEON
 	/* Default location if just starting */
 	if (!Depth && !p_ptr->py && !p_ptr->px)
 	{
@@ -1242,9 +1299,13 @@ static void player_setup(int Ind)
 		p_ptr->py = level_down_y[0];
 		p_ptr->px = level_down_x[0];
 	}
-
+#endif
 	/* Memorize town */
+#ifdef NEW_DUNGEON
+	if(!wpos->wz && wpos->wy==MAX_WILD_Y/2 && wpos->wx==MAX_WILD_X/2)
+#else
 	if (!Depth)
+#endif
 	{
 		/* Memorize the town if it's daytime */
 		for (y = 0; y < MAX_HGT; y++)
@@ -1254,7 +1315,11 @@ static void player_setup(int Ind)
 				byte *w_ptr = &p_ptr->cave_flag[y][x];
 
 				/* Acquire pointer */
+#ifdef NEW_DUNGEON
+				c_ptr = &zcave[y][x];
+#else
 				c_ptr = &cave[0][y][x];
+#endif
 
 				/* If day or interesting, memorize */
 				if (dawn || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
@@ -1278,7 +1343,7 @@ static void player_setup(int Ind)
 		/* Hack -- ghosts&wraithly Sorcerors do not scatter, as they may not be in a line of sight
 		   with a valid region */
 #if 0
-		//		if (!p_ptr->ghost && !p_ptr->wraith_in_wall)
+		//              if (!p_ptr->ghost && !p_ptr->wraith_in_wall)
 		//{
 			// Hack -- require line of sight if the level has not been unstaticed
 			// since the player was last on it.  If the player was on it, then
@@ -1303,11 +1368,17 @@ static void player_setup(int Ind)
 	p_ptr->px = x;
 
 	/* Update the location's player index */
+#ifdef NEW_DUNGEON
+	zcave[y][x].m_idx = 0 - Ind;
+
+	/* Show him to everybody */
+	everyone_lite_spot(wpos, y, x);
+#else
 	cave[Depth][y][x].m_idx = 0 - Ind;
 
 	/* Show him to everybody */
 	everyone_lite_spot(Depth, y, x);
-
+#endif
 	/* Hack -- Give him "awareness" of certain objects */
 	for (i = 1; i < MAX_K_IDX; i++)
 	{
@@ -1435,10 +1506,10 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	/* Did loading succeed? */
 	if (character_loaded)
 	{
-		/* Loading succeeded */		
+		/* Loading succeeded */         
 		player_setup(Ind);
 		clockin(Ind);
-		return TRUE;		
+		return TRUE;            
 	}
 
 	/* Else, loading failed, but we just create a new character */

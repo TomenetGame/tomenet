@@ -739,7 +739,11 @@ void do_cmd_study(int Ind, int book, int spell)
 
 
 	/* Take a turn */
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 
 	/* Learn the spell */
 	if (j < 32)
@@ -800,7 +804,11 @@ bool check_antimagic(int Ind)
 		if (q_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Skip players not on this depth */
+#ifdef NEW_DUNGEON
+		if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) continue;
+#else
 		if (q_ptr->dun_depth != p_ptr->dun_depth) continue;
+#endif
 
 		if (!q_ptr->anti_magic) continue;
 
@@ -968,8 +976,13 @@ void do_cmd_cast(int Ind, int book, int spell)
 		return;
 	}
 
+#ifdef NEW_DUNGEON
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_spell;
+#else
 	/* Take a turn */
 	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+#endif
 
 	/* Spell failure chance */
 	chance = spell_chance(Ind, s_ptr);
@@ -1209,7 +1222,11 @@ void do_cmd_cast(int Ind, int book, int spell)
 			case 31:
 			{
 				msg_format_near(Ind, "%s unleashes great power!", p_ptr->name);
+#ifdef NEW_DUNGEON
+				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE);
+#else
 				destroy_area(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 15, TRUE);
+#endif
 				break;
 			}
 
@@ -1240,7 +1257,11 @@ void do_cmd_cast(int Ind, int book, int spell)
 			case 36:
 			{
 				msg_format_near(Ind, "%s casts a spell, and the ground shakes!", p_ptr->name);
+#ifdef NEW_DUNGEON
+				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
+#else
 				earthquake(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 10);
+#endif
 				break;
 			}
 
@@ -1843,8 +1864,13 @@ void do_cmd_sorc(int Ind, int book, int spell)
 		return;
 	}
 
+#ifdef NEW_DUNGEON
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_spell;
+#else
 	/* Take a turn */
 	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+#endif
 
 	/* Spell failure chance */
 	chance = spell_chance(Ind, s_ptr);
@@ -2027,22 +2053,44 @@ void do_cmd_sorc(int Ind, int book, int spell)
                 	for (i = p_ptr->px - rad; i <= p_ptr->px + rad; i++)
                 	for (j = p_ptr->py - rad; j <= p_ptr->py + rad; j++)
                 	{
+				cave_type **zcave;
+				struct worldpos *wpos=&p_ptr->wpos;
+				zcave=getcave(wpos);
                 		/* First we must be in the dungeon */
+#ifdef NEW_DUNGEON
+                		if (!in_bounds(j, i)) continue;
+#else
                 		if (!in_bounds(p_ptr->dun_depth, j, i)) continue;
+#endif
                 		
                 		/* Is it a naked grid ? */
+#ifdef NEW_DUNGEON
+                		if (!cave_naked_bold(zcave, j, i)) continue;
+                		
+                		/* Beware of the houses in town */
+                		if ((wpos->wz== 0) && (zcave[j][i].info & CAVE_ICKY)) continue;
+#else
                 		if (!cave_naked_bold(p_ptr->dun_depth, j, i)) continue;
                 		
                 		/* Beware of the houses in town */
                 		if ((p_ptr->dun_depth <= 0) && (cave[p_ptr->dun_depth][j][i].info & CAVE_ICKY)) continue;
+#endif
                 		
                 		/* Now we want a circle */
                 		if (distance(j, i, p_ptr->py, p_ptr->px) != rad) continue;
                 		
                 		/* Everything ok ? then put a glyph */
+#ifdef NEW_DUNGEON
+				zcave[j][i].feat = FEAT_GLYPH;
+#else
 				cave[p_ptr->dun_depth][j][i].feat = FEAT_GLYPH;
+#endif
 				note_spot(Ind, j, i);
+#ifdef NEW_DUNGEON
+				everyone_lite_spot(wpos, j, i);
+#else
 				everyone_lite_spot(p_ptr->dun_depth, j, i);
+#endif
                 	}
 		        break;
                 }
@@ -2108,7 +2156,11 @@ void do_cmd_sorc(int Ind, int book, int spell)
                         break;
 
                 case 40: /* Earthquake */
+#ifdef NEW_DUNGEON
+                        earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 5);
+#else
                         earthquake(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 5);
+#endif
                         break;
                 case 41: /* Polymorph */
 			p_ptr->current_spell = j;
@@ -2124,7 +2176,11 @@ void do_cmd_sorc(int Ind, int book, int spell)
                         break;
                 case 45: /* Wipe */
                 	msg_format_near(Ind, "%s mumurs 'wipe'.", p_ptr->name);
+#ifdef NEW_DUNGEON
+                	wipe_spell(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
+#else
                 	wipe_spell(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 10);
+#endif
                         take_hit(Ind, 100, "the Wipe spell");
                         break;
                 case 46: /* Pyrrhic Blast */
@@ -2132,7 +2188,11 @@ void do_cmd_sorc(int Ind, int book, int spell)
                         take_hit(Ind, 90, "the heat of a Pyrrhic Blast");
                         break;
                 case 47: /* Word of Destruction */
+#ifdef NEW_DUNGEON
+                        destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE);
+#else
                         destroy_area(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 15, TRUE);
+#endif
                         break;
 
                 case 48: /* Radiate Fear */
@@ -2690,8 +2750,13 @@ void do_cmd_pray(int Ind, int book, int spell)
 		return;
 	}
 
+#ifdef NEW_DUNGEON
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_spell;
+#else
 	/* Take a turn */
 	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+#endif
 
 	/* Spell failure chance */
 	chance = spell_chance(Ind, s_ptr);
@@ -2876,7 +2941,11 @@ void do_cmd_pray(int Ind, int book, int spell)
 			case 21:
 			{
 				msg_format_near(Ind, "%s murmurs, and the ground shakes!", p_ptr->name);
+#ifdef NEW_DUNGEON
+				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
+#else
 				earthquake(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 10);
+#endif
 				break;
 			}
 
@@ -3055,7 +3124,11 @@ void do_cmd_pray(int Ind, int book, int spell)
 			case 44:
 			{
 				msg_format_near(Ind, "%s unleashs a spell of great power!", p_ptr->name);
+#ifdef NEW_DUNGEON
+				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE);
+#else
 				destroy_area(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 15, TRUE);
+#endif
 				break;
 			}
 
@@ -3499,7 +3572,11 @@ void do_cmd_ghost_power(int Ind, int ability)
 	}
 
 	/* Take a turn */
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 
 	/* Take some experience */
 	p_ptr->max_exp -= s_ptr->slevel * s_ptr->smana;
@@ -3569,7 +3646,11 @@ void do_cmd_ghost_power_aux(int Ind, int dir)
 	p_ptr->current_spell = -1;
 
 	/* Take a turn */
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 
 	/* Take some experience */
 	p_ptr->max_exp -= s_ptr->slevel * s_ptr->smana;
@@ -3688,8 +3769,13 @@ void do_cmd_fight(int Ind, int book, int spell)
 		return;
 	}
 
+#ifdef NEW_DUNGEON
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
 	/* Take a turn */
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 
 	/* Spell failure chance */
 	chance = spell_chance(Ind, s_ptr);
@@ -3795,7 +3881,11 @@ void do_cmd_fight(int Ind, int book, int spell)
                                         x = p_ptr->px + ddx[d];
                                         y = p_ptr->py + ddy[d];
 
+#ifdef NEW_DUNGEON
+                                        if (!in_bounds(y, x)) continue;
+#else
                                         if (!in_bounds(p_ptr->dun_depth, y, x)) continue;
+#endif
                                         py_attack(Ind, y, x, TRUE);
                                 }
 				break;
@@ -3941,7 +4031,11 @@ void do_cmd_fight_aux(int Ind, int dir)
 			}
 		
                         msg_format_near(Ind, "%s hacks at the wall.", p_ptr->name);
+#ifdef NEW_DUNGEON
+                        project(0 - Ind, 0, &p_ptr->wpos, ty, tx, 1, GF_KILL_WALL, PROJECT_BEAM | PROJECT_GRID);
+#else
                         project(0 - Ind, 0, p_ptr->dun_depth, ty, tx, 1, GF_KILL_WALL, PROJECT_BEAM | PROJECT_GRID);
+#endif
 			break;
 		}
 		default:  /* For some reason we got called for a technic that */
@@ -3973,7 +4067,11 @@ void do_cmd_fight_aux(int Ind, int dir)
 		p_ptr->window |= PW_SPELL;
 	}
 
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 
 	if (s_ptr->smana <= p_ptr->csp)
 	{
@@ -4123,8 +4221,13 @@ void do_cmd_shad(int Ind, int book, int spell)
 		return;
 	}
 
+#ifdef NEW_DUNGEON
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_spell;
+#else
 	/* Take a turn */
 	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+#endif
 
 	/* Spell failure chance */
 	chance = spell_chance(Ind, s_ptr);
@@ -4297,7 +4400,11 @@ void do_cmd_shad(int Ind, int book, int spell)
 
 		    for (k = 0; k < (p_ptr->lev / 10); k++)
 		      {
+#ifdef NEW_DUNGEON
+			summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0);
+#else
 			summon_specific(p_ptr->dun_depth, p_ptr->py, p_ptr->px, p_ptr->dun_depth, 0);
+#endif
 		      }
 		  }
 			
@@ -4581,8 +4688,13 @@ void do_cmd_hunt(int Ind, int book, int spell)
 		return;
 	}
 
+#ifdef NEW_DUNGEON
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_spell;
+#else
 	/* Take a turn */
 	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
+#endif
 
 	/* Spell failure chance */
 	chance = spell_chance(Ind, s_ptr);
@@ -5407,7 +5519,11 @@ static void do_mimic_power(int Ind, int power)
     }
 	}
 
-    p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
+	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 	if (s_ptr->smana <= p_ptr->csp)
 	{
 		/* Use some mana */
@@ -5688,7 +5804,11 @@ void do_mimic_power_aux(int Ind, int dir)
 		}
 	}	
 
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 
 	if (s_ptr->smana <= p_ptr->csp)
 	{
@@ -5767,14 +5887,22 @@ void do_cmd_mimic(int Ind, int r_idx, int spell)
 	/* No anti-magic shields around ? */
 	if (check_antimagic(Ind))
 	  {
-	    p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
+	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 	    return;
 	  }
 
 	if (!spell)
 	  {
 	    do_mimic_change(Ind, r_idx);
-	    p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#ifdef NEW_DUNGEON
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+#else
+	p_ptr->energy -= level_speed(p_ptr->dun_depth);
+#endif
 	  }
 	else
 	  {
@@ -5900,8 +6028,13 @@ void do_cmd_psi(int Ind, int book, int spell)
 		return;
 	}
 
+#ifdef NEW_DUNGEON
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr2->num_spell;
+#else
 	/* Take a turn */
 	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr2->num_spell;
+#endif
 
 	/* Spell failure chance */
 	chance = spell_chance(Ind2, s_ptr);
