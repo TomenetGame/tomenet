@@ -542,7 +542,7 @@ void process_command()
 static void cmd_clear_buffer(void)
 {
 	/* Hack -- flush the key buffer */
-	Term_flush();
+	//Term_flush();
 
 	Send_clear_buffer();
 }
