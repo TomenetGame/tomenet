@@ -3259,7 +3259,7 @@ int get_playerind(char *name)
                 return(-1);
         for(i=1; i<=NumPlayers; i++)
         {
-                if(Players[i]->conn==NOT_CONNECTED) return(-1);
+                if(Players[i]->conn==NOT_CONNECTED) continue;
                 if(!stricmp(Players[i]->name, name)) return(i);
         }
         return(-1);
