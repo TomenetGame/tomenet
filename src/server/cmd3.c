@@ -2228,8 +2228,11 @@ void do_cmd_look(int Ind, int dir)
 	monster_type *m_ptr;
 	object_type *o_ptr;
 
+	cptr p1 = "A ", p2 = "", info = "";
+	struct c_special *cs_ptr;
+
 	char o_name[160];
-	char out_val[160];
+	char out_val[160], tmp_val[160];
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Blind */
@@ -2386,14 +2389,35 @@ void do_cmd_look(int Ind, int dir)
 
 		sprintf(out_val, "You see %s%s", o_name,
 				o_ptr->next_o_idx ? " on a pile" : "");
+
+		/* Check if the object is on a detected trap */
+		if ((cs_ptr=GetCS(c_ptr, CS_TRAPS)))
+		{
+			int t_idx = cs_ptr->sc.trap.t_idx;
+			if (cs_ptr->sc.trap.found)
+			{
+				if (p_ptr->trap_ident[t_idx])
+					p1 = t_name + t_info[t_idx].name;
+				else
+					p1 = "trapped";
+
+				/* Add trap description at the end */
+				strcat(out_val, " {");
+				strcat(out_val, p1);
+				strcat(out_val, "}");
+				/* Also add a ^ at the beginning of the line
+				in case it's too long to read its end */
+				strcpy(tmp_val, "^ ");
+				strcat(tmp_val, out_val);
+				strcpy(out_val, tmp_val);
+			}
+		}
+
 	}
 	else
 	{
 		int feat = f_info[c_ptr->feat].mimic;
 		cptr name = f_name + f_info[feat].name;
-		cptr p1 = "A ", p2 = "", info = "";
-		struct c_special *cs_ptr;
-
 		if (is_a_vowel(name[0])) p1 = "An ";
 
 		/* Hack -- add trap description */
