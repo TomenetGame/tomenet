@@ -1,9 +1,16 @@
+/* $Id$ */
 /*
  * Support for the "party" system.
  */
 
 #include "angband.h"
 #include "party.h"
+
+/*
+ * Give some exp-bonus to encourage partying (aka "C.Blue party bonus") [2]
+ * formula: (PARTY_XP_BOOST+1)/(PARTY_XP_BOOST + (# of applicable players))
+ */
+#define PARTY_XP_BOOST	(cfg.party_xp_boost)
 
 static void del_party(int id);
 static void party_msg(int party_id, cptr msg);
@@ -867,9 +874,9 @@ void party_gain_exp(int Ind, int party_id, s32b amount)
 			*/
 
 			/* Some bonus is applied to encourage partying	- Jir - */
-			new_exp = (amount * modified_level * 3 * num_members) / (average_lev * num_members * p_ptr->lev * (num_members + 2));
-			new_exp_frac = ((((amount * modified_level * 3 * num_members) % (average_lev * num_members * p_ptr->lev * (num_members + 2)) )
-			                * 0x10000L ) / (average_lev * num_members * p_ptr->lev * (num_members + 2))) + p_ptr->exp_frac;
+			new_exp = (amount * modified_level * (PARTY_XP_BOOST + 1) * num_members) / (average_lev * num_members * p_ptr->lev * (num_members + PARTY_XP_BOOST));
+			new_exp_frac = ((((amount * modified_level * (PARTY_XP_BOOST + 1) * num_members) % (average_lev * num_members * p_ptr->lev * (num_members + PARTY_XP_BOOST)) )
+			                * 0x10000L ) / (average_lev * num_members * p_ptr->lev * (num_members + PARTY_XP_BOOST))) + p_ptr->exp_frac;
 
 			/* Keep track of experience */
 			if (new_exp_frac >= 0x10000L)
@@ -1565,6 +1572,9 @@ bool check_ignore(int attacker, int target)
 /* The hash table itself */
 static hash_entry *hash_table[NUM_HASH_ENTRIES];
 
+/* lookup function */
+hash_entry *lookup_player(int id);
+
 
 /*
  * Return the slot in which an ID should be stored.
@@ -1573,6 +1583,36 @@ static int hash_slot(int id)
 {
 	/* Be very efficient */
 	return (id & (NUM_HASH_ENTRIES - 1));
+}
+
+
+/*
+ * Lookup a player record ID.  Will return NULL on failure.
+ */
+hash_entry *lookup_player(int id)
+{
+	int slot;
+	hash_entry *ptr;
+
+	/* Get the slot */
+	slot = hash_slot(id);
+
+	/* Acquire the pointer to the first element in the chain */
+	ptr = hash_table[slot];
+
+	/* Search the chain, looking for the correct ID */
+	while (ptr)
+	{
+		/* Check this entry */
+		if (ptr->id == id)
+			return ptr;
+
+		/* Next entry in chain */
+		ptr = ptr->next;
+	}
+
+	/* Not found */
+	return NULL;
 }
 
 
@@ -1614,36 +1654,6 @@ time_t lookup_player_laston(int id)
 
 	/* Not found */
 	return -1L;
-}
-
-
-/*
- * Lookup a player record ID.  Will return NULL on failure.
- */
-hash_entry *lookup_player(int id)
-{
-	int slot;
-	hash_entry *ptr;
-
-	/* Get the slot */
-	slot = hash_slot(id);
-
-	/* Acquire the pointer to the first element in the chain */
-	ptr = hash_table[slot];
-
-	/* Search the chain, looking for the correct ID */
-	while (ptr)
-	{
-		/* Check this entry */
-		if (ptr->id == id)
-			return ptr;
-
-		/* Next entry in chain */
-		ptr = ptr->next;
-	}
-
-	/* Not found */
-	return NULL;
 }
 
 /*
@@ -1778,7 +1788,7 @@ int newid(){
 
 static void sf_delete(const char *name){
 	int i,k=0;
-	char temp[128],fname[128];
+	char temp[128],fname[MAX_PATH_LENGTH];
 	/* Extract "useful" letters */
 	for (i = 0; name[i]; i++)
 	{
@@ -1791,7 +1801,7 @@ static void sf_delete(const char *name){
 		else if (strchr(". _", c)) temp[k++] = '_';
 	}
 	temp[k] = '\0';
-	path_build(fname, 1024, ANGBAND_DIR_SAVE, temp);
+	path_build(fname, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, temp);
 	unlink(fname);
 }
 
@@ -1995,3 +2005,181 @@ int player_id_list(int **list)
 	/* Return length */
 	return len;
 }
+
+/*
+ * Set/reset 'pk' mode, which allows a player to kill the others
+ *
+ * These functions should be common with hostilityes in the future. -Jir-
+ */
+bool set_pkill(int Ind, int delay)
+{
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	bool admin = is_admin(p_ptr);
+
+//	p_ptr->tim_pkill= admin ? 10 : 200;	/* so many turns */
+	p_ptr->tim_pkill= delay;
+	p_ptr->pkill^=PKILL_SET; /* Toggle value */
+	if(p_ptr->pkill&PKILL_SET){
+		msg_print(Ind, "\377rYou wish to kill other players");
+		p_ptr->pkill|=PKILL_KILLABLE;
+	}
+	else{
+		hostile_type *t_host;
+		msg_print(Ind, "\377gYou do not wish to kill other players");
+		p_ptr->pkill&=~PKILL_KILLER;
+		/* Remove all hostilities */
+		while(p_ptr->hostile){
+			t_host=p_ptr->hostile;
+			p_ptr->hostile=t_host->next;
+			KILL(t_host, hostile_type);
+		}
+	}
+}
+
+#if 0	// under construction
+/*
+ * Set/reset 'pilot' mode, which allows a player to follow another player
+ * for comfort in party diving.
+ *
+ * These functions should be common with hostilityes in the future. -Jir-
+ */
+bool pilot_set(int Ind, cptr name)
+{
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	hostile_type *h_ptr, *i_ptr;
+	int i;
+	cptr p,q;
+
+	/* Check for silliness */
+	if (!name)
+	{
+		msg_print(Ind, "Usage: /pilot foobar");
+
+		return FALSE;
+	}
+
+	i = name_lookup_loose(Ind, name, TRUE);
+
+	if (!i)
+	{
+		return FALSE;
+	}
+
+	/* Check for another silliness */
+	if (i == Ind)
+	{
+		/* Message */
+		msg_print(Ind, "You cannot follow yourself.");
+
+		return FALSE;
+	}
+
+	/* Forge name */
+	if (i > 0)
+	{
+		q = Players[i]->name;
+	}
+
+
+	if (i > 0)
+	{
+		q_ptr = Players[i];
+
+		/* Create a new hostility node */
+		MAKE(h_ptr, hostile_type);
+
+		/* Set ID in node */
+		h_ptr->id = q_ptr->id;
+
+		/* Put this node at the beginning of the list */
+		h_ptr->next = p_ptr->ignore;
+		p_ptr->ignore = h_ptr;
+
+		/* Message */
+		msg_format(Ind, "You aren't hearing %s any more.", q_ptr->name);
+
+		/* Success */
+		return TRUE;
+	}
+	else
+	{
+		/* Tweak - inverse i once more */
+		i = 0 - i;
+
+		/* Create a new hostility node */
+		MAKE(h_ptr, hostile_type);
+
+		/* Set ID in node */
+		h_ptr->id = 0 - i;
+
+		/* Put this node at the beginning of the list */
+		h_ptr->next = p_ptr->ignore;
+		p_ptr->ignore = h_ptr;
+
+		/* Message */
+		msg_format(Ind, "You aren't hearing party '%s' any more.", parties[i].name);
+
+		/* Success */
+		return TRUE;
+	}
+
+#if 0
+	/* Search for player to add */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		q_ptr = Players[i];
+
+		/* Check name */
+		if (!streq(q_ptr->name, name)) continue;
+
+		/* Create a new hostility node */
+		MAKE(h_ptr, hostile_type);
+
+		/* Set ID in node */
+		h_ptr->id = q_ptr->id;
+
+		/* Put this node at the beginning of the list */
+		h_ptr->next = p_ptr->ignore;
+		p_ptr->ignore = h_ptr;
+
+		/* Message */
+		msg_format(Ind, "You aren't hearing %s any more.", q_ptr->name);
+
+		/* Success */
+		return TRUE;
+	}
+
+	/* Search for party to add */
+	if ((i = party_lookup(name)) != -1)
+	{
+		if (player_in_party(i, Ind))
+		{
+			msg_print(Ind, "You cannot ignore your own party.");
+			return FALSE;
+		}
+			
+		/* Create a new hostility node */
+		MAKE(h_ptr, hostile_type);
+
+		/* Set ID in node */
+		h_ptr->id = 0 - i;
+
+		/* Put this node at the beginning of the list */
+		h_ptr->next = p_ptr->ignore;
+		p_ptr->ignore = h_ptr;
+
+		/* Message */
+		msg_format(Ind, "You aren't hearing party '%s' any more.", parties[i].name);
+
+		/* Success */
+		return TRUE;
+	}
+
+	/* Couldn't find player */
+	msg_format(Ind, "%^s is not currently in the game.", name);
+
+	return FALSE;
+#endif
+}
+#endif	// 0
+

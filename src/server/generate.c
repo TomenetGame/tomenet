@@ -4973,7 +4973,12 @@ void del_dungeon(struct worldpos *wpos, bool tower){
 			if(d_ptr->level[i].cave) dealloc_dungeon_level(&twpos);
 		}
 		C_KILL(d_ptr->level, d_ptr->maxdepth, struct dun_level);
+#ifdef __BORLANDC__
+		if (tower) KILL(wild->tower, struct dungeon_type);
+		else       KILL(wild->dungeon, struct dungeon_type);
+#else
 		KILL((tower ? wild->tower : wild->dungeon), struct dungeon_type);
+#endif
 	}
 	else{
 		s_printf("%s at (%d,%d) restored\n", (tower ? "Tower" : "Dungeon"), wpos->wx, wpos->wy);

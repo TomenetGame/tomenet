@@ -59,6 +59,38 @@ int stricmp(cptr a, cptr b)
 
 #endif
 
+bool in_banlist(char *addr){
+	struct ip_ban *ptr;
+	for(ptr=banlist; ptr!=(struct ip_ban*)NULL; ptr=ptr->next){
+		if(!strcmp(addr, ptr->ip)) return(TRUE);
+	}
+	return(FALSE);
+}
+
+void check_banlist(){
+	struct ip_ban *ptr, *new, *old=(struct ip_ban*)NULL;
+	ptr=banlist;
+	while(ptr!=(struct ip_ban*)NULL){
+		if(ptr->time){
+			if(!(--ptr->time)){
+				s_printf("Unbanning connections from %s\n", ptr->ip);
+				if(!old){
+					banlist=ptr->next;
+					new=banlist;
+				}
+				else{
+					old->next=ptr->next;
+					new=old->next;
+				}
+				free(ptr);
+				ptr=new;
+				continue;
+			}
+		}
+		ptr=ptr->next;
+	}
+}
+
 
 #ifdef SET_UID
 
@@ -113,38 +145,6 @@ static int usleep(huge microSeconds)
  */
 extern struct passwd *getpwuid();
 extern struct passwd *getpwnam();
-
-bool in_banlist(char *addr){
-	struct ip_ban *ptr;
-	for(ptr=banlist; ptr!=(struct ip_ban*)NULL; ptr=ptr->next){
-		if(!strcmp(addr, ptr->ip)) return(TRUE);
-	}
-	return(FALSE);
-}
-
-void check_banlist(){
-	struct ip_ban *ptr, *new, *old=(struct ip_ban*)NULL;
-	ptr=banlist;
-	while(ptr!=(struct ip_ban*)NULL){
-		if(ptr->time){
-			if(!(--ptr->time)){
-				s_printf("Unbanning connections from %s\n", ptr->ip);
-				if(!old){
-					banlist=ptr->next;
-					new=banlist;
-				}
-				else{
-					old->next=ptr->next;
-					new=old->next;
-				}
-				free(ptr);
-				ptr=new;
-				continue;
-			}
-		}
-		ptr=ptr->next;
-	}
-}
 
 /*
  * Find a default user name from the system.
@@ -2598,7 +2598,7 @@ static void do_slash_cmd(int Ind, char *message)
 						do_cmd_pray(Ind, item, 4);
 						break;
 					case TV_SHADOW_BOOK:	// 5c,5d
-						if (spell_okay(Ind, o_ptr->tval, 35, 1) &&
+						if (spell_okay(Ind, 35, 1, FALSE/*NOT USED*/) &&
 								p_ptr->csp >= 40)
 							do_cmd_shad(Ind, item, 3);
 						else do_cmd_shad(Ind, item, 2);
@@ -2630,7 +2630,7 @@ static void do_slash_cmd(int Ind, char *message)
 					p_ptr->recall_pos.wz = 0;
 					break;
 
-				default:	/* follow the inscription */
+//				default:	/* follow the inscription */
 					/* TODO: support tower */
 //					p_ptr->recall_pos.wz = 0 - p_ptr->max_dlv;
 //					p_ptr->recall_pos.wz = 0;

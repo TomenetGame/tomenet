@@ -3527,12 +3527,12 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	if (*lpCmdLine != NULL)
 	{
 		/* Initialize with given server name */
-		client_init(lpCmdLine);
+		client_init(lpCmdLine, FALSE);
 	}
 	else
 	{
 		/* Initialize and query metaserver */
-		client_init(NULL);
+		client_init(NULL, FALSE);
 	}
 
 	/* Process messages forever */

@@ -86,6 +86,7 @@ TOLUA = server\tolua.exe
 SERV_SRCS = \
   common\z-util.c common\z-virt.c common\z-form.c common\z-rand.c \
   common\net-win.c common\sockbuf.c server\variable.c server\control.c \
+  server\hooks.c server\skills.c \
   server\party.c server\tables.c server\util.c server\cave.c \
   server\object1.c server\object2.c server\monster2.c \
   server\xtra1.c server\xtra2.c server\spells1.c server\spells2.c \
@@ -100,6 +101,7 @@ SERV_SRCS = \
 SERV_OBJS = \
   common\z-util.obj common\z-virt.obj common\z-form.obj common\z-rand.obj \
   common\net-win.obj common\sockbuf.obj server\variable.obj server\control.obj \
+  server\hooks.obj server\skills.obj \
   server\party.obj server\tables.obj server\util.obj server\cave.obj \
   server\object1.obj server\object2.obj server\monster2.obj \
   server\xtra1.obj server\xtra2.obj server\spells1.obj server\spells2.obj \
@@ -132,7 +134,7 @@ CLI_SRCS = \
   client\c-files.c client\c-tables.c client\c-store.c client\c-init.c \
   client\variable.c client\main-win.c client\nclient.c client\c-birth.c \
   client\c-xtra1.c client\c-xtra2.c client\c-spell.c client\client.c \
-  client\readdib.c
+  client\readdib.c client\skills.c
 
 CLI_OBJS = \
   common\z-util.obj common\z-virt.obj common\z-form.obj common\z-rand.obj \
@@ -141,7 +143,7 @@ CLI_OBJS = \
   client\c-files.obj client\c-tables.obj client\c-store.obj client\c-init.obj \
   client\variable.obj client\main-win.obj client\nclient.obj client\c-birth.obj \
   client\c-xtra1.obj client\c-xtra2.obj client\c-spell.obj client\client.obj \
-  client\readdib.obj
+  client\readdib.obj client\skills.obj
 
 LUASRCS = \
   server\script.c server\lua_bind.c \

@@ -2724,6 +2724,7 @@ player_magic magic_info[MAX_REALM] =
 
         /* Ghost */
         {
+        NULL,
         },
 };
 /*
@@ -3887,6 +3888,7 @@ martial_arts ma_blows[MAX_MA] =
 skill_type s_info[MAX_SKILLS] =
 {
         {
+        NULL,
         },
         {
                 "Combat",
@@ -3897,7 +3899,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -3917,7 +3919,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_FIGHTING,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -3937,7 +3939,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -3957,7 +3959,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -3977,7 +3979,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -3997,7 +3999,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4017,7 +4019,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_ARCHERING,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4037,7 +4039,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4057,7 +4059,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4077,7 +4079,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4097,7 +4099,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4117,7 +4119,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4137,7 +4139,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4157,7 +4159,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_SORCERY,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4177,7 +4179,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_MAGERY,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4197,7 +4199,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_MIMICRY,
 
                  /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4217,7 +4219,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                  /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4237,7 +4239,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_SHADOW,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4257,7 +4259,7 @@ skill_type s_info[MAX_SKILLS] =
                 MKEY_PRAY,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,
@@ -4277,7 +4279,7 @@ skill_type s_info[MAX_SKILLS] =
                 0,
 
                 /* Effect on other skills */
-                {},
+                {NULL},
 
                 /* Father skills */
                 0,

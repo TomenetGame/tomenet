@@ -92,7 +92,7 @@ extern int skill_tree_init[MAX_SKILLS][2];
 
 
 /* variable.c */
-obj_theme default_obj_theme;
+extern obj_theme default_obj_theme;
 extern s16b count_project;
 extern char tdy[662];
 extern char tdx[662];
@@ -1039,6 +1039,10 @@ extern void monster_death_mon(int am_idx, int m_idx);
 extern void monster_death(int Ind, int m_idx);
 extern void player_death(int Ind);
 extern void resurrect_player(int Ind);
+extern void del_quest(int id);
+extern void rem_quest(u16b id);
+extern void kill_quest(int Ind);
+extern bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags);
 extern bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note);
 extern void panel_bounds(int Ind);
 extern void verify_panel(int Ind);

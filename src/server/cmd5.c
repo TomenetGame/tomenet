@@ -94,7 +94,7 @@ int find_realm_skill(int realm)
                 return SKILL_ARCHERY;
         case REALM_FIGHTING:
                 return SKILL_MASTERY;
-        case REALM_PSI:
+//        case REALM_PSI:
 //                return SKILL_;
         };
         return 0;
