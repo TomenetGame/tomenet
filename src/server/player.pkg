@@ -199,7 +199,7 @@ struct player_type
 
         skill_player s_info[MAX_SKILLS]; /* Player skills */
         s16b skill_points;      /* number of skills assignable */
-        s16b skill_last_level;  /* last level we gained a skill point */
+//        s16b skill_last_level;  /* last level we gained a skill point */
 	
 	byte hitdie;		/* Hit dice (sides) */
 	s16b expfact;		/* Experience factor */

@@ -15,6 +15,11 @@
 
 #include "angband.h"
 
+/*
+ * If defined, monsters stop to stun player and Mystics will stop using
+ * their martial-arts..
+ */
+#define SUPPRESS_MONSTER_STUN // HERESY !
 
 
 /*
@@ -247,7 +252,7 @@ bool make_attack_normal(int Ind, int m_idx)
 
 			if ((chance > 0) && magik(chance))
 			{
-				msg_format(Ind, "You dodge %s attack!", m_name);
+				msg_format(Ind, "You dodge %s's attack!", m_name);
 				continue;
 			}
 
@@ -1457,7 +1462,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				/* Apply the cut */
 				if (k) (void)set_cut(Ind, p_ptr->cut + k);
 			}
-#if 0 // HERESY !
+#ifndef SUPPRESS_MONSTER_STUN // HERESY !
 			/* Handle stun */
 			if (do_stun)
 			{

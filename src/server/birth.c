@@ -1600,7 +1600,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 
 	/* Set up the skills */
 	p_ptr->skill_points = 0;
-	p_ptr->skill_last_level = 1;	/* max_plv will do maybe..? */
+//	p_ptr->skill_last_level = 1;	/* max_plv will do maybe..? */
 	for (i = 1; i < MAX_SKILLS; i++)
 		p_ptr->s_info[i].dev = FALSE;
 	for (i = 1; i < MAX_SKILLS; i++)

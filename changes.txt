@@ -1153,8 +1153,12 @@ To find the latest change quickly, search ==== :)
 25/06/2002 (Jir)
 - SKILL_SPELLRAD('Revelation') (oh, sry DG, it's last one :)
 - race/class additions/deletions can be done without client update.
+- p_ptr->skill_last_level removed.
 [B] classname.prf file wasn't read correctly.
 
+26/06/2002 (Jir)
+- skill-requirements for spells revised.
+[B] choose_race/choose_class still used MAX_* (and not Setup.max_*)
 
 
 ** [B] stands for Bugfix.
@@ -1170,8 +1174,10 @@ things to do before 4.0.0
 - rebalance skill-points
 - adjust depth for ball-type trap
 - fix gfx
+- refine pk code
 - source-code cleanup
 - export configurable things to tomenet.cfg
+- a spoonful of documentation for skill system
 
 (multi-dungeon, multi-town, terrains, pets etc. are put off after 4.0.0 ...)
 

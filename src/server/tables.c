@@ -1430,7 +1430,14 @@ player_race race_info[MAX_RACES] =
 		0,
                 0xFFFFFFFF,
                 100,
-                { 0 },
+                {
+						/* HUMAN POWER!! */
+                        {
+                                SKILL_TRAINING,
+                                '+', 500,
+                                '+', 200,
+                        },
+                },
         },
 
 	{
@@ -1596,7 +1603,14 @@ player_race race_info[MAX_RACES] =
 		3,
                 0xFFFFFFFF,
                 70,
-                { 0 },
+                {
+						/* Never ask me the reason why, I love boomerang :) */
+                        {
+                                SKILL_BOOMERANG,
+                                '+', 1000,
+                                '+', 400,
+                        },
+                },
 	},
 
 	{
@@ -1625,7 +1639,7 @@ player_race race_info[MAX_RACES] =
                 95,
                 { 0 },
         },
-#if 0 // do not activate until I find a way to have a race in the server and not in the client
+#if 1 // do not activate until I find a way to have a race in the server and not in the client
         {
                 "Exp 626",
                 {  1,  2,  -3,  1,  2,  -3 },
@@ -1748,9 +1762,10 @@ player_class class_info[MAX_CLASS] =
                                 '+', 300,
                         },
                         {
+                                /* let's keep it low for now - offbalancing */
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
-                                '+', 600,
+                                '+', 400,
                         },
 
                         /* Magic tree */
@@ -1792,7 +1807,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MIMIC,
                                 '+', 0,
-                                '+', 300,
+                                '+', 300,	/* I'd give 200 */
                         },
                         {
                                 SKILL_PRAY,
@@ -1953,9 +1968,10 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
                         {
+                                /* let's keep it low for now - offbalancing */
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
-                                '+', 900,
+                                '+', 600,
                         },
 
                         {
@@ -1976,7 +1992,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 1000,
-                                '+', 1000,
+                                '+', 900,
                         },
 
                         {
@@ -2034,12 +2050,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_COMBAT,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 500,
                         },
                         {
                                 SKILL_MASTERY,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 300,
                         },
                         {
                                 SKILL_MAGIC,
@@ -2121,7 +2137,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MASTERY,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 700,
                         },
 						/* let's give them some skills for non-swords */
                         {
@@ -2571,12 +2587,14 @@ player_magic magic_info[MAX_REALM] =
 			{ 33, 21, 80,  15},
 			{ 37, 25, 95,  21},
 
+			/* 6 */
 			{  7,  7, 20,  28},
 			{  9, 12, 40,  44},
 			{ 15, 17, 60,  29},
 			{ 20, 18, 60,  24},
 			{ 25, 25, 75,  19},
 
+			/* 9 */
 			{ 12,  9, 42,  16},
 			{ 20, 15, 50,  20},
 			{ 27, 20, 60,  29},
@@ -2584,22 +2602,40 @@ player_magic magic_info[MAX_REALM] =
 			{ 40, 30, 90, 200},
 			{ 46, 25, 82, 205},
 
+			/* 7 */
 			{ 5,  5,  50,   8},
 			{ 10, 10, 70,  40},
 			{ 25, 30, 95, 160},
+#if 0
 			{ 30, 50, 70,  40},
 			{ 40, 75, 80, 100},
+#else	// 0
+			{ 40, 50, 70,  40},
+			{ 50, 75, 80, 100},
+#endif	// 0
 
+			/* 5 */
 			{  4,  5, 50,  20},
 			{  4,  5, 50,  20},
 			{  4,  5, 50,  20},
+#if 0
 			{  8, 10, 75,  40},
 			{ 15, 20, 85,  60},
+#else	// 0
+			{ 15, 10, 75,  40},
+			{ 35, 20, 85,  60},
+#endif	// 0
 			
+			/* 8 */
 			{  5,  5, 50,  80},
 			{ 10, 12, 75, 120},
+#if 0
 			{ 15, 20, 80, 200},
 			{ 22, 30, 50, 250},	/* 350 */
+#else	// 0
+			{ 20, 20, 80, 200},
+			{ 35, 30, 50, 250},	/* 350 */
+#endif	// 0
 			{ 45, 70, 75, 250},	/* 450 */
 
 			{ 99,  0,  0,   0},
@@ -2651,31 +2687,57 @@ player_magic magic_info[MAX_REALM] =
 			{ 33, 55, 90,  15},
 			{ 39, 32, 95,  20},
 
+			/* Order is messed..? */
+			/* Godly Insights(6) */
 			{  3,  3, 50,   2},
 			{ 10, 10, 80,  20},
 			{ 20, 20, 80,  20},
 			{ 25, 10, 80, 150},
 			{ 35, 50, 80, 230},
 
+			/* Purifications and Healings(7) */
 			{ 15,  5, 50,  25},
+#if 0
 			{ 17,  7, 60,  45},
 			{ 30, 50, 80, 130},
 			{ 35, 70, 90, 230},
 			{ 35, 70, 90, 250},	/* 350 */
+#else // 0
+			{ 20,  7, 60,  45},
+			{ 35, 50, 80, 130},
+			{ 40, 70, 90, 230},
+			{ 45, 70, 90, 250},	/* 350 */
+#endif // 0
 
+			/* Wrath of God(9) */
+#if 0
 			{ 15,  7, 70,  25},
 			{ 20, 10, 75,  60},
 			{ 25, 25, 80, 250},
 			{ 35, 35, 80, 115},
 			{ 45, 60, 75, 250},	/* 350 */
+#else // 0
+			{ 38, 10, 75,  60},
+			{ 41, 25, 80, 250},
+			{ 45, 35, 80, 115},
+			{ 50, 60, 75, 250},	/* 350 */
+#endif // 0
 
+			/* Holy Infusions(8) */
+#if 0
 			{  5,  6, 50,  40},
 			{ 15, 20, 80,  25},
 			{ 25, 40, 80, 160},
+#else // 0
+			{ 20,  6, 50,  40},
+			{ 25, 20, 80,  25},
+			{ 30, 40, 80, 160},
+#endif // 0
 			{ 35, 50, 80, 230},
 			{ 37, 60, 85, 250},	/* 325 */
 			{ 45, 95, 85, 250},	/* 530 */
 
+			/* Ethereal Openings(5) */
 			{  3,  3, 50,   6},
 			{ 10, 10, 50,   8},
 			{ 20, 20, 80,  16},
@@ -2796,9 +2858,15 @@ player_magic magic_info[MAX_REALM] =
 			{ 99,  0,  0,   0},
 			
 			{ 15,  5, 30,  15},
+#if 0
                         { 25,  6, 50,  40},
                         { 30,  8, 60,  60},
                         { 35,  9, 70,  90},
+#else	// 0
+                        { 30,  6, 50,  40},
+                        { 35,  8, 60,  60},
+                        { 40,  9, 70,  90},
+#endif	// 0
 			{ 99,  0,  0,   0},
 			{ 99,  0,  0,   0},
 			{ 99,  0,  0,   0},
@@ -2893,28 +2961,50 @@ player_magic magic_info[MAX_REALM] =
 			/* Bilbo's Tome of Burglary */
 			{ 10,  9, 30,  15},
 			{ 15, 12, 10,  20},
+#if 0
 			{ 25, 20, 50,  40},
 			{ 26, 35, 50,  60},
 			{ 30, 40, 55,  70},
 			{ 31, 35, 50,  80},
 			{ 35, 50, 60,  90},
+#else	// 0
+			{ 25, 20, 50,  40},
+			{ 28, 35, 50,  60},
+			{ 35, 40, 55,  70},
+			{ 42, 35, 50,  80},
+			{ 44, 50, 60,  90},
+#endif	// 0
 			{ 99,  0,  0, 100},
 			
 			/* Shadows Escapes */
+#if 0
 			{ 20, 10, 30,  40},
 			{ 25, 15, 35,  60},
 			{ 30, 20, 40,  70},
 			{ 35, 40, 40,  80},
+#else	// 0
+			{ 30, 10, 30,  40},
+			{ 35, 15, 35,  60},
+			{ 40, 20, 40,  70},
+			{ 45, 40, 40,  80},
+#endif	// 0
 			{ 99,  0,  0,   0},
 			{ 99,  0,  0,   0},
 			{ 99,  0,  0,   0},
 			{ 99,  0,  0,   0},
 			
 			/* Great Shadows */
+#if 0
 			{  9,  8, 25,  10},
 			{ 19, 16, 35,  15},
 			{ 29, 20, 40,  30},
 			{ 39, 25, 45,  50},
+#else	// 0
+			{ 19,  8, 25,  10},
+			{ 29, 16, 35,  15},
+			{ 39, 20, 40,  30},
+			{ 49, 25, 45,  50},
+#endif	// 0
 			{ 99,  0,  0,   0},
 			{ 99,  0,  0,   0},
 			{ 99,  0,  0,   0},
@@ -3224,6 +3314,10 @@ magic_type ghost_spells[64] =
 
 /*
  * Spells in each book (mage spells then priest spells)
+ */
+/*
+ * This table is obsoleted, but perhaps we can recycle it to co-own books
+ * among more than one skills
  */
 u32b spell_flags[MAX_REALM - 1][9][2] =
 {
@@ -5044,7 +5138,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Interception",
-                "Ability to hinder your opponents around you.",
+                "Ability to hinder the opponents around you.",
 
                 /* Mkey desc/mkey */
                 NULL,

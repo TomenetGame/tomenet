@@ -1146,7 +1146,7 @@ static void wr_extra(int Ind)
                 wr_byte(p_ptr->s_info[i].hidden);
         }
 	wr_s16b(p_ptr->skill_points);
-	wr_s16b(p_ptr->skill_last_level);
+//	wr_s16b(p_ptr->skill_last_level);
 
 	wr_s32b(p_ptr->id);
 	wr_u32b(p_ptr->dna);

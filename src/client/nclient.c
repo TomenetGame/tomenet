@@ -164,43 +164,22 @@ int Net_setup(void)
 					errno = 0;
 					quit("Can't read setup info from reliable data buffer");
 				}
-				/* test -Jir- */
-				/* TODO: allocate the arrays after loading;
-				 * currently, we cannot handle race/class addition/deletion */
 
+				/* allocate the arrays after loading */
 				C_MAKE(race_info, Setup.max_race, player_race);
 				C_MAKE(class_info, Setup.max_class, player_class);
 
+				for (i = 0; i < Setup.max_race; i++)
 				{
-					for (i = 0; i < Setup.max_race; i++)
-					{
-						Packet_scanf(&cbuf, "%s%ld", &str,
-								&race_info[i].choice);
-						race_info[i].title = string_make(str);
-#if 0
-						Packet_scanf(&cbuf, "%s%ld", &Setup.race_title[i],
-								&Setup.race_choice[i]);
-#if 0
-						printf("r %d: %s (%d)\n", i, Setup.race_title[i],
-								Setup.race_choice[i]);
-#endif	// 0
-						race_info[i].title = &Setup.race_title[i];
-						race_info[i].choice = Setup.race_choice[i];
-#endif	// 0
-					}
+					Packet_scanf(&cbuf, "%s%ld", &str,
+							&race_info[i].choice);
+					race_info[i].title = string_make(str);
+				}
 
-					for (i = 0; i < Setup.max_class; i++)
-					{
-//						Packet_scanf(&cbuf, "%s", &class_info[i].title);
-						Packet_scanf(&cbuf, "%s", &str);
-						class_info[i].title = string_make(str);
-#if 0
-						//			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
-						Packet_scanf(&cbuf, "%s", &Setup.class_title[i]);
-//						printf("c %d: %s\n", i, Setup.class_title[i]);
-						class_info[i].title = &Setup.class_title[i];
-#endif	// 0
-					}
+				for (i = 0; i < Setup.max_class; i++)
+				{
+					Packet_scanf(&cbuf, "%s", &str);
+					class_info[i].title = string_make(str);
 				}
 
 				ptr = (char *) &Setup;

@@ -971,6 +971,10 @@ struct alloc_entry
  * The setup data that the server transmits to the
  * client.
  */
+/*
+ * Very sorry, this struct doesn't contain all the data sent during setup.
+ * Please see Init_setup for details.		- Jir -
+ */
 typedef struct setup_t setup_t;
 
 struct setup_t
@@ -1625,7 +1629,7 @@ struct player_type
 
         skill_player s_info[MAX_SKILLS]; /* Player skills */
         s16b skill_points;      /* number of skills assignable */
-        s16b skill_last_level;  /* last level we gained a skill point */
+//        s16b skill_last_level;  /* last level we gained a skill point */
 	
 	s16b class_extra;	/* Class extra info */
 

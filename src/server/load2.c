@@ -1222,7 +1222,8 @@ static bool rd_extra(int Ind)
 			rd_byte(&p_ptr->s_info[i].hidden);
 		}
 		rd_s16b(&p_ptr->skill_points);
-		rd_s16b(&p_ptr->skill_last_level);
+//		rd_s16b(&p_ptr->skill_last_level);
+//		rd_s16b(&tmp16b);
 	}
 	else
 	{
@@ -2097,7 +2098,7 @@ static errr rd_savefile_new_aux(int Ind)
 	{
 		/* Set up the skills */
 		p_ptr->skill_points = 0;
-		p_ptr->skill_last_level = 1;
+//		p_ptr->skill_last_level = 1;
 		for (i = 1; i < MAX_SKILLS; i++)
 			p_ptr->s_info[i].dev = FALSE;
 		for (i = 1; i < MAX_SKILLS; i++)

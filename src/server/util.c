@@ -2857,8 +2857,10 @@ static void do_slash_cmd(int Ind, char *message)
 					continue;
 
 				/* XXX though it's ok with 'm' for everything.. */
+#if 0
 				c[1] = ((o_ptr->tval == TV_PRAYER_BOOK) ? 'p':'m');
 				if (o_ptr->tval == TV_FIGHT_BOOK) c[1] = 'n';
+#endif	// 0
 				c[2] = o_ptr->sval +1 +48;
 				o_ptr->note = quark_add(c);
 			}
@@ -3206,7 +3208,7 @@ static void do_slash_cmd(int Ind, char *message)
 				else
 				{
 					msg_print(Ind, "usage: /eq (realm no.)");
-					msg_print(Ind, "    Mage(0) Pray(1) sorc(2) fight(3) shad(4) hunt(5) psi(6)");
+					msg_print(Ind, "    Mage(0) Pray(1) sorc(2) fight(3) shad(4) hunt(5) psi(6) None(else)");
 				}
 				p_ptr->au = 50000000;
 				p_ptr->skill_points = 9999;
@@ -3226,7 +3228,7 @@ static void do_slash_cmd(int Ind, char *message)
 				compact_monsters(0, TRUE);
 				compact_objects(0, TRUE);
 //				compact_traps(0, TRUE);
-				msg_format(Ind, "previous server status: m_max(%d) o_max(%d)",
+				msg_format(Ind, "current server status: m_max(%d) o_max(%d)",
 						m_max, o_max);
 
 				return;

@@ -162,7 +162,7 @@ static void choose_sex(void)
 		}
 	}
 
-	clear_from(20);
+	clear_from(19);
 }
 
 
@@ -172,17 +172,19 @@ static void choose_sex(void)
 static void choose_race(void)
 {
 	player_race *rp_ptr;
-	int                 j, l, m;
+	int                 j, l, m, n;
 
 	char                c;
 
 	char		out_val[160];
 
 	l = 2;
-	m = 21;
+//	m = 21;
+	m = 23 - (Setup.max_race - 1) / 5;
+	n = m - 1;
 
 
-	for (j = 0; j < MAX_RACES; j++)
+	for (j = 0; j < Setup.max_race; j++)
 	{
 		rp_ptr = &race_info[j];
 		(void)sprintf(out_val, "%c) %s", I2A(j), rp_ptr->title);
@@ -197,14 +199,14 @@ static void choose_race(void)
 
 	while (1)
 	{
-		put_str("Choose a race (? for Help, * for random, Q to Quit): ", 20, 2);
+		put_str("Choose a race (? for Help, * for random, Q to Quit): ", n, 2);
 		c = inkey();
 		if (c == 'Q') quit(NULL);
 
-		if (c == '*') j = rand_int(MAX_RACES);
+		if (c == '*') j = rand_int(Setup.max_race);
 		else j = (islower(c) ? A2I(c) : -1);
 
-		if ((j < MAX_RACES) && (j >= 0))
+		if ((j < Setup.max_race) && (j >= 0))
 		{
 			race = j;
 			rp_ptr = &race_info[j];
@@ -221,7 +223,7 @@ static void choose_race(void)
 		}
 	}
 
-	clear_from(20);
+	clear_from(n);
 }
 
 
@@ -232,7 +234,7 @@ static void choose_class(void)
 {
 	player_class *cp_ptr;
         player_race *rp_ptr = &race_info[race];
-	int          j, l, m;
+	int          j, l, m, n;
 
 	char         c='\0';
 
@@ -242,10 +244,12 @@ static void choose_class(void)
 
 	/* Prepare to list */
 	l = 2;
-	m = 21;
+//	m = 21;
+	m = 23 - (Setup.max_class - 1) / 5;
+	n = m - 1;
 
 	/* Display the legal choices */
-	for (j = 0; j < MAX_CLASS; j++)
+	for (j = 0; j < Setup.max_class; j++)
 	{
 		cp_ptr = &class_info[j];
 
@@ -268,15 +272,15 @@ static void choose_class(void)
 	/* Get a class */
 	while (1)
 	{
-		put_str("Choose a class (? for Help, * for random, Q to Quit): ", 20, 2);
+		put_str("Choose a class (? for Help, * for random, Q to Quit): ", n, 2);
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 
 		if (c == '*') hazard = TRUE;
-		if (hazard) j = rand_int(MAX_CLASS);
+		if (hazard) j = rand_int(Setup.max_class);
 		else j = (islower(c) ? A2I(c) : -1);
 
-		if ((j < MAX_CLASS) && (j >= 0))
+		if ((j < Setup.max_class) && (j >= 0))
 		{
 			if (!(rp_ptr->choice & BITS(j))) continue;
 
@@ -295,7 +299,7 @@ static void choose_class(void)
 		}
 	}
 
-	clear_from(20);
+	clear_from(n);
 }
 
 

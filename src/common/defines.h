@@ -168,7 +168,8 @@
 /*
  * Maximum number of player "race" types (see "table.c", etc)
  */
-#define MAX_RACES	14
+//#define MAX_RACES	14
+#define MAX_RACES	15
 
 /*
  * Maximum number of player "class" types (see "table.c", etc)
