@@ -140,8 +140,7 @@ void prt_level(int level, s32b max, s32b cur, s32b adv)
 		else
 		{
 			/* Hack -- display in minus (to avoid confusion chez player) */
-//			(void)sprintf(tmp, "%9ld", adv - cur);
-			(void)sprintf(tmp, "%9d", cur - adv);	/* int, not long int - evileye */
+			(void)sprintf(tmp, "%9ld", cur - adv);
 		}
 	}
 
@@ -256,46 +255,15 @@ void prt_sp(int max, int cur)
 /*
  * Prints the player's current sanity.
  */
-#if 0
-void prt_sane(void)
-{
-#ifdef SHOW_SANITY	// NO SANITY DISPLAY!!!
-  char tmp[32];
-  byte color;
-  int perc;
-
-  if (p_ptr->msane == 0) {
-    perc = 100;
-  } else {
-    perc = (100*p_ptr->csane)/p_ptr->msane;
-  }
-
-  put_str("Sane: ", ROW_SANITY, COL_SANITY);
-
-  sprintf(tmp, "%3d%%", perc);
-
-  if (perc >= 100) {
-    color = TERM_L_GREEN;
-  } else /* if (perc > (10 * hitpoint_warn)) */ {
-    color = TERM_YELLOW;
-  } /* else {
-    color = TERM_RED;
-  } */
-
-  c_put_str(color, tmp, ROW_SANITY, COL_SANITY+8);
-#endif	// SHOW_SANITY
-}
-#else	// 0
 void prt_sane(byte attr, cptr buf)
 {
-#ifdef SHOW_SANITY	// NO SANITY DISPLAY!!!
+#ifdef SHOW_SANITY	/* NO SANITY DISPLAY!!! */
 
   put_str("SN:         ", ROW_SANITY, COL_SANITY);
 
   c_put_str(attr, buf, ROW_SANITY, COL_SANITY+3);
-#endif	// SHOW_SANITY
+#endif	/* SHOW_SANITY */
 }
-#endif	// 0
 
 /*
  * Prints depth into the dungeon
@@ -308,7 +276,6 @@ void prt_depth(int x, int y, int z, bool town, int recall, cptr name)
 	c_put_str(TERM_L_GREEN, depths, ROW_XYPOS, COL_XYPOS);
 
 	if(town)
-		//sprintf(depths, "Town");
 		sprintf(depths, name);
 	else if (c_cfg.depth_in_feet)
 		sprintf(depths, "%dft", z*50);
@@ -1096,7 +1063,7 @@ static void fix_message(void)
         /* Scan windows */
         for (j = 0; j < 8; j++)
         {
-                term *old = Term, *newterm;
+                term *old = Term;
 
                 /* No window */
                 if (!ang_term[j]) continue;
@@ -1242,8 +1209,7 @@ void display_player(int hist)
 	cptr desc;
 
         /* Clear screen */
-		clear_from(0);
-//        Term_clear();
+	clear_from(0);
 
         /* Name, Sex, Race, Class */
         put_str("Name        :", 2, 1);
@@ -1357,7 +1323,7 @@ void display_player(int hist)
 		c_put_str(likert_color, desc, 17, 15);
 
 		put_str("Saving Throw:", 18, 1);
-		desc = likert(p_ptr->skill_sav, 52);//was 6.0 before x10 increase
+		desc = likert(p_ptr->skill_sav, 52);	/*was 6.0 before x10 increase */
 		c_put_str(likert_color, desc, 18, 15);
 
 		put_str("Stealth     :", 19, 1);
@@ -1399,7 +1365,6 @@ void display_player(int hist)
 	prt_num("+To MHit    ", p_ptr->dis_to_h + p_ptr->to_h_melee, 9, 1, TERM_L_BLUE);
 	prt_num("+To MDamage ", p_ptr->dis_to_d + p_ptr->to_d_melee, 10, 1, TERM_L_BLUE);
 	prt_num("+To RHit    ", p_ptr->dis_to_h + p_ptr->to_h_ranged, 11, 1, TERM_L_BLUE);
-	//        prt_num("+To RDamage ", p_ptr->dis_to_d + p_ptr->to_d_ranged, 12, 1, TERM_L_BLUE);
 	prt_num("+To RDamage ", p_ptr->to_d_ranged, 12, 1, TERM_L_BLUE);
 
 	/* Dump the armor class bonus */
@@ -1463,23 +1428,10 @@ void display_player(int hist)
 		prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_RED);
 	}
 #ifdef SHOW_SANITY
-#if 0	// client no longer holds these values
-	if (p_ptr->msane)
-	{
-		if((100*p_ptr->csane)/p_ptr->msane>99)
-			prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_L_GREEN);
-		else if((100*p_ptr->csane)/p_ptr->msane>30)
-			prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_YELLOW);
-		else
-			prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_RED);
-	}
-#else	// 0
 	put_str("Cur Sanity", 13, 52);
 
 	c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, 13, 67);
-
-#endif	// 0
-#endif	// SHOW_SANITY
+#endif	/* SHOW_SANITY */
 
 
 	/* Show location (better description needed XXX) */

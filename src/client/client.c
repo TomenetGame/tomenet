@@ -11,7 +11,6 @@
 #include "angband.h"
 
 
-//static bool read_mangrc(void)
 static bool read_mangrc(cptr filename)
 {
 	char config_name[100];
@@ -161,79 +160,6 @@ static bool read_mangrc(cptr filename)
 	return (skip);
 }
 
-#if 0
-static void read_mangrc(void)
-{
-	char config_name[100];
-	FILE *config;
-	char buf[1024];
-
-	/* Try to find home directory */
-	if (getenv("HOME"))
-	{
-		/* Use home directory as base */
-		strcpy(config_name, getenv("HOME"));
-	}
-
-	/* Otherwise use current directory */
-	else
-	{
-		/* Current directory */
-		strcpy(config_name, ".");
-	}
-
-	/* Append filename */
-#ifdef USE_EMX
-	strcat(config_name, "\\mang.rc");
-#else
-	strcat(config_name, "/.mangrc");
-#endif
-
-	/* Attempt to open file */
-	if ((config = fopen(config_name, "r")))
-	{
-		/* Read until end */
-		while (!feof(config))
-		{
-			/* Get a line */
-			fgets(buf, 1024, config);
-
-			/* Skip comments, empty lines */
-			if (buf[0] == '\n' || buf[0] == '#')
-				continue;
-
-			/* Name line */
-			if (!strncmp(buf, "nick", 4))
-			{
-				char *name;
-
-				/* Extract name */
-				name = strtok(buf, " \t\n");
-				name = strtok(NULL, "\t\n");
-
-				/* Default nickname */
-				strcpy(nick, name);
-			}
-
-			/* Password line */
-			if (!strncmp(buf, "pass", 4))
-			{
-				char *p;
-
-				/* Extract password */
-				p = strtok(buf, " \t\n");
-				p = strtok(NULL, "\t\n");
-
-				/* Default password */
-				strcpy(pass, p);
-			}
-
-			/*** Everything else is ignored ***/
-		}
-	}
-}
-#endif	// 0
-
 static void default_set(void)
 {
 	char *temp;
@@ -296,7 +222,6 @@ int main(int argc, char **argv)
 	/* Acquire the version strings */
 	version_build();
 
-//	skip = read_mangrc();
 #ifdef USE_EMX
 	skip = read_mangrc("tomenet.rc");
 #else
@@ -318,7 +243,6 @@ int main(int argc, char **argv)
 				}
 				else
 				{
-//					strcpy(nick, argv[i][2]);
 					strcpy(nick, argv[i]);
 					modus = 2;
 				}
@@ -357,9 +281,8 @@ int main(int argc, char **argv)
 		
 		/* Pull login id */
 		case 'l':
-			if (argv[i][2])	// Hack -- allow space after '-l'
+			if (argv[i][2])	/* Hack -- allow space after '-l' */
 			{
-//				strcpy(nick, argv[i][2]);
 				strcpy(nick, argv[i]+2);
 				modus = 2;
 			}
@@ -368,8 +291,7 @@ int main(int argc, char **argv)
 
 		/* Pull 'real name' */
 		case 'n':
-//			strcpy(real_name, argv[i][2]);
-			if (argv[i][2])	// Hack -- allow space after '-l'
+			if (argv[i][2])	/* Hack -- allow space after '-l' */
 			{
 				strcpy(real_name, argv[i]+2);
 				break;
@@ -413,7 +335,6 @@ int main(int argc, char **argv)
 	{
 #ifdef USE_GTK
 	/* Attempt to use the "main-gtk.c" support */
-//	if (!done && (!mstr || (streq(mstr, "gtk"))))
 	if (!done)
 	{
 		if (0 == init_gtk(argc, argv))
@@ -488,10 +409,6 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	/* Hack -- use RNG for character generation	- Jir -*/
-	/* Init the RNG */
-	// Is it a good idea ? DGDGDGD --  maybe FIXME
-	//	if (Rand_quick)
 	{
 		u32b seed;
 
@@ -513,7 +430,6 @@ int main(int argc, char **argv)
 	}
 
 	/* Attempt to read default name/password from mangrc file */
-//	if (modus < 2) modus = read_mangrc() ? 3 : modus;
 
 	done = (modus > 2 || skip) ? TRUE : FALSE;
 	

@@ -48,16 +48,12 @@ static int pern_errormessage(lua_State *L)
 		else
 		{
 			buf[j] = '\0';
-			//msg_broadcast(0, format("\377vLUA: %s", buf));
-			//msg_admin("\377vLUA: %s", buf);
 			c_msg_format("\377vLUA: %s", buf);
 			j = 0;
 		}
 		i++;
 	}
 	buf[j] = '\0';
-	//msg_broadcast(0, format("\377vLUA: %s", buf));
-	//msg_admin("\377vLUA: %s", buf);
 	c_msg_format("\377vLUA: %s", buf);
 	return (0);
 }

@@ -353,39 +353,6 @@ bool my_freadable(cptr file)
 }
 
 /*
- * Get a safe filename from given strings.	- Jir -
- * eg. "./lib/text/Jir" => "./lib/text/Jir0004.txt"
- *
- * TODO: handle extender neatly. REWRITE ME
- */
-errr get_safe_file(char *buf, cptr file)
-{
-	int i;
-	char tmp[1024];
-
-	/* Assume no result */
-	buf[0] = '\0';
-
-	/* No file? */
-	if (!file) return (-1);
-
-	for (i = 1; i <= 9999; i++)
-	{
-		//sprintf(tmp, "%s%#4d.txt", file, i);
-		sprintf(tmp, "%s%4d.txt", file, i);
-		if (my_freadable(tmp)) continue;
-
-		strcpy(buf, tmp);
-		return (0);
-	}
-	
-	/* Failure */
-	return (-1);
-}
-
-
-
-/*
  * Hack -- replacement for "fgets()"
  *
  * Read a string, without a newline, to a file
@@ -561,7 +528,6 @@ void init_file_paths(char *path)
         ANGBAND_DIR_FILE = string_make(path);
 
         /* Build a path name */
-//        strcpy(tail, "help");
         strcpy(tail, "text");
         ANGBAND_DIR_HELP = string_make(path);
 
@@ -761,7 +727,9 @@ errr process_pref_file_aux(char *buf)
                         i = (huge)strtol(zz[0], NULL, 0);
                         n1 = strtol(zz[1], NULL, 0);
                         n2 = strtol(zz[2], NULL, 0);
-                        // if (i >= MAX_F_IDX) return (1);
+#if 0
+                        if (i >= MAX_F_IDX) return (1);
+#endif
                         if (n1) Client_setup.f_attr[i] = n1;
                         if (n2) Client_setup.f_char[i] = n2;
                         return (0);
@@ -924,7 +892,6 @@ errr process_pref_file(cptr name)
 
         char buf[1024];
 
-
         /* Build the filename */
         path_build(buf, 1024, ANGBAND_DIR_USER, name);
 
@@ -982,14 +949,10 @@ void show_motd(int delay)
 	usleep(delay * 10000L);
 
 	/* Wait for a keypress */
-//	Term_inkey(&ch, TRUE, TRUE);
-	while (!inkey()) /* nothing -- it saves us from getting disconnected */;
+	while (!inkey());	/* nothing -- it saves us from getting disconnected */
 
 	/* Reload the old screen */
 	Term_load();
-
-	/* Clear the screen again */
-//	Term_clear();
 }
 
 /*
@@ -1026,7 +989,6 @@ void peruse_file(void)
 
 
 		/* Prompt */
-//		prt("[Press Return, Space, -, b, or ESC to exit.]", 23, 0);
 		prt(format("[Press Return, Space, -, b, or ESC to exit.] (%d/%d)",
 					cur_line, max_line), 23, 0);
 
@@ -1037,7 +999,6 @@ void peruse_file(void)
 		if (k == '#')
 		{
 			char tmp[80];
-//			prt("Goto Line: ", 23, 0);
 			prt(format("Goto Line(max %d): ", max_line), 23, 0);
 			strcpy(tmp, "0");
 			if (askfor_aux(tmp, 10, 0))
@@ -1123,7 +1084,6 @@ errr file_character(cptr name, bool full)
 	cptr		paren = ")";
 	int			fd = -1;
 	FILE		*fff = NULL;
-//	store_type  *st_ptr;
 	char		buf[1024];
 
 
@@ -1202,7 +1162,7 @@ errr file_character(cptr name, bool full)
 	/* Dump skills */
 	dump_skills(fff);
 
-#if 0 // DGDGDG - make me work
+#if 0 /* DGDGDG - make me work */
 	/* Well, sorry, that'd be hard. We should put new 'connection-status'
 	 * for tombscreen maybe..	- Jir */
 
@@ -1259,7 +1219,6 @@ errr file_character(cptr name, bool full)
 	for (i = 0; i < INVEN_PACK; i++)
 	{
 		if (!strncmp(inventory_name[i], "(nothing)", 9)) continue;
-//		if (!strlen(inventory_name[i])) continue;
 
 		fprintf(fff, "%c%s %s\n",
 				index_to_label(i), paren, inventory_name[i]);

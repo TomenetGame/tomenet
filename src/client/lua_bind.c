@@ -84,8 +84,6 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
         if (lvl < min) lvl = min;
         else if (lvl > 0)
         {
-//                tmp += p_ptr->to_s * (SKILL_STEP / 10);
-//                tmp += get_skill_scale(p_ptr, SKILL_SPELL, 20) * (SKILL_STEP / 10);
                 tmp += bonus;
                 lvl = (tmp * (max * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10);
                 lvl *= (100 + get_skill_scale(p_ptr, SKILL_SPELL, 40));
@@ -95,7 +93,6 @@ s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus)
 }
 
 /* adj_mag_stat? stat_ind??  pfft */
-//s32b lua_spell_chance(s32b chance, int level, int skill_level, int mana, int cur_mana, int stat)
 s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat)
 {
         int             minfail;
@@ -119,7 +116,7 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 	/* Extract the minimum failure rate */
         minfail = adj_mag_fail[p_ptr->stat_ind[stat]];
 
-#if 0	// disabled for the time being
+#if 0	/* disabled for the time being */
 	/*
          * Non mage characters never get too good
 	 */
@@ -130,7 +127,7 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 
 	/* Hack -- Priest prayer penalty for "edged" weapons  -DGK */
 	if ((forbid_non_blessed()) && (p_ptr->icky_wield)) chance += 25;
-#endif	// 0
+#endif	/* 0 */
 
 	/* Minimum failure rate */
 	if (chance < minfail) chance = minfail;

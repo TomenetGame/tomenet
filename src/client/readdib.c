@@ -238,7 +238,6 @@ BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
 			nNumColors = 1 << lpbi->biBitCount;
 	}
 
-//#if 0
 	/* fill in some default values if they are zero */
 	if (lpbi->biClrUsed == 0)
 		lpbi->biClrUsed = nNumColors;
@@ -327,6 +326,5 @@ ErrExit2:
 
 	_lclose(fh);
 	return(result);
-//#endif
 }
 

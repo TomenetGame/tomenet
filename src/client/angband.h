@@ -39,7 +39,7 @@
 
 
 /*
- * Now, include the define's, the type's, and the extern's
+ * Now, include the defines, the types, and the externs
  */
 #include "../common/defines.h"
 #include "../common/types.h"

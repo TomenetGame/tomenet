@@ -8,7 +8,6 @@ bool c_quit=FALSE;
 char nick[MAX_CHARS]="";
 char pass[MAX_CHARS]="";
 char svname[MAX_CHARS]="";
-//char path[1024]="";
 char path[1024]="";
 char real_name[MAX_CHARS]="";
 char server_name[MAX_CHARS]="";
@@ -16,7 +15,6 @@ s32b server_port;
 char cname[MAX_CHARS]="";
 
 char message_history[MSG_HISTORY_MAX][80];	/* history for chat, slash-cmd etc. */
-//byte hist_start = 0;
 byte hist_end = 0;
 bool hist_looped = FALSE;
 
@@ -24,7 +22,6 @@ object_type inventory[INVEN_TOTAL];	/* The client-side copy of the inventory */
 char inventory_name[INVEN_TOTAL][80];	/* The client-side copy of the inventory names */
 
 store_type store;			/* The general info about the current store */
-//owner_type store_owner;			/* The current owner of the store */
 c_store_extra c_store;	/* Extra info about the current store */
 int store_prices[STORE_INVEN_MAX];			/* The prices of the items in the store */
 char store_names[STORE_INVEN_MAX][80];		/* The names of the stuff in the store */
@@ -51,7 +48,6 @@ player_type *p_ptr = &Players[1];
 
 c_player_extra c_player;
 c_player_extra *c_p_ptr = &c_player;
-// char body_name[80];			/* Form of Player */
 
 
 s32b exp_adv;				/* Amount of experience required to advance a level */
@@ -114,21 +110,6 @@ bool topline_icky;
 short screen_icky;
 bool party_mode;
 
-#if 0	// This should be gone for good		- Jir -
-cptr race_title[] = {
-	"Human", "Half-elf", "Elf", "Hobbit",
-	"Gnome", "Dwarf", "Half-Orc", "Half-Troll",
-	"Dunadan", "High-elf", "Yeek", "Goblin",
-	"Ent", "DragonRider",
-	};
-
-cptr class_title[] = {
-	"Warrior", "Warlock", "Priest", "Rogue",
-	"Ranger", "Paladin", "Sorceror", "Mimic",
-	"Unbeliever", "Archer", "Monk", "Telepath",
-	};
-#endif	// 0
-
 player_race *race_info;
 player_class *class_info;
 
@@ -160,8 +141,6 @@ u32b cfg_game_port = 18348;
 skill_type s_info[MAX_SKILLS];
 
 s16b flush_count = 0;
-
-// char reason[MAX_CHARS];	/* Receive_quit */
 
 /*
  * The spell list of schools

@@ -5,7 +5,6 @@
 
 #include "angband.h"
 
-//static bool leave_store;
 bool leave_store;
 static int store_top;
 
@@ -17,36 +16,13 @@ static int store_top;
 void display_store_action()
 {
 	int i;
-#if 0
-	char buff[20];
-	byte action_color;
-	char tmp_str[80];
-#endif	// 0
 
 	for (i = 0; i < 6; i++)
 	{
 		if (!c_store.actions[i]) continue;
 
-#if 0
-		action_color = TERM_WHITE;
-
-		if (c_store.cost[i]) strnfmt(buff, 20, "(%dgp)", c_store.cost[i]);
-		else buff[0] = '\0';
-
-		strnfmt(tmp_str, 80, " %c) %s %s",
-				c_store.letter[i], c_store.action_name[i], buff);
-		c_put_str(action_color, tmp_str, 21 + (i / 2), 17 + (30 * (i % 2)));
-#else	// 0
 		c_put_str(c_store.action_attr[i], c_store.action_name[i],
 				21 + (i / 2), 17 + (30 * (i % 2)));
-#endif	// 0
-
-#if 0
-		prt(" p) Purchase an item.", 22, 30);
-		prt(" s) Sell an item.", 23, 30);
-
-		prt(" x) eXamine an item.", 22, 60);
-#endif	// 0
 	}
 }
 
@@ -229,7 +205,6 @@ static void store_examine(void)
 		return;
 	}
 
-
 	/* Find the number of objects on this and following pages */
 	i = (store.stock_num - store_top);
 
@@ -386,8 +361,6 @@ static void store_do_command(int num)
 	u16b action = c_store.actions[num];
 	u16b bact = c_store.bact[num];
 
-//	object_type             *o_ptr;
-
 	char            out_val[160];
 
 	i = amt = gold = item = item2 = 0;
@@ -463,17 +436,14 @@ static void store_do_command(int num)
 
 static void store_process_command(void)
 {
-	//if (store_num != 7)
+	int i;
+	for (i = 0; i < 6; i++)
 	{
-		int i;
-		for (i = 0; i < 6; i++)
+		if (!c_store.actions[i]) continue;
+		if (c_store.letter[i] == command_cmd)
 		{
-			if (!c_store.actions[i]) continue;
-			if (c_store.letter[i] == command_cmd)
-			{
-				store_do_command(i);
-				return;
-			}
+			store_do_command(i);
+			return;
 		}
 	}
 
@@ -553,7 +523,6 @@ static void store_process_command(void)
 		default:
 		{
 			cmd_raw_key(command_cmd);
-//			c_msg_print("That command does not work in stores.");
 			break;
 		}
 	}
@@ -586,10 +555,9 @@ void c_store_prt_gold(void)
 void display_store(void)
 {
 	char buf[1024];
-//	cptr feature = "feature variable";
 
-	/* The screen is "icky" */
-	screen_icky = TRUE;
+	/* Save the term */
+	Term_save();
 
 	/* We are "shopping" */
 	shopping = TRUE;
@@ -599,27 +567,11 @@ void display_store(void)
 
 	store_top = 0;
 
-	/* Find the "store name" */
-#if 0
-	switch (store_num)	/* This will change.. */
-	{
-		case 0: feature = "General store"; break;
-		case 1: feature = "Armoury"; break;
-		case 2: feature = "Weapon Smith"; break;
-		case 3: feature = "Temple"; break;
-		case 4: feature = "Alchemist"; break;
-		case 5: feature = "Magic Shop"; break;
-		case 6: feature = "Black Market"; break;
-		case 7: feature = "Your home"; break;
-	}
-#endif	// 0
-	
 	/* The "Home" is special */
 	if (store_num == 7)
 	{
 		/* Put the owner name */
 		put_str("Your Home", 3, 30);
-		//put_str(format("Capacity: %d", c_store.max_cost), 3, 60);
 
 		/* Label the item descriptions */
 		put_str("Item Description", 5, 3);
@@ -635,13 +587,10 @@ void display_store(void)
 	else
 	{
 		/* Put the owner name and race */
-		//sprintf(buf, "%s (%s)", store_owner.owner_name, race_info[store_owner.owner_race].title);
 		sprintf(buf, "%s", c_store.owner_name);
 		put_str(buf, 3, 10);
 
 		/* Show the max price in the store (above prices) */
-		//sprintf(buf, "%s (%ld)", feature, (long)(store_owner.max_cost));
-		//sprintf(buf, "%s (%ld)", feature, (long)(c_store.max_cost));
 		sprintf(buf, "%s (%ld)", c_store.store_name, (long)(c_store.max_cost));
 		prt(buf, 3, 50);
 
@@ -683,13 +632,11 @@ void display_store(void)
 		prt("You may: ", 21, 0);
 
 		/* Basic commands */
-//		prt(" ESC) Exit from Building.", 22, 0);
 		prt(" ESC) Exit.", 22, 0);
 
 		/* Browse if necessary */
 		if (store.stock_num > 12)
 		{
-//			prt(" SPACE) Next page of stock", 23, 0);
 			prt(" SPACE) Next page", 23, 0);
 		}
 
@@ -706,12 +653,6 @@ void display_store(void)
 		else
 		{
 			display_store_action();
-#if 0
-			prt(" p) Purchase an item.", 22, 30);
-			prt(" s) Sell an item.", 23, 30);
-
-			prt(" x) eXamine an item.", 22, 60);
-#endif	// 0
 		}
 
 		/* Get a command */
@@ -772,14 +713,12 @@ void display_store(void)
 	/* Clear the screen */
 	Term_clear();
 
-	/* The screen is no longer icky */
-	screen_icky = FALSE;
-
 	/* We are no longer "shopping" */
 	shopping = FALSE;
 
 	/* Flush any events that happened */
 	Flush_queue();
+
+	/* reload the term */
+	Term_load();
 }
-
-

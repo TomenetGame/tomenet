@@ -34,7 +34,6 @@ static void choose_name(void)
 	prt("than 1 account. Ask a server administrator to 'validate' your account!", 18, 2);
 	prt("If an account is not validated, it has certain restrictions to prevent abuse.", 19, 2);
 	prt("Enter your account name above.", 21, 2);
-	//prt("Enter your account name above (or hit ESCAPE).", 21, 2);
 
 	/* Ask until happy */
 	while (1)
@@ -72,7 +71,6 @@ static void enter_password(void)
 	char tmp[23];
 
 	/* Prompt and ask */
-	//prt("Enter your password above (or hit ESCAPE).", 21, 2);
 	prt("Enter your password above.", 21, 2);
 
 	/* Default */
@@ -114,10 +112,6 @@ static void choose_sex(void)
 
 	put_str("m) Male", 20, parity ? 2 : 17);
 	put_str("f) Female", 20, parity ? 17 : 2);
-#if 0
-	put_str("M) Hell Male", 21, parity ? 2 : 17);
-	put_str("F) Hell Female", 21, parity ? 17 : 2);
-#endif	// 0
 
 	while (1)
 	{
@@ -136,20 +130,6 @@ static void choose_sex(void)
 			c_put_str(TERM_L_BLUE, "Female", 4, 15);
 			break;
 		}
-#if 0
-		else if (c == 'M')
-		{
-			sex = 3;
-			c_put_str(TERM_L_BLUE, "Hell Male", 4, 15);
-			break;
-		}
-		else if (c == 'F')
-		{
-			sex = 2;
-			c_put_str(TERM_L_BLUE, "Hell Female", 4, 15);
-			break;
-		}
-#endif	// 0
 		else if (c == '?')
 		{
 			/*do_cmd_help("help.hlp");*/
@@ -164,14 +144,6 @@ static void choose_sex(void)
 				case 1:
 					c = 'm';
 					break;
-#if 0
-				case 2:
-					c = 'F';
-					break;
-				case 3:
-					c = 'M';
-					break;
-#endif	// 0
 			}
 			hazard = TRUE;
 		}
@@ -198,7 +170,6 @@ static void choose_race(void)
 	char		out_val[160];
 
 	l = 2;
-//	m = 21;
 	m = 23 - (Setup.max_race - 1) / 5;
 	n = m - 1;
 
@@ -263,7 +234,6 @@ static void choose_class(void)
 
 	/* Prepare to list */
 	l = 2;
-//	m = 21;
 	m = 23 - (Setup.max_class - 1) / 5;
 	n = m - 1;
 
@@ -364,7 +334,6 @@ static void choose_stat_order(void)
 		/* Get a stat */
 		while (1)
 		{
-//			put_str("Choose your stat order (? for Help, * for random, Q to Quit): ", 20, 2);
 			put_str("Choose your stat order (* for random, Q to Quit): ", 20, 2);
 			if (hazard)
 			{
@@ -382,7 +351,6 @@ static void choose_stat_order(void)
 			if ((j < 6) && (j >= 0) && (avail[j]))
 			{
 				stat_order[i] = j;
-//				c_put_str(TERM_L_BLUE, stats[j], 8 + i, 15);
 				c_put_str(TERM_L_BLUE, stats[j], 8, 15 + i * 5);
 				avail[j] = 0;
 				break;
@@ -401,46 +369,6 @@ static void choose_stat_order(void)
 	clear_from(20);
 }
 
-/*
- * Choose to be a batman or not       -Jir-
- */
-#if 0
-static void choose_bat(void)
-{
-	char        c;
-
-	put_str("y) Yes, bat me!", 20, 2);
-	put_str("n) Who cares?", 21, 2);
-
-	while (1)
-	{
-		put_str("You wanna be a fruit bat? (? for Help, Q to Quit): ", 19, 2);
-		c = inkey();
-		if (c == 'Q') quit(NULL);
-		if (c == 'y')
-		{
-			sex += 512;
-			c_put_str(TERM_L_BLUE, "Fruit Bat", 15, 15);
-			break;
-		}
-		else if (c == 'n' || c == '*')
-		{
-			c_put_str(TERM_L_BLUE, "Normal Form", 15, 15);
-			break;
-		}
-		else if (c == '?')
-		{
-			/*do_cmd_help("help.hlp");*/
-		}
-		else
-		{
-			bell();
-		}
-	}
-
-	clear_from(20);
-}
-#else	// 0
 /* Quick hack!		- Jir -
  * TODO: remove hard-coded things. */
 static void choose_mode(void)
@@ -532,44 +460,6 @@ static void choose_mode(void)
 
 	clear_from(20);
 }
-#endif	// 0
-
-#if 0
-/*
- * Gets a character class				-JWT-
- */
-static void choose_class_mage(void)
-{
-	int          j;
-
-	char         c;
-
-	/* Get a class */
-	while (1)
-	{
-		put_str("Choose the max number of blows you want(1-4) (? for Help, Q to Quit)", 20, 2);
-		put_str("The less blows you have the fastest your mana regenerate :", 21, 2);
-		c = inkey();
-		if (c == 'Q') quit(NULL);
-		j = A2I(c);
-		if ((j <= 4) && (j >= 1))
-		{
-			class_extra = j;
-			break;
-		}
-		else if (c == '?')
-		{
-			/*do_cmd_help("help.hlp");*/
-		}
-		else
-		{
-			bell();
-		}
-	}
-
-	clear_from(20);
-}
-#endif
 
 /*
  * Get the name/pass for this character.
@@ -765,7 +655,6 @@ bool get_server_name(void)
 		j = strlen(out_val);
 
 		/* Strip off offending characters */
-//		out_val[strlen(out_val) - 1] = '\0';
 		out_val[j - 1] = '\0';
 		out_val[j]='\0';
 
@@ -781,20 +670,6 @@ bool get_server_name(void)
 			k+=(l+1);
 			j=strlen(&out_val[k]);
 		}
-#if 0
-
-		prt(out_val, lines++, 1);
-
-		k = 79;
-
-		while (j > k)
-		{
-			/* Print this entry */
-			prt(out_val + k, lines++, 3);
-
-			k += 77;
-		}
-#endif
 
 		/* Go to next metaserver entry */
 		ptr += strlen(ptr) + 1;
@@ -803,7 +678,6 @@ bool get_server_name(void)
 		i++;
 
 		/* We can't handle more than 20 entries -- BAD */
-//		if (i > 20) break;
 		if (lines > 20) break;
 	}
 
@@ -882,13 +756,11 @@ static char *human_syllable3[] =
  * based on a Javascript by Michael Hensley
  * "http://geocities.com/timessquare/castle/6274/"
  */
-//static void create_random_name(int race, char *name)
 void create_random_name(int race, char *name)
 {
 	char *syl1, *syl2, *syl3;
 
 	int idx;
-
 
 	/* Paranoia */
 	if (!name) return;

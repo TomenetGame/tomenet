@@ -13,6 +13,8 @@
 
 #include "angband.h"
 
+static int get_idx(int i);
+
 /*
  * Given the name of a skill, returns skill index or -1 if no
  * such skill is found
@@ -56,7 +58,7 @@ s16b get_skill_scale(player_type *pfft, int skill, u32b scale)
 /*
  *
  */
-int get_idx(int i)
+static int get_idx(int i)
 {
 	int j;
 
@@ -83,7 +85,6 @@ static void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int l
 
 		if (s_info[i].father != father) continue;
 		if (p_ptr->s_info[i].hidden) continue;
-//                if ((!p_ptr->s_info[i].value) && (!p_ptr->s_info[i].mod)) continue;
 
 		table[*idx][0] = i;
 		table[*idx][1] = lev;
@@ -196,8 +197,6 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 	Term_clear();
 	Term_get_size(&wid, &hgt);
 
-//	c_prt(TERM_WHITE, "TomeNET Skills Screen", 0, 28);
-//	c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:2,8,j,k  fold:<CR>,c,o  advance:6,l]", 0, 0);
 	if (c_cfg.rogue_like_commands)
 	{
 		c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:j,k,g,G,#  fold:<CR>,c,o  advance:l]", 0, 0);
@@ -272,11 +271,6 @@ void do_cmd_skill()
 	int i;
 	int wid,hgt;
 	bool changed = FALSE;
-
-#ifndef EVIL_TEST /* evil test */
-	/* Screen is icky */
-	screen_icky = TRUE;
-#endif
 
 	/* Save the screen */
 	Term_save();
@@ -430,9 +424,6 @@ void do_cmd_skill()
 			/* Move cursor up */
 			if (dir == '8' || dir == 'k') sel--;
 
-			/* Miscellaneous skills cannot be increased/decreased as a group */
-			//			if (table[sel][0] == SKILL_MISC) continue;
-
 			/* Increase the current skill */
 			if (dir == '6' || dir == 'l')
 			{
@@ -446,16 +437,7 @@ void do_cmd_skill()
 				changed = TRUE;
 			}
 
-			/* Decrease the current skill */
-			//      		if (dir == '4' || dir == 'h') decrease_skill(table[sel][0], skill_invest);
-
 			/* XXX XXX XXX Wizard mode commands outside of wizard2.c */
-
-			/* Increase the skill */
-			//			if (wizard && (c == '+')) skill_bonus[table[sel][0]] += SKILL_STEP;
-
-			/* Decrease the skill */
-			//			if (wizard && (c == '-')) skill_bonus[table[sel][0]] -= SKILL_STEP;
 
 			/* Handle boundaries and scrolling */
 			if (sel < 0) sel = max - 1;
@@ -470,11 +452,6 @@ void do_cmd_skill()
 
 	/* XXX test -- redraw when done */
 	if (changed) Send_redraw(1);
-
-#ifndef EVIL_TEST /* evil test */
-	/* Screen is not icky */
-	screen_icky = FALSE;
-#endif
 }
 
 /*
@@ -491,13 +468,8 @@ static void print_skill_batch(int *p, int start, int max, bool mode)
 	{
 		if (i >= max) break;
 
-		/* Hack -- only able to learn spells when learning is required */
-		//                if ((p[i] == SKILL_LEARN) && (!must_learn_spells()))
-		//                        continue;
-		/* XXX seems to do BAD thing here - see Receive_skill_init */
-		else if (p[i] > 0)
+		if (p[i] > 0)
 			sprintf(buff, "  %c-%3d) %-30s", I2A(j), p[i] + 1, s_info[p[i]].action_desc);
-		//			sprintf(buff, "  %c-%3d) %-30s", I2A(j), s_info[p[i]].action_mkey + 1, s_info[p[i]].action_desc);
 		else
 			sprintf(buff, "  %c-%3d) %-30s", I2A(j), 1, "Change melee style");
 
@@ -550,9 +522,6 @@ static int do_cmd_activate_skill_aux()
 		return p[0];
 	}
 
-#ifndef EVIL_TEST /* evil test */
-	screen_icky = TRUE;
-#endif
 	Term_save();
 
 	while (1)
@@ -570,9 +539,6 @@ static int do_cmd_activate_skill_aux()
 			mode = (mode)?FALSE:TRUE;
 			Term_load();
 			Term_save();
-#ifndef EVIL_TEST /* evil test */
-			screen_icky = FALSE;
-#endif
 		}
 		else if (which == '+')
 		{
@@ -580,9 +546,6 @@ static int do_cmd_activate_skill_aux()
 			if (start >= max) start -= 20;
 			Term_load();
 			Term_save();
-#ifndef EVIL_TEST /* evil test */
-			screen_icky = FALSE;
-#endif
 		}
 		else if (which == '-')
 		{
@@ -590,9 +553,6 @@ static int do_cmd_activate_skill_aux()
 			if (start < 0) start += 20;
 			Term_load();
 			Term_save();
-#ifndef EVIL_TEST /* evil test */
-			screen_icky = FALSE;
-#endif
 		}
 		else if (which == '@')
 		{
@@ -612,7 +572,6 @@ static int do_cmd_activate_skill_aux()
 				if (s_info[i].action_desc && (!strcmp(buf, (char*)s_info[i].action_desc) && get_skill(i)))
 					break;
 				if (i == nb)
-//				if (i == s_info[nb].action_mkey)
 					break;
 			}
 			if ((i < MAX_SKILLS))
@@ -641,9 +600,6 @@ static int do_cmd_activate_skill_aux()
 		}
 	}
 	Term_load();
-#ifndef EVIL_TEST /* evil test */
-	screen_icky = FALSE;
-#endif
 
 	C_FREE(p, MAX_SKILLS, int);
 
@@ -680,7 +636,6 @@ static bool item_tester_hook_potion(object_type *o_ptr)
  */
 static void do_trap(int item_kit)
 {
-//	int item_kit, item_load;
 	int item_load;
 	object_type *o_ptr;
 

@@ -392,18 +392,6 @@ static void keymap_game_prepare(void)
 	game_termio.c_cc[VEOF] = (char)-1;
 	game_termio.c_cc[VEOL] = (char)-1;
 
-#if 0
-	/* Disable the non-posix control characters */
-	game_termio.c_cc[VEOL2] = (char)-1;
-	game_termio.c_cc[VSWTCH] = (char)-1;
-	game_termio.c_cc[VDSUSP] = (char)-1;
-	game_termio.c_cc[VREPRINT] = (char)-1;
-	game_termio.c_cc[VDISCARD] = (char)-1;
-	game_termio.c_cc[VWERASE] = (char)-1;
-	game_termio.c_cc[VLNEXT] = (char)-1;
-	game_termio.c_cc[VSTATUS] = (char)-1;
-#endif
-
 	/* Normally, block until a character is read */
 	game_termio.c_cc[VMIN] = 1;
 	game_termio.c_cc[VTIME] = 0;
@@ -945,14 +933,14 @@ errr init_gcu(void)
 		init_color(15,  750,  500,  250);	/* Light Brown */
 
 		/* if (can_use_color) { */
-		init_pair(0, 0, 0);//black
-		init_pair(1, 1, 0);//white
-		init_pair(2, 2, 0);//grey
-		init_pair(3, 3, 0);//orange
-		init_pair(4, 4, 0);//red
-		init_pair(5, 5, 0);//green
-		init_pair(6, 6, 0);//blue
-		init_pair(7, 7, 0);//brown
+		init_pair(0, 0, 0);	/*black */
+		init_pair(1, 1, 0);	/*white */
+		init_pair(2, 2, 0);	/*grey */
+		init_pair(3, 3, 0);	/*orange */
+		init_pair(4, 4, 0);	/*red */
+		init_pair(5, 5, 0);	/*green */
+		init_pair(6, 6, 0);	/*blue */
+		init_pair(7, 7, 0);	/*brown */
 
 		/* Prepare the "Angband Colors" */
 		colortable[0] = (COLOR_PAIR(0) | A_NORMAL);	/* Black */
@@ -990,27 +978,21 @@ errr init_gcu(void)
 
 		/* Prepare the "Angband Colors" */
 		colortable[0] = (COLOR_PAIR(7) | A_NORMAL);	/* Black */
-//		colortable[1] = (COLOR_PAIR(0) | A_NORMAL);	/* White */
-colortable[1] = (COLOR_PAIR(0) | A_BRIGHT);
-//		colortable[2] = (COLOR_PAIR(6) | A_NORMAL);	/* Grey XXX */
-colortable[2] = (COLOR_PAIR(0) | A_NORMAL);
-//		colortable[3] = (COLOR_PAIR(1) | A_BRIGHT);	/* Orange XXX */
-colortable[3] = (COLOR_PAIR(3) | A_NORMAL);
+		colortable[1] = (COLOR_PAIR(0) | A_BRIGHT);
+		colortable[2] = (COLOR_PAIR(0) | A_NORMAL);
+		colortable[3] = (COLOR_PAIR(3) | A_NORMAL);
 		colortable[4] = (COLOR_PAIR(1) | A_NORMAL);	/* Red */
 		colortable[5] = (COLOR_PAIR(2) | A_NORMAL);	/* Green */
 		colortable[6] = (COLOR_PAIR(4) | A_NORMAL);	/* Blue */
 		colortable[7] = (COLOR_PAIR(3) | A_NORMAL);	/* Umber */
 		colortable[8] = (COLOR_PAIR(7) | A_BRIGHT);	/* Dark-grey XXX */
-//		colortable[9] = (COLOR_PAIR(6) | A_BRIGHT);	/* Light-grey XXX */
-colortable[9] = (COLOR_PAIR(1) | A_BRIGHT);
+		colortable[9] = (COLOR_PAIR(1) | A_BRIGHT);
 		colortable[10] = (COLOR_PAIR(5) | A_NORMAL);	/* Purple */
 		colortable[11] = (COLOR_PAIR(3) | A_BRIGHT);	/* Yellow */
-//		colortable[12] = (COLOR_PAIR(5) | A_BRIGHT);	/* Light Red XXX */
 		colortable[12] = (COLOR_PAIR(1) | A_BRIGHT);
 		colortable[13] = (COLOR_PAIR(2) | A_BRIGHT);	/* Light Green */
 		colortable[14] = (COLOR_PAIR(4) | A_BRIGHT);	/* Light Blue */
 		colortable[15] = (COLOR_PAIR(3) | A_NORMAL);	/* Light Umber XXX */
-//		colortable[15] = (COLOR_PAIR(3) | A_BRIGHT);
 	}
 #endif
 

@@ -48,8 +48,6 @@ extern s16b ddx[10];
 extern s16b ddy[10];
 extern char hexsym[16];
 extern owner_type owners[MAX_STORES][MAX_OWNERS];
-//extern player_race race_info[MAX_RACES];
-//extern player_class class_info[MAX_CLASS];
 extern option_type option_info[];
 extern cptr stat_names[6];
 extern cptr stat_names_reduced[6];
@@ -73,7 +71,7 @@ extern s32b server_port;
 extern char cname[MAX_CHARS];
 
 extern char message_history[MSG_HISTORY_MAX][80];
-//extern byte hist_start;
+/*extern byte hist_start; */
 extern byte hist_end;
 extern bool hist_looped;
 
@@ -81,7 +79,6 @@ extern object_type inventory[INVEN_TOTAL];
 extern char inventory_name[INVEN_TOTAL][80];
 
 extern store_type store;
-//extern owner_type store_owner;
 extern c_store_extra c_store;
 extern int store_prices[STORE_INVEN_MAX];
 extern char store_names[STORE_INVEN_MAX][80];
@@ -107,7 +104,7 @@ extern player_type *p_ptr;
 
 extern c_player_extra c_player;
 extern c_player_extra *c_p_ptr;
-// extern char body_name[80];
+/* extern char body_name[80]; */
 extern s32b exp_adv;
 
 extern s16b command_see;
@@ -168,10 +165,6 @@ extern bool topline_icky;
 extern short screen_icky;
 extern bool party_mode;
 
-
-//extern cptr race_title[];
-//extern cptr class_title[];
-
 extern player_race *race_info;
 extern player_class *class_info;
 
@@ -230,7 +223,6 @@ extern void cmd_walk(void);
 extern void cmd_king(void);
 extern void cmd_run(void);
 extern void cmd_stay(void);
-//extern void cmd_map(void);
 extern void cmd_map(char mode);
 extern void cmd_locate(void);
 extern void cmd_search(void);
@@ -307,7 +299,8 @@ extern errr get_safe_file(char *buf, cptr file);
 /* c-init.c */
 extern void init_schools(s16b new_size);
 extern void init_spells(s16b new_size);
-extern void initialize_all_pref_files(void);
+extern void initialize_main_pref_files(void);
+extern void initialize_player_pref_files(void);
 extern void client_init(char *argv1, bool skip);
 
 /* c-inven.c */
@@ -344,11 +337,10 @@ extern void prt_num(cptr header, int num, int row, int col, byte color);
 extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);
 extern void interact_macros(void);
 extern void do_cmd_options(void);
-//extern void close_game(cptr reason);
 extern void c_close_game(cptr reason);
 
 /* c-spell.c */
-//extern void show_browse(int book);
+/*extern void show_browse(int book); */
 s32b get_school_spell(cptr do_what, int *item_book);
 extern int get_spell(s32b *sn, cptr prompt, int book, bool known);
 extern void show_browse(object_type *o_ptr);
@@ -375,7 +367,6 @@ extern void prt_gold(int gold);
 extern void prt_ac(int ac);
 extern void prt_hp(int max, int cur);
 extern void prt_sp(int max, int cur);
-//extern void prt_depth(int x, int y, int z, bool town, int recall);
 extern void prt_depth(int x, int y, int z, bool town, int recall, cptr buf);
 extern void prt_hunger(int food);
 extern void prt_blind(bool blind);
@@ -393,7 +384,6 @@ extern void show_inven(void);
 extern void show_equip(void);
 extern void display_player(int hist);
 extern void window_stuff(void);
-//extern void prt_sane(void);
 extern void prt_sane(byte attr, cptr buf);
 
 /* c-xtra2.c */
@@ -412,13 +402,11 @@ extern void update_ticks(void);
 extern void do_keepalive(void);
 extern int Net_setup(void);
 extern unsigned char Net_login(void);
-//extern int Net_verify(char *real, char *nick, char *pass, int sex, int race, int class);
 extern int Net_verify(char *real, char *nick, char *pass);
 extern int Net_init(char *server, int port);
 extern void Net_cleanup(void);
 extern int Net_flush(void);
 extern int Net_fd(void);
-//extern int Net_start(void);
 extern int Net_start(int sex, int race, int class);
 extern int Net_input(void);
 extern int Flush_queue(void);
@@ -465,7 +453,6 @@ extern int Send_target(int dir);
 extern int Send_target_friendly(int dir);
 extern int Send_look(int dir);
 extern int Send_msg(cptr message);
-//extern int Send_fire(int item, int dir);
 extern int Send_fire(int dir);
 extern int Send_throw(int item, int dir);
 extern int Send_item(int item);
@@ -474,7 +461,6 @@ extern int Send_cast(int book, int spell);
 extern int Send_pray(int book, int spell);
 extern int Send_fight(int book, int spell);
 extern int Send_ghost(int ability);
-//extern int Send_map(void);
 extern int Send_map(char mode);
 extern int Send_locate(int dir);
 extern int Send_store_purchase(int item, int amt);

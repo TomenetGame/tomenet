@@ -16,9 +16,6 @@ static bool flush_later = FALSE;
 
 static byte macro__use[256];
 
-//bool msg_flag;
-
-
 static char octify(uint i)
 {
 	return (hexsym[i%8]);
@@ -124,7 +121,6 @@ static int macro_ready(cptr buf)
 void macro_add(cptr pat, cptr act, bool cmd_flag)
 {
         int n;
-
 
         /* Paranoia -- require data */
         if (!pat || !act) return;
@@ -1278,28 +1274,6 @@ void request_command(bool shopping)
 	/* Paranoia */
 	if (!command_cmd) command_cmd = ESCAPE;
 
-#if 0
-	/* Shopping */
-	if (shopping)
-	{
-		/* Convert */
-		switch (command_cmd)
-		{
-			/* Command "p" -> "purchase" (get) */
-			case 'p': command_cmd = 'g'; break;
-
-			/* Command "m" -> "purchase" (get) */
-			case 'm': command_cmd = 'g'; break;
-
-			/* Command "s" -> "sell" (drop) */
-			case 's': command_cmd = 'd'; break;
-
-			/* Command "l" -> "examine" */
-			case 'l': command_cmd = 'x'; break;
-		}
-	}
-#endif	// 0
-
 	/* Hack -- erase the message line. */
 	prt("", 0, 0);
 }
@@ -1627,45 +1601,6 @@ void c_message_add(cptr str)
 	/* Window stuff */
 	p_ptr->window |= PW_MESSAGE;
 }
-
-
-
-/*
- * Hack -- flush
- *
- * Not needed --KLJ--
- */
-#if 0
-static void msg_flush(int x)
-{
-	byte a = TERM_L_BLUE;
-
-	/* The top line is "icky" */
-	topline_icky = TRUE;
-
-	/* Pause for response */
-	Term_putstr(x, 0, -1, a, "-more-");
-
-	/* Get an acceptable keypress */
-	while (1)
-	{
-		int cmd = inkey();
-		if (quick_messages) break;
-		if ((cmd == ESCAPE) || (cmd == ' ')) break;
-		if ((cmd == '\n') || (cmd == '\r')) break;
-		bell();
-	}
-
-	/* Clear the line */
-	Term_erase(0, 0, 255);
-
-	/* The top line is OK */
-	topline_icky = FALSE;
-
-	Flush_queue();
-}
-#endif
-
 
 /*
  * Output a message to the top line of the screen.
@@ -2126,10 +2061,6 @@ void interact_macros(void)
 		Term_putstr(5,  8, -1, TERM_WHITE, "(5) Create a normal macro");
 		Term_putstr(5,  9, -1, TERM_WHITE, "(6) Create a identity macro");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Create an empty macro");
-#if 0
-		Term_putstr(5, 12, -1, TERM_WHITE, "(X) Turn off an option (by name)");
-		Term_putstr(5, 13, -1, TERM_WHITE, "(Y) Turn on an option (by name)");
-#endif
 
 		/* Prompt */
 		Term_putstr(0, 15, -1, TERM_WHITE, "Command: ");
@@ -2629,7 +2560,6 @@ static errr options_dump(cptr fname)
 		fprintf(fff, "# Option '%s'\n", option_info[i].o_desc);
 
 		/* Dump the option */
-//		if (op_ptr->opt[i])
 		if (*option_info[i].o_var)
 		{
 			fprintf(fff, "Y:%s\n", option_info[i].o_text);
@@ -2646,11 +2576,12 @@ static errr options_dump(cptr fname)
 	fprintf(fff, "\n");
 
 	/* Dump window flags */
-//	for (i = 1; i < ANGBAND_TERM_MAX; i++)
+#if 0
+	for (i = 1; i < ANGBAND_TERM_MAX; i++)
+#endif
 	for (i = 1; i < 8; i++)
 	{
 		/* Require a real window */
-//		if (!angband_term[i]) continue;
 		if (!ang_term_name[i]) continue;
 
 		/* Check each flag */
@@ -2670,10 +2601,6 @@ static errr options_dump(cptr fname)
 
 				/* Skip a line */
 				fprintf(fff, "\n");
-			}
-			else
-			{
-//				fprintf(fff, "W:%d:%d:0\n", i, j);
 			}
 		}
 	}
@@ -2816,7 +2743,6 @@ void do_cmd_options(void)
 			(void)process_pref_file(tmp);
 		}
 
-
 		/* Window flags */
 		else if (k == 'W')
 		{
@@ -2832,21 +2758,16 @@ void do_cmd_options(void)
 		}
 	}
 
-
 	/* Restore the screen */
 	Term_load();
 
 	Flush_queue();
-
 
 	/* Verify the keymap */
 	keymap_init();
 
 	/* Resend options to server */
 	Send_options();
-
-	/* Send a redraw request */
-	// Send_redraw();
 }
 
 
@@ -2872,19 +2793,9 @@ static void center_string(char *buf, cptr str)
  * Display a "tomb-stone"
  */
 /* ToME parts. */
-// static void print_tomb(void)
 static void print_tomb(cptr reason)
 {
 	bool done = FALSE;
-
-#if 0
-	/* Do we use a special tombstone ? */
-	if (tombstone_aux)
-	{
-		/* Use tombstone hook */
-		done = (*tombstone_aux)();
-	}
-#endif	// 0
 
 	/* Print the text-tombstone */
 	if (!done)
@@ -2902,17 +2813,10 @@ static void print_tomb(cptr reason)
 		Term_clear();
 
 		/* Build the filename */
-//		path_build(buf, 1024, ANGBAND_DIR_HELP, !magik(50) ? "dead.txt" : "dead2.txt");
 		path_build(buf, 1024, ANGBAND_DIR_HELP, ct % 2 ? "dead.txt" : "dead2.txt");
-
-		/* Grab permission */
-//		safe_setuid_grab();
 
 		/* Open the News file */
 		fp = my_fopen(buf, "r");
-
-		/* Drop permission */
-//		safe_setuid_drop();
 
 		/* Dump */
 		if (fp)
@@ -2923,7 +2827,6 @@ static void print_tomb(cptr reason)
 			while (0 == my_fgets(fp, buf, 1024))
 			{
 				/* Display and advance */
-//				display_message(0, i++, strlen(buf), TERM_WHITE, buf);
 				Term_putstr(0, i++, -1, TERM_WHITE, buf);
 			}
 
@@ -2931,7 +2834,7 @@ static void print_tomb(cptr reason)
 			my_fclose(fp);
 		}
 
-#if 0	// make the server send those info!
+#if 0	/* make the server send those info! */
 		/* King or Queen */
 		if (total_winner || (p_ptr->lev > PY_MAX_LEVEL))
 		{
@@ -2943,32 +2846,19 @@ static void print_tomb(cptr reason)
 		{
 			p =  cp_ptr->titles[(p_ptr->lev-1)/5] + c_text;
 		}
-#endif	// 0
+#endif	/* 0 */
 
 		center_string(buf, cname);
 		put_str(buf, 6, 11);
 
-#if 0
 		center_string(buf, "the");
 		put_str(buf, 7, 11);
 
-		center_string(buf, p);
-		put_str(buf, 8, 11);
-#endif	// 0
-
-		center_string(buf, "the");
-		put_str(buf, 7, 11);
-
-        center_string(buf, race_info[race].title);
+        	center_string(buf, race_info[race].title);
 		put_str(buf, 8, 11);
 
-        center_string(buf, class_info[class].title);
+        	center_string(buf, class_info[class].title);
 		put_str(buf, 9, 11);
-
-#if 0
-		center_string(buf, spp_ptr->title + c_name);
-		put_str(buf, 10, 11);
-#endif	// 0
 
 		(void)sprintf(tmp, "Level: %d", (int)p_ptr->lev);
 		center_string(buf, tmp);
@@ -3007,7 +2897,7 @@ static void print_tomb(cptr reason)
 
 		center_string(buf, tmp);
 		put_str(buf, 15, 11);
-#endif	// 0
+#endif	/* 0 */
 
 
 		(void)sprintf(tmp, "%-.24s", ctime(&ct));
@@ -3022,20 +2912,13 @@ static void print_tomb(cptr reason)
  * Display some character info	- Jir -
  * For now, only when losing the character.
  */
-//void close_game(void)
 void c_close_game(cptr reason)
 {
 	int k;
 	char tmp[1024];
 
-
-	/* Save the screen */
-//	Term_save();
-
 	/* Let the player view the last scene */
-//	put_str("...Press any key to proceed", 0, 0);
 	c_msg_format("%s ...Press '0' key to proceed", reason);
-//	put_str(format("%s ...Press '0' key to proceed", reason), 0, 0);
 
 	while (inkey() != '0');
 
@@ -3073,7 +2956,6 @@ void c_close_game(cptr reason)
 		else if (k) break;
 	}
 
-#if 1
 	/* Interact */
 	while (1)
 	{
@@ -3138,7 +3020,7 @@ void c_close_game(cptr reason)
 		{
 			do_cmd_skill();
 		}
-#endif	// 0
+#endif	/* 0 */
 
 		/* Unknown option */
 		else
@@ -3147,7 +3029,6 @@ void c_close_game(cptr reason)
 			bell();
 		}
 	}
-#endif	// 0
 }
 
 

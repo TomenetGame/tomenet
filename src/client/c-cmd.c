@@ -14,28 +14,6 @@ static void cmd_player_equip(void)
     peruse_file();
 }
 
-#if 0
-static bool item_tester_magicable(object_type *o_ptr)
-{
-	if (get_skill(SKILL_MAGERY) && (o_ptr->tval == TV_MAGIC_BOOK)) return TRUE;
-
-	if (get_skill(SKILL_SORCERY) && (o_ptr->tval == TV_SORCERY_BOOK)) return TRUE;
-
-	if (get_skill(SKILL_SHADOW) && o_ptr->tval == TV_SHADOW_BOOK) return TRUE;
-
-	if (get_skill(SKILL_ARCHERY) && o_ptr->tval == TV_HUNT_BOOK) return TRUE;
-
-//	if (get_skill(SKILL_PSI) && o_ptr->tval == TV_PSI_BOOK) return TRUE;
-//	if (o_ptr->tval == TV_PSI_BOOK) return TRUE;
-
-	/* two more for expansion */
-	if (get_skill(SKILL_MASTERY) && o_ptr->tval == TV_FIGHT_BOOK) return TRUE;
-	if (get_skill(SKILL_PRAY) && o_ptr->tval == TV_PRAYER_BOOK) return TRUE;
-
-	return FALSE;
-}
-#endif	// 0
-
 static bool item_tester_edible(object_type *o_ptr)
 {
 	if (o_ptr->tval == TV_FOOD) return TRUE;
@@ -133,14 +111,7 @@ static void cmd_all_in_one(void)
 		case TV_ARROW:
 		case TV_BOLT:
 		{
-#if 0
-			if (!get_dir(&dir))
-				return;
-
-			Send_fire(item, dir);
-#else	// 0
 			Send_wield(item);
-#endif	// 0
 			break;
 		}
 
@@ -198,13 +169,11 @@ static void cmd_all_in_one(void)
 						break;
 					}
 					/* Now a number of skills shares same mkey */
-					// break;
 				}
 			}
 			if (!done)
 				/* XXX there should be more generic 'use' command */
 				Send_activate(item);
-//				c_msg_print("You couldn't find a way to use it.");
 
 			break;
 		}
@@ -440,7 +409,6 @@ void process_command()
 
 		case '~':
 			cmd_check_misc();
-//			cmd_artifacts();
 			break;
 
 		case '|':
@@ -533,7 +501,6 @@ void process_command()
 
 		default:
 			cmd_raw_key(command_cmd);
-//			prt("Hit '?' for help.", 0, 0);
 			break;
 	}
 }
@@ -544,7 +511,6 @@ void process_command()
 static void cmd_clear_buffer(void)
 {
 	/* Hack -- flush the key buffer */
-	//Term_flush();
 
 	Send_clear_buffer();
 }
@@ -592,7 +558,6 @@ void cmd_stay(void)
 	Send_stay();
 }
 
-//void cmd_map(void)
 void cmd_map(char mode)
 {
 	char ch;
@@ -945,7 +910,6 @@ void cmd_quaff(void)
 {
 	int item;
 
-//	item_tester_tval = TV_POTION;
 	item_tester_hook = item_tester_quaffable;
 
 	if (!c_get_item(&item, "Quaff which potion? ", FALSE, TRUE, FALSE))
@@ -969,7 +933,6 @@ void cmd_read_scroll(void)
 {
 	int item;
 
-//	item_tester_tval = TV_SCROLL;
 	item_tester_hook = item_tester_readable;
 
 	if (!c_get_item(&item, "Read which scroll? ", FALSE, TRUE, FALSE))
@@ -1034,26 +997,6 @@ void cmd_refill(void)
 	int item;
 	cptr p;
 
-#if 0
-	if (inventory[INVEN_LITE].tval == TV_TORCH)
-	{
-		item_tester_tval = TV_TORCH;
-		p = "Refill with which torch? ";
-	}
-
-	else if (inventory[INVEN_LITE].tval == TV_LANTERN)
-	{
-		item_tester_hook = item_tester_oils;
-		p = "Refill with which? ";
-	}
-
-	else
-	{
-		c_msg_print("Your light cannot be refilled.");
-		return;
-	}
-#endif
-
 	if (!inventory[INVEN_LITE].tval)
 	{
 		c_msg_print("You are not wielding a light source.");
@@ -1076,7 +1019,6 @@ void cmd_eat(void)
 {
 	int item;
 
-//	item_tester_tval = TV_FOOD;
 	item_tester_hook = item_tester_edible;
 
 	if (!c_get_item(&item, "Eat what? ", FALSE, TRUE, FALSE))
@@ -1408,7 +1350,6 @@ void cmd_check_misc(void)
 				Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0);
 				break;
 			case 'e':
-//				Send_special_line(SPECIAL_FILE_RFE, 0);
 				/* Set the hook */
 				special_line_type = SPECIAL_FILE_RFE;
 
@@ -1604,18 +1545,10 @@ void cmd_fire(void)
 {
 	int dir;
 
-#if 0
-	if (!c_get_item(&item, "Fire which ammo? ", FALSE, TRUE, FALSE))
-	{
-		return;
-	}
-#endif	// 0
-
 	if (!get_dir(&dir))
 		return;
 	
 	/* Send it */
-//	Send_fire(item, dir);
 	Send_fire(dir);
 }
 
@@ -1638,18 +1571,6 @@ void cmd_throw(void)
 static bool item_tester_browsable(object_type *o_ptr)
 {
 	return (is_book(o_ptr) || o_ptr->tval == TV_BOOK);
-#if 0	// mdr
-	if ((o_ptr->tval == TV_MAGIC_BOOK)) return TRUE;
-	if ((o_ptr->tval == TV_SORCERY_BOOK)) return TRUE;
-	if (o_ptr->tval == TV_SHADOW_BOOK) return TRUE;
-	if (o_ptr->tval == TV_HUNT_BOOK) return TRUE;
-	if (o_ptr->tval == TV_PSI_BOOK) return TRUE;
-	/* two more for expansion */
-	if (o_ptr->tval == TV_FIGHT_BOOK) return TRUE;
-	if (o_ptr->tval == TV_PRAYER_BOOK) return TRUE;
-
-        return FALSE;
-#endif	// 0
 }
 
 void cmd_browse(void)
@@ -1680,7 +1601,6 @@ void cmd_browse(void)
 	}
 
 	/* Show it */
-//	show_browse(item);
 	show_browse(o_ptr);
 }
 
@@ -1895,7 +1815,6 @@ static void cmd_master_aux_level(void)
 			 */
 			if(get_check("Random dungeon?")) buf[5] |= DF2_RANDOM;
 			if(get_check("Hellish?")) buf[5] |= DF2_HELL;
-			//if(get_check("Not mappable?")) buf[5] |= DF2_NOMAP;
 			if(get_check("Not mappable?"))
 			{
 				buf[4] |= DF1_FORGET;
@@ -2628,45 +2547,13 @@ static void cmd_master_aux_player()
 /* TODO: up-to-date check and download facility */
 static void cmd_script_upload()
 {
-#if 0
-	char buf[1025]
-#endif
 	char name[81];
 
 	name[0]='\0';
 
-#if 0
-	if (!get_string("Script name: ", name + 1, 79)) return;
-#else
 	if (!get_string("Script name: ", name, 30)) return;
-#endif
 
 	remote_update(0, name);
-
-#if 0	/* evileye - testing my file xfer */
-	/* feel free to return this to normal afterwards!!! */
-
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_SCPT, name + 1);
-
-	fff = my_fopen(buf, "r");
-	if (fff == NULL) return;
-
-	name[0] = MASTER_SCRIPTB_W;
-	Send_master(MASTER_SCRIPTB, name);
-
-	/* Process the file */
-	while (0 == my_fgets(fff, buf, 1024))
-	{
-		Send_master(MASTER_SCRIPTL, buf);
-	}
-
-	buf[0] = '\0';
-	Send_master(MASTER_SCRIPTE, buf);
-
-	my_fclose(fff);
-	c_msg_print("Sent.");
-#endif
 }
 
 /*

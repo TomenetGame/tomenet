@@ -1346,15 +1346,6 @@ static void term_change_font(term_data *td)
 		/* Force the font */
 		term_force_font(td, NULL);
 
-#if 0
-		/* Assume not bizarre */
-		td->bizarre = TRUE;
-
-		/* Reset the tile info */
-		td->tile_wid = td->font_wid;
-		td->tile_hgt = td->font_hgt;
-#endif
-
 		/* Analyze the font */
 		term_getsize(td);
 
@@ -2461,16 +2452,6 @@ static void process_menus(WORD wCmd)
 		/* Save and Exit */
 		case IDM_FILE_EXIT:
 		{
-#if 0
-			if (game_in_progress && character_generated)
-			{
-				// Hack -- Forget messages
-				msg_flag = FALSE;
-
-				// Save the game
-				do_cmd_save_game();
-			}
-#endif
 			quit(NULL);
 			break;
 		}
@@ -2478,17 +2459,6 @@ static void process_menus(WORD wCmd)
 		/* Quit (no save) */
 		case IDM_FILE_QUIT:
 		{
-#if 0
-			if (game_in_progress && character_generated)
-			{
-				if (MessageBox(data[0].w,
-				               "Your character will be not saved!",
-				               "Warning", MB_ICONEXCLAMATION | MB_OKCANCEL) == IDCANCEL)
-				{
-					break;
-				}
-			}
-#endif
 			quit(NULL);
 			break;
 		}
@@ -3148,15 +3118,6 @@ LRESULT FAR PASCAL _export AngbandSaverProc(HWND hWnd, UINT uMsg,
 			SetCursor(NULL);
 			return 0;
 		}
-
-#if 0
-		case WM_ACTIVATE:
-		{
-			if (LOWORD(wParam) == WA_INACTIVE) break;
-
-			/* else fall through */
-		}
-#endif
 
 		case WM_LBUTTONDOWN:
 		case WM_MBUTTONDOWN:

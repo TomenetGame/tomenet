@@ -66,8 +66,6 @@ void init_spells(s16b new_size)
  */
 static void init_stuff(void)
 {
-	//        char path[1024];
-
 #if defined(AMIGA) || defined(VM)
 
 	/* Hack -- prepare "path" */
@@ -100,7 +98,7 @@ static void init_stuff(void)
 /*
  * Open all relevant pref files.
  */
-void initialize_all_pref_files(void)
+void initialize_main_pref_files(void)
 {
 	char buf[1024];
 
@@ -127,8 +125,6 @@ void initialize_all_pref_files(void)
 	/* Process that file */
 	process_pref_file(buf);
 
-
-
 	/* Access the "basic" system pref file */
 	sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 
@@ -146,12 +142,14 @@ void initialize_all_pref_files(void)
 
 	/* Process that file */
 	process_pref_file(buf);
+}
 
+void initialize_player_pref_files(void){
+	char buf[1024];
 
 	/* Access the "race" pref file */
 	if (race < Setup.max_race)
 	{
-		//		sprintf(buf, "%s.prf", race_title[race]);
 		sprintf(buf, "%s.prf", race_info[race].title);
 		buf[0] = tolower(buf[0]);
 
@@ -162,7 +160,6 @@ void initialize_all_pref_files(void)
 	/* Access the "class" pref file */
 	if (class < Setup.max_class)
 	{
-		//        sprintf(buf, "%s.prf", class_title[class]);
 		sprintf(buf, "%s.prf", class_info[class].title);
 		buf[0] = tolower(buf[0]);
 
@@ -204,7 +201,7 @@ static void Input_loop(void)
 
 	for (;;)
 	{
-		// Send out a keepalive packet if need be
+		/* Send out a keepalive packet if need be */
 		do_keepalive();
 		do_mail();
 		do_flicker();
@@ -223,8 +220,7 @@ static void Input_loop(void)
 		 * system calling usleep seems to have a 10 ms overhead
 		 * attached to it.
 		 */
-		//SetTimeout(0, 1000000 / Setup.frames_per_second);
-		SetTimeout(0, 1000000 / 1000);
+		SetTimeout(0, 1000);
 
 		/* Only take input if we got some */
 		if (SocketReadable(netfd))
@@ -247,9 +243,6 @@ static void Input_loop(void)
 			/* Process it */
 			process_command();
 
-			/* XXX Unused */
-			//last_sent = time(NULL);
-
 			/* Clear previous command */
 			command_cmd = 0;
 
@@ -257,8 +250,10 @@ static void Input_loop(void)
 			request_command(FALSE);
 		}
 
-		// Update our internal timer, which is used to figure out when
-		// to send keepalive packets.
+		/*
+		 * Update our internal timer, which is used to figure out when
+		 * to send keepalive packets.
+		 */
 		update_ticks();
 
 		/* Hack -- don't redraw the screen until we have all of it */
@@ -333,7 +328,6 @@ void client_init(char *argv1, bool skip)
 	char host_name[80];
 	/* u16b version = MY_VERSION; */
         s32b temp;
-//        char max_class;
 
 	/* Setup the file paths */
 	init_stuff();
@@ -386,7 +380,7 @@ void client_init(char *argv1, bool skip)
         /* Capitalize the name */
 	nick[0] = toupper(nick[0]);
 
-	// Create the net socket and make the TCP connection
+	/* Create the net socket and make the TCP connection */
 	if ((Socket = CreateClientSocket(server_name, cfg_game_port)) == -1)
 	{
 		quit("That server either isn't up, or you mistyped the hostname.\n");
@@ -399,19 +393,15 @@ void client_init(char *argv1, bool skip)
 		quit("No memory for socket buffer\n");
 	}
 
-	/* Make it non-blocking */
-	//if (SetSocketNonBlocking(Socket, 1) == -1)
-//	{	
-//		quit("Can't make socket non-blocking\n");
-//	}
-
 	/* Clear it */
 	Sockbuf_clear(&ibuf);
 	
 	/* Put the contact info in it */
 	Packet_printf(&ibuf, "%u", magic);
 	Packet_printf(&ibuf, "%s%hu%c", real_name, GetPortNum(ibuf.sock), 0xFF);
-//	Packet_printf(&ibuf, "%s%s%hu", nick, host_name, version);
+#if 0
+	Packet_printf(&ibuf, "%s%s%hu", nick, host_name, version);
+#endif
 	Packet_printf(&ibuf, "%s%s%hu", nick, host_name, 2);
 	/* Increment the last number in the line above for each new
 	client version that requires the player to update the client!
@@ -423,12 +413,7 @@ void client_init(char *argv1, bool skip)
 	/* Connect to server */
 #ifdef UNIX_SOCKETS
 	if ((DgramConnect(Socket, server_name, cfg_game_port)) == -1)
-#else
-	// UDP stuffif ((DgramConnect(Socket, server_name, cfg_game_port)) == -1)
 #endif
-	//{
-	//	quit("That server either isn't up, or you mistyped the host name.\n");
-	//}
 	
 	/* Send the info */
 	if ((bytes = DgramWrite(Socket, ibuf.buf, ibuf.len) == -1))
@@ -470,17 +455,7 @@ void client_init(char *argv1, bool skip)
 	}
 
 	/* Server returned error code */
-	if (status == E_NEED_INFO)
-	{
-#if 0	// fall through..
-		/* Hack -- display the nick */
-		if (skip) prt(format("Name        : %s", nick), 2, 1);
-
-		/* Get sex/race/class */
-		get_char_info();
-#endif	// 0
-	}
-	else if (status)
+	if (status && status != E_NEED_INFO)
 	{
 		/* The server didn't like us.... */
 		switch (status)
@@ -510,17 +485,15 @@ void client_init(char *argv1, bool skip)
 	printf("Server sent status %u\n", status);  */
 
 	/* Close our current connection */
-	// Dont close the TCP connection DgramClose(Socket);
+	/* Dont close the TCP connection DgramClose(Socket); */
 
 	/* Connect to the server on the port it sent */
-	//if (Net_init(server_name, login_port) == -1)
 	if (Net_init(server_name, Socket) == -1)
 	{
 		quit("Network initialization failed!\n");
 	}
 
 	/* Verify that we are on the correct port */
-//	if (Net_verify(real_name, nick, pass, sex, race, class) == -1)
 	if (Net_verify(real_name, nick, pass) == -1)
 	{
 		Net_cleanup();
@@ -541,16 +514,13 @@ void client_init(char *argv1, bool skip)
 
 	if (status == E_NEED_INFO)
 	{
-		/* Hack -- display the nick */
-//		if (skip) prt(format("Name        : %s", cname), 2, 1);
-
 		/* Get sex/race/class */
 		/* XXX this function sends PKT_KEEPALIVE */
 		get_char_info();
 	}
 
 	/* Initialize the pref files */
-	initialize_all_pref_files();
+	initialize_main_pref_files();
 
 	/* Setup the key mappings */
 	keymap_init();
@@ -560,9 +530,6 @@ void client_init(char *argv1, bool skip)
 
 	/* Clear the screen again */
 	Term_clear();
-
-			/* Flush the network output buffer */
-//			Net_flush();	// meanless, most likely
 
 	/* Start the game */
 	if (Net_start(sex, race, class) == -1)

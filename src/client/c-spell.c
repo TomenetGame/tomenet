@@ -4,11 +4,9 @@
 #include "angband.h"
 
 /* NULL for ghost - FIXME */
-//static void print_spells(int book)
 static void print_spells(object_type *o_ptr)
 {
 	int	i, col, realm, num;
-//	object_type *o_ptr = &inventory[book];
 
 	/* Hack -- handle ghosts right */
 	if (p_ptr->ghost)
@@ -140,12 +138,8 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
 	{
 		/* Look for "okay" spells */
 		if (spell_info[realm][sval][i][0] &&
-				/* Hack -- This presumes the spells are sorted by level */
-				!strstr(spell_info[realm][sval][i],"unknown"))
-//		if (spell_info[realm][book][i])
-		/* quite a hack.. FIXME */
-//		if (!spell_info[realm][book][i][0])
-//		if (!strstr(spell_info[realm][book][i],"unknown"))
+			/* Hack -- This presumes the spells are sorted by level */
+			!strstr(spell_info[realm][sval][i],"unknown"))
 		{
 			okay = TRUE;
 			num++;
@@ -197,7 +191,6 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
 				Term_save();
 
 				/* Display a list of spells */
-//				print_spells(book);
 				print_spells(o_ptr);
 			}
 
@@ -272,14 +265,12 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
  *
  * Note that *all* spells in the book are listed
  */
-//void show_browse(int book)
 void show_browse(object_type *o_ptr)
 {
 	/* Save the screen */
 	Term_save();
 
 	/* Display the spells */
-//	print_spells(book);
 	print_spells(o_ptr);
 	
 	/* Clear the top line */
@@ -297,61 +288,6 @@ void show_browse(object_type *o_ptr)
 	/* Flush any events */
 	Flush_queue();
 }
-
-#if 0
-/*
- * Study a book to gain a new spell/prayer
- */
-void do_study(int book)
-{
-	s32b j;
-	cptr p = "spell";
-
-	/* Priest -- Learn random spell */
-	if (!strcmp(p, "prayer"))
-	{
-		j = -1;
-	}
-	/* Mage -- Learn a selected spell */
-	else
-	{
-		/* Ask for a spell, allow cancel */
-		if (!get_spell(&j, "study", book, FALSE)) return;
-	}
-
-	/* Tell the server */
-	/* Note that if we are a priest, the server ignores the spell parameter */
-	Send_gain(book, j);
-}
-
-/*
- * Cast a spell
- */
-void do_cast(int book)
-{
-	s32b j;
-
-	/* Ask for a spell, allow cancel */
-	if (!get_spell(&j, "cast", book, FALSE)) return;
-
-	/* Tell the server */
-	Send_cast(book, j);
-}
-
-/*
- * Pray a spell
- */
-void do_pray(int book)
-{
-	s32b j;
-
-	/* Ask for a spell, allow cancel */
-	if (!get_spell(&j, "pray", book, FALSE)) return;
-
-	/* Tell the server */
-	Send_pray(book, j);
-}
-#endif	// 0
 
 static int get_mimic_spell(int *sn)
 {
@@ -513,14 +449,9 @@ void do_mimic()
   /* Ask for the spell */
   if(!get_mimic_spell(&spell)) return;
 
-  /* Tell the server */
-//  Send_mimic(spell);
-
   /* later on maybe this can moved to server side, then no need for '20000 hack'.
   Btw, 30000, the more logical one, doesnt work, dont ask me why */
   if(spell == 1){
-    //j = c_get_quantity("Which form (0 for player) ? ", 0);
-    
     strcpy(out_val,"");
     get_string("Which form (0 for player) ? ", out_val, 4);
     if(strlen(out_val) == 0) return;
@@ -532,23 +463,6 @@ void do_mimic()
 
   Send_activate_skill(MKEY_MIMICRY, 0, spell, 0, 0, 0);
 }
-
-
-#if 0
-/*
- * Use a technic
- */
-void do_fight(int book)
-{
-	s32b j;
-
-	/* Ask for a spell, allow cancel */
-	if (!get_spell(&j, "use", book, FALSE)) return;
-
-	/* Tell the server */
-	Send_fight(book, j);
-}
-#endif	// 0
 
 /*
  * Use a ghost ability
@@ -656,11 +570,7 @@ s32b get_school_spell(cptr do_what, int *item_book)
 		// DGDGDG -- someone fix it please        get_item_extra_hook = get_item_hook_find_spell;
 		item_tester_tval = TV_BOOK;
 		sprintf(buf2, "You have no book to %s from", do_what);
-#if 0	/* not sure if this is what you want ;/ */
-		if (!get_item(&item, format("%^s from which book?", do_what), buf2, USE_INVEN | USE_EQUIP )) return -1;
-#else
 		if (!c_get_item(&item, format("%^s from which book?", do_what), TRUE, TRUE, FALSE )) return -1;
-#endif
 	}
 	else
 	{
@@ -728,7 +638,6 @@ s32b get_school_spell(cptr do_what, int *item_book)
 
 			/* Display a list of spells */
 			where = exec_lua(0, format("return print_book(0, %d, %d)", sval, pval));
-			//print_spells(o_ptr);
 		}
 
 		/* Get a spell from the user */
@@ -853,7 +762,6 @@ s32b get_school_spell(cptr do_what, int *item_book)
 	if (!flag) return -1;
 
 	tmp = spell;
-	//        repeat_push(tmp);
 	*item_book = item;
 	return(spell);
 }
@@ -867,18 +775,6 @@ void browse_school_spell(int book, int pval)
 	char choice;
 	char out_val[160];
 
-#if 0
-	/* Show choices */
-	if (show_choices)
-	{
-		/* Update */
-		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
-	}
-#endif	// 0
-
         num = exec_lua(0, format("return book_spells_num(%d)", book));
 
 	/* Build a prompt (accept all spells) */
@@ -886,7 +782,6 @@ void browse_school_spell(int book, int pval)
 	        I2A(0), I2A(num - 1));
 
 	/* Save the screen */
-//	character_icky = TRUE;
 	Term_save();
 
 	/* Display a list of spells */
@@ -925,18 +820,5 @@ void browse_school_spell(int book, int pval)
 
 	/* Restore the screen */
 	Term_load();
-//	character_icky = FALSE;
-
-#if 0
-	/* Show choices */
-	if (show_choices)
-	{
-		/* Update */
-		p_ptr->window |= (PW_SPELL);
-
-		/* Window stuff */
-		window_stuff();
-	}
-#endif	// 0
 }
 

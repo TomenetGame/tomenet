@@ -42,7 +42,7 @@ void do_cmd_messages(void)
 
 	/* Total messages */
 	n = message_num();
-	nn = 0;  // number of new messages
+	nn = 0;  /* number of new messages */
 
 	/* Filter message buffer for "unimportant messages" add to message_recall
 	 * "Target Selected" messages are too much clutter for archers to remove 
@@ -79,10 +79,10 @@ void do_cmd_messages(void)
 		/* Clear screen */
 		Term_clear();
 
-		n = nn;  // new total # of messages in our new array
-		r = 0;	// how many times the message is Repeated
-		s = 0;	// how many lines Saved
-		k = 0;	// end of buffer flag
+		n = nn;  /* new total # of messages in our new array */
+		r = 0;	/* how many times the message is Repeated */
+		s = 0;	/* how many lines Saved */
+		k = 0;	/* end of buffer flag */
 
 
 		/* Dump up to 20 lines of messages */
@@ -105,12 +105,8 @@ void do_cmd_messages(void)
 
 			if (r)
 			{
-//				msg = format("    (the message below repeated %d times)", r + 1);
-//				Term_putstr(72, 21-j+1-k, -1, a, format(" (x%d)", r + 1));
 				Term_putstr(t < 72 ? t : 72, 21-j+1-k, -1, a, format(" (x%d)", r + 1));
 				r = 0;
-//				continue;
-//				s--;
 			}
 
 			/* Apply horizontal scroll */
@@ -118,17 +114,6 @@ void do_cmd_messages(void)
 
 			/* Handle "shower" */
 			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
-
-#if 0
-			/* Handle message from other player */
-			/* Display messages in different colors -Zz */
-			if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL))
-				a = TERM_GREEN;
-			else if (msg[0] == '[')
-				a = TERM_L_BLUE;
-			else 
-				a = TERM_WHITE;
-#endif
 
 			/* Dump the messages, bottom to top */
 			Term_putstr(0, 21-j, -1, a, (char*)msg);
@@ -140,7 +125,6 @@ void do_cmd_messages(void)
 					i, i+j-1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-//		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 23, 0);
 		prt("[Press 'p' for older, 'n' for newer, 'f' for filedump, ..., or ESCAPE]", 23, 0);
 
 		/* Get a command */
@@ -156,7 +140,6 @@ void do_cmd_messages(void)
 		if (k == '#')
 		{
 			char tmp[80];
-//			prt("Goto Line: ", 23, 0);
 			prt(format("Goto Line(max %d): ", n), 23, 0);
 			strcpy(tmp, "0");
 			if (askfor_aux(tmp, 80, 0))
@@ -164,7 +147,6 @@ void do_cmd_messages(void)
 				i = atoi(tmp);
 				i = i > 0 ? (i < n ? i : n - 1) : 0;
 			}
-//			continue;
 		}
 
 		/* Horizontal scroll */
@@ -278,7 +260,6 @@ void do_cmd_messages(void)
 		if (k == 'g')
 		{
 			/* Go oldest */
-//			i = n - 1;
 			i = n - 20;
 		}
 
@@ -353,7 +334,6 @@ void do_cmd_messages_chatonly(void)
 	cptr msg_inven_destroy4 = "All of your ";*/
 	cptr msg_inven_destroy1 = "was destroyed!";
 	cptr msg_inven_destroyx = "were destroyed!";
-	//cptr msg_telepath = "mind";
 
 
 	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
@@ -362,7 +342,7 @@ void do_cmd_messages_chatonly(void)
 
 	/* Total messages */
 	n = message_num();
-	nn = 0;  // number of new messages
+	nn = 0;  /* number of new messages */
 
 	/* Filter message buffer for "important messages" add to message_chat*/
 	for (i = 0; i < n; i++)
@@ -378,7 +358,6 @@ void do_cmd_messages_chatonly(void)
 		    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) || \
 		    (strstr(msg, msg_deadA)  != NULL) || (strstr(msg, msg_deadB)     != NULL) || \
 		    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroyx) != NULL) || \
-//			(strstr(msg, msg_telepath) != NULL) || (msg[2] == '['))
 		    (msg[2] == '['))
 		{
 			message_chat[nn] = msg;	
@@ -416,16 +395,6 @@ void do_cmd_messages_chatonly(void)
 			/* Handle "shower" */
 			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
 
-#if 0
-			/* Handle message from other player */
-			/* Display messages in different colors -Zz */
-			if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL))
-				a = TERM_GREEN;
-			else if (msg[0] == '[')
-				a = TERM_L_BLUE;
-			else 
-				a = TERM_WHITE;
-#endif
 			/* Dump the messages, bottom to top */
 			Term_putstr(0, 21-j, -1, a, (char*)msg);
 		}
@@ -435,7 +404,6 @@ void do_cmd_messages_chatonly(void)
 					i, i+j-1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-//		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 23, 0);
 		prt("[Press 'p' for older, 'n' for newer, 'f' for filedump, ..., or ESCAPE]", 23, 0);
 
 		/* Get a command */
@@ -451,7 +419,6 @@ void do_cmd_messages_chatonly(void)
 		if (k == '#')
 		{
 			char tmp[80];
-//			prt("Goto Line: ", 23, 0);
 			prt(format("Goto Line(max %d): ", n), 23, 0);
 			strcpy(tmp, "0");
 			if (askfor_aux(tmp, 80, 0))
@@ -459,7 +426,6 @@ void do_cmd_messages_chatonly(void)
 				i = atoi(tmp);
 				i = i > 0 ? (i < n ? i : n - 1) : 0;
 			}
-//			continue;
 		}
 
 		/* Horizontal scroll */
@@ -573,7 +539,6 @@ void do_cmd_messages_chatonly(void)
 		if (k == 'g')
 		{
 			/* Go oldest */
-//			i = n - 1;
 			i = n - 20;
 		}
 
@@ -633,14 +598,13 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 	cptr msg_killed = "was killed by";
 	cptr msg_destroyed = "ghost was destroyed by";
 	cptr msg_suicide = "committed suicide.";
-	//cptr msg_telepath = "mind";
 
 
 	char buf[160];
 
 	/* Total messages */
 	n = message_num();
-	nn = 0;  // number of new messages
+	nn = 0;  /* number of new messages */
 
 	/* Filter message buffer for "unimportant messages" add to message_recall
 	 * "Target Selected" messages are too much clutter for archers to remove 
@@ -665,8 +629,6 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 		else
 		{
 			if (
-				//(strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) ||
-				//(strstr(msg, msg_telepath) != NULL) ||
 				(msg[0] == '[') || (msg[2] == '[') ||
 				(strstr(msg, msg_killed) != NULL) ||
 				(strstr(msg, msg_destroyed) != NULL) ||
@@ -684,28 +646,22 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 
 
 	/* Start on first message */
-	//	i = 0;
 	i = nn - lines;
 	if (i < 0) i = 0;
 
 	/* Start at leftmost edge */
 	q = 0;
 
-	/* Save the screen */
-	//	Term_save();
-
-	n = nn;  // new total # of messages in our new array
-	r = 0;	// how many times the message is Repeated
-	s = 0;	// how many lines Saved
-	k = 0;	// end of buffer flag
+	n = nn;  /* new total # of messages in our new array */
+	r = 0;	/* how many times the message is Repeated */
+	s = 0;	/* how many lines Saved */
+	k = 0;	/* end of buffer flag */
 
 
 	/* Dump up to 20 lines of messages */
-//	for (j = 0; i + j + s < n; j++)
 	for (j = 0; j + s < MIN(n, lines); j++)
 	{
 		msg2 = msg;
-//		msg = message_recall[i+j+s];
 		msg = message_recall[MIN(n, lines) - (j+s) - 1];
 
 		/* Handle repeated messages */
@@ -714,7 +670,6 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 			r++;
 			j--;
 			s++;
-//			if (i + j + s < n - 1) continue;
 			if (j + s < MIN(n, lines) - 1) continue;
 			k = 1;
 		}
@@ -753,7 +708,6 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 		buf[q]='\0';
 
 		/* Dump the messages, bottom to top */
-		//fprintf(fff, buf);
 		fputs(buf, fff);
 	}
 	fprintf(fff, "\n\n");

@@ -1957,10 +1957,6 @@ errr Term_clear(void)
 	return (0);
 }
 
-
-
-
-
 /*
  * Redraw (and refresh) the whole window.
  */
@@ -2163,11 +2159,6 @@ errr Term_keypress(int k)
 	/* Success (unless overflow) */
 	if (Term->key_head != Term->key_tail) return (0);
 
-#if 0
-	/* Hack -- Forget the oldest key */
-	if (++Term->key_tail == Term->key_size) Term->key_tail = 0;
-#endif
-
 	/* Problem */
 	return (1);
 }
@@ -2189,11 +2180,6 @@ errr Term_key_push(int k)
 
 	/* Success (unless overflow) */
 	if (Term->key_head != Term->key_tail) return (0);
-
-#if 0
-	/* Hack -- Forget the oldest key */
-	if (++Term->key_tail == Term->key_size) Term->key_tail = 0;
-#endif
 
 	/* Problem */
 	return (1);
@@ -2282,18 +2268,9 @@ errr Term_save(void)
 	int w = Term->wid;
 	int h = Term->hgt;
 
-/* evileye - design upgrade test */
-#ifdef EVIL_TEST
-//	screen_icky++;
-//	if(screen_icky>1) return(0);
-
  	if(screen_icky>3) return(0);
 
  	term_win_copy(Term->mem[screen_icky++], Term->scr, w, h);
-#else
-	/* Grab */
-	term_win_copy(Term->mem, Term->scr, w, h);
-#endif
 
 	/* Success */
 	return (0);
@@ -2312,17 +2289,9 @@ errr Term_load(void)
 	int w = Term->wid;
 	int h = Term->hgt;
 
-/* evileye - design upgrade test */
-#ifdef EVIL_TEST
 	if(!screen_icky) return(0);	/* should really be a value */
-//	screen_icky--;
-//	if(screen_icky) return(0);
 
  	term_win_copy(Term->scr, Term->mem[--screen_icky], w, h);
-#else
-	/* Load */
-	term_win_copy(Term->scr, Term->mem, w, h);
-#endif
 
 	/* Assume change */
 	for (y = 0; y < h; y++)
@@ -2359,13 +2328,6 @@ errr Term_resize(int w, int h)
 	term_win *hold_scr;
 	term_win *hold_mem[4];
 
-#if 0
-
-	term_win *hold_tmp;
-
-#endif
-
-
 	/* Ignore illegal changes */
 	if ((w < 1) || (h < 1)) return (1);
 
@@ -2393,14 +2355,6 @@ errr Term_resize(int w, int h)
 		/* Save old window */
 		hold_mem[i] = Term->mem[i];
 	}
-
-#if 0
-
-	/* Save old window */
-	hold_tmp = Term->tmp;
-
-#endif
-
 
 	/*** Make new ***/
 
@@ -2439,23 +2393,6 @@ errr Term_resize(int w, int h)
 		term_win_copy(Term->mem[i], hold_mem[i], wid, hgt);
 	}
 
-
-
-
-#if 0
-
-	/* Create new window */
-	MAKE(Term->tmp, term_win);
-
-	/* Initialize new window */
-	term_win_init(Term->tmp, w, h);
-
-	/* Save the contents */
-	term_win_copy(Term->tmp, hold_tmp, wid, hgt);
-
-#endif
-
-
 	/*** Kill old ***/
 
 	/* Free some arrays */
@@ -2485,20 +2422,6 @@ errr Term_resize(int w, int h)
 		KILL(hold_mem[i], term_win);
 	}
 
-
-#if 0
-
-	/* Nuke */
-	term_win_nuke(hold_tmp, Term->wid, Term->hgt);
-
-	/* Kill */
-	KILL(hold_tmp, term_win);
-
-#endif
-
-
-	/*** Verify cursor ***/
-
 	/* Illegal cursor */
 	if (Term->old->cx >= w) Term->old->cu = 1;
 	if (Term->old->cy >= h) Term->old->cu = 1;
@@ -2512,15 +2435,6 @@ errr Term_resize(int w, int h)
 		if (Term->mem[i]->cx >= w) Term->mem[i]->cu = 1;
 		if (Term->mem[i]->cy >= h) Term->mem[i]->cu = 1;
 	}
-
-#if 0
-
-	/* Illegal cursor */
-	if (Term->tmp->cx >= w) Term->tmp->cu = 1;
-	if (Term->tmp->cy >= h) Term->tmp->cu = 1;
-
-#endif
-
 
 	/* Save new size */
 	Term->wid = w;
@@ -2634,17 +2548,6 @@ errr term_nuke(term *t)
 		KILL(t->mem[i], term_win);
 	}
 
-#if 0
-
-	/* Nuke "temporary" */
-	term_win_nuke(t->tmp, w, h);
-
-	/* Kill "temporary" */
-	KILL(t->tmp, term_win);
-
-#endif
-
-
 	/* Free some arrays */
 	C_KILL(t->x1, h, byte);
 	C_KILL(t->x2, h, byte);
@@ -2712,17 +2615,6 @@ errr term_init(term *t, int w, int h, int k)
 		/* Initialize "memorized" */
 		term_win_init(t->mem[y], w, h);
 	}
-
-
-#if 0
-
-	/* Allocate "temporary" */
-	MAKE(t->tmp, term_win);
-
-	/* Initialize "temporary" */
-	term_win_init(t->tmp, w, h);
-
-#endif
 
 	/* Assume change */
 	for (y = 0; y < h; y++)
