@@ -290,7 +290,7 @@ D:powers elemental and ethereal.
 N:18:of Melkor
 I:22:2:-4
 W:65:45:200:100000
-P:0:4d6:12:24:0
+P:0:4d5:12:24:0
 F:STEALTH | WIS | CURSED | HEAVY_CURSE | TY_CURSE | ESP_GOOD | 
 F:DRAIN_MANA | DRAIN_HP | 
 F:RES_DARK | RES_BLIND | RES_LITE | RES_NETHER | BRAND_POIS | RES_CONF
@@ -980,7 +980,7 @@ D:an edge to wound the wind.
 N:71:'Calris'
 I:23:21:5
 W:30:15:140:100000
-P:0:5d4:-20:20:0
+P:0:5d6:-20:20:0
 F:CON | HIDE_TYPE | DRAIN_HP | 
 F:KILL_DRAGON | SLAY_EVIL | SLAY_DEMON | SLAY_TROLL | RES_DISEN | 
 F:AGGRAVATE | CURSED | HEAVY_CURSE | SHOW_MODS | ESP_DRAGON | ESP_DEMON
@@ -1299,7 +1299,7 @@ D:the minds of their enemies.
 N:94:of Pain
 I:22:13:0
 W:30:155:190:150000
-P:0:9d6:0:30:0
+P:0:9d7:0:30:0
 F:SHOW_MODS | LEVELS | DRAIN_MANA
 D:The massive chopper that crowns this glaive glows blood-red and black; 
 D:fell spells of annihilation swirl and dance as you swing death's myrmidon 
@@ -1311,7 +1311,7 @@ D:down.
 N:95:'Osondir'
 I:22:15:1
 W:10:8:190:62000
-P:0:3d5:9:15:0
+P:0:3d9:9:15:0
 F:CHR | HIDE_TYPE | BLOWS | 
 F:BRAND_FIRE | SLAY_UNDEAD | SLAY_GIANT | IM_FIRE | RES_SOUND | 
 F:FEATHER | SEE_INVIS | SHOW_MODS | ESP_GIANT
@@ -1324,7 +1324,7 @@ D:clear-eyed in barrows fell, wielding a halberd glowing ruby red.
 N:96:'Til-i-arc'
 I:22:8:3
 W:20:15:160:72000
-P:0:2d5:10:15:10
+P:0:2d11:10:15:10
 F:INT | HIDE_TYPE | 
 F:BRAND_COLD | BRAND_FIRE | SLAY_DEMON | SLAY_TROLL | SLAY_GIANT | ESP_GIANT |
 F:IM_FIRE | IM_COLD | SUST_INT | SLOW_DIGEST | SHOW_MODS |
@@ -1338,7 +1338,7 @@ D:demons, who war forever, trapped by magely spells.
 N:97:'Aeglos'
 I:22:2:4
 W:15:45:50:180000
-P:0:3d6:15:25:5
+P:0:3d5:15:25:5
 F:DEX | WIS | HIDE_TYPE |
 F:BRAND_COLD | BRAND_ELEC | LITE1 | 
 F:SLAY_TROLL | SLAY_ORC | SLAY_GIANT | KILL_UNDEAD | 
@@ -1353,7 +1353,7 @@ D:Elves, against which all the foul corruptions of Sauron dashed in vain.
 N:98:of Orome
 I:22:2:4
 W:15:45:50:177777
-P:0:4d6:15:15:0
+P:0:4d5:15:15:0
 F:INT | WIS | SPEED | TUNNEL | INFRA | HIDE_TYPE | SEARCH |
 F:BRAND_FIRE |
 F:SLAY_GIANT | SLAY_EVIL | KILL_DEMON | KILL_UNDEAD | KILL_DRAGON |
@@ -1370,7 +1370,7 @@ D:which can melt rock or flesh with ease.
 N:99:'Nimloth'
 I:22:2:3
 W:15:12:50:60000
-P:0:1d6:11:13:0
+P:0:1d5:11:13:0
 F:STEALTH | RES_DARK | INFRA | SPEED | BLESSED | 
 F:BRAND_COLD | SLAY_UNDEAD | IM_COLD | SEE_INVIS | SHOW_MODS | RES_FEAR
 D:A thin spike of thrice-forged steel caps a straight sylvan shaft cut from 
@@ -1426,7 +1426,7 @@ D:evil at a word, and grants Maia-like powers of body and mind.
 N:103:of Balli Stonehand
 I:24:22:3
 W:30:15:170:90000
-P:0:3d8:8:21:5
+P:0:3d9:8:21:5
 F:STR | CON | STEALTH | HIDE_TYPE | ESP_NONLIVING |
 F:SLAY_DEMON | SLAY_TROLL | SLAY_ORC | FREE_ACT | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_BLIND | FEATHER | 
@@ -1440,7 +1440,7 @@ D:to resist and endure lie ready for he who shall wield it once more.
 N:104:'Lotharang'
 I:24:22:1
 W:10:15:170:41000
-P:0:2d8:4:9:0
+P:0:2d9:4:9:0
 F:STR | DEX | HIDE_TYPE | BLOWS | REGEN | RES_SHARDS | 
 F:SLAY_TROLL | SLAY_ORC | ACTIVATE | SHOW_MODS
 D:A superbly crafted double-bladed axe that slays the creatures of earth and 
@@ -1452,7 +1452,7 @@ D:allows rapid recovery from their blows.
 N:105:of the Dwarves
 I:24:28:10
 W:30:8:250:100000
-P:0:3d6:12:17:0
+P:0:3d7:12:17:0
 F:SLAY_EVIL | TUNNEL | INFRA | SEARCH | SLAY_GIANT | SLAY_EVIL | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_FEAR |
 F:SHOW_MODS
@@ -1552,7 +1552,7 @@ D:whose wielder holds the lives of all Morgoth's servants in his hand.
 N:112:'Totila'
 I:21:13:2
 W:3:8:150:55000
-P:0:3d6:6:8:0
+P:0:3d7:6:8:0
 F:STEALTH | 
 F:SLAY_EVIL | BRAND_FIRE | IM_FIRE | RES_CONF | ACTIVATE | 
 F:SHOW_MODS | LITE1
@@ -1615,7 +1615,7 @@ D:fingers and eyebrows.
 N:117:of Aule
 I:21:8:5
 W:60:75:120:250000
-P:0:9d3:19:21:5
+P:0:9d4:19:21:5
 F:WIS | TUNNEL | HIDE_TYPE | RES_FEAR | RES_POIS | 
 F:KILL_DRAGON | SLAY_EVIL | BRAND_ELEC | SLAY_UNDEAD | SLAY_DEMON | 
 F:FREE_ACT | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_NEXUS | 
@@ -2054,7 +2054,7 @@ D:the Sandworm Queen.
 N:154:'Dragonbane'
 I:24:28:2
 W:70:20:260:173000
-P:0:3d6:20:20:0
+P:0:3d7:20:20:0
 F:BLOWS | KILL_DRAGON | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
 F:RES_POIS | SHOW_MODS | RES_SHARDS | FREE_ACT
 D:Forged by the Dwarves to defend their home of Khazad-dum from dragons, 
@@ -2085,7 +2085,7 @@ D:this axe turned many a battle against the invading orcs.
 N:157:of the Night
 I:24:1:4
 W:45:20:45:154000
-P:0:2d6:34:22:0
+P:0:2d5:34:22:0
 F:DEX | STEALTH | VAMPIRIC | KILL_UNDEAD | RES_DARK | HIDE_TYPE | 
 F:SHOW_MODS | SEE_INVIS | ACTIVATE | DRAIN_EXP
 D:Found on an unmarked grave after a violent storm, this hatchet 
@@ -2349,7 +2349,7 @@ D:the Southron barbarians handle poisoned darts naturally.
 N:177:'Skullcleaver'
 I:21:15:5
 W:30:15:500:70000
-P:0:5d4:11:23:20
+P:0:5d5:11:23:20
 F:STR | TUNNEL | INFRA | HIDE_TYPE | 
 F:CURSED | AGGRAVATE | NO_MAGIC | 
 F:RES_NEXUS | RES_BLIND | RES_SOUND | 
@@ -2662,8 +2662,8 @@ D:Not to be found by players. (C. Blue)
 
 N:219:of Dain Ironfoot
 I:24:22:5
-W:30:20:170:100000
-P:0:6d8:8:15:0
+W:60:20:170:100000
+P:0:5d9:8:15:0
 F:STR | CON | ESP_ORC | ESP_TROLL | RES_FEAR | 
 F:SLAY_TROLL | SLAY_ORC | FREE_ACT | 
 F:IM_FIRE | RES_LITE | RES_DARK | SUST_STR | SUST_CON | BRAND_FIRE
