@@ -1872,11 +1872,6 @@ static int Handle_login(int ind)
 		}
 	}
 
-	/* update the client files */
-	remote_update(NumPlayers, "scpt/spells.lua");
-	remote_update(NumPlayers, "scpt/s_convey.lua");
-	remote_update(NumPlayers, "scpt/s_aux.lua");
-
 	/* Tell the meta server about the new player */
 	Report_to_meta(META_UPDATE);
 
@@ -2732,21 +2727,20 @@ int Receive_file_data(int ind, unsigned short len, char *buffer){
 
 int Send_file_check(int ind, unsigned short id, char *fname){
 	connection_t *connp = &Conn[ind];
-	Packet_printf(&connp->w, "%c%c%hd%s", PKT_FILE, PKT_FILE_CHECK, id, fname);
+	Packet_printf(&connp->c, "%c%c%hd%s", PKT_FILE, PKT_FILE_CHECK, id, fname);
 	return(0);
 }
 
 int Send_file_init(int ind, unsigned short id, char *fname){
 	connection_t *connp = &Conn[ind];
-	Packet_printf(&connp->w, "%c%c%hd%s", PKT_FILE, PKT_FILE_INIT, id, fname);
+	Packet_printf(&connp->c, "%c%c%hd%s", PKT_FILE, PKT_FILE_INIT, id, fname);
 	return(0);
 }
 
 int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
 	connection_t *connp = &Conn[ind];
-	printf("send data\n");
-	Packet_printf(&connp->w, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
-	if (Sockbuf_write(&connp->w, buf, len) != len){
+	Packet_printf(&connp->c, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
+	if (Sockbuf_write(&connp->c, buf, len) != len){
 		printf("failed sending file data\n");
 	}
 	return(0);
@@ -2754,8 +2748,7 @@ int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
 
 int Send_file_end(int ind, unsigned short id){
 	connection_t *connp = &Conn[ind];
-	printf("send end\n");
-	Packet_printf(&connp->w, "%c%c%hd", PKT_FILE, PKT_FILE_END, id);
+	Packet_printf(&connp->c, "%c%c%hd", PKT_FILE, PKT_FILE_END, id);
 	return(0);
 }
 

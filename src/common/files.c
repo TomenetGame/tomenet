@@ -45,7 +45,10 @@ int getfile(int ind, unsigned short fnum){
 }
 
 int new_fileid(){
-	return(123);
+	static int c_id=0;
+	c_id++;
+	if(!c_id) c_id=1;
+	return(c_id);
 }
 
 /* acknowledge recipient ready to receive more */
@@ -117,7 +120,7 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 	if(!fdata[num].state&FS_CHECK){
 		return(0);
 	}
-	if(lsum!=sum){
+	if(lsum!=sum || 1){
 		path_build(buf, 4096, ANGBAND_DIR, fdata[num].fname);
 		fd=open(buf, O_RDONLY);
 		if(fd==-1){
