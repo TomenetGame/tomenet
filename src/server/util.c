@@ -3040,7 +3040,7 @@ void player_talk_aux(int Ind, cptr message)
 
 						/* skip unsuitable inscriptions */
 						if (o_ptr->note &&
-								(strcmp(quark_str(o_ptr->note), "cursed") ||
+								(!strcmp(quark_str(o_ptr->note), "cursed") ||
 								 check_guard_inscription(o_ptr->note, 'w')) )continue;
 
 						if (wield_slot(Ind, o_ptr) != i) continue;
