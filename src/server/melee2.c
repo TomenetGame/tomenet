@@ -909,12 +909,14 @@ bool monst_check_grab(int m_idx, cptr desc)
 {
 //	player_type *p_ptr;
 	monster_type	*m_ptr = &m_list[m_idx];
+	monster_race    *r_ptr = race_inf(m_ptr);
 
 	worldpos *wpos = &m_ptr->wpos;
 
 	cave_type **zcave;
 	int i, x2 = m_ptr->fx, y2 = m_ptr->fy;
 	int grabchance;
+	int rlev = r_ptr->level;
 
 	if (!(zcave=getcave(wpos))) return(FALSE);
 
@@ -934,7 +936,7 @@ bool monst_check_grab(int m_idx, cptr desc)
 		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed)
 			continue;
 
-		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 80);
+		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 150) - rlev;
 
 		/* Apply Martial-arts bonus */
 		if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(q_ptr)

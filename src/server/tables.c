@@ -1758,6 +1758,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 600,
                         },
+                        {
+                                SKILL_SPELLRAD,
+                                '+', 0,
+                                '+', 500,
+                        },
 
                         /* Sneakiness tree */
                         {
@@ -2104,6 +2109,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 800,
                         },
                         {
+                                SKILL_SPELLRAD,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
                                 SKILL_DEVICE,
                                 '+', 1000,
                                 '+', 800,
@@ -2197,6 +2207,11 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_SHADOW,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_SPELLLENGTH,
                                 '+', 1000,
                                 '+', 700,
                         },
@@ -5076,6 +5091,26 @@ skill_type s_info[MAX_SKILLS] =
                 /* Flags */
                 0,
         },
+        {
+                "Revelation",
+                "Affects how broad a revelation your prayer will bring.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
 };
 
 /*
@@ -5110,6 +5145,7 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_SHADOW, SKILL_SPELLLENGTH },
         { SKILL_MAGIC, SKILL_MIMIC },
         { SKILL_MAGIC, SKILL_PRAY },
+        { SKILL_PRAY, SKILL_SPELLRAD },
 
         { -1, SKILL_SNEAKINESS },
         { SKILL_SNEAKINESS, SKILL_STEALTH },

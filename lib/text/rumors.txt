@@ -7,7 +7,7 @@
 # You should manually write the total # of rumous (lines - 10).
 
 N:*:Default
-621
+632
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -632,4 +632,13 @@ They say that you don't need Free-Action at all to feed carrion crawlers.
 They say that carrying Teleportation scrolls, staves and rings isn't paranoia.
 They say that never try to pick things up when you're wounded.
 They say that Ent is tree and tree can {rburn{W.
+They say that learn about your merchandise.
+I still cannot see why that naked barbalian isn't afraid of traps at all.
+They say that hobbits are great slingers, in general.
+They say that from a garbage dump you can pick nice grenades.
+They say that jump over the doors and everything's fine.
+They say that if you find a long and straight corridor, just don't walk in.
+They say that you cannot master martial arts really without learning to dodge.
+(AD) Purchase the Gazette and you'll never miss the trend!
+They say that 
 They say that 

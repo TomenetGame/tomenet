@@ -1447,7 +1447,7 @@ static void process_player_end(int Ind)
 		/* Unbelievers "resist" magic */
 //		int minus = (p_ptr->anti_magic)?3:1;
 		int minus = 1 + get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 3);
-		int recovery = magik(get_skill_scale(p_ptr, SKILL_HEALTH, 100))?1:0;
+		int recovery = magik(get_skill_scale(p_ptr, SKILL_HEALTH, 100))?2:0;
 		
 		/*** Damage over Time ***/
 

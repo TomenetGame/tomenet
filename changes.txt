@@ -1150,6 +1150,8 @@ To find the latest change quickly, search ==== :)
 [C]- .mangrc changed to .tomenetrc
 [C]- Chardump ability in the char screen
 
+25/06/2002 (Jir)
+- SKILL_SPELLRAD('Revelation')
 
 
 

@@ -830,7 +830,8 @@ void do_cmd_cast(int Ind, int book, int spell)
 	int			i, j, sval;
 	int			chance, beam;
 	int			plev = get_skill(p_ptr, SKILL_MAGERY);
-	int			rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
+//	int			rad = DEFAULT_RADIUS_SPELL(p_ptr);
+	int	rad = DEFAULT_RADIUS - 5 + get_skill_scale(p_ptr, SKILL_MAGERY, 10);
 
 	object_type		*o_ptr;
 
@@ -1057,7 +1058,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 
 			case 11:
 			{
-				(void)destroy_doors_touch(Ind);
+				(void)destroy_doors_touch(Ind, 1);
 				break;
 			}
 
@@ -1960,7 +1961,8 @@ void do_cmd_sorc(int Ind, int book, int spell)
 	int			i, j, sval;
 	int			chance, beam;
 	int			plev = get_skill(p_ptr, SKILL_SORCERY);
-	int			rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
+//	int			rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
+	int	rad = DEFAULT_RADIUS - 5 + get_skill_scale(p_ptr, SKILL_SORCERY, 10);
 
 	object_type		*o_ptr;
 
@@ -2826,7 +2828,8 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 	int item, sval, j, chance, i;
 	int plev = get_skill(p_ptr, SKILL_PRAY);
-	int	rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
+//	int	rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
+	int	rad = DEFAULT_RADIUS - 5 + get_skill_scale(p_ptr, SKILL_SPELLRAD, 30);
 
 	object_type	*o_ptr;
 
@@ -3424,7 +3427,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 46:
 			{
-				(void)destroy_doors_touch(Ind);
+				(void)destroy_doors_touch(Ind, 1 + get_skill_scale(p_ptr, SKILL_SPELLRAD, 2));
 				break;
 			}
 
@@ -4682,7 +4685,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 			}
 			case 7: /* T/D dest */
 			{
-				destroy_doors_touch(Ind);
+				destroy_doors_touch(Ind, 1);
 				break;
 			}
 		

@@ -204,13 +204,19 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
  */
 /*
  * makeshift river for 3.3.x
- * [15,4,8,25,4]
+ * pfft, still alive for 4.0.0...
+ * [15,7,4,6,45,4,19,100]
+ *
+ * A player is supposed to cross 2 watery belts without avoiding them
+ * by scumming;  the first by swimming, the second by flying parhaps.
  */
-#define DUN_RIVER_CHANCE	15
+#define DUN_RIVER_CHANCE	15	/* The deeper, the less watery area. */
+#define DUN_RIVER_REDUCE	7	/* DUN_RIVER_CHANCE / 2, maximum. */
 #define DUN_STR_WAT			4
-#define DUN_LAKE_TRY		8	/* how many tries to generate lake on river */
-#define WATERY_CYCLE		25	/* defines 'watery belt' */
-#define WATERY_RANGE		4	/* (25,4) = '1100-1250,2350-2500...' */
+#define DUN_LAKE_TRY		6	/* how many tries to generate lake on river */
+#define WATERY_CYCLE		45	/* defines 'watery belt' */
+#define WATERY_RANGE		4	/* (45,4,19) = '1100-1250, 3350-3500,.. ' */
+#define WATERY_OFFSET		19
 #define WATERY_BELT_CHANCE	100 /* chance of river generated on watery belt */
 
 /*
@@ -3867,8 +3873,8 @@ static void cave_gen(struct worldpos *wpos)
 
 	/* Hack -- Watery caves */
 	dun->watery = glev > 5 &&
-		(((glev % WATERY_CYCLE) >= (WATERY_CYCLE - WATERY_RANGE))?
-		magik(WATERY_BELT_CHANCE) : magik(DUN_RIVER_CHANCE));
+		((((glev + WATERY_OFFSET) % WATERY_CYCLE) >= (WATERY_CYCLE - WATERY_RANGE))?
+		magik(WATERY_BELT_CHANCE) : magik(DUN_RIVER_CHANCE - glev * DUN_RIVER_REDUCE / 100));
 
 	/* Actual maximum number of rooms on this level */
 /*	dun->row_rooms = MAX_HGT / BLOCK_HGT;

@@ -1815,7 +1815,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
 			{
-				if (destroy_doors_touch(Ind)) ident = TRUE;
+				if (destroy_doors_touch(Ind, 1)) ident = TRUE;
 				break;
 			}
 
@@ -4261,7 +4261,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_CASPANION:
 			{
 				msg_print(Ind, "Your armor glows bright red...");
-				destroy_doors_touch(Ind);
+				destroy_doors_touch(Ind, 1);
 				o_ptr->timeout = 10;
 				break;
 			}
@@ -4746,7 +4746,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_CASPANION:
 			{
 				msg_print(Ind, "Your armor glows bright red...");
-				destroy_doors_touch(Ind);
+				destroy_doors_touch(Ind, 1);
 				o_ptr->timeout = 10;
 				break;
 			}
@@ -5670,7 +5670,7 @@ void do_cmd_activate(int Ind, int item)
 			case ART_BILBO:
 			{
 				msg_print(Ind, "Your picklock flashes...");
-				destroy_doors_touch(Ind);
+				destroy_doors_touch(Ind, 2);
 				o_ptr->timeout = 30 + randint(30);
 				return;
 			}

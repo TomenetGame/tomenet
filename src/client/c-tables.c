@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: tables.c */
 
 /* Purpose: Angband Tables */
@@ -13,6 +14,7 @@
 /*
  * Only a little of the file is used for the client, the rest is commented out.
  */
+#if 1	// Entire file!		- Jir -
 
 #include "angband.h"
 
@@ -2880,3 +2882,5 @@ cptr monster_spells6[32] =
   "XXX",
   /* Summons follow, but players can't summon */
 };
+
+#endif	// 0

@@ -5025,12 +5025,12 @@ bool trap_creation(int Ind, int mod, int rad)
 	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, mod, GF_MAKE_TRAP, flg));
 }
 
-bool destroy_doors_touch(int Ind)
+bool destroy_doors_touch(int Ind, int rad)
 {
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg));
+	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg));
 }
 
 bool sleep_monsters_touch(int Ind)

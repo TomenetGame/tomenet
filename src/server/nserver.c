@@ -1343,6 +1343,11 @@ static int Handle_listening(int ind)
 	// The verification block is 2654 bytes long.  Make sure we have this
 	// much data past the basic player information.  If we don't, then reset
 	// the read location and exit.
+	/*
+	 * It's quite doubtful if it's 2654 bytes, since MAX_R_IDX and MAX_K_IDX
+	 * etc are much bigger than before;  however, let's follow the saying
+	 * 'Never touch what works' ;)		- Jir -
+	 */
 	if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
 	{
 		connp->r.ptr = connp->r.buf;

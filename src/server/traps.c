@@ -2254,7 +2254,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          break;
       /* Trap of Garbage */
       case TRAP_OF_GARBAGE:
-		 ident = do_player_trap_garbage(Ind, 300);
+		 ident = do_player_trap_garbage(Ind, 300 + glev * 3);
 		 break;
       /* Trap of discordance */
 	  case TRAP_OF_HOSTILITY:
@@ -2359,12 +2359,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          break;
       case TRAP_OF_PRESENT_EXCHANGE:
 		 ident = do_player_drop_items(Ind, 50, TRUE);
-		 ident |= do_player_trap_garbage(Ind, 300);
+		 ident |= do_player_trap_garbage(Ind, 300 + glev * 3);
 		 break;
       case TRAP_OF_GARBAGE_FILLING:
          {
             s16b nx, ny;
-			ident |= do_player_trap_garbage(Ind, 300);
+			ident |= do_player_trap_garbage(Ind, 300 + glev * 3);
             for (nx=x-8;nx<=x+8;nx++)
             {
                for (ny=y-8;ny<=y+8;ny++)
