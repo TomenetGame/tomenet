@@ -300,7 +300,7 @@ Ever met Morgie twice?
 Ever tried to rob a store?
 Ever been in yeek town?
 Ever heard about Mirkwood Legends?
-Ever seen a God or Godesse player?
+Ever seen a God or Goddess player?
 [The Lady] Thou art doomed, poor little mangband player..
 [Olorin] mh
 [Moltor] pfft
@@ -330,9 +330,9 @@ Never slam the door!
 (AD) please deposit your spare artifacts to PARC(Pern Arts Recycle Centre)!
 YOU'VE JUST WON THE FORTUNE-COOKIE LOTTERY! REPORT IT TO THE ML NOW!
 They say that One of the easiest way to find PoAS is to play an unbeliever.
-They say that archemist never stocks restore potions of the kind you need. 
+They say that alchemist never stocks restore potions of the kind you need. 
 Segmentation fault - core dumped.
-That server either isn't up, or you mistyped the hostname.
+This server either isn't up, or you mistyped the hostname.
 They say that only vaccinated can survive beneath 2000'
 They say that Yeek is weak, weak is Yeek.
 They say that Ent is slow, slow is Ent.
