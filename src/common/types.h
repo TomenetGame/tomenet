@@ -1666,6 +1666,14 @@ struct hostile_type
 	hostile_type *next;	/* Next in list */
 };
 
+/* remotely ignore players */
+struct remote_ignore
+{
+	char name[40];
+	short serverid;
+	struct remote_ignore *next;	/* Next in list */
+};
+
 /* The Troll Pit */
 /* Temporary banning of certain addresses */
 struct ip_ban{
@@ -2278,6 +2286,7 @@ struct player_type
 
 	/* elements under this line won't be saved...for now. - Jir - */
 	hostile_type	*ignore;  /* List of players whose chat we wish to ignore */
+	struct remote_ignore	*w_ignore;  /* List of players whose chat we wish to ignore */
 	bool	afk;		/* player is afk */
 	bool	use_r_gfx;	/* hack - client uses gfx? */
 
