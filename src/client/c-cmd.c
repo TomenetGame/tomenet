@@ -2432,6 +2432,12 @@ void cmd_master_aux_player(){
 			case '7':
 				buf[0]='B';
 				get_string("Message:",&buf[1],69);
+				{
+				  int j;
+				  for(j=0;j<60;j++){
+				    if(buf[j]=='{') buf[j]='\377';
+				  }
+				}
 				break;
 			case ESCAPE:
 				break;
