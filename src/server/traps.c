@@ -803,7 +803,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos = &p_ptr->wpos;
 	bool ident = FALSE, never_id = FALSE;
-	s16b trap, vanish;
+	s16b trap=0, vanish;
 	//   dungeon_info_type *d_ptr = &d_info[dungeon_type];
 
 	s16b k, l, glev = getlevel(wpos);
@@ -813,14 +813,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	/* Paranoia */
 	cave_type **zcave;
 	if (!in_bounds(y, x)) return(FALSE);
-	if((zcave=getcave(wpos)))
-	{
-		c_ptr=&zcave[y][x];
 
-		if (item < 0)
-		{
-			trap = GetCS(c_ptr, CS_TRAPS)->sc.trap.t_idx;
-		}
+	if(!(zcave=getcave(wpos))) return(FALSE);
+	c_ptr=&zcave[y][x];
+
+	if (item < 0)
+	{
+		trap = GetCS(c_ptr, CS_TRAPS)->sc.trap.t_idx;
 	}
 
 	if (i_ptr == NULL)
@@ -4338,7 +4337,7 @@ bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
  */
 bool mon_hit_trap(int m_idx)
 {
-	player_type *p_ptr;
+	player_type *p_ptr(player_type*)NULL;
 	monster_type *m_ptr = &m_list[m_idx];
 	//	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);

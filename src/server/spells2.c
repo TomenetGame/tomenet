@@ -3706,8 +3706,7 @@ bool genocide(int Ind)
 
 	int		i;
 
-	char	typ;
-
+	char	typ=-1;	
 
 	int d = 999, tmp;
 

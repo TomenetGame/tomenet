@@ -1352,8 +1352,8 @@ static void wr_hostilities(int Ind)
 static void wr_dungeon(struct worldpos *wpos)
 {
 	int y, x, i;
-	byte prev_feature, n;
-	u16b prev_info;
+	byte prev_feature=0xff, n;
+	u16b prev_info=0xffff;
 	unsigned char runlength;
 	struct c_special *cs_ptr;
 
@@ -1506,7 +1506,7 @@ void wr_cave_memory(Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int y,x;
-	char prev_flag;
+	char prev_flag=-1;	/* just for definedness. */
 	unsigned char runlength = 0;
 
 	/* write the number of flags */

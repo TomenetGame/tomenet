@@ -313,7 +313,8 @@ bool check_st_anchor(struct worldpos *wpos, int y, int x)
  */
 bool teleport_away(int m_idx, int dis)
 {
-	int			ny, nx, oy, ox, d, i, min;
+	int		oy, ox, d, i, min;
+	int		ny=0, nx=0;
 
 	bool		look = TRUE;
 
@@ -810,7 +811,7 @@ void teleport_player_level(int Ind)
 	wilderness_type *w_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
 	struct worldpos new_depth;
-	char *msg;
+	char *msg="\377rCritical bug!";
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
@@ -4841,10 +4842,12 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		case GF_HOLD:
 		case GF_DOMINATE:
-			if(!(r_ptr->flags1 & (RF1_UNIQUE|RF1_NEVER_MOVE)) && 
-				!(r_ptr->flags9 & RF9_IM_PSI) && !(r_ptr->flags7 & RF7_MULTIPLY))
-				m_ptr->owner=p_ptr->id;
-			note = " starts following you.";
+			if(!quiet){
+				if(!(r_ptr->flags1 & (RF1_UNIQUE|RF1_NEVER_MOVE)) && 
+					!(r_ptr->flags9 & RF9_IM_PSI) && !(r_ptr->flags7 & RF7_MULTIPLY))
+					m_ptr->owner=p_ptr->id;
+				note = " starts following you.";
+			}
 			dam=0;
 			break;
 

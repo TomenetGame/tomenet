@@ -2349,9 +2349,8 @@ static void do_slash_cmd(int Ind, char *message)
 			}
 			else
 			{
-				int item;
+				int item=-1;
 				object_type *o_ptr;
-				bool found = FALSE;
 
 				for(i = 0; i < INVEN_PACK; i++)
 				{
@@ -2361,12 +2360,11 @@ static void do_slash_cmd(int Ind, char *message)
 					if (find_inscription(o_ptr->note, "@R"))
 					{
 						item = i;
-						found = TRUE;
 						break;
 					}
 				}
 
-				if (!found)
+				if (i==-1)
 				{
 					msg_print(Ind, "\377oInscription {@R} not found.");
 					return;

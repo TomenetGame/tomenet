@@ -997,7 +997,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 		}
 
 		/* Still hurt badly, couldn't flee, attempt to heal */
-		else if (has_heal && m_ptr->hp < m_ptr->maxhp / 4 || m_ptr->stunned)
+		else if (has_heal && (m_ptr->hp < m_ptr->maxhp / 4 || m_ptr->stunned))
 		{
 			/* Choose heal spell */
 			f4_mask = (RF4_HEAL_MASK);
@@ -1513,7 +1513,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* Assume "projectable" */
 	bool direct = TRUE;
 
-	bool stupid, summon;
+	bool stupid, summon=FALSE;
 	int rad = 0, srad;
 
 
@@ -4543,13 +4543,13 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		if (ax < 2 && ay > 5 &&
 			projectable(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, y2, x2))
 		{
-			x = (x > 0 || !x && magik(50)) ? -ay / 2: ay / 2;
+			x = (x > 0 || (!x && magik(50))) ? -ay / 2: ay / 2;
 			ax = ay / 2;
 		}
 		if (ay < 2 && ax > 5 &&
 			projectable(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, y2, x2))
 		{
-			y = (y > 0 || !y && magik(50)) ? -ax / 2: ax / 2;
+			y = (y > 0 || (!y && magik(50))) ? -ax / 2: ax / 2;
 			ay = ax / 2;
 		}
 	}

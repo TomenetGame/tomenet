@@ -560,14 +560,13 @@ void wild_add_monster(struct worldpos *wpos)
 	get_mon_num_prep();
 	
 	/* find a legal, unoccupied space */
-	while (tries < 50)
-	{
+	do{
 		monst_x = rand_int(MAX_WID);
 		monst_y = rand_int(MAX_HGT);
 		
 		if (cave_naked_bold(zcave, monst_y, monst_x)) break;
 		tries++;
-	}
+	}while (tries < 50);
 	
 	/* get the monster */
 	r_idx = get_mon_num(monster_level);
@@ -2434,7 +2433,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 							fputc(c_ptr->feat, gfp);
 							if(c_ptr->feat==FEAT_HOME){
 								id=0;
-								if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR)) && key==cs_ptr->sc.ptr)
+								if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR)) && (key=cs_ptr->sc.ptr))
 									id=key->id;
 								fputc((id>>8), gfp);
 								fputc(id&0xff, gfp);

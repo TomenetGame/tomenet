@@ -690,7 +690,6 @@ s16b o_pop(void)
 {
 	int i, n, k;
 
-
 	/* Initial allocation */
 	if (o_max < MAX_O_IDX)
 	{
@@ -5726,10 +5725,11 @@ void place_gold(struct worldpos *wpos, int y, int x)
 /* XXX XXX XXX DIRTY! DIRTY! DIRTY!		- Jir - */
 s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
 {
-	int		k, d, ny, nx, y1, x1, o_idx, i, s;
+	int		k, d, ny, nx, y1, x1, i, s;
 	int bs, bn;
 	int by, bx;
 	int ty, tx;
+	int o_idx=-1;
 	int flag = 0;	// 1 = normal, 2 = combine, 3 = crash
 
 	cave_type	*c_ptr;
@@ -5752,7 +5752,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		if (wizard) msg_print("(breakage)");
 #endif	// 0
 		/* Failure */
-		return (0);
+		return (-1);
 	}
 
 #if 0
