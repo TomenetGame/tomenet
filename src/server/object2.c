@@ -2670,8 +2670,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
                 }
 		case TV_DRAG_ARMOR:
 		{
-			/* Mention the item */
-//                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
 
 			break;
 		}
@@ -2679,8 +2677,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 		{
 			if (o_ptr->sval == SV_DRAGON_SHIELD)
 			{
-				/* Mention the item */
-//                                if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
 
 				/* pfft */
 //				dragon_resist(o_ptr);
@@ -3362,8 +3358,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						break;
 					}
 
-					/* Mention the item */
-//                                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
 
 					break;
 				}
@@ -3518,8 +3512,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 //					o_ptr->xtra1 = EGO_XTRA_ABILITY;
 //					o_ptr->xtra2 = randint(256);
 
-					/* Mention the item */
-					/*if (cheat_peek) object_mention(o_ptr);*/
 
 					break;
 				}
@@ -3534,8 +3526,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					// o_ptr->xtra1 = EGO_XTRA_ABILITY;
 					//o_ptr->xtra2 = randint(256);
 
-					/* Mention the item */
-					/*if (cheat_peek) object_mention(o_ptr);*/
 
 					break;
 				}
@@ -3546,8 +3536,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				{
                                         o_ptr->pval = 1 + m_bonus(3, level);
 
-					/* Mention the item */
-//                                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
 					break;
 				}
 
@@ -3558,8 +3546,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
                                         o_ptr->to_h = 1 + m_bonus(5, level);
                                         o_ptr->to_d = 1 + m_bonus(5, level);
 
-					/* Mention the item */
-//                                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
 					break;
 				}
 
@@ -3645,9 +3631,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
                                         o_ptr->pval = 1 + m_bonus(3, level);
 
 //					if (randint(3)==1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
-
-					/* Mention the item */
-//                                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
 
 					break;
 				}
@@ -3752,9 +3735,6 @@ tries = 100;
 
 						break;
 					}
-
-					/* Mention the item */
-					/*if (cheat_peek) object_mention(o_ptr);*/
 
 					break;
 				}
@@ -3999,9 +3979,6 @@ tries = 100;
                                         o_ptr->xtra1 = EGO_XTRA_ABILITY;
                                         o_ptr->xtra2 = randint(256);
 
-					/* Mention the item */
-					/*if (cheat_peek) object_mention(o_ptr);*/
-
 					break;
 				}
 
@@ -4015,9 +3992,6 @@ tries = 100;
                                        // o_ptr->xtra1 = EGO_XTRA_ABILITY;
                                         //o_ptr->xtra2 = randint(256);
 
-					/* Mention the item */
-					/*if (cheat_peek) object_mention(o_ptr);*/
-
 					break;
 				}
 
@@ -4029,9 +4003,6 @@ tries = 100;
 
                  			o_ptr->xtra1 = EGO_XTRA_POWER;
                                         o_ptr->xtra2 = randint(256);
-
-					/* Mention the item */
-					/*if (cheat_peek) object_mention(o_ptr);*/
 
 					break;
 				}
@@ -4314,9 +4285,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* Hack -- extract the "cursed" flag */
 		if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= ID_CURSED;
 
-		/* Cheat -- peek at the item */
-		/* if (cheat_peek) object_mention(o_ptr); */
-
 		/* Done */
 		return;
 	}
@@ -4525,9 +4493,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			if (e_ptr->max_pval > 0) o_ptr->pval += randint(e_ptr->max_pval);
 			else if (e_ptr->max_pval < 0) o_ptr->pval -= randint(-e_ptr->max_pval);
 		}
-
-		/* Cheat -- describe the item */
-		/*if (cheat_peek) object_mention(o_ptr);*/
 
 		/* Done */
 		return;

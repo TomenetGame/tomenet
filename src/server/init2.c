@@ -849,39 +849,6 @@ static errr init_re_info(void)
         re_head->info_size = re_head->info_num * re_head->info_len;
 
 #ifdef ALLOW_TEMPLATES
-#if USE_RAW_FILES
-	/*** Load the binary image file ***/
-
-	/* Build the filename */
-        path_build(buf, 1024, ANGBAND_DIR_DATA, "re_info.raw");
-
-	/* Attempt to open the "raw" file */
-	fd = fd_open(buf, O_RDONLY);
-
-	/* Process existing "raw" file */
-	if (fd >= 0)
-	{
-#ifdef CHECK_MODIFICATION_TIME
-
-                err = check_modification_date(fd, "re_info.txt");
-
-#endif /* CHECK_MODIFICATION_TIME */
-
-		/* Attempt to parse the "raw" file */
-		if (!err)
-                        err = init_re_info_raw(fd);
-
-		/* Close it */
-		(void)fd_close(fd);
-
-		/* Success */
-		if (!err) return (0);
-
-		/* Information */
-                msg_print("Ignoring obsolete/defective 're_info.raw' file.");
-		msg_print(NULL);
-	}
-#endif	// USE_RAW_FILES
 
 	/*** Make the fake arrays ***/
 
@@ -931,74 +898,7 @@ static errr init_re_info(void)
                 quit("Error in 're_info.txt' file.");
 	}
 
-#ifdef USE_RAW_FILES
-	/*** Dump the binary image file ***/
-
-	/* File type is "DATA" */
-	FILE_TYPE(FILE_TYPE_DATA);
-
-	/* Build the filename */
-        path_build(buf, 1024, ANGBAND_DIR_DATA, "re_info.raw");
-
-	/* Kill the old file */
-	safe_setuid_grab();
-	(void)fd_kill(buf);
-
-	/* Attempt to create the raw file */
-	fd = fd_make(buf, mode);
-	safe_setuid_drop();
-
-	/* Dump to the file */
-	if (fd >= 0)
-	{
-		/* Dump it */
-                fd_write(fd, (char*)(re_head), re_head->head_size);
-
-                /* Dump the "re_info" array */
-                fd_write(fd, (char*)(re_info), re_head->info_size);
-
-                /* Dump the "re_name" array */
-                fd_write(fd, (char*)(re_name), re_head->name_size);
-
-		/* Close */
-		(void)fd_close(fd);
-	}
-
-	/*** Kill the fake arrays ***/
-
-        /* Free the "re_info" array */
-        C_KILL(re_info, re_head->info_num, monster_ego);
-
-	/* Hack -- Free the "fake" arrays */
-        C_KILL(re_name, fake_name_size, char);
-
-	/* Forget the array sizes */
-	fake_name_size = 0;
-
-#endif // USE_RAW_FILES
 #endif	/* ALLOW_TEMPLATES */
-
-#ifdef USE_RAW_FILES
-	/*** Load the binary image file ***/
-
-	/* Build the filename */
-        path_build(buf, 1024, ANGBAND_DIR_DATA, "re_info.raw");
-
-	/* Attempt to open the "raw" file */
-	fd = fd_open(buf, O_RDONLY);
-
-	/* Process existing "raw" file */
-        if (fd < 0) quit("Cannot load 're_info.raw' file.");
-
-	/* Attempt to parse the "raw" file */
-        err = init_re_info_raw(fd);
-
-	/* Close it */
-	(void)fd_close(fd);
-
-	/* Error */
-        if (err) quit("Cannot parse 're_info.raw' file.");
-#endif
 
 	/* Success */
 	return (0);
@@ -1044,39 +944,6 @@ static errr init_t_info(void)
 
 
 #ifdef ALLOW_TEMPLATES
-#ifdef USE_RAW_FILES
-	/*** Load the binary image file ***/
-
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_DATA, "tr_info.raw");
-
-	/* Attempt to open the "raw" file */
-	fd = fd_open(buf, O_RDONLY);
-
-	/* Process existing "raw" file */
-	if (fd >= 0)
-	{
-#ifdef CHECK_MODIFICATION_TIME
-
-                err = check_modification_date(fd, "tr_info.txt");
-
-#endif /* CHECK_MODIFICATION_TIME */
-
-		/* Attempt to parse the "raw" file */
-		if (!err)
-			err = init_t_info_raw(fd);
-
-		/* Close it */
-		(void)fd_close(fd);
-
-		/* Success */
-		if (!err) return (0);
-
-		/* Information */
-		msg_print("Ignoring obsolete/defective 'tr_info.raw' file.");
-		msg_print(NULL);
-	}
-#endif	// USE_RAW_FILES
 
 	/*** Make the fake arrays ***/
 
@@ -1129,79 +996,7 @@ static errr init_t_info(void)
 		quit("Error in 'tr_info.txt' file.");
 	}
 
-#ifdef USE_RAW_FILES
-	/*** Dump the binary image file ***/
-
-	/* File type is "DATA" */
-	FILE_TYPE(FILE_TYPE_DATA);
-
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_DATA, "tr_info.raw");
-
-	/* Kill the old file */
-	safe_setuid_grab();
-	(void)fd_kill(buf);
-
-	/* Attempt to create the raw file */
-	fd = fd_make(buf, mode);
-	safe_setuid_drop();
-
-	/* Dump to the file */
-	if (fd >= 0)
-	{
-		/* Dump it */
-		fd_write(fd, (char*)(t_head), t_head->head_size);
-
-		/* Dump the "f_info" array */
-		fd_write(fd, (char*)(t_info), t_head->info_size);
-
-		/* Dump the "f_name" array */
-		fd_write(fd, (char*)(t_name), t_head->name_size);
-
-		/* Dump the "f_text" array */
-		fd_write(fd, (char*)(t_text), t_head->text_size);
-
-		/* Close */
-		(void)fd_close(fd);
-	}
-
-
-	/*** Kill the fake arrays ***/
-
-	/* Free the "h_info" array */
-	C_KILL(t_info, t_head->info_num, trap_type);
-
-	/* Hack -- Free the "fake" arrays */
-	C_KILL(t_name, fake_name_size, char);
-	C_KILL(t_text, fake_text_size, char);
-
-	/* Forget the array sizes */
-	fake_name_size = 0;
-	fake_text_size = 0;
-#endif	// USE_RAW_FILES
 #endif	/* ALLOW_TEMPLATES */
-#ifdef USE_RAW_FILES
-
-	/*** Load the binary image file ***/
-
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_DATA, "tr_info.raw");
-
-	/* Attempt to open the "raw" file */
-	fd = fd_open(buf, O_RDONLY);
-
-	/* Process existing "raw" file */
-	if (fd < 0) quit("Cannot load 'tr_info.raw' file.");
-
-	/* Attempt to parse the "raw" file */
-	err = init_t_info_raw(fd);
-
-	/* Close it */
-	(void)fd_close(fd);
-
-	/* Error */
-	if (err) quit("Cannot parse 'tr_info.raw' file.");
-#endif	// USE_RAW_FILES
 
 	/* Success */
 	return (0);

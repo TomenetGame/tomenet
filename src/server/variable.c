@@ -58,9 +58,6 @@ u16b sf_saves;                  /* Number of "saves" during this life */
 /*
  * Hack -- Run-time arguments
  */
-bool arg_force_original;        /* Command arg -- Force original keyset */
-bool arg_force_roguelike;       /* Command arg -- Force roguelike keyset */
-
 bool server_generated;          /* The character exists */
 bool server_dungeon;            /* The character has a dungeon */
 bool server_state_loaded;       /* The server state was loaded from a savefile */
@@ -76,14 +73,11 @@ s16b command_new;               /* Command chaining from inven/equip view */
 bool create_up_stair;           /* Auto-create "up stairs" */
 bool create_down_stair;         /* Auto-create "down stairs" */
 
-bool msg_flag;                  /* Used in msg_print() for "buffering" */
-
 s16b num_repro;                 /* Current reproducer count */
 s16b object_level;              /* Current object creation level */
 s16b monster_level;             /* Current monster creation level */
 
 s32b turn;                      /* Current game turn */
-s32b old_turn;                  /* Turn when level began (feelings) */
 
 s32b player_id;                 /* Current player ID */
 
@@ -182,32 +176,6 @@ bool avoid_other;                       /* Avoid processing special colors */
 /* Special options */
 
 s16b hitpoint_warn;             /* Hitpoint warning (0 to 9) */
-
-bool closing_flag;              /* Dungeon is closing */
-
-
-/* Dungeon size info */
-s16b max_panel_rows, max_panel_cols;
-s16b panel_row, panel_col;
-/*s16b panel_row_min, panel_row_max;
-s16b panel_col_min, panel_col_max;*/
-/*s16b panel_col_prt, panel_row_prt;*/
-
-/* Targetting variables */
-s16b target_who;
-s16b target_col;
-s16b target_row;
-
-/* Health bar variable -DRS- */
-s16b health_who;
-
-/* Monster recall race */
-s16b recent_idx;
-
-/* User info */
-int player_uid = 0;
-int player_euid = 0;
-int player_egid = 0;
 
 /* The array of players */
 player_type **Players;

@@ -2071,9 +2071,6 @@ bool load_player(int Ind)
 			/* Count lives */
 			sf_lives++;
 
-			/* Forget turns */
-			/*turn = old_turn = 0;*/
-
 			/* Done */
 			return (TRUE);
 		}

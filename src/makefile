@@ -51,7 +51,7 @@ SERV_SRCS = \
   common/net-unix.c common/sockbuf.c common/common.c \
   server/variable.c server/control.c \
   server/party.c server/tables.c server/util.c server/cave.c \
-  server/object1.c server/object2.c server/monster1.c server/monster2.c \
+  server/object1.c server/object2.c server/monster2.c \
   server/xtra1.c server/xtra2.c server/spells1.c server/spells2.c \
   server/melee1.c server/melee2.c server/save.c server/files.c \
   server/cmd1.c server/cmd2.c server/cmd3.c server/cmd4.c server/cmd5.c \
@@ -65,7 +65,7 @@ SERV_OBJS = \
   common/net-unix.o common/sockbuf.o common/common.o \
   server/variable.o server/control.o \
   server/party.o server/tables.o server/util.o server/cave.o \
-  server/object1.o server/object2.o server/monster1.o server/monster2.o \
+  server/object1.o server/object2.o server/monster2.o \
   server/xtra1.o server/xtra2.o server/spells1.o server/spells2.o \
   server/melee1.o server/melee2.o server/save.o server/files.o \
   server/cmd1.o server/cmd2.o server/cmd3.o server/cmd4.o server/cmd5.o \

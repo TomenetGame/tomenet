@@ -1693,9 +1693,6 @@ void message_add(cptr str)
  *
  * We could do "Term_fresh()" to provide "flicker" if needed.
  *
- * The global "msg_flag" variable can be cleared to tell us to
- * "erase" any "pending" messages still on the screen.
- *
  * XXX XXX XXX Note that we must be very careful about using the
  * "msg_print()" functions without explicitly calling the special
  * "msg_print(NULL)" function, since this may result in the loss

@@ -4687,10 +4687,4 @@ void generate_cave(struct worldpos *wpos)
 
 	/* Dungeon level ready */
 	server_dungeon = TRUE;
-
-	/* Remember when this level was "created" */
-	old_turn = turn;
 }
-
-
-

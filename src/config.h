@@ -612,10 +612,3 @@
  * (3.2.2)
  */
 #define RANDUNIS
-
-/*
- * OPTION: Determine if we use *.raw files.
- * not implemented at all.	-Jir-
- */
-/* #define USE_RAW_FILES */
-

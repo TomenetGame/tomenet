@@ -31,7 +31,6 @@ typedef unsigned int u32b;
 
 
 extern s32b turn;
-extern s32b old_turn;
 
 $extern s32b intMod(s32b a, s32b b);
 $extern s32b intAnd(s32b a, s32b b);

@@ -97,8 +97,6 @@ extern u32b sf_xtra;
 extern u32b sf_when;
 extern u16b sf_lives;
 extern u16b sf_saves;
-extern bool arg_force_original;
-extern bool arg_force_roguelike;
 extern bool server_generated;
 extern bool server_dungeon;
 extern bool server_state_loaded;
@@ -110,7 +108,6 @@ extern s16b command_new;
 extern s16b choose_default;
 extern bool create_up_stair;
 extern bool create_down_stair;
-extern bool msg_flag;
 extern s16b num_repro;
 extern s16b object_level;
 extern s16b monster_level;
@@ -127,7 +124,6 @@ extern void new_level_down_y(struct worldpos *wpos, int y);
 extern void new_level_rand_x(struct worldpos *wpos, int x);
 extern void new_level_rand_y(struct worldpos *wpos, int y);
 extern s32b turn;
-extern s32b old_turn;
 extern s32b player_id;
 extern u16b panic_save;
 extern s16b signal_count;
@@ -215,11 +211,6 @@ extern bool dungeon_stair;
 extern bool smart_learn;
 extern bool smart_cheat;
 extern s16b hitpoint_warn;
-extern bool closing_flag;
-extern s16b recent_idx;
-extern int player_uid;
-extern int player_euid;
-extern int player_egid;
 extern player_type **Players;
 extern party_type parties[MAX_PARTIES];
 extern house_type *houses;
@@ -490,8 +481,6 @@ extern void dungeon(void);
 extern void pack_overflow(int Ind);
 
 /* files.c */
-extern void safe_setuid_drop(void);
-extern void safe_setuid_grab(void);
 extern s16b tokenize(char *buf, s16b num, char **tokens);
 extern void display_player(int Ind);
 extern errr file_character(cptr name, bool full);
@@ -567,10 +556,6 @@ extern bool make_attack_normal(int Ind, int m_idx);
 extern bool make_attack_spell(int Ind, int m_idx);
 extern void process_monsters(void);
 extern void curse_equipment(int Ind, int chance, int heavy_chance);
-
-/* mon-desc.c */
-extern void screen_roff(int r_idx);
-extern void display_roff(int r_idx);
 
 /* monster.c */
 /* monster1.c monster2.c */

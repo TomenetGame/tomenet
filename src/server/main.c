@@ -165,49 +165,6 @@ int main(int argc, char *argv[])
 	/* Open the file */
 	s_setup(buf);
 
-
-#ifdef SET_UID
-
-	/* Get the user id (?) */
-	player_uid = getuid();
-
-#ifdef VMS
-	/* Mega-Hack -- Factor group id */
-	player_uid += (getgid() * 1000);
-#endif
-
-# ifdef SAFE_SETUID
-
-#  ifdef _POSIX_SAVED_IDS
-
-	/* Save some info for later */
-	player_euid = geteuid();
-	player_egid = getegid();
-
-#  endif
-
-#  if 0	/* XXX XXX XXX */
-
-	/* Redundant setting necessary in case root is running the game */
-	/* If not root or game not setuid the following two calls do nothing */
-
-	if (setgid(getegid()) != 0)
-	{
-		quit("setgid(): cannot set permissions correctly!");
-	}
-
-	if (setuid(geteuid()) != 0)
-	{
-		quit("setuid(): cannot set permissions correctly!");
-	}
-
-#  endif
-
-# endif
-
-#endif
-
-
 #ifdef SET_UID
 
 	/* Initialize the "time" checker */
@@ -221,11 +178,6 @@ int main(int argc, char *argv[])
 	{
 		quit("The gates to Angband are closed (bad load).");
 	}
-
-#if 0
-	/* Acquire the "user name" as a default player name */
-	user_name(player_name, player_uid);
-#endif
 
 #endif
 
@@ -288,7 +240,6 @@ int main(int argc, char *argv[])
 			puts("Usage: mangband [options]");
 			puts("  -r	 Reset the server");
 			puts("  -z       Don't catch signals");
-			puts("  -p<uid>  Play with the <uid> userid");
 			puts("  -c<path> Look for pref files in the directory <path>");
 			puts("  -d<path> Look for save files in the directory <path>");
 			puts("  -i<path> Look for info files in the directory <path>");

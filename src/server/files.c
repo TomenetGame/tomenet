@@ -23,89 +23,6 @@
  */
 /* #undef _POSIX_SAVED_IDS */
 
-
-/*
- * Hack -- drop permissions
- */
-void safe_setuid_drop(void)
-{
-
-#ifdef SET_UID
-
-# ifdef SAFE_SETUID
-
-#  ifdef SAFE_SETUID_POSIX
-
-	if (setuid(getuid()) != 0)
-	{
-		quit("setuid(): cannot set permissions correctly!");
-	}
-	if (setgid(getgid()) != 0)
-	{
-		quit("setgid(): cannot set permissions correctly!");
-	}
-
-#  else
-
-	if (setreuid(geteuid(), getuid()) != 0)
-	{
-		quit("setreuid(): cannot set permissions correctly!");
-	}
-	if (setregid(getegid(), getgid()) != 0)
-	{
-		quit("setregid(): cannot set permissions correctly!");
-	}
-
-#  endif
-
-# endif
-
-#endif
-
-}
-
-
-/*
- * Hack -- grab permissions
- */
-void safe_setuid_grab(void)
-{
-
-#ifdef SET_UID
-
-# ifdef SAFE_SETUID
-
-#  ifdef SAFE_SETUID_POSIX
-
-	if (setuid(player_euid) != 0)
-	{
-		quit("setuid(): cannot set permissions correctly!");
-	}
-	if (setgid(player_egid) != 0)
-	{
-		quit("setgid(): cannot set permissions correctly!");
-	}
-
-#  else
-
-	if (setreuid(geteuid(), getuid()) != 0)
-	{
-		quit("setreuid(): cannot set permissions correctly!");
-	}
-	if (setregid(getegid(), getgid()) != 0)
-	{
-		quit("setregid(): cannot set permissions correctly!");
-	}
-
-#  endif
-
-# endif
-
-#endif
-
-}
-
-
 /*
  * Extract the first few "tokens" from a buffer
  *
@@ -997,8 +914,6 @@ struct high_score
 
 	char who[16];           /* Player Name (string) */
 
-	char uid[8];            /* Player UID (number) */
-
 	char sex[2];            /* Player Sex (string) */
 	char p_r[3];            /* Player Race (number) */
 	char p_c[3];            /* Player Class (number) */
@@ -1215,7 +1130,6 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		mdun = atoi(the_score.max_dun);
 
 		/* Hack -- extract the gold and such */
-		for (user = the_score.uid; isspace(*user); user++) /* loop */;
 		for (when = the_score.day; isspace(*when); when++) /* loop */;
 		for (gold = the_score.gold; isspace(*gold); gold++) /* loop */;
 		for (aged = the_score.turns; isspace(*aged); aged++) /* loop */;
@@ -1346,7 +1260,6 @@ static errr top_twenty(int Ind)
 	sprintf(the_score.who, "%-.15s", p_ptr->name);
 
 	/* Save the player info */
-	sprintf(the_score.uid, "%7u", 0 /*player_uid*/);
 	sprintf(the_score.sex, "%c", (p_ptr->male ? 'm' : 'f'));
 	sprintf(the_score.p_r, "%2d", p_ptr->prace);
 	sprintf(the_score.p_c, "%2d", p_ptr->pclass);
@@ -1432,7 +1345,6 @@ static errr predict_score(int Ind, int line)
 	sprintf(the_score.who, "%-.15s", p_ptr->name);
 
 	/* Save the player info */
-	sprintf(the_score.uid, "%7u", 0 /*player_uid*/);
 	sprintf(the_score.sex, "%c", (p_ptr->male ? 'm' : 'f'));
 	sprintf(the_score.p_r, "%2d", p_ptr->prace);
 	sprintf(the_score.p_c, "%2d", p_ptr->pclass);
@@ -1792,9 +1704,6 @@ void exit_game_panic(void)
 
 	/* If nothing important has happened, just quit */
 	if (!server_generated || server_saved) quit("panic");
-
-	/* Mega-Hack -- see "msg_print()" */
-	msg_flag = FALSE;
 
 	while (NumPlayers > (i - 1))
 	{

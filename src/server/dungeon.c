@@ -3495,10 +3495,6 @@ void play_game(bool new_game)
 	/* Reset the visual mappings */
 	reset_visuals();
 
-	/* Set or clear "rogue_like_commands" if requested */
-	/*if (arg_force_original) rogue_like_commands = FALSE;
-	if (arg_force_roguelike) rogue_like_commands = TRUE;*/
-
 	/* Make a town if necessary */
 	if (!server_dungeon)
 	{
