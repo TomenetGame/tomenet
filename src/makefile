@@ -111,6 +111,30 @@ CONS_OBJS = \
   console/variable.o console/c-util.o console/console.o console/c-init.o
 
 
+LUASRCS = \
+  server/script.c server/lua_bind.c \
+  server/w_util.c server/w_play.c
+
+TOLUASRCS = \
+  server/lua/lapi.c server/lua/lcode.c server/lua/ldebug.c server/lua/ldo.c server/lua/lfunc.c server/lua/lgc.c \
+  server/lua/llex.c server/lua/lmem.c server/lua/lobject.c server/lua/lparser.c server/lua/lstate.c server/lua/lstring.c \
+  server/lua/ltable.c server/lua/ltests.c server/lua/ltm.c server/lua/lundump.c server/lua/lvm.c server/lua/lzio.c \
+  server/lua/lauxlib.c server/lua/lbaselib.c server/lua/ldblib.c server/lua/liolib.c server/lua/lstrlib.c \
+  server/lua/tolua_lb.c server/lua/tolua_rg.c server/lua/tolua_tt.c server/lua/tolua_tm.c server/lua/tolua_gp.c \
+  server/lua/tolua_eh.c server/lua/tolua_bd.c
+
+LUAOBJS = \
+  server/script.o server/lua_bind.o \
+  server/w_util.o server/w_play.o
+
+TOLUAOBJS = \
+  server/lua/lapi.o server/lua/lcode.o server/lua/ldebug.o server/lua/ldo.o server/lua/lfunc.o server/lua/lgc.o \
+  server/lua/llex.o server/lua/lmem.o server/lua/lobject.o server/lua/lparser.o server/lua/lstate.o server/lua/lstring.o \
+  server/lua/ltable.o server/lua/ltests.o server/lua/ltm.o server/lua/lundump.o server/lua/lvm.o server/lua/lzio.o \
+  server/lua/lauxlib.o server/lua/lbaselib.o server/lua/ldblib.o server/lua/liolib.o server/lua/lstrlib.o \
+  server/lua/tolua_lb.o server/lua/tolua_rg.o server/lua/tolua_tt.o server/lua/tolua_tm.o server/lua/tolua_gp.o \
+  server/lua/tolua_eh.o server/lua/tolua_bd.o
+
 ##
 ## Following are some "system" definitions
 ##
@@ -270,6 +294,15 @@ LIBS = -L/usr/X11R6/lib -lX11 -lcurses
 #LIBS = -ltcp
 
 
+# Lua
+SRCS += $(LUASRCS)
+SERV_OBJS += $(LUAOBJS)
+SERV_SRCS += $(TOLUASRCS)
+SERV_OBJS += $(TOLUAOBJS)
+CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
+
+TOLUA = server/tolua
+
 #
 # Hack -- "install" as the base target
 #
@@ -285,13 +318,13 @@ install: mangclient mangconsole mangband
 	cp mangconsole ..
 	cp mangband ..
 
-
+mini_install: install
 
 #
 # Build the "MAngband" server
 #
 
-mangband: $(SERV_OBJS)
+mangband: $(SERV_OBJS) $(TOLUA)
 	$(CC) $(CFLAGS) -o mangband $(SERV_OBJS) $(LDFLAGS) $(LIBS)
 
 
@@ -311,6 +344,9 @@ mangconsole: $(CONS_OBJS)
 	$(CC) $(CFLAGS) -o mangconsole $(CONS_OBJS) $(LDFLAGS) $(LIBS)
 
 
+$(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c $(LIBS)
+
 #
 # Rule for making a '.o'
 #
@@ -327,6 +363,16 @@ clean:
 	cd client; rm -f *.o
 	cd common; rm -f *.o
 	cd console; rm -f *.o
+
+#
+# Lua library compilation rules
+#
+
+server/w_util.c: server/util.pkg $(TOLUA)
+	cd server; ./tolua -n util -o w_util.c util.pkg; cd ..
+
+server/w_play.c: server/player.pkg $(TOLUA)
+	cd server; ./tolua -n player -o w_play.c player.pkg; cd ..
 
 
 

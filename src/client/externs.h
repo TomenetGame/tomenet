@@ -136,6 +136,7 @@ extern cptr ANGBAND_DIR_INFO;
 extern cptr ANGBAND_DIR_SAVE;
 extern cptr ANGBAND_DIR_USER;
 extern cptr ANGBAND_DIR_XTRA;
+extern cptr ANGBAND_DIR_SCPT;
 
 extern bool use_graphics;
 extern bool use_sound;
@@ -290,6 +291,7 @@ extern errr process_pref_file(cptr buf);
 extern errr process_pref_file_aux(char *buf);
 extern void show_motd(void);
 extern void peruse_file(void);
+extern errr my_fgets(FILE *fff, char *buf, huge n);
 
 /* c-init.c */
 extern void initialize_all_pref_files(void);

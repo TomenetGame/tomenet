@@ -219,6 +219,7 @@
 /* The number of wilderness levels we have allocated.
 */
 #define MAX_WILD        4096
+#define MAX_WILD_8      (MAX_WILD/8)
 
 
 /*
@@ -302,9 +303,16 @@
 #define	MASTER_SUMMON	3
 #define MASTER_GENERATE	4
 #define MASTER_PLAYER	5
+#define	MASTER_SCRIPTL  6
+#define	MASTER_SCRIPTB  7
+#define	MASTER_SCRIPTE  8
+#define	MASTER_SCRIPTS  9
 
 #define	MASTER_SUMMON_SPEFIC	0	
 #define	MASTER_SUMMON_
+
+#define	MASTER_SCRIPTB_W        'w'
+#define	MASTER_SCRIPTB_A        'a'
 
 
 /*

@@ -454,6 +454,7 @@ void init_file_paths(char *path)
         string_free(ANGBAND_DIR_SAVE);
         string_free(ANGBAND_DIR_USER);
         string_free(ANGBAND_DIR_XTRA);
+        string_free(ANGBAND_DIR_SCPT);
 
 
         /*** Prepare the "path" ***/
@@ -480,6 +481,7 @@ void init_file_paths(char *path)
         ANGBAND_DIR_INFO = string_make("");
         ANGBAND_DIR_SAVE = string_make("");
         ANGBAND_DIR_USER = string_make("");
+        ANGBAND_DIR_SCPT = string_make("");
         ANGBAND_DIR_XTRA = string_make("");
 
 
@@ -491,6 +493,10 @@ void init_file_paths(char *path)
         /* Build a path name */
         strcpy(tail, "apex");
         ANGBAND_DIR_APEX = string_make(path);
+
+        /* Build a path name */
+        strcpy(tail, "scpt");
+        ANGBAND_DIR_SCPT = string_make(path);
 
         /* Build a path name */
         strcpy(tail, "bone");

@@ -709,6 +709,11 @@ cptr ANGBAND_DIR;
 
 
 /*
+ * Scripts
+ */
+cptr ANGBAND_DIR_SCPT;
+
+/*
  * Various data files for the game, such as the high score and
  * the mangband logs.
  */

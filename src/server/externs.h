@@ -376,6 +376,7 @@ extern char *r_name;
 extern char *r_text;
 extern cptr ANGBAND_SYS;
 extern cptr ANGBAND_DIR;
+extern cptr ANGBAND_DIR_SCPT;
 extern cptr ANGBAND_DIR_DATA;
 extern cptr ANGBAND_DIR_GAME;
 extern cptr ANGBAND_DIR_SAVE;
@@ -1117,3 +1118,14 @@ extern int stricmp(cptr a, cptr b);
 /* main-win.c */
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 #endif
+
+
+/* script.c */
+extern void init_lua();
+extern bool pern_dofile(int Ind, char *file);
+extern bool exec_lua(int Ind, char *file);
+extern void master_script_begin(char *name, char mode);
+extern void master_script_end();
+extern void master_script_line(char *buf);
+extern void master_script_exec(int Ind, char *name);
+extern void cat_script(int Ind, char *name);

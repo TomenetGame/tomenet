@@ -627,3 +627,5 @@
 
 
 #define NEWHOUSES
+
+#define USE_LUA

@@ -1153,7 +1153,7 @@ struct player_type
 	s16b world_x;	/* The wilderness x coordinate */
 	s16b world_y;	/* The wilderness y coordinate */
 
-	unsigned char wild_map[(MAX_WILD/8)]; /* the wilderness we have explored */
+	unsigned char wild_map[MAX_WILD_8]; /* the wilderness we have explored */
 
 	s16b py;		/* Player location in dungeon */
 	s16b px;

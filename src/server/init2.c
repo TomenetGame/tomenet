@@ -74,6 +74,7 @@ void init_file_paths(char *path)
 	string_free(ANGBAND_DIR);
 
 	/* Free the sub-paths */
+	string_free(ANGBAND_DIR_SCPT);
 	string_free(ANGBAND_DIR_DATA);
 	string_free(ANGBAND_DIR_GAME);
 	string_free(ANGBAND_DIR_SAVE);
@@ -100,6 +101,7 @@ void init_file_paths(char *path)
 	/*** Use "flat" paths with VM/ESA ***/
 
 	/* Use "blank" path names */
+	ANGBAND_DIR_SCPT = string_make("");
 	ANGBAND_DIR_DATA = string_make("");
 	ANGBAND_DIR_GAME = string_make("");
 	ANGBAND_DIR_SAVE = string_make("");
@@ -111,6 +113,10 @@ void init_file_paths(char *path)
 
 
 	/*** Build the sub-directory names ***/
+
+	/* Build a path name */
+	strcpy(tail, "scpt");
+	ANGBAND_DIR_SCPT = string_make(path);
 
 	/* Build a path name */
 	strcpy(tail, "data");
@@ -1776,6 +1782,10 @@ void load_server_cfg(void)
  */
 void init_some_arrays(void)
 {
+        /* Init lua */
+	s_printf("[Initializing lua... (scripts)]\n");
+        init_lua();
+
 	/* Initialize feature info */
 	s_printf("[Initializing arrays... (features)]\n");
 	if (init_f_info()) quit("Cannot initialize features");

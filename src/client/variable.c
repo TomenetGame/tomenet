@@ -107,6 +107,7 @@ cptr class_title[] = {
 	};
 
 cptr ANGBAND_DIR;
+cptr ANGBAND_DIR_SCPT;
 cptr ANGBAND_DIR_APEX;
 cptr ANGBAND_DIR_BONE;
 cptr ANGBAND_DIR_DATA;

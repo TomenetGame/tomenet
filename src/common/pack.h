@@ -136,6 +136,7 @@
 #define PKT_FAILURE		121
 #define PKT_SUCCESS		122
 #define PKT_CLEAR_BUFFER	123
+#define PKT_SCRIPT		124
 
 
 /* Packet type 150 are hacks */
