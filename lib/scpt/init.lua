@@ -21,6 +21,9 @@ pern_dofile(Ind, "s_aux.lua")
 -- Add the schools of magic
 pern_dofile(Ind, "spells.lua")
 
+-- Automaticaly update clients, neat heh ? :;=)
+pern_dofile(Ind, "update.lua")
+
 
 -- Put whatever is needed here
 

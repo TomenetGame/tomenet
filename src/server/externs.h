@@ -37,6 +37,7 @@ void do_xfers();
 void kill_xfers(int ind);
 int check_return(int ind, unsigned short fnum, unsigned long sum);
 int remote_update(int ind, char *fname);
+void remote_update_lua(int Ind, cptr file);
 
 /* csfunc.c */
 extern struct sfunc csfunc[];

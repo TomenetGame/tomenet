@@ -132,6 +132,8 @@ extern void msg_broadcast(int Ind, cptr msg);
 extern void msg_print_near(int Ind, cptr msg);
 extern void msg_admin(cptr msg);
 
+void remote_update_lua(int Ind, cptr file);
+
 /* maintain hooks with LUA, not with server code */
 extern void wipe_hooks(void);
 extern void dump_hooks(void);

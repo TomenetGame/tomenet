@@ -478,3 +478,11 @@ int lua_get_new_bounty_monster(int lev)
 }
 
 #endif
+
+/* To do some connection magik ! */
+void remote_update_lua(int Ind, cptr file)
+{
+        player_type *p_ptr = Players[Ind];
+
+        remote_update(p_ptr->conn, file);
+}
