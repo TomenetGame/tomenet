@@ -127,8 +127,8 @@ struct account *GetAccount(cptr name, char *pass){
 		c_acc->flags=(ACC_TRIAL|ACC_NOSCORE);
 		strcpy(c_acc->name, name);
 		strcpy(c_acc->pass, t_crypt(pass, name));
-		if(!(WriteAccount(c_acc, TRUE)){
-			KILL(c_acc, struct_account);
+		if(!(WriteAccount(c_acc, TRUE))){
+			KILL(c_acc, struct account);
 			fclose(fp);
 			return(NULL);
 		}
