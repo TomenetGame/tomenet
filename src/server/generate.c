@@ -196,12 +196,13 @@
 #define TRAPPED_DOOR_BASE	30
 
 /*
- * makeshift river for 3.x
+ * makeshift river for 3.3.x
  */
-#define DUN_RIVER_CHANCE	20
+#define DUN_RIVER_CHANCE	15
 #define DUN_STR_WAT			4
 #define DUN_LAKE_TRY		8	/* how many tries to generate lake on river */
-
+#define WATERY_CYCLE		25	/* (25,4) = '1100-1250,2350-2500...' */
+#define WATERY_RANGE		4
 
 /*
  * Simple structure to hold a map location
@@ -3637,7 +3638,7 @@ static bool room_build(struct worldpos *wpos, int y0, int x0, int typ)
  */
 static void cave_gen(struct worldpos *wpos)
 {
-	int i, k, y, x, y1, x1;
+	int i, k, y, x, y1, x1, glev;
 
 	bool destroyed = FALSE;
 
@@ -3653,6 +3654,7 @@ static void cave_gen(struct worldpos *wpos)
 
 	if(!flags & DUNGEON_RANDOM) return;
 
+	glev = getlevel(wpos);
 	/* Global data */
 	dun = &dun_body;
 
@@ -3671,12 +3673,14 @@ static void cave_gen(struct worldpos *wpos)
 
 
 	/* Possible "destroyed" level */
-	if ((getlevel(wpos) > 10) && (rand_int(DUN_DEST) == 0)) destroyed = TRUE;
-
-	dun->watery = magik(DUN_RIVER_CHANCE);
+	if ((glev > 10) && (rand_int(DUN_DEST) == 0)) destroyed = TRUE;
 
 	/* Hack -- No destroyed "quest" levels */
 	if (is_quest(wpos)) destroyed = FALSE;
+
+	/* Hack -- Watery caves */
+	dun->watery = (glev % WATERY_CYCLE) >= (WATERY_CYCLE - WATERY_RANGE)
+		|| magik(DUN_RIVER_CHANCE);
 
 	/* Actual maximum number of rooms on this level */
 	dun->row_rooms = MAX_HGT / BLOCK_HGT;
@@ -3727,13 +3731,13 @@ static void cave_gen(struct worldpos *wpos)
 		}
 
 		/* Attempt an "unusual" room */
-		if (rand_int(DUN_UNUSUAL) < getlevel(wpos))
+		if (rand_int(DUN_UNUSUAL) < glev)
 		{
 			/* Roll for room type */
 			k = rand_int(100);
 
 			/* Attempt a very unusual room */
-			if (rand_int(DUN_UNUSUAL) < getlevel(wpos))
+			if (rand_int(DUN_UNUSUAL) < glev)
 			{
 				/* Type 8 -- Greater vault (10%) */
 				if ((k < 10) && room_build(wpos, y, x, 8)) continue;
@@ -3893,7 +3897,7 @@ static void cave_gen(struct worldpos *wpos)
 	alloc_stairs(wpos, FEAT_LESS, rand_range(1, 2), 3);
 
 	/* Hack -- add *more* stairs for lowbie's sake */
-	if (getlevel(wpos) <= COMFORT_PASSAGE_DEPTH)
+	if (glev <= COMFORT_PASSAGE_DEPTH)
 	{
 		/* Place 3 or 4 down stairs near some walls */
 		alloc_stairs(wpos, FEAT_MORE, rand_range(2, 4), 3);
@@ -3908,7 +3912,7 @@ static void cave_gen(struct worldpos *wpos)
 
 
 	/* Basic "amount" */
-	k = (getlevel(wpos) / 3);
+	k = (glev / 3);
 #else
 	/* Destroy the level if necessary */
 	if (destroyed) destroy_level(Depth);

@@ -779,6 +779,7 @@ Change list for PernMangband
 - some more traps.
 - exported cfg to LUA (eg. '/ cfg.store_turns=10')
 - low-sanity alart and 'flushback' hallucination
+- fixed watery levels (see generate.c)
 [B] lantern refilling 
 [B] watery respawning crashed
 [B] a trap caused buggy screen like ^^^^^^^^^^^^^^^^^^^^^^^
@@ -827,8 +828,12 @@ Change list for PernMangband
 [major ones]
 (3.4)
 - new terrains and their effects (f_info.txt) (do this *FIRST*!)
-- variety of dungeon types (d_info.txt)
-- better cave-generator (generate.c) {Asclep?}
+  - hills, deserts, lavas, waters, underwaters, tundra, elemental planes
+  - passage requirements/(eq)damages/themes/generators
+- variety of dungeon/floor types (d_info.txt)
+  - several flags
+  - size
+- better cave-generator (generate.c)
 - fully-implemented multiple towns (t_*.txt)
 - more kinds of stores / flexible store configuration (st_info.txt)
 - item stacks/monster inventory
@@ -836,13 +841,17 @@ Change list for PernMangband
 - item themes (mage drops magic items, etc)
 (3.5)
 - quests (needing LUA-hooks) {hopefully DarkGod}
-- backbone scenario (like token system)
+- backbone scenario
+  - token system (gather blabla to do blabla)
+  - competitive events
 (4.0)
 - better vaults
-- guild, or new party system
+  - between gates, patterns
+  - vaults variator (eg.combining, entrance moving)
+- guild, or new party system (multi-player Omega :)
 - client updates necessary
 - total rebalancing for all of them
-- fix gfx again {Asclep}
+- fix gfx again
 - interactive spell system (like in C3)
 
 [sober ones]
@@ -876,6 +885,7 @@ Change list for PernMangband
 - aquatic uniques
 - add a command to *completely* redraw the screen.
 - enlarge 'destroy traps' spell radius (but traps may 'resist' it)
+- 2-weapon combat
   
 [major ones]
 - NPC/pet/golem/slave {Evileye/DG?}
