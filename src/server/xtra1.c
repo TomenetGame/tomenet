@@ -1371,13 +1371,18 @@ void calc_hitpoints(int Ind)
 	/*	mhp += p_ptr->msp * 2 / 3; */
 	}
 
-	/* Bonus from +LIFE items (should be weapons only).
-	   Also, cap it at +3 (boomerang + weapon could result in +6) */
+	/* Bonus from +LIFE items (should be weapons only -- not anymore, Bladeturner / Randarts etc.!).
+	   Also, cap it at +3 (boomerang + weapon could result in +6) (Boomerangs can't have +LIFE anymore) */
 	if (!is_admin(p_ptr) && p_ptr->to_l > 3) p_ptr->to_l = 3;
-	if (mhp > mhp_playerform)
-		mhp += (mhp_playerform * p_ptr->to_l) / 10;
-	else
+	if (mhp > mhp_playerform) {
+		/* Reduce the use for mimics (while in monster-form) */
+		if (p_ptr->to_l > 0)
+			mhp += (mhp_playerform * p_ptr->to_l * mhp_playerform) / (10 * mhp);
+		else
+			mhp += (mhp_playerform * p_ptr->to_l) / 10;
+	} else {
 		mhp += (mhp * p_ptr->to_l) / 10;
+	}
 
 	/* New maximum hitpoints */
 	if (mhp != p_ptr->mhp)
@@ -1611,6 +1616,7 @@ static void calc_body_bonus(int Ind)
 		p_ptr->pspeed = (((r_ptr->speed - 110) * 50) / 100) + 110;
 	}
 
+#if 0
 	/* Base skill -- searching ability */
 	p_ptr->skill_srh /= 2;
 	p_ptr->skill_srh += r_ptr->aaf / 10;
@@ -1618,6 +1624,13 @@ static void calc_body_bonus(int Ind)
 	/* Base skill -- searching frequency */
 	p_ptr->skill_fos /= 2;
 	p_ptr->skill_fos += r_ptr->aaf / 10;
+#else
+	/* Base skill -- searching ability */
+	p_ptr->skill_srh += r_ptr->aaf / 20 - 5;
+
+	/* Base skill -- searching frequency */
+	p_ptr->skill_fos += r_ptr->aaf / 20 - 5;
+#endif
 
 	/* Stealth ability is influenced by weight (-> size) of the monster */
 	if (r_ptr->weight <= 500) p_ptr->skill_stl += 2;
@@ -1838,6 +1851,9 @@ static void calc_body_bonus(int Ind)
 		p_ptr->resist_fear = TRUE;
 		p_ptr->reduce_insanity = 2;
 	}
+
+	/* Greater demons resist poison (monsters are immune) */
+	if((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) p_ptr->resist_pois = TRUE;
 
 	/* Affect charisma by appearance */
 	d = 0;
@@ -2751,7 +2767,7 @@ void calc_bonuses(int Ind)
 			if (k_ptr->flags1 & TR1_SEARCH) p_ptr->skill_srh += (o_ptr->bpval * 5);
 
 			/* Affect searching frequency (factor of five) */
-			if (k_ptr->flags1 & TR1_SEARCH) p_ptr->skill_fos += (o_ptr->bpval * 5);
+			if (k_ptr->flags1 & TR1_SEARCH) p_ptr->skill_fos += (o_ptr->bpval * 3);
 
 			/* Affect infravision */
 			if (k_ptr->flags1 & TR1_INFRA) p_ptr->see_infra += o_ptr->bpval;
@@ -2881,7 +2897,7 @@ void calc_bonuses(int Ind)
 		if (f1 & TR1_SEARCH) p_ptr->skill_srh += (pval * 5);
 
 		/* Affect searching frequency (factor of five) */
-		if (f1 & TR1_SEARCH) p_ptr->skill_fos += (pval * 5);
+		if (f1 & TR1_SEARCH) p_ptr->skill_fos += (pval * 3);
 
 		/* Affect infravision */
 		if (f1 & TR1_INFRA) p_ptr->see_infra += pval;
@@ -4148,7 +4164,7 @@ void calc_bonuses(int Ind)
 	p_ptr->skill_srh += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_srh * 5)) + get_skill(p_ptr, SKILL_SNEAKINESS);
 
 	/* Affect Skill -- search frequency (Level, by Class) */
-	p_ptr->skill_fos += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_fos * 5)) + get_skill(p_ptr, SKILL_SNEAKINESS);
+	p_ptr->skill_fos += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_fos * 5));// + get_skill(p_ptr, SKILL_SNEAKINESS);
 
 
 #endif	// 0
