@@ -3300,7 +3300,7 @@ int Send_stat(int ind, int stat, int max, int cur, int s_ind)
 	      }
 	  }
 
-	return Packet_printf(&connp->c, "%c%c%hd%hd", PKT_STAT, stat, max, cur, s_ind);
+	return Packet_printf(&connp->c, "%c%c%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind);
 }
 
 int Send_history(int ind, int line, cptr hist)
