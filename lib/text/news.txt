@@ -1,5 +1,5 @@
 ':' to chat **********************************************************
-'?' to help ** PernMAngband 3.3.6b **  The Troubles of Middle Earth **
+'?' to help **   TomeNET 3.3.6b   **   The Troubles of Middle Earth **
             **********************************************************
 
                "One Ring to rule them all, One Ring to find them
@@ -19,5 +19,5 @@
    3.3.6b client is available from the official site below.
  - To learn about new features/changes, please see the help screen('?').
 
-        Official PernMangband site - http://www.pernmangband.org/
-  PernMAngband 3.x: DarkGod(darkgod@pernangband.org) / PernMangband dev-team
+              Official TomeNET site - http://www.TomeNET.net/
+    PernMAngband 3.x: DarkGod(darkgod@t-o-m-e.net) / TomeNET dev-team
