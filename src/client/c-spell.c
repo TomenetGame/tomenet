@@ -704,7 +704,7 @@ s32b get_school_spell(cptr do_what)
                                         Term_save();
 
                                         /* Display a list of spells */
-                                        where = exec_lua(0, format("return print_book(%d, %d)", sval, pval));
+                                        where = exec_lua(0, format("return print_book(0, %d, %d)", sval, pval));
                                 }
 
                                 /* Hide the list */
