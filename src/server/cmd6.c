@@ -1194,6 +1194,8 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					p_ptr->fruit_bat = 0;
 					p_ptr->update |= (PU_BONUS | PU_HP);
 				}
+				else
+					msg_print(Ind, "You feel certain you are a fruit bat!");
 
 				break;
 			case SV_POTION2_LEARNING:
