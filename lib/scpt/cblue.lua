@@ -83,33 +83,33 @@ function maxskills(name)
 end
 
 -- Set all uniques/monsters to '1 times killed' for a player.
-function allunis()
---function allunis(name)
+--function allunis()
+function allunis(name)
     local p, i
---    p = ind(name)
-    p = Ind
+    p = ind(name)
+--    p = Ind
     for i = 1, MAX_R_IDX do
 	players(p).r_killed[i] = 1
     end
 end
 
 -- Set all uniques/monsters to '0 times killed' for a player.
-function nomons()
---function nomons(name)
+--function nomons()
+function nomons(name)
     local p, i
---    p = ind(name)
-    p = Ind
+    p = ind(name)
+--    p = Ind
     for i = 1, MAX_R_IDX do
 	players(p).r_killed[i] = 0
     end
 end
 
 -- Set all uniques/monsters to '666 times killed' for a player.
-function allmons()
---function allmons(name)
+--function allmons()
+function allmons(name)
     local p, i
---    p = ind(name)
-    p = Ind
+    p = ind(name)
+--    p = Ind
     for i = 1, MAX_R_IDX do
 	players(p).r_killed[i] = 666
     end

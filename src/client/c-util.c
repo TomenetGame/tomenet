@@ -2075,6 +2075,25 @@ void c_msg_print(cptr msg)
 	char nameB[20];
 	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
 	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
+	cptr msg_deadA = "You have been killed";
+	cptr msg_deadB = "You die";
+	cptr msg_unique = "was slain by ";
+	cptr msg_killed = "was killed ";
+	cptr msg_killed2 = "was annihilated ";
+	cptr msg_killed3 = "was vaporized ";
+	cptr msg_destroyed = "was destroyed ";
+	cptr msg_suicide = "committed suicide.";
+	cptr msg_entered = "has entered the game.";
+	cptr msg_left = "has left the game.";
+	cptr msg_quest = "has won the";
+	cptr msg_dice = "dice and get";
+	cptr msg_level = "Welcome to level";
+	cptr msg_level2 = "has attained level";
+	cptr msg_nopkfight = "You have beaten";
+	cptr msg_nopkfight2 = "has beaten you";
+	cptr msg_bloodbond = "blood bond";
+	cptr msg_retire = "has retired";
+	cptr msg_fruitbat = "turned into a fruit bat";
 
 
 	/* Hack -- Reset */
@@ -2108,13 +2127,34 @@ void c_msg_print(cptr msg)
 	if (n > 1000) return;
 
 
+	/* Ok, bad hack - Sorry ;) - C. Blue */
+	if (strstr(msg, "AFK mode is turned \377rON\377w.") - msg == 0) {
+		p_ptr->afk = TRUE;
+		c_put_str(TERM_ORANGE, "AFK", 22, 0);
+	}
+	if (strstr(msg, "AFK mode is turned \377GOFF\377w.") - msg == 0) {
+		p_ptr->afk = FALSE;
+		put_str("   ", 22, 0);
+	}
+
 	/* Memorize the message */
 #if 1
-	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {
+	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[0] == '[') || \
+	    (strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_killed2) != NULL) || \
+	    (strstr(msg, msg_killed3) != NULL) || (strstr(msg, msg_destroyed) != NULL) || \
+	    (strstr(msg, msg_unique) != NULL) || (strstr(msg, msg_suicide) != NULL) || \
+	    (strstr(msg, msg_entered) != NULL) || (strstr(msg, msg_left) != NULL) || \
+	    (strstr(msg, msg_quest) != NULL) || (strstr(msg, msg_dice) != NULL) || \
+	    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) || \
+	    (strstr(msg, msg_deadA) != NULL) || (strstr(msg, msg_deadB) != NULL) || \
+	    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) || \
+	    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_retire) != NULL) ||
+	    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[')) {
+/*	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {*/
 		c_message_add_chat(msg);
 	}
-//#if 0
-	else {
+/*#if 0*/
+	if (msg[2] != '[') {
 		c_message_add_msgnochat(msg);
 	}
 #endif

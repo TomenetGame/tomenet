@@ -1235,47 +1235,53 @@ W:20:0:2:340
 A:30/1
 F:SEE_INVIS | EASY_KNOW
 
-N:156:Sustain Strength
+#N:156:Sustain Strength
+N:156:Sustain Might
 G:=:d
 I:45:10:0
-W:20:0:2:400
-A:20/1
-F:SUST_STR | EASY_KNOW
+W:10:0:2:400
+A:10/2:20/1
+F:SUST_STR | SUST_CON | EASY_KNOW
 
-N:157:Sustain Intelligence
+#N:157:Sustain Intelligence
+N:157:Sustain Power
 G:=:d
 I:45:11:0
-W:20:0:2:400
-A:20/1
-F:SUST_INT | EASY_KNOW
+W:10:0:2:400
+A:10/2:20/1
+F:SUST_INT | SUST_WIS | EASY_KNOW
 
-N:158:Sustain Wisdom
+#N:158:Sustain Wisdom
+N:158:Sustain Ability
 G:=:d
 I:45:12:0
-W:20:0:2:400
-A:20/1
-F:SUST_WIS | EASY_KNOW
+W:10:0:2:400
+A:10/2:20/1
+F:SUST_STR | SUST_DEX | EASY_KNOW
 
-N:159:Sustain Constitution
+#N:159:Sustain Constitution
+N:159:Sustain Ready Wit
 G:=:d
 I:45:13:0
-W:20:0:2:400
-A:20/1
-F:SUST_CON | EASY_KNOW
+W:10:0:2:400
+A:10/2:20/1
+F:SUST_DEX | SUST_INT | SUST_CHR | EASY_KNOW
 
-N:160:Sustain Dexterity
+#N:160:Sustain Dexterity
+N:160:Sustain Steadiness
 G:=:d
 I:45:14:0
-W:20:0:2:400
-A:20/1
-F:SUST_DEX | EASY_KNOW
+W:10:0:2:400
+A:10/2:20/1
+F:SUST_CON | SUST_WIS | EASY_KNOW
 
-N:161:Sustain Charisma
+#N:161:Sustain Charisma
+N:161:Sustain Cunningness
 G:=:d
 I:45:15:0
-W:20:0:2:400
-A:20/1
-F:SUST_CHR | EASY_KNOW
+W:10:0:2:400
+A:10/2:20/1
+F:SUST_STR | SUST_INT | SUST_CHR | EASY_KNOW
 
 N:162:Slaying
 G:=:d
@@ -1660,7 +1666,7 @@ N:218:Holy Chant
 G:?:d
 I:70:34:0
 #W:10:0:5:50
-W:10:0:5:150
+W:10:0:5:200
 A:10/1
 
 N:219:Holy Prayer

@@ -182,6 +182,7 @@ static void increase_related_skills(int Ind, int i)
 void increase_skill(int Ind, int i)
 {
 	player_type *p_ptr = Players[Ind];
+	int as, ws, old_value;
 
 	/* No skill points to be allocated */
 	if (p_ptr->skill_points <= 0)
@@ -218,6 +219,10 @@ void increase_skill(int Ind, int i)
 	/* Spend an unallocated skill point */
 	p_ptr->skill_points--;
 
+	/* Save previous value for telling the player about newly gained
+	   abilities later on. Round down extra-safely (just paranoia). */
+	old_value = (p_ptr->s_info[i].value - (p_ptr->s_info[i].value % SKILL_STEP)) / SKILL_STEP;
+
 	/* Increase the skill */
 	p_ptr->s_info[i].value += p_ptr->s_info[i].mod;
 	if (p_ptr->s_info[i].value >= SKILL_MAX) p_ptr->s_info[i].value = SKILL_MAX;
@@ -236,9 +241,96 @@ void increase_skill(int Ind, int i)
 
 	/* XXX updating is delayed till player leaves the skill screen */
 	p_ptr->update |= (PU_SKILL_MOD);
+
+	/* Tell the player about new abilities that he gained from the skill increase */
+	if (old_value == get_skill(p_ptr, i)) return;
+	as = get_archery_skill(p_ptr);
+	ws = get_weaponmastery_skill(p_ptr);
+	switch(i) {
+	case SKILL_CLIMB:	if (get_skill(p_ptr, i) == 1) msg_print(Ind, "\377GYou learn how to climb mountains!");;
+				break;
+	case SKILL_FLY: 	if (get_skill(p_ptr, i) == 1) msg_print(Ind, "\377GYou learn how to fly!");;
+				break;
+	case SKILL_FREEACT:	if (get_skill(p_ptr, i) == 1) msg_print(Ind, "\377GYou learn how to resist paralysis and move freely!");;
+				break;
+	case SKILL_RESCONF:	if (get_skill(p_ptr, i) == 1) msg_print(Ind, "\377GYou learn how to keep a focussed mind and avoid confusion!");;
+				break;
+	case SKILL_MARTIAL_ARTS:
+		switch(get_skill(p_ptr, i)) {
+		case 10: msg_print(Ind, "\377GYou learn how to fall safely!");
+			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+			break;
+		case 15: msg_print(Ind, "\377GYou learn how to tame your fear!");
+			break;
+		case 20: msg_print(Ind, "\377GYou learn how to keep your mind focussed and avoid confusion!");
+			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+			break;
+		case 25: msg_print(Ind, "\377GYou learn how to resist paralysis and move freely!");
+			break;
+		case 30: msg_print(Ind, "\377GYou learn how to swim easily!");
+			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+			break;
+		case 35: msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+			break;
+		case 40: msg_print(Ind, "\377GYou learn how to climb mountains!");
+			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+			break;
+		case 45: msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+			break;
+		case 50: msg_print(Ind, "\377GYou learn the technique of flying!");
+			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+			break;
+		}
+		break;
+	case SKILL_ARCHERY:
+		if (get_skill(p_ptr, i) == 50) msg_print(Ind, "\377GYour general shooting power gains extra might due to your training!");
+		break;
+	case SKILL_COMBAT:
+		switch (get_skill(p_ptr, i)) {
+		case 11: msg_print(Ind, "\377GYou got better at recognizing the power of unknown weapons.");
+			break;
+		case 31: msg_print(Ind, "\377GYou got better at recognizing the power of unknown ranged weapons and ammo.");
+			break;
+		case 41: msg_print(Ind, "\377GYou got better at recognizing the power of unknown magical items.");
+			break;
+		}
+		break;
+	case SKILL_MAGIC:
+		if (get_skill(p_ptr, i) == 11) msg_print(Ind, "\377GYou got better at recognizing the power of unknown magical items.");
+		break;
+#if 1
+	case SKILL_SWORD: case SKILL_AXE: case SKILL_HAFTED: case SKILL_POLEARM:
+		switch (get_skill(p_ptr, i)) {
+		case 25: case 50:
+			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+			break;
+		}
+		break;
+	case SKILL_SLING: case SKILL_BOW: case SKILL_XBOW: case SKILL_BOOMERANG:
+		switch (get_skill(p_ptr, i)) {
+		case 16: case 32: case 48:
+			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
+			break;
+		}
+		break;
+	}
+#else
+	}
+	if (i == ws) {
+		switch (get_skill(p_ptr, i)) {
+		case 25: case 50:
+			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+			break;
+		}
+	} else if (i == as) {
+		switch (get_skill(p_ptr, i)) {
+		case 16: case 32: case 48:
+			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
+			break;
+		}
+	}
+#endif
 }
-
-
 /*
  * Given the name of a skill, returns skill index or -1 if no
  * such skill is found

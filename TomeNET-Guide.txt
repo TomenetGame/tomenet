@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. Dec 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. Dec 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -72,6 +72,7 @@ Contents
     (5.12)  Monster attack brands and effects
     (5.13)  Earthquakes
     (5.14)  Curses
+    (5.15)  Vampirism
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills
@@ -175,6 +176,7 @@ r       r       read a scroll.
 E       E       eat. (Thunderlords, also known as Dragonriders, can eat
                 firestones to gain temporary special abilities, see (5.9) .)
 F       F       fuel your light source.
+                Use oil for lanterns, and torches to fuel another torch.
 f       t       fire.
 v       v       throw.
 b       (P)     browse (peruse) a book.
@@ -297,11 +299,6 @@ They all start with a slash '/':
             shop!) your blacklist timer won't decrease while you're AFK!
             Note that your character won't need to consume food while afk if
             you are not already 'hungry' or even 'weak' from a lack of food!
-            Your character is thrown out of the game if..
-            -you don't have /afk turned on AND
-            -you begin to starve (you get 'weak') due to lack of food AND
-            -your HP are fully healed! HP-draining items are dangerous!
-            So always use /afk to be on the safe side.
 /afk <msg>  You can specify a reason that will be displayed to the other
             players, so they know why you are currently AFK or when you will
             be back.
@@ -394,11 +391,14 @@ Weapons:
 
 Ranged weapons:
     @O          Auto-retaliate with it (shooting ammo). ('O' is the letter)
-                Note: @O must be on your ammunition, not on the bow!
+                NOTE: @O must be on your ammunition, not on the bow!
 
 Spellbooks:
     @Oc         You will auto-retaliate by casting the spell 'c)' from this
                 book (or any other spell, change the inscription accordingly).
+                IMPORTANT: If you cannot cast spells from the book or you
+                inscribe an unsuitable item, auto-retaliation will be disabled
+                completely!
 
 Ammunition:
     !=          will make your character auto-pickup the ammo from the floor.
@@ -1033,14 +1033,19 @@ it will be automatically loaded on all chars of that account.
 You can also save macros to <racename>.prf or to <classname>.prf, like
 warrior.prf to have them being auto-loaded on all characters of that class.
 Priority order (latter one overrides prior one):
+
 pref.prf (global for all OS and users on the system)
 user.prf (global, for the specific user)
 pref-<operating system>.prf (loaded if under the specific operating system)
+graf-<operating system>.prf OR font-<operating system>.prf
+                            (loaded if using graphics / ascii font on the
+                             specified system)
 user-<operating system>.prf (loaded if under the specific operating system)
 <race>.prf (for the specific race)
 <class>.prf (for the specific class)
 <account name>.prf (for the account the player logged in with)
 <character name>.prf (for the specific character the player logged in with)
+
 It is recommended to use only race/class/account/character preference files.
 
 Command macros:
@@ -2702,6 +2707,7 @@ BLESSED ('It has been blessed by the gods')
         without penalties, even if they are not 'hafted' (blunt).
 VAMPIRIC ('The weapon drains life from your victim')
         Drains life from your victim, which you gain as hit points.
+        For details see '(5.15) Vampirism'.
 VORPAL ('Sharp' weapons)
         Has a chance that weapon dice result is multiplied on hitting,
         you'll see 'Your weapon cuts deep into your enemy'.
@@ -3178,6 +3184,35 @@ can alternatively be broken by enchanting the item's stats above +0.
 Each enchantment of any of their stats (to-hit, to-dam, to-ac) above +0 has
 a certain chance to break the curse. This can often be cheaper than buying a
 *remove curse* scroll for HEAVY_CURSE items.
+
+
+
+(5.15) Vampirism
+----------------
+Weapons and other items that you can equip may by 'vampiric' (see (5.8)),
+meaning that they drain life from your target.
+Mimics who use a vampire form will also get a vampiric 'brand' on their melee
+attacks (see (6.7)).
+
+Vampiric life draining heals you with a part of the damage you afflicted on
+your target! The more damage you deal and the more attacks per round you have,
+the more life you will leech back. There's a maximum amount of HP which you
+can leech from a victim per round (usually around 50..100).
+
+The best case is to have vampiric flag on a weapon, that will drain at maximum
+efficiency. If you use vampiric equipment like gloves, they will be a bit less
+efficient than an actual vampiric weapon, meaning that you won't leech _every_
+time you hit (although _if_ you do, then the leeched amount is the same).
+If you use ranged weapons, it doesn't matter which part is vampiric, the bow
+or the ammunition. It won't increase your over all life leeching if both are
+vampiric.
+
+In general, vampiric flags don't stack from multiple items! Just the item that
+fits the situation better (weapons) overrides the weaker ones (non-weapons).
+Note that vampirism from mimicked forms works only works on melee combat and
+has 50% to go off (except for vampire bat which has 100%) due to a half of
+vampires' attacks being normal hits and the other half being biting which
+drains hit points.
 
 
 
@@ -3672,7 +3707,7 @@ High-Elf
     High-elves can see the invisible and resist light and the flow of time
     intrinsically. They are a race of immortal beings dating from the
     beginning of time, masters of all skills, strong and intelligent, although
-    their wisdom is sometimes suspect. They do very well in all   professions.
+    their wisdom is sometimes suspect. They do very well in all professions.
     There are few things that they have not seen already, and experience is
     hard for them to gain.
     High-Elves receive bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Dodging',
@@ -3735,9 +3770,9 @@ Human       +0  +0  +0  +0  +0  +0      10      100%    0ft
             0   0   0   0   10  0   0   0
 Half-Elf    -1  +1  +0  +1  -1  +1      9       110%    20ft            
             2   3   3   1   11  6   -1  6
-Elf         -1  +2  +1  +1  -2  +1      8       120%    30ft            
+Elf         -1  +2  +1  +1  -2  +2      8       120%    30ft            
             5   6   6   1   1   8   -5  15
-Hobbit      -2  +2  +1  +3  +2  +1      7       110%    40ft            
+Hobbit      -2  +2  +1  +3  +0  +1      7       110%    40ft            
             15  18  18  4   15  12  -10 20
 Gnome       -1  +2  +0  +2  +1  -2      8       125%    40ft            
             10  12  12  3   13  6   -8  12
@@ -3749,7 +3784,7 @@ Half-Troll  +4  -4  -2  -4  +3  -6      12      120%    30ft
             -5  -8  -8  -2  5   -1  20  -10
 Dunadan     +1  +2  +2  +2  +3  +2      10      180%    0ft             
             4   5   5   2   13  3   15  10
-High-Elf    +1  +3  -1  +3  +1  +5      10      250%    40ft            
+High-Elf    +1  +3  -1  +3  +1  +3      10      230%    40ft            
             4   20  20  3   14  3   10  25
 Yeek        -5  -5  -5  -5  -5  -5      8       35%     0ft             
             0   0   0   0   10  0   0   0
@@ -3757,7 +3792,7 @@ Goblin      +0  -1  -5  +4  +2  -5      11      115%    30ft
             2   -3  -3  0   8   2   12  -5
 Ent         +8  -4  +2  -4  +8  -5      14      300%    50ft            
             5   0   20  -6  4   5   15  5
-Thunderlord +6  +2  +1  +1  +3  +8      14      350%    0ft             
+Thunderlord +6  +2  +1  +1  +3  +5      14      350%    0ft             
             6   0   10  -16 10  30  15  5
 
 
@@ -3906,23 +3941,23 @@ Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
             STR INT WIS DEX CON CHR     HPdice  Exp%    Blows/Round
             Di  MD  ST  St  Pe  Sr  Fi  BT
 ------------------------------------------------------------------------------
-Adventurer  +0  +0  +0  +0  +0  +0      +5      *100%       4
+Adventurer  +0  +0  +0  +0  +0  +0      +6      *100%       4
             20  20  20  2   15  15  50  50
 Warrior     +5  -2  -2  +2  +2  -1      +10     *110%       6
             25  18  18  1   2   14  70  55
 Istari      -5  +3  +0  +1  -2  +1      +0      *135%       1
             30  36  30  2   20  16  34  20
-Priest      -1  -3  +3  -1  +0  +2      +3      *120%       4
+Priest      -1  -3  +3  -1  +0  +2      +4      *120%       4
             25  30  32  2   8   16  48  35
 Rogue       +2  +1  -2  +3  +1  -1      +5      *125%       5
             45  32  28  5   32  24  60  66
 Mimic       +1  +0  +0  +1  +1  -4      +5      *140%       4
             25  35  28  7   18  18  60  66
-Archer      +1  +0  +2  +3  +1  -1      +4      *115%       3
+Archer      +1  +0  +2  +3  +1  -1      +5      *115%       3
             30  32  28  2   20  24  56  82
 Paladin     +3  -3  +1  +0  +2  +2      +8      *130%       5
             10  21  54  1   16  13  60  29
-Ranger      +2  +2  -1  +1  +2  +0      +6      *135%       5
+Ranger      +2  +2  -1  +1  +2  +0      +7      *135%       5
             34  32  30  5   30  30  50  60
 
 
@@ -4164,6 +4199,11 @@ All undead creatures
 All non-living creatures
             Resist poison (usually even immune) and fear; insanity attacks
             are reduced by 50%.
+All vampires and vampire bats
+            Chance to drain life on attacking in melee.
+            Vampire bat form has 100% chance to do a vampiric attack,
+            real vampire forms have 50% chance (half their attacks are hits,
+            the other half is biting). For details see '(5.15) Vampirism'.
 
 Keep in mind that by changing forms you can potentially lose abilities that
 you had in player form, because they were bound to your normal form.
@@ -5228,8 +5268,7 @@ SOLUTION:   This can have several reasons. On disconnection a message box will
             "Killed by..."
                     Your character was finally killed/destroyed.
             "Starving to death"
-                    If this happens in town, your life will be saved if you
-                    had full HP. Otherwise you died to starvation.
+                    You died to starvation.
             "Timeout 08"
                     This happens if you 'lag out' on a slow connection or if
                     the server or your computer is under very heavy load.

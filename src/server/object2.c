@@ -1366,7 +1366,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			a_ptr = randart_make(o_ptr);
 			value = a_ptr->cost;
 
-			if (value && !star) value = (object_value_base(Ind, o_ptr) << 3) + 15000;
+			if (value && !star) value = (object_value_base(Ind, o_ptr) << 3) + 10000;
 			if (value > a_ptr->cost) value = a_ptr->cost;
 		}
 		else
@@ -1675,10 +1675,15 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			/* Give credit for bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += (((o_ptr->to_h < 0)? 0 : PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4)) +
-				((o_ptr->to_d < 0)? 0 : PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4)) + 
-				((o_ptr->to_a < 0)? 0 : PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 9, 4))) * 100L;
-
+			value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 : 
+				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 4): 
+				    PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4))) + 
+				    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
+				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 4):
+				    PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4))) + 
+				    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
+				    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 4):
+				    PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 9, 4))) ) * 100L;
 			/* Done */
 			break;
 		}
@@ -1707,12 +1712,19 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			/* Factor in the bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += (((o_ptr->to_h < 0)? 0 : PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4)) + 
-				((o_ptr->to_d < 0)? 0 : PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4)) + 
-				((o_ptr->to_a < 0)? 0 : PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 9, 4))) * 100L;
+			value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
+				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 4):
+				    PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4))) + 
+				    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
+				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 4):
+				    PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4))) + 
+				    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
+				    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 4):
+				    PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 9, 4))) ) * 100L;
 
 			/* Hack -- Factor in extra damage dice */
-			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
+			if (((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds)) &&
+			    (o_ptr->dd > 0 && o_ptr->ds > 0))
 			{
 				value += PRICE_BOOST((o_ptr->dd - k_ptr->dd), 1, 4) * o_ptr->ds * 100L;
 			}
@@ -1732,13 +1744,18 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			/* Factor in the bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
 			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-			value += (((o_ptr->to_h < 0)? 0 : PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4)) + 
-				((o_ptr->to_d < 0)? 0 : PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4))) * 5L;
+			value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
+				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 4):
+				    PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4))) + 
+				    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
+				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 4):
+				    PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4)))  ) * 5L;
 
 			/* Hack -- Factor in extra damage dice */
-			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
+			if (((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds)) &&
+			    (o_ptr->dd > 0 && o_ptr->ds > 0))
 			{
-				value += (o_ptr->dd - k_ptr->dd) * o_ptr->ds * 5L;
+				value += (o_ptr->dd - k_ptr->dd) * (o_ptr->ds - k_ptr->ds) * 5L;
 			}
 
 			/* Special attack (exploding arrow) */
@@ -1847,11 +1864,6 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 	/* Require identical object types */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
 
-	/* Require objects from the same modus! */
-	if (((o_ptr->owner_mode & MODE_IMMORTAL) && !(j_ptr->owner_mode & MODE_IMMORTAL)) ||
-	    ((j_ptr->owner_mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL)))
-		return(0);
-
 		/* Require same owner or convertable to same owner */
 //
 /*		if (o_ptr->owner != j_ptr->owner) return (0); */
@@ -1864,8 +1876,24 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 			&& (j_ptr->owner)) return (0);
 		if ((o_ptr->owner != p_ptr->id)
 			&& (o_ptr->owner != j_ptr->owner)) return (0);
+
+		/* Require objects from the same modus! */
+		/* A non-everlasting player won't have his items stacked w/ everlasting stuff */
+		if (!(Players[Ind]->mode & MODE_IMMORTAL)) {
+			if (((o_ptr->owner_mode & MODE_IMMORTAL) && !(j_ptr->owner_mode & MODE_IMMORTAL)) ||
+			    ((j_ptr->owner_mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL)))
+				return(0);
+		}
 	}
-	else if (o_ptr->owner != j_ptr->owner) return (0);
+	else
+	{
+		if (o_ptr->owner != j_ptr->owner) return (0);
+		/* no stacks of unowned everlasting items in shops after a now-dead
+		   everlasting player sold an item to the shop before he died :) */
+		if (((o_ptr->owner_mode & MODE_IMMORTAL) && !(j_ptr->owner_mode & MODE_IMMORTAL)) ||
+		    ((j_ptr->owner_mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL)))
+			return(0);
+	}
 
 	/* Analyze the items */
 	switch (o_ptr->tval)
@@ -2071,6 +2099,15 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 	/* Maximal "stacking" limit */
 	if (total >= MAX_STACK_SIZE) return (0);
 
+	/* An everlasting player will have _his_ items stack w/ non-everlasting stuff
+	   (especially new items bought in the shops) and convert them all to everlasting */
+	if (Ind && (p_ptr->mode & MODE_IMMORTAL)) {
+/*		if ((o_ptr->owner_mode & MODE_IMMORTAL) || (j_ptr->owner_mode & MODE_IMMORTAL))*/
+		{
+			o_ptr->owner_mode = MODE_IMMORTAL;
+			j_ptr->owner_mode = MODE_IMMORTAL;
+		}
+	}
 
 	/* They match, so they must be similar */
 	return (TRUE);
@@ -2623,6 +2660,13 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good)
 			if (rand_int(e_ptr->mrarity) > e_ptr->rarity)
 			{
 				continue;
+			}
+			
+			/* Don't allow silyl combinations (elven armour of resist xxxx) */
+			switch (o_ptr->name2) {
+			case EGO_RESIST_FIRE:	case EGO_RESIST_COLD:
+			case EGO_RESIST_ELEC:	case EGO_RESIST_ACID:
+				if (i == EGO_ELVENKIND) continue;
 			}
 
 			/* Hack -- mark the item as an ego */
@@ -5432,12 +5476,91 @@ void determine_level_req(int level, object_type *o_ptr)
 		}
 	}
 
+	/* stat/heal potions harder to cheeze-transfer */
+	if (o_ptr->tval == TV_POTION)
+	{
+		switch(o_ptr->sval) {
+		case SV_POTION_HEALING:
+			base += 15+10;
+			break;
+		case SV_POTION_RESTORE_MANA:
+			base += 10+10;
+			break;
+		case SV_POTION_INC_STR:
+		case SV_POTION_INC_INT:
+		case SV_POTION_INC_WIS:
+		case SV_POTION_INC_DEX:
+		case SV_POTION_INC_CON:
+		case SV_POTION_INC_CHR:
+			base += 40+30;
+			break;
+		case SV_POTION_AUGMENTATION:
+			base += 20+20;
+			break;
+		case SV_POTION_EXPERIENCE:
+			base += 20+20;
+			break;
+		}
+	}
+
 	/* Hack -- analyze ego-items */
 	if (o_ptr->name2 || o_ptr->name2b)
 	{
-		base += 15; /* general increase for ego items! */
 		if (o_ptr->name2) base += e_info[o_ptr->name2].rating;
 		if (o_ptr->name2b) base += e_info[o_ptr->name2b].rating;
+		/* general level boost for ego items!
+		   except very basic ones */
+		switch (o_ptr->name2) {
+		case EGO_LEPROUS:
+		case EGO_STUPIDITY:	case EGO_NAIVETY:
+		case EGO_UGLINESS:	case EGO_SICKLINESS:
+		case EGO_ENVELOPING:	case EGO_VULNERABILITY:
+		case EGO_IRRITATION:
+		case EGO_WEAKNESS:	case EGO_CLUMSINESS:
+		case EGO_PEACE:
+		case EGO_NOISE:		case EGO_SLOWNESS:
+		case EGO_ANNOYANCE:
+		case EGO_MORGUL:	case EGO_NOTHINGNESS:
+		case EGO_BACKBITING:	case EGO_SHATTERED:
+		case EGO_BLASTED:
+		case EGO_LFADING:
+		case EGO_INDESTRUCTIBLE:case EGO_CURSED:
+		case EGO_FIREPROOF:	case EGO_PLENTY:
+		case EGO_TOBVIOUS:
+		case EGO_VULNERABILITY2:case EGO_VULNERABILITY3:
+		case EGO_BUDWEISER:	case EGO_HEINEKEN:
+		case EGO_GUINNESS:
+			break;
+
+		case EGO_RESIST_ACID:	case EGO_RESIST_ELEC:
+		case EGO_RESIST_FIRE:	case EGO_RESIST_COLD:
+		case EGO_ENDURE_ACID:	case EGO_ENDURE_ELEC:
+		case EGO_ENDURE_FIRE:	case EGO_ENDURE_COLD:
+		case EGO_NOLDOR:	case EGO_WISDOM:
+		case EGO_BEAUTY:	case EGO_INFRAVISION:
+		case EGO_REGENERATION:	case EGO_TELEPORTATION:
+		case EGO_PROTECTION:	case EGO_STEALTH:
+		case EGO_CHARMING:
+		case EGO_SLOW_DESCENT:	case EGO_QUIET:
+		case EGO_DIGGING:
+		case EGO_RQUICKNESS:	case EGO_RCHARGING:
+		case EGO_LBOLDNESS:	case EGO_LBRIGHTNESS:
+		case EGO_LSTAR_BRIGHTNESS:	case EGO_LINFRAVISION:
+		case EGO_RSIMPLICITY:
+		case EGO_CONCENTRATION:
+			base += 5;
+			break;
+
+		case EGO_FREE_ACTION:
+		case EGO_SLAYING:	case EGO_AGILITY:
+		case EGO_MOTION:
+		case EGO_RISTARI:
+			base += 10;
+			break;
+		
+		default:
+			base += 15;
+		}
 	}
 
 	/* '17/72' == 0.2361... < 1/4 :) */
@@ -6459,7 +6582,7 @@ void pick_trap(struct worldpos *wpos, int y, int x)
 		if ((feat == FEAT_TRAP_HEAD + 0x00) && is_quest(wpos)) continue;
 
 		/* Hack -- no trap doors on the deepest level */
-                if ((feat == FEAT_TRAP_HEAD + 0x00) && can_go_down(wpos))
+                if ((feat == FEAT_TRAP_HEAD + 0x00) && can_go_down_simple(wpos))
 		continue;
 
 		/* Done */

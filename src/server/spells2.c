@@ -2826,7 +2826,11 @@ void stair_creation(int Ind)
 	delete_object(wpos, p_ptr->py, p_ptr->px, TRUE);
 
 	/* Create a staircase */
-	if (can_go_down(wpos) && !can_go_up(wpos))
+	if (!can_go_down(wpos) && !can_go_up(wpos))
+	{
+		/* special..? */
+	}
+	else if (can_go_down(wpos) && !can_go_up(wpos))
 	{
 		c_ptr->feat = FEAT_MORE;
 	}

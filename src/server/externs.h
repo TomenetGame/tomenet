@@ -402,6 +402,8 @@ extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);
 extern bool can_go_up(struct worldpos *wpos);
 extern bool can_go_down(struct worldpos *wpos);
+extern bool can_go_up_simple(struct worldpos *wpos);
+extern bool can_go_down_simple(struct worldpos *wpos);
 extern int getlevel(struct worldpos *wpos);
 extern void wpcopy(struct worldpos *dest, struct worldpos *src);
 extern int distance(int y1, int x1, int y2, int x2);
@@ -1212,6 +1214,7 @@ extern void fix_spell(int Ind, bool full);
 
 extern void calc_bonuses(int Ind);
 extern int get_archery_skill(player_type *p_ptr);
+extern int get_weaponmastery_skill(player_type *p_ptr);
 extern int calc_blows(int Ind, object_type *o_ptr);
 
 
@@ -1417,3 +1420,4 @@ school_type *grab_school_type(s16b num);
 /* only called once, in util.c, referring to new file slash.c */
 extern void do_slash_cmd(int Ind, char *message);
 extern int global_luck;
+extern void lua_intrusion(int Ind, char *problem_diz);

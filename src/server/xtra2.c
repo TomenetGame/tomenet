@@ -3106,6 +3106,7 @@ bool set_food(int Ind, int v)
 			 * destroy his conneciton (this will hopefully prevent
 			 * people from starving while afk)
 			 */
+#if 0
 			if (p_ptr->chp >= p_ptr->mhp) /* changed it due to CHP = MHP-1 bug.. -C. Blue */
 			{
 				/* Use the value */
@@ -3113,6 +3114,7 @@ bool set_food(int Ind, int v)
 				Destroy_connection(p_ptr->conn, "Starving to death!");
 				return TRUE;
 			}
+#endif
 			break;
 
 			/* Weak */
@@ -3354,6 +3356,39 @@ void check_experience(int Ind)
 		char str[160];
 		/* Message */
 		msg_format(Ind, "\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
+		
+		/* Introduce newly learned abilities (that depend on char level) */
+		/* those that depend on a race */
+		switch (p_ptr->prace) {
+		case RACE_DWARF:
+			if (p_ptr->lev == 30) msg_print(Ind, "\377GYou learn to climb mountains easily!");
+			break;
+		case RACE_ENT:
+			if (p_ptr->lev == 4) msg_print(Ind, "\377GYou learn to see the invisible!");
+			if (p_ptr->lev == 10) msg_print(Ind, "\377GYou learn to telepathically sense animals!");
+			if (p_ptr->lev == 15) msg_print(Ind, "\377GYou learn to telepathically sense orcs!");
+			if (p_ptr->lev == 20) msg_print(Ind, "\377GYou learn to telepathically sense trolls!");
+			if (p_ptr->lev == 25) msg_print(Ind, "\377GYou learn to telepathically sense giants!");
+			if (p_ptr->lev == 30) msg_print(Ind, "\377GYou learn to telepathically sense dragons!");
+			if (p_ptr->lev == 40) msg_print(Ind, "\377GYou learn to telepathically sense demons!");
+			if (p_ptr->lev == 50) msg_print(Ind, "\377GYou learn to telepathically sense evil!");
+			break;
+		case RACE_DRIDER:
+			if (p_ptr->lev == 5) msg_print(Ind, "\377GYou learn to telepathically sense dragons!");
+			if (p_ptr->lev == 10) msg_print(Ind, "\377GYou become more resistant to fire!");
+			if (p_ptr->lev == 15) msg_print(Ind, "\377GYou become more resistant to cold!");
+			if (p_ptr->lev == 20) msg_print(Ind, "\377GYou become more resistant to acid!");
+			if (p_ptr->lev == 25) msg_print(Ind, "\377GYou become more resistant to lightning!");
+			if (p_ptr->lev == 30) msg_print(Ind, "\377GYou learn how to fly!");
+			break;
+		}
+		/* those that depend on a class */
+		switch (p_ptr->pclass) {
+		case CLASS_RANGER:
+			if (p_ptr->lev == 20) msg_print(Ind, "\377GYou learn how to move through dense forests easily.");
+			break;
+		}
+
 #ifdef KINGCAP_LEV
 		if(p_ptr->lev == 50) msg_print(Ind, "\377GYou can't gain more levels until you defeat Morgoth, the Lord of Darkness!");
 #endif
@@ -4517,8 +4552,7 @@ static void kill_objs(int id){
 		if(!o_ptr->k_idx) continue;
 		if(o_ptr->owner==id){
 			o_ptr->owner=MAX_ID+1;
-			o_ptr->owner_mode = 0;
-
+			/* o_ptr->owner_mode = 0; <- makes everlasting items usable! bad! */
 		}
 	}
 }
@@ -5471,7 +5505,11 @@ void kill_quest(int Ind){
 		   it will do for now though
 		   - I toned it down a bit via magik() -C. Blue
 		*/
+		strcpy(temp, r_name + r_info[quests[pos].type].name);
+		strcat(temp, " quest");
+		unique_quark = quark_add(temp);
 		acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, magik(50 + p_ptr->lev * 2) ? TRUE : FALSE);
+		unique_quark = 0;
 	}
 	for(i=1; i<=NumPlayers; i++){
 		q_ptr=Players[i];

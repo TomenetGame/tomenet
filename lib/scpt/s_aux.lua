@@ -399,6 +399,13 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 			return
 		end
 
+		-- Level requirements met?
+		if (get_level(i, s, 50, -50) < 1) then
+			msg_print(i, "Your skill is not high enough!")
+			lua_intrusion(i, "bad spell level")
+			return
+		end
+
 		-- Enough mana
 		if (get_mana(i, s) > get_power(i, s)) then
 --                        if (get_check("You do not have enough "..get_power_name(s)..", do you want to try anyway?") == FALSE) then return end

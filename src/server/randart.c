@@ -1389,7 +1389,7 @@ artifact_type *randart_make(object_type *o_ptr)
 			ap = artifact_power (a_ptr);
 		}
 	}
-	a_ptr->cost = ap * (s32b)1000;
+	a_ptr->cost = (ap + 10 - RANDART_QUALITY) * (s32b)1500;
         a_ptr->level = ap;
 
 	if (a_ptr->cost < 0) a_ptr->cost = 0;

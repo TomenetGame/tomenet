@@ -1385,7 +1385,7 @@ that keeps many algorithms happy.
 #define EGO_NAIVETY		37
 #define EGO_UGLINESS		38
 #define EGO_SICKLINESS		39
-
+#define EGO_DWARVEN		40
 #define EGO_PROTECTION          41
 #define EGO_STEALTH             42
 #define EGO_AMAN		43
@@ -1397,14 +1397,15 @@ that keeps many algorithms happy.
 #define EGO_SLAYING             50
 #define EGO_AGILITY		51
 #define EGO_POWER		52
-
+#define EGO_PEACE		53
+#define EGO_CHARMING		54
 #define EGO_WEAKNESS		55
 #define EGO_CLUMSINESS		56
 #define EGO_SLOW_DESCENT	57
 #define EGO_QUIET               58
 #define EGO_MOTION              59
 #define EGO_SPEED               60
-
+#define EGO_DWARVISHENDU	61
 #define EGO_NOISE		62
 #define EGO_SLOWNESS		63
 #define EGO_ANNOYANCE		64
@@ -1440,24 +1441,28 @@ that keeps many algorithms happy.
 #define EGO_KILL_GIANT		95
 #define EGO_KILL_DRAGON		96
 #define EGO_VAMPIRIC            97
-#define EGO_STAR_DF         98
+#define EGO_STAR_DF         	98
 #define EGO_DRAGON              99
-
+#define EGO_GONDOLIN		100
 #define EGO_DIGGING		101
 #define EGO_SPECTRAL            102
-#if 0
-#define EGO_MORGUL			103
+#define EGO_MORGUL		103
 #define EGO_NOTHINGNESS		104
-#endif	/* 0 */
 #define EGO_ACCURACY		105
 #define EGO_EXTRA_MIGHT		107
 #define EGO_EXTRA_SHOTS		108
 #define EGO_LORIEN              109
-
+#define EGO_HARADRIM		110
+#define EGO_BUCKLAND		111
 #define EGO_HURT_ANIMAL		112
 #define EGO_HURT_EVIL		113
+#define EGO_HURT_UNDEAD		114
+#define EGO_POISONOUS		115
+#define EGO_ACIDIC		116
+#define EGO_ELEMENTAL		117
+#define EGO_HURT_DEMON		118
 #define EGO_HURT_DRAGON		119
-
+#define EGO_HURT_ALL		120
 #define EGO_LIGHTNING_BOLT      121
 #define EGO_FLAME               122
 #define EGO_FROST               123
@@ -1466,16 +1471,78 @@ that keeps many algorithms happy.
 #define EGO_SHATTERED           126
 #define EGO_BLASTED             127
 #define EGO_INST_DRAGONKIND     130
+#define EGO_GNOMISH		131
+#define EGO_DWARVISH		132
+#define EGO_RQUICKNESS		133
+#define EGO_RCHARGING		134
+#define EGO_RISTARI		135
+
+#define EGO_LBOLDNESS		137
+
+#define EGO_LBRIGHTNESS		139
+#define EGO_LSTAR_BRIGHTNESS	140
+
+#define EGO_LINFRAVISION	142
+#define EGO_LETERNAL_EYE	143
+
+#define EGO_LFADING		145
+
+#define EGO_INDESTRUCTIBLE	147
+#define EGO_CURSED		148
+#define EGO_FIREPROOF		149
 #define EGO_PLENTY		150
+#define EGO_TXMIGHT		151
+#define EGO_TXSHOTS		152
+#define EGO_TAUTO		153
+#define EGO_TFULLAUTO		154
+#define EGO_TWELLHIDDEN		155
+#define EGO_TCOMPLICATED	156
+#define EGO_TOBVIOUS		157
+#define EGO_TDRAGON		158
+#define EGO_TDEMON		159
+#define EGO_TANIMAL		160
+#define EGO_TUNDEAD		161
+#define EGO_TEVIL		162
 #define EGO_LITE_MAGI           163
-
+#define EGO_VULNERABILITY2	164
+#define EGO_VULNERABILITY3	165
+#define EGO_PRESERVATION	166
+#define EGO_SERENITY		167
+#define EGO_NIGHT_DAY		168
+#define EGO_CLOAK_MAGI		169
+#define EGO_CLOAK_INVIS		170
+#define EGO_CLOAK_BAT		171
+#define EGO_THIEVERY		172
+#define EGO_COMBAT		173
+#define EGO_STABILITY		174
+#define EGO_ELVENKIND2		175
 #define EGO_FURY		176
+#define EGO_PLENTY2		177
 
+#define EGO_RSIMPLICITY		179
 /* megahack */
 #define EGO_CLOAK_LORDLY_RES	180 
+#define EGO_CLOAK_TELERI	181
+#define EGO_MIRKWOOD		182
 #define EGO_NUMENOR             183
+#define EGO_AVARI		184
+#define EGO_ISTARI		185
+#define EGO_OFTHEMAGI		186
 #define EGO_STORMBRINGER	187
+#define EGO_BUDWEISER		188
+#define EGO_HEINEKEN		189
+#define EGO_MISTRUST		190
+#define EGO_INSULATION		191
+#define EGO_CONCENTRATION	192
+#define EGO_BRILLIANCE		193
+#define EGO_LIMMUNITY		194
+#define EGO_LPERPETUITY		195
+#define EGO_LPRESENTIMENT	196
 #define EGO_ESP			197	/* amulet of telepathic awareness, formerly ESP */
+#define EGO_GUINNESS		198
+#define EGO_PERFECTION		199
+
+
 
 /*** Object "tval" and "sval" codes ***/
 

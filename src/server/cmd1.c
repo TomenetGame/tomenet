@@ -15,7 +15,8 @@
 
 #include "angband.h"
 
-#define MAX_VAMPIRIC_DRAIN 100
+#define MAX_VAMPIRIC_DRAIN 50	/* was 100 */
+#define NON_WEAPON_VAMPIRIC_CHANCE 67 /* chance to drain if VAMPIRIC is given be a non-weapon item */
 
 /*
  * Allow wraith-formed player to pass through permawalls on the surface.
@@ -2682,6 +2683,17 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				/* Apply the player damage bonuses */
 				/* (should this also cancelled by nazgul?(for now not)) */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
+
+				/* Vampiric drain */
+				if (((p_ptr->vampiric == -1 && magik(NON_WEAPON_VAMPIRIC_CHANCE)) ||
+				    magik(p_ptr->vampiric)) &&
+				    !((r_ptr->flags3 & RF3_UNDEAD) ||
+//		      		    (r_ptr->flags3 & RF3_DEMON) ||
+				    (r_ptr->flags3 & RF3_NONLIVING) ||
+	                            (strchr("Egv", r_ptr->d_char))))
+					drain_result = m_ptr->hp;
+				else
+					drain_result = 0;
 			} else
 #endif	// 1 (martial arts)
 			/* Handle normal weapon */
@@ -2743,13 +2755,16 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 
 				/* Vampiric drain */
-				if ((f1 & TR1_VAMPIRIC) || (chaos_effect == 1))
-				{
-					if (!((r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->flags3 & RF3_NONLIVING)))
-						drain_result = m_ptr->hp;
-					else
-						drain_result = 0;
-				}
+				if (((f1 & TR1_VAMPIRIC) || (chaos_effect == 1) || 
+				    (p_ptr->vampiric == -1 && magik(NON_WEAPON_VAMPIRIC_CHANCE)) ||
+				    magik(p_ptr->vampiric)) &&
+				    !((r_ptr->flags3 & RF3_UNDEAD) ||
+/*		      		    (r_ptr->flags3 & RF3_DEMON) ||*/
+				    (r_ptr->flags3 & RF3_NONLIVING) ||
+	                            (strchr("Egv", r_ptr->d_char))))
+					drain_result = m_ptr->hp;
+				else
+					drain_result = 0;
 
                                 if (f5 & TR5_VORPAL && (randint(6) == 1))
                                         vorpal_cut = TRUE;
@@ -2798,6 +2813,17 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				/* Apply the player damage bonuses */
 				/* (should this also cancelled by nazgul?(for now not)) */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
+
+				/* Vampiric drain */
+				if (((p_ptr->vampiric == -1 && magik(NON_WEAPON_VAMPIRIC_CHANCE)) ||
+				    magik(p_ptr->vampiric)) &&
+				    !((r_ptr->flags3 & RF3_UNDEAD) ||
+//		      		    (r_ptr->flags3 & RF3_DEMON) ||
+				    (r_ptr->flags3 & RF3_NONLIVING) ||
+	                            (strchr("Egv", r_ptr->d_char))))
+					drain_result = m_ptr->hp;
+				else
+					drain_result = 0;
 			}
 
 			/* Penalty for could-2H when having a shield */
@@ -2941,16 +2967,15 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 			}
 
-			/* Are we draining it?  A little note: If the monster is
+			/* VAMPIRIC: Are we draining it?  A little note: If the monster is
 			   dead, the drain does not work... */
-
 			if (drain_result)
 			{
 				drain_result -= m_ptr->hp;  /* Calculate the difference */
 
 				if (drain_result > 0) /* Did we really hurt it? */
 				{
-					drain_heal = damroll(4,(drain_result / 6));
+					drain_heal = damroll(2,(drain_result / 8));/* was 4,../6 */
 
 					if (drain_left)
 					{
@@ -2966,7 +2991,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 						if (drain_msg)
 						{
-							msg_format(Ind, "Your weapon drains life from %s!", m_name);
+							if (martial || !o_ptr->k_idx) 
+								msg_format(Ind, "Your hits drain life from %s!", m_name);
+							else
+								msg_format(Ind, "Your weapon drains life from %s!", m_name);
 							drain_msg = FALSE;
 						}
 

@@ -100,9 +100,11 @@ static cptr value_check_aux1(object_type *o_ptr)
 		case TV_BOW:
 		case TV_BOOMERANG:
 			/* Good "armor" bonus */
-			if (o_ptr->to_a > k_ptr->to_a) return "good";
+			if ((o_ptr->to_a > k_ptr->to_a) &&
+			    (o_ptr->to_a > 0)) return "good";
 			/* Good "weapon" bonus */
-			if (o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) return "good";
+			if ((o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) &&
+			    (o_ptr->to_h > 0 || o_ptr->to_d > 0)) return "good";
 			break;
 		default:
 			/* Good "armor" bonus */
@@ -1640,9 +1642,14 @@ static int auto_retaliate(int Ind)
 				if (*inscription == 'O')
 				{                       
 					inscription++;
-					item = i;
-					i = INVEN_TOTAL;
-					break;
+					/* Don't let @Ox stop auto-retaliation if it's
+					   not on an equipped weapon at all! */
+					if ((*inscription != 'x') || (i == INVEN_WIELD) ||
+					    (i == INVEN_BOW) || (i == INVEN_AMMO)) {
+						item = i;
+						i = INVEN_TOTAL;
+						break;
+					}
 				}
 			}
 			inscription++;
@@ -1898,9 +1905,12 @@ static void do_recall(int Ind, bool bypass)
 		d_ptr=getdungeon(&p_ptr->wpos);
 
 		/* Messages */
-		if(d_ptr->flags2 & DF2_IRON && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)){
+		if(((d_ptr->flags2 & DF2_IRON && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)) ||
+		    (d_ptr->flags1 & DF1_NO_RECALL)) && !p_ptr->admin_dm && !p_ptr->admin_wiz) {
 			msg_print(Ind, "You feel yourself being pulled toward the surface!");
 			recall_ok=FALSE;
+			/* Redraw the depth(colour) */
+	    		p_ptr->redraw |= (PR_DEPTH);
 		}
 		else{
 			if(p_ptr->wpos.wz > 0)
@@ -1978,8 +1988,9 @@ static void do_recall(int Ind, bool bypass)
 			dungeon_type *d_ptr=wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon;
 
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
-			if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
-					(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
+			if(((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
+			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
+			    (d_ptr->flags1 & DF1_NO_RECALL)) && !p_ptr->admin_dm && !p_ptr->admin_wiz)
 			{
 				p_ptr->recall_pos.wz = 0;
 			}
@@ -2007,8 +2018,9 @@ static void do_recall(int Ind, bool bypass)
 			dungeon_type *d_ptr=wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower;
 
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
-			if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
-					(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
+			if(((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
+			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
+			    (d_ptr->flags1 & DF1_NO_RECALL)) && !p_ptr->admin_dm && !p_ptr->admin_wiz)
 			{
 				p_ptr->recall_pos.wz = 0;
 			}

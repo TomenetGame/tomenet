@@ -2276,3 +2276,10 @@ int gold_colour(int amt)
 	return (lookup_kind(TV_GOLD, unit));
 }
 
+/* Catching bad players who hack their client.. nasty! */
+void lua_intrusion(int Ind, char *problem_diz)
+{
+	s_printf(format("LUA INTRUSION: %s : %s\n", Players[Ind]->name, problem_diz));
+	take_hit(Ind, Players[Ind]->chp - 1, "");
+	msg_print(Ind, "\377rThat was close huh?!");
+}

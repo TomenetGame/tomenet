@@ -626,6 +626,7 @@ static void place_up_stairs(struct worldpos *wpos, int y, int x)
 	c_ptr=&zcave[y][x];
 
 	/* Create up stairs */
+	if (can_go_up(wpos))
 	c_ptr->feat = FEAT_LESS;
 }
 
@@ -641,6 +642,7 @@ static void place_down_stairs(worldpos *wpos, int y, int x)
 	c_ptr=&zcave[y][x];
 
 	/* Create down stairs */
+	if (can_go_down(wpos))
 	c_ptr->feat = FEAT_MORE;
 }
 
@@ -658,7 +660,10 @@ static void place_random_stairs(struct worldpos *wpos, int y, int x)
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr=&zcave[y][x];
 	if(!cave_clean_bold(zcave, y, x)) return;
-	if(!can_go_down(wpos) && can_go_up(wpos)){
+	if(!can_go_down(wpos) && !can_go_up(wpos)){
+		/* special or what? */
+	}
+	else if(!can_go_down(wpos) && can_go_up(wpos)){
 		place_up_stairs(wpos, y, x);
 	}
 	else if(!can_go_up(wpos) && can_go_down(wpos)){
@@ -846,10 +851,11 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 				c_ptr = &zcave[y][x];
 
 				/* Town -- must go down */
-				if (!can_go_up(wpos))
+				if (!can_go_up_simple(wpos))
 				{
 					/* Clear previous contents, add down stairs */
-					c_ptr->feat = FEAT_MORE;
+					if (can_go_down(wpos)) c_ptr->feat = FEAT_MORE;
+
 					if(!istown(wpos)){
 						new_level_up_y(wpos,y);
 						new_level_up_x(wpos,x);
@@ -857,10 +863,10 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 				}
 
 				/* Quest -- must go up */
-				else if (is_quest(wpos) || !can_go_down(wpos))
+				else if (is_quest(wpos) || !can_go_down_simple(wpos))
 				{
 					/* Clear previous contents, add up stairs */
-					c_ptr->feat = FEAT_LESS;
+					if (can_go_up(wpos)) c_ptr->feat = FEAT_LESS;
 
 					/* Set this to be the starting location for people going down */
 					new_level_down_y(wpos,y);
@@ -871,7 +877,9 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 				else
 				{
 					/* Clear previous contents, add stairs */
-					c_ptr->feat = feat;
+					if ((can_go_up(wpos) && (feat == FEAT_LESS || feat == FEAT_WAY_LESS)) ||
+					    (can_go_down(wpos) && (feat == FEAT_MORE || feat == FEAT_WAY_MORE)))
+						c_ptr->feat = feat;
 
 					if (feat == FEAT_LESS || feat == FEAT_WAY_LESS)
 					{

@@ -262,4 +262,4 @@ extern u16b max_t_idx;
 ////extern player_type Players[2] @ Players_real;
 
 extern int global_luck;
-  
+extern void lua_intrusion(int Ind, char *problem_diz);

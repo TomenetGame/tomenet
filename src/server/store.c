@@ -467,6 +467,11 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	/* Different objects cannot be stacked */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
 
+	/* Different modes cannot be stacked */
+	if (((o_ptr->owner_mode & MODE_IMMORTAL) && !(j_ptr->owner_mode & MODE_IMMORTAL)) ||
+	    (!(o_ptr->owner_mode & MODE_IMMORTAL) && (j_ptr->owner_mode & MODE_IMMORTAL)))
+		return (0);
+
 	/* Different charges (etc) cannot be stacked */
 	if (o_ptr->pval != j_ptr->pval && o_ptr->tval != TV_WAND) return (0);
 	if (o_ptr->bpval != j_ptr->bpval) return (0);

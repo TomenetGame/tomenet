@@ -1968,7 +1968,7 @@ F:REGEN_MANA
 # Weapon of Fury (must be big heavy type of weapon, no daggers or whips)
 N:176:of Fury
 X:A:24:30
-W:0:1:107:20000
+W:0:1:107:15000
 T:21:12:99
 T:22:10:99
 T:23:16:99

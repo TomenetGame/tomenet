@@ -176,17 +176,55 @@ byte level_rand_y(struct worldpos *wpos)
 
 bool can_go_up(struct worldpos *wpos)
 {
-	struct wilderness_type *wild;
-	if(wpos->wz<0) return(TRUE);
-	wild=&wild_info[wpos->wy][wpos->wx];
+        struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
+
+        struct dungeon_type *d_ptr = wild->tower;
+	if (wpos->wz < 0) d_ptr = wild->dungeon;
+	/* Check for empty staircase without any connected dungeon/tower! */
+	if (!d_ptr) return((wild->flags&WILD_F_UP)?TRUE:FALSE); /* you MAY create 'empty' staircase */
+
+	if(wpos->wz<0) {
+		if ((d_ptr->flags1 & (DF1_NO_UP | DF1_FORCE_DOWN)) ||
+		    (d_ptr->flags2 & DF2_IRON))
+			return(FALSE);
+		return(TRUE);
+	}
+
 	if(wpos->wz>0) return(wpos->wz < wild->tower->maxdepth);
+
 	return((wild->flags&WILD_F_UP)?TRUE:FALSE);
 }
 bool can_go_down(struct worldpos *wpos)
 {
-	struct wilderness_type *wild;
+        struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
+
+        struct dungeon_type *d_ptr = wild->dungeon;
+        if (wpos->wz > 0) d_ptr = wild->tower;
+	/* Check for empty staircase without any connected dungeon/tower! */
+	if (!d_ptr) {
+		return((wild->flags&WILD_F_DOWN)?TRUE:FALSE); /* you MAY create 'empty' staircase */
+	}
+
+	if(wpos->wz>0) {
+		if (d_ptr->flags2 & DF2_IRON) return(FALSE);
+		return(TRUE);
+	}
+
+	if(wpos->wz<0) return(ABS(wpos->wz) < wild->dungeon->maxdepth);
+
+	return((wild->flags&WILD_F_DOWN)?TRUE:FALSE);
+}
+bool can_go_up_simple(struct worldpos *wpos)
+{
+        struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
+	if(wpos->wz<0) return(TRUE);
+	if(wpos->wz>0) return(wpos->wz < wild->tower->maxdepth);
+	return((wild->flags&WILD_F_UP)?TRUE:FALSE);
+}
+bool can_go_down_simple(struct worldpos *wpos)
+{
+        struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz>0) return(TRUE);
-	wild=&wild_info[wpos->wy][wpos->wx];
 	if(wpos->wz<0) return(ABS(wpos->wz) < wild->dungeon->maxdepth);
 	return((wild->flags&WILD_F_DOWN)?TRUE:FALSE);
 }

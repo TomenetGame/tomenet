@@ -15,6 +15,9 @@
 
 #include "angband.h"
 
+#define MAX_VAMPIRIC_DRAIN_RANGED 50
+#define NON_WEAPON_VAMPIRIC_CHANCE_RANGED 50 /* chance to drain if VAMPIRIC is given be a non-weapon/non-ammo item */
+
 /* chance of walking in a random direction when confused and trying to climb,
  * in percent. [50]
  */
@@ -2711,6 +2714,11 @@ void do_cmd_fire(int Ind, int dir)
 	
 	char brand_msg[80];
 
+        bool            drain_msg = TRUE;
+        int             drain_result = 0, drain_heal = 0;
+        int             drain_left = MAX_VAMPIRIC_DRAIN_RANGED;
+	u32b f1, f1a, fx, esp;
+
 	char            o_name[160];
 	bool magic = FALSE, boomerang = FALSE;
 	cave_type **zcave;
@@ -2734,13 +2742,16 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Get the "bow" (if any) */
 	j_ptr = &(p_ptr->inventory[INVEN_BOW]);
-
+		
 	/* Require a launcher */
 	if (!j_ptr->tval)
 	{
 		msg_print(Ind, "You have nothing to fire with.");
 		return;
 	}
+
+	/* Extract the item flags */
+        object_flags(j_ptr, &f1, &fx, &fx, &fx, &fx, &esp);
 
 	if (j_ptr->tval == TV_BOOMERANG)
 	{
@@ -2769,6 +2780,9 @@ void do_cmd_fire(int Ind, int dir)
 		return;
 	}
 
+	/* Extract the item flags */
+        object_flags(o_ptr, &f1a, &fx, &fx, &fx, &fx, &esp);
+
 	/* Only fire in direction 5 if we have a target */
 	if ((dir == 5) && !target_okay(Ind))
 		return;
@@ -2779,6 +2793,10 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Take a (partial) turn */
 	p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
+
+	/* Adjust VAMPIRIC draining to shooting speed, since
+	   do_cmd_fire only handles ONE shot :/ */
+	drain_left /= thits;
 
 	/* Check if monsters around him/her hinder this */
 //  if (interfere(Ind, cfg.spell_interfere * 3)) return;
@@ -3185,9 +3203,13 @@ void do_cmd_fire(int Ind, int dir)
 				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible))
 				{
 					bool fear = FALSE;
+					char m_name[80];
 
 					/* Assume a default death */
 					cptr note_dies = " dies";
+
+					/* Get "the monster" or "it" */
+					monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 					/* Some monsters get "destroyed" */
 					if ((r_ptr->flags3 & RF3_DEMON) ||
@@ -3210,11 +3232,6 @@ void do_cmd_fire(int Ind, int dir)
 					/* Handle visible monster */
 					else
 					{
-						char m_name[80];
-
-						/* Get "the monster" or "it" */
-						monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
 						/* Message */
 						msg_format(Ind, "The %s hits %s.", o_name, m_name);
 
@@ -3291,6 +3308,19 @@ void do_cmd_fire(int Ind, int dir)
 					}
 #endif	// 0
 
+					/* Vampiric drain  - Launcher or ammo can be vampiric!
+					   Should general p_ptr->vampiric help for ranged attacks?
+					   - for now vampiric from items (-1) helps a bit,
+					   - vampiric from vampire form (>0) doesn't (relies on melee-biting!) */
+					if ((((f1 | f1a) & TR1_VAMPIRIC) || 
+					    (p_ptr->vampiric == -1 && magik(NON_WEAPON_VAMPIRIC_CHANCE_RANGED))) &&
+					    !((r_ptr->flags3 & RF3_UNDEAD) ||
+/*          				    (r_ptr->flags3 & RF3_DEMON) ||*/
+					    (r_ptr->flags3 & RF3_NONLIVING) ||
+					    (strchr("Egv", r_ptr->d_char))))
+						drain_result = m_ptr->hp;
+					else
+						drain_result = 0;
 
 					/* Hit the monster, check for death */
 					if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))
@@ -3303,6 +3333,34 @@ void do_cmd_fire(int Ind, int dir)
 					{
 						/* Message */
 						message_pain(Ind, c_ptr->m_idx, tdam);
+
+						/* VAMPIRIC: Are we draining it?  A little note: If the monster is
+						dead, the drain does not work... */
+						if (drain_result) {
+							drain_result -= m_ptr->hp;  /* Calculate the difference */
+						
+							if (drain_result > 0) /* Did we really hurt it? */
+							{
+								drain_heal = damroll(2,(drain_result / 8));/* was 4,../6 */
+
+								if (drain_left) {
+									if (drain_heal < drain_left) {
+									        drain_left -= drain_heal;
+									} else {
+										drain_heal = drain_left;
+										drain_left = 0;
+									}
+
+									if (drain_msg) {
+									        msg_format(Ind, "Your shot drains life from %s!", m_name);
+									        drain_msg = FALSE;
+									}
+
+									hp_player(Ind, drain_heal);
+									/* We get to keep some of it! */
+								}
+							}
+						}
 
 						/* Take note */
 						if (fear && visible)

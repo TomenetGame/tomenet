@@ -418,7 +418,7 @@ f:Boomerang-mastery:Combat%10
 f:Hunting Lore:Combat%7
 #f:Ricochet:Combat%7
 f:Fighting Technique:Combat%25
-f:Martial Arts:Combat%25
+f:Martial Arts:Combat%20
 
 # Sorcery and Weaponmastery arent exactly friendly to each other
 O:Sorcery:Weaponmastery%100

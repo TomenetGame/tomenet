@@ -1572,6 +1572,8 @@ static void calc_body_bonus(int Ind)
 		case 377:	case 391:	case 406:	case 484:	case 968:
 		{
 			p_ptr->feather_fall = TRUE;
+			/* Vampire bats are vampiric */
+			if (p_ptr->body_monster == 391) p_ptr->vampiric = 100;
 			break;
 		}
 
@@ -1656,6 +1658,11 @@ static void calc_body_bonus(int Ind)
 	//		p_ptr->invis += 5; */ /* No. */
 			break;
 		}
+		
+		/* Vampires have VAMPIRIC attacks */
+		case 432:	case 520:	case 521:	case 623:	case 989:
+			p_ptr->vampiric = 50;
+			break;
 	}
 	
 	/* If monster has a lite source, but doesn't prove a torso (needed
@@ -1954,7 +1961,7 @@ bool monk_heavy_armor(int Ind)
 #endif	// 0
 
 /* Are all the weapons wielded of the right type ? */
-static int get_weaponmastery_skill(player_type *p_ptr)
+int get_weaponmastery_skill(player_type *p_ptr)
 {
 	int i, skill = 0;
 	object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
@@ -2284,6 +2291,7 @@ void calc_bonuses(int Ind)
 	p_ptr->sensible_acid = FALSE;
 	p_ptr->sensible_pois = FALSE;
 	p_ptr->resist_continuum = FALSE;
+	p_ptr->vampiric = 0;
 
 	/* Start with a single blow per turn */
 	p_ptr->num_blow = 1;
@@ -2613,18 +2621,17 @@ void calc_bonuses(int Ind)
 			if (k_ptr->flags1 & TR1_SPELL) extra_spells += o_ptr->bpval;
 //			if (k_ptr->flags1 & TR1_SPELL_SPEED) extra_spells += o_ptr->bpval;
 
-                /* Affect mana capacity */
-                if (f1 & (TR1_MANA)) {
-			if ((f4 & TR4_COULD2H) &&
-			    (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx))
-				p_ptr->to_m += (o_ptr->bpval * 20) / 3;
-			else
-				p_ptr->to_m += o_ptr->bpval * 10;
-		}
+	                /* Affect mana capacity */
+    	        	if (f1 & (TR1_MANA)) {
+				if ((f4 & TR4_COULD2H) &&
+				    (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx))
+					p_ptr->to_m += (o_ptr->bpval * 20) / 3;
+				else
+					p_ptr->to_m += o_ptr->bpval * 10;
+			}
 
-                /* Affect life capacity */
-                if (f1 & (TR1_LIFE)) p_ptr->to_l += o_ptr->bpval;
-
+    	        	/* Affect life capacity */
+        	        if (f1 & (TR1_LIFE)) p_ptr->to_l += o_ptr->bpval;
 		}
 
 		if (k_ptr->flags5 & TR5_PVAL_MASK)
@@ -2632,6 +2639,26 @@ void calc_bonuses(int Ind)
 			if (f5 & (TR5_CRIT)) p_ptr->xtra_crit += o_ptr->bpval;
 			if (f5 & (TR5_DISARM)) p_ptr->skill_dis += (o_ptr->bpval) * 10;
 			if (f5 & (TR5_LUCK)) p_ptr->luck_cur += o_ptr->bpval;
+		}
+
+		/* bad hack, sorry. need redesign of bonusses - C. Blue
+		   fixes the vampiric shadow blade bug / affects all +life +basestealth weapons:
+		   (+2)(-2stl) -> life remains unchanged, stealth is increased by 2:
+		   both mods affect the life! Correct mod affects the stealth, but it's displayed wrong.
+		   pval should contain life bonus, bpval stealth. */
+/*		if (o_ptr->name2 == EGO_VAMPIRIC || o_ptr->name2b == EGO_VAMPIRIC)*/
+		if (f1 & (TR1_LIFE))
+		{
+/*			if ((o_ptr->pval < 0 && o_ptr->bpval > 0) ||
+			    (o_ptr->pval > 0 && o_ptr->bpval < 0)) {*/
+			if (o_ptr->pval != 0 && o_ptr->bpval != 0) {
+				/* first we remove both effects on +LIFE */
+				p_ptr->to_l -= o_ptr->pval + o_ptr->bpval;
+				/* then we add the correct one, which is the wrong one ;) */
+/*				if (o_ptr->pval < 0) p_ptr->to_l += o_ptr->pval;
+				if (o_ptr->bpval < 0) p_ptr->to_l += o_ptr->bpval;*/
+				p_ptr->to_l += o_ptr->pval;
+			}
 		}
 
 		/* Next, add our ego bonuses */
@@ -2913,6 +2940,9 @@ void calc_bonuses(int Ind)
 
 		/* Hack -- cause earthquakes */
 		if (f5 & TR5_IMPACT) p_ptr->impact = TRUE;
+
+		/* Generally vampiric? */
+		if (f1 & TR1_VAMPIRIC) p_ptr->vampiric = -1;
 
 		/* Apply the bonuses to hit/damage */
 		p_ptr->to_h += o_ptr->to_h;

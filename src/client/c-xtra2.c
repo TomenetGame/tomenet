@@ -334,6 +334,11 @@ void do_cmd_messages_chatonly(void)
 	cptr msg_inven_destroy4 = "All of your ";*/
 	cptr msg_inven_destroy1 = "was destroyed!";
 	cptr msg_inven_destroyx = "were destroyed!";
+	cptr msg_nopkfight = "You have beaten";
+	cptr msg_nopkfight2 = "has beaten you";
+	cptr msg_bloodbond = "blood bond";
+	cptr msg_retire = "has retired";
+	cptr msg_fruitbat = "turned into a fruit bat";
 
 
 	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
@@ -358,7 +363,9 @@ void do_cmd_messages_chatonly(void)
 		    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) || \
 		    (strstr(msg, msg_deadA)  != NULL) || (strstr(msg, msg_deadB)     != NULL) || \
 		    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroyx) != NULL) || \
-		    (msg[2] == '['))
+		    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) || \
+		    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_retire) != NULL) ||
+		    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '['))
 		{
 			message_chat[nn] = msg;	
 			nn++;

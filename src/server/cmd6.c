@@ -6756,8 +6756,8 @@ void do_cmd_activate(int Ind, int item)
 					}
 					
 					/* Poly first, break then :) */
-					do_mimic_change(Ind, o_ptr->pval, FALSE);
-
+					/* reversed again since you need need to keep wearing the ring
+					   or you will polymorph back */
 #if 0
 					if (rand_int(100) < (11 + (1000 / ((1010 / (r_info[p_ptr->body_monster].level + 1)) + 10 +
 					    (get_skill(p_ptr, SKILL_MIMIC) * get_skill(p_ptr, SKILL_MIMIC) / 30)))))
@@ -6784,6 +6784,8 @@ void do_cmd_activate(int Ind, int item)
 						}
 						return;
 					}
+
+					do_mimic_change(Ind, o_ptr->pval, FALSE);
 #if 0
 					monster_race *r_ptr = &r_info[o_ptr->pval];
 
