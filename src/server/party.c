@@ -360,7 +360,7 @@ void party_check(int Ind){
 void account_check(int Ind){	/* Temporary Ind */
 	hash_entry *ptr;
 	int i;
-	player_type *p_ptr=Player[Ind];
+	player_type *p_ptr=Players[Ind];
 
 	/* Search in each array slot */
 	for (i = 0; i < NUM_HASH_ENTRIES; i++)
