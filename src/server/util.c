@@ -2829,6 +2829,13 @@ static void do_slash_cmd(int Ind, cptr message)
  */
 // #define FRIENDLY_SPELL_BOOST
 
+int checkallow(char *buff, int pos){
+	if(!pos) return(0);
+	if(pos==1) return(buff[0]==' ' ? 0 : 1); /* allow things like brass lantern */
+	if(buff[pos-1]==' ' || buff[pos-2]=='\377') return(0);	/* swearing in colour */
+	return(1);
+}
+
 int censor(char *line){
 	int i, j;
 	char *word;
@@ -2840,7 +2847,7 @@ int censor(char *line){
 	}
 	for(i=0; strlen(swear[i].word); i++){
 		if((word=strstr(lcopy, swear[i].word))){
-			if(word!=lcopy && *(word-1)!=' ') continue;
+			if(checkallow(lcopy, word-lcopy)) continue;
 			word=(&line[(word-lcopy)]);
 			for(j=0; j<strlen(swear[i].word); j++){
 				word[j]='*';
