@@ -167,10 +167,10 @@ void delete_object_idx(int o_idx)
 
 	int y = o_ptr->iy;
 	int x = o_ptr->ix;
-	cave_type **zcave;
+	//cave_type **zcave;
 	struct worldpos *wpos=&o_ptr->wpos;
 
-	cave_type *c_ptr;
+	//cave_type *c_ptr;
 
 	/* Artifact becomes 'not found' status */
 	if (true_artifact_p(o_ptr))
@@ -283,7 +283,7 @@ void delete_object(struct worldpos *wpos, int y, int x) /* maybe */
  */
 void compact_objects(int size, bool purge)
 {
-	int i, j, y, x, num, cnt, Ind, ny, nx;
+	int i, j, y, x, num, cnt, Ind; // , ny, nx;
 
 	int cur_val, cur_lev, cur_dis, chance;
 	struct worldpos *wpos;
@@ -1768,7 +1768,7 @@ s32b object_value(int Ind, object_type *o_ptr)
  */
 bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 {
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 	int total = o_ptr->number + j_ptr->number;
 
 
@@ -2402,7 +2402,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr)
  */
 static bool make_ego_item(int level, object_type *o_ptr, bool good)
 {
-	int i = 0, j, k;
+	int i = 0, j;
 	int *ok_ego, ok_num = 0;
 	bool ret = FALSE;
 
@@ -2691,7 +2691,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 
 	int tohit2 = m_bonus(10, level);
 	int todam2 = m_bonus(10, level);
-	int tries;
+	//int tries;
 
 	artifact_bias = 0;
 
@@ -3736,7 +3736,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
  */
 static void a_m_aux_3(object_type *o_ptr, int level, int power)
 {
-	int tries;
+	//int tries;
 
 	artifact_bias = 0;
 
@@ -4901,19 +4901,21 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 //	else if (o_ptr->name2)
 	if (o_ptr->name2 && !o_ptr->name1)
 	{
-                ego_item_type *e_ptr;
-                int j;
-                bool limit_blows = FALSE;
-                u32b f1, f2, f3, f4, f5, esp;
-                s16b e_idx;
+#if 0
+		ego_item_type *e_ptr;
+		int j;
+		bool limit_blows = FALSE;
+		u32b f1, f2, f3, f4, f5, esp;
+		s16b e_idx;
+#endif	// 0
 
-	 	artifact_type *a_ptr;
-	 	
-			a_ptr =	ego_make(o_ptr);
+		artifact_type *a_ptr;
+
+		a_ptr =	ego_make(o_ptr);
 
 		/* Extract the other fields */
 		o_ptr->pval += a_ptr->pval;
-//		o_ptr->pval = a_ptr->pval;
+		//		o_ptr->pval = a_ptr->pval;
 		o_ptr->ac += a_ptr->ac;
 		o_ptr->dd += a_ptr->dd;
 		o_ptr->ds += a_ptr->ds;
@@ -4921,8 +4923,8 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		o_ptr->to_h += a_ptr->to_h;
 		o_ptr->to_d += a_ptr->to_d;
 
-	/* Hack -- acquire "cursed" flag */
-	//                if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
+		/* Hack -- acquire "cursed" flag */
+		//                if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
 		if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
 	}
 #endif	// 0
@@ -5430,7 +5432,7 @@ s16b unique_quark = 0;
 //void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
 void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, obj_theme theme)
 {
-	int			o_idx, prob, base;
+	int prob, base;
 
 	object_type		forge;
 
@@ -5663,12 +5665,12 @@ void place_trap(struct worldpos *wpos, int y, int x)
  */
 void place_gold(struct worldpos *wpos, int y, int x)
 {
-	int		i, j, o_idx;
+	int		i;
 
 	s32b	base;
 
-	cave_type	*c_ptr;
-//	object_type	*o_ptr;
+	//cave_type	*c_ptr;
+	//object_type *o_ptr;
 	object_type	forge;
 
 	cave_type **zcave;
@@ -5729,10 +5731,10 @@ void place_gold(struct worldpos *wpos, int y, int x)
 /* XXX XXX XXX DIRTY! DIRTY! DIRTY!		- Jir - */
 s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
 {
-	int		k, d, ny, nx, y1, x1, i, s;
+	int		k, d, ny, nx, i, s;	// , y1, x1
 	int bs, bn;
 	int by, bx;
-	int ty, tx;
+	//int ty, tx;
 	int o_idx=-1;
 	int flag = 0;	// 1 = normal, 2 = combine, 3 = crash
 
@@ -6981,7 +6983,7 @@ void process_objects(void)
  */
 void setup_objects(void)
 {
-	int i, j;
+	int i;
 	cave_type **zcave;
 
 	for (i = 0; i < o_max; i++)

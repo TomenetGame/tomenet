@@ -18,7 +18,7 @@
 /*
  * Name flavors by combination of adj and extra modifier, so that
  * we don't have to devise new flavor every time adding a new item.
- * eg. 'whirling' + 'red'
+ * eg. 'whirling' + 'red' = 'whirling red potion'
  *
  * Not implemented yet.		- Jir -
  */
@@ -45,7 +45,7 @@
 #define MAX_METALS     39       /* Used with wands/rods (min 32/30) */
 #define MAX_COLORS     68       /* Used with potions (min 62) */
 #define MAX_SHROOM     20       /* Used with mushrooms (min 20) */
-#define MAX_TITLES     64       /* Used with scrolls (min 55) */
+#define MAX_TITLES     65       /* Used with scrolls (min 55) */
 #define MAX_SYLLABLES 164       /* Used with scrolls (see below) */
 
 #if EXTRA_FLAVORS

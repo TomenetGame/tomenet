@@ -645,7 +645,8 @@ errr get_mon_num_prep(void)
 		alloc_entry *entry = &alloc_race_table[i];
 
 		/* Accept monsters which pass the restriction, if any */
-		if (!get_mon_num_hook || (*get_mon_num_hook)(entry->index))
+		if ((!get_mon_num_hook || (*get_mon_num_hook)(entry->index)) &&
+			(!get_mon_num2_hook || (*get_mon_num2_hook)(entry->index)))
 		{
 			/* Accept this monster */
 			entry->prob2 = entry->prob1;
@@ -720,6 +721,124 @@ bool mon_allowed_view(monster_race *r_ptr)
 
 
 /*
+ * Some dungeon types restrict the possible monsters.
+ * Return TRUE is the monster is OK and FALSE otherwise
+ */
+//bool apply_rule(monster_race *r_ptr, byte rule)
+bool apply_rule(monster_race *r_ptr, byte rule, int dun_type)
+{
+	dungeon_info_type *d_ptr = &d_info[dun_type];
+
+	if (d_ptr->rules[rule].mode == DUNGEON_MODE_NONE)
+	{
+		return TRUE;
+	}
+	else if ((d_ptr->rules[rule].mode == DUNGEON_MODE_AND) || (d_ptr->rules[rule].mode == DUNGEON_MODE_NAND))
+	{
+		int a;
+
+		if (d_ptr->rules[rule].mflags1)
+		{
+			if((d_ptr->rules[rule].mflags1 & r_ptr->flags1) != d_ptr->rules[rule].mflags1)
+				return FALSE;
+		}
+		if (d_ptr->rules[rule].mflags2)
+		{
+			if((d_ptr->rules[rule].mflags2 & r_ptr->flags2) != d_ptr->rules[rule].mflags2)
+				return FALSE;
+		}
+		if (d_ptr->rules[rule].mflags3)
+		{
+			if((d_ptr->rules[rule].mflags3 & r_ptr->flags3) != d_ptr->rules[rule].mflags3)
+				return FALSE;
+		}
+		if (d_ptr->rules[rule].mflags4)
+		{
+			if((d_ptr->rules[rule].mflags4 & r_ptr->flags4) != d_ptr->rules[rule].mflags4)
+				return FALSE;
+		}
+		if (d_ptr->rules[rule].mflags5)
+		{
+			if((d_ptr->rules[rule].mflags5 & r_ptr->flags5) != d_ptr->rules[rule].mflags5)
+				return FALSE;
+		}
+		if (d_ptr->rules[rule].mflags6)
+		{
+			if((d_ptr->rules[rule].mflags6 & r_ptr->flags6) != d_ptr->rules[rule].mflags6)
+				return FALSE;
+		}
+		if (d_ptr->rules[rule].mflags7)
+		{
+			if((d_ptr->rules[rule].mflags7 & r_ptr->flags7) != d_ptr->rules[rule].mflags7)
+				return FALSE;
+		}
+		if (d_ptr->rules[rule].mflags8)
+		{
+			if((d_ptr->rules[rule].mflags8 & r_ptr->flags8) != d_ptr->rules[rule].mflags8)
+				return FALSE;
+		}
+		if (d_ptr->rules[rule].mflags9)
+		{
+			if((d_ptr->rules[rule].mflags9 & r_ptr->flags9) != d_ptr->rules[rule].mflags9)
+				return FALSE;
+		}
+		for(a = 0; a < 5; a++)
+		{
+			if (d_ptr->rules[rule].r_char[a] && (d_ptr->rules[rule].r_char[a] != r_ptr->d_char)) return FALSE;
+		}
+
+		/* All checks passed ? lets go ! */
+		return TRUE;
+	}
+	else if ((d_ptr->rules[rule].mode == DUNGEON_MODE_OR) || (d_ptr->rules[rule].mode == DUNGEON_MODE_NOR))
+	{
+		int a;
+
+		if (d_ptr->rules[rule].mflags1 && (r_ptr->flags1 & d_ptr->rules[rule].mflags1)) return TRUE;
+		if (d_ptr->rules[rule].mflags2 && (r_ptr->flags2 & d_ptr->rules[rule].mflags2)) return TRUE;
+		if (d_ptr->rules[rule].mflags3 && (r_ptr->flags3 & d_ptr->rules[rule].mflags3)) return TRUE;
+		if (d_ptr->rules[rule].mflags4 && (r_ptr->flags4 & d_ptr->rules[rule].mflags4)) return TRUE;
+		if (d_ptr->rules[rule].mflags5 && (r_ptr->flags5 & d_ptr->rules[rule].mflags5)) return TRUE;
+		if (d_ptr->rules[rule].mflags6 && (r_ptr->flags6 & d_ptr->rules[rule].mflags6)) return TRUE;
+		if (d_ptr->rules[rule].mflags7 && (r_ptr->flags7 & d_ptr->rules[rule].mflags7)) return TRUE;
+		if (d_ptr->rules[rule].mflags8 && (r_ptr->flags8 & d_ptr->rules[rule].mflags8)) return TRUE;
+		if (d_ptr->rules[rule].mflags9 && (r_ptr->flags9 & d_ptr->rules[rule].mflags9)) return TRUE;
+
+		for (a = 0; a < 5; a++)
+			if (d_ptr->rules[rule].r_char[a] == r_ptr->d_char) return TRUE;
+
+		/* All checks failled ? Sorry ... */
+		return FALSE;
+	}
+
+	/* Should NEVER happen */
+	return FALSE;
+}
+
+//bool restrict_monster_to_dungeon(int r_idx)
+bool restrict_monster_to_dungeon(int r_idx, int dun_type)
+{
+	dungeon_info_type *d_ptr = &d_info[dun_type];
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Select a random rule */
+	byte rule = d_ptr->rule_percents[rand_int(100)];
+
+	/* Apply the rule */
+	bool rule_ret = apply_rule(r_ptr, rule, dun_type);
+
+	/* Should the rule be right or not ? */
+	if ((d_ptr->rules[rule].mode == DUNGEON_MODE_NAND) || (d_ptr->rules[rule].mode == DUNGEON_MODE_NOR)) rule_ret = !rule_ret;
+
+	/* Rule ok ? */
+	if (rule_ret) return TRUE;
+
+	/* Not allowed */
+	return FALSE;
+}
+
+
+/*
  * Choose a monster race that seems "appropriate" to the given level
  *
  * This function uses the "prob2" field of the "monster allocation table",
@@ -751,7 +870,8 @@ bool mon_allowed_view(monster_race *r_ptr)
  * This function is kind of a mess right now.
  */
 
-s16b get_mon_num(int level)
+//s16b get_mon_num(int level)
+s16b get_mon_num(int level, int dun_type)
 {
 	int                     i, j, p, d1 = 0, d2 = 0;
 
@@ -860,6 +980,7 @@ s16b get_mon_num(int level)
 
 		/* Some dungeon types restrict the possible monsters */
 //		if(!summon_hack && !restrict_monster_to_dungeon(r_idx) && dlev) continue;
+		if(dun_type && !restrict_monster_to_dungeon(r_idx, dun_type)) continue;
 
 
 		/* Accept */
@@ -1318,6 +1439,9 @@ void sanity_blast(int Ind, int m_idx, bool necro)
 	monster_type    *m_ptr = &m_list[m_idx];
 	bool happened = FALSE;
 	int power = 100;
+
+	/* Don't blast the master */
+	if (p_ptr->admin_dm) return;
 
 	if (!necro)
 	{
@@ -1921,9 +2045,6 @@ void update_player(int Ind)
 		p_ptr = Players[i];
 		zcave=getcave(&p_ptr->wpos);
 
-		/* Reset the flags */
-		flag = easy = hard = FALSE;
-
 		/* Skip disconnected players */
 		if (p_ptr->conn == NOT_CONNECTED) continue;
 
@@ -1932,6 +2053,9 @@ void update_player(int Ind)
 
 		/* Player can always see himself */
 		if (Ind == i) continue;
+
+		/* Reset the flags */
+		flag = easy = hard = FALSE;
 
 		/* Compute distance */
 		dis = distance(py, px, p_ptr->py, p_ptr->px);
@@ -2576,6 +2700,10 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	/* Escorts for certain monsters */
 	if (r_ptr->flags1 & RF1_ESCORT)
 	{
+		dungeon_type *dt_ptr = getdungeon(wpos);
+		int dun_type = 0;
+		if (dt_ptr) dun_type = dt_ptr->type;
+
 		/* Try to place several "escorts" */
 		for (i = 0; i < 50; i++)
 		{
@@ -2597,7 +2725,7 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 
 
 			/* Pick a random race */
-			z = get_mon_num(r_ptr->level);
+			z = get_mon_num(r_ptr->level, dun_type);
 
 
 			/* Remove restriction */
@@ -2646,7 +2774,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 	if(d_ptr && (d_ptr->r_char[0] || d_ptr->nr_char[0])){
 		int i,j=0;
 		monster_race *r_ptr;
-		while((r_idx=get_mon_num(monster_level))){
+		while((r_idx=get_mon_num(monster_level, 0))){
 			if(j++>250) break;
 			r_ptr=&r_info[r_idx];
 			if(d_ptr->r_char[0]){
@@ -2668,14 +2796,24 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 	}
 	else
 	{
+		dungeon_type *dt_ptr = getdungeon(wpos);
+		int dun_type = 0;
+		if (dt_ptr) dun_type = dt_ptr->type;
+
 		/* Set monster restriction */
 		set_mon_num2_hook(wpos, y, x);
 
+		/* Prepare allocation table */
+		get_mon_num_prep();
+
 		/* Pick a monster */
-		r_idx = get_mon_num(monster_level);
+		r_idx = get_mon_num(monster_level, dun_type);
 
 		/* Reset restriction */
 		get_mon_num2_hook = NULL;
+
+		/* Prepare allocation table */
+		get_mon_num_prep();
 	}
 
 	/* Handle failure */
@@ -3194,7 +3332,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int type)
 	 * This fix presumes Morgie and Morgie only has level 100 */
 	
 	/* Ok, now let them summon what they can */
-	r_idx = get_mon_num((getlevel(wpos) + lev) / 2 + 5);
+	r_idx = get_mon_num((getlevel(wpos) + lev) / 2 + 5, 0);
 
 
 	/* Remove restriction */

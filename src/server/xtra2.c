@@ -4238,7 +4238,7 @@ void player_death(int Ind)
 	else
 	{
 		/* Polymorph back to player */
-		if (p_ptr->body_monster) do_mimic_change(Ind, 0);
+		if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
 
 		/* Cure him from various maladies */
 		p_ptr->black_breath = FALSE;
@@ -6662,7 +6662,7 @@ bool master_level(int Ind, char * parms)
 			}
 			if(parms[3]=='t' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags&WILD_F_UP)){
 				printf("tower: flags %x,%x\n",parms[4], parms[5]);
-				adddungeon(&p_ptr->wpos, parms[1], parms[2], parms[4], parms[5], NULL, NULL, TRUE);
+				adddungeon(&p_ptr->wpos, parms[1], parms[2], parms[4], parms[5], NULL, NULL, TRUE, 0);
 				new_level_down_y(&p_ptr->wpos, p_ptr->py);
 				new_level_down_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave=getcave(&p_ptr->wpos))){
@@ -6671,7 +6671,7 @@ bool master_level(int Ind, char * parms)
 			}
 			if(parms[3]=='d' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags&WILD_F_DOWN)){
 				printf("dungeon: flags %x,%x\n",parms[4], parms[5]);
-				adddungeon(&p_ptr->wpos, parms[1], parms[2], parms[4], parms[5], NULL, NULL, FALSE);
+				adddungeon(&p_ptr->wpos, parms[1], parms[2], parms[4], parms[5], NULL, NULL, FALSE, 0);
 				new_level_up_y(&p_ptr->wpos, p_ptr->py);
 				new_level_up_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave=getcave(&p_ptr->wpos))){
@@ -6915,7 +6915,7 @@ u16b master_summon_aux_monster_type( char monster_type, char * monster_parms)
 				get_mon_num_prep();
 //				tmp = get_mon_num(rand_int(100) + 10);
 				tmp = get_mon_num((monster_parms[0] == 't') ?
-						0 : rand_int(100) + 10);
+						0 : rand_int(100) + 10, 0);
 
 				/* restore monster generator */
 				get_mon_num_hook = dungeon_aux;
@@ -6993,7 +6993,7 @@ u16b master_summon_aux_monster_type( char monster_type, char * monster_parms)
 		/* specific depth specified */
 		case 'd':
 		{
-			return get_mon_num(monster_parms[0]);
+			return get_mon_num(monster_parms[0], 0);
 		}
 
 		default : break;

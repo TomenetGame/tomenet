@@ -250,14 +250,17 @@ void Receive_login(void)
 		i++;
 		if(i==8) break;
 	}
-	sprintf(tmp, "%c) New character", 'a'+i);
-	c_put_str(TERM_L_BLUE, tmp, 5+i, 11);
+	//sprintf(tmp, "%c) New character", 'a'+i);
+	sprintf(tmp, "N) New character");
+	c_put_str(TERM_L_BLUE, tmp, 5+i+1, 11);
 	c_put_str(TERM_L_BLUE, "Q) Quit", 8+i, 11);
-	while(ch<'a' || ch>'a'+i){
+	//while(ch<'a' || ch>'a'+i){
+	while((ch<'a' || ch>='a'+i) && ch != 'N'){
 		ch=inkey();
 		if (ch == 'Q') quit(NULL);
 	}
-	if(ch=='a'+i){
+	//if(ch=='a'+i){
+	if(ch=='N'){
 		if (!strlen(cname)) strcpy(c_name, nick);
 		else strcpy(c_name, cname);
 
@@ -1692,7 +1695,8 @@ int Receive_skill_init(void)
 	else
 		s_info[i].action_desc = string_make(buf);
 #else
-	/* These are x32b, not char * !!!!! */
+	/* XXX XXX These are x32b, not char * !!!!!
+	 * It's really needed that we separate c-types.h from types.h */
 	s_info[i].name = string_make(name);
 	s_info[i].desc = string_make(desc);
 	s_info[i].action_desc = (strlen(act) ? string_make(act) : 0L);
@@ -1746,7 +1750,7 @@ int Receive_gold(void)
 
 	if (shopping)
 	{
-		char out_val[64];
+		//char out_val[64];
 
 		/* Display the players remaining gold */
 		c_store_prt_gold();
@@ -3344,11 +3348,12 @@ int Send_ghost(int ability)
 	return 1;
 }
 
-int Send_map(void)
+//int Send_map(void)
+int Send_map(char mode)
 {
 	int	n;
 
-	if ((n = Packet_printf(&wbuf, "%c", PKT_MAP)) <= 0)
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_MAP, mode)) <= 0)
 	{
 		return n;
 	}

@@ -1997,7 +1997,11 @@ errr rd_server_savefile()
 	{
 		rd_house(i);
 		if(!(houses[i].flags&HF_STOCK))
+#if 0	/* I believe it's not right - if it is, tell me		- Jir - */
 			wild_add_uhouse(&houses[i].wpos);
+#else	// 0
+			wild_add_uhouse(&houses[i]);
+#endif	// 0
 	}
 
 	/* Read the player name database if new enough */
@@ -2076,6 +2080,7 @@ void new_rd_wild()
 				rd_byte(&wptr->up_x);
 				rd_byte(&wptr->up_y);
 				rd_u16b(&d_ptr->id);
+				rd_u16b(&d_ptr->type);
 				rd_u16b(&d_ptr->baselevel);
 				rd_u32b(&d_ptr->flags1);
 				rd_u32b(&d_ptr->flags2);
@@ -2092,6 +2097,7 @@ void new_rd_wild()
 				rd_byte(&wptr->dn_x);
 				rd_byte(&wptr->dn_y);
 				rd_u16b(&d_ptr->id);
+				rd_u16b(&d_ptr->type);
 				rd_u16b(&d_ptr->baselevel);
 				rd_u32b(&d_ptr->flags1);
 				rd_u32b(&d_ptr->flags2);

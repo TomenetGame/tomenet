@@ -203,7 +203,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 	}
 
 	(void) project(who, radius, wpos, y, x, dam, dt,
-	               (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL));
+			   (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF));
 
 	/* XXX	those potions that explode need to become "known" */
 	return angry;
@@ -234,7 +234,7 @@ s16b poly_r_idx(int r_idx)
 		/* Pick a new race, using a level calculation */
 		/* Don't base this on "dlev" */
 		/*r = get_mon_num((dlev + r_ptr->level) / 2 + 5);*/
-		r = get_mon_num(r_ptr->level + 5);
+		r = get_mon_num(r_ptr->level + 5, 0);
 
 		/* Handle failure */
 		if (!r) break;
@@ -3686,7 +3686,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	cave_type **zcave;
 	cave_type *c_ptr;
 	bool quiet;
-	player_type *p_ptr;
+	player_type *p_ptr = NULL;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	c_ptr=&zcave[y][x];
 	/* hack -- by trap */
@@ -5241,6 +5241,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Player needs a "description" (he is blind) */
 	bool fuzzy = FALSE;
 
+	/* Player is damaging herself (eg. by shattering potion) */
+	bool self = FALSE;
+
 	/* Source monster */
 	monster_type *m_ptr;
 
@@ -5268,7 +5271,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if ((x != p_ptr->px) || (y != p_ptr->py) || (!inarea(wpos,&p_ptr->wpos))) return (FALSE);
 
 	/* Player cannot hurt himself */
-	if (0 - who == Ind) return (FALSE);
+	if (0 - who == Ind)
+	{
+		if (flg & PROJECT_SELF) self = TRUE;
+		else return (FALSE);
+	}
 
 	/* Mega-Hack -- Players cannot hurt other players */
 	if (cfg.use_pk_rules == PK_RULES_NEVER && who <= 0 &&
@@ -5484,6 +5491,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		sprintf(killer, "A terrain effect");
 	}
 #endif	// 0
+	else if (self)
+	{
+		sprintf(killer, p_ptr->male ? "himself" : "herself");
+	}
 	else if (who < 0)
 	{
 		strcpy(killer, p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");

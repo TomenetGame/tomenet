@@ -2345,16 +2345,6 @@ static bool wr_server_savefile(void)
 	/* Dump the objects */
 	for (i = 0; i < tmp16u; i++) wr_item(&o_list[i]);
 
-#if 0	/* done in wr_dungeon, using csfunc */
-	/* Prepare to write the traps */
-	compact_traps(0, FALSE);
-	/* Note the number of traps */
-	tmp16u = t_max;
-	wr_u16b(tmp16u);
-	/* Dump the traps */
-	for (i = 0; i < tmp16u; i++) wr_trap(&t_list[i]);
-#endif	// 0
-
 	tmp32u=0L;
 	for(i=0;i<num_houses;i++){
 		if(!(houses[i].flags&HF_DELETED)) tmp32u++;
@@ -2408,6 +2398,7 @@ static void new_wr_wild(){
 				wr_byte(w_ptr->up_x);
 				wr_byte(w_ptr->up_y);
 				wr_u16b(w_ptr->dungeon->id);
+				wr_u16b(w_ptr->dungeon->type);
 				wr_u16b(w_ptr->dungeon->baselevel);
 				wr_u32b(w_ptr->dungeon->flags1);
 				wr_u32b(w_ptr->dungeon->flags2);
@@ -2421,6 +2412,7 @@ static void new_wr_wild(){
 				wr_byte(w_ptr->dn_x);
 				wr_byte(w_ptr->dn_y);
 				wr_u16b(w_ptr->tower->id);
+				wr_u16b(w_ptr->tower->type);
 				wr_u16b(w_ptr->tower->baselevel);
 				wr_u32b(w_ptr->tower->flags1);
 				wr_u32b(w_ptr->tower->flags2);

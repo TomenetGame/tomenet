@@ -22,6 +22,30 @@
 
 # bug.txt should follow the exact same format
 
+30/08/2002 (Jir)
+# 'rm lib/save/*; cd src; make clean; make' (as usual)
+[D]- wilderness houses have smaller chance of having 'non-enterable doors'.
+     (dwelling_check_entrance)
+[D]- town walls are FEAT_PERM_EXTRA (and not FEAT_PERM_SOLID) now
+[D]- d_info.txt is backported (dungeons are merely scattered in the wilderness)
+[D]- dungeon_type refers to dungeon_info_type.
+[G]- player can extend V-house for a price.
+[G]- player is affected when (s)he makes a potion shatter.
+[G]- wilderness travel with WoR is limited by radius (RECALL_MAX_RANGE)
+[I]- 'known' towns display (~7)
+[I]- player can view wilderness map in town via '~8'
+[I]- 'New Character' is always 'N)'
+[O]- scroll of wilderness mapping.
+[O]- 'Scourge' added from RFE
+[P]- Player shimmers (get_monster_color)
+[m]- legality check for store commands. (store_attest_command)
+[B]- wild_add_uhouse was called with wpos instead of h_ptr(rd_server_savefile)
+[B]- black market was shovel store (oops)
+[B]- DSM activation required mimicy skill.
+[B]- wipe_spell was broken (tho I don't know how this function was used)
+[B]- pet/golem creation could cause crash when there's no space around her
+[B]- p_ptr->town_x/town_y weren't updated if recalled/level-teleported
+
 28/08/2002 (Jir)
 [D]- most of DF1_* flags in generate.c are implemented.
 [D]- 'newbie tower' in Bree (with DF2_NO_DEATH)
@@ -1804,9 +1828,6 @@ TODO: things to do before 4.0.0
   + less packets
   + spells should be exported to LUA?
 - login code
-  (PBs)
-  + .tomenetrc and command-line option(-l) should be able to handle
-    not only account name but also character choice (read_mangrc, main)
   (RFEs)
   + If you care, would you add temporal account banning (like IP
     banning)?
@@ -1823,7 +1844,6 @@ TODO: things to do before 4.0.0
 
 - rebalance skill-points
 - rebalance mimics (they are way too hard, seemingly)
-- devise a nice way to control ego-item generation w/o luck
 - fix gfx
 - refine pk code (just set as option?)
 - source-code cleanup
@@ -1831,6 +1851,7 @@ TODO: things to do before 4.0.0
 - export configurable things to tomenet.cfg
 - a spoonful of documentation for skill system
 - rewrite this changes.txt into the 'new' format
+- total rebalancing for all of them
 
 (multi-dungeon, multi-town, terrains, pets etc. are put off after 4.0.0 ...)
 
@@ -1841,13 +1862,12 @@ concisely: what's hot now?
 - multiple-dungeons stuff
   + we should preserve level_up_y etc. for manually-added dungeons/towers.
 - quest system
+  + consider a little more 'complicated' quests.. (but maybe for v5)
 - skill system
   + SKILL_CLIMB
-  + spell_info should be redone
-  * a mage would just raise 'Sorcery' to 10 for Wraithform..
-    is it within the design?
 - LUA hook (hooked, but not used for now)
 - csfunc
+  + save/load perfectly work. hit/see need some works, maybe.
 - alignment (let's wait for EE :)
 - mimics
   + new skill 'Ego Powers', 'Innate Powers'
@@ -1864,16 +1884,8 @@ Porting targets
 
 [P] School spells/client-LUA (under 'fix it pls, anyone?' status..)
 (client-side)
-seemingly c-init.lua is not loaded even though the path is correctly
-built internally (testtest() LUA function is to test it.)
-
-(server-side)
-spells.lua seems to fail; something is wrong in s_aux.lua but I cannot
-figure out where (all LUA interpreter gives me as clue is 'nil value', pfft).
-
+seemingly spells/schools are not initialized (failing to read s_aux.lua?)
 (other issues)
-- c-s_aux.lua is obsoleted; I hacked the client to use Players[] array.
-- '&6' menu contains 'execute local LUA script' command.
 - since bind_lua.c refers to hard-coded tables like adj_mag_stat[],
   the LUA code rather increase client-side hard coded things (I had to
   add adj_mag_stat[] etc to client, that is)
@@ -1900,6 +1912,8 @@ below this line are the unfixed bugs known:
 [B]- cannot specify some monster names in master summoning (&35)
 [B]- cannot specify 0-depth monsters in admin summoning.
 [B]- monsters sometimes drop '(nothing)' (Dread?)
+[B]- 'drop items' trap generated (nothing)?
+     (I suspect the compacting functions..)
 [B]- strange gray spots in the dark. (info=26; room filler leaks maybe)
 [B]- sometimes you can see monsters over the door.
 [B]- [C] X11 client doesn't accept keystrokes if screen is less than 80x24
@@ -1991,13 +2005,10 @@ below this line are the unfixed bugs known:
 [B]- No magic arrows? (at least, my server offers plenty) (maybe wrong report)
 [B]- perma walls / normal walls are not distinguishable anymore
      (were they distinguishable before??)
-[B]- filthy street-urchins dropped a "nothing" which spawns random items
-     (not seen recently, but need to check)
 [B]- Ancient Blue Dragon appears regularly on 550 ft (didn't see a vault)
      (Hrm I've never met one -Jir)
 [B]- -read WoR scroll -> "Full" appeared as if I had eaten something.
      (maybe already full, but wasn't shown. ^R)
-[B]- DSM morphing fails due to low Mimicry (most likely - check it)
 
 
 **below are bugs not shown recently(fixed??)**
@@ -2111,6 +2122,7 @@ below this line are the unfixed bugs known:
      (b/c they're "cave" and not object - but might as well be 'fixed')
 [B]- one can raise father skill beyond limit by increasing the children
      (eg. Weaponmastery=>Combat)
+[B]- admin cannot delete FEAT_WALL_XTRA(basically, townwalls are not erasable)
 
 
 
@@ -2149,8 +2161,6 @@ memo and questions:
 - implement monster mimics in a nicer way
 + towns
   - hint players of town locations (like 'Lorien is south-east to Bree')
-  - display town name
-  - Scroll of wilderness mapping?
 [C] chat-line cursor editing
 
 [major ones]
@@ -2162,13 +2172,6 @@ memo and questions:
   - terrain effects (eg. +AC; like in some 'strategy' games)
 - variety of dungeon/floor types (d_info.txt)
   - several flags
-- fully-implemented multiple towns (t_*.txt)
-- more kinds of stores / flexible store configuration (almost done)
-  - new stores:
-    + job centre (for lowbies died)
-    + guild house
-    + auction house
-    + arena (pvp arena would be of great fun!)
   
 (4.3)
 - quests
@@ -2181,7 +2184,10 @@ memo and questions:
 
 (4.4)
 - guild, or new party system (multi-player Omega :)
-- total rebalancing for all of them
+  + prepare pre-defined set of guilds, and player can be 'owner' or 'member'
+    of some of them.
+  + some buildings can give extra services for members only
+  + member can gain/polish related skills (eg. Thieves Guild => Sneakiness)
 - interactive spell system (like in C3)
 - extend worldpos, so that one surface can have more than one dungeons/towers
 
@@ -2297,10 +2303,9 @@ memo and questions:
   + more RBM and RMEs (like seducing, switching place)
 - magic:
   + sth should be done with all those 'attacking' magic devices no1 uses,
-    such as fire bolt wand/rod..
+    such as fire bolt wand/rod.. {DG seems to have an idea}
   + enlarge 'destroy traps' spell radius (but traps may 'resist' it)
   + implement project_m
-  + check_st_anchor() should take distance into account?
   + separate GoI into 'vs.spell' and 'vs.melee'.
   + avoid landing in the middle of a lake (river is ok)
   + some methods(spell?) to detect vault entrance, so that ppl won't peek
@@ -2310,7 +2315,6 @@ memo and questions:
   + query[Y/n] for selling/buying houses.
   + visual effect when teleporting, so that players won't lose sight of '@'.
   + add a command to *completely* redraw the screen.
-  + smoother screen scroll (currently 1/2.. perhaps 1/4?)
   - enhanced help system (imo we cannot beat web browsers anyway..)
     + at least, jump and colour tags are needed.
   + 'hand to(give)' command
@@ -2328,24 +2332,27 @@ memo and questions:
     + screenshot! (do_cmd_html_dump)
   + chat-history/spell window
   + inventory/equipment display should accept next command directly.
-  + more docs in general
   + online help (nice, esp. if someone else writes that ;)
 - stores:
   + one player shouldn't stay more than 1 minutes in a store?
   + stores should buy {cursed} potions/scrolls/wands etc?
   + artifact repair (not sure if good -Jir)
+  + casino should have games playable 'between players'
+  + pvp arena
+  + Auction house {A.Dingle}
+- dungeon & terrain:
+  + antimagic terrain feature (is that 'playable'..?)
+  + pattern vaults
+  + moonlit night (not easy under current code)
 - misc:
   + some measures to 'cheezy' admins (at least some warnings)
-  + some places that renders special services(eg. curing, id, *ID*, enchant etc)
-    * no single town should contain all of them!
   + resurrect 'level feelings'
   + allow 'guest' account for invite-only server
-  + water should 'flow'
+  + water should 'flow', pushing players toward downstream.
   + score list should show middle-earth time (and not raw turn).
   + spiked/locked door should be *tougher* (cf. Vanilla)
   + IRC server connection
-  + pattern vaults
-  + moonlit night (not easy under current code)
+  + player in multi-hued form should be multi-hued (naturally - code it)
   
 [major ones]
 - monsters' interactions
@@ -2371,10 +2378,8 @@ memo and questions:
 - randunis
 - port internationalization codes
 - newbie and veteran mode
-- Auction house {A.Dingle}
-- Casino (or Scroll of Back Gammon ;)
 - really intelligent auto-retaliator/borg
-- documentations
+- documentations (we need volonteers ;)
 - grec-mythology monsters (GRECANGBAND)
 - allow players to run always, by allowing it to the monsters too?
 - screen wider than 66x22
@@ -2384,9 +2389,9 @@ memo and questions:
 - savedata scanner (to fix broken arts/unique lists, find illigal data etc.)
 - vault/map editor
 - new networking code (to kiss xpilot adieu :)
-- redefine packets in a way more generic
+- redefine packets in a more generic way
 - ./configure
-- most of configurable-things should be in mangband.cfg(and not config.h)?
+- most of configurable-things should be in tonemet.cfg(and not config.h)?
 - meta-server should:
   + transmit 'port No.', 'variant name' information.
 - periodic (a la cron) savedata backup

@@ -3598,6 +3598,115 @@ cptr month_name[9] =
 	"Mettare",
 };
 
+#if 0	/* I'm too lazy to rewrite it; pls do if u care :) */
+/*
+ * Description of GF_FOO
+ */
+gf_name_type gf_names[] =
+{
+	{ GF_ELEC, "electricity" },
+	{ GF_POIS, "poison" },
+	{ GF_ACID, "acid" },
+	{ GF_COLD, "cold" },
+	{ GF_FIRE, "fire" },
+	{ GF_UNBREATH, "asphyxiating gas" },
+	{ GF_CORPSE_EXPL, "corpse explosion" },
+	{ GF_MISSILE, "missile" },
+	{ GF_ARROW, "arrow" },
+	{ GF_PLASMA, "plasma" },
+	{ GF_WAVE, "a tidal wave" },
+	{ GF_WATER, "water" },
+	{ GF_LITE, "light" },
+	{ GF_DARK, "darkness" },
+	{ GF_LITE_WEAK, "weak light" },
+	{ GF_DARK_WEAK, "weak darkness" },
+	{ GF_SHARDS, "shards" },
+	{ GF_SOUND, "sound" },
+	{ GF_CONFUSION, "confusion" },
+	{ GF_FORCE, "force" },
+	{ GF_INERTIA, "inertia" },
+	{ GF_MANA, "pure mana" },
+	{ GF_METEOR, "meteor" },
+	{ GF_ICE, "ice" },
+	{ GF_CHAOS, "chaos" },
+	{ GF_NETHER, "nether" },
+	{ GF_DISENCHANT, "disenchantment" },
+	{ GF_NEXUS, "nexus" },
+	{ GF_TIME, "time" },
+	{ GF_GRAVITY, "gravity" },
+	{ GF_KILL_WALL, "wall destruction" },
+	{ GF_KILL_DOOR, "door destruction" },
+	{ GF_KILL_TRAP, "trap destruction" },
+	{ GF_MAKE_WALL, "wall creation" },
+	{ GF_MAKE_DOOR, "door creation" },
+	{ GF_MAKE_TRAP, "trap creation" },
+	{ GF_OLD_CLONE, "clone" },
+	{ GF_OLD_POLY, "polymorph" },
+	{ GF_OLD_HEAL, "healing" },
+	{ GF_OLD_SPEED, "speed" },
+	{ GF_OLD_SLOW, "slowness" },
+	{ GF_OLD_CONF, "confusion" },
+	{ GF_OLD_SLEEP, "sleep" },
+	{ GF_OLD_DRAIN, "drain life" },
+	{ GF_AWAY_UNDEAD, "teleport away undead" },
+	{ GF_AWAY_EVIL, "teleport away evil" },
+	{ GF_AWAY_ALL, "teleport away" },
+	{ GF_TURN_UNDEAD, "scare undead" },
+	{ GF_TURN_EVIL, "scare evil" },
+	{ GF_TURN_ALL, "scare" },
+	{ GF_DISP_UNDEAD, "dispel undead" },
+	{ GF_DISP_EVIL, "dispel evil" },
+	{ GF_DISP_ALL, "dispel" },
+	{ GF_DISP_DEMON, "dispel demons" },
+	{ GF_DISP_LIVING, "dispel living creatures" },
+	{ GF_ROCKET, "rocket" },
+	{ GF_NUKE, "nuke" },
+	{ GF_MAKE_GLYPH, "glyph creation" },
+	{ GF_STASIS, "stasis" },
+	{ GF_STONE_WALL, "stone wall creation" },
+	{ GF_DEATH_RAY, "death ray" },
+	{ GF_STUN, "stunning" },
+	{ GF_HOLY_FIRE, "holy fire" },
+	{ GF_HELL_FIRE, "hellfire" },
+	{ GF_DISINTEGRATE, "disintegration" },
+	{ GF_CHARM, "charming" },
+	{ GF_CONTROL_UNDEAD, "undead control" },
+	{ GF_CONTROL_ANIMAL, "animal control" },
+	{ GF_PSI, "psionic energy" },
+	{ GF_PSI_DRAIN, "psionic drain" },
+	{ GF_TELEKINESIS, "telekinesis" },
+	{ GF_JAM_DOOR, "door jamming" },
+	{ GF_DOMINATION, "domination" },
+	{ GF_DISP_GOOD, "dispel good" },
+	{ GF_IDENTIFY, "identification" },
+	{ GF_RAISE, "raise dead" },
+	{ GF_STAR_IDENTIFY, "*identification*" },
+	{ GF_DESTRUCTION, "destruction" },
+	{ GF_STUN_CONF, "stunning and confusion" },
+	{ GF_STUN_DAM, "stunning and damage" },
+	{ GF_CONF_DAM, "confusion and damage" },
+	{ GF_STAR_CHARM, "*charming*" },
+	{ GF_IMPLOSION, "implosion" },
+	{ GF_LAVA_FLOW, "lava" },
+	{ GF_FEAR, "fear" },
+	{ GF_BETWEEN_GATE, "jumpgate creation" },
+	{ GF_WINDS_MANA, "" },
+	{ GF_DEATH, "death" },
+	{ GF_CONTROL_DEMON, "control demon" },
+	{ GF_RAISE_DEMON, "raise demon" },
+	{ GF_TRAP_DEMONSOUL, "*control demon*" },
+	{ GF_ATTACK, "projected melee attacks" },
+        { -1, NULL },
+};
+#endif	// 0
+
+
+/*
+ * Quick hack for towns -- this should die	- Jir -
+ */
+/* FIXME: Dungeons don't match the Tolkien themes;
+ * they're simply used to match the necessity 
+ */
 town_extra town_profile[6]=
 {
 	/* Vanilla */
@@ -3607,6 +3716,11 @@ town_extra town_profile[6]=
 		FEAT_GRASS,
 		90,
 		WILD_GRASSLAND,
+		{
+			0,	/* No dungeon unless admin creates one */
+			0,
+		},
+
 		1,
 		127,
 		FALSE,
@@ -3621,6 +3735,11 @@ town_extra town_profile[6]=
 		FEAT_GRASS,
 		98,
 		WILD_FOREST,
+		{
+			4,	/* Barrow-Downs */
+			30,	/* Training Tower */
+		},
+
 		1,
 		60,
 		FALSE,
@@ -3635,6 +3754,11 @@ town_extra town_profile[6]=
 		FEAT_DIRT,
 		70,
 		WILD_GRASSLAND,
+		{
+			2,	/* Mordor */
+			0,
+		},
+
 		20,
 		80,
 		FALSE,
@@ -3649,6 +3773,11 @@ town_extra town_profile[6]=
 		FEAT_SAND,
 		90,
 		WILD_MOUNTAIN,
+		{
+			16,	/* Paths of the Dead */
+			0,
+		},
+
 		40,
 		80,
 		TRUE,
@@ -3663,6 +3792,11 @@ town_extra town_profile[6]=
 		FEAT_SHAL_WATER,
 		80,
 		WILD_RIVER,
+		{
+			3,	/* Angband */
+			0,
+		},
+
 		60,
 		80,
 		FALSE,
@@ -3677,6 +3811,11 @@ town_extra town_profile[6]=
 		FEAT_ASH,
 		70,
 		WILD_MOUNTAIN,
+		{
+			3,	/* Angband (lazy :) */
+			0,
+		},
+
 		80,
 		120,
 		TRUE,

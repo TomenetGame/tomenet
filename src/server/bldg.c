@@ -18,11 +18,13 @@
 
 #include "angband.h"
 
+#if 0
 /* hack as in leave_store in store.c */
 static bool leave_bldg = FALSE;
 
 /* remember building location */
 static int building_loc = 0;
+#endif	// 0
 
 
 
@@ -435,11 +437,13 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 
 	s32b oldgold;
 
+#if 0
 	static const char *fruit[6]={"Lemon", "Orange", "Sword", "Shield", "Plum", "Cherry"};
 
 	char out_val[160], tmp_str[80], again;
 
-	//cptr p;
+	cptr p;
+#endif	// 0
 
 
 	//screen_save();
@@ -1212,14 +1216,14 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 	player_type *p_ptr = Players[Ind];
 	int i;
 
-	int j = 9;
+	//int j = 9;
 
 	/* XXX maxenchant can go up to +20 here, but maybe no pb :) */
 	int maxenchant = (p_ptr->lev / 5);
 
 	object_type *o_ptr;
 
-	char out_val[80], tmp_str[80];
+	char tmp_str[80]; // , out_val[80];
 
 	bool repaired = FALSE;
 
@@ -1723,7 +1727,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 		int item2, int amt, int gold)
 {
 	player_type *p_ptr = Players[Ind];
-	object_type *q_ptr, forge;
+	//object_type *q_ptr, forge;
 
 //	store_action_type *ba_ptr = &ba_info[st_info[s_ptr->st_idx].actions[i]];
 	store_action_type *ba_ptr = &ba_info[action];
@@ -2202,6 +2206,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			break;
 
 		}
+#endif	// 0
 
 		case BACT_BUY:
 		{
@@ -2220,7 +2225,6 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			store_examine(Ind, item);
 			break;
 		}
-#endif	// 0
 
 		case BACT_STEAL:
 		{
@@ -2303,7 +2307,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			p_ptr->balance += gold;
 			p_ptr->au -= gold;
 
-			msg_format(Ind, "You deposit %i gold pieces", gold);
+			msg_format(Ind, "You deposit %i gold pieces.", gold);
 
 			paid = TRUE;
 			break;
@@ -2317,9 +2321,16 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			p_ptr->balance -= gold;
 			p_ptr->au += gold;
 
-			msg_format(Ind, "You withdraw %i gold pieces", gold);
+			msg_format(Ind, "You withdraw %i gold pieces.", gold);
 
 			paid = TRUE;
+			break;
+		}
+
+		case BACT_EXTEND_HOUSE:
+		{
+			//paid = home_extend(Ind);
+			home_extend(Ind);
 			break;
 		}
 

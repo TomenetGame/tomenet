@@ -148,7 +148,7 @@ void keysee(c_special *cs_ptr, char *c, byte *a, int Ind){
 			*a=TERM_L_DARK;
 		}
 	}
-	return(FALSE);
+	return(FALSE);	/* ok I don't change it, but this function is 'void'.. */
 }
 
 /*

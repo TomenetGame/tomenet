@@ -252,7 +252,7 @@ void process_command()
 
 			/* Get the mini-map */
 		case 'M':
-			cmd_map();
+			cmd_map(0);
 			break;
 
 			/* Recenter map */
@@ -588,18 +588,19 @@ void cmd_stay(void)
 	Send_stay();
 }
 
-void cmd_map(void)
+//void cmd_map(void)
+void cmd_map(char mode)
 {
 	char ch;
 
 	/* Hack -- if the screen is already icky, ignore this command */
-	if (screen_icky) return;
+	if (screen_icky && !mode) return;
 
 	/* Save the screen */
 	Term_save();
 
 	/* Send the request */
-	Send_map();
+	Send_map(mode);
 
 	/* Reset the line counter */
 	last_line_info = 0;
@@ -1333,6 +1334,7 @@ void cmd_help(void)
 void cmd_check_misc(void)
 {
 	char i=0, choice;
+	int second = 13;
 
 	Term_save();
 	Term_clear();
@@ -1343,17 +1345,18 @@ void cmd_check_misc(void)
 	Term_putstr(5,  7, -1, TERM_WHITE, "(4) Objects");
 	Term_putstr(5,  8, -1, TERM_WHITE, "(5) Traps");
 	Term_putstr(5,  9, -1, TERM_WHITE, "(6) Houses");
-	Term_putstr(5, 10, -1, TERM_WHITE, "(7) Recall depth");
+	Term_putstr(5, 10, -1, TERM_WHITE, "(7) Recall depths and Towns");
+	Term_putstr(5, 11, -1, TERM_WHITE, "(8) Wilderness Map");
 
-	Term_putstr(5, 12, -1, TERM_WHITE, "(a) Players online");
-	Term_putstr(5, 13, -1, TERM_WHITE, "(b) Other players' equipments");
-	Term_putstr(5, 14, -1, TERM_WHITE, "(c) Score list");
-	Term_putstr(5, 15, -1, TERM_WHITE, "(d) Server settings");
-	Term_putstr(5, 16, -1, TERM_WHITE, "(e) Opinions (if available)");
-	Term_putstr(5, 17, -1, TERM_WHITE, "(f) News (login message)");
-	Term_putstr(5, 18, -1, TERM_WHITE, "(g) Message history");
-	Term_putstr(5, 19, -1, TERM_WHITE, "(h) Chat history");
-	Term_putstr(5, 20, -1, TERM_WHITE, "(?) Help");
+	Term_putstr(5, second + 0, -1, TERM_WHITE, "(a) Players online");
+	Term_putstr(5, second + 1, -1, TERM_WHITE, "(b) Other players' equipments");
+	Term_putstr(5, second + 2, -1, TERM_WHITE, "(c) Score list");
+	Term_putstr(5, second + 3, -1, TERM_WHITE, "(d) Server settings");
+	Term_putstr(5, second + 4, -1, TERM_WHITE, "(e) Opinions (if available)");
+	Term_putstr(5, second + 5, -1, TERM_WHITE, "(f) News (login message)");
+	Term_putstr(5, second + 6, -1, TERM_WHITE, "(g) Message history");
+	Term_putstr(5, second + 7, -1, TERM_WHITE, "(h) Chat history");
+	Term_putstr(5, second + 8, -1, TERM_WHITE, "(?) Help");
 
 	while(i!=ESCAPE){
 		i=inkey();
@@ -1384,6 +1387,9 @@ void cmd_check_misc(void)
 				break;
 			case '7':
 				Send_special_line(SPECIAL_FILE_RECALL, 0);
+				break;
+			case '8':
+				cmd_map(1);
 				break;
 			case 'a':
 				cmd_players();

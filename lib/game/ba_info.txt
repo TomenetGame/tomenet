@@ -291,3 +291,7 @@ N:61:Withdraw gold
 C:0:0:0
 I:55:0:w:4
 
+N:62:Extend the house
+C:0:0:0
+I:56:0:h:0
+

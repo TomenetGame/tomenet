@@ -13,6 +13,10 @@
  * included in all such copies.
  */
 
+/*
+ * Heavily modified and improved in 2001-2002 by Evileye
+ */
+
 #define SERVER
 
 #include "angband.h"
@@ -166,7 +170,7 @@ void addtown(int y, int x, int base, u16b flags, int type)
 //	for (n = 0; n < MAX_STORES; n++)
 	for (n = 0; n < max_st_idx; n++)
 	{
-		int i;
+		//int i;
 		/* Initialize */
 		store_init(&town[numtowns].townstore[n]);
 
@@ -195,10 +199,17 @@ void wild_bulldoze()
 	}
 }
 
+/*
+ * Makeshift towns/dungeons placer for v4
+ * This should be totally rewritten for v5!		- Jir -
+ */
 void wild_spawn_towns()
 {
-	int x, y, i, j;
-	bool retry;
+	int x, y, i, j, k;
+	bool retry, skip;
+
+	int tries = 100;
+	worldpos wpos = {0, 0, 0};
 
 	for (i = 1 + 1; i < 6; i++)
 	{
@@ -232,6 +243,83 @@ void wild_spawn_towns()
 		//addtown(y, x, i * 20 - 20 , 0, i);	/* base town */
 		addtown(y, x, town_profile[i].dun_base, 0, i);	/* base town */
 	}
+
+	for (i = 1; i < max_d_idx; i++)
+	{
+		retry = FALSE;
+
+		/* Skip empty entry */
+		if (!d_info[i].name) continue;
+
+		/* Hack -- omit dungeons associated with towns */
+		if (tries == 100)
+		{
+			skip = FALSE;
+
+			for (j = 1; j < 6; j++)
+			{
+				for (k = 0; k < 2; k++)
+				{
+					if (town_profile[j].dungeons[k] == i) skip = TRUE;
+				}
+			}
+			
+			if (skip) continue;
+		}
+
+		y = rand_int(MAX_WILD_Y);
+		x = rand_int(MAX_WILD_X);
+
+		wpos.wy = y;
+		wpos.wx = x;
+
+		/* Don't build them too near to towns
+		 * (otherwise entrance can be within a house) */
+		for (j = 1; j < 6; j++)
+		{
+			if (distance(y, x, town[j].y, town[j].x) < 3)
+			{
+				retry = TRUE;
+				break;
+			}
+		}
+		if (!retry)
+		{
+			if (wild_info[y][x].dungeon || wild_info[y][x].tower) retry = TRUE;
+
+			/* TODO: easy dungeons around Bree,
+			 * hard dungeons around Lorien */
+		}
+		if (retry)
+		{
+			if (tries-- > 0) i--;
+			continue;
+		}
+
+		adddungeon(&wpos, 0, 0, 0, 0, NULL, NULL, FALSE, i);
+
+		if (d_info[i].flags1 & DF1_TOWER)
+		{
+			new_level_down_y(&wpos, rand_int(MAX_HGT));
+			new_level_down_x(&wpos, rand_int(MAX_WID));
+		}
+		else
+		{
+			new_level_up_y(&wpos, rand_int(MAX_HGT));
+			new_level_up_x(&wpos, rand_int(MAX_WID));
+		}
+#if 0
+		if((zcave=getcave(&p_ptr->wpos))){
+			zcave[p_ptr->py][p_ptr->px].feat=FEAT_MORE;
+		}
+#endif	// 0
+
+#if DEBUG_LEVEL > 2
+		s_printf("Dungeon %d is generated in %s.\n", i, wpos_format(0, &wpos));
+#endif	// 0
+
+		tries = 100;
+	}
 }
 
 #if 0
@@ -260,7 +348,6 @@ void init_wild_info()
 //void init_wild_info(bool new)
 void init_wild_info()
 {
-	int x, y, i, j;
 	memset(&wild_info[0][0],0,sizeof(wilderness_type)*(MAX_WILD_Y*MAX_WILD_X));
 
 	/* evileye test new wilderness map */
@@ -629,7 +716,7 @@ void wild_add_monster(struct worldpos *wpos)
 	}while (tries < 50);
 	
 	/* get the monster */
-	r_idx = get_mon_num(monster_level);
+	r_idx = get_mon_num(monster_level, 0);
 	
 	/* place the monster */
 	place_monster_aux(wpos, monst_y, monst_x, r_idx, FALSE, TRUE, FALSE);
@@ -1080,7 +1167,7 @@ void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2, int y2
 		get_mon_num_hook = wild_monst_aux_home_owner;
 		get_mon_num_prep();		
 		/* homeowners can be tough */
-		r_idx = get_mon_num(w_ptr->radius);
+		r_idx = get_mon_num(w_ptr->radius, 0);
 		
 		/* get the owners location */
 		x = rand_range(x1,x2)+rand_int(40)-20;
@@ -1098,7 +1185,7 @@ void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2, int y2
 		/* determine the invaders species*/
 		get_mon_num_hook = wild_monst_aux_invaders;
 		get_mon_num_prep();	 
-		r_idx = get_mon_num((w_ptr->radius/2)+1);
+		r_idx = get_mon_num((w_ptr->radius/2)+1, 0);
 	
 		/* add the monsters */
 		for (y = y1; y <= y2; y++)
@@ -1114,6 +1201,36 @@ void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2, int y2
 	Rand_value = old_seed;
 }
 
+/* check if a location is suitable for placing a door	- Jir - */
+/* TODO: check for houses built *after* door creation */
+static bool dwelling_check_entrance(worldpos *wpos, int y, int x)
+{
+	int i;
+	cave_type *c_ptr;
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return(FALSE);
+	
+	for (i = 1; i < tdi[1]; i++)
+	{
+		c_ptr = &zcave[y + tdy[i]][x + tdx[i]];
+
+		/* Inside a house */
+		if (c_ptr->info & CAVE_ICKY) continue;			
+
+		/* Wall blocking the door */
+		if (f_info[c_ptr->feat].flags1 & FF1_WALL) continue;
+
+		/* Nasty terrain covering the door */
+		if (c_ptr->feat == FEAT_DEEP_WATER || c_ptr->feat == FEAT_DEEP_LAVA)
+			continue;
+
+		/* Found a neat entrance */
+		return (TRUE);
+	}
+
+	/* Assume failure */
+	return (FALSE);
+}
 
 /* adds a building to the wilderness. if the coordinate is not given,
    find it randomly.
@@ -1249,8 +1366,8 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 						
 			break;
 		case WILD_PERM_HOME:
-//			wall_feature = FEAT_PERM_EXTRA;
-			wall_feature = FEAT_WALL_HOUSE;
+			wall_feature = FEAT_PERM_EXTRA;
+//			wall_feature = FEAT_WALL_HOUSE;
 			
 			/* doors are locked 90% of the time */
 			if (rand_int(100) < 90) door_feature = FEAT_DOOR_HEAD + rand_int(7);
@@ -1306,6 +1423,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	   try to prevent it form being put on water. */
 
 	/* hack -- avoid doors in water */
+	/* avoid lava and wall too */
 	num_door_attempts = 0;
 	do
 	{
@@ -1365,7 +1483,9 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		c_ptr = &zcave[door_y][door_x];
 		num_door_attempts++;
 	}	
-	while ((c_ptr->feat == FEAT_DEEP_WATER) && (num_door_attempts < 30));
+	//while ((c_ptr->feat == FEAT_DEEP_WATER) && (num_door_attempts < 30));
+	while ((dwelling_check_entrance(wpos, door_y, door_x)) &&
+			(num_door_attempts < 30));
 				
 	/* Build a rectangular building */
 	for (y = h_y1; y <= h_y2; y++)
@@ -1514,7 +1634,7 @@ int wild_clone_closed_loop_total(struct worldpos *wpos)
 {
 	int total_depth;
 	struct worldpos start, curr, total, neigh;
-	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
+	//wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	int iter=0;	/* hack ;( locks otherwise */
 		
 	total_depth = 0;
@@ -2557,7 +2677,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 									MAKE(cs_ptr->sc.ptr, struct key_type);
 //									cs_ptr->type=CS_KEYDOOR;
 								}
-								key=cs_ptr->sc.ptr;
+								key=cs_ptr->sc.ptr;	/* isn't it dangerous? -Jir */
 								key->id=id;
 							}
 						}
@@ -3116,3 +3236,89 @@ void genwild(){
 	Rand_quick=rand_old;
 	Rand_value=old_seed;
 }
+
+
+
+
+
+/* Show a small radius of wilderness around the player */
+bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w)
+{
+	player_type *p_ptr = Players[Ind];
+	int i, j;
+	bool shown = FALSE;
+
+	/* Circle or square ? */
+	if (h == 0)
+	{
+		for (i = x - w; i < x + w; i++)
+		{
+			for (j = y - w; j < y + w; j++)
+			{
+				/* Bound checking */
+				if (!in_bounds_wild(j, i)) continue;
+
+				/* We want a radius, not a "squarus" :) */
+				if (distance(y, x, j, i) >= w) continue;
+
+				/* New we know here */
+				if (!(p_ptr->wild_map[(i + j * MAX_WILD_X) / 8] &
+					(1 << ((i + j * MAX_WILD_X) % 8))))
+				{
+					p_ptr->wild_map[(i + j * MAX_WILD_X) / 8] |=
+						(1 << ((i + j * MAX_WILD_X) % 8));
+					shown = TRUE;
+				}
+
+#if 0
+				wild_map[j][i].known = TRUE;
+
+				/* Only if we are in overview */
+				if (p_ptr->wild_mode)
+				{
+					cave[j][i].info |= (CAVE_GLOW | CAVE_MARK);
+
+					/* Show it */
+					lite_spot(j, i);
+				}
+#endif	// 0
+			}
+		}
+	}
+	else
+	{
+		for (i = x; i < x + w; i++)
+		{
+			for (j = y; j < y + h; j++)
+			{
+				/* Bound checking */
+				if (!in_bounds_wild(j, i)) continue;
+
+				/* New we know here */
+				if (!(p_ptr->wild_map[(i + j * MAX_WILD_X) / 8] &
+					(1 << ((i + j * MAX_WILD_X) % 8))))
+				{
+					p_ptr->wild_map[(i + j * MAX_WILD_X) / 8] |=
+						(1 << ((i + j * MAX_WILD_X) % 8));
+					shown = TRUE;
+				}
+
+#if 0
+				wild_map[j][i].known = TRUE;
+
+				/* Only if we are in overview */
+				if (p_ptr->wild_mode)
+				{
+					cave[j][i].info |= (CAVE_GLOW | CAVE_MARK);
+
+					/* Show it */
+					lite_spot(j, i);
+				}
+#endif	// 0
+			}
+		}
+	}
+
+	return (shown);
+}
+

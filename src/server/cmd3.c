@@ -93,7 +93,7 @@ void inven_takeoff(int Ind, int item, int amt)
 
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
-	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) do_mimic_change(Ind, 0);
+	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) do_mimic_change(Ind, 0, TRUE);
 
 	/* Carry the object, saving the slot it went in */
 	posn = inven_carry(Ind, &tmp_obj);
@@ -210,7 +210,7 @@ void inven_drop(int Ind, int item, int amt)
 	}
 
 	/* Polymorph back */
-	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) do_mimic_change(Ind, 0);
+	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) do_mimic_change(Ind, 0, TRUE);
 
 	/* Message */
 	object_desc(Ind, o_name, &tmp_obj, TRUE, 3);
@@ -867,7 +867,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 
 	int			old_number;
 
-	bool		force = FALSE;
+	//bool		force = FALSE;
 
 	object_type		*o_ptr;
 
@@ -1911,7 +1911,7 @@ bool do_auto_refill(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	object_type *o_ptr;
-	object_type *j_ptr;
+	object_type *j_ptr = NULL;
 
 	int i;
 	u32b f1, f2, f3, f4, f5, esp;

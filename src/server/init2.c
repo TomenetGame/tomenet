@@ -2523,7 +2523,7 @@ void init_spells(s16b new_size)
  */
 static errr init_other(void)
 {
-	int i, k, n;
+	//int i, k, n;
 
 
 	/*** Prepare the "dungeon" information ***/

@@ -293,6 +293,54 @@ int getlevel(struct worldpos *wpos)
 	}
 }
 
+/* Simple finder routine. Scan list of c_special, return match */
+/* NOTE only ONE of each type !!! */
+struct c_special *GetCS(cave_type *c_ptr, unsigned char type){
+	struct c_special *trav;
+//	int i=0;
+
+	if(!c_ptr->special) return(NULL);
+	trav=c_ptr->special;
+	while(trav){
+		if(trav->type==type){
+			return(trav);
+		}
+		trav=trav->next;
+	}
+	return(NULL);				/* returns ** to the structs. always dealloc */
+}
+
+/* check for duplication, and also set the type	- Jir - */
+struct c_special *AddCS(cave_type *c_ptr, byte type){
+	struct c_special *cs_ptr;
+	if (GetCS(c_ptr, type)){
+		return(NULL);	/* already exists! */
+	}
+	MAKE(cs_ptr, struct c_special);
+	if(!cs_ptr) return(NULL);
+	cs_ptr->next=c_ptr->special;
+	c_ptr->special=cs_ptr;
+	cs_ptr->type = type;
+	return(cs_ptr);
+}
+
+/* like AddCS, but override already-existing one */
+c_special *ReplaceCS(cave_type *c_ptr, byte type)
+{
+	struct c_special *cs_ptr;
+	if (!(cs_ptr=GetCS(c_ptr, type)))
+	{
+		MAKE(cs_ptr, struct c_special);
+		if(!cs_ptr) return(NULL);
+		cs_ptr->next=c_ptr->special;
+		c_ptr->special=cs_ptr;
+	}
+	cs_ptr->type = type;
+	return(cs_ptr);
+}
+
+
+
 /*
  * Approximate Distance between two points.
  *
@@ -1060,10 +1108,11 @@ static byte player_color(int Ind)
 	/* Black Breath carriers emit malignant aura sometimes.. */
 	if (p_ptr->black_breath && magik(50)) return TERM_L_DARK;
 
+	/* Mimicing a monster */
+	/* TODO: handle 'ATTR_MULTI', 'ATTR_CLEAR' */
 	if (p_ptr->body_monster) return (r_ptr->d_attr);
 
 	/* Bats are orange */
-	
 	if (p_ptr->fruit_bat) return TERM_ORANGE;
 	
 	if (p_ptr->tim_mimic) pcolor = p_ptr->tim_mimic_what;
@@ -1072,50 +1121,149 @@ static byte player_color(int Ind)
 	return p_ptr->cp_ptr->color;
 }
 
-/* Simple finder routine. Scan list of c_special, return match */
-/* NOTE only ONE of each type !!! */
-struct c_special *GetCS(cave_type *c_ptr, unsigned char type){
-	struct c_special *trav;
-//	int i=0;
 
-	if(!c_ptr->special) return(NULL);
-	trav=c_ptr->special;
-	while(trav){
-		if(trav->type==type){
-			return(trav);
-		}
-		trav=trav->next;
-	}
-	return(NULL);				/* returns ** to the structs. always dealloc */
-}
-
-/* check for duplication, and also set the type	- Jir - */
-struct c_special *AddCS(cave_type *c_ptr, byte type){
-	struct c_special *cs_ptr;
-	if (GetCS(c_ptr, type)){
-		return(NULL);	/* already exists! */
-	}
-	MAKE(cs_ptr, struct c_special);
-	if(!cs_ptr) return(NULL);
-	cs_ptr->next=c_ptr->special;
-	c_ptr->special=cs_ptr;
-	cs_ptr->type = type;
-	return(cs_ptr);
-}
-
-/* like AddCS, but override already-existing one */
-c_special *ReplaceCS(cave_type *c_ptr, byte type)
+static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr, byte *ap, char *cp)
 {
-	struct c_special *cs_ptr;
-	if (!(cs_ptr=GetCS(c_ptr, type)))
+	player_type *p_ptr = Players[Ind];
+	byte a;
+	char c;
+	//monster_race *r_ptr = race_inf(m_ptr);
+
+	/* Possibly GFX corrupts with egos;
+	 * in that case use m_ptr->r_ptr instead.	- Jir -
+	 */
+	/* Desired attr */
+	/* a = r_ptr->x_attr; */
+	if (m_ptr && !m_ptr->special && p_ptr->use_r_gfx) a = p_ptr->r_attr[m_ptr->r_idx];
+	else a = r_ptr->d_attr;
+	/*                        else a = m_ptr->r_ptr->d_attr; */
+
+	/* Desired char */
+	/* c = r_ptr->x_char; */
+	if (m_ptr && !m_ptr->special && p_ptr->use_r_gfx) c = p_ptr->r_char[m_ptr->r_idx];
+	else c = r_ptr->d_char;
+	/*                        else c = m_ptr->r_ptr->d_char; */
+
+	/* Hack -- mimics */
+	if (r_ptr->flags9 & RF9_MIMIC)
 	{
-		MAKE(cs_ptr, struct c_special);
-		if(!cs_ptr) return(NULL);
-		cs_ptr->next=c_ptr->special;
-		c_ptr->special=cs_ptr;
+		mimic_object(&a, &c, c_ptr->m_idx);
 	}
-	cs_ptr->type = type;
-	return(cs_ptr);
+
+	/* Ignore weird codes */
+	if (avoid_other)
+	{
+		/* Use char */
+		(*cp) = c;
+
+		/* Use attr */
+		(*ap) = a;
+	}
+
+	/* Special attr/char codes */
+	else if ((a & 0x80) && (c & 0x80))
+	{
+		/* Use char */
+		(*cp) = c;
+
+		/* Use attr */
+		(*ap) = a;
+	}
+
+	/* Hack -- Unique/Ego 'glitters' sometimes */
+	else if (m_ptr && ((((r_ptr->flags1 & RF1_UNIQUE) && magik(30)) ||
+				(m_ptr->ego && magik(5)) ) &&
+			(!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)) &&
+			 !(r_ptr->flags2 & (RF2_SHAPECHANGER)))))
+	{
+		(*cp) = c;
+
+		/* Multi-hued attr */
+		if (r_ptr->flags2 & (RF2_ATTR_ANY))
+			(*ap) = TERM_MULTI;
+		else (*ap) = TERM_HALF;
+	}
+
+	/* Multi-hued monster */
+	else if (r_ptr->flags1 & RF1_ATTR_MULTI)
+	{
+		/* Is it a shapechanger? */
+		if (r_ptr->flags2 & (RF2_SHAPECHANGER))
+		{
+			{
+				(*cp) = (randint(25)==1?
+						 image_object_hack[randint(strlen(image_object_hack))]:
+						 image_monster_hack[randint(strlen(image_monster_hack))]);
+			}
+		}
+		else
+			(*cp) = c;
+
+		/* Multi-hued attr */
+		if (r_ptr->flags2 & (RF2_ATTR_ANY))
+			(*ap) = randint(15);
+#ifdef MULTI_HUED_PROPER
+		else (*ap) = multi_hued_attr(r_ptr);
+#else
+#ifdef CLIENT_SHIMMER
+		else (*ap) = TERM_HALF;
+#else
+		else (*ap) = get_shimmer_color();
+#endif
+#endif	/* MULTI_HUED_PROPER */
+#if 0
+		/* Normal char */
+		(*cp) = c;
+
+		/* Multi-hued attr */
+		(*ap) = randint(15);
+#endif	/* 0 */
+	}
+
+	/* Normal monster (not "clear" in any way) */
+	else if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)))
+	{
+		/* Use char */
+		(*cp) = c;
+
+		/* Use attr */
+		(*ap) = a;
+	}
+
+	/* Hack -- Bizarre grid under monster */
+	else if ((*ap & 0x80) || (*cp & 0x80))
+	{
+		/* Use char */
+		(*cp) = c;
+
+		/* Use attr */
+		(*ap) = a;
+	}
+
+	/* Normal */
+	else
+	{
+		/* Normal (non-clear char) monster */
+		if (!(r_ptr->flags1 & RF1_CHAR_CLEAR))
+		{
+			/* Normal char */
+			(*cp) = c;
+		}
+
+		/* Normal (non-clear attr) monster */
+		else if (!(r_ptr->flags1 & RF1_ATTR_CLEAR))
+		{
+			/* Normal attr */
+			(*ap) = a;
+		}
+	}
+
+	/* Hack -- hallucination */
+	if (p_ptr->image)
+	{
+		/* Hallucinatory monster */
+		image_monster(ap, cp);
+	}
 }
 
 /*
@@ -1640,141 +1788,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		{
 			monster_race *r_ptr = race_inf(m_ptr);
 
-			/* Possibly GFX corrupts with egos;
-			 * in that case use m_ptr->r_ptr instead.	- Jir -
-			 */
-			/* Desired attr */
-			/* a = r_ptr->x_attr; */
-			if (!m_ptr->special && p_ptr->use_r_gfx) a = p_ptr->r_attr[m_ptr->r_idx];
-			else a = r_ptr->d_attr;
-			/*                        else a = m_ptr->r_ptr->d_attr; */
-
-			/* Desired char */
-			/* c = r_ptr->x_char; */
-			if (!m_ptr->special && p_ptr->use_r_gfx) c = p_ptr->r_char[m_ptr->r_idx];
-			else c = r_ptr->d_char;
-			/*                        else c = m_ptr->r_ptr->d_char; */
-
-			/* Hack -- mimics */
-			if (r_ptr->flags9 & RF9_MIMIC)
-			{
-				mimic_object(&a, &c, c_ptr->m_idx);
-			}
-
-			/* Ignore weird codes */
-			if (avoid_other)
-			{
-				/* Use char */
-				(*cp) = c;
-
-				/* Use attr */
-				(*ap) = a;
-			}
-
-			/* Special attr/char codes */
-			else if ((a & 0x80) && (c & 0x80))
-			{
-				/* Use char */
-				(*cp) = c;
-
-				/* Use attr */
-				(*ap) = a;
-			}
-
-			/* Hack -- Unique/Ego 'glitters' sometimes */
-			else if ((((r_ptr->flags1 & RF1_UNIQUE) && magik(30)) ||
-						(m_ptr->ego && magik(5)) ) &&
-					(!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)) &&
-					 !(r_ptr->flags2 & (RF2_SHAPECHANGER))))
-			{
-				(*cp) = c;
-
-				/* Multi-hued attr */
-				if (r_ptr->flags2 & (RF2_ATTR_ANY))
-					(*ap) = TERM_MULTI;
-				else (*ap) = TERM_HALF;
-			}
-
-			/* Multi-hued monster */
-			else if (r_ptr->flags1 & RF1_ATTR_MULTI)
-			{
-				/* Is it a shapechanger? */
-				if (r_ptr->flags2 & (RF2_SHAPECHANGER))
-				{
-					{
-						(*cp) = (randint(25)==1?
-								 image_object_hack[randint(strlen(image_object_hack))]:
-								 image_monster_hack[randint(strlen(image_monster_hack))]);
-					}
-				}
-				else
-					(*cp) = c;
-
-				/* Multi-hued attr */
-				if (r_ptr->flags2 & (RF2_ATTR_ANY))
-					(*ap) = randint(15);
-#ifdef MULTI_HUED_PROPER
-				else (*ap) = multi_hued_attr(r_ptr);
-#else
-#ifdef CLIENT_SHIMMER
-				else (*ap) = TERM_HALF;
-#else
-				else (*ap) = get_shimmer_color();
-#endif
-#endif	/* MULTI_HUED_PROPER */
-#if 0
-				/* Normal char */
-				(*cp) = c;
-
-				/* Multi-hued attr */
-				(*ap) = randint(15);
-#endif	/* 0 */
-			}
-
-			/* Normal monster (not "clear" in any way) */
-			else if (!(r_ptr->flags1 & (RF1_ATTR_CLEAR | RF1_CHAR_CLEAR)))
-			{
-				/* Use char */
-				(*cp) = c;
-
-				/* Use attr */
-				(*ap) = a;
-			}
-
-			/* Hack -- Bizarre grid under monster */
-			else if ((*ap & 0x80) || (*cp & 0x80))
-			{
-				/* Use char */
-				(*cp) = c;
-
-				/* Use attr */
-				(*ap) = a;
-			}
-
-			/* Normal */
-			else
-			{
-				/* Normal (non-clear char) monster */
-				if (!(r_ptr->flags1 & RF1_CHAR_CLEAR))
-				{
-					/* Normal char */
-					(*cp) = c;
-				}
-
-				/* Normal (non-clear attr) monster */
-				else if (!(r_ptr->flags1 & RF1_ATTR_CLEAR))
-				{
-					/* Normal attr */
-					(*ap) = a;
-				}
-			}
-
-			/* Hack -- hallucination */
-			if (p_ptr->image)
-			{
-				/* Hallucinatory monster */
-				image_monster(ap, cp);
-			}
+			get_monster_color(Ind, m_ptr, r_ptr, c_ptr, ap, cp);
 		}
 	}
 
@@ -1788,29 +1802,39 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	   
 	else if (c_ptr->m_idx < 0)
 	{
-		/* Is that player visible? */
-		if (p_ptr->play_vis[0 - c_ptr->m_idx])
-		{
-		  
-		  if((( Players[0 - c_ptr->m_idx]->chp * 95)/ (Players[0 - c_ptr->m_idx]->mhp*10)) >= 7){
-		  	if (Players[0 - c_ptr->m_idx]->body_monster) c = r_info[Players[0 - c_ptr->m_idx]->body_monster].d_char;
-			else if (Players[0 - c_ptr->m_idx]->fruit_bat) c = 'b';
-			else c='@';
-		  }
-		  else
-		  {
-			if(Players[0 - c_ptr->m_idx]->chp<0) c='-';
-			else{
-				sprintf((unsigned char *)&kludge,"%d", ((Players[0 - c_ptr->m_idx]->chp * 95) / (Players[0 - c_ptr->m_idx]->mhp*10)));
-				c = kludge;
-			}
-		  }                       
+		int Ind2 = 0 - c_ptr->m_idx;
+		player_type *p2_ptr = Players[Ind2];
 
-			a = player_color(0 - c_ptr->m_idx);
+		/* Is that player visible? */
+		if (p_ptr->play_vis[Ind2])
+		{
+			a = player_color(Ind2);
+
+			if((( p2_ptr->chp * 95) /
+						(p2_ptr->mhp*10)) >= 7)
+			{
+#if 0
+				if (p2_ptr->body_monster) c = r_info[p2_ptr->body_monster].d_char;
+#else	// 0
+				if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], c_ptr, &a, &c);
+#endif	// 0
+				else if (p2_ptr->fruit_bat) c = 'b';
+				else c='@';
+			}
+			else
+			{
+				if(p2_ptr->chp<0) c='-';
+				else{
+					sprintf((unsigned char *)&kludge,"%d", ((p2_ptr->chp * 95) / (p2_ptr->mhp*10)));
+					c = kludge;
+				}
+			}                       
 
 			(*cp) = c;
-	
+
 			(*ap) = a;
+
+			// if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], ap, cp)
 
 			if (p_ptr->image)
 			{
@@ -2581,7 +2605,7 @@ void wild_display_map(int Ind)
     "wilderness map" mode now that will represent each level with one character.
  */
  
-void do_cmd_view_map(int Ind)
+void do_cmd_view_map(int Ind, char mode)
 {
 	int cy, cx;
 
@@ -2590,7 +2614,8 @@ void do_cmd_view_map(int Ind)
 	/* if not in town or the dungeon, do normal map */
 	/* is player in a town or dungeon? */
 	/* only off floor ATM */
-	if (Players[Ind]->wpos.wz!=0 || (istown(&Players[Ind]->wpos)))
+	if ((Players[Ind]->wpos.wz!=0 || (istown(&Players[Ind]->wpos))) &&
+			!mode)
 		display_map(Ind, &cy, &cx);
 	/* do wilderness map */
 	/* pfft, fix me pls, Evileye ;) */

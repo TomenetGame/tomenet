@@ -704,12 +704,13 @@ static void print_skill_batch(int *p, int start, int max, bool mode)
 	{
 		if (i >= max) break;
 
-                /* Hack -- only able to learn spells when learning is required */
-//                if ((p[i] == SKILL_LEARN) && (!must_learn_spells()))
-//                        continue;
-                else if (p[i] > 0)
+		/* Hack -- only able to learn spells when learning is required */
+		//                if ((p[i] == SKILL_LEARN) && (!must_learn_spells()))
+		//                        continue;
+		/* XXX seems to do BAD thing here - see Receive_skill_init */
+		else if (p[i] > 0)
 			sprintf(buff, "  %c-%3d) %-30s", I2A(j), p[i] + 1, s_info[p[i]].action_desc);
-//			sprintf(buff, "  %c-%3d) %-30s", I2A(j), s_info[p[i]].action_mkey + 1, s_info[p[i]].action_desc);
+		//			sprintf(buff, "  %c-%3d) %-30s", I2A(j), s_info[p[i]].action_mkey + 1, s_info[p[i]].action_desc);
 		else
 			sprintf(buff, "  %c-%3d) %-30s", I2A(j), 1, "Change melee style");
 

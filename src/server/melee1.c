@@ -151,8 +151,8 @@ static bool do_eat_gold(int Ind, int m_idx)
 	monster_type    *m_ptr = &m_list[m_idx];
 #if 0
 	monster_race    *r_ptr = race_inf(m_ptr);
-#endif	// 0
 	int i, k;
+#endif	// 0
 	s32b            gold;
 
 

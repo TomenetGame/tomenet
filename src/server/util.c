@@ -1036,13 +1036,13 @@ void ascii_to_text(char *buf, cptr str)
 
 
 
+#if 0
 /*
  * Variable used by the functions below
  */
 static int hack_dir = 0;
 
 
-#if 0
 /*
  * Convert a "Rogue" keypress into an "Angband" keypress
  * Pass extra information as needed via "hack_dir"
@@ -1781,9 +1781,9 @@ static void do_slash_brief_help(int Ind)
 
 static void do_slash_cmd(int Ind, char *message)
 {
-	int i;
+	int i = 0;
 	int k = 0, tk = 0;
-	player_type *p_ptr = Players[Ind], *q_ptr;
+	player_type *p_ptr = Players[Ind];
  	/* cptr colon; */
  	char *colon;
 	char *token[9];
@@ -2548,7 +2548,7 @@ static void do_slash_cmd(int Ind, char *message)
 			get_mon_num_prep();
 			i=2+randint(7);
 			do{
-				r=get_mon_num(lev);
+				r=get_mon_num(lev, 0);
 				k++;
 				if(k>100) lev--;
 			} while(((lev-5) > r_info[r].level) || r_info[r].flags1 & RF1_UNIQUE);
@@ -3066,6 +3066,8 @@ static void do_slash_cmd(int Ind, char *message)
 
 				return;
 			}
+			/* Refresh stores
+			 * XXX very slow */
 			else if (prefix(message, "/store") ||
 					prefix(message, "/sto"))
 			{
@@ -3117,6 +3119,51 @@ static void do_slash_cmd(int Ind, char *message)
 
 				return;
 			}
+#if 0
+			/* Obsolete -- use '~7' instead */
+			else if (prefix(message, "/towns") ||
+					prefix(message, "/to")) 
+			{
+				for (i = 0; i < numtowns; i++)
+				{
+					msg_format(Ind, "  %d. (%3d, %3d) %s lv:%d flags:%d", i,
+							town[i].x, town[i].y,
+							town_profile[town[i].type].name,
+							town[i].baselevel, town[i].flags);
+				}
+
+				return;
+			}
+			else if (prefix(message, "/dungeons") ||
+					prefix(message, "/du")) 
+			{
+				int y, x;
+				dungeon_type *d_ptr;
+
+				for (y = 0; y < MAX_WILD_Y; y++)
+				{
+					for (x = 0; x < MAX_WILD_X; x++)
+					{
+						if ((d_ptr = wild_info[y][x].tower))
+						{
+							msg_format(Ind, "  %d. (%3d, %3d) %s lv:%d", i,
+								x, y,
+								d_info[d_ptr->type].name + d_name,
+								d_info[d_ptr->type].mindepth);
+						}
+						if ((d_ptr = wild_info[y][x].dungeon))
+						{
+							msg_format(Ind, "  %d. (%3d, %3d) %s lv:%d", i,
+								x, y,
+								d_info[d_ptr->type].name + d_name,
+								d_info[d_ptr->type].mindepth);
+						}
+					}
+				}
+
+				return;
+			}
+#endif	// 0
 		}
 	}
 
@@ -3166,7 +3213,7 @@ static void player_talk_aux(int Ind, char *message)
  	int i, len, target = 0;
 	char search[80], sender[80];
 	player_type *p_ptr = Players[Ind], *q_ptr;
- 	cptr colon, problem = "";
+ 	cptr colon; // , problem = "";
 	bool me = FALSE;
 	char c = 'B';
 	int mycolor = 0;

@@ -936,7 +936,7 @@ static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
 /* Hack -- borrowing 'direct' flag for los check */
 static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bool direct)
 {
-	player_type *p_ptr = Players[Ind];
+	//player_type *p_ptr = Players[Ind];
 
 	int i, num = 0;
 	byte spells[96];

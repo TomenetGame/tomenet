@@ -33,7 +33,7 @@
  */
 void do_cmd_check_artifacts(int Ind, int line)
 {
-	int i, j, k, z, y, x;
+	int i, j, k, z;
 
 	FILE *fff;
 
@@ -169,7 +169,7 @@ void do_cmd_check_artifacts(int Ind, int line)
  * the colour for each letter!	- Jir - */
 void do_cmd_check_uniques(int Ind, int line)
 {
-	player_type *p_ptr = Players[Ind];
+	//player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr;
 	int k, l, total = 0;
 
@@ -667,10 +667,10 @@ void do_cmd_knowledge_dungeons(int Ind)
 
 //	msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
 
-	int		i, j, num, total = 0;
-	monster_race	*r_ptr;
-	bool	shown = FALSE;
+	int		i, x, y;	// num, total = 0;
+	//bool	shown = FALSE;
 	bool	admin = is_admin(p_ptr);
+	dungeon_type *d_ptr;
 
 	FILE *fff;
 
@@ -686,10 +686,14 @@ void do_cmd_knowledge_dungeons(int Ind)
 	/* Let the player scroll through the info */
 	p_ptr->special_file_type = TRUE;
 
-//	fprintf(fff, "The deepest point of Angband you've reached: -%d ft\n", p_ptr->max_dlv * 50);
+	fprintf(fff, "======== Dungeon(s) ========\n\n");
 
+#if 0
 	if (p_ptr->depth_in_feet) fprintf(fff, "The deepest point you've reached: -%d ft\n", p_ptr->max_dlv * 50);
 	else fprintf(fff, "The deepest point you've reached: Lev -%d\n", p_ptr->max_dlv);
+#else	// 0
+	fprintf(fff, "The deepest/highest point you've ever reached: %d ft (Lv %d)\n", p_ptr->max_dlv * 50, p_ptr->max_dlv);
+#endif	// 0
 
 #if 0
 	/* Scan all dungeons */
@@ -706,6 +710,70 @@ void do_cmd_knowledge_dungeons(int Ind)
 		}
 	}
 #endif	// 0
+
+	fprintf(fff,"\n");
+
+	for (y = 0; y < MAX_WILD_Y; y++)
+	{
+		for (x = 0; x < MAX_WILD_X; x++)
+		{
+			if (!((p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
+						(1 << ((x + y * MAX_WILD_X) % 8))) || admin))
+				continue;
+
+			if ((d_ptr = wild_info[y][x].tower))
+			{
+				i = d_ptr->type;
+				fprintf(fff, " (%3d, %3d) %-30s", x, y,
+						d_info[i].name + d_name);
+				if (admin)
+					fprintf(fff, "  Lev: %3d  Req: %3d  type: %3d",
+							d_info[i].mindepth, d_info[i].min_plev, i);
+
+				fprintf(fff,"\n");
+			}
+			if ((d_ptr = wild_info[y][x].dungeon))
+			{
+				i = d_ptr->type;
+				fprintf(fff, " (%3d, %3d) %-30s", x, y,
+						d_info[i].name + d_name);
+				if (admin)
+					fprintf(fff, "  Lev: %3d  Req: %3d  type: %3d",
+							d_info[i].mindepth, d_info[i].min_plev, i);
+
+				fprintf(fff,"\n");
+			}
+		}
+	}
+
+	fprintf(fff,"\n");
+
+
+
+	fprintf(fff, "\n\n======== Town(s) ========\n\n");
+
+	/* Scan all towns */
+	for (i = 0; i < numtowns; i++)
+	{
+		y = town[i].y;
+		x = town[i].x;
+
+		/* The dungeon has a valid recall depth set */
+		if ((p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
+					(1 << ((x + y * MAX_WILD_X) % 8))) || admin)
+		{
+			/* Describe the town locations */
+			fprintf(fff, " (%3d, %3d) : %-15s", x, y,
+					town_profile[town[i].type].name);
+			if (admin)
+				fprintf(fff, "  Lev: %d", town[i].baselevel);
+
+			if (p_ptr->town_x == x && p_ptr->town_y == y)
+				fprintf(fff, "  (default recall point)");
+
+			fprintf(fff,"\n");
+		}
+	}
 
 	/* Close the file */
 	my_fclose(fff);
@@ -992,20 +1060,20 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 			j = r_ptr->level - num;
 
 			if (j > 0)
-				fprintf(fff, "%s : %d (%d more to go)\n",
+				fprintf(fff, "%-30s : %d (%d more to go)\n",
 						r_name + r_ptr->name, num, j);
 			else
 			{
 				if (p_ptr->body_monster == i)
-					fprintf(fff, "%s : %d  ** Your current form **\n",
+					fprintf(fff, "%-30s : %d  ** Your current form **\n",
 							r_name + r_ptr->name, num);
-				else fprintf(fff, "%s : %d (learnt)\n",
+				else fprintf(fff, "%-30s : %d (learnt)\n",
 						r_name + r_ptr->name, num);
 			}
 		}
 		else
 		{
-			fprintf(fff, "%s : %d\n", r_name + r_ptr->name, num);
+			fprintf(fff, "%-30s : %d\n", r_name + r_ptr->name, num);
 		}
 		total += num;
 		shown = TRUE;
@@ -1031,7 +1099,7 @@ void do_cmd_show_houses(int Ind)
 	struct dna_type *dna;
 	cptr name;
 
-	int		i, j, num, total = 0;
+	int		i, total = 0;	//j, num,
 	bool	shown = FALSE;
 	bool	admin = is_admin(p_ptr);
 
@@ -1177,7 +1245,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		i, j, num, total = 0;
+	int		i, j, total = 0;
 	object_kind	*k_ptr;
 	object_type forge;
 	char o_name[80];

@@ -494,7 +494,7 @@ void display_player(int Ind)
  */
 static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 {
-	int             i, k;
+	int             i, k = 0;
 
 	/* Number of "real" lines passed by */
 	int             next = 0;
@@ -997,7 +997,7 @@ struct high_score
 };
 
 int highscore_send(char *buffer, int max){
-	int i=0, len=0;
+	int len=0;
 	FILE *hsp;
 	char buf[1024];
 	struct high_score score;

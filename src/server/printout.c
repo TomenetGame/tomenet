@@ -120,7 +120,7 @@ extern bool rfe_printf(char *str, ...)
 /* better move to cmd4.c? */
 extern bool do_cmd_view_rfe(int Ind, char *str, int line)
 {
-	player_type *p_ptr = Players[Ind];
+	//player_type *p_ptr = Players[Ind];
 	/* Path buffer */
 	char    path[MAX_PATH_LENGTH];
 

@@ -588,7 +588,7 @@ void self_knowledge(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		i = 0, k;
+	int		k;
 
 	u32b	f1 = 0L, f2 = 0L, f3 = 0L, f4 = 0L, f5 = 0L, esp = 0L;
 
@@ -2307,7 +2307,7 @@ bool detect_object(int Ind, int rad)
 
 	struct worldpos *wpos=&p_ptr->wpos;
 	dun_level		*l_ptr;
-	int		py = p_ptr->py, px = p_ptr->px;
+	//int		py = p_ptr->py, px = p_ptr->px;
 
 	int		i, j;
 	bool	detect = FALSE;
@@ -2457,7 +2457,7 @@ bool detect_sdoor(int Ind, int rad)
 
 	struct worldpos *wpos=&p_ptr->wpos;
 	dun_level		*l_ptr;
-	int		py = p_ptr->py, px = p_ptr->px;
+	//int		py = p_ptr->py, px = p_ptr->px;
 
 	int		i, j;
 	bool	detect = FALSE;
@@ -3619,7 +3619,7 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ)
 
 	bool	result = FALSE;
 
-	int d = 999, tmp;
+	int tmp;	// , d = 999;
 
 	dun_level		*l_ptr = getfloor(wpos);
 	cave_type **zcave;
@@ -4513,7 +4513,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 /* Wipe everything */
 void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 {
-	int		y, x, yy, xx, dy, dx;
+	int		yy, xx, dy, dx;
 
 	cave_type	*c_ptr;
 
@@ -4555,13 +4555,13 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 			c_ptr->feat = FEAT_FLOOR;
 			
 			/* Delete monsters */
-                        if (c_ptr->m_idx > 0)
-                        {
-                                monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
-                                if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, y, x);
-                                else continue;
-                        }
-			
+			if (c_ptr->m_idx > 0)
+			{
+				monster_race *r_ptr = race_inf(&m_list[c_ptr->m_idx]);
+				if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster(wpos, yy, xx);
+				else continue;
+			}
+
 			/* Delete objects */
 			delete_object(wpos, yy, xx);
 
@@ -4967,6 +4967,10 @@ bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff)
 	return (fire_cloud(Ind, typ, dir, dam, rad, time));
 }
 
+/*
+ * Player swaps position with whatever in (lty, ltx)
+ * usually used for 'Void Jumpgate'		- Jir -
+ */
 void swap_position(int Ind, int lty, int ltx)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -4974,7 +4978,7 @@ void swap_position(int Ind, int lty, int ltx)
 	int tx = ltx, ty = lty;
 	cave_type * c_ptr;
 	monster_type * m_ptr;
-	monster_race * r_ptr;
+	//monster_race * r_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -5601,100 +5605,106 @@ void summon_pet(int Ind, int max)
 {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr;
-        monster_type *m_ptr;
-        cave_type *c_ptr;
+	monster_type *m_ptr;
+	cave_type *c_ptr;
 	cave_type **zcave;
-        int x, y, i;
+	int x, y, i;
+	bool okay = FALSE;
 
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
-        for (x = p_ptr->px - 1; x <= p_ptr->px; x++)        
-        for (y = p_ptr->py - 1; y <= p_ptr->py; y++)
-        {
-                /* Verify location */
-                if (!in_bounds(y, x)) continue;
-                /* Require empty space */
-                if (!cave_empty_bold(zcave, y, x)) continue;
 
-                /* Hack -- no creation on glyph of warding */
-                if (zcave[y][x].feat == FEAT_GLYPH) continue;
+	for (x = p_ptr->px - 1; x <= p_ptr->px; x++)        
+		for (y = p_ptr->py - 1; y <= p_ptr->py; y++)
+		{
+			/* Verify location */
+			if (!in_bounds(y, x)) continue;
+			/* Require empty space */
+			if (!cave_empty_bold(zcave, y, x)) continue;
 
-                if ((p_ptr->px == x) || (p_ptr->py == y)) continue;
+			/* Hack -- no creation on glyph of warding */
+			if (zcave[y][x].feat == FEAT_GLYPH) continue;
 
-                break;
-        }
+			if ((p_ptr->px == x) && (p_ptr->py == y)) continue;
+
+			okay = TRUE;
+			break;
+		}
+
+	if (!okay) return;
+
 	/* Access the location */
-        c_ptr = &zcave[y][x];
+	c_ptr = &zcave[y][x];
 
 	/* Make a new monster */
 	c_ptr->m_idx = m_pop();
 
 	/* Mega-Hack -- catch "failure" */
-        if (!c_ptr->m_idx) return;
+	if (!c_ptr->m_idx) return;
 
-        /* Grab and allocate */
-        m_ptr = &m_list[c_ptr->m_idx];
+	/* Grab and allocate */
+	m_ptr = &m_list[c_ptr->m_idx];
 #if 0
-        MAKE(m_ptr->r_ptr, monster_race);
-        m_ptr->special = TRUE;
+	MAKE(m_ptr->r_ptr, monster_race);
+	m_ptr->special = TRUE;
 #endif
 	r_ptr=&r_info[1];
 	m_ptr->special = FALSE;
-        m_ptr->fx = x;
-        m_ptr->fy = y;
+	m_ptr->fx = x;
+	m_ptr->fy = y;
 
 #if 0
-        r_ptr = m_ptr->r_ptr;
+	r_ptr = m_ptr->r_ptr;
 
-        r_ptr->flags1 = 0;
-        r_ptr->flags2 = 0;
-        r_ptr->flags3 = 0;
-        r_ptr->flags4 = 0;
-        r_ptr->flags5 = 0;
-        r_ptr->flags6 = 0;
+	r_ptr->flags1 = 0;
+	r_ptr->flags2 = 0;
+	r_ptr->flags3 = 0;
+	r_ptr->flags4 = 0;
+	r_ptr->flags5 = 0;
+	r_ptr->flags6 = 0;
 
-        r_ptr->text = 0;
-        r_ptr->name = 0;
-        r_ptr->sleep = 0;
-        r_ptr->aaf = 20;
-        r_ptr->speed = 140;
+	r_ptr->text = 0;
+	r_ptr->name = 0;
+	r_ptr->sleep = 0;
+	r_ptr->aaf = 20;
+	r_ptr->speed = 140;
 
-        r_ptr->mexp = 1;
+	r_ptr->mexp = 1;
 
-        r_ptr->d_attr = TERM_YELLOW;
-        r_ptr->d_char = 'g';
-        r_ptr->x_attr = TERM_YELLOW;
-        r_ptr->x_char = 'g';
+	r_ptr->d_attr = TERM_YELLOW;
+	r_ptr->d_char = 'g';
+	r_ptr->x_attr = TERM_YELLOW;
+	r_ptr->x_char = 'g';
 
-        r_ptr->freq_inate = 0;
-        r_ptr->freq_spell = 0;
-        r_ptr->flags1 |= RF1_FORCE_MAXHP;
-        r_ptr->flags2 |= RF2_STUPID | RF2_EMPTY_MIND | RF2_REGENERATE | RF2_POWERFUL | RF2_BASH_DOOR | RF2_MOVE_BODY | RF2_TAKE_ITEM;
-        r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP | RF9_IM_TELE;
+	r_ptr->freq_inate = 0;
+	r_ptr->freq_spell = 0;
+	r_ptr->flags1 |= RF1_FORCE_MAXHP;
+	r_ptr->flags2 |= RF2_STUPID | RF2_EMPTY_MIND | RF2_REGENERATE | RF2_POWERFUL | RF2_BASH_DOOR | RF2_MOVE_BODY | RF2_TAKE_ITEM;
+	r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP | RF9_IM_TELE;
 
 	r_ptr->hdice = 10;
 	r_ptr->hside = 20;
 	r_ptr->ac = 90;
 #endif
-        
+
 	m_ptr->speed = r_ptr->speed;
-        m_ptr->mspeed = m_ptr->speed;
-        m_ptr->ac = r_ptr->ac;
-        m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
-        m_ptr->hp = maxroll(r_ptr->hdice, r_ptr->hside);
+	m_ptr->mspeed = m_ptr->speed;
+	m_ptr->ac = r_ptr->ac;
+	m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
+	m_ptr->hp = maxroll(r_ptr->hdice, r_ptr->hside);
 
 	m_ptr->clone = 100;
-        m_ptr->owner = p_ptr->id;
-        for (i = 0; i < 4; i++)
-        {
-                m_ptr->blow[i].method = r_ptr->blow[i].method = RBM_HIT;
-                m_ptr->blow[i].effect = r_ptr->blow[i].effect = RBE_HURT;
-                m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice = 5;
-                m_ptr->blow[i].d_side = r_ptr->blow[i].d_side = 8;
-        }
-        m_ptr->r_idx = 1;
+	m_ptr->owner = p_ptr->id;
+	for (i = 0; i < 4; i++)
+	{
+		m_ptr->blow[i].method = r_ptr->blow[i].method = RBM_HIT;
+		m_ptr->blow[i].effect = r_ptr->blow[i].effect = RBE_HURT;
+		m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice = 5;
+		m_ptr->blow[i].d_side = r_ptr->blow[i].d_side = 8;
+	}
+	m_ptr->r_idx = 1;
 
-        m_ptr->level = p_ptr->lev;
-        m_ptr->exp = MONSTER_EXP(m_ptr->level);
+	m_ptr->level = p_ptr->lev;
+	m_ptr->exp = MONSTER_EXP(m_ptr->level);
 
 	/* Assume no sleeping */
 	m_ptr->csleep = 0;
@@ -5707,7 +5717,7 @@ void summon_pet(int Ind, int max)
 
 	/* No knowledge */
 	m_ptr->cdis = 0;
-        m_ptr->mind = (GOLEM_FOLLOW|GOLEM_ATTACK);
+	m_ptr->mind = (GOLEM_FOLLOW|GOLEM_ATTACK);
 
 	/* Update the monster */
 	update_mon(c_ptr->m_idx, TRUE);
@@ -5718,268 +5728,277 @@ void summon_pet(int Ind, int max)
 void golem_creation(int Ind, int max)
 {
 	player_type *p_ptr = Players[Ind];
-        monster_race *r_ptr;
-        monster_type *m_ptr;
-        int i;
-        int golem_type = -1;
-        int golem_arms[4], golem_m_arms = 0;
-        int golem_legs[30], golem_m_legs = 0;
-        s16b golem_flags = 0;
-        cave_type *c_ptr;
-        int x, y, k, g_cnt = 0;
+	monster_race *r_ptr;
+	monster_type *m_ptr;
+	int i;
+	int golem_type = -1;
+	int golem_arms[4], golem_m_arms = 0;
+	int golem_legs[30], golem_m_legs = 0;
+	s16b golem_flags = 0;
+	cave_type *c_ptr;
+	int x, y, k, g_cnt = 0;
+	bool okay = FALSE;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
-        /* Process the monsters */
-        for (k = m_top - 1; k >= 0; k--)
-        {
-                /* Access the index */
-                i = m_fast[k];
+	/* Process the monsters */
+	for (k = m_top - 1; k >= 0; k--)
+	{
+		/* Access the index */
+		i = m_fast[k];
 
-                /* Access the monster */
-                m_ptr = &m_list[i];
+		/* Access the monster */
+		m_ptr = &m_list[i];
 
-                /* Excise "dead" monsters */
-                if (!m_ptr->r_idx) continue;
+		/* Excise "dead" monsters */
+		if (!m_ptr->r_idx) continue;
 
-                if (m_ptr->owner != p_ptr->id) continue;
+		if (m_ptr->owner != p_ptr->id) continue;
 
-                if (!i) continue;
+		if (!i) continue;
 
-                g_cnt++;
-        }
+		g_cnt++;
+	}
 
-        if (g_cnt >= max)
-        {
-                msg_print(Ind, "You cannot create more golems.");
-        }
+	if (g_cnt >= max)
+	{
+		msg_print(Ind, "You cannot create more golems.");
+	}
 
-        for (x = p_ptr->px - 1; x <= p_ptr->px; x++)        
-        for (y = p_ptr->py - 1; y <= p_ptr->py; y++)
-        {
-                /* Verify location */
-                if (!in_bounds(y, x)) continue;
-                /* Require empty space */
-                if (!cave_empty_bold(zcave, y, x)) continue;
+	for (x = p_ptr->px - 1; x <= p_ptr->px; x++)        
+		for (y = p_ptr->py - 1; y <= p_ptr->py; y++)
+		{
+			/* Verify location */
+			if (!in_bounds(y, x)) continue;
+			/* Require empty space */
+			if (!cave_empty_bold(zcave, y, x)) continue;
 
-                /* Hack -- no creation on glyph of warding */
-                if (zcave[y][x].feat == FEAT_GLYPH) continue;
+			/* Hack -- no creation on glyph of warding */
+			if (zcave[y][x].feat == FEAT_GLYPH) continue;
 
-                if ((p_ptr->px == x) || (p_ptr->py == y)) continue;
+			if ((p_ptr->px == x) && (p_ptr->py == y)) continue;
 
-                break;
-        }
+			okay = TRUE;
+			break;
+		}
+
+	if (!okay)
+	{
+		msg_print(Ind, "You don't have sufficient space to create a golem.");
+		return;
+	}
+
 
 	/* Access the location */
-        c_ptr = &zcave[y][x];
+	c_ptr = &zcave[y][x];
 
 	/* Make a new monster */
 	c_ptr->m_idx = m_pop();
 
 	/* Mega-Hack -- catch "failure" */
-        if (!c_ptr->m_idx) return;
+	if (!c_ptr->m_idx) return;
 
-        /* Grab and allocate */
-        m_ptr = &m_list[c_ptr->m_idx];
-        MAKE(m_ptr->r_ptr, monster_race);
-        m_ptr->special = TRUE;
-        m_ptr->fx = x;
-        m_ptr->fy = y;
+	/* Grab and allocate */
+	m_ptr = &m_list[c_ptr->m_idx];
+	MAKE(m_ptr->r_ptr, monster_race);
+	m_ptr->special = TRUE;
+	m_ptr->fx = x;
+	m_ptr->fy = y;
 
-        r_ptr = m_ptr->r_ptr;
+	r_ptr = m_ptr->r_ptr;
 
-        r_ptr->flags1 = 0;
-        r_ptr->flags2 = 0;
-        r_ptr->flags3 = 0;
-        r_ptr->flags4 = 0;
-        r_ptr->flags5 = 0;
-        r_ptr->flags6 = 0;
+	r_ptr->flags1 = 0;
+	r_ptr->flags2 = 0;
+	r_ptr->flags3 = 0;
+	r_ptr->flags4 = 0;
+	r_ptr->flags5 = 0;
+	r_ptr->flags6 = 0;
 
-        msg_print(Ind, "Some of your items begins to consume in roaring flames.");
+	msg_print(Ind, "Some of your items begins to consume in roaring flames.");
 
-        /* Find items used for "golemification" */
-        for (i = 0; i < INVEN_WIELD; i++)
-        {
-                object_type *o_ptr = &p_ptr->inventory[i];
+	/* Find items used for "golemification" */
+	for (i = 0; i < INVEN_WIELD; i++)
+	{
+		object_type *o_ptr = &p_ptr->inventory[i];
 
-                if (o_ptr->tval == TV_GOLEM)
-                {
-                        if (o_ptr->sval <= SV_GOLEM_ADAM)
-                        {
-                                golem_type = o_ptr->sval;
+		if (o_ptr->tval == TV_GOLEM)
+		{
+			if (o_ptr->sval <= SV_GOLEM_ADAM)
+			{
+				golem_type = o_ptr->sval;
 				inven_item_increase(Ind,i,-o_ptr->number);
 				inven_item_optimize(Ind,i);
 				i--;
 				continue;
-                        }
-                        if (o_ptr->sval == SV_GOLEM_ARM)
-                        {
-                                int k;
+			}
+			if (o_ptr->sval == SV_GOLEM_ARM)
+			{
+				int k;
 
-                                for (k = 0; k < o_ptr->number; k++){
+				for (k = 0; k < o_ptr->number; k++){
 					if(golem_m_arms==4) break;
-                                        golem_arms[golem_m_arms++] = o_ptr->pval;
+					golem_arms[golem_m_arms++] = o_ptr->pval;
 				}
 				inven_item_increase(Ind,i,-o_ptr->number);
 				inven_item_optimize(Ind,i);
 				i--;
 				continue;
-                        }
-                        if (o_ptr->sval == SV_GOLEM_LEG)
-                        {
-                                int k;
+			}
+			if (o_ptr->sval == SV_GOLEM_LEG)
+			{
+				int k;
 
-                                for (k = 0; k < o_ptr->number; k++){
+				for (k = 0; k < o_ptr->number; k++){
 					if(golem_m_legs==30) break;
-                                        golem_legs[golem_m_legs++] = o_ptr->pval;
+					golem_legs[golem_m_legs++] = o_ptr->pval;
 				}
 				inven_item_increase(Ind,i,-o_ptr->number);
 				inven_item_optimize(Ind,i);
 				i--;
 				continue;
-                        }
-                        else
-                        {
-                                golem_flags |= 1 << (o_ptr->sval - 200);
-                        }
-                }
+			}
+			else
+			{
+				golem_flags |= 1 << (o_ptr->sval - 200);
+			}
+		}
 		/* Combine / Reorder the pack (later) */
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-        }
+	}
 
-        /* Ahah FAIL !!! */
-        if ((golem_type == -1) || (golem_m_legs < 2))
-        {
-                msg_print(Ind, "The spell fails! You lose all your material.");
+	/* Ahah FAIL !!! */
+	if ((golem_type == -1) || (golem_m_legs < 2))
+	{
+		msg_print(Ind, "The spell fails! You lose all your material.");
 		delete_monster_idx(c_ptr->m_idx);
-                return;
-        }
+		return;
+	}
 
-        r_ptr->text = 0;
-        r_ptr->name = 0;
-        r_ptr->sleep = 0;
-        r_ptr->aaf = 20;
-        r_ptr->speed = 110;
-        for (i = 0; i < golem_m_legs; i++)
-        {
-                r_ptr->speed += golem_legs[i];
-        }
-        r_ptr->mexp = 1;
+	r_ptr->text = 0;
+	r_ptr->name = 0;
+	r_ptr->sleep = 0;
+	r_ptr->aaf = 20;
+	r_ptr->speed = 110;
+	for (i = 0; i < golem_m_legs; i++)
+	{
+		r_ptr->speed += golem_legs[i];
+	}
+	r_ptr->mexp = 1;
 
-        r_ptr->d_attr = TERM_YELLOW;
-        r_ptr->d_char = 'g';
-        r_ptr->x_attr = TERM_YELLOW;
-        r_ptr->x_char = 'g';
+	r_ptr->d_attr = TERM_YELLOW;
+	r_ptr->d_char = 'g';
+	r_ptr->x_attr = TERM_YELLOW;
+	r_ptr->x_char = 'g';
 
-        r_ptr->freq_inate = 0;
-        r_ptr->freq_spell = 0;
-        r_ptr->flags1 |= RF1_FORCE_MAXHP;
-        r_ptr->flags2 |= RF2_STUPID | RF2_EMPTY_MIND | RF2_REGENERATE | RF2_POWERFUL | RF2_BASH_DOOR | RF2_MOVE_BODY;
-        r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP | RF9_IM_TELE;
+	r_ptr->freq_inate = 0;
+	r_ptr->freq_spell = 0;
+	r_ptr->flags1 |= RF1_FORCE_MAXHP;
+	r_ptr->flags2 |= RF2_STUPID | RF2_EMPTY_MIND | RF2_REGENERATE | RF2_POWERFUL | RF2_BASH_DOOR | RF2_MOVE_BODY;
+	r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP | RF9_IM_TELE;
 
-        switch (golem_type)
-        {
-                case SV_GOLEM_WOOD:
-                        r_ptr->hdice = 10;
-                        r_ptr->hside = 10;
-                        r_ptr->ac = 20;
-                        break;
-                case SV_GOLEM_COPPER:
-                        r_ptr->hdice = 10;
-                        r_ptr->hside = 20;
-                        r_ptr->ac = 40;
-                        break;
-                case SV_GOLEM_IRON:
-                        r_ptr->hdice = 10;
-                        r_ptr->hside = 40;
-                        r_ptr->ac = 70;
-                        break;
-                case SV_GOLEM_ALUM:
-                        r_ptr->hdice = 10;
-                        r_ptr->hside = 60;
-                        r_ptr->ac = 90;
-                        break;
-                case SV_GOLEM_SILVER:
-                        r_ptr->hdice = 10;
-                        r_ptr->hside = 70;
-                        r_ptr->ac = 100;
-                        break;
-                case SV_GOLEM_GOLD:
-                        r_ptr->hdice = 10;
-                        r_ptr->hside = 80;
-                        r_ptr->ac = 130;
-                        break;
-                case SV_GOLEM_MITHRIL:
-                        r_ptr->hdice = 10;
-                        r_ptr->hside = 100;
-                        r_ptr->ac = 160;
-                        break;
-                case SV_GOLEM_ADAM:
-                        r_ptr->hdice = 10;
-                        r_ptr->hside = 150;
-                        r_ptr->ac = 210;
-                        break;
-//		default:
-        }
-        r_ptr->extra = golem_flags;
-//#if 0
-        /* Find items used for "golemification" */
-        for (i = 0; i < INVEN_WIELD; i++)
-        {
-                object_type *o_ptr = &p_ptr->inventory[i];
-                unsigned char *inscription = (unsigned char *) quark_str(o_ptr->note);
+	switch (golem_type)
+	{
+		case SV_GOLEM_WOOD:
+			r_ptr->hdice = 10;
+			r_ptr->hside = 10;
+			r_ptr->ac = 20;
+			break;
+		case SV_GOLEM_COPPER:
+			r_ptr->hdice = 10;
+			r_ptr->hside = 20;
+			r_ptr->ac = 40;
+			break;
+		case SV_GOLEM_IRON:
+			r_ptr->hdice = 10;
+			r_ptr->hside = 40;
+			r_ptr->ac = 70;
+			break;
+		case SV_GOLEM_ALUM:
+			r_ptr->hdice = 10;
+			r_ptr->hside = 60;
+			r_ptr->ac = 90;
+			break;
+		case SV_GOLEM_SILVER:
+			r_ptr->hdice = 10;
+			r_ptr->hside = 70;
+			r_ptr->ac = 100;
+			break;
+		case SV_GOLEM_GOLD:
+			r_ptr->hdice = 10;
+			r_ptr->hside = 80;
+			r_ptr->ac = 130;
+			break;
+		case SV_GOLEM_MITHRIL:
+			r_ptr->hdice = 10;
+			r_ptr->hside = 100;
+			r_ptr->ac = 160;
+			break;
+		case SV_GOLEM_ADAM:
+			r_ptr->hdice = 10;
+			r_ptr->hside = 150;
+			r_ptr->ac = 210;
+			break;
+			//		default:
+	}
+	r_ptr->extra = golem_flags;
+	//#if 0
+	/* Find items used for "golemification" */
+	for (i = 0; i < INVEN_WIELD; i++)
+	{
+		object_type *o_ptr = &p_ptr->inventory[i];
+		unsigned char *inscription = (unsigned char *) quark_str(o_ptr->note);
 
-                /* Additionnal items ? */
-                if (inscription != NULL)
-                {
-                        /* scan the inscription for @P */
-                        while ((*inscription != '\0'))
-                        {
-		
-                                if (*inscription == '@')
-                                {
-                                        inscription++;
-			
-                                        /* a valid @G has been located */
-                                        if (*inscription == 'G')
-                                        {                
-                                                inscription++;
+		/* Additionnal items ? */
+		if (inscription != NULL)
+		{
+			/* scan the inscription for @P */
+			while ((*inscription != '\0'))
+			{
 
-                                                scan_golem_flags(o_ptr, r_ptr);
+				if (*inscription == '@')
+				{
+					inscription++;
+
+					/* a valid @G has been located */
+					if (*inscription == 'G')
+					{                
+						inscription++;
+
+						scan_golem_flags(o_ptr, r_ptr);
 						inven_item_increase(Ind,i,-o_ptr->number);
 						inven_item_optimize(Ind,i);
 						i--;
 						continue;
-                                        }
-                                }
-                                inscription++;
-                        }
-                }
-        }
-//#endif
-        m_ptr->speed = r_ptr->speed;
-        m_ptr->mspeed = m_ptr->speed;
-        m_ptr->ac = r_ptr->ac;
-        m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
-        m_ptr->hp = maxroll(r_ptr->hdice, r_ptr->hside);
-        m_ptr->clone = 100;
+					}
+				}
+				inscription++;
+			}
+		}
+	}
+	//#endif
+	m_ptr->speed = r_ptr->speed;
+	m_ptr->mspeed = m_ptr->speed;
+	m_ptr->ac = r_ptr->ac;
+	m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
+	m_ptr->hp = maxroll(r_ptr->hdice, r_ptr->hside);
+	m_ptr->clone = 100;
 
-        for (i = 0; i < golem_m_arms; i++)
-        {
-                m_ptr->blow[i].method = r_ptr->blow[i].method = RBM_HIT;
-                m_ptr->blow[i].effect = r_ptr->blow[i].effect = RBE_HURT;
-                m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice = (golem_type + 1) * 3;
-                m_ptr->blow[i].d_side = r_ptr->blow[i].d_side = 3 + golem_arms[i];
-        }
+	for (i = 0; i < golem_m_arms; i++)
+	{
+		m_ptr->blow[i].method = r_ptr->blow[i].method = RBM_HIT;
+		m_ptr->blow[i].effect = r_ptr->blow[i].effect = RBE_HURT;
+		m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice = (golem_type + 1) * 3;
+		m_ptr->blow[i].d_side = r_ptr->blow[i].d_side = 3 + golem_arms[i];
+	}
 
-        m_ptr->owner = p_ptr->id;
-        m_ptr->r_idx = 1 + golem_type;
+	m_ptr->owner = p_ptr->id;
+	m_ptr->r_idx = 1 + golem_type;
 
-        m_ptr->level = p_ptr->lev;
-        m_ptr->exp = MONSTER_EXP(m_ptr->level);
+	m_ptr->level = p_ptr->lev;
+	m_ptr->exp = MONSTER_EXP(m_ptr->level);
 
 	/* Assume no sleeping */
 	m_ptr->csleep = 0;
@@ -5992,7 +6011,7 @@ void golem_creation(int Ind, int max)
 
 	/* No knowledge */
 	m_ptr->cdis = 0;
-        m_ptr->mind = GOLEM_NONE;
+	m_ptr->mind = GOLEM_NONE;
 
 	/* Update the monster */
 	update_mon(c_ptr->m_idx, TRUE);

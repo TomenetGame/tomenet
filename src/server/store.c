@@ -30,6 +30,8 @@ void home_examine(int Ind, int item);
 static void display_house_entry(int Ind, int pos);
 static void display_house_inventory(int Ind);
 static void display_trad_house(int Ind);
+void home_extend(int Ind);
+
 
 #define MAX_COMMENT_1	6
 
@@ -1594,6 +1596,14 @@ static void store_create(store_type *st_ptr)
 			level = 60 + rand_int(25);	/* for now let's use this */
 //			level = return_level(st_ptr);
 
+#if 1
+			/* Clear restriction */
+			get_obj_num_hook = NULL;
+
+			/* Prepare allocation table */
+			get_obj_num_prep();
+#endif	// 0
+
 			/* Random item (usually of given level) */
 			i = get_obj_num(level);
 			
@@ -2128,6 +2138,18 @@ static bool retire_owner_p(store_type *st_ptr)
 
 
 
+/* Is the command legal?	- Jir - */
+bool store_attest_command(int store, int bact)
+{
+	int i;
+	for (i = 0; i < STORE_MAX_ACTION; i++)
+		if (ba_info[st_info[store].actions[i]].action == bact) return (TRUE);
+		//if (st_info[store].actions[i] == action) return (TRUE);
+
+	return (FALSE);
+}
+
+
 /*
  * Stole an item from a store                   -DG-
  */
@@ -2141,18 +2163,17 @@ void store_stole(int Ind, int item)
 	store_type *st_ptr;
 	owner_type *ot_ptr;
 
-	int			i, choice;
+	int			i;
 	int			item_new;
 	int amt = 1;
 	int chance = 0;
 
-	s32b		price, best;
+	s32b		best;
 
 	object_type		sell_obj;
 	object_type		*o_ptr;
 
 	char		o_name[160];
-	bool legal = FALSE;
 
 	if (p_ptr->store_num == 7)
 	{
@@ -2179,15 +2200,7 @@ void store_stole(int Ind, int item)
 //	ot_ptr = &owners[st][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
-	for (i = 0; i < 6; i++)
-	{
-		if (ba_info[st_info[p_ptr->store_num].actions[i]].action == BACT_BUY)
-		{
-			legal = TRUE;
-			break;
-		}
-	}
-	if (!legal)
+	if (!store_attest_command(p_ptr->store_num, BACT_STEAL))
 	{
 		//if (!is_admin(p_ptr)) return;
 		return;
@@ -2389,7 +2402,6 @@ void store_purchase(int Ind, int item, int amt)
 	object_type		*o_ptr;
 
 	char		o_name[160];
-	bool legal = FALSE;
 
 	if (p_ptr->store_num == 7)
 	{
@@ -2409,15 +2421,7 @@ void store_purchase(int Ind, int item, int amt)
 //	ot_ptr = &owners[st][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
-	for (i = 0; i < 6; i++)
-	{
-		if (ba_info[st_info[p_ptr->store_num].actions[i]].action == BACT_BUY)
-		{
-			legal = TRUE;
-			break;
-		}
-	}
-	if (!legal)
+	if (!store_attest_command(p_ptr->store_num, BACT_BUY))
 	{
 		/* Hack -- admin can 'buy'
 		 * (it's to remove craps from the Museums) */
@@ -2724,7 +2728,7 @@ void store_sell(int Ind, int item, int amt)
 	player_type *p_ptr = Players[Ind];
 //	store_type *st_ptr;
 
-	int			choice, i;
+	int			choice;
 
 	s32b		price;
 
@@ -2732,7 +2736,6 @@ void store_sell(int Ind, int item, int amt)
 	object_type		*o_ptr;
 
 	char		o_name[160];
-	bool legal = FALSE;
 
 	if (p_ptr->store_num == 7)
 	{
@@ -2748,15 +2751,7 @@ void store_sell(int Ind, int item, int amt)
 
 //	st_ptr = &town[gettown(Ind)].townstore[p_ptr->store_num];
 
-	for (i = 0; i < 6; i++)
-	{
-		if (ba_info[st_info[p_ptr->store_num].actions[i]].action == BACT_SELL)
-		{
-			legal = TRUE;
-			break;
-		}
-	}
-	if (!legal) return;
+	if (!store_attest_command(p_ptr->store_num, BACT_SELL)) return;
 
 	/* You can't sell 0 of something. */
 	if (amt <= 0) return;
@@ -3047,6 +3042,12 @@ void store_examine(int Ind, int item)
 	st_ptr = &town[i].townstore[st];
 //	ot_ptr = &owners[st][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
+
+	if (!store_attest_command(st, BACT_EXAMINE))
+	{
+		//if (!is_admin(p_ptr)) return;
+		return;
+	}
 
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)
@@ -3495,8 +3496,16 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 	store_type *st_ptr;
 	int i;
 
+	/* MEGAHACK -- accept house extension command */
+	if (p_ptr->store_num==7)
+	{
+		if (ba_info[action].action == BACT_EXTEND_HOUSE) home_extend(Ind);
+		return;
+	}
+
+
 	i=gettown(Ind);
-	if(i==-1) return(0);
+	if(i==-1) return;
 
 	/* sanity check - Yakina - */
 	if (p_ptr->store_num==-1){
@@ -3508,6 +3517,11 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 
 	/* Mockup */
 	msg_format(Ind, "Store command received: %d, %d, %d, %d, %d", action, item, item2, amt, gold);
+
+	/* Is the action legal? */
+	//if (!store_attest_command(p_ptr->store_num, action)) return;
+	if (!store_attest_command(p_ptr->store_num, ba_info[action].action))
+		return;
 
 	bldg_process_command(Ind, st_ptr, action, item, item2, amt, gold);
 }
@@ -4095,6 +4109,58 @@ void home_examine(int Ind, int item)
 	return;
 }
 
+/* Extend the house!	- Jir - */
+/* TODO:
+ * - remove some dirty hacks
+ * - tell players of the cost in advance
+ */
+void home_extend(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+//	int st = p_ptr->store_num;
+
+	int	h_idx, cost = 0;
+
+	house_type *h_ptr;
+
+	/* This should never happen */
+	if (p_ptr->store_num != 7) return;
+
+	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+	if (h_idx == -1) return;
+
+	h_ptr = &houses[h_idx];
+
+	/* Already too large? */
+	if (h_ptr->stock_size >= STORE_INVEN_MAX)
+	{
+		msg_print(Ind, "Your house cannot be extended any more.");
+		return;
+	}
+
+	cost = h_ptr->dna->price * 2 / (h_ptr->stock_size + 1);
+
+	if (p_ptr->au < cost)
+	{
+		msg_print(Ind, "You couldn't afford it..");
+		return;
+	}
+
+	GROW(h_ptr->stock, h_ptr->stock_size, h_ptr->stock_size + 1, object_type);
+	h_ptr->stock_size++;
+	p_ptr->au -= cost;
+	h_ptr->dna->price += cost;
+
+	msg_format(Ind, "You extend your house for %dau.", cost);
+
+	display_trad_house(Ind);
+
+	/* Display the current gold */
+	store_prt_gold(Ind);
+}
+
+
 static void display_house_entry(int Ind, int pos)
 {
 	player_type *p_ptr = Players[Ind];
@@ -4204,6 +4270,11 @@ static void display_trad_house(int Ind)
 
 	/* Draw in the inventory */
 	display_house_inventory(Ind);
+
+	/* Hack -- Send the store actions info */
+	/* XXX it's dirty hack -- the aim is to avoid
+	 * hard-coded stuffs in the client */
+	show_building(Ind, &town[0].townstore[7]);
 
 	/* Send the store info */
 	//Send_store_info(Ind, p_ptr->store_num, 0, h_ptr->stock_num);

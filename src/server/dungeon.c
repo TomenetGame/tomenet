@@ -28,6 +28,11 @@
 /* Chance of items damaged when drowning, in % [3] */
 #define WATER_ITEM_DAMAGE_CHANCE	3
 
+/* Maximum wilderness radius a player can travel with WoR [16] 
+ * TODO: Add another method to allow wilderness travels */
+#define RECALL_MAX_RANGE	24
+
+
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
  */
@@ -655,7 +660,6 @@ static void process_effects(void)
 		/* Creates a "storm" effect*/
 		else if (e_ptr->flags & EFF_STORM && who > PROJECTOR_EFFECT)
 		{
-			int x, y;
 			p_ptr = Players[0 - who];
 
 			e_ptr->cy = p_ptr->py;
@@ -742,14 +746,14 @@ static void process_world(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		x, y, i, j;
+	int		x, y, i;
 
 //	int		regen_amount, NumPlayers_old=NumPlayers;
 
 	cave_type		*c_ptr;
 	byte			*w_ptr;
 
-	object_type		*o_ptr;
+	//object_type		*o_ptr;
 
 
 	/* Every 50 game turns */
@@ -979,7 +983,7 @@ static int retaliate_mimic_power(int Ind, int power)
 static bool retaliate_item(int Ind, int item, cptr inscription)
 {
 	player_type *p_ptr = Players[Ind];
-	object_type		*o_ptr;
+	//object_type		*o_ptr;
 	int spell = 0;
 
 	if (item < 0) return FALSE;
@@ -1153,11 +1157,14 @@ static int auto_retaliate(int Ind)
 //	char friends = 0;
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
 	monster_race *r_ptr = NULL, *r_ptr2;
-	cptr inscription;
+	cptr inscription = NULL;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
 	if (p_ptr->new_level_flag) return 0;
+
+	/* Just to kill compiler warnings */
+	target = prev_target = 0;
 
 	for (d = 1; d <= 9; d++)
 	{
@@ -1600,9 +1607,10 @@ static void process_player_begin(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
+	/*
 	int			i;
-
 	object_type		*o_ptr;
+	*/
 
 
 	/* Give the player some energy */
@@ -1700,6 +1708,201 @@ void apply_effect(int Ind)
 }
 
 
+/* Handles WoR
+ * XXX dirty -- REWRITEME
+ */
+void do_recall(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* sorta circumlocution? */
+	worldpos new_pos;
+	bool recall_ok=TRUE;
+
+	/* Disturbing! */
+	disturb(Ind, 0, 0);
+
+	/* Determine the level */
+	/* recalling to surface */
+	if(p_ptr->wpos.wz)
+	{
+		struct dungeon_type *d_ptr;
+		d_ptr=getdungeon(&p_ptr->wpos);
+
+		/* Messages */
+		if(d_ptr->flags2 & DF2_IRON && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)){
+			msg_print(Ind, "You feel yourself being pulled toward the surface!");
+			recall_ok=FALSE;
+		}
+		else{
+			if(p_ptr->wpos.wz > 0)
+			{
+				msg_print(Ind, "You feel yourself yanked downwards!");
+				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
+			}
+			else
+			{
+				msg_print(Ind, "You feel yourself yanked upwards!");
+				msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
+			}
+
+			/* New location */
+			new_pos.wx = p_ptr->wpos.wx;
+			new_pos.wy = p_ptr->wpos.wy;
+			new_pos.wz = 0;
+#if 0
+			p_ptr->new_level_method = ( istown(&new_pos) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND );
+#endif
+			p_ptr->new_level_method = (p_ptr->wpos.wz>0 ? LEVEL_DOWN : LEVEL_UP);
+		}
+	}
+	/* beware! bugs inside! (jir) (no longer I hope) */
+	/* world travel */
+	/* why wz again? (jir) */
+	else if (!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN) ))
+	{
+		int dis;
+
+		if (((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] &
+							(1 << (wild_idx(&p_ptr->recall_pos))%8))) &&
+					!is_admin(p_ptr) ) ||
+				inarea(&p_ptr->wpos, &p_ptr->recall_pos))
+		{
+			/* back to the last town (s)he visited.
+			 * (This can fail if gone too far) */
+			p_ptr->recall_pos.wx = p_ptr->town_x;
+			p_ptr->recall_pos.wy = p_ptr->town_y;
+		}
+
+#ifdef RECALL_MAX_RANGE
+		dis = distance(p_ptr->recall_pos.wy, p_ptr->recall_pos.wx,
+				p_ptr->wpos.wy, p_ptr->wpos.wx);
+		if (dis > RECALL_MAX_RANGE && !is_admin(p_ptr))
+		{
+			new_pos.wx = p_ptr->wpos.wx + (p_ptr->recall_pos.wx - p_ptr->wpos.wx) * RECALL_MAX_RANGE / dis;
+			new_pos.wy = p_ptr->wpos.wy + (p_ptr->recall_pos.wy - p_ptr->wpos.wy) * RECALL_MAX_RANGE / dis;
+		}
+		else
+#endif	// RECALL_MAX_RANGE
+		{
+			new_pos.wx = p_ptr->recall_pos.wx;
+			new_pos.wy = p_ptr->recall_pos.wy;
+		}
+
+		new_pos.wz = 0;
+
+		/* Messages */
+		msg_print(Ind, "You feel yourself yanked sideways!");
+		msg_format_near(Ind, "%s is yanked sideways!", p_ptr->name);
+
+		/* New location */
+		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;												
+	}
+
+	/* into dungeon/tower */
+	else if(cfg.runlevel>4)
+	{
+		wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+		/* Messages */
+		if(p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN)
+		{
+			dungeon_type *d_ptr=wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon;
+
+			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
+			if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
+					(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
+			{
+				p_ptr->recall_pos.wz = 0;
+			}
+
+			if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz)
+				p_ptr->recall_pos.wz = w_ptr->dungeon->baselevel - p_ptr->max_dlv - 1;
+
+			if (-p_ptr->recall_pos.wz > w_ptr->dungeon->maxdepth)
+				p_ptr->recall_pos.wz = 0 - w_ptr->dungeon->maxdepth;
+
+			if (p_ptr->recall_pos.wz >= 0)
+			{
+				p_ptr->recall_pos.wz = 0;
+			}
+			else
+			{
+				msg_print(Ind, "You feel yourself yanked downwards!");
+				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
+			}
+		}
+		else if(p_ptr->recall_pos.wz > 0 && w_ptr->flags & WILD_F_UP)
+		{
+			dungeon_type *d_ptr=wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower;
+
+			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
+			if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
+					(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
+			{
+				p_ptr->recall_pos.wz = 0;
+			}
+
+			if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz + 1)
+				p_ptr->recall_pos.wz = 0 - w_ptr->tower->baselevel + p_ptr->max_dlv + 1;
+
+			if (p_ptr->recall_pos.wz > w_ptr->tower->maxdepth)
+				p_ptr->recall_pos.wz = w_ptr->tower->maxdepth;
+
+			if (p_ptr->recall_pos.wz <= 0)
+			{
+				p_ptr->recall_pos.wz = 0;
+			}
+			else
+			{
+				msg_print(Ind, "You feel yourself yanked upwards!");
+				msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
+			}
+		}
+		else
+		{
+			p_ptr->recall_pos.wz = 0;
+		}
+
+		new_pos.wx = p_ptr->wpos.wx;
+		new_pos.wy = p_ptr->wpos.wy;
+		new_pos.wz = p_ptr->recall_pos.wz;
+		if (p_ptr->recall_pos.wz == 0)
+		{
+			msg_print(Ind, "You feel yourself yanked toward nowhere...");
+			p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+		}
+		else p_ptr->new_level_method = LEVEL_RAND;
+	}
+
+	if(recall_ok)
+	{
+		cave_type **zcave;
+		if(!(zcave=getcave(&p_ptr->wpos))) return;	// eww
+
+		/* One less person here */
+		new_players_on_depth(&p_ptr->wpos,-1,TRUE);
+
+		/* Remove the player */
+		zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+		/* Show everyone that he's left */
+		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+		/* Forget his lite and view */
+		forget_lite(Ind);
+		forget_view(Ind);
+
+		wpcopy(&p_ptr->wpos, &new_pos);
+
+		/* One more person here */
+		new_players_on_depth(&p_ptr->wpos,1,TRUE);
+
+		p_ptr->new_level_flag = TRUE;
+
+		/* He'll be safe for 2 turns */
+		set_invuln_short(Ind, 5);	// It runs out if attacking anyway
+	}
+}
+
 /*
  * Handle misc. 'timed' things on the player.
  * returns FALSE if player no longer exists.
@@ -1711,7 +1914,7 @@ static bool process_player_end_aux(int Ind)
 	player_type *p_ptr = Players[Ind];
 	cave_type		*c_ptr;
 	object_type		*o_ptr;
-	int		x, y, i, j;
+	int		i, j;
 	int		regen_amount, NumPlayers_old=NumPlayers;
 
 	/* Unbelievers "resist" magic */
@@ -2650,7 +2853,7 @@ static bool process_player_end_aux(int Ind)
 		}
 	}
 
-	if (p_ptr->tim_blacklist)
+	if (p_ptr->tim_blacklist && !p_ptr->afk)
 	{
 		/* Count down towards turnout */
 		p_ptr->tim_blacklist--;
@@ -2679,157 +2882,7 @@ static bool process_player_end_aux(int Ind)
 		/* Activate the recall */
 		if (!p_ptr->word_recall)
 		{
-			/* sorta circumlocution? */
-			worldpos new_pos;
-			bool recall_ok=TRUE;
-
-			/* Disturbing! */
-			disturb(Ind, 0, 0);
-
-			/* Determine the level */
-			/* recalling to surface */
-			if(p_ptr->wpos.wz)
-			{
-				struct dungeon_type *d_ptr;
-				d_ptr=getdungeon(&p_ptr->wpos);
-
-				/* Messages */
-				if(d_ptr->flags2 & DF2_IRON && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)){
-					msg_print(Ind, "You feel yourself being pulled toward the surface!");
-					recall_ok=FALSE;
-				}
-				else{
-					if(p_ptr->wpos.wz > 0)
-					{
-						msg_print(Ind, "You feel yourself yanked downwards!");
-						msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
-					}
-					else
-					{
-						msg_print(Ind, "You feel yourself yanked upwards!");
-						msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
-					}
-
-					/* New location */
-					new_pos.wx = p_ptr->wpos.wx;
-					new_pos.wy = p_ptr->wpos.wy;
-					new_pos.wz = 0;
-#if 0
-					p_ptr->new_level_method = ( istown(&new_pos) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND );
-#endif
-					p_ptr->new_level_method = (p_ptr->wpos.wz>0 ? LEVEL_DOWN : LEVEL_UP);
-				}
-			}
-			/* beware! bugs inside! (jir) */
-			/* world travel */
-			/* why wz again? (jir) */
-			else if (!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN) ))
-			{
-				if (((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] &
-								(1 << (wild_idx(&p_ptr->recall_pos))%8))) &&
-						!is_admin(p_ptr) ) ||
-						inarea(&p_ptr->wpos, &p_ptr->recall_pos))
-				{
-					/* lazy -- back to the centre of the world
-					 * this should be changed so that it lands him/her
-					 * back to the last town (s)he visited.	*/
-					p_ptr->recall_pos.wx = p_ptr->town_x;
-					p_ptr->recall_pos.wy = p_ptr->town_y;
-				}
-
-				new_pos.wx = p_ptr->recall_pos.wx;
-				new_pos.wy = p_ptr->recall_pos.wy;
-				new_pos.wz = 0;
-
-
-				/* Messages */
-				msg_print(Ind, "You feel yourself yanked sideways!");
-				msg_format_near(Ind, "%s is yanked sideways!", p_ptr->name);
-
-				/* New location */
-				p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;												
-			}
-
-			/* into dungeon/tower */
-			else if(cfg.runlevel>4)
-			{
-				wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-				/* Messages */
-				if(p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN)
-				{
-					if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz)
-						p_ptr->recall_pos.wz = w_ptr->dungeon->baselevel - p_ptr->max_dlv - 1;
-
-					if (-p_ptr->recall_pos.wz > w_ptr->dungeon->maxdepth)
-						p_ptr->recall_pos.wz = 0 - w_ptr->dungeon->maxdepth;
-
-					if (p_ptr->recall_pos.wz >= 0)
-					{
-						p_ptr->recall_pos.wz = 0;
-					}
-					else
-					{
-						msg_print(Ind, "You feel yourself yanked downwards!");
-						msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
-					}
-				}
-				else if(p_ptr->recall_pos.wz > 0 && w_ptr->flags & WILD_F_UP)
-				{
-					if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz + 1)
-						p_ptr->recall_pos.wz = 0 - w_ptr->tower->baselevel + p_ptr->max_dlv + 1;
-
-					if (p_ptr->recall_pos.wz > w_ptr->tower->maxdepth)
-						p_ptr->recall_pos.wz = w_ptr->tower->maxdepth;
-
-					if (p_ptr->recall_pos.wz <= 0)
-					{
-						p_ptr->recall_pos.wz = 0;
-					}
-					else
-					{
-						msg_print(Ind, "You feel yourself yanked upwards!");
-						msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
-					}
-				}
-				else
-				{
-					p_ptr->recall_pos.wz = 0;
-				}
-
-				new_pos.wx = p_ptr->wpos.wx;
-				new_pos.wy = p_ptr->wpos.wy;
-				new_pos.wz = p_ptr->recall_pos.wz;
-				if (p_ptr->recall_pos.wz == 0)
-				{
-					msg_print(Ind, "You feel yourself yanked toward nowhere...");
-					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-				}
-				else p_ptr->new_level_method = LEVEL_RAND;
-			}
-
-			if(recall_ok){
-				/* One less person here */
-				new_players_on_depth(&p_ptr->wpos,-1,TRUE);
-
-				/* Remove the player */
-				zcave[p_ptr->py][p_ptr->px].m_idx = 0;
-				/* Show everyone that he's left */
-				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-
-				/* Forget his lite and view */
-				forget_lite(Ind);
-				forget_view(Ind);
-
-				wpcopy(&p_ptr->wpos, &new_pos);
-
-				/* One more person here */
-				new_players_on_depth(&p_ptr->wpos,1,TRUE);
-
-				p_ptr->new_level_flag = TRUE;
-
-				/* He'll be safe for 2 turns */
-				set_invuln_short(Ind, 5);	// It runs out if attacking anyway
-			}
+			do_recall(Ind);
 		}
 	}
 
@@ -3017,7 +3070,7 @@ static void do_unstat(struct worldpos *wpos)
 void scan_houses()
 {
 	int i;
-	int lval;
+	//int lval;
 	s_printf("Doing house maintenance\n");
 	for(i=0;i<num_houses;i++)
 	{
@@ -3309,10 +3362,10 @@ void store_turnover()
 static void process_various(void)
 {
 	int i, j;
-	cave_type *c_ptr;
+	//cave_type *c_ptr;
 	player_type *p_ptr;
 
-	char buf[1024];
+	//char buf[1024];
 
 	/* this TomeCron stuff could be merged at some point
 	   to improve efficiency. ;) */
@@ -3363,12 +3416,12 @@ static void process_various(void)
 		purge_old();
 	}
 
-	check_quests();
-
 	/* Handle certain things once a minute */
 	if (!(turn % (cfg.fps * 60)))
 	{
 		monster_race *r_ptr;
+
+		check_quests();		/* It's enough with 'once a minute', none? -Jir */
 
 		check_banlist();	/* unban some players */
 		scan_objs();		/* scan objects and houses */
@@ -3643,9 +3696,9 @@ static void process_player_change_wpos(int Ind)
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
-	worldpos twpos;
+	//worldpos twpos;
 	dun_level *l_ptr;
-	int d, j, x, y, startx, starty, m_idx, my, mx;
+	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx;
 	byte *w_ptr;
 	cave_type *c_ptr;
 
@@ -3744,6 +3797,11 @@ static void process_player_change_wpos(int Ind)
 
 		p_ptr->cur_hgt = MAX_HGT;
 		p_ptr->cur_wid = MAX_WID;
+
+		if(istown(wpos)){
+			p_ptr->town_x = wpos->wx;
+			p_ptr->town_y = wpos->wy;
+		}
 
 		/* Memorize the town for this player (if daytime) */
 		for (y = 0; y < MAX_HGT; y++)
@@ -4254,7 +4312,7 @@ void set_runlevel(int val)
  */
 void play_game(bool new_game)
 {
-	int i, n;
+	//int i, n;
 
 	/*** Init the wild_info array... for more information see wilderness.c ***/
 	init_wild_info();
@@ -4389,7 +4447,8 @@ void play_game(bool new_game)
 	 * NOTE: The central town of Angband is handled in a special way;
 	 * If it was static when saved, we shouldn't allocate it.
 	 * If not static, or it's new game, we should allocate it.
-	 *
+	 */
+	/*
 	 * For sure, we should redesign it for real multiple-towns!
 	 * - Jir -
 	 */
@@ -4467,7 +4526,7 @@ void play_game(bool new_game)
 
 void shutdown_server(void)
 {
-	int i;
+	//int i;
 
 	s_printf("Shutting down.\n");
 

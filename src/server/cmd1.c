@@ -2566,7 +2566,7 @@ void move_player(int Ind, int dir, int do_pickup)
 
 	int                     y, x, oldx, oldy;
 	int i;
-	bool do_move = FALSE;
+	//bool do_move = FALSE;
 
 	cave_type               *c_ptr;
 	struct c_special	*cs_ptr;
@@ -2698,10 +2698,12 @@ void move_player(int Ind, int dir, int do_pickup)
 			new_players_on_depth(wpos,1,TRUE);
 			p_ptr->new_level_flag = TRUE;
 			p_ptr->new_level_method = LEVEL_OUTSIDE;
+#if 0	// it's done in process_player_change_wpos
 			if(istown(&p_ptr->wpos)){
 				p_ptr->town_x=p_ptr->wpos.wx;
 				p_ptr->town_y=p_ptr->wpos.wy;
 			}
+#endif	// 0
 
 			return;
 		}

@@ -542,6 +542,8 @@ byte flick_colour(byte attr){
 		case TERM_DARKNESS:
 			return(randint(5)>4?TERM_SLATE:TERM_L_DARK);
 			break;
+		/* NOTE: TERM_SHAL_LAVA, TERM_DEEP_LAVA, TERM_SHAL_WATER,
+		 * TERM_DEEP_WATER would be nice for terrains  - Jir - */
 			
 
 		default:

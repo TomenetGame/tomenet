@@ -401,7 +401,8 @@ extern cave_type **getcave(struct worldpos *wpos);
 extern void lite_spot(int Ind, int y, int x);
 extern void prt_map(int Ind);
 extern void display_map(int Ind, int *cy, int *cx);
-extern void do_cmd_view_map(int Ind);
+//extern void do_cmd_view_map(int Ind);
+extern void do_cmd_view_map(int Ind, char mode);
 extern void forget_lite(int Ind);
 extern void update_lite(int Ind);
 extern void forget_view(int Ind);
@@ -423,6 +424,9 @@ extern void recent_track(int r_idx);
 extern void disturb(int Ind, int stop_search, int flush_output);
 extern void update_players(void);
 
+extern int new_effect(int who, int type, int dam, int time, worldpos *wpos, int cy, int cx, int rad, s32b flags);
+
+
 /* cmd1.c */
 extern bool test_hit_fire(int chance, int ac, int vis);
 extern bool test_hit_norm(int chance, int ac, int vis);
@@ -441,6 +445,7 @@ extern void move_player(int Ind, int dir, int do_pickup);
 extern void run_step(int Ind, int dir);
 extern void black_breath_infection(int Ind, int Ind2);
 extern int see_wall(int Ind, int dir, int y, int x);
+extern bool player_can_enter(int Ind, byte feature);
 
 /* cmd2.c */
 extern bool access_door(int Ind, struct dna_type *dna);
@@ -468,6 +473,11 @@ extern int pick_house(struct worldpos *wpos, int y, int x);
 extern void house_admin(int Ind, int dir, char *args);
 extern bool twall(int Ind, int y, int x);
 extern int breakage_chance(object_type *o_ptr);
+
+extern int get_shooter_mult(object_type *o_ptr);
+extern bool get_something_tval(int Ind, int tval, int *ip);
+extern void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x);
+
 
 /* cmd3.c */
 extern void inven_drop(int Ind, int item, int amt);
@@ -517,7 +527,7 @@ extern void do_cmd_cast(int Ind, int book, int spell);
 extern void do_cmd_cast_aux(int Ind, int dir);
 extern void do_cmd_sorc(int Ind, int book, int spell);
 extern void do_cmd_sorc_aux(int Ind, int dir);
-extern void do_mimic_change(int Ind, int r_idx);
+extern void do_mimic_change(int Ind, int r_idx, bool force);
 extern void do_mimic_power_aux(int Ind, int dir);
 extern void do_cmd_mimic(int Ind, int spell);
 extern void do_cmd_pray(int Ind, int book, int spell);
@@ -548,6 +558,11 @@ extern bool unmagic(int Ind);
 extern void fortune(int Ind, bool broadcast);
 extern char random_colour();
 
+extern void do_cmd_drink_fountain(int Ind);
+extern void do_cmd_fill_bottle(int Ind);
+extern void do_cmd_fletchery(int Ind);
+
+
 /* control.c */
 extern void SGWHit(int fd, int arg);
 extern void NewConsole(int fd, int arg);
@@ -563,6 +578,10 @@ extern void dungeon(void);
 extern void pack_overflow(int Ind);
 extern void set_runlevel(int val);
 extern void store_turnover();
+
+extern void cheeze(object_type *o_ptr);
+extern void cheeze_trad_house();
+
 
 /* files.c */
 //extern s16b tokenize(char *buf, s16b num, char **tokens);
@@ -596,12 +615,17 @@ extern void wipeout_needless_objects();
 /* generate.c */
 extern bool dungeon_aux(int r_idx);
 //extern void dealloc_dungeon_level_maybe(struct worldpos *wpos);
-extern void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, char *race, char *exclude, bool tower);
+//extern void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, char *race, char *exclude, bool tower);
+extern void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, char *race, char *exclude, bool tower, int type);
+extern void remdungeon(struct worldpos *wpos, bool tower);
 extern void alloc_dungeon_level(struct worldpos *wpos);
 extern void dealloc_dungeon_level(struct worldpos *wpos);
 extern void generate_cave(struct worldpos *wpos);
 //extern void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, cptr data);
 extern void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr);
+
+extern void place_floor(worldpos *wpos, int y, int x);
+
 
 /* wild.c */
 extern int world_index(int world_x, int world_y);
@@ -617,6 +641,7 @@ extern void wilderness_gen(struct worldpos *wpos);
 extern void wild_add_monster(struct worldpos *wpos);
 extern bool fill_house(house_type *h_ptr, int func, void *data);
 extern void wild_add_uhouse(house_type *h_ptr);
+extern bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w);
 
 /* init-txt.c */
 extern errr init_v_info_txt(FILE *fp, char *buf);
@@ -632,11 +657,14 @@ extern errr init_ba_info_txt(FILE *fp, char *buf);
 extern errr init_st_info_txt(FILE *fp, char *buf);
 extern errr init_s_info_txt(FILE *fp, char *buf);
 
-/* init.c */
+/* init.c (init1.c , init2.c)*/
 extern errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int ymax, int xmax, bool init);
 extern void init_file_paths(char *path);
 extern void init_some_arrays(void);
 extern bool load_server_cfg(void);
+
+extern void init_schools(s16b new_size);
+extern void init_spells(s16b new_size);
 
 /* load1.c */
 /*extern errr rd_savefile_old(void);*/
@@ -670,7 +698,8 @@ extern void wipe_m_list(struct worldpos *wpos);
 extern void compact_monsters(int size, bool purge);
 extern s16b m_pop(void);
 extern errr get_mon_num_prep(void);
-extern s16b get_mon_num(int level);
+//extern s16b get_mon_num(int level);
+extern s16b get_mon_num(int level, int dun_type);
 extern void monster_desc(int Ind, char *desc, int m_idx, int mode);
 extern void lore_do_probe(int m_idx);
 extern void lore_treasure(int m_idx, int num_item, int num_gold);
@@ -695,7 +724,14 @@ extern void monster_drop_carried_objects(monster_type *m_ptr);
 extern bool monster_can_cross_terrain(byte feat, monster_race *r_ptr);
 extern void set_mon_num2_hook(worldpos *wpos, int y, int x);
 
-/* netserver.c */
+extern void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr);
+extern void player_desc(int Ind, char *desc, int Ind2, int mode);
+extern void monster_check_experience(int m_idx, bool silent);
+
+
+/* netserver.c (nserver.c) */
+/* XXX those entries are duplicated with those in netserver.h
+ * consider removing one of them */
 /*extern void Contact(int fd, void *arg);*/
 extern int Net_input(void);
 extern int Net_output(void);
@@ -769,6 +805,7 @@ extern int Send_chardump(int ind);
 
 extern void Handle_direction(int Ind, int dir);
 extern void Handle_clear_buffer(int Ind);
+extern int Send_sanity(int ind, byte attr, cptr msg);
 
 
 
@@ -844,6 +881,12 @@ extern void setup_objects(void);
 extern s16b m_bonus(int max, int level);
 extern s32b object_value_real(int Ind, object_type *o_ptr);
 
+extern void wipe_o_list_safely(struct worldpos *wpos);
+extern void excise_object_idx(int o_idx);
+extern bool kind_is_legal(int k_idx);
+extern void init_match_theme(obj_theme theme);
+
+
 /* party.c */
 extern struct account *GetAccount(cptr name, char *pass);
 extern struct account *GetAccountID(u32b id);
@@ -877,6 +920,12 @@ extern byte lookup_player_level(int id);
 extern byte lookup_player_party(int id);
 extern void clockin(int Ind, int type);
 extern int newid(void);
+
+extern void scan_players();
+extern void party_check(int Ind);
+extern void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...);
+extern u16b lookup_player_type(int id);
+extern bool check_account(char *accname, char *c_name);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);
@@ -935,6 +984,10 @@ extern int set_water_destroy(object_type *o_ptr);
 extern int minus_ac(int Ind, int water);
 extern int inven_damage(int Ind, inven_func typ, int perc);
 //extern int inven_damage(int Ind, object_type *typ, int perc);
+
+extern bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval);
+extern void teleport_to_player(int Ind, int m_idx);
+
 
 /* spells2.c */
 extern bool heal_insanity(int Ind, int val);
@@ -1032,6 +1085,11 @@ extern bool curse_spell_aux(int Ind, int item);
 extern void house_creation(int Ind, bool floor, bool jail);
 extern bool item_tester_hook_recharge(object_type *o_ptr);
 
+extern bool do_res_stat_temp(int Ind, int stat);
+extern void swap_position(int Ind, int lty, int ltx);
+extern void call_chaos(int Ind, int dir);
+extern bool turn_monsters(int Ind, int dam);
+
 
 /* store.c */
 extern void alloc_stores(int townval);
@@ -1043,6 +1101,12 @@ extern void store_shuffle(store_type *st_ptr);
 extern void store_maint(store_type *st_ptr);
 extern void store_init(store_type *st_ptr);
 extern void store_kick(int Ind, bool say);
+extern void store_stole(int Ind, int item);
+
+extern void do_cmd_trad_house(int Ind);
+extern void store_examine(int Ind, int item);
+extern void store_exec_command(int Ind, int action, int item, int item2, int amt, int gold);
+extern void home_extend(int Ind);
 
 /* util.c */
 extern bool suppress_message;
@@ -1093,6 +1157,14 @@ extern char *wpos_format(int Ind, worldpos *wpos);
 extern s32b bst(s32b what, s32b t);
 extern cptr get_month_name(int day, bool full, bool compact);
 extern cptr get_day(int day);
+extern void bracer_ff(char *buf);
+
+extern void check_banlist();
+extern void msg_broadcast_format(int Ind, cptr fmt, ...);
+extern byte count_bits(u32b array);
+extern int gold_colour(int amt);
+extern int test_item_name(cptr name);
+extern bool in_banlist(char *addr);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);
@@ -1103,6 +1175,11 @@ extern void redraw_stuff(int Ind);
 extern void window_stuff(int Ind);
 extern void handle_stuff(int Ind);
 extern void fix_spell(int Ind, bool full);
+
+extern void calc_bonuses(int Ind);
+extern int get_archery_skill(player_type *p_ptr);
+extern int calc_blows(int Ind, object_type *o_ptr);
+
 
 /* xtra2.c */
 extern s16b questid;
@@ -1201,6 +1278,8 @@ extern void kill_houses(int id, int type);
 /*extern bool get_rep_dir(int *dp);*/
 
 extern bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor);
+extern void check_quests();
+extern bool master_level_specific(int Ind, struct worldpos *wpos, char * parms);
 
 /*
  * Hack -- conditional (or "bizarre") externs
@@ -1267,9 +1346,13 @@ extern void do_cmd_set_trap(int Ind, int item_kit, int item_load);
 extern void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x);
 extern bool mon_hit_trap(int m_idx);
 
+extern void wiz_place_trap(int Ind, int trap);
+
 /* wild.c */
 extern void initwild(void);
 extern void genwild(void);
+extern void wild_spawn_towns();
+extern void init_wild_info_aux(int x, int y);
 
 
 extern char	*longVersion;
@@ -1283,9 +1366,16 @@ extern s16b get_skill(player_type *p_ptr, int skill);
 extern s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale);
 extern void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i);
 //extern bool init_s_info();
+extern s16b find_skill(cptr name);
 
 /* hooks.c */
 extern bool process_hooks(int h_idx, char *fmt, ...);
 extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
 extern void dump_hooks();
 extern void wipe_hooks();
+
+/* bldg.c */
+extern bool is_state(int Ind, store_type *s_ptr, int state);
+extern void show_building(int Ind, store_type *s_ptr);
+extern bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item, int item2, int amt, int gold);
+

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: externs.h */
 
 /* Purpose: extern declarations (variables and functions) */
@@ -862,7 +863,10 @@ extern bool get_item(int Ind);
 
 extern bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor);
 
+/* common.c */
 extern int color_char_to_attr(char c);
+extern int find_realm(int book);
+extern void version_build();
 
 /*
  * Hack -- conditional (or "bizarre") externs

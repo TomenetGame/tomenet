@@ -823,7 +823,7 @@ static void player_wipe(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	object_type *old_inven;
-	int i, j;
+	int i;
 
 
 	/* Hack -- save the inventory pointer */
@@ -957,7 +957,7 @@ static byte player_init[MAX_CLASS][3][2] =
 void admin_outfit(int Ind, int realm)
 {
 	player_type *p_ptr = Players[Ind];
-	int             i, tv, sv;
+	int             i;
 
 	object_type     forge;
 	object_type     *o_ptr = &forge;
@@ -1200,7 +1200,7 @@ void player_create_tmpfile(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	FILE *fff;
+	//FILE *fff;
 
 	char file_name[MAX_PATH_LENGTH];
 
@@ -1458,12 +1458,11 @@ static void player_setup(int Ind, bool new)
 }
 
 
-/* Hack -- give the bard random skills	- Jir - */
-/* TODO: racial skills should be preserved */
+/* Hack -- give the bard(or whatever randskill class) random skills	- Jir - */
 static void do_bard_skill(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int i, j, k;
+	int i, j;
 	int value, mod;
 
 	for (i = 1; i < MAX_SKILLS; i++)
@@ -1528,7 +1527,7 @@ static void do_bard_skill(int Ind)
 	/* Father zero, child zero */
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
-		s32b value = 0, mod = 0;
+		//s32b value = 0, mod = 0;
 
 		/* Develop only revelant branches */
 		if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod)

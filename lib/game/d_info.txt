@@ -35,6 +35,7 @@
 V:4.0.0
 
 ### Wilderness(purely cosmetic, never used) ###
+# (actually, not used but often refered)
 
 N:0:Wilderness
 D:Wil:a way to the Wilderness
@@ -82,7 +83,9 @@ R:100:0
 
 N:4:Barrow-Downs
 D:BDw:a way to the Barrow-Downs.
-W:1:10:1:0:14:160
+# tmp. Made deeper (consider building Mirkwood near Bree)
+#W:1:10:1:0:14:160
+W:1:35:1:0:14:160
 L:88:78:89:18:199:4
 L:0:95:5
 A:96:34:97:66:56:0:57:97
@@ -113,9 +116,11 @@ M:IM_FIRE
 # Nether Realm
 # Levels 666-696 (!!!)
 # guarded by Tik'srvzllat, who has the Ring of Phasing
+# (Hrm it causes infinite loop; bear with 166-196)
 N:6:Nether Realm
 D:Nth:a magical portal to the Nether Realm.
-W:666:696:40:0:14:160
+#W:666:696:40:0:14:160
+W:166:196:40:0:14:160
 L:102:80:86:15:85:5
 A:85:80:87:20:87:0:57:85
 A:50:50:0
@@ -450,6 +455,22 @@ F:FINAL_GUARDIAN_1034 |
 F:FILL_METHOD_2
 R:100:1
 M:IM_COLD
+
+# The Training Tower
+# levels 1-10
+# Guarded by the White Balrog guarding The Pike 'Til-i-arc'
+N:30:Training Tower
+D:Nwb:A tower for newbies.
+W:1:10:1:0:14:160
+L:1:80:174:20:1:0
+A:56:100:56:0:56:0:57:58
+O:20:20:20:20
+F:PRINCIPAL | TOWER | EMPTY | NO_DEATH
+F:FILL_METHOD_3
+R:25:1
+M:ANIMAL
+R:75:0
+
 
 # N:<index>:<name>
 # D:<3 letter short name>:<long name>

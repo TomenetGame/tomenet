@@ -412,7 +412,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
 
         s16b  o_idx = 0;
 	object_type *o_ptr;
-	cave_type *c_ptr;
+	//cave_type *c_ptr;
 
 	s16b  x1;
 	s16b  y1;
@@ -1082,7 +1082,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				for(k = -1; k <= 1; k++)
 					for(l = -1; l <= 1; l++)
 					{
-						cave_type *c2_ptr=&zcave[y + l][x + k];
+						//cave_type *c2_ptr=&zcave[y + l][x + k];
 						//                if(in_bounds(y + l, px + k) && !cave[y + l][px + k].t_idx)
 						if(in_bounds(y + l, x + k) && (!GetCS(&zcave[y + l][x + k], CS_TRAPS)))
 						{
@@ -2124,9 +2124,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		case TRAP_OF_GOODBYE_CHARLIE:
 		{
-			s16b i,j;
+			//s16b i,j;
 			int chance = 10 + glev / 2;
-			bool message = FALSE;
+			//bool message = FALSE;
 
 			if (chance > 50) chance = 50;
 
@@ -2996,7 +2996,7 @@ void player_activate_door_trap(int Ind, s16b y, s16b x)
 void place_trap(struct worldpos *wpos, int y, int x, int mod)
 {
 	bool           more       = TRUE;
-	s16b           trap, t_idx, lv;
+	s16b           trap, lv;
 	trap_kind	*t_ptr;
 
 	s16b           cnt        = 0;
@@ -3127,11 +3127,11 @@ void wiz_place_trap(int Ind, int trap)
 	player_type *p_ptr = Players[Ind];
 	int x = p_ptr->px, y = p_ptr->py;
 	worldpos *wpos = &p_ptr->wpos;
-	s16b           t_idx;
+	//s16b           t_idx;
 	trap_kind	*t_ptr;
 	struct c_special *cs_ptr;
 
-	s16b           cnt        = 0;
+	//s16b           cnt        = 0;
 	u32b flags;
 	cave_type *c_ptr;
 	//	dungeon_info_type *d_ptr = &d_info[dungeon_type];
@@ -3322,7 +3322,7 @@ static s16b pop_montrap(int Ind, object_type *j_ptr, u16b next_o_idx)
 void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 {
 	player_type *p_ptr = Players[Ind];
-	worldpos *wpos = &p_ptr->wpos;
+	//worldpos *wpos = &p_ptr->wpos;
 	int py = p_ptr->py, px = p_ptr->px, i;
 #if 0
 	int item_kit, item_load, i;
@@ -4369,7 +4369,7 @@ bool mon_hit_trap(int m_idx)
 	bool remove = FALSE;
 	bool dead = FALSE;
 	bool fear = FALSE;
-	s32b special = 0;
+	//s32b special = 0;
 
 	int dam, chance, shots, trapping;
 	int mul = 0;

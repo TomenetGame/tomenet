@@ -6421,7 +6421,7 @@ static int Receive_map(int ind)
 {
 	connection_t *connp = &Conn[ind];
 
-	char ch;
+	char ch, mode;
 
 	int n, player = -1;
 
@@ -6446,7 +6446,7 @@ static int Receive_map(int ind)
 		  }
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
+	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &mode)) <= 0)
 	{
 		if (n == -1)
 			Destroy_connection(ind, "read error");
@@ -6454,7 +6454,7 @@ static int Receive_map(int ind)
 	}
 
 	if (connp->id != -1)
-		do_cmd_view_map(player);
+		do_cmd_view_map(player, mode);
 
 	return 1;
 }

@@ -197,7 +197,8 @@ extern void cmd_walk(void);
 extern void cmd_king(void);
 extern void cmd_run(void);
 extern void cmd_stay(void);
-extern void cmd_map(void);
+//extern void cmd_map(void);
+extern void cmd_map(char mode);
 extern void cmd_locate(void);
 extern void cmd_search(void);
 extern void cmd_toggle_search(void);
@@ -313,6 +314,7 @@ extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);
 extern void interact_macros(void);
 extern void do_cmd_options(void);
 //extern void close_game(cptr reason);
+extern void c_close_game(cptr reason);
 
 /* c-spell.c */
 //extern void show_browse(int book);
@@ -330,6 +332,8 @@ extern void do_mimic();
 extern bool leave_store;
 extern void display_inventory(void);
 extern void display_store(void);
+extern void c_store_prt_gold(void);
+extern void display_store_action();
 
 /* c-xtra1.c */
 extern void prt_stat(int stat, int max, int cur);
@@ -369,7 +373,7 @@ extern void dump_messages_aux(FILE *fff, int lines, int mode);
 
 /* client.c */
 
-/* netclient.c */
+/* nclient.c (forer netclient.c) */
 extern int ticks;
 extern void do_flicker(void);
 extern void do_mail(void);
@@ -434,7 +438,8 @@ extern int Send_cast(int book, int spell);
 extern int Send_pray(int book, int spell);
 extern int Send_fight(int book, int spell);
 extern int Send_ghost(int ability);
-extern int Send_map(void);
+//extern int Send_map(void);
+extern int Send_map(char mode);
 extern int Send_locate(int dir);
 extern int Send_store_purchase(int item, int amt);
 extern int Send_store_sell(int item, int amt);
@@ -455,6 +460,7 @@ extern int Send_spike(int dir);
 extern int Send_skill_mod(int i);
 extern int Send_store_examine(int item);
 extern int Send_store_command(int action, int item, int item2, int amt, int gold);
+extern int Send_activate_skill(int mkey, int book, int spell, int dir);
 
 
 /* skills.c */

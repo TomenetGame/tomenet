@@ -1288,7 +1288,7 @@ bool remove_hostility(int Ind, cptr name)
 {
 	player_type *p_ptr = Players[Ind];
 	hostile_type *h_ptr, *i_ptr;
-	cptr p, q;
+	cptr p, q = NULL;
 	int i = name_lookup_loose(Ind, name, TRUE);
 
 	if (!i)
@@ -1501,7 +1501,7 @@ bool add_ignore(int Ind, cptr name)
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	hostile_type *h_ptr, *i_ptr;
 	int i;
-	cptr p,q;
+	cptr p, q = NULL;
 
 	/* Check for silliness */
 	if (!name)
@@ -2208,7 +2208,7 @@ int player_id_list(int **list, u32b account)
 void set_pkill(int Ind, int delay)
 {
 	player_type *p_ptr = Players[Ind];
-	bool admin = is_admin(p_ptr);
+	//bool admin = is_admin(p_ptr);
 
 	if (cfg.use_pk_rules != PK_RULES_DECLARE)
 	{

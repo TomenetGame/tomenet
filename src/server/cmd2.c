@@ -110,7 +110,10 @@ void do_cmd_go_up(int Ind)
 	}
 	if(wpos->wz==0){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].tower;
-		if(d_ptr->baselevel-p_ptr->max_dlv>2){
+		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
+		if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
+			(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
+		{
 			msg_print(Ind,"\377rAs you attempt to ascend, you are gripped by an uncontrollable fear.");
 			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
 			return;
@@ -308,7 +311,12 @@ void do_cmd_go_down(int Ind)
 	}
 	if(wpos->wz==0){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
-		if(d_ptr->baselevel-p_ptr->max_dlv>2){
+		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
+		if(d_ptr->baselevel-p_ptr->max_dlv>2 ||
+				d_info[d_ptr->type].min_plev > p_ptr->lev)
+		if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
+			(d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
+		{
 			msg_print(Ind,"\377rAs you attempt to descend, you are gripped by an uncontrollable fear.");
 			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
 			return;
@@ -2070,6 +2078,7 @@ void do_cmd_bash(int Ind, int dir)
  *
  * XXX XXX XXX Let user choose a pile of spikes, perhaps?
  */
+/* Now this can be used for any tvals.	- Jir - */
 //static bool get_spike(int Ind, int *ip)
 bool get_something_tval(int Ind, int tval, int *ip)
 {
@@ -3918,7 +3927,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 //			if (potion_smash_effect(0, wpos, y, x, o_ptr->sval))
 			if (k_info[o_ptr->k_idx].tval == TV_POTION)
-				/* This should harm the player too, but for now no way :/ */
+			{
 				if (potion_smash_effect(0 - Ind, wpos, y, x, o_ptr->sval))
 //				if (potion_smash_effect(PROJECTOR_POTION, wpos, y, x, o_ptr->sval))
 				{
@@ -3941,6 +3950,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 					}
 #endif	// 0
 				}
+			}
 
 			return;
 		}

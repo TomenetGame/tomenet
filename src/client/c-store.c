@@ -137,21 +137,21 @@ void display_inventory(void)
 		display_entry(store_top + k);
 	}
 
-        /* Erase the extra lines and the "more" prompt */
-        for (i = k; i < 13; i++) prt("", i + 6, 0);
+	/* Erase the extra lines and the "more" prompt */
+	for (i = k; i < 13; i++) prt("", i + 6, 0);
 
-        /* Assume "no current page" */
-        put_str("        ", 5, 20);
+	/* Assume "no current page" */
+	put_str("        ", 5, 20);
 
-        /* Visual reminder of "more items" */
-        if (store.stock_num > 12)
-        {
-                /* Show "more" reminder (after the last item) */
-                prt("-more-", k + 6, 3);
+	/* Visual reminder of "more items" */
+	if (store.stock_num > 12)
+	{
+		/* Show "more" reminder (after the last item) */
+		prt("-more-", k + 6, 3);
 
-                /* Indicate the "current page" */
-                put_str(format("(Page %d)", store_top/12 + 1), 5, 20);
-        }
+		/* Indicate the "current page" */
+		put_str(format("(Page %d)", store_top/12 + 1), 5, 20);
+	}
 }
 
 /*
@@ -461,7 +461,7 @@ static void store_do_command(int num)
 
 static void store_process_command(void)
 {
-	if (store_num != 7)
+	//if (store_num != 7)
 	{
 		int i;
 		for (i = 0; i < 6; i++)
@@ -617,7 +617,7 @@ void display_store(void)
 	{
 		/* Put the owner name */
 		put_str("Your Home", 3, 30);
-		put_str(format("Capacity: %d", c_store.max_cost), 3, 60);
+		//put_str(format("Capacity: %d", c_store.max_cost), 3, 60);
 
 		/* Label the item descriptions */
 		put_str("Item Description", 5, 3);
@@ -692,7 +692,7 @@ void display_store(void)
 		}
 
 		/* Home commands */
-		if (store_num == 7)
+		if (store_num == 7 && FALSE)
 		{
 			prt(" g) Get an item.", 22, 30);
 			prt(" d) Drop an item.", 23, 30);
@@ -715,6 +715,13 @@ void display_store(void)
 		/* Get a command */
 		while (!command_cmd)
 		{
+			/* XXX it's here since it can be changed */
+			if (store_num == 7)
+			{
+				/* Put the house capacity */
+				put_str(format("Capacity: %d", c_store.max_cost), 3, 60);
+			}
+
 			/* Re-fresh the screen */
 			Term_fresh();
 

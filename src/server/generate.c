@@ -361,6 +361,8 @@ static dun_data *dun;
 /* ToME variables -- not implemented, but needed to have it work */
 static byte feat_wall_outer = FEAT_WALL_OUTER;	/* Outer wall of rooms */
 static byte feat_wall_inner = FEAT_WALL_INNER;	/* Inner wall of rooms */
+s16b floor_type[100];	/* Dungeon floor */
+s16b fill_type[100];	/* Dungeon filler */
 
 static bool good_item_flag;		/* True if "Artifact" on this level */
 
@@ -384,7 +386,6 @@ static room_data room[ROOM_MAX] =
 	{ 0, 1, -1, 1, 10 },	/* 11 = Random vault (44x22) */
 	{ 0, 1, 0, 1, 10 },	/* 12 = Crypts (22x22) */
 };
-
 
 
 /*
@@ -1117,6 +1118,8 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 }
 
 
+#if 0
+int dist2(int x1, int y1, int x2, int y2, int h1, int h2, int h3, int h4)
 /*
  * Build an underground lake 
  */
@@ -1144,6 +1147,9 @@ static void lake_level(struct worldpos *wpos)
 
 		rad = rand_range(8, 18);
 		distort = magik(50 - rad * 2);
+
+		/* (Warning killer) */
+		h1 = h2 = h3 = h4 = 0;
 
 		if (distort)
 		{
@@ -1214,6 +1220,7 @@ static void lake_level(struct worldpos *wpos)
 		break;
 	}
 }
+#endif	// 0
 
 
 /*
@@ -1439,8 +1446,8 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num)
  */
 static void place_filler(worldpos *wpos, int y, int x)
 {
-//	cave_set_feat(wpos, y, x, fill_type[rand_int(100)]);
-	cave_set_feat(wpos, y, x, FEAT_WALL_EXTRA);
+	cave_set_feat(wpos, y, x, fill_type[rand_int(100)]);
+	//cave_set_feat(wpos, y, x, FEAT_WALL_EXTRA);
 }
 
 /*
@@ -1448,9 +1455,9 @@ static void place_filler(worldpos *wpos, int y, int x)
  */
 void place_floor(worldpos *wpos, int y, int x)
 {
-//	cave_set_feat(wpos, y, x, floor_type[rand_int(100)]);
-	cave_set_feat(wpos, y, x, dun->watery ? FEAT_SHAL_WATER : FEAT_FLOOR);
-	cave_set_feat(wpos, y, x, FEAT_FLOOR);
+	cave_set_feat(wpos, y, x, floor_type[rand_int(100)]);
+	//cave_set_feat(wpos, y, x, dun->watery ? FEAT_SHAL_WATER : FEAT_FLOOR);
+	//cave_set_feat(wpos, y, x, FEAT_FLOOR);
 }
 
 /*
@@ -1465,7 +1472,8 @@ void place_floor_respectedly(worldpos *wpos, int y, int x)
 //	cave_set_feat(wpos, y, x, dun->watery ? FEAT_WATER : FEAT_FLOOR);
 
 	if (dun->no_penetr && zcave[y][x].info & CAVE_ICKY) return;
-	cave_set_feat(wpos, y, x, FEAT_FLOOR);
+	cave_set_feat(wpos, y, x, floor_type[rand_int(100)]);
+	//cave_set_feat(wpos, y, x, FEAT_FLOOR);
 }
 
 /*
@@ -1480,9 +1488,11 @@ static bool get_is_floor(worldpos *wpos, int x, int y)
 	if (!in_bounds(y, x)) return (FALSE);	/* XXX */
 
 	/* Do the real check: */
-//	if (f_info[cave[y][x].feat].flags1 & FF1_FLOOR) return (TRUE);
+	if (f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) return (TRUE);
+#if 0
 	if (zcave[y][x].feat == FEAT_FLOOR ||
 		zcave[y][x].feat == FEAT_DEEP_WATER) return (TRUE);
+#endif	// 0
 
 	return (FALSE);
 }
@@ -1949,16 +1959,16 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0)
 	for (y = y1 - 1; y <= y2 + 1; y++)
 	{
 		c_ptr = &zcave[y][x1-1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y][x2+1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++)
 	{
 		c_ptr = &zcave[y1-1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y2+1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 
 
@@ -1970,7 +1980,7 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0)
 			for (x = x1; x <= x2; x += 2)
 			{
 				c_ptr = &zcave[y][x];
-				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr->feat = feat_wall_inner;
 			}
 		}
 	}
@@ -1981,16 +1991,16 @@ static void build_type1(struct worldpos *wpos, int by0, int bx0)
 		for (y = y1 + 2; y <= y2 - 2; y += 2)
 		{
 			c_ptr = &zcave[y][x1];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 			c_ptr = &zcave[y][x2];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 		}
 		for (x = x1 + 2; x <= x2 - 2; x += 2)
 		{
 			c_ptr = &zcave[y1][x];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 			c_ptr = &zcave[y2][x];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 		}
 	}
 }
@@ -2060,32 +2070,32 @@ static void build_type2(struct worldpos *wpos, int by0, int bx0)
 	for (y = y1a - 1; y <= y2a + 1; y++)
 	{
 		c_ptr = &zcave[y][x1a-1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y][x2a+1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1a - 1; x <= x2a + 1; x++)
 	{
 		c_ptr = &zcave[y1a-1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y2a+1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 
 	/* Place the walls around room "b" */
 	for (y = y1b - 1; y <= y2b + 1; y++)
 	{
 		c_ptr = &zcave[y][x1b-1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y][x2b+1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1b - 1; x <= x2b + 1; x++)
 	{
 		c_ptr = &zcave[y1b-1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y2b+1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 
 
@@ -2198,32 +2208,32 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0)
 	for (y = y1a - 1; y <= y2a + 1; y++)
 	{
 		c_ptr = &zcave[y][x1a-1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y][x2a+1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1a - 1; x <= x2a + 1; x++)
 	{
 		c_ptr = &zcave[y1a-1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y2a+1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 
 	/* Place the walls around room "b" */
 	for (y = y1b - 1; y <= y2b + 1; y++)
 	{
 		c_ptr = &zcave[y][x1b-1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y][x2b+1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1b - 1; x <= x2b + 1; x++)
 	{
 		c_ptr = &zcave[y1b-1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y2b+1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 
 
@@ -2259,7 +2269,7 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0)
 			for (x = x1a; x <= x2a; x++)
 			{
 				c_ptr = &zcave[y][x];
-				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr->feat = feat_wall_inner;
 			}
 		}
 		break;
@@ -2271,16 +2281,16 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0)
 		for (y = y1b; y <= y2b; y++)
 		{
 			c_ptr = &zcave[y][x1a];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 			c_ptr = &zcave[y][x2a];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 		}
 		for (x = x1a; x <= x2a; x++)
 		{
 			c_ptr = &zcave[y1b][x];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 			c_ptr = &zcave[y2b][x];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 		}
 
 		/* Place a secret door on the inner room */
@@ -2318,9 +2328,9 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0)
 			{
 				if (y == yval) continue;
 				c_ptr = &zcave[y][x1a - 1];
-				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr->feat = feat_wall_inner;
 				c_ptr = &zcave[y][x2a + 1];
-				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr->feat = feat_wall_inner;
 			}
 
 			/* Pinch the north/south sides */
@@ -2328,9 +2338,9 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0)
 			{
 				if (x == xval) continue;
 				c_ptr = &zcave[y1b - 1][x];
-				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr->feat = feat_wall_inner;
 				c_ptr = &zcave[y2b + 1][x];
-				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr->feat = feat_wall_inner;
 			}
 
 			/* Sometimes shut using secret doors */
@@ -2347,22 +2357,22 @@ static void build_type3(struct worldpos *wpos, int by0, int bx0)
 		else if (rand_int(3) == 0)
 		{
 			c_ptr = &zcave[yval][xval];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 			c_ptr = &zcave[y1b][xval];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 			c_ptr = &zcave[y2b][xval];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 			c_ptr = &zcave[yval][x1a];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 			c_ptr = &zcave[yval][x2a];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 		}
 
 		/* Occasionally put a pillar in the center */
 		else if (rand_int(3) == 0)
 		{
 			c_ptr = &zcave[yval][xval];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 		}
 
 		break;
@@ -2421,16 +2431,16 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 	for (y = y1 - 1; y <= y2 + 1; y++)
 	{
 		c_ptr = &zcave[y][x1-1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y][x2+1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++)
 	{
 		c_ptr = &zcave[y1-1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y2+1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 
 
@@ -2444,16 +2454,16 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 	for (y = y1 - 1; y <= y2 + 1; y++)
 	{
 		c_ptr = &zcave[y][x1-1];
-		c_ptr->feat = FEAT_WALL_INNER;
+		c_ptr->feat = feat_wall_inner;
 		c_ptr = &zcave[y][x2+1];
-		c_ptr->feat = FEAT_WALL_INNER;
+		c_ptr->feat = feat_wall_inner;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++)
 	{
 		c_ptr = &zcave[y1-1][x];
-		c_ptr->feat = FEAT_WALL_INNER;
+		c_ptr->feat = feat_wall_inner;
 		c_ptr = &zcave[y2+1][x];
-		c_ptr->feat = FEAT_WALL_INNER;
+		c_ptr->feat = feat_wall_inner;
 	}
 
 
@@ -2497,7 +2507,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 			{
 				if ((x == xval) && (y == yval)) continue;
 				c_ptr = &zcave[y][x];
-				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr->feat = feat_wall_inner;
 			}
 		}
 
@@ -2549,7 +2559,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 			for (x = xval - 1; x <= xval + 1; x++)
 			{
 				c_ptr = &zcave[y][x];
-				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr->feat = feat_wall_inner;
 			}
 		}
 
@@ -2562,12 +2572,12 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 				for (x = xval - 5 - tmp; x <= xval - 3 - tmp; x++)
 				{
 					c_ptr = &zcave[y][x];
-					c_ptr->feat = FEAT_WALL_INNER;
+					c_ptr->feat = feat_wall_inner;
 				}
 				for (x = xval + 3 + tmp; x <= xval + 5 + tmp; x++)
 				{
 					c_ptr = &zcave[y][x];
-					c_ptr->feat = FEAT_WALL_INNER;
+					c_ptr->feat = feat_wall_inner;
 				}
 			}
 		}
@@ -2579,16 +2589,16 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 			for (x = xval - 5; x <= xval + 5; x++)
 			{
 				c_ptr = &zcave[yval-1][x];
-				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr->feat = feat_wall_inner;
 				c_ptr = &zcave[yval+1][x];
-				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr->feat = feat_wall_inner;
 			}
 
 			/* Close off the left/right edges */
 			c_ptr = &zcave[yval][xval-5];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 			c_ptr = &zcave[yval][xval+5];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 
 			/* Secret doors (random top/bottom) */
 			place_secret_door(wpos, yval - 3 + (randint(2) * 2), xval - 3);
@@ -2626,7 +2636,7 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 				if (0x1 & (x + y))
 				{
 					c_ptr = &zcave[y][x];
-					c_ptr->feat = FEAT_WALL_INNER;
+					c_ptr->feat = feat_wall_inner;
 				}
 			}
 		}
@@ -2652,12 +2662,12 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0)
 		for (y = y1; y <= y2; y++)
 		{
 			c_ptr = &zcave[y][xval];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 		}
 		for (x = x1; x <= x2; x++)
 		{
 			c_ptr = &zcave[yval][x];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = feat_wall_inner;
 		}
 
 		/* Doors into the rooms */
@@ -3049,6 +3059,9 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0)
 
 	cptr		name;
 
+		dungeon_type *dt_ptr = getdungeon(wpos);
+		int dun_type = dt_ptr->type;
+
 	bool		empty = FALSE;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -3080,16 +3093,16 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0)
 	for (y = y1 - 1; y <= y2 + 1; y++)
 	{
 		c_ptr = &zcave[y][x1-1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y][x2+1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++)
 	{
 		c_ptr = &zcave[y1-1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y2+1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 
 
@@ -3103,16 +3116,16 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0)
 	for (y = y1 - 1; y <= y2 + 1; y++)
 	{
 		c_ptr = &zcave[y][x1-1];
-		c_ptr->feat = FEAT_WALL_INNER;
+		c_ptr->feat = feat_wall_inner;
 		c_ptr = &zcave[y][x2+1];
-		c_ptr->feat = FEAT_WALL_INNER;
+		c_ptr->feat = feat_wall_inner;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++)
 	{
 		c_ptr = &zcave[y1-1][x];
-		c_ptr->feat = FEAT_WALL_INNER;
+		c_ptr->feat = feat_wall_inner;
 		c_ptr = &zcave[y2+1][x];
-		c_ptr->feat = FEAT_WALL_INNER;
+		c_ptr->feat = feat_wall_inner;
 	}
 
 
@@ -3249,7 +3262,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0)
 	for (i = 0; i < 64; i++)
 	{
 		/* Get a (hard) monster type */
-		what[i] = get_mon_num(getlevel(wpos) + 10);
+		what[i] = get_mon_num(getlevel(wpos) + 10, dun_type);
 
 		/* Notice failure */
 		if (!what[i]) empty = TRUE;
@@ -3336,6 +3349,9 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 
 	cave_type		*c_ptr;
 
+		dungeon_type *dt_ptr = getdungeon(wpos);
+		int dun_type = dt_ptr->type;
+
 	cptr		name;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -3367,16 +3383,16 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 	for (y = y1 - 1; y <= y2 + 1; y++)
 	{
 		c_ptr = &zcave[y][x1-1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y][x2+1];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++)
 	{
 		c_ptr = &zcave[y1-1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 		c_ptr = &zcave[y2+1][x];
-		c_ptr->feat = FEAT_WALL_OUTER;
+		c_ptr->feat = feat_wall_outer;
 	}
 
 
@@ -3390,16 +3406,16 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 	for (y = y1 - 1; y <= y2 + 1; y++)
 	{
 		c_ptr = &zcave[y][x1-1];
-		c_ptr->feat = FEAT_WALL_INNER;
+		c_ptr->feat = feat_wall_inner;
 		c_ptr = &zcave[y][x2+1];
-		c_ptr->feat = FEAT_WALL_INNER;
+		c_ptr->feat = feat_wall_inner;
 	}
 	for (x = x1 - 1; x <= x2 + 1; x++)
 	{
 		c_ptr = &zcave[y1-1][x];
-		c_ptr->feat = FEAT_WALL_INNER;
+		c_ptr->feat = feat_wall_inner;
 		c_ptr = &zcave[y2+1][x];
-		c_ptr->feat = FEAT_WALL_INNER;
+		c_ptr->feat = feat_wall_inner;
 	}
 
 
@@ -3624,7 +3640,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 	for (i = 0; i < BUILD_6_MONSTER_TABLE; i++)
 	{
 		/* Get a (hard) monster type */
-		what[i] = get_mon_num(getlevel(wpos) + 10);
+		what[i] = get_mon_num(getlevel(wpos) + 10, dun_type);
 
 		/* Notice failure */
 		if (!what[i]) empty = TRUE;
@@ -3821,11 +3837,13 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 			{
 				/* Granite wall (outer) */
 				case '%':
+				//c_ptr->feat = feat_wall_outer;
 				c_ptr->feat = FEAT_WALL_OUTER;
 				break;
 
 				/* Granite wall (inner) */
 				case '#':
+				//c_ptr->feat = feat_wall_inner;
 				c_ptr->feat = FEAT_WALL_INNER;
 				break;
 
@@ -5214,7 +5232,7 @@ static void convert_extra(worldpos *wpos, int y1, int x1, int y2, int x2)
 	{
 		for (y = y1; y <= y2; y++)
 		{
-			if (zcave[y][x].feat == FEAT_WALL_OUTER)
+			if (zcave[y][x].feat == feat_wall_outer)
 			{
 				place_filler(wpos, y, x);
 			}
@@ -5269,7 +5287,7 @@ static void build_room(worldpos *wpos, int x1, int x2, int y1, int y2)
 	{
 		for (y = 1; y < ysize; y++)
 		{
-			if (zcave[y1 + y][x1 + x].feat == FEAT_WALL_OUTER)
+			if (zcave[y1 + y][x1 + x].feat == feat_wall_outer)
 			{
 				/* Clear the untouched region */
 				place_floor(wpos, y1 + y, x1 + x);
@@ -5311,7 +5329,7 @@ static void build_room_vault(worldpos *wpos, int x0, int y0, int xsize, int ysiz
 		{
 			int y = y0 - yhsize + y1;
 
-			cave_set_feat(wpos, y, x, FEAT_WALL_OUTER);
+			cave_set_feat(wpos, y, x, feat_wall_outer);
 			zcave[y][x].info &= ~(CAVE_ICKY);
 		}
 	}
@@ -6876,6 +6894,9 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 
 	dungeon_type	*d_ptr = getdungeon(wpos);
 
+	int dun_type = d_ptr->type;
+	// dungeon_info_type *di_ptr = &d_info[dun_type];
+
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -6945,7 +6966,7 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 		if (c_ptr->feat == FEAT_WALL_SOLID) continue;
 
 		/* Pierce "outer" walls of rooms */
-		if (c_ptr->feat == FEAT_WALL_OUTER)
+		if (c_ptr->feat == feat_wall_outer)
 		{
 			/* Acquire the "next" location */
 			y = tmp_row + row_dir;
@@ -6956,7 +6977,9 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 			if (zcave[y][x].feat == FEAT_PERM_OUTER) continue;
 
 			/* Hack -- Avoid outer/solid granite walls */
-			if (zcave[y][x].feat == FEAT_WALL_OUTER) continue;
+			//if (zcave[y][x].feat == feat_wall_outer) continue;
+			if ((zcave[y][x].feat == feat_wall_outer) &&
+			    (zcave[y][x].info & CAVE_ROOM)) continue;
 			if (zcave[y][x].feat == FEAT_WALL_SOLID) continue;
 
 			/* Accept this location */
@@ -7001,7 +7024,7 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 					if (!in_bounds(y, x)) continue;
 
 					/* Convert adjacent "outer" walls as "solid" walls */
-					if (zcave[y][x].feat == FEAT_WALL_OUTER)
+					if (zcave[y][x].feat == feat_wall_outer)
 					{
 						/* Change the wall to a "solid" wall */
 						zcave[y][x].feat = FEAT_WALL_SOLID;
@@ -7015,7 +7038,7 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 				for (x = col1 - 1; x <= col1 + 1; x++)
 				{
 					/* Convert adjacent "outer" walls as "solid" walls */
-					if (zcave[y][x].feat == FEAT_WALL_OUTER)
+					if (zcave[y][x].feat == feat_wall_outer)
 					{
 						/* Change the wall to a "solid" wall */
 						zcave[y][x].feat = FEAT_WALL_SOLID;
@@ -7034,7 +7057,10 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 		}
 
 		/* Tunnel through all other walls */
-		else if (c_ptr->feat >= FEAT_WALL_EXTRA)
+		//else if (c_ptr->feat >= FEAT_WALL_EXTRA)
+		else if ((c_ptr->feat == d_info[dun_type].fill_type1) ||
+		         (c_ptr->feat == d_info[dun_type].fill_type2) ||
+		         (c_ptr->feat == d_info[dun_type].fill_type3))
 		{
 			/* Accept this location */
 			row1 = tmp_row;
@@ -7058,7 +7084,11 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 				c_ptr = &zcave[row1 + col_dir][col1 + row_dir];
 
 				/* Make sure it's a wall we want to tunnel */
-				if (c_ptr->feat == FEAT_WALL_EXTRA)
+				//if (c_ptr->feat == FEAT_WALL_EXTRA)
+				if ((c_ptr->feat == d_info[dun_type].fill_type1) ||
+						(c_ptr->feat == d_info[dun_type].fill_type2) ||
+						(c_ptr->feat == d_info[dun_type].fill_type3)
+						|| c_ptr->feat == FEAT_WALL_EXTRA)
 				{
 					/* Save the tunnel location */
 					if (dun->tunn_n < TUNN_MAX)
@@ -7603,6 +7633,335 @@ static bool room_build(struct worldpos *wpos, int y, int x, int typ)
 
 
 /*
+ * Build probability tables for walls and floors and set feat_wall_outer
+ * and feat_wall_inner according to the current information in d_info.txt
+ *
+ * *hint* *hint* with this made extern, and we no longer have to
+ * store fill_type and floor_type in the savefile...
+ */
+//static void init_feat_info(void)
+static void init_feat_info(worldpos *wpos)
+{
+	int i;
+	int cur_depth, max_depth;
+	int p1, p2;
+	int floor_lim1, floor_lim2, floor_lim3;
+	int fill_lim1, fill_lim2, fill_lim3;
+
+	int dun_level = getlevel(wpos);
+	dungeon_type *dt_ptr = getdungeon(wpos);
+	int dun_type = dt_ptr->type;
+	dungeon_info_type *d_ptr = &d_info[dun_type];
+
+	/* Default dungeon? */
+	if (!dun_type)
+	{
+		feat_wall_outer = FEAT_WALL_OUTER;	/* Outer wall of rooms */
+		feat_wall_inner = FEAT_WALL_INNER;	/* Inner wall of rooms */
+
+		for (i = 0; i < 100; i++)
+		{
+			floor_type[i] = FEAT_FLOOR;
+			fill_type[i] = FEAT_WALL_EXTRA;	/* Dungeon filler */
+		}
+
+		return;
+	}
+
+	/* Retrieve dungeon depth info (base 1, to avoid zero divide errors) */
+	cur_depth = (dun_level - d_ptr->mindepth) + 1;
+	max_depth = (d_ptr->maxdepth - d_ptr->mindepth) + 1;
+
+
+	/* Set room wall types */
+	feat_wall_outer = d_ptr->outer_wall;
+	feat_wall_inner = d_ptr->inner_wall;
+
+
+	/* Setup probability info -- Floors */
+	p1 = d_ptr->floor_percent1[0];
+	p2 = d_ptr->floor_percent1[1];
+	floor_lim1 = p1 + (p2 - p1) * cur_depth / max_depth;
+
+	p1 = d_ptr->floor_percent2[0];
+	p2 = d_ptr->floor_percent2[1];
+	floor_lim2 = floor_lim1 + p1 + (p2 - p1) * cur_depth / max_depth;
+
+	floor_lim3 = 100;
+
+	/* Setup probability info -- Fillers */
+	p1 = d_ptr->fill_percent1[0];
+	p2 = d_ptr->fill_percent1[1];
+	fill_lim1 = p1 + (p2 - p1) * cur_depth / max_depth;
+
+	p1 = d_ptr->fill_percent2[0];
+	p2 = d_ptr->fill_percent2[1];
+	fill_lim2 = fill_lim1 + p1 + (p2 - p1) * cur_depth / max_depth;
+
+	fill_lim3 = 100;
+
+
+	/* Fill the arrays of floors and walls in the good proportions */
+	for (i = 0; i < 100; i++)
+	{
+#if 0
+		/* Mega-HACK -- if a druid request a flooded level, he/she obtains it */
+		if (get_skill(SKILL_DRUID) &&
+		    (p_ptr->druid_extra & CLASS_FLOOD_LEVEL))
+		{
+			if (i < 33)
+			{
+				floor_type[i] = FEAT_DEEP_WATER;
+			}
+			else
+			{
+				floor_type[i] = FEAT_SHAL_WATER;
+			}
+		}
+		else
+#endif	// 0
+		{
+			if (i < floor_lim1)
+			{
+				floor_type[i] = d_ptr->floor1;
+			}
+			else if (i < floor_lim2)
+			{
+				floor_type[i] = d_ptr->floor2;
+			}
+			else
+			{
+				floor_type[i] = d_ptr->floor3;
+			}
+		}
+
+		if (i < fill_lim1)
+		{
+			fill_type[i] = d_ptr->fill_type1;
+		}
+		else if (i < fill_lim2)
+		{
+			fill_type[i] = d_ptr->fill_type2;
+		}
+		else
+		{
+			fill_type[i] = d_ptr->fill_type3;
+		}
+	}
+}
+
+
+/*
+ * Fill a level with wall type specified in A: or L: line of d_info.txt
+ *
+ * 'use_floor', when it is TRUE, tells the function to use floor type
+ * terrains (L:) instead of walls (A:).
+ *
+ * Filling behaviour can be controlled by the second parameter 'smooth',
+ * with the following options available:
+ *
+ * smooth  behaviour
+ * ------  ------------------------------------------------------------
+ * 0       Fill the entire level with fill_type1 / floor1
+ * 1       All the grids are randomly selected (== --P5.1.2)
+ * 2       Slightly smoothed -- look like scattered patches
+ * 3       More smoothed -- tend to look like caverns / small scale map
+ * 4--     Max smoothing -- tend to look like landscape/island/
+ *         continent etc.
+ *
+ * I put it here, because there's another filler generator in
+ * wild.c, but it works better there, in fact...
+ *
+ * CAVEAT: smoothness of 3 or greater doesn't work well with the
+ * current secret door implementation. Outer walls also need some
+ * rethinking.
+ *
+ * -- pelpel
+ */
+
+/*
+ * Thou shalt not invoke the name of thy RNG in vain.
+ * The Angband RNG generates 28 bit pseudo-random number, hence
+ * 28 / 2 = 14
+ */
+#define MAX_SHIFTS 14
+
+static void fill_level(worldpos *wpos, bool use_floor, byte smooth)
+{
+	int y, x;
+	int step;
+	int shift;
+
+	int cur_hgt = dun->l_ptr->hgt;
+	int cur_wid = dun->l_ptr->wid;
+
+	dungeon_type *dt_ptr = getdungeon(wpos);
+	int dun_type = dt_ptr->type;
+
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+
+	/* Convert smoothness to initial step */
+	if (smooth == 0) step = 0;
+	else if (smooth == 1) step = 1;
+	else if (smooth == 2) step = 2;
+	else if (smooth == 3) step = 4;
+	else step = 8;
+
+	/*
+	 * Paranoia -- step must be less than or equal to a half of
+	 * width or height, whichever shorter
+	 */
+	if ((cur_hgt < 16) && (step > 4)) step = 4;
+	if ((cur_wid < 16) && (step > 4)) step = 4;
+
+
+	/* Special case -- simple fill */
+	if (step == 0)
+	{
+		byte filler;
+
+		/* Pick a filler XXX XXX XXX */
+		if (use_floor) filler = d_info[dun_type].floor1;
+		else filler = d_info[dun_type].fill_type1;
+
+		/* Fill the level with the filler without calling RNG */
+		//for (y = 0; y < cur_hgt; y++)
+		for (y = 1; y < cur_hgt - 1; y++)
+		{
+			for (x = 1; x < cur_wid - 1; x++)
+			{
+				cave_set_feat(wpos, y, x, filler);
+			}
+		}
+
+		/* Done */
+		return;
+	}
+
+
+	/*
+	 * Fill starting positions -- every 'step' grids horizontally and
+	 * vertically
+	 */
+	for (y = 1; y < cur_hgt - 1; y += step)
+	{
+		for (x = 1; x < cur_wid - 1; x += step)
+		{
+			/*
+			 * Place randomly selected terrain feature using the prebuilt
+			 * probability table
+			 *
+			 * By slightly modifying this, you can build streamers as
+			 * well as normal fillers all at once, but this calls for
+			 * modifications to the other part of the dungeon generator.
+			 */
+			if (use_floor) place_floor(wpos, y, x);
+			else place_filler(wpos, y, x);
+		}
+	}
+
+
+	/*
+	 * Fill spaces between, randomly picking one of their neighbours
+	 *
+	 * This simple yet powerful algorithm was described by Mike Anderson:
+	 *
+	 * A   B      A | B      A a B
+	 *        ->  --+--  ->  d e b
+	 * D   C      D | C      D c C
+	 *
+	 * a can be either A or B, b B or C, c C or D and d D or A.
+	 * e is chosen from A, B, C and D.
+	 * Subdivide and repeat the process as many times as you like.
+	 *
+	 * All the nasty tricks that obscure this simplicity are mine (^ ^;)
+	 */
+
+	/* Initialise bit shift counter */
+	shift = MAX_SHIFTS;
+
+	/* Repeat subdivision until all the grids are filled in */
+	while ((step = step >> 1) > 0)
+	{
+		bool y_even, x_even;
+		s16b y_wrap, x_wrap;
+		s16b y_sel, x_sel;
+		u32b selector = 0;
+
+		/* Hacklette -- Calculate wrap-around locations */
+		y_wrap = ((cur_hgt - 1) / (step * 2)) * (step * 2);
+		x_wrap = ((cur_wid - 1) / (step * 2)) * (step * 2);
+
+		/* Initialise vertical phase */
+		y_even = 0;
+
+		for (y = 1; y < cur_hgt - 1; y += step)
+		{
+			/* Flip vertical phase */
+			y_even = !y_even;
+
+			/* Initialise horizontal phase */
+			x_even = 0;
+
+			for (x = 1; x < cur_wid - 1; x += step)
+			{
+				/* Flip horizontal phase */
+				x_even = !x_even;
+
+				/* Already filled in by previous iterations */
+				if (y_even && x_even) continue;
+
+				/*
+				 * Retrieve next two bits from pseudo-random bit sequence
+				 *
+				 * You can do well not caring so much about their randomness.
+				 *
+				 * This is not really necessary, but I don't like to invoke
+				 * relatively expensive RNG when we can do with much smaller
+				 * number of calls.
+				 */
+				if (shift >= MAX_SHIFTS)
+				{
+					selector = rand_int(0x10000000L);
+					shift = 0;
+				}
+				else
+				{
+					selector >>= 2;
+					shift++;
+				}
+
+				/* Vertically in sync */
+				if (y_even) y_sel = y;
+
+				/* Bit 1 selects neighbouring y */
+				else y_sel = (selector & 2) ? y + step : y - step;
+
+				/* Horizontally in sync */
+				if (x_even) x_sel = x;
+
+				/* Bit 0 selects neighbouring x */
+				else x_sel = (selector & 1) ? x + step : x - step;
+
+				/* Hacklette -- Fix out of range indices by wrapping around */
+				if (y_sel >= cur_hgt) y_sel = 0;
+				else if (y_sel < 0) y_sel = y_wrap;
+				if (x_sel >= cur_wid) x_sel = 0;
+				else if (x_sel < 0) x_sel = x_wrap;
+
+				/*
+				 * Fill the grid with terrain feature of the randomly
+				 * picked up neighbour
+				 */
+				cave_set_feat(wpos, y, x, zcave[y_sel][x_sel].feat);
+			}
+		}
+	}
+}
+
+
+/*
  * Generate a new dungeon level
  *
  * Note that "dun_body" adds about 4000 bytes of memory to the stack.
@@ -7633,6 +7992,9 @@ static void cave_gen(struct worldpos *wpos)
 	flags2=(wpos->wz>0 ? wild->tower->flags2 : wild->dungeon->flags2);
 
 	if(!flags2 & DF2_RANDOM) return;
+
+	/* Fill the arrays of floors and walls in the good proportions */
+	init_feat_info(wpos);
 
 	glev = getlevel(wpos);
 	/* Global data */
@@ -7746,6 +8108,7 @@ static void cave_gen(struct worldpos *wpos)
 		}
 	}
 
+#if 0
 	/* Hack -- then curve with basic granite */
 	for (y = 1; y < dun->l_ptr->hgt - 1; y++)
 	{
@@ -7758,6 +8121,33 @@ static void cave_gen(struct worldpos *wpos)
 				(permaze ? FEAT_PERM_INNER : FEAT_WALL_EXTRA);
 		}
 	}
+#else	// 0
+
+	/*
+	 * Hack -- Start with fill_type's
+	 *
+	 * Need a way to know appropriate smoothing factor for the current
+	 * dungeon. Maybe we need another d_info flag/value.
+	 */
+	/* Hack -- then curve with basic granite */
+	if (permaze)
+	{
+		for (y = 1; y < dun->l_ptr->hgt - 1; y++)
+		{
+			for (x = 1; x < dun->l_ptr->wid - 1; x++)
+			{
+				cave_type *c_ptr = &zcave[y][x];
+
+				/* Create permawall */
+				c_ptr->feat = FEAT_PERM_INNER;
+			}
+		}
+	}
+	else fill_level(wpos, empty_level, d_info[d_ptr->type].fill_method);
+	//fill_level(wpos, empty_level, d_ptr->fill_method);
+#endif	// 0
+
+
 
 	/* Actual maximum number of rooms on this level */
 /*	dun->row_rooms = MAX_HGT / BLOCK_HGT;
@@ -9302,22 +9692,47 @@ void remdungeon(struct worldpos *wpos, bool tower){
 	del_dungeon(wpos, tower);	/* Hopefully first time */
 }
 
-void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, char *race, char *exclude, bool tower){
+/* 'type' refers to t_info[] */
+void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, char *race, char *exclude, bool tower, int type)
+{
 	int i;
 	wilderness_type *wild;
 	struct dungeon_type *d_ptr;
 	wild=&wild_info[wpos->wy][wpos->wx];
+
+	/* Hack -- override the specification */
+	if (type)
+	{
+		tower = (d_info[type].flags1 & DF1_TOWER) ? TRUE : FALSE;
+	}
+
 	if(wild->flags & (tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN)) return;
+
 	wild->flags |= (tower ? WILD_F_UP : WILD_F_DOWN); /* no checking */
 	if (tower)
 		MAKE(wild->tower, struct dungeon_type);
 	else
 		MAKE(wild->dungeon, struct dungeon_type);
 	d_ptr=(tower ? wild->tower : wild->dungeon);
-	d_ptr->baselevel=baselevel;
-	d_ptr->flags1=flags1; 
-	d_ptr->flags2=flags2; 
-	d_ptr->maxdepth=maxdep;
+
+	d_ptr->type = type; 
+
+	if (type)
+	{
+		/* XXX: flags1, flags2 can be affected if specified so? */
+		d_ptr->baselevel = d_info[type].mindepth;
+		d_ptr->maxdepth  = d_info[type].maxdepth - d_ptr->baselevel + 1; 
+		d_ptr->flags1    = d_info[type].flags1 | flags1;
+		d_ptr->flags2    = d_info[type].flags2 | flags2 | DF2_RANDOM;
+	}
+	else
+	{
+		d_ptr->baselevel=baselevel;
+		d_ptr->flags1=flags1; 
+		d_ptr->flags2=flags2; 
+		d_ptr->maxdepth=maxdep;
+	}
+
 	for(i=0;i<10;i++){
 		d_ptr->r_char[i]='\0';
 		d_ptr->nr_char[i]='\0';
@@ -9328,10 +9743,18 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 	if(exclude!=(char*)NULL){
 		strcpy(d_ptr->nr_char, exclude);
 	}
+#if 0
 	C_MAKE(d_ptr->level, maxdep, struct dun_level);
 	for(i=0;i<maxdep;i++){
 		d_ptr->level[i].ondepth=0;
 	}
+#else	// 0
+	C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
+	for(i = 0; i < d_ptr->maxdepth ; i++)
+	{
+		d_ptr->level[i].ondepth = 0;
+	}
+#endif	// 0
 }
 
 /*
@@ -9403,15 +9826,17 @@ void generate_cave(struct worldpos *wpos)
 			panel_col = max_panel_cols;*/
 
 			/* Hack -- add Bree dungeons manually (this will be changed) */
+#if 0
 			if(wpos->wx==cfg.town_x && wpos->wy==cfg.town_y && !wpos->wz){
 				/* Bree dungeon */
-				adddungeon(wpos, cfg.dun_base, cfg.dun_max, 0, DF2_RANDOM, NULL, NULL, FALSE);
+				adddungeon(wpos, cfg.dun_base, cfg.dun_max, 0, DF2_RANDOM, NULL, NULL, FALSE, 0);
 
 				/* Newbie-training tower */
 				adddungeon(wpos, 1, 10, DF1_SAND_VEIN,
-						DF2_RANDOM | DF2_NO_DEATH, NULL, NULL, TRUE);
+						DF2_RANDOM | DF2_NO_DEATH, NULL, NULL, TRUE, 0);
 			}
 			else if (!wpos->wz)
+#endif	// 0
 			{
 				int retval = -1, type;
 				for(i=0;i<numtowns;i++)
@@ -9428,7 +9853,16 @@ void generate_cave(struct worldpos *wpos)
 					return;	/* This should never.. */
 				}
 				type = town[retval].type;
-				adddungeon(wpos, town_profile[type].dun_base, town_profile[type].dun_max, 0, DF2_RANDOM, NULL, NULL, town_profile[type].tower);
+#if 0
+				adddungeon(wpos, town_profile[type].dun_base, town_profile[type].dun_max, 0, DF2_RANDOM, NULL, NULL, town_profile[type].tower, 0);
+#else	// 0
+				for (i = 0; i < 2; i++)
+				{
+					if (town_profile[type].dungeons[i])
+						adddungeon(wpos, 0, 0, 0, 0, NULL, NULL, FALSE,
+								town_profile[type].dungeons[i]);
+				}
+#endif	// 0
 			}
 			/* Make a town */
 			town_gen(wpos);

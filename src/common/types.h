@@ -1242,21 +1242,31 @@ struct dun_level
 /* dungeon_type structure
  *
  * Filter for races is not strict. It shall alter the probability.
- *
+ * (consider using rule_type	- Jir -)
  */
 typedef struct dungeon_type dungeon_type;
 struct dungeon_type
 {
 	u16b id;		/* dungeon id */
+	u16b type;		/* dungeon type (of d_info) */
 	u16b baselevel;		/* base level (1 - 50ft etc). */
 	u32b flags1;		/* dungeon flags */
 	u32b flags2;		/* DF2 flags */
 	byte maxdepth;		/* max height/depth */
+#if 0
+	rule_type rules[5];             /* Monster generation rules */
+#else	// 0
 	char r_char[10];	/* races allowed */
 	char nr_char[10];	/* races prevented */
+#endif	// 0
 	struct dun_level *level;	/* array of dungeon levels */
 };
 
+/*
+ * TODO:
+ * - allow towns in the dungeons/towers
+ * - allow towns to have dungeon flags(DFn_*)
+ */
 struct town_type
 {
 	u16b x,y;		/* town wilderness location */
@@ -2434,6 +2444,7 @@ struct town_extra
 	byte feat2;
 	byte ratio;		/* percent of feat1 */
 	byte wild_req;	/* On what kind of wilderness this town should be built */
+	u16b dungeons[2];	/* Type of dungeon(s) the town contains */
 	u16b dun_base;
 	u16b dun_max;
 	bool tower;		/* TODO: change it, so that a town can have both tower and dungeon */

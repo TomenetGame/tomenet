@@ -1677,6 +1677,8 @@ that keeps many algorithms happy.
 #define SV_MACE_OF_DISRUPTION           20	/* 5d8  */
 #define SV_GROND                        50	/* 3d4  */
 
+#define SV_SCOURGE						21	/* 4d2  */
+
 /* The "sval" values for TV_AXE */
 #define SV_HATCHET                       1	/* 1d5 */
 #define SV_CLEAVER                       2      /* 2d4 */
@@ -2120,6 +2122,7 @@ that keeps many algorithms happy.
 #define SV_SCROLL_ID_ALL			60
 #define SV_SCROLL_VERMIN_CONTROL	61
 #define SV_SCROLL_CANCELLATION		62
+#define SV_SCROLL_WILDERNESS_MAP	63
 
 
 /* The "sval" codes for TV_POTION */
@@ -2360,6 +2363,8 @@ that keeps many algorithms happy.
 #define PROJECT_ABSORB_MANA 0x00008000   /* The spell increase in power as it absord grid's mana. */
 #endif	/* 0 */
 #define PROJECT_STAY       0x00010000
+
+#define PROJECT_SELF		0x80000000	/* Affect the projector too */
 
 
 /*
@@ -4043,7 +4048,7 @@ that keeps many algorithms happy.
 /*
  * replacement of in_bound2 -
  * Determines if a map location is on or inside the outer walls,
- * using current hgt/wid	- Jir -)
+ * using current hgt/wid	- Jir -
  */
 #define in_bounds3(WPOS,l_ptr,Y,X) \
 	(istown(WPOS) ? in_bounds2(WPOS,Y,X) : in_bounds4(l_ptr,Y,X))
@@ -4052,13 +4057,19 @@ that keeps many algorithms happy.
            : (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID))))
 #endif	/* 0 */
 
-/* replacement of in_bound. */
+/* replacement of in_bounds. */
 #define in_bounds4(l_ptr,Y,X) \
    (l_ptr ? \
 	(((Y) > 0) && ((X) > 0) && ((Y) < (l_ptr)->hgt - 1) && ((X) < (l_ptr)->wid - 1)) \
 	: in_bounds(Y,X))
 
 /*   (((Y) > 0) && ((X) > 0) && ((Y) < (l_ptr)->hgt) && ((X) < (l_ptr)->wid))  */
+
+
+/* wilderness version of in_bounds */
+#define in_bounds_wild(Y,X) \
+   (((Y) >= 0) && ((X) >= 0) && ((Y) < MAX_WILD_Y) && ((X) < MAX_WILD_X))
+
 
 /*
  * Determines if a map location is currently "on screen" -RAK-
@@ -4942,6 +4953,8 @@ extern int PlayerUID;
 #define STORE_LIKED     1
 #define STORE_NORMAL    2
 
+#define STORE_MAX_ACTION	6
+
 /*
  * Store flags
  */
@@ -5032,6 +5045,7 @@ extern int PlayerUID;
 #define BACT_PAY_BACK_LOAN          53
 #define BACT_DEPOSIT				54
 #define BACT_WITHDRAW				55
+#define BACT_EXTEND_HOUSE			56
 // If one adds new BACT_ do NOT forget to increase max_bact in variables.c
 /* MAX_BA_INFO for TomeNET	- Jir - */
 

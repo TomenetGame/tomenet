@@ -964,10 +964,10 @@ static cptr d_info_flags2[] =
 	"HELL",
 	"NOMAP",	/* will be annexed to DF1_FORGET */
 	"NO_MAGIC_MAP",
-	"NO_DEATH",
 	"XXX1",
 	"XXX1",
 	"XXX1",
+	"NO_DEATH",	/* 0x00000100L */
 	"XXX1",
 	"XXX1",
 	"XXX1",
@@ -6004,6 +6004,14 @@ errr init_d_info_txt(FILE *fp, char *buf)
 
 	/* No version yet */
 	if (!okay) return (2);
+
+	/* Hack -- acquire total number */
+	max_d_idx = ++error_idx;
+
+#if DEBUG_LEVEL > 2
+	/* Debug -- print total no. */
+	s_printf("d_info total: %d\n", max_d_idx);
+#endif	// DEBUG_LEVEL
 
 	/* Success */
 	return (0);

@@ -44,7 +44,7 @@
 
 # Version stamp (required)
 
-V:3.4.0
+V:4.0.0
 
 
 ##### Something special #####
@@ -5956,6 +5956,22 @@ I:65:34:0
 W:20:0:10:2000
 A:20/6
 P:0:1d1:0:0:0
+
+N:914:Wilderness Mapping
+G:?:d
+I:70:63:0
+W:15:0:5:500
+A:15/2:30/1
+
+# from RFEs
+N:915:& Scourge~
+G:\:W
+I:21:21:0
+W:30:0:70:400
+A:30/2
+P:0:4d2:0:0:0
+F:SHOW_MODS
+
 
 # Always ego!
 

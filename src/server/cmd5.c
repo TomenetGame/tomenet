@@ -515,7 +515,7 @@ static void do_mimic_power(int Ind, int power)
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	int rlev = r_ptr->level;
-	int j, k, chance;
+	int j, chance;
 	magic_type *s_ptr = &innate_powers[power];
 
 //	j = power;
@@ -1371,11 +1371,11 @@ void do_mimic_power_aux(int Ind, int dir)
 	p_ptr->window |= (PW_PLAYER);
 }
 
-void do_mimic_change(int Ind, int r_idx)
+void do_mimic_change(int Ind, int r_idx, bool force)
 {
 	player_type *p_ptr = Players[Ind];
 
-	if (r_info[r_idx].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))
+	if (!force && r_info[r_idx].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))
 	{
 		msg_print(Ind, "You do need a higher mimicry skill to use that shape.");
 		return;
@@ -1446,7 +1446,7 @@ void do_cmd_mimic(int Ind, int spell)
 			/* Ok we found */
 			break;
 		}
-		do_mimic_change(Ind, j);
+		do_mimic_change(Ind, j, FALSE);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 	}
 	else {

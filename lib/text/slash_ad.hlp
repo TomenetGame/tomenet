@@ -182,7 +182,7 @@ They are accessible from both slash-commands and '&' admin commands.
 
 To know the 'Ind' value of a player, use '@' key.
 If you manipulate values directly, please add '1' to Ind (b/c of definition
-difference between LUA and C).
+difference between LUA and C). (or use players() instead)
 
 (examples of direct manipulation)
 / Players[2].au = 999999
@@ -190,16 +190,22 @@ difference between LUA and C).
 / cfg.running_speed = 8
 
 
+(player.lua)
+/ players(ind)   refers to the Players[ind]. [eg. '/ players(1).au = 999999']
+
+
 (player-info.lua)
 
-/ p_in(Ind)    display player info.
+/ p_in(Ind)      display player info.
 / o_in(Ind, slot)    display object info in inventory.
 
-/ trap_k()     set all the traps as 'known'.
+/ trap_k()       set all the traps as 'known'.
 / id_all(state)  set objects' "known" states for you.
 / id_all2()      trap_k() + id_all(1)
 / res_uni(state) set uniques' "killed" No. for you.
-/ learn()        set all the spells as 'learnt'. (not working fully)
+/ learn()        set all the skills to 50 (cept 'Antimagic')
+/ skill(skill,val)   set the skill value [eg. '/ skill(SKILL_PRAY, 3000)']
+/ antimagic(val) set 'Antimagic' skill to the specified value.
 
 / adj_xp(Ind, amount)    adjust exp of specified player.(refresh needed)
 / healup(Ind)    cures the player of all troubles.

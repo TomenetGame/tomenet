@@ -60,11 +60,13 @@
 
 
 
-/* Quick hack to make use of firestones */
+/* Quick hack to make use of firestones		- Jir -
+ * This function should be obsoleted when ToME power.c is backported.
+ */
 /* Basically not cumulative */
 void do_tank(int Ind, int power)
 {
-	player_type *p_ptr = Players[Ind];
+	// player_type *p_ptr = Players[Ind];
 	int i = randint(9);
 	switch (i)
 	{
@@ -1325,7 +1327,6 @@ void do_cmd_drink_fountain(int Ind)
 
 	bool ident;
 	int tval, sval, pval = 0, k_idx;
-	int i;
 
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
@@ -1440,12 +1441,11 @@ void do_cmd_fill_bottle(int Ind)
 	cave_type *c_ptr;
 	c_special *cs_ptr;
 
-	bool ident;
-	int tval, sval, pval = 0, k_idx, item;
-	int i;
+	//bool ident;
+	int tval, sval, k_idx, item;
 
 	object_type *q_ptr, forge;
-	cptr q, s;
+	//cptr q, s;
 
 
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
@@ -1950,9 +1950,9 @@ void do_lottery(int Ind, object_type *o_ptr)
 void do_cmd_read_scroll(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
-	cave_type * c_ptr;
+	//cave_type * c_ptr;
 
-	int		k, ident, lev, x,y;
+	int		k, ident, lev;	// , x,y;
 	bool	used_up, keep = FALSE;
 
 	object_type	*o_ptr;
@@ -2525,6 +2525,20 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				ident = do_cancellation(Ind, 0);
 				if (ident) msg_print(Ind, "You feel your backpack less worthy.");
+				break;
+			}
+
+			case SV_SCROLL_WILDERNESS_MAP:
+			{
+				if (p_ptr->wpos.wz)
+				{
+					msg_print(Ind, "You have a strange feeling of loss.");
+					break;
+				}
+				ident = reveal_wilderness_around_player(Ind,
+						p_ptr->wpos.wy, p_ptr->wpos.wx, 0, 3);
+				//if (ident) wild_display_map(Ind);
+				if (ident) msg_print(Ind, "You seem to get a feel for the place.");
 				break;
 			}
 
@@ -4647,79 +4661,79 @@ void do_cmd_activate(int Ind, int item)
 			case SV_DRAGON_BLACK:
 			{
 				//			do_mimic_change(Ind, 429);
-				do_mimic_change(Ind, race_index("Ancient black dragon"));
+				do_mimic_change(Ind, race_index("Ancient black dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_BLUE:
 			{
 				//		      do_mimic_change(Ind, 411);
-				do_mimic_change(Ind, race_index("Ancient blue dragon"));
+				do_mimic_change(Ind, race_index("Ancient blue dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_WHITE:
 			{
 				//			do_mimic_change(Ind, 424);
-				do_mimic_change(Ind, race_index("Ancient white dragon"));
+				do_mimic_change(Ind, race_index("Ancient white dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_RED:
 			{
 				//			do_mimic_change(Ind, 444);
-				do_mimic_change(Ind, race_index("Ancient red dragon"));
+				do_mimic_change(Ind, race_index("Ancient red dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_GREEN:
 			{
 				//			do_mimic_change(Ind, 425);
-				do_mimic_change(Ind, race_index("Ancient green dragon"));
+				do_mimic_change(Ind, race_index("Ancient green dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_MULTIHUED:
 			{
 				//			do_mimic_change(Ind, 462);
-				do_mimic_change(Ind, race_index("Ancient multi-hued dragon"));
+				do_mimic_change(Ind, race_index("Ancient multi-hued dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_SHINING:
 			{
 				//			do_mimic_change(Ind, 463);
-				do_mimic_change(Ind, race_index("Ethereal dragon"));
+				do_mimic_change(Ind, race_index("Ethereal dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_LAW:
 			{
 				//			do_mimic_change(Ind, 520);
-				do_mimic_change(Ind, race_index("Great Wyrm of Law"));
+				do_mimic_change(Ind, race_index("Great Wyrm of Law"), TRUE);
 				break;
 			}
 			case SV_DRAGON_BRONZE:
 			{
 				//			do_mimic_change(Ind, 412);
-				do_mimic_change(Ind, race_index("Ancient bronze dragon"));
+				do_mimic_change(Ind, race_index("Ancient bronze dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_GOLD:
 			{
 				//			do_mimic_change(Ind, 445);
-				do_mimic_change(Ind, race_index("Ancient gold dragon"));
+				do_mimic_change(Ind, race_index("Ancient gold dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_CHAOS:
 			{
 				//			do_mimic_change(Ind, 519);
-				do_mimic_change(Ind, race_index("Great Wyrm of Chaos"));
+				do_mimic_change(Ind, race_index("Great Wyrm of Chaos"), TRUE);
 				break;
 			}
 			case SV_DRAGON_BALANCE:
 			{
 				//			do_mimic_change(Ind, 521);
-				do_mimic_change(Ind, race_index("Great Wyrm of Balance"));
+				do_mimic_change(Ind, race_index("Great Wyrm of Balance"), TRUE);
 				break;
 			}
 			case SV_DRAGON_POWER:
 			{
 				//			do_mimic_change(Ind, 549);
-				do_mimic_change(Ind, race_index("Great Wyrm of Power"));
+				do_mimic_change(Ind, race_index("Great Wyrm of Power"), TRUE);
 				break;
 			}
 		}
@@ -6441,7 +6455,7 @@ void do_cmd_activate(int Ind, int item)
 				else
 				{
 					/* Need skill; no need of killing count */
-					do_mimic_change(Ind, o_ptr->pval);
+					do_mimic_change(Ind, o_ptr->pval, FALSE);
 #if 0
 					monster_race *r_ptr = &r_info[o_ptr->pval];
 
@@ -6874,7 +6888,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 bool unmagic(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	bool ident;
+	bool ident = FALSE;
 	if (
 			set_adrenaline(Ind, 0) |
 			set_biofeedback(Ind, 0) |
@@ -7034,12 +7048,12 @@ void do_cmd_fletchery(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int ext=0, tlev = 0;
-	char ch;
+	//char ch;
 
 	object_type	forge;
 	object_type     *q_ptr;
 
-	char com[80];
+	//char com[80];
 
 	bool done = FALSE;
 
