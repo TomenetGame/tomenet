@@ -2840,6 +2840,30 @@ static void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377rMonsters on %s are cleared.", wpos_format(Ind, &wp));
 				return;
 			}
+			else if (prefix(message, "/game") && tk>0){
+				if(!strcmp(token[1], "rugby")){
+					object_type	forge;
+					object_type	*o_ptr = &forge;
+
+					invcopy(o_ptr, lookup_kind(1, 9));
+					o_ptr->number = 1;
+					o_ptr->name1=0;
+					o_ptr->name2=0;
+					o_ptr->name3=0;
+					o_ptr->pval=0;
+					o_ptr->level = 1;
+					(void)inven_carry(Ind, o_ptr);
+
+					teamscore[0]=0;
+					teamscore[1]=0;
+					gametype=EEGAME_RUGBY;
+					msg_broadcast(0, "A new game of rugby has started!");
+					for(k=1; k<=NumPlayers; k++){
+						Players[k]->team=0;
+					}
+				}
+				return;
+			}
 			else if (prefix(message, "/unstatic-level") ||
 					prefix(message, "/unst"))
 			{
