@@ -384,7 +384,7 @@ void client_init(char *argv1, bool skip)
 
         /* Capitalize the name */
 	nick[0] = toupper(nick[0]);
-        printf("=> %s :: %d\n",server_name, cfg_game_port);
+
 	// Create the net socket and make the TCP connection
 	if ((Socket = CreateClientSocket(server_name, cfg_game_port)) == -1)
 	{
