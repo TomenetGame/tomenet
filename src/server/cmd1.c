@@ -2005,7 +2005,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < q_ptr->chp))
 				{
 					msg_format(Ind, "%^s moans in agony!", q_ptr->name);
-					stun_effect = 7 + randint(13);
+					stun_effect = 3 + randint(3);
 					resist_stun /= 3;
 				}
 

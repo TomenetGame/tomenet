@@ -4381,7 +4381,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 				break;
 			case SV_POTION_STAR_HEALING:
 				typ = GF_OLD_HEAL;
-				dam = 1000;
+				dam = 800;
 				break;
 			case SV_POTION_LIFE:
 				{

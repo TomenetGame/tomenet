@@ -188,7 +188,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 		case SV_POTION_STAR_HEALING:
 		case SV_POTION_LIFE:
 			dt = GF_OLD_HEAL;
-			dam = damroll(50,20);//50x50 was more in average than STAR_HEALING heals
+			dam = damroll(40,20);//50x50 was more in average than STAR_HEALING heals
 			radius = 1;
 			ident = TRUE;
 			break;

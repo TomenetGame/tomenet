@@ -939,7 +939,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_STAR_HEALING:
 				{
-					if (hp_player(Ind, 1000)) ident = TRUE;
+					if (hp_player(Ind, 800)) ident = TRUE;
 					if (set_blind(Ind, 0)) ident = TRUE;
 					if (set_confused(Ind, 0)) ident = TRUE;
 					if (set_poisoned(Ind, 0)) ident = TRUE;
