@@ -229,6 +229,7 @@ void do_cmd_eat_food(int Ind, int item)
 			{
 				if (!p_ptr->resist_chaos)
 				{
+					take_sanity_hit(Ind, 2, "drugs");
 					if (set_image(Ind, p_ptr->image + rand_int(250) + 250))
 					{
 						ident = TRUE;
@@ -425,8 +426,10 @@ void do_cmd_eat_food(int Ind, int item)
 					if (magik(o_ptr->name2? 50 : 20))
 						set_stun(Ind, p_ptr->stun + 10 + randint(10));
 
-					if (magik(o_ptr->name2? 50 : 10))
+					if (magik(o_ptr->name2? 50 : 10)){
 						set_image(Ind, p_ptr->image + 10 + randint(10));
+						take_sanity_hit(Ind, 1, "ale");
+					}
 					if (magik(o_ptr->name2? 10 : 20))
 						set_paralyzed(Ind, p_ptr->paralyzed + 10 + randint(10));
 					if (magik(o_ptr->name2? 50 : 10))
