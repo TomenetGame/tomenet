@@ -4347,6 +4347,7 @@ extern int PlayerUID;
 #define SOUND_KILL	5
 #define SOUND_LEVEL	6
 #define SOUND_DEATH	7
+#define SOUND_WARN	8
 
 /*
  * Mega-Hack -- maximum known sounds

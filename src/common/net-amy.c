@@ -1881,22 +1881,7 @@ void DgramClose(int fd){
  * Originally coded by Bert Gijsbers
  */
 void GetLocalHostName(char *name, unsigned size){
-    struct hostent	*he, *xpilot_he, tmp;
-    int			xpilot_len;
-    char		*alias, *dot;
-    char		xpilot_hostname[MAXHOSTNAMELEN];
-    static const char	xpilot[] = "xpilot";
-
-    xpilot_len = strlen(xpilot);
-
-    /* Make a wild guess that a "xpilot" hostname or alias is in this domain */
-    if ((xpilot_he = gethostbyname(xpilot)) != NULL) {
-	if (strcmp(xpilot_he->h_name, "prince.mc.bio.uva.nl")) {
-	    strcpy(xpilot_hostname, xpilot_he->h_name);	/* copy data to buffer */
-	    tmp = *xpilot_he;
-	    xpilot_he = &tmp;
-	}
-    }
+    struct hostent	*he;
 
     if((GetVar("mang_host",name,size,0L))!=-1){
       return;
@@ -1942,45 +1927,6 @@ void GetLocalHostName(char *name, unsigned size){
 	    }
 	    return;
 	}
-    }
-
-    /*
-     * If a "xpilot" host is found compare if it's this one.
-     * and if so, make the local name as "xpilot.*"
-     */
-    if (xpilot_he != NULL) {               /* host xpilot was found */
-	if (strcmp(he->h_name, xpilot_hostname) == 0) {
-	   /*
-	    * Identical official names. Can they be different hosts after this?
-	    * Find out the name which starts with "xpilot" and use it:
-	    */
-	    xpilot_he = gethostbyname(xpilot); /* read again the aliases info */
-	    if (xpilot_he == NULL)       /* shouldn't happen */
-		return;
-
-	    if (strncmp(xpilot, xpilot_he->h_name, xpilot_len) != 0) {
-		/*
-		 * the official hostname doesn't begin "xpilot"
-		 * so we'll find the alias:
-		 */
-		int i;
-		for (i = 0; xpilot_he->h_aliases[i] != NULL; i++) {
-		    alias = xpilot_he->h_aliases[i];
-		    if (!strncmp(xpilot, alias, xpilot_len)) {
-			strcpy(xpilot_hostname, alias);
-			if (!strchr(alias, '.') && (dot = strchr(name, '.'))) {
-			    strcat(xpilot_hostname + strlen(xpilot_hostname), dot);
-			}
-			strncpy(name, xpilot_hostname, size);
-			return;
-		    }
-		}
-	    } else {
-		strncpy(name, xpilot_he->h_name, size);
-		return;
-	    }
-	}
-	/* NOT REATCHED */
     }
 } /* GetLocalHostName */
 

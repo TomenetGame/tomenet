@@ -609,6 +609,7 @@ struct sfunc{		/* structure containing calls for specials */
 	void (*save)(void *ptr);		/* save function */
 	void (*see)(void *ptr, int Ind);	/* sets player view */
 	void (*activate)(void *ptr, int Ind);	/* walk on/bump */
+	//void (*kill)(void *ptr);		/* removal */
 };
 #endif
 
