@@ -2288,6 +2288,8 @@ static void process_player_end(int Ind)
 
 	/* Update stuff (if needed) */
 	if (p_ptr->update) update_stuff(Ind);
+
+	if(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) p_ptr->tim_wraith=0;
 	
 	/* Redraw stuff (if needed) */
 	if (p_ptr->redraw) redraw_stuff(Ind);

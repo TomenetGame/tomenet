@@ -1299,7 +1299,7 @@ void display_player(int hist)
 		put_str("Shots/Round:", 17, 55);
 		put_str(format("%d", p_ptr->num_fire), 17, 69);
 
-		put_str("Shots/Round:", 18, 55);
+		put_str("Spells/Round:", 18, 55);
 		put_str(format("%d", p_ptr->num_spell), 18, 69);
 
 		put_str("Infra-Vision:", 19, 55);
@@ -1370,7 +1370,12 @@ void display_player(int hist)
         {
                 prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_RED);
         }
-	prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_RED);
+	if((100*p_ptr->csane)/p_ptr->msane>99)
+		prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_L_GREEN);
+	else if((100*p_ptr->csane)/p_ptr->msane>30)
+		prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_YELLOW);
+	else
+		prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_RED);
 }
 
 /*
