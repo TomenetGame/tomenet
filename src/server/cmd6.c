@@ -1906,19 +1906,19 @@ void do_cmd_read_scroll(int Ind, int item)
 
 		case SV_SCROLL_LOTTERY:
 		{
-			int i = k_info[o_ptr->k_idx].cost, j = rand_int(100);
+			int i = k_info[o_ptr->k_idx].cost, j = rand_int(1000);
 
 			i -= i * o_ptr->discount / 100;
 
-			j*=100;
 
-			if (!j)
+			if (j<900)
 			{
 				msg_print(Ind, "\377WYou draw a blank :-P");
 			}
 			else
 			{
-				if (p_ptr->au < i * 10000 / 5)
+				j=(j-900)*100;
+				if (p_ptr->au < i * j / 5)
 				{
 					char temp[80];
 					sprintf(temp, "\377B%s seems to hit the big time!", p_ptr->name);

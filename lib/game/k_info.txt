@@ -6374,81 +6374,84 @@ W:10:0:30:25
 A:10/3
 P:0:1d1:0:0:0
 
-N:850:& Massive~ Piece of Wood
+# secondary probabilities for pieces
+N:850:& Massive Piece~ of Wood
 G:*:y
 I:52:0:0
 W:10:0:2500:500
-A:10/40
+A:10/40:20/10
 P:0:1d1:0:0:0
 
-N:851:& Massive~ Piece of Copper
+N:851:& Massive Piece~ of Copper
 G:*:y
 I:52:1:0
 W:30:0:3000:500
-A:30/50
+A:30/50:40/10
 P:0:1d1:0:0:0
 
-N:852:& Massive~ Piece of Iron
+N:852:& Massive Piece~ of Iron
 G:*:y
 I:52:2:0
 W:50:0:3500:500
 A:50/60
 P:0:1d1:0:0:0
 
-N:853:& Massive~ Piece of Aluminium
+N:853:& Massive Piece~ of Aluminium
 G:*:y
 I:52:3:0
 W:70:0:3500:500
 A:70/70
 P:0:1d1:0:0:0
 
-N:854:& Massive~ Piece of Silver
+N:854:& Massive Piece~ of Silver
 G:*:y
 I:52:4:0
 W:80:0:4000:500
 A:80/80
 P:0:1d1:0:0:0
 
-N:855:& Massive~ Piece of Gold
+N:855:& Massive Piece~ of Gold
 G:*:y
 I:52:5:0
 W:90:0:4500:500
 A:90/90
 P:0:1d1:0:0:0
 
-N:856:& Massive~ Piece of Mithril
+N:856:& Massive Piece~ of Mithril
 G:*:y
 I:52:6:0
 W:110:0:3500:500
 A:110/110
 P:0:1d1:0:0:0
 
-N:857:& Massive~ Piece of Adamantite
+N:857:& Massive Piece~ of Adamantite
 G:*:y
 I:52:7:0
 W:120:0:6000:500
 A:120/200
 P:0:1d1:0:0:0
 
+# added secondary, easier probabilites for deeper levels.
+
 N:858:& Golem Arm~
 G:*:v
 I:52:8:0
 W:10:0:400:500
-A:10/30
+A:10/30:20/10
 P:0:1d1:0:0:0
 
 N:859:& Golem Leg~
 G:*:v
 I:52:9:0
 W:10:0:400:500
-A:10/30
+A:10/30:20/10
 P:0:1d1:0:0:0
 
 N:860:& Golem Scroll~ of Attack
 G:*:s
 I:52:200:0
 W:10:0:10:500
-A:10/30
+A:10/30:20/10
 P:0:1d1:0:0:0
 F:ACTIVATE
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
@@ -6457,7 +6460,7 @@ N:861:& Golem Scroll~ of Following
 G:*:s
 I:52:201:0
 W:10:0:10:500
-A:20/40
+A:20/40:20/20
 P:0:1d1:0:0:0
 F:ACTIVATE
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
@@ -6466,7 +6469,7 @@ N:862:& Golem Scroll~ of Guard
 G:*:s
 I:52:202:0
 W:15:0:10:500
-A:15/30
+A:15/30:25/10
 P:0:1d1:0:0:0
 F:ACTIVATE
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
@@ -6476,7 +6479,7 @@ G:?:d
 #I:70:23:0
 I:70:55:0
 W:10:0:5:1250
-A:10/20
+A:10/20:20/10
 
 ##### Sorcery Books #####
 

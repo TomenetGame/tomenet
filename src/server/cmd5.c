@@ -6203,8 +6203,21 @@ void do_cmd_psi(int Ind, int book, int spell)
 		break;
 	      }
 	      
-	  //	  "Hold",
-	  //	  "Dominate",
+	      /* Hold */
+	    case 4:
+		get_aim_dir(Ind);
+		p_ptr2->current_mind = j;
+		break;
+	      /* Dominate */
+	    case 5:
+		if(p_ptr2->esp_link){
+			msg_print(Ind, "You cannot dominate a monster while fused.");
+			break;
+		}
+		get_aim_dir(Ind);
+		p_ptr2->current_mind = j;
+
+		break;
 	  
 	      /* Psychoportation */
 	    case 8: /* Blink */
@@ -6565,6 +6578,12 @@ void do_cmd_psi_aux(int Ind, int dir)
 			msg_format_near(Ind, "\377R%s hurls a mind thrust.", p_ptr2->name);
 			fire_bolt(Ind, GF_PSI, dir,
 						damroll(3 + ((plev - 1) / 5), 4 + (plev / 5)));
+			break;
+		case 4:
+			msg_format(Ind, "You attempt to use hold. {y({gcoming soon{y)");
+			break;
+		case 5:
+			msg_format(Ind, "You attempt to use dominate. {y({gcoming soon{y)");
 			break;
 		case 14:
 			msg_format_near(Ind, "%s breaks the space/time continuum.", p_ptr2->name);
