@@ -659,6 +659,10 @@ Change list for PernMangband
   in the future. ;)
 - Players may not enter high level dungeons quite so easily.
 
+15/01/2002 (Evileye)
+- Fixed temple priest for dungeon master.
+- Fixed typo in "amulet shatters".
+
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
