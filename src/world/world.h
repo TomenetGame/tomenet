@@ -2,9 +2,12 @@
  *
  */
 
+#define MAX_SERVERS	30	/* Max servers we will deal */
+
 #define WP_CHAT		1	/* chat message */
 #define WP_NPLAYER	2	/* player enters */
 #define WP_QPLAYER	3	/* player leaves */
+#define WP_DEATH	4	/* player death */
 #define WP_LOCK		5	/* obtain a lock (timed) */
 #define WP_UNLOCK	6	/* free the lock */
 #define WP_MESSAGE	7	/* all critical server messages */
@@ -18,11 +21,23 @@
 
 #define CL_QUIT		1
 
+struct serverinfo{
+	char name[20];	/* server world name */
+	char pass[20];	/* server plaintext password */
+};
+
+struct secure{
+	short secure :1,	/* kick off ALL unauthed clients */
+		chat :1,	/* Permit chat if unauthed (and not secure) */
+		play :1,	/* Players online tracing */
+		msgs :1;	/* Permit server messages */
+};
+
 struct client{
 	struct client *next;
 	int fd;
 	unsigned short flags;
-	unsigned short bpos;
+	short authed;		/* Server ID (>0), authing (0), or failed authentication (-1) */
 	unsigned short blen;
 	char buf[1024];
 };
@@ -32,13 +47,25 @@ struct client{
 
 struct player{
 	unsigned long id;	/* UNIQUE player id */
-	char name[30];
+	short server;		/* server info 0 means unknown */
+	char name[30];		/* temp. player name */
 	unsigned char silent;	/* Left due to death for instance */
+};
+
+struct death{
+	unsigned long id;
+	unsigned short dtype;	/* death type */
+	char name[30];		/* temp. player name */
+	char method[40];	/* death method */
 };
 
 struct chat{
 	unsigned long id;
-	char ctxt[80];
+	char ctxt[120];
+};
+
+struct auth{
+	char pass[30];
 };
 
 struct smsg{
@@ -52,6 +79,7 @@ struct wpacket{
 		struct chat chat;
 		struct smsg smsg;
 		struct player play;
+		struct auth auth;
 		int lockval;
 	} d;
 };

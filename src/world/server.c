@@ -1,10 +1,14 @@
 /* TomeNET world server test code copyright 2002 Richard Smith. */
 
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
 #include <errno.h>
+
+#include "world.h"
+#include "externs.h"
 
 #define PORT 18360
 #define ADDR INADDR_ANY
@@ -13,6 +17,8 @@ struct sockaddr_in sa;
 
 int main(int argc, char *argv[]){
 	int ser;
+	initrand();
+	loadservers();
 	ser=createsocket(PORT, ADDR);
 	if(ser!=-1){
 		world(ser);
@@ -44,4 +50,18 @@ int createsocket(int port, unsigned long ip){
 	}
 	close(ss);
 	return(-1);
+}
+
+void loadservers(){
+	FILE *fp;
+	char buf[80];
+	int i=0;
+	fp=fopen("servers", "r");
+	if(fp==(FILE*)NULL) return;
+	do{
+		fscanf(fp, "%s%s\n", &slist[i].name, &slist[i].pass);
+		i++;
+	} while(!feof(fp) && i<MAX_SERVERS);
+	snum=i;
+	fclose(fp);
 }
