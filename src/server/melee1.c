@@ -19,7 +19,7 @@
  * If defined, monsters stop to stun player and Mystics will stop using
  * their martial-arts..
  */
-#define SUPPRESS_MONSTER_STUN // HERESY !
+//#define SUPPRESS_MONSTER_STUN // HERESY !
 
 
 /*
