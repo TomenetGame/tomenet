@@ -5392,7 +5392,7 @@ bool poly_build(int Ind, char *args)
 		p_ptr->update|=PU_VIEW;
 	}
 	msg_print(Ind,"Your house building attempt has failed");
-	erase_cs(zcave[curr->sy][curr->sx], curr->cs);
+	cs_erase(&zcave[curr->sy][curr->sx], curr->cs);
 #else
 	if(curr->depth==p_ptr->dun_depth && !(cave[curr->depth][curr->dy][curr->dx].info&CAVE_ICKY && cave[curr->depth][curr->dy][curr->dx].feat==FEAT_WATER)){
 		cave[p_ptr->dun_depth][curr->dy][curr->dx].feat=FEAT_WALL_EXTRA;

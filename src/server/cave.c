@@ -1011,6 +1011,15 @@ struct c_special *GetCS(cave_type *c_ptr, unsigned char type){
 	return(NULL);				/* returns ** to the structs. always dealloc */
 }
 
+struct c_special *AddCS(cave_type *c_ptr){
+	struct c_special *cs_ptr;
+	MAKE(cs_ptr, struct c_special);
+	if(!cs_ptr) return(NULL);
+	cs_ptr->next=c_ptr->special;
+	c_ptr->special=cs_ptr;
+	return(cs_ptr);
+}
+
 /*
  * Extract the attr/char to display at the given (legal) map location
  *

@@ -1496,10 +1496,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Trap of New Trap */
 		case TRAP_OF_NEW:
 		{
+			struct c_special *cs_ptr;
+			cs_ptr=GetCS(c_ptr, CS_TRAPS);
 			/* if we're on a floor or on a door, place a new trap */
 			if ((item == -1) || (item == -2))
 			{
-				cs_erase(c_ptr);
+				cs_erase(c_ptr, cs_ptr);
 				place_trap(wpos, y , x, 0);
 				if (player_has_los_bold(Ind, y, x))
 				{
@@ -1522,12 +1524,14 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Trap of Acquirement */
 		case TRAP_OF_ACQUIREMENT:
 		{
+			struct c_special *cs_ptr;
 			/* Get a nice thing */
 			msg_print(Ind, "You notice something falling off the trap.");
 			acquirement(wpos, y, x, 1, TRUE);
 			//			 acquirement(wpos, y, x, 1, TRUE, FALSE);	// last is 'known' flag
 
-			cs_erase(c_ptr);
+			cs_ptr=GetCS(c_ptr, CS_TRAPS);
+			cs_erase(c_ptr, cs_ptr);
 			/* if we're on a floor or on a door, place a new trap */
 			if ((item == -1) || (item == -2))
 			{
@@ -2833,7 +2837,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	/* some traps vanish */
 	if (magik(vanish))
 	{
-		if (item < 0) cs_erase(c_ptr);
+		struct c_special *cs_ptr;
+		cs_ptr=GetCS(c_ptr, CS_TRAPS);
+		if (item < 0) cs_erase(c_ptr, cs_ptr);
 		else i_ptr->pval = 0;
 		ident = FALSE;
 	}
@@ -3246,6 +3252,8 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 
 	cave_type *c_ptr;
 	cave_type **zcave;
+	struct c_special *cs_ptr;
+
 	zcave=getcave(&p_ptr->wpos);
 
 	c_ptr = &zcave[py][px];
@@ -3278,7 +3286,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 
 	/* Only set traps on clean floor grids */
 	if (!cave_clean_bold(zcave, py, px) ||
-			c_ptr->special.type)
+			c_ptr->special)
 	{
 		msg_print(Ind, "You cannot set a trap on this.");
 		return;
@@ -3418,8 +3426,9 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	
 	/* Drop it here */
 //	cave[py][px].special = floor_carry(py, px, i_ptr);
-	c_ptr->special.type = CS_MON_TRAP;
-//	c_ptr->special.sc.montrap.trap_load = pop_montrap(i_ptr);
+	cs_ptr=AddCS(c_ptr);
+	cs_ptr->type = CS_MON_TRAP;
+//	cs_ptr->sc.montrap.trap_load = pop_montrap(i_ptr);
 	i = pop_montrap(Ind, i_ptr, 0);
 
 	/* Obtain local object for trap trigger kit */
@@ -3429,11 +3438,11 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	i_ptr->number = 1;
 
 	/* Set difficulty */
-	c_ptr->special.sc.montrap.difficulty = get_skill(p_ptr, SKILL_TRAPPING);
+	cs_ptr->sc.montrap.difficulty = get_skill(p_ptr, SKILL_TRAPPING);
 
 	/* Drop it here */
 //	cave[py][px].special2 = floor_carry(py, px, i_ptr);
-	c_ptr->special.sc.montrap.trap_kit = pop_montrap(Ind, i_ptr, i);
+	cs_ptr->sc.montrap.trap_kit = pop_montrap(Ind, i_ptr, i);
 
 	/* Modify, Describe, Optimize */
 	inven_item_increase(Ind, item_kit, -1);
@@ -3451,7 +3460,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	}
 
 	/* Preserve former feat */
-	c_ptr->special.sc.montrap.feat = c_ptr->feat;
+	cs_ptr->sc.montrap.feat = c_ptr->feat;
 
 	/* Actually set the trap */
 	cave_set_feat(&p_ptr->wpos, py, px, FEAT_MON_TRAP);
@@ -4235,6 +4244,7 @@ bool mon_hit_trap(int m_idx)
 #endif
 
 	object_type *kit_o_ptr, *load_o_ptr, *j_ptr;
+	struct c_special *cs_ptr;
 
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -4269,13 +4279,16 @@ bool mon_hit_trap(int m_idx)
 
 	c_ptr = &zcave[my][mx];
 
+	cs_ptr=GetCS(c_ptr, CS_MON_TRAP);
+	if(!cs_ptr) return(FALSE);
+
 	/* Get the trap objects */
-	kit_o_ptr = &o_list[c_ptr->special.sc.montrap.trap_kit];
+	kit_o_ptr = &o_list[cs_ptr->sc.montrap.trap_kit];
 	load_o_ptr = &o_list[kit_o_ptr->next_o_idx];
 	j_ptr = &object_type_body;
 
 	/* Paranoia */
-	if (!kit_o_ptr || !load_o_ptr || c_ptr->special.type != CS_MON_TRAP)
+	if (!kit_o_ptr || !load_o_ptr)
 		return (FALSE);
 
 	/* Get trap properties */
@@ -4314,7 +4327,7 @@ bool mon_hit_trap(int m_idx)
 
 	/* Get detection difficulty */
 	/* High level players hide traps better */
-	trapping = c_ptr->special.sc.montrap.difficulty;
+	trapping = cs_ptr->sc.montrap.difficulty;
 	difficulty = (trapping * 3) / 2;	/* somewhat boosted than ToME */
 
 	/* Darkness helps */
