@@ -37,12 +37,15 @@ void do_cmd_go_up(int Ind)
 	/* Verify stairs if not a ghost, or admin wizard */
 	if (!p_ptr->admin_wiz && c_ptr->feat != FEAT_LESS && !p_ptr->prob_travel)
 	{
+		struct worldpos twpos;
+		wpcopy(&twpos, wpos);
+		twpos.wz++;
 		if (!p_ptr->ghost)
 		{
 			msg_print(Ind, "I see no up staircase here.");
 			return;
 		}
-		else if (p_ptr->max_dlv + 5 <= getlevel(&p_ptr->wpos))
+		else if (p_ptr->max_dlv + 5 <= getlevel(&twpos))
 		{
 			/* anti Ghost-dive */
 			msg_print(Ind, "A mysterious force prevents you from going up.");
@@ -132,12 +135,15 @@ void do_cmd_go_down(int Ind)
 //      if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
 	if (!p_ptr->admin_wiz && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
 	{
+		struct worldpos twpos;
+		wpcopy(&twpos, wpos);
+		twpos.wz--;
 		if (!p_ptr->ghost)
 		{
 			msg_print(Ind, "I see no down staircase here.");
 			return;
 		}
-		else if (p_ptr->max_dlv + 5 <= getlevel(&p_ptr->wpos))
+		else if (p_ptr->max_dlv + 5 <= getlevel(&twpos))
 		{
 			/* anti Ghost-dive */
 			msg_print(Ind, "A mysterious force prevents you from going down.");
@@ -202,8 +208,8 @@ void do_cmd_go_down(int Ind)
 
 	p_ptr->new_level_flag = TRUE;
 
-    /* He'll be safe for 2 turns */
-    set_invuln_short(Ind, 2);
+	/* He'll be safe for 2 turns */
+	set_invuln_short(Ind, 2);
 
 	/* Create a way back */
 	create_up_stair = TRUE;
