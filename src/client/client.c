@@ -315,9 +315,9 @@ int main(int argc, char **argv)
 	{
 		/* Dump usage information */
 		puts(longVersion);
-		puts("Usage  : mangclient [options] [servername]");
-		puts("Example: mangclient -lMorgoth MorgyPass -p18348 TomeNET.net");
-		puts("       : mangclient -f.myrc -lOlorin_archer");
+		puts("Usage  : tomenet [options] [servername]");
+		puts("Example: tomenet -lMorgoth MorgyPass -p18348 TomeNET.net");
+		puts("       : tomenet -f.myrc -lOlorin_archer");
 		puts("  -c                 Always use CUI(GCU) interface");
 		puts("  -f                 specify rc File to read");
 		puts("  -i                 Ignore .tomenetrc");
