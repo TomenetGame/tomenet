@@ -12649,7 +12649,7 @@ D:fantastically multi-coloured wings.
 N:746:Keeper of Secrets
 G:H:G
 I:130:60d70:30:150:20
-W:54:3:0:17000
+W:64:3:0:17000
 E:2:0:2:2:1:1
 O:0:0:100:0
 B:HIT:CONFUSE:10d10

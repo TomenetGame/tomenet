@@ -46,7 +46,7 @@ D:Its light is imperishable, and near it darkness cannot endure.
 # The Star of Elendil
 
 N:2:of Elendil
-I:39:101:1
+I:39:101:2
 W:30:25:5:35000
 P:0:1d1:0:0:0
 F:ACTIVATE | RES_FEAR | SEE_INVIS | HOLD_LIFE | RES_BLIND | 
@@ -63,7 +63,7 @@ I:39:102:3
 W:40:50:5:60000
 P:0:1d1:0:0:0
 F:ACTIVATE | SEE_INVIS | HOLD_LIFE | RES_CHAOS | HIDE_TYPE | RES_BLIND |
-F:INSTA_ART | SPEED | RES_LITE | RES_DARK | ESP_ORC | LITE3 | LITE2
+F:INSTA_ART | SPEED | RES_LITE | RES_DARK | ESP_ORC | LITE3 | LITE2 | WIS
 D:A great globe seemingly filled with moonlight, the famed Heart of the 
 D:Mountain, which splinters the light that falls upon it into a thousand 
 D:glowing shards.
