@@ -525,8 +525,13 @@ extern s16b tot_dam_aux_player(object_type *o_ptr, int tdam, player_type *p_ptr)
 extern void search(int Ind);
 extern void carry(int Ind, int pickup, int confirm);
 extern void py_attack(int Ind, int y, int x, bool old);
+extern void touch_zap_player(int Ind, int m_idx);
+extern void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_ptr);
+extern void set_black_breath(int Ind);
+extern void do_prob_travel(int Ind, int dir);
 extern void move_player(int Ind, int dir, int do_pickup);
 extern void run_step(int Ind, int dir);
+extern void black_breath_infection(int Ind, int Ind2);
 extern int see_wall(int Ind, int dir, int y, int x);
 
 /* cmd2.c */
@@ -546,6 +551,7 @@ extern void do_cmd_stay(int Ind, int pickup);
 extern int do_cmd_run(int Ind, int dir);
 /*extern void do_cmd_rest(void);*/
 extern void do_cmd_fire(int Ind, int dir, int item);
+extern bool interfere(int Ind, int chance);
 extern void do_cmd_throw(int Ind, int dir, int item);
 extern void do_cmd_purchase_house(int Ind, int dir);
 #ifdef NEW_DUNGEON
@@ -613,6 +619,7 @@ extern void do_cmd_pray_aux(int Ind, int dir);
 extern void do_cmd_shad(int Ind, int book, int spell);
 extern void do_cmd_shad_aux(int Ind, int dir);
 extern void do_cmd_fight(int Ind, int book, int spell);
+extern void do_spin(int Ind);
 extern void do_cmd_fight_aux(int Ind, int dir);
 extern void show_ghost_spells(int Ind);
 extern void do_cmd_ghost_power(int Ind, int ability);
@@ -629,6 +636,9 @@ extern void do_cmd_zap_rod(int Ind, int item);
 extern void do_cmd_zap_rod_dir(int Ind, int dir);
 extern void do_cmd_activate(int Ind, int item);
 extern void do_cmd_activate_dir(int Ind, int dir);
+extern bool unmagic(int Ind);
+extern void fortune(int Ind, bool broadcast);
+extern char random_colour();
 
 /* control.c */
 extern void NewConsole(int fd, int arg);
@@ -732,6 +742,7 @@ extern bool monster_attack_normal(int m_idx, int tm_idx);
 extern bool make_attack_normal(int Ind, int m_idx);
 extern bool make_attack_spell(int Ind, int m_idx);
 extern void process_monsters(void);
+extern void curse_equipment(int Ind, int chance, int heavy_chance);
 
 /* mon-desc.c */
 extern void screen_roff(int r_idx);
@@ -884,6 +895,7 @@ extern void delete_object_idx(int i);
 extern void delete_object(struct worldpos *wpos, int y, int x);
 extern void wipe_o_list(struct worldpos *wpos);
 extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great);
+extern void determine_level_req(int level, object_type *o_ptr);
 extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great);
 extern void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great);
 extern void place_trap(struct worldpos *wpos, int y, int x);
@@ -894,6 +906,7 @@ extern void pick_trap(struct worldpos *wpos, int y, int x);
 extern void delete_object(int Depth, int y, int x);
 extern void wipe_o_list(int Depth);
 extern void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great);
+extern void determine_level_req(int Depth, object_type *o_ptr);
 extern void place_object(int Depth, int y, int x, bool good, bool great);
 extern void acquirement(int Depth, int y1, int x1, int num, bool great);
 extern void place_trap(int Depth, int y, int x);
@@ -933,6 +946,8 @@ extern void party_msg_format(int party_id, cptr fmt, ...);
 extern void party_gain_exp(int Ind, int party_id, s32b amount);
 extern bool add_hostility(int Ind, cptr name);
 extern bool remove_hostility(int Ind, cptr name);
+extern bool add_ignore(int Ind, cptr name);
+extern bool check_ignore(int attacker, int target);
 extern bool check_hostile(int attacker, int target);
 extern cptr lookup_player_name(int id);
 extern int lookup_player_id(cptr name);
@@ -1138,8 +1153,10 @@ extern void msg_broadcast(int Ind, cptr msg);
 extern void msg_format(int Ind, cptr fmt, ...);
 extern void msg_print_near(int Ind, cptr msg);
 extern void msg_format_near(int Ind, cptr fmt, ...);
+extern void toggle_afk(int Ind);
 extern void player_talk(int Ind, char *msg);
 extern bool is_a_vowel(int ch);
+extern char *wpos_format(worldpos *wpos);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);

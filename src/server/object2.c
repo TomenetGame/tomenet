@@ -4489,6 +4489,17 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 }
 
 /*
+ * This 'utter hack' function is to allow item-generation w/o specifing
+ * worldpos.
+ */
+void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great)
+{
+	worldpos wpos = { 0, 0, -Depth};
+	apply_magic(&wpos, o_ptr, lev, okay, good, great);
+}
+
+
+/*
  * determine level requirement.
  * based on C.Blue's idea.	- Jir -
  */

@@ -1364,9 +1364,15 @@ DgramSendRec(int fd, char *host, int port, char *sbuf,
  * Originally coded by Arne Helme
  */
 char *
-DgramLastaddr(void)
+DgramLastaddr(int fd)
 {
+#ifdef UNIX_SOCKETS
+    return "localhost";
+#else
+    int len=sizeof(struct sockaddr_in);
+    getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
     return (inet_ntoa(sl_dgram_lastaddr.sin_addr));
+#endif
 } /* DgramLastaddr */
 
 /*
@@ -1403,10 +1409,15 @@ DgramLastaddr(void)
  * Originally coded by Bert Gijsbers
  */
 char *
-DgramLastname(void)
+DgramLastname(int fd)
 {
+#ifdef UNIX_SOCKETS
+    return "localhost";
+#else
     struct hostent	*he;
     char		*str;
+    int len=sizeof(struct sockaddr_in);
+    getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
 
     he = gethostbyaddr((char *)&sl_dgram_lastaddr.sin_addr,
 		       sizeof(struct in_addr), AF_INET);
@@ -1416,6 +1427,7 @@ DgramLastname(void)
 	str = (char *) he->h_name;
     }
     return str;
+#endif
 } /* DgramLastname */
 
 /*
@@ -1448,9 +1460,19 @@ DgramLastname(void)
  * Originally coded by Arne Helme
  */
 int
-DgramLastport(void)
+DgramLastport(int fd)
 {
+#ifdef UNIX_SOCKETS
+    int port;
+
+    if (sscanf(sl_dgram_lastaddr.sun_path, "/tmp/mangband%d", &port) < 1)
+        return (-1);
+    return port;
+#else
+    int len=sizeof(struct sockaddr_in);
+    getpeername(fd, (struct sockaddr*)&sl_dgram_lastaddr, &len);
     return (ntohs((int)sl_dgram_lastaddr.sin_port));
+#endif
 } /* DgramLastport */
 
 /*

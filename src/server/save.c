@@ -6,6 +6,11 @@
 
 #include "angband.h"
 
+#ifdef NEW_DUNGEON
+void new_wr_wild();
+static void new_wr_dungeons();
+static void wr_towns();
+#endif
 
 #ifdef FUTURE_SAVEFILES
 
@@ -97,7 +102,6 @@ static byte *data_head;
  * Hack -- pointer into the data buffer
  */
 static byte *data_next;
-
 
 
 /*
@@ -1367,9 +1371,9 @@ static void wr_extra(int Ind)
 
 	wr_byte(p_ptr->black_breath);
 
-	wr_s16b(&p_ptr->msane);
-	wr_s16b(&p_ptr->csane);
-	wr_u16b(&p_ptr->csane_frac);
+	wr_s16b(p_ptr->msane);
+	wr_s16b(p_ptr->csane);
+	wr_u16b(p_ptr->csane_frac);
 
 	/* Write feeling */
 	/*wr_byte(feeling);*/

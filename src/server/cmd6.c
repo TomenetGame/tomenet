@@ -377,6 +377,26 @@ void do_cmd_eat_food(int Ind, int item)
 				/* Methyl! */
 				if (magik(o_ptr->name2? 0 : 3))
 					set_blind(Ind, p_ptr->blind + 10 + randint(10));
+				if (rand_int(100) > p_ptr->food * 80 / PY_FOOD_MAX)
+				{
+					msg_print(Ind, "You become nauseous and vomit!");
+					msg_format_near(Ind, "%s vomits!", p_ptr->name);
+					/* made salt water less deadly -APD */
+					(void)set_food(Ind, (p_ptr->food/2));
+					(void)set_poisoned(Ind, 0);
+					(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
+				}
+				if (magik(o_ptr->name2? 2 : 3))
+					(void)dec_stat(Ind, A_DEX, 1, STAT_DEC_TEMPORARY);
+				if (magik(o_ptr->name2? 2 : 3))
+					(void)dec_stat(Ind, A_WIS, 1, STAT_DEC_TEMPORARY);
+				if (magik(o_ptr->name2? 0 : 1))
+					(void)dec_stat(Ind, A_CON, 1, STAT_DEC_TEMPORARY);
+				//			(void)dec_stat(Ind, A_STR, 1, STAT_DEC_TEMPORARY);
+				if (magik(o_ptr->name2? 3 : 5))
+					(void)dec_stat(Ind, A_CHR, 1, STAT_DEC_TEMPORARY);
+				if (magik(o_ptr->name2? 2 : 3))
+					(void)dec_stat(Ind, A_INT, 1, STAT_DEC_TEMPORARY);
 			}
 			else msg_print(Ind, "That tastes good.");
 

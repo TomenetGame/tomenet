@@ -1399,6 +1399,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 //			 int dam = damroll(2, 8);
 //			 take_hit(Ind, dam, name);
 			 take_hit(Ind, damroll(2, 8), "trap door");
+			 take_sanity_hit(Ind, damroll(1, 2), "trap door");
 		 }
 		 p_ptr->new_level_flag = TRUE;
 		 p_ptr->new_level_method = LEVEL_RAND;

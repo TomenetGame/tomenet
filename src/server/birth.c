@@ -1135,7 +1135,7 @@ static void player_outfit(int Ind)
 
 	invcopy(o_ptr, lookup_kind(TV_GLOVES, SV_SET_OF_CESTI));
 		o_ptr->name1 = ART_FINGOLFIN;
-		apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
+		apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
 	o_ptr->number = 1;
 	o_ptr->discount = 0;
 	object_known(o_ptr);
@@ -1145,7 +1145,7 @@ static void player_outfit(int Ind)
 
 	invcopy(o_ptr, lookup_kind(TV_HAFTED, SV_GROND));
 		o_ptr->name1 = ART_GROND;
-		apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
+		apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
 	o_ptr->number = 1;
 	o_ptr->discount = 0;
 	object_known(o_ptr);

@@ -1579,7 +1579,7 @@ void update_mon(int m_idx, bool dist)
 				/* well, is it the right place to be? */
 				if (r_ptr->flags2 & RF2_ELDRITCH_HORROR)
 				{
-					sanity_blast(Ind, m_ptr, FALSE);
+					sanity_blast(Ind, m_idx, FALSE);
 				}
 
 			}

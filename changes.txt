@@ -582,5 +582,6 @@ Change list for PernMangband
 - Original monsters/mego/items/egos/artifacts.
 - Drain life/mana
 
-2/1/2001 (Jir)
-- some fixes on win32-client (thx Yakina!)
+2/1/2001 (Yakina [note by Jir])
+- some fixes on win32-client.
+- bugfixes, and extern.h cleanup.

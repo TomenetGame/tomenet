@@ -2660,6 +2660,7 @@ void player_talk_aux(int Ind, cptr message)
 		/* hack -- non-token ones first */
 		if ((prefix(message, "/script") ||
 					prefix(message, "/scr") ||
+					prefix(message, "/ ") ||	// use with care!
 					prefix(message, "/lua")) && admin)
 		{
 			if (colon)
