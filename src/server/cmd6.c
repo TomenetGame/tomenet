@@ -5707,7 +5707,7 @@ void do_cmd_activate(int Ind, int item)
 				/* Mimics only */
 				if(!(p_ptr->pclass==CLASS_MIMIC)) return;
 
-				if(!(item==INVEN_LEFT || item==INVEN_RIGHT])){
+				if(!(item==INVEN_LEFT || item==INVEN_RIGHT)){
 					msg_print(Ind, "You must be wearing the ring!");
 					return;
 				}
