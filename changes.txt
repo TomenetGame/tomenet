@@ -1,5 +1,26 @@
 # $Id$
 
+# Keys: I = Interface, M = Monster, O = Objectf, G = Gameplay
+# m = Misc P = Player D = Dungeon B = Bug, V = version
+# if you need others tell me
+# -- hrm, T = Tome backports, R = rebalancement
+# i = internal, N = network, C = client, S = spell ?
+
+# date is always this format
+02/1/2002
+# tags are always this form: '[x]- ' thi is 5 chars, so if the line must continue
+# on a new line it is alsio 5 spaces that are needed
+[m]- blahalhjaljkalkjlajazkljklqjsd qslkdjqs lkdjqsl
+     qmlfkmzkk qskdjfmqslfk mlqzemfj qmlj mldf
+
+# date start with a number and can then include anything, they are like comments
+23/07/2002 - T.o.M.E 2.0.0 aka "Point of No Return"
+
+# special tag to specify the current version
+[V]  TomeNET 4.0.0 aka "Ping of No Return"
+
+# bug.txt should follow the exact same format
+
 Change list and TODO list for ToME-NET(PernMangband)
 TODO: the newest should appear the first!
 To find the latest change quickly, search ==== :)
@@ -1422,12 +1443,22 @@ To find the latest change quickly, search ==== :)
 [B] monster zigzag chasing was broken (get_moves)
 [B] NEVER_MOVE form mimics could climb the stairs.
 [B] p_ptr->furry typo.
-[B] new player is sometimes generated on the north-west of town.
 [H] arrow range limitation is removed again, due to monster AI improvements
 [H] r_killed is halved in place of becoming 0 when forging a mimic ring.
 
+24/07/2002 (Jir)
+# changelog format changed.
+[B]- *ID* shown wrong anti-magic power if with minus modifiers.
+[B]- arrows had strange svals. (k_info.txt)
+[M]- boulder from Vanilla.
+[T]- calendar. (/ex - do_cmd_time)
+[T]- SKILL_FLETCHERY. (do_cmd_fletchery)
+[R]- destruction cannot affect vaults(CAVE_ICKY).
+[R]- meditation takes 2 turns.
 
 
+
+(valid till 19/07/2002)
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack and rebalancement :)
@@ -1449,6 +1480,7 @@ things to do before 4.0.0
 - sort ?_info.txt (they are quite messy now)
 - export configurable things to tomenet.cfg
 - a spoonful of documentation for skill system
+- rewrite this changes.txt into the 'new' format
 
 (multi-dungeon, multi-town, terrains, pets etc. are put off after 4.0.0 ...)
 
@@ -1507,6 +1539,7 @@ below this line are the unfixed bugs known:
 [B][C] X11 client doesn't accept keystrokes if screen is less than 80x24
 [B] 'You are shooting with a Boomerang.' is not so cool a msg
 [B] macro 'w0w0' doesn't work correctly (no way to fix under current netcode)
+[B] new player is sometimes generated on the north-west of town.
 [B] deallocator deallocates the floor that ghost is on!
 1 players on -1950ft of (32,32).
 Key_monk was killed by a Night mare.
@@ -1731,13 +1764,14 @@ memo and questions:
   - enhanced help system (imo we cannot beat web browsers anyway..)
     + at least, jump and colour tags are needed.
   + 'hand to(give)' command
-  + client option for verbosity;
+  + client option for verbosity; (half done)
     msg_print(Ind, importance, "Vlad was here!");
   + options ('=') should be revised.
   + auto-retaliator should be able to handle non-item actions.
   + better character ('C') screen
   + auto-inscriber for item attributes (eg. {StDxNeFASI})
   + resurrect 'repeat' (eg. '099^j' to dig etc.)
+  + let players target monsters outside the screen (scrolling)
 - stores:
   + one player shouldn't stay more than 1 minutes in a store?
   + stores should buy {cursed} potions/scrolls/wands etc?
@@ -1748,6 +1782,7 @@ memo and questions:
   + resurrect 'level feelings'
   + allow 'guest' account for invite-only server
   + water should 'flow'
+  + score list should show middle-earth time (and not raw turn).
   
 [major ones]
 - monsters' interactions
@@ -1804,7 +1839,6 @@ memo and questions:
     and the client just displays it and send the answer back.
   - another solution is to put those things in a file like plug-ins.
 - resurrect 'targetting cursor'
-- write gaming options changed by '=' to the local pref files.
 - client options other than boolean
 - following things should be client-side options:
   + scroll_mergin (x, y)
@@ -1906,4 +1940,3 @@ Program terminated with signal 10, Bus error.
   - features vs. speed
   - long-term gameplay(ala UO) vs. quick game(ala Populous3)
   - terminal base(ascii+vi) vs modernity(gui+mouse)
-+ BTW, how about 'ToMAngband'?

@@ -26,8 +26,8 @@ Latest changes for version 4.0.0a (digest):
 - some of unpopular classes are removed:
   Unbeliever, Warlock, Sorceror, Ranger, Paladin, Monk and Telepath.
 - several client-options added; press '=' to check them out(Important!).
-- dungeon generator is improved.. sorry, sometimes non-connecting room is
-  generated.  Please carry a Pick and Scrolls of Phase Door.
+- dungeon generator is improved.. however, sorry, sometimes non-connecting
+  room is generated.  Please carry a Pick and Scrolls of Phase Door.
 - items can stack on the floor now. (BEWARE: not inside a house!)
 - potions can cause some effects when shattering; handle them with care.
 - quiver/tool slots available.

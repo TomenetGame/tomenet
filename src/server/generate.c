@@ -3500,7 +3500,8 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 		l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 	if (v_ptr->flags1 & VF1_NO_DESTROY && (magik(VAULT_FLAG_CHANCE) || force))
 		l_ptr->flags1 |= LF1_NO_DESTROY;
-	if (v_ptr->flags1 & VF1_NO_MAGIC && (magik(VAULT_FLAG_CHANCE) || force))
+	if (v_ptr->flags1 & VF1_NO_MAGIC && (magik(VAULT_FLAG_CHANCE) || force)
+			&& lev < 100)
 		l_ptr->flags1 |= LF1_NO_MAGIC;
 
 	/* Place dungeon features and objects */
@@ -7462,20 +7463,23 @@ static void cave_gen(struct worldpos *wpos)
 	}
 
 
-	/* Place 3 or 4 down stairs near some walls */
-	alloc_stairs(wpos, FEAT_MORE, rand_range(3, 4) * dun->ratio / 100 + 1, 3);
-
-	/* Place 1 or 2 up stairs near some walls */
-	alloc_stairs(wpos, FEAT_LESS, rand_range(1, 2), 3);
-
-	/* Hack -- add *more* stairs for lowbie's sake */
-	if (glev <= COMFORT_PASSAGE_DEPTH)
+	if (!(dun->l_ptr->flags1 & LF1_NO_STAIR))
 	{
 		/* Place 3 or 4 down stairs near some walls */
-		alloc_stairs(wpos, FEAT_MORE, rand_range(2, 4), 3);
+		alloc_stairs(wpos, FEAT_MORE, rand_range(3, 4) * dun->ratio / 100 + 1, 3);
 
 		/* Place 1 or 2 up stairs near some walls */
-		alloc_stairs(wpos, FEAT_LESS, rand_range(3, 4), 3);
+		alloc_stairs(wpos, FEAT_LESS, rand_range(1, 2), 3);
+
+		/* Hack -- add *more* stairs for lowbie's sake */
+		if (glev <= COMFORT_PASSAGE_DEPTH)
+		{
+			/* Place 3 or 4 down stairs near some walls */
+			alloc_stairs(wpos, FEAT_MORE, rand_range(2, 4), 3);
+
+			/* Place 1 or 2 up stairs near some walls */
+			alloc_stairs(wpos, FEAT_LESS, rand_range(3, 4), 3);
+		}
 	}
 
 
@@ -8307,7 +8311,8 @@ static void town_gen(struct worldpos *wpos)
 
 
 	/* Day Light */
-	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
+//	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
+	if (IS_DAY)
 	{	
 		/* Lite up the town */ 
 		for (y = 0; y < MAX_HGT; y++)

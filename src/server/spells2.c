@@ -3945,6 +3945,9 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			/* Access the grid */
 			c_ptr = &zcave[y][x];
 
+			/* Vault is protected */
+			if (c_ptr->info & CAVE_ICKY) continue;
+
 			/* Lose room and vault */
 			/* Hack -- don't do this to houses/rooms outside the dungeon,
 			 * this will protect hosues outside town.
@@ -4005,7 +4008,8 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
                         }
 
 			/* Destroy "valid" grids */
-			if ((cave_valid_bold(zcave, y, x)) && !(c_ptr->info&CAVE_ICKY))
+//			if ((cave_valid_bold(zcave, y, x)) && !(c_ptr->info&CAVE_ICKY))
+			if (cave_valid_bold(zcave, y, x))
 			{
 				/* Delete the object (if any) */
 				delete_object(wpos, y, x);
@@ -4946,6 +4950,7 @@ bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam)
 /*
  * Some of the old functions
  */
+/* TODO: the result should be affected by skills (and not plev) */
 
 bool lite_line(int Ind, int dir)
 {

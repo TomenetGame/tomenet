@@ -450,7 +450,8 @@
  * Misc constants
  */
 #define SERVER_SAVE	500		/* How often to save the server state (100) */
-#define TOWN_DAWN		10000	/* Number of turns from dawn to dawn XXX */
+//#define TOWN_DAWN		10000	/* Number of turns from dawn to dawn XXX */
+//#define TOWN_DAWN		(DAY / 2) /* Number of turns from dawn to dawn XXX */
 #define GROW_TREE	5000		/* How often to grow a new tree in town */
 #define BREAK_GLYPH		550		/* Rune of protection resistance */
 #define BTH_PLUS_ADJ	3		/* Adjust BTH per plus-to-hit */
@@ -513,8 +514,25 @@
 
 /* Macros for determing if it is night or day */
 
+#if 0
 #define		IS_DAY	 ((turn % (10L * TOWN_DAWN)) <= (10L * TOWN_DAWN / 2))
 #define		IS_NIGHT ((turn % (10L * TOWN_DAWN)) > (10L * TOWN_DAWN / 2))	
+#else	// 0
+#define		IS_NIGHT	((bst(HOUR, turn) < 6) || (bst(HOUR, turn) >= 18))
+#define		IS_DAY		(!IS_NIGHT)	
+#endif	// 0
+
+/*
+ * Misc constants ( see bst(), do_cmd_time() )
+ */
+//#define DAY                     11520                   /* Number of turns per day */
+#define DAY                     23040					/* Number of turns per day */
+#define YEAR                    (DAY * 365)             /* Number of turns per year */
+#define HOUR                    (DAY / 24)              /* Number of turns per hour */
+#define MINUTE                  (HOUR / 60)             /* Number of turns per minute */
+#define DAY_START               (HOUR * 6)              /* Sunrise */
+#define START_YEAR              2890                    /* Bilbo birthday year */
+#define START_DAY               (DAY * (42 + 127))      /* Bilbo birthday */
 
 
 /*
@@ -3069,6 +3087,7 @@ that keeps many algorithms happy.
 //#define RF4_XXX6			0x20000000
 //#define RF4_XXX7			0x40000000
 //#define RF4_XXX8			0x80000000
+#define RF4_BOULDER			0x80000000  /* Hurl Boulder (Vanilla) */
 
 //#define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA)
 
@@ -3374,12 +3393,22 @@ that keeps many algorithms happy.
 
 #endif	// 0
 
+/* dungeon flags for dungeon_type 
+ * they should be renamed to DFx_*
+ */
+#define DUNGEON_RANDOM		0x00000001L /* random dungeon - not preloaded */
+#define DUNGEON_IRON		0x00000002L	/* one way dungeon - return portal at max level */
+#define DUNGEON_HELL		0x00000004L	/* hellish dungeon - forces hellish mode on all */
+#define DUNGEON_NOMAP		0x00000008L	/* player never gains level knowledge */
+#define DUNGEON_NO_MAGIC_MAP	0x00000010L
+#define DUNGEON_DELETED		0x80000000L /* Deleted, but not yet removed */
+
 /* level flags for dun_level */
 #define LF1_NO_TELEPORT         0x00000001L
 #define LF1_ASK_LEAVE           0x00000002L /* XXX */
-#define LF1_NO_STAIR            0x00000004L /* XXX */
+#define LF1_NO_STAIR            0x00000004L /* XXX ok */
 #define LF1_SPECIAL             0x00000008L /* XXX */
-#define LF1_NO_NEW_MONSTER      0x00000010L /* XXX */
+#define LF1_NO_NEW_MONSTER      0x00000010L /* XXX ok */
 #define LF1_DESC                0x00000020L /* XXX */
 #define LF1_NO_GENO             0x00000040L
 #define LF1_NOMAP				0x00000080L	/* player never gains level knowledge */
@@ -3472,7 +3501,7 @@ that keeps many algorithms happy.
  * Hack -- "bolt" spells that may hurt fellow monsters
  */
 #define RF4_BOLT_MASK \
-  (RF4_ARROW_1 | RF4_ARROW_2)
+  (RF4_ARROW_1 | RF4_ARROW_2 | RF4_BOULDER)
 //  (RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4)
 
 #define RF5_BOLT_MASK \
@@ -3522,7 +3551,7 @@ that keeps many algorithms happy.
 	 RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | \
 	 RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | \
 	 RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | \
-	 RF4_BR_NUKE | RF4_BR_DISI)
+	 RF4_BR_NUKE | RF4_BR_DISI | RF4_BOULDER)
 //	 RF4_BA_NUKE | RF4_BR_NUKE | RF4_BA_CHAO | RF4_BR_DISI)
 
 #define RF5_ATTACK_MASK \
@@ -4450,6 +4479,7 @@ extern int PlayerUID;
 #define MKEY_PRAY               7
 
 #define MKEY_DODGE              8
+#define MKEY_FLETCHERY			9
 
 /*
  * Skills

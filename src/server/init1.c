@@ -303,7 +303,7 @@ static cptr r_info_flags4[] =
 	"BR_DISI",	// "XXX8X4"
 	"BR_NUKE",	// "XXX6X4",
 	"XXX",
-	"XXX",
+	"BOULDER",	// "XXX",
 };
 
 /*

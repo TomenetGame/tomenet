@@ -1147,14 +1147,6 @@ struct quest_type{
 /*
  * struct for individual levels.
  */
-/* dungeon flags for dungeon_type (DF2?) */
-#define DUNGEON_RANDOM		0x00000001L /* random dungeon - not preloaded */
-#define DUNGEON_IRON		0x00000002L	/* one way dungeon - return portal at max level */
-#define DUNGEON_HELL		0x00000004L	/* hellish dungeon - forces hellish mode on all */
-#define DUNGEON_NOMAP		0x00000008L	/* player never gains level knowledge */
-#define DUNGEON_NO_MAGIC_MAP	0x00000010L
-#define DUNGEON_DELETED		0x80000000L /* Deleted, but not yet removed */
-
 typedef struct dun_level dun_level;
 struct dun_level
 {

@@ -4762,7 +4762,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			dam=0;
 			break;
 
-		/* Teleport monster TO (Use "dam" as "power") */
+		/* Teleport monster TO */
 		case GF_TELE_TO:
 		{
 			bool resists_tele = FALSE;

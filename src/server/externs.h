@@ -90,6 +90,9 @@ extern martial_arts ma_blows[MAX_MA];
 extern skill_type s_info[MAX_SKILLS];
 extern int skill_tree_init[MAX_SKILLS][2];
 
+extern int month_day[9];
+extern cptr month_name[9];
+
 
 /* variable.c */
 extern obj_theme default_obj_theme;
@@ -413,6 +416,7 @@ extern void do_cmd_throw(int Ind, int dir, int item);
 extern void do_cmd_purchase_house(int Ind, int dir);
 extern int pick_house(struct worldpos *wpos, int y, int x);
 extern void house_admin(int Ind, int dir, char *args);
+extern bool twall(int Ind, int y, int x);
 
 /* cmd3.c */
 extern void inven_drop(int Ind, int item, int amt);
@@ -447,6 +451,7 @@ extern void do_cmd_show_houses(int Ind);
 extern void do_cmd_show_known_item_letter(int Ind, char *letter);
 extern void do_cmd_knowledge_traps(int Ind);
 extern void do_cmd_knowledge_dungeons(int Ind);
+extern void do_cmd_time(int Ind);
 extern void do_cmd_check_other(int Ind, int line);
 extern void do_cmd_check_other_prepare(int Ind, char *path);
 
@@ -1002,6 +1007,9 @@ extern void toggle_afk(int Ind);
 extern void player_talk(int Ind, char *msg);
 extern bool is_a_vowel(int ch);
 extern char *wpos_format(int Ind, worldpos *wpos);
+extern s32b bst(s32b what, s32b t);
+extern cptr get_month_name(int day, bool full, bool compact);
+extern cptr get_day(int day);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);

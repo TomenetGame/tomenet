@@ -2224,6 +2224,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
 				else
 					set_tim_meditation(Ind, p_ptr->tim_meditation + 5);
 #endif
+				p_ptr->energy -= level_speed(&p_ptr->wpos) * 2;
                         break;
                 case 26: /* Gravitic Distortion */
                         fire_ball(Ind, GF_GRAVITY, 0, 10, 2);

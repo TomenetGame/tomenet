@@ -1246,7 +1246,9 @@ static void player_setup(int Ind, bool new)
 	cave_type *c_ptr;
 			dun_level *l_ptr;
 
-	bool dawn = ((turn % (10L * TOWN_DAWN)) < (10L * TOWN_DAWN / 2)), unstaticed = 0; 
+//	bool dawn = ((turn % (10L * TOWN_DAWN)) < (10L * TOWN_DAWN / 2)), unstaticed = 0; 
+//	bool dawn = IS_DAY, unstaticed = 0; 
+	bool unstaticed = 0; 
 
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
@@ -1339,7 +1341,7 @@ static void player_setup(int Ind, bool new)
 				c_ptr = &zcave[y][x];
 
 				/* If day or interesting, memorize */
-				if (dawn || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
+				if (IS_DAY || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
 					*w_ptr |= CAVE_MARK;
 			}
 		}

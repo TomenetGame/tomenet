@@ -1490,7 +1490,8 @@ A:5/1:10/1
 
 N:195:& Sheaf Arrow~
 G:{:o
-I:17:1:0
+#I:17:1:0
+I:17:5:0
 W:10:0:4:3
 A:15/2:50/2
 P:0:1d5:0:0:0
@@ -2218,7 +2219,8 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 N:293:& Flight Arrow~
 G:{:y
-I:17:1:0
+#I:17:1:0
+I:17:6:0
 W:3:0:1:1
 A:3/2
 P:0:1d3:0:0:0

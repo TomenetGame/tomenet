@@ -45,11 +45,11 @@
 //#define LEVEL_GAINING_LIMIT
 
 /*
- * Thresholds for scrolling.	[2,4]
+ * Thresholds for scrolling.	[3,8] [2,4]
  * XXX They should be client-side numerical options.	- Jir -
  */
-#define	SCROLL_MARGIN_ROW	(p_ptr->wide_scroll_margin ? 3 : 2)
-#define	SCROLL_MARGIN_COL	(p_ptr->wide_scroll_margin ? 8 : 4)
+#define	SCROLL_MARGIN_ROW	(p_ptr->wide_scroll_margin ? 5 : 2)
+#define	SCROLL_MARGIN_COL	(p_ptr->wide_scroll_margin ? 16 : 4)
 
 
 /*

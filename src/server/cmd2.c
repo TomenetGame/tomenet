@@ -1164,7 +1164,7 @@ byte twall_erosion(worldpos *wpos, int y, int x)
  * This will, however, produce grids which are NOT illuminated
  * (or darkened) along with the rest of the room.
  */
-static bool twall(int Ind, int y, int x)
+bool twall(int Ind, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
 	byte            *w_ptr = &p_ptr->cave_flag[y][x];

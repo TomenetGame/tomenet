@@ -1503,6 +1503,124 @@ void do_cmd_knowledge_traps(int Ind)
 }
 
 /*
+ * Display the time and date
+ */
+void do_cmd_time(Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int day = bst(DAY, turn);
+
+	int hour = bst(HOUR, turn);
+
+	int min = bst(MINUTE, turn);
+
+	int full = hour * 100 + min;
+
+	char buf2[20];
+
+	int start = 9999;
+
+	int end = -9999;
+
+	int num = 0;
+
+	char desc[1024];
+
+	char buf[1024];
+
+	FILE *fff;
+
+
+	/* Note */
+	strcpy(desc, "It is a strange time.");
+
+	/* Format time of the day */
+	strnfmt(buf2, 20, get_day(bst(YEAR, turn) + START_YEAR));
+
+	/* Display current date in the Elvish calendar */
+	msg_format(Ind, "This is %s of the %s year of the third age.",
+	           get_month_name(day, is_admin(p_ptr), FALSE), buf2);
+
+	/* Message */
+	msg_format(Ind, "The time is %d:%02d %s.",
+				 (hour % 12 == 0) ? 12 : (hour % 12),
+				 min, (hour < 12) ? "AM" : "PM");
+
+#if 0
+	/* Find the path */
+	if (!rand_int(10) || p_ptr->image)
+	{
+		path_build(buf, 1024, ANGBAND_DIR_FILE, "timefun.txt");
+	}
+	else
+	{
+		path_build(buf, 1024, ANGBAND_DIR_FILE, "timenorm.txt");
+	}
+
+	/* Open this file */
+	fff = my_fopen(buf, "rt");
+
+	/* Oops */
+	if (!fff) return;
+
+	/* Find this time */
+	while (!my_fgets(fff, buf, 1024))
+	{
+		/* Ignore comments */
+		if (!buf[0] || (buf[0] == '#')) continue;
+
+		/* Ignore invalid lines */
+		if (buf[1] != ':') continue;
+
+		/* Process 'Start' */
+		if (buf[0] == 'S')
+		{
+			/* Extract the starting time */
+			start = atoi(buf + 2);
+
+			/* Assume valid for an hour */
+			end = start + 59;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'End' */
+		if (buf[0] == 'E')
+		{
+			/* Extract the ending time */
+			end = atoi(buf + 2);
+
+			/* Next... */
+			continue;
+		}
+
+		/* Ignore incorrect range */
+		if ((start > full) || (full > end)) continue;
+
+		/* Process 'Description' */
+		if (buf[0] == 'D')
+		{
+			num++;
+
+			/* Apply the randomizer */
+			if (!rand_int(num)) strcpy(desc, buf + 2);
+
+			/* Next... */
+			continue;
+		}
+	}
+
+	/* Message */
+	msg_print(desc);
+
+	/* Close the file */
+	my_fclose(fff);
+#endif	// 0
+}
+
+/*
  * Prepare to view already-existing text file. full path is needed.
  * do_cmd_check_other is called after the client is ready.	- Jir -
  *

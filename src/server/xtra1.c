@@ -1765,6 +1765,8 @@ int get_archery_skill(player_type *p_ptr)
 
         o_ptr = &p_ptr->inventory[INVEN_BOW];
 
+		if (!o_ptr->k_idx) return -1;
+
 		/* Hack -- Boomerang skill */
 		if (o_ptr->tval == TV_BOOMERANG) return SKILL_BOOMERANG;
 

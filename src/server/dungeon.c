@@ -554,7 +554,8 @@ static void process_world(int Ind)
 	if (p_ptr->wpos.wz==0)
 	{
 		/* Hack -- Daybreak/Nighfall in town */
-		if (!(turn % ((10L * TOWN_DAWN) / 2)))
+//		if (!(turn % ((10L * TOWN_DAWN) / 2)))
+		if (!(turn % ((10L * DAY) / 2)))
 		{
 			bool dawn;
 			struct worldpos *wpos=&p_ptr->wpos;
@@ -562,7 +563,8 @@ static void process_world(int Ind)
 			if(!(zcave=getcave(wpos))) return;
 
 			/* Check for dawn */
-			dawn = (!(turn % (10L * TOWN_DAWN)));
+//			dawn = (!(turn % (10L * TOWN_DAWN)));
+			dawn = (!(turn % (10L * DAY)));
 
 			/* Day breaks */
 			if (dawn)
@@ -640,6 +642,17 @@ static void process_world(int Ind)
 		/*  taken out entirely for now --KLJ-- */
 	}
 
+	/* Tell a day passed */
+	if (((turn + (DAY_START * 10L)) % (10L * DAY)) == 0)
+	{
+		char buf[20];
+
+		sprintf(buf, get_day(bst(YEAR, turn) + START_YEAR));
+		msg_broadcast_format(0,
+				"\377GToday it is %s of the %s year of the third age.",
+				get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
+	}
+
 
 	/*** Process the monsters ***/
 	/* Note : since monsters are added at a constant rate in real time,
@@ -650,11 +663,15 @@ static void process_world(int Ind)
 	/* Check for creature generation */
 	if ((rand_int(MAX_M_ALLOC_CHANCE) == 0) && ((!istown(&p_ptr->wpos)) || magik(TOWNIE_RESPAWN_CHANCE)))
 	{
-		/* Set the monster generation depth */
-		monster_level = getlevel(&p_ptr->wpos);
-		if (p_ptr->wpos.wz)
-			(void)alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
-		else wild_add_monster(&p_ptr->wpos);
+		dun_level *l_ptr = getfloor(&p_ptr->wpos);
+		if (!l_ptr || !(l_ptr->flags1 & LF1_NO_NEW_MONSTER))
+		{
+			/* Set the monster generation depth */
+			monster_level = getlevel(&p_ptr->wpos);
+			if (p_ptr->wpos.wz)
+				(void)alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
+			else wild_add_monster(&p_ptr->wpos);
+		}
 	}
 
 	/* Every 1500 turns, warn about any Black Breath not gotten from an equipped
@@ -3312,7 +3329,8 @@ static void process_player_change_wpos(int Ind)
 	/* Memorize the town and all wilderness levels close to town */
 	if (istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius <=2))
 	{
-		bool dawn = ((turn % (10L * TOWN_DAWN)) < (10L * TOWN_DAWN / 2)); 
+//		bool dawn = ((turn % (10L * TOWN_DAWN)) < (10L * TOWN_DAWN / 2)); 
+		bool dawn = IS_DAY; 
 
 		p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
 		p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;

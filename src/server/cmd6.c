@@ -6632,3 +6632,307 @@ char random_colour()
 }
 
 
+/*
+ * These are out of place -- we should add cmd7.c in the near future.	- Jir -
+ */
+
+/*
+ * Hook to determine if an object is contertible in an arrow/bolt
+ */
+#if 0
+static bool item_tester_hook_convertible(object_type *o_ptr)
+{
+	if ((o_ptr->tval == TV_JUNK) || (o_ptr->tval == TV_SKELETON)) return TRUE;
+
+	/* Assume not */
+	return (FALSE);
+}
+#endif	// 0
+
+static int fletchery_items(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	object_type     *o_ptr;
+	int i;
+
+	for (i = 0; i < INVEN_PACK; i++)
+	{
+		o_ptr = &p_ptr->inventory[i];
+		if (!o_ptr->k_idx) continue;
+		if (!can_use(Ind, o_ptr)) continue;
+		/* Broken Stick */
+		if (o_ptr->tval == TV_JUNK && o_ptr->sval == 6) return (i);
+		if (o_ptr->tval == TV_SKELETON) return (i);
+	}
+
+	/* Failed */
+	return (-1);
+}
+
+/*
+ * do_cmd_cast calls this function if the player's class
+ * is 'archer'.
+ */
+//void do_cmd_archer(void)
+void do_cmd_fletchery(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int ext=0, tlev = 0;
+	char ch;
+
+	object_type	forge;
+	object_type     *q_ptr;
+
+	char com[80];
+
+	bool done = FALSE;
+
+	cave_type **zcave;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+
+
+	if (p_ptr->confused)
+	{
+		msg_print(Ind, "You are too confused!");
+		return;
+	}
+
+	if (p_ptr->blind)
+	{
+		msg_print(Ind, "You are blind!");
+		return;
+	}
+
+	if (get_skill(p_ptr, SKILL_ARCHERY) < 20)
+	{
+		msg_print(Ind, "You don't know how to create ammos well.");
+		return;
+	}
+
+#if 0
+	if (p_ptr->lev >= 20)
+	{
+		strnfmt(com, 80, "Create [S]hots, Create [A]rrow or Create [B]olt? ");
+	}
+	else if (p_ptr->lev >= 10)
+	{
+		strnfmt(com, 80, "Create [S]hots or Create [A]rrow? ");
+	}
+	else
+	{
+		strnfmt(com, 80, "Create [S]hots? ");
+	}
+
+	while (TRUE)
+	{
+		if (!get_com(com, &ch))
+		{
+			ext = 0;
+			break;
+		}
+		if ((ch == 'S') || (ch == 's'))
+		{
+			ext = 1;
+			break;
+		}
+		if (((ch == 'A') || (ch == 'a')) && (p_ptr->lev >= 10))
+		{
+			ext = 2;
+			break;
+		}
+		if (((ch == 'B') || (ch == 'b')) && (p_ptr->lev >= 20))
+		{
+			ext = 3;
+			break;
+		}
+	}
+#endif	// 0
+
+	ext = get_archery_skill(p_ptr);
+	if (ext < 1)
+	{
+		msg_print(Ind, "Sorry, you have to wield a launcher first.");
+		return;
+	}
+	if (ext == SKILL_BOOMERANG)
+	{
+		msg_print(Ind, "You don't need ammo for boomerangs, naturally.");
+		return;
+	}
+
+	tlev = get_skill_scale(p_ptr, SKILL_ARCHERY, 25)
+		+ get_skill_scale(p_ptr, ext, 35);
+
+	/* Prepare for object creation */
+//	q_ptr = &forge;
+
+	/**********Create shots*********/
+//	if (ext == 1)
+	if (ext == SKILL_SLING)
+	{
+		int x,y, dir;
+		cave_type *c_ptr;
+
+//		if (!get_rep_dir(&dir)) return;
+		for (dir = 1; dir <= 9; dir++)
+		{
+			y = p_ptr->py + ddy[dir];
+			x = p_ptr->px + ddx[dir];
+			c_ptr = &zcave[y][x];
+			if (c_ptr->feat == FEAT_RUBBLE)
+			{
+				/* Get local object */
+				q_ptr = &forge;
+
+				/* Hack -- Give the player some bullets */
+				invcopy(q_ptr, lookup_kind(TV_SHOT, m_bonus(2, tlev)));
+				q_ptr->number = (byte)rand_range(15,30);
+				object_aware(Ind, q_ptr);
+				object_known(q_ptr);
+				apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 10))?TRUE:FALSE);
+
+				(void)inven_carry(Ind, q_ptr);
+
+				msg_print(Ind, "You make some ammo.");
+
+//				(void)wall_to_mud(Ind, dir);
+				twall(Ind, y, x);
+//				p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
+				p_ptr->update |= (PU_VIEW | PU_FLOW);
+				p_ptr->window |= (PW_OVERHEAD);
+
+				done = TRUE;
+				break;
+			}
+		}
+		if (!done)
+		{
+			msg_print(Ind, "You need rubbles to create sling shots.");
+		}
+	}
+
+	/**********Create arrows*********/
+//	else if (ext == 2)
+	else if (ext == SKILL_BOW)
+	{
+		int item;
+
+#if 0
+		cptr q, s;
+
+		item_tester_hook = item_tester_hook_convertible;
+
+		/* Get an item */
+		q = "Convert which item? ";
+		s = "You have no item to convert.";
+		if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+#endif	// 0
+
+		item = fletchery_items(Ind);
+
+		/* Get the item (in the pack) */
+		if (item >= 0)
+		{
+			q_ptr = &p_ptr->inventory[item];
+		}
+
+		/* Get the item (on the floor) */
+		else
+		{
+			msg_print(Ind, "You don't have appropriate materials.");
+			return;
+//			q_ptr = &o_list[0 - item];
+		}
+
+		/* Get local object */
+		q_ptr = &forge;
+
+		/* Hack -- Give the player some arrow */
+		invcopy(q_ptr, lookup_kind(TV_ARROW, m_bonus(1, tlev) + 1));
+//		q_ptr->number = (byte)rand_range(15,25);
+		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
+		object_aware(Ind, q_ptr);
+		object_known(q_ptr);
+		apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 10))?TRUE:FALSE);
+
+		msg_print(Ind, "You make some ammo.");
+
+		if (item >= 0)
+		{
+			inven_item_increase(Ind, item, -1);
+			inven_item_describe(Ind, item);
+			inven_item_optimize(Ind, item);
+		}
+		else
+		{
+			floor_item_increase(0 - item, -1);
+			floor_item_describe(0 - item);
+			floor_item_optimize(0 - item);
+		}
+
+		(void)inven_carry(Ind, q_ptr);
+	}
+
+	/**********Create bolts*********/
+//	else if (ext == 3)
+	else if (ext == SKILL_XBOW)
+	{
+		int item;
+
+#if 0
+		cptr q, s;
+
+		item_tester_hook = item_tester_hook_convertible;
+
+		/* Get an item */
+		q = "Convert which item? ";
+		s = "You have no item to convert.";
+		if (!get_item(&item, q, s, (USE_INVEN | USE_FLOOR))) return;
+#endif	// 0
+
+		item = fletchery_items(Ind);
+
+		/* Get the item (in the pack) */
+		if (item >= 0)
+		{
+			q_ptr = &p_ptr->inventory[item];
+		}
+
+		/* Get the item (on the floor) */
+		else
+		{
+			msg_print(Ind, "You don't have appropriate materials.");
+			return;
+//			q_ptr = &o_list[0 - item];
+		}
+
+		/* Get local object */
+		q_ptr = &forge;
+
+		/* Hack -- Give the player some small firestones */
+		invcopy(q_ptr, lookup_kind(TV_BOLT, m_bonus(1, tlev) + 1));
+//		q_ptr->number = (byte)rand_range(15,25);
+		q_ptr->number = p_ptr->inventory[item].weight / q_ptr->weight + randint(5);
+		object_aware(Ind, q_ptr);
+		object_known(q_ptr);
+		apply_magic(&p_ptr->wpos, q_ptr, tlev, TRUE, TRUE, (magik(tlev / 20))?TRUE:FALSE);
+
+		msg_print(Ind, "You make some ammo.");
+
+		if (item >= 0)
+		{
+			inven_item_increase(Ind, item, -1);
+			inven_item_describe(Ind, item);
+			inven_item_optimize(Ind, item);
+		}
+		else
+		{
+			floor_item_increase(0 - item, -1);
+			floor_item_describe(0 - item);
+			floor_item_optimize(0 - item);
+		}
+
+		(void)inven_carry(Ind, q_ptr);
+	}
+}
+

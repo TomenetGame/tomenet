@@ -1174,6 +1174,7 @@ static bool rd_extra(int Ind)
 	}
 	else
 	{
+		/* Old 'guest' hack -- DELETEME */
 		if (strcmp(pass, p_ptr->pass) && strcmp("Guest", p_ptr->name))
 			return TRUE;
 	}

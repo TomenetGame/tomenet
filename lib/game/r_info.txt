@@ -3864,6 +3864,8 @@ F:DROP_60 | WILD_TOO | WILD_MOUNTAIN | DROP_SKELETON | DROP_CORPSE |
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | GIANT | MALE | 
 F:MORTAL | BASEANGBAND | HAS_LITE
+S:1_IN_10
+S:BOULDER
 D:A ten foot tall humanoid with powerful muscles. 
 
 N:256:Flesh golem
@@ -4227,6 +4229,8 @@ F:DROP_60 | WILD_TOO | WILD_WASTE | WILD_MOUNTAIN |
 F:OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE | 
 F:EVIL | GIANT | MALE | AURA_COLD | SUSCEP_FIRE |
 F:IM_COLD | BASEANGBAND | HAS_LITE | MORTAL
+S:1_IN_10
+S:BOULDER
 D:A twelve foot tall giant covered in furs. 
 
 N:279:Griffon
@@ -4381,6 +4385,8 @@ F:DROP_60 |
 F:OPEN_DOOR | BASH_DOOR | WILD_TOO | WILD_VOLCANO | SUSCEP_COLD |
 F:EVIL | GIANT | MALE | AURA_FIRE | DROP_SKELETON | DROP_CORPSE | 
 F:IM_FIRE | BASEANGBAND | HAS_LITE | MORTAL
+S:1_IN_8
+S:BOULDER
 D:A glowing fourteen foot tall giant. Flames drip from its red skin. 
 
 N:289:Hummerhorn
@@ -4902,6 +4908,8 @@ B:HIT:HURT:3d8
 F:DROP_60 | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE | 
 F:EVIL | GIANT | MALE | WILD_TOO | WILD_MOUNTAIN | BASEANGBAND | HAS_LITE
+S:1_IN_5
+S:BOULDER
 D:It is eighteen feet tall and looking at you. 
 
 N:322:Giant black dragon fly
@@ -5345,6 +5353,8 @@ B:HIT:ELEC:8d8
 F:DROP_90 | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE | 
 F:EVIL | GIANT | IM_ELEC | MALE | BASEANGBAND | HAS_LITE
+S:1_IN_8
+S:BOULDER
 D:It is a twenty foot tall giant wreathed in clouds. 
 
 N:350:Ugluk, the Uruk
@@ -6899,7 +6909,8 @@ F:BASH_DOOR | OPEN_DOOR | MOVE_BODY | DROP_CORPSE |
 F:EVIL | IM_POIS | IM_ACID | IM_FIRE | IM_COLD | GIANT | 
 F:MORTAL | BASEANGBAND | HAS_LITE
 S:1_IN_8 | 
-S:ARROW_2
+S:BOULDER
+#S:ARROW_2
 D:A gigantic humanoid with but one eye.  
 
 N:445:Clairvoyant
@@ -7642,7 +7653,7 @@ F:FORCE_SLEEP | FORCE_MAXHP | DROP_1D2 | WILD_TOO | WILD_MOUNTAIN |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | AURA_ELEC | DROP_SKELETON | DROP_CORPSE | 
 F:EVIL | GIANT | IM_COLD | IM_ELEC | MALE | BASEANGBAND | HAS_LITE
 S:1_IN_8 | 
-S:BLINK | TELE_TO | CONF | SCARE | BO_ELEC | BA_ELEC
+S:BLINK | TELE_TO | CONF | SCARE | BO_ELEC | BA_ELEC | BOULDER
 D:It is a twenty-five foot tall giant wreathed in lightning. 
 
 N:488:Spectator
@@ -7697,7 +7708,8 @@ F:BASH_DOOR | OPEN_DOOR | MOVE_BODY |
 F:EVIL | IM_POIS | IM_ACID | IM_FIRE | IM_COLD | GIANT | 
 F:MORTAL | ZANGBAND | HAS_LITE
 S:1_IN_8 | 
-S:ARROW_2
+#S:ARROW_2
+S:BOULDER
 D:Oh, no! Aaargh! It is the most unnatural, most disgusting 
 D:creature imaginable: a two-eyed cyclops! This perversion 
 D:of nature must be exterminated! 
@@ -7749,6 +7761,8 @@ F:ESCORT | SPECIAL_GENE | MOVE_BODY | REGENERATE |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | WILD_TOO | WILD_WOOD |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE | 
 F:EVIL | TROLL | IM_COLD | IM_POIS | HURT_LITE | HURT_ROCK | BASEANGBAND | NO_CUT
+S:1_IN_7
+S:BOULDER
 D:Big, brawny, powerful and with a taste for hobbit. He has friends called 
 D:Bill and Tom. 
 
@@ -7767,6 +7781,8 @@ F:ESCORT | SPECIAL_GENE | MOVE_BODY | REGENERATE |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | WILD_TOO | WILD_WOOD |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE
 F:EVIL | TROLL | IM_COLD | IM_POIS | HURT_LITE | HURT_ROCK | BASEANGBAND | NO_CUT
+S:1_IN_7
+S:BOULDER
 D:Big, brawny, powerful and with a taste for hobbit. He has friends called 
 D:Bert and Tom. 
 
@@ -7990,6 +8006,8 @@ F:ESCORT |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | 
 F:EVIL | GIANT | IM_COLD | IM_POIS | BASEANGBAND | HAS_LITE
+S:1_IN_7
+S:BOULDER
 D:Big, brawny, powerful and with a greed for gold. 
 
 N:507:Shade
@@ -8767,6 +8785,8 @@ F:ESCORT | MOVE_BODY |
 F:ONLY_ITEM | DROP_2D2 | DROP_GOOD | DROP_CORPSE | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | REGENERATE | 
 F:EVIL | TROLL | IM_COLD | IM_POIS | BASEANGBAND
+S:1_IN_7
+S:BOULDER
 D:A massive and cruel troll of great power, drool slides caustically down 
 D:his muscular frame. Despite his bulk, he strikes with stunning speed. 
 
@@ -10311,7 +10331,7 @@ F:DROP_GOOD | DROP_4D2 | DROP_SKELETON | DROP_CORPSE |
 F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:EVIL | GIANT | MALE | BASEANGBAND | HAS_LITE
 S:1_IN_3 | 
-S:HEAL | TELE_TO | SCARE | 
+S:HEAL | TELE_TO | SCARE | BOULDER
 S:S_MONSTERS
 D:It is a humanoid figure thirty feet tall that gives off an aura of power 
 D:and hate. 
@@ -11722,7 +11742,7 @@ F:ONLY_ITEM | DROP_4D2 | DROP_1D2 | DROP_GOOD | MOVE_BODY |
 F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:EVIL | GIANT | MALE | BASEANGBAND | HAS_LITE
 S:1_IN_3 | 
-S:HEAL | TELE_TO | 
+S:HEAL | TELE_TO | BOULDER
 S:S_MONSTERS
 D:A forty foot tall humanoid that shakes the ground as it walks. The power 
 D:radiating from its frame shakes your courage, its hatred inspired by your 
@@ -17668,7 +17688,7 @@ F:DROP_2D2 | DROP_3D2 | DROP_GOOD | ONLY_ITEM | KILL_ITEM |
 F:BASH_DOOR | KILL_BODY | 
 F:EVIL | GIANT | IM_ACID | IM_POIS | IM_FIRE | IM_COLD | 
 S:1_IN_5 | 
-S:BO_WATE | BA_WATE | BO_ICEE | BA_ACID | ARROW_2
+S:BO_WATE | BA_WATE | BO_ICEE | BA_ACID | BOULDER
 D:No ordinary cyclops, but the son of a sea-god:  he wields the powers of 
 D:elemental water as well as the considerable strength of a cyclops.  His 
 D:one eye was blinded long ago by the warrior Odysseus, but he has trained 
@@ -18349,6 +18369,8 @@ F:ONLY_ITEM | DROP_GOOD | DROP_4D2 | KILL_BODY | KILL_WALL |
 F:SMART | TAKE_ITEM | OPEN_DOOR | BASH_DOOR | DROP_CORPSE | 
 F:EVIL | GIANT | HURT_ROCK | BASEANGBAND | HAS_LITE | 
 F:IM_FIRE | IM_COLD | IM_ACID | IM_ELEC | IM_POIS
+S:1_IN_5
+S:BOULDER
 D:The strongest of all the Titans.  Legend has it that he once held the sky 
 D:on his shoulders; and the mountain range that now does so is named after him. 
 
@@ -18370,7 +18392,7 @@ F:EVIL | GIANT | ESCORT | BASEANGBAND | DROP_CORPSE |
 F:IM_FIRE | IM_COLD | IM_ACID | IM_POIS | IM_ELEC
 S:1_IN_3 |
 S:BR_FIRE | BR_COLD | BR_SHAR | BR_SOUN | ROCKET | 
-S:S_MONSTERS | S_KIN | TELE_TO | HEAL 
+S:S_MONSTERS | S_KIN | TELE_TO | HEAL | BOULDER
 D:The lord of the Titans, he has broken loose from his confinement in 
 D:the nether hells to seek revenge on the world. 
 
