@@ -1080,9 +1080,9 @@ struct quest_type{
 
 /* evileye - same as above, but multiplayerized. */
 struct quest_type{
-	s16b active;		/* quest is active? */
-	s16b id;		/* quest id */
-	s16b type;		/* Monster race */
+	u16b active;		/* quest is active? (num players) */
+	u16b id;		/* quest id */
+	s16b type;		/* Monster race or object type */
 };
 
 /* Adding this structure so we can have different creatures generated
@@ -1504,6 +1504,7 @@ struct player_type
 	s16b wt;			/* Weight */
 	s16b sc;			/* Social Class */
 
+	u32b align;			/* alignment (msw - good, lsw - law) */
 
 	player_race *rp_ptr;		/* Pointers to player tables */
 	player_class *cp_ptr;
@@ -1953,7 +1954,7 @@ struct player_type
 		bool admin_wiz;		/* Is this char Wizard? */
 		bool admin_dm;		/* or Dungeon Master? */
 
-	s16b quest_id;		/* Quest number */
+	u16b quest_id;		/* Quest number */
 	s16b quest_num;		/* Number of kills needed */
 
         s16b xtra_crit;         /* % of increased crits */

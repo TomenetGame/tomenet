@@ -4032,7 +4032,8 @@ void resurrect_player(int Ind)
 void del_quest(int id){
 	int i;
 	for(i=0; i<20; i++){
-		if(quests[i].active && quests[i].id==id){
+		if(quests[i].id==id){
+			s_printf("quest %d removed\n", id);
 			quests[i].active=0;
 			quests[i].id=0;
 			quests[i].type=0;
@@ -4040,17 +4041,34 @@ void del_quest(int id){
 	}
 }
 
-void rem_quest(int id){
-	if(id && quests[id].active){
-		quests[id].active--;
-		if(!quests[id].active)
+/* One player leave a quest (death, deletion) */
+void rem_quest(u16b id){
+	int i;
+
+	s_printf("Player death. Quest id: %d\n", id);
+
+	if(!id) return;
+
+	for(i=0;i<20;i++){
+		if(quests[i].id==id){
+			break;
+		}
+	}
+	if(i==20) return;
+	s_printf("Quest found in slot %d\n",i);
+	if(quests[i].active){
+		quests[i].active--;
+		s_printf("Remaining active: %d\n", quests[i].active);
+		if(!quests[i].active){
+			s_printf("delete call\n");
 			del_quest(id);
+		}
 	}
 }
 
 void kill_quest(int Ind){
 	int i;
-	s16b id, pos=-1;
+	u16b id, pos=-1;
 	player_type *p_ptr=Players[Ind], *q_ptr;
 	char temp[160];
 
@@ -4084,7 +4102,7 @@ void kill_quest(int Ind){
 
 s16b questid=1;
 
-bool add_quest(s16b type, s16b num, int midlevel){
+bool add_quest(u16b type, u16b num, int midlevel){
 	int i, j;
 	bool added=FALSE;
 	player_type *q_ptr;
@@ -4108,6 +4126,7 @@ bool add_quest(s16b type, s16b num, int midlevel){
 			if(ABS(q_ptr->lev-midlevel)>5) continue;
 			q_ptr->quest_id=questid;
 			q_ptr->quest_num=num;
+			clockin(j, 4);	/* register that player */
 			msg_print(j, "\377oYou have been given a quest\377y!");
 			msg_format(j, "\377oFind and kill \377y%d \377g%s \377obefore any other player\377y!", num, r_name+r_info[type].name);
 			quests[i].active++;
@@ -4117,6 +4136,7 @@ bool add_quest(s16b type, s16b num, int midlevel){
 		del_quest(questid);
 		return(FALSE);
 	}
+	s_printf("Added quest id %d (players %d)\n", quests[i].id, quests[i].active);
 	questid++;
 	if(questid==0) questid=1;
 	return(TRUE);

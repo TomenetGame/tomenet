@@ -5,6 +5,7 @@
 #define SERVER
 
 #include "angband.h"
+#include "party.h"
 
 static void new_wr_wild();
 static void new_wr_dungeons();
@@ -1305,38 +1306,6 @@ static void wr_hostilities(int Ind)
 }
 
 
-/*
- * Write the player name hash table.
- */
-static void wr_player_names(void)
-{
-	/*int i, num, *id_list;*/
-	int i,  *id_list;
-	u32b num;
-
-	/* Get the list of player ID's */
-	num = player_id_list(&id_list);
-
-	/* Store the number of entries */
-	wr_u32b(num);
-
-	/* Store each entry */
-	for (i = 0; i < num; i++)
-	{
-		/* Store the ID */
-		wr_s32b(id_list[i]);
-		wr_s32b(lookup_player_laston(id_list[i]));
-		/* 3.4.2 server */
-		wr_byte(lookup_player_level(id_list[i]));
-		wr_byte(lookup_player_party(id_list[i]));
-
-		/* Store the player name */
-		wr_string(lookup_player_name(id_list[i]));
-	}
-
-	/* Free the memory in the list */
-	C_KILL(id_list, num, int);
-}
 
 
 /*
@@ -1661,6 +1630,8 @@ static bool wr_savefile_new(int Ind)
 
 	wr_s16b(p_ptr->quest_id);
 	wr_s16b(p_ptr->quest_num);
+
+	wr_u32b(p_ptr->align);
 
 	/* Write the "value check-sum" */
 	wr_u32b(v_stamp);
@@ -2119,6 +2090,45 @@ bool load_player(int Ind)
 
 	/* Oops */
 	return (FALSE);
+}
+
+/*
+ * Write the player name hash table.
+ * Much better to write it from here...
+ */
+static void wr_player_names(void)
+{
+	hash_entry *ptr;
+
+	/*int i, num, *id_list;*/
+	int i,  *id_list;
+	u32b num;
+
+	/* Get the list of player ID's */
+	num = player_id_list(&id_list);
+
+	/* Store the number of entries */
+	wr_u32b(num);
+
+	/* Store each entry */
+	for (i = 0; i < num; i++)
+	{
+		/* Store the ID */
+		ptr=lookup_player(id_list[i]);
+		if(ptr){
+			wr_s32b(id_list[i]);
+			wr_s32b(ptr->laston);
+			/* 3.4.2 server */
+			wr_byte(ptr->level);
+			wr_byte(ptr->party);
+			wr_u16b(ptr->quest);
+			/* Store the player name */
+			wr_string(ptr->name);
+		}
+	}
+
+	/* Free the memory in the list */
+	C_KILL(id_list, num, int);
 }
 
 static bool wr_server_savefile(void)

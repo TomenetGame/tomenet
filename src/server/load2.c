@@ -1893,6 +1893,9 @@ static errr rd_savefile_new_aux(int Ind)
 		rd_s16b(&p_ptr->quest_id);
 		rd_s16b(&p_ptr->quest_num);
 	}
+	if(!older_than(3,5,0)){
+		rd_u32b(&p_ptr->align);
+	}
 
 #ifdef VERIFY_CHECKSUMS
 
@@ -2195,7 +2198,8 @@ errr rd_server_savefile()
 	if (!older_than(0,4,1))
 	{
 		char name[80];
-		byte level, party;
+		byte level, party, guild;
+		u16b quest;
 
 		rd_u32b(&tmp32u);
 
@@ -2210,6 +2214,14 @@ errr rd_server_savefile()
 			if(!older_than(3,4,2)){
 				rd_byte(&level);
 				rd_byte(&party);
+				if(!older_than(3,5,0)){
+					rd_byte(&guild);
+					rd_u16b(&quest);
+				}
+				else{
+					guild=0;
+					quest=0;
+				}
 			}
 			else{
 				level=0;
@@ -2220,7 +2232,7 @@ errr rd_server_savefile()
 			rd_string(name, 80);
 
 			/* Store the player name */
-			add_player_name(name, tmp32s, level, party, laston);
+			add_player_name(name, tmp32s, level, party, guild, quest, laston);
 		}
 	}
 

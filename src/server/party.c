@@ -3,6 +3,7 @@
  */
 
 #include "angband.h"
+#include "party.h"
 
 static void del_party(int id);
 static void party_msg(int party_id, cptr msg);
@@ -290,6 +291,7 @@ int guild_add(int adder, cptr name){
 
 	/* Set his guild number */
 	p_ptr->guild = guild_id;
+	clockin(Ind, 3);
 
 #if 0
 	/* Resend info */
@@ -1549,22 +1551,6 @@ bool check_ignore(int attacker, int target)
  * however.
  */
 
-/* The struct to hold a data entry */
-typedef struct hash_entry hash_entry;
-
-struct hash_entry
-{
-	int id;				/* The ID */
-	cptr name;			/* Player name */
-
-	/* new in 3.4.2 */
-	byte level;			/* Player maximum level */
-	byte party;			/* Player party */
-
-	time_t laston;			/* Last on time */
-	struct hash_entry *next;	/* Next entry in the chain */
-};
-
 /* The hash table itself */
 static hash_entry *hash_table[NUM_HASH_ENTRIES];
 
@@ -1578,30 +1564,15 @@ static int hash_slot(int id)
 	return (id & (NUM_HASH_ENTRIES - 1));
 }
 
+
 /*
  * Get the player's highest level.
  */
 byte lookup_player_level(int id)
 {
-	int slot;
 	hash_entry *ptr;
-
-	/* Get the slot */
-	slot = hash_slot(id);
-
-	/* Acquire the pointer to the first element in the chain */
-	ptr = hash_table[slot];
-
-	/* Search the chain, looking for the correct ID */
-	while (ptr)
-	{
-		/* Check this entry */
-		if (ptr->id == id)
-			return ptr->level;
-
-		/* Next entry in chain */
-		ptr = ptr->next;
-	}
+	if((ptr=lookup_player(id)))
+		return ptr->level;
 
 	/* Not found */
 	return -1L;
@@ -1612,25 +1583,9 @@ byte lookup_player_level(int id)
  */
 byte lookup_player_party(int id)
 {
-	int slot;
 	hash_entry *ptr;
-
-	/* Get the slot */
-	slot = hash_slot(id);
-
-	/* Acquire the pointer to the first element in the chain */
-	ptr = hash_table[slot];
-
-	/* Search the chain, looking for the correct ID */
-	while (ptr)
-	{
-		/* Check this entry */
-		if (ptr->id == id)
-			return ptr->party;
-
-		/* Next entry in chain */
-		ptr = ptr->next;
-	}
+	if((ptr=lookup_player(id)))
+		return ptr->party;
 
 	/* Not found */
 	return -1L;
@@ -1641,34 +1596,20 @@ byte lookup_player_party(int id)
  */
 time_t lookup_player_laston(int id)
 {
-	int slot;
 	hash_entry *ptr;
 
-	/* Get the slot */
-	slot = hash_slot(id);
-
-	/* Acquire the pointer to the first element in the chain */
-	ptr = hash_table[slot];
-
-	/* Search the chain, looking for the correct ID */
-	while (ptr)
-	{
-		/* Check this entry */
-		if (ptr->id == id)
-			return ptr->laston;
-
-		/* Next entry in chain */
-		ptr = ptr->next;
-	}
+	if((ptr=lookup_player(id)))
+		return ptr->laston;
 
 	/* Not found */
 	return -1L;
 }
 
+
 /*
- * Lookup a player name by ID.  Will return NULL if the name doesn't exist.
+ * Lookup a player record ID.  Will return NULL on failure.
  */
-cptr lookup_player_name(int id)
+hash_entry *lookup_player(int id)
 {
 	int slot;
 	hash_entry *ptr;
@@ -1684,11 +1625,24 @@ cptr lookup_player_name(int id)
 	{
 		/* Check this entry */
 		if (ptr->id == id)
-			return ptr->name;
+			return ptr;
 
 		/* Next entry in chain */
 		ptr = ptr->next;
 	}
+
+	/* Not found */
+	return NULL;
+}
+
+/*
+ * Lookup a player name by ID.  Will return NULL if the name doesn't exist.
+ */
+cptr lookup_player_name(int id)
+{
+	hash_entry *ptr;
+	if((ptr=lookup_player(id)))
+		return ptr->name;
 
 	/* Not found */
 	return NULL;
@@ -1761,6 +1715,12 @@ void clockin(int Ind, int type){
 					break;
 				case 2:
 					ptr->party=p_ptr->party;
+					break;
+				case 3:
+					ptr->guild=p_ptr->guild;
+					break;
+				case 4:
+					ptr->quest=p_ptr->quest_id;
 					break;
 			}
 			break;
@@ -1851,6 +1811,8 @@ void scan_players(){
 					}
 				}
 				kill_houses(ptr->id, OT_PLAYER);
+				rem_quest(ptr->quest);
+
 				sf_delete(ptr->name);	/* a sad day ;( */
 				if(!pptr)
 					hash_table[slot]=ptr->next;
@@ -1877,7 +1839,7 @@ void scan_players(){
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, byte level, byte party, time_t laston)
+void add_player_name(cptr name, int id, byte level, byte party, byte guild, u16b quest, time_t laston)
 {
 	int slot;
 	hash_entry *ptr;
@@ -1896,6 +1858,8 @@ void add_player_name(cptr name, int id, byte level, byte party, time_t laston)
 	ptr->id = id;
 	ptr->level = level;
 	ptr->party = party;
+	ptr->guild = guild;
+	ptr->quest = quest;
 
 	/* Add the rest of the chain to this entry */
 	ptr->next = hash_table[slot];

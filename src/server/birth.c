@@ -1383,7 +1383,7 @@ static void player_setup(int Ind)
 	{
 		time_t ttime;
 		/* Add */
-		add_player_name(p_ptr->name, p_ptr->id, 1, 0, time(&ttime));
+		add_player_name(p_ptr->name, p_ptr->id, 1, 0, 0, 0, time(&ttime));
 	}
 
 	/* Set his "current activities" variables */

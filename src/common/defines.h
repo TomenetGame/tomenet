@@ -32,8 +32,8 @@
  */
 
 #define VERSION_MAJOR	3
-#define VERSION_MINOR   4
-#define VERSION_PATCH   6
+#define VERSION_MINOR   5
+#define VERSION_PATCH   0
 
 /*
  * Current version number of TomeNET:

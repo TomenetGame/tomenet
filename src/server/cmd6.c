@@ -633,6 +633,11 @@ void do_cmd_quaff_potion(int Ind, int item)
 			}
 			break;
 		}
+		case SV_POTION_MUTATION:
+		{
+			ident = TRUE;
+			break;
+		}
 
 		case SV_POTION_SLEEP:
 		{

@@ -741,7 +741,7 @@ extern bool check_ignore(int attacker, int target);
 extern bool check_hostile(int attacker, int target);
 extern cptr lookup_player_name(int id);
 extern int lookup_player_id(cptr name);
-extern void add_player_name(cptr name, int id, byte level, byte party, time_t laston);
+extern void add_player_name(cptr name, int id, byte level, byte party, byte guild, u16b quest, time_t laston);
 extern void delete_player_id(int id);
 extern void delete_player_name(cptr name);
 extern int player_id_list(int **list);
@@ -958,7 +958,7 @@ extern void handle_stuff(int Ind);
 /* xtra2.c */
 extern s16b questid;
 extern bool imprison(int Ind, u16b time, char *reason);
-extern bool add_quest(s16b type, s16b num, int midlevel);
+extern bool add_quest(u16b type, u16b num, int midlevel);
 extern bool set_invuln_short(int Ind, int v);
 extern bool set_biofeedback(int Ind, int v);
 extern bool set_adrenaline(int Ind, int v);
