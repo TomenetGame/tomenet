@@ -872,6 +872,51 @@ I:6:30:50:3:16:0d0:y
 D:Your backpack feels lighter, now it's the time to depart!
 F:FLOOR | DOOR | CHEST
 
+N:186:Scribble Trap
+I:7:30:50:2:40:0d0:y
+D:A magic marker dances around you!
+F:FLOOR | DOOR | CHEST
+
+N:187:Slump Trap
+I:12:15:5:8:80:0d0:b
+D:You feel yourself hitting a slump nowadays.
+F:FLOOR | CHEST | DOOR
+
+N:188:Ophiuchus Trap
+I:10:30:5:5:35:0d0:W
+D:A fragrant mist fills the air...
+F:FLOOR | DOOR
+
+N:189:Lost Labor Trap
+I:12:10:5:5:38:0d0:W
+D:You feel very despondent..
+F:FLOOR | DOOR
+
+N:190:Trap of Despoir
+I:8:10:5:5:10:0d0:y
+D:You are driven to despair.
+F:FLOOR | DOOR | CHEST
+
+N:191:Trap of Rare Books
+I:3:6:5:5:35:0d0:y
+D:Suddenly you felt something really splendid just happened to you!
+F:DOOR | CHEST | CHANGE
+
+N:192:Wrong Target Trap
+I:7:40:5:5:22:0d0:w
+D:Suddenly you felt something really splendid just happened to you!
+F:FLOOR | DOOR | CHEST
+
+N:193:Cleaning Trap
+I:6:20:0:10:38:0d0:o
+D:Thank you for helping us to keep the dungeon clean.
+F:FLOOR
+
+N:194:Trap of Preparation
+I:10:100:0:10:25:0d0:o
+D:You feel they are ready to welcome you!
+F:FLOOR | CHEST | DOOR
+
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
 # I:diff:prob:            :minlevel:      :color

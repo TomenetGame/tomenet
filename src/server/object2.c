@@ -1715,6 +1715,7 @@ void invcopy(object_type *o_ptr, int k_idx)
 	if (o_ptr->tval == TV_POTION ||
 		o_ptr->tval == TV_POTION2 ||
 		o_ptr->tval == TV_LITE ||
+		o_ptr->tval == TV_FLASK ||
 		o_ptr->tval == TV_FOOD)
 		o_ptr->pval = k_ptr->pval;
 	else if (!o_ptr->tval == TV_ROD)
@@ -3590,34 +3591,33 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					// o_ptr->xtra1 = EGO_XTRA_ABILITY;
 					//o_ptr->xtra2 = randint(256);
 
+					break;
+				}
+
+				/* Amulet of Trickery */
+				case SV_AMULET_TRICKERY:
+				case SV_AMULET_DEVOTION:
+				{
+					o_ptr->bpval = 1 + m_bonus(3, level);
 
 					break;
 				}
 
-                                /* Amulet of Trickery */
-                                case SV_AMULET_TRICKERY:
-                                case SV_AMULET_DEVOTION:
+				case SV_AMULET_WEAPONMASTERY:
 				{
-                                        o_ptr->bpval = 1 + m_bonus(3, level);
-
-					break;
-				}
-
-                                case SV_AMULET_WEAPONMASTERY:
-				{
-                                        o_ptr->bpval = 1 + m_bonus(2, level);
-                                        o_ptr->to_a = 1 + m_bonus(4, level);
-                                        o_ptr->to_h = 1 + m_bonus(5, level);
-                                        o_ptr->to_d = 1 + m_bonus(5, level);
+					o_ptr->bpval = 1 + m_bonus(2, level);
+					o_ptr->to_a = 1 + m_bonus(4, level);
+					o_ptr->to_h = 1 + m_bonus(5, level);
+					o_ptr->to_d = 1 + m_bonus(5, level);
 
 					break;
 				}
 
 				/* Amulet of wisdom/charisma */
-                                case SV_AMULET_BRILLANCE:
+				case SV_AMULET_BRILLANCE:
 				case SV_AMULET_CHARISMA:
-                                case SV_AMULET_WISDOM:
-                                case SV_AMULET_INFRA:
+				case SV_AMULET_WISDOM:
+				case SV_AMULET_INFRA:
 				{
 					o_ptr->bpval = 1 + m_bonus(5, level);
 
@@ -3634,11 +3634,11 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					break;
 				}
 
-                                /* Amulet of the Serpents */
-                                case SV_AMULET_SERPENT:
+				/* Amulet of the Serpents */
+				case SV_AMULET_SERPENT:
 				{
-                                        o_ptr->bpval = 1 + m_bonus(5, level);
-                                        o_ptr->to_a = 1 + m_bonus(6, level);
+					o_ptr->bpval = 1 + m_bonus(5, level);
+					o_ptr->to_a = 1 + m_bonus(6, level);
 
 					/* Cursed */
 					if (power < 0)
@@ -3692,9 +3692,9 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				/* Amulet of the Magi -- never cursed */
 				case SV_AMULET_THE_MAGI:
 				{
-                                        o_ptr->bpval = 1 + m_bonus(3, level);
+					o_ptr->bpval = 1 + m_bonus(3, level);
 
-//					if (randint(3)==1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
+					//					if (randint(3)==1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
 
 					break;
 				}
@@ -3710,6 +3710,12 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					o_ptr->to_a = 0 - (randint(5) + m_bonus(5, level));
 
 					break;
+				}
+
+				/* Amulet of Suspicion */
+				case SV_AMULET_SUSPICION:
+				{
+					o_ptr->bpval = -1;
 				}
 			}
 

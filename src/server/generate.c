@@ -1965,10 +1965,10 @@ static void build_type4(struct worldpos *wpos, int yval, int xval)
 bool dungeon_aux(int r_idx){
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (dun->watery) return(TRUE);
+//	if (dun->watery) return(TRUE);
 
 	/* No aquatic life in the dungeon */
-	if (r_ptr->flags7 & RF7_AQUATIC) return(FALSE);
+//	if (r_ptr->flags7 & RF7_AQUATIC) return(FALSE);
 	return TRUE;
 }
 

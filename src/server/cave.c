@@ -179,6 +179,7 @@ void wpcopy(struct worldpos *dest, struct worldpos *src)
 	dest->wz=src->wz;
 }
 
+// pfft, it was same with inarea
 /* better use macros maybe..	- Jir - */
 bool wpcmp(worldpos *dest, worldpos *src)
 {
@@ -241,9 +242,12 @@ int players_on_depth(struct worldpos *wpos)
 
 bool inarea(struct worldpos *apos, struct worldpos *bpos)
 {
+	return(apos->wx==bpos->wx && apos->wy==bpos->wy && apos->wz==bpos->wz);
+#if 0
 	if(apos->wx==bpos->wx && apos->wy==bpos->wy && apos->wz==bpos->wz)
 		return TRUE;
 	return FALSE;
+#endif	// 0
 }
 
 int getlevel(struct worldpos *wpos)
@@ -1113,6 +1117,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 						/* Add attr */
 						a = t_info[t_ptr->t_idx].color;
+
 						/* Get a new color with a strange formula :) */
 						if (t_info[t_ptr->t_idx].flags & FTRAP_CHANGE)
 						{
@@ -1125,6 +1130,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 							/* mega-hack: use trap-like colours only */
 							a = tmp % 6 + 1;
 						}
+
+						/* Hack -- always l.blue if underwater */
+						if (feat == FEAT_WATER)
+							a = TERM_L_BLUE;
 					}
 				}
 			}

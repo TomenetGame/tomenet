@@ -2884,6 +2884,8 @@ bool genocide(int Ind)
 	}
 #endif	// 0
 
+	bypass_invuln = TRUE;
+
 	/* Delete the monsters of that "type" */
 	for (i = 1; i < m_max; i++)
 	{
@@ -2946,6 +2948,8 @@ bool genocide(int Ind)
 		p_ptr->redraw |= (PR_HP);
 #endif	// SEVERE_GENO
 
+		bypass_invuln = FALSE;
+
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
 
@@ -2970,6 +2974,8 @@ bool mass_genocide(int Ind)
 	worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return FALSE;
+
+	bypass_invuln = TRUE;
 
 	/* Delete the (nearby) monsters */
 	for (i = 1; i < m_max; i++)
@@ -3037,6 +3043,7 @@ bool mass_genocide(int Ind)
 	p_ptr->redraw |= (PR_HP);
 #endif
 
+	bypass_invuln = FALSE;
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);

@@ -3016,11 +3016,11 @@ void do_cmd_throw(int Ind, int dir, int item)
 	}
 
 	if(o_ptr->tval==0){
-		msg_print(Ind, "\377rYou cannot throw that");
+		msg_print(Ind, "\377rYou cannot throw that.");
 		return;
 	}
 	if( check_guard_inscription( o_ptr->note, 'v' )) {
-		msg_print(Ind, "The item's inscription prevents it");
+		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	};
 

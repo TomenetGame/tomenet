@@ -307,7 +307,7 @@ extern struct dungeon_type *getdungeon(struct worldpos *wpos);
 extern bool can_go_up(struct worldpos *wpos);
 extern bool can_go_down(struct worldpos *wpos);
 extern bool istown(struct worldpos *wpos);
-extern bool inarea(struct worldpos *apos, struct worldpos *bpos);
+//extern bool inarea(struct worldpos *apos, struct worldpos *bpos);
 extern int getlevel(struct worldpos *wpos);
 extern void wpcopy(struct worldpos *dest, struct worldpos *src);
 extern int distance(int y1, int x1, int y2, int x2);

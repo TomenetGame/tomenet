@@ -471,7 +471,8 @@ static void process_world(int Ind)
 
 
 	/* Every 50 game turns */
-	if (turn % 50) return;
+	/* Check moved */
+//	if (turn % 50) return;
 
 
 	/*** Check the Time and Load ***/
@@ -1338,53 +1339,6 @@ static void process_player_end(int Ind)
 
 	/* XXX XXX XXX Pack Overflow */
 	pack_overflow(Ind);
-#if 0
-	if (p_ptr->inventory[INVEN_PACK].k_idx)
-	{
-		int		amt, j = 0;
-
-		char	o_name[160];
-
-		/* Choose an item to spill */
-//		i = INVEN_PACK;
-
-		for(i = INVEN_PACK; i >= 0; i--)
-		{
-			if(!check_guard_inscription( (p_ptr->inventory[i]).note, 'd' ))
-			{
-				j = 1;
-				break;
-			}
-		}
-
-		if (!j) i = INVEN_PACK;
-
-		/* Access the slot to be dropped */
-		o_ptr = &p_ptr->inventory[i];
-
-		/* Drop all of that item */
-		amt = o_ptr->number;
-
-		/* Disturbing */
-		disturb(Ind, 0, 0);
-
-		/* Warning */
-		msg_print(Ind, "Your pack overflows!");
-
-		/* Describe */
-		object_desc(Ind, o_name, o_ptr, TRUE, 3);
-
-		/* Message */
-		msg_format(Ind, "You drop %s.", o_name);
-
-		/* Drop it (carefully) near the player */
-		drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-
-		/* Decrease the item, optimize. */
-		inven_item_increase(Ind, i, -amt);
-		inven_item_optimize(Ind, i);
-	}
-#endif /* 0 */
 
 
 	/* Process things such as regeneration. */
@@ -2131,7 +2085,7 @@ static void process_player_end(int Ind)
 				}
 			}
 
-			/* Rework needed! */
+			/* XXX Rework needed! */
 			/* Activate the recall */
 			if (!p_ptr->word_recall)
 			{
@@ -2180,7 +2134,7 @@ static void process_player_end(int Ind)
 				else if (!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN) ))
 				{
 					if ((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] & (1 << (wild_idx(&p_ptr->recall_pos))%8))) ||
-						wpcmp(&p_ptr->wpos, &p_ptr->recall_pos))
+						inarea(&p_ptr->wpos, &p_ptr->recall_pos))
 					{
 						/* lazy -- back to the centre of the world
 						 * this should be changed so that it lands him/her
@@ -2568,7 +2522,7 @@ static void process_various(void)
 				// 				r_ptr->max_num = 1;
 				//				r_ptr->respawn_timer = -1;
 
-				/* Tell every player */
+				/* Tell the player */
 				msg_format(j,"%s rises from the dead!",(r_name + r_ptr->name));
 				//				msg_broadcast(0,buf); 
 			}
@@ -3231,14 +3185,15 @@ void dungeon(void)
 	process_objects();
 
 	/* Probess the world */
-	for (i = 1; i < NumPlayers + 1; i++)
-	{
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
+	if (turn % 50)
+		for (i = 1; i < NumPlayers + 1; i++)
+		{
+			if (Players[i]->conn == NOT_CONNECTED)
+				continue;
 
-		/* Process the world of that player */
-		process_world(i);
-	}
+			/* Process the world of that player */
+			process_world(i);
+		}
 
 	/* Process everything else */
 	process_various();

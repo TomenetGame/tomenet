@@ -1136,9 +1136,14 @@ void admin_outfit(int Ind)
 		for (i = 0; i < 9; i++)
 		{
 			int k = lookup_kind(p_ptr->mp_ptr->spell_book, i);
+			u32b f1, f2, f3, f4, f5, esp;
 			if (!k) continue;
 			invcopy(o_ptr, k);
-			o_ptr->number = 9;
+
+			/* Hack^2 -- use this as a sign of being 'high books' */
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+			o_ptr->number = (f3 & TR3_IGNORE_FIRE) ? 1 : 30;
+
 			o_ptr->discount = 72;
 			object_known(o_ptr);
 			o_ptr->owner = p_ptr->id;

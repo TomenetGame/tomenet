@@ -637,7 +637,7 @@ bool do_player_trap_call_out(int Ind)
 	/* Paranoia -- Skip dead monsters */
 	if (!m_ptr->r_idx) continue;
 
-	if (!wpcmp(&p_ptr->wpos, &m_ptr->wpos)) continue;
+	if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 	if (m_ptr->level>=h_level)
 	{
 		h_level = m_ptr->level;
@@ -2240,7 +2240,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			 }
 
 			 /* paranoia */
-			 if (!cave_floor_bold(zcave, cy, cx))
+			 if (!cave_empty_bold(zcave, cy, cx))
 			 {
 				 cx = x;
 				 cy = y;
@@ -2428,10 +2428,256 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			}
 			break;
 		}
-      default:
-      {
-         s_printf("Executing unknown trap %d", trap);
-      }
+		/* Scribble Trap */
+		case TRAP_OF_SCRIBBLE:
+		{
+			int i, j;
+			object_type *o_ptr;
+
+			for (i=0;i<INVEN_TOTAL;i++)
+			{
+				cptr str;
+				o_ptr = &p_ptr->inventory[i];
+
+				if (!o_ptr->k_idx) continue;
+				if (o_ptr->name1 == ART_POWER) continue;
+
+				ident = TRUE;
+
+				if (is_book(o_ptr)) str = "!*!m!n!p";
+				else switch (o_ptr->tval)
+				{
+					case TV_SCROLL:
+						str = "!*!r";
+						break;
+					case TV_POTION:
+					case TV_POTION2:
+						str = "!*!q";
+						break;
+					case TV_FOOD:
+						str = "!*!E";
+						break;
+					case TV_ROD:
+					case TV_WAND:
+					case TV_STAFF:
+						str = "!*!a!u!z";
+						break;
+					default:
+						str = "!*!f!t!w!A!F";
+				}
+
+				o_ptr->note = quark_add(str);
+			}
+
+			if (ident && !p_ptr->blind)
+			{
+				msg_print(Ind, "A magic marker dances around you!");
+			}
+			break;
+		}
+		/* Slump Trap */
+		case TRAP_OF_SLUMP:
+			k = glev / 5;
+			k = k < 1 ? 1 : k;
+			msg_print(Ind, "You feel yourself hitting a slump nowadays.");
+			//		ident |= dec_stat(Ind, A_DEX, 25, TRUE);	// TRUE..!?
+			ident |= dec_stat(Ind, A_DEX, k, STAT_DEC_PERMANENT);
+			ident |= dec_stat(Ind, A_WIS, k, STAT_DEC_PERMANENT);
+			ident |= dec_stat(Ind, A_CON, k, STAT_DEC_PERMANENT);
+			ident |= dec_stat(Ind, A_STR, k, STAT_DEC_PERMANENT);
+			ident |= dec_stat(Ind, A_CHR, k, STAT_DEC_PERMANENT);
+			ident |= dec_stat(Ind, A_INT, k, STAT_DEC_PERMANENT);
+			break;
+		/* Ophiuchus Trap */
+		case TRAP_OF_OPHIUCHUS:
+		{
+			player_type *q_ptr;
+			for (k = m_max - 1; k >= 1; k--)
+			{
+				monster_type *m_ptr = &m_list[k];
+
+				if (inarea(&m_ptr->wpos,wpos))
+					m_ptr->hp = m_ptr->maxhp;
+			}
+			for (k = 1; k <= NumPlayers; k++)
+			{
+				if (Players[k]->conn == NOT_CONNECTED) continue;
+
+				q_ptr = Players[k];
+
+				msg_print(k, "A fragrant mist fills the air...");
+				hp_player(k, 9999);
+			}
+			vanish = 101;
+			break;
+		}
+		/* Lost Labor Trap */
+		case TRAP_OF_LOST_LABOR:
+			for (k = m_max - 1; k >= 1; k--)
+			{
+				monster_type *m_ptr = &m_list[k];
+
+				if (inarea(&m_ptr->wpos,wpos))
+				{
+					monster_race    *r_ptr = race_inf(m_ptr);
+					if (!(r_ptr->flags1 & RF1_UNIQUE))
+						m_ptr->clone = TRUE;
+				}
+			}
+			msg_print(Ind, "You feel very despondent..");
+			break;
+		case TRAP_OF_DESPAIR:
+			{
+				object_type     forge;
+				object_type     *o_ptr = &forge;
+
+				msg_print(Ind, "You are driven to despair.");
+				//		ident |= dec_stat(Ind, A_DEX, 25, TRUE);	// TRUE..!?
+				ident |= dec_stat(Ind, A_DEX, 10, STAT_DEC_PERMANENT);
+				ident |= dec_stat(Ind, A_WIS, 10, STAT_DEC_PERMANENT);
+				ident |= dec_stat(Ind, A_CON, 10, STAT_DEC_PERMANENT);
+				ident |= dec_stat(Ind, A_STR, 10, STAT_DEC_PERMANENT);
+				ident |= dec_stat(Ind, A_CHR, 10, STAT_DEC_PERMANENT);
+				ident |= dec_stat(Ind, A_INT, 10, STAT_DEC_PERMANENT);
+
+				invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_AUGMENTATION));
+				o_ptr->number = 1;
+				o_ptr->discount = 100;
+				o_ptr->owner = p_ptr->id;
+				o_ptr->level = 0;
+				(void)inven_carry(Ind, o_ptr);
+
+				invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_DEATH));
+				o_ptr->number = 1;
+				o_ptr->discount = 100;
+				o_ptr->owner = p_ptr->id;
+				o_ptr->level = 0;
+				(void)inven_carry(Ind, o_ptr);
+
+				vanish = 101;
+
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+				break;
+			}
+		case TRAP_OF_RARE_BOOKS:
+			{
+				object_type     forge;
+				object_type     *o_ptr = &forge;
+
+				msg_print(Ind, "Suddenly you felt something really splendid just happened to you!");
+
+				if (p_ptr->pclass == CLASS_SORCERER)
+					invcopy(o_ptr, lookup_kind(TV_MAGIC_BOOK, 7));
+				else invcopy(o_ptr, lookup_kind(TV_SORCERY_BOOK, 7));
+				o_ptr->number = 1;
+				o_ptr->discount = 100;
+				o_ptr->owner = p_ptr->id;
+				o_ptr->level = 0;
+				o_ptr->note = quark_add("!*");
+				(void)inven_carry(Ind, o_ptr);
+
+				vanish = 101;
+
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+				break;
+			}
+		/* Wrong Target Trap */
+		case TRAP_OF_WRONG_TARGET:
+		{
+			int tx, ty;
+
+			/* Clear the target */
+			p_ptr->target_who = 0;
+
+			scatter(wpos, &ty, &tx, p_ptr->py, p_ptr->px, 15, 0);
+			
+			/* Set the target */
+			p_ptr->target_row = ty;
+			p_ptr->target_col = tx;
+
+			/* Set 'stationary' target */
+			p_ptr->target_who = 0 - MAX_PLAYERS - 2;
+
+			msg_print(Ind, "You feel uneasy.");
+			break;
+		}
+		/* Cleaning Trap */
+		case TRAP_OF_CLEANING:
+		{
+			int x, y;
+			char o_name[80];
+
+			/* Delete the existing objects */
+			for (k = 1; k < o_max; k++)
+			{
+				object_type *o_ptr = &o_list[k];
+
+				/* Skip dead objects */
+				if (!o_ptr->k_idx) continue;
+
+				/* Skip objects not on this depth */
+				if (!inarea(&o_ptr->wpos, wpos)) continue;
+
+				/* Skip 'owned' items, so that this won't be too harsh 
+				 * in the rescue scene */
+				if (o_ptr->owner) continue;
+
+				/* Mega-Hack -- preserve artifacts */
+				if (true_artifact_p(o_ptr)/* && !object_known_p(o_ptr)*/)
+				{
+					a_info[o_ptr->name1].cur_num = 0;
+					a_info[o_ptr->name1].known = FALSE;
+					msg_print(Ind, "You have an accute feeling of loss!");
+				}
+
+				x = o_ptr->ix;
+				y = o_ptr->iy;
+
+				if (zcave) zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
+
+				if (!p_ptr->blind && player_has_los_bold(Ind, y, x))
+				{
+					note_spot(Ind, y,x);
+					lite_spot(Ind, y,x);
+					ident=TRUE;
+					object_desc(Ind, o_name, o_ptr, FALSE, 0);
+
+					msg_format(Ind, "You suddenly don't see the %s anymore!", o_name);
+				}
+
+				/* Wipe the object */
+				WIPE(o_ptr, object_type);
+			}
+			/* Compact the object list */
+			compact_objects(0);
+			break;
+		}
+		/* Preparation Trap */
+		case TRAP_OF_PREPARE:
+		{
+			/* Delete the existing objects */
+			for (k = 1; k < o_max; k++)
+			{
+				object_type *o_ptr = &o_list[k];
+
+				/* Skip dead objects */
+				if (!o_ptr->k_idx) continue;
+
+				/* Skip objects not on this depth */
+				if (!inarea(&o_ptr->wpos, wpos)) continue;
+
+				if (magik(glev)) place_trap(wpos, o_ptr->iy, o_ptr->ix);
+			}
+			msg_print(Ind, "You feel uneasy.");
+			break;
+		}
+
+		default:
+		{
+			s_printf("Executing unknown trap %d", trap);
+		}
    }
 
    /* some traps vanish */

@@ -4626,6 +4626,16 @@ extern int PlayerUID;
 #define TRAP_OF_CHASM		183
 #define TRAP_OF_PIT			184
 #define TRAP_OF_SEASONED_TRAVELER	185
+#define TRAP_OF_SCRIBBLE	186
+#define TRAP_OF_SLUMP		187
+#define TRAP_OF_OPHIUCHUS	188
+#define TRAP_OF_LOST_LABOR	189
+#define TRAP_OF_DESPAIR		190
+#define TRAP_OF_RARE_BOOKS	191
+#define TRAP_OF_WRONG_TARGET	192
+#define TRAP_OF_CLEANING	193
+#define TRAP_OF_PREPARE		194
+
 
 #define TR_LIST(c_ptr) (c_ptr->special.ptr)
 
@@ -4639,3 +4649,8 @@ extern int PlayerUID;
 	 (p_ptr->pclass == CLASS_MONK))
 
 #define is_admin(p_ptr) (p_ptr->admin_wiz || p_ptr->admin_dm)
+/*
+#define inarea(apos, bpos) \
+	(apos->wx==bpos->wx && apos->wy==bpos->wy && apos->wz==bpos->wz)
+//	(apos.wx==bpos.wx && apos.wy==bpos.wy && apos.wz==bpos.wz)
+*/

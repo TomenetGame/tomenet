@@ -770,18 +770,25 @@ Change list for PernMangband
 - monsters also cast spells even when out of sight.
 - *ID*ed items are marked with '*'.
 - /unc(urse)
+- GoI can no longer prevent genocide's strain.
 [H] makeshift underground watery area added for exhibition.
 [B] client crushed when having 2 same books with different inscription.
     (not really fixed; just hacked around)
+
+05/03/2002 (Jir)
+- some more traps.
+[B] lantern refilling 
+[B] watery respawning crashed
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)
 
 ==== below this line are the unfixed bugs known ====
+[B] rebooting server always make floors disappear;
+    monsters are preserved; only cave disappears.
 [B] Self-reproducing black trap
 [B] Panic save often enters into infinite loop.
-[B] rebooting server always make floors disappear
 [B] House doors still seem to crash sometimes.
 [B] wpos display hides wound states(eg.'Deep Gash')
 [B] ever-charging arts (eg.star)
@@ -804,9 +811,14 @@ Change list for PernMangband
 - wilderness compacting (how about 'compacting' townies?)
 - low-sanity alart each 2000 turn or sth(and 'flushback' hallucination?)
 - display "non-scoring mode" in '@' screen
-- no return trap/expert traveller trap
 - torch/lantern shouldn't be EASY_KNOWN.
 - Nazgul rings should have corresponding names
+* Trap ideas
+  - no return trap should steal books also?
+  - innondation trap
+  - telekinesis trap
+  - death molds trap
+  - house-door-opening trap
 [C] ameliorate option interface(toggle-key/vi-key)
 
 [major ones]
@@ -849,6 +861,12 @@ Change list for PernMangband
 - intelligent monsters should cast a spell even when player is out of sight.
 - NO_GHOST, but not HELLISH mode
 - vision sharing among the members of a party
+- improved 'running' (eg.ignore townies)
+- sth should be done with all those 'attacking' magic devices no1 uses,
+  such as fire bolt wand/rod..
+- visual effect when teleporting, so that players won't lose sight of '@'.
+- aquatic uniques
+  
 [major ones]
 - NPC/pet/golem/slave {Evileye/DG?}
 - monsters' interactions
