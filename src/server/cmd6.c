@@ -298,8 +298,6 @@ void do_cmd_eat_food(int Ind, int item)
 
 		case SV_FOOD_FORTUNE_COOKIE:
 		{
-			char Rumor[80];
-
 			msg_print(Ind, "That tastes good.");
 			if (p_ptr->blind || no_lite(Ind))
 			{
@@ -308,26 +306,7 @@ void do_cmd_eat_food(int Ind, int item)
 			else
 			{
 				msg_print(Ind, "There is message in the cookie. It says:");
-				msg_print(Ind, NULL);
-				switch(randint(20))
-				{
-					case 1:
-						get_rnd_line("chainswd.txt",0 , Rumor);
-						break;
-					case 2:
-						get_rnd_line("error.txt",0 , Rumor);
-						break;
-					case 3:
-					case 4:
-					case 5:
-						get_rnd_line("death.txt",0 , Rumor);
-						break;
-					default:
-						get_rnd_line("rumors.txt",0 , Rumor);
-				}
-				bracer_ff(Rumor);
-				msg_format(Ind, "%s", Rumor);
-				msg_print(Ind, NULL);
+				fortune(Ind);
 			}
 			ident = TRUE;
 			break;
@@ -514,7 +493,8 @@ void do_cmd_quaff_potion(int Ind, int item)
         }
 
 
-	if (o_ptr->tval != TV_POTION)
+	if ((o_ptr->tval != TV_POTION) &&
+		(o_ptr->tval != TV_POTION2))
 	{
 		msg_print(Ind, "SERVER ERROR: Tried to quaff non-potion!");
 		return;
@@ -534,6 +514,9 @@ void do_cmd_quaff_potion(int Ind, int item)
 	lev = k_info[o_ptr->k_idx].level;
 
 	/* Analyze the potion */
+	if (o_ptr->tval != TV_POTION)
+	{
+
 	switch (o_ptr->sval)
 	{
 		case SV_POTION_WATER:
@@ -1005,7 +988,16 @@ void do_cmd_quaff_potion(int Ind, int item)
 			}
 			break;
 		}
+
+		/* additions from PernA */
+		case SV_POTION_INVULNERABILITY:
+		{
+			ident = set_invuln(Ind, p_ptr->invuln + randint(7) + 7);
+			break;
+		}
+
 	}
+	} else {/* POTION2 */}
 
 
 	/* Combine / Reorder the pack (later) */
@@ -1706,6 +1698,44 @@ void do_cmd_read_scroll(int Ind, int item)
 #else
 			acquirement(p_ptr->dun_depth, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE);
 #endif
+			ident = TRUE;
+			break;
+		}
+
+		/* New Zangband scrolls */
+		case SV_SCROLL_FIRE:
+		{
+			fire_ball(Ind, GF_FIRE, 0, 150, 4);
+			/* Note: "Double" damage since it is centered on the player ... */
+			if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
+//                                take_hit(Ind, 50+randint(50)+(p_ptr->sensible_fire)?20:0, "a Scroll of Fire");
+                                take_hit(Ind, 50+randint(50), "a Scroll of Fire");
+			ident = TRUE;
+			break;
+		}
+
+
+		case SV_SCROLL_ICE:
+		{
+			fire_ball(Ind, GF_ICE, 0, 175, 4);
+			if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
+				take_hit(Ind, 100+randint(100), "a Scroll of Ice");
+			ident = TRUE;
+			break;
+		}
+
+		case SV_SCROLL_CHAOS:
+		{
+			fire_ball(Ind, GF_CHAOS, 0, 222, 4);
+			if (!p_ptr->resist_chaos)
+                                take_hit(Ind, 111+randint(111), "a Scroll of Chaos");
+			ident = TRUE;
+			break;
+		}
+
+		case SV_SCROLL_RUMOR:
+		{
+			fortune(Ind);
 			ident = TRUE;
 			break;
 		}
@@ -2591,6 +2621,33 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 			if (drain_life(Ind, dir, 125)) ident = TRUE;
 			break;
 		}
+
+		/* Additions from PernAngband	- Jir - */
+		case SV_WAND_ROCKETS:
+		{
+			msg_print(Ind, "You launch a rocket!");
+			fire_ball(Ind, GF_ROCKET, dir, 75 + (randint(50)), 2);
+			ident = TRUE;
+			break;
+		}
+#if 0
+		/* Hope we can port this someday.. */
+		case SV_WAND_CHARM_MONSTER:
+		{
+			if (charm_monster(dir, 45))
+			ident = TRUE;
+			break;
+		}
+
+#endif	// 0
+
+                case SV_WAND_WALL_CREATION:
+		{
+                        project_hook(Ind, GF_STONE_WALL, dir, 1, PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID);
+                        ident = TRUE;
+			break;
+		}
+
 	}
 
 
@@ -5883,4 +5940,34 @@ bool unmagic(int Ind)
 	}
 
 	return (ident);
+}
+
+/*
+ * Displays random fortune/rumour.
+ * Thanks Mihi!		- Jir -
+ */
+void fortune(int Ind)
+{
+	char Rumor[80];
+
+	msg_print(Ind, NULL);
+	switch(randint(20))
+	{
+		case 1:
+			get_rnd_line("chainswd.txt",0 , Rumor);
+			break;
+		case 2:
+			get_rnd_line("error.txt",0 , Rumor);
+			break;
+		case 3:
+		case 4:
+		case 5:
+			get_rnd_line("death.txt",0 , Rumor);
+			break;
+		default:
+			get_rnd_line("rumors.txt",0 , Rumor);
+	}
+	bracer_ff(Rumor);
+	msg_format(Ind, "%s", Rumor);
+	msg_print(Ind, NULL);
 }

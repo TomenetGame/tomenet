@@ -2989,6 +2989,66 @@ void player_talk_aux(int Ind, cptr message)
 				}
 				return;
 			}
+			/* '/cast' code is written by Ascrep(DEG). thx! */
+			else if (prefix(message, "/quaff"))
+			{
+				int book, whichplayer, whichspell;
+				bool ami = FALSE;
+
+				/* at least 1 argument required */
+				if (tk < 1)
+				{
+					msg_print(Ind, "\377oUsage: /quaff (item index or no.)");
+					return;
+				}
+
+				if(*token[1]>='1' && *token[1]<='9')
+				{	
+					object_type *o_ptr;
+					char c[4] = "@q";
+					bool found = FALSE;
+
+					c[2] = *token[1];
+					c[3] = '\0';
+
+					for(i = 0; i < INVEN_PACK; i++)
+					{
+						o_ptr = &(p_ptr->inventory[i]);
+						if (!o_ptr->tval) break;
+
+						if (find_inscription(o_ptr->note, c))
+						{
+							book = i;
+							found = TRUE;
+							break;
+						}
+					}
+
+					if (!found)
+					{
+						msg_format(Ind, "\377oInscription {%s} not found.", c);
+						return;
+					}
+					//					book = atoi(token[1])-1;
+				}	
+				else
+				{	
+					*token[1] &= ~(0x20);
+					if(*token[1]>='A' && *token[1]<='W')
+					{	
+						book = (int)(*token[1]-'A');
+					}		
+					else 
+					{
+						msg_print(Ind,"\377oPotion variable was out of range (a-w) or (1-9)");
+						return;
+					}	
+				}
+
+				do_cmd_quaff_potion(Ind, book);
+				return;
+			}
+
 
 			/*
 			 * Admin commands
@@ -3293,6 +3353,7 @@ void player_talk_aux(int Ind, cptr message)
 			else
 			{
 				msg_print(Ind, "Commands: afk bed cast dis dress ignore me tag untag;");
+				msg_print(Ind, "  /quaff is also available for old client users :)");
 				msg_print(Ind, "  /dis \377rdestroys \377wevery uninscribed items in your inventory!");
 				return;
 			}

@@ -4213,6 +4213,8 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
+		case TV_BOOMERANG:
+		case TV_AXE:
 		{
 			if (power) a_m_aux_1(o_ptr, lev, power);
 			break;

@@ -2600,6 +2600,23 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			/* All done */
 			break;
 		}
+
+		/* from PernA	- Jir - */
+#if 0
+		case GF_MAKE_GLYPH:
+		{
+			/* Require a "naked" floor grid */
+                        if (!cave_clean_bold(y, x)) break;
+
+//                        if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
+
+			cave_set_feat(&p_ptr->wpos, y, x, FEAT_GLYPH);
+
+			break;
+		}
+#endif	// 0
+
+
 	}
 
 	/* Return "Anything seen?" */
@@ -3364,6 +3381,21 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			{
 				note = " resists.";
 				dam *= 3; dam /= (randint(6)+6);
+			}
+			break;
+		}
+
+		/* Rocket: Shard resistance helps (PernA) */
+		case GF_ROCKET:
+		{
+			if (seen) obvious = TRUE;
+
+//			if (magik(12)) do_cut = (10 + randint(15) +r) / (r + 1);
+			if (r_ptr->flags4 & (RF4_BR_SHAR))
+			{
+				note = " resists somewhat.";
+				dam /= 2;
+//                                do_cut = 0;
 			}
 			break;
 		}
@@ -4998,6 +5030,33 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		}
 		break;
 		
+		/* PernA ones */
+		/* Rocket -- stun, cut */
+		case GF_ROCKET:
+		{
+			if (fuzzy) msg_print(Ind, "There is an explosion!");
+			if (!p_ptr->resist_sound)
+			{
+				(void)set_stun(Ind, p_ptr->stun + randint(20));
+			}
+			if (p_ptr->resist_shard)
+			{
+				dam /= 2;
+			}
+			else
+			{
+				(void)set_cut(Ind, p_ptr->  cut + ( dam / 2) );
+			}
+
+			if ((!p_ptr->resist_shard) || (randint(12)==1))
+			{
+				inven_damage(Ind, set_cold_destroy, 3);
+			}
+
+			take_hit(Ind, dam, killer);
+			break;
+		}
+
 		/* Default */
 		default:
 

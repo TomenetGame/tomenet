@@ -4192,6 +4192,41 @@ void wiz_dark(int Ind)
 
 
 
+/*
+ * Change the "feat" flag for a grid, and notice/redraw the grid
+ * (Adapted from PernAngband)
+ */
+void cave_set_feat(worldpos *wpos, int y, int x, int feat)
+{
+	player_type *p_ptr;
+	cave_type **zcave;
+	cave_type *c_ptr;
+	int i;
+
+	if(!(zcave=getcave(wpos))) return;
+
+	c_ptr = &zcave[y][x];
+
+	/* Change the feature */
+	c_ptr->feat = feat;
+
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		p_ptr = Players[i];
+		
+		/* Only works for players on the level */
+		if (!inarea(wpos, &p_ptr->wpos)) continue;
+		
+		/* Notice */
+		note_spot(i, y, x);
+
+		/* Redraw */
+		lite_spot(i, y, x);
+	}
+}
+
+
+
 
 /*
  * Calculate "incremental motion". Used by project() and shoot().

@@ -526,6 +526,7 @@ Change list for PernMangband
 ** [C] stands for Client changes.
 - Sector info on '@'.
 - Some small scripts.
-- Chatline commands: /bed, /dress
+- Chatline commands: /bed, /dress, /quaff
 - pval/bpval bug is fixed(but still needing ameliorations).
 [C] Random attribute-picker.
+- Some of ported items are implemented(cmd6.c).

@@ -1727,7 +1727,7 @@ D:shoot bolts that blaze with flame unquenchable.
 
 
 # The Mage Staff of Gandalf
-# Realy powerful for a mage but extremely rare
+# Really powerful for a mage but extremely rare
 # The ULTIMATE "weapon" for a Sorceror or a magic class
 
 N:127:of Gandalf

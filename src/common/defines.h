@@ -2964,6 +2964,50 @@ that keeps many algorithms happy.
 #define GF_IDENTIFY      78
 #define GF_PSI           79
 
+#define GF_MAKE_GLYPH   85
+#define GF_ROCKET       91
+#if 0
+#define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
+#define GF_DISP_LIVING  71
+#define GF_NUKE         73
+#define GF_STASIS       75
+#define GF_STONE_WALL   76	// *
+#define GF_DEATH_RAY    77
+#define GF_STUN         78	// *
+#define GF_HOLY_FIRE    79
+#define GF_HELL_FIRE    80
+#define GF_DISINTEGRATE 81
+#define GF_CHARM        82
+#define GF_CONTROL_UNDEAD   83
+#define GF_CONTROL_ANIMAL   84
+#define GF_PSI         85	// **
+#define GF_PSI_DRAIN   86
+#define GF_TELEKINESIS  87
+#define GF_JAM_DOOR     88
+#define GF_DOMINATION   89
+#define GF_DISP_GOOD    90
+#define GF_IDENTIFY     91	// **
+#define GF_RAISE        92
+#define GF_STAR_IDENTIFY 93
+#define GF_DESTRUCTION  94
+#define GF_STUN_CONF    95
+#define GF_STUN_DAM     96
+#define GF_CONF_DAM     98
+#define GF_STAR_CHARM   99
+#define GF_IMPLOSION    100
+#define GF_LAVA_FLOW    101
+#define GF_FEAR         102
+#define GF_BETWEEN_GATE 103
+#define GF_WINDS_MANA   104
+#define GF_DEATH        105
+#define GF_CONTROL_DEMON 106
+#define GF_RAISE_DEMON 107
+#define GF_TRAP_DEMONSOUL 108
+#define GF_ATTACK       109
+#define MAX_GF          110
+
+#endif	// 0
+
 /*
  * Some things which induce learning
  */

@@ -1783,12 +1783,12 @@ W:90:0:4:100000
 A:90/9
 P:0:1d1:0:0:0
 
-N:239:New Life
-G:!:d
-I:71:63:100
-W:50:0:4:750000
-A:50/20:100/10:120/5
-P:0:1d1:0:0:0
+#N:239:New Life
+#G:!:d
+#I:71:63:100
+#W:50:0:4:750000
+#A:50/20:100/10:120/5
+#P:0:1d1:0:0:0
 
 N:240:Cure Serious Wounds
 G:!:d
@@ -4292,8 +4292,10 @@ F:INSTA_ART
 N:583:Invisibility
 G:!:d
 I:71:8:0
-W:3:0:4:50
-A:3/1
+#W:3:0:4:50
+#A:3/1
+W:20:0:4:1000
+A:20/14
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
@@ -4811,11 +4813,11 @@ W:127:200:60:0
 A:127/255
 P:0:0d0:0:0:0
 
-N:654:Summon never-moving pet
-G:?:d
-I:70:6:0
-W:5:0:5:125
-A:5/1:15/1:25/1:35/1:65/1:85/1:95/1
+#N:654:Summon never-moving pet
+#G:?:d
+#I:70:6:0
+#W:5:0:5:125
+#A:5/1:15/1:25/1:35/1:65/1:85/1:95/1
 
 #Here are the Symbiotic spell books
 #N:655:[Life in symbiosis]
@@ -4836,37 +4838,37 @@ A:5/1:15/1:25/1:35/1:65/1:85/1:95/1
 # The potions of cure insanity, in light, medium, regular, and full
 # versions.
 
-N:657:Cure Light Insanity
-G:!:d
-I:72:14:0
-W:5:5:4:15
-A:5/1:1/1:3/1
-P:0:1d1:0:0:0
-F:FOUNTAIN
-
-N:658:Cure Serious Insanity
-G:!:d
-I:72:15:0
-W:10:5:4:40
-A:10/1
-P:0:1d1:0:0:0
-F:FOUNTAIN
-
-N:659:Cure Critical Insanity
-G:!:d
-I:72:16:0
-W:15:5:4:100
-A:15/3
-P:0:1d1:0:0:0
-F:FOUNTAIN
-
-N:660:Cure Insanity
-G:!:d
-I:72:17:0
-W:25:5:4:30
-A:25/3
-P:0:1d1:0:0:0
-F:FOUNTAIN
+#N:657:Cure Light Insanity
+#G:!:d
+#I:72:14:0
+#W:5:5:4:15
+#A:5/1:1/1:3/1
+#P:0:1d1:0:0:0
+#F:FOUNTAIN
+#
+#N:658:Cure Serious Insanity
+#G:!:d
+#I:72:15:0
+#W:10:5:4:40
+#A:10/1
+#P:0:1d1:0:0:0
+#F:FOUNTAIN
+#
+#N:659:Cure Critical Insanity
+#G:!:d
+#I:72:16:0
+#W:15:5:4:100
+#A:15/3
+#P:0:1d1:0:0:0
+#F:FOUNTAIN
+#
+#N:660:Cure Insanity
+#G:!:d
+#I:72:17:0
+#W:25:5:4:30
+#A:25/3
+#P:0:1d1:0:0:0
+#F:FOUNTAIN
 
 # The Phial of Undeath -- see artifact list. He he he he...
 
@@ -5006,17 +5008,17 @@ F:INSTA_ART
 #P:0:1d1:0:0:0
 #F:ACTIVATE
 
-N:677:Reset Recall
-G:?:d
-I:70:23:0
-W:20:0:5:125
-A:20/1:25/1:35/1
-
-N:678:Divination
-G:?:d
-I:70:31:0
-W:20:0:5:600
-A:30/1:45/1:55/1
+#N:677:Reset Recall
+#G:?:d
+#I:70:23:0
+#W:20:0:5:125
+#A:20/1:25/1:35/1
+#
+#N:678:Divination
+#G:?:d
+#I:70:31:0
+#W:20:0:5:600
+#A:30/1:45/1:55/1
 
 
 # Here comes the Runes
@@ -5592,13 +5594,13 @@ W:100:0:5:200000
 A:100/16
 
 # Staff
-N:750:Wishing
-G:_:d
-I:55:31:0
-W:80:0:2:300000
-A:80/50
-P:0:1d2:0:0:0
-F:NO_RECHARGE
+#N:750:Wishing
+#G:_:d
+#I:55:31:0
+#W:80:0:2:300000
+#A:80/50
+#P:0:1d2:0:0:0
+#F:NO_RECHARGE
 
 #N:751:Khuzdul - The hidden tongue of the Dwarves
 #G:?:s
