@@ -1139,13 +1139,14 @@ static void calc_mana(int Ind)
 		}
 	}
 
+#if 0 /* DG -- no with skills everybody can have mana  */
 	/* Hack -- Must be literate */
-	if ((!p_ptr->mp_ptr->spell_book) && (p_ptr->pclass != CLASS_MIMIC) && (!Ind2))
+	if ((!p_ptr->mp_ptr->spell_book) && (!get_skill(p_ptr, SKILL_MIMIC)) && (!Ind2))
 	{
 		p_ptr->msp = p_ptr->csp = 0;
 		return;
 	}
-
+#endif
 
 	/* Extract "effective" player level */
 	levels = (p_ptr->lev - p_ptr->mp_ptr->spell_first) + 1;

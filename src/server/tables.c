@@ -1631,7 +1631,7 @@ player_class class_info[MAX_CLASS] =
                 {
                         {
                                 SKILL_COMBAT,
-                                '+', 1000,
+                                '+', 3000,
                                 '+', 900,
                         },
                         {
@@ -1642,17 +1642,17 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWORD,
                                 '+', 0,
-                                '+', 400,
+                                '+', 700,
                         },
                         {
                                 SKILL_HAFTED,
                                 '+', 0,
-                                '+', 400,
+                                '+', 700,
                         },
                         {
                                 SKILL_POLEARM,
                                 '+', 0,
-                                '+', 400,
+                                '+', 700,
                         },
                         {
                                 SKILL_ARCHERY,
@@ -1683,8 +1683,40 @@ player_class class_info[MAX_CLASS] =
 		{ 2, 1, -2, 3, 1, -1},
 		45, 32, 28, 5, 32, 24, 60, 66,
 		15, 10, 10, 0,  0,  0, 40, 30,
-		6, 25
-	},
+                6, 25,
+                {
+                        {
+                                SKILL_COMBAT,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_SWORD,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_CRITS,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_BACKSTAB,
+                                '+', 1000,
+                                '+', 1100,
+                        },
+                        {
+                                SKILL_ARCHERY,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                }
+        },
 
 	{
 		"Ranger",
@@ -1732,7 +1764,34 @@ player_class class_info[MAX_CLASS] =
 		{ 1, 0, 0, 1, 1, -4},
 		25, 35, 28, 7, 18, 18, 60, 66,
 	         9, 10, 10, 0,  0,  0, 40, 30,
-		6, 25
+		6, 25,
+                {
+                        {
+                                SKILL_COMBAT,
+                                '+', 3000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_ARCHERY,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_MAGIC,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_MIMIC,
+                                '+', 1000,
+                                '+', 900,
+                        },
+                }
 	},
 	
 	{
@@ -4050,9 +4109,9 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                -1,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4070,9 +4129,9 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                SKILL_COMBAT,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4090,9 +4149,29 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                SKILL_MASTERY,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Critical-strike",
+                "Ability to use land more critial hits with light swords",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                0,
+
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4110,9 +4189,9 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                SKILL_MASTERY,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4130,9 +4209,9 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                SKILL_MASTERY,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4150,9 +4229,9 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                SKILL_COMBAT,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4170,9 +4249,9 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                SKILL_ARCHERY,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4190,9 +4269,9 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                SKILL_ARCHERY,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4210,9 +4289,9 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                SKILL_ARCHERY,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4230,9 +4309,9 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                SKILL_COMBAT,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4250,9 +4329,9 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                -1,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4270,9 +4349,9 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                SKILL_MAGIC,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4290,9 +4369,9 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                SKILL_MAGIC,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
@@ -4310,12 +4389,53 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                SKILL_MAGIC,
+                0,
 
-                /* Order, unused .. I hope */
+                /* Order */
                 0,
 
                 /* Flags */
                 0,
         },
+        {
+                "Mimicry",
+                "Ability to polymorph into slain monsters",
+
+                /* Mkey desc/mkey */
+                "Cast monster spell",
+                MKEY_MIMICRY,
+
+                 /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+};
+
+/*
+ * Pairs of skill in the format: father, child
+ * Used to fill in father and order of s_info in a nice way
+ */
+int skill_tree_init[MAX_SKILLS][2] =
+{
+        { -1, SKILL_COMBAT },
+        { SKILL_COMBAT, SKILL_MASTERY },
+        { SKILL_MASTERY, SKILL_SWORD },
+        { SKILL_SWORD, SKILL_CRITS },
+        { SKILL_MASTERY, SKILL_POLEARM },
+        { SKILL_MASTERY, SKILL_HAFTED },
+        { SKILL_COMBAT, SKILL_ARCHERY },
+        { SKILL_COMBAT, SKILL_BACKSTAB },
+        { -1, SKILL_MAGIC },
+        { SKILL_MAGIC, SKILL_SORCERY },
+        { SKILL_SORCERY, SKILL_CASTSPEED },
+        { SKILL_MAGIC, SKILL_MAGERY },
+        { SKILL_MAGIC, SKILL_MIMIC },
 };

@@ -800,7 +800,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 		return status;
 	}
 
-	if (version < ((4 << 12) | (0 << 8) | (0 << 4) | 0))
+	if (version < ((3 << 12) | (2 << 8) | (0 << 4) | 0))
 		return E_VERSION;
 
 	if(!player_allowed(nick))

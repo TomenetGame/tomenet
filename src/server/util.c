@@ -1875,7 +1875,7 @@ static void do_show_monster_killed_letter(int Ind, char *letter)
 	int		i, j, num;
 	monster_race	*r_ptr;
 	bool	shown = FALSE;
-	bool	mimic = (p_ptr->pclass == CLASS_MIMIC);
+	bool	mimic = (get_skill(p_ptr, SKILL_MIMIC));
 
 	FILE *fff;
 
@@ -2801,7 +2801,7 @@ static void do_slash_cmd(int Ind, char *message)
 			r_ptr = &r_info[r_idx];
 			num = p_ptr->r_killed[r_idx];
 
-			if (p_ptr->pclass == CLASS_MIMIC)
+			if (get_skill(p_ptr, SKILL_MIMIC))
 			{
 				i = r_ptr->level - num;
 

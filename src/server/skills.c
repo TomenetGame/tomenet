@@ -13,6 +13,24 @@
 
 #include "angband.h"
 
+/* Initialze the s_info array at server start */
+bool init_s_info()
+{
+        int i;
+        int order = 1;
+
+        for (i = 0; i < MAX_SKILLS; i++)
+        {
+                /* Is there a skill to process here ? */
+                if (skill_tree_init[i][1] > 0)
+                {
+                        /* Set it's father and order in the tree */
+                        s_info[skill_tree_init[i][1]].father = skill_tree_init[i][0];
+                        s_info[skill_tree_init[i][1]].order = order++;
+                }
+        }
+        return FALSE;
+}
 
 /*
  * Initialize a skill with given values
