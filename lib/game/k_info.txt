@@ -1,3 +1,4 @@
+# $Id$
 # File: k_info.txt
 
 
@@ -23,9 +24,9 @@
 #
 # IMPORTANT NOTES:
 # N:(no.):(name)
-# This (no.) is obsolete; the server will number the kinds by itself;
-# However, this field is still needed for compatibility;
-# Just write '0' or something in case :)
+# This (no.) field is obsolete; the server will number the kinds by itself.
+# However the parser still needs the existance of this field, so just write
+# '0' or something in case :)
 #
 # When loading a savedata, the server will determine k_idx from
 # tval and sval given.
@@ -4250,7 +4251,8 @@ N:577:& Mage Staff~
 G:\:B
 I:6:1:0
 W:5:0:12:300
-A:5/1:20/1:50/1:80/1
+#A:5/1:20/1:50/1:80/1
+A:5/3:45/2
 P:0:1d4:0:0:0
 F:SHOW_MODS | COULD2H
 
@@ -5845,16 +5847,18 @@ F:SPECIAL_GENE | FULL_NAME
 N:786:Climbing Set~
 G:`:B
 I:12:0:0
-W:40:0:2:50000
+#W:40:0:2:50000
+W:40:0:80:50000
 A:40/3
 F:CLIMB
 
 # Parchment to help beginners
-#N:787:Adventurer's guide to Middle Earth
-#G:?:o
+N:787:Adventurer's guide to Middle Earth
+G:?:o
 #I:8:20:0
-#W:0:0:5:1
-#A:0/1
+I:8:50:0
+W:0:0:5:1
+A:0/1
 
 ##### Daemon Books #####
 #N:788:[Dark Incantations]
@@ -6097,7 +6101,7 @@ I:17:3:0
 W:10:0:2:100
 A:10/1:25/1
 P:0:1d4:0:0:0
-F:SHOW_MODS
+F:SHOW_MODS | NO_ENCHANT
 
 N:812:Life
 G:?:d
@@ -6773,7 +6777,7 @@ F:INT | WIS | ANTIMAGIC_20
 N:897:Life Saving
 G:":d
 I:40:35:0
-W:40:0:3:400000
+W:40:0:3:200000
 A:40/60
 #F:BLACK_BREATH | DRAIN_EXP | DRAIN_MANA | DRAIN_HP
 F:DRAIN_EXP | DRAIN_MANA | DRAIN_HP
@@ -6786,6 +6790,59 @@ G:?:d
 I:70:59:0
 W:1:0:5:30
 A:1/1
+
+N:899:Identify Everything
+G:?:d
+I:70:60:0
+W:20:0:5:800
+A:20/1:50/2:80/1:100/1
+
+N:900:Vermin Control
+G:?:d
+I:70:61:0
+W:15:0:5:2000
+A:15/4
+
+N:901:Chauve-Souris
+G:!:d
+I:72:19:0
+W:15:5:4:10000
+A:15/30
+P:0:1d1:0:0:0
+F:FOUNTAIN
+
+N:902:*Perception*
+G:_:d
+I:55:33:0
+W:40:0:50:8000
+A:40/5
+P:0:1d2:0:0:0
+
+N:903:& Picklock~
+G:`:B
+I:12:2:3
+W:10:0:2:500
+A:10/3
+F:HIDE_TYPE | DISARM
+
+N:904:& Money Belt~
+G:`:B
+I:12:3:0
+W:10:0:10:1000
+A:10/3
+
+N:905:& Device of Theft Prevention~
+G:`:B
+I:12:4:0
+W:35:0:12:30000
+A:35/20
+
+N:905:& Tarpaulin~
+G:`:D
+#G:`:B
+I:12:5:0
+W:15:0:60:1000
+A:15/5
 
 # Always ego!
 

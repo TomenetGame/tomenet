@@ -1093,9 +1093,15 @@ To find the latest change quickly, search ==== :)
 - trap_creation() is radius-based now.
 - player cannot gain more than 1 level at a time.
 [P] detection magics are radius-based now. (affected by skill and level)
+[P] Parchment.
 [B] player could infinitely gain skill points by losing and gaining levels.
 [B] invisibility and aggravation caused spamming.
+[H] wands/staves of plenty get double from recharging.
 
+21/06/2002 (Jir)
+- item-enchanting spells can add to 'discount' (after Zz's proposal)
+[B] admin char caused 'write error'.
+[H] 'p' key to scroll back when perusing a file.
 
 
 
@@ -1114,6 +1120,7 @@ concisely: what's hot now?
 - skill system
   + interfere() should be affected by archery/wizardly skills?
   + no SKILL_BOOMERANG ?
+  + SKILL_SWIM
 - LUA hook
 - csfunc
 - alignment (let's wait for EE :)

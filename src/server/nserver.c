@@ -4566,6 +4566,7 @@ static int Receive_spell(int ind)
 		return n;
 	}
 
+#if 0
 	if (connp->id != -1 && Players[old]->energy >= level_speed(&Players[old]->wpos) && (Players[old]->pclass == CLASS_TELEPATH))
 	  {
 	    do_cmd_psi(player, book, spell);
@@ -4603,6 +4604,45 @@ static int Receive_spell(int ind)
 		Packet_printf(&connp->q, "%c%hd%hd", ch, book, spell);
 		return 0;
 	}
+#else	// 0
+	if (connp->id != -1 && Players[old]->energy >= level_speed(&Players[old]->wpos) && (Players[old]->pclass == CLASS_TELEPATH))
+	{
+		do_cmd_psi(player, book, spell);
+	}
+	else if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
+	{
+		p_ptr->current_char = (old == player)?TRUE:FALSE;
+
+		if (p_ptr->pclass == CLASS_SORCERER)
+		{
+			do_cmd_sorc(player, book, spell);
+		}
+		else if (p_ptr->pclass == CLASS_TELEPATH)
+		{
+			do_cmd_psi(player, book, spell);
+		}
+		else if (p_ptr->pclass == CLASS_ROGUE)
+		{
+			do_cmd_shad(player, book, spell);
+		}
+		else if (p_ptr->pclass == CLASS_ARCHER)
+		{
+			do_cmd_hunt(player, book, spell);
+		}
+		else if ((p_ptr->pclass == CLASS_MAGE) || (p_ptr->pclass == CLASS_RANGER))
+		{
+			do_cmd_cast(player, book, spell);
+		}
+		return 2;
+	}
+	else if (player)
+	{
+		p_ptr->current_spell = -1;
+		p_ptr->current_mind = -1;
+		Packet_printf(&connp->q, "%c%hd%hd", ch, book, spell);
+		return 0;
+	}
+#endif	// 0
 
 	return 1;
 }
@@ -7028,7 +7068,8 @@ void Handle_item(int Ind, int item)
              (p_ptr->current_enchant_a > 0))
 	{
 		enchant_spell_aux(Ind, item, p_ptr->current_enchant_h,
-			p_ptr->current_enchant_d, p_ptr->current_enchant_a);
+			p_ptr->current_enchant_d, p_ptr->current_enchant_a,
+			p_ptr->current_enchant_flag);
 	}
 	else if (p_ptr->current_identify)
 	{

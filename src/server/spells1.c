@@ -1303,6 +1303,7 @@ static bool hates_acid(object_type *o_ptr)
 		/* Staffs/Scrolls are wood/paper */
 		case TV_STAFF:
 		case TV_SCROLL:
+		case TV_PARCHEMENT:
 		{
 			return (TRUE);
 		}
@@ -1388,6 +1389,7 @@ static bool hates_fire(object_type *o_ptr)
 		/* Staffs/Scrolls burn */
 		case TV_STAFF:
 		case TV_SCROLL:
+		case TV_PARCHEMENT:
 		{
 			return (TRUE);
 		}

@@ -1294,6 +1294,7 @@ that keeps many algorithms happy.
 #define EGO_SHATTERED           126
 #define EGO_BLASTED             127
 #define EGO_INST_DRAGONKIND     130
+#define EGO_PLENTY				150
 #define EGO_LITE_MAGI           163
 
 /* megahack */

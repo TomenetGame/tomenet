@@ -793,6 +793,7 @@ static void get_money(int Ind)
 #endif
 		p_ptr->total_winner = TRUE;
 		p_ptr->max_dlv = 200;
+		p_ptr->max_plv = 99;
 
 		for (i = 1; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = r_info[i].level;
 	}
@@ -805,6 +806,7 @@ static void get_money(int Ind)
 		p_ptr->ghost = 1;
 		p_ptr->noscore = 1;
 		p_ptr->max_dlv = 200;
+		p_ptr->max_plv = 99;
 	}
 	
 }
@@ -1215,6 +1217,13 @@ static void player_outfit(int Ind)
 		(void)inven_carry(Ind, o_ptr);
 	}
 	
+	/* Hack -- Give the player newbie guide Parchment */
+	invcopy(o_ptr, lookup_kind(TV_PARCHEMENT, 50));
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 0;
+	(void)inven_carry(Ind, o_ptr);
 }
 
 void player_create_tmpfile(int Ind)

@@ -52,6 +52,7 @@ void cmd_all_in_one(void)
 		}
 
 		case TV_SCROLL:
+		case TV_PARCHEMENT:
 		{
 			Send_read(item);
 			break;
@@ -972,11 +973,20 @@ void cmd_quaff(void)
 	Send_quaff(item);
 }
 
+static bool item_tester_readable(object_type *o_ptr)
+{
+	if (o_ptr->tval == TV_SCROLL) return TRUE;
+	if (o_ptr->tval == TV_PARCHEMENT) return TRUE;
+
+	return FALSE;
+}
+
 void cmd_read_scroll(void)
 {
 	int item;
 
-	item_tester_tval = TV_SCROLL;
+//	item_tester_tval = TV_SCROLL;
+	item_tester_hook = item_tester_readable;
 
 	if (!c_get_item(&item, "Read which scroll? ", FALSE, TRUE, FALSE))
 	{

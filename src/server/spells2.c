@@ -2853,7 +2853,7 @@ bool curse_spell_aux(int Ind, int item)
 	return(TRUE);
 }
 
-bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac)
+bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac, int flags)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -2862,6 +2862,7 @@ bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac)
 	p_ptr->current_enchant_h = num_hit;
 	p_ptr->current_enchant_d = num_dam;
 	p_ptr->current_enchant_a = num_ac;
+	p_ptr->current_enchant_flag = flags;
 
 	return (TRUE);
 }
@@ -2871,7 +2872,11 @@ bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac)
  * Note that "num_ac" requires armour, else weapon
  * Returns TRUE if attempted, FALSE if cancelled
  */
-bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac)
+/* 
+ * For now, 'flags' is the chance of the item getting 'discounted'
+ * in the process.
+ */
+bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, int flags)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -2927,9 +2932,27 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac)
 		msg_print(Ind, "The enchantment failed.");
 	}
 
+	// else
+	/* Anti-cheeze */
+	if (!artifact_p(o_ptr) && !ego_item_p(o_ptr) && magik(flags))
+	{
+		int discount = (100 - o_ptr->discount) / 2;
+		if (discount > 0)
+		{
+			o_ptr->discount += discount;
+
+			/* Message */
+			msg_format(Ind, "It spoiled the appearence of %s %s somewhat!",
+					((item >= 0) ? "your" : "the"), o_name);
+		}
+	}
+
+
+
 	p_ptr->current_enchant_h = -1;
 	p_ptr->current_enchant_d = -1;
 	p_ptr->current_enchant_a = -1;
+	p_ptr->current_enchant_flag = -1;
 
 	/* Something happened */
 	return (TRUE);
@@ -3277,6 +3300,9 @@ bool recharge_aux(int Ind, int item, int num)
 		{
 			/* Extract a "power" */
 			t = (num / (lev + 2)) + 1;
+
+			/* Hack -- ego */
+			if (o_ptr->name2 == EGO_PLENTY) t <<= 1;
 
 			/* Recharge based on the power */
 			if (t > 0) o_ptr->pval += 2 + randint(t);

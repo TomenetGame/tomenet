@@ -1817,6 +1817,7 @@ struct player_type
 	s16b current_enchant_h; /* Current enchantments */
 	s16b current_enchant_d;
 	s16b current_enchant_a;
+	s16b current_enchant_flag;
 	s16b current_identify;	/* Are we identifying something? */
 	s16b current_star_identify;
 	s16b current_recharge;

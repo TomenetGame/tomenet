@@ -1,0 +1,82 @@
+             /----------------------------------------\
+            <  Adventurer's guide to the Middle Earth  >
+             \----------------------------------------/
+                                   
+
+Welcome to the ToME-NET!
+
+First of all, please press '@' key on the game screen to see who are playing
+on the server; if any, press ':' to chat with them.  They could be of great
+help to you if you're good and polite :)
+
+To get a more detailed help, list of commands and latest news press '?' key.
+To get a list of extended commands, enter '/?' on the chat-line.
+And to get more information the manuals don't contain, ask other players ;)
+
+
+The game is running on the real-time; if you've been playing ToME or other
+rogue-like games, you may think the game is too slow... but soon you'll
+understand it's not.  The situations and the monsters will never give you
+enough time to think and react - probably you should die once or twice to get
+accustomed to the time-system of this world.  Be vigilant and respond quickly.
+(don't forget to feed yourself!)
+
+
+To save the game, press ^X ... you can save the game anywhere, however it is
+strongly recommended to do it on the town, since your character is handled as
+'staying there still' for 30 seconds after saving which means the monsters
+around can kill you in the while.
+
+
+
+##### Notes on some rules
+
+For abuse-preventing purposes, new characters can be subject to some
+restrictions, eg. cannot drop items/objects.  The restrictions will be lifted
+as you gain levels (normally lv5).
+
+Please don't attempt to use subchars (to hold spare items, take and sell items
+etc).  it is regarded as 'cheating' and subject to the character deletion.
+
+Generally please don't seek to abuse the system.
+
+
+##### Etiquette desirable
+
+Being multi-player game, there are some sort of 'etiquette' you are supposed
+to keep in mind, so that everyone can play it with comfort.
+
+[For newcomers:]
+- say 'hello' or something when you log on. (use ':' key)
+
+- leave the shop as soon as possible; never form a line behind you!
+
+- never litter the town; destroy (ctrl-d or 'k') useless items instead.
+
+- avoid saving in shallow floor, esp. never save on 50ft.
+       
+
+[General etiquette:]
+- never pester the other players; remember they don't have to do you a favor.
+
+- don't be too rude, watch your language; you don't have to be so goody-goody,
+  but at least avoid offending others.
+  (If you've gone too far, some super-game majors can be taken..)
+
+- avoid the topics concerning privacy or politics (Netiquette!)
+
+
+[For experienced players:]
+- answer the cries of those killed, or no one will help you in turn.
+
+- buy houses only in need; sell smaller ones when you buy a bigger one.
+
+- never summon monsters on town! always imagine a lv1 newbie when in town.
+
+- be good to the newbies; they could really use your help.
+
+
+In short: 'Think of the others.'
+
+
+Alright - Happy Diving!

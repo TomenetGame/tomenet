@@ -2671,8 +2671,11 @@ void check_experience(int Ind)
 
 	bool newlv = FALSE;
 
-	int limit = (s64b)((s64b)player_exp[p_ptr->max_plv] *
-                               (s64b)p_ptr->expfact / 100L) - 1;
+	int limit;
+
+	/* paranoia -- fix the max level first */
+	if (p_ptr->lev > p_ptr->max_plv)
+		p_ptr->max_plv = p_ptr->lev;
 
 	/* Note current level */
 //	i = p_ptr->lev;
@@ -2684,6 +2687,10 @@ void check_experience(int Ind)
 	if (p_ptr->max_exp < 0) p_ptr->max_exp = 0;
 
 #ifdef LEVEL_GAINING_LIMIT
+	/* upper limit */
+	limit = (s64b)((s64b)player_exp[p_ptr->max_plv] *
+			(s64b)p_ptr->expfact / 100L) - 1;
+
 	/* Hack -- upper limit */
 	if (p_ptr->exp > limit) p_ptr->exp = limit;
 #endif	// LEVEL_GAINING_LIMIT

@@ -403,59 +403,6 @@ void do_cmd_eat_food(int Ind, int item)
 
 		case SV_FOOD_UNMAGIC:
 		{
-#if 0
-			/*
-			set_adrenaline(Ind, 0);
-			set_biofeedback(Ind, 0);
-			set_tim_esp(Ind, 0);
-			set_st_anchor(Ind, 0);
-			set_prob_travel( Ind, 0);
-			*/
-			if (
-				set_adrenaline(Ind, 0) |
-				set_biofeedback(Ind, 0) |
-				set_tim_esp(Ind, 0) |
-				set_st_anchor(Ind, 0) |
-				set_prob_travel( Ind, 0) |
-				set_bow_brand(Ind, 0, 0, 0) |
-				set_mimic(Ind, 0, 0) |
-				set_tim_manashield(Ind, 0) |
-				set_tim_traps(Ind, 0) |
-				set_invis(Ind, 0, 0) |
-				set_furry(Ind, 0) |
-				set_tim_meditation(Ind, 0) |
-//				set_tim_wraith(Ind, 0) |
-				set_fast(Ind, 0) |
-				set_shield(Ind, 0) |
-				set_blessed(Ind, 0) |
-				set_hero(Ind, 0) |
-				set_shero(Ind, 0) |
-				set_protevil(Ind, 0) |
-				set_invuln(Ind, 0) |
-				set_tim_invis(Ind, 0) |
-				set_tim_infra(Ind, 0) |
-				set_oppose_acid(Ind, 0) |
-				set_oppose_elec(Ind, 0) |
-				set_oppose_fire(Ind, 0) |
-				set_oppose_cold(Ind, 0) |
-				set_oppose_pois(Ind, 0)
-				) ident = TRUE;
-
-				/* In town it only runs out if you are not on a wall
-				 * To prevent breaking into houses */
-				if (players_on_depth(&p_ptr->wpos)!= 0) {
-					cave_type **zcave;
-					zcave=getcave(&p_ptr->wpos);
-					/* important! check for illegal spaces */
-					if (in_bounds(p_ptr->py, p_ptr->px))
-					{
-						if ((p_ptr->wpos.wz) || (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)))
-						{
-							if (set_tim_wraith(Ind, 0)) ident = TRUE;
-						}
-					}
-				}
-#endif	// 0
 			ident = unmagic(Ind);
 			break;
 		}
@@ -1405,14 +1352,20 @@ bool curse_an_item(int Ind, int slot)
 -AD-
  */
  
+/*
+ * NOTE: seemingly, 'used_up' flag is used in a strange way to allow
+ * item specification.  'keep' flag should be used for non-consuming
+ * scrolls instead.		- Jir -
+ */
 void do_cmd_read_scroll(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
 	cave_type * c_ptr;
 
-	int			k, used_up, ident, lev, x,y;
+	int		k, ident, lev, x,y;
+	bool	used_up, keep = FALSE;
 
-	object_type		*o_ptr;
+	object_type	*o_ptr;
 
 
 	/* Check some conditions */
@@ -1448,22 +1401,22 @@ void do_cmd_read_scroll(int Ind, int item)
 		o_ptr = &o_list[0 - item];
 	}
 
-        if( check_guard_inscription( o_ptr->note, 'r' )) {
-                msg_print(Ind, "The item's inscription prevents it");
-                return;
-        };
+	if( check_guard_inscription( o_ptr->note, 'r' )) {
+		msg_print(Ind, "The item's inscription prevents it");
+		return;
+	};
 
-	if (o_ptr->tval != TV_SCROLL)
+	if (o_ptr->tval != TV_SCROLL && o_ptr->tval != TV_PARCHEMENT)
 	{
 		msg_print(Ind, "SERVER ERROR: Tried to read non-scroll!");
 		return;
 	}
 
-        if (!can_use(Ind, o_ptr))
-        {
-                msg_print(Ind, "You are not high level enough.");
+	if (!can_use(Ind, o_ptr))
+	{
+		msg_print(Ind, "You are not high level enough.");
 		return;
-        }
+	}
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1480,526 +1433,570 @@ void do_cmd_read_scroll(int Ind, int item)
 	used_up = TRUE;
 
 	/* Analyze the scroll */
-	switch (o_ptr->sval)
+	if (o_ptr->tval == TV_SCROLL)
 	{
-		case SV_SCROLL_HOUSE:
+		switch (o_ptr->sval)
 		{
-//			unsigned char *ins=quark_str(o_ptr->note);
-			cptr ins=quark_str(o_ptr->note);
-			bool floor=TRUE;
-			bool jail=FALSE;
-			msg_print(Ind, "This is a house creation scroll.");
-			ident = TRUE;
-			if(ins){
-				while((*ins!='\0')){
-					if(*ins=='@'){
+			case SV_SCROLL_HOUSE:
+			{
+				//			unsigned char *ins=quark_str(o_ptr->note);
+				cptr ins=quark_str(o_ptr->note);
+				bool floor=TRUE;
+				bool jail=FALSE;
+				msg_print(Ind, "This is a house creation scroll.");
+				ident = TRUE;
+				if(ins){
+					while((*ins!='\0')){
+						if(*ins=='@'){
+							ins++;
+							if(*ins=='F'){
+								floor=FALSE;
+							}
+							if(*ins=='J'){
+								jail=TRUE;
+							}
+						}
 						ins++;
-						if(*ins=='F'){
-							floor=FALSE;
-						}
-						if(*ins=='J'){
-							jail=TRUE;
-						}
 					}
-					ins++;
 				}
+				house_creation(Ind, floor, jail);
+				break;
 			}
-			house_creation(Ind, floor, jail);
-			break;
-		}
 
-		case SV_SCROLL_GOLEM:
-		{	    
-			msg_print(Ind, "This is a golem creation scroll.");
-			ident = TRUE;
-			golem_creation(Ind, 1);
-			break;
-		}
-
-		case SV_SCROLL_BLOOD_BOND:
-		{
-
-			msg_print(Ind, "This is a blood bond scroll.");
-			ident = TRUE;
-			blood_bond(Ind, o_ptr);
-			break;
-		}
-
-		case SV_SCROLL_ARTIFACT_CREATION:
-		{
-
-			msg_print(Ind, "This is an artifact creation scroll.");
-			ident = TRUE;
-			(void)create_artifact(Ind);
-			used_up = FALSE;
-			break;
-		}
-
-		case SV_SCROLL_DARKNESS:
-		{
-			if (unlite_area(Ind, 10, 3)) ident = TRUE;
-			if (!p_ptr->resist_dark)
-			{
-				(void)set_blind(Ind, p_ptr->blind + 3 + randint(5));
+			case SV_SCROLL_GOLEM:
+			{	    
+				msg_print(Ind, "This is a golem creation scroll.");
+				ident = TRUE;
+				golem_creation(Ind, 1);
+				break;
 			}
-			break;
-		}
 
-		case SV_SCROLL_AGGRAVATE_MONSTER:
-		{
-			msg_print(Ind, "There is a high pitched humming noise.");
-			aggravate_monsters(Ind, 1);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_CURSE_ARMOR:
-		{
-			if (curse_armor(Ind)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_CURSE_WEAPON:
-		{
-			if (curse_weapon(Ind)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_SUMMON_MONSTER:
-		{
-			for (k = 0; k < randint(3); k++)
+			case SV_SCROLL_BLOOD_BOND:
 			{
-				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0))
+
+				msg_print(Ind, "This is a blood bond scroll.");
+				ident = TRUE;
+				blood_bond(Ind, o_ptr);
+				break;
+			}
+
+			case SV_SCROLL_ARTIFACT_CREATION:
+			{
+
+				msg_print(Ind, "This is an artifact creation scroll.");
+				ident = TRUE;
+				(void)create_artifact(Ind);
+				used_up = FALSE;
+				break;
+			}
+
+			case SV_SCROLL_DARKNESS:
+			{
+				if (unlite_area(Ind, 10, 3)) ident = TRUE;
+				if (!p_ptr->resist_dark)
 				{
-					ident = TRUE;
+					(void)set_blind(Ind, p_ptr->blind + 3 + randint(5));
 				}
+				break;
 			}
-			break;
-		}
-		
-		/* not adding bounds checking now... because of perma walls
-		   hope that I don't need to...... 
-		   
-		   OK, modified so you cant ressurect ghosts in walls......
-		   to prevent bad things from happening in town.
-		   */
-		case SV_SCROLL_LIFE:
-		{/*
-			for (y = -1; y <= 1; y++)
+
+			case SV_SCROLL_AGGRAVATE_MONSTER:
 			{
+				msg_print(Ind, "There is a high pitched humming noise.");
+				aggravate_monsters(Ind, 1);
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_CURSE_ARMOR:
+			{
+				if (curse_armor(Ind)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_CURSE_WEAPON:
+			{
+				if (curse_weapon(Ind)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_SUMMON_MONSTER:
+			{
+				for (k = 0; k < randint(3); k++)
+				{
+					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0))
+					{
+						ident = TRUE;
+					}
+				}
+				break;
+			}
+
+			/* not adding bounds checking now... because of perma walls
+			   hope that I don't need to...... 
+
+			   OK, modified so you cant ressurect ghosts in walls......
+			   to prevent bad things from happening in town.
+			   */
+			case SV_SCROLL_LIFE:
+			{/*
+				for (y = -1; y <= 1; y++)
+				{
 				for (x = -1; x <= 1; x++)
 				{				
-					cave_type **zcave;
-					zcave=getcave(&p_ptr->wpos);
-					c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
-					
-					if ((c_ptr->m_idx < 0) && (cave_floor_bold(zcave, p_ptr->py+y, p_ptr->px+x)))
-					{
-						if (Players[0 - c_ptr->m_idx]->ghost)
-						{
-							resurrect_player(0 - c_ptr->m_idx);
-							break;
-						}
-					}
-					
-				}
-			}
-			*/
-			restore_level(Ind);
-			do_scroll_life(Ind);
-			break;
-		
-		}
-		
-		case SV_SCROLL_SUMMON_UNDEAD:
-		{
-			for (k = 0; k < randint(3); k++)
-			{
-				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), SUMMON_UNDEAD))
+				cave_type **zcave;
+				zcave=getcave(&p_ptr->wpos);
+				c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
+
+				if ((c_ptr->m_idx < 0) && (cave_floor_bold(zcave, p_ptr->py+y, p_ptr->px+x)))
 				{
+				if (Players[0 - c_ptr->m_idx]->ghost)
+				{
+				resurrect_player(0 - c_ptr->m_idx);
+				break;
+				}
+				}
+
+				}
+				}
+				*/
+				restore_level(Ind);
+				do_scroll_life(Ind);
+				break;
+
+			}
+
+			case SV_SCROLL_SUMMON_UNDEAD:
+			{
+				for (k = 0; k < randint(3); k++)
+				{
+					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), SUMMON_UNDEAD))
+					{
+						ident = TRUE;
+					}
+				}
+				break;
+			}
+
+			case SV_SCROLL_TRAP_CREATION:
+			{
+				if (trap_creation(Ind, 5, 1)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_PHASE_DOOR:
+			{
+				teleport_player(Ind, 10);
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_TELEPORT:
+			{
+				teleport_player(Ind, 100);
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_TELEPORT_LEVEL:
+			{
+				teleport_player_level(Ind);
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_WORD_OF_RECALL:
+			{
+				if (p_ptr->word_recall == 0)
+				{
+					set_recall_depth(p_ptr, o_ptr);
+					p_ptr->word_recall = randint(20) + 15;
+					msg_print(Ind, "\377oThe air about you becomes charged...");
+				}
+				else
+				{
+					p_ptr->word_recall = 0;
+					msg_print(Ind, "\377oA tension leaves the air around you...");
+				}
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_IDENTIFY:
+			{
+				msg_print(Ind, "This is an identify scroll.");
+				ident = TRUE;
+				(void)ident_spell(Ind);
+				used_up = FALSE;
+				break;
+			}
+
+			case SV_SCROLL_STAR_IDENTIFY:
+			{
+				msg_print(Ind, "This is an *identify* scroll.");
+				ident = TRUE;
+				(void)identify_fully(Ind);
+				used_up = FALSE;
+				break;
+			}
+
+			case SV_SCROLL_REMOVE_CURSE:
+			{
+				if (remove_curse(Ind))
+				{
+					msg_print(Ind, "\377GYou feel as if someone is watching over you.");
 					ident = TRUE;
 				}
+				break;
 			}
-			break;
-		}
 
-		case SV_SCROLL_TRAP_CREATION:
-		{
-			if (trap_creation(Ind, 5, 1)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_PHASE_DOOR:
-		{
-			teleport_player(Ind, 10);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_TELEPORT:
-		{
-			teleport_player(Ind, 100);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_TELEPORT_LEVEL:
-		{
-			teleport_player_level(Ind);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_WORD_OF_RECALL:
-		{
-			if (p_ptr->word_recall == 0)
+			case SV_SCROLL_STAR_REMOVE_CURSE:
 			{
-				set_recall_depth(p_ptr, o_ptr);
-				p_ptr->word_recall = randint(20) + 15;
-				msg_print(Ind, "\377oThe air about you becomes charged...");
-			}
-			else
-			{
-				p_ptr->word_recall = 0;
-				msg_print(Ind, "\377oA tension leaves the air around you...");
-			}
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_IDENTIFY:
-		{
-			msg_print(Ind, "This is an identify scroll.");
-			ident = TRUE;
-			(void)ident_spell(Ind);
-			used_up = FALSE;
-			break;
-		}
-
-		case SV_SCROLL_STAR_IDENTIFY:
-		{
-			msg_print(Ind, "This is an *identify* scroll.");
-			ident = TRUE;
-			(void)identify_fully(Ind);
-			used_up = FALSE;
-			break;
-		}
-
-		case SV_SCROLL_REMOVE_CURSE:
-		{
-			if (remove_curse(Ind))
-			{
-				msg_print(Ind, "\377GYou feel as if someone is watching over you.");
+				remove_all_curse(Ind);
 				ident = TRUE;
+				break;
 			}
-			break;
-		}
 
-		case SV_SCROLL_STAR_REMOVE_CURSE:
-		{
-			remove_all_curse(Ind);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_ENCHANT_ARMOR:
-		{
-			msg_print(Ind, "This is a scroll of enchant armor.");
-			ident = TRUE;
-			(void)enchant_spell(Ind, 0, 0, 1);
-			used_up = FALSE;
-			break;
-		}
-
-		case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
-		{
-			msg_print(Ind, "This is a scroll of enchant weapon to-hit.");
-			(void)enchant_spell(Ind, 1, 0, 0);
-			used_up = FALSE;
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
-		{
-			msg_print(Ind, "This is a scroll of enchant weapon to-dam.");
-			(void)enchant_spell(Ind, 0, 1, 0);
-			used_up = FALSE;
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_STAR_ENCHANT_ARMOR:
-		{
-			msg_print(Ind, "This is a scroll of *enchant* armor.");
-			(void)enchant_spell(Ind, 0, 0, randint(3) + 2);
-			used_up = FALSE;
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_STAR_ENCHANT_WEAPON:
-		{
-			msg_print(Ind, "This is a scroll of *enchant* weapon.");
-			(void)enchant_spell(Ind, randint(3), randint(3), 0);
-			used_up = FALSE;
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_RECHARGING:
-		{
-			msg_print(Ind, "This is a scroll of recharging.");
-			(void)recharge(Ind, 60);
-			used_up = FALSE;
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_LIGHT:
-		{
-			if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_MAPPING:
-		{
-			map_area(Ind);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_DETECT_GOLD:
-		{
-			if (detect_treasure(Ind, DEFAULT_RADIUS)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_DETECT_ITEM:
-		{
-			if (detect_object(Ind, DEFAULT_RADIUS)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_DETECT_TRAP:
-		{
-			if (detect_trap(Ind, DEFAULT_RADIUS)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_DETECT_DOOR:
-		{
-			if (detect_sdoor(Ind, DEFAULT_RADIUS)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_DETECT_INVIS:
-		{
-			if (detect_invisible(Ind)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_SATISFY_HUNGER:
-		{
-			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_BLESSING:
-		{
-			if (set_blessed(Ind, p_ptr->blessed + randint(12) + 6)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_HOLY_CHANT:
-		{
-			if (set_blessed(Ind, p_ptr->blessed + randint(24) + 12)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_HOLY_PRAYER:
-		{
-			if (set_blessed(Ind, p_ptr->blessed + randint(48) + 24)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_MONSTER_CONFUSION:
-		{
-			if (p_ptr->confusing == 0)
+			case SV_SCROLL_ENCHANT_ARMOR:
 			{
-				msg_print(Ind, "Your hands begin to glow.");
-				p_ptr->confusing = TRUE;
+				msg_print(Ind, "This is a scroll of enchant armor.");
 				ident = TRUE;
+				(void)enchant_spell(Ind, 0, 0, 1, 0);
+				used_up = FALSE;
+				break;
 			}
-			break;
-		}
 
-		case SV_SCROLL_PROTECTION_FROM_EVIL:
-		{
-			k = 3 * p_ptr->lev;
-			if (set_protevil(Ind, p_ptr->protevil + randint(25) + k)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_RUNE_OF_PROTECTION:
-		{
-			warding_glyph(Ind);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
-		{
-			if (destroy_doors_touch(Ind)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_STAR_DESTRUCTION:
-		{
-			destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_DISPEL_UNDEAD:
-		{
-			if (dispel_undead(Ind, 60)) ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_GENOCIDE:
-		{
-			msg_print(Ind, "This is a genocide scroll.");
-			(void)genocide(Ind);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_MASS_GENOCIDE:
-		{
-			msg_print(Ind, "This is a mass genocide scroll.");
-			(void)mass_genocide(Ind);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_ACQUIREMENT:
-		{
-			acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_STAR_ACQUIREMENT:
-		{
-			acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE);
-			ident = TRUE;
-			break;
-		}
-
-		/* New Zangband scrolls */
-		case SV_SCROLL_FIRE:
-		{
-			fire_ball(Ind, GF_FIRE, 0, 150, 4);
-			/* Note: "Double" damage since it is centered on the player ... */
-			if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
-//                                take_hit(Ind, 50+randint(50)+(p_ptr->sensible_fire)?20:0, "a Scroll of Fire");
-                                take_hit(Ind, 50+randint(50), "a Scroll of Fire");
-			ident = TRUE;
-			break;
-		}
-
-
-		case SV_SCROLL_ICE:
-		{
-			fire_ball(Ind, GF_ICE, 0, 175, 4);
-			if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
-				take_hit(Ind, 100+randint(100), "a Scroll of Ice");
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_CHAOS:
-		{
-			fire_ball(Ind, GF_CHAOS, 0, 222, 4);
-			if (!p_ptr->resist_chaos)
-                                take_hit(Ind, 111+randint(111), "a Scroll of Chaos");
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_RUMOR:
-		{
-			msg_print(Ind, "You read the scroll:");
-			fortune(Ind, magik(40) ? TRUE : FALSE);
-			ident = TRUE;
-			break;
-		}
-
-		case SV_SCROLL_LOTTERY:
-		{
-			int i = k_info[o_ptr->k_idx].cost, j = rand_int(10000);
-
-			i -= i * o_ptr->discount / 100;
-			
-			if (j)
+			case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
 			{
-				msg_print(Ind, "\377WYou draw a blank :-P");
+				msg_print(Ind, "This is a scroll of enchant weapon to-hit.");
+				(void)enchant_spell(Ind, 1, 0, 0, 0);
+				used_up = FALSE;
+				ident = TRUE;
+				break;
 			}
-			else
+
+			case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
 			{
-				if (p_ptr->au < i * 10000 / 5)
+				msg_print(Ind, "This is a scroll of enchant weapon to-dam.");
+				(void)enchant_spell(Ind, 0, 1, 0, 0);
+				used_up = FALSE;
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_STAR_ENCHANT_ARMOR:
+			{
+				msg_print(Ind, "This is a scroll of *enchant* armor.");
+				(void)enchant_spell(Ind, 0, 0, randint(3) + 2, 0);
+				used_up = FALSE;
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_STAR_ENCHANT_WEAPON:
+			{
+				msg_print(Ind, "This is a scroll of *enchant* weapon.");
+				(void)enchant_spell(Ind, randint(3), randint(3), 0, 0);
+				used_up = FALSE;
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_RECHARGING:
+			{
+				msg_print(Ind, "This is a scroll of recharging.");
+				(void)recharge(Ind, 60);
+				used_up = FALSE;
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_LIGHT:
+			{
+				if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_MAPPING:
+			{
+				map_area(Ind);
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_DETECT_GOLD:
+			{
+				if (detect_treasure(Ind, DEFAULT_RADIUS)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_DETECT_ITEM:
+			{
+				if (detect_object(Ind, DEFAULT_RADIUS)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_DETECT_TRAP:
+			{
+				if (detect_trap(Ind, DEFAULT_RADIUS)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_DETECT_DOOR:
+			{
+				if (detect_sdoor(Ind, DEFAULT_RADIUS)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_DETECT_INVIS:
+			{
+				if (detect_invisible(Ind)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_SATISFY_HUNGER:
+			{
+				if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_BLESSING:
+			{
+				if (set_blessed(Ind, p_ptr->blessed + randint(12) + 6)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_HOLY_CHANT:
+			{
+				if (set_blessed(Ind, p_ptr->blessed + randint(24) + 12)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_HOLY_PRAYER:
+			{
+				if (set_blessed(Ind, p_ptr->blessed + randint(48) + 24)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_MONSTER_CONFUSION:
+			{
+				if (p_ptr->confusing == 0)
 				{
-					msg_broadcast_format(Ind, "\377B%s seems to hit the big time!", p_ptr->name);
-#if 0
-					char temp[80];
-					sprintf(temp, "\377B%s seems to hit the big time!", p_ptr->name);
-					msg_broadcast(Ind, temp);
-#endif	// 0
-					set_confused(Ind, p_ptr->confused + rand_int(10) + 10);
-					set_image(Ind, p_ptr->image + rand_int(10) + 10);
+					msg_print(Ind, "Your hands begin to glow.");
+					p_ptr->confusing = TRUE;
+					ident = TRUE;
 				}
-
-				msg_print(Ind, "\377BYou won the first prize!");
-				p_ptr->au += i * 10000;
-
-				/* Redraw gold */
-				p_ptr->redraw |= (PR_GOLD);
-
-				/* Window stuff */
-				p_ptr->window |= (PW_PLAYER);
+				break;
 			}
-			ident = TRUE;
-			break;
-		}
+
+			case SV_SCROLL_PROTECTION_FROM_EVIL:
+			{
+				k = 3 * p_ptr->lev;
+				if (set_protevil(Ind, p_ptr->protevil + randint(25) + k)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_RUNE_OF_PROTECTION:
+			{
+				warding_glyph(Ind);
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
+			{
+				if (destroy_doors_touch(Ind)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_STAR_DESTRUCTION:
+			{
+				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR);
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_DISPEL_UNDEAD:
+			{
+				if (dispel_undead(Ind, 60)) ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_GENOCIDE:
+			{
+				msg_print(Ind, "This is a genocide scroll.");
+				(void)genocide(Ind);
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_MASS_GENOCIDE:
+			{
+				msg_print(Ind, "This is a mass genocide scroll.");
+				(void)mass_genocide(Ind);
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_ACQUIREMENT:
+			{
+				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE);
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_STAR_ACQUIREMENT:
+			{
+				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE);
+				ident = TRUE;
+				break;
+			}
+
+			/* New Zangband scrolls */
+			case SV_SCROLL_FIRE:
+			{
+				fire_ball(Ind, GF_FIRE, 0, 150, 4);
+				/* Note: "Double" damage since it is centered on the player ... */
+				if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
+					//                                take_hit(Ind, 50+randint(50)+(p_ptr->sensible_fire)?20:0, "a Scroll of Fire");
+					take_hit(Ind, 50+randint(50), "a Scroll of Fire");
+				ident = TRUE;
+				break;
+			}
+
+
+			case SV_SCROLL_ICE:
+			{
+				fire_ball(Ind, GF_ICE, 0, 175, 4);
+				if (!(p_ptr->oppose_cold || p_ptr->resist_cold || p_ptr->immune_cold))
+					take_hit(Ind, 100+randint(100), "a Scroll of Ice");
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_CHAOS:
+			{
+				fire_ball(Ind, GF_CHAOS, 0, 222, 4);
+				if (!p_ptr->resist_chaos)
+					take_hit(Ind, 111+randint(111), "a Scroll of Chaos");
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_RUMOR:
+			{
+				msg_print(Ind, "You read the scroll:");
+				fortune(Ind, magik(40) ? TRUE : FALSE);
+				ident = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_LOTTERY:
+			{
+				int i = k_info[o_ptr->k_idx].cost, j = rand_int(10000);
+
+				i -= i * o_ptr->discount / 100;
+
+				if (j)
+				{
+					msg_print(Ind, "\377WYou draw a blank :-P");
+				}
+				else
+				{
+					if (p_ptr->au < i * 10000 / 5)
+					{
+						msg_broadcast_format(Ind, "\377B%s seems to hit the big time!", p_ptr->name);
+#if 0
+						char temp[80];
+						sprintf(temp, "\377B%s seems to hit the big time!", p_ptr->name);
+						msg_broadcast(Ind, temp);
+#endif	// 0
+						set_confused(Ind, p_ptr->confused + rand_int(10) + 10);
+						set_image(Ind, p_ptr->image + rand_int(10) + 10);
+					}
+
+					msg_print(Ind, "\377BYou won the first prize!");
+					p_ptr->au += i * 10000;
+
+					/* Redraw gold */
+					p_ptr->redraw |= (PR_GOLD);
+
+					/* Window stuff */
+					p_ptr->window |= (PW_PLAYER);
+				}
+				ident = TRUE;
+				break;
+			}
 
 #if 0	// implement them whenever you feel like :)
-		case SV_SCROLL_BACCARAT:
-		case SV_SCROLL_BLACK_JACK:
-		case SV_SCROLL_ROULETTE:
-		case SV_SCROLL_SLOT_MACHINE:
-		case SV_SCROLL_BACK_GAMMON:
-		{
-			break;
-		}
+			case SV_SCROLL_BACCARAT:
+			case SV_SCROLL_BLACK_JACK:
+			case SV_SCROLL_ROULETTE:
+			case SV_SCROLL_SLOT_MACHINE:
+			case SV_SCROLL_BACK_GAMMON:
+			{
+				break;
+			}
 #endif	// 0
 
-		case SV_SCROLL_ID_ALL:
+			case SV_SCROLL_ID_ALL:
+			{
+				identify_pack(Ind);
+				break;
+			}
+
+			case SV_SCROLL_VERMIN_CONTROL:
+			{
+				dun_level *l_ptr = getfloor(&p_ptr->wpos);
+				if(l_ptr && !(l_ptr->flags1 & LF1_NO_MULTIPLY))
+				{
+					l_ptr->flags1 |= LF1_NO_MULTIPLY;
+					msg_print(Ind, "You feel less itchy.");
+					ident = TRUE;
+				}
+				break;
+			}
+		}
+	}
+	else if (o_ptr->tval == TV_PARCHEMENT)
+	{
+#if 0
+		/* Maps */
+		if (o_ptr->sval >= 200)
 		{
-			identify_pack(Ind);
-			break;
+			int i, n;
+			char buf[80], fil[20];
+
+			strnfmt(fil, 20, "book-%d.txt",o_ptr->sval);
+
+			n = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, -1));
+
+			/* Parse all the fields */
+			for (i = 0; i < n; i += 4)
+			{
+				/* Grab the fields */
+				int x = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, i + 0));
+				int y = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, i + 1));
+				int w = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, i + 2));
+				int h = atoi(get_line(fil, ANGBAND_DIR_FILE, buf, i + 3));
+
+				reveal_wilderness_around_player(y, x, h, w);
+			}
 		}
 
-		case SV_SCROLL_VERMIN_CONTROL:
+		/* Normal parchements */
+		else
+#endif	// 0
 		{
-			dun_level *l_ptr = getfloor(&p_ptr->wpos);
-			if(l_ptr && !(l_ptr->flags1 & LF1_NO_MULTIPLY))
-			{
-				l_ptr->flags1 |= LF1_NO_MULTIPLY;
-				msg_print(Ind, "You feel less itchy.");
-				ident = TRUE;
-			}
-			break;
+			/* Get the filename */
+			char    path[MAX_PATH_LENGTH];
+			cptr q = format("book-%d.txt",o_ptr->sval);
+
+			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, q);
+			do_cmd_check_other_prepare(Ind, path);
+
+//			used_up = FALSE;
+			keep = TRUE;
 		}
 	}
 
@@ -2021,6 +2018,8 @@ void do_cmd_read_scroll(int Ind, int item)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 
+	/* Hack -- really allow certain scrolls to be "preserved" */
+	if (keep) return;
 
 	/* Destroy a scroll in the pack */
 	if (item >= 0)
@@ -3858,6 +3857,9 @@ static bool brand_bolts(int Ind)
 
 		/* Enchant */
 		enchant(Ind, o_ptr, rand_int(3) + 4, ENCH_TOHIT | ENCH_TODAM);
+
+		/* Hack -- you don't sell the wep blessed by your god, do you? :) */
+		o_ptr->discount = 100;
 
 		/* Notice */
 		return (TRUE);

@@ -788,7 +788,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 			return TRUE;
 		}
 
-		/* not likely :); */
+		/* not likely :) */
 		case TV_FIGHT_BOOK:
 		{
 			do_cmd_fight(Ind, item, spell);

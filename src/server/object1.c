@@ -560,6 +560,7 @@ static byte default_tval_to_attr(int tval)
 		}
 
 		case TV_SCROLL:
+		case TV_PARCHEMENT:
 		{
 			return (TERM_WHITE);
 		}
@@ -1306,9 +1307,10 @@ static char *object_desc_int(char *t, sint v)
  *   1 -- The Cloak of Death [1,+3]
  *   2 -- The Cloak of Death [1,+3] (+2 to Stealth)
  *   3 -- The Cloak of Death [1,+3] (+2 to Stealth) {nifty}
- *
+ */   
+/*   
  *  +8 -- Cloak Death [1,+3](+2stl){nifty}
- *   
+ *
  * If the strings created with mode 0-3 are too long, this function is called
  * again with 8 added to 'mode' and attempt to 'abbreviate' the strings. -Jir-
  */
@@ -1592,6 +1594,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		{
 			modstr = basenm;
 			basenm = mode < 8 ? "& Hunting Book~ #" : "& Hunt B. #";
+			break;
+		}
+
+		case TV_PARCHEMENT:
+		{
+			modstr = basenm;
+			basenm = "& Parchment~ - #";
 			break;
 		}
 

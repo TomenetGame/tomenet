@@ -1,3 +1,5 @@
+**** Press 'G' key on this screen to see the complete command list!! ****
+
 A resume, or 'read it and dive the hell!';)
 
 0. print out the commands summary(available on the webpages below)
@@ -655,3 +657,144 @@ return you to town, and if read in town will take you to the deepest depth
 you have been in the dungeon.  You can select your recall depth by either
 inscribing your scrolls @R[the depth] like @R-650, or by simply inscribe @R
 and calling chat-line command '/rec -650'.
+
+
+Part VII. -- Command list
+------------------------------------------------------
+
+=== Original Keyset Command Summary (ToME-NET 4.0.0) ===
+
+        movement keys
+
+           7  8  9          
+           4     6          
+           1  2  3          
+
+ a  Aim a wand                           A  Activate an artifact
+ b  Browse a book                        B  Bash a door
+ c  Close a door                         C  Character description
+ d  Drop an item                         D  Disarm a trap
+ e  Equipment list                       E  Eat some food
+ f  Fire an item                         F  Fuel your lantern/torch
+ g  Stay still (flip pickup)             G  Gain new spells/prayers
+ h  buy or sell a House                  H  (unused)
+ i  Inventory list                       I  (unused)
+ j  Steal from other player              J  (unused)
+ k  Destroy an item                      K  (unused)
+ l  Look around                          L  Locate player on map
+ m  Cast a spell/use a skill             M  Full dungeon/wilderness map
+ n  (unused)                             N  Activate class power
+ o  Open a door or chest                 O  (unused)
+ p  Pray a prayer                        P  Party commands
+ q  Quaff a potion                       Q  Quit (commit suicide)
+ r  Read a scroll                        R  Rest for a period
+ s  Search for traps/doors               S  Toggle search mode
+ t  Take off equipment                   T  Dig a tunnel
+ u  Use a staff                          U  Use ghost powers
+ v  Throw an item                        V  (unused)
+ w  Wear/wield equipment                 W  (unused)
+ x  (unused)                             X  View and acquire skills
+ y  (unused)                             Y  (unused)
+ z  Zap a rod                            Z  (unused)
+ !  Interact with system                ^A  (unused)
+ @  view players                        ^B  (unused)
+ #  view score list                     ^C  (special - break)
+ $  Drop gold                           ^D  (unused)
+ %  Interact with macros                ^E  Toggle choice window
+ ^  (special - control key)             ^F  Repeat level feeling
+ &  Dungeon Master Commands             ^G  (unused)
+ *  Target monster or location          ^H  (unused)
+ (  Target other player?                ^I  (special - tab)
+ )  (Dump screen dump) not used         ^J  (special - linefeed)
+ {  Inscribe an object                  ^K  (unused)
+ }  Uninscribe an object                ^L  (unused)
+ [  (unused)                            ^M  (special - return)
+ ]  (unused)                            ^N  (unused)
+ -  (unused)                            ^O  Show previous chats(3.2.1+)
+ _  (unused)                            ^P  Show previous messages
+ +  Dig tunnel                          ^Q  (unused)
+ =  Set options                         ^R  Redraw the screen
+ ;  Walk (with pickup)                  ^S  Spike a door
+ :  Chat with other players             ^T  (unused)
+ '  (unused)                            ^U  (unused)
+ "  Enter a user pref command           ^V  (unused)
+ ,  Stay still (with pickup)            ^W  (unused)
+ <  Go up staircase                     ^X  Save and quit
+ .  Run                                 ^Y  (unused)
+ >  Go down staircase                   ^Z  (unused)
+ \  (special - bypass keymap)            |  Check uniques
+ `  (special - escape)                   ~  Check artifacts
+ /  (unused)                             ?  Help
+
+
+
+===  Roguelike Keyset Command Summary (ToME-NET 4.0.0) ===
+
+      movement keys (+shift to run、+ctrl to tunnel)
+
+         y  k  u
+         h     l
+         b  j  n
+
+ a  Zap a rod (Activate)                 A  Activate an artifact
+ b  (walk - south west)                  B  (run - south west)
+ c  Close a door                         C  Character description
+ d  Drop an item                         D  Disarm a trap or chest
+ e  Equipment list                       E  Eat some food
+ f  Bash a door (force)                  F  Fuel your lantern/torch
+ g  Stay still (flip pickup)             G  Gain new spells/prayers
+ h  (walk - west)                        H  (run - west)
+ i  Inventory list                       I  (Observe an item) not used
+ j  (walk - south)                       J  (run - south)
+ k  (walk - north)                       K  (run - north)
+ l  (walk - east)                        L  (run - east)
+ m  Cast a spell / use a skill           M  Full dungeon/wilderness map
+ n  (walk - south east)                  N  (run - south east)
+ o  Open a door or chest                 O  Party commands
+ p  Pray a prayer                        P  Browse a book
+ q  Quaff a potion                       Q  Quit (commit suicide)
+ r  Read a scroll                        R  Rest for a period
+ s  Search for traps/doors               S  Steal from other player
+ t  Fire an item                         T  Take off equipment
+ u  (walk - north east)                  U  (run - north east)
+ v  Throw an item                        V  (Version info) not used
+ w  Wear/wield equipment                 W  Locate player on map (Where)
+ x  Look around                          X  (unused)
+ y  (walk - north west)                  Y  (run - north west)
+ z  Aim a wand (Zap)                     Z  Use a staff (Zap)
+ !  (unused)                            ^A  (unused)
+ @  Player list                         ^B  (tunnel - south west)
+ #  Toggle search mode                  ^C  Quit (same as 'Q')
+ $  drop money                          ^D  Destroy item
+ %  Interact with macros                ^E  (unused)
+ ^  (special - control key)             ^F  (unused)
+ &  Dungeon Master Commands             ^G  (unused)
+ *  Target monster or location          ^H  (tunnel - west)
+ (  Target player?                      ^I  (special - tab)
+ )  (not used)                          ^J  (tunnel - south)
+ {  Inscribe an object                  ^K  (tunnel - north)
+ }  Uninscribe an object                ^L  (tunnel - east)
+ [  (unused)                            ^M  (tunnel - south)
+ ]  (unused)                            ^N  (tunnel - south east)
+ -  (unused)                            ^O  Show previous chats(3.2.1+)
+ _  (unused)                            ^P  Show previous messages
+ +  Dig tunnel                          ^Q  (unused)
+ =  Set options                         ^R  Redraw the screen
+ ;  Walk (with pickup)                  ^S  Spike a door
+ :  Chat with other players             ^T  (unused)
+ '  (unused)                            ^U  (tunnel - north east)
+ "  Enter a user pref command           ^V  (unused)
+ ,  Run                                 ^W  (unused)
+ <  Go up staircase                     ^X  Save and quit
+ .  Stay still (with pickup)            ^Y  (tunnel - north west)
+ >  Go down staircase                   ^Z  (unused)
+ \  (special - bypass keymap)            |  Check uniques
+ `  (special - escape)                   ~  Check artifacts
+ /  (unused)                             ?  Help
+
+ \h buy or sell a house
+ \U use undead powers
+ \# view score list
+ \N activate class powers
+ \X view and acquire skills
+

@@ -1,11 +1,10 @@
+/* $Id$ */
 /*
  * Handle client-side files, such as the .mangrc configuration
  * file, and some various "pref files".
  */
 
 #include "angband.h"
-
-#define EVIL_TEST /* evil test */
 
 /*
  * Extract the first few "tokens" from a buffer
@@ -951,11 +950,6 @@ void peruse_file(void)
 	/* Initialize */
 	cur_line = 0;
 
-#ifndef EVIL_TEST /* evil test */
-	/* The screen is icky */
-	screen_icky = TRUE;
-#endif
-
 	/* Save the old screen */
 	Term_save();
 
@@ -969,8 +963,10 @@ void peruse_file(void)
 		Send_special_line(special_line_type, cur_line);
 
 		/* Show a general "title" */
-		prt(format("[TomeNET %d.%d.%d]",
-			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH), 0, 0);
+		prt(format("[%s]", shortVersion), 0, 0);
+/*		prt(format("[TomeNET %d.%d.%d]",
+			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH), 0, 0);	*/
+
 
 		/* Prompt */
 //		prt("[Press Return, Space, -, b, or ESC to exit.]", 23, 0);
@@ -1000,7 +996,7 @@ void peruse_file(void)
 		}
 
 		/* Hack -- Allow backing up ala 'less' */
-		if (k == 'b' || k == KTRL('U'))
+		if (k == 'b' || k == 'p' || k == KTRL('U'))
 		{
 			cur_line -= 20;
 		}
@@ -1051,11 +1047,6 @@ void peruse_file(void)
 
 	/* Reload the old screen */
 	Term_load();
-
-#ifndef EVIL_TEST /* evil test */
-	/* The screen isn't icky anymore */
-	screen_icky = FALSE;
-#endif
 
 	/* Flush any events that came in */
 	Flush_queue();
