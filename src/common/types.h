@@ -2178,6 +2178,7 @@ struct server_opts
 	char cth_monsters;
 	char joke_monsters;
 	char vanilla_monsters;
+	char pet_monsters;
 	bool report_to_meta;
 	bool secret_dungeon_master;
 	bool anti_arts_horde;

@@ -139,7 +139,7 @@ server_opts cfg =
 	3, 2,		// resting_rate, party_xp_boost
 
 	10, 100, 100,	// zang_monsters, pern_monsters, cth_monsters
-	1, 100,			// joke_monsters, vanilla_monsters
+	1, 100, 0,		// joke_monsters, vanilla_monsters, pet_monsters
 
 	/* bool */
 	TRUE,TRUE,	// report_to_meta, secret_dungeon_master

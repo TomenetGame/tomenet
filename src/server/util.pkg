@@ -1,3 +1,4 @@
+/* $Id$ */
 $#include "angband.h"
 
 typedef char* cptr;
@@ -60,6 +61,14 @@ struct server_opts
 	s16b dun_base;
 	s16b dun_max;
 	s16b store_turns;
+	char resting_rate;
+	char party_xp_boost;
+	char zang_monsters;
+	char pern_monsters;
+	char cth_monsters;
+	char joke_monsters;
+	char vanilla_monsters;
+	char pet_monsters;
 	bool report_to_meta;
 	bool secret_dungeon_master;
 	bool anti_arts_horde;
@@ -69,13 +78,8 @@ struct server_opts
 	bool maximize;
 	bool kings_etiquette;
 	bool public_rfe;
-	bool zang_monsters;
-	bool pern_monsters;
-	bool cth_monsters;
-	bool joke_monsters;
-	bool vanilla_monsters;
+	bool auto_purge;
 };
-
 
 extern s32b turn;
 extern server_opts cfg;

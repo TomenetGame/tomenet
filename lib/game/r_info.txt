@@ -18442,29 +18442,29 @@ D:unsuspecting adventurers within reach of its venomous claws.
 
 # Questors -- Rest till the day will come
 
-#N:1041:Melinda Proudfoot
-#G:h:v
-#I:110:1d1:40:250:3
-#W:1:1:730:0
-#E:0:1:1:2:1:1
-#O:0:0:0:1
-#F:FEMALE | CAN_SPEAK
-#F:FORCE_MAXHP | SPECIAL_GENE
-#F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
-#F:MORTAL | BASEANGBAND | UNIQUE | NEUTRAL | NO_DEATH
-#D:She seems to seek someone, you may help...
-#
-#N:1042:Thrain, the King Under the Mountain
-#G:h:B
-#I:110:1d1:40:250:3
-#W:60:1:730:0
-#E:0:1:1:2:1:1
-#O:0:0:0:1
-#F:MALE | CAN_SPEAK
-#F:FORCE_MAXHP | SPECIAL_GENE
-#F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
-#F:MORTAL | BASEANGBAND | UNIQUE | NEUTRAL | NO_DEATH
-#D:He must have suffered horrible tortures...
+N:1041:Melinda Proudfoot
+G:h:v
+I:110:1d1:40:250:3
+W:1:1:730:0
+E:0:1:1:2:1:1
+O:0:0:0:1
+F:FEMALE | CAN_SPEAK
+F:FORCE_MAXHP | SPECIAL_GENE
+F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
+F:MORTAL | BASEANGBAND | UNIQUE | NEUTRAL | NO_DEATH
+D:She seems to seek someone, you may help...
+
+N:1042:Thrain, the King Under the Mountain
+G:h:B
+I:110:1d1:40:250:3
+W:60:1:730:0
+E:0:1:1:2:1:1
+O:0:0:0:1
+F:MALE | CAN_SPEAK
+F:FORCE_MAXHP | SPECIAL_GENE
+F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
+F:MORTAL | BASEANGBAND | UNIQUE | NEUTRAL | NO_DEATH
+D:He must have suffered horrible tortures...
 
 # PernMangband Additions
 

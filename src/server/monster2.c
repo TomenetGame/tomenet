@@ -649,17 +649,21 @@ bool mon_allowed(monster_race *r_ptr)
 {
 	int i = randint(100);
 
+	/* Pet/neutral monsters allowed? */
+	if(i > cfg.pet_monsters && (r_ptr->flags7 & (RF7_PET | RF7_NEUTRAL)))
+				return(FALSE);
+
 	/* Joke monsters allowed ? or not ? */
 	if(i > cfg.joke_monsters && (r_ptr->flags8 & RF8_JOKEANGBAND)) return(FALSE);
+
+	/* Lovercraftian monsters allowed ? or not ? */
+	if(i > cfg.cth_monsters && (r_ptr->flags8 & RF8_CTHANGBAND)) return(FALSE);
 
 	/* Zangbandish monsters allowed ? or not ? */
 	if(i > cfg.zang_monsters && (r_ptr->flags8 & RF8_ZANGBAND)) return(FALSE);
 
 	/* Pernian monsters allowed ? or not ? */
 	if(i > cfg.pern_monsters && (r_ptr->flags8 & RF8_PERNANGBAND)) return(FALSE);
-
-	/* Lovercraftian monsters allowed ? or not ? */
-	if(i > cfg.cth_monsters && (r_ptr->flags8 & RF8_CTHANGBAND)) return(FALSE);
 
 	/* Base monsters allowed ? or not ? */
 	if(i > cfg.vanilla_monsters && (r_ptr->flags8 & RF8_ANGBAND)) return(FALSE);

@@ -1199,6 +1199,7 @@ To find the latest change quickly, search ==== :)
 
 28/06/2002 (Jir)
 [B] prayer realm level check was broken.
+[H] added a filter for RF7_PET/RF7_NEUTRAL monsters.
 
 
 ** [B] stands for Bugfix.
