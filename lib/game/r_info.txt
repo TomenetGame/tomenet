@@ -558,7 +558,7 @@ F:RAND_50 | WILD_TOO | WILD_GRASS |
 F:CAN_SWIM |
 F:ANIMAL | DROP_CORPSE |
 F:MORTAL | BASEANGBAND |
-S:MULTIPLY
+F:MULTIPLY
 D:It is about three feet long with large teeth. 
 
 N:28:Large brown snake
@@ -611,7 +611,7 @@ F:RAND_50 | RAND_25 | CAN_SWIM |
 F:STUPID | WEIRD_MIND | 
 F:ANIMAL | IM_POIS | HURT_LITE | NO_FEAR
 F:MORTAL | BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:It is a large slimy mass of worms. 
 
 N:32:Floating eye
@@ -974,7 +974,7 @@ F:STUPID | WEIRD_MIND |
 F:ANIMAL | IM_ACID | CAN_SWIM | 
 F:HURT_LITE | NO_FEAR | 
 F:MORTAL | BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:It is a large slimy mass of worms. 
 
 N:59:Large yellow snake
@@ -1119,7 +1119,7 @@ O:0:0:0:0
 B:BITE:HURT:1d1
 F:RAND_50 | RAND_25 | CAN_FLY |
 F:WEIRD_MIND | ANIMAL | MORTAL | BASEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:It is six inches long. 
 
 N:70:Giant yellow centipede
@@ -1242,7 +1242,7 @@ F:RAND_50 | RAND_25 | CAN_SWIM |
 F:STUPID | WEIRD_MIND | 
 F:ANIMAL | HURT_LITE | NO_FEAR | 
 F:MORTAL | BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:It is a large slimy mass of worms. 
 
 N:79:Clear worm mass
@@ -1258,7 +1258,7 @@ F:STUPID | WEIRD_MIND | INVISIBLE |
 F:ANIMAL | 
 F:IM_POIS | HURT_LITE | NO_FEAR | 
 F:MORTAL | BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:It is a disgusting mass of poisonous worms. 
 
 N:80:Radiation eye
@@ -1350,7 +1350,7 @@ O:0:0:0:0
 B:BITE:POISON:1d3
 F:RAND_25 | 
 F:ANIMAL | MORTAL | BASEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:It is a very vicious rodent. 
 
 N:87:Snotling
@@ -1391,7 +1391,7 @@ F:STUPID | WEIRD_MIND | COLD_BLOOD |
 F:ANIMAL | IM_COLD | CAN_SWIM |
 F:HURT_LITE | NO_FEAR | 
 F:MORTAL | SUSCEP_FIRE | BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:It is a large slimy mass of worms. 
 
 N:90:Large grey snake
@@ -1607,7 +1607,7 @@ F:STUPID | EMPTY_MIND | BASH_DOOR |
 F:ANIMAL | IM_FIRE | CAN_SWIM |
 F:HURT_LITE | NO_FEAR | 
 F:MORTAL | BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:It is a large slimy mass of worms. 
 
 N:106:Copperhead snake
@@ -2287,7 +2287,7 @@ B:BITE:EAT_FOOD:1d3
 F:IM_POIS | HURT_LITE | EVIL | DEMON | OPEN_DOOR | 
 F:TAKE_ITEM | CAN_SWIM | 
 F:MORTAL | ZANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:Don't feed them after midnight! 
 
 N:154:Yeti
@@ -2329,7 +2329,7 @@ B:BITE:POISON:1d4
 F:RAND_25 | 
 F:ANIMAL | IM_POIS | 
 F:MORTAL | BASEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:It is a rodent of unusual size. 
 
 N:157:Black harpy
@@ -2766,7 +2766,7 @@ F:ATTR_CLEAR |
 F:NEVER_MOVE | INVISIBLE | COLD_BLOOD | 
 F:STUPID | EMPTY_MIND | CAN_SWIM |
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:Yum! It smells quite tasty.  If you could only see it...
 
 N:185:Quiver slot
@@ -2780,7 +2780,7 @@ B:SPORE:CONFUSE:1d1
 F:NEVER_MOVE | COLD_BLOOD | 
 F:STUPID | EMPTY_MIND | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | JOKEANGBAND | NO_CUT
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_5 | ARROW_1
 D:What looks like the remains of a quiver dropped by a past adventurer 
 D:has become overgrown with a strange mold intent on using the contents 
@@ -2954,7 +2954,7 @@ O:0:0:0:0
 B:BITE:HURT:1d2
 F:RAND_50 | RAND_25 | CAN_FLY | WEIRD_MIND | 
 F:ANIMAL | MORTAL | BASEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:A fast-breeding, annoying pest. 
 
 N:198:Panther
@@ -3029,7 +3029,7 @@ B:TOUCH:DISEASE:1d6
 B:TOUCH:LOSE_CON:1d6
 F:UNDEAD | EMPTY_MIND | NO_CONF | NO_SLEEP | IM_POIS | IM_COLD | NO_FEAR |
 F:HURT_LITE | COLD_BLOOD | EVIL | NEVER_MOVE | BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:A sickening mound of decaying flesh, bones, hands and so on. It seems to 
 D:be growing. 
 
@@ -3198,7 +3198,7 @@ B:TOUCH:EXP_10
 F:RAND_50 | RAND_25 | CAN_SWIM |
 F:STUPID | WEIRD_MIND | BASH_DOOR | 
 F:ANIMAL | HURT_LITE | NO_FEAR | BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:It is a disgusting mass of dark worms, eating each other, the floor, 
 D:the air, you... 
 
@@ -3213,7 +3213,7 @@ F:RAND_50 | RAND_25 |
 F:STUPID | WEIRD_MIND | BASH_DOOR | EVIL | CAN_SWIM |
 F:ANIMAL | HURT_LITE | NO_FEAR | KILL_WALL | COLD_BLOOD | INVISIBLE | 
 F:MORTAL | ZANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:Even more disgusting dark worms, their essence that of unbeing. 
 
 N:215:Golfimbul, the Hill Orc Chief
@@ -3712,7 +3712,7 @@ B:BITE:HURT:1d2
 F:RAND_50 | RAND_25 | 
 F:WEIRD_MIND | BASH_DOOR | CAN_FLY |
 F:ANIMAL | MORTAL | JOKEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:Oh no! They are everywhere! 
 
 N:247:Lurker
@@ -3806,7 +3806,7 @@ F:FORCE_SLEEP |
 F:RAND_50 | 
 F:OPEN_DOOR | BASH_DOOR | CAN_SWIM | DROP_CORPSE | 
 F:EVIL | IM_POIS | BASEANGBAND
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_8 | 
 S:BLIND | CONF | SCARE
 D:It is a strange, slimy, icky creature, with rudimentary intelligence, 
@@ -3821,7 +3821,7 @@ O:0:0:0:0
 B:CRAWL:POISON:1d4
 F:NEVER_MOVE | EVIL | CAN_SWIM |
 F:IM_POIS | EMPTY_MIND | NO_FEAR | BASEANGBAND | NO_CUT
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_7 | 
 S:SCARE | CONF | BR_LITE
 D:A chaotic mass of pulsating flesh, mouths and eyes. 
@@ -3889,7 +3889,7 @@ B:TOUCH:EAT_GOLD
 B:TOUCH:EAT_FOOD
 F:DROP_60 | ONLY_GOLD | RAND_50 | OPEN_DOOR | MALE | 
 F:GOOD | MORTAL | ZANGBAND
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_6 | 
 S:BLINK
 D:A merry little gnome. 
@@ -3903,7 +3903,7 @@ O:0:0:0:0
 B:BITE:HURT:1d2
 F:RAND_50 | CAN_FLY | WEIRD_MIND | 
 F:ANIMAL | MORTAL | BASEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:It makes you itch just to look at it. 
 
 N:260:Ufthak of Cirith Ungol
@@ -4016,7 +4016,7 @@ F:FORCE_SLEEP | NEVER_MOVE | STUPID | EMPTY_MIND | FRIENDS |
 F:KILL_TREES | SUSCEP_FIRE | ANIMAL | 
 F:WILD_ONLY | COLD_BLOOD | WILD_WOOD | WILD_GRASS | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | MORTAL | BASEANGBAND | DROP_60 | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:A mass of vegetation.  It seems to be growing...  
 
 N:267:Magic mushroom patch
@@ -4378,7 +4378,7 @@ O:0:0:0:0
 B:BITE:CONFUSE:2d2
 F:RAND_50 | RAND_25 | CAN_FLY |
 F:WEIRD_MIND | ANIMAL | BASEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:A giant buzzing wasp, its stinger drips venom. 
 
 N:290:Lizard man
@@ -4986,7 +4986,7 @@ W:19:4:100:4
 B:BITE:POISON:2d2
 F:RAND_50 | RAND_25 | CAN_FLY | WILD_SWAMP | WILD_TOO | 
 F:WEIRD_MIND | ANIMAL | EVIL | BASEANGBAND
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_12 | 
 S:SHRIEK
 D:Believed to be an evil relative of the cricket, this creature gets its name 
@@ -5121,7 +5121,7 @@ B:HIT:HURT:2d5
 F:NEVER_MOVE | IM_COLD | COLD_BLOOD | IM_ACID | IM_ELEC | NO_FEAR |
 F:IM_FIRE | IM_POIS | NO_CONF | NO_SLEEP | FRIENDS | CHAR_MULTI | HURT_ROCK | 
 F:BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:A sentient section of wall. 
 
 N:337:Earth hound
@@ -5524,7 +5524,7 @@ W:24:4:100:4
 B:BITE:BLIND:1d2
 F:RAND_50 | RAND_25 | CAN_FLY | 
 F:WEIRD_MIND | ANIMAL | BASEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:Clouds of these monsters light up the dungeon - so brightly that you can 
 D:barely see through them. 
 
@@ -5672,7 +5672,7 @@ F:RAND_50 | DROP_60 | STUPID | EMPTY_MIND | CAN_SWIM |
 F:TAKE_ITEM | KILL_BODY | OPEN_DOOR | BASH_DOOR | 
 F:IM_POIS | NO_FEAR | 
 F:MORTAL | BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 S:1_IN_11 | 
 S:DRAIN_MANA
 D:It is a strangely moving puddle. 
@@ -6949,7 +6949,7 @@ B:HIT:HURT:2d6
 F:FORCE_SLEEP | COLD_BLOOD | EMPTY_MIND | KILL_WALL | RAND_50 | 
 F:BASH_DOOR | IM_COLD | IM_ACID | IM_FIRE | IM_ELEC | IM_POIS | NONLIVING | 
 F:HURT_ROCK | NO_CONF | NO_SLEEP | CHAR_MULTI | BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:A sentient, moving section of wall. 
 
 N:449:Mage
@@ -7135,7 +7135,7 @@ F:CHAR_MULTI | ATTR_MULTI | ATTR_ANY |
 F:FORCE_SLEEP | NEVER_MOVE | 
 F:EMPTY_MIND | COLD_BLOOD | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | ZANGBAND | NO_CUT
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_4 | 
 S:BLIND | CONF | SCARE | CURSE | BLINK | S_MONSTER
 D:It is a floor tile corrupted by chaos. 
@@ -8370,7 +8370,7 @@ B:TOUCH:EAT_ITEM
 F:INVISIBLE | RAND_25 | TAKE_ITEM | COLD_BLOOD |
 F:HURT_LITE | EVIL | OPEN_DOOR | MALE | 
 F:MORTAL | BASEANGBAND
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_6 | 
 S:BLINK | TPORT | TELE_TO | CURSE
 D:This little creature has a fiendish gleam in its eyes. 
@@ -10151,7 +10151,7 @@ F:FORCE_SLEEP | ATTR_MULTI | ATTR_ANY | EVIL |
 F:RAND_25 | RES_NEXU |  AURA_ELEC | IM_FIRE | IM_ELEC |
 F:EMPTY_MIND | BASH_DOOR | POWERFUL | KILL_BODY |
 F:CAN_SWIM | NO_CONF | NO_SLEEP | CTHANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:Weird, jelly like creatures. No two look the same. 
 
 N:627:Fat Man
@@ -10249,7 +10249,7 @@ B:CRAWL:UN_BONUS:1d4
 F:RAND_50 | RES_DISE | ATTR_MULTI | CAN_SWIM |
 F:STUPID | WEIRD_MIND | BASH_DOOR | 
 F:ANIMAL | HURT_LITE | NO_FEAR | BASEANGBAND | NO_CUT
-S:MULTIPLY
+F:MULTIPLY
 D:It is a strange mass of squirming worms. Magical energy crackles 
 D:around its disgusting form. 
 
@@ -11218,7 +11218,7 @@ B:TOUCH:EAT_GOLD
 B:TOUCH:EAT_ITEM
 F:INVISIBLE | RAND_25 | TAKE_ITEM | COLD_BLOOD | SMART |
 F:HURT_LITE | EVIL | OPEN_DOOR | MALE | UNDEAD | RES_NETH | ZANGBAND | NO_CUT
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_6 | 
 S:BLINK | TPORT | TELE_TO | CURSE | ANIM_DEAD
 D:Nasty undead little creatures. They are chanting the name of the 
@@ -11648,7 +11648,7 @@ B:EXPLODE:HURT:20d3
 F:RAND_25 | TAKE_ITEM | SMART |
 F:EVIL | OPEN_DOOR | MALE |
 F:MORTAL | ZANGBAND
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_6 | 
 S:BLINK | TPORT | TELE_TO  
 D:These leprechauns are not afraid to die for their cause. They are 
@@ -12013,7 +12013,7 @@ F:FORCE_SLEEP | COLD_BLOOD | EMPTY_MIND | PASS_WALL | RAND_50 |
 F:BASH_DOOR | IM_COLD | IM_ACID | IM_FIRE | IM_ELEC | IM_POIS | NONLIVING | 
 F:HURT_ROCK | NO_CONF | NO_SLEEP | CHAR_MULTI | CAN_FLY | BASEANGBAND
 F:NO_CUT
-S:MULTIPLY | 
+F:MULTIPLY | 
 D:A sentient, moving section of wall. 
 
 N:719:Nycadaemon
@@ -14120,7 +14120,7 @@ F:DROP_60 | DROP_GOOD | POWERFUL | AURA_ELEC | AURA_FIRE | AURA_COLD |
 F:BASH_DOOR | IM_ELEC | IM_FIRE | RES_NEXU | IM_COLD | ZANGBAND | 
 F:IM_POIS | IM_ACID | RES_PLAS | RES_DISE | COLD_BLOOD | NONLIVING | RAND_50
 F:NO_CUT
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_5 |
 S:BR_CHAO
 D:Spawned from the Pits of the Abyss, it is a mass of sentient Chaos, 
@@ -15219,6 +15219,7 @@ F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | DROP_3D2 | DROP_4D2 |
 F:DROP_GOOD | DROP_GREAT | DROP_CHOSEN | RES_NETH |
 F:SMART | KILL_WALL | MOVE_BODY | AURA_COLD |
 F:REGENERATE | POWERFUL |
+F:CAN_SWIM | CAN_FLY
 F:EVIL | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
 F:NO_CONF | NO_SLEEP | NO_FEAR | NO_STUN | RES_TELE | BASEANGBAND | HAS_LITE
 S:1_IN_3 | 
@@ -15361,7 +15362,7 @@ B:MOAN:*
 B:HIT:CONFUSE:1d6
 F:DROP_1D2 | EVIL |
 F:EMPTY_MIND | RAND_50 | RAND_25 | JOKEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:A feared creation of the Variant Maintainer, it tries to generate Morgoth 
 D:in the town and the One Ring in the magic shop. 
 
@@ -15688,7 +15689,7 @@ B:BITE:POISON:3d6
 F:AQUATIC | ANIMAL | IM_POIS | FRIENDS | 
 F:CHAR_CLEAR | ATTR_CLEAR | DROP_CORPSE | COLD_BLOOD | 
 F:MORTAL | BASEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:A relative of crabs and shrimp, this is a tiny creature that inhabits sandy 
 D:bottoms. It has a pair of dangerous-looking claws. 
 
@@ -16864,7 +16865,7 @@ F:STUPID | EMPTY_MIND | KILL_TREES |
 F:IM_POIS | IM_ELEC | IM_ACID | IM_COLD |
 F:NO_CONF | NO_SLEEP | NO_FEAR | 
 F:MORTAL | PERNANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:A kind of carnivorous giant mycorhiza:  originally from the far system 
 D:of Rukbat in which orbits the plant Pern, home of the Dragonriders. 
 
@@ -17120,7 +17121,7 @@ F:DROP_60 | ONLY_GOLD | DROP_CORPSE |
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | DRAGON | NO_CONF | 
 F:MORTAL | BASEANGBAND | ATTR_MULTI
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_6 | BR_CONF
 D:You thought dragons used eggs, but this worm has the scales, and the bad 
 D:breath, and the fiery eyes, of a real Dragon. Its scales glitter in 
@@ -17140,7 +17141,7 @@ F:DROP_60 | ONLY_GOLD | DROP_CORPSE |
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | DRAGON | NO_STUN | 
 F:MORTAL | BASEANGBAND | ATTR_MULTI
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_6 | BR_SOUN
 D:You thought dragons used eggs, but this worm has the scales, and the bad 
 D:breath, and the fiery eyes, of a real Dragon. You can feel the air itself 
@@ -17699,7 +17700,7 @@ O:0:0:0:0
 B:BITE:EAT_LITE:1d2
 F:RAND_25 | CAN_SWIM | ANIMAL | 
 F:DROP_CORPSE | MORTAL | BASEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:It is about three feet long with large teeth.  As the light of your lamp falls 
 D:on it, it seems to grow stronger.
 
@@ -17746,7 +17747,7 @@ O:0:0:0:0
 B:BITE:HURT:1d2
 F:RAND_50 | RAND_25 | CAN_FLY | WEIRD_MIND | 
 F:ANIMAL | MORTAL | BASEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:It is six inches long. 
 
 N:1009:Fire Phantom
@@ -18038,7 +18039,7 @@ F:DROP_60 | ONLY_GOLD | DROP_CORPSE |
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | DRAGON | IM_ELEC | 
 F:MORTAL | BASEANGBAND | ATTR_MULTI
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_6 | BR_ELEC
 D:You thought dragons used eggs, but this worm has the scales, and the bad  
 D:breath, and the fiery eyes, of a real Dragon. Sparks fly from its jaws.
@@ -18057,7 +18058,7 @@ F:DROP_60 | ONLY_GOLD | DROP_CORPSE |
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | DRAGON | IM_COLD | 
 F:MORTAL | BASEANGBAND | ATTR_MULTI
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_6 | BR_COLD
 D:You thought dragons used eggs, but this worm has the scales, and the bad  
 D:breath, and the fiery eyes, of a real Dragon. Its breath condenses in the air.
@@ -18076,7 +18077,7 @@ F:DROP_60 | ONLY_GOLD | DROP_CORPSE |
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | DRAGON | IM_POIS | 
 F:MORTAL | BASEANGBAND | ATTR_MULTI
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_6 | BR_POIS
 D:You thought dragons used eggs, but this worm has the scales, and the bad 
 D:breath, and the fiery eyes, of a real Dragon. You can smell foul gases 
@@ -18096,7 +18097,7 @@ F:DROP_60 | ONLY_GOLD | DROP_CORPSE |
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | DRAGON | IM_ACID | 
 F:MORTAL | BASEANGBAND | ATTR_MULTI
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_6 | BR_ACID
 D:You thought dragons used eggs, but this worm has the scales, and the bad  
 D:breath, and the fiery eyes, of a real Dragon. Acidic drool drips from its jaws.
@@ -18115,7 +18116,7 @@ F:DROP_60 | ONLY_GOLD | DROP_CORPSE |
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | DRAGON | IM_FIRE | 
 F:MORTAL | BASEANGBAND | ATTR_MULTI
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_6 | BR_FIRE
 D:You thought dragons used eggs, but this worm has the scales, and the bad  
 D:breath, and the fiery eyes, of a real Dragon. Smoke comes from its mouth. 
@@ -18134,7 +18135,7 @@ F:DROP_60 | ONLY_GOLD | DROP_CORPSE |
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | DRAGON | IM_ELEC | IM_FIRE | IM_ACID | IM_COLD | IM_POIS | 
 F:MORTAL | BASEANGBAND
-S:MULTIPLY | 
+F:MULTIPLY | 
 S:1_IN_6 | BR_ELEC | BR_COLD | BR_FIRE | BR_ACID | BR_POIS
 D:You thought dragons used eggs, but this worm has the scales, and the bad 
 D:breath, and the fiery eyes, of a real Dragon. Its scales shimmer different 
@@ -18186,7 +18187,7 @@ F:RAND_25 |
 F:FORCE_MAXHP | DROP_CORPSE | POWERFUL | 
 F:EVIL | IM_ELEC | IM_FIRE | IM_POIS | EMPTY_MIND | 
 F:MORTAL | BASEANGBAND
-S:MULTIPLY
+F:MULTIPLY
 D:Offbreed of the Sandworm Queen, they are harmless alone... 
 
 
@@ -18592,6 +18593,32 @@ F:COLD_BLOOD | BASH_DOOR | CHAR_MULTI |
 F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 D:It appears to be a pile of coins made of precious adamant, slithering toward 
 D:you on lots of tiny legs. 
+
+N:1054:Goldfish
+G:~:r
+W:0:1:80:0
+I:110:1d1:30:4:10
+E:0:0:0:0:1:0
+O:0:0:0:0
+B:BITE:HURT:1d2
+F:WILD_TOWN | WILD_ONLY  | RAND_50
+#F:WILD_LAKE
+F:AQUATIC | COLD_BLOOD | NO_SLEEP
+F:MORTAL | BASEANGBAND
+D:Beautiful red fish in ponds.
+
+N:1055:Carp
+G:~:R
+W:0:3:80:0
+I:105:2d4:70:6:10
+E:0:0:0:0:1:0
+O:0:0:0:0
+B:BITE:HURT:1d4
+F:WILD_TOWN | WILD_ONLY 
+#F:WILD_LAKE
+F:AQUATIC | COLD_BLOOD | NO_SLEEP
+F:MORTAL | BASEANGBAND
+D:Beautiful and expensive fish for ponds.
 
 # N: serial number : monster name
 # G: symbol : color

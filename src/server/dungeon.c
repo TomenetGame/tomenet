@@ -631,6 +631,20 @@ static void process_world(int Ind)
 		}
 	}
 #endif	// 0
+
+	/* Cold Turkey  */
+
+	i = (p_ptr->csane << 7) / p_ptr->msane;
+	if (!(turn % 1500) && !magik(i))
+	{
+		msg_print(Ind, "\377rA flashback storms your head!");
+
+		/* alert to the neighbors also */
+		if (magik(20)) msg_format_near(Ind, "You see %s's eyes bloodshot.", p_ptr->name);
+
+		set_image(Ind, p_ptr->image + 25 - i / 4);
+		disturb(Ind, 0, 0);
+	}
 }
 
 /*
@@ -3185,7 +3199,7 @@ void dungeon(void)
 	process_objects();
 
 	/* Probess the world */
-	if (turn % 50)
+	if (!(turn % 50))
 		for (i = 1; i < NumPlayers + 1; i++)
 		{
 			if (Players[i]->conn == NOT_CONNECTED)

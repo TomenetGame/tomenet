@@ -1753,6 +1753,22 @@ static void calc_bonuses(int Ind)
 	p_ptr->antimagic_dis = 0;
 	p_ptr->xtra_crit = 0;
 
+	/* Start with a single blow per turn */
+	p_ptr->num_blow = 1;
+
+	/* Start with a single shot per turn */
+	p_ptr->num_fire = 1;
+
+	/* Start with a single spell per turn */
+	p_ptr->num_spell = 1;
+
+	/* Reset the "xtra" tval */
+	p_ptr->tval_xtra = 0;
+
+	/* Reset the "ammo" tval */
+	p_ptr->tval_ammo = 0;
+
+
 	/* Base infravision (purely racial) */
 	p_ptr->see_infra = p_ptr->rp_ptr->infra;
 
@@ -1790,108 +1806,102 @@ static void calc_bonuses(int Ind)
 
 	/* Calc bonus body */
 	if(p_ptr->body_monster)
-	  {
-	    calc_body_bonus(Ind);
-	  }
-	else
-	  {
-	    /* Start with "normal" speed */
-	    p_ptr->pspeed = 110;
+	{
+		calc_body_bonus(Ind);
+	}
+	else	// if if or switch to switch, that is the problem :)
+	{
+		/* Start with "normal" speed */
+		p_ptr->pspeed = 110;
 
-	    /* Bats get +10 speed ... they need it!*/
-	    if (p_ptr->fruit_bat) p_ptr->pspeed += 10;
-	    if (p_ptr->fruit_bat) p_ptr->feather_fall = TRUE;
+		/* Bats get +10 speed ... they need it!*/
+		if (p_ptr->fruit_bat) p_ptr->pspeed += 10;
+		if (p_ptr->fruit_bat) p_ptr->feather_fall = TRUE;
 
-	    /* Elf */
-	    if (p_ptr->prace == RACE_ELF) p_ptr->resist_lite = TRUE;
+		/* Elf */
+		if (p_ptr->prace == RACE_ELF) p_ptr->resist_lite = TRUE;
 
-	    /* Hobbit */
-	    if (p_ptr->prace == RACE_HOBBIT) p_ptr->sustain_dex = TRUE;
+		/* Hobbit */
+		else if (p_ptr->prace == RACE_HOBBIT) p_ptr->sustain_dex = TRUE;
 
-	    /* Gnome */
-	    if (p_ptr->prace == RACE_GNOME) p_ptr->free_act = TRUE;
-	    
-	    /* Dwarf */
-	    if (p_ptr->prace == RACE_DWARF) p_ptr->resist_blind = TRUE;
-	    
-	    /* Half-Orc */
-	    if (p_ptr->prace == RACE_HALF_ORC) p_ptr->resist_dark = TRUE;
-	
-	    /* Half-Troll */
-	    if (p_ptr->prace == RACE_HALF_TROLL) p_ptr->sustain_str = TRUE;
-	
-	    /* Dunadan */
-	    if (p_ptr->prace == RACE_DUNADAN) p_ptr->sustain_con = TRUE;
+		/* Gnome */
+		else if (p_ptr->prace == RACE_GNOME) p_ptr->free_act = TRUE;
 
-	    /* High Elf */
-	    if (p_ptr->prace == RACE_HIGH_ELF) p_ptr->resist_lite = TRUE;
-	    if (p_ptr->prace == RACE_HIGH_ELF) p_ptr->see_inv = TRUE;
+		/* Dwarf */
+		else if (p_ptr->prace == RACE_DWARF) p_ptr->resist_blind = TRUE;
 
-	    /* Yeek */
-	    if (p_ptr->prace == RACE_YEEK) p_ptr->feather_fall = TRUE;
+		/* Half-Orc */
+		else if (p_ptr->prace == RACE_HALF_ORC) p_ptr->resist_dark = TRUE;
 
-	    /* Goblin */
-	    if (p_ptr->prace == RACE_GOBLIN) p_ptr->resist_dark = TRUE;
-	    if (p_ptr->prace == RACE_GOBLIN) p_ptr->feather_fall = TRUE;
+		/* Half-Troll */
+		else if (p_ptr->prace == RACE_HALF_TROLL) p_ptr->sustain_str = TRUE;
 
-	    /* Ent */
-	    if (p_ptr->prace == RACE_ENT)
-	      {
-		p_ptr->slow_digest = TRUE;
-		p_ptr->pspeed -= 2;
+		/* Dunadan */
+		else if (p_ptr->prace == RACE_DUNADAN) p_ptr->sustain_con = TRUE;
 
-		if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
-		if (p_ptr->lev >= 40) p_ptr->telepathy = TRUE;
-	      }
+		/* High Elf */
+		else if (p_ptr->prace == RACE_HIGH_ELF)
+		{
+			p_ptr->resist_lite = TRUE;
+			p_ptr->see_inv = TRUE;
+		}
 
-	    /* DragonRider */
-	    if (p_ptr->prace == RACE_DRIDER)
-	      {
-		p_ptr->feather_fall = TRUE;
+		/* Yeek */
+		else if (p_ptr->prace == RACE_YEEK) p_ptr->feather_fall = TRUE;
 
-		if (p_ptr->lev >= 10) p_ptr->resist_fire = TRUE;
-		if (p_ptr->lev >= 15) p_ptr->resist_cold = TRUE;
-		if (p_ptr->lev >= 20) p_ptr->resist_acid = TRUE;
-		if (p_ptr->lev >= 25) p_ptr->resist_elec = TRUE;
-	      }
-	  }
+		/* Goblin */
+		else if (p_ptr->prace == RACE_GOBLIN)
+		{
+			p_ptr->resist_dark = TRUE;
+			p_ptr->feather_fall = TRUE;
+		}
+
+		/* Ent */
+		else if (p_ptr->prace == RACE_ENT)
+		{
+			p_ptr->slow_digest = TRUE;
+			p_ptr->pspeed -= 2;
+
+			if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
+			if (p_ptr->lev >= 40) p_ptr->telepathy = TRUE;
+		}
+
+		/* DragonRider */
+		else if (p_ptr->prace == RACE_DRIDER)
+		{
+			p_ptr->feather_fall = TRUE;
+
+			if (p_ptr->lev >= 10) p_ptr->resist_fire = TRUE;
+			if (p_ptr->lev >= 15) p_ptr->resist_cold = TRUE;
+			if (p_ptr->lev >= 20) p_ptr->resist_acid = TRUE;
+			if (p_ptr->lev >= 25) p_ptr->resist_elec = TRUE;
+		}
+	}
 
 	switch(p_ptr->pclass)
-	  {
+	{
 		case CLASS_MONK:
 			/* Unencumbered Monks become faster every 10 levels */
 			if (!(monk_heavy_armor(Ind)))
-			  p_ptr->pspeed += (p_ptr->lev) / 10;
+				p_ptr->pspeed += (p_ptr->lev) / 10;
 
 			/* Free action if unencumbered at level 25 */
 			if  ((p_ptr->lev > 24) && !(monk_heavy_armor(Ind)))
 				p_ptr->free_act = TRUE;
 			break;
-	  }
+	}
 
 	/* Ghost */
-	if (p_ptr->ghost) p_ptr->see_inv = TRUE;
-	if (p_ptr->ghost) p_ptr->resist_neth = TRUE;
-	if (p_ptr->ghost) p_ptr->hold_life = TRUE;
-	if (p_ptr->ghost) p_ptr->free_act = TRUE;
-	if (p_ptr->ghost) p_ptr->see_infra += 2;
-	if (p_ptr->ghost) p_ptr->resist_pois = TRUE;
-	/* if (p_ptr->ghost) p_ptr->invis += 5; */ /* No. */
-
-	/* Start with a single blow per turn */
-	p_ptr->num_blow = 1;
-
-	/* Start with a single shot per turn */
-	p_ptr->num_fire = 1;
-
-	/* Start with a single spell per turn */
-	p_ptr->num_spell = 1;
-
-	/* Reset the "xtra" tval */
-	p_ptr->tval_xtra = 0;
-
-	/* Reset the "ammo" tval */
-	p_ptr->tval_ammo = 0;
+	if (p_ptr->ghost)
+	{
+		p_ptr->see_inv = TRUE;
+		p_ptr->resist_neth = TRUE;
+		p_ptr->hold_life = TRUE;
+		p_ptr->free_act = TRUE;
+		p_ptr->see_infra += 2;
+		p_ptr->resist_pois = TRUE;
+//		p_ptr->invis += 5; */ /* No. */
+	}
 
 
 	/* Hack -- apply racial/class stat maxes */
@@ -1908,13 +1918,13 @@ static void calc_bonuses(int Ind)
 
        	/* Apply the racial modifiers */
 	if (p_ptr->mode == MODE_HELL)
-	  {
-	    for (i = 0; i < 6; i++)
-	      {
-		/* Modify the stats for "race" */
-		p_ptr->stat_add[i]--;
-	      }
-	  }
+	{
+		for (i = 0; i < 6; i++)
+		{
+			/* Modify the stats for "race" */
+			p_ptr->stat_add[i]--;
+		}
+	}
 	
 
 	/* -APD- Hack -- rogues +1 speed at 5,20,35,50. this may be out of place, but.... */
@@ -1951,7 +1961,10 @@ static void calc_bonuses(int Ind)
 		if (!o_ptr->k_idx) continue;
 
 		/* Extract the item flags */
-			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+		/* Not-burning light source does nothing, good or bad */
+		if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) continue;
 
 		/* Hack -- first add any "base bonuses" of the item.  A new
 		 * feature in MAngband 0.7.0 is that the magnitude of the
@@ -2113,7 +2126,7 @@ static void calc_bonuses(int Ind)
 		if (f2 & TR2_HOLD_LIFE) p_ptr->hold_life = TRUE;
 
 		/* Light(consider doing it on calc_torch) */
-		if (((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0)) || (!(f4 & TR4_FUEL_LITE)))
+//		if (((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0)) || (!(f4 & TR4_FUEL_LITE)))
 		{
 			if (f3 & TR3_LITE1) p_ptr->lite++;
 			if (f4 & TR4_LITE2) p_ptr->lite += 2;
@@ -2443,7 +2456,7 @@ static void calc_bonuses(int Ind)
 		p_ptr->dis_to_h += 12;
 	}
 
-	/* Temporary "Beserk" */
+	/* Temporary "Berserk" */
 	if (p_ptr->shero)
 	{
 		p_ptr->to_h += 24;
@@ -2452,7 +2465,7 @@ static void calc_bonuses(int Ind)
 		p_ptr->dis_to_a -= 10;
 	}
 
-	/* Temporary "Furry" */
+	/* Temporary "Fury" */
 	if (p_ptr->furry)
 	{
 		p_ptr->to_h += 10;
@@ -3013,10 +3026,10 @@ void update_stuff(int Ind)
 		calc_hitpoints(Ind);
 	}
 
-        if (p_ptr->update & (PU_SANITY))
-        {
-                p_ptr->update &= ~(PU_SANITY);
-                calc_sanity(Ind);
+	if (p_ptr->update & (PU_SANITY))
+	{
+		p_ptr->update &= ~(PU_SANITY);
+		calc_sanity(Ind);
 	}
 
 	if (p_ptr->update & PU_MANA)

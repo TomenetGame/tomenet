@@ -777,8 +777,11 @@ Change list for PernMangband
 
 05/03/2002 (Jir)
 - some more traps.
+- exported cfg to LUA (eg. '/ cfg.store_turns=10')
+- low-sanity alart and 'flushback' hallucination
 [B] lantern refilling 
 [B] watery respawning crashed
+[B] a trap caused buggy screen like ^^^^^^^^^^^^^^^^^^^^^^^
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
@@ -796,10 +799,9 @@ Change list for PernMangband
 [B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
 [B] /rec won't work if to wilderness? (admin)
 [B] some monsters become 'immune' to spell attacks.
-[B] ^^^^^^^^^^^^^^^^^^^^^^^ broken display (on certain vault?)
-    ./mangclient: Received unknown packet type (86, 41), dropping
 [B][C] chat-history contains lines with 'mindcrafter'. 
-[B] log-file viewer leaves messy screen when done.
+[B] log-file viewer(&6) leaves messy screen when done.
+[B] [Bashing for beginners] contains 'Darkness Storm' etc.
 
 ==== below this line are changes to be done in the future ====
 [minor ones]
@@ -809,19 +811,21 @@ Change list for PernMangband
 - sort unique-list according to the level
 - tombstone screen
 - wilderness compacting (how about 'compacting' townies?)
-- low-sanity alart each 2000 turn or sth(and 'flushback' hallucination?)
 - display "non-scoring mode" in '@' screen
 - torch/lantern shouldn't be EASY_KNOWN.
 - Nazgul rings should have corresponding names
+- implement EGO_WOUNDING(ie. monster bleeding)
 * Trap ideas
   - no return trap should steal books also?
   - innondation trap
   - telekinesis trap
   - death molds trap
   - house-door-opening trap
+- perma-light should be rarer
 [C] ameliorate option interface(toggle-key/vi-key)
 
 [major ones]
+(3.4)
 - new terrains and their effects (f_info.txt) (do this *FIRST*!)
 - variety of dungeon types (d_info.txt)
 - better cave-generator (generate.c) {Asclep?}
@@ -830,12 +834,14 @@ Change list for PernMangband
 - item stacks/monster inventory
   * vault treasures should be held by guardians
 - item themes (mage drops magic items, etc)
+(3.5)
 - quests (needing LUA-hooks) {hopefully DarkGod}
-- guild, or new party system
 - backbone scenario (like token system)
-- total rebalancing for all of them
-- client updates necessary
+(4.0)
 - better vaults
+- guild, or new party system
+- client updates necessary
+- total rebalancing for all of them
 - fix gfx again {Asclep}
 - interactive spell system (like in C3)
 
@@ -845,6 +851,8 @@ Change list for PernMangband
 - total source-code cleanup {takkaria?}
 - integrate save/load into one function (eg. saveload.c)
 - *_info.txt encryption
+- optimize monster AI
+- better remove 'take note'(monster knowledge) stuffs?
 
 ==== below this line are RFEs collected so far (good or bad) ====
 [minor ones]
@@ -866,6 +874,8 @@ Change list for PernMangband
   such as fire bolt wand/rod..
 - visual effect when teleporting, so that players won't lose sight of '@'.
 - aquatic uniques
+- add a command to *completely* redraw the screen.
+- enlarge 'destroy traps' spell radius (but traps may 'resist' it)
   
 [major ones]
 - NPC/pet/golem/slave {Evileye/DG?}
@@ -895,6 +905,7 @@ Change list for PernMangband
 - GTK client
 - Auction house {A.Dingle}
 - Casino (or Scroll of Back Gammon ;)
+- resurrect 'targetting cursor'
 [sober (intrinsic) ones]
 - savedata editor
 - vault/map editor
@@ -911,7 +922,6 @@ Program received signal SIGSEGV, Segmentation fault.
 0x80879d3 in project_i (Ind=1, who=-1, r=0, wpos=0x8d3ca2c, y=121, x=179, 
 		dam=500, typ=13) at server/spells1.c:2606
 2606            o_ptr = &o_list[c_ptr->o_idx];
-(gdb) bt
 #0  0x80879d3 in project_i (Ind=1, who=-1, r=0, wpos=0x8d3ca2c, y=121, x=179, 
 		dam=500, typ=13) at server/spells1.c:2606
 #1  0x808d8b1 in project (who=-1, rad=16, wpos=0x8d3ca2c, y=121, x=179, 
@@ -931,7 +941,6 @@ at server/spells2.c:4082
 Program received signal SIGSEGV, Segmentation fault.
 0x80526bf in message_str (age=0) at client/c-util.c:1340
 1340            o = message__ptr[x];
-(gdb) bt
 #0  0x80526bf in message_str (age=0) at client/c-util.c:1340
 #1  0x80659f1 in fix_message () at client/c-xtra1.c:1067
 #2  0x80666d0 in window_stuff () at client/c-xtra1.c:1407
@@ -939,4 +948,16 @@ Program received signal SIGSEGV, Segmentation fault.
 #4  0x805b5b0 in client_init (argv1=0x0) at client/c-init.c:464
 #5  0x806822a in main (argc=1, argv=0xbfbff740) at client/client.c:263
 #6  0x804a311 in _start ()
+
+Program received signal SIGBUS, Bus error.
+0x281e4901 in memcpy () from /usr/lib/libc.so.4
+#0  0x281e4901 in memcpy () from /usr/lib/libc.so.4
+#1  0xbfbff72c in ?? ()
+#2  0x805f527 in Flush_queue () at client/nclient.c:831
+#3  0x8054e8e in cmd_inven () at client/c-cmd.c:782
+#4  0x80548e5 in process_command () at client/c-cmd.c:315
+#5  0x805b0a9 in Input_loop () at client/c-init.c:201
+#6  0x805b5b0 in client_init (argv1=0x0) at client/c-init.c:464
+#7  0x806822a in main (argc=1, argv=0xbfbff724) at client/client.c:263
+#8  0x804a311 in _start ()
 

@@ -1090,10 +1090,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			f_ptr = &f_info[FEAT_FLOOR];
 
 			/* Normal char */
-			(*cp) = p_ptr->f_char[c_ptr->feat];
+			(*cp) = p_ptr->f_char[feat];
 
 			/* Normal attr */
-			a = p_ptr->f_attr[c_ptr->feat];
+			a = p_ptr->f_attr[feat];
 
 			/* Hack to display detected traps */
 			if ((c_ptr->special.type == CS_TRAPS) )
@@ -1121,10 +1121,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 						/* Get a new color with a strange formula :) */
 						if (t_info[t_ptr->t_idx].flags & FTRAP_CHANGE)
 						{
-							s32b tmp;
+							u32b tmp;
 
 							// tmp = dun_level + dungeon_type + c_ptr->feat;
-							tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + c_ptr->feat;
+							tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + feat;
 
 							// a = tmp % 16;
 							/* mega-hack: use trap-like colours only */
@@ -1245,12 +1245,13 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 						/* Get a new color with a strange formula :) */
 						if (t_info[t_ptr->t_idx].flags & FTRAP_CHANGE)
 						{
-							s32b tmp;
+							u32b tmp;
 
 							tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + c_ptr->feat;
 							//tmp = dun_level + dungeon_type + c_ptr->feat;
 
-							a = tmp % 16;
+//							a = tmp % 16;
+							a = tmp % 6 + 1;
 						}
 					}
 				}

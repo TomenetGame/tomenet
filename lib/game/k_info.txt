@@ -3841,7 +3841,8 @@ N:525:& Dwarven Lantern~
 G:~:b
 I:39:3:0
 W:15:0:50:5000
-A:15/2
+#A:15/2
+A:20/20
 P:0:1d1:0:0:0
 F:EASY_KNOW | IGNORE_FIRE | LITE2
 
@@ -3857,7 +3858,8 @@ N:527:& Everburning Torch~
 G:~:R
 I:39:2:0
 W:5:0:50:2500
-A:5/1
+#A:5/1
+A:5/10
 P:0:1d1:0:0:0
 F:EASY_KNOW | IGNORE_FIRE | LITE1
 
@@ -3882,7 +3884,8 @@ N:530:& Feanorian Lamp~
 G:~:B
 I:39:4:0
 W:25:0:50:15000
-A:25/3
+#A:25/3
+A:40/10
 P:0:1d1:0:0:0
 F:EASY_KNOW | IGNORE_FIRE | LITE3
 

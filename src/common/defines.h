@@ -3612,7 +3612,7 @@ that keeps many algorithms happy.
  * New monster race bit flags
  */
 #define RF4_SHRIEK			0x00000001	/* Shriek for help */
-#define RF4_MULTIPLY                    0x00000002  /* Monster reproduces */
+//#define RF4_MULTIPLY                    0x00000002  /* Monster reproduces */
 #define RF4_S_ANIMAL                    0x00000004  /* Summon animals */
 #define RF4_ROCKET                      0x00000008  /* TY: Rocket */
 //#define RF4_XXX2			0x00000002	/* (?) */
@@ -3762,6 +3762,7 @@ that keeps many algorithms happy.
 #define RF7_AI_SPECIAL          0x00002000  /* For quests */
 #define RF7_NEUTRAL             0x00004000  /* Monster is neutral */
 
+#define RF7_MULTIPLY            0x40000000  /* Monster reproduces */
 #define RF7_DISBELIEVE			0x80000000	/* Antimagic shield */
 
 

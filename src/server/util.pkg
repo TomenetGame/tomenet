@@ -29,8 +29,55 @@ typedef unsigned int u32b;
 #define TERM_L_BLUE             14  /* 'B' */   /* 0,4,4 */
 #define TERM_L_UMBER            15  /* 'U' */   /* 3,2,1 */
 
+/* probably this shouldn't be here? */
+struct server_opts
+{
+	s16b runlevel;		/* Glorified shutdown mode */
+	time_t closetime;	/* Server closedown time */
+	char * meta_address;
+	char * bind_name;
+	char * console_password;
+	char * admin_wizard;
+	char * dungeon_master;
+	s32b preserve_death_level;
+	s32b unique_respawn_time;
+	s32b unique_max_respawn_time;
+	s32b level_unstatic_chance;
+	s32b min_unstatic_level;
+	s32b retire_timer;
+	s32b game_port;
+	s32b console_port;
+	s32b spell_interfere;
+	s32b spell_stack_limit;
+	s16b fps;
+	s16b newbies_cannot_drop;
+	s16b running_speed;
+	s16b anti_scum;
+	s16b dun_unusual;
+	s16b town_x;
+	s16b town_y;
+	s16b town_base;
+	s16b dun_base;
+	s16b dun_max;
+	s16b store_turns;
+	bool report_to_meta;
+	bool secret_dungeon_master;
+	bool anti_arts_horde;
+	bool mage_hp_bonus;
+	bool door_bump_open;
+	bool no_ghost;
+	bool maximize;
+	bool kings_etiquette;
+	bool zang_monsters;
+	bool pern_monsters;
+	bool cth_monsters;
+	bool joke_monsters;
+	bool vanilla_monsters;
+};
+
 
 extern s32b turn;
+extern server_opts cfg;
 
 $extern s32b intMod(s32b a, s32b b);
 $extern s32b intAnd(s32b a, s32b b);

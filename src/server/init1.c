@@ -267,7 +267,7 @@ static cptr r_info_flags3[] =
 static cptr r_info_flags4[] =
 {
 	"SHRIEK",
-	"MULTIPLY",	// "XXX2X4",
+	"XXX2X4",	//	"MULTIPLY",
 	"S_ANIMAL",	// "XXX3X4",
 	"ROCKET",	// "XXX4X4",
 	"ARROW_1",	// former 1/2 (arrow)
@@ -429,7 +429,7 @@ static cptr r_info_flags7[] =
 	"XXX7X27",
 	"XXX7X28",
 	"XXX7X29",
-	"XXX7X30",
+	"MULTIPLY",		//"XXX7X30",
 	"DISBELIEVE",	//"XXX7X31",
 };
 

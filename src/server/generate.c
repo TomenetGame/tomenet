@@ -2811,11 +2811,63 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 				case '^':
 				place_trap(wpos, y, x);
 				break;
+
+				/* Monster */
+				case '&':
+				monster_level = lev + 5;
+				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level = lev;
+				break;
+
+				/* Meaner monster */
+				case '@':
+				monster_level = lev + 11;
+				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level = lev;
+				break;
+
+				/* Meaner monster, plus treasure */
+				case '9':
+				monster_level = lev + 9;
+				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level = lev;
+				object_level = lev + 7;
+				place_object(wpos, y, x, TRUE, FALSE);
+				object_level = lev;
+				if (magik(40)) place_trap(wpos, y, x);
+				break;
+
+				/* Nasty monster and treasure */
+				case '8':
+				monster_level = lev + 40;
+				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level = lev;
+				object_level = lev + 20;
+				place_object(wpos, y, x, TRUE, TRUE);
+				object_level = lev;
+				if (magik(80)) place_trap(wpos, y, x);
+				break;
+
+				/* Monster and/or object */
+				case ',':
+				if (rand_int(100) < 50)
+				{
+					monster_level = lev + 3;
+					place_monster(wpos, y, x, TRUE, TRUE);
+					monster_level = lev;
+				}
+				if (rand_int(100) < 50)
+				{
+					object_level = lev + 7;
+					place_object(wpos, y, x, FALSE, FALSE);
+					object_level = lev;
+				}
+				break;
 			}
 		}
 	}
 
-
+#if 0	// why 2 phases??
 	/* Place dungeon monsters and objects */
 	for (t = data, dy = 0; dy < ymax; dy++)
 	{
@@ -2941,6 +2993,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 			}
 		}
 	}
+#endif	// 0
 }
 
 

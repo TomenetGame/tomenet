@@ -2037,24 +2037,19 @@ void do_slash_cmd(int Ind, cptr message){
 		{
 			/* Insanity warning (better message needed!) */
 			if (p_ptr->csane < p_ptr->msane / 8)
-			{
-				/* Message */
 				msg_print(Ind, "\377rYou can hardly resist the temptation to cry out!");
-			}
 			else if (p_ptr->csane < p_ptr->msane / 4)
-			{
-				/* Message */
 				msg_print(Ind, "\377yYou feel insanity about to grasp your mind..");
-			}
 			else if (p_ptr->csane < p_ptr->msane / 2)
-			{
-				/* Message */
 				msg_print(Ind, "\377yYou feel insanity creep into your mind..");
-			}
 			else
-			{
-				/* Message */
 				msg_print(Ind, "\377wYou are sane.");
+
+			if (admin)
+			{
+				msg_format(Ind, "your sanity: %d/%d", p_ptr->csane, p_ptr->msane);
+				msg_format(Ind, "server status - m_max(%d) o_max(%d) t_max(%d)",
+						m_max, o_max, t_max);
 			}
 
 			return;

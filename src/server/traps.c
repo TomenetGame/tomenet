@@ -293,6 +293,8 @@ void compact_traps(int size)
 void wipe_t_list(struct worldpos *wpos)
 {
 	int i, x, y;
+	cave_type **zcave;
+	zcave=getcave(wpos);
 
 	/* Delete the existing traps */
 	for (i = 1; i < t_max; i++)
@@ -307,7 +309,11 @@ void wipe_t_list(struct worldpos *wpos)
 			continue;
 
 		/* Delete it */
-
+		if(zcave)
+		{
+			zcave[t_ptr->iy][t_ptr->ix].special.type = CS_NONE;
+			zcave[t_ptr->iy][t_ptr->ix].special.ptr = NULL;
+		}
 
 		/* Wipe the trap */
 		WIPE(t_ptr, trap_type);

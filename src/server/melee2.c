@@ -644,12 +644,14 @@ static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
 	
 	int i;
 	
+#if 0
 	/* Stupid monsters choose randomly */
 	if (r_ptr->flags2 & (RF2_STUPID))
 	{
 		/* Pick at random */
 		return (spells[rand_int(num)]);
 	}
+#endif	// 0
 	
 	/* Categorize spells */
 	for (i = 0; i < num; i++)
@@ -1021,7 +1023,9 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* Assume "projectable" */
 	bool direct = TRUE;
 
-	int rad = 0, srad = 0;
+	bool stupid, summon;
+	int rad = 0, srad;
+
 
 //	int antichance = 0, antidis = 0;
 
@@ -1086,6 +1090,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	f5 = r_ptr->flags5;
 	f6 = r_ptr->flags6;
 
+	srad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
 
 	/* Hack -- require projectable player */
 	if (normal)
@@ -1097,14 +1102,23 @@ bool make_attack_spell(int Ind, int m_idx)
 #ifdef STUPID_MONSTERS
 		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)) return (FALSE);
 #else
+		summon = f4 & (RF4_SUMMON_MASK) || f5 & (RF5_SUMMON_MASK) || f6 & (RF6_SUMMON_MASK);
+
 		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px))
 		{
 			if (!magik(INDIRECT_FREQ)) return (FALSE);
 
 			direct = FALSE;
-			rad = near_hit(m_idx, &y, &x);
 
-			if (rad > 3 || (rad == 3 && !(r_ptr->flags2 & (RF2_POWERFUL)))) 
+			/* effort to avoid bottlenecks.. */
+			if (summon ||
+				f4 & RF4_RADIUS_SPELLS ||
+				f5 & RF5_RADIUS_SPELLS)
+				rad = near_hit(m_idx, &y, &x);
+			else rad = 99;
+
+//			if (rad > 3 || (rad == 3 && !(r_ptr->flags2 & (RF2_POWERFUL)))) 
+			if (rad > srad) 
 			{
 				/* Remove inappropriate spells -
 				 * 'direct' spells should be removed this way also */
@@ -1138,6 +1152,9 @@ bool make_attack_spell(int Ind, int m_idx)
 		if (!f4 && !f5 && !f6) return (FALSE);
 	}
 
+	/* Stupid monster flag */
+	stupid = r_ptr->flags2 & (RF2_STUPID);
+	
 
 #ifdef DRS_SMART_OPTIONS
 
@@ -1153,7 +1170,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* Check for a clean bolt shot */
 	if (!direct || ((f4&(RF4_BOLT_MASK) || f5 & (RF5_BOLT_MASK) ||
 				f6&(RF6_BOLT_MASK)) &&
-			!(r_ptr->flags2 & (RF2_STUPID)) &&
+			!stupid &&
 			!clean_shot(wpos, m_ptr->fy, m_ptr->fx, y, x)))
 	{
 		/* Remove spells that will only hurt friends */
@@ -1163,10 +1180,13 @@ bool make_attack_spell(int Ind, int m_idx)
 	}
 
 	/* Check for a possible summon */
+	/*
 	if (rad > 3 || ((f4 & (RF4_SUMMON_MASK) || f5 & (RF5_SUMMON_MASK) ||
 				f6 & (RF6_SUMMON_MASK)) &&
-			!(r_ptr->flags2 & (RF2_STUPID)) &&
-			!(summon_possible(wpos, y, x))))
+	*/
+	if (rad > 3 ||
+		(summon && !stupid &&
+		!(summon_possible(wpos, y, x))))	// <= we can omit this now?
 	{
 		/* Remove summoning spells */
 		f4 &= ~(RF4_SUMMON_MASK);
@@ -1182,8 +1202,11 @@ bool make_attack_spell(int Ind, int m_idx)
 	for (k = 0; k < 32; k++)
 	{
 		if (f4 & (1L << k)) spell[num++] = k + 32 * 3;
+		if (f5 & (1L << k)) spell[num++] = k + 32 * 4;
+		if (f6 & (1L << k)) spell[num++] = k + 32 * 5;
 	}
 
+#if 0
 	/* Extract the "normal" spells */
 	for (k = 0; k < 32; k++)
 	{
@@ -1195,6 +1218,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	{
 		if (f6 & (1L << k)) spell[num++] = k + 32 * 5;
 	}
+#endif	// 0
 
 	/* No spells left */
 	if (!num) return (FALSE);
@@ -1207,18 +1231,13 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* Get the monster name (or "it") */
 	monster_desc(Ind, m_name, m_idx, 0x00);
 
-	/* Get the monster possessive ("his"/"her"/"its") */
-	monster_desc(Ind, m_poss, m_idx, 0x22);
-
-	/* Hack -- Get the "died from" name */
-	monster_desc(Ind, ddesc, m_idx, 0x88);
-
 
 #ifdef STUPID_MONSTERS
 	/* Choose a spell to cast */
 	thrown_spell = spell[rand_int(num)];
 #else
-	thrown_spell = choose_attack_spell(Ind, m_idx, spell, num);
+	thrown_spell = stupid ? spell[rand_int(num)] :
+		choose_attack_spell(Ind, m_idx, spell, num);
 
 	/* Abort if no spell was chosen */
 	if (!thrown_spell) return (FALSE);
@@ -1227,19 +1246,25 @@ bool make_attack_spell(int Ind, int m_idx)
 	failrate = 25 - (rlev + 3) / 4;
 
 	/* Hack -- Stupid monsters will never fail (for jellies and such) */
-	if (r_ptr->flags2 & (RF2_STUPID)) failrate = 0;
+//	if (r_ptr->flags2 & (RF2_STUPID)) failrate = 0;
 
 	/* Check for spell failure (inate attacks never fail) */
+	if (!(r_ptr->flags2 & (RF2_STUPID)))
 	if ((thrown_spell >= 128) && (rand_int(100) < failrate))
 	{
 		/* Message */
-		msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
+		if (direct)
+			msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
 
 		return (TRUE);
 	}
 #endif	// STUPID_MONSTERS
 
-	srad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
+	/* Get the monster possessive ("his"/"her"/"its") */
+	monster_desc(Ind, m_poss, m_idx, 0x22);
+
+	/* Hack -- Get the "died from" name */
+	monster_desc(Ind, ddesc, m_idx, 0x88);
 
 
 	/* Cast the spell. */
@@ -1257,7 +1282,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		}
 
 		/* RF4_XXX2X4 */
-		/* (RF4_MULTIPLY .. not a spell) */
+		/* (used to be RF4_MULTIPLY .. not a spell) */
 		case 96+1:
 		{
 			break;
@@ -4195,7 +4220,7 @@ static void process_monster(int Ind, int m_idx)
 
 	if(!istown(wpos) &&
 		(m_ptr->wpos.wz != 0 ||wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].radius > 2))
-		if ((r_ptr->flags4 & RF4_MULTIPLY) && (num_repro < MAX_REPRO))
+		if ((r_ptr->flags7 & RF7_MULTIPLY) && (num_repro < MAX_REPRO))
 		{
 			int k, y, x;
 
@@ -4215,7 +4240,7 @@ static void process_monster(int Ind, int m_idx)
 				if (multiply_monster(m_idx))
 				{
 					/* Take note if visible */
-					if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags4 |= RF4_MULTIPLY;
+					if (p_ptr->mon_vis[m_idx]) r_ptr->flags7 |= RF7_MULTIPLY;
 
 					/* Multiplying takes energy */
 					m_ptr->energy -= level_speed(&m_ptr->wpos);

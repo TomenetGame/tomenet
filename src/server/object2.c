@@ -320,6 +320,7 @@ void wipe_o_list_safely(struct worldpos *wpos)
 	int i;
 
 	cave_type **zcave;
+	zcave=getcave(wpos);
 
 	/* Delete the existing objects */
 	for (i = 1; i < o_max; i++)
@@ -334,8 +335,7 @@ void wipe_o_list_safely(struct worldpos *wpos)
 			continue;
 
 		/* Skip objects inside a house(or something) */
-		zcave=getcave(&o_ptr->wpos);
-		if(!zcave || zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)
+		if(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)
 			continue;
 
 		/* Mega-Hack -- preserve artifacts */
@@ -5711,6 +5711,17 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		c[2] = o_ptr->sval +1 +48;
 		o_ptr->note = quark_add(c);
 	}
+
+	if (!o_ptr->note && p_ptr->obj_aware[o_ptr->k_idx])
+	{
+		if ((o_ptr->tval == TV_SCROLL &&
+			o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
+			(o_ptr->tval == TV_ROD &&
+			o_ptr->sval == SV_ROD_RECALL))
+			o_ptr->note = quark_add("@R");
+	}
+			
+
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 

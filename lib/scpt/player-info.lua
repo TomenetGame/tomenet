@@ -14,6 +14,20 @@ local p = Players[i+1]
 
 end
 
+-- display some information about a specified object in inventory.
+-- (prolly easier to use gdb..
+function o_in(i, j)
+-- +1 offset
+local o = Players[i+1].inventory[j+1]
+        
+-- Ind is global.
+	msg_print(Ind, "location: ("..o.ix..","..o.iy..") of ["..(o.wpos.wx)..","..(o.wpos.wy).."], "..(o.wpos.wz*50).."ft")
+	msg_print(Ind, "k_idx:"..o.k_idx.." tval:"..o.tval.." sval:"..o.sval.." bpval:"..o.bpval.." pval:"..o.pval)
+	msg_print(Ind, "name1:"..o.name1.." name2:"..o.name2.." name3:"..o.name3.." xtra1:"..o.xtra1.." xtra2:"..o.xtra2)
+	msg_print(Ind, "timeout:"..o.timeout.." ident:"..o.ident.." note:"..o.note)
+
+end
+
 -- give knowledge about traps
 function trap_k()
 local i = 0

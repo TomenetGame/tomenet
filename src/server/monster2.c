@@ -182,7 +182,7 @@ void delete_monster_idx(int i)
 	r_ptr->cur_num--;
 
 	/* Hack -- count the number of "reproducers" */
-	if (r_ptr->flags4 & RF4_MULTIPLY) num_repro--;
+	if (r_ptr->flags7 & RF7_MULTIPLY) num_repro--;
 
 
 	/* Remove him from everybody's view */
@@ -2019,7 +2019,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 
 
 	/* Hack -- count the number of "reproducers" */
-	if (r_ptr->flags4 & RF4_MULTIPLY) num_repro++;
+	if (r_ptr->flags7 & RF7_MULTIPLY) num_repro++;
 
 
 	/* Assign maximal hitpoints */
@@ -2811,7 +2811,7 @@ static bool summon_specific_okay(int r_idx)
 
 		case SUMMON_VERMIN:
 		{
-			okay = (r_ptr->flags4 & RF4_MULTIPLY)?TRUE:FALSE;
+			okay = (r_ptr->flags7 & RF7_MULTIPLY)?TRUE:FALSE;
 			break;
 		}
 

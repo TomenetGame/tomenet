@@ -26,6 +26,7 @@
 # B umber  for elemental ball trap
 # R l red  for arrow/dagger traps
 # W        for compound trap!!!
+# G        for devine trap??
 # don't use U or you'll get trapped doors that are indistinguishable from untrapped doors!
 #
 #  an unknown character is multi-hued!
@@ -721,12 +722,14 @@ F:FLOOR | CHEST | DOOR
 
 N:158:Trap of Divine Anger
 I:6:100:5:0:15:0d0:G
-D:A voice booms out "Have a care, mortal!"
+#D:A voice booms out "Have a care, mortal!"
+D:A voice booms out 'Have a care, mortal!'
 F:FLOOR | CHEST | DOOR
 
 N:159:Trap of Divine Wrath
 I:9:50:5:0:30:0d0:G
-D:A voice booms out "Sacrilege!"
+#D:A voice booms out "Sacrilege!"
+D:A voice booms out 'Sacrilege!'
 F:FLOOR | CHEST | DOOR
 
 N:160:Hallucination Trap
