@@ -1871,7 +1871,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_STAR_REMOVE_CURSE:
 			{
-				remove_all_curse(Ind);
+				remove_all_curse_reverse(Ind);
 				ident = TRUE;
 				break;
 			}
@@ -4282,6 +4282,7 @@ void do_cmd_activate(int Ind, int item)
 
 		inven_item_increase(Ind, item, -255);
 		inven_item_optimize(Ind, item);
+		return;
 	}
 
 	/* Hack -- Dragon Scale Mail can be activated as well */

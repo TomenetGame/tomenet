@@ -203,6 +203,17 @@ static cptr desc_stat_pos[] =
 	"cute"
 };
 
+#if 0	// second set for future use
+{
+	"mighty",
+	"intelligent",
+	"sagacious",
+	"agile",
+	"sturdy",
+	"charming"
+}
+#endif	// 0
+
 
 /*
  * Array of stat "descriptions"
@@ -216,6 +227,17 @@ static cptr desc_stat_neg[] =
 	"sickly",
 	"ugly"
 };
+
+#if 0
+{
+	"feeble",
+	"dull",
+	"foolish",
+	"awkward",
+	"fragile",
+	"indecent"
+},
+#endif	// 0
 
 
 /*
@@ -401,6 +423,10 @@ static int enchant_table[16] =
  * "Heavy-Cursed" (Mormegil, Calris, and Weapons of Morgul)
  * will not be uncursed.
  */
+/*
+ * 0x01 - all
+ * 0x02 - reverse
+ */
 static int remove_curse_aux(int Ind, int all)
 {
 	player_type *p_ptr = Players[Ind];
@@ -426,7 +452,7 @@ static int remove_curse_aux(int Ind, int all)
 			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 		/* Heavily Cursed Items need a special spell */
-		if (!all && (f3 & TR3_HEAVY_CURSE)) continue;
+		if (!(all & 0x01) && (f3 & TR3_HEAVY_CURSE)) continue;
 
 		/* Perma-Cursed Items can NEVER be uncursed */
 		if (f3 & TR3_PERMA_CURSE) continue;
@@ -448,7 +474,7 @@ static int remove_curse_aux(int Ind, int all)
 		/* be somewhat unbalancing */
 		/* due to the nature of this procedure, it only works on cursed items */
 		/* ie you get only one chance! */
-		if (all && ((randint(p_ptr->lev > 50) ? 5 : 55 - p_ptr->lev)==1) && !artifact_p(o_ptr) && !(f5 & TR5_NO_ENCHANT));
+		if ((all & 0x02) && ((randint(p_ptr->lev > 50) ? 5 : 55 - p_ptr->lev)==1) && !artifact_p(o_ptr) && !(f5 & TR5_NO_ENCHANT));
 	
 		{
 			if (o_ptr->to_a<0) o_ptr->to_a=-o_ptr->to_a;
@@ -467,7 +493,7 @@ static int remove_curse_aux(int Ind, int all)
 		cnt++;
 		
 		/* Not everything at once. */
-		if (!all && magik(50)) break;
+		if (!(all & 0x01) && magik(50)) break;
 	}
 
 	/* Return "something uncursed" */
@@ -475,12 +501,13 @@ static int remove_curse_aux(int Ind, int all)
 }
 
 
+/* well, erm... */
 /*
  * Remove most curses
  */
 bool remove_curse(int Ind)
 {
-	return (remove_curse_aux(Ind, FALSE));
+	return (remove_curse_aux(Ind, 0));
 }
 
 /*
@@ -488,7 +515,15 @@ bool remove_curse(int Ind)
  */
 bool remove_all_curse(int Ind)
 {
-	return (remove_curse_aux(Ind, TRUE));
+	return (remove_curse_aux(Ind, 1));
+}
+
+/*
+ * Remove all curses
+ */
+bool remove_all_curse_reverse(int Ind)
+{
+	return (remove_curse_aux(Ind, 2));
 }
 
 
@@ -722,6 +757,10 @@ void self_knowledge(int Ind)
 	if (p_ptr->see_infra)
 	{
 		fprintf(fff, "Your eyes are sensitive to infrared light.\n");
+	}
+	if (p_ptr->invis)
+	{
+		fprintf(fff, "You are invisible.\n");
 	}
 	if (p_ptr->see_inv)
 	{

@@ -1944,11 +1944,16 @@ static void do_slash_cmd(int Ind, char *message)
 		{
 			object_type		*o_ptr;
 			u32b f1, f2, f3, f4, f5, esp;
+			bool nontag = FALSE;
 
 			disturb(Ind, 1, 0);
 
+			/* only tagged ones? */
+			if (tk > 0 && prefix(token[1], "!")) nontag = TRUE;
+
 			for(i = 0; i < INVEN_PACK; i++)
 			{
+				bool resist = FALSE;
 				o_ptr = &(p_ptr->inventory[i]);
 				if (!o_ptr->tval) break;
 
@@ -1957,7 +1962,7 @@ static void do_slash_cmd(int Ind, char *message)
 				/* skip inscribed items */
 				/* skip non-matching tags */
 				if (o_ptr->note && 
-//					strcmp(quark_str(o_ptr->note), "terrible") &&
+					strcmp(quark_str(o_ptr->note), "terrible") &&
 					strcmp(quark_str(o_ptr->note), "cursed") &&
 					strcmp(quark_str(o_ptr->note), "uncursed") &&
 					strcmp(quark_str(o_ptr->note), "broken") &&
@@ -1967,8 +1972,17 @@ static void do_slash_cmd(int Ind, char *message)
 					strcmp(quark_str(o_ptr->note), "worthless"))
 					continue;
 
-				if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr))
+				if (!nontag && !o_ptr->note) continue;
+
+				/* Player might wish to identify it first */
+				if (k_info[o_ptr->k_idx].has_flavor &&
+						!p_ptr->obj_aware[o_ptr->k_idx])
 					continue;
+
+				/* Hrm, this cannot be destroyed */
+				if (((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) ||
+						artifact_p(o_ptr))
+					resist = TRUE;
 
 				/* Hack -- filter by value */
 				if (k && (!object_known_p(Ind, o_ptr) ||
@@ -1976,7 +1990,7 @@ static void do_slash_cmd(int Ind, char *message)
 					continue;
 
 				do_cmd_destroy(Ind, i, o_ptr->number);
-				i--;
+				if (!resist) i--;
 
 				/* Hack - Don't take a turn here */
 				p_ptr->energy += level_speed(&p_ptr->wpos);

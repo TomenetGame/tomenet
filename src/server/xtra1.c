@@ -1943,6 +1943,7 @@ static void calc_bonuses(int Ind)
 		calc_body_bonus(Ind);
 	}
 	else	// if if or switch to switch, that is the problem :)
+			/* I vote for p_info ;) */
 	{
 		/* Start with "normal" speed */
 		p_ptr->pspeed = 110;
@@ -2000,7 +2001,12 @@ static void calc_bonuses(int Ind)
 			p_ptr->sensible_fire = TRUE;
 
 			if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
-			if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_ALL;
+//			if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_ALL;
+			if (p_ptr->lev >= 20) p_ptr->telepathy |= ESP_ANIMAL;
+			if (p_ptr->lev >= 25) p_ptr->telepathy |= ESP_TROLL;
+			if (p_ptr->lev >= 30) p_ptr->telepathy |= ESP_GIANT;
+			if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_EVIL;
+			if (p_ptr->lev >= 50) p_ptr->telepathy = ESP_ALL;
 		}
 
 		/* DragonRider */
@@ -2014,59 +2020,6 @@ static void calc_bonuses(int Ind)
 			if (p_ptr->lev >= 25) p_ptr->resist_elec = TRUE;
 		}
 	}
-
-#if 0 // DGDGDGDG -- skill powa !
-	switch(p_ptr->pclass)
-	{
-		case CLASS_MONK:
-			/* Unencumbered Monks become faster every 10 levels */
-			if (!(monk_heavy_armor(Ind)))
-				p_ptr->pspeed += (p_ptr->lev) / 10;
-
-			/* Free action if unencumbered at level 25 */
-			if  ((p_ptr->lev > 24) && !(monk_heavy_armor(Ind)))
-				p_ptr->free_act = TRUE;
-			break;
-
-			/* -APD- Hack -- rogues +1 speed at 5,20,35,50.
-			 * this may be out of place, but.... */
-	
-		case CLASS_ROGUE:
-			p_ptr->pspeed += p_ptr->lev / 6;
-			break;
-	}
-#else	// 0
-	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(p_ptr))
-	{
-		int k = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
-
-		if (k)
-		{
-			/* Extract the current weight (in tenth pounds) */
-			j = p_ptr->total_weight;
-
-			/* Extract the "weight limit" (in tenth pounds) */
-			i = weight_limit(Ind);
-
-			/* XXX XXX XXX Apply "encumbrance" from weight */
-			if (j > i/5) k -= ((j - (i/5)) / (i / 10));
-
-			if (k > 0)
-			{
-				p_ptr->pspeed += k;
-
-				/* Free action if unencumbered at level 25 */
-				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 24)
-					p_ptr->free_act = TRUE;
-
-				/* give a stealth bonus */
-				p_ptr->skill_stl += get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
-			}
-		}
-	}
-
-	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
-#endif	// 0
 
 	/* Compute antimagic */
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
@@ -2124,6 +2077,20 @@ static void calc_bonuses(int Ind)
 		p_ptr->telepathy |= ESP_ALL;
 	}
 
+	/* Hack -- recalculate inventory weight and count */
+	p_ptr->total_weight = 0;
+	p_ptr->inven_cnt = 0;
+
+	for (i = 0; i < INVEN_PACK; i++)
+	{
+		o_ptr = &p_ptr->inventory[i];
+
+		/* Skip missing items */
+		if (!o_ptr->k_idx) break;
+
+		p_ptr->inven_cnt++;
+		p_ptr->total_weight += o_ptr->weight * o_ptr->number;
+	}
 
 	/* Scan the usable inventory */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -2134,6 +2101,8 @@ static void calc_bonuses(int Ind)
 
 		/* Skip missing items */
 		if (!o_ptr->k_idx) continue;
+
+		p_ptr->total_weight += o_ptr->weight * o_ptr->number;
 
 		/* Extract the item flags */
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -2538,7 +2507,98 @@ static void calc_bonuses(int Ind)
 			p_ptr->window |= (PW_PLAYER);
 		}
 	}
-#if 1 // DGDGDGDGDG - no monks ffor the time being
+
+#if 0 // DGDGDGDG -- skill powa !
+	switch(p_ptr->pclass)
+	{
+		case CLASS_MONK:
+			/* Unencumbered Monks become faster every 10 levels */
+			if (!(monk_heavy_armor(Ind)))
+				p_ptr->pspeed += (p_ptr->lev) / 10;
+
+			/* Free action if unencumbered at level 25 */
+			if  ((p_ptr->lev > 24) && !(monk_heavy_armor(Ind)))
+				p_ptr->free_act = TRUE;
+			break;
+
+			/* -APD- Hack -- rogues +1 speed at 5,20,35,50.
+			 * this may be out of place, but.... */
+	
+		case CLASS_ROGUE:
+			p_ptr->pspeed += p_ptr->lev / 6;
+			break;
+	}
+#else	// 0
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(p_ptr))
+	{
+		int k = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
+
+		if (k)
+		{
+			/* Extract the current weight (in tenth pounds) */
+			j = p_ptr->total_weight;
+
+			/* Extract the "weight limit" (in tenth pounds) */
+			i = weight_limit(Ind);
+
+			/* XXX XXX XXX Apply "encumbrance" from weight */
+			if (j > i/5) k -= ((j - (i/5)) / (i / 10));
+
+			if (k > 0)
+			{
+				p_ptr->pspeed += k;
+
+				/* Free action if unencumbered at level 25 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 24)
+					p_ptr->free_act = TRUE;
+
+				/* give a stealth bonus */
+				p_ptr->skill_stl += get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
+			}
+		}
+
+		/* Monks get extra ac for armour _not worn_ */
+		if (!p_ptr->inventory[INVEN_BOW].k_idx &&
+			!p_ptr->inventory[INVEN_WIELD].k_idx)
+		{
+			int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
+			if (!(p_ptr->inventory[INVEN_BODY].k_idx))
+			{
+				p_ptr->to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
+				p_ptr->dis_to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
+			}
+			if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15))
+			{
+				p_ptr->to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+				p_ptr->dis_to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			}
+			if (!(p_ptr->inventory[INVEN_ARM].k_idx) && (marts > 10))
+			{
+				p_ptr->to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+				p_ptr->dis_to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			}
+			if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4))
+			{
+				p_ptr->to_a += (marts - 2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
+				p_ptr->dis_to_a += (marts -2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
+			}
+			if (!(p_ptr->inventory[INVEN_HANDS].k_idx))
+			{
+				p_ptr->to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
+				p_ptr->dis_to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
+			}
+			if (!(p_ptr->inventory[INVEN_FEET].k_idx))
+			{
+				p_ptr->to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+				p_ptr->dis_to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			}
+		}
+	}
+
+	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
+#endif	// 0
+
+#if 0 // DGDGDGDGDG - no monks ffor the time being
 	/* Monks get extra ac for armour _not worn_ */
 //	if ((p_ptr->pclass == CLASS_MONK) && !(monk_heavy_armor(Ind)))
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !(monk_heavy_armor(p_ptr)) &&
@@ -2577,6 +2637,7 @@ static void calc_bonuses(int Ind)
 		}
 	}
 #endif
+
 	/* Apply temporary "stun" */
 	if (p_ptr->stun > 50)
 	{
@@ -3138,6 +3199,7 @@ static void calc_bonuses(int Ind)
 	/* Affect Skill -- saving throw (Level, by Class) */
 	p_ptr->skill_sav += (p_ptr->cp_ptr->x_sav * p_ptr->lev / 10);
 
+#if 0	// doh, it's all zero!!
 	/* Affect Skill -- stealth (Level, by Class) */
 	p_ptr->skill_stl += (p_ptr->cp_ptr->x_stl * get_skill(p_ptr, SKILL_STEALTH) / 10);
 
@@ -3146,6 +3208,18 @@ static void calc_bonuses(int Ind)
 
 	/* Affect Skill -- search frequency (Level, by Class) */
 	p_ptr->skill_fos += (p_ptr->cp_ptr->x_fos * get_skill(p_ptr, SKILL_SNEAKINESS) / 10);
+#else
+	/* Affect Skill -- stealth (Level, by Class) */
+	p_ptr->skill_stl += (get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5)) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
+
+	/* Affect Skill -- search ability (Level, by Class) */
+	p_ptr->skill_srh += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_srh * 5)) + get_skill(p_ptr, SKILL_SNEAKINESS);
+
+	/* Affect Skill -- search frequency (Level, by Class) */
+	p_ptr->skill_fos += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_fos * 5)) + get_skill(p_ptr, SKILL_SNEAKINESS);
+
+
+#endif	// 0
 
 	/* Affect Skill -- combat (normal) (Level, by Class) */
         p_ptr->skill_thn += (p_ptr->cp_ptr->x_thn * (((7 * get_skill(p_ptr, SKILL_MASTERY)) + (3 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
@@ -3156,6 +3230,7 @@ static void calc_bonuses(int Ind)
 	/* Affect Skill -- combat (throwing) (Level, by Class) */
 	p_ptr->skill_tht += (p_ptr->cp_ptr->x_thb * get_skill_scale(p_ptr, SKILL_COMBAT, 10));
 
+#if 0	// moved to player_invis
 	if (p_ptr->aggravate)
 	{
 		if (p_ptr->tim_invisibility || magik(1))	/* don't be too noisy */
@@ -3173,6 +3248,7 @@ static void calc_bonuses(int Ind)
                 }
 #endif
 	}
+#endif	// 0
 
 
 	/* Limit Skill -- stealth from 0 to 30 */

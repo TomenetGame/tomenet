@@ -823,17 +823,6 @@ void do_cmd_check_server_settings(int Ind)
 	if (!cfg.maximize)
 		fprintf(fff, "This server is *NOT* maximized!\n");
 
-	/* TODO: reflect client options too */
-	if (cfg.door_bump_open & BUMP_OPEN_DOOR)
-		fprintf(fff, "You'll try to open a door by bumping onto it.\n");
-	else
-		fprintf(fff, "You should use 'o' command explicitly to open a door.\n");
-
-	if (cfg.door_bump_open & BUMP_OPEN_HOUSE)
-		fprintf(fff, "You can 'walk through' your house door.\n");
-	if (cfg.door_bump_open & BUMP_OPEN_TRAP)
-		fprintf(fff, "You'll try to disarm a visible trap by stepping onto it.\n");
-
 	fprintf(fff,"\n");
 
 	if (k=cfg.newbies_cannot_drop)
@@ -933,10 +922,27 @@ void do_cmd_check_server_settings(int Ind)
 			fprintf(fff, "  Joke-monsters\n");
 	}
 
+	fprintf(fff,"\n");
+
 	/* trivial */
 	if (cfg.public_rfe)
 //		fprintf(fff, "You can see RFE files via '&62' command.\n");
 		fprintf(fff, "You can see RFE files via '~e' command.\n");
+
+	/* TODO: reflect client options too */
+	if (cfg.door_bump_open & BUMP_OPEN_DOOR)
+//		fprintf(fff, "You'll try to open a door by bumping onto it.\n");
+		fprintf(fff, "easy_open is allowed.\n");
+	else
+		fprintf(fff, "You should use 'o' command explicitly to open a door.\n");
+
+	if (cfg.door_bump_open & BUMP_OPEN_TRAP)
+//		fprintf(fff, "You'll try to disarm a visible trap by stepping onto it.\n");
+		fprintf(fff, "easy_disarm is allowed.\n");
+
+	if (cfg.door_bump_open & BUMP_OPEN_HOUSE)
+		fprintf(fff, "You can 'walk through' your house door.\n");
+
 
 	/* Administrative */
 	if (is_admin(p_ptr))

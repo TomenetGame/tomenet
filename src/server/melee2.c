@@ -1563,6 +1563,9 @@ bool make_attack_spell(int Ind, int m_idx)
 	f5 = r_ptr->flags5;
 	f6 = r_ptr->flags6;
 
+	/* Only innate spells */
+	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) f5 = f6 = 0;
+
 	/* radius of ball spells and breathes.
 	 * XXX this doesn't reflect some exceptions(eg. radius=4 spells). */
 	srad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
@@ -1721,8 +1724,10 @@ bool make_attack_spell(int Ind, int m_idx)
 	if (!thrown_spell) return (FALSE);
 
 
-	if(thrown_spell < 128 && l_ptr && l_ptr->flags1 & LF1_NO_MAGIC)
+#if 0
+	if(thrown_spell > 127 && l_ptr && l_ptr->flags1 & LF1_NO_MAGIC)
 		return(FALSE);
+#endif	// 0
 
 	/* Extract the monster level */
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
@@ -4683,6 +4688,104 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
 }
 
 
+/* Determine whether the player is invisible to a monster */
+/* Maybe we'd better add SEE_INVIS flags to the monsters.. */
+static bool player_invis(int Ind, monster_type *m_ptr, int dist)
+{
+	player_type *p_ptr = Players[Ind];
+	s16b inv, mlv;
+	monster_race *r_ptr;
+
+	inv = p_ptr->invis;
+
+	if(p_ptr->ghost) inv+=10;
+
+	/* Bad conditions */
+	if (p_ptr->cur_lite) inv /= 2;
+	if (p_ptr->aggravate) inv /= 3;
+
+	if (inv < 1) return(FALSE);
+
+	r_ptr = race_inf(m_ptr);
+
+	if (r_ptr->flags2 & RF2_INVISIBLE || r_ptr->flags1 & RF1_QUESTOR ||
+			r_ptr->flags3 & RF3_DRAGONRIDER)	/* have ESP */
+		return(FALSE);
+
+	/* Probably they detect things by non-optical means */
+	if (r_ptr->flags3 & RF3_NONLIVING && r_ptr->flags2 & RF2_EMPTY_MIND)
+		return(FALSE);
+
+	mlv = (s16b) r_ptr->level + r_ptr->aaf - dist * 2;
+
+#if 0	// PernMangband one
+	if (r_ptr->flags3 & RF3_NO_SLEEP)
+	{
+		mlv += 5;
+	}
+	if (r_ptr->flags3 & RF3_DRAGON)
+	{
+		mlv += 10;
+	}
+	if (r_ptr->flags3 & RF3_UNDEAD)
+	{
+		mlv += 12;
+	}
+	if (r_ptr->flags3 & RF3_DEMON)
+	{
+		mlv += 10;
+	}
+	if (r_ptr->flags3 & RF3_ANIMAL)
+	{
+		mlv += 3;
+	}
+	if (r_ptr->flags3 & RF3_ORC)
+	{
+		mlv -= 15;
+	}
+	if (r_ptr->flags3 & RF3_TROLL)
+	{
+		mlv -= 10;
+	}
+	if (r_ptr->flags2 & RF2_STUPID)
+	{
+		mlv /= 2;
+	}
+	if (r_ptr->flags2 & RF2_SMART)
+	{
+		mlv = (mlv * 5) / 4;
+	}
+	if (mlv < 1)
+	{
+		mlv = 1;
+	}
+#else	// ToME one
+	if (r_ptr->flags3 & RF3_NO_SLEEP)
+		mlv += 10;
+	if (r_ptr->flags3 & RF3_DRAGON)
+		mlv += 20;
+	if (r_ptr->flags3 & RF3_UNDEAD)
+		mlv += 15;
+	if (r_ptr->flags3 & RF3_DEMON)
+		mlv += 15;
+	if (r_ptr->flags3 & RF3_ANIMAL)
+		mlv += 15;
+	if (r_ptr->flags3 & RF3_ORC)
+		mlv -= 15;
+	if (r_ptr->flags3 & RF3_TROLL)
+		mlv -= 10;
+	if (r_ptr->flags2 & RF2_STUPID)
+		mlv /= 2;
+	if (r_ptr->flags2 & RF2_SMART)
+		mlv = (mlv * 5) / 4;
+	if (mlv < 1)
+		mlv = 1;
+
+#endif	// 0
+
+	return (inv >= randint((mlv * 10) / 7));
+}
+
 
 /*
  * Hack -- local "player stealth" value (see below)
@@ -4749,11 +4852,16 @@ static void process_monster(int Ind, int m_idx)
 	bool		did_pass_wall;
 	bool		did_kill_wall;
 
+	bool		inv;
 
 /* Hack -- don't process monsters on wilderness levels that have not
 	   been regenerated yet.
 	*/
 	if(!(zcave=getcave(wpos))) return;
+
+	/* If the monster can't see the player */ 
+	inv = player_invis(Ind, m_ptr, m_ptr->cdis);
+
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep)
@@ -5016,7 +5124,7 @@ static void process_monster(int Ind, int m_idx)
 		}
 						
 	/* Attempt to cast a spell */
-	if (make_attack_spell(Ind, m_idx)) 
+	if (!inv && make_attack_spell(Ind, m_idx)) 
 	{
 		m_ptr->energy -= level_speed(&m_ptr->wpos);
 		return;
@@ -5036,9 +5144,9 @@ static void process_monster(int Ind, int m_idx)
 	}
 
 	/* 75% random movement */
-	else if ((r_ptr->flags1 & RF1_RAND_50) &&
+	else if (((r_ptr->flags1 & RF1_RAND_50) &&
 	         (r_ptr->flags1 & RF1_RAND_25) &&
-	         (rand_int(100) < 75))
+	         (rand_int(100) < 75)) || inv)
 	{
 		/* Memorize flags */
 		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_50;
@@ -5635,7 +5743,29 @@ static void process_monster(int Ind, int m_idx)
 					}
 
 					/* Delete the object */
-					delete_object(wpos, ny, nx);
+//					delete_object(wpos, ny, nx);	/* arts.. */
+					delete_object_idx(c_ptr->o_idx);
+
+#if 0	// XXX
+					/* Scan all objects in the grid */
+					for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+					{
+						/* Acquire object */
+						o_ptr = &o_list[this_o_idx];
+
+						/* Acquire next object */
+						next_o_idx = o_ptr->next_o_idx;
+
+						if (artifact_p(o_ptr))
+						{
+							c_ptr->o_idx = this_o_idx;
+							break;
+						}
+
+						/* Wipe the object */
+						delete_object_idx(this_o_idx);
+					}
+#endif	// 0
 				}
 			}
 		}
@@ -6125,69 +6255,6 @@ static void process_monster_golem(int Ind, int m_idx)
 }
 
 
-/* Determine whether the player is invisible to a monster */
-static bool player_invis(int Ind, monster_type *m_ptr)
-{
-	player_type *p_ptr = Players[Ind];
-	s16b inv, mlv;
-	monster_race *r_ptr;
-
-	inv = p_ptr->invis;
-	if(p_ptr->ghost) inv+=1;
-	if (inv < 1) return(FALSE);
-
-	r_ptr = race_inf(m_ptr);
-
-	if (r_ptr->flags2 & RF2_INVISIBLE || r_ptr->flags1 & RF1_QUESTOR)
-		return(FALSE);
-
-	mlv = (s16b) r_ptr->level;
-
-	if (r_ptr->flags3 & RF3_NO_SLEEP)
-	{
-		mlv += 5;
-	}
-	if (r_ptr->flags3 & RF3_DRAGON)
-	{
-		mlv += 10;
-	}
-	if (r_ptr->flags3 & RF3_UNDEAD)
-	{
-		mlv += 12;
-	}
-	if (r_ptr->flags3 & RF3_DEMON)
-	{
-		mlv += 10;
-	}
-	if (r_ptr->flags3 & RF3_ANIMAL)
-	{
-		mlv += 3;
-	}
-	if (r_ptr->flags3 & RF3_ORC)
-	{
-		mlv -= 15;
-	}
-	if (r_ptr->flags3 & RF3_TROLL)
-	{
-		mlv -= 10;
-	}
-	if (r_ptr->flags2 & RF2_STUPID)
-	{
-		mlv /= 2;
-	}
-	if (r_ptr->flags2 & RF2_SMART)
-	{
-		mlv = (mlv * 5) / 4;
-	}
-	if (mlv < 1)
-	{
-		mlv = 1;
-	}
-
-	return (inv >= randint((mlv * 10) / 7));
-}
-
-
 
 /*
  * Process all the "live" monsters, once per game turn.
@@ -6323,11 +6390,11 @@ void process_monsters(void)
 			/* Monsters serve a king on his land they dont attack him */ 
 			// if (player_is_king(pl)) continue; 
 
-			/* Skip if the monster can't see the player */ 
-			if (player_invis(pl, m_ptr)) continue; 
-
 			/* Compute distance */ 
 			j = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx); 
+
+			/* Skip if the monster can't see the player */ 
+//			if (player_invis(pl, m_ptr, j)) continue;	/* moved */
 
 			/* Glaur. Check if monster has LOS to the player */ 
 			new_los=los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy,m_ptr->fx);

@@ -2603,6 +2603,17 @@ P:0:1d1:0:0:0
 F:DEX | SUST_DEX | SEE_INVIS | STEALTH | DISARM | SEARCH
 F:ACTIVATE
 
+# The Sling of Halflings
+
+N:215:of Halflings
+I:19:2:3
+W:15:45:50:15000
+P:0:0d0:20:25:0
+F:DEX | SUST_DEX | STEALTH | HIDE_TYPE
+F:REGEN | XTRA_MIGHT | XTRA_SHOTS
+F:ESP_ANIMAL | SEE_INVIS |
+
+
 #N:(No.):(name)
 #G:(appearence):(colour)
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)

@@ -248,10 +248,10 @@ static void sense_inventory(int Ind)
 	/* No sensing when confused */
 	if (p_ptr->confused) return;
 
-	if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_COMBAT, 130))) ok_combat = TRUE;
-	if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_ARCHERY, 130))) ok_archery = TRUE;
-	if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) ok_magic = TRUE;
-	if ((!ok_combat) && (!ok_magic)) return;
+	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_COMBAT, 130))) ok_combat = TRUE;
+	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_ARCHERY, 130))) ok_archery = TRUE;
+	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) ok_magic = TRUE;
+	if (!ok_combat && !ok_magic && !ok_archery) return;
 	heavy = (get_skill(p_ptr, SKILL_COMBAT) > 10) ? TRUE : FALSE;
 	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) > 10) ? TRUE : FALSE;
 	heavy_archery = (get_skill(p_ptr, SKILL_ARCHERY) > 10) ? TRUE : FALSE;
@@ -262,12 +262,22 @@ static void sense_inventory(int Ind)
 	/* Check everything */
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
-		byte okay = 0;
-
 		o_ptr = &p_ptr->inventory[i];
 
 		/* Skip empty slots */
 		if (!o_ptr->k_idx) continue;
+
+		/* We know about it already, do not tell us again */
+		if (o_ptr->ident & ID_SENSE) continue;
+
+		/* It is fully known, no information needed */
+		if (object_known_p(Ind, o_ptr)) continue;
+
+		/* Occasional failure on inventory items */
+		if ((i < INVEN_WIELD) &&
+				(magik(80) || UNAWARENESS(p_ptr))) continue;
+
+		feel = 0;
 
 		/* Valid "tval" codes */
 		switch (o_ptr->tval)
@@ -287,7 +297,9 @@ static void sense_inventory(int Ind)
 			case TV_DRAG_ARMOR:
 			case TV_AXE:
 			{
-				if (ok_combat) okay = 1;
+				if (ok_combat)
+					feel = (heavy ? value_check_aux1(o_ptr) :
+							value_check_aux2(o_ptr));
 				break;
 			}
 
@@ -300,7 +312,9 @@ static void sense_inventory(int Ind)
 			case TV_FOOD:
 			case TV_MSTAFF:
 			{
-				if (ok_magic) okay = 2;
+				if (ok_magic)
+					feel = (heavy_magic ? value_check_aux1_magic(o_ptr) :
+							value_check_aux2_magic(o_ptr));
 				break;
 			}
 
@@ -310,37 +324,11 @@ static void sense_inventory(int Ind)
 			case TV_BOW:
 			case TV_BOOMERANG:
 			{
-				if (ok_archery || (ok_combat && magik(50))) okay = 3;
+				if (ok_archery || (ok_combat && magik(50)))
+					feel = (heavy_archery ? value_check_aux1(o_ptr) :
+							value_check_aux2(o_ptr));
 				break;
 			}
-
-		}
-
-		/* Skip non-sense machines */
-		if (!okay) continue;
-
-		/* We know about it already, do not tell us again */
-		if (o_ptr->ident & ID_SENSE) continue;
-
-		/* It is fully known, no information needed */
-		if (object_known_p(Ind, o_ptr)) continue;
-
-		/* Occasional failure on inventory items */
-		if ((i < INVEN_WIELD) &&
-				((0 != rand_int(5)) || UNAWARENESS(p_ptr))) continue;
-
-		/* Check for a feeling */
-		if (okay == 1)
-		{
-			feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
-		}
-		else if (okay == 2)
-		{
-			feel = (heavy_magic ? value_check_aux1_magic(o_ptr) : value_check_aux2_magic(o_ptr));
-		}
-		else
-		{
-			feel = (heavy_archery ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 		}
 
 		/* Skip non-feelings */

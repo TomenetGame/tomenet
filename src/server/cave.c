@@ -1331,6 +1331,12 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				{
 					a = TERM_L_GREEN;
 				}
+				else
+				{
+					struct dna_type *dna=c_ptr->special.sc.ptr;
+					if (dna->owner && dna->owner_type)
+						a = TERM_L_DARK;
+				}
 			}
 
 			/* Special lighting effects */

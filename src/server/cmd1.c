@@ -776,12 +776,14 @@ void carry(int Ind, int pickup, int confirm)
 	/* Pick it up */
 	else
 	{
+		bool force_pickup = check_guard_inscription(o_ptr->note, '=')
+			&& p_ptr->id == o_ptr->owner;
+
 		/* Hack -- disturb */
 		disturb(Ind, 0, 0);
 
 		/* Describe the object */
-		if ((!pickup) && !(check_guard_inscription( o_ptr->note, '=' ) &&
-					p_ptr->id == o_ptr->owner))
+		if (!pickup && !force_pickup)
 		{
 			if (p_ptr->blind || no_lite(Ind))
 				msg_format(Ind, "You feel %s%s here.", o_name, 
@@ -799,9 +801,11 @@ void carry(int Ind, int pickup, int confirm)
 
 			msg_print(Ind, "You add the ammo to your quiver.");
 
+#if 0
 			/* Own it */
 			if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
 			can_use(Ind, o_ptr);
+#endif	// 0
 
 			/* Get the item again */
 			o_ptr = &(p_ptr->inventory[slot]);
@@ -828,6 +832,76 @@ void carry(int Ind, int pickup, int confirm)
 
 			/* Refresh */
 			p_ptr->window |= PW_EQUIP;
+		}
+		/* Try to add to the empty quiver */
+		else if (force_pickup && !p_ptr->inventory[INVEN_AMMO].k_idx &&
+				wield_slot(Ind, o_ptr) == INVEN_AMMO)
+		{
+			int slot = INVEN_AMMO;
+        u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
+
+			msg_print(Ind, "You add the ammo to your quiver.");
+
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+			/* Auto Curse */
+			if (f3 & TR3_AUTO_CURSE)
+			{
+				/* The object recurse itself ! */
+				o_ptr->ident |= ID_CURSED;
+			}
+
+			/* Cursed! */
+			if (cursed_p(o_ptr))
+			{
+				/* Warn the player */
+				msg_print(Ind, "Oops! It feels deathly cold!");
+
+				/* Note the curse */
+				o_ptr->ident |= ID_SENSE;
+			}
+
+			/* Structure copy to insert the new item */
+			p_ptr->inventory[slot] = (*o_ptr);
+
+			/* Forget the old location */
+			p_ptr->inventory[slot].iy = p_ptr->inventory[slot].ix = 0;
+			p_ptr->inventory[slot].wpos.wx = 0;
+			p_ptr->inventory[slot].wpos.wy = 0;
+			p_ptr->inventory[slot].wpos.wz = 0;
+			/* Clean out unused fields */
+			p_ptr->inventory[slot].next_o_idx = 0;
+			p_ptr->inventory[slot].held_m_idx = 0;
+
+
+			/* Increase the weight, prepare to redraw */
+			p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
+
+			/* Get the item again */
+			o_ptr = &(p_ptr->inventory[slot]);
+
+			/* Describe the object */
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+			o_ptr->marked=0;
+
+			/* Message */
+			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+
+			/* Delete original */
+			//			delete_object(wpos, p_ptr->py, p_ptr->px);
+			delete_object_idx(c_ptr->o_idx);
+
+			/* Hack -- tell the player of the next object on the pile */
+			whats_under_your_feet(Ind);
+
+			/* Tell the client */
+			Send_floor(Ind, 0);
+
+			/* Recalculate bonuses */
+			p_ptr->update |= (PU_BONUS);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_EQUIP);
 		}
 #endif	// 0
 		/* Note that the pack is too full */
@@ -1337,6 +1411,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 	bool            do_quake = FALSE;
 
 	bool            backstab = FALSE, stab_fleeing = FALSE;
+	bool nolite, nolite2;
 
 
 	bool            vorpal_cut = FALSE;
@@ -1353,6 +1428,9 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 
 	m_ptr = &m_list[c_ptr->m_idx];
 	r_ptr = race_inf(m_ptr);
+
+	nolite = c_ptr->info & (CAVE_LITE | CAVE_GLOW) ? FALSE : TRUE;
+	nolite2 = nolite && !(r_ptr->flags9 & RF9_HAS_LITE);
 
 	/* Disturb the player */
 	disturb(Ind, 0, 0);
@@ -1475,12 +1553,14 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			sound(Ind, SOUND_HIT);
 
 			/* Message */
-			if ((!backstab) && (!stab_fleeing))
-				msg_format(Ind, "You hit %s.", m_name);
-			else if(backstab)
-				msg_format(Ind, "You cruelly stab the helpless, sleeping %s!", r_name_get(m_ptr));
+			if(backstab)
+				msg_format(Ind, "You %s stab the helpless, sleeping %s!",
+						nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr));
+			else if (stab_fleeing)
+				msg_format(Ind, "You %s the fleeing %s!",
+						nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr));
 			else
-				msg_format(Ind, "You backstab the fleeing %s!", r_name_get(m_ptr));
+				msg_format(Ind, "You hit %s.", m_name);
 
 			/* Hack -- bare hands do one damage */
 			k = 1;
@@ -1611,17 +1691,18 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				k = damroll(o_ptr->dd, o_ptr->ds);
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr);
 
-                                if (backstab)
-                                {
-                                        k += (k *
-                                              get_skill_scale(p_ptr, SKILL_BACKSTAB,
-                                                              100)) / 100;
-                                }
-                                else if (stab_fleeing)
-                                {
-                                        k += (k * get_skill_scale(p_ptr, SKILL_BACKSTAB, 70)) /
-                                                100;
-                                }
+				if (backstab)
+				{
+					k += (k * (nolite ? 3 : 1),
+							get_skill_scale(p_ptr, SKILL_BACKSTAB,
+								100)) / 100;
+				}
+				else if (stab_fleeing)
+				{
+					k += (k * (nolite2 ? 2 : 1),
+							get_skill_scale(p_ptr, SKILL_BACKSTAB, 70)) /
+						100;
+				}
 
 				/* Select a chaotic effect (50% chance) */
 				if ((f5 & TR5_CHAOTIC) && (randint(2)==1))
@@ -2514,6 +2595,11 @@ void move_player(int Ind, int dir, int do_pickup)
 				}
 			}
 		}
+
+		/* Hack -- Exception for trees (in a bad way :-/) */
+		if (!myhome && c_ptr->feat == FEAT_TREE &&
+				(p_ptr->fly || p_ptr->prace == RACE_ENT))
+			myhome = TRUE;
 
 		if (!myhome)
 		{

@@ -4431,7 +4431,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	}
 	if (f4 & (TR4_CURSE_NO_DROP))
 	{
-		fprintf(fff, "It cannot be droped while cursed.\n");
+		fprintf(fff, "It cannot be dropped while cursed.\n");
 	}
 	if (f3 & (TR3_AUTO_CURSE))
 	{

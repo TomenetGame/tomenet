@@ -757,6 +757,7 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
 {
 	int y, x, k;
+	int try = 1000;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -767,6 +768,14 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num)
 		while (TRUE)
 		{
 			bool room;
+
+			if (!--try)
+			{
+#if DEBUG_LEVEL > 1
+				s_printf("alloc_object failed!\n");
+#endif	// DEBUG_LEVEL
+				return;
+			}
 
 			/* Location */
 			y = rand_int(dun->l_ptr->hgt);

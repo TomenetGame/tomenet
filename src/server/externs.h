@@ -861,6 +861,7 @@ extern void identify_pack(int Ind);
 extern void message_pain(int Ind, int m_idx, int dam);
 extern bool remove_curse(int Ind);
 extern bool remove_all_curse(int Ind);
+extern bool remove_all_curse_reverse(int Ind);
 extern bool restore_level(int Ind);
 extern void self_knowledge(int Ind);
 extern bool lose_all_info(int Ind);

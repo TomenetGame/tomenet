@@ -380,23 +380,23 @@ void do_cmd_wield(int Ind, int item)
 	if( check_guard_inscription( o_ptr->note, 'w' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
-	};
+	}
+
+	/* Check the slot */
+	slot = wield_slot(Ind, o_ptr);
 
 
-	if (!item_tester_hook_wear(Ind, wield_slot(Ind, o_ptr)))
+	if (!item_tester_hook_wear(Ind, slot))
 	{
 		msg_print(Ind, "You may not wield that item.");
 		return;
 	}
 
-        if (!can_use(Ind, o_ptr))
-        {
-                msg_print(Ind, "You are not high level enough.");
+	if (!can_use(Ind, o_ptr))
+	{
+		msg_print(Ind, "You are not high level enough.");
 		return;
-        }
-
-	/* Check the slot */
-	slot = wield_slot(Ind, o_ptr);
+	}
 
 	/* Prevent wielding into a cursed slot */
 	if (cursed_p(&(p_ptr->inventory[slot])))

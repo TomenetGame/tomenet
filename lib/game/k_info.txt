@@ -6855,6 +6855,7 @@ G:?:o
 I:8:51:0
 W:0:0:5:1
 A:200/127
+F:ACTIVATE
 
 # Parchment sold in general store to tell players of the news
 N:908:The Gazette

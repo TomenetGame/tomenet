@@ -4785,7 +4785,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Backstabing",
-                "Ability to backstab sleeping and fleeing monsters",
+                "Ability to backstab sleeping and fleeing monsters\nMuch more effective in the dark",
 
                 /* Mkey desc/mkey */
                 NULL,

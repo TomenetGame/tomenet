@@ -1351,6 +1351,21 @@ To find the latest change quickly, search ==== :)
     (not really fixed, but suppressed..)
 [H] racial skill modifiers added.
 
+14/07/2002 (Jir)
+- Ent learns ESP gradually now.
+- Backstabbing dmg is tripled if done in the dark.
+- invisibility rule changed - monster staggers in place of freezing
+- carrying light lessens the effect of invisibility.
+  (In short - Rogue is 'Class of Darkness' :)
+- {!=} inscription works better for artifact missiles.
+- /dis improved somewhat.
+[H] Ent can pass through trees.
+[H] cursed-item reversion is only done by scrolls (and not spells).
+[B] NO_MAGIC banned innate spells
+[B] Added Infinite loop breaker at alloc_object
+[B] spell_info was wrong for Prayer realm.
+[B] SKILL_STEALTH and SKILL_SNEAKINESS did nothing!! (calc_bonuses)
+
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
@@ -1429,6 +1444,21 @@ below this line are the unfixed bugs known:
 [B] cannot specify some monster names in master summoning (&35)
 [B][C] GCU client doesn't show the motd when using 'fullauto'
 [B] monsters sometimes drop '(nothing)' (Dread?)
+[B] admin char gets disconnected after generation once.
+[B] deallocator deallocates the floor that ghost is on!
+1 players on -1950ft of (32,32).
+Key_monk was killed by a Night mare.
+saving server info...
+1 players on -1950ft of (32,32).
+14 Jul 16:43:51: Welcome Laggwyrm=key@pm.dip.jp (127.0.0.1/2179)
+saving server info...
+1 players on -1950ft of (32,32).
+1 players on -3050ft of (32,32).
+saving server info...
+1 players on -1950ft of (32,32).
+deallocating -1950ft of (32,32)
+
+
 
 *below are bugs repoorted but not confirmed*
 (nothing so far)
@@ -1532,6 +1562,7 @@ memo and questions:
 - obsolete c-tables.c
 - send flags for each spell, so that we can obsolete do_cmd_cast_aux etc.
 - integrate p_ptr->fruit_bat into p_ptr->body_monster
+- p_ptr->total_weight/inven_cnt should be recalculated sometimes.
 
 [speeding the server up]
 # ok, it's 3 times faster now. maybe we don't squeeze it further for now.

@@ -2727,14 +2727,16 @@ void do_cmd_options(void)
 		prt("(4) Efficiency Options", 7, 5);
 		prt("(5) TomeNET Additional Options", 8, 5);
 
-		prt("(9) Save Options", 10, 5);
-		prt("(0) Load Options", 11, 5);
+		prt("(8) Check Server Options", 10, 5);
+
+		prt("(9) Save Options", 12, 5);
+		prt("(0) Load Options", 13, 5);
 
 		/* Window flags */
-		prt("(W) Window flags", 13, 5);
+		prt("(W) Window flags", 15, 5);
 
 		/* Prompt */
-		prt("Command: ", 15, 0);
+		prt("Command: ", 17, 0);
 
 		/* Get command */
 		k = inkey();
@@ -2777,14 +2779,20 @@ void do_cmd_options(void)
 			do_cmd_options_aux(5, "TomeNET Options");
 		}
 
+		/* Server Options */
+		else if (k == '8')
+		{
+			Send_special_line(SPECIAL_FILE_SERVER_SETTING, 0);
+		}
+
 		/* Save a 'option' file */
 		else if (k == '9')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Save an option file");
+			Term_putstr(0, 17, -1, TERM_WHITE, "Command: Save an option file");
 
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
+			Term_putstr(0, 19, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
 			sprintf(tmp, "user.prf");
@@ -2799,10 +2807,10 @@ void do_cmd_options(void)
 		else if (k == '0')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Load a user pref file");
+			Term_putstr(0, 17, -1, TERM_WHITE, "Command: Load a user pref file");
 
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
+			Term_putstr(0, 19, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
 			sprintf(tmp, "user.prf", ANGBAND_SYS);

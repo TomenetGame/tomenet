@@ -5875,6 +5875,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 //		if (!testing_stack && (k > 1)) continue;
 
 		/* Hack -- no stacking inside houses */
+		/* XXX this can cause 'arts crashes arts' */
 		crash = (!wpos->wz && k > 1 && !comb && (c_ptr->info&CAVE_ICKY));
 		if (!arts && crash) continue;
 

@@ -3634,7 +3634,8 @@ void monster_death(int Ind, int m_idx)
 				case RBE_FIRE:      typ = GF_FIRE; break;
 				case RBE_COLD:      typ = GF_COLD; break;
 				case RBE_BLIND:     typ = GF_BLIND; break;
-				case RBE_HALLU:     typ = GF_CONFUSION; break;
+//				case RBE_HALLU:     typ = GF_CONFUSION; break;
+				case RBE_HALLU:     typ = GF_CHAOS; break;	/* CAUTION! */
 				case RBE_CONFUSE:   typ = GF_CONFUSION; break;
 				case RBE_TERRIFY:   typ = GF_MISSILE; break;
 				case RBE_PARALYZE:  typ = GF_MISSILE; break;
@@ -4678,7 +4679,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	}
 
 	/* Sometimes a monster gets scared by damage */
-	if (!m_ptr->monfear && !(r_ptr->flags3 & RF3_NO_FEAR))
+	else if (!m_ptr->monfear && !(r_ptr->flags3 & RF3_NO_FEAR))
 	{
 		int		percentage;
 
@@ -4877,7 +4878,7 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note)
 	}
 
 	/* Sometimes a monster gets scared by damage */
-	if (!m_ptr->monfear && !(r_ptr->flags3 & RF3_NO_FEAR))
+	else if (!m_ptr->monfear && !(r_ptr->flags3 & RF3_NO_FEAR))
 	{
 		int		percentage;
 

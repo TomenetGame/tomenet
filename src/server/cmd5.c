@@ -231,12 +231,12 @@ static void spell_info(int Ind, char *p, int realm, int j)
 			case 2: strcpy(p, " dur 12+d12"); break;
 			case 9: sprintf(p, " range %d", 3*plev); break;
 			case 10: strcpy(p, " heal 4d10"); break;
-			case 11: strcpy(p, " dur 24+d24"); break;
+			case 14: strcpy(p, " dur 24+d24"); break;	// 11
 			case 15: strcpy(p, " dur 10+d10"); break;
-			case 17: sprintf(p, " %d+3d6", plev + orb); break;
-			case 18: strcpy(p, " heal 6d10"); break;
-			case 19: strcpy(p, " dur 24+d24"); break;
-			case 20: sprintf(p, " dur %d+d25", 3*plev); break;
+			case 16: sprintf(p, " %d+3d6", plev + orb); break;	// 17
+			case 17: strcpy(p, " heal 6d10"); break;
+			case 18: strcpy(p, " dur 24+d24"); break;
+			case 19: sprintf(p, " dur %d+d25", 3*plev); break;	// .. 20
 			case 23: strcpy(p, " heal 8d10"); break;
 			case 25: strcpy(p, " dur 48+d48"); break;
 			case 26: sprintf(p, " dam d%d", 3*plev); break;
