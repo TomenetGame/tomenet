@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. June 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 12. July 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -521,7 +521,8 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 (0.5) Rumours, missing features, technical warnings (READ!)
 -----------------------------------------------------------
--Usually characters are deleted after 90 days of inactivity.
+-Usually characters expire (that means they are automatically deleted!)
+ after 90 days of inactivity.
 -Items on the ground (especially in towns) often disappear automatically after
  a few minutes. So don't use the town to 'store' loot.
 -If you press CTRL+X to save&exit the game, you should do that in a safe town.
@@ -3418,7 +3419,7 @@ that you have equipped!
 
 In order for an item to guaranteedly survive such an attack, you must either
 be immune or double-resisting (have permanent AND temporary resistance) to
-that specific element.
+that specific element. (Double resistance is nearly as good as immunity.)
 Some items have IGNORE_xxx flags which let them ignore certain elements,
 preventing them from being destroyed.
 All artifacts, random and static ones, cannot be harmed by elemental attacks
@@ -3691,6 +3692,8 @@ If another player is invisible and not of higher level than you..
          The lower his level, the more often you will be able to see him.
          If you want to look at his equipment then you'll need some timing,
          might take several tries.
+Invisibility (on players) overrides ESP. So it does help in a (blood bond)
+duel even if the opponent has ESP.
 
 
 
@@ -3699,7 +3702,7 @@ If another player is invisible and not of higher level than you..
 The same resistance from two or more items in your equipment don't add to each
 other. For example you only need one item that provides fire resistance. If
 you equip two such items you won't get better resistance than with just one
-item.
+item. You cannot get "double resistance" from two items' permanent resistances.
 This rule applies to all resistances and abilities that don't use a bonus
 number to indicate their effectiveness, like faster mana recharging or hit
 point regeneration, telepathic powers, slow digestion, etc.
@@ -3880,6 +3883,9 @@ Note that not every skill is available to every profession (class).
         .Sling-mastery          Imcreases hit chance (while using a sling).
                                 At 16,32,48 you will get +1 additional shot
                                 per round each (while using a sling).
+                                (Note: Number of shots per round is capped at
+                                5 in total, so Extra Shot forms won't make
+                                mimics better archers than true archers.)
                                 Also reduces the chance of your ammunition to
                                 shatter from 50% at skill 0 down to 10% at 50
                                 (only concerns ammo for slings).
@@ -4715,17 +4721,14 @@ F: flag list
     DISBELIEVE  Will increase the player's anti-magic field by
                 ((monsterlevel / 2) + 20) percent. The range of the anti-magic
                 field is increased by ((monsterlevel / 15) + 3) fields.
-    ARROW       The player will receive an additional shot per round.
-    1_IN_3 or 1_IN_2
-                If the monster has the ARROW flag, the player can shoot an
-                additional shot per round, because the monster seems to be
-                good at it.
-                If the monster doesn't has the ARROW flag, the player can
-                cast an additional spell per round instead.
-    1_IN_1      If the monster has the ARROW flag, the player can shoot an
-                additional shot per round, because the monster seems to be
-                superb at it. Otherwise, the player can cast an additional
-                spell per round.
+    ARROW_1     The player will receive an additional shot per round with bows
+                since the monster seems to be good at shooting.
+                If the monster shoots 1_IN_3 or better, the player will
+                even receive 2 extra shots with bows!
+                (Note that the number of shots per round is capped at 5!)
+    HURT_ROCK   Means that this creature has a rock-like skin and body.
+                Takes damage from Stone-To-Mud and takes more damage from
+                'disintegration' attacks, but at the same time resists shards!
     WILD_WOOD or ANIMAL
                 The player (like the monster) can pass trees.
     WILD_MOUNTAIN or WILD_VOLCANO
@@ -4753,6 +4756,17 @@ F: flag list
 S: spell list
     These spells can be cast by the monster. Most of them are available to
     the mimic too, some of them have slightly different effects.
+    Depending on how frequently the monster is able to cast spells, the player
+    gets boni on intelligence and mana! This only applies if the spells are in
+    fact magic spells, not if the monster cannot do anything except firing
+    missiles, shrieking or shooting arrows (etc).
+    If the creature is able to cast 1_IN_3, the player receives +1 INT and
+    +10% Mana bonus.
+    If the creature is able to cast 1_IN_2, the player receives +3 INT and
+    +30% Mana bonus.
+    If the creature is able to cast 1_IN_1, the player receives +5 INT and
+    +40% Mana bonus.
+    About specific spells:
     BR_xxx      (breathing) will give the according resistance to the player
                 (if that specific attack CAN be resisted at all).
     BR_PLASMA   gives plasma & fire resistance.
