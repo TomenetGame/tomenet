@@ -1062,16 +1062,11 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 	/* Hack - This shouldn't be here, still.. */
 	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-#if 0	// stat changes are observable w/o *ID*
-	if (f1 & TR1_STR) total += (1000 * plusses);
-	if (f1 & TR1_INT) total += (1000 * plusses);
-	if (f1 & TR1_WIS) total += (1000 * plusses);
-	if (f1 & TR1_DEX) total += (1000 * plusses);
-	if (f1 & TR1_CON) total += (1000 * plusses);
-	if (f1 & TR1_CHR) total += (250 * plusses);
-#endif	// 0
-	if (f5 & TR5_CHAOTIC) total += 10000;
-	if (f1 & TR1_VAMPIRIC) total += 13000;
+
+	/* Basically easily observable without *ID*
+	   so I moved them to object_value_real (in fact we had
+	   doubled calculations happening here o_O) - C. Blue */
+#if 0
 	if (f1 & TR1_STEALTH) total += (250 * plusses);
 	if (f5 & TR5_DISARM) total += (100 * plusses);
 	if (f1 & TR1_SEARCH) total += (500 * plusses);
@@ -1083,6 +1078,21 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 		total += (10000 + (2500 * plusses));
         if (f1 & TR1_MANA) total += (1000 * plusses);
         if (f1 & TR1_SPELL) total += (2000 * plusses);
+        if (f1 & TR1_LIFE) total += (5000 * plusses);
+	if (f3 & TR3_WRAITH) total += 250000;
+        if (f5 & TR5_INVIS) total += 30000;
+	if (!(f4 & TR4_FUEL_LITE))
+	{
+	        if (f3 & TR3_LITE1) total += 750;
+	        if (f4 & TR4_LITE2) total += 1250;
+	        if (f4 & TR4_LITE3) total += 2750;
+	}
+#endif
+
+	if ((!(f4 & TR4_FUEL_LITE)) && (f3 & TR3_IGNORE_FIRE)) total += 100;
+
+	if (f5 & TR5_CHAOTIC) total += 10000;
+	if (f1 & TR1_VAMPIRIC) total += 13000;
 	if (f1 & TR1_SLAY_ANIMAL) total += 3500;
 	if (f1 & TR1_SLAY_EVIL) total += 4500;
 	if (f1 & TR1_SLAY_UNDEAD) total += 3500;
@@ -1107,9 +1117,6 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f2 & TR2_SUST_DEX) total += 850;
 	if (f2 & TR2_SUST_CON) total += 850;
 	if (f2 & TR2_SUST_CHR) total += 250;
-        if (f5 & TR5_INVIS) total += 30000;
-//        if (f5 & TR5_LIFE) total += (5000 * plusses);
-        if (f1 & TR1_LIFE) total += (5000 * plusses);
 	if (f2 & TR2_IM_ACID) total += 15000;
 	if (f2 & TR2_IM_ELEC) total += 15000;
 	if (f2 & TR2_IM_FIRE) total += 15000;
@@ -1144,19 +1151,11 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
         if (f3 & TR3_DECAY) total += 0;
 	if (f3 & TR3_NO_TELE) total += 2500;
 	if (f3 & TR3_NO_MAGIC) total += 2500;
-	if (f3 & TR3_WRAITH) total += 250000;
 	if (f3 & TR3_TY_CURSE) total -= 15000;
 	if (f3 & TR3_EASY_KNOW) total += 0;
 	if (f3 & TR3_HIDE_TYPE) total += 0;
 	if (f3 & TR3_SHOW_MODS) total += 0;
 	if (f3 & TR3_INSTA_ART) total += 0;
-	if (!(f4 & TR4_FUEL_LITE))
-	{
-	        if (f3 & TR3_LITE1) total += 750;
-	        if (f4 & TR4_LITE2) total += 1250;
-	        if (f4 & TR4_LITE3) total += 2750;
-		if (f3 & TR3_IGNORE_FIRE) total += 100;
-	}
 	if (f3 & TR3_SEE_INVIS) total += 2000;
 	if (esp & ESP_ORC) total += 5000;
 	if (esp & ESP_TROLL) total += 10000;
@@ -1189,7 +1188,7 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 		if (o_ptr->ident & ID_CURSED)
 			total -= 7500;
 		else
-			total += 250;
+			total += 500;
 	}
 	if (f3 & TR3_AGGRAVATE) total -= 10000; /* penalty 1 of 2 */
 	if (f3 & TR3_BLESSED) total += 750;
@@ -1400,6 +1399,10 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 
 			/* Hope this won't cause inflation.. */
 			if (star) value += flag_cost(o_ptr, o_ptr->pval);
+			/* Note: flag_cost contains all the resistances and other flags,
+			   while down here in object_value_real only the 'visible' boni
+			   are checked (pval, bpval, tohit, todam, toac), all those stats
+			   whose changes are observable without *ID* - C. Blue */
 
 			if (o_ptr->name2b)
 			{
@@ -1562,19 +1565,36 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 
 				/* Give credit for stealth and searching */
 //				if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
-				if (f1 & TR1_STEALTH) value += pval * pval * 100L;
-				if (f1 & TR1_SEARCH) value += pval * pval * 200L;
+				if (f1 & TR1_STEALTH) value += pval * pval * 250L;//100
+				if (f1 & TR1_SEARCH) value += pval * pval * 500L;//200
 				if (f5 & TR5_DISARM) value += pval * pval * 100L;
 
 				/* Give credit for infra-vision and tunneling */
-				if (f1 & TR1_INFRA) value += pval * pval * 100L;
-				if (f1 & TR1_TUNNEL) value += pval * pval * 50L;
+				if (f1 & TR1_INFRA) value += pval * pval * 150L;//100
+				if (f1 & TR1_TUNNEL) value += pval * pval * 175L;//50
 
 				/* Give credit for extra attacks */
 				if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
 
 				/* Give credit for extra casting */
 				if (f1 & TR1_SPELL) value += (PRICE_BOOST(pval, 0, 1) * 4000L);
+
+				/* Give credit for extra HP bonus */
+				if (f1 & TR1_LIFE) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
+
+
+				/* Flags moved here exclusively from flag_cost */
+			        if (f1 & TR1_MANA) value += (1000 * pval);
+				if (f3 & TR3_WRAITH) value += 250000;
+			        if (f5 & TR5_INVIS) value += 30000;
+				if (!(f4 & TR4_FUEL_LITE))
+				{
+				        if (f3 & TR3_LITE1) value += 750;
+				        if (f4 & TR4_LITE2) value += 1250;
+        			        if (f4 & TR4_LITE3) value += 2750;
+				}
+				/* End of flags, moved here from flag_cost */
+
 
 				/* Hack -- amulets of speed and rings of speed are
 				 * cheaper than other items of speed.
@@ -5032,7 +5052,8 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
  */
 void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, bool true_art)
 {
-	object_type *o_ptr_bak;
+	object_type forge_bak;
+	object_type *o_ptr_bak = &forge_bak;
 
 	int i, rolls, f1, f2, power;
 

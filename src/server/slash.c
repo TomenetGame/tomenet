@@ -215,7 +215,7 @@ void sc_wish(int Ind, void *argp){
 		o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 	}
 
-	apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, TRUE, p_ptr->total_winner?FALSE:TRUE);
+	apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, p_ptr->total_winner?FALSE:TRUE);
 	if (tk > 3){
 		o_ptr->discount = atoi(token[4]);
 	}
@@ -1959,7 +1959,7 @@ void do_slash_cmd(int Ind, char *message)
 					o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 				}
 
-				apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, TRUE, TRUE);
+				apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, TRUE, FALSE);
 				if (tk > 3){
 					o_ptr->discount = atoi(token[4]);
 				}
