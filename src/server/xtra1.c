@@ -1869,7 +1869,7 @@ static void calc_bonuses(int Ind)
 	if (p_ptr->ghost) p_ptr->free_act = TRUE;
 	if (p_ptr->ghost) p_ptr->see_infra += 2;
 	if (p_ptr->ghost) p_ptr->resist_pois = TRUE;
-	if (p_ptr->ghost) p_ptr->invis += 20;
+	/* if (p_ptr->ghost) p_ptr->invis += 5; */ /* No. */
 
 	/* Start with a single blow per turn */
 	p_ptr->num_blow = 1;

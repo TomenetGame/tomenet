@@ -4996,6 +4996,8 @@ static bool player_invis(int Ind, monster_type *m_ptr)
 
 	mlv = (s16b) r_ptr->level;
 
+	if(p_ptr->ghost) inv+=1;
+
 	if (r_ptr->flags3 & RF3_NO_SLEEP)
 	{
 		mlv += 5;
@@ -5045,7 +5047,7 @@ static bool player_invis(int Ind, monster_type *m_ptr)
                 mlv = 1;
         }
 
-        return (inv >= randint(mlv * 10 / 7));
+        return (inv >= randint((mlv * 10) / 7));
 }
 
 
