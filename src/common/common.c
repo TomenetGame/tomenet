@@ -76,3 +76,8 @@ int color_char_to_attr(char c)
 
 	return (-1);
 }
+
+/*
+ * version strings
+ */
+char	*longVersion = TOMANG_VERSION_LONG_DATE __DATE__ " " __TIME__ ")";

@@ -3,6 +3,7 @@
 #define MACRO_USE_CMD	0x01
 #define MACRO_USE_STD	0x02
 
+#define EVIL_TEST /* evil test */
 
 static bool after_macro = FALSE;
 static bool parse_macro = FALSE;
@@ -2037,7 +2038,7 @@ void interact_macros(void)
 
 	char tmp[160], buf[1024];
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Screen is icky */
 	screen_icky = TRUE;
 #endif
@@ -2231,7 +2232,7 @@ void interact_macros(void)
 	/* Reload screen */
 	Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Screen is no longer icky */
 	screen_icky = FALSE;
 #endif
@@ -2556,7 +2557,7 @@ void do_cmd_options(void)
 	int k;
 
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Enter "icky" mode */
 	screen_icky = TRUE;
 #endif
@@ -2639,7 +2640,7 @@ void do_cmd_options(void)
 	/* Restore the screen */
 	Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Leave "icky" mode */
 	screen_icky = FALSE;
 #endif

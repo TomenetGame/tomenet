@@ -34,6 +34,7 @@
 /*
  * Current version number of TomeNET:
  */
+#define TOMANG_VERSION_LONG_DATE "TomeNET[aka PernMAngband] 3.4.0beta (compiled "
  
 #define VERSION_MAJOR	3
 #define VERSION_MINOR   4
@@ -1992,6 +1993,8 @@ that keeps many algorithms happy.
 #define SV_SCROLL_HOUSE				57
 #define SV_SCROLL_BLOOD_BOND			58
 
+#define SV_SCROLL_LOTTERY				59
+
 #define SV_WAND_ELEC_BOLT		33
 
 /* those items need some reworking. */
@@ -2542,6 +2545,7 @@ that keeps many algorithms happy.
 */
 #define SV_SCROLL_NOTHING               53
 #define SV_SCROLL_SPELL                 54
+
 
 /* The "sval" codes for TV_POTION */
 #define SV_POTION_WATER                  0

@@ -15,17 +15,18 @@ A resume, or 'read it and dive the hell!';)
 
 For further (and easy-to-read) documentation, please visit:
 
-Official Site   - http://www.pernmangband.org/
+Official Site   - http://T-o-M-E.net/pernmangband/
 Newbie Tutorial - http://www.ctt.ne.jp/~sap/mang/
 
-Latest changes for version 3.3.6b (digest):
-- Monsters behave a little cleverer.
+Latest changes for version 3.4.0b (digest):
+- Name changed to 'TomeNET'(Trouble-of-Middle-Earth the NET).
+- Monster AI significantly improved; use your head, too!
+- Underground rivers and lakes, and their habitants.
+- Unnumbered new items/monsters/traps etc. are added.
 - Sanity point, which describes how distant you are from insanity.
 - Genocide spell is penalized; use it with attention!
 - New item system, including hundleds of new egos/artifacts.
 - Multiple towns/dungeons/towers implemented - try exploring the wilderness!
-- About 170 new traps added; They now are nasty foes!
-- Ego monsters added; beware, they can be MUCH nastier!
 - YOU LOSE YOUR (non-random) ARTIFACT IF YOU LOOSE YOUR GRIP ON IT!
 - 50-350ft in dungeon cannot be static, so please SAVE IN TOWN.
 - You'll be protected by GoI for 2-turns after recall/stairs.

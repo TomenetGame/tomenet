@@ -14,6 +14,10 @@
 
 #include "angband.h"
 
+/* chance of walking in a random direction when confused and trying to climb,
+ * in percent.
+ */
+#define STAIR_FAIL_IF_CONFUSED	50
 
 
 /*
@@ -30,6 +34,20 @@ void do_cmd_go_up(int Ind)
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
 		return;
+
+#if STAIR_FAIL_IF_CONFUSED
+	/* Hack -- handle confusion */
+	if (p_ptr->confused && magik(STAIR_FAIL_IF_CONFUSED))
+	{
+		int dir = 5;
+
+		/* Prevent walking nowhere */
+		while (dir == 5)
+			dir = rand_int(9) + 1;
+
+		do_cmd_walk(Ind, dir, FALSE);
+	}
+#endif // STAIR_FAIL_IF_CONFUSED
 
 	if(cfg.runlevel<5 && !p_ptr->wpos.wz){
 		msg_print(Ind,"The dungeon is closed");
@@ -137,6 +155,20 @@ void do_cmd_go_down(int Ind)
 		msg_print(Ind,"The dungeon is closed");
 		return;
 	}
+
+#if STAIR_FAIL_IF_CONFUSED
+	/* Hack -- handle confusion */
+	if (p_ptr->confused && magik(STAIR_FAIL_IF_CONFUSED))
+	{
+		int dir = 5;
+
+		/* Prevent walking nowhere */
+		while (dir == 5)
+			dir = rand_int(9) + 1;
+
+		do_cmd_walk(Ind, dir, FALSE);
+	}
+#endif // STAIR_FAIL_IF_CONFUSED
 
 	/* Player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];

@@ -6772,6 +6772,13 @@ F:DRAIN_EXP | DRAIN_MANA | DRAIN_HP
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 F:AUTO_CURSE | CURSED 
 
+# change the price, and prize changes automatically.
+N:897:Lottery
+G:?:d
+I:70:59:0
+W:1:0:5:30
+A:1/1
+
 # Always ego!
 
 #N:503:& Amulet~

@@ -2,6 +2,8 @@
 
 #include "angband.h"
 
+#define EVIL_TEST /* evil test */
+
 static void print_spells(int book)
 {
 	int	i, col;
@@ -148,7 +150,7 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 				/* Show list */
 				redraw = TRUE;
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 				/* The screen is icky */
 				screen_icky = TRUE;
 #endif
@@ -169,7 +171,7 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 				/* Restore the screen */
 				Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 				/* The screen is OK now */
 				screen_icky = FALSE;
 #endif
@@ -223,7 +225,7 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 	if (redraw)
 	{
 		Term_load();
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 		screen_icky = FALSE;
 #endif
 
@@ -250,7 +252,7 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
  */
 void show_browse(int book)
 {
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* The screen is icky */
 	screen_icky = TRUE;
 #endif
@@ -273,7 +275,7 @@ void show_browse(int book)
 	/* Restore the screen */
 	Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Screen is OK now */
 	screen_icky = FALSE;
 #endif
@@ -407,7 +409,7 @@ static int get_mimic_spell(int *sn)
 				/* Show list */
 				redraw = TRUE;
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 				/* The screen is icky */
 				screen_icky = TRUE;
 #endif
@@ -428,7 +430,7 @@ static int get_mimic_spell(int *sn)
 				/* Restore the screen */
 				Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 				/* The screen is OK now */
 				screen_icky = FALSE;
 #endif
@@ -460,7 +462,7 @@ static int get_mimic_spell(int *sn)
 	if (redraw)
 	{
 		Term_load();
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 		screen_icky = FALSE;
 #endif
 

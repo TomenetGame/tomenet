@@ -1,5 +1,5 @@
 ':' to chat **********************************************************
-'?' to help **   TomeNET 3.3.6b   **   The Troubles of Middle Earth **
+'?' to help **   TomeNET 3.4.0b   **   The Troubles of Middle Earth **
             **********************************************************
 
                "One Ring to rule them all, One Ring to find them
@@ -7,11 +7,11 @@
                   In the land of Mordor where the shadows lie"
                                 "Lord of The Rings", J.R.R.Tolkien
 
- - Sanity system is added; going insane is no good of you.
- - New item system, including hundleds of new egos/artifacts.
- - 1043 PernAngband monsters are ported, along with 50 ego monsters.
+ - Monster AI significantly improved; use your head, too!
+ - Underground rivers and lakes, and their habitants.
+ - Unnumbered new items/monsters/traps are added.
  - Multiple towns/dungeons/towers implemented. Try exploring the wilderness!
- - About 170 new traps added; They now are nasty foes!
+ - Sanity system is added; going insane is no good of you.
  - Dropping/throwing/selling(etc) will make non-random artifacts disappear!
  - Save the game in town as far as possible, so as not to be buried alive.
  - Please don't abuse the system, so as not to have your character removed.
@@ -19,5 +19,5 @@
    3.3.6b client is available from the official site below.
  - To learn about new features/changes, please see the help screen('?').
 
-              Official TomeNET site - http://www.TomeNET.net/
+        Official TomeNET site - http://T-o-M-E.net/pernmangband/
     PernMAngband 3.x: DarkGod(darkgod@t-o-m-e.net) / TomeNET dev-team

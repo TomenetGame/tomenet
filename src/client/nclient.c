@@ -31,6 +31,8 @@
 #include <sys/stat.h>
 #endif
 
+#define EVIL_TEST /* evil test */
+
 int			ticks = 0; // Keeps track of time in 100ms "ticks"
 static bool		request_redraw;
 
@@ -2249,7 +2251,7 @@ int Receive_pause(void)
 	/* Flush any pending keystrokes */
 	Term_flush();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* The screen is icky */
 	screen_icky = TRUE;
 #endif
@@ -2257,7 +2259,7 @@ int Receive_pause(void)
 	/* Wait */
 	inkey();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Screen isn't icky any more */
 	screen_icky = FALSE;
 #endif

@@ -621,7 +621,7 @@
 #define PREPARE_RADIUS	16
 
 /*
- * OPTION: vervosity of server.
+ * OPTION: verbosity of server.
  *
  * 0 - no debug msgs
  * 1 - very recent debug msgs

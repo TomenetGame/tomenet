@@ -2503,6 +2503,10 @@ static void process_various(void)
 		scan_players();
 		scan_houses();
 		s_printf("Finished maintenance\n");
+#if DEBUG_LEVEL > 1
+		s_printf("Current server status:  m_max(%d) o_max(%d) t_max(%d)\n",
+				m_max, o_max, t_max);
+#endif
 	}
 
 	if (!(turn % (cfg.fps * 10))){

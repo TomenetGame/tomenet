@@ -1903,6 +1903,52 @@ void do_cmd_read_scroll(int Ind, int item)
 			ident = TRUE;
 			break;
 		}
+
+		case SV_SCROLL_LOTTERY:
+		{
+			int i = k_info[o_ptr->k_idx].cost, j = rand_int(10000);
+
+			i -= i * o_ptr->discount / 100;
+			
+			if (!j)
+			{
+				msg_print(Ind, "\377WYou draw a blank :-P");
+			}
+			else
+			{
+				if (p_ptr->au < i * 10000 / 5)
+				{
+					msg_broadcast(Ind, "\377B%^s seems to hit a big time!");
+					set_confused(Ind, p_ptr->confused + rand_int(10) + 10);
+					set_image(Ind, p_ptr->image + rand_int(10) + 10);
+				}
+
+				msg_print(Ind, "\377BYou won the first prize!");
+				p_ptr->au += i * 10000;
+
+				/* Redraw gold */
+				p_ptr->redraw |= (PR_GOLD);
+
+				/* Window stuff */
+				p_ptr->window |= (PW_PLAYER);
+			}
+			ident = TRUE;
+			break;
+		}
+
+#if 0	// implement them whenever you feel like :)
+		case SV_SCROLL_BACCARAT:
+		case SV_SCROLL_BLACK_JACK:
+		case SV_SCROLL_ROULETTE:
+		case SV_SCROLL_SLOT_MACHINE:
+		case SV_SCROLL_BACK_GAMMON:
+		{
+			break;
+		}
+#endif	// 0
+
+
+
 	}
 
 

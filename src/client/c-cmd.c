@@ -1,5 +1,7 @@
 #include "angband.h"
 
+#define EVIL_TEST /* evil test */
+
 static void cmd_clear_buffer(void);
 
 void cmd_player_equip(void)
@@ -605,7 +607,7 @@ void cmd_map(void)
 	/* Hack -- if the screen is already icky, ignore this command */
 	if (screen_icky) return;
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* The screen is icky */
 	screen_icky = TRUE;
 #endif
@@ -633,7 +635,7 @@ void cmd_map(void)
 	/* Reload the screen */
 	Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* The screen is OK now */
 	screen_icky = FALSE;
 #endif
@@ -761,7 +763,7 @@ void cmd_disarm(void)
 
 void cmd_inven(void)
 {
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */	/* bad test; messing the screen :( jir */
 	/* The whole screen is "icky" */
 	screen_icky = TRUE;
 #endif
@@ -781,7 +783,7 @@ void cmd_inven(void)
 	Term_load();
 	/* print our new location */
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* The screen is OK now */
 	screen_icky = FALSE;
 #endif
@@ -792,7 +794,7 @@ void cmd_inven(void)
 
 void cmd_equip(void)
 {
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* The whole screen is "icky" */
 	screen_icky = TRUE;
 #endif
@@ -813,7 +815,7 @@ void cmd_equip(void)
 
 	Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* The screen is OK now */
 	screen_icky = FALSE;
 #endif
@@ -1243,7 +1245,7 @@ void cmd_character(void)
 	char ch = 0;
 	int hist = 0, done = 0;
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Screen is icky */
 	screen_icky = TRUE;
 #endif
@@ -1280,7 +1282,7 @@ void cmd_character(void)
 	/* Reload screen */
 	Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Screen is no longer icky */
 	screen_icky = FALSE;
 #endif
@@ -1356,7 +1358,7 @@ void cmd_party(void)
 	char i;
 	char buf[80];
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Screen is icky */
 	screen_icky = TRUE;
 #endif
@@ -1466,7 +1468,7 @@ void cmd_party(void)
 	/* Reload screen */
 	Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Screen is no longer icky */
 	screen_icky = FALSE;
 #endif
@@ -1760,7 +1762,7 @@ void cmd_purchase_house(void)
 
 	if (!get_dir(&dir)) return;
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	screen_icky=TRUE;
 #endif
 
@@ -1799,7 +1801,7 @@ void cmd_purchase_house(void)
 		c_msg_print(NULL);
 	}
 	Term_load();
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	screen_icky=FALSE;
 #endif
 }
@@ -2615,7 +2617,7 @@ void cmd_master_aux_system()
 				/* Call the file perusal */
 				peruse_file();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 				/* Hack -- still icky */
 				screen_icky = TRUE;
 #endif
@@ -2628,7 +2630,7 @@ void cmd_master_aux_system()
 				/* Call the file perusal */
 				peruse_file();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 				/* Hack -- still icky */
 				screen_icky = TRUE;
 #endif
@@ -2696,7 +2698,7 @@ void cmd_master(void)
 	char i=0;
 	char buf[80];
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Screen is icky */
 	screen_icky = TRUE;
 #endif
@@ -2772,7 +2774,7 @@ void cmd_master(void)
 	/* Reload screen */
 	Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Screen is no longer icky */
 	screen_icky = FALSE;
 #endif

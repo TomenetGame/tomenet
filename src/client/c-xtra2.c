@@ -2,6 +2,8 @@
 
 #include "angband.h"
 
+#define EVIL_TEST /* evil test */
+
 /*
  * Show previous messages to the user   -BEN-
  *
@@ -65,7 +67,7 @@ void do_cmd_messages(void)
 	/* Start at leftmost edge */
 	q = 0;
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Enter "icky" mode */
 	screen_icky = topline_icky = TRUE;
 #endif
@@ -146,13 +148,28 @@ void do_cmd_messages(void)
 		k = inkey();
 
 		/* Exit on Escape */
-		if (k == ESCAPE) break;
+		if (k == ESCAPE || k == KTRL('X')) break;
 
 		/* Hack -- Save the old index */
 		j = i;
 
+		/* Hack -- go to a specific line */
+		if (k == '#')
+		{
+			char tmp[80];
+//			prt("Goto Line: ", 23, 0);
+			prt(format("Goto Line(max %d): ", n), 23, 0);
+			strcpy(tmp, "0");
+			if (askfor_aux(tmp, 80, 0))
+			{
+				i = atoi(tmp);
+				i = i > 0 ? (i < n ? i : n - 1) : 0;
+			}
+//			continue;
+		}
+
 		/* Horizontal scroll */
-		if (k == '4')
+		if (k == '4' || k == '<')
 		{
 			/* Scroll left */
 			q = (q >= 40) ? (q - 40) : 0;
@@ -162,7 +179,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Horizontal scroll */
-		if (k == '6')
+		if (k == '6' || k == '>')
 		{
 			/* Scroll right */
 			q = q + 40;
@@ -213,7 +230,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Recall 1 older message */
-		if ((k == '8') || (k == '\n') || (k == '\r'))
+		if ((k == '8') || (k == '\n') || (k == '\r') || k=='k')
 		{
 			/* Go newer if legal */
 			if (i + 1 < n) i += 1;
@@ -227,14 +244,14 @@ void do_cmd_messages(void)
 		}
 
 		/* Recall 20 older messages */
-		if ((k == 'p') || (k == KTRL('P')) || (k == ' '))
+		if ((k == 'p') || (k == KTRL('P')) || (k == ' ') || k == KTRL('U'))
 		{
 			/* Go older if legal */
 			if (i + 20 < n) i += 20;
 		}
 
 		/* Recall 20 newer messages */
-		if ((k == 'n') || (k == KTRL('N')))
+		if ((k == 'n') || (k == KTRL('N')) || k=='b')
 		{
 			/* Go newer (if able) */
 			i = (i >= 20) ? (i - 20) : 0;
@@ -248,10 +265,25 @@ void do_cmd_messages(void)
 		}
 
 		/* Recall 1 newer messages */
-		if (k == '2')
+		if (k == '2' || k=='j')
 		{
 			/* Go newer (if able) */
 			i = (i >= 1) ? (i - 1) : 0;
+		}
+
+		/* Recall the oldest messages */
+		if (k == 'g')
+		{
+			/* Go oldest */
+//			i = n - 1;
+			i = n - 20;
+		}
+
+		/* Recall the newest messages */
+		if (k == 'G')
+		{
+			/* Go newest */
+			i = 0;
 		}
 
 		/* Hack -- Error of some kind */
@@ -261,7 +293,7 @@ void do_cmd_messages(void)
 	/* Restore the screen */
 	Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Leave "icky" mode */
 	screen_icky = topline_icky = FALSE;
 #endif
@@ -328,7 +360,7 @@ void do_cmd_messages_chatonly(void)
 	q = 0;
 
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Enter "icky" mode */
 	screen_icky = topline_icky = TRUE;
 #endif
@@ -381,13 +413,28 @@ void do_cmd_messages_chatonly(void)
 		k = inkey();
 
 		/* Exit on Escape */
-		if (k == ESCAPE) break;
+		if (k == ESCAPE || k == KTRL('X')) break;
 
 		/* Hack -- Save the old index */
 		j = i;
 
+		/* Hack -- go to a specific line */
+		if (k == '#')
+		{
+			char tmp[80];
+//			prt("Goto Line: ", 23, 0);
+			prt(format("Goto Line(max %d): ", n), 23, 0);
+			strcpy(tmp, "0");
+			if (askfor_aux(tmp, 80, 0))
+			{
+				i = atoi(tmp);
+				i = i > 0 ? (i < n ? i : n - 1) : 0;
+			}
+//			continue;
+		}
+
 		/* Horizontal scroll */
-		if (k == '4')
+		if (k == '4' || k == '<')
 		{
 			/* Scroll left */
 			q = (q >= 40) ? (q - 40) : 0;
@@ -397,7 +444,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Horizontal scroll */
-		if (k == '6')
+		if (k == '6' || k == '>')
 		{
 			/* Scroll right */
 			q = q + 40;
@@ -448,7 +495,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Recall 1 older message */
-		if ((k == '8') || (k == '\n') || (k == '\r'))
+		if ((k == '8') || (k == '\n') || (k == '\r') || k=='k')
 		{
 			/* Go newer if legal */
 			if (i + 1 < n) i += 1;
@@ -462,14 +509,15 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Recall 20 older messages */
-		if ((k == 'p') || (k == KTRL('P')) || (k == ' ') || (k == KTRL('O')))
+		if ((k == 'p') || (k == KTRL('P')) || (k == ' ') || (k == KTRL('O')) ||
+				k == KTRL('U'))
 		{
 			/* Go older if legal */
 			if (i + 20 < n) i += 20;
 		}
 
 		/* Recall 20 newer messages */
-		if ((k == 'n') || (k == KTRL('N')))
+		if ((k == 'n') || (k == KTRL('N')) || k=='b')
 		{
 			/* Go newer (if able) */
 			i = (i >= 20) ? (i - 20) : 0;
@@ -483,10 +531,25 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Recall 1 newer messages */
-		if (k == '2')
+		if (k == '2' || k=='j')
 		{
 			/* Go newer (if able) */
 			i = (i >= 1) ? (i - 1) : 0;
+		}
+
+		/* Recall the oldest messages */
+		if (k == 'g')
+		{
+			/* Go oldest */
+//			i = n - 1;
+			i = n - 20;
+		}
+
+		/* Recall the newest messages */
+		if (k == 'G')
+		{
+			/* Go newest */
+			i = 0;
 		}
 
 		/* Hack -- Error of some kind */
@@ -496,7 +559,7 @@ void do_cmd_messages_chatonly(void)
 	/* Restore the screen */
 	Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* Leave "icky" mode */
 	screen_icky = topline_icky = FALSE;
 #endif

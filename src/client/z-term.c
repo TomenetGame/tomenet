@@ -8,8 +8,12 @@
 
 #include "../common/angband.h"
 
+#define EVIL_TEST /* evil test */
+
 /* evil test */
+#ifdef EVIL_TEST
 extern bool screen_icky;
+#endif
 
 /*
  * This file provides a generic, efficient, terminal window package,

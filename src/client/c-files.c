@@ -5,6 +5,7 @@
 
 #include "angband.h"
 
+#define EVIL_TEST /* evil test */
 
 /*
  * Extract the first few "tokens" from a buffer
@@ -950,7 +951,7 @@ void peruse_file(void)
 	/* Initialize */
 	cur_line = 0;
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* The screen is icky */
 	screen_icky = TRUE;
 #endif
@@ -972,7 +973,9 @@ void peruse_file(void)
 			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH), 0, 0);
 
 		/* Prompt */
-		prt("[Press Return, Space, -, or ESC to exit.]", 23, 0);
+//		prt("[Press Return, Space, -, b, or ESC to exit.]", 23, 0);
+		prt(format("[Press Return, Space, -, b, or ESC to exit.] (%d/%d)",
+					cur_line, max_line), 23, 0);
 
 		/* Get a keypress */
 		k = inkey();
@@ -981,7 +984,8 @@ void peruse_file(void)
 		if (k == '#')
 		{
 			char tmp[80];
-			prt("Goto Line: ", 23, 0);
+//			prt("Goto Line: ", 23, 0);
+			prt(format("Goto Line(max %d): ", max_line), 23, 0);
 			strcpy(tmp, "0");
 			if (askfor_aux(tmp, 80, 0))
 			{
@@ -993,26 +997,49 @@ void peruse_file(void)
 		if (k == '-')
 		{
 			cur_line -= 10;
-			if (cur_line < 0) cur_line = 0;
+		}
+
+		/* Hack -- Allow backing up ala 'less' */
+		if (k == 'b' || k == KTRL('U'))
+		{
+			cur_line -= 20;
 		}
 
 		/* Hack -- Advance one line */
-		if ((k == '\n') || (k == '\r'))
+		if ((k == '\n') || (k == '\r') || (k == 'j') || k == '2')
 		{
 			cur_line++;
 		}
 
+		/* Hack -- backing up one line */
+		if (k == 'k' || k == '8')
+		{
+			cur_line--;
+		}
+
 		/* Advance one page */
-		if (k == ' ')
+		if (k == ' ' || k == KTRL('D'))
 		{
 			cur_line += 20;
 		}
 
+		/* Hack -- back to the top */
+		if (k == 'g')
+		{
+			cur_line = 0;
+		}
+
+		/* Hack -- go to the bottom (it's vi, u know ;) */
+		if (k == 'G')
+		{
+			cur_line = max_line - 20;
+		}
+
 		/* Exit on escape */
-		if (k == ESCAPE) break;
+		if (k == ESCAPE || k == KTRL('X')) break;
 
 		/* Check maximum line */
-		if (cur_line > max_line)
+		if (cur_line > max_line || cur_line < 0)
 			cur_line = 0;
 	}
 
@@ -1025,7 +1052,7 @@ void peruse_file(void)
 	/* Reload the old screen */
 	Term_load();
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 	/* The screen isn't icky anymore */
 	screen_icky = FALSE;
 #endif

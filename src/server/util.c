@@ -1550,7 +1550,236 @@ void msg_format_near(int Ind, cptr fmt, ...)
 	msg_print_near(Ind, buf);
 }
 
-void do_slash_cmd(int Ind, cptr message){
+/*
+ * Horrible implementation... :(	- Jir -
+ *
+ * XXX XXX XXX Use the "show_file()" method, perhaps.
+ */
+static void server_knowledge(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int		 k;
+
+	msg_print(Ind, "\377G======== Server Settings ========");
+
+	/* General information */
+	msg_print(Ind, format("Game speed(FPS): %d (%+d%%)", cfg.fps, (cfg.fps-60)*100/60));
+	msg_print(Ind, format("Player-running speed is boosted (x%d).", cfg.running_speed));
+
+	/* Several restrictions */
+	if (!cfg.maximize)
+		msg_print(Ind, "This server is *NOT* maximized!");
+
+	if (k=cfg.newbies_cannot_drop)
+		msg_print(Ind, format("Players under exp.level %d are not allowed to drop items/golds.", k));
+
+	if (k=cfg.spell_interfere)
+		msg_print(Ind, format("Monsters adjacant to you have %d%% chance of interfering your spellcasting.", k));
+
+	if (k=cfg.spell_stack_limit)
+		msg_print(Ind, format("Duration of assistance spells is limited to %d turns.", k));
+
+	/* level preservation */
+	if (cfg.no_ghost)
+		msg_print(Ind, "You disappear the moment you die, without becoming a ghost.");
+
+	msg_print(Ind, format("The floor will be erased about %d seconds after you left.", cfg.anti_scum));
+	if (k=cfg.level_unstatic_chance)
+		msg_print(Ind, format("When saving in dungeon, the floor is kept for %dx(level) minutes.", k));
+
+	if ((k=cfg.min_unstatic_level) > 0) 
+		msg_print(Ind, format("Shallow dungeon(till %d) will never be saved. Save in town!", k));
+
+	if ((k=cfg.preserve_death_level) < 201)
+		msg_print(Ind, format("Site of death under level %d will be static, allowing others to loot it.", k));
+
+
+
+		
+	/* arts & winners */
+	if (cfg.anti_arts_horde)
+		msg_print(Ind, "True-Artifacts will disappear if you drop/leave them.");
+
+	if ((k=cfg.retire_timer) > 0)
+		msg_print(Ind, format("The winner will automatically retire after %d minutes.", k));
+	else if (k = 0)
+		msg_print(Ind, format("The game ends the moment you beat the final foe, Morgoth.", k));
+
+	if (k !=0)
+	{
+		if (k=cfg.unique_respawn_time)
+			msg_print(Ind, format("After winning the game, unique moster will resurrect randomly.(%d)", k));
+
+		if (cfg.kings_etiquette)
+			msg_print(Ind, "The winner is not allowed to carry/use artifacts(save Grond/Crown).");
+	}
+
+
+	/* monster-sets */
+	msg_print(Ind, "Monsters:");
+	if (cfg.vanilla_monsters)
+		msg_print(Ind, "  Vanilla-angband(default) monsters");
+	if (cfg.zang_monsters)
+		msg_print(Ind, "  Zelasny Angband additions");
+	if (cfg.pern_monsters)
+		msg_print(Ind, "  DragonRiders of Pern additions");
+	if (cfg.cth_monsters)
+		msg_print(Ind, "  Lovecraft additions");
+	if (cfg.joke_monsters)
+		msg_print(Ind, "  Joke-monsters");
+
+	/* trivial */
+	if (cfg.public_rfe)
+		msg_print(Ind, "You can see RFE files via '&62' command.");
+
+	if (!cfg.door_bump_open)
+		msg_print(Ind, "You should use 'o' command explicitly to open a door.");
+
+	/* Administrative */
+	if (is_admin(p_ptr))
+	{
+		msg_print(Ind, "==== Administrative or hidden settings ====");
+		msg_print(Ind, format("dun_usual: %d (default = 200)", cfg.dun_unusual));
+		msg_print(Ind, format("Stores change their inventory every %d seconds(store_turns=%d).", cfg.store_turns * 10 / cfg.fps, cfg.store_turns));
+
+		msg_print(Ind, format("starting town: location [%d, %d], baselevel(%d)", cfg.town_x, cfg.town_y, cfg.town_base));
+		msg_print(Ind, format("Angband: baselevel(%d) depth(%d)", cfg.dun_base, cfg.dun_max));
+
+
+		if (cfg.mage_hp_bonus)
+			msg_print(Ind, "mage_hp_bonus is applied.");
+		if (cfg.report_to_meta)
+			msg_print(Ind, "Reporting to the meta-server.");
+		if (cfg.secret_dungeon_master)
+			msg_print(Ind, "Dungeon Master is hidden.");
+		else
+			msg_print(Ind, "Dungeon Master is *SHOWN*!!");
+		//	cfg.unique_max_respawn_time
+		//	cfg.game_port
+		//	cfg.console_port
+	}
+}
+
+#if 0
+static void server_knowledge(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int		i = 0, k;
+
+	cptr	*info = p_ptr->info;
+
+	/* Let the player scroll through the info */
+	p_ptr->special_file_type = TRUE;
+
+	info[i++] = format("Game speed(FPS): %d (%+d%%)", cfg.fps, (cfg.fps-60)*100/60);
+	info[i++] = format("Player-running speed is boosted (x%d).", cfg.running_speed);
+
+	if (!cfg.maximize)
+		info[i++] = "This server is *NOT* maximized!";
+
+	if (k=cfg.newbies_cannot_drop)
+		info[i++] = format("Players under exp.level %d are not allowed to drop items/golds.", k);
+
+	if (k=cfg.spell_interfere)
+		info[i++] = format("Monsters adjacant to you have %d%% chance of interfering your spellcasting.", k);
+
+	if (k=cfg.spell_stack_limit)
+		info[i++] = format("Duration of assistance spells is limited to %d turns.", k);
+
+	if (cfg.no_ghost)
+		info[i++] = "You disappear the moment you die, without becoming a ghost.";
+
+	info[i++] = format("The floor will be erased about %d seconds after you left.", cfg.anti_scum);
+	if (k=cfg.level_unstatic_chance)
+		info[i++] = format("When saving in dungeon, the floor is kept for %dx(level) minutes.", k);
+
+	if ((k=cfg.min_unstatic_level) > 0) 
+		info[i++] = format("Shallow dungeon(till %d) will never be saved. Save in town!", k);
+
+	if ((k=cfg.preserve_death_level) < 201)
+		info[i++] = format("Site of death under level %d will be static, allowing others to loot it.", k);
+
+
+
+		
+	/* arts & winners */
+	if (cfg.anti_arts_horde)
+		info[i++] = "True-Artifacts will disappear if you drop/leave them.";
+
+	if ((k=cfg.retire_timer) > 0)
+		info[i++] = format("The winner will automatically retire after %d minutes.", k);
+	else if (k = 0)
+		info[i++] = format("The game ends the moment you beat the final foe, Morgoth.", k);
+
+	if (k !=0)
+	{
+		if (k=cfg.unique_respawn_time)
+			info[i++] = format("After winning the game, unique moster will resurrect randomly.(%d)", k);
+
+		if (cfg.kings_etiquette)
+			info[i++] = "The winner is not allowed to carry/use artifacts(save Grond/Crown).";
+	}
+
+
+	/* monster-sets */
+	info[i++] = "Monsters:";
+	if (cfg.vanilla_monsters)
+		info[i++] = "  Vanilla-angband(default) monsters";
+	if (cfg.zang_monsters)
+		info[i++] = "  Zelasny Angband additions";
+	if (cfg.pern_monsters)
+		info[i++] = "  DragonRiders of Pern additions";
+	if (cfg.cth_monsters)
+		info[i++] = "  Lovecraft additions";
+	if (cfg.joke_monsters)
+		info[i++] = "  Joke-monsters";
+
+	/* trivial */
+	if (cfg.public_rfe)
+		info[i++] = "You can see RFE files via '&62' command.";
+
+	if (!cfg.door_bump_open)
+		info[i++] = "You should use 'o' command explicitly to open a door.";
+
+	/* Administrative */
+	if (is_admin(p_ptr))
+	{
+		info[i++] = "==== Administrative or hidden settings ====";
+		info[i++] = format("dun_usual: %d (default = 200)", cfg.dun_unusual);
+		info[i++] = format("Stores change their inventory every %d minutes.", cfg.store_turns * 10 / cfg.fps);
+
+		info[i++] = format("starting town: location [%d, %d], baselevel(%d)", cfg.town_x, cfg.town_y, cfg.town_base);
+		info[i++] = format("Angband: baselevel(%d) depth(%d)", cfg.dun_base, cfg.dun_max);
+
+
+		if (cfg.mage_hp_bonus)
+			info[i++] = "mage_hp_bonus is applied.";
+		if (cfg.report_to_meta)
+			info[i++] = "Reporting to the meta-server.";
+		if (cfg.secret_dungeon_master)
+			info[i++] = "Dungeon Master is hidden.";
+		else
+			info[i++] = "Dungeon Master is *SHOWN*!!";
+		//	cfg.unique_max_respawn_time
+		//	cfg.game_port
+		//	cfg.console_port
+	}
+
+	info[i]=NULL;
+
+	/* Let the client know to expect some info */
+	Send_special_other(Ind);
+}
+#endif	// 0
+
+/*
+ * Slash commands - huge hack function for command expansion.
+ */
+
+void do_slash_cmd(int Ind, cptr message)
+{
 	int i;
 	int k = 0, tk = 0;
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -2203,26 +2432,14 @@ void do_slash_cmd(int Ind, cptr message){
 					default:
 						p_ptr->recall_pos.wz = 0;
 				}
-#if 0
-				/* depth in feet */
-				k = tk ? k / 50 : 0;
-
-				if (-MAX_WILD >= k || k >= MAX_DEPTH)
-				{
-						msg_print(Ind, "\377oIllegal depth.  Usage: /recall [depth in feet]");
-				}
-				else
-				{
-						p_ptr->recall_depth = k;
-						p_ptr->word_recall = 1;
-
-						msg_print(Ind, "\377oOmnipresent you are...");
-				}
-				/* do it on your own risk.. pfft */
-				p_ptr->recall_pos.wz = k;
-#endif
 
 				return;
+		}
+		else if (prefix(message, "/version") ||
+				prefix(message, "/ver"))
+		{
+			if (tk) server_knowledge(Ind);
+			msg_print(Ind, longVersion);
 		}
 
 		/*
@@ -2292,18 +2509,6 @@ void do_slash_cmd(int Ind, cptr message){
 			else if (prefix(message, "/clear-level") ||
 					prefix(message, "/clv"))
 			{
-#if 0
-				/* depth in feet */
-				k = k / 50;
-				if (!tk) k = p_ptr->dun_depth;
-
-				if (-MAX_WILD >= k || k >= MAX_DEPTH)
-				{
-					msg_print(Ind, "\377oIllegal depth.  Usage: /clv [depth in feet]");
-					return;
-				}
-#endif
-
 				/* Wipe even if town/wilderness */
 				wipe_o_list_safely(&wp);
 				wipe_m_list(&wp);
@@ -2315,18 +2520,6 @@ void do_slash_cmd(int Ind, cptr message){
 			else if (prefix(message, "/geno-level") ||
 					prefix(message, "/geno"))
 			{
-#if 0
-				/* depth in feet */
-				k = k / 50;
-				if (!tk) k = p_ptr->dun_depth;
-
-				if (-MAX_WILD >= k || k >= MAX_DEPTH)
-				{
-					msg_print(Ind, "\377oIllegal depth.  Usage: /geno [depth in feet]");
-					return;
-				}
-#endif	// 0
-
 				/* Wipe even if town/wilderness */
 				wipe_m_list(&wp);
 
@@ -2336,17 +2529,6 @@ void do_slash_cmd(int Ind, cptr message){
 			else if (prefix(message, "/unstatic-level") ||
 					prefix(message, "/unst"))
 			{
-#if 0
-				/* depth in feet */
-				k = k / 50;
-				if (!tk) k = p_ptr->dun_depth;
-
-				if (-MAX_WILD >= k || k >= MAX_DEPTH)
-				{
-					msg_print(Ind, "\377oIllegal depth.  Usage: /unst [depth in feet]");
-					return;
-				}
-#endif
 				/* no sanity check, so be warned! */
 				master_level_specific(Ind, &wp, "u");
 				//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
@@ -2355,18 +2537,6 @@ void do_slash_cmd(int Ind, cptr message){
 			else if (prefix(message, "/static-level") ||
 					prefix(message, "/sta"))
 			{
-#if 0
-				/* depth in feet */
-				k = k / 50;
-				if (!tk) k = p_ptr->dun_depth;
-
-				if (-MAX_WILD >= k || k >= MAX_DEPTH)
-				{
-					msg_print(Ind, "\377oIllegal depth.  Usage: /sta [depth in feet]");
-					return;
-				}
-#endif // 0
-
 				/* no sanity check, so be warned! */
 				master_level_specific(Ind, &wp, "s");
 				//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
@@ -2552,14 +2722,16 @@ void do_slash_cmd(int Ind, cptr message){
 #endif	// 0
 			else
 			{
-				msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me rec ref rfe tag target untag;");
+				msg_print(Ind, "Commands: afk bed bug cast dis dress ex ignore me rec ref rfe");
+				msg_print(Ind, "  tag target untag ver;");
 				msg_print(Ind, "  art cfg clv en eq geno id kick lua purge shutdown sta trap unc unst wish");
 				return;
 			}
 		}
 		else
 		{
-			msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me rec ref rfe tag target untag;");
+			msg_print(Ind, "Commands: afk bed bug cast dis dress ex ignore me rec ref rfe");
+			msg_print(Ind, "  tag target untag ver;");
 //			msg_print(Ind, "  /quaff is also available for old client users :)");
 			msg_print(Ind, "  /dis \377rdestroys \377wall the uninscribed items in your inventory!");
 			return;

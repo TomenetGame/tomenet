@@ -2448,10 +2448,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				if (!o_ptr->k_idx) continue;
 				if (o_ptr->name1 == ART_POWER) continue;
+				if ((j = rand_int(100)) > 20 + glev) continue;
 
 				ident = TRUE;
 
-				if (is_book(o_ptr)) str = "!*!m!n!p";
+				if (!(j % 3)) str = "Vlad was here!!";
+				else if (is_book(o_ptr)) str = "!*!m!n!p";
 				else switch (o_ptr->tval)
 				{
 					case TV_SCROLL:
@@ -2508,9 +2510,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			}
 			for (k = 1; k <= NumPlayers; k++)
 			{
-				if (Players[k]->conn == NOT_CONNECTED) continue;
-
 				q_ptr = Players[k];
+				if (q_ptr->conn == NOT_CONNECTED) continue;
+
+				if (inarea(wpos, &q_ptr->wpos)) continue;
 
 				msg_print(k, "A fragrant mist fills the air...");
 				hp_player(k, 9999);
@@ -2611,6 +2614,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
 		}
 		/* Cleaning Trap */
+		/* TODO: make radius version of this trap */
 		case TRAP_OF_CLEANING:
 		{
 			int x, y;

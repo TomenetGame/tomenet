@@ -1085,3 +1085,6 @@ extern void place_trap_object(object_type *o_ptr);
 /* wild.c */
 extern void initwild(void);
 extern void genwild(void);
+
+
+extern char	*longVersion;

@@ -659,14 +659,14 @@ bool get_server_name(void)
 //		out_val[strlen(out_val) - 1] = '\0';
 		out_val[j - 1] = '\0';
 
-		prt(out_val, ++lines, 1);
+		prt(out_val, lines++, 1);
 
 		k = 79;
 
 		while (j > k)
 		{
 			/* Print this entry */
-			prt(out_val + k, ++lines, 3);
+			prt(out_val + k, lines++, 3);
 
 			k += 77;
 		}
@@ -681,6 +681,9 @@ bool get_server_name(void)
 //		if (i > 20) break;
 		if (lines > 20) break;
 	}
+
+	/* Message */
+	prt(longVersion , lines + 1, 1);
 
 	/* Prompt */
 	prt("Choose a server to connect to (Q for manual entry): ", lines + 2, 1);

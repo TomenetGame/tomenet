@@ -1,5 +1,7 @@
 #include "angband.h"
 
+#define EVIL_TEST /* evil test */
+
 s16b index_to_label(int i)
 {
 	/* Indices for "inven" are easy */
@@ -252,7 +254,7 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	/* Hack -- start out in "display" mode */
 	if (command_see) 
 	{
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 		screen_icky = TRUE;
 #endif
 		Term_save();
@@ -361,7 +363,7 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				/* Show/hide the list */
 				if (!command_see)
 				{
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 					screen_icky = TRUE;
 #endif
 
@@ -373,7 +375,7 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 					Term_load();
 					command_see = FALSE;
 
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 					screen_icky = FALSE;
 #endif
 
@@ -541,7 +543,7 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	if (command_see) 
 	{
 		Term_load();
-#if 0 /* evil test */
+#ifndef EVIL_TEST /* evil test */
 		screen_icky = FALSE;
 #endif
 	}

@@ -842,10 +842,10 @@ bool check_antimagic(int Ind)
 		if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) continue;
 
 		/* Compute distance */
-		dis = distance(y2, x2, q_ptr->py, q_ptr->px);
+		if (q_ptr->antimagic_dis < distance(y2, x2, q_ptr->py, q_ptr->px))
+			continue;
 
 		antichance = q_ptr->antimagic;
-		antidis = q_ptr->antimagic_dis;
 
 		if (i != Ind) antichance -= p_ptr->lev >> 1;
 
@@ -854,8 +854,11 @@ bool check_antimagic(int Ind)
 		/* Reduction for party */
 		if ((i != Ind) && player_in_party(p_ptr->party, i))
 			antichance >>= 1;
-
+#if 0
+		dis = distance(y2, x2, q_ptr->py, q_ptr->px);
+		antidis = q_ptr->antimagic_dis;
 		if (dis > antidis) antichance = 0;
+#endif	// 0
 
 		/* Got disrupted ? */
 		if (magik(antichance))
@@ -866,6 +869,52 @@ bool check_antimagic(int Ind)
 		}
 	}
 
+	/* Scan the maximal area of radius "MONSTER_ANTIDIS" */
+	dis = 1;
+	for (i = 1; i <= tdi[MONSTER_ANTIDIS]; i++)
+	{
+		if (i == tdi[dis]) dis++;
+
+		y = y2 + tdy[i];
+		x = x2 + tdx[i];
+
+		/* Ignore "illegal" locations */
+		if (!in_bounds2(wpos, y, x)) continue;
+
+		if ((m_idx = zcave[y][x].m_idx)<=0) continue;
+
+		m_ptr = &m_list[m_idx];	// pfft, bad design
+
+		/* dont use removed monsters */
+		if(!m_ptr->r_idx) continue;
+
+		r_ptr = race_inf(m_ptr);
+
+		if (!(r_ptr->flags7 & RF7_DISBELIEVE)) continue;
+
+		antichance = r_ptr->level / 2 + 20;
+		antidis = r_ptr->level / 15 + 3;
+
+		if (dis > antidis) continue;
+		if (antichance > 95) antichance = 95;
+
+		/* Got disrupted ? */
+		if (magik(antichance))
+		{
+			if (p_ptr->mon_vis[m_idx])
+			{
+				char m_name[80];
+				monster_desc(Ind, m_name, m_idx, 0);
+				msg_format(Ind, "%^s's anti-magic shield disrupts your attemps.", m_name);
+			}
+			else
+			{
+				msg_print(Ind, "An anti-magic shield disrupts your attemps.");
+			}
+			return TRUE;
+		}
+	}
+#if 0
 	/* Scan the maximal area of radius "MONSTER_ANTIDIS" */
 	for (y = y2 - MONSTER_ANTIDIS; y <= y2 + MONSTER_ANTIDIS; y++)
 	{
@@ -911,7 +960,7 @@ bool check_antimagic(int Ind)
 			}
 		}
 	}
-
+#endif	// 0
 	/* Assume no antimagic */
 	return FALSE;
 }
