@@ -39,7 +39,10 @@ struct account *GetAccount(char *name, char *pass){
 		if(!strcmp(c_acc->name, name)){
 			int val;
 			if(c_acc->flags & ACC_DELD) continue;
-			val=strcmp(c_acc->pass, pass);
+			if(pass==NULL)		/* direct name lookup */
+				val=0;
+			else
+				val=strcmp(c_acc->pass, pass);
 			memset((char *)c_acc->pass, 0, 20);
 			if(val){
 				fclose(fp);
@@ -61,6 +64,27 @@ struct account *GetAccount(char *name, char *pass){
 	memset((char *)c_acc->pass, 0, 20);
 	fclose(fp);
 	if(c_acc->id) return(c_acc);
+	KILL(c_acc, struct account);
+	return(NULL);
+}
+
+struct account *GetAccountID(u32b id){
+	FILE *fp;
+	struct account *c_acc;
+
+	MAKE(c_acc, struct account);
+	if(c_acc==(struct account*)NULL) return(NULL);
+	fp=fopen("tomenet.acc", "r+");
+	if(fp==(FILE*)NULL) return(NULL);	/* failed */
+	while(!feof(fp)){
+		fread(c_acc, sizeof(struct account), 1, fp);
+		if(id==c_acc->id && !(c_acc->flags & ACC_DELD)){
+			memset((char *)c_acc->pass, 0, 20);
+			fclose(fp);
+			return(c_acc);
+		}
+	}
+	fclose(fp);
 	KILL(c_acc, struct account);
 	return(NULL);
 }

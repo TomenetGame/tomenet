@@ -2438,6 +2438,7 @@ errr rd_server_savefile()
 
 	if (!older_than(0,4,1))
 	{
+		rd_u32b(&account_id);
 		rd_s32b(&player_id);
 	}
 	else player_id = 1;

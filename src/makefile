@@ -322,7 +322,7 @@ CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
 TOLUA = server/tolua
 
-all: date tomenet tomenet.console tomenet.server
+all: date tomenet tomenet.console tomenet.server accedit
 
 # sorry. install on every make is a real pain ;)
 
@@ -342,6 +342,9 @@ update_use:
 	touch client/main-x11.c
 #	touch client/main-gcu.c
 	touch console/c-init.c
+
+accedit: account/accedit.o
+	$(CC) $(CFLAGS) -o accedit account/accedit.o -lcurses
 
 #
 # Build the "MAngband" server

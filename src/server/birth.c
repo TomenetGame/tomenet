@@ -1509,10 +1509,11 @@ static void player_setup(int Ind, bool new)
  * Note that we may be called with "junk" leftover in the various
  * fields, so we must be sure to clear them first.
  */
-bool player_birth(int Ind, cptr name, int conn, int race, int class, int sex, int stat_order[6])
+bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int class, int sex, int stat_order[6])
 {
 	player_type *p_ptr;
 	int i;
+	struct account *c_acc;
 
 	/* Do some consistency checks */
 	if (race < 0 || race >= MAX_RACES) race = 0;
@@ -1535,11 +1536,19 @@ bool player_birth(int Ind, cptr name, int conn, int race, int class, int sex, in
 	strcpy(p_ptr->name, name);
 	p_ptr->conn = conn;
 
+	c_acc=GetAccount(accname, NULL);
+	if(c_acc){
+		p_ptr->account=c_acc->id;
+		KILL(c_acc, struct account);
+	}
+
 	/* Verify his name and create a savefile name */
 	if (!process_player_name(Ind, TRUE)) return FALSE;
 
 	/* Attempt to load from a savefile */
 	character_loaded = FALSE;
+
+	confirm_admin(Ind);
 
 	/* Try to load */
 	if (!load_player(Ind))
@@ -1678,8 +1687,16 @@ bool player_birth(int Ind, cptr name, int conn, int race, int class, int sex, in
 /* returns FALSE if bogus admin - Jir - */
 bool confirm_admin(int Ind)
 {
+	struct account *c_acc;
 	player_type *p_ptr = Players[Ind];
-	return TRUE;
+	bool admin=FALSE;
+
+	c_acc=GetAccountID(p_ptr->account);
+	if(!c_acc) return(FALSE);
+	if(c_acc->flags&ACC_ADMIN) admin=TRUE;
+	KILL(c_acc, struct account);
+	p_ptr->admin_dm=admin;
+	return(admin);
 }
 
 
@@ -1713,6 +1730,7 @@ void server_birth(void)
 	strcpy(parties[0].name, "Neutral");
 
 	/* First player's ID should be 1 */
+	account_id = 1;
 	player_id = 1;
 }
 

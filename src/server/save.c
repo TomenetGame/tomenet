@@ -2367,6 +2367,7 @@ static bool wr_server_savefile(void)
 	wr_guilds();
 	wr_quests();
 
+	wr_u32b(account_id);
 	wr_s32b(player_id);
 	wr_s32b(turn);
 

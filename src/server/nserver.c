@@ -1679,7 +1679,7 @@ static int Handle_login(int ind)
 		}
 	}
 
-	if (!player_birth(NumPlayers + 1, connp->nick, ind, connp->race, connp->class, connp->sex, connp->stat_order))
+	if (!player_birth(NumPlayers + 1, connp->nick, connp->nick, ind, connp->race, connp->class, connp->sex, connp->stat_order))
 	{
 		/* Failed, connection destroyed */
 		Destroy_connection(ind, "not login");

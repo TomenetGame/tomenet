@@ -321,7 +321,7 @@ extern char summon_kin_type;
  */
 
 /* birth.c */
-extern bool player_birth(int Ind, cptr name, int conn, int race, int class, int sex, int stat_order[]);
+extern bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int class, int sex, int stat_order[]);
 extern bool confirm_admin(int Ind);
 extern void server_birth(void);
 extern void admin_outfit(int Ind, int realm);
