@@ -20,8 +20,9 @@ static bool item_tester_magicable(object_type *o_ptr)
 
 	if (get_skill(SKILL_SHADOW) && o_ptr->tval == TV_SHADOW_BOOK) return TRUE;
 
-	if (o_ptr->tval == TV_HUNT_BOOK) return TRUE;
+	if (get_skill(SKILL_ARCHERY) && o_ptr->tval == TV_HUNT_BOOK) return TRUE;
 
+//	if (get_skill(SKILL_PSI) && o_ptr->tval == TV_PSI_BOOK) return TRUE;
 	if (o_ptr->tval == TV_PSI_BOOK) return TRUE;
 
 	/* two more for expansion */

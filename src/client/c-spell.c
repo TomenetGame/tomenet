@@ -5,8 +5,21 @@
 
 static void print_spells(int book)
 {
-        int	i, col;
-        object_type *o_ptr = &inventory[book];
+	int	i, col, realm, num;
+	object_type *o_ptr = &inventory[book];
+
+	/* Hack -- handle ghosts right */
+	if (p_ptr->ghost)
+	{
+		realm = REALM_GHOST;
+		num = 0;
+	}
+	else
+	{
+		realm = find_realm(o_ptr->tval);
+		num = o_ptr->xtra1;
+	}
+
 
 	/* Print column */
 	col = 20;
@@ -20,11 +33,11 @@ static void print_spells(int book)
 	for (i = 0; i < 9; i++)
 	{
 		/* Check for end of the book */
-		if (spell_info[find_realm(o_ptr->tval)][o_ptr->xtra1][i][0] == '\0')
+		if (spell_info[realm][num][i][0] == '\0')
 			break;
 
 		/* Dump the info */
-		prt(spell_info[find_realm(o_ptr->tval)][o_ptr->xtra1][i], 2 + i, col);
+		prt(spell_info[realm][num][i], 2 + i, col);
 	}
 
 	/* Clear the bottom line */
@@ -120,7 +133,8 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 		/* Look for "okay" spells */
 		//if (spell_info[realm][book][i][0])
 		/* quite a hack.. FIXME */
-		if (!spell_info[realm][book][i][0])
+//		if (!spell_info[realm][book][i][0])
+		if (!strstr(spell_info[realm][book][i],"unknown"))
 		{
 			okay = TRUE;
 			num++;

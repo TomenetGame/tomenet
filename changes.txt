@@ -1109,6 +1109,7 @@ To find the latest change quickly, search ==== :)
 22/06/2002 (Jir)
 - spell interference is affected by corresponding skills.
 [B] some spells are shown as 'unknown' even when castable
+[B] Ghost powers were broken
 
 
 
@@ -1130,7 +1131,6 @@ concisely: what's hot now?
   + Archery and Hunting should be separate skills?
     (Hunting books for non-archers are too strong)
   + spell_info should be redone
-  [B] Ghost powers are broken
 - LUA hook
 - csfunc
 - alignment (let's wait for EE :)
