@@ -1448,7 +1448,8 @@ static void player_setup(int Ind)
  */
 bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, int sex, int stat_order[6])
 {
-	player_type *p_ptr;
+        player_type *p_ptr;
+        int i;
 
 	/* Do some consistency checks */
 	if (race < 0 || race >= MAX_RACES) race = 0;
@@ -1573,7 +1574,35 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	player_outfit(Ind);
 
 	/* Set his location, panel, etc. */
-	player_setup(Ind);
+        player_setup(Ind);
+
+        /* Set up the skills */
+	p_ptr->skill_points = 0;
+	p_ptr->skill_last_level = 1;
+	for (i = 1; i < MAX_SKILLS; i++)
+		p_ptr->s_info[i].dev = FALSE;
+	for (i = 1; i < MAX_SKILLS; i++)
+	{
+		s32b value = 0, mod = 0;
+
+		compute_skills(p_ptr, &value, &mod, i);
+
+                init_skill(p_ptr, value, mod, i);
+
+		/* Develop only revelant branches */
+		if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod)
+		{
+			int z = s_info[i].father;
+
+			while (z != -1)
+			{
+				p_ptr->s_info[z].dev = TRUE;
+                                z = s_info[z].father;
+                                if (z == 0)
+                                        break;
+			}
+		}
+        }
 
 	/* Success */
 	return TRUE;

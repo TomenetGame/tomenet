@@ -31,14 +31,14 @@
  * You have been warned.
  */
 
-#define VERSION_MAJOR	3
-#define VERSION_MINOR   5
-#define VERSION_PATCH   2
+#define VERSION_MAJOR   4
+#define VERSION_MINOR   0
+#define VERSION_PATCH   0
 
 /*
  * Current version number of TomeNET:
  */
-#define TOMANG_VERSION_LONG_DATE "TomeNET 3.5.2 beta (compiled "
+#define TOMANG_VERSION_LONG_DATE "TomeNET 4.0.0 (compiled "
 
 /*
  * This value specifies the suffix to the version info sent to the metaserver.
@@ -4676,3 +4676,27 @@ extern int PlayerUID;
 #define HOOK_LEVEL_REGEN        42
 #define HOOK_LEVEL_END_GEN      43
 #define MAX_HOOKS               44
+
+
+/*
+ * Skills
+ */
+#define SKILL_MAX               50000           /* Maximun skill value */
+#define SKILL_STEP              1000            /* 1 skill point */
+
+#define SKILl_EXCLUSIVE         9999            /* Flag to tell exclusive skills */
+
+#define SKILL_COMBAT            1
+#define SKILL_MASTERY           2
+#define SKILL_SWORD             3
+#define SKILL_POLEARM           4
+#define SKILL_HAFTED            5
+
+/* Ugly but needed */
+#define MAX_SKILLS              70
+
+/* SKill flags */
+#define SKF1_HIDDEN             0x00000001      /* Starts hidden */
+
+/* Skill points per level */
+#define SKILL_NB_BASE           4

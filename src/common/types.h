@@ -1297,7 +1297,18 @@ struct player_class
 	s16b x_thb;			/* extra to hit (bows) */
 
 	s16b c_mhp;			/* Class hit-dice adjustment */
-	s16b c_exp;			/* Class experience factor */
+        s16b c_exp;			/* Class experience factor */
+
+        struct
+        {
+                s16b skill;
+
+                char vmod;
+                s32b value;
+
+                char mmod;
+                s16b mod;
+        } skills[MAX_SKILLS];
 };
 
 
@@ -1448,6 +1459,39 @@ struct ip_ban{
 };
 
 /*
+ * Skills !
+ */
+typedef struct skill_type skill_type;
+struct skill_type
+{
+	cptr name;                              /* Name */
+	cptr desc;                              /* Description */
+	cptr action_desc;                       /* Action Description */
+
+	s16b action_mkey;                       /* Action do to */
+
+        s16b action[MAX_SKILLS][2];             /* List of actions against other skills in th form: action[x] = {SKILL_FOO, 10} */
+
+	s16b father;                            /* Father in the skill tree */
+        s16b order;                             /* Order in the tree */
+
+        u32b flags1;                            /* Skill flags */
+};
+
+/*
+ * Skills of each player
+ */
+typedef struct skill_player skill_player;
+struct skill_player
+{
+	s32b value;                             /* Actual value */
+	u16b mod;                               /* Modifier(1 skill point = modifier skill) */
+	bool dev;                               /* Is the branch developped ? */
+        bool hidden;                            /* Innactive */
+
+};
+
+/*
  * Most of the "player" information goes here.
  *
  * This stucture gives us a large collection of player variables.
@@ -1500,7 +1544,11 @@ struct player_type
 	byte prace;			/* Race index */
 	byte pclass;		/* Class index */
 	byte male;			/* Sex of character */
-	byte oops;			/* Unused */
+        byte oops;			/* Unused */
+
+        skill_player s_info[MAX_SKILLS]; /* Player skills */
+        s16b skill_points;      /* number of skills assignable */
+        s16b skill_last_level;  /* last level we gained a skill point */
 	
 	s16b class_extra;	/* Class extra info */
 

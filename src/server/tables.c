@@ -1627,7 +1627,34 @@ player_class class_info[MAX_CLASS] =
 		{ 5, -2, -2, 2, 2, -1},
 		25, 18, 18, 1,  14, 2, 70, 55,
 		10, 7,  10, 0,  0,  0,  45, 45,
-		9,  0
+                9,  0,
+                {
+                        {
+                                SKILL_COMBAT,
+                                '+', 1000,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_SWORD,
+                                '+', 0,
+                                '+', 400,
+                        },
+                        {
+                                SKILL_HAFTED,
+                                '+', 0,
+                                '+', 400,
+                        },
+                        {
+                                SKILL_POLEARM,
+                                '+', 0,
+                                '+', 400,
+                        },
+                }
 	},
 
 	{
@@ -3979,4 +4006,114 @@ martial_arts ma_blows[MAX_MA] =
 	{ "You hit %s with a flying kick.",         41, 35, 8, 10, 12 },
 	{ "You hit %s with a Dragon Fist.",         45, 35, 10, 10, 16 },
 	{ "You hit %s with a Crushing Blow.",       48, 35, 10, 12, 18 },
+};
+
+
+/*
+ * Skills
+ */
+skill_type s_info[MAX_SKILLS] =
+{
+        {
+        },
+        {
+                "Combat",
+                "General ability to fight and to pseudo-id armors and weapons.\nIt also allows to use heavier armors without penalities",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                -1,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Weaponmastery",
+                "General ability to use melee weapons",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                -1,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Sword-mastery",
+                "Ability to use swords",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                -1,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Polearm-mastery",
+                "Ability to use polearms",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                -1,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Hafted-mastery",
+                "Ability to use hafted weapons",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                -1,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
 };

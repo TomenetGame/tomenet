@@ -132,7 +132,8 @@ s16b critical_norm(int Ind, int weight, int plus, int dam)
 	int i, k;
 
 	/* Extract "blow" power */
-	i = (weight + ((p_ptr->to_h + plus) * 5) + (p_ptr->lev * 3));
+	i = (weight + ((p_ptr->to_h + plus) * 5) +
+                 get_skill_scale(p_ptr, SKILL_MASTERY, 150));
         i += 50 * p_ptr->xtra_crit;
 
 	/* Chance */
@@ -1373,7 +1374,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 				else
 				{
 					msg_format(Ind, "%^s appears confused.", p_name);
-					set_confused(0 - c_ptr->m_idx, q_ptr->confused + 10 + rand_int(p_ptr->lev) / 5);
+					set_confused(0 - c_ptr->m_idx, q_ptr->confused + 10 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
 				}
 			}
 
@@ -1394,7 +1395,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 				else
 				{
 					msg_format(Ind, "\377o%^s appears stunned.", p_name);
-					set_stun(0 - c_ptr->m_idx, q_ptr->stun + 20 + rand_int(p_ptr->lev) / 5);
+					set_stun(0 - c_ptr->m_idx, q_ptr->stun + 20 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
 				}
 			}
 
@@ -1406,7 +1407,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 				if (rand_int(100) < fear_chance)
 				{
 					msg_format(Ind, "%^s appears afraid.", p_name);
-					set_afraid(0 - c_ptr->m_idx, q_ptr->afraid + 4 + rand_int(p_ptr->lev) / 5);
+					set_afraid(0 - c_ptr->m_idx, q_ptr->afraid + 4 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
 				}
 			}
 

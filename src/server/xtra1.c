@@ -1237,7 +1237,7 @@ static void calc_mana(int Ind)
 	cur_wgt += p_ptr->inventory[INVEN_FEET].weight;
 
 	/* Determine the weight allowance */
-	max_wgt = p_ptr->mp_ptr->spell_weight;
+	max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 500);
 
 	/* Heavy armor penalizes mana */
 	if (((cur_wgt - max_wgt) / 10) > 0)
@@ -1622,6 +1622,38 @@ bool monk_heavy_armor(int Ind)
 	monk_arm_wgt += p_ptr->inventory[INVEN_FEET].weight;
 
 	return (monk_arm_wgt > ( 100 + (p_ptr->lev * 4))) ;
+}
+
+/* Are all the weapons wielded of the right type ? */
+int get_weaponmastery_skill(player_type *p_ptr)
+{
+	int i, skill = 0;
+	object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
+
+	i = 0;
+
+        if (!o_ptr->k_idx)
+        {
+                return 0;
+        }
+        switch (o_ptr->tval)
+        {
+        case TV_SWORD:
+                if ((!skill) || (skill == SKILL_SWORD)) skill = SKILL_SWORD;
+                else skill = -1;
+                break;
+        case TV_HAFTED:
+                if ((!skill) || (skill == SKILL_HAFTED)) skill = SKILL_HAFTED;
+                else skill = -1;
+                break;
+        case SKILL_POLEARM:
+                if ((!skill) || (skill == SKILL_POLEARM)) skill = SKILL_POLEARM;
+                else skill = -1;
+                break;
+	}
+
+	/* Everything is ok */
+	return skill;
 }
 
 
@@ -2799,7 +2831,19 @@ static void calc_bonuses(int Ind)
 
 		/* Boost digging skill by weapon weight */
 		p_ptr->skill_dig += (o_ptr->weight / 10);
-	}
+
+                /* Boost blows with masteries */
+                if (get_weaponmastery_skill(p_ptr) != -1)
+                {
+                        int lev = get_skill(p_ptr, get_weaponmastery_skill(p_ptr));
+
+                        p_ptr->to_h += lev;
+                        p_ptr->to_d += lev / 2;
+                        p_ptr->dis_to_h += lev;
+                        p_ptr->dis_to_d += lev / 2;
+                        p_ptr->num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
+                }
+        }
 
 	/* Different calculation for monks with empty hands */
 	if (p_ptr->pclass == CLASS_MONK)
@@ -2832,6 +2876,14 @@ static void calc_bonuses(int Ind)
 	/* Hell mode is HARD */
 	if ((p_ptr->mode == MODE_HELL) && (p_ptr->num_blow > 1)) p_ptr->num_blow--;
 
+        /* Combat bonus to damage */
+        if (get_skill(p_ptr, SKILL_COMBAT))
+	{
+                int lev = get_skill_scale(p_ptr, SKILL_COMBAT, 10);
+
+                p_ptr->to_d += lev;
+                p_ptr->dis_to_d += lev;
+	}
 
 	/* Assume okay */
 	p_ptr->icky_wield = FALSE;
@@ -2895,7 +2947,7 @@ static void calc_bonuses(int Ind)
 	p_ptr->skill_fos += (p_ptr->cp_ptr->x_fos * p_ptr->lev / 10);
 
 	/* Affect Skill -- combat (normal) (Level, by Class) */
-	p_ptr->skill_thn += (p_ptr->cp_ptr->x_thn * p_ptr->lev / 10);
+        p_ptr->skill_thn += (p_ptr->cp_ptr->x_thn * (((7 * get_skill(p_ptr, SKILL_MASTERY)) + (3 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
 
 	/* Affect Skill -- combat (shooting) (Level, by Class) */
 	p_ptr->skill_thb += (p_ptr->cp_ptr->x_thb * p_ptr->lev / 10);

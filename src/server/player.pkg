@@ -10,6 +10,30 @@ typedef signed int s32b;
 typedef unsigned int u32b;
 
 /*
+ * Skills
+ */
+#define SKILL_MAX               50000           /* Maximun skill value */
+#define SKILL_STEP              1000            /* 1 skill point */
+
+#define SKILl_EXCLUSIVE         9999            /* Flag to tell exclusive skills */
+
+#define SKILL_COMBAT            1
+#define SKILL_MASTERY           2
+#define SKILL_SWORD             3
+#define SKILL_POLEARM           4
+#define SKILL_HAFTED            5
+
+/* Ugly but needed */
+#define MAX_SKILLS              70
+
+/* SKill flags */
+#define SKF1_HIDDEN             0x00000001      /* Starts hidden */
+
+/* Skill points per level */
+#define SKILL_NB_BASE           4
+
+
+/*
  * Maximum number of "normal" pack slots, and the index of the "overflow"
  * slot, which can hold an item, but only temporarily, since it causes the
  * pack to "overflow", dropping the "last" item onto the ground.  Since this
@@ -138,6 +162,18 @@ struct object_type
 	u16b note;			/* Inscription index */
 };
 
+/*
+ * Skills of each player
+ */
+struct skill_player
+{
+	s32b value;                             /* Actual value */
+	u16b mod;                               /* Modifier(1 skill point = modifier skill) */
+	bool dev;                               /* Is the branch developped ? */
+        bool hidden;                            /* Innactive */
+
+};
+
 struct player_type
 {
 	int conn;			/* Connection number */
@@ -166,24 +202,13 @@ struct player_type
 	byte pclass;		/* Class index */
 	byte male;			/* Sex of character */
 	byte oops;			/* Unused */
-	
-	s16b class_extra;	/* Class extra info */
 
+        skill_player s_info[MAX_SKILLS]; /* Player skills */
+        s16b skill_points;      /* number of skills assignable */
+        s16b skill_last_level;  /* last level we gained a skill point */
+	
 	byte hitdie;		/* Hit dice (sides) */
 	s16b expfact;		/* Experience factor */
-
-	byte maximize;		/* Maximize stats */
-	byte preserve;		/* Preserve artifacts */
-
-	s16b age;			/* Characters age */
-	s16b ht;			/* Height */
-	s16b wt;			/* Weight */
-	s16b sc;			/* Social Class */
-
-
-	player_race *rp_ptr;		/* Pointers to player tables */
-	player_class *cp_ptr;
-	player_magic *mp_ptr;
 
 	s32b au;			/* Current Gold */
 
@@ -212,7 +237,6 @@ struct player_type
 
 	s16b max_plv;		/* Max Player Level */
 	s16b max_dlv;		/* Max level explored */
-//	s16b recall_depth;	/* which depth to recall to */
 	worldpos recall_pos;	/* which depth to recall to */
 
 	s16b stat_max[6];	/* Current "maximal" stat values */
@@ -238,79 +262,6 @@ struct player_type
 	s16b target_row;
 
 	s16b health_who;	/* Who's shown on the health bar */
-
-	s16b view_n;		/* Array of grids viewable to player */
-	byte view_y[VIEW_MAX];
-	byte view_x[VIEW_MAX];
-
-	s16b lite_n;		/* Array of grids lit by player lite */
-	byte lite_y[LITE_MAX];
-	byte lite_x[LITE_MAX];
-
-	s16b temp_n;		/* Array of grids used for various things */
-	byte temp_y[TEMP_MAX];
-	byte temp_x[TEMP_MAX];
-
-	s16b target_n;		/* Array of grids used for targetting/looking */
-	byte target_y[TEMP_MAX];
-	byte target_x[TEMP_MAX];
-	s16b target_idx[TEMP_MAX];
-
-	cptr info[128];		/* Temp storage of *ID* and Self Knowledge info */
-	byte special_file_type;	/* Is he using *ID* or Self Knowledge? */
-
-	bool obj_aware[MAX_K_IDX]; /* Is the player aware of this obj type? */
-	bool obj_tried[MAX_K_IDX]; /* Has the player tried this obj type? */
-	bool trap_ident[MAX_T_IDX];       /* do we know the name */
-
-	bool options[64];	/* Player's options */
-	byte d_attr[MAX_K_IDX];
-	char d_char[MAX_K_IDX];
-	byte f_attr[MAX_F_IDX];
-	char f_char[MAX_F_IDX];
-	byte k_attr[MAX_K_IDX];
-	char k_char[MAX_K_IDX];
-	byte r_attr[MAX_R_IDX];
-	char r_char[MAX_R_IDX];
-
-	bool carry_query_flag;
-	bool use_old_target;
-	bool always_pickup;
-	bool stack_force_notes;
-	bool stack_force_costs;
-	bool find_ignore_stairs;
-	bool find_ignore_doors;
-	bool find_cut;
-	bool find_examine;
-	bool disturb_move;
-	bool disturb_near;
-	bool disturb_panel;
-	bool disturb_state;
-	bool disturb_minor;
-	bool disturb_other;
-	bool stack_allow_items;
-	bool stack_allow_wands;
-	bool view_perma_grids;
-	bool view_torch_grids;
-	bool view_reduce_lite;
-	bool view_reduce_view;
-	bool view_yellow_lite;
-	bool view_bright_lite;
-	bool view_granite_lite;
-	bool view_special_lite;
-
-	s16b max_panel_rows;
-	s16b max_panel_cols;
-	s16b panel_row;
-	s16b panel_col;
-	s16b panel_row_min;
-	s16b panel_row_max;
-	s16b panel_col_min;
-	s16b panel_col_max;
-	s16b panel_col_prt;	/* What panel this guy's on */
-	s16b panel_row_prt;
-	s16b panel_row_old;
-	s16b panel_col_old;
 
 	char died_from[80];	/* What off-ed him */
 	char died_from_list[80]; /* what goes on the high score list */

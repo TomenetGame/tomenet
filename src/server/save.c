@@ -1124,6 +1124,18 @@ static void wr_extra(int Ind)
 	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_cnt[i]);
 	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_los[i]);
 
+        /* Dump the skills */
+        wr_u16b(MAX_SKILLS);
+        for (i = 0; i < MAX_SKILLS; ++i)
+        {
+                wr_s32b(p_ptr->s_info[i].value);
+                wr_u16b(p_ptr->s_info[i].mod);
+                wr_byte(p_ptr->s_info[i].dev);
+                wr_byte(p_ptr->s_info[i].hidden);
+        }
+	wr_s16b(p_ptr->skill_points);
+	wr_s16b(p_ptr->skill_last_level);
+
 	wr_s32b(p_ptr->id);
 	wr_u32b(p_ptr->dna);
 

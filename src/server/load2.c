@@ -1087,7 +1087,8 @@ static bool rd_extra(int Ind)
 
 	int i;
 
-	byte tmp8u;
+        byte tmp8u;
+        u16b tmp16b;
 
 	rd_string(p_ptr->name, 32);
 
@@ -1133,6 +1134,22 @@ static bool rd_extra(int Ind)
 	/* Dump the stats (maximum and current) */
 	for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_cnt[i]);
 	for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_los[i]);
+
+        /* Read the skills */
+        rd_s16b(&tmp16b);
+        if (tmp16b > MAX_SKILLS)
+        {
+                quit("Too many skills!");
+        }
+        for (i = 0; i < tmp16b; ++i)
+        {
+                rd_s32b(&p_ptr->s_info[i].value);
+                rd_u16b(&p_ptr->s_info[i].mod);
+                rd_byte(&p_ptr->s_info[i].dev);
+                rd_byte(&p_ptr->s_info[i].hidden);
+        }
+	rd_s16b(&p_ptr->skill_points);
+	rd_s16b(&p_ptr->skill_last_level);
 
 	rd_s32b(&p_ptr->id);
 
