@@ -1042,6 +1042,8 @@ static char *object_desc_num(char *t, uint n)
 {
 	uint p;
 
+        if (n > 10000) n = 10000;
+
 	/* Find "size" of "n" */
 	for (p = 1; n >= p * 10; p = p * 10) /* loop */;
 
