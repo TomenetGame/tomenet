@@ -1858,7 +1858,7 @@ struct player_type
 	byte party;		/* The party he belongs to (or 0 if neutral) */
 	byte guild;		/* The guild he belongs to (0 if neutral)*/
 
-	s16b target_who;
+	u16b target_who;
 	s16b target_col;	/* What position is targetted */
 	s16b target_row;
 

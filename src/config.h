@@ -786,7 +786,7 @@
 /* OPTION: Use mangband-style houses in place of Vanilla/ToME ones.
  * (make clean!)
  */
-//#define USE_MANG_HOUSE_ONLY	/* Not tested yet */
+/* #define USE_MANG_HOUSE_ONLY	*//* Not tested yet */
 #define USE_MANG_HOUSE
 #define MANG_HOUSE_RATE	80	/* 80 is important to allow newbies without */
 				/* 300k cash to spend to buy a house too! (C. Blue) */
@@ -802,11 +802,6 @@
  */
 #define MSG_HISTORY_MAX	30
 
-/*
- * Evileye's testing code for 'icky' things in the client.
- * DELETEME - test done
- */
-#define EVIL_TEST
 #define EVIL_METACLIENT
 
 #define CLIENT_SHIMMER

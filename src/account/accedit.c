@@ -7,6 +7,9 @@
 #define HAVE_CRYPT 1
 
 #include <curses.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
@@ -17,6 +20,8 @@
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
 #endif
 
+static char *t_crypt(char *inbuf, const char *salt);
+
 void editor(void);
 void edit(void);
 unsigned short ask(char *prompt);
@@ -24,6 +29,9 @@ void status(char *info);
 void setupscreen(void);
 unsigned short recwrite(struct account *rec, long filepos);
 int ListAccounts(int fpos);
+void statinput(char *prompt, char *string, int max);
+void getstring(const char *prompt, char *string, int max);
+int findacc(void);
 
 FILE *fp;
 WINDOW *listwin, *mainwin;
@@ -438,7 +446,7 @@ int findacc(){
 	char sname[30];
 	struct account c_acc;
 
-	statinput("Find which name: ", &sname, 30);
+	statinput("Find which name: ", sname, 30);
 	fseek(fp, 0L, SEEK_SET);
 	/* its always upper, and admins can be lazy */
 	sname[0]=toupper(sname[0]);
