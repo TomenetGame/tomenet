@@ -21,6 +21,7 @@ Newbie Tutorial - http://www.ctt.ne.jp/~sap/mang/
 Latest changes(digest):
 - YOU LOSE YOUR ARTIFACT IF YOU LOOSE YOUR GRIP ON IT!
 - 50-350ft in dungeon cannot be static, so please SAVE IN TOWN.
+- You'll be protected by GoI for 2-turns after recall/stairs.
 - Some anti-cheeze rules are applied.
 - Temple priest gives you some $ when resurrecting, so don't suicide :)
 - Inscription {!=} forces you to pick it up; use it on your arrows.
@@ -35,8 +36,8 @@ Latest changes(digest):
 
 Mangband newbie FAQ / survival guide
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-Version .35, late april/early may 1999
-By Alex Dingle (Blair, Wortle, Thraxton, etc)
+Version .35a, late november 2001
+Modified by Jir - Originally by Alex Dingle (Blair, Wortle, Thraxton, etc)
 Macros and revisions added by Conn -- thanks!
 
 *** NOTICE -- This document is currently under construction. If you would 
@@ -103,21 +104,21 @@ Part VI -- Glossary of mang-related slang/vocabulary
 Part I -- Basic Setup, pre-game questions
 -----------------------------------------
 
-1. What is mangband? How do I find out more about it?
+1. What is Mangband/PernMangband? How do I find out more about it?
 
        Mangband is an addictive multiplayer real-time adventure game based 
 loosly off Tolkien's "The Lord of the Rings" series, originally written by
 Keldon Jones. The official (although somewhat dated) mangband homepage can 
-be found at http://www.umr.edu/~keldon/MAngband/. A more recent page that I
-recommend is Thorin's mangband page, found at 
-http://members.xoom.com/MAngband/index.html . Mangband is a variant of the
+be found at http://www.mangband.org/.  Mangband is a variant of the
 popular game angband, and a lot of useful links and information can be found
-on the angband home, http://www.phial.com. 
+on the angband home, http://www.phial.com/. 
        Since the source code is available, many of the servers 
-(such as fox-099) run versions of mangband with custom modifications. Servers
-using the fox-099 set of modifications are usually denoted by a -D after the 
-version name. These modifications give a number of things, notably affordable 
-houses, enhanced team abilities, and enhanced class skills.
+(such as dsb.to) run versions of mangband with custom modifications. 
+       Amongst of such variants is the PernMangband - DarkGod(Olorin), the
+author of PernAngband (probably one of the best single-player angband variant)
+founded this by adding many new features and ameliorating the system, and
+now the game is developed by PernAngband Dev-Team.
+       Official website is - http://www.pernmangband.net/ .
 
 2. How is mangband different from angband?
 
@@ -145,9 +146,8 @@ be a way to disable graphics, this does not work. To disable graphics, you
 have to edit mangclient.ini (in the same directory as the executable) and 
 change the first line from graphics=1 to graphics=0. For this change take 
 effect, you will have to exit mangclient.exe and start it again. 
-      Thorin (see Thorin's mangband page above) has mentioned that he has a
-set of graphics which are much nicer looking than the standard ones, but I 
-have not seen them yet.
+      Thorin has mentioned that he has a set of graphics which are much nicer
+looking than the standard ones, but I have not seen them yet.
 
 5. How do I make the game go faster?
 
@@ -215,7 +215,7 @@ to move faster, then you can by getting plusses to speed, such as from a
 potion of speed.  Also, if the game ran faster, then since monsters would get
 more attacks in a given period of time lag would be even more significant.
       It should be noted that the game runs at varies with the depth of the 
-dungeon.  This was
+dungeon.
 
 
 6. What are the preference files? What options should I enable?
@@ -298,8 +298,8 @@ vetrans!
 
       Make sure you are equiping a light source (such as a torch or a
 lantern).  Try to practice running away from them before they get to you. 
-This skill will be useful in the dungeon. If this is a real problem, maybe you can convince a higher level
-character to kill all the townspeople, 
+This skill will be useful in the dungeon. If this is a real problem, maybe
+you can convince a higher level character to kill all the townspeople. 
 
 5. How do I get into the dungeon?
 
@@ -313,13 +313,31 @@ One is that someone else is on the level, which causes it to remain static.
 Another is that someone has saved on the level. When you save on a level,
 it remains the same until either the server resets or you come back into
 game and leave the level.
+      So keep in mind: save in town.
 
 7. How do I attack monsters? How is this different from angband?
 
+      You can attack a monster next to you by hitting the direction the
+monster is - it's same with angband, but actually no one would do that.
+      Here's what is new: you'll attack nearby monsters automatically if you
+don't type a command(it's called "auto-retaliator").
+      Furthermore, now the game has configurable auto-retaliator:
+      If you inscribe {@O} on missiles, you'll auto-attack monsters with them.
+      {@Oc} on a book makes you auto-cast the spell 'c'.
+      {@Ox} inscription on an item turns auto-retaliator off.
+      Don't forget - they only works against monsters NEXT TO YOU.
+
 8. Help, I just died!  What do I do now?
 
-      If you are high level (yeah, right), you may be able to get a
-sympathetic PC to come ressurect you.
+      It depends on your level. If your level is:
+
+- very low (like lv.1-3), just suicide and start over.
+- low (lv.4-20), press '<' continuously to get back to the town, visit
+  the temple(store '4') to resurrect. Temple priest gives you some money
+  for your revival.
+- high (yeah, right), you may be able to get a sympathetic PC to come ressurect you(by a scroll of life or something). Try not to leave the floor you died as far as possible, or your items will disappear. 
+  Stocking items in a house might be a good idea also.
+- too high (50+), probably it'll be hard to find suitable one to help you :)
 
 9. If I am deep in the dungeon, how do I easily return to town?
 
@@ -475,11 +493,24 @@ Part V. -- Miscilanious Questions
 
 1. How does mangband differ from angband?
 
+      Monsters won't wait for you to make decision.
+	  You have comrades to talk with and fight WITH(both means:).
+
 2. How do I send private messages?
+
+      (name):(message)
+
+	  ex) Alex:can u come to my house?
 
 3. What is targetting lag?
 
+      (I dunno - Jir)
+
 4. Can I attack other players?
+
+      Use the party command('P' or 'O');
+	  Specify the player/party to attack.
+	  Of course, you should prepare for the worst ;)
 
 5. Help! Now that I am addicted to mangband, how do I retain a social life?
 
@@ -523,8 +554,8 @@ See stair scumming.
 DSM -- Dragon Scale Mail, a type of rare armour. if you are new you probably 
 won't be finding any anytime soon.
 
-Dynamic level (dynamic) -- A level that is randomly regenerating each time someone 
-leaves it and comes back to it.  See static level.
+Dynamic level (dynamic) -- A level that is randomly regenerating each time
+someone leaves it and comes back to it.  See static level.
 
 Excellents -- Non-unique items that possess special powers. An example
 would be a long sword of slay orc, or soft leather boots of stealth.
@@ -538,7 +569,11 @@ example would be a whip +6+3, or small leather boots +6.
 Gorth Room -- a type of room found in the dungeon that is subdivided into 4
 chambers, often housing tough monsters.
  
+GV -- Greater Vault.
+
 HA -- Holy Avenger. A type of excellent weapon. (see excellent)
+
+LV -- Lesser Vault.
 
 Morgoth, Lord of Darkness (Morgoth) -- This is the most powerful unique
 monster. To win the game you must kill him.
@@ -560,13 +595,14 @@ object long enough, he may be able to tell if it is enchanted, cursed, or
 ordinary. High level characters pseudo-ID faster. Can be used as a verb. 
 (Hey, wanna pseudo this for me?)
 
-Sector -- 
+Sector -- yardstick to tell people your location, like [3,2]. 
+Press 'L' (or 'W') to obtain it.
 
 Static level (static) -- A level that, for whatever reason, is staying the
 same when it is left. 
 
 Unique -- A special monster, who is an individual. Often accompanied by
-acoplices. An example would be Mugash, the Kobold Lord.
+accomplices('Fan Club'). An example would be Mugash, the Kobold Lord.
 
 Vault (lesser vault) -- a special room in the dungeon, typically housing many 
 out of depth monsters and superior treasure.
