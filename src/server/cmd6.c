@@ -4700,7 +4700,7 @@ void do_cmd_activate(int Ind, int item)
         u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
 
-	int         i, k, lev, chance;
+	int         i, k, lev, chance, slot;
 
 	object_type *o_ptr;
 
@@ -4734,9 +4734,20 @@ void do_cmd_activate(int Ind, int item)
 		o_ptr = &o_list[0 - item];
 	}
 
+	/* If the item can be equipped, it MUST be equipped to be activated */
+	slot = wield_slot(Ind, o_ptr);
+	if (item_tester_hook_wear(Ind, slot))
+	{
+		if (item != slot)
+		{
+			msg_print(Ind, "You must be using this item to activate it.");
+			return;
+		}
+	}
+
 	if( check_guard_inscription( o_ptr->note, 'A' ))
 	{
-		msg_print(Ind, "The item's inscription prevents it");
+		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	} 
 
@@ -6798,7 +6809,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 
-	int item;
+	int item, slot;
 
 	item = p_ptr->current_activation;
 
@@ -6812,6 +6823,17 @@ void do_cmd_activate_dir(int Ind, int dir)
 	else
 	{
 		o_ptr = &o_list[0 - item];
+	}
+
+	/* If the item can be equipped, it MUST be equipped to be activated */
+	slot = wield_slot(Ind, o_ptr);
+	if (item_tester_hook_wear(Ind, slot))
+	{
+		if (item != slot)
+		{
+			msg_print(Ind, "You must be using this item to activate it.");
+			return;
+		}
 	}
 
 	if( check_guard_inscription( o_ptr->note, 'A' )) {
