@@ -3473,8 +3473,11 @@ bool player_can_enter(int Ind, byte feature)
 			return (TRUE);	/* you can pass, but you may suffer dmg */
 
 		case FEAT_DEAD_TREE:
+			if ((p_ptr->fly) || pass_wall)
+			    return (TRUE);
+		/* 	handled in default:
+		    case FEAT_SMALL_TREES: 	*/
 		case FEAT_TREES:
-		case FEAT_SMALL_TREES:
 		{
 			/* 708 = Ent (passes trees), 83/142 novice ranger, 345 ranger, 637 ranger chieftain, 945 high-elven ranger */
 			if ((p_ptr->fly) || (p_ptr->prace == RACE_ENT) || pass_wall ||
