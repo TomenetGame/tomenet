@@ -1155,7 +1155,7 @@ void do_cmd_read_scroll(int Ind, int item)
 	        {	    
                         msg_print(Ind, "This is a golem creation scroll.");
 			ident = TRUE;
-                        golem_creation(Ind);
+                        golem_creation(Ind, 1);
 			break;
             	}
 	        case SV_SCROLL_BLOOD_BOND:

@@ -4108,7 +4108,7 @@ void house_creation(int Ind)
 }
 
 /* Create a mindless servant ! */
-void golem_creation(int Ind)
+void golem_creation(int Ind, int max)
 {
 	player_type *p_ptr = Players[Ind];
         monster_race *r_ptr;
@@ -4119,8 +4119,33 @@ void golem_creation(int Ind)
         int golem_legs[30], golem_m_legs = 0;
         s16b golem_flags = 0;
         cave_type *c_ptr;
-        int x, y;
+        int x, y, k, g_cnt = 0;
         bool ok = FALSE;
+
+        /* Process the monsters */
+        for (k = m_top - 1; k >= 0; k--)
+        {
+                /* Access the index */
+                i = m_fast[k];
+
+                /* Access the monster */
+                m_ptr = &m_list[i];
+
+                /* Excise "dead" monsters */
+                if (!m_ptr->r_idx) continue;
+
+                if (m_ptr->owner != p_ptr->id) continue;
+
+                if (!i) continue;
+
+                g_cnt++;
+        }
+
+        if (g_cnt >= max)
+        {
+                msg_print(Ind, "You cannot create more golems.");
+                return (FALSE);
+        }
 
         for (x = p_ptr->px - 1; x <= p_ptr->px; x++)        
         for (y = p_ptr->py - 1; y <= p_ptr->py; y++)

@@ -850,7 +850,7 @@ extern bool project_hook(int Ind, int typ, int dir, int dam, int flg);
 extern bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int flg);
 
 /* spells2.c */
-extern void golem_creation(int Ind);
+extern void golem_creation(int Ind, int max);
 extern bool hp_player(int Ind, int num);
 extern bool hp_player_quiet(int Ind, int num);
 extern void warding_glyph(int Ind);
