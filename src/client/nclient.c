@@ -136,6 +136,7 @@ int Receive_file(void){
 	char command, ch;
 	char fname[30];	/* possible filename */
 	int x;	/* return value/ack */
+	char outbuf[80];
 	unsigned short fnum;	/* unique SENDER side file number */
 	unsigned short len;
 	unsigned long csum=0;
@@ -146,6 +147,10 @@ int Receive_file(void){
 			case PKT_FILE_INIT:
 				Packet_scanf(&rbuf, "%s", fname);
 				x=local_file_init(0, fnum, fname);
+				if(x){
+					sprintf(outbuf, "\377oReceiving updated file %s [%d]", fname, fnum);
+					c_msg_print(outbuf);
+				}
 				break;
 			case PKT_FILE_DATA:
 				Packet_scanf(&rbuf, "%hd", &len);
@@ -153,6 +158,10 @@ int Receive_file(void){
 				break;
 			case PKT_FILE_END:
 				x=local_file_close(0, fnum);
+				if(x){
+					sprintf(outbuf, "\377gReceived file %d", fnum);
+					c_msg_print(outbuf);
+				}
 				break;
 			case PKT_FILE_CHECK:
 				Packet_scanf(&rbuf, "%s", fname);
