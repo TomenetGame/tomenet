@@ -2948,6 +2948,7 @@ void monster_death(int Ind, int m_idx)
 				  if (cfg_retire_timer >= 0)
 				    {
 				      p_ptr2->retire_timer = cfg_retire_timer;
+					  msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg_retire_timer);
 				    }
 				}
 			    }
@@ -2968,6 +2969,7 @@ void monster_death(int Ind, int m_idx)
 				if (cfg_retire_timer >= 0)
 				{
 					q_ptr->retire_timer = cfg_retire_timer;
+					msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg_retire_timer);
 				}
 			}
 		}	

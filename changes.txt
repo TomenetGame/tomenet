@@ -304,26 +304,31 @@ Change list for PernMangband
 - "'" command is supported(see above).
 - Graphics bug in win-client is fixed (by Tanix)
  
-19/11/01 (Jir)
+19/11/2001 (Jir)
 - Some xp bonus to encourage partying (C.Blue's idea)
 - Revised conditions to check equipments.
 - Bugfix on /ignore command code.
 
-20/11/01 (Jir)
+20/11/2001 (Jir)
 - You get stunned, confused and also drop some items when theft fails.
 - I have put a bug where OOD monsters are summoned; now fixed (thx Tanix)
 
-22/11/01 (Jir)
+22/11/2001 (Jir)
 - You can use {@O} inscription to control auto-retaliator.
 - Neighboring monsters will try to interfere your attempt to fire.
 
-23/11/01 (Jir)
+23/11/2001 (Jir)
 - Items with too long names are displayed with abbreviated names.
 - New admin commands: /lua, /recall
 - Multiple-melee attacks are efficiently handled now.
 
-23/11/01 (Tanix [Jir wrote this log])
+23/11/2001 (Tanix [Jir wrote this log])
 - Recall/stair GoI message is removed.
 
 24/11/2001
 - Lua scripting
+
+25/11/2001 (Jir)
+- Uniques can resurrect after beating Morgoth.
+- Kings/Queens will be alarmed of retire_timer.
+

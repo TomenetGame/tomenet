@@ -2043,6 +2043,8 @@ static void process_various(void)
 	/* Handle certain things once a minute */
 	if (!(turn % (cfg_fps * 60)))
 	{
+		monster_race *r_ptr;
+
 		/* Update the player retirement timers */
 		for (i = 1; i <= NumPlayers; i++)
 		{
@@ -2052,17 +2054,68 @@ static void process_various(void)
 			if (p_ptr->retire_timer > 0)
 			{
 				// Decrement our retire timer
-				p_ptr->retire_timer--;
+				j = --p_ptr->retire_timer;
+
+				// Alert him
+				if (j <= 60)
+				{
+					msg_format(i, "\377rYou have %d minute%s of tenure left.", j, j > 1 ? "s" : "");
+				}
+				else if (j <= 1440 && !(p_ptr->retire_timer % 60))
+				{
+					msg_format(i, "\377yYou have %d hours of tenure left.", j / 60);
+				}
+				else if (!(j % 1440))
+				{
+					msg_format(i, "\377GYou have %d days of tenure left.", j / 1440);
+				}
+
 
 				// If the timer runs out, forcibly retire
 				// this character.
-				if (!p_ptr->retire_timer)
+				if (!j)
 				{
 					do_cmd_suicide(i);
 				}
 			}
 
-		}
+			/* Reswpan for kings' joy  -Jir- */
+			/* Update the unique respawn timers */
+			for (j = 1; j <= NumPlayers; j++)
+			{
+				p_ptr = Players[j];
+				if (!p_ptr->total_winner) continue;
+
+				/* Hack -- never Maggot and his dogs :) */
+				i = rand_range(50,MAX_R_IDX-2);
+				r_ptr = &r_info[i];
+
+				/* Make sure we are looking at a dead unique */
+				if (!(r_ptr->flags1 & RF1_UNIQUE))
+				{
+					j--;
+					continue;
+				}
+
+				if (!p_ptr->r_killed[i]) continue;
+
+				/* Hack -- Sauron and Morgoth are exceptions */
+				if (r_ptr->flags1 & RF1_QUESTOR) continue;
+
+//				if (r_ptr->max_num > 0) continue;
+				if (rand_int(cfg_unique_respawn_time * (r_ptr->level + 1)) > 9)
+					continue;
+
+				/* "Ressurect" the unique */
+				p_ptr->r_killed[i] = 0;
+// 				r_ptr->max_num = 1;
+//				r_ptr->respawn_timer = -1;
+
+   				/* Tell every player */
+   				msg_format(j,"%s rises from the dead!",(r_name + r_ptr->name));
+//				msg_broadcast(0,buf); 
+			}
+ 		}
 
 #if 0 /* No more reswpan */
 		/* Update the unique respawn timers */
@@ -2097,33 +2150,34 @@ static void process_various(void)
     			}	    			
  		}
 #endif
+
+	}
  		
-		// If the level unstaticer is not disabled
-		if (cfg_level_unstatic_chance > 0)
+	// If the level unstaticer is not disabled
+	if (cfg_level_unstatic_chance > 0)
+	{
+		// For each dungeon level
+		for (i = 1; i < MAX_DEPTH; i++)
 		{
-			// For each dungeon level
-			for (i = 1; i < MAX_DEPTH; i++)
+			// If this depth is static
+			if (players_on_depth[i])
 			{
-				// If this depth is static
-				if (players_on_depth[i])
+				num_on_depth = 0;
+				// Count the number of players actually in game on this depth
+				for (j = 1; j < NumPlayers + 1; j++)
 				{
-					num_on_depth = 0;
-					// Count the number of players actually in game on this depth
-					for (j = 1; j < NumPlayers + 1; j++)
+					p_ptr = Players[j];
+					if (p_ptr->dun_depth == i) num_on_depth++;
+				}
+				// If this level is static and no one is actually on it
+				if (!num_on_depth)
+				{
+					// random chance of the level unstaticing
+					// the chance is one in (base_chance * depth)/250 feet.
+					if (!rand_int(((cfg_level_unstatic_chance * (i+5))/5)-1))
 					{
-						p_ptr = Players[j];
-						if (p_ptr->dun_depth == i) num_on_depth++;
-					}
-					// If this level is static and no one is actually on it
-					if (!num_on_depth)
-					{
-						// random chance of the level unstaticing
-						// the chance is one in (base_chance * depth)/250 feet.
-						if (!rand_int(((cfg_level_unstatic_chance * (i+5))/5)-1))
-						{
-							// unstatic the level
-							players_on_depth[i] = 0;
-						}
+						// unstatic the level
+						players_on_depth[i] = 0;
 					}
 				}
 			}
