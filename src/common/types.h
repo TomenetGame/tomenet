@@ -1215,6 +1215,7 @@ struct player_type
 	s16b current_recharge;
   s16b current_artifact;
   object_type *current_telekinesis;
+	s16b current_curse;
 
 	s16b current_selling;
 	s16b current_sell_amt;

@@ -3210,6 +3210,7 @@ void player_death(int Ind)
 		/* No more item */
 		p_ptr->inventory[i].k_idx = 0;
 		p_ptr->inventory[i].tval = 0;
+		p_ptr->inventory[i].ident = 0;
 		inven_item_increase(Ind, i, -p_ptr->inventory[i].number);
 	}
 
@@ -4383,8 +4384,10 @@ bool target_set_friendly(int Ind, int dir)
 			if (q_ptr->conn == NOT_CONNECTED) continue;
 
 			/* Ignore players we aren't friends with */
-			/* if (!check_hostile(Ind, i)) continue; */
-			if ((!player_in_party(p_ptr->party, Ind)) || (p_ptr->party == 0)) continue;
+			if (check_hostile(Ind, i)) continue;
+
+			/* if we are in party, only help members */
+			if (p_ptr->party && (!player_in_party(p_ptr->party, Ind))) continue;
 
 			/* Ignore "unreasonable" players */
 			if (!target_able(Ind, 0 - i)) continue;

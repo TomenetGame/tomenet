@@ -1860,6 +1860,41 @@ bool create_artifact_aux(int Ind, int item)
 		return TRUE;
 }
 
+bool curse_spell(int Ind){	// could be void
+	player->type *p_ptr=Players[Ind];
+	get_item(Ind);
+	p_ptr->current_curse=1;	/* This is awful. I intend to change it */
+	return(TRUE);
+}
+
+bool curse_spell_aux(int Ind, int item){
+	char		o_name[80];
+
+	object_desc(Ind, o_name, o_ptr, FALSE, 0);
+
+
+	if(artifact_p(item)) return(FALSE);
+	if(item_tester_hook_weapon(item)){
+		o_ptr->to_h=0-randint(10);
+		o_ptr->to_d=0-randint(10);
+	}
+	else if(item_tester_hook_armour(item)){
+		o_ptr->to_a=0-randint(10);
+	}
+	else{
+		msg_format(Ind,"You cannot curse that item!");
+		return(FALSE);
+	}
+
+	msg_format(Ind,"A terrible black aura surrounds your %s\n",o_name,o_ptr->number>1 ? "" : "s");
+	/* except it doesnt actually get cursed properly yet. */
+	o_ptr->name1=0;
+	o_ptr->name3=0;
+	o_ptr->ident|=ID_CURSED|ID_SENSE;	/* not allowing sense may be cruel */
+	o_ptr->ident&=~ID_KNOWN;		/* without this, the spell is pointless */
+	return(TRUE);
+}
+
 bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1887,7 +1922,6 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac)
 	object_type		*o_ptr;
 
 	char		o_name[80];
-
 
 	/* Assume enchant weapon */
 	item_tester_hook = item_tester_hook_weapon;
