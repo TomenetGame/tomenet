@@ -4204,6 +4204,7 @@ void player_death(int Ind)
 #endif	// TOMENET_WORLDS
 			msg_broadcast(Ind, buf);
 		}
+		if(!p_ptr->ghost) Send_chardump(Ind);
 
 		/* wipe artifacts (s)he had */
 		for (i = 0; i < INVEN_TOTAL; i++)
@@ -4268,8 +4269,6 @@ void player_death(int Ind)
 		sprintf(buf, "\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from);
 		s_printf("%s was killed by %s.\n", p_ptr->name, p_ptr->died_from);
 
-		/* Hack -- tell the client to generate a chardump */
-//		Send_chardump(Ind);
 	}
 	else if (!p_ptr->total_winner)
 		sprintf(buf, "\377r%s committed suicide.", p_ptr->name);
@@ -4495,7 +4494,6 @@ void player_death(int Ind)
 		}
 #endif	// CHATTERBOX_LEVEL
 
-		/* Hack -- tell the client to generate a chardump */
 		Send_chardump(Ind);
 
 		/* Turn him into a ghost */

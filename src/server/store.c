@@ -2366,7 +2366,7 @@ void store_stole(int Ind, int item)
 	{
 		/* Complain */
 		// say_comment_4();
-		msg_print(Ind, "\377yBastard{L!!!");
+		msg_print(Ind, "\377yBastard\377L!!!");
 		msg_print(Ind, "\377rNow you're on the black list of merchants..");
 
 		/* Reset insults */
