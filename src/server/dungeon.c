@@ -182,7 +182,7 @@ static cptr value_check_aux2_magic(object_type *o_ptr)
 			if (artifact_p(o_ptr)) return "good";
 
 			/* Scroll of Nothing, Apple Juice, etc. */
-			if (k_ptr->cost < 3) return "average";
+			if (k_ptr->cost < 3) return "average"";
 
 			/*
 			 * Identify, Phase Door, Cure Light Wounds, etc. are
@@ -236,6 +236,8 @@ static void sense_inventory(int Ind)
         bool heavy = FALSE, heavy_magic = FALSE;
         bool ok_combat = FALSE, ok_magic = FALSE;
 
+	bool	heavy = FALSE;
+
 	cptr	feel;
 
 	object_type *o_ptr;
@@ -248,11 +250,11 @@ static void sense_inventory(int Ind)
 	/* No sensing when confused */
 	if (p_ptr->confused) return;
 
-	if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_COMBAT, 130))) ok_combat = TRUE;
-        if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) ok_magic = TRUE;
+	if (0 == rand_int(133 - get_skill_scale(SKILL_COMBAT, 130))) ok_combat = TRUE;
+        if (0 == rand_int(133 - get_skill_scale(SKILL_MAGIC, 130))) ok_magic = TRUE;
         if ((!ok_combat) && (!ok_magic)) return;
-	heavy = (get_skill(p_ptr, SKILL_COMBAT) > 10) ? TRUE : FALSE;
-        heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) > 10) ? TRUE : FALSE;
+	heavy = (get_skill(SKILL_COMBAT) > 10) ? TRUE : FALSE;
+        heavy_magic = (get_skill(SKILL_MAGIC) > 10) ? TRUE : FALSE;
 
 
 	/*** Sense everything ***/
