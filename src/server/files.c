@@ -243,7 +243,7 @@ errr check_time_init(void)
 	check_time_flag = TRUE;
 
 	/* Parse the file */
-	while (0 == my_fgets(fp, buf, 80))
+	while (0 == my_fgets(fp, buf, 80, FALSE))
 	{
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
@@ -370,7 +370,7 @@ errr check_load_init(void)
 	(void)gethostname(thishost, (sizeof thishost) - 1);
 
 	/* Parse it */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		int value;
 
@@ -588,7 +588,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 	while (TRUE)
 	{
 		/* Read a line or stop */
-		if (my_fgets(fff, buf, 1024)) break;
+		if (my_fgets(fff, buf, 1024, FALSE)) break;
 
 		/* XXX Parse "menu" items */
 		if (prefix(buf, "***** "))
@@ -647,7 +647,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 	for (; next < line; next++)
 	{
 		/* Skip a line */
-		if (my_fgets(fff, buf, 1024)) break;
+		if (my_fgets(fff, buf, 1024, FALSE)) break;
 	}
 
 
@@ -660,7 +660,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 		if (!i) line = next;
 
 		/* Get a line of the file or stop */
-		if (my_fgets(fff, buf, 1024)) break;
+		if (my_fgets(fff, buf, 1024, FALSE)) break;
 
 		/* Hack -- skip "special" lines */
 		if (prefix(buf, "***** ")) continue;
@@ -1668,7 +1668,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 	while (TRUE)
 	{
 		/* Get a line from the file */
-		if (my_fgets(fp, buf, 1024) == 0)
+		if (my_fgets(fp, buf, 1024, FALSE) == 0)
 		{
 			/* Count the lines */
 			line_num++;
@@ -1713,7 +1713,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 	while (TRUE)
 	{
 		/* Get the line */
-		if (my_fgets(fp, buf, 1024) == 0)
+		if (my_fgets(fp, buf, 1024, FALSE) == 0)
 		{
 			/* Count the lines */
 			line_num++;
@@ -1748,7 +1748,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 			line_num++;
 
 			/* Try to read the line */
-			if (my_fgets(fp, buf, 1024) == 0)
+			if (my_fgets(fp, buf, 1024, FALSE) == 0)
 			{
 				/* Found the line */
 				if (counter == line) break;

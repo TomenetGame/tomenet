@@ -278,7 +278,7 @@ void show_news(void)
 	if (fp)
 	{
 		/* Dump the file to the screen */
-		while (0 == my_fgets(fp, buf, 1024))
+		while (0 == my_fgets(fp, buf, 1024, FALSE))
 		{
 			/* Display and advance */
 			s_printf(buf);

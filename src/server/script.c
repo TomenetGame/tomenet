@@ -360,7 +360,7 @@ void cat_script(int Ind, char *name)
         if (fff == NULL) return;
 
         /* Process the file */
-        while (0 == my_fgets(fff, buf, 1024))
+        while (0 == my_fgets(fff, buf, 1024, FALSE))
         {
                 msg_print(Ind, buf);
         }

@@ -364,7 +364,7 @@ errr my_fclose(FILE *fff)
  *
  * Process tabs, strip internal non-printables
  */
-errr my_fgets(FILE *fff, char *buf, huge n)
+errr my_fgets(FILE *fff, char *buf, huge n, bool conv)
 {
 	huge i = 0;
 
@@ -402,8 +402,11 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 			}
 
 			/* Handle printables */
-			else if (isprint(*s))
+			else if (isprint(*s) || *s=='\377')
 			{
+				/* easier to edit perma files */
+				if(conv && *s=='{' && *(s+1)!='{')
+					*s='\377';
 				/* Copy */
 				buf[i++] = *s;
 

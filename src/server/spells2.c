@@ -732,7 +732,7 @@ void self_knowledge(int Ind)
 	}
 	if (p_ptr->image)
 	{
-		fprintf(fff, "You are \377rha\377oll\377yuc\377gin\377bat\377ving.\n");
+		fprintf(fff, "You are hallucinating.\n");
 	}
 
 	if (p_ptr->aggravate)

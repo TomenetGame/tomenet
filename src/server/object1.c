@@ -4652,7 +4652,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	/* Open a new file */
 	fff = my_fopen(p_ptr->infofile, "r");
 
-	if (my_fgets(fff, buf, 1024))
+	if (my_fgets(fff, buf, 1024, FALSE))
 	{
 		/* Close the file */
 		my_fclose(fff);

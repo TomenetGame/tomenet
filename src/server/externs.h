@@ -1142,7 +1142,7 @@ extern int name_lookup_loose(int Ind, cptr name, bool party);
 extern errr path_parse(char *buf, int max, cptr file);
 extern errr path_temp(char *buf, int max);
 extern FILE *my_fopen(cptr file, cptr mode);
-extern errr my_fgets(FILE *fff, char *buf, huge n);
+extern errr my_fgets(FILE *fff, char *buf, huge n, bool conv);
 extern int get_playerind(char *name);
 extern errr my_fputs(FILE *fff, cptr buf, huge n);
 extern errr my_fclose(FILE *fff);

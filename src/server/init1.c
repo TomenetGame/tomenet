@@ -1292,7 +1292,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 	v_head->text_size = 0;
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -1498,7 +1498,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 	f_head->text_size = 0;
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -1743,7 +1743,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 	f_head->text_size += strlen("a wall blocking your way");
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -2167,7 +2167,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 	k_head->text_size = 0;
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -2570,7 +2570,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -2868,7 +2868,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -3338,7 +3338,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -3812,7 +3812,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 	r_head->text_size = 0;
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -4526,7 +4526,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
         re_head->text_size = 0;
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -5088,7 +5088,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 	t_head->text_size = 0;
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -5467,7 +5467,7 @@ errr init_d_info_txt(FILE *fp, char *buf)
 	d_head->text_size = 0;
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -6109,7 +6109,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 	st_head->text_size = 0;
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -6416,7 +6416,7 @@ errr init_ba_info_txt(FILE *fp, char *buf)
 	ba_head->text_size = 0;
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -6594,7 +6594,7 @@ errr init_ow_info_txt(FILE *fp, char *buf)
 	ow_head->text_size = 0;
 
 	/* Parse */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Advance the line number */
 		error_line++;
@@ -8041,7 +8041,7 @@ errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int y
 	}
 
 	/* Process the file */
-	while (0 == my_fgets(fp, buf, 1024))
+	while (0 == my_fgets(fp, buf, 1024, FALSE))
 	{
 		/* Count lines */
 		num++;

@@ -1602,7 +1602,7 @@ void do_cmd_time(Ind)
 	if (!fff) return;
 
 	/* Find this time */
-	while (!my_fgets(fff, buf, 1024))
+	while (!my_fgets(fff, buf, 1024, FALSE))
 	{
 		/* Ignore comments */
 		if (!buf[0] || (buf[0] == '#')) continue;

@@ -280,7 +280,7 @@ static int Init_setup(void)
 	if (fp)
 	{
 		/* Dump the file into the buffer */
-		while (0 == my_fgets(fp, buf, 1024) && n < 23)
+		while (0 == my_fgets(fp, buf, 1024, TRUE) && n < 23)
 		{
 			strncpy(&Setup.motd[n * 80], buf, 80);
 			n++;
