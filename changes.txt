@@ -324,3 +324,6 @@ Change list for PernMangband
 
 23/11/01 (Tanix [Jir wrote this log])
 - Recall/stair GoI message is removed.
+
+24/11/2001
+- Lua scripting
