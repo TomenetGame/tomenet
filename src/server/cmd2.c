@@ -3583,6 +3583,11 @@ void do_cmd_throw(int Ind, int dir, int item)
 #endif	// 0
 
 
+	/* Handle rugby ball */
+	if(o_ptr->tval==1 && o_ptr->sval==9){
+		msg_print(Ind, "You pass the ball");
+		msg_format_near(Ind, "%s passes the ball", p_ptr->name);
+	}
 	/* Handle the newbies_cannot_drop option */
 	if (p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval)
 	{
@@ -3781,6 +3786,22 @@ void do_cmd_throw(int Ind, int dir, int item)
 		/* Player here, try to hit him */
 		if (zcave[y][x].m_idx < 0)
 		{
+			/* rugby */
+			if(o_ptr->tval==1 && o_ptr->sval==9){
+				cave_type *c_ptr = &zcave[y][x];
+				if(rand_int(11)>6){
+					msg_format_near(0-c_ptr->m_idx, "%s catches the ball", Players[0-c_ptr->m_idx]->name);
+					msg_print(0-c_ptr->m_idx, "You catch the ball");
+					inven_carry(0-c_ptr->m_idx, o_ptr);
+				}
+				else{
+					msg_format_near(0-c_ptr->m_idx, "%s misses the ball", Players[0-c_ptr->m_idx]->name);
+					msg_print(0-c_ptr->m_idx, "You miss the ball");
+					drop_near(o_ptr, -1, wpos, y, x);
+				}
+				/* and stop */
+				return;
+			}
 			if (cfg.use_pk_rules == PK_RULES_NEVER)
 			{
 				/* Stop looking */
