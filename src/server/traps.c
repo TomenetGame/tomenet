@@ -475,7 +475,7 @@ bool do_trap_of_silliness(int Ind, int power)
 
 }
 
-bool do_player_drop_items(int Ind, int chance)
+bool do_player_drop_items(int Ind, int chance, bool trap)
 {
 	player_type *p_ptr = Players[Ind];
 	s16b i;
@@ -501,14 +501,14 @@ bool do_player_drop_items(int Ind, int chance)
 		inven_item_increase(Ind, i,-999);
 		inven_item_optimize(Ind, i);
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-		if (!message)
+		if (trap && !message)
 		{
 			msg_print(Ind, "You are startled by a sudden sound.");
 			message = TRUE;
 		}
 		ident = TRUE;
 	}
-	if (!ident)
+	if (trap && !ident)
 	{
 		msg_print(Ind, "You hear a sudden, strange sound.");
 	}
@@ -1953,13 +1953,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 		 /* it was '20,90,70'... */
       case TRAP_OF_DROP_ITEMS:
-		 ident = do_player_drop_items(Ind, 20);
+		 ident = do_player_drop_items(Ind, 20, TRUE);
          break;
       case TRAP_OF_DROP_ALL_ITEMS:
-		 ident = do_player_drop_items(Ind, 70);
+		 ident = do_player_drop_items(Ind, 70, TRUE);
          break;
       case TRAP_OF_DROP_EVERYTHING:
-		 ident = do_player_drop_items(Ind, 90);
+		 ident = do_player_drop_items(Ind, 90, TRUE);
          break;
 
       /* Bolt Trap */
@@ -2311,7 +2311,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          }
          break;
       case TRAP_OF_PRESENT_EXCHANGE:
-		 ident = do_player_drop_items(Ind, 50);
+		 ident = do_player_drop_items(Ind, 50, TRUE);
 		 ident |= do_player_trap_garbage(Ind, 300);
 		 break;
       case TRAP_OF_GARBAGE_FILLING:

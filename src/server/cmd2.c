@@ -2504,9 +2504,15 @@ void do_cmd_fire(int Ind, int dir, int item)
 					/* Note the collision */
 					hit_body = TRUE;
 
-					if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
-						p_ptr->target_who=0;
-						imprison(Ind, 100, "attempted murder");
+					if(!(p_ptr->pkill & PKILL_KILLER) || zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
+						if(visible){
+							p_ptr->target_who=0;
+							if(!(p_ptr->pkill & PKILL_KILLER)){
+								do_player_drop_items(Ind, 40, FALSE);
+							}
+							imprison(Ind, 100, "attempted murder");
+							p_ptr->pkill|=PKILL_KILLABLE;
+						}
 					}
 
 					/* Did we hit it (penalize range) */
