@@ -76,6 +76,12 @@ int color_char_to_attr(char c)
 
 		case 'h': return (TERM_HALF);
 		case 'm': return (TERM_MULTI);
+		case 'p': return (TERM_POIS);
+		case 'L': return (TERM_LITE);
+		case 'f': return (TERM_FIRE);
+		case 'a': return (TERM_ACID);
+		case 'e': return (TERM_ELEC);
+		case 'c': return (TERM_COLD);
 	}
 
 	return (-1);
