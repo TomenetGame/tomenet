@@ -2943,7 +2943,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_MAKE_TRAP:
 		{
 			/* Require a "naked" floor grid */
-			if (!cave_naked_bold(zcave, y, x)) break;
+			if ((zcave[y][x].feat!=FEAT_MORE && zcave[y][x].feat!=FEAT_LESS) && cave_perma_bold(zcave, y, x)) break;
 
 			/* Place a trap */
 			place_trap(wpos, y, x, dam);
