@@ -2609,6 +2609,9 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
 #endif
 
+	/* Special hack - bottom of NR is empty except for Zu-Aon */
+	if (getlevel(wpos) == (166 + 30)) r_idx = 1097;
+
 	/* hard-coded -C. Blue */
 	/* Wight-King of the Barrow-downs might not occur anywhere else */
 	if ((r_idx == 971) && ((wpos->wx != 32) || (wpos->wy != 32))) return (FALSE);
@@ -2623,6 +2626,10 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
 	if ((r_idx == 1097) && (getlevel(wpos) < (166 + 30))) return (FALSE);
 	/* On Nether Realm bottom no Nether Guards but only Zu-Aon may spawn */
 	if ((r_idx == 1068) && (getlevel(wpos) == (166 + 30))) r_idx = 1097;
+
+	/* Update r_ptr due to possible r_idx changes */
+	r_ptr = &r_info[r_idx];
+
 	/* Nether Guard isn't a unique but there's only 1 guard per level,
 	   If Zu-Aon appears, the Nether Guard disappears instead */
 	if (r_idx == 1068) {
@@ -2708,16 +2715,15 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 2\n");
 	   I put this in after someone told me about 3 Glaurungs on the same
 	   level, while 1 player on the depth had him killed, the other didn't.
 	   Then a Glaurung summoned 2 more of himself.. */
-	for (i = m_top - 1; i >= 0; i--)
-	{
-        	m_idx = m_fast[i];
-		m_ptr = &m_list[m_idx];
-		if (!m_ptr->r_idx) {
-			m_fast[i] = m_fast[--m_top];
-			continue;
+
+        for(i=0;i<m_max;i++){
+                m_ptr=&m_list[i];
+		if (m_ptr->r_idx == r_idx) {
+		    if (inarea(wpos, &m_ptr->wpos)) {
+			already_on_level = TRUE;
+			break;
+		    }
 		}
-		if (m_ptr->r_idx != r_idx) continue;
-		if (inarea(wpos, &m_ptr->wpos)) already_on_level = TRUE;
 	}
 /* END of ugly hack */
 

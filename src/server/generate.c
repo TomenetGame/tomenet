@@ -8170,7 +8170,7 @@ static void fill_level(worldpos *wpos, bool use_floor, byte smooth)
 static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 {
 	int i, k, y, x, y1, x1, dun_level;
-	bool nether_level = FALSE;
+	bool nether_level = FALSE, nether_bottom = FALSE;
 	int build_special_store = 0; /* 0 = don't build a dungeon store,
 					1 = build deep dungeon store,
 					2 = build low-level dungeon store - C. Blue */
@@ -8308,6 +8308,15 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 			dark_empty = FALSE;
 	}
 
+	/* Hack for bottom of Nether Realm */
+	if (dun_level == 166 + 30) {
+		destroyed = FALSE;
+		empty_level = TRUE; dark_empty = TRUE;
+		cavern = FALSE;
+		maze = FALSE; permaze = FALSE; bonus = FALSE;
+		nether_bottom = TRUE;
+	}
+
 	/* Hack -- Start with permawalls
 	 * Hope run-length do a good job :) */
 	for (y = 0; y < MAX_HGT; y++)
@@ -8388,7 +8397,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 	/* No rooms yet */
 	dun->cent_n = 0;
-
+if (!nether_bottom) {
 	/* Build some rooms */
 	if (!maze || !(d_ptr->flags1 & DF1_MAZE))
 	for (i = 0; i < DUN_ROOMS; i++)
@@ -8507,7 +8516,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 			else if (room_build(wpos, y, x, 1, p_ptr)) continue;
 		}
 	}
-
+}
 #if 1
 	/* XXX the walls here should 'mimic' the surroundings,
 	 * however I omitted it to spare 522 c_special	- Jir */
@@ -8554,6 +8563,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	}
 	else
 	{
+if (!nether_bottom) {
 		/* Hack -- Scramble the room order */
 		for (i = 0; i < dun->cent_n; i++)
 		{
@@ -8601,7 +8611,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 #endif	/* 0 */
 			try_doors(wpos, y , x);
 		}
-
+}
 
 		/* Hack -- Add some magma streamers */
 		for (i = 0; i < DUN_STR_MAG; i++)
@@ -8853,7 +8863,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		(void)alloc_monster(wpos, 0, TRUE);
 	}
 
-
+if (!nether_bottom) {
 	/* Place some traps in the dungeon */
 	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
 			randint(k * (bonus ? 3 : 1)), p_ptr);
@@ -8878,7 +8888,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 	/* Put some fountains */
 	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1, p_ptr);
-
+}
 	/* It's done */
 	cave_set_quietly = FALSE;
 
