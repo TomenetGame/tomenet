@@ -156,8 +156,9 @@ char *Receive_login(void){
 		ch=inkey();
 	}
 	if(ch=='a'+i){
-		c_put_str(TERM_L_BLUE, "New name: ", 6+i, 11);
-		askfor_aux(c_name, MAX_CHARS, 0);
+		c_put_str(TERM_YELLOW, "New name: ", 6+i, 11);
+		while(strlen(c_name)==0)
+			askfor_aux(c_name, MAX_CHARS, 0);
 	}
 	else strcpy(c_name, names[ch-'a']);
 #if 0
