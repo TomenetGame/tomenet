@@ -31,6 +31,11 @@
 - fixed problem with new savefile creation (again?)
 - made file transfer point to lib.
 - weak security (starting '/', presence of '..')
+- corrected the buffer that file transfer uses for acks/errs
+  so it does not sit waiting for action.
+- Added client file sending (TEMP..) move it if you want....
+  I realise that a LIST of files would be better, rather than
+  having to mess with the srcs.
 
 18/08/2002 (evileye)
 - File transfer changes. I have changed script upload in client to
