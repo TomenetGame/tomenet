@@ -3958,11 +3958,11 @@ I: speed : hit points : vision : armor class : alertness
   hit points:
     The monster's hit dice xdy are multiplied. Now, if the mimic's HP
     are less then the result, the mimic's HP will become approx.
-    ((x*y) + mimic_HP) / 2. This value is capped against ~2700, so gain
-    might decrease in higher regions. (1/2 monster HP, 1/2 player HP.)
+    ((3*x*y) + (2*normal_HP)) / 5. This value is capped against ~2500,
+    so gain might decrease in higher regions. (2/5 monster HP, 3/5 player HP.)
     If the mimic's HP in player form (0) are greater than x*y, the
-    resulting HP will be ((x*y * 2) + (mimic_HP * 5)) / 7.
-    (2/7 monster HP, 5/7 player HP.)
+    resulting HP will be ((x*y * 4) + (mimic_HP * 1)) / 5.
+    (1/5 monster HP, 4/5 player HP!)
   armour class:
     Mimicking a monster is already a very difficult task. By changing
     shape, the usual armour class of the monster will magically influence

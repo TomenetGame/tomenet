@@ -1271,9 +1271,9 @@ static void calc_hitpoints(int Ind)
 	    long rhp = ((long)(r_info[p_ptr->body_monster].hdice)) * ((long)(r_info[p_ptr->body_monster].hside));
 
 	    /* pre-cap monster HP against ~3500 (5000) */
-	    mHPLim = (100000 / ((100000 / rhp) + 18));
+	    mHPLim = (100000 / ((100000 / rhp) + 18));/*18/*
 	    /* average with player HP */
-	    finalHP = (mHPLim < mhp ) ? (((mhp * 5) + (mHPLim * 2)) / 7) : ((mHPLim + mhp) / 2);
+	    finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
 	    /* cap final HP against ~2300 */
 //	    finalHP = (100000 / ((100000 / finalHP) + 20));
 	    /* done */
