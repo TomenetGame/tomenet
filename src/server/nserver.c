@@ -2445,6 +2445,7 @@ static int Receive_login(int ind){
 	n = Sockbuf_read(&connp->r);
 	if(n==0 && !(errno==EAGAIN || errno==EWOULDBLOCK)){
 		/* avoid SIGPIPE in zero read - it was closed */
+		close(connp->w.sock);
 		remove_input(connp->w.sock);
 		connp->w.sock = -1;
 		Destroy_connection(ind, "disconnect in login");
@@ -2524,6 +2525,7 @@ static int Receive_play(int ind)
 	if(n==0 && !(errno==EAGAIN || errno==EWOULDBLOCK)){
 
 		/* avoid SIGPIPE in zero read */
+		close(connp->w.sock);
 		remove_input(connp->w.sock);
 		connp->w.sock = -1;
 		Destroy_connection(ind, "disconnect in play");
