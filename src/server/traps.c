@@ -1696,7 +1696,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          break;
       /* Trap of Wasting Wands */
       case TRAP_OF_WASTING_WANDS:
-#if 0	// SV_WAND_NASTY_WAND not defined!
          {
             s16b i;
             object_type *j_ptr;
@@ -1708,14 +1707,14 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
                {
                   if ((j_ptr->sval>=SV_WAND_NASTY_WAND) && (rand_int(5)==1))
                   {
-                     if (object_known_p(j_ptr)) ident=TRUE;
+                     if (object_known_p(Ind, j_ptr)) ident=TRUE;
                      j_ptr->sval = rand_int(SV_WAND_NASTY_WAND);
                      j_ptr->k_idx = lookup_kind(j_ptr->tval, j_ptr->sval);
                      p_ptr->notice |= (PN_COMBINE | PN_REORDER);
                   }
                   if ((j_ptr->sval>=SV_STAFF_NASTY_STAFF) && (rand_int(5)==1))
                   {
-                     if (object_known_p(j_ptr)) ident=TRUE;
+                     if (object_known_p(Ind, j_ptr)) ident=TRUE;
                      j_ptr->sval = rand_int(SV_STAFF_NASTY_STAFF);
                      j_ptr->k_idx = lookup_kind(j_ptr->tval, j_ptr->sval);
                      p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -1731,7 +1730,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          {
             msg_print(Ind, "You hear an echoing cry of rage.");
          }
-#endif	// 0
          break;
       /* Trap of Filling */
       case TRAP_OF_FILLING:

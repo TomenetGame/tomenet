@@ -1374,6 +1374,8 @@ that keeps many algorithms happy.
 #define SV_STAFF_EARTHQUAKES	28
 #define SV_STAFF_DESTRUCTION	29
 
+/* jk - the first valuable staff (for TRAP_OF_WASTING_WANDS) */
+#define SV_STAFF_NASTY_STAFF              4
 
 /* The "sval" codes for TV_WAND */
 #define SV_WAND_HEAL_MONSTER	0
@@ -1405,6 +1407,9 @@ that keeps many algorithms happy.
 #define SV_WAND_DRAGON_FIRE		26
 #define SV_WAND_DRAGON_COLD		27
 #define SV_WAND_DRAGON_BREATH	28
+
+/* jk - the first valuable wand (for TRAP_OF_WASTING_WANDS) */
+#define SV_WAND_NASTY_WAND               3
 
 /* The "sval" codes for TV_ROD */
 #define SV_ROD_DETECT_TRAP		0
