@@ -1222,7 +1222,6 @@ bool make_attack_normal(int Ind, int m_idx)
 						case RBM_BUTT: case RBM_CRUSH:
 							/* still take physical damage */
 							take_hit(Ind, (damage * 2) / 3, ddesc);
-						default: /* no damage for non-physical assaults */	
 						}
 					else
 						/* take physical damage + elemental effect */
@@ -1250,7 +1249,6 @@ bool make_attack_normal(int Ind, int m_idx)
 						case RBM_BUTT: case RBM_CRUSH:
 							/* still take physical damage */
 							take_hit(Ind, (damage * 2) / 3, ddesc);
-						default: /* no damage for non-physical assaults */
 						}
 					else
 						/* take physical damage + elemental effect */
@@ -1278,7 +1276,6 @@ bool make_attack_normal(int Ind, int m_idx)
 						case RBM_BUTT: case RBM_CRUSH:
 							/* still take physical damage */
 							take_hit(Ind, (damage * 2) / 3, ddesc);
-						default: /* no damage for non-physical assaults */
 						}
 					else
 						/* take physical damage + elemental effect */
@@ -1306,7 +1303,6 @@ bool make_attack_normal(int Ind, int m_idx)
 						case RBM_BUTT: case RBM_CRUSH:
 							/* still take physical damage */
 							take_hit(Ind, (damage * 2) / 3, ddesc);
-						default: /* no damage for non-physical assaults */
 						}
 					else
 						/* take physical damage + elemental effect */
