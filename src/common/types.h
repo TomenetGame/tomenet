@@ -2558,6 +2558,8 @@ struct server_opts
 	s16b unikill_format;
 	char *server_notes;
 	bool arts_disabled;
+	s16b arts_level_req;
+	bool surface_summoning;
 };
 
 /* Client option struct */

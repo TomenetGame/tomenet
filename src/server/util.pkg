@@ -149,6 +149,7 @@ struct server_opts
 	char * server_notes;	/* comments to be displayed in meta server */
 	bool arts_disabled;	/* May artifacts be created? For maintenance reasons */
 	s16b arts_level_req;	/* Do artifacts have normal level reqs, or level 0? */
+	bool surface_summoning;	/* May players summon in towns / on the worldmap? Very cheezy! */
 };
 
 extern s32b turn;

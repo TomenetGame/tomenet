@@ -2019,10 +2019,14 @@ static void do_lottery(int Ind, object_type *o_ptr)
 
 /*
  * Too much summon cheeze - check it before letting them summon - evileye
+ * Let's not summon on worldmap surface at all but only in dungeons/towers,
+ * since those have level requirements (C. Blue)
  *
  */
 static int check_self_summon(player_type *p_ptr){
 	cave_type **zcave, *c_ptr;
+
+	if ((!cfg.surface_summoning) && (p_ptr->wpos.wz == 0)) return(FALSE);
 
 	zcave=getcave(&p_ptr->wpos);
 	if(zcave){

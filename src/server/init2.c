@@ -3150,6 +3150,10 @@ static void set_server_option(char * option, char * value)
 	{
 		cfg.arts_level_req = atoi(value);
 	}
+	else if (!strcmp(option,"SURFACE_SUMMONING"))
+	{
+		cfg.surface_summoning = str_to_boolean(value);
+	}
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }
 

@@ -179,7 +179,9 @@ server_opts cfg =
 	FALSE,FALSE,	// public_rfe, auto_purge
 	FALSE,2,0,	// log_u, replace_hiscore, unikill_format
 	"",		// server notes for meta list
-	FALSE		// artifact creation disabled for maintenance reasons?
+	FALSE,		// artifact creation disabled for maintenance reasons?
+	1,		// arts_level_req - Only SPECIAL_GENE arts from DROP_CHOSEN have 0.
+	FALSE,		// surface_summoning is disabled by default to prevent BAD cheeze.
 };
 
 struct ip_ban *banlist=NULL;
