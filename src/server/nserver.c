@@ -2590,11 +2590,11 @@ int Send_skill_init(int ind, int type, int i)
 		return 0;
         }
         if (type == PKT_SKILL_INIT_NAME)
-                return Packet_printf(&connp->c, "%c%d%d%d%d%s", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].action_mkey, s_info[i].name);
+                return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%s", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].action_mkey, s_info[i].name);
         else if (type == PKT_SKILL_INIT_DESC)
-                return Packet_printf(&connp->c, "%c%d%d%d%d%s", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].action_mkey, s_info[i].desc);
+                return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%s", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].action_mkey, s_info[i].desc);
         else if (type == PKT_SKILL_INIT_MKEY)
-                return Packet_printf(&connp->c, "%c%d%d%d%d%s", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].action_mkey, s_info[i].action_desc);
+                return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%s", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].action_mkey, s_info[i].action_desc);
 }
 
 int Send_skill_info(int ind, int i)
@@ -2609,7 +2609,7 @@ int Send_skill_info(int ind, int i)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-        return Packet_printf(&connp->c, "%c%d%d%ld%d%d%d", PKT_SKILL_MOD, p_ptr->skill_points, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden);
+        return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%ld", PKT_SKILL_MOD, p_ptr->skill_points, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden);
 }
 
 int Send_gold(int ind, s32b au)
@@ -5911,7 +5911,7 @@ static int Receive_skill_mod(int ind)
 
 	char ch;
 
-	s16b i;
+	s32b i;
 
 	int n, player;
 
@@ -5921,7 +5921,7 @@ static int Receive_skill_mod(int ind)
 		p_ptr = Players[player];
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c%d", &ch, &i)) <= 0)
+	if ((n = Packet_scanf(&connp->r, "%c%ld", &ch, &i)) <= 0)
 	{
 		if (n == -1)
 			Destroy_connection(ind, "read error");

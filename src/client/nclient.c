@@ -1344,7 +1344,7 @@ int Receive_skill_init(void)
 	int	i, type, father, mkey;
 	char    buf[300];
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%s", &ch, &type, &i, &father, &mkey, buf)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%s", &ch, &type, &i, &father, &mkey, buf)) <= 0)
 	{
 		return n;
 	}
@@ -1369,7 +1369,7 @@ int Receive_skill_info(void)
 	int	i, mod, dev, hidden, pt;
 	char    buf[300];
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%ld%d%d%d", &ch, &pt, &i, &val, &mod, &dev, &hidden)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%ld%ld", &ch, &pt, &i, &val, &mod, &dev, &hidden)) <= 0)
 	{
 		return n;
 	}
@@ -3000,7 +3000,7 @@ int Send_skill_mod(int i)
 {
 	int	n;
 
-	if ((n = Packet_printf(&wbuf, "%c%d", PKT_SKILL_MOD, i)) <= 0)
+	if ((n = Packet_printf(&wbuf, "%c%ld", PKT_SKILL_MOD, i)) <= 0)
 	{
 		return n;
 	}
