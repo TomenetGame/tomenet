@@ -3097,7 +3097,7 @@ int Send_spike(int dir)
 	return 1;
 }
 
-#ifdef WINDOWS
+#if defined(WINDOWS) && !defined(CYGWIN)
 int gettimeofday(struct timeval *timenow)
 {
 	time_t t;
@@ -3125,7 +3125,7 @@ void update_ticks()
 #ifdef AMIGA
 	GetSysTime(&cur_time);
 #else
-#ifdef WINDOWS
+#if defined(WINDOWS) && !defined(CYGWIN)
 	gettimeofday(&cur_time);
 #else
 	gettimeofday(&cur_time, NULL);
@@ -3138,7 +3138,7 @@ void update_ticks()
 #ifdef AMIGA
 	newticks += cur_time.tv_micro / 100000;
 #else
-#ifdef WINDOWS
+#if defined(WINDOWS) && !defined(CYGWIN)
 	newticks += cur_time.tv_usec / 100;
 #else
 	newticks += cur_time.tv_usec / 100000;
