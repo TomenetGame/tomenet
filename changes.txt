@@ -1051,6 +1051,7 @@ TODO: the newest should appear the first!
 16/06/2002 (Jir)
 - /news, displays news.txt
 [B] TV_POTION2 didn't shatter when thrown.
+[B] you couldn't fire missiles, doh!
 
 
 ** [B] stands for Bugfix.
@@ -1063,8 +1064,8 @@ concisely: what's hot now?
 
 - multiple-dungeons stuff
   + we should preserve level_up_y etc. for manually-added dungeons/towers.
-- LUA hook
 - quest system
+- LUA hook
 - csfunc
 - alignment (let's wait for EE :)
 - item stacking

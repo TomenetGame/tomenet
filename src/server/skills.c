@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: skills.c */
 
 /* Purpose: player skills */

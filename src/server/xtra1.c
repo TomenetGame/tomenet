@@ -2743,7 +2743,31 @@ static void calc_bonuses(int Ind)
 	/* Compute "extra shots" if needed */
 	if (o_ptr->k_idx && !p_ptr->heavy_shoot)
 	{
-                int archery = get_archery_skill(p_ptr);
+		int archery = get_archery_skill(p_ptr);
+
+		/* Take note of required "tval" for missiles */
+		switch (o_ptr->sval)
+		{
+			case SV_SLING:
+			{
+				p_ptr->tval_ammo = TV_SHOT;
+				break;
+			}
+
+			case SV_SHORT_BOW:
+			case SV_LONG_BOW:
+			{
+				p_ptr->tval_ammo = TV_ARROW;
+				break;
+			}
+
+			case SV_LIGHT_XBOW:
+			case SV_HEAVY_XBOW:
+			{
+				p_ptr->tval_ammo = TV_BOLT;
+				break;
+			}
+		}
 
 		if (archery != -1)
 		{

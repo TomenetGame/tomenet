@@ -5,7 +5,7 @@ If you want a help for game-play itself, try '?' key in the game instead.
 
 'Slash-commands' are set of expanded commands available via chat-command(':').
 
-Commands: afk bed bug cast dis dress ex feel help ignore less me pkill
+Commands: afk bed bug cast dis dress ex feel help ignore less me news pkill
           quest rec ref rfe shout tag target untag ver
 
 Note:
@@ -82,8 +82,10 @@ Note:
 /news
     Displays the news screen, in case you overlooked it when logging on.
 
-/pkill
+/pkill {shorthand: /pk}
 	Toggles 'player-killing' mode.
+	It takes *long* for the change to actually become valid, so be careful.
+	(You'll receive a message when the switching completes.)
 
 /quest [guild (name)]
 	Requests for a quest.
