@@ -81,6 +81,10 @@
 
 #define NETBSD /* pfft */
 
+/*
+ * For server: can use crypt() for doing passwords
+ */
+#define HAVE_CRYPT
 
 /*
  * OPTION: Use the POSIX "termios" methods in "main-gcu.c"
