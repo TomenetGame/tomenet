@@ -1647,7 +1647,6 @@ struct skill_type
 	u32b flags1;                            /* Skill flags */
 	byte tval;	/* tval associated */
 };
-#endif	// 0
 
 /*
  * Skills of each player
