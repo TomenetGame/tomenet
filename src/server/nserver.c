@@ -915,8 +915,10 @@ static void Delete_player(int Ind)
 		p_ptr			= Players[NumPlayers];
 	}
 
-	GetInd[Conn[Players[Ind]->conn].id] = Ind;
-	GetInd[Conn[Players[NumPlayers]->conn].id] = NumPlayers;
+	if (Conn[Players[Ind]->conn].id>=0)
+		GetInd[Conn[Players[Ind]->conn].id] = Ind;
+	if (Conn[Players[NumPlayers]->conn].id>=0)
+		GetInd[Conn[Players[NumPlayers]->conn].id] = NumPlayers;
 
 	/* Recalculate player-player visibility */
 	update_players();

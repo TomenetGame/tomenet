@@ -4083,6 +4083,9 @@ void shutdown_server(void)
 	}
 #endif
 
+	/* Stop the timer */
+	teardown_timer();
+
 	/* Save the server state */
 	if (!save_server_info()) quit("Server state save failed!");
 

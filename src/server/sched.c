@@ -161,7 +161,7 @@ DWORD WINAPI DoThread(DWORD param)
  * Setup the handling of the SIGALRM signal
  * and setup the real-time interval timer.
  */
-static void setup_timer(void)
+void setup_timer(void)
 {
 #ifndef WINDOWS
     struct itimerval itv;
@@ -231,6 +231,15 @@ static void setup_timer(void)
     ticks_till_second = timer_freq;
 #endif /* WINDOWS */
 }
+
+void teardown_timer(void)
+{
+#ifdef WINDOWS
+	CancelWaitableTimer(hTimer);
+	CloseHandle(hTimer);
+#endif
+}
+
 
 /*
  * Configure timer tick callback.
@@ -483,6 +492,8 @@ void sched(void)
             /* need fast I/O checks now! (2 or 3 times per frames) */
             tv.tv_sec = 0;
             tv.tv_usec = 1000000 / (3 * timer_freq + 1); 
+            if (tv.tv_usec<15000)
+                tv.tv_usec = 15000;
         }
         else {
             /* slow I/O checks are possible here... (2 times per second) */ ; 

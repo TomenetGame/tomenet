@@ -987,6 +987,8 @@ extern void remove_input(int fd);
 extern void sched(void);
 extern void block_timer(void);
 extern void allow_timer(void);
+extern void setup_timer(void);
+extern void teardown_timer(void);
 
 /* spells1.c */
 extern s16b poly_r_idx(int r_idx);

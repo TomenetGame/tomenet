@@ -2472,6 +2472,9 @@ void close_game(void)
 		/*highscore_fd = -1;*/
 	}
 
+	/* Stop the timer */
+	teardown_timer();
+
 	/* Try to save the server information */
 	save_server_info();
 
@@ -2752,6 +2755,9 @@ void exit_game_panic(void)
 		if (!players_on_depth[i]) wipe_o_list(i);
 	}
 #endif
+	/* Stop the timer */
+	teardown_timer();
+
 	if (!save_server_info()) quit("server panic info save failed!");
 
 
