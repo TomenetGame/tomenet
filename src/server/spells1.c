@@ -4230,6 +4230,10 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, FALSE);
 
 			/* XXX XXX XXX Hack -- Assume success */
+			if(c_ptr->m_idx==0){
+				msg_format(Ind, "%^s disappears!", m_name);
+				return(FALSE);
+			}
 
 			/* Hack -- Get new monster */
 			m_ptr = &m_list[c_ptr->m_idx];
