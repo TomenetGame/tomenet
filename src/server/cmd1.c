@@ -338,7 +338,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 					monster_brands++;
 					monster_brand[monster_brands] = TR1_BRAND_COLD;
 					break;
-				case RBE_POISON:
+				case RBE_POISON:	case RBE_DISEASE:
 					monster_brands++;
 					monster_brand[monster_brands] = TR1_BRAND_POIS;
 					break;
@@ -354,26 +354,6 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 		/* Modify damage */
 		if (apply_monster_brands) f1 |= monster_brand_chosen;
-#if 0
-		/* Display message */
-		switch (monster_brand_chosen)
-		{
-			case TR1_BRAND_ACID:
-				msg_format(Ind, "%^s is covered in acid!", m_name);
-				break;
-			case TR1_BRAND_ELEC:
-				msg_format(Ind, "%^s is struck by electricity!", m_name);
-				break;
-			case TR1_BRAND_FIRE:
-				msg_format(Ind, "%^s is enveloped in flames!", m_name);
-				break;
-			case TR1_BRAND_COLD:
-				msg_format(Ind, "%^s is covered with frost!", m_name);
-				break;
-			case TR1_BRAND_POIS:
-				break;
-		}
-#endif
 	}
 
 	/* Add brands/slaying from non-weapon items (gloves, frost-armour) */
@@ -897,7 +877,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 					monster_brands++;
 					monster_brand[monster_brands] = TR1_BRAND_COLD;
 					break;
-				case RBE_POISON:
+				case RBE_POISON:	// case RBE_DISEASE: vs player DISEASE will poison instead.
 					monster_brands++;
 					monster_brand[monster_brands] = TR1_BRAND_POIS;
 					break;
@@ -913,26 +893,6 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 		/* Modify damage */
 		if (apply_monster_brands) f1 |= monster_brand_chosen;
-#if 0
-		/* Display message */
-		switch (monster_brand_chosen)
-		{
-			case TR1_BRAND_ACID:
-				msg_format(Ind, "%^s is covered in acid!", q_ptr->name);
-				break;
-			case TR1_BRAND_ELEC:
-				msg_format(Ind, "%^s is struck by electricity!", q_ptr->name);
-				break;
-			case TR1_BRAND_FIRE:
-				msg_format(Ind, "%^s is enveloped in flames!", q_ptr->name);
-				break;
-			case TR1_BRAND_COLD:
-				msg_format(Ind, "%^s is covered with frost!", q_ptr->name);
-				break;
-			case TR1_BRAND_POIS:
-				break;
-		}
-#endif
 	}
 
 	/* Add brands/slaying from non-weapon items (gloves, frost-armour) */
@@ -2026,26 +1986,6 @@ void py_attack_player(int Ind, int y, int x, bool old)
 					{
 						monster_effects++;
 						monster_effect[monster_effects] = pr_ptr->blow[i].effect;
-						/*
-						switch (pr_ptr->blow[i].effect)
-						{
-						case RBE_CONFUSE:
-							monster_effects++;
-		    					monster_effect[monster_effects] = 1;
-							break;
-						case RBE_TERRIFY:
-							monster_effects++;
-		    					monster_effect[monster_effects] = 2;
-							break;
-						case RBE_PARALYZE:
-							monster_effects++;
-		    					monster_effect[monster_effects] = 3;
-							break;
-						default:
-							monster_effects++;
-		    					monster_effect[monster_effects] = 0;
-							break;
-						}*/
 					}
 				}
 				/* Choose random brand from the ones available */
@@ -2057,6 +1997,54 @@ void py_attack_player(int Ind, int y, int x, bool old)
 				{
 					switch (monster_effect_chosen)
 					{
+					case RBE_DISEASE:
+                                        /* Take "poison" effect */
+					        if (q_ptr->resist_pois || q_ptr->oppose_pois || q_ptr->immune_poison)
+		                                {
+		                                        msg_format(Ind, "%^s is unaffected.", p_name);
+	                                        }
+	                                        else if (rand_int(100) < q_ptr->skill_sav)
+	                                        {
+							msg_format(Ind, "%^s resists the disease.", p_name);
+	                                        }
+						else
+		                                {
+							msg_format(Ind, "%^s suffers from disease.", p_name);
+				                        set_poisoned(0 - c_ptr->m_idx, q_ptr->poisoned + randint(p_ptr->lev) + 5);
+						}
+						break;
+					case RBE_BLIND:
+				                /* Increase "blind" */
+	        	                        if (q_ptr->resist_blind)
+						/*  for (i = 1; i <= NumPlayers; i++)
+				                if (Players[i]->id == q_ptr->id) { */
+		                                {
+		                                        msg_format(Ind, "%^s is unaffected.", p_name);
+	                                        }
+	                                        else if (rand_int(100) < q_ptr->skill_sav)
+	                                        {
+							msg_format(Ind, "%^s resists the effect.", p_name);
+	                                        }
+	                                        else
+						{
+							set_blind(0 - c_ptr->m_idx, q_ptr->blind + 10 + randint(p_ptr->lev));
+						}
+						break;
+					case RBE_HALLU:
+	                                        /* Increase "image" */
+	                                        if (q_ptr->resist_chaos)
+		                                {
+		                                        msg_format(Ind, "%^s is unaffected.", p_name);
+	                                        }
+	                                        else if (rand_int(100) < q_ptr->lev)
+	                                        {
+							msg_format(Ind, "%^s resists the effect.", p_name);
+	                                        }
+	                                        else
+						{
+                                    			set_image(0 - c_ptr->m_idx, q_ptr->image + 3 + randint(p_ptr->lev / 2));
+						}
+						break;
 					case RBE_CONFUSE:
 						if (!p_ptr->confusing)
 						{
@@ -2090,6 +2078,20 @@ void py_attack_player(int Ind, int y, int x, bool old)
 						}
 						break;
 					case RBE_PARALYZE:
+	                                        /* Increase "paralyzed" */
+		                                if (q_ptr->free_act)
+		                                {
+		                                        msg_format(Ind, "%^s is unaffected.", p_name);
+	                                        }
+	                                        else if (rand_int(100) < q_ptr->skill_sav)
+	                                        {
+							msg_format(Ind, "%^s resists the effect.", p_name);
+	                                        }
+	                                        else
+						{
+                            				set_paralyzed(0 - c_ptr->m_idx, q_ptr->paralyzed + 3 + randint(p_ptr->lev));
+				                }
+#if 0
 						if (!p_ptr->stunning)
 						{
 							/* Stun the monster */
@@ -2103,6 +2105,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 								set_stun(0 - c_ptr->m_idx, q_ptr->stun + 20 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
 							}
 						}
+#endif
 						break;
 					}
 				}
@@ -2698,26 +2701,6 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 					{
 						monster_effects++;
 	    					monster_effect[monster_effects] = pr_ptr->blow[i].effect;
-						/*
-		    				switch (pr_ptr->blow[i].effect)
-						{
-						case RBE_CONFUSE:
-							monster_effects++;
-		    					monster_effect[monster_effects] = 1;
-							break;
-						case RBE_TERRIFY:
-							monster_effects++;
-		    					monster_effect[monster_effects] = 2;
-							break;
-						case RBE_PARALYZE:
-							monster_effects++;
-		    					monster_effect[monster_effects] = 3;
-							break;
-						default:
-							monster_effects++;
-		    					monster_effect[monster_effects] = 0;
-							break;
-						}*/
 					}
 				}
 				/* Choose random brand from the ones available */
@@ -2729,6 +2712,10 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				{
 					switch (monster_effect_chosen)
 					{
+					case RBE_BLIND:
+						if (r_ptr->flags3 & RF3_NO_SLEEP) break;
+					case RBE_HALLU:
+						if (r_ptr->flags3 & RF3_NO_CONF) break;
 					case RBE_CONFUSE:
 						if (!p_ptr->confusing)
 						{

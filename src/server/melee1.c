@@ -1581,7 +1581,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Take "poison" effect */
-					if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
 					{
 						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5))
 						{

@@ -1331,6 +1331,12 @@ void calc_body_bonus(int Ind)
 		j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
 
 		if (j) n++;
+		
+		switch (r_ptr->blow[i].effect)
+		{
+			case RBE_EXP_10:	case RBE_EXP_20:	case RBE_EXP_40:	case RBE_EXP_80:
+			p_ptr->hold_life = TRUE;
+		}
 
 		/* Hack -- weaponless combat */
 		if (wepless && j)
