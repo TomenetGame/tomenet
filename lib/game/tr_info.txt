@@ -827,9 +827,14 @@ D:Awwww! You feel itchy!
 F:FLOOR | CHEST | DOOR
 
 N:177:Multi-Flavor Trap
-I:1:60:5:5:10:0d0:v
+I:3:60:5:5:10:0d0:v
 D:You feel uneasy.
 F:FLOOR | DOOR | CHANGE
+
+N:178:Amnesia Trap
+I:4:50:30:6:12:0d0:r
+D:You suddenly can't remember what you were doing here...
+F:FLOOR | CHEST | DOOR
 
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color

@@ -3202,6 +3202,7 @@ extern int PlayerUID;
 #define TRAP_OF_UNMAGIC		175
 #define TRAP_OF_VERMIN		176
 #define TRAP_OF_RANDOM_EFFECT	177
+#define TRAP_OF_AMNESIA		178
 
 #define TR_LIST(c_ptr) (c_ptr->special.ptr)
 

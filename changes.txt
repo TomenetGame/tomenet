@@ -493,4 +493,4 @@ Change list for PernMangband
 21/12/2001 (Jir)
 - Still bugfixes on traps.
 - Some traps have chance of disappearence.
-- 2 more traps(Random/Wasting wand).
+- 3 more traps(Random/Wasting wand/Amnesia).

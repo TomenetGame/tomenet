@@ -2271,6 +2271,20 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
             msg_print(Ind, "You suddenly feel itchy.");
          }
          break;
+      /* Trap of amnesia (and not lose_memory) */
+	  case TRAP_OF_AMNESIA:
+		 {
+			 if (rand_int(100) < p_ptr->skill_sav)
+			 {
+				 msg_print(Ind, "You resist the effects!");
+			 }
+			 else if (lose_all_info(Ind))
+			 {
+				 msg_print(Ind, "Your memories fade away.");
+//				 ident = TRUE;	// haha you forget this also :)
+			 }
+			 break;
+		 }
       default:
       {
          s_printf("Executing unknown trap %d", trap);
