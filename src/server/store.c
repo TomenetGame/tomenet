@@ -1290,11 +1290,24 @@ static bool black_market_crap(object_type *o_ptr)
 	if (o_ptr->to_h > 0) return (FALSE);
 	if (o_ptr->to_d > 0) return (FALSE);
 
+	/* check individual store would be better. *later* */
+	for(i=0; i<max_st_idx; i++){
+		if (st_info[i].flags1 & SF1_ALL_ITEM){
+			for(j=0; j<st_info[i].table_num; j++){
+				if(o_ptr->k_idx==st_info[i].table[j][0])
+					return(FALSE);
+			}
+		}
+	}
+
 	for(k = 0; k < numtowns; k++){
 		st_ptr=town[k].townstore;
 		/* Check the other "normal" stores */
 		for (i = 0; i < max_st_idx; i++)
 		{
+			/* Don't compare other BMs */
+			if (st_info[i].flags1 & SF1_ALL_ITEM) continue;
+
 			/* Check every item in the store */
 			for (j = 0; j < st_ptr[i].stock_num; j++)
 			{
@@ -1409,10 +1422,6 @@ static bool kind_is_storeok(int k_idx)
 	return (TRUE);
 }
 
-
-static int black_market_potion;
-
-
 /*
  * Creates a random item and gives it to a store
  * This algorithm needs to be rethought.  A lot.
@@ -1426,7 +1435,7 @@ static int black_market_potion;
  */
 static void store_create(store_type *st_ptr)
 {
-	int i, tries, level, chance, item;
+	int i=0, tries, level, chance, item;
 
 	object_type		tmp_obj;
 	object_type		*o_ptr = &tmp_obj;
@@ -1441,55 +1450,44 @@ static void store_create(store_type *st_ptr)
 	for (tries = 0; tries < 4; tries++)
 	{
 		/* Black Market */
-		if ((st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) &&
-			--black_market_potion < 0)
+
+		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) 
 		{
-			/* Pick a level for object/magic */
-			level = 60 + rand_int(25);	/* for now let's use this */
+			/* Hack -- Pick an item to sell */
+			item = rand_int(st_info[st_ptr->st_idx].table_num);
+			i = st_info[st_ptr->st_idx].table[item][0];
+			chance = st_info[st_ptr->st_idx].table[item][1];
 
-			/* Clear restriction */
-			get_obj_num_hook = NULL;
+			/* Hack -- fake level for apply_magic() */
+			level = return_level(st_ptr);
 
-			/* Prepare allocation table */
-			get_obj_num_prep();
+			/* Does it pass the rarity check ? */
+			/* Balancing check for other items!!! */
+			if (!magik(chance) || magik(60)) i=0; 
+			else{
+				/* Hack -- mass-produce for black-market promised items */
+				if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
+				{
+					force_num = rand_range(3, 9);
+				}
+			}
 
-			/* Random item (usually of given level) */
-			i = get_obj_num(level);
+			if(!i){
+				/* Pick a level for object/magic */
+				level = 60 + rand_int(25);	/* for now let's use this */
+
+				/* Clear restriction */
+				get_obj_num_hook = NULL;
+
+				/* Prepare allocation table */
+				get_obj_num_prep();
+
+				/* Random item (usually of given level) */
+				i = get_obj_num(level);
 			
-			/* MEGA HACK */ /* XXX This will be removed */
-			if (black_market_potion == 1)
-			{
-				i = lookup_kind(TV_POTION, SV_POTION_SPEED);
-				black_market_potion--;
-				force_num = rand_range(10, 20);
+				/* Handle failure */
+				if (!i) continue;
 			}
-			if (black_market_potion == 2)
-			{
-				i = lookup_kind(TV_POTION, SV_POTION_HEALING);
-				black_market_potion--;
-				force_num = rand_range(3, 9);
-			}
-			if (black_market_potion == 3)
-			{
-				i = lookup_kind(TV_POTION, SV_POTION_RESTORE_MANA);
-				black_market_potion--;
-				force_num = rand_range(3, 9);
-			}
-			if (black_market_potion == 4)
-			  {
-			    i = lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT);
-			    black_market_potion--;
-			    force_num = rand_range(2, 4);
-			  }
-			if (black_market_potion == 5)
-			  {
-			    i = lookup_kind(TV_SCROLL, SV_SCROLL_BLOOD_BOND);
-			    black_market_potion--;
-			    force_num = rand_range(2, 4);
-			  }
-
-			/* Handle failure */
-			if (!i) continue;
 		}
 
 		/* Normal Store */
@@ -1537,12 +1535,6 @@ static void store_create(store_type *st_ptr)
 //				alloc_kind_table_valid = FALSE;
 			}
 
-			/* Hack -- mass-produce for black-market promised items */
-			if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
-			{
-				force_num = rand_range(3, 9);
-			}
-
 			if (!i) continue;
 		}
 
@@ -1576,7 +1568,6 @@ static void store_create(store_type *st_ptr)
 		if (o_ptr->tval == TV_CHEST) continue;
 
 		/* Prune the black market */
-//		if (st_ptr->st_idx == 6)
 		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
 		{
 			/* Hack -- No "crappy" items */
@@ -3290,7 +3281,6 @@ void store_maint(store_type *st_ptr)
 
 	/* Acquire some new items */
 	/* We want speed & healing & mana pots in the BM */
-	black_market_potion = 10;	/* 5 */
 	while (st_ptr->stock_num < j)
 	  {
 	    store_create(st_ptr);
