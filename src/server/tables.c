@@ -2778,6 +2778,11 @@ player_class class_info[MAX_CLASS] =
                         },
 						/* let's give them some skills for non-swords */
                         {
+                                SKILL_SWORD,
+                                '+', 0,
+                                '+', 450,
+                        },
+                        {
                                 SKILL_HAFTED,
                                 '+', 0,
                                 '+', 600,
