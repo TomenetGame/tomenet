@@ -3051,6 +3051,10 @@ void move_player(int Ind, int dir, int do_pickup)
 		p_ptr->py = y;
 		p_ptr->px = x;
 
+		if(zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK))
+			msg_print(Ind, "\377DThe air in here feels very still.");
+		if(zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK))
+			msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
 		/* Update the player indices */
 		zcave[oy][ox].m_idx = 0;
 		zcave[y][x].m_idx = 0 - Ind;
@@ -4026,5 +4030,3 @@ void run_step(int Ind, int dir)
 	/* Move the player, using the "pickup" flag */
 	move_player(Ind, p_ptr->find_current, p_ptr->always_pickup);
 }
-
-
