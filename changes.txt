@@ -21,6 +21,12 @@
 
 # bug.txt should follow the exact same format
 
+06/08/2002 (Jir)
+[O]- randart/ego rings/amus/lites needs ID now.
+[G]- SKILL_DISARM grants small chance of IDing traps when disarming.
+[G]- examine('I') command tells how many blows that wep gives.
+[B]- "destroyed" msg was shown when no-ghost player died.
+
 05/08/2002 (Jir)
 [m]- DM afk no longer is broadcasted (DM doesn't need AFK mode anyway)
 [m]- part of gold stolen from player can be retrieved.
@@ -1928,7 +1934,7 @@ memo and questions:
 - monsters:
   + monster speech
   + 'water bolt' should wash players away.
-  + aquatic should be hard to attack if underwater?
+  + aquatic should be hard to attack if underwater? (bonus for polearm?)
   + some monster may become 'ghost' after being killed?
   + monster spell points.
   + upper limit of monsters per floor?
@@ -1938,17 +1944,14 @@ memo and questions:
   + vault treasures should be held by guardians
   + monsters should stagger(and not freeze) when player is invisible
 - traps:
-  + another check for Dexterity (with high Dex, you can avoid some)
   + missile traps should have AC check(check_hit)?
-  + some traps should be identified when disarmed (EASY_KNOWN/NEVER_KNOWN)
   * Trap ideas
     - no return trap should steal books also?
     - telekinesis trap
     - house-door-opening trap
 - items:
   + Potion of Light Mana?
-  + Scroll of Teleport After/To.
-  + Scroll of Dull Weapon/Armor (makes the item (+0, +0) [n, +0])
+  + Scroll of Teleport After/To. (wand of teleport to implemented)
   + Staff of Opening/Closing
   + Scroll of Admin Message (another way to tell players of information)
   + Musical Instruments
@@ -1959,9 +1962,9 @@ memo and questions:
   + generic mimic rings (like 'D', 'Z') / ego rings
   + wooden/leather armours should be immune to water damage.
 - anticheeze:
-  + take a log when dropping/picking up gold.
+  + (nothing so far)
 - players:
-  + thirst?
+  + thirst/sleep?
   + Asclep's '/spell' should be applicable to wands/rods? (fix that first)
   + when fruit-batting, only overflowed items should be dropped?
   + lowbies (<lv10?) should be immune to Black Breath?

@@ -6368,7 +6368,7 @@ void do_cmd_mimic(int Ind, int spell)
 			if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) continue;
 			if (r_info[j].flags1 & RF1_UNIQUE) continue;
 			if (p_ptr->r_killed[j] < r_info[j].level) continue;
-			if (p_ptr->r_killed[j] < 1) continue;
+			if (p_ptr->r_killed[j] < 1 && j) continue;
 			if (strlen(r_info[j].name + r_name) <= 1) continue;
 			if (!r_info[j].level && !mon_allowed(&r_info[j])) continue;
 

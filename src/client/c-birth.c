@@ -478,7 +478,7 @@ static void choose_mode(void)
 		}
 		else if (c == '*')
 		{
-			switch (rand_int(4))
+			switch (rand_int(5))
 			{
 				case 0:
 					c = 'n';
@@ -491,6 +491,9 @@ static void choose_mode(void)
 					break;
 				case 3:
 					c = 'h';
+					break;
+				case 4:
+					c = 'H';
 					break;
 			}
 			hazard = TRUE;

@@ -1498,6 +1498,40 @@ void do_cmd_tunnel(int Ind, int dir)
 }
 
 
+/*
+ * Try to identify a trap when disarming it.	- Jir -
+ */
+void do_id_trap(int Ind, int t_idx)
+{
+	player_type *p_ptr = Players[Ind];
+	trap_kind *tr_ptr = &t_info[t_idx];
+	int power;
+
+	/* Already known? */
+	if (p_ptr->trap_ident[t_idx]) return;
+
+	/* Need proper skill */
+//	if (get_skill(p_ptr, SKILL_DISARM) < 20) return;
+	if (!get_skill(p_ptr, SKILL_DISARM)) return;
+
+	/* Impossible? */
+	if (tr_ptr->flags & FTRAP_NO_ID) return;
+	if (UNAWARENESS(p_ptr) || no_lite(Ind)) return;
+
+	/* Check for failure (hard) */
+	power = (tr_ptr->difficulty + 2) * (tr_ptr->minlevel + 10) * 5;
+	if (tr_ptr->flags & FTRAP_EASY_ID) power /= 10;
+
+	if (randint(power) > get_skill(p_ptr, SKILL_DISARM)) return;
+
+	/* Good job */
+	p_ptr->trap_ident[t_idx] = TRUE;
+	msg_format(Ind, "You identified that trap as %s.",
+			t_name + tr_ptr->name);
+
+	/* Small reward */
+	if (power >= 10) gain_exp(Ind, power / 10);
+}
 
 /*
  * Disarms a trap, or chest     -RAK-
@@ -1634,6 +1668,7 @@ void do_cmd_disarm(int Ind, int dir)
 				gain_exp(Ind, t_ptr->difficulty * 3);
 //				gain_exp(Ind, o_ptr->pval);
 				o_ptr->pval = (0 - o_ptr->pval);
+				do_id_trap(Ind, o_ptr->pval);
 			}
 
 			/* Failure -- Keep trying */
@@ -1703,6 +1738,9 @@ void do_cmd_disarm(int Ind, int dir)
 
 				/* Reward */
 				gain_exp(Ind, power);
+
+				/* Try to identify it */
+				do_id_trap(Ind, t_idx);
 
 				/* Remove the trap */
 				cs_erase(c_ptr, cs_ptr);

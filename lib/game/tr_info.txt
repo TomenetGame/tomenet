@@ -236,7 +236,7 @@ F:FLOOR | CHEST | DOOR
 N:39:Trap of Sinking
 I:2:50:0:0:3:0d0:w:0
 D:A trapdoor opens up under you!
-F:FLOOR
+F:FLOOR | EASY_ID
 
 N:40:Trap of Mana Drain
 I:4:100:50:3:4:0d0:r:10
@@ -270,7 +270,7 @@ F:FLOOR | CHEST | DOOR
 
 N:46:Trap of Sliding
 I:8:50:50:4:8:0d0:r:10
-D:You feet seem to have a life of their own!
+D:Your feet seem to have a life of their own!
 F:FLOOR | CHEST | DOOR
 
 N:47:Trap of Charges Drain
@@ -685,7 +685,7 @@ D:A sudden sound startles you and you drop everything!
 F:FLOOR | CHEST | DOOR
 
 #-SC-
-N:150:Trap of Femininity
+N:150:Trap of Feminity
 I:4:30:5:0:10:2d8:r:10
 D:You feel like a new woman!
 F:FLOOR | CHEST | DOOR
@@ -726,13 +726,13 @@ N:158:Trap of Divine Anger
 I:6:100:5:0:15:0d0:G:10
 #D:A voice booms out "Have a care, mortal!"
 D:A voice booms out 'Have a care, mortal!'
-F:FLOOR | CHEST | DOOR
+F:FLOOR | CHEST | DOOR | NO_ID
 
 N:159:Trap of Divine Wrath
 I:9:50:5:0:30:0d0:G:10
 #D:A voice booms out "Sacrilege!"
 D:A voice booms out 'Sacrilege!'
-F:FLOOR | CHEST | DOOR
+F:FLOOR | CHEST | DOOR | NO_ID
 
 N:160:Hallucination Trap
 I:3:100:10:0:4:0d0:r:10
@@ -797,7 +797,7 @@ N:170:Acquirement Trap
 #I:1:40:5:5:18:0d0:v
 I:1:4:5:5:18:0d0:v:10
 D:Woh !
-F:FLOOR | DOOR | CHANGE
+F:FLOOR | DOOR | CHANGE | NO_ID
 
 # PernMangband traps	- Jir -
 
@@ -805,7 +805,7 @@ F:FLOOR | DOOR | CHANGE
 N:171:Ale Vendor
 I:1:20:5:5:0:0d0:y:10
 D:You feel like having a shot.
-F:FLOOR | DOOR
+F:FLOOR | DOOR | EASY_ID
 
 N:172:Garbage Trap
 I:3:30:5:5:15:0d0:y:10
@@ -835,7 +835,7 @@ F:FLOOR | CHEST | DOOR
 N:177:Multi-Flavor Trap
 I:3:60:5:5:10:0d0:v:10
 D:You feel uneasy.
-F:FLOOR | DOOR | CHANGE
+F:FLOOR | DOOR | CHANGE | NO_ID
 
 N:178:Amnesia Trap
 I:4:50:30:6:12:0d0:r:10
@@ -865,12 +865,12 @@ F:FLOOR | DOOR | CHEST
 N:183:Chasm
 I:20:30:0:0:20:0d0:w:0
 D:A chasm opens up under you!
-F:FLOOR
+F:FLOOR | EASY_ID
 
 N:184:Pit
 I:4:100:0:0:3:0d0:w:0
 D:A pit opens up under you!
-F:FLOOR
+F:FLOOR | EASY_ID
 
 N:185:Seasoned Traveler Trap
 I:6:30:50:3:16:0d0:y:10
@@ -890,7 +890,7 @@ F:FLOOR | CHEST | DOOR
 N:188:Ophiuchus Trap
 I:10:30:5:5:35:0d0:W:100
 D:A fragrant mist fills the air...
-F:FLOOR | DOOR
+F:FLOOR | DOOR | NO_ID
 
 N:189:Lost Labor Trap
 I:12:10:5:5:38:0d0:W:10
@@ -900,12 +900,12 @@ F:FLOOR | DOOR
 N:190:Trap of Despair
 I:8:10:5:5:10:0d0:y:100
 D:You are driven to despair.
-F:FLOOR | DOOR | CHEST
+F:FLOOR | DOOR | CHEST | NO_ID
 
 N:191:Trap of Rare Books
 I:3:6:5:5:35:0d0:y:100
 D:Suddenly you felt something really splendid just happened to you!
-F:DOOR | CHEST | CHANGE
+F:DOOR | CHEST | CHANGE | NO_ID
 
 N:192:Wrong Target Trap
 I:7:40:5:5:22:0d0:w:10

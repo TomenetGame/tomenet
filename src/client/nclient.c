@@ -154,8 +154,10 @@ void Receive_login(void)
 	}
 	sprintf(tmp, "%c) New character", 'a'+i);
 	c_put_str(TERM_L_BLUE, tmp, 5+i, 11);
+	c_put_str(TERM_L_BLUE, "Q) Quit", 8+i, 11);
 	while(ch<'a' || ch>'a'+i){
 		ch=inkey();
+		if (ch == 'Q') quit(NULL);
 	}
 	if(ch=='a'+i){
 		if (!strlen(cname)) strcpy(c_name, nick);

@@ -6,9 +6,13 @@ S:0001
 E:0200
 D:It is deep night.
 
+# Hole here..?
+
 S:0300 
 E:0400
 D:It is early morning, but still dark.
+
+# Hole here..?
 
 S:0500 
 E:0544

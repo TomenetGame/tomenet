@@ -1862,6 +1862,74 @@ int get_archery_skill(player_type *p_ptr)
 }
 
 
+int calc_blows(int Ind, object_type *o_ptr)
+{
+	player_type *p_ptr = Players[Ind];
+	int str_index, dex_index;
+
+	int num = 0, wgt = 0, mul = 0, div = 0, num_blow = 0;
+
+	/* Analyze the class */
+	switch (p_ptr->pclass)
+	{
+		/* Adevnturer */
+		case CLASS_ADVENTURER: num = 5; wgt = 35; mul = 6; break;
+
+							   /* Warrior */
+		case CLASS_WARRIOR: num = 6; wgt = 30; mul = 5; break;
+
+							/* Mage */
+		case CLASS_MAGE:    num = 4; wgt = 40; mul = 2; break;
+
+							/* Priest */
+		case CLASS_PRIEST:  num = 5; wgt = 35; mul = 3; break;
+
+							/* Rogue */
+		case CLASS_ROGUE:   num = 5; wgt = 30; mul = 3; break;
+
+							/* Mimic */
+		case CLASS_MIMIC:   num = 4; wgt = 30; mul = 3; break;
+
+							/* Archer */
+		case CLASS_ARCHER:   num = 3; wgt = 30; mul = 3; break;
+	}
+
+	/* Enforce a minimum "weight" (tenth pounds) */
+	div = ((o_ptr->weight < wgt) ? wgt : o_ptr->weight);
+
+	/* Access the strength vs weight */
+	str_index = (adj_str_blow[p_ptr->stat_ind[A_STR]] * mul / div);
+
+	/* Maximal value */
+	if (str_index > 11) str_index = 11;
+
+	/* Index by dexterity */
+	dex_index = (adj_dex_blow[p_ptr->stat_ind[A_DEX]]);
+
+	/* Maximal value */
+	if (dex_index > 11) dex_index = 11;
+
+	/* Use the blows table */
+	num_blow = blows_table[str_index][dex_index];
+
+	/* Maximal value */
+	if (num_blow > num) num_blow = num;
+
+	/* Add in the "bonus blows" */
+	num_blow += p_ptr->extra_blows;
+
+	/* Require at least one blow */
+	if (num_blow < 1) num_blow = 1;
+
+	/* Boost blows with masteries */
+	if (get_weaponmastery_skill(p_ptr) != -1)
+	{
+		num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
+	}
+
+	return (num_blow);
+}
+
 /*
  * Calculate the players current "state", taking into account
  * not only race/class intrinsics, but also objects being worn
@@ -1899,7 +1967,7 @@ static void calc_bonuses(int Ind)
 	int			old_dis_to_h;
 	int			old_dis_to_d;
 
-	int			extra_blows;
+//	int			extra_blows;
 	int			extra_shots;
 	int			extra_spells;
 
@@ -1926,7 +1994,8 @@ static void calc_bonuses(int Ind)
 	old_dis_to_d = p_ptr->dis_to_d;
 
 	/* Clear extra blows/shots */
-	extra_blows = extra_shots = extra_spells = 0;
+//	extra_blows = extra_shots = extra_spells = 0;
+	extra_shots = extra_spells = 0;
 
 	/* Clear the stat modifiers */
 	for (i = 0; i < 6; i++) p_ptr->stat_add[i] = 0;
@@ -2017,6 +2086,7 @@ static void calc_bonuses(int Ind)
 
 	/* Start with a single blow per turn */
 	p_ptr->num_blow = 1;
+	p_ptr->extra_blows = 0;
 
 	/* Start with a single shot per turn */
 	p_ptr->num_fire = 1;
@@ -2296,7 +2366,7 @@ static void calc_bonuses(int Ind)
 			if (k_ptr->flags1 & TR1_SPEED) p_ptr->pspeed += o_ptr->bpval;
 
 			/* Affect blows */
-			if (k_ptr->flags1 & TR1_BLOWS) extra_blows += o_ptr->bpval;
+			if (k_ptr->flags1 & TR1_BLOWS) p_ptr->extra_blows += o_ptr->bpval;
 
 			/* Affect spells */
 			if (k_ptr->flags1 & TR1_SPELL) extra_spells += o_ptr->bpval;
@@ -2395,7 +2465,7 @@ static void calc_bonuses(int Ind)
 		if (f1 & TR1_SPEED) p_ptr->pspeed += pval;
 
 		/* Affect blows */
-		if (f1 & TR1_BLOWS) extra_blows += pval;
+		if (f1 & TR1_BLOWS) p_ptr->extra_blows += pval;
                 if (f5 & (TR5_CRIT)) p_ptr->xtra_crit += pval;
 
 		/* Affect spellss */
@@ -2811,7 +2881,7 @@ static void calc_bonuses(int Ind)
 			p_ptr->to_d += 8;
 			p_ptr->dis_to_d += 8;
 		}
-		if (p_ptr->adrenaline & 2) extra_blows++;
+		if (p_ptr->adrenaline & 2) p_ptr->extra_blows++;
 		p_ptr->to_a -= 20;
 		p_ptr->dis_to_a -= 10;
 	}
@@ -3139,75 +3209,17 @@ static void calc_bonuses(int Ind)
 	/* Normal weapons */
 	if (o_ptr->k_idx && !p_ptr->heavy_wield)
 	{
-		int str_index, dex_index;
-
-		int num = 0, wgt = 0, mul = 0, div = 0;
-
-		/* Analyze the class */
-		switch (p_ptr->pclass)
+		p_ptr->num_blow = calc_blows(Ind, o_ptr);
+		/* Boost blows with masteries */
+		if (get_weaponmastery_skill(p_ptr) != -1)
 		{
-			/* Adevnturer */
-			case CLASS_ADVENTURER: num = 5; wgt = 35; mul = 6; break;
+			int lev = get_skill(p_ptr, get_weaponmastery_skill(p_ptr));
 
-			/* Warrior */
-			case CLASS_WARRIOR: num = 6; wgt = 30; mul = 5; break;
-
-			/* Mage */
-			case CLASS_MAGE:    num = 4; wgt = 40; mul = 2; break;
-
-			/* Priest */
-			case CLASS_PRIEST:  num = 5; wgt = 35; mul = 3; break;
-
-			/* Rogue */
-			case CLASS_ROGUE:   num = 5; wgt = 30; mul = 3; break;
-
-			/* Mimic */
-			case CLASS_MIMIC:   num = 4; wgt = 30; mul = 3; break;
-
-			/* Archer */
-			case CLASS_ARCHER:   num = 3; wgt = 30; mul = 3; break;
+			p_ptr->to_h_melee += lev;
+			p_ptr->to_d_melee += lev / 2;
+//			p_ptr->num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
 		}
-
-		/* Enforce a minimum "weight" (tenth pounds) */
-		div = ((o_ptr->weight < wgt) ? wgt : o_ptr->weight);
-
-		/* Access the strength vs weight */
-		str_index = (adj_str_blow[p_ptr->stat_ind[A_STR]] * mul / div);
-
-		/* Maximal value */
-		if (str_index > 11) str_index = 11;
-
-		/* Index by dexterity */
-		dex_index = (adj_dex_blow[p_ptr->stat_ind[A_DEX]]);
-
-		/* Maximal value */
-		if (dex_index > 11) dex_index = 11;
-
-		/* Use the blows table */
-		p_ptr->num_blow = blows_table[str_index][dex_index];
-
-		/* Maximal value */
-		if (p_ptr->num_blow > num) p_ptr->num_blow = num;
-
-		/* Add in the "bonus blows" */
-		p_ptr->num_blow += extra_blows;
-
-		/* Require at least one blow */
-		if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
-
-		/* Boost digging skill by weapon weight */
-//		p_ptr->skill_dig += (o_ptr->weight / 10);
-
-                /* Boost blows with masteries */
-                if (get_weaponmastery_skill(p_ptr) != -1)
-                {
-                        int lev = get_skill(p_ptr, get_weaponmastery_skill(p_ptr));
-
-                        p_ptr->to_h_melee += lev;
-                        p_ptr->to_d_melee += lev / 2;
-                        p_ptr->num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
-                }
-        }
+	}
 
 	/* Different calculation for monks with empty hands */
 #if 1 // DGDGDGDG -- no more monks for the time being
@@ -3228,7 +3240,7 @@ static void calc_bonuses(int Ind)
 
 		if (monk_heavy_armor(p_ptr)) p_ptr->num_blow /= 2;
 
-		p_ptr->num_blow += 1 + extra_blows;
+		p_ptr->num_blow += 1 + p_ptr->extra_blows;
 
 		if (!monk_heavy_armor(p_ptr))
 		{

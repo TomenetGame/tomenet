@@ -3836,7 +3836,7 @@ void player_death(int Ind)
 		msg_print(Ind, "\377oYour amulet shatters into the pieces!");
 
 		inven_item_increase(Ind, INVEN_NECK, -99);
-		inven_item_describe(Ind, INVEN_NECK);
+//		inven_item_describe(Ind, INVEN_NECK);
 		inven_item_optimize(Ind, INVEN_NECK);
 
 		/* Cure him from various maladies */
@@ -3896,10 +3896,13 @@ void player_death(int Ind)
 	if (p_ptr->ghost || (hell && p_ptr->alive))
 	{
 		/* Tell players */
-		sprintf(buf, "\377r%s's ghost was destroyed by %s.",
+		if (p_ptr->ghost) sprintf(buf, "\377r%s's ghost was destroyed by %s.",
+				p_ptr->name, p_ptr->died_from);
+		else sprintf(buf, "\377r%s was killed and destroyed by %s.",
 				p_ptr->name, p_ptr->died_from);
 
-		msg_broadcast(Ind, buf);
+		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master))
+			msg_broadcast(Ind, buf);
 
 		/* wipe artifacts (s)he had */
 		for (i = 0; i < INVEN_TOTAL; i++)

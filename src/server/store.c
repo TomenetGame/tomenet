@@ -2592,7 +2592,13 @@ void store_examine(int Ind, int item)
 	if (!(o_ptr->ident & (ID_MENTAL)))
 	{
 		/* This can only happen in the home */
-		msg_print(Ind, "You have no special knowledge about that item.");
+		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
+		{
+			int blows = calc_blows(Ind, o_ptr);
+			msg_format(Ind, "With it, you can usually attack %d time%s/turn.",
+					blows, blows > 1 ? "s" : "");
+		}
+		else msg_print(Ind, "You have no special knowledge about that item.");
 		return;
 	}
 

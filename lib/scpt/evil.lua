@@ -4,7 +4,8 @@ function ball(name, rad, type, harm, dam, flg)
 	local w;
 	i=ind(name);
 	if(i==-1) then return end;
-	if(harm==1) then w=-999 else w=-i end;
+--	if(harm==1) then w=-999 else w=-i end;
+	if(harm==1) then w=-1000 else w=-i end;
 	if(rad>8) then rad=8 end;
 	project(w, rad, players(i).wpos, players(i).py, players(i).px, dam, type, flg);
 end

@@ -1506,6 +1506,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 1000,
                                 '+', 200,
                         },
+                        {
+                                SKILL_AGILITY,
+                                '+', 1000,
+                                '+', 100,
+                        },
 				},
 	},
 
@@ -1742,6 +1747,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_DODGE,
                                 '+', 1000,
                                 '+', 300,
+                        },
+                        {
+                                SKILL_AGILITY,
+                                '+', 2000,
+                                '+', 150,
                         },
 				},
 	},
@@ -2097,7 +2107,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_AGILITY,
                                 '+', 0,
-                                '+', 200,	// *HARD* to learn
+                                '+', 300,	// *HARD* to learn
                         },
                         {
                                 SKILL_SWIM,
@@ -2224,7 +2234,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_AGILITY,
                                 '+', 1000,
-                                '+', 300,
+                                '+', 400,
                         },
                         {
                                 SKILL_SWIM,
@@ -2526,7 +2536,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_AGILITY,
                                 '+', 1000,
-                                '+', 350,
+                                '+', 500,
                         },
                         {
                                 SKILL_CALMNESS,

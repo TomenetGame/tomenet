@@ -4537,13 +4537,13 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		 */
 		if (ax < 2 && ay > 5)
 		{
-			x = (x > 0 || !x && magik(50)) ? -ay : ay;
-			ax = ay;
+			x = (x > 0 || !x && magik(50)) ? -ay / 2: ay / 2;
+			ax = ay / 2;
 		}
 		if (ay < 2 && ax > 5)
 		{
-			y = (y > 0 || !y && magik(50)) ? -ax : ax;
-			ay = ax;
+			y = (y > 0 || !y && magik(50)) ? -ax / 2: ax / 2;
+			ay = ax / 2;
 		}
 	}
 

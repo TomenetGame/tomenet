@@ -555,7 +555,7 @@ static cptr t_info_flags[] =
    "XXX28",
    "XXX29",
    "XXX30",
-   "XXX31",
+   "EASY_ID",
    "NO_ID"
 };
 

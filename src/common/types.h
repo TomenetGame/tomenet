@@ -2199,6 +2199,7 @@ struct player_type
 	s16b quest_num;		/* Number of kills needed */
 
 	s16b xtra_crit;         /* % of increased crits */
+	s16b extra_blows;		/* Number of extra blows */
 
 	s16b to_l;                      /* Bonus to life */
 	s16b to_m;                      /* Bonus to mana */

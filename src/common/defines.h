@@ -3714,11 +3714,13 @@ that keeps many algorithms happy.
 /*
  * Determine if a given inventory item is "known"
  * Test One -- Check for special "known" tag
- * Test Two -- Check for "Easy Know" + "Aware"
+ * Test Two -- Check for "Easy Know" + "Aware" ( + not "Arts" nor "ego")
  */
 #define object_known_p(IND, T) \
     (((T)->ident & ID_KNOWN) || \
-     (k_info[(T)->k_idx].easy_know && Players[IND]->obj_aware[(T)->k_idx]))
+     (k_info[(T)->k_idx].easy_know && Players[IND]->obj_aware[(T)->k_idx] && \
+	 !(T)->name1 && !(T)->name2 && !(T)->name2b))
+//     (k_info[(T)->k_idx].easy_know && Players[IND]->obj_aware[(T)->k_idx]))
 
 #define object_fully_known_p(IND, T) \
 	(object_known_p(IND,T) && ((T)->ident & ID_MENTAL))
@@ -4251,7 +4253,7 @@ extern int PlayerUID;
 #define FTRAP_XXX28      0x008000000
 #define FTRAP_XXX29      0x010000000
 #define FTRAP_XXX30      0x020000000
-#define FTRAP_XXX31      0x040000000
+#define FTRAP_EASY_ID    0x040000000
 #define FTRAP_NO_ID      0x080000000	/* nominally implemented (but not used) */
 
 /* jk */

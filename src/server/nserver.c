@@ -607,6 +607,10 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 	{
 		if(Players[i]->conn != NOT_CONNECTED ) {
 		    p_ptr = Players[i];
+			/*
+			 * FIXME: p_ptr->name is character name while nick_name is
+			 * account name, so this check always fail.  Evileye? :)
+			 */
 		    if (strcasecmp(p_ptr->name, nick_name) == 0)
 		    {
 			/*plog(format("%s %s", Players[i]->name, nick_name));*/

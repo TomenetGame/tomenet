@@ -1449,7 +1449,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_AMULET:
 		{
 			/* Known artifacts */
-			if (artifact_p(o_ptr) && aware) break;
+//			if (artifact_p(o_ptr) && aware) break;
+			if (artifact_p(o_ptr) && known) break;
 
 			/* Color the object */
 			modstr = amulet_adj[indexx];
@@ -1463,7 +1464,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_RING:
 		{
 			/* Known artifacts */
-			if (artifact_p(o_ptr) && aware) break;
+//			if (artifact_p(o_ptr) && aware) break;
+			if (artifact_p(o_ptr) && known) break;
 
 			/* Color the object */
 			modstr = ring_adj[indexx];
@@ -1924,6 +1926,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	}
 
 	/* you cannot tell the level if not id-ed. */
+	/* XXX it's still abusable */
 	if (!known)
 	{
 		t = object_desc_chr(t, '?');
@@ -3827,6 +3830,13 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 #endif
 	if (f4 & TR4_COULD2H) fprintf(fff, "It can be wielded two-handed.\n");
 	if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
+
+	if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
+	{
+		int blows = calc_blows(Ind, o_ptr);
+		fprintf(fff, "With it, you can usually attack %d time%s/turn.\n",
+				blows, blows > 1 ? "s" : "");
+	}
 
 	/* Mega Hack^3 -- describe the amulet of life saving */
 	if (o_ptr->tval == TV_AMULET &&
