@@ -846,7 +846,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 
 	/* Cannot remove cursed items */
-	if (cursed_p(o_ptr) && !p_ptr->admin_dm)	/* Hack -- DM can */
+	if (cursed_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))	/* Hack -- DM can */
 	{
 		if ((item >= INVEN_WIELD) )
 		{
@@ -1010,7 +1010,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-	if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr))
+	if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))
 	{
 		/* Oops */
 		msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
@@ -1020,7 +1020,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 
 	/* Artifacts cannot be destroyed */
-	if (artifact_p(o_ptr))
+	if (artifact_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))
 	{
 		cptr feel = "special";
 
@@ -1047,7 +1047,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 
 	/* Keys cannot be destroyed */
-	if (o_ptr->tval == TV_KEY && !p_ptr->admin_dm)
+	if (o_ptr->tval == TV_KEY && !(p_ptr->admin_dm || p_ptr->admin_wiz))
 	{
 		/* Message */
 		msg_format(Ind, "You cannot destroy %s.", o_name);
@@ -1057,7 +1057,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 
 	/* Cursed, equipped items cannot be destroyed */
-	if (item >= INVEN_WIELD && cursed_p(o_ptr))
+	if (item >= INVEN_WIELD && cursed_p(o_ptr) && !(p_ptr->admin_dm || p_ptr->admin_wiz))
 	{
 		/* Message */
 		msg_print(Ind, "Hmm, that seems to be cursed.");
