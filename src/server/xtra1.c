@@ -3572,7 +3572,8 @@ void update_stuff(int Ind)
 	/* Update stuff */
 	if (!p_ptr->update) return;
 
-
+	/* This should only be sent once. This data
+	   does not change in runtime */
 	if (p_ptr->update & PU_SKILL_INFO)
         {
                 int i;
@@ -3582,10 +3583,14 @@ void update_stuff(int Ind)
                 {
                         if (s_info[i].name)
                         {
+#if 0
                                 Send_skill_init(Ind, PKT_SKILL_INIT_NAME, i);
                                 Send_skill_init(Ind, PKT_SKILL_INIT_DESC, i);
                                 if (s_info[i].action_desc != NULL)
                                         Send_skill_init(Ind, PKT_SKILL_INIT_MKEY, i);
+#else
+				Send_skill_init(Ind, i);
+#endif
                         }
                 }
 	}

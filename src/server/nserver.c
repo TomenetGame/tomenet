@@ -3031,10 +3031,16 @@ int Send_experience(int ind, int lev, s32b max, s32b cur, s32b adv)
 			max, cur, adv);
 }
 
+#if 0
 int Send_skill_init(int ind, int type, int i)
+#else
+int Send_skill_init(int ind, u16b i)
+#endif
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 
+	char *tmp;
+	
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
 		errno = 0;
@@ -3043,6 +3049,7 @@ int Send_skill_init(int ind, int type, int i)
 		return 0;
 	}
 
+#if 0
 	/* Why sending thrice..? */
 #if 0
 	if (type == PKT_SKILL_INIT_NAME)
@@ -3059,6 +3066,18 @@ int Send_skill_init(int ind, int type, int i)
 	else if (type == PKT_SKILL_INIT_MKEY)
 		return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%S%d%c", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].order, s_info[i].action_mkey, s_text + s_info[i].action_desc, s_info[i].flags1, s_info[i].tval);
 #endif	// 0
+#endif /* evileye - 0 */
+
+	tmp=s_info[i].action_desc ? s_text + s_info[i].action_desc : "";
+
+	/* Note: %hd is 2 bytes - use this for x16b.
+	   We can use %c for bytes. */
+	return( Packet_printf(&connp->c, "%c%hd%hd%hd%hd%ld%c%S%S%S",
+		PKT_SKILL_INIT, i,
+		s_info[i].father, s_info[i].order, s_info[i].action_mkey,
+		s_info[i].flags1, s_info[i].tval, s_name+s_info[i].name,
+		s_text+s_info[i].desc, tmp ? tmp : "" ) );
+
 }
 
 int Send_skill_info(int ind, int i)

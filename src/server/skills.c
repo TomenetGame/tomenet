@@ -243,7 +243,7 @@ void increase_skill(int Ind, int i)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
 #endif	// 0
 
-	p_ptr->update |= (PU_SKILL_INFO | PU_SKILL_MOD);
+	p_ptr->update |= (PU_SKILL_MOD);
 }
 
 

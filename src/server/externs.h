@@ -668,7 +668,11 @@ extern bool Destroy_connection(int Ind, char *reason);
 extern int Send_plusses(int Ind, int tohit, int todam, int tohit_r, int todam_r, int tohit_m, int todam_m);
 extern int Send_ac(int Ind, int base, int plus);
 extern int Send_experience(int Ind, int lev, s32b max_exp, s32b cur_exp, s32b adv_exp);
+#if 0
 extern int Send_skill_init(int ind, int type, int i);
+#else
+extern int Send_skill_init(int ind, u16b i);
+#endif
 extern int Send_skill_info(int ind, int i);
 extern int Send_gold(int Ind, s32b gold);
 extern int Send_hp(int Ind, int mhp, int chp);

@@ -1644,23 +1644,40 @@ int Receive_skill_init(void)
 {
 	int	n;
 	char	ch;
+#if 0
 	int	i, type, father, mkey, order;
-	char    buf[300];
+#else
+	u16b	i;
+	u16b	father, mkey, order;
+#endif
+	char    name[300], desc[300], act[300];
 	u32b	flags1;
-	byte	tval;
+	u16b	tval;
 
+#if 0
 //	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%ld%S", &ch, &type, &i, &father, &order, &mkey, buf)) <= 0)
 	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%ld%S%d%c", &ch, &type, &i, &father, &order, &mkey, buf, &flags1, &tval)) <= 0)
+#else
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%ld%c%S%S%S", &ch, &i,
+		&father, &order, &mkey, &flags1, &tval, name, desc, act)) <= 0)
 	{
 		return n;
 	}
+#endif
 
+#if 0
 	if (type == PKT_SKILL_INIT_NAME)
 		s_info[i].name = string_make(buf);
 	if (type == PKT_SKILL_INIT_DESC)
 		s_info[i].desc = string_make(buf);
 	else
 		s_info[i].action_desc = string_make(buf);
+#else
+	/* These are x32b, not char * !!!!! */
+	s_info[i].name = string_make(name);
+	s_info[i].desc = string_make(desc);
+	s_info[i].action_desc = (strlen(act) ? string_make(act) : 0L);
+#endif
 
 	s_info[i].father = father;
 	s_info[i].order = order;
