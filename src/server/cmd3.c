@@ -867,14 +867,6 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	object_type *o_ptr;
 	u32b f1, f2, f3, f4, f5, esp;
 
-	/* Handle the newbies_cannot_drop option */	
-	if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
-	{
-		msg_print(Ind, "You are not experienced enough to drop items.");
-		return;
-	}
-
 	/* Get the item (in the pack) */
 	if (item >= 0)
 	{
@@ -888,6 +880,14 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	}
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	/* Handle the newbies_cannot_drop option */	
+	if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
+	{
+		msg_print(Ind, "You are not experienced enough to drop items.");
+		return;
+	}
 
 	if( check_guard_inscription( o_ptr->note, 'd' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
