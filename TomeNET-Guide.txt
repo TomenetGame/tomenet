@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. November 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. November 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2b, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -2772,6 +2772,7 @@ However, a temporary resistance (by potion or spell) and a permanent
 resistance can stack. That means if you quaff a 'potion of resist heat'
 (temporary resistance) and wear an armour of fire resistance (permanent
 resistance) fire attacks will do only 1/3 * 1/3 = 1/9 of the original damage.
+For more information on resistance/ability stacking see (5.17).
 
 For all attacks the following way of how the final damage is calculated
 applies:
@@ -2799,7 +2800,7 @@ leaving approx. 400 damage.
 Overview:
 Breath damage is capped, the number is given in the corresponding description.
 Bolts and balls are not capped (except for the general damage cap of 1600).
-Their damage maximum is depends on the level of the casting monster as the
+Their damage maximum depends on the level of the casting monster as the
 formulas show. The total maximum damage an attack can do in TomeNET is 1600
 (general damage cap for all breath/bolt/ball attacks).
 
@@ -2842,13 +2843,15 @@ will need the according immunity! Resistance is only sufficient to protect
 your equipment, not your inventory.
 Magic rods are always immune to all kinds of attacks.
 
-Then there's 'poison resistance'. This one doesn't belong to the basic
-resistances but is also very essential at the beginning.
-If you resist poison you will not only take just 1/3 of the poison damage but
-also be protected from poisoning effects.
-Breath damage before capping is monster HP/3. Poison breath caps at 800.
-Make sure that you have the basics and poison resistance before going far
-deeper than 1000 ft.
+Poison          Poison resistance doesn't belong to the basic resistances but
+                is also very essential at the beginning. If you resist poison
+                you will not only take just 1/3 of the poison damage but also
+                be protected from poisoning effects.
+                Breath damage before capping is monster HP/3. Poison breath
+                caps at 800.
+
+Make sure that you have the basic resistances as soon as possible, and poison
+resistance before going far deeper than 1500 ft.
 Poison balls (also known as Stinking Clouds) do 12d2 damage.
 
 There are also five minor resistances:
