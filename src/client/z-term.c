@@ -509,9 +509,11 @@ byte flick_colour(byte attr){
 		case TERM_MULTI:
 			return(random()&15);
 			break;	/* unnecessary breaks ;) */
+#if 0
 		case TERM_FIRE:
 			return(random()&1?TERM_RED:TERM_L_RED);
 			break;
+#endif
 		case TERM_HALF:
 			return(get_shimmer_color());
 			break;
