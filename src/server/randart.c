@@ -1317,7 +1317,7 @@ artifact_type *randart_make(object_type *o_ptr)
 	    (k_ptr->tval==TV_DRAG_ARMOR) ||
 	    (k_ptr->tval==TV_HARD_ARMOR))
 	{
-		a_ptr->to_a += 1 + rand_int(20);
+		a_ptr->to_a += 1 + rand_int(17);
 	}
 		
 	/* First draft: add two abilities, then curse it three times. */
@@ -1564,7 +1564,7 @@ void randart_name(object_type *o_ptr, char *buffer)
 artifact_type *ego_make(object_type *o_ptr)
 {
 	ego_item_type *e_ptr;
-	int j, rr;
+	int j, rr, granted_pval;
 	bool limit_blows = FALSE;
 //	u32b f1, f2, f3, f4, f5, esp;
 	s16b e_idx;
@@ -1682,9 +1682,17 @@ try_an_other_ego:
 	if (e_ptr->max_to_a > 0) a_ptr->to_a += randint(e_ptr->max_to_a);
 	if (e_ptr->max_to_a < 0) a_ptr->to_a -= randint(-e_ptr->max_to_a);
 
+	/* Obtain granted minimum pval */
+	granted_pval = 0;
+	if ((o_ptr->tval == TV_MSTAFF) && (o_ptr->sval == SV_MSTAFF))
+	{
+		if (o_ptr->name2b == 2) granted_pval = 3;
+		if (o_ptr->name2b == 3) granted_pval = 5;
+	}
+
 	/* Hack -- obtain pval */
-	if (e_ptr->max_pval > 0) a_ptr->pval += randint(e_ptr->max_pval);
-	if (e_ptr->max_pval < 0) a_ptr->pval -= randint(-e_ptr->max_pval);
+	if (e_ptr->max_pval > 0) a_ptr->pval += granted_pval + randint(e_ptr->max_pval - granted_pval);
+	if (e_ptr->max_pval < 0) a_ptr->pval -= (granted_pval + randint(-e_ptr->max_pval - granted_pval));
 
 	/* Hack -- apply rating bonus(it's done in apply_magic) */
 	//		rating += e_ptr->rating;

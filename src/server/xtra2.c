@@ -3588,6 +3588,9 @@ void monster_death(int Ind, int m_idx)
 	struct worldpos *wpos;
 	cave_type **zcave;
 
+	int a_idx, chance, I_kind;
+	artifact_type *a_ptr;
+
 	/* get monster name for damage deal description */
 	monster_desc(Ind, m_name, m_idx, 0x00);
 	
@@ -4152,9 +4155,9 @@ void monster_death(int Ind, int m_idx)
 		}
 		else
 		{
-			byte a_idx = 0;
-			int chance = 0;
-			int I_kind = 0;
+			a_idx = 0;
+			chance = 0;
+			I_kind = 0;
 
 			/* chances should be reduced, so that the quickest
 			 * won't benefit too much?	- Jir - */
@@ -4203,7 +4206,7 @@ void monster_death(int Ind, int m_idx)
 			{
 				if (a_info[a_idx].cur_num == 0)
 				{
-					artifact_type *a_ptr = &a_info[a_idx];
+					a_ptr = &a_info[a_idx];
 
 					/* Get local object */
 					qq_ptr = &forge;
@@ -4262,9 +4265,9 @@ void monster_death(int Ind, int m_idx)
 	/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: -C. Blue */
 	else if (r_ptr->flags3 & RF3_DRAGON)
 	{
-		byte a_idx = ART_AMUGROM;
-		artifact_type *a_ptr = &a_info[a_idx];
 		bool pfft = TRUE;
+		a_idx = ART_AMUGROM;
+		a_ptr = &a_info[a_idx];
 
 		/* don't allow duplicates */
 		if (a_ptr->cur_num) pfft = FALSE;
@@ -4273,22 +4276,24 @@ void monster_death(int Ind, int m_idx)
 		else if ((m_ptr->maxhp < 6000) && rand_int(60)) pfft = FALSE;/* strong wyrms at 6000+ */
 		else if ((m_ptr->maxhp >= 6000) && (m_ptr->maxhp < 10000) && rand_int(40)) pfft = FALSE;
 		else if ((m_ptr->maxhp >= 10000) && rand_int(20)) pfft = FALSE;/* gwop ^^ */
-
 #if 0
-		if (pfft) {
-            		int chance = 0;
-                        int I_kind = 0;
+		if (pfft || TRUE) {
+            		chance = 0;
+                        I_kind = 0;
 			/* Get local object */
 			qq_ptr = &forge;
 			/* Wipe the object */
 			object_wipe(qq_ptr);
 			/* Acquire the "kind" index */
-			I_kind = lookup_kind(a_ptr->tval, a_ptr->sval);
+//			I_kind = lookup_kind(a_ptr->tval, a_ptr->sval);
+			I_kind = 927;
 			/* Create the artifact */
 			invcopy(qq_ptr, I_kind);
 			/* Save the name */
 			qq_ptr->name1 = a_idx;
 			/* Extract the fields */
+			qq_ptr->tval = TV_AMULET;
+			qq_ptr->sval = SV_AMULET_GROM;
 			qq_ptr->pval = a_ptr->pval;
 			qq_ptr->ac = a_ptr->ac;
 			qq_ptr->dd = a_ptr->dd;
@@ -5549,6 +5554,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		{
 			m_ptr->clone = 90;
 		}
+		
+		/* Monsters in the Training Tower give 50% exp */
+		if ((p_ptr->wpos.wx == 32) && (p_ptr->wpos.wy == 32) && (p_ptr->wpos.wz > 0))
+			tmp_exp /= 2;
 
 		/* Split experience if in a party */
 		if (p_ptr->party == 0 || p_ptr->ghost)
@@ -7185,6 +7194,12 @@ void telekinesis_aux(int Ind, int item)
 	Ind2 = get_player(Ind, o_ptr);
 	if (!Ind2) return;
 	p2_ptr = Players[Ind2];
+
+	if (p2_ptr->ghost)
+	{
+	    msg_print(Ind, "You cannot send items to ghosts!");
+	    return;
+	}
 
 	if ((p_ptr->mode & MODE_IMMORTAL) && !(p2_ptr->mode & MODE_IMMORTAL))
 	{

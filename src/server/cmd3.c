@@ -937,6 +937,9 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	/* Hack -- 'own' the gold */
 	tmp_obj.owner = p_ptr->id;
 
+	/* Non-everlasting can't take money from everlasting */
+	tmp_obj.owner_mode = p_ptr->mode;
+
 	/* Drop it */
 	drop_near(&tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 

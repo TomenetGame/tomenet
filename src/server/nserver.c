@@ -939,7 +939,7 @@ static void Contact(int fd, int arg)
 	status = Enter_player(real_name, nick_name, host_addr, host_name,
 				version, port, &login_port, fd);
 
-#if DEBUG_LEVEL > 1
+#if DEBUG_LEVEL > 0
 	if (status && status != E_NEED_INFO)
 		s_printf("%s: Connection refused(%d).. %s=%s@%s (%s/%d)\n", showtime(),
 				status, nick_name, real_name, host_name, host_addr, port);

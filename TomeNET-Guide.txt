@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. June 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. June 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -873,6 +873,7 @@ Use 'create command macro' instead of 'create normal macro' in case you don't
 want the macro to appear on hitting the corresponding key in a normal chat
 message (for example useful for '-' key so it won't prevent you from inscribing your
 word-of-recall scrolls).
+(It is recommended to command macros rather than normal macros.)
 
 Identity macros:
 ----------------
@@ -1335,12 +1336,14 @@ Look for the staircase ">", step on it and press the '>' key to enter the
 dungeon. There is often a so-called newbie tower, which is represented by a
 "<", meaning it goes upwards instead of downwards. Enter it by pressing the
 '<' key. The newbie tower often allows you to die without suffering
-consequences, or is in general easier. You might ask other players in game
-(use ':' to chat) where/if there is a newbie tower, or you might search for it
-yourself. While inside a town, you get a good overview including the
-staircases upwards and downwards by invoking the map by pressing SHIFT+'M'
-(capital M !). If you leave a town and explore the wildernis, M will bring up
-a map showing you towns and areas that you have explored so far.
+consequences, or is in general easier. An experience penalty might be applied
+for killing monsters in the tower (usually 50%). You might ask other players
+in game (use ':' to chat) where/if there is a newbie tower (also called
+'Training Tower'), or you might search for it yourself.
+While inside a town, you get a good overview including the staircases upwards
+and downwards by invoking the map by pressing SHIFT+'M' (capital M !).
+If you leave a town and explore the wildernis, M will bring up a map showing
+you towns and areas that you have explored so far.
 After you entered the dungeon, make sure again that you have equipped a light
 source! Note the bright dots around you, these are lightened fields within the
 radius of your light source. To look at your current dungeon/tower level or
@@ -4056,6 +4059,12 @@ SOLUTION:   Your LUA script files are outdated. Those files are responsible
              is to just download a ZIP file containing the latest scripts
              and extract it to your /tomenet-bin/lib/scpt folder.
              You can get the latest scripts at www.c-blue.de/rogue.html .
+PROBLEM:    When I start TomeNET I don't see anything except a small hollow
+            yellow rectangle (the cursor). All windows stay black. It seems
+            that the cursor reacts to my inputs by printing out some black
+            hence invisible text.
+SOLUTION:   A rare problem that is not caused by TomeNET really. Restart your
+            MS Windows system and the text should be visible again.
 
 
 

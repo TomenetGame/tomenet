@@ -321,8 +321,6 @@ void do_cmd_check_uniques(int Ind, int line)
 
 			/* Hack -- Show the ID for admin */
 			if (admin) fprintf(fff, "(%4d) ", k);
-			/* don't display dungeon master to players */
-			else if (q_ptr->admin_dm) continue;
 
 			/* Format message */
 			//				fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
@@ -331,6 +329,9 @@ void do_cmd_check_uniques(int Ind, int line)
 			for (i = 1; i <= NumPlayers; i++)
 			{
 				player_type *q_ptr = Players[i];
+
+				/* don't display dungeon master to players */
+				if (q_ptr->admin_dm && !Players[Ind]->admin_dm) continue;
 
 				if (q_ptr->r_killed[k])
 				{

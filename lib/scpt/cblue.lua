@@ -12,7 +12,7 @@ end
 
 -- Cures all maladies of a player.
 function cureall(name)
-    local p
+    local p, t
     p = ind(name)
     set_afraid(p, 0)
     set_image(p, 0)
@@ -32,8 +32,10 @@ function cureall(name)
     restore_level(p)
     set_food(p, PY_FOOD_FULL)
     players(p).black_breath = FALSE
-    players(p).csane = player.msane
-    players(p).chp = player.mhp
+    t = players(p).msane
+    players(p).csane = t
+    t = players(p).mhp
+    players(p).chp = t
     players(p).chp_frac = 0
 end
 
@@ -96,14 +98,14 @@ function nomons()
     end
 end
 
--- Set all uniques/monsters to '100 times killed' for a player.
+-- Set all uniques/monsters to '666 times killed' for a player.
 function allmons()
 --function allmons(name)
     local p, i
 --    p = ind(name)
     p = Ind
     for i = 1, MAX_R_IDX do
-	players(p).r_killed[i] = 1
+	players(p).r_killed[i] = 666
     end
 end
 

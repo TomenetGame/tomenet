@@ -2337,6 +2337,10 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		return (FALSE);
 	}
 
+	/* hard-coded - hack */
+	/* Wight-King of the Barrow-downs might not occur anywhere else -C. Blue */
+	if ((r_idx == 971) && ((wpos->wx != 32) || (wpos->wy != 32))) return (FALSE);
+
         /* Ego Uniques are NOT to be created */
         if ((r_ptr->flags1 & RF1_UNIQUE) && (ego || randuni)) return 0;
 

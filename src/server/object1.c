@@ -40,7 +40,7 @@
  * Max sizes of the following arrays
  */
 #define MAX_ROCKS      62       /* Used with rings (min 58) */
-#define MAX_AMULETS    38       /* Used with amulets (min 30) */
+#define MAX_AMULETS    39       /* Used with amulets (min 30) */
 #define MAX_WOODS      36       /* Used with staffs (min 32) */
 #define MAX_METALS     39       /* Used with wands/rods (min 32/30) */
 #define MAX_COLORS     68       /* Used with potions (min 62) */
@@ -113,7 +113,7 @@ static cptr amulet_adj[MAX_AMULETS] =
         "Carved Oak", "Sea Shell", "Flint Stone", "Ruby", "Scarab",
         "Origami Paper", "Meteoric Iron", "Platinum", "Glass", "Beryl",
         "Malachite", "Adamantite", "Mother-of-pearl", "Runed",
-	"Sandalwood", "Emerald", "Aquamarine", "Sparkling",
+	"Sandalwood", "Emerald", "Aquamarine", "Sapphire", "Glimmer-Stone",
 };
 
 static byte amulet_col[MAX_AMULETS] =
@@ -125,7 +125,7 @@ static byte amulet_col[MAX_AMULETS] =
 	TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN, 
 	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_WHITE, TERM_L_GREEN, 
 	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER,
-	TERM_L_WHITE, TERM_GREEN, TERM_L_BLUE, TERM_ELEC,
+	TERM_L_WHITE, TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_LITE, 
 };
 
 
@@ -1274,7 +1274,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 {
         player_type     *p_ptr = Players[Ind];
 	cptr		basenm, modstr;
-	int			power, indexx;
+	int		power, indexx;
 
 	bool		aware = FALSE;
 	bool		known = FALSE;
@@ -1293,13 +1293,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 	char		tmp_val[160];
 
-	    u32b f1, f2, f3, f4, f5, esp;
+	u32b f1, f2, f3, f4, f5, esp;
 
-	object_kind		*k_ptr = &k_info[o_ptr->k_idx];
+	object_kind	*k_ptr = &k_info[o_ptr->k_idx];
 
 
 	/* Extract some flags */
-			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 
 	/* Assume aware and known if not a valid player */
@@ -1404,11 +1404,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		{
 			/* Known artifacts */
 //			if (artifact_p(o_ptr) && aware) break;
-			if (artifact_p(o_ptr) && known) break;
+			if (artifact_p(o_ptr) && known)	break;
 
 			/* Color the object */
 			modstr = amulet_adj[indexx];
-			if (aware) append_name = TRUE;
+			if (aware && !artifact_p(o_ptr)) append_name = TRUE;
 //			basenm = aware ? "& Amulet~" : "& # Amulet~";
 			basenm = "& # Amulet~";
 			break;

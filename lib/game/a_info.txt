@@ -405,7 +405,7 @@ F:FREE_ACT | RES_BLIND | RES_CONF | RES_FEAR | DRAIN_MANA |
 F:REFLECT | RES_NEXUS | SH_FIRE | SUST_INT | SUST_CON | SUST_CHR |
 F:STEALTH | ESP_DRAGONRIDER | CON | CHR | INT | ACTIVATE |
 F:RES_ACID | RES_ELEC | IM_COLD | RES_COLD | AGGRAVATE | HEAVY_CURSE
-F:REGEN_MANA
+F:REGEN_MANA | SPECIAL_GENE
 D:The flying suit of Mardra, very powerful armour that protects 
 D:the wearer from cold.  Wonderful as this mighty 
 D:armour is, beware wearing it, for it has been cursed by a 
@@ -2685,7 +2685,7 @@ D:very end. Baruk Khazad!
 N:220:of the Durin
 I:32:6:3
 W:40:70:60:100000
-P:9:0d0:0:0:25 
+P:9:0d0:0:0:20
 F:STR | CON | HIDE_TYPE | RES_FEAR | SUST_STR | SUST_CON | 
 F:IM_FIRE | RES_CONF | SEARCH | SEE_INVIS | LITE1 
 D:A helm wrought with the image of what Durin saw when he first gazed 

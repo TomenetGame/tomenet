@@ -313,7 +313,7 @@ void wild_spawn_towns()
 		}
 #endif	// 0
 
-#if DEBUG_LEVEL > 2
+#if DEBUG_LEVEL > 0
 		s_printf("Dungeon %d is generated in %s.\n", i, wpos_format(0, &wpos));
 #endif	// 0
 

@@ -300,10 +300,11 @@ B:MOAN:*
 F:UNIQUE | MALE | CAN_SPEAK | DROP_CORPSE |
 F:FORCE_MAXHP | WILD_TOWN | WILD_ONLY | 
 #Don't drop.. then no1 hunts you..
-#F:ONLY_ITEM | DROP_90 | DROP_GOOD | NEVER_MOVE
+F:ONLY_ITEM | DROP_90 | DROP_GOOD |
 F:NEVER_MOVE | NO_DEATH |
 F:OPEN_DOOR | BASH_DOOR | SPECIAL_GENE |
 F:NO_CONF | NO_SLEEP | NEUTRAL |
+#F:DROP_GOOD | DROP_GREAT | DROP_60 | ONLY_ITEM | 
 F:MORTAL | BASEANGBAND | HAS_LITE
 D:He's lost his dogs. He's had his mushrooms stolen. He's not a happy 
 D:hobbit! 
@@ -2012,7 +2013,7 @@ D:It is almost insubstantial.
 
 N:134:Night lizard
 G:R:b
-I:110:4d8:20:16:30
+I:110:4d8:20:24:30
 W:7:2:400:35
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -3430,7 +3431,7 @@ F:FORCE_SLEEP |
 F:ONLY_ITEM | DROP_1D2 | 
 F:SMART | OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE | 
 F:EVIL | HURT_LITE | BASEANGBAND | HAS_LITE | RES_DARK
-S:1_IN_5 | 
+S:1_IN_3 | 
 S:HEAL | BLIND | CONF | CURSE | DARKNESS | MISSILE
 D:A dark elven figure, dressed all in black, chanting curses and waiting to 
 D:deliver your soul to hell. 
@@ -3789,7 +3790,7 @@ B:BITE:COLD:1d6
 F:FORCE_SLEEP | WILD_TOO | WILD_WASTE |
 F:RAND_50 | CAN_FLY | SUSCEP_FIRE |
 F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL | IM_COLD | 
+F:ANIMAL | IM_COLD | AI_ANNOY | 
 F:MORTAL | BASEANGBAND
 S:1_IN_10 | 
 S:BR_COLD
@@ -4372,7 +4373,7 @@ O:0:0:0:0
 B:BITE:POISON:1d6
 F:FORCE_SLEEP | RAND_50 | RAND_25 | WILD_TOO | WILD_SWAMP |
 F:WEIRD_MIND | BASH_DOOR | CAN_FLY |
-F:ANIMAL | IM_POIS | 
+F:ANIMAL | IM_POIS | AI_ANNOY | 
 F:MORTAL | BASEANGBAND
 S:1_IN_10 | 
 S:BR_POIS
@@ -4896,7 +4897,7 @@ O:0:0:0:0
 B:BITE:CONFUSE:1d6
 F:FORCE_SLEEP | RAND_50 | RAND_25 | CAN_FLY |
 F:WEIRD_MIND | BASH_DOOR | WILD_TOO | WILD_MOUNTAIN |
-F:ANIMAL | NO_CONF | NO_SLEEP | 
+F:ANIMAL | NO_CONF | NO_SLEEP | AI_ANNOY | 
 F:MORTAL | BASEANGBAND
 S:1_IN_10 | 
 S:BR_CONF
@@ -4926,7 +4927,7 @@ O:0:0:0:0
 B:BITE:ACID:1d6
 F:FORCE_SLEEP | RAND_50 | RAND_25 | 
 F:WEIRD_MIND | BASH_DOOR | CAN_FLY | WILD_TOO | WILD_SWAMP |
-F:ANIMAL | IM_ACID | 
+F:ANIMAL | IM_ACID | AI_ANNOY | 
 F:MORTAL | BASEANGBAND
 S:1_IN_10 | 
 S:BR_ACID
@@ -4970,7 +4971,7 @@ B:BITE:HURT:1d6
 F:FORCE_SLEEP | 
 F:RAND_50 | RAND_25 | WILD_TOO | WILD_MOUNTAIN |
 F:WEIRD_MIND | BASH_DOOR | 
-F:ANIMAL | RES_FIRE | CAN_FLY | 
+F:ANIMAL | RES_FIRE | CAN_FLY | AI_ANNOY | 
 F:MORTAL | BASEANGBAND
 S:1_IN_10 | 
 S:BR_SOUN
@@ -6180,7 +6181,7 @@ F:FORCE_SLEEP |
 F:ONLY_ITEM | DROP_1D2 | DROP_SKELETON | DROP_CORPSE
 F:OPEN_DOOR | BASH_DOOR | RES_DARK |
 F:EVIL | IM_POIS | HURT_LITE | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
-S:1_IN_6 | 
+S:1_IN_4 | 
 S:HEAL | CONF | DARKNESS | 
 S:S_MONSTER | S_SPIDER | S_ANIMAL
 D:A powerful dark elf, with mighty nature-controlling enchantments. 
@@ -7016,7 +7017,7 @@ F:ONLY_ITEM | DROP_60 | DROP_1D2 |
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | NO_CONF | NO_SLEEP
 F:MORTAL | BASEANGBAND
-S:1_IN_8 | 
+S:1_IN_5 | 
 S:BLIND | HOLD | SCARE | MIND_BLAST | BRAIN_SMASH | FORGET
 D:A humanoid form with a gruesome head, tentacular mouth, and piercing 
 D:eyes. Claws reach out for you and you feel a presence invade your mind. 
@@ -17007,7 +17008,7 @@ B:CLAW:POISON:2d8
 B:BITE:POISON:2d6
 B:BITE:POISON:2d6
 F:DROP_SKELETON | FORCE_MAXHP | FRIENDS |
-F:OPEN_DOOR | BASH_DOOR | HURT_LITE |
+F:BASH_DOOR | HURT_LITE |
 F:ANIMAL | SPIDER | EVIL | IM_POIS | BASEANGBAND
 S:1_IN_4
 S:BO_FIRE | SLOW | HOLD | CURSE | MISSILE
@@ -17025,7 +17026,7 @@ B:BITE:HALLU:5d6
 #B:BITE:HALLU:5d6
 B:BITE:EAT_LITE:5d6
 F:DROP_SKELETON | FORCE_MAXHP |
-F:OPEN_DOOR | BASH_DOOR | HURT_LITE | SMART |
+F:BASH_DOOR | HURT_LITE | SMART |
 F:ANIMAL | SPIDER | EVIL | IM_FIRE | IM_POIS | BASEANGBAND
 S:1_IN_6
 S:SLOW | HOLD | DRAIN_MANA | MIND_BLAST | HEAL | 
@@ -17119,6 +17120,7 @@ F:MORTAL | BASEANGBAND | UNIQUE | PET | NO_DEATH
 D:The poor hobbit got lost in the dreadful maze!
 
 N:971:The Wight-King of the Barrow-downs
+#hard-code warning: It can only appear in Barrow-downs
 G:W:v
 I:120:38d22:30:45:0
 W:35:1:0:22000
@@ -19195,7 +19197,22 @@ D:A huge disembodied eye.  As you stare into the black nothingness of its pupil,
 D:you feel your will and vitality draining away, and are unable to do anything 
 D:except approach it in horrified fascination. 
 
-#N:1079:The Cosmos Eater
+N:1079:Gold ant
+G:a:y
+I:113:10d10:14:39:40
+W:25:2:700:200
+E:0:1:0:2:1:0
+O:0:0:0:0
+B:BITE:HURT:1d12
+B:BITE:HURT:1d12
+#B:DROOL:*
+F:FORCE_MAXHP | KILL_BODY | DROP_SKELETON | 
+F:WEIRD_MIND | BASH_DOOR | GOOD | 
+F:ANIMAL | RES_SOUND | MORTAL | BLUEBAND
+D:A giant ant covered in shaggy fur. Its powerful jaws glow with heat. 
+
+
+#N:1080:The Cosmos Eater
 #G:g:r
 #I:166:500d200:200:300:0
 #W:150:1:0:150000

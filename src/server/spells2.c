@@ -1296,6 +1296,14 @@ void self_knowledge(int Ind)
 		{
 			fprintf(fff, "Your weapon is a great bane of dragons.\n");
 		}
+		if (f1 & TR1_KILL_DEMON)
+		{
+			fprintf(fff, "Your weapon is a great bane of demons.\n");
+		}
+		if (f1 & TR1_KILL_UNDEAD)
+		{
+			fprintf(fff, "Your weapon is a great bane of undead.\n");
+		}
 	}
 //	info[i]=NULL;
 
