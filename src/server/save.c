@@ -1146,6 +1146,9 @@ static void wr_extra(int Ind)
 
 	wr_s32b(p_ptr->id);
 	wr_u32b(p_ptr->dna);
+#ifdef LAZY_EVIL_KILL_SFS
+	wr_s32b(p_ptr->turn);
+#endif
 
 	/* Ignore the transient stats */
 	for (i = 0; i < 10; ++i) wr_s16b(0);

@@ -1089,7 +1089,7 @@ void do_cmd_show_houses(int Ind)
 #endif	// 0
 			name = lookup_player_name(houses[i].dna->owner);
 			if (name) fprintf(fff, "  Owner:%s", name);
-			else fprintf(fff, "  ID: %d", dna->owner);
+			else fprintf(fff, "  ID: %ld", dna->owner);
 		}
 
 #if 1

@@ -5628,12 +5628,18 @@ static void process_monster(int Ind, int m_idx)
 
 		/* Monster destroys walls (and doors) */
 #ifdef MONSTER_DIG_FACTOR
+/* EVILEYE - correct me if i interpreted this wrongly. *//*
 		else if (r_ptr->flags2 & RF2_KILL_WALL ||
 				(!(r_ptr->flags1 & RF1_NEVER_MOVE ||
 				   r_ptr->flags2 & RF2_EMPTY_MIND ||
 				   r_ptr->flags2 & RF2_STUPID)) &&
 				(!rand_int(digging_difficulty(c_ptr->feat) * MONSTER_DIG_FACTOR)
 				 && magik(5 + r_ptr->level))) 
+*/
+
+		else if (r_ptr->flags2 & RF2_KILL_WALL ||
+			(!(r_ptr->flags2 & RF1_NEVER_MOVE || r_ptr->flags2 & RF2_EMPTY_MIND || r_ptr->flags2 & RF2_STUPID) &&
+			(!rand_int(digging_difficulty(c_ptr->feat) * MONSTER_DIG_FACTOR) && magik(5+r_ptr->level))))
 #else
 		else if (r_ptr->flags2 & RF2_KILL_WALL)
 #endif

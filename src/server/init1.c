@@ -5792,17 +5792,17 @@ errr init_ba_info_txt(FILE *fp, char *buf)
 		{
 			int act, act_res;
 			char letter;
-			byte flags;
+			unsigned int flags;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%c:%d",
+			if (4 != sscanf(buf+2, "%d:%d:%c:%u",
 				&act, &act_res, &letter, &flags)) return (1);
 
 			/* Save the values */
 			ba_ptr->action = act;
 			ba_ptr->action_restr = act_res;
 			ba_ptr->letter = letter;
-			ba_ptr->flags = flags;
+			ba_ptr->flags = (byte)flags;
 
 			/* Next... */
 			continue;

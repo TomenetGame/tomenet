@@ -25,8 +25,14 @@ void SGWHit(int read_fd, int arg){
 			int i;
 			time(&now);
 			size+=sprintf(sdb,"runtime=%ld\n", now-cfg.runtime);
-			size+=sprintf(&sdb[size],"num=%d\n", NumPlayers);
+			size+=sprintf(&sdb[size], "turn=%ld\n", turn);
+			size+=sprintf(&sdb[size], "day=%ld\n", DAY);	/* day const */
+			size+=sprintf(&sdb[size], "year=%d\n", START_YEAR);	/* starting year const */
+			/* let the script count or we'll give away
+			   the dungeon masters. */
+			/* size+=sprintf(&sdb[size],"num=%d\n", NumPlayers);*/
 			for(i=1; i<=NumPlayers; i++){
+				if(Players[i]->admin_dm && cfg.secret_dungeon_master) continue;
 				size+=sprintf(&sdb[size], "player=%s\n", Players[i]->name);
 				size+=sprintf(&sdb[size], "level=%d\n", Players[i]->lev);
 				size+=sprintf(&sdb[size], "race=%s\n", race_info[Players[i]->prace].title);

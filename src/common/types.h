@@ -1740,6 +1740,7 @@ struct player_type
 	s32b id;		/* Unique ID to each player */
 	u32b account;		/* account group id */
 	u32b dna;		/* DNA - psuedo unique to each player life */
+	s32b turn;		/* Player's birthday */
 	time_t msg;		/* anti spamming protection */
 	byte msgcnt;
 	byte spam;

@@ -1220,8 +1220,6 @@ static void player_setup(int Ind, bool new)
 	cave_type *c_ptr;
 			dun_level *l_ptr;
 
-//	bool dawn = ((turn % (10L * TOWN_DAWN)) < (10L * TOWN_DAWN / 2)), unstaticed = 0; 
-//	bool dawn = IS_DAY, unstaticed = 0; 
 	bool unstaticed = 0; 
 
 	struct worldpos *wpos=&p_ptr->wpos;
@@ -1642,6 +1640,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		p_ptr->inval=(c_acc->flags & ACC_TRIAL);
 		KILL(c_acc, struct account);
 	}
+	p_ptr->turn=turn;	/* Birth time (for info) */
 
 	/* Reprocess his name */
 	if (!process_player_name(Ind, TRUE)) return FALSE;

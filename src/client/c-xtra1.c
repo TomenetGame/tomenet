@@ -134,7 +134,7 @@ void prt_level(int level, int max, int cur, int adv)
 		{
 			/* Hack -- display in minus (to avoid confusion chez player) */
 //			(void)sprintf(tmp, "%9ld", adv - cur);
-			(void)sprintf(tmp, "%9ld", cur - adv);
+			(void)sprintf(tmp, "%9d", cur - adv);	/* int, not long int - evileye */
 		}
 	}
 

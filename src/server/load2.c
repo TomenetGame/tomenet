@@ -993,6 +993,9 @@ static bool rd_extra(int Ind)
 	rd_s32b(&p_ptr->id);
 
 	rd_u32b(&p_ptr->dna);
+#ifdef LAZY_EVIL_KILL_SFS
+	rd_s32b(&p_ptr->turn);
+#endif
 
 	/* If he was created in the pre-ID days, give him one */
 	if (!p_ptr->id)
