@@ -1484,7 +1484,7 @@ bool make_attack_spell(int Ind, int m_idx)
 
 //	byte		spell[96], num = 0;
 
-	u32b		f4, f5, f6;
+	u32b		f4, f5, f6, f7;
 
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
@@ -1522,7 +1522,12 @@ bool make_attack_spell(int Ind, int m_idx)
 	int rad = 0, srad;
 
 
+	//u32b f7 = race_inf(&m_list[m_idx])->flags7;
+	int s_clone = 0;
+
+
 //	int antichance = 0, antidis = 0;
+
 
 	/* Cannot cast spells when confused */
 	if (m_ptr->confused) return (FALSE);
@@ -1544,6 +1549,10 @@ bool make_attack_spell(int Ind, int m_idx)
 	f4 = r_ptr->flags4;
 	f5 = r_ptr->flags5;
 	f6 = r_ptr->flags6;
+	f7 = r_ptr->flags7;
+
+	if (f7 & RF7_S_LOWEXP) s_clone=85;
+	if (f7 & RF7_S_NOEXP) s_clone=100;
 
 	/* Only innate spells */
 	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) f5 = f6 = 0;
@@ -1826,7 +1835,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons an animal!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_ANIMAL);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANIMAL);
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3056,7 +3065,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons some animals!", m_name);
 			for (k = 0; k < 4; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_ANIMAL);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANIMAL);
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3108,7 +3117,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically codes some software bugs.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_BUG);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_BUG);
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3179,7 +3188,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically codes some RNGs.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_RNG);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_RNG);
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3236,7 +3245,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			//else msg_format(Ind, "%^s magically summons a Thunderlord!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_DRAGONRIDER);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_DRAGONRIDER);
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3258,7 +3267,7 @@ bool make_attack_spell(int Ind, int m_idx)
 
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_KIN);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_KIN);
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 
@@ -3274,7 +3283,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons greater demons!", m_name);
 			if (blind && count) msg_print(Ind, "You hear heavy steps nearby.");
-			summon_cyber(Ind);
+			summon_cyber(Ind, s_clone);
 			break;
 		}
 
@@ -3287,7 +3296,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons help!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, 0);
+				count += summon_specific(wpos, y, x, rlev, s_clone, 0);
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3302,7 +3311,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons monsters!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, 0);
+				count += summon_specific(wpos, y, x, rlev, s_clone, 0);
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3317,7 +3326,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons ants.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_ANT);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANT);
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3332,7 +3341,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons spiders.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_SPIDER);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_SPIDER);
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3347,7 +3356,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons hounds.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_HOUND);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HOUND);
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3362,7 +3371,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons hydras.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_HYDRA);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HYDRA);
 			}
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
 			break;
@@ -3377,7 +3386,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons an angel!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_ANGEL);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANGEL);
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3392,7 +3401,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons a hellish adversary!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_DEMON);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_DEMON);
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3407,7 +3416,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons an undead adversary!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_UNDEAD);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_UNDEAD);
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3422,7 +3431,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons a dragon!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_DRAGON);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_DRAGON);
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
 			break;
@@ -3437,7 +3446,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons greater undead!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_HI_UNDEAD);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD);
 			}
 			if (blind && count)
 			{
@@ -3455,7 +3464,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons ancient dragons!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_HI_DRAGON);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_DRAGON);
 			}
 			if (blind && count)
 			{
@@ -3473,11 +3482,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons mighty undead opponents!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_WRAITH);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_WRAITH);
 			}
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_HI_UNDEAD);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD);
 			}
 			if (blind && count)
 			{
@@ -3495,11 +3504,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons special opponents!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_UNIQUE);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_UNIQUE);
 			}
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, SUMMON_HI_UNDEAD);
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD);
 			}
 			if (blind && count)
 			{

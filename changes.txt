@@ -22,6 +22,9 @@
 # special tag to specify the current version
 [V]  TomeNET 4.0.0 aka "The Gathering"
 
+12/12/2002
+[M]- S_LOWEXP and S_NOEXP flags added to prevent summon certain farming.
+
 25/11/2002
 [I]- No more color information in the message dump in character dumps
 

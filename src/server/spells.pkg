@@ -242,7 +242,7 @@ extern bool detect_creatures(int Ind);
 
 /* spells2.c */
 extern bool heal_insanity(int Ind, int val);
-extern void summon_cyber(int Ind);
+extern void summon_cyber(int Ind, int s_clone);
 extern void golem_creation(int Ind, int max);
 extern bool hp_player(int Ind, int num);
 extern bool hp_player_quiet(int Ind, int num);

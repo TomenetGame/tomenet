@@ -930,22 +930,22 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_SUMMON_MONSTER:
 		{
 			msg_print(Ind, "A spell hangs in the air.");
-			//            for (k = 0; k < randint(3); k++) ident |= summon_specific(y, x, max_dlv[dungeon_type], SUMMON_UNDEAD);	// max?
-			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0);
+			//            for (k = 0; k < randint(3); k++) ident |= summon_specific(y, x, max_dlv[dungeon_type], 0, SUMMON_UNDEAD);	// max?
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 100, 0);
 			break;
 		}
 		/* Summon Undead Trap */
 		case TRAP_OF_SUMMON_UNDEAD:
 		{
 			msg_print(Ind, "A mighty spell hangs in the air.");
-			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, SUMMON_UNDEAD);
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_UNDEAD);
 			break;
 		}
 		/* Summon Greater Undead Trap */
 		case TRAP_OF_SUMMON_GREATER_UNDEAD:
 		{
 			msg_print(Ind, "An old and evil spell hangs in the air.");
-			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, SUMMON_HI_UNDEAD);
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_HI_UNDEAD);
 			break;
 		}
 		/* Teleport Trap */
@@ -1156,7 +1156,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 			for (k = 0; k < randint(3); k++)
 			{
-				ident |= summon_specific(wpos, y, x, glev, SUMMON_QUYLTHULG);
+				ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_QUYLTHULG);
 			}
 			if (ident)
 			{
@@ -2104,7 +2104,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 					cy = y;
 				}
 
-				ident |= summon_specific(wpos, cy, cx, glev, SUMMON_VERMIN);
+				ident |= summon_specific(wpos, cy, cx, glev, 0, SUMMON_VERMIN);
 			}
 			if (ident)
 			{
@@ -2675,7 +2675,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_BATTLE_FIELD:
 		{
 			ident=player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap);
-			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0);
+			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, 0);
 			break;
 		}
 		/* Death Molds Trap */
@@ -2832,7 +2832,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 			for (k = 0; k < amt; k++)
 			{
-				if (summon_specific(wpos, y, x, glev, SUMMON_BIZARRE5))
+				if (summon_specific(wpos, y, x, glev, 0, SUMMON_BIZARRE5))
 				{
 					ident = TRUE;
 					p_ptr->au -= price;
@@ -2938,7 +2938,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 			for (k = 0; k < randint(3); k++)
 			{
-				ident |= summon_specific(wpos, y, x, glev, SUMMON_BIZARRE6);
+				ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_BIZARRE6);
 			}
 #if 0
 			if (ident)
@@ -3836,7 +3836,7 @@ bool mon_hit_trap_aux_staff(int who, int m_idx, int sval)
 			break;
 		case SV_STAFF_SUMMONING:
 			for (k = 0; k < randint(4) ; k++)
-				(void)summon_specific(&wpos, y, x, getlevel(&wpos), 0);
+				(void)summon_specific(&wpos, y, x, getlevel(&wpos), 0, 0);
 			return (FALSE);
 		case SV_STAFF_TELEPORTATION:	
 			typ = GF_AWAY_ALL;
@@ -3984,10 +3984,10 @@ bool mon_hit_trap_aux_scroll(int who, int m_idx, int sval)
 		      	if (who > 0) aggravate_monsters(who, m_idx);
 		      	return (FALSE);
 		case SV_SCROLL_SUMMON_MONSTER:
-                        for (k = 0; k < randint(3) ; k++) summon_specific(&wpos, y, x, getlevel(&wpos), 0);
+                        for (k = 0; k < randint(3) ; k++) summon_specific(&wpos, y, x, getlevel(&wpos), 0, 0);
 			return (FALSE);	
 		case SV_SCROLL_SUMMON_UNDEAD:	
-                        for (k = 0; k < randint(3) ; k++) summon_specific(&wpos, y, x, getlevel(&wpos), SUMMON_UNDEAD);
+                        for (k = 0; k < randint(3) ; k++) summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_UNDEAD);
 			return (FALSE);	
 		case SV_SCROLL_PHASE_DOOR:
 			typ = GF_AWAY_ALL;

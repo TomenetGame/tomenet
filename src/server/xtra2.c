@@ -3323,7 +3323,7 @@ void monster_death(int Ind, int m_idx)
 				else
 #endif
 				{
-					if (summon_specific(wpos, wy, wx, 100, SUMMON_DAWN))
+					if (summon_specific(wpos, wy, wx, 100, m_ptr->clone + 20, SUMMON_DAWN))
 					{
 						if (player_can_see_bold(Ind, wy, wx))
 							msg_print (Ind, "A new warrior steps forth!");
@@ -3370,7 +3370,7 @@ void monster_death(int Ind, int m_idx)
 
 			if (attempts > 0)
 			{
-				if (summon_specific(wpos, wy, wx, 100, SUMMON_BLUE_HORROR))
+				if (summon_specific(wpos, wy, wx, 100, 0, SUMMON_BLUE_HORROR))
 				{
 					if (player_can_see_bold(Ind, wy, wx))
 						msg_print (Ind, "A blue horror appears!");
@@ -7268,7 +7268,7 @@ bool master_summon(int Ind, char * parms)
 
 				/* summon the monster, if we have a valid one */
 				if (r_idx)
-					summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, r_idx, 1);
+					summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, r_idx, 0, 1);
 			}
 			break;
 		}
@@ -7282,7 +7282,7 @@ bool master_summon(int Ind, char * parms)
 				r_idx = master_summon_aux_monster_type(monster_type, monster_parms);
 				/* summon the monster at a random location */
 				if (r_idx)
-					summon_specific_race_somewhere(&p_ptr->wpos,r_idx, 1);
+					summon_specific_race_somewhere(&p_ptr->wpos,r_idx, 0, 1);
 			}
 			break;
 		}
@@ -7295,7 +7295,7 @@ bool master_summon(int Ind, char * parms)
 			/* figure out who to summon */
 			r_idx = master_summon_aux_monster_type(monster_type, monster_parms);
 			/* summon the group here */
-			summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, r_idx, size);
+			summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, r_idx, 0, size);
 			break;
 		}
 		/* summon group of random size at random location */
@@ -7306,7 +7306,7 @@ bool master_summon(int Ind, char * parms)
 			/* figure out who to summon */
 			r_idx = master_summon_aux_monster_type(monster_type, monster_parms);
 			/* someone the group at a random location */
-			summon_specific_race_somewhere(&p_ptr->wpos, r_idx, size);
+			summon_specific_race_somewhere(&p_ptr->wpos, r_idx, 0, size);
 			break;
 		}
 		/* summon mode on (use with discretion... lets not be TOO mean ;-) )*/

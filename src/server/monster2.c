@@ -3292,7 +3292,7 @@ static bool summon_specific_okay(int r_idx)
  *
  * Note that this function may not succeed, though this is very rare.
  */
-bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int type)
+bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone, int type)
 {
 	int i, x, y, r_idx;
 	cave_type **zcave;
@@ -3351,7 +3351,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int type)
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster (awake, allow groups) */
-	if (!place_monster_aux(wpos, y, x, r_idx, FALSE, TRUE, FALSE)) return (FALSE);
+	if (!place_monster_aux(wpos, y, x, r_idx, FALSE, TRUE, s_clone)) return (FALSE);
 
 	/* Success */
 	return (TRUE);
@@ -3359,7 +3359,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int type)
 
 /* summon a specific race near this location */
 /* summon until we can't find a location or we have summoned size */
-bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, unsigned char size)
+bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int s_clone, unsigned char size)
 {
 	int c, i, x, y;
 	cave_type **zcave;
@@ -3396,7 +3396,7 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, unsi
 		if (i == 20) return (FALSE);
 
 		/* Attempt to place the monster (awake, don't allow groups) */
-		if (!place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE))
+		if (!place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, s_clone))
 			return (FALSE);
 
 	}
@@ -3407,7 +3407,7 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, unsi
 
 
 /* summon a specific race at a random location */
-bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, unsigned char size)
+bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clone, unsigned char size)
 {
 	int                     y, x;
 	int                     tries = 0;
@@ -3438,7 +3438,7 @@ bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, unsigned c
 	}
 
 	/* Attempt to place the monster */
-	if (summon_specific_race(wpos, y, x, r_idx, size)) return TRUE;
+	if (summon_specific_race(wpos, y, x, r_idx, s_clone, size)) return TRUE;
 	return (FALSE);
 }
 
@@ -3478,7 +3478,7 @@ bool multiply_monster(int m_idx)
 		if (!cave_empty_bold(zcave, y, x)) continue;
 #if 0
 		/* Create a new monster (awake, no groups) */
-		result = place_monster_aux(&m_ptr->wpos, y, x, m_ptr->r_idx, FALSE, FALSE, m_ptr->clone+10);
+		result = place_monster_aux(&m_ptr->wpos, y, x, m_ptr->r_idx, FALSE, FALSE, m_ptr->clone + 10);
 #else
 		result = place_monster_one(&m_ptr->wpos, y, x, m_ptr->r_idx,
 				(m_ptr->ego && magik(CLONE_EGO_CHANCE)) ? m_ptr->ego :
