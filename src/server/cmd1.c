@@ -3244,7 +3244,6 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 				msg_print(Ind, "\377rYour weapon *DISINTEGRATES*!");
 				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 				inven_item_optimize(Ind, INVEN_WIELD + weap);
-
 				/* To stop attacking */
 	//			*num = num_blow;
 			}

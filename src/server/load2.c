@@ -1174,8 +1174,7 @@ static bool rd_extra(int Ind)
 	/*rd_u32b(&seed_flavor);
 	  rd_u32b(&seed_town);*/
         if (!older_than(4, 0, 5))
-                rd_u32b(&p_ptr->mimic_seed);
-
+                rd_s32b(&p_ptr->mimic_seed);
 
 	/* Special stuff */
 	rd_u16b(&panic_save);

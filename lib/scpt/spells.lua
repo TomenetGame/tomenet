@@ -87,6 +87,32 @@ SCHOOL_UDUN = add_school
         ["sorcery"] = TRUE,
 }
 
+<<<<<<< spells.lua
+-- Priests / Paladins
+
+SCHOOL_HOFFENSE = add_school
+{
+	["name"] = "Holy Offense",
+        ["skill"] = SKILL_HOFFENSE,
+}
+SCHOOL_HDEFENSE = add_school
+{
+	["name"] = "Holy Defense",
+        ["skill"] = SKILL_HDEFENSE,
+}
+SCHOOL_HCURING = add_school
+{
+	["name"] = "Holy Curing",
+        ["skill"] = SKILL_HCURING,
+}
+SCHOOL_HSUPPORT = add_school
+{
+	["name"] = "Holy Support",
+        ["skill"] = SKILL_HSUPPORT,
+}
+
+
+=======
 -- Priests / Paladins
 
 SCHOOL_HOFFENSE = add_school
@@ -115,6 +141,7 @@ SCHOOL_HSUPPORT = add_school
 }
 
 
+>>>>>>> 1.22
 -- Put some spells
 pern_dofile(Ind, "s_mana.lua")
 pern_dofile(Ind, "s_fire.lua")

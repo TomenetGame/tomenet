@@ -6156,6 +6156,7 @@ W:120:0:2000:0
 A:200/200
 P:0:1d1:0:0:0
 
+
 #N:(No.):(name)
 #G:(appearence):(colour)
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
