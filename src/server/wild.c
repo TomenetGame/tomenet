@@ -208,6 +208,7 @@ void addtown(int y, int x, int base, u16b flags){
 	town[numtowns].baselevel=base;
 	town[numtowns].flags=flags;
 	wild_info[y][x].type=WILD_TOWN;
+	wild_info[y][x].radius=base;
 	numtowns++;
 }
 
@@ -1700,7 +1701,7 @@ int determine_wilderness_type(int Depth)
 		/* illegal locations -- the town and off the edge */
 		
 #ifdef NEW_DUNGEON
-		while((inarea(&neighbor, wpos) || (neighbor.wx<0 || neighbor.wy<0 || neighbor.wx>=MAX_WILD_X || neighbor.wy>=MAX_WILD_Y))){
+		while((istown(&neighbor) || (neighbor.wx<0 || neighbor.wy<0 || neighbor.wx>=MAX_WILD_X || neighbor.wy>=MAX_WILD_Y))){
 			switch(rand_int(4)){
 				case 0:
 					neighbor.wx++;

@@ -699,6 +699,10 @@ static void alloc_stairs(int Depth, int feat, int num, int walls)
 				{
 					/* Clear previous contents, add down stairs */
 					c_ptr->feat = FEAT_MORE;
+					if(!istown(wpos)){
+						new_level_up_y(wpos,y);
+						new_level_up_x(wpos,x);
+					}
 				}
 
 #ifdef NEW_DUNGEON

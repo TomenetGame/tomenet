@@ -5675,7 +5675,7 @@ bool master_level(int Ind, char * parms)
 				return FALSE;
 			}
 			if(parms[3]=='t' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags&WILD_F_UP)){
-				adddungeon(&p_ptr->wpos, parms[1], parms[2], DUNGEON_RANDOM|DUNGEON_IRON, TRUE);
+				adddungeon(&p_ptr->wpos, parms[1], parms[2], DUNGEON_RANDOM|DUNGEON_NOMAP, TRUE);
 				new_level_down_y(&p_ptr->wpos, p_ptr->py);
 				new_level_down_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave=getcave(&p_ptr->wpos))){
@@ -5683,7 +5683,7 @@ bool master_level(int Ind, char * parms)
 				}
 			}
 			if(parms[3]=='d' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags&WILD_F_DOWN)){
-				adddungeon(&p_ptr->wpos, parms[1], parms[2], DUNGEON_RANDOM|DUNGEON_HELL, FALSE);
+				adddungeon(&p_ptr->wpos, parms[1], parms[2], DUNGEON_RANDOM, FALSE);
 				new_level_up_y(&p_ptr->wpos, p_ptr->py);
 				new_level_up_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave=getcave(&p_ptr->wpos))){

@@ -3223,7 +3223,8 @@ void dungeon(void)
 
 		//printf("finding area (%d,%d)\n",startx,starty);
 		/* Place the player in an empty space */
-		for (j = 0; j < 1500; ++j)
+		//for (j = 0; j < 1500; ++j)
+		for (j = 0; j < 1500; j++)
 		{
 			/* Increasing distance */
 			d = (j + 149) / 150;

@@ -429,7 +429,11 @@ Change list for PernMangband
 - Fixed bug in unstatic_level (space/time anchor wasnt killed for all)
 - Fixed bug where new towns would not have objects/monsters attached
 - Added some support for ironman dungeons - not recall
+- Added support for hellish dungeons.
 - Dungeons may not be generated in towns (must generate with town)
 
 14/12/2001 (Evileye)
 - Forced net code to recheck IP/port when asked
+- Non mapping dungeons added. Player does not remember the map.
+- Fixed bug which caused towns to be cloned in wild generator.
+- Baselevel for new towns is set correctly for getlevel()

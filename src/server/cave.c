@@ -2769,7 +2769,7 @@ void forget_view(int Ind)
 	int i;
 
 	byte *w_ptr;
-
+	
 	/* None to forget */
 	if (!(p_ptr->view_n)) return;
 
@@ -3074,6 +3074,7 @@ void update_view(int Ind)
 
 	cave_type *c_ptr;
 	byte *w_ptr;
+	bool unmap=FALSE;
 
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
@@ -3083,6 +3084,11 @@ void update_view(int Ind)
 #else
 	int Depth = p_ptr->dun_depth;
 #endif
+	if(p_ptr->wpos.wz){
+		struct dungeon_type *d_ptr;
+		d_ptr=(p_ptr->wpos.wz>0? wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower : wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon);
+		if(d_ptr->flags & DUNGEON_NOMAP) unmap=TRUE;
+	}
 
 
 	/*** Initialize ***/
@@ -3130,6 +3136,8 @@ void update_view(int Ind)
 
 		/* Mark the grid as not in "view" */
 		*w_ptr &= ~(CAVE_VIEW);
+		if(unmap)
+			*w_ptr &= ~CAVE_MARK;
 
 		/* Mark the grid as "seen" */
 		c_ptr->info |= CAVE_TEMP;
