@@ -355,7 +355,7 @@ extern cave_type ***cave;
 #ifdef NEW_DUNGEON
 extern wilderness_type wild_info[MAX_WILD_Y][MAX_WILD_X];
 extern struct town_type *town;
-extern int numtowns;
+extern u16b numtowns;
 #else
 extern wilderness_type *wild_info;
 #endif
