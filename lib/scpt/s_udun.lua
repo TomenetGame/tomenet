@@ -64,7 +64,7 @@ GENOCIDE = add_spell
         ["mana_max"] = 	50,
         ["fail"] = 	20,
         ["stat"] =      A_WIS,
-        ["extra"] =     function () if get_check("Genocide all monsters near you? ") == TRUE then return TRUE else return FALSE end end,
+        ["extra"] =     function () if get_check("Genocide all monsters near you (y=all in radius, n=race on whole map)? ") == TRUE then return TRUE else return FALSE end end,
         ["spell"] = 	function(args)
                         local type
 
