@@ -290,13 +290,15 @@ static void quit_hook(cptr s)
 
 	Net_cleanup();
 	c_quit=1;
-	if(get_check("Save chatlog?")){
+	if(message_num() && get_check("Save chatlog?")){
 		FILE *fp;
-		char buf[80]="tome_chat.log";
+		char buf[80]="tome_chat.txt";
 		int i;
 		i=message_num();
 		get_string("Filename:", buf, 80);
-		fp=fopen(buf, "w");
+		/* maybe one day we'll get a Mac client */
+		FILE_TYPE(FILE_TYPE_TEXT);
+		fp=my_fopen(buf, "w");
 		if(fp!=(FILE*)NULL){
 			dump_messages_aux(fp, i, 1);
 			fclose(fp);

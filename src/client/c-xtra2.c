@@ -705,22 +705,51 @@ void dump_messages_aux(FILE *fff, int lines, int mode)
 			fprintf(fff, " (x%d)", r + 1);
 			r = 0;
 		}
-
+#ifndef WINDOWS
 		fprintf(fff, "\n");
-		
+#else
+		fprintf(fff, "\r\n");
+#endif	
 		if (k) break;
 
+#ifdef WINDOWS
+		q=0;
+		for(t=0; t<strlen(msg); t++){
+			if(msg[t]=='\377'){
+				buf[q++]='{';
+				continue;
+			}
+			if(msg[t]=='\n'){
+				buf[q++]='\r';
+				buf[q++]='\n';
+				continue;
+			}
+			if(msg[t]=='\r'){
+				buf[q++]='\r';
+				buf[q++]='\n';
+				continue;
+			}
+			buf[q++]=msg[t];
+		}
+		buf[q]='\0';
+#else
 		strcpy(buf, msg);
 
 		/* XXX Erase '\377' */
 		for(t=0;t<strlen(buf);t++){
 			if(buf[t]=='\377') buf[t]='{';
 		}
+#endif
 
 		/* Dump the messages, bottom to top */
+		//fprintf(fff, buf);
 		fputs(buf, fff);
 	}
+#ifndef WINDOWS
 	fprintf(fff, "\n\n");
+#else
+	fprintf(fff, "\r\n\r\n");
+#endif
 }
 
 errr dump_messages(cptr name, int lines, int mode)
