@@ -15,6 +15,7 @@
 #define WP_MESSAGE	7	/* all critical server messages */
 #define WP_AUTH		8	/* server authing */
 #define WP_SQUIT	9	/* server quits */
+#define WP_RESTART	10	/* servers quit now */
 
 /* now we are going to be the server which authenticates
  * the players. Once they are logged in, they will receive

@@ -95,6 +95,12 @@ void wproto(struct client *ccl){
 	struct wpacket *wpk=ccl->buf;
 	while(ccl->blen>=sizeof(struct wpacket)){
 		switch(wpk->type){
+			case WP_RESTART:
+				/* mass restart */
+				if(ccl->authed>0){
+					relay(wpk, ccl);
+				}
+				break;
 			case WP_AUTH:
 			/* method - plaintext password on server.
 			   server uses this to encrypt an answer to a RANDOMLY

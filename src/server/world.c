@@ -48,6 +48,10 @@ int world_comm(int fd, int arg){
 			case WP_SQUIT:
 				/* Remove players */
 				rem_players(wpk->d.sid);
+				break;
+			case WP_RESTART:
+				cfg.runlevel=0;
+				break;
 			default:
 				s_printf("unknown packet from world: %d\n", wpk->type);
 		}
