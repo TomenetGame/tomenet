@@ -2112,6 +2112,9 @@ bool set_cut(int Ind, int v)
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
 
+	/* a ghost never bleeds */
+	if (v && p_ptr->ghost) v = 0;
+
 	/* Mortal wound */
 	if (p_ptr->cut > 1000)
 	{

@@ -414,4 +414,4 @@ Change list for PernMangband
 - 'Cannot run' / 'Delayed run' bug fixed.
 - World-coodination display for '@' screen.
 - Player-location is shown on 'M'(Map) screen. (wilderness map is disabled)
-
+- Ghost never bleeds.
