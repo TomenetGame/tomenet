@@ -4232,7 +4232,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				/* Amulet of Rage, formerly 'Suspicion' */
 				case SV_AMULET_RAGE:
 				{
-					o_ptr->bpval = 1 + m_bonus(4, level);
+					o_ptr->bpval = 1 + m_bonus(2, level);
 					//o_ptr->to_a = -1 - m_bonus(15, level);
 					o_ptr->to_h = -1 - m_bonus(10, level);//15
 					o_ptr->to_d = 1 + m_bonus(15, level);
