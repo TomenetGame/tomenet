@@ -25,6 +25,13 @@
 # DARKGOD, EVILEYE, WRITE THE CHANGELOGS!!!!!!!  CVS log does NO HELP!!!!
 # - Jir -
 
+19/08/2002 (evileye)
+- delete tempfiles when used (/tmp won't fill up)
+- windows mkstemp allows for this by filling string.
+- fixed problem with new savefile creation (again?)
+- made file transfer point to lib.
+- weak security (starting '/', presence of '..')
+
 18/08/2002 (evileye)
 - File transfer changes. I have changed script upload in client to
   use the file transfer system which I wrote. Server replies with
