@@ -4018,7 +4018,7 @@ bool poly_build(int Ind, char *args){
 	int x,y;
 	int dir=0;
 
-	if(curr==0 || !lookup_player_id(curr)){
+	if(curr==0 || !lookup_player_name(curr)){
 		if(!args){
 			p_ptr->master_move_hook=NULL;
 			return FALSE;
