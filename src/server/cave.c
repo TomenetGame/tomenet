@@ -3320,6 +3320,8 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return FALSE;
 
+	if(y<0 || y>=MAX_HGT || x<0 || x>=MAX_WID) return(FALSE);
+
 	/* Access the grids */
 	g1_c_ptr = &zcave[y1][x1];
 	g2_c_ptr = &zcave[y2][x2];
@@ -3638,7 +3640,7 @@ void update_view(int Ind)
 	/* Scan south-east */
 	for (d = 1; d <= z; d++)
 	{
-		/*if (y + d > 65) break;*/
+		if (y + d > 65) break;
 		c_ptr = &zcave[y+d][x+d];
 		w_ptr = &p_ptr->cave_flag[y+d][x+d];
 		c_ptr->info |= CAVE_XTRA;
@@ -3649,7 +3651,7 @@ void update_view(int Ind)
 	/* Scan south-west */
 	for (d = 1; d <= z; d++)
 	{
-		/*if (y + d > 65) break;*/
+		if (y + d > 65) break;
 		c_ptr = &zcave[y+d][x-d];
 		w_ptr = &p_ptr->cave_flag[y+d][x-d];
 		c_ptr->info |= CAVE_XTRA;
@@ -3660,7 +3662,7 @@ void update_view(int Ind)
 	/* Scan north-east */
 	for (d = 1; d <= z; d++)
 	{
-		/*if (d > y) break;*/
+		if (d > y) break;
 		c_ptr = &zcave[y-d][x+d];
 		w_ptr = &p_ptr->cave_flag[y-d][x+d];
 		c_ptr->info |= CAVE_XTRA;
@@ -3671,7 +3673,7 @@ void update_view(int Ind)
 	/* Scan north-west */
 	for (d = 1; d <= z; d++)
 	{
-		/*if (d > y) break;*/
+		if (d > y) break;
 		c_ptr = &zcave[y-d][x-d];
 		w_ptr = &p_ptr->cave_flag[y-d][x-d];
 		c_ptr->info |= CAVE_XTRA;
