@@ -206,10 +206,12 @@ void do_cmd_check_uniques(int Ind, int line)
 				bool full = FALSE;
 
 				/* Output color byte */
-				fprintf(fff, "%c", 'w');
+				fprintf(fff, "\377%c", 'w');
 
 				/* Hack -- Show the ID for admin */
 				if (admin) fprintf(fff, "(%4d) ", k);
+				/* don't display dungeon master to players */
+				else if (q_ptr->admin_dm) continue;
 
 				/* Format message */
 //				fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
@@ -229,7 +231,7 @@ void do_cmd_check_uniques(int Ind, int line)
 						if (!ok)
 						{
 							fprintf(fff, ":\n");
-							fprintf(fff, "%c", 'B');
+							fprintf(fff, "\377%c", 'B');
 							ok = TRUE;
 						}
 #if 0
@@ -243,7 +245,7 @@ void do_cmd_check_uniques(int Ind, int line)
 						else if (check_hostile(Ind, i)) attr = 'r';
 
 						/* Output color byte */
-						fprintf(fff, "%c", attr);
+						fprintf(fff, "\377%c", attr);
 #endif
 
 						fprintf(fff, "  %-16.16s", q_ptr->name);
@@ -252,7 +254,7 @@ void do_cmd_check_uniques(int Ind, int line)
 						if (j == 4)
 						{
 							fprintf(fff, "\n");
-							fprintf(fff, "%c", 'B');
+							fprintf(fff, "\377%c", 'B');
 							j = 0;
 							full = TRUE;
 						}
@@ -319,6 +321,8 @@ void do_cmd_check_uniques(int Ind, int line)
 
 			/* Hack -- Show the ID for admin */
 			if (admin) fprintf(fff, "(%4d) ", k);
+			/* don't display dungeon master to players */
+			else if (q_ptr->admin_dm) continue;
 
 			/* Format message */
 			//				fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
