@@ -241,9 +241,11 @@ void text_to_ascii(char *buf, cptr str)
 errr path_parse(char *buf, int max, cptr file)
 {
 #ifndef WIN32
+#ifndef AMIGA
         cptr            u, s;
         struct passwd   *pw;
         char            user[128];
+#endif
 #endif /* WIN32 */
 
 
@@ -262,6 +264,7 @@ errr path_parse(char *buf, int max, cptr file)
 
 	/* Windows should never have ~ in filename */
 #ifndef WIN32
+#ifndef AMIGA
 
         /* Point at the user */
         u = file+1;
@@ -299,6 +302,7 @@ errr path_parse(char *buf, int max, cptr file)
 
         /* Success */
         return (0);
+#endif
 #endif /* WIN32 */
 }
 
