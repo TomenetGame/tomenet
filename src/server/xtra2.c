@@ -7378,6 +7378,8 @@ bool master_player(int Ind, char *parms){
 	player_type *q_ptr;
 	int Ind2=0;
 	int i;
+	struct account *d_acc;
+	int *id_list, n;
 
 	if (!p_ptr->admin_dm && !p_ptr->admin_wiz)
 	{
@@ -7457,8 +7459,22 @@ bool master_player(int Ind, char *parms){
 #endif	// TOMENET_WORLDS
 			msg_broadcast(0, &parms[1]);
 			break;
-		case 'r':
+		case 'r':	/* FULL ACCOUNT SCAN + RM */
 			/* Delete a player from the database/savefile */
+			d_acc=GetAccount(&parms[1], NULL);
+			if(d_acc!=(struct account*)NULL){
+				char name[80];
+				n=player_id_list(&id_list, d_acc->id);
+				for(i=0; i<n; i++){
+					strcpy(name, lookup_player_name(id_list[i]));
+					msg_format(Ind, "\377oDeleting %s", name);
+					delete_player_id(id_list[i]);
+					sf_delete(name);
+				}
+				if(n) C_KILL(id_list, n, int);
+			}
+			else
+				msg_print(Ind, "\377rCould not find account");
 			break;
 	}
 	return(FALSE);

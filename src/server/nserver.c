@@ -2474,7 +2474,7 @@ static int Receive_login(int ind){
 				Packet_printf(&connp->c, "%c%s%hd%hd%hd", PKT_LOGIN, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
 			}
 			Packet_printf(&connp->c, "%c%s%hd%hd%hd", PKT_LOGIN, "", 0, 0, 0);
-			C_KILL(id_list, i, int);
+			if(n) C_KILL(id_list, n, int);
 			KILL(l_acc, struct account);
 		}
 		else{

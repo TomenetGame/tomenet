@@ -1975,7 +1975,7 @@ int newid(){
 	return(0);	/* no user IDs available - not likely */
 }
 
-static void sf_delete(const char *name){
+void sf_delete(const char *name){
 	int i,k=0;
 	char temp[128],fname[MAX_PATH_LENGTH];
 	/* Extract "useful" letters */
@@ -2174,6 +2174,7 @@ int player_id_list(int **list, u32b account)
 			ptr = ptr->next;
 		}
 	}
+	if(!len) return(0);
 
 	/* Allocate memory for the list */
 	C_MAKE((*list), len, int);
