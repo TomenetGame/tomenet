@@ -2383,6 +2383,8 @@ void cmd_master_aux_player(){
 	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Invoke wrath");
 	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Static player");
 	Term_putstr(5, 8, -1, TERM_WHITE, "(5) Unstatic player");
+	Term_putstr(5, 8, -1, TERM_WHITE, "(6) Unstatic player");
+	Term_putstr(5, 8, -1, TERM_WHITE, "(7) Broadcast");
 	
 	Term_putstr(0, 10, -1, TERM_WHITE, "Command: ");
 
@@ -2415,6 +2417,10 @@ void cmd_master_aux_player(){
 				/* DM to player telekinesis */
 				buf[0]='t';
 				get_string("Enter player name:",&buf[1],15);
+				break;
+			case '7':
+				buf[0]='B';
+				get_string("Message:",&buf[1],69);
 				break;
 			case ESCAPE:
 				break;

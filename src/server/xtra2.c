@@ -5562,6 +5562,9 @@ bool master_player(int Ind, char *parms){
 			/* want to combine it while there is a */
 			/* potential bug. */
 			break;
+		case 'B':
+			/* This could be fun - be wise dungeon master */
+			msg_broadcast(Ind,&parms[1]);
 	}
 	return(FALSE);
 }
