@@ -53,67 +53,6 @@ s16b get_skill_scale(player_type *pfft, int skill, u32b scale)
 	        (SKILL_STEP / 10));
 }
 
-
-#if 0
-/*
- * Advance the skill point of the skill specified by i and
- * modify related skills
- */
-void increase_skill(int i, s16b *invest)
-{
-	/* No skill points to be allocated */
-	if (!p_ptr->skill_points) return;
-
-	/* The skill cannot be increased */
-	if (!s_info[i].mod) return;
-
-	/* The skill is already maxed */
-        if (s_info[i].value >= SKILL_MAX) return;
-
-        /* Cannot allocate more than player level * 3 / 2 + 4 levels */
-        if ((s_info[i].value / SKILL_STEP) >= ((p_ptr->lev * 3 / 2) + 4))
-        {
-                int hgt, wid;
-
-		Term_get_size(&wid, &hgt);
-                msg_box("Cannot raise a skill value above 4 + player level * 3/2.", (int)(hgt / 2), (int)(wid / 2));
-                return;
-        }
-
-	/* Spend an unallocated skill point */
-	p_ptr->skill_points--;
-
-	/* Increase the skill */
-        s_info[i].value += s_info[i].mod;
-        invest[i]++;
-}
-
-
-/*
- * Descrease the skill point of the skill specified by i and
- * modify related skills
- */
-void decrease_skill(int i, s16b *invest)
-{
-        /* Cannot decrease more */
-        if (!invest[i]) return;
-
-	/* The skill cannot be decreased */
-	if (!s_info[i].mod) return;
-
-	/* The skill already has minimal value */
-	if (!s_info[i].value) return;
-
-	/* Free a skill point */
-	p_ptr->skill_points++;
-
-	/* Decrease the skill */
-	s_info[i].value -= s_info[i].mod;
-        invest[i]--;
-}
-
-#endif
-
 /*
  *
  */
@@ -144,6 +83,7 @@ void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int lev,
 
 		if (s_info[i].father != father) continue;
 		if (p_ptr->s_info[i].hidden) continue;
+                if ((!p_ptr->s_info[i].value) && (!p_ptr->s_info[i].mod)) continue;
 
 		table[*idx][0] = i;
 		table[*idx][1] = lev;
@@ -166,7 +106,7 @@ bool has_child(int sel)
 
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
-		if (s_info[i].father == sel)
+		if ((s_info[i].father == sel) && ((p_ptr->s_info[i].mod) || (p_ptr->s_info[i].value)))
 			return (TRUE);
 	}
 	return (FALSE);
@@ -195,50 +135,6 @@ void print_desc_aux(cptr txt, int y, int xx)
  * Dump the skill tree
  */
 void dump_skills(FILE *fff)
-#if 0
-{
-	int i, j, max = 0;
-	int table[MAX_SKILLS][2];
-	char buf[80];
-
-	init_table(table, &max, TRUE);
-
-	Term_clear();
-
-	fprintf(fff, "\nSkills (points left: %d)", p_ptr->skill_points);
-
-	for (j = 0; j < max; j++)
-	{
-		int z;
-
-		i = table[j][0];
-
-		if ((p_ptr->s_info[i].value == 0) && (i != SKILL_MISC))
-		{
-			if (p_ptr->s_info[i].mod == 0) continue;
-		}
-
-		sprintf(buf, "\n");
-
-		for (z = 0; z < table[j][1]; z++) strcat(buf, "	 ");
-
-		if (!has_child(i))
-		{
-			strcat(buf, format(" . %s", s_info[i].name));
-		}
-		else
-		{
-			strcat(buf, format(" - %s", s_info[i].name));
-		}
-
-		fprintf(fff, "%-50s%02ld.%03ld [%01d.%03d]",
-		        buf, p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
-		        p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000);
-	}
-
-	fprintf(fff, "\n");
-}
-#else	// 0
 {
 	int i, j, max = 0;
 	int table[MAX_SKILLS][2];
@@ -300,7 +196,6 @@ void dump_skills(FILE *fff)
 	fprintf(fff, "\r\n");
 #endif
 }
-#endif	// 0
 
 /*
  * Draw the skill tree
@@ -590,115 +485,6 @@ void do_cmd_skill()
 #endif
 }
 
-
-#if 0
-/*
- * List of melee skills
- */
-s16b melee_skills[MAX_MELEE] =
-{
-	SKILL_MASTERY,
-	SKILL_HAND,
-	SKILL_BEAR,
-};
-char *melee_names[MAX_MELEE] =
-{
-	"Weapon combat",
-	"Barehanded combat",
-	"Bearform combat",
-};
-static bool melee_bool[MAX_MELEE];
-static int melee_num[MAX_MELEE];
-
-s16b get_melee_skill()
-{
-	int i;
-
-	for (i = 0; i < MAX_MELEE; i++)
-	{
-		if (p_ptr->melee_style == melee_skills[i])
-			return (i);
-	}
-	return (0);
-}
-
-s16b get_melee_skills()
-{
-	int i, j = 0;
-
-	for (i = 0; i < MAX_MELEE; i++)
-	{
-		if (s_info[melee_skills[i]].value && (!s_info[melee_skills[i]].hidden))
-		{
-			melee_bool[i] = TRUE;
-			j++;
-		}
-		else
-			melee_bool[i] = FALSE;
-	}
-
-	return (j);
-}
-
-static void choose_melee()
-{
-	int i, j, z = 0;
-
-	character_icky = TRUE;
-	Term_save();
-	Term_clear();
-
-	j = get_melee_skills();
-	prt("Choose a melee style:", 0, 0);
-	for (i = 0; i < MAX_MELEE; i++)
-	{
-		if (melee_bool[i])
-		{
-			prt(format("%c) %s", I2A(z), melee_names[i]), z + 1, 0);
-			melee_num[z] = i;
-			z++;
-		}
-	}
-
-	while (TRUE)
-	{
-		char c = inkey();
-
-		if (c == ESCAPE) break;
-		if (A2I(c) < 0) continue;
-		if (A2I(c) >= j) continue;
-
-		for (i = 0, z = 0; z < A2I(c); i++)
-			if (melee_bool[i]) z++;
-		p_ptr->melee_style = melee_skills[melee_num[z]];
-		for (i = INVEN_WIELD; p_ptr->body_parts[i - INVEN_WIELD] == INVEN_WIELD; i++)
-			inven_takeoff(i, 255, FALSE);
-		energy_use = 100;
-		break;
-	}
-
-	Term_load();
-	character_icky = FALSE;
-}
-
-void select_default_melee()
-{
-	int i;
-
-        get_melee_skills();
-        p_ptr->melee_style = SKILL_MASTERY;
-	for (i = 0; i < MAX_MELEE; i++)
-	{
-		if (melee_bool[i])
-		{
-                        p_ptr->melee_style = melee_skills[i];
-                        break;
-		}
-	}
-}
-
-#endif
-
 /*
  * Print a batch of skills.
  */
@@ -735,19 +521,10 @@ int do_cmd_activate_skill_aux()
 	char which;
 	int max = 0, i, start = 0;
 	int ret;
-//	bool mode = FALSE;
 	bool mode = c_cfg.always_show_lists;
 	int *p;
 
 	C_MAKE(p, MAX_SKILLS, int);
-
-	/* Count the max */
-
-	/* More than 1 melee skill ? */
-	//	if (get_melee_skills() > 1)
-	//	{
-	//		p[max++] = 0;
-	//	}
 
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
@@ -767,9 +544,6 @@ int do_cmd_activate_skill_aux()
 			}
 			if (next) continue;
 
-			/* Hack -- only able to learn spells when learning is required */
-			//                      if ((i == SKILL_LEARN) && (!must_learn_spells()))
-			//                              continue;
 			p[max++] = i;
 		}
 	}
@@ -984,11 +758,9 @@ void do_activate_skill(int x_idx, int item)
 		{
 			case MKEY_MIMICRY:
 				do_mimic();
-//				cmd_mimic();
 				break;
 			case MKEY_TRAP:
 				do_trap(item);
-//				cmd_mimic();
 				break;
 			default:
 				c_msg_print("Very sorry, you need more recent client.");
@@ -1074,71 +846,7 @@ void do_cmd_activate_skill()
 
 	/* Get the skill, if available */
 	x_idx = do_cmd_activate_skill_aux();
-#if 0
-        else
-	{
-		x_idx = command_arg - 1;
-		if ((x_idx < 0) || (x_idx >= MAX_SKILLS)) return;
-                if ((!s_info[x_idx].value) || (!s_info[x_idx].action_mkey))
-                {
-                        c_msg_print("You cannot use this skill.");
-                        return;
-                }
-	}
-#endif
 	if (x_idx == -1) return;
 
 	do_activate_skill(x_idx, -1);
-
-//	if (!x_idx)
-//	{
-//		choose_melee();
-//		return;
-//	}
-
-#if 0
-	switch (s_info[x_idx].action_mkey)
-	{
-		case MKEY_SORCERY:
-			item_tester_tval = TV_SORCERY_BOOK;
-			cmd_cast_skill();
-			break;
-		case MKEY_MAGERY:
-			item_tester_tval = TV_MAGIC_BOOK;
-			cmd_cast_skill();
-			break;
-		case MKEY_SHADOW:
-			item_tester_tval = TV_SHADOW_BOOK;
-			cmd_cast_skill();
-			break;
-		case MKEY_ARCHERING:
-			item_tester_tval = TV_HUNT_BOOK;
-			cmd_cast_skill();
-			break;
-		case MKEY_PRAY:
-			item_tester_tval = TV_PRAYER_BOOK;
-			cmd_cast_skill();
-			break;
-#if 0	// not implemeted yet.
-		case MKEY_PSI:
-			item_tester_tval = TV_PSI_BOOK;
-			cmd_cast_skill();
-			break;
-#endif	// 0
-		case MKEY_MIMICRY:
-			cmd_mimic();
-			break;
-		case MKEY_FIGHTING:
-			/* Note - cmd_cast() will do */
-#if 0
-			item_tester_tval = TV_FIGHT_BOOK;
-			cmd_cast_skill();
-#else	// 0
-			cmd_fight();
-#endif	// 0
-			break;
-		default:
-			break;
-	}
-#endif	// 0
 }

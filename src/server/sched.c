@@ -137,7 +137,7 @@ static void catch_timer(int signum)
 }
 
 #ifdef WINDOWS
-#define TIMERNAME "pernmangband_timer"
+#define TIMERNAME "tomenet_timer"
 
 /* Timer handle */
 HANDLE hTimer;
@@ -164,71 +164,71 @@ DWORD WINAPI DoThread(DWORD param)
 void setup_timer(void)
 {
 #ifndef WINDOWS
-    struct itimerval itv;
-    struct sigaction act;
+	struct itimerval itv;
+	struct sigaction act;
 
-    /*
-     * Prevent SIGALRMs from disturbing the initialization.
-     */
-    block_timer();
+	/*
+	 * Prevent SIGALRMs from disturbing the initialization.
+	 */
+	block_timer();
 
-    /*
-     * Install a signal handler for the alarm signal.
-     */
-    act.sa_handler = catch_timer;
-    act.sa_flags = 0;
-    sigemptyset(&act.sa_mask);
-    sigaddset(&act.sa_mask, SIGALRM);
-    if (sigaction(SIGALRM, &act, (struct sigaction *)NULL) == -1) {
-	plog("sigaction SIGALRM");
-	exit(1);
-    }
+	/*
+	 * Install a signal handler for the alarm signal.
+	 */
+	act.sa_handler = catch_timer;
+	act.sa_flags = 0;
+	sigemptyset(&act.sa_mask);
+	sigaddset(&act.sa_mask, SIGALRM);
+	if (sigaction(SIGALRM, &act, (struct sigaction *)NULL) == -1) {
+		plog("sigaction SIGALRM");
+		exit(1);
+	}
 
-    /*
-     * Install a real-time timer.
-     */
-    if (timer_freq <= 0) {
-	plog(format("illegal timer frequency: %ld", timer_freq));
-	exit(1);
-    }
-    itv.it_interval.tv_sec = 0;
-    itv.it_interval.tv_usec = 1000000 / timer_freq;
-    itv.it_value = itv.it_interval;
-    if (setitimer(ITIMER_REAL, &itv, NULL) == -1) {
-	plog("setitimer");
-	exit(1);
-    }
+	/*
+	 * Install a real-time timer.
+	 */
+	if (timer_freq <= 0) {
+		plog(format("illegal timer frequency: %ld", timer_freq));
+		exit(1);
+	}
+	itv.it_interval.tv_sec = 0;
+	itv.it_interval.tv_usec = 1000000 / timer_freq;
+	itv.it_value = itv.it_interval;
+	if (setitimer(ITIMER_REAL, &itv, NULL) == -1) {
+		plog("setitimer");
+		exit(1);
+	}
 
-    timers_used = timer_ticks;
-    time(&current_time);
-    ticks_till_second = timer_freq;
+	timers_used = timer_ticks;
+	time(&current_time);
+	ticks_till_second = timer_freq;
 
-    /*
-     * Allow the real-time timer to generate SIGALRM signals.
-     */
-    allow_timer();
+	/*
+	 * Allow the real-time timer to generate SIGALRM signals.
+	 */
+	allow_timer();
 #else /* WINDOWS */
 	HANDLE hThread;
 	DWORD ThreadID;
 	LARGE_INTEGER li;
 
-    /* sanity check */
-    if (timer_freq <= 0) {
-	plog(format("illegal timer frequency: %ld", timer_freq));
-	exit(1);
-    }
-	
+	/* sanity check */
+	if (timer_freq <= 0) {
+		plog(format("illegal timer frequency: %ld", timer_freq));
+		exit(1);
+	}
+
 	/* Initialize a timer object */
 	hTimer = CreateWaitableTimer(NULL, FALSE, TIMERNAME);
 	hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)DoThread,
-			NULL, 0, &ThreadID);
+			       NULL, 0, &ThreadID);
 	li.QuadPart = -10000; /* unit=100ns (negative for relative); wait 1ms */
-    SetWaitableTimer(hTimer, &li, 1000/timer_freq, NULL, &li, FALSE);
-	hTimer = OpenWaitableTimer(TIMER_ALL_ACCESS, FALSE, TIMERNAME);
+	SetWaitableTimer(hTimer, &li, 1000/timer_freq, NULL, &li, FALSE);
+	hTimer = OpenWaitableTimerA(TIMER_ALL_ACCESS, FALSE, TIMERNAME);
 
-    timers_used = timer_ticks;
-    time(&current_time);
-    ticks_till_second = timer_freq;
+	timers_used = timer_ticks;
+	time(&current_time);
+	ticks_till_second = timer_freq;
 #endif /* WINDOWS */
 }
 

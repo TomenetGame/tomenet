@@ -2480,11 +2480,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 2000,
                                 '+', 900,
                         },
-						/* No religion
-						 * Let them be kind of druid/priests.
-						 * nature, divination, meta, conveyance at least,
-						 * some elemental maybe
-						 */
                         {
                                 SKILL_SPELL,
                                 '+', 0,
@@ -2501,6 +2496,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1700,
                         },
                         {
+                                SKILL_MIND,
+                                '+', 0,
+                                '+', 1400,
+                        },
+                        {
                                 SKILL_META,
                                 '+', 0,
                                 '+', 1400,
@@ -2508,28 +2508,22 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
-                                '+', 1400,
+                                '+', 900,
                         },
-						/* Maybe 1-2 random elemental schools? */
                         {
                                 SKILL_FIRE,
                                 '+', 0,
-                                '+', 1500,
+                                '+', 900,
                         },
                         {
                                 SKILL_WATER,
                                 '+', 0,
-                                '+', 1500,
+                                '+', 900,
                         },
                         {
                                 SKILL_AIR,
                                 '+', 0,
-                                '+', 1500,
-                        },
-                        {
-                                SKILL_EARTH,
-                                '+', 0,
-                                '+', 1500,
+                                '+', 900,
                         },
                         {
                                 SKILL_DEVICE,

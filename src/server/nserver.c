@@ -574,8 +574,12 @@ void setup_contact_socket(void)
 	/* really, server should DIE if this happens */
 	block_timer();
 	if((WorldSocket=CreateClientSocket(cfg.wserver, 18360))==-1){
+#ifdef WIN32
+		s_printf("Unable to connect to world server %d\n", errno);
+#else
 		s_printf("Unable to connect to world server %d %d\n", errno, sl_errno);
-		return;
+#endif
+                return;
 	}
 	allow_timer();
 	install_input(world_comm, WorldSocket, 0);

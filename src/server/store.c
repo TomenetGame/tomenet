@@ -1424,163 +1424,6 @@ static int black_market_potion;
  *
  * Should we check for "permission" to have the given item?
  */
-#if 0
-static void store_create(store_type *st_ptr)
-{
-	int			i, tries, level;
-	object_type		tmp_obj;
-	object_type		*o_ptr = &tmp_obj;
-	int force_num = 0;
-
-
-	/* Paranoia -- no room left */
-	if (st_ptr->stock_num >= st_ptr->stock_size) return;
-
-
-	/* Hack -- consider up to four items */
-	for (tries = 0; tries < 4; tries++)
-	{
-		/* Black Market */
-		if (st_ptr->st_idx == 6)
-		{
-			/* Pick a level for object/magic */
-			level = 60 + rand_int(25);
-
-			/* Random item (usually of given level) */
-			i = get_obj_num(level);
-			
-			/* MEGA HACK */
-			if (black_market_potion == 1)
-			{
-				i = lookup_kind(TV_POTION, SV_POTION_SPEED);
-				black_market_potion--;
-				force_num = rand_range(10, 20);
-			}
-			if (black_market_potion == 2)
-			{
-				i = lookup_kind(TV_POTION, SV_POTION_HEALING);
-				black_market_potion--;
-				force_num = rand_range(3, 9);
-			}
-			if (black_market_potion == 3)
-			{
-				i = lookup_kind(TV_POTION, SV_POTION_RESTORE_MANA);
-				black_market_potion--;
-				force_num = rand_range(3, 9);
-			}
-			if (black_market_potion == 4)
-			  {
-			    i = lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT);
-			    black_market_potion--;
-			    force_num = rand_range(2, 4);
-			  }
-			if (black_market_potion == 5)
-			  {
-			    i = lookup_kind(TV_SCROLL, SV_SCROLL_BLOOD_BOND);
-			    black_market_potion--;
-			    force_num = rand_range(2, 4);
-			  }
-#if 0
-			if (black_market_potion == 6)
-			  {
-			    i = lookup_kind(TV_FOOD, SV_FOOD_UNMAGIC);
-			    black_market_potion--;
-			    force_num = rand_range(2, 4);
-			  }
-#endif
-
-			/* Handle failure */
-			if (!i) continue;
-		}
-
-		/* Normal Store */
-		else
-		{
-			/* Hack -- Pick an item to sell */
-			i = st_ptr->table[rand_int(st_ptr->table_num)];
-
-			/* Hack -- fake level for apply_magic() */
-			level = rand_range(1, STORE_OBJ_LEVEL);
-		}
-
-
-		/* Create a new object of the chosen kind */
-		invcopy(o_ptr, i);
-
-		/* Apply some "low-level" magic (no artifacts) */
-		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, FALSE, FALSE);
-
-		/* Hack -- Charge lite uniformly */
-		if (o_ptr->tval == TV_LITE)
-		{
-			u32b f1, f2, f3, f4, f5, esp;
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-			/* Only fuelable ones! */
-			if (f4 & TR4_FUEL_LITE)
-			{
-				if (o_ptr->sval == SV_LITE_TORCH) o_ptr->timeout = FUEL_TORCH / 2;
-				if (o_ptr->sval == SV_LITE_LANTERN) o_ptr->timeout = FUEL_LAMP / 2;
-			}
-		}
-
-
-		/* The item is "known" */
-		object_known(o_ptr);
-
-		/* Mega-Hack -- no chests in stores */
-//		if (o_ptr->tval == TV_CHEST || o_ptr->tval==8) continue;
-		if (o_ptr->tval == TV_CHEST) continue;
-
-		/* Prune the black market */
-		if (st_ptr->st_idx == 6)
-		{
-			/* Hack -- No "crappy" items */
-			if (black_market_crap(o_ptr)) continue;
-
-			/* Hack -- No "cheap" items */
-			if (object_value(0, o_ptr) < 10) continue;
-
-			/* No "worthless" items */
-			/* if (object_value(o_ptr) <= 0) continue; */
-
-			/* Hack -- No POTION2 items */
-			if (o_ptr->tval == TV_POTION2) continue;
-
-			/* Hack -- less athelas */
-			if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_ATHELAS &&
-				magik(80)) continue;
-		}
-
-		/* Prune normal stores */
-		else
-		{
-			/* No "worthless" items */
-			if (object_value(0, o_ptr) <= 0) continue;
-
-			/* ego rarity control for normal stores */
-			if ((o_ptr->name2 || o_ptr->name2b) && !magik(STORE_EGO_CHANCE))
-				continue;
-
-			/* Hack -- General store shouldn't sell too much aman cloaks etc */
-			if (st_ptr->st_idx == 0 && object_value(0, o_ptr) > 1000 &&
-					magik(33)) continue;
-		}
-
-
-		/* Mass produce and/or Apply discount */
-		mass_produce(o_ptr);
-		
-		if (force_num) o_ptr->number = force_num;
-
-		/* Attempt to carry the (known) item */
-		(void)store_carry(st_ptr, o_ptr);
-
-		/* Definitely done */
-		break;
-	}
-}
-#else
 static void store_create(store_type *st_ptr)
 {
 	int i, tries, level, chance, item;
@@ -1598,26 +1441,21 @@ static void store_create(store_type *st_ptr)
 	for (tries = 0; tries < 4; tries++)
 	{
 		/* Black Market */
-//		if (st_ptr->st_idx == 6)
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) &&
 			--black_market_potion < 0)
 		{
 			/* Pick a level for object/magic */
 			level = 60 + rand_int(25);	/* for now let's use this */
-//			level = return_level(st_ptr);
 
-#if 1
 			/* Clear restriction */
 			get_obj_num_hook = NULL;
 
 			/* Prepare allocation table */
 			get_obj_num_prep();
-#endif	// 0
 
 			/* Random item (usually of given level) */
 			i = get_obj_num(level);
 			
-//#if 0
 			/* MEGA HACK */ /* XXX This will be removed */
 			if (black_market_potion == 1)
 			{
@@ -1649,15 +1487,6 @@ static void store_create(store_type *st_ptr)
 			    black_market_potion--;
 			    force_num = rand_range(2, 4);
 			  }
-#if 0
-			if (black_market_potion == 6)
-			  {
-			    i = lookup_kind(TV_FOOD, SV_FOOD_UNMAGIC);
-			    black_market_potion--;
-			    force_num = rand_range(2, 4);
-			  }
-#endif
-//#endif	// 0
 
 			/* Handle failure */
 			if (!i) continue;
@@ -1666,24 +1495,10 @@ static void store_create(store_type *st_ptr)
 		/* Normal Store */
 		else
 		{
-#if 0	// former code
-			/* Hack -- Pick an item to sell */
-			i = st_ptr->table[rand_int(st_ptr->table_num)];
-
-			/* Hack -- fake level for apply_magic() */
-			level = rand_range(1, STORE_OBJ_LEVEL);
-#endif	// 0
-
 			/* Hack -- Pick an item to sell */
 			item = rand_int(st_info[st_ptr->st_idx].table_num);
 			i = st_info[st_ptr->st_idx].table[item][0];
 			chance = st_info[st_ptr->st_idx].table[item][1];
-
-#if 0
-			/* Don't allow k_info artifacts */
-			if ((i <= 10000) && (k_info[i].flags3 & TR3_NORM_ART))
-				continue;
-#endif	// 0
 
 			/* Does it pass the rarity check ? */
 			if (!magik(chance)) continue;
@@ -1809,7 +1624,6 @@ static void store_create(store_type *st_ptr)
 		break;
 	}
 }
-#endif	// 0
 
 /*
  * Update the bargain info

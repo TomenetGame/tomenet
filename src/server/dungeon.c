@@ -1655,9 +1655,6 @@ static void process_player_begin(int Ind)
 
 	/* Give the player some energy */
 	p_ptr->energy += extract_energy[p_ptr->pspeed];
-#ifdef DUMB_WIN
-        p_ptr->energy = 32000;
-#endif
 
 	/* Make sure they don't have too much */
 	/* But let them store up some extra */

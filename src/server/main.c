@@ -117,13 +117,6 @@ int main(int argc, char *argv[])
 	bool config_specified = FALSE;
 	char buf[1024];
 	int catch_signals = TRUE;
-#ifdef DUMB_WIN
-	WSADATA wsadata;
-
-	/* Initialize WinSock */
-	WSAStartup(MAKEWORD(1, 1), &wsadata);
-#endif
-
 #ifdef WINDOWS
 	WSADATA wsadata;
 	/* Initialize WinSock */

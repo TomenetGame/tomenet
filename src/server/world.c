@@ -1,12 +1,12 @@
 /* experimental code - evileye */
 /* this does not necessarily follow any sensible design */
 
-#include <sys/types.h>
-#include <sys/socket.h>
-
 #include "angband.h"
 
 #ifdef TOMENET_WORLDS
+
+#include <sys/types.h>
+#include <sys/socket.h>
 
 #include "../world/world.h"
 

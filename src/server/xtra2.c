@@ -3083,7 +3083,13 @@ void gain_exp(int Ind, s32b amount)
 	int Ind2 = 0;
 
 	/* You cant gain xp on your land */
-	if (player_is_king(Ind)) return;
+        if (player_is_king(Ind)) return;
+
+        /* You must defeat morgoth before beong allowed level > 50 */
+        if ((!p_ptr->total_winner) && (p_ptr->exp + amount >= ((s64b)((s64b)player_exp[50 - 1] *
+                                           (s64b)p_ptr->expfact / 100L))))
+            return;
+
 //        if (p_ptr->ghost) amount/=1.5;	/* allow own kills to be gained */
 	if (p_ptr->ghost) amount = (amount * 2) / 3;	/* 1.5 = 1, none? :) */
 

@@ -60,7 +60,7 @@ SERV_SRCS = \
   server/sched.c server/generate.c server/wild.c server/dungeon.c \
   server/init1.c server/init2.c server/nserver.c server/printout.c \
   server/main.c server/traps.c server/csfunc.c server/skills.c \
-  common/files.c
+  common/files.c common/w_z_pack.c server/world.c server/bldg.c
 
 SERV_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -75,7 +75,7 @@ SERV_OBJS = \
   server/sched.o server/generate.o server/wild.o server/dungeon.o \
   server/init1.o server/init2.o server/nserver.o server/printout.o \
   server/main.o server/traps.o server/csfunc.o server/skills.o \
-  common/files.c
+  common/files.c common/w_z_pack.o server/world.o server/bldg.o
 
 
 CLI_SRCS = \
@@ -207,7 +207,7 @@ CC = gcc
 ## Variation -- Cygwin
 ##
 CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DUSE_WIN -DWIN32 -DUSE_GRAPHICS -DDUMB_WIN -DCYGWIN
-LIBS = -luser32 -lwsock32 -lgdi32 -lcomdlg32
+LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32
 ## LDFLAGS = --export-all-symbols
 LDFLAGS = -g
 SCFLAGS = -Wall -O2 -DUSE_WIN -DDUMB_WIN
@@ -359,13 +359,9 @@ TOLUA = server/tolua
 # below.
 #
 
-install: date tomenet tomenet.console tomenet.server
-	-mv ../tomenet ../tomenet.old
-	-mv ../mangband ../mangband.old
-	-mv ../tomenet.console ../tomenet.console.old
-	cp tomenet ..
-	cp tomenet.console ..
-	cp tomenet.server ..
+install: date tomenet tomenet.server
+	cp tomenet.exe ..
+	cp tomenet.server ../tomenet.server.exe
 
 mini_install: install
 
@@ -438,6 +434,9 @@ client/w_util.c: client/util.pkg $(TOLUA)
 client/w_spells.c: client/spells.pkg $(TOLUA)
 	cd client; ../server/tolua -n spells -o w_spells.c spells.pkg; cd ..
 
+
+common/w_z_pack.c: common/z_pack.pkg $(TOLUA)
+	cd common; ../server/tolua -n z_pack -o w_z_pack.c z_pack.pkg; cd ..
 
 #
 # Generate dependancies automatically

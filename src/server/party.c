@@ -40,7 +40,7 @@ bool WriteAccount(struct account *r_acc, bool new){
 	fd=open("tomenet.acc", O_RDWR|O_NONBLOCK);
 #endif
 	if(fd<0) return(FALSE);
-#ifndef NETBSD
+#if (!defined(NETBSD)) && (!defined(WIN32))
 	if((flock(fd, LOCK_EX))!=0) return(FALSE);
 #endif
 	fp=fdopen(fd, "r+");
@@ -67,7 +67,7 @@ bool WriteAccount(struct account *r_acc, bool new){
 		}
 		fclose(fp);
 	}
-#ifndef NETBSD
+#if (!defined(NETBSD)) && (!defined(WIN32))
 	flock(fd, LOCK_UN);
 #endif
 	close(fd);

@@ -86,7 +86,9 @@
 /*
  * For server: can use crypt() for doing passwords
  */
+#ifndef WIN32
 #define HAVE_CRYPT
+#endif
 
 /*
  * OPTION: Use the POSIX "termios" methods in "main-gcu.c"
@@ -231,7 +233,9 @@
  * I committed it by mistake.  please just make it revert back.	-Jir
  */
 /* Would you make it a tomenet.cfg option? */
+#ifndef WIN32
 #define TOMENET_WORLDS
+#endif
 
 #if 0
 #define BIND_NAME "TomeNET.net"

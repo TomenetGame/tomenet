@@ -8,6 +8,7 @@ RECHARGE = add_spell
         ["mana"] = 	10,
         ["mana_max"] = 	100,
         ["fail"] = 	10,
+        ["stat"] =      A_WIS,
         ["spell"] = 	function()
         		recharge(Ind, 60 + get_level(Ind, RECHARGE, 140))
 	end,
@@ -27,6 +28,7 @@ PROJECT_SPELLS = add_spell
         ["mana"] = 	10,
         ["mana_max"] = 	50,
         ["fail"] = 	10,
+        ["stat"] =      A_WIS,
         ["spell"] = 	function()
                         if player.spell_project == 0 then
                                 player.spell_project = 1 + get_level(Ind, PROJECT_SPELLS, 6, 0)
@@ -53,6 +55,7 @@ DISPERSEMAGIC = add_spell
         ["mana"] = 	30,
         ["mana_max"] = 	60,
         ["fail"] = 	10,
+        ["stat"] =      A_WIS,
         -- Unnafected by blindness
         ["blind"] =     FALSE,
         -- Unnafected by confusion

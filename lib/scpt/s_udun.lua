@@ -63,6 +63,7 @@ GENOCIDE = add_spell
         ["mana"] = 	50,
         ["mana_max"] = 	50,
         ["fail"] = 	20,
+        ["stat"] =      A_WIS,
         ["extra"] =     function () if get_check("Genocide all monsters near you? ") == TRUE then return TRUE else return FALSE end end,
         ["spell"] = 	function(args)
                         local type
@@ -96,6 +97,7 @@ WRAITHFORM = add_spell
         ["mana"] = 	20,
         ["mana_max"] = 	40,
         ["fail"] = 	20,
+        ["stat"] =      A_WIS,
         ["spell"] = 	function()
                         local dur = randint(30) + 20 + get_level(Ind, WRAITHFORM, 40)
                        	set_tim_wraith(Ind, dur)

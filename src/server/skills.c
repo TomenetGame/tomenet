@@ -203,8 +203,8 @@ void increase_skill(int Ind, int i)
 		return;
 	}
 
-	/* Cannot allocate more than player level * 3 / 2 + 4 levels */
-	if ((p_ptr->s_info[i].value / SKILL_STEP) >= p_ptr->lev + 4)
+	/* Cannot allocate more than player level + 2 levels */
+	if ((p_ptr->s_info[i].value / SKILL_STEP) >= p_ptr->lev + 2)
 	{
 		Send_skill_info(Ind, i);
 		return;
@@ -223,56 +223,9 @@ void increase_skill(int Ind, int i)
 	Send_skill_info(Ind, i);
 
 	/* XXX updating is delayed till player leaves the skill screen */
-#if 0
-	/* Tell the server to redraw the player's display */
-	p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS;
-	p_ptr->redraw |= PR_PLUSSES;
-	p_ptr->redraw |= PR_STUDY;
-
-	/* Update his view, light, bonuses, and torch radius */
-#ifdef ORIG_SKILL_EVIL	/* not to be defined */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE
-		| PU_SKILL_INFO | PU_SKILL_MOD);
-#else
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE);
-#endif
-	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
-
-	/* Update his inventory, equipment, and spell info */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP);
-#endif	// 0
-
 	p_ptr->update |= (PU_SKILL_MOD);
 }
 
-
-#if 0
-
-
-/*
- * Descrease the skill point of the skill specified by i and
- * modify related skills
- */
-void decrease_skill(int i, s16b *invest)
-{
-        /* Cannot decrease more */
-        if (!invest[i]) return;
-
-	/* The skill cannot be decreased */
-	if (!s_info[i].mod) return;
-
-	/* The skill already has minimal value */
-	if (!s_info[i].value) return;
-
-	/* Free a skill point */
-	p_ptr->skill_points++;
-
-	/* Decrease the skill */
-	s_info[i].value -= s_info[i].mod;
-        invest[i]--;
-}
-
-#endif	// 0
 
 /*
  * Given the name of a skill, returns skill index or -1 if no
