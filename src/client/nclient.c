@@ -1362,20 +1362,21 @@ int Receive_stat(void)
 	int	n;
 	char	ch;
 	char	stat;
-	s16b	max, cur;
+	s16b	max, cur, s_ind;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd", &ch, &stat, &max, &cur)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%hd", &ch, &stat, &max, &cur, &s_ind)) <= 0)
 	{
 		return n;
 	}
 
 	p_ptr->stat_top[(int) stat] = max;
 	p_ptr->stat_use[(int) stat] = cur;
+	p_ptr->stat_ind[(int) stat] = s_ind;
 
 	if (!screen_icky && !shopping)
 		prt_stat(stat, max, cur);
 	else
-		if ((n = Packet_printf(&qbuf, "%c%c%hd%hd", ch, stat, max, cur)) <= 0)
+		if ((n = Packet_printf(&qbuf, "%c%c%hd%hd%hd", ch, stat, max, cur, s_ind)) <= 0)
 		{
 			return n;
 		}
