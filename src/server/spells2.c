@@ -452,6 +452,36 @@ static int enchant_table[16] =
 	1000
 };
 
+/*
+ * Lock a door. Currently range of one only.. Maybe a beam
+ * would be better?
+ */
+void wizard_lock(int Ind, int dir){
+	player_type *p_ptr;
+	cave_type **zcave, *c_ptr;
+	int dy, dx;
+
+	p_ptr=Players[Ind];
+	if(!p_ptr) return;
+	zcave=getcave(&p_ptr->wpos);
+	if(!zcave) return;
+
+	dx = p_ptr->px + ddx[dir];
+	dy = p_ptr->py + ddy[dir];
+
+	c_ptr = &zcave[dy][dx];
+	if(c_ptr->feat>=FEAT_DOOR_HEAD && c_ptr->feat<(FEAT_DOOR_HEAD+7)){
+		if(c_ptr->feat==FEAT_DOOR_HEAD)
+			msg_print(Ind, "The door locks!");
+		else
+			msg_print(Ind, "The door appears stronger!");
+		c_ptr->feat++;
+	}
+	else if(c_ptr->feat!=(FEAT_DOOR_HEAD+7))
+		msg_print(Ind, "You see no lockable door there");
+	else
+		msg_print(Ind, "The door is locked fast already!");
+}
 
 /*
  * Removes curses from items in inventory

@@ -223,6 +223,7 @@ extern bool set_paralyzed(int Ind, int v);
 extern bool set_image(int Ind, int v);
 extern bool set_fast(int Ind, int v, int p);
 extern bool set_slow(int Ind, int v);
+extern void wizard_lock(int Ind, int dir);
 
 /*
  * Shield effect options
