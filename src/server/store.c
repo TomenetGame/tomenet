@@ -1252,7 +1252,7 @@ static void store_create(int st)
 		object_known(o_ptr);
 
 		/* Mega-Hack -- no chests in stores */
-		if (o_ptr->tval == TV_CHEST) continue;
+		if (o_ptr->tval == TV_CHEST || o_ptr->tval==8) continue;
 
 		/* Prune the black market */
 		if (store_num == 6)
@@ -2081,7 +2081,8 @@ void store_confirm(int Ind)
 	handle_stuff(Ind);
 
 	/* The store gets that (known) item */
-	item_pos = store_carry(p_ptr->store_num, &sold_obj);
+	if(sold_obj.tval!=8)
+		item_pos = store_carry(p_ptr->store_num, &sold_obj);
 
 	/* Resend the basic store info */
 	display_store(Ind);
