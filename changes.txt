@@ -24,6 +24,7 @@
 
 09/09/2002
 [P]- Casting spells cost a turn ;)
+[m]- New news.txt
 
 06/09/2002
 [I]- Spells can ask for items client side directly
