@@ -150,14 +150,22 @@ void delete_monster(int Depth, int y, int x)
 	/* Paranoia */
 	if (!in_bounds(Depth, y, x)) return;
 
-	/* Paranoia */
-	if (!cave[Depth]) return;
-
-	/* Check the grid */
-	c_ptr = &cave[Depth][y][x];
-
-	/* Delete the monster (if any) */
-	if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx);
+	if (cave[Depth]){
+		/* Check the grid */
+		c_ptr = &cave[Depth][y][x];
+		/* Delete the monster (if any) */
+		if (c_ptr->m_idx > 0) delete_monster_idx(c_ptr->m_idx);
+	}
+	else{				/* still delete the monster, just slower method */
+		int i;
+		for(i=0;i<m_max;i++){
+			monster_type *m_ptr=&m_list[i];
+			if(o_ptr->r_idx && Depth==m_ptr->dun_depth){
+				if(y==m_ptr->fy && x==m_ptr->fx)
+					delete_monster_idx(i);
+			}
+		}
+	}
 }
 
 

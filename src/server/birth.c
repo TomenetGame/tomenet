@@ -1038,6 +1038,14 @@ static void player_outfit(int Ind)
                 o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
+                invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_HOUSE));
+		o_ptr->number = 99;
+		o_ptr->discount = 100;
+		object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
+		(void)inven_carry(Ind, o_ptr);
+
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;

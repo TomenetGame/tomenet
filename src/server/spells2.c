@@ -4003,6 +4003,37 @@ void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
         if (f2 & TR2_RES_DISEN) r_ptr->flags3 |= RF3_RES_DISE;
 }
 
+void house_creation(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int w,h;
+	if((house_alloc-num_houses)<32){
+		return;		/* i know... */
+	}
+	if(p_ptr->depth>=0) return;		/* Building in town??? no */
+	w=4+randint(4);
+	h=4+randint(4);
+	if(!(p_ptr->px+w<196 && p_ptr->py+h<64))	/* bounds */
+		return;
+	houses[num_houses].x=p_ptr->px;		/* lame positioning code */
+	houses[num_houses].y=p_ptr->py;
+	houses[num_houses].dx=w/2;	
+	houses[num_houses].dy=h-1;
+	houses[num_houses].flags=HF_RECT;
+	houses[num_houses].coords.rect.width=w;
+	houses[num_houses].coords.rect.height=h;
+	houses[num_houses].depth=p_ptr->dun_depth;;
+	MAKE(houses[num_houses].dna, struct dna_type);
+	houses[num_houses].dna->creator=p_ptr->dna;
+	houses[num_houses].dna->owner=p_ptr->id;
+	houses[num_houses].dna->owner_type=OT_PLAYER;
+	houses[num_houses].dna->a_flags=ACF_NONE;
+	houses[num_houses].dna->min_level=ACF_NONE;
+	houses[num_houses].dna->price=5;	/* so work out */
+	num_houses++;
+	wild_add_uhouse(&houses[num_houses-1]);
+}
+
 /* Create a mindless servant ! */
 void golem_creation(int Ind)
 {

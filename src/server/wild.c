@@ -1007,8 +1007,8 @@ static void wild_add_dwelling(int Depth, int x, int y)
 #ifdef NEWHOUSES
 			MAKE(houses[num_houses].dna, struct dna_type);
 			houses[num_houses].dna->price = price;
-			houses[num_houses].x = h_x1+1;
-			houses[num_houses].y = h_y1+1;
+			houses[num_houses].x = h_x1;
+			houses[num_houses].y = h_y1;
 			houses[num_houses].flags = HF_RECT|HF_STOCK;
 			if(has_moat)
 				houses[num_houses].flags |= HF_MOAT;
@@ -1984,27 +1984,56 @@ void bleed_with_neighbors(int Depth)
 	Rand_quick = rand_old;
 }
 
+void wild_add_uhouse(house_type *h_ptr){
+ 	int x,y;
+	int Depth=h_ptr->depth;
+ 	cave_type *c_ptr;
+
+	/* draw our user defined house */
+ 	if(h_ptr->flags&HF_RECT){
+		for(x=0;x<h_ptr->coords.rect.width;x++){
+ 			c_ptr=&cave[Depth][h_ptr->y][h_ptr->x+x];
+ 			c_ptr->feat=FEAT_PERM_EXTRA;
+		}
+		for(y=h_ptr->coords.rect.height-1,x=0;x<h_ptr->coords.rect.width;x++){
+ 			c_ptr=&cave[Depth][h_ptr->y+y][h_ptr->x+x];
+ 			c_ptr->feat=FEAT_PERM_EXTRA;
+		}
+		for(y=1;y<h_ptr->coords.rect.height;y++){
+ 			c_ptr=&cave[Depth][h_ptr->y+y][h_ptr->x];
+ 			c_ptr->feat=FEAT_PERM_EXTRA;
+		}
+		for(x=h_ptr->coords.rect.width-1,y=1;y<h_ptr->coords.rect.height;y++){
+ 			c_ptr=&cave[Depth][h_ptr->y+y][h_ptr->x+x];
+ 			c_ptr->feat=FEAT_PERM_EXTRA;
+		}
+		for(x=1;x<h_ptr->coords.rect.width-1;x++){
+			for(y=1;y<h_ptr->coords.rect.height-1;y++){
+ 				c_ptr=&cave[Depth][h_ptr->y+y][h_ptr->x+x];
+				if(c_ptr->feat!=FEAT_PERM_EXTRA){
+ 					c_ptr->feat=FEAT_FLOOR;
+ 					c_ptr->info|=CAVE_ICKY;
+				}
+			}
+		}
+		c_ptr=&cave[Depth][h_ptr->y+h_ptr->dy][h_ptr->x+h_ptr->dx];
+		c_ptr->feat=FEAT_HOME_HEAD;
+		c_ptr->special=h_ptr->dna;
+	}
+	else{
+		/* polygonal house */
+	}
+	if(h_ptr->flags&HF_MOAT){
+		/* Draw a moat around our house */
+	}
+}
+
 void wild_add_uhouses(int Depth){
 #ifdef NEWHOUSES
 	int i;
- 	cave_type *c_ptr;
- 	house_type *h_ptr;
 	for(i=0;i<num_houses;i++){
 		if(houses[i].depth==Depth && !(houses[i].flags&HF_STOCK)){
- 			int x,y;
- 			h_ptr=&houses[i];
-			/* draw our user defined house */
- 			if(h_ptr->flags&HF_RECT){
- 				for(y=0;y<h_ptr->coords.rect.height;y++){
- 					for(x=0;x<h_ptr->coords.rect.width;x++){
- 						c_ptr=&cave[Depth][y][x];
- 						c_ptr->feat=FEAT_PERM_EXTRA;
- 					}
- 				}
-			}
-			else{
-				/* polygonal house */
-			}
+			wild_add_uhouse(&houses[i]);
 		}
 	}
 #endif

@@ -3064,6 +3064,35 @@ void monster_death(int Ind, int m_idx)
         FREE(m_ptr->r_ptr, monster_race);
 }
 
+kill_house_contents(house_type *h_ptr){
+	int depth=h_ptr->depth;
+	if(h_ptr->flags&HF_RECT){
+		int sy,sx,ey,ex,x,y;
+		sy=h_ptr->y+1;
+		sx=h_ptr->x+1;
+		ey=h_ptr->y+h_ptr->coords.rect.height-1;
+		ex=h_ptr->x+h_ptr->coords.rect.width-1;
+		for(y=sy;y<ey;y++){
+			for(x=sx;x<ex;x++)
+				delete_object(depth,y,x);	
+		}
+	}
+	else{
+		/* Polygonal house */
+	}
+}
+
+kill_houses(int id, int type){
+	int i;
+	for(i=0;i<num_houses;i++){
+		struct dna_type *dna=houses[i].dna;
+		if(dna->owner==id && dna->owner_type==type){
+			dna->owner=0L;
+			dna->creator=0L;
+			kill_house_contents(&houses[i]);
+		}
+	}
+}
 
 /*
  * Handle the death of a player and drop their stuff.
@@ -3117,6 +3146,7 @@ void player_death(int Ind)
 				p_ptr->name, p_ptr->died_from);
 
 		msg_broadcast(Ind, buf);
+		kill_houses(p_ptr->id, OT_PLAYER);
 		
 		/* Remove him from his party */
 		if (p_ptr->party)

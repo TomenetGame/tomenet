@@ -29,7 +29,7 @@ void delete_object_idx(int o_idx)
 	int x = o_ptr->ix;
 	int Depth = o_ptr->dun_depth;
 
-	cave_type *c_ptr = &cave[Depth][y][x];
+	cave_type *c_ptr;
 
 #ifndef NEWHOUSES
 	/* First, if this is a key, we need to reset the house */
@@ -62,7 +62,10 @@ void delete_object_idx(int o_idx)
 
 
 	/* Object is gone */
-	c_ptr->o_idx = 0;
+	if(cave[Depth]){
+		c_ptr=&cave[Depth][y][x];
+		c_ptr->o_idx = 0;
+	}
 
 	/* No one can see it anymore */
 	for (i = 1; i < NumPlayers + 1; i++)
@@ -74,7 +77,6 @@ void delete_object_idx(int o_idx)
 	everyone_lite_spot(Depth, y, x);
 }
 
-
 /*
  * Deletes object from given location
  */
@@ -85,11 +87,24 @@ void delete_object(int Depth, int y, int x)
 	/* Refuse "illegal" locations */
 	if (!in_bounds(Depth, y, x)) return;
 
-	/* Find where it was */
-	c_ptr = &cave[Depth][y][x];
+	if(cave[Depth]){	/* This is fast indexing method first */
+		/* Find where it was */
+		c_ptr = &cave[Depth][y][x];
 
-	/* Delete the object */
-	if (c_ptr->o_idx) delete_object_idx(c_ptr->o_idx);
+		/* Delete the object */
+		if (c_ptr->o_idx) delete_object_idx(c_ptr->o_idx);
+	}
+	else{			/* Cave depth not static (houses etc) - do slow method */
+		int i;
+		for(i=0;i<o_max;i++){
+			object_type *o_ptr = &o_list[i];
+			if(o_ptr->k_idx && Depth==o_ptr->dun_depth){
+				if(y==o_ptr->iy && x==o_ptr->ix){
+					delete_object_idx(i);
+				}
+			}
+		}
+	}
 }
 
 

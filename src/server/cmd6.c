@@ -1144,6 +1144,13 @@ void do_cmd_read_scroll(int Ind, int item)
 	/* Analyze the scroll */
 	switch (o_ptr->sval)
 	{
+		case SV_SCROLL_HOUSE:
+		{
+                        msg_print(Ind, "This is a house creation scroll.");
+			ident = TRUE;
+                        house_creation(Ind);
+			break;
+		}
                 case SV_SCROLL_GOLEM:
 	        {	    
                         msg_print(Ind, "This is a golem creation scroll.");

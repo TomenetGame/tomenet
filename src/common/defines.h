@@ -1458,6 +1458,7 @@ that keeps many algorithms happy.
 #define SV_SCROLL_ACQUIREMENT			46
 #define SV_SCROLL_STAR_ACQUIREMENT		47
 #define SV_SCROLL_LIFE				48
+#define SV_SCROLL_HOUSE				49
 
 
 /* The "sval" codes for TV_POTION */

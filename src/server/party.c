@@ -230,6 +230,7 @@ int party_remove(int remover, cptr name)
 	if (remover == Ind)
 	{
 		/* Remove the party altogether */
+		kill_houses(party_id, OT_PARTY);
 
 		/* Set the number of people in this party to zero */
 		parties[party_id].num = 0;

@@ -3775,8 +3775,8 @@ static void build_store(int n, int yy, int xx)
 #ifdef NEWHOUSES
 		MAKE(houses[num_houses].dna, struct dna_type);
 		houses[num_houses].dna->price = price;
-		houses[num_houses].x=x1+1;
-		houses[num_houses].y=y1+1;
+		houses[num_houses].x=x1;
+		houses[num_houses].y=y1;
 		houses[num_houses].flags=HF_RECT|HF_STOCK;
 		houses[num_houses].coords.rect.width=x2-x1+1;
 		houses[num_houses].coords.rect.height=y2-y1+1;
