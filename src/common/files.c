@@ -159,11 +159,12 @@ void do_xfers(){
 #ifdef WIN32
 int mkstemp(char *template)
 {
-        char f[400];
+        char f[30];	/* if it overflows, it overflows.. */
         int fd;
 
         if (!tmpnam(f)) return -1;
         fd = open(f, O_RDWR | O_CREAT);
+	strcpy(template, f);	/* give back our filename */
         return fd;
 }
 #endif
