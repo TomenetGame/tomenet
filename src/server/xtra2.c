@@ -3775,7 +3775,7 @@ void player_death(int Ind)
 		/* Drop no more than 32000 gold */
 		if (p_ptr->au > 32000) p_ptr->au = 32000;
 		/* (actually, this if-clause is not necessary) */
-		if(p_ptr->lev >= cfg.newbies_cannot_drop){
+		if(p_ptr->max_plv >= cfg.newbies_cannot_drop){
 			/* Set the amount */
 			p_ptr->inventory[INVEN_PACK].pval = p_ptr->au;
 		}
@@ -3834,7 +3834,7 @@ void player_death(int Ind)
 			continue;
 		}
 
-		if(p_ptr->lev >= cfg.newbies_cannot_drop){
+		if(p_ptr->max_plv >= cfg.newbies_cannot_drop){
 			/* Drop this one */
 			drop_near(&p_ptr->inventory[i], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
