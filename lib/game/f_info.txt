@@ -872,7 +872,7 @@ F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
 N:202:small tree
 G:#:g
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | REMEMBER
-F:NO_VISION | CAN_FLY
+F:NO_VISION
 
 # Just to have a town entrance picture
 N:203:town
