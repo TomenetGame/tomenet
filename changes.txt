@@ -25,7 +25,7 @@
 21/12/2002
 [m]- Client/server now do version check on development versions.
      That number starts at 0, raises with each client and is never
-     used for any other purpose. (c-birth.c and nserver.c)
+     used for any other purpose. (c-init.c and nserver.c)
      Client displays a link to documentation.
 [M]- Toned down townspeople (more newbie-friendly)
 [G]- Fixed aiming for mimic powers
