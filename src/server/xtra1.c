@@ -834,7 +834,7 @@ static void fix_spell_aux(int Ind, int realm, int sval)
  * Probably we'd better call this function only once when a player logs on.
  * XXX XXX target of spell-reform
  */
-void fix_spell(int Ind)
+void fix_spell(int Ind, bool full)
 {
 	player_type *p_ptr = Players[Ind];
 	int i, j;
@@ -856,23 +856,33 @@ void fix_spell(int Ind)
 #endif	// 0
 
 	/* Scan for appropriate books */
-#if 0
-	for (i = 0; i < INVEN_WIELD; i++)
-	{
-		if (is_book((&p_ptr->inventory[i])))
+/* #if 0 */
+	/* sending all spells ?*/
+	/* This is *still* far from adequate 
+	   we should only send individual spells that
+	   are changed - evileye */
+	/* idea is to send (like mentioned above) all at start
+	   and only updates after that */
+	if(!full){
+		for (i = 0; i < INVEN_WIELD; i++)
 		{
-			do_cmd_browse(Ind, &p_ptr->inventory[i]);
+			if (is_book((&p_ptr->inventory[i])))
+			{
+				do_cmd_browse(Ind, &p_ptr->inventory[i]);
+			}
 		}
+/* #else */
 	}
-#else	// 0
-	for (i = TV_PSI_BOOK; i < TV_HUNT_BOOK + 1; i++)
-	{
-		for (j = 0; j < 9; j++)
+	else{
+		for (i = TV_PSI_BOOK; i < TV_HUNT_BOOK + 1; i++)
 		{
-			if (!lookup_kind(i, j)) continue;
-			forge.tval = i;
-			forge.sval = j;
-			do_cmd_browse(Ind, &forge);
+			for (j = 0; j < 9; j++)
+			{
+				if (!lookup_kind(i, j)) continue;
+				forge.tval = i;
+				forge.sval = j;
+				do_cmd_browse(Ind, &forge);
+			}
 		}
 	}
 #if 0
@@ -880,7 +890,7 @@ void fix_spell(int Ind)
 		for (j = 0; j < 9; j++)
 			fix_spell_aux(Ind, i, j);
 #endif	// 0
-#endif	// 0
+/* #endif */
 }
 
 
@@ -3928,7 +3938,7 @@ void window_stuff(int Ind)
 	if (p_ptr->window & PW_SPELL)
 	{
 		p_ptr->window &= ~(PW_SPELL);
-		fix_spell(Ind);
+		fix_spell(Ind, 0);
 	}
 
 	/* Display player */
