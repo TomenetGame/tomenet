@@ -206,3 +206,7 @@ Change list for PernMangband
 - Object ownership made invalid now after player ghost death. It was
   recycling ownership. It is set to MAX_ID+1.
 - Annoying level 1 suicides are no longer shown.
+
+03/10/2001
+- A couple of bug fixes, and some debug stuff removed (mine)
+- Fixed golem change places with owner.

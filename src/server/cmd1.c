@@ -1374,7 +1374,7 @@ void py_attack_mon(int Ind, int y, int x)
                 cave[Depth][ny][nx].m_idx = c_ptr->m_idx;
 
                 /* Update the old location */
-                cave[Depth][oy][ox].m_idx = 0;
+                cave[Depth][oy][ox].m_idx = -Ind;
 
                 /* Move the monster */
                 m_ptr->fy = ny;
@@ -1739,7 +1739,7 @@ void py_attack(int Ind, int y, int x)
 		py_attack_mon(Ind, y, x);
 
 	/* Check for player */
-	if (c_ptr->m_idx < 0)
+	else if (c_ptr->m_idx < 0)
 		py_attack_player(Ind, y, x);
 }
 

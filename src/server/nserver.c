@@ -2150,10 +2150,8 @@ void do_quit(int ind, bool tellclient)
 	/* If we are close to the center of town, exit quickly. */
 	if (depth <= 0 ? wild_info[depth].radius <= 2 : 0)
 	{
-		printf("Quick quit: %d\n",ind);
 		Destroy_connection(ind, "client quit");
 	}
-	printf("Timeout quit: %d\n",ind);
 	// Otherwise wait for the timeout
 }
 

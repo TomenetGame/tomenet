@@ -2608,7 +2608,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm)
 
         /* Lets find a target */
 
-        if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK))
+        if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK) && p_ptr->target_who && (p_ptr->target_who > 0 || check_hostile(Ind, -p_ptr->target_who)))
         {
                 tm_idx = p_ptr->target_who;
         }
