@@ -3304,7 +3304,7 @@ void monster_death(int Ind, int m_idx)
 
 		} 
 
-
+		world_msg(buf);
 		/* Tell every player */
 		msg_broadcast(Ind, buf);
 	}
@@ -3980,6 +3980,7 @@ void player_death(int Ind)
 				p_ptr->name, p_ptr->died_from);
 		else sprintf(buf, "\377r%s was killed and destroyed by %s.",
 				p_ptr->name, p_ptr->died_from);
+		world_msg(buf);
 
 		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master))
 			msg_broadcast(Ind, buf);
