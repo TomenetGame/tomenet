@@ -2562,7 +2562,7 @@ void player_talk_aux(int Ind, cptr message)
 			colon++;
 		}
 
-		/* Ignore command */
+		/* User commands */
 		if (prefix(message, "/ignore ") ||
 			prefix(message, "/ig"))
 		{
@@ -2587,6 +2587,51 @@ void player_talk_aux(int Ind, cptr message)
 		{
 			me = TRUE;
 		}
+		/* Semi-auto item destroyer */
+		else if ((prefix(message, "/dispose ")) ||
+				prefix(message, "/dis"))
+		{
+			object_type		*o_ptr;
+			for(i = 0; i < INVEN_PACK; i++)
+			{
+				o_ptr = &(p_ptr->inventory[i]);
+				if (!o_ptr->tval) break;
+
+				/* skip inscribed items */
+				if (o_ptr->note) continue;
+				
+				do_cmd_destroy(Ind, i, o_ptr->number);
+				i--;
+
+				/* Hack - Don't take a turn here */
+				p_ptr->energy -= level_speed(p_ptr->dun_depth);
+			}
+			/* Take total of one turn */
+			p_ptr->energy -= level_speed(p_ptr->dun_depth);
+			return;
+		}
+		/* add inscription to everything */
+		else if (prefix(message, "/tag"))
+		{
+			object_type		*o_ptr;
+			for(i = 0; i < INVEN_PACK; i++)
+			{
+				o_ptr = &(p_ptr->inventory[i]);
+				if (!o_ptr->tval) break;
+
+				/* skip inscribed items */
+				if (o_ptr->note) continue;
+				
+				o_ptr->note = quark_add("!k");
+			}
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+			return;
+		}
+				
+
+
 		/* Admin commands */
 		else if (!strcmp(p_ptr->name,cfg_admin_wizard)
 			|| !strcmp(p_ptr->name,cfg_dungeon_master))
@@ -2630,6 +2675,38 @@ void player_talk_aux(int Ind, cptr message)
 				wipe_m_list(k);
 
 				msg_format(Ind, "\377rItems and monsters on %dft are cleared.", k * 50);
+				return;
+			}
+			else if (prefix(message, "/geno-level") ||
+					prefix(message, "/geno"))
+			{
+				/* depth in feet */
+				k = k / 50;
+				if (!colon) k = p_ptr->dun_depth;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+				{
+					msg_print(Ind, "\377oIlligal depth.  Usage: /geno [depth in feet]");
+					return;
+				}
+
+				/* Wipe even if town/wilderness */
+				wipe_m_list(k);
+
+				msg_format(Ind, "\377rMonsters on %dft are cleared.", k * 50);
+				return;
+			}
+			else if (prefix(message, "/identify") ||
+					prefix(message, "/id"))
+			{
+				identify_pack(Ind);
+
+				/* Combine the pack */
+				p_ptr->notice |= (PN_COMBINE);
+
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
 				return;
 			}
 			else if (prefix(message, "/unstatic-level") ||
@@ -2740,14 +2817,15 @@ void player_talk_aux(int Ind, cptr message)
 			}
 			else
 			{
-				msg_print(Ind, "Commands(player): afk ignore me;");
-				msg_print(Ind, "  art cfg clv kick recall script shutdown sta unst");
+				msg_print(Ind, "Commands(player): afk dis ignore me tag;");
+				msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta unst");
 				return;
 			}
 		}
 		else
 		{
-			msg_print(Ind, "Commands: afk ignore me");
+			msg_print(Ind, "Commands: afk dis ignore me tag");
+			msg_print(Ind, "/dis \377rdestroys \377wevery uninscribed items in your inventory!");
 			return;
 		}
 	}

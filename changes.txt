@@ -354,3 +354,4 @@ Change list for PernMangband
 
 01/12/2001 (Jir)
 - lv-req is now based on both item's quality and depth.
+- User commands: /dispose(dis), /tag  Admin commands: /id, /geno
