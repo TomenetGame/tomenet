@@ -1307,6 +1307,10 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr)
 	/* Cursed/Worthless items "disappear" when sold */
 	if (value <= 0) return (-1);
 
+	/* All store items are fully *identified* */
+	/* (I don't know it's too nice.. ) */
+	o_ptr->ident |= ID_MENTAL;
+
 	/* Erase the inscription */
 	o_ptr->note = 0;
 
@@ -1768,7 +1772,7 @@ static void display_entry(int Ind, int pos)
 		wgt = o_ptr->weight;
 
 		/* Send the info */
-		Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name);
+		Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval);
 	}
 
 	/* Describe an item (fully) in a store */
@@ -1793,7 +1797,7 @@ static void display_entry(int Ind, int pos)
 		x = price_item(Ind, o_ptr, ot_ptr->min_inflate, FALSE);
 
 		/* Send the info */
-		Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name);
+		Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval);
 	}
 }
 
@@ -2465,6 +2469,86 @@ void store_confirm(int Ind)
 	{
 		display_inventory(Ind);
 	}
+}
+
+
+/*
+ * Examine an item in a store			   -JDL-
+ */
+void store_examine(int Ind, int item)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int st = p_ptr->store_num;
+
+	store_type *st_ptr;
+	owner_type *ot_ptr;
+
+	int			i, choice;
+	int			item_new;
+
+	s32b		price, best;
+
+	object_type		sell_obj;
+	object_type		*o_ptr;
+
+	char		o_name[160];
+
+	i=gettown(Ind);
+	if(i==-1) return;
+
+	st_ptr = &town[i].townstore[st];
+	ot_ptr = &owners[st][st_ptr->owner];
+
+	/* Empty? */
+	if (st_ptr->stock_num <= 0)
+	{
+		if (p_ptr->store_num == 7) msg_print(Ind, "Your home is empty.");
+		else msg_print(Ind, "I am currently out of stock.");
+		return;
+	}
+
+	/* Get the actual item */
+	o_ptr = &st_ptr->stock[item];
+
+	/* Assume the player wants just one of them */
+	/*amt = 1;*/
+
+	/* Hack -- get a "sample" object */
+	sell_obj = *o_ptr;
+
+
+
+	/* Require full knowledge */
+	if (!(o_ptr->ident & (ID_MENTAL)))
+	{
+		/* This can only happen in the home */
+		msg_print(Ind, "You have no special knowledge about that item.");
+		return;
+	}
+
+	/* Description */
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+	/* Describe */
+//	msg_format(Ind, "Examining %s...", o_name);
+
+	/* Describe it fully */
+	if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
+
+#if 0
+	if (o_ptr->tval < TV_BOOK)
+	{
+		if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");
+		/* Books are read */
+	}
+	else
+	{
+		do_cmd_browse_aux(o_ptr);
+	}
+#endif	// 0
+
+	return;
 }
 
 

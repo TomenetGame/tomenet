@@ -2249,6 +2249,55 @@ static int breakage_chance(object_type *o_ptr)
 	return (10);
 }
 
+/* Add a nice ball if needed */
+static void do_arrow_brand_effect(int Ind, int y, int x)
+{
+	player_type *p_ptr = Players[Ind];
+
+	switch (p_ptr->bow_brand_t)
+	{
+		case BOW_BRAND_BALL_FIRE:
+			project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+			break;
+		case BOW_BRAND_BALL_COLD:
+			project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+			break;
+		case BOW_BRAND_BALL_ELEC:
+			project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+			break;
+		case BOW_BRAND_BALL_ACID:
+			project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+			break;
+		case BOW_BRAND_BALL_SOUND:
+			project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+			break;
+		case BOW_BRAND_SHARP:
+			/* Nothing here */
+			break;
+		case BOW_BRAND_CONF:
+			/* XXX This allows the target player to 'dodge' the effect... */
+			project(0 - Ind, 0, &p_ptr->wpos, y, x, 1, GF_CONFUSION, PROJECT_JUMP | PROJECT_KILL);
+			break;
+	}
+}
+
+/* Exploding arrow */
+static void do_arrow_explode(int Ind, object_type *o_ptr, int y, int x)
+{
+	player_type *p_ptr = Players[Ind];
+	int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2;
+	int flag = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
+
+	switch(o_ptr->sval)
+	{
+		case SV_AMMO_LIGHT: rad = 2; dam /= 2; break;
+		case SV_AMMO_NORMAL: rad = 3; break;
+		case SV_AMMO_HEAVY: rad = 4; dam *= 2; break;
+	}
+
+	project(0 - Ind, rad, &p_ptr->wpos, y, x, dam, o_ptr->pval, flag);
+}
+
 
 /*
  * Fire an object from the pack or floor.
@@ -2280,6 +2329,7 @@ static int breakage_chance(object_type *o_ptr)
  */
 /* Added a lot of hacks to handle boomerangs.	- Jir - */
 /* Added another lot of hacks to handle quiver-slot.	- Jir - */
+/* XXX it's... way too dirty. consider using 'project()' */
 //void do_cmd_fire(int Ind, int dir, int item)
 void do_cmd_fire(int Ind, int dir)
 {
@@ -2693,10 +2743,13 @@ void do_cmd_fire(int Ind, int dir)
 					q_ptr = Players[0 - c_ptr->m_idx];
 
 					/* AD hack -- "pass over" players in same party */
-					if ((p_ptr->pkill & PKILL_KILLER || magik(NEUTRAL_FIRE_CHANCE)) &&
+					if ((p_ptr->pkill & PKILL_KILLER ||
+								check_hostile(Ind, 0 - c_ptr->m_idx) ||
+								magik(NEUTRAL_FIRE_CHANCE)) &&
 							(p_ptr->party == 0 ||
 							 !player_in_party(p_ptr->party, 0 - c_ptr->m_idx) ||
-							 magik(FRIEND_FIRE_CHANCE)) )
+							 magik(FRIEND_FIRE_CHANCE))
+							&& !p_ptr->admin_dm)
 					{ 
 
 						/* Check the visibility */
@@ -2720,98 +2773,86 @@ void do_cmd_fire(int Ind, int dir)
 						if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible))
 						{
 							char p_name[80];
+							bool dodged = FALSE;
 
 							/* Get the name */
 							strcpy(p_name, q_ptr->name);
 
-							/* Handle unseen player */
-							if (!visible)
+							if (get_skill(q_ptr, SKILL_DODGE))
 							{
-								/* Invisible player */
-								msg_format(Ind, "The %s finds a mark.", o_name);
-								msg_format(0 - c_ptr->m_idx, "You are hit by a %s!", o_name);
-							}
+								int chance = (q_ptr->dodge_chance - p_ptr->lev - archery) / 3;
 
-							/* Handle visible player */
-							else
-							{
-								/* Messages */
-								msg_format(Ind, "The %s hits %s.", o_name, p_name);
-								msg_format(0 - c_ptr->m_idx, "%^s hits you with a %s.", p_ptr->name, o_name);
-
-								/* Track this player's health */
-								health_track(Ind, c_ptr->m_idx);
-							}
-
-							/* If this was intentional, make target hostile */
-							if (check_hostile(Ind, 0 - c_ptr->m_idx))
-							{
-								/* Make target hostile if not already */
-								if (!check_hostile(0 - c_ptr->m_idx, Ind))
+								if ((chance > 0) && magik(chance))
 								{
-									add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+									//				msg_print(Ind, "You dodge a magical attack!");
+									msg_print(0 - c_ptr->m_idx, "You dodge the projectile!");
+									if (visible) msg_format(Ind, "The %s dodges %s.", p_name, o_name);
+									dodged = TRUE;
 								}
 							}
 
-							/* Apply special damage XXX XXX XXX */
-							tdam = tot_dam_aux_player(o_ptr, tdam, q_ptr);
-							tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
-
-							/* No negative damage */
-							if (tdam < 0) tdam = 0;
-
-							/* XXX Reduce damage by 1/3 */
-							tdam = (tdam + 2) / 3;
-
-
-							if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) && !q_ptr->resist_conf && !boomerang)
+							if (!dodged)	// 'goto' would be cleaner
 							{
-								(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + q_ptr->lev);
-							}
-
-							/* Take damage */
-							take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
-
-							/* Add a nice ball if needed */
-							if (p_ptr->bow_brand_t && !boomerang)
-							{
-								switch (p_ptr->bow_brand_t)
+								/* Handle unseen player */
+								if (!visible)
 								{
-									case BOW_BRAND_BALL_FIRE:
-										project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-										break;
-									case BOW_BRAND_BALL_COLD:
-										project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-										break;
-									case BOW_BRAND_BALL_ELEC:
-										project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-										break;
-									case BOW_BRAND_BALL_ACID:
-										project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-										break;
-									case BOW_BRAND_BALL_SOUND:
-										project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-										break;
-								}
-							}
-							/* Exploding arrow ? */
-							else if (o_ptr->pval != 0 && !magic)
-							{
-								int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2;
-								int flag = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
-								switch(o_ptr->sval)
-								{
-									case SV_AMMO_LIGHT: rad = 2; dam /= 2; break;
-									case SV_AMMO_NORMAL: rad = 3; break;
-									case SV_AMMO_HEAVY: rad = 4; dam *= 2; break;
+									/* Invisible player */
+									msg_format(Ind, "The %s finds a mark.", o_name);
+									msg_format(0 - c_ptr->m_idx, "You are hit by a %s!", o_name);
 								}
 
-								project(0 - Ind, rad, &p_ptr->wpos, y, x, dam, o_ptr->pval, flag);
+								/* Handle visible player */
+								else
+								{
+									/* Messages */
+									msg_format(Ind, "The %s hits %s.", o_name, p_name);
+									msg_format(0 - c_ptr->m_idx, "%^s hits you with a %s.", p_ptr->name, o_name);
+
+									/* Track this player's health */
+									health_track(Ind, c_ptr->m_idx);
+								}
+
+								/* If this was intentional, make target hostile */
+								if (check_hostile(Ind, 0 - c_ptr->m_idx))
+								{
+									/* Make target hostile if not already */
+									if (!check_hostile(0 - c_ptr->m_idx, Ind))
+									{
+										add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+									}
+								}
+
+								/* Apply special damage XXX XXX XXX */
+								tdam = tot_dam_aux_player(o_ptr, tdam, q_ptr);
+								tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
+
+								/* No negative damage */
+								if (tdam < 0) tdam = 0;
+
+								/* XXX Reduce damage by 1/3 */
+								tdam = (tdam + 2) / 3;
+
+
+								if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) && !q_ptr->resist_conf && !boomerang)
+								{
+									(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + q_ptr->lev);
+								}
+
+								/* Take damage */
+								take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
+
+								/* XXX confusion arrow is not handled right
+								 * in do_arrow_brand_effect */
+								if (!boomerang && p_ptr->bow_brand_t
+										&& p_ptr->bow_brand_t != BOW_BRAND_CONF) 
+									do_arrow_brand_effect(Ind, y, x);
+
+								if (!magic && o_ptr->pval) 
+									do_arrow_explode(Ind, o_ptr, y, x);
+
+								/* Stop looking */
+								if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP) || boomerang) break;
 							}
-
-
-							/* Stop looking */
-							if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP) || boomerang) break;
 						}
 
 					} /* end hack */
@@ -2883,6 +2924,8 @@ void do_cmd_fire(int Ind, int dir)
 					/* No negative damage */
 					if (tdam < 0) tdam = 0;
 
+#if 0
+					/* XXX consider using project() with GF_CONF */
 					if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) &&
 							!(r_ptr->flags3 & RF3_NO_CONF) &&
 							!(r_ptr->flags4 & RF4_BR_CONF) &&
@@ -2916,6 +2959,7 @@ void do_cmd_fire(int Ind, int dir)
 							msg_format(Ind, "%s appears confused.", m_name);
 						}
 					}
+#endif	// 0
 
 
 					/* Hit the monster, check for death */
@@ -2946,42 +2990,11 @@ void do_cmd_fire(int Ind, int dir)
 						}
 					}
 
-					/* Add a nice ball if needed */
-					if (p_ptr->bow_brand_t && !boomerang)
-					{
-						switch (p_ptr->bow_brand_t)
-						{
-							case BOW_BRAND_BALL_FIRE:
-								project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-								break;
-							case BOW_BRAND_BALL_COLD:
-								project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-								break;
-							case BOW_BRAND_BALL_ELEC:
-								project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-								break;
-							case BOW_BRAND_BALL_ACID:
-								project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-								break;
-							case BOW_BRAND_BALL_SOUND:
-								project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-								break;
-						}
-					}
-					/* Exploding arrow ? */
-					else if (o_ptr->pval != 0 && !magic)
-					{
-						int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2;
-						int flag = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
-						switch(o_ptr->sval)
-						{
-							case SV_AMMO_LIGHT: rad = 2; dam /= 2; break;
-							case SV_AMMO_NORMAL: rad = 3; break;
-							case SV_AMMO_HEAVY: rad = 4; dam *= 2; break;
-						}
+					if (!boomerang && p_ptr->bow_brand_t) 
+						do_arrow_brand_effect(Ind, y, x);
 
-						project(0 - Ind, rad, &p_ptr->wpos, y, x, dam, o_ptr->pval, flag);
-					}
+					if (!magic && o_ptr->pval) 
+						do_arrow_explode(Ind, o_ptr, y, x);
 
 					/* Stop looking */
 					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP) || boomerang) break;
@@ -2991,8 +3004,8 @@ void do_cmd_fire(int Ind, int dir)
 
 		/* Chance of breakage (during attacks) */
 		j = (hit_body ? breakage_chance(o_ptr) : 0);
-		j *= (100 - get_skill_scale(p_ptr, archery,
-					(archery == SKILL_BOOMERANG ? 95 : 80))) / 100;
+		j = (j * (100 - get_skill_scale(p_ptr, archery,
+					(archery == SKILL_BOOMERANG ? 95 : 80)))) / 100;
 
 		/* Break ? */
 		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(100) < j)) && (!magic || boomerang) && !artifact_p(o_ptr))

@@ -1259,11 +1259,15 @@ void request_command(bool shopping)
 		/* Access the array info */
 		command_cmd = keymap_cmds[cmd & 0x7F];
 		command_dir = keymap_dirs[cmd & 0x7F];
+
+		/* Hack -- always raw key when in a store */
+		if (shopping) command_cmd = cmd;
 	}
 
 	/* Paranoia */
 	if (!command_cmd) command_cmd = ESCAPE;
 
+#if 0
 	/* Shopping */
 	if (shopping)
 	{
@@ -1278,8 +1282,12 @@ void request_command(bool shopping)
 
 			/* Command "s" -> "sell" (drop) */
 			case 's': command_cmd = 'd'; break;
+
+			/* Command "l" -> "examine" */
+			case 'l': command_cmd = 'x'; break;
 		}
 	}
+#endif	// 0
 
 	/* Hack -- erase the message line. */
 	prt("", 0, 0);

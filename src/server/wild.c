@@ -176,6 +176,21 @@ void addtown(int y, int x, int base, u16b flags)
 	numtowns++;
 }
 
+void wild_bulldoze()
+{
+	int x,y;
+
+	/* inefficient? thats an understatement */
+	for(y=0;y<MAX_WILD_Y;y++){
+		for(x=0;x<MAX_WILD_X;x++){
+			struct wilderness_type *w_ptr=&wild_info[y][x];
+			if(w_ptr->radius<=2 && (w_ptr->type==WILD_WASTELAND || w_ptr->type==WILD_DENSEFOREST || w_ptr->type==WILD_OCEAN || w_ptr->type==WILD_RIVER || w_ptr->type==WILD_VOLCANO || w_ptr->type==WILD_MOUNTAIN)){
+				wild_info[y][x].type=WILD_GRASSLAND;
+			}
+		}
+	}
+}
+
 void init_wild_info()
 {
 	int x,y;
@@ -192,15 +207,9 @@ void init_wild_info()
 	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0);	/* base town */
 	init_wild_info_aux(0,0);
 
-	/* inefficient? thats an understatement */
-	for(y=0;y<MAX_WILD_Y;y++){
-		for(x=0;x<MAX_WILD_X;x++){
-			struct wilderness_type *w_ptr=&wild_info[y][x];
-			if(w_ptr->radius<=2 && (w_ptr->type==WILD_WASTELAND || w_ptr->type==WILD_DENSEFOREST || w_ptr->type==WILD_OCEAN || w_ptr->type==WILD_RIVER || w_ptr->type==WILD_VOLCANO || w_ptr->type==WILD_MOUNTAIN)){
-				wild_info[y][x].type=WILD_GRASSLAND;
-			}
-		}
-	}
+#if 0	// this function is called *before* wilderness generation, so..
+	wild_bulldoze()
+#endif	// 0
 }
 
 /* Called when the player goes onto a wilderness level, to 
@@ -318,9 +327,10 @@ static bool wild_monst_aux_lake(int r_idx)
 	/* humanoids and other races are OK */
 	if (strchr("ph", r_ptr->d_char)) return TRUE;
 	/* always allow aquatics! */
-	if (r_ptr->flags7 & RF7_AQUATIC) return TRUE;
+	if (r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY))
+		return TRUE;
 
-	/* OK */
+	/* No */
 	return FALSE;
 }
 

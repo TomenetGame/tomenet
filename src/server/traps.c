@@ -2534,6 +2534,19 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				take_hit(Ind, l, "pit");
 				take_sanity_hit(Ind, 1 , "pit");
 
+				/* Maybe better make them other types of traps? */
+				if (glev > 29)
+				{
+					msg_print(Ind, "You are pierced by the spikes!");
+					(void)set_cut(Ind, p_ptr->cut + randint(glev * 2) + 30);
+
+					if (glev > 49 && !p_ptr->resist_pois && !p_ptr->oppose_pois)
+					{
+						msg_print(Ind, "The spikes were poisoned!");
+						(void)set_poisoned(Ind, p_ptr->poisoned + randint(glev * 2) + 50);
+					}
+				}
+
 			}
 			break;
 		}

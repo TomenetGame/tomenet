@@ -5833,7 +5833,8 @@ bool heal_insanity(int Ind, int val)
 
 		p_ptr->update |= PU_SANITY;
 		p_ptr->redraw |= PR_SANITY;
-		p_ptr->window |= (PW_SPELL | PW_PLAYER);
+//		p_ptr->window |= (PW_SPELL | PW_PLAYER);
+		p_ptr->window |= (PW_PLAYER);
 
 		if (val < 5) {
 			msg_print(Ind, "You feel a little saner.");

@@ -78,6 +78,7 @@
 /* Packet types 67-116 are sent from the client */
 #define PKT_MIND		67
 //#define PKT_MIMIC		68
+#define PKT_STORE_EXAMINE	68
 #define PKT_KING		69
 #define PKT_WALK		70
 #define PKT_RUN			71

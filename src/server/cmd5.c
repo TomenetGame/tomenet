@@ -505,7 +505,7 @@ void do_cmd_browse(int Ind, object_type	*o_ptr)
 
 
 
-
+#if 0
 /*
  * Study a book to gain a new spell/prayer
  */
@@ -673,6 +673,7 @@ void do_cmd_study(int Ind, int book, int spell)
 	/* Update the spell info */
 	p_ptr->window |= (PW_SPELL);
 }
+#endif	// 0
 
 /* ok, it's hacked :) */
 /* of course, you can optimize it further by bandling

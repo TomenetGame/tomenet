@@ -7153,6 +7153,9 @@ static void cave_gen(struct worldpos *wpos)
 	if (d_ptr && d_ptr->flags & DUNGEON_NOMAP) dun->l_ptr->flags1 |= LF1_NOMAP;
 	if (d_ptr && d_ptr->flags & DUNGEON_NO_MAGIC_MAP) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
 
+	/* Hack -- NOMAP often comes with NO_MAGIC_MAP */
+	if (dun->l_ptr->flags1 & LF1_NOMAP && magik(70)) dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
+
 	/* Possible cavern */
 //	if ((d_ptr->flags1 & DF1_CAVERN) && (rand_int(dun_level/2) > DUN_CAVERN))
 //	if (rand_int(glev/2) > DUN_CAVERN && magik(DUN_CAVERN2))
@@ -7548,6 +7551,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 {
 	int                 i, y, x, y0, x0, y1, x1, y2, x2, tmp;
 	cave_type		*c_ptr;
+	bool flat = FALSE;
 
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return; /*multitowns*/
@@ -7577,6 +7581,18 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		y2 = y0 + 1 + randint(2);
 		x1 = x0 - 3 - randint(2);
 		x2 = x0 + 3 + randint(2);
+	}
+
+	/* Hack -- try 'apartment house' */
+	if (n == 13 && magik(60))
+	{
+		y1 = y0 - 1 - randint(2);
+		y2 = y0 + 1 + randint(2);
+		x1 = x0 - 3 - randint(3);
+		x2 = x0 + 3 + randint(2);
+		if ((x2 - x1) % 2) x2--;
+		if ((y2 - y1) % 2) y2--;
+		if ((x2 - x1) >= 4 && (y2 - y1) >= 4 && magik(60)) flat = TRUE;
 	}
 
 	/* Build an invulnerable rectangular building */
@@ -7787,25 +7803,116 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			}
 		}
 
-		/* Setup some "house info" */
-		price = (x2 - x1 - 1) * (y2 - y1 - 1);
-		/*price *= 20 * price; -APD- price is now proportional to size*/
-		price *= 20;
-		price *= 80 + randint(40);
+		if (!flat)
+		{
+			/* Setup some "house info" */
+			price = (x2 - x1 - 1) * (y2 - y1 - 1);
+			/*price *= 20 * price; -APD- price is now proportional to size*/
+			price *= 20;
+			price *= 80 + randint(40);
 
-		/* Remember price */
-		MAKE(houses[num_houses].dna, struct dna_type);
-		houses[num_houses].dna->price = price;
-		houses[num_houses].x=x1;
-		houses[num_houses].y=y1;
-		houses[num_houses].flags=HF_RECT|HF_STOCK;
-		houses[num_houses].coords.rect.width=x2-x1+1;
-		houses[num_houses].coords.rect.height=y2-y1+1;
+			/* Remember price */
+			MAKE(houses[num_houses].dna, struct dna_type);
+			houses[num_houses].dna->price = price;
+			houses[num_houses].x=x1;
+			houses[num_houses].y=y1;
+			houses[num_houses].flags=HF_RECT|HF_STOCK;
+			houses[num_houses].coords.rect.width=x2-x1+1;
+			houses[num_houses].coords.rect.height=y2-y1+1;
 #ifdef NEW_DUNGEON
-		wpcopy(&houses[num_houses].wpos, wpos);
+			wpcopy(&houses[num_houses].wpos, wpos);
 #else
-		houses[num_houses].depth = 0;
+			houses[num_houses].depth = 0;
 #endif
+		}
+		/* Hack -- apartment house */
+		else
+		{
+			int doory = 0, doorx = 0;
+			if (magik(75)) doorx = rand_int((x2 - x1 - 1) / 2);
+			else doory = rand_int((y2 - y1 - 1) / 2);
+
+			for (x = x1; x <= x2; x++)
+			{
+				/* Get the grid */
+				c_ptr = &zcave[(y1 + y2) / 2][x];
+
+				/* Clear previous contents, add "basic" perma-wall */
+				c_ptr->feat = FEAT_PERM_EXTRA;
+			}
+
+			for (y = y1 + 1; y < y2; y++)
+			{
+				/* Get the grid */
+				c_ptr = &zcave[y][(x1 + x2) / 2];
+
+				/* Clear previous contents, add "basic" perma-wall */
+				c_ptr->feat = FEAT_PERM_EXTRA;
+			}
+
+			/* Setup some "house info" */
+			/* XXX slightly 'bad bargain' */
+			price = (x2 - x1 - 2) * (y2 - y1 - 2) / 4;
+			/*price *= 20 * price; -APD- price is now proportional to size*/
+			price *= 20;
+			price *= 80 + randint(40);
+
+
+			for (i = 0; i < 4; i++)
+			{
+				x = (i < 2 ? x1 : x2);
+				y = ((i % 2) ? y2 : y1);
+				c_ptr = &zcave[y][x];
+
+				/* Remember price */
+				MAKE(houses[num_houses].dna, struct dna_type);
+				houses[num_houses].dna->price = price;
+				houses[num_houses].x = x;
+				houses[num_houses].y = y;
+				houses[num_houses].flags=HF_RECT|HF_STOCK;
+				houses[num_houses].coords.rect.width=(x2-x1+1) / 2;
+				houses[num_houses].coords.rect.height=(y2-y1+1) / 2;
+#ifdef NEW_DUNGEON
+				wpcopy(&houses[num_houses].wpos, wpos);
+#else
+				houses[num_houses].depth = 0;
+#endif
+
+				/* MEGAHACK -- add doors here and return */
+
+				/* hack -- only create houses that aren't already loaded from disk */
+				if ((tmp=pick_house(wpos, y, x)) == -1)
+				{
+					x += (i < 2 ? doorx : 0 - doorx);
+					y += ((i % 2) ? 0 - doory : doory);
+					c_ptr = &zcave[y][x];
+
+					/* Store door location information */
+					c_ptr->feat = FEAT_HOME_HEAD;
+					c_ptr->special.type=DNA_DOOR;
+					c_ptr->special.sc.ptr = houses[num_houses].dna;
+					houses[num_houses].dx=x;
+					houses[num_houses].dy=y;
+					houses[num_houses].dna->creator=0L;
+					houses[num_houses].dna->owner=0L;
+
+					/* One more house */
+					num_houses++;
+					if((house_alloc-num_houses)<32){
+						GROW(houses, house_alloc, house_alloc+512, house_type);
+						house_alloc+=512;
+					}
+				}
+				else{
+					KILL(houses[num_houses].dna, struct dna_type);
+					c_ptr->feat=FEAT_HOME_HEAD;
+					c_ptr->special.type=DNA_DOOR;
+					c_ptr->special.sc.ptr=houses[tmp].dna;
+				}
+			}
+
+			return;
+		}
 	}
 
 
@@ -7854,7 +7961,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	c_ptr = &zcave[y][x];
 
 	/* Some buildings get special doors */
-	if (n == 13)
+	if (n == 13 && !flat)
 	{
 		/* hack -- only create houses that aren't already loaded from disk */
 		if ((i=pick_house(wpos, y, x)) == -1)

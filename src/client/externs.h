@@ -365,7 +365,8 @@ extern void interact_macros(void);
 extern void do_cmd_options(void);
 
 /* c-spell.c */
-extern void show_browse(int book);
+//extern void show_browse(int book);
+extern void show_browse(object_type *o_ptr);
 extern void do_study(int book);
 extern void do_cast(int book);
 extern void do_pray(int book);

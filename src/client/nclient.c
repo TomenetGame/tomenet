@@ -2159,11 +2159,11 @@ int Receive_special_other(void)
 int Receive_store(void)
 {
 	int	n, price;
-	char	ch, pos, name[1024];
+	char	ch, pos, name[1024], tval, sval;
 	byte	attr;
 	s16b	wgt, num;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%s", &ch, &pos, &attr, &wgt, &num, &price, name)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%s%c%c", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval)) <= 0)
 	{
 		return n;
 	}
@@ -2173,6 +2173,8 @@ int Receive_store(void)
 	store.stock[(int)pos].number = num;
 	store_prices[(int) pos] = price;
 	strncpy(store_names[(int) pos], name, 80);
+	store.stock[(int)pos].tval = tval;
+	store.stock[(int)pos].xtra1 = sval;	/* GRRRR.. I *REALLY* hate it */
 
 	/* Make sure that we're in a store */
 	if (shopping)
@@ -3026,6 +3028,18 @@ int Send_locate(int dir)
 	int n;
 
 	if ((n = Packet_printf(&wbuf, "%c%c", PKT_LOCATE, dir)) <= 0)
+	{
+		return n;
+	}
+
+	return 1;
+}
+
+int Send_store_examine(int item)
+{
+	int 	n;
+
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_STORE_EXAMINE, item)) <= 0)
 	{
 		return n;
 	}

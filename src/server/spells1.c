@@ -1726,7 +1726,9 @@ int inven_damage(int Ind, inven_func typ, int perc)
  *
  * If any armor is damaged (or resists), the player takes less damage.
  */
-int minus_ac(int Ind)
+/* Hack -- 'water' means it was water damage (and not acid).
+ * TODO: add IGNORE_WATER flags */
+int minus_ac(int Ind, int water)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -1742,7 +1744,8 @@ int minus_ac(int Ind)
 	{
 		case 1: o_ptr = &p_ptr->inventory[INVEN_BODY]; break;
 		case 2: o_ptr = &p_ptr->inventory[INVEN_ARM]; break;
-		case 3: o_ptr = &p_ptr->inventory[INVEN_OUTER]; break;
+		case 3: if (water) return (FALSE);
+				o_ptr = &p_ptr->inventory[INVEN_OUTER]; break;
 		case 4: o_ptr = &p_ptr->inventory[INVEN_HANDS]; break;
 		case 5: o_ptr = &p_ptr->inventory[INVEN_HEAD]; break;
 		case 6: o_ptr = &p_ptr->inventory[INVEN_FEET]; break;
@@ -1754,6 +1757,10 @@ int minus_ac(int Ind)
 	/* No damage left to be done */
 	if (o_ptr->ac + o_ptr->to_a <= 0) return (FALSE);
 
+	/* Hack -- Leather gears are immune to water (need IGNORE_WATER!) */
+	if (water && (strstr((k_name + k_info[o_ptr->k_idx].name),"Leather") ||
+				strstr((k_name + k_info[o_ptr->k_idx].name),"Robe")))
+		return(FALSE);
 
 	/* Describe */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -1811,7 +1818,7 @@ void acid_dam(int Ind, int dam, cptr kb_str)
 		(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE(inv));
 
 	/* If any armor gets hit, defend the player */
-	if (minus_ac(Ind)) dam = (dam + 1) / 2;
+	if (minus_ac(Ind, 0)) dam = (dam + 1) / 2;
 
 	/* Take damage */
 	take_hit(Ind, dam, kb_str);
@@ -2547,7 +2554,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			c_ptr->feat = FEAT_WALL_EXTRA;
 					
 			/* Notice */
-			note_spot(Ind, y, x);
+			if (!quiet) note_spot(Ind, y, x);
 
 			/* Redraw */
 			everyone_lite_spot(wpos, y, x);
@@ -3038,6 +3045,75 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #endif	// 0
 
+//		case GF_WAVE:
+		case GF_WATER:
+		{
+			int p1 = 0;
+			int p2 = 0;
+			int f1 = 0;
+			int f2 = 0;
+			int f = 0;
+			int k;
+
+			/* "Permanent" features will stay */
+//			if ((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
+
+			if ((c_ptr->feat == FEAT_FLOOR) ||
+			    (c_ptr->feat == FEAT_DIRT) ||
+			    (c_ptr->feat == FEAT_GRASS))
+			{
+				/* 35% chance to create shallow water */
+//				p1 = 35; f1 = FEAT_SHAL_WATER;
+				p1 = 35; f1 = FEAT_WATER;
+
+				/* 5% chance to create deep water */
+//				p2 = 40; f2 = FEAT_DEEP_WATER;
+			}
+#if 0
+			else if ((c_ptr->feat == FEAT_MAGMA) ||
+			         (c_ptr->feat == FEAT_MAGMA_H) ||
+			         (c_ptr->feat == FEAT_MAGMA_K) ||
+			         (c_ptr->feat == FEAT_SHAL_LAVA))
+			{
+				/* 15% chance to convert it to normal floor */
+				p1 = 15; f1 = FEAT_FLOOR;
+			}
+			else if (c_ptr->feat == FEAT_DEEP_LAVA)
+			{
+				/* 10% chance to convert it to shallow lava */
+				p1 = 10; f1 = FEAT_SHAL_LAVA;
+
+				/* 5% chance to convert it to normal floor */
+				p2 = 15; f2 = FEAT_FLOOR;
+			}
+			else if ((c_ptr->feat == FEAT_SHAL_WATER) ||
+			         (c_ptr->feat == FEAT_DARK_PIT))
+			{
+				/* 10% chance to convert it to deep water */
+				p1 = 10; f1 = FEAT_DEEP_WATER;
+			}
+#endif	// 0
+
+			k = rand_int(100);
+
+			if (k < p1) f = f1;
+			else if (k < p2) f = f2;
+
+			if (f)
+			{
+				if (f == FEAT_FLOOR) place_floor(wpos, y, x);
+				else cave_set_feat(wpos, y, x, f);
+
+				/* Notice */
+				if (!quiet) note_spot(Ind, y, x);
+
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
+//				if (seen) obvious = TRUE;
+			}
+
+			break;
+		}
 
 	}
 
@@ -5403,7 +5479,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN && magik(20 + dam / 20))
 		{
 			inven_damage(Ind, set_water_destroy, 1);
-			if (magik(20)) minus_ac(Ind);
+			if (magik(20)) minus_ac(Ind, 1);
 		}
 		take_hit(Ind, dam, killer);
 		break;
@@ -5491,7 +5567,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			dam *= 5; dam /= (randint(6) + 6);
 		}
-		if (!p_ptr->resist_conf)
+		else
 		{
 			(void)set_confused(Ind, p_ptr->confused + randint(20) + 10);
 		}

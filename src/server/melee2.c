@@ -5705,6 +5705,9 @@ static void process_monster(int Ind, int m_idx)
 					else
 #endif	// MONSTER_ITEM_CONSUME
 					{
+						/* paranoia */
+						o_ptr->held_m_idx = 0;
+
 						/* Excise the object */
 						excise_object_idx(this_o_idx);
 

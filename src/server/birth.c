@@ -1165,6 +1165,7 @@ static void player_outfit(int Ind)
 	o_ptr->number = rand_range(3, 7);
 	object_aware(Ind, o_ptr);
 	object_known(o_ptr);
+	o_ptr->ident |= ID_MENTAL;
 	o_ptr->owner = p_ptr->id;
 	o_ptr->level = 0;
 	(void)inven_carry(Ind, o_ptr);
@@ -1174,6 +1175,7 @@ static void player_outfit(int Ind)
 	o_ptr->number = rand_range(3, 7);
 	o_ptr->timeout = rand_range(3, 7) * 500;
 	object_known(o_ptr);
+	o_ptr->ident |= ID_MENTAL;
 	o_ptr->owner = p_ptr->id;
 	o_ptr->level = 0;
 	(void)inven_carry(Ind, o_ptr);
@@ -1189,6 +1191,7 @@ static void player_outfit(int Ind)
 		o_ptr->level = 1;
 		object_known(o_ptr);
 		object_aware(Ind, o_ptr);
+		o_ptr->ident |= ID_MENTAL;
 		(void)inven_carry(Ind, o_ptr);
 	}
 
@@ -1202,6 +1205,7 @@ static void player_outfit(int Ind)
 		invcopy(o_ptr, lookup_kind(tv, sv));
 		object_aware(Ind, o_ptr);
 		object_known(o_ptr);
+		o_ptr->ident |= ID_MENTAL;
 		o_ptr->owner = p_ptr->id;
 		o_ptr->level = 0;
 		(void)inven_carry(Ind, o_ptr);
@@ -1211,6 +1215,7 @@ static void player_outfit(int Ind)
 	invcopy(o_ptr, lookup_kind(TV_PARCHEMENT, SV_PARCHMENT_NEWBIE));
 	object_known(o_ptr);
 	object_aware(Ind, o_ptr);
+	o_ptr->ident |= ID_MENTAL;
 	o_ptr->owner = p_ptr->id;
 	o_ptr->level = 0;
 	(void)inven_carry(Ind, o_ptr);
@@ -1227,7 +1232,7 @@ void player_create_tmpfile(int Ind)
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH))
 	{
-		s_printf("failed to generate tmpfile for %s!", p_ptr->name);
+		s_printf("failed to generate tmpfile for %s!\n", p_ptr->name);
 		return;
 	}
 
@@ -1339,6 +1344,10 @@ static void player_setup(int Ind)
 		}
 	}
 	
+	/* hack -- update night/day in wilderness levels */
+	if ((!wpos->wz) && (IS_DAY)) wild_apply_day(wpos); 
+	if ((!wpos->wz) && (IS_NIGHT)) wild_apply_night(wpos);
+
 	/* Hack be sure the player is inbounds */
 	if (p_ptr->px < 1) p_ptr->px = 1;
 	if (p_ptr->py < 1) p_ptr->py = 1;

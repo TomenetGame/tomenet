@@ -988,7 +988,7 @@ void carry(int Ind, int pickup, int confirm)
 			magik(3))
 	{
 		inven_damage(Ind, set_water_destroy, 1);
-		if (magik(20)) minus_ac(Ind);
+		if (magik(20)) minus_ac(Ind, 1);
 	}
 
 }
@@ -2905,7 +2905,8 @@ int see_wall(int Ind, int dir, int y, int x)
 	if ( (!in_bounds(y, x)) && (wpos->wz==0) ) return FALSE;
 
 	/* Illegal grids are blank */
-	if (!in_bounds2(wpos, y, x)) return (FALSE);
+	/* XXX this should be blocked by permawalls, hopefully. */
+//	if (!in_bounds2(wpos, y, x)) return (FALSE);
 
 	/* Must actually block motion */
 	if (cave_floor_bold(zcave, y, x)) return (FALSE);

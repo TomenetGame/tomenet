@@ -1653,30 +1653,29 @@ void cmd_throw(void)
 
 static bool item_tester_browsable(object_type *o_ptr)
 {
+	return (is_book(o_ptr));
+#if 0	// mdr
 	if ((o_ptr->tval == TV_MAGIC_BOOK)) return TRUE;
-
 	if ((o_ptr->tval == TV_SORCERY_BOOK)) return TRUE;
-
 	if (o_ptr->tval == TV_SHADOW_BOOK) return TRUE;
-
 	if (o_ptr->tval == TV_HUNT_BOOK) return TRUE;
-
 	if (o_ptr->tval == TV_PSI_BOOK) return TRUE;
-
 	/* two more for expansion */
 	if (o_ptr->tval == TV_FIGHT_BOOK) return TRUE;
 	if (o_ptr->tval == TV_PRAYER_BOOK) return TRUE;
 
         return FALSE;
+#endif	// 0
 }
 
 void cmd_browse(void)
 {
 	int item;
+	object_type *o_ptr;
 
 	if (p_ptr->ghost)
 	{
-		show_browse(0);
+		show_browse(NULL);
 		return;
 	}
 
@@ -1689,7 +1688,8 @@ void cmd_browse(void)
 	}
 
 	/* Show it */
-	show_browse(item);
+//	show_browse(item);
+	show_browse(&inventory[item]);
 }
 
 #if 0	// obsolete

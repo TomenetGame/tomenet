@@ -1949,7 +1949,7 @@ static void do_slash_cmd(int Ind, char *message)
 			disturb(Ind, 1, 0);
 
 			/* only tagged ones? */
-			if (tk > 0 && prefix(token[1], "!")) nontag = TRUE;
+			if (tk > 0 && prefix(token[1], "a")) nontag = TRUE;
 
 			for(i = 0; i < INVEN_PACK; i++)
 			{

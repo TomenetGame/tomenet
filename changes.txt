@@ -1366,6 +1366,29 @@ To find the latest change quickly, search ==== :)
 [B] spell_info was wrong for Prayer realm.
 [B] SKILL_STEALTH and SKILL_SNEAKINESS did nothing!! (calc_bonuses)
 
+15/07/2002 (Jir)
+# beware -- savedata could be destroyed due to the apartments
+- apartments to supply more residence (town_gen_hack - but it's ugly)
+[B] wilderness lighting was wrong if logged off/entered a store in day and
+	on/leave in night (player_birth / Receive_store_leave)
+[B] books become unbrowsable when logged on in the dark. (fix_spell)
+    (not really fixed - this allows to browse even when in the dark)
+[B] town still could be generated in the midst of the ocean (wild_bulldoze)
+[B] stairs/doors tended to disappear on NO_MAP floors (update_view)
+[B] arrows never broke (my bug - do_cmd_fire)
+[B] couldn't 'run' near the outer permawall (run_test)
+
+16/07/2002 (Jir)
+- 'aware' magic items no longer are pseudo-IDed. (sense_inventory)
+- player can dodge other players' arrow. (do_cmd_fire)
+- player can eXamine items in the stores. All items in stores are *ID*ed.
+- fix_spell is basically called only when logging on. (further work needed)
+- cmd_raw_key is called even when in a store.
+[P] water effect to the terrain (project_f)
+[B] players could shoot the DM
+
+
+
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
@@ -1414,8 +1437,10 @@ concisely: what's hot now?
 =============================================================================
 Porting targets
 [P] show_file, for tagged file browsing
+    (but maybe ##### tag is bad methinks - cannot draw ascii-art dungeon!)
 [P] powers.c for misc activations
-[P] display_player
+[P] display_player (character dump)
+[P] update_view (for fast algorithm)
 
 
 =============================================================================
@@ -1435,16 +1460,16 @@ below this line are the unfixed bugs known:
 [B][C] inventory window sometimes loses a) b) etc.
 [B] 'write error' sometimes (old bug)
 [B] 'No more Scroll of *Identify*'
-[B] Macro sticks sometimes
+[B] Macro sticks sometimes (this should be fixed by spell restructuring)
 [B] Window refreshing fails sometimes, requiring ^R.
 [B] ghost gets 'The weight of your armor emcumbers your movement' msg.
 [B] isolated space can be generated (generate.c)
     (esp. random vaults tend to have no entrance)
-[B] stairs/doors tend to disappear on NO_MAP floors
 [B] cannot specify some monster names in master summoning (&35)
 [B][C] GCU client doesn't show the motd when using 'fullauto'
 [B] monsters sometimes drop '(nothing)' (Dread?)
 [B] admin char gets disconnected after generation once.
+[B] strange gray spots in the dark.
 [B] deallocator deallocates the floor that ghost is on!
 1 players on -1950ft of (32,32).
 Key_monk was killed by a Night mare.
@@ -1491,15 +1516,11 @@ memo and questions:
   any resistances/abilities).
 
 ==== below this line are changes to be done in the future ====
-# probably after 4.0.0 :-/
 [minor ones]
 (4.1)
-- implement NO_MAP fully please!
 - recall-depth array for each dungeons/towers
 - full colour-support in show_file
-- sort unique-list according to the level
 - tombstone screen (maybe CONN_TOMB)
-- wilderness compacting (how about 'compacting' townies?)
 - display "non-scoring mode" in '@' screen
 - torch/lantern shouldn't be EASY_KNOWN.
 - Nazgul rings should have corresponding names
@@ -1524,6 +1545,8 @@ memo and questions:
   - size (done)
 - fully-implemented multiple towns (t_*.txt)
 - more kinds of stores / flexible store configuration (st_info.txt)
+  - a set of commands should be sent to client when entering a store, so that
+	different stores can have different commands.
   + archery shop
   + bookstore
   + job centre (for lowbies died)
@@ -1534,18 +1557,17 @@ memo and questions:
   + arena (pvp arena would be of great fun!)
   
 (4.3)
-- quests (needing LUA-hooks) {hopefully DarkGod}
+- quests
 - backbone scenario
   - token system (gather blabla to do blabla)
   - competitive events
 - NPC/pet/golem/slave
   + NPC should basically be a monster with a flag (like RF9_NPC),
     and prolly with special array (npc_list[])?
+
 (4.4)
 - guild, or new party system (multi-player Omega :)
-- client updates necessary
 - total rebalancing for all of them
-- fix gfx again
 - interactive spell system (like in C3)
 
 [sober ones]
@@ -1567,6 +1589,7 @@ memo and questions:
 [speeding the server up]
 # ok, it's 3 times faster now. maybe we don't squeeze it further for now.
 - m_list and o_list should be separated by worldpos (like zcave)
+- wilderness compacting (how about 'compacting' townies?)
 - purging things (more)
 - optimize monster AI
 - reduce ATTR_MULTI (now testing)
@@ -1629,6 +1652,7 @@ memo and questions:
   + upgrade some of arts, so that they'll be treasured.
   + more tools
   + generic mimic rings (like 'D', 'Z') / ego rings
+  + wooden/leather armours should be immune to water damage.
 - anticheeze:
   + take a log when dropping/picking up gold.
 - players:

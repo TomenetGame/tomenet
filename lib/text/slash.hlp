@@ -52,14 +52,14 @@ Note:
     This command consumes 1 (casting) turn.
     This command was coded by Tanix(Asclep).
 
-/dispose [value/'!'] {shorthand: /dis} 
+/dispose [value/'a'] {shorthand: /dis} 
     *** DANGER *** read this instruction carefully before trying it!
     This Destroys every item in your pack that matches certain conditions:
     1. if no argument is specified..
       Items with pseudo-ID tags equal to or below {good}
     2. if [value] is specified..
       Non-tagged identified items below the value
-    3. if '!' is specified.. ('/dis !')
+    3. if 'a' is specified.. ('/dis a')
       Non-tagged items
       Items with pseudo-ID tags equal to or below {good}
       

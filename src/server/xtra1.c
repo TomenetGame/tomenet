@@ -761,10 +761,18 @@ static void fix_spell_aux(int Ind, int realm, int sval)
 /*
  * Hack -- display equipment in sub-windows
  */
-static void fix_spell(int Ind)
+/*
+ * NOTE: Seemingly, this function has different meanings than Vanilla -
+ * It simply send the spell informations to the client.
+ *
+ * Probably we'd better call this function only once when a player logs on.
+ * XXX XXX target of spell-reform
+ */
+void fix_spell(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int i, j;
+	object_type forge;
 
 	/* Ghosts get a different set */
 	if (p_ptr->ghost)
@@ -773,14 +781,16 @@ static void fix_spell(int Ind)
 		return;
 	}
 
+#if 0	// this should be done elsewhere (tho I'm not sure where)
 	/* Check for blindness and no lite and confusion */
 	if (p_ptr->blind || no_lite(Ind) || p_ptr->confused)
 	{
 		return;
 	}
+#endif	// 0
 
 	/* Scan for appropriate books */
-#if 1
+#if 0
 	for (i = 0; i < INVEN_WIELD; i++)
 	{
 		if (is_book((&p_ptr->inventory[i])))
@@ -789,9 +799,21 @@ static void fix_spell(int Ind)
 		}
 	}
 #else	// 0
+	for (i = TV_PSI_BOOK; i < TV_HUNT_BOOK + 1; i++)
+	{
+		for (j = 0; j < 9; j++)
+		{
+			if (!lookup_kind(i, j)) continue;
+			forge.tval = i;
+			forge.sval = j;
+			do_cmd_browse(Ind, &forge);
+		}
+	}
+#if 0
 	for (i = 0; i < MAX_REALM; i++)
 		for (j = 0; j < 9; j++)
 			fix_spell_aux(Ind, i, j);
+#endif	// 0
 #endif	// 0
 }
 
@@ -1124,7 +1146,8 @@ void calc_sanity(int Ind)
 		}
 
 		p_ptr->redraw |= (PR_SANITY);
-		p_ptr->window |= (PW_SPELL | PW_PLAYER);
+//		p_ptr->window |= (PW_SPELL | PW_PLAYER);
+		p_ptr->window |= (PW_PLAYER);
 	}
 }
 
@@ -3121,6 +3144,9 @@ static void calc_bonuses(int Ind)
 		/* Encumberance bonus/penalty */
 		p_ptr->dodge_chance -= p_ptr->total_weight / 100;
 
+		/* Penalty for bad conditions */
+		p_ptr->dodge_chance -= UNAWARENESS(p_ptr);
+
 		/* Never below 0 */
 		if (p_ptr->dodge_chance < 0) p_ptr->dodge_chance = 0;
 	}
@@ -3139,12 +3165,12 @@ static void calc_bonuses(int Ind)
 		if (f4 & TR4_COULD2H)
 		{                
 			/* Reduce the real bonuses */
-			p_ptr->to_h = (3 * p_ptr->to_h) / 4;
-			p_ptr->to_d = (3 * p_ptr->to_d) / 4;
+			if (p_ptr->to_h > 0) p_ptr->to_h = (3 * p_ptr->to_h) / 4;
+			if (p_ptr->to_d > 0) p_ptr->to_d = (3 * p_ptr->to_d) / 4;
 
 			/* Reduce the mental bonuses */
-			p_ptr->dis_to_h = (3 * p_ptr->dis_to_h) / 4;
-			p_ptr->dis_to_d = (3 * p_ptr->dis_to_d) / 4;
+			if (p_ptr->dis_to_h > 0) p_ptr->dis_to_h = (3 * p_ptr->dis_to_h) / 4;
+			if (p_ptr->dis_to_d > 0) p_ptr->dis_to_d = (3 * p_ptr->dis_to_d) / 4;
 
 			p_ptr->awkward_wield = TRUE;
 		}

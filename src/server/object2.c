@@ -954,7 +954,6 @@ void object_known(object_type *o_ptr)
 
 
 
-
 /*
  * The player is now aware of the effects of the given object.
  */
@@ -6254,7 +6253,8 @@ void inven_item_optimize(int Ind, int item)
 	}
 
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+//	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 }
 
 
@@ -6445,7 +6445,8 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 			p_ptr->update |= (PU_BONUS);
 
 			/* Window stuff */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+//			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 			/* Success */
 			return (j);
@@ -6598,7 +6599,8 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 	p_ptr->notice |= (PN_REORDER);
 
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+//	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Return the slot */
 	return (i);

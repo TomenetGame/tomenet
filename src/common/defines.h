@@ -4561,7 +4561,7 @@ extern int PlayerUID;
 	(p_ptr->confused ? 25 : 0) + \
 	(p_ptr->image ? 10 : 0) + \
 	(p_ptr->blind ? 20 : 0) + \
-	(p_ptr->paralyzed ? 10000 : 0) )
+	(p_ptr->paralyzed ? 1000 : 0) )
 
 /*
 #define inarea(apos, bpos) \

@@ -2315,11 +2315,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 500,
                         },
                         {
-                                SKILL_POLEARM,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
                                 SKILL_MAGIC,
                                 '+', 2000,
                                 '+', 1000,

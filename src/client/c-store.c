@@ -168,6 +168,56 @@ static int get_stock(int *com_val, cptr pmt, int i, int j)
 
 
 
+/* XXX Bad design.. store code really should be rewritten.	- Jir - */
+static void store_examine(void)
+{
+	int                     i, amt;
+	int                     item;
+
+	object_type             *o_ptr;
+
+	char            out_val[160];
+
+
+	/* Empty? */
+	if (store.stock_num <= 0)
+	{
+		if (store_num == 7) c_msg_print("Your home is empty.");
+		else c_msg_print("I am currently out of stock.");
+		return;
+	}
+
+
+	/* Find the number of objects on this and following pages */
+	i = (store.stock_num - store_top);
+
+	/* And then restrict it to the current page */
+	if (i > 12) i = 12;
+
+	/* Prompt */
+	if (store_num == 7)
+	{
+		sprintf(out_val, "Which item do you want to examine? ");
+	}
+	else
+	{
+		sprintf(out_val, "Which item do you want to examine? ");
+	}
+
+	/* Get the item number to be bought */
+	if (!get_stock(&item, out_val, 0, i-1)) return;
+
+	/* Get the actual index */
+	item = item + store_top;
+
+	/* Get the actual item */
+	o_ptr = &store.stock[item];
+
+	/* Tell the server */
+	if (is_book(o_ptr)) show_browse(o_ptr);
+	else Send_store_examine(item);
+}
+
 
 static void store_purchase(void)
 {
@@ -268,70 +318,82 @@ static void store_sell(void)
 
 static void store_process_command(void)
 {
-        /* Parse the command */
-        switch (command_cmd)
-        {
-                        /* Leave */
-                case ESCAPE:
-                {
-                        leave_store = TRUE;
-                        break;
-                }
+	/* Parse the command */
+	switch (command_cmd)
+	{
+		/* Leave */
+		case ESCAPE:
+		{
+			leave_store = TRUE;
+			break;
+		}
 
-                        /* Browse */
-                case ' ':
-                {
-                        if (store.stock_num <= 12)
-                        {
-                                c_msg_print("Entire inventory is shown.");
-                        }
-                        else
-                        {
-                                store_top += 12;
-                                if (store_top >= store.stock_num) store_top = 0;
-                                display_inventory();
-                        }
-                        break;
-                }
+		/* Browse */
+		case ' ':
+		{
+			if (store.stock_num <= 12)
+			{
+				c_msg_print("Entire inventory is shown.");
+			}
+			else
+			{
+				store_top += 12;
+				if (store_top >= store.stock_num) store_top = 0;
+				display_inventory();
+			}
+			break;
+		}
 
-                        /* Get (purchase) */
-                case 'g':
-                {
-                        store_purchase();
-                        break;
-                }
+		/* Get (purchase) */
+		case 'g':
+		case 'p':
+		case 'm':
+		{
+			store_purchase();
+			break;
+		}
 
-                        /* Drop (Sell) */
-                case 'd':
-                {
-                        store_sell();
-                        break;
-                }
+		/* Drop (Sell) */
+		case 'd':
+		case 's':
+		{
+			store_sell();
+			break;
+		}
 
-                        /* Ignore return */
-                case '\r':
-                {
-                        break;
-                }
+		/* eXamine */
+		case 'x':
+		case 'l':
+		{
+			store_examine();
+			break;
+		}
 
-                        /* Equipment list */
-                case 'e':
-                {
-                        cmd_equip();
-                        break;
-                }
+		/* Ignore return */
+		case '\r':
+		{
+			break;
+		}
 
-                        /* Inventory list */
-                case 'i':
-                {
-                        cmd_inven();
-                        break;
-                }
+		/* Equipment list */
+		case 'e':
+		{
+			cmd_equip();
+			break;
+		}
+
+		/* Inventory list */
+		case 'i':
+		{
+			cmd_inven();
+			break;
+		}
 
 
 		default:
 		{
-			c_msg_print("That command does not work in stores.");
+			cmd_raw_key(command_cmd);
+//			c_msg_print("That command does not work in stores.");
 			break;
 		}
 	}
@@ -444,15 +506,19 @@ void display_store(void)
 		/* Home commands */
 		if (store_num == 7)
 		{
-			prt(" g) Get an item.", 22, 40);
-			prt(" d) Drop an item.", 23, 40);
+			prt(" g) Get an item.", 22, 30);
+			prt(" d) Drop an item.", 23, 30);
+
+			prt(" x) eXamine an item.", 22, 60);
 		}
 
 		/* Shop commands XXX XXX XXX */
 		else
 		{
-			prt(" p) Purchase an item.", 22, 40);
-			prt(" s) Sell an item.", 23, 40);
+			prt(" p) Purchase an item.", 22, 30);
+			prt(" s) Sell an item.", 23, 30);
+
+			prt(" x) eXamine an item.", 22, 60);
 		}
 
 		/* Prompt */

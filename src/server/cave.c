@@ -3234,6 +3234,10 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
     With my new "invisible wall" code this shouldn't be neccecary. 
     
  */
+
+/* TODO: Hrm, recent variants seem to get better algorithm
+ * - let's port them! */
+
 void update_view(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -3310,8 +3314,12 @@ void update_view(int Ind)
 
 		/* Mark the grid as not in "view" */
 		*w_ptr &= ~(CAVE_VIEW);
+#if 0	// moved to the end of this function
+		/* NOTE: this makes the player forget stairs/doors even when
+		 * they are still within the sight.  FIXME */
 		if(unmap)
 			*w_ptr &= ~CAVE_MARK;
+#endif	// 0
 
 		/* Mark the grid as "seen" */
 		c_ptr->info |= CAVE_TEMP;
@@ -3745,6 +3753,10 @@ void update_view(int Ind)
 
 		/* Update only non-viewable grids */
 		if (*w_ptr & CAVE_VIEW) continue;
+
+		/* Forget it, dude */
+		/* TODO: make player forget of objects too */
+		if(unmap) *w_ptr &= ~CAVE_MARK;
 
 		/* Redraw */
 		lite_spot(Ind, y, x);

@@ -254,6 +254,7 @@ static void Init_receive(void)
         playing_receive[PKT_SKILL_MOD]		= Receive_skill_mod;
         playing_receive[PKT_ACTIVATE_SKILL]		= Receive_activate_skill;
 	playing_receive[PKT_RAW_KEY]		= Receive_raw_key;
+	playing_receive[PKT_STORE_EXAMINE]		= Receive_store_examine;
 }
 
 static int Init_setup(void)
@@ -3853,7 +3854,8 @@ int Send_mini_map(int ind, int y)
 	return 1;
 }
 
-int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name)
+//int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name)
+int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -3879,11 +3881,11 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%s", PKT_STORE, pos, attr, wgt, number, price, name);
+		Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%s%c%c", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval);
 	      }
 	  }
 
-	return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s", PKT_STORE, pos, attr, wgt, number, price, name);
+	return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval);
 }
 
 int Send_store_info(int ind, int num, int owner, int items)
@@ -6619,6 +6621,43 @@ static int Receive_message(int ind)
 	return 1;
 }
 	
+static int Receive_admin_house(int ind){
+	connection_t *connp = &Conn[ind];
+	char ch, dir;
+	int n,player;
+	char buf[80];
+	player_type *p_ptr;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
+		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
+		  {
+		    int Ind2 = find_player(p_ptr->esp_link);
+		    
+		    if (!Ind2)
+	      	      end_mind(ind, TRUE);
+		    else
+		      {
+			player = Ind2;
+			p_ptr = Players[Ind2];
+		      }
+		  }
+	}
+	else player = 0;
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &dir, buf)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+	house_admin(player, dir, buf);
+	return(1);
+}
+
 static int Receive_purchase(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -6661,43 +6700,6 @@ static int Receive_purchase(int ind)
 		do_cmd_purchase_house(player, item);
 
 	return 1;
-}
-
-static int Receive_admin_house(int ind){
-	connection_t *connp = &Conn[ind];
-	char ch, dir;
-	int n,player;
-	char buf[80];
-	player_type *p_ptr;
-
-	if (connp->id != -1)
-	{
-		player = GetInd[connp->id];
-		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
-	}
-	else player = 0;
-
-	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &dir, buf)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
-		return n;
-	}
-	house_admin(player, dir, buf);
-	return(1);
 }
 
 static int Receive_sell(int ind)
@@ -6798,6 +6800,12 @@ static int Receive_store_leave(int ind)
 	/* Update store info */
 	p_ptr->store_num = -1;
 
+	/* hack -- update night/day in wilderness levels */
+	/* XXX it's not so good place to do such things -
+	 * prolly we'll need PU_SUN or sth.		- Jir - */
+	if ((!p_ptr->wpos.wz) && (IS_DAY)) wild_apply_day(&p_ptr->wpos); 
+	if ((!p_ptr->wpos.wz) && (IS_NIGHT)) wild_apply_night(&p_ptr->wpos);
+
 	return 1;
 }
 
@@ -6839,6 +6847,50 @@ static int Receive_store_confirm(int ind)
 		return -1;
 
 	store_confirm(player);
+
+	return 1;
+}
+
+/* Store code should be written to allow more kinds of actions in general..
+ */
+static int Receive_store_examine(int ind)
+{
+	connection_t *connp = &Conn[ind];
+	player_type *p_ptr;
+
+	char ch;
+	int n, player;
+	s16b item, amt;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
+		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
+		  {
+		    int Ind2 = find_player(p_ptr->esp_link);
+		    
+		    if (!Ind2)
+	      	      end_mind(ind, TRUE);
+		    else
+		      {
+			player = Ind2;
+			p_ptr = Players[Ind2];
+		      }
+		  }
+	}
+	else player = 0;
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (player && p_ptr->store_num > -1)
+		store_examine(player, item);
 
 	return 1;
 }
@@ -7805,12 +7857,24 @@ static int Receive_raw_key(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
-		switch (key)
+		if (p_ptr->store_num > -1)
 		{
-			default:
-				msg_format(player, "'%c' key is currently not used.  Hit '?' for help.", key);
+			switch (key)
+			{
+				default:
+					msg_format(player, "'%c' key does not work in stores.", key);
+					break;
+			}
 		}
-
+		else
+		{
+			switch (key)
+			{
+				default:
+					msg_format(player, "'%c' key is currently not used.  Hit '?' for help.", key);
+					break;
+			}
+		}
 		return 2;
 	}
 	else if (player)

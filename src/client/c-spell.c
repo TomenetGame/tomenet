@@ -3,10 +3,12 @@
 
 #include "angband.h"
 
-static void print_spells(int book)
+/* NULL for ghost - FIXME */
+//static void print_spells(int book)
+static void print_spells(object_type *o_ptr)
 {
 	int	i, col, realm, num;
-	object_type *o_ptr = &inventory[book];
+//	object_type *o_ptr = &inventory[book];
 
 	/* Hack -- handle ghosts right */
 	if (p_ptr->ghost)
@@ -180,7 +182,8 @@ int get_spell(int *sn, cptr prompt, int book, bool known)
 				Term_save();
 
 				/* Display a list of spells */
-				print_spells(book);
+//				print_spells(book);
+				print_spells(o_ptr);
 			}
 
 			/* Hide the list */
@@ -254,13 +257,15 @@ int get_spell(int *sn, cptr prompt, int book, bool known)
  *
  * Note that *all* spells in the book are listed
  */
-void show_browse(int book)
+//void show_browse(int book)
+void show_browse(object_type *o_ptr)
 {
 	/* Save the screen */
 	Term_save();
 
 	/* Display the spells */
-	print_spells(book);
+//	print_spells(book);
+	print_spells(o_ptr);
 	
 	/* Clear the top line */
 	prt("", 0, 0);

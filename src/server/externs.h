@@ -548,6 +548,7 @@ extern void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v
 
 /* wild.c */
 extern int world_index(int world_x, int world_y);
+extern void wild_bulldoze();
 extern void init_wild_info(void);
 extern void addtown(int y, int x, int base, u16b flags);
 extern void wild_apply_day(struct worldpos *wpos);
@@ -672,7 +673,8 @@ extern int Send_state(int Ind, bool paralyzed, bool searching, bool resting);
 extern int Send_flush(int Ind);
 extern int Send_line_info(int Ind, int y);
 extern int Send_mini_map(int Ind, int y);
-extern int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name);
+//extern int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name);
+extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval);
 extern int Send_store_info(int Ind, int num, int owner, int items);
 extern int Send_store_sell(int Ind, int price);
 extern int Send_target_info(int ind, int x, int y, cptr buf);
@@ -843,7 +845,7 @@ extern int set_all_destroy(object_type *o_ptr);
 extern int set_cold_destroy(object_type *o_ptr);
 extern int set_impact_destroy(object_type *o_ptr);
 extern int set_water_destroy(object_type *o_ptr);
-extern int minus_ac(int Ind);
+extern int minus_ac(int Ind, int water);
 extern int inven_damage(int Ind, inven_func typ, int perc);
 //extern int inven_damage(int Ind, object_type *typ, int perc);
 
@@ -1006,6 +1008,7 @@ extern void update_stuff(int Ind);
 extern void redraw_stuff(int Ind);
 extern void window_stuff(int Ind);
 extern void handle_stuff(int Ind);
+extern void fix_spell(int Ind);
 
 /* xtra2.c */
 extern s16b questid;

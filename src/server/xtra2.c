@@ -2778,7 +2778,8 @@ void check_experience(int Ind)
 		p_ptr->redraw |= (PR_LEV | PR_TITLE);
 
 		/* Window stuff */
-		p_ptr->window |= (PW_PLAYER | PW_SPELL);
+//		p_ptr->window |= (PW_PLAYER | PW_SPELL);
+		p_ptr->window |= (PW_PLAYER);
 
 		/* Handle stuff */
 		handle_stuff(Ind);
@@ -2819,7 +2820,8 @@ void check_experience(int Ind)
 		p_ptr->redraw |= (PR_LEV | PR_TITLE);
 
 		/* Window stuff */
-		p_ptr->window |= (PW_PLAYER | PW_SPELL);
+//		p_ptr->window |= (PW_PLAYER | PW_SPELL);
+		p_ptr->window |= (PW_PLAYER);
 
 		/* Handle stuff */
 		handle_stuff(Ind);
@@ -4219,7 +4221,8 @@ void player_death(int Ind)
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Windows */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
+//	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 }
 
 /*
@@ -4277,7 +4280,7 @@ void resurrect_player(int Ind)
 	p_ptr->update |= (PU_BONUS);
 
 	/* Window */
-	p_ptr->window |= (PW_SPELL);
+//	p_ptr->window |= (PW_SPELL);
 }
 
 void del_quest(int id){

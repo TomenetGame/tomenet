@@ -2347,10 +2347,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		t = object_desc_str(t, mode < 8 ? " (charging)" : "(#)");
 	}
 
+#if 0	/* Now the stores does *ID* */
 	if (o_ptr->ident & ID_MENTAL)
 	{
 		t = object_desc_chr(t, '*');
 	}
+#endif	// 0
 
 
 	/* No more details wanted */
@@ -3612,6 +3614,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	//        byte            color[400];
 
 	FILE *fff;
+	char    buf[1024];
 
 #if 0
 	char file_name[MAX_PATH_LENGTH];
@@ -4478,11 +4481,25 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		}
 	}
 
-
 	//	info[i]=NULL;
 	/* Close the file */
 	my_fclose(fff);
 
+	/* Hack -- anything written? (rewrite me) */
+
+	/* Open a new file */
+	fff = my_fopen(p_ptr->infofile, "r");
+
+	if (my_fgets(fff, buf, 1024))
+	{
+		/* Close the file */
+		my_fclose(fff);
+
+		return (FALSE);
+	}
+
+	/* Close the file */
+	my_fclose(fff);
 
 	/* No special effects */
 //	if (!i) return (FALSE);
@@ -6010,7 +6027,9 @@ cptr describe_use(int Ind, int i)
 
 	switch (i)
 	{
-		case INVEN_WIELD: p = "attacking monsters with"; break;
+		/* you attack players too, none? */
+//		case INVEN_WIELD: p = "attacking monsters with"; break;
+		case INVEN_WIELD: p = "attacking enemies with"; break;
 		case INVEN_BOW:   p = "shooting missiles with"; break;
 		case INVEN_LEFT:  p = "wearing on your left hand"; break;
 		case INVEN_RIGHT: p = "wearing on your right hand"; break;

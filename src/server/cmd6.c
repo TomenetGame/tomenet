@@ -380,6 +380,7 @@ void do_cmd_eat_food(int Ind, int item)
 				{
 					msg_print(Ind, "That tastes very good.");
 					(void)set_poisoned(Ind, 0);
+					(void)set_image(Ind, 0);	// ok?
 					(void)hp_player(Ind, damroll(4, 8));
 					set_food(Ind, PY_FOOD_MAX - 1);
 					ident = TRUE;
@@ -5770,7 +5771,7 @@ void do_cmd_activate(int Ind, int item)
 					msg_print(Ind, "Your feel your head clear.");
 					p_ptr->redraw |= (PR_MANA);
 					p_ptr->window |= (PW_PLAYER);
-					p_ptr->window |= (PW_SPELL);
+//					p_ptr->window |= (PW_SPELL);
 				}
 				o_ptr->timeout = 666;
 				break;

@@ -187,7 +187,8 @@ void increase_skill(int Ind, int i)
 	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
 
 	/* Update his inventory, equipment, and spell info */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
+//	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
 }
 
