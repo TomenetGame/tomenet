@@ -2592,6 +2592,7 @@ errr init_x11(void)
 	/* Initialize the screen */
 	term_data_init(&screen, TRUE, "TomeNET", fnt_name);
 	term_screen = Term;
+	ang_term[0]=Term;
 
 #ifdef USE_GRAPHICS
 
@@ -2633,6 +2634,7 @@ errr init_x11(void)
 	/* Initialize the recall window */
 	term_data_init(&mirror, FALSE, "Mirror", fnt_name);
 	term_mirror = Term;
+	ang_term[1]=Term;
 
 #endif
 
@@ -2650,6 +2652,7 @@ errr init_x11(void)
 	/* Initialize the recall window */
 	term_data_init(&recall, FALSE, "Recall", fnt_name);
 	term_recall = Term;
+	ang_term[2]=Term;
 
 #endif
 
@@ -2667,6 +2670,7 @@ errr init_x11(void)
 	/* Initialize the choice window */
 	term_data_init(&choice, FALSE, "Choice", fnt_name);
 	term_choice = Term;
+	ang_term[3]=Term;
 
 #endif
 

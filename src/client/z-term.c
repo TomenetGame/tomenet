@@ -549,18 +549,28 @@ byte flick_colour(byte attr){
 	}
 }
 
-void flicker(){
-	int y, x;
-	char ch, attr;
+extern term *ang_term[];
 
-	for(y=0; y<Term->hgt; y++){
-		for(x=0; x<Term->wid; x++){
-			if(Term->scr->a[y][x]<TERM_MULTI) continue;
-			ch=Term->scr->c[y][x];
-			attr=flick_colour(Term->scr->a[y][x]);
-			(void)((*Term->text_hook)(x, y, 1, attr, &ch));
+void flicker(){
+	int y, x, i;
+	char ch, attr;
+	term *tterm, *old;
+
+	old=Term;
+	for(i=0; i<8; i++){
+		tterm=ang_term[i];
+		if(!tterm) continue;
+		Term_activate(tterm);
+		for(y=0; y<tterm->hgt; y++){
+			for(x=0; x<tterm->wid; x++){
+				if(tterm->scr->a[y][x]<TERM_MULTI) continue;
+				ch=tterm->scr->c[y][x];
+				attr=flick_colour(tterm->scr->a[y][x]);
+				(void)((*tterm->text_hook)(x, y, 1, attr, &ch));
+			}
 		}
 	}
+	Term_activate(old);
 }
 
 /*** Refresh routines ***/
