@@ -3632,7 +3632,7 @@ int mon_will_run(int Ind, int m_idx)
 
 	u16b p_lev, m_lev;
 	u16b p_chp, p_mhp;
-	u16b m_chp, m_mhp;
+	long m_chp, m_mhp;
 	u32b p_val, m_val;
 
 	/* Hack -- aquatic life outa water */

@@ -2036,6 +2036,9 @@ bool set_zeal(int Ind, int p, int v)
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
 
+	/* Redraw the Blows/Round */	
+	p_ptr->update |= PU_BONUS;
+
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 

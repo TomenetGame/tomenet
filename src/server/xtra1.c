@@ -1172,7 +1172,8 @@ static void calc_hitpoints(int Ind)
 //	object_type *o_ptr;
 //	u32b f1, f2, f3, f4, f5, esp;
 
-	int bonus, mhp, Ind2 = 0;
+	int bonus, Ind2 = 0;
+	long mhp;
 	u32b mHPLim, finalHP;
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
@@ -1207,11 +1208,12 @@ static void calc_hitpoints(int Ind)
 
 	if (p_ptr->body_monster)
 	{
-	    int rhp = r_info[p_ptr->body_monster].hdice * r_info[p_ptr->body_monster].hside;
+	    long rhp = ((long)(r_info[p_ptr->body_monster].hdice)) * ((long)(r_info[p_ptr->body_monster].hside));
 
 	    /* limit HP against ~2900 in total: */
 	    /* mHPLim = (100000 / ((100000 / rhp) + 15)); */
 	    /* limit HP against ~2500 in total: */
+s_printf("rhp %d \n", rhp);
 	    mHPLim = (100000 / ((100000 / rhp) + 20));
 	    finalHP = (mHPLim < mhp ) ? (((mhp * 3) + (mHPLim * 2)) / 5) : ((mHPLim + mhp) / 2);
 	    mhp = finalHP;
