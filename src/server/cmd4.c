@@ -264,7 +264,7 @@ void do_cmd_check_uniques(int Ind, int line)
 					if (q_ptr->r_killed[k])
 					{
 //						byte attr = 'U';
-						//							fprintf(fff, "        %s\n", q_ptr->name);
+//						fprintf(fff, "        %s\n", q_ptr->name);
 						if (!ok)
 						{
 							fprintf(fff, ":\n");

@@ -1098,7 +1098,6 @@ int Receive_sanity(void){
 	p_ptr->msane=max;
 	p_ptr->csane=cur;
 	if (!screen_icky && !shopping){
-		printf("received sanity\n");
 		prt_sane(stat, max, cur);
 	}
 	else

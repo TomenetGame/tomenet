@@ -6214,8 +6214,10 @@ void do_cmd_psi(int Ind, int book, int spell)
 			msg_print(Ind, "You cannot dominate a monster while fused.");
 			break;
 		}
-		get_aim_dir(Ind);
-		p_ptr2->current_mind = j;
+		else{
+			get_aim_dir(Ind);
+			p_ptr2->current_mind = j;
+		}
 
 		break;
 	  
@@ -6581,9 +6583,13 @@ void do_cmd_psi_aux(int Ind, int dir)
 			break;
 		case 4:
 			msg_format(Ind, "You attempt to use hold. {y({gcoming soon{y)");
+			fire_bolt(Ind, GF_HOLD, dir,
+						damroll(3 + ((plev - 1) / 5), 4 + (plev / 5)));
 			break;
 		case 5:
 			msg_format(Ind, "You attempt to use dominate. {y({gcoming soon{y)");
+			fire_bolt(Ind, GF_DOMINATE, dir,
+						damroll(3 + ((plev - 1) / 5), 4 + (plev / 5)));
 			break;
 		case 14:
 			msg_format_near(Ind, "%s breaks the space/time continuum.", p_ptr2->name);

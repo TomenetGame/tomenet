@@ -638,7 +638,7 @@
 #define ROW_CURSP		19
 #define COL_CURSP		0	/* "Cur SP xxxxx" */
 
-#define ROW_SANITY              20      /* "Sanity  100%" */
+#define ROW_SANITY              14      /* "Sanity  100%" */
 #define COL_SANITY              0
 
 #if 1
@@ -2968,11 +2968,11 @@ that keeps many algorithms happy.
 #define GF_MAKE_DOOR	46
 #define GF_MAKE_TRAP	47
 #define GF_OLD_CLONE	51
-#define GF_OLD_POLY		52
-#define GF_OLD_HEAL		53
+#define GF_OLD_POLY	52
+#define GF_OLD_HEAL	53
 #define GF_OLD_SPEED	54
-#define GF_OLD_SLOW		55
-#define GF_OLD_CONF		56
+#define GF_OLD_SLOW	55
+#define GF_OLD_CONF	56
 #define GF_OLD_SLEEP	57
 #define GF_OLD_DRAIN	58
 #define GF_AWAY_UNDEAD	61
@@ -3001,7 +3001,9 @@ that keeps many algorithms happy.
 #define GF_MAKE_GLYPH   85
 #define GF_ROCKET       91
 #define GF_NUKE         110
-#define GF_BLIND		111
+#define GF_BLIND	111
+#define GF_HOLD		112	/* hold */
+#define GF_DOMINATE	113	/* dominate */
 
 #if 0
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */

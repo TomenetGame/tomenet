@@ -659,6 +659,9 @@ static void prt_frame_basic(int Ind)
 	/* Hitpoints */
 	prt_hp(Ind);
 
+	/* Sanity */
+	prt_sanity(Ind);
+
 	/* Spellpoints */
 	prt_sp(Ind);
 

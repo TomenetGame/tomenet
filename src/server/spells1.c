@@ -4160,6 +4160,11 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			break;
 		}
+		case GF_HOLD:
+		case GF_DOMINATE:
+			note = " is selected";
+			dam=0;
+			break;
 
 			/* Default */
 		default:

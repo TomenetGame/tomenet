@@ -219,9 +219,9 @@ void prt_sane(void) {
     perc = (100*p_ptr->csane)/p_ptr->msane;
   }
 
-  put_str("SN ", ROW_SANITY, COL_SANITY);
+  put_str("Sane: ", ROW_SANITY, COL_SANITY);
 
-  sprintf(tmp, "%5d/%5d", p_ptr->csane, p_ptr->msane);
+  sprintf(tmp, "%3d%%", perc);
 
   if (perc >= 100) {
     color = TERM_L_GREEN;
@@ -231,7 +231,7 @@ void prt_sane(void) {
     color = TERM_RED;
   } */
 
-  c_put_str(color, tmp, ROW_SANITY, COL_SANITY+2);
+  c_put_str(color, tmp, ROW_SANITY, COL_SANITY+8);
 }
 
 /*
