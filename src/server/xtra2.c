@@ -3700,7 +3700,7 @@ void monster_death(int Ind, int m_idx)
 			{
 				if ( (Players[i]->party == p_ptr->party) && (inarea(&Players[i]->wpos, &p_ptr->wpos)) && (i != Ind) && (p_ptr->wpos.wz) )
 				{
-					sprintf(buf, "\377b%s was slain by %s.", r_name_get(m_ptr),parties[p_ptr->party].name);
+					sprintf(buf, "\377b%s was slain by %s of %s.", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 					break; 
 				} 
 
