@@ -6846,7 +6846,7 @@ s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *
 	if (is_admin(p_ptr)) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 
 	/* Artifact always disappears, depending on tomenet.cfg flags */
-	if (true_artifact_p(o_ptr) && !is_admin(p_ptr) && cfg.anti_arts_hoard)
+	if (true_artifact_p(o_ptr) && ((!is_admin(p_ptr) && cfg.anti_arts_hoard) || p_ptr->total_winner))
 	    //(cfg.anti_arts_hoard || (cfg.anti_arts_house && 0)) would be cleaner sometime in the future..
 	{
 		char	o_name[160];
