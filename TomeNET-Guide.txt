@@ -1,7 +1,7 @@
 .=========================+==--.
 | TomeNET Beginners Guide |
 +=========================+-
-| Latest update: 28. May 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. June 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.0.0, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -28,7 +28,7 @@ Contents
 	(2.2)	Starting TomeNET and getting to play on an internet server
 	(2.3)	Behaviour and chat messages
 (3) Creating a character & starting to play
-	(3.1)	Creating a new character
+	(3.1)	Creating a new character; character modes
 	(3.2) 	The display (user-interface)
 	(3.3) 	Start-up equipment & how to use it
 	(3.4)	Preparing the first time for fighting enemies
@@ -65,6 +65,7 @@ Contents
 	(6.7)	Ghosts
 	(6.8)	Mimic details, polymorph rings
 	(6.9)	Magic spells and prayers
+	(6.10)	Parties, Iron Teams, Guilds
 (7) Tactics & strategy
 	(7.1) 	Preparing the inventory for diving into the dungeon
 	(7.2)	Preparing the equipment for diving into the dungeon
@@ -159,6 +160,9 @@ P	party screen. Form/disband/modify a party with other players here.
 	In a party you will share experience points if you are within 7 character
 	levels to each other and on the same dungeon/tower level respectively
 	the same worldmap/wildernis sector.
+	An 'Iron Team' can only be formed with newly created characters. Its
+	members will only get experience for killing monsters if ALL members
+	are online and on the same dungeon level!
 G 	skills screen.
 o 	open something.
 c 	close something.
@@ -203,6 +207,15 @@ k 	destroy an item.
 :	type a chat message. To whisper privately, enter <player>:<text> then.
 	Example:	Hi!				<- goes to everyone
 				C. Blue:Hi!		<- goes to the character named 'C. Blue'
+	In chat messages you can type a double colon '::' to force output of a
+	normal colon ':' instead of having it interpreted as separator for a
+	private chat message. Most smileys are recognized automatically and don't
+	require you to enter a double colon ( ':)' will work equally to '::)' ).
+	(If you want to send a private message to someone which starts with a
+	smiley, you will have to enter a space between the private-separator
+	colon and the smiley colon, example: 'd00d: :)'	sends a private message to
+	d00d, containing  ' :)' while 'd00d::)' will result in a public chat
+	message looking like this 'd00d:)' .)
 @	displays a list of players currently on the server.
 '	lets you peek at the equipment of party members or players within sight.
 <,>	go upstairs/downstairs.
@@ -257,6 +270,8 @@ They all start with a slash '/':
  (/recall)	using an item inscribed {RR}.
 /dr			Wields all items in your inventory that are: not cursed,
  (/dress)	not {worthless}, not {terrible}, known to you.
+/mar		Tells a prayer-user if he may use the prayer 'Holy Martyr'.
+ (/martyr)
 
 
 
@@ -346,6 +361,9 @@ FA			Free Action (immunity to paralysis).
 FF			Feather falling (Levitation).
 Gorth		Room in the dungeon, divided into 4 chambers. Similar to a pit.
 GV			Greater Vault.
+Iron Team	A special type of party which can only be formed with newly
+			created characters. Its members only gain experience if all
+			members are online and on the same dungeon level.
 Loot		Items that have been dropped by dead monsters or players and
 			are waiting to be picked up by someone. :)
 LV			Lesser Vault.
@@ -537,8 +555,8 @@ using CTRL+O.
 
 (3) Creating a character & starting to play
 ===========================================
-(3.1) Creating a new character
-------------------------------
+(3.1) Creating a new character; character modes
+-----------------------------------------------
 First you may choose your gender. This will not have actual influence on your
 strengths or weaknesses.
 Now you have to choose your race. Humans are good allrounders, while the other
@@ -562,17 +580,40 @@ each character that you create even with same race and class will be a bit
 different. Sometimes you are lucky and get really high attributes at the
 beginning. And sometimes you get more gold to start with.
 Now you can choose a difficulty level you wish to play on. Options are
-n) Normal  f) Fruit bat  g) no Ghost  h) Hard  H) Hellish
+n) Normal  f) Fruit bat  g) no Ghost  h) Hard  H) Hellish e) Everlasting
 It is recommended that you choose either n) to play a normal character or g)
 to play a normal character without a ghost.
+You can also choose e), that will give your character an infinite amount of
+resurrecionts, while 'normal' characters often have a limited amount of lives
+(depending on the server configuration).
+
+'Normal':
+---------
 A normal character will turn into a ghost if he dies. The ghost can be revived
 by either visiting a temple or another living player using a magic scroll of
 life when standing adjacent to the ghost. The ghost will return to the world
 of living under the cost of a lot of experience but at least the player can
 resume playing. If the ghost dies, the character will finally be erased
 permanently, watch out!
-A character without a ghost, as well as hellish characters will be annihilated
-and deleted completely on death.
+Depending on the server configuration the number of times a ghost can be
+resurrected can be limited.
+
+'Everlasting':
+--------------
+Create an everlasting character for infinite amount of resurrections.
+Everlasting characters can become king/queen, but cannot enter the high-score.
+Other character types cannot pick up items that belong to everlasting
+characters. Non-everlasting and everlasting characters can't be in the same
+party.
+
+'Unworldly' (no-ghost) and 'Hellish' (no-ghost + hard):
+-------------------------------------------------------
+A character without a ghost, as well as hellish characters (who basically are
+a combination of 'no-ghost' and 'hard') will be annihilated and deleted
+completely on death.
+
+'Hard' and 'Hellish':
+---------------------
 Hard characters and hellish characters get certain penalties in gameplay.
 These are:
 -losing -1 to all stats
@@ -581,15 +622,20 @@ These are:
 -ESP only works within radius of 20 squares
 -any speed changes above or below +0 is reduced by 50%
 -max number of melee attacks is reduced by 1.
+
+'Fruit bat':
+------------
 A fruit bat is like a normal character, just not in humanoid shape but in bat
 form! Fruit bats usually can take way less damage than normal characters
 before they die, and they cannot wear certain equipment like boots, gloves or
 weapons. However they are twice as fast and hard to hit. Fruit bats are said
 to make good explorers.
+
 Note that race and class will have influence on how much experience you will
 need to gain a new character level. For example, High-Elves already know a
 lot, so experience is hard to gain for them. In fact they will need 100% more
 experience than a human.
+
 Creation of your character is now finished and you are asked to press a key to
 start the actual game. Do so and take a minute to read the text that will
 appear. It is called news or motd (message of the day) and often contains
@@ -3180,6 +3226,58 @@ Holy Support
 					Lv20: Gives +3 EA.								(project)
 					Note: The EA effect won't be applied to barehanded players
 					if they don't have Martial Arts skill of at least 01.000.
+
+
+
+(6.10) Parties, Iron Teams, Guilds
+----------------------------------
+Press 'P' to display the party menu.
+Here you can..
+
+-Form a party
+	In a party you will share experience points if you are within 7 character
+	levels to each other and on the same dungeon/tower level respectively
+	the same worldmap/wildernis sector.
+	Set a house owner to 'party' to allow all party members to access that
+	house.
+	If the owner dies, the whole party is disbanded and all houses of the
+	party are wiped. 
+-Create an iron team
+	An iron team is like a party with the following differences:
+	An 'Iron Team' can only be formed with newly created characters. Its
+	members will only get experience for killing monsters if ALL members
+	are online and on the same dungeon level!
+-Add a player to your party
+	This can be done by all members of the party, not just by the owner!
+-Remove a player from your party
+	This can only be done by the party owner.
+	Note that if you remove a player from an iron team and his character has
+	already gained some experience he will be unable to join again.
+	If the owner removes himself from his own party, the whole party is
+	disbanded and all houses of the party are wiped.
+-Leave your current party.
+	Note that if you leave an iron team and your character has already gained
+	experience you will be unable to join again.
+	If the owner leaves his own party, the whole party is disbanded and all
+	houses of the party are wiped.
+
+-Specify player to attack
+	Now you are hostile to that player and you will hurt each other like
+	when fighting a monster (this includes auto-retaliating and targetting)!
+-Make peace
+	Make peace with a player you are hostile too. Better pay attention that
+	your opponent makes peace too >:).
+
+-Create a new guild
+	This costs 2,000,000 Au. A guild will stay, even if the owner dies.
+-Add player to guild
+	Only the guild master or a dungeon wizard (administrator) can do this.
+-Remove player from guild
+	Only the guild master can do this. If all members are removed including
+	the guild master, the guild ceases to exist and all houses the guild owns
+	are wiped.
+-Leave guild
+	If the guild master leaves, the whole guild is disbanded.
 
 
 
