@@ -197,7 +197,7 @@ void wproto(struct client *ccl){
    one */
 void relay(struct wpacket *wpk, struct client *talker){
 	struct client *ccl;
-	wpk->serverid=ccl->authed;
+	wpk->serverid=talker->authed;
 	for(ccl=clist; ccl; ccl=ccl->next){
 		if(ccl!=talker){
 			send(ccl->fd, wpk, sizeof(struct wpacket), 0); 
