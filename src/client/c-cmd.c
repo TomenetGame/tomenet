@@ -259,10 +259,6 @@ void process_command()
 			cmd_run();
 			break;
 
-                case 'X':
-			do_cmd_skill();
-			break;
-
 		case ',':
 		case 'g':
 			cmd_stay();
@@ -416,11 +412,9 @@ void process_command()
 		case 'b':
 			cmd_browse();
 			break;
-#if 0 // DGDGDGDG -- no more I hope
 		case 'G':
-			cmd_study();
+			do_cmd_skill();
 			break;
-#endif
 		case 'm':
 			do_cmd_activate_skill();
 			break;
