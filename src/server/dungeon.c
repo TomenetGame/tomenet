@@ -2134,7 +2134,7 @@ static bool process_player_end_aux(int Ind)
 
 	/* Ghosts don't need food */
 	/* Allow AFK-hivernation if not hungry */
-	if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food > PY_FOOD_ALERT))
+	if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food > PY_FOOD_ALERT) && !p_ptr->admin_dm)
 	{
 		/* Digest normally */
 		if (p_ptr->food < PY_FOOD_MAX)
