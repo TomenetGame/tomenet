@@ -847,7 +847,7 @@ bool check_antimagic(int Ind)
 		antichance = q_ptr->antimagic;
 		antidis = q_ptr->antimagic_dis;
 
-		antichance -= p_ptr->lev;
+		if (i != Ind) antichance -= p_ptr->lev >> 1;
 
 		if (antichance > 95) antichance = 95;
 

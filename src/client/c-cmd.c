@@ -160,6 +160,16 @@ void cmd_all_in_one(void)
 			break;
         }
 
+		/* NOTE: 'item' isn't actually sent */
+		case TV_SPIKE:
+		{
+			if (!get_dir(&dir))
+				return;
+
+			Send_spike(dir);
+			break;
+		}
+
 		case TV_BOW:
 //		case TV_BOOMERANG:	// soon
 		case TV_DIGGING:
@@ -204,477 +214,337 @@ void cmd_all_in_one(void)
 
 void process_command()
 {
-        /* Parse the command */
-        switch (command_cmd)
-        {
-                /* Ignore */
-                case ESCAPE:
-                case ' ':
-                {
-                        break;
-                }
+	/* Parse the command */
+	switch (command_cmd)
+	{
+		/* Ignore */
+		case ESCAPE:
+		case ' ':
+			break;
 
-                /* Ignore return */
-                case '\r':
-                {
-                        break;
-                }
+			/* Ignore return */
+		case '\r':
+			break;
 
-                /* Clear buffer */
-                case ')':
-                {
-                        cmd_clear_buffer();
-                        break;
-                }
+			/* Clear buffer */
+		case ')':
+			cmd_clear_buffer();
+			break;
 
-                /*** Movement Commands ***/
+			/*** Movement Commands ***/
 
-                /* Dig a tunnel*/
-                case '+':
-                {
-                        cmd_tunnel();
-                        break;
-                }
+			/* Dig a tunnel*/
+		case '+':
+			cmd_tunnel();
+			break;
 
-                /* Move */
-                case ';':
-                {
-                        cmd_walk();
-                        break;
-                }
+			/* Move */
+		case ';':
+			cmd_walk();
+			break;
 
-                /*** Running, Staying, Resting ***/
-                case '.':
-                {
-                        cmd_run();
-                        break;
-                }
+			/*** Running, Staying, Resting ***/
+		case '.':
+			cmd_run();
+			break;
 
-                case ',':
-                case 'g':
-                {
-                        cmd_stay();
-                        break;
-                }
+		case ',':
+		case 'g':
+			cmd_stay();
+			break;
 
-                /* Get the mini-map */
-                case 'M':
-                {
-                        cmd_map();
-                        break;
-                }
+			/* Get the mini-map */
+		case 'M':
+			cmd_map();
+			break;
 
-		/* Recenter map */
+			/* Recenter map */
 		case 'L':
-		{
 			cmd_locate();
 			break;
-		}
 
-                /* Search */
-                case 's':
-                {
-                        cmd_search();
-                        break;
-                }
+			/* Search */
+		case 's':
+			cmd_search();
+			break;
 
-                /* Toggle Search Mode */
-                case 'S':
-                {
-                        cmd_toggle_search();
-                        break;
-                }
+			/* Toggle Search Mode */
+		case 'S':
+			cmd_toggle_search();
+			break;
 
-		/* Rest */
+			/* Rest */
 		case 'R':
-		{
 			cmd_rest();
 			break;
-		}
 
-                /*** Stairs and doors and chests ***/
+			/*** Stairs and doors and chests ***/
 
-                /* Go up */
-                case '<':
-                {
-                        cmd_go_up();
-                        break;
-                }
+			/* Go up */
+		case '<':
+			cmd_go_up();
+			break;
 
-                /* Go down */
-                case '>':
-                {
-                        cmd_go_down();
-                        break;
-                }
+			/* Go down */
+		case '>':
+			cmd_go_down();
+			break;
 
-                /* Open a door */
-                case 'o':
-                {
-                        cmd_open();
-                        break;
-                }
+			/* Open a door */
+		case 'o':
+			cmd_open();
+			break;
 
-                /* Close a door */
-                case 'c':
-                {
-                        cmd_close();
-                        break;
-                }
+			/* Close a door */
+		case 'c':
+			cmd_close();
+			break;
 
-                /* Bash a door */
-                case 'B':
-                {
-                        cmd_bash();
-                        break;
-                }
+			/* Bash a door */
+		case 'B':
+			cmd_bash();
+			break;
 
-                /* Disarm a trap or chest */
-                case 'D':
-                {
-                        cmd_disarm();
-                        break;
-                }
+			/* Disarm a trap or chest */
+		case 'D':
+			cmd_disarm();
+			break;
 
-                /*** Inventory commands ***/
-                case 'i':
-                {
-                        cmd_inven();
-                        break;
-                }
+			/*** Inventory commands ***/
+		case 'i':
+			cmd_inven();
+			break;
 
-                case 'e':
-                {
-                        cmd_equip();
-                        break;
-                }
+		case 'e':
+			cmd_equip();
+			break;
 
-                case 'd':
-                {
-                        cmd_drop();
-                        break;
-                }
+		case 'd':
+			cmd_drop();
+			break;
 
 		case '$':
-		{
 			cmd_drop_gold();
 			break;
-		}
 
-                case 'w':
-                {
-                        cmd_wield();
-                        break;
-                }
+		case 'w':
+			cmd_wield();
+			break;
 
-                case 't':
-                {
-                        cmd_take_off();
-                        break;
-                }
+		case 't':
+			cmd_take_off();
+			break;
 
-                case 'k':
-                {
-                        cmd_destroy();
-                        break;
-                }
+		case 'k':
+			cmd_destroy();
+			break;
 
-                case 'K':
-                {
-                        cmd_king();
-                        break;
-                }
+		case 'K':
+			cmd_king();
+			break;
 
 		case '{':
-		{
 			cmd_inscribe();
 			break;
-		}
 
 		case '}':
-		{
 			cmd_uninscribe();
 			break;
-		}
 
 		case 'j':
-		{
 			cmd_steal();
 			break;
-		}
 
-                /*** Inventory "usage" commands ***/
-                case 'q':
-                {
-                        cmd_quaff();
-                        break;
-                }
+			/*** Inventory "usage" commands ***/
+		case 'q':
+			cmd_quaff();
+			break;
 
-                case 'r':
-                {
-                        cmd_read_scroll();
-                        break;
-                }
+		case 'r':
+			cmd_read_scroll();
+			break;
 
-                case 'a':
-                {
-                        cmd_aim_wand();
-                        break;
-                }
+		case 'a':
+			cmd_aim_wand();
+			break;
 
-                case 'u':
-                {
-                        cmd_use_staff();
-                        break;
-                }
+		case 'u':
+			cmd_use_staff();
+			break;
 
-                case 'z':
-                {
-                        cmd_zap_rod();
-                        break;
-                }
+		case 'z':
+			cmd_zap_rod();
+			break;
 
-                case 'F':
-                {
-                        cmd_refill();
-                        break;
-                }
+		case 'F':
+			cmd_refill();
+			break;
 
-                case 'E':
-                {
-                        cmd_eat();
-                        break;
-                }
+		case 'E':
+			cmd_eat();
+			break;
 
-                case 'A':
-                {
-                        cmd_activate();
-                        break;
-                }
+		case 'A':
+			cmd_activate();
+			break;
 
-		/*** Firing and throwing ***/
+			/*** Firing and throwing ***/
 		case 'f':
-		{
 			cmd_fire();
 			break;
-		}
 
 		case 'v':
-		{
 			cmd_throw();
 			break;
-		}
 
-                /*** Spell casting ***/
-                case 'b':
-                {
-                        cmd_browse();
-                        break;
-                }
+			/*** Spell casting ***/
+		case 'b':
+			cmd_browse();
+			break;
 
-                case 'G':
-                {
-                        cmd_study();
-                        break;
-                }
+		case 'G':
+			cmd_study();
+			break;
 
-                case 'm':
-                {
-                        cmd_cast();
-                        break;
-                }
+		case 'm':
+			cmd_cast();
+			break;
 
-                case 'p':
-                {
-                        cmd_pray();
-                        break;
-                }
+		case 'p':
+			cmd_pray();
+			break;
 
-                case 'n':
-                {
-                        cmd_fight();
-                        break;
-                }
+		case 'n':
+			cmd_fight();
+			break;
 
-                case 'N':
-                {
-                        cmd_mimic();
-                        break;
-                }
+		case 'N':
+			cmd_mimic();
+			break;
 
 		case 'U':
-		{
 			cmd_ghost();
 			break;
-		}
 
 		case 'x':
-		{
 			cmd_mind();
 			break;
-		}
-		/*** Looking/Targetting ***/
+			/*** Looking/Targetting ***/
 		case '*':
-		{
 			cmd_target();
 			break;
-		}
-		
+
 		case '(':
-		{
 			cmd_target_friendly();
 			break;
-		}
 
 		case 'l':
-		{
 			cmd_look();
 			break;
-		}
 
 		case 'I':
-		{
 			cmd_observe();
 			break;
-		}
 
-		/*** Information ***/
+			/*** Information ***/
 		case 'C':
-		{
 			cmd_character();
 			break;
-		}
 
 		case '~':
-		{
 			cmd_artifacts();
 			break;
-		}
 
 		case '|':
-		{
 			cmd_uniques();
 			break;
-		}
 
-        case '\'':
-        {
-            cmd_player_equip();
-            break;
-        }
+		case '\'':
+			cmd_player_equip();
+			break;
 
 		case '@':
-		{
 			cmd_players();
 			break;
-		}
 
 		case '#':
-		{
 			cmd_high_scores();
 			break;
-		}
 
 		case '?':
-		{
 			cmd_help();
 			break;
-		}
-		/*** Miscellaneous ***/
+			/*** Miscellaneous ***/
 		case ':':
-		{
 			cmd_message();
 			break;
-		}
 
 		case 'P':
-		{
 			cmd_party();
 			break;
-		}
 
 		case '&':
-		{
 			/* Dungeon master commands, normally only accessible to 
 			 * a valid dungeon master.  These commands only are 
 			 * effective for a valid dungeon master.
 			 */
 
 			/*
-			if (!strcmp(nick,DUNGEON_MASTER)) cmd_master(); 
-			else prt("Hit '?' for help.", 0, 0);
-			*/
+			   if (!strcmp(nick,DUNGEON_MASTER)) cmd_master(); 
+			   else prt("Hit '?' for help.", 0, 0);
+			   */
 			cmd_master();
 			break;
-		}
 
-		/* Add separate buffer for chat only review (good for afk) -Zz */
-                case KTRL('O'):
-                {
-                        do_cmd_messages_chatonly();
-                        break;
-                }
+			/* Add separate buffer for chat only review (good for afk) -Zz */
+		case KTRL('O'):
+			do_cmd_messages_chatonly();
+			break;
 
-                case KTRL('P'):
-                {
-                        do_cmd_messages();
-                        break;
-                }
+		case KTRL('P'):
+			do_cmd_messages();
+			break;
 
-                case KTRL('X'):
-                {
-                        Net_cleanup();
-                        quit(NULL);
-                }
+		case KTRL('X'):
+			Net_cleanup();
+			quit(NULL);
 
 		case KTRL('R'):
-		{
 			cmd_redraw();
 			break;
-		}
 
 		case 'Q':
-		{
 			cmd_suicide();
 			break;
-		}
 
 		case '=':
-		{
 			do_cmd_options();
 			break;
-		}
 
-		case '\"':
-		{
-			cmd_load_pref();
+			case '\"':
+				cmd_load_pref();
 			break;
-		}
 
 		case '%':
-		{
 			interact_macros();
 			break;
-		}
 
 		case 'h':
-		{
 			cmd_purchase_house();
 			break;
-		}
 
 		case '/':
-		{
 			cmd_all_in_one();
 			break;
-		}
 
-                default:
-                {
-                        prt("Hit '?' for help.", 0, 0);
-                        break;
-                }
-        }
+		case KTRL('S'):
+			cmd_spike();
+			break;
+
+		default:
+			prt("Hit '?' for help.", 0, 0);
+			break;
+	}
 }
 
 
@@ -2588,53 +2458,43 @@ void cmd_master_aux_summon(void)
 			{
 				/* X here */
 				case '1': 
-				{
 					buf[0] = 'x';
 					buf[1] = c_get_quantity("Summon how many? ", 127);
 					break;
-				}
-				/* X in different places */
+					/* X in different places */
 				case '2':
-				{
 					buf[0] = 'X';
 					buf[1] = c_get_quantity("Summon how many? ", 127);
 					break;
-				}
-				/* Group here */
+					/* Group here */
 				case '3':
-				{
 					buf[0] = 'g';
 					break;
-				}
-				/* Group at random location */
+					/* Group at random location */
 				case '4':
-				{
 					buf[0] = 'G';
 					break;
-				}
-				/* summoning mode on */
+					/* summoning mode on */
 				case '5':
-				{
 					buf[0] = 'T';
 					buf[1] = 1;
 					break;
-				}
 
-				/* Oops */
+					/* Oops */
 				default : bell(); redo_hack = 1; break;
 			}
-		/* if we have a valid summoning type (escape was not just pressed)
-		 * then summon the monster */
-		if (buf[0]) Send_master(MASTER_SUMMON, buf);
+			/* if we have a valid summoning type (escape was not just pressed)
+			 * then summon the monster */
+			if (buf[0]) Send_master(MASTER_SUMMON, buf);
 		}
-
 
 		/* Flush messages */
 		c_msg_print(NULL);
 	}
 }
 
-void cmd_master_aux_player(){
+void cmd_master_aux_player()
+{
 	char i=0;
 	char buf[80];
 	Term_clear();
@@ -2680,13 +2540,12 @@ void cmd_master_aux_player(){
 				get_string("Enter player name:",&buf[1],15);
 				break;
 			case '7':
-				buf[0]='B';
-				get_string("Message:",&buf[1],69);
 				{
 					int j;
-					for(j=0;j<60;j++){
+					buf[0]='B';
+					get_string("Message:",&buf[1],69);
+					for(j=0;j<60;j++)
 						if(buf[j]=='{') buf[j]='\377';
-					}
 				}
 				break;
 			case ESCAPE:
@@ -2701,6 +2560,53 @@ void cmd_master_aux_player(){
 	}
 }
 
+/* Dirty implementation.. FIXME		- Jir - */
+void cmd_master_aux_system()
+{
+	char i=0;
+	Term_clear();
+	Term_putstr(0, 2, -1, TERM_BLUE, "System commands");
+	Term_putstr(5, 4, -1, TERM_WHITE, "(1) View mangband.log");
+	Term_putstr(5, 5, -1, TERM_WHITE, "(2) View mangband.rfe");
+	
+	Term_putstr(0, 12, -1, TERM_WHITE, "Command: ");
+
+	while(i!=ESCAPE){
+		/* Get a key */
+		i = inkey();
+		switch(i){
+			case '1':
+				/* Set the hook */
+				special_line_type = SPECIAL_FILE_LOG;
+
+				/* Call the file perusal */
+				peruse_file();
+
+				/* Hack -- still icky */
+				screen_icky = TRUE;
+
+				break;
+			case '2':
+				/* Set the hook */
+				special_line_type = SPECIAL_FILE_RFE;
+
+				/* Call the file perusal */
+				peruse_file();
+
+				/* Hack -- still icky */
+				screen_icky = TRUE;
+
+				break;
+			case ESCAPE:
+				break;
+			default:
+				bell();
+		}
+
+		/* Flush messages */
+		c_msg_print(NULL);
+	}
+}
 /*
  * Upload/execute scripts
  */
@@ -2779,11 +2685,12 @@ void cmd_master(void)
 		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Summoning Commands");
 		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Generation Commands");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Player Commands");
-		Term_putstr(5, 9, -1, TERM_WHITE, "(e) Execute script command");
-		Term_putstr(5, 10, -1, TERM_WHITE, "(u) Upload script file");
+		Term_putstr(5, 9, -1, TERM_WHITE, "(6) System Commands");
+		Term_putstr(5, 10, -1, TERM_WHITE, "(e) Execute script command");
+		Term_putstr(5, 11, -1, TERM_WHITE, "(u) Upload script file");
 
 		/* Prompt */
-		Term_putstr(0, 11, -1, TERM_WHITE, "Command: ");
+		Term_putstr(0, 13, -1, TERM_WHITE, "Command: ");
 
 		/* Get a key */
 		i = inkey();
@@ -2803,6 +2710,9 @@ void cmd_master(void)
 				break;
 			case '5':
 				cmd_master_aux_player();
+				break;
+			case '6':
+				cmd_master_aux_system();
 				break;
 			case 'e':
 				cmd_script_exec();
@@ -2839,3 +2749,16 @@ void cmd_king()
 	
 	Send_King(KING_OWN);
 }
+
+void cmd_spike()
+{
+	int dir = command_dir;
+
+	if (!dir)
+	{
+		get_dir(&dir);
+	}
+
+	Send_spike(dir);
+}
+

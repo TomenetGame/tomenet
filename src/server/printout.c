@@ -66,3 +66,74 @@ extern int s_printf(char *str, ...)
 
 	return(TRUE);
 }
+
+/*
+ * functions for /rfe command, suggested by A.Dingle.		- Jir -
+ * this should be expanded in a way more scalable.
+ */
+
+static FILE *fpr = NULL;
+static int initr = FALSE;
+
+
+extern bool s_setupr(char *str)
+{
+
+	if(initr == FALSE)
+	{
+		if( (fpr = fopen(str,"a+")) == NULL )
+		{
+//			quit("Cannot Open Log file\n");
+			s_printf("Cannot Open RFE file\n");
+		}
+		initr = TRUE;
+	}
+	return(TRUE);
+}
+
+extern bool rfe_printf(char *str, ...)
+{
+	va_list va;
+
+	if(initr == FALSE)   /* in case we don't start her up properly */
+	{
+		fpr = fopen("mangband.rfe","a+");
+		initr = TRUE;
+	}
+
+	va_start(va, str);
+	vfprintf(fpr,str,va);
+	/*
+	if(!print_to_file)
+		vprintf(str,va);
+	*/
+	va_end(va);
+
+	/* KLJ -- Flush the log so that people can look at it while the server is running */
+	fflush(fpr);
+
+	return(TRUE);
+}
+
+#if 1	// under construction
+/* better move to cmd4.c? */
+extern bool do_cmd_view_rfe(int Ind, char *str, int line)
+{
+	player_type *p_ptr = Players[Ind];
+	/* Path buffer */
+	char    path[1024];
+
+	if (!is_admin(p_ptr)) return(FALSE);
+
+	/* Hack - close the file once, so that show_file can 'open' it
+	my_fclose(fpr);
+	initr = FALSE; */
+
+	/* Build the filename */
+	path_build(path, 1024, ANGBAND_DIR_DATA, str);
+
+	/* Display the file contents */
+	show_file(Ind, path, str, line, FALSE);
+	return(TRUE);
+}
+#endif	// 0

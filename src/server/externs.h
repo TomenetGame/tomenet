@@ -300,6 +300,7 @@ extern char summon_kin_type;
 extern bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, int sex, int stat_order[]);
 extern bool confirm_admin(int Ind, cptr name, cptr pass);
 extern void server_birth(void);
+extern void admin_outfit(int Ind);
 
 /* cave.c */
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);
@@ -739,6 +740,9 @@ extern int s_print_only_to_file(int which);
 extern int s_setup(char *str);
 extern int s_shutdown(void);
 extern int s_printf(char *str, ...);
+extern bool s_setupr(char *str);
+extern bool rfe_printf(char *str, ...);
+extern bool do_cmd_view_rfe(int Ind,char *str, int line);
 
 /* save.c */
 extern bool save_player(int Ind);

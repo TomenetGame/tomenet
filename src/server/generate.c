@@ -2676,6 +2676,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 				object_level = getlevel(wpos) + 7;
 				place_object(wpos, y, x, TRUE, FALSE);
 				object_level = getlevel(wpos);
+				if (magik(40)) place_trap(wpos, y, x);
 				break;
 
 				/* Nasty monster and treasure */
@@ -2686,6 +2687,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, int ymax, int xmax, 
 				object_level = getlevel(wpos) + 20;
 				place_object(wpos, y, x, TRUE, TRUE);
 				object_level = getlevel(wpos);
+				if (magik(80)) place_trap(wpos, y, x);
 				break;
 
 				/* Monster and/or object */

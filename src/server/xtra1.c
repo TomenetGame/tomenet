@@ -2861,6 +2861,10 @@ static void calc_bonuses(int Ind)
 
 	if ((p_ptr->anti_magic) && (p_ptr->skill_sav < 95)) p_ptr->skill_sav = 95;
 
+	/* Limit Skill -- saving throw upto 95 */
+	if (p_ptr->skill_sav > 95) p_ptr->skill_sav = 95;
+
+
 	/* Take note when "heavy bow" changes */
 	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot)
 	{

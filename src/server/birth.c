@@ -981,13 +981,10 @@ static byte player_init[MAX_CLASS][3][2] =
 };
 
 
-
 /*
- * Init players with some belongings
- *
- * Having an item makes the player "aware" of its purpose.
+ * Init admin characters with some belongings
  */
-static void player_outfit(int Ind)
+void admin_outfit(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int             i, tv, sv;
@@ -996,39 +993,6 @@ static void player_outfit(int Ind)
 
 	object_type     *o_ptr = &forge;
 
-
-	/* Hack -- Give the player some food */
-	invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
-	o_ptr->number = rand_range(3, 7);
-	object_aware(Ind, o_ptr);
-	object_known(o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 0;
-	(void)inven_carry(Ind, o_ptr);
-
-	/* Hack -- Give the player some torches */
-	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
-	o_ptr->number = rand_range(3, 7);
-	o_ptr->timeout = rand_range(3, 7) * 500;
-	object_known(o_ptr);
-	o_ptr->owner = p_ptr->id;
-	o_ptr->level = 0;
-	(void)inven_carry(Ind, o_ptr);
-
-	 if (!strcmp(p_ptr->name, "Moltor"))
-	 {
-		 invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
-		 o_ptr->name2 = 187;	// Bud ;)
-		 o_ptr->number = 9;
-		 apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
-		 o_ptr->discount = 72;
-		 o_ptr->owner = p_ptr->id;
-		 o_ptr->level = 1;
-		 object_known(o_ptr);
-		 object_aware(Ind, o_ptr);
-		 (void)inven_carry(Ind, o_ptr);
-	 }
-#if 1
 	/*
 	 * Give the cfg_admin_wizard some interesting stuff.
 	 */
@@ -1115,6 +1079,16 @@ static void player_outfit(int Ind)
                 o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 
+		invcopy(o_ptr, lookup_kind(TV_ARROW, SV_AMMO_MAGIC));
+		o_ptr->note = quark_add("@f1");
+		apply_magic_depth(1, o_ptr, -1, FALSE, FALSE, FALSE);
+                o_ptr->number = 98;
+		o_ptr->discount = 0;
+		object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
+		(void)inven_carry(Ind, o_ptr);
+
 #if 0
 		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_INVIS));
 		o_ptr->number = 9;
@@ -1135,7 +1109,6 @@ static void player_outfit(int Ind)
                 o_ptr->owner = p_ptr->id;
                 o_ptr->level = 1;
         (void)inven_carry(Ind, o_ptr);
-#endif
 
 	invcopy(o_ptr, lookup_kind(TV_GLOVES, SV_SET_OF_CESTI));
 		o_ptr->name1 = ART_FINGOLFIN;
@@ -1146,16 +1119,17 @@ static void player_outfit(int Ind)
 		o_ptr->owner = p_ptr->id;
 		o_ptr->level = 1;
 	(void)inven_carry(Ind, o_ptr);
+#endif
 
-	invcopy(o_ptr, lookup_kind(TV_HAFTED, SV_GROND));
+		invcopy(o_ptr, lookup_kind(TV_HAFTED, SV_GROND));
 		o_ptr->name1 = ART_GROND;
 		apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
-	o_ptr->number = 1;
-	o_ptr->discount = 0;
-	object_known(o_ptr);
+		o_ptr->number = 1;
+		o_ptr->discount = 0;
+		object_known(o_ptr);
 		o_ptr->owner = p_ptr->id;
 		o_ptr->level = 1;
-	(void)inven_carry(Ind, o_ptr);
+		(void)inven_carry(Ind, o_ptr);
 
 		/* gimme books :) */
 		for (i = p_ptr->pclass == CLASS_WARRIOR?0:1; i < 9; i++)
@@ -1171,8 +1145,58 @@ static void player_outfit(int Ind)
 			(void)inven_carry(Ind, o_ptr);
 		}
 	}
-#endif
-	
+}
+
+
+/*
+ * Init players with some belongings
+ *
+ * Having an item makes the player "aware" of its purpose.
+ */
+static void player_outfit(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int             i, tv, sv;
+
+	object_type     forge;
+
+	object_type     *o_ptr = &forge;
+
+
+	/* Hack -- Give the player some food */
+	invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
+	o_ptr->number = rand_range(3, 7);
+	object_aware(Ind, o_ptr);
+	object_known(o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 0;
+	(void)inven_carry(Ind, o_ptr);
+
+	/* Hack -- Give the player some torches */
+	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
+	o_ptr->number = rand_range(3, 7);
+	o_ptr->timeout = rand_range(3, 7) * 500;
+	object_known(o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 0;
+	(void)inven_carry(Ind, o_ptr);
+
+	if (!strcmp(p_ptr->name, "Moltor"))
+	{
+		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
+		o_ptr->name2 = 188;	// Bud ;)
+		o_ptr->number = 9;
+		apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
+		o_ptr->discount = 72;
+		o_ptr->owner = p_ptr->id;
+		o_ptr->level = 1;
+		object_known(o_ptr);
+		object_aware(Ind, o_ptr);
+		(void)inven_carry(Ind, o_ptr);
+	}
+
+	admin_outfit(Ind);
+
 	/* Hack -- Give the player three useful objects */
 	for (i = 0; i < 3; i++)
 	{

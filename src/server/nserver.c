@@ -231,6 +231,8 @@ static void Init_receive(void)
 	playing_receive[PKT_AUTOPHASE]		= Receive_autophase;
 
 	playing_receive[PKT_CLEAR_BUFFER]	= Receive_clear_buffer;
+
+	playing_receive[PKT_SPIKE]		= Receive_spike;
 }
 
 static int Init_setup(void)
@@ -6556,6 +6558,12 @@ static int Receive_special_line(int ind)
 			case SPECIAL_FILE_HELP:
 				do_cmd_help(player, line);
  				break;
+			case SPECIAL_FILE_LOG:
+				do_cmd_view_rfe(player, "mangband.log", line);
+ 				break;
+			case SPECIAL_FILE_RFE:
+				do_cmd_view_rfe(player, "mangband.rfe", line);
+ 				break;
 		}
 	}
 
@@ -6961,3 +6969,53 @@ void end_mind(int Ind, bool update){
 		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 	}
 }
+
+static int Receive_spike(int ind)
+{
+	connection_t *connp = &Conn[ind];
+	player_type *p_ptr;
+
+	char ch, dir;
+
+	int n, player;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
+		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
+		  {
+		    int Ind2 = find_player(p_ptr->esp_link);
+		    
+		    if (!Ind2)
+	      	      end_mind(ind, TRUE);
+		    else
+		      {
+			player = Ind2;
+			p_ptr = Players[Ind2];
+		      }
+		  }
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
+	{
+		do_cmd_spike(player, dir);
+		return 2;
+	}
+	else if (player)
+	{
+		Packet_printf(&connp->q, "%c%c", ch, dir);
+		return 0;
+	}
+
+	return 1;
+}
+

@@ -740,11 +740,18 @@ Change list for PernMangband
 01/03/2002 (Jir)
 - players can use /rec now (this applies item with {@R})
 - new monster: exploding coins
+- admin command: /en, /eq
+- SEVERE_GENO/RESIST_GENO compile-time option.
+- saving-throw is limited to 95 (4% fail) now.
+- door spiking (ctrl-s or '/')
+- /bug (/rfe), which leaves a message on server. {thx A.Dingle for idea}
+- admin can view log-file and rfe-file via client.
 [B] strange colouring in unique list
 [B] some traps create 'phial' (INSTA_ARTS)
 [B] breeders won't breed
 [B] stormbringer was way too powerful (+8 attacks!!)
 [B] indestructible rings didn't work
+[B] a leveled spellcasters could cast with DarkSword.
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
@@ -759,6 +766,12 @@ Change list for PernMangband
 [B] CURSE_x does 100+ dmg on 50ft?
 [B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
 [B] /rec won't work if to wilderness? (admin)
+[B] savedata corruption observed!
+[B] some monsters become 'immune' to spell attacks.
+[B] ^^^^^^^^^^^^^^^^^^^^^^^ broken display (on certain vault?)
+    ./mangclient: Received unknown packet type (86, 41), dropping
+[B][C] chat-history contains lines containing 'mindcrafter'. 
+[B] log-file viewer leaves messy screen when done.
 
 ==== below this line are changes to be done in the future ====
 [minor ones]
@@ -772,18 +785,18 @@ Change list for PernMangband
 - cave_special should use union? and their save/load via csfunc
 - display "non-scoring mode" in '@' screen
 - store buying-price should reflect *ID* states
-- /bug (/rfe), which leaves a message on log. {A.Dingle}
 - DEBUG_MSG_LEVEL
 [C] ameliorate option interface(toggle-key/vi-key)
 [C] use 2 lines for each server on server-list
 
 [major ones]
-- new terrains and their effects (f_info.txt)
+- new terrains and their effects (f_info.txt) (do this *FIRST*!)
 - variety of dungeon types (d_info.txt)
 - better cave-generator (generate.c) {Asclep?}
 - fully-implemented multiple towns (t_*.txt)
-- more kinds of stores (st_info.txt)
+- more kinds of stores / flexible store configuration (st_info.txt)
 - item stacks/monster inventory
+  * vault treasures should be held by guardians
 - item themes (mage drops magic items, etc)
 - quests (needing LUA-hooks) {hopefully DarkGod}
 - guild, or new party system
@@ -799,7 +812,6 @@ Change list for PernMangband
 ==== below this line are RFEs collected so far (good or bad) ====
 [minor ones]
 - more equipment slots in general (like Bracer)
-- door spiking (with '/' key)
 - player shouldn't gain more than 1 levels at once (esp.from books)
 - enhanced help system (imo we cannot beat web browsers anyway..)
 - some measures to 'cheezy' admins (at least some warnings)
@@ -808,31 +820,43 @@ Change list for PernMangband
   the floor for days.
 - 'hand to(give)' command
 - lowbies (<lv10?) should be immune to Black Breath?
+- wielding 'Stormbringer' should make the wielder attack the others
+- intelligent monsters should cast a spell even when player is out of sight.
+- NO_GHOST, but not HELLISH mode
 [major ones]
 - NPC/pet/golem/slave {Evileye/DG?}
 - monsters' interactions
 - subclass system (thief, esper, erudit, tough, mighty etc)
 - karma/luck system (karma is like luck, but never gets positive value)
 - make charisma/wisdom/dexterity more important
+- resistances handled by percent
 - time-limited features(like in Larn) / time bomb
 	struct timed_event{
 		worldpos wpos;
 		int time;
 		char ly, lx, event_kind, magnitude;};
-- savedata editor
-- vault/map editor
-- new networking code (to kiss xpilot adieu :)
 - chat-line editor/history
 - vanilla-Angband style houses
 - horizontal-connected caves (eg.[32,32,-40]=>[32,31,-40])
-- resistances handled by percent
 - (re)new classes/races
   + Paladin/Ranger
   + Mimic
   + Telepath (as a keystone of party)
   + Merchant/Diplomat
-- spell extensions, esp. after lv50
+  + Bard/Beastmaster/Necromancer
+- spell extensions, esp. after lv50 (remove the 64-spells limit first!)
 - randunis
+- port internationalization codes
+- newbie and veteran mode
+- GTK client
+- Auction house {A.Dingle}
+- Casino (or Scroll of Back Gammon ;)
+[sober (intrinsic) ones]
+- savedata editor
+- vault/map editor
+- new networking code (to kiss xpilot adieu :)
+- redefine packets in a way more generic
+- ./configure
 [lunatic ones]
 - 3-D gfx and full-audio support
 - full-mouse operation

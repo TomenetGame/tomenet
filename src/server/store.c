@@ -49,8 +49,8 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 		{ TV_FLASK, 0 },
 		{ TV_FLASK, 0 },
 		{ TV_FLASK, 0 },
-		{ TV_FLASK, 0 },
-		{ TV_FLASK, 0 },
+		{ TV_SPIKE, 0 },
+		{ TV_SPIKE, 0 },
 		{ TV_ARROW, SV_AMMO_NORMAL },
 		{ TV_ARROW, SV_AMMO_NORMAL },
 

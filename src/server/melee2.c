@@ -728,6 +728,122 @@ static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
 }
 
 
+bool monst_check_antimagic(int Ind, int m_idx)
+{
+//	player_type *p_ptr;
+	monster_type	*m_ptr = &m_list[m_idx];
+	monster_race    *r_ptr = race_inf(m_ptr);
+
+	worldpos *wpos = &m_ptr->wpos;
+
+	cave_type **zcave;
+	int i, x, y, x2 = m_ptr->fx, y2 = m_ptr->fy;
+	int dis, antichance;	// , antidis;
+
+	if (!(zcave=getcave(wpos))) return(FALSE);
+
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		player_type *q_ptr = Players[i];
+
+		/* Skip disconnected players */
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Skip players not on this depth */
+		if (!inarea(&q_ptr->wpos, wpos)) continue;
+
+		/* Compute distance */
+//		dis = distance(y2, x2, q_ptr->py, q_ptr->px);
+		if (distance(y2, x2, q_ptr->py, q_ptr->px) > q_ptr->antimagic_dis)
+			continue;
+
+//		antidis = q_ptr->antimagic_dis;
+
+		antichance = q_ptr->antimagic;
+
+//		antichance -= r_ptr->level;
+
+		if (antichance > 95) antichance = 95;
+
+		/* Reduction for party */
+		/*
+		if ((i != Ind) && player_in_party(p_ptr->party, i))
+			antichance >>= 1;
+		*/
+
+		if (i != Ind) antichance >>= 1;
+
+//		if (dis > antidis) antichance = 0;
+
+		/* Got disrupted ? */
+		if (magik(antichance))
+		{
+			char		m_name[80];
+			/* Get the monster name (or "it") */
+			monster_desc(Ind, m_name, m_idx, 0x00);
+
+//			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
+			if (i == Ind) msg_format(Ind, "\377oYour anti-magic shield disrupts %s's attemps.", m_name);
+			else msg_format(Ind, "%s's anti-magic shield disrupts %s's attemps.", q_ptr->name, m_name);
+			return TRUE;
+		}
+	}
+
+#if 0
+	/* Use this code if monster's antimagic should hinder other monsters'
+	 * casting.
+	 * */
+	/* Scan the maximal area of radius "MONSTER_ANTIDIS" */
+	for (y = y2 - MONSTER_ANTIDIS; y <= y2 + MONSTER_ANTIDIS; y++)
+	{
+		for (x = x2 - MONSTER_ANTIDIS; x <= x2 + MONSTER_ANTIDIS; x++)
+		{
+			/* Ignore "illegal" locations */
+			if (!in_bounds2(wpos, y, x)) continue;
+
+			if ((m_idx = zcave[y][x].m_idx)<=0) continue;
+
+			/* Enforce a "circular" explosion */
+			if ((dis = distance(y2, x2, y, x)) > MONSTER_ANTIDIS) continue;
+
+			m_ptr = &m_list[m_idx];	// pfft, bad design
+
+			/* dont use removed monsters */
+			if(!m_ptr->r_idx) continue;
+
+			r_ptr = race_inf(m_ptr);
+
+			if (!(r_ptr->flags7 & RF7_DISBELIEVE)) continue;
+
+			antichance = r_ptr->level / 2 + 20;
+			antidis = r_ptr->level / 15 + 3;
+
+			if (dis > antidis) continue;
+			if (antichance > 95) antichance = 95;
+
+			/* Got disrupted ? */
+			if (magik(antichance))
+			{
+				if (p_ptr->mon_vis[m_idx])
+				{
+					char m_name[80];
+					monster_desc(Ind, m_name, m_idx, 0);
+					msg_format(Ind, "%^s's anti-magic shield disrupts your attemps.", m_name);
+				}
+				else
+				{
+					msg_print(Ind, "An anti-magic shield disrupts your attemps.");
+				}
+				return TRUE;
+			}
+		}
+	}
+#endif	// 0
+
+	/* Assume no antimagic */
+	return FALSE;
+}
+
 
 /*
  * Creatures can cast spells, shoot missiles, and breathe.
@@ -868,11 +984,12 @@ bool make_attack_spell(int Ind, int m_idx)
 	      }
 	  }
 #endif	// 0
-	
+#if 0	
 	antichance = p_ptr->antimagic;
 	antidis = p_ptr->antimagic_dis;
 
 	if (m_ptr->cdis > antidis) antichance = 0;
+#endif	// 0
 
 
 	/* XXX XXX XXX Handle "track_target" option (?) */
@@ -1023,11 +1140,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 96+0:
 		{
 			if (!direct) break;
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			msg_format(Ind, "%^s makes a high pitched shriek.", m_name);
 			aggravate_monsters(Ind, m_idx);
@@ -1052,11 +1165,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 96+2:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			{
-				msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-				break;
-			}
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons an animal!", m_name);
 			for (k = 0; k < 1; k++)
@@ -1474,11 +1583,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+0:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts an acid ball.", m_name);
 			breath(Ind, m_idx, GF_ACID,
@@ -1491,11 +1596,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+1:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a lightning ball.", m_name);
 			breath(Ind, m_idx, GF_ELEC,
@@ -1508,11 +1609,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+2:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a fire ball.", m_name);
 			breath(Ind, m_idx, GF_FIRE,
@@ -1525,11 +1622,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+3:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a frost ball.", m_name);
 			breath(Ind, m_idx, GF_COLD,
@@ -1542,11 +1635,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+4:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a stinking cloud.", m_name);
 			breath(Ind, m_idx, GF_POIS,
@@ -1559,11 +1648,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+5:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a nether ball.", m_name);
 			breath(Ind, m_idx, GF_NETHER, (50 + damroll(10, 10) + rlev), 0);
@@ -1575,11 +1660,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+6:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s gestures fluidly.", m_name);
 			msg_print(Ind, "You are engulfed in a whirlpool.");
@@ -1592,11 +1673,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+7:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles powerfully.", m_name);
 			else msg_format(Ind, "%^s invokes a mana storm.", m_name);
 			breath(Ind, m_idx, GF_MANA,
@@ -1608,11 +1685,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+8:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles powerfully.", m_name);
 			else msg_format(Ind, "%^s invokes a darkness storm.", m_name);
 			breath(Ind, m_idx, GF_DARK,
@@ -1625,11 +1698,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+9:
 		{
 			if (!direct) break;
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (p_ptr->csp)
 			{
 				int r1;
@@ -1924,15 +1993,11 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (!direct) break;
 			disturb(Ind, 1, 0);
 #if 0	// oops, this cannot be 'magic' ;)
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 #endif	// 0
 //			if (blind) msg_format(Ind, "%^s mumbles coldly.", m_name); else
 			msg_format(Ind, "%^s mumbles coldly.", m_name);
-			if (rand_int(150) < p_ptr->skill_sav)
+			if (rand_int(120) < p_ptr->skill_sav)
 			{
 				msg_print(Ind, "You resist the effects!");
 			}
@@ -1947,11 +2012,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+16:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a acid bolt.", m_name);
 			bolt(Ind, m_idx, GF_ACID,
@@ -1964,11 +2025,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+17:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a lightning bolt.", m_name);
 			bolt(Ind, m_idx, GF_ELEC,
@@ -1981,11 +2038,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+18:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a fire bolt.", m_name);
 			bolt(Ind, m_idx, GF_FIRE,
@@ -1998,11 +2051,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+19:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a frost bolt.", m_name);
 			bolt(Ind, m_idx, GF_COLD,
@@ -2022,11 +2071,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+21:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a nether bolt.", m_name);
 			bolt(Ind, m_idx, GF_NETHER,
@@ -2039,11 +2084,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+22:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a water bolt.", m_name);
 			bolt(Ind, m_idx, GF_WATER,
@@ -2055,11 +2096,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+23:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a mana bolt.", m_name);
 			bolt(Ind, m_idx, GF_MANA,
@@ -2071,11 +2108,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+24:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a plasma bolt.", m_name);
 			bolt(Ind, m_idx, GF_PLASMA,
@@ -2087,11 +2120,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+25:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts an ice bolt.", m_name);
 			bolt(Ind, m_idx, GF_ICE,
@@ -2104,11 +2133,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+26:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a magic missile.", m_name);
 			bolt(Ind, m_idx, GF_MISSILE,
@@ -2120,11 +2145,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+27:
 		{
 			if (!direct) break;
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles, and you hear scary noises.", m_name);
 			else msg_format(Ind, "%^s casts a fearful illusion.", m_name);
@@ -2149,11 +2170,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (!direct) break;
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a spell, burning your eyes!", m_name);
 			if (p_ptr->resist_blind)
@@ -2176,11 +2193,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+29:
 		{
 			if (!direct) break;
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles, and you hear puzzling noises.", m_name);
 			else msg_format(Ind, "%^s creates a mesmerising illusion.", m_name);
@@ -2204,11 +2217,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+30:
 		{
 			if (!direct) break;
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			msg_format(Ind, "%^s drains power from your muscles!", m_name);
 			if (p_ptr->free_act)
@@ -2231,11 +2240,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 128+31:
 		{
 			if (!direct) break;
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s stares deep into your eyes!", m_name);
@@ -2261,11 +2266,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+0:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind)
 			{
 				msg_format(Ind, "%^s mumbles.", m_name);
@@ -2319,11 +2320,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+2:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 
 			/* Message */
 			if (blind)
@@ -2405,11 +2402,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+4:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			msg_format(Ind, "%^s blinks away.", m_name);
 			teleport_away(m_idx, 10);
 			break;
@@ -2419,11 +2412,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+5:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			msg_format(Ind, "%^s teleports away.", m_name);
 			teleport_away(m_idx, MAX_SIGHT * 2 + 5);
 			break;
@@ -2456,11 +2445,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+8:
 		{
 			if (!direct) break;
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			msg_format(Ind, "%^s commands you to return.", m_name);
 			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
@@ -2471,11 +2456,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+9:
 		{
 			if (!direct) break;
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			msg_format(Ind, "%^s teleports you away.", m_name);
 			teleport_player(Ind, 100);
@@ -2486,11 +2467,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+10:
 		{
 			if (!direct) break;
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles strangely.", m_name);
 			else msg_format(Ind, "%^s gestures at your feet.", m_name);
@@ -2530,11 +2507,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+12:
 		{
 			if (!direct) break;
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s gestures in shadow.", m_name);
@@ -2546,11 +2519,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+13:
 		{
 			if (!direct) break;
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles, and then cackles evilly.", m_name);
 			else msg_format(Ind, "%^s casts a spell and cackles evilly.", m_name);
@@ -2629,11 +2598,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+18:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons help!", m_name);
 			for (k = 0; k < 1; k++)
@@ -2648,11 +2613,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+19:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons monsters!", m_name);
 			for (k = 0; k < 8; k++)
@@ -2667,11 +2628,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+20:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons ants.", m_name);
 			for (k = 0; k < 6; k++)
@@ -2686,11 +2643,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+21:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons spiders.", m_name);
 			for (k = 0; k < 6; k++)
@@ -2705,11 +2658,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+22:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons hounds.", m_name);
 			for (k = 0; k < 6; k++)
@@ -2724,11 +2673,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+23:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons hydras.", m_name);
 			for (k = 0; k < 6; k++)
@@ -2743,11 +2688,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+24:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons an angel!", m_name);
 			for (k = 0; k < 1; k++)
@@ -2762,11 +2703,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+25:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons a hellish adversary!", m_name);
 			for (k = 0; k < 1; k++)
@@ -2781,11 +2718,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+26:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons an undead adversary!", m_name);
 			for (k = 0; k < 1; k++)
@@ -2800,11 +2733,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+27:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons a dragon!", m_name);
 			for (k = 0; k < 1; k++)
@@ -2819,11 +2748,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+28:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons greater undead!", m_name);
 			for (k = 0; k < 8; k++)
@@ -2841,11 +2766,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+29:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons ancient dragons!", m_name);
 			for (k = 0; k < 8; k++)
@@ -2863,11 +2784,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+30:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons mighty undead opponents!", m_name);
 			for (k = 0; k < 8; k++)
@@ -2889,11 +2806,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case 160+31:
 		{
 			disturb(Ind, 1, 0);
-			if (magik(antichance))
-			  {
-			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
-			    break;
-			  }
+			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons special opponents!", m_name);
 			for (k = 0; k < 8; k++)

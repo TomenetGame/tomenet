@@ -15,7 +15,16 @@
 #include "angband.h"
 
 
-
+/* 
+ * (Mass) Genocide spell being way too powerful, the caster's HP is halved
+ * if this option is set.
+ * Also, geno won't work if inside a vault(icky).		- Jir -
+ */
+#define SEVERE_GENO
+/*
+ * Further, each monster has (level) in RESIST_GENO chance of surviving this.
+ */
+#define RESIST_GENO 250
 
 
 /*
@@ -2822,14 +2831,19 @@ bool genocide(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		i;
+	int		i, tmp;
 
 	char	typ;
 
 	bool	result = FALSE;
 
-	int d = 999, tmp;
+//	int d = 999, tmp;
 
+	worldpos *wpos=&p_ptr->wpos;
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return FALSE;
+
+#if 0	// what does this do??
 	/* Search all monsters and find the closest */
 	for (i = 1; i < m_max; i++)
 	{
@@ -2861,12 +2875,13 @@ bool genocide(int Ind)
 	{
 		return FALSE;
 	}
+#endif	// 0
 
 	/* Delete the monsters of that "type" */
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type	*m_ptr = &m_list[i];
-                monster_race    *r_ptr = race_inf(m_ptr);
+		monster_race    *r_ptr = race_inf(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -2880,12 +2895,25 @@ bool genocide(int Ind)
 		/* Skip monsters not on this depth */
 		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
+		/* Skip those immune */
+		if (r_ptr->flags9 & RF9_IM_TELE) continue;
+
+		/* Roll for resistance */
+		tmp = r_ptr->level;
+#ifdef RESIST_GENO
+		if (randint(RESIST_GENO) < tmp) continue;
+#endif	// RESIST_GENO
+
+#ifdef SEVERE_GENO
+		/* Not valid inside a vault */
+		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
+#endif	// SEVERE_GENO
+
 		/* Delete the monster */
-                if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster_idx(i);
-                else continue;
+		delete_monster_idx(i);
 
 		/* Take damage */
-		take_hit(Ind, randint(4), "the strain of casting Genocide");
+		take_hit(Ind, randint(4 + tmp >> 3), "the strain of casting Genocide");
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_HP);
@@ -2902,6 +2930,14 @@ bool genocide(int Ind)
 		/* Take note */
 		result = TRUE;
 	}
+
+#ifdef SEVERE_GENO
+		if (!p_ptr->death && result)
+			take_hit(Ind, p_ptr->chp >> 1, "the strain of casting Genocide");
+
+		/* Redraw */
+		p_ptr->redraw |= (PR_HP);
+#endif	// SEVERE_GENO
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
@@ -2920,9 +2956,13 @@ bool mass_genocide(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		i;
+	int		i, tmp;
 
 	bool	result = FALSE;
+
+	worldpos *wpos=&p_ptr->wpos;
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return FALSE;
 
 	/* Delete the (nearby) monsters */
 	for (i = 1; i < m_max; i++)
@@ -2942,15 +2982,29 @@ bool mass_genocide(int Ind)
 		/* Skip distant monsters */
 		if (m_ptr->cdis > MAX_SIGHT) continue;
 
+		/* Skip those immune */
+		if (r_ptr->flags9 & RF9_IM_TELE) continue;
+
+		/* Roll for resistance */
+		tmp = r_ptr->level;
+#ifdef RESIST_GENO
+		if (randint(RESIST_GENO) < tmp) continue;
+#endif	// RESIST_GENO
+
+#ifdef SEVERE_GENO
+		/* Not valid inside a vault */
+		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY && !p_ptr->admin_dm)
+			continue;
+#endif	// SEVERE_GENO
+
 		/* Delete the monster */
-                if (!(r_ptr->flags9 & RF9_IM_TELE)) delete_monster_idx(i);
-                else continue;
+		delete_monster_idx(i);
 
 		/* Hack -- visual feedback */
 		/* does not effect the dungeon master, because it disturbs his movement
 		 */
 		if (!p_ptr->admin_dm)
-			take_hit(Ind, randint(3), "the strain of casting Mass Genocide");
+			take_hit(Ind, randint(3 + tmp >> 3), "the strain of casting Genocide");
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_HP);
@@ -2967,6 +3021,15 @@ bool mass_genocide(int Ind)
 		/* Note effect */
 		result = TRUE;
 	}
+
+#ifdef SEVERE_GENO
+	if (!p_ptr->death && result)
+			take_hit(Ind, p_ptr->chp >> 1, "the strain of casting Genocide");
+
+	/* Redraw */
+	p_ptr->redraw |= (PR_HP);
+#endif
+
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);

@@ -3043,6 +3043,18 @@ int Send_King(byte type)
 	return 1;
 }
 
+int Send_spike(int dir)
+{
+	int	n;
+
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_SPIKE, dir)) <= 0)
+	{
+		return n;
+	}
+
+	return 1;
+}
+
 #ifdef WINDOWS
 int gettimeofday(struct timeval *timenow)
 {

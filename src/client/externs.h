@@ -283,6 +283,7 @@ extern void cmd_master(void);
 extern void cmd_master_aux_level(void);
 extern void cmd_master_aux_build(void);
 extern void cmd_master_aux_summon(void);
+extern void cmd_spike(void);
 
 /* c-files.c */
 extern void text_to_ascii(char *buf, cptr str);
@@ -459,6 +460,7 @@ extern int Send_master(s16b command, cptr buf);
 extern int Send_clear_buffer(void);
 extern int Send_King(byte type);
 extern int Send_admin_house(int dir, cptr buf);
+extern int Send_spike(int dir);
 
 
 

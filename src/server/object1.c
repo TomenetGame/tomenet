@@ -1962,50 +1962,6 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	/* Hack -- Append "Artifact" or "Special" names */
 	if (known)
 	{
-                /* -TM- Hack -- Add false-artifact names */
-                /* Dagger inscribed {@w0#of Smell} will be named
-                 * Dagger of Smell {@w0} */
-                if (o_ptr->note)
-                {
-                        cptr str = strchr(quark_str(o_ptr->note), '#');
-
-                        /* Add the false name */
-                        if (str)
-                        {
-                                t = object_desc_chr(t, ' ');
-                                t = object_desc_str(t, &str[1]);
-                        }
-                }
-
-		/* Grab any randart name */
-                if (o_ptr->name1 == ART_RANDART)
-		{
-			/* Create the name */
-			randart_name(o_ptr, tmp_val);
-			
-			t = object_desc_chr(t, ' ');
-			t = object_desc_str(t, tmp_val);
-		}
-			
-		/* Grab any artifact name */
-		else if (o_ptr->name1)
-		{
-			artifact_type *a_ptr = &a_info[o_ptr->name1];
-
-			t = object_desc_chr(t, ' ');
-			t = object_desc_str(t, (a_name + a_ptr->name));
-		}
-#if 0
-		/* Grab any ego-item name */
-		else if (o_ptr->name2)
-		{
-			ego_item_type *e_ptr = &e_info[o_ptr->name2];
-
-			t = object_desc_chr(t, ' ');
-			t = object_desc_str(t, (e_name + e_ptr->name));
-		}
-#endif	// 0
-
 		/* Grab any ego-item name */
 //                if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
 		if ((o_ptr->name2) && (o_ptr->tval != TV_ROD_MAIN))
@@ -2026,6 +1982,39 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 #endif	// 0
 		}
 
+		/* Grab any randart name */
+                if (o_ptr->name1 == ART_RANDART)
+		{
+			/* Create the name */
+			randart_name(o_ptr, tmp_val);
+			
+			t = object_desc_chr(t, ' ');
+			t = object_desc_str(t, tmp_val);
+		}
+			
+		/* Grab any artifact name */
+		else if (o_ptr->name1)
+		{
+			artifact_type *a_ptr = &a_info[o_ptr->name1];
+
+			t = object_desc_chr(t, ' ');
+			t = object_desc_str(t, (a_name + a_ptr->name));
+		}
+
+		/* -TM- Hack -- Add false-artifact names */
+		/* Dagger inscribed {@w0#of Smell} will be named
+		 * Dagger of Smell {@w0} */
+		if (o_ptr->note)
+		{
+			cptr str = strchr(quark_str(o_ptr->note), '#');
+
+			/* Add the false name */
+			if (str)
+			{
+				t = object_desc_chr(t, ' ');
+				t = object_desc_str(t, &str[1]);
+			}
+		}
 	}
 
 	/* Print level and owning */

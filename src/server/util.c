@@ -1581,6 +1581,20 @@ void do_slash_cmd(int Ind, cptr message){
 		}
 		return;
 	}
+	else if ((prefix(message, "/rfe")) ||
+			prefix(message, "/bug"))
+	{
+		if (colon)
+		{
+			rfe_printf("[%s]%s\n", p_ptr->name, colon);
+		}
+		else
+		{
+			msg_print(Ind, "\377oUsage: /rfe (message)");
+		}
+		return;
+	}
+
 	else
 	{
 		/* cut tokens off (thx Ascrep(DEG)) */
@@ -2479,16 +2493,53 @@ void do_slash_cmd(int Ind, cptr message){
 				}
 				return;
 			}
+			else if (prefix(message, "/enlight") ||
+					prefix(message, "/en"))
+			{
+				wiz_lite(Ind);
+				(void)detect_treasure(Ind);
+				(void)detect_object(Ind);
+				(void)detect_sdoor(Ind);
+				(void)detect_trap(Ind);
+				if (k)
+				{
+					(void)detect_trap(Ind);
+					identify_pack(Ind);
+					self_knowledge(Ind);
+
+					/* Combine the pack */
+					p_ptr->notice |= (PN_COMBINE);
+
+					/* Window stuff */
+					p_ptr->window |= (PW_INVEN | PW_EQUIP);
+				}
+
+				return;
+			}
+			else if (prefix(message, "/equip") ||
+					prefix(message, "/eq"))
+			{
+				admin_outfit(Ind);
+				return;
+			}
+#if 0	// pfft, it was not suitable for slash-commands
+			/* view RFE file. this should be able to handle log file also. */
+			else if (prefix(message, "/less")) 
+			{
+				do_cmd_view_rfe(Ind);
+				return;
+			}
+#endif	// 0
 			else
 			{
-				msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me rec ref tag target untag;");
-				msg_print(Ind, "  art cfg clv geno id kick lua shutdown sta trap unst wish");
+				msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me rec ref rfe tag target untag;");
+				msg_print(Ind, "  art cfg clv en eq geno id kick lua shutdown sta trap unst wish");
 				return;
 			}
 		}
 		else
 		{
-			msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me rec ref tag target untag;");
+			msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me rec ref rfe tag target untag;");
 //			msg_print(Ind, "  /quaff is also available for old client users :)");
 			msg_print(Ind, "  /dis \377rdestroys \377wall the uninscribed items in your inventory!");
 			return;

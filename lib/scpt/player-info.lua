@@ -101,3 +101,18 @@ function init()
 	pern_dofile(Ind, "jir.lua")
 end
 
+-- get all the spells
+function learn()
+local i = 0
+local p = Players[Ind+1]
+-- 0xffffffff
+	p.spell_learned1 = 4294967295
+	p.spell_learned2 = 4294967295
+	while (i < 64)
+	do
+		i = i + 1
+		p.spell_order[i] = i
+	end
+
+end
+

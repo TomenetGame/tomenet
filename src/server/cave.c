@@ -1093,28 +1093,38 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			/* Hack to display detected traps */
 			if ((c_ptr->special.type == CS_TRAPS) )
-//					&& ((c_ptr->special.ptr)->found))
+				// && ((c_ptr->special.ptr)->found))
 			{
 				trap_type *t_ptr = c_ptr->special.ptr;
 				if (t_ptr->found)
 				{
-					/* If trap isn't on door display it */
-//					if (!(f_ptr->flags1 & FF1_DOOR)) c = '^';
-					(*cp) = '^';
-
-					/* Add attr */
-					a = t_info[t_ptr->t_idx].color;
-					/* Get a new color with a strange formula :) */
-					if (t_info[t_ptr->t_idx].flags & FTRAP_CHANGE)
+					/* Hack -- random hallucination */
+					if (p_ptr->image)
 					{
-						s32b tmp;
+//						image_random(ap, cp);
+						image_object(ap, cp);
+						a = randint(15);
+					}
+					else
+					{
+						/* If trap isn't on door display it */
+						// if (!(f_ptr->flags1 & FF1_DOOR)) c = '^';
+						(*cp) = '^';
 
-//						tmp = dun_level + dungeon_type + c_ptr->feat;
-						tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + c_ptr->feat;
+						/* Add attr */
+						a = t_info[t_ptr->t_idx].color;
+						/* Get a new color with a strange formula :) */
+						if (t_info[t_ptr->t_idx].flags & FTRAP_CHANGE)
+						{
+							s32b tmp;
 
-//						a = tmp % 16;
-						/* mega-hack: use trap-like colours only */
-						a = tmp % 6 + 1;
+							// tmp = dun_level + dungeon_type + c_ptr->feat;
+							tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + c_ptr->feat;
+
+							// a = tmp % 16;
+							/* mega-hack: use trap-like colours only */
+							a = tmp % 6 + 1;
+						}
 					}
 				}
 			}
@@ -1212,18 +1222,27 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				trap_type *t_ptr = c_ptr->special.ptr;
 				if (t_ptr->found)
 				{
-					/* Add attr */
-					a = t_info[t_ptr->t_idx].color;
-					//			a = t_info[TR_LIST(c_ptr)->t_idx].color;
-					/* Get a new color with a strange formula :) */
-					if (t_info[t_ptr->t_idx].flags & FTRAP_CHANGE)
+					/* Hack -- random hallucination */
+					if (p_ptr->image)
 					{
-						s32b tmp;
+						image_object(ap, cp);
+						a = randint(15);
+					}
+					else
+					{
+						/* Add attr */
+						a = t_info[t_ptr->t_idx].color;
+						//	a = t_info[TR_LIST(c_ptr)->t_idx].color;
+						/* Get a new color with a strange formula :) */
+						if (t_info[t_ptr->t_idx].flags & FTRAP_CHANGE)
+						{
+							s32b tmp;
 
-						tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + c_ptr->feat;
-//						tmp = dun_level + dungeon_type + c_ptr->feat;
+							tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + c_ptr->feat;
+							//tmp = dun_level + dungeon_type + c_ptr->feat;
 
-						a = tmp % 16;
+							a = tmp % 16;
+						}
 					}
 				}
 			}

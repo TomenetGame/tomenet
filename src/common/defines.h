@@ -346,6 +346,8 @@
 #define SPECIAL_FILE_SCORES	5
 #define SPECIAL_FILE_HELP	6
 #define SPECIAL_FILE_PLAYER_EQUIP      7
+#define SPECIAL_FILE_LOG		8
+#define SPECIAL_FILE_RFE		9
 
 
 /*
@@ -4626,3 +4628,5 @@ extern int PlayerUID;
 	((p_ptr->pclass == CLASS_WARRIOR) || \
 	 (p_ptr->pclass == CLASS_UNBELIEVER) || \
 	 (p_ptr->pclass == CLASS_MONK))
+
+#define is_admin(p_ptr) (p_ptr->admin_wiz || p_ptr->admin_dm)

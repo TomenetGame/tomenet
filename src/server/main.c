@@ -165,6 +165,12 @@ int main(int argc, char *argv[])
 	/* Open the file */
 	s_setup(buf);
 
+	/* Initialize the server rfe file */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "mangband.rfe");
+
+	/* Open the file */
+	s_setupr(buf);
+
 #ifdef SET_UID
 
 	/* Initialize the "time" checker */

@@ -1409,7 +1409,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          {
             if (p_ptr->msp==0) /* no sense saying this unless you never have mana */
             {
-               msg_format(Ind, "Suddenly you feel glad you're only a %s",p_ptr->cp_ptr->title);
+               msg_format(Ind, "Suddenly you feel glad you're only a %s.",p_ptr->cp_ptr->title);
             }
             else
             {
@@ -2412,7 +2412,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	   ident = FALSE;
    }
 
-   if (never_id) return (FALSE);
+   if (never_id || p_ptr->image || p_ptr->confused || p_ptr->blind) return (FALSE);
    else return ident;
 }
 
