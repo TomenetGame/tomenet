@@ -2494,16 +2494,16 @@ static void do_slash_cmd(int Ind, char *message)
 			/* Clear the target */
 			p_ptr->target_who = 0;
 
-			/* Recalculate bonuses */
-			p_ptr->update |= (PU_BONUS);
-
-			/* Recalculate torch */
-			p_ptr->update |= (PU_TORCH);
+			/* Update his view, light, bonuses, and torch radius */
+			p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH |
+					PU_DISTANCE | PU_SPELLS | PU_SKILL_INFO | PU_SKILL_MOD);
 
 			/* Recalculate mana */
 			p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
 
 			/* Redraw */
+			p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_HISTORY | PR_VARIOUS;
+
 			p_ptr->redraw |= (PR_HP | PR_GOLD | PR_BASIC | PR_PLUSSES);
 
 			/* Notice */

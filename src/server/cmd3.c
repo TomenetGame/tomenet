@@ -2086,8 +2086,9 @@ void do_cmd_look(int Ind, int dir)
 					p1 = t_name + t_info[t_idx].name;
 				else
 					p1 = "A trap";
+
+				p2 = " on ";
 			}
-			p2 = " on ";
 		}
 
 		/* Hack -- special description for store doors */

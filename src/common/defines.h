@@ -4974,6 +4974,8 @@ extern int PlayerUID;
 #define SKILL_AURA_FEAR         28
 #define SKILL_AURA_SHIVER       29
 #define SKILL_AURA_DEATH        30
+#define SKILL_HUNTING			31
+#define SKILL_TECHNIC			32
 
 #define MAX_SKILLS              70
 

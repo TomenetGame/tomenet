@@ -38,9 +38,11 @@ int find_realm_skill(int realm)
         case REALM_SHADOW:
                 return SKILL_SHADOW;
         case REALM_HUNT:
-                return SKILL_ARCHERY;
+//                return SKILL_ARCHERY;
+                return SKILL_HUNTING;
         case REALM_FIGHTING:
-                return SKILL_MASTERY;
+//                return SKILL_MASTERY;
+                return SKILL_TECHNIC;
 //        case REALM_PSI:
 //                return SKILL_;
         };
@@ -4065,7 +4067,8 @@ void do_cmd_fight(int Ind, int book, int spell)
 
 	int			i, j, sval;
 	int			chance;
-	int			plev = get_skill(p_ptr, SKILL_MASTERY);
+//	int			plev = get_skill(p_ptr, SKILL_MASTERY);
+	int			plev = get_skill(p_ptr, SKILL_TECHNIC);
 
 	object_type		*o_ptr;
 
@@ -4074,7 +4077,8 @@ void do_cmd_fight(int Ind, int book, int spell)
 	byte spells[64], num = 0;
 
 	/* Require spell ability */
-	if (!get_skill(p_ptr, SKILL_MASTERY))
+//	if (!get_skill(p_ptr, SKILL_MASTERY))
+	if (!get_skill(p_ptr, SKILL_TECHNIC))
 	{
 		msg_print(Ind, "You cannot use fighting techniques!");
 		return;
@@ -4350,7 +4354,8 @@ void do_cmd_fight_aux(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int plev = get_skill(p_ptr, SKILL_MASTERY);
+//	int plev = get_skill(p_ptr, SKILL_MASTERY);
+	int plev = get_skill(p_ptr, SKILL_TECHNIC);
 
 	magic_type *s_ptr = &magic_info[REALM_FIGHTING].info[p_ptr->current_spell];
 
@@ -4970,7 +4975,8 @@ void do_cmd_hunt(int Ind, int book, int spell)
 
 	int			i, j, sval;
 	int			chance, beam;
-	int			plev = get_skill(p_ptr, SKILL_ARCHERY);
+//	int			plev = get_skill(p_ptr, SKILL_ARCHERY);
+	int			plev = get_skill(p_ptr, SKILL_HUNTING);
 
 	object_type		*o_ptr;
 
@@ -4986,7 +4992,8 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	if (check_antimagic(Ind)) antifail = TRUE;
 
 	/* Require spell ability */
-	if (!get_skill(p_ptr, SKILL_ARCHERY))
+//	if (!get_skill(p_ptr, SKILL_ARCHERY))
+	if (!get_skill(p_ptr, SKILL_HUNTING))
 	{
 		msg_print(Ind, "You cannot cast spells!");
 		return;
@@ -5083,7 +5090,8 @@ void do_cmd_hunt(int Ind, int book, int spell)
 //		if (interfere(Ind, cfg.spell_interfere * 2)) return;
 		/* XXX this should be different skill (like SKILL_HUNT) */
 		if (interfere(Ind, cfg.spell_interfere * 2 *
-					(100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
+//					(100 - get_skill_scale(p_ptr, SKILL_ARCHERY, 50)) / 100))
+					(100 - get_skill_scale(p_ptr, SKILL_HUNTING, 50)) / 100))
 			return;
 
 		/* Hack -- preserve current 'realm' */
@@ -5334,7 +5342,7 @@ void do_cmd_shad_aux(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int plev = get_skill(p_ptr, SKILL_ARCHERY);
+	int plev = get_skill(p_ptr, SKILL_SHADOW);
 
 	magic_type *s_ptr = &magic_info[REALM_SHADOW].info[p_ptr->current_spell];
 

@@ -16,6 +16,14 @@
 #include "angband.h"
 
 
+/*
+ * Inscribe the books automatically.
+ * TODO: make it a client option.
+ */
+// DGDGDGDG -- na, dont let tehm be lazy
+// Alas, I'm too lazy	- Jir -
+#define AUTO_INSCRIBER
+
 
 /*
  * Excise a dungeon object from any stacks
@@ -6455,7 +6463,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 #endif
 
         /* Auto-inscriber */
-#if 0 // DGDGDGDG -- na, dont let tehm be lazy
+#ifdef AUTO_INSCRIBER
 #if 0	// not working well with the new skill system
 	if ((o_ptr->tval == p_ptr->mp_ptr->spell_book) && (!o_ptr->note) && (can_use(Ind, o_ptr)))
 	{

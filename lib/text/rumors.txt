@@ -7,7 +7,7 @@
 # You should manually write the total # of rumous (lines - 10).
 
 N:*:Default
-614
+617
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -622,6 +622,8 @@ They say that without flintstone you cannot light a {ytorch{w.
 Don't you know that it's a fool who digs with sword?
 Ever tried to hit your comrade with {Ba Potion of Healing{w?
 Ever tried to hit your comrade sorc with {Ba Potion of Restore Mana{w?
-They say that 
+Why a wand of plenty contains plenty of charges? Because it's easy to charge.
+They say that a crazy monster can drive you crazy too.
+They say that a tanker can explode and sink with one single smallest torpedo.
 They say that 
 They say that 

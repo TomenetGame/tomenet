@@ -1644,6 +1644,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 900,
                         },
                         {
+                                SKILL_TECHNIC,
+                                '+', 1000,
+                                '+', 900,
+                        },
+                        {
                                 SKILL_SWORD,
                                 '+', 0,
                                 '+', 700,
@@ -1662,6 +1667,26 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_ARCHERY,
                                 '+', 1000,
                                 '+', 700,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 300,
+                                '+', 300,
+                        },
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 500,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_DISARM,
+                                '+', 500,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_BACKSTAB,
+                                '+', 500,
+                                '+', 500,
                         },
                 }
 	},
@@ -1688,6 +1713,12 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_DEVICE,
                                 '+', 1000,
                                 '+', 1000,
+                        },
+						/* ok try it */
+                        {
+                                SKILL_SORCERY,
+                                '+', 500,
+                                '+', 200,
                         },
                 }
 	},
@@ -1762,19 +1793,14 @@ player_class class_info[MAX_CLASS] =
                                 '+', 900,
                         },
                         {
-                                SKILL_BACKSTAB,
-                                '+', 1000,
-                                '+', 1100,
-                        },
-                        {
                                 SKILL_ARCHERY,
-                                '+', 1000,
+                                '+', 500,
                                 '+', 800,
                         },
                         {
                                 SKILL_MAGIC,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 500,
                         },
                         {
                                 SKILL_SHADOW,
@@ -1785,6 +1811,26 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_DEVICE,
                                 '+', 1000,
                                 '+', 800,
+                        },
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_DISARM,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_STEALING,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_BACKSTAB,
+                                '+', 1000,
+                                '+', 1000,
                         },
                 }
         },
@@ -1826,6 +1872,31 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_ARCHERY,
                                 '+', 1000,
                                 '+', 800,
+                        },
+                        {
+                                SKILL_BOW,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_DISARM,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_STEALING,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_BACKSTAB,
+                                '+', 1000,
+                                '+', 1000,
                         },
                 }
 	},
@@ -1989,6 +2060,21 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 700,
                         },
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 500,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_DISARM,
+                                '+', 500,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_BACKSTAB,
+                                '+', 500,
+                                '+', 500,
+                        },
                 }
 	},
 
@@ -2023,12 +2109,42 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_POLEARM,
                                 '+', 0,
-                                '+', 700,
+                                '+', 1000,
                         },
                         {
                                 SKILL_ARCHERY,
                                 '+', 3000,
                                 '+', 1000,
+                        },
+                        {
+                                SKILL_BOW,
+                                '+', 3000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_XBOW,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_SLING,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_HUNTING,
+                                '+', 1000,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_DISARM,
+                                '+', 500,
+                                '+', 500,
                         },
                 }
 	},
@@ -2039,6 +2155,12 @@ player_class class_info[MAX_CLASS] =
 		45, 32, 28, 5, 32, 24, 64, 60,
 		15, 11, 10, 0,  0,  0, 40, 30,
 		6, 40,
+						/* I'm not quite sure what a Monk should be like.. */
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 1000,
+                                '+', 1000,
+                        },
 	},
 
 	{
@@ -3419,6 +3541,7 @@ cptr spell_names[MAX_REALM][64] =
  * The "pval" of a chest determines the quality of its treasure
  * Note that disarming a trap on a chest also removes the lock.
  */
+#if 0	// obsolete
 byte chest_traps[64] =
 {
 	0,					/* 0 == empty */
@@ -3486,6 +3609,7 @@ byte chest_traps[64] =
 	(CHEST_EXPLODE | CHEST_SUMMON),
 	(CHEST_EXPLODE | CHEST_SUMMON),
 };
+#endif	// 0
 
 
 
@@ -3914,8 +4038,14 @@ skill_type s_info[MAX_SKILLS] =
                 "General ability to use melee weapons",
 
                 /* Mkey desc/mkey */
+#if 0
                 "Use a fighting technic",
                 MKEY_FIGHTING,
+#else
+                NULL,
+                0,
+#endif	// 0
+
 
                 /* Effect on other skills */
                 { 0 },
@@ -4014,8 +4144,13 @@ skill_type s_info[MAX_SKILLS] =
                 "General ability to use ranged weapons",
 
                 /* Mkey desc/mkey */
+#if 0
                 "Use an archery book",
                 MKEY_ARCHERING,
+#else
+				NULL,
+				0,
+#endif	// 0
 
                 /* Effect on other skills */
                 { 0 },
@@ -4489,6 +4624,46 @@ skill_type s_info[MAX_SKILLS] =
                 /* Flags */
                 0,
         },
+        {
+                "Hunting Lore",
+                "Ability to cast hunting spells.",
+
+                /* Mkey desc/mkey */
+                "Use an archery book",
+                MKEY_ARCHERING,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Fighting Technic",
+                "Ability to perform special fighting technics.",
+
+                /* Mkey desc/mkey */
+                "Use a fighting technic",
+                MKEY_FIGHTING,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
 };
 
 /*
@@ -4504,10 +4679,12 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_SWORD, SKILL_CRITS },
         { SKILL_MASTERY, SKILL_POLEARM },
         { SKILL_MASTERY, SKILL_HAFTED },
+        { SKILL_MASTERY, SKILL_TECHNIC },
         { SKILL_COMBAT, SKILL_ARCHERY },
         { SKILL_ARCHERY, SKILL_SLING },
         { SKILL_ARCHERY, SKILL_BOW },
         { SKILL_ARCHERY, SKILL_XBOW },
+        { SKILL_ARCHERY, SKILL_HUNTING },
 
         { -1, SKILL_MAGIC },
         { SKILL_MAGIC, SKILL_DEVICE },

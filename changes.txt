@@ -1111,10 +1111,14 @@ To find the latest change quickly, search ==== :)
 - some parchments.
 - auto-inscriber reimplemented.
 - changes in skill reflect to the spells list at once.
+- chest dies nicely.
+- Hunting and Technic skills.
 [B] some spells are shown as 'unknown' even when castable
 [B] Ghost powers were broken
 [B] get_spell was messed due to sval/xtra1 hack :(
 [B] 'directional' spells didn't work if not of original realm.
+[B] inventory wasn't refreshed after some scrolls(eg. id,enchant) are used.
+[B] 'A  on broken door'. (do_cmd_look)
 
 22/06/2002 (Yakina)
 - updates needed for bcc.  Thanks Yakina for courtesy.
@@ -1294,32 +1298,6 @@ memo and questions:
 
 ==== below this line are RFEs collected so far (good or bad) ====
 [minor ones]
-- more equipment slots in general (like Bracer)
-- enhanced help system (imo we cannot beat web browsers anyway..)
-  + at least, jump and colour tags are needed.
-- some measures to 'cheezy' admins (at least some warnings)
-- 'hand to(give)' command
-- NO_GHOST, but not HELLISH mode
-- vision sharing among the members of a party
-- sth should be done with all those 'attacking' magic devices no1 uses,
-  such as fire bolt wand/rod..
-- visual effect when teleporting, so that players won't lose sight of '@'.
-- add a command to *completely* redraw the screen.
-- enlarge 'destroy traps' spell radius (but traps may 'resist' it)
-- make wand of haste monster etc. friend-castable
-- implement project_m
-- some places that renders special services(eg. curing, id, *ID*, enchant etc)
-  * no single town should contain all of them!
-- client option for verbosity;
-  msg_print(Ind, importance, "Vlad was here!");
-- smoother screen scroll (currently 1/2.. perhaps 1/4?)
-- some methods(spell?) to detect vault entrance, so that ppl won't peek
-  v_info.txt ...
-- resurrect 'level feelings'
-- check_st_anchor() should take distance into account?
-- allow 'guest' account for invite-only server
-- avoid landing in the middle of a lake (river is ok)
-- separate GoI into 'vs.spell' and 'vs.melee'.
 - party, guild and pk (players' interaction) codes:
   + pk via missile/spell should be punished?
   + player attacked by another player should be able to strike back at once?
@@ -1327,6 +1305,8 @@ memo and questions:
   + not only 'attempt' but also 'commission' of pk should be punished.
   + ball spell should harm neutral players somewhat
     (or warrior&sorc combination will be too mighty)
+  + vision sharing among the members of a party
+  + make wand of haste monster etc. friend-castable
 - monsters:
   + disarming (like ratling duelist chez AD*M)
   + monster digging should reflects the solidity of wall types
@@ -1363,11 +1343,39 @@ memo and questions:
   + lowbies (<lv10?) should be immune to Black Breath?
   + raise stats when gaining level, lower ones first
     (better wait for ToME skill system?)
+  + more equipment slots in general (like Bracer)
+  + NO_GHOST, but not HELLISH mode
 - combat:
   + players should be able to interfere monsters' firing/casting?
   + 2-weapon combat
   + DEX should affect missile to-hit? (or maybe done with skill)
-  + more RBM and RMEs (like seducing)
+  + more RBM and RMEs (like seducing, switching place)
+- magic:
+  + sth should be done with all those 'attacking' magic devices no1 uses,
+	such as fire bolt wand/rod..
+  + enlarge 'destroy traps' spell radius (but traps may 'resist' it)
+  + implement project_m
+  + check_st_anchor() should take distance into account?
+  + separate GoI into 'vs.spell' and 'vs.melee'.
+  + avoid landing in the middle of a lake (river is ok)
+  + some methods(spell?) to detect vault entrance, so that ppl won't peek
+    v_info.txt ...
+- user interface:
+  + query for selling/buying houses.
+  + visual effect when teleporting, so that players won't lose sight of '@'.
+  + add a command to *completely* redraw the screen.
+  + smoother screen scroll (currently 1/2.. perhaps 1/4?)
+  - enhanced help system (imo we cannot beat web browsers anyway..)
+    + at least, jump and colour tags are needed.
+  + 'hand to(give)' command
+  + client option for verbosity;
+    msg_print(Ind, importance, "Vlad was here!");
+- misc:
+  + some measures to 'cheezy' admins (at least some warnings)
+  + some places that renders special services(eg. curing, id, *ID*, enchant etc)
+    * no single town should contain all of them!
+  + resurrect 'level feelings'
+  + allow 'guest' account for invite-only server
   
 [major ones]
 - NPC/pet/golem/slave

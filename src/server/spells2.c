@@ -2954,6 +2954,9 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	p_ptr->current_enchant_a = -1;
 	p_ptr->current_enchant_flag = -1;
 
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
 	/* Something happened */
 	return (TRUE);
 }
@@ -3031,6 +3034,9 @@ bool ident_spell_aux(int Ind, int item)
 	}
 
 	p_ptr->current_identify = 0;
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Something happened */
 	return (TRUE);

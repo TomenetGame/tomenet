@@ -161,9 +161,19 @@ void increase_skill(int Ind, int i)
 	/* Update the client */
 	Send_skill_info(Ind, i);
 
-	/* Update the spells */
-	p_ptr->window |= PW_SPELL;
-        p_ptr->redraw |= PR_STUDY;
+	/* Tell the server to redraw the player's display */
+	p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS;
+	p_ptr->redraw |= PR_PLUSSES;
+	p_ptr->redraw |= PR_STUDY;
+
+	/* Update his view, light, bonuses, and torch radius */
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE |
+			PU_SPELLS | PU_SKILL_INFO | PU_SKILL_MOD);
+	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
+
+	/* Update his inventory, equipment, and spell info */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
+
 }
 
 

@@ -366,6 +366,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 		/* Drop some objects (non-chests) */
 		for (; number > 0; --number)
 		{
+#if 0
 			/* Try 20 times per item */
 			for (i = 0; i < 20; ++i)
 			{
@@ -376,6 +377,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				scatter(wpos, &ny, &nx, y, x, d, 0);
 				/* Must be a clean floor grid */
 				if (!cave_clean_bold(zcave, ny, nx)) continue;
+#endif	// 0
 
 				/* Opening a chest */
 				opening_chest = TRUE;
@@ -386,13 +388,13 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* Small chests often drop gold */
 				if (small && (rand_int(100) < 75))
 				{
-					place_gold(wpos, ny, nx);
+					place_gold(wpos, y, x);
 				}
 
 				/* Otherwise drop an item */
 				else
 				{
-					place_object(wpos, ny, nx, FALSE, FALSE, default_obj_theme);
+					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
 				}
 
 				/* Reset the object level */
@@ -401,6 +403,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* No longer opening a chest */
 				opening_chest = FALSE;
 
+#if 0
 				/* Notice it */
 				note_spot(Ind, ny, nx);
 
@@ -416,6 +419,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* Successful placement */
 				break;
 			}
+#endif	// 0
 		}
 	}
 
@@ -1524,11 +1528,13 @@ void do_cmd_disarm(int Ind, int dir)
 				msg_print(Ind, "The chest is not trapped.");
 			}
 
+#if 0
 			/* No traps to find. */
 			else if (!chest_traps[o_ptr->pval])
 			{
 				msg_print(Ind, "The chest is not trapped.");
 			}
+#endif	// 0
 
 			/* Success (get a lot of experience) */
 			else if (rand_int(100) < j)

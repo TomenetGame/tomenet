@@ -676,7 +676,7 @@ Part VII. -- Command list
  d  Drop an item                         D  Disarm a trap
  e  Equipment list                       E  Eat some food
  f  Fire an item                         F  Fuel your lantern/torch
- g  Stay still (flip pickup)             G  Gain new spells/prayers
+ g  Stay still (flip pickup)             G  Gain skills
  h  buy or sell a House                  H  (unused)
  i  Inventory list                       I  (unused)
  j  Steal from other player              J  (unused)
@@ -693,7 +693,7 @@ Part VII. -- Command list
  u  Use a staff                          U  Use ghost powers
  v  Throw an item                        V  (unused)
  w  Wear/wield equipment                 W  (unused)
- x  (unused)                             X  View and acquire skills
+ x  (unused)                             X  (unused)
  y  (unused)                             Y  (unused)
  z  Zap a rod                            Z  (unused)
  !  Interact with system                ^A  (unused)
@@ -742,7 +742,7 @@ Part VII. -- Command list
  d  Drop an item                         D  Disarm a trap or chest
  e  Equipment list                       E  Eat some food
  f  Bash a door (force)                  F  Fuel your lantern/torch
- g  Stay still (flip pickup)             G  Gain new spells/prayers
+ g  Stay still (flip pickup)             G  Gain skills
  h  (walk - west)                        H  (run - west)
  i  Inventory list                       I  (Observe an item) not used
  j  (walk - south)                       J  (run - south)
@@ -796,5 +796,4 @@ Part VII. -- Command list
  \U use undead powers
  \# view score list
  \N activate class powers
- \X view and acquire skills
 

@@ -8,7 +8,7 @@
                                 "Lord of The Rings", J.R.R.Tolkien
  - Detect traps can NOT fail (Pfft)
  - TomeNET 4.0.0 development version
- - skill system is being implemented. ('X' or '\X' to check)
+ - skill system is being implemented. ('G' to check and enhance)
  - items can stack on the floor now. (but not inside a house!)
  - A guild system is implemented.  - Player alignment is coming soon?
  - Simple quests are available (say /quest)
