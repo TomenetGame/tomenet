@@ -1872,6 +1872,11 @@ static int Handle_login(int ind)
 		}
 	}
 
+	/* update the client files */
+	remote_update(NumPlayers, "scpt/spells.lua");
+	remote_update(NumPlayers, "scpt/s_convey.lua");
+	remote_update(NumPlayers, "scpt/s_aux.lua");
+
 	/* Tell the meta server about the new player */
 	Report_to_meta(META_UPDATE);
 
