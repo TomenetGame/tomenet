@@ -16,6 +16,10 @@ struct rplist{
 
 struct wpacket spk;
 
+long chk(char *s1, char *s2);
+void rem_players(short id);
+void add_rplayer(struct wpacket *wpk);
+
 int world_comm(int fd, int arg){
 	static char buffer[1024];
 	static char bpos=0;
@@ -23,7 +27,7 @@ int world_comm(int fd, int arg){
 	struct wpacket *wpk;
 	x=recv(fd, buffer+bpos, 1024-bpos, 0);
 	if(x>=sizeof(struct wpacket)){
-		wpk=buffer+bpos;
+		wpk=(struct wpacket*)(buffer+bpos);
 		switch(wpk->type){
 			case WP_CHAT:
 				/* TEMPORARY chat broadcast method */
