@@ -2478,7 +2478,6 @@ that keeps many algorithms happy.
  */
 #define PW_INVEN	0x00000001L	/* Display inven/equip */
 #define PW_EQUIP	0x00000002L	/* Display equip/inven */
-#define PW_SPELL	0x00000004L	/* Display spell list */
 #define PW_PLAYER	0x00000008L	/* Display character */
 /* xxx */
 /* xxx */
@@ -3022,6 +3021,7 @@ that keeps many algorithms happy.
      TR1_CON | TR1_CHR | TR1_LIFE | \
 	 TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
      TR1_SPEED | TR1_BLOWS | TR1_MANA | TR1_SPELL)
+//#define PW_SPELL	0x00000004L	/* Display spell list */
 #endif	/* 0 */
 
 #define TR5_PVAL_MASK   \

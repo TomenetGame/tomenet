@@ -367,314 +367,6 @@ static void spell_info(int Ind, char *p, int realm, int j)
 
 }
 
-
-/*
- * Print a list of spells (for browsing or casting)
- */
-void print_spells(int Ind, int realm, int book, byte *spell, int num)
-{
-	player_type *p_ptr = Players[Ind];
-
-	int			i, j;
-
-	magic_type		*s_ptr;
-
-	cptr		comment;
-
-	char		info[80];
-
-        char		out_val[160];
-
-	/* Dump the spells */
-	for (i = 0; i < num; i++)
-	{
-		/* Access the spell */
-		j = spell[i];
-
-		/* Access the spell */
-		s_ptr = &magic_info[realm].info[j];
-
-		/* Skip illegible spells */
-		if (s_ptr->slevel >= 99)
-		{
-			sprintf(out_val, "  %c) %-30s", I2A(i), "(illegible)");
-			Send_spell_info(Ind, realm, book, i, out_val);
-			continue;
-		}
-
-		/* XXX XXX Could label spells above the players level */
-
-		/* Get extra info */
-		spell_info(Ind, info, realm, j);
-
-		/* Use that info */
-		comment = info;
-
-#if 0 // no more learning
-		/* Analyze the spell */
-		if ((j < 32) ?
-		    ((p_ptr->spell_forgotten1[realm] & (1L << j))) :
-		    ((p_ptr->spell_forgotten2[realm] & (1L << (j - 32)))))
-		{
-			comment = " forgotten";
-		}
-		else if (!((j < 32) ?
-		           (p_ptr->spell_learned1[realm] & (1L << j)) :
-		           (p_ptr->spell_learned2[realm] & (1L << (j - 32)))))
-		{
-			comment = " unknown";
-		}
-		else if (!((j < 32) ?
-		           (p_ptr->spell_worked1[realm] & (1L << j)) :
-		           (p_ptr->spell_worked2[realm] & (1L << (j - 32)))))
-		{
-			comment = " untried";
-                }
-#else
-		if (!spell_okay(Ind, realm, j, TRUE))
-		{
-			comment = " unknown";
-		}
-#endif
-		/* Dump the spell --(-- */
-		sprintf(out_val, "  %c) %-30s%2d %4d %3d%%%s",
-		        I2A(i), spell_names[realm][j],
-		        s_ptr->slevel, s_ptr->smana, spell_chance(Ind, realm, s_ptr), comment);
-		Send_spell_info(Ind, realm, book, i, out_val);
-	}
-}
-
-/*
- * Peruse the spells/prayers in a Book
- *
- * Note that *all* spells in the book are listed
- */
-void do_cmd_browse(int Ind, object_type	*o_ptr)
-{
-	player_type *p_ptr = Players[Ind];
-
-	int			i, item, sval, realm;
-
-	byte		spell[64], num = 0;
-
-#if 0	// pointless..
-	/* No lite */
-	if (p_ptr->blind || no_lite(Ind))
-	{
-		msg_print(Ind, "You cannot see!");
-		return;
-	}
-
-	/* Confused */
-	if (p_ptr->confused)
-	{
-		msg_print(Ind, "You are too confused!");
-		return;
-	}
-#endif	// 0
-
-	/* Access the item's sval */
-	if (o_ptr)	/* paranoia */
-	{
-		sval = o_ptr->sval;
-		realm = find_realm(o_ptr->tval);
-	}
-	else
-	{
-		sval = 0;
-		realm = REALM_GHOST;
-	}
-
-	/* Extract spells */
-	for (i = 0; i < 64; i++)
-	{
-		/* Check for this spell */
-		if ((i < 32) ?
-		    (spell_flags[realm][sval][0] & (1L << i)) :
-		    (spell_flags[realm][sval][1] & (1L << (i - 32))))
-		{
-			/* Collect this spell */
-			spell[num++] = i;
-		}
-	}
-
-
-	/* Display the spells */
-	print_spells(Ind, realm, sval, spell, num);
-}
-
-
-
-#if 0
-/*
- * Study a book to gain a new spell/prayer
- */
-void do_cmd_study(int Ind, int book, int spell)
-{
-	player_type *p_ptr = Players[Ind];
-
-	int			i, sval;
-
-	int			j = -1;
-
-	cptr                    p = "spell";
-
-        object_type		*o_ptr;
-
-        int realm;
-
-	byte spells[64], num = 0;
-	
-	if (p_ptr->blind || no_lite(Ind))
-	{
-		msg_print(Ind, "You cannot see!");
-		return;
-	}
-
-	if (p_ptr->confused)
-	{
-		msg_print(Ind, "You are too confused!");
-		return;
-	}
-
-	if (!(p_ptr->new_spells))
-	{
-		msg_format(Ind, "You cannot learn any new %ss!", p);
-		return;
-	}
-
-	/* Get the item (in the pack) */
-	if (book >= 0)
-	{
-		o_ptr = &p_ptr->inventory[book];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - book];
-	}
-
-        if (!can_use(Ind, o_ptr))
-        {
-                msg_print(Ind, "You are not high level enough.");
-		return;
-        }
-
-	/* Access the item's sval */
-	sval = o_ptr->sval;
-
-        realm = find_realm(o_ptr->tval);
-
-	/* Mage -- Learn a selected spell */
-	if ((o_ptr->tval == TV_SORCERY_BOOK) || (o_ptr->tval == TV_MAGIC_BOOK) || (o_ptr->tval == TV_HUNT_BOOK) || (o_ptr->tval == TV_PSI_BOOK) || (o_ptr->tval == TV_SHADOW_BOOK) || (o_ptr->tval == TV_FIGHT_BOOK))
-	{
-		for (i = 0; i < 64; i++)
-		{
-			/* Check for this spell */
-			if ((i < 32) ?
-				(spell_flags[realm][sval][0] & (1L << i)) :
-				(spell_flags[realm][sval][1] & (1L << (i - 32))))
-			{
-				/* Collect this spell */
-				spells[num++] = i;
-			}
-		}
-
-		/* Set the spell number */
-		j = spells[spell];
-
-		if (!spell_okay(Ind, realm, j, FALSE))
-		{
-			msg_print(Ind, "You cannot gain that spell!");
-			return;
-		}
-	}
-
-
-	/* Priest -- Learn a random prayer */
-	if (o_ptr->tval == TV_PRAYER_BOOK)
-	{
-		int k = 0;
-
-		/* Extract spells */
-		for (i = 0; i < 64; i++)
-		{
-			/* Check spells in the book */
-			if ((i < 32) ?
-			    (spell_flags[realm][sval][0] & (1L << i)) :
-			    (spell_flags[realm][sval][1] & (1L << (i - 32))))
-			{
-				/* Skip non "okay" prayers */
-				if (!spell_okay(Ind, realm, i, FALSE)) continue;
-
-				/* Hack -- Prepare the randomizer */
-				k++;
-
-				/* Hack -- Apply the randomizer */
-				if (rand_int(k) == 0) j = i;
-			}
-		}
-	}
-
-	/* Nothing to study */
-	if (j < 0)
-	{
-		/* Message */
-		msg_format(Ind, "You cannot learn any %ss in that book.", p);
-
-		/* Abort */
-		return;
-	}
-
-
-	/* Take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
-
-	/* Learn the spell */
-	if (j < 32)
-	{
-		p_ptr->spell_learned1[realm] |= (1L << j);
-	}
-	else
-	{
-		p_ptr->spell_learned2[realm] |= (1L << (j - 32));
-	}
-
-	/* Find the next open entry in "spell_order[]" */
-	for (i = 0; i < 64; i++)
-	{
-		/* Stop at the first empty space */
-		if (p_ptr->spell_order[realm][i] == 99) break;
-	}
-
-	/* Add the spell to the known list */
-	p_ptr->spell_order[realm][i++] = j;
-
-	/* Mention the result */
-	msg_format(Ind, "You have learned the %s of %s.",
-	           p, spell_names[realm][j]);
-
-	/* One less spell available */
-	p_ptr->new_spells--;
-
-	/* Report on remaining prayers */
-	if (p_ptr->new_spells)
-	{
-		msg_format(Ind, "You can learn %d more %ss.", p_ptr->new_spells, p);
-	}
-
-	/* Save the new_spells value */
-	p_ptr->old_spells = p_ptr->new_spells;
-
-	/* Redraw Study Status */
-	p_ptr->redraw |= (PR_STUDY);
-
-	/* Update the spell info */
-	p_ptr->window |= (PW_SPELL);
-}
-#endif	// 0
-
 /* ok, it's hacked :) */
 /* of course, you can optimize it further by bandling
  * monsters and players into one loop..		- Jir - */
@@ -1503,31 +1195,6 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 		}
-#if 0 // Dont learn, dont gain xp
-                /* A spell was cast */
-		if (!((j < 32) ?
-		      (p_ptr->spell_worked1[REALM_MAGERY] & (1L << j)) :
-		      (p_ptr->spell_worked2[REALM_MAGERY] & (1L << (j - 32)))))
-		{
-			int e = s_ptr->sexp;
-
-			/* The spell worked */
-			if (j < 32)
-			{
-				p_ptr->spell_worked1[REALM_MAGERY] |= (1L << j);
-			}
-			else
-			{
-				p_ptr->spell_worked2[REALM_MAGERY] |= (1L << (j - 32));
-			}
-
-			/* Gain experience */
-			gain_exp(Ind, e * s_ptr->slevel);
-
-			/* Fix the spell info */
-			p_ptr->window |= PW_SPELL;
-		}
-#endif
         }
 
 	/* Take a turn */
@@ -1879,28 +1546,6 @@ void do_cmd_cast_aux(int Ind, int dir)
 		}
 	}	
 		
-#if 0 // Dont learn, dont gain xp
-	if (!((p_ptr->current_spell < 32) ?
-		(p_ptr->spell_worked1[REALM_MAGERY] & (1L << p_ptr->current_spell)) :
-		(p_ptr->spell_worked2[REALM_MAGERY] & (1L << (p_ptr->current_spell - 32)))))
-	{
-		int e = s_ptr->sexp;
-
-		if (p_ptr->current_spell < 32)
-		{
-			p_ptr->spell_worked1[REALM_MAGERY] |= (1L << p_ptr->current_spell);
-		}
-		else
-		{
-			p_ptr->spell_worked2[REALM_MAGERY] |= (1L << (p_ptr->current_spell - 32));
-		}
-
-		gain_exp(Ind, e * s_ptr->slevel);
-
-		/* Fix the spell info */
-		p_ptr->window |= PW_SPELL;
-	}
-#endif
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	if (s_ptr->smana <= p_ptr->csp)
@@ -2482,31 +2127,6 @@ void do_cmd_sorc(int Ind, int book, int spell)
 			get_aim_dir(Ind);
 			return;
 		}
-#if 0 // Dont learn, dont gain xp
-		/* A spell was cast */
-		if (!((j < 32) ?
-		      (p_ptr->spell_worked1[REALM_SORCERY] & (1L << j)) :
-		      (p_ptr->spell_worked2[REALM_SORCERY] & (1L << (j - 32)))))
-		{
-			int e = s_ptr->sexp;
-
-			/* The spell worked */
-			if (j < 32)
-			{
-				p_ptr->spell_worked1[REALM_SORCERY] |= (1L << j);
-			}
-			else
-			{
-				p_ptr->spell_worked2[REALM_SORCERY] |= (1L << (j - 32));
-			}
-
-			/* Gain experience */
-			if(!(j>=64)) gain_exp(Ind, e * s_ptr->slevel);
-
-			/* Fix the spell info */
-			p_ptr->window |= PW_SPELL;
-		}
-#endif
         }
 
 	/* Take a turn */
@@ -2694,28 +2314,6 @@ void do_cmd_sorc_aux(int Ind, int dir)
 		}
 	}	
 
-#if 0 // Dont learn, dont gain xp
-	if (!((p_ptr->current_spell < 32) ?
-		(p_ptr->spell_worked1[REALM_SORCERY] & (1L << p_ptr->current_spell)) :
-		(p_ptr->spell_worked2[REALM_SORCERY] & (1L << (p_ptr->current_spell - 32)))))
-	{
-		int e = s_ptr->sexp;
-
-		if (p_ptr->current_spell < 32)
-		{
-			p_ptr->spell_worked1[REALM_SORCERY] |= (1L << p_ptr->current_spell);
-		}
-		else
-		{
-			p_ptr->spell_worked2[REALM_SORCERY] |= (1L << (p_ptr->current_spell - 32));
-		}
-
-		gain_exp(Ind, e * s_ptr->slevel);
-
-		/* Fix the spell info */
-		p_ptr->window |= PW_SPELL;
-	}
-#endif
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	if (s_ptr->smana <= p_ptr->csp)
@@ -3504,32 +3102,6 @@ void do_cmd_pray(int Ind, int book, int spell)
 				break;
 			}
 		}
-
-#if 0 // Dont learn, dont gain xp
-		/* A prayer was prayed */
-		if (!((j < 32) ?
-		      (p_ptr->spell_worked1[REALM_PRAYER] & (1L << j)) :
-		      (p_ptr->spell_worked2[REALM_PRAYER] & (1L << (j - 32)))))
-		{
-			int e = s_ptr->sexp;
-
-			/* The spell worked */
-			if (j < 32)
-			{
-				p_ptr->spell_worked1[REALM_PRAYER] |= (1L << j);
-			}
-			else
-			{
-				p_ptr->spell_worked2[REALM_PRAYER] |= (1L << (j - 32));
-			}
-
-			/* Gain experience */
-			if(!(j>=64)) gain_exp(Ind, e * s_ptr->slevel);
-
-			/* Fix the spell info */
-			p_ptr->window |= PW_SPELL;
-                }
-#endif
 	}
 
 	/* Take a turn */
@@ -3769,29 +3341,6 @@ void do_cmd_pray_aux(int Ind, int dir)
 			p_ptr->current_spell = -1;
 		}
 	}
-
-#if 0 // Dont learn, dont gain xp
-	if (!((p_ptr->current_spell < 32) ?
-		(p_ptr->spell_worked1[REALM_PRAYER] & (1L << p_ptr->current_spell)) :
-		(p_ptr->spell_worked2[REALM_PRAYER] & (1L << (p_ptr->current_spell - 32)))))
-	{
-		int e = s_ptr->sexp;
-
-		if (p_ptr->current_spell < 32)
-		{
-			p_ptr->spell_worked1[REALM_PRAYER] |= (1L << p_ptr->current_spell);
-		}
-		else
-		{
-			p_ptr->spell_worked2[REALM_PRAYER] |= (1L << (p_ptr->current_spell - 32));
-		}
-
-		gain_exp(Ind, e * s_ptr->slevel);
-
-		/* Fix the spell info */
-		p_ptr->window |= PW_SPELL;
-	}
-#endif
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	if (s_ptr->smana <= p_ptr->csp)
@@ -3836,37 +3385,6 @@ void do_cmd_pray_aux(int Ind, int dir)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
-}
-
-
-/*
- * Send the ghost spell info to the client.
- */
-void show_ghost_spells(int Ind)
-{
-	magic_type *s_ptr;
-	int i, j = 0;
-	char out_val[80];
-	cptr comment = "";
-
-	/* Check each spell */
-	for (i = 0; i < 64; i++)
-	{
-		s_ptr = &ghost_spells[i];
-
-		/* Check for existance */
-		if (s_ptr->slevel >= 99) continue;
-
-		/* Format information */
-		sprintf(out_val, "  %c) %-30s%2d %4d %3d%%%s",
-		        I2A(j), spell_names[GHOST_SPELLS][i], s_ptr->slevel, s_ptr->smana, 0, comment);
-
-		/* Send it */
-		Send_spell_info(Ind, REALM_GHOST, 0, j, out_val);
-
-		/* Next spell */
-		j++;
-	}
 }
 
 /*
@@ -4254,32 +3772,6 @@ void do_cmd_fight(int Ind, int book, int spell)
 				break;
 			}
 		}
-
-#if 0 // Dont learn, dont gain xp
-		/* A spell was cast */
-		if (!((j < 32) ?
-		      (p_ptr->spell_worked1[REALM_FIGHTING] & (1L << j)) :
-		      (p_ptr->spell_worked2[REALM_FIGHTING] & (1L << (j - 32)))))
-		{
-			int e = s_ptr->sexp;
-
-			/* The spell worked */
-			if (j < 32)
-			{
-				p_ptr->spell_worked1[REALM_FIGHTING] |= (1L << j);
-			}
-			else
-			{
-				p_ptr->spell_worked2[REALM_FIGHTING] |= (1L << (j - 32));
-			}
-
-			/* Gain experience */
-			gain_exp(Ind, e * s_ptr->slevel);
-
-			/* Fix the spell info */
-			p_ptr->window |= PW_SPELL;
-                }
-#endif
 	}
 
 	/* Sufficient mana */
@@ -4427,28 +3919,6 @@ void do_cmd_fight_aux(int Ind, int dir)
 		}
 	}	
 
-#if 0 // Dont learn, dont gain xp
-	if (!((p_ptr->current_spell < 32) ?
-		(p_ptr->spell_worked1[REALM_FIGHTING] & (1L << p_ptr->current_spell)) :
-		(p_ptr->spell_worked2[REALM_FIGHTING] & (1L << (p_ptr->current_spell - 32)))))
-	{
-		int e = s_ptr->sexp;
-
-		if (p_ptr->current_spell < 32)
-		{
-			p_ptr->spell_worked1[REALM_FIGHTING] |= (1L << p_ptr->current_spell);
-		}
-		else
-		{
-			p_ptr->spell_worked2[REALM_FIGHTING] |= (1L << (p_ptr->current_spell - 32));
-		}
-
-		gain_exp(Ind, e * s_ptr->slevel);
-
-		/* Fix the spell info */
-                p_ptr->window |= PW_SPELL;
-	}
-#endif
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	if (s_ptr->smana <= p_ptr->csp)
@@ -4870,32 +4340,6 @@ void do_cmd_shad(int Ind, int book, int spell)
 				break;
 			}
 		}
-
-#if 0 // Dont learn, dont gain xp
-		/* A spell was cast */
-		if (!((j < 32) ?
-		      (p_ptr->spell_worked1[REALM_SHADOW] & (1L << j)) :
-		      (p_ptr->spell_worked2[REALM_SHADOW] & (1L << (j - 32)))))
-		{
-			int e = s_ptr->sexp;
-
-			/* The spell worked */
-			if (j < 32)
-			{
-				p_ptr->spell_worked1[REALM_SHADOW] |= (1L << j);
-			}
-			else
-			{
-				p_ptr->spell_worked2[REALM_SHADOW] |= (1L << (j - 32));
-			}
-
-			/* Gain experience */
-			gain_exp(Ind, e * s_ptr->slevel);
-
-			/* Fix the spell info */
-			p_ptr->window |= PW_SPELL;
-		}
-#endif
         }
 
 	/* Take a turn */
@@ -5008,29 +4452,6 @@ void do_cmd_shad_aux(int Ind, int dir)
 			return;
 		}
 	}	
-
-#if 0 // Dont learn, dont gain xp
-	if (!((p_ptr->current_spell < 32) ?
-		(p_ptr->spell_worked1[REALM_SHADOW] & (1L << p_ptr->current_spell)) :
-		(p_ptr->spell_worked2[REALM_SHADOW] & (1L << (p_ptr->current_spell - 32)))))
-	{
-		int e = s_ptr->sexp;
-
-		if (p_ptr->current_spell < 32)
-		{
-			p_ptr->spell_worked1[REALM_SHADOW] |= (1L << p_ptr->current_spell);
-		}
-		else
-		{
-			p_ptr->spell_worked2[REALM_SHADOW] |= (1L << (p_ptr->current_spell - 32));
-		}
-
-		gain_exp(Ind, e * s_ptr->slevel);
-
-		/* Fix the spell info */
-		p_ptr->window |= PW_SPELL;
-	}
-#endif
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	if (s_ptr->smana <= p_ptr->csp)
@@ -5365,32 +4786,6 @@ void do_cmd_hunt(int Ind, int book, int spell)
 				break;
 			}
 		}
-
-#if 0 // Dont learn, dont gain xp
-		/* A spell was cast */
-		if (!((j < 32) ?
-					(p_ptr->spell_worked1[REALM_HUNT] & (1L << j)) :
-					(p_ptr->spell_worked2[REALM_HUNT] & (1L << (j - 32)))))
-		{
-			int e = s_ptr->sexp;
-
-			/* The spell worked */
-			if (j < 32)
-			{
-				p_ptr->spell_worked1[REALM_HUNT] |= (1L << j);
-			}
-			else
-			{
-				p_ptr->spell_worked2[REALM_HUNT] |= (1L << (j - 32));
-			}
-
-			/* Gain experience */
-			gain_exp(Ind, e * s_ptr->slevel);
-
-			/* Fix the spell info */
-			p_ptr->window |= PW_SPELL;
-		}
-#endif
 	}
 
 	/* Take a turn */
@@ -6576,14 +5971,14 @@ void do_cmd_psi(int Ind, int book, int spell)
 		p_ptr->esp_link = Players[Ind2]->id;
 		p_ptr->esp_link_type = LINK_DOMINANT;
 		p_ptr->esp_link_flags = LINKF_MOV | LINKF_OBJ;
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 		
 		Players[Ind2]->esp_link = p_ptr->id;
 		Players[Ind2]->esp_link_type = LINK_DOMINATED;
 		Players[Ind2]->esp_link_flags = LINKF_VIEW | LINKF_MISC | LINKF_PAIN;
-		Players[Ind2]->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+		Players[Ind2]->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		Players[Ind2]->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 		Players[Ind2]->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 		break;
@@ -6621,14 +6016,14 @@ void do_cmd_psi(int Ind, int book, int spell)
 		p_ptr->esp_link = Players[Ind2]->id;
 		p_ptr->esp_link_type = LINK_DOMINANT;
 		p_ptr->esp_link_flags = 0;
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 		
 		Players[Ind2]->esp_link = p_ptr->id;
 		Players[Ind2]->esp_link_type = LINK_DOMINATED;
 		Players[Ind2]->esp_link_flags = LINKF_VIEW;
-		Players[Ind2]->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+		Players[Ind2]->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		Players[Ind2]->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 		Players[Ind2]->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 		break;
@@ -6667,14 +6062,14 @@ void do_cmd_psi(int Ind, int book, int spell)
 		p_ptr->esp_link = Players[Ind2]->id;
 		p_ptr->esp_link_type = LINK_DOMINANT;
 		p_ptr->esp_link_flags = LINKF_MOV | LINKF_OBJ;
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 		
 		Players[Ind2]->esp_link = p_ptr->id;
 		Players[Ind2]->esp_link_type = LINK_DOMINATED;
 		Players[Ind2]->esp_link_flags = LINKF_VIEW | LINKF_MISC;
-		Players[Ind2]->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+		Players[Ind2]->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		Players[Ind2]->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 		Players[Ind2]->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 		break;
@@ -6850,14 +6245,14 @@ void do_cmd_psi(int Ind, int book, int spell)
 		p_ptr->esp_link = Players[Ind2]->id;
 		p_ptr->esp_link_type = LINK_DOMINANT;
 		p_ptr->esp_link_flags = 0;
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 		
 		Players[Ind2]->esp_link = p_ptr->id;
 		Players[Ind2]->esp_link_type = LINK_DOMINATED;
 		Players[Ind2]->esp_link_flags = LINKF_PAIN;
-		Players[Ind2]->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+		Players[Ind2]->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		Players[Ind2]->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 		Players[Ind2]->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 		break;
@@ -6914,33 +6309,6 @@ void do_cmd_psi(int Ind, int book, int spell)
 		break;
 	      }
 	    }
-	
-	
-#if 0 // Dont learn, dont gain xp
-	  /* A spell was cast */
-	  if (!((j < 32) ?
-		(p_ptr->spell_worked1 & (1L << j)) :
-		(p_ptr->spell_worked2 & (1L << (j - 32)))))
-	    {
-	      int e = s_ptr->sexp;
-	      
-	      /* The spell worked */
-	      if (j < 32)
-		{
-		  p_ptr->spell_worked1 |= (1L << j);
-		}
-	      else
-		{
-		  p_ptr->spell_worked2 |= (1L << (j - 32));
-		}
-	      
-	      /* Gain experience */
-	      gain_exp(Ind, e * s_ptr->slevel);
-	      
-	      /* Fix the spell info */
-	      p_ptr->window |= PW_SPELL;
-            }
-#endif
 	}
 	
 	/* Take a turn */
@@ -7095,28 +6463,6 @@ void do_cmd_psi_aux(int Ind, int dir)
 		}
 	}	
 
-#if 0 // Dont learn, dont gain xp
-	if (!((p_ptr2->current_mind < 32) ?
-		(p_ptr->spell_worked1 & (1L << p_ptr->current_mind)) :
-		(p_ptr->spell_worked2 & (1L << (p_ptr->current_mind - 32)))))
-	{
-		int e = s_ptr->sexp;
-
-		if (p_ptr2->current_mind < 32)
-		{
-			p_ptr->spell_worked1 |= (1L << p_ptr->current_mind);
-		}
-		else
-		{
-			p_ptr->spell_worked2 |= (1L << (p_ptr->current_mind - 32));
-		}
-
-		gain_exp(Ind, e * s_ptr->slevel);
-
-		/* Fix the spell info */
-		p_ptr->window |= PW_SPELL;
-	}
-#endif
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr2->num_spell;
 
 	if (s_ptr->smana <= p_ptr2->csp)

@@ -342,7 +342,7 @@ CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
 TOLUA = server/tolua
 
-all: date tomenet tomenet.console tomenet.server accedit
+all: tomenet tomenet.console tomenet.server accedit
 
 # sorry. install on every make is a real pain ;)
 
@@ -350,6 +350,7 @@ install: all
 	install -b tomenet ..
 	install -b tomenet.console ..
 	install -b tomenet.server ..
+	touch ../tomenet.acc
 
 
 mini_install: install

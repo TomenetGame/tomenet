@@ -10,7 +10,6 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
-#define PW_SPELL	4
 #define PW_PLAYER	8
 
 /*

@@ -32,6 +32,7 @@ void setupscreen(){
 	attroff(A_STANDOUT);
 	mvprintw(LINES-3, COLS/2-19, "N: next      P: previous     D: Delete");
 	mvprintw(LINES-4, COLS/2-19, "V: Validate A: Admin S: Score M: Multi");
+	mvprintw(LINES-5, COLS/2-19, "L: List accounts");
 }
 
 void editor(){
@@ -76,6 +77,10 @@ void editor(){
 							}
 						quit=1;
 					}
+					break;
+				case 'l':
+				case 'L':
+					/* Short list of accounts */
 					break;
 				case 'n':
 				case 'N':

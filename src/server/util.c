@@ -1787,7 +1787,7 @@ static void do_cmd_refresh(int Ind)
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_SPELL);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	return;
 }

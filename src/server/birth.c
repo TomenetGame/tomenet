@@ -1533,7 +1533,7 @@ static void player_setup(int Ind, bool new)
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE | PU_SPELLS | PU_SKILL_INFO | PU_SKILL_MOD | PU_LUA);
 
 	/* Update his inventory, equipment, and spell info */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
 
 	p_ptr->master_move_hook=NULL; /* just in case its not */

@@ -806,97 +806,6 @@ static void fix_equip(int Ind)
 	display_equip(Ind);
 }
 
-static void fix_spell_aux(int Ind, int realm, int sval)
-{
-	int i;
-	byte		spell[64], num = 0;
-
-	/* Extract spells */
-	for (i = 0; i < 64; i++)
-	{
-		/* Check for this spell */
-		if ((i < 32) ?
-		    (spell_flags[realm][sval][0] & (1L << i)) :
-		    (spell_flags[realm][sval][1] & (1L << (i - 32))))
-		{
-			/* Collect this spell */
-			spell[num++] = i;
-		}
-	}
-
-
-	/* Display the spells */
-	print_spells(Ind, realm, sval, spell, num);
-}
-
-/*
- * Hack -- display equipment in sub-windows
- */
-/*
- * NOTE: Seemingly, this function has different meanings than Vanilla -
- * It simply send the spell informations to the client.
- *
- * Probably we'd better call this function only once when a player logs on.
- * XXX XXX target of spell-reform
- */
-void fix_spell(int Ind, bool full)
-{
-	player_type *p_ptr = Players[Ind];
-	int i, j;
-	object_type forge;
-
-	/* Ghosts get a different set */
-	if (p_ptr->ghost)
-	{
-		show_ghost_spells(Ind);
-		return;
-	}
-
-#if 0	// this should be done elsewhere (tho I'm not sure where)
-	/* Check for blindness and no lite and confusion */
-	if (p_ptr->blind || no_lite(Ind) || p_ptr->confused)
-	{
-		return;
-	}
-#endif	// 0
-
-	/* Scan for appropriate books */
-#if 0	// pfft, visit the magic shop and eXamine books; pls fix more nicely
-	/* sending all spells ?*/
-	/* This is *still* far from adequate 
-	   we should only send individual spells that
-	   are changed - evileye */
-	/* idea is to send (like mentioned above) all at start
-	   and only updates after that */
-	if(!full){
-		for (i = 0; i < INVEN_WIELD; i++)
-		{
-			if (is_book((&p_ptr->inventory[i])))
-			{
-				do_cmd_browse(Ind, &p_ptr->inventory[i]);
-			}
-		}
-	}
-	else{
-		for (i = TV_PSI_BOOK; i < TV_HUNT_BOOK + 1; i++)
-		{
-			for (j = 0; j < 9; j++)
-			{
-				if (!lookup_kind(i, j)) continue;
-				forge.tval = i;
-				forge.sval = j;
-				do_cmd_browse(Ind, &forge);
-			}
-		}
-	}
-#else
-	for (i = 0; i < MAX_REALM; i++)
-		for (j = 0; j < 9; j++)
-			fix_spell_aux(Ind, i, j);
-#endif
-}
-
-
 /*
  * Hack -- display character in sub-windows
  */
@@ -1225,7 +1134,6 @@ void calc_sanity(int Ind)
 		}
 
 		p_ptr->redraw |= (PR_SANITY);
-//		p_ptr->window |= (PW_SPELL | PW_PLAYER);
 		p_ptr->window |= (PW_PLAYER);
 	}
 }
@@ -3956,13 +3864,6 @@ void window_stuff(int Ind)
 	{
 		p_ptr->window &= ~(PW_EQUIP);
 		fix_equip(Ind);
-	}
-
-	/* Display spell list */
-	if (p_ptr->window & PW_SPELL)
-	{
-		p_ptr->window &= ~(PW_SPELL);
-		fix_spell(Ind, 0);
 	}
 
 	/* Display player */

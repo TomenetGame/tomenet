@@ -6122,7 +6122,6 @@ void do_cmd_activate(int Ind, int item)
 					msg_print(Ind, "Your feel your head clear.");
 					p_ptr->redraw |= (PR_MANA);
 					p_ptr->window |= (PW_PLAYER);
-//					p_ptr->window |= (PW_SPELL);
 				}
 				o_ptr->timeout = 666;
 				break;

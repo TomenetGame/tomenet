@@ -240,7 +240,7 @@ void increase_skill(int Ind, int i)
 	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
 
 	/* Update his inventory, equipment, and spell info */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 #endif	// 0
 
 	p_ptr->update |= (PU_SKILL_MOD);
@@ -1108,9 +1108,6 @@ void do_cmd_activate_skill()
 			break;
 		case MKEY_SCHOOL:
 			cast_school_spell();
-			break;
-                case MKEY_LEARN:
-                        do_cmd_study();
 			break;
                 case MKEY_COPY:
                         do_cmd_copy_spell();

@@ -2648,13 +2648,13 @@ static bool process_player_end_aux(int Ind)
 					p_ptr->esp_link = 0;
 					p_ptr->esp_link_type = 0;
 					p_ptr->esp_link_flags = 0;
-					p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+					p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 					p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 					p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 					p_ptr2->esp_link = 0;
 					p_ptr2->esp_link_type = 0;
 					p_ptr2->esp_link_flags = 0;
-					p_ptr2->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+					p_ptr2->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 					p_ptr2->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 					p_ptr2->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 				}

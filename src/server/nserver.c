@@ -6775,46 +6775,6 @@ static int Receive_close(int ind)
 	return 1;
 }
 
-#if 0
-static int Receive_gain(int ind)
-{
-	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
-
-	char ch;
-
-	int n, player;
-
-	s16b book, spell;
-
-	if (connp->id != -1)
-	{
-		player = GetInd[connp->id];
-		p_ptr = Players[player];
-	}
-
-	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &book, &spell)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
-		return n;
-	}
-
-	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-	{
-		do_cmd_study(player, book, spell);
-		return 2;
-	}
-	else if (player)
-	{
-		Packet_printf(&connp->q, "%c%hd%hd", ch, book, spell);
-		return 0;
-	}
-
-	return 1;
-}
-#endif	// 0
-
 static int Receive_skill_mod(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -7532,7 +7492,7 @@ static int Receive_redraw(int ind)
 	{
 //		p_ptr->store_num = -1;
 		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-	       	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+	       	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 	       	p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP | PU_SANITY);
 
 		/* Do 'Heavy' redraw if requested.
@@ -7556,7 +7516,7 @@ static int Receive_redraw(int ind)
 			p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
 
 			/* Update his inventory, equipment, and spell info */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 		}
 	}
 
@@ -8265,7 +8225,7 @@ void end_mind(int Ind, bool update){
 	p_ptr->esp_link_type = 0;
 	p_ptr->esp_link_flags = 0;
 	if(update){
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
 		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 	}
