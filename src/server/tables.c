@@ -2779,7 +2779,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
-                                '+', 650,
+                                '+', 550,
                         },
                         {
                                 SKILL_MAGIC,
