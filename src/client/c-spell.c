@@ -643,6 +643,8 @@ s32b get_school_spell(cptr do_what)
 	{
 		o_ptr = &inventory[item];
 	}
+	else
+		return(-1);
 
 #if 0 //someome fix ;)
         /* If it can be wielded, it must */

@@ -174,6 +174,7 @@ int Receive_file(void){
 			case PKT_FILE_SUM:
 				Packet_scanf(&rbuf, "%ld", &csum);
 				check_return(0, fnum, csum);
+				return(1);
 				break;
 			case PKT_FILE_ACK:
 				local_file_ack(0, fnum);
