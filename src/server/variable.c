@@ -701,6 +701,16 @@ monster_race *r_info;
 char *r_name;
 char *r_text;
 
+/*
+ * The monster ego race arrays
+ */
+#ifdef RANDUNIS
+header *re_head;
+monster_ego *re_info;
+char *re_name;
+
+#endif
+
 
 /*
  * Hack -- The special Angband "System Suffix"

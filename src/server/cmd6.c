@@ -321,6 +321,7 @@ void do_cmd_eat_food(int Ind, int item)
 					default:
 						get_rnd_line("rumors.txt",0 , Rumor);
 				}
+				bracer_ff(Rumor);
 				msg_format(Ind, "%s", Rumor);
 				msg_print(Ind, NULL);
 			}

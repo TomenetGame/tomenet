@@ -1,5 +1,5 @@
 N:*:Default
-386
+428
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -41,7 +41,7 @@ It's a bad idea to wield a Longsword (4d5).
 It's useless to bash monsters with bows - but there's one notable exception...
 Actually, Slime Mold Juice is not completely useless.
 Help me! I'm being held captive in a Vault at 2850'!
-Ever tried inscribing your armor {erodeproof}?
+Ever tried inscribing your armor {{erodeproof}?
 Using a Morningstar in the evening has no effect.
 Why are you wasting time reading fortunes?
 There is a horrible, ghastly fate awaiting you... at 2700'!
@@ -181,7 +181,7 @@ A Ring of Speed? Phooey! Try looking for a Ring of *Speed*!
 Thisss cccity isss guilty... the crime isss life... the ssentence isss DEATH!
 If you hear heavy steps - watch out!
 A visit to the Zoo is educational: you meet many strange animals.
-What happens if you wear a Ring of Extra Ring Fingers (-2) {cursed}?
+What happens if you wear a Ring of Extra Ring Fingers (-2) {{cursed}?
 Oremor nhoj em llik tsum uoy emag siht niw ot.
 If I cancel tomorrow the undead will thank me today.
 Hellfire will burn your soul...
@@ -189,7 +189,7 @@ Never attempt to Call the Void in an enclosed space!
 Call the Void needs a lot of room to cast...
 Why doesn't Detect Monsters show invisible monsters? 'Cos you can't see 'em!
 I'll tell you the truth, son: your soul's gonna burn in a lake of fire!
-There is a rare spellbook called [M$ PowerFools] {cursed}
+There is a rare spellbook called [M$ PowerFools] {{cursed}
 *** LOW HITPOINT WARNING! ***
 You cruelly stab the helpless, sleeping Software bug!
 Slab: Jus' say AarrghaarrghpleeassennononoUGH.
@@ -228,8 +228,8 @@ They say that wizards are subtle and quick to anger, even the kindest.
 They say that a macro can save your life hundreds of times.
 They say that only truly-free person can go beneath 1000'
 They say that a hellish is suitable to visit the Hell.
-Have you ever found a staircase-up in the wilderness?
-Have you ever been in the mushroom farm?
+Ever found a staircase-up in the wilderness?
+Ever been in the mushroom farm?
 They say that the Mafia would buy some kinda mushrooms for a price.
 Morgul weapons are utterly useless - but there's one notable exception...
 They say that a stone is just a stone.
@@ -246,7 +246,7 @@ They say that some supreme spells won't concern worldly matters.
 You can do away with notorious The Lady by doing the following:
 They say that a clever thief never does her job with her pack full.
 They say that a Demigod should leave his worldly treasures.
-They say that Morgoth never forget to inscribe his hammer with {!E}.
+They say that Morgoth never forget to inscribe his hammer with {{!E}.
 Ever tried a batman archer?
 Ever tried a batman monk?
 Ever tried a female Ent?
@@ -257,7 +257,7 @@ They say that there's a world called 'potland'.
 They say that cloning technology is prohibited by the U.S. government.
 They say that a warrior starts his adventure by selling his Broad Sword.
 They say that a true rogue should learn to turn off the light.
-They say that you should learn to type '/' in the chat-line.
+They say that you should learn to type '/' on the chat-line.
 They say that you should die at the centre of a large room.
 They say that you should fight behind a rubble.
 They say that when you die your ghost will haunt there.
@@ -280,9 +280,10 @@ Ever seen a member of The Guild?
 Ask a priest to enchant your stuffs.
 Ask a rogue to curse your stuffs.
 Ask a sorceror to wraith you.
+Ask a sorceror to examine your randarts.
 Ask a telepath to dominate you.
 Ask an unbeliever to get rid of that Q.
-Ask a priest to sweep the pit.
+Ask a priest to sweep a pit.
 Ask a warlock to go downstairs first.
 Ask a disenchanter mold to disenchant your HA DarkSword.
 Nowadays even a warrior should learn to read.
@@ -301,12 +302,12 @@ Ever tried to rob a store?
 Ever been in yeek town?
 Ever heard about Mirkwood Legends?
 Ever seen a God or Goddess player?
-[The Lady] Thou art doomed, poor little mangband player..
-[Olorin] mh
-[Moltor] pfft
-[Evileye] hehe
-[Jir] :)
-[Mihi] May the source be with you! *^-')b
+[The Lady] {BThou art doomed, poor little mangband player..
+{B[Olorin] mh
+{D[Moltor] {Bpfft
+{B[Evileye] hehe
+{B[Jir] {y:)
+{B[Mihi] May the source be with you! *^-')b
 [Server Admin] Server Shutdown (right now)
 You are hit by a bolt from the blue!
 They say that there once was a poor batman who found both Ringil and Feanor.
@@ -332,6 +333,7 @@ YOU'VE JUST WON THE FORTUNE-COOKIE LOTTERY! REPORT IT TO THE ML NOW!
 They say that One of the easiest way to find PoAS is to play an unbeliever.
 They say that alchemist never stocks restore potions of the kind you need. 
 Segmentation fault - core dumped.
+Segmentation fault - cookie dumped.
 This server either isn't up, or you mistyped the hostname.
 They say that only vaccinated can survive beneath 2000'
 They say that Yeek is weak, weak is Yeek.
@@ -385,4 +387,44 @@ Ever eaten an eye?
 They say that angband players are of less gourmant.
 They say that silence is a requirement for enjoying music.
 Ever heard the sound of silence? Oops, everyone /ignore you!
-     Ever seen an anonymous message?
+{d[Thavakrache] {BEver seen an anonymous message?
+They say that there's 1/4294967296 chance of finding the same randarts twice.
+Ever found the same randarts twice?
+They say that a true hero never gets afraid.
+They say that a tengu sometimes marks an instakill.
+Ever wondered why all those small town stores are open 24/7?
+Ever seen a living statue? Or ever been?
+Ever bounced on a phase spiders' trampoline?
+They say that carrion crawlers are good at creating carrions.
+They say that the deeper you go the higher you fly.
+Your stuffs weigh you down? Drop the gold!
+They say that you should lead cold hounds to breathe at fire hounds.
+Ever heard about a meat shield?
+They say that wiry and prompt fighter attacks like a lightning.
+They say that amulet of adornment gives off more charm than that of charisma.
+They say that every vault contains at least one entrance.
+They say that you shouldn't attack a greater vault alone.
+They say that avoiding to kill felines won't grant you a ring.
+They say that uninscribed arrows are utter crap.
+PernM cookie ingredient: flour, NetHack, Zangband, PernA and players online.
+They say that you can rust armours.
+Ever seen your tombstone?
+Got tired of cunning players? Quaff a potion of naivety!
+They say that a poor player created adamantium golem that never follows him.
+They say that a poor player created Pinnocio that is doomed to be burnt.
+{vAdamantium {wso precious, ever wondered why its massive piece is that cheap?
+They say that have you seen another {yQ {wstanding in the shadow?
+They say that no one can be stealthy enough to sneak up on a Quylthulg.
+What's that Quylthulg creature anyway?
+Ever relished a dragon steak?
+Ever seen a {rcoloured {bcookie{w?
+Yikes! This cookie was {rp{Ga{vi{on{Bt{Re{yd{w!!
+They say that {yP {wis terrible and {oP {wis horrible.
+Ever seen a {DP{w?
+You know you played PernM too much when you wonder why you don't auto-attack.
+Ever macroed \eQy@ ?
+They say that it's no good digging with a dagger.
+{rYou die.
+Wanna revenge? Stock potions of detonation!
+They say that Sauron has forged an all-powerful useless Ring.
+Wanna slay Sauron? Ask Wormie!

@@ -3281,3 +3281,15 @@ int name_lookup_loose(int Ind, cptr name, bool party)
 	/* Success */
 	return target;
 }
+
+/*
+ * Convert bracer '{' into '\377'
+ */
+void bracer_ff(char *buf)
+{
+	int i, len = strlen(buf);
+
+	for(i=0;i<len;i++){
+		if(buf[i]=='{') buf[i]='\377';
+	}
+}

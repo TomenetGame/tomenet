@@ -1084,6 +1084,15 @@ static void player_outfit(int Ind)
                 o_ptr->owner = p_ptr->id;
                 o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
+
+		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_FORTUNE_COOKIE));
+                o_ptr->number = 99;
+		o_ptr->discount = 0;
+		object_known(o_ptr);
+                o_ptr->owner = p_ptr->id;
+                o_ptr->level = 1;
+		(void)inven_carry(Ind, o_ptr);
+
 #if 0
 		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_INVIS));
 		o_ptr->number = 9;
@@ -1092,7 +1101,6 @@ static void player_outfit(int Ind)
                 o_ptr->owner = p_ptr->id;
                 o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
-#endif
 
 		/* Ifrit bug report */
         invcopy(o_ptr, lookup_kind(TV_SWORD, SV_BROAD_SWORD));
@@ -1104,6 +1112,7 @@ static void player_outfit(int Ind)
                 o_ptr->owner = p_ptr->id;
                 o_ptr->level = 1;
         (void)inven_carry(Ind, o_ptr);
+#endif
 
         invcopy(o_ptr, lookup_kind(TV_GLOVES, SV_SET_OF_CESTI));
 		o_ptr->name1 = ART_FINGOLFIN;
