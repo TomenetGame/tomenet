@@ -2714,6 +2714,13 @@ bool set_food(int Ind, int v)
 
 	bool notice = FALSE;
 
+	/* True Ghosts don't starve */
+	if (p_ptr->ghost)
+	{
+	    p_ptr->food = PY_FOOD_MAX;
+	    return (FALSE);
+	}
+
 	/* Hack -- Force good values */
 	v = (v > 20000) ? 20000 : (v < 0) ? 0 : v;
 
