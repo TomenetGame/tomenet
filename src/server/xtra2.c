@@ -5184,11 +5184,12 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 					p_ptr->recall_pos.wy = atoi(inscription) % MAX_WILD_Y;
 					p_ptr->recall_pos.wz = 0;
 				}
-#if 0
+#if 1
 				/* @RT for inter-Town travels (not implemented yet) */
 				else if (*inscription == 'T')
 				{
-				inscription++;
+					inscription++;
+					p_ptr->recall_pos.wz = 0;
 				}
 #endif
 				else
