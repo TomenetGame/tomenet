@@ -84,6 +84,7 @@ B:TOUCH:EXP_40:+0d+0
 F:SMART | R_CHAR_h | R_CHAR_p | R_CHAR_P | R_CHAR_O
 #H:UNDEAD | NONLIVING | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g
 H:UNDEAD | R_CHAR_Z | R_CHAR_A | R_CHAR_E | R_CHAR_g | R_CHAR_s
+H:R_CHAR_L
 #M:DROP_SKELETON | UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF
 M:UNDEAD | IM_COLD | IM_POIS | NO_FEAR | NO_CONF
 M:NO_SLEEP | SMART | EVIL | COLD_BLOOD
@@ -130,7 +131,7 @@ B:*:*:+0d+1
 B:*:*:+0d+1
 #F:R_CHAR_o | R_CHAR_y | R_CHAR_k | BASEANGBAND # orc captain already
 # hack - avoid Orc captain captain
-H:DROP_90
+#H:DROP_90
 F:R_CHAR_o | R_CHAR_O | R_CHAR_y | R_CHAR_k | BASEANGBAND
 M:FORCE_MAXHP | FRIENDS | SMART | DROP_1D2
 
@@ -150,8 +151,8 @@ N:7:Shaman
 G:*:r
 I:+0:%90d%100:+10:%90:=0
 W:+2:1:%90:%120:A
-#F:R_CHAR_o | R_CHAR_k | R_CHAR_n | BASEANGBAND
-F:R_CHAR_k | R_CHAR_n | BASEANGBAND
+F:R_CHAR_o | R_CHAR_k | R_CHAR_n | BASEANGBAND
+#F:R_CHAR_k | R_CHAR_n | BASEANGBAND
 M:SMART | FORCE_MAXHP | DROP_1D2
 O:FRIENDS
 S:1_IN_6 | MISSILE | CAUSE_1 | CONF | BLINK
@@ -162,7 +163,7 @@ G:*:G
 I:+0:%90d%100:+10:%90:=0
 W:+3:2:%90:%120:A
 # hack - avoid Troll priest Priest
-H:DROP_90
+#H:DROP_90
 F:R_CHAR_T | R_CHAR_P | R_CHAR_O | BASEANGBAND
 M:FRIENDS | SMART | FORCE_MAXHP | DROP_1D2
 S:1_IN_6 | CAUSE_2 | MISSILE | DARKNESS | CONF | SCARE | BLINK
@@ -206,6 +207,7 @@ M:TAKE_ITEM | DROP_60
 # such as weight, E: and some new flags.	- Jir -
 #
 # use M:FORCE_DEPTH if OoD is not preferable at all.
+# up to 10 R_CHAR_? are allowed for F:/H:
 
 
 N:12:(ridden)
@@ -222,24 +224,27 @@ S:1_IN_6 | HEAL |
 N:13:Veteran Archer
 G:*:W
 I:+10:+0d+0:+0:+0:=0
-W:+8:4:%100:%120:A
-M:DROP_1D2
+W:+12:4:%100:%140:A
 F:R_CHAR_y | R_CHAR_k | R_CHAR_O | R_CHAR_o | R_CHAR_T
+# hack - no Titan / Ogre mage V.Archer
+H:SMART | DROP_1D2
+M:DROP_1D2
 S:1_IN_1 | ARROW_2 | ARROW_4 | BLINK
+T:MF_ALL
 
 N:14:(Rider on)
 G:*:*
-I:+0:%120d%100:%120:+20:=0
-W:+15:4:+100:%150:A
-B:HIT:HURT:%120d%100
+I:+0:%120d%120:%120:+20:=0
+W:+15:4:+100:%180:A
+B:HIT:HURT:%120d%150
 F:R_CHAR_D | POWERFUL
-M:FORCE_MAXHP | DROP_GOOD
-S:HEAL | BLINK
+M:FORCE_MAXHP | DROP_GOOD | TAKE_ITEM | MOVE_BODY
+S:1_IN_4 | HEAL | BLINK
 
 N:15:Drunk
 G:*:*
 I:+0:+0d+0:+0:+0:+10
-W:+1:4:%90:%80:A
+W:+1:6:+0:%80:A
 F:R_CHAR_y | R_CHAR_k | R_CHAR_o | R_CHAR_p | R_CHAR_h
 H:NO_CONF
 M:RAND_25
@@ -259,7 +264,7 @@ M:NO_FEAR | NO_SLEEP
 N:17:Projector
 G:*:*
 I:+30:+0d+0:+20:+0:=0
-W:+15:3:+0:%150:B
+W:+15:3:+0:%400:B
 F:R_CHAR_m | R_CHAR_j | NEVER_MOVE
 M:FORCE_DEPTH
 S:1_IN_2 | ARROW_4
@@ -268,12 +273,12 @@ T:MF_ALL
 N:18:Mana-charged
 G:*:*
 I:+0:+0d+0:+20:+0:=0
-W:+20:3:+0:%175:B
+W:+20:3:+0:%800:B
 F:R_CHAR_m | R_CHAR_j
 M:FORCE_DEPTH
-S:1_IN_3 | BA_COLD | BO_FIRE | BA_ACID | BA_ELEC | BA_DARK | HEAL | HOLD
+S:1_IN_3 | BA_COLD | BA_FIRE | BA_ACID | BO_ELEC | BA_DARK | HEAL | HOLD
 S:HASTE | TELE_AWAY
-T:MF_ALL
+#T:MF_ALL
 
 N:19:Sparkling
 G:*:*
@@ -357,7 +362,7 @@ T:MF_ALL
 N:25:Holy
 G:*:v
 I:+50:%400d%400:+20:+50:=0
-W:+30:8:+0:%600:B
+W:+30:8:+0:%800:B
 B:*:*:%300d%300
 B:*:*:%300d%300
 B:*:*:%300d%300
@@ -396,6 +401,28 @@ H:DROP_90 | DROP_1D2 | SMART
 M:FORCE_MAXHP | FRIENDS | DROP_1D2
 M:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC
 T:MF_ALL
+
+N:28:Thief
+G:*:b
+I:+20:%120d%120:+0:+10:=0
+W:+15:8:%90:%150:A
+B:*:EAT_ITEM:+2d+2
+B:*:EAT_GOLD:+2d+2
+F:R_CHAR_y | R_CHAR_k | R_CHAR_o | R_CHAR_T | R_CHAR_O
+H:DROP_90 | DROP_1D2 
+M:TAKE_ITEM | DROP_1D2
+S:1_IN_10 | CONF | DARKNESS | TRAPS
+T:MF_ALL
+
+N:29:(mimic)
+G:*:*
+I:+0:+0d+0:+0:+0:+0
+W:+0:120:+0:+0:A
+#F:R_CHAR_y | R_CHAR_k | R_CHAR_o | R_CHAR_T | R_CHAR_O
+H:R_CHAR_! | R_CHAR_? | R_CHAR_= | R_CHAR_> | R_CHAR_<
+#M:TAKE_ITEM | DROP_1D2
+#S:1_IN_10 | CONF | DARKNESS | TRAPS
+#T:MF_ALL
 
 
 

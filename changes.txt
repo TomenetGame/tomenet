@@ -390,3 +390,6 @@ Change list for PernMangband
 - Failing to cast a spell takes a turn now.
 - wizard/DM can view all the players' inventory via "'".
 - Repeated messages are shown in more decent way.(client)
+
+09/12/2001 (Jir)
+- Bugfixes. Megos.

@@ -1393,8 +1393,8 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	player_type *p_ptr;
 
 	/* Disallow non-authorized admin (improvement needed!!) */
-	if ((!strcmp(p_ptr->name,cfg_admin_wizard) ||
-		!strcmp(p_ptr->name, cfg_dungeon_master)) &&
+	if ((!strcmp(name,cfg_admin_wizard) ||
+		!strcmp(name, cfg_dungeon_master)) &&
 		(strcmp(pass, cfg_console_password))) return FALSE;
 
 	/* Do some consistency checks */
