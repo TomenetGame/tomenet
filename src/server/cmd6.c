@@ -545,6 +545,14 @@ void do_cmd_quaff_potion(int Ind, int item)
 		o_ptr = &o_list[0 - item];
 	}
 
+	/* Hack -- allow to quaff ale/wine */
+	if (o_ptr->tval == TV_FOOD)
+	{
+		do_cmd_eat_food(Ind, item);
+		return;
+	}
+
+
         if( check_guard_inscription( o_ptr->note, 'q' )) {
                 msg_print(Ind, "The item's inscription prevents it");
                 return;

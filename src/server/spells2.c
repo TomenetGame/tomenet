@@ -5221,7 +5221,7 @@ void call_chaos(int Ind, int dir)
 	int plev = p_ptr->lev;
 	bool line_chaos = FALSE;
 
-	int hurt_types[26] =	// 30
+	int hurt_types[28] =	// 30
 	{
 		GF_ELEC,      GF_POIS,    GF_ACID,    GF_COLD,
 		GF_FIRE,      GF_MISSILE, GF_ARROW,   GF_PLASMA,
@@ -5230,12 +5230,12 @@ void call_chaos(int Ind, int dir)
 		GF_FORCE,     GF_INERTIA, GF_MANA,    GF_METEOR,
 		GF_ICE,       GF_CHAOS,   GF_NETHER,  GF_DISENCHANT,
 		GF_SHARDS,    GF_SOUND,   GF_NEXUS,   GF_CONFUSION,
-//		GF_TIME,      GF_GRAVITY, GF_ROCKET,  GF_NUKE,
-		GF_TIME,      GF_GRAVITY, GF_ROCKET,
+		GF_TIME,      GF_GRAVITY, GF_ROCKET,  GF_NUKE,
+		GF_DISINTEGRATE
 //		GF_HELL_FIRE, GF_DISINTEGRATE
 	};
 
-	Chaos_type = hurt_types[randint(26) - 1];
+	Chaos_type = hurt_types[randint(28) - 1];
 	if (randint(4) == 1) line_chaos = TRUE;
 
 #if 0

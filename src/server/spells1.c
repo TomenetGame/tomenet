@@ -935,7 +935,9 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		if (!p_ptr->ghost) 
 		{	strcpy(p_ptr->died_from_list, hit_from);
 #ifdef NEW_DUNGEON
-			wpcopy(&p_ptr->died_from_depth, &p_ptr->wpos);
+			/* pfft, what's this, EE? :) */
+//			wpcopy(&p_ptr->died_from_depth, &p_ptr->wpos);
+			p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
 #else
 			p_ptr->died_from_depth = p_ptr->dun_depth;
 #endif
@@ -1010,11 +1012,14 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 		   of death, use died_from_list.  To preserve the original
 		   depth, use died_from_depth. */
 
-		(void)strcpy(p_ptr->died_from, hit_from);
+//		(void)strcpy(p_ptr->died_from, hit_from);
+		(void)strcpy(p_ptr->died_from, "Insanity");
 		if (!p_ptr->ghost) 
-		{	strcpy(p_ptr->died_from_list, hit_from);
+		{	strcpy(p_ptr->died_from_list, "Insanity");
 #ifdef NEW_DUNGEON
-			wpcopy(&p_ptr->died_from_depth, &p_ptr->wpos);
+			/* pfft, what's this, EE? :) */
+//			wpcopy(&p_ptr->died_from_depth, &p_ptr->wpos);
+			p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
 #else
 			p_ptr->died_from_depth = p_ptr->dun_depth;
 #endif
@@ -1274,7 +1279,7 @@ static int set_fire_destroy(object_type *o_ptr)
 /*
  * Freeze things
  */
-static int set_cold_destroy(object_type *o_ptr)
+int set_cold_destroy(object_type *o_ptr)
 {
 	    u32b f1, f2, f3, f4, f5, esp;
 	if (!hates_cold(o_ptr)) return (FALSE);
@@ -1284,13 +1289,23 @@ static int set_cold_destroy(object_type *o_ptr)
 	return (TRUE);
 }
 
+/*
+ * Every things
+ */
+int set_all_destroy(object_type *o_ptr)
+{
+	if (artifact_p(o_ptr)) return (FALSE);
+	if (is_book(o_ptr) && o_ptr->sval >= SV_BOOK_MIN_GOOD) return (FALSE);
+	return (TRUE);
+}
+
 
 
 
 /*
  * This seems like a pretty standard "typedef"
  */
-typedef int (*inven_func)(object_type *);
+//typedef int (*inven_func)(object_type *);
 
 /*
  * Destroys a type of item on a given percent chance
@@ -1298,7 +1313,7 @@ typedef int (*inven_func)(object_type *);
  * Destruction taken from "melee.c" code for "stealing".
  * Returns number of items destroyed.
  */
-static int inven_damage(int Ind, inven_func typ, int perc)
+int inven_damage(int Ind, inven_func typ, int perc)
 {
 	player_type *p_ptr = Players[Ind];
 

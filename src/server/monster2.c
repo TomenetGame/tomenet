@@ -1753,7 +1753,7 @@ void update_player(int Ind)
 			}
 
 			/* Telepathy can see all players */
-			if (p_ptr->telepathy || (p_ptr->prace == RACE_DRIDER))
+			if (p_ptr->telepathy & ESP_ALL || (p_ptr->prace == RACE_DRIDER))
 			{
 			  bool see = FALSE;
 
@@ -1769,6 +1769,7 @@ void update_player(int Ind)
 			}
 			
 			/* hack -- dungeon masters are invisible */
+			if (p_ptr->admin_dm) flag = TRUE;
 			if (q_ptr->admin_dm) flag = FALSE;
 			
 			/* Can we see invisibvle players ? */

@@ -857,6 +857,16 @@ I:7:30:5:5:30:0d0:W
 D:You feel like a dustbinman!
 F:FLOOR | DOOR | CHEST
 
+N:183:Chasm
+I:20:30:0:0:20:0d0:w
+D:A chasm opens up under you!
+F:FLOOR
+
+N:184:Pit
+I:4:50:0:0:3:0d0:w
+D:A pit opens up under you!
+F:FLOOR
+
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
 # I:diff:prob:            :minlevel:      :color

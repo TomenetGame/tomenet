@@ -1017,6 +1017,10 @@ extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int d
 #else
 extern bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int flg);
 #endif
+typedef int (*inven_func)(object_type *);
+extern int set_all_destroy(object_type *o_ptr);
+extern int set_cold_destroy(object_type *o_ptr);
+extern int inven_damage(int Ind, inven_func typ, int perc);
 
 /* spells2.c */
 extern void golem_creation(int Ind, int max);

@@ -1062,11 +1062,24 @@ void cmd_steal(void)
 	Send_steal(dir);
 }
 
+static bool item_tester_quaffable(object_type *o_ptr)
+{
+	if (o_ptr->tval == TV_POTION) return TRUE;
+	if (o_ptr->tval == TV_POTION2) return TRUE;
+	if ((o_ptr->tval == TV_FOOD) &&
+			(o_ptr->sval == SV_FOOD_PINT_OF_ALE ||
+			 o_ptr->sval == SV_FOOD_PINT_OF_WINE) )
+			return TRUE;
+
+	return FALSE;
+}
+
 void cmd_quaff(void)
 {
 	int item;
 
-	item_tester_tval = TV_POTION;
+//	item_tester_tval = TV_POTION;
+	item_tester_hook = item_tester_quaffable;
 
 	if (!c_get_item(&item, "Quaff which potion? ", FALSE, TRUE, FALSE))
 	{

@@ -592,3 +592,6 @@ Change list for PernMangband
 - monster category filter (eg. to eliminate Joke-monsters).
 - better store-price calculator (rebalancement needed).
 - dying hellish could cause unfindable arts.
+
+3/1/2001 (Jir)
+- new(?) traps: pit, chasm

@@ -1465,6 +1465,9 @@ that keeps many algorithms happy.
 #define TV_SHADOW_BOOK 	94
 #define TV_HUNT_BOOK 	95
 
+#define is_book(o_ptr) \
+	(89 <= o_ptr->tval && o_ptr->tval <= 95)
+
 /* Maximum "tval" */
 #define TV_MAX		127
 
@@ -3316,6 +3319,7 @@ that keeps many algorithms happy.
 #define ESP_NONLIVING           0x00000400L
 #define ESP_UNIQUE              0x00000800L
 #define ESP_SPIDER              0x00001000L
+// #define ESP_PLAYER			0x40000000L
 #define ESP_ALL                 0x80000000L
 
 /* Number of group of flags to choose from */
@@ -4652,6 +4656,8 @@ extern int PlayerUID;
 #define TRAP_OF_GOODBYE_CHARLIE	180
 #define TRAP_OF_PRESENT_EXCHANGE	181
 #define TRAP_OF_GARBAGE_FILLING		182
+#define TRAP_OF_CHASM		183
+#define TRAP_OF_PIT			184
 
 #define TR_LIST(c_ptr) (c_ptr->special.ptr)
 

@@ -14,6 +14,9 @@
 
 #include "angband.h"
 
+/* Minimal benefit a store should obtain via transaction.
+ * in percent. */
+#define STORE_BENEFIT	10
 static int gettown(int Ind);
 
 /*
@@ -744,7 +747,7 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		adjust += (20 - o_ptr->level) / 2 ;
 
 		/* Never get "silly" */
-		if (adjust > 100) adjust = 100;
+		if (adjust > 100 - STORE_BENEFIT) adjust = 100 - STORE_BENEFIT;
 
 		/* Mega-Hack -- Black market sucks */
 		if (p_ptr->store_num == 6) price = price / 4;
@@ -760,7 +763,7 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		adjust = 100 + ((greed + factor) - 300);
 
 		/* Never get "silly" */
-		if (adjust < 100) adjust = 100;
+		if (adjust < 100 + STORE_BENEFIT) adjust = 100 + STORE_BENEFIT;
 
 		/* Mega-Hack -- Black market sucks */
 		if (p_ptr->store_num == 6) price = price * 4;
