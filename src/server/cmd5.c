@@ -1504,7 +1504,7 @@ void do_cmd_mimic(int Ind, int spell)
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 	}
 	else {
-		do_mimic_power(Ind, spell - 1);
+		do_mimic_power(Ind, spell - 2); /* 2 polymorph self abilities */
 	}
 }
 
