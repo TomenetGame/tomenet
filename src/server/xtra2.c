@@ -2832,7 +2832,7 @@ void check_experience(int Ind)
 	{
 		char str[160];
 		/* Message */
-		msg_format(Ind, "Welcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
+		msg_format(Ind, "\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
 
 		sprintf(str, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
 		clockin(Ind, 1);	/* Set player level */
