@@ -1,5 +1,6 @@
 /* $Id$ */
 $#include "angband.h"
+$#include "party.h"
 
 typedef char* cptr;
 typedef int errr;
