@@ -809,6 +809,9 @@ Change list for PernMangband
 - version strings(code is from Vim6.1a).
 - client is very un*x/vi-user friendly now.
 
+07/03/2002 (Evileye)
+- Added more of the guild system functions - still incomplete, but
+  nearly done. Save/load to be done last (must remain compat.)
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.

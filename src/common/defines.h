@@ -4159,7 +4159,7 @@ that keeps many algorithms happy.
      (ZCAVE[Y][X].feat <= FEAT_MUD) && \
      !(ZCAVE[Y][X].o_idx) && \
      !(ZCAVE[Y][X].m_idx))
-//     (ZCAVE[Y][X].feat <= FEAT_DIRT) && \
+/*     (ZCAVE[Y][X].feat <= FEAT_DIRT) && \ */
 
 
 /*

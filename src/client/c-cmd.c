@@ -1389,12 +1389,15 @@ void cmd_party(void)
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Specify player to attack");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Make peace");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Create a new guild");
+		Term_putstr(5, 11, -1, TERM_WHITE, "(8) Add player to guild");
+		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Remove player from guild");
+		Term_putstr(5, 13, -1, TERM_WHITE, "(a) Leave guild");
 
 		/* Show current party status */
-		Term_putstr(0, 13, -1, TERM_WHITE, party_info);
+		Term_putstr(0, 16, -1, TERM_WHITE, party_info);
 
 		/* Prompt */
-		Term_putstr(0, 11, -1, TERM_WHITE, "Command: ");
+		Term_putstr(0, 15, -1, TERM_WHITE, "Command: ");
 
 		/* Get a key */
 		i = inkey();
@@ -1452,6 +1455,19 @@ void cmd_party(void)
 			/* Get new guild name */
 			if (get_string("Guild name: ", buf, 79))
 				Send_guild(GUILD_CREATE, buf);
+		}
+		else if (i == '8'){
+			/* Get player name */
+			if (get_string("Player name: ", buf, 79))
+				Send_guild(GUILD_ADD, buf);
+		}
+		else if (i == '9'){
+			/* Get player name */
+			if (get_string("Player name: ", buf, 79))
+				Send_guild(GUILD_DELETE, buf);
+		}
+		else if (i == 'a'){
+			Send_guild(GUILD_REMOVE_ME, "");
 		}
 
 		/* Oops */

@@ -105,6 +105,9 @@ int guild_create(int Ind, cptr name){
 		msg_print(Ind, "There aren't enough guild slots!");
 		return FALSE;
 	}
+	/* broadcast the news */
+	msg_format(0, "A new guild '%s' has been created.", name);
+
 	p_ptr->au-=4000000;
 	p_ptr->redraw|=PR_GOLD;
 
@@ -194,7 +197,63 @@ int party_create(int Ind, cptr name)
 	return TRUE;
 }
 
+/*
+ * Add player to a guild
+ */
 int guild_add(int adder, cptr name){
+	player_type *p_ptr;
+	player_type *q_ptr = Players[adder];
+	int guild_id = q_ptr->guild, Ind = 0;
+
+	Ind = name_lookup_loose(adder, name, FALSE);
+
+	if (Ind <= 0)
+	{
+		return FALSE;
+	}
+
+	/* Set pointer */
+	p_ptr = Players[Ind];
+
+	/* Make sure this isn't an impostor */
+	if (guilds[guild_id].master==q_ptr->id)
+	{
+		/* Message */
+		msg_print(adder, "Only the guildmaster may add new members.");
+
+		/* Abort */
+		return FALSE;
+	}
+
+	/* Make sure this added person is neutral */
+	if (p_ptr->guild != 0)
+	{
+		/* Message */
+		msg_print(adder, "That player is already in a guild.");
+
+		/* Abort */
+		return FALSE;
+	}
+
+	/* Tell the guild about its new member */
+	guild_msg_format(guild_id, "%s has been added to %s.", p_ptr->name, guilds[guild_id].name);
+
+	/* One more player in this guild */
+	guilds[guild_id].num++;
+
+	/* Tell him about it */
+	msg_format(Ind, "You've been added to '%s'.", guilds[guild_id].name);
+
+	/* Set his guild number */
+	p_ptr->guild = guild_id;
+
+#if 0
+	/* Resend info */
+	Send_guild(Ind);
+#endif
+
+	/* Success */
+	return TRUE;
 }
 
 /*
@@ -237,7 +296,7 @@ int party_add(int adder, cptr name)
 	/* Set pointer */
 	p_ptr = Players[Ind];
 
-	/* Make sure this isn't an imposter */
+	/* Make sure this isn't an impostor */
 	if (!streq(parties[party_id].owner, q_ptr->name))
 	{
 		/* Message */
@@ -325,7 +384,66 @@ static void del_party(int id){
 	strcpy(parties[id].name, "");
 }
 
+/* 
+ * Remove player from a guild
+ */
 int guild_remove(int remover, cptr name){
+	player_type *p_ptr;
+	player_type *q_ptr = Players[remover];
+	int guild_id = q_ptr->guild, Ind = 0;
+
+	/* Make sure this is the owner */
+	if (guilds[guild_id].master==q_ptr->id)
+	{
+		/* Message */
+		msg_print(remover, "You must be the owner to delete someone.");
+
+		/* Abort */
+		return FALSE;
+	}
+
+	Ind = name_lookup_loose(remover, name, FALSE);
+
+	if (Ind <= 0)
+	{
+		return FALSE;
+	}
+
+	p_ptr = Players[Ind];
+
+	/* Make sure they were in the guild to begin with */
+	if (guild_id==p_ptr->guild)
+	{
+		/* Message */
+		msg_print(remover, "You can only delete guild members.");
+
+		/* Abort */
+		return FALSE;
+	}
+
+	/* Keep the guild, just lose a member */
+	else
+	{
+		/* Lose a member */
+		guilds[guild_id].num--;
+
+		/* Set his party number back to "neutral" */
+		p_ptr->guild = 0;
+
+		/* Messages */
+		msg_print(Ind, "You have been removed from the guild.");
+		guild_msg_format(guild_id, "%s has been removed from the guild.", p_ptr->name);
+
+#if 0
+		/* Resend info */
+		Send_guild(Ind);
+#endif
+		/* Last member deleted? */
+		if(guilds[guild_id].num==0)
+			del_guild(guild_id);
+	}
+
+	return TRUE;
 }
 
 /*
@@ -419,6 +537,41 @@ int party_remove(int remover, cptr name)
 }
 
 void guild_leave(int Ind){
+	player_type *p_ptr = Players[Ind];
+	int guild_id = p_ptr->guild;
+
+	/* Make sure he belongs to a guild */
+	if (!guild_id)
+	{
+		msg_print(Ind, "You don't belong to a guild.");
+		return;
+	}
+
+	/* If he's the guildmaster, set master to zero */
+	if (p_ptr->id==guilds[guild_id].master)
+	{
+		guilds[guild_id].master=0;
+		return;
+	}
+
+	/* Lose a member */
+	guilds[guild_id].num--;
+
+	/* Set him back to "neutral" */
+	p_ptr->guild = 0;
+
+	/* Inform people */
+	msg_print(Ind, "You have been removed from your guild.");
+	guild_msg_format(guild_id, "%s has left the guild.", p_ptr->name);
+
+#if 0
+	/* Resend info */
+	Send_guild(Ind);
+#endif
+
+	/* Last member deleted? */
+	if(guilds[guild_id].num==0)
+		del_guild(guild_id);
 }
 
 /*
@@ -458,6 +611,25 @@ void party_leave(int Ind)
 	Send_party(Ind);
 }
 
+/*
+ * Send a message to everyone in a party.
+ */
+void guild_msg(int guild_id, cptr msg)
+{
+	int i;
+
+	/* Check for this guy */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
+
+		/* Check this guy */
+		if (guild_id==Players[i]->guild)
+			msg_print(i, msg);
+	}
+}
+
 
 /*
  * Send a message to everyone in a party.
@@ -476,6 +648,27 @@ void party_msg(int party_id, cptr msg)
 		if (player_in_party(party_id, i))
 			msg_print(i, msg);
 	}
+}
+
+/*
+ * Send a formatted message to a guild.
+ */
+void guild_msg_format(int guild_id, cptr fmt, ...)
+{
+	va_list vp;
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Display */
+	guild_msg(guild_id, buf);
 }
 
 /*
