@@ -1826,6 +1826,7 @@ void scan_players(){
 	now=time(&now);
 	s_printf("Starting player inactivity check\n");
 	for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
+		pptr=NULL;
 		ptr=hash_table[slot];
 		while(ptr){
 			if(ptr->laston && (now - ptr->laston > 7776000)){
@@ -1860,7 +1861,6 @@ void scan_players(){
 			}
 			pptr=ptr;
 			ptr=ptr->next;
-			pptr=ptr;
 		}
 	}
 	s_printf("Finished player inactivity check\n");
