@@ -3773,8 +3773,10 @@ void player_death(int Ind)
 	if (p_ptr->fruit_bat == -1)
 		sprintf(buf, "%s was turned into a fruit bat by %s!", p_ptr->name, p_ptr->died_from);
 	
-	else if (p_ptr->alive)
+	else if (p_ptr->alive){
 		sprintf(buf, "\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from);
+		s_printf("%s was killed by %s.", p_ptr->name, p_ptr->died_from);
+	}
 	else if (!p_ptr->total_winner)
 		sprintf(buf, "\377r%s committed suicide.", p_ptr->name);
 	else
