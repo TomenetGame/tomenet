@@ -1,0 +1,1 @@
+pern_dofile(0, "test.lua")
