@@ -180,13 +180,6 @@ void cmd_all_in_one(void)
 
 		/* Presume it's sort of spellbook */
 		case TV_BOOK:
-		case TV_PSI_BOOK:
-		case TV_MAGIC_BOOK:
-		case TV_SORCERY_BOOK:
-		case TV_SHADOW_BOOK:
-		case TV_HUNT_BOOK:
-		case TV_FIGHT_BOOK:
-		case TV_PRAYER_BOOK:
 		case TV_TRAPKIT:
 		default:
 		{
@@ -211,56 +204,6 @@ void cmd_all_in_one(void)
 
 			break;
 		}
-#if 0
-		{
-			if ((*item_tester_magicable)(&inventory[item]))
-			{
-				 do_cast(item);
-			}
-			else
-			{
-				c_msg_print("You tried to decipher the contents in vain.");
-			}
-			break;
-		}
-
-		case TV_FIGHT_BOOK:
-		{
-//			if ((*item_tester_magicable)(&inventory[item]))
-			if (get_skill(SKILL_TECHNIC))
-			{
-				 do_fight(item);
-			}
-			else
-			{
-//				c_msg_print("You are not strong enough.");
-				c_msg_print("You find it hard to follow those acrobatic instructions.");
-			}
-			break;
-		}
-
-
-
-		case TV_PRAYER_BOOK:
-                        {
-                                if (!get_skill(SKILL_PRAY))
-                                {
-                                        c_msg_print("You pray.");
-                                }
-                                else
-                                {
-                                        do_pray(item);
-                                }
-                                break;
-                        }
-#endif	// 0
-
-#if 0
-		{
-			prt("Sorry I cannot handle that.", 0, 0);
-			break;
-		}
-#endif	// 0
 	}
 }
 

@@ -796,15 +796,15 @@ static void rd_house(int n)
 		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.sc.ptr=house_ptr->dna;
 	}
 #else	// 0
-	if(zcave=getcave(&house_ptr->wpos))
+	if((zcave=getcave(&house_ptr->wpos)))
 	{
 		struct c_special *cs_ptr;
 		if (house_ptr->flags&HF_STOCK)
 		{
 			/* add dna to static levels even though town-generated */
-			if(cs_ptr=GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR))
+			if((cs_ptr=GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
 				cs_ptr->sc.ptr=house_ptr->dna;
-			else if (cs_ptr=AddCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR))
+			else if ((cs_ptr=AddCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
 
 //			cs_ptr->type=CS_DNADOOR;
 				cs_ptr->sc.ptr=house_ptr->dna;
@@ -812,9 +812,9 @@ static void rd_house(int n)
 		else
 		{
 			/* add dna to static levels */
-			if(cs_ptr=GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR))
+			if((cs_ptr=GetCS(&zcave[house_ptr->dy][house_ptr->dx], CS_DNADOOR)))
 				cs_ptr->sc.ptr=house_ptr->dna;
-			else if (cs_ptr=AddCS(&zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx], CS_DNADOOR))
+			else if ((cs_ptr=AddCS(&zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx], CS_DNADOOR)))
 //			cs_ptr->type=CS_DNADOOR;
 				cs_ptr->sc.ptr=house_ptr->dna;
 		}
