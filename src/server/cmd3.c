@@ -1222,6 +1222,9 @@ void do_cmd_steal(int Ind, int dir)
 
 			if (!o_ptr->tval) continue;
 
+			/* He never drops body-armour this way */
+			if (j == INVEN_BODY) continue;
+
 			/* An artifact 'resists' */
 			if (artifact_p(o_ptr) && !o_ptr->name3 && rand_int(100) > 2)
 				continue;
