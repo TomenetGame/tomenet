@@ -1574,7 +1574,23 @@ struct skill_player
 
 };
 
+/* account flags */
+#define ACC_TRIAL 0x0001	/* Account is awaiting validation */
+#define ACC_ADMIN 0x0002	/* Account members are admins */
+#define ACC_MULTI 0x0004	/* Simultaneous play */
+#define ACC_NOSCORE 0x0008	/* No scoring allowed */
+#define ACC_DELD  0x8000	/* Delete account/members */
 
+/*
+ * new account struct - pass in player_type will be removed
+ * this will provide a better account management system
+ */
+struct account{
+	u32b id;	/* account id */
+	u16b flags;	/* account flags */
+	char name[30];	/* login */
+	char pass[20];	/* some crypts are not 13 */
+};
 
 /*
  * Most of the "player" information goes here.
@@ -1610,6 +1626,7 @@ struct player_type
 	unsigned int version;		/* His version */
 
 	s32b id;		/* Unique ID to each player */
+	u32b account;		/* account group id */
 	u32b dna;		/* DNA - psuedo unique to each player life */
 	time_t msg;		/* anti spamming protection */
 	byte msgcnt;
