@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. Mar 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 23. Mar 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -29,7 +29,7 @@ Contents
     (1.2)   What is a rogue-like game?
     (1.3)   Where do I find more information about rogue-like games?
     (1.4)   Goal and progress of TomeNET players
-    (1.5)   The Nazguls
+    (1.5)   Morgoth and the Nazgul
     (1.6)   How to encounter the final boss: Morgoth, The Lord Of Darkness
 (2) Installation & setup
     (2.1)   Installing TomeNET
@@ -531,8 +531,10 @@ TomeNET is to destroy the fallen god Melkor who is known by the name of
 Morgoth, Lord Of Darkness. The official website is http://www.tomenet.net/ .
 Latest version and information also available at http://www.c-blue.de/rogue/ .
 
-The source code is hosted at http://sourceforge.net/projects/pernband,
+The source code was hosted at http://sourceforge.net/projects/pernband,
 module pm. Access it straight via CVS, avoid any snapshot tarballs and stuff.
+Due to sourceforge's slowness TomeNET source is now accessible at a new
+repository at http://angband.oook.cz/, see below.
 The cvs command-line to download the latest sources and files for TomeNET is:
 For sourceforge.net CVS (old):
 cvs -d:pserver:anonymous@cvs.pernband.sourceforge.net:/cvsroot/pernband co pm
@@ -591,13 +593,13 @@ dangers but also fantastic treasure. Players on the same server can also play
 together by forming parties and sharing their experience! Players will acquire
 new ranks as their experience grows, allowing them to learn new abilities and
 to become stronger. Morgoth is said not to show up until his servant Sauron,
-the sorceror has been killed.
+the sorceror has been killed. (See 1.5 for more information about Morgoth.)
 
 
 
-(1.5) The Nazguls
------------------
-Morgoth, The Lord Of Darkness commands nine Ring Wraiths, called 'Nazguls'.
+(1.5) Morgoth and the Nazgul
+----------------------------
+Morgoth, The Lord Of Darkness commands nine Ring Wraiths, called 'Nazgul'.
 These corrupted souls of former ring-wearers are named..
 Uvatha the Horseman, Adunaphel the Quiet, Akhorahil the Blind,
 Ren the Unclean, Ji Indur Dawndeath, Dwar Dog Lord of Waw, Hoarmurath of Dir,
@@ -609,16 +611,21 @@ Morgoth is also able to summon all other unique beings, so one of your tasks
 to prevail against him will be to kill off as many of the powerful unique foes
 as you can before facing him.
 
-A very dangerous thing about Nazguls is that weapons get quickly destroyed if
+Morgoth, the god of destruction, has reinforced his surroundings to be
+especially devastating to all living beings:
+If you get killed on a level where Morgoth, The Lord Of Darkness walks, your
+ghost will be destroyed too, even if you are everlasting! Beware!
+
+A very dangerous thing about Nazgul is that weapons get quickly destroyed if
 they touch these corrupted beings.
 If you are a spell-caster who doesn't use his weapon to fight but just to
 profit from its magical abilities then it's strongly recommended to inscribe
 the weapon @Ox to avoid auto-retaliation, see (0.3) about inscriptions and
 (4.1) about auto-retaliation.
 If you rely on melee weapons you must try to get your hands on an artifact
-since these resist Nazguls greatly!
+since these resist Nazgul greatly!
 Dark Swords and ego weapons also have a certain chance to resist destruction,
-ego Dark Swords are the best non-artifact weapons against Nazguls.
+ego Dark Swords are the best non-artifact weapons against Nazgul.
 (It doesn't matter if the artifact is a random or a static one.)
 
 
@@ -638,6 +645,8 @@ be teleported to town instead and Morgoth will remain on the level.
 -If a party of players encounters him he will be a bit thougher than
 he appears to a solo player, depending on the size of the party.
 -There are hardly any walls that can hold Morgoth back for long.
+
+See (1.5) for more information about Morgoth.
 
 There are rumours of even more powerful beings than the Lord Of Darkness.
 Kings and Queens who seek new challenges shall try to enter the Nether Realm,
@@ -2042,8 +2051,15 @@ Each kind of trap set requires different items serving as ammunition:
 Catapult Trap Set       -       Sling ammo (fires with 2x base might).
 Arrow Trap Set          -       Arrows (fires with 3x base might).
 Bolt Trap Set           -       Bolts (fires with 4x base might).
-Fumes Trap Set          -       Potions.
-Magic Trap Set          -       Scrolls.
+Fumes Trap Set          -       Potions. The effects are very similar to the
+                                effects when throwing a potion at a monster,
+                                the trap will greatly increase the potion's
+                                effectiveness though, by generating a thick
+                                fume that envelops nearby creatues and
+                                possibly gets inhaled as well.
+Magic Trap Set          -       Scrolls. Even scrolls that are usually only
+                                used on items might have effects on certain
+                                creatures.
 Device Trap Set         -       Wands/Staves/Rods.
                                 The charges of wands and staves will be
                                 decreased by 1 each time the trap sets off.
@@ -2051,15 +2067,19 @@ Device Trap Set         -       Wands/Staves/Rods.
                                 itself.
 
 A normal trap set can be loaded with 1 item of the according ammo.
-After it went off you can pick up the trap set to use it again.
+After it went off (and is out of charges for device traps) you can pick up the
+trap set to use it again.
 If it was a catapult/arrow/bolt trap set you can often recover the ammunition
 too, in case it didn't break. (Magic arrows and artifact ammo never break).
 
 Trap sets can have special (ego) powers:
 (prefixes:)
-Automatic       - Can set off up to 99 times,
-                  with a 20% chance each time of ceasing to function.
+Automatic       - Can set off up to 99 times, with a 20% chance each time of
+                  ceasing to function. Requires the according amount of ammo
+                  though, if it's not a device trap set.
 Fully Automatic - Sets off up to 99 times.
+                  Requires the according amount of ammunition if it's not a
+                  device trap set.
 Well-hidden     - Makes it harder for monsters to spot the trap.
 Complicated     - Trap gets an extra AC bonus, making it harder to disarm.
 Obvious         - Curses the trap and makes it practically useless.
@@ -2186,6 +2206,8 @@ If you forgot which houses you own, type ~6 to see a list of your houses.
 
 Items on the floor within a house don't form piles! If you drop too many
 items and space in the house runs out the dropped item may just disappear!
+
+Party/Guild access are currently disabled due to abuse, sorry :|.
 
 
 
@@ -2952,6 +2974,7 @@ Some items might look bad (Mushrooms of Unhealth), but keep in mind that you
 can often throw ('v') these items to damage or impair an enemy.
 For more information about items and especially ego items see (7.4).
 
+
 Weapons & Armour
 --
 Dark Sword      Dark Swords have a so-called 'antimagic field', which
@@ -2976,6 +2999,8 @@ Shadow Cloak    Makes you hard to spot for other players, regarding
                 Shadow Cloaks work especially well to further disguise
                 yourself while being invisible vs. someone who is able to see
                 invisible creatures/players. See '(5.16) Invisibility'.
+Dragonrider Coat        Resists heat & cold.
+
 
 Potions
 --
@@ -3023,6 +3048,7 @@ Learning        Gives you 1..3 (random) additional skill points to spend.
 Lose Memories   Lose 25% experience (if Hold Life is missing).
 Ruination       Take 10d10 damage. All stats are decreased by 25 (restorable).
 Detonations     Better not drink it.
+
 
 Scrolls
 --
@@ -3092,8 +3118,10 @@ Mass Genocide   Removes all monsters that are close to you.
                 Monsters have a chance to resist genocide, depending on their
                 level. Monsters inside vaults, Uniques, and monsters that are
                 immune to teleportation attacks cannot be genocided.
-Acquirement     Gives you a great item.
-*Acquirement*   Gives you two or three great items.
+Acquirement     Gives you a great item. Reading it on deeper dungeon levels
+                produces better results mostly.
+*Acquirement*   Gives you two or three great items. Reading it on deeper
+                dungeon levels produce better results mostly.
 Fire/Ice/Chaos  Fires a ball of the according type around you. Make sure you
                 resist it or you will take damage too.
 Lottery         This might be your chance today to win the Jackpot!
@@ -3105,6 +3133,7 @@ Cancellation    Don't use it! It can heavily disenchant magic items in your
                 inventory. It hasn't got a useful purpose.
 Parchments      These contain informations about the game, they won't
                 disappear if you read them.
+
 
 Wands/Rods/Staves
 --
@@ -3133,6 +3162,7 @@ Dragon's Breath These wands fire a ball of dragon odem (more powerful than
 Havoc           Fires balls or beams of chaos, the exact outcome is hard to
                 tell.. it's very powerful though.
 
+
 Misc
 --
 (Small) Firestones  These can be eaten by Thunderlords and have various
@@ -3157,9 +3187,10 @@ Misc
                         - Speed-up:     Speed bonus.
                         - Heroism:      10 more HP, to-hit bonus, resist fear.
                         - Temp res:     Temporary base and poison resistance.
-Mattock/Pick/Shovel Improves your digging capabilities.
-                    (+to-hit, +to-dam) on digging tools helps to further
-                    increase their effectiveness.
+Mattock/Pick/Shovel Diggers, improving your digging capabilities.
+                    (+to-hit, +to-dam) on digging tools as well as a high
+                    weight help to further increase their effectiveness.
+                    The main factor is the (+diggingpower) mod though.
 Mummy Wrapping      Reduces your charisma slightly, and prevents other players
                     from seeing your equipment except for your melee and/or
                     ranged weapon. Also makes you look dark like being
@@ -3582,24 +3613,30 @@ Note that not every skill is available to every profession (class).
         +Sword-mastery          Greatly improves to-dam/to-hit with swords.
                                 At 25 and 50 you will get +1 blow per round
                                 while having a sword equipped.
-            .Critical-strike    Ability to score 2x/3x/4x damage hits.
-                                Critical strike skill works only with light
-                                swords, up to 10.0 lb. It improves the chance
-                                to score critical hits and adds to crit bonus
-                                from your equipment.
-                                The lighter a weapon is the more likely you
-                                will score a crit. Weight cap is 10.0 lb,
-                                above this the chance to hit your target
+            .Critical-strike    Increases your chance to score hits of
+                                extremely high damage. This skill improves
+                                the chance to score critical hits and adds
+                                to critical-hit bonus from your equipment.
+                                NOTES ABOUT CRITICAL-STRIKE SKILL:
+                                Critical-strike skill only helps light swords,
+                                not heavier than 10.0 lb., while critical-hits
+                                items will work with all weapons.
+                                NOTES ABOUT CRITICAL HITS IN GENERAL:
+                                You can always score critical hits,
+                                independent on weapon class and crit-skill.
+                                The probability will be small though, if you
+                                don't have +critical hit items or this skill
+                                to help out.
+                                If your weapon is lighter than 10.0 lb, your
+                                chances to score a critical hit will further
+                                increase.
+                                Above 10.0 lb, the chance to hit your target
                                 critically won't be worse than with a 10.0 lb
                                 weapon.
                                 Although your chance of hitting critical spots
                                 is better with lighter weapons, the damage of
                                 your critical strike -IF you manage to execute
                                 one- is higher if your weapon is heavier.
-                                NOTE:
-                                You can always score critical hits,
-                                independent on weapon class and crit-skill.
-                                The probability will be small though.
         .Axe-mastery            See Sword-mastery
         .Hafted-mastery         See Sword-mastery
         .Polearm-mastery        See Sword-mastery
@@ -3625,7 +3662,7 @@ Note that not every skill is available to every profession (class).
         .Boomerang-mastery      See Sling-mastery, and also increases ranged
                                 to-damage bonus while using a boomerang, and
                                 reduces the chance of a boomerang to break.
-                                Skill 0 -> 5% chance. Skill 50 -> 0,1% chance.
+                                Skill 0 -> 2% chance. Skill 50 -> 0,1% chance.
                                 Artifact boomerangs never break.
     .Martial Arts               Ability to fight with bare hands.
                                 Slightly raises you character speed.
@@ -3701,6 +3738,7 @@ Note that not every skill is available to every profession (class).
                                 a harder time to discover your traps.
                                 Last but not least you learn to optimize your
                                 traps for higher damage output.
+                                See (4.7) for details about monster traps.
     .Backstabbing               Lets you backstab enemies, afflicting high
                                 damage. Works best in the dark and if the
                                 opponent is sleeping.
@@ -4244,26 +4282,26 @@ as they fight barehanded). See (5.3) for a table of MA attacks.
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
 Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
 
-            STR INT WIS DEX CON CHR     HPdice  Exp%    Blows/Round
-            Di  MD  ST  St  Pe  Sr  Fi  BT
+            STR INT WIS DEX CON CHR     HPdice  Exp%    max.Blows/Round
+            Di  MD  ST  St  Pe  Sr  Fi  BT              (from STR & DEX)
 ------------------------------------------------------------------------------
-Adventurer  +0  +0  +0  +0  +0  +0      +6      *100%       4
+Adventurer  +0  +0  +0  +0  +0  +0      +6       +10%       4
             20  20  20  2   15  15  50  50
-Warrior     +5  -2  -2  +2  +2  -1      +10     *110%       6
+Warrior     +5  -2  -2  +2  +2  -1      +10       +0%       6
             25  18  18  1   2   14  70  55
-Istari      -5  +3  +0  +1  -2  +1      +0      *135%       1
+Istari      -5  +3  +0  +1  -2  +1      +0       +35%       1
             30  36  30  2   20  16  34  20
-Priest      -1  -3  +3  -1  +0  +2      +4      *120%       4
+Priest      -1  -3  +3  -1  +0  +2      +4       +20%       4
             25  30  32  2   8   16  48  35
-Rogue       +2  +1  -2  +3  +1  -1      +5      *125%       5
+Rogue       +2  +1  -2  +3  +1  -1      +5       +25%       5
             45  32  28  5   32  24  60  66
-Mimic       +1  +0  +0  +1  +1  -4      +5      *140%       4
+Mimic       +1  +0  +0  +1  +1  -4      +5       +40%       4
             25  35  28  7   18  18  60  66
-Archer      +1  +0  +2  +3  +1  -1      +5      *115%       3
+Archer      +1  +0  +2  +3  +1  -1      +5       +15%       3
             30  32  28  2   20  24  56  82
-Paladin     +3  -3  +1  +0  +2  +2      +8      *130%       5
+Paladin     +3  -3  +1  +0  +2  +2      +8       +30%       5
             10  21  54  1   16  13  60  29
-Ranger      +2  +2  -1  +1  +2  +0      +7      *135%       5
+Ranger      +2  +2  -1  +1  +2  +0      +7       +35%       5
             34  32  30  5   30  30  50  60
 
 
@@ -5235,7 +5273,7 @@ The most powerful representant of each class:
 
 -Blinking 'A' (unique angels) or 'U' (powerful or unique demons) as well as
  bright coloured 'U' (greater demons) and blinking 'W' (zephyr lords or
- Nazguls) always pose a high threat. While Zephyr lords aren't that strong on
+ Nazgul) always pose a high threat. While Zephyr lords aren't that strong on
  their own they are able to summon packs of hounds which can mean a swift doom
  if those have dangerous breathing attacks.
  Some other dangerous demons are..
@@ -5245,11 +5283,11 @@ The most powerful representant of each class:
 -High undead can also pose a high threat and are responsible for many a death,
  those are Nightwalkers, Nightcrawlers, Nightwings and their likes.
 
--Nazguls have quite some chance to destroy your melee weapon if you hit them!
+-Nazgul have quite some chance to destroy your melee weapon if you hit them!
  In case your melee weapon isn't your main way of fighting you could inscribe
  it @Ox before fighting a Nazgul to avoid auto-retaliation and then use
  spells or whatever to destroy it. If you rely on melee weapons get an
- artifact since these resist Nazguls greatly!
+ artifact since these resist Nazgul greatly!
  Dark Swords and ego weapons also have a certain chance to resist destruction.
  (Compare (1.5).)
 
@@ -5468,6 +5506,8 @@ random artifact. Often kings and queens look out for these since they are
 unable to use static artifacts, so they depend on rand-arts.
 The scrolls are very rarely found; occasions to buy one are fair in the
 expensive black market, but also the normal BM may sometimes offer some.
+It doesn't matter where you are when you read the scroll, the resulting
+artifact's power is always determined randomly.
 
 Here is some advice how to use these most valuable scrolls wisely:
 
