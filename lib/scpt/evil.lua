@@ -74,6 +74,16 @@ function curse(i)
 	end
 end
 
+function punish(i)
+	local j=1;
+	while(j<7)
+	do
+		players(i).stat_cur[j]=players(i).stat_cur[j]-1;
+		players(i).stat_max[j]=players(i).stat_max[j]-1;
+		j=j+1;
+	end
+end
+
 -- Use this when you want to hassle a player
 -- in the dungeon. (Sets same uniques as victim)
 function unimask(name)
