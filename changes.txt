@@ -437,3 +437,5 @@ Change list for PernMangband
 - Non mapping dungeons added. Player does not remember the map.
 - Fixed bug which caused towns to be cloned in wild generator.
 - Baselevel for new towns is set correctly for getlevel()
+- Fixed bug which prevented towers having new_level_up_* set
+  if they were maxdepth 1. (Caused endless loop in scatter)
