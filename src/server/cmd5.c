@@ -5816,8 +5816,8 @@ void do_mimic_change(int Ind, int r_idx)
 	msg_format(Ind, "You polymorph into a %s !", r_info[r_idx].name + r_name);
 	msg_format_near(Ind, "%s polymorphs a % !", p_ptr->name, r_info[r_idx].name + r_name);
 
-	note_spot(Ind, p_ptr->wy, p_ptr->wx);
-	everyone_lite_spot(&p_ptr->wpos, p_ptr->wy, p_ptr->wx);
+	note_spot(Ind, p_ptr->py, p_ptr->px);
+	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* Recalculate mana */
 	p_ptr->update |= (PU_MANA | PU_HP | PU_BONUS | PU_VIEW);
